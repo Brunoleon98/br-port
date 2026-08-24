@@ -1,0 +1,31 @@
+; BR Port VS — Bloco 2 (loop core com placeholder)
+; Godot 4.2+ · GDScript · renderer Compatibility (mobile-friendly, sem drama de export)
+
+config_version=5
+
+[application]
+
+config/name="BR Port VS"
+run/main_scene="res://scenes/Main.tscn"
+config/features=PackedStringArray("4.2")
+
+[autoload]
+
+GameState="*res://autoload/GameState.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/handheld/orientation="portrait"
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
