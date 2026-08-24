@@ -41,9 +41,9 @@ func _build_ui(won: bool, reason: String) -> void:
 	var m := GameState.metrics
 	var body := Label.new()
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD
-	body.text = "%s\n\nBarcos atendidos: %d\nBarcos perdidos: %d\nOfertas do rival igualadas: %d\nReceita total: R$%d\nReputação final: %d (%s)" % [
+	body.text = "%s\n\nBarcos atendidos: %d\nBarcos perdidos: %d\nOfertas do rival igualadas: %d\nReceita de barcos: R$%d\nRenda do píer: R$%d\nReputação final: %d (%s)" % [
 		reason,
-		int(m["boats_served"]), int(m["boats_lost"]), int(m["rival_matched"]), int(m["revenue"]),
+		int(m["boats_served"]), int(m["boats_lost"]), int(m["rival_matched"]), int(m["revenue"]), int(m.get("pier_income", 0)),
 		int(GameState.reputation), GameState.reputation_label()
 	]
 	vbox.add_child(body)

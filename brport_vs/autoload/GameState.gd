@@ -35,6 +35,9 @@ const UPGRADE_COST := 400               # TUNING: GDD não define custo do upgra
 const UPGRADE_EXTRA_DOCKS := 1
 const UPGRADE_EXTRA_WORKERS := 1
 
+const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
+const PIER_RATE_PER_SLOT := 40          # GDD "Margem operacional base": R$40/vaga -> R$240/sem
+
 const BOAT_VALUE_SMALL_MIN := 80        # GDD "Valor de contratos" Fase 1: R$80–300
 const BOAT_VALUE_SMALL_MAX := 150
 const BOAT_VALUE_LARGE_MIN := 150
@@ -79,6 +82,7 @@ var metrics := {
 	"rival_matched": 0,
 	"rival_refused": 0,
 	"revenue": 0,
+	"pier_income": 0,
 }
 
 var _uid := 1
@@ -102,7 +106,7 @@ func new_game() -> void:
 	pending_rival_dock = -1
 	end_reason = ""
 	won = false
-	metrics = {"boats_served": 0, "boats_lost": 0, "rival_matched": 0, "rival_refused": 0, "revenue": 0}
+	metrics = {"boats_served": 0, "boats_lost": 0, "rival_matched": 0, "rival_refused": 0, "revenue": 0, "pier_income": 0}
 
 	docks.clear()
 	for i in range(DOCKS_BASE):
@@ -239,10 +243,13 @@ func advance_turn() -> void:
 
 
 func _process_week_end(ended_week: int) -> void:
+	var pier_income := PIER_SLOTS * PIER_RATE_PER_SLOT
 	var cost := (SALARY_PER_WORKER * workers.size()) + MAINTENANCE_WEEKLY
+	cash += pier_income
 	cash -= cost
+	metrics["pier_income"] = int(metrics.get("pier_income", 0)) + pier_income
 	cash_changed.emit(cash)
-	message.emit("⚓ Semana %d encerrada — -R$%d em custos (salários + manutenção)." % [ended_week, cost], "warn")
+	message.emit("⚓ Semana %d encerrada — +R$%d do aluguel do píer, -R$%d em custos (salários + manutenção)." % [ended_week, pier_income, cost], "warn")
 
 
 func _check_end() -> void:
