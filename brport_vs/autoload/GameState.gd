@@ -38,12 +38,12 @@ const UPGRADE_EXTRA_WORKERS := 1
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
 const PIER_RATE_PER_SLOT := 40          # GDD "Margem operacional base": R$40/vaga -> R$240/sem
 
-const BOAT_VALUE_SMALL_MIN := 80        # GDD "Valor de contratos" Fase 1: R$80–300
-const BOAT_VALUE_SMALL_MAX := 150
-const BOAT_VALUE_LARGE_MIN := 150
-const BOAT_VALUE_LARGE_MAX := 300
+const BOAT_VALUE_SMALL_MIN := 240       # TUNING: acima do "Valor de contratos" da GDD (R$80-300)
+const BOAT_VALUE_SMALL_MAX := 420       # — necessário pra parcela de R$8.000 caber em 4 semanas
+const BOAT_VALUE_LARGE_MIN := 420
+const BOAT_VALUE_LARGE_MAX := 760
 const BOAT_LARGE_CHANCE := 0.4          # TUNING
-const BOAT_ARRIVAL_CHANCE := 0.75       # TUNING: chance de 1 barco novo por turno
+const BOAT_ARRIVAL_CHANCE := 0.75       # TUNING: chance POR doca vazia de chegar barco no turno
 
 const RIVAL_TRIGGER_CHANCE := 0.30      # Protótipo validado (Arlindo — dumping)
 const RIVAL_DISCOUNT := 0.15            # Protótipo validado — 15% de desconto
@@ -332,20 +332,24 @@ func _make_boat() -> Dictionary:
 
 
 func _spawn_boats() -> void:
-	if _rng.randf() > BOAT_ARRIVAL_CHANCE:
-		return
-	var empty_indices: Array = []
+	# Cada doca vazia tem sua própria chance de receber barco (em vez de
+	# no máximo 1 barco por turno) — aumenta a frequência de chegada e
+	# mantém as docas ocupadas com mais consistência.
+	var newly_spawned: Array = []
 	for i in range(docks.size()):
-		if docks[i]["boat"] == null:
-			empty_indices.append(i)
-	if empty_indices.is_empty():
+		if docks[i]["boat"] != null:
+			continue
+		if _rng.randf() > BOAT_ARRIVAL_CHANCE:
+			continue
+		docks[i]["boat"] = _make_boat()
+		newly_spawned.append(i)
+	if newly_spawned.is_empty():
 		return
-	var idx: int = empty_indices[_rng.randi_range(0, empty_indices.size() - 1)]
-	docks[idx]["boat"] = _make_boat()
 	boats_spawned.emit()
 
-	# Chance de oferta do rival (Arlindo) sobre o barco recém-chegado.
+	# No máximo 1 oferta do rival (Arlindo) por turno, sobre um dos barcos novos.
 	if _rng.randf() < RIVAL_TRIGGER_CHANCE:
+		var idx: int = newly_spawned[_rng.randi_range(0, newly_spawned.size() - 1)]
 		docks[idx]["boat"]["rival"] = true
 		pending_rival_dock = idx
 		phase = "rival_offer"
