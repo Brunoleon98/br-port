@@ -36,9 +36,16 @@ func refresh() -> void:
 	if w == null:
 		return
 	var busy: int = int(w["busy_turns"])
+	# `busy_turns` só conta operações que já começaram; quem foi alocado neste
+	# turno ainda está com 0 e precisa ser detectado pela doca, senão aparece
+	# como "Livre" e dá para arrastar o mesmo trabalhador para outra doca.
+	var dock_index := GameState.worker_dock_index(worker_id)
 	if busy > 0:
 		_bg.color = Color(0.3, 0.3, 0.35)
 		_label.text = "👷 #%d\nOcupado (%dt)" % [worker_id, busy]
+	elif dock_index >= 0:
+		_bg.color = Color(0.35, 0.4, 0.5)
+		_label.text = "👷 #%d\nNa Doca %d" % [worker_id, dock_index + 1]
 	else:
 		_bg.color = Color(0.25, 0.65, 0.35)
 		_label.text = "👷 #%d\nLivre\narraste →" % worker_id
@@ -54,6 +61,8 @@ func _find_self() -> Variant:
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	var w = _find_self()
 	if w == null or int(w["busy_turns"]) > 0 or GameState.phase != "playing":
+		return null
+	if GameState.worker_dock_index(worker_id) >= 0:
 		return null
 	var preview := ColorRect.new()
 	preview.color = Color(0.25, 0.65, 0.35, 0.85)

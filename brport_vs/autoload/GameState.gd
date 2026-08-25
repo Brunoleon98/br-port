@@ -18,7 +18,12 @@ signal cash_changed(new_cash: int)
 signal reputation_changed(new_reputation: float)
 signal turn_advanced(new_turn: int, week: int)
 signal boats_spawned()
-signal worker_assigned()
+# Docas/trabalhadores mudaram (alocação, liberação ou upgrade).
+signal roster_changed()
+# Toda troca de fase passa por _set_phase() e emite isto. A UI depende
+# disso para reabilitar botões — sem esse sinal o jogo trava (era o bug
+# de travamento depois de resolver a oferta do rival).
+signal phase_changed(new_phase: String)
 signal rival_offer_triggered(dock_index: int)
 signal debt_due(amount: int)
 signal game_over(won: bool, reason: String)
@@ -102,7 +107,7 @@ func new_game() -> void:
 	reputation = REPUTATION_START
 	upgrade_purchased = false
 	parcela_paid = false
-	phase = "playing"
+	_set_phase("playing")
 	pending_rival_dock = -1
 	end_reason = ""
 	won = false
@@ -118,6 +123,13 @@ func new_game() -> void:
 
 	_spawn_boats()
 	save_game()
+
+
+func _set_phase(new_phase: String) -> void:
+	if phase == new_phase:
+		return
+	phase = new_phase
+	phase_changed.emit(phase)
 
 
 func week_of(t: int) -> int:
@@ -148,9 +160,48 @@ func assign_worker(worker_id: int, dock_index: int) -> bool:
 	var worker = _find_worker(worker_id)
 	if worker == null or int(worker["busy_turns"]) > 0:
 		return false
+	# `busy_turns` só é preenchido no advance_turn, então dentro do mesmo
+	# turno ele não impede nada — é preciso olhar as docas para saber se o
+	# trabalhador já está alocado, senão dá para colocar o mesmo sujeito em
+	# várias docas e faturar de graça.
+	var already := worker_dock_index(worker_id)
+	if already >= 0:
+		message.emit("Trabalhador #%d já está na Doca %d. Toque na doca para liberá-lo." % [worker_id, already + 1], "warn")
+		return false
 	dock["worker_id"] = worker_id
 	message.emit("✅ Trabalhador alocado. Avance o dia para operar.", "good")
-	worker_assigned.emit()
+	roster_changed.emit()
+	save_game()
+	return true
+
+
+# Devolve o índice da doca onde o trabalhador está alocado, ou -1.
+func worker_dock_index(worker_id: int) -> int:
+	for i in range(docks.size()):
+		var assigned = docks[i]["worker_id"]
+		if assigned != null and int(assigned) == worker_id:
+			return i
+	return -1
+
+
+# Tira o trabalhador da doca — só enquanto a operação não começou, para o
+# jogador poder desfazer um arrasto errado sem perder o turno.
+func release_worker(dock_index: int) -> bool:
+	if phase != "playing":
+		return false
+	if dock_index < 0 or dock_index >= docks.size():
+		return false
+	var dock: Dictionary = docks[dock_index]
+	if dock["worker_id"] == null:
+		return false
+	var boat = dock["boat"]
+	if boat != null and int(boat["progress"]) > 0:
+		message.emit("A operação já começou — não dá para tirar o trabalhador agora.", "warn")
+		return false
+	var worker_id := int(dock["worker_id"])
+	dock["worker_id"] = null
+	message.emit("Trabalhador #%d liberado." % worker_id, "")
+	roster_changed.emit()
 	save_game()
 	return true
 
@@ -169,8 +220,15 @@ func resolve_rival_offer(accept_match: bool) -> void:
 	var dock: Dictionary = docks[pending_rival_dock]
 	var boat = dock["boat"]
 	if boat == null:
-		phase = "playing"
+		pending_rival_dock = -1
+		_set_phase("playing")
 		return
+	# A fase volta ANTES de emitir qualquer coisa: os sinais abaixo fazem a UI
+	# se redesenhar, e se ela ler `phase` ainda em "rival_offer" o botão de
+	# avançar o dia fica desabilitado para sempre.
+	pending_rival_dock = -1
+	_set_phase("playing")
+
 	if accept_match:
 		var discounted := int(round(boat["value"] * (1.0 - RIVAL_DISCOUNT)))
 		boat["matched"] = true
@@ -182,12 +240,11 @@ func resolve_rival_offer(accept_match: bool) -> void:
 	else:
 		metrics["rival_refused"] += 1
 		metrics["boats_lost"] += 1
-		docks[pending_rival_dock]["boat"] = null
-		docks[pending_rival_dock]["worker_id"] = null
+		dock["boat"] = null
+		dock["worker_id"] = null
 		_change_reputation(-REPUTATION_LOSS_RIVAL_REFUSED)
 		message.emit("❌ Barco foi para o rival (Arlindo). Reputação caiu.", "bad")
-	pending_rival_dock = -1
-	phase = "playing"
+	roster_changed.emit()
 	save_game()
 
 
@@ -232,7 +289,7 @@ func advance_turn() -> void:
 		_process_week_end(week_of(prev_turn))
 
 	if prev_turn == PARCELA_DUE_TURN and not parcela_paid:
-		phase = "debt_payment"
+		_set_phase("debt_payment")
 		debt_due.emit(PARCELA_AMOUNT)
 		save_game()
 		return
@@ -263,9 +320,9 @@ func _check_end() -> void:
 
 
 func _end_game(did_win: bool, reason: String) -> void:
-	phase = "game_over"
 	won = did_win
 	end_reason = reason
+	_set_phase("game_over")
 	game_over.emit(did_win, reason)
 	save_game()
 
@@ -279,7 +336,7 @@ func pay_debt() -> void:
 		return
 	cash -= PARCELA_AMOUNT
 	parcela_paid = true
-	phase = "playing"
+	_set_phase("playing")
 	cash_changed.emit(cash)
 	message.emit("✅ Parcela de R$%d paga ao Sr. Ribeiro." % PARCELA_AMOUNT, "good")
 	turn_advanced.emit(turn, current_week())
@@ -305,6 +362,7 @@ func buy_upgrade() -> bool:
 	for i in range(UPGRADE_EXTRA_WORKERS):
 		workers.append({"id": workers.size() + 1, "busy_turns": 0})
 	cash_changed.emit(cash)
+	roster_changed.emit()
 	message.emit("🏗️ Píer ampliado! +1 doca e +1 trabalhador.", "good")
 	save_game()
 	return true
@@ -352,7 +410,7 @@ func _spawn_boats() -> void:
 		var idx: int = newly_spawned[_rng.randi_range(0, newly_spawned.size() - 1)]
 		docks[idx]["boat"]["rival"] = true
 		pending_rival_dock = idx
-		phase = "rival_offer"
+		_set_phase("rival_offer")
 		rival_offer_triggered.emit(idx)
 
 

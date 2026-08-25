@@ -89,6 +89,8 @@ func _build_ui() -> void:
 	_rep_bar = ProgressBar.new()
 	_rep_bar.custom_minimum_size = Vector2(200, 20)
 	_rep_bar.max_value = 100
+	# O número já aparece no label ao lado; a porcentagem na barra é ruído.
+	_rep_bar.show_percentage = false
 	rep_row.add_child(_rep_bar)
 
 	_rep_label = Label.new()
@@ -142,9 +144,10 @@ func _build_ui() -> void:
 func _connect_game_state() -> void:
 	GameState.cash_changed.connect(func(_v): _refresh_hud())
 	GameState.reputation_changed.connect(func(_v): _refresh_hud())
+	GameState.phase_changed.connect(func(_p): _refresh_hud())
 	GameState.turn_advanced.connect(func(_t, _w): _refresh_all())
 	GameState.boats_spawned.connect(func(): _refresh_docks())
-	GameState.worker_assigned.connect(func(): _refresh_docks(); _refresh_workers())
+	GameState.roster_changed.connect(_refresh_all)
 	GameState.message.connect(_on_message)
 	GameState.rival_offer_triggered.connect(_on_rival_offer_triggered)
 	GameState.debt_due.connect(_on_debt_due)
@@ -159,7 +162,9 @@ func _refresh_all() -> void:
 
 func _refresh_hud() -> void:
 	_cash_label.text = "💰 Caixa: R$%d" % int(GameState.cash)
-	_day_label.text = "📅 Dia %d/%d — Semana %d" % [GameState.turn, GameState.TURNS_TOTAL, GameState.current_week()]
+	var shown_day: int = min(GameState.turn, GameState.TURNS_TOTAL)
+	var shown_week: int = min(GameState.current_week(), GameState.WEEKS_TOTAL)
+	_day_label.text = "📅 Dia %d/%d — Semana %d" % [shown_day, GameState.TURNS_TOTAL, shown_week]
 	_rep_bar.value = GameState.reputation
 	_rep_label.text = "%d — %s" % [int(GameState.reputation), GameState.reputation_label()]
 	_upgrade_button.disabled = GameState.upgrade_purchased or GameState.phase != "playing"
@@ -167,9 +172,16 @@ func _refresh_hud() -> void:
 	_advance_button.disabled = GameState.phase != "playing"
 
 
-func _refresh_docks() -> void:
-	for child in _docks_container.get_children():
+func _clear(container: Node) -> void:
+	# queue_free() sozinho é adiado até o fim do frame — sem o remove_child o
+	# container fica com os nós velhos e os novos ao mesmo tempo por um frame.
+	for child in container.get_children():
+		container.remove_child(child)
 		child.queue_free()
+
+
+func _refresh_docks() -> void:
+	_clear(_docks_container)
 	for i in range(GameState.docks.size()):
 		var dock_node = DockScene.instantiate()
 		_docks_container.add_child(dock_node)
@@ -177,8 +189,7 @@ func _refresh_docks() -> void:
 
 
 func _refresh_workers() -> void:
-	for child in _workers_container.get_children():
-		child.queue_free()
+	_clear(_workers_container)
 	for w in GameState.workers:
 		var worker_node = WorkerScene.instantiate()
 		_workers_container.add_child(worker_node)
