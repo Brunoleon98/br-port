@@ -23,16 +23,16 @@ descompacta e dá duplo clique no `.exe`. Pode deixar onde quiser (Desktop, Docu
 
 ## 2. Baixar o código do jogo
 
-Link direto do branch:
+Link direto:
 
 ```
-https://github.com/Brunoleon98/br-port/archive/refs/heads/claude/godot-game-dev-w9vxei.zip
+https://github.com/Brunoleon98/br-port/archive/refs/heads/main.zip
 ```
 
 Descompactar. Vai aparecer a pasta:
 
 ```
-br-port-claude-godot-game-dev-w9vxei\
+br-port-main\
 └── brport_vs\          ← ESTA é a pasta do projeto Godot
     ├── project.godot
     ├── autoload\
@@ -40,8 +40,8 @@ br-port-claude-godot-game-dev-w9vxei\
     └── scripts\
 ```
 
-> Se preferir pelo site: github.com/Brunoleon98/br-port → trocar o branch para
-> `claude/godot-game-dev-w9vxei` → botão verde **Code** → **Download ZIP**.
+> Se preferir pelo site: github.com/Brunoleon98/br-port → botão verde **Code**
+> → **Download ZIP**.
 
 ---
 
@@ -129,6 +129,18 @@ Termina com `TODOS OS TESTES PASSARAM` (código de saída 0) ou lista o que falh
 Todos os números do jogo estão em **`autoload/GameState.gd`**, no topo do arquivo,
 marcados com o comentário `# TUNING:`. Dá para mudar valor de barco, custo de
 salário, valor da parcela etc. sem tocar em nenhuma lógica.
+
+Para **medir** o efeito de uma mudança em vez de chutar, existe um simulador que
+roda centenas de partidas com três perfis de jogador (quem joga perfeito, quem
+joga mediano e quem joga mal) e imprime a taxa de vitória de cada um:
+
+```
+Godot_v4.x_win64.exe --headless --path . --script res://tools/simular_balanceamento.gd -- 800
+```
+
+O jeito de usar é: rodar, anotar os números, mudar **uma** constante `# TUNING:`,
+rodar de novo com a mesma semente e comparar. Detalhes e a leitura dos resultados
+de hoje estão em `../docs/BLOCO3_MARCO_INTERMEDIARIO.md`.
 
 ---
 
