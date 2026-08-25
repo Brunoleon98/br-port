@@ -109,6 +109,21 @@ O save fica em `%APPDATA%\Godot\app_userdata\BR Port VS\`
 
 ---
 
+## Testes automáticos (opcional)
+
+Existe um conjunto de testes em `tests/run_tests.gd` que abre a cena real e
+confere o loop (oferta do rival, alocação de trabalhador, upgrade, 40 partidas
+completas). Não é necessário para jogar — serve para pegar regressão quando o
+código mudar. Para rodar pela linha de comando:
+
+```
+Godot_v4.x_win64.exe --headless --path . --script res://tests/run_tests.gd
+```
+
+Termina com `TODOS OS TESTES PASSARAM` (código de saída 0) ou lista o que falhou.
+
+---
+
 ## Onde mexer no balanceamento
 
 Todos os números do jogo estão em **`autoload/GameState.gd`**, no topo do arquivo,

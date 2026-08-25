@@ -46,6 +46,9 @@ func refresh() -> void:
 	var worker_txt := ""
 	if dock["worker_id"] != null:
 		worker_txt = "\n👷 #%d" % int(dock["worker_id"])
+		# Enquanto a operação não começou dá para desfazer um arrasto errado.
+		if int(boat["progress"]) == 0:
+			worker_txt += " (toque p/ liberar)"
 
 	if boat.get("rival", false) and not boat.get("matched", false):
 		_bg.color = Color(0.55, 0.16, 0.16)
@@ -70,3 +73,12 @@ func _can_drop_data(_at_position: Vector2, data) -> bool:
 
 func _drop_data(_at_position: Vector2, data) -> void:
 	GameState.assign_worker(int(data["worker_id"]), dock_index)
+
+
+func _gui_input(event: InputEvent) -> void:
+	# Tocar/clicar numa doca com trabalhador alocado o devolve para a lista,
+	# desde que a operação ainda não tenha começado.
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if GameState.docks[dock_index]["worker_id"] != null:
+			GameState.release_worker(dock_index)
+			accept_event()

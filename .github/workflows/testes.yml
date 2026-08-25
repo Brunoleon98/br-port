@@ -1,0 +1,64 @@
+name: Testes
+
+# Roda a suíte de testes do jogo automaticamente a cada push no main e a cada
+# pull request. Serve para pegar regressão sem ninguém precisar lembrar de
+# rodar os testes na mão.
+#
+# Para rodar o mesmo comando localmente, veja brport_vs/COMO_RODAR.md.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  testes-godot:
+    name: Godot headless
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      GODOT_VERSION: "4.2.2"
+
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Reaproveitar o Godot já baixado
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ~/godot-bin
+          key: godot-${{ env.GODOT_VERSION }}-linux-x86_64
+
+      - name: Baixar o Godot
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p ~/godot-bin
+          curl -sSL --retry 3 -o /tmp/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot-bin
+          chmod +x ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: Importar o projeto
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --import
+
+      - name: Rodar os testes
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --script res://tests/run_tests.gd \
+            2>&1 | tee /tmp/saida.txt
+
+          # O script sai com código != 0 quando alguma asserção falha, mas um
+          # erro de compilação do GDScript pode sair com 0 sem rodar nada —
+          # por isso exigimos também a linha final de sucesso.
+          if ! grep -q "TODOS OS TESTES PASSARAM" /tmp/saida.txt; then
+            echo "::error::A suíte não chegou ao fim com sucesso (veja a saída acima)."
+            exit 1
+          fi
