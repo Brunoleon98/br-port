@@ -1,4 +1,17 @@
+# Cache do editor — regerado sozinho, não vai para o Git.
 .godot/
-*.import
+
+# Configuração de export com caminhos e chaves da máquina local.
 export_presets.cfg
 android/
+
+# ATENÇÃO — o que NÃO deve entrar aqui:
+#
+# *.uid  — a partir do Godot 4.4 cada script ganha um .gd.uid. Eles são estado
+#          do projeto, não artefato de build: se ficarem fora do Git, cada
+#          clone gera UIDs novos e as cenas que referenciam script por uid://
+#          apontam para IDs que só existem na máquina de quem criou.
+#
+# *.import — quando entrar arte de verdade (Bloco 4), cada imagem/áudio ganha
+#          um .import com as configurações de importação. Ignorá-los faz cada
+#          clone reimportar com os padrões, perdendo os ajustes.

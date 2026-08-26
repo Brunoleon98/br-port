@@ -10,7 +10,8 @@ Não precisa saber programar nem instalar Git.
 1. Ir em **https://godotengine.org/download/windows**
 2. Baixar o **"Godot Engine"** — a versão **padrão**.
    ⚠️ **NÃO** baixar a versão **".NET"** — aquela é para C#, e este projeto é GDScript.
-3. Precisa ser **Godot 4.2 ou mais novo**. (O projeto foi validado no 4.2.2.)
+3. Precisa ser **Godot 4.6 ou mais novo**. (O projeto é validado no **4.6.3**,
+   que é a versão que roda no CI a cada push.)
 
 O download é um `.zip` com **um único `.exe` dentro**. Não tem instalador:
 descompacta e dá duplo clique no `.exe`. Pode deixar onde quiser (Desktop, Documentos…).
@@ -23,16 +24,16 @@ descompacta e dá duplo clique no `.exe`. Pode deixar onde quiser (Desktop, Docu
 
 ## 2. Baixar o código do jogo
 
-Link direto do branch:
+Link direto:
 
 ```
-https://github.com/Brunoleon98/br-port/archive/refs/heads/claude/godot-game-dev-w9vxei.zip
+https://github.com/Brunoleon98/br-port/archive/refs/heads/main.zip
 ```
 
 Descompactar. Vai aparecer a pasta:
 
 ```
-br-port-claude-godot-game-dev-w9vxei\
+br-port-main\
 └── brport_vs\          ← ESTA é a pasta do projeto Godot
     ├── project.godot
     ├── autoload\
@@ -40,8 +41,8 @@ br-port-claude-godot-game-dev-w9vxei\
     └── scripts\
 ```
 
-> Se preferir pelo site: github.com/Brunoleon98/br-port → trocar o branch para
-> `claude/godot-game-dev-w9vxei` → botão verde **Code** → **Download ZIP**.
+> Se preferir pelo site: github.com/Brunoleon98/br-port → botão verde **Code**
+> → **Download ZIP**.
 
 ---
 
@@ -102,7 +103,7 @@ O save fica em `%APPDATA%\Godot\app_userdata\BR Port VS\`
 
 | Sintoma | O que fazer |
 |---|---|
-| "Projeto criado em outra versão do Godot" | Confirmar que baixou **Godot 4.x**, não 3.x. De 4.2 para 4.3/4.4/4.5 costuma abrir sem drama. |
+| "Projeto criado em outra versão do Godot" | Confirmar que baixou **Godot 4.6.3** (ou mais novo), não 3.x. O projeto está marcado como 4.6 — abrir numa 4.x anterior mostra esse aviso. |
 | Tela preta ao rodar | Conferir em **Projeto → Configurações do Projeto → Application → Run** se a cena principal é `res://scenes/Main.tscn`. |
 | Erro de script | Ler o painel **"Saída"** (Output), na parte de baixo do editor — a mensagem inteira costuma dizer exatamente o que faltou. |
 | Não consigo arrastar o trabalhador | O trabalhador precisa estar **verde** (livre). Cinza = ocupado. E a doca precisa ter barco sem trabalhador. |
@@ -117,7 +118,7 @@ completas). Não é necessário para jogar — serve para pegar regressão quand
 código mudar. Para rodar pela linha de comando:
 
 ```
-Godot_v4.x_win64.exe --headless --path . --script res://tests/run_tests.gd
+Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tests/run_tests.gd
 ```
 
 Termina com `TODOS OS TESTES PASSARAM` (código de saída 0) ou lista o que falhou.
@@ -129,6 +130,18 @@ Termina com `TODOS OS TESTES PASSARAM` (código de saída 0) ou lista o que falh
 Todos os números do jogo estão em **`autoload/GameState.gd`**, no topo do arquivo,
 marcados com o comentário `# TUNING:`. Dá para mudar valor de barco, custo de
 salário, valor da parcela etc. sem tocar em nenhuma lógica.
+
+Para **medir** o efeito de uma mudança em vez de chutar, existe um simulador que
+roda centenas de partidas com três perfis de jogador (quem joga perfeito, quem
+joga mediano e quem joga mal) e imprime a taxa de vitória de cada um:
+
+```
+Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tools/simular_balanceamento.gd -- 800
+```
+
+O jeito de usar é: rodar, anotar os números, mudar **uma** constante `# TUNING:`,
+rodar de novo com a mesma semente e comparar. Detalhes e a leitura dos resultados
+de hoje estão em `../docs/BLOCO3_MARCO_INTERMEDIARIO.md`.
 
 ---
 

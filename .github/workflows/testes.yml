@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 15
 
     env:
-      GODOT_VERSION: "4.2.2"
+      GODOT_VERSION: "4.6.3"
 
     steps:
       - name: Baixar o repositório
@@ -60,5 +60,21 @@ jobs:
           # por isso exigimos também a linha final de sucesso.
           if ! grep -q "TODOS OS TESTES PASSARAM" /tmp/saida.txt; then
             echo "::error::A suíte não chegou ao fim com sucesso (veja a saída acima)."
+            exit 1
+          fi
+
+      - name: Conferir o simulador de balanceamento
+        # Rodada mínima só para garantir que a ferramenta continua funcionando
+        # depois de mudanças no GameState — ela usa a API do jogo por fora e
+        # quebraria em silêncio. Não julga o balanceamento, só que roda.
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs \
+            --script res://tools/simular_balanceamento.gd -- 30 \
+            2>&1 | tee /tmp/sim.txt
+
+          if ! grep -q "=== Leitura ===" /tmp/sim.txt; then
+            echo "::error::O simulador não chegou ao fim (veja a saída acima)."
             exit 1
           fi
