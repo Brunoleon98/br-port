@@ -3,27 +3,27 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 25/08/2026 (medição de balanceamento + kit do Bloco 3)
+> **Última atualização:** 26/08/2026 (Bloco 3 fechado — playtest, rebalanceamento
+> e errata do GDD)
 
 ---
 
 ## Onde estamos no roadmap
 
-**Fase 4 — Produção do Vertical Slice**, dentro dela o **Bloco 2 (loop core com
-placeholder)**, que está **entregue e jogável**.
+**Fase 4 — Produção do Vertical Slice**. O **Bloco 2 (loop core)** está entregue
+e o **Bloco 3 (marco intermediário) está FECHADO** — playtest humano feito,
+decisão registrada, ajustes aplicados.
 
 As Fases 1–3 já foram concluídas antes: o protótipo HTML de diagnóstico foi
 jogado e aprovado (Playtest V3 ✅ GO) e o **GDD 7 está congelado** como fonte da
 verdade (`docs/design/BR_Port_GDD_V7.jsx`).
 
-Próximo passo previsto no plano de produção: **Bloco 3 — marco intermediário**
-(jogar bastante, entregar para 1 pessoa de confiança testar sem instrução, e
-decidir se o loop está pronto para receber arte final).
+**Decisão do Bloco 3 (26/08):** *ajustar antes de ir para a arte* — e os
+ajustes já foram feitos, dentro de 1 semana. O registro completo, com as 5
+partidas do playtest e o raciocínio, está em
+`docs/BLOCO3_MARCO_INTERMEDIARIO.md`, Parte 3.
 
-O Bloco 3 **já está começado**: a parte medível foi feita (ver a seção de
-balanceamento abaixo) e o roteiro do playtest está pronto em
-`docs/BLOCO3_MARCO_INTERMEDIARIO.md`. Falta a parte humana — jogar e observar
-alguém jogando — e registrar a decisão.
+Próximo passo: **Bloco 4 — arte final, áudio e integração**.
 
 ---
 
@@ -57,40 +57,48 @@ narrativa de fim de Fase 1 e a lista "VS — OUT" do GDD também ficam para depo
 
 ---
 
-## Pendência conhecida: balanceamento
+## Balanceamento — resolvido no Bloco 3
 
-**Correção de rumo:** a leitura anterior ("provavelmente fácil demais, ~63% de
-vitória") estava errada. Aqueles 63% vinham da suíte de testes, que joga
-**perfeito** — e com 40 partidas a margem de erro é de ±15 pontos.
+O jogo **estava no fio da navalha**, não fácil como o handoff dizia. O playtest
+humano confirmou: 5 partidas, 1 vitória, e uma delas perdida por **R$ 1**
+(R$ 7.999 contra R$ 8.000) — jogando bem, sem perder barco.
 
-Medido direito, com 3.000 partidas por perfil de jogador:
+A causa não era o valor do barco: era a **vazão**. Com 3 turnos por semana, a
+parcela só cabia inflando o barco para R$ 240–760, fora da faixa do GDD.
 
-| Perfil | Vitórias | Caixa no vencimento (mediana) |
+**Correção aplicada:** 8 turnos por semana, barcos de volta a **R$ 80–300**
+(a faixa que o GDD define para a Fase 1).
+
+| Perfil | Antes | Depois |
 |---|---|---|
-| Joga perfeito | 58,5% | R$ 8.188 (parcela: R$ 8.000) |
-| Joga mediano | 7,2% | R$ 6.634 |
-| Joga mal | 0,1% | R$ 4.689 |
+| Joga perfeito | 58,5% | **99,7%** |
+| Joga mediano | 7,2% | **63,8%** |
+| Joga mal | 0,1% | **0,7%** |
+| Folga no vencimento | 2% | **20%** |
 
-Ou seja: **não está fácil — está no fio da navalha.** Quem joga certo ganha por
-2% de folga, decidida pelo sorteio dos barcos; quem joga como um estreante não
-ganha nunca. Além disso, ninguém quebra por caixa (o píer sozinho paga os
-custos) e a reputação não afeta nada mecanicamente — igualar a oferta do Arlindo
-é sempre a jogada certa, então aquela tela ainda não é uma decisão.
+A dívida técnica registrada antes — "valores de barco acima do GDD" — **não
+existe mais**.
 
-A análise completa, as tabelas de sensibilidade (o que acontece mudando a
-parcela ou a chegada de barcos) e o roteiro do playtest estão em
-**`docs/BLOCO3_MARCO_INTERMEDIARIO.md`**.
+### Achados de design que vieram junto
 
-**Nenhum número do jogo foi alterado** — essa decisão é do Bloco 3, depois de
-jogar e observar alguém jogando. Se for ajustar: todas as constantes estão no
-topo de `brport_vs/autoload/GameState.gd`, marcadas com `# TUNING:`, e dá para
-medir o efeito de cada mudança com o simulador antes de fechar.
+- **A contra-oferta do Arlindo virou uma decisão de verdade.** O botão "Manter
+  preço" não tinha chance nenhuma de dar certo — apertar duas vezes sempre
+  perdia o barco. Agora os 3 presets são os do GDD ("Igualar −15%" / "Cortar
+  metade −7%" / "Manter preço"), os dois últimos são apostas reais, e igualar
+  depois de insistir custa 28% em vez de 15%.
+- **A economia do GDD não fechava.** Erro de aritmética no próprio GDD: o
+  modelo da Fase 1 acumulava R$ 1.480 em 4 semanas contra uma parcela de
+  R$ 8.000. Corrigido, com registro em
+  `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`. **As Parcelas 2 e 3 seguem
+  não verificadas** — vale checar antes de codar a economia da Fase 2.
+- **Ninguém quebra por caixa.** O píer sozinho paga os custos, então a derrota
+  por caixa negativo continua sendo código morto: a única forma de perder é o
+  portão da parcela. Fica anotado, não foi mexido.
+- **A reputação ainda não afeta nada** mecanicamente — só o rótulo na HUD.
+  Decisão de design em aberto para a produção full.
 
-Uma ressalva registrada: os valores de barco hoje (R$240–760) estão
-**acima** do que o GDD define para a Fase 1 (R$80–300). Foi necessário para a
-parcela de R$8.000 caber em 4 semanas sem mexer no valor dela — e, pela medição
-acima, mesmo assim ela **quase não cabe**. Vale reabrir a pergunta ao contrário:
-talvez o número a mexer seja a parcela, não o valor do barco.
+Para medir qualquer mudança: constantes marcadas `# TUNING:` no topo de
+`brport_vs/autoload/GameState.gd`, e o simulador mede o efeito em segundos.
 
 ---
 
