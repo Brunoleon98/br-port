@@ -35,30 +35,38 @@ const SEMENTE_PADRAO := 20260825
 #   chance_esquecer_doca — por doca, por turno: deixou o barco sem
 #     trabalhador (distração, não entendeu o drag-and-drop, achou que
 #     já tinha alocado).
-#   chance_igualar_rival — quando o Arlindo aparece, com que frequência
-#     o jogador aceita baixar o preço em vez de recusar por orgulho.
+#   estilo_negociacao — como o jogador joga a contra-oferta do Arlindo:
+#     "otimo"  tenta o meio-termo (−7%) e, se falhar, iguala para não perder;
+#     "medio"  na maioria das vezes iguala de cara, às vezes arrisca segurar
+#              o preço, e recua para igualar se o cliente reclamar;
+#     "ruim"   segura o preço por teimosia e insiste até o cliente ir embora.
+#   chance_igualar_rival — para "medio"/"ruim": com que frequência ele já
+#     iguala de cara em vez de arriscar.
 #   folga_para_upgrade — múltiplo do custo do upgrade que o jogador
 #     exige ter em caixa antes de comprar. 1.0 = compra assim que dá;
 #     4.0 = só compra com muita folga (na prática, quase nunca compra).
 const PERFIS := [
 	{
 		"nome": "Ótimo",
-		"descricao": "aloca tudo, sempre iguala o rival, compra o upgrade assim que dá",
+		"descricao": "aloca tudo, negocia o meio-termo e recua a tempo, compra o upgrade assim que dá",
 		"chance_esquecer_doca": 0.0,
+		"estilo_negociacao": "otimo",
 		"chance_igualar_rival": 1.0,
 		"folga_para_upgrade": 1.0,
 	},
 	{
 		"nome": "Mediano",
-		"descricao": "deixa uma doca passar de vez em quando, às vezes recusa o rival",
+		"descricao": "deixa uma doca passar de vez em quando, arrisca na negociação às vezes",
 		"chance_esquecer_doca": 0.15,
+		"estilo_negociacao": "medio",
 		"chance_igualar_rival": 0.70,
 		"folga_para_upgrade": 2.0,
 	},
 	{
 		"nome": "Descuidado",
-		"descricao": "perde barco com frequência, recusa o rival mais do que aceita",
+		"descricao": "perde barco com frequência, teima em segurar o preço até perder o cliente",
 		"chance_esquecer_doca": 0.35,
+		"estilo_negociacao": "ruim",
 		"chance_igualar_rival": 0.40,
 		"folga_para_upgrade": 4.0,
 	},
@@ -135,7 +143,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 			seguranca += 1
 
 			if GS.phase == "rival_offer":
-				GS.resolve_rival_offer(rng.randf() < float(perfil["chance_igualar_rival"]))
+				_negociar(perfil, rng)
 				continue
 
 			if GS.phase == "debt_payment":
@@ -182,6 +190,35 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"reputacao_media": reputacoes / float(partidas),
 		"travadas": travadas,
 	}
+
+
+# Joga a contra-oferta inteira até ela fechar de um jeito ou de outro.
+# "insistiu" devolve o controle com o cliente ainda na mesa, então é preciso
+# escolher de novo — daí o laço. A paciência é 2, então ele sempre termina.
+func _negociar(perfil: Dictionary, rng: RandomNumberGenerator) -> void:
+	var guarda := 0
+	while GS.phase == "rival_offer" and guarda < 5:
+		guarda += 1
+		GS.negotiate_rival(_escolher_acao(perfil, rng))
+
+
+func _escolher_acao(perfil: Dictionary, rng: RandomNumberGenerator) -> String:
+	var ja_insistiu: bool = GS.rival_attempts_left < GS.RIVAL_PATIENCE
+	match String(perfil["estilo_negociacao"]):
+		"otimo":
+			# Meio-termo primeiro (é o de melhor retorno esperado); se o cliente
+			# recusar, iguala em vez de arriscar perder o barco.
+			return "igualar" if ja_insistiu else "metade"
+		"ruim":
+			# Teima: segura o preço de novo mesmo com o cliente de saída.
+			if ja_insistiu:
+				return "manter"
+			return "igualar" if rng.randf() < float(perfil["chance_igualar_rival"]) else "manter"
+		_:
+			# "medio": arrisca uma vez, mas recua quando o cliente reclama.
+			if ja_insistiu:
+				return "igualar"
+			return "igualar" if rng.randf() < float(perfil["chance_igualar_rival"]) else "manter"
 
 
 # Aloca trabalhadores livres nas docas com barco, respeitando o modelo de

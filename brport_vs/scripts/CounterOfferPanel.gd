@@ -1,20 +1,24 @@
 extends Control
 
-# Contra-oferta do Arlindo: 3 presets em botões + mood face do
-# cliente em 3 estados (2/1/0 tentativas restantes) — GDD 7,
-# "VS — Sistemas IN".
+# Contra-oferta do Arlindo — GDD, "Limiar de paciência do cliente":
+# 3 presets em botões ("Igualar rival −15%" / "Cortar metade −7%" /
+# "Manter preço") + mood face do cliente em 3 estados.
+#
+# O painel é só a tela: quem sorteia e decide é o GameState. A paciência
+# restante também mora lá, para o autosave não devolver tentativas gastas.
 
 var dock_index: int = -1
-var attempts_left: int = 2
 
 var _mood_label: Label
+var _btn_igualar: Button
+var _btn_metade: Button
+var _btn_manter: Button
 
 
 func setup(index: int) -> void:
 	dock_index = index
-	attempts_left = 2
 	_build_ui()
-	_refresh_mood()
+	_refresh()
 
 
 func _build_ui() -> void:
@@ -32,10 +36,10 @@ func _build_ui() -> void:
 	box.anchor_top = 0.5
 	box.anchor_right = 0.5
 	box.anchor_bottom = 0.5
-	box.offset_left = -190
-	box.offset_top = -140
-	box.offset_right = 190
-	box.offset_bottom = 140
+	box.offset_left = -200
+	box.offset_top = -160
+	box.offset_right = 200
+	box.offset_bottom = 160
 	add_child(box)
 
 	var vbox := VBoxContainer.new()
@@ -47,59 +51,70 @@ func _build_ui() -> void:
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD
 	vbox.add_child(title)
 
-	var boat = GameState.docks[dock_index]["boat"]
-	var value: int = int(boat["value"]) if boat != null else 0
-
 	var info_label := Label.new()
-	info_label.text = "Cliente considerando ir para o Porto Farol.\nValor original: R$%d" % value
+	info_label.text = "Cliente considerando ir para o Porto Farol.\nValor original: R$%d" % _valor_barco()
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	vbox.add_child(info_label)
 
 	_mood_label = Label.new()
+	_mood_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	vbox.add_child(_mood_label)
 
-	var btn_row := HBoxContainer.new()
-	btn_row.add_theme_constant_override("separation", 8)
+	var btn_row := VBoxContainer.new()
+	btn_row.add_theme_constant_override("separation", 6)
 	vbox.add_child(btn_row)
 
-	var discounted := int(round(value * (1.0 - GameState.RIVAL_DISCOUNT)))
+	_btn_igualar = Button.new()
+	_btn_igualar.pressed.connect(func(): _negociar("igualar"))
+	btn_row.add_child(_btn_igualar)
 
-	var btn_match := Button.new()
-	btn_match.text = "Igualar\nR$%d" % discounted
-	btn_match.pressed.connect(func(): _resolve(true))
-	btn_row.add_child(btn_match)
+	_btn_metade = Button.new()
+	_btn_metade.pressed.connect(func(): _negociar("metade"))
+	btn_row.add_child(_btn_metade)
 
-	var btn_keep := Button.new()
-	btn_keep.text = "Manter preço\n(gasta tentativa)"
-	btn_keep.pressed.connect(_on_keep_price)
-	btn_row.add_child(btn_keep)
-
-	var btn_refuse := Button.new()
-	btn_refuse.text = "Recusar\n(perde barco)"
-	btn_refuse.pressed.connect(func(): _resolve(false))
-	btn_row.add_child(btn_refuse)
+	_btn_manter = Button.new()
+	_btn_manter.pressed.connect(func(): _negociar("manter"))
+	btn_row.add_child(_btn_manter)
 
 
-func _on_keep_price() -> void:
-	attempts_left -= 1
-	if attempts_left <= 0:
-		_resolve(false)
+func _valor_barco() -> int:
+	if dock_index < 0 or dock_index >= GameState.docks.size():
+		return 0
+	var boat = GameState.docks[dock_index]["boat"]
+	return int(boat["value"]) if boat != null else 0
+
+
+func _negociar(acao: String) -> void:
+	var resultado := GameState.negotiate_rival(acao)
+	if resultado == "insistiu":
+		# Cliente ainda na mesa, mas mais impaciente — e igualar ficou mais caro.
+		_refresh()
 		return
-	_refresh_mood()
-
-
-func _refresh_mood() -> void:
-	var face := "🙂"
-	var desc := "Cliente neutro."
-	if attempts_left == 1:
-		face = "😟"
-		desc = "Cliente impaciente — última tentativa."
-	elif attempts_left <= 0:
-		face = "🚶"
-		desc = "Cliente saindo."
-	_mood_label.text = "%s %s (%d tentativa(s) restante(s))" % [face, desc, attempts_left]
-
-
-func _resolve(accept_match: bool) -> void:
-	GameState.resolve_rival_offer(accept_match)
 	queue_free()
+
+
+func _refresh() -> void:
+	var valor := _valor_barco()
+	var restantes := GameState.rival_attempts_left
+	var ja_insistiu := restantes < GameState.RIVAL_PATIENCE
+
+	var desconto_igualar: float = GameState.RIVAL_DISCOUNT_AFTER_FAIL if ja_insistiu else GameState.RIVAL_DISCOUNT
+	_btn_igualar.text = "🤝 Igualar (−%d%%) → R$%d  ·  fecha na hora" % [
+		int(round(desconto_igualar * 100.0)),
+		int(round(valor * (1.0 - desconto_igualar)))]
+
+	_btn_metade.text = "✂️ Cortar metade (−%d%%) → R$%d  ·  %d%% de chance" % [
+		int(round(GameState.RIVAL_HALF_DISCOUNT * 100.0)),
+		int(round(valor * (1.0 - GameState.RIVAL_HALF_DISCOUNT))),
+		int(round(GameState.RIVAL_HALF_CHANCE * 100.0))]
+
+	_btn_manter.text = "💪 Manter preço → R$%d  ·  %d%% de chance" % [
+		valor,
+		int(round(GameState.RIVAL_KEEP_CHANCE * 100.0))]
+
+	var face := "🙂"
+	var desc := "Cliente ouvindo a proposta."
+	if restantes <= 1:
+		face = "😟"
+		desc = "Cliente impaciente — se esta não colar, ele vai embora."
+	_mood_label.text = "%s %s (%d tentativa(s))" % [face, desc, restantes]

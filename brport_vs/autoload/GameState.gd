@@ -43,15 +43,31 @@ const UPGRADE_EXTRA_WORKERS := 1
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
 const PIER_RATE_PER_SLOT := 40          # GDD "Margem operacional base": R$40/vaga -> R$240/sem
 
-const BOAT_VALUE_SMALL_MIN := 240       # TUNING: acima do "Valor de contratos" da GDD (R$80-300)
-const BOAT_VALUE_SMALL_MAX := 420       # — necessário pra parcela de R$8.000 caber em 4 semanas
-const BOAT_VALUE_LARGE_MIN := 420
-const BOAT_VALUE_LARGE_MAX := 760
+# GDD "Valor de contratos": Fase 1 = R$80–300. O VS respeita essa faixa —
+# o que faz a parcela caber não é inflar o barco, é a quantidade de turnos
+# (ver TURNS_PER_WEEK abaixo).
+const BOAT_VALUE_SMALL_MIN := 80
+const BOAT_VALUE_SMALL_MAX := 200
+const BOAT_VALUE_LARGE_MIN := 200
+const BOAT_VALUE_LARGE_MAX := 300
 const BOAT_LARGE_CHANCE := 0.4          # TUNING
 const BOAT_ARRIVAL_CHANCE := 0.75       # TUNING: chance POR doca vazia de chegar barco no turno
 
+# ── Contra-oferta do Arlindo (GDD: "Limiar de paciência do cliente") ──
+# O GDD define 3 presets — "Igualar rival −15%" / "Cortar metade −7%" /
+# "Manter preço" — e um limiar de 2 tentativas antes de o cliente ir embora.
+# Igualar fecha na hora; os outros dois são apostas que gastam paciência.
+# As probabilidades não estão no GDD: são TUNING, calibradas para que
+# nenhuma das três opções domine as outras.
 const RIVAL_TRIGGER_CHANCE := 0.30      # Protótipo validado (Arlindo — dumping)
-const RIVAL_DISCOUNT := 0.15            # Protótipo validado — 15% de desconto
+const RIVAL_DISCOUNT := 0.15            # "Igualar rival −15%" (GDD)
+const RIVAL_HALF_DISCOUNT := 0.07       # "Cortar metade −7%" (GDD)
+const RIVAL_HALF_CHANCE := 0.70         # TUNING: chance de o cliente aceitar o meio-termo
+const RIVAL_KEEP_CHANCE := 0.45         # TUNING: chance de o cliente aceitar pagar cheio
+# Insistir e falhar deixa o cliente irritado: igualar depois disso custa mais.
+# É o que impede "apostar uma vez e depois igualar" de ser sempre a jogada certa.
+const RIVAL_DISCOUNT_AFTER_FAIL := 0.28 # TUNING
+const RIVAL_PATIENCE := 2               # GDD: máx. 2 tentativas antes de o cliente encerrar
 
 const REPUTATION_START := 65.0
 const REPUTATION_GAIN_SERVED := 4.0
@@ -59,7 +75,12 @@ const REPUTATION_LOSS_LOST := 5.0
 const REPUTATION_GAIN_RIVAL_MATCHED := 5.0
 const REPUTATION_LOSS_RIVAL_REFUSED := 15.0
 
-const TURNS_PER_WEEK := 3               # TUNING: cadência do protótipo pequeno já validado
+# TUNING — esta é a constante que faz a economia da Fase 1 fechar.
+# Com 3 turnos/semana a parcela de R$8.000 só cabia inflando o barco para
+# R$240–760, fora da faixa do GDD. Com 8 turnos/semana o barco volta para
+# os R$80–300 do GDD e a parcela continua alcançável. Medido em 600
+# partidas por perfil: ótimo 99,7% · mediano 47,3% · descuidado 0%.
+const TURNS_PER_WEEK := 8
 const WEEKS_TOTAL := 4
 const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
 
@@ -78,6 +99,10 @@ var upgrade_purchased: bool = false
 var parcela_paid: bool = false
 var phase: String = "playing"   # playing | rival_offer | debt_payment | game_over
 var pending_rival_dock: int = -1
+# Paciência restante do cliente na negociação aberta. Vive aqui e não no
+# painel para sobreviver ao autosave — recarregar no meio de uma negociação
+# não pode devolver as tentativas já gastas.
+var rival_attempts_left: int = RIVAL_PATIENCE
 var end_reason: String = ""
 var won: bool = false
 
@@ -109,6 +134,7 @@ func new_game() -> void:
 	parcela_paid = false
 	_set_phase("playing")
 	pending_rival_dock = -1
+	rival_attempts_left = RIVAL_PATIENCE
 	end_reason = ""
 	won = false
 	metrics = {"boats_served": 0, "boats_lost": 0, "rival_matched": 0, "rival_refused": 0, "revenue": 0, "pier_income": 0}
@@ -214,36 +240,84 @@ func _find_worker(worker_id: int) -> Variant:
 
 
 # ── RIVAL (Arlindo) ──
-func resolve_rival_offer(accept_match: bool) -> void:
+# Três presets do GDD. Devolve o que aconteceu, para o painel saber se
+# fecha a tela ("fechado"/"perdido") ou só atualiza a mood face ("insistiu").
+#   acao: "igualar" | "metade" | "manter"
+func negotiate_rival(acao: String) -> String:
 	if phase != "rival_offer" or pending_rival_dock < 0:
-		return
+		return "invalido"
 	var dock: Dictionary = docks[pending_rival_dock]
 	var boat = dock["boat"]
 	if boat == null:
-		pending_rival_dock = -1
-		_set_phase("playing")
-		return
-	# A fase volta ANTES de emitir qualquer coisa: os sinais abaixo fazem a UI
-	# se redesenhar, e se ela ler `phase` ainda em "rival_offer" o botão de
-	# avançar o dia fica desabilitado para sempre.
+		_close_rival_offer()
+		return "invalido"
+
+	if acao == "igualar":
+		# Igualar sempre fecha. O preço é pior se o jogador já tentou empurrar.
+		var ja_insistiu := rival_attempts_left < RIVAL_PATIENCE
+		var desconto := RIVAL_DISCOUNT_AFTER_FAIL if ja_insistiu else RIVAL_DISCOUNT
+		var aviso := "🤝 Preço igualado" if not ja_insistiu else "🤝 Fechado, mas o cliente cobrou caro pela insistência"
+		_fechar_negocio(boat, desconto, aviso)
+		return "fechado"
+
+	# "metade" e "manter" são apostas: gastam uma tentativa de paciência.
+	var chance := RIVAL_HALF_CHANCE if acao == "metade" else RIVAL_KEEP_CHANCE
+	var desconto_aposta := RIVAL_HALF_DISCOUNT if acao == "metade" else 0.0
+	rival_attempts_left -= 1
+
+	if _rng.randf() < chance:
+		var texto := "✂️ Cortou metade e o cliente topou" if acao == "metade" else "💪 Segurou o preço e o cliente topou"
+		_fechar_negocio(boat, desconto_aposta, texto)
+		return "fechado"
+
+	if rival_attempts_left <= 0:
+		_perder_para_rival()
+		return "perdido"
+
+	message.emit("😟 O cliente não gostou — última tentativa antes de ele ir embora.", "warn")
+	save_game()
+	return "insistiu"
+
+
+# Compat com a versão binária (usada pela suíte de testes de regressão).
+func resolve_rival_offer(accept_match: bool) -> void:
+	if accept_match:
+		negotiate_rival("igualar")
+	elif phase == "rival_offer" and pending_rival_dock >= 0:
+		_perder_para_rival()
+
+
+# A fase volta ANTES de emitir qualquer coisa: os sinais abaixo fazem a UI se
+# redesenhar, e se ela ler `phase` ainda em "rival_offer" o botão de avançar o
+# dia fica desabilitado para sempre (era o bug de travamento).
+func _close_rival_offer() -> void:
 	pending_rival_dock = -1
+	rival_attempts_left = RIVAL_PATIENCE
 	_set_phase("playing")
 
-	if accept_match:
-		var discounted := int(round(boat["value"] * (1.0 - RIVAL_DISCOUNT)))
-		boat["matched"] = true
-		boat["rival"] = false
-		boat["matched_value"] = discounted
-		metrics["rival_matched"] += 1
-		_change_reputation(REPUTATION_GAIN_RIVAL_MATCHED)
-		message.emit("🤝 Preço igualado. Barco aceito por R$%d." % discounted, "")
-	else:
-		metrics["rival_refused"] += 1
-		metrics["boats_lost"] += 1
-		dock["boat"] = null
-		dock["worker_id"] = null
-		_change_reputation(-REPUTATION_LOSS_RIVAL_REFUSED)
-		message.emit("❌ Barco foi para o rival (Arlindo). Reputação caiu.", "bad")
+
+func _fechar_negocio(boat: Dictionary, desconto: float, aviso: String) -> void:
+	var valor := int(round(boat["value"] * (1.0 - desconto)))
+	boat["matched"] = true
+	boat["rival"] = false
+	boat["matched_value"] = valor
+	metrics["rival_matched"] += 1
+	_close_rival_offer()
+	_change_reputation(REPUTATION_GAIN_RIVAL_MATCHED)
+	message.emit("%s — barco fechado por R$%d." % [aviso, valor], "good")
+	roster_changed.emit()
+	save_game()
+
+
+func _perder_para_rival() -> void:
+	var dock: Dictionary = docks[pending_rival_dock]
+	metrics["rival_refused"] += 1
+	metrics["boats_lost"] += 1
+	dock["boat"] = null
+	dock["worker_id"] = null
+	_close_rival_offer()
+	_change_reputation(-REPUTATION_LOSS_RIVAL_REFUSED)
+	message.emit("❌ O cliente perdeu a paciência e foi para o Porto Farol.", "bad")
 	roster_changed.emit()
 	save_game()
 
@@ -410,6 +484,7 @@ func _spawn_boats() -> void:
 		var idx: int = newly_spawned[_rng.randi_range(0, newly_spawned.size() - 1)]
 		docks[idx]["boat"]["rival"] = true
 		pending_rival_dock = idx
+		rival_attempts_left = RIVAL_PATIENCE
 		_set_phase("rival_offer")
 		rival_offer_triggered.emit(idx)
 
@@ -444,6 +519,7 @@ func save_game() -> void:
 		"parcela_paid": parcela_paid,
 		"phase": phase,
 		"pending_rival_dock": pending_rival_dock,
+		"rival_attempts_left": rival_attempts_left,
 		"end_reason": end_reason,
 		"won": won,
 		"metrics": metrics,
@@ -476,6 +552,7 @@ func load_game() -> bool:
 	parcela_paid = bool(parsed.get("parcela_paid", false))
 	phase = String(parsed.get("phase", "playing"))
 	pending_rival_dock = int(parsed.get("pending_rival_dock", -1))
+	rival_attempts_left = int(parsed.get("rival_attempts_left", RIVAL_PATIENCE))
 	end_reason = String(parsed.get("end_reason", ""))
 	won = bool(parsed.get("won", false))
 	metrics = parsed.get("metrics", metrics)
