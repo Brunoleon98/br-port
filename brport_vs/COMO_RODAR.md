@@ -10,7 +10,8 @@ Não precisa saber programar nem instalar Git.
 1. Ir em **https://godotengine.org/download/windows**
 2. Baixar o **"Godot Engine"** — a versão **padrão**.
    ⚠️ **NÃO** baixar a versão **".NET"** — aquela é para C#, e este projeto é GDScript.
-3. Precisa ser **Godot 4.2 ou mais novo**. (O projeto foi validado no 4.2.2.)
+3. Precisa ser **Godot 4.6 ou mais novo**. (O projeto é validado no **4.6.3**,
+   que é a versão que roda no CI a cada push.)
 
 O download é um `.zip` com **um único `.exe` dentro**. Não tem instalador:
 descompacta e dá duplo clique no `.exe`. Pode deixar onde quiser (Desktop, Documentos…).
@@ -102,7 +103,7 @@ O save fica em `%APPDATA%\Godot\app_userdata\BR Port VS\`
 
 | Sintoma | O que fazer |
 |---|---|
-| "Projeto criado em outra versão do Godot" | Confirmar que baixou **Godot 4.x**, não 3.x. De 4.2 para 4.3/4.4/4.5 costuma abrir sem drama. |
+| "Projeto criado em outra versão do Godot" | Confirmar que baixou **Godot 4.6.3** (ou mais novo), não 3.x. O projeto está marcado como 4.6 — abrir numa 4.x anterior mostra esse aviso. |
 | Tela preta ao rodar | Conferir em **Projeto → Configurações do Projeto → Application → Run** se a cena principal é `res://scenes/Main.tscn`. |
 | Erro de script | Ler o painel **"Saída"** (Output), na parte de baixo do editor — a mensagem inteira costuma dizer exatamente o que faltou. |
 | Não consigo arrastar o trabalhador | O trabalhador precisa estar **verde** (livre). Cinza = ocupado. E a doca precisa ter barco sem trabalhador. |
@@ -117,7 +118,7 @@ completas). Não é necessário para jogar — serve para pegar regressão quand
 código mudar. Para rodar pela linha de comando:
 
 ```
-Godot_v4.x_win64.exe --headless --path . --script res://tests/run_tests.gd
+Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tests/run_tests.gd
 ```
 
 Termina com `TODOS OS TESTES PASSARAM` (código de saída 0) ou lista o que falhou.
@@ -135,7 +136,7 @@ roda centenas de partidas com três perfis de jogador (quem joga perfeito, quem
 joga mediano e quem joga mal) e imprime a taxa de vitória de cada um:
 
 ```
-Godot_v4.x_win64.exe --headless --path . --script res://tools/simular_balanceamento.gd -- 800
+Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tools/simular_balanceamento.gd -- 800
 ```
 
 O jeito de usar é: rodar, anotar os números, mudar **uma** constante `# TUNING:`,

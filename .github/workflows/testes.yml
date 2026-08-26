@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 15
 
     env:
-      GODOT_VERSION: "4.2.2"
+      GODOT_VERSION: "4.6.3"
 
     steps:
       - name: Baixar o repositório

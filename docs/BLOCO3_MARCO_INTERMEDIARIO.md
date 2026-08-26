@@ -202,7 +202,7 @@ ficar registrado como fechado.
 ## Rodar o simulador
 
 ```
-Godot_v4.x_win64.exe --headless --path brport_vs --script res://tools/simular_balanceamento.gd -- 800
+Godot_v4.6.3-stable_win64.exe --headless --path brport_vs --script res://tools/simular_balanceamento.gd -- 800
 ```
 
 O último número é a quantidade de partidas por perfil (800 dá margem de ~±3
@@ -215,7 +215,7 @@ duas constantes ao mesmo tempo não diz qual das duas causou a diferença.
 E rode os testes antes e depois de mexer em qualquer coisa:
 
 ```
-Godot_v4.x_win64.exe --headless --path brport_vs --script res://tests/run_tests.gd
+Godot_v4.6.3-stable_win64.exe --headless --path brport_vs --script res://tests/run_tests.gd
 ```
 
 ---

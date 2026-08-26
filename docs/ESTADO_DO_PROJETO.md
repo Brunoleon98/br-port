@@ -31,7 +31,7 @@ alguém jogando — e registrar a decisão.
 
 | Onde | O que é |
 |---|---|
-| `brport_vs/` | Projeto Godot 4.2+ (GDScript) — o jogo |
+| `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
 | `brport_vs/tests/run_tests.gd` | 19 asserções de regressão |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
@@ -128,7 +128,7 @@ Comece a conversa apontando este arquivo. Algo como:
 Para rodar os testes antes e depois de mexer no código:
 
 ```
-Godot_v4.x_win64.exe --headless --path brport_vs --script res://tests/run_tests.gd
+Godot_v4.6.3-stable_win64.exe --headless --path brport_vs --script res://tests/run_tests.gd
 ```
 
 Espera-se `TODOS OS TESTES PASSARAM` e código de saída 0.
@@ -137,5 +137,5 @@ E para medir o efeito de qualquer mudança de balanceamento (800 partidas por
 perfil de jogador, ~10 segundos):
 
 ```
-Godot_v4.x_win64.exe --headless --path brport_vs --script res://tools/simular_balanceamento.gd -- 800
+Godot_v4.6.3-stable_win64.exe --headless --path brport_vs --script res://tools/simular_balanceamento.gd -- 800
 ```
