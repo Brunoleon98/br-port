@@ -125,6 +125,33 @@ Termina com `TODOS OS TESTES PASSARAM` (código de saída 0) ou lista o que falh
 
 ---
 
+## Onde mexer no visual
+
+A interface **não é mais construída por código**. Ela mora em dois lugares:
+
+| Onde | O que é |
+|---|---|
+| `ui/tema_brport.tres` | **Todo o estilo** — cores, cantos, fontes, botões, e os estilos de doca e trabalhador. Mudar aqui muda o jogo inteiro. |
+| `scenes/*.tscn` | A árvore de nós de cada tela. Abre no editor e dá para arrastar. |
+
+A paleta é a do protótipo HTML validado (navy `#1c3454` sobre creme `#f0f6ff`).
+Os scripts só alimentam os nós com texto e trocam qual estilo do tema está
+valendo — nenhum deles pinta cor na mão.
+
+**Isso é o que torna o Bloco 4 barato:** trocar retângulo por sprite é editar
+cena e tema, não reescrever script.
+
+Para ver a tela sem abrir o editor:
+
+```
+Godot_v4.6.3-stable_win64.exe --path . --resolution 720x1280 --script res://tools/capturar_tela.gd -- 10 tela.png
+```
+
+O `10` é quantos turnos jogar antes da foto (0 = tela inicial). No Linux sem
+monitor, prefixe com `xvfb-run -a` e acrescente `--rendering-driver opengl3`.
+
+---
+
 ## Onde mexer no balanceamento
 
 Todos os números do jogo estão em **`autoload/GameState.gd`**, no topo do arquivo,

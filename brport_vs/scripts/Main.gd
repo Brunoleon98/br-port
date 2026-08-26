@@ -2,9 +2,12 @@ extends Control
 
 # ============================================================
 # BR Port VS — Main
-# Constrói a tela toda via código (HUD, docas, trabalhadores) e
-# escuta os signals do GameState para se manter em sincronia.
-# Arte é 100% placeholder (ColorRect) — Bloco 4 troca por final.
+#
+# A tela mora em Main.tscn e o estilo em ui/tema_brport.tres. Este script
+# só escuta os signals do GameState e alimenta os nós — não constrói e não
+# pinta nada. Antes ele montava a interface inteira por código, o que
+# obrigaria a reescrevê-lo para encaixar a arte final; agora o Bloco 4
+# troca cena e tema sem tocar aqui.
 # ============================================================
 
 const WorkerScene := preload("res://scenes/worker/Worker.tscn")
@@ -15,23 +18,32 @@ const UpgradePanelScene := preload("res://scenes/panels/UpgradePanel.tscn")
 const PauseMenuScene := preload("res://scenes/panels/PauseMenu.tscn")
 const EndGameScene := preload("res://scenes/EndGame.tscn")
 
-var _overlay_layer: CanvasLayer
+const COR_BOA := Color(0.102, 0.478, 0.251)
+const COR_AVISO := Color(0.851, 0.467, 0.024)
+const COR_RUIM := Color(0.761, 0.188, 0.188)
+const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 
-var _cash_label: Label
-var _day_label: Label
-var _rep_bar: ProgressBar
-var _rep_label: Label
-var _message_label: Label
-var _advance_button: Button
-var _upgrade_button: Button
-var _docks_container: HBoxContainer
-var _workers_container: HBoxContainer
+@onready var _overlay_layer: CanvasLayer = $Overlay
+@onready var _cash_label: Label = $Margem/Coluna/Cabecalho/CabecalhoColuna/HudLinha/Caixa
+@onready var _day_label: Label = $Margem/Coluna/Cabecalho/CabecalhoColuna/HudLinha/Dia
+@onready var _rep_bar: ProgressBar = $Margem/Coluna/ReputacaoCartao/RepLinha/RepBarra
+@onready var _rep_label: Label = $Margem/Coluna/ReputacaoCartao/RepLinha/RepTexto
+@onready var _message_label: Label = $Margem/Coluna/MensagemCartao/Mensagem
+@onready var _advance_button: Button = $Margem/Coluna/Avancar
+@onready var _upgrade_button: Button = $Margem/Coluna/BotoesLinha/Upgrade
+@onready var _pause_button: Button = $Margem/Coluna/BotoesLinha/Pausar
+@onready var _docks_container: HBoxContainer = $Margem/Coluna/Docas
+@onready var _workers_container: HBoxContainer = $Margem/Coluna/Trabalhadores
+@onready var _meta_bar: ProgressBar = $Margem/Coluna/MetaCartao/MetaColuna/MetaBarra
+@onready var _meta_label: Label = $Margem/Coluna/MetaCartao/MetaColuna/MetaTexto
+@onready var _meta_titulo: Label = $Margem/Coluna/MetaCartao/MetaColuna/MetaTitulo
 
 
 func _ready() -> void:
-	anchor_right = 1.0
-	anchor_bottom = 1.0
-	_build_ui()
+	_advance_button.pressed.connect(_on_advance_pressed)
+	_upgrade_button.pressed.connect(_on_upgrade_pressed)
+	_pause_button.pressed.connect(_on_pause_pressed)
+
 	_connect_game_state()
 	_refresh_all()
 
@@ -42,103 +54,6 @@ func _ready() -> void:
 		_on_debt_due(GameState.PARCELA_AMOUNT)
 	elif GameState.phase == "game_over":
 		_on_game_over(GameState.won, GameState.end_reason)
-
-
-func _build_ui() -> void:
-	var bg := ColorRect.new()
-	bg.color = Color(0.11, 0.16, 0.24)
-	bg.anchor_right = 1.0
-	bg.anchor_bottom = 1.0
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(bg)
-
-	var root_vbox := VBoxContainer.new()
-	root_vbox.anchor_right = 1.0
-	root_vbox.anchor_bottom = 1.0
-	root_vbox.offset_left = 16
-	root_vbox.offset_top = 16
-	root_vbox.offset_right = -16
-	root_vbox.offset_bottom = -16
-	root_vbox.add_theme_constant_override("separation", 10)
-	add_child(root_vbox)
-
-	var title := Label.new()
-	title.text = "⚓ BR PORT — Vertical Slice (loop core)"
-	title.add_theme_font_size_override("font_size", 20)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	root_vbox.add_child(title)
-
-	var hud_row := HBoxContainer.new()
-	hud_row.add_theme_constant_override("separation", 24)
-	root_vbox.add_child(hud_row)
-
-	_cash_label = Label.new()
-	hud_row.add_child(_cash_label)
-
-	_day_label = Label.new()
-	hud_row.add_child(_day_label)
-
-	var rep_row := HBoxContainer.new()
-	rep_row.add_theme_constant_override("separation", 8)
-	root_vbox.add_child(rep_row)
-
-	var rep_icon := Label.new()
-	rep_icon.text = "⭐ Reputação Comercial (Dona Cida):"
-	rep_row.add_child(rep_icon)
-
-	_rep_bar = ProgressBar.new()
-	_rep_bar.custom_minimum_size = Vector2(200, 20)
-	_rep_bar.max_value = 100
-	# O número já aparece no label ao lado; a porcentagem na barra é ruído.
-	_rep_bar.show_percentage = false
-	rep_row.add_child(_rep_bar)
-
-	_rep_label = Label.new()
-	rep_row.add_child(_rep_label)
-
-	var docks_title := Label.new()
-	docks_title.text = "Docas"
-	root_vbox.add_child(docks_title)
-
-	_docks_container = HBoxContainer.new()
-	_docks_container.add_theme_constant_override("separation", 12)
-	root_vbox.add_child(_docks_container)
-
-	var workers_title := Label.new()
-	workers_title.text = "Trabalhadores — arraste para uma doca"
-	root_vbox.add_child(workers_title)
-
-	_workers_container = HBoxContainer.new()
-	_workers_container.add_theme_constant_override("separation", 12)
-	root_vbox.add_child(_workers_container)
-
-	_message_label = Label.new()
-	_message_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	_message_label.custom_minimum_size = Vector2(0, 40)
-	root_vbox.add_child(_message_label)
-
-	var btn_row := HBoxContainer.new()
-	btn_row.add_theme_constant_override("separation", 12)
-	root_vbox.add_child(btn_row)
-
-	_upgrade_button = Button.new()
-	_upgrade_button.pressed.connect(_on_upgrade_pressed)
-	btn_row.add_child(_upgrade_button)
-
-	var pause_button := Button.new()
-	pause_button.text = "⏸ Pausar"
-	pause_button.pressed.connect(_on_pause_pressed)
-	btn_row.add_child(pause_button)
-
-	_advance_button = Button.new()
-	_advance_button.text = "▶ AVANÇAR DIA"
-	_advance_button.custom_minimum_size = Vector2(220, 48)
-	_advance_button.pressed.connect(_on_advance_pressed)
-	root_vbox.add_child(_advance_button)
-
-	_overlay_layer = CanvasLayer.new()
-	_overlay_layer.layer = 10
-	add_child(_overlay_layer)
 
 
 func _connect_game_state() -> void:
@@ -161,15 +76,37 @@ func _refresh_all() -> void:
 
 
 func _refresh_hud() -> void:
-	_cash_label.text = "💰 Caixa: R$%d" % int(GameState.cash)
+	_cash_label.text = "💰 R$%d" % int(GameState.cash)
 	var shown_day: int = min(GameState.turn, GameState.TURNS_TOTAL)
 	var shown_week: int = min(GameState.current_week(), GameState.WEEKS_TOTAL)
-	_day_label.text = "📅 Dia %d/%d — Semana %d" % [shown_day, GameState.TURNS_TOTAL, shown_week]
+	_day_label.text = "📅 Dia %d/%d · Semana %d" % [shown_day, GameState.TURNS_TOTAL, shown_week]
 	_rep_bar.value = GameState.reputation
 	_rep_label.text = "%d — %s" % [int(GameState.reputation), GameState.reputation_label()]
 	_upgrade_button.disabled = GameState.upgrade_purchased or GameState.phase != "playing"
 	_upgrade_button.text = "✓ Píer ampliado" if GameState.upgrade_purchased else "🏗️ Ampliar píer (R$%d)" % GameState.UPGRADE_COST
 	_advance_button.disabled = GameState.phase != "playing"
+	_refresh_meta()
+
+
+# O playtest perdeu uma partida por R$1 sem nunca ver o quanto faltava. Esta é
+# a informação que estava faltando na tela: quanto já tem, quanto falta e
+# quantos dias restam até o Sr. Ribeiro bater na porta.
+func _refresh_meta() -> void:
+	var alvo := GameState.PARCELA_AMOUNT
+	if GameState.parcela_paid:
+		_meta_titulo.text = "🏦 Parcela do Sr. Ribeiro"
+		_meta_bar.value = 100.0
+		_meta_label.text = "✅ Paga — porto salvo"
+		return
+
+	var dias_restantes: int = max(GameState.PARCELA_DUE_TURN - GameState.turn + 1, 0)
+	_meta_titulo.text = "🏦 Parcela do Sr. Ribeiro — %d dia(s) restante(s)" % dias_restantes
+	_meta_bar.value = clamp(100.0 * float(GameState.cash) / float(alvo), 0.0, 100.0)
+	var falta: int = alvo - int(GameState.cash)
+	if falta > 0:
+		_meta_label.text = "R$%d de R$%d — faltam R$%d" % [int(GameState.cash), alvo, falta]
+	else:
+		_meta_label.text = "R$%d de R$%d — já dá para pagar" % [int(GameState.cash), alvo]
 
 
 func _clear(container: Node) -> void:
@@ -200,43 +137,45 @@ func _on_message(text: String, kind: String) -> void:
 	_message_label.text = text
 	match kind:
 		"good":
-			_message_label.add_theme_color_override("font_color", Color(0.4, 0.9, 0.5))
+			_message_label.add_theme_color_override("font_color", COR_BOA)
 		"warn":
-			_message_label.add_theme_color_override("font_color", Color(0.95, 0.75, 0.2))
+			_message_label.add_theme_color_override("font_color", COR_AVISO)
 		"bad":
-			_message_label.add_theme_color_override("font_color", Color(0.95, 0.4, 0.4))
+			_message_label.add_theme_color_override("font_color", COR_RUIM)
 		_:
-			_message_label.add_theme_color_override("font_color", Color(1, 1, 1))
+			_message_label.add_theme_color_override("font_color", COR_NEUTRA)
 
 
 func _on_advance_pressed() -> void:
 	GameState.advance_turn()
 
 
+# Os painéis pendurados no CanvasLayer NÃO herdam o tema: tema só se propaga
+# por uma árvore de Control, e CanvasLayer não é Control. Sem repassar na mão,
+# todo painel sai com o visual padrão do Godot em cima do jogo temático.
+func _abrir_painel(cena: PackedScene) -> Control:
+	var painel: Control = cena.instantiate()
+	painel.theme = theme
+	_overlay_layer.add_child(painel)
+	return painel
+
+
 func _on_upgrade_pressed() -> void:
-	var panel = UpgradePanelScene.instantiate()
-	_overlay_layer.add_child(panel)
+	_abrir_painel(UpgradePanelScene)
 
 
 func _on_pause_pressed() -> void:
-	var panel = PauseMenuScene.instantiate()
-	_overlay_layer.add_child(panel)
+	_abrir_painel(PauseMenuScene)
 
 
 func _on_rival_offer_triggered(dock_index: int) -> void:
 	_refresh_docks()
-	var panel = CounterOfferScene.instantiate()
-	_overlay_layer.add_child(panel)
-	panel.setup(dock_index)
+	_abrir_painel(CounterOfferScene).setup(dock_index)
 
 
 func _on_debt_due(amount: int) -> void:
-	var panel = DebtPaymentScene.instantiate()
-	_overlay_layer.add_child(panel)
-	panel.setup(amount)
+	_abrir_painel(DebtPaymentScene).setup(amount)
 
 
 func _on_game_over(did_win: bool, reason: String) -> void:
-	var panel = EndGameScene.instantiate()
-	_overlay_layer.add_child(panel)
-	panel.setup(did_win, reason)
+	_abrir_painel(EndGameScene).setup(did_win, reason)

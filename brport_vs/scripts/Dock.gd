@@ -1,62 +1,79 @@
-extends Control
+extends PanelContainer
 
-# Slot de doca — alvo de drop dos trabalhadores. Mostra o barco
-# (se houver), valor, progresso e se está sob oferta do rival.
+# Slot de doca — alvo de drop dos trabalhadores. Mostra o barco (se houver),
+# valor, progresso e se está sob oferta do rival.
+#
+# A árvore de nós mora em Dock.tscn e o estilo mora no tema (DocaVazia,
+# DocaBarco, DocaGrande, DocaRival). Este script não constrói nem pinta
+# nada: só decide qual estilo vale agora e o que cada label diz. É isso que
+# permite trocar o visual no Bloco 4 sem tocar em lógica.
 
 var dock_index: int = -1
 
-var _bg: ColorRect
-var _label: Label
+@onready var _titulo: Label = $Conteudo/Titulo
+@onready var _tipo: Label = $Conteudo/Tipo
+@onready var _valor: Label = $Conteudo/Valor
+@onready var _progresso: Label = $Conteudo/Progresso
+@onready var _trabalhador: Label = $Conteudo/Trabalhador
 
 
 func setup(index: int) -> void:
 	dock_index = index
-	custom_minimum_size = Vector2(150, 170)
+	# setup() pode ser chamado antes de a cena entrar na árvore, quando os
+	# @onready ainda são null. Nesse caso o refresh acontece no _ready().
+	if is_node_ready():
+		refresh()
 
-	_bg = ColorRect.new()
-	_bg.anchor_right = 1.0
-	_bg.anchor_bottom = 1.0
-	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_bg)
 
-	_label = Label.new()
-	_label.anchor_right = 1.0
-	_label.anchor_bottom = 1.0
-	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_label)
+func _ready() -> void:
+	if dock_index >= 0:
+		refresh()
 
-	refresh()
+
+func _aplicar_estilo(nome_no_tema: String) -> void:
+	add_theme_stylebox_override("panel", get_theme_stylebox("panel", nome_no_tema))
 
 
 func refresh() -> void:
+	if dock_index < 0 or dock_index >= GameState.docks.size():
+		return
 	var dock: Dictionary = GameState.docks[dock_index]
 	var boat = dock["boat"]
 
+	_titulo.text = "Doca %d" % (dock_index + 1)
+
 	if boat == null:
-		_bg.color = Color(0.18, 0.22, 0.3)
-		_label.text = "Doca %d\n\nVazia" % (dock_index + 1)
+		_aplicar_estilo("DocaVazia")
+		_tipo.text = "Vazia"
+		_valor.text = ""
+		_progresso.text = ""
+		_trabalhador.text = ""
 		return
 
-	var boat_type := "🚢 Grande" if boat.get("large", false) else "⛵ Pequeno"
-	var value := int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
-	var progress_txt := "%d/%d turnos" % [int(boat["progress"]), int(boat["op_turns"])]
-	var worker_txt := ""
-	if dock["worker_id"] != null:
-		worker_txt = "\n👷 #%d" % int(dock["worker_id"])
+	var grande: bool = boat.get("large", false)
+	var sob_oferta: bool = boat.get("rival", false) and not boat.get("matched", false)
+	var valor: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
+
+	_tipo.text = "🚢 Grande" if grande else "⛵ Pequeno"
+	_valor.text = "R$%d%s" % [valor, " (acordo)" if boat.get("matched", false) else ""]
+
+	if sob_oferta:
+		_aplicar_estilo("DocaRival")
+		_progresso.text = "⚔️ OFERTA DO RIVAL"
+		_trabalhador.text = ""
+		return
+
+	_aplicar_estilo("DocaGrande" if grande else "DocaBarco")
+	_progresso.text = "%d/%d turnos" % [int(boat["progress"]), int(boat["op_turns"])]
+
+	if dock["worker_id"] == null:
+		_trabalhador.text = ""
+	else:
+		var texto := "👷 #%d" % int(dock["worker_id"])
 		# Enquanto a operação não começou dá para desfazer um arrasto errado.
 		if int(boat["progress"]) == 0:
-			worker_txt += " (toque p/ liberar)"
-
-	if boat.get("rival", false) and not boat.get("matched", false):
-		_bg.color = Color(0.55, 0.16, 0.16)
-		_label.text = "Doca %d\n%s\nOFERTA DO RIVAL\nR$%d" % [dock_index + 1, boat_type, value]
-	else:
-		_bg.color = Color(0.16, 0.4, 0.55) if boat.get("large", false) else Color(0.18, 0.45, 0.5)
-		var matched_txt := " (igualado)" if boat.get("matched", false) else ""
-		_label.text = "Doca %d\n%s\nR$%d%s\n%s%s" % [dock_index + 1, boat_type, value, matched_txt, progress_txt, worker_txt]
+			texto += " (toque p/ liberar)"
+		_trabalhador.text = texto
 
 
 func _can_drop_data(_at_position: Vector2, data) -> bool:

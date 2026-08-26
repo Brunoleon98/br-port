@@ -1,0 +1,250 @@
+[gd_resource type="Theme" load_steps=16 format=3]
+
+; BR Port VS — tema da interface
+;
+; Paleta portada do protótipo HTML validado (index.html, :root) — claro,
+; navy sobre creme, cantos arredondados. Era o visual que o playtest
+; considerou melhor que o placeholder escuro anterior.
+;
+; Este arquivo é o ponto único de estilo: mudar cor, canto ou fonte aqui
+; muda a interface inteira, sem tocar em script nenhum. É o que torna o
+; Bloco 4 (arte final) uma troca de recurso, e não uma reescrita de código.
+;
+;   navy   #1c3454   navy2  #24466e   amber  #e09a10
+;   cream  #f0f6ff   white  #ffffff   border #d0dff0
+;   green  #1a7a40   red    #c23030   warn   #d97706   gray #8299b4
+
+
+[sub_resource type="StyleBoxFlat" id="cartao"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.816, 0.875, 0.941, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+shadow_color = Color(0.11, 0.204, 0.329, 0.06)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="botao_normal"]
+bg_color = Color(0.11, 0.204, 0.329, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="botao_hover"]
+bg_color = Color(0.141, 0.275, 0.431, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="botao_press"]
+bg_color = Color(0.078, 0.153, 0.251, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="botao_off"]
+bg_color = Color(0.816, 0.875, 0.941, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="barra_fundo"]
+bg_color = Color(0.878, 0.914, 0.965, 1)
+corner_radius_top_left = 99
+corner_radius_top_right = 99
+corner_radius_bottom_right = 99
+corner_radius_bottom_left = 99
+
+[sub_resource type="StyleBoxFlat" id="barra_cheia"]
+bg_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_left = 99
+corner_radius_top_right = 99
+corner_radius_bottom_right = 99
+corner_radius_bottom_left = 99
+
+[sub_resource type="StyleBoxFlat" id="painel_escuro"]
+bg_color = Color(0.11, 0.204, 0.329, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxFlat" id="doca_vazia"]
+bg_color = Color(0.909, 0.933, 0.968, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.816, 0.875, 0.941, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="doca_barco"]
+bg_color = Color(0.906, 0.957, 0.984, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.404, 0.643, 0.788, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="doca_grande"]
+bg_color = Color(0.855, 0.925, 0.969, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.141, 0.275, 0.431, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="doca_rival"]
+bg_color = Color(1, 0.941, 0.941, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.761, 0.188, 0.188, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="trab_livre"]
+bg_color = Color(0.929, 0.984, 0.949, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.102, 0.478, 0.251, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="trab_alocado"]
+bg_color = Color(0.906, 0.941, 0.976, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.404, 0.643, 0.788, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="trab_ocupado"]
+bg_color = Color(0.925, 0.933, 0.945, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.702, 0.729, 0.769, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[resource]
+default_font_size = 15
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(0.961, 0.725, 0.227, 1)
+Button/colors/font_disabled_color = Color(0.51, 0.6, 0.706, 1)
+Button/font_sizes/font_size = 15
+Button/styles/normal = SubResource("botao_normal")
+Button/styles/hover = SubResource("botao_hover")
+Button/styles/pressed = SubResource("botao_press")
+Button/styles/disabled = SubResource("botao_off")
+Label/colors/font_color = Color(0.11, 0.204, 0.329, 1)
+Label/font_sizes/font_size = 15
+PanelContainer/styles/panel = SubResource("cartao")
+ProgressBar/styles/background = SubResource("barra_fundo")
+ProgressBar/styles/fill = SubResource("barra_cheia")
+Cartao/base_type = "PanelContainer"
+Cartao/styles/panel = SubResource("cartao")
+CartaoEscuro/base_type = "PanelContainer"
+CartaoEscuro/styles/panel = SubResource("painel_escuro")
+DocaVazia/base_type = "PanelContainer"
+DocaVazia/styles/panel = SubResource("doca_vazia")
+DocaBarco/base_type = "PanelContainer"
+DocaBarco/styles/panel = SubResource("doca_barco")
+DocaGrande/base_type = "PanelContainer"
+DocaGrande/styles/panel = SubResource("doca_grande")
+DocaRival/base_type = "PanelContainer"
+DocaRival/styles/panel = SubResource("doca_rival")
+TrabLivre/base_type = "PanelContainer"
+TrabLivre/styles/panel = SubResource("trab_livre")
+TrabAlocado/base_type = "PanelContainer"
+TrabAlocado/styles/panel = SubResource("trab_alocado")
+TrabOcupado/base_type = "PanelContainer"
+TrabOcupado/styles/panel = SubResource("trab_ocupado")

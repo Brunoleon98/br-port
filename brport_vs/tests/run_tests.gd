@@ -94,6 +94,92 @@ func _run() -> void:
 	GS.docks[1]["boat"]["progress"] = 1
 	_check("recusa liberar com operacao em andamento", GS.release_worker(1) == false)
 
+	print("=== T4b: contra-oferta com os 3 presets do GDD ===")
+	# Igualar fecha na hora, sem gastar paciência.
+	_fresh_playing()
+	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE
+	GS._set_phase("rival_offer")
+	_check("igualar devolve 'fechado'", GS.negotiate_rival("igualar") == "fechado")
+	_check("igualar cobra os 15% do GDD", int(GS.docks[0]["boat"]["matched_value"]) == 850)
+	_check("fase voltou para playing", GS.phase == "playing")
+
+	# Manter preço: com o sorteio forçado a favor, fecha pelo valor CHEIO.
+	# É exatamente o que não existia antes — o botão era perda garantida.
+	_fresh_playing()
+	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE
+	GS._set_phase("rival_offer")
+	GS._rng.seed = 1
+	var sucesso := false
+	for tentativa in range(400):
+		GS.rival_attempts_left = GS.RIVAL_PATIENCE
+		GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
+		GS.pending_rival_dock = 0
+		GS._set_phase("rival_offer")
+		if GS.negotiate_rival("manter") == "fechado":
+			sucesso = true
+			break
+	_check("manter preco PODE dar certo  <-- era impossivel antes", sucesso)
+	_check("quando da certo, paga o valor cheio", not sucesso or int(GS.docks[0]["boat"]["matched_value"]) == 1000)
+
+	# Paciência: duas insistências seguidas perdem o cliente.
+	_fresh_playing()
+	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = 1
+	GS._set_phase("rival_offer")
+	GS._rng.seed = 7
+	var perdeu := false
+	for tentativa2 in range(400):
+		GS.rival_attempts_left = 1
+		GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
+		GS.pending_rival_dock = 0
+		GS._set_phase("rival_offer")
+		if GS.negotiate_rival("manter") == "perdido":
+			perdeu = true
+			break
+	_check("sem paciencia o cliente vai embora", perdeu)
+	_check("doca fica vazia quando o cliente vai", GS.docks[0]["boat"] == null)
+	_check("fase volta para playing mesmo perdendo", GS.phase == "playing")
+
+	# Insistir e falhar encarece o igualar — é o que impede a aposta grátis.
+	_fresh_playing()
+	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE - 1   # já insistiu uma vez
+	GS._set_phase("rival_offer")
+	GS.negotiate_rival("igualar")
+	_check("igualar depois de insistir custa mais (28 por cento)", int(GS.docks[0]["boat"]["matched_value"]) == 720)
+
+	print("=== T4c: painel da contra-oferta (cena real) ===")
+	# A lição do playtest anterior: testar só a lógica não pega bug de tela.
+	# Aqui o painel é instanciado de verdade e os botões são inspecionados.
+	_fresh_playing()
+	var main2 = load("res://scenes/Main.tscn").instantiate()
+	root.add_child(main2)
+	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE
+	GS._set_phase("rival_offer")
+
+	var painel = load("res://scenes/panels/CounterOfferPanel.tscn").instantiate()
+	root.add_child(painel)
+	painel.setup(0)
+	_check("painel tem os 3 presets do GDD", painel._btn_igualar != null and painel._btn_metade != null and painel._btn_manter != null)
+	_check("botao de igualar mostra o preco", painel._btn_igualar.text.contains("850"))
+	_check("botao de cortar metade mostra a chance", painel._btn_metade.text.contains("70"))
+	_check("botao de manter mostra o valor cheio", painel._btn_manter.text.contains("1000"))
+
+	painel._negociar("igualar")
+	_check("negociar pelo painel devolve o jogo para playing", GS.phase == "playing")
+	_check("botao AVANCAR DIA reabilitado depois do painel", main2._advance_button.disabled == false)
+
+	root.remove_child(main2)
+	main2.free()
+
 	print("=== T5: upgrade avisa a UI ===")
 	_fresh_playing()
 	var roster_fired := [false]

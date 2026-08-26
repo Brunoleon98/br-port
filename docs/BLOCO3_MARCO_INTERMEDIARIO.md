@@ -15,6 +15,11 @@ o **playtest humano**, e onde **registrar a decisão**.
 
 ## Parte 1 — O que a medição já diz
 
+> 📌 **Esta parte é o diagnóstico de ANTES do ajuste.** Ela está preservada
+> como está porque é o raciocínio que levou à decisão registrada na Parte 3 —
+> e porque o playtest humano confirmou cada achado dela. Para os números de
+> hoje, ver a Parte 3.
+
 ### A pendência anterior estava mal lida
 
 O handoff registrava *"o jogo está provavelmente fácil demais — ~63% de
@@ -65,7 +70,11 @@ sempre igualar, e em quantos turnos.
 ### Se for ajustar: o que cada alavanca faz
 
 Medido com 800 partidas por perfil, mudando **uma** constante por vez.
-**Nada disso foi aplicado ao jogo** — os números continuam como estavam.
+
+> ✅ **Resolvido de outro jeito.** Nenhuma destas duas alavancas foi a escolhida.
+> O playtest e a revisão do GDD mostraram que a correção certa era uma terceira:
+> **aumentar os turnos por semana**, o que deixou os barcos voltarem para a
+> faixa do GDD. As tabelas abaixo ficam como registro do que foi considerado.
 
 **Alavanca A — valor da parcela** (`PARCELA_AMOUNT`)
 
@@ -174,28 +183,83 @@ Três coisas que ela fez e eu não esperava:
 
 ---
 
-## Parte 3 — A decisão (preencher e commitar)
+## Parte 3 — A decisão · **REGISTRADA em 26/08/2026**
 
-```
-Data da decisão: ____/____/______
+### O playtest que decidiu
 
-Partidas jogadas por mim: ______    Testador observado: ( ) sim  ( ) não
+**Bruno, 5 partidas completas, 25–26/08/2026.**
 
-DECISÃO:
-( ) A — Loop pronto para receber arte final. Vai para o Bloco 4.
-( ) B — Ajustar antes. Estimativa: ______ semanas.
-        O que ajustar (só o que está quebrado — não inflar escopo):
-        1.
-        2.
-( ) C — Ajuste estimado passa de 3 semanas → voltar e replanejar a Fase 2.
+| # | Caixa no vencimento | Atendidos | Perdidos | Resultado |
+|---|---|---|---|---|
+| 1 | R$ 6.509 | 15 | 0 | perdeu |
+| 2 | R$ 7.010 | 18 | 2 | perdeu |
+| 3 | — | 20 | 0 | **venceu** |
+| 4 | R$ 7.490 | 21 | 0 | perdeu |
+| 5 | **R$ 7.999** | 22 | 0 | perdeu — **por R$ 1** |
 
-Por quê (2–3 linhas, o raciocínio, não só a conclusão):
+**1 vitória em 5.** E em 4 das 5 partidas ele não perdeu nenhum barco, ou seja,
+jogou no nível do perfil "Ótimo" da simulação. A partida 5 terminou a um real
+da parcela.
 
+Isso fechou a questão que a Parte 1 tinha deixado em aberto: o problema não
+era o jogador, era o sistema. A simulação já dizia 58% para jogo perfeito; o
+humano confirmou ao vivo, e o "R$ 7.999" é a demonstração mais limpa possível
+de que o resultado estava sendo decidido pelo sorteio dos barcos.
 
-```
+### O que o playtest apontou além da dificuldade
 
-Depois de preencher, atualize também `docs/ESTADO_DO_PROJETO.md` para o Bloco 3
-ficar registrado como fechado.
+1. **"Manter preço" não era uma decisão.** O jogador relatou: *"ao deixar o
+   cliente impaciente eu igualava o preço para não perder ele"*. A leitura
+   estava correta — o código não tinha sorteio nenhum: apertar "Manter preço"
+   duas vezes **sempre** perdia o barco. Confirma o achado 4 da Parte 1, com a
+   causa exata.
+2. **Partidas curtas demais.** *"foi bem rápido terminar as partidas"* — 12
+   turnos.
+3. **Visual aquém do protótipo HTML**, com o pedido de melhorá-lo antes da arte
+   final, para facilitar o encaixe.
+4. **Sensação de que o VS é pequeno**, mais protótipo que vertical slice.
+
+### DECISÃO: **B — ajustar antes de ir para a arte final**
+
+**Estimativa: dentro de 1 semana** (bem abaixo do limite de 3 semanas que
+obrigaria a replanejar a Fase 2).
+
+O que foi ajustado — e por que cada um era "consertar o que está quebrado", não
+inflar escopo:
+
+| Ajuste | Por que era obrigatório |
+|---|---|
+| **8 turnos/semana** (era 3) | Sem isso a parcela só cabia inflando o barco para fora da faixa do GDD. Resolve junto a queixa de partida curta. |
+| **Barcos de volta a R$ 80–300** | Voltam à faixa que o GDD define para a Fase 1. Elimina o desvio que estava registrado como dívida conhecida. |
+| **Contra-oferta com os 3 presets do GDD** | O painel implementado não era o que o GDD especifica, e uma das opções era matematicamente impossível de dar certo. Isso é um defeito, não um ajuste de gosto. |
+| **Errata da economia do GDD** | A aritmética do GDD não fechava nem a Parcela 1. Deixar passar faria o mesmo erro reaparecer na Fase 2. |
+| **UI em cenas `.tscn`** | A interface era construída por código imperativo. Encaixar arte por cima disso no Bloco 4 exigiria reescrevê-la de qualquer forma — fazer agora é mais barato que fazer depois. |
+
+**Resultado medido depois do ajuste** (2.000 partidas por perfil):
+
+| Perfil | Antes | Depois |
+|---|---|---|
+| Joga perfeito | 58,5% | **99,7%** |
+| Joga mediano | 7,2% | **63,8%** |
+| Joga mal | 0,1% | **0,7%** |
+| Folga no vencimento (jogo perfeito) | 2% | **20%** |
+
+### Sobre "parece mais protótipo que vertical slice"
+
+A percepção está certa sobre o estado de hoje, e o plano concorda com ela: o
+que falta para virar VS — Dona Cida, a cena do Sr. Ribeiro, Diário do Porto,
+áudio, narrativa e arte — é exatamente o conteúdo dos Blocos 4 e 5. O Bloco 2
+entrega o esqueleto de sistemas, e é o esqueleto que o Bloco 3 valida.
+
+Vale registrar a proporção, porque ela é real: o VS cobre a **Parcela 1 de 3**
+do Ato 1, e o Ato 1 é **1 de 5 fases** do jogo. É pequeno de propósito — a
+função dele é provar que o loop funciona antes de a produção cara começar.
+
+### Próximo passo
+
+**Bloco 4 — arte final + áudio + integração**, com a ressalva de que a UI já
+foi migrada para cenas, então a integração de arte começa de uma base melhor
+do que o plano original previa.
 
 ---
 
