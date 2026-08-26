@@ -1,54 +1,54 @@
-extends Control
+extends PanelContainer
 
-# Retângulo colorido arrastável (placeholder). Usa o sistema nativo
-# de drag-and-drop de Control do Godot — funciona com touch e mouse.
+# Trabalhador arrastável. Usa o sistema nativo de drag-and-drop de Control
+# do Godot — funciona com touch e mouse.
+#
+# Como a doca: árvore em Worker.tscn, estilo no tema (TrabLivre,
+# TrabAlocado, TrabOcupado). No Bloco 4 o retângulo vira sprite trocando a
+# cena, sem mexer aqui.
 
 var worker_id: int = -1
 
-var _bg: ColorRect
-var _label: Label
+@onready var _nome: Label = $Conteudo/Nome
+@onready var _estado: Label = $Conteudo/Estado
 
 
 func setup(id: int) -> void:
 	worker_id = id
-	custom_minimum_size = Vector2(96, 96)
+	if is_node_ready():
+		refresh()
 
-	_bg = ColorRect.new()
-	_bg.anchor_right = 1.0
-	_bg.anchor_bottom = 1.0
-	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_bg)
 
-	_label = Label.new()
-	_label.anchor_right = 1.0
-	_label.anchor_bottom = 1.0
-	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_label)
+func _ready() -> void:
+	if worker_id >= 0:
+		refresh()
 
-	refresh()
+
+func _aplicar_estilo(nome_no_tema: String) -> void:
+	add_theme_stylebox_override("panel", get_theme_stylebox("panel", nome_no_tema))
 
 
 func refresh() -> void:
 	var w = _find_self()
 	if w == null:
 		return
+	_nome.text = "👷 #%d" % worker_id
+
 	var busy: int = int(w["busy_turns"])
 	# `busy_turns` só conta operações que já começaram; quem foi alocado neste
 	# turno ainda está com 0 e precisa ser detectado pela doca, senão aparece
 	# como "Livre" e dá para arrastar o mesmo trabalhador para outra doca.
 	var dock_index := GameState.worker_dock_index(worker_id)
+
 	if busy > 0:
-		_bg.color = Color(0.3, 0.3, 0.35)
-		_label.text = "👷 #%d\nOcupado (%dt)" % [worker_id, busy]
+		_aplicar_estilo("TrabOcupado")
+		_estado.text = "Ocupado (%dt)" % busy
 	elif dock_index >= 0:
-		_bg.color = Color(0.35, 0.4, 0.5)
-		_label.text = "👷 #%d\nNa Doca %d" % [worker_id, dock_index + 1]
+		_aplicar_estilo("TrabAlocado")
+		_estado.text = "Na Doca %d" % (dock_index + 1)
 	else:
-		_bg.color = Color(0.25, 0.65, 0.35)
-		_label.text = "👷 #%d\nLivre\narraste →" % worker_id
+		_aplicar_estilo("TrabLivre")
+		_estado.text = "Livre\narraste →"
 
 
 func _find_self() -> Variant:
@@ -58,14 +58,18 @@ func _find_self() -> Variant:
 	return null
 
 
-func _get_drag_data(_at_position: Vector2) -> Variant:
+func esta_livre() -> bool:
 	var w = _find_self()
 	if w == null or int(w["busy_turns"]) > 0 or GameState.phase != "playing":
+		return false
+	return GameState.worker_dock_index(worker_id) < 0
+
+
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	if not esta_livre():
 		return null
-	if GameState.worker_dock_index(worker_id) >= 0:
-		return null
-	var preview := ColorRect.new()
-	preview.color = Color(0.25, 0.65, 0.35, 0.85)
-	preview.custom_minimum_size = Vector2(90, 90)
+	var preview := Label.new()
+	preview.text = "👷 #%d" % worker_id
+	preview.add_theme_color_override("font_color", Color(0.102, 0.478, 0.251))
 	set_drag_preview(preview)
 	return {"worker_id": worker_id}

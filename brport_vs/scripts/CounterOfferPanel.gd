@@ -31,16 +31,16 @@ func _build_ui() -> void:
 	dim.anchor_bottom = 1.0
 	add_child(dim)
 
+	# Centralizado e do tamanho do conteúdo — com offsets fixos sobrava um
+	# tampão vazio embaixo dos botões.
+	var centro := CenterContainer.new()
+	centro.anchor_right = 1.0
+	centro.anchor_bottom = 1.0
+	add_child(centro)
+
 	var box := PanelContainer.new()
-	box.anchor_left = 0.5
-	box.anchor_top = 0.5
-	box.anchor_right = 0.5
-	box.anchor_bottom = 0.5
-	box.offset_left = -200
-	box.offset_top = -160
-	box.offset_right = 200
-	box.offset_bottom = 160
-	add_child(box)
+	box.custom_minimum_size = Vector2(400, 0)
+	centro.add_child(box)
 
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 10)

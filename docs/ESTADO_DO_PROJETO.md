@@ -34,7 +34,10 @@ Próximo passo: **Bloco 4 — arte final, áudio e integração**.
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
 | `brport_vs/tests/run_tests.gd` | 19 asserções de regressão |
+| `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, estilos de doca e trabalhador |
+| `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
+| `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `docs/BLOCO3_MARCO_INTERMEDIARIO.md` | Medição do balanceamento + roteiro do playtest + onde registrar a decisão |
 | `docs/design/` | GDD 7, Roadmap, Plano de Produção, guias, Validation Guide |
@@ -51,9 +54,14 @@ Próximo passo: **Bloco 4 — arte final, áudio e integração**.
 - Autosave local a cada turno
 
 ### O que é placeholder de propósito
-**Toda a arte** — a interface é montada por código com retângulos coloridos.
-Isso é intencional: arte final é o **Bloco 4**. Áudio, Diário do Porto, cena
-narrativa de fim de Fase 1 e a lista "VS — OUT" do GDD também ficam para depois.
+**A arte** — ainda são formas e emoji, sem sprite nenhum. Mas a interface
+**não é mais montada por código**: desde o Bloco 3 ela vive em cenas `.tscn`
+com um tema (`ui/tema_brport.tres`) que carrega a paleta do protótipo HTML.
+Trocar placeholder por arte final no Bloco 4 é editar cena e tema, não
+reescrever script.
+
+Continuam para depois: áudio, Diário do Porto, cena narrativa de fim de Fase 1
+e a lista "VS — OUT" do GDD.
 
 ---
 
