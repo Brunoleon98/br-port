@@ -1,0 +1,356 @@
+[gd_scene load_steps=7 format=3]
+
+; PROTÓTIPO VISUAL — não faz parte do jogo, não tem lógica.
+; Existe só para responder "dá para chegar perto da imagem conceito?".
+; Os números são estáticos e escolhidos para parecer uma partida real.
+
+[ext_resource type="Texture2D" path="res://art/porto_mapa.svg" id="1"]
+[ext_resource type="Texture2D" path="res://art/barco_grande.svg" id="2"]
+[ext_resource type="Texture2D" path="res://art/barco_pequeno.svg" id="3"]
+
+[sub_resource type="StyleBoxFlat" id="pilula"]
+bg_color = Color(0.09, 0.16, 0.24, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.34, 0.47, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxFlat" id="painel_contexto"]
+bg_color = Color(0.925, 0.949, 0.973, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 14.0
+content_margin_top = 9.0
+content_margin_right = 14.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBoxFlat" id="botao_verde"]
+bg_color = Color(0.176, 0.478, 0.227, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+
+[node name="MapaConceito" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Fundo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.051, 0.102, 0.149, 1)
+
+; ================= BARRA DE HUD =================
+
+[node name="HudBar" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 712.0
+offset_bottom = 56.0
+theme_override_constants/separation = 5
+
+[node name="P1" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P1"]
+layout_mode = 2
+text = "👷 2"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="P2" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P2"]
+layout_mode = 2
+text = "⚓ 3"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="P3" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P3"]
+layout_mode = 2
+text = "⛵ 3"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="P4" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P4"]
+layout_mode = 2
+text = "⭐ 74"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="P5" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.7
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P5"]
+layout_mode = 2
+text = "💰 R$1.240"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.42, 0.85, 0.53, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="P6" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.8
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P6"]
+layout_mode = 2
+text = "📅 Dia 11/32"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="P7" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P7"]
+layout_mode = 2
+text = "⚙"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 17
+
+; ================= MAPA =================
+
+[node name="MapaWrap" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 64.0
+offset_right = 720.0
+offset_bottom = 964.0
+clip_contents = true
+
+[node name="Mapa" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 900.0
+texture = ExtResource("1")
+
+[node name="Barco1" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 384.0
+offset_top = 124.0
+offset_right = 568.0
+offset_bottom = 196.0
+texture = ExtResource("2")
+
+[node name="Barco2" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 330.0
+offset_top = 364.0
+offset_right = 454.0
+offset_bottom = 424.0
+texture = ExtResource("3")
+
+[node name="Barco3" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 274.0
+offset_top = 604.0
+offset_right = 458.0
+offset_bottom = 676.0
+texture = ExtResource("2")
+
+[node name="BarcoEsp1" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 544.0
+offset_top = 150.0
+offset_right = 668.0
+offset_bottom = 210.0
+texture = ExtResource("3")
+
+[node name="BarcoEsp2" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 514.0
+offset_top = 422.0
+offset_right = 638.0
+offset_bottom = 482.0
+texture = ExtResource("3")
+
+[node name="BarcoEsp3" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 594.0
+offset_top = 558.0
+offset_right = 718.0
+offset_bottom = 618.0
+texture = ExtResource("3")
+
+[node name="Doca1" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 34.0
+offset_right = 600.0
+offset_bottom = 74.0
+text = "DOCA 1"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 29
+
+[node name="Doca2" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 340.0
+offset_top = 276.0
+offset_right = 540.0
+offset_bottom = 316.0
+text = "DOCA 2"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 29
+
+[node name="Doca3" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 290.0
+offset_top = 516.0
+offset_right = 490.0
+offset_bottom = 556.0
+text = "DOCA 3"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 29
+
+[node name="ZonaEspera" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 496.0
+offset_top = 222.0
+offset_right = 712.0
+offset_bottom = 306.0
+text = "ZONA DE
+ESPERA"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 27
+
+[node name="Escritorio" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 82.0
+offset_top = 160.0
+offset_right = 322.0
+offset_bottom = 200.0
+text = "ESCRITÓRIO"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 23
+
+; ================= PAINEL DE CONTEXTO =================
+
+[node name="Contexto" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 978.0
+offset_right = 706.0
+offset_bottom = 1098.0
+theme_override_styles/panel = SubResource("painel_contexto")
+
+[node name="Coluna" type="VBoxContainer" parent="Contexto"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="T" type="Label" parent="Contexto/Coluna"]
+layout_mode = 2
+text = "OPERAÇÃO ATUAL — DOCA 2"
+theme_override_colors/font_color = Color(0.11, 0.204, 0.329, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="S" type="Label" parent="Contexto/Coluna"]
+layout_mode = 2
+text = "STATUS: EM OPERAÇÃO · Trabalhador #1"
+theme_override_colors/font_color = Color(0.102, 0.478, 0.251, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="P" type="Label" parent="Contexto/Coluna"]
+layout_mode = 2
+text = "PRÓXIMO BARCO: Doca 3 · Grande · R$250"
+theme_override_colors/font_color = Color(0.51, 0.6, 0.706, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="C" type="Label" parent="Contexto/Coluna"]
+layout_mode = 2
+text = "CONCLUI EM: 2 turnos"
+theme_override_colors/font_color = Color(0.851, 0.467, 0.024, 1)
+theme_override_font_sizes/font_size = 15
+
+; ================= AÇÕES =================
+
+[node name="Acoes" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 1108.0
+offset_right = 706.0
+offset_bottom = 1164.0
+theme_override_constants/separation = 10
+
+[node name="Contratos" type="Button" parent="Acoes"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "📋 Contratos"
+theme_override_styles/normal = SubResource("pilula")
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="Relatorio" type="Button" parent="Acoes"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "📊 Relatório"
+theme_override_styles/normal = SubResource("pilula")
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="Avancar" type="Button" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 1174.0
+offset_right = 706.0
+offset_bottom = 1240.0
+text = "▶ AVANÇAR DIA"
+theme_override_styles/normal = SubResource("botao_verde")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 23
