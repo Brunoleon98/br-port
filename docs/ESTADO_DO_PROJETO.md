@@ -25,6 +25,11 @@ partidas do playtest e o raciocínio, está em
 
 Próximo passo: **Bloco 4 — arte final, áudio e integração**.
 
+👉 **Se você vai trabalhar no visual, leia antes
+`docs/BLOCO4_BRIEFING_VISUAL.md`.** Ele traz decisões já tomadas sobre a
+imagem de referência (mapa do porto visto de cima, turnos mantidos, arte pelo
+style guide do GDD) e a lista do que NÃO seguir dessa imagem.
+
 ---
 
 ## O que existe hoje
