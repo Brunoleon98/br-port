@@ -3,8 +3,8 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 26/08/2026 (Bloco 3 fechado — playtest, rebalanceamento
-> e errata do GDD)
+> **Última atualização:** 27/08/2026 (Bloco 4 iniciado — style guide de flat
+> design e estrutura do mapa do porto com placeholder)
 
 ---
 
@@ -23,9 +23,24 @@ ajustes já foram feitos, dentro de 1 semana. O registro completo, com as 5
 partidas do playtest e o raciocínio, está em
 `docs/BLOCO3_MARCO_INTERMEDIARIO.md`, Parte 3.
 
-Próximo passo: **Bloco 4 — arte final, áudio e integração**.
+**Bloco 4 — arte final, áudio e integração — está EM ANDAMENTO.** Os dois
+primeiros itens da ordem de trabalho (`docs/BLOCO4_BRIEFING_VISUAL.md`) saíram
+em 27/08:
 
-👉 **Se você vai trabalhar no visual, leia antes
+1. ✅ **Style guide de flat design** —
+   `docs/design/BR_Port_Style_Guide_Flat_Design.md`. Paleta de UI (já
+   validada) + paleta nova de mapa/cenário, peso de linha, espaçamento,
+   proporções canônicas e convenção de cor por estado.
+2. ✅ **Estrutura do mapa do porto com placeholder** — a antiga fileira
+   "Docas" virou um mapa visto de cima (`Main.tscn`, seção "Porto"):
+   Escritório (terreno) | Docas (dinâmico, 2–3 conforme upgrade) | Zona de
+   Espera, sobre um fundo de água. Ainda formas simples — valida a leitura
+   espacial antes de encomendar sprite.
+
+Faltam os itens 3–7 do plano: sprites de personagem, sprites de cenário, UI
+das 12 telas, áudio, integração progressiva.
+
+👉 **Se você vai continuar o visual, leia antes
 `docs/BLOCO4_BRIEFING_VISUAL.md`.** Ele traz decisões já tomadas sobre a
 imagem de referência (mapa do porto visto de cima, turnos mantidos, arte pelo
 style guide do GDD) e a lista do que NÃO seguir dessa imagem.
@@ -39,8 +54,9 @@ style guide do GDD) e a lista do que NÃO seguir dessa imagem.
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
 | `brport_vs/tests/run_tests.gd` | 19 asserções de regressão |
-| `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, estilos de doca e trabalhador |
-| `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) |
+| `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, estilos de doca e trabalhador, e (Bloco 4) os tokens do mapa (água, escritório, zona de espera) |
+| `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem a seção "Porto" com o mapa do porto |
+| `docs/design/BR_Port_Style_Guide_Flat_Design.md` | Paleta, peso de linha, espaçamento e proporções canônicas para toda arte futura |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
@@ -64,6 +80,13 @@ style guide do GDD) e a lista do que NÃO seguir dessa imagem.
 com um tema (`ui/tema_brport.tres`) que carrega a paleta do protótipo HTML.
 Trocar placeholder por arte final no Bloco 4 é editar cena e tema, não
 reescrever script.
+
+Desde o Bloco 4, as docas moram num **mapa do porto visto de cima**
+(Escritório | Docas | Zona de Espera), não mais numa fileira de cartões —
+mas ainda com retângulos coloridos, não sprite. A Zona de Espera é **só
+visual** por enquanto: mostra um marcador decorativo, não representa uma
+fila de verdade (barcos continuam nascendo direto nas docas — ver o aviso
+em `BLOCO4_BRIEFING_VISUAL.md` antes de torná-la mecânica).
 
 Continuam para depois: áudio, Diário do Porto, cena narrativa de fim de Fase 1
 e a lista "VS — OUT" do GDD.

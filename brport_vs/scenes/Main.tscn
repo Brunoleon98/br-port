@@ -100,15 +100,81 @@ show_percentage = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 
-[node name="DocasTitulo" type="Label" parent="Margem/Coluna"]
+[node name="PortoTitulo" type="Label" parent="Margem/Coluna"]
 layout_mode = 2
-text = "Docas"
+text = "Porto"
 theme_override_colors/font_color = Color(0.51, 0.6, 0.706, 1)
 theme_override_font_sizes/font_size = 13
 
-[node name="Docas" type="HBoxContainer" parent="Margem/Coluna"]
+[node name="MapaPainel" type="PanelContainer" parent="Margem/Coluna"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_type_variation = &"MapaAgua"
+
+[node name="MapaLinha" type="HBoxContainer" parent="Margem/Coluna/MapaPainel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Escritorio" type="PanelContainer" parent="Margem/Coluna/MapaPainel/MapaLinha"]
+custom_minimum_size = Vector2(90, 170)
+layout_mode = 2
+theme_type_variation = &"Escritorio"
+
+[node name="EscritorioColuna" type="VBoxContainer" parent="Margem/Coluna/MapaPainel/MapaLinha/Escritorio"]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Icone" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/Escritorio/EscritorioColuna"]
+layout_mode = 2
+text = "🏢"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
+
+[node name="Rotulo" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/Escritorio/EscritorioColuna"]
+layout_mode = 2
+text = "Escritório"
+horizontal_alignment = 1
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 11
+
+[node name="Docas" type="HBoxContainer" parent="Margem/Coluna/MapaPainel/MapaLinha"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="ZonaEspera" type="PanelContainer" parent="Margem/Coluna/MapaPainel/MapaLinha"]
+custom_minimum_size = Vector2(90, 170)
+layout_mode = 2
+theme_type_variation = &"ZonaEspera"
+
+[node name="ZonaColuna" type="VBoxContainer" parent="Margem/Coluna/MapaPainel/MapaLinha/ZonaEspera"]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Icone" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/ZonaEspera/ZonaColuna"]
+layout_mode = 2
+text = "🌊"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+
+[node name="Rotulo" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/ZonaEspera/ZonaColuna"]
+layout_mode = 2
+text = "Zona de
+Espera"
+horizontal_alignment = 1
+autowrap_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="Marcadores" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/ZonaEspera/ZonaColuna"]
+layout_mode = 2
+text = "⚓ ⚓"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
 
 [node name="TrabalhadoresTitulo" type="Label" parent="Margem/Coluna"]
 layout_mode = 2
