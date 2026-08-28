@@ -3,8 +3,8 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 27/08/2026 (Bloco 4 iniciado — style guide de flat
-> design e estrutura do mapa do porto com placeholder)
+> **Última atualização:** 28/08/2026 (Bloco 4 — sprites do trabalhador e dos
+> barcos integrados; a arte deixou de ser placeholder)
 
 ---
 
@@ -37,8 +37,20 @@ em 27/08:
    Espera, sobre um fundo de água. Ainda formas simples — valida a leitura
    espacial antes de encomendar sprite.
 
-Faltam os itens 3–7 do plano: sprites de personagem, sprites de cenário, UI
-das 12 telas, áudio, integração progressiva.
+3. ✅ **Sprites de personagem e de barco integrados** (28/08) — trabalhador,
+   cargueiro e barco de pesca entraram nas cenas reais, mais um caminhão
+   decorativo no escritório. Os PNGs vieram **sem canal alpha** (quadriculado
+   pintado nos pixels); `tools/preparar_sprites.py` conserta isso e é para ser
+   reusado a cada leva nova. Análise completa do pacote — incluindo o que dele
+   NÃO cabe na Fase 1 — em `docs/BLOCO4_PACOTE_SPRITES.md`.
+
+Faltam os itens 4–7 do plano: sprites de cenário (píer, água), UI das 12
+telas, áudio, integração progressiva.
+
+⚠️ **Decisão de estilo em aberto:** a interface é flat e os sprites novos são
+ilustrados em vista 3/4 — o GDD congela "Flat Design 2D". Dentro de cartão
+funciona; solto sobre o mapa vai brigar de perspectiva. Ver §6b do style
+guide.
 
 👉 **Se você vai continuar o visual, leia antes
 `docs/BLOCO4_BRIEFING_VISUAL.md`.** Ele traz decisões já tomadas sobre a
@@ -57,6 +69,9 @@ style guide do GDD) e a lista do que NÃO seguir dessa imagem.
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, estilos de doca e trabalhador, e (Bloco 4) os tokens do mapa (água, escritório, zona de espera) |
 | `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem a seção "Porto" com o mapa do porto |
 | `docs/design/BR_Port_Style_Guide_Flat_Design.md` | Paleta, peso de linha, espaçamento e proporções canônicas para toda arte futura |
+| `brport_vs/art/sprites/` | Sprites prontos (trabalhador, cargueiro, barco de pesca, caminhão, guindaste) |
+| `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
+| `docs/BLOCO4_PACOTE_SPRITES.md` | O que do pacote de sprites/mockups entrou, o que não entrou e por quê |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |

@@ -9,6 +9,7 @@ extends PanelContainer
 
 var worker_id: int = -1
 
+@onready var _retrato: TextureRect = $Conteudo/Retrato
 @onready var _nome: Label = $Conteudo/Nome
 @onready var _estado: Label = $Conteudo/Estado
 
@@ -32,7 +33,7 @@ func refresh() -> void:
 	var w = _find_self()
 	if w == null:
 		return
-	_nome.text = "👷 #%d" % worker_id
+	_nome.text = "#%d" % worker_id
 
 	var busy: int = int(w["busy_turns"])
 	# `busy_turns` só conta operações que já começaram; quem foi alocado neste
@@ -68,8 +69,13 @@ func esta_livre() -> bool:
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if not esta_livre():
 		return null
-	var preview := Label.new()
-	preview.text = "👷 #%d" % worker_id
-	preview.add_theme_color_override("font_color", Color(0.102, 0.478, 0.251))
+	# O arrasto carrega o próprio trabalhador, não um rótulo: fica claro o que
+	# está sendo levado para a doca.
+	var preview := TextureRect.new()
+	preview.texture = _retrato.texture
+	preview.custom_minimum_size = Vector2(48, 96)
+	preview.size = Vector2(48, 96)
+	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	set_drag_preview(preview)
 	return {"worker_id": worker_id}

@@ -8,9 +8,15 @@ extends PanelContainer
 # nada: só decide qual estilo vale agora e o que cada label diz. É isso que
 # permite trocar o visual no Bloco 4 sem tocar em lógica.
 
+# A arte do barco entra por textura, não por cor pintada em script — mesma
+# regra dos estilos: o script escolhe QUAL recurso vale, nunca desenha.
+const ArteGrande := preload("res://art/sprites/cargueiro.png")
+const ArtePequeno := preload("res://art/sprites/barco_pesca.png")
+
 var dock_index: int = -1
 
 @onready var _titulo: Label = $Conteudo/Titulo
+@onready var _barco: TextureRect = $Conteudo/Barco
 @onready var _tipo: Label = $Conteudo/Tipo
 @onready var _valor: Label = $Conteudo/Valor
 @onready var _progresso: Label = $Conteudo/Progresso
@@ -44,6 +50,7 @@ func refresh() -> void:
 
 	if boat == null:
 		_aplicar_estilo("DocaVazia")
+		_barco.texture = null
 		_tipo.text = "Vazia"
 		_valor.text = ""
 		_progresso.text = ""
@@ -54,7 +61,9 @@ func refresh() -> void:
 	var sob_oferta: bool = boat.get("rival", false) and not boat.get("matched", false)
 	var valor: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
 
-	_tipo.text = "🚢 Grande" if grande else "⛵ Pequeno"
+	# O sprite já diz que barco é: o emoji que ficava aqui virou redundante.
+	_barco.texture = ArteGrande if grande else ArtePequeno
+	_tipo.text = "Grande" if grande else "Pequeno"
 	_valor.text = "R$%d%s" % [valor, " (acordo)" if boat.get("matched", false) else ""]
 
 	if sob_oferta:

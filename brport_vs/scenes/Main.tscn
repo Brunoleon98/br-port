@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
+[ext_resource type="Texture2D" path="res://art/sprites/caminhao.png" id="3"]
 
 [sub_resource type="StyleBoxFlat" id="faixa_msg"]
 bg_color = Color(1, 0.984, 0.922, 1)
@@ -124,11 +125,12 @@ layout_mode = 2
 theme_override_constants/separation = 4
 alignment = 1
 
-[node name="Icone" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/Escritorio/EscritorioColuna"]
+[node name="Icone" type="TextureRect" parent="Margem/Coluna/MapaPainel/MapaLinha/Escritorio/EscritorioColuna"]
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
-text = "🏢"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 28
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Rotulo" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/Escritorio/EscritorioColuna"]
 layout_mode = 2

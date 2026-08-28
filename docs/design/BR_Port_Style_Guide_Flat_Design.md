@@ -94,8 +94,8 @@ respeitar — o placeholder já define o espaço; o sprite entra dentro dele.
 
 | Elemento | Caixa (px) | Nota |
 |---|---|---|
-| Trabalhador (`Worker.tscn`) | 96×96 | Figura de pé, centralizada, margem interna ~8px |
-| Doca (`Dock.tscn`) | 150×170 | Retrato — arte do barco/píer ocupa a faixa superior (~100px), texto/estado embaixo (~70px) |
+| Trabalhador (`Worker.tscn`) | 108×152 | Figura de pé, centralizada; sprite ocupa ~86px de altura, nome e estado embaixo |
+| Doca (`Dock.tscn`) | 150×202 | Retrato — sprite do barco na faixa de 82px, texto/estado embaixo |
 | Escritório (mapa) | 90×170 | Alinhado à mesma altura da doca, para a leitura da fileira ficar nivelada |
 | Zona de espera (mapa) | 90×170 | Mesma altura da doca; largura menor porque é só marcador, não slot operável |
 | Ícone inline (emoji hoje, vetor depois) | 13–28px | Tamanho de fonte onde o ícone é usado hoje — usar como guia de escala do sprite final |
@@ -120,6 +120,30 @@ propósito. Quando entrar arte final (Bloco 4, item 5 — "UI das 12 telas"),
 o ícone vetorial troca o emoji **no mesmo slot de texto/tamanho**, mantendo
 o peso de linha da seção 2. Não trocar emoji por ícone com estilo diferente
 (ex.: outline fino) sem atualizar este guia primeiro.
+
+## 6b. Decisão em aberto — sprites ilustrados sobre interface flat
+
+Desde 28/08 o jogo mistura duas linguagens visuais: a **interface é flat**
+(cores chapadas, sem gradiente) e os **sprites são ilustrados** — vista 3/4,
+sombreado, contorno escuro, volume. Ver `docs/BLOCO4_PACOTE_SPRITES.md`.
+
+Isso **contraria o GDD**, que congela "Flat Design 2D" como estilo de arte.
+Não é acidente: os sprites vieram prontos nesse estilo e funcionam bem dentro
+dos cartões, porque cartão é interface — o sprite lê como ilustração de
+catálogo, não como objeto de mundo, e por isso a mistura não incomoda.
+
+Onde isso **vai** incomodar: se os sprites forem colocados soltos sobre o
+mapa visto de cima. A perspectiva 3/4 dos sprites briga com a projeção
+topo-down do mapa, e aí a mistura passa de estilística a erro de perspectiva.
+
+Enquanto a decisão não for tomada, vale a regra prática:
+
+- Sprite ilustrado **dentro de cartão/painel de UI** — ok, é o que está no ar.
+- Sprite ilustrado **solto sobre o mapa** — não, até o estilo ser decidido.
+
+As duas saídas coerentes, para decidir depois: ou o mapa passa a 3/4 para
+casar com os sprites, ou os sprites são refeitos em flat topo-down. A segunda
+respeita o GDD; a primeira aproveita o que já existe.
 
 ## 7. O que este guia NÃO decide
 
