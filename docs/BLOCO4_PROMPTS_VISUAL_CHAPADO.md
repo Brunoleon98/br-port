@@ -1,3 +1,10 @@
+> ⚠️ **SUPERADO em 28/08/2026.** A direção mudou para **isométrico** — ver
+> `docs/BLOCO4_PROMPTS_ISOMETRICO.md`. Os prompts abaixo trazem
+> `no isometric view, no 3/4 view, no perspective` no bloco de negativos e
+> produzem o oposto do visual escolhido. Mantido só pelo registro do
+> raciocínio (a análise de animação e de evolução por Fase segue válida e foi
+> reaproveitada no documento novo).
+
 # BR Port — Prompts para o visual chapado (mapa implementado)
 
 > Escrito em 28/08/2026, depois de o mapa do porto virar a tela do jogo de

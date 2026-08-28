@@ -47,11 +47,12 @@ em 27/08:
 Faltam os itens 4–7 do plano: sprites de cenário (píer, água), UI das 12
 telas, áudio, integração progressiva.
 
-✅ **Decisão de estilo resolvida (28/08):** o mapa e tudo que fica sobre ele é
-**vetor chapado topo-down**, de volta ao "Flat Design 2D" do GDD. Os PNGs
-ilustrados em 3/4 seguem no repo para painéis e retratos, nunca no mapa —
-sobre um mapa visto de cima eles são erro de perspectiva, não estilo.
-Prompts do visual atual em `docs/BLOCO4_PROMPTS_VISUAL_CHAPADO.md`.
+🔄 **Direção de arte: ISOMÉTRICA (decidida 28/08).** O jogo em produção ainda
+está em topo-down chapado e funcional; o isométrico está provado em
+`scenes/proto/MapaIso.tscn` mas **não foi integrado**. Migrar exige regerar os
+assets — os dois barcos atuais estão na orientação errada (horizontais; num
+plano isométrico nenhum eixo é horizontal). Prompts em
+`docs/BLOCO4_PROMPTS_ISOMETRICO.md`, cuja §0 trata só de orientação.
 
 👉 **Se você vai continuar o visual, leia antes
 `docs/BLOCO4_BRIEFING_VISUAL.md`.** Ele traz decisões já tomadas sobre a
@@ -73,7 +74,9 @@ style guide do GDD) e a lista do que NÃO seguir dessa imagem.
 | `brport_vs/art/sprites/` | Sprites prontos (trabalhador, cargueiro, barco de pesca, caminhão, guindaste) |
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
 | `docs/BLOCO4_GUIA_GERACAO_ASSETS.md` | Prompts de gerador (retratos) + o que o píer construível exige |
-| `docs/BLOCO4_PROMPTS_VISUAL_CHAPADO.md` | **Prompts do visual atual** — vetor chapado topo-down, animação e evolução por Fase |
+| `docs/BLOCO4_PROMPTS_ISOMETRICO.md` | **Prompts do visual escolhido** — isométrico, orientação obrigatória, animação e evolução por Fase |
+| `docs/BLOCO4_PROMPTS_VISUAL_CHAPADO.md` | Superado — versão topo-down, mantida pelo registro |
+| `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo |
 | `docs/BLOCO4_PACOTE_SPRITES.md` | O que do pacote de sprites/mockups entrou, o que não entrou e por quê |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |

@@ -1,13 +1,13 @@
 [gd_scene load_steps=8 format=3]
 
 ; PROTÓTIPO VISUAL — não faz parte do jogo, não tem lógica.
-; Existe para responder uma pergunta só: o ângulo isométrico dos mockups
-; funciona num ecrã RETRATO 720x1280? Os mockups são todos quadrados, e é
-; justamente isso que eles escondem.
 ;
-; Os sprites ilustrados 3/4 (cargueiro, barco de pesca, guindaste, caminhão,
-; trabalhador) aparecem aqui na perspetiva CERTA — foi para este ângulo que
-; eles foram desenhados.
+; Duas coisas em teste:
+;  1. Costa em DEGRAUS, para as docas descerem na vertical em vez de fugirem
+;     para a esquerda (numa costa reta elas saem do ecrã retrato).
+;  2. Os barcos rotacionados 26,6° — o ângulo do eixo do píer na tela. É um
+;     paliativo: sprite ilustrado tem a perspetiva assada dentro dele, então
+;     rodar só disfarça. O certo é GERAR já na orientação isométrica.
 
 [ext_resource type="Texture2D" path="res://art/porto_mapa_iso.svg" id="1"]
 [ext_resource type="Texture2D" path="res://art/sprites/cargueiro.png" id="2"]
@@ -110,81 +110,87 @@ theme_override_font_sizes/font_size = 16
 layout_mode = 0
 offset_top = 62.0
 offset_right = 720.0
-offset_bottom = 802.0
+offset_bottom = 782.0
 clip_contents = true
 
 [node name="Mapa" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
 offset_right = 720.0
-offset_bottom = 740.0
+offset_bottom = 720.0
 texture = ExtResource("1")
 
 [node name="Guindaste" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 396.0
-offset_top = 128.0
-offset_right = 480.0
-offset_bottom = 236.0
+offset_left = 424.0
+offset_top = 6.0
+offset_right = 524.0
+offset_bottom = 134.0
 texture = ExtResource("4")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Caminhao" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 466.0
-offset_top = 236.0
-offset_right = 556.0
-offset_bottom = 328.0
+offset_left = 232.0
+offset_top = 96.0
+offset_right = 320.0
+offset_bottom = 186.0
 texture = ExtResource("5")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Barco1" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 278.0
-offset_top = 240.0
-offset_right = 458.0
-offset_bottom = 369.0
+offset_left = 420.0
+offset_top = 150.0
+offset_right = 620.0
+offset_bottom = 293.0
+pivot_offset = Vector2(100, 71.5)
+rotation = 0.4636
 texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Trabalhador" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 372.0
-offset_top = 288.0
-offset_right = 410.0
-offset_bottom = 368.0
+offset_left = 336.0
+offset_top = 214.0
+offset_right = 376.0
+offset_bottom = 298.0
 texture = ExtResource("6")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Barco2" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 168.0
-offset_top = 312.0
-offset_right = 316.0
-offset_bottom = 449.0
+offset_left = 315.0
+offset_top = 324.0
+offset_right = 485.0
+offset_bottom = 481.0
+pivot_offset = Vector2(85, 78.5)
+rotation = 0.4636
 texture = ExtResource("3")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Barco3" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 26.0
-offset_top = 366.0
-offset_right = 206.0
-offset_bottom = 495.0
+offset_left = 180.0
+offset_top = 510.0
+offset_right = 380.0
+offset_bottom = 653.0
+pivot_offset = Vector2(100, 71.5)
+rotation = 0.4636
 texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="LblDoca1" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 452.0
-offset_top = 224.0
-offset_right = 652.0
-offset_bottom = 258.0
+offset_left = 552.0
+offset_top = 120.0
+offset_right = 716.0
+offset_bottom = 154.0
 text = "DOCA 1"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
@@ -193,10 +199,10 @@ theme_override_font_sizes/font_size = 24
 
 [node name="LblDoca2" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 326.0
-offset_top = 288.0
-offset_right = 526.0
-offset_bottom = 322.0
+offset_left = 462.0
+offset_top = 306.0
+offset_right = 626.0
+offset_bottom = 340.0
 text = "DOCA 2"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
@@ -205,10 +211,10 @@ theme_override_font_sizes/font_size = 24
 
 [node name="LblDoca3" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 200.0
-offset_top = 352.0
-offset_right = 400.0
-offset_bottom = 386.0
+offset_left = 340.0
+offset_top = 486.0
+offset_right = 504.0
+offset_bottom = 520.0
 text = "DOCA 3"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
@@ -217,37 +223,30 @@ theme_override_font_sizes/font_size = 24
 
 [node name="LblZona" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 380.0
-offset_top = 570.0
-offset_right = 700.0
-offset_bottom = 640.0
-text = "ZONA DE ESPERA"
+offset_left = 470.0
+offset_top = 596.0
+offset_right = 712.0
+offset_bottom = 666.0
+text = "ZONA DE
+ESPERA"
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
 theme_override_constants/outline_size = 9
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 22
 
 ; ================= RODAPÉ =================
 
 [node name="Nota" type="Label" parent="."]
 layout_mode = 0
 offset_left = 16.0
-offset_top = 812.0
+offset_top = 794.0
 offset_right = 704.0
-offset_bottom = 900.0
+offset_bottom = 862.0
 autowrap_mode = 2
-text = "O chão isométrico mede 716 x 358 px. Não é escolha: a caixa de um plano isométrico é sempre 2:1, então em 720 de largura ele nunca passa de 360 de altura."
+text = "Costa em degraus: as docas descem na vertical. Barcos rodados 26,6° para casar com o eixo do píer — paliativo, o certo é gerar já nessa orientação."
 theme_override_colors/font_color = Color(0.639, 0.792, 0.855, 1)
 theme_override_font_sizes/font_size = 14
-
-[node name="Trabalhadores" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 14.0
-offset_top = 916.0
-offset_right = 706.0
-offset_bottom = 1074.0
-theme_override_constants/separation = 10
 
 [node name="Avancar" type="Button" parent="."]
 layout_mode = 0
