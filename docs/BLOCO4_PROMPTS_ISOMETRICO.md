@@ -144,8 +144,28 @@ C3  Small two-storey port office building, white and pale blue walls,
 [+ BLOCO DE ESTILO + ORIENTATION]
 ```
 
+```
+C4  Empty construction plot: bare graded ground with corner marker stakes and
+    a length of string between them, nothing built yet.
+[+ BLOCO DE ESTILO + FOOTPRINT do lote]
+```
+
 C1 e C2 são o mesmo par de estados de B1/B2 — mesmo enquadramento, um troca
-pelo outro.
+pelo outro. **C4 é o par de C3**: toda estrutura precisa do estado "lote vazio",
+senão o sistema de Fases (§5) não tem o que mostrar antes de construir.
+
+### C5 — Trabalhador isométrico
+
+O `trabalhador.png` atual serve no cartão de arrasto (cartão é interface). Se
+os trabalhadores forem para o cais, precisa de versão isométrica:
+
+```
+C5  Port worker standing, yellow hard hat, orange safety vest with reflective
+    stripes, dark work trousers and boots, arms slightly out, seen in the same
+    isometric projection as the ground — looking down at him from the same
+    height and angle as the buildings.
+[+ BLOCO DE ESTILO; sem ORIENTATION — figura de pé não tem eixo longo]
+```
 
 ### D — Cenário
 
@@ -156,6 +176,93 @@ D3  Wooden cargo crates, a few stacked, rope and stencil marks, no readable text
 D4  Red harbor mooring buoy floating in water, white top stripe.
 [+ BLOCO DE ESTILO; ORIENTATION só em D2 e D3]
 ```
+
+### E — Peças que a animação exige (ver §4)
+
+```
+E1  Gantry crane BASE only — the tower and its rails, no jib, no hook.
+E2  Gantry crane JIB only — the horizontal boom arm, same scale as E1.
+E3  Crane HOOK block only — a small dark pulley block, tiny.
+[+ BLOCO DE ESTILO + ORIENTATION em E1 e E2]
+```
+
+### F — Marcadores da zona de espera
+
+```
+F1  Anchorage marker: a dashed white circle drawn flat on the water with a
+    simple white anchor symbol at its centre, seen in the same isometric
+    projection so the circle reads as an ellipse, not a circle.
+[+ BLOCO DE ESTILO]
+```
+
+---
+
+## 3b. Ícones de interface — e estes NÃO são isométricos
+
+**Não cole o bloco de estilo isométrico num ícone de HUD.** Ícone de barra
+superior é interface, não objeto de mundo: precisa de silhueta chapada e
+legível a 19px. Money bag em perspetiva isométrica dentro de uma pílula escura
+vira borrão.
+
+Bloco próprio para os ícones:
+
+```
+STYLE: flat 2D game UI icon, front-facing, bold simple silhouette, solid flat
+colors, thick clean shapes, readable at 19 pixels, centered, no perspective.
+PALETTE: navy #1c3454, amber #e09a10, cream #f0f6ff, green #1a7a40,
+red #c23030, grey #8299b4.
+BACKGROUND: solid flat magenta #FF00FF.
+NEGATIVE: no isometric view, no 3D, no text, no letters, no numbers,
+no watermark, no gradient.
+OUTPUT: square 1:1, 512x512.
+```
+
+São **17 ícones**, um por emoji que ainda está de pé na interface:
+
+| # | Ícone | Onde o jogo usa (emoji atual) |
+|---|---|---|
+| G1 | Saco de dinheiro com moedas | HUD, caixa (💰) |
+| G2 | Folha de calendário | HUD, dia/turno (📅) |
+| G3 | Estrela em disco | HUD, reputação (⭐) |
+| G4 | Âncora | HUD, contador de docas (⚓) |
+| G5 | Prédio de banco com selo vermelho | Barra da parcela (🏦) |
+| G6 | Guindaste/martelo de construção | Botão "Ampliar píer" (🏗) |
+| G7 | Duas barras de pausa | Botão pausar (⏸) |
+| G8 | Triângulo de play | Botão "Avançar dia" (▶) |
+| G9 | Setas circulares | Botão recomeçar (🔄) |
+| G10 | Capacete de obra | Trabalhador na doca (👷) |
+| G11 | Espadas cruzadas | Oferta do rival (⚔) |
+| G12 | Aperto de mãos | Contra-oferta "Igualar" (🤝) |
+| G13 | Tesoura | Contra-oferta "Cortar metade" (✂) |
+| G14 | Braço flexionado | Contra-oferta "Manter preço" (💪) |
+| G15 | Troféu | Fim de jogo, vitória (🏆) |
+| G16 | Nota voando | Fim de jogo, derrota (💸) |
+| G17 | Marca de confirmado | Estado concluído (✅/✓) |
+
+> A seta `→` que aparece em "arraste →" é tipografia, não ícone — fica como está.
+
+> **Alternativa mais barata para este grupo:** os 17 são vetor chapado, que é
+> exatamente o que o Claude Design faz bem e o gerador faz mal (silhueta
+> imprecisa, conjunto inconsistente, insiste em pôr texto). Oito deles já estão
+> desenhados — ver `BLOCO4_GUIA_GERACAO_ASSETS.md` §1b.
+
+---
+
+## 3c. Personagens — 3/4, nunca isométricos
+
+Os retratos aparecem em **painéis de interface**, não no mapa. Levam o bloco de
+estilo do `BLOCO4_GUIA_GERACAO_ASSETS.md` §5, não o daqui.
+
+Só dois personagens têm tela na Fase 1 — confirmado no código (`GameState.gd`,
+`CounterOfferPanel.gd`, `DebtPaymentPanel.gd`):
+
+| Quem | O que gerar | Por que importa |
+|---|---|---|
+| **Arlindo** | 3 expressões: neutro · impaciente · indo embora | A paciência dele (`RIVAL_PATIENCE = 2`) já está implementada e hoje é desenhada com 🙂/😟. É o asset de maior retorno da lista inteira. |
+| **Sr. Ribeiro** | 1 pose | Painel da parcela — a única forma de perder o jogo. |
+
+**Dona Cida fica de fora**, mesmo o plano de produção mandando começar por ela:
+é para o jogo completo, e o VS não tem tela onde ela apareça.
 
 ---
 
@@ -278,15 +385,53 @@ Descobertas medindo, não no papel — estão em `tools/gerar_mapa_iso.py`.
 
 ---
 
+## 6b. Checklist — tudo que a Fase 1 consome
+
+Serve para responder "os prompts cobrem tudo?" sem depender de memória. Cada
+linha é um asset que o jogo carrega ou um emoji que ainda está no lugar de um.
+
+| Asset | Prompt | Estado |
+|---|---|---|
+| Mapa base isométrico | — | ✅ gerado por `tools/gerar_mapa_iso.py` |
+| Píer vazio / construído | B1 · B2 | ⬜ a gerar |
+| Barco pequeno (pesca) | A1 | ⬜ a gerar (o atual está horizontal) |
+| Barco grande (cargueiro) | A2 | ⬜ a gerar (o atual está horizontal) |
+| 3º barco (GDD pede 3 variações) | A3 | ⬜ a gerar |
+| Galpão velho / consertado | C1 · C2 | ⬜ a gerar |
+| Escritório + lote vazio | C3 · C4 | ⬜ a gerar |
+| Trabalhador isométrico | C5 | ⬜ só se forem para o cais |
+| Guindaste em peças | E1 · E2 · E3 | ⬜ só quando for animar |
+| Marcador de fundeadouro | F1 | ⬜ a gerar |
+| Coqueiro (copa + tronco) | D1a · D1b | ⬜ a gerar |
+| Contêineres, caixotes, boia | D2 · D3 · D4 | ⬜ a gerar |
+| Ondulação da água | D5 | ⬜ ou shader, sem arte |
+| **17 ícones de HUD e botões** | G1–G17 | ⬜ **vetor chapado, não isométrico** |
+| Arlindo, 3 expressões | §3c | ⬜ maior retorno da lista |
+| Sr. Ribeiro | §3c | ⬜ a gerar |
+
+**Ainda são emoji na interface:** 💰 📅 ⭐ ⚓ 🏦 🏗 ⏸ ▶ 🔄 👷 ⚔ 🤝 ✂ 💪 🏆 💸 ✅
+
+Para reconferir depois de qualquer mudança no jogo:
+
+```
+grep -rhoP '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' \
+  brport_vs/scenes brport_vs/scripts | sort -u
+```
+
+---
+
 ## 7. Ordem sugerida
 
 1. **A1–A3** — os três barcos, já na orientação certa. É o que o jogador olha
    o tempo todo, e os dois atuais estão tortos.
 2. **B1–B2** — píer nos dois estados, o par que o botão "Ampliar píer" troca.
-3. **D1a–D1b** — copa e tronco do coqueiro. Vento é o maior retorno por
-   esforço: duas peças e um `Tween`.
-4. **C1–C2** — galpão velho e consertado, com gancho narrativo pronto.
-5. Estruturas de Fase 2+ — só depois de o VS fechar.
+3. **§3c, Arlindo** — as 3 expressões. A mecânica da paciência já existe e hoje
+   é desenhada com emoji; é o maior salto de qualidade por asset gerado.
+4. **G1–G17** — os ícones. São muitos, mas é a camada que faz a interface
+   parar de parecer protótipo. Considere o caminho do Claude Design (§3b).
+5. **D1a–D1b** — copa e tronco do coqueiro. Vento é duas peças e um `Tween`.
+6. **C1–C2** — galpão velho e consertado, com gancho narrativo pronto.
+7. Estruturas de Fase 2+ — só depois de o VS fechar.
 
 ---
 
