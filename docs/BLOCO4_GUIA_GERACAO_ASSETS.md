@@ -58,6 +58,64 @@ GDD e regerar os 5 —, me avise: os prompts mudam, mas a estrutura do guia não
 
 ---
 
+## 1b. Quem produz o quê — Claude Design ou gerador de imagem
+
+O Claude Design **não é um gerador de imagem**. É uma prancheta de HTML/CSS/SVG:
+eu desenho os assets em vetor, você vê tudo numa tela só e ajusta na mão. Isso
+muda o que faz sentido pedir a cada um.
+
+| | Claude Design (vetor) | Gerador de imagem (raster) |
+|---|---|---|
+| Ícones de HUD | ✅ **melhor opção** | ❌ ruim: silhueta imprecisa, inconsistente no conjunto, insiste em pôr texto |
+| Píer vazio / construído | ✅ ótimo (as duas peças alinham exatas) | ⚠️ difícil casar as duas |
+| Peças chapadas do mapa | ✅ bom | ⚠️ ok |
+| Sprites ilustrados 3/4 | ❌ **não faz** | ✅ é para isso que serve |
+| Retratos do Arlindo / Ribeiro | ❌ sai duro | ✅ melhor opção |
+
+**A regra prática:** interface em vetor, mundo em raster. Ícone chapado ao lado
+de sprite ilustrado não é incoerência — é convenção normal de jogo mobile,
+porque HUD e mundo são camadas diferentes. Ninguém espera o ícone de dinheiro
+pintado como o cargueiro.
+
+### O detalhe que decide o pipeline
+
+O Claude Design exporta **PNG por prancheta, um de cada vez, por caixa de
+diálogo** — e a prancheta pinta um fundo. Ou seja, **transparência não é a
+saída natural dele**, e transparência é exatamente o que sprite de jogo precisa.
+
+Por isso o caminho bom não é exportar do Claude Design: é **eu gravar os
+arquivos `.svg` direto no repositório**. Já está provado nesta sessão que o
+Godot importa SVG nativamente (o mapa e os barcos do protótipo são SVG). Isso
+dá alpha perfeito, escala sem borrar, arquivo minúsculo e versionado como
+texto — sem passo manual de exportação.
+
+**O Claude Design entra como superfície de revisão**, não como fábrica: você
+olha, mexe, me diz o que mudar, e eu gravo o `.svg` final.
+
+### Como pedir (não é prompt de colar em caixa)
+
+Aqui o "prompt" é um pedido em português para mim. O que vale dizer:
+
+```
+Faz os ícones de HUD no Claude Design, na paleta do tema_brport.tres,
+mostrando cada um em tamanho grande e a 19px dentro da barra escura.
+```
+
+```
+Ajusta o ícone de reputação: a estrela some no fundo navy, deixa
+o disco mais claro.
+```
+
+```
+Aprovado. Grava os 8 como .svg em brport_vs/art/icones/ e troca
+os emoji do HUD por eles.
+```
+
+O canvas dos 8 ícones + píer nos dois estados já está feito — foi assim que
+essa comparação foi decidida, e não no papel.
+
+---
+
 ## 2. Bloco de estilo (cole em TODO prompt, sem alterar)
 
 A consistência entre assets vem de repetir isto **literalmente** em cada
@@ -169,6 +227,14 @@ on the sea.
 ---
 
 ## 4. GRUPO B — Indicadores do HUD (prioridade 2)
+
+> **Este grupo NÃO vai para o gerador de imagem — vai para o Claude Design**
+> (ver §1b). Já está desenhado: os oito abaixo existem em vetor, na paleta do
+> jogo, e podem virar `.svg` no repositório quando você aprovar.
+>
+> A tabela abaixo fica registrada como a especificação do conjunto: é o que
+> cada ícone representa e onde o jogo o lê. Os prompts de gerador ficam só
+> como plano B, caso você prefira o caminho raster.
 
 São os oito que o jogo **realmente lê** hoje. Um por imagem.
 
