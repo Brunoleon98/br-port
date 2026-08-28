@@ -3,8 +3,8 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 28/08/2026 (Bloco 4 — sprites do trabalhador e dos
-> barcos integrados; a arte deixou de ser placeholder)
+> **Última atualização:** 28/08/2026 (Bloco 4 — o mapa do porto virou a tela
+> do jogo; docas são vagas no mapa e o upgrade acende a terceira)
 
 ---
 
@@ -47,10 +47,11 @@ em 27/08:
 Faltam os itens 4–7 do plano: sprites de cenário (píer, água), UI das 12
 telas, áudio, integração progressiva.
 
-⚠️ **Decisão de estilo em aberto:** a interface é flat e os sprites novos são
-ilustrados em vista 3/4 — o GDD congela "Flat Design 2D". Dentro de cartão
-funciona; solto sobre o mapa vai brigar de perspectiva. Ver §6b do style
-guide.
+✅ **Decisão de estilo resolvida (28/08):** o mapa e tudo que fica sobre ele é
+**vetor chapado topo-down**, de volta ao "Flat Design 2D" do GDD. Os PNGs
+ilustrados em 3/4 seguem no repo para painéis e retratos, nunca no mapa —
+sobre um mapa visto de cima eles são erro de perspectiva, não estilo.
+Prompts do visual atual em `docs/BLOCO4_PROMPTS_VISUAL_CHAPADO.md`.
 
 👉 **Se você vai continuar o visual, leia antes
 `docs/BLOCO4_BRIEFING_VISUAL.md`.** Ele traz decisões já tomadas sobre a
@@ -71,7 +72,8 @@ style guide do GDD) e a lista do que NÃO seguir dessa imagem.
 | `docs/design/BR_Port_Style_Guide_Flat_Design.md` | Paleta, peso de linha, espaçamento e proporções canônicas para toda arte futura |
 | `brport_vs/art/sprites/` | Sprites prontos (trabalhador, cargueiro, barco de pesca, caminhão, guindaste) |
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
-| `docs/BLOCO4_GUIA_GERACAO_ASSETS.md` | Prompts prontos para gerar o que falta (mapa, HUD, Arlindo, Sr. Ribeiro) + o que o píer construível exige |
+| `docs/BLOCO4_GUIA_GERACAO_ASSETS.md` | Prompts de gerador (retratos) + o que o píer construível exige |
+| `docs/BLOCO4_PROMPTS_VISUAL_CHAPADO.md` | **Prompts do visual atual** — vetor chapado topo-down, animação e evolução por Fase |
 | `docs/BLOCO4_PACOTE_SPRITES.md` | O que do pacote de sprites/mockups entrou, o que não entrou e por quê |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
