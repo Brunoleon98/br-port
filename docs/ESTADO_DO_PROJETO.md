@@ -92,19 +92,25 @@ style guide do GDD) e a lista do que NÃO seguir dessa imagem.
 - Upgrade único (ampliar píer: +1 doca, +1 trabalhador)
 - Autosave local a cada turno
 
-### O que é placeholder de propósito
-**A arte** — ainda são formas e emoji, sem sprite nenhum. Mas a interface
-**não é mais montada por código**: desde o Bloco 3 ela vive em cenas `.tscn`
-com um tema (`ui/tema_brport.tres`) que carrega a paleta do protótipo HTML.
-Trocar placeholder por arte final no Bloco 4 é editar cena e tema, não
-reescrever script.
+### O que já é arte de verdade, e o que ainda é placeholder
+**O mapa do porto é a tela do jogo** (`Main.tscn`): água, cais, escritório,
+armazém, pátio de contêineres, caminhões e coqueiros, tudo em vetor chapado
+visto de cima. As docas são **3 vagas fixas sobre os píeres** — quantas
+existem vem de `GameState.docks`, e "Ampliar píer" acende a terceira, que até
+lá mostra as estacas velhas sob contorno tracejado.
 
-Desde o Bloco 4, as docas moram num **mapa do porto visto de cima**
-(Escritório | Docas | Zona de Espera), não mais numa fileira de cartões —
-mas ainda com retângulos coloridos, não sprite. A Zona de Espera é **só
-visual** por enquanto: mostra um marcador decorativo, não representa uma
-fila de verdade (barcos continuam nascendo direto nas docas — ver o aviso
-em `BLOCO4_BRIEFING_VISUAL.md` antes de torná-la mecânica).
+A interface **não é montada por código**: vive em cenas `.tscn` com um tema
+(`ui/tema_brport.tres`). Trocar arte é editar cena e tema, não reescrever
+script.
+
+Ainda é placeholder: **os ícones do HUD são emoji** (💰 📅 ⭐ ⚓) — já existem
+desenhados em vetor, esperando aprovação para entrar. Faltam também variações
+de barco (o GDD pede 3, existem 2) e o trabalhador visto de cima.
+
+A **Zona de Espera é só visual**: os barcos ancorados são decorativos e não
+representam fila de verdade — barcos continuam nascendo direto nas docas.
+Torná-la mecânica muda o balanceamento medido (ver o aviso em
+`BLOCO4_BRIEFING_VISUAL.md`).
 
 Continuam para depois: áudio, Diário do Porto, cena narrativa de fim de Fase 1
 e a lista "VS — OUT" do GDD.
