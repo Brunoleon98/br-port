@@ -1,0 +1,260 @@
+[gd_scene load_steps=8 format=3]
+
+; PROTÓTIPO VISUAL — não faz parte do jogo, não tem lógica.
+;
+; Duas coisas em teste:
+;  1. Costa em DEGRAUS, para as docas descerem na vertical em vez de fugirem
+;     para a esquerda (numa costa reta elas saem do ecrã retrato).
+;  2. Os barcos rotacionados 26,6° — o ângulo do eixo do píer na tela. É um
+;     paliativo: sprite ilustrado tem a perspetiva assada dentro dele, então
+;     rodar só disfarça. O certo é GERAR já na orientação isométrica.
+
+[ext_resource type="Texture2D" path="res://art/porto_mapa_iso.svg" id="1"]
+[ext_resource type="Texture2D" path="res://art/sprites/cargueiro.png" id="2"]
+[ext_resource type="Texture2D" path="res://art/sprites/barco_pesca.png" id="3"]
+[ext_resource type="Texture2D" path="res://art/sprites/guindaste.png" id="4"]
+[ext_resource type="Texture2D" path="res://art/sprites/caminhao.png" id="5"]
+[ext_resource type="Texture2D" path="res://art/sprites/trabalhador.png" id="6"]
+
+[sub_resource type="StyleBoxFlat" id="pilula"]
+bg_color = Color(0.09, 0.16, 0.24, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.34, 0.47, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 9.0
+content_margin_top = 6.0
+content_margin_right = 9.0
+content_margin_bottom = 6.0
+
+[node name="MapaIso" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Fundo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.051, 0.102, 0.149, 1)
+
+[node name="HudBar" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 712.0
+offset_bottom = 56.0
+theme_override_constants/separation = 6
+
+[node name="P1" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P1"]
+layout_mode = 2
+text = "💰 R$982"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.42, 0.85, 0.53, 1)
+theme_override_font_sizes/font_size = 16
+
+[node name="P2" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P2"]
+layout_mode = 2
+text = "📅 Dia 4/32"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 16
+
+[node name="P3" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.7
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P3"]
+layout_mode = 2
+text = "⭐ 65 Respeitado"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
+theme_override_font_sizes/font_size = 16
+
+[node name="P4" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="L" type="Label" parent="HudBar/P4"]
+layout_mode = 2
+text = "⚓ 3/3"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 16
+
+; ================= MAPA ISOMÉTRICO =================
+
+[node name="MapaWrap" type="Control" parent="."]
+layout_mode = 0
+offset_top = 62.0
+offset_right = 720.0
+offset_bottom = 782.0
+clip_contents = true
+
+[node name="Mapa" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 720.0
+texture = ExtResource("1")
+
+[node name="Guindaste" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 424.0
+offset_top = 6.0
+offset_right = 524.0
+offset_bottom = 134.0
+texture = ExtResource("4")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Caminhao" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 96.0
+offset_right = 320.0
+offset_bottom = 186.0
+texture = ExtResource("5")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Barco1" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 420.0
+offset_top = 150.0
+offset_right = 620.0
+offset_bottom = 293.0
+pivot_offset = Vector2(100, 71.5)
+rotation = 0.4636
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Trabalhador" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 336.0
+offset_top = 214.0
+offset_right = 376.0
+offset_bottom = 298.0
+texture = ExtResource("6")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Barco2" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 315.0
+offset_top = 324.0
+offset_right = 485.0
+offset_bottom = 481.0
+pivot_offset = Vector2(85, 78.5)
+rotation = 0.4636
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Barco3" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 180.0
+offset_top = 510.0
+offset_right = 380.0
+offset_bottom = 653.0
+pivot_offset = Vector2(100, 71.5)
+rotation = 0.4636
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LblDoca1" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 552.0
+offset_top = 120.0
+offset_right = 716.0
+offset_bottom = 154.0
+text = "DOCA 1"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 24
+
+[node name="LblDoca2" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 462.0
+offset_top = 306.0
+offset_right = 626.0
+offset_bottom = 340.0
+text = "DOCA 2"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 24
+
+[node name="LblDoca3" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 340.0
+offset_top = 486.0
+offset_right = 504.0
+offset_bottom = 520.0
+text = "DOCA 3"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 24
+
+[node name="LblZona" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 596.0
+offset_right = 712.0
+offset_bottom = 666.0
+text = "ZONA DE
+ESPERA"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 22
+
+; ================= RODAPÉ =================
+
+[node name="Nota" type="Label" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 794.0
+offset_right = 704.0
+offset_bottom = 862.0
+autowrap_mode = 2
+text = "Costa em degraus: as docas descem na vertical. Barcos rodados 26,6° para casar com o eixo do píer — paliativo, o certo é gerar já nessa orientação."
+theme_override_colors/font_color = Color(0.639, 0.792, 0.855, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="Avancar" type="Button" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 1176.0
+offset_right = 706.0
+offset_bottom = 1234.0
+text = "▶ AVANÇAR DIA"
+theme_override_styles/normal = SubResource("pilula")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 19

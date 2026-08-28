@@ -5,18 +5,24 @@ extends Control
 #
 # A tela mora em Main.tscn e o estilo em ui/tema_brport.tres. Este script
 # só escuta os signals do GameState e alimenta os nós — não constrói e não
-# pinta nada. Antes ele montava a interface inteira por código, o que
-# obrigaria a reescrevê-lo para encaixar a arte final; agora o Bloco 4
-# troca cena e tema sem tocar aqui.
+# pinta nada.
+#
+# Desde o Bloco 4 as docas não são mais uma fileira de cartões: são três
+# VAGAS FIXAS no mapa do porto, já posicionadas em Main.tscn sobre os
+# píeres. Quantas estão construídas vem de GameState.docks, então "Ampliar
+# píer" acende a terceira vaga em vez de só somar um cartão.
 # ============================================================
 
 const WorkerScene := preload("res://scenes/worker/Worker.tscn")
-const DockScene := preload("res://scenes/dock/Dock.tscn")
 const CounterOfferScene := preload("res://scenes/panels/CounterOfferPanel.tscn")
 const DebtPaymentScene := preload("res://scenes/panels/DebtPaymentPanel.tscn")
 const UpgradePanelScene := preload("res://scenes/panels/UpgradePanel.tscn")
 const PauseMenuScene := preload("res://scenes/panels/PauseMenu.tscn")
 const EndGameScene := preload("res://scenes/EndGame.tscn")
+
+# Vagas desenhadas no mapa. O upgrade do píer nunca pode passar disto sem
+# o mapa ganhar uma quarta posição desenhada.
+const VAGAS_NO_MAPA := 3
 
 const COR_BOA := Color(0.102, 0.478, 0.251)
 const COR_AVISO := Color(0.851, 0.467, 0.024)
@@ -24,19 +30,19 @@ const COR_RUIM := Color(0.761, 0.188, 0.188)
 const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 
 @onready var _overlay_layer: CanvasLayer = $Overlay
-@onready var _cash_label: Label = $Margem/Coluna/Cabecalho/CabecalhoColuna/HudLinha/Caixa
-@onready var _day_label: Label = $Margem/Coluna/Cabecalho/CabecalhoColuna/HudLinha/Dia
-@onready var _rep_bar: ProgressBar = $Margem/Coluna/ReputacaoCartao/RepLinha/RepBarra
-@onready var _rep_label: Label = $Margem/Coluna/ReputacaoCartao/RepLinha/RepTexto
-@onready var _message_label: Label = $Margem/Coluna/MensagemCartao/Mensagem
-@onready var _advance_button: Button = $Margem/Coluna/Avancar
-@onready var _upgrade_button: Button = $Margem/Coluna/BotoesLinha/Upgrade
-@onready var _pause_button: Button = $Margem/Coluna/BotoesLinha/Pausar
-@onready var _docks_container: HBoxContainer = $Margem/Coluna/Docas
-@onready var _workers_container: HBoxContainer = $Margem/Coluna/Trabalhadores
-@onready var _meta_bar: ProgressBar = $Margem/Coluna/MetaCartao/MetaColuna/MetaBarra
-@onready var _meta_label: Label = $Margem/Coluna/MetaCartao/MetaColuna/MetaTexto
-@onready var _meta_titulo: Label = $Margem/Coluna/MetaCartao/MetaColuna/MetaTitulo
+@onready var _cash_label: Label = $HudBar/CaixaPilula/Caixa
+@onready var _day_label: Label = $HudBar/DiaPilula/Dia
+@onready var _rep_label: Label = $HudBar/RepPilula/RepTexto
+@onready var _docks_label: Label = $HudBar/DocasPilula/DocasTexto
+@onready var _pause_button: Button = $HudBar/Pausar
+@onready var _message_label: Label = $MensagemCartao/Mensagem
+@onready var _advance_button: Button = $Avancar
+@onready var _upgrade_button: Button = $Upgrade
+@onready var _docks_container: Control = $MapaWrap/Docas
+@onready var _workers_container: HBoxContainer = $Trabalhadores
+@onready var _meta_bar: ProgressBar = $MetaCartao/MetaColuna/MetaBarra
+@onready var _meta_label: Label = $MetaCartao/MetaColuna/MetaTexto
+@onready var _meta_titulo: Label = $MetaCartao/MetaColuna/MetaTitulo
 
 
 func _ready() -> void:
@@ -78,10 +84,9 @@ func _refresh_all() -> void:
 func _refresh_hud() -> void:
 	_cash_label.text = "💰 R$%d" % int(GameState.cash)
 	var shown_day: int = min(GameState.turn, GameState.TURNS_TOTAL)
-	var shown_week: int = min(GameState.current_week(), GameState.WEEKS_TOTAL)
-	_day_label.text = "📅 Dia %d/%d · Semana %d" % [shown_day, GameState.TURNS_TOTAL, shown_week]
-	_rep_bar.value = GameState.reputation
-	_rep_label.text = "%d — %s" % [int(GameState.reputation), GameState.reputation_label()]
+	_day_label.text = "📅 Dia %d/%d" % [shown_day, GameState.TURNS_TOTAL]
+	_rep_label.text = "⭐ %d %s" % [int(GameState.reputation), GameState.reputation_label()]
+	_docks_label.text = "⚓ %d/%d" % [GameState.docks.size(), VAGAS_NO_MAPA]
 	_upgrade_button.disabled = GameState.upgrade_purchased or GameState.phase != "playing"
 	_upgrade_button.text = "✓ Píer ampliado" if GameState.upgrade_purchased else "🏗️ Ampliar píer (R$%d)" % GameState.UPGRADE_COST
 	_advance_button.disabled = GameState.phase != "playing"
@@ -109,20 +114,21 @@ func _refresh_meta() -> void:
 		_meta_label.text = "R$%d de R$%d — já dá para pagar" % [int(GameState.cash), alvo]
 
 
+# As vagas já existem na cena, uma por píer desenhado no mapa. Aqui só se diz
+# a cada uma qual índice ela representa — quem não tem doca correspondente se
+# desenha como vaga por construir.
+func _refresh_docks() -> void:
+	var vagas := _docks_container.get_children()
+	for i in range(vagas.size()):
+		vagas[i].setup(i)
+
+
 func _clear(container: Node) -> void:
 	# queue_free() sozinho é adiado até o fim do frame — sem o remove_child o
 	# container fica com os nós velhos e os novos ao mesmo tempo por um frame.
 	for child in container.get_children():
 		container.remove_child(child)
 		child.queue_free()
-
-
-func _refresh_docks() -> void:
-	_clear(_docks_container)
-	for i in range(GameState.docks.size()):
-		var dock_node = DockScene.instantiate()
-		_docks_container.add_child(dock_node)
-		dock_node.setup(i)
 
 
 func _refresh_workers() -> void:

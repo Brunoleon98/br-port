@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=16 format=3]
+[gd_resource type="Theme" load_steps=19 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -214,6 +214,56 @@ content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
 
+; ── Mapa do porto (Bloco 4) ──
+; Paleta de mundo, registrada em docs/design/BR_Port_Style_Guide_Flat_Design.md
+; §1.2 — deriva das mesmas famílias de cor da UI (o telhado reaproveita o
+; "orange" que já existia no protótipo) em vez de inventar tom à parte.
+;
+;   agua #2f7690   areia #efe0c0   madeira_escura #6b4423   telhado #c85420
+
+[sub_resource type="StyleBoxFlat" id="mapa_agua"]
+bg_color = Color(0.184, 0.463, 0.565, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="escritorio"]
+bg_color = Color(0.937, 0.878, 0.753, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.784, 0.329, 0.125, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 6.0
+content_margin_top = 8.0
+content_margin_right = 6.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="zona_espera"]
+bg_color = Color(0.373, 0.706, 0.820, 0.55)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.7)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 6.0
+content_margin_top = 8.0
+content_margin_right = 6.0
+content_margin_bottom = 8.0
+
 [resource]
 default_font_size = 15
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -248,3 +298,9 @@ TrabAlocado/base_type = "PanelContainer"
 TrabAlocado/styles/panel = SubResource("trab_alocado")
 TrabOcupado/base_type = "PanelContainer"
 TrabOcupado/styles/panel = SubResource("trab_ocupado")
+MapaAgua/base_type = "PanelContainer"
+MapaAgua/styles/panel = SubResource("mapa_agua")
+Escritorio/base_type = "PanelContainer"
+Escritorio/styles/panel = SubResource("escritorio")
+ZonaEspera/base_type = "PanelContainer"
+ZonaEspera/styles/panel = SubResource("zona_espera")

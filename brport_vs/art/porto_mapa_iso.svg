@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 720 720">
+  <rect width="720" height="720" fill="#2b6f8c"/>
+  <ellipse cx="560" cy="90" rx="150" ry="90" fill="#27647e"/>
+  <ellipse cx="120" cy="430" rx="140" ry="90" fill="#27647e"/>
+  <ellipse cx="600" cy="620" rx="150" ry="85" fill="#27647e"/>
+  <g fill="none" stroke="#3d87a4" stroke-width="4" stroke-linecap="round">
+    <path d="M500 60 q9-6 18 0 q9 6 18 0"/>
+    <path d="M620 200 q9-6 18 0 q9 6 18 0"/>
+    <path d="M80 300 q9-6 18 0 q9 6 18 0"/>
+    <path d="M560 380 q9-6 18 0 q9 6 18 0"/>
+    <path d="M60 560 q9-6 18 0 q9 6 18 0"/>
+    <path d="M300 660 q9-6 18 0 q9 6 18 0"/>
+    <path d="M640 500 q9-6 18 0 q9 6 18 0"/>
+    <path d="M180 120 q9-6 18 0 q9 6 18 0"/>
+    <path d="M420 690 q9-6 18 0 q9 6 18 0"/>
+    <path d="M660 90 q9-6 18 0 q9 6 18 0"/>
+  </g>
+  <polygon points="812.0,-18.0 392.0,192.0 392.0,218.0 812.0,8.0" fill="#76828a"/>
+  <polygon points="-28.0,-18.0 392.0,192.0 392.0,218.0 -28.0,8.0" fill="#8e9aa2"/>
+  <polygon points="392.0,-228.0 812.0,-18.0 392.0,192.0 -28.0,-18.0" fill="#b9c2c8"/>
+  <polygon points="377.0,-220.5 758.0,-30.0 368.0,165.0 -13.0,-25.5" fill="#6f7b85"/>
+  <path d="M776.0,-27.0 L374.0,174.0" stroke="#e0a81f" stroke-width="2.5" fill="none"/>
+  <polygon points="512.0,252.0 272.0,372.0 272.0,398.0 512.0,278.0" fill="#76828a"/>
+  <polygon points="-268.0,102.0 272.0,372.0 272.0,398.0 -268.0,128.0" fill="#8e9aa2"/>
+  <polygon points="-28.0,-18.0 512.0,252.0 272.0,372.0 -268.0,102.0" fill="#b9c2c8"/>
+  <polygon points="-43.0,-10.5 458.0,240.0 248.0,345.0 -253.0,94.5" fill="#6f7b85"/>
+  <path d="M476.0,243.0 L254.0,354.0" stroke="#e0a81f" stroke-width="2.5" fill="none"/>
+  <polygon points="392.0,432.0 152.0,552.0 152.0,578.0 392.0,458.0" fill="#76828a"/>
+  <polygon points="-508.0,222.0 152.0,552.0 152.0,578.0 -508.0,248.0" fill="#8e9aa2"/>
+  <polygon points="-268.0,102.0 392.0,432.0 152.0,552.0 -508.0,222.0" fill="#b9c2c8"/>
+  <polygon points="-283.0,109.5 338.0,420.0 128.0,525.0 -493.0,214.5" fill="#6f7b85"/>
+  <path d="M356.0,423.0 L134.0,534.0" stroke="#e0a81f" stroke-width="2.5" fill="none"/>
+  <polygon points="272.0,612.0 -28.0,762.0 -28.0,788.0 272.0,638.0" fill="#76828a"/>
+  <polygon points="-808.0,372.0 -28.0,762.0 -28.0,788.0 -808.0,398.0" fill="#8e9aa2"/>
+  <polygon points="-508.0,222.0 272.0,612.0 -28.0,762.0 -808.0,372.0" fill="#b9c2c8"/>
+  <polygon points="-523.0,229.5 218.0,600.0 -52.0,735.0 -793.0,364.5" fill="#6f7b85"/>
+  <path d="M236.0,603.0 L-46.0,744.0" stroke="#e0a81f" stroke-width="2.5" fill="none"/>
+  <polygon points="707.0,180.5 635.0,216.5 635.0,231.5 707.0,195.5" fill="#633d20"/>
+  <polygon points="500.0,149.0 635.0,216.5 635.0,231.5 500.0,164.0" fill="#7a4d2a"/>
+  <polygon points="572.0,113.0 707.0,180.5 635.0,216.5 500.0,149.0" fill="#9a6438"/>
+  <path d="M594.5,124.2 L522.5,160.2" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M617.0,135.5 L545.0,171.5" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M639.5,146.8 L567.5,182.8" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M662.0,158.0 L590.0,194.0" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M684.5,169.2 L612.5,205.2" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <polygon points="584.3,114.3 574.7,119.2 574.7,128.2 584.3,123.3" fill="#2b3238"/>
+  <polygon points="564.2,113.9 574.7,119.2 574.7,128.2 564.2,122.9" fill="#3c4348"/>
+  <polygon points="573.8,109.1 584.3,114.3 574.7,119.2 564.2,113.9" fill="#4a535a"/>
+  <polygon points="530.3,141.3 520.7,146.2 520.7,155.2 530.3,150.3" fill="#2b3238"/>
+  <polygon points="510.2,140.9 520.7,146.2 520.7,155.2 510.2,149.9" fill="#3c4348"/>
+  <polygon points="519.8,136.1 530.3,141.3 520.7,146.2 510.2,140.9" fill="#4a535a"/>
+  <polygon points="587.0,360.5 515.0,396.5 515.0,411.5 587.0,375.5" fill="#633d20"/>
+  <polygon points="380.0,329.0 515.0,396.5 515.0,411.5 380.0,344.0" fill="#7a4d2a"/>
+  <polygon points="452.0,293.0 587.0,360.5 515.0,396.5 380.0,329.0" fill="#9a6438"/>
+  <path d="M474.5,304.2 L402.5,340.2" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M497.0,315.5 L425.0,351.5" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M519.5,326.8 L447.5,362.8" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M542.0,338.0 L470.0,374.0" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M564.5,349.2 L492.5,385.2" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <polygon points="464.3,294.4 454.7,299.2 454.7,308.2 464.3,303.4" fill="#2b3238"/>
+  <polygon points="444.2,293.9 454.7,299.2 454.7,308.2 444.2,302.9" fill="#3c4348"/>
+  <polygon points="453.8,289.1 464.3,294.4 454.7,299.2 444.2,293.9" fill="#4a535a"/>
+  <polygon points="410.3,321.4 400.7,326.2 400.7,335.2 410.3,330.4" fill="#2b3238"/>
+  <polygon points="390.2,320.9 400.7,326.2 400.7,335.2 390.2,329.9" fill="#3c4348"/>
+  <polygon points="399.8,316.1 410.3,321.4 400.7,326.2 390.2,320.9" fill="#4a535a"/>
+  <polygon points="467.0,540.5 395.0,576.5 395.0,591.5 467.0,555.5" fill="#633d20"/>
+  <polygon points="260.0,509.0 395.0,576.5 395.0,591.5 260.0,524.0" fill="#7a4d2a"/>
+  <polygon points="332.0,473.0 467.0,540.5 395.0,576.5 260.0,509.0" fill="#9a6438"/>
+  <path d="M354.5,484.2 L282.5,520.2" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M377.0,495.5 L305.0,531.5" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M399.5,506.8 L327.5,542.8" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M422.0,518.0 L350.0,554.0" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <path d="M444.5,529.2 L372.5,565.2" stroke="#633d20" stroke-width="1.8" fill="none"/>
+  <polygon points="344.3,474.3 334.7,479.2 334.7,488.2 344.3,483.3" fill="#2b3238"/>
+  <polygon points="324.2,473.9 334.7,479.2 334.7,488.2 324.2,482.9" fill="#3c4348"/>
+  <polygon points="333.8,469.1 344.3,474.3 334.7,479.2 324.2,473.9" fill="#4a535a"/>
+  <polygon points="290.3,501.3 280.7,506.2 280.7,515.2 290.3,510.3" fill="#2b3238"/>
+  <polygon points="270.2,500.9 280.7,506.2 280.7,515.2 270.2,509.9" fill="#3c4348"/>
+  <polygon points="279.8,496.1 290.3,501.3 280.7,506.2 270.2,500.9" fill="#4a535a"/>
+  <polygon points="647.0,-59.5 527.0,0.5 527.0,34.5 647.0,-25.5" fill="#8f3822"/>
+  <polygon points="407.0,-59.5 527.0,0.5 527.0,34.5 407.0,-25.5" fill="#a8452a"/>
+  <polygon points="527.0,-119.5 647.0,-59.5 527.0,0.5 407.0,-59.5" fill="#c85420"/>
+  <polygon points="494.0,109.0 362.0,175.0 362.0,219.0 494.0,153.0" fill="#b3bfc7"/>
+  <polygon points="230.0,109.0 362.0,175.0 362.0,219.0 230.0,153.0" fill="#cfd8de"/>
+  <polygon points="362.0,43.0 494.0,109.0 362.0,175.0 230.0,109.0" fill="#eef2f5"/>
+  <polygon points="362.0,43.0 494.0,109.0 362.0,175.0 230.0,109.0" fill="#c85420"/>
+  <polygon points="374.0,301.0 242.0,367.0 242.0,399.0 374.0,333.0" fill="#8f3822"/>
+  <polygon points="110.0,301.0 242.0,367.0 242.0,399.0 110.0,333.0" fill="#a8452a"/>
+  <polygon points="242.0,235.0 374.0,301.0 242.0,367.0 110.0,301.0" fill="#c85420"/>
+  <polygon points="254.0,483.0 122.0,549.0 122.0,579.0 254.0,513.0" fill="#b3bfc7"/>
+  <polygon points="-10.0,483.0 122.0,549.0 122.0,579.0 -10.0,513.0" fill="#cfd8de"/>
+  <polygon points="122.0,417.0 254.0,483.0 122.0,549.0 -10.0,483.0" fill="#eef2f5"/>
+  <polygon points="512.0,47.0 464.0,71.0 464.0,84.0 512.0,60.0" fill="#7a1a1a"/>
+  <polygon points="428.0,53.0 464.0,71.0 464.0,84.0 428.0,66.0" fill="#8f2020"/>
+  <polygon points="476.0,29.0 512.0,47.0 464.0,71.0 428.0,53.0" fill="#c23030"/>
+  <polygon points="557.0,69.5 509.0,93.5 509.0,106.5 557.0,82.5" fill="#1d4a75"/>
+  <polygon points="473.0,75.5 509.0,93.5 509.0,106.5 473.0,88.5" fill="#245a8c"/>
+  <polygon points="521.0,51.5 557.0,69.5 509.0,93.5 473.0,75.5" fill="#2f74b0"/>
+  <polygon points="362.0,236.0 314.0,260.0 314.0,273.0 362.0,249.0" fill="#9c7a15"/>
+  <polygon points="278.0,242.0 314.0,260.0 314.0,273.0 278.0,255.0" fill="#b8901a"/>
+  <polygon points="326.0,218.0 362.0,236.0 314.0,260.0 278.0,242.0" fill="#e0a81f"/>
+  <polygon points="407.0,258.5 359.0,282.5 359.0,295.5 407.0,271.5" fill="#19512d"/>
+  <polygon points="323.0,264.5 359.0,282.5 359.0,295.5 323.0,277.5" fill="#1f6236"/>
+  <polygon points="371.0,240.5 407.0,258.5 359.0,282.5 323.0,264.5" fill="#2d7a3a"/>
+  <polygon points="242.0,416.0 194.0,440.0 194.0,453.0 242.0,429.0" fill="#7a1a1a"/>
+  <polygon points="158.0,422.0 194.0,440.0 194.0,453.0 158.0,435.0" fill="#8f2020"/>
+  <polygon points="206.0,398.0 242.0,416.0 194.0,440.0 158.0,422.0" fill="#c23030"/>
+  <polygon points="287.0,438.5 239.0,462.5 239.0,475.5 287.0,451.5" fill="#1d4a75"/>
+  <polygon points="203.0,444.5 239.0,462.5 239.0,475.5 203.0,457.5" fill="#245a8c"/>
+  <polygon points="251.0,420.5 287.0,438.5 239.0,462.5 203.0,444.5" fill="#2f74b0"/>
+  <polygon points="158.0,182.0 110.0,206.0 110.0,219.0 158.0,195.0" fill="#9c7a15"/>
+  <polygon points="74.0,188.0 110.0,206.0 110.0,219.0 74.0,201.0" fill="#b8901a"/>
+  <polygon points="122.0,164.0 158.0,182.0 110.0,206.0 74.0,188.0" fill="#e0a81f"/>
+  <polygon points="38.0,362.0 -10.0,386.0 -10.0,399.0 38.0,375.0" fill="#19512d"/>
+  <polygon points="-46.0,368.0 -10.0,386.0 -10.0,399.0 -46.0,381.0" fill="#1f6236"/>
+  <polygon points="2.0,344.0 38.0,362.0 -10.0,386.0 -46.0,368.0" fill="#2d7a3a"/>
+  <path d="M392.0,-108.0 l0,-22" stroke="#7a4d2a" stroke-width="4"/>
+  <g transform="translate(392.0,-130.0)">
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(0)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(51)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(102)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(153)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(204)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(255)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(306)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(357)"/>
+  </g>
+  <path d="M182.0,27.0 l0,-22" stroke="#7a4d2a" stroke-width="4"/>
+  <g transform="translate(182.0,5.0)">
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(0)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(51)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(102)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(153)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(204)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(255)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(306)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(357)"/>
+  </g>
+  <path d="M32.0,192.0 l0,-22" stroke="#7a4d2a" stroke-width="4"/>
+  <g transform="translate(32.0,170.0)">
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(0)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(51)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(102)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(153)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(204)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(255)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(306)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(357)"/>
+  </g>
+  <path d="M-118.0,357.0 l0,-22" stroke="#7a4d2a" stroke-width="4"/>
+  <g transform="translate(-118.0,335.0)">
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(0)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(51)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(102)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(153)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(204)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(255)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(306)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(357)"/>
+  </g>
+  <path d="M-208.0,522.0 l0,-22" stroke="#7a4d2a" stroke-width="4"/>
+  <g transform="translate(-208.0,500.0)">
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(0)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(51)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(102)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(153)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(204)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(255)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(306)"/>
+    <ellipse rx="6" ry="14" cy="-11" fill="#2d7a3a" transform="rotate(357)"/>
+  </g>
+</svg>
