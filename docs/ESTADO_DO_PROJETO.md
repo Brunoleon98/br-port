@@ -3,8 +3,10 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 28/08/2026 (Bloco 4 — o mapa do porto virou a tela
-> do jogo; docas são vagas no mapa e o upgrade acende a terceira)
+> **Última atualização:** 28/08/2026 (Bloco 4 — mapa do porto virou a tela do
+> jogo; direção de arte decidida como isométrica, ainda não integrada)
+>
+> 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO4_BRIEFING_CONTINUACAO.md`.**
 
 ---
 
@@ -37,27 +39,34 @@ em 27/08:
    Espera, sobre um fundo de água. Ainda formas simples — valida a leitura
    espacial antes de encomendar sprite.
 
-3. ✅ **Sprites de personagem e de barco integrados** (28/08) — trabalhador,
-   cargueiro e barco de pesca entraram nas cenas reais, mais um caminhão
-   decorativo no escritório. Os PNGs vieram **sem canal alpha** (quadriculado
-   pintado nos pixels); `tools/preparar_sprites.py` conserta isso e é para ser
-   reusado a cada leva nova. Análise completa do pacote — incluindo o que dele
-   NÃO cabe na Fase 1 — em `docs/BLOCO4_PACOTE_SPRITES.md`.
+3. ✅ **Pacote de sprites tratado** (28/08) — os PNGs vieram **sem canal alpha**
+   (o quadriculado que parece transparência estava pintado nos pixels);
+   `tools/preparar_sprites.py` conserta isso e é para ser reusado a cada leva
+   nova. Análise do pacote em `docs/BLOCO4_PACOTE_SPRITES.md`.
+   ⚠️ Desses 5 PNGs, **só `trabalhador.png` continua carregado pelo jogo** — o
+   resto ficou para a migração isométrica, porque em cima de um mapa topo-down
+   eles eram erro de perspetiva.
+4. ✅ **Mapa virou a tela do jogo** (28/08) — docas são 3 vagas fixas sobre os
+   píeres, e "Ampliar píer" acende a terceira.
 
-Faltam os itens 4–7 do plano: sprites de cenário (píer, água), UI das 12
-telas, áudio, integração progressiva.
+Faltam os itens 5–7 do plano: UI das 12 telas, áudio, integração progressiva.
 
-🔄 **Direção de arte: ISOMÉTRICA (decidida 28/08).** O jogo em produção ainda
-está em topo-down chapado e funcional; o isométrico está provado em
-`scenes/proto/MapaIso.tscn` mas **não foi integrado**. Migrar exige regerar os
-assets — os dois barcos atuais estão na orientação errada (horizontais; num
-plano isométrico nenhum eixo é horizontal). Prompts em
+🔄 **Direção de arte: ISOMÉTRICA (decidida 28/08) — decisão fechada.** Ela
+oscilou três vezes na sessão (3/4 ilustrado → chapado topo-down → isométrico);
+o histórico e o porquê estão na §2 do briefing de continuação, para não voltar
+atrás de novo.
+
+**O jogo em produção ainda é topo-down chapado**, funcional e testado. O
+isométrico está provado em `scenes/proto/MapaIso.tscn` mas **não foi
+integrado**, e não dá para integrar com o que existe: os sprites atuais foram
+gerados deitados, e num plano isométrico nenhum eixo é horizontal (ambos saem a
+26,6°). **Migrar exige regerar os assets primeiro.** Prompts em
 `docs/BLOCO4_PROMPTS_ISOMETRICO.md`, cuja §0 trata só de orientação.
 
-👉 **Se você vai continuar o visual, leia antes
-`docs/BLOCO4_BRIEFING_VISUAL.md`.** Ele traz decisões já tomadas sobre a
-imagem de referência (mapa do porto visto de cima, turnos mantidos, arte pelo
-style guide do GDD) e a lista do que NÃO seguir dessa imagem.
+👉 **Para retomar, o ponto de entrada é `docs/BLOCO4_BRIEFING_CONTINUACAO.md`**
+— estado atual, decisões fechadas e os três caminhos possíveis.
+`docs/BLOCO4_BRIEFING_VISUAL.md` continua válido como registro das decisões
+sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 
 ---
 
@@ -67,13 +76,14 @@ style guide do GDD) e a lista do que NÃO seguir dessa imagem.
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
-| `brport_vs/tests/run_tests.gd` | 19 asserções de regressão |
+| `brport_vs/tests/run_tests.gd` | 33 asserções de regressão |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, estilos de doca e trabalhador, e (Bloco 4) os tokens do mapa (água, escritório, zona de espera) |
 | `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem a seção "Porto" com o mapa do porto |
 | `docs/design/BR_Port_Style_Guide_Flat_Design.md` | Paleta, peso de linha, espaçamento e proporções canônicas para toda arte futura |
 | `brport_vs/art/sprites/` | Sprites prontos (trabalhador, cargueiro, barco de pesca, caminhão, guindaste) |
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
 | `docs/BLOCO4_GUIA_GERACAO_ASSETS.md` | Prompts de gerador (retratos) + o que o píer construível exige |
+| `docs/BLOCO4_BRIEFING_CONTINUACAO.md` | **Ponto de entrada para retomar** — estado, decisões fechadas, 3 caminhos possíveis |
 | `docs/BLOCO4_PROMPTS_ISOMETRICO.md` | **Prompts do visual escolhido** — isométrico, orientação obrigatória, animação e evolução por Fase |
 | `docs/BLOCO4_PROMPTS_VISUAL_CHAPADO.md` | Superado — versão topo-down, mantida pelo registro |
 | `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo |
@@ -96,9 +106,9 @@ style guide do GDD) e a lista do que NÃO seguir dessa imagem.
 - Autosave local a cada turno
 
 ### O que já é arte de verdade, e o que ainda é placeholder
-**O mapa do porto é a tela do jogo** (`Main.tscn`): água, cais, escritório,
-armazém, pátio de contêineres, caminhões e coqueiros, tudo em vetor chapado
-visto de cima. As docas são **3 vagas fixas sobre os píeres** — quantas
+**O mapa do porto é a tela do jogo** (`Main.tscn`): água, cais, armazém, pátio
+de contêineres, caminhões estacionados e coqueiros, tudo em vetor chapado visto
+de cima. As docas são **3 vagas fixas sobre os píeres** — quantas
 existem vem de `GameState.docks`, e "Ampliar píer" acende a terceira, que até
 lá mostra as estacas velhas sob contorno tracejado.
 
