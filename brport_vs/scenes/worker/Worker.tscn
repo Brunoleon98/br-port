@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://art/sprites/trabalhador.png" id="2"]
 
 [node name="Worker" type="PanelContainer"]
-custom_minimum_size = Vector2(108, 152)
+custom_minimum_size = Vector2(108, 158)
 script = ExtResource("1")
 
 [node name="Conteudo" type="VBoxContainer" parent="."]

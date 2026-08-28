@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="58" viewBox="0 0 200 58">
+  <!-- contorno da vaga por construir -->
+  <rect x="7" y="9" width="186" height="38" rx="5"
+        fill="#3d87a4" fill-opacity="0.45"
+        stroke="#cfe6ef" stroke-width="2.5" stroke-dasharray="9 8"/>
+  <!-- estacas velhas, sem tabuado -->
+  <g fill="#5a3a1c">
+    <ellipse cx="16" cy="15" rx="8" ry="7"/><ellipse cx="70" cy="15" rx="8" ry="7"/>
+    <ellipse cx="130" cy="15" rx="8" ry="7"/><ellipse cx="184" cy="15" rx="8" ry="7"/>
+    <ellipse cx="16" cy="48" rx="8" ry="7"/><ellipse cx="70" cy="48" rx="8" ry="7"/>
+    <ellipse cx="130" cy="48" rx="8" ry="7"/><ellipse cx="184" cy="48" rx="8" ry="7"/>
+  </g>
+  <g fill="#7a4d2a">
+    <ellipse cx="16" cy="12" rx="8" ry="7"/><ellipse cx="70" cy="12" rx="8" ry="7"/>
+    <ellipse cx="130" cy="12" rx="8" ry="7"/><ellipse cx="184" cy="12" rx="8" ry="7"/>
+    <ellipse cx="16" cy="45" rx="8" ry="7"/><ellipse cx="70" cy="45" rx="8" ry="7"/>
+    <ellipse cx="130" cy="45" rx="8" ry="7"/><ellipse cx="184" cy="45" rx="8" ry="7"/>
+  </g>
+</svg>

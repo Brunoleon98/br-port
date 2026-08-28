@@ -1,8 +1,26 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
-[ext_resource type="Texture2D" path="res://art/sprites/caminhao.png" id="3"]
+[ext_resource type="Texture2D" path="res://art/porto_mapa.svg" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/dock/Dock.tscn" id="4"]
+[ext_resource type="Texture2D" path="res://art/barco_pequeno.svg" id="5"]
+
+[sub_resource type="StyleBoxFlat" id="pilula"]
+bg_color = Color(0.09, 0.16, 0.24, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.34, 0.47, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 9.0
+content_margin_top = 6.0
+content_margin_right = 9.0
+content_margin_bottom = 6.0
 
 [sub_resource type="StyleBoxFlat" id="faixa_msg"]
 bg_color = Color(1, 0.984, 0.922, 1)
@@ -13,9 +31,9 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 content_margin_left = 12.0
-content_margin_top = 8.0
+content_margin_top = 6.0
 content_margin_right = 12.0
-content_margin_bottom = 8.0
+content_margin_bottom = 6.0
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -31,216 +49,284 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-color = Color(0.941, 0.965, 1, 1)
+color = Color(0.051, 0.102, 0.149, 1)
 
-[node name="Margem" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+; ================= BARRA DE HUD =================
 
-[node name="Coluna" type="VBoxContainer" parent="Margem"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Cabecalho" type="PanelContainer" parent="Margem/Coluna"]
-layout_mode = 2
-theme_type_variation = &"CartaoEscuro"
-
-[node name="CabecalhoColuna" type="VBoxContainer" parent="Margem/Coluna/Cabecalho"]
-layout_mode = 2
+[node name="HudBar" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 712.0
+offset_bottom = 56.0
 theme_override_constants/separation = 6
 
-[node name="Titulo" type="Label" parent="Margem/Coluna/Cabecalho/CabecalhoColuna"]
+[node name="CaixaPilula" type="PanelContainer" parent="HudBar"]
 layout_mode = 2
-text = "⚓ BR PORT"
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
-theme_override_font_sizes/font_size = 22
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+theme_override_styles/panel = SubResource("pilula")
 
-[node name="HudLinha" type="HBoxContainer" parent="Margem/Coluna/Cabecalho/CabecalhoColuna"]
-layout_mode = 2
-theme_override_constants/separation = 20
-alignment = 1
-
-[node name="Caixa" type="Label" parent="Margem/Coluna/Cabecalho/CabecalhoColuna/HudLinha"]
+[node name="Caixa" type="Label" parent="HudBar/CaixaPilula"]
 layout_mode = 2
 text = "💰"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.42, 0.85, 0.53, 1)
+theme_override_font_sizes/font_size = 16
 
-[node name="Dia" type="Label" parent="Margem/Coluna/Cabecalho/CabecalhoColuna/HudLinha"]
+[node name="DiaPilula" type="PanelContainer" parent="HudBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+theme_override_styles/panel = SubResource("pilula")
+
+[node name="Dia" type="Label" parent="HudBar/DiaPilula"]
 layout_mode = 2
 text = "📅"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 16
 
-[node name="ReputacaoCartao" type="PanelContainer" parent="Margem/Coluna"]
+[node name="RepPilula" type="PanelContainer" parent="HudBar"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.7
+theme_override_styles/panel = SubResource("pilula")
 
-[node name="RepLinha" type="HBoxContainer" parent="Margem/Coluna/ReputacaoCartao"]
+[node name="RepTexto" type="Label" parent="HudBar/RepPilula"]
 layout_mode = 2
-theme_override_constants/separation = 8
+text = "⭐"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
+theme_override_font_sizes/font_size = 16
 
-[node name="RepIcone" type="Label" parent="Margem/Coluna/ReputacaoCartao/RepLinha"]
+[node name="DocasPilula" type="PanelContainer" parent="HudBar"]
 layout_mode = 2
-text = "⭐ Reputação"
-theme_override_font_sizes/font_size = 14
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("pilula")
 
-[node name="RepBarra" type="ProgressBar" parent="Margem/Coluna/ReputacaoCartao/RepLinha"]
-custom_minimum_size = Vector2(140, 14)
+[node name="DocasTexto" type="Label" parent="HudBar/DocasPilula"]
 layout_mode = 2
-size_flags_vertical = 4
-show_percentage = false
+text = "⚓"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_override_font_sizes/font_size = 16
 
-[node name="RepTexto" type="Label" parent="Margem/Coluna/ReputacaoCartao/RepLinha"]
+[node name="Pausar" type="Button" parent="HudBar"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+text = "⏸"
+theme_override_styles/normal = SubResource("pilula")
+theme_override_font_sizes/font_size = 16
 
-[node name="PortoTitulo" type="Label" parent="Margem/Coluna"]
-layout_mode = 2
-text = "Porto"
-theme_override_colors/font_color = Color(0.51, 0.6, 0.706, 1)
-theme_override_font_sizes/font_size = 13
+; ================= MAPA DO PORTO =================
 
-[node name="MapaPainel" type="PanelContainer" parent="Margem/Coluna"]
-layout_mode = 2
-theme_type_variation = &"MapaAgua"
+[node name="MapaWrap" type="Control" parent="."]
+layout_mode = 0
+offset_top = 62.0
+offset_right = 720.0
+offset_bottom = 814.0
+mouse_filter = 2
+clip_contents = true
 
-[node name="MapaLinha" type="HBoxContainer" parent="Margem/Coluna/MapaPainel"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Escritorio" type="PanelContainer" parent="Margem/Coluna/MapaPainel/MapaLinha"]
-custom_minimum_size = Vector2(90, 170)
-layout_mode = 2
-theme_type_variation = &"Escritorio"
-
-[node name="EscritorioColuna" type="VBoxContainer" parent="Margem/Coluna/MapaPainel/MapaLinha/Escritorio"]
-layout_mode = 2
-theme_override_constants/separation = 4
-alignment = 1
-
-[node name="Icone" type="TextureRect" parent="Margem/Coluna/MapaPainel/MapaLinha/Escritorio/EscritorioColuna"]
-custom_minimum_size = Vector2(0, 62)
-layout_mode = 2
+[node name="Mapa" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 900.0
+mouse_filter = 2
 texture = ExtResource("3")
+
+[node name="BarcoEspera1" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 548.0
+offset_top = 152.0
+offset_right = 664.0
+offset_bottom = 208.0
+mouse_filter = 2
+texture = ExtResource("5")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Rotulo" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/Escritorio/EscritorioColuna"]
-layout_mode = 2
-text = "Escritório"
-horizontal_alignment = 1
-autowrap_mode = 2
-theme_override_font_sizes/font_size = 11
+[node name="BarcoEspera2" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 596.0
+offset_top = 560.0
+offset_right = 712.0
+offset_bottom = 616.0
+mouse_filter = 2
+texture = ExtResource("5")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Docas" type="HBoxContainer" parent="Margem/Coluna/MapaPainel/MapaLinha"]
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-theme_override_constants/separation = 8
+[node name="Docas" type="Control" parent="MapaWrap"]
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 900.0
+mouse_filter = 2
 
-[node name="ZonaEspera" type="PanelContainer" parent="Margem/Coluna/MapaPainel/MapaLinha"]
-custom_minimum_size = Vector2(90, 170)
-layout_mode = 2
-theme_type_variation = &"ZonaEspera"
+[node name="Doca0" parent="MapaWrap/Docas" instance=ExtResource("4")]
+layout_mode = 0
+offset_left = 374.0
+offset_top = 92.0
+offset_right = 574.0
+offset_bottom = 256.0
 
-[node name="ZonaColuna" type="VBoxContainer" parent="Margem/Coluna/MapaPainel/MapaLinha/ZonaEspera"]
-layout_mode = 2
-theme_override_constants/separation = 4
-alignment = 1
+[node name="Doca1" parent="MapaWrap/Docas" instance=ExtResource("4")]
+layout_mode = 0
+offset_left = 314.0
+offset_top = 332.0
+offset_right = 514.0
+offset_bottom = 496.0
 
-[node name="Icone" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/ZonaEspera/ZonaColuna"]
-layout_mode = 2
-text = "🌊"
+[node name="Doca2" parent="MapaWrap/Docas" instance=ExtResource("4")]
+layout_mode = 0
+offset_left = 264.0
+offset_top = 572.0
+offset_right = 464.0
+offset_bottom = 736.0
+
+[node name="LblDoca1" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 396.0
+offset_top = 34.0
+offset_right = 596.0
+offset_bottom = 72.0
+mouse_filter = 2
+text = "DOCA 1"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 27
+
+[node name="LblDoca2" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 336.0
+offset_top = 274.0
+offset_right = 536.0
+offset_bottom = 312.0
+mouse_filter = 2
+text = "DOCA 2"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 27
+
+[node name="LblDoca3" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 286.0
+offset_top = 514.0
+offset_right = 486.0
+offset_bottom = 552.0
+mouse_filter = 2
+text = "DOCA 3"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 27
+
+[node name="LblZona" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 516.0
+offset_top = 292.0
+offset_right = 712.0
+offset_bottom = 364.0
+mouse_filter = 2
+text = "ZONA DE
+ESPERA"
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 24
 
-[node name="Rotulo" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/ZonaEspera/ZonaColuna"]
-layout_mode = 2
-text = "Zona de
-Espera"
-horizontal_alignment = 1
-autowrap_mode = 2
+[node name="LblEscritorio" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 158.0
+offset_right = 320.0
+offset_bottom = 194.0
+mouse_filter = 2
+text = "ESCRITÓRIO"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 22
 
-[node name="Marcadores" type="Label" parent="Margem/Coluna/MapaPainel/MapaLinha/ZonaEspera/ZonaColuna"]
-layout_mode = 2
-text = "⚓ ⚓"
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 15
+; ================= TRABALHADORES =================
 
-[node name="TrabalhadoresTitulo" type="Label" parent="Margem/Coluna"]
-layout_mode = 2
+[node name="TrabalhadoresTitulo" type="Label" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 820.0
+offset_right = 706.0
+offset_bottom = 838.0
 text = "Trabalhadores — arraste para uma doca"
 theme_override_colors/font_color = Color(0.51, 0.6, 0.706, 1)
 theme_override_font_sizes/font_size = 13
 
-[node name="Trabalhadores" type="HBoxContainer" parent="Margem/Coluna"]
-layout_mode = 2
+[node name="Trabalhadores" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 840.0
+offset_right = 706.0
+offset_bottom = 1000.0
 theme_override_constants/separation = 10
 
-[node name="MensagemCartao" type="PanelContainer" parent="Margem/Coluna"]
-layout_mode = 2
+; ================= RODAPÉ =================
+
+[node name="MensagemCartao" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 1006.0
+offset_right = 706.0
+offset_bottom = 1050.0
 theme_override_styles/panel = SubResource("faixa_msg")
 
-[node name="Mensagem" type="Label" parent="Margem/Coluna/MensagemCartao"]
-custom_minimum_size = Vector2(0, 36)
+[node name="Mensagem" type="Label" parent="MensagemCartao"]
 layout_mode = 2
 autowrap_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 13
 
-[node name="MetaCartao" type="PanelContainer" parent="Margem/Coluna"]
+[node name="MetaCartao" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 1056.0
+offset_right = 706.0
+offset_bottom = 1118.0
+
+[node name="MetaColuna" type="VBoxContainer" parent="MetaCartao"]
 layout_mode = 2
+theme_override_constants/separation = 3
 
-[node name="MetaColuna" type="VBoxContainer" parent="Margem/Coluna/MetaCartao"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="MetaTitulo" type="Label" parent="Margem/Coluna/MetaCartao/MetaColuna"]
+[node name="MetaTitulo" type="Label" parent="MetaCartao/MetaColuna"]
 layout_mode = 2
 text = "🏦 Parcela do Sr. Ribeiro"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 13
 
-[node name="MetaBarra" type="ProgressBar" parent="Margem/Coluna/MetaCartao/MetaColuna"]
-custom_minimum_size = Vector2(0, 18)
+[node name="MetaBarra" type="ProgressBar" parent="MetaCartao/MetaColuna"]
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 show_percentage = false
 
-[node name="MetaTexto" type="Label" parent="Margem/Coluna/MetaCartao/MetaColuna"]
+[node name="MetaTexto" type="Label" parent="MetaCartao/MetaColuna"]
 layout_mode = 2
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 13
 
-[node name="Espacador" type="Control" parent="Margem/Coluna"]
-layout_mode = 2
-size_flags_vertical = 3
+[node name="Upgrade" type="Button" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 1124.0
+offset_right = 706.0
+offset_bottom = 1170.0
 
-[node name="BotoesLinha" type="HBoxContainer" parent="Margem/Coluna"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Upgrade" type="Button" parent="Margem/Coluna/BotoesLinha"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Pausar" type="Button" parent="Margem/Coluna/BotoesLinha"]
-layout_mode = 2
-text = "⏸ Pausar"
-
-[node name="Avancar" type="Button" parent="Margem/Coluna"]
-custom_minimum_size = Vector2(0, 52)
-layout_mode = 2
+[node name="Avancar" type="Button" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 1176.0
+offset_right = 706.0
+offset_bottom = 1234.0
 text = "▶ AVANÇAR DIA"
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 19
 
 [node name="Overlay" type="CanvasLayer" parent="."]
 layer = 10
