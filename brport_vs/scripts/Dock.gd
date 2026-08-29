@@ -11,15 +11,18 @@ extends Control
 # A árvore de nós mora em Dock.tscn e o estilo no tema. Este script não
 # constrói nem pinta nada: só escolhe qual textura e qual texto valem agora.
 
-const ArtePierPronto := preload("res://art/pier_construido.svg")
-const ArtePierVazio := preload("res://art/pier_vazio.svg")
+# Props ISOMÉTRICOS, gerados por tools/gerar_props_iso.py. São quadros de 512
+# cujo centro é a origem do mundo — a cena os ancora por aí, então trocar de
+# textura nunca desloca o píer.
+const ArtePierPronto := preload("res://art/props/pier_construido.png")
+const ArtePierVazio := preload("res://art/props/pier_vazio.png")
 
-# Barcos em vetor CHAPADO, vistos de cima — não os PNGs ilustrados em 3/4.
-# Sobre um mapa topo-down, sprite em 3/4 não é escolha de estilo, é erro de
-# perspectiva: o barco fica boiando por cima do mapa em vez de dentro dele.
-# Os PNGs ilustrados continuam no repositório, para painéis e retratos.
-const ArteGrande := preload("res://art/barco_grande.svg")
-const ArtePequeno := preload("res://art/barco_pequeno.svg")
+# Os dois barcos partilham o mesmo casco e diferem pela carga. Não são sprites
+# ilustrados em 3/4: aqueles têm a perspectiva assada dentro da imagem e ficam
+# atravessados em cima de um píer isométrico, que é o erro que já custou duas
+# levas de arte.
+const ArteGrande := preload("res://art/props/barco_grande.png")
+const ArtePequeno := preload("res://art/props/barco_pequeno.png")
 
 var dock_index: int = -1
 
@@ -27,8 +30,10 @@ var dock_index: int = -1
 @onready var _barco: TextureRect = $Barco
 @onready var _chip: PanelContainer = $Chip
 @onready var _valor: Label = $Chip/Coluna/Valor
-@onready var _progresso: Label = $Chip/Coluna/Progresso
-@onready var _trabalhador: Label = $Chip/Coluna/Trabalhador
+@onready var _progresso: Label = $Chip/Coluna/ProgressoLinha/Progresso
+@onready var _progresso_icone: TextureRect = $Chip/Coluna/ProgressoLinha/Icone
+@onready var _trabalhador: Label = $Chip/Coluna/TrabalhadorLinha/Trabalhador
+@onready var _trabalhador_icone: TextureRect = $Chip/Coluna/TrabalhadorLinha/Icone
 
 
 func setup(index: int) -> void:
@@ -51,6 +56,11 @@ func esta_construida() -> bool:
 func refresh() -> void:
 	if dock_index < 0:
 		return
+
+	# Cada saída de refresh() precisa deixar os dois ícones no estado certo, por
+	# isso eles são apagados aqui e reacesos só por quem tem o que anunciar.
+	_progresso_icone.visible = false
+	_trabalhador_icone.visible = false
 
 	# Vaga ainda não construída: estacas velhas, sem barco.
 	if not esta_construida():
@@ -80,7 +90,8 @@ func refresh() -> void:
 	_valor.text = "R$%d%s" % [valor, " (acordo)" if boat.get("matched", false) else ""]
 
 	if sob_oferta:
-		_progresso.text = "⚔️ OFERTA DO RIVAL"
+		_progresso_icone.visible = true
+		_progresso.text = "OFERTA DO RIVAL"
 		_trabalhador.text = ""
 		return
 
@@ -89,7 +100,8 @@ func refresh() -> void:
 	if dock["worker_id"] == null:
 		_trabalhador.text = "sem trabalhador"
 	else:
-		var texto := "👷 #%d" % int(dock["worker_id"])
+		_trabalhador_icone.visible = true
+		var texto := "#%d" % int(dock["worker_id"])
 		# Enquanto a operação não começou dá para desfazer um arrasto errado.
 		if int(boat["progress"]) == 0:
 			texto += " · toque p/ liberar"

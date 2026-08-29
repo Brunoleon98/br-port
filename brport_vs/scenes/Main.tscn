@@ -1,10 +1,18 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
-[ext_resource type="Texture2D" path="res://art/porto_mapa.svg" id="3"]
+[ext_resource type="Texture2D" path="res://art/porto_mapa_iso.svg" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/dock/Dock.tscn" id="4"]
-[ext_resource type="Texture2D" path="res://art/barco_pequeno.svg" id="5"]
+[ext_resource type="Texture2D" path="res://art/props/barco_medio.png" id="5"]
+[ext_resource type="Texture2D" path="res://art/icones/caixa.svg" id="ic_caixa"]
+[ext_resource type="Texture2D" path="res://art/icones/dia.svg" id="ic_dia"]
+[ext_resource type="Texture2D" path="res://art/icones/reputacao.svg" id="ic_reputacao"]
+[ext_resource type="Texture2D" path="res://art/icones/doca.svg" id="ic_doca"]
+[ext_resource type="Texture2D" path="res://art/icones/pausar.svg" id="ic_pausar"]
+[ext_resource type="Texture2D" path="res://art/icones/parcela.svg" id="ic_parcela"]
+[ext_resource type="Texture2D" path="res://art/icones/ampliar_pier.svg" id="ic_ampliar"]
+[ext_resource type="Texture2D" path="res://art/icones/avancar.svg" id="ic_avancar"]
 
 [sub_resource type="StyleBoxFlat" id="pilula"]
 bg_color = Color(0.09, 0.16, 0.24, 1)
@@ -67,9 +75,23 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.5
 theme_override_styles/panel = SubResource("pilula")
 
-[node name="Caixa" type="Label" parent="HudBar/CaixaPilula"]
+[node name="Linha" type="HBoxContainer" parent="HudBar/CaixaPilula"]
 layout_mode = 2
-text = "💰"
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 5
+
+[node name="Icone" type="TextureRect" parent="HudBar/CaixaPilula/Linha"]
+custom_minimum_size = Vector2(19, 19)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("ic_caixa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Caixa" type="Label" parent="HudBar/CaixaPilula/Linha"]
+layout_mode = 2
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.42, 0.85, 0.53, 1)
 theme_override_font_sizes/font_size = 16
@@ -80,9 +102,23 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.5
 theme_override_styles/panel = SubResource("pilula")
 
-[node name="Dia" type="Label" parent="HudBar/DiaPilula"]
+[node name="Linha" type="HBoxContainer" parent="HudBar/DiaPilula"]
 layout_mode = 2
-text = "📅"
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 5
+
+[node name="Icone" type="TextureRect" parent="HudBar/DiaPilula/Linha"]
+custom_minimum_size = Vector2(19, 19)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("ic_dia")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Dia" type="Label" parent="HudBar/DiaPilula/Linha"]
+layout_mode = 2
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
 theme_override_font_sizes/font_size = 16
@@ -93,9 +129,23 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.7
 theme_override_styles/panel = SubResource("pilula")
 
-[node name="RepTexto" type="Label" parent="HudBar/RepPilula"]
+[node name="Linha" type="HBoxContainer" parent="HudBar/RepPilula"]
 layout_mode = 2
-text = "⭐"
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 5
+
+[node name="Icone" type="TextureRect" parent="HudBar/RepPilula/Linha"]
+custom_minimum_size = Vector2(19, 19)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("ic_reputacao")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RepTexto" type="Label" parent="HudBar/RepPilula/Linha"]
+layout_mode = 2
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
 theme_override_font_sizes/font_size = 16
@@ -105,18 +155,34 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("pilula")
 
-[node name="DocasTexto" type="Label" parent="HudBar/DocasPilula"]
+[node name="Linha" type="HBoxContainer" parent="HudBar/DocasPilula"]
 layout_mode = 2
-text = "⚓"
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 5
+
+[node name="Icone" type="TextureRect" parent="HudBar/DocasPilula/Linha"]
+custom_minimum_size = Vector2(19, 19)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("ic_doca")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DocasTexto" type="Label" parent="HudBar/DocasPilula/Linha"]
+layout_mode = 2
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
 theme_override_font_sizes/font_size = 16
 
 [node name="Pausar" type="Button" parent="HudBar"]
 layout_mode = 2
-text = "⏸"
+tooltip_text = "Pausar"
+theme_override_constants/icon_max_width = 20
 theme_override_styles/normal = SubResource("pilula")
 theme_override_font_sizes/font_size = 16
+icon = ExtResource("ic_pausar")
 
 ; ================= MAPA DO PORTO =================
 
@@ -124,72 +190,68 @@ theme_override_font_sizes/font_size = 16
 layout_mode = 0
 offset_top = 62.0
 offset_right = 720.0
-offset_bottom = 814.0
+offset_bottom = 782.0
 mouse_filter = 2
 clip_contents = true
 
 [node name="Mapa" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
 offset_right = 720.0
-offset_bottom = 900.0
+offset_bottom = 720.0
 mouse_filter = 2
 texture = ExtResource("3")
 
 [node name="BarcoEspera1" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 548.0
-offset_top = 152.0
-offset_right = 664.0
-offset_bottom = 208.0
+offset_left = 404.0
+offset_top = 214.0
+offset_right = 916.0
+offset_bottom = 726.0
 mouse_filter = 2
 texture = ExtResource("5")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="BarcoEspera2" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 596.0
-offset_top = 560.0
-offset_right = 712.0
-offset_bottom = 616.0
+offset_left = 364.0
+offset_top = 384.0
+offset_right = 876.0
+offset_bottom = 896.0
 mouse_filter = 2
 texture = ExtResource("5")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="Docas" type="Control" parent="MapaWrap"]
 layout_mode = 0
 offset_right = 720.0
-offset_bottom = 900.0
+offset_bottom = 720.0
 mouse_filter = 2
 
 [node name="Doca0" parent="MapaWrap/Docas" instance=ExtResource("4")]
 layout_mode = 0
-offset_left = 374.0
-offset_top = 92.0
-offset_right = 574.0
-offset_bottom = 256.0
+offset_left = 448.0
+offset_top = 96.0
+offset_right = 710.0
+offset_bottom = 264.0
 
 [node name="Doca1" parent="MapaWrap/Docas" instance=ExtResource("4")]
 layout_mode = 0
-offset_left = 314.0
-offset_top = 332.0
-offset_right = 514.0
-offset_bottom = 496.0
+offset_left = 328.0
+offset_top = 276.0
+offset_right = 590.0
+offset_bottom = 444.0
 
 [node name="Doca2" parent="MapaWrap/Docas" instance=ExtResource("4")]
 layout_mode = 0
-offset_left = 264.0
-offset_top = 572.0
-offset_right = 464.0
-offset_bottom = 736.0
+offset_left = 208.0
+offset_top = 456.0
+offset_right = 470.0
+offset_bottom = 624.0
 
 [node name="LblDoca1" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 396.0
-offset_top = 34.0
-offset_right = 596.0
-offset_bottom = 72.0
+offset_left = 500.0
+offset_top = 78.0
+offset_right = 664.0
+offset_bottom = 112.0
 mouse_filter = 2
 text = "DOCA 1"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -199,10 +261,10 @@ theme_override_font_sizes/font_size = 27
 
 [node name="LblDoca2" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 336.0
-offset_top = 274.0
-offset_right = 536.0
-offset_bottom = 312.0
+offset_left = 380.0
+offset_top = 258.0
+offset_right = 544.0
+offset_bottom = 292.0
 mouse_filter = 2
 text = "DOCA 2"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -212,10 +274,10 @@ theme_override_font_sizes/font_size = 27
 
 [node name="LblDoca3" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 286.0
-offset_top = 514.0
-offset_right = 486.0
-offset_bottom = 552.0
+offset_left = 260.0
+offset_top = 438.0
+offset_right = 424.0
+offset_bottom = 472.0
 mouse_filter = 2
 text = "DOCA 3"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -225,10 +287,10 @@ theme_override_font_sizes/font_size = 27
 
 [node name="LblZona" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 516.0
-offset_top = 292.0
-offset_right = 712.0
-offset_bottom = 364.0
+offset_left = 476.0
+offset_top = 500.0
+offset_right = 676.0
+offset_bottom = 572.0
 mouse_filter = 2
 text = "ZONA DE
 ESPERA"
@@ -240,10 +302,10 @@ theme_override_font_sizes/font_size = 24
 
 [node name="LblEscritorio" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 80.0
-offset_top = 158.0
-offset_right = 320.0
-offset_bottom = 194.0
+offset_left = 60.0
+offset_top = 300.0
+offset_right = 300.0
+offset_bottom = 336.0
 mouse_filter = 2
 text = "ESCRITÓRIO"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -297,9 +359,24 @@ offset_bottom = 1118.0
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="MetaTitulo" type="Label" parent="MetaCartao/MetaColuna"]
+[node name="MetaTituloLinha" type="HBoxContainer" parent="MetaCartao/MetaColuna"]
 layout_mode = 2
-text = "🏦 Parcela do Sr. Ribeiro"
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Icone" type="TextureRect" parent="MetaCartao/MetaColuna/MetaTituloLinha"]
+custom_minimum_size = Vector2(19, 19)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("ic_parcela")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MetaTitulo" type="Label" parent="MetaCartao/MetaColuna/MetaTituloLinha"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Parcela do Sr. Ribeiro"
 theme_override_font_sizes/font_size = 13
 
 [node name="MetaBarra" type="ProgressBar" parent="MetaCartao/MetaColuna"]
@@ -318,6 +395,8 @@ offset_left = 14.0
 offset_top = 1124.0
 offset_right = 706.0
 offset_bottom = 1170.0
+theme_override_constants/icon_max_width = 26
+icon = ExtResource("ic_ampliar")
 
 [node name="Avancar" type="Button" parent="."]
 layout_mode = 0
@@ -325,8 +404,10 @@ offset_left = 14.0
 offset_top = 1176.0
 offset_right = 706.0
 offset_bottom = 1234.0
-text = "▶ AVANÇAR DIA"
+text = "AVANÇAR DIA"
+theme_override_constants/icon_max_width = 30
 theme_override_font_sizes/font_size = 19
+icon = ExtResource("ic_avancar")
 
 [node name="Overlay" type="CanvasLayer" parent="."]
 layer = 10

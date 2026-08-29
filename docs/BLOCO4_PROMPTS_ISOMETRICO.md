@@ -217,7 +217,18 @@ no watermark, no gradient.
 OUTPUT: square 1:1, 512x512.
 ```
 
-São **17 ícones**, um por emoji que ainda está de pé na interface:
+> ## ✅ ESTE GRUPO ESTÁ FEITO (29/08) — NÃO GERAR
+>
+> Os ícones foram desenhados à mão em SVG e estão em `brport_vs/art/icones/`,
+> registrados em `brport_vs/scripts/Icones.gd`. **Nenhuma tela do jogo usa
+> emoji.** São 20, não 17: a tabela abaixo não contava a cara do cliente (2
+> estados) nem o barco.
+>
+> O prompt acima e a tabela ficam como registro do que era o plano. Se um dia
+> um ícone novo for preciso, desenhe no mesmo grid 24×24 e rode
+> `tools/folha_icones.gd` — foi ele que reprovou 4 desenhos que pareciam bons.
+
+A tabela original, com o emoji que cada um substituiu:
 
 | # | Ícone | Onde o jogo usa (emoji atual) |
 |---|---|---|
@@ -241,10 +252,10 @@ São **17 ícones**, um por emoji que ainda está de pé na interface:
 
 > A seta `→` que aparece em "arraste →" é tipografia, não ícone — fica como está.
 
-> **Alternativa mais barata para este grupo:** os 17 são vetor chapado, que é
-> exatamente o que o Claude Design faz bem e o gerador faz mal (silhueta
-> imprecisa, conjunto inconsistente, insiste em pôr texto). Oito deles já estão
-> desenhados — ver `BLOCO4_GUIA_GERACAO_ASSETS.md` §1b.
+> **Foi o que se fez, e confirmou a suspeita:** vetor chapado à mão saiu melhor
+> e mais rápido que gerador para este grupo. Três das metáforas da tabela não
+> sobreviveram a 19px e foram trocadas — aperto de mão virou sinal de igual,
+> braço flexionado virou escudo, nota voando virou cédula com seta de queda.
 
 ---
 
@@ -405,11 +416,11 @@ linha é um asset que o jogo carrega ou um emoji que ainda está no lugar de um.
 | Coqueiro (copa + tronco) | D1a · D1b | ⬜ a gerar |
 | Contêineres, caixotes, boia | D2 · D3 · D4 | ⬜ a gerar |
 | Ondulação da água | D5 | ⬜ ou shader, sem arte |
-| **17 ícones de HUD e botões** | G1–G17 | ⬜ **vetor chapado, não isométrico** |
+| **Ícones de HUD e botões** | G1–G17 | ✅ **FEITO — 20 SVGs em `art/icones/`, vetor chapado** |
 | Arlindo, 3 expressões | §3c | ⬜ maior retorno da lista |
 | Sr. Ribeiro | §3c | ⬜ a gerar |
 
-**Ainda são emoji na interface:** 💰 📅 ⭐ ⚓ 🏦 🏗 ⏸ ▶ 🔄 👷 ⚔ 🤝 ✂ 💪 🏆 💸 ✅
+**Emoji ainda na interface:** nenhum. A camada foi fechada em 29/08.
 
 Para reconferir depois de qualquer mudança no jogo:
 

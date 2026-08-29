@@ -33,10 +33,9 @@ func _build_ui(won: bool, reason: String) -> void:
 	vbox.add_theme_constant_override("separation", 10)
 	box.add_child(vbox)
 
-	var title := Label.new()
-	title.text = "🏆 VITÓRIA!" if won else "💸 GAME OVER"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(title)
+	var icone := Icones.VITORIA if won else Icones.DERROTA
+	vbox.add_child(Icones.rotulo(icone, "VITÓRIA!" if won else "GAME OVER",
+		Icones.TAM_TITULO, true))
 
 	var m := GameState.metrics
 	var body := Label.new()
@@ -49,7 +48,8 @@ func _build_ui(won: bool, reason: String) -> void:
 	vbox.add_child(body)
 
 	var btn_restart := Button.new()
-	btn_restart.text = "🔄 Jogar de novo"
+	Icones.no_botao(btn_restart, Icones.RECOMECAR)
+	btn_restart.text = "Jogar de novo"
 	btn_restart.pressed.connect(func():
 		GameState.clear_save()
 		GameState.new_game()

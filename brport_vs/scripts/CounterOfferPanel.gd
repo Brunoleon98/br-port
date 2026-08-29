@@ -10,6 +10,7 @@ extends Control
 var dock_index: int = -1
 
 var _mood_label: Label
+var _mood_icone: TextureRect
 var _btn_igualar: Button
 var _btn_metade: Button
 var _btn_manter: Button
@@ -46,33 +47,36 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 10)
 	box.add_child(vbox)
 
-	var title := Label.new()
-	title.text = "⚔️ Arlindo (Porto Farol) fez uma oferta"
-	title.autowrap_mode = TextServer.AUTOWRAP_WORD
-	vbox.add_child(title)
+	vbox.add_child(Icones.rotulo(Icones.RIVAL, "Arlindo (Porto Farol) fez uma oferta"))
 
 	var info_label := Label.new()
 	info_label.text = "Cliente considerando ir para o Porto Farol.\nValor original: R$%d" % _valor_barco()
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	vbox.add_child(info_label)
 
-	_mood_label = Label.new()
-	_mood_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	vbox.add_child(_mood_label)
+	# A cara do cliente é um ícone que troca no meio da negociação, então a
+	# linha é guardada em pedaços: o texto e o ícone mudam juntos em _refresh().
+	var mood_linha := Icones.rotulo(Icones.CLIENTE_CALMO, "", Icones.TAM_TEXTO)
+	_mood_icone = mood_linha.get_node("Icone")
+	_mood_label = mood_linha.get_node("Texto")
+	vbox.add_child(mood_linha)
 
 	var btn_row := VBoxContainer.new()
 	btn_row.add_theme_constant_override("separation", 6)
 	vbox.add_child(btn_row)
 
 	_btn_igualar = Button.new()
+	Icones.no_botao(_btn_igualar, Icones.ACORDO)
 	_btn_igualar.pressed.connect(func(): _negociar("igualar"))
 	btn_row.add_child(_btn_igualar)
 
 	_btn_metade = Button.new()
+	Icones.no_botao(_btn_metade, Icones.CORTAR)
 	_btn_metade.pressed.connect(func(): _negociar("metade"))
 	btn_row.add_child(_btn_metade)
 
 	_btn_manter = Button.new()
+	Icones.no_botao(_btn_manter, Icones.FIRMEZA)
 	_btn_manter.pressed.connect(func(): _negociar("manter"))
 	btn_row.add_child(_btn_manter)
 
@@ -99,22 +103,22 @@ func _refresh() -> void:
 	var ja_insistiu := restantes < GameState.RIVAL_PATIENCE
 
 	var desconto_igualar: float = GameState.RIVAL_DISCOUNT_AFTER_FAIL if ja_insistiu else GameState.RIVAL_DISCOUNT
-	_btn_igualar.text = "🤝 Igualar (−%d%%) → R$%d  ·  fecha na hora" % [
+	_btn_igualar.text = "Igualar (−%d%%) → R$%d  ·  fecha na hora" % [
 		int(round(desconto_igualar * 100.0)),
 		int(round(valor * (1.0 - desconto_igualar)))]
 
-	_btn_metade.text = "✂️ Cortar metade (−%d%%) → R$%d  ·  %d%% de chance" % [
+	_btn_metade.text = "Cortar metade (−%d%%) → R$%d  ·  %d%% de chance" % [
 		int(round(GameState.RIVAL_HALF_DISCOUNT * 100.0)),
 		int(round(valor * (1.0 - GameState.RIVAL_HALF_DISCOUNT))),
 		int(round(GameState.RIVAL_HALF_CHANCE * 100.0))]
 
-	_btn_manter.text = "💪 Manter preço → R$%d  ·  %d%% de chance" % [
+	_btn_manter.text = "Manter preço → R$%d  ·  %d%% de chance" % [
 		valor,
 		int(round(GameState.RIVAL_KEEP_CHANCE * 100.0))]
 
-	var face := "🙂"
 	var desc := "Cliente ouvindo a proposta."
+	_mood_icone.texture = Icones.CLIENTE_CALMO
 	if restantes <= 1:
-		face = "😟"
+		_mood_icone.texture = Icones.CLIENTE_IMPACIENTE
 		desc = "Cliente impaciente — se esta não colar, ele vai embora."
-	_mood_label.text = "%s %s (%d tentativa(s))" % [face, desc, restantes]
+	_mood_label.text = "%s (%d tentativa(s))" % [desc, restantes]
