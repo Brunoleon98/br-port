@@ -47,6 +47,17 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 var _selecionado: int = -1
 @onready var _workers_container: HBoxContainer = $Trabalhadores
 @onready var _workers_title: Label = $TrabalhadoresTitulo
+@onready var _mapa: TextureRect = $MapaWrap/Mapa
+
+# As estruturas trocam de TEXTURA, não de nó: assim o prop ocupa exatamente o
+# mesmo quadro nos dois estados e o prédio não salta ao ser consertado — a
+# mesma razão que fez o píer partilhar a geometria entre vazio e construído.
+const MapaTerra := preload("res://art/porto_mapa_iso.svg")
+const MapaPatio := preload("res://art/porto_mapa_iso_patio.svg")
+const ArmazemRuina := preload("res://art/props/galpao_velho.png")
+const ArmazemPronto := preload("res://art/props/galpao.png")
+const EscritorioRuina := preload("res://art/props/escritorio_ruina.png")
+const EscritorioPronto := preload("res://art/props/escritorio.png")
 @onready var _meta_bar: ProgressBar = $MetaCartao/MetaColuna/MetaBarra
 @onready var _meta_label: Label = $MetaCartao/MetaColuna/MetaTexto
 @onready var _meta_titulo: Label = $MetaCartao/MetaColuna/MetaTituloLinha/MetaTitulo
@@ -134,9 +145,26 @@ func _connect_game_state() -> void:
 
 
 func _refresh_all() -> void:
+	_refresh_estruturas()
 	_refresh_hud()
 	_refresh_docks()
 	_refresh_workers()
+
+
+# O mapa e os prédios contam o que o jogador construiu. É o retorno visível do
+# dinheiro gasto — sem isto, comprar uma estrutura é só um número que baixa.
+func _refresh_estruturas() -> void:
+	_mapa.texture = MapaPatio if GameState.tem_estrutura("patio") else MapaTerra
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return
+	var armazem := cenario.get_node_or_null("Armazem") as TextureRect
+	if armazem != null:
+		armazem.texture = ArmazemPronto if GameState.tem_estrutura("armazem") else ArmazemRuina
+	var escritorio := cenario.get_node_or_null("Escritorio") as TextureRect
+	if escritorio != null:
+		escritorio.texture = EscritorioPronto if GameState.tem_estrutura("escritorio") \
+			else EscritorioRuina
 
 
 func _refresh_hud() -> void:
@@ -145,12 +173,18 @@ func _refresh_hud() -> void:
 	_day_label.text = "Dia %d/%d" % [shown_day, GameState.TURNS_TOTAL]
 	_rep_label.text = "%d %s" % [int(GameState.reputation), GameState.reputation_label()]
 	_docks_label.text = "%d/%d" % [GameState.docks.size(), VAGAS_NO_MAPA]
-	_upgrade_button.disabled = GameState.upgrade_purchased or GameState.phase != "playing"
-	if GameState.upgrade_purchased:
-		_upgrade_button.text = "Píer ampliado"
+	# O botão não some quando tudo está construído: vira o registo de que o
+	# porto está completo, que é uma informação, não um beco sem saída.
+	var faltam := 0
+	for id in GameState.ESTRUTURAS:
+		if not GameState.tem_estrutura(String(id)):
+			faltam += 1
+	_upgrade_button.disabled = GameState.phase != "playing" or faltam == 0
+	if faltam == 0:
+		_upgrade_button.text = "Porto completo"
 		Icones.no_botao(_upgrade_button, Icones.FEITO, 26)
 	else:
-		_upgrade_button.text = "Ampliar píer (R$%d)" % GameState.UPGRADE_COST
+		_upgrade_button.text = "Construir (%d disponível(is))" % faltam
 		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	_advance_button.disabled = GameState.phase != "playing"
 	_alocar_button.disabled = not GameState.has_pending_assignment()

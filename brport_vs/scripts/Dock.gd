@@ -103,7 +103,7 @@ func refresh() -> void:
 		_parar_barco()
 		_barco.texture = null
 		_valor.text = "Vaga livre"
-		_progresso.text = "Ampliar píer"
+		_progresso.text = "Construir píer"
 		_trabalhador.text = ""
 		return
 

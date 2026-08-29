@@ -103,7 +103,7 @@ PALETA = {
     "laranja": "#c85420", "azul": "#2f7690", "amarelo": "#e09a10",
     "boia": "#d94f2a", "corda": "#c9b48a",
     "colete": "#e0561f", "capacete": "#e0a81f", "pele": "#b07b52",
-    "calca": "#24466e", "rede": "#8d9aa6", "casco_pesca": "#2f6f4a",
+    "calca": "#24466e", "rede": "#8d9aa6", "casco_pesca": "#2f6f4a", "parede_suja": "#9a9c93", "vidro": "#7fb6cc",
 }
 
 
@@ -350,6 +350,24 @@ def montar(M: dict) -> dict:
         caixa("gal_telha_v", (0, 0.1, 1.92), (3.7, 2.5, 0.3), M["telhado_velho"],
               rot=(0, 0, 2)),
         caixa("gal_buraco", (0.9, -0.6, 1.99), (0.8, 0.7, 0.32), M["madeira_esc"])]
+
+    # -- ESCRITÓRIO nos dois estados. O armazém reaproveita galpao/galpao_velho.
+    # A ruína não é o prédio "pintado de velho": é MENOS prédio — parede caída,
+    # telhado furado. Um jogador tem de ver de longe que ali não se opera.
+    esc_base = [caixa("esc_parede", (0, 0, 0.70), (2.4, 2.0, 1.4), M["parede"]),
+                caixa("esc_porta", (0, -1.01, 0.45), (0.8, 0.06, 0.9), M["madeira_esc"])]
+    grupos["escritorio"] = esc_base + [
+        caixa("esc_telha", (0, 0, 1.62), (2.7, 2.3, 0.3), M["telhado"]),
+        caixa("esc_janela", (1.21, 0.3, 0.95), (0.05, 0.7, 0.45), M["vidro"]),
+        caixa("esc_placa", (0, -1.05, 1.25), (1.2, 0.06, 0.3), M["amarelo"])]
+    grupos["escritorio_ruina"] = [
+        caixa("ruina_parede_alta", (-0.55, 0, 0.55), (1.3, 2.0, 1.1), M["parede_suja"]),
+        caixa("ruina_parede_baixa", (0.75, 0, 0.22), (1.1, 2.0, 0.44), M["parede_suja"]),
+        caixa("ruina_viga", (0.1, 0.35, 1.05), (2.3, 0.12, 0.12), M["madeira_esc"],
+              rot=(0, 9, 0)),
+        caixa("ruina_entulho_a", (-1.35, -0.85, 0.16), (0.7, 0.6, 0.32), M["madeira_esc"]),
+        caixa("ruina_entulho_b", (0.95, -0.95, 0.12), (0.5, 0.45, 0.24), M["parede_suja"],
+              rot=(0, 0, 22))]
 
     return grupos
 

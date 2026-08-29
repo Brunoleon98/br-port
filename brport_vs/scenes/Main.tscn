@@ -18,6 +18,11 @@
 [ext_resource type="Texture2D" path="res://art/props/coqueiro_copa.png" id="prop_coqueiro_copa"]
 [ext_resource type="Texture2D" path="res://art/props/boia.png" id="prop_boia"]
 [ext_resource type="Texture2D" path="res://art/props/marcador.png" id="prop_marcador"]
+[ext_resource type="Texture2D" path="res://art/porto_mapa_iso_patio.svg" id="mapa_patio"]
+[ext_resource type="Texture2D" path="res://art/props/galpao_velho.png" id="prop_galpao_velho"]
+[ext_resource type="Texture2D" path="res://art/props/galpao.png" id="prop_galpao"]
+[ext_resource type="Texture2D" path="res://art/props/escritorio_ruina.png" id="prop_escritorio_ruina"]
+[ext_resource type="Texture2D" path="res://art/props/escritorio.png" id="prop_escritorio"]
 
 [sub_resource type="StyleBoxFlat" id="pilula"]
 bg_color = Color(0.09, 0.16, 0.24, 1)
@@ -230,6 +235,24 @@ offset_right = 720.0
 offset_bottom = 720.0
 mouse_filter = 2
 
+[node name="Armazem" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -14.0
+offset_top = 77.0
+offset_right = 498.0
+offset_bottom = 589.0
+mouse_filter = 2
+texture = ExtResource("prop_galpao_velho")
+
+[node name="Escritorio" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 106.0
+offset_top = -103.0
+offset_right = 618.0
+offset_bottom = 409.0
+mouse_filter = 2
+texture = ExtResource("prop_escritorio_ruina")
+
 [node name="Coqueiro0Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -107.0
@@ -380,6 +403,19 @@ theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
 theme_override_constants/outline_size = 9
 theme_override_font_sizes/font_size = 27
 
+[node name="LblArmazem" type="Label" parent="MapaWrap"]
+layout_mode = 0
+offset_left = 148.0
+offset_top = 274.0
+offset_right = 348.0
+offset_bottom = 308.0
+mouse_filter = 2
+text = "ARMAZÉM"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 22
+
 [node name="LblZona" type="Label" parent="MapaWrap"]
 layout_mode = 0
 offset_left = 476.0
@@ -397,10 +433,10 @@ theme_override_font_sizes/font_size = 24
 
 [node name="LblEscritorio" type="Label" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 60.0
-offset_top = 300.0
-offset_right = 300.0
-offset_bottom = 336.0
+offset_left = 268.0
+offset_top = 96.0
+offset_right = 468.0
+offset_bottom = 130.0
 mouse_filter = 2
 text = "ESCRITÓRIO"
 theme_override_colors/font_color = Color(1, 1, 1, 1)

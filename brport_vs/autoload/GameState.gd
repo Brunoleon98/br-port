@@ -31,14 +31,66 @@ signal message(text: String, kind: String)
 signal state_loaded()
 
 # ── TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1) ──
-const START_CASH := 600                 # GDD "Abertura de caixa": R$600 herdado
+# TUNING — medido, não estimado. 600 partidas por perfil em
+# tools/simular_balanceamento.gd: ótimo 99,8% · mediano 50,5% · descuidado 0%.
+# A mediana do jogador mediano fecha em R$8.007 contra uma parcela de R$8.000:
+# é para ficar nessa margem. Mexer aqui SEM rodar o simulador quebra isso.
+const START_CASH := 3250
 const SALARY_PER_WORKER := 100          # GDD "Margem operacional base": 2 trab. x R$100 = R$200/sem
 const MAINTENANCE_WEEKLY := 30          # GDD "Margem operacional base": manutenção R$30/sem
-const DOCKS_BASE := 2                   # GDD "VS — Sistemas IN": 2 slots simultâneos
-const WORKERS_BASE := 2
-const UPGRADE_COST := 400               # TUNING: GDD não define custo do upgrade de VS; estimado
+# O porto ABRE PARADO. Um píer de pé, o resto em ruína — é o que a herança do
+# avô do GDD descreve, e é a diferença entre "administrar um porto" e "levantar
+# um porto", que é a fantasia do jogo.
+const DOCKS_BASE := 1
+const WORKERS_BASE := 1
 const UPGRADE_EXTRA_DOCKS := 1
 const UPGRADE_EXTRA_WORKERS := 1
+
+# ── ESTRUTURAS ──
+# O que o jogador compra ou conserta. Cada uma tem um efeito ECONÔMICO real —
+# nenhuma é só enfeite, senão comprar seria só gastar.
+#
+# PROPORÇÃO, não escala. O problema dos preços antigos não era o R$ ser baixo:
+# era um píer custar R$400 enquanto um barco paga R$80–300, ou seja UM barco
+# comprava um píer. Aqui a infraestrutura custa DEZENAS de barcos, que é o que
+# faz decidir onde gastar valer alguma coisa.
+#
+# `ordem` é só a apresentação no painel. `custo` é TUNING — medido em
+# tools/simular_balanceamento.gd, não estimado.
+const ESTRUTURAS := {
+	"pier_2": {
+		"nome": "Reconstruir o Píer 2",
+		"desc": "+1 doca e +1 trabalhador",
+		"custo": 900, "ordem": 1, "requer": "",
+	},
+	"pier_3": {
+		"nome": "Reconstruir o Píer 3",
+		"desc": "+1 doca e +1 trabalhador",
+		"custo": 1600, "ordem": 2, "requer": "pier_2",
+	},
+	"armazem": {
+		"nome": "Consertar o armazém",
+		"desc": "+20% no valor de cada barco atendido",
+		"custo": 1100, "ordem": 3, "requer": "",
+	},
+	"patio": {
+		"nome": "Pavimentar o pátio",
+		"desc": "dobra a renda semanal do píer",
+		"custo": 700, "ordem": 4, "requer": "",
+	},
+	"escritorio": {
+		"nome": "Reformar o escritório",
+		"desc": "-50% nos salários da semana",
+		"custo": 500, "ordem": 5, "requer": "",
+	},
+}
+
+const ARMAZEM_BONUS := 0.20             # TUNING
+const PATIO_BONUS_PIER := 1.00          # TUNING
+# O escritório mexia na manutenção (R$30/sem): pouparia R$18 por semana e
+# nunca se pagaria. Agora corta SALÁRIO, que é o custo que cresce com o
+# porto — é o que torna a compra uma decisão e não uma armadilha.
+const ESCRITORIO_DESCONTO_SALARIO := 0.50   # TUNING
 
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
 const PIER_RATE_PER_SLOT := 40          # GDD "Margem operacional base": R$40/vaga -> R$240/sem
@@ -96,6 +148,9 @@ var reputation: float = REPUTATION_START
 var docks: Array = []       # [{boat: Dictionary|null, worker_id: int|null}]
 var workers: Array = []     # [{id:int, busy_turns:int}]
 var upgrade_purchased: bool = false
+# Estruturas já compradas, por id. Guardado como Array para o save ser um JSON
+# simples — Dictionary de bool viraria ruído no ficheiro.
+var estruturas: Array = []
 var parcela_paid: bool = false
 var phase: String = "playing"   # playing | rival_offer | debt_payment | game_over
 var pending_rival_dock: int = -1
@@ -131,6 +186,7 @@ func new_game() -> void:
 	cash = START_CASH
 	reputation = REPUTATION_START
 	upgrade_purchased = false
+	estruturas = []
 	parcela_paid = false
 	_set_phase("playing")
 	pending_rival_dock = -1
@@ -424,7 +480,8 @@ func advance_turn() -> void:
 		if dock["worker_id"] != null:
 			boat["progress"] = int(boat["progress"]) + 1
 			if int(boat["progress"]) >= int(boat["op_turns"]):
-				var value: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
+				var bruto: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
+				var value := _valor_recebido(bruto)
 				cash += value
 				metrics["revenue"] += value
 				metrics["boats_served"] += 1
@@ -463,8 +520,15 @@ func advance_turn() -> void:
 
 
 func _process_week_end(ended_week: int) -> void:
+	# Pátio pavimentado: mais vagas de píer alugáveis. Escritório reformado:
+	# menos manutenção porque a administração deixa de ser improvisada.
 	var pier_income := PIER_SLOTS * PIER_RATE_PER_SLOT
-	var cost := (SALARY_PER_WORKER * workers.size()) + MAINTENANCE_WEEKLY
+	if tem_estrutura("patio"):
+		pier_income = int(round(pier_income * (1.0 + PATIO_BONUS_PIER)))
+	var salarios := SALARY_PER_WORKER * workers.size()
+	if tem_estrutura("escritorio"):
+		salarios = int(round(salarios * (1.0 - ESCRITORIO_DESCONTO_SALARIO)))
+	var cost := salarios + MAINTENANCE_WEEKLY
 	cash += pier_income
 	cash -= cost
 	metrics["pier_income"] = int(metrics.get("pier_income", 0)) + pier_income
@@ -512,23 +576,66 @@ func fail_debt() -> void:
 
 
 # ── UPGRADE (ampliar píer) ──
-func buy_upgrade() -> bool:
-	if phase != "playing" or upgrade_purchased:
+func tem_estrutura(id: String) -> bool:
+	return estruturas.has(id)
+
+
+# Por que não dá para comprar: "" quando dá. O painel mostra este texto, então
+# o jogador nunca fica com um botão apagado sem explicação.
+func impedimento_estrutura(id: String) -> String:
+	if not ESTRUTURAS.has(id):
+		return "Estrutura desconhecida."
+	if tem_estrutura(id):
+		return "Já construída."
+	if phase != "playing":
+		return "Resolva o que está na tela primeiro."
+	var def: Dictionary = ESTRUTURAS[id]
+	var requer := String(def["requer"])
+	if requer != "" and not tem_estrutura(requer):
+		return "Precisa antes de: %s." % ESTRUTURAS[requer]["nome"]
+	if cash < int(def["custo"]):
+		return "Faltam R$%d." % (int(def["custo"]) - int(cash))
+	return ""
+
+
+func comprar_estrutura(id: String) -> bool:
+	if impedimento_estrutura(id) != "":
 		return false
-	if cash < UPGRADE_COST:
-		message.emit("Caixa insuficiente para o upgrade. Precisa de R$%d." % UPGRADE_COST, "warn")
-		return false
-	cash -= UPGRADE_COST
-	upgrade_purchased = true
-	for i in range(UPGRADE_EXTRA_DOCKS):
-		docks.append({"boat": null, "worker_id": null})
-	for i in range(UPGRADE_EXTRA_WORKERS):
-		workers.append({"id": workers.size() + 1, "busy_turns": 0})
+	var def: Dictionary = ESTRUTURAS[id]
+	cash -= int(def["custo"])
+	estruturas.append(id)
+
+	# Os píeres são os únicos que mexem no roster. O resto é econômico e age
+	# nos lugares onde o dinheiro é contado (ver _valor_recebido e
+	# _process_week_end).
+	if id == "pier_2" or id == "pier_3":
+		upgrade_purchased = true          # compat: a suíte antiga ainda olha isto
+		for i in range(UPGRADE_EXTRA_DOCKS):
+			docks.append({"boat": null, "worker_id": null})
+		for i in range(UPGRADE_EXTRA_WORKERS):
+			workers.append({"id": workers.size() + 1, "busy_turns": 0})
+
 	cash_changed.emit(cash)
 	roster_changed.emit()
-	message.emit("Píer ampliado! +1 doca e +1 trabalhador.", "good")
+	message.emit("%s — pronto. %s" % [def["nome"], def["desc"]], "good")
 	save_game()
 	return true
+
+
+# Compat com a suíte de regressão e o simulador, que conheciam um upgrade só.
+func buy_upgrade() -> bool:
+	if not tem_estrutura("pier_2"):
+		return comprar_estrutura("pier_2")
+	return comprar_estrutura("pier_3")
+
+
+# Quanto o porto realmente recebe por um barco. O armazém entra aqui porque é
+# aqui que o dinheiro é contado — espalhar o bônus pelos sítios que somam caixa
+# é como se esquece um deles.
+func _valor_recebido(bruto: int) -> int:
+	if tem_estrutura("armazem"):
+		return int(round(bruto * (1.0 + ARMAZEM_BONUS)))
+	return bruto
 
 
 # ── GERAÇÃO DE BARCOS ──
@@ -605,6 +712,7 @@ func save_game() -> void:
 		"docks": docks,
 		"workers": workers,
 		"upgrade_purchased": upgrade_purchased,
+		"estruturas": estruturas,
 		"parcela_paid": parcela_paid,
 		"phase": phase,
 		"pending_rival_dock": pending_rival_dock,
@@ -638,6 +746,7 @@ func load_game() -> bool:
 	docks = parsed.get("docks", [])
 	workers = parsed.get("workers", [])
 	upgrade_purchased = bool(parsed.get("upgrade_purchased", false))
+	estruturas = parsed.get("estruturas", [])
 	parcela_paid = bool(parsed.get("parcela_paid", false))
 	phase = String(parsed.get("phase", "playing"))
 	pending_rival_dock = int(parsed.get("pending_rival_dock", -1))

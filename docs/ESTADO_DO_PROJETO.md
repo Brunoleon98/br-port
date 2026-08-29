@@ -7,7 +7,23 @@
 > HUD não usa mais emoji; direção de arte decidida como isométrica, ainda não
 > integrada)
 >
-> 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO4_BRIEFING_CONTINUACAO.md`.**
+> 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
+
+---
+
+## O jogo hoje, em três linhas
+
+**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$3.250 e cinco estruturas
+para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada uma
+muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
+saem de ruína para telhado novo.
+
+**Economia medida em 600 partidas por perfil:** ótimo 99,8% · mediano 50,5% ·
+descuidado 0,0%. A mediana do mediano fecha em R$8.007 contra uma parcela de
+R$8.000. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
+
+**Não se arrasta trabalhador a cada turno:** há "Alocar todos" e
+toque-para-alocar, com o arrasto ainda funcionando.
 
 ---
 
@@ -135,6 +151,10 @@ todos conferidos a 19px sobre os três fundos que a interface tem (pílula
 escura, cartão branco, botão navy) com `tools/folha_icones.gd`. Cada um foi
 colorido para o fundo onde cai — dois não são reaproveitáveis em qualquer
 lugar, e o cabeçalho de `Icones.gd` diz quais e por quê.
+
+As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
+nos dois estados, então o prédio não salta ao ser consertado. Mesma razão que
+fez o píer partilhar geometria entre vazio e construído.
 
 O cenário usa os props: **coqueiros low-poly** (que oscilam, copa e tronco em
 peças separadas), **guindaste** nas docas construídas (a lança varre), **carga

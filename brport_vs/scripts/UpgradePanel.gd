@@ -1,9 +1,27 @@
 extends Control
 
-# Upgrade único do VS — ampliar o píer (+1 doca, +1 trabalhador).
+# Painel de construção do porto.
+#
+# Antes era um upgrade só ("ampliar o píer") e cabia num botão. Agora o porto
+# ABRE PARADO e o jogador levanta-o peça por peça, então o painel lista tudo:
+# o que já está de pé, o que dá para comprar agora, e — o que mais importa —
+# POR QUE não dá, quando não dá. Um botão apagado sem explicação faz o jogador
+# achar que o jogo travou.
+
+const COR_FEITO := Color(0.102, 0.478, 0.251)
+const COR_BLOQUEADO := Color(0.51, 0.6, 0.706)
 
 
 func _ready() -> void:
+	_build_ui()
+	GameState.cash_changed.connect(func(_v): _rebuild())
+	GameState.roster_changed.connect(_rebuild)
+
+
+func _rebuild() -> void:
+	for filho in get_children():
+		remove_child(filho)
+		filho.queue_free()
 	_build_ui()
 
 
@@ -22,37 +40,74 @@ func _build_ui() -> void:
 	box.anchor_top = 0.5
 	box.anchor_right = 0.5
 	box.anchor_bottom = 0.5
-	box.offset_left = -160
-	box.offset_top = -110
-	box.offset_right = 160
-	box.offset_bottom = 110
+	box.offset_left = -320
+	box.offset_top = -280
+	box.offset_right = 320
+	box.offset_bottom = 280
 	add_child(box)
 
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 10)
+	vbox.add_theme_constant_override("separation", 8)
 	box.add_child(vbox)
 
-	vbox.add_child(Icones.rotulo(Icones.AMPLIAR_PIER, "Ampliar o píer"))
+	vbox.add_child(Icones.rotulo(Icones.AMPLIAR_PIER, "Construir no porto"))
 
-	var body := Label.new()
-	body.autowrap_mode = TextServer.AUTOWRAP_WORD
-	body.text = "Custo: R$%d\nEfeito: +1 doca e +1 trabalhador.\nCaixa atual: R$%d" % [GameState.UPGRADE_COST, int(GameState.cash)]
-	vbox.add_child(body)
+	var caixa := Label.new()
+	caixa.text = "Caixa: R$%d" % int(GameState.cash)
+	caixa.add_theme_font_size_override("font_size", 14)
+	vbox.add_child(caixa)
 
-	var btn_row := HBoxContainer.new()
-	btn_row.add_theme_constant_override("separation", 8)
-	vbox.add_child(btn_row)
+	# Ordenar pela chave `ordem` e não pela do dicionário: a ordem de um
+	# Dictionary em GDScript é a de inserção, e depender disso é frágil.
+	var ids := GameState.ESTRUTURAS.keys()
+	ids.sort_custom(func(a, b):
+		return int(GameState.ESTRUTURAS[a]["ordem"]) < int(GameState.ESTRUTURAS[b]["ordem"]))
 
-	var btn_buy := Button.new()
-	btn_buy.text = "Comprar"
-	btn_buy.disabled = GameState.cash < GameState.UPGRADE_COST
-	btn_buy.pressed.connect(func():
-		GameState.buy_upgrade()
-		queue_free()
-	)
-	btn_row.add_child(btn_buy)
+	for id in ids:
+		vbox.add_child(_linha_estrutura(String(id)))
 
-	var btn_cancel := Button.new()
-	btn_cancel.text = "Cancelar"
-	btn_cancel.pressed.connect(func(): queue_free())
-	btn_row.add_child(btn_cancel)
+	var btn_fechar := Button.new()
+	btn_fechar.text = "Fechar"
+	btn_fechar.pressed.connect(func(): queue_free())
+	vbox.add_child(btn_fechar)
+
+
+func _linha_estrutura(id: String) -> Control:
+	var def: Dictionary = GameState.ESTRUTURAS[id]
+	var feito: bool = GameState.tem_estrutura(id)
+	var impedimento: String = GameState.impedimento_estrutura(id)
+
+	var cartao := PanelContainer.new()
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 2)
+	cartao.add_child(col)
+
+	var titulo := Label.new()
+	titulo.text = "%s — R$%d" % [def["nome"], int(def["custo"])]
+	titulo.add_theme_font_size_override("font_size", 15)
+	if feito:
+		titulo.add_theme_color_override("font_color", COR_FEITO)
+	col.add_child(titulo)
+
+	var efeito := Label.new()
+	efeito.text = String(def["desc"])
+	efeito.autowrap_mode = TextServer.AUTOWRAP_WORD
+	efeito.add_theme_font_size_override("font_size", 12)
+	efeito.add_theme_color_override("font_color", COR_BLOQUEADO)
+	col.add_child(efeito)
+
+	if feito:
+		var pronto := Icones.rotulo(Icones.FEITO, "Construída", Icones.TAM_TEXTO)
+		pronto.get_node("Texto").add_theme_font_size_override("font_size", 12)
+		pronto.get_node("Texto").add_theme_color_override("font_color", COR_FEITO)
+		col.add_child(pronto)
+		return cartao
+
+	var btn := Button.new()
+	btn.text = "Construir (R$%d)" % int(def["custo"]) if impedimento == "" else impedimento
+	btn.disabled = impedimento != ""
+	btn.add_theme_font_size_override("font_size", 13)
+	if impedimento == "":
+		btn.pressed.connect(func(): GameState.comprar_estrutura(id))
+	col.add_child(btn)
+	return cartao

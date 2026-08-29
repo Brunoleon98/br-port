@@ -56,7 +56,7 @@ C = {
     "asfalto": "#6f7b85", "madeira": "#9a6438", "madeira_dir": "#633d20",
     "madeira_esq": "#7a4d2a", "telhado": "#c85420", "parede": "#eef2f5",
     "parede_dir": "#b3bfc7", "parede_esq": "#cfd8de", "verde": "#2d7a3a",
-    "vidro": "#7fb6cc", "porta": "#5a3a20",
+    "vidro": "#7fb6cc", "porta": "#5a3a20", "terra": "#8a7a63",
 }
 
 
@@ -131,7 +131,8 @@ def predio(mx0, my0, mx1, my1, base, altura, telhado, telhado_dir, telhado_esq,
     return s
 
 
-def gerar(com_pieres: bool = True, com_coqueiros: bool = True) -> str:
+def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
+          com_predios: bool = True, com_pavimento: bool = True) -> str:
     s = '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d">\n' % (
         LARG, ALT, LARG, ALT)
 
@@ -150,12 +151,14 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True) -> str:
     for my0, my1, borda in DEGRAUS:
         s += laje(FUNDO_TERRA, my0, borda, my1, ALT_CAIS,
                   C["cais_topo"], C["cais_dir"], C["cais_esq"])
+        # Pátio: terra batida no início, asfalto com faixa depois de pavimentado.
         s += poli([p(FUNDO_TERRA, my0 + 0.5, ALT_CAIS), p(borda - 1.3, my0 + 0.5, ALT_CAIS),
                    p(borda - 1.3, my1 - 0.5, ALT_CAIS), p(FUNDO_TERRA, my1 - 0.5, ALT_CAIS)],
-                  C["asfalto"])
-        s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="#e0a81f" '
-              'stroke-width="2.5" fill="none"/>\n' % (
-                  *p(borda - 0.9, my0 + 0.3, ALT_CAIS), *p(borda - 0.9, my1 - 0.3, ALT_CAIS)))
+                  C["asfalto"] if com_pavimento else C["terra"])
+        if com_pavimento:
+            s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="#e0a81f" '
+                  'stroke-width="2.5" fill="none"/>\n' % (
+                      *p(borda - 0.9, my0 + 0.3, ALT_CAIS), *p(borda - 0.9, my1 - 0.3, ALT_CAIS)))
 
     # ---- píeres ----
     # Em jogo o píer TROCA DE ESTADO (vaga por construir -> píer construído), e
@@ -176,19 +179,29 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True) -> str:
 
     # ---- prédios no pátio, de trás para a frente ----
     B = ALT_CAIS
+    # Prédios e contêineres saem do mapa quando --sem-predios: eles TROCAM DE
+    # ESTADO em jogo (ruína -> consertado), e o que muda de estado não pode
+    # estar assado no fundo. Mesma regra dos píeres e dos coqueiros.
+    # Carga empilhada no pátio: só faz sentido com o chão pavimentado.
+    if com_pavimento:
+        cores = [("#c23030", "#7a1a1a", "#8f2020"), ("#2f74b0", "#1d4a75", "#245a8c"),
+                 ("#e0a81f", "#9c7a15", "#b8901a"), ("#2d7a3a", "#19512d", "#1f6236")]
+        k = 0
+        for mx, my in [(2.4, 1.6), (3.9, 1.6), (6.2, 10.4), (7.7, 10.4),
+                       (10.2, 18.4), (11.7, 18.4), (1.0, 12.0), (5.0, 20.0)]:
+            c = cores[k % len(cores)]
+            s += caixa(mx, my, mx + 1.2, my + 1.6, B, 13, c[0], c[1], c[2])
+            k += 1
+
+    if not com_predios:
+        s += "</svg>\n"
+        return s
+
     s += predio(-1.0, -3.5, 3.0, 0.5, B, 34, C["telhado"], "#8f3822", "#a8452a")
     s += predio(2.0, 5.0, 6.4, 9.4, B, 44, "#3f6f4a", "#2a4d33", "#335c3d", 3)
     s += predio(6.0, 13.0, 10.4, 17.4, B, 32, C["telhado"], "#8f3822", "#a8452a")
     s += predio(10.0, 21.0, 14.4, 25.4, B, 30, "#3f6f4a", "#2a4d33", "#335c3d")
 
-    cores = [("#c23030", "#7a1a1a", "#8f2020"), ("#2f74b0", "#1d4a75", "#245a8c"),
-             ("#e0a81f", "#9c7a15", "#b8901a"), ("#2d7a3a", "#19512d", "#1f6236")]
-    k = 0
-    for mx, my in [(2.4, 1.6), (3.9, 1.6), (6.2, 10.4), (7.7, 10.4),
-                   (10.2, 18.4), (11.7, 18.4), (1.0, 12.0), (5.0, 20.0)]:
-        c = cores[k % len(cores)]
-        s += caixa(mx, my, mx + 1.2, my + 1.6, B, 13, c[0], c[1], c[2])
-        k += 1
 
     # Coqueiros chapados: só saem quando --sem-coqueiros. Eles viraram props
     # low-poly com copa e tronco SEPARADOS, porque o que balança não pode
@@ -211,13 +224,17 @@ def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     com_pieres = "--sem-pieres" not in sys.argv
     com_coqueiros = "--sem-coqueiros" not in sys.argv
+    com_predios = "--sem-predios" not in sys.argv
+    com_pavimento = "--sem-pavimento" not in sys.argv
     destino = args[0] if args else "porto_mapa_iso.svg"
-    conteudo = gerar(com_pieres, com_coqueiros)      # gerar ANTES de abrir: open(...,"w")
+    conteudo = gerar(com_pieres, com_coqueiros, com_predios, com_pavimento)      # gerar ANTES de abrir: open(...,"w")
     with open(destino, "w", encoding="utf-8") as f:   # trunca de imediato, e um
         f.write(conteudo)                             # erro deixaria o mapa vazio
     print("%s — %dx%d, chão transbordando de propósito (o ecrã é a janela)%s" % (
         destino, LARG, ALT, ("" if com_pieres else "  [SEM os píeres]")
-        + ("" if com_coqueiros else "  [SEM os coqueiros]")))
+        + ("" if com_coqueiros else "  [SEM os coqueiros]")
+        + ("" if com_predios else "  [SEM os prédios]")
+        + ("" if com_pavimento else "  [terra batida]")))
 
     # O centro de cada píer no chão. É por aqui que o Main.tscn ancora o prop:
     # o render mira a origem do chão, então o canto do TextureRect é este ponto
