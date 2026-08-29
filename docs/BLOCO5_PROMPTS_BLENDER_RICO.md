@@ -33,8 +33,13 @@ direita o que dá para ter sem trocar de ferramenta:
 | render | 5 s | 27 s |
 
 **O detalhe não custa espaço de tela.** O guindaste rico é *menor* que o atual
-e tem 15 vezes mais peças. O que ele custa é tempo de render: com ~20 props,
-2 min viram ~9 min. Isso se paga.
+e tem 15 vezes mais peças.
+
+O custo previsto era tempo de render — e a previsão saiu errada, para melhor.
+Estimei ~9 min para os 20 props a partir dos 27 s do demo; **o lote inteiro
+leva 54 s**. O demo usava 128 amostras sem denoiser; ligar o denoiser deixa
+64 amostras saírem limpas e mais baratas que 128 sem ele. Fica o registro
+porque a conta errada quase fez o custo parecer proibitivo.
 
 O que fez a diferença, em ordem de impacto:
 
@@ -73,11 +78,69 @@ carga espalhada.
 
 ---
 
+## 2.5. O que já foi EXECUTADO (29/08/2026)
+
+Os prompts A, B, C e D foram rodados nesta mesma sessão, com o Blender já
+instalado. Estado:
+
+| Prompt | Estado | O que ficou |
+|---|---|---|
+| **A** — luz, chanfro, desgaste | **feito** | rig de três pontos, `BEVEL` em toda malha, `material_gasto()` com ruído procedural |
+| **B** — sombra de contato | **feito** | passe separado, composto em numpy dentro do próprio Blender |
+| **C** — geometria | **feito no guindaste** | torre e lança de treliça vazada, cabine, contrapeso, tirantes; prédios e barcos por fazer |
+| **D** — contorno | **testado e REJEITADO** | flag `--contorno` fica, desligada; ver abaixo |
+| **E** — água em Blender | não iniciado | continua sendo decisão do Bruno |
+
+### As cinco correções que só apareceram ao executar
+
+1. **Escala de ruído é relativa ao tamanho da peça.** Usei 14–24 para tudo na
+   primeira passagem. Numa longarina de 0,045 isso dá uma marca; numa parede de
+   galpão de 3 unidades dá setenta, e a parede vira LIXA. A tabela `DESGASTE`
+   ficou dividida em três faixas por isso, e a regra é olhar o prop, não a
+   tabela.
+2. **Preenchimento a 260 lava a forma.** Com ele forte demais as três faces do
+   volume voltam ao mesmo tom, que é exatamente o que a chave existe para
+   evitar. Ficou em 150: serve para tirar o preto da sombra, não para iluminar.
+3. **Sombra no azimute do mapa fica INVISÍVEL.** A convenção de faces do SVG
+   (face +mx mais escura que a +my) implica luz de baixo-esquerda na tela, e a
+   sombra correspondente cai atrás do prop, onde o próprio prop a esconde. Os
+   coqueiros ficaram bons e o armazém e os contentores não ganharam sombra
+   nenhuma que se visse. O passe de sombra passou a ter azimute próprio (250°),
+   assumindo a inconsistência: a sombra não está ali para dizer de onde vem o
+   sol, está para dizer que a peça toca o chão.
+4. **`use_freestyle` já cria um lineset, e cria-o sem estilo.** Criar outro por
+   cima não resolve — o Freestyle percorre todos e rebenta com `'NoneType'
+   object has no attribute 'use_chaining'`. Reaproveitar o que existe, e
+   garantir estilo em cada um.
+5. **Freestyle contorna o plano apanhador de sombra.** Um losango escuro de 16
+   unidades entrava na composição. O passe de sombra desliga o Freestyle.
+
+### Por que o contorno foi rejeitado
+
+Depois de corrigidos os dois bugs acima, o contorno ficou tecnicamente correto
+e mesmo assim não compensou, na escala em que estes props aparecem:
+
+- no galpão quase não se vê — não paga o tempo de render;
+- no guindaste **piora**: cada longarina da treliça ganha um halo cinzento e o
+  vazado, que era o ponto inteiro da peça, fecha;
+- no trabalhador (menos de 60 px) o traço é proporcionalmente enorme e a peça
+  fica embaçada.
+
+A flag `--contorno` fica no gerador, desligada por padrão, para que a próxima
+conversa não volte a tentar às cegas. Reabri-la só faz sentido com espessura
+escalada pelo tamanho do prop, e provavelmente só nos props grandes.
+
+---
+
 ## 3. Os prompts
 
 Cada um é para colar numa conversa nova do Claude Code. Estão em ordem de
 retorno: o primeiro mexe em todos os props sem tocar em geometria nenhuma, e é
 onde está a maior parte do ganho.
+
+**A, B e D já foram executados** (ver §2.5) — valem como registro do que foi
+pedido e como base para reabrir. O que continua por fazer é a segunda metade
+do **C** (prédios, barcos, píer) e o **E**.
 
 ### Preâmbulo (colar antes de qualquer um dos prompts)
 

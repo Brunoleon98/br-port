@@ -100,25 +100,39 @@ parcela de R$8.000** — é para ficar nessa margem.
 
 ## 3. O que fica para a próxima conversa
 
-### A0) Subir a arte no Blender — **tem documento próprio**
+### A0) Subir a arte no Blender — **tem documento próprio, e já foi executado**
 
 `docs/BLOCO5_PROMPTS_BLENDER_RICO.md` responde, com medição e imagem, se dá
 para chegar ao nível de uma arte de porto ilustrada usando o Blender por
-script, e traz cinco prompts prontos em ordem de retorno. Resumo: **o volume,
-a luz, o desgaste e a densidade de peça, sim; a pincelada, não.** O mesmo
-guindaste passou de 5 caixas para 75 peças **ocupando menos tela** (133×207 px
-→ 119×178 px), ao custo de 5 s → 27 s de render.
+script. Resumo: **o volume, a luz, o desgaste e a densidade de peça, sim; a
+pincelada, não.**
 
-Comece pelo Prompt A daquele documento: ele melhora os vinte props de uma vez
-e não pode desalinhar nada, porque não mexe em coordenada nenhuma.
+Quatro dos cinco prompts daquele documento **já foram rodados** (ver a §2.5 de
+lá, que traz as cinco correções que só apareceram ao executar):
+
+- **A — luz, chanfro, desgaste:** feito. Rig de três pontos, `BEVEL` em toda
+  malha, `material_gasto()`.
+- **B — sombra de contato:** feito. Passe separado, composto em numpy dentro do
+  Blender, com azimute PRÓPRIO (250°) — no azimute do mapa a sombra cai atrás
+  do prop e não se vê.
+- **C — geometria:** feito **só no guindaste**. Prédios, barcos e píer por
+  fazer, e é aí que está o próximo ganho grande.
+- **D — contorno:** testado e **rejeitado**. Fecha o vazado da treliça e
+  engorda os props pequenos. Fica a flag `--contorno`, desligada.
+- **E — água em Blender:** não iniciado. Continua sendo decisão do Bruno.
+
+O lote inteiro de props leva **54 s** para regerar.
 
 ### A) O refino visual que ficou pendente
 
-- **A lança do guindaste varre para o lado errado** — estende-se para terra, e
-  o barco atraca do outro lado. Inverter o eixo dela em `gerar_props_iso.py`.
+- ~~A lança do guindaste varre para o lado errado~~ — **resolvido** ao refazer
+  o guindaste. O gerador do mapa já imprimia a conta: entre o centro do píer e
+  a âncora do barco há Δmx = 0 e Δmy = +2,8, ou seja o barco encosta no FLANCO,
+  não na ponta. A lança agora varre para −Y local, atravessando o convés.
 - **A chip da doca cobre o meio do convés.** É a tensão de sempre: o passo
   vertical entre docas é 180px e o píer ocupa ~155, então não cabe empilhar.
-  A saída real é repensar ONDE a informação da doca mora.
+  A saída real é repensar ONDE a informação da doca mora. **Piorou um pouco**
+  com o guindaste novo, que é mais alto e passa por trás da chip.
 - **O retrato ilustrado do trabalhador** no cartão é de outra leva e de outra
   linguagem visual que o resto.
 
@@ -149,6 +163,7 @@ uso.
 | `tools/gerar_props_iso.py` | Props em Blender por script. Confere a própria projeção ao fim. |
 | `tools/preparar_sprites.py` | Conserta o alpha de PNG gerado por IA. Só faz falta para o gerador de imagem. |
 | `tools/demo_guindaste_rico.py` | Demonstração, fora do jogo: o mesmo guindaste no pipeline de hoje e num mais rico. Base dos prompts de `BLOCO5_PROMPTS_BLENDER_RICO.md`. |
+| `tools/gerar_props_iso.py --contorno` | Contorno Freestyle. **Testado e rejeitado** nesta escala — ver §2.5 daquele documento antes de reabrir. |
 | `brport_vs/tools/simular_balanceamento.gd` | **Roda antes de mexer em qualquer preço.** |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos. |
 | `brport_vs/tools/capturar_tela.gd` | PNG do jogo rodando. Terceiro argumento `completo` compra todas as estruturas antes de montar a cena, para fotografar o mapa pavimentado. **Teste verde não prova que ficou bonito.** |
