@@ -167,21 +167,27 @@ func current_week() -> int:
 
 
 # ── WORKER ASSIGNMENT ──
-func assign_worker(worker_id: int, dock_index: int) -> bool:
+# `avisar` só existe para a alocação em lote: chamar isto N vezes emitiria N
+# mensagens e só a última sobreviveria na barra. Quem aloca em lote silencia
+# aqui e emite um resumo no fim.
+func assign_worker(worker_id: int, dock_index: int, avisar: bool = true) -> bool:
 	if phase != "playing":
 		return false
 	if dock_index < 0 or dock_index >= docks.size():
 		return false
 	var dock: Dictionary = docks[dock_index]
 	if dock["boat"] == null:
-		message.emit("Doca vazia — não há barco aqui.", "warn")
+		if avisar:
+			message.emit("Doca vazia — não há barco aqui.", "warn")
 		return false
 	if dock["worker_id"] != null:
-		message.emit("Essa doca já tem trabalhador operando.", "warn")
+		if avisar:
+			message.emit("Essa doca já tem trabalhador operando.", "warn")
 		return false
 	var boat: Dictionary = dock["boat"]
 	if boat.get("rival", false) and not boat.get("matched", false):
-		message.emit("Resolva a oferta do rival antes de alocar.", "warn")
+		if avisar:
+			message.emit("Resolva a oferta do rival antes de alocar.", "warn")
 		return false
 	var worker = _find_worker(worker_id)
 	if worker == null or int(worker["busy_turns"]) > 0:
@@ -192,13 +198,96 @@ func assign_worker(worker_id: int, dock_index: int) -> bool:
 	# várias docas e faturar de graça.
 	var already := worker_dock_index(worker_id)
 	if already >= 0:
-		message.emit("Trabalhador #%d já está na Doca %d. Toque na doca para liberá-lo." % [worker_id, already + 1], "warn")
+		if avisar:
+			message.emit("Trabalhador #%d já está na Doca %d. Toque na doca para liberá-lo." % [worker_id, already + 1], "warn")
 		return false
 	dock["worker_id"] = worker_id
-	message.emit("Trabalhador alocado. Avance o dia para operar.", "good")
+	if avisar:
+		message.emit("Trabalhador alocado. Avance o dia para operar.", "good")
 	roster_changed.emit()
 	save_game()
 	return true
+
+
+# Põe todo trabalhador livre numa doca que esteja esperando, do barco mais
+# valioso para o menos. Existe porque arrastar um por um, todo turno, é o que
+# mais cansa em quem joga — e quando há trabalhador para todas as docas não
+# havia decisão nenhuma sendo tomada no arrasto.
+#
+# A ordem por valor NÃO é enfeite: quando há menos trabalhador que barco,
+# atender o mais caro primeiro é a jogada certa, então o botão faz o que um
+# bom jogador faria. Quem quiser outra coisa toca na doca para liberar e
+# realoca — a escolha continua existindo, deixou é de ser obrigatória.
+func assign_all_free_workers() -> int:
+	if phase != "playing":
+		return 0
+
+	var livres: Array[int] = []
+	for w in workers:
+		var wid := int(w["id"])
+		if int(w["busy_turns"]) == 0 and worker_dock_index(wid) < 0:
+			livres.append(wid)
+	if livres.is_empty():
+		return 0
+
+	var esperando: Array[int] = []
+	for i in range(docks.size()):
+		var doca: Dictionary = docks[i]
+		var barco = doca["boat"]
+		if barco == null or doca["worker_id"] != null:
+			continue
+		if barco.get("rival", false) and not barco.get("matched", false):
+			continue
+		esperando.append(i)
+	if esperando.is_empty():
+		return 0
+
+	esperando.sort_custom(func(a, b): return _valor_do_barco(a) > _valor_do_barco(b))
+
+	var postos := 0
+	for i in esperando:
+		if postos >= livres.size():
+			break
+		if assign_worker(livres[postos], i, false):
+			postos += 1
+
+	if postos > 0:
+		var sobraram := esperando.size() - postos
+		var texto := "%d trabalhador(es) alocado(s). Avance o dia para operar." % postos
+		if sobraram > 0:
+			texto += " Faltou gente para %d doca(s)." % sobraram
+		message.emit(texto, "good")
+	return postos
+
+
+func _valor_do_barco(dock_index: int) -> int:
+	var barco = docks[dock_index]["boat"]
+	if barco == null:
+		return 0
+	return int(barco["matched_value"]) if barco.get("matched", false) else int(barco["value"])
+
+
+# Há trabalhador livre E doca esperando? É o que decide se o botão de alocar
+# em lote fica aceso.
+func has_pending_assignment() -> bool:
+	if phase != "playing":
+		return false
+	var tem_livre := false
+	for w in workers:
+		if int(w["busy_turns"]) == 0 and worker_dock_index(int(w["id"])) < 0:
+			tem_livre = true
+			break
+	if not tem_livre:
+		return false
+	for i in range(docks.size()):
+		var doca: Dictionary = docks[i]
+		var barco = doca["boat"]
+		if barco == null or doca["worker_id"] != null:
+			continue
+		if barco.get("rival", false) and not barco.get("matched", false):
+			continue
+		return true
+	return false
 
 
 # Devolve o índice da doca onde o trabalhador está alocado, ou -1.

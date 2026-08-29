@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" path="res://art/icones/parcela.svg" id="ic_parcela"]
 [ext_resource type="Texture2D" path="res://art/icones/ampliar_pier.svg" id="ic_ampliar"]
 [ext_resource type="Texture2D" path="res://art/icones/avancar.svg" id="ic_avancar"]
+[ext_resource type="Texture2D" path="res://art/icones/trabalhador.svg" id="ic_trabalhador"]
 
 [sub_resource type="StyleBoxFlat" id="pilula"]
 bg_color = Color(0.09, 0.16, 0.24, 1)
@@ -321,7 +322,7 @@ offset_left = 14.0
 offset_top = 820.0
 offset_right = 706.0
 offset_bottom = 838.0
-text = "Trabalhadores — arraste para uma doca"
+text = "Trabalhadores — toque ou arraste para uma doca"
 theme_override_colors/font_color = Color(0.51, 0.6, 0.706, 1)
 theme_override_font_sizes/font_size = 13
 
@@ -398,12 +399,27 @@ offset_bottom = 1170.0
 theme_override_constants/icon_max_width = 26
 icon = ExtResource("ic_ampliar")
 
-[node name="Avancar" type="Button" parent="."]
+[node name="AcoesTurno" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
 offset_top = 1176.0
 offset_right = 706.0
 offset_bottom = 1234.0
+theme_override_constants/separation = 8
+
+[node name="Alocar" type="Button" parent="AcoesTurno"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Põe cada trabalhador livre numa doca que esteja esperando, do barco mais valioso para o menos"
+text = "Alocar todos"
+theme_override_constants/icon_max_width = 24
+theme_override_font_sizes/font_size = 15
+icon = ExtResource("ic_trabalhador")
+
+[node name="Avancar" type="Button" parent="AcoesTurno"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.7
 text = "AVANÇAR DIA"
 theme_override_constants/icon_max_width = 30
 theme_override_font_sizes/font_size = 19

@@ -26,6 +26,10 @@ const ArtePequeno := preload("res://art/props/barco_pequeno.png")
 
 var dock_index: int = -1
 
+# Quem está selecionado na fileira de trabalhadores, ou -1. O Main mantém isto
+# em dia; a doca só precisa saber para onde mandar o toque.
+var trabalhador_selecionado: int = -1
+
 @onready var _pier: TextureRect = $Pier
 @onready var _barco: TextureRect = $Barco
 @onready var _chip: PanelContainer = $Chip
@@ -127,11 +131,20 @@ func _drop_data(_at_position: Vector2, data) -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
-	# Tocar/clicar numa doca com trabalhador alocado o devolve para a lista,
-	# desde que a operação ainda não tenha começado.
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if not esta_construida():
-			return
-		if GameState.docks[dock_index]["worker_id"] != null:
-			GameState.release_worker(dock_index)
-			accept_event()
+	if not (event is InputEventMouseButton and event.pressed
+			and event.button_index == MOUSE_BUTTON_LEFT):
+		return
+	if not esta_construida():
+		return
+
+	# Com alguém selecionado na fileira, o toque ALOCA — é o outro lado do
+	# toque-para-alocar. Sem seleção, o toque devolve quem está aqui para a
+	# fileira, que é como se desfaz um arrasto errado.
+	if trabalhador_selecionado >= 0 and GameState.docks[dock_index]["worker_id"] == null:
+		GameState.assign_worker(trabalhador_selecionado, dock_index)
+		accept_event()
+		return
+
+	if GameState.docks[dock_index]["worker_id"] != null:
+		GameState.release_worker(dock_index)
+		accept_event()

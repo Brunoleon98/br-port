@@ -7,7 +7,13 @@ extends PanelContainer
 # TrabAlocado, TrabOcupado). No Bloco 4 o retângulo vira sprite trocando a
 # cena, sem mexer aqui.
 
+# Tocar num trabalhador o SELECIONA; tocar depois numa doca o manda para lá.
+# É a alternativa ao arrasto — que continua funcionando, mas exigia precisão
+# e repetição a cada turno.
+signal selecionado(worker_id: int)
+
 var worker_id: int = -1
+var _selecionado := false
 
 @onready var _retrato: TextureRect = $Conteudo/Retrato
 @onready var _nome: Label = $Conteudo/Nome
@@ -26,7 +32,32 @@ func _ready() -> void:
 
 
 func _aplicar_estilo(nome_no_tema: String) -> void:
-	add_theme_stylebox_override("panel", get_theme_stylebox("panel", nome_no_tema))
+	var estilo := get_theme_stylebox("panel", nome_no_tema)
+	if _selecionado and estilo is StyleBoxFlat:
+		# Duplicar: mexer no stylebox do tema mudaria TODOS os trabalhadores.
+		var realce: StyleBoxFlat = estilo.duplicate()
+		realce.border_color = Color(0.878, 0.604, 0.063)
+		realce.set_border_width_all(4)
+		estilo = realce
+	add_theme_stylebox_override("panel", estilo)
+
+
+func marcar_selecionado(valor: bool) -> void:
+	if _selecionado == valor:
+		return
+	_selecionado = valor
+	if is_node_ready():
+		refresh()
+
+
+func _gui_input(event: InputEvent) -> void:
+	# No RELEASE, não no press: soltar um arrasto acontece sobre a doca, então
+	# tratar aqui não rouba o clique de quem prefere arrastar.
+	if event is InputEventMouseButton and not event.pressed \
+			and event.button_index == MOUSE_BUTTON_LEFT:
+		if esta_livre():
+			selecionado.emit(worker_id)
+			accept_event()
 
 
 func refresh() -> void:
@@ -49,7 +80,7 @@ func refresh() -> void:
 		_estado.text = "Na Doca %d" % (dock_index + 1)
 	else:
 		_aplicar_estilo("TrabLivre")
-		_estado.text = "Livre\narraste →"
+		_estado.text = "Escolhido" if _selecionado else "Livre"
 
 
 func _find_self() -> Variant:

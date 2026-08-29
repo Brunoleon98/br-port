@@ -180,6 +180,42 @@ func _run() -> void:
 	root.remove_child(main2)
 	main2.free()
 
+	print("=== T4d: alocar em lote e por toque ===")
+	_fresh_playing()
+	# Cenário controlado: 3 docas com barco, e menos trabalhador que doca —
+	# é onde a ORDEM importa. Se o lote não servir o mais caro primeiro, o
+	# botão estaria jogando pior do que um humano atento.
+	while GS.docks.size() < 3:
+		GS.docks.append({"boat": null, "worker_id": null})
+	while GS.workers.size() > 2:
+		GS.workers.pop_back()
+	for i in range(3):
+		GS.docks[i]["boat"] = _fake_boat(100 + i * 100, 1, false)
+		GS.docks[i]["worker_id"] = null
+	for w in GS.workers:
+		w["busy_turns"] = 0
+
+	_check("ha alocacao pendente antes", GS.has_pending_assignment() == true)
+	var postos: int = GS.assign_all_free_workers()
+	_check("alocou os 2 trabalhadores livres", postos == 2)
+	_check("serviu primeiro a doca de R$300", GS.docks[2]["worker_id"] != null)
+	_check("serviu depois a doca de R$200", GS.docks[1]["worker_id"] != null)
+	_check("deixou de fora a doca mais barata", GS.docks[0]["worker_id"] == null)
+	_check("nao ha mais alocacao pendente", GS.has_pending_assignment() == false)
+	_check("rodar de novo nao aloca nada", GS.assign_all_free_workers() == 0)
+
+	# Uma doca sob oferta do rival nao pode ser preenchida pelo lote.
+	_fresh_playing()
+	for i in range(GS.docks.size()):
+		GS.docks[i]["boat"] = null
+		GS.docks[i]["worker_id"] = null
+	for w in GS.workers:
+		w["busy_turns"] = 0
+	GS.docks[0]["boat"] = _fake_boat(300, 1, true)
+	_check("doca sob oferta do rival nao conta como pendente",
+		GS.has_pending_assignment() == false)
+	_check("lote nao aloca em doca sob oferta", GS.assign_all_free_workers() == 0)
+
 	print("=== T5: upgrade avisa a UI ===")
 	_fresh_playing()
 	var roster_fired := [false]

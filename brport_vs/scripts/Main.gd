@@ -36,10 +36,17 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 @onready var _docks_label: Label = $HudBar/DocasPilula/Linha/DocasTexto
 @onready var _pause_button: Button = $HudBar/Pausar
 @onready var _message_label: Label = $MensagemCartao/Mensagem
-@onready var _advance_button: Button = $Avancar
+@onready var _advance_button: Button = $AcoesTurno/Avancar
+@onready var _alocar_button: Button = $AcoesTurno/Alocar
 @onready var _upgrade_button: Button = $Upgrade
 @onready var _docks_container: Control = $MapaWrap/Docas
+
+# Trabalhador escolhido por toque, à espera de uma doca. -1 = nenhum.
+# Vive aqui e não no GameState porque é estado de interface: quem joga com
+# arrasto nunca o usa, e o jogo salvo não deve carregar isto.
+var _selecionado: int = -1
 @onready var _workers_container: HBoxContainer = $Trabalhadores
+@onready var _workers_title: Label = $TrabalhadoresTitulo
 @onready var _meta_bar: ProgressBar = $MetaCartao/MetaColuna/MetaBarra
 @onready var _meta_label: Label = $MetaCartao/MetaColuna/MetaTexto
 @onready var _meta_titulo: Label = $MetaCartao/MetaColuna/MetaTituloLinha/MetaTitulo
@@ -48,6 +55,7 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 
 func _ready() -> void:
 	_advance_button.pressed.connect(_on_advance_pressed)
+	_alocar_button.pressed.connect(_on_alocar_pressed)
 	_upgrade_button.pressed.connect(_on_upgrade_pressed)
 	_pause_button.pressed.connect(_on_pause_pressed)
 
@@ -96,6 +104,7 @@ func _refresh_hud() -> void:
 		_upgrade_button.text = "Ampliar píer (R$%d)" % GameState.UPGRADE_COST
 		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	_advance_button.disabled = GameState.phase != "playing"
+	_alocar_button.disabled = not GameState.has_pending_assignment()
 	_refresh_meta()
 
 
@@ -129,6 +138,7 @@ func _refresh_meta() -> void:
 func _refresh_docks() -> void:
 	var vagas := _docks_container.get_children()
 	for i in range(vagas.size()):
+		vagas[i].trabalhador_selecionado = _selecionado
 		vagas[i].setup(i)
 
 
@@ -141,11 +151,57 @@ func _clear(container: Node) -> void:
 
 
 func _refresh_workers() -> void:
+	# Um trabalhador que deixou de estar livre não pode continuar selecionado —
+	# senão o próximo toque numa doca tentaria alocar quem já está ocupado.
+	if _selecionado >= 0 and not _pode_ser_selecionado(_selecionado):
+		_selecionado = -1
+
 	_clear(_workers_container)
 	for w in GameState.workers:
 		var worker_node = WorkerScene.instantiate()
 		_workers_container.add_child(worker_node)
 		worker_node.setup(int(w["id"]))
+		worker_node.selecionado.connect(_on_worker_selecionado)
+		worker_node.marcar_selecionado(int(w["id"]) == _selecionado)
+	_refresh_titulo_trabalhadores()
+
+
+func _pode_ser_selecionado(worker_id: int) -> bool:
+	if GameState.phase != "playing":
+		return false
+	if GameState.worker_dock_index(worker_id) >= 0:
+		return false
+	for w in GameState.workers:
+		if int(w["id"]) == worker_id:
+			return int(w["busy_turns"]) == 0
+	return false
+
+
+# Tocar no mesmo trabalhador de novo desmarca — sem isso não haveria como
+# desistir da seleção a não ser alocando.
+func _on_worker_selecionado(worker_id: int) -> void:
+	_selecionado = -1 if _selecionado == worker_id else worker_id
+	for no in _workers_container.get_children():
+		no.marcar_selecionado(no.worker_id == _selecionado)
+	for vaga in _docks_container.get_children():
+		vaga.trabalhador_selecionado = _selecionado
+	_refresh_titulo_trabalhadores()
+
+
+# O cartão do trabalhador tem 158px e não comporta a instrução; ela vive aqui,
+# onde também pode mudar conforme o estado.
+func _refresh_titulo_trabalhadores() -> void:
+	if _selecionado >= 0:
+		_workers_title.text = "Agora toque numa doca para enviar o #%d" % _selecionado
+		_workers_title.add_theme_color_override("font_color", COR_AVISO)
+	else:
+		_workers_title.text = "Trabalhadores — toque ou arraste para uma doca"
+		_workers_title.add_theme_color_override("font_color", Color(0.51, 0.6, 0.706))
+
+
+func _on_alocar_pressed() -> void:
+	_selecionado = -1
+	GameState.assign_all_free_workers()
 
 
 func _on_message(text: String, kind: String) -> void:
