@@ -27,6 +27,7 @@ const SAIDA_PADRAO := "user://tela.png"
 const FRAMES_ATE_ASSENTAR := 15
 
 var GS
+var _main: Control
 var _montado := false
 var _frames := 0
 var _saida := SAIDA_PADRAO
@@ -45,6 +46,7 @@ func _process(_delta: float) -> bool:
 	if _frames < FRAMES_ATE_ASSENTAR:
 		if GS.phase == "rival_offer":
 			GS.negotiate_rival("igualar")
+			_fechar_painel_do_rival()
 		return false
 
 	var img: Image = root.get_texture().get_image()
@@ -70,16 +72,37 @@ func _montar() -> void:
 
 	GS.clear_save()
 	GS.new_game()
-	root.add_child(load("res://scenes/Main.tscn").instantiate())
+	_main = load("res://scenes/Main.tscn").instantiate()
+	root.add_child(_main)
 
 	for t in range(turnos):
 		if GS.phase == "rival_offer":
 			GS.negotiate_rival("metade")
+			_fechar_painel_do_rival()
 			continue
 		if GS.phase != "playing":
 			break
 		_alocar_todos()
 		GS.advance_turn()
+
+
+# Resolver a oferta direto no GameState NÃO fecha o painel: quem o fecha é o
+# próprio painel, quando é ele que chama negotiate_rival(). Sem isto a foto sai
+# sempre com o modal por cima e o mapa escurecido pelo dim — que era exatamente
+# o que se queria fotografar.
+#
+# Só o painel da contra-oferta é fechado (é o único que carrega `dock_index`):
+# as telas de fim de jogo e da parcela continuam fotografáveis.
+func _fechar_painel_do_rival() -> void:
+	if _main == null:
+		return
+	var overlay := _main.get_node_or_null("Overlay")
+	if overlay == null:
+		return
+	for painel in overlay.get_children():
+		if "dock_index" in painel:
+			overlay.remove_child(painel)
+			painel.queue_free()
 
 
 func _alocar_todos() -> void:
