@@ -17,7 +17,9 @@ extends SceneTree
 #     --script res://tools/capturar_tela.gd -- 10 tela.png
 #
 # `turnos` avança a partida antes de fotografar (0 = tela inicial), e a
-# oferta do rival é resolvida para a tela sair limpa. Para fotografar o
+# oferta do rival é resolvida para a tela sair limpa. Um terceiro argumento
+# `completo` compra todas as estruturas antes de montar a cena, para
+# fotografar o porto reconstruído (mapa pavimentado, píeres e prédios de pé). Para fotografar o
 # PAINEL da contra-oferta em vez da tela principal, use --  0  e rode com
 # uma semente que abra oferta no primeiro turno.
 # ============================================================
@@ -72,6 +74,19 @@ func _montar() -> void:
 
 	GS.clear_save()
 	GS.new_game()
+
+	# `completo` fotografa o porto NO FIM da reconstrução. O mapa tem dois
+	# estados (terra batida e pavimentado) e props que trocam de textura; sem
+	# isto só dava para conferir na tela o estado inicial, e o segundo mapa
+	# ficava sem ninguém olhando.
+	if args.size() >= 3 and args[2] == "completo":
+		GS.cash += 100000
+		var ids: Array = GS.ESTRUTURAS.keys()
+		var tabela: Dictionary = GS.ESTRUTURAS
+		ids.sort_custom(func(a, b): return int(tabela[a]["ordem"]) < int(tabela[b]["ordem"]))
+		for eid in ids:
+			GS.comprar_estrutura(eid)
+
 	_main = load("res://scenes/Main.tscn").instantiate()
 	root.add_child(_main)
 

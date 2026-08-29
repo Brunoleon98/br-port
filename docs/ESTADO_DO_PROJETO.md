@@ -18,8 +18,8 @@ para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada u
 muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
 saem de ruína para telhado novo.
 
-**Economia medida em 600 partidas por perfil:** ótimo 99,8% · mediano 50,5% ·
-descuidado 0,0%. A mediana do mediano fecha em R$8.007 contra uma parcela de
+**Economia medida em 600 partidas por perfil:** ótimo 100% · mediano 47% ·
+descuidado 0%. A mediana do mediano fecha em R$7.945 contra uma parcela de
 R$8.000. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
 **Não se arrasta trabalhador a cada turno:** há "Alocar todos" e

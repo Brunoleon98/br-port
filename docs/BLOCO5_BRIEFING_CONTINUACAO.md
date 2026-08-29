@@ -25,18 +25,50 @@ barco mais caro primeiro) e toque-para-alocar. O arrasto continua.
 **O porto se mexe.** Barcos balançam e chegam deslizando, copas de coqueiro
 oscilam, lanças de guindaste varrem, e a doca que espera trabalhador pulsa.
 
+**O terreno e a água deixaram de ser chapados.** A margem ganhou rampa de
+profundidade, enrocamento e espuma; o pátio ganhou manchas, cascalho e mato (ou
+remendo de asfalto, rachadura e faixa, quando pavimentado); o cais ganhou junta
+de dilatação. Quatro coisas se aprenderam aqui, e valem para o resto da arte:
+
+1. **Faixa de profundidade tem de SEGUIR a costa.** A costa é em degraus (ver
+   §4). Elipse solta na água ignora isso e nunca lê como praia — lê como
+   mancha. O helper `costa(de, ate)` devolve os pontos de uma faixa que
+   acompanha os degraus, e é dele que sai o baixio inteiro.
+2. **Perto tem contorno, longe não.** Pôr o mar aberto também como faixa em
+   degraus cortava a água ao meio numa diagonal reta que parecia falha de
+   desenho. Raso é aresta dura; fundo é degradê.
+3. **Faixa uniforme não vira pedra, vira listra.** O enrocamento começou como
+   uma tira cinza chapada com seixos regulares e leu como sujeira pintada no
+   muro. O que faz o olho ler enrocamento é o CONTORNO irregular: pedras de
+   tamanhos diferentes, encavaladas.
+4. **Espuma é quantidade, não espessura.** Linha contínua ao longo do cais lê
+   como arame; quebrar em `stroke-dasharray` só troca o arame por faixa de
+   rodovia. Manchas de tamanho e opacidade irregulares é o que lê como
+   arrebentação.
+
+O mato passou pelo mesmo: três riscos retos saindo de um ponto liam como SETAS
+verdes espalhadas pelo chão. Folha curva, baixa, fina e várias juntas — mato
+aparece em moita, e é a moita que o olho reconhece.
+
 ---
 
 ## 2. A economia — MEDIDA, não estimada
 
 | Perfil | Taxa | Caixa no vencimento (mediana) |
 |---|---|---|
-| Ótimo | 99,8% | R$10.217 |
-| Mediano | 50,5% | R$8.007 |
-| Descuidado | 0,0% | R$5.074 |
+| Ótimo | 100,0% | R$10.223 |
+| Mediano | 47,0% | R$7.945 |
+| Descuidado | 0,0% | R$5.107 |
 
-600 partidas por perfil. A mediana do mediano fecha em **R$8.007 contra uma
+600 partidas por perfil. A mediana do mediano fecha em **R$7.945 contra uma
 parcela de R$8.000** — é para ficar nessa margem.
+
+> Estes números **substituem** os da tabela anterior (99,8% / 50,5% / 0%). Não
+> houve mudança de preço: o simulador é que semeava o gerador DEPOIS de
+> `new_game()`, e `new_game()` já sorteia a mão inicial de barcos. A abertura
+> de toda partida vinha do gerador não semeado, e duas rodadas seguidas sem
+> tocar em nada davam medianas diferentes. Corrigido; agora repete idêntico.
+> O mediano continua no fio da navalha, só que meio ponto do outro lado.
 
 ### As cinco estruturas
 
@@ -106,7 +138,7 @@ uso.
 | `tools/preparar_sprites.py` | Conserta o alpha de PNG gerado por IA. Só faz falta para o gerador de imagem. |
 | `brport_vs/tools/simular_balanceamento.gd` | **Roda antes de mexer em qualquer preço.** |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos. |
-| `brport_vs/tools/capturar_tela.gd` | PNG do jogo rodando. **Teste verde não prova que ficou bonito.** |
+| `brport_vs/tools/capturar_tela.gd` | PNG do jogo rodando. Terceiro argumento `completo` compra todas as estruturas antes de montar a cena, para fotografar o mapa pavimentado. **Teste verde não prova que ficou bonito.** |
 
 O Blender entra como biblioteca Python, sem interface:
 
@@ -131,6 +163,15 @@ As novas:
    mas o Godot gravou `valid=false` no `.import` do arquivo vazio e **manteve
    o veredito depois de o arquivo voltar**. Apagar o `.import` força a
    reimportação.
+4. **Semear o gerador DEPOIS de `new_game()` não semeia nada.** `new_game()`
+   já chama `_spawn_boats()`, então a mão inicial saía do `_rng.randomize()`
+   do `_ready`. O simulador fazia exatamente isso e dava medianas diferentes
+   entre duas rodadas idênticas. Corrigido — agora repete igual. Quem for
+   semear qualquer coisa: **antes** de montar o estado, nunca depois.
+5. **Duas lajes que encostam no mesmo `my` deixam meio pixel de fundo entre
+   elas**, e na tela isso vira uma linha escura pontilhada atravessando o
+   cais. A constante `COSTURA` estica um triz o degrau de trás, que o da
+   frente cobre.
 
 ---
 

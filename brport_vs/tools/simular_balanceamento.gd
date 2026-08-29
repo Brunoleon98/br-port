@@ -130,10 +130,17 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		# Duas sementes independentes: uma para o mundo (chegada de barco,
 		# valor, oferta do rival) e outra para os erros do jogador. Assim dá
 		# para trocar de perfil e continuar caindo nos MESMOS barcos.
+		#
+		# A SEMENTE VEM ANTES DE `new_game()`. Ela vinha depois, e como
+		# `new_game()` já chama `_spawn_boats()`, a mão inicial de toda partida
+		# saía do gerador não semeado (`_rng.randomize()` no `_ready`). O
+		# resultado é que duas rodadas seguidas do simulador, sem tocar em
+		# nada, davam medianas diferentes — e comparar antes/depois de uma
+		# afinação é justamente para o que esta ferramenta serve.
 		GS.clear_save()
-		GS.new_game()
 		GS._rng.seed = semente + run * 7919
 		rng.seed = semente + run * 104729
+		GS.new_game()
 
 		var caixa_no_vencimento := -1
 		var seguranca := 0

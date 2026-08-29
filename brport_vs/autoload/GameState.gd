@@ -32,8 +32,8 @@ signal state_loaded()
 
 # ── TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1) ──
 # TUNING — medido, não estimado. 600 partidas por perfil em
-# tools/simular_balanceamento.gd: ótimo 99,8% · mediano 50,5% · descuidado 0%.
-# A mediana do jogador mediano fecha em R$8.007 contra uma parcela de R$8.000:
+# tools/simular_balanceamento.gd: ótimo 100% · mediano 47% · descuidado 0%.
+# A mediana do jogador mediano fecha em R$7.945 contra uma parcela de R$8.000:
 # é para ficar nessa margem. Mexer aqui SEM rodar o simulador quebra isso.
 const START_CASH := 3250
 const SALARY_PER_WORKER := 100          # GDD "Margem operacional base": 2 trab. x R$100 = R$200/sem
@@ -130,8 +130,9 @@ const REPUTATION_LOSS_RIVAL_REFUSED := 15.0
 # TUNING — esta é a constante que faz a economia da Fase 1 fechar.
 # Com 3 turnos/semana a parcela de R$8.000 só cabia inflando o barco para
 # R$240–760, fora da faixa do GDD. Com 8 turnos/semana o barco volta para
-# os R$80–300 do GDD e a parcela continua alcançável. Medido em 600
-# partidas por perfil: ótimo 99,7% · mediano 47,3% · descuidado 0%.
+# os R$80–300 do GDD e a parcela continua alcançável. As taxas medidas estão
+# no bloco de economia lá em cima — uma tabela só, para não haver duas
+# versões dos mesmos números envelhecendo em ritmos diferentes.
 const TURNS_PER_WEEK := 8
 const WEEKS_TOTAL := 4
 const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
