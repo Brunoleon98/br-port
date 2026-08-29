@@ -215,12 +215,25 @@ def montar(M: dict) -> dict:
 
     tabuado = [caixa("tabuado", (0, 0, ALT_PIER - z(2.2)),
                      (PIER_ALCANCE, PIER_LARG, z(4.4)), M["madeira"])]
+
+    # Carga no convés. Um píer limpo parece cenário; com caixotes à espera de
+    # embarque parece que ali se trabalha. Fica na ponta do mar (+mx) e do lado
+    # oposto ao barco, que atraca no +my — o meio do tabuado é da chip.
+    def _no_conves(nome, mx, my, altura_px, tam, mat, rot=(0, 0, 0)):
+        px, py, pz = pos(mx, my, 15.0 + altura_px / 2.0)
+        return caixa(nome, (px, py, pz), (tam[0], tam[1], z(altura_px)), mat, rot)
+
+    tabuado += [
+        _no_conves("cont_conves", 1.95, -0.72, 15.0, (1.05, 0.5), M["laranja"]),
+        _no_conves("cont_topo", 1.95, -0.72, 1.6, (1.02, 0.47), M["azul"]),
+        _no_conves("caixote_a", 2.00, 0.50, 11.0, (0.42, 0.42), M["madeira"]),
+        _no_conves("caixote_b", -1.95, 0.68, 9.5, (0.38, 0.38), M["madeira"],
+                   rot=(0, 0, 18)),
+    ]
     for x in (-PIER_ALCANCE / 2 + 0.7, PIER_ALCANCE / 2 - 0.7):
         tabuado.append(caixa(f"cabeco_{x:.1f}",
                              (x, -PIER_LARG / 2 + 0.3, ALT_PIER + z(4.5)),
                              (0.3, 0.3, z(9.0)), M["metal"]))
-    grupos["pier_construido"] = estacas + tabuado
-
     # -- GUINDASTE em peças: o Tween gira a lança sem mexer no mastro -----
     g_base = [caixa("g_base", (PIER_ALCANCE / 2 - 1.0, PIER_LARG / 2 - 0.4,
                                ALT_PIER + 0.18), (0.6, 0.6, 0.36), M["metal"])]
@@ -232,8 +245,10 @@ def montar(M: dict) -> dict:
                                 ALT_PIER + 2.25), (0.05, 0.05, 0.8), M["metal"]),
                caixa("g_gancho", (PIER_ALCANCE / 2 - 2.75, PIER_LARG / 2 - 0.4,
                                   ALT_PIER + 1.78), (0.2, 0.2, 0.24), M["amarelo"])]
-    grupos["guindaste_base"] = g_base
-    grupos["guindaste_mastro"] = g_mastro
+    # Base e mastro entram no PRÓPRIO píer: um guindaste é o que faz uma
+    # estrutura de madeira ler como porto e não como pontão de pesca. A lança
+    # fica solta porque é ela que gira — e o que se move não pode estar assado.
+    grupos["pier_construido"] = estacas + tabuado + g_base + g_mastro
     grupos["guindaste_lanca"] = g_lanca
     grupos["pier_ampliado"] = estacas + tabuado + g_base + g_mastro + g_lanca
 

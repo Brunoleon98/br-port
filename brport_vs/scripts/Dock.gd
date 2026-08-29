@@ -47,10 +47,12 @@ var _tw_balanco: Tween
 var _tw_chegada: Tween
 var _tw_pulso: Tween
 var _tw_trabalho: Tween
+var _tw_lanca: Tween
 
 @onready var _pier: TextureRect = $Pier
 @onready var _barco: TextureRect = $Barco
 @onready var _trabalhador_prop: TextureRect = $Trabalhador
+@onready var _lanca: TextureRect = $Lanca
 @onready var _chip: PanelContainer = $Chip
 @onready var _valor: Label = $Chip/Coluna/Valor
 @onready var _progresso: Label = $Chip/Coluna/ProgressoLinha/Progresso
@@ -93,6 +95,9 @@ func refresh() -> void:
 	_pulsar_chip(false)
 
 	# Vaga ainda não construída: estacas velhas, sem barco.
+	# A lança só existe onde há píer: numa vaga por construir há só estacas.
+	_mostrar_lanca(esta_construida())
+
 	if not esta_construida():
 		_pier.texture = ArtePierVazio
 		_parar_barco()
@@ -257,3 +262,20 @@ func _animar_trabalho(operando: bool) -> void:
 		_trabalhador_base.y - 3.0, 0.42).set_trans(Tween.TRANS_SINE)
 	_tw_trabalho.tween_property(_trabalhador_prop, "position:y",
 		_trabalhador_base.y, 0.42).set_trans(Tween.TRANS_SINE)
+
+
+# A lança do guindaste varre devagar. É o único movimento do porto que não
+# depende de haver barco — dá sinal de vida a uma doca vazia.
+func _mostrar_lanca(ligado: bool) -> void:
+	_lanca.visible = ligado
+	if _tw_lanca != null and _tw_lanca.is_valid():
+		_tw_lanca.kill()
+	if not ligado:
+		return
+	# Fase por doca, senão as três varrem como um só mecanismo.
+	var fase := 0.9 * float(max(dock_index, 0))
+	_tw_lanca = create_tween().set_loops()
+	if fase > 0.0:
+		_tw_lanca.tween_interval(fase)
+	_tw_lanca.tween_property(_lanca, "rotation", 0.13, 3.4).set_trans(Tween.TRANS_SINE)
+	_tw_lanca.tween_property(_lanca, "rotation", -0.05, 3.4).set_trans(Tween.TRANS_SINE)

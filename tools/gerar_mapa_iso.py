@@ -131,7 +131,7 @@ def predio(mx0, my0, mx1, my1, base, altura, telhado, telhado_dir, telhado_esq,
     return s
 
 
-def gerar(com_pieres: bool = True) -> str:
+def gerar(com_pieres: bool = True, com_coqueiros: bool = True) -> str:
     s = '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d">\n' % (
         LARG, ALT, LARG, ALT)
 
@@ -190,7 +190,11 @@ def gerar(com_pieres: bool = True) -> str:
         s += caixa(mx, my, mx + 1.2, my + 1.6, B, 13, c[0], c[1], c[2])
         k += 1
 
-    for mx, my in [(-4.0, -2.0), (-3.0, 6.0), (0.0, 14.0), (3.0, 22.0), (7.0, 29.0)]:
+    # Coqueiros chapados: só saem quando --sem-coqueiros. Eles viraram props
+    # low-poly com copa e tronco SEPARADOS, porque o que balança não pode
+    # estar assado no fundo — a mesma razão que tirou os píeres daqui.
+    for mx, my in ([] if not com_coqueiros else
+                   [(-4.0, -2.0), (-3.0, 6.0), (0.0, 14.0), (3.0, 22.0), (7.0, 29.0)]):
         bx, by = p(mx, my, ALT_CAIS)
         s += '  <path d="M%.1f,%.1f l0,-22" stroke="#7a4d2a" stroke-width="4"/>\n' % (bx, by)
         s += '  <g transform="translate(%.1f,%.1f)">\n' % (bx, by - 22)
@@ -206,12 +210,14 @@ def gerar(com_pieres: bool = True) -> str:
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     com_pieres = "--sem-pieres" not in sys.argv
+    com_coqueiros = "--sem-coqueiros" not in sys.argv
     destino = args[0] if args else "porto_mapa_iso.svg"
-    conteudo = gerar(com_pieres)      # gerar ANTES de abrir: open(...,"w")
+    conteudo = gerar(com_pieres, com_coqueiros)      # gerar ANTES de abrir: open(...,"w")
     with open(destino, "w", encoding="utf-8") as f:   # trunca de imediato, e um
         f.write(conteudo)                             # erro deixaria o mapa vazio
     print("%s — %dx%d, chão transbordando de propósito (o ecrã é a janela)%s" % (
-        destino, LARG, ALT, "" if com_pieres else "  [SEM os píeres]"))
+        destino, LARG, ALT, ("" if com_pieres else "  [SEM os píeres]")
+        + ("" if com_coqueiros else "  [SEM os coqueiros]")))
 
     # O centro de cada píer no chão. É por aqui que o Main.tscn ancora o prop:
     # o render mira a origem do chão, então o canto do TextureRect é este ponto

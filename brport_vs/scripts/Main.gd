@@ -62,6 +62,7 @@ func _ready() -> void:
 	_connect_game_state()
 	_refresh_all()
 	_animar_ancorados()
+	_animar_coqueiros()
 
 	# Se o jogo carregou de um save já em rival_offer/debt_payment, reabre o painel certo.
 	if GameState.phase == "rival_offer" and GameState.pending_rival_dock >= 0:
@@ -90,6 +91,32 @@ func _animar_ancorados() -> void:
 			.set_trans(Tween.TRANS_SINE)
 		tw.tween_property(barco, "position:y", base.y, 2.1) \
 			.set_trans(Tween.TRANS_SINE)
+		i += 1
+
+
+# A copa gira no TOPO DO TRONCO, não no centro do quadro: o pivot_offset da
+# cena está em (256, 178), que é onde as duas peças se encontram. Girar pelo
+# centro faria a copa descrever um arco e descolar do tronco.
+#
+# Cada uma com sua duração e sua fase — coqueiros em sincronia denunciam que é
+# a mesma animação repetida.
+func _animar_coqueiros() -> void:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return
+	var duracoes := [2.6, 3.1, 2.9]
+	var fases := [0.0, 1.1, 0.5]
+	var i := 0
+	for no in cenario.get_children():
+		if not String(no.name).ends_with("Copa"):
+			continue
+		var amplitude := 0.035 if i % 2 == 0 else -0.035
+		var dur: float = duracoes[i % duracoes.size()]
+		var tw := no.create_tween().set_loops()
+		if fases[i % fases.size()] > 0.0:
+			tw.tween_interval(fases[i % fases.size()])
+		tw.tween_property(no, "rotation", amplitude, dur).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(no, "rotation", -amplitude, dur).set_trans(Tween.TRANS_SINE)
 		i += 1
 
 

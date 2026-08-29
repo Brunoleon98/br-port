@@ -136,6 +136,16 @@ escura, cartão branco, botão navy) com `tools/folha_icones.gd`. Cada um foi
 colorido para o fundo onde cai — dois não são reaproveitáveis em qualquer
 lugar, e o cabeçalho de `Icones.gd` diz quais e por quê.
 
+O cenário usa os props: **coqueiros low-poly** (que oscilam, copa e tronco em
+peças separadas), **guindaste** nas docas construídas (a lança varre), **carga
+no convés** e **boias + marcador** na Zona de Espera. Os coqueiros chapados
+saíram do SVG do mapa — `gerar_mapa_iso.py --sem-coqueiros` — pela mesma razão
+que os píeres: o que se mexe não pode estar assado no fundo.
+
+Continuam **sem uso** `galpao` e `galpao_velho` (os prédios do mapa já fazem
+esse papel) e as versões avulsas de `caixote`/`conteiner` (foram assadas no
+píer).
+
 Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande), e o
 pesqueiro tem casco próprio — não é o mesmo casco com carga trocada. O
 **trabalhador aparece de pé no tabuado** quando alocado, e mexe-se enquanto a
