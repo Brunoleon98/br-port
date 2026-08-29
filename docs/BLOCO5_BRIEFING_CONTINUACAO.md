@@ -203,6 +203,23 @@ As novas:
 
 ---
 
+## 5.5. O próximo bloco é ÁUDIO
+
+`docs/BLOCO6_BRIEFING_AUDIO.md` é o documento de entrada da próxima conversa.
+Resumo: **o jogo é mudo — zero arquivos, zero `AudioStream`, zero bus** — e o
+contêiner não tem placa de som, então nenhuma sessão consegue ouvir o que
+produz. Quem julga o som é o Bruno.
+
+O que já está pronto é o guia de geração
+(`docs/design/BR_Port_Guia_Audio_Suno_ElevenLabs.md`, com os prompts de Suno e
+ElevenLabs); o que falta é toda a engenharia. O maior achado do levantamento:
+o sinal `message(text, kind)` do `GameState` já vem classificado em
+good/warn/bad e **cobre 13 pontos da interface com um ouvinte só**.
+
+As pendências de arte da §3 continuam abertas e NÃO entram no bloco de áudio.
+
+---
+
 ## 6. Como abrir a conversa nova
 
 Cole isto:

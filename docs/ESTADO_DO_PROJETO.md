@@ -22,6 +22,9 @@ saem de ruína para telhado novo.
 descuidado 0%. A mediana do mediano fecha em R$7.945 contra uma parcela de
 R$8.000. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
+**O jogo é mudo.** Não há um arquivo de áudio, um `AudioStream` ou um bus no
+projeto. É o próximo bloco — ver `docs/BLOCO6_BRIEFING_AUDIO.md`.
+
 **Não se arrasta trabalhador a cada turno:** há "Alocar todos" e
 toque-para-alocar, com o arrasto ainda funcionando.
 
