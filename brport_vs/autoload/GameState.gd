@@ -195,7 +195,7 @@ func assign_worker(worker_id: int, dock_index: int) -> bool:
 		message.emit("Trabalhador #%d já está na Doca %d. Toque na doca para liberá-lo." % [worker_id, already + 1], "warn")
 		return false
 	dock["worker_id"] = worker_id
-	message.emit("✅ Trabalhador alocado. Avance o dia para operar.", "good")
+	message.emit("Trabalhador alocado. Avance o dia para operar.", "good")
 	roster_changed.emit()
 	save_game()
 	return true
@@ -256,7 +256,7 @@ func negotiate_rival(acao: String) -> String:
 		# Igualar sempre fecha. O preço é pior se o jogador já tentou empurrar.
 		var ja_insistiu := rival_attempts_left < RIVAL_PATIENCE
 		var desconto := RIVAL_DISCOUNT_AFTER_FAIL if ja_insistiu else RIVAL_DISCOUNT
-		var aviso := "🤝 Preço igualado" if not ja_insistiu else "🤝 Fechado, mas o cliente cobrou caro pela insistência"
+		var aviso := "Preço igualado" if not ja_insistiu else "Fechado, mas o cliente cobrou caro pela insistência"
 		_fechar_negocio(boat, desconto, aviso)
 		return "fechado"
 
@@ -266,7 +266,7 @@ func negotiate_rival(acao: String) -> String:
 	rival_attempts_left -= 1
 
 	if _rng.randf() < chance:
-		var texto := "✂️ Cortou metade e o cliente topou" if acao == "metade" else "💪 Segurou o preço e o cliente topou"
+		var texto := "Cortou metade e o cliente topou" if acao == "metade" else "Segurou o preço e o cliente topou"
 		_fechar_negocio(boat, desconto_aposta, texto)
 		return "fechado"
 
@@ -274,7 +274,7 @@ func negotiate_rival(acao: String) -> String:
 		_perder_para_rival()
 		return "perdido"
 
-	message.emit("😟 O cliente não gostou — última tentativa antes de ele ir embora.", "warn")
+	message.emit("O cliente não gostou — última tentativa antes de ele ir embora.", "warn")
 	save_game()
 	return "insistiu"
 
@@ -317,7 +317,7 @@ func _perder_para_rival() -> void:
 	dock["worker_id"] = null
 	_close_rival_offer()
 	_change_reputation(-REPUTATION_LOSS_RIVAL_REFUSED)
-	message.emit("❌ O cliente perdeu a paciência e foi para o Porto Farol.", "bad")
+	message.emit("O cliente perdeu a paciência e foi para o Porto Farol.", "bad")
 	roster_changed.emit()
 	save_game()
 
@@ -380,7 +380,7 @@ func _process_week_end(ended_week: int) -> void:
 	cash -= cost
 	metrics["pier_income"] = int(metrics.get("pier_income", 0)) + pier_income
 	cash_changed.emit(cash)
-	message.emit("⚓ Semana %d encerrada — +R$%d do aluguel do píer, -R$%d em custos (salários + manutenção)." % [ended_week, pier_income, cost], "warn")
+	message.emit("Semana %d encerrada — +R$%d do aluguel do píer, -R$%d em custos (salários + manutenção)." % [ended_week, pier_income, cost], "warn")
 
 
 func _check_end() -> void:
@@ -412,7 +412,7 @@ func pay_debt() -> void:
 	parcela_paid = true
 	_set_phase("playing")
 	cash_changed.emit(cash)
-	message.emit("✅ Parcela de R$%d paga ao Sr. Ribeiro." % PARCELA_AMOUNT, "good")
+	message.emit("Parcela de R$%d paga ao Sr. Ribeiro." % PARCELA_AMOUNT, "good")
 	turn_advanced.emit(turn, current_week())
 	_check_end()
 	save_game()
@@ -437,7 +437,7 @@ func buy_upgrade() -> bool:
 		workers.append({"id": workers.size() + 1, "busy_turns": 0})
 	cash_changed.emit(cash)
 	roster_changed.emit()
-	message.emit("🏗️ Píer ampliado! +1 doca e +1 trabalhador.", "good")
+	message.emit("Píer ampliado! +1 doca e +1 trabalhador.", "good")
 	save_game()
 	return true
 

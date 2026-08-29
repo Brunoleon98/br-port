@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/Dock.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/icones/rival.svg" id="ic_rival"]
+[ext_resource type="Texture2D" path="res://art/icones/trabalhador.svg" id="ic_trabalhador"]
 
 [sub_resource type="StyleBoxFlat" id="chip"]
 bg_color = Color(0.09, 0.16, 0.24, 0.88)
@@ -63,17 +65,50 @@ horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
 theme_override_font_sizes/font_size = 17
 
-[node name="Progresso" type="Label" parent="Chip/Coluna"]
+[node name="ProgressoLinha" type="HBoxContainer" parent="Chip/Coluna"]
 layout_mode = 2
 mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="Icone" type="TextureRect" parent="Chip/Coluna/ProgressoLinha"]
+custom_minimum_size = Vector2(17, 17)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+visible = false
+texture = ExtResource("ic_rival")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Progresso" type="Label" parent="Chip/Coluna/ProgressoLinha"]
+layout_mode = 2
+mouse_filter = 2
+size_flags_horizontal = 4
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.639, 0.792, 0.855, 1)
 theme_override_font_sizes/font_size = 12
 
-[node name="Trabalhador" type="Label" parent="Chip/Coluna"]
+[node name="TrabalhadorLinha" type="HBoxContainer" parent="Chip/Coluna"]
 layout_mode = 2
 mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="Icone" type="TextureRect" parent="Chip/Coluna/TrabalhadorLinha"]
+custom_minimum_size = Vector2(17, 17)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+visible = false
+texture = ExtResource("ic_trabalhador")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Trabalhador" type="Label" parent="Chip/Coluna/TrabalhadorLinha"]
+layout_mode = 2
+mouse_filter = 2
+size_flags_horizontal = 4
 horizontal_alignment = 1
-autowrap_mode = 2
 theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
 theme_override_font_sizes/font_size = 12

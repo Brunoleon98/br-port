@@ -36,10 +36,7 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 10)
 	box.add_child(vbox)
 
-	var title := Label.new()
-	title.text = "🏦 Sr. Ribeiro — Banco de Porto Mirim"
-	title.autowrap_mode = TextServer.AUTOWRAP_WORD
-	vbox.add_child(title)
+	vbox.add_child(Icones.rotulo(Icones.PARCELA, "Sr. Ribeiro — Banco de Porto Mirim"))
 
 	var can_pay: bool = GameState.cash >= amount
 	var body := Label.new()

@@ -1,7 +1,8 @@
 # BR Port — Briefing para continuar o Bloco 4
 
 > Documento de entrada para a próxima conversa. Escrito em 28/08/2026, ao fim
-> da sessão que abriu o Bloco 4.
+> da sessão que abriu o Bloco 4. **Atualizado em 29/08/2026**: o caminho B da
+> §3 (camada de ícones) foi executado e está fechado.
 >
 > **Leia este arquivo primeiro, depois `docs/ESTADO_DO_PROJETO.md`.**
 > Existe para não repetir perguntas já respondidas nem refazer decisões já
@@ -57,7 +58,7 @@ isométrico com o que existe hoje.
 
 ---
 
-## 3. O que fazer a seguir — três caminhos
+## 3. O que fazer a seguir — dois caminhos abertos (B está fechado)
 
 ### A) Gerar os assets isométricos (o caminho da direção escolhida)
 
@@ -66,19 +67,48 @@ e um checklist de cobertura no fim. A §0 trata só de **orientação**, que é 
 erro que derrubou os sprites atuais.
 
 Ordem sugerida no próprio documento: 3 barcos → píer nos dois estados →
-Arlindo (3 expressões) → os 17 ícones → coqueiro → galpão.
+Arlindo (3 expressões) → coqueiro → galpão.
+
+**Os ícones saíram dessa lista.** Eles já existem, em vetor chapado, e é assim
+que devem ficar: ícone de HUD é interface, tem de se ler a 19px, e o estilo
+isométrico não entrega isso nesse tamanho (§5, armadilha 4). A migração para
+isométrico é do CENÁRIO — não encoste em `art/icones/`.
 
 Depois de gerar: `python3 tools/preparar_sprites.py <pasta> brport_vs/art/sprites`
 e conferir que a coluna `fundo` diz **`sólido`**.
 
-### B) Fechar a interface sem esperar arte nova
+### B) Fechar a interface sem esperar arte nova ✅ FEITO (29/08)
 
-**17 ícones ainda são emoji.** São vetor chapado, não isométricos — e oito já
-estão desenhados, esperando aprovação:
-https://claude.ai/code/artifact/922a5018-28ff-432f-9d6d-011c7a93fe1f
+**Nenhuma tela do jogo usa emoji.** São 20 SVGs em `brport_vs/art/icones/`,
+com o registro em `brport_vs/scripts/Icones.gd` — os 8 que já estavam
+desenhados no canvas
+(https://claude.ai/code/artifact/922a5018-28ff-432f-9d6d-011c7a93fe1f)
+mais 12 novos, no mesmo grid 24×24 e na mesma paleta.
 
-Aprovar e gravar como `.svg` em `brport_vs/art/icones/` fecha a camada de UI
-sem depender de gerador nenhum. É o maior ganho por esforço disponível hoje.
+O que isto ensinou, e vale para qualquer ícone futuro:
+
+1. **Cor de ícone depende do fundo, e a paleta não tem uma cor que sirva aos
+   dois.** A interface tem três fundos — pílula/chip escura, cartão branco,
+   botão navy. As variantes "pílula" do canvas eram creme chapado e sumiam em
+   cartão branco. Cada ícone foi colorido para onde ele cai de verdade;
+   `doca` (traço creme) e `parcela` (navy cheio) só servem no fundo delas.
+   O jeito de um ícone servir aos dois é ter contraste próprio: disco de fundo
+   (como `feito`, `pausar`, `acordo`) ou âmbar/vermelho puro.
+2. **Metáfora que não sobrevive a 19px não serve, por melhor que seja.**
+   O aperto de mão de "Igualar" virou mancha em três desenhos diferentes; virou
+   sinal de igual. O braço flexionado de "Manter preço" virou escudo. Desenhe
+   para o tamanho de uso, não para o catálogo.
+3. **A parte escura do desenho some no fundo escuro.** O capacete do
+   trabalhador tinha a aba em âmbar escuro e virava um triângulo na chip da
+   doca. A informação tem que estar na parte CLARA do ícone.
+4. **`tools/folha_icones.gd` é o teste.** Desenha os 20 nos três fundos, a 19px
+   e ampliado. Rodar a cada leva nova — foi ele que reprovou 4 ícones que
+   pareciam bons no código.
+
+Os emoji que ficaram nas mensagens do `GameState` também saíram: só 7 dos 15
+`message.emit` tinham um, nunca foi um sistema, e a barra já codifica o tom por
+cor. Se um dia a barra de mensagem ganhar um slot de ícone, é decisão nova —
+o `GameState` é lógica e hoje não nomeia ícone nenhum.
 
 ### C) Resolver o píer de 1 a 3 (mexe na economia)
 
@@ -109,6 +139,7 @@ semente, então dá para comparar antes/depois sem ruído.
 | `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo. Mudar o ângulo = mudar duas constantes e regerar. |
 | `brport_vs/tools/simular_balanceamento.gd` | Roda N partidas com 3 perfis e mede a dificuldade. Determinístico por semente. |
 | `brport_vs/tools/capturar_tela.gd` | Salva um PNG do jogo rodando, sem abrir o editor. **Usar a cada mudança visual** — teste verde não prova que ficou bonito. |
+| `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos da interface, a 19px e ampliado. **Rodar a cada ícone novo.** |
 
 Para rodar o Godot nesta sessão foi usado o binário 4.6.3 em `~/godot-bin/`,
 com `xvfb-run` para as capturas.
@@ -132,7 +163,11 @@ com `xvfb-run` para as capturas.
 4. **Ícone de HUD não é isométrico.** É interface: silhueta chapada, legível a
    19px. Colar o bloco de estilo isométrico num prompt de ícone devolve borrão.
 
-5. **Animação não se pede ao gerador.** Barco balançando, chegando, doca
+5. **A tela do projeto é retrato com aspecto travado** (`stretch/aspect="keep"`,
+   720×1280). Pedir `--resolution` numa proporção diferente não dá erro: devolve
+   a imagem espremida. Ferramenta de captura tem de respeitar 720:1280.
+
+6. **Animação não se pede ao gerador.** Barco balançando, chegando, doca
    pulsando — tudo é `Tween` sobre sprite existente, zero arte nova. O que
    precisa de arte é **anatomia separada pelo eixo que se move** (copa e tronco
    do coqueiro em arquivos distintos, por exemplo).
@@ -160,7 +195,10 @@ Cole isto:
 > `docs/ESTADO_DO_PROJETO.md`. A direção de arte já está decidida (isométrico)
 > e não precisa reabrir.
 
-E diga qual dos três caminhos da §3 quer seguir.
+E diga qual caminho da §3 quer seguir — sobraram **A** (gerar os assets
+isométricos, que depende de você rodar o gerador) e **C** (píer de 1 a 3, que
+precisa antes de duas decisões suas: custo por píer e quantos trabalhadores
+iniciais). O B está fechado.
 
 ---
 

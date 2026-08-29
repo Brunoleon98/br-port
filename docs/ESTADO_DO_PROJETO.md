@@ -3,8 +3,9 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 28/08/2026 (Bloco 4 — mapa do porto virou a tela do
-> jogo; direção de arte decidida como isométrica, ainda não integrada)
+> **Última atualização:** 29/08/2026 (Bloco 4 — camada de ícones fechada: o
+> HUD não usa mais emoji; direção de arte decidida como isométrica, ainda não
+> integrada)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO4_BRIEFING_CONTINUACAO.md`.**
 
@@ -48,8 +49,13 @@ em 27/08:
    eles eram erro de perspetiva.
 4. ✅ **Mapa virou a tela do jogo** (28/08) — docas são 3 vagas fixas sobre os
    píeres, e "Ampliar píer" acende a terceira.
+5. ✅ **Camada de ícones fechada** (29/08) — os 20 ícones da interface são SVG
+   em `art/icones/`, registrados em `scripts/Icones.gd`. **Nenhuma tela do jogo
+   usa emoji.** São vetor chapado, não isométrico: ícone de HUD é interface e
+   precisa se ler a 19px, o que o estilo isométrico não entrega nesse tamanho —
+   então esta camada NÃO muda quando o mapa migrar.
 
-Faltam os itens 5–7 do plano: UI das 12 telas, áudio, integração progressiva.
+Faltam os itens 6–7 do plano: áudio e integração progressiva.
 
 🔄 **Direção de arte: ISOMÉTRICA (decidida 28/08) — decisão fechada.** Ela
 oscilou três vezes na sessão (3/4 ilustrado → chapado topo-down → isométrico);
@@ -64,7 +70,8 @@ gerados deitados, e num plano isométrico nenhum eixo é horizontal (ambos saem 
 `docs/BLOCO4_PROMPTS_ISOMETRICO.md`, cuja §0 trata só de orientação.
 
 👉 **Para retomar, o ponto de entrada é `docs/BLOCO4_BRIEFING_CONTINUACAO.md`**
-— estado atual, decisões fechadas e os três caminhos possíveis.
+— estado atual, decisões fechadas e os caminhos que restam (o dos ícones foi
+fechado em 29/08).
 `docs/BLOCO4_BRIEFING_VISUAL.md` continua válido como registro das decisões
 sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 
@@ -81,6 +88,8 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem a seção "Porto" com o mapa do porto |
 | `docs/design/BR_Port_Style_Guide_Flat_Design.md` | Paleta, peso de linha, espaçamento e proporções canônicas para toda arte futura |
 | `brport_vs/art/sprites/` | Sprites prontos (trabalhador, cargueiro, barco de pesca, caminhão, guindaste) |
+| `brport_vs/art/icones/` | **Os 20 ícones da interface**, em SVG chapado |
+| `brport_vs/scripts/Icones.gd` | Registro dos ícones + helpers de rótulo e botão — o único lugar que sabe qual arquivo é qual ícone |
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
 | `docs/BLOCO4_GUIA_GERACAO_ASSETS.md` | Prompts de gerador (retratos) + o que o píer construível exige |
 | `docs/BLOCO4_BRIEFING_CONTINUACAO.md` | **Ponto de entrada para retomar** — estado, decisões fechadas, 3 caminhos possíveis |
@@ -90,6 +99,7 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `docs/BLOCO4_PACOTE_SPRITES.md` | O que do pacote de sprites/mockups entrou, o que não entrou e por quê |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
+| `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos da interface, a 19px e ampliado — **rodar a cada ícone novo** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `docs/BLOCO3_MARCO_INTERMEDIARIO.md` | Medição do balanceamento + roteiro do playtest + onde registrar a decisão |
 | `docs/design/` | GDD 7, Roadmap, Plano de Produção, guias, Validation Guide |
@@ -116,9 +126,14 @@ A interface **não é montada por código**: vive em cenas `.tscn` com um tema
 (`ui/tema_brport.tres`). Trocar arte é editar cena e tema, não reescrever
 script.
 
-Ainda é placeholder: **os ícones do HUD são emoji** (💰 📅 ⭐ ⚓) — já existem
-desenhados em vetor, esperando aprovação para entrar. Faltam também variações
-de barco (o GDD pede 3, existem 2) e o trabalhador visto de cima.
+**Os ícones do HUD já são arte de verdade** (29/08): 20 SVGs em `art/icones/`,
+todos conferidos a 19px sobre os três fundos que a interface tem (pílula
+escura, cartão branco, botão navy) com `tools/folha_icones.gd`. Cada um foi
+colorido para o fundo onde cai — dois não são reaproveitáveis em qualquer
+lugar, e o cabeçalho de `Icones.gd` diz quais e por quê.
+
+Ainda é placeholder: variações de barco (o GDD pede 3, existem 2) e o
+trabalhador visto de cima.
 
 A **Zona de Espera é só visual**: os barcos ancorados são decorativos e não
 representam fila de verdade — barcos continuam nascendo direto nas docas.

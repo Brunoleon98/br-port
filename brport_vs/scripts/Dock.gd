@@ -27,8 +27,10 @@ var dock_index: int = -1
 @onready var _barco: TextureRect = $Barco
 @onready var _chip: PanelContainer = $Chip
 @onready var _valor: Label = $Chip/Coluna/Valor
-@onready var _progresso: Label = $Chip/Coluna/Progresso
-@onready var _trabalhador: Label = $Chip/Coluna/Trabalhador
+@onready var _progresso: Label = $Chip/Coluna/ProgressoLinha/Progresso
+@onready var _progresso_icone: TextureRect = $Chip/Coluna/ProgressoLinha/Icone
+@onready var _trabalhador: Label = $Chip/Coluna/TrabalhadorLinha/Trabalhador
+@onready var _trabalhador_icone: TextureRect = $Chip/Coluna/TrabalhadorLinha/Icone
 
 
 func setup(index: int) -> void:
@@ -51,6 +53,11 @@ func esta_construida() -> bool:
 func refresh() -> void:
 	if dock_index < 0:
 		return
+
+	# Cada saída de refresh() precisa deixar os dois ícones no estado certo, por
+	# isso eles são apagados aqui e reacesos só por quem tem o que anunciar.
+	_progresso_icone.visible = false
+	_trabalhador_icone.visible = false
 
 	# Vaga ainda não construída: estacas velhas, sem barco.
 	if not esta_construida():
@@ -80,7 +87,8 @@ func refresh() -> void:
 	_valor.text = "R$%d%s" % [valor, " (acordo)" if boat.get("matched", false) else ""]
 
 	if sob_oferta:
-		_progresso.text = "⚔️ OFERTA DO RIVAL"
+		_progresso_icone.visible = true
+		_progresso.text = "OFERTA DO RIVAL"
 		_trabalhador.text = ""
 		return
 
@@ -89,7 +97,8 @@ func refresh() -> void:
 	if dock["worker_id"] == null:
 		_trabalhador.text = "sem trabalhador"
 	else:
-		var texto := "👷 #%d" % int(dock["worker_id"])
+		_trabalhador_icone.visible = true
+		var texto := "#%d" % int(dock["worker_id"])
 		# Enquanto a operação não começou dá para desfazer um arrasto errado.
 		if int(boat["progress"]) == 0:
 			texto += " · toque p/ liberar"

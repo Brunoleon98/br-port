@@ -30,10 +30,10 @@ const COR_RUIM := Color(0.761, 0.188, 0.188)
 const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 
 @onready var _overlay_layer: CanvasLayer = $Overlay
-@onready var _cash_label: Label = $HudBar/CaixaPilula/Caixa
-@onready var _day_label: Label = $HudBar/DiaPilula/Dia
-@onready var _rep_label: Label = $HudBar/RepPilula/RepTexto
-@onready var _docks_label: Label = $HudBar/DocasPilula/DocasTexto
+@onready var _cash_label: Label = $HudBar/CaixaPilula/Linha/Caixa
+@onready var _day_label: Label = $HudBar/DiaPilula/Linha/Dia
+@onready var _rep_label: Label = $HudBar/RepPilula/Linha/RepTexto
+@onready var _docks_label: Label = $HudBar/DocasPilula/Linha/DocasTexto
 @onready var _pause_button: Button = $HudBar/Pausar
 @onready var _message_label: Label = $MensagemCartao/Mensagem
 @onready var _advance_button: Button = $Avancar
@@ -42,7 +42,8 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 @onready var _workers_container: HBoxContainer = $Trabalhadores
 @onready var _meta_bar: ProgressBar = $MetaCartao/MetaColuna/MetaBarra
 @onready var _meta_label: Label = $MetaCartao/MetaColuna/MetaTexto
-@onready var _meta_titulo: Label = $MetaCartao/MetaColuna/MetaTitulo
+@onready var _meta_titulo: Label = $MetaCartao/MetaColuna/MetaTituloLinha/MetaTitulo
+@onready var _meta_icone: TextureRect = $MetaCartao/MetaColuna/MetaTituloLinha/Icone
 
 
 func _ready() -> void:
@@ -82,13 +83,18 @@ func _refresh_all() -> void:
 
 
 func _refresh_hud() -> void:
-	_cash_label.text = "💰 R$%d" % int(GameState.cash)
+	_cash_label.text = "R$%d" % int(GameState.cash)
 	var shown_day: int = min(GameState.turn, GameState.TURNS_TOTAL)
-	_day_label.text = "📅 Dia %d/%d" % [shown_day, GameState.TURNS_TOTAL]
-	_rep_label.text = "⭐ %d %s" % [int(GameState.reputation), GameState.reputation_label()]
-	_docks_label.text = "⚓ %d/%d" % [GameState.docks.size(), VAGAS_NO_MAPA]
+	_day_label.text = "Dia %d/%d" % [shown_day, GameState.TURNS_TOTAL]
+	_rep_label.text = "%d %s" % [int(GameState.reputation), GameState.reputation_label()]
+	_docks_label.text = "%d/%d" % [GameState.docks.size(), VAGAS_NO_MAPA]
 	_upgrade_button.disabled = GameState.upgrade_purchased or GameState.phase != "playing"
-	_upgrade_button.text = "✓ Píer ampliado" if GameState.upgrade_purchased else "🏗️ Ampliar píer (R$%d)" % GameState.UPGRADE_COST
+	if GameState.upgrade_purchased:
+		_upgrade_button.text = "Píer ampliado"
+		Icones.no_botao(_upgrade_button, Icones.FEITO, 26)
+	else:
+		_upgrade_button.text = "Ampliar píer (R$%d)" % GameState.UPGRADE_COST
+		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	_advance_button.disabled = GameState.phase != "playing"
 	_refresh_meta()
 
@@ -99,13 +105,16 @@ func _refresh_hud() -> void:
 func _refresh_meta() -> void:
 	var alvo := GameState.PARCELA_AMOUNT
 	if GameState.parcela_paid:
-		_meta_titulo.text = "🏦 Parcela do Sr. Ribeiro"
+		# Pago: o banco dá lugar ao visto verde, que é o estado, não o credor.
+		_meta_icone.texture = Icones.FEITO
+		_meta_titulo.text = "Parcela do Sr. Ribeiro"
 		_meta_bar.value = 100.0
-		_meta_label.text = "✅ Paga — porto salvo"
+		_meta_label.text = "Paga — porto salvo"
 		return
 
+	_meta_icone.texture = Icones.PARCELA
 	var dias_restantes: int = max(GameState.PARCELA_DUE_TURN - GameState.turn + 1, 0)
-	_meta_titulo.text = "🏦 Parcela do Sr. Ribeiro — %d dia(s) restante(s)" % dias_restantes
+	_meta_titulo.text = "Parcela do Sr. Ribeiro — %d dia(s) restante(s)" % dias_restantes
 	_meta_bar.value = clamp(100.0 * float(GameState.cash) / float(alvo), 0.0, 100.0)
 	var falta: int = alvo - int(GameState.cash)
 	if falta > 0:

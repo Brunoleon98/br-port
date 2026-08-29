@@ -32,9 +32,7 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 10)
 	box.add_child(vbox)
 
-	var title := Label.new()
-	title.text = "🏗️ Ampliar o píer"
-	vbox.add_child(title)
+	vbox.add_child(Icones.rotulo(Icones.AMPLIAR_PIER, "Ampliar o píer"))
 
 	var body := Label.new()
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD
