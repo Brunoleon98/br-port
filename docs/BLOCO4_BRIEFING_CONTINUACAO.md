@@ -43,18 +43,27 @@ Ela oscilou três vezes nesta sessão. O histórico importa para não voltar:
 2D". A justificativa é que o Bruno escolheu explicitamente esse ângulo depois
 de ver os dois protótipos lado a lado.
 
-### Mas o jogo ainda NÃO é isométrico
+### E o jogo JÁ É isométrico (29/08)
 
-O que roda é **vetor chapado topo-down**. O isométrico existe só em
-`scenes/proto/MapaIso.tscn` — protótipo sem lógica, não carregado pelo jogo.
+`Main.tscn` roda sobre `porto_mapa_iso.svg` com os props de
+`tools/gerar_props_iso.py`. As 33 asserções continuam passando.
 
-**O que bloqueia a migração:** os sprites existentes foram gerados deitados, e
-num plano isométrico **nenhum eixo é horizontal** (ambos saem a 26,6°). Eles
-ficam atravessados em cima de qualquer píer. Rotacionar em Godot é paliativo —
-a perspetiva e a luz estão assadas dentro da imagem.
+O que destravou: os sprites antigos foram gerados deitados, e num plano
+isométrico **nenhum eixo é horizontal** (ambos saem a 26,57°) — por isso
+ficavam atravessados em cima do píer. Gerar por script em vez de por prompt
+tira o ângulo das mãos de quem desenha.
 
-Ou seja: **migrar exige regerar os assets primeiro.** Não dá para integrar o
-isométrico com o que existe hoje.
+Três coisas que a migração exigiu e que ficam registradas:
+
+1. **O mapa passou a sair sem os píeres** (`--sem-pieres`). O que muda de
+   estado em jogo não pode estar assado no fundo.
+2. **A altura precisou de conversão.** O mapa trata altura como PIXELS livres
+   (`ALT_PIER=15`, `ALT_CAIS=26`); o Blender projeta de verdade, onde uma
+   unidade vale 36,74px. Sem o `z()` de `gerar_props_iso.py` o píer sai 2,4x
+   mais alto que o cais ao lado.
+3. **O passo vertical entre docas é 180px** e o píer ocupa ~155. Píer e chip
+   empilhados não cabem — por isso a chip foi para cima do convés, menor. Quem
+   for mexer no layout esbarra nisso de novo.
 
 ---
 

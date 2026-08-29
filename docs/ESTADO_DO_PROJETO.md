@@ -62,12 +62,15 @@ oscilou três vezes na sessão (3/4 ilustrado → chapado topo-down → isométr
 o histórico e o porquê estão na §2 do briefing de continuação, para não voltar
 atrás de novo.
 
-**O jogo em produção ainda é topo-down chapado**, funcional e testado. O
-isométrico está provado em `scenes/proto/MapaIso.tscn` mas **não foi
-integrado**, e não dá para integrar com o que existe: os sprites atuais foram
-gerados deitados, e num plano isométrico nenhum eixo é horizontal (ambos saem a
-26,6°). **Migrar exige regerar os assets primeiro.** Prompts em
-`docs/BLOCO4_PROMPTS_ISOMETRICO.md`, cuja §0 trata só de orientação.
+**O jogo em produção JÁ É isométrico** (29/08) e continua com as 33 asserções
+passando. `Main.tscn` roda sobre `porto_mapa_iso.svg` com os props de
+`tools/gerar_props_iso.py` — píer nos dois estados, barcos, cenário. O que
+destravou foi gerar por script em vez de por prompt: num plano isométrico
+nenhum eixo é horizontal (ambos a 26,57°), e o ângulo deixou de ser uma coisa
+que alguém acerta para ser uma conta que não pode sair errada.
+
+Continuam com gerador de imagem só os **retratos** (Arlindo, Sr. Ribeiro), onde
+a perspectiva não importa porque vivem em painel.
 
 👉 **Para retomar, o ponto de entrada é `docs/BLOCO4_BRIEFING_CONTINUACAO.md`**
 — estado atual, decisões fechadas e os caminhos que restam (o dos ícones foi

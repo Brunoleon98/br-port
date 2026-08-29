@@ -72,11 +72,27 @@ RESOLUCAO = 512
 # então ortho_scale = RESOLUCAO / (MEIA_LARG / cos(45°)).
 ESCALA_ORTO = RESOLUCAO / (MEIA_LARG / math.cos(math.radians(45.0)))
 
-# Geometria do píer, de gerar_mapa_iso.py. ALT_PIER lá é em PIXELS; aqui vira
-# unidade de mundo dividindo por MEIA_ALT.
+# ALTURA: o ponto onde os dois mundos quase não se falam.
+#
+# `gerar_mapa_iso.py` trata altura como PIXELS livres — ALT_PIER=15, ALT_CAIS=26,
+# um armazém com 44. É uma convenção de desenho, não uma projeção.
+# O Blender faz projeção DE VERDADE: uma unidade de altura projeta
+# (RESOLUCAO/ortho_scale) * cos(elevação) = 36,74 px.
+#
+# Ignorar isso põe um píer renderizado 2,4x mais alto que o cais desenhado ao
+# lado dele. Por isso os props falam a mesma língua do mapa: altura em PIXELS
+# DO MAPA, convertida aqui num lugar só.
+ALTURA_PX = (RESOLUCAO / ESCALA_ORTO) * math.cos(math.radians(90.0 - ROT_X))
+
+
+def z(altura_px: float) -> float:
+    """Altura em pixels do mapa -> unidades de mundo do Blender."""
+    return altura_px / ALTURA_PX
+
+
 PIER_ALCANCE = 4.5
 PIER_LARG = 2.4
-ALT_PIER = 15.0 / MEIA_ALT
+ALT_PIER = z(15.0)          # ALT_PIER do mapa, em pixels
 
 PALETA = {
     "madeira": "#9a6438", "madeira_esc": "#633d20", "madeira_velha": "#7d7266",
@@ -164,8 +180,8 @@ def montar(M: dict) -> dict:
     for i in range(4):
         x = -PIER_ALCANCE / 2 + 0.5 + i * (PIER_ALCANCE - 1.0) / 3
         for lado, y in enumerate((-PIER_LARG / 2 + 0.28, PIER_LARG / 2 - 0.28)):
-            estacas.append(caixa(f"estaca_{i}_{lado}", (x, y, ALT_PIER / 2 - 0.35),
-                                 (0.22, 0.22, ALT_PIER + 0.7), M["madeira_esc"]))
+            estacas.append(caixa(f"estaca_{i}_{lado}", (x, y, ALT_PIER / 2 - z(13.0)),
+                                 (0.22, 0.22, ALT_PIER + z(26.0)), M["madeira_esc"]))
 
     # Vaga por construir: as mesmas estacas, gastas, sem tabuado.
     estacas_velhas = []
@@ -173,18 +189,18 @@ def montar(M: dict) -> dict:
         x = -PIER_ALCANCE / 2 + 0.5 + i * (PIER_ALCANCE - 1.0) / 3
         for lado, y in enumerate((-PIER_LARG / 2 + 0.28, PIER_LARG / 2 - 0.28)):
             # Alturas irregulares — é o que faz "abandonado" ler à primeira vista.
-            h = ALT_PIER + 0.7 - (0.35 if (i + lado) % 3 == 0 else 0.0)
+            h = ALT_PIER + z(26.0) - (z(13.0) if (i + lado) % 3 == 0 else 0.0)
             estacas_velhas.append(caixa(
-                f"velha_{i}_{lado}", (x, y, h / 2 - 0.35), (0.22, 0.22, h),
+                f"velha_{i}_{lado}", (x, y, h / 2 - z(13.0)), (0.22, 0.22, h),
                 M["madeira_velha"], rot=(0, 2 if i % 2 else -3, 0)))
     grupos["pier_vazio"] = estacas_velhas
 
-    tabuado = [caixa("tabuado", (0, 0, ALT_PIER - 0.12),
-                     (PIER_ALCANCE, PIER_LARG, 0.24), M["madeira"])]
+    tabuado = [caixa("tabuado", (0, 0, ALT_PIER - z(2.2)),
+                     (PIER_ALCANCE, PIER_LARG, z(4.4)), M["madeira"])]
     for x in (-PIER_ALCANCE / 2 + 0.7, PIER_ALCANCE / 2 - 0.7):
         tabuado.append(caixa(f"cabeco_{x:.1f}",
-                             (x, -PIER_LARG / 2 + 0.3, ALT_PIER + 0.3),
-                             (0.3, 0.3, 0.6), M["metal"]))
+                             (x, -PIER_LARG / 2 + 0.3, ALT_PIER + z(4.5)),
+                             (0.3, 0.3, z(9.0)), M["metal"]))
     grupos["pier_construido"] = estacas + tabuado
 
     # -- GUINDASTE em peças: o Tween gira a lança sem mexer no mastro -----
@@ -299,8 +315,10 @@ def preparar_cena():
     dx, dy, dz = 0.0, math.sin(rx), -math.cos(rx)
     d = (dx * math.cos(rz) - dy * math.sin(rz),
          dx * math.sin(rz) + dy * math.cos(rz), dz)
+    # A câmera mira a ORIGEM DO CHÃO, não o meio do prop: assim o centro do
+    # quadro corresponde a p(mx, my, 0) do mapa, e posicionar um prop na cena
+    # vira uma subtração de meio quadro em vez de um ajuste no olho.
     cam.location = tuple(-d[i] * 40.0 for i in range(3))
-    cam.location.z += ALT_PIER * 0.5
     bpy.context.view_layer.update()
     cena.camera = cam
     return cena

@@ -11,15 +11,18 @@ extends Control
 # A árvore de nós mora em Dock.tscn e o estilo no tema. Este script não
 # constrói nem pinta nada: só escolhe qual textura e qual texto valem agora.
 
-const ArtePierPronto := preload("res://art/pier_construido.svg")
-const ArtePierVazio := preload("res://art/pier_vazio.svg")
+# Props ISOMÉTRICOS, gerados por tools/gerar_props_iso.py. São quadros de 512
+# cujo centro é a origem do mundo — a cena os ancora por aí, então trocar de
+# textura nunca desloca o píer.
+const ArtePierPronto := preload("res://art/props/pier_construido.png")
+const ArtePierVazio := preload("res://art/props/pier_vazio.png")
 
-# Barcos em vetor CHAPADO, vistos de cima — não os PNGs ilustrados em 3/4.
-# Sobre um mapa topo-down, sprite em 3/4 não é escolha de estilo, é erro de
-# perspectiva: o barco fica boiando por cima do mapa em vez de dentro dele.
-# Os PNGs ilustrados continuam no repositório, para painéis e retratos.
-const ArteGrande := preload("res://art/barco_grande.svg")
-const ArtePequeno := preload("res://art/barco_pequeno.svg")
+# Os dois barcos partilham o mesmo casco e diferem pela carga. Não são sprites
+# ilustrados em 3/4: aqueles têm a perspectiva assada dentro da imagem e ficam
+# atravessados em cima de um píer isométrico, que é o erro que já custou duas
+# levas de arte.
+const ArteGrande := preload("res://art/props/barco_grande.png")
+const ArtePequeno := preload("res://art/props/barco_pequeno.png")
 
 var dock_index: int = -1
 

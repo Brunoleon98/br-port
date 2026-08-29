@@ -84,7 +84,7 @@ def caixa(x0, y0, x1, y1, base, altura, topo, dir_, esq) -> str:
     return s
 
 
-def gerar() -> str:
+def gerar(com_pieres: bool = True) -> str:
     s = '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d">\n' % (
         LARG, ALT, LARG, ALT)
 
@@ -111,7 +111,11 @@ def gerar() -> str:
                   *p(borda - 0.9, my0 + 0.3, ALT_CAIS), *p(borda - 0.9, my1 - 0.3, ALT_CAIS)))
 
     # ---- píeres ----
-    for my0, my1, borda in PIERES:
+    # Em jogo o píer TROCA DE ESTADO (vaga por construir -> píer construído), e
+    # o que muda de estado não pode estar assado no fundo. Com --sem-pieres o
+    # mapa sai só com água e terra, e as três vagas viram props posicionados
+    # por cima — que é como o Main.tscn os usa.
+    for my0, my1, borda in (PIERES if com_pieres else []):
         s += laje(borda, my0, borda + PIER_ALCANCE, my1, ALT_PIER,
                   C["madeira"], C["madeira_dir"], C["madeira_esq"])
         for i in range(1, 6):
@@ -155,10 +159,21 @@ def gerar() -> str:
 
 
 def main() -> int:
-    destino = sys.argv[1] if len(sys.argv) > 1 else "porto_mapa_iso.svg"
-    open(destino, "w", encoding="utf-8").write(gerar())
-    print("%s — %dx%d, chão transbordando de propósito (o ecrã é a janela)" % (
-        destino, LARG, ALT))
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    com_pieres = "--sem-pieres" not in sys.argv
+    destino = args[0] if args else "porto_mapa_iso.svg"
+    open(destino, "w", encoding="utf-8").write(gerar(com_pieres))
+    print("%s — %dx%d, chão transbordando de propósito (o ecrã é a janela)%s" % (
+        destino, LARG, ALT, "" if com_pieres else "  [SEM os píeres]"))
+
+    # O centro de cada píer no chão. É por aqui que o Main.tscn ancora o prop:
+    # o render mira a origem do chão, então o canto do TextureRect é este ponto
+    # menos meio quadro.
+    print("\nCentro de cada píer, em pixels do mapa (h=0):")
+    for i, (my0, my1, borda) in enumerate(PIERES):
+        x, y = p(borda + PIER_ALCANCE / 2, (my0 + my1) / 2, 0)
+        print("  Vaga %d: (%.0f, %.0f)" % (i + 1, x, y))
+
     print("\nAncoras de barco (centro, encostado em cada píer):")
     for i, (my0, my1, borda) in enumerate(PIERES):
         x, y = p(borda + PIER_ALCANCE / 2, my1 + 1.6, 0)
