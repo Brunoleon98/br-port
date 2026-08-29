@@ -100,6 +100,18 @@ parcela de R$8.000** — é para ficar nessa margem.
 
 ## 3. O que fica para a próxima conversa
 
+### A0) Subir a arte no Blender — **tem documento próprio**
+
+`docs/BLOCO5_PROMPTS_BLENDER_RICO.md` responde, com medição e imagem, se dá
+para chegar ao nível de uma arte de porto ilustrada usando o Blender por
+script, e traz cinco prompts prontos em ordem de retorno. Resumo: **o volume,
+a luz, o desgaste e a densidade de peça, sim; a pincelada, não.** O mesmo
+guindaste passou de 5 caixas para 75 peças **ocupando menos tela** (133×207 px
+→ 119×178 px), ao custo de 5 s → 27 s de render.
+
+Comece pelo Prompt A daquele documento: ele melhora os vinte props de uma vez
+e não pode desalinhar nada, porque não mexe em coordenada nenhuma.
+
 ### A) O refino visual que ficou pendente
 
 - **A lança do guindaste varre para o lado errado** — estende-se para terra, e
@@ -136,6 +148,7 @@ uso.
 | `tools/gerar_mapa_iso.py` | Mapa isométrico. Flags: `--sem-pieres`, `--sem-coqueiros`, `--sem-predios`, `--sem-pavimento`. O jogo usa duas saídas: terra batida e pavimentado. |
 | `tools/gerar_props_iso.py` | Props em Blender por script. Confere a própria projeção ao fim. |
 | `tools/preparar_sprites.py` | Conserta o alpha de PNG gerado por IA. Só faz falta para o gerador de imagem. |
+| `tools/demo_guindaste_rico.py` | Demonstração, fora do jogo: o mesmo guindaste no pipeline de hoje e num mais rico. Base dos prompts de `BLOCO5_PROMPTS_BLENDER_RICO.md`. |
 | `brport_vs/tools/simular_balanceamento.gd` | **Roda antes de mexer em qualquer preço.** |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos. |
 | `brport_vs/tools/capturar_tela.gd` | PNG do jogo rodando. Terceiro argumento `completo` compra todas as estruturas antes de montar a cena, para fotografar o mapa pavimentado. **Teste verde não prova que ficou bonito.** |
@@ -183,8 +196,8 @@ Cole isto:
 > `docs/ESTADO_DO_PROJETO.md`. A direção de arte (isométrico) e a economia das
 > estruturas já estão decididas e medidas — não reabrir sem rodar o simulador.
 
-E diga o que quer: o refino visual da §3A, mais lugares para gastar (§3C), ou
-outra coisa.
+E diga o que quer: subir a arte no Blender (§3A0 — tem prompts prontos), o
+refino visual da §3A, mais lugares para gastar (§3C), ou outra coisa.
 
 ---
 
