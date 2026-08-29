@@ -62,9 +62,20 @@ isométrico com o que existe hoje.
 
 ### A) Gerar os assets isométricos (o caminho da direção escolhida)
 
-`docs/BLOCO4_PROMPTS_ISOMETRICO.md` é o documento corrente, com prompts prontos
-e um checklist de cobertura no fim. A §0 trata só de **orientação**, que é o
-erro que derrubou os sprites atuais.
+**Isto mudou em 29/08.** O gerador de imagem já perdeu duas levas pelo mesmo
+motivo — ele não erra o desenho, erra o ÂNGULO — e agora existe um caminho que
+não pode errar: `tools/gerar_props_iso.py` monta os props em Blender por script,
+com a câmera ortográfica no 2:1 do mapa. Os 17 props saem em ~60s e o próprio
+script CONFERE a projeção no fim, medindo a largura do tabuado contra a conta
+de `gerar_mapa_iso.py`.
+
+Sobrou para o gerador de imagem só o que não se escreve em coordenadas:
+**Arlindo (3 expressões) e o Sr. Ribeiro** — e lá a perspectiva não importa,
+porque eles vivem em painel. Foi por isso que a leva de retratos que o Bruno
+gerou ficou boa e a de barcos não.
+
+`docs/BLOCO4_PROMPTS_ISOMETRICO.md` continua valendo para esses dois. A §0
+trata de **orientação**, que é o erro que derrubou os sprites de cenário.
 
 Ordem sugerida no próprio documento: 3 barcos → píer nos dois estados →
 Arlindo (3 expressões) → coqueiro → galpão.
@@ -140,6 +151,7 @@ semente, então dá para comparar antes/depois sem ruído.
 | `brport_vs/tools/simular_balanceamento.gd` | Roda N partidas com 3 perfis e mede a dificuldade. Determinístico por semente. |
 | `brport_vs/tools/capturar_tela.gd` | Salva um PNG do jogo rodando, sem abrir o editor. **Usar a cada mudança visual** — teste verde não prova que ficou bonito. |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos da interface, a 19px e ampliado. **Rodar a cada ícone novo.** |
+| `tools/gerar_props_iso.py` | **Props isométricos em Blender por script** — píer nos 3 estados, 3 barcos, guindaste em peças, coqueiro copa+tronco, galpão, contêiner, caixote, boia, marcador. Confere a própria projeção. Não faz retrato de personagem. |
 
 Para rodar o Godot nesta sessão foi usado o binário 4.6.3 em `~/godot-bin/`,
 com `xvfb-run` para as capturas.
@@ -163,11 +175,21 @@ com `xvfb-run` para as capturas.
 4. **Ícone de HUD não é isométrico.** É interface: silhueta chapada, legível a
    19px. Colar o bloco de estilo isométrico num prompt de ícone devolve borrão.
 
-5. **A tela do projeto é retrato com aspecto travado** (`stretch/aspect="keep"`,
+5. **A escala do render tem um número, não um chute.** Para o PNG cair no mapa
+   em 1:1, `ortho_scale = resolução / (MEIA_LARG / cos 45°)` = resolução/42,4264.
+   E a rotação da câmera é **(60°, 0, 45°)** — o 54,736° que aparece em todo
+   tutorial é isométrico VERDADEIRO (1,732:1) e aqui daria o ângulo errado.
+
+6. **`cam.matrix_world` mente logo depois de mexer na rotação.** A matriz só é
+   recalculada no depsgraph seguinte, então ler a direção de vista dali põe a
+   câmera longe do alvo e o render sai VAZIO, sem erro nenhum. Faça a conta na
+   mão.
+
+7. **A tela do projeto é retrato com aspecto travado** (`stretch/aspect="keep"`,
    720×1280). Pedir `--resolution` numa proporção diferente não dá erro: devolve
    a imagem espremida. Ferramenta de captura tem de respeitar 720:1280.
 
-6. **Animação não se pede ao gerador.** Barco balançando, chegando, doca
+8. **Animação não se pede ao gerador.** Barco balançando, chegando, doca
    pulsando — tudo é `Tween` sobre sprite existente, zero arte nova. O que
    precisa de arte é **anatomia separada pelo eixo que se move** (copa e tronco
    do coqueiro em arquivos distintos, por exemplo).

@@ -96,6 +96,7 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `docs/BLOCO4_PROMPTS_ISOMETRICO.md` | **Prompts do visual escolhido** — isométrico, orientação obrigatória, animação e evolução por Fase |
 | `docs/BLOCO4_PROMPTS_VISUAL_CHAPADO.md` | Superado — versão topo-down, mantida pelo registro |
 | `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo |
+| `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `docs/BLOCO4_PACOTE_SPRITES.md` | O que do pacote de sprites/mockups entrou, o que não entrou e por quê |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
