@@ -61,6 +61,7 @@ func _ready() -> void:
 
 	_connect_game_state()
 	_refresh_all()
+	_animar_ancorados()
 
 	# Se o jogo carregou de um save já em rival_offer/debt_payment, reabre o painel certo.
 	if GameState.phase == "rival_offer" and GameState.pending_rival_dock >= 0:
@@ -69,6 +70,27 @@ func _ready() -> void:
 		_on_debt_due(GameState.PARCELA_AMOUNT)
 	elif GameState.phase == "game_over":
 		_on_game_over(GameState.won, GameState.end_reason)
+
+
+# Os barcos da Zona de Espera são cenário: não têm lógica, mas parados fazem o
+# porto parecer uma fotografia. Fases diferentes para não balançarem em bloco,
+# que é o que denuncia a animação como truque.
+func _animar_ancorados() -> void:
+	var fases := [0.0, 0.85]
+	var i := 0
+	for nome in ["BarcoEspera1", "BarcoEspera2"]:
+		var barco := $MapaWrap.get_node_or_null(nome) as TextureRect
+		if barco == null:
+			continue
+		var base := barco.position
+		var tw := barco.create_tween().set_loops()
+		if fases[i] > 0.0:
+			tw.tween_interval(fases[i])
+		tw.tween_property(barco, "position:y", base.y - 4.0, 2.1) \
+			.set_trans(Tween.TRANS_SINE)
+		tw.tween_property(barco, "position:y", base.y, 2.1) \
+			.set_trans(Tween.TRANS_SINE)
+		i += 1
 
 
 func _connect_game_state() -> void:

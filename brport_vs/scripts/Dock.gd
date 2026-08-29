@@ -30,6 +30,22 @@ var dock_index: int = -1
 # em dia; a doca só precisa saber para onde mandar o toque.
 var trabalhador_selecionado: int = -1
 
+# ── ANIMAÇÃO ──
+# Nada aqui precisa de arte nova: é Tween sobre os sprites que já existem.
+# O balanço dá vida ao barco parado; a chegada explica de onde ele veio; e a
+# pulsação da chip aponta a doca que está esperando trabalhador — que era
+# justamente o que se perdia de vista jogando.
+const BALANCO_PX := 5.0
+const BALANCO_SEG := 1.7
+const CHEGADA_SEG := 0.5
+const PULSO_SEG := 0.9
+
+var _barco_base := Vector2.ZERO
+var _barco_id_anterior: int = -1
+var _tw_balanco: Tween
+var _tw_chegada: Tween
+var _tw_pulso: Tween
+
 @onready var _pier: TextureRect = $Pier
 @onready var _barco: TextureRect = $Barco
 @onready var _chip: PanelContainer = $Chip
@@ -49,6 +65,7 @@ func setup(index: int) -> void:
 
 
 func _ready() -> void:
+	_barco_base = _barco.position
 	if dock_index >= 0:
 		refresh()
 
@@ -65,10 +82,12 @@ func refresh() -> void:
 	# isso eles são apagados aqui e reacesos só por quem tem o que anunciar.
 	_progresso_icone.visible = false
 	_trabalhador_icone.visible = false
+	_pulsar_chip(false)
 
 	# Vaga ainda não construída: estacas velhas, sem barco.
 	if not esta_construida():
 		_pier.texture = ArtePierVazio
+		_parar_barco()
 		_barco.texture = null
 		_valor.text = "Vaga livre"
 		_progresso.text = "Ampliar píer"
@@ -80,6 +99,7 @@ func refresh() -> void:
 	var boat = dock["boat"]
 
 	if boat == null:
+		_parar_barco()
 		_barco.texture = null
 		_valor.text = "Doca vazia"
 		_progresso.text = "aguardando barco"
@@ -94,12 +114,16 @@ func refresh() -> void:
 	_valor.text = "R$%d%s" % [valor, " (acordo)" if boat.get("matched", false) else ""]
 
 	if sob_oferta:
+		_animar_barco(int(boat["id"]))
 		_progresso_icone.visible = true
 		_progresso.text = "OFERTA DO RIVAL"
 		_trabalhador.text = ""
 		return
 
 	_progresso.text = "%d/%d turnos" % [int(boat["progress"]), int(boat["op_turns"])]
+	_animar_barco(int(boat["id"]))
+	# Barco parado esperando gente é o que o jogador precisa notar.
+	_pulsar_chip(dock["worker_id"] == null and int(boat["progress"]) == 0)
 
 	if dock["worker_id"] == null:
 		_trabalhador.text = "sem trabalhador"
@@ -148,3 +172,63 @@ func _gui_input(event: InputEvent) -> void:
 	if GameState.docks[dock_index]["worker_id"] != null:
 		GameState.release_worker(dock_index)
 		accept_event()
+
+
+# ── as animações ──
+func _parar_barco() -> void:
+	_barco_id_anterior = -1
+	for tw in [_tw_balanco, _tw_chegada]:
+		if tw != null and tw.is_valid():
+			tw.kill()
+	_barco.position = _barco_base
+
+
+func _animar_barco(barco_id: int) -> void:
+	if barco_id == _barco_id_anterior:
+		return                      # mesmo barco: já está balançando
+	var era_outro := _barco_id_anterior != -1
+	_barco_id_anterior = barco_id
+
+	if _tw_chegada != null and _tw_chegada.is_valid():
+		_tw_chegada.kill()
+	if _tw_balanco != null and _tw_balanco.is_valid():
+		_tw_balanco.kill()
+
+	# Barco novo entra deslizando do lado da zona de espera; o que já estava
+	# aqui (ao recarregar um save) simplesmente aparece.
+	if not era_outro:
+		_barco.position = _barco_base
+		_iniciar_balanco()
+		return
+
+	_barco.position = _barco_base + Vector2(90, -45)
+	_barco.modulate.a = 0.0
+	_tw_chegada = create_tween().set_parallel(true)
+	_tw_chegada.tween_property(_barco, "position", _barco_base, CHEGADA_SEG) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_tw_chegada.tween_property(_barco, "modulate:a", 1.0, CHEGADA_SEG * 0.6)
+	_tw_chegada.chain().tween_callback(_iniciar_balanco)
+
+
+func _iniciar_balanco() -> void:
+	_barco.modulate.a = 1.0
+	if _tw_balanco != null and _tw_balanco.is_valid():
+		_tw_balanco.kill()
+	_tw_balanco = create_tween().set_loops()
+	_tw_balanco.tween_property(_barco, "position:y",
+		_barco_base.y - BALANCO_PX, BALANCO_SEG).set_trans(Tween.TRANS_SINE)
+	_tw_balanco.tween_property(_barco, "position:y",
+		_barco_base.y, BALANCO_SEG).set_trans(Tween.TRANS_SINE)
+
+
+func _pulsar_chip(ligado: bool) -> void:
+	if _tw_pulso != null and _tw_pulso.is_valid():
+		_tw_pulso.kill()
+	if not ligado:
+		_chip.modulate = Color.WHITE
+		return
+	_tw_pulso = create_tween().set_loops()
+	_tw_pulso.tween_property(_chip, "modulate", Color(1.35, 1.2, 0.75), PULSO_SEG) \
+		.set_trans(Tween.TRANS_SINE)
+	_tw_pulso.tween_property(_chip, "modulate", Color.WHITE, PULSO_SEG) \
+		.set_trans(Tween.TRANS_SINE)
