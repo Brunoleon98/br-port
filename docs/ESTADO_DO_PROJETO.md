@@ -136,8 +136,13 @@ escura, cartão branco, botão navy) com `tools/folha_icones.gd`. Cada um foi
 colorido para o fundo onde cai — dois não são reaproveitáveis em qualquer
 lugar, e o cabeçalho de `Icones.gd` diz quais e por quê.
 
-Ainda é placeholder: variações de barco (o GDD pede 3, existem 2) e o
-trabalhador visto de cima.
+Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande), e o
+pesqueiro tem casco próprio — não é o mesmo casco com carga trocada. O
+**trabalhador aparece de pé no tabuado** quando alocado, e mexe-se enquanto a
+operação corre.
+
+Ainda é placeholder o **retrato ilustrado do trabalhador** no cartão da
+fileira, que é de outra leva e de outra linguagem visual.
 
 A **Zona de Espera é só visual**: os barcos ancorados são decorativos e não
 representam fila de verdade — barcos continuam nascendo direto nas docas.

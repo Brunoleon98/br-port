@@ -56,6 +56,7 @@ C = {
     "asfalto": "#6f7b85", "madeira": "#9a6438", "madeira_dir": "#633d20",
     "madeira_esq": "#7a4d2a", "telhado": "#c85420", "parede": "#eef2f5",
     "parede_dir": "#b3bfc7", "parede_esq": "#cfd8de", "verde": "#2d7a3a",
+    "vidro": "#7fb6cc", "porta": "#5a3a20",
 }
 
 
@@ -81,6 +82,52 @@ def caixa(x0, y0, x1, y1, base, altura, topo, dir_, esq) -> str:
     s = poli([p(x1, y0, t), p(x1, y1, t), p(x1, y1, base), p(x1, y0, base)], dir_)
     s += poli([p(x0, y1, t), p(x1, y1, t), p(x1, y1, base), p(x0, y1, base)], esq)
     s += poli([p(x0, y0, t), p(x1, y0, t), p(x1, y1, t), p(x0, y1, t)], topo)
+    return s
+
+
+# As duas faces visíveis de um volume isométrico. Servem para pintar aberturas
+# em cima de uma parede já desenhada, sem redesenhar o volume.
+def face_mx(mx, my0, my1, z0, z1, cor) -> str:
+    return poli([p(mx, my0, z1), p(mx, my1, z1), p(mx, my1, z0), p(mx, my0, z0)], cor)
+
+
+def face_my(my, mx0, mx1, z0, z1, cor) -> str:
+    return poli([p(mx0, my, z1), p(mx1, my, z1), p(mx1, my, z0), p(mx0, my, z0)], cor)
+
+
+def predio(mx0, my0, mx1, my1, base, altura, telhado, telhado_dir, telhado_esq,
+           janelas: int = 2) -> str:
+    """Prédio com porta, janelas e telhado que sobressai.
+
+    Antes eram caixas lisas com a face de cima pintada de telhado: à distância
+    liam-se como blocos de cor. O que dá escala a um edifício é a ABERTURA —
+    uma porta diz de que tamanho é a construção sem precisar de mais nada.
+    """
+    t = base + altura
+    s = caixa(mx0, my0, mx1, my1, base, altura,
+              C["parede"], C["parede_dir"], C["parede_esq"])
+
+    # Porta na face +my (a que fica virada para o cais).
+    meio = (mx0 + mx1) / 2
+    s += face_my(my1, meio - 0.55, meio + 0.55, base, base + min(16, altura - 8),
+                 C["porta"])
+
+    # Janelas nas duas faces visíveis, distribuídas ao longo do vão.
+    alt_j0, alt_j1 = base + altura * 0.52, base + altura * 0.78
+    vao_y = (my1 - my0) / (janelas + 1)
+    for i in range(1, janelas + 1):
+        cy = my0 + vao_y * i
+        s += face_mx(mx1, cy - 0.42, cy + 0.42, alt_j0, alt_j1, C["vidro"])
+    vao_x = (mx1 - mx0) / (janelas + 1)
+    for i in range(1, janelas + 1):
+        cx = mx0 + vao_x * i
+        if abs(cx - meio) < 0.75:
+            continue                       # não abre janela em cima da porta
+        s += face_my(my1, cx - 0.42, cx + 0.42, alt_j0, alt_j1, C["vidro"])
+
+    # Telhado sobressaindo dos quatro lados — é o beiral que faz parecer coberto.
+    s += caixa(mx0 - 0.3, my0 - 0.3, mx1 + 0.3, my1 + 0.3, t, 8,
+               telhado, telhado_dir, telhado_esq)
     return s
 
 
@@ -129,12 +176,10 @@ def gerar(com_pieres: bool = True) -> str:
 
     # ---- prédios no pátio, de trás para a frente ----
     B = ALT_CAIS
-    s += caixa(-1.0, -3.5, 3.0, 0.5, B, 34, C["telhado"], "#8f3822", "#a8452a")
-    s += caixa(2.0, 5.0, 6.4, 9.4, B, 44, C["parede"], C["parede_dir"], C["parede_esq"])
-    s += poli([p(2.0, 5.0, B + 44), p(6.4, 5.0, B + 44),
-               p(6.4, 9.4, B + 44), p(2.0, 9.4, B + 44)], C["telhado"])
-    s += caixa(6.0, 13.0, 10.4, 17.4, B, 32, C["telhado"], "#8f3822", "#a8452a")
-    s += caixa(10.0, 21.0, 14.4, 25.4, B, 30, C["parede"], C["parede_dir"], C["parede_esq"])
+    s += predio(-1.0, -3.5, 3.0, 0.5, B, 34, C["telhado"], "#8f3822", "#a8452a")
+    s += predio(2.0, 5.0, 6.4, 9.4, B, 44, "#3f6f4a", "#2a4d33", "#335c3d", 3)
+    s += predio(6.0, 13.0, 10.4, 17.4, B, 32, C["telhado"], "#8f3822", "#a8452a")
+    s += predio(10.0, 21.0, 14.4, 25.4, B, 30, "#3f6f4a", "#2a4d33", "#335c3d")
 
     cores = [("#c23030", "#7a1a1a", "#8f2020"), ("#2f74b0", "#1d4a75", "#245a8c"),
              ("#e0a81f", "#9c7a15", "#b8901a"), ("#2d7a3a", "#19512d", "#1f6236")]
@@ -162,7 +207,9 @@ def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     com_pieres = "--sem-pieres" not in sys.argv
     destino = args[0] if args else "porto_mapa_iso.svg"
-    open(destino, "w", encoding="utf-8").write(gerar(com_pieres))
+    conteudo = gerar(com_pieres)      # gerar ANTES de abrir: open(...,"w")
+    with open(destino, "w", encoding="utf-8") as f:   # trunca de imediato, e um
+        f.write(conteudo)                             # erro deixaria o mapa vazio
     print("%s — %dx%d, chão transbordando de propósito (o ecrã é a janela)%s" % (
         destino, LARG, ALT, "" if com_pieres else "  [SEM os píeres]"))
 

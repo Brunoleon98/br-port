@@ -41,13 +41,16 @@ const CHEGADA_SEG := 0.5
 const PULSO_SEG := 0.9
 
 var _barco_base := Vector2.ZERO
+var _trabalhador_base := Vector2.ZERO
 var _barco_id_anterior: int = -1
 var _tw_balanco: Tween
 var _tw_chegada: Tween
 var _tw_pulso: Tween
+var _tw_trabalho: Tween
 
 @onready var _pier: TextureRect = $Pier
 @onready var _barco: TextureRect = $Barco
+@onready var _trabalhador_prop: TextureRect = $Trabalhador
 @onready var _chip: PanelContainer = $Chip
 @onready var _valor: Label = $Chip/Coluna/Valor
 @onready var _progresso: Label = $Chip/Coluna/ProgressoLinha/Progresso
@@ -65,7 +68,11 @@ func setup(index: int) -> void:
 
 
 func _ready() -> void:
+	# Guardar a posição de repouso é obrigatório: num Control o `position` É o
+	# offset, então zerá-lo não "volta ao lugar" — atira o nó para o canto do
+	# pai e apaga a ancoragem da cena.
 	_barco_base = _barco.position
+	_trabalhador_base = _trabalhador_prop.position
 	if dock_index >= 0:
 		refresh()
 
@@ -82,6 +89,7 @@ func refresh() -> void:
 	# isso eles são apagados aqui e reacesos só por quem tem o que anunciar.
 	_progresso_icone.visible = false
 	_trabalhador_icone.visible = false
+	_trabalhador_prop.visible = false
 	_pulsar_chip(false)
 
 	# Vaga ainda não construída: estacas velhas, sem barco.
@@ -129,6 +137,9 @@ func refresh() -> void:
 		_trabalhador.text = "sem trabalhador"
 	else:
 		_trabalhador_icone.visible = true
+		# A figura no tabuado é o que faz "doca ocupada" ler sem texto.
+		_trabalhador_prop.visible = true
+		_animar_trabalho(int(boat["progress"]) > 0)
 		var texto := "#%d" % int(dock["worker_id"])
 		# Enquanto a operação não começou dá para desfazer um arrasto errado.
 		if int(boat["progress"]) == 0:
@@ -232,3 +243,17 @@ func _pulsar_chip(ligado: bool) -> void:
 		.set_trans(Tween.TRANS_SINE)
 	_tw_pulso.tween_property(_chip, "modulate", Color.WHITE, PULSO_SEG) \
 		.set_trans(Tween.TRANS_SINE)
+
+
+# Enquanto a operação corre, o trabalhador se mexe. Parado, fica de pé.
+func _animar_trabalho(operando: bool) -> void:
+	if _tw_trabalho != null and _tw_trabalho.is_valid():
+		_tw_trabalho.kill()
+	_trabalhador_prop.position = _trabalhador_base
+	if not operando:
+		return
+	_tw_trabalho = create_tween().set_loops()
+	_tw_trabalho.tween_property(_trabalhador_prop, "position:y",
+		_trabalhador_base.y - 3.0, 0.42).set_trans(Tween.TRANS_SINE)
+	_tw_trabalho.tween_property(_trabalhador_prop, "position:y",
+		_trabalhador_base.y, 0.42).set_trans(Tween.TRANS_SINE)
