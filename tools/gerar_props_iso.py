@@ -102,7 +102,8 @@ PALETA = {
     "metal": "#4a535a", "metal_claro": "#6d7880",
     "casco": "#24466e", "faixa": "#c23030", "cabine": "#eef2f5",
     "tronco": "#8a5a34", "folha": "#2d7a3a", "folha_clara": "#4a9c58",
-    "telhado": "#c85420", "telhado_velho": "#8f6a4a", "parede": "#eef2f5",
+    "telhado": "#c85420", "telhado_velho": "#8f6a4a", "parede": "#eef2f5", "parede_dir": "#cdd8e0", "porta": "#5a3a20",
+    "telha_cume": "#8f3822", "luz_poste": "#ffe6a8",
     "laranja": "#c85420", "azul": "#2f7690", "amarelo": "#e09a10",
     "boia": "#d94f2a", "corda": "#c9b48a",
     "colete": "#e0561f", "capacete": "#e0a81f", "pele": "#b07b52",
@@ -194,11 +195,18 @@ def material_gasto(nome: str, hexa: str, escala: float):
     return m
 
 
+# Preenchido por paleta_completa(). O kit de detalhe lê daqui em vez de
+# receber `M` em toda assinatura — são seis funções e o dicionário é um só.
+PALETA_MAT: dict = {}
+
+
 def paleta_completa() -> dict:
     """A paleta virada em materiais: gasto onde faz sentido, chapado no resto."""
-    return {k: (material_gasto(k, v, DESGASTE[k]) if k in DESGASTE
-                else material(k, v))
-            for k, v in PALETA.items()}
+    global PALETA_MAT
+    PALETA_MAT = {k: (material_gasto(k, v, DESGASTE[k]) if k in DESGASTE
+                      else material(k, v))
+                  for k, v in PALETA.items()}
+    return PALETA_MAT
 
 
 def chanfrar(objs, largura: float = 0.020, segmentos: int = 2) -> None:
@@ -357,6 +365,190 @@ def para_pixel(p) -> tuple:
             RESOLUCAO / 2.0 - p.dot(cima) * px_por_unidade)
 
 
+# ------------------------------------------------------------ kit de detalhe
+# A distância entre o que este gerador entregava e a arte de referência não é
+# luz nem cor — é DENSIDADE DE PEÇA. Um galpão da referência tem moldura de
+# janela, peitoril, calha, fiada de telha, degrau e placa; o daqui tinha uma
+# caixa e um buraco de porta. Detalhe acrescentado prop a prop é caro; detalhe
+# como PEÇA REUTILIZÁVEL é barato, e fica mais barato a cada prop novo.
+#
+# SÓ DUAS FACES IMPORTAM. A câmera está em (+X, −Y, +Z) olhando para a origem,
+# então de qualquer volume vêem-se a face +X e a face −Y e mais nada. Detalhar
+# as outras duas é render que ninguém vê. Todas as funções aqui aceitam
+# `face` como "+x" ou "-y" e recusam o resto, para o engano ser barulhento.
+#
+# COORDENADA DE FACE. Cada peça é descrita em (u, v) na face — `u` corre ao
+# longo dela, `v` sobe — e não em (x, y, z) absolutos. Era essa aritmética à
+# mão que punha a janela cinco centímetros dentro da parede.
+
+FACES = ("+x", "-y")
+
+
+def _plano_da_face(face: str, centro, tam):
+    if face not in FACES:
+        raise ValueError("face %r invisível para esta câmera; use %s" % (face, FACES))
+    cx, cy, cz = centro
+    sx, sy, sz = tam
+    if face == "+x":
+        return (cx + sx / 2.0, cy, cz), (0, 1, 0), (0, 0, 1), (1, 0, 0)
+    return (cx, cy - sy / 2.0, cz), (1, 0, 0), (0, 0, 1), (0, -1, 0)
+
+
+def na_face(nome, face, centro, tam, u, v, larg, alt, esp, mat, fora=0.0):
+    """Uma placa rente à face, saliente `fora` (negativo = recuada)."""
+    org, eu, ev, n = _plano_da_face(face, centro, tam)
+    p = tuple(org[i] + eu[i] * u + ev[i] * v + n[i] * (esp / 2.0 + fora)
+              for i in range(3))
+    t = tuple(abs(eu[i]) * larg + abs(ev[i]) * alt + abs(n[i]) * esp
+              for i in range(3))
+    return caixa(nome, p, t, mat)
+
+
+def moldura(nome, face, centro, tam, u, v, larg, alt, esp, mat, fora=0.0,
+            barra_larg=0.07):
+    """As quatro barras em volta de um vão — e não uma chapa do tamanho dele.
+
+    Foi o erro da primeira versão do kit: moldura desenhada como placa cheia
+    fica NA FRENTE do vidro e tapa exatamente o que devia emoldurar. A janela
+    saía como um retângulo cinza e a porta desaparecia.
+    """
+    b = barra_larg
+    return [
+        na_face("%s_cima" % nome, face, centro, tam, u, v + alt / 2.0 + b / 2.0,
+                larg + 2 * b, b, esp, mat, fora),
+        na_face("%s_baixo" % nome, face, centro, tam, u, v - alt / 2.0 - b / 2.0,
+                larg + 2 * b, b, esp, mat, fora),
+        na_face("%s_esq" % nome, face, centro, tam, u - larg / 2.0 - b / 2.0, v,
+                b, alt, esp, mat, fora),
+        na_face("%s_dir" % nome, face, centro, tam, u + larg / 2.0 + b / 2.0, v,
+                b, alt, esp, mat, fora),
+    ]
+
+
+def janela(nome, face, centro, tam, u, v, larg, alt, M, peitoril=True):
+    """Vidro recuado, moldura saliente, travessa e peitoril.
+
+    O que faz uma janela ler como janela não é o retângulo azul: é a SOMBRA
+    da moldura em volta dele. Por isso a moldura sai da parede e o vidro entra.
+    """
+    pecas = [na_face(nome + "_vidro", face, centro, tam, u, v,
+                     larg, alt, 0.04, M["vidro"], -0.03)]
+    pecas += moldura(nome + "_m", face, centro, tam, u, v, larg, alt,
+                     0.06, M["parede_dir"], 0.01)
+    # Travessa central: duas folhas leem melhor que um vidro só a esta escala.
+    pecas.append(na_face(nome + "_travessa", face, centro, tam, u, v,
+                         0.05, alt, 0.05, M["parede_dir"], 0.005))
+    if peitoril:
+        pecas.append(na_face(nome + "_peitoril", face, centro, tam,
+                             u, v - alt / 2.0 - 0.11,
+                             larg + 0.26, 0.08, 0.13, M["parede_dir"], 0.045))
+    return pecas
+
+
+def porta(nome, face, centro, tam, u, larg, alt, M, base=None):
+    """Porta com batente e degrau. `base` é o z do chão da construção."""
+    chao = base if base is not None else centro[2] - tam[2] / 2.0
+    v = chao + alt / 2.0 - centro[2]      # `v` é medido do centro da parede
+    pecas = [na_face(nome + "_vao", face, centro, tam, u, v,
+                     larg, alt, 0.06, M["porta"], -0.035)]
+    pecas += moldura(nome + "_b", face, centro, tam, u, v, larg, alt,
+                     0.07, M["parede_dir"], 0.01, barra_larg=0.09)
+    org, eu, _ev, n = _plano_da_face(face, centro, tam)
+    pe = tuple(org[i] + eu[i] * u + n[i] * 0.16 for i in range(3))
+    pecas.append(caixa(nome + "_degrau",
+                       (pe[0], pe[1], centro[2] - tam[2] / 2.0 + 0.05),
+                       (larg + 0.3 if face == "-y" else 0.34,
+                        0.34 if face == "-y" else larg + 0.3, 0.10),
+                       M["parede_dir"]))
+    return pecas
+
+
+def telhado_duas_aguas(nome, centro, tam, altura, mat, mat_cume, fiadas=5):
+    """Telhado de duas águas com fiadas de telha visíveis.
+
+    A laje chapada que havia antes lia como tampa. O que dá a leitura de
+    TELHADO é a inclinação e a linha horizontal das fiadas — duas coisas que
+    custam meia dúzia de caixas e mudam o prédio inteiro.
+
+    A cumeeira corre em X, e a água desce em Y, porque é assim que as duas
+    faces visíveis (+X e −Y) mostram uma água inteira e o beiral da outra.
+    """
+    cx, cy, cz = centro
+    sx, sy = tam[0], tam[1]          # a espessura da laje não interessa aqui
+    beiral = 0.18
+    meia = sy / 2.0 + beiral
+    ang = math.degrees(math.atan2(altura, meia))
+    comp = math.hypot(altura, meia)
+    pecas = []
+    for lado, sinal in (("a", -1), ("b", 1)):
+        agua = caixa("%s_agua_%s" % (nome, lado),
+                     (cx, cy + sinal * meia / 2.0, cz + altura / 2.0),
+                     (sx + 2 * beiral, comp, 0.10), mat,
+                     rot=(-sinal * ang, 0, 0))
+        pecas.append(agua)
+        # Fiadas: ressaltos finos paralelos à cumeeira. Não são telhas — são a
+        # sombra entre elas, que é o que o olho lê a esta escala.
+        for i in range(1, fiadas):
+            f = i / float(fiadas)
+            dy = sinal * meia * f
+            dz = altura * (1.0 - f)
+            pecas.append(caixa("%s_fiada_%s%d" % (nome, lado, i),
+                               (cx, cy + dy, cz + dz + 0.02),
+                               (sx + 2 * beiral, 0.05, 0.12),
+                               mat_cume, rot=(-sinal * ang, 0, 0)))
+    pecas.append(caixa(nome + "_cumeeira", (cx, cy, cz + altura + 0.03),
+                       (sx + 2 * beiral + 0.05, 0.16, 0.10), mat_cume))
+    return pecas
+
+
+def corrimao(nome, a, b, altura, mat, postes=5, esp=0.035):
+    """Guarda-corpo: dois corrimãos e os montantes entre eles.
+
+    É a peça que mais separa um casco de navio de uma cunha de cor. Vazado, de
+    propósito: é o fundo aparecendo entre os montantes que dá a escala.
+    """
+    a, b = Vector(a), Vector(b)
+    pecas = [barra(nome + "_alto", a + Vector((0, 0, altura)),
+                   b + Vector((0, 0, altura)), esp, mat),
+             barra(nome + "_meio", a + Vector((0, 0, altura * 0.55)),
+                   b + Vector((0, 0, altura * 0.55)), esp, mat)]
+    for i in range(postes):
+        t = i / float(max(postes - 1, 1))
+        p = a.lerp(b, t)
+        pecas.append(barra("%s_poste%d" % (nome, i), p,
+                           p + Vector((0, 0, altura)), esp * 1.1, mat))
+    return pecas
+
+
+def escotilhas(nome, face, centro, tam, v, quantas, passo, raio, mat):
+    """Fileira de vigias. Uma janela redonda a esta escala é um disco escuro
+    com um anel claro — e é o anel que a faz parecer furo, não mancha."""
+    pecas = []
+    for i in range(quantas):
+        u = (i - (quantas - 1) / 2.0) * passo
+        pecas.append(na_face("%s_anel%d" % (nome, i), face, centro, tam, u, v,
+                             raio * 2.4, raio * 2.4, 0.04, mat, 0.0))
+        pecas.append(na_face("%s_vidro%d" % (nome, i), face, centro, tam, u, v,
+                             raio * 1.5, raio * 1.5, 0.04, PALETA_MAT["vidro"],
+                             -0.012))
+    return pecas
+
+
+def poste_de_luz(nome, base, altura, mat, mat_luz):
+    """Poste com braço e luminária. O cenário da referência é pontuado por
+    eles — é o que dá escala a uma rua vazia."""
+    x, y, z = base
+    return [
+        caixa(nome + "_pe", (x, y, z + 0.06), (0.26, 0.26, 0.12), mat),
+        cone(nome + "_haste", (x, y, z + altura / 2.0), 0.055, 0.038,
+             altura, 6, mat),
+        barra(nome + "_braco", (x, y, z + altura),
+              (x - 0.34, y, z + altura + 0.10), 0.05, mat),
+        caixa(nome + "_luminaria", (x - 0.40, y, z + altura + 0.06),
+              (0.26, 0.16, 0.07), mat_luz),
+    ]
+
+
 # ---------------------------------------------------------------- os props
 # Cada função devolve a lista de objetos daquele prop. Props que partilham
 # geometria (o píer nos três estados) montam a partir das MESMAS peças: é o que
@@ -482,10 +674,38 @@ def montar(M: dict) -> dict:
     PESCA = [(1.55, 0.0), (1.05, 0.42), (-0.95, 0.46), (-1.40, 0.32),
              (-1.40, -0.32), (-0.95, -0.46), (1.05, -0.42)]
 
-    def casco(sufixo, contorno, altura, cor_casco, cor_faixa):
-        return [prisma("casco" + sufixo, contorno, 0.0, altura, (0.88, 0.42), cor_casco),
-                prisma("faixa" + sufixo, contorno, altura - 0.12, altura + 0.02,
-                       (0.99, 0.97), cor_faixa)]
+    def casco(sufixo, contorno, altura, cor_casco, cor_faixa, vigias=4):
+        """Casco, faixa de amurada, guarda-corpo e vigias.
+
+        O casco sozinho lia como uma CUNHA DE COR. O que separa navio de cunha
+        é o vazado do guarda-corpo e a fileira de vigias: dois detalhes que dão
+        escala — o olho conhece o tamanho de uma vigia e mede o resto por ela.
+        """
+        meio = max(p[0] for p in contorno) * 0.55
+        largura = max(p[1] for p in contorno) * 0.80
+        pecas = [
+            prisma("casco" + sufixo, contorno, 0.0, altura, (0.88, 0.42), cor_casco),
+            prisma("faixa" + sufixo, contorno, altura - 0.12, altura + 0.02,
+                   (0.99, 0.97), cor_faixa),
+            # Convés: um plano claro dentro da amurada, senão o interior do
+            # casco fica com a cor do costado e o barco parece maciço.
+            prisma("conves" + sufixo, contorno, altura - 0.06, altura - 0.02,
+                   (0.80, 0.62), PALETA_MAT["cabine"]),
+        ]
+        pecas += corrimao("cor" + sufixo, (-meio, -largura, altura),
+                          (meio, -largura, altura), 0.20,
+                          PALETA_MAT["metal_claro"], postes=6, esp=0.030)
+        # Vigias na face que a câmera vê. O casco não é uma caixa, mas nesta
+        # escala a fileira só precisa de acompanhar a linha de água.
+        for i in range(vigias):
+            u = (i - (vigias - 1) / 2.0) * (meio * 1.5 / max(vigias - 1, 1))
+            pecas.append(caixa("vig%s%d" % (sufixo, i),
+                               (u, -largura - 0.02, altura * 0.55),
+                               (0.13, 0.05, 0.13), PALETA_MAT["metal_claro"]))
+            pecas.append(caixa("vigv%s%d" % (sufixo, i),
+                               (u, -largura - 0.05, altura * 0.55),
+                               (0.08, 0.03, 0.08), PALETA_MAT["vidro"]))
+        return pecas
 
     grupos["barco_pequeno"] = casco("_p", PESCA, 0.44, M["casco_pesca"], M["cabine"]) + [
         caixa("cabine_p", (-0.75, 0.0, 0.70), (0.85, 0.62, 0.50), M["cabine"]),
@@ -496,16 +716,44 @@ def montar(M: dict) -> dict:
         caixa("rede_p", (-0.15, 0.0, 0.60), (0.7, 0.5, 0.26), M["rede"]),
         caixa("boia_p", (1.05, 0.30, 0.52), (0.2, 0.2, 0.18), M["boia"])]
 
-    grupos["barco_medio"] = casco("_m", CARGA, 0.62, M["casco"], M["faixa"]) + [
-        caixa("cabine_m", (-1.15, 0.0, 0.95), (1.1, 0.85, 0.62), M["cabine"]),
-        caixa("chamine_m", (-1.55, 0.0, 1.42), (0.22, 0.22, 0.42), M["metal"]),
+    def superestrutura(sufixo, x, z, tam, com_ponte=True):
+        """Cabine com janelas em fita, teto e chaminé com faixa.
+
+        A cabine era um bloco branco. Uma superestrutura de navio tem uma
+        FITA DE JANELA correndo à volta da ponte — é ela que diz de que lado
+        alguém está a olhar, e é a peça que mais barato transforma o bloco.
+        """
+        pecas = [caixa("cab" + sufixo, (x, 0.0, z), tam, PALETA_MAT["cabine"])]
+        if com_ponte:
+            pecas.append(caixa("fita" + sufixo, (x, 0.0, z + tam[2] * 0.18),
+                               (tam[0] * 1.01, tam[1] * 1.01, tam[2] * 0.24),
+                               PALETA_MAT["vidro"]))
+        pecas.append(caixa("teto" + sufixo, (x, 0.0, z + tam[2] / 2.0 + 0.03),
+                           (tam[0] * 1.10, tam[1] * 1.10, 0.07),
+                           PALETA_MAT["metal_claro"]))
+        return pecas
+
+    def chamine(sufixo, x, z, raio, alt):
+        return [
+            cone("cham" + sufixo, (x, 0.0, z), raio, raio * 0.92, alt, 10,
+                 PALETA_MAT["metal"]),
+            cone("chamf" + sufixo, (x, 0.0, z + alt * 0.16), raio * 1.06,
+                 raio * 1.02, alt * 0.28, 10, PALETA_MAT["faixa"]),
+            cone("chamt" + sufixo, (x, 0.0, z + alt / 2.0), raio * 1.12,
+                 raio * 1.12, 0.06, 10, PALETA_MAT["metal"]),
+        ]
+
+    grupos["barco_medio"] = casco("_m", CARGA, 0.62, M["casco"], M["faixa"]) \
+        + superestrutura("_m", -1.15, 0.95, (1.1, 0.85, 0.62)) \
+        + chamine("_m", -1.55, 1.48, 0.13, 0.5) + [
         caixa("carga_a", (0.75, 0.22, 0.85), (0.6, 0.42, 0.42), M["laranja"]),
         caixa("carga_b", (0.75, -0.25, 0.82), (0.55, 0.4, 0.38), M["azul"]),
-        caixa("carga_c", (0.05, 0.0, 0.82), (0.55, 0.5, 0.38), M["amarelo"])]
+        caixa("carga_c", (0.05, 0.0, 0.82), (0.55, 0.5, 0.38), M["amarelo"]),
+        caixa("mastro_m", (1.55, 0.0, 1.25), (0.06, 0.06, 1.0), M["metal_claro"])]
 
-    grupos["barco_grande"] = casco("_g", CARGA, 0.62, M["casco"], M["faixa"]) + [
-        caixa("cabine_g", (-1.35, 0.0, 1.00), (0.95, 0.8, 0.72), M["cabine"]),
-        caixa("chamine_g", (-1.7, 0.0, 1.52), (0.24, 0.24, 0.46), M["metal"]),
+    grupos["barco_grande"] = casco("_g", CARGA, 0.62, M["casco"], M["faixa"], 5) \
+        + superestrutura("_g", -1.35, 1.00, (0.95, 0.8, 0.72)) \
+        + chamine("_g", -1.7, 1.58, 0.15, 0.56) + [
         caixa("pilha_a", (0.95, 0.22, 0.86), (0.7, 0.42, 0.44), M["laranja"]),
         caixa("pilha_b", (0.95, -0.25, 0.86), (0.7, 0.42, 0.44), M["azul"]),
         caixa("pilha_c", (0.95, 0.0, 1.30), (0.68, 0.42, 0.42), M["amarelo"]),
@@ -539,16 +787,25 @@ def montar(M: dict) -> dict:
     grupos["coqueiro_tronco"] = [
         cone("tronco", (0, 0, 1.15), 0.17, 0.11, 2.3, 6, M["tronco"], rot=(4, 0, 0)),
         cone("raiz", (0, 0, 0.12), 0.3, 0.18, 0.25, 6, M["madeira_esc"])]
+    # A copa era uma ESTRELA CHAPADA: sete cones retos saindo de um ponto, e a
+    # esta escala lia como uma folha de papel recortada. Palmeira de verdade
+    # tem folha que sai para cima e CAI — são dois segmentos por folha, e é a
+    # dobra entre eles que faz a copa ter volume.
     copa = []
-    for i in range(7):
-        a = i * (360.0 / 7)
+    for i in range(8):
+        a = i * (360.0 / 8) + (7 if i % 2 else 0)
         r = math.radians(a)
-        copa.append(cone(f"folha{i}",
-                         (0.42 * math.cos(r), 0.42 * math.sin(r) + 0.16, 2.32),
-                         0.30, 0.02, 1.5, 4,
-                         M["folha"] if i % 2 else M["folha_clara"],
-                         rot=(66, 0, a + 90)))
-    copa.append(cone("coco", (0.1, 0.1, 2.26), 0.13, 0.13, 0.2, 6, M["madeira_esc"]))
+        cor = M["folha"] if i % 2 else M["folha_clara"]
+        base = (0.30 * math.cos(r), 0.30 * math.sin(r) + 0.14, 2.34)
+        copa.append(cone("folha%d_a" % i, base, 0.16, 0.11, 0.62, 4, cor,
+                         rot=(52, 0, a + 90)))
+        ponta = (base[0] + 0.62 * math.cos(r), base[1] + 0.62 * math.sin(r),
+                 base[2] + 0.20)
+        copa.append(cone("folha%d_b" % i, ponta, 0.12, 0.015, 0.95, 4, cor,
+                         rot=(104, 0, a + 90)))
+    for j, (dx, dy) in enumerate([(0.09, 0.07), (-0.06, 0.10), (0.02, -0.09)]):
+        copa.append(cone("coco%d" % j, (dx, dy, 2.24), 0.085, 0.085, 0.14, 6,
+                         M["madeira_esc"]))
     grupos["coqueiro_copa"] = copa
 
     # -- CENÁRIO solto ---------------------------------------------------
@@ -562,24 +819,52 @@ def montar(M: dict) -> dict:
                           caixa("m_base", (0, 0, 0.06), (0.5, 0.5, 0.12), M["metal"])]
 
     # -- GALPÃO nos dois estados: mesmas paredes, telhado diferente ------
-    paredes = [caixa("gal_parede", (0, 0, 0.85), (3.4, 2.4, 1.7), M["parede"]),
-               caixa("gal_porta", (0, -1.21, 0.6), (1.4, 0.06, 1.2), M["madeira_esc"])]
+    # O galpão era uma caixa com um buraco. Agora tem plinto, portão de
+    # correr com trilho, janela alta de galpão, calha e telhado de duas
+    # águas com fiada — e o custo disso foi meia dúzia de chamadas ao kit.
+    GAL = ((0, 0, 0.85), (3.4, 2.4, 1.7))
+    paredes = [
+        caixa("gal_plinto", (0, 0, 0.09), (3.5, 2.5, 0.18), M["parede_suja"]),
+        caixa("gal_parede", *GAL, M["parede"]),
+    ]
+    paredes += porta("gal_portao", "-y", *GAL, 0.0, 1.5, 1.25, M, base=0.18)
+    paredes += [na_face("gal_trilho", "-y", *GAL, 0.0, 0.70, 1.9, 0.07, 0.06,
+                        M["metal"], 0.02)]
+    for i, u in enumerate((-1.0, 0.0, 1.0)):
+        paredes += janela("gal_jan%d" % i, "+x", *GAL, u, 0.38, 0.46, 0.36, M,
+                          peitoril=False)
     grupos["galpao"] = paredes + [
-        caixa("gal_telha", (0, 0, 1.95), (3.7, 2.7, 0.36), M["telhado"])]
-    grupos["galpao_velho"] = paredes + [
-        caixa("gal_telha_v", (0, 0.1, 1.92), (3.7, 2.5, 0.3), M["telhado_velho"],
-              rot=(0, 0, 2)),
-        caixa("gal_buraco", (0.9, -0.6, 1.99), (0.8, 0.7, 0.32), M["madeira_esc"])]
+        na_face("gal_calha", "-y", *GAL, 0.0, 0.86, 3.5, 0.09, 0.12,
+                M["metal_claro"], 0.06),
+    ] + telhado_duas_aguas("gal_tel", (0, 0, 1.70), (3.4, 2.4), 0.62,
+                           M["telhado"], M["telha_cume"])
+    grupos["galpao_velho"] = paredes + telhado_duas_aguas(
+        "gal_telv", (0, 0, 1.70), (3.4, 2.4), 0.52,
+        M["telhado_velho"], M["madeira_esc"], fiadas=4) + [
+        caixa("gal_buraco", (0.7, -0.55, 1.86), (0.85, 0.75, 0.34),
+              M["madeira_esc"], rot=(0, 0, 6)),
+        caixa("gal_tabua", (-1.1, -1.35, 0.55), (0.09, 0.09, 1.2),
+              M["madeira_velha"], rot=(0, 22, 0))]
 
     # -- ESCRITÓRIO nos dois estados. O armazém reaproveita galpao/galpao_velho.
     # A ruína não é o prédio "pintado de velho": é MENOS prédio — parede caída,
     # telhado furado. Um jogador tem de ver de longe que ali não se opera.
-    esc_base = [caixa("esc_parede", (0, 0, 0.70), (2.4, 2.0, 1.4), M["parede"]),
-                caixa("esc_porta", (0, -1.01, 0.45), (0.8, 0.06, 0.9), M["madeira_esc"])]
+    ESC = ((0, 0, 0.78), (2.4, 2.0, 1.56))
+    esc_base = [caixa("esc_plinto", (0, 0, 0.08), (2.5, 2.1, 0.16), M["parede_suja"]),
+                caixa("esc_parede", *ESC, M["parede"])]
+    esc_base += porta("esc_porta", "-y", *ESC, -0.55, 0.62, 0.98, M, base=0.16)
     grupos["escritorio"] = esc_base + [
-        caixa("esc_telha", (0, 0, 1.62), (2.7, 2.3, 0.3), M["telhado"]),
-        caixa("esc_janela", (1.21, 0.3, 0.95), (0.05, 0.7, 0.45), M["vidro"]),
-        caixa("esc_placa", (0, -1.05, 1.25), (1.2, 0.06, 0.3), M["amarelo"])]
+        # Toldo sobre a entrada: é o que a referência usa para dizer
+        # "aqui se atende alguém" sem escrever nada.
+        na_face("esc_toldo", "-y", *ESC, -0.55, 0.42, 1.0, 0.10, 0.42,
+                M["azul"], 0.18),
+        na_face("esc_placa", "-y", *ESC, 0.45, 0.52, 1.05, 0.30, 0.07,
+                M["amarelo"], 0.03),
+    ] + janela("esc_j1", "-y", *ESC, 0.45, -0.05, 0.62, 0.44, M) \
+      + janela("esc_j2", "+x", *ESC, -0.42, -0.05, 0.56, 0.44, M) \
+      + janela("esc_j3", "+x", *ESC, 0.42, -0.05, 0.56, 0.44, M) \
+      + telhado_duas_aguas("esc_tel", (0, 0, 1.56), (2.4, 2.0), 0.50,
+                           M["telhado"], M["telha_cume"])
     grupos["escritorio_ruina"] = [
         caixa("ruina_parede_alta", (-0.55, 0, 0.55), (1.3, 2.0, 1.1), M["parede_suja"]),
         caixa("ruina_parede_baixa", (0.75, 0, 0.22), (1.1, 2.0, 0.44), M["parede_suja"]),
