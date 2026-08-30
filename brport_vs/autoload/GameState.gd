@@ -24,6 +24,10 @@ signal roster_changed()
 # disso para reabilitar botões — sem esse sinal o jogo trava (era o bug
 # de travamento depois de resolver a oferta do rival).
 signal phase_changed(new_phase: String)
+# Estrutura levantada. Existe separado de `message` porque construir merece
+# som PRÓPRIO: uma pancada de madeira, e não o mesmo tinido de "deu certo" que
+# tocaria ao alocar um trabalhador. O áudio é o único ouvinte hoje.
+signal estrutura_comprada(id: String)
 signal rival_offer_triggered(dock_index: int)
 signal debt_due(amount: int)
 signal game_over(won: bool, reason: String)
@@ -667,6 +671,7 @@ func comprar_estrutura(id: String) -> bool:
 
 	cash_changed.emit(cash)
 	roster_changed.emit()
+	estrutura_comprada.emit(id)
 	message.emit("%s — pronto. %s" % [def["nome"], def["desc"]], "good")
 	save_game()
 	return true

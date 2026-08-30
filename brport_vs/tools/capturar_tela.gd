@@ -19,7 +19,8 @@ extends SceneTree
 # `turnos` avança a partida antes de fotografar (0 = tela inicial), e a
 # oferta do rival é resolvida para a tela sair limpa. Um terceiro argumento
 # `completo` compra todas as estruturas antes de montar a cena, para
-# fotografar o porto reconstruído (mapa pavimentado, píeres e prédios de pé). Para fotografar o
+# fotografar o porto reconstruído (mapa pavimentado, píeres e prédios de pé).
+# Um quarto argumento `pausa` abre o menu de pausa por cima. Para fotografar o
 # PAINEL da contra-oferta em vez da tela principal, use --  0  e rode com
 # uma semente que abra oferta no primeiro turno.
 # ============================================================
@@ -97,6 +98,12 @@ func _montar() -> void:
 
 	_main = load("res://scenes/Main.tscn").instantiate()
 	root.add_child(_main)
+
+	# `pausa` fotografa o menu de pausa, que é onde vivem os sliders de volume.
+	# Sem isto a única forma de conferir aquele painel era abrir o editor — e é
+	# um painel construído por código, portanto o que mais escapa ao olho.
+	if args.size() >= 4 and args[3] == "pausa":
+		_main._on_pause_pressed()
 
 	for t in range(turnos):
 		if GS.phase == "rival_offer":

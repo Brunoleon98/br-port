@@ -80,6 +80,33 @@ jobs:
             exit 1
           fi
 
+      - name: Rodar o teste de áudio
+        # Ninguém — nem o CI, nem a máquina de quem desenvolve — consegue OUVIR
+        # os sons: não há placa de som. Este passo cobre exatamente o que dá
+        # para provar sem ouvir: o arquivo carrega, o bus existe, o sinal certo
+        # pede o som certo, e a prioridade impede quatro sinais do mesmo frame
+        # de virarem quatro sons.
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --script res://tests/teste_audio.gd \
+            2>&1 | tee /tmp/audio.txt
+
+          if ! grep -q "AUDIO OK" /tmp/audio.txt; then
+            echo "::error::O encanamento de áudio está quebrado (veja a saída acima)."
+            exit 1
+          fi
+
+      - name: Conferir que os sons versionados batem com o gerador
+        run: |
+          set -euo pipefail
+          python3 tools/gerar_sons.py brport_vs/audio/sfx >/dev/null
+          if ! git diff --quiet -- brport_vs/audio; then
+            echo "::error::Os WAV versionados não batem com tools/gerar_sons.py."
+            git diff --stat -- brport_vs/audio
+            exit 1
+          fi
+
       - name: Conferir que a tabela de âncoras está em dia
         # A tabela é gerada pelo mesmo script que gera os mapas. Se alguém
         # mexer nas coordenadas do mundo e esquecer de versionar a tabela, o

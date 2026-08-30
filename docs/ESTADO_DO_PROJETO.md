@@ -25,8 +25,12 @@ saem de ruína para telhado novo.
 descuidado 0%. A mediana do mediano fecha em R$7.945 contra uma parcela de
 R$8.000. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
-**O jogo é mudo.** Não há um arquivo de áudio, um `AudioStream` ou um bus no
-projeto. É o próximo bloco — ver `docs/BLOCO6_BRIEFING_AUDIO.md`.
+**O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
+autoload `Audio.gd` com dois buses (Música e SFX), sliders de volume no menu de
+pausa e todo o disparo ligado aos sinais do `GameState`. Os efeitos são de
+RASCUNHO — a música e os sons finais do Suno/ElevenLabs entram trocando arquivo
+por arquivo, sem mexer em código. **Ninguém que os fez os ouviu:** o contêiner
+não tem placa de som (ver `docs/BLOCO6_BRIEFING_AUDIO.md` §2).
 
 **Não se arrasta trabalhador a cada turno:** há "Alocar todos" e
 toque-para-alocar, com o arrasto ainda funcionando.
@@ -120,6 +124,9 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
 | `CLAUDE.md` (raiz) | **As regras do projeto que carregam sozinhas** — projeção, save, arte, interface, e como rodar Godot e Blender aqui dentro |
 | `brport_vs/tests/run_tests.gd` | ~65 asserções de regressão (a lógica) |
+| `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
+| `tools/gerar_sons.py` | Gera os 10 efeitos de rascunho. Sem dependência: só biblioteca padrão |
+| `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/BLOCO7_PLANO_ARTE_BLENDER.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
@@ -212,8 +219,8 @@ representam fila de verdade — barcos continuam nascendo direto nas docas.
 Torná-la mecânica muda o balanceamento medido (ver o aviso em
 `BLOCO4_BRIEFING_VISUAL.md`).
 
-Continuam para depois: áudio, Diário do Porto, cena narrativa de fim de Fase 1
-e a lista "VS — OUT" do GDD.
+Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o Diário
+do Porto, a cena narrativa de fim de Fase 1 e a lista "VS — OUT" do GDD.
 
 ---
 

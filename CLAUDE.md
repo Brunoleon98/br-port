@@ -24,6 +24,7 @@ G=/tmp/godot/Godot_v4.6.1-stable_linux.x86_64
 $G --headless --path brport_vs --import                       # UMA VEZ por clone
 $G --headless --path brport_vs --script res://tests/run_tests.gd
 $G --headless --path brport_vs --script res://tests/teste_design.gd
+$G --headless --path brport_vs --script res://tests/teste_audio.gd
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
 
@@ -32,6 +33,9 @@ pip install "bpy==4.5.0"                                      # precisa de Pytho
 python3 tools/gerar_props_iso.py brport_vs/art/props [prop ...]
 python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
   --sem-pavimento brport_vs/art/porto_mapa_iso.svg
+
+# Efeitos sonoros — sem dependência, biblioteca padrão só
+python3 tools/gerar_sons.py brport_vs/audio/sfx
 ```
 
 **`--import` não é opcional.** Num clone novo não existe `.godot/`, e sem ela
@@ -47,6 +51,7 @@ Teste e import rodam sem tela.
 
 1. `tests/run_tests.gd` — a lógica. Espera `TODOS OS TESTES PASSARAM`.
 2. `tests/teste_design.gd` — o encaixe e o layout. Espera `DESIGN OK`.
+   `tests/teste_audio.gd` — o encanamento de som. Espera `AUDIO OK`.
 3. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
    O balanceamento medido é 100% / 47% / 0% por perfil, com a mediana do
    jogador mediano em ~R$7.950 contra uma parcela de R$8.000. Mexer sem medir
@@ -111,6 +116,20 @@ desenha 3.
   mapa: no azimute do mapa ela cai atrás do prop e não se vê.
 - **O importador de SVG do Godot é o ThorVG e não desenha `<text>`.** Texto no
   mapa é polígono de estêncil (ver `DIGITOS`).
+
+### Áudio
+
+- **Este contêiner NÃO tem placa de som.** Ninguém aqui consegue ouvir o que
+  produz. Nunca escrever "o som ficou bom" num commit — escrever "toca no
+  evento X, dura Y ms, roteado no bus Z", que é o que dá para provar.
+- Som sai por `Audio.tocar(id)` — um ponto só, como `Icones.gd` para ícone.
+  `AudioStreamPlayer` espalhado por cena é o que se está a evitar.
+- **Pedir não é tocar.** Avançar o dia emite quatro sinais no mesmo frame; só
+  o de maior prioridade soa. Cada som tem também uma espera mínima própria.
+- Os WAV são **gerados** por `tools/gerar_sons.py` (sem dependência nenhuma) e
+  forçados a PCM sem perdas — o Godot 4.4+ importa WAV como QOA por omissão,
+  que é compressão com perdas.
+- `tests/teste_audio.gd` cobre o que é verificável. Espera `AUDIO OK`.
 
 ### Interface
 
