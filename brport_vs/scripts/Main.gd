@@ -97,13 +97,15 @@ func _ready() -> void:
 
 
 # Os barcos da Zona de Espera são cenário: não têm lógica, mas parados fazem o
-# porto parecer uma fotografia. Fases diferentes para não balançarem em bloco,
+# porto parecer uma fotografia. Vivem dentro do Cenario, e não soltos no
+# MapaWrap, porque a ordem lá dentro é a profundidade isométrica — metade do
+# mapa ordenada e metade não é o mesmo que não estar ordenada. Fases diferentes para não balançarem em bloco,
 # que é o que denuncia a animação como truque.
 func _animar_ancorados() -> void:
 	var fases := [0.0, 0.85]
 	var i := 0
 	for nome in ["BarcoEspera1", "BarcoEspera2"]:
-		var barco := $MapaWrap.get_node_or_null(nome) as TextureRect
+		var barco := $MapaWrap/Cenario.get_node_or_null(nome) as TextureRect
 		if barco == null:
 			continue
 		var base := barco.position

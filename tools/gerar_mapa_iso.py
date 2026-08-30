@@ -31,6 +31,7 @@ Uso:
     python3 tools/gerar_mapa_iso.py brport_vs/art/porto_mapa_iso.svg
 """
 
+import json
 import random
 import sys
 
@@ -760,8 +761,10 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
         # dois destes caíam na rua e outros dois no meio da vila, porque o
         # cais avança 4 unidades por degrau e eles não avançavam com ele.
         k = 0
-        for recuo, my in [(3.1, 1.4), (3.1, 3.2), (2.9, 9.9), (2.9, 11.7),
-                          (3.1, 18.2), (3.1, 20.0), (2.8, 26.4)]:
+        # Recuo entre 1,3 (avental) e 2,98 (meio-fio da rua). O teste de design
+        # pegou os antigos 2,8–3,1 em cima do asfalto da via.
+        for recuo, my in [(2.05, 1.4), (2.6, 3.2), (2.05, 9.9), (2.6, 11.7),
+                          (2.05, 18.2), (2.6, 20.0), (2.05, 26.4)]:
             borda = _borda_em(my)
             mx = borda - recuo
             c = cores[k % len(cores)]
@@ -793,6 +796,53 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
 
     s += "</svg>\n"
     return s
+
+
+# ── TABELA DE ÂNCORAS ────────────────────────────────────────────────────
+# O gerador sabe onde tudo está no MUNDO; o Main.tscn põe os props por
+# OFFSET DE TELA. Nada obrigava os dois a concordarem — e quando discordam o
+# píer renderizado pousa ao lado do píer desenhado, o que só se descobre
+# olhando. Exportar a tabela transforma "olhar" em asserção: o teste de design
+# lê este JSON e confere cada prop contra ele.
+#
+# Tudo em pixels do mapa, com h=0 — que é onde o quadro de 512 de cada prop
+# tem o seu centro (ver `para_pixel` em gerar_props_iso.py).
+
+
+def tabela_ancoras() -> dict:
+    def px(mx, my, h=0.0):
+        x, y = p(mx, my, h)
+        return [round(x, 1), round(y, 1)]
+
+    pieres = []
+    for i, (my0, my1, borda) in enumerate(PIERES):
+        pieres.append({
+            "doca": i + 1,
+            "centro": px(borda + PIER_ALCANCE / 2, (my0 + my1) / 2),
+            "barco": px(borda + PIER_ALCANCE / 2, my1 + 1.6),
+            "raiz": px(borda, (my0 + my1) / 2),
+        })
+
+    # Faixas em `mx` medidas do cais, por degrau. O teste usa isto para saber
+    # se um prop caiu no asfalto da rua ou dentro de um lote da vila.
+    faixas = []
+    for my0, my1, borda in DEGRAUS:
+        faixas.append({
+            "my": [my0, my1], "borda": borda,
+            "avental": [borda - APRON, borda],
+            "rua": [borda - RUA_RECUO - CALCADA, borda - RUA_RECUO + RUA_LARG + CALCADA],
+            "vila": [borda - VILA_RECUO, borda - VILA_RECUO + VILA_PROF],
+        })
+
+    return {
+        "projecao": {"cx": CX, "cy": CY, "meia_larg": MEIA_LARG,
+                     "meia_alt": MEIA_ALT, "alt_cais": ALT_CAIS},
+        "mapa": {"largura": LARG, "altura": ALT},
+        "pieres": pieres,
+        "faixas": faixas,
+        "lotes": [{"mx": round(l[0], 2), "my": round(l[1], 2),
+                   "canto": px(l[0], l[1], ALT_CAIS)} for l in lotes_da_vila()],
+    }
 
 
 def main() -> int:
@@ -829,6 +879,15 @@ def main() -> int:
     for i, (my0, my1, borda) in enumerate(PIERES):
         x, y = p(borda + PIER_ALCANCE / 2, my1 + 1.6, 0)
         print("  Doca %d: (%.0f, %.0f)" % (i + 1, x, y))
+
+    # A tabela sai ao lado do mapa, sempre. É o contrato que o teste de design
+    # confere contra o Main.tscn — gerar o mapa sem gerar a tabela deixaria o
+    # teste a validar contra um mundo que já não existe.
+    ancoras = destino.rsplit("/", 1)[0] + "/porto_mapa_ancoras.json" \
+        if "/" in destino else "porto_mapa_ancoras.json"
+    with open(ancoras, "w", encoding="utf-8") as f:
+        json.dump(tabela_ancoras(), f, ensure_ascii=False, indent=1, sort_keys=True)
+    print("\nÂncoras em %s — é contra elas que tests/teste_design.gd confere." % ancoras)
     return 0
 
 

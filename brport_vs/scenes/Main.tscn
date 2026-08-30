@@ -188,6 +188,7 @@ theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
 theme_override_font_sizes/font_size = 16
 
 [node name="Pausar" type="Button" parent="HudBar"]
+custom_minimum_size = Vector2(46, 44)
 layout_mode = 2
 tooltip_text = "Pausar"
 theme_override_constants/icon_max_width = 20
@@ -203,7 +204,7 @@ icon = ExtResource("ic_pausar")
 layout_mode = 0
 offset_top = 62.0
 offset_right = 720.0
-offset_bottom = 742.0
+offset_bottom = 722.0
 mouse_filter = 2
 clip_contents = true
 
@@ -213,24 +214,6 @@ offset_right = 720.0
 offset_bottom = 720.0
 mouse_filter = 2
 texture = ExtResource("3")
-
-[node name="BarcoEspera1" type="TextureRect" parent="MapaWrap"]
-layout_mode = 0
-offset_left = 404.0
-offset_top = 214.0
-offset_right = 916.0
-offset_bottom = 726.0
-mouse_filter = 2
-texture = ExtResource("5")
-
-[node name="BarcoEspera2" type="TextureRect" parent="MapaWrap"]
-layout_mode = 0
-offset_left = 364.0
-offset_top = 360.0
-offset_right = 876.0
-offset_bottom = 872.0
-mouse_filter = 2
-texture = ExtResource("5")
 
 [node name="Cenario" type="Control" parent="MapaWrap"]
 layout_mode = 0
@@ -257,7 +240,7 @@ offset_bottom = 409.0
 mouse_filter = 2
 texture = ExtResource("prop_escritorio_ruina")
 
-[node name="Coqueiro2Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
+[node name="Coqueiro0Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 163.0
 offset_top = -26.0
@@ -266,7 +249,7 @@ offset_bottom = 486.0
 mouse_filter = 2
 texture = ExtResource("prop_coqueiro_tronco")
 
-[node name="Coqueiro2Copa" type="TextureRect" parent="MapaWrap/Cenario"]
+[node name="Coqueiro0Copa" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 163.0
 offset_top = -26.0
@@ -285,43 +268,33 @@ offset_bottom = 589.0
 mouse_filter = 2
 texture = ExtResource("prop_galpao_velho")
 
-[node name="Coqueiro0Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = -105.0
-offset_top = 162.0
-offset_right = 407.0
-offset_bottom = 674.0
-mouse_filter = 2
-texture = ExtResource("prop_coqueiro_tronco")
-
-[node name="Coqueiro0Copa" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = -105.0
-offset_top = 162.0
-offset_right = 407.0
-offset_bottom = 674.0
-mouse_filter = 2
-pivot_offset = Vector2(256, 178)
-texture = ExtResource("prop_coqueiro_copa")
-
 [node name="Coqueiro1Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -226.0
-offset_top = 343.0
-offset_right = 286.0
-offset_bottom = 855.0
+offset_left = 43.0
+offset_top = 154.0
+offset_right = 555.0
+offset_bottom = 666.0
 mouse_filter = 2
 texture = ExtResource("prop_coqueiro_tronco")
 
 [node name="Coqueiro1Copa" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -226.0
-offset_top = 343.0
-offset_right = 286.0
-offset_bottom = 855.0
+offset_left = 43.0
+offset_top = 154.0
+offset_right = 555.0
+offset_bottom = 666.0
 mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
+
+[node name="BarcoEspera1" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 404.0
+offset_top = 214.0
+offset_right = 916.0
+offset_bottom = 726.0
+mouse_filter = 2
+texture = ExtResource("5")
 
 [node name="Ancoragem0" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
@@ -332,14 +305,24 @@ offset_bottom = 756.5
 mouse_filter = 2
 texture = ExtResource("prop_marcador")
 
-[node name="Ancoragem1" type="TextureRect" parent="MapaWrap/Cenario"]
+[node name="Coqueiro2Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 244.0
-offset_top = 353.5
-offset_right = 756.0
-offset_bottom = 865.5
+offset_left = -155.0
+offset_top = 253.0
+offset_right = 357.0
+offset_bottom = 765.0
 mouse_filter = 2
-texture = ExtResource("prop_boia")
+texture = ExtResource("prop_coqueiro_tronco")
+
+[node name="Coqueiro2Copa" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -155.0
+offset_top = 253.0
+offset_right = 357.0
+offset_bottom = 765.0
+mouse_filter = 2
+pivot_offset = Vector2(256, 178)
+texture = ExtResource("prop_coqueiro_copa")
 
 [node name="Ancoragem2" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
@@ -349,6 +332,24 @@ offset_right = 948.0
 offset_bottom = 822.0
 mouse_filter = 2
 texture = ExtResource("prop_boia")
+
+[node name="Ancoragem1" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 244.0
+offset_top = 353.5
+offset_right = 756.0
+offset_bottom = 865.5
+mouse_filter = 2
+texture = ExtResource("prop_boia")
+
+[node name="BarcoEspera2" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 364.0
+offset_top = 360.0
+offset_right = 876.0
+offset_bottom = 872.0
+mouse_filter = 2
+texture = ExtResource("5")
 
 [node name="Docas" type="Control" parent="MapaWrap"]
 layout_mode = 0
@@ -505,9 +506,9 @@ theme_override_font_sizes/font_size = 13
 [node name="BarraDocas" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 752.0
+offset_top = 732.0
 offset_right = 706.0
-offset_bottom = 836.0
+offset_bottom = 816.0
 theme_override_constants/separation = 10
 
 [node name="Cartao0" parent="BarraDocas" instance=ExtResource("6")]
@@ -527,9 +528,9 @@ size_flags_horizontal = 3
 [node name="TrabalhadoresTitulo" type="Label" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 846.0
+offset_top = 826.0
 offset_right = 706.0
-offset_bottom = 864.0
+offset_bottom = 844.0
 text = "Trabalhadores — toque ou arraste para uma doca"
 theme_override_colors/font_color = Color(0.51, 0.6, 0.706, 1)
 theme_override_font_sizes/font_size = 13
@@ -537,9 +538,9 @@ theme_override_font_sizes/font_size = 13
 [node name="Trabalhadores" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 868.0
+offset_top = 848.0
 offset_right = 706.0
-offset_bottom = 1004.0
+offset_bottom = 984.0
 theme_override_constants/separation = 10
 
 ; ================= RODAPÉ =================
@@ -547,9 +548,9 @@ theme_override_constants/separation = 10
 [node name="MensagemCartao" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1014.0
+offset_top = 994.0
 offset_right = 706.0
-offset_bottom = 1058.0
+offset_bottom = 1046.0
 theme_override_styles/panel = SubResource("faixa_msg")
 
 [node name="Mensagem" type="Label" parent="MensagemCartao"]
@@ -560,9 +561,9 @@ theme_override_font_sizes/font_size = 13
 [node name="MetaCartao" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1066.0
+offset_top = 1054.0
 offset_right = 706.0
-offset_bottom = 1128.0
+offset_bottom = 1131.0
 
 [node name="MetaColuna" type="VBoxContainer" parent="MetaCartao"]
 layout_mode = 2
@@ -601,18 +602,18 @@ theme_override_font_sizes/font_size = 13
 [node name="Upgrade" type="Button" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1136.0
+offset_top = 1139.0
 offset_right = 706.0
-offset_bottom = 1182.0
+offset_bottom = 1185.0
 theme_override_constants/icon_max_width = 26
 icon = ExtResource("ic_ampliar")
 
 [node name="AcoesTurno" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1190.0
+offset_top = 1193.0
 offset_right = 706.0
-offset_bottom = 1248.0
+offset_bottom = 1251.0
 theme_override_constants/separation = 8
 
 [node name="Alocar" type="Button" parent="AcoesTurno"]
