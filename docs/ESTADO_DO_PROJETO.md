@@ -9,6 +9,8 @@
 > cresce por Fase, e o Godot passou a rodar dentro da sessão)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
+> As regras que já custaram trabalho estão em `CLAUDE.md`, na raiz — o Claude
+> Code carrega esse arquivo sozinho em toda sessão.
 
 ---
 
@@ -116,7 +118,11 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
-| `brport_vs/tests/run_tests.gd` | ~65 asserções de regressão |
+| `CLAUDE.md` (raiz) | **As regras do projeto que carregam sozinhas** — projeção, save, arte, interface, e como rodar Godot e Blender aqui dentro |
+| `brport_vs/tests/run_tests.gd` | ~65 asserções de regressão (a lógica) |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela |
+| `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
+| `docs/BLOCO7_PLANO_ARTE_BLENDER.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, cartão de doca, cartão de trabalhador e letreiro. Os tokens de cor de mapa saíram daqui em 30/08: quem os define é o gerador do SVG |
 | `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem o mapa, os letreiros e a barra de docas |
 | `brport_vs/scenes/dock/Dock.tscn` | A metade de CENÁRIO de uma doca: píer, barco, guindaste, trabalhador |
