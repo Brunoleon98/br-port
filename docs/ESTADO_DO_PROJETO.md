@@ -9,6 +9,9 @@
 > cresce por Fase, e o Godot passou a rodar dentro da sessão)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
+> Para saber **o que fazer a seguir e quem faz o quê**, o plano é
+> `docs/design/BR_Port_Plano_v3_Claude_Code.md` — ele tem a fila, e diz em quais
+> itens a máquina para e só o Bruno resolve.
 > As regras que já custaram trabalho estão em `CLAUDE.md`, na raiz — o Claude
 > Code carrega esse arquivo sozinho em toda sessão.
 
@@ -48,6 +51,14 @@ a cada Fase, sem o jogo precisar saber.
 ---
 
 ## Onde estamos no roadmap
+
+**O planejamento das Fases 4 a 7 foi REFEITO em 30/08** —
+`docs/design/BR_Port_Plano_v3_Claude_Code.md`. O cronograma antigo (44 semanas,
+~490h com buffer, 10–14 meses) foi calibrado para *"dev solo iniciante em Godot,
+8h/semana"*: os Blocos 2 a 4, orçados ali em 28 semanas, saíram em sete dias.
+O plano novo troca a semana pela **sessão** como unidade, ordena o trabalho em
+duas trilhas — o JOGO e o PROJETO/CLAUDE — e orça a parte que continua cara:
+os seis momentos em que só uma pessoa resolve (jogar, ouvir, olhar, decidir).
 
 **Fase 4 — Produção do Vertical Slice**. O **Bloco 2 (loop core)** está entregue
 e o **Bloco 3 (marco intermediário) está FECHADO** — playtest humano feito,
@@ -151,7 +162,8 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos da interface, a 19px e ampliado — **rodar a cada ícone novo** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `docs/BLOCO3_MARCO_INTERMEDIARIO.md` | Medição do balanceamento + roteiro do playtest + onde registrar a decisão |
-| `docs/design/` | GDD 7, Roadmap, Plano de Produção, guias, Validation Guide |
+| `docs/design/BR_Port_Plano_v3_Claude_Code.md` | **O plano em vigor** — a fila do que fazer, as duas trilhas (jogo e projeto/Claude) e os gates que só o Bruno fecha |
+| `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados no cronograma, mantidos como registro das decisões) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
 
 ### Sistemas que funcionam

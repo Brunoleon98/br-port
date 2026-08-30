@@ -1,6 +1,14 @@
 # BR Port — Plano de Produção do Vertical Slice (Fase 2)
 **Versão 1.0 · Entregável da Fase 2 do Roadmap v2.1**
 
+> ⚠️ **SUPERADO por `BR_Port_Plano_v3_Claude_Code.md` (30/08/2026).** O
+> cronograma, a conta de horas, a estrutura da semana de trabalho e a ordem dos
+> cinco blocos foram calibrados para uma premissa que não existe mais — *"dev
+> solo iniciante em Godot, 8h/semana"*. Os Blocos 2 a 4, orçados aqui em 28
+> semanas e 224h, saíram em sete dias de calendário. Mantido pelo registro: a
+> **lista de assets** da §3 e o **que não está no plano** da §9 continuam
+> valendo, e o plano v3 não os repete por inteiro.
+
 > Este documento é o plano de produção do VS. Foi escrito uma vez e travado. Mudanças aqui significam re-abrir a fase. Pequenos ajustes vão pra "anotações de produção", não pra este doc.
 
 ---

@@ -5,6 +5,7 @@ português do Brasil. O código, os comentários, os documentos e os nomes de n�
 são em português — commits e PRs em inglês.
 
 > Ponto de entrada para entender o estado: `docs/ESTADO_DO_PROJETO.md`.
+> O que fazer a seguir, e quem faz o quê: `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
 > Para retomar o trabalho: `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.
 > Para a arte: `docs/BLOCO7_PLANO_ARTE_BLENDER.md`.
 
