@@ -130,13 +130,19 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		# Duas sementes independentes: uma para o mundo (chegada de barco,
 		# valor, oferta do rival) e outra para os erros do jogador. Assim dá
 		# para trocar de perfil e continuar caindo nos MESMOS barcos.
+		#
+		# A SEMENTE VEM ANTES DE `new_game()`. Ela vinha depois, e como
+		# `new_game()` já chama `_spawn_boats()`, a mão inicial de toda partida
+		# saía do gerador não semeado (`_rng.randomize()` no `_ready`). O
+		# resultado é que duas rodadas seguidas do simulador, sem tocar em
+		# nada, davam medianas diferentes — e comparar antes/depois de uma
+		# afinação é justamente para o que esta ferramenta serve.
 		GS.clear_save()
-		GS.new_game()
 		GS._rng.seed = semente + run * 7919
 		rng.seed = semente + run * 104729
+		GS.new_game()
 
 		var caixa_no_vencimento := -1
-		var comprou_upgrade := false
 		var seguranca := 0
 
 		while GS.phase != "game_over" and seguranca < 300:
@@ -154,9 +160,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 					GS.fail_debt()
 				continue
 
-			if not comprou_upgrade and GS.cash >= int(GS.UPGRADE_COST * float(perfil["folga_para_upgrade"])):
-				if GS.buy_upgrade():
-					comprou_upgrade = true
+			_construir(perfil)
 
 			_alocar(perfil, rng)
 			GS.advance_turn()
@@ -224,6 +228,30 @@ func _escolher_acao(perfil: Dictionary, rng: RandomNumberGenerator) -> String:
 # Aloca trabalhadores livres nas docas com barco, respeitando o modelo de
 # erro do perfil. Espelha o que um jogador faz na tela, não um atalho de
 # lógica — inclusive passando por assign_worker(), que é quem valida.
+# Ordem de compra do porto. Não é arbitrária: doca é vazão, e vazão multiplica
+# tudo o que vem depois — comprar o armazém antes do segundo píer é somar 15%
+# a uma receita que ainda é metade do que podia ser.
+#
+# `folga_para_upgrade` continua sendo o que separa os perfis: o jogador atento
+# compra assim que dá, o descuidado só quando sobra muito.
+const ORDEM_DE_COMPRA := ["pier_2", "patio", "armazem", "pier_3", "escritorio"]
+
+
+func _construir(perfil: Dictionary) -> void:
+	var folga: float = float(perfil["folga_para_upgrade"])
+	for id in ORDEM_DE_COMPRA:
+		if GS.tem_estrutura(id):
+			continue
+		if GS.impedimento_estrutura(id) != "":
+			continue
+		# Guardar uma folga: gastar até o último real deixa o porto sem
+		# salário na virada da semana.
+		if GS.cash < int(int(GS.ESTRUTURAS[id]["custo"]) * folga):
+			continue
+		GS.comprar_estrutura(id)
+		return                      # uma por turno, para não esvaziar o caixa
+
+
 func _alocar(perfil: Dictionary, rng: RandomNumberGenerator) -> void:
 	for i in range(GS.docks.size()):
 		var doca: Dictionary = GS.docks[i]

@@ -194,11 +194,28 @@ com `xvfb-run` para as capturas.
    câmera longe do alvo e o render sai VAZIO, sem erro nenhum. Faça a conta na
    mão.
 
-7. **A tela do projeto é retrato com aspecto travado** (`stretch/aspect="keep"`,
+7. **O Y do Blender é o −my do mapa.** No Blender a direita da tela é o vetor
+   (+X, +Y) — os dois eixos do chão puxam para a direita. No mapa,
+   `tela_x = (mx - my) * MEIA_LARG`, e o +my puxa para a ESQUERDA. Um prop
+   simétrico em Y não denuncia; o primeiro assimétrico sai 40px fora. Use
+   `pos(mx, my, altura_px)` de `gerar_props_iso.py` e não escreva coordenadas
+   do Blender à mão.
+
+8. **Num Control, `position` É o offset.** Zerá-lo numa animação não "volta ao
+   lugar": atira o nó para o canto do pai e apaga a ancoragem da cena. Guarde
+   a posição de repouso no `_ready()` e anime relativo a ela.
+
+9. **`open(destino, "w").write(gerar())` trunca antes de gerar.** Em Python o
+   `open()` é avaliado primeiro; um erro dentro de `gerar()` deixa o arquivo
+   VAZIO. Pior: o Godot grava `valid=false` no `.import` do arquivo vazio e
+   mantém o veredito mesmo depois de o arquivo voltar — é preciso apagar o
+   `.import` para ele reimportar.
+
+10. **A tela do projeto é retrato com aspecto travado** (`stretch/aspect="keep"`,
    720×1280). Pedir `--resolution` numa proporção diferente não dá erro: devolve
    a imagem espremida. Ferramenta de captura tem de respeitar 720:1280.
 
-8. **Animação não se pede ao gerador.** Barco balançando, chegando, doca
+11. **Animação não se pede ao gerador.** Barco balançando, chegando, doca
    pulsando — tudo é `Tween` sobre sprite existente, zero arte nova. O que
    precisa de arte é **anatomia separada pelo eixo que se move** (copa e tronco
    do coqueiro em arquivos distintos, por exemplo).

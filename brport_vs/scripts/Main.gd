@@ -36,10 +36,28 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 @onready var _docks_label: Label = $HudBar/DocasPilula/Linha/DocasTexto
 @onready var _pause_button: Button = $HudBar/Pausar
 @onready var _message_label: Label = $MensagemCartao/Mensagem
-@onready var _advance_button: Button = $Avancar
+@onready var _advance_button: Button = $AcoesTurno/Avancar
+@onready var _alocar_button: Button = $AcoesTurno/Alocar
 @onready var _upgrade_button: Button = $Upgrade
 @onready var _docks_container: Control = $MapaWrap/Docas
+
+# Trabalhador escolhido por toque, à espera de uma doca. -1 = nenhum.
+# Vive aqui e não no GameState porque é estado de interface: quem joga com
+# arrasto nunca o usa, e o jogo salvo não deve carregar isto.
+var _selecionado: int = -1
 @onready var _workers_container: HBoxContainer = $Trabalhadores
+@onready var _workers_title: Label = $TrabalhadoresTitulo
+@onready var _mapa: TextureRect = $MapaWrap/Mapa
+
+# As estruturas trocam de TEXTURA, não de nó: assim o prop ocupa exatamente o
+# mesmo quadro nos dois estados e o prédio não salta ao ser consertado — a
+# mesma razão que fez o píer partilhar a geometria entre vazio e construído.
+const MapaTerra := preload("res://art/porto_mapa_iso.svg")
+const MapaPatio := preload("res://art/porto_mapa_iso_patio.svg")
+const ArmazemRuina := preload("res://art/props/galpao_velho.png")
+const ArmazemPronto := preload("res://art/props/galpao.png")
+const EscritorioRuina := preload("res://art/props/escritorio_ruina.png")
+const EscritorioPronto := preload("res://art/props/escritorio.png")
 @onready var _meta_bar: ProgressBar = $MetaCartao/MetaColuna/MetaBarra
 @onready var _meta_label: Label = $MetaCartao/MetaColuna/MetaTexto
 @onready var _meta_titulo: Label = $MetaCartao/MetaColuna/MetaTituloLinha/MetaTitulo
@@ -48,11 +66,14 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 
 func _ready() -> void:
 	_advance_button.pressed.connect(_on_advance_pressed)
+	_alocar_button.pressed.connect(_on_alocar_pressed)
 	_upgrade_button.pressed.connect(_on_upgrade_pressed)
 	_pause_button.pressed.connect(_on_pause_pressed)
 
 	_connect_game_state()
 	_refresh_all()
+	_animar_ancorados()
+	_animar_coqueiros()
 
 	# Se o jogo carregou de um save já em rival_offer/debt_payment, reabre o painel certo.
 	if GameState.phase == "rival_offer" and GameState.pending_rival_dock >= 0:
@@ -61,6 +82,53 @@ func _ready() -> void:
 		_on_debt_due(GameState.PARCELA_AMOUNT)
 	elif GameState.phase == "game_over":
 		_on_game_over(GameState.won, GameState.end_reason)
+
+
+# Os barcos da Zona de Espera são cenário: não têm lógica, mas parados fazem o
+# porto parecer uma fotografia. Fases diferentes para não balançarem em bloco,
+# que é o que denuncia a animação como truque.
+func _animar_ancorados() -> void:
+	var fases := [0.0, 0.85]
+	var i := 0
+	for nome in ["BarcoEspera1", "BarcoEspera2"]:
+		var barco := $MapaWrap.get_node_or_null(nome) as TextureRect
+		if barco == null:
+			continue
+		var base := barco.position
+		var tw := barco.create_tween().set_loops()
+		if fases[i] > 0.0:
+			tw.tween_interval(fases[i])
+		tw.tween_property(barco, "position:y", base.y - 4.0, 2.1) \
+			.set_trans(Tween.TRANS_SINE)
+		tw.tween_property(barco, "position:y", base.y, 2.1) \
+			.set_trans(Tween.TRANS_SINE)
+		i += 1
+
+
+# A copa gira no TOPO DO TRONCO, não no centro do quadro: o pivot_offset da
+# cena está em (256, 178), que é onde as duas peças se encontram. Girar pelo
+# centro faria a copa descrever um arco e descolar do tronco.
+#
+# Cada uma com sua duração e sua fase — coqueiros em sincronia denunciam que é
+# a mesma animação repetida.
+func _animar_coqueiros() -> void:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return
+	var duracoes := [2.6, 3.1, 2.9]
+	var fases := [0.0, 1.1, 0.5]
+	var i := 0
+	for no in cenario.get_children():
+		if not String(no.name).ends_with("Copa"):
+			continue
+		var amplitude := 0.035 if i % 2 == 0 else -0.035
+		var dur: float = duracoes[i % duracoes.size()]
+		var tw := no.create_tween().set_loops()
+		if fases[i % fases.size()] > 0.0:
+			tw.tween_interval(fases[i % fases.size()])
+		tw.tween_property(no, "rotation", amplitude, dur).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(no, "rotation", -amplitude, dur).set_trans(Tween.TRANS_SINE)
+		i += 1
 
 
 func _connect_game_state() -> void:
@@ -77,9 +145,26 @@ func _connect_game_state() -> void:
 
 
 func _refresh_all() -> void:
+	_refresh_estruturas()
 	_refresh_hud()
 	_refresh_docks()
 	_refresh_workers()
+
+
+# O mapa e os prédios contam o que o jogador construiu. É o retorno visível do
+# dinheiro gasto — sem isto, comprar uma estrutura é só um número que baixa.
+func _refresh_estruturas() -> void:
+	_mapa.texture = MapaPatio if GameState.tem_estrutura("patio") else MapaTerra
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return
+	var armazem := cenario.get_node_or_null("Armazem") as TextureRect
+	if armazem != null:
+		armazem.texture = ArmazemPronto if GameState.tem_estrutura("armazem") else ArmazemRuina
+	var escritorio := cenario.get_node_or_null("Escritorio") as TextureRect
+	if escritorio != null:
+		escritorio.texture = EscritorioPronto if GameState.tem_estrutura("escritorio") \
+			else EscritorioRuina
 
 
 func _refresh_hud() -> void:
@@ -88,14 +173,21 @@ func _refresh_hud() -> void:
 	_day_label.text = "Dia %d/%d" % [shown_day, GameState.TURNS_TOTAL]
 	_rep_label.text = "%d %s" % [int(GameState.reputation), GameState.reputation_label()]
 	_docks_label.text = "%d/%d" % [GameState.docks.size(), VAGAS_NO_MAPA]
-	_upgrade_button.disabled = GameState.upgrade_purchased or GameState.phase != "playing"
-	if GameState.upgrade_purchased:
-		_upgrade_button.text = "Píer ampliado"
+	# O botão não some quando tudo está construído: vira o registo de que o
+	# porto está completo, que é uma informação, não um beco sem saída.
+	var faltam := 0
+	for id in GameState.ESTRUTURAS:
+		if not GameState.tem_estrutura(String(id)):
+			faltam += 1
+	_upgrade_button.disabled = GameState.phase != "playing" or faltam == 0
+	if faltam == 0:
+		_upgrade_button.text = "Porto completo"
 		Icones.no_botao(_upgrade_button, Icones.FEITO, 26)
 	else:
-		_upgrade_button.text = "Ampliar píer (R$%d)" % GameState.UPGRADE_COST
+		_upgrade_button.text = "Construir (%d disponível(is))" % faltam
 		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	_advance_button.disabled = GameState.phase != "playing"
+	_alocar_button.disabled = not GameState.has_pending_assignment()
 	_refresh_meta()
 
 
@@ -129,6 +221,7 @@ func _refresh_meta() -> void:
 func _refresh_docks() -> void:
 	var vagas := _docks_container.get_children()
 	for i in range(vagas.size()):
+		vagas[i].trabalhador_selecionado = _selecionado
 		vagas[i].setup(i)
 
 
@@ -141,11 +234,57 @@ func _clear(container: Node) -> void:
 
 
 func _refresh_workers() -> void:
+	# Um trabalhador que deixou de estar livre não pode continuar selecionado —
+	# senão o próximo toque numa doca tentaria alocar quem já está ocupado.
+	if _selecionado >= 0 and not _pode_ser_selecionado(_selecionado):
+		_selecionado = -1
+
 	_clear(_workers_container)
 	for w in GameState.workers:
 		var worker_node = WorkerScene.instantiate()
 		_workers_container.add_child(worker_node)
 		worker_node.setup(int(w["id"]))
+		worker_node.selecionado.connect(_on_worker_selecionado)
+		worker_node.marcar_selecionado(int(w["id"]) == _selecionado)
+	_refresh_titulo_trabalhadores()
+
+
+func _pode_ser_selecionado(worker_id: int) -> bool:
+	if GameState.phase != "playing":
+		return false
+	if GameState.worker_dock_index(worker_id) >= 0:
+		return false
+	for w in GameState.workers:
+		if int(w["id"]) == worker_id:
+			return int(w["busy_turns"]) == 0
+	return false
+
+
+# Tocar no mesmo trabalhador de novo desmarca — sem isso não haveria como
+# desistir da seleção a não ser alocando.
+func _on_worker_selecionado(worker_id: int) -> void:
+	_selecionado = -1 if _selecionado == worker_id else worker_id
+	for no in _workers_container.get_children():
+		no.marcar_selecionado(no.worker_id == _selecionado)
+	for vaga in _docks_container.get_children():
+		vaga.trabalhador_selecionado = _selecionado
+	_refresh_titulo_trabalhadores()
+
+
+# O cartão do trabalhador tem 158px e não comporta a instrução; ela vive aqui,
+# onde também pode mudar conforme o estado.
+func _refresh_titulo_trabalhadores() -> void:
+	if _selecionado >= 0:
+		_workers_title.text = "Agora toque numa doca para enviar o #%d" % _selecionado
+		_workers_title.add_theme_color_override("font_color", COR_AVISO)
+	else:
+		_workers_title.text = "Trabalhadores — toque ou arraste para uma doca"
+		_workers_title.add_theme_color_override("font_color", Color(0.51, 0.6, 0.706))
+
+
+func _on_alocar_pressed() -> void:
+	_selecionado = -1
+	GameState.assign_all_free_workers()
 
 
 func _on_message(text: String, kind: String) -> void:

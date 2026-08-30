@@ -25,6 +25,18 @@ func _fresh_playing() -> void:
 		GS.resolve_rival_offer(true)
 
 
+# O porto agora ABRE com 1 doca e 1 trabalhador. Testes que precisam de mais
+# passaram a pedir explicitamente, em vez de assumir a base — assim mexer em
+# DOCKS_BASE não volta a partir a suíte inteira.
+func _garantir(docas: int, trabalhadores: int) -> void:
+	while GS.docks.size() < docas:
+		GS.docks.append({"boat": null, "worker_id": null})
+	while GS.workers.size() < trabalhadores:
+		GS.workers.append({"id": GS.workers.size() + 1, "busy_turns": 0})
+	for w in GS.workers:
+		w["busy_turns"] = 0
+
+
 func _fake_boat(value: int, op_turns: int, rival: bool) -> Dictionary:
 	return {
 		"id": 999, "value": value, "op_turns": op_turns, "large": op_turns > 1,
@@ -75,6 +87,7 @@ func _run() -> void:
 
 	print("=== T3: mesmo trabalhador em duas docas ===")
 	_fresh_playing()
+	_garantir(2, 2)
 	GS.docks[0]["boat"] = _fake_boat(200, 1, false)
 	GS.docks[1]["boat"] = _fake_boat(200, 1, false)
 	GS.docks[0]["worker_id"] = null
@@ -180,16 +193,81 @@ func _run() -> void:
 	root.remove_child(main2)
 	main2.free()
 
+	print("=== T4d: alocar em lote e por toque ===")
+	_fresh_playing()
+	# Cenário controlado: 3 docas com barco, e menos trabalhador que doca —
+	# é onde a ORDEM importa. Se o lote não servir o mais caro primeiro, o
+	# botão estaria jogando pior do que um humano atento.
+	_garantir(3, 2)
+	while GS.workers.size() > 2:
+		GS.workers.pop_back()
+	for i in range(3):
+		GS.docks[i]["boat"] = _fake_boat(100 + i * 100, 1, false)
+		GS.docks[i]["worker_id"] = null
+	for w in GS.workers:
+		w["busy_turns"] = 0
+
+	_check("ha alocacao pendente antes", GS.has_pending_assignment() == true)
+	var postos: int = GS.assign_all_free_workers()
+	_check("alocou os 2 trabalhadores livres", postos == 2)
+	_check("serviu primeiro a doca de R$300", GS.docks[2]["worker_id"] != null)
+	_check("serviu depois a doca de R$200", GS.docks[1]["worker_id"] != null)
+	_check("deixou de fora a doca mais barata", GS.docks[0]["worker_id"] == null)
+	_check("nao ha mais alocacao pendente", GS.has_pending_assignment() == false)
+	_check("rodar de novo nao aloca nada", GS.assign_all_free_workers() == 0)
+
+	# Uma doca sob oferta do rival nao pode ser preenchida pelo lote.
+	_fresh_playing()
+	for i in range(GS.docks.size()):
+		GS.docks[i]["boat"] = null
+		GS.docks[i]["worker_id"] = null
+	for w in GS.workers:
+		w["busy_turns"] = 0
+	GS.docks[0]["boat"] = _fake_boat(300, 1, true)
+	_check("doca sob oferta do rival nao conta como pendente",
+		GS.has_pending_assignment() == false)
+	_check("lote nao aloca em doca sob oferta", GS.assign_all_free_workers() == 0)
+
 	print("=== T5: upgrade avisa a UI ===")
 	_fresh_playing()
 	var roster_fired := [false]
 	GS.roster_changed.connect(func(): roster_fired[0] = true)
-	GS.cash = GS.UPGRADE_COST + 100
-	var bought = GS.buy_upgrade()
-	_check("upgrade comprado", bought == true)
+	GS.cash = int(GS.ESTRUTURAS["pier_2"]["custo"]) \
+		+ int(GS.ESTRUTURAS["pier_3"]["custo"]) + 100
+	var bought = GS.comprar_estrutura("pier_2")
+	_check("pier 2 comprado", bought == true)
 	_check("roster_changed disparou", roster_fired[0] == true)
+	_check("docas subiram para 2", GS.docks.size() == 2)
+	_check("trabalhadores subiram para 2", GS.workers.size() == 2)
+	_check("pier 3 exige o pier 2 antes", GS.impedimento_estrutura("pier_3") == "")
+	_check("pier 3 comprado", GS.comprar_estrutura("pier_3") == true)
 	_check("docas subiram para 3", GS.docks.size() == 3)
 	_check("trabalhadores subiram para 3", GS.workers.size() == 3)
+
+	print("=== T5b: estruturas — pre-requisito, caixa e efeito ===")
+	_fresh_playing()
+	GS.cash = 100
+	_check("sem caixa, o pier 2 diz quanto falta",
+		GS.impedimento_estrutura("pier_2").begins_with("Faltam R$"))
+	_check("e recusa a compra", GS.comprar_estrutura("pier_2") == false)
+	GS.cash = 99999
+	_check("pier 3 bloqueado sem o pier 2",
+		GS.impedimento_estrutura("pier_3").begins_with("Precisa antes de"))
+	_check("comprar duas vezes nao acontece",
+		GS.comprar_estrutura("armazem") == true and GS.comprar_estrutura("armazem") == false)
+	_check("estrutura ja construida diz isso",
+		GS.impedimento_estrutura("armazem") == "Já construída.")
+	var esperado := int(round(200 * (1.0 + GS.ARMAZEM_BONUS)))
+	_garantir(1, 1)
+	GS.docks[0]["boat"] = _fake_boat(200, 1, false)
+	GS.docks[0]["worker_id"] = null
+	GS.metrics["revenue"] = 0
+	_check("trabalhador alocado para o teste do armazem",
+		GS.assign_worker(1, 0) == true)
+	GS.advance_turn()
+	_check("armazem soma %d%% ao barco (200 -> %d)" % [
+		int(GS.ARMAZEM_BONUS * 100), esperado],
+		int(GS.metrics["revenue"]) == esperado)
 
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
@@ -211,7 +289,7 @@ func _run() -> void:
 					GS.fail_debt()
 				continue
 			if GS.phase == "playing":
-				if not bought_up and GS.cash >= GS.UPGRADE_COST:
+				if not bought_up and GS.cash >= int(GS.ESTRUTURAS["pier_2"]["custo"]):
 					GS.buy_upgrade()
 					bought_up = true
 				for w in GS.workers:

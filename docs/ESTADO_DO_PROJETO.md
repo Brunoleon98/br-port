@@ -7,7 +7,26 @@
 > HUD não usa mais emoji; direção de arte decidida como isométrica, ainda não
 > integrada)
 >
-> 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO4_BRIEFING_CONTINUACAO.md`.**
+> 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
+
+---
+
+## O jogo hoje, em três linhas
+
+**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$3.250 e cinco estruturas
+para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada uma
+muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
+saem de ruína para telhado novo.
+
+**Economia medida em 600 partidas por perfil:** ótimo 100% · mediano 47% ·
+descuidado 0%. A mediana do mediano fecha em R$7.945 contra uma parcela de
+R$8.000. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
+
+**O jogo é mudo.** Não há um arquivo de áudio, um `AudioStream` ou um bus no
+projeto. É o próximo bloco — ver `docs/BLOCO6_BRIEFING_AUDIO.md`.
+
+**Não se arrasta trabalhador a cada turno:** há "Alocar todos" e
+toque-para-alocar, com o arrasto ainda funcionando.
 
 ---
 
@@ -136,8 +155,27 @@ escura, cartão branco, botão navy) com `tools/folha_icones.gd`. Cada um foi
 colorido para o fundo onde cai — dois não são reaproveitáveis em qualquer
 lugar, e o cabeçalho de `Icones.gd` diz quais e por quê.
 
-Ainda é placeholder: variações de barco (o GDD pede 3, existem 2) e o
-trabalhador visto de cima.
+As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
+nos dois estados, então o prédio não salta ao ser consertado. Mesma razão que
+fez o píer partilhar geometria entre vazio e construído.
+
+O cenário usa os props: **coqueiros low-poly** (que oscilam, copa e tronco em
+peças separadas), **guindaste** nas docas construídas (a lança varre), **carga
+no convés** e **boias + marcador** na Zona de Espera. Os coqueiros chapados
+saíram do SVG do mapa — `gerar_mapa_iso.py --sem-coqueiros` — pela mesma razão
+que os píeres: o que se mexe não pode estar assado no fundo.
+
+Continuam **sem uso** `galpao` e `galpao_velho` (os prédios do mapa já fazem
+esse papel) e as versões avulsas de `caixote`/`conteiner` (foram assadas no
+píer).
+
+Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande), e o
+pesqueiro tem casco próprio — não é o mesmo casco com carga trocada. O
+**trabalhador aparece de pé no tabuado** quando alocado, e mexe-se enquanto a
+operação corre.
+
+Ainda é placeholder o **retrato ilustrado do trabalhador** no cartão da
+fileira, que é de outra leva e de outra linguagem visual.
 
 A **Zona de Espera é só visual**: os barcos ancorados são decorativos e não
 representam fila de verdade — barcos continuam nascendo direto nas docas.

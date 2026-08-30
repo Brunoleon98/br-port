@@ -31,14 +31,66 @@ signal message(text: String, kind: String)
 signal state_loaded()
 
 # ── TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1) ──
-const START_CASH := 600                 # GDD "Abertura de caixa": R$600 herdado
+# TUNING — medido, não estimado. 600 partidas por perfil em
+# tools/simular_balanceamento.gd: ótimo 100% · mediano 47% · descuidado 0%.
+# A mediana do jogador mediano fecha em R$7.945 contra uma parcela de R$8.000:
+# é para ficar nessa margem. Mexer aqui SEM rodar o simulador quebra isso.
+const START_CASH := 3250
 const SALARY_PER_WORKER := 100          # GDD "Margem operacional base": 2 trab. x R$100 = R$200/sem
 const MAINTENANCE_WEEKLY := 30          # GDD "Margem operacional base": manutenção R$30/sem
-const DOCKS_BASE := 2                   # GDD "VS — Sistemas IN": 2 slots simultâneos
-const WORKERS_BASE := 2
-const UPGRADE_COST := 400               # TUNING: GDD não define custo do upgrade de VS; estimado
+# O porto ABRE PARADO. Um píer de pé, o resto em ruína — é o que a herança do
+# avô do GDD descreve, e é a diferença entre "administrar um porto" e "levantar
+# um porto", que é a fantasia do jogo.
+const DOCKS_BASE := 1
+const WORKERS_BASE := 1
 const UPGRADE_EXTRA_DOCKS := 1
 const UPGRADE_EXTRA_WORKERS := 1
+
+# ── ESTRUTURAS ──
+# O que o jogador compra ou conserta. Cada uma tem um efeito ECONÔMICO real —
+# nenhuma é só enfeite, senão comprar seria só gastar.
+#
+# PROPORÇÃO, não escala. O problema dos preços antigos não era o R$ ser baixo:
+# era um píer custar R$400 enquanto um barco paga R$80–300, ou seja UM barco
+# comprava um píer. Aqui a infraestrutura custa DEZENAS de barcos, que é o que
+# faz decidir onde gastar valer alguma coisa.
+#
+# `ordem` é só a apresentação no painel. `custo` é TUNING — medido em
+# tools/simular_balanceamento.gd, não estimado.
+const ESTRUTURAS := {
+	"pier_2": {
+		"nome": "Reconstruir o Píer 2",
+		"desc": "+1 doca e +1 trabalhador",
+		"custo": 900, "ordem": 1, "requer": "",
+	},
+	"pier_3": {
+		"nome": "Reconstruir o Píer 3",
+		"desc": "+1 doca e +1 trabalhador",
+		"custo": 1600, "ordem": 2, "requer": "pier_2",
+	},
+	"armazem": {
+		"nome": "Consertar o armazém",
+		"desc": "+20% no valor de cada barco atendido",
+		"custo": 1100, "ordem": 3, "requer": "",
+	},
+	"patio": {
+		"nome": "Pavimentar o pátio",
+		"desc": "dobra a renda semanal do píer",
+		"custo": 700, "ordem": 4, "requer": "",
+	},
+	"escritorio": {
+		"nome": "Reformar o escritório",
+		"desc": "-50% nos salários da semana",
+		"custo": 500, "ordem": 5, "requer": "",
+	},
+}
+
+const ARMAZEM_BONUS := 0.20             # TUNING
+const PATIO_BONUS_PIER := 1.00          # TUNING
+# O escritório mexia na manutenção (R$30/sem): pouparia R$18 por semana e
+# nunca se pagaria. Agora corta SALÁRIO, que é o custo que cresce com o
+# porto — é o que torna a compra uma decisão e não uma armadilha.
+const ESCRITORIO_DESCONTO_SALARIO := 0.50   # TUNING
 
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
 const PIER_RATE_PER_SLOT := 40          # GDD "Margem operacional base": R$40/vaga -> R$240/sem
@@ -78,8 +130,9 @@ const REPUTATION_LOSS_RIVAL_REFUSED := 15.0
 # TUNING — esta é a constante que faz a economia da Fase 1 fechar.
 # Com 3 turnos/semana a parcela de R$8.000 só cabia inflando o barco para
 # R$240–760, fora da faixa do GDD. Com 8 turnos/semana o barco volta para
-# os R$80–300 do GDD e a parcela continua alcançável. Medido em 600
-# partidas por perfil: ótimo 99,7% · mediano 47,3% · descuidado 0%.
+# os R$80–300 do GDD e a parcela continua alcançável. As taxas medidas estão
+# no bloco de economia lá em cima — uma tabela só, para não haver duas
+# versões dos mesmos números envelhecendo em ritmos diferentes.
 const TURNS_PER_WEEK := 8
 const WEEKS_TOTAL := 4
 const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
@@ -96,6 +149,9 @@ var reputation: float = REPUTATION_START
 var docks: Array = []       # [{boat: Dictionary|null, worker_id: int|null}]
 var workers: Array = []     # [{id:int, busy_turns:int}]
 var upgrade_purchased: bool = false
+# Estruturas já compradas, por id. Guardado como Array para o save ser um JSON
+# simples — Dictionary de bool viraria ruído no ficheiro.
+var estruturas: Array = []
 var parcela_paid: bool = false
 var phase: String = "playing"   # playing | rival_offer | debt_payment | game_over
 var pending_rival_dock: int = -1
@@ -131,6 +187,7 @@ func new_game() -> void:
 	cash = START_CASH
 	reputation = REPUTATION_START
 	upgrade_purchased = false
+	estruturas = []
 	parcela_paid = false
 	_set_phase("playing")
 	pending_rival_dock = -1
@@ -167,21 +224,27 @@ func current_week() -> int:
 
 
 # ── WORKER ASSIGNMENT ──
-func assign_worker(worker_id: int, dock_index: int) -> bool:
+# `avisar` só existe para a alocação em lote: chamar isto N vezes emitiria N
+# mensagens e só a última sobreviveria na barra. Quem aloca em lote silencia
+# aqui e emite um resumo no fim.
+func assign_worker(worker_id: int, dock_index: int, avisar: bool = true) -> bool:
 	if phase != "playing":
 		return false
 	if dock_index < 0 or dock_index >= docks.size():
 		return false
 	var dock: Dictionary = docks[dock_index]
 	if dock["boat"] == null:
-		message.emit("Doca vazia — não há barco aqui.", "warn")
+		if avisar:
+			message.emit("Doca vazia — não há barco aqui.", "warn")
 		return false
 	if dock["worker_id"] != null:
-		message.emit("Essa doca já tem trabalhador operando.", "warn")
+		if avisar:
+			message.emit("Essa doca já tem trabalhador operando.", "warn")
 		return false
 	var boat: Dictionary = dock["boat"]
 	if boat.get("rival", false) and not boat.get("matched", false):
-		message.emit("Resolva a oferta do rival antes de alocar.", "warn")
+		if avisar:
+			message.emit("Resolva a oferta do rival antes de alocar.", "warn")
 		return false
 	var worker = _find_worker(worker_id)
 	if worker == null or int(worker["busy_turns"]) > 0:
@@ -192,13 +255,96 @@ func assign_worker(worker_id: int, dock_index: int) -> bool:
 	# várias docas e faturar de graça.
 	var already := worker_dock_index(worker_id)
 	if already >= 0:
-		message.emit("Trabalhador #%d já está na Doca %d. Toque na doca para liberá-lo." % [worker_id, already + 1], "warn")
+		if avisar:
+			message.emit("Trabalhador #%d já está na Doca %d. Toque na doca para liberá-lo." % [worker_id, already + 1], "warn")
 		return false
 	dock["worker_id"] = worker_id
-	message.emit("Trabalhador alocado. Avance o dia para operar.", "good")
+	if avisar:
+		message.emit("Trabalhador alocado. Avance o dia para operar.", "good")
 	roster_changed.emit()
 	save_game()
 	return true
+
+
+# Põe todo trabalhador livre numa doca que esteja esperando, do barco mais
+# valioso para o menos. Existe porque arrastar um por um, todo turno, é o que
+# mais cansa em quem joga — e quando há trabalhador para todas as docas não
+# havia decisão nenhuma sendo tomada no arrasto.
+#
+# A ordem por valor NÃO é enfeite: quando há menos trabalhador que barco,
+# atender o mais caro primeiro é a jogada certa, então o botão faz o que um
+# bom jogador faria. Quem quiser outra coisa toca na doca para liberar e
+# realoca — a escolha continua existindo, deixou é de ser obrigatória.
+func assign_all_free_workers() -> int:
+	if phase != "playing":
+		return 0
+
+	var livres: Array[int] = []
+	for w in workers:
+		var wid := int(w["id"])
+		if int(w["busy_turns"]) == 0 and worker_dock_index(wid) < 0:
+			livres.append(wid)
+	if livres.is_empty():
+		return 0
+
+	var esperando: Array[int] = []
+	for i in range(docks.size()):
+		var doca: Dictionary = docks[i]
+		var barco = doca["boat"]
+		if barco == null or doca["worker_id"] != null:
+			continue
+		if barco.get("rival", false) and not barco.get("matched", false):
+			continue
+		esperando.append(i)
+	if esperando.is_empty():
+		return 0
+
+	esperando.sort_custom(func(a, b): return _valor_do_barco(a) > _valor_do_barco(b))
+
+	var postos := 0
+	for i in esperando:
+		if postos >= livres.size():
+			break
+		if assign_worker(livres[postos], i, false):
+			postos += 1
+
+	if postos > 0:
+		var sobraram := esperando.size() - postos
+		var texto := "%d trabalhador(es) alocado(s). Avance o dia para operar." % postos
+		if sobraram > 0:
+			texto += " Faltou gente para %d doca(s)." % sobraram
+		message.emit(texto, "good")
+	return postos
+
+
+func _valor_do_barco(dock_index: int) -> int:
+	var barco = docks[dock_index]["boat"]
+	if barco == null:
+		return 0
+	return int(barco["matched_value"]) if barco.get("matched", false) else int(barco["value"])
+
+
+# Há trabalhador livre E doca esperando? É o que decide se o botão de alocar
+# em lote fica aceso.
+func has_pending_assignment() -> bool:
+	if phase != "playing":
+		return false
+	var tem_livre := false
+	for w in workers:
+		if int(w["busy_turns"]) == 0 and worker_dock_index(int(w["id"])) < 0:
+			tem_livre = true
+			break
+	if not tem_livre:
+		return false
+	for i in range(docks.size()):
+		var doca: Dictionary = docks[i]
+		var barco = doca["boat"]
+		if barco == null or doca["worker_id"] != null:
+			continue
+		if barco.get("rival", false) and not barco.get("matched", false):
+			continue
+		return true
+	return false
 
 
 # Devolve o índice da doca onde o trabalhador está alocado, ou -1.
@@ -335,7 +481,8 @@ func advance_turn() -> void:
 		if dock["worker_id"] != null:
 			boat["progress"] = int(boat["progress"]) + 1
 			if int(boat["progress"]) >= int(boat["op_turns"]):
-				var value: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
+				var bruto: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
+				var value := _valor_recebido(bruto)
 				cash += value
 				metrics["revenue"] += value
 				metrics["boats_served"] += 1
@@ -374,8 +521,15 @@ func advance_turn() -> void:
 
 
 func _process_week_end(ended_week: int) -> void:
+	# Pátio pavimentado: mais vagas de píer alugáveis. Escritório reformado:
+	# menos manutenção porque a administração deixa de ser improvisada.
 	var pier_income := PIER_SLOTS * PIER_RATE_PER_SLOT
-	var cost := (SALARY_PER_WORKER * workers.size()) + MAINTENANCE_WEEKLY
+	if tem_estrutura("patio"):
+		pier_income = int(round(pier_income * (1.0 + PATIO_BONUS_PIER)))
+	var salarios := SALARY_PER_WORKER * workers.size()
+	if tem_estrutura("escritorio"):
+		salarios = int(round(salarios * (1.0 - ESCRITORIO_DESCONTO_SALARIO)))
+	var cost := salarios + MAINTENANCE_WEEKLY
 	cash += pier_income
 	cash -= cost
 	metrics["pier_income"] = int(metrics.get("pier_income", 0)) + pier_income
@@ -423,23 +577,66 @@ func fail_debt() -> void:
 
 
 # ── UPGRADE (ampliar píer) ──
-func buy_upgrade() -> bool:
-	if phase != "playing" or upgrade_purchased:
+func tem_estrutura(id: String) -> bool:
+	return estruturas.has(id)
+
+
+# Por que não dá para comprar: "" quando dá. O painel mostra este texto, então
+# o jogador nunca fica com um botão apagado sem explicação.
+func impedimento_estrutura(id: String) -> String:
+	if not ESTRUTURAS.has(id):
+		return "Estrutura desconhecida."
+	if tem_estrutura(id):
+		return "Já construída."
+	if phase != "playing":
+		return "Resolva o que está na tela primeiro."
+	var def: Dictionary = ESTRUTURAS[id]
+	var requer := String(def["requer"])
+	if requer != "" and not tem_estrutura(requer):
+		return "Precisa antes de: %s." % ESTRUTURAS[requer]["nome"]
+	if cash < int(def["custo"]):
+		return "Faltam R$%d." % (int(def["custo"]) - int(cash))
+	return ""
+
+
+func comprar_estrutura(id: String) -> bool:
+	if impedimento_estrutura(id) != "":
 		return false
-	if cash < UPGRADE_COST:
-		message.emit("Caixa insuficiente para o upgrade. Precisa de R$%d." % UPGRADE_COST, "warn")
-		return false
-	cash -= UPGRADE_COST
-	upgrade_purchased = true
-	for i in range(UPGRADE_EXTRA_DOCKS):
-		docks.append({"boat": null, "worker_id": null})
-	for i in range(UPGRADE_EXTRA_WORKERS):
-		workers.append({"id": workers.size() + 1, "busy_turns": 0})
+	var def: Dictionary = ESTRUTURAS[id]
+	cash -= int(def["custo"])
+	estruturas.append(id)
+
+	# Os píeres são os únicos que mexem no roster. O resto é econômico e age
+	# nos lugares onde o dinheiro é contado (ver _valor_recebido e
+	# _process_week_end).
+	if id == "pier_2" or id == "pier_3":
+		upgrade_purchased = true          # compat: a suíte antiga ainda olha isto
+		for i in range(UPGRADE_EXTRA_DOCKS):
+			docks.append({"boat": null, "worker_id": null})
+		for i in range(UPGRADE_EXTRA_WORKERS):
+			workers.append({"id": workers.size() + 1, "busy_turns": 0})
+
 	cash_changed.emit(cash)
 	roster_changed.emit()
-	message.emit("Píer ampliado! +1 doca e +1 trabalhador.", "good")
+	message.emit("%s — pronto. %s" % [def["nome"], def["desc"]], "good")
 	save_game()
 	return true
+
+
+# Compat com a suíte de regressão e o simulador, que conheciam um upgrade só.
+func buy_upgrade() -> bool:
+	if not tem_estrutura("pier_2"):
+		return comprar_estrutura("pier_2")
+	return comprar_estrutura("pier_3")
+
+
+# Quanto o porto realmente recebe por um barco. O armazém entra aqui porque é
+# aqui que o dinheiro é contado — espalhar o bônus pelos sítios que somam caixa
+# é como se esquece um deles.
+func _valor_recebido(bruto: int) -> int:
+	if tem_estrutura("armazem"):
+		return int(round(bruto * (1.0 + ARMAZEM_BONUS)))
+	return bruto
 
 
 # ── GERAÇÃO DE BARCOS ──
@@ -516,6 +713,7 @@ func save_game() -> void:
 		"docks": docks,
 		"workers": workers,
 		"upgrade_purchased": upgrade_purchased,
+		"estruturas": estruturas,
 		"parcela_paid": parcela_paid,
 		"phase": phase,
 		"pending_rival_dock": pending_rival_dock,
@@ -549,6 +747,7 @@ func load_game() -> bool:
 	docks = parsed.get("docks", [])
 	workers = parsed.get("workers", [])
 	upgrade_purchased = bool(parsed.get("upgrade_purchased", false))
+	estruturas = parsed.get("estruturas", [])
 	parcela_paid = bool(parsed.get("parcela_paid", false))
 	phase = String(parsed.get("phase", "playing"))
 	pending_rival_dock = int(parsed.get("pending_rival_dock", -1))

@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/Dock.gd" id="1"]
 [ext_resource type="Texture2D" path="res://art/icones/rival.svg" id="ic_rival"]
 [ext_resource type="Texture2D" path="res://art/icones/trabalhador.svg" id="ic_trabalhador"]
+[ext_resource type="Texture2D" path="res://art/props/trabalhador.png" id="prop_trabalhador"]
+[ext_resource type="Texture2D" path="res://art/props/guindaste_lanca.png" id="prop_lanca"]
 
 [sub_resource type="StyleBoxFlat" id="chip"]
 bg_color = Color(0.09, 0.16, 0.24, 0.88)
@@ -41,6 +43,27 @@ offset_top = -130.0
 offset_right = 328.0
 offset_bottom = 382.0
 mouse_filter = 2
+
+[node name="Lanca" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -100.0
+offset_top = -172.0
+offset_right = 412.0
+offset_bottom = 340.0
+pivot_offset = Vector2(311, 153)
+mouse_filter = 2
+visible = false
+texture = ExtResource("prop_lanca")
+
+[node name="Trabalhador" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -100.0
+offset_top = -172.0
+offset_right = 412.0
+offset_bottom = 340.0
+mouse_filter = 2
+visible = false
+texture = ExtResource("prop_trabalhador")
 
 [node name="Chip" type="PanelContainer" parent="."]
 layout_mode = 0

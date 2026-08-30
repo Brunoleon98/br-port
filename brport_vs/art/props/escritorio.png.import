@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://br8pesym6pd5x"
-path="res://.godot/imported/porto_mapa_iso.svg-075af2047ccee587794b8f8211b23fca.ctex"
+uid="uid://1l8x3wac1nxh"
+path="res://.godot/imported/escritorio.png-260e7f95c3bff1428709a830ab22fe60.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/porto_mapa_iso.svg"
-dest_files=["res://.godot/imported/porto_mapa_iso.svg-075af2047ccee587794b8f8211b23fca.ctex"]
+source_file="res://art/props/escritorio.png"
+dest_files=["res://.godot/imported/escritorio.png-260e7f95c3bff1428709a830ab22fe60.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
