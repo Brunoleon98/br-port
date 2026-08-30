@@ -61,10 +61,9 @@ Apertar **F5** (ou o botão **▶** no canto superior direito).
 
 ### Dois avisos para não assustar
 
-**A cena parece vazia no editor.** Ao abrir `scenes/Main.tscn`, você vê só um nó
-`Control` e uma tela em branco. **Isso é esperado, não é bug.** Toda a interface
-deste protótipo é construída por código em tempo de execução (é placeholder —
-retângulos coloridos). Só dá para ver o jogo apertando **F5**.
+**A primeira abertura demora.** O Godot importa a arte toda (mapa, props,
+ícones) antes de conseguir abrir a cena. É uma vez só — depois fica em cache
+na pasta `.godot`.
 
 **A janela abre alta e estreita** (720×1280, retrato). É um jogo mobile, então a
 janela tem formato de celular mesmo.
@@ -75,10 +74,10 @@ janela tem formato de celular mesmo.
 
 | Ação | Como fazer |
 |---|---|
-| Alocar trabalhador | **Arrastar** o retângulo **verde** (trabalhador livre) para uma doca que tenha barco |
+| Alocar trabalhador | **Tocar** no trabalhador livre e depois no cartão da doca — ou **arrastar**, para o cartão ou para o píer no mapa |
 | Passar o dia | Botão **▶ AVANÇAR DIA** — processa a docagem e fatura |
 | Oferta do rival | Quando o Arlindo aparecer: **Igualar** / **Manter preço** / **Recusar** |
-| Comprar upgrade | Botão **🏗️ Ampliar píer** (+1 doca, +1 trabalhador) |
+| Construir no porto | Botão **Construir** — píer 2 e 3, armazém, pátio e escritório |
 | Pagar a dívida | No fim da **semana 4** vem a cobrança da parcela de R$ 8.000 |
 
 Regras rápidas do loop:
@@ -106,7 +105,7 @@ O save fica em `%APPDATA%\Godot\app_userdata\BR Port VS\`
 | "Projeto criado em outra versão do Godot" | Confirmar que baixou **Godot 4.6.3** (ou mais novo), não 3.x. O projeto está marcado como 4.6 — abrir numa 4.x anterior mostra esse aviso. |
 | Tela preta ao rodar | Conferir em **Projeto → Configurações do Projeto → Application → Run** se a cena principal é `res://scenes/Main.tscn`. |
 | Erro de script | Ler o painel **"Saída"** (Output), na parte de baixo do editor — a mensagem inteira costuma dizer exatamente o que faltou. |
-| Não consigo arrastar o trabalhador | O trabalhador precisa estar **verde** (livre). Cinza = ocupado. E a doca precisa ter barco sem trabalhador. |
+| Não consigo arrastar o trabalhador | O trabalhador precisa estar **verde** (livre). Cinza = ocupado. E a doca precisa ter barco sem trabalhador — quando aceita, o píer no mapa acende. |
 
 ---
 
@@ -122,6 +121,17 @@ Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tests/run_tests
 ```
 
 Termina com `TODOS OS TESTES PASSARAM` (código de saída 0) ou lista o que falhou.
+
+> **Num clone novo, importe a arte antes.** Sem a pasta `.godot` o Godot não
+> resolve as texturas e a suíte falha com uma pilha de
+> `referenced non-existent resource` que não tem nada a ver com o teste:
+>
+> ```
+> Godot --headless --path . --import
+> ```
+>
+> É preciso uma vez por clone. Em Linux sem monitor isto funciona igual — o
+> `--import` não precisa de tela, só a captura precisa (ver abaixo).
 
 ---
 

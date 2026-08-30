@@ -3,9 +3,10 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 30/08/2026 (rodada de polimento a partir de um
-> playtest: a informação da doca saiu de cima do mapa, os nomes viraram placa,
-> e o save ganhou versão — era ele que duplicava a compra dos píeres)
+> **Última atualização:** 30/08/2026 (duas rodadas de polimento a partir de
+> playtest: a interface saiu de cima do mapa, o save ganhou versão — era ele
+> que duplicava a compra dos píeres —, o pátio ganhou rua e uma vila que
+> cresce por Fase, e o Godot passou a rodar dentro da sessão)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 
@@ -32,6 +33,11 @@ toque-para-alocar, com o arrasto ainda funcionando.
 mapa (píer, barco, guindaste, trabalhador) e o cartão na barra logo abaixo
 dele (valor, turnos, trabalhador). Os nomes dos lugares são placas com mastro,
 e o número de cada doca está pintado no cais.
+
+**O porto tem uma cidade atrás dele.** Rua paralela ao cais, calçada, acesso a
+cada berço, e uma fileira de casas. A vila tem nível (`--nivel-vila=N` no
+gerador do mapa): 1 é casa térrea, 2 sobrado, 3 prédio — é assim que ela cresce
+a cada Fase, sem o jogo precisar saber.
 
 ---
 
@@ -124,7 +130,7 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `docs/BLOCO4_BRIEFING_CONTINUACAO.md` | **Ponto de entrada para retomar** — estado, decisões fechadas, 3 caminhos possíveis |
 | `docs/BLOCO4_PROMPTS_ISOMETRICO.md` | **Prompts do visual escolhido** — isométrico, orientação obrigatória, animação e evolução por Fase |
 | `docs/BLOCO4_PROMPTS_VISUAL_CHAPADO.md` | Superado — versão topo-down, mantida pelo registro |
-| `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo |
+| `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo — inclui a malha viária, a vila (`--nivel-vila=N`) e os números de doca pintados no cais |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `docs/BLOCO4_PACOTE_SPRITES.md` | O que do pacote de sprites/mockups entrou, o que não entrou e por quê |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
@@ -272,6 +278,19 @@ O playtest de 30/08 encontrou um bug de estado e três defeitos de imagem:
    espelhos dos degraus, e tudo o que a acompanha anda por ele.
 4. **Os nomes flutuavam sobre o mapa** e as chips das docas tapavam a arte.
    Ver a seção anterior.
+5. **O enrocamento cruzava a raiz de cada píer** e as pedras liam-se como se
+   estivessem por cima do tabuado. Elas param onde o píer começa: ninguém
+   joga pedra na frente da entrada de um píer.
+6. **Faixas claras atravessavam o pátio até dar na água.** Não eram estrada —
+   eram a margem de meia unidade que sobrava entre um degrau e o seguinte. O
+   pátio passou a ocupar o degrau inteiro, e no lugar delas entrou uma malha
+   viária desenhada de propósito.
+7. **Os coqueiros nasciam no meio do asfalto e por cima do armazém.** Foram
+   para o passeio e o cenário passou a ser desenhado por profundidade.
+8. **A ferramenta de captura fotografava o porto errado sem avisar** — 30% das
+   vezes `new_game()` abre oferta do rival, e com o jogo nesse estado toda
+   compra é recusada, então a foto do porto "completo" saía do porto em
+   ruínas. Resolve a oferta antes de comprar e grita se alguma falhar.
 
 O primeiro playtest humano (25/08) encontrou dois bugs sérios, ambos corrigidos:
 
@@ -311,6 +330,12 @@ Godot_v4.6.3-stable_win64.exe --headless --path brport_vs --script res://tests/r
 Espera-se `TODOS OS TESTES PASSARAM` e código de saída 0. A suíte cobre, entre
 outras coisas, o bug do save de outra versão (T5c), o teto de docas do mapa
 (T5d) e o formato do dinheiro (T5e).
+
+**Num clone novo, rode `--import` antes** — sem a pasta `.godot` a suíte falha
+com uma pilha de `referenced non-existent resource` que não tem nada a ver com
+o teste. E **o Godot roda no contêiner destas sessões**: baixar o binário Linux
+leva segundos e evita trabalhar às cegas. A receita completa está na §4 de
+`docs/BLOCO5_BRIEFING_CONTINUACAO.md`.
 
 E para medir o efeito de qualquer mudança de balanceamento (800 partidas por
 perfil de jogador, ~10 segundos):

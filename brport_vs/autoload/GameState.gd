@@ -651,13 +651,18 @@ func comprar_estrutura(id: String) -> bool:
 	# _process_week_end).
 	if id == "pier_2" or id == "pier_3":
 		upgrade_purchased = true          # compat: a suíte antiga ainda olha isto
+		# Doca que o mapa não desenha é doca invisível: recebe barco, o barco
+		# vai embora sem trabalhador e o jogador nunca vê por quê. E o
+		# trabalhador SÓ ENTRA COM A DOCA — quando o teto barrava a doca e o
+		# trabalhador vinha assim mesmo, sobrava gente na fileira sem lugar
+		# nenhum para trabalhar, que é como um "#4" fantasma nasceria de novo.
+		var abertas := 0
 		for i in range(UPGRADE_EXTRA_DOCKS):
-			# Doca que o mapa não desenha é doca invisível: recebe barco, o
-			# barco vai embora sem trabalhador e o jogador nunca vê por quê.
 			if docks.size() >= BERCOS_NO_MAPA:
 				break
 			docks.append({"boat": null, "worker_id": null})
-		for i in range(UPGRADE_EXTRA_WORKERS):
+			abertas += 1
+		for i in range(abertas * UPGRADE_EXTRA_WORKERS):
 			workers.append({"id": workers.size() + 1, "busy_turns": 0})
 
 	cash_changed.emit(cash)

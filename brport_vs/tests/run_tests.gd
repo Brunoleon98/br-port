@@ -182,9 +182,13 @@ func _run() -> void:
 	root.add_child(painel)
 	painel.setup(0)
 	_check("painel tem os 3 presets do GDD", painel._btn_igualar != null and painel._btn_metade != null and painel._btn_manter != null)
-	_check("botao de igualar mostra o preco", painel._btn_igualar.text.contains("850"))
+	# Os valores saem por GameState.moeda(), então o esperado vem de lá também —
+	# fixar "1000" aqui quebraria de novo no dia em que o formato mudasse.
+	_check("botao de igualar mostra o preco",
+		painel._btn_igualar.text.contains(GS.moeda(850)))
 	_check("botao de cortar metade mostra a chance", painel._btn_metade.text.contains("70"))
-	_check("botao de manter mostra o valor cheio", painel._btn_manter.text.contains("1000"))
+	_check("botao de manter mostra o valor cheio",
+		painel._btn_manter.text.contains(GS.moeda(1000)))
 
 	painel._negociar("igualar")
 	_check("negociar pelo painel devolve o jogo para playing", GS.phase == "playing")
@@ -306,6 +310,10 @@ func _run() -> void:
 	GS.comprar_estrutura("pier_3")
 	_check("os dois pieres dao exatamente %d docas" % GS.BERCOS_NO_MAPA,
 		GS.docks.size() == GS.BERCOS_NO_MAPA)
+	# Trabalhador sem doca é o "#4 fantasma" do playtest: um cartão na fileira
+	# que não tem onde trabalhar. O teto do mapa tem de segurar os dois juntos.
+	_check("e nunca mais trabalhador do que doca",
+		GS.workers.size() == GS.docks.size())
 	# Forca o estado impossivel e confere que carregar o conserta.
 	GS.docks.append({"boat": null, "worker_id": null})
 	GS.workers.append({"id": 99, "busy_turns": 0})

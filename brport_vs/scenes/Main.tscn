@@ -238,14 +238,15 @@ offset_right = 720.0
 offset_bottom = 720.0
 mouse_filter = 2
 
-[node name="Armazem" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = -14.0
-offset_top = 77.0
-offset_right = 498.0
-offset_bottom = 589.0
-mouse_filter = 2
-texture = ExtResource("prop_galpao_velho")
+; ORDEM = PROFUNDIDADE, aqui como em Dock.tscn: quem tem `mx+my` maior está
+; mais perto da câmera e tapa quem tem menor. Os coqueiros estavam todos
+; depois dos prédios e por isso apareciam por cima do armazém mesmo estando
+; atrás dele; e o escritório, que é o mais distante dos dois, tapava o
+; armazém. Intercalados por profundidade, cada um cai no seu lugar.
+;
+; Os três coqueiros também mudaram de sítio: estavam no meio do asfalto da
+; rua nova. Agora ficam no passeio, entre a rua e as casas, que é onde um
+; coqueiro fica numa cidade de porto.
 
 [node name="Escritorio" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
@@ -256,59 +257,68 @@ offset_bottom = 409.0
 mouse_filter = 2
 texture = ExtResource("prop_escritorio_ruina")
 
+[node name="Coqueiro2Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 163.0
+offset_top = -26.0
+offset_right = 675.0
+offset_bottom = 486.0
+mouse_filter = 2
+texture = ExtResource("prop_coqueiro_tronco")
+
+[node name="Coqueiro2Copa" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 163.0
+offset_top = -26.0
+offset_right = 675.0
+offset_bottom = 486.0
+mouse_filter = 2
+pivot_offset = Vector2(256, 178)
+texture = ExtResource("prop_coqueiro_copa")
+
+[node name="Armazem" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -14.0
+offset_top = 77.0
+offset_right = 498.0
+offset_bottom = 589.0
+mouse_filter = 2
+texture = ExtResource("prop_galpao_velho")
+
 [node name="Coqueiro0Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -107.0
-offset_top = -5.5
-offset_right = 405.0
-offset_bottom = 506.5
+offset_left = -105.0
+offset_top = 162.0
+offset_right = 407.0
+offset_bottom = 674.0
 mouse_filter = 2
 texture = ExtResource("prop_coqueiro_tronco")
 
 [node name="Coqueiro0Copa" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -107.0
-offset_top = -5.5
-offset_right = 405.0
-offset_bottom = 506.5
+offset_left = -105.0
+offset_top = 162.0
+offset_right = 407.0
+offset_bottom = 674.0
 mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
 [node name="Coqueiro1Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -194.0
-offset_top = 164.0
-offset_right = 318.0
-offset_bottom = 676.0
+offset_left = -226.0
+offset_top = 343.0
+offset_right = 286.0
+offset_bottom = 855.0
 mouse_filter = 2
 texture = ExtResource("prop_coqueiro_tronco")
 
 [node name="Coqueiro1Copa" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -194.0
-offset_top = 164.0
-offset_right = 318.0
-offset_bottom = 676.0
-mouse_filter = 2
-pivot_offset = Vector2(256, 178)
-texture = ExtResource("prop_coqueiro_copa")
-
-[node name="Coqueiro2Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = -134.0
-offset_top = 320.0
-offset_right = 378.0
-offset_bottom = 832.0
-mouse_filter = 2
-texture = ExtResource("prop_coqueiro_tronco")
-
-[node name="Coqueiro2Copa" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = -134.0
-offset_top = 320.0
-offset_right = 378.0
-offset_bottom = 832.0
+offset_left = -226.0
+offset_top = 343.0
+offset_right = 286.0
+offset_bottom = 855.0
 mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")

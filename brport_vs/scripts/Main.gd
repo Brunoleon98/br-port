@@ -80,6 +80,13 @@ func _ready() -> void:
 	_animar_ancorados()
 	_animar_coqueiros()
 
+	# Turno 1 abria com a faixa de mensagem VAZIA — um cartão creme com nada
+	# dentro, que na tela lê como falha e não como "ainda não aconteceu nada".
+	# A mensagem inicial não pode vir do GameState: `new_game()` roda no
+	# autoload, antes de esta cena existir para escutar o sinal.
+	if _message_label.text == "":
+		_on_message("O porto é seu. Um píer de pé e o resto por levantar.", "")
+
 	# Se o jogo carregou de um save já em rival_offer/debt_payment, reabre o painel certo.
 	if GameState.phase == "rival_offer" and GameState.pending_rival_dock >= 0:
 		_on_rival_offer_triggered(GameState.pending_rival_dock)
