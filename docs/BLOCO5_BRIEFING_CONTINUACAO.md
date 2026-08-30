@@ -129,12 +129,49 @@ O lote inteiro de props leva **54 s** para regerar.
   o guindaste. O gerador do mapa já imprimia a conta: entre o centro do píer e
   a âncora do barco há Δmx = 0 e Δmy = +2,8, ou seja o barco encosta no FLANCO,
   não na ponta. A lança agora varre para −Y local, atravessando o convés.
-- **A chip da doca cobre o meio do convés.** É a tensão de sempre: o passo
-  vertical entre docas é 180px e o píer ocupa ~155, então não cabe empilhar.
-  A saída real é repensar ONDE a informação da doca mora. **Piorou um pouco**
-  com o guindaste novo, que é mais alto e passa por trás da chip.
+- ~~A chip da doca cobre o meio do convés~~ — **resolvido em 30/08**, e pela
+  saída que este parágrafo já apontava: repensar ONDE a informação da doca
+  mora. Ela deixou de morar no mapa. A doca agora tem duas metades —
+  `Dock.tscn` (píer, barco, guindaste, trabalhador, sobre o mapa) e
+  `DocaCartao.tscn` (valor, turnos, trabalhador, numa barra alinhada logo
+  abaixo do mapa) — e é o `Main` que sabe que as duas são a mesma doca. O
+  mapa ficou sem nenhum retângulo de interface em cima, e os três alvos de
+  toque saíram da diagonal para uma fileira, que é mais fácil de acertar com
+  o polegar. O píer no mapa continua sendo alvo de arrasto: quando há
+  trabalhador escolhido, ele ACENDE (modulate no sprite) em vez de ganhar
+  uma moldura.
 - **O retrato ilustrado do trabalhador** no cartão é de outra leva e de outra
   linguagem visual que o resto.
+- ~~As faixas claras que atravessavam o pátio~~ — **resolvido em 30/08.** Não
+  eram desenho: eram a margem de meia unidade em `my` que sobrava entre um
+  degrau e o seguinte, e por isso iam dar na água sem levar a lugar nenhum. O
+  pátio passou a ocupar o degrau inteiro e no lugar delas entrou uma malha
+  viária de verdade — rua paralela ao cais, calçada, faixa tracejada e um
+  acesso curto ligando a rua a cada berço.
+- ~~O enrocamento cruzava a raiz do píer~~ — **resolvido em 30/08.** As pedras
+  param onde o tabuado começa (`PIER_FOLGA`): ninguém joga pedra na frente da
+  entrada de um píer, e a faixa cruzando ali fazia as pedras lerem como se
+  estivessem por cima dele.
+
+### A VILA — o que ficou pronto e o que falta
+
+Atrás da rua há agora uma **fileira de casas**, e ela tem um caminho de
+crescimento embutido: `--nivel-vila=N` no gerador do mapa. Nível 1 (o que
+está no jogo) é casa térrea de telha de barro; 2 é sobrado; 3 é prédio. Só a
+altura, o telhado e o número de linhas de janela mudam — a implantação é a
+mesma, então a cidade cresce PARA CIMA no mesmo lote, que é o que se vê numa
+cidade portuária de verdade.
+
+Duas coisas para quem for subir a Fase:
+
+1. **O nível 3 ainda lê como casa alta, não como prédio.** Implantação de
+   1,35 × 1,1 com 56px de altura é uma torre estreita. Crescer de verdade
+   pede FUNDIR LOTES — dois vizinhos viram um prédio — e isso é mudança em
+   `lotes_da_vila()`, não em `VILA_NIVEIS`.
+2. **A vila é assada no SVG, não é prop.** Prop é para o que troca de estado
+   dentro de uma partida. A vila troca entre Fases, que é fronteira de
+   conteúdo: subir o nível é regerar os dois mapas, não mexer no jogo. Se um
+   dia a cidade crescer DURANTE a partida, aí sim ela vira prop.
 
 ### B) Props gerados e ainda sem uso
 
@@ -168,6 +205,24 @@ uso.
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos. |
 | `brport_vs/tools/capturar_tela.gd` | PNG do jogo rodando. Terceiro argumento `completo` compra todas as estruturas antes de montar a cena, para fotografar o mapa pavimentado. **Teste verde não prova que ficou bonito.** |
 
+**O Godot RODA no contêiner destas sessões, e isto vale mais do que parece.**
+Duas rodadas de trabalho visual foram feitas às cegas por falta desta linha:
+
+    curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
+    unzip -q godot.zip && chmod +x Godot_v4.6.1-stable_linux.x86_64
+
+São 70 MB e leva segundos. Depois:
+
+    ./Godot... --headless --path brport_vs --import            # UMA VEZ por clone
+    ./Godot... --headless --path brport_vs --script res://tests/run_tests.gd
+    xvfb-run -a ./Godot... --path brport_vs --resolution 720x1280 \
+      --rendering-driver opengl3 --script res://tools/capturar_tela.gd -- 12 foto.png completo
+
+O `--import` não é opcional: num clone novo não existe a pasta `.godot`, e sem
+ela a suíte falha com uma pilha de `referenced non-existent resource` que não
+tem nada a ver com o que se está testando. O `xvfb-run` só é preciso para a
+captura (que exige contexto gráfico); teste e import rodam sem tela.
+
 O Blender entra como biblioteca Python, sem interface:
 
     python3 -m venv ~/bpy-venv && ~/bpy-venv/bin/pip install "bpy==4.5.13"
@@ -200,6 +255,48 @@ As novas:
    elas**, e na tela isso vira uma linha escura pontilhada atravessando o
    cais. A constante `COSTURA` estica um triz o degrau de trás, que o da
    frente cobre.
+6. **Save sem versão é uma bomba-relógio.** `DOCKS_BASE` foi de 2 para 1 e o
+   save gravado antes continuou a ser carregado: o jogador ficava com duas
+   docas de graça, `estruturas` vinha vazia (a chave nem existia naquela
+   versão), o painel continuava a oferecer os píeres 2 e 3, e comprar os dois
+   levava o porto a **4 docas num mapa que só desenha 3** — a quarta recebia
+   barco e nunca aparecia. Hoje há `SAVE_VERSION`, save de outra versão é
+   descartado, e `_reconciliar_roster()` deriva docas e trabalhadores do que
+   está construído em vez de os tratar como contador solto.
+7. **Contagem que a tela mostra tem de ser regra do jogo.** `VAGAS_NO_MAPA`
+   vivia no `Main.gd`, então nada impedia o estado de passar do que a tela
+   sabe desenhar — e passou. Virou `GameState.BERCOS_NO_MAPA`.
+8. **Num plano isométrico, ordem de nó É profundidade.** O trabalhador era o
+   último filho de `Dock.tscn` e por isso era desenhado por cima do cabo e do
+   moitão do guindaste, que estão à frente dele no mundo. Parecia pendurado no
+   ar. Sempre que um prop novo entrar numa cena, ele vai onde o `mx+my` dele
+   manda.
+9. **O que acompanha a costa tem de virar a esquina junto com ela.** O
+   enrocamento era espalhado degrau por degrau, cada um ao longo do seu
+   próprio `borda`, e nas quinas da escada as pedras caíam dentro do degrau
+   seguinte — na tela, cascalho pintado em cima do concreto do cais. Agora a
+   costa é um CONTORNO explícito (`contorno_costa`/`costa_deslocada`), com os
+   espelhos dos degraus incluídos, e tudo o que a acompanha anda por ele com a
+   normal apontando para o mar.
+11. **Tudo o que vive em terra tem de ser medido A PARTIR DO CAIS.** A rua e
+   as casas nasceram em `mx` absoluto e ficavam a 4 unidades da água no
+   primeiro degrau e a 16 no último — no ecrã, saíam pela esquerda antes do
+   terceiro. O cais avança 4 por degrau; o que não avança com ele sai do
+   enquadramento. Os contêineres do pátio tinham o mesmo defeito e dois deles
+   caíam dentro da rua nova.
+12. **Ordem dos nós de cenário também é profundidade.** Os coqueiros vinham
+   todos depois dos prédios e apareciam por cima do armazém estando atrás
+   dele; o escritório, mais distante, tapava o armazém. Intercalados por
+   `mx+my` crescente, cada um cai no seu lugar.
+13. **A ferramenta de captura mentia sem dar erro.** `new_game()` tem 30% de
+   abrir oferta do rival, e com o jogo em `rival_offer` toda compra é
+   recusada — a foto do porto "completo" saía do porto EM RUÍNAS, com o nome
+   certo e sem uma linha de aviso. Resolve a oferta antes de comprar e agora
+   grita (`push_error`) se alguma compra falhar.
+14. **O ThorVG não desenha `<text>`.** Texto escrito com fonte num SVG sai
+   vazio dentro do Godot. Os números de doca pintados no cais são polígonos de
+   estêncil (`DIGITOS` em `gerar_mapa_iso.py`) por causa disso — e o estêncil
+   ainda ficou mais parecido com tinta de piso do que uma fonte ficaria.
 
 ---
 

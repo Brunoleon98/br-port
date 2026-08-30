@@ -31,6 +31,21 @@ extends SceneTree
 const PARTIDAS_PADRAO := 500
 const SEMENTE_PADRAO := 20260825
 
+# Abaixo de quantas partidas o resultado deixa de ser uma MEDIDA e passa a ser
+# só um teste de fumaça — a ferramenta ainda roda, mas o número que ela imprime
+# não dá para comparar com nada.
+#
+# Não é zelo teórico: o CI roda 30 partidas (só para provar que o simulador
+# não quebrou junto com o GameState) e imprimiu 36,7% para o jogador mediano,
+# contra os 47% medidos e registrados no CLAUDE.md. Leu-se como regressão de
+# balanceamento e custou uma investigação inteira. Com 30 partidas a margem é
+# de ±18 pontos: 36,7% e 47,3% são a MESMA medida, e o log não dizia isso.
+#
+# O corte sai da margem: em 100 partidas o pior caso é ±10 pontos, que é o
+# menor deslocamento que ainda interessa a alguém que mexe num `# TUNING:`.
+const PARTIDAS_PARA_MEDIR := 100
+const MARGEM_UTIL := 10.0
+
 # Perfis de jogador. Os números são o modelo de "como alguém erra":
 #   chance_esquecer_doca — por doca, por turno: deixou o barco sem
 #     trabalhador (distração, não entendeu o drag-and-drop, achou que
@@ -103,6 +118,7 @@ func _rodar() -> void:
 	print("Parcela a vencer: R$%d na semana %d (turno %d)" % [
 		GS.PARCELA_AMOUNT, GS.WEEKS_TOTAL, GS.PARCELA_DUE_TURN])
 	print("")
+	_avisar_se_amostra_curta(partidas)
 
 	var resultados := []
 	for perfil in PERFIS:
@@ -110,7 +126,27 @@ func _rodar() -> void:
 
 	_imprimir_tabela(resultados, partidas)
 	_imprimir_diagnostico(resultados)
+	# De novo no fim: log de CI se lê de baixo para cima, e o aviso do
+	# cabeçalho fica a centenas de linhas de distância da conclusão.
+	_avisar_se_amostra_curta(partidas)
 	quit(0)
+
+
+# Diz, em voz alta, quando a rodada não tem partidas que cheguem para medir.
+# O silêncio aqui é o que faz um número de teste de fumaça passar por medida.
+func _avisar_se_amostra_curta(partidas: int) -> void:
+	if partidas >= PARTIDAS_PARA_MEDIR:
+		return
+	# O pior caso da margem é em p = 0,5, e não depende do resultado: dá para
+	# afirmar a imprecisão ANTES de olhar para a taxa.
+	var pior := _margem_de_erro(0.5, partidas)
+	print("")
+	print("⚠️  TESTE DE FUMAÇA, NÃO MEDIÇÃO — %d partidas por perfil." % partidas)
+	print("    A margem chega a ±%.0f pontos. NÃO compare estas taxas com as do" % pior)
+	print("    CLAUDE.md (100% / 47% / 0%, medidas em 600 partidas): a diferença")
+	print("    que você vê provavelmente é sorteio.")
+	print("    Para medir de verdade: ... --script res://tools/simular_balanceamento.gd -- 600")
+	print("")
 
 
 func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Dictionary:

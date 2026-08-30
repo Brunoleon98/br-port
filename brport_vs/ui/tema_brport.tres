@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=19 format=3]
+[gd_resource type="Theme" load_steps=16 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -91,81 +91,6 @@ corner_radius_top_right = 99
 corner_radius_bottom_right = 99
 corner_radius_bottom_left = 99
 
-[sub_resource type="StyleBoxFlat" id="painel_escuro"]
-bg_color = Color(0.11, 0.204, 0.329, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-content_margin_left = 14.0
-content_margin_top = 12.0
-content_margin_right = 14.0
-content_margin_bottom = 12.0
-
-[sub_resource type="StyleBoxFlat" id="doca_vazia"]
-bg_color = Color(0.909, 0.933, 0.968, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.816, 0.875, 0.941, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-
-[sub_resource type="StyleBoxFlat" id="doca_barco"]
-bg_color = Color(0.906, 0.957, 0.984, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.404, 0.643, 0.788, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-
-[sub_resource type="StyleBoxFlat" id="doca_grande"]
-bg_color = Color(0.855, 0.925, 0.969, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.141, 0.275, 0.431, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-
-[sub_resource type="StyleBoxFlat" id="doca_rival"]
-bg_color = Color(1, 0.941, 0.941, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.761, 0.188, 0.188, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-
 [sub_resource type="StyleBoxFlat" id="trab_livre"]
 bg_color = Color(0.929, 0.984, 0.949, 1)
 border_width_left = 2
@@ -214,55 +139,94 @@ content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
 
-; ── Mapa do porto (Bloco 4) ──
-; Paleta de mundo, registrada em docs/design/BR_Port_Style_Guide_Flat_Design.md
-; §1.2 — deriva das mesmas famílias de cor da UI (o telhado reaproveita o
-; "orange" que já existia no protótipo) em vez de inventar tom à parte.
+; ── Sobre o mapa do porto ──
+; O mapa é arte de verdade desde o Bloco 4, então os tokens de cor de água,
+; areia e telhado saíram daqui: quem os define é o gerador do SVG. O que
+; sobra em cima do mapa é interface, e interface é ESCURA — cartão claro
+; sobre cenário colorido some, e foi por isso que os rótulos brancos com
+; contorno tinham de ser tão grandes.
 ;
-;   agua #2f7690   areia #efe0c0   madeira_escura #6b4423   telhado #c85420
+;   painel #17293d   contorno #33577a   âmbar #e09a10   vermelho #c23030
 
-[sub_resource type="StyleBoxFlat" id="mapa_agua"]
-bg_color = Color(0.184, 0.463, 0.565, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-
-[sub_resource type="StyleBoxFlat" id="escritorio"]
-bg_color = Color(0.937, 0.878, 0.753, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.784, 0.329, 0.125, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-content_margin_left = 6.0
-content_margin_top = 8.0
-content_margin_right = 6.0
-content_margin_bottom = 8.0
-
-[sub_resource type="StyleBoxFlat" id="zona_espera"]
-bg_color = Color(0.373, 0.706, 0.820, 0.55)
+[sub_resource type="StyleBoxFlat" id="cartao_doca"]
+bg_color = Color(0.09, 0.161, 0.239, 0.96)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(1, 1, 1, 0.7)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-content_margin_left = 6.0
-content_margin_top = 8.0
-content_margin_right = 6.0
-content_margin_bottom = 8.0
+border_color = Color(0.2, 0.341, 0.478, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 12.0
+content_margin_top = 7.0
+content_margin_right = 12.0
+content_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxFlat" id="cartao_doca_espera"]
+bg_color = Color(0.129, 0.2, 0.259, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 11.0
+content_margin_top = 6.0
+content_margin_right = 11.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="cartao_doca_rival"]
+bg_color = Color(0.196, 0.129, 0.145, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.761, 0.188, 0.188, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 11.0
+content_margin_top = 6.0
+content_margin_right = 11.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="cartao_doca_obra"]
+bg_color = Color(0.086, 0.133, 0.173, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.227, 0.29, 0.341, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 12.0
+content_margin_top = 7.0
+content_margin_right = 12.0
+content_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxFlat" id="letreiro"]
+bg_color = Color(0.09, 0.161, 0.239, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+content_margin_left = 10.0
+content_margin_top = 3.0
+content_margin_right = 10.0
+content_margin_bottom = 3.0
 
 [resource]
 default_font_size = 15
@@ -282,25 +246,19 @@ ProgressBar/styles/background = SubResource("barra_fundo")
 ProgressBar/styles/fill = SubResource("barra_cheia")
 Cartao/base_type = "PanelContainer"
 Cartao/styles/panel = SubResource("cartao")
-CartaoEscuro/base_type = "PanelContainer"
-CartaoEscuro/styles/panel = SubResource("painel_escuro")
-DocaVazia/base_type = "PanelContainer"
-DocaVazia/styles/panel = SubResource("doca_vazia")
-DocaBarco/base_type = "PanelContainer"
-DocaBarco/styles/panel = SubResource("doca_barco")
-DocaGrande/base_type = "PanelContainer"
-DocaGrande/styles/panel = SubResource("doca_grande")
-DocaRival/base_type = "PanelContainer"
-DocaRival/styles/panel = SubResource("doca_rival")
 TrabLivre/base_type = "PanelContainer"
 TrabLivre/styles/panel = SubResource("trab_livre")
 TrabAlocado/base_type = "PanelContainer"
 TrabAlocado/styles/panel = SubResource("trab_alocado")
 TrabOcupado/base_type = "PanelContainer"
 TrabOcupado/styles/panel = SubResource("trab_ocupado")
-MapaAgua/base_type = "PanelContainer"
-MapaAgua/styles/panel = SubResource("mapa_agua")
-Escritorio/base_type = "PanelContainer"
-Escritorio/styles/panel = SubResource("escritorio")
-ZonaEspera/base_type = "PanelContainer"
-ZonaEspera/styles/panel = SubResource("zona_espera")
+CartaoDoca/base_type = "PanelContainer"
+CartaoDoca/styles/panel = SubResource("cartao_doca")
+CartaoDocaEspera/base_type = "PanelContainer"
+CartaoDocaEspera/styles/panel = SubResource("cartao_doca_espera")
+CartaoDocaRival/base_type = "PanelContainer"
+CartaoDocaRival/styles/panel = SubResource("cartao_doca_rival")
+CartaoDocaObra/base_type = "PanelContainer"
+CartaoDocaObra/styles/panel = SubResource("cartao_doca_obra")
+Letreiro/base_type = "PanelContainer"
+Letreiro/styles/panel = SubResource("letreiro")

@@ -12,6 +12,11 @@ config/features=PackedStringArray("4.6")
 [autoload]
 
 GameState="*res://autoload/GameState.gd"
+Audio="*res://autoload/Audio.gd"
+
+[audio]
+
+buses/default_bus_layout="res://audio/default_bus_layout.tres"
 
 [display]
 

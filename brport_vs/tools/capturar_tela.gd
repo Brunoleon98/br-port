@@ -19,7 +19,8 @@ extends SceneTree
 # `turnos` avança a partida antes de fotografar (0 = tela inicial), e a
 # oferta do rival é resolvida para a tela sair limpa. Um terceiro argumento
 # `completo` compra todas as estruturas antes de montar a cena, para
-# fotografar o porto reconstruído (mapa pavimentado, píeres e prédios de pé). Para fotografar o
+# fotografar o porto reconstruído (mapa pavimentado, píeres e prédios de pé).
+# Um quarto argumento `pausa` abre o menu de pausa por cima. Para fotografar o
 # PAINEL da contra-oferta em vez da tela principal, use --  0  e rode com
 # uma semente que abra oferta no primeiro turno.
 # ============================================================
@@ -80,15 +81,29 @@ func _montar() -> void:
 	# isto só dava para conferir na tela o estado inicial, e o segundo mapa
 	# ficava sem ninguém olhando.
 	if args.size() >= 3 and args[2] == "completo":
+		# new_game() sorteia a mão inicial e tem 30% de abrir oferta do rival.
+		# Com o jogo em "rival_offer" toda compra é recusada com "Resolva o que
+		# está na tela primeiro", e a foto saía do porto EM RUÍNAS com o nome
+		# "completo" — sem erro nenhum, o que é pior. Resolver antes de comprar.
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
 		GS.cash += 100000
 		var ids: Array = GS.ESTRUTURAS.keys()
 		var tabela: Dictionary = GS.ESTRUTURAS
 		ids.sort_custom(func(a, b): return int(tabela[a]["ordem"]) < int(tabela[b]["ordem"]))
 		for eid in ids:
-			GS.comprar_estrutura(eid)
+			if not GS.comprar_estrutura(eid):
+				push_error("captura: nao consegui comprar %s (%s)"
+					% [eid, GS.impedimento_estrutura(eid)])
 
 	_main = load("res://scenes/Main.tscn").instantiate()
 	root.add_child(_main)
+
+	# `pausa` fotografa o menu de pausa, que é onde vivem os sliders de volume.
+	# Sem isto a única forma de conferir aquele painel era abrir o editor — e é
+	# um painel construído por código, portanto o que mais escapa ao olho.
+	if args.size() >= 4 and args[3] == "pausa":
+		_main._on_pause_pressed()
 
 	for t in range(turnos):
 		if GS.phase == "rival_offer":

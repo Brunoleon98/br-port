@@ -50,7 +50,7 @@ func _build_ui() -> void:
 	vbox.add_child(Icones.rotulo(Icones.RIVAL, "Arlindo (Porto Farol) fez uma oferta"))
 
 	var info_label := Label.new()
-	info_label.text = "Cliente considerando ir para o Porto Farol.\nValor original: R$%d" % _valor_barco()
+	info_label.text = "Cliente considerando ir para o Porto Farol.\nValor original: %s" % GameState.moeda(_valor_barco())
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	vbox.add_child(info_label)
 
@@ -103,17 +103,17 @@ func _refresh() -> void:
 	var ja_insistiu := restantes < GameState.RIVAL_PATIENCE
 
 	var desconto_igualar: float = GameState.RIVAL_DISCOUNT_AFTER_FAIL if ja_insistiu else GameState.RIVAL_DISCOUNT
-	_btn_igualar.text = "Igualar (−%d%%) → R$%d  ·  fecha na hora" % [
+	_btn_igualar.text = "Igualar (−%d%%) → %s  ·  fecha na hora" % [
 		int(round(desconto_igualar * 100.0)),
-		int(round(valor * (1.0 - desconto_igualar)))]
+		GameState.moeda(int(round(valor * (1.0 - desconto_igualar))))]
 
-	_btn_metade.text = "Cortar metade (−%d%%) → R$%d  ·  %d%% de chance" % [
+	_btn_metade.text = "Cortar metade (−%d%%) → %s  ·  %d%% de chance" % [
 		int(round(GameState.RIVAL_HALF_DISCOUNT * 100.0)),
-		int(round(valor * (1.0 - GameState.RIVAL_HALF_DISCOUNT))),
+		GameState.moeda(int(round(valor * (1.0 - GameState.RIVAL_HALF_DISCOUNT)))),
 		int(round(GameState.RIVAL_HALF_CHANCE * 100.0))]
 
-	_btn_manter.text = "Manter preço → R$%d  ·  %d%% de chance" % [
-		valor,
+	_btn_manter.text = "Manter preço → %s  ·  %d%% de chance" % [
+		GameState.moeda(valor),
 		int(round(GameState.RIVAL_KEEP_CHANCE * 100.0))]
 
 	var desc := "Cliente ouvindo a proposta."

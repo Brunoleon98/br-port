@@ -41,11 +41,11 @@ func _build_ui() -> void:
 	var can_pay: bool = GameState.cash >= amount
 	var body := Label.new()
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD
-	body.text = "\"A Parcela vence hoje: R$%d. Fui amigo do seu avô — vim pessoalmente porque o porto merece esse respeito.\"\n\nCaixa atual: R$%d" % [amount, int(GameState.cash)]
+	body.text = "\"A Parcela vence hoje: %s. Fui amigo do seu avô — vim pessoalmente porque o porto merece esse respeito.\"\n\nCaixa atual: %s" % [GameState.moeda(amount), GameState.moeda(int(GameState.cash))]
 	vbox.add_child(body)
 
 	var btn_pay := Button.new()
-	btn_pay.text = "Pagar R$%d" % amount
+	btn_pay.text = "Pagar %s" % GameState.moeda(amount)
 	btn_pay.disabled = not can_pay
 	btn_pay.pressed.connect(_on_pay)
 	vbox.add_child(btn_pay)

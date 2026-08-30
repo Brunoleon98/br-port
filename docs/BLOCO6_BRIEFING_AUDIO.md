@@ -8,6 +8,30 @@
 
 ---
 
+## 0. ESTADO — o encanamento está FEITO (30/08)
+
+O que este briefing pedia na §6 foi executado, e é o que está no jogo hoje:
+
+| Pedido | Onde ficou |
+|---|---|
+| Buses `Musica` e `SFX` | `brport_vs/audio/default_bus_layout.tres` |
+| Autoload tocador | `brport_vs/autoload/Audio.gd` |
+| Ouvinte único de `message` | `Audio._ao_mensagem` — cobre os 13 pontos |
+| Anti-empilhamento | prioridade por frame + espera mínima por som |
+| Sons de rascunho | `tools/gerar_sons.py` → 10 WAV, 320 kB |
+| Sliders de volume | `PauseMenu.gd`, gravados em `user://audio.cfg` |
+| Clique em botão | `node_added` liga sozinho em todo `BaseButton` |
+| O que dá para verificar | `tests/teste_audio.gd`, no CI |
+
+**O que FALTA:** a música (as 8 camadas do guia), o ambiente de porto, o loop
+do guindaste, e a troca dos efeitos de rascunho pelos reais. Nada disso muda
+código — é trocar arquivo por arquivo na pasta `audio/sfx/`, mantendo o nome.
+
+O resto deste documento continua válido como levantamento e como registro do
+raciocínio.
+
+---
+
 ## 1. O ponto de partida, sem rodeio
 
 **O jogo é mudo. Zero.** Não é "tem pouco áudio": não existe um `AudioStream`,

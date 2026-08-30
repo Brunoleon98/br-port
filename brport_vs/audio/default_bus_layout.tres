@@ -1,0 +1,26 @@
+[gd_resource type="AudioBusLayout" format=3]
+
+; BR Port VS — barramentos de áudio
+;
+; Três buses e não um: `Musica` e `SFX` precisam de volume SEPARADO nas opções,
+; porque quem baixa a trilha para ouvir um podcast não quer perder o retorno
+; sonoro dos botões — e quem acha o efeito cansativo não quer perder a trilha.
+; Um bus só obriga a escolher entre as duas coisas.
+;
+; `Musica` já existe sem nada roteado nele: a trilha ainda não foi produzida
+; (ver docs/BLOCO6_BRIEFING_AUDIO.md §3). Criá-lo agora custa nada e evita que
+; a chegada dela venha junto com uma migração de rota.
+
+[resource]
+bus/1/name = &"Musica"
+bus/1/solo = false
+bus/1/mute = false
+bus/1/bypass_fx = false
+bus/1/volume_db = 0.0
+bus/1/send = &"Master"
+bus/2/name = &"SFX"
+bus/2/solo = false
+bus/2/mute = false
+bus/2/bypass_fx = false
+bus/2/volume_db = 0.0
+bus/2/send = &"Master"

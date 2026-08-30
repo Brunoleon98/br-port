@@ -31,6 +31,7 @@ Uso:
     python3 tools/gerar_mapa_iso.py brport_vs/art/porto_mapa_iso.svg
 """
 
+import json
 import random
 import sys
 
@@ -52,6 +53,24 @@ PIER_ALCANCE = 4.5
 # (my inicial, my final, mx da beira) de cada píer — alinhados aos degraus.
 PIERES = [(2.0, 4.4, 6.0), (10.0, 12.4, 10.0), (18.0, 20.4, 14.0)]
 
+# ── MALHA VIÁRIA E VILA ──────────────────────────────────────────────────
+# TUDO AQUI É MEDIDO A PARTIR DA BEIRA DO CAIS, nunca em `mx` absoluto, e a
+# razão é a janela: a terra visível é uma faixa que acompanha a costa, e o
+# cais avança 4 unidades a cada degrau. Uma rua em `mx` fixo ficaria a 4
+# unidades da água no primeiro degrau e a 16 no último — no ecrã, sairia pela
+# esquerda antes do terceiro. Medindo do cais, rua e casas acompanham a costa
+# e continuam enquadradas do começo ao fim.
+#
+# A ordem, da água para dentro: avental (manobra colada ao navio), pátio do
+# porto (onde estão armazém, escritório e a carga), rua, e a vila atrás dela.
+APRON = 1.3              # concreto entre o pátio e a beira do cais
+RUA_RECUO = 4.3          # da beira do cais até a face de TERRA da rua
+RUA_LARG = 1.1
+CALCADA = 0.22
+VILA_RECUO = 6.0         # fundo dos lotes, também medido do cais
+VILA_PROF = 1.35         # profundidade da casa em mx
+VILA_PASSO = 1.95        # de uma casa à seguinte, em my
+
 C = {
     "agua": "#2b6f8c", "agua_funda": "#1d4f68", "agua_media": "#33789a",
     "agua_rasa": "#4a96b4", "agua_baixio": "#63aec7", "espuma": "#b6dcea",
@@ -65,11 +84,90 @@ C = {
     "vidro": "#7fb6cc", "porta": "#5a3a20", "terra": "#8a7a63",
     "terra_clara": "#9c8b71", "terra_escura": "#75664f", "poca": "#6b6f66",
     "mato": "#5c7343", "asfalto_claro": "#7d8993", "asfalto_escuro": "#616c76",
+    "tinta": "#e0a81f",
+    "asfalto_via": "#5f6a73", "calcada": "#a6b0b7", "faixa_via": "#d8dee3",
+    "casa_a": "#e8e2d4", "casa_b": "#dcd3c2", "casa_c": "#cfd8de",
+    "telha_a": "#b1512a", "telha_b": "#9d6a3c", "telha_c": "#7f8c98",
+    "telha_d": "#a05a52",
 }
 
 
 def p(mx: float, my: float, h: float = 0.0) -> tuple:
     return (CX + (mx - my) * MEIA_LARG, CY + (mx + my) * MEIA_ALT - h)
+
+
+def contorno_costa() -> list:
+    """Os vértices (mx, my) da linha que separa terra de água, em ordem de my.
+
+    A costa é uma ESCADA, não uma diagonal. Cada degrau avança 4 em `mx` e
+    8 em `my` (ver o cabeçalho), e entre um e o seguinte há uma quina de
+    verdade: primeiro o muro do degrau atual, depois o espelho que liga ao
+    muro do próximo. Descrever isso como uma linha só é o que faz tudo o que
+    acompanha a margem — faixa de profundidade, enrocamento, espuma — virar a
+    esquina junto com ela.
+    """
+    v = [(DEGRAUS[0][2], DEGRAUS[0][0])]
+    for i, (_, my1, borda) in enumerate(DEGRAUS):
+        v.append((borda, my1))
+        if i + 1 < len(DEGRAUS):
+            v.append((DEGRAUS[i + 1][2], my1))
+    return v
+
+
+def costa_deslocada(d: float) -> list:
+    """O contorno da costa empurrado `d` unidades para dentro da ÁGUA.
+
+    Cada tipo de segmento tem a água de um lado diferente: num muro (mx
+    constante) a água está no +mx; num espelho de degrau (my constante) ela
+    está no -my, porque o degrau seguinte é mais largo e come o +my.
+
+    Era exatamente isto que faltava. A versão anterior empurrava tudo em +mx
+    e tratava cada degrau como uma faixa solta: nas quinas a faixa entrava
+    pelo cais adentro, e o enrocamento aparecia como cascalho pintado em cima
+    do concreto — o "textura de pedra por cima do mapa" reportado no playtest.
+    """
+    v = contorno_costa()
+    ponta = len(v) - 1
+    return [(mx + d, my if i in (0, ponta) else my - d)
+            for i, (mx, my) in enumerate(v)]
+
+
+def andar_costa(d: float, passo: tuple, r: random.Random):
+    """Percorre a linha de água a `d` da terra, a passos irregulares.
+
+    Devolve (mx, my, normal, tangente) — a normal aponta para o mar, e é ela
+    que garante que nada do que se espalha por aqui caia do lado da terra.
+    """
+    v = costa_deslocada(d)
+    for i in range(len(v) - 1):
+        (x0, y0), (x1, y1) = v[i], v[i + 1]
+        muro = abs(x1 - x0) < 1e-6
+        normal = (1.0, 0.0) if muro else (0.0, -1.0)
+        tangente = (0.0, 1.0) if muro else (1.0, 0.0)
+        comprimento = abs(y1 - y0) if muro else abs(x1 - x0)
+        andado = 0.0
+        while andado < comprimento:
+            f = andado / comprimento
+            yield (x0 + (x1 - x0) * f, y0 + (y1 - y0) * f, normal, tangente)
+            andado += r.uniform(*passo)
+
+
+# Folga em `my` de cada lado do píer onde nada da margem é desenhado. Um
+# pouco maior que o tabuado, para a interrupção ficar visivelmente alinhada
+# com ele em vez de aparecer como falha.
+PIER_FOLGA = 0.55
+
+
+def _borda_em(my: float) -> float:
+    """A beira do cais no `my` dado — o degrau a que aquele ponto pertence."""
+    for my0, my1, borda in DEGRAUS:
+        if my0 <= my < my1:
+            return borda
+    return DEGRAUS[-1][2]
+
+
+def _sob_pier(my: float) -> bool:
+    return any(my0 - PIER_FOLGA <= my <= my1 + PIER_FOLGA for my0, my1, _ in PIERES)
 
 
 def costa(de: float, ate: float) -> list:
@@ -80,11 +178,51 @@ def costa(de: float, ate: float) -> list:
     faixa de profundidade tem de SEGUIR a linha da terra, e é isso que faz o
     olho ler "isto é uma margem" em vez de "isto é uma mancha".
     """
-    perto, longe = [], []
-    for my0, my1, borda in DEGRAUS:
-        perto += [p(borda + de, my0), p(borda + de, my1)]
-        longe += [p(borda + ate, my0), p(borda + ate, my1)]
+    perto = [p(mx, my) for mx, my in costa_deslocada(de)]
+    longe = [p(mx, my) for mx, my in costa_deslocada(ate)]
     return perto + list(reversed(longe))
+
+
+# ── NÚMERO DA DOCA, PINTADO NO CAIS ──────────────────────────────────────
+# Os nomes das docas eram Labels brancos flutuando por cima do mapa: liam-se
+# como legenda de diagrama, não como porto. Numa doca de verdade o número está
+# PINTADO NO CHÃO, para ser lido de dentro do navio — então é isso que ele é
+# aqui, e o cartão da doca lá embaixo é que diz "DOCA 1" por extenso.
+#
+# Por que estêncil e não uma fonte: o importador de SVG do Godot é o ThorVG,
+# que não desenha <text>. Um dígito escrito com fonte sairia vazio no jogo.
+# Três dígitos como polígonos custam vinte linhas e ainda dão o traço grosso e
+# chapado que a tinta de piso tem de verdade.
+
+# Cada dígito numa caixa de 6x10, y para baixo. Barras = (x0, y0, x1, y1).
+DIGITOS = {
+    "1": [(2.2, 0.0, 3.8, 10.0), (0.8, 8.4, 5.2, 10.0), (0.9, 1.3, 2.2, 2.6)],
+    "2": [(0.0, 0.0, 6.0, 1.6), (4.4, 1.2, 6.0, 4.8), (0.0, 4.0, 6.0, 5.6),
+          (0.0, 5.2, 1.6, 8.8), (0.0, 8.4, 6.0, 10.0)],
+    "3": [(0.0, 0.0, 6.0, 1.6), (4.4, 0.0, 6.0, 10.0), (1.4, 4.2, 6.0, 5.8),
+          (0.0, 8.4, 6.0, 10.0)],
+}
+
+
+def pintura_doca(digito: str, mx0: float, my0: float, altura: float,
+                 cor: str, opacidade: float) -> str:
+    """Um dígito deitado no plano do chão, para ser lido da água.
+
+    O eixo do texto acompanha a beira do cais (-my sobe para a direita) e a
+    altura das letras cai para dentro da terra (+mx). Não há rotação que
+    resolva isto: um plano isométrico precisa de CISALHAMENTO, e é por isso que
+    a conta vive aqui e não num nó de interface.
+    """
+    escala = altura / 10.0
+    out = []
+    for x0, y0, x1, y1 in DIGITOS[digito]:
+        # (u ao longo de -my, v ao longo de +mx), ambos em unidades de mundo.
+        quina = []
+        for u, v in [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]:
+            quina.append(p(mx0 + v * escala, my0 - u * escala, ALT_CAIS))
+        out.append('  <polygon points="%s" fill="%s" opacity="%.2f"/>\n'
+                   % (" ".join("%.1f,%.1f" % q for q in quina), cor, opacidade))
+    return "".join(out)
 
 
 SEMENTE_CHAO = 20260829   # fixo: o mapa tem de sair igual toda vez
@@ -243,8 +381,181 @@ def predio(mx0, my0, mx1, my1, base, altura, telhado, telhado_dir, telhado_esq,
     return s
 
 
+# ── VIAS E VILA ──────────────────────────────────────────────────────────
+# Isto substitui as faixas claras que atravessavam o pátio. Elas não eram
+# desenho: eram a margem de meia unidade que sobrava entre um degrau e o
+# seguinte, e por isso iam dar na água sem levar a lugar nenhum. Uma rua de
+# porto tem forma conhecida — corre paralela ao cais, tem acesso curto até
+# cada berço e tem casa do outro lado — e é o que se desenha aqui.
+
+
+def _faixa_mx(mx0, mx1, my0, my1, cor, opac=1.0) -> str:
+    """Retângulo deitado no plano do chão, em coordenadas de mundo."""
+    return poli([p(mx0, my0, ALT_CAIS), p(mx1, my0, ALT_CAIS),
+                 p(mx1, my1, ALT_CAIS), p(mx0, my1, ALT_CAIS)], cor, opac)
+
+
+def vias(pavimentado: bool) -> str:
+    """A rua do porto, com calçada, e o acesso de cada berço.
+
+    A rua acompanha a escada da costa. No degrau ela salta 4 unidades em `mx`,
+    e o cotovelo que liga um trecho ao seguinte é desenhado com a MESMA
+    largura da rua — desenhá-lo como um retângulo de canto a canto foi a
+    primeira tentativa, e virava uma laje de asfalto do tamanho de um quarteirão.
+    """
+    s = ""
+    dentro = lambda b: b - RUA_RECUO
+    fora = lambda b: b - RUA_RECUO + RUA_LARG
+
+    for i, (my0, my1, borda) in enumerate(DEGRAUS):
+        fim = my1 + COSTURA
+        s += _faixa_mx(dentro(borda) - CALCADA, fora(borda) + CALCADA,
+                       my0, fim, C["calcada"])
+        s += _faixa_mx(dentro(borda), fora(borda), my0, fim, C["asfalto_via"])
+
+        if i + 1 < len(DEGRAUS):
+            prox = DEGRAUS[i + 1][2]
+            s += _faixa_mx(dentro(borda) - CALCADA, fora(prox) + CALCADA,
+                           my1 - RUA_LARG - CALCADA, my1 + CALCADA, C["calcada"])
+            s += _faixa_mx(dentro(borda), fora(prox),
+                           my1 - RUA_LARG, my1, C["asfalto_via"])
+
+        if pavimentado:
+            meio = (dentro(borda) + fora(borda)) / 2.0
+            my = my0 + 0.5
+            while my < my1 - 1.4:
+                s += _faixa_mx(meio - 0.05, meio + 0.05, my, my + 0.5,
+                               C["faixa_via"], 0.7)
+                my += 1.2
+
+    # Acesso de cada berço: liga a rua ao avental, na altura do píer. É o que
+    # explica para que serve a rua — sem ele ela passeia sem servir a nada.
+    for my0, my1, borda in PIERES:
+        meio = (my0 + my1) / 2.0
+        s += _faixa_mx(fora(borda), borda - APRON,
+                       meio - 0.6, meio + 0.6, C["asfalto_via"])
+    return s
+
+
+# ── A VILA QUE CRESCE ────────────────────────────────────────────────────
+# O porto não fica sozinho na paisagem: a cidade nasce atrás dele. Cada casa
+# tem um NÍVEL, e é só ele que muda entre as Fases — 1 é casa térrea de telha
+# de barro, 2 é sobrado, 3 é prédio. Subir a Fase é passar `--nivel-vila=2`
+# ao gerador e regerar os dois mapas; nada no jogo precisa saber disso.
+#
+# Por que assado no SVG e não como prop: prop é para o que troca de estado
+# DENTRO de uma partida (píer, armazém, escritório). A vila troca entre
+# Fases, que é fronteira de conteúdo e não de turno — e assar poupa vinte nós
+# permanentemente visíveis que nunca seriam tocados.
+#
+# POR QUE `casa()` E NÃO `predio()`. A primeira versão reusou o prédio do
+# pátio e as casas saíram como LAJES LARANJA deitadas no chão: o beiral de
+# 0,3 e o telhado de 8px do prédio são desenhados para um galpão de 4,4
+# unidades, e numa casa de 1,35 o telhado engolia a parede inteira. Numa casa
+# o que se tem de ver é a PAREDE — é ela que diz que aquilo tem gente dentro.
+
+# Por nível: (altura da parede em px do mapa, telha, linhas de janela).
+VILA_NIVEIS = {
+    1: [(20, "telha_a", 1), (18, "telha_b", 1), (22, "telha_d", 1)],
+    2: [(34, "telha_a", 2), (31, "telha_b", 2), (37, "telha_d", 2)],
+    3: [(56, "telha_c", 3), (48, "telha_c", 3), (64, "telha_c", 3)],
+}
+VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
+
+# Onde NÃO cabe casa. Vazio por enquanto: os coqueiros do cenário foram para
+# o passeio, na frente das casas, então nenhum tronco nasce dentro de um lote.
+VILA_VAZIOS = []
+
+
+def _sombrear(hexa: str, fator: float) -> str:
+    n = int(hexa[1:], 16)
+    r, g, b = (n >> 16) & 255, (n >> 8) & 255, n & 255
+    return "#%02x%02x%02x" % tuple(min(255, int(c * fator)) for c in (r, g, b))
+
+
+def casa(mx0, my0, mx1, my1, altura, parede, telha, janelas) -> str:
+    """Uma casa da vila: parede, porta, janela e telhado com beiral curto.
+
+    O beiral é 0,12 e o telhado tem 5px — proporção de casa, não de galpão.
+    A porta fica na face +my (virada para a rua) e ocupa pouco mais de um
+    terço do vão, que é o que dá escala humana à construção.
+    """
+    p_dir, p_esq = _sombrear(parede, 0.80), _sombrear(parede, 0.91)
+    s = caixa(mx0, my0, mx1, my1, ALT_CAIS, altura, parede, p_dir, p_esq)
+
+    meio = (mx0 + mx1) / 2.0
+    vao = (mx1 - mx0)
+    s += face_my(my1, meio - vao * 0.17, meio + vao * 0.17,
+                 ALT_CAIS, ALT_CAIS + altura * 0.55, C["porta"])
+    for linha in range(janelas):
+        j0 = ALT_CAIS + altura * (0.30 + 0.62 * linha / max(janelas, 1))
+        j1 = j0 + altura * 0.24
+        s += face_mx(mx1, my0 + (my1 - my0) * 0.34, my0 + (my1 - my0) * 0.66,
+                     j0, j1, C["vidro"])
+        if linha > 0 or janelas == 1:
+            s += face_my(my1, mx0 + vao * 0.66, mx0 + vao * 0.88, j0, j1, C["vidro"])
+
+    t = ALT_CAIS + altura
+    s += caixa(mx0 - 0.12, my0 - 0.12, mx1 + 0.12, my1 + 0.12, t, 5,
+               C[telha], _sombrear(C[telha], 0.72), _sombrear(C[telha], 0.86))
+    return s
+
+
+def lotes_da_vila() -> list:
+    """(mx0, my0, dmx, dmy, variante) de cada casa, medido do cais.
+
+    Uma casa por passo de `my` ao longo de cada degrau, na fileira logo atrás
+    da rua. Uma fileira só, e não duas: a segunda cairia fora da esquerda do
+    ecrã a partir do terceiro degrau, e casa que ninguém vê é desenho pago em
+    nada.
+    """
+    r = random.Random(SEMENTE_CHAO + 210)
+    saida = []
+    for my0, my1, borda in DEGRAUS:
+        my = my0 + 0.45
+        while my + VILA_PASSO * 0.7 < my1:
+            recuo = r.uniform(0.0, 0.22)
+            dmy = VILA_PASSO - r.uniform(0.7, 0.95)
+            if not any(a - dmy < my < b for a, b in VILA_VAZIOS):
+                saida.append((borda - VILA_RECUO + recuo, my,
+                              VILA_PROF - r.uniform(0.0, 0.18), dmy,
+                              r.randrange(3)))
+            my += VILA_PASSO
+    return saida
+
+
+def vila(nivel: int, pavimentado: bool) -> str:
+    """As casas atrás da rua, no nível pedido.
+
+    Desenhadas de trás para a frente (por `mx + my` crescente), senão uma casa
+    de trás aparece por cima da que está à frente dela.
+    """
+    if nivel <= 0:
+        return ""
+    perfis = VILA_NIVEIS[min(nivel, max(VILA_NIVEIS))]
+    r = random.Random(SEMENTE_CHAO + 300 + nivel)
+    s = ""
+    for mx0, my0, dmx, dmy, variante in sorted(lotes_da_vila(),
+                                               key=lambda l: l[0] + l[1]):
+        altura, telha, janelas = perfis[variante]
+        # Quintal: a casa não ocupa o lote todo, e o que sobra é chão batido
+        # mesmo no mapa pavimentado — quintal não é asfalto.
+        s += _faixa_mx(mx0 - 0.28, mx0 + dmx + 0.5, my0 - 0.3, my0 + dmy + 0.3,
+                       C["terra_clara"] if pavimentado else C["terra_escura"], 0.5)
+        s += casa(mx0, my0, mx0 + dmx, my0 + dmy, altura,
+                  C[VILA_PAREDES[variante]], telha, janelas)
+        # Um pé de mato no quintal — é o que faz a casa parecer morada.
+        if r.random() < 0.7:
+            gx, gy = p(mx0 + dmx + r.uniform(0.12, 0.4),
+                       my0 + r.uniform(0.1, dmy), ALT_CAIS)
+            s += ('  <ellipse cx="%.0f" cy="%.0f" rx="5" ry="2.6" fill="%s" '
+                  'opacity="0.7"/>\n' % (gx, gy, C["mato"]))
+    return s
+
+
 def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
-          com_predios: bool = True, com_pavimento: bool = True) -> str:
+          com_predios: bool = True, com_pavimento: bool = True,
+          nivel_vila: int = 1) -> str:
     s = '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d">\n' % (
         LARG, ALT, LARG, ALT)
 
@@ -306,19 +617,32 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # escura pontilhada atravessando o cais. Como o degrau seguinte é
     # desenhado por cima, esticar um triz o anterior fecha a fresta sem
     # mudar nada do que se vê.
+    # As faixas claras que apareciam ATRAVESSANDO o pátio de ponta a ponta não
+    # eram estrada: eram a meia unidade de concreto que sobrava entre um degrau
+    # e o seguinte, porque o pátio era desenhado com margem em `my`. Do chão
+    # elas liam como ruas que iam dar na água e não levavam a lugar nenhum.
+    # Agora o pátio ocupa o degrau inteiro (`- COSTURA` no fim, só para não
+    # abrir fresta) e as vias são DESENHADAS, com traçado que serve para
+    # alguma coisa — ver `vias()`.
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
         s += laje(FUNDO_TERRA, my0, borda, my1 + COSTURA, ALT_CAIS,
                   C["cais_topo"], C["cais_dir"], C["cais_esq"])
-        # Pátio: terra batida no início, asfalto com faixa depois de pavimentado.
-        s += poli([p(FUNDO_TERRA, my0 + 0.5, ALT_CAIS), p(borda - 1.3, my0 + 0.5, ALT_CAIS),
-                   p(borda - 1.3, my1 - 0.5, ALT_CAIS), p(FUNDO_TERRA, my1 - 0.5, ALT_CAIS)],
+        # Pátio: terra batida no início, asfalto depois de pavimentado.
+        s += poli([p(FUNDO_TERRA, my0, ALT_CAIS), p(borda - APRON, my0, ALT_CAIS),
+                   p(borda - APRON, my1 + COSTURA, ALT_CAIS),
+                   p(FUNDO_TERRA, my1 + COSTURA, ALT_CAIS)],
                   C["asfalto"] if com_pavimento else C["terra"])
-        s += manchas_chao(i, FUNDO_TERRA, my0 + 0.5, borda - 1.3, my1 - 0.5,
-                          com_pavimento)
+        s += manchas_chao(i, FUNDO_TERRA, my0, borda - APRON, my1, com_pavimento)
         if com_pavimento:
+            # Faixa do avental, rente à borda interna dele — mais para dentro
+            # riscaria o número da doca, que é pintado logo ao lado.
             s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="#e0a81f" '
                   'stroke-width="2.5" fill="none"/>\n' % (
-                      *p(borda - 0.9, my0 + 0.3, ALT_CAIS), *p(borda - 0.9, my1 - 0.3, ALT_CAIS)))
+                      *p(borda - APRON + 0.05, my0 + 0.3, ALT_CAIS),
+                      *p(borda - APRON + 0.05, my1 - 0.3, ALT_CAIS)))
+
+    s += vias(com_pavimento)
+    s += vila(nivel_vila, com_pavimento)
 
     # ---- concreto do cais: juntas e desgaste ----
     # O cais era a única superfície ainda 100% chapada da cena — pátio já tem
@@ -343,6 +667,13 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
                      C["cais_junta"]))
             my += 1.9
 
+    # ---- número de cada doca, pintado na faixa de concreto ----
+    # Vai DEPOIS da junta e da faixa amarela porque tinta de piso é a última
+    # camada a ser aplicada — e porque assim o dígito não sai riscado ao meio.
+    for i, (my0, my1, borda) in enumerate(PIERES):
+        s += pintura_doca(str(i + 1), borda - 1.20, (my0 + my1) / 2.0 - 0.20,
+                          1.05, C["tinta"], 0.90)
+
     # ---- pé do cais: sombra do muro, enrocamento e espuma ----
     # Sem isto o cais encontra a água numa aresta limpa, que é o que fazia a
     # margem parecer recortada em papel.
@@ -354,18 +685,32 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # um pedaço da anterior.
     s += poli(costa(0.0, 1.15), C["sombra_agua"], 0.30)
 
+    #
+    # A SEGUNDA correção veio do playtest: as pedras eram espalhadas por
+    # degrau, cada um ao longo do seu próprio `borda`, e nas quinas da escada
+    # isso as jogava para dentro do degrau seguinte — que é mais largo. Vistas
+    # na tela pareciam cascalho pintado no concreto do cais. Agora elas andam
+    # pelo CONTORNO (andar_costa) e só se afastam na direção do mar, então
+    # nenhuma pode cair em terra: a quina passou a ser uma quina de pedra.
     r = random.Random(SEMENTE_CHAO + 90)
     tons = [C["pedra"], C["pedra_media"], C["pedra_clara"]]
-    for my0, my1, borda in DEGRAUS:
-        my = my0
-        while my < my1:
-            for _ in range(2):
-                px, py = p(borda + r.uniform(-0.10, 0.55), my + r.uniform(-0.12, 0.12))
-                rx = r.uniform(4.5, 9.5)
-                s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
-                      'fill="%s"/>\n'
-                      % (px, py, rx, rx * r.uniform(0.48, 0.62), tons[r.randrange(3)]))
-            my += r.uniform(0.22, 0.40)
+    for mx, my, (nmx, nmy), (tmx, tmy) in andar_costa(0.06, (0.22, 0.40), r):
+        # O enrocamento PARA onde o píer começa. Ele não some por baixo do
+        # tabuado: ali não há enrocamento nenhum, porque ninguém joga pedra na
+        # frente da entrada de um píer. Sem isto a faixa cruzava a raiz do
+        # tabuado e as pedras liam-se como se estivessem POR CIMA dele — o
+        # muro é que continua atrás, e é o que se vê.
+        if _sob_pier(my):
+            continue
+        for _ in range(2):
+            fora = r.uniform(0.0, 0.42)
+            ao_longo = r.uniform(-0.12, 0.12)
+            px, py = p(mx + nmx * fora + tmx * ao_longo,
+                       my + nmy * fora + tmy * ao_longo)
+            rx = r.uniform(4.5, 9.5)
+            s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
+                  'fill="%s"/>\n'
+                  % (px, py, rx, rx * r.uniform(0.48, 0.62), tons[r.randrange(3)]))
 
     # Espuma: MANCHAS, não traço.
     # Passou por duas versões erradas antes desta. Linha contínua ao longo do
@@ -375,17 +720,16 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # lê como arrebentação é borrão de tamanho e opacidade irregulares — a
     # espuma não tem espessura, tem quantidade.
     re_ = random.Random(SEMENTE_CHAO + 55)
-    for my0, my1, borda in DEGRAUS:
-        my = my0
-        while my < my1:
-            if re_.random() < 0.72:
-                fx, fy = p(borda + re_.uniform(0.45, 1.00), my)
-                rx = re_.uniform(4.0, 11.0)
-                s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
-                      'fill="%s" opacity="%.2f"/>\n'
-                      % (fx, fy, rx, re_.uniform(1.8, 3.2), C["espuma"],
-                         re_.uniform(0.28, 0.60)))
-            my += re_.uniform(0.18, 0.42)
+    for mx, my, (nmx, nmy), _t in andar_costa(0.45, (0.18, 0.42), re_):
+        if re_.random() >= 0.72 or _sob_pier(my):
+            continue
+        fora = re_.uniform(0.0, 0.55)
+        fx, fy = p(mx + nmx * fora, my + nmy * fora)
+        rx = re_.uniform(4.0, 11.0)
+        s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
+              'fill="%s" opacity="%.2f"/>\n'
+              % (fx, fy, rx, re_.uniform(1.8, 3.2), C["espuma"],
+                 re_.uniform(0.28, 0.60)))
 
     # ---- píeres ----
     # Em jogo o píer TROCA DE ESTADO (vaga por construir -> píer construído), e
@@ -413,11 +757,18 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     if com_pavimento:
         cores = [("#c23030", "#7a1a1a", "#8f2020"), ("#2f74b0", "#1d4a75", "#245a8c"),
                  ("#e0a81f", "#9c7a15", "#b8901a"), ("#2d7a3a", "#19512d", "#1f6236")]
+        # Recuo do CAIS, como tudo o mais que vive em terra. Em `mx` absoluto
+        # dois destes caíam na rua e outros dois no meio da vila, porque o
+        # cais avança 4 unidades por degrau e eles não avançavam com ele.
         k = 0
-        for mx, my in [(2.4, 1.6), (3.9, 1.6), (6.2, 10.4), (7.7, 10.4),
-                       (10.2, 18.4), (11.7, 18.4), (1.0, 12.0), (5.0, 20.0)]:
+        # Recuo entre 1,3 (avental) e 2,98 (meio-fio da rua). O teste de design
+        # pegou os antigos 2,8–3,1 em cima do asfalto da via.
+        for recuo, my in [(2.05, 1.4), (2.6, 3.2), (2.05, 9.9), (2.6, 11.7),
+                          (2.05, 18.2), (2.6, 20.0), (2.05, 26.4)]:
+            borda = _borda_em(my)
+            mx = borda - recuo
             c = cores[k % len(cores)]
-            s += caixa(mx, my, mx + 1.2, my + 1.6, B, 13, c[0], c[1], c[2])
+            s += caixa(mx, my, mx + 1.15, my + 1.5, B, 13, c[0], c[1], c[2])
             k += 1
 
     if not com_predios:
@@ -447,6 +798,53 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     return s
 
 
+# ── TABELA DE ÂNCORAS ────────────────────────────────────────────────────
+# O gerador sabe onde tudo está no MUNDO; o Main.tscn põe os props por
+# OFFSET DE TELA. Nada obrigava os dois a concordarem — e quando discordam o
+# píer renderizado pousa ao lado do píer desenhado, o que só se descobre
+# olhando. Exportar a tabela transforma "olhar" em asserção: o teste de design
+# lê este JSON e confere cada prop contra ele.
+#
+# Tudo em pixels do mapa, com h=0 — que é onde o quadro de 512 de cada prop
+# tem o seu centro (ver `para_pixel` em gerar_props_iso.py).
+
+
+def tabela_ancoras() -> dict:
+    def px(mx, my, h=0.0):
+        x, y = p(mx, my, h)
+        return [round(x, 1), round(y, 1)]
+
+    pieres = []
+    for i, (my0, my1, borda) in enumerate(PIERES):
+        pieres.append({
+            "doca": i + 1,
+            "centro": px(borda + PIER_ALCANCE / 2, (my0 + my1) / 2),
+            "barco": px(borda + PIER_ALCANCE / 2, my1 + 1.6),
+            "raiz": px(borda, (my0 + my1) / 2),
+        })
+
+    # Faixas em `mx` medidas do cais, por degrau. O teste usa isto para saber
+    # se um prop caiu no asfalto da rua ou dentro de um lote da vila.
+    faixas = []
+    for my0, my1, borda in DEGRAUS:
+        faixas.append({
+            "my": [my0, my1], "borda": borda,
+            "avental": [borda - APRON, borda],
+            "rua": [borda - RUA_RECUO - CALCADA, borda - RUA_RECUO + RUA_LARG + CALCADA],
+            "vila": [borda - VILA_RECUO, borda - VILA_RECUO + VILA_PROF],
+        })
+
+    return {
+        "projecao": {"cx": CX, "cy": CY, "meia_larg": MEIA_LARG,
+                     "meia_alt": MEIA_ALT, "alt_cais": ALT_CAIS},
+        "mapa": {"largura": LARG, "altura": ALT},
+        "pieres": pieres,
+        "faixas": faixas,
+        "lotes": [{"mx": round(l[0], 2), "my": round(l[1], 2),
+                   "canto": px(l[0], l[1], ALT_CAIS)} for l in lotes_da_vila()],
+    }
+
+
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     com_pieres = "--sem-pieres" not in sys.argv
@@ -454,14 +852,20 @@ def main() -> int:
     com_predios = "--sem-predios" not in sys.argv
     com_pavimento = "--sem-pavimento" not in sys.argv
     destino = args[0] if args else "porto_mapa_iso.svg"
-    conteudo = gerar(com_pieres, com_coqueiros, com_predios, com_pavimento)      # gerar ANTES de abrir: open(...,"w")
+    nivel_vila = 1
+    for a in sys.argv[1:]:
+        if a.startswith("--nivel-vila="):
+            nivel_vila = int(a.split("=", 1)[1])
+    conteudo = gerar(com_pieres, com_coqueiros, com_predios, com_pavimento,
+                     nivel_vila)                  # gerar ANTES de abrir: open(...,"w")
     with open(destino, "w", encoding="utf-8") as f:   # trunca de imediato, e um
         f.write(conteudo)                             # erro deixaria o mapa vazio
     print("%s — %dx%d, chão transbordando de propósito (o ecrã é a janela)%s" % (
         destino, LARG, ALT, ("" if com_pieres else "  [SEM os píeres]")
         + ("" if com_coqueiros else "  [SEM os coqueiros]")
         + ("" if com_predios else "  [SEM os prédios]")
-        + ("" if com_pavimento else "  [terra batida]")))
+        + ("" if com_pavimento else "  [terra batida]")
+        + ("  [vila nível %d]" % nivel_vila)))
 
     # O centro de cada píer no chão. É por aqui que o Main.tscn ancora o prop:
     # o render mira a origem do chão, então o canto do TextureRect é este ponto
@@ -475,6 +879,15 @@ def main() -> int:
     for i, (my0, my1, borda) in enumerate(PIERES):
         x, y = p(borda + PIER_ALCANCE / 2, my1 + 1.6, 0)
         print("  Doca %d: (%.0f, %.0f)" % (i + 1, x, y))
+
+    # A tabela sai ao lado do mapa, sempre. É o contrato que o teste de design
+    # confere contra o Main.tscn — gerar o mapa sem gerar a tabela deixaria o
+    # teste a validar contra um mundo que já não existe.
+    ancoras = destino.rsplit("/", 1)[0] + "/porto_mapa_ancoras.json" \
+        if "/" in destino else "porto_mapa_ancoras.json"
+    with open(ancoras, "w", encoding="utf-8") as f:
+        json.dump(tabela_ancoras(), f, ensure_ascii=False, indent=1, sort_keys=True)
+    print("\nÂncoras em %s — é contra elas que tests/teste_design.gd confere." % ancoras)
     return 0
 
 
