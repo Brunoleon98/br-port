@@ -129,10 +129,17 @@ O lote inteiro de props leva **54 s** para regerar.
   o guindaste. O gerador do mapa já imprimia a conta: entre o centro do píer e
   a âncora do barco há Δmx = 0 e Δmy = +2,8, ou seja o barco encosta no FLANCO,
   não na ponta. A lança agora varre para −Y local, atravessando o convés.
-- **A chip da doca cobre o meio do convés.** É a tensão de sempre: o passo
-  vertical entre docas é 180px e o píer ocupa ~155, então não cabe empilhar.
-  A saída real é repensar ONDE a informação da doca mora. **Piorou um pouco**
-  com o guindaste novo, que é mais alto e passa por trás da chip.
+- ~~A chip da doca cobre o meio do convés~~ — **resolvido em 30/08**, e pela
+  saída que este parágrafo já apontava: repensar ONDE a informação da doca
+  mora. Ela deixou de morar no mapa. A doca agora tem duas metades —
+  `Dock.tscn` (píer, barco, guindaste, trabalhador, sobre o mapa) e
+  `DocaCartao.tscn` (valor, turnos, trabalhador, numa barra alinhada logo
+  abaixo do mapa) — e é o `Main` que sabe que as duas são a mesma doca. O
+  mapa ficou sem nenhum retângulo de interface em cima, e os três alvos de
+  toque saíram da diagonal para uma fileira, que é mais fácil de acertar com
+  o polegar. O píer no mapa continua sendo alvo de arrasto: quando há
+  trabalhador escolhido, ele ACENDE (modulate no sprite) em vez de ganhar
+  uma moldura.
 - **O retrato ilustrado do trabalhador** no cartão é de outra leva e de outra
   linguagem visual que o resto.
 
@@ -200,6 +207,33 @@ As novas:
    elas**, e na tela isso vira uma linha escura pontilhada atravessando o
    cais. A constante `COSTURA` estica um triz o degrau de trás, que o da
    frente cobre.
+6. **Save sem versão é uma bomba-relógio.** `DOCKS_BASE` foi de 2 para 1 e o
+   save gravado antes continuou a ser carregado: o jogador ficava com duas
+   docas de graça, `estruturas` vinha vazia (a chave nem existia naquela
+   versão), o painel continuava a oferecer os píeres 2 e 3, e comprar os dois
+   levava o porto a **4 docas num mapa que só desenha 3** — a quarta recebia
+   barco e nunca aparecia. Hoje há `SAVE_VERSION`, save de outra versão é
+   descartado, e `_reconciliar_roster()` deriva docas e trabalhadores do que
+   está construído em vez de os tratar como contador solto.
+7. **Contagem que a tela mostra tem de ser regra do jogo.** `VAGAS_NO_MAPA`
+   vivia no `Main.gd`, então nada impedia o estado de passar do que a tela
+   sabe desenhar — e passou. Virou `GameState.BERCOS_NO_MAPA`.
+8. **Num plano isométrico, ordem de nó É profundidade.** O trabalhador era o
+   último filho de `Dock.tscn` e por isso era desenhado por cima do cabo e do
+   moitão do guindaste, que estão à frente dele no mundo. Parecia pendurado no
+   ar. Sempre que um prop novo entrar numa cena, ele vai onde o `mx+my` dele
+   manda.
+9. **O que acompanha a costa tem de virar a esquina junto com ela.** O
+   enrocamento era espalhado degrau por degrau, cada um ao longo do seu
+   próprio `borda`, e nas quinas da escada as pedras caíam dentro do degrau
+   seguinte — na tela, cascalho pintado em cima do concreto do cais. Agora a
+   costa é um CONTORNO explícito (`contorno_costa`/`costa_deslocada`), com os
+   espelhos dos degraus incluídos, e tudo o que a acompanha anda por ele com a
+   normal apontando para o mar.
+10. **O ThorVG não desenha `<text>`.** Texto escrito com fonte num SVG sai
+   vazio dentro do Godot. Os números de doca pintados no cais são polígonos de
+   estêncil (`DIGITOS` em `gerar_mapa_iso.py`) por causa disso — e o estêncil
+   ainda ficou mais parecido com tinta de piso do que uma fonte ficaria.
 
 ---
 

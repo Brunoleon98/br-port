@@ -3,9 +3,9 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 29/08/2026 (Bloco 4 — camada de ícones fechada: o
-> HUD não usa mais emoji; direção de arte decidida como isométrica, ainda não
-> integrada)
+> **Última atualização:** 30/08/2026 (rodada de polimento a partir de um
+> playtest: a informação da doca saiu de cima do mapa, os nomes viraram placa,
+> e o save ganhou versão — era ele que duplicava a compra dos píeres)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 
@@ -27,6 +27,11 @@ projeto. É o próximo bloco — ver `docs/BLOCO6_BRIEFING_AUDIO.md`.
 
 **Não se arrasta trabalhador a cada turno:** há "Alocar todos" e
 toque-para-alocar, com o arrasto ainda funcionando.
+
+**Nada de interface pousa sobre o mapa.** A doca tem duas metades: a vaga no
+mapa (píer, barco, guindaste, trabalhador) e o cartão na barra logo abaixo
+dele (valor, turnos, trabalhador). Os nomes dos lugares são placas com mastro,
+e o número de cada doca está pintado no cais.
 
 ---
 
@@ -81,7 +86,7 @@ oscilou três vezes na sessão (3/4 ilustrado → chapado topo-down → isométr
 o histórico e o porquê estão na §2 do briefing de continuação, para não voltar
 atrás de novo.
 
-**O jogo em produção JÁ É isométrico** (29/08) e continua com as 33 asserções
+**O jogo em produção JÁ É isométrico** (29/08) e continua com a suíte inteira
 passando. `Main.tscn` roda sobre `porto_mapa_iso.svg` com os props de
 `tools/gerar_props_iso.py` — píer nos dois estados, barcos, cenário. O que
 destravou foi gerar por script em vez de por prompt: num plano isométrico
@@ -105,9 +110,11 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
-| `brport_vs/tests/run_tests.gd` | 33 asserções de regressão |
-| `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, estilos de doca e trabalhador, e (Bloco 4) os tokens do mapa (água, escritório, zona de espera) |
-| `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem a seção "Porto" com o mapa do porto |
+| `brport_vs/tests/run_tests.gd` | ~65 asserções de regressão |
+| `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, cartão de doca, cartão de trabalhador e letreiro. Os tokens de cor de mapa saíram daqui em 30/08: quem os define é o gerador do SVG |
+| `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem o mapa, os letreiros e a barra de docas |
+| `brport_vs/scenes/dock/Dock.tscn` | A metade de CENÁRIO de uma doca: píer, barco, guindaste, trabalhador |
+| `brport_vs/scenes/dock/DocaCartao.tscn` | A metade de INTERFACE da mesma doca: valor, turnos, trabalhador, alvo de toque |
 | `docs/design/BR_Port_Style_Guide_Flat_Design.md` | Paleta, peso de linha, espaçamento e proporções canônicas para toda arte futura |
 | `brport_vs/art/sprites/` | Sprites prontos (trabalhador, cargueiro, barco de pesca, caminhão, guindaste) |
 | `brport_vs/art/icones/` | **Os 20 ícones da interface**, em SVG chapado |
@@ -148,6 +155,17 @@ lá mostra as estacas velhas sob contorno tracejado.
 A interface **não é montada por código**: vive em cenas `.tscn` com um tema
 (`ui/tema_brport.tres`). Trocar arte é editar cena e tema, não reescrever
 script.
+
+**O mapa não carrega interface em cima** (30/08). As chips que mostravam valor
+e turnos pousavam no tabuado e tapavam justamente o barco, o guindaste e o
+trabalhador; hoje isso vive em `scenes/dock/DocaCartao.tscn`, numa fileira de
+três cartões alinhados abaixo do mapa — onde o polegar sabe onde estão. O píer
+continua sendo alvo de arrasto e ACENDE quando aceita o trabalhador escolhido.
+Os nomes (escritório, armazém, zona de espera) deixaram de ser rótulos brancos
+de 27px flutuando e viraram **placas com mastro**, apoiadas no prédio ou numa
+estaca na água; o número de cada doca é **tinta de piso no cais**, gerada em
+estêncil pelo `gerar_mapa_iso.py` porque o importador de SVG do Godot não
+desenha `<text>`.
 
 **Os ícones do HUD já são arte de verdade** (29/08): 20 SVGs em `art/icones/`,
 todos conferidos a 19px sobre os três fundos que a interface tem (pílula
@@ -234,6 +252,27 @@ Para medir qualquer mudança: constantes marcadas `# TUNING:` no topo de
 
 ## Histórico de correções relevantes
 
+O playtest de 30/08 encontrou um bug de estado e três defeitos de imagem:
+
+1. **A compra dos píeres duplicava.** O jogador via as opções "Reconstruir o
+   Píer 2" e "Píer 3" mesmo já tendo os píeres, e comprá-los levava o porto a
+   **4 docas num mapa que só desenha 3** — a quarta recebia barco e nunca
+   aparecia na tela. A causa não estava na compra: estava no SAVE. Ele não
+   tinha versão, e um jogo gravado quando o porto ainda abria com 2 docas
+   continuava a ser carregado depois de `DOCKS_BASE` cair para 1. Hoje há
+   `SAVE_VERSION`, `BERCOS_NO_MAPA` é regra do jogo (não constante de tela) e
+   `_reconciliar_roster()` deriva docas e trabalhadores do que está
+   construído.
+2. **O trabalhador parecia pendurado no guindaste.** Era o último filho de
+   `Dock.tscn` e por isso desenhado por cima do cabo e do moitão, que estão à
+   frente dele no mundo. Ordem de nó é profundidade num plano isométrico.
+3. **O enrocamento aparecia como cascalho pintado no cais.** As pedras eram
+   espalhadas degrau por degrau e nas quinas da escada caíam dentro do degrau
+   seguinte, que é mais largo. Hoje a costa é um contorno explícito, com os
+   espelhos dos degraus, e tudo o que a acompanha anda por ele.
+4. **Os nomes flutuavam sobre o mapa** e as chips das docas tapavam a arte.
+   Ver a seção anterior.
+
 O primeiro playtest humano (25/08) encontrou dois bugs sérios, ambos corrigidos:
 
 1. **Jogo travava** depois de aceitar a oferta do rival — o botão "Avançar dia"
@@ -269,7 +308,9 @@ Para rodar os testes antes e depois de mexer no código:
 Godot_v4.6.3-stable_win64.exe --headless --path brport_vs --script res://tests/run_tests.gd
 ```
 
-Espera-se `TODOS OS TESTES PASSARAM` e código de saída 0.
+Espera-se `TODOS OS TESTES PASSARAM` e código de saída 0. A suíte cobre, entre
+outras coisas, o bug do save de outra versão (T5c), o teto de docas do mapa
+(T5d) e o formato do dinheiro (T5e).
 
 E para medir o efeito de qualquer mudança de balanceamento (800 partidas por
 perfil de jogador, ~10 segundos):

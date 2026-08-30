@@ -1,9 +1,10 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
 [ext_resource type="Texture2D" path="res://art/porto_mapa_iso.svg" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/dock/Dock.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/dock/DocaCartao.tscn" id="6"]
 [ext_resource type="Texture2D" path="res://art/props/barco_medio.png" id="5"]
 [ext_resource type="Texture2D" path="res://art/icones/caixa.svg" id="ic_caixa"]
 [ext_resource type="Texture2D" path="res://art/icones/dia.svg" id="ic_dia"]
@@ -196,11 +197,13 @@ icon = ExtResource("ic_pausar")
 
 ; ================= MAPA DO PORTO =================
 
+; O recorte para em 742 e não em 782: os 40px que faltam eram água aberta no
+; canto de baixo, e é o que paga a barra de docas sem espremer o rodapé.
 [node name="MapaWrap" type="Control" parent="."]
 layout_mode = 0
 offset_top = 62.0
 offset_right = 720.0
-offset_bottom = 782.0
+offset_bottom = 742.0
 mouse_filter = 2
 clip_contents = true
 
@@ -223,9 +226,9 @@ texture = ExtResource("5")
 [node name="BarcoEspera2" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
 offset_left = 364.0
-offset_top = 384.0
+offset_top = 360.0
 offset_right = 876.0
-offset_bottom = 896.0
+offset_bottom = 872.0
 mouse_filter = 2
 texture = ExtResource("5")
 
@@ -294,37 +297,37 @@ texture = ExtResource("prop_coqueiro_copa")
 [node name="Coqueiro2Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -134.0
-offset_top = 344.0
+offset_top = 320.0
 offset_right = 378.0
-offset_bottom = 856.0
+offset_bottom = 832.0
 mouse_filter = 2
 texture = ExtResource("prop_coqueiro_tronco")
 
 [node name="Coqueiro2Copa" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -134.0
-offset_top = 344.0
+offset_top = 320.0
 offset_right = 378.0
-offset_bottom = 856.0
+offset_bottom = 832.0
 mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
 [node name="Ancoragem0" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 409.0
-offset_top = 434.5
-offset_right = 921.0
-offset_bottom = 946.5
+offset_left = 319.0
+offset_top = 244.5
+offset_right = 831.0
+offset_bottom = 756.5
 mouse_filter = 2
 texture = ExtResource("prop_marcador")
 
 [node name="Ancoragem1" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 244.0
-offset_top = 443.5
+offset_top = 353.5
 offset_right = 756.0
-offset_bottom = 955.5
+offset_bottom = 865.5
 mouse_filter = 2
 texture = ExtResource("prop_boia")
 
@@ -364,94 +367,159 @@ offset_top = 456.0
 offset_right = 470.0
 offset_bottom = 624.0
 
-[node name="LblDoca1" type="Label" parent="MapaWrap"]
-layout_mode = 0
-offset_left = 500.0
-offset_top = 78.0
-offset_right = 664.0
-offset_bottom = 112.0
-mouse_filter = 2
-text = "DOCA 1"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
-theme_override_constants/outline_size = 9
-theme_override_font_sizes/font_size = 27
+; ================= LETREIROS =================
+; Os nomes eram Labels brancos de 27px com contorno de 9px, pousados no meio
+; do mapa. Precisavam ser tão grandes justamente porque não pertenciam a
+; lugar nenhum: texto solto sobre cenário colorido só se lê no grito. Agora
+; cada um é uma PLACA — chapa escura, contorno âmbar, mastro descendo até o
+; prédio — e, por pertencer ao mundo, cabe em 14px.
+;
+; O mastro é fixo e o quadro flutua acima do telhado mais alto dos dois
+; estados (ruína e consertado), então a placa não pula quando o jogador
+; conserta o prédio.
 
-[node name="LblDoca2" type="Label" parent="MapaWrap"]
+[node name="Letreiros" type="Control" parent="MapaWrap"]
 layout_mode = 0
-offset_left = 380.0
-offset_top = 258.0
-offset_right = 544.0
-offset_bottom = 292.0
+offset_right = 720.0
+offset_bottom = 720.0
 mouse_filter = 2
-text = "DOCA 2"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
-theme_override_constants/outline_size = 9
-theme_override_font_sizes/font_size = 27
 
-[node name="LblDoca3" type="Label" parent="MapaWrap"]
+[node name="LetreiroEscritorio" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
-offset_left = 260.0
-offset_top = 438.0
-offset_right = 424.0
-offset_bottom = 472.0
+offset_left = 289.0
+offset_top = 38.0
+offset_right = 421.0
+offset_bottom = 86.0
 mouse_filter = 2
-text = "DOCA 3"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
-theme_override_constants/outline_size = 9
-theme_override_font_sizes/font_size = 27
 
-[node name="LblArmazem" type="Label" parent="MapaWrap"]
+[node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroEscritorio"]
 layout_mode = 0
-offset_left = 148.0
-offset_top = 274.0
-offset_right = 348.0
-offset_bottom = 308.0
+offset_left = 64.0
+offset_top = 24.0
+offset_right = 68.0
+offset_bottom = 48.0
 mouse_filter = 2
+color = Color(0.29, 0.325, 0.353, 1)
+
+[node name="Placa" type="PanelContainer" parent="MapaWrap/Letreiros/LetreiroEscritorio"]
+layout_mode = 0
+offset_right = 132.0
+offset_bottom = 28.0
+mouse_filter = 2
+theme_type_variation = &"Letreiro"
+
+[node name="Texto" type="Label" parent="MapaWrap/Letreiros/LetreiroEscritorio/Placa"]
+layout_mode = 2
+mouse_filter = 2
+horizontal_alignment = 1
+text = "ESCRITÓRIO"
+theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="LetreiroArmazem" type="Control" parent="MapaWrap/Letreiros"]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 166.0
+offset_right = 296.0
+offset_bottom = 214.0
+mouse_filter = 2
+
+[node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroArmazem"]
+layout_mode = 0
+offset_left = 62.0
+offset_top = 24.0
+offset_right = 66.0
+offset_bottom = 48.0
+mouse_filter = 2
+color = Color(0.29, 0.325, 0.353, 1)
+
+[node name="Placa" type="PanelContainer" parent="MapaWrap/Letreiros/LetreiroArmazem"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 28.0
+mouse_filter = 2
+theme_type_variation = &"Letreiro"
+
+[node name="Texto" type="Label" parent="MapaWrap/Letreiros/LetreiroArmazem/Placa"]
+layout_mode = 2
+mouse_filter = 2
+horizontal_alignment = 1
 text = "ARMAZÉM"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
-theme_override_constants/outline_size = 9
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
+theme_override_font_sizes/font_size = 14
 
-[node name="LblZona" type="Label" parent="MapaWrap"]
+; A da zona de espera fica numa estaca fincada na água, que é onde uma placa
+; de fundeadouro fica mesmo. Mastro mais comprido: não há telhado por baixo.
+[node name="LetreiroZona" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
-offset_left = 476.0
-offset_top = 500.0
-offset_right = 676.0
-offset_bottom = 572.0
+offset_left = 610.0
+offset_top = 266.0
+offset_right = 706.0
+offset_bottom = 344.0
 mouse_filter = 2
+
+[node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroZona"]
+layout_mode = 0
+offset_left = 46.0
+offset_top = 42.0
+offset_right = 50.0
+offset_bottom = 78.0
+mouse_filter = 2
+color = Color(0.235, 0.267, 0.29, 1)
+
+[node name="Placa" type="PanelContainer" parent="MapaWrap/Letreiros/LetreiroZona"]
+layout_mode = 0
+offset_right = 96.0
+offset_bottom = 46.0
+mouse_filter = 2
+theme_type_variation = &"Letreiro"
+
+[node name="Texto" type="Label" parent="MapaWrap/Letreiros/LetreiroZona/Placa"]
+layout_mode = 2
+mouse_filter = 2
+horizontal_alignment = 1
 text = "ZONA DE
 ESPERA"
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
-theme_override_constants/outline_size = 9
-theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.784, 0.878, 0.945, 1)
+theme_override_font_sizes/font_size = 13
 
-[node name="LblEscritorio" type="Label" parent="MapaWrap"]
+; ================= BARRA DE DOCAS =================
+; Os três alvos de alocação, alinhados logo abaixo do mapa. Antes eram chips
+; pousadas nos píeres: cobriam o barco e o guindaste, e ficavam em diagonal
+; pela tela, cada uma num lugar diferente a cada partida. Aqui o polegar sabe
+; sempre onde estão, e o mapa fica livre para mostrar o porto.
+;
+; Continuam aceitando ARRASTO, e o píer no mapa também — quem já jogava
+; arrastando não perde nada, só ganhou um segundo alvo maior.
+
+[node name="BarraDocas" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 268.0
-offset_top = 96.0
-offset_right = 468.0
-offset_bottom = 130.0
-mouse_filter = 2
-text = "ESCRITÓRIO"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.051, 0.153, 0.212, 1)
-theme_override_constants/outline_size = 9
-theme_override_font_sizes/font_size = 22
+offset_left = 14.0
+offset_top = 752.0
+offset_right = 706.0
+offset_bottom = 836.0
+theme_override_constants/separation = 10
+
+[node name="Cartao0" parent="BarraDocas" instance=ExtResource("6")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Cartao1" parent="BarraDocas" instance=ExtResource("6")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Cartao2" parent="BarraDocas" instance=ExtResource("6")]
+layout_mode = 2
+size_flags_horizontal = 3
 
 ; ================= TRABALHADORES =================
 
 [node name="TrabalhadoresTitulo" type="Label" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 820.0
+offset_top = 846.0
 offset_right = 706.0
-offset_bottom = 838.0
+offset_bottom = 864.0
 text = "Trabalhadores — toque ou arraste para uma doca"
 theme_override_colors/font_color = Color(0.51, 0.6, 0.706, 1)
 theme_override_font_sizes/font_size = 13
@@ -459,9 +527,9 @@ theme_override_font_sizes/font_size = 13
 [node name="Trabalhadores" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 840.0
+offset_top = 868.0
 offset_right = 706.0
-offset_bottom = 1000.0
+offset_bottom = 1004.0
 theme_override_constants/separation = 10
 
 ; ================= RODAPÉ =================
@@ -469,9 +537,9 @@ theme_override_constants/separation = 10
 [node name="MensagemCartao" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1006.0
+offset_top = 1014.0
 offset_right = 706.0
-offset_bottom = 1050.0
+offset_bottom = 1058.0
 theme_override_styles/panel = SubResource("faixa_msg")
 
 [node name="Mensagem" type="Label" parent="MensagemCartao"]
@@ -482,9 +550,9 @@ theme_override_font_sizes/font_size = 13
 [node name="MetaCartao" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1056.0
+offset_top = 1066.0
 offset_right = 706.0
-offset_bottom = 1118.0
+offset_bottom = 1128.0
 
 [node name="MetaColuna" type="VBoxContainer" parent="MetaCartao"]
 layout_mode = 2
@@ -523,18 +591,18 @@ theme_override_font_sizes/font_size = 13
 [node name="Upgrade" type="Button" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1124.0
+offset_top = 1136.0
 offset_right = 706.0
-offset_bottom = 1170.0
+offset_bottom = 1182.0
 theme_override_constants/icon_max_width = 26
 icon = ExtResource("ic_ampliar")
 
 [node name="AcoesTurno" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1176.0
+offset_top = 1190.0
 offset_right = 706.0
-offset_bottom = 1234.0
+offset_bottom = 1248.0
 theme_override_constants/separation = 8
 
 [node name="Alocar" type="Button" parent="AcoesTurno"]

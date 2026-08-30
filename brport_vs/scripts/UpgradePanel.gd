@@ -11,14 +11,28 @@ extends Control
 const COR_FEITO := Color(0.102, 0.478, 0.251)
 const COR_BLOQUEADO := Color(0.51, 0.6, 0.706)
 
+# Comprar emite `cash_changed` E `roster_changed`, e o botão que disparou a
+# compra está dentro do que vai ser destruído. Remontar na hora significaria
+# libertar um nó no meio da emissão do sinal dele próprio, duas vezes.
+# Marcar e remontar no fim do frame resolve as duas coisas de uma vez.
+var _rebuild_pedido := false
+
 
 func _ready() -> void:
 	_build_ui()
-	GameState.cash_changed.connect(func(_v): _rebuild())
-	GameState.roster_changed.connect(_rebuild)
+	GameState.cash_changed.connect(func(_v): _pedir_rebuild())
+	GameState.roster_changed.connect(_pedir_rebuild)
+
+
+func _pedir_rebuild() -> void:
+	if _rebuild_pedido:
+		return
+	_rebuild_pedido = true
+	_rebuild.call_deferred()
 
 
 func _rebuild() -> void:
+	_rebuild_pedido = false
 	for filho in get_children():
 		remove_child(filho)
 		filho.queue_free()
@@ -53,7 +67,7 @@ func _build_ui() -> void:
 	vbox.add_child(Icones.rotulo(Icones.AMPLIAR_PIER, "Construir no porto"))
 
 	var caixa := Label.new()
-	caixa.text = "Caixa: R$%d" % int(GameState.cash)
+	caixa.text = "Caixa: %s" % GameState.moeda(int(GameState.cash))
 	caixa.add_theme_font_size_override("font_size", 14)
 	vbox.add_child(caixa)
 
@@ -83,7 +97,7 @@ func _linha_estrutura(id: String) -> Control:
 	cartao.add_child(col)
 
 	var titulo := Label.new()
-	titulo.text = "%s — R$%d" % [def["nome"], int(def["custo"])]
+	titulo.text = "%s  ·  %s" % [def["nome"], GameState.moeda(int(def["custo"]))]
 	titulo.add_theme_font_size_override("font_size", 15)
 	if feito:
 		titulo.add_theme_color_override("font_color", COR_FEITO)
@@ -104,7 +118,7 @@ func _linha_estrutura(id: String) -> Control:
 		return cartao
 
 	var btn := Button.new()
-	btn.text = "Construir (R$%d)" % int(def["custo"]) if impedimento == "" else impedimento
+	btn.text = "Construir por %s" % GameState.moeda(int(def["custo"])) if impedimento == "" else impedimento
 	btn.disabled = impedimento != ""
 	btn.add_theme_font_size_override("font_size", 13)
 	if impedimento == "":

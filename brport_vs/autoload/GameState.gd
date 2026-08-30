@@ -46,6 +46,14 @@ const WORKERS_BASE := 1
 const UPGRADE_EXTRA_DOCKS := 1
 const UPGRADE_EXTRA_WORKERS := 1
 
+# Quantos berços o mapa desenha. Não é número de interface: é o TETO do porto,
+# e por isso mora aqui e não no Main. Enquanto vivia só lá em cima, nada
+# impedia o estado de passar do que a tela sabe mostrar — e passou: um save
+# antigo, gravado quando o porto abria com 2 docas, somava os dois píeres
+# comprados e chegava a 4 docas contra 3 vagas desenhadas. A quarta doca
+# existia, recebia barco e nunca aparecia.
+const BERCOS_NO_MAPA := 3
+
 # ── ESTRUTURAS ──
 # O que o jogador compra ou conserta. Cada uma tem um efeito ECONÔMICO real —
 # nenhuma é só enfeite, senão comprar seria só gastar.
@@ -142,6 +150,16 @@ const PARCELA_DUE_TURN := TURNS_PER_WEEK * 4   # vence ao fim da semana 4
 
 const SAVE_PATH := "user://savegame.json"
 
+# VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar.
+#
+# O save não tinha versão nenhuma, e isso já custou um bug de verdade: quando
+# o porto passou a abrir com 1 doca em vez de 2, um jogo salvo antes continuou
+# a ser carregado como se nada tivesse mudado. O jogador ficava com duas docas
+# de graça, o painel de construção continuava a oferecer os píeres 2 e 3 (que
+# nunca constaram de `estruturas`), e comprá-los levava o porto a 4 docas num
+# mapa de 3. Save de outra versão não é save: é ruído com a extensão certa.
+const SAVE_VERSION := 2
+
 # ── STATE ──
 var turn: int = 1
 var cash: int = START_CASH
@@ -213,6 +231,38 @@ func _set_phase(new_phase: String) -> void:
 		return
 	phase = new_phase
 	phase_changed.emit(phase)
+
+
+# R$8000 lido de relance vira "R$800" ou "R$80000". Com o separador de milhar
+# o número tem forma, e forma é o que o olho compara sem contar dígito.
+# Vive aqui porque quatro telas mostram dinheiro e não pode haver quatro
+# versões da mesma regra.
+func moeda(valor: int) -> String:
+	var negativo := valor < 0
+	var digitos := str(abs(valor))
+	var saida := ""
+	var contados := 0
+	for i in range(digitos.length() - 1, -1, -1):
+		saida = digitos[i] + saida
+		contados += 1
+		if contados % 3 == 0 and i > 0:
+			saida = "." + saida
+	return "%sR$%s" % ["-" if negativo else "", saida]
+
+
+# Uma doca só aceita trabalhador se existe, tem barco esperando, ninguém está
+# nela e a negociação do rival já foi resolvida. Três telas precisavam saber
+# disso e cada uma tinha a sua cópia da regra.
+func doca_aceita_trabalhador(dock_index: int) -> bool:
+	if phase != "playing":
+		return false
+	if dock_index < 0 or dock_index >= docks.size():
+		return false
+	var doca: Dictionary = docks[dock_index]
+	var barco = doca["boat"]
+	if barco == null or doca["worker_id"] != null:
+		return false
+	return not (barco.get("rival", false) and not barco.get("matched", false))
 
 
 func week_of(t: int) -> int:
@@ -289,13 +339,8 @@ func assign_all_free_workers() -> int:
 
 	var esperando: Array[int] = []
 	for i in range(docks.size()):
-		var doca: Dictionary = docks[i]
-		var barco = doca["boat"]
-		if barco == null or doca["worker_id"] != null:
-			continue
-		if barco.get("rival", false) and not barco.get("matched", false):
-			continue
-		esperando.append(i)
+		if doca_aceita_trabalhador(i):
+			esperando.append(i)
 	if esperando.is_empty():
 		return 0
 
@@ -337,13 +382,8 @@ func has_pending_assignment() -> bool:
 	if not tem_livre:
 		return false
 	for i in range(docks.size()):
-		var doca: Dictionary = docks[i]
-		var barco = doca["boat"]
-		if barco == null or doca["worker_id"] != null:
-			continue
-		if barco.get("rival", false) and not barco.get("matched", false):
-			continue
-		return true
+		if doca_aceita_trabalhador(i):
+			return true
 	return false
 
 
@@ -450,7 +490,7 @@ func _fechar_negocio(boat: Dictionary, desconto: float, aviso: String) -> void:
 	metrics["rival_matched"] += 1
 	_close_rival_offer()
 	_change_reputation(REPUTATION_GAIN_RIVAL_MATCHED)
-	message.emit("%s — barco fechado por R$%d." % [aviso, valor], "good")
+	message.emit("%s — barco fechado por %s." % [aviso, moeda(valor)], "good")
 	roster_changed.emit()
 	save_game()
 
@@ -534,7 +574,7 @@ func _process_week_end(ended_week: int) -> void:
 	cash -= cost
 	metrics["pier_income"] = int(metrics.get("pier_income", 0)) + pier_income
 	cash_changed.emit(cash)
-	message.emit("Semana %d encerrada — +R$%d do aluguel do píer, -R$%d em custos (salários + manutenção)." % [ended_week, pier_income, cost], "warn")
+	message.emit("Semana %d encerrada — +%s do aluguel do píer, -%s em custos (salários + manutenção)." % [ended_week, moeda(pier_income), moeda(cost)], "warn")
 
 
 func _check_end() -> void:
@@ -566,7 +606,7 @@ func pay_debt() -> void:
 	parcela_paid = true
 	_set_phase("playing")
 	cash_changed.emit(cash)
-	message.emit("Parcela de R$%d paga ao Sr. Ribeiro." % PARCELA_AMOUNT, "good")
+	message.emit("Parcela de %s paga ao Sr. Ribeiro." % moeda(PARCELA_AMOUNT), "good")
 	turn_advanced.emit(turn, current_week())
 	_check_end()
 	save_game()
@@ -595,7 +635,7 @@ func impedimento_estrutura(id: String) -> String:
 	if requer != "" and not tem_estrutura(requer):
 		return "Precisa antes de: %s." % ESTRUTURAS[requer]["nome"]
 	if cash < int(def["custo"]):
-		return "Faltam R$%d." % (int(def["custo"]) - int(cash))
+		return "Faltam %s." % moeda(int(def["custo"]) - int(cash))
 	return ""
 
 
@@ -612,6 +652,10 @@ func comprar_estrutura(id: String) -> bool:
 	if id == "pier_2" or id == "pier_3":
 		upgrade_purchased = true          # compat: a suíte antiga ainda olha isto
 		for i in range(UPGRADE_EXTRA_DOCKS):
+			# Doca que o mapa não desenha é doca invisível: recebe barco, o
+			# barco vai embora sem trabalhador e o jogador nunca vê por quê.
+			if docks.size() >= BERCOS_NO_MAPA:
+				break
 			docks.append({"boat": null, "worker_id": null})
 		for i in range(UPGRADE_EXTRA_WORKERS):
 			workers.append({"id": workers.size() + 1, "busy_turns": 0})
@@ -707,6 +751,7 @@ func reputation_label() -> String:
 # ── AUTOSAVE LOCAL ──
 func save_game() -> void:
 	var data := {
+		"versao": SAVE_VERSION,
 		"turn": turn,
 		"cash": cash,
 		"reputation": reputation,
@@ -741,6 +786,14 @@ func load_game() -> bool:
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return false
 
+	# Save de outra versão do jogo é descartado, não adaptado. Migrar exigiria
+	# adivinhar o que o jogador tinha comprado a partir de números que já não
+	# querem dizer a mesma coisa — foi assim que apareceu o porto de 4 docas
+	# num mapa de 3. Recomeçar é honesto; carregar um estado impossível não é.
+	if int(parsed.get("versao", 1)) != SAVE_VERSION:
+		clear_save()
+		return false
+
 	turn = int(parsed.get("turn", 1))
 	cash = int(parsed.get("cash", START_CASH))
 	reputation = float(parsed.get("reputation", REPUTATION_START))
@@ -759,8 +812,58 @@ func load_game() -> bool:
 
 	if docks.is_empty() or workers.is_empty():
 		return false
+	_reconciliar_roster()
 	state_loaded.emit()
 	return true
+
+
+# Quantas docas e quantos trabalhadores o porto DEVE ter, dado o que está
+# construído. É a única fonte da verdade: docas não são um contador que anda
+# sozinho, são consequência dos píeres.
+func docas_esperadas() -> int:
+	var n := DOCKS_BASE
+	for id in ["pier_2", "pier_3"]:
+		if tem_estrutura(id):
+			n += UPGRADE_EXTRA_DOCKS
+	return mini(n, BERCOS_NO_MAPA)
+
+
+func trabalhadores_esperados() -> int:
+	var n := WORKERS_BASE
+	for id in ["pier_2", "pier_3"]:
+		if tem_estrutura(id):
+			n += UPGRADE_EXTRA_WORKERS
+	return n
+
+
+# Rede de segurança do carregamento. A versão do save já barra o caso
+# conhecido; isto barra o próximo, seja ele um arquivo editado à mão ou um
+# bug futuro que some uma doca a mais. Sobra doca -> corta as do fim (as
+# últimas são as que o mapa não desenha); falta -> completa vazia.
+func _reconciliar_roster() -> void:
+	var alvo_docas := docas_esperadas()
+	while docks.size() > alvo_docas:
+		var perdida: Dictionary = docks.pop_back()
+		var trabalhador = perdida.get("worker_id")
+		if trabalhador != null:
+			var w = _find_worker(int(trabalhador))
+			if w != null:
+				w["busy_turns"] = 0
+	while docks.size() < alvo_docas:
+		docks.append({"boat": null, "worker_id": null})
+
+	var alvo_trab := trabalhadores_esperados()
+	while workers.size() > alvo_trab:
+		workers.pop_back()
+	while workers.size() < alvo_trab:
+		workers.append({"id": workers.size() + 1, "busy_turns": 0})
+
+	# Trabalhador cortado não pode continuar alocado numa doca que ficou: seria
+	# um "#4" na tela sem cartão correspondente na fileira.
+	for doca in docks:
+		var alocado = doca["worker_id"]
+		if alocado != null and _find_worker(int(alocado)) == null:
+			doca["worker_id"] = null
 
 
 func clear_save() -> void:

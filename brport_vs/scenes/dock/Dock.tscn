@@ -1,26 +1,8 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/Dock.gd" id="1"]
-[ext_resource type="Texture2D" path="res://art/icones/rival.svg" id="ic_rival"]
-[ext_resource type="Texture2D" path="res://art/icones/trabalhador.svg" id="ic_trabalhador"]
 [ext_resource type="Texture2D" path="res://art/props/trabalhador.png" id="prop_trabalhador"]
 [ext_resource type="Texture2D" path="res://art/props/guindaste_lanca.png" id="prop_lanca"]
-
-[sub_resource type="StyleBoxFlat" id="chip"]
-bg_color = Color(0.09, 0.16, 0.24, 0.88)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.2, 0.34, 0.47, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-content_margin_left = 8.0
-content_margin_top = 5.0
-content_margin_right = 8.0
-content_margin_bottom = 5.0
 
 [node name="Dock" type="Control"]
 custom_minimum_size = Vector2(262, 168)
@@ -35,6 +17,28 @@ offset_top = -172.0
 offset_right = 412.0
 offset_bottom = 340.0
 mouse_filter = 2
+
+; ORDEM DOS PROPS = PROFUNDIDADE. Num plano isométrico quem tem `mx+my`
+; maior está mais perto da câmera e tapa quem tem menor. O trabalhador fica
+; no convés, atrás do barco e da lança, então vem ANTES dos dois. Estava por
+; último, e o resultado era a figura desenhada por cima do cabo e do moitão do
+; guindaste — de pé no tabuado, mas parecendo pendurada no ar.
+;
+; O OFFSET DELE NÃO É O DO PÍER, de propósito. O quadro de 512 continua
+; ancorado na origem do mundo como todos os outros props; deslocá-lo aqui é o
+; que reposiciona a figura no tabuado sem precisar de um render novo. Os
+; -36,+35 px valem Δmx +0,55 / Δmy +1,75 no mapa: tiram o trabalhador de baixo
+; da lança e do cabo (que passavam exatamente por cima dele) e o põem à beira
+; do costado, encarando o navio, onde uma figura de 22px ainda se lê.
+[node name="Trabalhador" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -136.0
+offset_top = -137.0
+offset_right = 376.0
+offset_bottom = 375.0
+mouse_filter = 2
+visible = false
+texture = ExtResource("prop_trabalhador")
 
 [node name="Barco" type="TextureRect" parent="."]
 layout_mode = 0
@@ -54,82 +58,3 @@ pivot_offset = Vector2(311, 153)
 mouse_filter = 2
 visible = false
 texture = ExtResource("prop_lanca")
-
-[node name="Trabalhador" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = -100.0
-offset_top = -172.0
-offset_right = 412.0
-offset_bottom = 340.0
-mouse_filter = 2
-visible = false
-texture = ExtResource("prop_trabalhador")
-
-[node name="Chip" type="PanelContainer" parent="."]
-layout_mode = 0
-offset_left = 92.0
-offset_top = 58.0
-offset_right = 222.0
-offset_bottom = 106.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("chip")
-
-[node name="Coluna" type="VBoxContainer" parent="Chip"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 1
-
-[node name="Valor" type="Label" parent="Chip/Coluna"]
-layout_mode = 2
-mouse_filter = 2
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
-theme_override_font_sizes/font_size = 17
-
-[node name="ProgressoLinha" type="HBoxContainer" parent="Chip/Coluna"]
-layout_mode = 2
-mouse_filter = 2
-alignment = 1
-theme_override_constants/separation = 4
-
-[node name="Icone" type="TextureRect" parent="Chip/Coluna/ProgressoLinha"]
-custom_minimum_size = Vector2(17, 17)
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-visible = false
-texture = ExtResource("ic_rival")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Progresso" type="Label" parent="Chip/Coluna/ProgressoLinha"]
-layout_mode = 2
-mouse_filter = 2
-size_flags_horizontal = 4
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.639, 0.792, 0.855, 1)
-theme_override_font_sizes/font_size = 12
-
-[node name="TrabalhadorLinha" type="HBoxContainer" parent="Chip/Coluna"]
-layout_mode = 2
-mouse_filter = 2
-alignment = 1
-theme_override_constants/separation = 4
-
-[node name="Icone" type="TextureRect" parent="Chip/Coluna/TrabalhadorLinha"]
-custom_minimum_size = Vector2(17, 17)
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-visible = false
-texture = ExtResource("ic_trabalhador")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Trabalhador" type="Label" parent="Chip/Coluna/TrabalhadorLinha"]
-layout_mode = 2
-mouse_filter = 2
-size_flags_horizontal = 4
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
-theme_override_font_sizes/font_size = 12

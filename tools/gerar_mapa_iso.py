@@ -65,11 +65,68 @@ C = {
     "vidro": "#7fb6cc", "porta": "#5a3a20", "terra": "#8a7a63",
     "terra_clara": "#9c8b71", "terra_escura": "#75664f", "poca": "#6b6f66",
     "mato": "#5c7343", "asfalto_claro": "#7d8993", "asfalto_escuro": "#616c76",
+    "tinta": "#e0a81f",
 }
 
 
 def p(mx: float, my: float, h: float = 0.0) -> tuple:
     return (CX + (mx - my) * MEIA_LARG, CY + (mx + my) * MEIA_ALT - h)
+
+
+def contorno_costa() -> list:
+    """Os vértices (mx, my) da linha que separa terra de água, em ordem de my.
+
+    A costa é uma ESCADA, não uma diagonal. Cada degrau avança 4 em `mx` e
+    8 em `my` (ver o cabeçalho), e entre um e o seguinte há uma quina de
+    verdade: primeiro o muro do degrau atual, depois o espelho que liga ao
+    muro do próximo. Descrever isso como uma linha só é o que faz tudo o que
+    acompanha a margem — faixa de profundidade, enrocamento, espuma — virar a
+    esquina junto com ela.
+    """
+    v = [(DEGRAUS[0][2], DEGRAUS[0][0])]
+    for i, (_, my1, borda) in enumerate(DEGRAUS):
+        v.append((borda, my1))
+        if i + 1 < len(DEGRAUS):
+            v.append((DEGRAUS[i + 1][2], my1))
+    return v
+
+
+def costa_deslocada(d: float) -> list:
+    """O contorno da costa empurrado `d` unidades para dentro da ÁGUA.
+
+    Cada tipo de segmento tem a água de um lado diferente: num muro (mx
+    constante) a água está no +mx; num espelho de degrau (my constante) ela
+    está no -my, porque o degrau seguinte é mais largo e come o +my.
+
+    Era exatamente isto que faltava. A versão anterior empurrava tudo em +mx
+    e tratava cada degrau como uma faixa solta: nas quinas a faixa entrava
+    pelo cais adentro, e o enrocamento aparecia como cascalho pintado em cima
+    do concreto — o "textura de pedra por cima do mapa" reportado no playtest.
+    """
+    v = contorno_costa()
+    ponta = len(v) - 1
+    return [(mx + d, my if i in (0, ponta) else my - d)
+            for i, (mx, my) in enumerate(v)]
+
+
+def andar_costa(d: float, passo: tuple, r: random.Random):
+    """Percorre a linha de água a `d` da terra, a passos irregulares.
+
+    Devolve (mx, my, normal, tangente) — a normal aponta para o mar, e é ela
+    que garante que nada do que se espalha por aqui caia do lado da terra.
+    """
+    v = costa_deslocada(d)
+    for i in range(len(v) - 1):
+        (x0, y0), (x1, y1) = v[i], v[i + 1]
+        muro = abs(x1 - x0) < 1e-6
+        normal = (1.0, 0.0) if muro else (0.0, -1.0)
+        tangente = (0.0, 1.0) if muro else (1.0, 0.0)
+        comprimento = abs(y1 - y0) if muro else abs(x1 - x0)
+        andado = 0.0
+        while andado < comprimento:
+            f = andado / comprimento
+            yield (x0 + (x1 - x0) * f, y0 + (y1 - y0) * f, normal, tangente)
+            andado += r.uniform(*passo)
 
 
 def costa(de: float, ate: float) -> list:
@@ -80,11 +137,51 @@ def costa(de: float, ate: float) -> list:
     faixa de profundidade tem de SEGUIR a linha da terra, e é isso que faz o
     olho ler "isto é uma margem" em vez de "isto é uma mancha".
     """
-    perto, longe = [], []
-    for my0, my1, borda in DEGRAUS:
-        perto += [p(borda + de, my0), p(borda + de, my1)]
-        longe += [p(borda + ate, my0), p(borda + ate, my1)]
+    perto = [p(mx, my) for mx, my in costa_deslocada(de)]
+    longe = [p(mx, my) for mx, my in costa_deslocada(ate)]
     return perto + list(reversed(longe))
+
+
+# ── NÚMERO DA DOCA, PINTADO NO CAIS ──────────────────────────────────────
+# Os nomes das docas eram Labels brancos flutuando por cima do mapa: liam-se
+# como legenda de diagrama, não como porto. Numa doca de verdade o número está
+# PINTADO NO CHÃO, para ser lido de dentro do navio — então é isso que ele é
+# aqui, e o cartão da doca lá embaixo é que diz "DOCA 1" por extenso.
+#
+# Por que estêncil e não uma fonte: o importador de SVG do Godot é o ThorVG,
+# que não desenha <text>. Um dígito escrito com fonte sairia vazio no jogo.
+# Três dígitos como polígonos custam vinte linhas e ainda dão o traço grosso e
+# chapado que a tinta de piso tem de verdade.
+
+# Cada dígito numa caixa de 6x10, y para baixo. Barras = (x0, y0, x1, y1).
+DIGITOS = {
+    "1": [(2.2, 0.0, 3.8, 10.0), (0.8, 8.4, 5.2, 10.0), (0.9, 1.3, 2.2, 2.6)],
+    "2": [(0.0, 0.0, 6.0, 1.6), (4.4, 1.2, 6.0, 4.8), (0.0, 4.0, 6.0, 5.6),
+          (0.0, 5.2, 1.6, 8.8), (0.0, 8.4, 6.0, 10.0)],
+    "3": [(0.0, 0.0, 6.0, 1.6), (4.4, 0.0, 6.0, 10.0), (1.4, 4.2, 6.0, 5.8),
+          (0.0, 8.4, 6.0, 10.0)],
+}
+
+
+def pintura_doca(digito: str, mx0: float, my0: float, altura: float,
+                 cor: str, opacidade: float) -> str:
+    """Um dígito deitado no plano do chão, para ser lido da água.
+
+    O eixo do texto acompanha a beira do cais (-my sobe para a direita) e a
+    altura das letras cai para dentro da terra (+mx). Não há rotação que
+    resolva isto: um plano isométrico precisa de CISALHAMENTO, e é por isso que
+    a conta vive aqui e não num nó de interface.
+    """
+    escala = altura / 10.0
+    out = []
+    for x0, y0, x1, y1 in DIGITOS[digito]:
+        # (u ao longo de -my, v ao longo de +mx), ambos em unidades de mundo.
+        quina = []
+        for u, v in [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]:
+            quina.append(p(mx0 + v * escala, my0 - u * escala, ALT_CAIS))
+        out.append('  <polygon points="%s" fill="%s" opacity="%.2f"/>\n'
+                   % (" ".join("%.1f,%.1f" % q for q in quina), cor, opacidade))
+    return "".join(out)
 
 
 SEMENTE_CHAO = 20260829   # fixo: o mapa tem de sair igual toda vez
@@ -343,6 +440,13 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
                      C["cais_junta"]))
             my += 1.9
 
+    # ---- número de cada doca, pintado na faixa de concreto ----
+    # Vai DEPOIS da junta e da faixa amarela porque tinta de piso é a última
+    # camada a ser aplicada — e porque assim o dígito não sai riscado ao meio.
+    for i, (my0, my1, borda) in enumerate(PIERES):
+        s += pintura_doca(str(i + 1), borda - 1.20, (my0 + my1) / 2.0 - 0.20,
+                          1.05, C["tinta"], 0.90)
+
     # ---- pé do cais: sombra do muro, enrocamento e espuma ----
     # Sem isto o cais encontra a água numa aresta limpa, que é o que fazia a
     # margem parecer recortada em papel.
@@ -354,18 +458,25 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # um pedaço da anterior.
     s += poli(costa(0.0, 1.15), C["sombra_agua"], 0.30)
 
+    #
+    # A SEGUNDA correção veio do playtest: as pedras eram espalhadas por
+    # degrau, cada um ao longo do seu próprio `borda`, e nas quinas da escada
+    # isso as jogava para dentro do degrau seguinte — que é mais largo. Vistas
+    # na tela pareciam cascalho pintado no concreto do cais. Agora elas andam
+    # pelo CONTORNO (andar_costa) e só se afastam na direção do mar, então
+    # nenhuma pode cair em terra: a quina passou a ser uma quina de pedra.
     r = random.Random(SEMENTE_CHAO + 90)
     tons = [C["pedra"], C["pedra_media"], C["pedra_clara"]]
-    for my0, my1, borda in DEGRAUS:
-        my = my0
-        while my < my1:
-            for _ in range(2):
-                px, py = p(borda + r.uniform(-0.10, 0.55), my + r.uniform(-0.12, 0.12))
-                rx = r.uniform(4.5, 9.5)
-                s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
-                      'fill="%s"/>\n'
-                      % (px, py, rx, rx * r.uniform(0.48, 0.62), tons[r.randrange(3)]))
-            my += r.uniform(0.22, 0.40)
+    for mx, my, (nmx, nmy), (tmx, tmy) in andar_costa(0.06, (0.22, 0.40), r):
+        for _ in range(2):
+            fora = r.uniform(0.0, 0.42)
+            ao_longo = r.uniform(-0.12, 0.12)
+            px, py = p(mx + nmx * fora + tmx * ao_longo,
+                       my + nmy * fora + tmy * ao_longo)
+            rx = r.uniform(4.5, 9.5)
+            s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
+                  'fill="%s"/>\n'
+                  % (px, py, rx, rx * r.uniform(0.48, 0.62), tons[r.randrange(3)]))
 
     # Espuma: MANCHAS, não traço.
     # Passou por duas versões erradas antes desta. Linha contínua ao longo do
@@ -375,17 +486,16 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # lê como arrebentação é borrão de tamanho e opacidade irregulares — a
     # espuma não tem espessura, tem quantidade.
     re_ = random.Random(SEMENTE_CHAO + 55)
-    for my0, my1, borda in DEGRAUS:
-        my = my0
-        while my < my1:
-            if re_.random() < 0.72:
-                fx, fy = p(borda + re_.uniform(0.45, 1.00), my)
-                rx = re_.uniform(4.0, 11.0)
-                s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
-                      'fill="%s" opacity="%.2f"/>\n'
-                      % (fx, fy, rx, re_.uniform(1.8, 3.2), C["espuma"],
-                         re_.uniform(0.28, 0.60)))
-            my += re_.uniform(0.18, 0.42)
+    for mx, my, (nmx, nmy), _t in andar_costa(0.45, (0.18, 0.42), re_):
+        if re_.random() >= 0.72:
+            continue
+        fora = re_.uniform(0.0, 0.55)
+        fx, fy = p(mx + nmx * fora, my + nmy * fora)
+        rx = re_.uniform(4.0, 11.0)
+        s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
+              'fill="%s" opacity="%.2f"/>\n'
+              % (fx, fy, rx, re_.uniform(1.8, 3.2), C["espuma"],
+                 re_.uniform(0.28, 0.60)))
 
     # ---- píeres ----
     # Em jogo o píer TROCA DE ESTADO (vaga por construir -> píer construído), e

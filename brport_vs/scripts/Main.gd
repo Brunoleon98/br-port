@@ -9,8 +9,11 @@ extends Control
 #
 # Desde o Bloco 4 as docas não são mais uma fileira de cartões: são três
 # VAGAS FIXAS no mapa do porto, já posicionadas em Main.tscn sobre os
-# píeres. Quantas estão construídas vem de GameState.docks, então "Ampliar
-# píer" acende a terceira vaga em vez de só somar um cartão.
+# píeres. Quantas estão construídas vem de GameState.docks, então "Reconstruir
+# o píer" acende a terceira vaga em vez de só somar um cartão.
+#
+# Cada doca tem duas metades na tela — a vaga no mapa e o cartão na barra
+# abaixo dele — e é este script que as mantém apontando para o mesmo índice.
 # ============================================================
 
 const WorkerScene := preload("res://scenes/worker/Worker.tscn")
@@ -20,9 +23,6 @@ const UpgradePanelScene := preload("res://scenes/panels/UpgradePanel.tscn")
 const PauseMenuScene := preload("res://scenes/panels/PauseMenu.tscn")
 const EndGameScene := preload("res://scenes/EndGame.tscn")
 
-# Vagas desenhadas no mapa. O upgrade do píer nunca pode passar disto sem
-# o mapa ganhar uma quarta posição desenhada.
-const VAGAS_NO_MAPA := 3
 
 const COR_BOA := Color(0.102, 0.478, 0.251)
 const COR_AVISO := Color(0.851, 0.467, 0.024)
@@ -39,7 +39,12 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 @onready var _advance_button: Button = $AcoesTurno/Avancar
 @onready var _alocar_button: Button = $AcoesTurno/Alocar
 @onready var _upgrade_button: Button = $Upgrade
+# Uma doca tem DUAS metades na tela: a vaga no mapa (píer, barco, guindaste,
+# trabalhador) e o cartão na barra de baixo (texto e alvo de toque). O Main é
+# quem sabe que as duas são a mesma doca de índice `i` — nenhuma das duas
+# conhece a outra.
 @onready var _docks_container: Control = $MapaWrap/Docas
+@onready var _dock_cards: HBoxContainer = $BarraDocas
 
 # Trabalhador escolhido por toque, à espera de uma doca. -1 = nenhum.
 # Vive aqui e não no GameState porque é estado de interface: quem joga com
@@ -168,11 +173,11 @@ func _refresh_estruturas() -> void:
 
 
 func _refresh_hud() -> void:
-	_cash_label.text = "R$%d" % int(GameState.cash)
+	_cash_label.text = GameState.moeda(int(GameState.cash))
 	var shown_day: int = min(GameState.turn, GameState.TURNS_TOTAL)
 	_day_label.text = "Dia %d/%d" % [shown_day, GameState.TURNS_TOTAL]
 	_rep_label.text = "%d %s" % [int(GameState.reputation), GameState.reputation_label()]
-	_docks_label.text = "%d/%d" % [GameState.docks.size(), VAGAS_NO_MAPA]
+	_docks_label.text = "%d/%d" % [GameState.docks.size(), GameState.BERCOS_NO_MAPA]
 	# O botão não some quando tudo está construído: vira o registo de que o
 	# porto está completo, que é uma informação, não um beco sem saída.
 	var faltam := 0
@@ -184,7 +189,8 @@ func _refresh_hud() -> void:
 		_upgrade_button.text = "Porto completo"
 		Icones.no_botao(_upgrade_button, Icones.FEITO, 26)
 	else:
-		_upgrade_button.text = "Construir (%d disponível(is))" % faltam
+		var plural := "disponível" if faltam == 1 else "disponíveis"
+		_upgrade_button.text = "Construir  ·  %d %s" % [faltam, plural]
 		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	_advance_button.disabled = GameState.phase != "playing"
 	_alocar_button.disabled = not GameState.has_pending_assignment()
@@ -209,10 +215,11 @@ func _refresh_meta() -> void:
 	_meta_titulo.text = "Parcela do Sr. Ribeiro — %d dia(s) restante(s)" % dias_restantes
 	_meta_bar.value = clamp(100.0 * float(GameState.cash) / float(alvo), 0.0, 100.0)
 	var falta: int = alvo - int(GameState.cash)
+	var progresso := "%s de %s" % [GameState.moeda(int(GameState.cash)), GameState.moeda(alvo)]
 	if falta > 0:
-		_meta_label.text = "R$%d de R$%d — faltam R$%d" % [int(GameState.cash), alvo, falta]
+		_meta_label.text = "%s — faltam %s" % [progresso, GameState.moeda(falta)]
 	else:
-		_meta_label.text = "R$%d de R$%d — já dá para pagar" % [int(GameState.cash), alvo]
+		_meta_label.text = "%s — já dá para pagar" % progresso
 
 
 # As vagas já existem na cena, uma por píer desenhado no mapa. Aqui só se diz
@@ -223,6 +230,10 @@ func _refresh_docks() -> void:
 	for i in range(vagas.size()):
 		vagas[i].trabalhador_selecionado = _selecionado
 		vagas[i].setup(i)
+	var cartoes := _dock_cards.get_children()
+	for i in range(cartoes.size()):
+		cartoes[i].trabalhador_selecionado = _selecionado
+		cartoes[i].setup(i)
 
 
 func _clear(container: Node) -> void:
@@ -266,8 +277,9 @@ func _on_worker_selecionado(worker_id: int) -> void:
 	_selecionado = -1 if _selecionado == worker_id else worker_id
 	for no in _workers_container.get_children():
 		no.marcar_selecionado(no.worker_id == _selecionado)
-	for vaga in _docks_container.get_children():
-		vaga.trabalhador_selecionado = _selecionado
+	# As duas metades da doca precisam saber quem está escolhido: o cartão para
+	# aceitar o toque, a vaga no mapa para acender o realce sobre o píer.
+	_refresh_docks()
 	_refresh_titulo_trabalhadores()
 
 

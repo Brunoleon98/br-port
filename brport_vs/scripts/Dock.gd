@@ -1,15 +1,20 @@
 extends Control
 
-# Vaga de doca no mapa do porto — alvo de drop dos trabalhadores.
+# Vaga de doca no mapa do porto — a metade de CENÁRIO de uma doca.
 #
 # Desde o Bloco 4 a doca não é mais um cartão numa fileira: é uma POSIÇÃO no
 # mapa visto de cima. O mapa desenha 3 vagas fixas; quantas estão construídas
 # vem de GameState.docks. A vaga além do que existe mostra o píer por
-# construir — é o que faz "Ampliar píer" ter consequência visível no mapa em
-# vez de só somar um cartão.
+# construir — é o que faz "Reconstruir o píer" ter consequência visível no
+# mapa em vez de só somar um cartão.
+#
+# O TEXTO NÃO MORA MAIS AQUI. Ele desceu para DocaCartao.tscn, na barra sob o
+# mapa: a chip escura pousada no tabuado tapava justamente o barco, o
+# guindaste e o trabalhador que explicam o turno. O que ficou foi o alvo de
+# arrasto e um realce que acende quando esta doca aceita quem está selecionado.
 #
 # A árvore de nós mora em Dock.tscn e o estilo no tema. Este script não
-# constrói nem pinta nada: só escolhe qual textura e qual texto valem agora.
+# constrói nem pinta nada: só escolhe qual textura e qual animação valem agora.
 
 # Props ISOMÉTRICOS, gerados por tools/gerar_props_iso.py. São quadros de 512
 # cujo centro é a origem do mundo — a cena os ancora por aí, então trocar de
@@ -32,20 +37,20 @@ var trabalhador_selecionado: int = -1
 
 # ── ANIMAÇÃO ──
 # Nada aqui precisa de arte nova: é Tween sobre os sprites que já existem.
-# O balanço dá vida ao barco parado; a chegada explica de onde ele veio; e a
-# pulsação da chip aponta a doca que está esperando trabalhador — que era
-# justamente o que se perdia de vista jogando.
+# O balanço dá vida ao barco parado; a chegada explica de onde ele veio; e o
+# realce aponta a doca que pode receber o trabalhador escolhido.
 const BALANCO_PX := 5.0
 const BALANCO_SEG := 1.7
 const CHEGADA_SEG := 0.5
 const PULSO_SEG := 0.9
+const REALCE := Color(1.45, 1.22, 0.72)
 
 var _barco_base := Vector2.ZERO
 var _trabalhador_base := Vector2.ZERO
 var _barco_id_anterior: int = -1
 var _tw_balanco: Tween
 var _tw_chegada: Tween
-var _tw_pulso: Tween
+var _tw_realce: Tween
 var _tw_trabalho: Tween
 var _tw_lanca: Tween
 
@@ -53,12 +58,6 @@ var _tw_lanca: Tween
 @onready var _barco: TextureRect = $Barco
 @onready var _trabalhador_prop: TextureRect = $Trabalhador
 @onready var _lanca: TextureRect = $Lanca
-@onready var _chip: PanelContainer = $Chip
-@onready var _valor: Label = $Chip/Coluna/Valor
-@onready var _progresso: Label = $Chip/Coluna/ProgressoLinha/Progresso
-@onready var _progresso_icone: TextureRect = $Chip/Coluna/ProgressoLinha/Icone
-@onready var _trabalhador: Label = $Chip/Coluna/TrabalhadorLinha/Trabalhador
-@onready var _trabalhador_icone: TextureRect = $Chip/Coluna/TrabalhadorLinha/Icone
 
 
 func setup(index: int) -> void:
@@ -87,14 +86,11 @@ func refresh() -> void:
 	if dock_index < 0:
 		return
 
-	# Cada saída de refresh() precisa deixar os dois ícones no estado certo, por
-	# isso eles são apagados aqui e reacesos só por quem tem o que anunciar.
-	_progresso_icone.visible = false
-	_trabalhador_icone.visible = false
 	_trabalhador_prop.visible = false
-	_pulsar_chip(false)
+	# O realce só faz sentido se há alguém escolhido esperando um destino.
+	_acender_realce(trabalhador_selecionado >= 0
+		and GameState.doca_aceita_trabalhador(dock_index))
 
-	# Vaga ainda não construída: estacas velhas, sem barco.
 	# A lança só existe onde há píer: numa vaga por construir há só estacas.
 	_mostrar_lanca(esta_construida())
 
@@ -102,9 +98,6 @@ func refresh() -> void:
 		_pier.texture = ArtePierVazio
 		_parar_barco()
 		_barco.texture = null
-		_valor.text = "Vaga livre"
-		_progresso.text = "Construir píer"
-		_trabalhador.text = ""
 		return
 
 	_pier.texture = ArtePierPronto
@@ -114,56 +107,24 @@ func refresh() -> void:
 	if boat == null:
 		_parar_barco()
 		_barco.texture = null
-		_valor.text = "Doca vazia"
-		_progresso.text = "aguardando barco"
-		_trabalhador.text = ""
 		return
 
-	var grande: bool = boat.get("large", false)
-	var sob_oferta: bool = boat.get("rival", false) and not boat.get("matched", false)
-	var valor: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
-
-	_barco.texture = ArteGrande if grande else ArtePequeno
-	_valor.text = "R$%d%s" % [valor, " (acordo)" if boat.get("matched", false) else ""]
-
-	if sob_oferta:
-		_animar_barco(int(boat["id"]))
-		_progresso_icone.visible = true
-		_progresso.text = "OFERTA DO RIVAL"
-		_trabalhador.text = ""
-		return
-
-	_progresso.text = "%d/%d turnos" % [int(boat["progress"]), int(boat["op_turns"])]
+	_barco.texture = ArteGrande if boat.get("large", false) else ArtePequeno
 	_animar_barco(int(boat["id"]))
-	# Barco parado esperando gente é o que o jogador precisa notar.
-	_pulsar_chip(dock["worker_id"] == null and int(boat["progress"]) == 0)
 
-	if dock["worker_id"] == null:
-		_trabalhador.text = "sem trabalhador"
-	else:
-		_trabalhador_icone.visible = true
+	if boat.get("rival", false) and not boat.get("matched", false):
+		return
+
+	if dock["worker_id"] != null:
 		# A figura no tabuado é o que faz "doca ocupada" ler sem texto.
 		_trabalhador_prop.visible = true
 		_animar_trabalho(int(boat["progress"]) > 0)
-		var texto := "#%d" % int(dock["worker_id"])
-		# Enquanto a operação não começou dá para desfazer um arrasto errado.
-		if int(boat["progress"]) == 0:
-			texto += " · toque p/ liberar"
-		_trabalhador.text = texto
 
 
 func _can_drop_data(_at_position: Vector2, data) -> bool:
 	if typeof(data) != TYPE_DICTIONARY or not data.has("worker_id"):
 		return false
-	if not esta_construida():
-		return false
-	var dock: Dictionary = GameState.docks[dock_index]
-	if dock["boat"] == null or dock["worker_id"] != null:
-		return false
-	var boat = dock["boat"]
-	if boat.get("rival", false) and not boat.get("matched", false):
-		return false
-	return true
+	return GameState.doca_aceita_trabalhador(dock_index)
 
 
 func _drop_data(_at_position: Vector2, data) -> void:
@@ -237,16 +198,24 @@ func _iniciar_balanco() -> void:
 		_barco_base.y, BALANCO_SEG).set_trans(Tween.TRANS_SINE)
 
 
-func _pulsar_chip(ligado: bool) -> void:
-	if _tw_pulso != null and _tw_pulso.is_valid():
-		_tw_pulso.kill()
+# "Solte aqui": o PRÓPRIO PÍER acende, em vez de uma moldura por cima dele.
+# A primeira versão era um retângulo âmbar arredondado sobre a vaga, e num
+# cenário isométrico um retângulo alinhado à tela não pertence a nada — lia
+# como recorte de interface pousado no mapa. Iluminar o sprite segue a forma
+# real do píer e não introduz geometria nova.
+#
+# Pisca devagar: com três vagas acesas ao mesmo tempo, brilho fixo vira
+# decoração e deixa de apontar.
+func _acender_realce(ligado: bool) -> void:
+	if _tw_realce != null and _tw_realce.is_valid():
+		_tw_realce.kill()
 	if not ligado:
-		_chip.modulate = Color.WHITE
+		_pier.modulate = Color.WHITE
 		return
-	_tw_pulso = create_tween().set_loops()
-	_tw_pulso.tween_property(_chip, "modulate", Color(1.35, 1.2, 0.75), PULSO_SEG) \
+	_tw_realce = create_tween().set_loops()
+	_tw_realce.tween_property(_pier, "modulate", REALCE, PULSO_SEG) \
 		.set_trans(Tween.TRANS_SINE)
-	_tw_pulso.tween_property(_chip, "modulate", Color.WHITE, PULSO_SEG) \
+	_tw_realce.tween_property(_pier, "modulate", Color.WHITE, PULSO_SEG) \
 		.set_trans(Tween.TRANS_SINE)
 
 

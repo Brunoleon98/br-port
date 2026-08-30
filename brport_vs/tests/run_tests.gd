@@ -269,6 +269,59 @@ func _run() -> void:
 		int(GS.ARMAZEM_BONUS * 100), esperado],
 		int(GS.metrics["revenue"]) == esperado)
 
+	print("=== T5c: save de outra versao nao entra ===")
+	# O bug que este teste tranca: quando o porto passou a abrir com 1 doca em
+	# vez de 2, um jogo salvo antes continuou a ser carregado. O jogador ficava
+	# com duas docas de graça, `estruturas` vinha vazia (a chave nem existia
+	# naquela versão), o painel continuava a oferecer os píeres 2 e 3, e
+	# comprá-los levava o porto a 4 docas num mapa que só desenha 3.
+	GS.clear_save()
+	var antigo := {
+		"turn": 5, "cash": 1234, "reputation": 70.0,
+		"docks": [{"boat": null, "worker_id": null}, {"boat": null, "worker_id": null}],
+		"workers": [{"id": 1, "busy_turns": 0}, {"id": 2, "busy_turns": 0}],
+		"upgrade_purchased": false, "parcela_paid": false, "phase": "playing",
+		"pending_rival_dock": -1, "uid": 9,
+	}
+	var f := FileAccess.open(GS.SAVE_PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(antigo))
+	f.close()
+	_check("save sem versao e recusado  <-- o bug do pier duplicado",
+		GS.load_game() == false)
+	_check("e apagado, para nao ser tentado de novo",
+		not FileAccess.file_exists(GS.SAVE_PATH))
+
+	# O save da versao corrente volta inteiro.
+	_fresh_playing()
+	GS.cash = 4321
+	GS.save_game()
+	GS.cash = 0
+	_check("save da versao corrente carrega", GS.load_game() == true)
+	_check("e traz o caixa de volta", GS.cash == 4321)
+
+	print("=== T5d: docas nunca passam do que o mapa desenha ===")
+	_fresh_playing()
+	GS.cash = 99999
+	GS.comprar_estrutura("pier_2")
+	GS.comprar_estrutura("pier_3")
+	_check("os dois pieres dao exatamente %d docas" % GS.BERCOS_NO_MAPA,
+		GS.docks.size() == GS.BERCOS_NO_MAPA)
+	# Forca o estado impossivel e confere que carregar o conserta.
+	GS.docks.append({"boat": null, "worker_id": null})
+	GS.workers.append({"id": 99, "busy_turns": 0})
+	GS.docks[GS.docks.size() - 1]["worker_id"] = 99
+	GS.save_game()
+	_check("save com doca a mais carrega", GS.load_game() == true)
+	_check("e a doca invisivel foi cortada", GS.docks.size() == GS.BERCOS_NO_MAPA)
+	_check("junto com o trabalhador que so ela tinha",
+		GS.workers.size() == GS.trabalhadores_esperados())
+
+	print("=== T5e: dinheiro sai com separador de milhar ===")
+	_check("R$8.000", GS.moeda(8000) == "R$8.000")
+	_check("R$54 sem ponto nenhum", GS.moeda(54) == "R$54")
+	_check("R$1.234.567", GS.moeda(1234567) == "R$1.234.567")
+	_check("negativo mantem o sinal na frente", GS.moeda(-2500) == "-R$2.500")
+
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
 	var losses := 0
