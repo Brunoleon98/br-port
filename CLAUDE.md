@@ -56,6 +56,10 @@ Teste e import rodam sem tela.
    O balanceamento medido é 100% / 47% / 0% por perfil, com a mediana do
    jogador mediano em ~R$7.950 contra uma parcela de R$8.000. Mexer sem medir
    quebra isso.
+   **Medir é com `-- 600`.** As 30 partidas que o CI roda são teste de fumaça
+   (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
+   de ±18 pontos — comparar aquele número com estes 47% é comparar sorteio.
+   O próprio simulador avisa quando a rodada é curta demais para medir.
 4. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
    ficou bonito.
 
