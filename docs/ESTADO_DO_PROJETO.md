@@ -9,6 +9,9 @@
 > cresce por Fase, e o Godot passou a rodar dentro da sessão)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
+> Para saber **o que fazer a seguir e quem faz o quê**, o plano é
+> `docs/design/BR_Port_Plano_v3_Claude_Code.md` — ele tem a fila, e diz em quais
+> itens a máquina para e só o Bruno resolve.
 > As regras que já custaram trabalho estão em `CLAUDE.md`, na raiz — o Claude
 > Code carrega esse arquivo sozinho em toda sessão.
 
@@ -48,6 +51,32 @@ a cada Fase, sem o jogo precisar saber.
 ---
 
 ## Onde estamos no roadmap
+
+**O pipeline Blender -> Godot do pacote está implementado** (31/08):
+`blender/` com quatro estúdios que partilham a câmera de `gerar_props_iso.py`,
+15 assets novos, manifest, dois validadores (um de cada lado), a cena
+`scenes/tests/AssetPlacementTest.tscn` e um passo novo no CI. O que foi e o que
+NÃO foi feito está em `docs/BRP_IMPLEMENTATION_NOTES.md`; os resultados
+medidos, em `docs/BRP_VALIDATION_REPORT.md`.
+
+**Chegou um pacote de arte externo em 31/08, e ele NÃO reabre o design.** Seis
+partes, 27 PNGs e 12 guias, com telas de gameplay dos cinco níveis e um prompt
+de pipeline Blender → Godot. As telas descrevem outro jogo — tempo real com
+controle de velocidade, formato paisagem, Pesquisa e Loja —, e ficou decidido
+que **o GDD 7 continua valendo**: o pacote entra como referência de arte e nada
+mais. O registro, com as medições que sustentam a decisão, está em
+`docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md`. O conferidor de lote
+que saiu daí é `tools/conferir_lote_de_arte.py` — **rodar em toda arte que
+chegar de fora**: o lote de 31/08 tinha metade das peças em outra projeção
+(34,6° contra os 26,57° do mapa) e nenhuma a olho denunciava isso.
+
+**O planejamento das Fases 4 a 7 foi REFEITO em 30/08** —
+`docs/design/BR_Port_Plano_v3_Claude_Code.md`. O cronograma antigo (44 semanas,
+~490h com buffer, 10–14 meses) foi calibrado para *"dev solo iniciante em Godot,
+8h/semana"*: os Blocos 2 a 4, orçados ali em 28 semanas, saíram em sete dias.
+O plano novo troca a semana pela **sessão** como unidade, ordena o trabalho em
+duas trilhas — o JOGO e o PROJETO/CLAUDE — e orça a parte que continua cara:
+os seis momentos em que só uma pessoa resolve (jogar, ouvir, olhar, decidir).
 
 **Fase 4 — Produção do Vertical Slice**. O **Bloco 2 (loop core)** está entregue
 e o **Bloco 3 (marco intermediário) está FECHADO** — playtest humano feito,
@@ -151,7 +180,10 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos da interface, a 19px e ampliado — **rodar a cada ícone novo** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `docs/BLOCO3_MARCO_INTERMEDIARIO.md` | Medição do balanceamento + roteiro do playtest + onde registrar a decisão |
-| `docs/design/` | GDD 7, Roadmap, Plano de Produção, guias, Validation Guide |
+| `docs/decisoes/` | **Uma decisão por arquivo** — por que se decidiu assim, para não rediscutir o que já foi fechado |
+| `tools/conferir_lote_de_arte.py` | Confere lote de arte vindo de fora: alfa de verdade, tamanho e **ângulo da base contra o contrato de 26,57°**. Rodar antes de qualquer PNG externo entrar |
+| `docs/design/BR_Port_Plano_v3_Claude_Code.md` | **O plano em vigor** — a fila do que fazer, as duas trilhas (jogo e projeto/Claude) e os gates que só o Bruno fecha |
+| `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados no cronograma, mantidos como registro das decisões) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
 
 ### Sistemas que funcionam

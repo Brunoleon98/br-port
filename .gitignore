@@ -1,0 +1,4 @@
+
+# Cache do Python — regerado sozinho, e agora há mais módulos a gerá-lo.
+__pycache__/
+*.pyc

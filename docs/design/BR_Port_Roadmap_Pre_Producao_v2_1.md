@@ -1,6 +1,16 @@
 # BR Port — Roadmap (Objetivo: Fazer o Jogo)
 **Versão 2.1 · Vendas são bônus — o critério de avanço é "ainda quero jogar isso?"**
 
+> ⚠️ **As Fases 4 a 7 deste roadmap foram REPLANEJADAS.** Veja
+> `BR_Port_Plano_v3_Claude_Code.md`. O que mudou não foi o rumo: foi quem
+> produz. O plano velho orçou horas de produção para um dev solo aprendendo
+> Godot em 8h por semana — e a produção deixou de ser a parte cara.
+>
+> **Continua valendo, e não se reabre:** as Fases 1 a 3 (concluídas), as nove
+> decisões de design fechadas na Fase 1, a pergunta da Fase 6 ("você ainda quer
+> jogar esse jogo?") e a definição do que é Vertical Slice. Este documento é o
+> registro dessas decisões.
+
 > **Mudanças do v2.0 → v2.1** (concluídas na Fase 1 do roadmap, junto com o GDD 6.5):
 > - Duração alvo do VS jogado: **5–10 min → 15–25 min** — ajustado para a duração natural da Fase 1 do JOGO (Ato 1 — Início).
 > - Os 3 ajustes do V3 saíram de "opções a decidir" para **decisões fechadas** — ver Fase 2 abaixo.

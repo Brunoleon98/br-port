@@ -97,6 +97,26 @@ jobs:
             exit 1
           fi
 
+      - name: Validar os assets do pipeline BRP
+        # Confere o que sobreviveu ao render e chegou ao jogo: quadro, canal
+        # alfa e — o que mais importa — que a projeção que gerou os PNGs é a
+        # mesma que o mapa desenha. O validador do lado do Blender
+        # (blender/validate_brp_assets.py) NÃO roda aqui: ele precisa do bpy,
+        # que são ~1 GB de download, e o que ele cobre (âncora, apoio, volume
+        # de seleção) só existe com a cena montada. Rodar à mão ao mexer nos
+        # catálogos.
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs \
+            --script res://scripts/validation/asset_validator.gd \
+            2>&1 | tee /tmp/assets.txt
+
+          if ! grep -q "ASSET OK" /tmp/assets.txt; then
+            echo "::error::Algum asset do pipeline BRP está fora do contrato."
+            exit 1
+          fi
+
       - name: Conferir que os sons versionados batem com o gerador
         run: |
           set -euo pipefail
