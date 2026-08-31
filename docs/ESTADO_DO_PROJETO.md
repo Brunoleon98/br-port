@@ -52,6 +52,17 @@ a cada Fase, sem o jogo precisar saber.
 
 ## Onde estamos no roadmap
 
+**Chegou um pacote de arte externo em 31/08, e ele NÃO reabre o design.** Seis
+partes, 27 PNGs e 12 guias, com telas de gameplay dos cinco níveis e um prompt
+de pipeline Blender → Godot. As telas descrevem outro jogo — tempo real com
+controle de velocidade, formato paisagem, Pesquisa e Loja —, e ficou decidido
+que **o GDD 7 continua valendo**: o pacote entra como referência de arte e nada
+mais. O registro, com as medições que sustentam a decisão, está em
+`docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md`. O conferidor de lote
+que saiu daí é `tools/conferir_lote_de_arte.py` — **rodar em toda arte que
+chegar de fora**: o lote de 31/08 tinha metade das peças em outra projeção
+(34,6° contra os 26,57° do mapa) e nenhuma a olho denunciava isso.
+
 **O planejamento das Fases 4 a 7 foi REFEITO em 30/08** —
 `docs/design/BR_Port_Plano_v3_Claude_Code.md`. O cronograma antigo (44 semanas,
 ~490h com buffer, 10–14 meses) foi calibrado para *"dev solo iniciante em Godot,
@@ -162,6 +173,8 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos da interface, a 19px e ampliado — **rodar a cada ícone novo** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `docs/BLOCO3_MARCO_INTERMEDIARIO.md` | Medição do balanceamento + roteiro do playtest + onde registrar a decisão |
+| `docs/decisoes/` | **Uma decisão por arquivo** — por que se decidiu assim, para não rediscutir o que já foi fechado |
+| `tools/conferir_lote_de_arte.py` | Confere lote de arte vindo de fora: alfa de verdade, tamanho e **ângulo da base contra o contrato de 26,57°**. Rodar antes de qualquer PNG externo entrar |
 | `docs/design/BR_Port_Plano_v3_Claude_Code.md` | **O plano em vigor** — a fila do que fazer, as duas trilhas (jogo e projeto/Claude) e os gates que só o Bruno fecha |
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados no cronograma, mantidos como registro das decisões) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
