@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=32 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
@@ -19,6 +19,11 @@
 [ext_resource type="Texture2D" path="res://art/props/coqueiro_copa.png" id="prop_coqueiro_copa"]
 [ext_resource type="Texture2D" path="res://art/props/boia.png" id="prop_boia"]
 [ext_resource type="Texture2D" path="res://art/props/marcador.png" id="prop_marcador"]
+[ext_resource type="Texture2D" path="res://art/props/caminhao.png" id="prop_caminhao"]
+[ext_resource type="Texture2D" path="res://art/props/poste.png" id="prop_poste"]
+[ext_resource type="Texture2D" path="res://art/props/cabeco.png" id="prop_cabeco"]
+[ext_resource type="Texture2D" path="res://art/props/empilhadeira.png" id="prop_empilhadeira"]
+[ext_resource type="Texture2D" path="res://art/props/pilha_caixotes.png" id="prop_pilha_caixotes"]
 [ext_resource type="Texture2D" path="res://art/porto_mapa_iso_patio.svg" id="mapa_patio"]
 [ext_resource type="Texture2D" path="res://art/props/galpao_velho.png" id="prop_galpao_velho"]
 [ext_resource type="Texture2D" path="res://art/props/galpao.png" id="prop_galpao"]
@@ -259,6 +264,14 @@ mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
+[node name="Caminhao" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 55.0
+offset_top = -14.5
+offset_right = 567.0
+offset_bottom = 497.5
+mouse_filter = 2
+texture = ExtResource("prop_caminhao")
 [node name="Armazem" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -14.0
@@ -287,6 +300,22 @@ mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
+[node name="Poste" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 164.0
+offset_right = 528.0
+offset_bottom = 676.0
+mouse_filter = 2
+texture = ExtResource("prop_poste")
+[node name="Cabeco" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 56.5
+offset_top = 208.2
+offset_right = 568.5
+offset_bottom = 720.2
+mouse_filter = 2
+texture = ExtResource("prop_cabeco")
 [node name="BarcoEspera1" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 404.0
@@ -296,6 +325,22 @@ offset_bottom = 726.0
 mouse_filter = 2
 texture = ExtResource("5")
 
+[node name="Empilhadeira" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -155.0
+offset_top = 237.5
+offset_right = 357.0
+offset_bottom = 749.5
+mouse_filter = 2
+texture = ExtResource("prop_empilhadeira")
+[node name="PilhaCaixotes" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -117.5
+offset_top = 241.2
+offset_right = 394.5
+offset_bottom = 753.2
+mouse_filter = 2
+texture = ExtResource("prop_pilha_caixotes")
 [node name="Ancoragem0" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 319.0
