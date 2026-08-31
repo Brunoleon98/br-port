@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ddenb3kttt2gv"
-path="res://.godot/imported/guindaste_mastro.png-297c3b4fb5ecdea8c036a86050c648c3.ctex"
+uid="uid://b81dj7mxh5c3y"
+path="res://.godot/imported/bote.png-dfda336730bb331afdfb47e76f7bf0a9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/guindaste_mastro.png"
-dest_files=["res://.godot/imported/guindaste_mastro.png-297c3b4fb5ecdea8c036a86050c648c3.ctex"]
+source_file="res://art/props/bote.png"
+dest_files=["res://.godot/imported/bote.png-dfda336730bb331afdfb47e76f7bf0a9.ctex"]
 
 [params]
 

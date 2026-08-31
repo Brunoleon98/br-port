@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3]
+[gd_scene load_steps=39 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
@@ -19,6 +19,13 @@
 [ext_resource type="Texture2D" path="res://art/props/coqueiro_copa.png" id="prop_coqueiro_copa"]
 [ext_resource type="Texture2D" path="res://art/props/boia.png" id="prop_boia"]
 [ext_resource type="Texture2D" path="res://art/props/marcador.png" id="prop_marcador"]
+[ext_resource type="Texture2D" path="res://art/props/bote.png" id="prop_bote"]
+[ext_resource type="Texture2D" path="res://art/props/cone_transito.png" id="prop_cone_transito"]
+[ext_resource type="Texture2D" path="res://art/props/pallet.png" id="prop_pallet"]
+[ext_resource type="Texture2D" path="res://art/props/pneus.png" id="prop_pneus"]
+[ext_resource type="Texture2D" path="res://art/props/barreira.png" id="prop_barreira"]
+[ext_resource type="Texture2D" path="res://art/props/poste_luz.png" id="prop_poste_luz"]
+[ext_resource type="Texture2D" path="res://art/props/guincho.png" id="prop_guincho"]
 [ext_resource type="Texture2D" path="res://art/props/caminhao.png" id="prop_caminhao"]
 [ext_resource type="Texture2D" path="res://art/props/poste.png" id="prop_poste"]
 [ext_resource type="Texture2D" path="res://art/props/cabeco.png" id="prop_cabeco"]
@@ -272,6 +279,14 @@ offset_right = 567.0
 offset_bottom = 497.5
 mouse_filter = 2
 texture = ExtResource("prop_caminhao")
+[node name="Bote" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 211.0
+offset_top = 3.5
+offset_right = 723.0
+offset_bottom = 515.5
+mouse_filter = 2
+texture = ExtResource("prop_bote")
 [node name="Armazem" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -14.0
@@ -281,6 +296,22 @@ offset_bottom = 589.0
 mouse_filter = 2
 texture = ExtResource("prop_galpao_velho")
 
+[node name="Pneus" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 77.0
+offset_right = 582.0
+offset_bottom = 589.0
+mouse_filter = 2
+texture = ExtResource("prop_pneus")
+[node name="Barreira" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 20.5
+offset_top = 148.2
+offset_right = 532.5
+offset_bottom = 660.2
+mouse_filter = 2
+texture = ExtResource("prop_barreira")
 [node name="Coqueiro1Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 43.0
@@ -308,6 +339,22 @@ offset_right = 528.0
 offset_bottom = 676.0
 mouse_filter = 2
 texture = ExtResource("prop_poste")
+[node name="PosteLuz" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 164.0
+offset_right = 528.0
+offset_bottom = 676.0
+mouse_filter = 2
+texture = ExtResource("prop_poste_luz")
+[node name="ConeTransito" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -68.0
+offset_top = 164.0
+offset_right = 444.0
+offset_bottom = 676.0
+mouse_filter = 2
+texture = ExtResource("prop_cone_transito")
 [node name="Cabeco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 56.5
@@ -341,6 +388,14 @@ offset_right = 394.5
 offset_bottom = 753.2
 mouse_filter = 2
 texture = ExtResource("prop_pilha_caixotes")
+[node name="Guincho" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -32.0
+offset_top = 242.0
+offset_right = 480.0
+offset_bottom = 754.0
+mouse_filter = 2
+texture = ExtResource("prop_guincho")
 [node name="Ancoragem0" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 319.0
@@ -350,6 +405,14 @@ offset_bottom = 756.5
 mouse_filter = 2
 texture = ExtResource("prop_marcador")
 
+[node name="Pallet" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -74.0
+offset_top = 251.0
+offset_right = 438.0
+offset_bottom = 763.0
+mouse_filter = 2
+texture = ExtResource("prop_pallet")
 [node name="Coqueiro2Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -155.0

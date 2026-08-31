@@ -662,7 +662,11 @@ def montar(M: dict) -> dict:
     # fica solta porque é ela que gira — e o que se move não pode estar assado.
     grupos["pier_construido"] = estacas + tabuado + g_base + g_mastro
     grupos["guindaste_lanca"] = g_lanca
-    grupos["pier_ampliado"] = estacas + tabuado + g_base + g_mastro + g_lanca
+    # NÃO existe um "pier_ampliado" assado. Existiu, e foi retirado em 31/08:
+    # era o píer com a lança já colada, e o jogo monta essa imagem em tempo de
+    # execução com as duas peças acima, justamente para poder girar a lança.
+    # Um render estático da montagem só serve para alguém o usar por engano e
+    # perder a varrida.
 
     # -- BARCOS ----------------------------------------------------------
     # O pesqueiro tinha o mesmo casco dos cargueiros e uma caixa bege no lugar
@@ -809,10 +813,16 @@ def montar(M: dict) -> dict:
     grupos["coqueiro_copa"] = copa
 
     # -- CENÁRIO solto ---------------------------------------------------
-    grupos["conteiner"] = [caixa("c", (0, 0, 0.45), (2.4, 1.1, 0.9), M["laranja"]),
-                           caixa("c_topo", (0, 0, 0.92), (2.35, 1.05, 0.06), M["azul"])]
-    grupos["caixote"] = [caixa("k", (0, 0, 0.35), (0.8, 0.8, 0.7), M["madeira"]),
-                         caixa("k_cinta", (0, 0, 0.35), (0.84, 0.5, 0.72), M["madeira_esc"])]
+    # NÃO existem `conteiner` e `caixote` avulsos. Existiram, e saíram em
+    # 31/08 depois de serem experimentados no pátio: o contêiner de 2,4
+    # unidades é maior que a carga que o mapa já assa ao lado dele e lia como
+    # peça de outro jogo; o caixote sozinho desaparecia atrás dos prédios e não
+    # acrescentava nada ao lado da `pilha_caixotes`, que lê melhor.
+    #
+    # A carga do convés do píer é montada aqui mesmo, por `_no_conves`, e a do
+    # pátio é desenhada pelo SVG do mapa. Prop avulso que ninguém carrega é
+    # convite a engano — foi assim que `guindaste_base` e `guindaste_mastro`
+    # sobreviveram meses depois de a torre ir para dentro do píer.
     grupos["boia"] = [cone("b", (0, 0, 0.3), 0.34, 0.28, 0.6, 8, M["boia"]),
                       cone("b_topo", (0, 0, 0.66), 0.1, 0.06, 0.3, 6, M["metal"])]
     grupos["marcador"] = [cone("m", (0, 0, 0.55), 0.26, 0.04, 1.1, 4, M["amarelo"]),

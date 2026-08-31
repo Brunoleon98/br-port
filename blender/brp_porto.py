@@ -14,8 +14,8 @@ pede as mesmas peças. Então este catálogo serve as duas listas de uma vez.
 Todas as peças usam o kit de `tools/gerar_props_iso.py` e a câmera do contrato.
 """
 
-from brp_studio import (caixa, cone, barra, corrimao, na_face, janela,
-                        poste_de_luz, origem, selecao, z)
+from brp_studio import (caixa, cone, prisma, barra, corrimao, na_face,
+                        janela, poste_de_luz, origem, selecao, z)
 
 
 # Um losango 1x1 do mundo tem 60px de largura na tela. As medidas abaixo estão
@@ -126,12 +126,122 @@ def cabeco(M, est):
 
 
 def poste(M, est):
-    """Poste de luz. O kit já tinha `poste_de_luz` e ninguém o usava — está
-    anotado como prop gerado e sem uso desde o Bloco 5."""
-    p = poste_de_luz("poste", (0.0, 0.0, 0.0), z(46.0), M["metal"],
-                     M["luz_poste"])
+    """Poste de luz, em DUAS peças: a haste e a luminária.
+
+    O kit devolve as quatro peças juntas, e assim o poste ficaria bom e morto.
+    A luminária sai à parte pela mesma razão que a copa do coqueiro e a lança do
+    guindaste saem: **o que se mexe não pode estar assado no que não se mexe.**
+    Com ela separada, o `light_flicker` que o prompt pede na FASE 7 pisca a
+    lâmpada e deixa o poste quieto — se fosse uma peça só, piscaria o ferro.
+    """
+    pecas = poste_de_luz("poste", (0.0, 0.0, 0.0), z(46.0), M["metal"],
+                         M["luz_poste"])
+    # `poste_de_luz` devolve pé, haste, braço e luminária, nesta ordem.
+    haste, luminaria = pecas[:3], pecas[3:]
     origem("poste")
-    est.registrar("poste", p, celulas=(1, 1))
+    est.registrar("poste", haste, celulas=(1, 1))
+    origem("poste_luz", tipo="encaixe")
+    est.registrar("poste_luz", luminaria, ancora="encaixe", celulas=(1, 1),
+                  animacoes={"light_flicker": {"tween": "modulate", "loop": True}})
+
+
+def pallet(M, est):
+    """Pallet vazio, encostado. Peça de dois minutos que diz muito: um pátio
+    sem pallets é um pátio onde nunca se descarregou nada."""
+    p = []
+    for i in range(5):
+        p.append(caixa("pal_ripa%d" % i, (-0.28 + i * 0.14, 0.0, z(2.6)),
+                       (0.10, 0.62, z(1.4)), M["madeira"]))
+    for i, y in enumerate((-0.26, 0.0, 0.26)):
+        p.append(caixa("pal_travessa%d" % i, (0.0, y, z(1.0)),
+                       (0.68, 0.12, z(2.0)), M["madeira_esc"]))
+    origem("pallet")
+    est.registrar("pallet", p, celulas=(1, 1))
+
+
+def pneus(M, est):
+    """Pilha de pneus de defensa. Fica no cais, junto da beira, e é o que
+    explica por que um casco encosta ali sem se estragar."""
+    p = []
+    for i, (x, y, h) in enumerate(((0.0, 0.0, 3.0), (0.0, 0.0, 8.0),
+                                   (0.26, 0.14, 3.0), (0.26, 0.14, 8.0),
+                                   (0.12, -0.2, 3.0))):
+        p.append(cone("pne_%d" % i, (x, y, z(h)), 0.20, 0.20, z(5.0), 12,
+                      M["metal"]))
+        # O furo do meio é o que separa "pneu" de "disco preto" a 40px.
+        p.append(cone("pne_furo%d" % i, (x, y, z(h)), 0.085, 0.085, z(5.4), 10,
+                      M["parede_suja"]))
+    origem("pneus")
+    est.registrar("pneus", p, celulas=(1, 1))
+
+
+def cone_transito(M, est):
+    """Cone de sinalização."""
+    p = [caixa("con_base", (0.0, 0.0, z(0.9)), (0.30, 0.30, z(1.8)),
+               M["laranja"]),
+         cone("con_corpo", (0.0, 0.0, z(6.0)), 0.13, 0.03, z(10.0), 10,
+              M["laranja"]),
+         cone("con_faixa", (0.0, 0.0, z(7.6)), 0.093, 0.075, z(2.0), 10,
+              M["cabine"])]
+    origem("cone_transito")
+    est.registrar("cone_transito", p, celulas=(1, 1))
+
+
+def barreira(M, est):
+    """Barreira de obra, listrada. Serve para fechar um trecho do pátio."""
+    p = [caixa("bar_trave", (0.0, 0.0, z(13.0)), (1.10, 0.10, z(4.0)),
+               M["cabine"])]
+    # As listras são peças, não textura: a esta escala uma faixa pintada some.
+    for i in range(4):
+        p.append(caixa("bar_faixa%d" % i, (-0.36 + i * 0.24, 0.0, z(13.0)),
+                       (0.12, 0.11, z(4.2)), M["laranja"], rot=(0, 0, 0)))
+    for x in (-0.46, 0.46):
+        p.append(caixa("bar_pe%s" % ("e" if x < 0 else "d"),
+                       (x, 0.0, z(6.0)), (0.09, 0.34, z(12.0)), M["cabine"]))
+    origem("barreira")
+    est.registrar("barreira", p, celulas=(1, 1))
+
+
+def bote(M, est):
+    """Bote salva-vidas no berço, de proa para o mar.
+
+    Casco em prisma, e não em caixa: um bote com a proa quadrada lê como
+    caixote pintado de laranja.
+    """
+    p = []
+    contorno = [(-0.52, -0.15), (0.30, -0.19), (0.60, 0.0),
+                (0.30, 0.19), (-0.52, 0.15)]
+    # `escala_baixo` é um PAR (ex, ey): o casco estreita mais em y que em x,
+    # senão o bote afina como uma cunha em vez de ter fundo.
+    p.append(prisma("bot_casco", contorno, z(3.0), z(11.0),
+                    (0.80, 0.62), M["boia"]))
+    p.append(prisma("bot_borda", contorno, z(11.0), z(12.2),
+                    (1.0, 1.0), M["cabine"]))
+    p.append(caixa("bot_banco", (-0.05, 0.0, z(9.0)), (0.30, 0.26, z(1.6)),
+                   M["madeira"]))
+    # Berço: sem ele o bote flutua sobre o cais, que é a queixa nº 1 do pacote.
+    for i, x in enumerate((-0.34, 0.24)):
+        p.append(caixa("bot_berco%d" % i, (x, 0.0, z(1.5)),
+                       (0.14, 0.42, z(3.0)), M["madeira_esc"]))
+    origem("bote")
+    est.registrar("bote", p, celulas=(1, 1))
+
+
+def guincho(M, est):
+    """Guincho de cais: tambor, manivela e cabo enrolado."""
+    p = [caixa("gui_base", (0.0, 0.0, z(1.5)), (0.52, 0.42, z(3.0)),
+               M["metal"])]
+    for i, y in enumerate((-0.17, 0.17)):
+        p.append(caixa("gui_flange%d" % i, (0.0, y, z(8.0)),
+                       (0.36, 0.06, z(9.0)), M["metal_claro"]))
+    p.append(cone("gui_tambor", (0.0, 0.0, z(8.0)), 0.13, 0.13, 0.30, 12,
+                  M["corda"], rot=(90, 0, 0)))
+    p.append(cone("gui_manivela", (0.0, 0.26, z(8.0)), 0.035, 0.035, 0.16, 8,
+                  M["metal_claro"], rot=(90, 0, 0)))
+    p.append(caixa("gui_punho", (0.13, 0.34, z(8.0)), (0.05, 0.05, z(3.4)),
+                   M["madeira"]))
+    origem("guincho")
+    est.registrar("guincho", p, celulas=(1, 1))
 
 
 def pilha_caixotes(M, est):
@@ -211,7 +321,8 @@ def doca_concreto(M, est):
 
 
 CATALOGO = (caminhao, empilhadeira, cabeco, poste, pilha_caixotes,
-            doca_concreto)
+            doca_concreto, pallet, pneus, cone_transito, barreira, bote,
+            guincho)
 
 
 def montar(M, est):

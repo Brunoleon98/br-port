@@ -75,7 +75,7 @@ fez:
 
 ## 5. O que NÃO passou
 
-**A gaivota.** Três versões, nenhuma lê como ave a 40px — sai um planador
+**A gaivota.** Continua sendo o pior asset do lote. Três versões, nenhuma lê como ave a 40px — sai um planador
 cinzento. Não é falta de iteração: é o mesmo teto que o
 `BLOCO7_PLANO_ARTE_BLENDER.md` já mediu para o rosto do trabalhador. Primitiva
 composta não resolve silhueta orgânica nessa escala, e a saída registrada é
@@ -100,5 +100,5 @@ Nenhuma posição foi escrita à mão.
 | Doca recebe navio, trabalhador e guindaste sem flutuação | ✅ na cena |
 | Rua liga sem invadir a água | ✅ os tiles encostam pela costa |
 | Prédio selecionável abre sem selecionar o vizinho | ⚠️ a `Area2D` existe e é dimensionada pela base; **o toque não foi testado com o dedo** — falta rodar a cena num aparelho |
-| Animação reinicia sem salto | ⚠️ **não implementado.** Os ciclos estão declarados no manifest (`wind_idle`, `fly`), e nenhum foi produzido |
+| Animação reinicia sem salto | ✅ para os três ciclos que existem — `wind_idle` (copa), `bob` (boia) e `light_flicker` (luminária). São Tweens em laço, não folhas de frames: a auditoria do próprio pacote manda reaproveitar os tweens antes de criar arquitetura concorrente, e um ciclo de 8 PNGs de 512px para uma boia que sobe 3px seria caro e frágil |
 | Janela panorâmica da cidade | ⚠️ **não implementada** — ver as notas de implementação |

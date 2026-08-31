@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://l7vi1j135jgw"
-path="res://.godot/imported/guindaste_base.png-b35be1455a52d58a4a0b2a382535dfc4.ctex"
+uid="uid://h640vod7v2ue"
+path="res://.godot/imported/guincho.png-c61eb942565d203202a96b41b701e829.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/guindaste_base.png"
-dest_files=["res://.godot/imported/guindaste_base.png-b35be1455a52d58a4a0b2a382535dfc4.ctex"]
+source_file="res://art/props/guincho.png"
+dest_files=["res://.godot/imported/guincho.png-c61eb942565d203202a96b41b701e829.ctex"]
 
 [params]
 
