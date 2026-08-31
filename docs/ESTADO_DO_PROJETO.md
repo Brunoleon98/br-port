@@ -192,6 +192,12 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `docs/BLOCO3_MARCO_INTERMEDIARIO.md` | Medição do balanceamento + roteiro do playtest + onde registrar a decisão |
 | `docs/decisoes/` | **Uma decisão por arquivo** — por que se decidiu assim, para não rediscutir o que já foi fechado |
 | `tools/conferir_lote_de_arte.py` | Confere lote de arte vindo de fora: alfa de verdade, tamanho e **ângulo da base contra o contrato de 26,57°**. Rodar antes de qualquer PNG externo entrar |
+| `docs/BRP_SPATIAL_CONTRACT.md` | **O contrato da projeção por escrito** — as constantes, os quatro participantes e a regra que faltava no guia do pacote de arte: `ROT_X = 60°` |
+| `blender/brp_studio.py` | O estúdio compartilhado — importa a câmera de `gerar_props_iso.py` em vez de a duplicar. Âncora, volume de seleção, nomenclatura e manifest |
+| `blender/gerar_brp.py` | Roda um estúdio (`terreno`, `porto`, `cidade`, `fauna`), exporta os PNGs e junta o manifest. Um estúdio por processo — `preparar_cena()` apaga a cena inteira |
+| `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
+| `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**. Roda no CI, espera `ASSET OK` |
+| `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
 | `docs/design/BR_Port_Plano_v3_Claude_Code.md` | **O plano em vigor** — a fila do que fazer, as duas trilhas (jogo e projeto/Claude) e os gates que só o Bruno fecha |
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados no cronograma, mantidos como registro das decisões) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |

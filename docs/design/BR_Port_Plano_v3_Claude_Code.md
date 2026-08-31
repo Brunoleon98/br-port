@@ -446,6 +446,22 @@ fim, e o que se procura é o resto.
 | Armadilha de uma função | Comentário nela, contando o que se tentou antes |
 | Onde o projeto está | `docs/ESTADO_DO_PROJETO.md` |
 
+**Feito em 31/08:** `/fechar-sessao` existe em
+`.claude/skills/fechar-sessao/SKILL.md`. Faltam `/arte` e `/balancear`.
+
+Duas coisas mudaram na construção em relação ao que se planejou aqui. A
+primeira: o passo dos testes não é uma lista fixa. Os quatro do Godot
+(`run_tests`, `teste_design`, `teste_audio`, `asset_validator`) são segundos
+cada e o CI roda todos em todo push — não há mudança barata o bastante para os
+pular, e por isso são base, não decisão. O que a skill decide é o caro e o
+condicional: as 600 partidas do simulador, a regeração dos mapas e dos sons, o
+validador do Blender (que precisa de ~1 GB de `bpy`), e a captura.
+
+A segunda: a skill exige a LINHA de sucesso, não o código de saída. Um erro de
+compilação do GDScript sai com 0 sem rodar teste nenhum — o CI já se protegia
+disso com `grep`, e um fecho que só olhasse o `$?` fecharia em cima de uma suíte
+que nunca correu.
+
 **Sabe-se que funcionou quando:** ninguém precisa de lembrar a próxima sessão de
 rodar o teste de design — e uma lição da sessão anterior não é redescoberta na
 seguinte.
