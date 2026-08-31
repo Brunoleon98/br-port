@@ -1,0 +1,318 @@
+{
+  "contrato": {
+    "meia_larg": 30.0,
+    "meia_alt": 15.0,
+    "rot_x": 60.0,
+    "rot_z": 45.0,
+    "angulo_aresta": 26.565,
+    "quadro": [
+      512,
+      512
+    ],
+    "altura_px_por_unidade": 36.74,
+    "doc": "docs/BRP_SPATIAL_CONTRACT.md"
+  },
+  "producao": {
+    "descricao": "Assets gerados por blender/, na projeção do contrato. Entram no jogo ou na cena de teste.",
+    "total": 15,
+    "assets": [
+      {
+        "id": "BRP_fauna_arbusto_base",
+        "arquivo": "arbusto.png",
+        "categoria": "fauna",
+        "estagio": "base",
+        "origem": "base",
+        "celulas_base": [
+          1,
+          1
+        ],
+        "selecionavel": false,
+        "animacoes": [
+          "wind_idle"
+        ],
+        "cena_godot": "",
+        "uso": "só a cena de teste"
+      },
+      {
+        "id": "BRP_porto_cabeco_base",
+        "arquivo": "cabeco.png",
+        "categoria": "porto",
+        "estagio": "base",
+        "origem": "base",
+        "celulas_base": [
+          1,
+          1
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "",
+        "uso": "jogo"
+      },
+      {
+        "id": "BRP_porto_caminhao_base",
+        "arquivo": "caminhao.png",
+        "categoria": "porto",
+        "estagio": "base",
+        "origem": "base",
+        "celulas_base": [
+          2,
+          1
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "res://scenes/props/Caminhao.tscn",
+        "uso": "jogo"
+      },
+      {
+        "id": "BRP_cidade_casa_costeira_base",
+        "arquivo": "casa_costeira.png",
+        "categoria": "cidade",
+        "estagio": "base",
+        "origem": "base",
+        "celulas_base": [
+          2,
+          2
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "",
+        "uso": "só a cena de teste"
+      },
+      {
+        "id": "BRP_fauna_coqueiro_jovem_basico",
+        "arquivo": "coqueiro_jovem.png",
+        "categoria": "fauna",
+        "estagio": "basico",
+        "origem": "base",
+        "celulas_base": [
+          1,
+          1
+        ],
+        "selecionavel": false,
+        "animacoes": [
+          "wind_idle"
+        ],
+        "cena_godot": "",
+        "uso": "só a cena de teste"
+      },
+      {
+        "id": "BRP_porto_doca_concreto_intermediario",
+        "arquivo": "doca_concreto.png",
+        "categoria": "porto",
+        "estagio": "intermediario",
+        "origem": "base",
+        "celulas_base": [
+          4,
+          2
+        ],
+        "selecionavel": true,
+        "animacoes": [],
+        "cena_godot": "res://scenes/dock/Dock.tscn",
+        "uso": "jogo"
+      },
+      {
+        "id": "BRP_porto_empilhadeira_base",
+        "arquivo": "empilhadeira.png",
+        "categoria": "porto",
+        "estagio": "base",
+        "origem": "base",
+        "celulas_base": [
+          1,
+          1
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "res://scenes/props/Empilhadeira.tscn",
+        "uso": "jogo"
+      },
+      {
+        "id": "BRP_fauna_gaivota_base",
+        "arquivo": "gaivota.png",
+        "categoria": "fauna",
+        "estagio": "base",
+        "origem": "voo",
+        "celulas_base": [
+          1,
+          1
+        ],
+        "selecionavel": false,
+        "animacoes": [
+          "fly"
+        ],
+        "cena_godot": "res://scenes/fauna/Gaivota.tscn",
+        "uso": "só a cena de teste"
+      },
+      {
+        "id": "BRP_cidade_mercado_base",
+        "arquivo": "mercado.png",
+        "categoria": "cidade",
+        "estagio": "base",
+        "origem": "base",
+        "celulas_base": [
+          2,
+          2
+        ],
+        "selecionavel": true,
+        "animacoes": [],
+        "cena_godot": "res://scenes/city/Mercado.tscn",
+        "uso": "só a cena de teste"
+      },
+      {
+        "id": "BRP_porto_pilha_caixotes_base",
+        "arquivo": "pilha_caixotes.png",
+        "categoria": "porto",
+        "estagio": "base",
+        "origem": "base",
+        "celulas_base": [
+          1,
+          1
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "",
+        "uso": "jogo"
+      },
+      {
+        "id": "BRP_porto_poste_base",
+        "arquivo": "poste.png",
+        "categoria": "porto",
+        "estagio": "base",
+        "origem": "base",
+        "celulas_base": [
+          1,
+          1
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "",
+        "uso": "jogo"
+      },
+      {
+        "id": "BRP_terreno_terreno_agua_base",
+        "arquivo": "terreno_agua.png",
+        "categoria": "terreno",
+        "estagio": "base",
+        "origem": "encaixe",
+        "celulas_base": [
+          2,
+          2
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "",
+        "uso": "só a cena de teste"
+      },
+      {
+        "id": "BRP_terreno_terreno_areia_base",
+        "arquivo": "terreno_areia.png",
+        "categoria": "terreno",
+        "estagio": "base",
+        "origem": "encaixe",
+        "celulas_base": [
+          2,
+          2
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "",
+        "uso": "só a cena de teste"
+      },
+      {
+        "id": "BRP_terreno_terreno_costa_base",
+        "arquivo": "terreno_costa.png",
+        "categoria": "terreno",
+        "estagio": "base",
+        "origem": "encaixe",
+        "celulas_base": [
+          2,
+          2
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "",
+        "uso": "só a cena de teste"
+      },
+      {
+        "id": "BRP_terreno_terreno_rua_base",
+        "arquivo": "terreno_rua.png",
+        "categoria": "terreno",
+        "estagio": "base",
+        "origem": "encaixe",
+        "celulas_base": [
+          2,
+          2
+        ],
+        "selecionavel": false,
+        "animacoes": [],
+        "cena_godot": "",
+        "uso": "só a cena de teste"
+      }
+    ]
+  },
+  "referencia": {
+    "descricao": "Pacote externo de 31/08. Guia a modelagem; NÃO vira sprite. 27 PNGs, todos sem canal alfa de verdade.",
+    "total": 27,
+    "entradas": [
+      {
+        "arquivo": "01_documentos_conceitos/05_conceitos_blender/BR_Port_prancha_conceitos_sprites.png",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      },
+      {
+        "arquivo": "01_documentos_conceitos/06_progressao_assets/BR_Port_progressao_assets_basico_intermediario_avancado.png",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      },
+      {
+        "arquivo": "01_documentos_conceitos/07_terrenos_agua/BR_Port_terrenos_agua_aprimorada.png",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      },
+      {
+        "arquivo": "02_telas_gameplay/01_telas_gameplay/BR_Port_gameplay_nivel_1..5.png",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      },
+      {
+        "arquivo": "03_telas_progressao/02_telas_progressao/BR_Port_nivel_1..5.png",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      },
+      {
+        "arquivo": "04_sprites_base_mapa/03_sprites_godot/BR_Port_sprite_*.png (5)",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      },
+      {
+        "arquivo": "04_sprites_base_mapa/04_mapa/BR_Port_tile_agua.png",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      },
+      {
+        "arquivo": "05_fauna_vegetacao_cidade/08_fauna_animada/*.png (4)",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      },
+      {
+        "arquivo": "05_fauna_vegetacao_cidade/09_vegetacao_objetos_animados/*.png (3)",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      },
+      {
+        "arquivo": "05_fauna_vegetacao_cidade/10_cidade_construcoes_objetos/*.png (1)",
+        "papel": "referência conceitual",
+        "pode_virar_sprite": false,
+        "motivo": "sem canal alfa; e a projeção do lote não é homogênea — ver docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md"
+      }
+    ]
+  }
+}

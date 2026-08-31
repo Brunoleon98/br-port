@@ -52,6 +52,13 @@ a cada Fase, sem o jogo precisar saber.
 
 ## Onde estamos no roadmap
 
+**O pipeline Blender -> Godot do pacote está implementado** (31/08):
+`blender/` com quatro estúdios que partilham a câmera de `gerar_props_iso.py`,
+15 assets novos, manifest, dois validadores (um de cada lado), a cena
+`scenes/tests/AssetPlacementTest.tscn` e um passo novo no CI. O que foi e o que
+NÃO foi feito está em `docs/BRP_IMPLEMENTATION_NOTES.md`; os resultados
+medidos, em `docs/BRP_VALIDATION_REPORT.md`.
+
 **Chegou um pacote de arte externo em 31/08, e ele NÃO reabre o design.** Seis
 partes, 27 PNGs e 12 guias, com telas de gameplay dos cinco níveis e um prompt
 de pipeline Blender → Godot. As telas descrevem outro jogo — tempo real com

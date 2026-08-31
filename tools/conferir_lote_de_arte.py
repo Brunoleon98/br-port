@@ -4,7 +4,7 @@
 Escrito depois do segundo lote que chegou com o mesmo defeito. O de 28/08 veio
 sem canal alfa (`docs/BLOCO4_PACOTE_SPRITES.md`); o de 31/08 veio sem alfa E com
 metade das peças em outra projeção — o guindaste avulso a 34,6° contra os 26,57°
-do mapa, e o guindaste da prancha de progressão a 25,6°, dentro do contrato. O
+do mapa, e um prédio da prancha de progressão a 28,2°, dentro do contrato. O
 lote não era homogêneo, e ninguém veria isso a olho.
 
 Responde as três perguntas que decidem se um asset entra no jogo ou fica como
@@ -95,12 +95,26 @@ def classificar(caminho, m):
 
 
 def angulo_da_base(m):
-    """Ângulo médio das duas arestas do apoio no chão, em graus.
+    """Devolve `(esquerda, direita)` — as duas arestas do apoio, em graus.
 
     Pega a faixa inferior da silhueta e mede as arestas que saem do ponto mais
-    baixo (a quina frontal) para a esquerda e para a direita. Num plano 2:1 as
-    duas dão 26,57°; num prop assimétrico ou com beiral elas divergem, e é por
-    isso que o valor sai como média e não como veredito.
+    baixo (a quina frontal) para a esquerda e para a direita.
+
+    NÃO devolve média, e a razão vale a leitura. A heurística só funciona quando
+    a parte de baixo do prop É um quadrilátero apoiado no chão. Num casco de
+    barco, numa copa de coqueiro ou numa lança de guindaste não é, e aí ela
+    devolve um número com cara de medida que não mede nada — `barco_pequeno` dá
+    42,77° e o barco está perfeitamente certo.
+
+    O que separa um caso do outro é as duas arestas CONCORDAREM. `guindaste_base`
+    dá 26,57° e 26,57°; o guindaste do lote externo de 31/08 deu 34,86° e 34,43°
+    — os dois medíveis, e um deles fora do contrato. O casco de barco dá 4,6° e
+    21,2°, e é isso que diz "não me use". Quem decide o veredito é `medir()`.
+
+    Uma última armadilha, medida: a sombra de contato tem azimute próprio (250°)
+    e contamina UMA das arestas, puxando-a alguns graus. Subir o limiar de
+    opacidade conserta uns props e estraga outros, então não se sobe — a
+    discordância que ela causa entra na tolerância de `medir()`.
     """
     ys, _ = np.nonzero(m)
     if ys.size == 0:
@@ -117,7 +131,36 @@ def angulo_da_base(m):
         dx, dy = q[0] - p[0], q[1] - p[1]
         return math.degrees(math.atan2(abs(dy), abs(dx))) if dx else 90.0
 
-    return (ang(esq, baixo) + ang(baixo, dire)) / 2
+    return ang(esq, baixo), ang(baixo, dire), float(dire[0] - esq[0])
+
+
+# Quanto as duas arestas podem discordar e a leitura ainda valer. 4° cobre a
+# contaminação da sombra de contato (medida em ~1,5°) e o arredondamento do
+# chanfro numa peça pequena, sem deixar passar um casco de barco.
+DISCORDANCIA = 4.0
+
+# Apoio estreito demais não mede: dois sapatos de um trabalhador dão 45°/45° —
+# as arestas concordam, e mesmo assim o número não quer dizer nada, porque não
+# há quadrilátero nenhum ali. Um losango 1x1 do mundo tem 60px de largura, então
+# 24px é aproximadamente meia célula: abaixo disso não se opina.
+APOIO_MINIMO_PX = 24
+
+
+def medir(m):
+    """`(veredito, esquerda, direita)`.
+
+    veredito: "ok" | "fora" | "indeterminado"
+    """
+    par = angulo_da_base(m)
+    if par is None:
+        return "indeterminado", None, None
+    e, d, largura = par
+    if largura < APOIO_MINIMO_PX:
+        return "indeterminado", e, d
+    if abs(e - d) > DISCORDANCIA:
+        return "indeterminado", e, d
+    media = (e + d) / 2
+    return ("ok" if abs(media - CONTRATO_GRAUS) <= TOLERANCIA else "fora"), e, d
 
 
 def main():
@@ -136,31 +179,44 @@ def main():
     for p in sorted(raiz.rglob("*.png")):
         m, fundo = mascara(p)
         tipo = classificar(p, m)
-        a = angulo_da_base(m) if tipo == "objeto" else None
+        veredito, e, d = medir(m) if tipo == "objeto" else ("prancha", None, None)
+        a = (e + d) / 2 if veredito in ("ok", "fora") else None
         im = Image.open(p)
-        if a is None:
+        if veredito == "prancha":
             leitura = f"  {tipo}"
+        elif veredito == "indeterminado":
+            leitura = (f"  arestas {e:5.1f}°/{d:5.1f}° discordam — sem apoio plano"
+                       if e is not None else "  vazio")
         else:
-            fora = abs(a - CONTRATO_GRAUS) > TOLERANCIA
-            leitura = f"{a:7.2f}°" + ("  ← fora do contrato" if fora else "  ok")
+            leitura = (f"{a:7.2f}°" +
+                       ("  ← fora do contrato" if veredito == "fora" else "  ok"))
         print(f"{p.name:<52} {im.width:>5}x{im.height:<5} {fundo:<15} {leitura}")
         linhas.append({
             "arquivo": str(p.relative_to(raiz)),
             "largura": im.width, "altura": im.height,
             "modo": im.mode, "fundo": fundo,
             "tipo": tipo,
+            "veredito": veredito,
+            "aresta_esq": round(e, 2) if e is not None else None,
+            "aresta_dir": round(d, 2) if d is not None else None,
             "angulo_base": round(a, 2) if a else None,
-            "no_contrato": bool(a and abs(a - CONTRATO_GRAUS) <= TOLERANCIA),
+            "no_contrato": veredito == "ok",
         })
 
-    fora = [x for x in linhas if x["angulo_base"] and not x["no_contrato"]]
+    fora = [x for x in linhas if x["veredito"] == "fora"]
+    ok = [x for x in linhas if x["veredito"] == "ok"]
+    indet = [x for x in linhas if x["veredito"] == "indeterminado"]
     sem_alfa = [x for x in linhas if x["fundo"] != "alfa"]
     print("─" * 92)
-    pranchas = [x for x in linhas if x["tipo"] != "objeto"]
-    print(f"{len(linhas)} imagens · {len(sem_alfa)} sem alfa de verdade · "
-          f"{len(pranchas)} pranchas/folhas (ângulo não medível) · "
-          f"{len(fora)} de {len(linhas) - len(pranchas)} objetos fora do contrato "
-          f"de {CONTRATO_GRAUS:.2f}°")
+    print(f"{len(linhas)} imagens · {len(sem_alfa)} sem alfa de verdade")
+    print(f"ângulo da base contra {CONTRATO_GRAUS:.2f}°: "
+          f"{len(ok)} no contrato · {len(fora)} fora · "
+          f"{len(indet)} sem apoio plano para medir · "
+          f"{len(linhas) - len(ok) - len(fora) - len(indet)} pranchas/folhas")
+    if fora:
+        print("fora do contrato:")
+        for x in fora:
+            print(f"  {x['arquivo']}  {x['angulo_base']}°")
 
     if args.json:
         pathlib.Path(args.json).write_text(

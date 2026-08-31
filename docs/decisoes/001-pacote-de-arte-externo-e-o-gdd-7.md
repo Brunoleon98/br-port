@@ -46,11 +46,21 @@ medição inteira), o playtest de 26/08 e o escopo travado do VS.
 
 | Origem | Objeto | Ângulo da base |
 |---|---|---|
-| Parte 04 — sprites avulsos | guindaste | 34,64° |
-| Parte 04 — sprites avulsos | caminhão | 36,20° |
-| Parte 01 — prancha de progressão | guindaste básico | 25,58° |
-| Parte 01 — prancha de progressão | guindaste intermediário | 25,84° |
+| Parte 04 — sprites avulsos | **guindaste** | **34,64°** — fora |
+| Parte 01 — prancha de progressão | **prédio sobre laje** | **28,20°** — no contrato |
 | **Contrato do projeto** | | **26,57°** |
+
+> **Estes são os dois únicos números que sobrevivem à régua estrita**, e a
+> régua ficou estrita depois de a primeira versão ter dado 45° para o
+> trabalhador e 42° para o barco pequeno — props que estão perfeitamente certos.
+> A medida só vale quando as DUAS arestas do apoio concordam e o apoio tem pelo
+> menos meia célula de largura; fora disso `conferir_lote_de_arte.py` diz
+> "sem apoio plano para medir" em vez de inventar. O caminhão do pacote e os
+> guindastes da prancha caem nesse caso — a primeira leitura deles (36,2° e
+> 25,6°) era média de duas arestas que discordavam, e foi retirada.
+>
+> O que continua de pé é a direção do achado: o sprite avulso está fora, a
+> prancha de progressão está dentro, e as duas coisas vieram no mesmo pacote.
 
 A causa está no guia da Parte 01, que fixa a câmera assim: *"Vista 3/4 de cima,
 com rotação em torno de 45° no eixo Z"*. **Especifica o Z e não especifica a

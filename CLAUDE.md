@@ -8,6 +8,7 @@ são em português — commits e PRs em inglês.
 > O que fazer a seguir, e quem faz o quê: `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
 > Para retomar o trabalho: `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.
 > Para a arte: `docs/BLOCO7_PLANO_ARTE_BLENDER.md`.
+> Contrato da projeção e pipeline de assets: `docs/BRP_SPATIAL_CONTRACT.md`.
 
 ---
 
@@ -105,6 +106,12 @@ desenha 3.
 
 ### Arte
 
+- **Arte que chega de fora passa por `tools/conferir_lote_de_arte.py` antes de
+  entrar.** Ele mede alfa e o ângulo da base contra os 26,57°. Dois lotes já
+  vieram com o xadrez de transparência pintado nos pixels, e o de 31/08 vinha
+  ainda com metade das peças noutra projeção.
+- **Asset novo sai de `blender/gerar_brp.py`**, que partilha a câmera e o kit
+  com `gerar_props_iso.py`. Nada de um segundo estúdio ao lado.
 - **Prop no cenário nunca sai de gerador de imagem.** Duas levas perdidas: o
   gerador não erra o desenho, erra o ÂNGULO, e ângulo errado não se conserta
   rodando no Godot. Retrato em painel, sim; prop no mapa, não.

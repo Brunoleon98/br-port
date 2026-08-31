@@ -1,0 +1,392 @@
+{
+  "contrato": {
+    "meia_larg": 30.0,
+    "meia_alt": 15.0,
+    "rot_x": 60.0,
+    "rot_z": 45.0,
+    "angulo_aresta": 26.565,
+    "quadro": [
+      512,
+      512
+    ],
+    "altura_px_por_unidade": 36.74,
+    "doc": "docs/BRP_SPATIAL_CONTRACT.md"
+  },
+  "assets": [
+    {
+      "id": "BRP_fauna_arbusto_base",
+      "category": "fauna",
+      "stage": "base",
+      "file": "arbusto.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "wind_idle": {
+          "frames": 6,
+          "loop": true
+        }
+      },
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_cabeco_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "cabeco.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/props/Caminhao.tscn",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_cidade_casa_costeira_base",
+      "category": "cidade",
+      "stage": "base",
+      "file": "casa_costeira.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_fauna_coqueiro_jovem_basico",
+      "category": "fauna",
+      "stage": "basico",
+      "file": "coqueiro_jovem.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "wind_idle": {
+          "frames": 6,
+          "loop": true
+        }
+      },
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_doca_concreto_intermediario",
+      "category": "porto",
+      "stage": "intermediario",
+      "file": "doca_concreto.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        4,
+        2
+      ],
+      "selectable": true,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/dock/Dock.tscn",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_empilhadeira_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "empilhadeira.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/props/Empilhadeira.tscn",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_fauna_gaivota_base",
+      "category": "fauna",
+      "stage": "base",
+      "file": "gaivota.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "fly": {
+          "frames": 6,
+          "loop": true
+        }
+      },
+      "origin": "voo",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "ar",
+      "godot_scene": "res://scenes/fauna/Gaivota.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_cidade_mercado_base",
+      "category": "cidade",
+      "stage": "base",
+      "file": "mercado.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        2
+      ],
+      "selectable": true,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/city/Mercado.tscn",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_pilha_caixotes_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "pilha_caixotes.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_terreno_terreno_agua_base",
+      "category": "terreno",
+      "stage": "base",
+      "file": "terreno_agua.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "encaixe",
+      "base_cells": [
+        2,
+        2
+      ],
+      "selectable": false,
+      "habitat": "agua",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_terreno_terreno_areia_base",
+      "category": "terreno",
+      "stage": "base",
+      "file": "terreno_areia.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "encaixe",
+      "base_cells": [
+        2,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_terreno_terreno_costa_base",
+      "category": "terreno",
+      "stage": "base",
+      "file": "terreno_costa.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "encaixe",
+      "base_cells": [
+        2,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_terreno_terreno_rua_base",
+      "category": "terreno",
+      "stage": "base",
+      "file": "terreno_rua.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "encaixe",
+      "base_cells": [
+        2,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    }
+  ]
+}

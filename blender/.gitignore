@@ -1,0 +1,17 @@
+# Os .blend NÃO entram no Git, e isto contraria a FASE 13 do prompt do pacote
+# ("entregue arquivos .blend organizados"). A razão:
+#
+# Eles são 3,7 MB de binário opaco que NINGUÉM consome — o Godot carrega PNG, o
+# jogo nunca abre um .blend, e o diff deles não diz nada a ninguém. E são
+# reproduzidos em segundos:
+#
+#     python3 blender/gerar_brp.py todos brport_vs/art/props
+#
+# A fonte de verdade dos assets é o Python que os monta, que é legível, tem
+# comentário e entra no diff. Versionar o .blend ao lado dele criaria duas
+# fontes para a mesma coisa — e uma delas envelheceria em silêncio, que é o
+# erro que este projeto já pagou com a errata da economia.
+#
+# Os PNGs, esses, entram: são o que o Godot importa.
+*.blend
+*.blend1

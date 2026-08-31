@@ -90,6 +90,8 @@ func _rodar() -> void:
 	_d6_alvos_de_toque()
 	print("=== D7: os letreiros pousam no que nomeiam ===")
 	_d7_letreiros()
+	print("=== D8: o pipeline BRP concorda com a projeção do mapa ===")
+	_d8_contrato_brp()
 
 	root.remove_child(_main)
 	_main.free()
@@ -133,6 +135,47 @@ func _no_mapa(no: Control) -> Vector2:
 			pos += (pai as Control).position
 		pai = pai.get_parent()
 	return pos
+
+
+# ── D8 ── a projeção agora tem QUATRO participantes, não três
+#
+# Era um contrato entre `gerar_mapa_iso.py`, `gerar_props_iso.py` e as cenas.
+# O pipeline do pacote de arte (`blender/`) é o quarto, e escreve a projeção que
+# usou dentro do manifest, no momento em que renderiza. Se alguém regerar um
+# lote com outra câmera, os PNGs saem certos aos olhos e errados no mapa — foi
+# exatamente assim que o lote externo de 31/08 veio com o guindaste a 34,6°.
+#
+# Este caso não abre PNG nenhum: compara o que o manifest DIZ com o que o mapa
+# publica. É barato e roda em todo push.
+const MANIFEST_BRP := "res://data/assets/BRP_EXPORT_MANIFEST.json"
+
+
+func _d8_contrato_brp() -> void:
+	if not FileAccess.file_exists(MANIFEST_BRP):
+		# Sem pipeline BRP no repositório não há o que conferir, e isso não é
+		# falha: o jogo funciona sem ele.
+		print("  (sem manifest BRP — nada a conferir)")
+		return
+	var f := FileAccess.open(MANIFEST_BRP, FileAccess.READ)
+	var lido: Variant = JSON.parse_string(f.get_as_text())
+	f.close()
+	if typeof(lido) != TYPE_DICTIONARY or not lido.has("contrato"):
+		_confere("manifest BRP tem bloco `contrato`", false, "JSON inválido")
+		return
+
+	var c: Dictionary = lido["contrato"]
+	var pr: Dictionary = _ancoras["projecao"]
+	_confere("meia_larg do pipeline BRP == a do mapa",
+		float(c["meia_larg"]) == float(pr["meia_larg"]),
+		"BRP %s, mapa %s" % [c["meia_larg"], pr["meia_larg"]])
+	_confere("meia_alt do pipeline BRP == a do mapa",
+		float(c["meia_alt"]) == float(pr["meia_alt"]),
+		"BRP %s, mapa %s" % [c["meia_alt"], pr["meia_alt"]])
+	_confere("câmera do pipeline BRP a 60/45",
+		abs(float(c["rot_x"]) - 60.0) < 0.001
+			and abs(float(c["rot_z"]) - 45.0) < 0.001,
+		"BRP usa %s/%s — o 54,736 do isométrico verdadeiro daria 1,732:1"
+			% [c["rot_x"], c["rot_z"]])
 
 
 # ── D1 ── cada píer e cada barco em cima do que o gerador desenhou
