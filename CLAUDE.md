@@ -63,7 +63,15 @@ Teste e import rodam sem tela.
    de ±18 pontos — comparar aquele número com estes 47% é comparar sorteio.
    O próprio simulador avisa quando a rodada é curta demais para medir.
 4. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
-   ficou bonito.
+   ficou bonito. E ao recortar a captura para conferir um detalhe, lembre que
+   **o mapa não começa no topo da tela**: `MapaWrap` tem `offset_top = 62`, e
+   as coordenadas que saem da projeção são do MAPA. Somar os 62 é a diferença
+   entre olhar o prop e olhar o telhado ao lado dele — três recortes já foram
+   ao lugar errado por causa disto.
+5. Escreveu um validador e ele **passou de primeira**? Desconfie. Injete o
+   defeito que ele deveria pegar e veja-o reprovar antes de confiar nele. Um
+   validador que nunca reprovou nada não é um validador — e, na primeira vez
+   que se fez isto aqui, quem estava furado era o teste, não o validador.
 
 ---
 
