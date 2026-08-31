@@ -1,0 +1,147 @@
+---
+name: fechar-sessao
+description: Fecha uma sessão de trabalho no BR Port com o que a mudança exige — as suítes certas, a captura quando o visual mudou, a varredura do que se aprendeu, o ESTADO_DO_PROJETO.md em dia e o commit. Acione com "fechar a sessão", "fecha isso", "terminei", "pode commitar", "encerrar", "hora de fechar", ou antes de qualquer commit no fim de um bloco de trabalho. NÃO é para rodar teste no meio do caminho — para isso rode a suíte direto.
+---
+
+# Fechar sessão — BR Port
+
+O ritual de fecho. Existe porque três coisas se perdem sempre no fim: uma
+verificação que a mudança exigia e ninguém rodou, o `ESTADO_DO_PROJETO.md` a
+envelhecer em silêncio, e uma lição que ficou só na conversa.
+
+**As regras do projeto estão em `CLAUDE.md` e carregam sozinhas.** Esta skill
+não as repete — ela só garante que foram cumpridas antes de fechar.
+
+---
+
+## 1. Descobrir o que mudou
+
+O que mudou é que decide o resto. Rodar 600 partidas por causa de um typo em
+documento é desperdício; não rodar por causa de um `# TUNING:` é negligência.
+
+```sh
+git status --short
+git diff --stat $(git merge-base HEAD origin/main)..HEAD
+```
+
+Num clone novo, **`--import` antes de qualquer coisa** — sem a pasta `.godot` a
+suíte falha com uma pilha de `referenced non-existent resource` que não tem
+nada a ver com o que se está testando.
+
+```sh
+G=/tmp/godot/Godot_v4.6.1-stable_linux.x86_64
+$G --headless --path brport_vs --import
+```
+
+## 2. A base: os quatro do Godot, sempre
+
+São segundos cada um e o CI roda os quatro em todo push. Não há mudança neste
+repositório barata o bastante para os pular.
+
+```sh
+for t in tests/run_tests tests/teste_design tests/teste_audio \
+         scripts/validation/asset_validator; do
+  $G --headless --path brport_vs --script res://$t.gd
+done
+```
+
+Espera-se, na ordem: `TODOS OS TESTES PASSARAM`, `DESIGN OK`, `AUDIO OK`,
+`ASSET OK`. O código de saída não chega: um erro de compilação do GDScript sai
+com 0 sem rodar nada — é por isso que o CI também exige a linha final, e você
+também deve.
+
+## 3. O que só a sua mudança exige
+
+| Se mexeu em… | Rode | Espera |
+|---|---|---|
+| preço ou constante `# TUNING:` | `$G --headless --path brport_vs --script res://tools/simular_balanceamento.gd -- 600` | 100% / 47% / 0% ainda de pé |
+| `tools/gerar_mapa_iso.py` | regerar os dois mapas (abaixo) | `git diff -- brport_vs/art` limpo |
+| `tools/gerar_sons.py` | `python3 tools/gerar_sons.py brport_vs/audio/sfx` | `git diff -- brport_vs/audio` limpo |
+| catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
+| qualquer coisa visível | uma captura, e **olhar para ela** (seção 4) | — |
+
+```sh
+# Os dois mapas — o do porto e o do pátio. Regerar um só e esquecer o outro
+# deixa a tabela de âncoras a descrever um porto que já não existe.
+python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
+  --sem-pavimento brport_vs/art/porto_mapa_iso.svg
+python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
+  brport_vs/art/porto_mapa_iso_patio.svg
+git diff --stat -- brport_vs/art        # tem de sair vazio
+```
+
+**Sobre o simulador:** medir é com `-- 600`. As 30 partidas do CI são teste de
+fumaça — provam que a ferramenta não quebrou junto com o `GameState` — e têm
+margem de ±18 pontos. Comparar aquele número com os 47% é comparar sorteio; o
+próprio simulador avisa quando a rodada é curta demais.
+
+**Sobre o validador do Blender:** ele não roda no CI, e de propósito — precisa
+do `bpy`, que são ~1 GB, e o que ele cobre (âncora, apoio ao solo, volume de
+seleção) só existe com a cena montada. Se mexeu em catálogo, é na mão:
+`pip install "bpy==4.5.0"` num Python 3.11.
+
+## 4. Olhar, se o visual mudou
+
+**Teste verde não prova que ficou bonito.** É a etapa que mais achado produz
+por minuto gasto: das últimas rodadas saíram daqui uma pilha de caixotes que
+virou massa marrom, um arbusto que era um balde, e rótulos enterrados debaixo
+dos sprites — tudo com a suíte verde.
+
+```sh
+xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
+  --script res://tools/capturar_tela.gd -- 12 foto.png completo
+```
+
+Para uma cena que não seja a principal (uma bancada de teste, por exemplo),
+`tools/capturar_cena.gd`, que só instancia e espera:
+
+```sh
+xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
+  --script res://tools/capturar_cena.gd -- res://scenes/tests/AssetPlacementTest.tscn foto.png
+```
+
+⚠️ **Ao recortar a captura, some 62.** `MapaWrap` tem `offset_top = 62`: as
+coordenadas que saem da projeção são do MAPA, não da tela. Três recortes já
+foram parar no telhado ao lado do prop por causa disto.
+
+## 5. Varredura do que se aprendeu
+
+**É verificação, não escrita.** Quem trabalha escrevendo comentário à medida
+que anda chega ao fim com quase tudo já registrado — medido numa sessão longa:
+dez de doze lições já estavam no código ou em `docs/decisoes/`. A varredura
+existe para as outras duas.
+
+Percorra a conversa e, para cada coisa que se descobriu — uma armadilha, um
+número medido, uma tentativa que falhou —, pergunte **onde isso está escrito**.
+Se a resposta for "só aqui", ela se perde quando a conversa fechar.
+
+| O que se aprendeu | Onde vive |
+|---|---|
+| Regra que vale sempre e para todos | `CLAUDE.md` — o único que carrega sozinho |
+| Por que se decidiu assim | `docs/decisoes/NNN-titulo.md`, curto, uma por arquivo |
+| Armadilha de uma função | Comentário nela, contando o que se tentou antes |
+| Onde o projeto está hoje | `docs/ESTADO_DO_PROJETO.md` |
+
+O que **não** merece registro: o que já está escrito, o que só vale para esta
+mudança, e o que ninguém vai reler. Camada de documento é custo.
+
+## 6. `ESTADO_DO_PROJETO.md` em dia
+
+É o único artefato crítico que **nenhum teste protege**. Ele envelhece calado, e
+quando envelhece a sessão seguinte trabalha com uma fotografia errada do
+projeto. Confira se ainda descreve o jogo depois desta sessão — o que existe, o
+que é placeholder, o que ficou pendente.
+
+## 7. Commit
+
+- Mensagem **em inglês**; código, comentário e documento em português.
+- Diga o que mudou **e por quê**; se algo foi medido, ponha o número.
+- Nada de identificador de modelo em commit, PR ou comentário.
+- Só empurre para a branch designada da sessão, com `git push -u origin <branch>`.
+- PR só se pedirem.
+
+## Falha segura
+
+Se uma verificação reprovar, **não feche**. Conserte, ou registre por escrito o
+que ficou quebrado e por quê — um fecho com teste vermelho e sem nota é a forma
+mais barata de a próxima sessão perder uma hora a descobrir sozinha.

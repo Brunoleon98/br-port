@@ -51,6 +51,10 @@ Teste e import rodam sem tela.
 
 ## Antes de fechar qualquer mudança
 
+> A skill **`/fechar-sessao`** conduz esta lista inteira — mais a varredura do
+> que se aprendeu e o `ESTADO_DO_PROJETO.md`. Esta seção continua aqui porque é
+> o que carrega sozinho; a skill é para quando se chega ao fim de um bloco.
+
 1. `tests/run_tests.gd` — a lógica. Espera `TODOS OS TESTES PASSARAM`.
 2. `tests/teste_design.gd` — o encaixe e o layout. Espera `DESIGN OK`.
    `tests/teste_audio.gd` — o encanamento de som. Espera `AUDIO OK`.
