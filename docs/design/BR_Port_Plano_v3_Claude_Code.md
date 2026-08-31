@@ -425,8 +425,30 @@ O `/fechar-sessao` é o que mais paga, e por um motivo pouco óbvio: **o
 Ele envelhece em silêncio, e quando envelhece a sessão seguinte trabalha com
 uma fotografia errada do projeto.
 
+O `/fechar-sessao` tem um QUARTO passo, que não estava nesta lista e devia:
+**varrer a conversa atrás do que se aprendeu e ver o que ficou só nela.**
+
+Medido em 31/08, no fim de uma sessão longa: das doze lições daquela conversa,
+dez já tinham ficado em comentário de código ou em `docs/decisoes/`, escritas à
+medida que o trabalho andava. Duas existiam só no diálogo — o deslocamento de
+62px do `MapaWrap`, que mandou três recortes de captura para o lugar errado, e
+a regra de injetar defeito num validador antes de confiar nele. Dez em doze é
+uma boa proporção, e ainda assim duas escaparam. Por isso o passo é de
+VERIFICAÇÃO e não de escrita: quase tudo já está registrado quando se chega ao
+fim, e o que se procura é o resto.
+
+**Onde cada coisa se registra**, para o passo não virar mais um documento:
+
+| O que se aprendeu | Onde vive |
+|---|---|
+| Regra que vale sempre e para todos | `CLAUDE.md` — o único que carrega sozinho |
+| Por que se decidiu assim | `docs/decisoes/NNN-*.md` |
+| Armadilha de uma função | Comentário nela, contando o que se tentou antes |
+| Onde o projeto está | `docs/ESTADO_DO_PROJETO.md` |
+
 **Sabe-se que funcionou quando:** ninguém precisa de lembrar a próxima sessão de
-rodar o teste de design.
+rodar o teste de design — e uma lição da sessão anterior não é redescoberta na
+seguinte.
 
 ---
 
