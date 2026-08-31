@@ -1009,8 +1009,13 @@ def preparar_cena():
 # que ficam sobre a água (píer, barcos, boia), no ar (copa, lança) ou em cima
 # de outro prop (o trabalhador, que fica no tabuado) ficam de fora: a sombra
 # deles cairia num plano que não existe no lugar onde o jogo os desenha.
+# `marcador` SAIU daqui em 31/08, e `conteiner`/`caixote` deixaram de existir.
+# O marcador é a baliza da Zona de Espera: ela fica na ÁGUA, e uma sombra de
+# contato dura projetada na água lê como uma mancha de óleo — que foi
+# exatamente o que apareceu na captura. O próprio comentário abaixo já dizia
+# que o que fica sobre a água fica de fora; o marcador tinha ficado dentro.
 SOMBRA = {"galpao", "galpao_velho", "escritorio", "escritorio_ruina",
-          "coqueiro_tronco", "conteiner", "caixote", "marcador"}
+          "coqueiro_tronco"}
 SOMBRA_COR = (0.06, 0.09, 0.13)   # azulada: sombra ao ar livre é céu, não breu
 SOMBRA_FORCA = 0.42
 SOMBRA_LIMIAR = 0.06              # abaixo disto é véu de oclusão, não sombra
