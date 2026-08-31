@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8ode262x085f"
-path="res://.godot/imported/pier_ampliado.png-14bca4968dce5ba9a2828426e54de9eb.ctex"
+uid="uid://coke5fys4je21"
+path="res://.godot/imported/cone_transito.png-9bb7e83e99d1dd9c56c36287047853e7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/pier_ampliado.png"
-dest_files=["res://.godot/imported/pier_ampliado.png-14bca4968dce5ba9a2828426e54de9eb.ctex"]
+source_file="res://art/props/cone_transito.png"
+dest_files=["res://.godot/imported/cone_transito.png-9bb7e83e99d1dd9c56c36287047853e7.ctex"]
 
 [params]
 

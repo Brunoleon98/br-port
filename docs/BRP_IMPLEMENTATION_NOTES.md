@@ -72,7 +72,7 @@ Não está pronto, e não vou dizer que está:
 
 | Fase | O que falta | Por quê |
 |---|---|---|
-| 7 — animações | Nenhum ciclo produzido. `wind_idle`, `bob`, `fly`, `rotate_lift` estão declarados no manifest e não existem | Precisa de folha de frames com célula e origem constantes; é trabalho de uma sessão inteira, e nenhum asset animado entra no VS |
+| 7 — animações | Feitos `wind_idle`, `bob` e `light_flicker`, por Tween. Faltam `fly` (a gaivota está fora do jogo) e `rotate_lift` (a lança já varre por Tween em `Dock.gd`, com outro nome) | O que falta é de asset que não entra no VS |
 | 8 — GLB | Só PNG | O jogo é 2D e não carrega GLB. Exportá-los seria produzir arquivo que nada abre |
 | 10 — `CityView.tscn` | Não existe | A cidade panorâmica é conteúdo `VS — OUT`. Fazer a janela sem a cidade seria moldura sem quadro |
 | 3 — atlas de terreno | Tiles avulsos, sem atlas | Atlas serve `TileMapLayer`, que não foi adotado |
@@ -107,5 +107,12 @@ prédios) continuam sendo de `tools/gerar_props_iso.py` e não são tocados.
    Um casco de barco dá 42° e está certo. Ver `tools/conferir_lote_de_arte.py`.
 3. **A gaivota é o teto do método**, não uma peça mal-acabada. Quem a for
    refazer, comece por textura num plano.
-4. **Isto não muda a fila do plano v3.** A1 — a build no telefone — continua
+4. **Prop avulso que ninguém carrega é convite a engano.** Saíram cinco:
+   `guindaste_base` e `guindaste_mastro` (o gerador deixou de os produzir
+   quando a torre foi para dentro do píer, e só a bancada os carregava — a
+   montar o guindaste de um jeito que o jogo não usa), `pier_ampliado` (render
+   estático de uma montagem que o jogo faz com duas peças, para poder girar a
+   lança) e `conteiner`/`caixote` avulsos, experimentados no pátio e reprovados
+   ao olhar.
+5. **Isto não muda a fila do plano v3.** A1 — a build no telefone — continua
    sendo o próximo item, e continua sendo o gate mais adiado do projeto.

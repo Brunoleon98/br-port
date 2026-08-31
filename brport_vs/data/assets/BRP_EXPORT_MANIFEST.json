@@ -43,6 +43,54 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_porto_barreira_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "barreira.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_bote_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "bote.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_cabeco_base",
       "category": "porto",
       "stage": "base",
@@ -108,6 +156,30 @@
       "base_cells": [
         2,
         2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_cone_transito_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "cone_transito.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
       ],
       "selectable": false,
       "habitat": "terra",
@@ -221,6 +293,30 @@
       "sombra_de_contato": false
     },
     {
+      "id": "BRP_porto_guincho_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "guincho.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_cidade_mercado_base",
       "category": "cidade",
       "stage": "base",
@@ -245,10 +341,58 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_porto_pallet_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "pallet.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_pilha_caixotes_base",
       "category": "porto",
       "stage": "base",
       "file": "pilha_caixotes.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_pneus_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "pneus.png",
       "format": "png-rgba",
       "frame_size": [
         512,
@@ -291,6 +435,35 @@
       "habitat": "terra",
       "godot_scene": "",
       "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_luz_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_luz.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "light_flicker": {
+          "tween": "modulate",
+          "loop": true
+        }
+      },
+      "origin": "encaixe",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
     },
     {
       "id": "BRP_terreno_terreno_agua_base",

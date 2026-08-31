@@ -52,6 +52,16 @@ a cada Fase, sem o jogo precisar saber.
 
 ## Onde estamos no roadmap
 
+**O mapa foi refeito a partir do que a captura mostrou** (31/08). O que estava
+errado, e agora não está: 40% do quadro era uma laje de asfalto atrás da vila
+(virou solo tropical com orla de mata, moita e capim); o escritório e o armazém
+pousavam em cima de casas (a vila abre vão no `my` que a PROJEÇÃO diz, não no
+`my` do prédio); a rua tinha o mesmo cinza do pátio e nenhuma borda (asfalto
+mais escuro e meio-fio); a água eram três faixas chapadas com aresta dura e
+oito ondas repetidas igual em todo degrau (gradiente radial de profundidade,
+ondas variadas, espuma na linha de costa); e a baliza da Zona de Espera
+projetava sombra de contato NA ÁGUA.
+
 **O pipeline Blender -> Godot do pacote está implementado** (31/08):
 `blender/` com quatro estúdios que partilham a câmera de `gerar_props_iso.py`,
 15 assets novos, manifest, dois validadores (um de cada lado), a cena

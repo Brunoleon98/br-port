@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://8oh5gn6ucxdw"
-path="res://.godot/imported/caixote.png-b4e94b81345ac8fbbc07bd74ada50a45.ctex"
+uid="uid://cwxkwor12lv85"
+path="res://.godot/imported/poste_luz.png-9806890954124ffc290a6c2e1d65190b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/caixote.png"
-dest_files=["res://.godot/imported/caixote.png-b4e94b81345ac8fbbc07bd74ada50a45.ctex"]
+source_file="res://art/props/poste_luz.png"
+dest_files=["res://.godot/imported/poste_luz.png-9806890954124ffc290a6c2e1d65190b.ctex"]
 
 [params]
 

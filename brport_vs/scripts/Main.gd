@@ -57,6 +57,10 @@ var _selecionado: int = -1
 # As estruturas trocam de TEXTURA, não de nó: assim o prop ocupa exatamente o
 # mesmo quadro nos dois estados e o prédio não salta ao ser consertado — a
 # mesma razão que fez o píer partilhar a geometria entre vazio e construído.
+## O que só faz sentido num pátio já reconstruído. Ver `_refresh_estruturas`.
+const EQUIPAMENTO_DE_PATIO := ["Empilhadeira", "PilhaCaixotes", "Pallet",
+	"Guincho", "ConeTransito", "Barreira"]
+
 const MapaTerra := preload("res://art/porto_mapa_iso.svg")
 const MapaPatio := preload("res://art/porto_mapa_iso_patio.svg")
 const ArmazemRuina := preload("res://art/props/galpao_velho.png")
@@ -79,6 +83,8 @@ func _ready() -> void:
 	_refresh_all()
 	_animar_ancorados()
 	_animar_coqueiros()
+	_animar_boias()
+	_animar_luzes()
 
 	# Turno 1 abria com a faixa de mensagem VAZIA — um cartão creme com nada
 	# dentro, que na tela lê como falha e não como "ainda não aconteceu nada".
@@ -145,6 +151,76 @@ func _animar_coqueiros() -> void:
 		i += 1
 
 
+# ── FASE 7 do prompt do pacote de arte, no idioma do projeto ──
+#
+# O prompt pede ciclos de 6 ou 8 frames em folha de sprites. Aqui não se faz
+# assim, e a auditoria do próprio pacote diz por quê: "reutilizar e ampliar os
+# padrões de tween existentes antes de criar uma segunda arquitetura
+# concorrente". Uma folha de frames para uma boia que sobe e desce 3px seria
+# oito PNGs de 512 para fazer o que uma linha de Tween faz — e ainda obrigaria
+# a manter célula, origem e margem iguais em todos eles, que é justamente a
+# lista de coisas que o prompt avisa que costuma sair errada.
+#
+# `wind_idle` já existia, em `_animar_coqueiros`. Faltavam estas duas.
+
+
+## `bob` — a boia sobe e desce, e a marca da Zona de Espera fica quieta.
+##
+## A marca é uma estaca cravada no fundo: se ela balançasse com a boia, o mar
+## inteiro pareceria subir. Por isso o filtro é pela TEXTURA e não pelo nome do
+## nó — `Ancoragem0` é o marcador e `Ancoragem1/2` são boias, e um dia alguém
+## vai acrescentar `Ancoragem3` sem olhar qual é qual.
+func _animar_boias() -> void:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return
+	var duracoes := [1.7, 2.05]
+	var fases := [0.0, 0.6]
+	var i := 0
+	for no in cenario.get_children():
+		var tr := no as TextureRect
+		if tr == null or tr.texture == null:
+			continue
+		if not String(tr.texture.resource_path).ends_with("boia.png"):
+			continue
+		var base := tr.position
+		var tw := tr.create_tween().set_loops()
+		if fases[i % fases.size()] > 0.0:
+			tw.tween_interval(fases[i % fases.size()])
+		var dur: float = duracoes[i % duracoes.size()]
+		tw.tween_property(tr, "position:y", base.y - 3.0, dur) \
+			.set_trans(Tween.TRANS_SINE)
+		tw.tween_property(tr, "position:y", base.y, dur) \
+			.set_trans(Tween.TRANS_SINE)
+		i += 1
+
+
+## `light_flicker` — a luminária do poste, e só ela.
+##
+## É esta a razão de `poste` e `poste_luz` serem dois PNGs: uma lâmpada que
+## pisca arrastando o ferro do poste atrás dela não lê como lâmpada, lê como
+## falha de render. Mesma divisão da copa do coqueiro e da lança do guindaste.
+##
+## A oscilação é pequena de propósito: 1.0 -> 0.82, e lenta. Uma lâmpada de
+## sódio velha BATE, não pisca. Amplitude maior aqui viraria pisca-pisca, e a
+## luminária tem 26px na tela — o que a esta escala se lê é a variação, não o
+## desenho dela.
+func _animar_luzes() -> void:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return
+	for no in cenario.get_children():
+		if not String(no.name).begins_with("PosteLuz"):
+			continue
+		var tr := no as TextureRect
+		if tr == null:
+			continue
+		var tw := tr.create_tween().set_loops()
+		tw.tween_property(tr, "modulate:a", 0.82, 1.4).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(tr, "modulate:a", 1.0, 0.9).set_trans(Tween.TRANS_SINE)
+		tw.tween_interval(2.2)
+
+
 func _connect_game_state() -> void:
 	GameState.cash_changed.connect(func(_v): _refresh_hud())
 	GameState.reputation_changed.connect(func(_v): _refresh_hud())
@@ -172,6 +248,23 @@ func _refresh_estruturas() -> void:
 	var cenario := $MapaWrap.get_node_or_null("Cenario")
 	if cenario == null:
 		return
+
+	# O equipamento de pátio só aparece quando o pátio existe.
+	#
+	# Sem isto, uma empilhadeira, um pallet e um guincho ficam em cima da terra
+	# batida de um porto que o jogador ainda não reconstruiu — e, pior, roubam
+	# metade do efeito da compra: o pátio é a estrutura cuja mudança visual é
+	# justamente terra virar asfalto COM movimento em cima. Comprar tem de
+	# mudar mais do que o chão.
+	#
+	# O caminhão, o poste e a beira do cais ficam de fora desta lista de
+	# propósito: rua, iluminação pública e cais não são do pátio, e o porto
+	# opera uma doca desde o primeiro dia.
+	var tem_patio := GameState.tem_estrutura("patio")
+	for nome in EQUIPAMENTO_DE_PATIO:
+		var eq := cenario.get_node_or_null(nome) as CanvasItem
+		if eq != null:
+			eq.visible = tem_patio
 	var armazem := cenario.get_node_or_null("Armazem") as TextureRect
 	if armazem != null:
 		armazem.texture = ArmazemPronto if GameState.tem_estrutura("armazem") else ArmazemRuina

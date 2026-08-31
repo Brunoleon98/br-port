@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dn63xdbdvkaig"
-path="res://.godot/imported/conteiner.png-86fa79469ca6a0f4c749c36f039354e8.ctex"
+uid="uid://b82gjqe7i8at6"
+path="res://.godot/imported/pallet.png-2563b77cf51457eacb836321429778e5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/conteiner.png"
-dest_files=["res://.godot/imported/conteiner.png-86fa79469ca6a0f4c749c36f039354e8.ctex"]
+source_file="res://art/props/pallet.png"
+dest_files=["res://.godot/imported/pallet.png-2563b77cf51457eacb836321429778e5.ctex"]
 
 [params]
 

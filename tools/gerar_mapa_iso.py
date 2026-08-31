@@ -32,6 +32,7 @@ Uso:
 """
 
 import json
+import math
 import random
 import sys
 
@@ -47,6 +48,7 @@ LARG, ALT = 720, 720
 # O salto de 4 em mx contra 8 em my é o que satisfaz Δmx > Δmy/3.
 DEGRAUS = [(-6.0, 8.0, 6.0), (8.0, 16.0, 10.0), (16.0, 24.0, 14.0), (24.0, 34.0, 18.0)]
 FUNDO_TERRA = -8.0       # o quanto a terra recua para trás (fora do ecrã)
+ALTURA_DE_MATO = 9.0     # px do mapa que um tufo de capim se levanta do chão
 COSTURA = 0.06           # sobreposição entre degraus (ver `gerar`)
 PIER_ALCANCE = 4.5
 
@@ -84,8 +86,19 @@ C = {
     "vidro": "#7fb6cc", "porta": "#5a3a20", "terra": "#8a7a63",
     "terra_clara": "#9c8b71", "terra_escura": "#75664f", "poca": "#6b6f66",
     "mato": "#5c7343", "asfalto_claro": "#7d8993", "asfalto_escuro": "#616c76",
+    # Solo tropical e mangue. Entraram em 31/08: até então o chão ATRÁS da rua
+    # era a mesma laje de asfalto do pátio, estendida até FUNDO_TERRA, e ocupava
+    # perto de 40% do enquadramento sem nada em cima. Um porto não tem
+    # estacionamento de oito unidades atrás das casas — tem mato.
+    "solo": "#7b8f52", "solo_claro": "#8ba05f", "solo_escuro": "#67793f",
+    "mangue": "#425f3c", "mangue_raiz": "#5a4a34", "capim": "#94a962",
     "tinta": "#e0a81f",
-    "asfalto_via": "#5f6a73", "calcada": "#a6b0b7", "faixa_via": "#d8dee3",
+    # A via ficou MAIS ESCURA que o pátio em 31/08. Antes era #5f6a73 contra o
+    # #6f7b85 do pátio — dois cinzas a um passo um do outro, que na tela viravam
+    # uma chapa só de ponta a ponta. Sem borda, uma rua não lê como rua: lê como
+    # o chão que sobrou. O meio-fio (`meiofio`) faz o resto do trabalho.
+    "asfalto_via": "#49535b", "calcada": "#aeb8bf", "faixa_via": "#e6ebee",
+    "meiofio": "#8d979e",
     "casa_a": "#e8e2d4", "casa_b": "#dcd3c2", "casa_c": "#cfd8de",
     "telha_a": "#b1512a", "telha_b": "#9d6a3c", "telha_c": "#7f8c98",
     "telha_d": "#a05a52",
@@ -313,6 +326,95 @@ def manchas_chao(indice: int, mx0: float, my0: float, mx1: float, my1: float,
     return "".join(out)
 
 
+def vegetacao_do_solo(indice: int, mx0: float, my0: float, mx1: float,
+                      my1: float) -> str:
+    """Povoa o solo atrás da rua: orla de mata no fundo, moita e capim à frente.
+
+    O guia de terrenos do pacote pede "solo tropical, mangue e restinga" e
+    "vegetação: gramínea, moita". Aqui isso é DESENHO no mapa, e não tile: o
+    chão deste jogo é um SVG gerado, e uma moita que muda de estado não existe.
+
+    DUAS COISAS QUE A PRIMEIRA VERSÃO ERROU, e ficam registradas:
+
+    1. Manchas grandes e claras leem como FALHA de grama, não como relevo — o
+       terreno parecia um campo de golfe malcuidado. Agora são poucas, escuras
+       e a 0,22 de opacidade: servem para tirar a chapa, não para se ver.
+    2. Havia uma faixa de mangue no fundo do mundo (`mx0`), que cai fora do
+       enquadramento e ninguém vê. Além disso mangue é vegetação de BEIRA DE
+       ÁGUA, e ali é o miolo da terra — atrás da vila o que existe é mata. A
+       água aqui é o cais, que é construído.
+
+    A densidade cresce para o fundo: rala junto à rua, fechada na orla. É o que
+    diz ao olho que a mata vem de trás e a cidade avança sobre ela.
+    """
+    r = random.Random(SEMENTE_CHAO + 91 + indice)
+    s = ""
+    largura = mx1 - mx0
+
+    # 1. Variação de tom. Discreta.
+    for _ in range(5):
+        cx = r.uniform(mx0 + 0.6, mx1 - 0.6)
+        cy = r.uniform(my0, my1)
+        rx, ry = r.uniform(1.4, 2.6), r.uniform(1.0, 2.0)
+        pts = []
+        for k in range(10):
+            ang = math.radians(k * 36.0)
+            pts.append(p(cx + rx * math.cos(ang) * r.uniform(0.85, 1.15),
+                         cy + ry * math.sin(ang) * r.uniform(0.85, 1.15),
+                         ALT_CAIS))
+        s += poli(pts, C["solo_escuro"], 0.22)
+
+    # 2. Orla de mata: copas sobrepostas, do fundo para a frente. São elipses
+    # com uma segunda elipse mais escura por baixo — a esta escala é o que
+    # separa "árvore" de "borrão verde".
+    copas = []
+    for _ in range(34):
+        vies = r.random() ** 2.2          # esmagado contra o fundo
+        mx = mx0 + 0.2 + vies * (largura * 0.72)
+        my = r.uniform(my0 - 0.4, my1 + 0.4)
+        copas.append((mx, my, r.uniform(0.42, 0.86)))
+    copas.sort(key=lambda c: c[0] + c[1])
+    for mx, my, raio in copas:
+        base, topo = [], []
+        for k in range(9):
+            ang = math.radians(k * 40.0)
+            j = r.uniform(0.78, 1.22)
+            base.append(p(mx + raio * math.cos(ang) * j,
+                          my + raio * 0.78 * math.sin(ang) * j, ALT_CAIS))
+            topo.append(p(mx + raio * math.cos(ang) * j * 0.92,
+                          my + raio * 0.78 * math.sin(ang) * j * 0.92,
+                          ALT_CAIS + ALTURA_DE_MATO * r.uniform(0.9, 1.5)))
+        s += poli(base, C["mangue"], 0.9)      # a sombra da própria copa
+        s += poli(topo, C["mato"] if r.random() < 0.6 else C["solo_escuro"], 1.0)
+
+    # 3. Moitas e capim, do meio para a frente, onde a mata já rareou.
+    for _ in range(30):
+        vies = r.random() ** 0.7
+        mx = mx0 + largura * 0.35 + vies * (largura * 0.62)
+        my = r.uniform(my0, my1)
+        if mx > mx1 - 0.25:
+            continue
+        if r.random() < 0.3:
+            rr = r.uniform(0.14, 0.30)
+            pts = []
+            for k in range(8):
+                ang = math.radians(k * 45.0)
+                pts.append(p(mx + rr * math.cos(ang) * r.uniform(0.8, 1.2),
+                             my + rr * 0.8 * math.sin(ang) * r.uniform(0.8, 1.2),
+                             ALT_CAIS))
+            s += poli(pts, C["mato"], 0.9)
+        else:
+            for k in range(3):
+                a = p(mx + k * 0.05, my + k * 0.035, ALT_CAIS)
+                b = p(mx + k * 0.05 - 0.035, my + k * 0.035,
+                      ALT_CAIS + r.uniform(0.4, 0.8) * ALTURA_DE_MATO)
+                s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="%s" '
+                      'stroke-width="1.7" stroke-linecap="round" fill="none" '
+                      'opacity="0.85"/>\n'
+                      % (a[0], a[1], b[0], b[1], C["capim"]))
+    return s
+
+
 def poli(pontos, cor: str, opacidade: float = 1.0) -> str:
     extra = "" if opacidade >= 1.0 else ' opacity="%.2f"' % opacidade
     return '  <polygon points="%s" fill="%s"%s/>\n' % (
@@ -412,6 +514,9 @@ def vias(pavimentado: bool) -> str:
         s += _faixa_mx(dentro(borda) - CALCADA, fora(borda) + CALCADA,
                        my0, fim, C["calcada"])
         s += _faixa_mx(dentro(borda), fora(borda), my0, fim, C["asfalto_via"])
+        # Meio-fio: 6cm de nada que fazem a rua ter margem em vez de acabar.
+        for m in (dentro(borda), fora(borda)):
+            s += _faixa_mx(m - 0.05, m + 0.05, my0, fim, C["meiofio"])
 
         if i + 1 < len(DEGRAUS):
             prox = DEGRAUS[i + 1][2]
@@ -462,9 +567,35 @@ VILA_NIVEIS = {
 }
 VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 
-# Onde NÃO cabe casa. Vazio por enquanto: os coqueiros do cenário foram para
-# o passeio, na frente das casas, então nenhum tronco nasce dentro de um lote.
-VILA_VAZIOS = []
+# Onde NÃO cabe casa, em `my`.
+#
+# O escritório e o armazém são props do CENÁRIO, postos em `Main.tscn`, e o
+# gerador do mapa não sabe deles. O resultado era o que se via na captura de
+# 31/08: os dois pousados em cima da fileira de casas, com um telhado de casa a
+# sair por baixo de cada um. Não é erro de profundidade — a ordem está certa —,
+# é que ali havia duas construções no mesmo lugar.
+#
+# Os intervalos abaixo são o `my` de cada prédio mais a folga da silhueta dele.
+# Se alguém mover o escritório ou o armazém em `Main.tscn`, tem de mexer aqui —
+# não há como o gerador descobrir sozinho, e é por isso que está escrito.
+# A CONTA, porque ela não é óbvia: a casa que um prédio tapa NÃO está no `my`
+# dele. As duas coisas vivem em `mx` diferentes — a vila lá atrás, o prédio no
+# pátio —, e na projeção quem decide a coluna da tela é `mx - my`. Igualando:
+#
+#     my_casa = mx_vila - (mx_predio - my_predio) ± (meia_largura_px / MEIA_LARG)
+#
+# Com o escritório em (4,2 / 7,2) e a vila do degrau 0 em mx=0, o centro cai em
+# my=3,0 — quatro unidades ANTES do prédio. A primeira tentativa pôs o vão em
+# 5,6..8,9, que é onde o prédio está, e por isso não tirou casa nenhuma de
+# baixo dele.
+#
+# O raio usado é ~0,6 da meia-largura do sprite: tapar tudo o que a silhueta
+# alcança abriria um vão de sete unidades e deixaria um buraco na fileira. O
+# que incomoda é a casa FATIADA pela quina, não a que espreita atrás.
+VILA_VAZIOS = [
+    (0.9, 5.1),      # Escritorio, sprite de 213px em (mx 4,2 / my 7,2)
+    (8.4, 13.6),     # Armazem, sprite de 258px em (mx 8,2 / my 15,2)
+]
 
 
 def _sombrear(hexa: str, fator: float) -> str:
@@ -580,35 +711,94 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
           'x1="%.0f" y1="%.0f" x2="%.0f" y2="%.0f">'
           '<stop offset="0" stop-color="%s"/>'
           '<stop offset="1" stop-color="%s"/>'
-          '</linearGradient></defs>\n'
-          % (ini[0], ini[1], fim[0], fim[1], C["agua"], C["agua_funda"]))
+          '</linearGradient>'
+          # Manchas de profundidade: gradiente RADIAL, e não polígono
+          # translúcido. A primeira versão usava um polígono de 12 lados a 0,16
+          # de opacidade e na tela saía uma FACETA — aresta reta e visível, que
+          # lê como erro de malha em vez de corrente. Gradiente que morre na
+          # borda é o que dá mancha sem contorno. `objectBoundingBox` deixa os
+          # dois `defs` servirem todas as manchas.
+          '<radialGradient id="mfunda" gradientUnits="objectBoundingBox" '
+          'cx="0.5" cy="0.5" r="0.5">'
+          '<stop offset="0" stop-color="%s" stop-opacity="0.30"/>'
+          '<stop offset="0.55" stop-color="%s" stop-opacity="0.16"/>'
+          '<stop offset="1" stop-color="%s" stop-opacity="0"/>'
+          '</radialGradient>'
+          '<radialGradient id="mrasa" gradientUnits="objectBoundingBox" '
+          'cx="0.5" cy="0.5" r="0.5">'
+          '<stop offset="0" stop-color="%s" stop-opacity="0.26"/>'
+          '<stop offset="0.55" stop-color="%s" stop-opacity="0.13"/>'
+          '<stop offset="1" stop-color="%s" stop-opacity="0"/>'
+          '</radialGradient>'
+          '</defs>\n'
+          % (ini[0], ini[1], fim[0], fim[1], C["agua"], C["agua_funda"],
+             C["agua_funda"], C["agua_funda"], C["agua_funda"],
+             C["agua_baixio"], C["agua_baixio"], C["agua_baixio"]))
     s += '  <rect width="%d" height="%d" fill="url(#fundo)"/>\n' % (LARG, ALT)
     for de, ate, cor in [(0.0, 6.0, C["agua_media"]),
                          (0.0, 2.6, C["agua_rasa"]),
                          (0.0, 1.0, C["agua_baixio"])]:
         s += poli(costa(de, ate), cor)
 
-    # Ondulação: acompanha a costa em vez de ser espalhada ao acaso, e rareia
-    # para o mar aberto — é assim que a água mostra de que lado fica a terra.
-    s += '  <g fill="none" stroke="%s" stroke-width="3" stroke-linecap="round" opacity="0.55">\n' % C["espuma"]
+    # ESPUMA na linha de costa. O guia de terrenos do pacote é explícito:
+    # "espuma somente nas bordas de praia, rochas, docas e colisões de barcos".
+    # É a peça que faltava — a água encostava no cais com uma aresta dura, como
+    # dois papéis colados, e é isso que fazia o mar parecer um preenchimento.
+    s += poli(costa(0.0, 0.42), C["espuma"], 0.34)
+    s += poli(costa(0.0, 0.16), C["espuma"], 0.55)
+
+    # Renda da espuma: a borda regular acima ainda lê como fita. Estes traços
+    # curtos e desiguais por cima dela quebram a régua.
+    re_ = random.Random(SEMENTE_CHAO + 31)
+    s += ('  <g fill="none" stroke="%s" stroke-linecap="round" opacity="0.7">\n'
+          % C["espuma"])
     for my0, my1, borda in DEGRAUS:
-        for dmx, dmy in [(2.0, 1.4), (4.6, 3.6), (3.1, 5.9), (6.8, 2.2),
-                         (5.4, 6.8), (8.6, 4.6), (11.0, 1.8), (9.4, 6.2)]:
-            if my0 + dmy > my1:
-                continue
-            wx, wy = p(borda + dmx, my0 + dmy)
-            s += '    <path d="M%.0f %.0f q8-5 16 0 q8 5 16 0"/>\n' % (wx - 16, wy)
+        my = my0
+        while my < my1:
+            if not _sob_pier(my):
+                a = p(borda + re_.uniform(0.05, 0.30), my)
+                b = p(borda + re_.uniform(0.05, 0.30), my + re_.uniform(0.35, 0.9))
+                s += ('    <path d="M%.1f,%.1f L%.1f,%.1f" stroke-width="%.1f"/>\n'
+                      % (a[0], a[1], b[0], b[1], re_.uniform(1.6, 3.2)))
+            my += re_.uniform(0.7, 1.6)
     s += '  </g>\n'
 
-    # Mar aberto: mais fraco e mais espaçado. Sem isto o canto fundo do ecrã
-    # fica um bloco de azul sem nada — água parada não é água, é fundo.
-    s += ('  <g fill="none" stroke="%s" stroke-width="3" stroke-linecap="round" '
-          'opacity="0.20">\n' % C["espuma"])
+    # VARIAÇÃO DE PROFUNDIDADE: manchas largas e suaves, para o mar não ser
+    # três faixas de cor com aresta. O guia chama a isto "manchas largas e
+    # suaves, sem ruído excessivo, sugerindo profundidade e corrente".
+    rv = random.Random(SEMENTE_CHAO + 47)
+    for _ in range(18):
+        my0, my1, borda = DEGRAUS[rv.randrange(len(DEGRAUS))]
+        cx, cy = p(borda + rv.uniform(2.0, 26.0), rv.uniform(my0 - 3.0, my1 + 5.0))
+        rx = rv.uniform(70.0, 190.0)
+        s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.0f" ry="%.0f" fill="url(#%s)" '
+              'transform="rotate(%.0f %.0f %.0f)"/>\n'
+              % (cx, cy, rx, rx * rv.uniform(0.34, 0.58),
+                 "mfunda" if rv.random() < 0.62 else "mrasa",
+                 rv.uniform(-40, 40), cx, cy))
+
+    # ONDAS. A primeira versão usava OITO deslocamentos fixos, repetidos igual
+    # em todos os degraus, e sempre o mesmo desenho `q8-5 16 0 q8 5 16 0`. Na
+    # tela isso vira papel de parede: o olho encontra o padrão em dois segundos
+    # e o mar deixa de ser mar. Agora comprimento, curvatura, opacidade e
+    # posição variam, com semente fixa para o mapa continuar reproduzível.
+    #
+    # A densidade cai com a distância da costa — é assim que a água mostra de
+    # que lado fica a terra.
     ro = random.Random(SEMENTE_CHAO + 7)
+    s += ('  <g fill="none" stroke="%s" stroke-linecap="round">\n' % C["espuma"])
     for my0, my1, borda in DEGRAUS:
-        for _ in range(7):
-            wx, wy = p(borda + ro.uniform(13.0, 30.0), ro.uniform(my0, my1 + 6.0))
-            s += '    <path d="M%.0f %.0f q8-5 16 0 q8 5 16 0"/>\n' % (wx - 16, wy)
+        for _ in range(26):
+            vies = ro.random() ** 1.9          # esmagado contra a costa
+            dmx = 1.2 + vies * 27.0
+            wx, wy = p(borda + dmx, ro.uniform(my0 - 2.0, my1 + 4.0))
+            comp = ro.uniform(9.0, 19.0)
+            curva = ro.uniform(3.0, 6.5)
+            op = max(0.10, 0.62 - vies * 0.5)
+            s += ('    <path d="M%.0f %.0f q%.0f-%.0f %.0f 0 q%.0f %.0f %.0f 0" '
+                  'stroke-width="%.1f" opacity="%.2f"/>\n'
+                  % (wx - comp, wy, comp / 2, curva, comp,
+                     comp / 2, curva, comp, ro.uniform(2.0, 3.4), op))
     s += '  </g>\n'
 
     # ---- terra, degrau por degrau (de trás para a frente) ----
@@ -627,12 +817,23 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
         s += laje(FUNDO_TERRA, my0, borda, my1 + COSTURA, ALT_CAIS,
                   C["cais_topo"], C["cais_dir"], C["cais_esq"])
-        # Pátio: terra batida no início, asfalto depois de pavimentado.
-        s += poli([p(FUNDO_TERRA, my0, ALT_CAIS), p(borda - APRON, my0, ALT_CAIS),
+        # SOLO TROPICAL do fundo do mundo até a calçada de trás da rua. É o
+        # chão em que a vila se assenta, e é o que estava faltando: antes esta
+        # faixa inteira era pátio, o que punha asfalto atrás das casas.
+        fundo_da_rua = borda - RUA_RECUO - CALCADA
+        s += poli([p(FUNDO_TERRA, my0, ALT_CAIS), p(fundo_da_rua, my0, ALT_CAIS),
+                   p(fundo_da_rua, my1 + COSTURA, ALT_CAIS),
+                   p(FUNDO_TERRA, my1 + COSTURA, ALT_CAIS)], C["solo"])
+        s += vegetacao_do_solo(i, FUNDO_TERRA, my0, fundo_da_rua, my1)
+
+        # PÁTIO: só entre a calçada da frente e o avental. É esta a área que
+        # trabalha, e é ela que troca de terra batida para asfalto.
+        frente_da_rua = borda - RUA_RECUO + RUA_LARG + CALCADA
+        s += poli([p(frente_da_rua, my0, ALT_CAIS), p(borda - APRON, my0, ALT_CAIS),
                    p(borda - APRON, my1 + COSTURA, ALT_CAIS),
-                   p(FUNDO_TERRA, my1 + COSTURA, ALT_CAIS)],
+                   p(frente_da_rua, my1 + COSTURA, ALT_CAIS)],
                   C["asfalto"] if com_pavimento else C["terra"])
-        s += manchas_chao(i, FUNDO_TERRA, my0, borda - APRON, my1, com_pavimento)
+        s += manchas_chao(i, frente_da_rua, my0, borda - APRON, my1, com_pavimento)
         if com_pavimento:
             # Faixa do avental, rente à borda interna dele — mais para dentro
             # riscaria o número da doca, que é pintado logo ao lado.
