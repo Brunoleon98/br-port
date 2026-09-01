@@ -198,6 +198,14 @@ desenha 3.
 
 ## Estilo de código
 
+- **`GS` é destipado, e `var x := GS.qualquer_coisa` NÃO compila.** As
+  ferramentas e os testes pegam o autoload por `root.get_node("GameState")`,
+  que devolve um `Node` sem tipo, e o Godot recusa-se a inferir a partir dele:
+  *"Cannot infer the type of X because the value doesn't have a set type"*.
+  Escreva o tipo à mão — `var x: float = GS.RIVAL_KEEP_CHANCE`. Isto mordeu
+  três vezes num dia só, em três arquivos diferentes, e cada vez custou uma
+  corrida: **o Godot encerra com código 0** nesse erro, então quem olha só o
+  `$?` conclui que passou.
 - Comentário explica **por que**, e de preferência conta o que se tentou antes
   e não funcionou. O repositório inteiro é escrito assim; siga.
 - Nada de emoji na interface — os 20 ícones vivem em `art/icones/` e são

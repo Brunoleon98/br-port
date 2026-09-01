@@ -4,8 +4,9 @@
 > nova sem precisar reexplicar tudo.
 >
 > **Última atualização:** 01/09/2026 (a sessão passou a arrancar com o Godot
-> pronto, os números do jogo ganharam fonte única, e as Parcelas 2 e 3 —
-> "não verificadas" desde agosto — foram projetadas: fecham, e fecham demais)
+> pronto, os números do jogo ganharam fonte única, as Parcelas 2 e 3 foram
+> projetadas — fecham, e fecham demais — e a **Reputação Comercial deixou de
+> ser rótulo**: ela decide a contra-oferta do Arlindo)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 > Para saber **o que fazer a seguir e quem faz o quê**, o plano é
@@ -50,6 +51,28 @@ a cada Fase, sem o jogo precisar saber.
 ---
 
 ## Onde estamos no roadmap
+
+**A reputação passou a fazer alguma coisa** (01/09) — item A3, fechado, e era
+ele que travava os itens 5 a 15 da fila. Reputação alta faz o cliente do Arlindo
+aceitar pagar cheio com mais frequência; reputação baixa faz o contrário. Só nas
+apostas ("cortar metade", "manter o preço") — igualar continua a fechar sempre,
+porque é o recuo de emergência do jogador.
+
+O caminho foi escolha do Bruno, entre três. O registro, com todos os números,
+está em `docs/decisoes/003-a-reputacao-passa-pela-negociacao.md`.
+
+⚠️ **A barra estava SATURADA, e medir antes de codar foi o que salvou o item.**
+Com +4 de reputação por barco e um porto que atende ~13 barcos por semana, ela
+batia no teto de 100 na primeira semana: 79,8% das contra-ofertas do jogador
+Ótimo e 53,8% das do Mediano aconteciam já no teto. Os dois perfis cuja
+separação é o que interessa chegavam à decisão com a mesma barra. Os ganhos
+foram divididos por cinco, e as medianas na oferta passaram a 86,0 / 74,1 /
+59,5. **Uma barra saturada não é um sistema — é um bónus fixo com mais código.**
+
+Medido, com o efeito desligado e ligado: a aposta ganha sobe de 71,3% para
+87,3% no jogador Ótimo, de 43,0% para 49,5% no Mediano, e CAI de 44,4% para
+39,0% no Descuidado. O balanceamento aguentou: 100% / 47,8% / 0% contra os
+100% / 47,3% / 0% da base, mesma medida dentro da margem de ±4,0.
 
 **A sessão já abre com o Godot pronto** (01/09) — item B1 da fila, fechado,
 **a partir do momento em que estiver na main**: sessão nova arranca do branch
@@ -202,7 +225,7 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
 | `CLAUDE.md` (raiz) | **As regras do projeto que carregam sozinhas** — projeção, save, arte, interface, e como rodar Godot e Blender aqui dentro |
-| `brport_vs/tests/run_tests.gd` | ~65 asserções de regressão (a lógica) |
+| `brport_vs/tests/run_tests.gd` | ~72 asserções de regressão (a lógica), incluindo `T5f` — a reputação a mexer na contra-oferta |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 10 efeitos de rascunho. Sem dependência: só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
@@ -357,8 +380,9 @@ existe mais**.
 - **Ninguém quebra por caixa.** O píer sozinho paga os custos, então a derrota
   por caixa negativo continua sendo código morto: a única forma de perder é o
   portão da parcela. Fica anotado, não foi mexido.
-- **A reputação ainda não afeta nada** mecanicamente — só o rótulo na HUD.
-  Decisão de design em aberto para a produção full.
+- ~~A reputação ainda não afeta nada mecanicamente~~ — **resolvido em 01/09**
+  (item A3). Ela decide a contra-oferta. Ver o roadmap acima e
+  `docs/decisoes/003`.
 
 Para medir qualquer mudança: constantes marcadas `# TUNING:` no topo de
 `brport_vs/autoload/GameState.gd`, e o simulador mede o efeito em segundos.

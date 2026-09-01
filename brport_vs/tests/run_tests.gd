@@ -330,6 +330,45 @@ func _run() -> void:
 	_check("R$1.234.567", GS.moeda(1234567) == "R$1.234.567")
 	_check("negativo mantem o sinal na frente", GS.moeda(-2500) == "-R$2.500")
 
+	print("=== T5f: a reputacao MEXE na contra-oferta (A3) ===")
+	# A reputacao foi rotulo na HUD ate 01/09. Agora ela decide, e por isso
+	# passa a ter teste: uma constante mexida sem querer voltaria a torna-la
+	# cosmetica em silencio, que e exatamente o estado de que se acabou de sair.
+	_fresh_playing()
+	var base_chance: float = GS.RIVAL_KEEP_CHANCE
+	GS.reputation = GS.REPUTATION_START
+	var neutra: float = GS._chance_com_reputacao(base_chance)
+	_check("na reputacao inicial o efeito e NEUTRO", is_equal_approx(neutra, base_chance))
+
+	GS.reputation = 100.0
+	var alta: float = GS._chance_com_reputacao(base_chance)
+	GS.reputation = 0.0
+	var baixa: float = GS._chance_com_reputacao(base_chance)
+	_check("reputacao alta ajuda", alta > base_chance)
+	_check("reputacao baixa atrapalha", baixa < base_chance)
+	_check("a ordem e monotona", baixa < neutra and neutra < alta)
+
+	# Segurar o preco nunca pode virar jogada automatica: com reputacao maxima
+	# a aposta fica boa, nao fica garantida. Sem este teto, uma constante de
+	# efeito generosa transformaria "manter" na unica escolha racional e
+	# mataria a decisao que a contra-oferta existe para criar.
+	GS.reputation = 100.0
+	_check("com reputacao maxima a aposta nao vira certeza",
+		GS._chance_com_reputacao(0.95) <= 0.95)
+	_check("nunca passa de 1", GS._chance_com_reputacao(1.0) <= 1.0)
+
+	# Igualar fecha SEMPRE, com reputacao no chao — e o recuo de emergencia do
+	# jogador, e a reputacao nao pode tirar-lho.
+	_fresh_playing()
+	_garantir(1, 1)
+	GS.docks[0]["boat"] = _fake_boat(200, 1, true)
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE
+	GS._set_phase("rival_offer")
+	GS.reputation = 0.0
+	_check("igualar fecha mesmo com reputacao zero",
+		GS.negotiate_rival("igualar") == "fechado")
+
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
 	var losses := 0

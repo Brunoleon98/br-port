@@ -65,33 +65,34 @@ já foram lidas como regressão de balanceamento uma vez.
 | `RIVAL_KEEP_CHANCE` | 0.45 | TUNING (GDD) | TUNING: chance de o cliente aceitar pagar cheio | `GameState.gd:130` |
 | `RIVAL_DISCOUNT_AFTER_FAIL` | 0.28 | TUNING | TUNING | `GameState.gd:133` |
 | `RIVAL_PATIENCE` | 2 | GDD 7 | GDD: máx. 2 tentativas antes de o cliente encerrar | `GameState.gd:134` |
+| `REPUTACAO_EFEITO_NEGOCIACAO` | 0.5 | TUNING | TUNING — o quanto a reputação pesa na aposta da contra-oferta (item A3). … | `GameState.gd:139` |
 
 ## REPUTAÇÃO COMERCIAL
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `REPUTATION_START` | 65.0 | regra | Hoje a reputação é RÓTULO na HUD e mais nada: … | `GameState.gd:140` |
-| `REPUTATION_GAIN_SERVED` | 4.0 | regra | Hoje a reputação é RÓTULO na HUD e mais nada: … | `GameState.gd:141` |
-| `REPUTATION_LOSS_LOST` | 5.0 | regra | Hoje a reputação é RÓTULO na HUD e mais nada: … | `GameState.gd:142` |
-| `REPUTATION_GAIN_RIVAL_MATCHED` | 5.0 | regra | Hoje a reputação é RÓTULO na HUD e mais nada: … | `GameState.gd:143` |
-| `REPUTATION_LOSS_RIVAL_REFUSED` | 15.0 | regra | Hoje a reputação é RÓTULO na HUD e mais nada: … | `GameState.gd:144` |
+| `REPUTATION_START` | 65.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:155` |
+| `REPUTATION_GAIN_SERVED` | 0.8 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:156` |
+| `REPUTATION_LOSS_LOST` | 2.5 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:157` |
+| `REPUTATION_GAIN_RIVAL_MATCHED` | 1.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:158` |
+| `REPUTATION_LOSS_RIVAL_REFUSED` | 8.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:159` |
 
 ## CADÊNCIA E PARCELA
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `TURNS_PER_WEEK` | 8 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:153` |
-| `WEEKS_TOTAL` | 4 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:154` |
-| `TURNS_TOTAL` | 32 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:155` |
-| `PARCELA_AMOUNT` | 8.000 | GDD 7 | GDD "Parcelas validadas" / Protótipo VS — parcela única | `GameState.gd:157` |
-| `PARCELA_DUE_TURN` | 32 | regra | vence ao fim da semana 4 | `GameState.gd:158` |
+| `TURNS_PER_WEEK` | 8 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:168` |
+| `WEEKS_TOTAL` | 4 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:169` |
+| `TURNS_TOTAL` | 32 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:170` |
+| `PARCELA_AMOUNT` | 8.000 | GDD 7 | GDD "Parcelas validadas" / Protótipo VS — parcela única | `GameState.gd:172` |
+| `PARCELA_DUE_TURN` | 32 | regra | vence ao fim da semana 4 | `GameState.gd:173` |
 
 ## SAVE
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `SAVE_PATH` | `user://savegame.json` | regra |  | `GameState.gd:161` |
-| `SAVE_VERSION` | 2 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:171` |
+| `SAVE_PATH` | `user://savegame.json` | regra |  | `GameState.gd:176` |
+| `SAVE_VERSION` | 2 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:186` |
 
 ## Estruturas — o que o jogador compra
 

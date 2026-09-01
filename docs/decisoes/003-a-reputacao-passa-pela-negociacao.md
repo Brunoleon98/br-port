@@ -73,4 +73,66 @@ sai da medição e não de discussão — e é a parte que a máquina faz sozinh
 
 ---
 
+## Implementado em 01/09 — e o que a medição obrigou a mudar junto
+
+**A barra estava saturada, e isso quase tornou a decisão inútil.** Antes de
+escrever uma linha de efeito, mediu-se a reputação NO MOMENTO da contra-oferta,
+que é o instante em que ela passaria a decidir. O resultado, em 600 partidas por
+perfil:
+
+| Perfil | mediana na oferta | ofertas com a barra no teto (100) |
+|---|---:|---:|
+| Ótimo | 100,0 | **79,8%** |
+| Mediano | 100,0 | **53,8%** |
+| Descuidado | 75,0 | 9,1% |
+
+Os dois perfis cuja separação é o que interessa chegavam à decisão com
+**exatamente a mesma barra**. A causa é aritmética: começa em 65, ganhava +4 por
+barco, e um porto que atende ~13 barcos por semana batia no teto na primeira
+semana. Pendurar a negociação nisso seria um bónus fixo para toda a gente — o
+mesmo que nada, com mais código.
+
+Por isso os ganhos de reputação foram divididos por cinco (`GAIN_SERVED` 4,0 →
+0,8; `LOSS_LOST` 5,0 → 2,5; `GAIN_RIVAL_MATCHED` 5,0 → 1,0;
+`LOSS_RIVAL_REFUSED` 15,0 → 8,0). Depois: medianas de **86,0 / 74,1 / 59,5**, com
+23,3% / 0,4% / 0% no teto. A barra passou a discriminar.
+
+Isto é mais do que a decisão pedia, e vale ser explícito: **retunar a curva não
+era escolher outro caminho, era tornar o caminho escolhido possível.**
+
+### O efeito, e a prova de que ele mexe
+
+`_chance_com_reputacao()` escala a chance da aposta, ancorada em
+`REPUTATION_START` — quem começa a partida não leva bónus nem castigo. Só as
+apostas ("cortar metade", "manter o preço"); igualar continua a fechar sempre,
+porque é o recuo de emergência do jogador e a reputação não pode tirar-lho.
+`REPUTACAO_EFEITO_NEGOCIACAO = 0.5`, com teto de 0,95 para "manter" nunca virar
+jogada automática.
+
+Medido com o efeito desligado e ligado, 600 partidas por perfil:
+
+| Perfil | reputação | aposta ganha (efeito 0,0) | (efeito 0,5) | Δ |
+|---|---:|---:|---:|---:|
+| Ótimo | 86,0 | 71,3% | **87,3%** | +16,0 |
+| Mediano | 74,1 | 43,0% | **49,5%** | +6,5 |
+| Descuidado | 59,5 | 44,4% | **39,0%** | **−5,4** |
+
+Monotónico na reputação, e nos dois sentidos: boa paga, má custa.
+
+### O balanceamento aguentou
+
+100% / 47,8% / 0% contra os 100% / 47,3% / 0% da base — a mesma medida dentro
+da margem de ±4,0 pontos. Os três perfis continuam separados, o descuidado
+continua a não ganhar e o mediano continua a não perder sempre, que era a barra
+que o plano definiu.
+
+### Teste
+
+`T5f` em `run_tests.gd`, sete asserções. Foram exercitadas com três defeitos
+injetados — efeito zerado, teto removido, sinal invertido — e cada um reprovou
+(3, 2 e 3 asserções). A reputação não tinha teste nenhum até aqui, o que era
+justo enquanto ela não fazia nada.
+
+---
+
 *BR Port · decisão 003 · destrava os itens 5 a 15 da fila do Plano v3.*

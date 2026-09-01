@@ -108,6 +108,14 @@ def desconto_medio_do_rival(k: dict, barcos_por_semana: float) -> float:
     quando algum barco chegou), e sobre essa fração o desconto depende de como
     o jogador negoceia. Modela-se o jogador que arrisca o meio-termo e recua —
     o mesmo do perfil Ótimo.
+
+    LIMITAÇÃO CONHECIDA, e medida: desde o A3 a reputação mexe na chance de o
+    cliente aceitar, e esta conta não sabe disso — usa as constantes cruas. O
+    efeito é uma sobreestimação do desconto para quem tem reputação alta, e em
+    01/09 ela cabia folgadamente na tolerância (erros de 1,4% / 0,1% / 1,3%
+    nos três perfis). Quem AUMENTAR `REPUTACAO_EFEITO_NEGOCIACAO` deve olhar
+    para o portão de calibração antes de olhar para a projeção: é ele que vai
+    reclamar primeiro.
     """
     turnos = float(k["TURNS_PER_WEEK"])
     ofertas = turnos * float(k["RIVAL_TRIGGER_CHANCE"])

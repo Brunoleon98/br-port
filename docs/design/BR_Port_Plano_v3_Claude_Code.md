@@ -259,6 +259,18 @@ economia medida. Mas a decisão é do dono do jogo.
 **Mede-se por:** os três perfis continuam separados. Se o perfil descuidado
 passar a ganhar, ou o mediano a perder sempre, a alavanca está grosseira demais.
 
+**Feito em 01/09.** O Bruno escolheu a negociação; o registro e todos os números
+estão em `docs/decisoes/003-a-reputacao-passa-pela-negociacao.md`. Mede: 100% /
+47,8% / 0%, contra os 100% / 47,3% / 0% da base — mesma medida dentro da margem.
+
+O que este item ensinou, e que não estava previsto aqui: **medir antes de codar
+mudou a forma do trabalho.** A primeira medição foi a reputação no momento da
+contra-oferta, e ela mostrou a barra SATURADA — 79,8% das ofertas do jogador
+Ótimo e 53,8% das do Mediano aconteciam já no teto de 100. Pendurar a mecânica
+ali teria produzido um bónus fixo para toda a gente e passado por sistema. A
+curva teve de ser retunada primeiro (ganhos divididos por cinco), e só depois é
+que havia onde pendurar seja o que for.
+
 ---
 
 ### A4 — As seis telas narrativas que faltam do escopo do VS
