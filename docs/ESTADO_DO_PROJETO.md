@@ -99,8 +99,9 @@ teste de fumaça reprova qualquer `{token}` que chegue cru à tela.
 que bloqueasse o turno faria **24 de 30 partidas não terminarem** no simulador —
 e o CI passaria na mesma, porque só procurava a linha `=== Leitura ===`. Medido,
 consertado (o CI agora reprova `possível travamento`) e escrito no `CLAUDE.md`.
-Como overlay, o balanceamento medido fica intocado por construção: as margens
-semanais continuam R$3.320 / R$3.005 / R$1.633.
+Como overlay, o balanceamento medido fica intocado por construção — e medido:
+600 partidas por perfil dão **100% / 47,8% / 0%**, com a mediana do mediano em
+R$7.960 contra a parcela de R$8.000. Nenhuma das 1.800 partidas travou.
 
 ⏳ **O gate é do Bruno: ler o texto em voz alta.** Três desvios do rascunho de
 escrita esperam por esse julgamento, e estão listados no A4 do plano.
