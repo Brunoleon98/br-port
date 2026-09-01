@@ -132,6 +132,7 @@ func _rodar() -> void:
 
 	_imprimir_tabela(resultados, partidas)
 	_imprimir_regime(resultados)
+	_imprimir_reputacao(resultados)
 	_imprimir_diagnostico(resultados)
 
 	# O despejo em JSON existe para o projetor das Parcelas 2 e 3
@@ -153,6 +154,34 @@ func _rodar() -> void:
 # a semana 1 é obra (o caixa SAI), e a última é o porto em regime. Projetar as
 # Fases 2 e 3 a partir da média das quatro seria projetar a partir de um porto
 # que só existe durante a Fase 1.
+# A reputação está a DISCRIMINAR? Pendurar uma mecânica nela só faz sentido se
+# ela variar entre jogadores e ao longo da partida. Se estiver no teto quando a
+# decisão acontece, o efeito é um bónus fixo para toda a gente — que é o mesmo
+# que não existir, com mais código.
+func _imprimir_reputacao(resultados: Array) -> void:
+	print("=== Reputação NO MOMENTO da contra-oferta ===")
+	print("%-12s │ %8s │ %8s │ %8s │ %8s │ %13s │ %8s │ %8s" % [
+		"Perfil", "ofertas", "mediana", "mín", "máx", "no teto (100)",
+		"apostas", "ganhas %"])
+	for r in resultados:
+		var v: Array = r["reputacao_nas_ofertas"]
+		if v.is_empty():
+			continue
+		var ord := v.duplicate()
+		ord.sort()
+		var no_teto := 0
+		for x in v:
+			if float(x) >= 99.999:
+				no_teto += 1
+		print("%-12s │ %8d │ %8.1f │ %8.1f │ %8.1f │ %12.1f%% │ %8d │ %7.1f%%" % [
+			r["perfil"]["nome"], v.size(), float(ord[int(ord.size() / 2)]),
+			float(ord[0]), float(ord[ord.size() - 1]),
+			100.0 * float(no_teto) / float(v.size()),
+			int(r["apostas_feitas"]),
+			100.0 * float(r["apostas_ganhas"]) / maxf(1.0, float(r["apostas_feitas"]))])
+	print("")
+
+
 func _imprimir_regime(resultados: Array) -> void:
 	print("=== Economia semana a semana (delta de caixa médio) ===")
 	var cabecalho := "%-12s │" % "Perfil"
@@ -256,6 +285,9 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	var perdidos := 0
 	var reputacoes := 0.0
 	var travadas := 0
+	var reputacoes_de_oferta := []   # reputação em cada contra-oferta, de todas as partidas
+	var apostas_feitas := 0          # "metade"/"manter" tentadas
+	var apostas_ganhas := 0          # ... e aceitas pelo cliente
 	var margem_por_semana := []      # soma do delta de caixa, semana a semana
 	var obra_por_semana := []        # e quanto desse delta foi obra, não operação
 	var atendidos_por_semana := []
@@ -299,12 +331,19 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		var caixa_anterior: int = GS.cash
 		var atendidos_anterior := 0
 		var obra_na_semana := 0
+		var reputacao_nas_ofertas := []
+		var apostas := [0, 0]        # [feitas, ganhas]
 
 		while GS.phase != "game_over" and seguranca < 300:
 			seguranca += 1
 
 			if GS.phase == "rival_offer":
-				_negociar(perfil, rng)
+				# A reputação NO MOMENTO da oferta é o número que interessa ao
+				# A3: é sobre ela que a negociação vai pendurar-se, e uma
+				# reputação que já esteja no teto quando a oferta chega não
+				# discrimina jogador nenhum.
+				reputacao_nas_ofertas.append(GS.reputation)
+				_negociar(perfil, rng, apostas)
 				continue
 
 			if GS.phase == "debt_payment":
@@ -346,6 +385,9 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		atendidos += int(GS.metrics["boats_served"])
 		perdidos += int(GS.metrics["boats_lost"])
 		reputacoes += GS.reputation
+		reputacoes_de_oferta.append_array(reputacao_nas_ofertas)
+		apostas_feitas += int(apostas[0])
+		apostas_ganhas += int(apostas[1])
 		for id in GS.ESTRUTURAS:
 			if GS.tem_estrutura(id):
 				estruturas_de_pe[id] = int(estruturas_de_pe.get(id, 0)) + 1
@@ -377,6 +419,9 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"obra_por_semana": _media_por_semana(obra_por_semana, amostras_por_semana),
 		"atendidos_por_semana": _media_por_semana(atendidos_por_semana, amostras_por_semana),
 		"estruturas": _fracao_de_pe(estruturas_de_pe, partidas),
+		"reputacao_nas_ofertas": reputacoes_de_oferta,
+		"apostas_feitas": apostas_feitas,
+		"apostas_ganhas": apostas_ganhas,
 		"docas_medias": float(docas_totais) / float(partidas),
 		"trabalhadores_medios": float(trabalhadores_totais) / float(partidas),
 	}
@@ -404,11 +449,21 @@ func _media_por_semana(somas: Array, amostras: Array) -> Array:
 # Joga a contra-oferta inteira até ela fechar de um jeito ou de outro.
 # "insistiu" devolve o controle com o cliente ainda na mesa, então é preciso
 # escolher de novo — daí o laço. A paciência é 2, então ele sempre termina.
-func _negociar(perfil: Dictionary, rng: RandomNumberGenerator) -> void:
+# `contador` recebe [apostas feitas, apostas ganhas]. Só "metade" e "manter"
+# contam: "igualar" fecha SEMPRE, e por isso um contador de ofertas fechadas
+# não mede nada — foi o primeiro que se escreveu aqui, e ele dava o mesmo
+# número com a reputação ligada e desligada, que é como se descobriu o erro.
+func _negociar(perfil: Dictionary, rng: RandomNumberGenerator, contador: Array) -> void:
 	var guarda := 0
 	while GS.phase == "rival_offer" and guarda < 5:
 		guarda += 1
-		GS.negotiate_rival(_escolher_acao(perfil, rng))
+		var acao := _escolher_acao(perfil, rng)
+		var aposta := acao != "igualar"
+		var res: String = GS.negotiate_rival(acao)
+		if aposta:
+			contador[0] += 1
+			if res == "fechado":
+				contador[1] += 1
 
 
 func _escolher_acao(perfil: Dictionary, rng: RandomNumberGenerator) -> String:

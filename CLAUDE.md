@@ -41,6 +41,7 @@ $G --headless --path brport_vs --import                       # UMA VEZ por clon
 $G --headless --path brport_vs --script res://tests/run_tests.gd
 $G --headless --path brport_vs --script res://tests/teste_design.gd
 $G --headless --path brport_vs --script res://tests/teste_audio.gd
+$G --headless --path brport_vs --script res://tests/teste_fumaca.gd
 $G --headless --path brport_vs --script res://scripts/validation/asset_validator.gd
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
@@ -78,6 +79,8 @@ Teste e import rodam sem tela.
 1. `tests/run_tests.gd` — a lógica. Espera `TODOS OS TESTES PASSARAM`.
 2. `tests/teste_design.gd` — o encaixe e o layout. Espera `DESIGN OK`.
    `tests/teste_audio.gd` — o encanamento de som. Espera `AUDIO OK`.
+   `tests/teste_fumaca.gd` — a cena abre, o ícone existe, o save não migra.
+   Espera `FUMACA OK`.
 3. Mexeu em QUALQUER `const` do `GameState.gd`? Regere a tabela dos números —
    `despejar_constantes.gd` + `tools/gerar_tabela_numeros.py --contra-godot`,
    espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
@@ -146,6 +149,15 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
 versão é descartado, não adaptado. Já custou um porto com 4 docas num mapa que
 desenha 3.
 
+**E recusar é recusar sem ter tocado em nada.** O `load_game()` escrevia os
+campos um a um e só conferia a sanidade do roster no fim: um save recusado
+deixava o `turn` e o `cash` do arquivo no estado vivo, com zero docas. Passava
+despercebido porque o `new_game()` que vem a seguir por acaso reescreve todos
+os campos — uma segurança que dependia de duas funções distantes continuarem a
+concordar sobre a lista de campos, e que um campo novo teria quebrado calada.
+**Tudo o que recusa vem antes de tudo o que escreve**, e o `teste_fumaca.gd`
+tranca isso.
+
 ### Arte
 
 - **Arte que chega de fora passa por `tools/conferir_lote_de_arte.py` antes de
@@ -198,6 +210,14 @@ desenha 3.
 
 ## Estilo de código
 
+- **`GS` é destipado, e `var x := GS.qualquer_coisa` NÃO compila.** As
+  ferramentas e os testes pegam o autoload por `root.get_node("GameState")`,
+  que devolve um `Node` sem tipo, e o Godot recusa-se a inferir a partir dele:
+  *"Cannot infer the type of X because the value doesn't have a set type"*.
+  Escreva o tipo à mão — `var x: float = GS.RIVAL_KEEP_CHANCE`. Isto mordeu
+  três vezes num dia só, em três arquivos diferentes, e cada vez custou uma
+  corrida: **o Godot encerra com código 0** nesse erro, então quem olha só o
+  `$?` conclui que passou.
 - Comentário explica **por que**, e de preferência conta o que se tentou antes
   e não funcionou. O repositório inteiro é escrito assim; siga.
 - Nada de emoji na interface — os 20 ícones vivem em `art/icones/` e são

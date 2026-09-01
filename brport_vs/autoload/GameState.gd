@@ -133,15 +133,30 @@ const RIVAL_KEEP_CHANCE := 0.45         # TUNING: chance de o cliente aceitar pa
 const RIVAL_DISCOUNT_AFTER_FAIL := 0.28 # TUNING
 const RIVAL_PATIENCE := 2               # GDD: máx. 2 tentativas antes de o cliente encerrar
 
+# TUNING — o quanto a reputação pesa na aposta da contra-oferta (item A3).
+# Ver `_chance_com_reputacao` para a conta e para o porquê deste ser o lugar
+# onde a reputação atua, e não o preço ou a chegada de barco.
+const REPUTACAO_EFEITO_NEGOCIACAO := 0.5
+
 # ── REPUTAÇÃO COMERCIAL ──
-# Hoje a reputação é RÓTULO na HUD e mais nada: nenhum destes números muda
-# receita, chegada de barco ou preço. Dar-lhe efeito mecânico é o item A3 da
-# fila, e está anotado como pendência desde o Bloco 3.
+# TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por
+# isso estes números deixaram de ser cosméticos.
+#
+# Os ganhos foram divididos por cinco em 01/09, e a razão é medida: com +4 por
+# barco atendido e um porto que atende ~13 barcos por semana, a barra batia no
+# teto de 100 ainda na PRIMEIRA semana. Medido em 600 partidas por perfil,
+# antes da correção: 79,8% das contra-ofertas do jogador Ótimo e 53,8% das do
+# Mediano aconteciam já com reputação 100 — os dois perfis cuja separação é o
+# que interessa chegavam à decisão com exatamente a mesma barra.
+#
+# Uma barra saturada não é um sistema: é um bónus fixo com mais código. Daí a
+# escala nova, calibrada para a reputação SUBIR ao longo da partida inteira em
+# vez de estourar no início.
 const REPUTATION_START := 65.0
-const REPUTATION_GAIN_SERVED := 4.0
-const REPUTATION_LOSS_LOST := 5.0
-const REPUTATION_GAIN_RIVAL_MATCHED := 5.0
-const REPUTATION_LOSS_RIVAL_REFUSED := 15.0
+const REPUTATION_GAIN_SERVED := 0.8
+const REPUTATION_LOSS_LOST := 2.5
+const REPUTATION_GAIN_RIVAL_MATCHED := 1.0
+const REPUTATION_LOSS_RIVAL_REFUSED := 8.0
 
 # ── CADÊNCIA E PARCELA ──
 # TUNING — esta é a constante que faz a economia da Fase 1 fechar.
@@ -456,8 +471,10 @@ func negotiate_rival(acao: String) -> String:
 		_fechar_negocio(boat, desconto, aviso)
 		return "fechado"
 
-	# "metade" e "manter" são apostas: gastam uma tentativa de paciência.
-	var chance := RIVAL_HALF_CHANCE if acao == "metade" else RIVAL_KEEP_CHANCE
+	# "metade" e "manter" são apostas: gastam uma tentativa de paciência — e é
+	# aqui, e só aqui, que a Reputação Comercial pesa (item A3).
+	var base := RIVAL_HALF_CHANCE if acao == "metade" else RIVAL_KEEP_CHANCE
+	var chance := _chance_com_reputacao(base)
 	var desconto_aposta := RIVAL_HALF_DISCOUNT if acao == "metade" else 0.0
 	rival_attempts_left -= 1
 
@@ -473,6 +490,31 @@ func negotiate_rival(acao: String) -> String:
 	message.emit("O cliente não gostou — última tentativa antes de ele ir embora.", "warn")
 	save_game()
 	return "insistiu"
+
+
+# A Reputação Comercial entra no jogo POR AQUI (item A3 da fila, decisão em
+# docs/decisoes/003). Reputação alta faz o cliente do Arlindo aceitar pagar mais
+# vezes; reputação baixa faz o contrário.
+#
+# Por que na aposta, e não no preço do barco ou na chegada:
+#   · é o único lugar onde o jogador está A DECIDIR quando o efeito acontece.
+#     Preço e chegada agem pelas costas — o barco já vale mais, o barco já
+#     chegou — e uma recompensa que ninguém vê não recompensa;
+#   · é o que menos ameaça a economia medida. A contra-oferta dispara em 30%
+#     dos turnos com barco e toca UM barco de cada vez, enquanto preço e vazão
+#     multiplicam a receita inteira.
+#
+# A conta é ancorada em REPUTATION_START: quem começa a partida não leva bónus
+# nem castigo, e a partir daí sobe ou desce com o que fizer. A âncora não é
+# enfeite — ancorar noutro sítio faria a mecânica INFLAR o jogo todo em vez de
+# redistribuir, e o balanceamento medido (100% / 47% / 0%) mede-se contra uma
+# partida que começa neutra.
+#
+# O teto de 0.95 existe para "manter o preço" nunca virar jogada automática:
+# com reputação máxima a aposta fica boa, não fica garantida.
+func _chance_com_reputacao(base: float) -> float:
+	var acima := (reputation - REPUTATION_START) / (100.0 - REPUTATION_START)
+	return clampf(base * (1.0 + REPUTACAO_EFEITO_NEGOCIACAO * acima), 0.0, 0.95)
 
 
 # Compat com a versão binária (usada pela suíte de testes de regressão).
@@ -800,21 +842,45 @@ func load_game() -> bool:
 	file.close()
 	var parsed = JSON.parse_string(text)
 	if typeof(parsed) != TYPE_DICTIONARY:
+		clear_save()
 		return false
 
+	# TUDO O QUE RECUSA VEM ANTES DE TUDO O QUE ESCREVE, e é de propósito.
+	#
 	# Save de outra versão do jogo é descartado, não adaptado. Migrar exigiria
 	# adivinhar o que o jogador tinha comprado a partir de números que já não
 	# querem dizer a mesma coisa — foi assim que apareceu o porto de 4 docas
 	# num mapa de 3. Recomeçar é honesto; carregar um estado impossível não é.
+	#
+	# Só que "não adaptar" também vale para a recusa: enquanto os campos eram
+	# escritos um a um e a sanidade do roster era conferida DEPOIS, um save
+	# recusado deixava `turn` e `cash` do arquivo no estado vivo e o porto com
+	# zero docas. Isso passava despercebido porque o `_ready()` chama
+	# `new_game()` logo a seguir e ele por acaso reescreve todos os campos —
+	# uma segurança que dependia de duas funções distantes continuarem a
+	# concordar sobre a lista de campos. Bastava um campo novo no save que o
+	# `new_game()` não zerasse para o estado impossível atravessar para a
+	# partida seguinte: o bug das 4 docas outra vez, com outra roupa.
+	# `tests/teste_fumaca.gd`, bloco F3, tranca isto.
 	if int(parsed.get("versao", 1)) != SAVE_VERSION:
+		clear_save()
+		return false
+
+	# O roster é lido do dicionário, não dos campos do jogo, justamente para
+	# poder recusar sem ter tocado em nada. Porto sem doca ou sem trabalhador é
+	# um estado que nenhuma partida produz — é arquivo truncado ou editado.
+	var docas_lidas = parsed.get("docks", [])
+	var trabalhadores_lidos = parsed.get("workers", [])
+	if typeof(docas_lidas) != TYPE_ARRAY or typeof(trabalhadores_lidos) != TYPE_ARRAY \
+			or docas_lidas.is_empty() or trabalhadores_lidos.is_empty():
 		clear_save()
 		return false
 
 	turn = int(parsed.get("turn", 1))
 	cash = int(parsed.get("cash", START_CASH))
 	reputation = float(parsed.get("reputation", REPUTATION_START))
-	docks = parsed.get("docks", [])
-	workers = parsed.get("workers", [])
+	docks = docas_lidas
+	workers = trabalhadores_lidos
 	upgrade_purchased = bool(parsed.get("upgrade_purchased", false))
 	estruturas = parsed.get("estruturas", [])
 	parcela_paid = bool(parsed.get("parcela_paid", false))
@@ -826,8 +892,6 @@ func load_game() -> bool:
 	metrics = parsed.get("metrics", metrics)
 	_uid = int(parsed.get("uid", 1))
 
-	if docks.is_empty() or workers.is_empty():
-		return false
 	_reconciliar_roster()
 	state_loaded.emit()
 	return true

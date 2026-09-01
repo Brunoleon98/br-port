@@ -3,9 +3,9 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 01/09/2026 (a sessão passou a arrancar com o Godot
-> pronto, os números do jogo ganharam fonte única, e as Parcelas 2 e 3 —
-> "não verificadas" desde agosto — foram projetadas: fecham, e fecham demais)
+> **Última atualização:** 01/09/2026 (a **Reputação Comercial deixou de ser
+> rótulo** — ela decide a contra-oferta do Arlindo — e a cena que abre ganhou
+> teste; o teste achou um save que era adaptado a meio)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 > Para saber **o que fazer a seguir e quem faz o quê**, o plano é
@@ -51,6 +51,28 @@ a cada Fase, sem o jogo precisar saber.
 
 ## Onde estamos no roadmap
 
+**A reputação passou a fazer alguma coisa** (01/09) — item A3, fechado, e era
+ele que travava os itens 5 a 15 da fila. Reputação alta faz o cliente do Arlindo
+aceitar pagar cheio com mais frequência; reputação baixa faz o contrário. Só nas
+apostas ("cortar metade", "manter o preço") — igualar continua a fechar sempre,
+porque é o recuo de emergência do jogador.
+
+O caminho foi escolha do Bruno, entre três. O registro, com todos os números,
+está em `docs/decisoes/003-a-reputacao-passa-pela-negociacao.md`.
+
+⚠️ **A barra estava SATURADA, e medir antes de codar foi o que salvou o item.**
+Com +4 de reputação por barco e um porto que atende ~13 barcos por semana, ela
+batia no teto de 100 na primeira semana: 79,8% das contra-ofertas do jogador
+Ótimo e 53,8% das do Mediano aconteciam já no teto. Os dois perfis cuja
+separação é o que interessa chegavam à decisão com a mesma barra. Os ganhos
+foram divididos por cinco, e as medianas na oferta passaram a 86,0 / 74,1 /
+59,5. **Uma barra saturada não é um sistema — é um bónus fixo com mais código.**
+
+Medido, com o efeito desligado e ligado: a aposta ganha sobe de 71,3% para
+87,3% no jogador Ótimo, de 43,0% para 49,5% no Mediano, e CAI de 44,4% para
+39,0% no Descuidado. O balanceamento aguentou: 100% / 47,8% / 0% contra os
+100% / 47,3% / 0% da base, mesma medida dentro da margem de ±4,0.
+
 **A sessão já abre com o Godot pronto** (01/09) — item B1 da fila, fechado,
 **a partir do momento em que estiver na main**: sessão nova arranca do branch
 padrão, e um hook que viva só numa branch de trabalho não corre.
@@ -62,6 +84,23 @@ fora de propósito: só faz falta em sessão de arte.
 Construir isso destapou uma divergência que já existia: **o `CLAUDE.md` mandava
 baixar a 4.6.1 e o CI rodava a 4.6.3.** A sessão testava numa versão e o PR era
 barrado noutra. A versão passou a viver em `.godot-version`, lido pelos dois.
+
+**A cena que abre passou a ter teste** (01/09) — item B4, fechado.
+`brport_vs/tests/teste_fumaca.gd` é o quinto passo do CI e espera `FUMACA OK`.
+Cobre as três coisas que até aqui só o olho cobria: **toda** `.tscn` do projeto
+instancia (as doze são achadas por varredura, não por lista — uma lista
+envelhece calada e deixaria de fora justamente a cena nova), todo ícone
+registrado em `Icones.gd` tem arquivo no disco, e o save de outra versão é
+descartado. Os quatro defeitos foram injetados e os quatro reprovaram.
+
+⚠️ **E o teste achou um bug de verdade, na migração de save.** Um save da
+versão CORRENTE mas com o roster vazio era recusado *depois* de o `load_game()`
+já ter escrito `turn`, `cash` e o resto por cima do estado vivo — e o arquivo
+impossível ficava no disco para ser tentado outra vez no arranque seguinte. O
+jogo sobrevivia por acidente: o `new_game()` que vem a seguir por acaso
+reescreve todos os campos. Bastava um campo novo que ele não zerasse para o
+estado impossível atravessar para a partida seguinte, que é **o bug das 4 docas
+com outra roupa**. Agora tudo o que recusa vem antes de tudo o que escreve.
 
 **Os números do jogo têm fonte única** (01/09) — item A2, fechado.
 `docs/design/BR_Port_Numeros_Fase_1.md` é GERADO do `GameState.gd` e o CI
@@ -202,11 +241,12 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
 | `CLAUDE.md` (raiz) | **As regras do projeto que carregam sozinhas** — projeção, save, arte, interface, e como rodar Godot e Blender aqui dentro |
-| `brport_vs/tests/run_tests.gd` | ~65 asserções de regressão (a lógica) |
+| `brport_vs/tests/run_tests.gd` | ~72 asserções de regressão (a lógica), incluindo `T5f` — a reputação a mexer na contra-oferta |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 10 efeitos de rascunho. Sem dependência: só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela |
+| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, e o save de outra versão é descartado sem tocar no estado vivo |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/BLOCO7_PLANO_ARTE_BLENDER.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, cartão de doca, cartão de trabalhador e letreiro. Os tokens de cor de mapa saíram daqui em 30/08: quem os define é o gerador do SVG |
@@ -357,8 +397,9 @@ existe mais**.
 - **Ninguém quebra por caixa.** O píer sozinho paga os custos, então a derrota
   por caixa negativo continua sendo código morto: a única forma de perder é o
   portão da parcela. Fica anotado, não foi mexido.
-- **A reputação ainda não afeta nada** mecanicamente — só o rótulo na HUD.
-  Decisão de design em aberto para a produção full.
+- ~~A reputação ainda não afeta nada mecanicamente~~ — **resolvido em 01/09**
+  (item A3). Ela decide a contra-oferta. Ver o roadmap acima e
+  `docs/decisoes/003`.
 
 Para medir qualquer mudança: constantes marcadas `# TUNING:` no topo de
 `brport_vs/autoload/GameState.gd`, e o simulador mede o efeito em segundos.

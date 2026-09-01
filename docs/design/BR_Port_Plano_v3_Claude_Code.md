@@ -61,7 +61,8 @@ Três razões, e só uma delas é "IA escreve código depressa":
    (Isto custou caro para se descobrir: **duas rodadas inteiras de trabalho
    visual foram feitas às cegas** antes de alguém tentar.)
 3. **A "integração", que o plano previa que comeria o ganho, virou teste.**
-   `run_tests.gd`, `teste_design.gd` e `teste_audio.gd` pegam a regressão que
+   `run_tests.gd`, `teste_design.gd`, `teste_audio.gd` e `teste_fumaca.gd`
+   pegam a regressão que
    antes se pagaria em horas de depuração no fim de semana.
 
 ### O erro na direção contrária — e é este que importa daqui em diante
@@ -258,6 +259,18 @@ economia medida. Mas a decisão é do dono do jogo.
 
 **Mede-se por:** os três perfis continuam separados. Se o perfil descuidado
 passar a ganhar, ou o mediano a perder sempre, a alavanca está grosseira demais.
+
+**Feito em 01/09.** O Bruno escolheu a negociação; o registro e todos os números
+estão em `docs/decisoes/003-a-reputacao-passa-pela-negociacao.md`. Mede: 100% /
+47,8% / 0%, contra os 100% / 47,3% / 0% da base — mesma medida dentro da margem.
+
+O que este item ensinou, e que não estava previsto aqui: **medir antes de codar
+mudou a forma do trabalho.** A primeira medição foi a reputação no momento da
+contra-oferta, e ela mostrou a barra SATURADA — 79,8% das ofertas do jogador
+Ótimo e 53,8% das do Mediano aconteciam já no teto de 100. Pendurar a mecânica
+ali teria produzido um bónus fixo para toda a gente e passado por sistema. A
+curva teve de ser retunada primeiro (ganhos divididos por cinco), e só depois é
+que havia onde pendurar seja o que for.
 
 ---
 
@@ -473,7 +486,8 @@ fim, e o que se procura é o resto.
 
 Duas coisas mudaram na construção em relação ao que se planejou aqui. A
 primeira: o passo dos testes não é uma lista fixa. Os quatro do Godot
-(`run_tests`, `teste_design`, `teste_audio`, `asset_validator`) são segundos
+(`run_tests`, `teste_design`, `teste_audio`, `teste_fumaca`,
+`asset_validator`) são segundos
 cada e o CI roda todos em todo push — não há mudança barata o bastante para os
 pular, e por isso são base, não decisão. O que a skill decide é o caro e o
 condicional: as 600 partidas do simulador, a regeração dos mapas e dos sons, o
@@ -509,7 +523,7 @@ abrir sessão nenhuma.
 
 ---
 
-### B4 — Testes onde hoje só existe olho
+### B4 — Testes onde hoje só existe olho  ✅ FEITO (01/09)
 
 **A dor:** três suítes cobrem lógica, encaixe e som. Ninguém cobre "a cena
 abre". `MapaConceito.tscn` e `MapaIso.tscn` estão em `scenes/proto/` sem
@@ -523,6 +537,34 @@ ninguém a garantir que ainda instanciam.
   desenha 3**.
 
 **Sabe-se que funcionou quando:** apagar um ícone do disco fica vermelho no CI.
+
+**O que ficou:** `brport_vs/tests/teste_fumaca.gd`, quinto passo do CI, espera
+`FUMACA OK`. As doze cenas são achadas por **varredura**, não por lista escrita
+à mão — uma lista envelhece calada, e a cena que ficaria de fora seria
+justamente a nova, que é a que ninguém testou ainda. De cada uma se confere o
+cabeçalho (as dependências existem no disco), a instanciação, a entrada na
+árvore e — o caso que mais escondia — que os scripts que a `.tscn` declara
+**compilaram**: um script que não compila não impede a cena de abrir, deixa o
+nó sem script e o jogo roda mudo.
+
+**Os quatro defeitos foram injetados e os quatro reprovaram**, que é a regra do
+`CLAUDE.md`: apagar um SVG, apontar uma cena para um recurso inexistente,
+quebrar um script de cena e deixar um SVG por registrar.
+
+**E o teste achou um bug de verdade — na migração de save, que é onde ele mais
+custa.** Um save da versão CORRENTE mas com o roster vazio era recusado
+*depois* de o `load_game()` já ter escrito `turn`, `cash` e o resto por cima do
+estado vivo, e o arquivo impossível ficava no disco para ser tentado outra vez
+no arranque seguinte. O jogo sobrevivia por acidente: o `new_game()` que vem a
+seguir por acaso reescreve todos os campos. Um campo novo no save que o
+`new_game()` não zerasse e o estado impossível atravessaria para a partida
+seguinte — o bug das 4 docas outra vez, com outra roupa. O `load_game()` passou
+a recusar **antes** de escrever qualquer coisa.
+
+Descoberta lateral que vale registro: com o cache de import quente, apagar um
+SVG do disco **não derruba cena nenhuma** — o Godot serve a cópia já importada
+de `.godot/`. O defeito só aparece num clone novo. É a razão de o ícone ter
+passo próprio em vez de se confiar no `preload` do `Icones.gd`.
 
 ---
 
@@ -604,7 +646,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | 3 | A2 | Números com fonte única + Parcelas 2/3 verificadas | Só se a conta não fechar |
 | 4 | B2 | `/arte`, `/balancear`, `/fechar-sessao` | — |
 | 5 | **A3** | **Reputação com efeito** | **Escolher o caminho — bloqueia** |
-| 6 | B4 | Fumaça de cena, ícones, migração de save | — |
+| 6 | ✅ B4 | Fumaça de cena, ícones, migração de save | — |
 | 7 | A4 | As seis telas narrativas | Ler o texto em voz alta |
 | 8 | B3 | CI com captura e build como artefato | — |
 | 9 | A5 | Arte, etapas 1–6 | Olhar cada antes/depois |
