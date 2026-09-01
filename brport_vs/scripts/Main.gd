@@ -22,6 +22,7 @@ const DebtPaymentScene := preload("res://scenes/panels/DebtPaymentPanel.tscn")
 const UpgradePanelScene := preload("res://scenes/panels/UpgradePanel.tscn")
 const PauseMenuScene := preload("res://scenes/panels/PauseMenu.tscn")
 const EndGameScene := preload("res://scenes/EndGame.tscn")
+const TelaNomesScene := preload("res://scenes/panels/TelaNomes.tscn")
 
 
 const COR_BOA := Color(0.102, 0.478, 0.251)
@@ -92,6 +93,14 @@ func _ready() -> void:
 	# autoload, antes de esta cena existir para escutar o sinal.
 	if _message_label.text == "":
 		_on_message("O porto é seu. Um píer de pé e o resto por levantar.", "")
+
+	# A ABERTURA VEM ANTES DE TUDO. Partida nova pergunta os dois nomes, e a
+	# escolha é irrevogável (GDD 7). É overlay e não fase do jogo de propósito:
+	# uma fase nova faria o simulador de balanceamento girar até o limite de
+	# segurança sem que nada reprovasse — ver o cabeçalho de TelaNomes.gd.
+	if GameState.precisa_dos_nomes():
+		_abrir_painel(TelaNomesScene)
+		return
 
 	# Se o jogo carregou de um save já em rival_offer/debt_payment, reabre o painel certo.
 	if GameState.phase == "rival_offer" and GameState.pending_rival_dock >= 0:

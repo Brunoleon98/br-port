@@ -80,8 +80,12 @@ func _rodar() -> void:
 	print("=== F3: save de outra versão é descartado, nunca adaptado ===")
 	_f3_migracao_de_save()
 
+	print("=== F4: o texto narrativo não chega ao jogador com token cru ===")
+	_f4_narrativa()
+	_f4_numeros_do_fim()
+
 	if _falhas == 0:
-		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra ===")
+		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve ===")
 		quit(0)
 	else:
 		print("\n=== FUMACA FALHOU — %d problema(s) ===" % _falhas)
@@ -412,3 +416,133 @@ func _recusa_texto(texto: String) -> bool:
 	_recusa_texto_escrever(texto)
 	var carregou: bool = GS.load_game()
 	return carregou == false and not FileAccess.file_exists(GS.SAVE_PATH)
+
+
+# ── F4 ──────────────────────────────────────────────────────────────────
+# O texto narrativo é escrito com tokens — `{portName}`, `{playerName}` — que
+# `GameState.texto()` resolve. Um token com erro de digitação não dá erro
+# nenhum: ele atravessa a substituição intacto e aparece na tela, cru, no meio
+# de uma fala. É o defeito que só o olho pega, numa tela que talvez só apareça
+# na semana 4 de uma partida.
+#
+# Os tokens permitidos são estes e mais nenhum. Os três últimos não são de
+# nome: têm resolvedor próprio (o vocativo do Sr. Ribeiro, o valor da parcela,
+# a semana e o dia do boletim) e por isso podem aparecer no texto BRUTO — mas
+# não podem sobreviver ao resolvedor, que é o que a segunda metade confere.
+const TOKENS_CONHECIDOS := ["portName", "playerName", "vocativo", "valor",
+	"semana", "dia"]
+
+
+func _f4_narrativa() -> void:
+	# As constantes são lidas do próprio script, e não de uma lista escrita à
+	# mão: a lista envelheceria, e o texto novo — o que ninguém reviu ainda —
+	# seria justamente o que ficaria de fora.
+	var script: GDScript = load("res://scripts/Narrativa.gd")
+	var constantes: Dictionary = script.get_script_constant_map()
+	_confere("Narrativa.gd expõe as constantes de texto (%d)" % constantes.size(),
+		constantes.size() >= 12)
+
+	var re := RegEx.new()
+	re.compile("\\{([A-Za-z_]+)\\}")
+
+	var textos := 0
+	for nome in constantes:
+		for pedaco in _strings_de(constantes[nome]):
+			textos += 1
+			for casamento in re.search_all(pedaco):
+				var token := casamento.get_string(1)
+				_confere("%s: token {%s} é conhecido" % [nome, token],
+					TOKENS_CONHECIDOS.has(token),
+					"tokens válidos: " + ", ".join(TOKENS_CONHECIDOS))
+	_confere("achou texto para conferir (%d pedaços)" % textos, textos >= 20)
+
+	# E agora o outro lado: o que sai dos resolvedores não pode ter token
+	# nenhum. Com nome de jogador e sem, porque o vocativo é o caso que muda.
+	GS.new_game()
+	GS.definir_nomes("Cais do Norte", "Bruno")
+	_sem_token_cru("com nome de jogador")
+	GS.new_game()
+	GS.definir_nomes("", "")
+	_sem_token_cru("sem nome de jogador (e porto no padrão)")
+
+	# O porto em branco tem de virar o padrão do GDD, e não ficar vazio: se
+	# ficasse, `precisa_dos_nomes()` daria true outra vez no arranque seguinte e
+	# a tela reapareceria — contra a regra de a escolha ser irrevogável.
+	_confere("porto em branco vira %s" % GS.NOME_PORTO_PADRAO,
+		GS.nome_porto == GS.NOME_PORTO_PADRAO)
+	_confere("e a tela de nomes não volta a pedir", not GS.precisa_dos_nomes())
+
+	# O nome do jogador NÃO ganha padrão — inventar um seria pôr palavra na
+	# boca de quem não a escolheu.
+	_confere("o nome do jogador em branco continua em branco", GS.nome_jogador == "")
+
+	GS.new_game()
+	_confere("partida nova volta a pedir os nomes", GS.precisa_dos_nomes())
+
+	# O corte no tamanho vive no GameState e não na tela: dois limites seriam
+	# duas regras, e a que a tela não aplicasse chegaria ao save.
+	GS.definir_nomes("x".repeat(GS.NOME_MAX_CARACTERES + 20), "  Bruno  ")
+	_confere("nome do porto é cortado em %d" % GS.NOME_MAX_CARACTERES,
+		GS.nome_porto.length() == GS.NOME_MAX_CARACTERES)
+	_confere("e o do jogador perde o espaço das pontas", GS.nome_jogador == "Bruno")
+
+	# Os dois nomes entram no save. É por eles que o SAVE_VERSION subiu para 3,
+	# e o bloco F3 acima é que garante que um save da versão 2 é descartado em
+	# vez de carregar sem nome nenhum.
+	GS.new_game()
+	GS.definir_nomes("Cais do Sul", "Bruno")
+	GS.nome_porto = "sujo"
+	GS.nome_jogador = "sujo"
+	_confere("o save traz os dois nomes de volta", GS.load_game() == true)
+	_confere("o do porto", GS.nome_porto == "Cais do Sul")
+	_confere("e o do jogador", GS.nome_jogador == "Bruno")
+	GS.clear_save()
+
+	# Toda linha registrada da Dona Cida tem de devolver texto. Uma chave com
+	# erro de digitação devolve vazio, e vazio na tela é um balão de fala mudo.
+	var linhas: Dictionary = constantes.get("CIDA_LINHAS", {})
+	_confere("as 8 linhas de loop da Dona Cida estão lá", linhas.size() == 8)
+	for id in linhas:
+		_confere("Cida: %s tem fala" % id, Narrativa.cida(String(id)) != "")
+
+
+# Devolve todos os pedaços de texto de uma constante — a própria, se for
+# String, ou os valores, se for o dicionário de falas.
+func _strings_de(valor) -> Array[String]:
+	var saida: Array[String] = []
+	if typeof(valor) == TYPE_STRING:
+		saida.append(String(valor))
+	elif typeof(valor) == TYPE_DICTIONARY:
+		for chave in valor:
+			if typeof(valor[chave]) == TYPE_STRING:
+				saida.append(String(valor[chave]))
+	return saida
+
+
+# O que os resolvedores devolvem não pode ter chaveta nenhuma.
+func _sem_token_cru(caso: String) -> void:
+	var saidas := {
+		"diário": Narrativa.diario(),
+		"Sr. Ribeiro (entrada)": Narrativa.ribeiro_entrada(),
+		"Sr. Ribeiro (a dívida)": Narrativa.ribeiro_a_divida(GS.PARCELA_AMOUNT),
+		"fim de fase": Narrativa.fim_de_fase(),
+		"Arlindo (abertura)": GS.texto(Narrativa.ARLINDO_ABERTURA),
+		"Arlindo (venceu)": GS.texto(Narrativa.ARLINDO_VENCEU),
+	}
+	for nome in saidas:
+		var texto: String = saidas[nome]
+		_confere("%s — %s sem token cru" % [caso, nome],
+			not texto.contains("{"), "saiu: " + texto.left(60))
+
+
+# A narração de fim de fase conta o jogo que EXISTE. O rascunho de escrita
+# falava de doze semanas e três parcelas, que é a Fase 1 do GDD e não o VS —
+# e um número escrito à mão no texto é um número a mais para envelhecer.
+func _f4_numeros_do_fim() -> void:
+	var texto: String = Narrativa.fim_de_fase()
+	var semanas: int = GS.WEEKS_TOTAL
+	_confere("o fim de fase diz as %d semanas que o jogo tem" % semanas,
+		texto.begins_with("%d semanas" % semanas),
+		"começa com: " + texto.left(30))
+	_confere("e os %d turnos que elas dão" % GS.TURNS_TOTAL,
+		texto.contains("%d turnos" % GS.TURNS_TOTAL))

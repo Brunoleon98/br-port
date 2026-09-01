@@ -92,7 +92,15 @@ já foram lidas como regressão de balanceamento uma vez.
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
 | `SAVE_PATH` | `user://savegame.json` | regra |  | `GameState.gd:176` |
-| `SAVE_VERSION` | 2 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:186` |
+| `SAVE_VERSION` | 3 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:190` |
+
+## OS DOIS NOMES
+
+| Constante | Valor | Fonte | Por quê | Onde |
+|---|---:|---|---|---|
+| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:199` |
+| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:206` |
+| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:211` |
 
 ## Estruturas — o que o jogador compra
 

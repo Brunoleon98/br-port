@@ -183,7 +183,32 @@ const SAVE_PATH := "user://savegame.json"
 # de graça, o painel de construção continuava a oferecer os píeres 2 e 3 (que
 # nunca constaram de `estruturas`), e comprá-los levava o porto a 4 docas num
 # mapa de 3. Save de outra versão não é save: é ruído com a extensão certa.
-const SAVE_VERSION := 2
+#
+# 3 (01/09): o save passou a guardar os dois nomes que o jogador escolhe na
+# abertura. Um save da versão 2 não os tem, e inventá-los seria adaptar — a
+# partida recomeça, com a tela de nomes outra vez.
+const SAVE_VERSION := 3
+
+# ── OS DOIS NOMES ──
+# O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7).
+#
+# `Cais Mirim` é o nome-PADRÃO do porto, não o da cidade: a cidade é Porto
+# Mirim e não muda. O GDD manda tratar o nome do porto como um token único em
+# todo texto de interface e diálogo, com este valor exibido apenas se o jogador
+# deixar o campo em branco.
+const NOME_PORTO_PADRAO := "Cais Mirim"
+
+# Para o nome do jogador NÃO há padrão, e é de propósito: inventar um nome
+# seria pôr palavra na boca de quem não a escolheu. Quem deixa em branco fica
+# sem vocativo, e as falas que o usariam têm variante para isso — o Toninho já
+# trata por "chefia" e o Arlindo por "sobrinho", então ninguém fica sem
+# forma de tratamento.
+const NOME_JOGADOR_PADRAO := ""
+
+# Limite de tamanho dos dois campos. Vem da tela, não do gosto: o nome do porto
+# entra no cabeçalho do Boletim e na placa, e acima disto ele estoura a caixa
+# nos 720px de largura do retrato.
+const NOME_MAX_CARACTERES := 24
 
 # ── STATE ──
 var turn: int = 1
@@ -204,6 +229,12 @@ var pending_rival_dock: int = -1
 var rival_attempts_left: int = RIVAL_PATIENCE
 var end_reason: String = ""
 var won: bool = false
+
+# Os nomes escolhidos na abertura. Vazios querem dizer "ainda não perguntámos"
+# — é assim que o `Main` sabe abrir a tela de nomes, e não com um booleano à
+# parte que pudesse discordar deles.
+var nome_porto: String = ""
+var nome_jogador: String = ""
 
 var metrics := {
 	"boats_served": 0,
@@ -227,6 +258,13 @@ func _ready() -> void:
 func new_game() -> void:
 	_uid = 1
 	turn = 1
+	# Partida nova pergunta os nomes outra vez. Zerar aqui, e não deixar para
+	# quem chama, é o que mantém o `new_game()` exaustivo — a lista de campos
+	# que ele reescreve é a mesma que o `load_game()` lê, e um campo de fora
+	# dessa lista é como o estado impossível atravessa de uma partida para a
+	# seguinte (ver o comentário do load_game).
+	nome_porto = ""
+	nome_jogador = ""
 	cash = START_CASH
 	reputation = REPUTATION_START
 	upgrade_purchased = false
@@ -273,6 +311,42 @@ func moeda(valor: int) -> String:
 		if contados % 3 == 0 and i > 0:
 			saida = "." + saida
 	return "%sR$%s" % ["-" if negativo else "", saida]
+
+
+# O NOME DO PORTO E O DO JOGADOR SAEM DAQUI, E SÓ DAQUI.
+#
+# O GDD manda tratar o nome do porto como um token único em todo texto de
+# interface e diálogo, com "Cais Mirim" exibido só se o campo ficar em branco.
+# Isso obriga a um ponto de substituição — a alternativa é cada tela lembrar-se
+# de trocar, e a que esquecer mostra `{portName}` cru ao jogador.
+#
+# Mesma razão do `moeda()` logo acima: quatro telas mostram dinheiro e não pode
+# haver quatro versões da regra. Aqui são sete telas e dois tokens.
+#
+# O nome do JOGADOR não tem padrão de propósito — inventar um seria pôr palavra
+# na boca de quem não a escolheu. Quem deixa em branco fica sem vocativo, e as
+# falas que o usariam têm variante para isso (ver Narrativa.gd).
+func texto(modelo: String) -> String:
+	var porto := nome_porto if nome_porto != "" else NOME_PORTO_PADRAO
+	return modelo.replace("{portName}", porto).replace("{playerName}", nome_jogador)
+
+
+# Se ainda não perguntámos os nomes. É derivado do estado, e não um booleano à
+# parte que pudesse discordar dele: um save da versão 3 gravado depois da tela
+# tem sempre nome de porto, nem que seja o padrão escrito por extenso.
+func precisa_dos_nomes() -> bool:
+	return nome_porto == ""
+
+
+# Grava a escolha da tela de abertura. Vazio no porto vira o padrão do GDD, e
+# não fica vazio: senão `precisa_dos_nomes()` voltaria a dar true no arranque
+# seguinte e a tela reapareceria, contra a regra de a escolha ser irrevogável.
+func definir_nomes(porto: String, jogador: String) -> void:
+	nome_porto = porto.strip_edges().left(NOME_MAX_CARACTERES)
+	if nome_porto == "":
+		nome_porto = NOME_PORTO_PADRAO
+	nome_jogador = jogador.strip_edges().left(NOME_MAX_CARACTERES)
+	save_game()
 
 
 # Uma doca só aceita trabalhador se existe, tem barco esperando, ninguém está
@@ -825,6 +899,8 @@ func save_game() -> void:
 		"won": won,
 		"metrics": metrics,
 		"uid": _uid,
+		"nome_porto": nome_porto,
+		"nome_jogador": nome_jogador,
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file:
@@ -891,6 +967,8 @@ func load_game() -> bool:
 	won = bool(parsed.get("won", false))
 	metrics = parsed.get("metrics", metrics)
 	_uid = int(parsed.get("uid", 1))
+	nome_porto = String(parsed.get("nome_porto", ""))
+	nome_jogador = String(parsed.get("nome_jogador", ""))
 
 	_reconciliar_roster()
 	state_loaded.emit()
