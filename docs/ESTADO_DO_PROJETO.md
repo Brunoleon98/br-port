@@ -51,7 +51,9 @@ a cada Fase, sem o jogo precisar saber.
 
 ## Onde estamos no roadmap
 
-**A sessão já abre com o Godot pronto** (01/09) — item B1 da fila, fechado.
+**A sessão já abre com o Godot pronto** (01/09) — item B1 da fila, fechado,
+**a partir do momento em que estiver na main**: sessão nova arranca do branch
+padrão, e um hook que viva só numa branch de trabalho não corre.
 `.claude/hooks/session-start.sh` baixa o binário, roda o `--import` e diz numa
 linha o que ficou disponível; a primeira mensagem de uma conversa nova já pode
 rodar a suíte. Doze segundos a frio, seis a quente. O `bpy` (~1 GB) ficou de

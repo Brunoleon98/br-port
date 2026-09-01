@@ -23,6 +23,12 @@ o binário, roda o `--import` e diz numa linha o que ficou disponível. Se a
 primeira mensagem da sessão não trouxer essa linha, o hook não correu — aí vale
 a receita manual abaixo.
 
+**O hook só vale a partir da MAIN.** Uma sessão nova arranca do branch padrão,
+então uma alteração ao hook que esteja só numa branch de trabalho não corre —
+nem na sessão que a escreveu, nem em nenhuma outra, até o PR ser fundido. Quem
+mexer no hook e não vir efeito na sessão seguinte deve olhar para isto antes de
+o ir depurar.
+
 ```sh
 # Godot (~70 MB, ~12 s) — só se o hook de arranque não tiver corrido
 V=$(tr -d '[:space:]' < .godot-version)   # a versão vive num arquivo só
