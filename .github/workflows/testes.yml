@@ -103,6 +103,29 @@ jobs:
             exit 1
           fi
 
+      - name: Rodar o teste de fumaça
+        # Item B4 do plano: cobre o que até aqui só o olho cobria. Instancia
+        # TODAS as `.tscn` do projeto — inclusive as de `scenes/proto/`, que
+        # nada no jogo carrega e por isso podiam apodrecer caladas —, confere
+        # que todo ícone registrado em `Icones.gd` tem arquivo no disco, e
+        # tranca a regra do save: outra versão é DESCARTADA, nunca adaptada.
+        #
+        # O ícone merece o passo próprio embora o `Icones.gd` use `preload`:
+        # medido aqui, apagar um SVG do disco com o cache de import quente NÃO
+        # derruba cena nenhuma — o Godot serve a cópia já importada em
+        # `.godot/`. O defeito só aparece num clone novo, que é onde ninguém
+        # está a olhar.
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --script res://tests/teste_fumaca.gd \
+            2>&1 | tee /tmp/fumaca.txt
+
+          if ! grep -q "FUMACA OK" /tmp/fumaca.txt; then
+            echo "::error::Alguma cena não abre, falta um ícone, ou o save migrou (veja a saída acima)."
+            exit 1
+          fi
+
       - name: Validar os assets do pipeline BRP
         # Confere o que sobreviveu ao render e chegou ao jogo: quadro, canal
         # alfa e — o que mais importa — que a projeção que gerou os PNGs é a

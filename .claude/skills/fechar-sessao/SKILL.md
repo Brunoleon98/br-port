@@ -38,20 +38,20 @@ $G --headless --path brport_vs --import   # sem .godot a suíte falha com uma
                                           # com o que se está testando
 ```
 
-## 2. A base: os quatro do Godot, sempre
+## 2. A base: os cinco do Godot, sempre
 
-São segundos cada um e o CI roda os quatro em todo push. Não há mudança neste
+São segundos cada um e o CI roda os cinco em todo push. Não há mudança neste
 repositório barata o bastante para os pular.
 
 ```sh
 for t in tests/run_tests tests/teste_design tests/teste_audio \
-         scripts/validation/asset_validator; do
+         tests/teste_fumaca scripts/validation/asset_validator; do
   $G --headless --path brport_vs --script res://$t.gd
 done
 ```
 
 Espera-se, na ordem: `TODOS OS TESTES PASSARAM`, `DESIGN OK`, `AUDIO OK`,
-`ASSET OK`. O código de saída não chega: um erro de compilação do GDScript sai
+`FUMACA OK`, `ASSET OK`. O código de saída não chega: um erro de compilação do GDScript sai
 com 0 sem rodar nada — é por isso que o CI também exige a linha final, e você
 também deve.
 

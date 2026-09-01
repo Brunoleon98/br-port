@@ -41,6 +41,7 @@ $G --headless --path brport_vs --import                       # UMA VEZ por clon
 $G --headless --path brport_vs --script res://tests/run_tests.gd
 $G --headless --path brport_vs --script res://tests/teste_design.gd
 $G --headless --path brport_vs --script res://tests/teste_audio.gd
+$G --headless --path brport_vs --script res://tests/teste_fumaca.gd
 $G --headless --path brport_vs --script res://scripts/validation/asset_validator.gd
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
@@ -78,6 +79,8 @@ Teste e import rodam sem tela.
 1. `tests/run_tests.gd` — a lógica. Espera `TODOS OS TESTES PASSARAM`.
 2. `tests/teste_design.gd` — o encaixe e o layout. Espera `DESIGN OK`.
    `tests/teste_audio.gd` — o encanamento de som. Espera `AUDIO OK`.
+   `tests/teste_fumaca.gd` — a cena abre, o ícone existe, o save não migra.
+   Espera `FUMACA OK`.
 3. Mexeu em QUALQUER `const` do `GameState.gd`? Regere a tabela dos números —
    `despejar_constantes.gd` + `tools/gerar_tabela_numeros.py --contra-godot`,
    espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
@@ -145,6 +148,15 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
 `SAVE_VERSION` sobe **sempre** que a forma do estado muda. Save de outra
 versão é descartado, não adaptado. Já custou um porto com 4 docas num mapa que
 desenha 3.
+
+**E recusar é recusar sem ter tocado em nada.** O `load_game()` escrevia os
+campos um a um e só conferia a sanidade do roster no fim: um save recusado
+deixava o `turn` e o `cash` do arquivo no estado vivo, com zero docas. Passava
+despercebido porque o `new_game()` que vem a seguir por acaso reescreve todos
+os campos — uma segurança que dependia de duas funções distantes continuarem a
+concordar sobre a lista de campos, e que um campo novo teria quebrado calada.
+**Tudo o que recusa vem antes de tudo o que escreve**, e o `teste_fumaca.gd`
+tranca isso.
 
 ### Arte
 

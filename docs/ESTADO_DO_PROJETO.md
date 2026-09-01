@@ -3,10 +3,9 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 01/09/2026 (a sessão passou a arrancar com o Godot
-> pronto, os números do jogo ganharam fonte única, as Parcelas 2 e 3 foram
-> projetadas — fecham, e fecham demais — e a **Reputação Comercial deixou de
-> ser rótulo**: ela decide a contra-oferta do Arlindo)
+> **Última atualização:** 01/09/2026 (a **Reputação Comercial deixou de ser
+> rótulo** — ela decide a contra-oferta do Arlindo — e a cena que abre ganhou
+> teste; o teste achou um save que era adaptado a meio)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 > Para saber **o que fazer a seguir e quem faz o quê**, o plano é
@@ -85,6 +84,23 @@ fora de propósito: só faz falta em sessão de arte.
 Construir isso destapou uma divergência que já existia: **o `CLAUDE.md` mandava
 baixar a 4.6.1 e o CI rodava a 4.6.3.** A sessão testava numa versão e o PR era
 barrado noutra. A versão passou a viver em `.godot-version`, lido pelos dois.
+
+**A cena que abre passou a ter teste** (01/09) — item B4, fechado.
+`brport_vs/tests/teste_fumaca.gd` é o quinto passo do CI e espera `FUMACA OK`.
+Cobre as três coisas que até aqui só o olho cobria: **toda** `.tscn` do projeto
+instancia (as doze são achadas por varredura, não por lista — uma lista
+envelhece calada e deixaria de fora justamente a cena nova), todo ícone
+registrado em `Icones.gd` tem arquivo no disco, e o save de outra versão é
+descartado. Os quatro defeitos foram injetados e os quatro reprovaram.
+
+⚠️ **E o teste achou um bug de verdade, na migração de save.** Um save da
+versão CORRENTE mas com o roster vazio era recusado *depois* de o `load_game()`
+já ter escrito `turn`, `cash` e o resto por cima do estado vivo — e o arquivo
+impossível ficava no disco para ser tentado outra vez no arranque seguinte. O
+jogo sobrevivia por acidente: o `new_game()` que vem a seguir por acaso
+reescreve todos os campos. Bastava um campo novo que ele não zerasse para o
+estado impossível atravessar para a partida seguinte, que é **o bug das 4 docas
+com outra roupa**. Agora tudo o que recusa vem antes de tudo o que escreve.
 
 **Os números do jogo têm fonte única** (01/09) — item A2, fechado.
 `docs/design/BR_Port_Numeros_Fase_1.md` é GERADO do `GameState.gd` e o CI
@@ -230,6 +246,7 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `tools/gerar_sons.py` | Gera os 10 efeitos de rascunho. Sem dependência: só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela |
+| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, e o save de outra versão é descartado sem tocar no estado vivo |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/BLOCO7_PLANO_ARTE_BLENDER.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, cartão de doca, cartão de trabalhador e letreiro. Os tokens de cor de mapa saíram daqui em 30/08: quem os define é o gerador do SVG |

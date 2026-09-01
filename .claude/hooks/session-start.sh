@@ -99,5 +99,5 @@ if [ "$IMPORT_OK" -eq 1 ]; then
 else
   echo "BR Port: Godot ${VERSAO} em \$G ($BIN), mas o --import falhou (veja /tmp/brport_import.txt). Rode-o antes de qualquer teste."
 fi
-echo "  Suítes: \$G --headless --path brport_vs --script res://tests/{run_tests,teste_design,teste_audio}.gd e res://scripts/validation/asset_validator.gd"
+echo "  Suítes: \$G --headless --path brport_vs --script res://tests/{run_tests,teste_design,teste_audio,teste_fumaca}.gd e res://scripts/validation/asset_validator.gd"
 echo "  Blender (bpy, ~1 GB) fica SOB DEMANDA, fora do arranque: pip install \"bpy==4.5.0\" — só faz falta em sessão de arte."

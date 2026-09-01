@@ -842,21 +842,45 @@ func load_game() -> bool:
 	file.close()
 	var parsed = JSON.parse_string(text)
 	if typeof(parsed) != TYPE_DICTIONARY:
+		clear_save()
 		return false
 
+	# TUDO O QUE RECUSA VEM ANTES DE TUDO O QUE ESCREVE, e é de propósito.
+	#
 	# Save de outra versão do jogo é descartado, não adaptado. Migrar exigiria
 	# adivinhar o que o jogador tinha comprado a partir de números que já não
 	# querem dizer a mesma coisa — foi assim que apareceu o porto de 4 docas
 	# num mapa de 3. Recomeçar é honesto; carregar um estado impossível não é.
+	#
+	# Só que "não adaptar" também vale para a recusa: enquanto os campos eram
+	# escritos um a um e a sanidade do roster era conferida DEPOIS, um save
+	# recusado deixava `turn` e `cash` do arquivo no estado vivo e o porto com
+	# zero docas. Isso passava despercebido porque o `_ready()` chama
+	# `new_game()` logo a seguir e ele por acaso reescreve todos os campos —
+	# uma segurança que dependia de duas funções distantes continuarem a
+	# concordar sobre a lista de campos. Bastava um campo novo no save que o
+	# `new_game()` não zerasse para o estado impossível atravessar para a
+	# partida seguinte: o bug das 4 docas outra vez, com outra roupa.
+	# `tests/teste_fumaca.gd`, bloco F3, tranca isto.
 	if int(parsed.get("versao", 1)) != SAVE_VERSION:
+		clear_save()
+		return false
+
+	# O roster é lido do dicionário, não dos campos do jogo, justamente para
+	# poder recusar sem ter tocado em nada. Porto sem doca ou sem trabalhador é
+	# um estado que nenhuma partida produz — é arquivo truncado ou editado.
+	var docas_lidas = parsed.get("docks", [])
+	var trabalhadores_lidos = parsed.get("workers", [])
+	if typeof(docas_lidas) != TYPE_ARRAY or typeof(trabalhadores_lidos) != TYPE_ARRAY \
+			or docas_lidas.is_empty() or trabalhadores_lidos.is_empty():
 		clear_save()
 		return false
 
 	turn = int(parsed.get("turn", 1))
 	cash = int(parsed.get("cash", START_CASH))
 	reputation = float(parsed.get("reputation", REPUTATION_START))
-	docks = parsed.get("docks", [])
-	workers = parsed.get("workers", [])
+	docks = docas_lidas
+	workers = trabalhadores_lidos
 	upgrade_purchased = bool(parsed.get("upgrade_purchased", false))
 	estruturas = parsed.get("estruturas", [])
 	parcela_paid = bool(parsed.get("parcela_paid", false))
@@ -868,8 +892,6 @@ func load_game() -> bool:
 	metrics = parsed.get("metrics", metrics)
 	_uid = int(parsed.get("uid", 1))
 
-	if docks.is_empty() or workers.is_empty():
-		return false
 	_reconciliar_roster()
 	state_loaded.emit()
 	return true
