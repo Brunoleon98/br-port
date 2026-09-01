@@ -18,12 +18,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    env:
-      GODOT_VERSION: "4.6.3"
-
     steps:
       - name: Baixar o repositório
         uses: actions/checkout@v4
+
+      # A versão do Godot vive num arquivo só, na raiz. O hook de arranque de
+      # sessão (.claude/hooks/session-start.sh) lê o mesmo arquivo — antes
+      # dele existir, a receita do CLAUDE.md baixava a 4.6.1 e o CI rodava a
+      # 4.6.3, de modo que a sessão testava numa versão e o PR era barrado
+      # noutra. Precisa ser um passo, e não `env:`, porque o bloco `env` do
+      # job é avaliado antes do checkout — o arquivo ainda não existe lá.
+      - name: Ler a versão do Godot
+        run: echo "GODOT_VERSION=$(tr -d '[:space:]' < .godot-version)" >> "$GITHUB_ENV"
 
       - name: Reaproveitar o Godot já baixado
         id: cache-godot

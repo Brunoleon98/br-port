@@ -17,16 +17,25 @@ são em português — commits e PRs em inglês.
 **O Godot e o Blender rodam neste contêiner.** Duas rodadas de trabalho visual
 já foram feitas às cegas por não se saber disto. Não trabalhe no escuro.
 
+**Numa sessão remota o Godot já está pronto quando a conversa abre**, e o `$G`
+já aponta para ele: quem faz isso é `.claude/hooks/session-start.sh`, que baixa
+o binário, roda o `--import` e diz numa linha o que ficou disponível. Se a
+primeira mensagem da sessão não trouxer essa linha, o hook não correu — aí vale
+a receita manual abaixo.
+
 ```sh
-# Godot (~70 MB, segundos)
-curl -sSL -o /tmp/g.zip https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
-unzip -q /tmp/g.zip -d /tmp/godot && chmod +x /tmp/godot/Godot_v4.6.1-stable_linux.x86_64
-G=/tmp/godot/Godot_v4.6.1-stable_linux.x86_64
+# Godot (~70 MB, ~12 s) — só se o hook de arranque não tiver corrido
+V=$(tr -d '[:space:]' < .godot-version)   # a versão vive num arquivo só
+curl -fsSL -o /tmp/g.zip https://github.com/godotengine/godot/releases/download/$V-stable/Godot_v$V-stable_linux.x86_64.zip
+mkdir -p ~/godot-bin && unzip -q -o /tmp/g.zip -d ~/godot-bin
+chmod +x ~/godot-bin/Godot_v$V-stable_linux.x86_64
+G=~/godot-bin/Godot_v$V-stable_linux.x86_64
 
 $G --headless --path brport_vs --import                       # UMA VEZ por clone
 $G --headless --path brport_vs --script res://tests/run_tests.gd
 $G --headless --path brport_vs --script res://tests/teste_design.gd
 $G --headless --path brport_vs --script res://tests/teste_audio.gd
+$G --headless --path brport_vs --script res://scripts/validation/asset_validator.gd
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
 
@@ -42,7 +51,12 @@ python3 tools/gerar_sons.py brport_vs/audio/sfx
 
 **`--import` não é opcional.** Num clone novo não existe `.godot/`, e sem ela
 a suíte falha com uma pilha de `referenced non-existent resource` que não tem
-nada a ver com o que se está testando.
+nada a ver com o que se está testando. O hook de arranque já a roda; a regra
+continua escrita aqui porque ela vale mesmo quando o hook não correu.
+
+**A versão do Godot vive em `.godot-version`, e num lugar só.** O hook e o CI
+leem esse arquivo. Antes dele, este documento mandava baixar a 4.6.1 e o CI
+rodava a 4.6.3 — a sessão testava numa versão e o PR era barrado noutra.
 
 O `xvfb-run` só faz falta para a captura, que precisa de contexto gráfico.
 Teste e import rodam sem tela.
