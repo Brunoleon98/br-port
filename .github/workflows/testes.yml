@@ -18,12 +18,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    env:
-      GODOT_VERSION: "4.6.3"
-
     steps:
       - name: Baixar o repositório
         uses: actions/checkout@v4
+
+      # A versão do Godot vive num arquivo só, na raiz. O hook de arranque de
+      # sessão (.claude/hooks/session-start.sh) lê o mesmo arquivo — antes
+      # dele existir, a receita do CLAUDE.md baixava a 4.6.1 e o CI rodava a
+      # 4.6.3, de modo que a sessão testava numa versão e o PR era barrado
+      # noutra. Precisa ser um passo, e não `env:`, porque o bloco `env` do
+      # job é avaliado antes do checkout — o arquivo ainda não existe lá.
+      - name: Ler a versão do Godot
+        run: echo "GODOT_VERSION=$(tr -d '[:space:]' < .godot-version)" >> "$GITHUB_ENV"
 
       - name: Reaproveitar o Godot já baixado
         id: cache-godot
@@ -143,6 +149,36 @@ jobs:
             exit 1
           fi
 
+      - name: Conferir que a tabela de números está em dia
+        # Os números do jogo viviam no GDD e nas constantes `# TUNING:`, e já
+        # divergiram uma vez: o modelo da Fase 1 no GDD acumulava R$1.480
+        # contra uma parcela de R$8.000, e ninguém notou até o playtest
+        # (BR_Port_GDD_V7_ERRATA_ECONOMIA.md). Agora a tabela é gerada do
+        # código e este passo reprova quem mexe num `# TUNING:` sem regerar.
+        #
+        # São dois programas de propósito. O despejo do Godot dá os valores
+        # avaliados (inclusive os derivados, como TURNS_TOTAL); o gerador lê o
+        # TEXTO, porque é dele que saem os comentários que dizem se o número
+        # veio do GDD ou é TUNING. O --contra-godot cruza as duas leituras, de
+        # modo que uma constante que o parser não entenda REPROVE em vez de
+        # sumir da tabela em silêncio.
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs \
+            --script res://tools/despejar_constantes.gd -- /tmp/constantes.json \
+            2>&1 | tee /tmp/constantes.txt
+
+          # A linha de sucesso, não o $?: um erro de compilação do GDScript
+          # sai com 0 sem rodar nada.
+          if ! grep -q "CONSTANTES OK" /tmp/constantes.txt; then
+            echo "::error::O despejo das constantes do GameState não chegou ao fim."
+            exit 1
+          fi
+
+          python3 tools/gerar_tabela_numeros.py --conferir \
+            --contra-godot /tmp/constantes.json
+
       - name: Conferir o simulador de balanceamento
         # Rodada mínima só para garantir que a ferramenta continua funcionando
         # depois de mudanças no GameState — ela usa a API do jogo por fora e
@@ -151,10 +187,28 @@ jobs:
           set -euo pipefail
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
             --headless --path brport_vs \
-            --script res://tools/simular_balanceamento.gd -- 30 \
+            --script res://tools/simular_balanceamento.gd -- 30 20260825 \
+            /tmp/medicao.json \
             2>&1 | tee /tmp/sim.txt
 
           if ! grep -q "=== Leitura ===" /tmp/sim.txt; then
             echo "::error::O simulador não chegou ao fim (veja a saída acima)."
             exit 1
           fi
+
+      - name: Conferir que o modelo das Parcelas 2 e 3 continua calibrado
+        # O projetor tem de RECONSTRUIR a semana em regime que o simulador
+        # acabou de medir, nos três perfis, antes de ter licença para falar das
+        # fases seguintes. Isso torna este passo uma guarda de regressão de
+        # verdade: mexer num `# TUNING:` de um jeito que desloque a economia
+        # sem o modelo saber reprova aqui.
+        #
+        # A calibração aguenta as 30 partidas de fumaça porque a margem semanal
+        # é média de muitos turnos — bem menos ruidosa do que a taxa de
+        # vitória, que a estas alturas tem ±18 pontos de margem. Medido: os
+        # três erros ficam abaixo de 2% com 30 partidas e abaixo de 1,2% com
+        # 600.
+        run: |
+          set -euo pipefail
+          python3 tools/projetar_parcelas.py \
+            --medicao /tmp/medicao.json --constantes /tmp/constantes.json

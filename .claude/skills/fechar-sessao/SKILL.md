@@ -24,13 +24,18 @@ git status --short
 git diff --stat $(git merge-base HEAD origin/main)..HEAD
 ```
 
-Num clone novo, **`--import` antes de qualquer coisa** — sem a pasta `.godot` a
-suíte falha com uma pilha de `referenced non-existent resource` que não tem
-nada a ver com o que se está testando.
+**Numa sessão remota o `$G` já está pronto e o projeto já foi importado** —
+quem faz isso é `.claude/hooks/session-start.sh`, e ele diz numa linha o que
+deixou disponível. Se a primeira mensagem da sessão não trouxe essa linha, o
+hook não correu: monte à mão pela receita do `CLAUDE.md`, que lê a versão de
+`.godot-version` (num lugar só, e é lá que o CI também a lê).
 
 ```sh
-G=/tmp/godot/Godot_v4.6.1-stable_linux.x86_64
-$G --headless --path brport_vs --import
+G=~/godot-bin/Godot_v$(tr -d '[:space:]' < .godot-version)-stable_linux.x86_64
+$G --headless --path brport_vs --import   # sem .godot a suíte falha com uma
+                                          # pilha de "referenced non-existent
+                                          # resource" que não tem nada a ver
+                                          # com o que se está testando
 ```
 
 ## 2. A base: os quatro do Godot, sempre
@@ -55,6 +60,8 @@ também deve.
 | Se mexeu em… | Rode | Espera |
 |---|---|---|
 | preço ou constante `# TUNING:` | `$G --headless --path brport_vs --script res://tools/simular_balanceamento.gd -- 600` | 100% / 47% / 0% ainda de pé |
+| **qualquer `const` do `GameState.gd`** | o despejo + a tabela (abaixo) | `TABELA OK` |
+| **a economia, de qualquer maneira** | `tools/projetar_parcelas.py` (abaixo) | o modelo ainda calibra nos 3 perfis |
 | `tools/gerar_mapa_iso.py` | regerar os dois mapas (abaixo) | `git diff -- brport_vs/art` limpo |
 | `tools/gerar_sons.py` | `python3 tools/gerar_sons.py brport_vs/audio/sfx` | `git diff -- brport_vs/audio` limpo |
 | catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
@@ -68,6 +75,22 @@ python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
 python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
   brport_vs/art/porto_mapa_iso_patio.svg
 git diff --stat -- brport_vs/art        # tem de sair vazio
+```
+
+```sh
+# A tabela dos números é GERADA do GameState.gd. Mexer numa constante sem a
+# regerar quebra o CI — e é de propósito: os números já viveram em dois sítios
+# e divergiram uma vez, com registro na errata da economia.
+$G --headless --path brport_vs --script res://tools/despejar_constantes.gd \
+  -- /tmp/constantes.json
+python3 tools/gerar_tabela_numeros.py --contra-godot /tmp/constantes.json
+
+# E o modelo das Parcelas 2 e 3 tem de continuar a reconstruir a Fase 1 medida,
+# senão não tem licença para falar das outras duas.
+$G --headless --path brport_vs --script res://tools/simular_balanceamento.gd \
+  -- 600 20260825 /tmp/medicao.json
+python3 tools/projetar_parcelas.py --medicao /tmp/medicao.json \
+  --constantes /tmp/constantes.json
 ```
 
 **Sobre o simulador:** medir é com `-- 600`. As 30 partidas do CI são teste de
@@ -114,6 +137,11 @@ existe para as outras duas.
 Percorra a conversa e, para cada coisa que se descobriu — uma armadilha, um
 número medido, uma tentativa que falhou —, pergunte **onde isso está escrito**.
 Se a resposta for "só aqui", ela se perde quando a conversa fechar.
+
+Inclua nesta varredura **os documentos que a própria mudança envelheceu**. Esta
+skill já apontou para um binário do Godot em `/tmp` numa versão que deixou de
+ser a do CI, e ninguém a teria olhado se a varredura só procurasse lições
+novas: quem muda uma receita tem de procurar quem a copiou.
 
 | O que se aprendeu | Onde vive |
 |---|---|

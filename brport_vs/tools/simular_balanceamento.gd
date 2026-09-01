@@ -87,6 +87,12 @@ const PERFIS := [
 	},
 ]
 
+# Destipado de propósito — é o autoload, resolvido em runtime. A consequência
+# morde ao editar este arquivo: `var x := GS.cash` NÃO compila, porque o Godot
+# não consegue inferir o tipo de um membro de um Node destipado. Escreva o tipo
+# à mão (`var x: int = GS.cash`). O erro sai como "Cannot infer the type of ...
+# because the value doesn't have a set type", e o Godot ainda assim encerra com
+# código 0 — por isso o CI e o /fechar-sessao exigem a LINHA de sucesso.
 var GS
 var _done := false
 
@@ -125,11 +131,100 @@ func _rodar() -> void:
 		resultados.append(_simular_perfil(perfil, partidas, semente))
 
 	_imprimir_tabela(resultados, partidas)
+	_imprimir_regime(resultados)
 	_imprimir_diagnostico(resultados)
+
+	# O despejo em JSON existe para o projetor das Parcelas 2 e 3
+	# (tools/projetar_parcelas.py) ter contra o que se calibrar. Sem ele o
+	# projetor seria um segundo modelo da economia, sem nada que o obrigasse a
+	# concordar com o jogo — que é exatamente como o modelo do GDD chegou a
+	# acumular R$1.480 contra uma parcela de R$8.000.
+	for a in args:
+		if a.ends_with(".json"):
+			_despejar_json(a, resultados, partidas, semente)
+			break
 	# De novo no fim: log de CI se lê de baixo para cima, e o aviso do
 	# cabeçalho fica a centenas de linhas de distância da conclusão.
 	_avisar_se_amostra_curta(partidas)
 	quit(0)
+
+
+# A economia semana a semana. A média das 4 semanas esconde o que interessa:
+# a semana 1 é obra (o caixa SAI), e a última é o porto em regime. Projetar as
+# Fases 2 e 3 a partir da média das quatro seria projetar a partir de um porto
+# que só existe durante a Fase 1.
+func _imprimir_regime(resultados: Array) -> void:
+	print("=== Economia semana a semana (delta de caixa médio) ===")
+	var cabecalho := "%-12s │" % "Perfil"
+	for w in range(GS.WEEKS_TOTAL):
+		cabecalho += " %10s │" % ("Semana %d" % (w + 1))
+	print(cabecalho)
+	for r in resultados:
+		var linha := "%-12s │" % r["perfil"]["nome"]
+		for w in range(GS.WEEKS_TOTAL):
+			var m: Array = r["margem_por_semana"]
+			linha += " %10s │" % ("—" if w >= m.size() else "R$%d" % int(round(float(m[w]))))
+		print(linha)
+	print("")
+	for r in resultados:
+		var m: Array = r["margem_por_semana"]
+		var b: Array = r["atendidos_por_semana"]
+		if m.is_empty():
+			continue
+		print("· %s — em REGIME (semana %d): R$%d de margem OPERACIONAL, %.1f barcos" % [
+			r["perfil"]["nome"], m.size(),
+			int(round(_operacional(r, m.size() - 1))), float(b[b.size() - 1])])
+	print("")
+	print("  Margem operacional = delta de caixa MENOS o que foi gasto em obra na")
+	print("  mesma semana. O perfil que compra tarde tem a compra dentro da semana")
+	print("  que se quer medir, e sem separar as duas coisas ele parece render")
+	print("  metade do que rende.")
+	print("")
+
+
+func _operacional(r: Dictionary, semana: int) -> float:
+	var m: Array = r["margem_por_semana"]
+	var o: Array = r["obra_por_semana"]
+	if semana < 0 or semana >= m.size():
+		return 0.0
+	return float(m[semana]) + (float(o[semana]) if semana < o.size() else 0.0)
+
+
+func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: int) -> void:
+	var perfis := {}
+	for r in resultados:
+		var m: Array = r["margem_por_semana"]
+		var b: Array = r["atendidos_por_semana"]
+		perfis[String(r["perfil"]["nome"])] = {
+			"vitorias": r["vitorias"],
+			"taxa": 100.0 * float(r["vitorias"]) / float(partidas),
+			"caixa_vencimento_mediana": r["caixa_vencimento_mediana"],
+			"margem_por_semana": m,
+			"atendidos_por_semana": b,
+			"margem_em_regime": _operacional(r, m.size() - 1),
+			"margem_bruta_em_regime": 0.0 if m.is_empty() else m[m.size() - 1],
+			"obra_por_semana": r["obra_por_semana"],
+			"atendidos_em_regime": 0.0 if b.is_empty() else b[b.size() - 1],
+			"estruturas": r["estruturas"],
+			"docas_medias": r["docas_medias"],
+			"trabalhadores_medios": r["trabalhadores_medios"],
+		}
+	var f := FileAccess.open(caminho, FileAccess.WRITE)
+	if f == null:
+		push_error("Não consegui escrever a medição em %s" % caminho)
+		return
+	f.store_string(JSON.stringify({
+		"partidas": partidas,
+		"semente": semente,
+		"parcela": GS.PARCELA_AMOUNT,
+		"semanas": GS.WEEKS_TOTAL,
+		"turnos_por_semana": GS.TURNS_PER_WEEK,
+		"caixa_inicial": GS.START_CASH,
+		"perfis": perfis,
+	}, "  ", true) + "\n")
+	f.close()
+	print("Medição despejada em %s" % caminho)
+	print("")
 
 
 # Diz, em voz alta, quando a rodada não tem partidas que cheguem para medir.
@@ -161,6 +256,18 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	var perdidos := 0
 	var reputacoes := 0.0
 	var travadas := 0
+	var margem_por_semana := []      # soma do delta de caixa, semana a semana
+	var obra_por_semana := []        # e quanto desse delta foi obra, não operação
+	var atendidos_por_semana := []
+	var amostras_por_semana := []
+	# Em quantas partidas cada estrutura acabou de pé, e com quantas
+	# docas/trabalhadores. Sem isto não dá para projetar as fases seguintes: o
+	# perfil Descuidado quase nunca compra nada, e um modelo que suponha o
+	# porto inteiro construído erra a margem dele em 98% — foi assim que este
+	# campo passou a existir.
+	var estruturas_de_pe := {}
+	var docas_totais := 0
+	var trabalhadores_totais := 0
 
 	for run in range(partidas):
 		# Duas sementes independentes: uma para o mundo (chegada de barco,
@@ -181,6 +288,18 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		var caixa_no_vencimento := -1
 		var seguranca := 0
 
+		# Fotografia no fim de cada semana. Serve para separar a semana 1 —
+		# em que o porto ainda está em ruínas e o caixa é gasto em obra — da
+		# semana em REGIME, com tudo construído. É essa a semana que interessa
+		# para projetar as Fases 2 e 3: a Parcela 1 é paga por um porto que
+		# ainda está a levantar-se, e as outras duas não seriam.
+		var caixa_semana := []
+		var obra_semana := []
+		var atendidos_semana := []
+		var caixa_anterior: int = GS.cash
+		var atendidos_anterior := 0
+		var obra_na_semana := 0
+
 		while GS.phase != "game_over" and seguranca < 300:
 			seguranca += 1
 
@@ -196,10 +315,20 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 					GS.fail_debt()
 				continue
 
-			_construir(perfil)
+			obra_na_semana += _construir(perfil)
 
 			_alocar(perfil, rng)
+			var semana_antes: int = GS.current_week()
 			GS.advance_turn()
+			# O fecho de semana acontece DENTRO do advance_turn, então a leitura
+			# tem de ser depois dele — e só quando a semana virou de verdade.
+			if GS.current_week() != semana_antes:
+				caixa_semana.append(GS.cash - caixa_anterior)
+				obra_semana.append(obra_na_semana)
+				atendidos_semana.append(int(GS.metrics["boats_served"]) - atendidos_anterior)
+				caixa_anterior = GS.cash
+				atendidos_anterior = int(GS.metrics["boats_served"])
+				obra_na_semana = 0
 
 		if seguranca >= 300:
 			travadas += 1
@@ -217,6 +346,21 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		atendidos += int(GS.metrics["boats_served"])
 		perdidos += int(GS.metrics["boats_lost"])
 		reputacoes += GS.reputation
+		for id in GS.ESTRUTURAS:
+			if GS.tem_estrutura(id):
+				estruturas_de_pe[id] = int(estruturas_de_pe.get(id, 0)) + 1
+		docas_totais += GS.docks.size()
+		trabalhadores_totais += GS.workers.size()
+		for w in range(caixa_semana.size()):
+			while margem_por_semana.size() <= w:
+				margem_por_semana.append(0)
+				obra_por_semana.append(0)
+				atendidos_por_semana.append(0)
+				amostras_por_semana.append(0)
+			margem_por_semana[w] += int(caixa_semana[w])
+			obra_por_semana[w] += int(obra_semana[w])
+			atendidos_por_semana[w] += int(atendidos_semana[w])
+			amostras_por_semana[w] += 1
 
 	return {
 		"perfil": perfil,
@@ -229,7 +373,32 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"perdidos_medio": float(perdidos) / float(partidas),
 		"reputacao_media": reputacoes / float(partidas),
 		"travadas": travadas,
+		"margem_por_semana": _media_por_semana(margem_por_semana, amostras_por_semana),
+		"obra_por_semana": _media_por_semana(obra_por_semana, amostras_por_semana),
+		"atendidos_por_semana": _media_por_semana(atendidos_por_semana, amostras_por_semana),
+		"estruturas": _fracao_de_pe(estruturas_de_pe, partidas),
+		"docas_medias": float(docas_totais) / float(partidas),
+		"trabalhadores_medios": float(trabalhadores_totais) / float(partidas),
 	}
+
+
+# Em que fração das partidas cada estrutura acabou construída.
+func _fracao_de_pe(contagem: Dictionary, partidas: int) -> Dictionary:
+	var out := {}
+	for id in GS.ESTRUTURAS:
+		out[id] = float(int(contagem.get(id, 0))) / float(partidas)
+	return out
+
+
+# Uma partida que acaba cedo (caixa negativo) não tem as 4 semanas, então a
+# média de cada semana divide pelo número de partidas que CHEGARAM a ela — e
+# não pelo total, que diluiria a semana 4 com partidas que nunca a jogaram.
+func _media_por_semana(somas: Array, amostras: Array) -> Array:
+	var out := []
+	for i in range(somas.size()):
+		var n: int = int(amostras[i])
+		out.append(0.0 if n == 0 else float(somas[i]) / float(n))
+	return out
 
 
 # Joga a contra-oferta inteira até ela fechar de um jeito ou de outro.
@@ -273,7 +442,11 @@ func _escolher_acao(perfil: Dictionary, rng: RandomNumberGenerator) -> String:
 const ORDEM_DE_COMPRA := ["pier_2", "patio", "armazem", "pier_3", "escritorio"]
 
 
-func _construir(perfil: Dictionary) -> void:
+# Devolve o que gastou. O valor importa: o delta de caixa de uma semana em que
+# se comprou o armazém não é a margem daquela semana, e tratá-lo como se fosse
+# fazia o perfil Descuidado parecer render metade do que rende — ele compra
+# tarde, e a compra caía dentro da semana que se queria medir em regime.
+func _construir(perfil: Dictionary) -> int:
 	var folga: float = float(perfil["folga_para_upgrade"])
 	for id in ORDEM_DE_COMPRA:
 		if GS.tem_estrutura(id):
@@ -284,8 +457,10 @@ func _construir(perfil: Dictionary) -> void:
 		# salário na virada da semana.
 		if GS.cash < int(int(GS.ESTRUTURAS[id]["custo"]) * folga):
 			continue
+		var custo := int(GS.ESTRUTURAS[id]["custo"])
 		GS.comprar_estrutura(id)
-		return                      # uma por turno, para não esvaziar o caixa
+		return custo if GS.tem_estrutura(id) else 0   # uma por turno
+	return 0
 
 
 func _alocar(perfil: Dictionary, rng: RandomNumberGenerator) -> void:

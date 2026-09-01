@@ -3,7 +3,9 @@
 > **Data:** 26/08/2026
 > **Origem:** revisão pedida após o primeiro playtest humano do Vertical Slice.
 > **Status:** Parcela 1 corrigida e revalidada por medição. Parcelas 2 e 3
-> continuam **não verificadas**.
+> **projetadas em 01/09/2026** — fecham, e fecham com muita folga. O que
+> sobra delas não é aritmética, é uma pergunta de design em aberto (ver o fim
+> deste documento).
 
 O GDD 7 está congelado como fonte da verdade. Esta errata existe porque um
 erro de aritmética dentro dele foi encontrado durante a produção — e corrigir
@@ -102,25 +104,95 @@ seja, nem jogar bem garantia nada.
 
 ---
 
-## O que continua em aberto
+## As Parcelas 2 e 3 — projetadas em 01/09/2026
 
-**As Parcelas 2 e 3 não foram verificadas.** A marca "VALIDADO" foi retirada
-do card porque o cenário que a sustentava não se sustenta, mas isso **não**
-significa que R$ 16.000 e R$ 24.000 estejam errados — significa que ninguém
-sabe. Elas dependem de:
+Ficou escrito acima que ninguém sabia se R$ 16.000 e R$ 24.000 fechavam. Agora
+sabe-se, com uma ressalva que importa: **isto é projeção, não medição.** Medir
+exigiria as Fases 2 e 3 implementadas, e este documento continua a dizer que
+construí-las antes de o Vertical Slice sair é a ordem errada.
 
-- a vazão de contratos das Fases 2 e 3 (não modelada);
-- os valores de contrato dessas fases (R$ 300–800 e R$ 800–2.000);
-- o armazém como terceira fonte de renda, que o próprio GDD já apontava como
-  obrigatório (card "Risco crítico da Parcela 3").
+O que torna a projeção defensável — e não mais uma planilha como a que falhou —
+são duas amarras, ambas dentro de `tools/projetar_parcelas.py`:
 
-Verificar isso exige estender o simulador para 12 semanas com progressão de
-fase — trabalho que **não faz parte do Vertical Slice** e não deve ser feito
-antes de ele estar publicado.
+1. **Os números da Fase 1 não são digitados.** Vêm de
+   `simular_balanceamento.gd` (a economia da semana em REGIME, medida em 600
+   partidas por perfil no jogo que existe) e de `despejar_constantes.gd` (as
+   constantes que o jogo usa de verdade). As faixas de contrato e os valores
+   das parcelas são lidos do GDD no disco, não copiados para o script.
+2. **O modelo tem de reconstruir a Fase 1 antes de falar das outras duas.** Se
+   erra a semana que dá para conferir, o programa recusa-se a projetar. Erros
+   medidos: Ótimo 0,6%, Mediano 0,3%, Descuidado 1,1%.
 
-**Recomendação:** rodar essa verificação antes de codar a economia da Fase 2,
-e não depois. O custo de descobrir o erro agora foi uma tarde; descobri-lo
-depois de três fases construídas em cima seria outra ordem de grandeza.
+A segunda amarra pagou-se logo na primeira corrida: o modelo errava a margem do
+perfil Descuidado em 98%. Não era o modelo — era a MEDIÇÃO. O delta de caixa da
+semana 4 desse perfil inclui a compra do armazém, que ele faz tarde, e um delta
+com uma obra dentro não é margem de regime. Daí o simulador passou a separar as
+duas coisas.
+
+### O que dá
+
+Cenário conservador (o porto fica como acaba a Fase 1: 3 docas, nada de novo,
+só o valor do contrato sobe como o GDD manda), perfil Ótimo, entrando na semana
+5 com **caixa zero** — acabou de pagar a Parcela 1:
+
+| Fase | Contrato | Margem/sem | 4 semanas | Parcela | Sobra |
+|---|---|---:|---:|---:|---|
+| 2 (sem. 5–8) | R$ 300–800 | R$ 8.918 | R$ 35.671 | R$ 16.000 | **+R$ 19.671 (2,2×)** |
+| 3 (sem. 9–12) | R$ 800–2.000 | R$ 22.268 | R$ 89.072 | R$ 24.000 | **+R$ 84.743 (4,5×)** |
+
+Para o jogador **mediano** — o que ganha 47% na Fase 1 — dá 2,0× e 4,0×. No
+cenário em que o porto continua a crescer (+1 doca por fase, armazém alugado a
+R$ 300/sem), sobe para 3,0× e 7,6×.
+
+### A leitura, que é o contrário do que o GDD temia
+
+O card **"Risco crítico da Parcela 3"** dizia que sem uma terceira fonte de
+renda a Parcela 3 não fecharia, e mandava escolher entre pôr o armazém a render
+desde a semana 2 ou baixar a Parcela 3 para R$ 18.000 — *"uma das duas mudanças
+é obrigatória antes de codar a economia"*. **Essa decisão perdeu o motivo.** Ela
+nasceu do mesmo cenário de 2 barcos/semana que esta errata já derrubou; com a
+vazão medida, nenhuma das duas mudanças é necessária.
+
+O que sobra é o problema oposto, e a causa é uma só:
+
+| | Fase 1 | Fase 2 | Fase 3 |
+|---|---:|---:|---:|
+| Valor médio de contrato | R$ 184 | R$ 536 (×2,9) | R$ 1.367 (×2,5) |
+| Parcela | R$ 8.000 | R$ 16.000 (×2,0) | R$ 24.000 (×1,5) |
+
+**A receita cresce mais depressa do que a dívida, nas duas passagens de fase.**
+A Fase 1 mede 47% de vitória para o jogador mediano — é apertada de propósito, e
+o playtest confirmou que a tensão se sente. Nas Fases 2 e 3, com estes números,
+a parcela deixa de ser pressão a partir da semana 5.
+
+### ⚠️ Isto é uma pergunta de design, e está EM ABERTO
+
+A aritmética fechou; o desenho não. As saídas possíveis são, pelo menos:
+
+- **subir as parcelas** para acompanharem a curva do contrato (uma Parcela 3 na
+  casa dos R$ 90.000 devolveria a tensão da Fase 1);
+- **deixar assim de propósito**, se a intenção é que a Fase 1 seja o aperto e as
+  seguintes sejam o alívio de quem levantou o porto;
+- **trocar o que pressiona** nas fases seguintes — se a dívida deixa de morder,
+  outra coisa tem de morder, ou o jogo perde o motor.
+
+Não se decide aqui. Fica registrado que **a Parcela 3 de R$ 24.000 não é mais
+um risco de não fechar — é um número que não pressiona**, e que codar a economia
+da Fase 2 sem resolver isto é construir em cima de uma pergunta.
+
+**Como refazer a conta:**
+
+```sh
+$G --headless --path brport_vs --script res://tools/simular_balanceamento.gd \
+   -- 600 20260825 /tmp/medicao.json
+$G --headless --path brport_vs --script res://tools/despejar_constantes.gd \
+   -- /tmp/constantes.json
+python3 tools/projetar_parcelas.py --medicao /tmp/medicao.json \
+   --constantes /tmp/constantes.json [--perfil Mediano]
+```
+
+O CI roda a mesma coisa com a amostra de fumaça e reprova se o modelo deixar de
+reproduzir a Fase 1.
 
 ---
 

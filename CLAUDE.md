@@ -17,16 +17,31 @@ são em português — commits e PRs em inglês.
 **O Godot e o Blender rodam neste contêiner.** Duas rodadas de trabalho visual
 já foram feitas às cegas por não se saber disto. Não trabalhe no escuro.
 
+**Numa sessão remota o Godot já está pronto quando a conversa abre**, e o `$G`
+já aponta para ele: quem faz isso é `.claude/hooks/session-start.sh`, que baixa
+o binário, roda o `--import` e diz numa linha o que ficou disponível. Se a
+primeira mensagem da sessão não trouxer essa linha, o hook não correu — aí vale
+a receita manual abaixo.
+
+**O hook só vale a partir da MAIN.** Uma sessão nova arranca do branch padrão,
+então uma alteração ao hook que esteja só numa branch de trabalho não corre —
+nem na sessão que a escreveu, nem em nenhuma outra, até o PR ser fundido. Quem
+mexer no hook e não vir efeito na sessão seguinte deve olhar para isto antes de
+o ir depurar.
+
 ```sh
-# Godot (~70 MB, segundos)
-curl -sSL -o /tmp/g.zip https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
-unzip -q /tmp/g.zip -d /tmp/godot && chmod +x /tmp/godot/Godot_v4.6.1-stable_linux.x86_64
-G=/tmp/godot/Godot_v4.6.1-stable_linux.x86_64
+# Godot (~70 MB, ~12 s) — só se o hook de arranque não tiver corrido
+V=$(tr -d '[:space:]' < .godot-version)   # a versão vive num arquivo só
+curl -fsSL -o /tmp/g.zip https://github.com/godotengine/godot/releases/download/$V-stable/Godot_v$V-stable_linux.x86_64.zip
+mkdir -p ~/godot-bin && unzip -q -o /tmp/g.zip -d ~/godot-bin
+chmod +x ~/godot-bin/Godot_v$V-stable_linux.x86_64
+G=~/godot-bin/Godot_v$V-stable_linux.x86_64
 
 $G --headless --path brport_vs --import                       # UMA VEZ por clone
 $G --headless --path brport_vs --script res://tests/run_tests.gd
 $G --headless --path brport_vs --script res://tests/teste_design.gd
 $G --headless --path brport_vs --script res://tests/teste_audio.gd
+$G --headless --path brport_vs --script res://scripts/validation/asset_validator.gd
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
 
@@ -42,7 +57,12 @@ python3 tools/gerar_sons.py brport_vs/audio/sfx
 
 **`--import` não é opcional.** Num clone novo não existe `.godot/`, e sem ela
 a suíte falha com uma pilha de `referenced non-existent resource` que não tem
-nada a ver com o que se está testando.
+nada a ver com o que se está testando. O hook de arranque já a roda; a regra
+continua escrita aqui porque ela vale mesmo quando o hook não correu.
+
+**A versão do Godot vive em `.godot-version`, e num lugar só.** O hook e o CI
+leem esse arquivo. Antes dele, este documento mandava baixar a 4.6.1 e o CI
+rodava a 4.6.3 — a sessão testava numa versão e o PR era barrado noutra.
 
 O `xvfb-run` só faz falta para a captura, que precisa de contexto gráfico.
 Teste e import rodam sem tela.
@@ -58,7 +78,11 @@ Teste e import rodam sem tela.
 1. `tests/run_tests.gd` — a lógica. Espera `TODOS OS TESTES PASSARAM`.
 2. `tests/teste_design.gd` — o encaixe e o layout. Espera `DESIGN OK`.
    `tests/teste_audio.gd` — o encanamento de som. Espera `AUDIO OK`.
-3. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
+3. Mexeu em QUALQUER `const` do `GameState.gd`? Regere a tabela dos números —
+   `despejar_constantes.gd` + `tools/gerar_tabela_numeros.py --contra-godot`,
+   espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
+   os números já viveram no GDD e nas constantes ao mesmo tempo, e divergiram.
+4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
    O balanceamento medido é 100% / 47% / 0% por perfil, com a mediana do
    jogador mediano em ~R$7.950 contra uma parcela de R$8.000. Mexer sem medir
    quebra isso.
@@ -66,16 +90,22 @@ Teste e import rodam sem tela.
    (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
    de ±18 pontos — comparar aquele número com estes 47% é comparar sorteio.
    O próprio simulador avisa quando a rodada é curta demais para medir.
-4. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
+5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
    ficou bonito. E ao recortar a captura para conferir um detalhe, lembre que
    **o mapa não começa no topo da tela**: `MapaWrap` tem `offset_top = 62`, e
    as coordenadas que saem da projeção são do MAPA. Somar os 62 é a diferença
    entre olhar o prop e olhar o telhado ao lado dele — três recortes já foram
    ao lugar errado por causa disto.
-5. Escreveu um validador e ele **passou de primeira**? Desconfie. Injete o
+6. Escreveu um validador e ele **passou de primeira**? Desconfie. Injete o
    defeito que ele deveria pegar e veja-o reprovar antes de confiar nele. Um
    validador que nunca reprovou nada não é um validador — e, na primeira vez
    que se fez isto aqui, quem estava furado era o teste, não o validador.
+   **E confira que o defeito injetado pegou.** Dois já não pegaram: um usou uma
+   variável de ambiente que a sessão já trazia definida, e outro quebrou o
+   GDScript de tal jeito que o passo anterior falhou calado e reaproveitou o
+   arquivo da corrida antiga. Nos dois casos o validador "passou" sem nunca ter
+   visto defeito nenhum — que é pior do que não o ter testado, porque agora há
+   confiança.
 
 ---
 

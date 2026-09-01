@@ -3,10 +3,9 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 30/08/2026 (duas rodadas de polimento a partir de
-> playtest: a interface saiu de cima do mapa, o save ganhou versão — era ele
-> que duplicava a compra dos píeres —, o pátio ganhou rua e uma vila que
-> cresce por Fase, e o Godot passou a rodar dentro da sessão)
+> **Última atualização:** 01/09/2026 (a sessão passou a arrancar com o Godot
+> pronto, os números do jogo ganharam fonte única, e as Parcelas 2 e 3 —
+> "não verificadas" desde agosto — foram projetadas: fecham, e fecham demais)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 > Para saber **o que fazer a seguir e quem faz o quê**, o plano é
@@ -51,6 +50,47 @@ a cada Fase, sem o jogo precisar saber.
 ---
 
 ## Onde estamos no roadmap
+
+**A sessão já abre com o Godot pronto** (01/09) — item B1 da fila, fechado,
+**a partir do momento em que estiver na main**: sessão nova arranca do branch
+padrão, e um hook que viva só numa branch de trabalho não corre.
+`.claude/hooks/session-start.sh` baixa o binário, roda o `--import` e diz numa
+linha o que ficou disponível; a primeira mensagem de uma conversa nova já pode
+rodar a suíte. Doze segundos a frio, seis a quente. O `bpy` (~1 GB) ficou de
+fora de propósito: só faz falta em sessão de arte.
+
+Construir isso destapou uma divergência que já existia: **o `CLAUDE.md` mandava
+baixar a 4.6.1 e o CI rodava a 4.6.3.** A sessão testava numa versão e o PR era
+barrado noutra. A versão passou a viver em `.godot-version`, lido pelos dois.
+
+**Os números do jogo têm fonte única** (01/09) — item A2, fechado.
+`docs/design/BR_Port_Numeros_Fase_1.md` é GERADO do `GameState.gd` e o CI
+reprova quem mexe numa constante sem regerar. São dois programas de propósito:
+o Godot despeja o que ele avalia de verdade, o Python lê o texto (é de lá que
+saem os comentários que dizem se o número veio do GDD ou é TUNING), e as duas
+leituras são cruzadas nome a nome — uma constante que o parser não entenda
+REPROVA, em vez de sumir da tabela em silêncio.
+
+**As Parcelas 2 e 3 deixaram de ser desconhecidas** (01/09) — e a resposta é o
+contrário do que o GDD temia. Elas fecham: 2,2× e 4,5× de folga no cenário
+conservador, para o jogador que joga bem; 2,0× e 4,0× para o mediano. O card
+"Risco crítico da Parcela 3", que mandava escolher entre pôr o armazém a render
+desde a semana 2 ou baixar a Parcela 3 para R$18.000, **perdeu o motivo** — ele
+nascia do mesmo cenário de 2 barcos/semana que a errata já tinha derrubado.
+
+⚠️ **Fica uma pergunta de design em aberto, e ela é a que importa.** O valor de
+contrato cresce ×2,9 e depois ×2,5 por fase; a parcela cresce ×2,0 e ×1,5. A
+receita corre mais depressa do que a dívida, então **a tensão que faz a Fase 1
+medir 47% desaparece a partir da semana 5.** Subir as parcelas, assumir que é
+de propósito, ou trocar o que pressiona — não está decidido, e codar a economia
+da Fase 2 sem resolver isto é construir em cima de uma pergunta. O registro,
+com os números e o modo de refazer a conta, está em
+`docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
+
+Isto é **projeção, não medição** — a Fase 1 é medida no jogo que existe, as
+outras duas são a mesma conta com os números que o GDD dá para elas. Vira
+medição quando as Fases 2 e 3 estiverem implementadas, e a errata continua a
+dizer que isso não se faz antes de o VS sair.
 
 **O mapa foi refeito a partir do que a captura mostrou** (31/08). O que estava
 errado, e agora não está: 40% do quadro era uma laje de asfalto atrás da vila
@@ -198,6 +238,13 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
 | `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**. Roda no CI, espera `ASSET OK` |
 | `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
+| `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto. Nunca derruba a sessão: todo caminho de erro devolve a receita manual |
+| `.godot-version` | A versão do Godot, num lugar só. Lida pelo hook e pelo CI |
+| `docs/design/BR_Port_Numeros_Fase_1.md` | **A tabela dos números, GERADA** do `GameState.gd`. Não editar à mão — o CI reprova se envelhecer |
+| `tools/gerar_tabela_numeros.py` | Gera a tabela acima e cruza a leitura de texto com o que o Godot avalia |
+| `brport_vs/tools/despejar_constantes.gd` | Despeja as constantes que o Godot avalia de verdade, em JSON. Espera `CONSTANTES OK` |
+| `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
+| `docs/decisoes/002-*.md` | Sentry só depois do A8; Freesound descartado (403 medido no proxy) |
 | `docs/design/BR_Port_Plano_v3_Claude_Code.md` | **O plano em vigor** — a fila do que fazer, as duas trilhas (jogo e projeto/Claude) e os gates que só o Bruno fecha |
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados no cronograma, mantidos como registro das decisões) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
@@ -304,8 +351,9 @@ existe mais**.
 - **A economia do GDD não fechava.** Erro de aritmética no próprio GDD: o
   modelo da Fase 1 acumulava R$ 1.480 em 4 semanas contra uma parcela de
   R$ 8.000. Corrigido, com registro em
-  `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`. **As Parcelas 2 e 3 seguem
-  não verificadas** — vale checar antes de codar a economia da Fase 2.
+  `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`. As Parcelas 2 e 3 ficaram
+  não verificadas até 01/09, quando foram projetadas — ver o roadmap acima:
+  **fecham com folga grande, e o problema virou o oposto.**
 - **Ninguém quebra por caixa.** O píer sozinho paga os custos, então a derrota
   por caixa negativo continua sendo código morto: a única forma de perder é o
   portão da parcela. Fica anotado, não foi mexido.
@@ -392,15 +440,20 @@ Espera-se `TODOS OS TESTES PASSARAM` e código de saída 0. A suíte cobre, entr
 outras coisas, o bug do save de outra versão (T5c), o teto de docas do mapa
 (T5d) e o formato do dinheiro (T5e).
 
-**Num clone novo, rode `--import` antes** — sem a pasta `.godot` a suíte falha
-com uma pilha de `referenced non-existent resource` que não tem nada a ver com
-o teste. E **o Godot roda no contêiner destas sessões**: baixar o binário Linux
-leva segundos e evita trabalhar às cegas. A receita completa está na §4 de
-`docs/BLOCO5_BRIEFING_CONTINUACAO.md`.
+**Numa sessão remota não é preciso fazer nada disso**: o hook de arranque já
+baixou o Godot e já rodou o `--import`, e diz numa linha que o fez. Se essa
+linha não apareceu na primeira mensagem, o hook não correu — a receita manual
+está no `CLAUDE.md`, e lê a versão de `.godot-version`.
 
-E para medir o efeito de qualquer mudança de balanceamento (800 partidas por
-perfil de jogador, ~10 segundos):
+**`--import` num clone novo não é opcional** — sem a pasta `.godot` a suíte
+falha com uma pilha de `referenced non-existent resource` que não tem nada a
+ver com o teste.
+
+E para medir o efeito de qualquer mudança de balanceamento — **600 partidas por
+perfil**, que é o número em que os 100% / 47% / 0% foram medidos e o que o
+`CLAUDE.md` e o `/fechar-sessao` mandam usar. Este documento dizia 800, o que
+dava três números a circular para a mesma coisa:
 
 ```
-Godot_v4.6.3-stable_win64.exe --headless --path brport_vs --script res://tools/simular_balanceamento.gd -- 800
+Godot_v4.6.3-stable_win64.exe --headless --path brport_vs --script res://tools/simular_balanceamento.gd -- 600
 ```

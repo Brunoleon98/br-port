@@ -408,6 +408,28 @@ sob demanda, não no arranque.
 **Sabe-se que funcionou quando:** a primeira mensagem de uma sessão nova já pode
 rodar a suíte.
 
+**Feito em 01/09:** `.claude/hooks/session-start.sh`, registrado em
+`.claude/settings.json`. Doze segundos a frio, seis a quente, e o `bpy` ficou
+de fora como planejado.
+
+Três coisas apareceram na construção que não estavam previstas aqui. A
+primeira: **a versão do Godot já tinha divergido.** O `CLAUDE.md` mandava baixar
+a 4.6.1 e o CI rodava a 4.6.3 — a sessão testava numa versão e o PR era barrado
+noutra. Escrever a versão no hook criaria um terceiro lugar, então ela passou a
+viver em `.godot-version`, lido pelo hook e pelo CI. É o mesmo remédio do A2,
+aplicado antes dele.
+
+A segunda: **o hook nunca derruba a sessão.** Todo caminho de erro sai com 0 e
+devolve a receita manual. Uma sessão sem Godot ainda serve para ler código e
+escrever documento; uma sessão que não abre não serve para nada.
+
+A terceira é a regra do `CLAUDE.md` sobre validadores, e ela pagou outra vez:
+os cinco caminhos foram exercitados com defeito injetado, e **três defeitos
+reais saíram daí** — o `curl` sem `-f` gravava a página de erro 404 do GitHub e
+chamava isso de download bem-sucedido; o `unzip` despejava vinte linhas de erro
+dentro do contexto da sessão; e o `.godot-version` ausente vazava mensagem do
+shell. O caminho feliz tinha passado de primeira nos três casos.
+
 ---
 
 ### B2 — Skills para os fluxos que repetem
