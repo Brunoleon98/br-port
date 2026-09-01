@@ -87,6 +87,12 @@ const PERFIS := [
 	},
 ]
 
+# Destipado de propósito — é o autoload, resolvido em runtime. A consequência
+# morde ao editar este arquivo: `var x := GS.cash` NÃO compila, porque o Godot
+# não consegue inferir o tipo de um membro de um Node destipado. Escreva o tipo
+# à mão (`var x: int = GS.cash`). O erro sai como "Cannot infer the type of ...
+# because the value doesn't have a set type", e o Godot ainda assim encerra com
+# código 0 — por isso o CI e o /fechar-sessao exigem a LINHA de sucesso.
 var GS
 var _done := false
 

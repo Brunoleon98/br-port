@@ -72,7 +72,11 @@ Teste e import rodam sem tela.
 1. `tests/run_tests.gd` — a lógica. Espera `TODOS OS TESTES PASSARAM`.
 2. `tests/teste_design.gd` — o encaixe e o layout. Espera `DESIGN OK`.
    `tests/teste_audio.gd` — o encanamento de som. Espera `AUDIO OK`.
-3. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
+3. Mexeu em QUALQUER `const` do `GameState.gd`? Regere a tabela dos números —
+   `despejar_constantes.gd` + `tools/gerar_tabela_numeros.py --contra-godot`,
+   espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
+   os números já viveram no GDD e nas constantes ao mesmo tempo, e divergiram.
+4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
    O balanceamento medido é 100% / 47% / 0% por perfil, com a mediana do
    jogador mediano em ~R$7.950 contra uma parcela de R$8.000. Mexer sem medir
    quebra isso.
@@ -80,16 +84,22 @@ Teste e import rodam sem tela.
    (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
    de ±18 pontos — comparar aquele número com estes 47% é comparar sorteio.
    O próprio simulador avisa quando a rodada é curta demais para medir.
-4. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
+5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
    ficou bonito. E ao recortar a captura para conferir um detalhe, lembre que
    **o mapa não começa no topo da tela**: `MapaWrap` tem `offset_top = 62`, e
    as coordenadas que saem da projeção são do MAPA. Somar os 62 é a diferença
    entre olhar o prop e olhar o telhado ao lado dele — três recortes já foram
    ao lugar errado por causa disto.
-5. Escreveu um validador e ele **passou de primeira**? Desconfie. Injete o
+6. Escreveu um validador e ele **passou de primeira**? Desconfie. Injete o
    defeito que ele deveria pegar e veja-o reprovar antes de confiar nele. Um
    validador que nunca reprovou nada não é um validador — e, na primeira vez
    que se fez isto aqui, quem estava furado era o teste, não o validador.
+   **E confira que o defeito injetado pegou.** Dois já não pegaram: um usou uma
+   variável de ambiente que a sessão já trazia definida, e outro quebrou o
+   GDScript de tal jeito que o passo anterior falhou calado e reaproveitou o
+   arquivo da corrida antiga. Nos dois casos o validador "passou" sem nunca ter
+   visto defeito nenhum — que é pior do que não o ter testado, porque agora há
+   confiança.
 
 ---
 
