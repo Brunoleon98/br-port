@@ -133,12 +133,17 @@ const RIVAL_KEEP_CHANCE := 0.45         # TUNING: chance de o cliente aceitar pa
 const RIVAL_DISCOUNT_AFTER_FAIL := 0.28 # TUNING
 const RIVAL_PATIENCE := 2               # GDD: máx. 2 tentativas antes de o cliente encerrar
 
+# ── REPUTAÇÃO COMERCIAL ──
+# Hoje a reputação é RÓTULO na HUD e mais nada: nenhum destes números muda
+# receita, chegada de barco ou preço. Dar-lhe efeito mecânico é o item A3 da
+# fila, e está anotado como pendência desde o Bloco 3.
 const REPUTATION_START := 65.0
 const REPUTATION_GAIN_SERVED := 4.0
 const REPUTATION_LOSS_LOST := 5.0
 const REPUTATION_GAIN_RIVAL_MATCHED := 5.0
 const REPUTATION_LOSS_RIVAL_REFUSED := 15.0
 
+# ── CADÊNCIA E PARCELA ──
 # TUNING — esta é a constante que faz a economia da Fase 1 fechar.
 # Com 3 turnos/semana a parcela de R$8.000 só cabia inflando o barco para
 # R$240–760, fora da faixa do GDD. Com 8 turnos/semana o barco volta para
@@ -152,6 +157,7 @@ const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
 const PARCELA_AMOUNT := 8000            # GDD "Parcelas validadas" / Protótipo VS — parcela única
 const PARCELA_DUE_TURN := TURNS_PER_WEEK * 4   # vence ao fim da semana 4
 
+# ── SAVE ──
 const SAVE_PATH := "user://savegame.json"
 
 # VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar.
