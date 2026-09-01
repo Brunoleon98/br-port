@@ -1,4 +1,4 @@
-extends Control
+extends PainelNarrativo
 
 # ============================================================
 # BR Port VS — a tela de abertura: os dois nomes
@@ -42,44 +42,16 @@ var _campo_jogador: LineEdit
 
 
 func _ready() -> void:
-	anchor_right = 1.0
-	anchor_bottom = 1.0
-	_construir()
-
-
-func _construir() -> void:
-	var fundo := ColorRect.new()
-	fundo.color = Color(0, 0, 0, 0.85)
-	fundo.anchor_right = 1.0
-	fundo.anchor_bottom = 1.0
-	add_child(fundo)
-
-	var caixa := PanelContainer.new()
-	caixa.anchor_left = 0.5
-	caixa.anchor_top = 0.5
-	caixa.anchor_right = 0.5
-	caixa.anchor_bottom = 0.5
-	caixa.offset_left = -LARGURA / 2.0
-	caixa.offset_top = -ALTURA / 2.0
-	caixa.offset_right = LARGURA / 2.0
-	caixa.offset_bottom = ALTURA / 2.0
-	add_child(caixa)
-
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 12)
-	caixa.add_child(vbox)
+	super()
+	var vbox := montar(LARGURA, ALTURA)
 
 	# ACORDO e não DOCA, e o Icones.gd avisa por escrito porquê: `doca` é traço
 	# creme e só sobrevive em fundo ESCURO — neste painel branco ele sai como um
 	# fantasma pálido, o que a primeira captura mostrou. `acordo` é navy com
 	# âmbar, aguenta os dois fundos, e ainda diz a coisa certa: o porto está a
 	# passar de mão.
-	vbox.add_child(Icones.rotulo(Icones.ACORDO, "O cais é seu"))
-
-	var intro := Label.new()
-	intro.autowrap_mode = TextServer.AUTOWRAP_WORD
-	intro.text = "O Seu Maneco deixou o porto para você. Antes de abrir os portões, duas coisas."
-	vbox.add_child(intro)
+	titulo(Icones.ACORDO, "O cais é seu")
+	paragrafo("O Seu Maneco deixou o porto para você. Antes de abrir os portões, duas coisas.")
 
 	_campo_porto = _campo(vbox, "Como o cais vai se chamar",
 		GameState.NOME_PORTO_PADRAO)
@@ -88,16 +60,8 @@ func _construir() -> void:
 	# variante — ninguém fica sem forma de tratamento (ver Narrativa.gd).
 	_campo_jogador = _campo(vbox, "E o seu nome (pode deixar em branco)", "")
 
-	var comecar := Button.new()
-	comecar.text = "Abrir o porto"
-	comecar.custom_minimum_size = Vector2(0, ALTURA_CAMPO)
-	comecar.pressed.connect(_on_comecar)
-	vbox.add_child(comecar)
-
-	var aviso := Label.new()
-	aviso.autowrap_mode = TextServer.AUTOWRAP_WORD
-	aviso.text = "O nome do cais não muda depois."
-	vbox.add_child(aviso)
+	botao_fechar("Abrir o porto")
+	paragrafo("O nome do cais não muda depois.")
 
 	_campo_porto.grab_focus()
 
@@ -116,11 +80,15 @@ func _campo(pai: VBoxContainer, rotulo: String, sugestao: String) -> LineEdit:
 	# Enter em qualquer um dos dois campos abre o porto: obrigar a acertar no
 	# botão depois de digitar é atrito sem motivo, e no telefone o teclado
 	# ainda estaria por cima dele.
-	entrada.text_submitted.connect(func(_t: String) -> void: _on_comecar())
+	entrada.text_submitted.connect(func(_t: String) -> void: _fechar())
 	pai.add_child(entrada)
 	return entrada
 
 
-func _on_comecar() -> void:
+# Sobrepõe o fecho da base para GRAVAR ANTES DE SAIR. A base emite `fechou` e
+# liberta o nó; se os nomes fossem gravados por um `pressed` ligado à parte, a
+# ordem entre os dois passaria a depender da ordem de ligação dos sinais — e o
+# diário que abre a seguir leria o nome do porto ainda vazio.
+func _fechar() -> void:
 	GameState.definir_nomes(_campo_porto.text, _campo_jogador.text)
-	queue_free()
+	super()

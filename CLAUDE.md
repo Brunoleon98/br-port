@@ -99,7 +99,15 @@ Teste e import rodam sem tela.
    as coordenadas que saem da projeção são do MAPA. Somar os 62 é a diferença
    entre olhar o prop e olhar o telhado ao lado dele — três recortes já foram
    ao lugar errado por causa disto.
-6. Escreveu um validador e ele **passou de primeira**? Desconfie. Injete o
+6. **Captura de painel sem tema é uma fotografia mentirosa.** No jogo quem
+   aplica o tema é o `_abrir_painel()`; cena instanciada solta nasce com o
+   cinzento padrão do Godot. O `capturar_cena.gd` já o aplica, e também chama
+   `setup()` com os argumentos extra — sem isso os painéis que dependem dele
+   saem VAZIOS e a captura passa por "a cena abre" sem mostrar nada.
+   Para olhar um detalhe pequeno, `tools/recortar_captura.gd` amplia sem
+   suavizar: a 19px um ícone não se julga a olho na captura inteira, e foi
+   ampliando que se viu que o ícone `doca` era um fantasma no painel branco.
+7. Escreveu um validador e ele **passou de primeira**? Desconfie. Injete o
    defeito que ele deveria pegar e veja-o reprovar antes de confiar nele. Um
    validador que nunca reprovou nada não é um validador — e, na primeira vez
    que se fez isto aqui, quem estava furado era o teste, não o validador.
@@ -197,8 +205,44 @@ tranca isso.
   que é compressão com perdas.
 - `tests/teste_audio.gd` cobre o que é verificável. Espera `AUDIO OK`.
 
+### Narrativa
+
+- **Todo texto de fala vive em `scripts/Narrativa.gd`**, como o ícone vive no
+  `Icones.gd`. Fala espalhada por painel é o que aconteceu com os emojis, e
+  trocar um custava caçar string por string em sete scripts.
+- **O nome do porto e o do jogador saem por `GameState.texto()`**, um lugar só,
+  como o dinheiro sai pelo `moeda()`. Os textos trazem `{portName}` e
+  `{playerName}`; quem não passar pela substituição mostra a chaveta crua ao
+  jogador, e isso não dá erro nenhum. O `teste_fumaca.gd`, bloco F4, tranca:
+  todo token tem de ser um dos seis conhecidos, e nada que saia de um
+  resolvedor pode ter chaveta.
+- **Porto Mirim é a CIDADE; Cais Mirim é o nome-padrão do PORTO.** São coisas
+  diferentes e o rascunho de escrita usa as duas. O banco do Sr. Ribeiro é de
+  Porto Mirim e não muda; o cais é o que o jogador batiza, e a escolha é
+  irrevogável (GDD 7).
+- **O nome do jogador pode estar vazio, e nenhum padrão o preenche.** Inventar
+  um é pôr palavra na boca de quem não a escolheu. Toda fala com vocativo tem
+  variante sem ele — e a vírgula viaja com o nome, senão sai "Boa tarde ,.".
+- **Número em prosa sai de constante, nunca escrito à mão.** A narração de fim
+  de fase dizia "Doze semanas / Três parcelas", que é a Fase 1 do GDD e não o
+  VS. Texto com número cravado é um número a mais para envelhecer — o mesmo
+  problema que a tabela dos números existe para resolver.
+
 ### Interface
 
+- **Tela nova é OVERLAY, nunca fase do `GameState`.** Uma fase nova que bloqueie
+  o turno não dá erro nenhum: o `advance_turn()` retorna calado fora de
+  `"playing"`, e o laço do `simular_balanceamento.gd` só sabe resolver
+  `rival_offer` e `debt_payment`. Medido: uma fase a mais fez **24 de 30
+  partidas não terminarem**, e o CI passava na mesma porque só procurava a
+  linha `=== Leitura ===`. Hoje ele também reprova `possível travamento`, mas a
+  regra vale antes do CI: como overlay, o balanceamento medido fica intocado
+  **por construção**, e não por cuidado de quem escreveu.
+- Painel novo herda de `PainelNarrativo.gd` — o andaime (escurecer, cartão,
+  título, parágrafo, botão) num lugar só. `montar(largura, 0)` faz o cartão
+  **ajustar-se ao conteúdo**; altura fixa só quando há área de rolagem. Três
+  painéis saíram com uma faixa branca debaixo do botão por causa disto, e o
+  mesmo painel muda de tamanho conforme o caso.
 - Nada de interface pousa sobre o mapa. Uma doca tem duas metades:
   `Dock.tscn` (cenário) e `DocaCartao.tscn` (texto e alvo de toque).
 - Alvo de toque mínimo 44px. O teste de design cobre.
@@ -218,6 +262,15 @@ tranca isso.
   três vezes num dia só, em três arquivos diferentes, e cada vez custou uma
   corrida: **o Godot encerra com código 0** nesse erro, então quem olha só o
   `$?` conclui que passou.
+- **O autoload não resolve pelo nome dentro de um `class_name`.**
+  `GameState.x` funciona num script de cena, que o Godot compila com os
+  autoloads já registrados; NÃO funciona dentro de uma classe alcançada a
+  partir de um script de `--script`, que é compilada antes disso. O erro sai
+  como *"Compile Error: Identifier not found: GameState"* e derruba a suíte
+  inteira, não só a linha culpada. Busque pela árvore —
+  `Engine.get_main_loop().root.get_node("GameState")` — e escreva o tipo à mão
+  no que vier de lá. É a irmã da regra acima, e tem a mesma origem: a suíte
+  roda o jogo POR FORA.
 - Comentário explica **por que**, e de preferência conta o que se tentou antes
   e não funcionou. O repositório inteiro é escrito assim; siga.
 - Nada de emoji na interface — os 20 ícones vivem em `art/icones/` e são

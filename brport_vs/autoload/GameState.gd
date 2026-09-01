@@ -33,6 +33,12 @@ signal debt_due(amount: int)
 signal game_over(won: bool, reason: String)
 signal message(text: String, kind: String)
 signal state_loaded()
+# Uma semana fechou, com o resumo por fonte. Existe separado de `message`
+# porque o Boletim Financeiro da Dona Cida é uma TELA, não uma faixa de texto —
+# e porque quem o escuta precisa dos números decompostos, que a mensagem não
+# carrega. O simulador de balanceamento não escuta isto: ele nunca abre cena,
+# então o boletim não existe para ele e não pode mexer no que ele mede.
+signal semana_fechada(resumo: Dictionary)
 
 # ── TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1) ──
 # TUNING — medido, não estimado. 600 partidas por perfil em
@@ -187,7 +193,12 @@ const SAVE_PATH := "user://savegame.json"
 # 3 (01/09): o save passou a guardar os dois nomes que o jogador escolhe na
 # abertura. Um save da versão 2 não os tem, e inventá-los seria adaptar — a
 # partida recomeça, com a tela de nomes outra vez.
-const SAVE_VERSION := 3
+#
+# 4 (01/09): e a contabilidade por fonte da semana, que o Boletim Financeiro
+# lê. A 3 nunca saiu daqui, então podia ter-se reaproveitado o número — mas
+# reaproveitar exige lembrar que se pode, e a regra vale mais barata do que a
+# exceção: a forma mudou, a versão sobe.
+const SAVE_VERSION := 4
 
 # ── OS DOIS NOMES ──
 # O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7).
@@ -236,6 +247,26 @@ var won: bool = false
 var nome_porto: String = ""
 var nome_jogador: String = ""
 
+# A CONTABILIDADE DA SEMANA EM CURSO, por fonte. Só OBSERVA: nenhum destes
+# números entra numa conta do jogo, e o `cash` continua a ser mexido
+# exatamente onde era. Existe porque o Boletim Financeiro pede receita e
+# despesa DECOMPOSTAS, e `metrics` só guarda totais acumulados da partida —
+# de onde não se consegue tirar uma semana.
+#
+# O bónus do armazém é contado à parte do valor do barco. No jogo ele vem
+# embutido (`_valor_recebido`), e embutido não dá para o mostrar como a linha
+# própria que o boletim tem.
+const SEMANA_ZERADA := {
+	"docagens": 0, "armazem": 0, "pier": 0,
+	"salarios": 0, "manutencao": 0, "parcela": 0,
+}
+var semana_atual: Dictionary = SEMANA_ZERADA.duplicate()
+
+# O resultado líquido de cada semana já fechada, em ordem. A Dona Cida compara
+# a semana contra a média das anteriores para escolher o tom, e sem histórico
+# não há com que comparar — na semana 1 ela usa só o sinal do resultado.
+var historico_semanas: Array = []
+
 var metrics := {
 	"boats_served": 0,
 	"boats_lost": 0,
@@ -265,6 +296,8 @@ func new_game() -> void:
 	# seguinte (ver o comentário do load_game).
 	nome_porto = ""
 	nome_jogador = ""
+	semana_atual = SEMANA_ZERADA.duplicate()
+	historico_semanas = []
 	cash = START_CASH
 	reputation = REPUTATION_START
 	upgrade_purchased = false
@@ -651,6 +684,12 @@ func advance_turn() -> void:
 				var value := _valor_recebido(bruto)
 				cash += value
 				metrics["revenue"] += value
+				# Observação para o Boletim, e nada mais: o `value` acima é o
+				# que entra no caixa e não muda. Aqui só se separa o que dele
+				# veio do armazém, para o boletim ter a linha própria que o
+				# arquivo de escrita pede.
+				semana_atual["docagens"] += bruto
+				semana_atual["armazem"] += value - bruto
 				metrics["boats_served"] += 1
 				_change_reputation(REPUTATION_GAIN_SERVED)
 				var w = _find_worker(dock["worker_id"])
@@ -702,6 +741,53 @@ func _process_week_end(ended_week: int) -> void:
 	cash_changed.emit(cash)
 	message.emit("Semana %d encerrada — +%s do aluguel do píer, -%s em custos (salários + manutenção)." % [ended_week, moeda(pier_income), moeda(cost)], "warn")
 
+	# O resumo sai DEPOIS de tudo estar contado e ANTES de a semana zerar. A
+	# média das anteriores vai no resumo em vez de ser recalculada por quem o
+	# recebe: assim a Dona Cida e um teste leem o mesmo número, e ninguém tem
+	# de saber que a média exclui a semana que acabou.
+	semana_atual["pier"] = pier_income
+	semana_atual["salarios"] = salarios
+	semana_atual["manutencao"] = MAINTENANCE_WEEKLY
+	var resumo := resumo_da_semana(ended_week)
+	historico_semanas.append(int(resumo["resultado"]))
+	semana_atual = SEMANA_ZERADA.duplicate()
+	semana_fechada.emit(resumo)
+
+
+# Fecha as contas da semana em curso num dicionário só. Vive aqui, e não no
+# painel, porque o teste precisa de fazer a mesma conta sem abrir cena — e duas
+# versões da mesma conta divergem, como já divergiram os números do GDD e os
+# das constantes.
+func resumo_da_semana(semana: int) -> Dictionary:
+	var receita: int = int(semana_atual["docagens"]) + int(semana_atual["armazem"]) \
+		+ int(semana_atual["pier"])
+	var despesa: int = int(semana_atual["salarios"]) + int(semana_atual["manutencao"]) \
+		+ int(semana_atual["parcela"])
+	var media := 0.0
+	for r in historico_semanas:
+		media += float(r)
+	if historico_semanas.size() > 0:
+		media /= float(historico_semanas.size())
+	return {
+		"semana": semana,
+		"docagens": int(semana_atual["docagens"]),
+		"armazem": int(semana_atual["armazem"]),
+		"pier": int(semana_atual["pier"]),
+		"salarios": int(semana_atual["salarios"]),
+		"manutencao": int(semana_atual["manutencao"]),
+		"parcela": int(semana_atual["parcela"]),
+		"receita": receita,
+		"despesa": despesa,
+		"resultado": receita - despesa,
+		"media_anterior": media,
+		"tem_historico": historico_semanas.size() > 0,
+		# A semana ANTERIOR, separada da média: o boletim mostra a comparação
+		# com ela ("semana anterior: X"), enquanto o tom da Dona Cida sai da
+		# média. São duas leituras diferentes do mesmo histórico e confundi-las
+		# faria a fala dela discordar do número logo acima dela.
+		"anterior": int(historico_semanas.back()) if historico_semanas.size() > 0 else 0,
+	}
+
 
 func _check_end() -> void:
 	if cash < 0:
@@ -729,6 +815,10 @@ func pay_debt() -> void:
 		message.emit("Caixa insuficiente para pagar a parcela.", "bad")
 		return
 	cash -= PARCELA_AMOUNT
+	# Só para o Boletim. A parcela vence NO fecho da semana 4, então cai na
+	# semana em curso — que é onde o jogador espera vê-la, porque foi essa a
+	# semana em que o dinheiro saiu.
+	semana_atual["parcela"] += PARCELA_AMOUNT
 	parcela_paid = true
 	_set_phase("playing")
 	cash_changed.emit(cash)
@@ -901,6 +991,8 @@ func save_game() -> void:
 		"uid": _uid,
 		"nome_porto": nome_porto,
 		"nome_jogador": nome_jogador,
+		"semana_atual": semana_atual,
+		"historico_semanas": historico_semanas,
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file:
@@ -969,6 +1061,18 @@ func load_game() -> bool:
 	_uid = int(parsed.get("uid", 1))
 	nome_porto = String(parsed.get("nome_porto", ""))
 	nome_jogador = String(parsed.get("nome_jogador", ""))
+	# O JSON devolve números como float. Sem reconverter, o boletim mostraria
+	# "R$1250.0" — e `moeda()` recebe int, então nem chegaria a mostrar.
+	semana_atual = SEMANA_ZERADA.duplicate()
+	var lida = parsed.get("semana_atual", {})
+	if typeof(lida) == TYPE_DICTIONARY:
+		for chave in SEMANA_ZERADA:
+			semana_atual[chave] = int(lida.get(chave, 0))
+	historico_semanas = []
+	var hist = parsed.get("historico_semanas", [])
+	if typeof(hist) == TYPE_ARRAY:
+		for r in hist:
+			historico_semanas.append(int(r))
 
 	_reconciliar_roster()
 	state_loaded.emit()

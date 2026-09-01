@@ -19,10 +19,15 @@ extends SceneTree
 
 const FRAMES_ATE_ASSENTAR := 12
 
+# O ponto único de estilo do projeto. Ver ui/tema_brport.tres.
+const TEMA := "res://ui/tema_brport.tres"
+
 var _cena := "res://scenes/tests/AssetPlacementTest.tscn"
 var _saida := "user://cena.png"
 var _montado := false
 var _frames := 0
+# Argumentos extra, entregues a `setup()` da cena quando ela tiver um.
+var _extra: Array = []
 
 
 func _process(_delta: float) -> bool:
@@ -34,7 +39,16 @@ func _process(_delta: float) -> bool:
 			quit(1)
 			return true
 		var no: Node = load(_cena).instantiate()
+		# O TEMA TEM DE SER APLICADO À MÃO AQUI. No jogo quem o põe é o
+		# `_abrir_painel()` do Main; uma cena instanciada solta nasce sem tema
+		# nenhum e o Godot desenha-a com o estilo padrão — cinzento sobre
+		# cinzento. A fotografia sai "funcionando" e não se parece nada com o
+		# que o jogador vê, que é a pior espécie de captura: a que dá confiança
+		# sem dar informação. Medido ao fotografar o Diário do Porto.
+		if no is Control:
+			(no as Control).theme = load(TEMA)
 		root.add_child(no)
+		_chamar_setup(no)
 		return false
 
 	# Alguns frames antes de fotografar: um Sprite2D só tem textura resolvida
@@ -55,9 +69,33 @@ func _process(_delta: float) -> bool:
 	return true
 
 
+# Vários painéis do jogo só existem depois de alguém lhes chamar `setup()` —
+# a cena da parcela precisa do valor, a de fim de fase precisa de saber se se
+# ganhou. Instanciadas sem isso ficam VAZIAS, e a captura sai um retângulo em
+# branco que passa por "a cena abre" sem mostrar nada do que se queria ver.
+#
+# Os argumentos extra da linha de comando são passados a `setup()` em ordem.
+# São convertidos por forma: "true"/"false" viram bool e o que for só dígitos
+# vira int, porque `setup(won: bool, ...)` recusa a String "true".
+func _chamar_setup(no: Node) -> void:
+	if _extra.is_empty() or not no.has_method("setup"):
+		return
+	var convertidos := []
+	for bruto in _extra:
+		if bruto == "true" or bruto == "false":
+			convertidos.append(bruto == "true")
+		elif bruto.is_valid_int():
+			convertidos.append(int(bruto))
+		else:
+			convertidos.append(bruto)
+	no.callv("setup", convertidos)
+
+
 func _ler_argumentos() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.size() > 0:
 		_cena = args[0]
 	if args.size() > 1:
 		_saida = args[1]
+	if args.size() > 2:
+		_extra = args.slice(2)

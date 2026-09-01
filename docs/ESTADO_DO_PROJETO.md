@@ -3,9 +3,9 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 01/09/2026 (a **Reputação Comercial deixou de ser
-> rótulo** — ela decide a contra-oferta do Arlindo — e a cena que abre ganhou
-> teste; o teste achou um save que era adaptado a meio)
+> **Última atualização:** 01/09/2026 (o jogo ganhou NPCs: sete telas
+> narrativas, o jogador batiza o cais, e a Dona Cida fala. Antes disto o loop
+> estava inteiro e não havia história nenhuma)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 > Para saber **o que fazer a seguir e quem faz o quê**, o plano é
@@ -84,6 +84,26 @@ fora de propósito: só faz falta em sessão de arte.
 Construir isso destapou uma divergência que já existia: **o `CLAUDE.md` mandava
 baixar a 4.6.1 e o CI rodava a 4.6.3.** A sessão testava numa versão e o PR era
 barrado noutra. A versão passou a viver em `.godot-version`, lido pelos dois.
+
+**O jogo ganhou história** (01/09) — item A4, construído; falta o gate humano.
+Até aqui o loop estava inteiro e **a Dona Cida não aparecia uma única vez no
+código**; o Sr. Ribeiro era uma linha de texto num painel. Agora são sete telas,
+não as seis do plano — a entrada dos dois nomes ganhou tela própria por decisão
+do Bruno, e é a primeira coisa que o jogador vê.
+
+O texto todo vive em `scripts/Narrativa.gd`, como o ícone vive no `Icones.gd`.
+O nome do cais e o do jogador saem por `GameState.texto()`, um ponto só, e o
+teste de fumaça reprova qualquer `{token}` que chegue cru à tela.
+
+⚠️ **Nenhuma tela é fase do `GameState`, e isso não é detalhe.** Uma fase nova
+que bloqueasse o turno faria **24 de 30 partidas não terminarem** no simulador —
+e o CI passaria na mesma, porque só procurava a linha `=== Leitura ===`. Medido,
+consertado (o CI agora reprova `possível travamento`) e escrito no `CLAUDE.md`.
+Como overlay, o balanceamento medido fica intocado por construção: as margens
+semanais continuam R$3.320 / R$3.005 / R$1.633.
+
+⏳ **O gate é do Bruno: ler o texto em voz alta.** Três desvios do rascunho de
+escrita esperam por esse julgamento, e estão listados no A4 do plano.
 
 **A cena que abre passou a ter teste** (01/09) — item B4, fechado.
 `brport_vs/tests/teste_fumaca.gd` é o quinto passo do CI e espera `FUMACA OK`.
@@ -246,7 +266,13 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `tools/gerar_sons.py` | Gera os 10 efeitos de rascunho. Sem dependência: só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela |
-| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, e o save de outra versão é descartado sem tocar no estado vivo |
+| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, e nenhum `{token}` de texto chega cru à tela |
+| `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os 3 tons da Dona Cida, as 8 falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Os números da narração saem das constantes, nunca escritos à mão |
+| `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
+| `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
+| `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
+| `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
+| `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar. A 19px um ícone não se julga a olho |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/BLOCO7_PLANO_ARTE_BLENDER.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, cartão de doca, cartão de trabalhador e letreiro. Os tokens de cor de mapa saíram daqui em 30/08: quem os define é o gerador do SVG |
@@ -298,6 +324,12 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 - Parcela única de R$ 8.000 ao Sr. Ribeiro, vencendo na semana 4
 - Upgrade único (ampliar píer: +1 doca, +1 trabalhador)
 - Autosave local a cada turno
+- **Sete telas narrativas**: nomes do cais e do jogador (abertura), primeira
+  página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
+  falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
+  o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
+- Contabilidade semanal por fonte (docagens, armazém, píer, salários,
+  manutenção, parcela) — **só observa**, não entra em conta nenhuma do jogo
 
 ### O que já é arte de verdade, e o que ainda é placeholder
 **O mapa do porto é a tela do jogo** (`Main.tscn`): água, cais, armazém, pátio

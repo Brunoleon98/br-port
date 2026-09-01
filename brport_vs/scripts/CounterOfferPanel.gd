@@ -10,6 +10,10 @@ extends Control
 var dock_index: int = -1
 
 var _mood_label: Label
+# A fala do Arlindo troca a cada rodada da negociação: abertura, reação ao que
+# o jogador ofereceu, e a linha da última tentativa. É guardada porque o painel
+# não se reconstrói entre rodadas — só se refresca.
+var _fala_arlindo: Label
 var _mood_icone: TextureRect
 var _btn_igualar: Button
 var _btn_metade: Button
@@ -49,8 +53,16 @@ func _build_ui() -> void:
 
 	vbox.add_child(Icones.rotulo(Icones.RIVAL, "Arlindo (Porto Farol) fez uma oferta"))
 
+	# O ARLINDO FALA COM O CLIENTE, NÃO COM O JOGADOR — é isso que faz a tela
+	# ser uma negociação assistida em vez de uma discussão, e o arquivo de
+	# escrita é explícito nisso. Daí as aspas: o jogador está a ouvir.
+	_fala_arlindo = Label.new()
+	_fala_arlindo.autowrap_mode = TextServer.AUTOWRAP_WORD
+	_fala_arlindo.text = "\"%s\"" % GameState.texto(Narrativa.ARLINDO_ABERTURA)
+	vbox.add_child(_fala_arlindo)
+
 	var info_label := Label.new()
-	info_label.text = "Cliente considerando ir para o Porto Farol.\nValor original: %s" % GameState.moeda(_valor_barco())
+	info_label.text = "Valor original: %s" % GameState.moeda(_valor_barco())
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	vbox.add_child(info_label)
 
@@ -89,15 +101,18 @@ func _valor_barco() -> int:
 
 
 func _negociar(acao: String) -> void:
+	# A reação sai do que o jogador ESCOLHEU, e por isso é lida antes de o
+	# GameState resolver: depois de resolver, a ação já não está em lado nenhum.
+	var reacao: String = String(Narrativa.ARLINDO_REACOES.get(acao, ""))
 	var resultado := GameState.negotiate_rival(acao)
 	if resultado == "insistiu":
 		# Cliente ainda na mesa, mas mais impaciente — e igualar ficou mais caro.
-		_refresh()
+		_refresh(reacao)
 		return
 	queue_free()
 
 
-func _refresh() -> void:
+func _refresh(reacao: String = "") -> void:
 	var valor := _valor_barco()
 	var restantes := GameState.rival_attempts_left
 	var ja_insistiu := restantes < GameState.RIVAL_PATIENCE
@@ -122,3 +137,12 @@ func _refresh() -> void:
 		_mood_icone.texture = Icones.CLIENTE_IMPACIENTE
 		desc = "Cliente impaciente — se esta não colar, ele vai embora."
 	_mood_label.text = "%s (%d tentativa(s))" % [desc, restantes]
+
+	# Duas falas dele numa rodada só: o que achou da oferta, e a pressão da
+	# última tentativa. Juntas porque são o mesmo momento — separá-las em dois
+	# balões daria dois cliques a uma coisa que se lê de uma vez.
+	if reacao != "":
+		var falas := "\"%s\"" % GameState.texto(reacao)
+		if restantes <= 1:
+			falas += "\n\n\"%s\"" % GameState.texto(Narrativa.ARLINDO_ULTIMA_TENTATIVA)
+		_fala_arlindo.text = falas

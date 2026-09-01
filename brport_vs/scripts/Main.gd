@@ -23,6 +23,8 @@ const UpgradePanelScene := preload("res://scenes/panels/UpgradePanel.tscn")
 const PauseMenuScene := preload("res://scenes/panels/PauseMenu.tscn")
 const EndGameScene := preload("res://scenes/EndGame.tscn")
 const TelaNomesScene := preload("res://scenes/panels/TelaNomes.tscn")
+const PainelDiarioScene := preload("res://scenes/panels/PainelDiario.tscn")
+const PainelBoletimScene := preload("res://scenes/panels/PainelBoletim.tscn")
 
 
 const COR_BOA := Color(0.102, 0.478, 0.251)
@@ -99,7 +101,12 @@ func _ready() -> void:
 	# uma fase nova faria o simulador de balanceamento girar até o limite de
 	# segurança sem que nada reprovasse — ver o cabeçalho de TelaNomes.gd.
 	if GameState.precisa_dos_nomes():
-		_abrir_painel(TelaNomesScene)
+		# A abertura é uma CORRENTE, não duas chamadas: o diário só pode abrir
+		# depois de os nomes estarem gravados, porque a primeira página usa o
+		# nome do cais. Encadear pelo sinal `fechou` mantém cada painel sem
+		# saber quem vem a seguir — quem sabe a ordem é este lugar, e só ele.
+		var nomes: PainelNarrativo = _abrir_painel(TelaNomesScene)
+		nomes.fechou.connect(func() -> void: _abrir_painel(PainelDiarioScene))
 		return
 
 	# Se o jogo carregou de um save já em rival_offer/debt_payment, reabre o painel certo.
@@ -241,6 +248,17 @@ func _connect_game_state() -> void:
 	GameState.rival_offer_triggered.connect(_on_rival_offer_triggered)
 	GameState.debt_due.connect(_on_debt_due)
 	GameState.game_over.connect(_on_game_over)
+	GameState.semana_fechada.connect(_on_semana_fechada)
+
+	# AS FALAS DA DONA CIDA penduram-se em sinais que já existiam. Nenhuma
+	# delas abre painel: são a faixa de mensagem que o jogo já tem, com voz.
+	# Uma tela por evento seria um clique a cada coisa que acontece — e o
+	# plano é explícito em que tela nova não pode mudar o ritmo do turno.
+	GameState.estrutura_comprada.connect(func(_id): _cida("upgrade_pronto"))
+	GameState.rival_offer_triggered.connect(func(_d): _cida("arlindo_indireto"))
+	GameState.reputation_changed.connect(_cida_reputacao)
+	GameState.cash_changed.connect(_cida_caixa)
+	GameState.turn_advanced.connect(_cida_semana)
 
 
 func _refresh_all() -> void:
@@ -421,6 +439,76 @@ func _on_message(text: String, kind: String) -> void:
 			_message_label.add_theme_color_override("font_color", COR_RUIM)
 		_:
 			_message_label.add_theme_color_override("font_color", COR_NEUTRA)
+
+
+# Uma linha da Dona Cida na faixa de mensagem. Ela NÃO tapa a mensagem do
+# sistema: quem chama isto chama-o depois do evento, e a mensagem do GameState
+# (que diz o que aconteceu em números) já passou. A fala dela é a leitura
+# humana por cima, não a substituição.
+func _cida(id: String) -> void:
+	var linha := Narrativa.cida(id)
+	if linha != "":
+		_on_message(linha, "")
+
+
+# A REPUTAÇÃO SÓ FALA QUANDO CRUZA UMA FAIXA, não a cada ponto. Ela mexe-se em
+# quase todo turno (±0,8 por barco), e uma fala por movimento seria a Dona Cida
+# a comentar ruído. A faixa qualitativa já existe em `reputation_label()` e é a
+# unidade em que o jogador pensa — "respeitado" virou "admirado" é notícia,
+# 71,2 virar 72,0 não é.
+var _faixa_reputacao := ""
+var _reputacao_vista := 0.0
+
+
+func _cida_reputacao(valor: float) -> void:
+	var faixa: String = GameState.reputation_label()
+	# A primeira chamada só regista onde a barra estava: sem um valor anterior
+	# não há direção nenhuma para anunciar.
+	if _faixa_reputacao == "":
+		_faixa_reputacao = faixa
+		_reputacao_vista = valor
+		return
+	if faixa != _faixa_reputacao:
+		# A DIREÇÃO SAI DO VALOR GUARDADO, não da barra corrente. A primeira
+		# versão comparava a reputação com ela própria, o que dá sempre falso —
+		# a Dona Cida teria dito "caiu" mesmo quando subia, e nada reprovaria.
+		_cida("reputacao_subiu" if valor > _reputacao_vista else "reputacao_caiu")
+		_faixa_reputacao = faixa
+	_reputacao_vista = valor
+
+
+# O aviso de caixa curto dispara UMA VEZ por travessia, não a cada centavo
+# abaixo da linha. Sem a memória do estado anterior ele repetir-se-ia em todo
+# turno enquanto o jogador estivesse apertado — que é justamente quando ele
+# menos precisa de ser lembrado.
+var _caixa_estava_curto := false
+
+
+func _cida_caixa(valor: int) -> void:
+	var curto: bool = valor < GameState.PARCELA_AMOUNT / 2
+	if curto and not _caixa_estava_curto:
+		_cida("caixa_baixo")
+	_caixa_estava_curto = curto
+
+
+var _semana_vista := 0
+
+
+func _cida_semana(_turno: int, semana: int) -> void:
+	if semana == _semana_vista:
+		return
+	# A semana 1 não é "semana nova": é a primeira, e o jogador acabou de ler o
+	# diário. A fala é sobre voltar ao trabalho, não sobre começar.
+	if _semana_vista > 0:
+		_cida("semana_nova")
+	_semana_vista = semana
+
+
+func _on_semana_fechada(resumo: Dictionary) -> void:
+	# O boletim é a única tela que abre sozinha durante o jogo. Abre no fecho
+	# da semana, que já é um momento de pausa — o turno acabou de virar e não
+	# há decisão pendente. Abrir a meio de um turno seria interromper.
+	_abrir_painel(PainelBoletimScene).setup(resumo)
 
 
 func _on_advance_pressed() -> void:
