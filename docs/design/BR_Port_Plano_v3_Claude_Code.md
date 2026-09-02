@@ -206,6 +206,14 @@ refazer arte.
 29 MB, `arm64-v8a`, assinado em debug com chave gerada na hora; o Web sai ao
 lado. Os dois ficam na aba **Actions** da corrida, em **Artifacts**.
 
+**E o item já se pagou.** A PRIMEIRA instalação num telefone real achou três
+defeitos que nenhum teste daqui podia ver — o jogo abria DEITADO (a orientação
+era a string do Godot 3, que o exportador lê como `0` = paisagem), o botão
+Voltar do Android FECHAVA A APLICAÇÃO, e o ícone na gaveta era o robô do Godot.
+Os três estão corrigidos e trancados por teste. É a justificação deste item,
+medida em vez de argumentada: dez minutos num aparelho contra quatro blocos de
+CI verde.
+
 ⚠️ **O export Android falhou primeiro, e com a lista de erros VAZIA.** De uns
 vinte testes de configuração do Godot, só o do ETC2/ASTC reprova sem escrever
 mensagem nenhuma — e ele depende do SISTEMA em que se exporta, passando num Mac
@@ -712,7 +720,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | # | Trilha | Entrega | Gate humano |
 |---|---|---|---|
 | 1 | B1 | Arranque de sessão automático | — |
-| 2 | **A1** | **Build no telefone** | **Jogar dez minutos** |
+| 2 | **A1** | **Build no telefone** ✅ máquina · instalado 02/09 | **Jogar dez minutos** ⏳ |
 | 3 | A2 | Números com fonte única + Parcelas 2/3 verificadas | Só se a conta não fechar |
 | 4 | B2 | ~~`/balancear`~~, ~~`/fechar-sessao`~~ · falta `/arte` | — |
 | 5 | **A3** | **Reputação com efeito** | **Escolher o caminho — bloqueia** |
