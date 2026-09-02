@@ -249,3 +249,134 @@ jobs:
           set -euo pipefail
           python3 tools/projetar_parcelas.py \
             --medicao /tmp/medicao.json --constantes /tmp/constantes.json
+
+  # ── A BUILD QUE SAI DAQUI E VAI PARA UM TELEFONE ──
+  #
+  # Item A1 do plano v3, e o único do plano ANTIGO que estava marcado para a
+  # semana 6 e nunca foi feito. Até 02/09 o jogo nunca tinha corrido fora de um
+  # contêiner: `export_presets.cfg` estava no `.gitignore` de `brport_vs/`, o CI
+  # não exportava nada, e tudo o que se sabia sobre o comportamento dele num
+  # telefone era dedução a partir do `gl_compatibility` e do retrato travado.
+  #
+  # POR QUE O APK SÓ SE CONSTRÓI AQUI: o contêiner de desenvolvimento não
+  # alcança `dl.google.com` — o proxy de egresso responde 403 por política, e
+  # está medido. Sem o SDK do Android não há `apksigner` nem `adb`, e o Godot
+  # recusa o export. O runner do GitHub já traz o SDK e o JDK, então é aqui que
+  # o telefone é servido. O export Web, esse, roda em qualquer lado e foi
+  # verificado no contêiner antes deste job existir.
+  #
+  # Job SEPARADO da suíte de propósito: um export que quebre não pode apagar o
+  # sinal dos testes, que é o que diz se o JOGO está bem.
+  build-telefone:
+    name: Export — APK e Web
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Ler a versão do Godot
+        run: |
+          V=$(tr -d '[:space:]' < .godot-version)
+          echo "GODOT_VERSION=$V" >> "$GITHUB_ENV"
+          # As definições do editor vivem num arquivo com a versão MAIOR.MENOR
+          # no nome (editor_settings-4.6.tres), não a de correção.
+          echo "GODOT_MINOR=${V%.*}" >> "$GITHUB_ENV"
+
+      - name: Reaproveitar o Godot e os templates já baixados
+        id: cache-export
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot-bin
+            ~/.local/share/godot/export_templates
+          key: godot-export-${{ env.GODOT_VERSION }}-linux-x86_64
+
+      - name: Baixar o Godot e os templates de export
+        if: steps.cache-export.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p ~/godot-bin
+          curl -sSL --retry 3 -o /tmp/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot-bin
+          chmod +x ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+          # ~1,2 GB. É a razão de o cache cobrir os dois juntos: sem ele, cada
+          # corrida gastaria mais tempo a baixar do que a exportar.
+          curl -sSL --retry 3 -o /tmp/templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          mkdir -p /tmp/tpl "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          unzip -q /tmp/templates.tpz -d /tmp/tpl
+          cp /tmp/tpl/templates/* "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
+
+      - name: Preparar a assinatura de debug e apontar o SDK
+        # O APK vai ASSINADO EM DEBUG, e é de propósito: o alvo deste item é um
+        # telefone do Bruno, não a loja. Chave de release exigiria um segredo no
+        # repositório para um APK que ninguém publica — e o `export_presets.cfg`
+        # versionado deixa os campos de keystore VAZIOS justamente para nenhuma
+        # chave passar por ele.
+        run: |
+          set -euo pipefail
+          KEYDIR="$HOME/.local/share/godot/keystores"
+          mkdir -p "$KEYDIR"
+          keytool -keyalg RSA -genkeypair -alias androiddebugkey \
+            -keypass android -keystore "$KEYDIR/debug.keystore" \
+            -storepass android -dname "CN=Android Debug,O=Android,C=US" \
+            -validity 9999 -deststoretype pkcs12
+
+          # Uma corrida em vazio para o Godot escrever as definições padrão do
+          # editor; depois só se corrigem os dois caminhos. Escrever o arquivo
+          # inteiro à mão prenderia esta receita ao formato de uma versão.
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --quit --editor --path brport_vs 2>/dev/null || true
+
+          CFG="$HOME/.config/godot/editor_settings-${GODOT_MINOR}.tres"
+          test -f "$CFG" || { echo "::error::não achei $CFG"; exit 1; }
+          sed -i "s|^export/android/android_sdk_path = .*|export/android/android_sdk_path = \"${ANDROID_SDK_ROOT}\"|" "$CFG"
+          sed -i "s|^export/android/debug_keystore = .*|export/android/debug_keystore = \"${KEYDIR}/debug.keystore\"|" "$CFG"
+          grep -E '^export/android/(android_sdk_path|debug_keystore|java_sdk_path)' "$CFG"
+
+      - name: Importar o projeto
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --import
+
+      - name: Exportar a build Web
+        run: |
+          set -euo pipefail
+          mkdir -p build/web
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --export-release "Web" ../build/web/index.html
+          test -s build/web/index.pck || { echo "::error::o .pck do Web saiu vazio."; exit 1; }
+          ls -la build/web
+
+      - name: Exportar o APK
+        run: |
+          set -euo pipefail
+          mkdir -p build/android
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --export-debug "Android" ../build/android/brport.apk
+
+          # Um APK de zero byte é o que sai quando o export falha a meio sem
+          # devolver código de erro. Conferir o tamanho é a diferença entre um
+          # artefato e uma promessa.
+          test -s build/android/brport.apk || { echo "::error::o APK saiu vazio."; exit 1; }
+          ls -la build/android
+          echo "APK: $(du -h build/android/brport.apk | cut -f1)"
+
+      - name: Guardar o APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: brport-apk
+          path: build/android/brport.apk
+          if-no-files-found: error
+
+      - name: Guardar a build Web
+        uses: actions/upload-artifact@v4
+        with:
+          name: brport-web
+          path: build/web/
+          if-no-files-found: error

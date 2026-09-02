@@ -69,8 +69,8 @@ signal semana_fechada(resumo: Dictionary)
 # fica em 3,3/semana. A manutenção alta é o que faz essa diferença doer, porque
 # custo fixo pesa proporcionalmente muito mais em quem tem pouca vazão.
 const START_CASH := 400000
-const SALARY_PER_WORKER := 6000          # GDD "Margem operacional base": 2 trab. x R$100 = R$200/sem
-const MAINTENANCE_WEEKLY := 40000          # GDD "Margem operacional base": manutenção R$30/sem
+const SALARY_PER_WORKER := 6000          # TUNING sobre a linha "Margem operacional base" do GDD, reescalada
+const MAINTENANCE_WEEKLY := 40000        # TUNING sobre a mesma linha do GDD — o custo fixo que separa os perfis
 # O porto ABRE PARADO. Um píer de pé, o resto em ruína — é o que a herança do
 # avô do GDD descreve, e é a diferença entre "administrar um porto" e "levantar
 # um porto", que é a fantasia do jogo.
@@ -134,11 +134,13 @@ const PATIO_BONUS_PIER := 1.00          # TUNING
 const ESCRITORIO_DESCONTO_SALARIO := 0.50   # TUNING
 
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
-const PIER_RATE_PER_SLOT := 5000          # GDD "Margem operacional base": R$40/vaga -> R$240/sem
+const PIER_RATE_PER_SLOT := 5000        # GDD "Margem operacional base", reescalado: renda fixa semanal
 
-# GDD "Valor de contratos": Fase 1 = R$80–300. O VS respeita essa faixa —
-# o que faz a parcela caber não é inflar o barco, é a quantidade de turnos
-# (ver TURNS_PER_WEEK abaixo).
+# GDD "Valor de contratos". A FAIXA do GDD (R$80–300) é de antes da reescala
+# de 02/09 e não vale mais como valor absoluto; o que dela sobrevive é a
+# PROPORÇÃO — barco pequeno contra grande, e barco contra infraestrutura.
+# O que faz a parcela caber nunca foi inflar o barco: é a quantidade de
+# turnos (ver TURNS_PER_WEEK abaixo).
 const BOAT_VALUE_SMALL_MIN := 8000
 const BOAT_VALUE_SMALL_MAX := 20000
 const BOAT_VALUE_LARGE_MIN := 20000
