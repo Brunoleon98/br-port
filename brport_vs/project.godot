@@ -7,7 +7,24 @@ config_version=5
 
 config/name="BR Port VS"
 run/main_scene="res://scenes/Main.tscn"
+; Sem esta linha o APK vai para a gaveta do telefone com O ROBÔ DO GODOT — o
+; exportador resolve o ícone por "escolha no preset -> ícone do projeto -> o
+; padrão do motor", e o projeto não tinha nenhum dos dois. Gerado por
+; tools/gerar_icone_app.gd a partir do art/icones/doca.svg, que é a mesma
+; âncora da barra de HUD.
+config/icon="res://art/icone_app.png"
 config/features=PackedStringArray("4.6")
+; O BOTÃO VOLTAR DO ANDROID NÃO FECHA O JOGO.
+;
+; Por omissão fecha, e sem aviso: com o boletim da semana aberto, um toque em
+; Voltar matava a aplicação em vez de fechar o painel. O save é por turno, por
+; isso não se perdia a partida — perdia-se o turno, e a confiança.
+;
+; Quem decide o que Voltar faz é o `_notification` do Main.gd, que fecha o
+; painel de cima quando há um, e abre a pausa quando não há. Ele NUNCA fecha
+; painel de decisão pendente (a fase do GameState diz qual é), senão o jogo
+; ficaria à espera de uma resposta cujo painel deixou de existir.
+config/quit_on_go_back=false
 
 [autoload]
 
@@ -22,7 +39,22 @@ buses/default_bus_layout="res://audio/default_bus_layout.tres"
 
 window/size/viewport_width=720
 window/size/viewport_height=1280
-window/handheld/orientation="portrait"
+; RETRATO, E É UM INTEIRO — não a string "portrait".
+;
+; Isto saiu num APK real em 02/09 e o telefone abriu O JOGO DEITADO, numa
+; caixinha no meio da tela: `"portrait"` é o valor do Godot 3; na 4 a chave é
+; um enum (`DisplayServer.ScreenOrientation`) e o export do Android faz
+; `int(...)` dela. `int("portrait")` é **0**, que é LANDSCAPE — o manifesto do
+; APK foi escrito em paisagem, e o projeto dizia-se retrato havia cinco blocos.
+;
+; NADA reprovava: o valor é aceite, o jogo abre certo no PC (onde a janela é
+; criada com o tamanho da viewport e a orientação não se aplica), e nenhuma
+; das cinco suítes olhava para esta linha. Só um telefone podia mostrar isto —
+; que é exatamente o argumento do item A1 do plano.
+;
+; 1 = SCREEN_PORTRAIT. Travado, não `SENSOR_PORTRAIT`: o jogo é uma coluna de
+; 720x1280 e girar não lhe dá nada.
+window/handheld/orientation=1
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep"
 
@@ -47,3 +79,22 @@ renderer/rendering_method.mobile="gl_compatibility"
 ; que é onde o CI corre. Ou seja: o mesmo projeto exportava numa máquina e não
 ; noutra, e a mensagem de erro não distinguia os dois casos.
 textures/vram_compression/import_etc2_astc=true
+
+; A COR DAS BARRAS PRETAS, e elas são inevitáveis.
+;
+; O jogo é uma coluna fixa de 720x1280 (9:16) e o telefone de hoje é 9:20 ou
+; mais estreito ainda. Com `stretch/aspect="keep"` sobram ~240px em cima e
+; outros 240 em baixo num 1080x2400 — um quinto da tela. Medido, não estimado:
+; a captura a 1080x2400 sai com 1080x1920 de conteúdo.
+;
+; As alternativas foram TESTADAS e são piores. `keep_width` enche a tela mas
+; empurra tudo para cima e deixa um terço dela vazia em baixo, porque cada
+; elemento do Main.tscn está posicionado em absoluto a partir do topo e o mapa
+; é uma textura de 720x720 que não estica. `keep_height` corta pelos lados.
+; Encher uma tela alta a sério é trabalho de ARTE — um mapa mais alto —, não
+; de configuração, e não se faz às escondidas dentro de um conserto de bug.
+;
+; O que se pode fazer de graça é a barra deixar de ser PRETA. Nesta cor ela lê
+; como moldura do jogo; em preto lê como defeito. É a mesma do `Fundo` do
+; Main.tscn.
+environment/defaults/default_clear_color=Color(0.051, 0.102, 0.149, 1)

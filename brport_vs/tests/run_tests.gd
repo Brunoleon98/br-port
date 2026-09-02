@@ -58,6 +58,7 @@ func _fake_boat(value: int, op_turns: int, rival: bool) -> Dictionary:
 
 
 var _done := false
+var _t5g_completo := false
 
 
 # Os testes rodam no primeiro frame, não em _initialize(): dentro de
@@ -388,6 +389,15 @@ func _run() -> void:
 	_check("igualar fecha mesmo com reputacao zero",
 		GS.negotiate_rival("igualar") == "fechado")
 
+	print("=== T5g: o Voltar do Android fecha o painel, nao o jogo ===")
+	_t5g_botao_voltar()
+	# UM ERRO DE EXECUÇÃO ABORTA A FUNÇÃO E A SUÍTE PASSA NA MESMA — aconteceu
+	# ao escrever este bloco: uma chamada com o número errado de argumentos
+	# matou o T5g inteiro e a suíte imprimiu "TODOS OS TESTES PASSARAM" com as
+	# sete asserções por correr. A bandeira é posta na ÚLTIMA linha do bloco,
+	# então só fica verdadeira se ele chegou ao fim.
+	_check("o bloco T5g correu até ao fim", _t5g_completo)
+
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
 	var losses := 0
@@ -438,3 +448,71 @@ func _run() -> void:
 	else:
 		print("=== %d TESTE(S) FALHARAM ===" % _fails)
 	quit(_fails)
+
+
+# ── T5g ──────────────────────────────────────────────────────────────────
+# O BOTÃO VOLTAR SÓ EXISTE NO TELEFONE, e por isso viveu cinco blocos sem
+# ninguém lhe tocar: por omissão o Godot fecha a APLICAÇÃO nele. Com o boletim
+# da semana aberto, um toque em Voltar matava o jogo.
+#
+# Testa-se por notificação e não por evento de entrada de propósito: é assim
+# que o Godot entrega o Voltar (NOTIFICATION_WM_GO_BACK_REQUEST), e um teste
+# que simulasse um toque estaria a testar outra coisa.
+func _t5g_botao_voltar() -> void:
+	_fresh_playing()
+	var main = load("res://scenes/Main.tscn").instantiate()
+	root.add_child(main)
+	var camada: CanvasLayer = main.get_node("Overlay")
+
+	# 1. Painel dispensável, em "playing": fecha.
+	var boletim = load("res://scenes/panels/PainelBoletim.tscn").instantiate()
+	camada.add_child(boletim)
+	boletim.setup(GS.resumo_da_semana(1))
+	main.notification(main.NOTIFICATION_WM_GO_BACK_REQUEST)
+	# O `_fechar()` chama `queue_free()`, que só age no fim do frame — quem
+	# pergunta antes disso vê o nó ainda lá. `is_queued_for_deletion()` é a
+	# pergunta certa, e é a diferença entre este teste medir alguma coisa e
+	# passar sempre.
+	_check("Voltar fecha o boletim", boletim.is_queued_for_deletion())
+
+	# 2. A tela dos nomes RECUSA: fechá-la batiza o cais, e isso não se faz
+	#    por engano. É o caso que justifica a bandeira existir.
+	var nomes = load("res://scenes/panels/TelaNomes.tscn").instantiate()
+	camada.add_child(nomes)
+	main.notification(main.NOTIFICATION_WM_GO_BACK_REQUEST)
+	_check("Voltar NAO fecha a tela dos nomes", not nomes.is_queued_for_deletion())
+	camada.remove_child(nomes)
+	nomes.free()
+
+	# 3. Decisão pendente: o painel fica. Fechá-lo deixaria a fase de pé sem
+	#    nada na tela para a resolver — travamento silencioso.
+	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE
+	GS._set_phase("rival_offer")
+	var oferta = load("res://scenes/panels/CounterOfferPanel.tscn").instantiate()
+	camada.add_child(oferta)
+	oferta.setup(0)
+	main.notification(main.NOTIFICATION_WM_GO_BACK_REQUEST)
+	_check("Voltar NAO fecha a oferta do rival", not oferta.is_queued_for_deletion())
+	_check("e nao muda a fase", GS.phase == "rival_offer")
+	GS.resolve_rival_offer(true)
+
+	# 4. Sem painel nenhum: abre a pausa, em vez de fechar o jogo.
+	for filho in camada.get_children():
+		camada.remove_child(filho)
+		filho.free()
+	main.notification(main.NOTIFICATION_WM_GO_BACK_REQUEST)
+	_check("Voltar sem painel abre a pausa (e nao fecha o jogo)",
+		camada.get_child_count() == 1)
+
+	root.remove_child(main)
+	main.free()
+
+	# E a definição que faz tudo isto valer: com `quit_on_go_back` ligado, o
+	# Godot fecha a aplicação ANTES de o `_notification` acima correr, e os
+	# quatro casos de cima passariam a testar código morto.
+	_check("quit_on_go_back esta desligado",
+		ProjectSettings.get_setting("application/config/quit_on_go_back") == false)
+
+	_t5g_completo = true
