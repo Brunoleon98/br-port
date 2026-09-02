@@ -74,15 +74,44 @@ VILA_PROF = 1.35         # profundidade da casa em mx
 VILA_PASSO = 1.95        # de uma casa à seguinte, em my
 
 C = {
-    "agua": "#2b6f8c", "agua_funda": "#1d4f68", "agua_media": "#33789a",
-    "agua_rasa": "#4a96b4", "agua_baixio": "#63aec7", "espuma": "#b6dcea",
+    # ÁGUA TROPICAL — Etapa 1 do plano de arte (A5), em 02/09. Os valores da
+    # água RASA saem AMOSTRADOS das imagens de referência, pela tabela de
+    # paleta de `docs/design/referencias/README.md`: turquesa #3fb6cf–#57c6dc.
+    # O mapa era de mar frio (#4a96b4 rasa, #1d4f68 funda) num jogo cuja
+    # referência é o litoral brasileiro, e o README chama a troca de "o ajuste
+    # mais barato e mais visível" que existe.
+    #
+    # ⚠️ TROCAR SÓ O MATIZ ACHATOU A ÁGUA, e foi preciso olhar a captura
+    # ampliada para ver. Pôr os dois valores amostrados nas duas pontas
+    # (#1b7fa8 funda, #57c6dc baixio) comprimiu a rampa de profundidade de
+    # 89,7 para 67,3 de luminância — 25% a menos — e o mar virou uma chapa
+    # turquesa. A espuma piorou junto: traço claro sobre água ESCURA
+    # contrastava, sobre água CLARA não, e o contraste de Weber caiu de 0,57
+    # para 0,46 ainda que a diferença absoluta quase não mudasse.
+    #
+    # A correção mantém a amostragem ONDE ELA VALE — a referência mostra a
+    # água rasa junto ao cais, que é o que ela enquadra — e estende a rampa
+    # para baixo na água funda, no mesmo matiz ciano. O #1b7fa8 amostrado
+    # passou a ser a faixa MÉDIA. Amplitude final 99,4 (era 89,7 no mar frio),
+    # Weber da espuma 0,56 (era 0,57): tropical no matiz, e com mais
+    # profundidade do que antes em vez de menos.
+    "agua": "#0d4d6b", "agua_funda": "#0f5a7d", "agua_media": "#1b7fa8",
+    "agua_rasa": "#3fb6cf", "agua_baixio": "#57c6dc", "espuma": "#eafaff",
     "pedra": "#5a666b", "pedra_clara": "#7c888e", "pedra_media": "#6b767b",
-    "sombra_agua": "#12384c",
+    # A sombra sob o muro do cais acompanha a água: escura o bastante para o pé
+    # do cais continuar a assentar, no matiz novo. No matiz antigo ela lia como
+    # uma mancha cinza sobre turquesa.
+    "sombra_agua": "#093a52",
     "cais_topo": "#b9c2c8", "cais_dir": "#76828a", "cais_esq": "#8e9aa2",
     "cais_junta": "#9aa5ac", "cais_mancha": "#a8b2b8",
     "asfalto": "#6f7b85", "madeira": "#9a6438", "madeira_dir": "#633d20",
-    "madeira_esq": "#7a4d2a", "telhado": "#c85420", "parede": "#eef2f5",
-    "parede_dir": "#b3bfc7", "parede_esq": "#cfd8de", "verde": "#2d7a3a",
+    "madeira_esq": "#7a4d2a", "telhado": "#c85420", "parede": "#f2e6cf",
+    # PAREDE CREME, não branco frio. Amostrado: #f2e6cf. O #eef2f5 anterior era
+    # azulado, e num porto tropical isso puxava o prédio para o mesmo cinza do
+    # cais. As duas faces sombreadas seguem os mesmos fatores do `_sombrear`
+    # que as casas da vila já usavam (0,80 e 0,91), para prédio e casa
+    # receberem a mesma luz.
+    "parede_dir": "#c1b8a6", "parede_esq": "#dcd1bc", "verde": "#3e8f3a",
     "vidro": "#7fb6cc", "porta": "#5a3a20", "terra": "#8a7a63",
     "terra_clara": "#9c8b71", "terra_escura": "#75664f", "poca": "#6b6f66",
     "mato": "#5c7343", "asfalto_claro": "#7d8993", "asfalto_escuro": "#616c76",
@@ -91,7 +120,11 @@ C = {
     # perto de 40% do enquadramento sem nada em cima. Um porto não tem
     # estacionamento de oito unidades atrás das casas — tem mato.
     "solo": "#7b8f52", "solo_claro": "#8ba05f", "solo_escuro": "#67793f",
-    "mangue": "#425f3c", "mangue_raiz": "#5a4a34", "capim": "#94a962",
+    # O capim é o REALCE da vegetação, e é a resposta à linha "sem realce" da
+    # tabela de paleta: a referência traz #3e8f3a com #6fbf4e por cima, e a
+    # vegetação do mapa era um verde só. O capim já era o traço mais claro do
+    # solo — passou a ser claro o bastante para se ver.
+    "mangue": "#425f3c", "mangue_raiz": "#5a4a34", "capim": "#6fbf4e",
     "tinta": "#e0a81f",
     # A via ficou MAIS ESCURA que o pátio em 31/08. Antes era #5f6a73 contra o
     # #6f7b85 do pátio — dois cinzas a um passo um do outro, que na tela viravam
@@ -99,7 +132,11 @@ C = {
     # o chão que sobrou. O meio-fio (`meiofio`) faz o resto do trabalho.
     "asfalto_via": "#49535b", "calcada": "#aeb8bf", "faixa_via": "#e6ebee",
     "meiofio": "#8d979e",
-    "casa_a": "#e8e2d4", "casa_b": "#dcd3c2", "casa_c": "#cfd8de",
+    # "cada casa de uma cor", diz a leitura da referência. A `casa_c` era
+    # #cfd8de — o mesmo azul-acinzentado da parede antiga, de modo que um terço
+    # da vila lia como concreto. Virou verde-água claro, que é cor de casa de
+    # litoral e não repete nenhuma das outras duas.
+    "casa_a": "#f0e7d3", "casa_b": "#e6d5b8", "casa_c": "#cfe0d2",
     "telha_a": "#b1512a", "telha_b": "#9d6a3c", "telha_c": "#7f8c98",
     "telha_d": "#a05a52",
 }

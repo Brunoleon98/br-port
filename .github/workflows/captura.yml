@@ -116,6 +116,12 @@ jobs:
         # O atrito real do artefato é ter de o baixar para saber se vale a pena
         # olhar. Esta tabela responde a "mudou alguma coisa?" sem download
         # nenhum; o zip fica para quando a resposta é sim.
+        #
+        # `tee -a` e não `>>`: a tabela ia SÓ para o resumo, e quem lesse o log
+        # da corrida via a comparação rodar e não via o resultado dela. Custou
+        # duas leituras de log a inferir o veredito pelos tamanhos dos arquivos
+        # antes de alguém reparar que a linha que interessa não estava em lado
+        # nenhum do log. Um relatório que existe num sítio só é meio relatório.
         if: ${{ !cancelled() }}
         run: |
           set -euo pipefail
@@ -148,7 +154,7 @@ jobs:
             fi
             echo
             echo "Baixe o artefato **brport-captura** para ver as imagens."
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Guardar as imagens
         # SOBE MESMO QUE UM PASSO ANTERIOR TENHA FALHADO, pela lição do export:

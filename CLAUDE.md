@@ -256,6 +256,15 @@ tranca isso.
 - **O que troca de estado numa partida não pode estar assado no fundo.** Píer,
   armazém, escritório e pátio são props ou mapas alternativos. A vila é a
   exceção, e de propósito: ela troca entre FASES, não entre turnos.
+- **Trocar cor olhando só o MATIZ achata a imagem.** Em 02/09 a água passou de
+  mar frio a turquesa tropical com valores amostrados da referência, e ficou
+  bonita e chapada: pôr as duas pontas amostradas nas duas pontas da rampa
+  comprimiu a separação de luminância entre água funda e baixio em 25%, e a
+  espuma — traço claro que contrastava sobre água escura — perdeu um quinto do
+  contraste de Weber sobre água clara. **Ao trocar uma paleta, meça a
+  amplitude de luminância antes e depois**, e lembre que o contraste que o olho
+  vê é razão e não diferença. Na captura inteira nada disso aparecia; a 3× de
+  ampliação era evidente.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
