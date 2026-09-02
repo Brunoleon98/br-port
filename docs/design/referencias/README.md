@@ -83,6 +83,21 @@ O que cresce, na ordem em que cresce:
 tropical e quente; o nosso mapa é de mar frio. São constantes no dicionário
 `C` de `tools/gerar_mapa_iso.py`.
 
+> ✅ **A ÁGUA, A PAREDE, A VEGETAÇÃO E AS CASAS foram trocadas em 02/09**
+> (Etapa 1 do plano de arte). A tabela acima continua a ser o alvo; a coluna
+> "o projeto hoje" descreve o mapa ANTES dessa passagem.
+>
+> Uma ressalva que a tabela não podia prever: os dois valores de água,
+> aplicados literalmente nas duas pontas da rampa de profundidade, **achatam o
+> mar** — a referência enquadra a água rasa junto ao cais, e o nosso mapa tem
+> muito mais água funda do que ela mostra. A amostragem vale onde ela foi
+> feita, e a rampa foi estendida para baixo no mesmo matiz. O plano de arte
+> traz os números.
+>
+> ⏳ **A AREIA continua por fazer**, e depende desta pasta receber as imagens:
+> a costa do mapa é cais de pedra de ponta a ponta, e decidir onde a praia cabe
+> é decisão de desenho que não se toma sem olhar a referência.
+
 ### Personagens
 
 Trabalhadores em proporção **chibi** (≈3 cabeças), com **rosto desenhado**,

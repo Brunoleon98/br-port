@@ -122,6 +122,40 @@ verificável — o teste de design e a folha de contato dizem se ficou.
   garante que os dois voltam a bater).
 - **Mede-se por:** captura antes/depois lado a lado.
 
+#### ✅ A PALETA está feita (02/09). O enquadramento e a areia, não.
+
+**Feito:** água, parede, vegetação e casas da vila, com os valores amostrados
+da tabela de paleta do `docs/design/referencias/README.md`. O mapa era de mar
+frio (`#4a96b4` rasa, `#1d4f68` funda) num jogo cujo cenário é o litoral
+brasileiro. Nenhuma coordenada mudou, então **a tabela de âncoras saiu idêntica**
+— era esse o compromisso de não tocar na projeção.
+
+⚠️ **E trocar só o MATIZ achatou a água, o que só se viu ampliando a captura.**
+Pôr os dois valores amostrados nas duas pontas da rampa comprimiu a separação
+de luminância entre água funda e baixio de **89,7 para 67,3** — 25% a menos — e
+o mar virou uma chapa turquesa bonita e sem profundidade. A espuma foi junto:
+traço claro sobre água ESCURA contrasta, sobre água CLARA não, e o contraste de
+Weber caiu de **0,57 para 0,46** embora a diferença absoluta quase não mudasse.
+Na captura inteira isso passava; ampliado a 3×, era evidente.
+
+A correção manteve a amostragem **onde ela vale** — a referência enquadra a
+água rasa junto ao cais — e estendeu a rampa para baixo na água funda, no mesmo
+matiz ciano. Fim: amplitude **99,4** (mais do que os 89,7 do mar frio) e Weber
+**0,56**. Tropical no matiz e com mais profundidade do que antes, em vez de
+menos.
+
+**A faixa de areia NÃO foi feita, e não por esquecimento.** A costa deste mapa é
+cais de pedra com enrocamento de ponta a ponta — não existe margem natural onde
+uma praia caiba. Pôr areia exige decidir ONDE: fundo de areia visto através da
+água rasa, ou um trecho de costa que deixa de ser cais? É decisão de desenho, e
+**as cinco imagens de referência ainda não estão no repositório** (ver o aviso
+no topo de `docs/design/referencias/README.md`), então não há como consultá-las.
+Fica para quando elas entrarem pelo Git.
+
+**O `MEIA_LARG` também não.** É a metade arriscada da etapa: muda a projeção,
+obriga a regerar todos os props em Blender (~1 GB de `bpy`) e a reconciliar o
+teste de design. Merece a sua própria passagem.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

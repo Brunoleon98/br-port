@@ -28,6 +28,12 @@ para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada u
 muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
 saem de ruína para telhado novo.
 
+**A água é tropical desde 02/09.** O mapa era de mar frio (`#4a96b4`) num jogo
+cujo cenário é o litoral brasileiro; a paleta passou a turquesa com os valores
+amostrados das imagens de referência — primeira metade da Etapa 1 do plano de
+arte. O enquadramento (`MEIA_LARG`) e a faixa de areia continuam por fazer, e o
+plano de arte diz por quê.
+
 **O jogo é TRANQUILO, e os valores são realistas** (02/09). Medido em 600
 partidas por perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a
 mediana do mediano em R$685.271 contra uma parcela de R$550.000. Um contrato
@@ -76,7 +82,7 @@ de máquina do A1 (APK e build Web a cada push), e duas das três skills do B2.
 |---|---|---|
 | **A1** | Jogar dez minutos no APK | O jogo já rodou num telefone e a primeira instalação achou três defeitos que nenhum teste daqui podia ver. Os três estão corrigidos e trancados por teste; a segunda passagem vale o mesmo preço |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | Não começou. O CI já anexa as cinco imagens a cada PR, então a olhada deixou de custar uma sessão |
+| **A5** | Olhar cada antes/depois da arte | **A Etapa 1 começou** — a paleta do mapa passou a tropical, com valores amostrados da referência. Falta o seu olho. As outras cinco etapas esperam |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 **Livres, sem gate:** a `/arte` que falta ao B2 — e o plano diz para a adiar
