@@ -41,12 +41,20 @@ $G --headless --path brport_vs --script res://tools/simular_balanceamento.gd \
    -- 600 20260825 /tmp/antes.json | tee /tmp/antes.txt
 ```
 
-**600, e a mesma semente.** As 30 partidas do CI são teste de fumaça: têm ±18
-pontos de margem, e comparar 36,7% com 47,3% é comparar sorteio. O próprio
-simulador avisa quando a amostra é curta demais.
+**600, e a mesma semente.** As 30 partidas que o `testes.yml` roda a cada push
+são teste de fumaça: têm ±18 pontos de margem, e comparar 36,7% com 47,3% é
+comparar sorteio. O próprio simulador avisa quando a amostra é curta demais.
 
-Isto demora minutos. Rode em segundo plano e trabalhe noutra coisa enquanto
-corre — não fique a olhar.
+**Medido em 02/09: as 600 partidas levam 26 segundos.** Esta skill dizia
+"demora minutos" e mandava rodar em segundo plano; não é preciso. O custo nunca
+foi o motivo de a medição ficar fora de cada PR — o motivo é o ruído, que um
+número com ±4 pontos anexado a todo PR convida a ler como regressão.
+
+Há também `.github/workflows/balanceamento.yml`, que roda estas mesmas 600 às
+segundas e sob demanda (Actions → Balanceamento → Run workflow), e deixa a
+leitura na página da corrida. **Ele não substitui esta skill:** ele mede o que
+está na main, e o que se quer aqui é o antes/depois de uma constante que ainda
+não foi empurrada.
 
 ---
 

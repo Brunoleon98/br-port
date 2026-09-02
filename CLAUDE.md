@@ -46,6 +46,8 @@ $G --headless --path brport_vs --script res://scripts/validation/asset_validator
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
 
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as cinco de uma vez
+
 # Blender como biblioteca Python (~1 GB, minutos)
 pip install "bpy==4.5.0"                                      # precisa de Python 3.11
 python3 tools/gerar_props_iso.py brport_vs/art/props [prop ...]
@@ -122,7 +124,16 @@ Teste e import rodam sem tela.
    de ±18 pontos — comparar aquele número com estes é comparar sorteio.
    O próprio simulador avisa quando a rodada é curta demais para medir.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
-   ficou bonito. E ao recortar a captura para conferir um detalhe, lembre que
+   ficou bonito. O CI já anexa as cinco a cada PR (artefato `brport-captura`) e
+   diz na página da corrida qual mudou — mas dizer que mudou não é dizer que
+   ficou bom, e essa parte continua a ser de quem olha.
+   **Captura só se compara com semente E passo de tempo fixos.** É o que o
+   `tools/capturar_evidencia.sh` faz, e as duas fazem falta: com a semente
+   sozinha, duas corridas do MESMO código davam 1.030 pixels diferentes,
+   porque os tweens em laço andam por *delta* e não por frame. Quem tirar a
+   captura à mão sem `--fixed-fps 60` tem uma foto para olhar, não uma para
+   comparar.
+   E ao recortar a captura para conferir um detalhe, lembre que
    **o mapa não começa no topo da tela**: `MapaWrap` tem `offset_top = 62`, e
    as coordenadas que saem da projeção são do MAPA. Somar os 62 é a diferença
    entre olhar o prop e olhar o telhado ao lado dele — três recortes já foram
@@ -151,6 +162,10 @@ Teste e import rodam sem tela.
    arquivo da corrida antiga. Nos dois casos o validador "passou" sem nunca ter
    visto defeito nenhum — que é pior do que não o ter testado, porque agora há
    confiança.
+   **E confira o `$?` do comando certo.** Em 02/09 um defeito injetado reprovou
+   como devia e o `$?` deu 0: a corrida acabava em `| tail -3`, e o que se
+   estava a medir era o `tail`. Redirecione para arquivo e leia o código de
+   saída antes de olhar a saída — num cano, o `$?` é do último elo.
    **E o defeito pode pegar e o teste passar na mesma.** Aconteceu em 02/09:
    tirar `tests/*` do filtro de export não reprovou nada, porque o teste
    perguntava `contains("tests/*")` e o `scenes/tests/*` que ficou no arquivo

@@ -1,0 +1,151 @@
+name: Balanceamento
+
+# A MEDIÇÃO DE VERDADE, fora do caminho de cada PR. Item B3 do plano v3.
+#
+# O `testes.yml` roda 30 partidas por perfil. Isso é teste de FUMAÇA — prova
+# que o simulador não quebrou junto com o `GameState` — e não serve para medir:
+# a margem é de ±18 pontos, e já custou uma investigação inteira quando 36,7%
+# foi lido como regressão contra os 47,3% registrados, sendo a mesma medida.
+#
+# Aqui rodam 600 por perfil, que é onde a margem cai para ±4. Semanal em vez de
+# a cada PR, e a razão NÃO é o custo: medido no contêiner, as 600 partidas
+# levam 26 segundos. A razão é o ruído — um número com ±4 pontos anexado a
+# todo PR convida a ler sorteio como regressão, que é exatamente o erro que
+# esta ferramenta existe para evitar.
+#
+# O que este workflow REPROVA é o que não depende de julgamento: o simulador
+# chegar ao fim, nenhuma partida travar, e o modelo das Parcelas 2 e 3
+# reconstruir a semana em regime que acabou de ser medida. As taxas de vitória
+# ele publica e não julga — o alvo (100% / 79,5% / 35,7%) vive em
+# `docs/decisoes/005` e no `CLAUDE.md`, e cravá-lo aqui seria dar-lhe um
+# terceiro endereço para envelhecer.
+
+on:
+  schedule:
+    # Segunda-feira, 06:00 UTC — 03:00 em Brasília, longe de qualquer sessão.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      partidas:
+        description: "Partidas por perfil"
+        default: "600"
+      semente:
+        description: "Semente do sorteio"
+        default: "20260825"
+
+jobs:
+  medir:
+    name: 600 partidas por perfil
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Ler a versão do Godot
+        run: echo "GODOT_VERSION=$(tr -d '[:space:]' < .godot-version)" >> "$GITHUB_ENV"
+
+      - name: Reaproveitar o Godot já baixado
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ~/godot-bin
+          key: godot-${{ env.GODOT_VERSION }}-linux-x86_64
+
+      - name: Baixar o Godot
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p ~/godot-bin
+          curl -sSL --retry 3 -o /tmp/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot-bin
+          chmod +x ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: Importar o projeto
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --import
+
+      - name: Despejar as constantes do GameState
+        run: |
+          set -euo pipefail
+          mkdir -p medicao
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs \
+            --script res://tools/despejar_constantes.gd -- "$PWD/medicao/constantes.json" \
+            2>&1 | tee medicao/constantes.txt
+
+          # A linha de sucesso, não o código de saída: um erro de compilação do GDScript sai
+          # com 0 sem rodar nada.
+          grep -q "CONSTANTES OK" medicao/constantes.txt || {
+            echo "::error::O despejo das constantes não chegou ao fim."; exit 1; }
+
+      - name: Medir
+        run: |
+          set -euo pipefail
+          PARTIDAS="${{ github.event.inputs.partidas || '600' }}"
+          SEMENTE="${{ github.event.inputs.semente || '20260825' }}"
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs \
+            --script res://tools/simular_balanceamento.gd \
+            -- "$PARTIDAS" "$SEMENTE" "$PWD/medicao/medicao.json" \
+            2>&1 | tee medicao/leitura.txt
+
+          grep -q "=== Leitura ===" medicao/leitura.txt || {
+            echo "::error::O simulador não chegou ao fim."; exit 1; }
+
+          # PARTIDA QUE NÃO TERMINA É REPROVAÇÃO. Uma fase nova no GameState
+          # que bloqueie o turno faz o laço girar até ao limite de segurança, e
+          # a medição inteira sai errada com a corrida verde. Já aconteceu.
+          #
+          # `if`, e não `grep ... && exit 1`: numa lista `&&` sob `set -e` o
+          # caso BOM (o grep não achar nada) é o que devolve 1, e o passo
+          # arriscava reprovar justamente quando estava tudo certo.
+          if grep -q "possível travamento" medicao/leitura.txt; then
+            echo "::error::Partidas não terminaram — alguma fase nova bloqueia o turno."
+            exit 1
+          fi
+
+      - name: Conferir o modelo das Parcelas 2 e 3
+        # Contra as 600 partidas o erro do modelo fica abaixo de 1,2%, contra
+        # os 2% que as 30 do CI permitem. É a versão apertada da mesma guarda.
+        run: |
+          set -euo pipefail
+          python3 tools/projetar_parcelas.py \
+            --medicao medicao/medicao.json --constantes medicao/constantes.json \
+            2>&1 | tee medicao/parcelas.txt
+
+      - name: Publicar a leitura na página da corrida
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Balanceamento medido"
+            echo
+            echo '```'
+            # Do cabeçalho do simulador até ao fim. O que vem antes é o
+            # carregamento do Godot, e as tabelas não têm marcador próprio
+            # para se cortar mais fino sem prender esta receita ao formato
+            # da saída.
+            # `|| true` porque um passo anterior que falhe deixa o arquivo sem
+            # o cabeçalho, e o resumo não deve empilhar uma segunda reprovação
+            # por cima da que interessa.
+            sed -n '/^=== BR Port VS/,$p' medicao/leitura.txt \
+              | grep -v '^\(WARNING\|ERROR\|   at:\)' || true
+            echo '```'
+            echo
+            echo "O alvo registrado é 100% / 79,5% / 35,7% (\`docs/decisoes/005\`),"
+            echo "com margem de ±4 pontos a 600 partidas. Este passo não julga a"
+            echo "medição — publica-a."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Guardar a medição
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: brport-balanceamento
+          path: medicao/
+          if-no-files-found: error

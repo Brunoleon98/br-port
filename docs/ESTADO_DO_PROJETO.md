@@ -3,10 +3,9 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 02/09/2026 (o jogo saiu do contêiner E rodou num
-> telefone de verdade. A primeira instalação achou três defeitos que nenhum
-> teste daqui podia ver — orientação, botão Voltar e ícone — os três já
-> corrigidos e na main)
+> **Última atualização:** 02/09/2026 (o CI passou a mostrar o que ficou, e não
+> só que nada quebrou: cada PR leva cinco imagens do jogo e uma linha dizendo
+> qual delas mudou. Antes disto, ver o porto custava abrir uma sessão)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 > Para saber **o que fazer a seguir e quem faz o quê**, o plano é
@@ -57,6 +56,44 @@ a cada Fase, sem o jogo precisar saber.
 ---
 
 ## Onde estamos no roadmap
+
+**O CI PASSOU A MOSTRAR O QUE FICOU** (02/09) — item B3, fechado. Até aqui o CI
+provava que nada tinha quebrado e não mostrava nada: para ver o porto era
+preciso abrir uma sessão e rodar a captura na mão. Agora cada PR leva o
+artefato `brport-captura` com cinco imagens — tela inicial, porto reconstruído,
+Boletim Financeiro, menu de pausa e a folha de contato dos ícones — e, quando é
+pull request, o job fotografa **também o commit-base** e escreve na página da
+corrida qual das cinco mudou. É a metade de máquina do gate do A5, que é
+literalmente *olhar cada antes/depois*.
+
+⚠️ **Para o antes/depois valer, a foto teve de virar função só do código — e
+isso exigiu DUAS coisas, não uma.** A semente fixa o mundo sorteado (e vem
+antes do `new_game()`, que já sorteia a mão inicial — a mesma armadilha que o
+simulador documenta). Não chegou: medido, duas corridas do mesmo código com a
+mesma semente ainda davam **1.030 pixels diferentes**, porque os tweens em laço
+— o balanço do barco, a lança do guindaste, o pulso do cartão — andam por
+*delta* e não por frame. Com `--fixed-fps 60`, dois clones independentes do
+repositório produzem PNGs **byte a byte idênticos**.
+
+⚠️ **E a foto do porto saía com o Boletim Financeiro tapando o mapa inteiro.**
+Com a semente fixa, doze turnos calham num fim de semana e o painel abre; a
+imagem chamava-se "porto" e mostrava uma tabela, sem um `push_error` sequer a
+denunciá-la. O `capturar_tela.gd` passou a imprimir quantos painéis estão por
+cima, e `tools/capturar_evidencia.sh` exige zero nos tiros do mapa e um no do
+menu de pausa. O boletim virou o quinto tiro, de propósito. A outra guarda é
+para a tela chapada, que também é um PNG válido: medido, uma imagem de cor
+única pesa 2,7–4,5 KB contra os 87–517 KB das de verdade, e o corte ficou em
+20 KB. Os dois defeitos foram injetados e os dois reprovaram.
+
+**O simulador longo também saiu do caminho de cada PR** —
+`.github/workflows/balanceamento.yml` roda as 600 partidas por perfil às
+segundas e sob demanda. **A razão de não ser a cada PR não é o custo:** medido,
+as 600 levam 26 segundos. É o ruído — um número com ±4 pontos de margem
+anexado a todo PR convida a ler sorteio como regressão, que é o erro que a
+ferramenta existe para evitar. Ele reprova só o que não depende de julgamento
+(o simulador chegar ao fim, nenhuma partida travar, o modelo das Parcelas
+reconstruir a semana medida) e publica as taxas sem as julgar: cravar o alvo no
+workflow dar-lhe-ia um terceiro endereço para envelhecer.
 
 **O JOGO RODOU NUM TELEFONE DE VERDADE, e a primeira vez achou três defeitos**
 (02/09). O Bruno instalou o APK e mandou duas fotos. Dez minutos num aparelho

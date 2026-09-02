@@ -166,6 +166,28 @@ Godot_v4.6.3-stable_win64.exe --path . --resolution 720x1280 --script res://tool
 O `10` é quantos turnos jogar antes da foto (0 = tela inicial). No Linux sem
 monitor, prefixe com `xvfb-run -a` e acrescente `--rendering-driver opengl3`.
 
+**Para as cinco de uma vez** — a tela inicial, o porto reconstruído, o boletim,
+o menu de pausa e a folha de contato dos ícones — há um atalho, e é o mesmo
+que o CI roda a cada PR:
+
+```
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"
+```
+
+Ele fixa duas coisas que a chamada à mão não fixa, e por isso as imagens dele
+se comparam entre si:
+
+- **`--semente=`**, senão cada foto mostra outra partida — outro caixa, outros
+  barcos, outra reputação — e quem olha duas não sabe o que é a mudança e o
+  que é o sorteio.
+- **`--fixed-fps 60`**, e só a semente NÃO chega: medido, duas corridas do
+  mesmo código com a mesma semente davam **1.030 pixels diferentes**, porque
+  os tweens em laço (o balanço do barco, a lança do guindaste, o pulso do
+  cartão) andam por *delta* e não por frame. Com o passo de tempo fixo, dois
+  clones independentes deste repositório produzem PNGs byte a byte idênticos.
+
+É isso que faz o CI conseguir dizer, no PR, **qual** das imagens mudou.
+
 ---
 
 ## Levar para o telefone (Android) e para o navegador

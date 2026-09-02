@@ -23,17 +23,29 @@ extends SceneTree
 # Um quarto argumento `pausa` abre o menu de pausa por cima. Para fotografar o
 # PAINEL da contra-oferta em vez da tela principal, use --  0  e rode com
 # uma semente que abra oferta no primeiro turno.
+#
+# `--semente=N`, em qualquer posição, escolhe o mundo sorteado. O PADRÃO É
+# FIXO de propósito: a captura é publicada como artefato de cada PR (item B3
+# do plano), e duas fotos de partidas diferentes não se comparam — a barra de
+# reputação muda, os barcos mudam, e quem olha não sabe o que é a mudança que
+# o PR fez. Com semente fixa, o que muda na foto é o que mudou no código.
 # ============================================================
 
 const TURNOS_PADRAO := 10
 const SAIDA_PADRAO := "user://tela.png"
 const FRAMES_ATE_ASSENTAR := 15
 
+# O dia em que a captura passou a ser artefato de PR. O valor não tem
+# significado nenhum — o que importa é ele NÃO MUDAR, senão a foto de hoje
+# deixa de se comparar com a de ontem.
+const SEMENTE_PADRAO := 20260902
+
 var GS
 var _main: Control
 var _montado := false
 var _frames := 0
 var _saida := SAIDA_PADRAO
+var _semente := SEMENTE_PADRAO
 
 
 func _process(_delta: float) -> bool:
@@ -52,6 +64,18 @@ func _process(_delta: float) -> bool:
 			_fechar_painel_do_rival()
 		return false
 
+	# QUANTOS PAINÉIS ESTÃO POR CIMA. A linha existe porque a captura do porto
+	# reconstruído saiu com o Boletim Financeiro tapando o mapa inteiro: com a
+	# semente fixa, doze turnos calham num fim de semana, e o painel abre. A
+	# foto tinha o nome "porto" e mostrava uma tabela — a fotografia mentirosa
+	# outra vez, e desta vez sem sequer um `push_error` a denunciá-la.
+	#
+	# Quem chama é que sabe o que quer: `capturar_evidencia.sh` exige zero nos
+	# tiros do mapa e pelo menos um no do menu de pausa. Assim, se um dia uma
+	# constante deslocar a fronteira da semana, o CI diz o que aconteceu em vez
+	# de anexar a imagem errada.
+	print("Overlay: %d painel(eis)" % _paineis_abertos())
+
 	var img: Image = root.get_texture().get_image()
 	var erro := img.save_png(_saida)
 	if erro != OK:
@@ -66,14 +90,37 @@ func _process(_delta: float) -> bool:
 func _montar() -> void:
 	GS = root.get_node("GameState")
 
-	var args := OS.get_cmdline_user_args()
+	# As opções `--` saem da lista ANTES das posicionais. Sem isto, passar uma
+	# semente empurraria `completo` e `pausa` uma casa para o lado, e a captura
+	# sairia do porto em ruínas sem se queixar de nada — o mesmo defeito calado
+	# que o caixa cravado já tinha causado aqui.
+	var args: Array = []
+	for bruto in OS.get_cmdline_user_args():
+		if bruto.begins_with("--semente="):
+			var valor := bruto.substr(10)
+			if not valor.is_valid_int():
+				push_error("captura: --semente= precisa de um inteiro, veio '%s'" % valor)
+				quit(1)
+				return
+			_semente = int(valor)
+			continue
+		args.append(bruto)
+
 	var turnos := TURNOS_PADRAO
-	if args.size() >= 1 and args[0].is_valid_int():
+	if args.size() >= 1 and str(args[0]).is_valid_int():
 		turnos = int(args[0])
 	if args.size() >= 2:
-		_saida = args[1]
+		_saida = str(args[1])
 
 	GS.clear_save()
+
+	# A SEMENTE VEM ANTES DE `new_game()`, e é a mesma armadilha que o
+	# `simular_balanceamento.gd` documenta: `new_game()` já chama
+	# `_spawn_boats()`, de modo que semear depois deixaria a mão inicial a sair
+	# do gerador não semeado (`_rng.randomize()` no `_ready`). Lá custava
+	# medianas diferentes entre duas rodadas iguais; aqui custa uma foto que
+	# não se pode comparar com a anterior.
+	GS._rng.seed = _semente
 	GS.new_game()
 
 	# OS NOMES SÃO DADOS AQUI, e sem isto a ferramenta deixou de servir. Desde
@@ -155,6 +202,15 @@ func _fechar_painel_do_rival() -> void:
 		if "dock_index" in painel:
 			overlay.remove_child(painel)
 			painel.queue_free()
+
+
+func _paineis_abertos() -> int:
+	if _main == null:
+		return 0
+	var overlay := _main.get_node_or_null("Overlay")
+	if overlay == null:
+		return 0
+	return overlay.get_child_count()
 
 
 func _alocar_todos() -> void:
