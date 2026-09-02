@@ -99,18 +99,18 @@ partida), e a metade de máquina do A1 (APK e build Web a cada push).
 |---|---|---|
 | **A1** | Jogar dez minutos no APK | O jogo já rodou num telefone e a primeira instalação achou três defeitos que nenhum teste daqui podia ver. Os três estão corrigidos e trancados por teste; a segunda passagem vale o mesmo preço |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **Duas etapas feitas** — a 1 (paleta tropical do mapa) e a 6 (o botão que move o jogo ganhou cor própria, os cartões claros ganharam sombra). São as duas que não precisam de Blender. As outras quatro esperam o `bpy` |
+| **A5** | Olhar cada antes/depois da arte | **Três etapas feitas** — a 1 (paleta tropical do mapa), a 6 (o botão âmbar e a sombra nos cartões claros) e a 2 (a cauda dos props: contêiner, caixote, boia e marcador). Faltam a 3, a 4 e a 5, e a metade cara da 1 (`MEIA_LARG`) |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume. Ele destrava o A1: os dez minutos no APK passam a produzir
 um arquivo em vez de só uma impressão.
 
-Da arte, **duas das seis etapas não precisam de Blender e estão feitas** — a 1
-(paleta) e a 6 (o chrome da interface). As outras quatro precisam de `bpy`
-(~1 GB, uma instalação só), e a Etapa 2 é a que o plano diz ser "barato, muda
-muito": contêiner e caixote têm duas peças cada e ocupam meia tela num pátio
-cheio.
+Da arte, **três das seis etapas estão feitas** — a 1 (paleta), a 6 (o chrome da
+interface) e a 2 (a cauda dos props, 02/09). Faltam a 3 (contorno pelo
+compositor), a 4 (materiais dirigidos) e a 5 (rosto do trabalhador), todas com
+`bpy`, mais a metade cara da 1: o `MEIA_LARG`, que muda a projeção e obriga a
+regerar tudo.
 
 ### ⚠️ A pergunta que trava a Fase 2
 
@@ -246,6 +246,16 @@ As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
 nos dois estados, então o prédio não salta ao ser consertado. Mesma razão que
 fez o píer partilhar geometria entre vazio e construído.
 
+**A cauda dos props tem corpo desde 02/09** (Etapa 2). O contêiner do convés
+passou de 2 peças a 13 — corrugado, cantoneiras de metal nos cantos e portas
+azuis —, o caixote virou carga empilhada em duas madeiras diferentes, a boia
+ganhou faixa refletiva e o marcador duas faixas mais lanterna. Os números do
+plano de arte para esta etapa (~14 peças no contêiner) foram escritos para um
+prop de 2,4 unidades que saiu do projeto em 31/08; o que existe hoje tem 46px
+na tela, e o plano de arte explica a conta. **As peças pequenas do pátio —
+caminhão, empilhadeira, pilha de caixotes, cabeço, poste e mais oito — já
+existiam desde 31/08**, em `blender/brp_porto.py`.
+
 O cenário usa os props: **coqueiros low-poly** (que oscilam, copa e tronco em
 peças separadas), **guindaste** nas docas construídas (a lança varre), **carga
 no convés** e **boias + marcador** na Zona de Espera. Os coqueiros chapados
@@ -253,8 +263,8 @@ saíram do SVG do mapa — `gerar_mapa_iso.py --sem-coqueiros` — pela mesma ra
 que os píeres: o que se mexe não pode estar assado no fundo.
 
 Continuam **sem uso** `galpao` e `galpao_velho` (os prédios do mapa já fazem
-esse papel) e as versões avulsas de `caixote`/`conteiner` (foram assadas no
-píer).
+esse papel). As versões avulsas de `caixote`/`conteiner` não existem: saíram em
+31/08 e a carga vive assada no píer, que é onde ela foi engordada.
 
 Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande), e o
 pesqueiro tem casco próprio — não é o mesmo casco com carga trocada. O

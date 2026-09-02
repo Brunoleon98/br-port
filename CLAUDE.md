@@ -280,6 +280,22 @@ tranca isso.
   **Cor de texto sobre fundo colorido mede-se com a WCAG**, não se escolhe: o
   âmbar do tema com rótulo branco dá 2,39:1 e reprova até o corte de texto
   grande (3,0); com rótulo navy dá 5,27:1 e passa o AA.
+- **Duas faces no MESMO plano dão um buraco preto, e não dão erro.** Um tampo
+  que acaba à altura exata do topo do corpo põe duas faces coplanares, o
+  z-buffer escolhe ao acaso e o prop sai com um losango preto que se lê como
+  caixa aberta. Mordeu duas vezes em 02/09 — no tampo do caixote e numa chapa
+  de metal sobre o contêiner. Peça que pousa noutra afunda uma fração ou sobe
+  uma fração; nunca encosta.
+- **Peça invisível conta como peça, e é por isso que contar não chega.** A
+  boia levou uma corrente que ficou DENTRO do cone do corpo: o contador dizia
+  cinco, o render mostrava quatro. Contagem de peças só vale depois de olhar
+  o render — o contador não sabe o que está tapado.
+- **Prop da cor do chão onde pousa desaparece.** É a irmã da regra do
+  `pilha_caixotes` ("faces vizinhas do mesmo tom fundem-se"), mas entre peça e
+  CENÁRIO: o caixote era `madeira` num tabuado de `madeira`, e enquanto foi
+  caixa lisa isso passou. Ao ganhar tampo e cinta, o corpo continuou fundido
+  com o convés e só as peças novas ficaram visíveis — o caixote saiu da
+  renderização parecendo um banquinho, com tampo e pernas. A suíte passou.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.

@@ -105,6 +105,13 @@ PALETA = {
     "telhado": "#c85420", "telhado_velho": "#8f6a4a", "parede": "#eef2f5", "parede_dir": "#cdd8e0", "porta": "#5a3a20",
     "telha_cume": "#8f3822", "luz_poste": "#ffe6a8",
     "laranja": "#c85420", "azul": "#2f7690", "amarelo": "#e09a10",
+    # O vinco do corrugado do contêiner. Tem de ser MATERIAL e não geometria:
+    # a face comprida dele tem 31px na tela, e a esta escala duas faces do
+    # mesmo tom fundem-se — o `pilha_caixotes` mediu isso e ficou escrito lá.
+    "laranja_esc": "#9c3f18",
+    # Faixa refletiva de boia e marcador. Branco puro estoura ao lado do
+    # laranja; este é o `cabine` levado um passo para o creme.
+    "refletivo": "#f2f5f7",
     "boia": "#d94f2a", "corda": "#c9b48a",
     "colete": "#e0561f", "capacete": "#e0a81f", "pele": "#b07b52",
     "calca": "#24466e", "rede": "#8d9aa6", "casco_pesca": "#2f6f4a", "parede_suja": "#9a9c93", "vidro": "#7fb6cc",
@@ -156,6 +163,7 @@ DESGASTE = {
     "azul": 5.0, "boia": 7.0, "tronco": 8.0,
     # peças pequenas: aqui sim número alto, senão a marca não cabe na peça
     "metal": 12.0, "metal_claro": 12.0, "laranja": 11.0, "amarelo": 13.0,
+    "laranja_esc": 11.0,
     "rede": 14.0, "corda": 13.0,
 }
 
@@ -586,13 +594,139 @@ def montar(M: dict) -> dict:
         px, py, pz = pos(mx, my, 15.0 + altura_px / 2.0)
         return caixa(nome, (px, py, pz), (tam[0], tam[1], z(altura_px)), mat, rot)
 
-    tabuado += [
-        _no_conves("cont_conves", 1.95, -0.72, 15.0, (1.05, 0.5), M["laranja"]),
-        _no_conves("cont_topo", 1.95, -0.72, 1.6, (1.02, 0.47), M["azul"]),
-        _no_conves("caixote_a", 2.00, 0.50, 11.0, (0.42, 0.42), M["madeira"]),
-        _no_conves("caixote_b", -1.95, 0.68, 9.5, (0.38, 0.38), M["madeira"],
-                   rot=(0, 0, 18)),
-    ]
+    # -- A CAUDA DA CARGA DO CONVÉS (Etapa 2 do plano de arte) -----------
+    #
+    # O contêiner tinha DUAS peças — a caixa laranja e uma faixa azul de 1,6px
+    # debaixo dela. O caixote tinha UMA.
+    #
+    # ⚠️ E O PLANO PEDE ~14 PEÇAS PARA O CONTÊINER, NÚMERO QUE NÃO SE APLICA A
+    # ESTE. Ele foi escrito para o prop `conteiner` AVULSO, de 2,4 unidades,
+    # que saiu do projeto em 31/08 (a razão está no comentário do `grupos` mais
+    # abaixo). O que sobrou é a carga do convés, e ela é pequena:
+    #
+    #     contêiner   46 × 38 px na tela, e a face comprida tem só 31 px
+    #     caixote_a   25 × 24 px          caixote_b   23 × 21 px
+    #
+    # Catorze peças numa face de 31px dão 2,5px cada, que é a LIXA da regra do
+    # `DESGASTE` com outra roupa. E o `pilha_caixotes` já mediu o resto: a esta
+    # escala "faces vizinhas do mesmo tom fundem-se, e não há chanfro que as
+    # separe — o que separa é o MATERIAL". Por isso o que entra aqui é pouca
+    # peça com valor diferente, e não muita peça da mesma cor:
+    #
+    #   · o corrugado são QUATRO chapas de laranja escuro, de 6px cada, e não
+    #     doze vincos de 2,5px. Elas são quase RENTES à face de propósito:
+    #     painel recuado numa caixa sólida fica DENTRO do volume e não se vê,
+    #     e um relevo de 0,9px não sobrevive ao antisserrilhado. Quem desenha
+    #     o corrugado aqui é a diferença de valor, não o relevo;
+    #   · as cantoneiras são metal escuro nos cantos — a assinatura visual de
+    #     um contêiner é o canto escuro, e escuro lê-se a 3px onde uma linha
+    #     não se lê;
+    #   · a porta é a face +x partida em duas folhas, e a junta vertical é o
+    #     vão entre elas — junta desenhada a 1px seria uma linha cinzenta.
+    def _face_conves(nome, face, centro, tam, u, v, larg, alt, mat, fora):
+        # 0,05 e não 0,03: o chanfro tem 0,020 de largura e numa chapa de 0,03
+        # ele consome a espessura inteira — o que sai é um seixo arredondado
+        # em vez de uma chapa. Com 0,05 sobra face plana no meio.
+        return na_face(nome, face, centro, tam, u, v, larg, alt, 0.05, mat, fora)
+
+    CONT_MX, CONT_MY, CONT_ALT = 1.95, -0.72, 15.0
+    CONT_TAM = (1.05, 0.5, z(CONT_ALT))
+    CONT_C = pos(CONT_MX, CONT_MY, 15.0 + CONT_ALT / 2.0)
+
+    conteiner = [caixa("cont_corpo", CONT_C, CONT_TAM, M["laranja"])]
+
+    # Corrugado: quatro painéis recuados na face comprida (-y). O passo sai da
+    # largura da face dividida por quatro, não de um número escolhido a olho.
+    for i in range(4):
+        u = (i - 1.5) * 0.245
+        conteiner.append(_face_conves(
+            "cont_vinco%d" % i, "-y", CONT_C, CONT_TAM, u, 0.0,
+            0.175, z(CONT_ALT) * 0.74, M["laranja_esc"], -0.032))
+
+    # Cantoneiras: o canto escuro é o que faz ler "contêiner" e não "caixa".
+    for i, (sx, sz) in enumerate(((-1, -1), (-1, 1), (1, -1), (1, 1))):
+        conteiner.append(caixa(
+            "cont_canto%d" % i,
+            (CONT_C[0] + sx * (CONT_TAM[0] / 2 - 0.055),
+             CONT_C[1] - CONT_TAM[1] / 2 + 0.055,
+             CONT_C[2] + sz * (CONT_TAM[2] / 2 - z(2.2))),
+            (0.11, 0.11, z(4.4)), M["metal"]))
+
+    # Porta: a face +x em duas folhas, e a junta vertical é o vão entre elas.
+    #
+    # AZUL, e é aqui que o azul do contêiner passa a viver. Ele estava numa
+    # faixa de 1,6px DEBAIXO da caixa, onde ninguém o via; tentou-se depois
+    # como plaquinha de marcação de 5×4px na lateral, e a essa escala não leu
+    # como marca — leu como um pixel ciano perdido. A porta tem 15px de largura
+    # e é uma FORMA, não um detalhe: dá o contêiner de dois tons que o mapa já
+    # tinha, com a leitura que o detalhe não conseguia.
+    for i, u in enumerate((-0.115, 0.115)):
+        conteiner.append(_face_conves(
+            "cont_folha%d" % i, "+x", CONT_C, CONT_TAM, u, 0.0,
+            0.195, z(CONT_ALT) * 0.78, M["azul"], -0.030))
+
+    # Longarina do topo: DUAS barras nas arestas visíveis, e não uma chapa
+    # sobre o topo inteiro. A primeira versão era uma caixa da largura do
+    # contêiner em `metal`, e o resultado está medido: desta câmera vê-se o
+    # topo, a face de cima do metal escuro recebe pouca luz, e o contêiner
+    # saiu com um buraco PRETO em cima — lia como caçamba aberta. O topo tem
+    # de continuar a ser da cor do contêiner.
+    for face, larg in (("-y", CONT_TAM[0]), ("+x", CONT_TAM[1])):
+        conteiner.append(_face_conves(
+            "cont_rail_%s" % face[1], face, CONT_C, CONT_TAM,
+            0.0, CONT_TAM[2] / 2 - z(0.9), larg, z(1.8), M["metal"], -0.032))
+
+    # -- CAIXOTE ---------------------------------------------------------
+    # A 25px o caixote aguenta TRÊS elementos, não dez ripas.
+    #
+    # ⚠️ E O PRIMEIRO DELES É A COR DO CORPO, o que não é óbvio. O caixote era
+    # `madeira` pousado num tabuado de `madeira`: o corpo dele FUNDIA-SE com o
+    # convés, e enquanto era uma caixa lisa isso passava. Ao acrescentar tampo
+    # escuro e cinta clara, o que ficou visível foram só as peças novas
+    # flutuando sobre o chão — e o caixote saiu da renderização parecendo um
+    # BANQUINHO, com tampo e pernas. A captura ampliada mostrou-o; a suíte,
+    # não. É a lição do `pilha_caixotes` outra vez ("faces vizinhas do mesmo
+    # tom fundem-se") aplicada ao par peça/chão em vez de peça/peça.
+    #
+    # Por isso os dois caixotes trocam de tom E trocam entre si: um em madeira
+    # escura, outro na madeira gasta acinzentada, nenhum na cor do tabuado.
+    #
+    # Feito com trigonometria em vez do `na_face` porque o caixote_b é TORTO —
+    # `na_face` monta alinhado aos eixos, então numa peça rodada ele punha a
+    # cinta a atravessar a madeira em diagonal.
+    def _caixote(nome, mx, my, alt_px, lado, giro, corpo, cinta, tampo):
+        c = pos(mx, my, 15.0 + alt_px / 2.0)
+        rot = (0, 0, giro)
+        topo_z = c[2] + z(alt_px) / 2
+        # Caixote de baixo.
+        pecas = [caixa(nome, c, (lado, lado, z(alt_px)), M[corpo], rot)]
+        # Cinta: a linha de valor destacado. Fica no TERÇO DE CIMA e não ao
+        # meio — ao meio ela partia os 11px de corpo em dois de 4px e o
+        # caixote lia como uma pilha de tábuas.
+        pecas.append(caixa("%s_cinta" % nome,
+                           (c[0], c[1], c[2] + z(alt_px) * 0.22),
+                           (lado + 0.010, lado + 0.010, z(1.4)), M[cinta], rot))
+        # O SEGUNDO CAIXOTE, e é ele que faz o prop ler.
+        #
+        # ⚠️ Tentou-se antes fazer um caixote só com detalhe por dentro —
+        # montantes, cinta ao meio, tampo. Não funciona: a peça tem 25×24px e
+        # só 11px de corpo, e três tons empilhados nesses 11px viram listras.
+        # O que funciona a esta escala é o idioma que o `pilha_caixotes` já
+        # mediu: SILHUETA MÚLTIPLA com tons diferentes. Duas caixas tortas uma
+        # sobre a outra leem-se como caixotes; uma caixa listrada, não.
+        menor = lado * 0.72
+        pecas.append(caixa("%s_topo" % nome,
+                           (c[0] + lado * 0.06, c[1] - lado * 0.05,
+                            topo_z + z(alt_px * 0.62) / 2 - z(0.6)),
+                           (menor, menor, z(alt_px * 0.62)), M[tampo],
+                           (0, 0, giro - 17)))
+        return pecas
+
+    tabuado += conteiner
+    tabuado += _caixote("caixote_a", 2.00, 0.50, 11.0, 0.42, 0,
+                        "madeira_esc", "metal_claro", "madeira")
+    tabuado += _caixote("caixote_b", -1.95, 0.68, 9.5, 0.38, 18,
+                        "madeira_velha", "metal", "madeira_esc")
     for x in (-PIER_ALCANCE / 2 + 0.7, PIER_ALCANCE / 2 - 0.7):
         tabuado.append(caixa(f"cabeco_{x:.1f}",
                              (x, -PIER_LARG / 2 + 0.3, ALT_PIER + z(4.5)),
@@ -823,10 +957,42 @@ def montar(M: dict) -> dict:
     # pátio é desenhada pelo SVG do mapa. Prop avulso que ninguém carrega é
     # convite a engano — foi assim que `guindaste_base` e `guindaste_mastro`
     # sobreviveram meses depois de a torre ir para dentro do píer.
-    grupos["boia"] = [cone("b", (0, 0, 0.3), 0.34, 0.28, 0.6, 8, M["boia"]),
-                      cone("b_topo", (0, 0, 0.66), 0.1, 0.06, 0.3, 6, M["metal"])]
-    grupos["marcador"] = [cone("m", (0, 0, 0.55), 0.26, 0.04, 1.1, 4, M["amarelo"]),
-                          caixa("m_base", (0, 0, 0.06), (0.5, 0.5, 0.12), M["metal"])]
+    # A boia e o marcador tinham DUAS peças cada, e é o resto da Etapa 2. Eles
+    # são as peças MAIS PEQUENAS que o mapa mostra — 20×22 px a boia, 16×40 px
+    # o marcador —, então aqui a conta da escala é ainda mais apertada do que
+    # na carga do convés: o que entra tem de se ler por VALOR contra o laranja
+    # e o amarelo, e nada mais se lê.
+    #
+    # Daí a faixa refletiva ser a peça principal das duas. Ela é o traço claro
+    # sobre corpo escuro, que é o contraste que a Etapa 1 mediu como o que o
+    # olho vê — razão, e não diferença. Uma argola de metal a 3px seria uma
+    # mancha; uma faixa branca a 2px atravessada num corpo laranja lê-se.
+    grupos["boia"] = [
+        cone("b", (0, 0, 0.3), 0.34, 0.28, 0.6, 8, M["boia"]),
+        cone("b_topo", (0, 0, 0.66), 0.1, 0.06, 0.3, 6, M["metal"]),
+        # Faixa refletiva à altura da linha de água aparente.
+        cone("b_faixa", (0, 0, 0.40), 0.322, 0.305, 0.10, 8, M["refletivo"]),
+        # Argola: o anel por onde a corrente passa, POUSADA no topo do mastro.
+        # Cone chato de 6 lados em vez de um toro — a esta escala o furo do
+        # toro não sobrevive ao antisserrilhado e o que resta é um borrão.
+        cone("b_argola", (0, 0, 0.80), 0.085, 0.085, 0.06, 6, M["metal"]),
+    ]
+    # ⚠️ Havia aqui uma quinta peça, uma corrente descendo para a água, e ela
+    # foi RETIRADA depois de renderizada: ficava dentro do cone do corpo e não
+    # se via um pixel dela. Peça invisível não é detalhe — é contagem inflada
+    # e tempo de render pago por nada. A regra que fica: contar peças só vale
+    # depois de olhar o render, porque o contador não sabe o que está tapado.
+    grupos["marcador"] = [
+        cone("m", (0, 0, 0.55), 0.26, 0.04, 1.1, 4, M["amarelo"]),
+        caixa("m_base", (0, 0, 0.06), (0.5, 0.5, 0.12), M["metal"]),
+        # DUAS faixas, e não uma: uma faixa só num corpo cónico lê como
+        # emenda de fabrico. Duas leem como sinalização, que é o que ele é.
+        cone("m_faixa_a", (0, 0, 0.42), 0.196, 0.183, 0.09, 4, M["refletivo"]),
+        cone("m_faixa_b", (0, 0, 0.78), 0.116, 0.104, 0.08, 4, M["refletivo"]),
+        # A lanterna no topo. É o único ponto quente do prop e ancora o olho
+        # no alto de uma peça que, sem ele, afina até desaparecer.
+        cone("m_luz", (0, 0, 1.13), 0.05, 0.035, 0.09, 6, M["luz_poste"]),
+    ]
 
     # -- GALPÃO nos dois estados: mesmas paredes, telhado diferente ------
     # O galpão era uma caixa com um buraco. Agora tem plinto, portão de
