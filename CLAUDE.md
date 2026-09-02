@@ -186,6 +186,13 @@ Teste e import rodam sem tela.
    como devia e o `$?` deu 0: a corrida acabava em `| tail -3`, e o que se
    estava a medir era o `tail`. Redirecione para arquivo e leia o código de
    saída antes de olhar a saída — num cano, o `$?` é do último elo.
+   **E confira que a base está LIMPA antes de injetar o defeito seguinte.** No
+   mesmo dia, o `git checkout` que devolvia o arquivo entre um defeito e outro
+   restaurou a versão anterior ao trabalho inteiro — e os três testes seguintes
+   relataram, contentes, a mesma falha herdada. Nenhum deles provou nada. Entre
+   um defeito e o próximo, rode o validador uma vez e exija que ele PASSE; e
+   guarde o original com `cp`, nunca com `git`, que não sabe o que ainda não foi
+   commitado.
    **E o defeito pode pegar e o teste passar na mesma.** Aconteceu em 02/09:
    tirar `tests/*` do filtro de export não reprovou nada, porque o teste
    perguntava `contains("tests/*")` e o `scenes/tests/*` que ficou no arquivo
@@ -270,6 +277,9 @@ tranca isso.
   e o fundo da barra inferior é #0d1a26 (lum 24) — pôr sombra nos cartões
   escuros desenharia um HALO. Cartão escuro sobre fundo escuro ganha corpo por
   borda, não por sombra. Antes de aplicar profundidade, amostre o fundo.
+  **Cor de texto sobre fundo colorido mede-se com a WCAG**, não se escolhe: o
+  âmbar do tema com rótulo branco dá 2,39:1 e reprova até o corte de texto
+  grande (3,0); com rótulo navy dá 5,27:1 e passa o AA.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.

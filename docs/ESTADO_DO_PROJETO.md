@@ -80,8 +80,11 @@ itens param à espera do Bruno. Aqui fica só a posição.
 **Fechados**, dos quinze itens: B1 (arranque de sessão), A2 (números com fonte
 única), A3 (reputação com efeito), A4 (as sete telas narrativas — construídas),
 B4 (fumaça de cena), B3 (o CI publica captura e antes/depois), B5 e B8
-(documentação em camadas e orçamento de sessão), B6 (o GDD legível), a metade
-de máquina do A1 (APK e build Web a cada push), e duas das três skills do B2.
+(documentação em camadas e orçamento de sessão), B6 (o GDD legível), B2 (as
+três skills: `/balancear`, `/fechar-sessao` e `/arte`), e a metade de máquina
+do A1 (APK e build Web a cada push).
+
+**A trilha do projeto acabou** — B1 a B6 e B8 estão todos fechados.
 
 **Abertos e esperando o Bruno** — nenhum deles precisa de uma sessão ligada:
 
@@ -93,8 +96,12 @@ de máquina do A1 (APK e build Web a cada push), e duas das três skills do B2.
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 **Livres, sem gate:** B7 (o registro de partida, metade de máquina do A7) e A8.
-Da trilha do projeto não sobra mais nada: B1 a B6 e B8 estão fechados, e a
-`/arte` fechou o B2 em 02/09.
+
+Da arte, **duas das seis etapas não precisam de Blender e estão feitas** — a 1
+(paleta) e a 6 (o chrome da interface). As outras quatro precisam de `bpy`
+(~1 GB, uma instalação só), e a Etapa 2 é a que o plano diz ser "barato, muda
+muito": contêiner e caixote têm duas peças cada e ocupam meia tela num pátio
+cheio.
 
 Da arte, **duas das seis etapas não precisam de Blender** — a 1 (paleta, feita)
 e a 6 (o chrome da interface, que é tema do Godot). As outras quatro precisam
