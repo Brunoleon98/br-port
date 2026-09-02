@@ -66,8 +66,9 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 **Fechados**, dos quinze itens: B1 (arranque de sessão), A2 (números com fonte
 única), A3 (reputação com efeito), A4 (as sete telas narrativas — construídas),
-B4 (fumaça de cena), B3 (o CI publica captura e antes/depois), a metade de
-máquina do A1 (APK e build Web a cada push), e duas das três skills do B2.
+B4 (fumaça de cena), B3 (o CI publica captura e antes/depois), B5 e B8
+(documentação em camadas e orçamento de sessão), B6 (o GDD legível), a metade
+de máquina do A1 (APK e build Web a cada push), e duas das três skills do B2.
 
 **Abertos e esperando o Bruno** — nenhum deles precisa de uma sessão ligada:
 
@@ -78,8 +79,10 @@ máquina do A1 (APK e build Web a cada push), e duas das três skills do B2.
 | **A5** | Olhar cada antes/depois da arte | Não começou. O CI já anexa as cinco imagens a cada PR, então a olhada deixou de custar uma sessão |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
-**Livres, sem gate:** B5 (documentação em camadas — este arquivo), B6 (o GDD
-legível), B8 (orçamento de sessão), a `/arte` que falta ao B2, e depois B7 e A8.
+**Livres, sem gate:** a `/arte` que falta ao B2 — e o plano diz para a adiar
+até o A5 estar perto, porque receita escrita para um fluxo que só corre daqui a
+duas sessões envelhece antes de ser usada. Depois dela, B7 (o registro de
+partida, metade de máquina do A7) e A8.
 
 ### ⚠️ A pergunta que trava a Fase 2
 
@@ -153,7 +156,9 @@ duas são a mesma conta com os números que o GDD dá para elas.
 | `.github/workflows/captura.yml` | As cinco imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere que as quatro camadas existem e que nenhuma referência de documento aponta para arquivo que não há |
-| `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `README.md` de lá |
+| `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
+| `docs/gdd/` | **O GDD 7 legível**, 80 páginas GERADAS do `.jsx` — uma seção por arquivo. Não editar. Descreve as Fases 1 a 5 e está congelado antes da reescala: onde divergir do jogo, quem manda é o código |
+| `tools/gerar_gdd_md.py` | Gera as 80 acima. Recusa-se a adivinhar: forma de dado que ele não conheça **reprova**, em vez de sumir do markdown |
 ### Sistemas que funcionam
 - Turno diário com botão "Avançar dia" (sem relógio real)
 - Drag-and-drop de trabalhadores para as docas

@@ -146,6 +146,32 @@ jobs:
             exit 1
           fi
 
+      - name: Conferir que o GDD legível bate com o .jsx
+        # Item B6. O GDD 7 são 5.658 linhas de JSX: boas para apresentar,
+        # péssimas para citar — foi assim que um erro de aritmética na economia
+        # da Fase 1 sobreviveu até ao Bloco 3, porque ninguém lê 5.658 linhas
+        # de JSX à procura de uma soma. `docs/gdd/` é a leitura, GERADA do
+        # `.jsx`, e este passo reprova quem mexer num sem regerar o outro.
+        #
+        # Mesmo padrão dos sons e dos mapas: regera e exige o `git diff` limpo.
+        # Precisa do Node para avaliar os literais do JSX — a imagem do runner
+        # já o traz, e o gerador diz o que falta se um dia não trouxer.
+        run: |
+          set -euo pipefail
+          python3 tools/gerar_gdd_md.py 2>&1 | tee /tmp/gdd.txt
+
+          # A linha de sucesso, não o código de saída — a mesma regra de sempre.
+          if ! grep -q "GDD OK" /tmp/gdd.txt; then
+            echo "::error::O gerador do GDD legível não chegou ao fim (veja a saída acima)."
+            exit 1
+          fi
+
+          if ! git diff --quiet -- docs/gdd; then
+            echo "::error::docs/gdd/ não bate com o GDD. Rode tools/gerar_gdd_md.py e versione."
+            git diff --stat -- docs/gdd
+            exit 1
+          fi
+
       - name: Conferir a documentação em camadas
         # Item B5. Documento não compila, e por isso envelhece calado: em 02/09
         # o `ESTADO_DO_PROJETO.md` tinha DOBRADO desde que o plano descreveu a

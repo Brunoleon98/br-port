@@ -764,7 +764,7 @@ senão o que reprova pode ser o defeito de trás.
 
 ---
 
-### B6 — O GDD legível por partes
+### B6 — O GDD legível por partes  ✅ FEITO (02/09)
 
 **A dor:** o GDD 7 são **5.658 linhas de JSX** numa aplicação React. Para citar
 uma regra é preciso varrer o arquivo; para o carregar inteiro gasta-se o contexto
@@ -778,6 +778,39 @@ leitura.** Nada de conteúdo muda: o GDD está congelado.
 
 **Sabe-se que funcionou quando:** uma sessão cita a regra da Fase 2 sem abrir o
 `.jsx`.
+
+**O que ficou (02/09):** `tools/gerar_gdd_md.py` e **80 páginas** em
+`docs/gdd/` — 60 de conceitos, 18 de sistemas, as perguntas de design com o
+porquê de cada uma, e um índice. Passo do CI que regenera e exige o `git diff`
+limpo, como os sons e os mapas.
+
+O `.jsx` acabou por ser mais tratável do que as 5.658 linhas sugerem: por
+dentro são **quatro literais de dados puros** — os dois `const sections`, o
+`questionGroups` e o `DECISIONS` —, sem JSX nem função dentro deles. O Node
+avalia-os e o Python desenha o markdown. Duas coisas que a leitura à mão não
+teria antecipado: os ids dos dois GDDs **colidem** (`mapa`, `tutorial`,
+`npcs`, `reputacao`, `finais`, `economia` existem nos dois), daí
+`conceitos/` e `sistemas/` serem pastas separadas; e o campo `decisions` de
+uma subseção é uma **referência** para o `DECISIONS`, que o gerador resolve —
+a leitura traz a decisão inteira em vez de mandar caçá-la.
+
+**O gerador recusa-se a adivinhar.** Toda forma de dado está declarada em
+`FORMAS`, e uma chave que não esteja lá **reprova** em vez de sumir do
+markdown. É a lição do A2 noutro documento: um gerador que ignora o que não
+entende produz uma leitura incompleta com cara de completa, e ninguém
+descobre até precisar da parte que falta. Os quatro defeitos foram injetados e
+os quatro reprovaram — um deles com traceback cru na primeira tentativa, que é
+mensagem sem endereço num log de CI, e foi corrigido.
+
+⚠️ **E gerar a leitura destapou o que ela ia espalhar.** A página
+`docs/gdd/sistemas/economia.md` traz as parcelas de R$8.000 / 16.000 / 24.000 e um card
+"RISCO CRÍTICO — Parcela 3 não fecha" que a errata **já tinha matado** — o GDD
+está congelado antes da reescala de 02/09, e o jogo roda com R$550.000. Sem
+cuidado, este item teria criado **um segundo endereço onde dois números do jogo
+convivem lidos como atuais**, que é exatamente o defeito que o B5 acabou de
+tirar do `ESTADO_DO_PROJETO.md`. Por isso **toda** página leva o mesmo rodapé,
+e não só as de economia: um aviso posto onde alguém achou que fazia falta é um
+aviso que falta na página seguinte.
 
 ---
 
@@ -828,7 +861,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | 7 | A4 | As seis telas narrativas **+ a de nomes** | Ler o texto em voz alta ⏳ |
 | 8 | ✅ B3 | CI com captura, antes/depois e build como artefato | — |
 | 9 | A5 | Arte, etapas 1–6 | Olhar cada antes/depois |
-| 10 | ✅ B5 + B8 · falta **B6** | Documentação em camadas e orçamento de sessão feitos; o GDD legível não | — |
+| 10 | ✅ B5 + B6 + B8 | Documentação em camadas, GDD legível e orçamento de sessão | — |
 | 11 | **A6** | **Áudio de verdade** | **Ouvir — só o Bruno consegue** |
 | 12 | B7 | Registro de partida | — |
 | 13 | **A7** | **Playtest** | **Jogar, e ver duas pessoas jogarem** |

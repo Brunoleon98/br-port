@@ -66,6 +66,7 @@ também deve.
 | `tools/gerar_sons.py` | `python3 tools/gerar_sons.py brport_vs/audio/sfx` | `git diff -- brport_vs/audio` limpo |
 | catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
 | **qualquer documento** | `python3 tools/conferir_docs.py` | `DOCS OK` |
+| `BR_Port_GDD_V7.jsx` | `python3 tools/gerar_gdd_md.py` | `GDD OK`, e `git diff -- docs/gdd` limpo |
 | qualquer coisa visível | uma captura, e **olhar para ela** (seção 4) | — |
 
 ```sh
