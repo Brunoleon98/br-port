@@ -126,6 +126,57 @@ jobs:
             exit 1
           fi
 
+      - name: Rodar o teste do registro de partida
+        # Item B7. O bloco que mais importa aqui é o R1: o `Registro` é um
+        # autoload e por isso está de pé também durante as 600 partidas × 3
+        # perfis do simulador de balanceamento. Se ele gravasse por omissão,
+        # medir o balanceamento escreveria 1.800 arquivos e o custo de os
+        # escrever entraria na medida — a mesma família de defeito que já fez
+        # 24 de 30 partidas não terminarem quando uma tela nova virou FASE em
+        # vez de overlay.
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --script res://tests/teste_registro.gd \
+            2>&1 | tee /tmp/registro.txt
+
+          if ! grep -q "REGISTRO OK" /tmp/registro.txt; then
+            echo "::error::O registro de partida está quebrado (veja a saída acima)."
+            exit 1
+          fi
+
+      - name: Gravar partidas e lê-las de volta
+        # O gravador (GDScript) e o leitor (Python) são dois arquivos em duas
+        # linguagens que têm de concordar sobre a forma de cada evento, e nada
+        # os obriga a isso: acrescentar um campo num não quebra o outro. A
+        # divergência só apareceria no dia em que alguém colasse um registro de
+        # verdade — que é o dia em que o dado do playtest já foi produzido e não
+        # se repete. Este passo põe os dois a encontrar-se a cada corrida.
+        #
+        # Os números que saem daqui NÃO são playtest: são partidas de máquina,
+        # com tempo de deliberação perto de zero. Mesma distinção que separa as
+        # 30 partidas do simulador aqui das 600 que medem balanceamento.
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs \
+            --script res://tools/gravar_partidas.gd -- 5 /tmp/registros \
+            2>&1 | tee /tmp/gravacao.txt
+
+          # A LINHA, e não o código de saída: um erro de execução no meio de um
+          # script do Godot aborta a função e ele encerra com 0 na mesma.
+          if ! grep -q "GRAVACAO OK" /tmp/gravacao.txt; then
+            echo "::error::Não consegui gravar as partidas de teste."
+            exit 1
+          fi
+
+          python3 tools/ler_registros.py --pasta /tmp/registros 2>&1 | tee /tmp/leitura.txt
+
+          if ! grep -q "LEITURA OK" /tmp/leitura.txt; then
+            echo "::error::O leitor não conseguiu ler o que o gravador escreveu."
+            exit 1
+          fi
+
       - name: Validar os assets do pipeline BRP
         # Confere o que sobreviveu ao render e chegou ao jogo: quadro, canal
         # alfa e — o que mais importa — que a projeção que gerou os PNGs é a

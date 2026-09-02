@@ -77,6 +77,14 @@ const EscritorioPronto := preload("res://art/props/escritorio.png")
 
 
 func _ready() -> void:
+	# O gravador de partida (item B7) só grava depois disto, e ESTA é a única
+	# linha do projeto que o arma. É de propósito que seja o jogo a armá-lo e
+	# não ele a armar-se sozinho: o autoload está de pé também durante as 600
+	# partidas × 3 perfis do simulador e durante as quatro suítes, que não
+	# abrem cena nenhuma — se gravasse por omissão, medir o balanceamento
+	# escreveria 1.800 arquivos e o custo de os escrever entraria na medida.
+	Registro.armar()
+
 	_advance_button.pressed.connect(_on_advance_pressed)
 	_alocar_button.pressed.connect(_on_alocar_pressed)
 	_upgrade_button.pressed.connect(_on_upgrade_pressed)

@@ -40,6 +40,21 @@ signal state_loaded()
 # então o boletim não existe para ele e não pode mexer no que ele mede.
 signal semana_fechada(resumo: Dictionary)
 
+# A contra-oferta do Arlindo fechou uma rodada: o que o jogador escolheu, no
+# que deu, e em que tentativa. Sinal de OBSERVAÇÃO — nada no jogo o escuta,
+# quem o escuta é o `Registro.gd` (item B7).
+#
+# Existe porque `negotiate_rival()` DEVOLVE o resultado em vez de o emitir, e
+# um valor de retorno só chega a quem chamou. O painel da contra-oferta é o
+# único que chama, então sem este sinal a escolha mais interessante da partida
+# — a única em que o jogador aposta contra o acaso — seria a única que o
+# registro não veria.
+#
+# O simulador de balanceamento chama `negotiate_rival()` milhares de vezes e
+# portanto emite isto milhares de vezes; é de propósito que emitir seja barato
+# e que o gravador esteja DESARMADO ali (ver o cabeçalho do `Registro.gd`).
+signal negociacao_resolvida(acao: String, resultado: String, tentativa: int)
+
 # ── TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1) ──
 #
 # ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em
@@ -586,7 +601,18 @@ func _find_worker(worker_id: int) -> Variant:
 # Três presets do GDD. Devolve o que aconteceu, para o painel saber se
 # fecha a tela ("fechado"/"perdido") ou só atualiza a mood face ("insistiu").
 #   acao: "igualar" | "metade" | "manter"
+# Casca fina sobre `_negociar()`, e é só para emitir o sinal de observação num
+# lugar em vez de em cinco. A função tem CINCO saídas ("invalido" duas vezes,
+# "fechado" duas, "perdido", "insistiu") e um `emit` antes de cada `return` é
+# a forma clássica de se esquecer um deles quando aparecer o sexto.
 func negotiate_rival(acao: String) -> String:
+	var restavam := rival_attempts_left
+	var resultado := _negociar(acao)
+	negociacao_resolvida.emit(acao, resultado, RIVAL_PATIENCE - restavam + 1)
+	return resultado
+
+
+func _negociar(acao: String) -> String:
 	if phase != "rival_offer" or pending_rival_dock < 0:
 		return "invalido"
 	var dock: Dictionary = docks[pending_rival_dock]
@@ -654,7 +680,12 @@ func resolve_rival_offer(accept_match: bool) -> void:
 	if accept_match:
 		negotiate_rival("igualar")
 	elif phase == "rival_offer" and pending_rival_dock >= 0:
+		var restavam := rival_attempts_left
 		_perder_para_rival()
+		# Este caminho NÃO passa por `negotiate_rival()`, então emite o seu
+		# próprio: um registro em que a oferta abre e nunca fecha leria como
+		# jogador que fugiu do painel, que é uma conclusão errada.
+		negociacao_resolvida.emit("recusar", "perdido", RIVAL_PATIENCE - restavam + 1)
 
 
 # A fase volta ANTES de emitir qualquer coisa: os sinais abaixo fazem a UI se

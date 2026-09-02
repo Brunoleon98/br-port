@@ -31,9 +31,18 @@ func _build_ui() -> void:
 	box.anchor_right = 0.5
 	box.anchor_bottom = 0.5
 	box.offset_left = -140
-	box.offset_top = -90
 	box.offset_right = 140
-	box.offset_bottom = 90
+	# A ALTURA SAI DO CONTEÚDO, e não de um número escrito aqui. Era fixa em
+	# 180 e o botão do registro (B7) não coube: o Godot trava o tamanho de um
+	# Control no mínimo do conteúdo, mas a caixa estava presa pelo topo, então
+	# ela crescia SÓ PARA BAIXO — o cartão descolava do centro e passava por
+	# baixo da barra de docas. Com os dois deslocamentos a zero e
+	# `GROW_DIRECTION_BOTH`, ela cresce para os dois lados a partir do centro e
+	# um botão novo não obriga a medir nada à mão. É o mesmo princípio do
+	# `montar(largura, 0)` do PainelNarrativo.
+	box.offset_top = 0
+	box.offset_bottom = 0
+	box.grow_vertical = Control.GROW_DIRECTION_BOTH
 	add_child(box)
 
 	var vbox := VBoxContainer.new()
@@ -49,6 +58,42 @@ func _build_ui() -> void:
 	btn_resume.text = "Continuar"
 	btn_resume.pressed.connect(func(): queue_free())
 	vbox.add_child(btn_resume)
+
+	# ── O REGISTRO DE PARTIDA SAI DAQUI, E É A ÚNICA PORTA QUE TEM ──
+	#
+	# `user://` no Android é privado da aplicação: sem cabo e sem `adb` não há
+	# como lá chegar. Um gravador cujo arquivo não sai do aparelho não gravou
+	# nada — e o A7 pede justamente que o jogo seja entregue a duas pessoas
+	# noutro telefone. A área de transferência é o caminho que funciona em
+	# qualquer aparelho: copiar aqui, colar numa conversa, ler com
+	# `tools/ler_registros.py`.
+	var aviso := Label.new()
+	aviso.add_theme_font_size_override("font_size", 12)
+	aviso.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	aviso.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	aviso.text = ""
+	# Rótulo vazio OCUPA ALTURA. Na captura ficava uma faixa em branco entre
+	# os dois botões que se lia como falha de layout, e não como espaço à
+	# espera de texto — o mesmo defeito da faixa branca debaixo do botão que
+	# já apareceu em três painéis.
+	aviso.visible = false
+
+	var btn_registro := Button.new()
+	btn_registro.text = "Copiar registro da partida"
+	btn_registro.pressed.connect(func():
+		var texto: String = Registro.texto_para_exportar()
+		if texto == "":
+			# Dizer "copiado" com a área de transferência vazia é pior do que
+			# não ter botão: quem cola descobre o silêncio uma hora depois.
+			aviso.text = "Nada gravado ainda nesta partida."
+			aviso.visible = true
+			return
+		DisplayServer.clipboard_set(texto)
+		aviso.text = "%d linhas copiadas. Cole numa conversa." % Registro.linhas_gravadas()
+		aviso.visible = true
+	)
+	vbox.add_child(btn_registro)
+	vbox.add_child(aviso)
 
 	var btn_new := Button.new()
 	btn_new.text = "Novo jogo (apaga progresso)"

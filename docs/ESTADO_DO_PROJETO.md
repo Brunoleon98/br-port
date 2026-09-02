@@ -51,6 +51,13 @@ A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
 agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
 Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
+**A partida grava-se desde 02/09.** Uma linha JSON por turno, por semana, por
+obra e por contra-oferta, num `.jsonl` por partida — com quanto tempo o jogador
+ficou em cada turno, que é a pergunta do A7 que nenhuma outra medida responde.
+O nome de quem jogou NÃO entra no arquivo (`docs/decisoes/006`). O menu de pausa
+tem "Copiar registro da partida", que é a única porta que ele tem para sair de
+um telefone; `tools/ler_registros.py` lê vários de uma vez e resume.
+
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
 autoload `Audio.gd` com dois buses (Música e SFX), sliders de volume no menu de
 pausa e todo o disparo ligado aos sinais do `GameState`. Os efeitos são de
@@ -81,8 +88,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 única), A3 (reputação com efeito), A4 (as sete telas narrativas — construídas),
 B4 (fumaça de cena), B3 (o CI publica captura e antes/depois), B5 e B8
 (documentação em camadas e orçamento de sessão), B6 (o GDD legível), B2 (as
-três skills: `/balancear`, `/fechar-sessao` e `/arte`), e a metade de máquina
-do A1 (APK e build Web a cada push).
+três skills: `/balancear`, `/fechar-sessao` e `/arte`), B7 (o registro de
+partida), e a metade de máquina do A1 (APK e build Web a cada push).
 
 **A trilha do projeto acabou** — B1 a B6 e B8 estão todos fechados.
 
@@ -95,17 +102,15 @@ do A1 (APK e build Web a cada push).
 | **A5** | Olhar cada antes/depois da arte | **Duas etapas feitas** — a 1 (paleta tropical do mapa) e a 6 (o botão que move o jogo ganhou cor própria, os cartões claros ganharam sombra). São as duas que não precisam de Blender. As outras quatro esperam o `bpy` |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
-**Livres, sem gate:** B7 (o registro de partida, metade de máquina do A7) e A8.
+**Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
+leitor que o resume. Ele destrava o A1: os dez minutos no APK passam a produzir
+um arquivo em vez de só uma impressão.
 
 Da arte, **duas das seis etapas não precisam de Blender e estão feitas** — a 1
 (paleta) e a 6 (o chrome da interface). As outras quatro precisam de `bpy`
 (~1 GB, uma instalação só), e a Etapa 2 é a que o plano diz ser "barato, muda
 muito": contêiner e caixote têm duas peças cada e ocupam meia tela num pátio
 cheio.
-
-Da arte, **duas das seis etapas não precisam de Blender** — a 1 (paleta, feita)
-e a 6 (o chrome da interface, que é tema do Godot). As outras quatro precisam
-de `bpy`, ~1 GB.
 
 ### ⚠️ A pergunta que trava a Fase 2
 
@@ -132,6 +137,10 @@ duas são a mesma conta com os números que o GDD dá para elas.
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 10 efeitos de rascunho. Sem dependência: só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
+| `brport_vs/autoload/Registro.gd` | **O gravador de partida** — uma linha JSON por acontecimento. Nasce DESARMADO: quem arma é o `Main._ready()`, senão o simulador de balanceamento gravaria 1.800 arquivos |
+| `tools/ler_registros.py` | **O leitor** — resume N partidas de uma vez, e põe o jogador MEDIDO ao lado dos perfis que o simulador supõe |
+| `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se — são dois arquivos em duas linguagens que nada obriga a concordar |
+| `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, e nenhum `{token}` de texto chega cru à tela |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os 3 tons da Dona Cida, as 8 falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Os números da narração saem das constantes, nunca escritos à mão |
@@ -200,6 +209,8 @@ duas são a mesma conta com os números que o GDD dá para elas.
   página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
+- **Registro de partida em `.jsonl`**, um arquivo por partida, com o tempo de
+  deliberação de cada turno. Sai pelo botão do menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,
   manutenção, parcela) — **só observa**, não entra em conta nenhuma do jogo
 

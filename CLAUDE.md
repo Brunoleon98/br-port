@@ -429,6 +429,29 @@ armadilha de uma função, no comentário dela.
   `Engine.get_main_loop().root.get_node("GameState")` — e escreva o tipo à mão
   no que vier de lá. É a irmã da regra acima, e tem a mesma origem: a suíte
   roda o jogo POR FORA.
+- **Autoload novo nasce DESLIGADO, e quem o liga é o JOGO.** Um autoload
+  carrega também em `--script` — é por isso que a suíte pega o `GameState` por
+  `root.get_node()`. Logo, tudo o que ele faça por omissão acontece TAMBÉM
+  durante as 600 partidas × 3 perfis do simulador e durante as cinco suítes. O
+  `Registro.gd` só grava depois de `armar()`, e a única linha do projeto que
+  arma é o `Main._ready()`. É a irmã da regra "tela nova é overlay, nunca fase
+  do `GameState`": ambas são coisas que funcionam no jogo e envenenam calado
+  quem mede.
+- **`.get(chave, omissão)` num dicionário de configuração transforma erro de
+  digitação em número plausível.** Em 02/09 o `Registro` lia
+  `ESTRUTURAS[id].get("preco", 0)` — a chave é `custo` — e o relatório dizia,
+  sem erro nenhum, que o jogador construía de graça. A mesma linha errada
+  estava em dois arquivos. Num dicionário cujas chaves são conhecidas, acesso
+  DIRETO: um `id` inexistente tem de rebentar em vez de mentir. E **zero é o
+  pior valor de omissão que há, porque se lê como medida** — no mesmo dia, um
+  contador por turno que era zerado e nunca incrementado fez o relatório
+  afirmar "0 barcos servidos" num porto que atendeu 184.
+- **Teste que JOGA fixa a semente.** `new_game()` chama `_spawn_boats()`, que
+  tem 30% de abrir contra-oferta — e nessa fase o `advance_turn()` retorna
+  CALADO. Um bloco de teste que avance o turno logo a seguir reprova em cerca
+  de 3 de cada 10 corridas por uma razão que nada tem a ver com o que ele
+  testa. Teste intermitente no CI é pior do que teste nenhum: ensina a ignorar
+  vermelho.
 - Comentário explica **por que**, e de preferência conta o que se tentou antes
   e não funcionou. O repositório inteiro é escrito assim; siga.
 - Nada de emoji na interface — os 20 ícones vivem em `art/icones/` e são
