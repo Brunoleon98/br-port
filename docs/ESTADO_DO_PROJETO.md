@@ -3,9 +3,10 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 01/09/2026 (o jogo ganhou NPCs: sete telas
-> narrativas, o jogador batiza o cais, e a Dona Cida fala. Antes disto o loop
-> estava inteiro e não havia história nenhuma)
+> **Última atualização:** 02/09/2026 (o jogo sai do contêiner: preset de
+> export versionado e o CI a produzir APK e build Web a cada push. Antes
+> disto o projeto dizia-se "mobile" havia quatro blocos sem nunca o ter
+> provado)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 > Para saber **o que fazer a seguir e quem faz o quê**, o plano é
@@ -18,14 +19,20 @@
 
 ## O jogo hoje, em três linhas
 
-**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$3.250 e cinco estruturas
+**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$400.000 e cinco estruturas
 para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada uma
 muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
 saem de ruína para telhado novo.
 
-**Economia medida em 600 partidas por perfil:** ótimo 100% · mediano 47% ·
-descuidado 0%. A mediana do mediano fecha em R$7.945 contra uma parcela de
-R$8.000. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
+**O jogo é TRANQUILO, e os valores são realistas** (02/09). Medido em 600
+partidas por perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a
+mediana do mediano em R$685.271 contra uma parcela de R$550.000. Um contrato
+vale R$8.000–70.000, a manutenção custa R$40.000/semana e reconstruir um píer
+custa R$150.000 — números de porto, não de banca de feira.
+
+A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
+agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
+Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
 autoload `Audio.gd` com dois buses (Música e SFX), sliders de volume no menu de
@@ -50,6 +57,40 @@ a cada Fase, sem o jogo precisar saber.
 ---
 
 ## Onde estamos no roadmap
+
+**O jogo finalmente SAI daqui** (02/09) — item A1, metade de máquina fechada;
+a outra metade é do Bruno. Quatro blocos e sessenta commits com o projeto
+descrito como "mobile", e ele nunca tinha saído de um contêiner: tudo o que se
+sabia sobre o comportamento dele num telefone era dedução.
+
+`brport_vs/export_presets.cfg` passou a ser versionado — escrito à mão para
+**não guardar chave nenhuma**: os campos de keystore ficam vazios de propósito,
+e o Godot lê as variáveis de ambiente quando os encontra em branco. Um segundo
+job do CI exporta Web e Android a cada push e anexa os dois à corrida
+(`brport-apk`, `brport-web`). A receita, pelos dois caminhos, está em
+`brport_vs/COMO_RODAR.md`.
+
+**Existe APK.** Medido na corrida verde: **29 MB**, `arm64-v8a`, assinado com
+uma chave de debug gerada na hora — descartável de propósito, porque o alvo é
+o telefone do Bruno e não uma loja. O Web sai ao lado, com `.pck` de 2.045.588
+bytes e `.wasm` de 37,7 MB. As duas passaram a excluir do pacote as cinco
+suítes, o simulador e as capturas: o primeiro export levava tudo isso dentro.
+
+⚠️ **O export Android falha com a lista de erros VAZIA**, e foi preciso ler o
+código do motor para saber porquê: de uns vinte testes de configuração, só o do
+ETC2/ASTC reprova sem escrever mensagem. Pior, ele depende do SISTEMA em que se
+exporta — passa num Mac e reprova em Linux, que é onde o CI corre. O
+`project.godot` ganhou `import_etc2_astc=true` com a explicação ao lado, e o
+bloco F5 do `teste_fumaca.gd` tranca isso e mais o preset (sem chaves, com os
+dois presets, com as pastas de ferramenta fora do pacote) — na suíte rápida,
+para a resposta chegar em segundos e não depois de um export de 25 minutos.
+
+⚠️ **O APK não se consegue construir nesta máquina.** O `dl.google.com` responde
+403 por política da organização, então o SDK do Android é inalcançável e o CI é
+o único lugar onde esse export se verifica. O Web esse corre aqui.
+
+⏳ **O gate é do Bruno: instalar o APK num telefone de verdade e jogar.** A
+entrega deste item não é o arquivo — é uma partida jogada.
 
 **A reputação passou a fazer alguma coisa** (01/09) — item A3, fechado, e era
 ele que travava os itens 5 a 15 da fila. Reputação alta faz o cliente do Arlindo
@@ -100,8 +141,10 @@ que bloqueasse o turno faria **24 de 30 partidas não terminarem** no simulador 
 e o CI passaria na mesma, porque só procurava a linha `=== Leitura ===`. Medido,
 consertado (o CI agora reprova `possível travamento`) e escrito no `CLAUDE.md`.
 Como overlay, o balanceamento medido fica intocado por construção — e medido:
-600 partidas por perfil dão **100% / 47,8% / 0%**, com a mediana do mediano em
+600 partidas por perfil deram **100% / 47,8% / 0%**, com a mediana do mediano em
 R$7.960 contra a parcela de R$8.000. Nenhuma das 1.800 partidas travou.
+*(Números de 01/09, antes da reescala. Serviram para provar que o A4 não mexeu
+na economia; os do jogo de hoje estão lá em cima, em "O jogo hoje".)*
 
 ⏳ **O gate é do Bruno: ler o texto em voz alta.** Três desvios do rascunho de
 escrita esperam por esse julgamento, e estão listados no A4 do plano.
@@ -305,6 +348,7 @@ sobre a imagem de referência original (turnos mantidos, R$ e não $, retrato).
 | `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
 | `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**. Roda no CI, espera `ASSET OK` |
 | `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
+| `.claude/skills/balancear/SKILL.md` | **O ritual da economia** — medir antes e depois com a mesma semente, separar escala de ratio, e arrastar atrás os oito lugares que afirmam o balanceamento |
 | `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto. Nunca derruba a sessão: todo caminho de erro devolve a receita manual |
 | `.godot-version` | A versão do Godot, num lugar só. Lida pelo hook e pelo CI |
 | `docs/design/BR_Port_Numeros_Fase_1.md` | **A tabela dos números, GERADA** do `GameState.gd`. Não editar à mão — o CI reprova se envelhecer |

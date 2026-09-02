@@ -65,6 +65,21 @@ continua escrita aqui porque ela vale mesmo quando o hook não correu.
 leem esse arquivo. Antes dele, este documento mandava baixar a 4.6.1 e o CI
 rodava a 4.6.3 — a sessão testava numa versão e o PR era barrado noutra.
 
+**O APK NÃO se constrói aqui, e o Web sim.** O `dl.google.com` responde 403 por
+política da organização, então o SDK do Android é inalcançável e o CI é o único
+lugar onde o export do APK se verifica — ele corre a cada push e deixa o
+`brport-apk` e o `brport-web` em Artifacts. O Web só precisa dos templates
+(~1,2 GB), que o CI cacheia; a receita completa, pelos dois caminhos, está em
+`brport_vs/COMO_RODAR.md`.
+
+⚠️ **O export Android reprova com a lista de erros VAZIA.** De uns vinte testes
+de configuração do Godot, só o do ETC2/ASTC põe `valid = false` sem escrever
+mensagem — e ele depende do SISTEMA em que se exporta, passando num Mac e
+reprovando em Linux. É por isso que `project.godot` traz
+`textures/vram_compression/import_etc2_astc=true` com a explicação ao lado, e
+que o bloco F5 do `teste_fumaca.gd` o tranca na suíte rápida: a resposta chega
+em segundos em vez de depois de um export inteiro.
+
 O `xvfb-run` só faz falta para a captura, que precisa de contexto gráfico.
 Teste e import rodam sem tela.
 
@@ -86,12 +101,17 @@ Teste e import rodam sem tela.
    espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
    os números já viveram no GDD e nas constantes ao mesmo tempo, e divergiram.
 4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
-   O balanceamento medido é 100% / 47% / 0% por perfil, com a mediana do
-   jogador mediano em ~R$7.950 contra uma parcela de R$8.000. Mexer sem medir
-   quebra isso.
+   O balanceamento medido é **100% / 79,5% / 35,7%** por perfil, com a mediana
+   do jogador mediano em R$685.271 contra uma parcela de R$550.000. Mexer sem
+   medir quebra isso.
+   **O alvo é TRANQUILO, e é decisão registrada** (`docs/decisoes/005`): a
+   dívida deixou de ser o motor. Os 100% / 47% / 0% que este arquivo afirmou
+   até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
+   história, não meta. Quem discrimina os jogadores agora é **o porto que
+   conseguem levantar**: o Ótimo atende 46,3 barcos, o Descuidado 12,5.
    **Medir é com `-- 600`.** As 30 partidas que o CI roda são teste de fumaça
    (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
-   de ±18 pontos — comparar aquele número com estes 47% é comparar sorteio.
+   de ±18 pontos — comparar aquele número com estes é comparar sorteio.
    O próprio simulador avisa quando a rodada é curta demais para medir.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
    ficou bonito. E ao recortar a captura para conferir um detalhe, lembre que
@@ -107,6 +127,12 @@ Teste e import rodam sem tela.
    Para olhar um detalhe pequeno, `tools/recortar_captura.gd` amplia sem
    suavizar: a 19px um ícone não se julga a olho na captura inteira, e foi
    ampliando que se viu que o ícone `doca` era um fantasma no painel branco.
+   **E a própria ferramenta de captura tem números que envelhecem.** O
+   `capturar_tela.gd -- N foto.png completo` dava R$100.000 ao jogador para
+   comprar o porto inteiro; depois da reescala o porto passou a custar
+   R$785.000, as duas últimas compras falhavam, e a foto saía com o porto A
+   MEIO chamando-se "completo". O caixa vem da tabela de preços agora — como
+   na suíte. Ferramenta que finge um estado tem de o DERIVAR do estado.
 7. Escreveu um validador e ele **passou de primeira**? Desconfie. Injete o
    defeito que ele deveria pegar e veja-o reprovar antes de confiar nele. Um
    validador que nunca reprovou nada não é um validador — e, na primeira vez
@@ -117,6 +143,13 @@ Teste e import rodam sem tela.
    arquivo da corrida antiga. Nos dois casos o validador "passou" sem nunca ter
    visto defeito nenhum — que é pior do que não o ter testado, porque agora há
    confiança.
+   **E o defeito pode pegar e o teste passar na mesma.** Aconteceu em 02/09:
+   tirar `tests/*` do filtro de export não reprovou nada, porque o teste
+   perguntava `contains("tests/*")` e o `scenes/tests/*` que ficou no arquivo
+   contém essa string. Num arquivo de configuração, `contains()` quase nunca é
+   a pergunta que se quer fazer — separe a lista e compare ITEM a item. Vale a
+   mesma desconfiança ao ler chave de config: uma linha dentro de um
+   COMENTÁRIO satisfaz uma busca no arquivo inteiro.
 
 ---
 
@@ -238,8 +271,17 @@ tranca isso.
   linha `=== Leitura ===`. Hoje ele também reprova `possível travamento`, mas a
   regra vale antes do CI: como overlay, o balanceamento medido fica intocado
   **por construção**, e não por cuidado de quem escreveu.
+- **Fala de personagem vai em BALÃO, informação do jogo não.** As telas
+  narrativas misturam dois registros e, sem diferença visual, a fala da Dona
+  Cida lia como rodapé de planilha. A variação `Fala` do tema (creme com barra
+  âmbar à esquerda) é o balão; `RotuloSecao` é o rótulo que guia e sai da
+  frente; `RotuloTotal` é a linha única que o olho tem de encontrar primeiro —
+  duas em destaque é nenhuma em destaque.
+- **Linha com valor zero não entra em tabela.** O boletim mostrava
+  `Armazém R$0` e `Parcela R$0` nas semanas em que não havia nem um nem outro:
+  ruído que o olho descarta toda semana para chegar ao que mudou.
 - Painel novo herda de `PainelNarrativo.gd` — o andaime (escurecer, cartão,
-  título, parágrafo, botão) num lugar só. `montar(largura, 0)` faz o cartão
+  título, parágrafo, botão, seção, total, fala, fio) num lugar só. `montar(largura, 0)` faz o cartão
   **ajustar-se ao conteúdo**; altura fixa só quando há área de rolagem. Três
   painéis saíram com uma faixa branca debaixo do botão por causa disto, e o
   mesmo painel muda de tamanho conforme o caso.

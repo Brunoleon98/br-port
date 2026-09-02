@@ -112,6 +112,50 @@ func paragrafo_rolavel(texto: String, altura: int) -> ScrollContainer:
 	return rolo
 
 
+# Cabeçalho de bloco — RECEITAS, DESPESAS. Cinza e menor que o corpo, porque a
+# função dele é agrupar e sair da frente, não competir com os números.
+func secao(texto: String) -> Label:
+	var rotulo := Label.new()
+	rotulo.theme_type_variation = "RotuloSecao"
+	rotulo.text = texto
+	_vbox.add_child(rotulo)
+	return rotulo
+
+
+# A linha que o olho tem de encontrar primeiro. Uma só por tela: duas em
+# destaque é nenhuma em destaque.
+func total(texto: String) -> Label:
+	var rotulo := Label.new()
+	rotulo.theme_type_variation = "RotuloTotal"
+	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD
+	rotulo.text = texto
+	_vbox.add_child(rotulo)
+	return rotulo
+
+
+# FALA DE PERSONAGEM, e não mais uma linha de relatório. As telas narrativas
+# misturam dois registros — o que o jogo informa e o que alguém diz — e sem
+# diferença visual a fala da Dona Cida lê como rodapé de planilha. O balão vem
+# do tema (variação "Fala"), como toda a aparência deste projeto.
+func fala(texto: String) -> PanelContainer:
+	var balao := PanelContainer.new()
+	balao.theme_type_variation = "Fala"
+	var rotulo := Label.new()
+	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD
+	rotulo.text = texto
+	balao.add_child(rotulo)
+	_vbox.add_child(balao)
+	return balao
+
+
+# Um fio para separar blocos. Vale mais que um espaço em branco: o espaço diz
+# "respira", o fio diz "acabou aqui".
+func fio() -> HSeparator:
+	var linha := HSeparator.new()
+	_vbox.add_child(linha)
+	return linha
+
+
 func titulo(icone: Texture2D, texto: String) -> void:
 	_vbox.add_child(Icones.rotulo(icone, texto, Icones.TAM_TITULO, true))
 

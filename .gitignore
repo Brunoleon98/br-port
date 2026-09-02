@@ -2,3 +2,8 @@
 # Cache do Python — regerado sozinho, e agora há mais módulos a gerá-lo.
 __pycache__/
 *.pyc
+
+# O que sai do export (`../build/` nos presets do brport_vs). Artefato de
+# build, não fonte — e mora AQUI, na raiz, não em brport_vs/.gitignore: um
+# .gitignore só vale da pasta dele para baixo, e o export sobe um nível.
+build/

@@ -84,8 +84,11 @@ func _rodar() -> void:
 	_f4_narrativa()
 	_f4_numeros_do_fim()
 
+	print("=== F5: o projeto continua exportável para o telefone ===")
+	_f5_exportavel_para_android()
+
 	if _falhas == 0:
-		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve ===")
+		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
 	else:
 		print("\n=== FUMACA FALHOU — %d problema(s) ===" % _falhas)
@@ -329,7 +332,9 @@ func _f3_migracao_de_save() -> void:
 	# campo novo no save que o `new_game()` não zerasse para o estado impossível
 	# passar para a partida seguinte — que é, letra por letra, o bug das 4 docas.
 	_novo_jogo()
-	GS.cash = 3250
+	# Do START_CASH, e não cravado: 3250 era o caixa inicial antes da reescala
+	# de 02/09 e passaria a ler como um número mágico qualquer.
+	GS.cash = GS.START_CASH
 	GS.turn = 1
 	var caixa_antes: int = GS.cash
 	var turno_antes: int = GS.turn
@@ -546,3 +551,97 @@ func _f4_numeros_do_fim() -> void:
 		"começa com: " + texto.left(30))
 	_confere("e os %d turnos que elas dão" % GS.TURNS_TOTAL,
 		texto.contains("%d turnos" % GS.TURNS_TOTAL))
+
+
+# ── F5 ──────────────────────────────────────────────────────────────────
+# O EXPORT ANDROID FALHA EM SILÊNCIO, e isto existe para o silêncio acabar.
+#
+# `has_valid_export_configuration()` do Android faz uns vinte testes e, de
+# todos, há UM que reprova sem acrescentar mensagem nenhuma: o do ETC2/ASTC
+# (platform/android/export/export_plugin.cpp:3071, na 4.6.3). O que o CI
+# imprimiu foi exatamente isto:
+#
+#     ERROR: Cannot export project with preset "Android" due to
+#     configuration errors:
+#     <nada>
+#
+# Uma lista de erros vazia, e nenhum caminho para o próximo passo. Custou ler
+# o código-fonte do motor para saber qual dos vinte tinha reprovado.
+#
+# E é pior do que parecer só chato: SEM A OPÇÃO LIGADA o Godot importa ETC2/
+# ASTC apenas quando o sistema operativo onde se exporta prefere esse formato.
+# Isso é verdade num Mac e falso em Linux — o mesmo projeto, o mesmo commit,
+# exporta numa máquina e não noutra. Um teste aqui é a diferença entre saber
+# disto num segundo e voltar a passar pela mesma corrida de CI.
+#
+# Não substitui o export de verdade, que só corre no CI: prova o pré-requisito
+# que o export não sabe nomear, na suíte que corre em toda parte.
+func _f5_exportavel_para_android() -> void:
+	_confere("o ETC2/ASTC está ligado no project.godot",
+		bool(ProjectSettings.get_setting(
+			"rendering/textures/vram_compression/import_etc2_astc", false)),
+		"sem isto o export do APK reprova com a lista de erros VAZIA")
+
+	# O preset é lido como TEXTO, e de propósito: um `ConfigFile` engasga-se
+	# com `PackedStringArray(...)` nos valores, e o que interessa aqui não é
+	# o valor de cada campo — é que o arquivo exista, tenha os dois presets, e
+	# continue SEM CHAVE NENHUMA dentro. É esta última parte que um dia alguém
+	# quebra sem reparar, ao gerar o preset clicando no editor.
+	var caminho := "res://export_presets.cfg"
+	if not FileAccess.file_exists(caminho):
+		_confere("o export_presets.cfg está versionado", false,
+			"não achei " + caminho)
+		return
+	_confere("o export_presets.cfg está versionado", true)
+
+	var texto := FileAccess.get_file_as_string(caminho)
+	for nome in ["Android", "Web"]:
+		_confere("o preset \"%s\" está lá" % nome,
+			texto.contains('name="%s"' % nome))
+
+	# Só as LINHAS DE VALOR interessam, e é uma correção que custou uma
+	# injeção falhada: procurar no arquivo inteiro faz o teste passar por
+	# causa dos próprios comentários que explicam a regra.
+	var valores: Array[String] = []
+	for linha in texto.split("\n"):
+		var limpa := linha.strip_edges()
+		if not limpa.begins_with(";") and limpa.contains("="):
+			valores.append(limpa)
+
+	for campo in ["keystore/release", "keystore/release_user",
+			"keystore/debug", "keystore/debug_user"]:
+		var achado := ""
+		for linha in valores:
+			if linha.begins_with(campo + "="):
+				achado = linha
+		_confere("%s continua sem chave" % campo,
+			achado == "" or achado.ends_with('=""'),
+			"chave versionada é chave comprometida — achei: " + achado)
+
+	# As pastas que NÃO entram no pacote. A primeira versão do preset levou as
+	# cinco suítes, o simulador e as capturas para dentro do .pck — peso que o
+	# jogador baixa para nunca usar. Uma pasta nova de ferramentas entra aqui.
+	#
+	# CADA PASTA É CONFERIDA COMO ITEM DA LISTA, não como pedaço de texto. Com
+	# `contains("tests/*")` o teste passava com o `tests/*` REMOVIDO do filtro,
+	# porque `scenes/tests/*` — que continua lá — o contém. Injetei o defeito,
+	# vi-o passar, e foi assim que se descobriu. Um `contains()` num arquivo de
+	# configuração quase nunca é a pergunta que se quer fazer.
+	var filtros: Array[String] = []
+	for linha in valores:
+		if linha.begins_with("exclude_filter="):
+			var lista := linha.split("=", true, 1)[1].strip_edges().trim_prefix('"').trim_suffix('"')
+			var desta: Array[String] = []
+			for item in lista.split(","):
+				desta.append(item.strip_edges())
+			filtros.append(",".join(desta))
+
+	_confere("os dois presets têm filtro de exclusão", filtros.size() == 2,
+		"achei %d" % filtros.size())
+	for pasta in ["tests/*", "tools/*", "scripts/validation/*",
+			"scenes/proto/*", "scenes/tests/*"]:
+		var em_todos := filtros.size() > 0
+		for f in filtros:
+			if not ("," + f + ",").contains("," + pasta + ","):
+				em_todos = false
+		_confere("%s fica fora dos dois pacotes" % pasta, em_todos)

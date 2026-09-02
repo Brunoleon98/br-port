@@ -78,12 +78,18 @@ janela tem formato de celular mesmo.
 | Passar o dia | Botão **▶ AVANÇAR DIA** — processa a docagem e fatura |
 | Oferta do rival | Quando o Arlindo aparecer: **Igualar** / **Manter preço** / **Recusar** |
 | Construir no porto | Botão **Construir** — píer 2 e 3, armazém, pátio e escritório |
-| Pagar a dívida | No fim da **semana 4** vem a cobrança da parcela de R$ 8.000 |
+| Pagar a dívida | No fim da **semana 4** vem a cobrança da parcela ao Sr. Ribeiro |
 
 Regras rápidas do loop:
 - Barco **sem trabalhador** alocado vai embora no fim do turno → você perde a receita e cai reputação.
 - Trabalhador fica **ocupado** enquanto opera (barco grande leva 2 turnos).
-- Toda semana: entra a renda do píer (+R$240) e saem os custos (salários + manutenção).
+- Toda semana: entra a renda do píer e saem os custos (salários + manutenção).
+
+> **Os valores em reais não estão escritos aqui de propósito.** Eles mudam
+> quando o balanceamento muda, e um número cravado num manual envelhece calado
+> — este dizia "parcela de R$ 8.000" muito depois de ela ter passado a valer
+> outra coisa. A tabela em `../docs/design/BR_Port_Numeros_Fase_1.md` é
+> **gerada** do `GameState.gd` e o CI reprova quando ela atrasa.
 
 ---
 
@@ -159,6 +165,71 @@ Godot_v4.6.3-stable_win64.exe --path . --resolution 720x1280 --script res://tool
 
 O `10` é quantos turnos jogar antes da foto (0 = tela inicial). No Linux sem
 monitor, prefixe com `xvfb-run -a` e acrescente `--rendering-driver opengl3`.
+
+---
+
+## Levar para o telefone (Android) e para o navegador
+
+O jogo é retrato 720×1280 e sempre foi descrito como "mobile", mas até 02/09
+nunca tinha saído de um PC — tudo o que se sabia sobre o comportamento dele num
+telefone era dedução. Isto é a receita para pôr à prova.
+
+**As opções de export estão versionadas** em `export_presets.cfg`, ao lado do
+`project.godot`. Elas não guardam chave nenhuma: os campos de keystore ficam
+vazios de propósito, e o Godot lê as variáveis de ambiente correspondentes
+quando encontra os campos em branco.
+
+### Pelo CI, sem instalar nada (o caminho fácil)
+
+A cada push, o workflow `testes.yml` exporta os dois e **anexa o resultado à
+corrida**. Em `github.com/Brunoleon98/br-port` → aba **Actions** → a corrida
+mais recente → o quadro **Artifacts** no fim da página:
+
+| Artefato | O que é |
+|---|---|
+| `brport-apk` | O `.apk` de debug, assinado com uma chave descartável gerada na hora. Instala num telefone com "fontes desconhecidas" ligado. |
+| `brport-web` | A pasta do export web. Não abre com duplo clique — precisa de servidor (ver abaixo). |
+
+Baixar o `brport-apk`, descompactar, passar o `.apk` para o telefone (cabo,
+Drive, o que for) e tocar nele. O Android vai perguntar se confia na origem;
+é o aviso normal de app fora da Play Store.
+
+> ⚠️ **Chave de debug é descartável de propósito.** Cada corrida do CI gera
+> uma nova, então o Android trata cada `.apk` como um app DIFERENTE do
+> anterior: para instalar por cima é preciso desinstalar o antigo, e o save
+> vai junto. Isto está certo — chave de release é para quando houver loja.
+
+### Na sua máquina
+
+Precisa dos **templates de export** (≈1,2 GB), que não vêm no `.exe` do Godot:
+no editor, **Editor → Gerenciar Modelos de Exportação → Baixar e Instalar**.
+
+Para o **Android** é preciso ainda o SDK — **Editor → Configurações do Editor →
+Export → Android**, apontando o `Android SDK Path` para uma instalação do
+Android Studio (ou do `commandlinetools`). Sem `platform-tools` e `build-tools`
+o export recusa-se a correr, e a mensagem diz qual dos dois falta.
+
+```
+Godot --headless --path . --export-debug   "Android" ../build/android/brport.apk
+Godot --headless --path . --export-release "Web"     ../build/web/index.html
+```
+
+O **Web não precisa de SDK nenhum** — só dos templates. É o jeito mais rápido
+de ver o jogo fora do editor. Mas o `index.html` **não abre com duplo clique**:
+o navegador recusa o `.wasm` vindo de `file://`. Sirva a pasta:
+
+```
+python3 -m http.server 8000 --directory ../build/web
+```
+
+…e abra `http://localhost:8000`.
+
+### O que NÃO vai dentro do pacote
+
+Os presets excluem `tests/`, `tools/`, `scripts/validation/` e as cenas de
+proto e de teste. O primeiro export levou tudo — as cinco suítes, o simulador,
+as capturas — para dentro do `.pck`: peso que o jogador baixa para nunca usar.
+Ao acrescentar uma ferramenta nova, confira se ela cai numa dessas pastas.
 
 ---
 

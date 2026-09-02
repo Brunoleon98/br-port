@@ -41,6 +41,22 @@ GDD = RAIZ / "docs" / "design" / "BR_Port_GDD_V7.jsx"
 # bastante para reprovar um modelo que perdeu uma parcela da conta.
 TOLERANCIA = 0.05
 
+# ...E UM PISO ABSOLUTO, em barcos. A percentagem sozinha deixou de servir
+# quando a economia passou a ter CUSTO FIXO GRANDE (manutenção de R$40.000/sem
+# contra o R$30 de antes, em 02/09): a margem de um perfil de baixa vazão passou
+# a ser a diferença pequena entre dois números grandes, e aí um erro absoluto
+# irrelevante vira uma percentagem enorme.
+#
+# Medido no dia em que isto apareceu: o perfil Descuidado dava 6,6% de erro
+# sobre uma diferença de R$6.586/semana — um quarto de barco — enquanto os
+# outros dois davam 0,1% e 0,5%. Um modelo partido não erra em UM perfil só.
+#
+# O piso é meio barco médio porque barco é a unidade natural desta economia, e
+# porque metade de um é pequeno o suficiente para não deixar passar a mudança
+# de constante que este portão existe para pegar: mexer num `# TUNING:` desloca
+# a margem em vários barcos, não em meio.
+PISO_EM_BARCOS = 0.5
+
 
 class ModeloNaoCalibra(Exception):
     pass
@@ -178,12 +194,20 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
         previsto = margem_semanal(
             k, barcos, faixas[1], float(dados["trabalhadores_medios"]), 0,
             dados["estruturas"])["margem"]
-        erro = abs(previsto - medido) / max(abs(medido), 1.0)
-        marca = "ok" if erro <= TOLERANCIA else "FORA"
+        desvio = abs(previsto - medido)
+        erro = desvio / max(abs(medido), 1.0)
+        # Passa por percentagem OU por piso absoluto — ver PISO_EM_BARCOS.
+        piso = PISO_EM_BARCOS * valor_medio(faixas[1], k)
+        passa = erro <= TOLERANCIA or desvio <= piso
+        marca = "ok" if passa else "FORA"
         queixas.append("  %-11s medido R$%-7d  modelo R$%-7d  erro %5.1f%%  %s"
                        % (nome, round(medido), round(previsto), 100 * erro, marca))
-        if erro > TOLERANCIA:
-            queixas.append("    ↑ acima da tolerância de %.0f%%" % (100 * TOLERANCIA))
+        if passa and erro > TOLERANCIA:
+            queixas.append("    (passa pelo piso: desvio de R$%d < meio barco, R$%d)"
+                           % (round(desvio), round(piso)))
+        if not passa:
+            queixas.append("    ↑ acima da tolerância de %.0f%% E de meio barco (R$%d)"
+                           % (100 * TOLERANCIA, round(piso)))
     return queixas
 
 
@@ -293,18 +317,34 @@ def main() -> int:
         print("  fase. É por isso que as Parcelas 2 e 3 fecham com tanta folga — e")
         print("  também por que a pressão da Fase 1 desaparece a partir da semana 5.")
         print("")
-        print("  Isto responde à pergunta que a errata deixou em aberto, e responde")
-        print("  ao contrário do que o GDD temia. O card 'Risco crítico da Parcela 3'")
-        print("  dizia que sem uma terceira fonte de renda a Parcela 3 não fecharia,")
-        print("  e mandava escolher entre pôr o armazém a render desde a semana 2 ou")
-        print("  baixar a Parcela 3 para R$18.000. Essa decisão nasceu do mesmo")
-        print("  cenário de 2 barcos/semana que a errata já derrubou: com a vazão")
-        print("  medida, NENHUMA das duas mudanças é necessária.")
+        print("  E ISTO É DE PROPÓSITO desde 02/09 — ver")
+        print("  docs/decisoes/005-o-jogo-e-tranquilo-a-divida-nao-e-o-motor.md.")
+        print("  A dívida é o motor da Fase 1 e mais nada; o que pressiona daí em")
+        print("  diante é a EXPANSÃO e a MANUTENÇÃO. Uma folga grande aqui não é")
+        print("  um defeito da economia: é o desenho escolhido.")
         print("")
-        print("  O que sobra é o problema oposto, e este é de DESIGN, não de")
-        print("  aritmética: a Fase 1 mede 47% de vitória para o jogador mediano, e")
-        print("  as Fases 2 e 3 seriam quase certeza. Quem decide o que fazer com")
-        print("  isso não é esta ferramenta.")
+        # A TAXA SAI DA MEDIÇÃO, e não escrita à mão. Esta prosa dizia "a Fase 1
+        # mede 47%" — verdade até 02/09 e mentira no dia seguinte, impressa no
+        # log do CI a cada corrida. Número em prosa é um número a mais para
+        # envelhecer, que é o problema que a tabela dos números existe para
+        # resolver; aqui o valor vem do JSON que acabou de ser medido.
+        mediano = medicao["perfis"].get("Mediano")
+        if mediano is None or "taxa" not in mediano:
+            # Barulhento de propósito. Se a forma da medição mudar, isto tem de
+            # aparecer — um bloco que se cala sozinho é como o número cravado
+            # volta sem ninguém reparar.
+            print("  ⚠️  não achei a taxa do perfil Mediano na medição — o formato")
+            print("      de simular_balanceamento.gd mudou?")
+        else:
+            partidas = int(medicao.get("partidas", 0))
+            print("  O jogador mediano ganha %.1f%% na Fase 1 — medido nesta mesma"
+                  % float(mediano["taxa"]))
+            print("  corrida, com %d partidas por perfil%s." % (
+                partidas,
+                " (amostra de fumaça: ±18 pontos)" if partidas < 200 else ""))
+            print("  As fases seguintes seriam mais folgadas ainda. Quem decide se")
+            print("  isso é o desejado não é esta ferramenta — a decisão 005 já disse")
+            print("  que sim.")
     else:
         print("· A dívida cresce pelo menos tão depressa quanto a receita. A tensão")
         print("  da Fase 1 sobrevive às fases seguintes.")

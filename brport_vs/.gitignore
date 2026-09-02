@@ -1,9 +1,21 @@
 # Cache do editor — regerado sozinho, não vai para o Git.
 .godot/
 
-# Configuração de export com caminhos e chaves da máquina local.
-export_presets.cfg
+# O `export_presets.cfg` ENTRA no Git desde 02/09 (item A1). O motivo de ele
+# estar aqui era "tem caminhos e chaves da máquina local", e isso é verdade
+# quando alguém o gera clicando no editor. O que está versionado agora foi
+# escrito à mão para NÃO ter nenhuma das duas coisas: caminhos relativos ao
+# projeto, e os campos de keystore vazios — o Godot lê as variáveis de
+# ambiente quando eles estão em branco, que é como o CI assina sem que a chave
+# passe por aqui.
+#
+# Sem ele versionado o jogo nunca saiu de um contêiner: cada máquina exportava
+# com opções diferentes e o CI não exportava nada. Quatro blocos de trabalho e
+# 58 commits com o projeto declarado "mobile-friendly" e nunca posto à prova.
+
+# A pasta de build do template Android (gradle). Essa sim é da máquina.
 android/
+
 
 # ATENÇÃO — o que NÃO deve entrar aqui:
 #

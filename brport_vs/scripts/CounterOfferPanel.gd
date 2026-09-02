@@ -56,12 +56,20 @@ func _build_ui() -> void:
 	# O ARLINDO FALA COM O CLIENTE, NÃO COM O JOGADOR — é isso que faz a tela
 	# ser uma negociação assistida em vez de uma discussão, e o arquivo de
 	# escrita é explícito nisso. Daí as aspas: o jogador está a ouvir.
+	# Mesmo balão das outras telas narrativas. Este painel não herda do
+	# `PainelNarrativo` (é anterior a ele e mexer nele sem necessidade é
+	# arriscar o que já foi jogado), então usa a variação do tema direto — o
+	# estilo continua a vir de um lugar só.
+	var balao := PanelContainer.new()
+	balao.theme_type_variation = "Fala"
 	_fala_arlindo = Label.new()
 	_fala_arlindo.autowrap_mode = TextServer.AUTOWRAP_WORD
-	_fala_arlindo.text = "\"%s\"" % GameState.texto(Narrativa.ARLINDO_ABERTURA)
-	vbox.add_child(_fala_arlindo)
+	_fala_arlindo.text = GameState.texto(Narrativa.ARLINDO_ABERTURA)
+	balao.add_child(_fala_arlindo)
+	vbox.add_child(balao)
 
 	var info_label := Label.new()
+	info_label.theme_type_variation = "RotuloSecao"
 	info_label.text = "Valor original: %s" % GameState.moeda(_valor_barco())
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	vbox.add_child(info_label)
@@ -142,7 +150,7 @@ func _refresh(reacao: String = "") -> void:
 	# última tentativa. Juntas porque são o mesmo momento — separá-las em dois
 	# balões daria dois cliques a uma coisa que se lê de uma vez.
 	if reacao != "":
-		var falas := "\"%s\"" % GameState.texto(reacao)
+		var falas := GameState.texto(reacao)
 		if restantes <= 1:
-			falas += "\n\n\"%s\"" % GameState.texto(Narrativa.ARLINDO_ULTIMA_TENTATIVA)
+			falas += "\n\n" + GameState.texto(Narrativa.ARLINDO_ULTIMA_TENTATIVA)
 		_fala_arlindo.text = falas

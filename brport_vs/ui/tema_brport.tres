@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=18 format=3]
+[gd_resource type="Theme" load_steps=19 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -264,6 +264,22 @@ content_margin_top = 7.0
 content_margin_right = 11.0
 content_margin_bottom = 7.0
 
+; O balão de fala dos NPCs. As telas narrativas misturam dois registros — o que
+; o jogo INFORMA (números, rótulos) e o que alguém DIZ — e sem uma diferença
+; visual entre eles a fala da Dona Cida lê como mais uma linha de relatório.
+; Creme com uma barra âmbar à esquerda: a barra é o que o olho lê como "aqui
+; alguém está falando", sem precisar de itálico (que a fonte não tem).
+[sub_resource type="StyleBoxFlat" id="fala"]
+bg_color = Color(0.941, 0.965, 1, 1)
+border_width_left = 3
+border_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+content_margin_left = 12.0
+content_margin_top = 9.0
+content_margin_right = 12.0
+content_margin_bottom = 9.0
+
 [resource]
 default_font_size = 15
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -283,6 +299,19 @@ LineEdit/colors/caret_color = Color(0.878, 0.604, 0.063, 1)
 LineEdit/font_sizes/font_size = 16
 LineEdit/styles/normal = SubResource("campo_normal")
 LineEdit/styles/focus = SubResource("campo_foco")
+; Variações de rótulo. Existem porque o tema é o ponto único de estilo: sem
+; elas, cada painel pintaria o seu destaque à mão e não haveria dois iguais.
+; RotuloSecao — cabeçalho de bloco (RECEITAS, DESPESAS). Cinza, menor.
+RotuloSecao/base_type = "Label"
+RotuloSecao/colors/font_color = Color(0.51, 0.6, 0.706, 1)
+RotuloSecao/font_sizes/font_size = 13
+; RotuloTotal — a linha que o olho tem de encontrar primeiro. Navy, maior.
+RotuloTotal/base_type = "Label"
+RotuloTotal/colors/font_color = Color(0.11, 0.204, 0.329, 1)
+RotuloTotal/font_sizes/font_size = 18
+; Fala — o balão dos NPCs.
+Fala/base_type = "PanelContainer"
+Fala/styles/panel = SubResource("fala")
 PanelContainer/styles/panel = SubResource("cartao")
 ProgressBar/styles/background = SubResource("barra_fundo")
 ProgressBar/styles/fill = SubResource("barra_cheia")

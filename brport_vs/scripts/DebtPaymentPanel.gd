@@ -41,11 +41,13 @@ func _montar() -> void:
 	# cartão. É o caso em que o Icones.gd manda usá-lo.
 	titulo(Icones.PARCELA, "Sr. Ribeiro — Banco Porto Mirim")
 
-	_corpo = Label.new()
-	_corpo.autowrap_mode = TextServer.AUTOWRAP_WORD
+	# A fala dele vai no balão; o valor e o caixa ficam FORA. São dois
+	# registros — o que o Sr. Ribeiro diz e o que o jogo informa — e misturá-los
+	# no mesmo bloco fazia a cobrança ler como rodapé de extrato.
+	var balao := fala("")
+	_corpo = balao.get_child(0)
 	_corpo.text = "%s\n\n%s" % [
 		Narrativa.ribeiro_entrada(), Narrativa.ribeiro_a_divida(amount)]
-	_vbox.add_child(_corpo)
 
 	_botoes = VBoxContainer.new()
 	_botoes.add_theme_constant_override("separation", 8)
@@ -57,6 +59,7 @@ func _montar_decisao() -> void:
 	var pode_pagar: bool = GameState.cash >= amount
 
 	var caixa := Label.new()
+	caixa.theme_type_variation = "RotuloSecao"
 	caixa.text = "Caixa: %s" % GameState.moeda(int(GameState.cash))
 	_botoes.add_child(caixa)
 

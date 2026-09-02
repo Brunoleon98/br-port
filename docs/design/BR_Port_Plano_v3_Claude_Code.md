@@ -197,10 +197,25 @@ de navegação por cima.
 Descobrir isso agora custa uma sessão. Descobrir depois da arte final custa
 refazer arte.
 
-| Quem | O quê |
-|---|---|
-| Máquina | Preset de export versionável (sem chaves), build headless, o APK e o `.zip` web como artefatos do CI, `COMO_RODAR.md` com a receita |
-| Bruno | Instalar no telefone. Jogar dez minutos. Dizer o que estranhou |
+| Quem | O quê | Estado |
+|---|---|---|
+| Máquina | Preset de export versionável (sem chaves), build headless, o APK e o `.zip` web como artefatos do CI, `COMO_RODAR.md` com a receita | ✅ 02/09 |
+| Bruno | Instalar no telefone. Jogar dez minutos. Dizer o que estranhou | ⏳ |
+
+**A metade de máquina está feita e verificada** (02/09). O APK sai a cada push,
+29 MB, `arm64-v8a`, assinado em debug com chave gerada na hora; o Web sai ao
+lado. Os dois ficam na aba **Actions** da corrida, em **Artifacts**.
+
+⚠️ **O export Android falhou primeiro, e com a lista de erros VAZIA.** De uns
+vinte testes de configuração do Godot, só o do ETC2/ASTC reprova sem escrever
+mensagem nenhuma — e ele depende do SISTEMA em que se exporta, passando num Mac
+e reprovando em Linux. Foi preciso ler o código do motor para o descobrir. O
+`project.godot` ganhou `import_etc2_astc=true` e o bloco F5 do `teste_fumaca.gd`
+tranca-o, na suíte rápida, para a próxima resposta chegar em segundos.
+
+⚠️ **O APK não se constrói no contêiner do Claude:** o `dl.google.com` responde
+403 por política da organização, o SDK do Android é inalcançável, e o CI é o
+único juiz desse export.
 
 **Mede-se por:** uma partida completa no telefone, e uma lista escrita do que
 apareceu.
@@ -320,9 +335,10 @@ Todo o texto vive em `scripts/Narrativa.gd`, e os dois nomes saem por
 `GameState.texto()` — um ponto de substituição só, como o `moeda()`.
 
 **O balanceamento não se mexeu, e é medido em 600 partidas por perfil** (não
-nas 30 de fumaça, que têm ±18 pontos de margem): **100% / 47,8% / 0%**, com a
-mediana do jogador mediano em R$7.960 no vencimento contra a parcela de
-R$8.000. Os números da reputação do A3 também estão intactos — 23,3% / 0,4% /
+nas 30 de fumaça, que têm ±18 pontos de margem): **100% / 47,8% / 0%** na
+escala de então, com a mediana do mediano em R$7.960 contra a parcela de
+R$8.000. *(Estes números são de 01/09; a economia foi reescalada e o alvo
+mudou para tranquilo em 02/09 — ver `docs/decisoes/005`.)* Os números da reputação do A3 também estão intactos — 23,3% / 0,4% /
 0% de ofertas no teto, apostas ganhas 87,3% / 49,5% / 39,0%. O modelo das
 Parcelas recalibra com erros de 1,3% / 0,1% / 1,4%, e nenhuma das 1.800
 partidas travou.
@@ -523,7 +539,20 @@ fim, e o que se procura é o resto.
 | Onde o projeto está | `docs/ESTADO_DO_PROJETO.md` |
 
 **Feito em 31/08:** `/fechar-sessao` existe em
-`.claude/skills/fechar-sessao/SKILL.md`. Faltam `/arte` e `/balancear`.
+`.claude/skills/fechar-sessao/SKILL.md`.
+
+**Feito em 02/09:** `/balancear`, escrito no dia seguinte a fazer o fluxo à mão
+— seis rodadas de 600 partidas para reescalar a economia. Escrever a skill logo
+a seguir ao trabalho é a diferença entre registar o processo e recordá-lo: ela
+carrega as três armadilhas que só apareceram por se ter feito à mão (a escala
+uniforme ser cosmética e ter de se PROVAR isso; a ordem dos perfis inverter
+quando a primeira estrutura fica cara face ao caixa inicial; e o rasto de prosa
+em oito arquivos que o CI cobra).
+
+**Falta `/arte`** — e continua a fazer sentido adiá-la: precisa de 1 GB de `bpy`
+para ser testada, e serve o A5, que está dois itens à frente na fila. Receita
+escrita para um fluxo que só corre daqui a duas sessões envelhece antes de ser
+usada, que é exatamente o problema que estas skills existem para resolver.
 
 Duas coisas mudaram na construção em relação ao que se planejou aqui. A
 primeira: o passo dos testes não é uma lista fixa. Os quatro do Godot
@@ -685,7 +714,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | 1 | B1 | Arranque de sessão automático | — |
 | 2 | **A1** | **Build no telefone** | **Jogar dez minutos** |
 | 3 | A2 | Números com fonte única + Parcelas 2/3 verificadas | Só se a conta não fechar |
-| 4 | B2 | `/arte`, `/balancear`, `/fechar-sessao` | — |
+| 4 | B2 | ~~`/balancear`~~, ~~`/fechar-sessao`~~ · falta `/arte` | — |
 | 5 | **A3** | **Reputação com efeito** | **Escolher o caminho — bloqueia** |
 | 6 | ✅ B4 | Fumaça de cena, ícones, migração de save | — |
 | 7 | A4 | As seis telas narrativas **+ a de nomes** | Ler o texto em voz alta ⏳ |

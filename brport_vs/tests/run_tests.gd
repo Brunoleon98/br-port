@@ -37,6 +37,19 @@ func _garantir(docas: int, trabalhadores: int) -> void:
 		w["busy_turns"] = 0
 
 
+# Caixa que compra TUDO, seja qual for a escala da economia. Substituiu o
+# `GS.cash = 99999` cravado, que comprava as cinco estruturas enquanto elas
+# custavam centenas de reais e deixou de comprar UMA quando a economia foi
+# reescalada para valores realistas em 02/09. O teste reprovava por ter
+# envelhecido, não por o jogo ter quebrado — que é o pior tipo de vermelho,
+# porque ensina a suíte a ser ignorada.
+func _caixa_para_tudo() -> int:
+	var total: int = 0
+	for eid in GS.ESTRUTURAS:
+		total += int(GS.ESTRUTURAS[eid]["custo"])
+	return total
+
+
 func _fake_boat(value: int, op_turns: int, rival: bool) -> Dictionary:
 	return {
 		"id": 999, "value": value, "op_turns": op_turns, "large": op_turns > 1,
@@ -250,11 +263,11 @@ func _run() -> void:
 
 	print("=== T5b: estruturas — pre-requisito, caixa e efeito ===")
 	_fresh_playing()
-	GS.cash = 100
+	GS.cash = 0
 	_check("sem caixa, o pier 2 diz quanto falta",
 		GS.impedimento_estrutura("pier_2").begins_with("Faltam R$"))
 	_check("e recusa a compra", GS.comprar_estrutura("pier_2") == false)
-	GS.cash = 99999
+	GS.cash = _caixa_para_tudo()
 	_check("pier 3 bloqueado sem o pier 2",
 		GS.impedimento_estrutura("pier_3").begins_with("Precisa antes de"))
 	_check("comprar duas vezes nao acontece",
@@ -305,7 +318,13 @@ func _run() -> void:
 
 	print("=== T5d: docas nunca passam do que o mapa desenha ===")
 	_fresh_playing()
-	GS.cash = 99999
+	# O CAIXA SAI DO PREÇO, e não de um número cravado. Este teste dizia
+	# `GS.cash = 99999`, que cobria os dois píeres enquanto eles custavam R$900
+	# e R$1.600; quando a economia foi reescalada em 02/09 para valores
+	# realistas, 99.999 deixou de comprar o primeiro — e o teste reprovou por
+	# ter envelhecido, não por o jogo ter quebrado. Somar os custos reais faz a
+	# asserção sobreviver a qualquer escala futura.
+	GS.cash = _caixa_para_tudo()
 	GS.comprar_estrutura("pier_2")
 	GS.comprar_estrutura("pier_3")
 	_check("os dois pieres dao exatamente %d docas" % GS.BERCOS_NO_MAPA,

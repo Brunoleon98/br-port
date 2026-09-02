@@ -61,13 +61,17 @@ func _ready() -> void:
 	_campo_jogador = _campo(vbox, "E o seu nome (pode deixar em branco)", "")
 
 	botao_fechar("Abrir o porto")
-	paragrafo("O nome do cais não muda depois.")
+	var aviso := paragrafo("O nome do cais não muda depois.")
+	aviso.theme_type_variation = "RotuloSecao"
 
 	_campo_porto.grab_focus()
 
 
 func _campo(pai: VBoxContainer, rotulo: String, sugestao: String) -> LineEdit:
+	# O rótulo GUIA, o campo é o conteúdo. Em tamanho igual os dois competiam e
+	# a tela lia como um formulário; menor e cinza, o olho vai direto ao campo.
 	var texto := Label.new()
+	texto.theme_type_variation = "RotuloSecao"
 	texto.text = rotulo
 	pai.add_child(texto)
 

@@ -267,7 +267,7 @@ func _avisar_se_amostra_curta(partidas: int) -> void:
 	print("")
 	print("⚠️  TESTE DE FUMAÇA, NÃO MEDIÇÃO — %d partidas por perfil." % partidas)
 	print("    A margem chega a ±%.0f pontos. NÃO compare estas taxas com as do" % pior)
-	print("    CLAUDE.md (100% / 47% / 0%, medidas em 600 partidas): a diferença")
+	print("    CLAUDE.md (100% / 79,5% / 35,7%, medidas em 600 partidas): a diferença")
 	print("    que você vê provavelmente é sorteio.")
 	print("    Para medir de verdade: ... --script res://tools/simular_balanceamento.gd -- 600")
 	print("")
