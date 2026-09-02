@@ -1,0 +1,163 @@
+name: Captura
+
+# O CI da suíte (testes.yml) prova que nada quebrou. Não mostra o que ficou.
+# Este workflow é o item B3 do plano v3: cada PR passa a ter as IMAGENS do
+# jogo anexadas, para uma mudança visual se julgar pelo PR sem ninguém abrir
+# uma sessão e rodar a captura na mão.
+#
+# Serve em primeiro lugar o gate humano do A5 — "olhar cada antes/depois" das
+# seis etapas de arte. É por isso que o job não anexa só a foto de agora: em
+# pull request ele fotografa também a BASE, com a mesma semente, e diz na
+# página da corrida qual das imagens mudou.
+#
+# WORKFLOW SEPARADO de propósito, pela mesma razão que o export tem o dele: um
+# problema de contexto gráfico no runner não pode apagar o sinal dos testes,
+# que é o que diz se o JOGO está bem.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  captura:
+    name: Evidência visual
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      # Força o rasterizador de software do Mesa. O runner não tem GPU, e sem
+      # isto o `opengl3` fica dependente do que a imagem do runner traz — que
+      # é a única parte desta receita que não se consegue medir daqui de
+      # dentro. Com llvmpipe, a captura é a mesma que roda no contêiner.
+      LIBGL_ALWAYS_SOFTWARE: "1"
+
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+        with:
+          # A comparação com a base precisa do histórico: o `git worktree` do
+          # passo do antes/depois trabalha sobre o commit-base do PR.
+          fetch-depth: 0
+
+      - name: Ler a versão do Godot
+        run: echo "GODOT_VERSION=$(tr -d '[:space:]' < .godot-version)" >> "$GITHUB_ENV"
+
+      - name: Reaproveitar o Godot já baixado
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ~/godot-bin
+          # A MESMA CHAVE do job da suíte, de propósito: os dois querem o mesmo
+          # binário, e duas chaves seriam dois downloads de 70 MB por corrida.
+          key: godot-${{ env.GODOT_VERSION }}-linux-x86_64
+
+      - name: Baixar o Godot
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p ~/godot-bin
+          curl -sSL --retry 3 -o /tmp/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot-bin
+          chmod +x ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: Garantir a tela virtual e o rasterizador
+        # A captura é o único passo do projeto que precisa de contexto gráfico
+        # — teste e import rodam sem tela. O `xvfb` é obrigatório e falha alto
+        # se faltar; os pacotes do Mesa vão com `|| true` porque os nomes deles
+        # mudam entre versões da imagem do runner e porque a captura em si já é
+        # a prova: sem GL ela falha, e se falhar em silêncio a guarda de
+        # imagem chapada apanha-a.
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb
+          sudo apt-get install -y -qq libgl1 libglx-mesa0 libgl1-mesa-dri || true
+
+      - name: Importar o projeto
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs --import
+
+      - name: Fotografar este commit
+        run: |
+          set -euo pipefail
+          tools/capturar_evidencia.sh brport_vs "$PWD/fotos/depois" \
+            ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: Fotografar a base do PR
+        # SÓ EM PULL REQUEST, e só se a base já souber tirar a mesma foto. Uma
+        # base anterior a este item não conhece `--semente=` nem `--fixed-fps`:
+        # cada corrida dela daria outro porto e outra fase das animações, e o
+        # antes/depois diria "mudou" em todas as cinco imagens, sempre. Melhor
+        # não comparar e dizer porquê do que comparar contra ruído.
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          BASE="${{ github.event.pull_request.base.sha }}"
+          git worktree add --detach /tmp/base "$BASE"
+
+          if ! grep -q "SEMENTE_PADRAO" /tmp/base/brport_vs/tools/capturar_tela.gd 2>/dev/null; then
+            echo "BASE_COMPARAVEL=nao" >> "$GITHUB_ENV"
+            echo "A base ($BASE) é anterior à captura determinística — sem antes/depois."
+            exit 0
+          fi
+
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path /tmp/base/brport_vs --import
+          tools/capturar_evidencia.sh /tmp/base/brport_vs "$PWD/fotos/antes" \
+            ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+          echo "BASE_COMPARAVEL=sim" >> "$GITHUB_ENV"
+
+      - name: Dizer o que mudou na página da corrida
+        # O atrito real do artefato é ter de o baixar para saber se vale a pena
+        # olhar. Esta tabela responde a "mudou alguma coisa?" sem download
+        # nenhum; o zip fica para quando a resposta é sim.
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Captura do jogo"
+            echo
+            if [ "${BASE_COMPARAVEL:-nao}" = "sim" ]; then
+              echo "| imagem | bytes | contra a base |"
+              echo "|---|---:|---|"
+              for png in fotos/depois/*.png; do
+                nome=$(basename "$png")
+                if cmp -s "$png" "fotos/antes/$nome"; then
+                  estado="igual"
+                else
+                  estado="**MUDOU**"
+                fi
+                echo "| \`$nome\` | $(wc -c < "$png") | $estado |"
+              done
+              echo
+              echo "As imagens são função só do código: semente fixa e passo de tempo fixo."
+              echo "\"MUDOU\" quer dizer que a foto mudou — não diz se mudou para melhor."
+            else
+              echo "| imagem | bytes |"
+              echo "|---|---:|"
+              for png in fotos/depois/*.png; do
+                echo "| \`$(basename "$png")\` | $(wc -c < "$png") |"
+              done
+              echo
+              echo "Sem antes/depois nesta corrida (push na main, ou base anterior à captura determinística)."
+            fi
+            echo
+            echo "Baixe o artefato **brport-captura** para ver as imagens."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Guardar as imagens
+        # SOBE MESMO QUE UM PASSO ANTERIOR TENHA FALHADO, pela lição do export:
+        # quando o APK falhou, levou atrás o upload do Web que tinha corrido
+        # bem, e perdeu-se a única build que existia. Se a captura da base
+        # falhar, a deste commit ainda vale a viagem.
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: brport-captura
+          path: fotos/
+          if-no-files-found: error

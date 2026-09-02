@@ -574,7 +574,7 @@ seguinte.
 
 ---
 
-### B3 — CI que produz evidência, não só um visto verde
+### B3 — CI que produz evidência, não só um visto verde  ✅ FEITO (02/09)
 
 **A dor:** o CI prova que nada quebrou. Não mostra o que ficou. Para ver o
 porto, hoje é preciso abrir uma sessão e rodar a captura na mão.
@@ -590,6 +590,59 @@ porto, hoje é preciso abrir uma sessão e rodar a captura na mão.
 
 **Sabe-se que funcionou quando:** dá para julgar uma mudança visual pelo PR, sem
 abrir sessão nenhuma.
+
+**O que ficou (02/09):** dois workflows novos.
+`.github/workflows/captura.yml` anexa a cada PR o artefato `brport-captura` com
+cinco imagens — a tela inicial, o porto reconstruído, o Boletim Financeiro, o
+menu de pausa e a folha de contato dos ícones. `.github/workflows/balanceamento.yml`
+roda as 600 partidas por perfil às segundas e sob demanda. A build web como
+artefato já tinha saído junto com o A1.
+
+**E a entrega passou a ser mais do que uma foto: é um ANTES/DEPOIS.** Em pull
+request o job fotografa também o commit-base, com a mesma semente, e escreve na
+página da corrida qual das cinco imagens mudou. Isso responde "mudou alguma
+coisa?" sem ninguém baixar nada — que é o atrito real de um artefato — e serve
+direto o gate do A5, que é literalmente *olhar cada antes/depois*.
+
+Só foi possível porque a captura passou a ser **função apenas do código**, e
+isso exigiu duas coisas, não uma. A semente (`--semente=`, com padrão fixo,
+semeada ANTES do `new_game()` — a mesma armadilha que o simulador já
+documentava) fixa o mundo sorteado. Não chegou: medido, duas corridas do mesmo
+código com a mesma semente ainda davam **1.030 pixels diferentes**, porque os
+tweens em laço — o balanço do barco, a lança do guindaste, o pulso do cartão —
+andam por *delta* e não por frame, e cada corrida fotografava outra fase da
+animação. Com `--fixed-fps 60`, **dois clones independentes do repositório
+produzem PNGs byte a byte idênticos**, e aí a pergunta "a imagem mudou?" passa
+a ter resposta.
+
+Três coisas apareceram na construção e não estavam previstas aqui:
+
+- **A foto do porto saía com o Boletim Financeiro tapando o mapa inteiro.** Com
+  a semente fixa, doze turnos calham num fim de semana e o painel abre. A
+  imagem chamava-se "porto" e mostrava uma tabela — a fotografia mentirosa do
+  `CLAUDE.md` outra vez, e desta vez sem um `push_error` sequer a denunciá-la.
+  A ferramenta passou a IMPRIMIR quantos painéis estão por cima, e o script
+  exige zero nos tiros do mapa e um no do menu de pausa: se um dia uma
+  constante deslocar a fronteira da semana, o CI diz o que aconteceu em vez de
+  anexar a imagem errada. O boletim virou o quinto tiro, de propósito.
+- **Uma tela chapada também é um PNG.** Se o contexto gráfico falhar em
+  silêncio no runner, a ferramenta salva um retângulo de uma cor só e diz
+  "Tela salva". Medido: um PNG 720×1280 de cor única pesa 2,7–4,5 KB e as
+  imagens de verdade pesam 87–517 KB, então o corte ficou em 20 KB. Os dois
+  defeitos foram injetados e os dois reprovaram.
+- **A comparação recusa-se a comparar contra ruído.** Uma base anterior a este
+  item não conhece `--semente=`: cada corrida dela daria outro porto, e o
+  antes/depois diria "mudou" nas cinco imagens, sempre. O job confere se a base
+  sabe tirar a mesma foto e, quando não sabe, diz porquê em vez de mentir.
+
+**Por que o simulador longo é semanal, e a razão NÃO é o custo:** medido, as 600
+partidas levam 26 segundos. É o ruído — um número com ±4 pontos de margem
+anexado a todo PR convida a ler sorteio como regressão, que é exatamente o erro
+que a ferramenta existe para evitar. O que o workflow semanal REPROVA é só o
+que não depende de julgamento: o simulador chegar ao fim, nenhuma partida
+travar, e o modelo das Parcelas reconstruir a semana medida. As taxas ele
+publica e não julga — cravar o alvo no workflow dar-lhe-ia um terceiro endereço
+para envelhecer.
 
 ---
 
@@ -718,7 +771,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | 5 | **A3** | **Reputação com efeito** | **Escolher o caminho — bloqueia** |
 | 6 | ✅ B4 | Fumaça de cena, ícones, migração de save | — |
 | 7 | A4 | As seis telas narrativas **+ a de nomes** | Ler o texto em voz alta ⏳ |
-| 8 | B3 | CI com captura e build como artefato | — |
+| 8 | ✅ B3 | CI com captura, antes/depois e build como artefato | — |
 | 9 | A5 | Arte, etapas 1–6 | Olhar cada antes/depois |
 | 10 | B5 + B6 | Documentação em camadas, GDD legível | — |
 | 11 | **A6** | **Áudio de verdade** | **Ouvir — só o Bruno consegue** |
