@@ -74,6 +74,14 @@ lugar onde o export do APK se verifica — ele corre a cada push e deixa o
 (~1,2 GB), que o CI cacheia; a receita completa, pelos dois caminhos, está em
 `brport_vs/COMO_RODAR.md`.
 
+⚠️ **Valor de Godot 3 numa chave de Godot 4 não dá erro — dá outra coisa.**
+`window/handheld/orientation="portrait"` é sintaxe da 3; na 4 a chave é um enum
+INTEIRO, e o exportador faz `int()` dela. `int("portrait")` é **0**, que é
+PAISAGEM: o APK saiu deitado enquanto o projeto se dizia retrato havia cinco
+blocos, e nenhuma das cinco suítes lia aquela linha. Ao conferir uma chave de
+`project.godot`, confira o **TIPO** e não só o valor — e desconfie de toda
+string numa chave que a documentação da 4 descreve como enum.
+
 ⚠️ **O export Android reprova com a lista de erros VAZIA.** De uns vinte testes
 de configuração do Godot, só o do ETC2/ASTC põe `valid = false` sem escrever
 mensagem — e ele depende do SISTEMA em que se exporta, passando num Mac e
@@ -315,6 +323,13 @@ tranca isso.
   três vezes num dia só, em três arquivos diferentes, e cada vez custou uma
   corrida: **o Godot encerra com código 0** nesse erro, então quem olha só o
   `$?` conclui que passou.
+- **Erro de execução DENTRO de um teste aborta a função e a suíte passa na
+  mesma.** Aconteceu em 02/09: uma chamada com o número errado de argumentos
+  matou o bloco T5g inteiro e o `run_tests.gd` imprimiu `TODOS OS TESTES
+  PASSARAM` com sete asserções por correr. É a irmã da regra acima — o erro sai
+  no `stderr`, o contador de falhas fica em zero, e nada reprova. Todo bloco de
+  teste novo põe uma bandeira na ÚLTIMA linha e quem o chama confere que ela
+  ficou verdadeira; só assim "passou" quer dizer "correu".
 - **O autoload não resolve pelo nome dentro de um `class_name`.**
   `GameState.x` funciona num script de cena, que o Godot compila com os
   autoloads já registrados; NÃO funciona dentro de uma classe alcançada a

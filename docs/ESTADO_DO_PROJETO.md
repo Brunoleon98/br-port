@@ -3,10 +3,10 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 02/09/2026 (o jogo sai do contêiner: preset de
-> export versionado e o CI a produzir APK e build Web a cada push. Antes
-> disto o projeto dizia-se "mobile" havia quatro blocos sem nunca o ter
-> provado)
+> **Última atualização:** 02/09/2026 (o jogo saiu do contêiner E rodou num
+> telefone de verdade. A primeira instalação achou três defeitos que nenhum
+> teste daqui podia ver — orientação, botão Voltar e ícone — os três já
+> corrigidos e na main)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 > Para saber **o que fazer a seguir e quem faz o quê**, o plano é
@@ -57,6 +57,50 @@ a cada Fase, sem o jogo precisar saber.
 ---
 
 ## Onde estamos no roadmap
+
+**O JOGO RODOU NUM TELEFONE DE VERDADE, e a primeira vez achou três defeitos**
+(02/09). O Bruno instalou o APK e mandou duas fotos. Dez minutos num aparelho
+acharam mais do que quatro blocos de CI — que é exatamente o argumento com que
+o A1 foi posto em segundo lugar na fila, e agora é fato medido e não previsão.
+
+⚠️ **O JOGO ABRIU DEITADO.** `window/handheld/orientation="portrait"` é valor do
+**Godot 3**. Na 4 a chave é um enum `DisplayServer.ScreenOrientation` e o
+exportador do Android faz `int()` dela — e `int("portrait")` é **0**, que é
+LANDSCAPE. O manifesto do APK saiu em paisagem enquanto o projeto se dizia
+retrato havia cinco blocos.
+
+**Nada podia pegar isso.** O valor é aceite sem reclamar, lê certo para uma
+pessoa, e no PC o jogo abre correto porque lá a janela nasce do tamanho da
+viewport e a orientação nem se aplica. Hoje é `1`, e o bloco F5 do
+`teste_fumaca.gd` confere o TIPO além do valor — o tipo, porque era o tipo que
+estava errado.
+
+⚠️ **O BOTÃO VOLTAR FECHAVA O JOGO.** Padrão do Godot
+(`quit_on_go_back=true`). Com o boletim da semana aberto, um toque em Voltar
+matava a aplicação. Quem decide agora é o `_notification` do `Main.gd`, e **a
+regra é a fase do `GameState`**, não uma lista de painéis: fora de `"playing"`
+o jogo espera uma resposta, e fechar esse painel deixaria a fase de pé sem nada
+na tela para a resolver. A exceção é declarada pelo próprio painel
+(`PainelNarrativo.fecha_com_voltar`), e a `TelaNomes` desliga-a: fechá-la
+BATIZA o cais, e a escolha é irrevogável (GDD 7).
+
+⚠️ **O APK tinha o ROBÔ DO GODOT por ícone.** O exportador resolve "escolha no
+preset → ícone do projeto → padrão do motor" e o projeto não tinha nenhum dos
+dois. `tools/gerar_icone_app.gd` gera os três arquivos que o Android quer a
+partir do `art/icones/doca.svg` — a mesma âncora que a barra de HUD já desenha.
+Gerado e não desenhado, para a marca não divergir da do jogo.
+
+**As barras pretas ficam, e isso foi medido.** 720x1280 é 9:16 e o telefone de
+hoje é 9:20, então o `keep` deixa ~um quinto de um 1080x2400 em barra. As duas
+alternativas foram renderizadas e olhadas: `keep_width` enche a tela mas larga
+um TERÇO dela vazia embaixo (cada nó do `Main.tscn` está posicionado em
+absoluto a partir do topo, e o mapa é uma textura 720x720 que não estica);
+`keep_height` corta pelos lados. **Encher tela alta a sério é trabalho de ARTE**
+— um mapa mais alto —, não de configuração. O que era de graça foi feito: a
+barra deixou de ser preta e passou a ser a navy do jogo.
+
+⏳ **O gate continua de pé: jogar dez minutos no APK novo.** As três correções
+estão na main e num APK verde; o que elas mostram no aparelho, só o aparelho diz.
 
 **O jogo finalmente SAI daqui** (02/09) — item A1, metade de máquina fechada;
 a outra metade é do Bruno. Quatro blocos e sessenta commits com o projeto
