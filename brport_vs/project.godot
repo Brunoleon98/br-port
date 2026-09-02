@@ -30,6 +30,7 @@ config/quit_on_go_back=false
 
 GameState="*res://autoload/GameState.gd"
 Audio="*res://autoload/Audio.gd"
+Registro="*res://autoload/Registro.gd"
 
 [audio]
 

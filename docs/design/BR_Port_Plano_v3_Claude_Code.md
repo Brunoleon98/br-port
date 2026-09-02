@@ -829,7 +829,7 @@ aviso que falta na página seguinte.
 
 ---
 
-### B7 — O playtest que vira dado
+### B7 — O playtest que vira dado  ✅ FEITO (02/09)
 
 A metade de máquina do **A7**: o registro `.jsonl` por turno, e um leitor que o
 resume. Escrever arquivo num telefone tem particularidade própria — é sessão de
@@ -837,6 +837,45 @@ sistema, com teste.
 
 **Sabe-se que funcionou quando:** cinco partidas produzem uma leitura que
 nenhuma delas mostrava sozinha.
+
+**O que ficou (02/09):** o autoload `Registro.gd` grava uma linha JSON por
+turno, semana, obra e contra-oferta; `tools/ler_registros.py` lê N partidas de
+uma vez; `tests/teste_registro.gd` tranca sete blocos e o CI corre-o mais um
+passo que faz o gravador e o leitor encontrarem-se.
+
+**A particularidade do telefone eram QUATRO, e nenhuma era a que se esperava.**
+Não é escrever — é o resto:
+
+1. `FileAccess.WRITE` **trunca**, e não há modo "append" no Godot 4. A versão
+   ingénua dá um arquivo de uma linha só — a última — que passa em qualquer
+   teste que só pergunte "é JSON válido?".
+2. **Fechar é o que grava.** O Android mata a aplicação sem aviso e o buffer
+   morre com ela. Uma partida de 32 turnos perdida porque alguém atendeu uma
+   chamada é exatamente o dado que este item existe para não perder: o arquivo
+   abre e fecha a cada linha.
+3. **`user://` no Android é privado da aplicação.** Sem cabo e sem `adb` não há
+   como lá chegar — um gravador cujo arquivo não sai do aparelho não gravou
+   nada. Daí o botão "Copiar registro da partida" no menu de pausa: copiar,
+   colar numa conversa, ler aqui. É a única porta que ele tem.
+4. **O carimbo de hora só tem resolução de um segundo**, e duas partidas
+   começadas dentro do mesmo segundo davam o mesmo nome de arquivo. Dois toques
+   em "Novo jogo" chegavam lá.
+
+**E o gravador nasce DESARMADO**, o que é a decisão de desenho que mais importa
+aqui. Um autoload carrega também em `--script`, então ele estaria de pé durante
+as 600 partidas × 3 perfis do simulador: a gravar por omissão, medir o
+balanceamento escreveria 1.800 arquivos e o custo de os escrever entraria na
+medida. Quem arma é o `Main._ready()`, e mais ninguém. Medido depois de tudo
+montado: **100% / 79,5% / 35,7%**, idêntico ao de antes.
+
+**O que o leitor responde e nenhuma partida responde:** o `simular_balanceamento.gd`
+mede a dificuldade com perfis cujos números — `chance_esquecer_doca`,
+`chance_igualar_rival` — são um MODELO de como alguém erra, estimado e nunca
+medido, e o balanceamento inteiro assenta neles. A última seção do relatório
+imprime o valor **medido** de cada um ao lado do que o simulador supõe. É onde
+os perfis encontram gente.
+
+**O nome de quem jogou não entra no arquivo** — `docs/decisoes/006`.
 
 ---
 
@@ -878,7 +917,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | 9 | A5 | Arte, etapas 1–6 | Olhar cada antes/depois |
 | 10 | ✅ B5 + B6 + B8 | Documentação em camadas, GDD legível e orçamento de sessão | — |
 | 11 | **A6** | **Áudio de verdade** | **Ouvir — só o Bruno consegue** |
-| 12 | B7 | Registro de partida | — |
+| 12 | ✅ B7 | Registro de partida + leitor que resume N partidas | — |
 | 13 | **A7** | **Playtest** | **Jogar, e ver duas pessoas jogarem** |
 | 14 | A8 | Publicar no itch.io | Conta, página, capturas |
 | 15 | **A9** | **A decisão da Fase 6** | **Só o Bruno** |
