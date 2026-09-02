@@ -165,7 +165,23 @@ A Fase 1 mede 47% de vitória para o jogador mediano — é apertada de propósi
 o playtest confirmou que a tensão se sente. Nas Fases 2 e 3, com estes números,
 a parcela deixa de ser pressão a partir da semana 5.
 
-### ⚠️ Isto é uma pergunta de design, e está EM ABERTO
+### ✅ FECHADA em 02/09/2026 — ver `docs/decisoes/005`
+
+**O Bruno escolheu a segunda saída: deixar assim, de propósito.** O jogo é
+tranquilo; a dívida é o motor da Fase 1 e mais nada, e o que pressiona daí em
+diante é a EXPANSÃO e a MANUTENÇÃO. A decisão, com as consequências, está em
+`docs/decisoes/005-o-jogo-e-tranquilo-a-divida-nao-e-o-motor.md`.
+
+Na mesma passagem a economia inteira foi **reescalada para valores realistas** —
+contratos de R$8.000 a R$70.000 na Fase 1, manutenção de R$40.000/semana,
+estruturas de R$80.000 a R$260.000, Parcela 1 de R$550.000. A escala uniforme
+foi medida e é cosmética; o que mudou o jogo foram os RATIOS. Medido em 600
+partidas por perfil: **100% / 79,5% / 35,7%**.
+
+O registro do que estava em aberto fica abaixo, porque é o raciocínio que levou
+à decisão.
+
+### O que estava em aberto (histórico)
 
 A aritmética fechou; o desenho não. As saídas possíveis são, pelo menos:
 

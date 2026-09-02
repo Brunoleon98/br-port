@@ -23,9 +23,15 @@ para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada u
 muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
 saem de ruína para telhado novo.
 
-**Economia medida em 600 partidas por perfil:** ótimo 100% · mediano 47% ·
-descuidado 0%. A mediana do mediano fecha em R$7.945 contra uma parcela de
-R$8.000. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
+**O jogo é TRANQUILO, e os valores são realistas** (02/09). Medido em 600
+partidas por perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a
+mediana do mediano em R$685.271 contra uma parcela de R$550.000. Um contrato
+vale R$8.000–70.000, a manutenção custa R$40.000/semana e reconstruir um píer
+custa R$150.000 — números de porto, não de banca de feira.
+
+A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
+agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
+Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
 autoload `Audio.gd` com dois buses (Música e SFX), sliders de volume no menu de

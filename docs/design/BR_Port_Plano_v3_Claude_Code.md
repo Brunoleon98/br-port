@@ -320,9 +320,10 @@ Todo o texto vive em `scripts/Narrativa.gd`, e os dois nomes saem por
 `GameState.texto()` — um ponto de substituição só, como o `moeda()`.
 
 **O balanceamento não se mexeu, e é medido em 600 partidas por perfil** (não
-nas 30 de fumaça, que têm ±18 pontos de margem): **100% / 47,8% / 0%**, com a
-mediana do jogador mediano em R$7.960 no vencimento contra a parcela de
-R$8.000. Os números da reputação do A3 também estão intactos — 23,3% / 0,4% /
+nas 30 de fumaça, que têm ±18 pontos de margem): **100% / 47,8% / 0%** na
+escala de então, com a mediana do mediano em R$7.960 contra a parcela de
+R$8.000. *(Estes números são de 01/09; a economia foi reescalada e o alvo
+mudou para tranquilo em 02/09 — ver `docs/decisoes/005`.)* Os números da reputação do A3 também estão intactos — 23,3% / 0,4% /
 0% de ofertas no teto, apostas ganhas 87,3% / 49,5% / 39,0%. O modelo das
 Parcelas recalibra com erros de 1,3% / 0,1% / 1,4%, e nenhuma das 1.800
 partidas travou.

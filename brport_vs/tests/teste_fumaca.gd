@@ -329,7 +329,9 @@ func _f3_migracao_de_save() -> void:
 	# campo novo no save que o `new_game()` não zerasse para o estado impossível
 	# passar para a partida seguinte — que é, letra por letra, o bug das 4 docas.
 	_novo_jogo()
-	GS.cash = 3250
+	# Do START_CASH, e não cravado: 3250 era o caixa inicial antes da reescala
+	# de 02/09 e passaria a ler como um número mágico qualquer.
+	GS.cash = GS.START_CASH
 	GS.turn = 1
 	var caixa_antes: int = GS.cash
 	var turno_antes: int = GS.turn

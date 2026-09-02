@@ -41,13 +41,36 @@ signal state_loaded()
 signal semana_fechada(resumo: Dictionary)
 
 # ── TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1) ──
+#
+# ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em
+# que foram feitos importa para quem vier reler isto.
+#
+# Primeiro os valores subiram ×100 e MEDIU-SE que nada mudava: todas as
+# medianas escalaram exatamente ×100 (margem em regime R$2.943 -> R$295.116).
+# Escala uniforme é cosmética, e prová-lo foi o que permitiu separar o efeito
+# da escala do efeito dos ratios.
+#
+# Depois os RATIOS mudaram, e esses mudam o jogo. Os de antes não eram
+# realistas: um trabalhador custava 60% de um barco, e a manutenção de um porto
+# inteiro custava menos do que meio contrato. Agora a mão de obra é fração
+# pequena da taxa de serviço, a manutenção é custo fixo de verdade, e o capital
+# (píer, armazém) é o que pesa — que é o que um porto é.
+#
 # TUNING — medido, não estimado. 600 partidas por perfil em
-# tools/simular_balanceamento.gd: ótimo 100% · mediano 47% · descuidado 0%.
-# A mediana do jogador mediano fecha em R$7.945 contra uma parcela de R$8.000:
-# é para ficar nessa margem. Mexer aqui SEM rodar o simulador quebra isso.
-const START_CASH := 3250
-const SALARY_PER_WORKER := 100          # GDD "Margem operacional base": 2 trab. x R$100 = R$200/sem
-const MAINTENANCE_WEEKLY := 30          # GDD "Margem operacional base": manutenção R$30/sem
+# tools/simular_balanceamento.gd: **ótimo 100% · mediano 79,5% · descuidado
+# 35,7%**. A mediana do mediano fecha em R$685.271 contra uma parcela de
+# R$550.000. Mexer aqui SEM rodar o simulador quebra isso.
+#
+# O ALVO MUDOU, e é decisão registrada (docs/decisoes/005): o jogo é TRANQUILO.
+# Os 47% do jogador mediano eram a fantasia de sobrevivência que essa decisão
+# substituiu — a dívida deixou de ser o motor, e quem discrimina os jogadores
+# passou a ser o PORTO QUE ELES CONSEGUEM LEVANTAR, não se pagam a parcela: o
+# Ótimo atende 46,3 barcos e chega a 13,8/semana, o Descuidado atende 12,5 e
+# fica em 3,3/semana. A manutenção alta é o que faz essa diferença doer, porque
+# custo fixo pesa proporcionalmente muito mais em quem tem pouca vazão.
+const START_CASH := 400000
+const SALARY_PER_WORKER := 6000          # GDD "Margem operacional base": 2 trab. x R$100 = R$200/sem
+const MAINTENANCE_WEEKLY := 40000          # GDD "Margem operacional base": manutenção R$30/sem
 # O porto ABRE PARADO. Um píer de pé, o resto em ruína — é o que a herança do
 # avô do GDD descreve, e é a diferença entre "administrar um porto" e "levantar
 # um porto", que é a fantasia do jogo.
@@ -79,27 +102,27 @@ const ESTRUTURAS := {
 	"pier_2": {
 		"nome": "Reconstruir o Píer 2",
 		"desc": "+1 doca e +1 trabalhador",
-		"custo": 900, "ordem": 1, "requer": "",
+		"custo": 150000, "ordem": 1, "requer": "",
 	},
 	"pier_3": {
 		"nome": "Reconstruir o Píer 3",
 		"desc": "+1 doca e +1 trabalhador",
-		"custo": 1600, "ordem": 2, "requer": "pier_2",
+		"custo": 260000, "ordem": 2, "requer": "pier_2",
 	},
 	"armazem": {
 		"nome": "Consertar o armazém",
 		"desc": "+20% no valor de cada barco atendido",
-		"custo": 1100, "ordem": 3, "requer": "",
+		"custo": 180000, "ordem": 3, "requer": "",
 	},
 	"patio": {
 		"nome": "Pavimentar o pátio",
 		"desc": "dobra a renda semanal do píer",
-		"custo": 700, "ordem": 4, "requer": "",
+		"custo": 115000, "ordem": 4, "requer": "",
 	},
 	"escritorio": {
 		"nome": "Reformar o escritório",
 		"desc": "-50% nos salários da semana",
-		"custo": 500, "ordem": 5, "requer": "",
+		"custo": 80000, "ordem": 5, "requer": "",
 	},
 }
 
@@ -111,15 +134,15 @@ const PATIO_BONUS_PIER := 1.00          # TUNING
 const ESCRITORIO_DESCONTO_SALARIO := 0.50   # TUNING
 
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
-const PIER_RATE_PER_SLOT := 40          # GDD "Margem operacional base": R$40/vaga -> R$240/sem
+const PIER_RATE_PER_SLOT := 5000          # GDD "Margem operacional base": R$40/vaga -> R$240/sem
 
 # GDD "Valor de contratos": Fase 1 = R$80–300. O VS respeita essa faixa —
 # o que faz a parcela caber não é inflar o barco, é a quantidade de turnos
 # (ver TURNS_PER_WEEK abaixo).
-const BOAT_VALUE_SMALL_MIN := 80
-const BOAT_VALUE_SMALL_MAX := 200
-const BOAT_VALUE_LARGE_MIN := 200
-const BOAT_VALUE_LARGE_MAX := 300
+const BOAT_VALUE_SMALL_MIN := 8000
+const BOAT_VALUE_SMALL_MAX := 20000
+const BOAT_VALUE_LARGE_MIN := 20000
+const BOAT_VALUE_LARGE_MAX := 70000
 const BOAT_LARGE_CHANCE := 0.4          # TUNING
 const BOAT_ARRIVAL_CHANCE := 0.75       # TUNING: chance POR doca vazia de chegar barco no turno
 
@@ -175,7 +198,7 @@ const TURNS_PER_WEEK := 8
 const WEEKS_TOTAL := 4
 const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
 
-const PARCELA_AMOUNT := 8000            # GDD "Parcelas validadas" / Protótipo VS — parcela única
+const PARCELA_AMOUNT := 550000            # GDD "Parcelas validadas" / Protótipo VS — parcela única
 const PARCELA_DUE_TURN := TURNS_PER_WEEK * 4   # vence ao fim da semana 4
 
 # ── SAVE ──

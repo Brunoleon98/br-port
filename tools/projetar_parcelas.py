@@ -41,6 +41,22 @@ GDD = RAIZ / "docs" / "design" / "BR_Port_GDD_V7.jsx"
 # bastante para reprovar um modelo que perdeu uma parcela da conta.
 TOLERANCIA = 0.05
 
+# ...E UM PISO ABSOLUTO, em barcos. A percentagem sozinha deixou de servir
+# quando a economia passou a ter CUSTO FIXO GRANDE (manutenção de R$40.000/sem
+# contra o R$30 de antes, em 02/09): a margem de um perfil de baixa vazão passou
+# a ser a diferença pequena entre dois números grandes, e aí um erro absoluto
+# irrelevante vira uma percentagem enorme.
+#
+# Medido no dia em que isto apareceu: o perfil Descuidado dava 6,6% de erro
+# sobre uma diferença de R$6.586/semana — um quarto de barco — enquanto os
+# outros dois davam 0,1% e 0,5%. Um modelo partido não erra em UM perfil só.
+#
+# O piso é meio barco médio porque barco é a unidade natural desta economia, e
+# porque metade de um é pequeno o suficiente para não deixar passar a mudança
+# de constante que este portão existe para pegar: mexer num `# TUNING:` desloca
+# a margem em vários barcos, não em meio.
+PISO_EM_BARCOS = 0.5
+
 
 class ModeloNaoCalibra(Exception):
     pass
@@ -178,12 +194,20 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
         previsto = margem_semanal(
             k, barcos, faixas[1], float(dados["trabalhadores_medios"]), 0,
             dados["estruturas"])["margem"]
-        erro = abs(previsto - medido) / max(abs(medido), 1.0)
-        marca = "ok" if erro <= TOLERANCIA else "FORA"
+        desvio = abs(previsto - medido)
+        erro = desvio / max(abs(medido), 1.0)
+        # Passa por percentagem OU por piso absoluto — ver PISO_EM_BARCOS.
+        piso = PISO_EM_BARCOS * valor_medio(faixas[1], k)
+        passa = erro <= TOLERANCIA or desvio <= piso
+        marca = "ok" if passa else "FORA"
         queixas.append("  %-11s medido R$%-7d  modelo R$%-7d  erro %5.1f%%  %s"
                        % (nome, round(medido), round(previsto), 100 * erro, marca))
-        if erro > TOLERANCIA:
-            queixas.append("    ↑ acima da tolerância de %.0f%%" % (100 * TOLERANCIA))
+        if passa and erro > TOLERANCIA:
+            queixas.append("    (passa pelo piso: desvio de R$%d < meio barco, R$%d)"
+                           % (round(desvio), round(piso)))
+        if not passa:
+            queixas.append("    ↑ acima da tolerância de %.0f%% E de meio barco (R$%d)"
+                           % (100 * TOLERANCIA, round(piso)))
     return queixas
 
 
