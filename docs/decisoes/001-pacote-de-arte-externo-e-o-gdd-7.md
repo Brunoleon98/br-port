@@ -33,7 +33,7 @@ estão.
 
 Isso não é crítica ao pacote: a direção de arte dele é melhor do que qualquer
 coisa que o projeto tem escrita, e é mais próxima do alvo do
-`BLOCO7_PLANO_ARTE_BLENDER.md`. É só que **arte e design chegaram no mesmo
+`docs/design/BR_Port_Plano_Arte_Blender.md`. É só que **arte e design chegaram no mesmo
 envelope, e só a arte foi aceita.**
 
 O que a decisão protege: as 600 partidas por perfil que mediram a economia
@@ -69,7 +69,7 @@ O projeto tem esse número: `ROT_X, ROT_Z = 60.0, 45.0`, em
 `tools/gerar_props_iso.py`. Um `.blend` montado com ele cai no mapa sem ajuste.
 
 **Alfa.** 27 de 27 PNGs sem canal alfa, com o xadrez de transparência pintado
-nos pixels — o mesmo defeito de `docs/BLOCO4_PACOTE_SPRITES.md`.
+nos pixels — o mesmo defeito de `docs/arquivo/BLOCO4_PACOTE_SPRITES.md`.
 `tools/preparar_sprites.py` conserta.
 
 ## O que entra, e como

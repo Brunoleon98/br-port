@@ -5,7 +5,7 @@ extends SceneTree
 #
 # Existe por uma razão específica e incômoda: **o contêiner de desenvolvimento
 # não tem placa de som.** O Godot cai no driver mudo e nenhuma sessão consegue
-# ouvir o que produz (docs/BLOCO6_BRIEFING_AUDIO.md §2).
+# ouvir o que produz (docs/design/BR_Port_Plano_Audio.md §2).
 #
 # Em arte havia saída — `capturar_tela.gd` tira a foto e alguém olha. Em áudio
 # não há equivalente. O que sobra é separar com rigor as duas colunas:

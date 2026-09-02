@@ -65,6 +65,7 @@ também deve.
 | `tools/gerar_mapa_iso.py` | regerar os dois mapas (abaixo) | `git diff -- brport_vs/art` limpo |
 | `tools/gerar_sons.py` | `python3 tools/gerar_sons.py brport_vs/audio/sfx` | `git diff -- brport_vs/audio` limpo |
 | catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
+| **qualquer documento** | `python3 tools/conferir_docs.py` | `DOCS OK` |
 | qualquer coisa visível | uma captura, e **olhar para ela** (seção 4) | — |
 
 ```sh
@@ -145,6 +146,12 @@ foram parar no telhado ao lado do prop por causa disto.
 
 ## 5. Varredura do que se aprendeu
 
+**Mexeu em documento? `python3 tools/conferir_docs.py`, e é menos de um
+segundo.** Ele confere que as quatro camadas existem, que toda referência de
+documento tem destino, que registro de sessão está em `docs/arquivo/` e no
+índice de lá, e que o `ESTADO_DO_PROJETO.md` não voltou a inchar. O CI roda o
+mesmo passo — descobrir aqui custa um segundo, descobrir lá custa uma corrida.
+
 **É verificação, não escrita.** Quem trabalha escrevendo comentário à medida
 que anda chega ao fim com quase tudo já registrado — medido numa sessão longa:
 dez de doze lições já estavam no código ou em `docs/decisoes/`. A varredura
@@ -171,10 +178,18 @@ mudança, e o que ninguém vai reler. Camada de documento é custo.
 
 ## 6. `ESTADO_DO_PROJETO.md` em dia
 
-É o único artefato crítico que **nenhum teste protege**. Ele envelhece calado, e
-quando envelhece a sessão seguinte trabalha com uma fotografia errada do
-projeto. Confira se ainda descreve o jogo depois desta sessão — o que existe, o
-que é placeholder, o que ficou pendente.
+É o artefato crítico que **nenhum teste protege de verdade**. Ele envelhece
+calado, e quando envelhece a sessão seguinte trabalha com uma fotografia errada
+do projeto. Confira se ainda descreve o jogo depois desta sessão — o que existe,
+o que é placeholder, o que ficou pendente.
+
+⚠️ **Ele descreve o AGORA, e nada mais.** Em 02/09 ele tinha dobrado de tamanho
+sem ninguém decidir, e por dentro contradizia-se: duas parcelas do Sr. Ribeiro
+(R$8.000 e R$550.000) e três leituras do balanceamento, todas lidas como atuais,
+porque o histórico tinha ficado a viver ao lado do estado. O caminho percorrido
+vive agora em `docs/arquivo/HISTORICO.md` — **o que envelheceu desce para lá em
+vez de ficar aqui com uma data ao lado.** O `conferir_docs.py` toca o alarme
+quando o arquivo volta a crescer, mas o alarme não escreve o documento.
 
 ## 7. Commit
 

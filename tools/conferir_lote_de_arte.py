@@ -2,7 +2,7 @@
 """Confere um lote de arte recebido de fora, antes de ele entrar no jogo.
 
 Escrito depois do segundo lote que chegou com o mesmo defeito. O de 28/08 veio
-sem canal alfa (`docs/BLOCO4_PACOTE_SPRITES.md`); o de 31/08 veio sem alfa E com
+sem canal alfa (`docs/arquivo/BLOCO4_PACOTE_SPRITES.md`); o de 31/08 veio sem alfa E com
 metade das peças em outra projeção — o guindaste avulso a 34,6° contra os 26,57°
 do mapa, e um prédio da prancha de progressão a 28,2°, dentro do contrato. O
 lote não era homogêneo, e ninguém veria isso a olho.

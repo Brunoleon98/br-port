@@ -4,7 +4,7 @@
 > Fase 1 do Vertical Slice: **mapa componível, indicadores e sprites**.
 >
 > Escrito em 28/08/2026, depois da primeira leva de sprites entrar no jogo.
-> Complementa `docs/BLOCO4_PACOTE_SPRITES.md` (o que já veio) e
+> Complementa `docs/arquivo/BLOCO4_PACOTE_SPRITES.md` (o que já veio) e
 > `docs/design/BR_Port_Style_Guide_Flat_Design.md` (paleta e proporções).
 
 ---

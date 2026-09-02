@@ -271,7 +271,7 @@ Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tools/simular_b
 
 O jeito de usar é: rodar, anotar os números, mudar **uma** constante `# TUNING:`,
 rodar de novo com a mesma semente e comparar. Detalhes e a leitura dos resultados
-de hoje estão em `../docs/BLOCO3_MARCO_INTERMEDIARIO.md`.
+de hoje estão em `../docs/arquivo/BLOCO3_MARCO_INTERMEDIARIO.md`.
 
 ---
 

@@ -7,7 +7,7 @@ armazém, escritório, contêiner, caixote e boia — refazê-los seria trocar a
 que funciona por arte nova sem ganho.
 
 O que falta é a CAUDA: as peças pequenas que ocupam o pátio e que o
-`docs/BLOCO7_PLANO_ARTE_BLENDER.md` já tinha medido como o melhor ganho por
+`docs/design/BR_Port_Plano_Arte_Blender.md` já tinha medido como o melhor ganho por
 custo do projeto ("Etapa 2 — a cauda dos props: barato, muda muito"). O pacote
 pede as mesmas peças. Então este catálogo serve as duas listas de uma vez.
 

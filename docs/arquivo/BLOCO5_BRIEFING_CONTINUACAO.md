@@ -102,7 +102,7 @@ parcela de R$8.000** — é para ficar nessa margem.
 
 ### A0) Subir a arte no Blender — **tem documento próprio, e já foi executado**
 
-`docs/BLOCO5_PROMPTS_BLENDER_RICO.md` responde, com medição e imagem, se dá
+`docs/arquivo/BLOCO5_PROMPTS_BLENDER_RICO.md` responde, com medição e imagem, se dá
 para chegar ao nível de uma arte de porto ilustrada usando o Blender por
 script. Resumo: **o volume, a luz, o desgaste e a densidade de peça, sim; a
 pincelada, não.**
@@ -302,7 +302,7 @@ As novas:
 
 ## 5.5. O próximo bloco é ÁUDIO
 
-`docs/BLOCO6_BRIEFING_AUDIO.md` é o documento de entrada da próxima conversa.
+`docs/design/BR_Port_Plano_Audio.md` é o documento de entrada da próxima conversa.
 Resumo: **o jogo é mudo — zero arquivos, zero `AudioStream`, zero bus** — e o
 contêiner não tem placa de som, então nenhuma sessão consegue ouvir o que
 produz. Quem julga o som é o Bruno.
@@ -321,7 +321,7 @@ As pendências de arte da §3 continuam abertas e NÃO entram no bloco de áudio
 
 Cole isto:
 
-> Continuando o BR Port. Leia `docs/BLOCO5_BRIEFING_CONTINUACAO.md` e depois
+> Continuando o BR Port. Leia `docs/arquivo/BLOCO5_BRIEFING_CONTINUACAO.md` e depois
 > `docs/ESTADO_DO_PROJETO.md`. A direção de arte (isométrico) e a economia das
 > estruturas já estão decididas e medidas — não reabrir sem rodar o simulador.
 

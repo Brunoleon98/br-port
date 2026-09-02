@@ -29,7 +29,7 @@ ESTUDIOS = {
 # precisa de o ler é o validador que roda no Godot — e `res://` não alcança
 # nada fora de `brport_vs/`. O prompt pede o arquivo em docs/; ter as duas
 # cópias seria a fonte dupla que este projeto já pagou caro uma vez (a errata
-# da economia). docs/BRP_EXPORT_MANIFEST.md aponta para cá.
+# da economia). docs/arquivo/BRP_EXPORT_MANIFEST.md aponta para cá.
 MANIFEST = "brport_vs/data/assets/BRP_EXPORT_MANIFEST.json"
 
 

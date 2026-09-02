@@ -4,11 +4,25 @@ Jogo mobile de gestão de porto. Godot 4.6 + GDScript, retrato 720×1280, em
 português do Brasil. O código, os comentários, os documentos e os nomes de nó
 são em português — commits e PRs em inglês.
 
-> Ponto de entrada para entender o estado: `docs/ESTADO_DO_PROJETO.md`.
-> O que fazer a seguir, e quem faz o quê: `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
-> Para retomar o trabalho: `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.
-> Para a arte: `docs/BLOCO7_PLANO_ARTE_BLENDER.md`.
-> Contrato da projeção e pipeline de assets: `docs/BRP_SPATIAL_CONTRACT.md`.
+> **A documentação tem quatro camadas, e mais nenhuma.** Este arquivo é a
+> primeira, e a única que carrega sozinha.
+>
+> | Camada | Onde | Responde |
+> |---|---|---|
+> | Regras | este arquivo | O que nunca se faz aqui |
+> | Estado | `docs/ESTADO_DO_PROJETO.md` | Como o jogo está hoje |
+> | Rumo | `docs/design/BR_Port_Plano_v3_Claude_Code.md` | O que vem a seguir, e quem faz o quê |
+> | Decisões | `docs/decisoes/NNN-*.md` | Por que se decidiu assim, uma por arquivo |
+>
+> Para retomar o trabalho são **dois** documentos: o estado e o plano. Até
+> 02/09 eram cinco em cadeia, e esta linha apontava para o terceiro elo.
+> O que aconteceu em cada sessão que fechou vive em `docs/arquivo/`, com
+> índice — **nada se apaga**, e nada de lá descreve o jogo de hoje.
+>
+> Dois documentos de trabalho não são camada e continuam onde a mão os
+> alcança: `docs/BRP_SPATIAL_CONTRACT.md` (o contrato da projeção) e
+> `docs/design/BR_Port_Plano_Arte_Blender.md` (o caminho medido da arte).
+> `tools/conferir_docs.py` tranca isto no CI, e espera `DOCS OK`.
 
 ---
 
@@ -314,6 +328,45 @@ tranca isso.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta
   cor na mão.
+
+---
+
+## O que cabe numa sessão
+
+Uma sessão que tenta fazer tudo entrega tudo pela metade, e a seguinte não sabe
+o que ficou por acabar. Meia página para evitar isso.
+
+**Uma sessão fecha com o `ESTADO_DO_PROJETO.md` em dia, ou não fecha.** É o
+único artefato crítico que nenhum teste protege — e quando envelhece, a sessão
+seguinte trabalha com uma fotografia errada. Em 02/09 ele tinha dobrado de
+tamanho sem ninguém decidir, e carregava dentro DUAS parcelas do Sr. Ribeiro
+(R$8.000 e R$550.000) e três respostas diferentes para "por onde começo", todas
+lidas como atuais. Hoje `tools/conferir_docs.py` toca o alarme antes de dobrar
+outra vez, mas o alarme não escreve o documento.
+
+**Prometa UM item da fila, não três.** A fila da §7 do plano é ordenada, e os
+itens têm tamanhos honestos: um item por sessão é o ritmo que os últimos blocos
+mediram. Sobrou tempo? Comece o seguinte e diga onde parou — melhor do que três
+metades.
+
+**Meça antes de codar, e o custo de medir quase nunca é o que se supõe.** Duas
+vezes em dois dias a suposição estava errada e nos dois casos para o lado caro:
+a barra de reputação que se ia afinar já estava saturada no teto, e as 600
+partidas que se evitavam por "demorarem minutos" levam 26 segundos. Rodar a
+ferramenta antes de decidir é mais barato do que discutir o que ela diria.
+
+**Quando abrir um subagente de varredura, e quando não.** Vale quando a
+pergunta é "onde está X" numa área que não se conhece e a resposta cabe em
+linhas — ele lê muito e devolve pouco. Não vale para ler um arquivo que já se
+sabe qual é, para uma edição, nem para nada que precise do julgamento de quem
+está na conversa: ele arranca frio e re-deriva o contexto que esta sessão já
+tem. Na dúvida, `grep` primeiro.
+
+**O que se aprendeu vai para onde se lê, antes de a conversa fechar.** A
+varredura do `/fechar-sessao` mediu dez de doze lições já registradas à medida
+que o trabalho andava — a skill existe para as outras duas. Regra que vale
+sempre entra neste arquivo; por que se decidiu assim, em `docs/decisoes/`;
+armadilha de uma função, no comentário dela.
 
 ---
 

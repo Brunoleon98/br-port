@@ -2,7 +2,7 @@
 
 Esta pasta guarda as imagens que definem **para onde a arte do jogo vai**.
 Elas não são especificação de produção: são concept art. A diferença importa e
-está registrada em `docs/BLOCO7_PLANO_ARTE_BLENDER.md`.
+está registrada em `docs/design/BR_Port_Plano_Arte_Blender.md`.
 
 ---
 
@@ -116,4 +116,4 @@ Referência serve para **decidir**, não para copiar. Antes de encomendar ou
 gerar qualquer arte nova, a pergunta é: *qual das seis linhas de crescimento
 acima esta peça serve, e em que Fase?* Peça que não responde a isso é peça
 que vai ficar sem uso — já aconteceu duas vezes neste projeto
-(`docs/BLOCO4_PACOTE_SPRITES.md`).
+(`docs/arquivo/BLOCO4_PACOTE_SPRITES.md`).

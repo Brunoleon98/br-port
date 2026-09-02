@@ -125,7 +125,7 @@ o peso de linha da seção 2. Não trocar emoji por ícone com estilo diferente
 
 Desde 28/08 o jogo mistura duas linguagens visuais: a **interface é flat**
 (cores chapadas, sem gradiente) e os **sprites são ilustrados** — vista 3/4,
-sombreado, contorno escuro, volume. Ver `docs/BLOCO4_PACOTE_SPRITES.md`.
+sombreado, contorno escuro, volume. Ver `docs/arquivo/BLOCO4_PACOTE_SPRITES.md`.
 
 Isso **contraria o GDD**, que congela "Flat Design 2D" como estilo de arte.
 Não é acidente: os sprites vieram prontos nesse estilo e funcionam bem dentro
