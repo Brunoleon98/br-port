@@ -515,6 +515,47 @@ func _on_advance_pressed() -> void:
 	GameState.advance_turn()
 
 
+# O BOTÃO VOLTAR DO ANDROID. Só existe no telefone, e é por isso que ninguém
+# tinha reparado: por omissão o Godot FECHA A APLICAÇÃO nele, de modo que um
+# toque em Voltar com o boletim aberto matava o jogo em vez de fechar o painel.
+# O `quit_on_go_back=false` no project.godot desliga o padrão; quem decide o
+# que ele faz é isto.
+#
+# A REGRA É A FASE DO GAMESTATE, e não uma lista de painéis. Fora de
+# `"playing"` o jogo está à espera de uma resposta — a oferta do Arlindo, a
+# parcela do Sr. Ribeiro, o fim de jogo —, e fechar esse painel deixaria a
+# fase de pé sem nada na tela para a resolver: um travamento silencioso, que é
+# exatamente o defeito que a decisão de as telas serem overlay existe para
+# evitar. Em `"playing"` todo painel é dispensável, com uma exceção que o
+# próprio painel declara (`fecha_com_voltar`).
+func _notification(qual: int) -> void:
+	if qual != NOTIFICATION_WM_GO_BACK_REQUEST:
+		return
+	if GameState.phase != "playing":
+		return
+
+	var filhos := _overlay_layer.get_children()
+	if filhos.is_empty():
+		# Nada aberto: Voltar abre a pausa. É onde estão sair e recomeçar, que
+		# é o que a pessoa queria ao carregar em Voltar — só que sem levar a
+		# aplicação abaixo pelo caminho.
+		_on_pause_pressed()
+		return
+
+	# O de cima é o último filho: é o que está desenhado por cima, e é o único
+	# que o toque alcança.
+	var topo: Node = filhos[-1]
+	if topo is PainelNarrativo and not (topo as PainelNarrativo).fecha_com_voltar:
+		return
+	# Pelo `_fechar()` do próprio painel quando ele tem um, e não por
+	# `queue_free()`: é o `_fechar()` que grava o que houver para gravar e que
+	# emite `fechou`, do qual depende a corrente de abertura do jogo.
+	if topo.has_method("_fechar"):
+		topo.call("_fechar")
+	else:
+		topo.queue_free()
+
+
 # Os painéis pendurados no CanvasLayer NÃO herdam o tema: tema só se propaga
 # por uma árvore de Control, e CanvasLayer não é Control. Sem repassar na mão,
 # todo painel sai com o visual padrão do Godot em cima do jogo temático.

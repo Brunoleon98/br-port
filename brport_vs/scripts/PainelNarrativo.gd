@@ -32,6 +32,18 @@ const TOQUE_MIN := 44
 # jogo — os nomes, e a seguir o diário — sem cada painel saber quem vem depois.
 signal fechou
 
+# O botão VOLTAR do Android pode fechar este painel?
+#
+# Quase sempre sim: um boletim, uma página do diário, uma lista — dispensar é
+# a mesma coisa que tocar no botão. A exceção é a tela em que fechar DECIDE
+# alguma coisa, e a tela dos nomes é isso: fechá-la batiza o cais com o padrão
+# e a escolha é irrevogável (GDD 7). Um toque acidental no Voltar não pode
+# nomear o porto de alguém.
+#
+# É uma declaração do painel e não uma lista no Main.gd de propósito: uma
+# lista lá envelheceria calada no dia em que aparecesse o painel seguinte.
+var fecha_com_voltar := true
+
 var _vbox: VBoxContainer
 
 

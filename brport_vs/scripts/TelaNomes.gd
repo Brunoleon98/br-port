@@ -43,6 +43,10 @@ var _campo_jogador: LineEdit
 
 func _ready() -> void:
 	super()
+	# Fechar esta tela BATIZA o cais, e o nome não muda depois. O Voltar do
+	# Android é o único jeito de a dispensar sem se ler o que ela pede, então
+	# é o único jeito de alguém ficar com um porto que não escolheu.
+	fecha_com_voltar = false
 	var vbox := montar(LARGURA, ALTURA)
 
 	# ACORDO e não DOCA, e o Icones.gd avisa por escrito porquê: `doca` é traço

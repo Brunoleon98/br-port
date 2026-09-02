@@ -577,6 +577,18 @@ func _f4_numeros_do_fim() -> void:
 # Não substitui o export de verdade, que só corre no CI: prova o pré-requisito
 # que o export não sabe nomear, na suíte que corre em toda parte.
 func _f5_exportavel_para_android() -> void:
+	# RETRATO, e conferido como INTEIRO. O projeto trazia a string "portrait"
+	# — valor do Godot 3 — e o export do Android faz `int()` dela, que dá 0,
+	# que é LANDSCAPE. O APK de 02/09 abriu deitado num telefone real. O tipo
+	# faz parte da asserção porque era o tipo que estava errado: uma string
+	# aqui não dá erro nenhum, dá um jogo virado.
+	var giro = ProjectSettings.get_setting("display/window/handheld/orientation")
+	_confere("a orientação é um INTEIRO, não a string do Godot 3",
+		typeof(giro) == TYPE_INT, "veio %s" % type_string(typeof(giro)))
+	_confere("e é retrato travado (SCREEN_PORTRAIT)",
+		int(giro) == DisplayServer.SCREEN_PORTRAIT,
+		"veio %d, e LANDSCAPE é %d" % [int(giro), DisplayServer.SCREEN_LANDSCAPE])
+
 	_confere("o ETC2/ASTC está ligado no project.godot",
 		bool(ProjectSettings.get_setting(
 			"rendering/textures/vram_compression/import_etc2_astc", false)),
