@@ -162,6 +162,10 @@ Teste e import rodam sem tela.
    arquivo da corrida antiga. Nos dois casos o validador "passou" sem nunca ter
    visto defeito nenhum — que é pior do que não o ter testado, porque agora há
    confiança.
+   **E confira o `$?` do comando certo.** Em 02/09 um defeito injetado reprovou
+   como devia e o `$?` deu 0: a corrida acabava em `| tail -3`, e o que se
+   estava a medir era o `tail`. Redirecione para arquivo e leia o código de
+   saída antes de olhar a saída — num cano, o `$?` é do último elo.
    **E o defeito pode pegar e o teste passar na mesma.** Aconteceu em 02/09:
    tirar `tests/*` do filtro de export não reprovou nada, porque o teste
    perguntava `contains("tests/*")` e o `scenes/tests/*` que ficou no arquivo

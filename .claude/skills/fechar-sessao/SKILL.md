@@ -111,9 +111,25 @@ virou massa marrom, um arbusto que era um balde, e rótulos enterrados debaixo
 dos sprites — tudo com a suíte verde.
 
 ```sh
-xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
-  --script res://tools/capturar_tela.gd -- 12 foto.png completo
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as cinco de uma vez
 ```
+
+São as mesmas cinco que o CI anexa a cada PR — a tela inicial, o porto
+reconstruído, o boletim, o menu de pausa e a folha de ícones — e ele já diz na
+página da corrida **qual** delas mudou. O que o CI não faz é julgar; olhar
+continua a ser aqui.
+
+Para um tiro só, à mão:
+
+```sh
+xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
+  --fixed-fps 60 --script res://tools/capturar_tela.gd -- 10 foto.png completo
+```
+
+⚠️ **Sem `--fixed-fps 60` a foto não se compara com nenhuma outra.** A semente
+já é fixa, mas os tweens em laço andam por *delta*: medido, duas corridas do
+mesmo código davam 1.030 pixels diferentes. Para olhar, tanto faz; para dizer
+"mudou", faz toda a diferença.
 
 Para uma cena que não seja a principal (uma bancada de teste, por exemplo),
 `tools/capturar_cena.gd`, que só instancia e espera:
