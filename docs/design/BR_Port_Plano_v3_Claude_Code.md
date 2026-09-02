@@ -524,7 +524,20 @@ fim, e o que se procura é o resto.
 | Onde o projeto está | `docs/ESTADO_DO_PROJETO.md` |
 
 **Feito em 31/08:** `/fechar-sessao` existe em
-`.claude/skills/fechar-sessao/SKILL.md`. Faltam `/arte` e `/balancear`.
+`.claude/skills/fechar-sessao/SKILL.md`.
+
+**Feito em 02/09:** `/balancear`, escrito no dia seguinte a fazer o fluxo à mão
+— seis rodadas de 600 partidas para reescalar a economia. Escrever a skill logo
+a seguir ao trabalho é a diferença entre registar o processo e recordá-lo: ela
+carrega as três armadilhas que só apareceram por se ter feito à mão (a escala
+uniforme ser cosmética e ter de se PROVAR isso; a ordem dos perfis inverter
+quando a primeira estrutura fica cara face ao caixa inicial; e o rasto de prosa
+em oito arquivos que o CI cobra).
+
+**Falta `/arte`** — e continua a fazer sentido adiá-la: precisa de 1 GB de `bpy`
+para ser testada, e serve o A5, que está dois itens à frente na fila. Receita
+escrita para um fluxo que só corre daqui a duas sessões envelhece antes de ser
+usada, que é exatamente o problema que estas skills existem para resolver.
 
 Duas coisas mudaram na construção em relação ao que se planejou aqui. A
 primeira: o passo dos testes não é uma lista fixa. Os quatro do Godot
@@ -686,7 +699,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | 1 | B1 | Arranque de sessão automático | — |
 | 2 | **A1** | **Build no telefone** | **Jogar dez minutos** |
 | 3 | A2 | Números com fonte única + Parcelas 2/3 verificadas | Só se a conta não fechar |
-| 4 | B2 | `/arte`, `/balancear`, `/fechar-sessao` | — |
+| 4 | B2 | ~~`/balancear`~~, ~~`/fechar-sessao`~~ · falta `/arte` | — |
 | 5 | **A3** | **Reputação com efeito** | **Escolher o caminho — bloqueia** |
 | 6 | ✅ B4 | Fumaça de cena, ícones, migração de save | — |
 | 7 | A4 | As seis telas narrativas **+ a de nomes** | Ler o texto em voz alta ⏳ |
