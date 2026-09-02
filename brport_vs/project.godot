@@ -34,3 +34,16 @@ pointing/emulate_touch_from_mouse=true
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+; OBRIGATÓRIO PARA O EXPORT ANDROID, e o Godot recusa-se A DIZER ISSO.
+;
+; Sem esta linha o export do APK falha com "Cannot export project with preset
+; Android due to configuration errors:" e A LISTA DE ERROS VEM VAZIA — o
+; único dos ~20 testes de `has_valid_export_configuration` que põe
+; `valid = false` sem acrescentar mensagem nenhuma
+; (platform/android/export/export_plugin.cpp:3071 na 4.6.3).
+;
+; Sem a opção ligada, o Godot só importa ETC2/ASTC quando o SISTEMA que está
+; a exportar prefere esse formato — o que é verdade num Mac e falso em Linux,
+; que é onde o CI corre. Ou seja: o mesmo projeto exportava numa máquina e não
+; noutra, e a mensagem de erro não distinguia os dois casos.
+textures/vram_compression/import_etc2_astc=true

@@ -13,7 +13,7 @@
 O jogo saiu de "administrar um porto pronto" para **"levantar um porto em
 ruínas"**, e isso mexeu em tudo ao mesmo tempo: arte, interface, economia.
 
-**O porto abre parado.** 1 doca, 1 trabalhador, R$3.250 em caixa e cinco
+**O porto abre parado.** 1 doca, 1 trabalhador, R$400.000 em caixa e cinco
 estruturas para consertar. O mapa começa com **pátio de terra batida, armazém
 com telhado furado e escritório em ruína**; comprar cada estrutura muda o
 mapa. O estado "porto completo" é o que a sessão anterior tinha como estado

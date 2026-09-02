@@ -18,7 +18,7 @@
 
 ## O jogo hoje, em três linhas
 
-**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$3.250 e cinco estruturas
+**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$400.000 e cinco estruturas
 para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada uma
 muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
 saem de ruína para telhado novo.

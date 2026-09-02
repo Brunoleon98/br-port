@@ -374,7 +374,13 @@ jobs:
           path: build/android/brport.apk
           if-no-files-found: error
 
+      # SOBE MESMO QUE O APK TENHA FALHADO. Na primeira corrida o Web
+      # exportou bem e não chegou a artefato nenhum, porque o passo do APK
+      # falhou antes e levou os dois uploads atrás — perdeu-se a única build
+      # que tinha funcionado. Um passo que deu certo tem de entregar o que
+      # produziu, independentemente do que veio depois.
       - name: Guardar a build Web
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: brport-web
