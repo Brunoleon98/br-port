@@ -274,7 +274,7 @@ que havia onde pendurar seja o que for.
 
 ---
 
-### A4 — As seis telas narrativas que faltam do escopo do VS
+### A4 — As seis telas narrativas que faltam do escopo do VS  🔨 CONSTRUÍDO (01/09), à espera do gate
 
 **Entrega:** Boletim do dia, Dona Cida (3 tons), Boletim Financeiro semanal,
 cena de parcela com o Sr. Ribeiro, Diário do Porto (1 página), cena de fim de
@@ -302,6 +302,47 @@ de decisões por semana.** Se alterar, o simulador roda antes do commit.
 
 **Mede-se por:** uma partida do início ao fim em que a Fase 1 tem começo, meio
 e fim narrativos — e o balanceamento não se mexeu.
+
+**O que ficou (01/09).** Sete telas, não seis: o Bruno decidiu que a entrada dos
+dois nomes merece tela própria, e ela é a primeira coisa que o jogador vê.
+
+| Tela | Onde | Abre em |
+|---|---|---|
+| Nomes do cais e do jogador | `TelaNomes.gd` | Partida nova, antes de tudo |
+| Diário do Porto, 1ª página | `PainelDiario.gd` | Encadeado à anterior |
+| Boletim Financeiro (3 tons) | `PainelBoletim.gd` | Fecho de cada semana |
+| Falas da Dona Cida (8) | `Main.gd` + `Narrativa.gd` | Faixa de mensagem, por evento |
+| Falas do Arlindo | `CounterOfferPanel.gd` | Durante a negociação |
+| Cena da parcela | `DebtPaymentPanel.gd` | Vencimento, semana 4 |
+| Fim de Fase 1 | `EndGame.gd` | Fim de jogo, só na vitória |
+
+Todo o texto vive em `scripts/Narrativa.gd`, e os dois nomes saem por
+`GameState.texto()` — um ponto de substituição só, como o `moeda()`.
+
+**O balanceamento não se mexeu, e é medido em 600 partidas por perfil** (não
+nas 30 de fumaça, que têm ±18 pontos de margem): **100% / 47,8% / 0%**, com a
+mediana do jogador mediano em R$7.960 no vencimento contra a parcela de
+R$8.000. Os números da reputação do A3 também estão intactos — 23,3% / 0,4% /
+0% de ofertas no teto, apostas ganhas 87,3% / 49,5% / 39,0%. O modelo das
+Parcelas recalibra com erros de 1,3% / 0,1% / 1,4%, e nenhuma das 1.800
+partidas travou.
+
+A razão é estrutural — nenhuma tela é fase do `GameState`, e o simulador nunca
+abre cena.
+
+**A armadilha que este item destapou, e que valia por si só:** uma fase nova
+que bloqueasse o turno faria **24 de 30 partidas não terminarem** no simulador,
+e o CI passaria na mesma, porque só procurava a linha `=== Leitura ===`. Está
+medido, está consertado (o CI reprova `possível travamento`) e está escrito no
+`CLAUDE.md`.
+
+⏳ **Falta o gate:** ler o texto em voz alta. Três desvios do rascunho de
+escrita precisam do julgamento do Bruno — a narração de fim de fase teve de
+passar de doze semanas para as `WEEKS_TOTAL` que o VS tem, as falas com
+vocativo ganharam variante para quem não escreve o nome, e o "Boletim do dia"
+foi lido como os comentários da Dona Cida (o arquivo de escrita não tem texto
+para uma tela diária, e 32 modais por partida mudariam o ritmo que a economia
+mede).
 
 ---
 
@@ -647,7 +688,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | 4 | B2 | `/arte`, `/balancear`, `/fechar-sessao` | — |
 | 5 | **A3** | **Reputação com efeito** | **Escolher o caminho — bloqueia** |
 | 6 | ✅ B4 | Fumaça de cena, ícones, migração de save | — |
-| 7 | A4 | As seis telas narrativas | Ler o texto em voz alta |
+| 7 | A4 | As seis telas narrativas **+ a de nomes** | Ler o texto em voz alta ⏳ |
 | 8 | B3 | CI com captura e build como artefato | — |
 | 9 | A5 | Arte, etapas 1–6 | Olhar cada antes/depois |
 | 10 | B5 + B6 | Documentação em camadas, GDD legível | — |

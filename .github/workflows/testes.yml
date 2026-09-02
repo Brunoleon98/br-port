@@ -219,6 +219,20 @@ jobs:
             exit 1
           fi
 
+          # PARTIDA QUE NÃO TERMINA É REPROVAÇÃO, e até 01/09 não era: o
+          # simulador imprimia "possível travamento" e seguia até à linha de
+          # Leitura, que é a única que este passo procurava. O laço dele só
+          # sabe resolver as fases `rival_offer` e `debt_payment`, e
+          # `advance_turn()` retorna CALADO fora de `playing` — de modo que
+          # uma fase nova no GameState faria as 30 partidas girarem até ao
+          # limite de segurança e o CI passaria na mesma, com a medição toda
+          # errada. Foi a razão de a tela de nomes do A4 ser overlay e não
+          # fase; esta linha é para a próxima vez, em que ninguém se lembrar.
+          if grep -q "possível travamento" /tmp/sim.txt; then
+            echo "::error::Partidas não terminaram no simulador — alguma fase nova bloqueia o turno."
+            exit 1
+          fi
+
       - name: Conferir que o modelo das Parcelas 2 e 3 continua calibrado
         # O projetor tem de RECONSTRUIR a semana em regime que o simulador
         # acabou de medir, nos três perfis, antes de ter licença para falar das

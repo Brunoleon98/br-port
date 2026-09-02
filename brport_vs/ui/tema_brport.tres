@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=16 format=3]
+[gd_resource type="Theme" load_steps=18 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -228,6 +228,42 @@ content_margin_top = 3.0
 content_margin_right = 10.0
 content_margin_bottom = 3.0
 
+; O campo de texto da tela de abertura. Sem isto o LineEdit cai no cinzento
+; padrão do Godot, que não é da paleta e lê como campo desativado — foi o que
+; a primeira captura mostrou. Creme sobre a mesma borda dos cartões, e âmbar
+; no foco: é a cor que o resto da interface já usa para "é aqui".
+[sub_resource type="StyleBoxFlat" id="campo_normal"]
+bg_color = Color(0.941, 0.965, 1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.816, 0.875, 0.941, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="campo_foco"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 11.0
+content_margin_top = 7.0
+content_margin_right = 11.0
+content_margin_bottom = 7.0
+
 [resource]
 default_font_size = 15
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -241,6 +277,12 @@ Button/styles/pressed = SubResource("botao_press")
 Button/styles/disabled = SubResource("botao_off")
 Label/colors/font_color = Color(0.11, 0.204, 0.329, 1)
 Label/font_sizes/font_size = 15
+LineEdit/colors/font_color = Color(0.11, 0.204, 0.329, 1)
+LineEdit/colors/font_placeholder_color = Color(0.51, 0.6, 0.706, 1)
+LineEdit/colors/caret_color = Color(0.878, 0.604, 0.063, 1)
+LineEdit/font_sizes/font_size = 16
+LineEdit/styles/normal = SubResource("campo_normal")
+LineEdit/styles/focus = SubResource("campo_foco")
 PanelContainer/styles/panel = SubResource("cartao")
 ProgressBar/styles/background = SubResource("barra_fundo")
 ProgressBar/styles/fill = SubResource("barra_cheia")

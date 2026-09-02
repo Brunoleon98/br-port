@@ -76,6 +76,17 @@ func _montar() -> void:
 	GS.clear_save()
 	GS.new_game()
 
+	# OS NOMES SÃO DADOS AQUI, e sem isto a ferramenta deixou de servir. Desde
+	# que a abertura passou a perguntar o nome do cais e do jogador, o `Main`
+	# abre a tela de nomes quando eles faltam — e ela fica POR CIMA de tudo o
+	# que se queria fotografar. A primeira captura depois disso saiu com o
+	# porto inteiro escondido atrás do painel de abertura.
+	#
+	# São nomes de ferramenta, não do jogo: "Cais Mirim" é o padrão do GDD, e
+	# o do jogador fica vazio de propósito — assim a captura mostra a variante
+	# SEM vocativo, que é a que ninguém se lembra de conferir.
+	GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
+
 	# `completo` fotografa o porto NO FIM da reconstrução. O mapa tem dois
 	# estados (terra batida e pavimentado) e props que trocam de textura; sem
 	# isto só dava para conferir na tela o estado inicial, e o segundo mapa
