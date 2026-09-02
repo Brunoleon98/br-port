@@ -197,10 +197,25 @@ de navegação por cima.
 Descobrir isso agora custa uma sessão. Descobrir depois da arte final custa
 refazer arte.
 
-| Quem | O quê |
-|---|---|
-| Máquina | Preset de export versionável (sem chaves), build headless, o APK e o `.zip` web como artefatos do CI, `COMO_RODAR.md` com a receita |
-| Bruno | Instalar no telefone. Jogar dez minutos. Dizer o que estranhou |
+| Quem | O quê | Estado |
+|---|---|---|
+| Máquina | Preset de export versionável (sem chaves), build headless, o APK e o `.zip` web como artefatos do CI, `COMO_RODAR.md` com a receita | ✅ 02/09 |
+| Bruno | Instalar no telefone. Jogar dez minutos. Dizer o que estranhou | ⏳ |
+
+**A metade de máquina está feita e verificada** (02/09). O APK sai a cada push,
+29 MB, `arm64-v8a`, assinado em debug com chave gerada na hora; o Web sai ao
+lado. Os dois ficam na aba **Actions** da corrida, em **Artifacts**.
+
+⚠️ **O export Android falhou primeiro, e com a lista de erros VAZIA.** De uns
+vinte testes de configuração do Godot, só o do ETC2/ASTC reprova sem escrever
+mensagem nenhuma — e ele depende do SISTEMA em que se exporta, passando num Mac
+e reprovando em Linux. Foi preciso ler o código do motor para o descobrir. O
+`project.godot` ganhou `import_etc2_astc=true` e o bloco F5 do `teste_fumaca.gd`
+tranca-o, na suíte rápida, para a próxima resposta chegar em segundos.
+
+⚠️ **O APK não se constrói no contêiner do Claude:** o `dl.google.com` responde
+403 por política da organização, o SDK do Android é inalcançável, e o CI é o
+único juiz desse export.
 
 **Mede-se por:** uma partida completa no telefone, e uma lista escrita do que
 apareceu.

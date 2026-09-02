@@ -3,9 +3,10 @@
 > Resumo de onde o projeto está. Serve para retomar o trabalho numa conversa
 > nova sem precisar reexplicar tudo.
 >
-> **Última atualização:** 01/09/2026 (o jogo ganhou NPCs: sete telas
-> narrativas, o jogador batiza o cais, e a Dona Cida fala. Antes disto o loop
-> estava inteiro e não havia história nenhuma)
+> **Última atualização:** 02/09/2026 (o jogo sai do contêiner: preset de
+> export versionado e o CI a produzir APK e build Web a cada push. Antes
+> disto o projeto dizia-se "mobile" havia quatro blocos sem nunca o ter
+> provado)
 >
 > 👉 **Vai retomar o trabalho? Comece por `docs/BLOCO5_BRIEFING_CONTINUACAO.md`.**
 > Para saber **o que fazer a seguir e quem faz o quê**, o plano é
@@ -57,6 +58,40 @@ a cada Fase, sem o jogo precisar saber.
 
 ## Onde estamos no roadmap
 
+**O jogo finalmente SAI daqui** (02/09) — item A1, metade de máquina fechada;
+a outra metade é do Bruno. Quatro blocos e sessenta commits com o projeto
+descrito como "mobile", e ele nunca tinha saído de um contêiner: tudo o que se
+sabia sobre o comportamento dele num telefone era dedução.
+
+`brport_vs/export_presets.cfg` passou a ser versionado — escrito à mão para
+**não guardar chave nenhuma**: os campos de keystore ficam vazios de propósito,
+e o Godot lê as variáveis de ambiente quando os encontra em branco. Um segundo
+job do CI exporta Web e Android a cada push e anexa os dois à corrida
+(`brport-apk`, `brport-web`). A receita, pelos dois caminhos, está em
+`brport_vs/COMO_RODAR.md`.
+
+**Existe APK.** Medido na corrida verde: **29 MB**, `arm64-v8a`, assinado com
+uma chave de debug gerada na hora — descartável de propósito, porque o alvo é
+o telefone do Bruno e não uma loja. O Web sai ao lado, com `.pck` de 2.045.588
+bytes e `.wasm` de 37,7 MB. As duas passaram a excluir do pacote as cinco
+suítes, o simulador e as capturas: o primeiro export levava tudo isso dentro.
+
+⚠️ **O export Android falha com a lista de erros VAZIA**, e foi preciso ler o
+código do motor para saber porquê: de uns vinte testes de configuração, só o do
+ETC2/ASTC reprova sem escrever mensagem. Pior, ele depende do SISTEMA em que se
+exporta — passa num Mac e reprova em Linux, que é onde o CI corre. O
+`project.godot` ganhou `import_etc2_astc=true` com a explicação ao lado, e o
+bloco F5 do `teste_fumaca.gd` tranca isso e mais o preset (sem chaves, com os
+dois presets, com as pastas de ferramenta fora do pacote) — na suíte rápida,
+para a resposta chegar em segundos e não depois de um export de 25 minutos.
+
+⚠️ **O APK não se consegue construir nesta máquina.** O `dl.google.com` responde
+403 por política da organização, então o SDK do Android é inalcançável e o CI é
+o único lugar onde esse export se verifica. O Web esse corre aqui.
+
+⏳ **O gate é do Bruno: instalar o APK num telefone de verdade e jogar.** A
+entrega deste item não é o arquivo — é uma partida jogada.
+
 **A reputação passou a fazer alguma coisa** (01/09) — item A3, fechado, e era
 ele que travava os itens 5 a 15 da fila. Reputação alta faz o cliente do Arlindo
 aceitar pagar cheio com mais frequência; reputação baixa faz o contrário. Só nas
@@ -106,8 +141,10 @@ que bloqueasse o turno faria **24 de 30 partidas não terminarem** no simulador 
 e o CI passaria na mesma, porque só procurava a linha `=== Leitura ===`. Medido,
 consertado (o CI agora reprova `possível travamento`) e escrito no `CLAUDE.md`.
 Como overlay, o balanceamento medido fica intocado por construção — e medido:
-600 partidas por perfil dão **100% / 47,8% / 0%**, com a mediana do mediano em
+600 partidas por perfil deram **100% / 47,8% / 0%**, com a mediana do mediano em
 R$7.960 contra a parcela de R$8.000. Nenhuma das 1.800 partidas travou.
+*(Números de 01/09, antes da reescala. Serviram para provar que o A4 não mexeu
+na economia; os do jogo de hoje estão lá em cima, em "O jogo hoje".)*
 
 ⏳ **O gate é do Bruno: ler o texto em voz alta.** Três desvios do rascunho de
 escrita esperam por esse julgamento, e estão listados no A4 do plano.
