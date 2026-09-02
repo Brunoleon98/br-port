@@ -364,11 +364,14 @@ itens têm tamanhos honestos: um item por sessão é o ritmo que os últimos blo
 mediram. Sobrou tempo? Comece o seguinte e diga onde parou — melhor do que três
 metades.
 
-**Meça antes de codar, e o custo de medir quase nunca é o que se supõe.** Duas
-vezes em dois dias a suposição estava errada e nos dois casos para o lado caro:
-a barra de reputação que se ia afinar já estava saturada no teto, e as 600
-partidas que se evitavam por "demorarem minutos" levam 26 segundos. Rodar a
-ferramenta antes de decidir é mais barato do que discutir o que ela diria.
+**Meça antes de codar, e o custo de medir quase nunca é o que se supõe.** Três
+vezes em dois dias a suposição estava errada e nas três para o lado caro: a
+barra de reputação que se ia afinar já estava saturada no teto; as 600 partidas
+que se evitavam por "demorarem minutos" levam 26 segundos; e a `/arte` foi
+adiada por "precisar de 1 GB de `bpy`" quando metade das etapas não precisa de
+Blender nenhum e o conferidor de lote precisa de `numpy` + `pillow`, que
+instalam em 8. Rodar a ferramenta antes de decidir é mais barato do que
+discutir o que ela diria.
 
 **Quando abrir um subagente de varredura, e quando não.** Vale quando a
 pergunta é "onde está X" numa área que não se conhece e a resposta cabe em

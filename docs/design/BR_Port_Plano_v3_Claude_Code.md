@@ -557,10 +557,25 @@ uniforme ser cosmética e ter de se PROVAR isso; a ordem dos perfis inverter
 quando a primeira estrutura fica cara face ao caixa inicial; e o rasto de prosa
 em oito arquivos que o CI cobra).
 
-**Falta `/arte`** — e continua a fazer sentido adiá-la: precisa de 1 GB de `bpy`
-para ser testada, e serve o A5, que está dois itens à frente na fila. Receita
-escrita para um fluxo que só corre daqui a duas sessões envelhece antes de ser
-usada, que é exatamente o problema que estas skills existem para resolver.
+**Feito em 02/09: `/arte`**, e a razão de deixar de a adiar é a mesma que
+mandava adiá-la. Esta seção dizia "serve o A5, que está dois itens à frente na
+fila" — o A5 passou a ser AGORA, e o fluxo tinha acabado de ser corrido à mão
+na Etapa 1. É o precedente da `/balancear` outra vez: escrever a seguir ao
+trabalho é a diferença entre registar o processo e recordá-lo.
+
+O que ela carrega e que não estava escrito em lado nenhum: a armadilha de
+trocar o MATIZ e esquecer o VALOR (com os números que a mediram), o recorte
+ampliado como o que denuncia o que a captura inteira deixa passar, e a ordem
+medir → aplicar → recortar → medir outra vez.
+
+⚠️ **E a suposição do custo estava errada num terceiro caso.** Esta seção dizia
+que a skill "precisa de 1 GB de `bpy` para ser testada". Metade não precisa: a
+Etapa 1 (paleta) e a Etapa 6 (interface) rodam sem Blender nenhum, e foi assim
+que a Etapa 1 saiu. E `tools/conferir_lote_de_arte.py`, que parecia estar do
+lado caro, precisa só de `numpy` e `pillow` — **medido, 8 segundos**. Quem
+visse o `ModuleNotFoundError` e concluísse "isto é Blender" adiaria uma
+ferramenta que não custa nada. As receitas da skill foram todas corridas; duas
+estavam erradas e foram corrigidas por isso.
 
 Duas coisas mudaram na construção em relação ao que se planejou aqui. A
 primeira: o passo dos testes não é uma lista fixa. Os quatro do Godot
@@ -855,7 +870,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | 1 | B1 | Arranque de sessão automático | — |
 | 2 | **A1** | **Build no telefone** ✅ máquina · instalado 02/09 | **Jogar dez minutos** ⏳ |
 | 3 | A2 | Números com fonte única + Parcelas 2/3 verificadas | Só se a conta não fechar |
-| 4 | B2 | ~~`/balancear`~~, ~~`/fechar-sessao`~~ · falta `/arte` | — |
+| 4 | ✅ B2 | `/balancear`, `/fechar-sessao` e `/arte` | — |
 | 5 | **A3** | **Reputação com efeito** | **Escolher o caminho — bloqueia** |
 | 6 | ✅ B4 | Fumaça de cena, ícones, migração de save | — |
 | 7 | A4 | As seis telas narrativas **+ a de nomes** | Ler o texto em voz alta ⏳ |
