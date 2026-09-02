@@ -85,10 +85,13 @@ de máquina do A1 (APK e build Web a cada push), e duas das três skills do B2.
 | **A5** | Olhar cada antes/depois da arte | **A Etapa 1 começou** — a paleta do mapa passou a tropical, com valores amostrados da referência. Falta o seu olho. As outras cinco etapas esperam |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
-**Livres, sem gate:** a `/arte` que falta ao B2 — e o plano diz para a adiar
-até o A5 estar perto, porque receita escrita para um fluxo que só corre daqui a
-duas sessões envelhece antes de ser usada. Depois dela, B7 (o registro de
-partida, metade de máquina do A7) e A8.
+**Livres, sem gate:** B7 (o registro de partida, metade de máquina do A7) e A8.
+Da trilha do projeto não sobra mais nada: B1 a B6 e B8 estão fechados, e a
+`/arte` fechou o B2 em 02/09.
+
+Da arte, **duas das seis etapas não precisam de Blender** — a 1 (paleta, feita)
+e a 6 (o chrome da interface, que é tema do Godot). As outras quatro precisam
+de `bpy`, ~1 GB.
 
 ### ⚠️ A pergunta que trava a Fase 2
 
@@ -147,6 +150,7 @@ duas são a mesma conta com os números que o GDD dá para elas.
 | `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
 | `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**. Roda no CI, espera `ASSET OK` |
 | `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
+| `.claude/skills/arte/SKILL.md` | **O ritual da arte** — qual etapa precisa de Blender, a armadilha de trocar matiz sem olhar o valor, o recorte ampliado, e o rasto que a mudança envelhece |
 | `.claude/skills/balancear/SKILL.md` | **O ritual da economia** — medir antes e depois com a mesma semente, separar escala de ratio, e arrastar atrás os oito lugares que afirmam o balanceamento |
 | `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto. Nunca derruba a sessão: todo caminho de erro devolve a receita manual |
 | `.godot-version` | A versão do Godot, num lugar só. Lida pelo hook e pelo CI |
