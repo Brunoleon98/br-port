@@ -28,6 +28,13 @@ para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada u
 muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
 saem de ruína para telhado novo.
 
+**O botão que move o jogo tem cor própria desde 02/09** — "Avançar dia" passou a
+âmbar com rótulo navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e
+os cartões claros ganharam sombra deslocada e borda de 2px. Antes eram dois
+botões navy iguais na barra inferior. **Os cartões escuros ficaram como estavam,
+de propósito:** a sombra do tema é mais clara que o fundo deles, e desenharia um
+halo.
+
 **A água é tropical desde 02/09.** O mapa era de mar frio (`#4a96b4`) num jogo
 cujo cenário é o litoral brasileiro; a paleta passou a turquesa com os valores
 amostrados das imagens de referência — primeira metade da Etapa 1 do plano de
@@ -82,7 +89,7 @@ de máquina do A1 (APK e build Web a cada push), e duas das três skills do B2.
 |---|---|---|
 | **A1** | Jogar dez minutos no APK | O jogo já rodou num telefone e a primeira instalação achou três defeitos que nenhum teste daqui podia ver. Os três estão corrigidos e trancados por teste; a segunda passagem vale o mesmo preço |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **A Etapa 1 começou** — a paleta do mapa passou a tropical, com valores amostrados da referência. Falta o seu olho. As outras cinco etapas esperam |
+| **A5** | Olhar cada antes/depois da arte | **Duas etapas feitas** — a 1 (paleta tropical do mapa) e a 6 (o botão que move o jogo ganhou cor própria, os cartões claros ganharam sombra). São as duas que não precisam de Blender. As outras quatro esperam o `bpy` |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 **Livres, sem gate:** B7 (o registro de partida, metade de máquina do A7) e A8.

@@ -123,6 +123,16 @@ Blender — é tema do Godot e ícone:
   tirar do mapa. A diferença: lá o rótulo tem uma pílula de dado por baixo e
   fica sobre água vazia; aqui ficava sobre o barco.
 
+> ✅ **A Etapa 6 usou desta lista o que se aplica** (02/09): sombra deslocada e
+> borda de 2px nos cartões claros, e cor própria no botão que move o jogo.
+>
+> **O trilho esquerdo e a barra de seis botões NÃO foram feitos, e não por
+> falta de tempo:** esta interface tem dois botões de ação, e a referência
+> descreve um jogo com mais sistemas. Copiá-los seria desenhar interface para
+> funcionalidade que não existe — o erro que esta pasta avisa duas linhas abaixo.
+> O gradiente também não: `StyleBoxFlat` não faz gradiente, e o plano de arte
+> explica o que custaria.
+
 ---
 
 ## Como usar esta pasta

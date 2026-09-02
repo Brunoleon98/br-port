@@ -737,6 +737,7 @@ icon = ExtResource("ic_trabalhador")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.7
+theme_type_variation = &"BotaoPrimario"
 text = "AVANÇAR DIA"
 theme_override_constants/icon_max_width = 30
 theme_override_font_sizes/font_size = 19

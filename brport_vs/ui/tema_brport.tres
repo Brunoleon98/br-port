@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=19 format=3]
+[gd_resource type="Theme" load_steps=25 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -16,11 +16,15 @@
 
 
 [sub_resource type="StyleBoxFlat" id="cartao"]
+; Etapa 6 do plano de arte, 02/09. A leitura da referência pede "borda clara de
+; 2px e sombra PROJETADA por baixo". A sombra já existia, mas sem deslocamento:
+; simétrica em volta do cartão, ela lê como halo e não como papel levantado da
+; mesa. `shadow_offset` é o que a faz cair para baixo.
 bg_color = Color(1, 1, 1, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 border_color = Color(0.816, 0.875, 0.941, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
@@ -30,10 +34,15 @@ content_margin_left = 12.0
 content_margin_top = 10.0
 content_margin_right = 12.0
 content_margin_bottom = 10.0
-shadow_color = Color(0.11, 0.204, 0.329, 0.06)
-shadow_size = 4
+shadow_color = Color(0.11, 0.204, 0.329, 0.1)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxFlat" id="botao_normal"]
+; O botão não tinha sombra NENHUMA e por isso ficava colado ao fundo. A sombra
+; deslocada é o que o levanta — e o `botao_press` continua sem ela de
+; propósito: pressionado é afundado, e sombra num botão premido desfaz a única
+; pista de profundidade que o toque devolve.
 bg_color = Color(0.11, 0.204, 0.329, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
@@ -43,6 +52,9 @@ content_margin_left = 14.0
 content_margin_top = 10.0
 content_margin_right = 14.0
 content_margin_bottom = 10.0
+shadow_color = Color(0.11, 0.204, 0.329, 0.22)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxFlat" id="botao_hover"]
 bg_color = Color(0.141, 0.275, 0.431, 1)
@@ -54,6 +66,9 @@ content_margin_left = 14.0
 content_margin_top = 10.0
 content_margin_right = 14.0
 content_margin_bottom = 10.0
+shadow_color = Color(0.11, 0.204, 0.329, 0.28)
+shadow_size = 7
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="botao_press"]
 bg_color = Color(0.078, 0.153, 0.251, 1)
@@ -68,6 +83,54 @@ content_margin_bottom = 10.0
 
 [sub_resource type="StyleBoxFlat" id="botao_off"]
 bg_color = Color(0.816, 0.875, 0.941, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="primario_normal"]
+; O BOTÃO QUE MOVE O JOGO. A leitura da referência pede "cada botão com cor
+; própria" numa barra de SEIS; esta interface tem DOIS, e com dois a distinção
+; útil não é seis cores — é primário contra secundário. "Avançar dia" é o que
+; faz o turno andar; "Alocar todos" é conveniência. Só o primeiro muda de cor.
+;
+; ⚠️ O TEXTO É NAVY, E ISSO FOI MEDIDO. Branco sobre este âmbar dá 2,39:1 de
+; contraste — reprova até no corte de texto grande da WCAG (3,0). Navy sobre
+; âmbar dá 5,27:1 e passa o AA normal. Botão âmbar com rótulo branco é o que
+; sai quando se escolhe pelo aspecto e não se mede.
+bg_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+shadow_color = Color(0.44, 0.3, 0.03, 0.32)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="primario_hover"]
+bg_color = Color(0.949, 0.675, 0.11, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+shadow_color = Color(0.44, 0.3, 0.03, 0.38)
+shadow_size = 7
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="primario_press"]
+bg_color = Color(0.776, 0.522, 0.043, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -316,6 +379,15 @@ PanelContainer/styles/panel = SubResource("cartao")
 ProgressBar/styles/background = SubResource("barra_fundo")
 ProgressBar/styles/fill = SubResource("barra_cheia")
 Cartao/base_type = "PanelContainer"
+BotaoPrimario/base_type = &"Button"
+BotaoPrimario/colors/font_color = Color(0.11, 0.204, 0.329, 1)
+BotaoPrimario/colors/font_hover_color = Color(0.11, 0.204, 0.329, 1)
+BotaoPrimario/colors/font_pressed_color = Color(0.078, 0.153, 0.251, 1)
+BotaoPrimario/colors/font_disabled_color = Color(0.51, 0.6, 0.706, 1)
+BotaoPrimario/styles/normal = SubResource("primario_normal")
+BotaoPrimario/styles/hover = SubResource("primario_hover")
+BotaoPrimario/styles/pressed = SubResource("primario_press")
+BotaoPrimario/styles/disabled = SubResource("botao_off")
 Cartao/styles/panel = SubResource("cartao")
 TrabLivre/base_type = "PanelContainer"
 TrabLivre/styles/panel = SubResource("trab_livre")

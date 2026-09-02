@@ -185,6 +185,42 @@ teste de design. Merece a sua própria passagem.
 - **Mede-se por:** o teste de design (que já cobre alvo de toque e
   sobreposição) mais uma captura.
 
+#### ✅ FEITA em 02/09, e ela corrigiu três coisas desta lista
+
+**1. `StyleBoxFlat` NÃO FAZ GRADIENTE.** Sondado no motor: 31 propriedades,
+nenhuma com "gradient" — há `bg_color` (chapado), `shadow_color`, `shadow_size`
+e `shadow_offset`. Gradiente exigiria `StyleBoxTexture` com um
+`GradientTexture2D`, que perde o `corner_radius` (o nine-patch não tem raio) e
+obrigaria a uma textura por raio. Isso desfaz a propriedade que o cabeçalho do
+tema declara — *"o ponto único de estilo: mudar cor, canto ou fonte aqui muda a
+interface inteira"*. **Não foi feito, e a troca não vale o preço.**
+
+**2. O trilho esquerdo e a barra de SEIS botões não existem neste jogo.** São da
+interface da referência, que serve um jogo com mais sistemas. Esta tem DOIS
+botões de ação, e com dois a distinção útil não é seis cores: é **primário
+contra secundário**. "Avançar dia" ganhou a variação `BotaoPrimario` em âmbar;
+"Alocar todos" ficou navy. O `referencias/README.md` avisa que peça que não
+responde a uma linha de crescimento fica sem uso — já aconteceu duas vezes.
+
+⚠️ **E o rótulo do primário é NAVY, não branco, porque foi medido.** Branco
+sobre o âmbar `#e09a10` dá **2,39:1** de contraste — reprova até o corte de
+texto grande da WCAG (3,0). Navy dá **5,27:1** e passa o AA normal. Botão âmbar
+com texto branco é o que sai quando se escolhe pelo aspecto.
+
+**3. Dar corpo à interface não é mexer NUM StyleBox — são oito.** Medido pixel a
+pixel por faixa da tela, a mudança caiu em dois lugares: os botões de ação (50%
+da faixa) e o cartão da parcela (15%). Ficaram intocados o HUD, os cartões de
+doca (×4 estilos próprios), os de trabalhador (×3) e a mensagem. O `cartao`
+genérico serve muito menos coisa do que o nome sugere.
+
+⚠️ **E os cartões escuros NÃO ganham profundidade por sombra — é física, não
+preguiça.** O fundo da barra inferior é `#0d1a26`, luminância **24,1**; a sombra
+do tema é navy `#1c3454`, luminância **49,2**. A sombra é MAIS CLARA que o
+fundo: aplicá-la ali desenharia um halo. É a mesma lição da água da Etapa 1 —
+o contraste depende do fundo, não da tinta. Cartão escuro sobre fundo escuro
+ganha corpo por BORDA, e os cartões de doca já a têm. Deixados como estão, de
+propósito.
+
 ---
 
 ## 5. A pergunta do conhecimento de Blender

@@ -265,6 +265,11 @@ tranca isso.
   amplitude de luminância antes e depois**, e lembre que o contraste que o olho
   vê é razão e não diferença. Na captura inteira nada disso aparecia; a 3× de
   ampliação era evidente.
+- **Contraste depende do FUNDO, e isso vale para sombra como vale para cor.**
+  Irmã da regra acima, e mordeu no mesmo dia: a sombra do tema é navy (lum 49)
+  e o fundo da barra inferior é #0d1a26 (lum 24) — pôr sombra nos cartões
+  escuros desenharia um HALO. Cartão escuro sobre fundo escuro ganha corpo por
+  borda, não por sombra. Antes de aplicar profundidade, amostre o fundo.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
