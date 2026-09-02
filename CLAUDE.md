@@ -23,6 +23,12 @@ são em português — commits e PRs em inglês.
 > alcança: `docs/BRP_SPATIAL_CONTRACT.md` (o contrato da projeção) e
 > `docs/design/BR_Port_Plano_Arte_Blender.md` (o caminho medido da arte).
 > `tools/conferir_docs.py` tranca isto no CI, e espera `DOCS OK`.
+>
+> **O GDD 7 lê-se em `docs/gdd/`**, uma seção por arquivo, GERADAS do
+> `BR_Port_GDD_V7.jsx` — não as edite. Ele descreve o jogo das Fases 1 a 5 e
+> está **congelado antes da reescala de 02/09**: onde os números dele
+> divergirem do jogo, quem manda é `docs/design/BR_Port_Numeros_Fase_1.md`,
+> que sai do `GameState.gd`.
 
 ---
 
