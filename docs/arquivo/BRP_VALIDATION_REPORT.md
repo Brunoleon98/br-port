@@ -77,7 +77,7 @@ fez:
 
 **A gaivota.** Continua sendo o pior asset do lote. Três versões, nenhuma lê como ave a 40px — sai um planador
 cinzento. Não é falta de iteração: é o mesmo teto que o
-`BLOCO7_PLANO_ARTE_BLENDER.md` já mediu para o rosto do trabalhador. Primitiva
+`docs/design/BR_Port_Plano_Arte_Blender.md` já mediu para o rosto do trabalhador. Primitiva
 composta não resolve silhueta orgânica nessa escala, e a saída registrada é
 textura pintada num plano, não mais geometria. Está anotado no cabeçalho de
 `blender/brp_fauna.py`.

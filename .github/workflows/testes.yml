@@ -146,6 +146,30 @@ jobs:
             exit 1
           fi
 
+      - name: Conferir a documentação em camadas
+        # Item B5. Documento não compila, e por isso envelhece calado: em 02/09
+        # o `ESTADO_DO_PROJETO.md` tinha DOBRADO desde que o plano descreveu a
+        # dor, e carregava dentro duas parcelas do Sr. Ribeiro (R$8.000 e
+        # R$550.000) e três respostas diferentes para "por onde começo", todas
+        # lidas como atuais. Este passo confere o que é conferível: que as
+        # quatro camadas existem, que toda referência de documento tem
+        # destino, que registro de sessão vive em `docs/arquivo/` e está no
+        # índice de lá, e que o estado não voltou a inchar.
+        #
+        # Não roda o Godot — é Python puro e leva menos de um segundo. Fica
+        # aqui, e não num workflow próprio, porque a mudança que o quebra é a
+        # mesma que mexe no repositório.
+        run: |
+          set -euo pipefail
+          python3 tools/conferir_docs.py 2>&1 | tee /tmp/docs.txt
+
+          # A linha de sucesso, e não o código de saída — a mesma regra que
+          # vale para as suítes do Godot, e que vale aqui pelo mesmo motivo.
+          if ! grep -q "DOCS OK" /tmp/docs.txt; then
+            echo "::error::A documentação em camadas está fora do contrato (veja a saída acima)."
+            exit 1
+          fi
+
       - name: Conferir que os sons versionados batem com o gerador
         run: |
           set -euo pipefail

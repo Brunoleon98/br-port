@@ -14,7 +14,7 @@ recortados e no tamanho de uso.
 
 DOIS MODOS, DETECTADOS SOZINHO
 ------------------------------
-* **Fundo sólido** (recomendado — ver docs/BLOCO4_GUIA_GERACAO_ASSETS.md):
+* **Fundo sólido** (recomendado — ver docs/arquivo/BLOCO4_GUIA_GERACAO_ASSETS.md):
   peça ao gerador um fundo chapado de magenta `#FF00FF`. É o caminho limpo,
   porque magenta não aparece em nada portuário e o recorte fica exato.
 

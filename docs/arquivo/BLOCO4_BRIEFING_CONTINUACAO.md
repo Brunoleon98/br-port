@@ -83,7 +83,7 @@ Sobrou para o gerador de imagem só o que não se escreve em coordenadas:
 porque eles vivem em painel. Foi por isso que a leva de retratos que o Bruno
 gerou ficou boa e a de barcos não.
 
-`docs/BLOCO4_PROMPTS_ISOMETRICO.md` continua valendo para esses dois. A §0
+`docs/arquivo/BLOCO4_PROMPTS_ISOMETRICO.md` continua valendo para esses dois. A §0
 trata de **orientação**, que é o erro que derrubou os sprites de cenário.
 
 Ordem sugerida no próprio documento: 3 barcos → píer nos dois estados →
@@ -239,7 +239,7 @@ com `xvfb-run` para as capturas.
 
 Cole isto:
 
-> Continuando o BR Port. Leia `docs/BLOCO4_BRIEFING_CONTINUACAO.md` e depois
+> Continuando o BR Port. Leia `docs/arquivo/BLOCO4_BRIEFING_CONTINUACAO.md` e depois
 > `docs/ESTADO_DO_PROJETO.md`. A direção de arte já está decidida (isométrico)
 > e não precisa reabrir.
 

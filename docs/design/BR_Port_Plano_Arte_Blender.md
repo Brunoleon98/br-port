@@ -24,7 +24,7 @@ esperar delas:
   imagem gerada não tem folha de sprite por trás, não tem estados (ruína ×
   consertado), não registra em cima do mapa, e não repete o mesmo prédio duas
   vezes igual. É por isso que este projeto já perdeu **duas levas de sprite**
-  (`docs/BLOCO4_PACOTE_SPRITES.md`) e acabou gerando por script.
+  (`docs/arquivo/BLOCO4_PACOTE_SPRITES.md`) e acabou gerando por script.
 
 O alvo realista, portanto, não é "reproduzir a imagem". É: **chegar ao ponto
 em que alguém que viu a referência reconhece o jogo como sendo aquilo**. A
@@ -96,7 +96,7 @@ tela num pátio cheio. É lá que está o ganho barato.
    material num plano da cabeça.
 2. **A pincelada.** A referência tem variação de mão — telha que não repete,
    parede com mancha que conta uma história. Ruído procedural chega perto e
-   não chega lá. Já registrado em `BLOCO5_PROMPTS_BLENDER_RICO.md`: *"o
+   não chega lá. Já registrado em `docs/arquivo/BLOCO5_PROMPTS_BLENDER_RICO.md`: *"o
    volume, a luz, o desgaste e a densidade de peça, sim; a pincelada, não."*
 3. **Composição.** A referência tem um pátio ARRUMADO por alguém — fileiras
    que fazem sentido, circulação, um caminhão parado onde faria falta. Isso é
@@ -196,7 +196,7 @@ Registrado porque cada um destes já custou tempo neste projeto:
 2. **Mexer na projeção sem rodar o teste de design.** `MEIA_LARG`,
    `ROT_X`/`ROT_Z` e `ESCALA_ORTO` são um contrato entre três arquivos.
 3. **Perseguir a pincelada com nó de ruído.** Tem teto, e o teto já foi
-   medido em `BLOCO5_PROMPTS_BLENDER_RICO.md`.
+   medido em `docs/arquivo/BLOCO5_PROMPTS_BLENDER_RICO.md`.
 4. **Densificar sem olhar o resultado no jogo.** Prop bonito na folha de
    contato e ilegível a 25% é trabalho jogado fora — foi o que aconteceu com
    a primeira tentativa de desgaste, que virou lixa.

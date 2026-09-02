@@ -145,8 +145,8 @@ do **C** (prédios, barcos, píer) e o **E**.
 ### Preâmbulo (colar antes de qualquer um dos prompts)
 
 ```
-Continuando o BR Port. Leia docs/BLOCO5_BRIEFING_CONTINUACAO.md,
-docs/BLOCO5_PROMPTS_BLENDER_RICO.md e depois docs/ESTADO_DO_PROJETO.md.
+Continuando o BR Port. Leia docs/arquivo/BLOCO5_BRIEFING_CONTINUACAO.md,
+docs/arquivo/BLOCO5_PROMPTS_BLENDER_RICO.md e depois docs/ESTADO_DO_PROJETO.md.
 
 Restrições que NÃO se negociam neste trabalho:
 
@@ -214,7 +214,7 @@ pode quebrar alinhamento — nenhuma coordenada muda.
 Os props do BR Port não projetam sombra nenhuma, e é isso que os faz parecer
 adesivo colado no mapa. Acrescente sombra — mas como PASSE SEPARADO, nunca no
 mesmo render do prop (a armadilha está medida na §4 de
-docs/BLOCO5_PROMPTS_BLENDER_RICO.md).
+docs/arquivo/BLOCO5_PROMPTS_BLENDER_RICO.md).
 
 Para cada prop, além do PNG que já existe, grave um <nome>_sombra.png:
 renderizado da MESMA câmera, com um plano apanhador de sombra pequeno na

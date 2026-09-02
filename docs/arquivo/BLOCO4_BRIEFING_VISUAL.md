@@ -136,7 +136,7 @@ O plano é explícito e vale seguir:
 - **Nada de pintar cor em script.** Estilo vai no tema; cena vai no `.tscn`.
 - **Rodar os testes antes e depois.** Espera-se `TODOS OS TESTES PASSARAM`.
 - **Mexeu em regra de jogo? Remedir** com o simulador e atualizar os números
-  em `docs/ESTADO_DO_PROJETO.md` e `docs/BLOCO3_MARCO_INTERMEDIARIO.md`.
+  em `docs/ESTADO_DO_PROJETO.md` e `docs/arquivo/BLOCO3_MARCO_INTERMEDIARIO.md`.
 
 ---
 
@@ -155,7 +155,7 @@ O plano é explícito e vale seguir:
 
 Cole isto:
 
-> Continuando o BR Port. Leia `docs/BLOCO4_BRIEFING_VISUAL.md` e depois
+> Continuando o BR Port. Leia `docs/arquivo/BLOCO4_BRIEFING_VISUAL.md` e depois
 > `docs/ESTADO_DO_PROJETO.md`. Vamos começar o Bloco 4 pela base visual: o
 > style guide de flat design e a estrutura do mapa do porto visto de cima, com
 > placeholder. As decisões sobre a imagem de referência já estão no briefing —

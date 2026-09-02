@@ -9,7 +9,7 @@ Renderiza o guindaste duas vezes, na MESMA câmera e na escala de produção:
   atual  — as 5 caixas que o jogo tem hoje, sol duro, material chapado
   rico   — treliça vazada, chanfro, luz de três pontos, desgaste procedural
 
-O veredito e o que se aprendeu estão em docs/BLOCO5_PROMPTS_BLENDER_RICO.md.
+O veredito e o que se aprendeu estão em docs/arquivo/BLOCO5_PROMPTS_BLENDER_RICO.md.
 A imagem resultante está em docs/img/guindaste_atual_vs_rico.png.
 
 Uso:

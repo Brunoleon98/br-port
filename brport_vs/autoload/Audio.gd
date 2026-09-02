@@ -28,7 +28,7 @@ extends Node
 #    partida não pode devolver o volume ao máximo no meio da noite.
 #
 # ⚠️ NINGUÉM QUE ESCREVEU ISTO OUVIU ESTES SONS. O contêiner de
-# desenvolvimento não tem placa de som (ver docs/BLOCO6_BRIEFING_AUDIO.md §2).
+# desenvolvimento não tem placa de som (ver docs/design/BR_Port_Plano_Audio.md §2).
 # O que se afirma aqui é o que `tests/teste_audio.gd` mede: o arquivo carrega,
 # o bus existe, o sinal certo chama o método certo, a espera mínima segura a
 # repetição. Se soa bem, quem julga é quem tem placa de som.

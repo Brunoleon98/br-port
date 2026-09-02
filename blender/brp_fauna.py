@@ -19,7 +19,7 @@ escura (leram como duas peças soltas), asa clara com bordo de fuga escuro (lê
 como um planador cinzento). O arbusto e o coqueiro consertaram-se com material
 e silhueta; a ave não.
 
-Não é falta de iteração — é o mesmo teto que o `BLOCO7_PLANO_ARTE_BLENDER.md`
+Não é falta de iteração — é o mesmo teto que o `docs/design/BR_Port_Plano_Arte_Blender.md`
 já mediu para o ROSTO do trabalhador: há coisas que primitiva composta não
 alcança a 40px. A saída é a mesma que está escrita lá, e não é modelar mais:
 é textura pintada num plano, com a silhueta resolvida no desenho em vez de na

@@ -58,7 +58,7 @@ estava decidido e não passava pelo Freesound. Os dez efeitos de rascunho saem
 de `tools/gerar_sons.py` (sem dependência nenhuma, só biblioteca padrão) e o
 áudio final vem do Suno/ElevenLabs, trocando arquivo por arquivo sem tocar em
 código — ver `docs/design/BR_Port_Guia_Audio_Suno_ElevenLabs.md` e
-`docs/BLOCO6_BRIEFING_AUDIO.md`.
+`docs/design/BR_Port_Plano_Audio.md`.
 
 **O que este registro protege:** que alguém volte a propor o Freesound daqui a
 um mês e gaste meia sessão a descobrir sozinho o mesmo 403.

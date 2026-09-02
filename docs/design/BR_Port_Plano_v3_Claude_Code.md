@@ -159,7 +159,7 @@ a máquina faz.
 **Regra de alternância:** nenhuma sequência de três sessões de Trilha A sem uma
 de Trilha B; e **nenhum item de Trilha B sem uma dor medida que ele pague.**
 
-A segunda metade dessa regra é do próprio projeto: o `BLOCO7_PLANO_ARTE_BLENDER.md`
+A segunda metade dessa regra é do próprio projeto: o `docs/design/BR_Port_Plano_Arte_Blender.md`
 §5 já tinha considerado criar uma skill de arte e **recusou** — *"uma skill
 compensa quando o fluxo repete muitas vezes na mesma sessão, e hoje o
 `CLAUDE.md` chega"*. Estava certo então. O que mudou é que agora há seis etapas
@@ -372,7 +372,7 @@ mede).
 
 ### A5 — A arte, pelas etapas que já estão medidas
 
-**Entrega:** as seis etapas do `BLOCO7_PLANO_ARTE_BLENDER.md`, nesta ordem, que
+**Entrega:** as seis etapas do `docs/design/BR_Port_Plano_Arte_Blender.md`, nesta ordem, que
 é a ordem por ganho ÷ custo que aquele documento já mediu:
 
 1. Paleta e enquadramento (muda tudo, e é barato)
@@ -699,7 +699,7 @@ passo próprio em vez de se confiar no `preload` do `Icones.gd`.
 
 ---
 
-### B5 — Documentação em camadas
+### B5 — Documentação em camadas  ✅ FEITO (02/09)
 
 **A dor, contada:** são **12 documentos na raiz de `docs/`** e mais 10 em
 `docs/design/`. Três deles se chamam, literalmente, "Briefing para continuar". O `ESTADO_DO_PROJETO.md`
@@ -722,6 +722,45 @@ registradas que não se repetiram.
 
 **Sabe-se que funcionou quando:** uma sessão nova precisa de ler dois
 documentos, não cinco.
+
+**O que ficou (02/09).** As quatro camadas estão de pé, `docs/arquivo/` recebeu
+os treze registros de sessão com um índice que diz o que cada um é, e os dois
+documentos que NÃO eram registro — o briefing de áudio e o plano de arte em
+Blender — foram para `docs/design/` sem o prefixo do bloco, porque são o plano
+operativo do A6 e do A5 e ainda não aconteceram. **A regra ficou por função e
+não por nome:** um documento vai para o arquivo quando conta o que aconteceu.
+
+**A dor era pior do que esta seção media, e de outro tipo.** Ela dizia "o ESTADO
+tem 20 KB". Tinha **42.707 bytes** — dobrou entre a escrita deste plano e a
+execução dele, sem ninguém decidir. E o tamanho era o sintoma menor: dentro do
+mesmo arquivo conviviam **duas parcelas do Sr. Ribeiro**, R$8.000 e R$550.000,
+e **três leituras do balanceamento**, todas lidas como atuais — porque o
+histórico morava ao lado do estado, e prosa velha não se anuncia como velha.
+Havia também **três respostas diferentes para "por onde começo"**: o cabeçalho
+mandava a um briefing de 29/08, a tabela de inventário a outro de 28/08, e o
+rodapé dizia para apontar o próprio arquivo.
+
+O corte foi 42.707 → **18.375 bytes**, e o histórico desceu **verbatim** para
+`docs/arquivo/HISTORICO.md` — texto movido, não reescrito, de modo que o
+`git diff` mostra linhas a mudar de casa e ninguém teve de re-julgar escrita
+antiga. As três linhas do "Sistemas que funcionam" que descreviam o jogo de
+antes da reescala foram corrigidas contra o `GameState.gd`.
+
+**E o item não se entrega sem uma guarda, porque o estado anterior também tinha
+nascido arrumado.** `tools/conferir_docs.py` (passo do CI, espera `DOCS OK`)
+tranca cinco coisas: as quatro camadas existem; toda referência de documento
+tem destino; registro de sessão vive em `docs/arquivo/`; tudo o que está lá
+consta do índice — é isso que faz "nada se apaga" ser verificável em vez de
+promessa; e o ESTADO não voltou a inchar. **O teto é alarme de fumaça, não
+regra de estilo**: subi-lo é legítimo, o que não é legítimo é o documento
+dobrar sem ninguém reparar.
+
+Os cinco defeitos foram injetados e os cinco reprovaram — na segunda tentativa.
+Na primeira, o `git checkout` que devolvia o arquivo entre um defeito e outro
+restaurou a versão ANTERIOR ao trabalho todo, e os três últimos testes
+relataram, contentes, a mesma falha herdada. É a regra do `CLAUDE.md` outra
+vez, num terceiro disfarce: **confira que a base está limpa ANTES de injetar**,
+senão o que reprova pode ser o defeito de trás.
 
 ---
 
@@ -753,7 +792,7 @@ nenhuma delas mostrava sozinha.
 
 ---
 
-### B8 — Orçamento de sessão
+### B8 — Orçamento de sessão  ✅ FEITO (02/09)
 
 **A dor:** uma sessão que tenta fazer tudo entrega tudo pela metade, e a
 seguinte não sabe o que ficou por acabar.
@@ -761,6 +800,14 @@ seguinte não sabe o que ficou por acabar.
 **O que se constrói:** meia página em `CLAUDE.md` — quando abrir um subagente de
 varredura em vez de ler à mão, o que uma sessão pode prometer, e a regra de que
 **uma sessão fecha com o `ESTADO` em dia ou não fecha**.
+
+**O que ficou (02/09):** a seção "O que cabe numa sessão", no `CLAUDE.md`, com
+cinco regras. Saiu junto do B5 de propósito — as duas tratam da mesma matéria,
+o que uma sessão lê e o que promete. A regra que ganhou número foi a de medir
+antes de codar: **duas vezes em dois dias a suposição estava errada e nas duas
+para o lado caro** — a barra de reputação que se ia afinar já estava saturada
+no teto, e as 600 partidas que se evitavam por "demorarem minutos" levam 26
+segundos.
 
 ---
 
@@ -781,7 +828,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | 7 | A4 | As seis telas narrativas **+ a de nomes** | Ler o texto em voz alta ⏳ |
 | 8 | ✅ B3 | CI com captura, antes/depois e build como artefato | — |
 | 9 | A5 | Arte, etapas 1–6 | Olhar cada antes/depois |
-| 10 | B5 + B6 | Documentação em camadas, GDD legível | — |
+| 10 | ✅ B5 + B8 · falta **B6** | Documentação em camadas e orçamento de sessão feitos; o GDD legível não | — |
 | 11 | **A6** | **Áudio de verdade** | **Ouvir — só o Bruno consegue** |
 | 12 | B7 | Registro de partida | — |
 | 13 | **A7** | **Playtest** | **Jogar, e ver duas pessoas jogarem** |

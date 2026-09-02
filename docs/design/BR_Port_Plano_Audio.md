@@ -4,7 +4,7 @@
 >
 > **Leia este primeiro.** Depois `docs/design/BR_Port_Guia_Audio_Suno_ElevenLabs.md`
 > (os prompts de geração já estão prontos lá) e só então
-> `docs/BLOCO5_BRIEFING_CONTINUACAO.md` para o resto do estado.
+> `docs/arquivo/BLOCO5_BRIEFING_CONTINUACAO.md` para o resto do estado.
 
 ---
 
@@ -207,7 +207,7 @@ duração conhecida, dá para afirmar "toca 0,15 s no evento X" e provar.
 Cole isto:
 
 > Continuando o BR Port, e agora quero focar em ÁUDIO. Leia
-> `docs/BLOCO6_BRIEFING_AUDIO.md` e depois
+> `docs/design/BR_Port_Plano_Audio.md` e depois
 > `docs/design/BR_Port_Guia_Audio_Suno_ElevenLabs.md`.
 >
 > Lembre que este contêiner não tem placa de som — você não consegue ouvir
@@ -231,8 +231,8 @@ Para não misturar: o Bloco 5 deixou pendências de arte que continuam abertas e
 - a chip da doca cobrindo o convés, que piorou com o guindaste novo;
 - o retrato ilustrado do trabalhador, de outra linguagem visual.
 
-Estão descritas em `docs/BLOCO5_BRIEFING_CONTINUACAO.md` §3 e em
-`docs/BLOCO5_PROMPTS_BLENDER_RICO.md`.
+Estão descritas em `docs/arquivo/BLOCO5_BRIEFING_CONTINUACAO.md` §3 e em
+`docs/arquivo/BLOCO5_PROMPTS_BLENDER_RICO.md`.
 
 ---
 
