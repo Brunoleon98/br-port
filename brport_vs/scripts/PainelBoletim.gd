@@ -34,25 +34,24 @@ func setup(resumo: Dictionary) -> void:
 	titulo(Icones.CAIXA, "Boletim Financeiro")
 	paragrafo("Semana %d de %d" % [int(_resumo["semana"]), GameState.WEEKS_TOTAL])
 
-	_secao("RECEITAS", [
+	# LINHA COM ZERO NÃO ENTRA. O armazém só rende depois de consertado e a
+	# parcela só vence numa semana das quatro; mostrá-las a R$0 nas outras é
+	# ruído que o olho tem de descartar toda semana para chegar ao que mudou.
+	_bloco("RECEITAS", [
 		["Docagens", int(_resumo["docagens"])],
 		["Armazém", int(_resumo["armazem"])],
 		["Aluguel de píer", int(_resumo["pier"])],
 	], int(_resumo["receita"]))
 
-	# A parcela só aparece na semana em que venceu. Uma linha "Parcela: R$0"
-	# nas outras três semanas é ruído que o olho tem de descartar toda semana.
-	var despesas := [
+	_bloco("DESPESAS", [
 		["Salários", int(_resumo["salarios"])],
 		["Manutenção", int(_resumo["manutencao"])],
-	]
-	if int(_resumo["parcela"]) > 0:
-		despesas.append(["Parcela", int(_resumo["parcela"])])
-	_secao("DESPESAS", despesas, int(_resumo["despesa"]))
+		["Parcela", int(_resumo["parcela"])],
+	], int(_resumo["despesa"]))
 
 	_resultado()
 
-	paragrafo(GameState.texto(Narrativa.tom_do_boletim(
+	fala(GameState.texto(Narrativa.tom_do_boletim(
 		int(_resumo["resultado"]),
 		float(_resumo["media_anterior"]),
 		bool(_resumo["tem_historico"]))))
@@ -60,15 +59,22 @@ func setup(resumo: Dictionary) -> void:
 	botao_fechar("Fechar o boletim")
 
 
-func _secao(nome: String, linhas: Array, total: int) -> void:
-	paragrafo(nome)
+func _bloco(nome: String, linhas: Array, soma: int) -> void:
+	secao(nome)
 	var grade := GridContainer.new()
 	grade.columns = 2
 	grade.add_theme_constant_override("h_separation", 16)
 	_vbox.add_child(grade)
 	for linha in linhas:
+		if int(linha[1]) == 0:
+			continue
 		_linha(grade, String(linha[0]), int(linha[1]))
-	_linha(grade, "Total", total)
+	fio()
+	var grade_total := GridContainer.new()
+	grade_total.columns = 2
+	grade_total.add_theme_constant_override("h_separation", 16)
+	_vbox.add_child(grade_total)
+	_linha(grade_total, "Total", soma)
 
 
 # Rótulo à esquerda, valor à direita. O valor alinha à direita porque é assim
@@ -88,7 +94,8 @@ func _linha(grade: GridContainer, rotulo: String, valor: int) -> void:
 
 func _resultado() -> void:
 	var resultado := int(_resumo["resultado"])
-	paragrafo("RESULTADO LÍQUIDO: %s" % GameState.moeda(resultado))
+	fio()
+	total("Resultado líquido: %s" % GameState.moeda(resultado))
 	if not bool(_resumo["tem_historico"]):
 		return
 	var anterior := int(_resumo["anterior"])

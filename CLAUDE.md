@@ -243,8 +243,17 @@ tranca isso.
   linha `=== Leitura ===`. Hoje ele também reprova `possível travamento`, mas a
   regra vale antes do CI: como overlay, o balanceamento medido fica intocado
   **por construção**, e não por cuidado de quem escreveu.
+- **Fala de personagem vai em BALÃO, informação do jogo não.** As telas
+  narrativas misturam dois registros e, sem diferença visual, a fala da Dona
+  Cida lia como rodapé de planilha. A variação `Fala` do tema (creme com barra
+  âmbar à esquerda) é o balão; `RotuloSecao` é o rótulo que guia e sai da
+  frente; `RotuloTotal` é a linha única que o olho tem de encontrar primeiro —
+  duas em destaque é nenhuma em destaque.
+- **Linha com valor zero não entra em tabela.** O boletim mostrava
+  `Armazém R$0` e `Parcela R$0` nas semanas em que não havia nem um nem outro:
+  ruído que o olho descarta toda semana para chegar ao que mudou.
 - Painel novo herda de `PainelNarrativo.gd` — o andaime (escurecer, cartão,
-  título, parágrafo, botão) num lugar só. `montar(largura, 0)` faz o cartão
+  título, parágrafo, botão, seção, total, fala, fio) num lugar só. `montar(largura, 0)` faz o cartão
   **ajustar-se ao conteúdo**; altura fixa só quando há área de rolagem. Três
   painéis saíram com uma faixa branca debaixo do botão por causa disto, e o
   mesmo painel muda de tamanho conforme o caso.
