@@ -98,7 +98,18 @@ func _montar() -> void:
 		# "completo" — sem erro nenhum, o que é pior. Resolver antes de comprar.
 		if GS.phase == "rival_offer":
 			GS.resolve_rival_offer(true)
-		GS.cash += 100000
+		# O CAIXA VEM DA TABELA DE PREÇOS, não de um número escrito aqui.
+		# Estava `+= 100000`, que chegava para o porto inteiro antes da reescala
+		# de 02/09 e deixou de chegar depois dela: as duas últimas compras
+		# falhavam e a foto saía com o porto A MEIO, com o nome "completo". Dava
+		# um `push_error` por compra, que num log de captura passa por ruído —
+		# é o mesmo defeito que já tinha acontecido com o rival, e a mesma lição
+		# que tirou o dinheiro cravado da suíte.
+		var custo_total: int = 0
+		for eid_custo in GS.ESTRUTURAS:
+			custo_total += int(GS.ESTRUTURAS[eid_custo]["custo"])
+		GS.cash += custo_total
+
 		var ids: Array = GS.ESTRUTURAS.keys()
 		var tabela: Dictionary = GS.ESTRUTURAS
 		ids.sort_custom(func(a, b): return int(tabela[a]["ordem"]) < int(tabela[b]["ordem"]))
