@@ -321,6 +321,14 @@ tranca isso.
   defeito que ela existia para pegar: os cantos caíam a 2,82 e a 5,58, a rua
   ocupava 2,98..4,52, e a pegada atravessava o asfalto inteiro sem pousar nele
   com canto nenhum. Retângulo contra faixa é **interseção de intervalos**.
+- **Uma conta que só divergiria com um modificador ativo não se testa num
+  porto em ruínas.** A projeção do dia (item da interface, 03/09) e o fecho
+  real da semana partilham `_custos_da_semana()` de propósito — e o teste que
+  provava isso rodava sem pátio nem escritório construídos, onde a fórmula
+  errada e a certa dão o mesmo número por acidente (nenhuma das duas aplica
+  bónus nenhum). Só com os dois construídos um defeito injetado na cópia
+  reprovou. É a mesma lição de "contagem só se testa acima de um", aplicada a
+  um bónus em vez de uma quantidade.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.

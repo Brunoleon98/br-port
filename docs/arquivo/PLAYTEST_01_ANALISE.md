@@ -162,8 +162,14 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
   de hoje vivem entre 0,853 e 0,933, e um creme de 0,902 leria como mais um
   irmão. O âmbar do tema como TEXTO ali dava 2,98:1 e reprovava a WCAG — por
   isso o sinal é o fundo.
-- Tocar nos itens do HUD abre detalhe (dinheiro → resumo do ganho de ontem e o
-  projetado para hoje)
+- ~~Tocar nos itens do HUD abre detalhe (dinheiro → resumo do ganho de ontem e
+  o projetado para hoje)~~ — **feito em 03/09**, só o dinheiro (os outros três
+  itens do HUD continuam sem detalhe). `GameState.dia_atual` / `dia_anterior`
+  são a mesma contabilidade de `semana_atual`, só que por dia; "ontem" é
+  histórico e só se lê, "hoje" é uma SIMULAÇÃO de `advance_turn()`
+  (`projecao_do_dia()`) que não mexe em nada — nem no caixa, nem numa doca. O
+  fecho de semana e a projeção partilham `_custos_da_semana()`, para as duas
+  contas nunca poderem divergir uma da outra.
 - Calendário nos dias, com eventos sinalizados
 - Espaço no HUD reservado para o que vem depois (mapa da cidade, lojas)
 

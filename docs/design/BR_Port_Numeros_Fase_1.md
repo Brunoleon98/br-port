@@ -92,7 +92,7 @@ já foram lidas como regressão de balanceamento uma vez.
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
 | `SAVE_PATH` | `user://savegame.json` | regra |  | `GameState.gd:222` |
-| `SAVE_VERSION` | 4 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:241` |
+| `SAVE_VERSION` | 5 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:241` |
 
 ## OS DOIS NOMES
 

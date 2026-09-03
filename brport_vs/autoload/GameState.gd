@@ -238,7 +238,7 @@ const SAVE_PATH := "user://savegame.json"
 # lê. A 3 nunca saiu daqui, então podia ter-se reaproveitado o número — mas
 # reaproveitar exige lembrar que se pode, e a regra vale mais barata do que a
 # exceção: a forma mudou, a versão sobe.
-const SAVE_VERSION := 4
+const SAVE_VERSION := 5
 
 # ── OS DOIS NOMES ──
 # O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7).
@@ -302,6 +302,21 @@ const SEMANA_ZERADA := {
 }
 var semana_atual: Dictionary = SEMANA_ZERADA.duplicate()
 
+# A MESMA CONTABILIDADE, MAS DO DIA. O boletim fecha a semana; o jogador toca
+# no caixa a meio dela e quer saber o que entrou ONTEM — e isso não se tira do
+# acumulador semanal, que já somou os outros dias.
+#
+# São dois dicionários e não um: `dia_atual` enche-se durante o turno e
+# `dia_anterior` é o que ficou do turno que acabou. Sem os dois, tocar no caixa
+# a meio de um turno mostraria uma soma parcial que muda enquanto se olha.
+const DIA_ZERADO := {
+	"docagens": 0, "armazem": 0, "pier": 0,
+	"salarios": 0, "manutencao": 0, "parcela": 0,
+	"servidos": 0, "perdidos": 0, "turno": 0,
+}
+var dia_atual: Dictionary = DIA_ZERADO.duplicate()
+var dia_anterior: Dictionary = DIA_ZERADO.duplicate()
+
 # O resultado líquido de cada semana já fechada, em ordem. A Dona Cida compara
 # a semana contra a média das anteriores para escolher o tom, e sem histórico
 # não há com que comparar — na semana 1 ela usa só o sinal do resultado.
@@ -337,6 +352,8 @@ func new_game() -> void:
 	nome_porto = ""
 	nome_jogador = ""
 	semana_atual = SEMANA_ZERADA.duplicate()
+	dia_atual = DIA_ZERADO.duplicate()
+	dia_anterior = DIA_ZERADO.duplicate()
 	historico_semanas = []
 	cash = START_CASH
 	reputation = REPUTATION_START
@@ -763,6 +780,9 @@ func advance_turn() -> void:
 				# arquivo de escrita pede.
 				semana_atual["docagens"] += bruto
 				semana_atual["armazem"] += value - bruto
+				dia_atual["docagens"] += bruto
+				dia_atual["armazem"] += value - bruto
+				dia_atual["servidos"] += 1
 				metrics["boats_served"] += 1
 				_change_reputation(REPUTATION_GAIN_SERVED)
 				var w = _find_worker(dock["worker_id"])
@@ -777,6 +797,7 @@ func advance_turn() -> void:
 		else:
 			# Barco sem trabalhador foi embora — perdido para o rival.
 			metrics["boats_lost"] += 1
+			dia_atual["perdidos"] += 1
 			_change_reputation(-REPUTATION_LOSS_LOST)
 			dock["boat"] = null
 
@@ -786,6 +807,16 @@ func advance_turn() -> void:
 
 	if prev_turn % TURNS_PER_WEEK == 0:
 		_process_week_end(week_of(prev_turn))
+
+	# A VIRADA DO DIA vem DEPOIS do fecho de semana e ANTES do corte por dívida
+	# — o dia que fechou já tem os números completos (pier/salários/manutenção
+	# inclusive, se foi dia de fechar semana) antes de ir para `dia_anterior`.
+	# Se a dívida vencer HOJE, `pay_debt()` ainda escreve na parcela DESTE
+	# dia (`dia_anterior`), porque `advance_turn()` já devolveu por aqui e o
+	# turno seguinte só começa depois de o jogador decidir.
+	dia_atual["turno"] = prev_turn
+	dia_anterior = dia_atual.duplicate()
+	dia_atual = DIA_ZERADO.duplicate()
 
 	if prev_turn == PARCELA_DUE_TURN and not parcela_paid:
 		_set_phase("debt_payment")
@@ -798,7 +829,13 @@ func advance_turn() -> void:
 	save_game()
 
 
-func _process_week_end(ended_week: int) -> void:
+# Píer e salários dependem só das estruturas e do roster — nada aqui muda
+# turno a turno. Existe em separado porque `_process_week_end()` PRECISA
+# destes números para mexer no caixa, e `projecao_do_dia()` precisa dos MESMOS
+# números para os mostrar sem mexer em nada — duas contas de olho no mesmo
+# resultado são convite a divergirem, e já divergiram noutro sítio deste
+# arquivo (o `.get("preco", 0)` do Registro).
+func _custos_da_semana() -> Dictionary:
 	# Pátio pavimentado: mais vagas de píer alugáveis. Escritório reformado:
 	# menos manutenção porque a administração deixa de ser improvisada.
 	var pier_income := PIER_SLOTS * PIER_RATE_PER_SLOT
@@ -807,7 +844,14 @@ func _process_week_end(ended_week: int) -> void:
 	var salarios := SALARY_PER_WORKER * workers.size()
 	if tem_estrutura("escritorio"):
 		salarios = int(round(salarios * (1.0 - ESCRITORIO_DESCONTO_SALARIO)))
-	var cost := salarios + MAINTENANCE_WEEKLY
+	return {"pier": pier_income, "salarios": salarios, "manutencao": MAINTENANCE_WEEKLY}
+
+
+func _process_week_end(ended_week: int) -> void:
+	var custos := _custos_da_semana()
+	var pier_income: int = int(custos["pier"])
+	var salarios: int = int(custos["salarios"])
+	var cost := salarios + int(custos["manutencao"])
 	cash += pier_income
 	cash -= cost
 	metrics["pier_income"] = int(metrics.get("pier_income", 0)) + pier_income
@@ -820,7 +864,10 @@ func _process_week_end(ended_week: int) -> void:
 	# de saber que a média exclui a semana que acabou.
 	semana_atual["pier"] = pier_income
 	semana_atual["salarios"] = salarios
-	semana_atual["manutencao"] = MAINTENANCE_WEEKLY
+	semana_atual["manutencao"] = int(custos["manutencao"])
+	dia_atual["pier"] = pier_income
+	dia_atual["salarios"] = salarios
+	dia_atual["manutencao"] = int(custos["manutencao"])
 	var resumo := resumo_da_semana(ended_week)
 	historico_semanas.append(int(resumo["resultado"]))
 	semana_atual = SEMANA_ZERADA.duplicate()
@@ -862,6 +909,55 @@ func resumo_da_semana(semana: int) -> Dictionary:
 	}
 
 
+# O que ACONTECEU ontem, mais o que ACONTECERIA hoje se o jogador avançasse o
+# dia agora — o par que o toque no dinheiro do HUD mostra. Existe porque o
+# playtest pediu exatamente isto: "toque no dinheiro → resumo do ganho de
+# ontem e o projetado para hoje".
+#
+# "Ontem" é `dia_anterior`, lido sem tocar em nada. "Hoje" não pode ser lido
+# do mesmo jeito — o dia em curso ainda não aconteceu, `dia_atual` está vazio
+# até o jogador avançar — então ele é uma SIMULAÇÃO do que `advance_turn()`
+# faria: por doca, o barco que completaria hoje entra como servido; o que não
+# tem trabalhador entra como perdido. Nenhuma das duas contas MEXE em nada —
+# nem em `cash`, nem em `dia_atual`, nem em doca nenhuma.
+func resumo_do_dia() -> Dictionary:
+	return {"ontem": dia_anterior.duplicate(), "hoje": projecao_do_dia()}
+
+
+func projecao_do_dia() -> Dictionary:
+	var proj: Dictionary = DIA_ZERADO.duplicate()
+	proj["turno"] = turn
+	if phase != "playing":
+		return proj
+	for i in range(docks.size()):
+		var doca: Dictionary = docks[i]
+		var barco = doca["boat"]
+		if barco == null:
+			continue
+		if doca["worker_id"] == null:
+			proj["perdidos"] += 1
+			continue
+		if int(barco["progress"]) + 1 < int(barco["op_turns"]):
+			continue
+		var bruto: int = int(barco["matched_value"]) if barco.get("matched", false) else int(barco["value"])
+		var valor := _valor_recebido(bruto)
+		proj["docagens"] += bruto
+		proj["armazem"] += valor - bruto
+		proj["servidos"] += 1
+	# O fecho de semana e a parcela caem no MESMO dia que fariam cair no jogo
+	# real — usar `_custos_da_semana()` em vez de repetir a conta é a mesma
+	# razão que fez ela existir: uma só fonte para o número que o caixa muda
+	# e o número que a projeção mostra.
+	if turn % TURNS_PER_WEEK == 0:
+		var custos := _custos_da_semana()
+		proj["pier"] = int(custos["pier"])
+		proj["salarios"] = int(custos["salarios"])
+		proj["manutencao"] = int(custos["manutencao"])
+	if turn == PARCELA_DUE_TURN and not parcela_paid:
+		proj["parcela"] = PARCELA_AMOUNT
+	return proj
+
+
 func _check_end() -> void:
 	if cash < 0:
 		_end_game(false, "Caixa negativo. Operação inviável.")
@@ -892,6 +988,11 @@ func pay_debt() -> void:
 	# semana em curso — que é onde o jogador espera vê-la, porque foi essa a
 	# semana em que o dinheiro saiu.
 	semana_atual["parcela"] += PARCELA_AMOUNT
+	# E para o resumo do dia. `advance_turn()` já fez a virada do dia antes de
+	# suspender em "debt_payment", então o dia em que a dívida venceu é
+	# `dia_anterior` — não `dia_atual`, que já é o dia seguinte, ainda por
+	# jogar.
+	dia_anterior["parcela"] += PARCELA_AMOUNT
 	parcela_paid = true
 	_set_phase("playing")
 	cash_changed.emit(cash)
@@ -1066,6 +1167,8 @@ func save_game() -> void:
 		"nome_jogador": nome_jogador,
 		"semana_atual": semana_atual,
 		"historico_semanas": historico_semanas,
+		"dia_atual": dia_atual,
+		"dia_anterior": dia_anterior,
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file:
@@ -1146,6 +1249,16 @@ func load_game() -> bool:
 	if typeof(hist) == TYPE_ARRAY:
 		for r in hist:
 			historico_semanas.append(int(r))
+	dia_atual = DIA_ZERADO.duplicate()
+	var lido_atual = parsed.get("dia_atual", {})
+	if typeof(lido_atual) == TYPE_DICTIONARY:
+		for chave in DIA_ZERADO:
+			dia_atual[chave] = int(lido_atual.get(chave, 0))
+	dia_anterior = DIA_ZERADO.duplicate()
+	var lido_anterior = parsed.get("dia_anterior", {})
+	if typeof(lido_anterior) == TYPE_DICTIONARY:
+		for chave in DIA_ZERADO:
+			dia_anterior[chave] = int(lido_anterior.get(chave, 0))
 
 	_reconciliar_roster()
 	state_loaded.emit()

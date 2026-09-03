@@ -25,6 +25,7 @@ const EndGameScene := preload("res://scenes/EndGame.tscn")
 const TelaNomesScene := preload("res://scenes/panels/TelaNomes.tscn")
 const PainelDiarioScene := preload("res://scenes/panels/PainelDiario.tscn")
 const PainelBoletimScene := preload("res://scenes/panels/PainelBoletim.tscn")
+const PainelCaixaScene := preload("res://scenes/panels/PainelCaixa.tscn")
 
 
 const COR_BOA := Color(0.102, 0.478, 0.251)
@@ -34,6 +35,7 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 
 @onready var _overlay_layer: CanvasLayer = $Overlay
 @onready var _cash_label: Label = $HudBar/CaixaPilula/Linha/Caixa
+@onready var _caixa_pilula: PanelContainer = $HudBar/CaixaPilula
 @onready var _day_label: Label = $HudBar/DiaPilula/Linha/Dia
 @onready var _rep_label: Label = $HudBar/RepPilula/Linha/RepTexto
 @onready var _docks_label: Label = $HudBar/DocasPilula/Linha/DocasTexto
@@ -89,6 +91,7 @@ func _ready() -> void:
 	_alocar_button.pressed.connect(_on_alocar_pressed)
 	_upgrade_button.pressed.connect(_on_upgrade_pressed)
 	_pause_button.pressed.connect(_on_pause_pressed)
+	_caixa_pilula.gui_input.connect(_on_caixa_pilula_input)
 
 	_connect_game_state()
 	_refresh_all()
@@ -642,6 +645,20 @@ func _abrir_painel(cena: PackedScene) -> Control:
 
 func _on_upgrade_pressed() -> void:
 	_abrir_painel(UpgradePanelScene)
+
+
+# A PÍLULA DO CAIXA É TOCÁVEL — item do primeiro playtest (02/09): "tocar no
+# dinheiro do HUD abre um resumo do ganho de ontem e o projetado para hoje".
+#
+# NO RELEASE, e não no press — a mesma razão do `Worker.gd`: reagir no toque
+# que solta, e não no que pressiona, deixa o clique livre para quem também
+# quisesse arrastar a partir daqui (hoje ninguém arrasta o HUD, mas a regra é
+# a mesma do resto da interface e custa nada segui-la).
+func _on_caixa_pilula_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and not event.pressed \
+			and event.button_index == MOUSE_BUTTON_LEFT:
+		_abrir_painel(PainelCaixaScene).setup(GameState.resumo_do_dia())
+		accept_event()
 
 
 func _on_pause_pressed() -> void:

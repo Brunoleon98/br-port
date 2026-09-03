@@ -47,6 +47,7 @@ var _feito := false
 var _ancoras: Dictionary
 var _main: Control
 var _d9_completo := false
+var _d10_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -101,6 +102,10 @@ func _rodar() -> void:
 	print("=== D9: trabalho parado avisa onde se resolve ===")
 	_d9_aviso_de_trabalho_parado()
 	_confere("o bloco D9 correu até ao fim", _d9_completo)
+
+	print("=== D10: tocar no dinheiro abre o resumo do dia ===")
+	_d10_toque_no_caixa()
+	_confere("o bloco D10 correu até ao fim", _d10_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -491,3 +496,75 @@ func _d9_aviso_de_trabalho_parado() -> void:
 	root.remove_child(tela)
 	tela.free()
 	_d9_completo = true
+
+
+# ── D10 ── o toque na pílula do caixa tem de abrir o painel de verdade
+#
+# Item do primeiro playtest: "tocar no dinheiro do HUD abre um resumo do
+# ganho de ontem e o projetado para hoje". A conta certa (T5i, em
+# `run_tests.gd`) não prova que o TOQUE chega lá — só que a função devolve o
+# número certo quando chamada direto. Este bloco emite o mesmo `gui_input`
+# que um dedo real dispara e confere que o painel abriu, e com o texto certo.
+func _d10_toque_no_caixa() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+
+	var pilula: Control = tela.get_node("HudBar/CaixaPilula")
+	var overlay: Node = tela.get_node("Overlay")
+	var antes := overlay.get_child_count()
+
+	# O RELEASE é o que o handler escuta — press sozinho não deve abrir nada,
+	# a mesma regra do `Worker.gd` (reagir no toque que solta).
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	ev.pressed = true
+	pilula.gui_input.emit(ev)
+	_confere("o press sozinho nao abre nada", overlay.get_child_count() == antes)
+
+	ev = InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	ev.pressed = false
+	pilula.gui_input.emit(ev)
+	_confere("o release abriu um painel a mais", overlay.get_child_count() == antes + 1)
+
+	var painel: Node = overlay.get_child(overlay.get_child_count() - 1)
+	var script: Script = painel.get_script()
+	_confere("e o painel aberto e o PainelCaixa",
+		script != null and String(script.resource_path).ends_with("PainelCaixa.gd"),
+		"script aberto: %s" % (script.resource_path if script != null else "nenhum"))
+
+	# "Ontem" ainda não tem turno num porto que acabou de nascer — o painel
+	# tem de dizer isso em vez de mostrar uma fileira de zeros.
+	var texto_inteiro := "\n".join(_juntar_textos(painel))
+	_confere("mostra que o primeiro dia ainda nao fechou",
+		texto_inteiro.contains("ainda não fechou"), "painel diz: %s" % texto_inteiro)
+	_confere("e mostra a secao do que hoje projeta",
+		texto_inteiro.contains("PROJETADO PARA HOJE"), "painel diz: %s" % texto_inteiro)
+
+	root.remove_child(tela)
+	tela.free()
+	_d10_completo = true
+
+
+# Recolhe o texto de todo Label debaixo de `no`, em ordem — para conferir o
+# CONTEÚDO de um painel sem depender do caminho exato de cada rótulo dentro
+# dele, que o `PainelNarrativo` monta dinamicamente.
+#
+# DEVOLVE em vez de RECEBER e mutar um `PackedStringArray` por parâmetro: COW
+# de array passado a uma função recursiva é o tipo de coisa que parece
+# funcionar e às vezes não propaga — devolver e concatenar com
+# `append_array()` não deixa essa dúvida no ar.
+func _juntar_textos(no: Node) -> PackedStringArray:
+	var saida := PackedStringArray()
+	if no is Label:
+		saida.append((no as Label).text)
+	for filho in no.get_children():
+		saida.append_array(_juntar_textos(filho))
+	return saida

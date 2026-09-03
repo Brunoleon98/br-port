@@ -60,6 +60,7 @@ func _fake_boat(value: int, op_turns: int, rival: bool) -> Dictionary:
 var _done := false
 var _t5g_completo := false
 var _t5h_completo := false
+var _t5i_completo := false
 
 
 # Os testes rodam no primeiro frame, não em _initialize(): dentro de
@@ -403,6 +404,10 @@ func _run() -> void:
 	_t5h_trabalho_parado()
 	_check("o bloco T5h correu até ao fim", _t5h_completo)
 
+	print("=== T5i: resumo do dia — o que ja aconteceu e o que a projecao promete ===")
+	_t5i_resumo_do_dia()
+	_check("o bloco T5i correu até ao fim", _t5i_completo)
+
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
 	var losses := 0
@@ -595,3 +600,108 @@ func _t5h_trabalho_parado() -> void:
 	GS._set_phase("playing")
 
 	_t5h_completo = true
+
+
+# ── T5i ──────────────────────────────────────────────────────────────────
+#
+# `resumo_do_dia()` é o que o toque no dinheiro do HUD lê (item do primeiro
+# playtest: "ontem e o projetado para hoje"). Duas contas, duas naturezas —
+# "ontem" é histórico (`dia_anterior`, só se lê), "hoje" é uma SIMULAÇÃO de
+# `advance_turn()` que não pode mexer em nada. Este bloco confere as duas.
+func _t5i_resumo_do_dia() -> void:
+	GS._rng.seed = 20260903
+	GS.clear_save()
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+	# Antes de qualquer dia fechar, "ontem" não tem turno nenhum — é o
+	# sentinela que o painel lê para dizer "o primeiro dia ainda não fechou"
+	# em vez de uma fileira de zeros que pareceria um dia real sem receita.
+	_check("antes do primeiro dia, 'ontem' nao tem turno",
+		int(GS.dia_anterior["turno"]) == 0)
+
+	# Um barco que completa NESTE turno tem de aparecer na projeção de hoje
+	# ANTES de avançar, e em "ontem" DEPOIS — a mesma soma, só que movida.
+	if GS.docks[0]["boat"] == null:
+		GS.docks[0]["boat"] = GS._make_boat()
+	var barco: Dictionary = GS.docks[0]["boat"]
+	barco["rival"] = false
+	barco["matched"] = false
+	barco["op_turns"] = 1
+	barco["progress"] = 0
+	barco["value"] = 10000
+	GS.docks[0]["worker_id"] = int(GS.workers[0]["id"])
+	GS.workers[0]["busy_turns"] = 0
+
+	var bruto := 10000
+	var esperado: int = GS._valor_recebido(bruto)
+	var proj: Dictionary = GS.projecao_do_dia()
+	_check("a projecao ve o barco que completaria hoje (servidos=%d receita=%d esperado=%d)"
+			% [int(proj["servidos"]), int(proj["docagens"]) + int(proj["armazem"]), esperado],
+		int(proj["servidos"]) == 1 and int(proj["docagens"]) + int(proj["armazem"]) == esperado)
+	# E NÃO MEXEU EM NADA — a doca continua com o barco, e o caixa não mudou.
+	var caixa_antes: int = GS.cash
+	_check("a projecao nao mexeu na doca", GS.docks[0]["boat"] != null)
+	_check("a projecao nao mexeu no caixa", GS.cash == caixa_antes)
+
+	GS.advance_turn()
+	var resumo: Dictionary = GS.resumo_do_dia()
+	var ontem: Dictionary = resumo["ontem"]
+	_check("depois de avançar, 'ontem' tem o que a projecao prometeu (servidos=%d receita=%d)"
+			% [int(ontem["servidos"]), int(ontem["docagens"]) + int(ontem["armazem"])],
+		int(ontem["servidos"]) == 1 and int(ontem["docagens"]) + int(ontem["armazem"]) == esperado)
+	# E o TURNO tem de ser o dia que fechou, e não o sentinela zero — sem isto
+	# o painel leria "o primeiro dia ainda não fechou" para sempre, mesmo com
+	# receita e barcos servidos dentro do dicionário.
+	_check("e 'ontem' leva o numero do dia que fechou (turno=%d)" % int(ontem["turno"]),
+		int(ontem["turno"]) == 1)
+	_check("e 'hoje' zerou — o dia novo ainda não jogou nada",
+		int(GS.dia_atual["servidos"]) == 0 and int(GS.dia_atual["docagens"]) == 0)
+
+	# Barco sem trabalhador conta como PERDIDO na projeção, e não como servido.
+	# ⚠️ O porto abre com UMA doca só — a mesma armadilha do T5h. Sem esta
+	# doca extra, `GS.docks[1]` estoura o array.
+	if GS.docks.size() < 2:
+		GS.docks.append({"boat": null, "worker_id": null, "turns_done": 0})
+	GS.docks[1]["boat"] = GS._make_boat()
+	GS.docks[1]["boat"]["rival"] = false
+	GS.docks[1]["worker_id"] = null
+	var proj2: Dictionary = GS.projecao_do_dia()
+	_check("barco sem trabalhador conta como perdido na projecao",
+		int(proj2["perdidos"]) >= 1)
+	GS.docks[1]["boat"] = null
+
+	# No dia que fecha semana, a projeção tem de mostrar píer/salários/
+	# manutenção — e com o MESMO número que `_custos_da_semana()` daria ao
+	# fechar de verdade. As duas leituras vêm da mesma função de propósito
+	# (ver o comentário dela); este teste é o que prova que continuam iguais.
+	#
+	# ⚠️ COM O PÁTIO E O ESCRITÓRIO CONSTRUÍDOS, e não num porto em ruínas —
+	# sem os dois bónus, uma cópia da fórmula que esquecesse o bónus do pátio
+	# ou o desconto do escritório bateria com a certa por acidente, porque as
+	# duas dariam o valor-base. É a mesma lição do T5h sobre contar acima de
+	# um: só um modificador ATIVO expõe a fórmula duplicada.
+	if not GS.tem_estrutura("patio"):
+		GS.estruturas.append("patio")
+	if not GS.tem_estrutura("escritorio"):
+		GS.estruturas.append("escritorio")
+	GS.turn = GS.TURNS_PER_WEEK
+	var custos: Dictionary = GS._custos_da_semana()
+	var proj3: Dictionary = GS.projecao_do_dia()
+	_check("dia de fechar semana projeta pier/salarios/manutencao",
+		int(proj3["pier"]) == int(custos["pier"])
+			and int(proj3["salarios"]) == int(custos["salarios"])
+			and int(proj3["manutencao"]) == int(custos["manutencao"]))
+
+	# E no dia em que a parcela vence, e só nesse dia.
+	GS.turn = GS.PARCELA_DUE_TURN
+	GS.parcela_paid = false
+	var proj4: Dictionary = GS.projecao_do_dia()
+	_check("dia da parcela projeta o valor dela",
+		int(proj4["parcela"]) == int(GS.PARCELA_AMOUNT))
+	GS.parcela_paid = true
+	var proj5: Dictionary = GS.projecao_do_dia()
+	_check("parcela ja paga nao projeta de novo", int(proj5["parcela"]) == 0)
+
+	_t5i_completo = true

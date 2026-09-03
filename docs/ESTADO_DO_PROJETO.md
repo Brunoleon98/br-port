@@ -121,11 +121,12 @@ vila saíram do quadro, de 11 para 9.
 
 O resto da análise está triado em `docs/arquivo/PLAYTEST_01_ANALISE.md`, em
 cinco gavetas, **nenhuma delas um bug**: **arte** (pedras, vegetação,
-animações, sprite do trabalhador = Etapa 5), **interface** (cinco itens novos, sem
-gate — **um feito em 03/09**: o aviso de trabalhador parado, que agora tem
-cartão próprio e conta quantos são), **economia** (três itens que só passam pelo `/balancear`),
-**desenho de sistema** (escopo de Fase 2 em diante) e **escrita** (dois, um
-deles à espera do A4).
+animações, sprite do trabalhador = Etapa 5), **interface** (cinco itens novos,
+sem gate — **dois feitos em 03/09**: o aviso de trabalhador parado, com cartão
+próprio, e o toque no dinheiro do HUD, que abre o resumo do ganho de ontem e o
+projetado para hoje), **economia** (três itens que só passam pelo
+`/balancear`), **desenho de sistema** (escopo de Fase 2 em diante) e
+**escrita** (dois, um deles à espera do A4).
 
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume. Ele destrava o A1: os dez minutos no APK passam a produzir
