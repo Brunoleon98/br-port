@@ -220,8 +220,12 @@ novos, `_spawn_boats()` abre a contra-oferta no autoload antes de o `Main`
 existir para a ouvir, e o `Main` saltava a recuperação de fase quando tinha de
 pedir os nomes. O turno ficava preso no dia 1, sem uma linha de erro. Corrigido
 e trancado pelo bloco F6 do `teste_fumaca.gd`. O resto do que ela devolveu está
-triado em `docs/arquivo/PLAYTEST_01_ANALISE.md` — um bug ainda aberto, arte,
-interface, economia (só via `/balancear`), desenho de sistema (Fase 2) e escrita.
+triado em `docs/arquivo/PLAYTEST_01_ANALISE.md`, item a item — **e nenhum outro
+era bug**. Em 02 e 03/09 fechou-se tudo o que não depende do Bruno: a interface
+inteira, a escrita que dava para mexer, e a arte (caminhão, prédios, pedras,
+espuma, trabalhador). Ficam a composição do mapa — vegetação e distribuição das
+casas —, o layout do rodapé, a economia (só via `/balancear`), o desenho de
+sistema (Fase 2) e a fala da madeira podre, que espera o A4.
 
 ⚠️ **O export Android falhou primeiro, e com a lista de erros VAZIA.** De uns
 vinte testes de configuração do Godot, só o do ETC2/ASTC reprova sem escrever
