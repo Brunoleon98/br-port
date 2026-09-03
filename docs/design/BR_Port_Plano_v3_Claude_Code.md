@@ -200,7 +200,7 @@ refazer arte.
 | Quem | O quê | Estado |
 |---|---|---|
 | Máquina | Preset de export versionável (sem chaves), build headless, o APK e o `.zip` web como artefatos do CI, `COMO_RODAR.md` com a receita | ✅ 02/09 |
-| Bruno | Instalar no telefone. Jogar dez minutos. Dizer o que estranhou | ⏳ |
+| Bruno | Instalar no telefone. Jogar dez minutos. Dizer o que estranhou | ✅ 02/09 |
 
 **A metade de máquina está feita e verificada** (02/09). O APK sai a cada push,
 29 MB, `arm64-v8a`, assinado em debug com chave gerada na hora; o Web sai ao
@@ -213,6 +213,15 @@ Voltar do Android FECHAVA A APLICAÇÃO, e o ícone na gaveta era o robô do God
 Os três estão corrigidos e trancados por teste. É a justificação deste item,
 medida em vez de argumentada: dez minutos num aparelho contra quatro blocos de
 CI verde.
+
+**E pagou-se outra vez, na jogada.** A partida de dez minutos achou um QUARTO
+defeito da mesma família — invisível daqui, e a travar o jogo: em 30% dos jogos
+novos, `_spawn_boats()` abre a contra-oferta no autoload antes de o `Main`
+existir para a ouvir, e o `Main` saltava a recuperação de fase quando tinha de
+pedir os nomes. O turno ficava preso no dia 1, sem uma linha de erro. Corrigido
+e trancado pelo bloco F6 do `teste_fumaca.gd`. O resto do que ela devolveu está
+triado em `docs/arquivo/PLAYTEST_01_ANALISE.md` — um bug ainda aberto, arte,
+interface, economia (só via `/balancear`), desenho de sistema (Fase 2) e escrita.
 
 ⚠️ **O export Android falhou primeiro, e com a lista de erros VAZIA.** De uns
 vinte testes de configuração do Godot, só o do ETC2/ASTC reprova sem escrever
@@ -907,7 +916,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | # | Trilha | Entrega | Gate humano |
 |---|---|---|---|
 | 1 | B1 | Arranque de sessão automático | — |
-| 2 | **A1** | **Build no telefone** ✅ máquina · instalado 02/09 | **Jogar dez minutos** ⏳ |
+| 2 | ✅ **A1** | **Build no telefone** ✅ máquina · instalado 02/09 · **jogado 02/09** — a análise está em `docs/arquivo/PLAYTEST_01_ANALISE.md` | ✅ feito (a passagem seguinte é do A7) |
 | 3 | A2 | Números com fonte única + Parcelas 2/3 verificadas | Só se a conta não fechar |
 | 4 | ✅ B2 | `/balancear`, `/fechar-sessao` e `/arte` | — |
 | 5 | **A3** | **Reputação com efeito** | **Escolher o caminho — bloqueia** |
