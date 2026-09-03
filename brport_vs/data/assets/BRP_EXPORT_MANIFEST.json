@@ -584,6 +584,30 @@
       "habitat": "terra",
       "godot_scene": "",
       "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_retrato_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_retrato.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
     }
   ]
 }

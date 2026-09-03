@@ -72,8 +72,12 @@ def origem(nome: str, mx: float = 0.0, my: float = 0.0,
         voo        ave no ar. Não se cobra apoio nenhum.
         encaixe    peça que monta noutra (copa de coqueiro, lança de guindaste):
                    a âncora é o ponto de encaixe na peça-mãe.
+        retrato    NÃO pousa em lado nenhum: vive num cartão de interface. Não
+                   se cobra apoio, e sobretudo não se compõe a sombra de
+                   contacto — num cartão não há chão para ela cair, e o que
+                   sai é um risco diagonal atrás do boneco.
     """
-    if tipo not in ("base", "waterline", "voo", "encaixe"):
+    if tipo not in ("base", "waterline", "voo", "encaixe", "retrato"):
         raise ValueError("tipo de âncora desconhecido: %s" % tipo)
     e = bpy.data.objects.new("ORIGIN_%s" % nome, None)
     e.empty_display_type = "PLAIN_AXES"

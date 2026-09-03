@@ -311,9 +311,51 @@ metade; o caixote melhorou e continua a ser a peça mais difícil do convés.**
 - **Mede-se por:** o galpão a 100% e a 25% — padrão que só funciona de perto
   não serve.
 
-### Etapa 5 — Personagem com rosto
+### Etapa 5 — Personagem com rosto  ✅ FEITA em 03/09
 - Folha de rostos por gerador de imagem, aplicada num plano da cabeça.
 - **Mede-se por:** o trabalhador no tabuado, a 22px, no jogo rodando.
+
+#### O que se fez, e por que não foi o que estava escrito
+
+O gerador de imagem **não entrou**, e o motivo é o mesmo que já custou duas
+levas de arte: gerador não erra o desenho, erra o ÂNGULO — e uma folha de
+rostos colada num plano teria de concordar com uma câmera que o gerador não
+conhece. O trabalhador do cartão saiu do MESMO estúdio de tudo o resto
+(`blender/brp_porto.py`, `trabalhador_retrato`), o que era exatamente o pedido
+do playtest: *"o sprite do trabalhador pode ser refeito para ficar mais de
+acordo com o design do jogo"*.
+
+**São dois bonecos, e continuam a ser.** O `trabalhador` do píer tem 22px na
+tela e são cinco caixas de propósito; a esta escala mais peça vira ruído. O
+`trabalhador_retrato` tem 32×70 no cartão do rodapé, e a 70px cinco caixas leem
+como um boneco de LEGO. Mesmo personagem, dois orçamentos de pixel.
+
+**Ele é o único prop que olha para a frente.** Todo o resto do catálogo vive no
+mapa e obedece ao 3/4 da câmera; um retrato de 3/4 num cartão de 108px mostra
+sobretudo o capacete. A volta foi rodar o boneco 45° em Z — a câmera não muda,
+o contrato não muda, e a cara passa a apontar para quem olha.
+
+**Quatro tentativas, e o que cada uma ensinou** (está tudo em comentário na
+função, para não se repetir):
+
+1. medidas misturadas — largura em unidades de mundo, altura em pixels — deram
+   um PALITO de 429×27, cortado no topo do quadro. Depois da rotação de 45° a
+   largura anda 42,4px por unidade, a altura 36,7 e a profundidade 21,2: três
+   fatores, e escrever tudo em pixels tira-os da frente;
+2. as duas faixas refletivas tinham 70px de largura num colete de 68 e taparam
+   o laranja inteiro — o tronco saiu BRANCO. A 32px cada peça tem de ganhar o
+   seu espaço contra as vizinhas, não apenas caber;
+3. o colete e o tronco tinham a mesma face da frente — duas faces coplanares, o
+   z-buffer a escolher ao acaso, e o laranja simplesmente não apareceu;
+4. `cone()` pede RAIO e o conversor devolve LARGURA: a aba do capacete saiu com
+   116px de diâmetro numa cabeça de 50, e no cartão o boneco aparecia de
+   CHAPÉU DE PALHA.
+
+E duas coisas que só a captura no jogo disse, com todas as asserções verdes: o
+boneco **enche o quadro** (um `TextureRect` em `KEEP_ASPECT_CENTERED` escala o
+PNG inteiro, transparência incluída — com 251px de boneco num quadro de 512 ele
+saía com 34px no cartão), e **centra-se pela quina da bota** e não pela altura,
+porque em isométrico a quina da frente desce meia profundidade abaixo do pé.
 
 ### Etapa 6 — Interface encorpada (NÃO é Blender)
 - Gradiente e sombra nos `StyleBoxFlat` do tema, cor por botão na barra

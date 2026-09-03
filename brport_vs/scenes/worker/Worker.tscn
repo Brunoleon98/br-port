@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/Worker.gd" id="1"]
-[ext_resource type="Texture2D" path="res://art/sprites/trabalhador.png" id="2"]
+[ext_resource type="Texture2D" path="res://art/props/trabalhador_retrato.png" id="2"]
 
 [node name="Worker" type="PanelContainer"]
 custom_minimum_size = Vector2(108, 136)

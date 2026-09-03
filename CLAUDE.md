@@ -362,6 +362,12 @@ tranca isso.
   gerador publica `cotovelos` e o D2 confere-os; a lição é anterior ao teste:
   **conferir o retângulo contra PARTE da rua não é conferi-lo contra a rua**,
   como conferir os quatro cantos não era conferir o retângulo.
+- **Peça de INTERFACE mede-se no tamanho do widget, não no do quadro.** Um prop
+  do mapa fica pequeno no PNG de 512 e é o Godot que o põe no sítio; um retrato
+  num `TextureRect` com `KEEP_ASPECT_CENTERED` escala o PNG INTEIRO, a
+  transparência incluída — 251px de boneco num quadro de 512 saem com 34px num
+  cartão de 70. Ele passava em todas as asserções. Arte para interface enche o
+  quadro; arte para o mapa, não.
 - **E letreiro é interface: desenha-se por cima do mapa, e o teste de design
   não sabe onde ele cai.** O caminhão nasceu num ponto que passava em todas as
   asserções e saía na captura com metade dele debaixo do letreiro do

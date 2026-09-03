@@ -157,7 +157,15 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
   **Ganho de lambuja, medido:** os vãos abertos na vila para eles encolheram
   junto, e a fileira de casas voltou de 9 para **11 lotes** no quadro — os dois
   que o alargamento do pátio tinha empurrado para fora.
-- Pedras chapadas, sem profundidade
+- ~~Pedras chapadas, sem profundidade~~ — **corrigido em 03/09.** Cada pedra
+  era UMA elipse de um tom, e elipse de um tom não tem lado: de longe o
+  enrocamento lia como mancha pintada no muro. Agora é um sólido facetado —
+  polígono irregular de topo e uma saia por aresta virada para baixo, a da
+  direita mais escura que a da esquerda, seguindo a mesma luz do resto do
+  mapa. Duas formas foram tentadas antes: elipse extrudada sai FICHA DE
+  PÔQUER (e desenha um ANEL onde um tampo claro cai sobre a saia do vizinho),
+  e elipse com cópia menor por cima lê como elipse chapada com sombra. O que
+  faz pedra pequena ler como pedra é ARESTA.
 - Vegetação pobre e casas mal distribuídas → **isto encontra a leitura de
   composição das referências**, que já diz para consultar mapas de cidades
   portuárias reais (`docs/design/referencias/README.md`)
@@ -189,7 +197,14 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
   lado do mapa, para o jogo a fazer derivar por cima da água. Não precisa de
   Blender (é o `gerar_mapa_iso.py`), mas é geração nova, nó novo na cena e
   import novo: não é ajuste de tween como as duas de cima.
-- Sprite do trabalhador refeito → **é a Etapa 5** do plano de arte
+- ~~Sprite do trabalhador refeito~~ — **feito em 03/09, e é a Etapa 5 do plano
+  de arte.** O sprite do cartão era um desenho pintado, com contorno, brilho e
+  degradê; o jogo é facetado, sem contorno e de faces chapadas. Não destoava
+  por ser feio, destoava por ser de outra oficina. O `trabalhador_retrato` sai
+  do MESMO estúdio de tudo o resto e é o único prop que olha para a frente —
+  rodado 45° em Z, porque um retrato de 3/4 num cartão de 108px mostra
+  sobretudo o capacete. O boneco do PÍER continua a existir e continua com
+  cinco caixas: 22px e 70px não são o mesmo orçamento de pixel.
 
 ### 🖥️ Interface — itens novos, sem gate
 
