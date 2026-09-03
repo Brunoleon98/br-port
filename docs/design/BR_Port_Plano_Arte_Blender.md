@@ -156,6 +156,34 @@ Fica para quando elas entrarem pelo Git.
 obriga a regerar todos os props em Blender (~1 GB de `bpy`) e a reconciliar o
 teste de design. Merece a sua própria passagem.
 
+#### ⚠️ E MEDIDO EM 03/09: baixar o `MEIA_LARG` não mostra mais porto
+
+Gerou-se o mapa base em 30 (o de hoje), 24 e 20, com o MESMO ponto do mundo no
+centro — o `CX`/`CY` é recalculado, senão a comparação media o deslocamento da
+origem em vez do enquadramento. O resultado desmente a premissa da etapa:
+
+| `MEIA_LARG` | terra visível | canto sup-esq | azul escuro na tela |
+|---:|---:|---|---:|
+| **30** (hoje) | 20,1% | terra no pixel 0 | 6,9% |
+| 24 | 23,8% | **vazio por 51 px** | 14,6% |
+| 20 | **23,6%** | **vazio por 100 px** | 27,4% |
+
+**A terra visível SATURA em ~24% e depois cai.** De 24 para 20 não entra mais
+porto nenhum — entra mais vazio, e o azul escuro quase dobra. A razão é que o
+mundo é FINITO: os `DEGRAUS` acabam em `my = 34` e o `FUNDO_TERRA` está em
+`mx = -8`, então afastar a câmera não descobre mais mapa, descobre a borda
+dele. Em 20 há uma cunha de 100 px no canto superior esquerdo onde a terra
+simplesmente termina numa diagonal reta contra água funda.
+
+**O que isto muda no custo da etapa:** ela deixa de ser "mexer numa constante e
+regerar os props" e passa a ser "estender o mundo primeiro" — mais degraus de
+costa, mais vila, mais água — e só depois mexer na projeção. A parte cara não
+é o `bpy`; é o mapa que ainda não existe.
+
+E continua a valer o bloqueio de antes: quanto porto DEVE caber na tela é
+julgamento de composição, e as cinco imagens de referência não estão no
+repositório.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

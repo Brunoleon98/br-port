@@ -112,14 +112,20 @@ compositor), a 4 (materiais dirigidos) e a 5 (rosto do trabalhador), todas com
 `bpy`, mais a metade cara da 1: o `MEIA_LARG`, que muda a projeção e obriga a
 regerar tudo.
 
-### ⚠️ A pergunta que trava a Fase 2
+### A pergunta da Fase 2 — adiada de propósito (03/09)
+
+**Decisão do Bruno: responde-se quando a Fase 2 for feita, e não antes.** Ela
+não é pendência aberta nem trava sessão nenhuma — é uma nota presa ao trabalho
+da Fase 2, para quem o abrir a ler antes de codar a economia. O que continua a
+valer é a regra: **codar a economia da Fase 2 sem a responder é construir em
+cima de uma pergunta**, e por isso o item começa por aqui.
 
 O valor de contrato cresce ×2,9 e depois ×2,5 por fase; a parcela cresce ×2,0 e
 ×1,5. **A receita corre mais depressa do que a dívida**, então a tensão que faz
 a Fase 1 medir o que mede desaparece a partir da semana 5. Subir as parcelas,
 assumir que é de propósito, ou trocar o que pressiona — **não está decidido**, e
 codar a economia da Fase 2 sem resolver isto é construir em cima de uma
-pergunta. Os números e o modo de refazer a conta estão em
+pergunta — resolver, quando chegar a altura. Os números e o modo de refazer a conta estão em
 `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 
 É **projeção, não medição**: a Fase 1 é medida no jogo que existe, as outras
