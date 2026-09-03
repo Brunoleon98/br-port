@@ -29,6 +29,7 @@ const PainelCaixaScene := preload("res://scenes/panels/PainelCaixa.tscn")
 const PainelReputacaoScene := preload("res://scenes/panels/PainelReputacao.tscn")
 const PainelDocasScene := preload("res://scenes/panels/PainelDocas.tscn")
 const PainelCalendarioScene := preload("res://scenes/panels/PainelCalendario.tscn")
+const PainelParcelaScene := preload("res://scenes/panels/PainelParcela.tscn")
 
 
 const COR_BOA := Color(0.102, 0.478, 0.251)
@@ -82,6 +83,7 @@ const EscritorioPronto := preload("res://art/props/escritorio.png")
 @onready var _meta_label: Label = $MetaCartao/MetaColuna/MetaTexto
 @onready var _meta_titulo: Label = $MetaCartao/MetaColuna/MetaTituloLinha/MetaTitulo
 @onready var _meta_icone: TextureRect = $MetaCartao/MetaColuna/MetaTituloLinha/Icone
+@onready var _meta_cartao: PanelContainer = $MetaCartao
 
 
 func _ready() -> void:
@@ -101,6 +103,7 @@ func _ready() -> void:
 	_dia_pilula.gui_input.connect(_on_dia_pilula_input)
 	_rep_pilula.gui_input.connect(_on_rep_pilula_input)
 	_docas_pilula.gui_input.connect(_on_docas_pilula_input)
+	_meta_cartao.gui_input.connect(_on_meta_cartao_input)
 
 	_connect_game_state()
 	_refresh_all()
@@ -108,6 +111,7 @@ func _ready() -> void:
 	_animar_coqueiros()
 	_animar_boias()
 	_animar_luzes()
+	_animar_caminhao()
 
 	# Turno 1 abria com a faixa de mensagem VAZIA — um cartão creme com nada
 	# dentro, que na tela lê como falha e não como "ainda não aconteceu nada".
@@ -195,23 +199,46 @@ func _animar_ancorados() -> void:
 #
 # Cada uma com sua duração e sua fase — coqueiros em sincronia denunciam que é
 # a mesma animação repetida.
+# ⚠️ RAJADA, E NÃO PÊNDULO — pedido do primeiro playtest ("pode deixar
+# animações mais fluidas"). A versão anterior era +A → −A → +A com a mesma
+# duração nos dois sentidos: um metrônomo, e é isso que o olho lia. Vento não
+# tem período fixo.
+#
+# O ciclo aqui é o de uma rajada de verdade: a copa é EMPURRADA depressa
+# (EASE_OUT, que gasta a velocidade no fim do movimento, como quem bate numa
+# parede de ar), volta devagar passando do ponto para o outro lado, oscila uma
+# vez menor — a copa a assentar — e PARA. A pausa é o que faz a rajada
+# seguinte parecer uma rajada nova em vez da mesma volta do relógio.
 func _animar_coqueiros() -> void:
 	var cenario := $MapaWrap.get_node_or_null("Cenario")
 	if cenario == null:
 		return
+	# Cada coqueiro com o seu tempo E a sua força: três iguais em sincronia
+	# denunciam que é a mesma animação repetida (era já a razão das fases).
 	var duracoes := [2.6, 3.1, 2.9]
 	var fases := [0.0, 1.1, 0.5]
+	var pausas := [1.3, 0.7, 1.9]
 	var i := 0
 	for no in cenario.get_children():
 		if not String(no.name).ends_with("Copa"):
 			continue
-		var amplitude := 0.035 if i % 2 == 0 else -0.035
+		var amplitude := 0.038 if i % 2 == 0 else -0.038
 		var dur: float = duracoes[i % duracoes.size()]
 		var tw := no.create_tween().set_loops()
 		if fases[i % fases.size()] > 0.0:
 			tw.tween_interval(fases[i % fases.size()])
-		tw.tween_property(no, "rotation", amplitude, dur).set_trans(Tween.TRANS_SINE)
-		tw.tween_property(no, "rotation", -amplitude, dur).set_trans(Tween.TRANS_SINE)
+		# A rajada bate: rápida a ir, com a velocidade a morrer no fim.
+		tw.tween_property(no, "rotation", amplitude, dur * 0.35) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		# E solta devagar, passando do ponto para o outro lado.
+		tw.tween_property(no, "rotation", -amplitude * 0.55, dur * 0.8) \
+			.set_trans(Tween.TRANS_SINE)
+		# A copa assenta — uma oscilação pequena, não uma segunda rajada.
+		tw.tween_property(no, "rotation", amplitude * 0.22, dur * 0.5) \
+			.set_trans(Tween.TRANS_SINE)
+		tw.tween_property(no, "rotation", 0.0, dur * 0.45) \
+			.set_trans(Tween.TRANS_SINE)
+		tw.tween_interval(pausas[i % pausas.size()])
 		i += 1
 
 
@@ -257,6 +284,87 @@ func _animar_boias() -> void:
 		tw.tween_property(tr, "position:y", base.y, dur) \
 			.set_trans(Tween.TRANS_SINE)
 		i += 1
+
+
+## O CAMINHÃO ENTRA NO PÁTIO — pedido do primeiro playtest ("até fazer o
+## caminhão andar pela estrada").
+##
+## ⚠️ ELE NÃO ANDA AO LONGO DA ESTRADA, e é medido: a cabine do prop aponta
+## para **+mx** (está escrito no `blender/brp_porto.py` — "+mx é o lado do mar;
+## o caminhão aponta para lá"), e a estrada corre no eixo **my**. Um caminhão
+## a percorrer a estrada com este sprite seria um caminhão a deslizar DE LADO,
+## que é justamente o defeito que o CLAUDE.md avisa não se consertar rodando
+## no Godot — ângulo errado se conserta no gerador, não aqui. Andar pela
+## estrada precisa do prop rerenderizado virado para o eixo dela (Blender).
+##
+## O que ele faz é a única marcha honesta com o desenho que existe: avança na
+## direção em que aponta, entrando da rua para o pátio — que é exactamente o
+## caso que o docstring do próprio prop antecipa ("carga chegando, fila no
+## portão").
+##
+## O LIMITE DA MARCHA SAI DO CONTRATO DE PROFUNDIDADE, não de um número
+## escrito aqui. Ordem de irmão É profundidade neste plano, e `mx+my` cresce
+## com o Y de tela — então o caminhão pode avançar até o Y do irmão seguinte,
+## e nem um pixel além. Um número cravado envelheceria calado no dia em que
+## alguém movesse o coqueiro ao lado; assim, a animação respeita o D3 por
+## construção.
+## Quanto o caminhão pode avançar, em pixels de Y, sem furar a ordem de
+## profundidade dos irmãos. Devolve 0 quando não há espaço.
+##
+## É PÚBLICA porque o teste de design a chama: sem isso, o dia em que o vizinho
+## se mexesse e o avanço caísse para zero, o caminhão ficava quieto e nenhuma
+## suíte notava — a animação desligava-se sozinha, calada.
+func avanco_do_caminhao() -> float:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return 0.0
+	var caminhao := cenario.get_node_or_null("Caminhao") as Control
+	if caminhao == null:
+		return 0.0
+	# O irmão seguinte que é prop: é ele que fixa o teto de profundidade.
+	var limite_y := INF
+	var achou := false
+	for no in cenario.get_children():
+		if no == caminhao:
+			achou = true
+			continue
+		if achou and no is TextureRect:
+			limite_y = (no as Control).position.y
+			break
+	# 6px de folga para não empatar em profundidade com o vizinho, e 42px de
+	# teto por gosto: mais do que isso e ele atravessa o pátio todo, num prop
+	# que devia estar a manobrar e não a viajar. Abaixo de 8px o movimento não
+	# se lê, e aí é mais honesto ficar parado do que tremer.
+	var espaco: float = minf(42.0, limite_y - 6.0 - caminhao.position.y)
+	return espaco if espaco >= 8.0 else 0.0
+
+
+func _animar_caminhao() -> void:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return
+	var caminhao := cenario.get_node_or_null("Caminhao") as TextureRect
+	if caminhao == null:
+		return
+
+	var base := caminhao.position
+	var avanco := avanco_do_caminhao()
+	if avanco <= 0.0:
+		return                       # sem espaço honesto para andar: fica parado
+	# +mx move (30, 15) por unidade — a marcha segue essa diagonal, que é a
+	# direção em que a cabine aponta.
+	var destino := base + Vector2(avanco * 2.0, avanco)
+
+	var tw := caminhao.create_tween().set_loops()
+	tw.tween_interval(1.5)
+	tw.tween_property(caminhao, "position", destino, 5.2) \
+		.set_trans(Tween.TRANS_SINE)
+	tw.tween_interval(2.4)
+	# Sai de cena e volta ao portão: um caminhão que fizesse o caminho de
+	# ré leria como defeito, porque o sprite tem frente e não tem marcha atrás.
+	tw.tween_property(caminhao, "modulate:a", 0.0, 0.8)
+	tw.tween_callback(func() -> void: caminhao.position = base)
+	tw.tween_property(caminhao, "modulate:a", 1.0, 0.8)
 
 
 ## `light_flicker` — a luminária do poste, e só ela.
@@ -394,8 +502,13 @@ func _refresh_meta() -> void:
 	var progresso := "%s de %s" % [GameState.moeda(int(GameState.cash)), GameState.moeda(alvo)]
 	if falta > 0:
 		_meta_label.text = "%s — faltam %s" % [progresso, GameState.moeda(falta)]
+		_meta_label.remove_theme_color_override("font_color")
 	else:
-		_meta_label.text = "%s — já dá para pagar" % progresso
+		# CARTÃO TOCÁVEL QUE NÃO SE ANUNCIA É CARTÃO QUE NINGUÉM TOCA. O convite
+		# só aparece quando há o que fazer com ele — antes disso, tocar abriria
+		# um painel que só sabe dizer quanto falta, e a linha aqui já diz isso.
+		_meta_label.text = "%s — toque para quitar agora" % progresso
+		_meta_label.add_theme_color_override("font_color", COR_AVISO)
 
 
 # As vagas já existem na cena, uma por píer desenhado no mapa. Aqui só se diz
@@ -693,6 +806,16 @@ func _on_rep_pilula_input(event: InputEvent) -> void:
 func _on_docas_pilula_input(event: InputEvent) -> void:
 	if _e_toque_de_soltar(event):
 		_abrir_painel(PainelDocasScene).setup()
+		accept_event()
+
+
+# O CARTÃO DA PARCELA TAMBÉM É TOCÁVEL, e é por ali que se paga adiantado —
+# item do playtest que a triagem tinha perdido. O botão não vive no cartão
+# porque o rodapé não tem os 44px de toque para lhe dar; ver o cabeçalho de
+# `PainelParcela.gd`.
+func _on_meta_cartao_input(event: InputEvent) -> void:
+	if _e_toque_de_soltar(event):
+		_abrir_painel(PainelParcelaScene).setup()
 		accept_event()
 
 

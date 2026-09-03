@@ -200,6 +200,15 @@ Teste e import rodam sem tela.
    reprovou nada, porque `doca_aceita_trabalhador()` carregava a mesma guarda.
    Quando um defeito não pega, a primeira suspeita é que a regra esteja
    duplicada — e a correção é apagar a cópia, não reforçar o teste.
+   **E confira QUAL guarda está a segurar a asserção.** Mordeu duas vezes em
+   03/09, e não é a regra duplicada: são duas guardas DIFERENTES a proteger a
+   mesma asserção, e a errada a segurar. Tirar o `not parcela_paid` de quem
+   quita a dívida não reprovou nada, porque quitar deixa o caixa abaixo da
+   parcela e a guarda do DINHEIRO fechava a porta no lugar dela; e tirar o
+   teto de profundidade da marcha do caminhão não reprovou nada, porque o teto
+   de gosto (42px) era mais apertado. Em ambos os casos a correção é montar o
+   estado em que a guarda sob teste é a que APERTA — caixa de sobra, vizinho
+   mais perto — e não reforçar a asserção.
    **E confira que a base está LIMPA antes de injetar o defeito seguinte.** No
    mesmo dia, o `git checkout` que devolvia o arquivo entre um defeito e outro
    restaurou a versão anterior ao trabalho inteiro — e os três testes seguintes

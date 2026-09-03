@@ -62,6 +62,7 @@ var _t5g_completo := false
 var _t5h_completo := false
 var _t5i_completo := false
 var _t5j_completo := false
+var _t5k_completo := false
 
 
 # Os testes rodam no primeiro frame, não em _initialize(): dentro de
@@ -413,6 +414,10 @@ func _run() -> void:
 	_t5j_calendario()
 	_check("o bloco T5j correu até ao fim", _t5j_completo)
 
+	print("=== T5k: quitar a parcela antes do prazo ===")
+	_t5k_parcela_adiantada()
+	_check("o bloco T5k correu até ao fim", _t5k_completo)
+
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
 	var losses := 0
@@ -755,3 +760,70 @@ func _t5j_calendario() -> void:
 	_check("a parcela vence uma vez só", vencem_parcela == 1)
 
 	_t5j_completo = true
+
+
+# ── T5k ──────────────────────────────────────────────────────────────────
+#
+# A segunda porta da dívida: pagar antes do vencimento, item do playtest que
+# a triagem tinha perdido. As duas portas baixam a MESMA parcela pela mesma
+# função (`_baixar_parcela`), e é isso que este bloco tranca — mais as três
+# recusas que a porta nova tem de fazer.
+func _t5k_parcela_adiantada() -> void:
+	_fresh_playing()
+
+	# 1. Sem caixa, a porta está fechada — e não tira dinheiro nenhum.
+	GS.cash = GS.PARCELA_AMOUNT - 1
+	_check("sem caixa para a parcela, nao da para quitar",
+		not GS.pode_pagar_parcela_adiantado())
+	var caixa_antes: int = GS.cash
+	_check("e a tentativa recusada nao mexe no caixa",
+		not GS.pagar_parcela_adiantado() and GS.cash == caixa_antes)
+
+	# 2. Com caixa, quita — e o dinheiro sai exatamente uma vez.
+	GS.cash = GS.PARCELA_AMOUNT + 1000
+	_check("com caixa, a porta abre", GS.pode_pagar_parcela_adiantado())
+	var antes: int = GS.cash
+	_check("quitar devolve verdadeiro", GS.pagar_parcela_adiantado())
+	_check("saiu exatamente a parcela do caixa (%d, esperado %d)"
+			% [antes - int(GS.cash), GS.PARCELA_AMOUNT],
+		antes - int(GS.cash) == GS.PARCELA_AMOUNT)
+	_check("a parcela ficou marcada como paga", bool(GS.parcela_paid))
+
+	# 3. Já paga, a porta fecha — quitar duas vezes cobraria duas vezes.
+	#
+	# ⚠️ COM CAIXA DE SOBRA, e não com o que ficou. Quitar deixa o caixa
+	# abaixo da parcela, e aí a porta fecharia pela guarda do DINHEIRO — um
+	# defeito injetado na guarda do "já paga" passava incólume, satisfeito
+	# pela guarda vizinha. Só com caixa suficiente a asserção mede o que diz
+	# medir. É a irmã de "contagem só se testa acima de um".
+	GS.cash = GS.PARCELA_AMOUNT * 2
+	var depois: int = GS.cash
+	_check("parcela ja paga fecha a porta", not GS.pode_pagar_parcela_adiantado())
+	_check("e a segunda tentativa nao cobra de novo",
+		not GS.pagar_parcela_adiantado() and GS.cash == depois)
+
+	# 4. O resumo do dia mostra a parcela no dia EM CURSO (o inverso do
+	#    `pay_debt()`, que a lança no dia que acabou de fechar).
+	_check("a parcela adiantada entra no dia em curso",
+		int(GS.dia_atual["parcela"]) == GS.PARCELA_AMOUNT)
+	_check("e no boletim da semana em curso",
+		int(GS.semana_atual["parcela"]) == GS.PARCELA_AMOUNT)
+
+	# 5. Fora de "playing" a porta fecha: o turno está parado à espera de uma
+	#    decisão, e pagar por baixo dela seria decidir por cima do jogador.
+	_fresh_playing()
+	GS.cash = GS.PARCELA_AMOUNT + 1000
+	GS._set_phase("debt_payment")
+	_check("fora de playing a porta fecha",
+		not GS.pode_pagar_parcela_adiantado())
+	GS._set_phase("playing")
+
+	# 6. E quem paga adiantado GANHA a partida no fim do prazo — a vitória
+	#    olha `parcela_paid`, não a fase em que ela foi paga.
+	_check("quitar adiantado satisfaz a vitoria", GS.pagar_parcela_adiantado())
+	GS.turn = GS.TURNS_TOTAL + 1
+	GS._check_end()
+	_check("no fim do prazo, com a parcela paga, o porto e salvo",
+		GS.phase == "game_over" and bool(GS.won))
+
+	_t5k_completo = true

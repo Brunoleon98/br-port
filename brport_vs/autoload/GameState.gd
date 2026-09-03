@@ -1002,29 +1002,67 @@ func _end_game(did_win: bool, reason: String) -> void:
 
 
 # ── DÍVIDA (Sr. Ribeiro) ──
+#
+# DUAS PORTAS PARA A MESMA DÍVIDA, e uma só função a baixá-la. `pay_debt()` é
+# a porta do vencimento (fase "debt_payment", turno parado à espera da
+# decisão); `pagar_parcela_adiantado()` é a porta que o playtest pediu — pagar
+# antes do prazo, a qualquer momento em que o caixa dê. O dinheiro sai igual
+# nas duas, e é por isso que sai de um lugar só: duas cópias desta conta
+# divergiriam no dia em que uma delas ganhasse uma linha nova.
 func pay_debt() -> void:
 	if phase != "debt_payment":
 		return
 	if cash < PARCELA_AMOUNT:
 		message.emit("Caixa insuficiente para pagar a parcela.", "bad")
 		return
+	# `advance_turn()` já fez a virada do dia antes de suspender em
+	# "debt_payment", então o dia em que a dívida venceu é `dia_anterior` —
+	# não `dia_atual`, que já é o dia seguinte, ainda por jogar.
+	_baixar_parcela(dia_anterior)
+	_set_phase("playing")
+	turn_advanced.emit(turn, current_week())
+	_check_end()
+	save_game()
+
+
+# Pagar ANTES do prazo — item do primeiro playtest ("pode haver a opção de
+# pagar a dívida antes do tempo").
+#
+# O VALOR É O MESMO, e de propósito: desconto por antecipação mexeria na
+# economia medida (100% / 79,5% / 35,7%) e isso não se faz sem passar pelo
+# `/balancear`. O que se ganha aqui não é dinheiro — é deixar de carregar a
+# dívida e o lembrete dela pelo resto da partida, e é uma escolha, porque o
+# mesmo caixa também compra estrutura.
+#
+# O simulador de balanceamento NUNCA passa por aqui (ele só resolve a fase
+# "debt_payment"), então a medição em vigor continua a descrever exatamente o
+# que descrevia: a partida que paga no vencimento.
+func pode_pagar_parcela_adiantado() -> bool:
+	return phase == "playing" and not parcela_paid and cash >= PARCELA_AMOUNT
+
+
+func pagar_parcela_adiantado() -> bool:
+	if not pode_pagar_parcela_adiantado():
+		return false
+	# Aqui é o INVERSO do `pay_debt()`: o dia em curso ainda não foi jogado,
+	# então a parcela cai em `dia_atual` — que vira `dia_anterior` na próxima
+	# virada, e é lá que o resumo do dia a vai mostrar.
+	_baixar_parcela(dia_atual)
+	roster_changed.emit()
+	save_game()
+	return true
+
+
+func _baixar_parcela(no_dia: Dictionary) -> void:
 	cash -= PARCELA_AMOUNT
 	# Só para o Boletim. A parcela vence NO fecho da semana 4, então cai na
 	# semana em curso — que é onde o jogador espera vê-la, porque foi essa a
 	# semana em que o dinheiro saiu.
 	semana_atual["parcela"] += PARCELA_AMOUNT
-	# E para o resumo do dia. `advance_turn()` já fez a virada do dia antes de
-	# suspender em "debt_payment", então o dia em que a dívida venceu é
-	# `dia_anterior` — não `dia_atual`, que já é o dia seguinte, ainda por
-	# jogar.
-	dia_anterior["parcela"] += PARCELA_AMOUNT
+	no_dia["parcela"] += PARCELA_AMOUNT
 	parcela_paid = true
-	_set_phase("playing")
 	cash_changed.emit(cash)
 	message.emit("Parcela de %s paga ao Sr. Ribeiro." % moeda(PARCELA_AMOUNT), "good")
-	turn_advanced.emit(turn, current_week())
-	_check_end()
-	save_game()
 
 
 func fail_debt() -> void:

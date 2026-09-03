@@ -146,7 +146,27 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
 - Vegetação pobre e casas mal distribuídas → **isto encontra a leitura de
   composição das referências**, que já diz para consultar mapas de cidades
   portuárias reais (`docs/design/referencias/README.md`)
-- Animações mais fluidas, e novas: coqueiro, ondas, caminhão a andar na estrada
+- ~~Animações mais fluidas~~ (coqueiro) e ~~caminhão a andar~~ — **feitas em
+  03/09.** O coqueiro era um PÊNDULO: +A → −A com a mesma duração nos dois
+  sentidos, período fixo, e é isso que o olho lia. Agora é uma RAJADA — empurra
+  depressa com a velocidade a morrer no fim (`EASE_OUT`), solta devagar
+  passando do ponto, assenta numa oscilação menor, e PARA. A pausa é o que faz
+  a rajada seguinte parecer nova.
+  O caminhão **não anda ao longo da estrada**, e é medido: a cabine do prop
+  aponta para `+mx` (está escrito no `blender/brp_porto.py`) e a estrada corre
+  no eixo `my` — percorrê-la com este sprite seria um caminhão a deslizar DE
+  LADO, que é o defeito que o CLAUDE.md avisa não se consertar rodando no
+  Godot. O que ele faz é a marcha honesta com o desenho que existe: avança na
+  direção em que aponta, entrando da rua para o pátio (42px, e o teto sai do
+  contrato de profundidade, não de um número cravado).
+  **Andar pela estrada precisa do prop rerenderizado virado para o eixo dela
+  — Blender, e portanto `pip install bpy` (~1 GB).**
+- **Ondas — em aberto, e medido por que:** não existe nó de onda nem de espuma
+  no jogo. A espuma está ASSADA no SVG do mapa, que é uma textura só, então
+  animá-la exige uma camada nova — um segundo SVG com só a espuma, gerado ao
+  lado do mapa, para o jogo a fazer derivar por cima da água. Não precisa de
+  Blender (é o `gerar_mapa_iso.py`), mas é geração nova, nó novo na cena e
+  import novo: não é ajuste de tween como as duas de cima.
 - Sprite do trabalhador refeito → **é a Etapa 5** do plano de arte
 
 ### 🖥️ Interface — itens novos, sem gate
@@ -180,7 +200,27 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
   Tocar nas docas mostra quantos berços faltam e o que destrava o próximo,
   reaproveitando o mesmo texto que o botão de construir já usa
   (`impedimento_estrutura()`), em vez de escrever uma segunda explicação.
-- Espaço no HUD reservado para o que vem depois (mapa da cidade, lojas)
+- ~~**Pagar a dívida antes do tempo**~~ — **feito em 03/09, e ESTE ITEM A
+  TRIAGEM TINHA PERDIDO.** Ele está na transcrição acima ("pode haver a opção
+  de pagar a dívida antes do tempo") e não entrou em gaveta nenhuma; só
+  apareceu ao reler o texto original palavra por palavra, um dia depois. É a
+  falha mais barata de cometer e a mais cara de descobrir tarde — **triagem
+  que resume perde item; a lista tem de sair da transcrição linha a linha.**
+  A porta nova é `pagar_parcela_adiantado()`, e ela e o vencimento baixam a
+  parcela pela MESMA função (`_baixar_parcela`). O valor é igual de propósito:
+  desconto por antecipação mexeria na economia medida. Toca-se no cartão da
+  meta — o rodapé tem sete faixas e 29px de folga, e um botão de 44px não cabe
+  lá sem tirar algo que já é usado.
+- Espaço no HUD reservado para o que vem depois (mapa da cidade, lojas) —
+  **em aberto, e é decisão do Bruno**: o rodapé está cheio (sete faixas, 29px
+  até a borda), então reservar espaço agora significa TIRAR alguma coisa que
+  já é usada. E o que iria para lá — mapa da cidade, lojas — é conteúdo de
+  Fase 2, que está adiado por decisão. Reservar espaço para o que não existe,
+  cortando o que existe, é a troca que precisa do olho dele.
+- Layout das opções abaixo do mapa — **em aberto, e pela mesma razão**: são
+  sete faixas empilhadas entre o mapa e a borda de baixo (cartões de doca,
+  título, trabalhadores, mensagem, meta, construir, ações). Enxugar isso é
+  escolher o que sai, e escolher o que sai é gosto — o gate A5 é ele a olhar.
 
 ### 💰 Economia e narrativa — NÃO se mexe sem medir
 
@@ -208,7 +248,10 @@ economia da Fase 2 continua adiada por decisão (ver `ESTADO_DO_PROJETO.md`).
 
 ### ✏️ Escrita
 
-- "termo piegas" na tela inicial — trocar
+- ~~"termo piegas" na tela inicial — trocar~~ — **feito em 03/09.** Era a
+  palavra literal, na primeira página do diário: "Eu achava piegas" → "Eu
+  achava bobagem". Mantém o desdém de quem era criança e olhava o avô
+  escrever, em palavra que se usa.
 - "madeira podre mas está novinho": a fala contradiz o que a tela mostra. Ou a
   fala muda, ou o porto ganha o sprite em ruínas que ela descreve.
 

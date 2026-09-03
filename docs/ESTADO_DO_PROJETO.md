@@ -120,16 +120,22 @@ inteiro e a medir a **pegada** contra as faixas. Custo medido: dois lotes da
 vila saíram do quadro, de 11 para 9.
 
 O resto da análise está triado em `docs/arquivo/PLAYTEST_01_ANALISE.md`, em
-cinco gavetas, **nenhuma delas um bug**: **arte** (pedras, vegetação,
-animações, sprite do trabalhador = Etapa 5), **interface** — **quatro dos
-cinco itens fechados em 03/09**: o aviso de trabalhador parado (cartão
-próprio), e os quatro chips do HUD tocáveis (dinheiro → ganho de ontem e
-projeção de hoje; dia → calendário com os três eventos que o jogo sabe de
-antemão; reputação → a escada de patamares; docas → o que falta para a
-próxima). Sobram dois: o layout das opções e o espaço reservado no HUD —,
-**economia** (três itens que só passam pelo `/balancear`), **desenho de
-sistema** (escopo de Fase 2 em diante) e **escrita** (dois, um deles à espera
-do A4).
+cinco gavetas, **nenhuma delas um bug**. Em 03/09 fechou-se tudo o que não
+depende dele: os cinco itens de interface que dão para fechar (o aviso de
+trabalhador parado, os quatro chips do HUD tocáveis e **pagar a dívida
+adiantado** — este a triagem tinha PERDIDO, e só apareceu ao reler a
+transcrição linha a linha), as duas animações que não pedem Blender (o coqueiro
+virou rajada, o caminhão anda) e o "piegas" da primeira página do diário.
+
+**O que sobra, e por quê** — a análise tem a medida de cada um:
+
+| Fica | Porque não se fecha aqui |
+|---|---|
+| Layout do rodapé · espaço reservado no HUD | São o mesmo problema: sete faixas e 29px de folga. Dar lugar a conteúdo de Fase 2 é TIRAR o que já é usado — gosto, e o gate A5 é dele |
+| Ondas | Não há nó de espuma: ela está assada no SVG. Precisa de camada nova gerada ao lado do mapa (sem Blender, mas não é tween) |
+| Caminhão pela ESTRADA · pedras · trabalhador | Ângulo e geometria de prop — `pip install bpy`, ~1 GB |
+| Economia (3 itens) | Só via `/balancear`, e ele mesmo amarrou-a ao pacote de Fase 2 ("para fazer tudo isso") |
+| Fala da madeira podre | Espera o A4 |
 
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume. Ele destrava o A1: os dez minutos no APK passam a produzir

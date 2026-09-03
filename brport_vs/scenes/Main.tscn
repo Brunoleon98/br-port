@@ -254,10 +254,10 @@ texture = ExtResource("prop_escritorio_ruina")
 
 [node name="Caminhao" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -20.0
-offset_top = -52.0
-offset_right = 492.0
-offset_bottom = 460.0
+offset_left = 25.0
+offset_top = -74.5
+offset_right = 537.0
+offset_bottom = 437.5
 mouse_filter = 2
 texture = ExtResource("prop_caminhao")
 [node name="Coqueiro0Tronco" type="TextureRect" parent="MapaWrap/Cenario"]

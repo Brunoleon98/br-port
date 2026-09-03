@@ -49,6 +49,8 @@ var _main: Control
 var _d9_completo := false
 var _d10_completo := false
 var _d11_completo := false
+var _d12_completo := false
+var _d13_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -111,6 +113,14 @@ func _rodar() -> void:
 	print("=== D11: os outros tres chips do HUD tambem abrem o deles ===")
 	_d11_toque_nos_outros_chips()
 	_confere("o bloco D11 correu até ao fim", _d11_completo)
+
+	print("=== D12: o cartao da parcela convida e abre ===")
+	_d12_toque_na_parcela()
+	_confere("o bloco D12 correu até ao fim", _d12_completo)
+
+	print("=== D13: o caminhao anda, e sem furar a profundidade ===")
+	_d13_marcha_do_caminhao()
+	_confere("o bloco D13 correu até ao fim", _d13_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -633,3 +643,105 @@ func _confere_chip_abre(tela: Control, overlay: Node, no_pilula: String,
 
 	overlay.remove_child(painel)
 	painel.free()
+
+
+# ── D12 ── o cartão da parcela: o convite e a porta
+#
+# Pagar adiantado é item do playtest, e o botão não vive no cartão (o rodapé
+# não tem 44px de folga) — vive num painel que o TOQUE abre. Duas coisas
+# podem falhar em silêncio aqui: o toque não estar ligado, e o cartão não
+# CONVIDAR. Cartão tocável que não se anuncia é cartão que ninguém toca, e
+# nenhum teste de layout pega isso — este pega.
+func _d12_toque_na_parcela() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	# Caixa que cobre a parcela: é o único estado em que o convite aparece.
+	GS.cash = int(GS.PARCELA_AMOUNT) + 1000
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var overlay: Node = tela.get_node("Overlay")
+
+	var rotulo: Label = tela.get_node("MetaCartao/MetaColuna/MetaTexto")
+	_confere("com caixa de sobra, o cartão convida ao toque",
+		rotulo.text.contains("toque"), "diz \"%s\"" % rotulo.text)
+	_confere("e o convite está na cor de aviso",
+		rotulo.get_theme_color("font_color").is_equal_approx(COR_AVISO))
+
+	_confere_chip_abre(tela, overlay, "MetaCartao", "PainelParcela.gd",
+		["Parcela do Sr. Ribeiro", "quitar"])
+
+	# Sem caixa, o convite SOME — senão ele prometeria uma ação que a porta
+	# do outro lado recusa.
+	GS.cash = int(GS.PARCELA_AMOUNT) - 1
+	tela.call("_refresh_hud")
+	_confere("sem caixa, o convite desaparece",
+		not rotulo.text.contains("toque"), "diz \"%s\"" % rotulo.text)
+
+	root.remove_child(tela)
+	tela.free()
+	_d12_completo = true
+
+
+# ── D13 ── a marcha do caminhão: que ela EXISTA, e que respeite o D3
+#
+# Pedido do playtest ("fazer o caminhão andar"). Duas coisas podem falhar em
+# silêncio: a animação desligar-se sozinha por falta de espaço (ela devolve
+# zero e não anda, sem erro nenhum), e o caminhão andar ATÉ FURAR a ordem de
+# profundidade — passar por cima do irmão que devia tapá-lo. Ordem de irmão é
+# profundidade neste plano (ver D3), e profundidade cresce com o Y de tela,
+# então as duas perguntas se medem em pixels de Y.
+func _d13_marcha_do_caminhao() -> void:
+	var tela: Control = _main
+	var cenario: Node = tela.get_node("MapaWrap/Cenario")
+	var caminhao: Control = cenario.get_node("Caminhao")
+
+	var avanco: float = tela.avanco_do_caminhao()
+	_confere("o caminhão tem espaço para andar (avanço de %.0fpx)" % avanco,
+		avanco >= 8.0,
+		"avanço zero: a animação desliga-se sozinha e nada na tela se mexe")
+
+	# O irmão seguinte fixa o teto: no fim da marcha o caminhão ainda tem de
+	# estar ATRÁS dele em profundidade.
+	var limite_y := INF
+	var achou := false
+	for no in cenario.get_children():
+		if no == caminhao:
+			achou = true
+			continue
+		if achou and no is TextureRect:
+			limite_y = (no as Control).position.y
+			break
+	_confere("e no fim da marcha continua atrás do irmão seguinte",
+		caminhao.position.y + avanco < limite_y,
+		"acabaria em y=%.1f e o irmão está em y=%.1f"
+			% [caminhao.position.y + avanco, limite_y])
+
+	# ⚠️ E AGORA COM A PROFUNDIDADE A APERTAR, porque a asserção acima não
+	# prova a guarda que diz provar: o teto de gosto (42px) é hoje mais
+	# apertado que o teto de profundidade, então é ELE que segura, e um defeito
+	# na conta da profundidade passava incólume. Aproximando o irmão, o teto de
+	# profundidade passa a ser o que manda — e aí a asserção mede o que diz.
+	var vizinho: Control = null
+	var achou2 := false
+	for no in cenario.get_children():
+		if no == caminhao:
+			achou2 = true
+			continue
+		if achou2 and no is TextureRect:
+			vizinho = no as Control
+			break
+	if vizinho != null:
+		var y_original := vizinho.position.y
+		vizinho.position.y = caminhao.position.y + 20.0
+		var apertado: float = tela.avanco_do_caminhao()
+		_confere("com o irmão a 20px, a marcha encurta em vez de o atravessar",
+			apertado == 0.0 or caminhao.position.y + apertado < vizinho.position.y,
+			"avanço de %.1fpx com o irmão a %.1fpx de distância" % [apertado, 20.0])
+		vizinho.position.y = y_original
+
+	_d13_completo = true
