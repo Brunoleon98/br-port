@@ -197,6 +197,16 @@ Fica a ordem do trabalho, que é o que esta medição estabelece:
 Os arquivos das imagens continuam FORA do repositório — anexo de conversa não
 vira arquivo no disco —, mas a decisão que eles travavam já não está travada.
 
+**O passo 1 andou meio degrau em 03/09, e por outro motivo.** O alargamento do
+pátio (`RUA_RECUO` 4,3 → 6,8, `VILA_RECUO` 6,0 → 8,5) empurrou rua e vila 2,5
+unidades para dentro, o que preenche parte da terra vazia que havia entre a
+fileira de casas e o `FUNDO_TERRA = -8`. Não dispensa o passo 1 — a costa
+continua a acabar em `my = 34` e o mundo continua a acabar dentro do quadro a
+`MEIA_LARG = 20` —, mas o lado de TERRA precisa de menos do que precisava.
+O custo medido do recuo foi dois lotes da vila a sair do quadro, de 11 para 9.
+Baixar o `MEIA_LARG` deve trazê-los de volta, mas isso **não está medido** — o
+`CX`/`CY` do mapa está afinado para 30/15 e refazer a conta é o passo 2.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

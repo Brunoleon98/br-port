@@ -114,10 +114,38 @@ func _ready() -> void:
 		# nome do cais. Encadear pelo sinal `fechou` mantém cada painel sem
 		# saber quem vem a seguir — quem sabe a ordem é este lugar, e só ele.
 		var nomes: PainelNarrativo = _abrir_painel(TelaNomesScene)
-		nomes.fechou.connect(func() -> void: _abrir_painel(PainelDiarioScene))
+		nomes.fechou.connect(func() -> void:
+			var diario: PainelNarrativo = _abrir_painel(PainelDiarioScene)
+			# ⚠️ E A RECUPERAÇÃO DE FASE VEM DEPOIS DO DIÁRIO, não é dispensada
+			# por ele. Antes, este ramo acabava num `return` e o bloco de
+			# recuperação lá em baixo nunca corria numa PARTIDA NOVA — que é
+			# justamente quando ele mais faz falta:
+			#
+			#   1. `GameState._ready()` chama `new_game()`, que chama
+			#      `_spawn_boats()`, que tem 30% de abrir contra-oferta;
+			#   2. o `rival_offer_triggered` é emitido no autoload, ANTES de
+			#      esta cena existir para o escutar — ninguém o ouve;
+			#   3. `_ready()` via `precisa_dos_nomes()` e saía;
+			#   4. o jogador batizava o cais, lia o diário, voltava ao mapa —
+			#      e a fase continuava `rival_offer` sem painel nenhum aberto.
+			#
+			# `advance_turn()` retorna CALADO fora de "playing", então o botão
+			# "Avançar dia" não fazia nada e a partida ficava presa no dia 1
+			# com um barco no píer. Sem erro, sem aviso. Trinta por cento das
+			# instalações novas, e foi o que o primeiro playtest no telefone
+			# encontrou (Análise 1, 02/09).
+			diario.fechou.connect(_recuperar_fase)
+		)
 		return
 
-	# Se o jogo carregou de um save já em rival_offer/debt_payment, reabre o painel certo.
+	_recuperar_fase()
+
+
+# Se o jogo abre com uma fase que BLOQUEIA o turno, o painel que a resolve tem
+# de estar na tela — venha ela de um save carregado ou do sorteio do
+# `new_game()`. Vive numa função própria porque é chamada de dois sítios: aqui,
+# quando não há abertura, e no fim da corrente da abertura.
+func _recuperar_fase() -> void:
 	if GameState.phase == "rival_offer" and GameState.pending_rival_dock >= 0:
 		_on_rival_offer_triggered(GameState.pending_rival_dock)
 	elif GameState.phase == "debt_payment":

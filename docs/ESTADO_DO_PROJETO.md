@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 02/09/2026
+> **Última atualização:** 03/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -97,10 +97,34 @@ partida), e a metade de máquina do A1 (APK e build Web a cada push).
 
 | Item | O que falta | Por que só ele |
 |---|---|---|
-| **A1** | Jogar dez minutos no APK | O jogo já rodou num telefone e a primeira instalação achou três defeitos que nenhum teste daqui podia ver. Os três estão corrigidos e trancados por teste; a segunda passagem vale o mesmo preço |
+| **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
 | **A5** | Olhar cada antes/depois da arte | **Três etapas feitas** — a 1 (paleta tropical do mapa), a 6 (o botão âmbar e a sombra nos cartões claros) e a 2 (a cauda dos props: contêiner, caixote, boia e marcador). Faltam a 3, a 4 e a 5, e a metade cara da 1 (`MEIA_LARG`) |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
+
+### O que a primeira jogada no telefone devolveu (02/09)
+
+O A1 pagou-se logo: um **bug que trava o jogo** que nenhuma das cinco suítes
+podia ver. `_spawn_boats()` abre contra-oferta em 30% dos jogos novos, isso
+corre no autoload antes de o `Main` existir para ouvir o sinal, e o `Main`
+saltava a recuperação de fase quando tinha de pedir os nomes — **30% das
+instalações novas ficavam presas no dia 1**, sem uma linha de erro.
+Corrigido em `Main.gd` e trancado pelo bloco F6 do `teste_fumaca.gd`.
+
+O segundo defeito relatado — **o escritório em cima da rua** — também está
+corrigido, e não era um prop mal posto: o pátio tinha 1,68 unidades de largura
+e o armazém ocupa 3,76. Os dois prédios transbordavam para o asfalto. O pátio
+passou a 4,18 (`RUA_RECUO` 4,3 → 6,8, com a vila a recuar junto), e o bloco D2
+do `teste_design` — que olhava um prop e um ponto — passou a varrer o cenário
+inteiro e a medir a **pegada** contra as faixas. Custo medido: dois lotes da
+vila saíram do quadro, de 11 para 9.
+
+O resto da análise está triado em `docs/arquivo/PLAYTEST_01_ANALISE.md`, em
+cinco gavetas, **nenhuma delas um bug**: **arte** (pedras, vegetação,
+animações, sprite do trabalhador = Etapa 5), **interface** (cinco itens novos,
+sem gate), **economia** (três itens que só passam pelo `/balancear`),
+**desenho de sistema** (escopo de Fase 2 em diante) e **escrita** (dois, um
+deles à espera do A4).
 
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume. Ele destrava o A1: os dez minutos no APK passam a produzir

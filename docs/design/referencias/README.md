@@ -105,6 +105,12 @@ justamente onde hoje o mundo acaba em diagonal reta.
 - **Entre a cidade e o cais há sempre uma avenida**, com faixa amarela e
   passeio dos dois lados. O projeto já tem a rua; a referência mostra que ela
   é mais LARGA do que a nossa e carrega trânsito.
+  **Em 03/09 a avenida recuou** — não por composição, mas porque o pátio entre
+  ela e a água tinha 1,68 unidades e o armazém ocupa 3,76, então os dois
+  prédios do porto estavam em cima do asfalto. `RUA_RECUO` foi de 4,3 para 6,8
+  e a vila recuou junto. O efeito de composição veio de lambuja e é o que a
+  referência pedia: a faixa da cidade, a avenida e o pátio do porto passaram a
+  ler-se como três bandas, em vez de se atropelarem.
 - **As docas encostam umas nas outras ao longo da diagonal.** Não há água
   entre berços vizinhos como há no nosso mapa — o cais é contínuo e os
   píeres saem dele.

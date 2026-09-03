@@ -245,13 +245,21 @@ mouse_filter = 2
 
 [node name="Escritorio" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 106.0
-offset_top = -103.0
-offset_right = 618.0
-offset_bottom = 409.0
+offset_left = 91.0
+offset_top = -125.5
+offset_right = 603.0
+offset_bottom = 386.5
 mouse_filter = 2
 texture = ExtResource("prop_escritorio_ruina")
 
+[node name="Caminhao" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -20.0
+offset_top = -52.0
+offset_right = 492.0
+offset_bottom = 460.0
+mouse_filter = 2
+texture = ExtResource("prop_caminhao")
 [node name="Coqueiro0Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 163.0
@@ -271,14 +279,6 @@ mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
-[node name="Caminhao" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = 55.0
-offset_top = -14.5
-offset_right = 567.0
-offset_bottom = 497.5
-mouse_filter = 2
-texture = ExtResource("prop_caminhao")
 [node name="Bote" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 211.0
@@ -289,10 +289,10 @@ mouse_filter = 2
 texture = ExtResource("prop_bote")
 [node name="Armazem" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -14.0
-offset_top = 77.0
-offset_right = 498.0
-offset_bottom = 589.0
+offset_left = -38.0
+offset_top = 44.0
+offset_right = 474.0
+offset_bottom = 556.0
 mouse_filter = 2
 texture = ExtResource("prop_galpao_velho")
 
@@ -306,12 +306,36 @@ mouse_filter = 2
 texture = ExtResource("prop_pneus")
 [node name="Barreira" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 20.5
-offset_top = 148.2
-offset_right = 532.5
-offset_bottom = 660.2
+offset_left = -53.0
+offset_top = 111.5
+offset_right = 459.0
+offset_bottom = 623.5
 mouse_filter = 2
 texture = ExtResource("prop_barreira")
+[node name="Poste" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -56.0
+offset_top = 128.0
+offset_right = 456.0
+offset_bottom = 640.0
+mouse_filter = 2
+texture = ExtResource("prop_poste")
+[node name="PosteLuz" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -56.0
+offset_top = 128.0
+offset_right = 456.0
+offset_bottom = 640.0
+mouse_filter = 2
+texture = ExtResource("prop_poste_luz")
+[node name="ConeTransito" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -140.0
+offset_top = 128.0
+offset_right = 372.0
+offset_bottom = 640.0
+mouse_filter = 2
+texture = ExtResource("prop_cone_transito")
 [node name="Coqueiro1Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 43.0
@@ -331,30 +355,6 @@ mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
-[node name="Poste" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 164.0
-offset_right = 528.0
-offset_bottom = 676.0
-mouse_filter = 2
-texture = ExtResource("prop_poste")
-[node name="PosteLuz" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 164.0
-offset_right = 528.0
-offset_bottom = 676.0
-mouse_filter = 2
-texture = ExtResource("prop_poste_luz")
-[node name="ConeTransito" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = -68.0
-offset_top = 164.0
-offset_right = 444.0
-offset_bottom = 676.0
-mouse_filter = 2
-texture = ExtResource("prop_cone_transito")
 [node name="Cabeco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 56.5
@@ -505,10 +505,10 @@ mouse_filter = 2
 
 [node name="LetreiroEscritorio" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
-offset_left = 289.0
-offset_top = 38.0
-offset_right = 421.0
-offset_bottom = 86.0
+offset_left = 274.0
+offset_top = 15.0
+offset_right = 406.0
+offset_bottom = 63.0
 mouse_filter = 2
 
 [node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroEscritorio"]
@@ -537,10 +537,10 @@ theme_override_font_sizes/font_size = 14
 
 [node name="LetreiroArmazem" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
-offset_left = 168.0
-offset_top = 166.0
-offset_right = 296.0
-offset_bottom = 214.0
+offset_left = 144.0
+offset_top = 133.0
+offset_right = 272.0
+offset_bottom = 181.0
 mouse_filter = 2
 
 [node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroArmazem"]

@@ -87,6 +87,9 @@ func _rodar() -> void:
 	print("=== F5: o projeto continua exportável para o telefone ===")
 	_f5_exportavel_para_android()
 
+	print("=== F6: a abertura não deixa o turno preso numa fase que bloqueia ===")
+	_f6_abertura_nao_prende_o_turno()
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -657,3 +660,81 @@ func _f5_exportavel_para_android() -> void:
 			if not ("," + f + ",").contains("," + pasta + ","):
 				em_todos = false
 		_confere("%s fica fora dos dois pacotes" % pasta, em_todos)
+
+
+# ── F6 ──────────────────────────────────────────────────────────────────
+# O BUG QUE O PRIMEIRO PLAYTEST NO TELEFONE ENCONTROU (Análise 1, 02/09):
+# "a oferta do rival no primeiro dia travou o turno mesmo com o navio ocupando
+# o píer". Trinta por cento das instalações novas.
+#
+# O mecanismo, e ele não dá erro nenhum:
+#   1. `GameState._ready()` chama `new_game()` → `_spawn_boats()`, que tem 30%
+#      de pôr a fase em `rival_offer` e emitir `rival_offer_triggered`;
+#   2. isso corre no AUTOLOAD, antes de o `Main` existir para escutar;
+#   3. `Main._ready()` via `precisa_dos_nomes()` e fazia `return`, saltando o
+#      bloco que reabre o painel da fase;
+#   4. fechada a abertura, a fase continuava `rival_offer` sem painel — e o
+#      `advance_turn()` retorna CALADO fora de "playing".
+#
+# É a irmã de cena da regra "tela nova é overlay, nunca fase do GameState": as
+# duas produzem um jogo preso sem uma linha de erro. Este bloco monta a
+# situação exata e percorre a abertura até ao fim.
+func _f6_abertura_nao_prende_o_turno() -> void:
+	var cena := load("res://scenes/Main.tscn") as PackedScene
+	if cena == null:
+		_confere("Main.tscn carrega", false)
+		return
+
+	# A situação: partida nova (os dois nomes por escolher) E a contra-oferta
+	# já aberta pelo sorteio do `new_game()`.
+	GS.new_game()
+	GS.nome_porto = ""
+	GS.nome_jogador = ""
+	if GS.docks[0]["boat"] == null:
+		GS.docks[0]["boat"] = GS._make_boat()
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE
+	GS._set_phase("rival_offer")
+	_confere("a montagem deixou o jogo em rival_offer com barco no píer",
+		GS.phase == "rival_offer" and GS.docks[0]["boat"] != null)
+
+	var main: Node = cena.instantiate()
+	root.add_child(main)          # `_ready()` corre já aqui, sem esperar frame
+
+	var overlay: Node = main.get_node_or_null("Overlay")
+	if overlay == null:
+		_confere("o Main tem a camada Overlay", false)
+		main.free()
+		return
+
+	# Percorre a abertura: nomes → diário → mapa. O `fechou` é o que encadeia.
+	var nomes: Node = _primeiro_com_script(overlay, "TelaNomes.gd")
+	_confere("a partida nova abre a tela de nomes", nomes != null)
+	if nomes != null:
+		GS.definir_nomes("Cais de Teste", "")
+		nomes.fechou.emit()
+
+	var diario: Node = _primeiro_com_script(overlay, "PainelDiario.gd")
+	_confere("e o diário a seguir", diario != null)
+	if diario != null:
+		diario.fechou.emit()
+
+	# A ASSERÇÃO QUE IMPORTA: fechada a abertura, a contra-oferta tem de estar
+	# na tela. Sem ela o jogador fica com um botão que não faz nada.
+	var oferta: Node = _primeiro_com_script(overlay, "CounterOfferPanel.gd")
+	_confere("fechada a abertura, o painel da contra-oferta está aberto",
+		oferta != null,
+		"a fase é %s e não há painel para a resolver — o turno fica preso" % GS.phase)
+
+	main.free()
+
+
+func _primeiro_com_script(raiz: Node, nome_do_script: String) -> Node:
+	for n in raiz.get_children():
+		var s = n.get_script()
+		if s != null and String(s.resource_path).ends_with(nome_do_script):
+			return n
+		var fundo := _primeiro_com_script(n, nome_do_script)
+		if fundo != null:
+			return fundo
+	return null
