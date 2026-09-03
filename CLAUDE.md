@@ -362,6 +362,19 @@ tranca isso.
   gerador publica `cotovelos` e o D2 confere-os; a lição é anterior ao teste:
   **conferir o retângulo contra PARTE da rua não é conferi-lo contra a rua**,
   como conferir os quatro cantos não era conferir o retângulo.
+- **Limite de GOSTO disfarçado de limite geométrico reprova o que está certo.**
+  O validador do Blender recusou o retrato do trabalhador dizendo que ele "vai
+  sair cortado do quadro de 512px" — e o render tinha 18px de folga em cima e
+  16 em baixo. O número (8 unidades) era uma regra de gosto para prop do mapa,
+  com a mensagem de uma regra geométrica; a geometria nunca chegou a ser
+  medida. Hoje são duas perguntas separadas, e a geométrica projeta mesmo os
+  cantos. **Validador que reprova o que está certo gasta-se depressa** — na
+  vez seguinte alguém sobe o limite em vez de olhar.
+- **E caixa alinhada aos eixos de um GRUPO tem quinas que não existem.** Ao
+  medir a projeção peça a peça a resposta bateu com o render; medindo pela
+  caixa do grupo, ela juntava o `x` de um braço com o `y` de uma bota e o `z`
+  do capacete e errava por 17px. Caixa de grupo serve para saber se algo cabe
+  num sítio; não serve para dizer o que a câmera vê.
 - **Peça de INTERFACE mede-se no tamanho do widget, não no do quadro.** Um prop
   do mapa fica pequeno no PNG de 512 e é o Godot que o põe no sítio; um retrato
   num `TextureRect` com `KEEP_ASPECT_CENTERED` escala o PNG INTEIRO, a

@@ -13,6 +13,18 @@
 
 ## O caminho, do mais recente para o mais antigo
 
+**O QUE SAIU DO ESTADO EM 03/09**, porque descreve o caminho e não o jogo de
+hoje. Os números da Etapa 2 do plano de arte (~14 peças no contêiner) foram
+escritos para um prop de 2,4 unidades que **saiu do projeto em 31/08**; o
+contêiner que existe hoje tem 46px na tela, e o plano de arte explica a conta.
+As versões avulsas de `caixote` e `conteiner` também saíram em 31/08 — a carga
+passou a viver assada no píer, que é onde ela foi engordada —, e `galpao` e
+`galpao_velho` ficaram sem uso porque os prédios do mapa fazem esse papel.
+E a interface só saiu de cima do mapa em **30/08**: até aí as chips de valor e
+de turnos pousavam no tabuado e tapavam justamente o barco, o guindaste e o
+trabalhador, e os nomes eram rótulos brancos de 27px a flutuar.
+
+
 **O CI PASSOU A MOSTRAR O QUE FICOU** (02/09) — item B3, fechado. Até aqui o CI
 provava que nada tinha quebrado e não mostrava nada: para ver o porto era
 preciso abrir uma sessão e rodar a captura na mão. Agora cada PR leva o

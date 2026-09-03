@@ -102,52 +102,48 @@ partida), e a metade de máquina do A1 (APK e build Web a cada push).
 | **A5** | Olhar cada antes/depois da arte | **Três etapas feitas** — a 1 (paleta tropical do mapa), a 6 (o botão âmbar e a sombra nos cartões claros) e a 2 (a cauda dos props: contêiner, caixote, boia e marcador). Faltam a 3, a 4 e a 5, e a metade cara da 1 (`MEIA_LARG`) |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
-### O que a primeira jogada no telefone devolveu (02/09)
+### O que a primeira jogada no telefone devolveu (02–03/09)
 
 O A1 pagou-se logo: um **bug que trava o jogo** que nenhuma das cinco suítes
-podia ver. `_spawn_boats()` abre contra-oferta em 30% dos jogos novos, isso
-corre no autoload antes de o `Main` existir para ouvir o sinal, e o `Main`
-saltava a recuperação de fase quando tinha de pedir os nomes — **30% das
-instalações novas ficavam presas no dia 1**, sem uma linha de erro.
-Corrigido em `Main.gd` e trancado pelo bloco F6 do `teste_fumaca.gd`.
+podia ver — `_spawn_boats()` abre contra-oferta em 30% dos jogos novos, no
+autoload, antes de o `Main` existir para ouvir o sinal, e **30% das instalações
+novas ficavam presas no dia 1** sem uma linha de erro. Corrigido e trancado
+pelo bloco F6 do `teste_fumaca.gd`.
 
-O segundo defeito relatado — **o escritório em cima da rua** — também está
-corrigido, e não era um prop mal posto: o pátio tinha 1,68 unidades de largura
-e o armazém ocupa 3,76. Os dois prédios transbordavam para o asfalto. O pátio
-passou a 4,18 (`RUA_RECUO` 4,3 → 6,8, com a vila a recuar junto), e o bloco D2
-do `teste_design` — que olhava um prop e um ponto — passou a varrer o cenário
-inteiro e a medir a **pegada** contra as faixas. Custo medido: dois lotes da
-vila saíram do quadro, de 11 para 9.
+**A análise inteira está triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`,
+item a item, com o que se mediu em cada um.** Nenhum outro item era bug. Em
+02 e 03/09 fechou-se **tudo o que não depende do Bruno**: os cinco itens de
+interface (aviso de trabalhador parado, os quatro chips do HUD tocáveis,
+calendário e **pagar a dívida adiantado** — este a triagem tinha PERDIDO, e só
+apareceu ao reler a transcrição linha a linha), o "piegas" do diário, e a arte
+que ele repetiu: caminhão a atravessar o mapa, prédios encolhidos, pedras com
+volume, espuma animada e o trabalhador do cartão refeito.
 
-O resto da análise está triado em `docs/arquivo/PLAYTEST_01_ANALISE.md`, em
-cinco gavetas, **nenhuma delas um bug**. Em 03/09 fechou-se tudo o que não
-depende dele: os cinco itens de interface que dão para fechar (o aviso de
-trabalhador parado, os quatro chips do HUD tocáveis e **pagar a dívida
-adiantado** — este a triagem tinha PERDIDO, e só apareceu ao reler a
-transcrição linha a linha), o "piegas" do diário e — com o `bpy` instalado — a
-arte que ele repetiu: o caminhão **rerenderizado no eixo da estrada**, que
-agora a atravessa de ponta a ponta, e os dois prédios do pátio **28% menores**.
-Eles liam-se "em cima da rua" mesmo com a pegada legal porque se levantavam 4×
-a altura de uma casa, e em isométrico é a altura que derrama a silhueta: o
-armazém saiu de 90% para 65% do pátio e a vila voltou de 9 para 11 lotes.
+**Os prédios em cima da rua tiveram DUAS causas, e a segunda esteve escondida
+atrás da primeira.** A pegada não cabia no pátio (corrigido alargando-o) e os
+prédios eram grandes demais (28% menores, `ESCALA_PREDIO = 0,72`) — e mesmo
+assim continuavam no asfalto, porque **a rua tem COTOVELOS**: entre um degrau
+e o seguinte ela vira, e o cotovelo corre 5,5 unidades em `mx` atravessando o
+pátio de lado a lado. As quatro faixas `rua` que as âncoras publicavam não o
+cobriam, e nenhuma delas mentia. **Cinco props** estavam lá dentro. O gerador
+publica `cotovelos` desde 03/09 e o bloco D2 confere-os.
 
 **O que sobra, e por quê** — a análise tem a medida de cada um:
 
 | Fica | Porque não se fecha aqui |
 |---|---|
 | Layout do rodapé · espaço reservado no HUD | São o mesmo problema: sete faixas e 29px de folga. Dar lugar a conteúdo de Fase 2 é TIRAR o que já é usado — gosto, e o gate A5 é dele |
-| Ondas | Não há nó de espuma: ela está assada no SVG. Precisa de camada nova gerada ao lado do mapa (sem Blender, mas não é tween) |
-| Pedras com profundidade · sprite do trabalhador | Geometria de prop — `bpy`, que esta sessão já instalou |
+| Vegetação pobre · casas mal distribuídas | **O único item de arte ainda aberto**, e é composição: a leitura das referências manda consultar mapas de cidades portuárias reais. Cabe numa sessão própria |
 | Economia (3 itens) | Só via `/balancear`, e ele mesmo amarrou-a ao pacote de Fase 2 ("para fazer tudo isso") |
 | Fala da madeira podre | Espera o A4 |
 
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume.
 
-Da arte, **três das seis etapas estão feitas** — a 1 (paleta), a 6 (o chrome da
-interface) e a 2 (a cauda dos props, 02/09). Faltam a 3 (contorno pelo
-compositor), a 4 (materiais dirigidos) e a 5 (rosto do trabalhador), todas com
-`bpy`, mais a metade cara da 1 — o enquadramento.
+Da arte, **quatro das seis etapas estão feitas** — a 1 (paleta), a 2 (a cauda
+dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da interface).
+Faltam a 3 (contorno pelo compositor) e a 4 (materiais dirigidos), mais a
+metade cara da 1 — o enquadramento.
 
 **O enquadramento deixou de estar bloqueado em 03/09:** o Bruno escolheu
 `MEIA_LARG = 20` olhando o mapa gerado em três larguras, e a leitura de
@@ -276,16 +272,12 @@ A interface **não é montada por código**: vive em cenas `.tscn` com um tema
 (`ui/tema_brport.tres`). Trocar arte é editar cena e tema, não reescrever
 script.
 
-**O mapa não carrega interface em cima** (30/08). As chips que mostravam valor
-e turnos pousavam no tabuado e tapavam justamente o barco, o guindaste e o
-trabalhador; hoje isso vive em `scenes/dock/DocaCartao.tscn`, numa fileira de
-três cartões alinhados abaixo do mapa — onde o polegar sabe onde estão. O píer
-continua sendo alvo de arrasto e ACENDE quando aceita o trabalhador escolhido.
-Os nomes (escritório, armazém, zona de espera) deixaram de ser rótulos brancos
-de 27px flutuando e viraram **placas com mastro**, apoiadas no prédio ou numa
-estaca na água; o número de cada doca é **tinta de piso no cais**, gerada em
-estêncil pelo `gerar_mapa_iso.py` porque o importador de SVG do Godot não
-desenha `<text>`.
+**O mapa não carrega interface em cima.** O texto e o alvo de toque de cada
+doca vivem em `scenes/dock/DocaCartao.tscn`, numa fileira de três cartões
+abaixo do mapa; o píer continua alvo de arrasto e ACENDE quando aceita o
+trabalhador. Os nomes são **placas com mastro** apoiadas no prédio ou numa
+estaca, e o número de cada doca é **tinta de piso**, em estêncil, porque o
+importador de SVG do Godot não desenha `<text>`.
 
 **Os ícones do HUD já são arte de verdade** (29/08): 20 SVGs em `art/icones/`,
 todos conferidos a 19px sobre os três fundos que a interface tem (pílula
@@ -297,33 +289,34 @@ As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
 nos dois estados, então o prédio não salta ao ser consertado. Mesma razão que
 fez o píer partilhar geometria entre vazio e construído.
 
-**A cauda dos props tem corpo desde 02/09** (Etapa 2). O contêiner do convés
-passou de 2 peças a 13 — corrugado, cantoneiras de metal nos cantos e portas
-azuis —, o caixote virou carga empilhada em duas madeiras diferentes, a boia
-ganhou faixa refletiva e o marcador duas faixas mais lanterna. Os números do
-plano de arte para esta etapa (~14 peças no contêiner) foram escritos para um
-prop de 2,4 unidades que saiu do projeto em 31/08; o que existe hoje tem 46px
-na tela, e o plano de arte explica a conta. **As peças pequenas do pátio —
-caminhão, empilhadeira, pilha de caixotes, cabeço, poste e mais oito — já
-existiam desde 31/08**, em `blender/brp_porto.py`.
+**A cauda dos props tem corpo desde 02/09** (Etapa 2): contêiner corrugado com
+cantoneiras e portas, carga empilhada em duas madeiras, boia e marcador com
+faixa refletiva, mais as catorze peças pequenas do pátio em
+`blender/brp_porto.py`.
 
-O cenário usa os props: **coqueiros low-poly** (que oscilam, copa e tronco em
-peças separadas), **guindaste** nas docas construídas (a lança varre), **carga
-no convés** e **boias + marcador** na Zona de Espera. Os coqueiros chapados
+O cenário usa os props: **coqueiros low-poly** (que oscilam em rajada, copa e
+tronco em peças separadas), **guindaste** nas docas construídas (a lança
+varre), **carga no convés** e **boias + marcador** na Zona de Espera. Desde
+03/09 o **caminhão atravessa o mapa inteiro pela estrada** — 43,5 unidades, de
+fora do quadro a fora do quadro, com duas silhuetas porque a rua vira 90° em
+cada cotovelo — e a **espuma lava a costa**, em duas camadas próprias e em
+contrafase (ela era assada no SVG, e por isso não havia onda nenhuma para
+animar). As **pedras do enrocamento** deixaram de ser elipses chapadas e são
+sólidos facetados. Os coqueiros chapados
 saíram do SVG do mapa — `gerar_mapa_iso.py --sem-coqueiros` — pela mesma razão
 que os píeres: o que se mexe não pode estar assado no fundo.
-
-Continuam **sem uso** `galpao` e `galpao_velho` (os prédios do mapa já fazem
-esse papel). As versões avulsas de `caixote`/`conteiner` não existem: saíram em
-31/08 e a carga vive assada no píer, que é onde ela foi engordada.
 
 Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande), e o
 pesqueiro tem casco próprio — não é o mesmo casco com carga trocada. O
 **trabalhador aparece de pé no tabuado** quando alocado, e mexe-se enquanto a
 operação corre.
 
-Ainda é placeholder o **retrato ilustrado do trabalhador** no cartão da
-fileira, que é de outra leva e de outra linguagem visual.
+O **retrato do trabalhador** deixou de ser placeholder em 03/09: era um
+desenho pintado, de outra leva e outra linguagem, e passou a sair do mesmo
+estúdio Blender de tudo o resto (`trabalhador_retrato`). É o único prop que
+olha para a frente — rodado 45° em Z, porque um retrato de 3/4 num cartão de
+108px mostra sobretudo o capacete. O boneco do PÍER continua com as cinco
+caixas dele: 22px e 70px não são o mesmo orçamento de pixel.
 
 A **Zona de Espera é só visual**: os barcos ancorados são decorativos e não
 representam fila de verdade — barcos continuam nascendo direto nas docas.

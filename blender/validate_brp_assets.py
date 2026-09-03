@@ -26,13 +26,25 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
-from brp_studio import Estudio, RESOLUCAO, z                 # noqa: E402
+from brp_studio import Estudio, RESOLUCAO, para_pixel, z     # noqa: E402
 from gerar_brp import ESTUDIOS                               # noqa: E402
 
-# Um asset não pode ser maior que o quadro: se for, o render corta-o e o corte
-# só aparece quando alguém olha. O quadro tem 512px e uma unidade de mundo na
-# horizontal vale MEIA_LARG=30, logo cabem ~17 unidades — mas metade disso já é
-# um prop que ocupa a tela inteira do jogo, então o limite prático é menor.
+# Duas perguntas diferentes, e durante um tempo só se fez a segunda com a
+# mensagem da primeira.
+#
+# A PRIMEIRA é geométrica: o render corta o que não cabe no quadro, e o corte
+# só aparece quando alguém olha. Agora ela é medida como deve ser — os oito
+# cantos da caixa projetados com a MESMA `para_pixel()` que o resto do kit usa,
+# conferidos contra os 512px. É a única forma de a resposta ser verdadeira,
+# porque o que toca a borda num plano isométrico não é a altura: é a QUINA, que
+# desce meia profundidade abaixo da base.
+MARGEM_QUADRO = 4          # px de folga, para o chanfro e o antisserrilhado
+
+# A SEGUNDA é de GOSTO, e vale só para prop que vive no mapa: 8 unidades já é
+# um prop que ocupa meia tela de jogo. Ela não se aplica a um `retrato`, que
+# por definição não pousa no mapa e enche o quadro de propósito — e foi ela que
+# reprovou o trabalhador do cartão dizendo que ele "vai sair cortado", quando
+# a medição do render mostrava 18px de folga em cima e 16 em baixo.
 ESCALA_MAXIMA = 8.0
 
 # Quanto a base da malha pode ficar afastada da âncora, em unidades de mundo.
@@ -54,6 +66,18 @@ def _caixa(objetos):
     if not xs:
         return None
     return (min(xs), max(xs), min(ys), max(ys), min(zs), max(zs))
+
+
+def _cantos_projetados(objetos) -> list:
+    """Os oito cantos da caixa DE CADA PEÇA, em pixels do quadro."""
+    from mathutils import Vector
+    saida = []
+    for o in objetos:
+        if o.type != "MESH":
+            continue
+        for canto in o.bound_box:
+            saida.append(para_pixel(o.matrix_world @ Vector(canto)))
+    return saida
 
 
 def validar(categoria: str) -> list:
@@ -115,13 +139,32 @@ def validar(categoria: str) -> list:
                 falhas.append("%s: flutua acima da própria linha de água"
                               % nome)
 
-        # -- escala ------------------------------------------------------
+        # -- cabe no quadro? A pergunta GEOMÉTRICA, medida na projeção -----
+        #
+        # ⚠️ PEÇA A PEÇA, e não pela caixa do grupo. A caixa do grupo é
+        # alinhada aos eixos e junta o `x` de um braço com o `y` de uma bota e
+        # o `z` do capacete: essa quina não existe em malha nenhuma, e
+        # projetá-la dizia que o trabalhador saía 17px do quadro quando o
+        # render mostrava 18px de folga. Um validador que reprova o que está
+        # certo gasta-se depressa.
+        cantos = _cantos_projetados(objetos)
+        fx0 = min(c[0] for c in cantos); fx1 = max(c[0] for c in cantos)
+        fy0 = min(c[1] for c in cantos); fy1 = max(c[1] for c in cantos)
+        if (fx0 < MARGEM_QUADRO or fy0 < MARGEM_QUADRO
+                or fx1 > RESOLUCAO - MARGEM_QUADRO
+                or fy1 > RESOLUCAO - MARGEM_QUADRO):
+            falhas.append(
+                "%s: sai do quadro — projeta em %.0f..%.0f x %.0f..%.0f e o "
+                "quadro é 0..%d" % (nome, fx0, fx1, fy0, fy1, RESOLUCAO))
+
+        # -- escala: a pergunta de GOSTO, e só para quem vive no mapa ------
         larg, fundo, alt = x1 - x0, y1 - y0, z1 - z0
-        for eixo, v in (("largura", larg), ("fundo", fundo), ("altura", alt)):
-            if v > ESCALA_MAXIMA:
-                falhas.append("%s: %s de %.1f unidades passa o limite de %.1f "
-                              "— vai sair cortado do quadro de %dpx"
-                              % (nome, eixo, v, ESCALA_MAXIMA, RESOLUCAO))
+        if tipo != "retrato":
+            for eixo, v in (("largura", larg), ("fundo", fundo), ("altura", alt)):
+                if v > ESCALA_MAXIMA:
+                    falhas.append("%s: %s de %.1f unidades passa o limite de "
+                                  "%.1f — é meia tela de jogo num prop só"
+                                  % (nome, eixo, v, ESCALA_MAXIMA))
 
         # -- seleção -----------------------------------------------------
         if ficha["selectable"] and "COL_select_%s" % nome not in selecoes:
