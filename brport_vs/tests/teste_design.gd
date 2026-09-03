@@ -33,6 +33,13 @@ const MEIO_QUADRO := 256.0
 # Meia célula do chão. Mais que isto e o prop já se lê deslocado do desenho.
 const TOLERANCIA_PX := 2.0
 
+# Onde o caminhão é DESENHADO dentro do quadro de 512, relativo ao ponto de
+# ancoragem — medido no alfa dos dois PNGs e unido, que é o pior caso de cada
+# lado. O quadro inteiro tem 512px e o desenho ocupa ~94x86 no meio dele:
+# perguntar se o QUADRO saiu do mapa daria "ainda dentro" com o caminhão já
+# invisível havia muito.
+const DESENHO_CAMINHAO := Rect2(-38, -46, 100, 86)
+
 # Alvo de toque mínimo. 44 é o piso das diretrizes de iOS e Android; abaixo
 # disso o polegar erra e o jogador acha que o jogo não respondeu.
 const TOQUE_MIN := 44.0
@@ -118,7 +125,7 @@ func _rodar() -> void:
 	_d12_toque_na_parcela()
 	_confere("o bloco D12 correu até ao fim", _d12_completo)
 
-	print("=== D13: o caminhao atravessa a estrada, e no asfalto ===")
+	print("=== D13: o caminhao atravessa o mapa, de fora a fora, no asfalto ===")
 	_d13_travessia_do_caminhao()
 	_confere("o bloco D13 correu até ao fim", _d13_completo)
 
@@ -254,9 +261,11 @@ func _d1_encaixe_das_docas() -> void:
 #
 #   1. todo prop do cenário — não só o coqueiro — cai fora do asfalto e em
 #      terra, pela âncora;
-#   2. quem tem pegada declarada em `porto_mapa_ancoras.json` responde pelos
-#      QUATRO cantos dela, e em cada degrau que a pegada toca (um prédio pode
-#      atravessar o salto da costa, onde a rua anda 4 unidades de uma vez);
+#   2. quem tem pegada declarada em `porto_mapa_ancoras.json` responde pela
+#      pegada inteira, em cada degrau que ela toca (um prédio pode atravessar
+#      o salto da costa, onde a rua anda 4 unidades de uma vez) E em cada
+#      COTOVELO — a rua vira entre um degrau e o seguinte, e o cotovelo é
+#      asfalto que faixa reta nenhuma declara;
 #   3. prop do cenário com silhueta grande e SEM pegada declarada reprova —
 #      senão o cerco só vale para os prédios que já existem hoje.
 #
@@ -324,6 +333,29 @@ func _d2_cenario_em_terra() -> void:
 				na_agua = true
 				pior = "a pegada chega a mx=%.2f e a beira do cais é %.2f" \
 					% [mx1, float(faixa["borda"])]
+
+		# ⚠️ E OS COTOVELOS, que são rua tanto quanto as faixas retas.
+		#
+		# Isto custou um bloco inteiro. Depois de encolher os dois prédios,
+		# este teste passava e o jogador continuava a ver o armazém em cima do
+		# asfalto — porque entre um degrau e o seguinte a rua VIRA, e o
+		# cotovelo em que ela vira corre em `mx` por cinco unidades e meia,
+		# atravessando o pátio de lado a lado. As faixas retas não o cobrem, e
+		# nenhuma delas mentia: a rua reta estava mesmo livre. Meia unidade de
+		# cada prédio estava dentro do cotovelo.
+		#
+		# É a mesma lição da interseção de intervalos, um andar acima: conferir
+		# o retângulo contra PARTE da rua não é conferi-lo contra a rua.
+		for cotovelo in _ancoras.get("cotovelos", []):
+			var cmx: Array = cotovelo["mx"]
+			var cmy: Array = cotovelo["my"]
+			if mx0 > float(cmx[1]) or mx1 < float(cmx[0]):
+				continue
+			if m.y + meia_y < float(cmy[0]) or m.y - meia_y > float(cmy[1]):
+				continue
+			pisa_rua = true
+			pior = "a pegada entra no cotovelo da rua (mx %.2f..%.2f, my %.2f..%.2f)" \
+				% [float(cmx[0]), float(cmx[1]), float(cmy[0]), float(cmy[1])]
 
 		if not _comeca_com_algum(nome, PODEM_PISAR_A_RUA):
 			_confere("%s fora do asfalto" % nome, not pisa_rua, pior)
@@ -687,72 +719,167 @@ func _d12_toque_na_parcela() -> void:
 	_d12_completo = true
 
 
-# ── D13 ── a travessia do caminhão: no asfalto do começo ao fim
+# ── D13 ── a travessia do caminhão: do lado de fora ao lado de fora
 #
-# Pedido do playtest, segunda volta: o caminhão percorre a estrada, aparece
-# numa ponta e some na outra. Três coisas podem falhar em silêncio:
+# Pedido do playtest, terceira volta: "ele deveria vir de fora do mapa, e
+# depois sair do mapa". A rota tem oito pontos e três cotovelos, e nenhum dos
+# quatro modos de falhar dá erro:
 #
-#   1. ele percorrer o degrau ERRADO — a estrada salta 4 unidades em `mx` a
-#      cada degrau da costa, e um percurso que atravessasse o salto punha o
-#      caminhão a andar sobre o pátio ou sobre a vila, sem erro nenhum;
-#   2. sair do asfalto a meio, pelo mesmo motivo;
-#   3. não se reordenar, e passar por cima de quem devia tapá-lo.
+#   1. um ponto no `mx` ERRADO — a estrada salta 4 unidades a cada degrau, e
+#      um trecho no `mx` do degrau vizinho põe o caminhão sobre o pátio ou
+#      sobre a vila, com o trajeto a continuar a parecer uma linha reta;
+#   2. as pontas DENTRO do quadro — aí ele aparece e some do nada, que é
+#      exatamente o que o pedido quis corrigir;
+#   3. a silhueta errada no trecho: só as faces `+x` e `-y` são visíveis, e um
+#      caminhão a percorrer um cotovelo com o sprite do outro eixo desliza de
+#      lado sem nada reprovar;
+#   4. não se reordenar, e passar por cima de quem devia tapá-lo.
 #
-# Os dois primeiros medem-se contra as FAIXAS que o gerador do mapa publica —
-# a mesma fonte que o D2 usa —, e não contra números repetidos aqui.
+# O asfalto NÃO é repetido aqui: sai das faixas que o gerador do mapa publica,
+# a mesma fonte que o D2 usa. Nem os pontos da rota — saem do `Main.gd`.
 func _d13_travessia_do_caminhao() -> void:
 	var tela: Control = _main
 	var cenario: Node = tela.get_node("MapaWrap/Cenario")
 	var caminhao: Control = cenario.get_node("Caminhao")
-	var alt := float(_ancoras["projecao"]["alt_cais"])
+	var pr: Dictionary = _ancoras["projecao"]
+	var alt := float(pr["alt_cais"])
+	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var rota: Array = consts["ROTA_ESTRADA"]
+	var origem_rota: Vector2 = consts["CAMINHAO_ORIGEM"]
 
-	var percurso: Vector2 = tela.percurso_do_caminhao()
-	_confere("o percurso é longo o suficiente para se ler (%.0fpx)" % percurso.length(),
-		percurso.length() >= 100.0)
+	# Zero: a projeção que o `Main.gd` usa para andar é a MESMA do mapa. Ele
+	# repete `MEIA_LARG`/`MEIA_ALT` porque roda dentro do jogo e não lê o JSON;
+	# repetição sem esta asserção é o contrato a divergir calado.
+	_confere("o caminhão anda na projeção do mapa (%.0f x %.0f)"
+			% [float(consts["MEIA_LARG"]), float(consts["MEIA_ALT"])],
+		is_equal_approx(float(consts["MEIA_LARG"]), float(pr["meia_larg"]))
+			and is_equal_approx(float(consts["MEIA_ALT"]), float(pr["meia_alt"])))
 
-	# Onze pontos ao longo da travessia: as duas pontas e o meio todo. Conferir
-	# só as pontas deixaria passar um percurso que saísse do asfalto no meio —
-	# é a mesma lição dos quatro cantos do D2.
-	var inicio := _origem(caminhao)
-	var faixa_inicial := -1
+	_confere("a rota tem os oito pontos da escada", rota.size() == 8,
+		"tem %d" % rota.size())
+
+	# ── 1 ── todo ponto da rota, e todo ponto ENTRE eles, cai em asfalto.
+	#
+	# Amostrar só os vértices deixaria passar um trecho que atravessasse a
+	# quadra pelo meio — é a mesma lição dos quatro cantos do D2. As regiões
+	# são duas: a faixa reta de cada degrau, e o cotovelo que liga um ao
+	# seguinte, que o `vias()` desenha com a largura da rua.
+	var regioes: Array = []
+	var faixas: Array = _ancoras["faixas"]
+	for i in range(faixas.size()):
+		var f: Dictionary = faixas[i]
+		var rua: Array = f["rua"]
+		var my: Array = f["my"]
+		regioes.append([float(rua[0]), float(rua[1]), float(my[0]), float(my[1])])
+		if i + 1 < faixas.size():
+			var prox: Array = faixas[i + 1]["rua"]
+			var largura := float(rua[1]) - float(rua[0])
+			regioes.append([float(rua[0]), float(prox[1]),
+				float(my[1]) - largura, float(my[1])])
+
 	var fora := ""
-	for i in range(11):
-		var pos := inicio + percurso * (float(i) / 10.0)
-		var m := _mundo(pos, alt)
-		var faixa := _faixa_de(m.y)
-		var rua: Array = faixa["rua"]
-		if faixa_inicial < 0:
-			faixa_inicial = int(faixa["borda"])
-		if int(faixa["borda"]) != faixa_inicial and fora == "":
-			fora = "no ponto %d/10 já é outro degrau (borda %.0f, começou em %d)" \
-				% [i, float(faixa["borda"]), faixa_inicial]
-		if (m.x < float(rua[0]) or m.x > float(rua[1])) and fora == "":
-			fora = "no ponto %d/10 está em mx=%.2f e o asfalto é %.2f..%.2f" \
-				% [i, m.x, float(rua[0]), float(rua[1])]
-	_confere("a travessia inteira fica no asfalto do MESMO degrau", fora == "", fora)
+	for i in range(rota.size() - 1):
+		var de: Vector2 = rota[i]
+		var para: Vector2 = rota[i + 1]
+		for k in range(21):
+			var m: Vector2 = de.lerp(para, float(k) / 20.0)
+			var dentro := false
+			for r in regioes:
+				if m.x >= r[0] - 0.01 and m.x <= r[1] + 0.01 \
+						and m.y >= r[2] - 0.01 and m.y <= r[3] + 0.01:
+					dentro = true
+					break
+			if not dentro and fora == "":
+				fora = "no trecho %d, a %d%%, está em (%.2f, %.2f) e ali não há asfalto" \
+					% [i, k * 5, m.x, m.y]
+	_confere("a rota inteira anda sobre asfalto, cotovelos incluídos",
+		fora == "", fora)
 
-	# E a reordenação: posto no fim do percurso, o caminhão tem de trocar de
-	# lugar entre os irmãos — senão ele atravessa a profundidade sem mudar de
-	# ordem, que é passar por cima de quem devia tapá-lo.
-	var indice_antes := caminhao.get_index()
+	# ── 2 ── as duas pontas ficam FORA do quadro visível.
+	#
+	# Fora não é "o ponto de ancoragem fora": é o desenho todo fora. O quadro
+	# do prop tem 512px e o caminhão ocupa um retângulo pequeno lá dentro, e é
+	# esse que se mede — pelo ponto de ancoragem o caminhão sairia meio dentro.
+	var janela := (tela.get_node("MapaWrap") as Control).size
+	var base := caminhao.position - _tela_da_rota(origem_rota, origem_rota, pr)
+	for ponta in [[0, "a entrada"], [rota.size() - 1, "a saída"]]:
+		var idx: int = ponta[0]
+		var pos: Vector2 = base + _tela_da_rota(rota[idx], origem_rota, pr) \
+			+ Vector2(MEIO_QUADRO, MEIO_QUADRO)
+		var caixa := Rect2(pos + DESENHO_CAMINHAO.position, DESENHO_CAMINHAO.size)
+		var visivel := Rect2(Vector2.ZERO, janela)
+		_confere("%s do caminhão está fora do quadro" % ponta[1],
+			not visivel.intersects(caixa),
+			"o desenho fica em %s e o mapa é %s" % [caixa, visivel])
+
+	# E o contrário para onde a CENA o põe: aí ele tem de estar inteiro
+	# dentro, senão as cinco capturas do CI apanham-no cortado ao meio.
+	var na_cena := Rect2(caminhao.position + Vector2(MEIO_QUADRO, MEIO_QUADRO)
+		+ DESENHO_CAMINHAO.position, DESENHO_CAMINHAO.size)
+	_confere("e onde a cena o põe ele está inteiro dentro",
+		Rect2(Vector2.ZERO, janela).encloses(na_cena),
+		"o desenho fica em %s" % na_cena)
+
+	# E a cena tem de o pôr num ponto DA rota, não ao lado dela.
+	var m_cena := _mundo(_origem(caminhao), alt)
+	_confere("a cena põe-no no ponto de partida da rota",
+		m_cena.distance_to(origem_rota) < 0.02,
+		"está em (%.2f, %.2f) e devia estar em (%.2f, %.2f)"
+			% [m_cena.x, m_cena.y, origem_rota.x, origem_rota.y])
+
+	# ── 3 ── a silhueta certa por trecho. Trecho que anda em `mx` usa o sprite
+	# de `mx`; trecho que anda em `my`, o de `my`. Um só sprite para os dois
+	# eixos foi a primeira versão, e o caminhão virava de lado nos cotovelos.
+	#
+	# E a pergunta é feita a QUEM DECIDE — `silhueta_do_trecho()` —, não
+	# recalculada aqui. A primeira versão deste bloco recalculava, e por isso
+	# não reprovou quando se pôs a mesma silhueta nos oito trechos: o teste
+	# estava a concordar consigo próprio.
+	var errado := ""
+	var vistas := {}
+	for i in range(rota.size() - 1):
+		var de: Vector2 = rota[i]
+		var para: Vector2 = rota[i + 1]
+		var anda_em_mx: bool = abs(para.x - de.x) > 0.01
+		var usada: Texture2D = tela.call("silhueta_do_trecho", de, para)
+		var caminho: String = usada.resource_path
+		vistas[caminho] = true
+		if anda_em_mx != caminho.ends_with("caminhao_mx.png") and errado == "":
+			errado = "o trecho %d anda em %s e usa %s" \
+				% [i, "mx" if anda_em_mx else "my", caminho.get_file()]
+	_confere("cada trecho usa a silhueta do eixo em que anda", errado == "", errado)
+	_confere("e as duas silhuetas entram em campo", vistas.size() == 2,
+		"só se viu %s" % str(vistas.keys()))
+
+	# ── 4 ── a reordenação. Ordem de irmão É profundidade neste plano, e a
+	# travessia atravessa a profundidade de meia cena: índice fixo estaria
+	# certo num sítio e errado no outro.
 	var pos_antes := caminhao.position
-	caminhao.position = pos_antes + percurso
+	var indice_antes := caminhao.get_index()
+	caminhao.position = base + _tela_da_rota(rota[rota.size() - 1], origem_rota, pr)
 	tela.call("_ordenar_por_profundidade", caminhao)
 	var indice_depois := caminhao.get_index()
 	_confere("no fim da travessia ele já mudou de ordem entre os irmãos",
 		indice_depois > indice_antes,
 		"ficou no índice %d, e começou no %d" % [indice_depois, indice_antes])
-	# E no lugar CERTO: ninguém acima dele na tela pode estar depois dele.
 	var erro_ordem := ""
 	for i in range(cenario.get_child_count()):
 		var outro := cenario.get_child(i) as Control
 		if outro == null or outro == caminhao:
 			continue
-		var acima: bool = outro.position.y < caminhao.position.y
-		if acima and i > indice_depois and erro_ordem == "":
+		if outro.position.y < caminhao.position.y and i > indice_depois and erro_ordem == "":
 			erro_ordem = "%s está acima na tela mas depois na ordem" % outro.name
 	_confere("e no lugar certo da fila de profundidade", erro_ordem == "", erro_ordem)
 
 	caminhao.position = pos_antes
 	tela.call("_ordenar_por_profundidade", caminhao)
 	_d13_completo = true
+
+
+# O mesmo `tela_da_rota()` do `Main.gd`, mas com a projeção vinda das ÂNCORAS.
+# Escrito à mão de propósito: chamar o do jogo faria o teste medir a rota com a
+# mesma conta que quer conferir, e uma projeção errada passaria dos dois lados.
+func _tela_da_rota(ponto: Vector2, origem: Vector2, pr: Dictionary) -> Vector2:
+	var d := ponto - origem
+	return Vector2((d.x - d.y) * float(pr["meia_larg"]),
+		(d.x + d.y) * float(pr["meia_alt"]))

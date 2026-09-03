@@ -1138,6 +1138,25 @@ def tabela_ancoras() -> dict:
             "vila": [borda - VILA_RECUO, borda - VILA_RECUO + VILA_PROF],
         })
 
+    # ⚠️ E OS COTOVELOS, que são rua tanto quanto as faixas retas.
+    #
+    # Publicá-los custou um bloco inteiro de trabalho perdido. O D2 conferia a
+    # pegada dos dois prédios contra `rua` e dizia OK, e o jogador continuava a
+    # ver os prédios em cima do asfalto: entre um degrau e o seguinte a rua
+    # VIRA, e o cotovelo que ela desenha para virar corre em `mx` por cinco
+    # unidades — mesmo asfalto, sem faixa nenhuma a declará-lo. Tanto o
+    # armazém como o escritório estavam com meia unidade de pegada lá dentro.
+    #
+    # Os números saem das MESMAS expressões que o `vias()` usa para desenhar, e
+    # incluem a calçada: prédio em cima do passeio também está errado.
+    cotovelos = []
+    for i, (_my0, my1, borda) in enumerate(DEGRAUS[:-1]):
+        prox = DEGRAUS[i + 1][2]
+        cotovelos.append({
+            "mx": [borda - RUA_RECUO - CALCADA, prox - RUA_RECUO + RUA_LARG + CALCADA],
+            "my": [my1 - RUA_LARG - CALCADA, my1 + CALCADA],
+        })
+
     return {
         "projecao": {"cx": CX, "cy": CY, "meia_larg": MEIA_LARG,
                      "meia_alt": MEIA_ALT, "alt_cais": ALT_CAIS},
@@ -1145,6 +1164,7 @@ def tabela_ancoras() -> dict:
         "mapa": {"largura": LARG, "altura": ALT},
         "pieres": pieres,
         "faixas": faixas,
+        "cotovelos": cotovelos,
         "lotes": [{"mx": round(l[0], 2), "my": round(l[1], 2),
                    "canto": px(l[0], l[1], ALT_CAIS)} for l in lotes_da_vila()],
     }

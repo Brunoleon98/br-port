@@ -139,6 +139,30 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_porto_caminhao_mx_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_mx.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/props/Caminhao.tscn",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_cidade_casa_costeira_base",
       "category": "cidade",
       "stage": "base",

@@ -37,69 +37,102 @@ def _roda(nome, x, y, raio_px, largura, mat, eixo="y"):
                 largura, 16, mat, rot=rot)
 
 
-def caminhao(M, est):
-    """Caminhão da estrada, deitado NO EIXO DELA.
+def _pecas_do_caminhao(M, eixo):
+    """As peças do caminhão, deitado no eixo pedido ("my" ou "mx").
 
-    O jogo já desenha caminhões estacionados no SVG do mapa; este é o prop,
-    para quando um caminhão precisar SE MEXER — que é a regra do projeto: o que
-    troca de estado dentro de uma partida não pode estar assado no fundo.
+    ⚠️ UM CONSTRUTOR, DUAS ORIENTAÇÕES, e é por isso que ele existe. A rua do
+    porto é uma ESCADA: corre em `my` dentro de cada degrau e salta 4 unidades
+    em `mx` no cotovelo que liga um degrau ao seguinte (ver `vias()` no
+    `gerar_mapa_iso.py`). Um caminhão que a percorra de ponta a ponta VIRA 90°
+    em cada cotovelo, e para virar precisa das duas silhuetas. Duas cópias
+    desta função divergiriam no dia em que uma ganhasse um farol.
 
-    ⚠️ O COMPRIMENTO CORRE EM **my**, E ISSO NÃO É DETALHE. A primeira versão
-    deitava o caminhão em `mx` (cabine para o mar), e o playtest pediu que ele
-    percorresse a ESTRADA — que corre em `my`. Um caminhão a andar em `my` com
-    o corpo em `mx` desliza DE LADO, e ângulo errado não se conserta rodando no
-    Godot (é regra do CLAUDE.md): conserta-se aqui.
-
-    E NÃO SE CONSERTA RODANDO AQUI TAMBÉM. Rodar o grupo 90° em Z põe o
-    para-brisa (que estava na face `+x`) a olhar para `-y`, mas manda a janela
-    lateral (que estava em `-y`) para `-x` — que é uma das duas faces que ESTA
-    câmera não vê. Rodar teria custado a janela lateral e ninguém notaria no
-    render, só na silhueta chapada. Por isso o corpo é reconstruído com o
-    comprimento em `y`, e cada detalhe reposto na face visível certa.
-
-    A cabine vai em **-y**, que é o `+my` do mapa: é para lá que ele anda.
+    ⚠️ E NÃO SE OBTÊM RODANDO O GRUPO. Só as faces `+x` e `-y` são visíveis
+    por esta câmera: rodar 90° manda metade dos detalhes para a face que
+    ninguém vê. Cada orientação repõe o para-brisa, a janela e o friso na face
+    visível que lhes corresponde — é isso que as duas listas abaixo dizem.
     """
     p = []
     RODA, LARG = 5.0, 0.62
+    ao_longo_de_y = eixo == "my"
 
-    # Chassi. Fica acima do raio da roda, senão o eixo aparece flutuando.
-    p.append(caixa("cam_chassi", (0.0, 0.0, z(RODA + 2.0)),
-                   (LARG, 1.48, z(4.0)), M["metal"]))
+    # `comp` é o eixo do comprimento e `larg` o da largura — trocam entre as
+    # duas orientações, e todo o resto sai daqui.
+    def dim(comprimento, largura):
+        return (largura, comprimento) if ao_longo_de_y else (comprimento, largura)
 
-    # Cabine à FRENTE, e a frente agora é -y (o +my do mapa).
-    cab_c, cab_t = (0.0, -0.50, z(RODA + 11.5)), (LARG, 0.46, z(15.0))
+    def loc(ao_longo, atravessado, alt):
+        return ((atravessado, ao_longo, alt) if ao_longo_de_y
+                else (ao_longo, atravessado, alt))
+
+    # A FRENTE aponta para onde ele anda: -y quando corre em `my` (que é o
+    # `+my` do mapa), +x quando corre em `mx`.
+    face_frente = "-y" if ao_longo_de_y else "+x"
+    face_lado = "+x" if ao_longo_de_y else "-y"
+    sinal_frente = -1.0 if ao_longo_de_y else 1.0
+
+    p.append(caixa("cam_chassi", loc(0.0, 0.0, z(RODA + 2.0)),
+                   dim(1.48, LARG) + (z(4.0),), M["metal"]))
+
+    cab_c = loc(sinal_frente * 0.50, 0.0, z(RODA + 11.5))
+    cab_t = dim(0.46, LARG) + (z(15.0),)
     p.append(caixa("cam_cabine", cab_c, cab_t, M["azul"]))
-    # Só as faces +x e -y são visíveis. O para-brisa é a face da FRENTE, que
-    # agora é -y; a janela lateral é a do lado, que agora é +x. As duas
-    # continuam a cair no que a câmera vê — foi para isso que o corpo se
-    # reconstruiu em vez de rodar.
-    p += janela("cam_vidro_f", "-y", cab_c, cab_t, 0.0, 0.030, 0.30, 0.16, M,
-                peitoril=False)
-    p += janela("cam_vidro_l", "+x", cab_c, cab_t, 0.0, 0.030, 0.26, 0.15, M,
-                peitoril=False)
-    p.append(na_face("cam_grade", "-y", cab_c, cab_t, 0.0, -0.16,
+    p += janela("cam_vidro_f", face_frente, cab_c, cab_t, 0.0, 0.030, 0.30,
+                0.16, M, peitoril=False)
+    p += janela("cam_vidro_l", face_lado, cab_c, cab_t, 0.0, 0.030, 0.26,
+                0.15, M, peitoril=False)
+    p.append(na_face("cam_grade", face_frente, cab_c, cab_t, 0.0, -0.16,
                      0.34, 0.08, 0.03, M["metal_claro"], 0.01))
 
-    # Caçamba atrás (+y), mais alta que a cabine — é o que dá silhueta de
-    # caminhão em vez de furgão.
-    cac_c, cac_t = (0.0, 0.46, z(RODA + 13.0)), (LARG + 0.04, 0.86, z(18.0))
+    # Caçamba atrás, mais alta que a cabine — é o que dá silhueta de caminhão
+    # em vez de furgão. O friso corre no comprimento dela, então vai na face
+    # que a mostra de PERFIL, que é a lateral.
+    cac_c = loc(-sinal_frente * 0.46, 0.0, z(RODA + 13.0))
+    cac_t = dim(0.86, LARG + 0.04) + (z(18.0),)
     p.append(caixa("cam_cacamba", cac_c, cac_t, M["laranja"]))
-    # O friso corre ao longo da caçamba, e ela agora é comprida em y: o friso
-    # vai na face LATERAL (+x), que é a que o mostra de perfil.
-    p.append(na_face("cam_friso", "+x", cac_c, cac_t, 0.0, 0.0,
+    p.append(na_face("cam_friso", face_lado, cac_c, cac_t, 0.0, 0.0,
                      0.80, 0.03, 0.02, M["metal_claro"], 0.005))
-    p.append(caixa("cam_tampa", (0.0, 0.90, z(RODA + 13.0)),
-                   (LARG, 0.06, z(17.0)), M["metal"]))
+    p.append(caixa("cam_tampa", loc(-sinal_frente * 0.90, 0.0, z(RODA + 13.0)),
+                   dim(0.06, LARG) + (z(17.0),), M["metal"]))
 
-    # Três eixos ao longo de y, dois lados em x.
-    for i, y in enumerate((-0.52, 0.30, 0.72)):
-        for j, x in enumerate((LARG / 2, -LARG / 2)):
-            p.append(_roda("cam_roda_%d%d" % (i, j), x, y, RODA, 0.12,
-                           M["metal"], eixo="x"))
+    # Três eixos ao longo do comprimento, dois lados na largura. O eixo da roda
+    # aponta na LARGURA — num veículo deitado em `my` isso é `x`.
+    eixo_roda = "x" if ao_longo_de_y else "y"
+    for i, ao_longo in enumerate((sinal_frente * 0.52, -sinal_frente * 0.30,
+                                  -sinal_frente * 0.72)):
+        for j, atravessado in enumerate((LARG / 2, -LARG / 2)):
+            xy = loc(ao_longo, atravessado, 0.0)
+            p.append(_roda("cam_roda_%d%d" % (i, j), xy[0], xy[1], RODA, 0.12,
+                           M["metal"], eixo=eixo_roda))
+    return p
 
+
+def caminhao(M, est):
+    """Caminhão da estrada, deitado NO EIXO DELA (`my`), cabine para o `+my`.
+
+    O jogo já desenha caminhões estacionados no SVG do mapa; este é o prop,
+    para quando um caminhão precisar SE MEXER — que é a regra do projeto: o
+    que troca de estado dentro de uma partida não pode estar assado no fundo.
+    Hoje ele atravessa o mapa inteiro pela rua; a intenção registada é usá-lo
+    para mostrar a chegada de uma entrega a um navio.
+    """
+    p = _pecas_do_caminhao(M, "my")
     origem("caminhao")
-    # A pegada virou também: 1 célula em mx por 2 em my.
     est.registrar("caminhao", p, celulas=(1, 2),
+                  cena_godot="res://scenes/props/Caminhao.tscn")
+
+
+def caminhao_mx(M, est):
+    """O mesmo caminhão virado para `+mx`, para os COTOVELOS da rua.
+
+    A rua salta 4 unidades em `mx` a cada degrau da costa, e nesse trecho o
+    caminhão anda atravessado ao anterior. Sem esta segunda silhueta ele faria
+    a curva a deslizar de lado — o defeito que o CLAUDE.md avisa não se
+    consertar rodando no Godot.
+    """
+    p = _pecas_do_caminhao(M, "mx")
+    origem("caminhao_mx")
+    est.registrar("caminhao_mx", p, celulas=(2, 1),
                   cena_godot="res://scenes/props/Caminhao.tscn")
 
 
@@ -349,7 +382,7 @@ def doca_concreto(M, est):
                   cena_godot="res://scenes/dock/Dock.tscn")
 
 
-CATALOGO = (caminhao, empilhadeira, cabeco, poste, pilha_caixotes,
+CATALOGO = (caminhao, caminhao_mx, empilhadeira, cabeco, poste, pilha_caixotes,
             doca_concreto, pallet, pneus, cone_transito, barreira, bote,
             guincho)
 

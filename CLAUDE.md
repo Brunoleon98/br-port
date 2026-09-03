@@ -351,6 +351,21 @@ tranca isso.
   ~4× a altura de uma casa da vila, e em isométrico é a ALTURA que projeta a
   silhueta para cima e para trás, por cima do que está atrás. Antes de mover
   um prop que "invade" algo, meça a altura dele contra os vizinhos.
+- **A rua tem COTOVELOS, e faixa reta nenhuma os declara.** Irmã da regra
+  acima, e o que estava mesmo por trás daquela queixa. Depois de encolher os
+  dois prédios o teste passava, e a estrada continuava com o armazém em cima
+  dela: entre um degrau e o seguinte a rua VIRA, e o `vias()` desenha esse
+  cotovelo em `mx` por cinco unidades e meia, atravessando o pátio de lado a
+  lado. As quatro faixas `rua` que o gerador publicava não o cobriam — e
+  nenhuma delas mentia, porque a rua RETA estava mesmo livre. Cinco props
+  estavam dentro dos cotovelos, dois deles com meia unidade de pegada. Hoje o
+  gerador publica `cotovelos` e o D2 confere-os; a lição é anterior ao teste:
+  **conferir o retângulo contra PARTE da rua não é conferi-lo contra a rua**,
+  como conferir os quatro cantos não era conferir o retângulo.
+- **E letreiro é interface: desenha-se por cima do mapa, e o teste de design
+  não sabe onde ele cai.** O caminhão nasceu num ponto que passava em todas as
+  asserções e saía na captura com metade dele debaixo do letreiro do
+  ESCRITÓRIO. Prop que se põe para ser VISTO confere-se na foto, não na régua.
 - **Encolher um prop escala-se no GRUPO, nunca reescrevendo as literais.**
   Porta contra parede, janela contra porta, beiral contra telhado: são trinta
   números e trinta chances de um ficar por escalar. E cada objeto UMA vez —

@@ -308,41 +308,94 @@ func _animar_boias() -> void:
 ## e nem um pixel além. Um número cravado envelheceria calado no dia em que
 ## alguém movesse o coqueiro ao lado; assim, a animação respeita o D3 por
 ## construção.
-## O CAMINHÃO PERCORRE A ESTRADA — pedido do primeiro playtest, na segunda
-## volta: "é para o caminhão passar pela estrada, aparecendo no início dela e
-## sumindo no final dela".
+## O CAMINHÃO ATRAVESSA O MAPA INTEIRO — pedido do playtest, terceira volta:
+## "ele deveria vir de fora do mapa, e depois sair do mapa".
 ##
-## A primeira tentativa fê-lo entrar no pátio, e não percorrer a estrada, por
-## uma razão que era verdadeira: a cabine do prop apontava para `+mx` e a
-## estrada corre em `my`, então percorrê-la seria deslizar de lado. A resposta
-## certa não era mudar a marcha — era **rerenderizar o prop** deitado no eixo
-## da estrada, que é o que `blender/brp_porto.py` faz desde 03/09. Ângulo
-## errado conserta-se no gerador; aqui só se anda.
+## As duas primeiras tentativas erraram por escrito aqui, e as duas por
+## acreditar numa coisa que não se tinha medido: que a rua fosse feita de
+## trechos soltos. NÃO É. O `vias()` do `gerar_mapa_iso.py` desenha um
+## COTOVELO em cada degrau, com a mesma largura da rua, ligando um trecho ao
+## seguinte — a estrada é uma escada CONTÍNUA, do topo do quadro até fora dele
+## pela esquerda. Dava para atravessá-la desde sempre.
 ##
-## ⚠️ A TRAVESSIA É DE UM DEGRAU, e não da costa toda. A estrada acompanha a
-## escada do litoral: salta 4 unidades em `mx` a cada degrau. Um caminhão a
-## percorrer a costa inteira teria de TELEPORTAR em cada salto. Ele percorre o
-## degrau 1 (`my` 8..16), que é o que a tela enquadra por inteiro — entra numa
-## ponta, sai na outra, e é exactamente o "aparece no início e some no fim" que
-## foi pedido.
+## A rota tem 42 unidades (~1.400px) e sai da geometria do mapa, não do gosto:
+## dentro de cada degrau a rua corre em `my` no eixo `borda - RUA_RECUO +
+## RUA_LARG/2`, e o cotovelo corre em `mx` a meia largura do fim do degrau.
+## O bloco D13 do teste de design confere ponto a ponto contra as faixas que o
+## gerador publica — se a estrada mudar, ele reprova antes de alguém olhar.
 ##
-## ⚠️ E REORDENA-SE PELO CAMINHO. Ordem de irmão É profundidade neste plano, e
-## a travessia atravessa a profundidade do coqueiro e do bote: um caminhão com
-## índice fixo passaria POR CIMA do coqueiro na primeira metade e por baixo do
-## bote na segunda, com o mesmo índice a estar certo num sítio e errado no
-## outro. Ordem fixa só serve a prop parado.
-const CAMINHAO_MY_INICIO := 8.2
-const CAMINHAO_MY_FIM := 15.8
+## ⚠️ E A CADA COTOVELO ELE VIRA, o que exige DUAS silhuetas. Só as faces `+x`
+## e `-y` são visíveis por esta câmera, então um caminhão virado não se obtém
+## rodando o sprite: `caminhao.png` corre em `my` e `caminhao_mx.png` em `mx`,
+## os dois saídos do mesmo construtor em `blender/brp_porto.py`. Trocar a
+## textura na curva é o que faz a volta ler como volta.
+##
+## A INTENÇÃO REGISTADA, para quem vier depois: isto é a base para mostrar a
+## chegada de uma entrega a um navio, quando existir o serviço de compra.
+const MEIA_LARG := 30.0     # o contrato da projeção; o D13 confere contra as âncoras
+const MEIA_ALT := 15.0
+
+## Onde a CENA põe o caminhão: um ponto já dentro do quadro, e é de propósito.
+## A primeira passagem começa aqui para que as cinco capturas do CI o apanhem
+## na estrada — prop que a captura não vê é prop que ninguém revê. Só depois
+## dela é que o ciclo passa a começar fora do mapa, como foi pedido.
+##
+## ⚠️ E "dentro do quadro" não chega: tem de ser dentro do quadro E À VISTA.
+## O primeiro ponto escolhido foi o alto do degrau 0, que passava no D13 e
+## saía na foto com metade do caminhão debaixo do letreiro do ESCRITÓRIO — os
+## letreiros são interface, desenham-se por cima de tudo, e nenhuma asserção
+## sobre o mapa sabe onde eles caem. Este ponto é o meio do degrau 1, o trecho
+## mais desimpedido da estrada; o D13 tranca que ele está na rota e inteiro
+## dentro do `MapaWrap` (que tem `clip_contents`), e o resto é olhar a foto.
+const CAMINHAO_ORIGEM := Vector2(3.75, 9.5)
+
+## A escada da rua, em (mx, my). Primeiro e último ponto estão FORA do quadro —
+## 43,5 unidades ao todo, ~1.459px de tela.
+##
+## O `mx` de cada trecho reto é o MEIO do asfalto daquele degrau
+## (`borda - RUA_RECUO + RUA_LARG/2`), e o `my` de cada cotovelo é o meio da
+## faixa que o `vias()` desenha para virar (`my1 - RUA_LARG/2`). Nenhum destes
+## números é de gosto, e o D13 confere-os todos contra as âncoras.
+const ROTA_ESTRADA: Array[Vector2] = [
+	Vector2(-0.25, -2.0),    # entra por cima do topo do quadro
+	Vector2(-0.25, 7.45),
+	Vector2(3.75, 7.45),     # cotovelo do degrau 0 para o 1
+	Vector2(3.75, 15.45),
+	Vector2(7.75, 15.45),    # cotovelo do 1 para o 2
+	Vector2(7.75, 23.45),
+	Vector2(11.75, 23.45),   # cotovelo do 2 para o 3
+	Vector2(11.75, 29.5),    # sai pela esquerda do quadro
+]
+
+## Velocidade constante em pixels por segundo. É ela que dá a duração de cada
+## trecho, e não um número por trecho: com durações iguais o caminhão
+## disparava nos cotovelos curtos e arrastava-se nos degraus longos.
+##
+## 38px/s dá ~38s de travessia e ~2,5s para ele andar o próprio comprimento
+## (94px de silhueta) — devagar de propósito: isto é fundo de cena, não é o
+## que se olha. Depressa, um prop que atravessa o quadro inteiro puxa o olho
+## para longe das docas.
+const CAMINHAO_VELOCIDADE := 38.0
+
+const CaminhaoMy := preload("res://art/props/caminhao.png")
+const CaminhaoMx := preload("res://art/props/caminhao_mx.png")
 
 
-## Quanto o caminhão percorre, em pixels de tela. `+my` move (−30, +15) por
-## unidade — é a diagonal da estrada, e a direção em que a cabine aponta.
-##
-## É PÚBLICA porque o teste de design a usa para conferir que a travessia
-## inteira fica no asfalto, contra as faixas que o gerador do mapa publica.
-func percurso_do_caminhao() -> Vector2:
-	var unidades := CAMINHAO_MY_FIM - CAMINHAO_MY_INICIO
-	return Vector2(-unidades * 30.0, unidades * 15.0)
+## A silhueta que um trecho pede: a de `mx` se ele anda em `mx`, a de `my` se
+## anda em `my`. É PÚBLICA e vive num lugar só porque o D13 lhe pergunta —
+## recalcular a mesma escolha do lado do teste seria o teste a concordar
+## consigo próprio, e foi assim que a primeira versão dele deixou passar um
+## caminhão que usava a mesma silhueta nos oito trechos.
+func silhueta_do_trecho(de: Vector2, para: Vector2) -> Texture2D:
+	return CaminhaoMx if abs(para.x - de.x) > 0.01 else CaminhaoMy
+
+
+## O deslocamento de tela de um ponto da rota, medido a partir de onde a cena
+## põe o caminhão. Só precisa das duas constantes da projeção — `CX`, `CY` e a
+## altura do cais cancelam-se na diferença.
+func tela_da_rota(ponto: Vector2) -> Vector2:
+	var d := ponto - CAMINHAO_ORIGEM
+	return Vector2((d.x - d.y) * MEIA_LARG, (d.x + d.y) * MEIA_ALT)
 
 
 func _animar_caminhao() -> void:
@@ -352,31 +405,49 @@ func _animar_caminhao() -> void:
 	var caminhao := cenario.get_node_or_null("Caminhao") as TextureRect
 	if caminhao == null:
 		return
+	var base := caminhao.position - tela_da_rota(CAMINHAO_ORIGEM)
 
-	var base := caminhao.position
-	var fim := base + percurso_do_caminhao()
-	# Atravessa, some no fim, espera, e o próximo APARECE no início. A espera é
-	# o que faz o seguinte parecer outro caminhão em vez do mesmo a dar a volta.
-	#
-	# ⚠️ E COMEÇA VISÍVEL, com o desvanecer no FIM do ciclo e não no princípio.
-	# Nasceu ao contrário e o caminhão ficava invisível nos primeiros frames —
-	# o que se lê no jogo (a estrada vazia por um segundo) mas sobretudo o que
-	# some da CAPTURA: as cinco fotos do CI assentam em poucos frames, e um prop
-	# que só aparece depois disso nunca entra na evidência que o Bruno olha.
-	# Prop que a captura não vê é prop que ninguém revê.
-	caminhao.modulate.a = 1.0
-	var tw := caminhao.create_tween().set_loops()
-	tw.tween_method(func(t: float) -> void:
-		caminhao.position = base.lerp(fim, t)
-		_ordenar_por_profundidade(caminhao)
-	, 0.0, 1.0, 11.0)
-	tw.tween_property(caminhao, "modulate:a", 0.0, 1.1)
+	# Primeira passagem: começa onde a cena o pôs (dentro do quadro) e sai.
+	var primeira := caminhao.create_tween()
+	_trechos_da_rota(primeira, caminhao, base, CAMINHAO_ORIGEM)
+	primeira.tween_callback(func() -> void:
+		# E daqui em diante o ciclo completo, de fora do mapa a fora do mapa.
+		var ciclo := caminhao.create_tween().set_loops()
+		ciclo.tween_interval(5.0)
+		_trechos_da_rota(ciclo, caminhao, base, ROTA_ESTRADA[0])
+	)
+
+
+## Enfia na `tw` um trecho por par de pontos da rota, a partir de `desde`.
+func _trechos_da_rota(tw: Tween, caminhao: TextureRect, base: Vector2,
+		desde: Vector2) -> void:
+	var pontos: Array[Vector2] = [desde]
+	for ponto in ROTA_ESTRADA:
+		# Só os pontos que ainda estão À FRENTE de onde se começa. Comparar por
+		# `my` chega: a rota nunca recua nele.
+		if ponto.y > desde.y or (is_equal_approx(ponto.y, desde.y) and ponto.x > desde.x):
+			pontos.append(ponto)
+
+	# O primeiro salto é um TELEPORTE, não um trecho: é ele que põe o caminhão
+	# no princípio da rota antes de a percorrer.
 	tw.tween_callback(func() -> void:
-		caminhao.position = base
+		caminhao.position = base + tela_da_rota(pontos[0])
+		caminhao.texture = CaminhaoMy
 		_ordenar_por_profundidade(caminhao)
 	)
-	tw.tween_interval(4.0)
-	tw.tween_property(caminhao, "modulate:a", 1.0, 1.1)
+	for i in range(pontos.size() - 1):
+		var de: Vector2 = pontos[i]
+		var para: Vector2 = pontos[i + 1]
+		var origem := base + tela_da_rota(de)
+		var destino := base + tela_da_rota(para)
+		# A silhueta certa para o eixo do trecho — é isto que faz a curva ler
+		# como curva em vez de o caminhão deslizar de lado.
+		var textura := silhueta_do_trecho(de, para)
+		tw.tween_callback(func() -> void: caminhao.texture = textura)
+		tw.tween_method(func(t: float) -> void:
+			caminhao.position = origem.lerp(destino, t)
+			_ordenar_por_profundidade(caminhao)
+		, 0.0, 1.0, origem.distance_to(destino) / CAMINHAO_VELOCIDADE)
 
 
 ## Põe `no` no índice que a profundidade dele pede, entre os irmãos.

@@ -994,6 +994,14 @@ no itch.io) · marketing, devlog público, Discord.
 
 Continua tudo cortado de propósito. Não é descuido.
 
+**Uma ideia nova entrou nesta lista em 03/09, e entrou por decisão do Bruno:**
+um **serviço de compra para os navios** — o jogador encomenda o que um barco
+precisa e a entrega chega por estrada. Ela ficou registada porque a travessia
+do caminhão, feita nesse dia como cenário, é a peça de que ela precisaria; a
+`_animar_caminhao()` do `Main.gd` diz isso no comentário, para que quem lá
+mexer saiba que aquilo tem um dono futuro. Mas é **economia**, e economia da
+Fase 2 não se coda sem perguntar antes — por isso está aqui e não na fila.
+
 ---
 
 ## 11. O que muda amanhã de manhã
