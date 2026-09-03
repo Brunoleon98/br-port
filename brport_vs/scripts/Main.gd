@@ -25,6 +25,11 @@ const EndGameScene := preload("res://scenes/EndGame.tscn")
 const TelaNomesScene := preload("res://scenes/panels/TelaNomes.tscn")
 const PainelDiarioScene := preload("res://scenes/panels/PainelDiario.tscn")
 const PainelBoletimScene := preload("res://scenes/panels/PainelBoletim.tscn")
+const PainelCaixaScene := preload("res://scenes/panels/PainelCaixa.tscn")
+const PainelReputacaoScene := preload("res://scenes/panels/PainelReputacao.tscn")
+const PainelDocasScene := preload("res://scenes/panels/PainelDocas.tscn")
+const PainelCalendarioScene := preload("res://scenes/panels/PainelCalendario.tscn")
+const PainelParcelaScene := preload("res://scenes/panels/PainelParcela.tscn")
 
 
 const COR_BOA := Color(0.102, 0.478, 0.251)
@@ -34,6 +39,10 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 
 @onready var _overlay_layer: CanvasLayer = $Overlay
 @onready var _cash_label: Label = $HudBar/CaixaPilula/Linha/Caixa
+@onready var _caixa_pilula: PanelContainer = $HudBar/CaixaPilula
+@onready var _dia_pilula: PanelContainer = $HudBar/DiaPilula
+@onready var _rep_pilula: PanelContainer = $HudBar/RepPilula
+@onready var _docas_pilula: PanelContainer = $HudBar/DocasPilula
 @onready var _day_label: Label = $HudBar/DiaPilula/Linha/Dia
 @onready var _rep_label: Label = $HudBar/RepPilula/Linha/RepTexto
 @onready var _docks_label: Label = $HudBar/DocasPilula/Linha/DocasTexto
@@ -74,6 +83,7 @@ const EscritorioPronto := preload("res://art/props/escritorio.png")
 @onready var _meta_label: Label = $MetaCartao/MetaColuna/MetaTexto
 @onready var _meta_titulo: Label = $MetaCartao/MetaColuna/MetaTituloLinha/MetaTitulo
 @onready var _meta_icone: TextureRect = $MetaCartao/MetaColuna/MetaTituloLinha/Icone
+@onready var _meta_cartao: PanelContainer = $MetaCartao
 
 
 func _ready() -> void:
@@ -89,6 +99,11 @@ func _ready() -> void:
 	_alocar_button.pressed.connect(_on_alocar_pressed)
 	_upgrade_button.pressed.connect(_on_upgrade_pressed)
 	_pause_button.pressed.connect(_on_pause_pressed)
+	_caixa_pilula.gui_input.connect(_on_caixa_pilula_input)
+	_dia_pilula.gui_input.connect(_on_dia_pilula_input)
+	_rep_pilula.gui_input.connect(_on_rep_pilula_input)
+	_docas_pilula.gui_input.connect(_on_docas_pilula_input)
+	_meta_cartao.gui_input.connect(_on_meta_cartao_input)
 
 	_connect_game_state()
 	_refresh_all()
@@ -96,6 +111,8 @@ func _ready() -> void:
 	_animar_coqueiros()
 	_animar_boias()
 	_animar_luzes()
+	_animar_caminhao()
+	_animar_espuma()
 
 	# Turno 1 abria com a faixa de mensagem VAZIA — um cartão creme com nada
 	# dentro, que na tela lê como falha e não como "ainda não aconteceu nada".
@@ -183,23 +200,46 @@ func _animar_ancorados() -> void:
 #
 # Cada uma com sua duração e sua fase — coqueiros em sincronia denunciam que é
 # a mesma animação repetida.
+# ⚠️ RAJADA, E NÃO PÊNDULO — pedido do primeiro playtest ("pode deixar
+# animações mais fluidas"). A versão anterior era +A → −A → +A com a mesma
+# duração nos dois sentidos: um metrônomo, e é isso que o olho lia. Vento não
+# tem período fixo.
+#
+# O ciclo aqui é o de uma rajada de verdade: a copa é EMPURRADA depressa
+# (EASE_OUT, que gasta a velocidade no fim do movimento, como quem bate numa
+# parede de ar), volta devagar passando do ponto para o outro lado, oscila uma
+# vez menor — a copa a assentar — e PARA. A pausa é o que faz a rajada
+# seguinte parecer uma rajada nova em vez da mesma volta do relógio.
 func _animar_coqueiros() -> void:
 	var cenario := $MapaWrap.get_node_or_null("Cenario")
 	if cenario == null:
 		return
+	# Cada coqueiro com o seu tempo E a sua força: três iguais em sincronia
+	# denunciam que é a mesma animação repetida (era já a razão das fases).
 	var duracoes := [2.6, 3.1, 2.9]
 	var fases := [0.0, 1.1, 0.5]
+	var pausas := [1.3, 0.7, 1.9]
 	var i := 0
 	for no in cenario.get_children():
 		if not String(no.name).ends_with("Copa"):
 			continue
-		var amplitude := 0.035 if i % 2 == 0 else -0.035
+		var amplitude := 0.038 if i % 2 == 0 else -0.038
 		var dur: float = duracoes[i % duracoes.size()]
 		var tw := no.create_tween().set_loops()
 		if fases[i % fases.size()] > 0.0:
 			tw.tween_interval(fases[i % fases.size()])
-		tw.tween_property(no, "rotation", amplitude, dur).set_trans(Tween.TRANS_SINE)
-		tw.tween_property(no, "rotation", -amplitude, dur).set_trans(Tween.TRANS_SINE)
+		# A rajada bate: rápida a ir, com a velocidade a morrer no fim.
+		tw.tween_property(no, "rotation", amplitude, dur * 0.35) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		# E solta devagar, passando do ponto para o outro lado.
+		tw.tween_property(no, "rotation", -amplitude * 0.55, dur * 0.8) \
+			.set_trans(Tween.TRANS_SINE)
+		# A copa assenta — uma oscilação pequena, não uma segunda rajada.
+		tw.tween_property(no, "rotation", amplitude * 0.22, dur * 0.5) \
+			.set_trans(Tween.TRANS_SINE)
+		tw.tween_property(no, "rotation", 0.0, dur * 0.45) \
+			.set_trans(Tween.TRANS_SINE)
+		tw.tween_interval(pausas[i % pausas.size()])
 		i += 1
 
 
@@ -245,6 +285,240 @@ func _animar_boias() -> void:
 		tw.tween_property(tr, "position:y", base.y, dur) \
 			.set_trans(Tween.TRANS_SINE)
 		i += 1
+
+
+## O CAMINHÃO ENTRA NO PÁTIO — pedido do primeiro playtest ("até fazer o
+## caminhão andar pela estrada").
+##
+## ⚠️ ELE NÃO ANDA AO LONGO DA ESTRADA, e é medido: a cabine do prop aponta
+## para **+mx** (está escrito no `blender/brp_porto.py` — "+mx é o lado do mar;
+## o caminhão aponta para lá"), e a estrada corre no eixo **my**. Um caminhão
+## a percorrer a estrada com este sprite seria um caminhão a deslizar DE LADO,
+## que é justamente o defeito que o CLAUDE.md avisa não se consertar rodando
+## no Godot — ângulo errado se conserta no gerador, não aqui. Andar pela
+## estrada precisa do prop rerenderizado virado para o eixo dela (Blender).
+##
+## O que ele faz é a única marcha honesta com o desenho que existe: avança na
+## direção em que aponta, entrando da rua para o pátio — que é exactamente o
+## caso que o docstring do próprio prop antecipa ("carga chegando, fila no
+## portão").
+##
+## O LIMITE DA MARCHA SAI DO CONTRATO DE PROFUNDIDADE, não de um número
+## escrito aqui. Ordem de irmão É profundidade neste plano, e `mx+my` cresce
+## com o Y de tela — então o caminhão pode avançar até o Y do irmão seguinte,
+## e nem um pixel além. Um número cravado envelheceria calado no dia em que
+## alguém movesse o coqueiro ao lado; assim, a animação respeita o D3 por
+## construção.
+## O CAMINHÃO ATRAVESSA O MAPA INTEIRO — pedido do playtest, terceira volta:
+## "ele deveria vir de fora do mapa, e depois sair do mapa".
+##
+## As duas primeiras tentativas erraram por escrito aqui, e as duas por
+## acreditar numa coisa que não se tinha medido: que a rua fosse feita de
+## trechos soltos. NÃO É. O `vias()` do `gerar_mapa_iso.py` desenha um
+## COTOVELO em cada degrau, com a mesma largura da rua, ligando um trecho ao
+## seguinte — a estrada é uma escada CONTÍNUA, do topo do quadro até fora dele
+## pela esquerda. Dava para atravessá-la desde sempre.
+##
+## A rota tem 42 unidades (~1.400px) e sai da geometria do mapa, não do gosto:
+## dentro de cada degrau a rua corre em `my` no eixo `borda - RUA_RECUO +
+## RUA_LARG/2`, e o cotovelo corre em `mx` a meia largura do fim do degrau.
+## O bloco D13 do teste de design confere ponto a ponto contra as faixas que o
+## gerador publica — se a estrada mudar, ele reprova antes de alguém olhar.
+##
+## ⚠️ E A CADA COTOVELO ELE VIRA, o que exige DUAS silhuetas. Só as faces `+x`
+## e `-y` são visíveis por esta câmera, então um caminhão virado não se obtém
+## rodando o sprite: `caminhao.png` corre em `my` e `caminhao_mx.png` em `mx`,
+## os dois saídos do mesmo construtor em `blender/brp_porto.py`. Trocar a
+## textura na curva é o que faz a volta ler como volta.
+##
+## A INTENÇÃO REGISTADA, para quem vier depois: isto é a base para mostrar a
+## chegada de uma entrega a um navio, quando existir o serviço de compra.
+const MEIA_LARG := 30.0     # o contrato da projeção; o D13 confere contra as âncoras
+const MEIA_ALT := 15.0
+
+## Onde a CENA põe o caminhão: um ponto já dentro do quadro, e é de propósito.
+## A primeira passagem começa aqui para que as cinco capturas do CI o apanhem
+## na estrada — prop que a captura não vê é prop que ninguém revê. Só depois
+## dela é que o ciclo passa a começar fora do mapa, como foi pedido.
+##
+## ⚠️ E "dentro do quadro" não chega: tem de ser dentro do quadro E À VISTA.
+## O primeiro ponto escolhido foi o alto do degrau 0, que passava no D13 e
+## saía na foto com metade do caminhão debaixo do letreiro do ESCRITÓRIO — os
+## letreiros são interface, desenham-se por cima de tudo, e nenhuma asserção
+## sobre o mapa sabe onde eles caem. Este ponto é o meio do degrau 1, o trecho
+## mais desimpedido da estrada; o D13 tranca que ele está na rota e inteiro
+## dentro do `MapaWrap` (que tem `clip_contents`), e o resto é olhar a foto.
+const CAMINHAO_ORIGEM := Vector2(3.75, 9.5)
+
+## A escada da rua, em (mx, my). Primeiro e último ponto estão FORA do quadro —
+## 43,5 unidades ao todo, ~1.459px de tela.
+##
+## O `mx` de cada trecho reto é o MEIO do asfalto daquele degrau
+## (`borda - RUA_RECUO + RUA_LARG/2`), e o `my` de cada cotovelo é o meio da
+## faixa que o `vias()` desenha para virar (`my1 - RUA_LARG/2`). Nenhum destes
+## números é de gosto, e o D13 confere-os todos contra as âncoras.
+const ROTA_ESTRADA: Array[Vector2] = [
+	Vector2(-0.25, -2.0),    # entra por cima do topo do quadro
+	Vector2(-0.25, 7.45),
+	Vector2(3.75, 7.45),     # cotovelo do degrau 0 para o 1
+	Vector2(3.75, 15.45),
+	Vector2(7.75, 15.45),    # cotovelo do 1 para o 2
+	Vector2(7.75, 23.45),
+	Vector2(11.75, 23.45),   # cotovelo do 2 para o 3
+	Vector2(11.75, 29.5),    # sai pela esquerda do quadro
+]
+
+## Velocidade constante em pixels por segundo. É ela que dá a duração de cada
+## trecho, e não um número por trecho: com durações iguais o caminhão
+## disparava nos cotovelos curtos e arrastava-se nos degraus longos.
+##
+## 38px/s dá ~38s de travessia e ~2,5s para ele andar o próprio comprimento
+## (94px de silhueta) — devagar de propósito: isto é fundo de cena, não é o
+## que se olha. Depressa, um prop que atravessa o quadro inteiro puxa o olho
+## para longe das docas.
+const CAMINHAO_VELOCIDADE := 38.0
+
+const CaminhaoMy := preload("res://art/props/caminhao.png")
+const CaminhaoMx := preload("res://art/props/caminhao_mx.png")
+
+
+## A silhueta que um trecho pede: a de `mx` se ele anda em `mx`, a de `my` se
+## anda em `my`. É PÚBLICA e vive num lugar só porque o D13 lhe pergunta —
+## recalcular a mesma escolha do lado do teste seria o teste a concordar
+## consigo próprio, e foi assim que a primeira versão dele deixou passar um
+## caminhão que usava a mesma silhueta nos oito trechos.
+func silhueta_do_trecho(de: Vector2, para: Vector2) -> Texture2D:
+	return CaminhaoMx if abs(para.x - de.x) > 0.01 else CaminhaoMy
+
+
+## O deslocamento de tela de um ponto da rota, medido a partir de onde a cena
+## põe o caminhão. Só precisa das duas constantes da projeção — `CX`, `CY` e a
+## altura do cais cancelam-se na diferença.
+func tela_da_rota(ponto: Vector2) -> Vector2:
+	var d := ponto - CAMINHAO_ORIGEM
+	return Vector2((d.x - d.y) * MEIA_LARG, (d.x + d.y) * MEIA_ALT)
+
+
+func _animar_caminhao() -> void:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return
+	var caminhao := cenario.get_node_or_null("Caminhao") as TextureRect
+	if caminhao == null:
+		return
+	var base := caminhao.position - tela_da_rota(CAMINHAO_ORIGEM)
+
+	# Primeira passagem: começa onde a cena o pôs (dentro do quadro) e sai.
+	var primeira := caminhao.create_tween()
+	_trechos_da_rota(primeira, caminhao, base, CAMINHAO_ORIGEM)
+	primeira.tween_callback(func() -> void:
+		# E daqui em diante o ciclo completo, de fora do mapa a fora do mapa.
+		var ciclo := caminhao.create_tween().set_loops()
+		ciclo.tween_interval(5.0)
+		_trechos_da_rota(ciclo, caminhao, base, ROTA_ESTRADA[0])
+	)
+
+
+## Enfia na `tw` um trecho por par de pontos da rota, a partir de `desde`.
+func _trechos_da_rota(tw: Tween, caminhao: TextureRect, base: Vector2,
+		desde: Vector2) -> void:
+	var pontos: Array[Vector2] = [desde]
+	for ponto in ROTA_ESTRADA:
+		# Só os pontos que ainda estão À FRENTE de onde se começa. Comparar por
+		# `my` chega: a rota nunca recua nele.
+		if ponto.y > desde.y or (is_equal_approx(ponto.y, desde.y) and ponto.x > desde.x):
+			pontos.append(ponto)
+
+	# O primeiro salto é um TELEPORTE, não um trecho: é ele que põe o caminhão
+	# no princípio da rota antes de a percorrer.
+	tw.tween_callback(func() -> void:
+		caminhao.position = base + tela_da_rota(pontos[0])
+		caminhao.texture = CaminhaoMy
+		_ordenar_por_profundidade(caminhao)
+	)
+	for i in range(pontos.size() - 1):
+		var de: Vector2 = pontos[i]
+		var para: Vector2 = pontos[i + 1]
+		var origem := base + tela_da_rota(de)
+		var destino := base + tela_da_rota(para)
+		# A silhueta certa para o eixo do trecho — é isto que faz a curva ler
+		# como curva em vez de o caminhão deslizar de lado.
+		var textura := silhueta_do_trecho(de, para)
+		tw.tween_callback(func() -> void: caminhao.texture = textura)
+		tw.tween_method(func(t: float) -> void:
+			caminhao.position = origem.lerp(destino, t)
+			_ordenar_por_profundidade(caminhao)
+		, 0.0, 1.0, origem.distance_to(destino) / CAMINHAO_VELOCIDADE)
+
+
+## Põe `no` no índice que a profundidade dele pede, entre os irmãos.
+##
+## Profundidade é `mx+my`, e ela cresce com o Y de tela — então contar quantos
+## irmãos estão ACIMA na tela dá o índice, sem precisar da projeção aqui. É a
+## mesma leitura que o bloco D3 do teste de design faz para reprovar ordem
+## errada; aqui ela mantém a ordem certa enquanto o prop se mexe.
+func _ordenar_por_profundidade(no: Control) -> void:
+	var pai := no.get_parent()
+	var indice := 0
+	for outro in pai.get_children():
+		if outro == no:
+			continue
+		if outro is Control and (outro as Control).position.y < no.position.y:
+			indice += 1
+	if pai.get_child(indice) != no:
+		pai.move_child(no, indice)
+
+
+## A ARREBENTAÇÃO — a terceira das três animações que o playtest pediu
+## ("animações mais fluidas, e novas animações, para o coqueiro, ondas e até
+## fazer o caminhão andar"). As outras duas eram tween e saíram no mesmo dia;
+## esta não era, e a razão está medida: até 03/09 a espuma estava ASSADA no SVG
+## do mapa, que é UMA textura. Não havia nó de onda para animar, e animar o
+## mapa faria a costa deslizar. Hoje o `gerar_mapa_iso.py` escreve a espuma em
+## dois arquivos próprios, e são eles que se lavam.
+##
+## ⚠️ A LAVAGEM É EM CONTRAFASE, e é isso que a faz parecer mar. Uma camada só
+## a pulsar põe a costa INTEIRA a clarear e a escurecer ao mesmo tempo — que é
+## o irmão do defeito que o gerador já documenta (traço de espessura constante
+## lê como pintura de solo, não como espuma). Com duas sementes diferentes em
+## oposição, o que se vê é espuma a nascer num sítio enquanto se desfaz noutro.
+##
+## ⚠️ E O TEMPO É ASSIMÉTRICO, como na rajada do coqueiro. Onda ENTRA depressa
+## e RECUA devagar; com a mesma duração nos dois sentidos volta a ser pêndulo,
+## e pêndulo é o que o olho identifica como animação de programador.
+const ESPUMA_ENTRA := 1.6
+const ESPUMA_RECUA := 3.4
+
+## Quanto a espuma avança sobre a terra no auge da lavagem. O sentido é o da
+## NORMAL DA COSTA: `+mx` move (+30, +15) por unidade na tela, e 4px disso é o
+## suficiente para se ler sem descolar a espuma da beira que ela desenha.
+const ESPUMA_AVANCO := Vector2(4.0, 2.0)
+
+
+func _animar_espuma() -> void:
+	for i in 2:
+		var camada := $MapaWrap.get_node_or_null("Espuma%d" % i) as TextureRect
+		if camada == null:
+			continue
+		var base := camada.position
+		# A segunda começa já lavada, para as duas nunca estarem no mesmo
+		# ponto do ciclo. Sem isto elas subiriam e desceriam juntas e a
+		# contrafase não existiria — duas camadas a fazer o trabalho de uma.
+		var alta := i == 1
+		camada.modulate.a = 1.0 if alta else 0.45
+		camada.position = base + (ESPUMA_AVANCO if alta else Vector2.ZERO)
+		var tw := camada.create_tween().set_loops().set_parallel(false)
+		for passo in 2:
+			var sobe := (passo == 0) != alta
+			var dur := ESPUMA_ENTRA if sobe else ESPUMA_RECUA
+			var trans := Tween.TRANS_CUBIC if sobe else Tween.TRANS_SINE
+			tw.set_parallel(true)
+			tw.tween_property(camada, "modulate:a", 1.0 if sobe else 0.45, dur) \
+				.set_trans(trans).set_ease(Tween.EASE_OUT)
+			tw.tween_property(camada, "position",
+				base + (ESPUMA_AVANCO if sobe else Vector2.ZERO), dur) \
+				.set_trans(trans).set_ease(Tween.EASE_OUT)
+			tw.set_parallel(false)
 
 
 ## `light_flicker` — a luminária do poste, e só ela.
@@ -358,7 +632,6 @@ func _refresh_hud() -> void:
 		_upgrade_button.text = "Construir  ·  %d %s" % [faltam, plural]
 		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	_advance_button.disabled = GameState.phase != "playing"
-	_alocar_button.disabled = not GameState.has_pending_assignment()
 	_refresh_meta()
 
 
@@ -383,8 +656,13 @@ func _refresh_meta() -> void:
 	var progresso := "%s de %s" % [GameState.moeda(int(GameState.cash)), GameState.moeda(alvo)]
 	if falta > 0:
 		_meta_label.text = "%s — faltam %s" % [progresso, GameState.moeda(falta)]
+		_meta_label.remove_theme_color_override("font_color")
 	else:
-		_meta_label.text = "%s — já dá para pagar" % progresso
+		# CARTÃO TOCÁVEL QUE NÃO SE ANUNCIA É CARTÃO QUE NINGUÉM TOCA. O convite
+		# só aparece quando há o que fazer com ele — antes disso, tocar abriria
+		# um painel que só sabe dizer quanto falta, e a linha aqui já diz isso.
+		_meta_label.text = "%s — toque para quitar agora" % progresso
+		_meta_label.add_theme_color_override("font_color", COR_AVISO)
 
 
 # As vagas já existem na cena, uma por píer desenhado no mapa. Aqui só se diz
@@ -399,6 +677,23 @@ func _refresh_docks() -> void:
 	for i in range(cartoes.size()):
 		cartoes[i].trabalhador_selecionado = _selecionado
 		cartoes[i].setup(i)
+	# MEXER NAS DOCAS OBRIGA A REPINTAR OS TRABALHADORES, porque "parado" é uma
+	# pergunta sobre as docas e não sobre o operário (ver `TrabParado` no tema).
+	# Sem isto o cartão só mudava quando o roster mudava — e barco novo a chegar
+	# não mexe no roster, que é exatamente o momento em que o aviso faz falta.
+	_repintar_trabalhadores()
+
+
+# Repinta o que depende de "há trabalho parado?", sem reconstruir cartão nenhum:
+# os cartões existentes, a linha de título e o botão de alocar em lote. É a
+# versão barata do `_refresh_workers()`, e o botão vive aqui — e não no
+# `_refresh_hud()`, onde vivia — para que os três sinais do mesmo estado sejam
+# atualizados pela mesma chamada e não possam discordar.
+func _repintar_trabalhadores() -> void:
+	for no in _workers_container.get_children():
+		no.refresh()
+	_alocar_button.disabled = not GameState.has_pending_assignment()
+	_refresh_titulo_trabalhadores()
 
 
 func _clear(container: Node) -> void:
@@ -422,7 +717,7 @@ func _refresh_workers() -> void:
 		worker_node.setup(int(w["id"]))
 		worker_node.selecionado.connect(_on_worker_selecionado)
 		worker_node.marcar_selecionado(int(w["id"]) == _selecionado)
-	_refresh_titulo_trabalhadores()
+	_repintar_trabalhadores()
 
 
 func _pode_ser_selecionado(worker_id: int) -> bool:
@@ -445,18 +740,40 @@ func _on_worker_selecionado(worker_id: int) -> void:
 	# As duas metades da doca precisam saber quem está escolhido: o cartão para
 	# aceitar o toque, a vaga no mapa para acender o realce sobre o píer.
 	_refresh_docks()
-	_refresh_titulo_trabalhadores()
 
 
 # O cartão do trabalhador tem 158px e não comporta a instrução; ela vive aqui,
 # onde também pode mudar conforme o estado.
+#
+# São TRÊS estados e não dois. O do meio nasceu do primeiro playtest: o dia
+# avançou com dois operários livres e duas docas sem trabalhador, e esta linha
+# dizia a instrução genérica de sempre, em cinzento-azulado. Ela é a única
+# linha de texto que fica logo acima dos cartões — se algum lugar tem de
+# contar quanto trabalho está parado, é este.
+#
+# O âmbar aqui MEDE (5,53:1 sobre a barra escura, passa o AA); no cartão do
+# trabalhador não mediria, e por isso lá o sinal é o fundo. Ver o comentário
+# do `trab_parado` no tema.
 func _refresh_titulo_trabalhadores() -> void:
+	var parado := GameState.trabalho_parado()
 	if _selecionado >= 0:
 		_workers_title.text = "Agora toque numa doca para enviar o #%d" % _selecionado
+		_workers_title.add_theme_color_override("font_color", COR_AVISO)
+	elif parado != Vector2i.ZERO:
+		_workers_title.text = "%s parado%s — %s esperando" % [
+			_plural(parado.x, "trabalhador", "trabalhadores"),
+			"" if parado.x == 1 else "s",
+			_plural(parado.y, "doca", "docas")]
 		_workers_title.add_theme_color_override("font_color", COR_AVISO)
 	else:
 		_workers_title.text = "Trabalhadores — toque ou arraste para uma doca"
 		_workers_title.add_theme_color_override("font_color", Color(0.51, 0.6, 0.706))
+
+
+# "1 doca" / "2 docas". Existe porque o número vem de uma contagem e escrever
+# "1 docas" numa faixa de alerta desfaz o alerta.
+func _plural(n: int, singular: String, plural: String) -> String:
+	return "%d %s" % [n, singular if n == 1 else plural]
 
 
 func _on_alocar_pressed() -> void:
@@ -604,6 +921,56 @@ func _abrir_painel(cena: PackedScene) -> Control:
 
 func _on_upgrade_pressed() -> void:
 	_abrir_painel(UpgradePanelScene)
+
+
+# AS QUATRO PÍLULAS DO HUD SÃO TOCÁVEIS — item do primeiro playtest (02/09):
+# "tocar num item do HUD abre detalhe". As quatro reagem à mesma pergunta —
+# toque que SOLTA, botão esquerdo, a mesma razão do `Worker.gd` (reagir no
+# release deixa o clique livre para quem quisesse arrastar) — e só o painel
+# que abrem muda. Extrair a pergunta evita QUATRO cópias da mesma regra: é
+# exatamente o tipo de duplicação que já escondeu um defeito neste projeto
+# (ver `trabalho_parado()` no CLAUDE.md, a guarda de fase repetida).
+func _e_toque_de_soltar(event: InputEvent) -> bool:
+	return event is InputEventMouseButton and not event.pressed \
+		and event.button_index == MOUSE_BUTTON_LEFT
+
+
+func _on_caixa_pilula_input(event: InputEvent) -> void:
+	if _e_toque_de_soltar(event):
+		_abrir_painel(PainelCaixaScene).setup(GameState.resumo_do_dia())
+		accept_event()
+
+
+# O chip "Dia" abre o CALENDÁRIO, não um resumo do próprio chip — os dois
+# itens do playtest ("tocar no dia" e "calendário com eventos sinalizados")
+# são a mesma pergunta, e abrir dois painéis para ela seria pedir ao jogador
+# para comparar um com o outro.
+func _on_dia_pilula_input(event: InputEvent) -> void:
+	if _e_toque_de_soltar(event):
+		_abrir_painel(PainelCalendarioScene).setup()
+		accept_event()
+
+
+func _on_rep_pilula_input(event: InputEvent) -> void:
+	if _e_toque_de_soltar(event):
+		_abrir_painel(PainelReputacaoScene).setup()
+		accept_event()
+
+
+func _on_docas_pilula_input(event: InputEvent) -> void:
+	if _e_toque_de_soltar(event):
+		_abrir_painel(PainelDocasScene).setup()
+		accept_event()
+
+
+# O CARTÃO DA PARCELA TAMBÉM É TOCÁVEL, e é por ali que se paga adiantado —
+# item do playtest que a triagem tinha perdido. O botão não vive no cartão
+# porque o rodapé não tem os 44px de toque para lhe dar; ver o cabeçalho de
+# `PainelParcela.gd`.
+func _on_meta_cartao_input(event: InputEvent) -> void:
+	if _e_toque_de_soltar(event):
+		_abrir_painel(PainelParcelaScene).setup()
+		accept_event()
 
 
 func _on_pause_pressed() -> void:

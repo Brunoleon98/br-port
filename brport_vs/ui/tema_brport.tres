@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=25 format=3]
+[gd_resource type="Theme" load_steps=26 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -153,6 +153,36 @@ corner_radius_top_left = 99
 corner_radius_top_right = 99
 corner_radius_bottom_right = 99
 corner_radius_bottom_left = 99
+
+; TRABALHADOR PARADO COM DOCA À ESPERA. Não é um quarto estado do trabalhador
+; — é o estado LIVRE quando ficar livre custa dinheiro. O primeiro playtest num
+; telefone parou o dia com dois operários livres e duas docas sem trabalhador:
+; a doca já avisava (borda âmbar), quem RESOLVE não avisava nada.
+;
+; O sinal é o FUNDO, e não a cor do texto. Medido pela WCAG: o âmbar do tema
+; sobre o cartão claro do trabalhador dá 2,98:1 e reprova até o corte de texto
+; grande (3,0) — a mesma armadilha que o CLAUDE.md descreve para o rótulo
+; branco sobre âmbar. Aqui o texto continua navy e mede 9,60:1.
+;
+; E o tom foi escolhido pela LUMINÂNCIA, não pelo matiz. Os três cartões de
+; hoje vivem entre 0,853 e 0,933; um creme de 0,902 cairia no meio deles e
+; leria como mais um irmão. Este está em 0,751 — 0,10 abaixo do mais escuro
+; dos três, que é o que o faz saltar numa fila de quatro cartões.
+[sub_resource type="StyleBoxFlat" id="trab_parado"]
+bg_color = Color(0.988, 0.867, 0.643, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.851, 0.467, 0.024, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="trab_livre"]
 bg_color = Color(0.929, 0.984, 0.949, 1)
@@ -391,6 +421,8 @@ BotaoPrimario/styles/disabled = SubResource("botao_off")
 Cartao/styles/panel = SubResource("cartao")
 TrabLivre/base_type = "PanelContainer"
 TrabLivre/styles/panel = SubResource("trab_livre")
+TrabParado/base_type = "PanelContainer"
+TrabParado/styles/panel = SubResource("trab_parado")
 TrabAlocado/base_type = "PanelContainer"
 TrabAlocado/styles/panel = SubResource("trab_alocado")
 TrabOcupado/base_type = "PanelContainer"

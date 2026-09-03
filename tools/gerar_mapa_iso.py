@@ -641,8 +641,8 @@ VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 #
 #     my_casa = mx_vila - (mx_predio - my_predio) ± (meia_largura_px / MEIA_LARG)
 #
-# Com o escritório em (3,2 / 6,7) e a vila do degrau 0 em mx=-2,5, o centro cai
-# em my=1,0 — quase seis unidades ANTES do prédio. A primeira tentativa pôs o
+# Com o escritório em (2,6 / 6,7) e a vila do degrau 0 em mx=-2,5, o centro cai
+# em my=1,6 — quase seis unidades ANTES do prédio. A primeira tentativa pôs o
 # vão em 5,6..8,9, que é onde o prédio está, e por isso não tirou casa nenhuma
 # de baixo dele.
 #
@@ -656,8 +656,8 @@ VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 # alcança abriria um vão de sete unidades e deixaria um buraco na fileira. O
 # que incomoda é a casa FATIADA pela quina, não a que espreita atrás.
 VILA_VAZIOS = [
-    (-1.1, 3.1),     # Escritorio, sprite de 213px em (mx 3,2 / my 6,7)
-    (6.7, 11.9),     # Armazem, sprite de 258px em (mx 6,7 / my 14,5)
+    (0.1, 3.1),      # Escritorio, sprite de 154px em (mx 2,6 / my 6,7)
+    (7.6, 11.3),     # Armazem, sprite de 185px em (mx 6,6 / my 14,5)
 ]
 
 
@@ -676,16 +676,27 @@ VILA_VAZIOS = [
 #     escritório  parede 2,4 × 2,0  →  telhado 2,76 × 2,36
 #     armazém     parede 3,4 × 2,4  →  telhado 3,76 × 2,76
 #
+# ⚠️ E MULTIPLICADOS POR `ESCALA_PREDIO`, que em 03/09 passou a 0,72. Os dois
+# prédios encolheram porque o playtest os leu como "muito grandes, e em cima
+# da estrada": a base estava legal, mas o armazém ocupava 90% da largura do
+# pátio e os dois levantavam-se 4x a altura de uma casa — em isométrico é a
+# altura que derrama a silhueta por cima do que está atrás. Quem mexer naquela
+# escala mexe NESTES quatro números, e o gerador de props é que a define.
+#
 # Estão escritos à mão porque `gerar_props_iso.py` precisa do `bpy` para dizer
 # o mesmo, e um teste que exija 1 GB de Blender não roda no CI nem numa sessão
 # normal. O preço é este: quem mexer na geometria de um prédio mexe aqui.
 # O teste fecha o resto do cerco — um prop do cenário cuja silhueta passe de
 # 130px sem pegada declarada REPROVA, para que um prédio novo não escape.
+ESCALA_PREDIO = 0.72                    # espelha `gerar_props_iso.ESCALA_PREDIO`
 PEGADAS = {
-    "escritorio": (2.76, 2.36),
-    "escritorio_ruina": (2.76, 2.36),   # a ruína é menor; medida pelo que ela vai ser
-    "galpao": (3.76, 2.76),
-    "galpao_velho": (3.76, 2.76),
+    "escritorio": (2.76 * ESCALA_PREDIO, 2.36 * ESCALA_PREDIO),
+    # A ruína é menor, e é medida pelo que ela VAI SER: o vão que ela ocupa tem
+    # de caber o prédio consertado, senão consertar empurraria o prop para cima
+    # do asfalto e o teste só reprovaria depois da compra.
+    "escritorio_ruina": (2.76 * ESCALA_PREDIO, 2.36 * ESCALA_PREDIO),
+    "galpao": (3.76 * ESCALA_PREDIO, 2.76 * ESCALA_PREDIO),
+    "galpao_velho": (3.76 * ESCALA_PREDIO, 2.76 * ESCALA_PREDIO),
 }
 
 
@@ -773,6 +784,55 @@ def vila(nivel: int, pavimentado: bool) -> str:
             s += ('  <ellipse cx="%.0f" cy="%.0f" rx="5" ry="2.6" fill="%s" '
                   'opacity="0.7"/>\n' % (gx, gy, C["mato"]))
     return s
+
+
+# ── ESPUMA: DEIXOU DE SER FUNDO E PASSOU A SER CAMADA ────────────────────
+#
+# Pedido do playtest: "animações mais fluidas, e novas animações, para o
+# coqueiro, ondas e até fazer o caminhão andar". O coqueiro e o caminhão eram
+# tween; a onda não era, e a razão está medida: a espuma estava ASSADA no SVG
+# do mapa, que é UMA textura. Não havia nó de onda nenhum para animar, e
+# animar o mapa inteiro seria fazer a costa deslizar.
+#
+# Agora ela sai em ARQUIVO PRÓPRIO, transparente, do mesmo tamanho do mapa e
+# na mesma projeção — o jogo põe-na por cima da água e faz a lavagem. São
+# DUAS camadas de sementes diferentes, em contrafase: uma entra enquanto a
+# outra sai, e é isso que dá continuidade. Uma camada só a pulsar dava uma
+# costa inteira a piscar ao mesmo tempo, que é exatamente o que a versão de
+# traço contínuo já tinha ensinado a não fazer.
+#
+# ⚠️ E O MAPA DEIXOU DE A TER. Se ela ficasse assada E em camada, a espuma
+# apareceria a dobrar e a parte assada nunca se mexeria — meia costa viva e
+# meia parada é pior do que uma costa parada.
+def espuma(semente: int) -> str:
+    """As manchas de arrebentação, como camada solta.
+
+    MANCHAS, não traço, e isto passou por duas versões erradas: linha contínua
+    ao longo do cais leu como arame esticado, e quebrá-la em `stroke-dasharray`
+    só trocou o arame por faixa de rodovia — traço claro de espessura constante
+    sobre pedra escura é o desenho de uma pintura de solo. O que lê como
+    arrebentação é borrão de tamanho e opacidade irregulares: a espuma não tem
+    espessura, tem quantidade.
+    """
+    s = ""
+    r = random.Random(semente)
+    for mx, my, (nmx, nmy), _t in andar_costa(0.45, (0.18, 0.42), r):
+        if r.random() >= 0.72 or _sob_pier(my):
+            continue
+        fora = r.uniform(0.0, 0.55)
+        fx, fy = p(mx + nmx * fora, my + nmy * fora)
+        rx = r.uniform(4.0, 11.0)
+        s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
+              'fill="%s" opacity="%.2f"/>\n'
+              % (fx, fy, rx, r.uniform(1.8, 3.2), C["espuma"],
+                 r.uniform(0.28, 0.60)))
+    return s
+
+
+def gerar_espuma(semente: int) -> str:
+    return ('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" '
+            'viewBox="0 0 %d %d">\n%s</svg>\n'
+            % (LARG, ALT, LARG, ALT, espuma(semente)))
 
 
 def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
@@ -984,8 +1044,31 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # na tela pareciam cascalho pintado no concreto do cais. Agora elas andam
     # pelo CONTORNO (andar_costa) e só se afastam na direção do mar, então
     # nenhuma pode cair em terra: a quina passou a ser uma quina de pedra.
+    #
+    # A TERCEIRA correção veio do mesmo playtest, e é a queixa de que as pedras
+    # eram "chapadas": cada uma era UMA elipse de um tom só, e elipse de um tom
+    # não tem lado nenhum. Agora cada pedra é um SÓLIDO FACETADO — um polígono
+    # irregular de topo e uma saia por aresta —, que é o vocabulário do resto
+    # do mapa: é o mesmo desenho da `caixa()` e da `laje()`, reduzido a um
+    # seixo. Custa dois a quatro nós por pedra e nenhuma imagem nova.
+    #
+    # ⚠️ DUAS FORMAS FORAM TENTADAS ANTES E DESCARTADAS, e não por gosto:
+    #   · elipse extrudada (tampo do mesmo tamanho da base) sai FICHA DE
+    #     PÔQUER — cilindro perfeito, e onde um tampo claro caía sobre a saia
+    #     escura da pedra ao lado lia-se um ANEL, que o olho lê como buraco;
+    #   · elipse com uma cópia menor deslocada para cima lê como elipse chapada
+    #     com sombra por baixo, que é o defeito de origem outra vez.
+    #   O que faz uma pedra pequena ler como pedra é ARESTA: contorno quebrado
+    #   e duas faces de tons diferentes, como em toda a outra peça deste mapa.
+    #
+    # ⚠️ E ORDENADAS POR PROFUNDIDADE, o que enquanto foram chapadas não era
+    # preciso. Duas elipses lisas encavaladas dão o mesmo desenho em qualquer
+    # ordem; duas pedras COM ALTURA, não — a de trás desenhada por último tapa
+    # a da frente pela saia, e o enrocamento sobe em vez de descer. Aqui, como
+    # no cenário do jogo, o Y de tela é a profundidade.
     r = random.Random(SEMENTE_CHAO + 90)
     tons = [C["pedra"], C["pedra_media"], C["pedra_clara"]]
+    pedras = []
     for mx, my, (nmx, nmy), (tmx, tmy) in andar_costa(0.06, (0.22, 0.40), r):
         # O enrocamento PARA onde o píer começa. Ele não some por baixo do
         # tabuado: ali não há enrocamento nenhum, porque ninguém joga pedra na
@@ -1000,28 +1083,41 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
             px, py = p(mx + nmx * fora + tmx * ao_longo,
                        my + nmy * fora + tmy * ao_longo)
             rx = r.uniform(4.5, 9.5)
-            s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
-                  'fill="%s"/>\n'
-                  % (px, py, rx, rx * r.uniform(0.48, 0.62), tons[r.randrange(3)]))
+            ry = rx * r.uniform(0.48, 0.62)
+            # O contorno: cinco ou seis vértices com o raio e o ângulo
+            # sacudidos. Polígono REGULAR sai cristal, e nesta escala um
+            # cristal lê-se como erro de desenho; a irregularidade é o que
+            # faz cinco arestas passarem por pedra.
+            n = r.choice((5, 6))
+            a0 = r.uniform(0.0, math.tau)
+            canto = []
+            for k in range(n):
+                a = a0 + math.tau * k / n + r.uniform(-0.25, 0.25)
+                f = r.uniform(0.78, 1.0)
+                canto.append((px + math.cos(a) * rx * f,
+                              py + math.sin(a) * ry * f))
+            pedras.append((py, canto, rx * r.uniform(0.30, 0.62),
+                           tons[r.randrange(3)]))
 
-    # Espuma: MANCHAS, não traço.
-    # Passou por duas versões erradas antes desta. Linha contínua ao longo do
-    # cais leu como arame esticado; quebrar em `stroke-dasharray` só trocou o
-    # arame por faixa de rodovia, porque traço claro de espessura constante
-    # sobre pedra escura é exatamente o desenho de uma pintura de solo. O que
-    # lê como arrebentação é borrão de tamanho e opacidade irregulares — a
-    # espuma não tem espessura, tem quantidade.
-    re_ = random.Random(SEMENTE_CHAO + 55)
-    for mx, my, (nmx, nmy), _t in andar_costa(0.45, (0.18, 0.42), re_):
-        if re_.random() >= 0.72 or _sob_pier(my):
-            continue
-        fora = re_.uniform(0.0, 0.55)
-        fx, fy = p(mx + nmx * fora, my + nmy * fora)
-        rx = re_.uniform(4.0, 11.0)
-        s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
-              'fill="%s" opacity="%.2f"/>\n'
-              % (fx, fy, rx, re_.uniform(1.8, 3.2), C["espuma"],
-                 re_.uniform(0.28, 0.60)))
+    for _py, canto, h, topo in sorted(pedras, key=lambda q: q[0]):
+        n = len(canto)
+        for k in range(n):
+            a, b = canto[k], canto[(k + 1) % n]
+            ex, ey = b[0] - a[0], b[1] - a[1]
+            # Normal exterior da aresta. Só se desenha a saia das arestas
+            # viradas para BAIXO na tela — as de cima ficam por trás do tampo,
+            # e desenhá-las seria pintar por baixo de quem vai tapar.
+            nx, ny = ey, -ex
+            if ny <= 0.0:
+                continue
+            # Duas faces, como as paredes: a que olha para a direita é a mais
+            # escura, seguindo a mesma luz de `madeira_esq` / `madeira_dir`.
+            tom = _sombrear(topo, 0.62 if nx > 0.0 else 0.76)
+            s += ('  <polygon points="%.1f,%.1f %.1f,%.1f %.1f,%.1f %.1f,%.1f" '
+                  'fill="%s"/>\n'
+                  % (a[0], a[1], b[0], b[1], b[0], b[1] + h, a[0], a[1] + h, tom))
+        s += ('  <polygon points="%s" fill="%s"/>\n'
+              % (" ".join("%.1f,%.1f" % c for c in canto), topo))
 
     # ---- píeres ----
     # Em jogo o píer TROCA DE ESTADO (vaga por construir -> píer construído), e
@@ -1127,6 +1223,25 @@ def tabela_ancoras() -> dict:
             "vila": [borda - VILA_RECUO, borda - VILA_RECUO + VILA_PROF],
         })
 
+    # ⚠️ E OS COTOVELOS, que são rua tanto quanto as faixas retas.
+    #
+    # Publicá-los custou um bloco inteiro de trabalho perdido. O D2 conferia a
+    # pegada dos dois prédios contra `rua` e dizia OK, e o jogador continuava a
+    # ver os prédios em cima do asfalto: entre um degrau e o seguinte a rua
+    # VIRA, e o cotovelo que ela desenha para virar corre em `mx` por cinco
+    # unidades — mesmo asfalto, sem faixa nenhuma a declará-lo. Tanto o
+    # armazém como o escritório estavam com meia unidade de pegada lá dentro.
+    #
+    # Os números saem das MESMAS expressões que o `vias()` usa para desenhar, e
+    # incluem a calçada: prédio em cima do passeio também está errado.
+    cotovelos = []
+    for i, (_my0, my1, borda) in enumerate(DEGRAUS[:-1]):
+        prox = DEGRAUS[i + 1][2]
+        cotovelos.append({
+            "mx": [borda - RUA_RECUO - CALCADA, prox - RUA_RECUO + RUA_LARG + CALCADA],
+            "my": [my1 - RUA_LARG - CALCADA, my1 + CALCADA],
+        })
+
     return {
         "projecao": {"cx": CX, "cy": CY, "meia_larg": MEIA_LARG,
                      "meia_alt": MEIA_ALT, "alt_cais": ALT_CAIS},
@@ -1134,13 +1249,31 @@ def tabela_ancoras() -> dict:
         "mapa": {"largura": LARG, "altura": ALT},
         "pieres": pieres,
         "faixas": faixas,
+        "cotovelos": cotovelos,
         "lotes": [{"mx": round(l[0], 2), "my": round(l[1], 2),
                    "canto": px(l[0], l[1], ALT_CAIS)} for l in lotes_da_vila()],
     }
 
 
+# As duas sementes da espuma. A primeira é a que o mapa usava quando ela era
+# assada — assim a camada 0 sai com as MESMAS manchas de sempre e a mudança
+# não é uma costa nova, é a mesma costa que agora respira.
+SEMENTES_ESPUMA = (SEMENTE_CHAO + 55, SEMENTE_CHAO + 56)
+
+
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    # `--espuma=N` escreve SÓ a camada de espuma de índice N, e é assim que o
+    # CI a regenera ao lado dos dois mapas.
+    for a in sys.argv[1:]:
+        if a.startswith("--espuma="):
+            i = int(a.split("=", 1)[1])
+            destino_e = args[0] if args else "porto_mapa_espuma%d.svg" % i
+            conteudo_e = gerar_espuma(SEMENTES_ESPUMA[i])
+            with open(destino_e, "w", encoding="utf-8") as f:
+                f.write(conteudo_e)
+            print("%s — camada de espuma %d, %dx%d" % (destino_e, i, LARG, ALT))
+            return 0
     com_pieres = "--sem-pieres" not in sys.argv
     com_coqueiros = "--sem-coqueiros" not in sys.argv
     com_predios = "--sem-predios" not in sys.argv

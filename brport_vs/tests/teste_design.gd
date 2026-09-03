@@ -33,14 +33,31 @@ const MEIO_QUADRO := 256.0
 # Meia célula do chão. Mais que isto e o prop já se lê deslocado do desenho.
 const TOLERANCIA_PX := 2.0
 
+# Onde o caminhão é DESENHADO dentro do quadro de 512, relativo ao ponto de
+# ancoragem — medido no alfa dos dois PNGs e unido, que é o pior caso de cada
+# lado. O quadro inteiro tem 512px e o desenho ocupa ~94x86 no meio dele:
+# perguntar se o QUADRO saiu do mapa daria "ainda dentro" com o caminhão já
+# invisível havia muito.
+const DESENHO_CAMINHAO := Rect2(-38, -46, 100, 86)
+
 # Alvo de toque mínimo. 44 é o piso das diretrizes de iOS e Android; abaixo
 # disso o polegar erra e o jogador acha que o jogo não respondeu.
 const TOQUE_MIN := 44.0
+
+# A cor de aviso do `Main.gd`. Repetida aqui porque o teste roda o jogo POR
+# FORA e não alcança a constante da cena — se ela mudar lá, este número tem de
+# mudar junto, e é a asserção do D9 que o denuncia.
+const COR_AVISO := Color(0.851, 0.467, 0.024)
 
 var _falhas := 0
 var _feito := false
 var _ancoras: Dictionary
 var _main: Control
+var _d9_completo := false
+var _d10_completo := false
+var _d11_completo := false
+var _d12_completo := false
+var _d13_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -92,6 +109,25 @@ func _rodar() -> void:
 	_d7_letreiros()
 	print("=== D8: o pipeline BRP concorda com a projeção do mapa ===")
 	_d8_contrato_brp()
+	print("=== D9: trabalho parado avisa onde se resolve ===")
+	_d9_aviso_de_trabalho_parado()
+	_confere("o bloco D9 correu até ao fim", _d9_completo)
+
+	print("=== D10: tocar no dinheiro abre o resumo do dia ===")
+	_d10_toque_no_caixa()
+	_confere("o bloco D10 correu até ao fim", _d10_completo)
+
+	print("=== D11: os outros tres chips do HUD tambem abrem o deles ===")
+	_d11_toque_nos_outros_chips()
+	_confere("o bloco D11 correu até ao fim", _d11_completo)
+
+	print("=== D12: o cartao da parcela convida e abre ===")
+	_d12_toque_na_parcela()
+	_confere("o bloco D12 correu até ao fim", _d12_completo)
+
+	print("=== D13: o caminhao atravessa o mapa, de fora a fora, no asfalto ===")
+	_d13_travessia_do_caminhao()
+	_confere("o bloco D13 correu até ao fim", _d13_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -225,9 +261,11 @@ func _d1_encaixe_das_docas() -> void:
 #
 #   1. todo prop do cenário — não só o coqueiro — cai fora do asfalto e em
 #      terra, pela âncora;
-#   2. quem tem pegada declarada em `porto_mapa_ancoras.json` responde pelos
-#      QUATRO cantos dela, e em cada degrau que a pegada toca (um prédio pode
-#      atravessar o salto da costa, onde a rua anda 4 unidades de uma vez);
+#   2. quem tem pegada declarada em `porto_mapa_ancoras.json` responde pela
+#      pegada inteira, em cada degrau que ela toca (um prédio pode atravessar
+#      o salto da costa, onde a rua anda 4 unidades de uma vez) E em cada
+#      COTOVELO — a rua vira entre um degrau e o seguinte, e o cotovelo é
+#      asfalto que faixa reta nenhuma declara;
 #   3. prop do cenário com silhueta grande e SEM pegada declarada reprova —
 #      senão o cerco só vale para os prédios que já existem hoje.
 #
@@ -295,6 +333,29 @@ func _d2_cenario_em_terra() -> void:
 				na_agua = true
 				pior = "a pegada chega a mx=%.2f e a beira do cais é %.2f" \
 					% [mx1, float(faixa["borda"])]
+
+		# ⚠️ E OS COTOVELOS, que são rua tanto quanto as faixas retas.
+		#
+		# Isto custou um bloco inteiro. Depois de encolher os dois prédios,
+		# este teste passava e o jogador continuava a ver o armazém em cima do
+		# asfalto — porque entre um degrau e o seguinte a rua VIRA, e o
+		# cotovelo em que ela vira corre em `mx` por cinco unidades e meia,
+		# atravessando o pátio de lado a lado. As faixas retas não o cobrem, e
+		# nenhuma delas mentia: a rua reta estava mesmo livre. Meia unidade de
+		# cada prédio estava dentro do cotovelo.
+		#
+		# É a mesma lição da interseção de intervalos, um andar acima: conferir
+		# o retângulo contra PARTE da rua não é conferi-lo contra a rua.
+		for cotovelo in _ancoras.get("cotovelos", []):
+			var cmx: Array = cotovelo["mx"]
+			var cmy: Array = cotovelo["my"]
+			if mx0 > float(cmx[1]) or mx1 < float(cmx[0]):
+				continue
+			if m.y + meia_y < float(cmy[0]) or m.y - meia_y > float(cmy[1]):
+				continue
+			pisa_rua = true
+			pior = "a pegada entra no cotovelo da rua (mx %.2f..%.2f, my %.2f..%.2f)" \
+				% [float(cmx[0]), float(cmx[1]), float(cmy[0]), float(cmy[1])]
 
 		if not _comeca_com_algum(nome, PODEM_PISAR_A_RUA):
 			_confere("%s fora do asfalto" % nome, not pisa_rua, pior)
@@ -424,3 +485,401 @@ func _d7_letreiros() -> void:
 		var quadro := Rect2(_no_mapa(predio), predio.size)
 		_confere("%s apoiado em %s" % [letreiro, pares[letreiro]],
 			quadro.has_point(pe), "pé em %s, quadro do prédio %s" % [pe, quadro])
+
+
+# ── D9 ── o aviso de trabalho parado tem de aparecer ONDE ele se resolve
+#
+# O primeiro playtest num telefone avançou o dia com dois operários livres e
+# duas docas sem trabalhador. A doca já avisava — borda âmbar, "sem
+# trabalhador" —, mas o lado que RESOLVE o problema não avisava nada: o cartão
+# dizia "Livre" em cinzento e a linha acima dele repetia a instrução genérica.
+#
+# Este bloco monta esse estado e exige os três sinais. Eles são três porque o
+# olho pode estar em qualquer um dos três sítios; são a MESMA contagem porque
+# saem todos do `trabalho_parado()`.
+func _d9_aviso_de_trabalho_parado() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	for i in range(GS.docks.size()):
+		GS.docks[i]["worker_id"] = null
+		GS.docks[i]["boat"] = GS._make_boat()
+		GS.docks[i]["boat"]["rival"] = false
+	for w in GS.workers:
+		w["busy_turns"] = 0
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var parado: Vector2i = GS.trabalho_parado()
+	_confere("o estado de teste tem mesmo trabalho parado", parado != Vector2i.ZERO,
+		"trabalho_parado() devolveu %s e o bloco não testa nada" % parado)
+
+	var titulo: Label = tela.get_node("TrabalhadoresTitulo")
+	_confere("o rótulo conta os trabalhadores parados",
+		titulo.text.contains(str(parado.x)), "diz \"%s\"" % titulo.text)
+	_confere("o rótulo conta as docas à espera",
+		titulo.text.contains(str(parado.y)), "diz \"%s\"" % titulo.text)
+	_confere("e está na cor de aviso, não na neutra",
+		titulo.get_theme_color("font_color").is_equal_approx(COR_AVISO),
+		"está em %s" % titulo.get_theme_color("font_color"))
+
+	# O cartão: o sinal é o FUNDO, porque o âmbar sobre ele dá 2,98:1 e
+	# reprovaria a WCAG como texto (ver `trab_parado` no tema).
+	var tema: Theme = load("res://ui/tema_brport.tres")
+	var esperado: StyleBox = tema.get_stylebox("panel", "TrabParado")
+	var parados := 0
+	for cartao in tela.get_node("Trabalhadores").get_children():
+		if (cartao as Control).get_theme_stylebox("panel") == esperado:
+			parados += 1
+	_confere("todo trabalhador parado tem o cartão de aviso",
+		parados == parado.x, "%d cartões marcados para %d parados" % [parados, parado.x])
+
+	var alocar: Button = tela.get_node("AcoesTurno/Alocar")
+	_confere("e o botão que resolve está aceso", not alocar.disabled)
+
+	root.remove_child(tela)
+	tela.free()
+	_d9_completo = true
+
+
+# ── D10 ── o toque na pílula do caixa tem de abrir o painel de verdade
+#
+# Item do primeiro playtest: "tocar no dinheiro do HUD abre um resumo do
+# ganho de ontem e o projetado para hoje". A conta certa (T5i, em
+# `run_tests.gd`) não prova que o TOQUE chega lá — só que a função devolve o
+# número certo quando chamada direto. Este bloco emite o mesmo `gui_input`
+# que um dedo real dispara e confere que o painel abriu, e com o texto certo.
+func _d10_toque_no_caixa() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+
+	var pilula: Control = tela.get_node("HudBar/CaixaPilula")
+	var overlay: Node = tela.get_node("Overlay")
+	var antes := overlay.get_child_count()
+
+	# O RELEASE é o que o handler escuta — press sozinho não deve abrir nada,
+	# a mesma regra do `Worker.gd` (reagir no toque que solta).
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	ev.pressed = true
+	pilula.gui_input.emit(ev)
+	_confere("o press sozinho nao abre nada", overlay.get_child_count() == antes)
+
+	ev = InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	ev.pressed = false
+	pilula.gui_input.emit(ev)
+	_confere("o release abriu um painel a mais", overlay.get_child_count() == antes + 1)
+
+	var painel: Node = overlay.get_child(overlay.get_child_count() - 1)
+	var script: Script = painel.get_script()
+	_confere("e o painel aberto e o PainelCaixa",
+		script != null and String(script.resource_path).ends_with("PainelCaixa.gd"),
+		"script aberto: %s" % (script.resource_path if script != null else "nenhum"))
+
+	# "Ontem" ainda não tem turno num porto que acabou de nascer — o painel
+	# tem de dizer isso em vez de mostrar uma fileira de zeros.
+	var texto_inteiro := "\n".join(_juntar_textos(painel))
+	_confere("mostra que o primeiro dia ainda nao fechou",
+		texto_inteiro.contains("ainda não fechou"), "painel diz: %s" % texto_inteiro)
+	_confere("e mostra a secao do que hoje projeta",
+		texto_inteiro.contains("PROJETADO PARA HOJE"), "painel diz: %s" % texto_inteiro)
+
+	root.remove_child(tela)
+	tela.free()
+	_d10_completo = true
+
+
+# Recolhe o texto de todo Label debaixo de `no`, em ordem — para conferir o
+# CONTEÚDO de um painel sem depender do caminho exato de cada rótulo dentro
+# dele, que o `PainelNarrativo` monta dinamicamente.
+#
+# DEVOLVE em vez de RECEBER e mutar um `PackedStringArray` por parâmetro: COW
+# de array passado a uma função recursiva é o tipo de coisa que parece
+# funcionar e às vezes não propaga — devolver e concatenar com
+# `append_array()` não deixa essa dúvida no ar.
+func _juntar_textos(no: Node) -> PackedStringArray:
+	var saida := PackedStringArray()
+	if no is Label:
+		saida.append((no as Label).text)
+	for filho in no.get_children():
+		saida.append_array(_juntar_textos(filho))
+	return saida
+
+
+# ── D11 ── o chip do dia, o da reputação e o das docas também respondem
+#
+# Mesma prova do D10, para os três chips que faltavam: o toque de verdade
+# (gui_input, não uma chamada direta a `setup()`) tem de abrir o painel
+# CERTO, com conteúdo dentro — e não um retângulo vazio ou o painel de outro
+# chip por engano de que scene ficou ligada a qual sinal.
+func _d11_toque_nos_outros_chips() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var overlay: Node = tela.get_node("Overlay")
+
+	_confere_chip_abre(tela, overlay, "HudBar/DiaPilula", "PainelCalendario.gd",
+		["Calendário", "SEMANA 1"])
+	_confere_chip_abre(tela, overlay, "HudBar/RepPilula", "PainelReputacao.gd",
+		["Reputação", GS.reputation_label()])
+	_confere_chip_abre(tela, overlay, "HudBar/DocasPilula", "PainelDocas.gd",
+		["Docas", "de %d berços" % int(GS.BERCOS_NO_MAPA)])
+
+	root.remove_child(tela)
+	tela.free()
+	_d11_completo = true
+
+
+# Toca (release) no caminho `no_pilula` dentro de `tela`, confere que o
+# painel que abriu no `overlay` é o `script_esperado` e contém CADA um dos
+# `deve_conter`, e fecha o painel antes de devolver — para o próximo chip
+# testado não herdar o painel do anterior no topo da pilha.
+func _confere_chip_abre(tela: Control, overlay: Node, no_pilula: String,
+		script_esperado: String, deve_conter: Array) -> void:
+	var pilula: Control = tela.get_node(no_pilula)
+	var antes := overlay.get_child_count()
+
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	ev.pressed = false
+	pilula.gui_input.emit(ev)
+
+	_confere("%s abriu um painel" % no_pilula, overlay.get_child_count() == antes + 1)
+	var painel: Node = overlay.get_child(overlay.get_child_count() - 1)
+	var script: Script = painel.get_script()
+	_confere("%s abriu o painel certo" % no_pilula,
+		script != null and String(script.resource_path).ends_with(script_esperado),
+		"abriu: %s" % (script.resource_path if script != null else "nenhum"))
+
+	var texto_inteiro := "\n".join(_juntar_textos(painel))
+	for trecho in deve_conter:
+		_confere("%s mostra \"%s\"" % [no_pilula, trecho],
+			texto_inteiro.contains(String(trecho)), "painel diz: %s" % texto_inteiro)
+
+	overlay.remove_child(painel)
+	painel.free()
+
+
+# ── D12 ── o cartão da parcela: o convite e a porta
+#
+# Pagar adiantado é item do playtest, e o botão não vive no cartão (o rodapé
+# não tem 44px de folga) — vive num painel que o TOQUE abre. Duas coisas
+# podem falhar em silêncio aqui: o toque não estar ligado, e o cartão não
+# CONVIDAR. Cartão tocável que não se anuncia é cartão que ninguém toca, e
+# nenhum teste de layout pega isso — este pega.
+func _d12_toque_na_parcela() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	# Caixa que cobre a parcela: é o único estado em que o convite aparece.
+	GS.cash = int(GS.PARCELA_AMOUNT) + 1000
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var overlay: Node = tela.get_node("Overlay")
+
+	var rotulo: Label = tela.get_node("MetaCartao/MetaColuna/MetaTexto")
+	_confere("com caixa de sobra, o cartão convida ao toque",
+		rotulo.text.contains("toque"), "diz \"%s\"" % rotulo.text)
+	_confere("e o convite está na cor de aviso",
+		rotulo.get_theme_color("font_color").is_equal_approx(COR_AVISO))
+
+	_confere_chip_abre(tela, overlay, "MetaCartao", "PainelParcela.gd",
+		["Parcela do Sr. Ribeiro", "quitar"])
+
+	# Sem caixa, o convite SOME — senão ele prometeria uma ação que a porta
+	# do outro lado recusa.
+	GS.cash = int(GS.PARCELA_AMOUNT) - 1
+	tela.call("_refresh_hud")
+	_confere("sem caixa, o convite desaparece",
+		not rotulo.text.contains("toque"), "diz \"%s\"" % rotulo.text)
+
+	root.remove_child(tela)
+	tela.free()
+	_d12_completo = true
+
+
+# ── D13 ── a travessia do caminhão: do lado de fora ao lado de fora
+#
+# Pedido do playtest, terceira volta: "ele deveria vir de fora do mapa, e
+# depois sair do mapa". A rota tem oito pontos e três cotovelos, e nenhum dos
+# quatro modos de falhar dá erro:
+#
+#   1. um ponto no `mx` ERRADO — a estrada salta 4 unidades a cada degrau, e
+#      um trecho no `mx` do degrau vizinho põe o caminhão sobre o pátio ou
+#      sobre a vila, com o trajeto a continuar a parecer uma linha reta;
+#   2. as pontas DENTRO do quadro — aí ele aparece e some do nada, que é
+#      exatamente o que o pedido quis corrigir;
+#   3. a silhueta errada no trecho: só as faces `+x` e `-y` são visíveis, e um
+#      caminhão a percorrer um cotovelo com o sprite do outro eixo desliza de
+#      lado sem nada reprovar;
+#   4. não se reordenar, e passar por cima de quem devia tapá-lo.
+#
+# O asfalto NÃO é repetido aqui: sai das faixas que o gerador do mapa publica,
+# a mesma fonte que o D2 usa. Nem os pontos da rota — saem do `Main.gd`.
+func _d13_travessia_do_caminhao() -> void:
+	var tela: Control = _main
+	var cenario: Node = tela.get_node("MapaWrap/Cenario")
+	var caminhao: Control = cenario.get_node("Caminhao")
+	var pr: Dictionary = _ancoras["projecao"]
+	var alt := float(pr["alt_cais"])
+	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var rota: Array = consts["ROTA_ESTRADA"]
+	var origem_rota: Vector2 = consts["CAMINHAO_ORIGEM"]
+
+	# Zero: a projeção que o `Main.gd` usa para andar é a MESMA do mapa. Ele
+	# repete `MEIA_LARG`/`MEIA_ALT` porque roda dentro do jogo e não lê o JSON;
+	# repetição sem esta asserção é o contrato a divergir calado.
+	_confere("o caminhão anda na projeção do mapa (%.0f x %.0f)"
+			% [float(consts["MEIA_LARG"]), float(consts["MEIA_ALT"])],
+		is_equal_approx(float(consts["MEIA_LARG"]), float(pr["meia_larg"]))
+			and is_equal_approx(float(consts["MEIA_ALT"]), float(pr["meia_alt"])))
+
+	_confere("a rota tem os oito pontos da escada", rota.size() == 8,
+		"tem %d" % rota.size())
+
+	# ── 1 ── todo ponto da rota, e todo ponto ENTRE eles, cai em asfalto.
+	#
+	# Amostrar só os vértices deixaria passar um trecho que atravessasse a
+	# quadra pelo meio — é a mesma lição dos quatro cantos do D2. As regiões
+	# são duas: a faixa reta de cada degrau, e o cotovelo que liga um ao
+	# seguinte, que o `vias()` desenha com a largura da rua.
+	var regioes: Array = []
+	var faixas: Array = _ancoras["faixas"]
+	for i in range(faixas.size()):
+		var f: Dictionary = faixas[i]
+		var rua: Array = f["rua"]
+		var my: Array = f["my"]
+		regioes.append([float(rua[0]), float(rua[1]), float(my[0]), float(my[1])])
+		if i + 1 < faixas.size():
+			var prox: Array = faixas[i + 1]["rua"]
+			var largura := float(rua[1]) - float(rua[0])
+			regioes.append([float(rua[0]), float(prox[1]),
+				float(my[1]) - largura, float(my[1])])
+
+	var fora := ""
+	for i in range(rota.size() - 1):
+		var de: Vector2 = rota[i]
+		var para: Vector2 = rota[i + 1]
+		for k in range(21):
+			var m: Vector2 = de.lerp(para, float(k) / 20.0)
+			var dentro := false
+			for r in regioes:
+				if m.x >= r[0] - 0.01 and m.x <= r[1] + 0.01 \
+						and m.y >= r[2] - 0.01 and m.y <= r[3] + 0.01:
+					dentro = true
+					break
+			if not dentro and fora == "":
+				fora = "no trecho %d, a %d%%, está em (%.2f, %.2f) e ali não há asfalto" \
+					% [i, k * 5, m.x, m.y]
+	_confere("a rota inteira anda sobre asfalto, cotovelos incluídos",
+		fora == "", fora)
+
+	# ── 2 ── as duas pontas ficam FORA do quadro visível.
+	#
+	# Fora não é "o ponto de ancoragem fora": é o desenho todo fora. O quadro
+	# do prop tem 512px e o caminhão ocupa um retângulo pequeno lá dentro, e é
+	# esse que se mede — pelo ponto de ancoragem o caminhão sairia meio dentro.
+	var janela := (tela.get_node("MapaWrap") as Control).size
+	var base := caminhao.position - _tela_da_rota(origem_rota, origem_rota, pr)
+	for ponta in [[0, "a entrada"], [rota.size() - 1, "a saída"]]:
+		var idx: int = ponta[0]
+		var pos: Vector2 = base + _tela_da_rota(rota[idx], origem_rota, pr) \
+			+ Vector2(MEIO_QUADRO, MEIO_QUADRO)
+		var caixa := Rect2(pos + DESENHO_CAMINHAO.position, DESENHO_CAMINHAO.size)
+		var visivel := Rect2(Vector2.ZERO, janela)
+		_confere("%s do caminhão está fora do quadro" % ponta[1],
+			not visivel.intersects(caixa),
+			"o desenho fica em %s e o mapa é %s" % [caixa, visivel])
+
+	# E o contrário para onde a CENA o põe: aí ele tem de estar inteiro
+	# dentro, senão as cinco capturas do CI apanham-no cortado ao meio.
+	var na_cena := Rect2(caminhao.position + Vector2(MEIO_QUADRO, MEIO_QUADRO)
+		+ DESENHO_CAMINHAO.position, DESENHO_CAMINHAO.size)
+	_confere("e onde a cena o põe ele está inteiro dentro",
+		Rect2(Vector2.ZERO, janela).encloses(na_cena),
+		"o desenho fica em %s" % na_cena)
+
+	# E a cena tem de o pôr num ponto DA rota, não ao lado dela.
+	var m_cena := _mundo(_origem(caminhao), alt)
+	_confere("a cena põe-no no ponto de partida da rota",
+		m_cena.distance_to(origem_rota) < 0.02,
+		"está em (%.2f, %.2f) e devia estar em (%.2f, %.2f)"
+			% [m_cena.x, m_cena.y, origem_rota.x, origem_rota.y])
+
+	# ── 3 ── a silhueta certa por trecho. Trecho que anda em `mx` usa o sprite
+	# de `mx`; trecho que anda em `my`, o de `my`. Um só sprite para os dois
+	# eixos foi a primeira versão, e o caminhão virava de lado nos cotovelos.
+	#
+	# E a pergunta é feita a QUEM DECIDE — `silhueta_do_trecho()` —, não
+	# recalculada aqui. A primeira versão deste bloco recalculava, e por isso
+	# não reprovou quando se pôs a mesma silhueta nos oito trechos: o teste
+	# estava a concordar consigo próprio.
+	var errado := ""
+	var vistas := {}
+	for i in range(rota.size() - 1):
+		var de: Vector2 = rota[i]
+		var para: Vector2 = rota[i + 1]
+		var anda_em_mx: bool = abs(para.x - de.x) > 0.01
+		var usada: Texture2D = tela.call("silhueta_do_trecho", de, para)
+		var caminho: String = usada.resource_path
+		vistas[caminho] = true
+		if anda_em_mx != caminho.ends_with("caminhao_mx.png") and errado == "":
+			errado = "o trecho %d anda em %s e usa %s" \
+				% [i, "mx" if anda_em_mx else "my", caminho.get_file()]
+	_confere("cada trecho usa a silhueta do eixo em que anda", errado == "", errado)
+	_confere("e as duas silhuetas entram em campo", vistas.size() == 2,
+		"só se viu %s" % str(vistas.keys()))
+
+	# ── 4 ── a reordenação. Ordem de irmão É profundidade neste plano, e a
+	# travessia atravessa a profundidade de meia cena: índice fixo estaria
+	# certo num sítio e errado no outro.
+	var pos_antes := caminhao.position
+	var indice_antes := caminhao.get_index()
+	caminhao.position = base + _tela_da_rota(rota[rota.size() - 1], origem_rota, pr)
+	tela.call("_ordenar_por_profundidade", caminhao)
+	var indice_depois := caminhao.get_index()
+	_confere("no fim da travessia ele já mudou de ordem entre os irmãos",
+		indice_depois > indice_antes,
+		"ficou no índice %d, e começou no %d" % [indice_depois, indice_antes])
+	var erro_ordem := ""
+	for i in range(cenario.get_child_count()):
+		var outro := cenario.get_child(i) as Control
+		if outro == null or outro == caminhao:
+			continue
+		if outro.position.y < caminhao.position.y and i > indice_depois and erro_ordem == "":
+			erro_ordem = "%s está acima na tela mas depois na ordem" % outro.name
+	_confere("e no lugar certo da fila de profundidade", erro_ordem == "", erro_ordem)
+
+	caminhao.position = pos_antes
+	tela.call("_ordenar_por_profundidade", caminhao)
+	_d13_completo = true
+
+
+# O mesmo `tela_da_rota()` do `Main.gd`, mas com a projeção vinda das ÂNCORAS.
+# Escrito à mão de propósito: chamar o do jogo faria o teste medir a rota com a
+# mesma conta que quer conferir, e uma projeção errada passaria dos dois lados.
+func _tela_da_rota(ponto: Vector2, origem: Vector2, pr: Dictionary) -> Vector2:
+	var d := ponto - origem
+	return Vector2((d.x - d.y) * float(pr["meia_larg"]),
+		(d.x + d.y) * float(pr["meia_alt"]))

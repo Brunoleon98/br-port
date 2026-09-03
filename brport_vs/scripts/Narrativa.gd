@@ -46,7 +46,7 @@ extends RefCounted
 # Abre uma vez, na semana 1. Primeira pessoa, incerteza com leveza.
 const DIARIO_PRIMEIRA_PAGINA := """Nunca pensei que ia escrever nesse diário.
 
-O avô escrevia aqui toda semana — vinte e três anos de {portName}, letra miúda, tinta azul. Eu achava piegas.
+O avô escrevia aqui toda semana — vinte e três anos de {portName}, letra miúda, tinta azul. Eu achava bobagem.
 
 Hoje abri a primeira página em branco.
 

@@ -207,6 +207,48 @@ O custo medido do recuo foi dois lotes da vila a sair do quadro, de 11 para 9.
 Baixar o `MEIA_LARG` deve trazê-los de volta, mas isso **não está medido** — o
 `CX`/`CY` do mapa está afinado para 30/15 e refazer a conta é o passo 2.
 
+### Fora das etapas — a escala dos dois prédios do pátio (03/09)
+
+Não é etapa do plano: é correção de playtest, e entra aqui porque mexeu em
+geometria de prop e no `bpy`.
+
+O Bruno leu "o armazém e o escritório estão muito grandes, além disso estão em
+cima da estrada" DEPOIS de o pátio já ter sido alargado e de o teste já provar
+que a pegada dos dois não toca o asfalto. As duas coisas eram verdade ao mesmo
+tempo, e a lição vale para o resto do plano:
+
+| | antes | depois |
+|---|---:|---:|
+| Armazém — largura do pátio ocupada | 90% | **65%** |
+| Armazém — sprite | 258px | **185px** |
+| Armazém — contra o maior navio (146px) | 1,8× | **1,27×** |
+| Escritório — sprite | 213px | **154px** |
+| Altura contra uma casa da vila | ~4× | ~3× |
+| Lotes da vila no quadro | 9 | **11** |
+
+**Base legal e silhueta a derramar são coisas diferentes.** Em isométrico a
+altura projeta para cima E para trás; um prédio 4× mais alto que os vizinhos
+cobre o que está atrás dele mesmo com a pegada certinha. O teste de design
+media a pegada — e continuou a passar o tempo todo, porque ele nunca esteve
+errado sobre a pegada.
+
+**Encolheu-se o GRUPO (`ESCALA_PREDIO = 0,72`), não as literais.** Porta contra
+parede, janela contra porta, beiral contra telhado: trinta números e trinta
+chances de um ficar por escalar. E cada objeto uma vez só — `galpao` e
+`galpao_velho` partilham as paredes, e escalar grupo a grupo daria `k²` nelas.
+
+### Fora das etapas — o caminhão virado para o eixo da estrada (03/09)
+
+Mesma origem. O prop nascera deitado em `mx` (cabine para o mar) e o playtest
+pediu que ele percorresse a ESTRADA, que corre em `my`.
+
+**E não se resolveu rodando o grupo 90°.** Só as faces `+x` e `-y` são
+visíveis por esta câmera: rodar punha o para-brisa a olhar certo e mandava a
+janela lateral para `-x`, que ninguém vê. O corpo foi RECONSTRUÍDO com o
+comprimento em `y` e cada detalhe reposto na face visível — inclusive o eixo
+das rodas, que num veículo deitado em `my` aponta em `x` (o `_roda()` ganhou
+um parâmetro para isso).
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.
@@ -269,9 +311,51 @@ metade; o caixote melhorou e continua a ser a peça mais difícil do convés.**
 - **Mede-se por:** o galpão a 100% e a 25% — padrão que só funciona de perto
   não serve.
 
-### Etapa 5 — Personagem com rosto
+### Etapa 5 — Personagem com rosto  ✅ FEITA em 03/09
 - Folha de rostos por gerador de imagem, aplicada num plano da cabeça.
 - **Mede-se por:** o trabalhador no tabuado, a 22px, no jogo rodando.
+
+#### O que se fez, e por que não foi o que estava escrito
+
+O gerador de imagem **não entrou**, e o motivo é o mesmo que já custou duas
+levas de arte: gerador não erra o desenho, erra o ÂNGULO — e uma folha de
+rostos colada num plano teria de concordar com uma câmera que o gerador não
+conhece. O trabalhador do cartão saiu do MESMO estúdio de tudo o resto
+(`blender/brp_porto.py`, `trabalhador_retrato`), o que era exatamente o pedido
+do playtest: *"o sprite do trabalhador pode ser refeito para ficar mais de
+acordo com o design do jogo"*.
+
+**São dois bonecos, e continuam a ser.** O `trabalhador` do píer tem 22px na
+tela e são cinco caixas de propósito; a esta escala mais peça vira ruído. O
+`trabalhador_retrato` tem 32×70 no cartão do rodapé, e a 70px cinco caixas leem
+como um boneco de LEGO. Mesmo personagem, dois orçamentos de pixel.
+
+**Ele é o único prop que olha para a frente.** Todo o resto do catálogo vive no
+mapa e obedece ao 3/4 da câmera; um retrato de 3/4 num cartão de 108px mostra
+sobretudo o capacete. A volta foi rodar o boneco 45° em Z — a câmera não muda,
+o contrato não muda, e a cara passa a apontar para quem olha.
+
+**Quatro tentativas, e o que cada uma ensinou** (está tudo em comentário na
+função, para não se repetir):
+
+1. medidas misturadas — largura em unidades de mundo, altura em pixels — deram
+   um PALITO de 429×27, cortado no topo do quadro. Depois da rotação de 45° a
+   largura anda 42,4px por unidade, a altura 36,7 e a profundidade 21,2: três
+   fatores, e escrever tudo em pixels tira-os da frente;
+2. as duas faixas refletivas tinham 70px de largura num colete de 68 e taparam
+   o laranja inteiro — o tronco saiu BRANCO. A 32px cada peça tem de ganhar o
+   seu espaço contra as vizinhas, não apenas caber;
+3. o colete e o tronco tinham a mesma face da frente — duas faces coplanares, o
+   z-buffer a escolher ao acaso, e o laranja simplesmente não apareceu;
+4. `cone()` pede RAIO e o conversor devolve LARGURA: a aba do capacete saiu com
+   116px de diâmetro numa cabeça de 50, e no cartão o boneco aparecia de
+   CHAPÉU DE PALHA.
+
+E duas coisas que só a captura no jogo disse, com todas as asserções verdes: o
+boneco **enche o quadro** (um `TextureRect` em `KEEP_ASPECT_CENTERED` escala o
+PNG inteiro, transparência incluída — com 251px de boneco num quadro de 512 ele
+saía com 34px no cartão), e **centra-se pela quina da bota** e não pela altura,
+porque em isométrico a quina da frente desce meia profundidade abaixo do pé.
 
 ### Etapa 6 — Interface encorpada (NÃO é Blender)
 - Gradiente e sombra nos `StyleBoxFlat` do tema, cor por botão na barra

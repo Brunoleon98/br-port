@@ -142,21 +142,128 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
 
 ### 🎨 Arte — entra na fila do plano de arte
 
-- Pedras chapadas, sem profundidade
+- ~~**O armazém e o escritório estão muito grandes, e em cima da estrada**~~ —
+  **corrigido em 03/09, e era ESCALA e não posição.** Em 03/09 o pátio já
+  tinha sido alargado e o teste já provava que a pegada dos dois não toca o
+  asfalto; ele continuou a vê-los em cima da rua, e estava certo. Medido: o
+  armazém ocupava **90% da largura do pátio** e os dois levantavam-se **~4x a
+  altura de uma casa da vila** — em isométrico é a ALTURA que projeta a
+  silhueta para cima e para trás, por cima do que está atrás. Base legal,
+  silhueta a derramar.
+  Os dois encolheram 28% (`ESCALA_PREDIO = 0,72`, escalando o GRUPO e não as
+  trinta literais, para porta/janela/beiral manterem a proporção). O armazém
+  passou de 258px para 185px de sprite — era 1,8x o maior navio do jogo, agora
+  é 1,27x — e de 90% para **65% do pátio**.
+  **Ganho de lambuja, medido:** os vãos abertos na vila para eles encolheram
+  junto, e a fileira de casas voltou de 9 para **11 lotes** no quadro — os dois
+  que o alargamento do pátio tinha empurrado para fora.
+- ~~Pedras chapadas, sem profundidade~~ — **corrigido em 03/09.** Cada pedra
+  era UMA elipse de um tom, e elipse de um tom não tem lado: de longe o
+  enrocamento lia como mancha pintada no muro. Agora é um sólido facetado —
+  polígono irregular de topo e uma saia por aresta virada para baixo, a da
+  direita mais escura que a da esquerda, seguindo a mesma luz do resto do
+  mapa. Duas formas foram tentadas antes: elipse extrudada sai FICHA DE
+  PÔQUER (e desenha um ANEL onde um tampo claro cai sobre a saia do vizinho),
+  e elipse com cópia menor por cima lê como elipse chapada com sombra. O que
+  faz pedra pequena ler como pedra é ARESTA.
 - Vegetação pobre e casas mal distribuídas → **isto encontra a leitura de
   composição das referências**, que já diz para consultar mapas de cidades
   portuárias reais (`docs/design/referencias/README.md`)
-- Animações mais fluidas, e novas: coqueiro, ondas, caminhão a andar na estrada
-- Sprite do trabalhador refeito → **é a Etapa 5** do plano de arte
+- ~~Animações mais fluidas~~ (coqueiro) e ~~caminhão a andar~~ — **feitas em
+  03/09.** O coqueiro era um PÊNDULO: +A → −A com a mesma duração nos dois
+  sentidos, período fixo, e é isso que o olho lia. Agora é uma RAJADA — empurra
+  depressa com a velocidade a morrer no fim (`EASE_OUT`), solta devagar
+  passando do ponto, assenta numa oscilação menor, e PARA. A pausa é o que faz
+  a rajada seguinte parecer nova.
+  ~~O caminhão **não anda ao longo da estrada**~~ — **anda desde 03/09, na
+  segunda volta do pedido.** A primeira resposta foi fazê-lo entrar no pátio,
+  porque a cabine do prop apontava para `+mx` e a estrada corre em `my`. O
+  diagnóstico estava certo e a conclusão errada: o consertável não era a
+  marcha, era o PROP. Rerenderizado deitado no eixo da estrada
+  (`blender/brp_porto.py`), ele atravessa o degrau 1 inteiro — 255px, aparece
+  numa ponta e some na outra, que é o que foi pedido.
+  **E não se resolveu rodando o grupo 90°**: só as faces `+x` e `-y` são
+  visíveis, e rodar mandava a janela lateral para `-x`, que a câmera não vê.
+  O corpo foi reconstruído com o comprimento em `y` e cada detalhe reposto na
+  face visível certa — inclusive o eixo das rodas, que num veículo deitado em
+  `my` aponta em `x`.
+  A travessia é de UM degrau de propósito: a estrada salta 4 unidades em `mx`
+  a cada degrau da costa, e percorrer a costa toda exigiria teleportar. E ele
+  **reordena-se pelo caminho**, porque atravessa a profundidade do coqueiro e
+  do bote — ordem fixa só serve a prop parado.
+- ~~**Ondas**~~ — **feitas em 03/09, e o diagnóstico de 02/09 estava certo.**
+  Não havia nó de onda nem de espuma: a espuma estava ASSADA no SVG do mapa,
+  que é UMA textura, e animá-la seria fazer a costa deslizar. Agora o
+  `gerar_mapa_iso.py` escreve-a em DOIS arquivos próprios, transparentes, do
+  tamanho do mapa e na mesma projeção — `--espuma=0` e `--espuma=1` —, e o
+  mapa deixou de a ter (assada E em camada apareceria a dobrar, com metade
+  parada). O jogo põe as duas entre a água e o cenário e lava-as em
+  CONTRAFASE: uma entra enquanto a outra sai. Uma camada só a pulsar punha a
+  costa inteira a clarear ao mesmo tempo, que é o irmão do defeito que o
+  gerador já documenta. E o tempo é assimétrico como na rajada do coqueiro —
+  1,6s a entrar, 3,4s a recuar; com a mesma duração nos dois sentidos volta a
+  ser pêndulo.
+- ~~Sprite do trabalhador refeito~~ — **feito em 03/09, e é a Etapa 5 do plano
+  de arte.** O sprite do cartão era um desenho pintado, com contorno, brilho e
+  degradê; o jogo é facetado, sem contorno e de faces chapadas. Não destoava
+  por ser feio, destoava por ser de outra oficina. O `trabalhador_retrato` sai
+  do MESMO estúdio de tudo o resto e é o único prop que olha para a frente —
+  rodado 45° em Z, porque um retrato de 3/4 num cartão de 108px mostra
+  sobretudo o capacete. O boneco do PÍER continua a existir e continua com
+  cinco caixas: 22px e 70px não são o mesmo orçamento de pixel.
 
 ### 🖥️ Interface — itens novos, sem gate
 
 - Layout das opções abaixo do mapa
-- Alerta de trabalhador não alocado mais visível
-- Tocar nos itens do HUD abre detalhe (dinheiro → resumo do ganho de ontem e o
-  projetado para hoje)
-- Calendário nos dias, com eventos sinalizados
-- Espaço no HUD reservado para o que vem depois (mapa da cidade, lojas)
+- ~~Alerta de trabalhador não alocado mais visível~~ — **feito em 03/09.** O
+  aviso existia só do lado da DOCA (borda âmbar, "sem trabalhador"); o lado que
+  resolve dizia "Livre" em cinzento. Agora o cartão do trabalhador tem estado
+  próprio (`TrabParado`, fundo âmbar) e a linha acima dele conta: "2
+  trabalhadores parados — 2 docas esperando". Os três sinais (rótulo, cartão,
+  botão) saem da mesma varredura, `GameState.trabalho_parado()`.
+  O tom do cartão foi escolhido por LUMINÂNCIA e não por matiz: os três cartões
+  de hoje vivem entre 0,853 e 0,933, e um creme de 0,902 leria como mais um
+  irmão. O âmbar do tema como TEXTO ali dava 2,98:1 e reprovava a WCAG — por
+  isso o sinal é o fundo.
+- ~~Tocar nos itens do HUD abre detalhe (dinheiro → resumo do ganho de ontem e
+  o projetado para hoje)~~ — **feito em duas partes.** O dinheiro em 03/09
+  (`GameState.dia_atual` / `dia_anterior` são a mesma contabilidade de
+  `semana_atual`, só que por dia; "ontem" é histórico e só se lê, "hoje" é uma
+  SIMULAÇÃO de `advance_turn()` — `projecao_do_dia()` — que não mexe em nada).
+  Os outros três chips (dia, reputação, docas) em 03/09 também, mais abaixo.
+- ~~Calendário nos dias, com eventos sinalizados~~ — **feito em 03/09, e junto
+  com o item acima**: tocar no dia e o calendário são a mesma pergunta, e
+  viraram um painel só. `GameState.calendario()` devolve, por dia, se é hoje,
+  se já passou, se fecha semana ou se é o vencimento da parcela — os únicos
+  três eventos que o jogo sabe de antemão. A oferta do rival fica de fora de
+  propósito: é sorteada por barco, não por dia, e marcá-la seria inventar uma
+  certeza que o jogo não tem.
+  Tocar na reputação abre a escada de patamares e o que sobe/desce cada um,
+  lido direto das constantes (nunca escrito à mão, para não poder divergir).
+  Tocar nas docas mostra quantos berços faltam e o que destrava o próximo,
+  reaproveitando o mesmo texto que o botão de construir já usa
+  (`impedimento_estrutura()`), em vez de escrever uma segunda explicação.
+- ~~**Pagar a dívida antes do tempo**~~ — **feito em 03/09, e ESTE ITEM A
+  TRIAGEM TINHA PERDIDO.** Ele está na transcrição acima ("pode haver a opção
+  de pagar a dívida antes do tempo") e não entrou em gaveta nenhuma; só
+  apareceu ao reler o texto original palavra por palavra, um dia depois. É a
+  falha mais barata de cometer e a mais cara de descobrir tarde — **triagem
+  que resume perde item; a lista tem de sair da transcrição linha a linha.**
+  A porta nova é `pagar_parcela_adiantado()`, e ela e o vencimento baixam a
+  parcela pela MESMA função (`_baixar_parcela`). O valor é igual de propósito:
+  desconto por antecipação mexeria na economia medida. Toca-se no cartão da
+  meta — o rodapé tem sete faixas e 29px de folga, e um botão de 44px não cabe
+  lá sem tirar algo que já é usado.
+- Espaço no HUD reservado para o que vem depois (mapa da cidade, lojas) —
+  **em aberto, e é decisão do Bruno**: o rodapé está cheio (sete faixas, 29px
+  até a borda), então reservar espaço agora significa TIRAR alguma coisa que
+  já é usada. E o que iria para lá — mapa da cidade, lojas — é conteúdo de
+  Fase 2, que está adiado por decisão. Reservar espaço para o que não existe,
+  cortando o que existe, é a troca que precisa do olho dele.
+- Layout das opções abaixo do mapa — **em aberto, e pela mesma razão**: são
+  sete faixas empilhadas entre o mapa e a borda de baixo (cartões de doca,
+  título, trabalhadores, mensagem, meta, construir, ações). Enxugar isso é
+  escolher o que sai, e escolher o que sai é gosto — o gate A5 é ele a olhar.
 
 ### 💰 Economia e narrativa — NÃO se mexe sem medir
 
@@ -184,7 +291,10 @@ economia da Fase 2 continua adiada por decisão (ver `ESTADO_DO_PROJETO.md`).
 
 ### ✏️ Escrita
 
-- "termo piegas" na tela inicial — trocar
+- ~~"termo piegas" na tela inicial — trocar~~ — **feito em 03/09.** Era a
+  palavra literal, na primeira página do diário: "Eu achava piegas" → "Eu
+  achava bobagem". Mantém o desdém de quem era criança e olhava o avô
+  escrever, em palavra que se usa.
 - "madeira podre mas está novinho": a fala contradiz o que a tela mostra. Ou a
   fala muda, ou o porto ganha o sprite em ruínas que ela descreve.
 

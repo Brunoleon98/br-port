@@ -191,6 +191,24 @@ Teste e import rodam sem tela.
    `gerar_mapa_iso.py` escreve as âncoras AO LADO do SVG, e o SVG tinha ido
    para `/tmp`. O teste leu a tabela antiga e nunca soube do defeito. Antes de
    concluir "o validador não pega", confira que o arquivo que ele lê mudou.
+   **E CONTAGEM SÓ SE TESTA ACIMA DE UM.** Em 03/09 injetou-se um `break` que
+   fazia o contador parar no primeiro trabalhador livre, e o teste passou: o
+   porto abre com UM trabalhador e uma doca, e com esses números contar um e
+   contar todos dá a mesma resposta. O bloco passou a montar três e dois.
+   **E defeito injetado numa regra que existe em DOIS sítios nunca reprova.**
+   No mesmo dia, tirar `if phase != "playing"` de `trabalho_parado()` não
+   reprovou nada, porque `doca_aceita_trabalhador()` carregava a mesma guarda.
+   Quando um defeito não pega, a primeira suspeita é que a regra esteja
+   duplicada — e a correção é apagar a cópia, não reforçar o teste.
+   **E confira QUAL guarda está a segurar a asserção.** Mordeu duas vezes em
+   03/09, e não é a regra duplicada: são duas guardas DIFERENTES a proteger a
+   mesma asserção, e a errada a segurar. Tirar o `not parcela_paid` de quem
+   quita a dívida não reprovou nada, porque quitar deixa o caixa abaixo da
+   parcela e a guarda do DINHEIRO fechava a porta no lugar dela; e tirar o
+   teto de profundidade da marcha do caminhão não reprovou nada, porque o teto
+   de gosto (42px) era mais apertado. Em ambos os casos a correção é montar o
+   estado em que a guarda sob teste é a que APERTA — caixa de sobra, vizinho
+   mais perto — e não reforçar a asserção.
    **E confira que a base está LIMPA antes de injetar o defeito seguinte.** No
    mesmo dia, o `git checkout` que devolvia o arquivo entre um defeito e outro
    restaurou a versão anterior ao trabalho inteiro — e os três testes seguintes
@@ -312,6 +330,76 @@ tranca isso.
   defeito que ela existia para pegar: os cantos caíam a 2,82 e a 5,58, a rua
   ocupava 2,98..4,52, e a pegada atravessava o asfalto inteiro sem pousar nele
   com canto nenhum. Retângulo contra faixa é **interseção de intervalos**.
+- **Uma conta que só divergiria com um modificador ativo não se testa num
+  porto em ruínas.** A projeção do dia (item da interface, 03/09) e o fecho
+  real da semana partilham `_custos_da_semana()` de propósito — e o teste que
+  provava isso rodava sem pátio nem escritório construídos, onde a fórmula
+  errada e a certa dão o mesmo número por acidente (nenhuma das duas aplica
+  bónus nenhum). Só com os dois construídos um defeito injetado na cópia
+  reprovou. É a mesma lição de "contagem só se testa acima de um", aplicada a
+  um bónus em vez de uma quantidade.
+- **Cor calibrada para um fundo não atravessa para outro sem medir de novo.**
+  O cinzento-azulado que marca texto neutro sobre o fundo ESCURO do jogo
+  (0,51/0,6/0,706, usado no aviso de trabalhador ocioso) foi reaproveitado
+  sem medir no calendário (03/09), sobre CARTÃO BRANCO: mediu 2,93:1, abaixo
+  do corte de texto grande da WCAG (3,0). Reaproveitar cor entre dois fundos
+  diferentes é reaproveitar cor nenhuma — é medir duas vezes.
+- **"Está em cima da estrada" pode ser problema de ESCALA, não de posição.**
+  Em 03/09 o pátio foi alargado, o teste passou a provar que a pegada dos dois
+  prédios não toca o asfalto — e o jogador continuou a ver o escritório em
+  cima da rua. Estava certo: a base era legal, mas os prédios levantavam-se
+  ~4× a altura de uma casa da vila, e em isométrico é a ALTURA que projeta a
+  silhueta para cima e para trás, por cima do que está atrás. Antes de mover
+  um prop que "invade" algo, meça a altura dele contra os vizinhos.
+- **A rua tem COTOVELOS, e faixa reta nenhuma os declara.** Irmã da regra
+  acima, e o que estava mesmo por trás daquela queixa. Depois de encolher os
+  dois prédios o teste passava, e a estrada continuava com o armazém em cima
+  dela: entre um degrau e o seguinte a rua VIRA, e o `vias()` desenha esse
+  cotovelo em `mx` por cinco unidades e meia, atravessando o pátio de lado a
+  lado. As quatro faixas `rua` que o gerador publicava não o cobriam — e
+  nenhuma delas mentia, porque a rua RETA estava mesmo livre. Cinco props
+  estavam dentro dos cotovelos, dois deles com meia unidade de pegada. Hoje o
+  gerador publica `cotovelos` e o D2 confere-os; a lição é anterior ao teste:
+  **conferir o retângulo contra PARTE da rua não é conferi-lo contra a rua**,
+  como conferir os quatro cantos não era conferir o retângulo.
+- **Limite de GOSTO disfarçado de limite geométrico reprova o que está certo.**
+  O validador do Blender recusou o retrato do trabalhador dizendo que ele "vai
+  sair cortado do quadro de 512px" — e o render tinha 18px de folga em cima e
+  16 em baixo. O número (8 unidades) era uma regra de gosto para prop do mapa,
+  com a mensagem de uma regra geométrica; a geometria nunca chegou a ser
+  medida. Hoje são duas perguntas separadas, e a geométrica projeta mesmo os
+  cantos. **Validador que reprova o que está certo gasta-se depressa** — na
+  vez seguinte alguém sobe o limite em vez de olhar.
+- **E caixa alinhada aos eixos de um GRUPO tem quinas que não existem.** Ao
+  medir a projeção peça a peça a resposta bateu com o render; medindo pela
+  caixa do grupo, ela juntava o `x` de um braço com o `y` de uma bota e o `z`
+  do capacete e errava por 17px. Caixa de grupo serve para saber se algo cabe
+  num sítio; não serve para dizer o que a câmera vê.
+- **Peça de INTERFACE mede-se no tamanho do widget, não no do quadro.** Um prop
+  do mapa fica pequeno no PNG de 512 e é o Godot que o põe no sítio; um retrato
+  num `TextureRect` com `KEEP_ASPECT_CENTERED` escala o PNG INTEIRO, a
+  transparência incluída — 251px de boneco num quadro de 512 saem com 34px num
+  cartão de 70. Ele passava em todas as asserções. Arte para interface enche o
+  quadro; arte para o mapa, não.
+- **E letreiro é interface: desenha-se por cima do mapa, e o teste de design
+  não sabe onde ele cai.** O caminhão nasceu num ponto que passava em todas as
+  asserções e saía na captura com metade dele debaixo do letreiro do
+  ESCRITÓRIO. Prop que se põe para ser VISTO confere-se na foto, não na régua.
+- **Encolher um prop escala-se no GRUPO, nunca reescrevendo as literais.**
+  Porta contra parede, janela contra porta, beiral contra telhado: são trinta
+  números e trinta chances de um ficar por escalar. E cada objeto UMA vez —
+  `galpao` e `galpao_velho` partilham as paredes de propósito, então escalar
+  grupo a grupo passaria duas vezes nas peças comuns e elas sairiam a `k²`,
+  sem erro nenhum a apontá-lo.
+- **Rodar um prop 90° manda metade dos detalhes para a face que a câmera não
+  vê.** Só `+x` e `-y` são visíveis. Rodar o caminhão para o eixo da estrada
+  punha o para-brisa a olhar certo e a janela lateral para `-x` — invisível, e
+  ninguém notaria no render, só na silhueta chapada. Prop que muda de eixo
+  RECONSTRÓI-SE com os detalhes repostos nas faces visíveis.
+- **Prop que a captura não vê é prop que ninguém revê.** A travessia do
+  caminhão nasceu com um desvanecer de 1,1 s no INÍCIO do ciclo, e as cinco
+  fotos do CI assentam em poucos frames: o caminhão saía invisível de todas
+  elas. Animação nova começa no estado VISÍVEL, e o desvanecer vai no fim.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
