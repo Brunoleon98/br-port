@@ -207,6 +207,48 @@ O custo medido do recuo foi dois lotes da vila a sair do quadro, de 11 para 9.
 Baixar o `MEIA_LARG` deve trazê-los de volta, mas isso **não está medido** — o
 `CX`/`CY` do mapa está afinado para 30/15 e refazer a conta é o passo 2.
 
+### Fora das etapas — a escala dos dois prédios do pátio (03/09)
+
+Não é etapa do plano: é correção de playtest, e entra aqui porque mexeu em
+geometria de prop e no `bpy`.
+
+O Bruno leu "o armazém e o escritório estão muito grandes, além disso estão em
+cima da estrada" DEPOIS de o pátio já ter sido alargado e de o teste já provar
+que a pegada dos dois não toca o asfalto. As duas coisas eram verdade ao mesmo
+tempo, e a lição vale para o resto do plano:
+
+| | antes | depois |
+|---|---:|---:|
+| Armazém — largura do pátio ocupada | 90% | **65%** |
+| Armazém — sprite | 258px | **185px** |
+| Armazém — contra o maior navio (146px) | 1,8× | **1,27×** |
+| Escritório — sprite | 213px | **154px** |
+| Altura contra uma casa da vila | ~4× | ~3× |
+| Lotes da vila no quadro | 9 | **11** |
+
+**Base legal e silhueta a derramar são coisas diferentes.** Em isométrico a
+altura projeta para cima E para trás; um prédio 4× mais alto que os vizinhos
+cobre o que está atrás dele mesmo com a pegada certinha. O teste de design
+media a pegada — e continuou a passar o tempo todo, porque ele nunca esteve
+errado sobre a pegada.
+
+**Encolheu-se o GRUPO (`ESCALA_PREDIO = 0,72`), não as literais.** Porta contra
+parede, janela contra porta, beiral contra telhado: trinta números e trinta
+chances de um ficar por escalar. E cada objeto uma vez só — `galpao` e
+`galpao_velho` partilham as paredes, e escalar grupo a grupo daria `k²` nelas.
+
+### Fora das etapas — o caminhão virado para o eixo da estrada (03/09)
+
+Mesma origem. O prop nascera deitado em `mx` (cabine para o mar) e o playtest
+pediu que ele percorresse a ESTRADA, que corre em `my`.
+
+**E não se resolveu rodando o grupo 90°.** Só as faces `+x` e `-y` são
+visíveis por esta câmera: rodar punha o para-brisa a olhar certo e mandava a
+janela lateral para `-x`, que ninguém vê. O corpo foi RECONSTRUÍDO com o
+comprimento em `y` e cada detalhe reposto na face visível — inclusive o eixo
+das rodas, que num veículo deitado em `my` aponta em `x` (o `_roda()` ganhou
+um parâmetro para isso).
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

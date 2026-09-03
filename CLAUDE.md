@@ -344,6 +344,28 @@ tranca isso.
   sem medir no calendário (03/09), sobre CARTÃO BRANCO: mediu 2,93:1, abaixo
   do corte de texto grande da WCAG (3,0). Reaproveitar cor entre dois fundos
   diferentes é reaproveitar cor nenhuma — é medir duas vezes.
+- **"Está em cima da estrada" pode ser problema de ESCALA, não de posição.**
+  Em 03/09 o pátio foi alargado, o teste passou a provar que a pegada dos dois
+  prédios não toca o asfalto — e o jogador continuou a ver o escritório em
+  cima da rua. Estava certo: a base era legal, mas os prédios levantavam-se
+  ~4× a altura de uma casa da vila, e em isométrico é a ALTURA que projeta a
+  silhueta para cima e para trás, por cima do que está atrás. Antes de mover
+  um prop que "invade" algo, meça a altura dele contra os vizinhos.
+- **Encolher um prop escala-se no GRUPO, nunca reescrevendo as literais.**
+  Porta contra parede, janela contra porta, beiral contra telhado: são trinta
+  números e trinta chances de um ficar por escalar. E cada objeto UMA vez —
+  `galpao` e `galpao_velho` partilham as paredes de propósito, então escalar
+  grupo a grupo passaria duas vezes nas peças comuns e elas sairiam a `k²`,
+  sem erro nenhum a apontá-lo.
+- **Rodar um prop 90° manda metade dos detalhes para a face que a câmera não
+  vê.** Só `+x` e `-y` são visíveis. Rodar o caminhão para o eixo da estrada
+  punha o para-brisa a olhar certo e a janela lateral para `-x` — invisível, e
+  ninguém notaria no render, só na silhueta chapada. Prop que muda de eixo
+  RECONSTRÓI-SE com os detalhes repostos nas faces visíveis.
+- **Prop que a captura não vê é prop que ninguém revê.** A travessia do
+  caminhão nasceu com um desvanecer de 1,1 s no INÍCIO do ciclo, e as cinco
+  fotos do CI assentam em poucos frames: o caminhão saía invisível de todas
+  elas. Animação nova começa no estado VISÍVEL, e o desvanecer vai no fim.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.

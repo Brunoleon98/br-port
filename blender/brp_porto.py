@@ -21,56 +21,85 @@ from brp_studio import (caixa, cone, prisma, barra, corrimao, na_face,
 # Um losango 1x1 do mundo tem 60px de largura na tela. As medidas abaixo estão
 # em unidades de mundo na horizontal e em PIXELS DO MAPA na vertical, que é a
 # convenção do §2 do contrato espacial.
-def _roda(nome, x, y, raio_px, largura, mat):
-    """Roda deitada: cilindro com o eixo em Y.
+def _roda(nome, x, y, raio_px, largura, mat, eixo="y"):
+    """Roda deitada: cilindro com o eixo em Y (ou em X, se pedido).
 
     `cone` nasce em pé, então a rotação de 90° em X é o que a deita. Sem ela a
     roda vira um disco no chão e o veículo parece assente na barriga.
+
+    O `eixo` existe por causa do caminhão da estrada: um veículo deitado em
+    `my` tem os eixos a apontar em `x`, e uma roda com o eixo no comprimento
+    do próprio veículo lê-se como disco espetado no chassi. `rot=(0,90,0)`
+    leva o Z do cilindro para o X do mundo, que é o que faz o eixo virar.
     """
+    rot = (90, 0, 0) if eixo == "y" else (0, 90, 0)
     return cone(nome, (x, y, z(raio_px)), z(raio_px), z(raio_px),
-                largura, 16, mat, rot=(90, 0, 0))
+                largura, 16, mat, rot=rot)
 
 
 def caminhao(M, est):
-    """Caminhão de pátio. O jogo já desenha caminhões estacionados no SVG do
-    mapa; este é o prop, para quando um caminhão precisar SE MEXER — carga
-    chegando, fila no portão — que é a regra do projeto: o que troca de estado
-    dentro de uma partida não pode estar assado no fundo."""
+    """Caminhão da estrada, deitado NO EIXO DELA.
+
+    O jogo já desenha caminhões estacionados no SVG do mapa; este é o prop,
+    para quando um caminhão precisar SE MEXER — que é a regra do projeto: o que
+    troca de estado dentro de uma partida não pode estar assado no fundo.
+
+    ⚠️ O COMPRIMENTO CORRE EM **my**, E ISSO NÃO É DETALHE. A primeira versão
+    deitava o caminhão em `mx` (cabine para o mar), e o playtest pediu que ele
+    percorresse a ESTRADA — que corre em `my`. Um caminhão a andar em `my` com
+    o corpo em `mx` desliza DE LADO, e ângulo errado não se conserta rodando no
+    Godot (é regra do CLAUDE.md): conserta-se aqui.
+
+    E NÃO SE CONSERTA RODANDO AQUI TAMBÉM. Rodar o grupo 90° em Z põe o
+    para-brisa (que estava na face `+x`) a olhar para `-y`, mas manda a janela
+    lateral (que estava em `-y`) para `-x` — que é uma das duas faces que ESTA
+    câmera não vê. Rodar teria custado a janela lateral e ninguém notaria no
+    render, só na silhueta chapada. Por isso o corpo é reconstruído com o
+    comprimento em `y`, e cada detalhe reposto na face visível certa.
+
+    A cabine vai em **-y**, que é o `+my` do mapa: é para lá que ele anda.
+    """
     p = []
     RODA, LARG = 5.0, 0.62
 
     # Chassi. Fica acima do raio da roda, senão o eixo aparece flutuando.
     p.append(caixa("cam_chassi", (0.0, 0.0, z(RODA + 2.0)),
-                   (1.48, LARG, z(4.0)), M["metal"]))
+                   (LARG, 1.48, z(4.0)), M["metal"]))
 
-    # Cabine à frente (+mx é o lado do mar; o caminhão aponta para lá).
-    cab_c, cab_t = (0.50, 0.0, z(RODA + 11.5)), (0.46, LARG, z(15.0))
+    # Cabine à FRENTE, e a frente agora é -y (o +my do mapa).
+    cab_c, cab_t = (0.0, -0.50, z(RODA + 11.5)), (LARG, 0.46, z(15.0))
     p.append(caixa("cam_cabine", cab_c, cab_t, M["azul"]))
-    # Só as faces +x e -y são visíveis: envidraçar as outras é render que
-    # ninguém vê.
-    p += janela("cam_vidro_f", "+x", cab_c, cab_t, 0.0, 0.030, 0.30, 0.16, M,
+    # Só as faces +x e -y são visíveis. O para-brisa é a face da FRENTE, que
+    # agora é -y; a janela lateral é a do lado, que agora é +x. As duas
+    # continuam a cair no que a câmera vê — foi para isso que o corpo se
+    # reconstruiu em vez de rodar.
+    p += janela("cam_vidro_f", "-y", cab_c, cab_t, 0.0, 0.030, 0.30, 0.16, M,
                 peitoril=False)
-    p += janela("cam_vidro_l", "-y", cab_c, cab_t, 0.0, 0.030, 0.26, 0.15, M,
+    p += janela("cam_vidro_l", "+x", cab_c, cab_t, 0.0, 0.030, 0.26, 0.15, M,
                 peitoril=False)
-    p.append(na_face("cam_grade", "+x", cab_c, cab_t, 0.0, -0.16,
+    p.append(na_face("cam_grade", "-y", cab_c, cab_t, 0.0, -0.16,
                      0.34, 0.08, 0.03, M["metal_claro"], 0.01))
 
-    # Caçamba atrás, mais alta que a cabine — é o que dá silhueta de caminhão
-    # em vez de furgão.
-    cac_c, cac_t = (-0.46, 0.0, z(RODA + 13.0)), (0.86, LARG + 0.04, z(18.0))
+    # Caçamba atrás (+y), mais alta que a cabine — é o que dá silhueta de
+    # caminhão em vez de furgão.
+    cac_c, cac_t = (0.0, 0.46, z(RODA + 13.0)), (LARG + 0.04, 0.86, z(18.0))
     p.append(caixa("cam_cacamba", cac_c, cac_t, M["laranja"]))
-    p.append(na_face("cam_friso", "-y", cac_c, cac_t, 0.0, 0.0,
+    # O friso corre ao longo da caçamba, e ela agora é comprida em y: o friso
+    # vai na face LATERAL (+x), que é a que o mostra de perfil.
+    p.append(na_face("cam_friso", "+x", cac_c, cac_t, 0.0, 0.0,
                      0.80, 0.03, 0.02, M["metal_claro"], 0.005))
-    p.append(caixa("cam_tampa", (-0.90, 0.0, z(RODA + 13.0)),
-                   (0.06, LARG, z(17.0)), M["metal"]))
+    p.append(caixa("cam_tampa", (0.0, 0.90, z(RODA + 13.0)),
+                   (LARG, 0.06, z(17.0)), M["metal"]))
 
-    for i, x in enumerate((0.52, -0.30, -0.72)):
-        for j, y in enumerate((LARG / 2, -LARG / 2)):
+    # Três eixos ao longo de y, dois lados em x.
+    for i, y in enumerate((-0.52, 0.30, 0.72)):
+        for j, x in enumerate((LARG / 2, -LARG / 2)):
             p.append(_roda("cam_roda_%d%d" % (i, j), x, y, RODA, 0.12,
-                           M["metal"]))
+                           M["metal"], eixo="x"))
 
     origem("caminhao")
-    est.registrar("caminhao", p, celulas=(2, 1),
+    # A pegada virou também: 1 célula em mx por 2 em my.
+    est.registrar("caminhao", p, celulas=(1, 2),
                   cena_godot="res://scenes/props/Caminhao.tscn")
 
 

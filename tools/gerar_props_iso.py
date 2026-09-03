@@ -1050,7 +1050,57 @@ def montar(M: dict) -> dict:
         caixa("ruina_entulho_b", (0.95, -0.95, 0.12), (0.5, 0.45, 0.24), M["parede_suja"],
               rot=(0, 0, 22))]
 
+    # ⚠️ OS DOIS PRÉDIOS DO PÁTIO ENCOLHEM AQUI, e não nas literais deles.
+    #
+    # O primeiro playtest disse "o armazém e o escritório estão muito grandes,
+    # além disso estão em cima da estrada". As duas frases são a mesma: medido,
+    # o armazém ocupava 90% da largura do pátio e os dois levantavam-se ~4x a
+    # altura de uma casa da vila. A BASE estava legal (o bloco D2 do teste de
+    # design prova a pegada contra o asfalto desde 03/09) — o que derramava por
+    # cima da estrada era a SILHUETA, porque em isométrico é a altura que
+    # projeta para cima e para trás. Escala, não posição.
+    #
+    # Encolher pela escala do GRUPO, e não reescrevendo as literais, mantém
+    # todas as proporções internas de pé: porta contra parede, janela contra
+    # porta, beiral contra telhado. Reescrever à mão trinta números era trinta
+    # chances de uma delas ficar por escalar.
+    _encolher(grupos, ("escritorio", "escritorio_ruina", "galpao", "galpao_velho"),
+              ESCALA_PREDIO)
     return grupos
+
+
+# Quanto os dois prédios do pátio encolheram, e o alvo que o número serve:
+#
+#   antes: armazém 3,76 de largura em `mx` num pátio de 4,18 (90%), e 2,32 de
+#          altura contra 0,54 de uma casa da vila (4,3x)
+#   com 0,72: 2,71 de largura (65% do pátio) e 1,67 de altura (3,1x a casa)
+#
+# O sprite do armazém passa de 258px para ~150px, que é a escala do maior
+# navio do jogo (146px) — antes ele era 1,8x o navio, o que é o que se lia
+# como "muito grande".
+ESCALA_PREDIO = 0.72
+
+
+def _encolher(grupos: dict, nomes: tuple, k: float) -> None:
+    """Escala uniforme, em torno da origem do mundo, dos grupos pedidos.
+
+    ⚠️ CADA OBJETO UMA VEZ SÓ. `galpao` e `galpao_velho` PARTILHAM a lista de
+    paredes (é de propósito: mesmas paredes, telhado diferente), e o mesmo vale
+    para o escritório. Escalar grupo a grupo passaria duas vezes pelas peças
+    partilhadas e elas sairiam a `k²` — um armazém com paredes menores que o
+    próprio telhado, sem erro nenhum a apontá-lo.
+
+    Escalar em torno da origem — `location` e `scale` pelo mesmo fator — mantém
+    a base assente no chão, porque a base está em z≈0. Escalar só o `scale`
+    deixaria as peças nos lugares antigos e o prédio desmontava-se.
+    """
+    unicos = set()
+    for nome in nomes:
+        for o in grupos.get(nome, []):
+            unicos.add(o)
+    for o in unicos:
+        o.location = tuple(c * k for c in o.location)
+        o.scale = tuple(c * k for c in o.scale)
 
 
 # ---------------------------------------------------------------- cena

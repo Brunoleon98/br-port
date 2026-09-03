@@ -641,8 +641,8 @@ VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 #
 #     my_casa = mx_vila - (mx_predio - my_predio) ± (meia_largura_px / MEIA_LARG)
 #
-# Com o escritório em (3,2 / 6,7) e a vila do degrau 0 em mx=-2,5, o centro cai
-# em my=1,0 — quase seis unidades ANTES do prédio. A primeira tentativa pôs o
+# Com o escritório em (2,6 / 6,7) e a vila do degrau 0 em mx=-2,5, o centro cai
+# em my=1,6 — quase seis unidades ANTES do prédio. A primeira tentativa pôs o
 # vão em 5,6..8,9, que é onde o prédio está, e por isso não tirou casa nenhuma
 # de baixo dele.
 #
@@ -656,8 +656,8 @@ VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 # alcança abriria um vão de sete unidades e deixaria um buraco na fileira. O
 # que incomoda é a casa FATIADA pela quina, não a que espreita atrás.
 VILA_VAZIOS = [
-    (-1.1, 3.1),     # Escritorio, sprite de 213px em (mx 3,2 / my 6,7)
-    (6.7, 11.9),     # Armazem, sprite de 258px em (mx 6,7 / my 14,5)
+    (0.1, 3.1),      # Escritorio, sprite de 154px em (mx 2,6 / my 6,7)
+    (7.6, 11.3),     # Armazem, sprite de 185px em (mx 6,6 / my 14,5)
 ]
 
 
@@ -676,16 +676,27 @@ VILA_VAZIOS = [
 #     escritório  parede 2,4 × 2,0  →  telhado 2,76 × 2,36
 #     armazém     parede 3,4 × 2,4  →  telhado 3,76 × 2,76
 #
+# ⚠️ E MULTIPLICADOS POR `ESCALA_PREDIO`, que em 03/09 passou a 0,72. Os dois
+# prédios encolheram porque o playtest os leu como "muito grandes, e em cima
+# da estrada": a base estava legal, mas o armazém ocupava 90% da largura do
+# pátio e os dois levantavam-se 4x a altura de uma casa — em isométrico é a
+# altura que derrama a silhueta por cima do que está atrás. Quem mexer naquela
+# escala mexe NESTES quatro números, e o gerador de props é que a define.
+#
 # Estão escritos à mão porque `gerar_props_iso.py` precisa do `bpy` para dizer
 # o mesmo, e um teste que exija 1 GB de Blender não roda no CI nem numa sessão
 # normal. O preço é este: quem mexer na geometria de um prédio mexe aqui.
 # O teste fecha o resto do cerco — um prop do cenário cuja silhueta passe de
 # 130px sem pegada declarada REPROVA, para que um prédio novo não escape.
+ESCALA_PREDIO = 0.72                    # espelha `gerar_props_iso.ESCALA_PREDIO`
 PEGADAS = {
-    "escritorio": (2.76, 2.36),
-    "escritorio_ruina": (2.76, 2.36),   # a ruína é menor; medida pelo que ela vai ser
-    "galpao": (3.76, 2.76),
-    "galpao_velho": (3.76, 2.76),
+    "escritorio": (2.76 * ESCALA_PREDIO, 2.36 * ESCALA_PREDIO),
+    # A ruína é menor, e é medida pelo que ela VAI SER: o vão que ela ocupa tem
+    # de caber o prédio consertado, senão consertar empurraria o prop para cima
+    # do asfalto e o teste só reprovaria depois da compra.
+    "escritorio_ruina": (2.76 * ESCALA_PREDIO, 2.36 * ESCALA_PREDIO),
+    "galpao": (3.76 * ESCALA_PREDIO, 2.76 * ESCALA_PREDIO),
+    "galpao_velho": (3.76 * ESCALA_PREDIO, 2.76 * ESCALA_PREDIO),
 }
 
 

@@ -130,8 +130,8 @@
       "animations": {},
       "origin": "base",
       "base_cells": [
-        2,
-        1
+        1,
+        2
       ],
       "selectable": false,
       "habitat": "terra",

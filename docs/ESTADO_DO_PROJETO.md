@@ -124,8 +124,12 @@ cinco gavetas, **nenhuma delas um bug**. Em 03/09 fechou-se tudo o que não
 depende dele: os cinco itens de interface que dão para fechar (o aviso de
 trabalhador parado, os quatro chips do HUD tocáveis e **pagar a dívida
 adiantado** — este a triagem tinha PERDIDO, e só apareceu ao reler a
-transcrição linha a linha), as duas animações que não pedem Blender (o coqueiro
-virou rajada, o caminhão anda) e o "piegas" da primeira página do diário.
+transcrição linha a linha), o "piegas" do diário e — com o `bpy` instalado — a
+arte que ele repetiu: o caminhão **rerenderizado no eixo da estrada**, que
+agora a atravessa de ponta a ponta, e os dois prédios do pátio **28% menores**.
+Eles liam-se "em cima da rua" mesmo com a pegada legal porque se levantavam 4×
+a altura de uma casa, e em isométrico é a altura que derrama a silhueta: o
+armazém saiu de 90% para 65% do pátio e a vila voltou de 9 para 11 lotes.
 
 **O que sobra, e por quê** — a análise tem a medida de cada um:
 
@@ -133,13 +137,12 @@ virou rajada, o caminhão anda) e o "piegas" da primeira página do diário.
 |---|---|
 | Layout do rodapé · espaço reservado no HUD | São o mesmo problema: sete faixas e 29px de folga. Dar lugar a conteúdo de Fase 2 é TIRAR o que já é usado — gosto, e o gate A5 é dele |
 | Ondas | Não há nó de espuma: ela está assada no SVG. Precisa de camada nova gerada ao lado do mapa (sem Blender, mas não é tween) |
-| Caminhão pela ESTRADA · pedras · trabalhador | Ângulo e geometria de prop — `pip install bpy`, ~1 GB |
+| Pedras com profundidade · sprite do trabalhador | Geometria de prop — `bpy`, que esta sessão já instalou |
 | Economia (3 itens) | Só via `/balancear`, e ele mesmo amarrou-a ao pacote de Fase 2 ("para fazer tudo isso") |
 | Fala da madeira podre | Espera o A4 |
 
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
-leitor que o resume. Ele destrava o A1: os dez minutos no APK passam a produzir
-um arquivo em vez de só uma impressão.
+leitor que o resume.
 
 Da arte, **três das seis etapas estão feitas** — a 1 (paleta), a 6 (o chrome da
 interface) e a 2 (a cauda dos props, 02/09). Faltam a 3 (contorno pelo

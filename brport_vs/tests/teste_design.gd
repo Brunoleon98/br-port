@@ -118,8 +118,8 @@ func _rodar() -> void:
 	_d12_toque_na_parcela()
 	_confere("o bloco D12 correu até ao fim", _d12_completo)
 
-	print("=== D13: o caminhao anda, e sem furar a profundidade ===")
-	_d13_marcha_do_caminhao()
+	print("=== D13: o caminhao atravessa a estrada, e no asfalto ===")
+	_d13_travessia_do_caminhao()
 	_confere("o bloco D13 correu até ao fim", _d13_completo)
 
 	root.remove_child(_main)
@@ -687,61 +687,72 @@ func _d12_toque_na_parcela() -> void:
 	_d12_completo = true
 
 
-# ── D13 ── a marcha do caminhão: que ela EXISTA, e que respeite o D3
+# ── D13 ── a travessia do caminhão: no asfalto do começo ao fim
 #
-# Pedido do playtest ("fazer o caminhão andar"). Duas coisas podem falhar em
-# silêncio: a animação desligar-se sozinha por falta de espaço (ela devolve
-# zero e não anda, sem erro nenhum), e o caminhão andar ATÉ FURAR a ordem de
-# profundidade — passar por cima do irmão que devia tapá-lo. Ordem de irmão é
-# profundidade neste plano (ver D3), e profundidade cresce com o Y de tela,
-# então as duas perguntas se medem em pixels de Y.
-func _d13_marcha_do_caminhao() -> void:
+# Pedido do playtest, segunda volta: o caminhão percorre a estrada, aparece
+# numa ponta e some na outra. Três coisas podem falhar em silêncio:
+#
+#   1. ele percorrer o degrau ERRADO — a estrada salta 4 unidades em `mx` a
+#      cada degrau da costa, e um percurso que atravessasse o salto punha o
+#      caminhão a andar sobre o pátio ou sobre a vila, sem erro nenhum;
+#   2. sair do asfalto a meio, pelo mesmo motivo;
+#   3. não se reordenar, e passar por cima de quem devia tapá-lo.
+#
+# Os dois primeiros medem-se contra as FAIXAS que o gerador do mapa publica —
+# a mesma fonte que o D2 usa —, e não contra números repetidos aqui.
+func _d13_travessia_do_caminhao() -> void:
 	var tela: Control = _main
 	var cenario: Node = tela.get_node("MapaWrap/Cenario")
 	var caminhao: Control = cenario.get_node("Caminhao")
+	var alt := float(_ancoras["projecao"]["alt_cais"])
 
-	var avanco: float = tela.avanco_do_caminhao()
-	_confere("o caminhão tem espaço para andar (avanço de %.0fpx)" % avanco,
-		avanco >= 8.0,
-		"avanço zero: a animação desliga-se sozinha e nada na tela se mexe")
+	var percurso: Vector2 = tela.percurso_do_caminhao()
+	_confere("o percurso é longo o suficiente para se ler (%.0fpx)" % percurso.length(),
+		percurso.length() >= 100.0)
 
-	# O irmão seguinte fixa o teto: no fim da marcha o caminhão ainda tem de
-	# estar ATRÁS dele em profundidade.
-	var limite_y := INF
-	var achou := false
-	for no in cenario.get_children():
-		if no == caminhao:
-			achou = true
+	# Onze pontos ao longo da travessia: as duas pontas e o meio todo. Conferir
+	# só as pontas deixaria passar um percurso que saísse do asfalto no meio —
+	# é a mesma lição dos quatro cantos do D2.
+	var inicio := _origem(caminhao)
+	var faixa_inicial := -1
+	var fora := ""
+	for i in range(11):
+		var pos := inicio + percurso * (float(i) / 10.0)
+		var m := _mundo(pos, alt)
+		var faixa := _faixa_de(m.y)
+		var rua: Array = faixa["rua"]
+		if faixa_inicial < 0:
+			faixa_inicial = int(faixa["borda"])
+		if int(faixa["borda"]) != faixa_inicial and fora == "":
+			fora = "no ponto %d/10 já é outro degrau (borda %.0f, começou em %d)" \
+				% [i, float(faixa["borda"]), faixa_inicial]
+		if (m.x < float(rua[0]) or m.x > float(rua[1])) and fora == "":
+			fora = "no ponto %d/10 está em mx=%.2f e o asfalto é %.2f..%.2f" \
+				% [i, m.x, float(rua[0]), float(rua[1])]
+	_confere("a travessia inteira fica no asfalto do MESMO degrau", fora == "", fora)
+
+	# E a reordenação: posto no fim do percurso, o caminhão tem de trocar de
+	# lugar entre os irmãos — senão ele atravessa a profundidade sem mudar de
+	# ordem, que é passar por cima de quem devia tapá-lo.
+	var indice_antes := caminhao.get_index()
+	var pos_antes := caminhao.position
+	caminhao.position = pos_antes + percurso
+	tela.call("_ordenar_por_profundidade", caminhao)
+	var indice_depois := caminhao.get_index()
+	_confere("no fim da travessia ele já mudou de ordem entre os irmãos",
+		indice_depois > indice_antes,
+		"ficou no índice %d, e começou no %d" % [indice_depois, indice_antes])
+	# E no lugar CERTO: ninguém acima dele na tela pode estar depois dele.
+	var erro_ordem := ""
+	for i in range(cenario.get_child_count()):
+		var outro := cenario.get_child(i) as Control
+		if outro == null or outro == caminhao:
 			continue
-		if achou and no is TextureRect:
-			limite_y = (no as Control).position.y
-			break
-	_confere("e no fim da marcha continua atrás do irmão seguinte",
-		caminhao.position.y + avanco < limite_y,
-		"acabaria em y=%.1f e o irmão está em y=%.1f"
-			% [caminhao.position.y + avanco, limite_y])
+		var acima: bool = outro.position.y < caminhao.position.y
+		if acima and i > indice_depois and erro_ordem == "":
+			erro_ordem = "%s está acima na tela mas depois na ordem" % outro.name
+	_confere("e no lugar certo da fila de profundidade", erro_ordem == "", erro_ordem)
 
-	# ⚠️ E AGORA COM A PROFUNDIDADE A APERTAR, porque a asserção acima não
-	# prova a guarda que diz provar: o teto de gosto (42px) é hoje mais
-	# apertado que o teto de profundidade, então é ELE que segura, e um defeito
-	# na conta da profundidade passava incólume. Aproximando o irmão, o teto de
-	# profundidade passa a ser o que manda — e aí a asserção mede o que diz.
-	var vizinho: Control = null
-	var achou2 := false
-	for no in cenario.get_children():
-		if no == caminhao:
-			achou2 = true
-			continue
-		if achou2 and no is TextureRect:
-			vizinho = no as Control
-			break
-	if vizinho != null:
-		var y_original := vizinho.position.y
-		vizinho.position.y = caminhao.position.y + 20.0
-		var apertado: float = tela.avanco_do_caminhao()
-		_confere("com o irmão a 20px, a marcha encurta em vez de o atravessar",
-			apertado == 0.0 or caminhao.position.y + apertado < vizinho.position.y,
-			"avanço de %.1fpx com o irmão a %.1fpx de distância" % [apertado, 20.0])
-		vizinho.position.y = y_original
-
+	caminhao.position = pos_antes
+	tela.call("_ordenar_por_profundidade", caminhao)
 	_d13_completo = true

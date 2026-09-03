@@ -308,35 +308,41 @@ func _animar_boias() -> void:
 ## e nem um pixel além. Um número cravado envelheceria calado no dia em que
 ## alguém movesse o coqueiro ao lado; assim, a animação respeita o D3 por
 ## construção.
-## Quanto o caminhão pode avançar, em pixels de Y, sem furar a ordem de
-## profundidade dos irmãos. Devolve 0 quando não há espaço.
+## O CAMINHÃO PERCORRE A ESTRADA — pedido do primeiro playtest, na segunda
+## volta: "é para o caminhão passar pela estrada, aparecendo no início dela e
+## sumindo no final dela".
 ##
-## É PÚBLICA porque o teste de design a chama: sem isso, o dia em que o vizinho
-## se mexesse e o avanço caísse para zero, o caminhão ficava quieto e nenhuma
-## suíte notava — a animação desligava-se sozinha, calada.
-func avanco_do_caminhao() -> float:
-	var cenario := $MapaWrap.get_node_or_null("Cenario")
-	if cenario == null:
-		return 0.0
-	var caminhao := cenario.get_node_or_null("Caminhao") as Control
-	if caminhao == null:
-		return 0.0
-	# O irmão seguinte que é prop: é ele que fixa o teto de profundidade.
-	var limite_y := INF
-	var achou := false
-	for no in cenario.get_children():
-		if no == caminhao:
-			achou = true
-			continue
-		if achou and no is TextureRect:
-			limite_y = (no as Control).position.y
-			break
-	# 6px de folga para não empatar em profundidade com o vizinho, e 42px de
-	# teto por gosto: mais do que isso e ele atravessa o pátio todo, num prop
-	# que devia estar a manobrar e não a viajar. Abaixo de 8px o movimento não
-	# se lê, e aí é mais honesto ficar parado do que tremer.
-	var espaco: float = minf(42.0, limite_y - 6.0 - caminhao.position.y)
-	return espaco if espaco >= 8.0 else 0.0
+## A primeira tentativa fê-lo entrar no pátio, e não percorrer a estrada, por
+## uma razão que era verdadeira: a cabine do prop apontava para `+mx` e a
+## estrada corre em `my`, então percorrê-la seria deslizar de lado. A resposta
+## certa não era mudar a marcha — era **rerenderizar o prop** deitado no eixo
+## da estrada, que é o que `blender/brp_porto.py` faz desde 03/09. Ângulo
+## errado conserta-se no gerador; aqui só se anda.
+##
+## ⚠️ A TRAVESSIA É DE UM DEGRAU, e não da costa toda. A estrada acompanha a
+## escada do litoral: salta 4 unidades em `mx` a cada degrau. Um caminhão a
+## percorrer a costa inteira teria de TELEPORTAR em cada salto. Ele percorre o
+## degrau 1 (`my` 8..16), que é o que a tela enquadra por inteiro — entra numa
+## ponta, sai na outra, e é exactamente o "aparece no início e some no fim" que
+## foi pedido.
+##
+## ⚠️ E REORDENA-SE PELO CAMINHO. Ordem de irmão É profundidade neste plano, e
+## a travessia atravessa a profundidade do coqueiro e do bote: um caminhão com
+## índice fixo passaria POR CIMA do coqueiro na primeira metade e por baixo do
+## bote na segunda, com o mesmo índice a estar certo num sítio e errado no
+## outro. Ordem fixa só serve a prop parado.
+const CAMINHAO_MY_INICIO := 8.2
+const CAMINHAO_MY_FIM := 15.8
+
+
+## Quanto o caminhão percorre, em pixels de tela. `+my` move (−30, +15) por
+## unidade — é a diagonal da estrada, e a direção em que a cabine aponta.
+##
+## É PÚBLICA porque o teste de design a usa para conferir que a travessia
+## inteira fica no asfalto, contra as faixas que o gerador do mapa publica.
+func percurso_do_caminhao() -> Vector2:
+	var unidades := CAMINHAO_MY_FIM - CAMINHAO_MY_INICIO
+	return Vector2(-unidades * 30.0, unidades * 15.0)
 
 
 func _animar_caminhao() -> void:
@@ -348,23 +354,47 @@ func _animar_caminhao() -> void:
 		return
 
 	var base := caminhao.position
-	var avanco := avanco_do_caminhao()
-	if avanco <= 0.0:
-		return                       # sem espaço honesto para andar: fica parado
-	# +mx move (30, 15) por unidade — a marcha segue essa diagonal, que é a
-	# direção em que a cabine aponta.
-	var destino := base + Vector2(avanco * 2.0, avanco)
-
+	var fim := base + percurso_do_caminhao()
+	# Atravessa, some no fim, espera, e o próximo APARECE no início. A espera é
+	# o que faz o seguinte parecer outro caminhão em vez do mesmo a dar a volta.
+	#
+	# ⚠️ E COMEÇA VISÍVEL, com o desvanecer no FIM do ciclo e não no princípio.
+	# Nasceu ao contrário e o caminhão ficava invisível nos primeiros frames —
+	# o que se lê no jogo (a estrada vazia por um segundo) mas sobretudo o que
+	# some da CAPTURA: as cinco fotos do CI assentam em poucos frames, e um prop
+	# que só aparece depois disso nunca entra na evidência que o Bruno olha.
+	# Prop que a captura não vê é prop que ninguém revê.
+	caminhao.modulate.a = 1.0
 	var tw := caminhao.create_tween().set_loops()
-	tw.tween_interval(1.5)
-	tw.tween_property(caminhao, "position", destino, 5.2) \
-		.set_trans(Tween.TRANS_SINE)
-	tw.tween_interval(2.4)
-	# Sai de cena e volta ao portão: um caminhão que fizesse o caminho de
-	# ré leria como defeito, porque o sprite tem frente e não tem marcha atrás.
-	tw.tween_property(caminhao, "modulate:a", 0.0, 0.8)
-	tw.tween_callback(func() -> void: caminhao.position = base)
-	tw.tween_property(caminhao, "modulate:a", 1.0, 0.8)
+	tw.tween_method(func(t: float) -> void:
+		caminhao.position = base.lerp(fim, t)
+		_ordenar_por_profundidade(caminhao)
+	, 0.0, 1.0, 11.0)
+	tw.tween_property(caminhao, "modulate:a", 0.0, 1.1)
+	tw.tween_callback(func() -> void:
+		caminhao.position = base
+		_ordenar_por_profundidade(caminhao)
+	)
+	tw.tween_interval(4.0)
+	tw.tween_property(caminhao, "modulate:a", 1.0, 1.1)
+
+
+## Põe `no` no índice que a profundidade dele pede, entre os irmãos.
+##
+## Profundidade é `mx+my`, e ela cresce com o Y de tela — então contar quantos
+## irmãos estão ACIMA na tela dá o índice, sem precisar da projeção aqui. É a
+## mesma leitura que o bloco D3 do teste de design faz para reprovar ordem
+## errada; aqui ela mantém a ordem certa enquanto o prop se mexe.
+func _ordenar_por_profundidade(no: Control) -> void:
+	var pai := no.get_parent()
+	var indice := 0
+	for outro in pai.get_children():
+		if outro == no:
+			continue
+		if outro is Control and (outro as Control).position.y < no.position.y:
+			indice += 1
+	if pai.get_child(indice) != no:
+		pai.move_child(no, indice)
 
 
 ## `light_flicker` — a luminária do poste, e só ela.

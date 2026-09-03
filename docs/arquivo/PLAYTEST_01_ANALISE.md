@@ -142,6 +142,21 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
 
 ### 🎨 Arte — entra na fila do plano de arte
 
+- ~~**O armazém e o escritório estão muito grandes, e em cima da estrada**~~ —
+  **corrigido em 03/09, e era ESCALA e não posição.** Em 03/09 o pátio já
+  tinha sido alargado e o teste já provava que a pegada dos dois não toca o
+  asfalto; ele continuou a vê-los em cima da rua, e estava certo. Medido: o
+  armazém ocupava **90% da largura do pátio** e os dois levantavam-se **~4x a
+  altura de uma casa da vila** — em isométrico é a ALTURA que projeta a
+  silhueta para cima e para trás, por cima do que está atrás. Base legal,
+  silhueta a derramar.
+  Os dois encolheram 28% (`ESCALA_PREDIO = 0,72`, escalando o GRUPO e não as
+  trinta literais, para porta/janela/beiral manterem a proporção). O armazém
+  passou de 258px para 185px de sprite — era 1,8x o maior navio do jogo, agora
+  é 1,27x — e de 90% para **65% do pátio**.
+  **Ganho de lambuja, medido:** os vãos abertos na vila para eles encolheram
+  junto, e a fileira de casas voltou de 9 para **11 lotes** no quadro — os dois
+  que o alargamento do pátio tinha empurrado para fora.
 - Pedras chapadas, sem profundidade
 - Vegetação pobre e casas mal distribuídas → **isto encontra a leitura de
   composição das referências**, que já diz para consultar mapas de cidades
@@ -152,15 +167,22 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
   depressa com a velocidade a morrer no fim (`EASE_OUT`), solta devagar
   passando do ponto, assenta numa oscilação menor, e PARA. A pausa é o que faz
   a rajada seguinte parecer nova.
-  O caminhão **não anda ao longo da estrada**, e é medido: a cabine do prop
-  aponta para `+mx` (está escrito no `blender/brp_porto.py`) e a estrada corre
-  no eixo `my` — percorrê-la com este sprite seria um caminhão a deslizar DE
-  LADO, que é o defeito que o CLAUDE.md avisa não se consertar rodando no
-  Godot. O que ele faz é a marcha honesta com o desenho que existe: avança na
-  direção em que aponta, entrando da rua para o pátio (42px, e o teto sai do
-  contrato de profundidade, não de um número cravado).
-  **Andar pela estrada precisa do prop rerenderizado virado para o eixo dela
-  — Blender, e portanto `pip install bpy` (~1 GB).**
+  ~~O caminhão **não anda ao longo da estrada**~~ — **anda desde 03/09, na
+  segunda volta do pedido.** A primeira resposta foi fazê-lo entrar no pátio,
+  porque a cabine do prop apontava para `+mx` e a estrada corre em `my`. O
+  diagnóstico estava certo e a conclusão errada: o consertável não era a
+  marcha, era o PROP. Rerenderizado deitado no eixo da estrada
+  (`blender/brp_porto.py`), ele atravessa o degrau 1 inteiro — 255px, aparece
+  numa ponta e some na outra, que é o que foi pedido.
+  **E não se resolveu rodando o grupo 90°**: só as faces `+x` e `-y` são
+  visíveis, e rodar mandava a janela lateral para `-x`, que a câmera não vê.
+  O corpo foi reconstruído com o comprimento em `y` e cada detalhe reposto na
+  face visível certa — inclusive o eixo das rodas, que num veículo deitado em
+  `my` aponta em `x`.
+  A travessia é de UM degrau de propósito: a estrada salta 4 unidades em `mx`
+  a cada degrau da costa, e percorrer a costa toda exigiria teleportar. E ele
+  **reordena-se pelo caminho**, porque atravessa a profundidade do coqueiro e
+  do bote — ordem fixa só serve a prop parado.
 - **Ondas — em aberto, e medido por que:** não existe nó de onda nem de espuma
   no jogo. A espuma está ASSADA no SVG do mapa, que é uma textura só, então
   animá-la exige uma camada nova — um segundo SVG com só a espuma, gerado ao

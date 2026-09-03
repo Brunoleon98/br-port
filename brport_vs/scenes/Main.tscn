@@ -245,19 +245,19 @@ mouse_filter = 2
 
 [node name="Escritorio" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 91.0
-offset_top = -125.5
-offset_right = 603.0
-offset_bottom = 386.5
+offset_left = 73.0
+offset_top = -134.5
+offset_right = 585.0
+offset_bottom = 377.5
 mouse_filter = 2
 texture = ExtResource("prop_escritorio_ruina")
 
 [node name="Caminhao" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 25.0
-offset_top = -74.5
-offset_right = 537.0
-offset_bottom = 437.5
+offset_left = 62.5
+offset_top = -94.75
+offset_right = 574.5
+offset_bottom = 417.25
 mouse_filter = 2
 texture = ExtResource("prop_caminhao")
 [node name="Coqueiro0Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
@@ -289,10 +289,10 @@ mouse_filter = 2
 texture = ExtResource("prop_bote")
 [node name="Armazem" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -38.0
-offset_top = 44.0
-offset_right = 474.0
-offset_bottom = 556.0
+offset_left = -41.0
+offset_top = 42.5
+offset_right = 471.0
+offset_bottom = 554.5
 mouse_filter = 2
 texture = ExtResource("prop_galpao_velho")
 
