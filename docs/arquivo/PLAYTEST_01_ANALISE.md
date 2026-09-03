@@ -107,11 +107,38 @@ bloco F6). O mecanismo, e ele não dava erro nenhum:
 jogada num telefone encontrou-o. É a irmã de cena da regra "tela nova é overlay,
 nunca fase do `GameState`": as duas produzem um jogo preso sem uma linha de erro.
 
+### ✅ Corrigido na mesma sessão — o escritório em cima da rua
+
+> "tem o escritório em cima da rua e outros objetos fora do lugar"
+
+**Não era um prop mal posto: era um prédio que não cabia no pátio.** Medido:
+
+| | largura em `mx` | ocupava | pátio disponível |
+|---|---:|---|---:|
+| Escritório | 2,76 | 2,82 → 5,58 | **1,68** |
+| Armazém | 3,76 | 6,32 → 10,08 | **1,68** |
+
+O escritório entrava 0,20 no asfalto; o armazém 0,70 — mais de metade da
+largura da rua — e ainda passava 0,08 da beira do cais, pendurado sobre a água.
+
+O `teste_design` não pegava por duas razões, e as duas foram fechadas: o bloco
+D2 filtrava `Coqueiro*Tronco` e ignorava todo o resto do cenário, e conferia a
+**âncora**, que é um ponto. Ponto nenhum pega uma pegada larga demais.
+
+A correção foi alargar o pátio — `RUA_RECUO` de 4,3 para 6,8, o que o leva de
+1,68 para 4,18 — recuando a vila junto (`VILA_RECUO` 6,0 → 8,5) para ela não
+ficar debaixo do passeio. Os prédios, o caminhão, o cone, o poste e a barreira
+foram reancorados, e a ordem dos irmãos reordenada porque `mx+my` mudou.
+**Custo medido:** dois lotes da vila saíram do quadro, de 11 para 9.
+
+O D2 agora varre o cenário inteiro, mede a pegada por **interseção de
+intervalos** em todo degrau que ela toca, e reprova prop de silhueta grande sem
+pegada declarada. Três defeitos injetados, três reprovações.
+
 ### 🐛 Bugs a corrigir, ainda abertos
 
-| O quê | Onde vive |
-|---|---|
-| **Escritório em cima da rua** e outros objetos fora do lugar | `gerar_mapa_iso.py` / `Main.tscn` — é posicionamento, e o teste de design não o pega porque confere ordem de profundidade, não sobreposição de prédio com via |
+Nenhum dos relatados. O "e outros objetos fora do lugar" foi coberto pela mesma
+varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
 
 ### 🎨 Arte — entra na fila do plano de arte
 

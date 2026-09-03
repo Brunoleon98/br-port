@@ -213,23 +213,106 @@ func _d1_encaixe_das_docas() -> void:
 
 
 # ── D2 ── nada do cenário fixo pode nascer no asfalto da rua
+#
+# ⚠️ ESTE BLOCO JÁ OLHOU UM PROP SÓ, E UM PONTO SÓ. Até 03/09 ele filtrava
+# `Coqueiro*Tronco` e conferia a ÂNCORA — e foi por isso que passou por cima do
+# defeito que a primeira jogada num telefone encontrou: a âncora dos dois
+# prédios caía no pátio, certinha, e a PEGADA deles não cabia lá. O armazém
+# ocupa 3,76 em `mx` e o pátio tinha 1,68, então 0,70 dele ficavam no asfalto e
+# 0,08 pendurados sobre a água. Ponto nenhum pega isso.
+#
+# Agora são três perguntas, e a terceira é o que fecha o cerco:
+#
+#   1. todo prop do cenário — não só o coqueiro — cai fora do asfalto e em
+#      terra, pela âncora;
+#   2. quem tem pegada declarada em `porto_mapa_ancoras.json` responde pelos
+#      QUATRO cantos dela, e em cada degrau que a pegada toca (um prédio pode
+#      atravessar o salto da costa, onde a rua anda 4 unidades de uma vez);
+#   3. prop do cenário com silhueta grande e SEM pegada declarada reprova —
+#      senão o cerco só vale para os prédios que já existem hoje.
+#
+# As exceções são nomeadas e explicadas: um caminhão na rua é um caminhão na
+# rua, e barco em terra seria o defeito oposto.
+const PODEM_PISAR_A_RUA := ["Caminhao", "ConeTransito"]
+const VIVEM_NA_AGUA := ["BarcoEspera", "Ancoragem", "Bote"]
+
+# Acima disto a âncora deixa de responder pelo prop e a pegada passa a ser
+# obrigatória. Medido: o escritório tem 213px de silhueta e o armazém 258; o
+# maior prop sem pegada é a copa do coqueiro, com 118.
+const SILHUETA_QUE_EXIGE_PEGADA := 130.0
+
+
 func _d2_cenario_em_terra() -> void:
 	var cenario := _main.get_node("MapaWrap/Cenario")
+	var pegadas: Dictionary = _ancoras.get("pegadas", {})
+	var alt := float(_ancoras["projecao"]["alt_cais"])
 	for no in cenario.get_children():
-		var nome := String(no.name)
-		if not (nome.begins_with("Coqueiro") and nome.ends_with("Tronco")):
+		if not (no is TextureRect):
 			continue
-		var base := _origem(no as Control)
-		var m := _mundo(base, float(_ancoras["projecao"]["alt_cais"]))
-		var faixa := _faixa_de(m.y)
-		var rua: Array = faixa["rua"]
-		var na_rua: bool = float(rua[0]) <= m.x and m.x <= float(rua[1])
-		_confere("%s fora do asfalto" % nome, not na_rua,
-			"base em mx=%.2f, e a rua ocupa %.2f..%.2f neste degrau"
-			% [m.x, float(rua[0]), float(rua[1])])
-		var borda := float(faixa["borda"])
-		_confere("%s em terra" % nome, m.x <= borda + 0.1,
-			"mx=%.2f passa da beira do cais (%.2f)" % [m.x, borda])
+		var nome := String(no.name)
+		if _comeca_com_algum(nome, VIVEM_NA_AGUA):
+			continue
+		var tex: Texture2D = (no as TextureRect).texture
+		var pegada: Array = pegadas.get(_id_do_prop(tex), [])
+		var m := _mundo(_origem(no as Control), alt)
+
+		# (3) silhueta grande sem pegada declarada — o buraco por onde o
+		# defeito de 02/09 entrou, agora fechado.
+		if pegada.is_empty() and tex != null:
+			var larg := float(tex.get_image().get_used_rect().size.x)
+			_confere("%s tem pegada declarada" % nome,
+				larg < SILHUETA_QUE_EXIGE_PEGADA,
+				"a silhueta tem %.0fpx e só a âncora é conferida — declare a "
+				% larg + "pegada em PEGADAS, no gerar_mapa_iso.py")
+
+		# ⚠️ INTERSEÇÃO DE INTERVALOS, E NÃO OS QUATRO CANTOS. A primeira
+		# versão deste bloco conferia canto a canto e deixou passar o defeito
+		# que ele foi escrito para pegar: com o escritório de volta ao sítio
+		# antigo, os cantos caíam a 2,82 e a 5,58 e a rua ocupava 2,98..4,52 —
+		# nenhum canto DENTRO do asfalto, e a pegada atravessando-o inteiro.
+		# Um retângulo maior que a faixa passa por cima dela sem tocar nela
+		# com ponto nenhum.
+		var meia_x: float = (float(pegada[0]) / 2.0) if not pegada.is_empty() else 0.0
+		var meia_y: float = (float(pegada[1]) / 2.0) if not pegada.is_empty() else 0.0
+		var mx0 := m.x - meia_x
+		var mx1 := m.x + meia_x
+		var pisa_rua := false
+		var na_agua := false
+		var pior := ""
+		# E em TODO degrau que a pegada toca, não só no da âncora: a costa é
+		# uma escada e a rua salta 4 unidades a cada degrau, então um prédio
+		# que atravessa o salto responde perante duas ruas diferentes.
+		for faixa in _ancoras["faixas"]:
+			var lim: Array = faixa["my"]
+			if m.y + meia_y <= float(lim[0]) or m.y - meia_y >= float(lim[1]):
+				continue
+			var rua: Array = faixa["rua"]
+			if mx0 <= float(rua[1]) and mx1 >= float(rua[0]):
+				pisa_rua = true
+				pior = "a pegada ocupa mx %.2f..%.2f e o asfalto %.2f..%.2f" \
+					% [mx0, mx1, float(rua[0]), float(rua[1])]
+			if mx1 > float(faixa["borda"]) + 0.1:
+				na_agua = true
+				pior = "a pegada chega a mx=%.2f e a beira do cais é %.2f" \
+					% [mx1, float(faixa["borda"])]
+
+		if not _comeca_com_algum(nome, PODEM_PISAR_A_RUA):
+			_confere("%s fora do asfalto" % nome, not pisa_rua, pior)
+		_confere("%s em terra" % nome, not na_agua, pior)
+
+
+func _comeca_com_algum(nome: String, lista: Array) -> bool:
+	for prefixo in lista:
+		if nome.begins_with(prefixo):
+			return true
+	return false
+
+
+# "res://art/props/galpao_velho.png" -> "galpao_velho", que é a chave de PEGADAS.
+func _id_do_prop(tex: Texture2D) -> String:
+	if tex == null:
+		return ""
+	return tex.resource_path.get_file().get_basename()
 
 
 # ── D3 ── num plano isométrico, ordem de irmão É profundidade

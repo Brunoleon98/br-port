@@ -66,10 +66,30 @@ PIERES = [(2.0, 4.4, 6.0), (10.0, 12.4, 10.0), (18.0, 20.4, 14.0)]
 # A ordem, da água para dentro: avental (manobra colada ao navio), pátio do
 # porto (onde estão armazém, escritório e a carga), rua, e a vila atrás dela.
 APRON = 1.3              # concreto entre o pátio e a beira do cais
-RUA_RECUO = 4.3          # da beira do cais até a face de TERRA da rua
+#
+# ⚠️ O PÁTIO TEM DE CABER O ARMAZÉM, e é isso que fixa o RUA_RECUO.
+#
+# Ele valeu 4,3 até 03/09, o que deixava entre o asfalto e o avental uma faixa
+# de 1,68 unidades — e o armazém ocupa 3,86 (3,4 de parede mais 0,18 de beiral
+# de cada lado) e o escritório 2,76. Os dois foram postos a olho em `Main.tscn`
+# e transbordaram: o escritório entrava 0,20 no asfalto e o armazém 0,70, mais
+# de metade da largura da rua, ainda por cima com 0,08 pendurados sobre a água.
+# A primeira jogada num telefone leu aquilo como "o escritório está em cima da
+# rua", que é exatamente o que era.
+#
+# A conta, para quem mexer nisto outra vez:
+#
+#     pátio = RUA_RECUO - RUA_LARG - CALCADA - APRON
+#
+# Com 6,8 o pátio dá 4,18 e o armazém entra com 0,32 de folga. Mexer no APRON,
+# na RUA_LARG ou na CALCADA muda o pátio na mesma proporção — e prédio que não
+# cabe não dá erro nenhum, só sai por cima do asfalto.
+RUA_RECUO = 6.8          # da beira do cais até a face de TERRA da rua
 RUA_LARG = 1.1
 CALCADA = 0.22
-VILA_RECUO = 6.0         # fundo dos lotes, também medido do cais
+# A vila acompanha a rua: 0,13 de folga entre o fundo da calçada e a frente do
+# lote, que é o que havia antes e o que mantém as casas fora do passeio.
+VILA_RECUO = 8.5         # fundo dos lotes, também medido do cais
 VILA_PROF = 1.35         # profundidade da casa em mx
 VILA_PASSO = 1.95        # de uma casa à seguinte, em my
 
@@ -621,18 +641,52 @@ VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 #
 #     my_casa = mx_vila - (mx_predio - my_predio) ± (meia_largura_px / MEIA_LARG)
 #
-# Com o escritório em (4,2 / 7,2) e a vila do degrau 0 em mx=0, o centro cai em
-# my=3,0 — quatro unidades ANTES do prédio. A primeira tentativa pôs o vão em
-# 5,6..8,9, que é onde o prédio está, e por isso não tirou casa nenhuma de
-# baixo dele.
+# Com o escritório em (3,2 / 6,7) e a vila do degrau 0 em mx=-2,5, o centro cai
+# em my=1,0 — quase seis unidades ANTES do prédio. A primeira tentativa pôs o
+# vão em 5,6..8,9, que é onde o prédio está, e por isso não tirou casa nenhuma
+# de baixo dele.
+#
+# ⚠️ E OS DOIS TERMOS DA CONTA MUDARAM EM 03/09. O alargamento do pátio mexeu
+# no `VILA_RECUO` (o `mx_vila`) E nas âncoras dos dois prédios em `Main.tscn`.
+# Quem mexer só num dos lados deixa o vão no sítio antigo — e um vão no sítio
+# errado não dá erro: dá uma casa fatiada por um telhado e um buraco na fileira
+# a seis unidades dali.
 #
 # O raio usado é ~0,6 da meia-largura do sprite: tapar tudo o que a silhueta
 # alcança abriria um vão de sete unidades e deixaria um buraco na fileira. O
 # que incomoda é a casa FATIADA pela quina, não a que espreita atrás.
 VILA_VAZIOS = [
-    (0.9, 5.1),      # Escritorio, sprite de 213px em (mx 4,2 / my 7,2)
-    (8.4, 13.6),     # Armazem, sprite de 258px em (mx 8,2 / my 15,2)
+    (-1.1, 3.1),     # Escritorio, sprite de 213px em (mx 3,2 / my 6,7)
+    (6.7, 11.9),     # Armazem, sprite de 258px em (mx 6,7 / my 14,5)
 ]
+
+
+# ── PEGADAS: quanto CHÃO um prop ocupa, e não onde a âncora dele caiu ────
+#
+# Existe por causa do defeito de 02/09. O bloco D2 do teste de design conferia
+# a âncora — um ponto — e a âncora dos dois prédios estava no pátio, certinha.
+# O que estava fora era a PEGADA: o armazém ocupa 3,86 em `mx` e o pátio tinha
+# 1,68, então 0,70 dele ficavam no asfalto e 0,08 sobre a água. Ponto nenhum
+# pega isso, por mais bem posto que esteja.
+#
+# Os números saem das literais de `tools/gerar_props_iso.py` (`ESC` e `GAL`),
+# mais o beiral de 0,18 que `telhado_duas_aguas()` acrescenta de cada lado —
+# é o telhado que manda, porque é ele o mais largo:
+#
+#     escritório  parede 2,4 × 2,0  →  telhado 2,76 × 2,36
+#     armazém     parede 3,4 × 2,4  →  telhado 3,76 × 2,76
+#
+# Estão escritos à mão porque `gerar_props_iso.py` precisa do `bpy` para dizer
+# o mesmo, e um teste que exija 1 GB de Blender não roda no CI nem numa sessão
+# normal. O preço é este: quem mexer na geometria de um prédio mexe aqui.
+# O teste fecha o resto do cerco — um prop do cenário cuja silhueta passe de
+# 130px sem pegada declarada REPROVA, para que um prédio novo não escape.
+PEGADAS = {
+    "escritorio": (2.76, 2.36),
+    "escritorio_ruina": (2.76, 2.36),   # a ruína é menor; medida pelo que ela vai ser
+    "galpao": (3.76, 2.76),
+    "galpao_velho": (3.76, 2.76),
+}
 
 
 def _sombrear(hexa: str, fator: float) -> str:
@@ -1061,6 +1115,7 @@ def tabela_ancoras() -> dict:
             "raiz": px(borda, (my0 + my1) / 2),
         })
 
+
     # Faixas em `mx` medidas do cais, por degrau. O teste usa isto para saber
     # se um prop caiu no asfalto da rua ou dentro de um lote da vila.
     faixas = []
@@ -1075,6 +1130,7 @@ def tabela_ancoras() -> dict:
     return {
         "projecao": {"cx": CX, "cy": CY, "meia_larg": MEIA_LARG,
                      "meia_alt": MEIA_ALT, "alt_cais": ALT_CAIS},
+        "pegadas": {k: list(v) for k, v in sorted(PEGADAS.items())},
         "mapa": {"largura": LARG, "altura": ALT},
         "pieres": pieres,
         "faixas": faixas,

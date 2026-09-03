@@ -186,6 +186,11 @@ Teste e import rodam sem tela.
    como devia e o `$?` deu 0: a corrida acabava em `| tail -3`, e o que se
    estava a medir era o `tail`. Redirecione para arquivo e leia o código de
    saída antes de olhar a saída — num cano, o `$?` é do último elo.
+   **E confira que o defeito chegou a quem o havia de ver.** Em 03/09 baixou-se
+   o `RUA_RECUO` para reproduzir o pátio estreito e o teste passou: o
+   `gerar_mapa_iso.py` escreve as âncoras AO LADO do SVG, e o SVG tinha ido
+   para `/tmp`. O teste leu a tabela antiga e nunca soube do defeito. Antes de
+   concluir "o validador não pega", confira que o arquivo que ele lê mudou.
    **E confira que a base está LIMPA antes de injetar o defeito seguinte.** No
    mesmo dia, o `git checkout` que devolvia o arquivo entre um defeito e outro
    restaurou a versão anterior ao trabalho inteiro — e os três testes seguintes
@@ -296,6 +301,17 @@ tranca isso.
   caixa lisa isso passou. Ao ganhar tampo e cinta, o corpo continuou fundido
   com o convés e só as peças novas ficaram visíveis — o caixote saiu da
   renderização parecendo um banquinho, com tampo e pernas. A suíte passou.
+- **Prédio que não cabe no pátio não dá erro — dá prédio em cima do asfalto.**
+  O armazém ocupa 3,76 unidades em `mx` e o pátio tinha 1,68: 0,70 dele ficavam
+  na rua e 0,08 pendurados sobre a água. O teste de design passava porque
+  conferia a ÂNCORA, que é um ponto, e o ponto estava no lugar certo. **Prop
+  grande responde pela PEGADA**, e a largura do pátio sai de uma conta —
+  `RUA_RECUO - RUA_LARG - CALCADA - APRON` — que hoje está escrita no gerador.
+- **Conferir os quatro cantos de um retângulo contra uma faixa não é conferir
+  o retângulo.** Foi assim que a primeira versão daquele teste deixou passar o
+  defeito que ela existia para pegar: os cantos caíam a 2,82 e a 5,58, a rua
+  ocupava 2,98..4,52, e a pegada atravessava o asfalto inteiro sem pousar nele
+  com canto nenhum. Retângulo contra faixa é **interseção de intervalos**.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
