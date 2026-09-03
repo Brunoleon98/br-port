@@ -121,8 +121,9 @@ vila saíram do quadro, de 11 para 9.
 
 O resto da análise está triado em `docs/arquivo/PLAYTEST_01_ANALISE.md`, em
 cinco gavetas, **nenhuma delas um bug**: **arte** (pedras, vegetação,
-animações, sprite do trabalhador = Etapa 5), **interface** (cinco itens novos,
-sem gate), **economia** (três itens que só passam pelo `/balancear`),
+animações, sprite do trabalhador = Etapa 5), **interface** (cinco itens novos, sem
+gate — **um feito em 03/09**: o aviso de trabalhador parado, que agora tem
+cartão próprio e conta quantos são), **economia** (três itens que só passam pelo `/balancear`),
 **desenho de sistema** (escopo de Fase 2 em diante) e **escrita** (dois, um
 deles à espera do A4).
 

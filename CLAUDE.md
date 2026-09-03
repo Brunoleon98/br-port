@@ -191,6 +191,15 @@ Teste e import rodam sem tela.
    `gerar_mapa_iso.py` escreve as âncoras AO LADO do SVG, e o SVG tinha ido
    para `/tmp`. O teste leu a tabela antiga e nunca soube do defeito. Antes de
    concluir "o validador não pega", confira que o arquivo que ele lê mudou.
+   **E CONTAGEM SÓ SE TESTA ACIMA DE UM.** Em 03/09 injetou-se um `break` que
+   fazia o contador parar no primeiro trabalhador livre, e o teste passou: o
+   porto abre com UM trabalhador e uma doca, e com esses números contar um e
+   contar todos dá a mesma resposta. O bloco passou a montar três e dois.
+   **E defeito injetado numa regra que existe em DOIS sítios nunca reprova.**
+   No mesmo dia, tirar `if phase != "playing"` de `trabalho_parado()` não
+   reprovou nada, porque `doca_aceita_trabalhador()` carregava a mesma guarda.
+   Quando um defeito não pega, a primeira suspeita é que a regra esteja
+   duplicada — e a correção é apagar a cópia, não reforçar o teste.
    **E confira que a base está LIMPA antes de injetar o defeito seguinte.** No
    mesmo dia, o `git checkout` que devolvia o arquivo entre um defeito e outro
    restaurou a versão anterior ao trabalho inteiro — e os três testes seguintes

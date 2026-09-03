@@ -541,22 +541,39 @@ func _valor_do_barco(dock_index: int) -> int:
 	return int(barco["matched_value"]) if barco.get("matched", false) else int(barco["value"])
 
 
+# Quantos trabalhadores estão parados e quantas docas esperam por um — nesta
+# ordem, num `Vector2i`.
+#
+# Os dois números saem da MESMA varredura de propósito. A interface mostra os
+# dois (o rótulo conta-os, o cartão do trabalhador muda de cor, o botão de
+# alocar acende), e três leituras separadas do mesmo estado é convite a
+# discordarem. Fora de "playing" é (0, 0): sem turno não há trabalho parado.
+func trabalho_parado() -> Vector2i:
+	# A fase NÃO se confere aqui, e é de propósito: `doca_aceita_trabalhador()`
+	# já devolve `false` fora de "playing", então nenhuma doca conta e a
+	# guarda dos zeros lá em baixo devolve (0, 0) sozinha. A primeira versão
+	# repetia o `if phase != "playing"` no topo, e o defeito injetado para o
+	# provar não reprovou nada — porque a outra cópia da regra o cobria. Duas
+	# cópias da mesma regra é uma que pode envelhecer calada.
+	var livres := 0
+	for w in workers:
+		if int(w["busy_turns"]) == 0 and worker_dock_index(int(w["id"])) < 0:
+			livres += 1
+	var esperando := 0
+	for i in range(docks.size()):
+		if doca_aceita_trabalhador(i):
+			esperando += 1
+	# Nem trabalhador parado sem doca, nem doca sem trabalhador é "trabalho
+	# parado" — nos dois casos não há nada que o jogador possa fazer agora.
+	if livres == 0 or esperando == 0:
+		return Vector2i.ZERO
+	return Vector2i(livres, esperando)
+
+
 # Há trabalhador livre E doca esperando? É o que decide se o botão de alocar
 # em lote fica aceso.
 func has_pending_assignment() -> bool:
-	if phase != "playing":
-		return false
-	var tem_livre := false
-	for w in workers:
-		if int(w["busy_turns"]) == 0 and worker_dock_index(int(w["id"])) < 0:
-			tem_livre = true
-			break
-	if not tem_livre:
-		return false
-	for i in range(docks.size()):
-		if doca_aceita_trabalhador(i):
-			return true
-	return false
+	return trabalho_parado() != Vector2i.ZERO
 
 
 # Devolve o índice da doca onde o trabalhador está alocado, ou -1.

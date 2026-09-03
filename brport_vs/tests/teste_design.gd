@@ -37,10 +37,16 @@ const TOLERANCIA_PX := 2.0
 # disso o polegar erra e o jogador acha que o jogo não respondeu.
 const TOQUE_MIN := 44.0
 
+# A cor de aviso do `Main.gd`. Repetida aqui porque o teste roda o jogo POR
+# FORA e não alcança a constante da cena — se ela mudar lá, este número tem de
+# mudar junto, e é a asserção do D9 que o denuncia.
+const COR_AVISO := Color(0.851, 0.467, 0.024)
+
 var _falhas := 0
 var _feito := false
 var _ancoras: Dictionary
 var _main: Control
+var _d9_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -92,6 +98,9 @@ func _rodar() -> void:
 	_d7_letreiros()
 	print("=== D8: o pipeline BRP concorda com a projeção do mapa ===")
 	_d8_contrato_brp()
+	print("=== D9: trabalho parado avisa onde se resolve ===")
+	_d9_aviso_de_trabalho_parado()
+	_confere("o bloco D9 correu até ao fim", _d9_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -424,3 +433,61 @@ func _d7_letreiros() -> void:
 		var quadro := Rect2(_no_mapa(predio), predio.size)
 		_confere("%s apoiado em %s" % [letreiro, pares[letreiro]],
 			quadro.has_point(pe), "pé em %s, quadro do prédio %s" % [pe, quadro])
+
+
+# ── D9 ── o aviso de trabalho parado tem de aparecer ONDE ele se resolve
+#
+# O primeiro playtest num telefone avançou o dia com dois operários livres e
+# duas docas sem trabalhador. A doca já avisava — borda âmbar, "sem
+# trabalhador" —, mas o lado que RESOLVE o problema não avisava nada: o cartão
+# dizia "Livre" em cinzento e a linha acima dele repetia a instrução genérica.
+#
+# Este bloco monta esse estado e exige os três sinais. Eles são três porque o
+# olho pode estar em qualquer um dos três sítios; são a MESMA contagem porque
+# saem todos do `trabalho_parado()`.
+func _d9_aviso_de_trabalho_parado() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	for i in range(GS.docks.size()):
+		GS.docks[i]["worker_id"] = null
+		GS.docks[i]["boat"] = GS._make_boat()
+		GS.docks[i]["boat"]["rival"] = false
+	for w in GS.workers:
+		w["busy_turns"] = 0
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var parado: Vector2i = GS.trabalho_parado()
+	_confere("o estado de teste tem mesmo trabalho parado", parado != Vector2i.ZERO,
+		"trabalho_parado() devolveu %s e o bloco não testa nada" % parado)
+
+	var titulo: Label = tela.get_node("TrabalhadoresTitulo")
+	_confere("o rótulo conta os trabalhadores parados",
+		titulo.text.contains(str(parado.x)), "diz \"%s\"" % titulo.text)
+	_confere("o rótulo conta as docas à espera",
+		titulo.text.contains(str(parado.y)), "diz \"%s\"" % titulo.text)
+	_confere("e está na cor de aviso, não na neutra",
+		titulo.get_theme_color("font_color").is_equal_approx(COR_AVISO),
+		"está em %s" % titulo.get_theme_color("font_color"))
+
+	# O cartão: o sinal é o FUNDO, porque o âmbar sobre ele dá 2,98:1 e
+	# reprovaria a WCAG como texto (ver `trab_parado` no tema).
+	var tema: Theme = load("res://ui/tema_brport.tres")
+	var esperado: StyleBox = tema.get_stylebox("panel", "TrabParado")
+	var parados := 0
+	for cartao in tela.get_node("Trabalhadores").get_children():
+		if (cartao as Control).get_theme_stylebox("panel") == esperado:
+			parados += 1
+	_confere("todo trabalhador parado tem o cartão de aviso",
+		parados == parado.x, "%d cartões marcados para %d parados" % [parados, parado.x])
+
+	var alocar: Button = tela.get_node("AcoesTurno/Alocar")
+	_confere("e o botão que resolve está aceso", not alocar.disabled)
+
+	root.remove_child(tela)
+	tela.free()
+	_d9_completo = true

@@ -78,9 +78,25 @@ func refresh() -> void:
 	elif dock_index >= 0:
 		_aplicar_estilo("TrabAlocado")
 		_estado.text = "Na Doca %d" % (dock_index + 1)
+	elif _selecionado:
+		_aplicar_estilo("TrabLivre")
+		_estado.text = "Escolhido"
+	elif GameState.has_pending_assignment():
+		# LIVRE E CUSTANDO DINHEIRO não é o mesmo estado que livre. O primeiro
+		# playtest num telefone avançou o dia com dois operários livres e duas
+		# docas sem trabalhador: a doca já avisava com a borda âmbar, e quem
+		# resolve o problema — este cartão — dizia "Livre" em cinzento, como
+		# quem não tem nada a fazer.
+		#
+		# A pergunta é global, e é por isso que sai do `has_pending_assignment()`
+		# e não de olhar só este trabalhador: um operário livre num porto sem
+		# doca à espera está livre e pronto, e pintá-lo de âmbar seria pedir
+		# uma ação que não existe.
+		_aplicar_estilo("TrabParado")
+		_estado.text = "Parado"
 	else:
 		_aplicar_estilo("TrabLivre")
-		_estado.text = "Escolhido" if _selecionado else "Livre"
+		_estado.text = "Livre"
 
 
 func _find_self() -> Variant:

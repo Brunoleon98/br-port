@@ -358,7 +358,6 @@ func _refresh_hud() -> void:
 		_upgrade_button.text = "Construir  ·  %d %s" % [faltam, plural]
 		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	_advance_button.disabled = GameState.phase != "playing"
-	_alocar_button.disabled = not GameState.has_pending_assignment()
 	_refresh_meta()
 
 
@@ -399,6 +398,23 @@ func _refresh_docks() -> void:
 	for i in range(cartoes.size()):
 		cartoes[i].trabalhador_selecionado = _selecionado
 		cartoes[i].setup(i)
+	# MEXER NAS DOCAS OBRIGA A REPINTAR OS TRABALHADORES, porque "parado" é uma
+	# pergunta sobre as docas e não sobre o operário (ver `TrabParado` no tema).
+	# Sem isto o cartão só mudava quando o roster mudava — e barco novo a chegar
+	# não mexe no roster, que é exatamente o momento em que o aviso faz falta.
+	_repintar_trabalhadores()
+
+
+# Repinta o que depende de "há trabalho parado?", sem reconstruir cartão nenhum:
+# os cartões existentes, a linha de título e o botão de alocar em lote. É a
+# versão barata do `_refresh_workers()`, e o botão vive aqui — e não no
+# `_refresh_hud()`, onde vivia — para que os três sinais do mesmo estado sejam
+# atualizados pela mesma chamada e não possam discordar.
+func _repintar_trabalhadores() -> void:
+	for no in _workers_container.get_children():
+		no.refresh()
+	_alocar_button.disabled = not GameState.has_pending_assignment()
+	_refresh_titulo_trabalhadores()
 
 
 func _clear(container: Node) -> void:
@@ -422,7 +438,7 @@ func _refresh_workers() -> void:
 		worker_node.setup(int(w["id"]))
 		worker_node.selecionado.connect(_on_worker_selecionado)
 		worker_node.marcar_selecionado(int(w["id"]) == _selecionado)
-	_refresh_titulo_trabalhadores()
+	_repintar_trabalhadores()
 
 
 func _pode_ser_selecionado(worker_id: int) -> bool:
@@ -445,18 +461,40 @@ func _on_worker_selecionado(worker_id: int) -> void:
 	# As duas metades da doca precisam saber quem está escolhido: o cartão para
 	# aceitar o toque, a vaga no mapa para acender o realce sobre o píer.
 	_refresh_docks()
-	_refresh_titulo_trabalhadores()
 
 
 # O cartão do trabalhador tem 158px e não comporta a instrução; ela vive aqui,
 # onde também pode mudar conforme o estado.
+#
+# São TRÊS estados e não dois. O do meio nasceu do primeiro playtest: o dia
+# avançou com dois operários livres e duas docas sem trabalhador, e esta linha
+# dizia a instrução genérica de sempre, em cinzento-azulado. Ela é a única
+# linha de texto que fica logo acima dos cartões — se algum lugar tem de
+# contar quanto trabalho está parado, é este.
+#
+# O âmbar aqui MEDE (5,53:1 sobre a barra escura, passa o AA); no cartão do
+# trabalhador não mediria, e por isso lá o sinal é o fundo. Ver o comentário
+# do `trab_parado` no tema.
 func _refresh_titulo_trabalhadores() -> void:
+	var parado := GameState.trabalho_parado()
 	if _selecionado >= 0:
 		_workers_title.text = "Agora toque numa doca para enviar o #%d" % _selecionado
+		_workers_title.add_theme_color_override("font_color", COR_AVISO)
+	elif parado != Vector2i.ZERO:
+		_workers_title.text = "%s parado%s — %s esperando" % [
+			_plural(parado.x, "trabalhador", "trabalhadores"),
+			"" if parado.x == 1 else "s",
+			_plural(parado.y, "doca", "docas")]
 		_workers_title.add_theme_color_override("font_color", COR_AVISO)
 	else:
 		_workers_title.text = "Trabalhadores — toque ou arraste para uma doca"
 		_workers_title.add_theme_color_override("font_color", Color(0.51, 0.6, 0.706))
+
+
+# "1 doca" / "2 docas". Existe porque o número vem de uma contagem e escrever
+# "1 docas" numa faixa de alerta desfaz o alerta.
+func _plural(n: int, singular: String, plural: String) -> String:
+	return "%d %s" % [n, singular if n == 1 else plural]
 
 
 func _on_alocar_pressed() -> void:

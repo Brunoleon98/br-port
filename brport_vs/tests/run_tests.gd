@@ -59,6 +59,7 @@ func _fake_boat(value: int, op_turns: int, rival: bool) -> Dictionary:
 
 var _done := false
 var _t5g_completo := false
+var _t5h_completo := false
 
 
 # Os testes rodam no primeiro frame, não em _initialize(): dentro de
@@ -398,6 +399,10 @@ func _run() -> void:
 	# então só fica verdadeira se ele chegou ao fim.
 	_check("o bloco T5g correu até ao fim", _t5g_completo)
 
+	print("=== T5h: trabalho parado — os dois numeros saem da mesma varredura ===")
+	_t5h_trabalho_parado()
+	_check("o bloco T5h correu até ao fim", _t5h_completo)
+
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
 	var losses := 0
@@ -516,3 +521,77 @@ func _t5g_botao_voltar() -> void:
 		ProjectSettings.get_setting("application/config/quit_on_go_back") == false)
 
 	_t5g_completo = true
+
+
+# ── T5h ──────────────────────────────────────────────────────────────────
+#
+# `trabalho_parado()` é o que a interface inteira lê para decidir se avisa: o
+# rótulo conta, o cartão do trabalhador muda de cor e o botão de alocar acende.
+# Três leituras do mesmo estado, uma varredura só — e é isto que testa que ela
+# conta certo, inclusive nos dois casos em que NÃO há nada a avisar.
+#
+# A semente é fixada porque este bloco JOGA: o `new_game()` chama
+# `_spawn_boats()`, que tem 30% de abrir contra-oferta, e nessa fase
+# `trabalho_parado()` devolve zero por construção.
+func _t5h_trabalho_parado() -> void:
+	GS._rng.seed = 20260903
+	GS.clear_save()
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+	# Um porto com barco na doca e ninguém alocado: é o estado exato que o
+	# playtest fotografou.
+	#
+	# ⚠️ TRÊS TRABALHADORES E DUAS DOCAS, e não os que o porto abre. O porto
+	# começa com UM trabalhador e uma doca, e com esses números um contador
+	# que parasse no primeiro livre daria a mesma resposta que um que contasse
+	# todos — foi assim que a primeira versão deste bloco passou com o defeito
+	# injetado dentro. Contagem só se testa acima de um.
+	while GS.workers.size() < 3:
+		GS.workers.append({"id": GS.workers.size() + 1, "busy_turns": 0})
+	while GS.docks.size() < 2:
+		GS.docks.append({"boat": null, "worker_id": null, "turns_done": 0})
+	for i in range(GS.docks.size()):
+		GS.docks[i]["worker_id"] = null
+		GS.docks[i]["boat"] = GS._make_boat()
+		GS.docks[i]["boat"]["rival"] = false
+	for w in GS.workers:
+		w["busy_turns"] = 0
+
+	var esperando := 0
+	for i in range(GS.docks.size()):
+		if GS.doca_aceita_trabalhador(i):
+			esperando += 1
+	var parado: Vector2i = GS.trabalho_parado()
+	_check("conta todos os trabalhadores parados, e nao só o primeiro",
+		parado.x == GS.workers.size() and parado.x >= 3)
+	_check("conta todas as docas à espera", parado.y == esperando and parado.y >= 2)
+	_check("has_pending_assignment concorda com a contagem",
+		GS.has_pending_assignment() == (parado != Vector2i.ZERO))
+
+	# Doca à espera mas ninguém livre: não há nada que o jogador possa fazer,
+	# e avisar seria pedir uma ação que não existe.
+	for w in GS.workers:
+		w["busy_turns"] = 2
+	_check("trabalhador nenhum livre => nao ha trabalho parado",
+		GS.trabalho_parado() == Vector2i.ZERO)
+
+	# E o simétrico: gente livre, doca nenhuma à espera.
+	for w in GS.workers:
+		w["busy_turns"] = 0
+	for i in range(GS.docks.size()):
+		GS.docks[i]["boat"] = null
+	_check("doca nenhuma à espera => nao ha trabalho parado",
+		GS.trabalho_parado() == Vector2i.ZERO)
+
+	# Fora de "playing" o turno está bloqueado por um painel; o aviso ali seria
+	# ruído por cima de uma decisão que o jogador ainda não tomou.
+	GS.docks[0]["boat"] = GS._make_boat()
+	GS.docks[0]["boat"]["rival"] = false
+	GS._set_phase("debt_payment")
+	_check("fora de playing nao ha trabalho parado",
+		GS.trabalho_parado() == Vector2i.ZERO)
+	GS._set_phase("playing")
+
+	_t5h_completo = true

@@ -152,7 +152,16 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
 ### 🖥️ Interface — itens novos, sem gate
 
 - Layout das opções abaixo do mapa
-- Alerta de trabalhador não alocado mais visível
+- ~~Alerta de trabalhador não alocado mais visível~~ — **feito em 03/09.** O
+  aviso existia só do lado da DOCA (borda âmbar, "sem trabalhador"); o lado que
+  resolve dizia "Livre" em cinzento. Agora o cartão do trabalhador tem estado
+  próprio (`TrabParado`, fundo âmbar) e a linha acima dele conta: "2
+  trabalhadores parados — 2 docas esperando". Os três sinais (rótulo, cartão,
+  botão) saem da mesma varredura, `GameState.trabalho_parado()`.
+  O tom do cartão foi escolhido por LUMINÂNCIA e não por matiz: os três cartões
+  de hoje vivem entre 0,853 e 0,933, e um creme de 0,902 leria como mais um
+  irmão. O âmbar do tema como TEXTO ali dava 2,98:1 e reprovava a WCAG — por
+  isso o sinal é o fundo.
 - Tocar nos itens do HUD abre detalhe (dinheiro → resumo do ganho de ontem e o
   projetado para hoje)
 - Calendário nos dias, com eventos sinalizados
