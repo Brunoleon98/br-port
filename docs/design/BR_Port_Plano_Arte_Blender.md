@@ -156,6 +156,47 @@ Fica para quando elas entrarem pelo Git.
 obriga a regerar todos os props em Blender (~1 GB de `bpy`) e a reconciliar o
 teste de design. Merece a sua própria passagem.
 
+#### ⚠️ E MEDIDO EM 03/09: baixar o `MEIA_LARG` não mostra mais porto
+
+Gerou-se o mapa base em 30 (o de hoje), 24 e 20, com o MESMO ponto do mundo no
+centro — o `CX`/`CY` é recalculado, senão a comparação media o deslocamento da
+origem em vez do enquadramento. O resultado desmente a premissa da etapa:
+
+| `MEIA_LARG` | terra visível | canto sup-esq | azul escuro na tela |
+|---:|---:|---|---:|
+| **30** (hoje) | 20,1% | terra no pixel 0 | 6,9% |
+| 24 | 23,8% | **vazio por 51 px** | 14,6% |
+| 20 | **23,6%** | **vazio por 100 px** | 27,4% |
+
+**A terra visível SATURA em ~24% e depois cai.** De 24 para 20 não entra mais
+porto nenhum — entra mais vazio, e o azul escuro quase dobra. A razão é que o
+mundo é FINITO: os `DEGRAUS` acabam em `my = 34` e o `FUNDO_TERRA` está em
+`mx = -8`, então afastar a câmera não descobre mais mapa, descobre a borda
+dele. Em 20 há uma cunha de 100 px no canto superior esquerdo onde a terra
+simplesmente termina numa diagonal reta contra água funda.
+
+**O que isto muda no custo da etapa:** ela deixa de ser "mexer numa constante e
+regerar os props" e passa a ser "estender o mundo primeiro" — mais degraus de
+costa, mais vila, mais água — e só depois mexer na projeção. A parte cara não
+é o `bpy`; é o mapa que ainda não existe.
+
+**A ESCOLHA DO BRUNO É `MEIA_LARG = 20`** (03/09), feita olhando as três lado
+a lado. O bloqueio de composição saiu: a leitura das cinco referências está
+agora escrita em `docs/design/referencias/README.md`, e responde também onde
+vai a areia — nas duas pontas da costa, para além do primeiro e do último
+berço, e **não** entre a água e o cais.
+
+Fica a ordem do trabalho, que é o que esta medição estabelece:
+
+1. **Estender o mundo** — mais degraus de costa para além de `my = 34`, terra
+   para trás de `mx = -8`, e os dois remates de praia nas pontas. Sem isto,
+   baixar o `MEIA_LARG` mostra a borda do mapa.
+2. **Só depois** baixar o `MEIA_LARG` para 20, regerar os props em Blender e
+   reconciliar `Main.tscn` com o teste de design.
+
+Os arquivos das imagens continuam FORA do repositório — anexo de conversa não
+vira arquivo no disco —, mas a decisão que eles travavam já não está travada.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.
@@ -163,6 +204,49 @@ teste de design. Merece a sua própria passagem.
 - Props novos: caminhão, empilhadeira, poste (o `poste_de_luz` do kit já
   existe e ainda não é usado), cabeço avulso, pilha de caixotes.
 - **Mede-se por:** `folha_de_contato` dos props, e contagem de peças.
+
+#### ✅ FEITA em 02/09 — em duas metades, e a segunda desmentiu os números acima
+
+**A primeira metade já estava feita e este documento não o dizia.** Os cinco
+"props novos" existem desde 31/08, em `blender/brp_porto.py`, cujo cabeçalho
+diz por escrito que serve esta etapa: caminhão (24 peças), empilhadeira (16),
+pilha de caixotes (9), cabeço (3) e poste (3), mais oito que a lista nem
+pedia — pallet, pneus, cone, barreira, bote, guincho, poste de luz e doca de
+concreto. Quem abrir esta etapa outra vez começa pela metade que falta.
+
+**A segunda metade ficou agora, e os números do plano NÃO SE APLICAM a ela.**
+O "~14 peças" foi escrito para o prop `conteiner` AVULSO, de 2,4 unidades, que
+saiu do projeto em 31/08 (a razão está no comentário do `grupos` em
+`gerar_props_iso.py`). O que restou é a carga do convés do píer, e ela é
+pequena. Medido antes de desenhar:
+
+| | peças antes | tamanho na tela | peças agora |
+|---|---:|---|---:|
+| contêiner do convés | 2 | **46 × 38 px** (face comprida: 31 px) | **13** |
+| caixote (os dois) | 1 cada | 25 × 24 e 23 × 21 px | **3** cada |
+| boia | 2 | 20 × 22 px | **4** |
+| marcador | 2 | 16 × 40 px | **5** |
+
+Catorze peças numa face de 31 px dão 2,5 px cada, que é a regra da lixa do
+`DESGASTE` com outra roupa. O que entrou foi pouca peça com VALOR diferente:
+quatro chapas de laranja escuro no lugar de doze vincos, cantoneiras de metal
+nos cantos (o canto escuro é a assinatura de um contêiner, e escuro lê-se a
+3 px onde uma linha não se lê) e a porta em azul — o azul estava numa faixa de
+1,6 px debaixo da caixa, onde ninguém o via.
+
+**Três armadilhas, todas achadas OLHANDO e nenhuma pela suíte** (estão no
+`CLAUDE.md`): faces coplanares dão um buraco preto; peça dentro de outra conta
+no contador e não aparece no render; e prop da cor do chão onde pousa
+desaparece — o caixote era `madeira` num tabuado de `madeira` e, ao ganhar
+tampo e cinta, saiu parecendo um banquinho.
+
+**O que NÃO ficou:** as "ripas" e a "marca estampada" do caixote. A peça tem
+25 px de largura e 11 px de corpo; três tons empilhados nesses 11 px viram
+listras, e foi o que a primeira tentativa produziu. O que funciona a esta
+escala é o idioma que o `pilha_caixotes` já mediu — silhueta múltipla com tons
+diferentes —, então o caixote passou a ser duas caixas tortas em madeiras
+distintas, e não uma caixa listrada. **O contêiner é o ganho claro desta
+metade; o caixote melhorou e continua a ser a peça mais difícil do convés.**
 
 ### Etapa 3 — Contorno pelo compositor
 - Passe de normal + profundidade, detecção de borda no compositor, espessura
