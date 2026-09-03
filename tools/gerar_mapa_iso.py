@@ -995,8 +995,31 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # na tela pareciam cascalho pintado no concreto do cais. Agora elas andam
     # pelo CONTORNO (andar_costa) e só se afastam na direção do mar, então
     # nenhuma pode cair em terra: a quina passou a ser uma quina de pedra.
+    #
+    # A TERCEIRA correção veio do mesmo playtest, e é a queixa de que as pedras
+    # eram "chapadas": cada uma era UMA elipse de um tom só, e elipse de um tom
+    # não tem lado nenhum. Agora cada pedra é um SÓLIDO FACETADO — um polígono
+    # irregular de topo e uma saia por aresta —, que é o vocabulário do resto
+    # do mapa: é o mesmo desenho da `caixa()` e da `laje()`, reduzido a um
+    # seixo. Custa dois a quatro nós por pedra e nenhuma imagem nova.
+    #
+    # ⚠️ DUAS FORMAS FORAM TENTADAS ANTES E DESCARTADAS, e não por gosto:
+    #   · elipse extrudada (tampo do mesmo tamanho da base) sai FICHA DE
+    #     PÔQUER — cilindro perfeito, e onde um tampo claro caía sobre a saia
+    #     escura da pedra ao lado lia-se um ANEL, que o olho lê como buraco;
+    #   · elipse com uma cópia menor deslocada para cima lê como elipse chapada
+    #     com sombra por baixo, que é o defeito de origem outra vez.
+    #   O que faz uma pedra pequena ler como pedra é ARESTA: contorno quebrado
+    #   e duas faces de tons diferentes, como em toda a outra peça deste mapa.
+    #
+    # ⚠️ E ORDENADAS POR PROFUNDIDADE, o que enquanto foram chapadas não era
+    # preciso. Duas elipses lisas encavaladas dão o mesmo desenho em qualquer
+    # ordem; duas pedras COM ALTURA, não — a de trás desenhada por último tapa
+    # a da frente pela saia, e o enrocamento sobe em vez de descer. Aqui, como
+    # no cenário do jogo, o Y de tela é a profundidade.
     r = random.Random(SEMENTE_CHAO + 90)
     tons = [C["pedra"], C["pedra_media"], C["pedra_clara"]]
+    pedras = []
     for mx, my, (nmx, nmy), (tmx, tmy) in andar_costa(0.06, (0.22, 0.40), r):
         # O enrocamento PARA onde o píer começa. Ele não some por baixo do
         # tabuado: ali não há enrocamento nenhum, porque ninguém joga pedra na
@@ -1011,9 +1034,41 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
             px, py = p(mx + nmx * fora + tmx * ao_longo,
                        my + nmy * fora + tmy * ao_longo)
             rx = r.uniform(4.5, 9.5)
-            s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
+            ry = rx * r.uniform(0.48, 0.62)
+            # O contorno: cinco ou seis vértices com o raio e o ângulo
+            # sacudidos. Polígono REGULAR sai cristal, e nesta escala um
+            # cristal lê-se como erro de desenho; a irregularidade é o que
+            # faz cinco arestas passarem por pedra.
+            n = r.choice((5, 6))
+            a0 = r.uniform(0.0, math.tau)
+            canto = []
+            for k in range(n):
+                a = a0 + math.tau * k / n + r.uniform(-0.25, 0.25)
+                f = r.uniform(0.78, 1.0)
+                canto.append((px + math.cos(a) * rx * f,
+                              py + math.sin(a) * ry * f))
+            pedras.append((py, canto, rx * r.uniform(0.30, 0.62),
+                           tons[r.randrange(3)]))
+
+    for _py, canto, h, topo in sorted(pedras, key=lambda q: q[0]):
+        n = len(canto)
+        for k in range(n):
+            a, b = canto[k], canto[(k + 1) % n]
+            ex, ey = b[0] - a[0], b[1] - a[1]
+            # Normal exterior da aresta. Só se desenha a saia das arestas
+            # viradas para BAIXO na tela — as de cima ficam por trás do tampo,
+            # e desenhá-las seria pintar por baixo de quem vai tapar.
+            nx, ny = ey, -ex
+            if ny <= 0.0:
+                continue
+            # Duas faces, como as paredes: a que olha para a direita é a mais
+            # escura, seguindo a mesma luz de `madeira_esq` / `madeira_dir`.
+            tom = _sombrear(topo, 0.62 if nx > 0.0 else 0.76)
+            s += ('  <polygon points="%.1f,%.1f %.1f,%.1f %.1f,%.1f %.1f,%.1f" '
                   'fill="%s"/>\n'
-                  % (px, py, rx, rx * r.uniform(0.48, 0.62), tons[r.randrange(3)]))
+                  % (a[0], a[1], b[0], b[1], b[0], b[1] + h, a[0], a[1] + h, tom))
+        s += ('  <polygon points="%s" fill="%s"/>\n'
+              % (" ".join("%.1f,%.1f" % c for c in canto), topo))
 
     # Espuma: MANCHAS, não traço.
     # Passou por duas versões erradas antes desta. Linha contínua ao longo do
