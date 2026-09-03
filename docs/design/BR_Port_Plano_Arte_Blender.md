@@ -180,9 +180,22 @@ regerar os props" e passa a ser "estender o mundo primeiro" — mais degraus de
 costa, mais vila, mais água — e só depois mexer na projeção. A parte cara não
 é o `bpy`; é o mapa que ainda não existe.
 
-E continua a valer o bloqueio de antes: quanto porto DEVE caber na tela é
-julgamento de composição, e as cinco imagens de referência não estão no
-repositório.
+**A ESCOLHA DO BRUNO É `MEIA_LARG = 20`** (03/09), feita olhando as três lado
+a lado. O bloqueio de composição saiu: a leitura das cinco referências está
+agora escrita em `docs/design/referencias/README.md`, e responde também onde
+vai a areia — nas duas pontas da costa, para além do primeiro e do último
+berço, e **não** entre a água e o cais.
+
+Fica a ordem do trabalho, que é o que esta medição estabelece:
+
+1. **Estender o mundo** — mais degraus de costa para além de `my = 34`, terra
+   para trás de `mx = -8`, e os dois remates de praia nas pontas. Sem isto,
+   baixar o `MEIA_LARG` mostra a borda do mapa.
+2. **Só depois** baixar o `MEIA_LARG` para 20, regerar os props em Blender e
+   reconciliar `Main.tscn` com o teste de design.
+
+Os arquivos das imagens continuam FORA do repositório — anexo de conversa não
+vira arquivo no disco —, mas a decisão que eles travavam já não está travada.
 
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.

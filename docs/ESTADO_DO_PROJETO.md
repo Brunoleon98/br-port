@@ -109,8 +109,15 @@ um arquivo em vez de só uma impressão.
 Da arte, **três das seis etapas estão feitas** — a 1 (paleta), a 6 (o chrome da
 interface) e a 2 (a cauda dos props, 02/09). Faltam a 3 (contorno pelo
 compositor), a 4 (materiais dirigidos) e a 5 (rosto do trabalhador), todas com
-`bpy`, mais a metade cara da 1: o `MEIA_LARG`, que muda a projeção e obriga a
-regerar tudo.
+`bpy`, mais a metade cara da 1 — o enquadramento.
+
+**O enquadramento deixou de estar bloqueado em 03/09:** o Bruno escolheu
+`MEIA_LARG = 20` olhando o mapa gerado em três larguras, e a leitura de
+composição das cinco referências está escrita em
+`docs/design/referencias/README.md` (inclusive onde vai a areia: nas pontas da
+costa, não entre a água e o cais). Só que **medido, em 20 o mundo acaba dentro
+do quadro** — então a ordem é estender a costa primeiro e mexer na projeção
+depois. O plano de arte tem a tabela.
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 

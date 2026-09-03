@@ -49,6 +49,76 @@ O que cresce, na ordem em que cresce:
 
 ---
 
+## Leitura de COMPOSIÇÃO — escrita em 03/09, e é a que faltava
+
+As seções abaixo cobriam paleta, estilo e personagem. **Composição não estava
+coberta**, e era exatamente ela que travava as duas metades por fazer da
+Etapa 1 do plano de arte: onde cabe a areia, e qual o enquadramento. Ficam
+respondidas aqui.
+
+### O enquadramento: `MEIA_LARG = 20`
+
+**Escolha do Bruno em 03/09**, feita olhando o mapa gerado em 30 (o de hoje),
+24 e 20 lado a lado, com o mesmo ponto do mundo no centro das três.
+
+E ela vem com um custo que foi MEDIDO antes de a etapa abrir (a tabela está no
+`BR_Port_Plano_Arte_Blender.md`): **em 20 o mundo acaba dentro do quadro.** A
+terra visível satura em ~24% da tela e para de crescer, enquanto o azul vazio
+quase dobra — há uma cunha de 100 px no canto superior esquerdo onde a terra
+termina numa diagonal reta contra água funda. Os `DEGRAUS` acabam em `my = 34`
+e o `FUNDO_TERRA` está em `mx = -8`: afastar a câmera não descobre mais mapa,
+descobre a borda dele.
+
+**Logo, a ordem do trabalho é: estender o mundo primeiro, mexer na projeção
+depois.** E as referências dizem para onde estendê-lo — elas enchem o quadro
+inteiro nesta escala, sem uma única borda à vista.
+
+### Onde vai a AREIA — e não é onde se supôs
+
+A pergunta em aberto era: *a costa deste mapa é cais de pedra de ponta a
+ponta; onde é que uma praia cabe?* A resposta das cinco imagens é clara e
+nenhuma delas põe areia entre a água e o cais:
+
+> **A areia fica onde o PORTO NÃO ESTÁ** — nas duas pontas da costa, para
+> além do primeiro e do último berço, emoldurando o porto.
+
+Nas cinco, o cais é pedra ou concreto descendo direto à água; a praia aparece
+como uma faixa clara com pedras e coqueiros **no canto de cima**, acima da
+doca mais ao norte, e **no canto de baixo**, onde a costa se curva e sai do
+quadro. Em duas delas há mangue e vegetação de água na margem oposta, do outro
+lado do canal.
+
+Isso torna a areia um item BARATO e não uma reforma da costa: são dois
+remates nas pontas do que já existe, e não uma faixa ao longo de todo o cais.
+Ela também resolve metade do problema de cima — as pontas da costa são
+justamente onde hoje o mundo acaba em diagonal reta.
+
+### O resto da composição
+
+- **A água ocupa perto de metade do quadro**, e a maior parte dela é água
+  aberta sem nada: a Zona de Espera (retângulo tracejado, que este projeto já
+  tem) flutua nela com dois ou três rebocadores e uma boia. Vazio de propósito
+  — é o que dá escala ao porto.
+- **A cidade é uma FAIXA atrás do cais**, paralela a ele, nunca um bloco. Ela
+  engorda para trás com as Fases (térrea → sobrado com comércio → prédio), e é
+  o que este projeto já faz com `--nivel-vila=N`.
+- **Entre a cidade e o cais há sempre uma avenida**, com faixa amarela e
+  passeio dos dois lados. O projeto já tem a rua; a referência mostra que ela
+  é mais LARGA do que a nossa e carrega trânsito.
+- **As docas encostam umas nas outras ao longo da diagonal.** Não há água
+  entre berços vizinhos como há no nosso mapa — o cais é contínuo e os
+  píeres saem dele.
+- **Rótulo de doca sobre água vazia**, com uma pílula escura por baixo dizendo
+  o tamanho em células. Nunca sobre o barco.
+
+⚠️ **E o aviso do fim desta página vale aqui mais do que em qualquer outro
+lado:** as cinco mostram um jogo com contratos, missões, pesquisa, loja,
+estaleiro e cruzeiros. O Vertical Slice tem 3 docas e cinco estruturas.
+Compor o mapa para caber o porto da imagem do Dia 105 é desenhar cenário para
+um jogo que não existe.
+
+---
+
 ## Leitura de estilo
 
 ### Cenário
@@ -94,9 +164,9 @@ tropical e quente; o nosso mapa é de mar frio. São constantes no dicionário
 > feita, e a rampa foi estendida para baixo no mesmo matiz. O plano de arte
 > traz os números.
 >
-> ⏳ **A AREIA continua por fazer**, e depende desta pasta receber as imagens:
-> a costa do mapa é cais de pedra de ponta a ponta, e decidir onde a praia cabe
-> é decisão de desenho que não se toma sem olhar a referência.
+> ✅ **A AREIA deixou de estar bloqueada em 03/09** — a leitura de composição
+> no topo desta página diz onde ela vai: nas duas pontas da costa, para além
+> do primeiro e do último berço, e não entre a água e o cais. Falta fazê-la.
 
 ### Personagens
 
