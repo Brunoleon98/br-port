@@ -462,6 +462,31 @@ func current_week() -> int:
 	return week_of(turn)
 
 
+# UM DICIONÁRIO POR DIA DA PARTIDA, com o que já se sabe de antemão sobre ele
+# — é o que o calendário (toque no chip "Dia" do HUD) lê, e o teste confere
+# sem abrir cena nenhuma, pela mesma razão de sempre: a conta vive uma vez só.
+#
+# A OFERTA DO RIVAL NÃO ENTRA AQUI. Ela é sorteada turno a turno dentro de
+# `_spawn_boats()` — 30% de chance, por barco, não por dia — e um calendário
+# que fingisse saber de antemão em que dia ela cai estaria a inventar uma
+# certeza que o jogo não tem. Só entram os TRÊS eventos que o próprio
+# calendário fixa antes de a partida começar: fecho de semana (píer e
+# custos), o vencimento da parcela, e o último dia.
+func calendario() -> Array:
+	var dias: Array = []
+	for t in range(1, TURNS_TOTAL + 1):
+		dias.append({
+			"turno": t,
+			"semana": week_of(t),
+			"hoje": t == turn,
+			"passado": t < turn,
+			"fecha_semana": t % TURNS_PER_WEEK == 0,
+			"parcela_vence": t == PARCELA_DUE_TURN,
+			"ultimo_dia": t == TURNS_TOTAL,
+		})
+	return dias
+
+
 # ── WORKER ASSIGNMENT ──
 # `avisar` só existe para a alocação em lote: chamar isto N vezes emitiria N
 # mensagens e só a última sobreviveria na barra. Quem aloca em lote silencia

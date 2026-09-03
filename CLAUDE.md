@@ -329,6 +329,12 @@ tranca isso.
   bónus nenhum). Só com os dois construídos um defeito injetado na cópia
   reprovou. É a mesma lição de "contagem só se testa acima de um", aplicada a
   um bónus em vez de uma quantidade.
+- **Cor calibrada para um fundo não atravessa para outro sem medir de novo.**
+  O cinzento-azulado que marca texto neutro sobre o fundo ESCURO do jogo
+  (0,51/0,6/0,706, usado no aviso de trabalhador ocioso) foi reaproveitado
+  sem medir no calendário (03/09), sobre CARTÃO BRANCO: mediu 2,93:1, abaixo
+  do corte de texto grande da WCAG (3,0). Reaproveitar cor entre dois fundos
+  diferentes é reaproveitar cor nenhuma — é medir duas vezes.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.

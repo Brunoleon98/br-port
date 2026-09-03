@@ -163,14 +163,23 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
   irmão. O âmbar do tema como TEXTO ali dava 2,98:1 e reprovava a WCAG — por
   isso o sinal é o fundo.
 - ~~Tocar nos itens do HUD abre detalhe (dinheiro → resumo do ganho de ontem e
-  o projetado para hoje)~~ — **feito em 03/09**, só o dinheiro (os outros três
-  itens do HUD continuam sem detalhe). `GameState.dia_atual` / `dia_anterior`
-  são a mesma contabilidade de `semana_atual`, só que por dia; "ontem" é
-  histórico e só se lê, "hoje" é uma SIMULAÇÃO de `advance_turn()`
-  (`projecao_do_dia()`) que não mexe em nada — nem no caixa, nem numa doca. O
-  fecho de semana e a projeção partilham `_custos_da_semana()`, para as duas
-  contas nunca poderem divergir uma da outra.
-- Calendário nos dias, com eventos sinalizados
+  o projetado para hoje)~~ — **feito em duas partes.** O dinheiro em 03/09
+  (`GameState.dia_atual` / `dia_anterior` são a mesma contabilidade de
+  `semana_atual`, só que por dia; "ontem" é histórico e só se lê, "hoje" é uma
+  SIMULAÇÃO de `advance_turn()` — `projecao_do_dia()` — que não mexe em nada).
+  Os outros três chips (dia, reputação, docas) em 03/09 também, mais abaixo.
+- ~~Calendário nos dias, com eventos sinalizados~~ — **feito em 03/09, e junto
+  com o item acima**: tocar no dia e o calendário são a mesma pergunta, e
+  viraram um painel só. `GameState.calendario()` devolve, por dia, se é hoje,
+  se já passou, se fecha semana ou se é o vencimento da parcela — os únicos
+  três eventos que o jogo sabe de antemão. A oferta do rival fica de fora de
+  propósito: é sorteada por barco, não por dia, e marcá-la seria inventar uma
+  certeza que o jogo não tem.
+  Tocar na reputação abre a escada de patamares e o que sobe/desce cada um,
+  lido direto das constantes (nunca escrito à mão, para não poder divergir).
+  Tocar nas docas mostra quantos berços faltam e o que destrava o próximo,
+  reaproveitando o mesmo texto que o botão de construir já usa
+  (`impedimento_estrutura()`), em vez de escrever uma segunda explicação.
 - Espaço no HUD reservado para o que vem depois (mapa da cidade, lojas)
 
 ### 💰 Economia e narrativa — NÃO se mexe sem medir

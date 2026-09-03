@@ -61,6 +61,7 @@ var _done := false
 var _t5g_completo := false
 var _t5h_completo := false
 var _t5i_completo := false
+var _t5j_completo := false
 
 
 # Os testes rodam no primeiro frame, não em _initialize(): dentro de
@@ -408,6 +409,10 @@ func _run() -> void:
 	_t5i_resumo_do_dia()
 	_check("o bloco T5i correu até ao fim", _t5i_completo)
 
+	print("=== T5j: calendario — so os tres eventos que se sabem de antemao ===")
+	_t5j_calendario()
+	_check("o bloco T5j correu até ao fim", _t5j_completo)
+
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
 	var losses := 0
@@ -705,3 +710,48 @@ func _t5i_resumo_do_dia() -> void:
 	_check("parcela ja paga nao projeta de novo", int(proj5["parcela"]) == 0)
 
 	_t5i_completo = true
+
+
+# ── T5j ──────────────────────────────────────────────────────────────────
+#
+# `calendario()` é o que o painel do mesmo nome desenha (toque no chip "Dia").
+# Confere as três contas que ele tem de acertar: quantos dias (nem um a mais
+# nem a menos que TURNS_TOTAL), qual é hoje, e em que dias caem os dois
+# eventos que o jogo já sabe de antemão — fecho de semana e vencimento da
+# parcela. Oferta do rival não entra: é sorteada por barco, não por dia.
+func _t5j_calendario() -> void:
+	_fresh_playing()
+	GS.turn = 10
+
+	var dias: Array = GS.calendario()
+	_check("um dia por turno da partida, nem mais nem menos",
+		dias.size() == GS.TURNS_TOTAL)
+
+	var vistos_hoje := 0
+	var fecham_semana := 0
+	var vencem_parcela := 0
+	for dia in dias:
+		if bool(dia["hoje"]):
+			vistos_hoje += 1
+			_check("o dia de hoje é o turno atual (%d)" % int(dia["turno"]),
+				int(dia["turno"]) == GS.turn)
+		_check("'passado' concorda com o turno atual (dia %d)" % int(dia["turno"]),
+			bool(dia["passado"]) == (int(dia["turno"]) < GS.turn))
+		if bool(dia["fecha_semana"]):
+			fecham_semana += 1
+			_check("todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia %d)"
+					% int(dia["turno"]),
+				int(dia["turno"]) % GS.TURNS_PER_WEEK == 0)
+		if bool(dia["parcela_vence"]):
+			vencem_parcela += 1
+			_check("a parcela vence no dia certo (dia %d, esperado %d)"
+					% [int(dia["turno"]), GS.PARCELA_DUE_TURN],
+				int(dia["turno"]) == GS.PARCELA_DUE_TURN)
+
+	_check("exatamente um dia é 'hoje'", vistos_hoje == 1)
+	_check("um fecho de semana por semana (%d, esperado %d)"
+			% [fecham_semana, GS.WEEKS_TOTAL],
+		fecham_semana == GS.TURNS_TOTAL / GS.TURNS_PER_WEEK)
+	_check("a parcela vence uma vez só", vencem_parcela == 1)
+
+	_t5j_completo = true

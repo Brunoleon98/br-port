@@ -48,6 +48,7 @@ var _ancoras: Dictionary
 var _main: Control
 var _d9_completo := false
 var _d10_completo := false
+var _d11_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -106,6 +107,10 @@ func _rodar() -> void:
 	print("=== D10: tocar no dinheiro abre o resumo do dia ===")
 	_d10_toque_no_caixa()
 	_confere("o bloco D10 correu até ao fim", _d10_completo)
+
+	print("=== D11: os outros tres chips do HUD tambem abrem o deles ===")
+	_d11_toque_nos_outros_chips()
+	_confere("o bloco D11 correu até ao fim", _d11_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -568,3 +573,63 @@ func _juntar_textos(no: Node) -> PackedStringArray:
 	for filho in no.get_children():
 		saida.append_array(_juntar_textos(filho))
 	return saida
+
+
+# ── D11 ── o chip do dia, o da reputação e o das docas também respondem
+#
+# Mesma prova do D10, para os três chips que faltavam: o toque de verdade
+# (gui_input, não uma chamada direta a `setup()`) tem de abrir o painel
+# CERTO, com conteúdo dentro — e não um retângulo vazio ou o painel de outro
+# chip por engano de que scene ficou ligada a qual sinal.
+func _d11_toque_nos_outros_chips() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var overlay: Node = tela.get_node("Overlay")
+
+	_confere_chip_abre(tela, overlay, "HudBar/DiaPilula", "PainelCalendario.gd",
+		["Calendário", "SEMANA 1"])
+	_confere_chip_abre(tela, overlay, "HudBar/RepPilula", "PainelReputacao.gd",
+		["Reputação", GS.reputation_label()])
+	_confere_chip_abre(tela, overlay, "HudBar/DocasPilula", "PainelDocas.gd",
+		["Docas", "de %d berços" % int(GS.BERCOS_NO_MAPA)])
+
+	root.remove_child(tela)
+	tela.free()
+	_d11_completo = true
+
+
+# Toca (release) no caminho `no_pilula` dentro de `tela`, confere que o
+# painel que abriu no `overlay` é o `script_esperado` e contém CADA um dos
+# `deve_conter`, e fecha o painel antes de devolver — para o próximo chip
+# testado não herdar o painel do anterior no topo da pilha.
+func _confere_chip_abre(tela: Control, overlay: Node, no_pilula: String,
+		script_esperado: String, deve_conter: Array) -> void:
+	var pilula: Control = tela.get_node(no_pilula)
+	var antes := overlay.get_child_count()
+
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	ev.pressed = false
+	pilula.gui_input.emit(ev)
+
+	_confere("%s abriu um painel" % no_pilula, overlay.get_child_count() == antes + 1)
+	var painel: Node = overlay.get_child(overlay.get_child_count() - 1)
+	var script: Script = painel.get_script()
+	_confere("%s abriu o painel certo" % no_pilula,
+		script != null and String(script.resource_path).ends_with(script_esperado),
+		"abriu: %s" % (script.resource_path if script != null else "nenhum"))
+
+	var texto_inteiro := "\n".join(_juntar_textos(painel))
+	for trecho in deve_conter:
+		_confere("%s mostra \"%s\"" % [no_pilula, trecho],
+			texto_inteiro.contains(String(trecho)), "painel diz: %s" % texto_inteiro)
+
+	overlay.remove_child(painel)
+	painel.free()

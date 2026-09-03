@@ -26,6 +26,9 @@ const TelaNomesScene := preload("res://scenes/panels/TelaNomes.tscn")
 const PainelDiarioScene := preload("res://scenes/panels/PainelDiario.tscn")
 const PainelBoletimScene := preload("res://scenes/panels/PainelBoletim.tscn")
 const PainelCaixaScene := preload("res://scenes/panels/PainelCaixa.tscn")
+const PainelReputacaoScene := preload("res://scenes/panels/PainelReputacao.tscn")
+const PainelDocasScene := preload("res://scenes/panels/PainelDocas.tscn")
+const PainelCalendarioScene := preload("res://scenes/panels/PainelCalendario.tscn")
 
 
 const COR_BOA := Color(0.102, 0.478, 0.251)
@@ -36,6 +39,9 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 @onready var _overlay_layer: CanvasLayer = $Overlay
 @onready var _cash_label: Label = $HudBar/CaixaPilula/Linha/Caixa
 @onready var _caixa_pilula: PanelContainer = $HudBar/CaixaPilula
+@onready var _dia_pilula: PanelContainer = $HudBar/DiaPilula
+@onready var _rep_pilula: PanelContainer = $HudBar/RepPilula
+@onready var _docas_pilula: PanelContainer = $HudBar/DocasPilula
 @onready var _day_label: Label = $HudBar/DiaPilula/Linha/Dia
 @onready var _rep_label: Label = $HudBar/RepPilula/Linha/RepTexto
 @onready var _docks_label: Label = $HudBar/DocasPilula/Linha/DocasTexto
@@ -92,6 +98,9 @@ func _ready() -> void:
 	_upgrade_button.pressed.connect(_on_upgrade_pressed)
 	_pause_button.pressed.connect(_on_pause_pressed)
 	_caixa_pilula.gui_input.connect(_on_caixa_pilula_input)
+	_dia_pilula.gui_input.connect(_on_dia_pilula_input)
+	_rep_pilula.gui_input.connect(_on_rep_pilula_input)
+	_docas_pilula.gui_input.connect(_on_docas_pilula_input)
 
 	_connect_game_state()
 	_refresh_all()
@@ -647,17 +656,43 @@ func _on_upgrade_pressed() -> void:
 	_abrir_painel(UpgradePanelScene)
 
 
-# A PÍLULA DO CAIXA É TOCÁVEL — item do primeiro playtest (02/09): "tocar no
-# dinheiro do HUD abre um resumo do ganho de ontem e o projetado para hoje".
-#
-# NO RELEASE, e não no press — a mesma razão do `Worker.gd`: reagir no toque
-# que solta, e não no que pressiona, deixa o clique livre para quem também
-# quisesse arrastar a partir daqui (hoje ninguém arrasta o HUD, mas a regra é
-# a mesma do resto da interface e custa nada segui-la).
+# AS QUATRO PÍLULAS DO HUD SÃO TOCÁVEIS — item do primeiro playtest (02/09):
+# "tocar num item do HUD abre detalhe". As quatro reagem à mesma pergunta —
+# toque que SOLTA, botão esquerdo, a mesma razão do `Worker.gd` (reagir no
+# release deixa o clique livre para quem quisesse arrastar) — e só o painel
+# que abrem muda. Extrair a pergunta evita QUATRO cópias da mesma regra: é
+# exatamente o tipo de duplicação que já escondeu um defeito neste projeto
+# (ver `trabalho_parado()` no CLAUDE.md, a guarda de fase repetida).
+func _e_toque_de_soltar(event: InputEvent) -> bool:
+	return event is InputEventMouseButton and not event.pressed \
+		and event.button_index == MOUSE_BUTTON_LEFT
+
+
 func _on_caixa_pilula_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and not event.pressed \
-			and event.button_index == MOUSE_BUTTON_LEFT:
+	if _e_toque_de_soltar(event):
 		_abrir_painel(PainelCaixaScene).setup(GameState.resumo_do_dia())
+		accept_event()
+
+
+# O chip "Dia" abre o CALENDÁRIO, não um resumo do próprio chip — os dois
+# itens do playtest ("tocar no dia" e "calendário com eventos sinalizados")
+# são a mesma pergunta, e abrir dois painéis para ela seria pedir ao jogador
+# para comparar um com o outro.
+func _on_dia_pilula_input(event: InputEvent) -> void:
+	if _e_toque_de_soltar(event):
+		_abrir_painel(PainelCalendarioScene).setup()
+		accept_event()
+
+
+func _on_rep_pilula_input(event: InputEvent) -> void:
+	if _e_toque_de_soltar(event):
+		_abrir_painel(PainelReputacaoScene).setup()
+		accept_event()
+
+
+func _on_docas_pilula_input(event: InputEvent) -> void:
+	if _e_toque_de_soltar(event):
+		_abrir_painel(PainelDocasScene).setup()
 		accept_event()
 
 
