@@ -786,6 +786,55 @@ def vila(nivel: int, pavimentado: bool) -> str:
     return s
 
 
+# ── ESPUMA: DEIXOU DE SER FUNDO E PASSOU A SER CAMADA ────────────────────
+#
+# Pedido do playtest: "animações mais fluidas, e novas animações, para o
+# coqueiro, ondas e até fazer o caminhão andar". O coqueiro e o caminhão eram
+# tween; a onda não era, e a razão está medida: a espuma estava ASSADA no SVG
+# do mapa, que é UMA textura. Não havia nó de onda nenhum para animar, e
+# animar o mapa inteiro seria fazer a costa deslizar.
+#
+# Agora ela sai em ARQUIVO PRÓPRIO, transparente, do mesmo tamanho do mapa e
+# na mesma projeção — o jogo põe-na por cima da água e faz a lavagem. São
+# DUAS camadas de sementes diferentes, em contrafase: uma entra enquanto a
+# outra sai, e é isso que dá continuidade. Uma camada só a pulsar dava uma
+# costa inteira a piscar ao mesmo tempo, que é exatamente o que a versão de
+# traço contínuo já tinha ensinado a não fazer.
+#
+# ⚠️ E O MAPA DEIXOU DE A TER. Se ela ficasse assada E em camada, a espuma
+# apareceria a dobrar e a parte assada nunca se mexeria — meia costa viva e
+# meia parada é pior do que uma costa parada.
+def espuma(semente: int) -> str:
+    """As manchas de arrebentação, como camada solta.
+
+    MANCHAS, não traço, e isto passou por duas versões erradas: linha contínua
+    ao longo do cais leu como arame esticado, e quebrá-la em `stroke-dasharray`
+    só trocou o arame por faixa de rodovia — traço claro de espessura constante
+    sobre pedra escura é o desenho de uma pintura de solo. O que lê como
+    arrebentação é borrão de tamanho e opacidade irregulares: a espuma não tem
+    espessura, tem quantidade.
+    """
+    s = ""
+    r = random.Random(semente)
+    for mx, my, (nmx, nmy), _t in andar_costa(0.45, (0.18, 0.42), r):
+        if r.random() >= 0.72 or _sob_pier(my):
+            continue
+        fora = r.uniform(0.0, 0.55)
+        fx, fy = p(mx + nmx * fora, my + nmy * fora)
+        rx = r.uniform(4.0, 11.0)
+        s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
+              'fill="%s" opacity="%.2f"/>\n'
+              % (fx, fy, rx, r.uniform(1.8, 3.2), C["espuma"],
+                 r.uniform(0.28, 0.60)))
+    return s
+
+
+def gerar_espuma(semente: int) -> str:
+    return ('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" '
+            'viewBox="0 0 %d %d">\n%s</svg>\n'
+            % (LARG, ALT, LARG, ALT, espuma(semente)))
+
+
 def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
           com_predios: bool = True, com_pavimento: bool = True,
           nivel_vila: int = 1) -> str:
@@ -1070,25 +1119,6 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
         s += ('  <polygon points="%s" fill="%s"/>\n'
               % (" ".join("%.1f,%.1f" % c for c in canto), topo))
 
-    # Espuma: MANCHAS, não traço.
-    # Passou por duas versões erradas antes desta. Linha contínua ao longo do
-    # cais leu como arame esticado; quebrar em `stroke-dasharray` só trocou o
-    # arame por faixa de rodovia, porque traço claro de espessura constante
-    # sobre pedra escura é exatamente o desenho de uma pintura de solo. O que
-    # lê como arrebentação é borrão de tamanho e opacidade irregulares — a
-    # espuma não tem espessura, tem quantidade.
-    re_ = random.Random(SEMENTE_CHAO + 55)
-    for mx, my, (nmx, nmy), _t in andar_costa(0.45, (0.18, 0.42), re_):
-        if re_.random() >= 0.72 or _sob_pier(my):
-            continue
-        fora = re_.uniform(0.0, 0.55)
-        fx, fy = p(mx + nmx * fora, my + nmy * fora)
-        rx = re_.uniform(4.0, 11.0)
-        s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" '
-              'fill="%s" opacity="%.2f"/>\n'
-              % (fx, fy, rx, re_.uniform(1.8, 3.2), C["espuma"],
-                 re_.uniform(0.28, 0.60)))
-
     # ---- píeres ----
     # Em jogo o píer TROCA DE ESTADO (vaga por construir -> píer construído), e
     # o que muda de estado não pode estar assado no fundo. Com --sem-pieres o
@@ -1225,8 +1255,25 @@ def tabela_ancoras() -> dict:
     }
 
 
+# As duas sementes da espuma. A primeira é a que o mapa usava quando ela era
+# assada — assim a camada 0 sai com as MESMAS manchas de sempre e a mudança
+# não é uma costa nova, é a mesma costa que agora respira.
+SEMENTES_ESPUMA = (SEMENTE_CHAO + 55, SEMENTE_CHAO + 56)
+
+
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    # `--espuma=N` escreve SÓ a camada de espuma de índice N, e é assim que o
+    # CI a regenera ao lado dos dois mapas.
+    for a in sys.argv[1:]:
+        if a.startswith("--espuma="):
+            i = int(a.split("=", 1)[1])
+            destino_e = args[0] if args else "porto_mapa_espuma%d.svg" % i
+            conteudo_e = gerar_espuma(SEMENTES_ESPUMA[i])
+            with open(destino_e, "w", encoding="utf-8") as f:
+                f.write(conteudo_e)
+            print("%s — camada de espuma %d, %dx%d" % (destino_e, i, LARG, ALT))
+            return 0
     com_pieres = "--sem-pieres" not in sys.argv
     com_coqueiros = "--sem-coqueiros" not in sys.argv
     com_predios = "--sem-predios" not in sys.argv

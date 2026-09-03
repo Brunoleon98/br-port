@@ -267,6 +267,12 @@ jobs:
             --sem-predios --sem-pavimento brport_vs/art/porto_mapa_iso.svg >/dev/null
           python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros \
             --sem-predios brport_vs/art/porto_mapa_iso_patio.svg >/dev/null
+          # A espuma deixou de ser assada no mapa e passou a ser camada: são
+          # dois arquivos próprios, e envelhecem tão calados quanto os mapas.
+          python3 tools/gerar_mapa_iso.py --espuma=0 \
+            brport_vs/art/porto_mapa_espuma0.svg >/dev/null
+          python3 tools/gerar_mapa_iso.py --espuma=1 \
+            brport_vs/art/porto_mapa_espuma1.svg >/dev/null
           if ! git diff --quiet -- brport_vs/art; then
             echo "::error::Os mapas ou as âncoras versionados não batem com o gerador."
             git diff --stat -- brport_vs/art

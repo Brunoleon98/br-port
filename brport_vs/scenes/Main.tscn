@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
 [ext_resource type="Texture2D" path="res://art/porto_mapa_iso.svg" id="3"]
+[ext_resource type="Texture2D" path="res://art/porto_mapa_espuma0.svg" id="espuma0"]
+[ext_resource type="Texture2D" path="res://art/porto_mapa_espuma1.svg" id="espuma1"]
 [ext_resource type="PackedScene" path="res://scenes/dock/Dock.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/dock/DocaCartao.tscn" id="6"]
 [ext_resource type="Texture2D" path="res://art/props/barco_medio.png" id="5"]
@@ -226,6 +228,25 @@ offset_right = 720.0
 offset_bottom = 720.0
 mouse_filter = 2
 texture = ExtResource("3")
+
+; A ESPUMA é camada, e não fundo. Ela fica ENTRE o mapa e o cenário: por cima
+; da água, por baixo de tudo o que flutua nela. São duas, de sementes
+; diferentes, e o `Main.gd` lava-as em contrafase — uma entra enquanto a outra
+; sai. Uma só a pulsar punha a costa inteira a piscar ao mesmo tempo.
+
+[node name="Espuma0" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 720.0
+mouse_filter = 2
+texture = ExtResource("espuma0")
+
+[node name="Espuma1" type="TextureRect" parent="MapaWrap"]
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 720.0
+mouse_filter = 2
+texture = ExtResource("espuma1")
 
 [node name="Cenario" type="Control" parent="MapaWrap"]
 layout_mode = 0

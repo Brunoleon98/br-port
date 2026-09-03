@@ -191,12 +191,18 @@ varredura: o D2 passou a conferir os 22 props de terra do cenário, e não um.
   a cada degrau da costa, e percorrer a costa toda exigiria teleportar. E ele
   **reordena-se pelo caminho**, porque atravessa a profundidade do coqueiro e
   do bote — ordem fixa só serve a prop parado.
-- **Ondas — em aberto, e medido por que:** não existe nó de onda nem de espuma
-  no jogo. A espuma está ASSADA no SVG do mapa, que é uma textura só, então
-  animá-la exige uma camada nova — um segundo SVG com só a espuma, gerado ao
-  lado do mapa, para o jogo a fazer derivar por cima da água. Não precisa de
-  Blender (é o `gerar_mapa_iso.py`), mas é geração nova, nó novo na cena e
-  import novo: não é ajuste de tween como as duas de cima.
+- ~~**Ondas**~~ — **feitas em 03/09, e o diagnóstico de 02/09 estava certo.**
+  Não havia nó de onda nem de espuma: a espuma estava ASSADA no SVG do mapa,
+  que é UMA textura, e animá-la seria fazer a costa deslizar. Agora o
+  `gerar_mapa_iso.py` escreve-a em DOIS arquivos próprios, transparentes, do
+  tamanho do mapa e na mesma projeção — `--espuma=0` e `--espuma=1` —, e o
+  mapa deixou de a ter (assada E em camada apareceria a dobrar, com metade
+  parada). O jogo põe as duas entre a água e o cenário e lava-as em
+  CONTRAFASE: uma entra enquanto a outra sai. Uma camada só a pulsar punha a
+  costa inteira a clarear ao mesmo tempo, que é o irmão do defeito que o
+  gerador já documenta. E o tempo é assimétrico como na rajada do coqueiro —
+  1,6s a entrar, 3,4s a recuar; com a mesma duração nos dois sentidos volta a
+  ser pêndulo.
 - ~~Sprite do trabalhador refeito~~ — **feito em 03/09, e é a Etapa 5 do plano
   de arte.** O sprite do cartão era um desenho pintado, com contorno, brilho e
   degradê; o jogo é facetado, sem contorno e de faces chapadas. Não destoava

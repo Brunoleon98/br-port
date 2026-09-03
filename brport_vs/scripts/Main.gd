@@ -112,6 +112,7 @@ func _ready() -> void:
 	_animar_boias()
 	_animar_luzes()
 	_animar_caminhao()
+	_animar_espuma()
 
 	# Turno 1 abria com a faixa de mensagem VAZIA — um cartão creme com nada
 	# dentro, que na tela lê como falha e não como "ainda não aconteceu nada".
@@ -466,6 +467,58 @@ func _ordenar_por_profundidade(no: Control) -> void:
 			indice += 1
 	if pai.get_child(indice) != no:
 		pai.move_child(no, indice)
+
+
+## A ARREBENTAÇÃO — a terceira das três animações que o playtest pediu
+## ("animações mais fluidas, e novas animações, para o coqueiro, ondas e até
+## fazer o caminhão andar"). As outras duas eram tween e saíram no mesmo dia;
+## esta não era, e a razão está medida: até 03/09 a espuma estava ASSADA no SVG
+## do mapa, que é UMA textura. Não havia nó de onda para animar, e animar o
+## mapa faria a costa deslizar. Hoje o `gerar_mapa_iso.py` escreve a espuma em
+## dois arquivos próprios, e são eles que se lavam.
+##
+## ⚠️ A LAVAGEM É EM CONTRAFASE, e é isso que a faz parecer mar. Uma camada só
+## a pulsar põe a costa INTEIRA a clarear e a escurecer ao mesmo tempo — que é
+## o irmão do defeito que o gerador já documenta (traço de espessura constante
+## lê como pintura de solo, não como espuma). Com duas sementes diferentes em
+## oposição, o que se vê é espuma a nascer num sítio enquanto se desfaz noutro.
+##
+## ⚠️ E O TEMPO É ASSIMÉTRICO, como na rajada do coqueiro. Onda ENTRA depressa
+## e RECUA devagar; com a mesma duração nos dois sentidos volta a ser pêndulo,
+## e pêndulo é o que o olho identifica como animação de programador.
+const ESPUMA_ENTRA := 1.6
+const ESPUMA_RECUA := 3.4
+
+## Quanto a espuma avança sobre a terra no auge da lavagem. O sentido é o da
+## NORMAL DA COSTA: `+mx` move (+30, +15) por unidade na tela, e 4px disso é o
+## suficiente para se ler sem descolar a espuma da beira que ela desenha.
+const ESPUMA_AVANCO := Vector2(4.0, 2.0)
+
+
+func _animar_espuma() -> void:
+	for i in 2:
+		var camada := $MapaWrap.get_node_or_null("Espuma%d" % i) as TextureRect
+		if camada == null:
+			continue
+		var base := camada.position
+		# A segunda começa já lavada, para as duas nunca estarem no mesmo
+		# ponto do ciclo. Sem isto elas subiriam e desceriam juntas e a
+		# contrafase não existiria — duas camadas a fazer o trabalho de uma.
+		var alta := i == 1
+		camada.modulate.a = 1.0 if alta else 0.45
+		camada.position = base + (ESPUMA_AVANCO if alta else Vector2.ZERO)
+		var tw := camada.create_tween().set_loops().set_parallel(false)
+		for passo in 2:
+			var sobe := (passo == 0) != alta
+			var dur := ESPUMA_ENTRA if sobe else ESPUMA_RECUA
+			var trans := Tween.TRANS_CUBIC if sobe else Tween.TRANS_SINE
+			tw.set_parallel(true)
+			tw.tween_property(camada, "modulate:a", 1.0 if sobe else 0.45, dur) \
+				.set_trans(trans).set_ease(Tween.EASE_OUT)
+			tw.tween_property(camada, "position",
+				base + (ESPUMA_AVANCO if sobe else Vector2.ZERO), dur) \
+				.set_trans(trans).set_ease(Tween.EASE_OUT)
+			tw.set_parallel(false)
 
 
 ## `light_flicker` — a luminária do poste, e só ela.
