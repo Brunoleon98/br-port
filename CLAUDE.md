@@ -232,7 +232,30 @@ Teste e import rodam sem tela.
 
 `tools/gerar_mapa_iso.py`, `tools/gerar_props_iso.py` e `brport_vs/scenes/Main.tscn`
 têm de concordar. As constantes: `MEIA_LARG=30`, `MEIA_ALT=15` (razão 2:1),
-câmera do Blender a `ROT_X=60°`, `ROT_Z=45°`, `ESCALA_ORTO` derivada delas.
+`ZOOM=2/3`, câmera do Blender a `ROT_X=60°`, `ROT_Z=45°`, `ESCALA_ORTO`
+derivada delas.
+
+- **São DOIS espaços desde 05/09, e a fronteira é `tela()`.** O mapa DESENHA a
+  30 num quadro de 1080 e o `viewBox` do SVG entrega 720 — a câmera é o `ZOOM`,
+  e o `MEIA_LARG` efetivo é 20. Quem desenha fala DESENHO; a tabela de âncoras,
+  o `Main.tscn`, o `Main.gd`, o manifest BRP e o teste de design falam TELA.
+  **A razão de não escrever 20 na constante:** altura, naquele arquivo, é
+  PIXEL — o `ALT_CAIS`, as paredes da vila, a largura de cada traço —, e baixar
+  só o `MEIA_LARG` encolheria a PLANTA deixando as ALTURAS paradas, com o porto
+  esticado 1,5× para cima e nenhuma das cinco suítes a lê-lo. Escala-se no
+  GRUPO, que é a mesma regra dos props.
+- **O prop não tem `viewBox`: quem o encolhe é o `ortho_scale`, e só ele.** O
+  `z()` continua na escala de DESENHO de propósito — o fator de altura e o
+  `ortho_scale` cancelam-se, e mexer nele levantaria cada prop 1,5×. Afastar
+  uma câmera não estica o que ela filma.
+- **Constante em PIXEL é constante que envelhece quando o `ZOOM` muda, e ela
+  não dá erro.** Foram cinco em 05/09: a silhueta do caminhão e o corte que
+  exige pegada no teste de design, a largura de telhado da vila, os sprites do
+  pátio e o avanço da espuma. Duas reprovavam o que estava certo; **uma deixou
+  de reprovar seja o que for** — o corte de 130px passou a ficar acima de todos
+  os props, e a asserção que exige pegada nunca mais teria exigido nenhuma.
+  Ao mexer na câmera, procure todo número medido em pixel e pergunte de que
+  escala ele é.
 
 - **Altura é em PIXELS DO MAPA**, não em unidades do Blender. A conversão está
   em `z()` num lugar só. Ignorar isso põe um píer 2,4× mais alto que o cais
@@ -248,6 +271,14 @@ câmera do Blender a `ROT_X=60°`, `ROT_Z=45°`, `ESCALA_ORTO` derivada delas.
   prop de terra em **+0,87 em mx E em my**, o que é pouco para se notar e
   suficiente para mudar a que DEGRAU ele pertence. Custou uma tabela inteira
   de posições errada em 04/09, e ela parecia plausível.
+- **Mas REESCALAR a projeção é uma semelhança, e aí a altura cancela-se.**
+  Desprojetar num espaço e reprojetar noutro dá `novo = P + (velho − Q) × ZOOM`
+  — a altura entra e sai, desde que o `alt_cais` encolha junto com a câmera.
+  A regra acima continua a valer para ler o MUNDO de um prop; para mover 37
+  props de uma escala para outra ela não muda nada, e saber isso é a diferença
+  entre uma migração de uma linha e uma tabela feita à mão. O que prova que
+  correu bem é a âncora: as três docas têm de cair a 0,00 px do que a tabela
+  publica.
 - **Só as faces `+x` e `-y` são visíveis** por esta câmera. Detalhar as outras
   é render que ninguém vê.
 - **Ordem de nó É profundidade.** Quem tem `mx+my` maior está mais perto da

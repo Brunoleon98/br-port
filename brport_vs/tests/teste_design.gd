@@ -35,10 +35,15 @@ const TOLERANCIA_PX := 2.0
 
 # Onde o caminhão é DESENHADO dentro do quadro de 512, relativo ao ponto de
 # ancoragem — medido no alfa dos dois PNGs e unido, que é o pior caso de cada
-# lado. O quadro inteiro tem 512px e o desenho ocupa ~94x86 no meio dele:
+# lado. O quadro inteiro tem 512px e o desenho ocupa ~67x58 no meio dele:
 # perguntar se o QUADRO saiu do mapa daria "ainda dentro" com o caminhão já
 # invisível havia muito.
-const DESENHO_CAMINHAO := Rect2(-38, -46, 100, 86)
+#
+# ⚠️ É PIXEL DE PNG, e por isso ENCOLHEU com a câmera em 05/09 (era
+# Rect2(-38,-46,100,86)). Constante medida num sprite é constante que envelhece
+# quando o sprite é regerado — e esta envelheceria a dizer que o caminhão é
+# maior do que é, o que faz o teste reprovar uma rota que está boa.
+const DESENHO_CAMINHAO := Rect2(-26, -31, 67, 58)
 
 # Alvo de toque mínimo. 44 é o piso das diretrizes de iOS e Android; abaixo
 # disso o polegar erra e o jogador acha que o jogo não respondeu.
@@ -59,6 +64,7 @@ var _d11_completo := false
 var _d12_completo := false
 var _d13_completo := false
 var _d15_completo := false
+var _d16_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -137,6 +143,10 @@ func _rodar() -> void:
 	print("=== D15: as duas pontas de areia, e quem pode pisá-las ===")
 	_d15_praias()
 	_confere("o bloco D15 correu até ao fim", _d15_completo)
+
+	print("=== D16: o mundo transborda o quadro pelos quatro lados ===")
+	_d16_bordas_do_mundo()
+	_confere("o bloco D16 correu até ao fim", _d16_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -240,6 +250,81 @@ func _d15_praias() -> void:
 	_d15_completo = true
 
 
+# ── D16 ── o mundo transborda o quadro
+#
+# O cabeçalho de `gerar_mapa_iso.py` promete isto com todas as letras — "a
+# saída é gerar o mundo MAIOR que o ecrã e cortar: o mapa transborda dos
+# quatro lados e o jogador vê uma janela para dentro dele" — e até 05/09 nada
+# o verificava. Ficou caro: com a câmera afastada para os 20 escolhidos em
+# 03/09, o mundo passou a acabar DENTRO do quadro por três lados diferentes,
+# 626 px de fronteira à vista, e a única maneira de o saber era gerar o mapa e
+# olhar. A terceira dessas fronteiras — a ponta NORTE — nem sequer estava na
+# lista de trabalho, porque a medição à mão de 03/09 só contava o canto
+# superior esquerdo.
+#
+# São as três que existem, e cada uma sai por um canto:
+#
+#   fundo   `mx = FUNDO_TERRA`, onde a terra acaba — canto superior esquerdo;
+#   norte   `my` do primeiro degrau, onde a costa começa — superior direito;
+#   sul     `my` do último, onde ela acaba — inferior esquerdo.
+#
+# O canto inferior DIREITO é mar aberto de propósito e não se confere: ali o
+# vazio é o oceano, e a leitura das referências pede-o ("a água ocupa perto de
+# metade do quadro, e a maior parte dela é água aberta sem nada").
+#
+# ⚠️ A JANELA É O `MapaWrap`, e não o PNG. São 660 de altura contra 720 — os
+# 60 de baixo nunca aparecem, e conferir contra eles deixaria passar uma
+# fronteira visível.
+func _d16_bordas_do_mundo() -> void:
+	var pr: Dictionary = _ancoras["projecao"]
+	_confere("a tabela de âncoras publica o fundo da terra",
+		pr.has("fundo_terra"),
+		"sem ele não há como saber onde o mundo acaba para trás")
+	if not pr.has("fundo_terra"):
+		return
+
+	var faixas: Array = _ancoras["faixas"]
+	var fundo := float(pr["fundo_terra"])
+	var alt := float(pr["alt_cais"])
+	var janela := (_main.get_node("MapaWrap") as Control).size
+	var primeira: Dictionary = faixas[0]
+	var ultima: Dictionary = faixas[faixas.size() - 1]
+	var my_n := float((primeira["my"] as Array)[0])
+	var my_s := float((ultima["my"] as Array)[1])
+
+	for caso in [
+		["o fundo da terra (mx=%.0f)" % fundo,
+			Vector2(fundo, my_n), Vector2(fundo, my_s)],
+		["o começo da costa (my=%.0f)" % my_n,
+			Vector2(fundo, my_n), Vector2(float(primeira["borda"]), my_n)],
+		["o fim da costa (my=%.0f)" % my_s,
+			Vector2(fundo, my_s), Vector2(float(ultima["borda"]), my_s)],
+	]:
+		var visivel := _linha_no_quadro(caso[1], caso[2], alt, janela)
+		_confere("%s fica fora do quadro" % caso[0], visivel < 1.0,
+			"%.0f px dela caem dentro da janela — o jogador vê o mapa ACABAR"
+			% visivel)
+	_d16_completo = true
+
+
+# Quantos pixels do segmento de mundo (a -> b), à altura `alt`, caem dentro da
+# janela. Mesmo método do D15, que mede a costa visível de cada praia.
+func _linha_no_quadro(a: Vector2, b: Vector2, alt: float,
+		janela: Vector2) -> float:
+	var visivel := 0.0
+	var ant := Vector2.INF
+	var passos := 1200
+	for i in range(passos + 1):
+		var m := a.lerp(b, float(i) / passos)
+		var ponto := _tela(m.x, m.y, alt)
+		var dentro: bool = (ponto.x >= 0.0 and ponto.x <= janela.x
+			and ponto.y >= 0.0 and ponto.y <= janela.y)
+		if dentro and ant != Vector2.INF:
+			visivel += ponto.distance_to(ant)
+		ant = ponto if dentro else Vector2.INF
+	return visivel
+
+
 # O inverso de `_mundo`: do mundo para o pixel do mapa.
 func _tela(mx: float, my: float, altura: float) -> Vector2:
 	var pr: Dictionary = _ancoras["projecao"]
@@ -278,7 +363,15 @@ func _tela(mx: float, my: float, altura: float) -> Vector2:
 # é o que a `casa()` desenha — conferir só `my..my+dmy` deixaria passar
 # exatamente a sobreposição de telhado que se quer evitar.
 const BEIRAL_DA_CASA := 0.12
-const LARGURA_DE_TELHADO := 78.0     # px, medido: (VILA_PROF + 0.24 + 1.0) * 30
+# A largura de um telhado desta vila, EM UNIDADES DE MUNDO: a profundidade do
+# lote mais os dois beirais mais a folga de uma unidade.
+#
+# ⚠️ ERA 78,0 EM PIXEL, e isso não sobreviveu a mexer na câmera: o número saía
+# de `(VILA_PROF + 0.24 + 1.0) * 30`, a separação com que ele é comparado sai
+# das âncoras — que passaram a publicar 20 —, e o teste reprovou seis degraus
+# que não tinham mudado nada. Régua e medida têm de vir da mesma escala. O
+# `VILA_PROF` sai da própria tabela (`faixa["vila"]`), que é quem o sabe.
+const TELHADO_FOLGA := 0.24 + 1.0
 
 var _d14_completo := false
 
@@ -330,7 +423,7 @@ func _d14_vila() -> void:
 		if tex == null:
 			continue
 		var usado := tex.get_image().get_used_rect()
-		if float(usado.size.x) < SILHUETA_QUE_EXIGE_PEGADA:
+		if float(usado.size.x) < SILHUETA_QUE_EXIGE_PEGADA_MUNDO * meia_larg:
 			continue                       # coqueiro, caminhão: não tapam vila
 		conferidos += 1
 		var base := _origem(no as Control)
@@ -352,7 +445,8 @@ func _d14_vila() -> void:
 				"a casa cai a %.0fpx da coluna do prédio e %.0fpx acima da base "
 				% [dx, dy] + "dele, num sprite de %dx%d" % [usado.size.x, usado.size.y])
 	_confere("houve prédio grande para conferir contra a vila", conferidos > 0,
-		"nenhum prop passou de %.0fpx — o filtro comeu tudo" % SILHUETA_QUE_EXIGE_PEGADA)
+		"nenhum prop passou de %.0fpx — o filtro comeu tudo"
+		% (SILHUETA_QUE_EXIGE_PEGADA_MUNDO * meia_larg))
 
 	# (3) as duas fileiras separam-se por mais de um telhado.
 	#
@@ -365,11 +459,13 @@ func _d14_vila() -> void:
 		var vila: Array = faixa["vila"]
 		var fundo_: Array = faixa["vila_fundo"]
 		var separacao: float = (float(vila[0]) - float(fundo_[0])) * meia_larg
+		var telhado: float = (float(vila[1]) - float(vila[0])
+			+ TELHADO_FOLGA) * meia_larg
 		_confere("no degrau my=%s a fileira de trás sai de trás da da frente"
 			% [faixa["my"]],
-			separacao > LARGURA_DE_TELHADO,
+			separacao > telhado,
 			"%.0fpx de separação para um telhado de %.0fpx — as duas fileiras "
-			% [separacao, LARGURA_DE_TELHADO] + "leem como um borrão de telha")
+			% [separacao, telhado] + "leem como um borrão de telha")
 
 	_d14_completo = true
 
@@ -507,15 +603,23 @@ const PODEM_PISAR_A_RUA := ["Caminhao", "ConeTransito"]
 const VIVEM_NA_AGUA := ["BarcoEspera", "Ancoragem", "Bote"]
 
 # Acima disto a âncora deixa de responder pelo prop e a pegada passa a ser
-# obrigatória. Medido: o escritório tem 213px de silhueta e o armazém 258; o
-# maior prop sem pegada é a copa do coqueiro, com 118.
-const SILHUETA_QUE_EXIGE_PEGADA := 130.0
+# obrigatória. É uma medida de MUNDO — "mais largo do que 4,33 unidades de
+# chão" —, e não de pixel: medido depois do enquadramento de 05/09, o
+# escritório tem 103px de silhueta e o armazém 124; o maior prop sem pegada é
+# a copa do coqueiro, com 79.
+#
+# ⚠️ EM PIXEL ELA MORRIA CALADA. Eram 130px, afinados quando os mesmos props
+# mediam 154 e 185; ao afastar a câmera todos passariam a caber por baixo do
+# corte, e a asserção que existe para exigir pegada deixaria de exigir
+# qualquer uma sem reprovar nada. Guarda que nunca reprova não é guarda.
+const SILHUETA_QUE_EXIGE_PEGADA_MUNDO := 4.33
 
 
 func _d2_cenario_em_terra() -> void:
 	var cenario := _main.get_node("MapaWrap/Cenario")
 	var pegadas: Dictionary = _ancoras.get("pegadas", {})
 	var alt := float(_ancoras["projecao"]["alt_cais"])
+	var meia_larg := float(_ancoras["projecao"]["meia_larg"])
 	for no in cenario.get_children():
 		if not (no is TextureRect):
 			continue
@@ -531,7 +635,7 @@ func _d2_cenario_em_terra() -> void:
 		if pegada.is_empty() and tex != null:
 			var larg := float(tex.get_image().get_used_rect().size.x)
 			_confere("%s tem pegada declarada" % nome,
-				larg < SILHUETA_QUE_EXIGE_PEGADA,
+				larg < SILHUETA_QUE_EXIGE_PEGADA_MUNDO * meia_larg,
 				"a silhueta tem %.0fpx e só a âncora é conferida — declare a "
 				% larg + "pegada em PEGADAS, no gerar_mapa_iso.py")
 
@@ -987,8 +1091,16 @@ func _d13_travessia_do_caminhao() -> void:
 		is_equal_approx(float(consts["MEIA_LARG"]), float(pr["meia_larg"]))
 			and is_equal_approx(float(consts["MEIA_ALT"]), float(pr["meia_alt"])))
 
-	_confere("a rota tem os oito pontos da escada", rota.size() == 8,
-		"tem %d" % rota.size())
+	# A escada tem duas pontas e um cotovelo entre cada par de degraus, e cada
+	# cotovelo é DOIS pontos (entra num `mx`, sai no seguinte): são 2 x degraus.
+	#
+	# ⚠️ ERA O NÚMERO 8 CRAVADO, e ele durou até a costa ganhar um degrau em
+	# cada ponta (05/09). Contagem cravada num teste é a mesma armadilha que
+	# uma altura cravada em pixel: passa a reprovar o certo assim que o mundo
+	# que ela descreve muda de tamanho.
+	var pontos_da_escada: int = 2 * _ancoras["faixas"].size()
+	_confere("a rota tem os %d pontos da escada" % pontos_da_escada,
+		rota.size() == pontos_da_escada, "tem %d" % rota.size())
 
 	# ── 1 ── todo ponto da rota, e todo ponto ENTRE eles, cai em asfalto.
 	#

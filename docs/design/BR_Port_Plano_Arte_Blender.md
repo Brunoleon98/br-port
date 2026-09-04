@@ -216,6 +216,77 @@ Baixar o `MEIA_LARG` deve trazê-los de volta, mas isso **não está medido** �
 > de baixar o `MEIA_LARG` deixou de ser "há terra vazia" e passou a ser só o
 > enquadramento. A costa continua a acabar em `my = 34`.
 
+#### ✅ O ENQUADRAMENTO FICOU EM 05/09 — a Etapa 1 está fechada
+
+**A ferramenta é `tools/medir_enquadramento.py` + `medir_enquadramento.gd`.**
+A medição de 03/09 foi feita à mão e não ficou no repositório, o que obrigava a
+sessão seguinte a acreditar nela. Agora ela repete-se num comando, e rasteriza
+com o ThorVG — o MESMO importador de SVG do jogo, e o único rasterizador que
+existe neste contêiner.
+
+**Ela achou o que a de 03/09 não tinha como achar: são TRÊS fronteiras, não
+uma.** Aquela contava a distância do canto superior esquerdo à terra; esta mede
+quantos pixels da FRONTEIRA DO MUNDO caem dentro da janela, e o mundo acaba por
+três lados diferentes. Com o mundo de 04/09, a `MEIA_LARG = 20`:
+
+| fronteira | onde sai | dentro do quadro |
+|---|---|---:|
+| `mx = FUNDO_TERRA` | canto superior esquerdo | **313 px** |
+| `my = DEGRAUS[0][0]` (o começo da costa) | canto superior **direito** | **200 px** |
+| `my = DEGRAUS[-1][1]` (o fim dela) | canto inferior esquerdo | **113 px** |
+
+O passo 1 desta seção falava em "mais degraus para além de `my = 34`, terra
+para trás de `mx = -8`" — e não mencionava a ponta NORTE, que é a segunda
+maior das três. Ela existia desde sempre e nunca aparecera porque a `30` o
+mundo transborda dos quatro lados sozinho.
+
+**O que se fez, e é o mínimo medido:** um degrau em cada ponta
+(`my` de −14 a 42, contra os −6 a 34) e `FUNDO_TERRA` de −8 para −16 (o mínimo
+é −15). Os três vão a **zero**; dois degraus por ponta não trazem nada que se
+veja.
+
+#### E a LARGURA é só metade do enquadramento — a outra é o CENTRO
+
+Estendido o mundo e baixada a câmera, a primeira captura saiu com o porto
+encostado à direita e um bloco de mata e telhado a ocupar a esquerda inteira:
+**61% do quadro em terra**. A leitura das referências é explícita nas duas
+pontas — *"a água ocupa perto de metade do quadro, e a maior parte dela é água
+aberta sem nada; vazio de propósito, é o que dá escala ao porto"* e *"a cidade
+é uma FAIXA atrás do cais, nunca um bloco"* — e nenhuma das duas estava a ser
+respeitada.
+
+A causa é que o `CX`/`CY` continuava a manter no centro o ponto do mundo que lá
+estava a 30. Ele passou a ser DERIVADO: o **centroide dos três berços**
+(`_centro_do_porto()`), o que centra a câmera no porto de que ela é. Se um
+berço mudar de sítio, a câmera vai atrás dele.
+
+| | terra | terra natural | azul aberto | fronteira no quadro |
+|---|---:|---:|---:|---:|
+| **30** (o de sempre) | 67,8% | 26,3% | 5,5% | 0 px |
+| 20, mundo de 04/09, centro antigo | 54,7% | 24,3% | 25,1% | **626 px** |
+| 20, mundo estendido, centro antigo | 61,0% | 31,9% | 16,3% | 0 px |
+| **20, mundo estendido, centrado no porto** | **47,3%** | **22,3%** | 25,8% | **0 px** |
+
+⚠️ **E o "azul vazio" deixou de ser a medida que interessa** — repare que a
+linha final tem quase o mesmo valor da segunda, que era a ruim. Na segunda ele
+era o mundo a ACABAR; na última é mar aberto, que é o que a referência pede.
+Quem responde por isso é a coluna da direita, e é para isso que ela existe.
+
+**E isto desmente a medição de 03/09 no ponto em que ela desmentia a etapa.**
+"A terra visível SATURA em ~24% e depois cai" era verdade do MUNDO, não da
+projeção. Centrado no porto e com o mundo estendido, a fração de porto no
+quadro fica PARADA em ~47,5% nas três larguras, e o que cresce é o distrito à
+volta dele: terra natural **14,4% → 18,4% → 22,3%** de 30 para 20. É
+exatamente o que a etapa prometia — *"a referência mostra um distrito"* — e não
+se via porque o mundo acabava antes.
+
+**O custo real, medido antes de prometer** (o documento supunha "~1 GB de
+`bpy`, e merece a sua própria passagem"): `pip install bpy` leva **17 s** (373
+MB), `gerar_props_iso.py` regera os 15 props em **68 s** e `gerar_brp.py todos`
+os outros 24 em **2 min 40**. Quatro minutos de máquina ao todo. O que custou
+mesmo foi o que ninguém tinha medido: **altura, no gerador do mapa, é PIXEL** —
+ver §1.1 de `docs/BRP_SPATIAL_CONTRACT.md` e a regra no `CLAUDE.md`.
+
 ### Fora das etapas — a escala dos dois prédios do pátio (03/09)
 
 Não é etapa do plano: é correção de playtest, e entra aqui porque mexeu em
@@ -355,7 +426,7 @@ silhueta de um prédio do pátio, e que as duas fileiras se separam por mais de
 um telhado. Os `lotes` eram publicados na tabela de âncoras desde sempre e
 NENHUM teste os lia. Quatro defeitos foram injetados e os quatro reprovaram.
 
-#### ✅ A AREIA DAS DUAS PONTAS ficou em 04/09 — a Etapa 1 só deve o enquadramento
+#### ✅ A AREIA DAS DUAS PONTAS ficou em 04/09
 
 A leitura de composição (`docs/design/referencias/README.md`) diz onde ela vai:
 **onde o porto não está** — nas duas pontas da costa, para além do primeiro e

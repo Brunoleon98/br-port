@@ -266,218 +266,218 @@ mouse_filter = 2
 
 [node name="Escritorio" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 106.0
-offset_top = -151.00
-offset_right = 618.0
-offset_bottom = 361.00
+offset_left = 23
+offset_top = -95.83
+offset_right = 535
+offset_bottom = 416.17
 mouse_filter = 2
 texture = ExtResource("prop_escritorio_ruina")
 
 [node name="Caminhao" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 23.5
-offset_top = -75.25
-offset_right = 535.5
-offset_bottom = 436.75
+offset_left = -32
+offset_top = -45.33
+offset_right = 480
+offset_bottom = 466.67
 mouse_filter = 2
 texture = ExtResource("prop_caminhao")
 
 [node name="Coqueiro0Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 163.0
-offset_top = -26.0
-offset_right = 675.0
-offset_bottom = 486.0
+offset_left = 61
+offset_top = -12.5
+offset_right = 573
+offset_bottom = 499.5
 mouse_filter = 2
 texture = ExtResource("prop_coqueiro_tronco")
 
 [node name="Coqueiro0Copa" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 163.0
-offset_top = -26.0
-offset_right = 675.0
-offset_bottom = 486.0
+offset_left = 61
+offset_top = -12.5
+offset_right = 573
+offset_bottom = 499.5
 mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
 [node name="Bote" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 211.0
-offset_top = 3.5
-offset_right = 723.0
-offset_bottom = 515.5
+offset_left = 93
+offset_top = 7.17
+offset_right = 605
+offset_bottom = 519.17
 mouse_filter = 2
 texture = ExtResource("prop_bote")
 [node name="Armazem" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -9.5
-offset_top = 26.75
-offset_right = 502.5
-offset_bottom = 538.75
+offset_left = -54
+offset_top = 22.67
+offset_right = 458
+offset_bottom = 534.67
 mouse_filter = 2
 texture = ExtResource("prop_galpao_velho")
 
 [node name="Pneus" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 70.0
-offset_top = 77.0
-offset_right = 582.0
-offset_bottom = 589.0
+offset_left = -1
+offset_top = 56.17
+offset_right = 511
+offset_bottom = 568.17
 mouse_filter = 2
 texture = ExtResource("prop_pneus")
 [node name="Barreira" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -53.0
-offset_top = 111.5
-offset_right = 459.0
-offset_bottom = 623.5
+offset_left = -83
+offset_top = 79.17
+offset_right = 429
+offset_bottom = 591.17
 mouse_filter = 2
 texture = ExtResource("prop_barreira")
 [node name="Poste" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -56.0
-offset_top = 128.0
-offset_right = 456.0
-offset_bottom = 640.0
+offset_left = -85
+offset_top = 90.17
+offset_right = 427
+offset_bottom = 602.17
 mouse_filter = 2
 texture = ExtResource("prop_poste")
 [node name="PosteLuz" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -56.0
-offset_top = 128.0
-offset_right = 456.0
-offset_bottom = 640.0
+offset_left = -85
+offset_top = 90.17
+offset_right = 427
+offset_bottom = 602.17
 mouse_filter = 2
 texture = ExtResource("prop_poste_luz")
 [node name="ConeTransito" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -140.0
-offset_top = 128.0
-offset_right = 372.0
-offset_bottom = 640.0
+offset_left = -141
+offset_top = 90.17
+offset_right = 371
+offset_bottom = 602.17
 mouse_filter = 2
 texture = ExtResource("prop_cone_transito")
 [node name="Coqueiro1Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 43.0
-offset_top = 154.0
-offset_right = 555.0
-offset_bottom = 666.0
+offset_left = -19
+offset_top = 107.5
+offset_right = 493
+offset_bottom = 619.5
 mouse_filter = 2
 texture = ExtResource("prop_coqueiro_tronco")
 
 [node name="Coqueiro1Copa" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 43.0
-offset_top = 154.0
-offset_right = 555.0
-offset_bottom = 666.0
+offset_left = -19
+offset_top = 107.5
+offset_right = 493
+offset_bottom = 619.5
 mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
 [node name="Empilhadeira" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -155.0
-offset_top = 189.50
-offset_right = 357.0
-offset_bottom = 701.50
+offset_left = -151
+offset_top = 131.17
+offset_right = 361
+offset_bottom = 643.17
 mouse_filter = 2
 texture = ExtResource("prop_empilhadeira")
 [node name="Cabeco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 56.5
-offset_top = 208.2
-offset_right = 568.5
-offset_bottom = 720.2
+offset_left = -10
+offset_top = 143.63
+offset_right = 502
+offset_bottom = 655.63
 mouse_filter = 2
 texture = ExtResource("prop_cabeco")
 [node name="BarcoEspera1" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 404.0
-offset_top = 214.0
-offset_right = 916.0
-offset_bottom = 726.0
+offset_left = 221.67
+offset_top = 147.5
+offset_right = 733.67
+offset_bottom = 659.5
 mouse_filter = 2
 texture = ExtResource("5")
 
 [node name="PilhaCaixotes" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -117.5
-offset_top = 241.2
-offset_right = 394.5
-offset_bottom = 753.2
+offset_left = -126
+offset_top = 165.63
+offset_right = 386
+offset_bottom = 677.63
 mouse_filter = 2
 texture = ExtResource("prop_pilha_caixotes")
 [node name="Guincho" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -32.0
-offset_top = 242.0
-offset_right = 480.0
-offset_bottom = 754.0
+offset_left = -69
+offset_top = 166.17
+offset_right = 443
+offset_bottom = 678.17
 mouse_filter = 2
 texture = ExtResource("prop_guincho")
 [node name="Ancoragem0" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 319.0
-offset_top = 244.5
-offset_right = 831.0
-offset_bottom = 756.5
+offset_left = 165
+offset_top = 167.83
+offset_right = 677
+offset_bottom = 679.83
 mouse_filter = 2
 texture = ExtResource("prop_marcador")
 
 [node name="Pallet" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -74.0
-offset_top = 251.0
-offset_right = 438.0
-offset_bottom = 763.0
+offset_left = -97
+offset_top = 172.17
+offset_right = 415
+offset_bottom = 684.17
 mouse_filter = 2
 texture = ExtResource("prop_pallet")
 [node name="Coqueiro2Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -140.0
-offset_top = 302.00
-offset_right = 372.0
-offset_bottom = 814.00
+offset_left = -141
+offset_top = 206.17
+offset_right = 371
+offset_bottom = 718.17
 mouse_filter = 2
 texture = ExtResource("prop_coqueiro_tronco")
 
 [node name="Coqueiro2Copa" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -140.0
-offset_top = 302.00
-offset_right = 372.0
-offset_bottom = 814.00
+offset_left = -141
+offset_top = 206.17
+offset_right = 371
+offset_bottom = 718.17
 mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
 [node name="Ancoragem2" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 436.0
-offset_top = 310.0
-offset_right = 948.0
-offset_bottom = 822.0
+offset_left = 243
+offset_top = 211.5
+offset_right = 755
+offset_bottom = 723.5
 mouse_filter = 2
 texture = ExtResource("prop_boia")
 
 [node name="Ancoragem1" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 244.0
-offset_top = 353.5
-offset_right = 756.0
-offset_bottom = 865.5
+offset_left = 115
+offset_top = 240.5
+offset_right = 627
+offset_bottom = 752.5
 mouse_filter = 2
 texture = ExtResource("prop_boia")
 
 [node name="BarcoEspera2" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 364.0
-offset_top = 360.0
-offset_right = 876.0
-offset_bottom = 872.0
+offset_left = 195
+offset_top = 244.83
+offset_right = 707
+offset_bottom = 756.83
 mouse_filter = 2
 texture = ExtResource("5")
 
@@ -489,24 +489,24 @@ mouse_filter = 2
 
 [node name="Doca0" parent="MapaWrap/Docas" instance=ExtResource("4")]
 layout_mode = 0
-offset_left = 448.0
-offset_top = 96.0
-offset_right = 710.0
-offset_bottom = 264.0
+offset_left = 250.67
+offset_top = 68.67
+offset_right = 512.67
+offset_bottom = 236.67
 
 [node name="Doca1" parent="MapaWrap/Docas" instance=ExtResource("4")]
 layout_mode = 0
-offset_left = 328.0
-offset_top = 276.0
-offset_right = 590.0
-offset_bottom = 444.0
+offset_left = 170.67
+offset_top = 188.67
+offset_right = 432.67
+offset_bottom = 356.67
 
 [node name="Doca2" parent="MapaWrap/Docas" instance=ExtResource("4")]
 layout_mode = 0
-offset_left = 208.0
-offset_top = 456.0
-offset_right = 470.0
-offset_bottom = 624.0
+offset_left = 90.67
+offset_top = 308.67
+offset_right = 352.67
+offset_bottom = 476.67
 
 ; ================= LETREIROS =================
 ; Os nomes eram Labels brancos de 27px com contorno de 9px, pousados no meio
@@ -527,10 +527,10 @@ mouse_filter = 2
 
 [node name="LetreiroEscritorio" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
-offset_left = 274.0
-offset_top = 15.0
-offset_right = 406.0
-offset_bottom = 63.0
+offset_left = 198.33
+offset_top = 84.17
+offset_right = 330.33
+offset_bottom = 132.17
 mouse_filter = 2
 
 [node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroEscritorio"]
@@ -559,10 +559,10 @@ theme_override_font_sizes/font_size = 14
 
 [node name="LetreiroArmazem" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
-offset_left = 144.0
-offset_top = 133.0
-offset_right = 272.0
-offset_bottom = 181.0
+offset_left = 112.33
+offset_top = 162.83
+offset_right = 240.33
+offset_bottom = 210.83
 mouse_filter = 2
 
 [node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroArmazem"]
@@ -593,10 +593,10 @@ theme_override_font_sizes/font_size = 14
 ; de fundeadouro fica mesmo. Mastro mais comprido: não há telhado por baixo.
 [node name="LetreiroZona" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
-offset_left = 610.0
-offset_top = 266.0
-offset_right = 706.0
-offset_bottom = 344.0
+offset_left = 428.33
+offset_top = 241.5
+offset_right = 524.33
+offset_bottom = 319.5
 mouse_filter = 2
 
 [node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroZona"]

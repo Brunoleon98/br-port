@@ -63,6 +63,23 @@ from mathutils import Vector
 # desalinha os props do chão.
 MEIA_LARG, MEIA_ALT = 30.0, 15.0
 
+# ── E O ZOOM, que é o terceiro membro do contrato desde 05/09 ────────────
+#
+# O mapa deixou de ser desenhado na escala em que é entregue: ele desenha a
+# `MEIA_LARG = 30` num quadro maior e o `viewBox` do SVG encolhe o quadro
+# inteiro (ver o bloco do enquadramento em `gerar_mapa_iso.py`). O prop não
+# tem `viewBox`: ele é PNG, e cai no `Main.tscn` a 1:1. Então quem encolhe o
+# prop é a CÂMERA — o `ESCALA_ORTO` abaixo, e mais nada.
+#
+# ⚠️ E É SÓ O `ESCALA_ORTO`. O `z()` continua a converter altura pela escala
+# de DESENHO, e por isso a geometria construída neste arquivo não muda um
+# milímetro: o `ALTURA_PX` de tela encolheria na mesma proporção do
+# `ESCALA_ORTO`, os dois cancelam-se, e mexer nele levantaria cada prop 1,5x
+# — o mesmo defeito que o mapa evita não reescrevendo os literais dele.
+# Afastar uma câmera não estica o que ela filma.
+ZOOM = 2.0 / 3.0
+MEIA_LARG_TELA = MEIA_LARG * ZOOM
+
 # Câmera ortográfica: a razão vertical/horizontal de um passo no chão é
 # sen(elevação). Com 15/30 = 0,5 -> elevação 30° -> rotação X = 60°.
 # (O 54,736° dos tutoriais é isométrico VERDADEIRO, 1,732:1. Aqui daria errado.)
@@ -70,10 +87,10 @@ ROT_X, ROT_Z = 60.0, 45.0
 
 RESOLUCAO = 512
 
-# Uma unidade de mundo na horizontal tem de valer MEIA_LARG pixels. Numa câmera
-# ortográfica a 45° de azimute isso é (RESOLUCAO / ortho_scale) * cos(45°),
-# então ortho_scale = RESOLUCAO / (MEIA_LARG / cos(45°)).
-ESCALA_ORTO = RESOLUCAO / (MEIA_LARG / math.cos(math.radians(45.0)))
+# Uma unidade de mundo na horizontal tem de valer MEIA_LARG_TELA pixels do PNG.
+# Numa câmera ortográfica a 45° de azimute isso é (RESOLUCAO / ortho_scale) *
+# cos(45°), então ortho_scale = RESOLUCAO / (MEIA_LARG_TELA / cos(45°)).
+ESCALA_ORTO = RESOLUCAO / (MEIA_LARG_TELA / math.cos(math.radians(45.0)))
 
 # ALTURA: o ponto onde os dois mundos quase não se falam.
 #
@@ -85,7 +102,11 @@ ESCALA_ORTO = RESOLUCAO / (MEIA_LARG / math.cos(math.radians(45.0)))
 # Ignorar isso põe um píer renderizado 2,4x mais alto que o cais desenhado ao
 # lado dele. Por isso os props falam a mesma língua do mapa: altura em PIXELS
 # DO MAPA, convertida aqui num lugar só.
-ALTURA_PX = (RESOLUCAO / ESCALA_ORTO) * math.cos(math.radians(90.0 - ROT_X))
+# ⚠️ E ESTE FATOR SAI DA ESCALA DE DESENHO, não da de tela — ver o bloco do
+# ZOOM acima. É `MEIA_LARG / cos(45°) * cos(30°)`, escrito assim para se ler
+# que é a mesma conta do `ESCALA_ORTO` com o outro `MEIA_LARG`.
+ALTURA_PX = (MEIA_LARG / math.cos(math.radians(45.0))) \
+    * math.cos(math.radians(90.0 - ROT_X))
 
 
 def z(altura_px: float) -> float:
@@ -1441,9 +1462,10 @@ def main() -> int:
 
     # A projeção sai certa ou sai errada; não há meio termo, e o resto do
     # trabalho depende dela. O tabuado tem largura conhecida pela conta do mapa:
-    # (comprimento + largura) * MEIA_LARG.
+    # (comprimento + largura) * MEIA_LARG_TELA — a escala do PNG, e não a do
+    # desenho do mapa: é no PNG que se mede.
     if "pier_construido" in alvos:
-        esperado = (PIER_ALCANCE + PIER_LARG) * MEIA_LARG
+        esperado = (PIER_ALCANCE + PIER_LARG) * MEIA_LARG_TELA
         medido = largura_opaca("%s/pier_construido.png" % saida.rstrip("/"))
         erro = abs(medido - esperado)
         print("\nverificação da projeção:")

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 04/09/2026
+> **Última atualização:** 05/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -33,15 +33,23 @@ com rótulo navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os
 cartões claros ganharam sombra e borda de 2px. Os escuros ficaram como estavam,
 de propósito: a sombra do tema é mais clara que o fundo deles, e faria halo.
 
+**A câmera afastou-se em 05/09, e a Etapa 1 fechou.** Vê-se agora um DISTRITO
+e não três berços: o `MEIA_LARG` efetivo passou de 30 para os 20 que o Bruno
+escolheu em 03/09, e a câmera centra-se no centroide dos três berços em vez de
+num ponto herdado. O mundo teve de crescer primeiro — um degrau de costa em
+cada ponta (`my` de −14 a 42) e o fundo da terra de −8 para −16 —, senão o
+jogador via o mapa ACABAR por três lados. Medido, o porto mantém ~47,5% do
+quadro nas três larguras e o que cresce é o distrito à volta: a terra natural
+vai de 14,4% a 30 para 22,3% a 20.
+
 **A água é tropical desde 02/09 e o porto tem PRAIA nas duas pontas desde
 04/09.** A água era mar frio (`#4a96b4`) e passou a turquesa amostrada da
-referência. A areia é a outra metade da Etapa 1, e ela não vai entre a água e
-o cais: vai **onde o porto não está** — para além do primeiro e do último
-berço, emoldurando-o. Nos dois trechos o porto PARA (sem avental, asfalto,
-junta, mancha nem enrocamento) e a terra desce numa rampa de areia até a água,
-com restinga, árvores baixas e pedras avulsas. Medido: **27% da costa visível**
-é praia (139 px ao norte, 233 ao sul, contra 982 de cais). Da Etapa 1 só falta
-o enquadramento (`MEIA_LARG`), e o plano de arte diz por quê.
+referência. A areia não vai entre a água e o cais: vai **onde o porto não
+está** — para além do primeiro e do último berço, emoldurando-o. Nos dois
+trechos o porto PARA (sem avental, asfalto, junta, mancha nem enrocamento) e a
+terra desce numa rampa de areia até a água, com restinga, árvores baixas e
+pedras avulsas. Com o enquadramento novo as duas pontas ficaram maiores, e são
+elas que emolduram o porto nos cantos de cima e de baixo.
 
 **O jogo é TRANQUILO, e os valores são realistas** (02/09). Medido em 600
 partidas por perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a
@@ -59,10 +67,9 @@ cada turno, que é a pergunta do A7. O nome de quem jogou NÃO entra no arquivo
 (`docs/decisoes/006`). Sai pelo menu de pausa; `tools/ler_registros.py` resume.
 
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
-autoload `Audio.gd` com dois buses, sliders no menu de pausa e o disparo ligado
-aos sinais do `GameState`. Os efeitos são de RASCUNHO — os finais entram
-trocando arquivo por arquivo. **Ninguém que os fez os ouviu:** o contêiner não
-tem placa de som (ver `docs/design/BR_Port_Plano_Audio.md` §2).
+autoload `Audio.gd` com dois buses e sliders no menu de pausa. São de RASCUNHO,
+e **ninguém que os fez os ouviu** — o contêiner não tem placa de som
+(`docs/design/BR_Port_Plano_Audio.md` §2).
 
 **Não se arrasta trabalhador a cada turno:** há "Alocar todos" e
 toque-para-alocar, com o arrasto ainda funcionando.
@@ -82,13 +89,9 @@ de acabar numa parede de telhados. A vila tem nível (`--nivel-vila=N` no
 gerador do mapa): 1 é casa térrea, 2 sobrado, 3 prédio — é assim que ela cresce
 a cada Fase, sem o jogo precisar saber.
 
-**E a mata deixou de ser desenhada fora do ecrã** (04/09). Das 136 copas que o
-gerador sorteava, **7** caíam dentro do quadro: o viés da densidade apontava
-para `FUNDO_TERRA`, que é pelo nome a parte do mundo que ninguém vê. Hoje são
-108 desenhadas, cada uma com sombra projetada, tronco e copa em lobos com
-aresta — a receita das pedras do enrocamento, agora com nome (`com_saia()`).
-De lambuja, achou-se que **o desgaste do CAIS estava a ser pintado no
-relvado**: onze manchas de concreto espalhadas pela mata e pela vila.
+**E a mata atrás dela é desenhada onde se vê** — copas com sombra projetada,
+tronco e lobos com aresta, pela receita `com_saia()`. Como se lá chegou está em
+`docs/arquivo/HISTORICO.md`.
 ---
 
 ## Onde estamos na fila
@@ -96,12 +99,9 @@ relvado**: onze manchas de concreto espalhadas pela mata e pela vila.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-**Fechados**, dos quinze itens: B1 (arranque de sessão), A2 (números com fonte
-única), A3 (reputação com efeito), A4 (as sete telas narrativas — construídas),
-B4 (fumaça de cena), B3 (o CI publica captura e antes/depois), B5 e B8
-(documentação em camadas e orçamento de sessão), B6 (o GDD legível), B2 (as
-três skills: `/balancear`, `/fechar-sessao` e `/arte`), B7 (o registro de
-partida), e a metade de máquina do A1 (APK e build Web a cada push).
+**Fechados**, dos quinze itens: B1 a B8 e A2, A3, A4 (construídas), mais a
+metade de máquina do A1 (APK e build Web a cada push). O que cada um era está
+em `docs/arquivo/HISTORICO.md`.
 
 **A trilha do projeto acabou** — B1 a B6 e B8 estão todos fechados.
 
@@ -111,17 +111,14 @@ partida), e a metade de máquina do A1 (APK e build Web a cada push).
 |---|---|---|
 | **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas** — a 1 (paleta tropical **e a areia das duas pontas**, 04/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Faltam a 3 e a 4, e a metade cara da 1 (`MEIA_LARG`) |
+| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas, e a 1 INTEIRA** — a 1 (paleta tropical, a areia das duas pontas e o enquadramento, 05/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Faltam a 3 e a 4 |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a primeira jogada no telefone devolveu (02–03/09)
 
 **A análise inteira está triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e
-em 02, 03 e 04/09 fechou-se **tudo o que não depende do Bruno** — o bug que
-travava 30% das instalações novas, os cinco itens de interface, o diário, e a
-arte inteira. Como isso foi feito está em `docs/arquivo/HISTORICO.md`.
-
-**O que sobra, e por quê** — a análise tem a medida de cada um:
+em 02–05/09 fechou-se **tudo o que não depende do Bruno**. O que sobra, e por
+quê — a análise tem a medida de cada um:
 
 | Fica | Porque não se fecha aqui |
 |---|---|
@@ -129,28 +126,31 @@ arte inteira. Como isso foi feito está em `docs/arquivo/HISTORICO.md`.
 | Economia (3 itens) | Só via `/balancear`, e ele mesmo amarrou-a ao pacote de Fase 2 ("para fazer tudo isso") |
 | Fala da madeira podre | Espera o A4 |
 
-~~Vegetação pobre · casas mal distribuídas~~ — **fechado em 04/09** (medição no
-plano de arte, "Fora das etapas"). Era o último item de arte da análise: **ela
-está agora fechada por inteiro no que não depende do Bruno.**
+~~Vegetação pobre · casas mal distribuídas~~ — **fechado em 04/09**. A análise
+está fechada por inteiro no que não depende do Bruno.
 
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume.
 
-Da arte, **quatro das seis etapas estão feitas** — a 1 (paleta, e a areia das
-duas pontas em 04/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão,
-03/09) e a 6 (o chrome da interface). Faltam a 3 (contorno pelo compositor) e
-a 4 (materiais dirigidos), mais a metade cara da 1 — o enquadramento. A areia
-fechou **a metade barata da Etapa 1**: a leitura de composição de 03/09 é que
-a destravou, e o que ela custou não foi desenho, foi o porto ter de parar.
+Da arte, **quatro das seis etapas estão feitas, e a 1 está fechada por
+inteiro** — a 1 (paleta, areia das duas pontas e enquadramento), a 2 (a cauda
+dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da
+interface). Faltam a 3 (contorno pelo compositor) e a 4 (materiais dirigidos).
 
-**O enquadramento deixou de estar bloqueado em 03/09:** o Bruno escolheu
-`MEIA_LARG = 20` olhando o mapa gerado em três larguras, e a leitura de
-composição das cinco referências está escrita em
-`docs/design/referencias/README.md`. Só que **medido, em 20 o mundo acaba
-dentro do quadro** — então a ordem é estender a costa primeiro e mexer na
-projeção depois. O plano de arte tem a tabela. Os **dois remates de praia** que
-essa ordem pedia já estão feitos (04/09); falta a costa para além de `my = 34`
-e a terra para trás de `mx = -8`.
+**O enquadramento fechou em 05/09**, e o que ele custou não foi o Blender —
+`pip install bpy` leva 17 s e regerar os 39 props 3,5 min, tudo medido antes de
+prometer. Custou a descoberta de que **altura, no gerador do mapa, é PIXEL**:
+baixar o `MEIA_LARG` de 30 para 20 encolheria a planta e deixaria o `ALT_CAIS`,
+as paredes da vila e cada traço onde estavam — o porto esticado 1,5× para cima,
+e nenhuma das cinco suítes a lê-lo. A saída é a mesma regra dos props: escala-se
+no GRUPO. O mapa continua a ser DESENHADO a 30 num quadro de 1080 e o `viewBox`
+do SVG entrega 720. São dois espaços agora, e a fronteira é a função `tela()` —
+`docs/BRP_SPATIAL_CONTRACT.md` §1.1 e a regra no `CLAUDE.md`.
+
+**E a largura era só metade do enquadramento.** A outra é o CENTRO: com o ponto
+herdado, o porto saía encostado à direita com um bloco de mata a ocupar a
+esquerda. Ele passou a ser derivado do centroide dos berços, e a água voltou aos
+"perto de metade do quadro" que a leitura das referências pede.
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
@@ -202,7 +202,8 @@ conta e o modo de a refazer estão em
 | `brport_vs/art/icones/` | **Os 20 ícones da interface**, em SVG chapado |
 | `brport_vs/scripts/Icones.gd` | Registro dos ícones + helpers de rótulo e botão — o único lugar que sabe qual arquivo é qual ícone |
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
-| `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo — inclui a malha viária, a vila (`--nivel-vila=N`) e os números de doca pintados no cais |
+| `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo — inclui a malha viária, a vila (`--nivel-vila=N`) e os números de doca pintados no cais. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`**: a câmera é o `ZOOM`, e a câmera centra-se sozinha nos berços |
+| `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | **A régua do enquadramento** — gera o mapa em várias larguras e mede quanto do quadro é porto, quanto é distrito, quanto é mar, e sobretudo **quantos pixels da FRONTEIRA DO MUNDO entram na janela**, que é a pergunta que decide a etapa. Rasteriza com o ThorVG, que é o mesmo importador do jogo |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
