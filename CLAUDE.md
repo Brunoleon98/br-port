@@ -323,6 +323,15 @@ tranca isso.
 - **O que troca de estado numa partida não pode estar assado no fundo.** Píer,
   armazém, escritório e pátio são props ou mapas alternativos. A vila é a
   exceção, e de propósito: ela troca entre FASES, não entre turnos.
+- **E o estado ANTES não pode partilhar as peças do estado DEPOIS.** O
+  `galpao_velho` reusava a lista de paredes do `galpao` — plinto, caixa branca
+  limpa, portão fechado, calha e três janelas de vidro — e trocava só a cor do
+  telhado. O porto abria "em ruínas" com um galpão de paredes novas, e a
+  queixa que isso gerou foi "as construções parecem avançadas para um porto
+  inicial". A regra certa já estava escrita ao lado, no comentário do
+  escritório: **a ruína não é o prédio pintado de velho, é MENOS prédio** —
+  parede caída, vidro nenhum, meio telhado. Partilhar peças entre dois estados
+  poupa render e custa a leitura, que é o que o estado existe para dar.
 - **Trocar cor olhando só o MATIZ achata a imagem.** Em 02/09 a água passou de
   mar frio a turquesa tropical com valores amostrados da referência, e ficou
   bonita e chapada: pôr as duas pontas amostradas nas duas pontas da rampa
@@ -346,6 +355,14 @@ tranca isso.
   caixa aberta. Mordeu duas vezes em 02/09 — no tampo do caixote e numa chapa
   de metal sobre o contêiner. Peça que pousa noutra afunda uma fração ou sobe
   uma fração; nunca encosta.
+  **E DUAS PAREDES QUE SE CRUZAM NUMA QUINA são o mesmo caso** (05/09): se as
+  duas chegam ao mesmo `x`, as duas faces exteriores ficam coplanares por toda
+  a altura e sai uma BARRA PRETA de pé na quina, que se lê como uma coluna que
+  não existe. Elas encaixam em L — uma leva a quina inteira, a outra começa
+  onde ela acaba — e nunca se cruzam.
+- **Vão recuado perto de uma quina atravessa a parede vizinha.** Irmã da
+  anterior: um `vao_cego` é uma placa RECUADA, e a menos de meia largura da
+  quina ela sai do outro lado. Meia largura de folga, e mais um pouco.
 - **Peça invisível conta como peça, e é por isso que contar não chega.** A
   boia levou uma corrente que ficou DENTRO do cone do corpo: o contador dizia
   cinco, o render mostrava quatro. Contagem de peças só vale depois de olhar

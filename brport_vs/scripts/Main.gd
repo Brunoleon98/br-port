@@ -348,11 +348,12 @@ const MEIA_ALT := 10.0
 ##
 ## ⚠️ E "dentro do quadro" não chega: tem de ser dentro do quadro E À VISTA.
 ## O primeiro ponto escolhido foi o alto do degrau 0, que passava no D13 e
-## saía na foto com metade do caminhão debaixo do letreiro do ESCRITÓRIO — os
-## letreiros são interface, desenham-se por cima de tudo, e nenhuma asserção
-## sobre o mapa sabe onde eles caem. Este ponto é o meio do degrau 1, o trecho
-## mais desimpedido da estrada; o D13 tranca que ele está na rota e inteiro
-## dentro do `MapaWrap` (que tem `clip_contents`), e o resto é olhar a foto.
+## saía na foto com metade do caminhão debaixo da placa do ESCRITÓRIO — as
+## placas eram interface, desenhavam-se por cima de tudo, e nenhuma asserção
+## sobre o mapa sabia onde elas caíam. (Elas saíram em 05/09; a lição não, e é
+## por isso que continua aqui: prop que se põe para ser VISTO confere-se na
+## foto.) Este ponto é o meio do degrau 1, o trecho mais desimpedido da
+## estrada; o D13 tranca que ele está na rota e inteiro dentro do `MapaWrap`.
 const CAMINHAO_ORIGEM := Vector2(3.75, 9.5)
 
 ## A escada da rua, em (mx, my). Primeiro e último ponto estão FORA do quadro —

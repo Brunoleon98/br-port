@@ -71,14 +71,19 @@ autoload `Audio.gd` com dois buses e sliders no menu de pausa. São de RASCUNHO,
 e **ninguém que os fez os ouviu** — o contêiner não tem placa de som
 (`docs/design/BR_Port_Plano_Audio.md` §2).
 
-**Nada de interface pousa sobre o mapa.** A doca tem duas metades: a vaga no
-mapa (píer, barco, guindaste, trabalhador) e o cartão na barra logo abaixo
-dele (valor, turnos, trabalhador). O número de cada doca está pintado no cais.
-Os nomes dos lugares são placas com mastro que **se plantam sozinhas**
-(`scripts/Letreiro.gd`, 05/09): a chapa mede-se pelo texto e o mastro morde o
-telhado, pelos dois estados do prédio. Antes eram offsets à mão, e traziam a
-placa do armazém a pairar 12px acima do telhado com o D7 a dizer "apoiado" —
-ele conferia o quadro de 512 do prop, não o desenho.
+**Nada de interface pousa sobre o mapa, e desde 05/09 nem os nomes.** A doca
+tem duas metades: a vaga no mapa (píer, barco, guindaste, trabalhador) e o
+cartão na barra logo abaixo (valor, turnos, trabalhador). O número de cada doca
+está pintado no cais. **As três placas com mastro saíram** — o mapa não carrega
+mais texto nenhum; quem distingue os prédios do porto das casas da vila são os
+próprios prédios.
+
+**E o porto abre em RUÍNAS de verdade desde 05/09.** O `galpao_velho` reusava
+as paredes do galpão acabado e trocava só a cor do telhado — paredes brancas,
+janelas inteiras, portão fechado. Agora são paredes sujas, um terço delas
+desabado, meio telhado com a armação à vista e o portão fora do trilho; e a
+ruína do escritório, que era duas lajes cinzentas, é um CANTO de pé com porta e
+janela vazias. O plano de arte tem as três armadilhas que a passagem apanhou.
 
 **O porto tem uma cidade atrás dele, e desde 04/09 ela é uma CIDADE.** Rua
 paralela ao cais, calçada, acesso a cada berço, e **duas fileiras de casas em
@@ -283,28 +288,24 @@ colorido para o fundo onde cai — dois não são reaproveitáveis em qualquer
 lugar, e o cabeçalho de `Icones.gd` diz quais e por quê.
 
 As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
-nos dois estados, então o prédio não salta ao ser consertado. Mesma razão que
-fez o píer partilhar geometria entre vazio e construído.
+nos dois estados, então o prédio não salta ao ser consertado. Mas as PEÇAS não
+se partilham entre os dois: foi isso que fez o galpão em ruína ter paredes
+novas até 05/09.
 
-**A cauda dos props tem corpo desde 02/09** (Etapa 2): contêiner corrugado com
-cantoneiras e portas, carga empilhada em duas madeiras, boia e marcador com
-faixa refletiva, mais as catorze peças pequenas do pátio em
-`blender/brp_porto.py`.
+**A cauda dos props tem corpo** (Etapa 2): contêiner corrugado, carga
+empilhada, boia e marcador com faixa refletiva, e as catorze peças pequenas do
+pátio em `blender/brp_porto.py`.
 
-O cenário usa os props: **coqueiros low-poly** (que oscilam em rajada, copa e
-tronco em peças separadas), **guindaste** nas docas construídas (a lança
-varre), **carga no convés** e **boias + marcador** na Zona de Espera. Desde
-03/09 o **caminhão atravessa o mapa inteiro pela estrada** — 43,5 unidades, de
-fora do quadro a fora do quadro, com duas silhuetas porque a rua vira 90° em
-cada cotovelo — e a **espuma lava a costa**, em duas camadas próprias e em
-contrafase (ela era assada no SVG, e por isso não havia onda nenhuma para
-animar). As **pedras do enrocamento** deixaram de ser elipses chapadas e são
-sólidos facetados — e desde 04/09 o enrocamento **para nas duas pontas**, onde
-o cais deu lugar a praia e as pedras são avulsas em cima da areia. Desde 04/09 a **mata atrás da vila tem árvores de verdade** — sombra
-projetada, tronco e copa em lobos facetados, no par de verdes AMOSTRADO da
-referência —, e há árvore no quintal das casas. Os coqueiros chapados
-saíram do SVG do mapa — `gerar_mapa_iso.py --sem-coqueiros` — pela mesma razão
-que os píeres: o que se mexe não pode estar assado no fundo.
+O cenário usa os props: **coqueiros low-poly** que oscilam em rajada,
+**guindaste** nas docas construídas (a lança varre), **carga no convés** e
+**boias + marcador** na Zona de Espera. O **caminhão atravessa o mapa inteiro
+pela estrada**, de fora do quadro a fora do quadro, com duas silhuetas porque a
+rua vira 90° em cada cotovelo; a **espuma lava a costa** em duas camadas em
+contrafase; as **pedras do enrocamento** são sólidos facetados e ele **para nas
+duas pontas**, onde o cais deu lugar a praia. A **mata atrás da vila tem
+árvores de verdade** e há árvore no quintal das casas. Os coqueiros chapados
+saíram do SVG do mapa — `--sem-coqueiros` — pela mesma razão que os píeres: o
+que se mexe não pode estar assado no fundo.
 
 Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande), e o
 pesqueiro tem casco próprio — não é o mesmo casco com carga trocada. O

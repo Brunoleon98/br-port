@@ -136,6 +136,21 @@ PALETA = {
     "boia": "#d94f2a", "corda": "#c9b48a",
     "colete": "#e0561f", "capacete": "#e0a81f", "pele": "#b07b52",
     "calca": "#24466e", "rede": "#8d9aa6", "casco_pesca": "#2f6f4a", "parede_suja": "#9a9c93", "vidro": "#7fb6cc",
+    # O VÃO: o dentro de uma janela sem vidro ou de uma porta que já não há.
+    # É a peça que faz uma ruína ler como ruína, e ela é uma COR e não um
+    # buraco — furar a parede daria duas faces coplanares no batente, que é o
+    # losango preto que este arquivo já registou duas vezes. Não é preto: preto
+    # chapado ao lado do `parede_suja` lê como recorte falhado. É o navio do
+    # tema levado ao escuro, que é a sombra que o resto do mapa já usa.
+    "vao": "#2b3138",
+    # O PISO que sobra quando as paredes caem: o `parede_suja` levado ao
+    # escuro. Sem ele a ruína inteira sai num cinzento só e as peças fundem-se
+    # umas nas outras — a mesma regra do caixote que era `madeira` num tabuado
+    # de `madeira`, aplicada dentro de um prop em vez de contra o cenário.
+    "piso_ruina": "#6f736c",
+    # A telha caída e o barrote à mostra. O `telhado_velho` é a água inteira;
+    # estes dois são o que sobra dela.
+    "barrote": "#6b543c",
 }
 
 
@@ -186,6 +201,8 @@ DESGASTE = {
     "metal": 12.0, "metal_claro": 12.0, "laranja": 11.0, "amarelo": 13.0,
     "laranja_esc": 11.0,
     "rede": 14.0, "corda": 13.0,
+    # O vão é pequeno e quer marca; o barrote é uma ripa fina, idem.
+    "vao": 9.0, "barrote": 9.0, "piso_ruina": 4.0,
 }
 
 
@@ -471,6 +488,77 @@ def janela(nome, face, centro, tam, u, v, larg, alt, M, peitoril=True):
         pecas.append(na_face(nome + "_peitoril", face, centro, tam,
                              u, v - alt / 2.0 - 0.11,
                              larg + 0.26, 0.08, 0.13, M["parede_dir"], 0.045))
+    return pecas
+
+
+def vao_cego(nome, face, centro, tam, u, v, larg, alt, M, batente=True):
+    """Uma abertura SEM nada atrás: janela partida, porta que já não há.
+
+    É a peça de ruína que faltava, e ela é a `janela()` ao contrário — lá o que
+    faz ler é o vidro claro com a moldura a fazer sombra; aqui é o VÃO ESCURO,
+    e o batente é o que resta dele: duas barras, e não quatro.
+
+    ⚠️ E ela é uma PLACA RECUADA, não um furo. Furar a parede punha o batente
+    coplanar com a face e devolvia o losango preto do z-buffer que este arquivo
+    já registou duas vezes — e num prop de 40px o resultado não se lê como
+    buraco, lê como falha de render.
+    """
+    pecas = [na_face(nome + "_vao", face, centro, tam, u, v,
+                     larg, alt, 0.05, M["vao"], -0.045)]
+    if batente:
+        # Só o topo e um lado: o batente inteiro devolveria a janela ARRUMADA,
+        # que é exatamente o que a ruína não é.
+        pecas.append(na_face(nome + "_verga", face, centro, tam, u,
+                             v + alt / 2.0 + 0.035, larg + 0.14, 0.07, 0.06,
+                             M["parede_dir"], 0.01))
+        pecas.append(na_face(nome + "_umbral", face, centro, tam,
+                             u - larg / 2.0 - 0.035, v - 0.06,
+                             0.07, alt - 0.12, 0.06, M["parede_dir"], 0.01))
+    return pecas
+
+
+# O perfil de uma parede que caiu: (largura, altura, profundidade), todas
+# relativas ao trecho inteiro. Os números são IRREGULARES de propósito e são
+# literais e não sorteio — o gerador é determinístico e o CI compara o PNG.
+#
+# ⚠️ A PRIMEIRA VERSÃO DESCIA EM DEGRAUS IGUAIS e saiu uma ESCADA. Três caixas
+# da mesma largura, descendo por um passo constante, é exatamente o desenho de
+# um lance de escada — e ampliada a 5x era isso que se via, com a janela
+# partida encaixada num dos degraus como se fosse um patamar. É a irmã da
+# regra que a vila já registou ("73% dos vãos mediam exatamente o VILA_PASSO, e
+# aquilo lia como cerca"): o que denuncia geometria gerada não é a forma, é a
+# REGULARIDADE dela.
+#
+# Aqui a largura varia de 0,22 a 0,40, a altura não é monótona (o segundo
+# pedaço é MAIS alto que o primeiro, que é o que uma parede faz quando racha em
+# vez de desmoronar por igual) e os dois últimos são mais finos, porque parede
+# que caiu partiu-se também na espessura.
+_PERFIL_QUEDA = ((0.24, 0.86, 1.00), (0.22, 1.00, 0.96),
+                 (0.32, 0.47, 0.78), (0.22, 0.24, 0.62))
+
+
+def parede_partida(nome, centro, tam, mat, resto=0.42):
+    """Um trecho de parede que DESABOU: o topo em pedaços irregulares.
+
+    O topo reto de uma caixa lê como parede por acabar; o que lê como parede
+    CAÍDA é a linha de cima quebrada — e quebrada de verdade, ver `_PERFIL_QUEDA`.
+    `resto` é a fração da altura a que o último pedaço chega.
+    """
+    cx, cy, cz = centro
+    sx, sy, sz = tam
+    base = cz - sz / 2.0
+    esq = cx - sx / 2.0
+    pecas = []
+    n = len(_PERFIL_QUEDA)
+    for i, (larg, alto, fundo) in enumerate(_PERFIL_QUEDA):
+        f = i / float(n - 1)
+        # A envolvente desce de 1 até `resto`; o perfil sacode-a por cima.
+        h = sz * (1.0 - (1.0 - resto) * f) * alto
+        w = sx * larg
+        pecas.append(caixa("%s%d" % (nome, i),
+                           (esq + w / 2.0, cy, base + h / 2.0),
+                           (w + 0.02, sy * fundo, h), mat))
+        esq += w
     return pecas
 
 
@@ -1035,13 +1123,111 @@ def montar(M: dict) -> dict:
                 M["metal_claro"], 0.06),
     ] + telhado_duas_aguas("gal_tel", (0, 0, 1.70), (3.4, 2.4), 0.62,
                            M["telhado"], M["telha_cume"])
-    grupos["galpao_velho"] = paredes + telhado_duas_aguas(
-        "gal_telv", (0, 0, 1.70), (3.4, 2.4), 0.52,
-        M["telhado_velho"], M["madeira_esc"], fiadas=4) + [
-        caixa("gal_buraco", (0.7, -0.55, 1.86), (0.85, 0.75, 0.34),
-              M["madeira_esc"], rot=(0, 0, 6)),
-        caixa("gal_tabua", (-1.1, -1.35, 0.55), (0.09, 0.09, 1.2),
-              M["madeira_velha"], rot=(0, 22, 0))]
+    # ⚠️ O ARMAZÉM EM RUÍNA DEIXOU DE PARTILHAR AS PAREDES DO ACABADO (05/09),
+    # e essa partilha era o defeito inteiro. Ele reusava `paredes` — plinto,
+    # caixa de `parede` BRANCA LIMPA, portão fechado, calha e três janelas de
+    # vidro azul — e trocava só a cor do telhado. Na captura o porto abria com
+    # um galpão de paredes novas e janelas inteiras, e o Bruno leu exatamente
+    # isso: "as construções atuais parecem avançadas para um porto inicial".
+    #
+    # O comentário do escritório, dez linhas abaixo, já dizia a regra certa —
+    # "a ruína não é o prédio pintado de velho: é MENOS prédio" — e o armazém
+    # nunca a tinha seguido. Agora segue: parede SUJA, um terço dela desabado,
+    # vidro nenhum, portão fora do trilho e metade do telhado no chão, com os
+    # barrotes à vista onde ele faltou.
+    #
+    # A escala do render diz o que cabe: o prop tem 124px de largura, então
+    # cada peça de ruína tem de valer por si a 3 ou 4px de espessura. É por
+    # isso que os barrotes são TRÊS e não oito, e que o vão é uma cor e não um
+    # furo (ver `vao_cego`).
+    GAL_V = ((0, 0, 0.85), (3.4, 2.4, 1.7))
+    corte = 1.05                      # daqui para +x a parede caiu
+    galv = [
+        caixa("galv_plinto", (0, 0, 0.09), (3.5, 2.5, 0.18), M["parede_suja"]),
+        caixa("galv_parede", (-corte / 2.0, 0, 0.85), (3.4 - corte, 2.4, 1.7),
+              M["parede_suja"]),
+    ]
+    # O terço que caiu, em degraus, e o entulho dele no chão logo à frente.
+    galv += parede_partida("galv_ruina", (3.4 / 2.0 - corte / 2.0, 0, 0.85),
+                           (corte, 2.4, 1.7), M["parede_suja"], resto=0.30)
+    # O PORTÃO SAIU DO TRILHO: o vão fica, e a folha está atravessada NELE.
+    #
+    # ⚠️ E O VÃO ENCOLHEU. A primeira versão herdou a largura do portão do
+    # galpão acabado (1,5 de 3,4) e o resultado, ampliado, era um RETÂNGULO
+    # PRETO CHAPADO do tamanho de meia parede — que não lê como abertura, lê
+    # como falha de recorte. É a mesma armadilha que o `pilha_caixotes` e a
+    # copa da árvore registaram: mancha escura grande e sem aresta não é
+    # volume, é buraco no PNG. O que faz o vão ler como vão é ele ser MENOR
+    # que a parede e ter alguma coisa a cortá-lo — aqui a folha caída, de
+    # través, e a verga por cima.
+    galv += vao_cego("galv_portao", "-y", *GAL_V, -0.62, -0.14, 1.02, 1.08, M)
+    galv += [
+        # A folha, encostada de través DENTRO do vão: parte dela sobre o
+        # escuro, parte sobre a parede.
+        caixa("galv_folha", (-0.80, -1.24, 0.60), (0.62, 0.07, 1.16),
+              M["madeira_velha"], rot=(0, 0, 0)),
+        caixa("galv_folha2", (-0.24, -1.22, 0.44), (0.10, 0.07, 0.92),
+              M["madeira_velha"], rot=(14, 0, 0)),
+        # O trilho de que ela saiu, torto, ainda na parede.
+        na_face("galv_trilho", "-y", *GAL_V, -0.62, 0.44, 1.3, 0.06, 0.05,
+                M["metal"], 0.02),
+    ]
+    # Duas janelas partidas na face +x — e não três, porque a terceira caía no
+    # trecho que desabou. A segunda vai TAPADA COM TÁBUA, que é o sinal de
+    # "alguém ainda fecha isto" e o que distingue abandono de destroço.
+    galv += vao_cego("galv_jan0", "+x", *GAL_V, -1.0, 0.38, 0.46, 0.36, M)
+    galv += vao_cego("galv_jan1", "+x", *GAL_V, 0.0, 0.38, 0.46, 0.36, M,
+                     batente=False)
+    for k, (dv, ang) in enumerate(((0.06, 9.0), (-0.08, -6.0))):
+        galv.append(na_face("galv_tabua%d" % k, "+x", *GAL_V, 0.0, 0.38 + dv,
+                            0.60, 0.09, 0.05, M["madeira_velha"], 0.02))
+        galv[-1].rotation_euler[0] = math.radians(ang)
+    # METADE DO TELHADO. A água cobre só o lado que ficou de pé; sobre o
+    # trecho caído ficam os barrotes, que é a silhueta que o olho conhece como
+    # ruína. Eles descem no mesmo ângulo do telhado, senão leem como grade.
+    galv += telhado_duas_aguas("galv_tel", (-0.92, 0, 1.70), (1.56, 2.4), 0.52,
+                               M["telhado_velho"], M["barrote"], fiadas=2)
+    ang_tel = math.degrees(math.atan2(0.52, 2.4 / 2.0 + 0.18))
+    comp_agua = math.hypot(0.52, 2.4 / 2.0 + 0.18)
+    # ⚠️ BARROTE PRECISA DE CUMEEIRA E DE TERÇA, senão ele flutua. A primeira
+    # versão pôs seis ripas inclinadas e nada a segurá-las: na sombra projetada
+    # via-se três barras paralelas a pairar sobre o chão, e no prop liam-se como
+    # gravetos espetados no telhado. O que faz uma armação ler como armação é a
+    # peça HORIZONTAL que a atravessa.
+    galv.append(caixa("galv_cume", (0.42, 0, 1.70 + 0.52), (1.5, 0.11, 0.09),
+                      M["barrote"]))
+    # ⚠️ E ELES PARAM ONDE A PAREDE PARA. A primeira armação corria até 1,58 e
+    # a parede caída acaba em 0,65: três ripas ficavam a pairar sobre o ar, e a
+    # sombra projetada mostrava-as como barras soltas no chão. Barrote é peça
+    # apoiada; sem apoio lê como graveto espetado.
+    for i, u in enumerate((0.02, 0.42, 0.82)):
+        for lado, sinal in (("a", -1), ("b", 1)):
+            galv.append(caixa("galv_barrote_%s%d" % (lado, i),
+                              (u, sinal * (2.4 / 2.0 + 0.18) / 2.0,
+                               1.70 + 0.52 / 2.0),
+                              (0.07, comp_agua, 0.06),
+                              M["barrote"], rot=(-sinal * ang_tel, 0, 0)))
+    # A terça: a ripa horizontal a meia-água, dos dois lados.
+    for lado, sinal in (("a", -1), ("b", 1)):
+        galv.append(caixa("galv_terca_%s" % lado,
+                          (0.42, sinal * (2.4 / 2.0 + 0.18) / 2.0,
+                           1.70 + 0.52 / 2.0 + 0.02),
+                          (1.34, 0.06, 0.05), M["barrote"]))
+    # Entulho: telha caída e um bloco de parede, os dois FORA da pegada do
+    # prédio para se verem contra o chão, e não contra o plinto.
+    galv += [
+        # ⚠️ TUDO ISTO CABE NA PEGADA de `gerar_mapa_iso.py` (±1,89 em x,
+        # ±1,39 em y, antes da escala do prédio). O D2 confere a pegada
+        # DECLARADA e não a geometria: entulho que passe dela vai parar no
+        # asfalto sem uma única asserção a reprovar.
+        caixa("galv_telha", (1.30, -1.32, 0.07), (0.62, 0.5, 0.09),
+              M["telhado_velho"], rot=(0, 0, 24)),
+        caixa("galv_bloco", (1.78, -0.9, 0.13), (0.42, 0.38, 0.26),
+              M["parede_suja"], rot=(0, 0, 15)),
+        caixa("galv_bloco2", (1.62, 0.92, 0.10), (0.34, 0.3, 0.2),
+              M["parede_suja"], rot=(0, 0, -18)),
+    ]
+    grupos["galpao_velho"] = galv
 
     # -- ESCRITÓRIO nos dois estados. O armazém reaproveita galpao/galpao_velho.
     # A ruína não é o prédio "pintado de velho": é MENOS prédio — parede caída,
@@ -1062,14 +1248,81 @@ def montar(M: dict) -> dict:
       + janela("esc_j3", "+x", *ESC, 0.42, -0.05, 0.56, 0.44, M) \
       + telhado_duas_aguas("esc_tel", (0, 0, 1.56), (2.4, 2.0), 0.50,
                            M["telhado"], M["telha_cume"])
-    grupos["escritorio_ruina"] = [
-        caixa("ruina_parede_alta", (-0.55, 0, 0.55), (1.3, 2.0, 1.1), M["parede_suja"]),
-        caixa("ruina_parede_baixa", (0.75, 0, 0.22), (1.1, 2.0, 0.44), M["parede_suja"]),
-        caixa("ruina_viga", (0.1, 0.35, 1.05), (2.3, 0.12, 0.12), M["madeira_esc"],
-              rot=(0, 9, 0)),
-        caixa("ruina_entulho_a", (-1.35, -0.85, 0.16), (0.7, 0.6, 0.32), M["madeira_esc"]),
-        caixa("ruina_entulho_b", (0.95, -0.95, 0.12), (0.5, 0.45, 0.24), M["parede_suja"],
-              rot=(0, 0, 22))]
+    # ⚠️ E A RUÍNA DO ESCRITÓRIO FALHAVA PELO LADO OPOSTO À DO ARMAZÉM. Ela
+    # seguia a regra ("menos prédio") e mesmo assim não lia: eram duas caixas
+    # cinzentas e um pau, e ampliada a 5x saía como uma PILHA DE LAJES DE
+    # CONCRETO — nada ali dizia que aquilo tinha sido um edifício. Menos prédio
+    # não é menos ARQUITETURA: o que faz o olho ler "ruína" e não "entulho" é
+    # reconhecer o que falta, e para isso é preciso que alguma coisa fique de
+    # pé com um vão dentro.
+    #
+    # Então fica um CANTO: a parede de trás inteira, a lateral inteira, a porta
+    # onde ela estava e uma janela sem vidro. O resto desaba em degraus, e a
+    # viga do telhado cai da parede que ficou para o entulho — é ela que liga
+    # as duas metades e conta o que aconteceu.
+    ESC_R = ((0, 0, 0.78), (2.4, 2.0, 1.56))
+    ALT_R = 1.42
+    esc_r = [
+        # O PISO. É a peça que diz "aqui havia um prédio" mesmo onde já não há
+        # parede nenhuma, e é a razão de ele ter tom próprio: a ruína inteira
+        # em `parede_suja` saía como um bloco cinzento só.
+        caixa("ruina_piso", (0, 0, 0.09), (2.5, 2.1, 0.18), M["piso_ruina"]),
+        # O CANTO QUE FICOU DE PÉ, e ele é o achado desta passagem. A versão
+        # anterior partia UMA parede ao meio e desabava metade; ampliada, saíam
+        # duas lâminas cinzentas de pé e nada dizia que aquilo tinha sido um
+        # edifício. O que o olho reconhece como ruína de PRÉDIO é o canto: duas
+        # paredes que se encontram, cada uma com o seu vão, e o resto a
+        # desfazer-se para longe delas. As duas escolhidas são as duas que a
+        # câmera vê — a de `-y` e a de `+x` (só essas duas faces existem para
+        # esta projeção).
+        # ⚠️ AS DUAS ENCAIXAM EM L, E NÃO SE SOBREPÕEM. A primeira versão
+        # cruzava-as no canto — a de `-y` ia até x=1,20 e a de `+x` também —, e
+        # as duas faces `+x` ficavam NO MESMO PLANO por toda a altura. É a
+        # armadilha que este arquivo já regista duas vezes ("duas faces no
+        # mesmo plano dão um buraco preto, e não dão erro"), e o resultado foi
+        # exatamente esse: uma BARRA PRETA de pé na quina, do chão ao topo, que
+        # se lia como uma coluna que não existe. Aqui a parede de `-y` leva a
+        # quina inteira e a de `+x` começa onde ela acaba.
+        caixa("ruina_parede_y", (0.42, -0.94, 0.09 + ALT_R / 2.0),
+              (1.56, 0.22, ALT_R), M["parede_suja"]),
+        caixa("ruina_parede_x", (1.09, -0.19, 0.09 + ALT_R / 2.0),
+              (0.22, 1.28, ALT_R), M["parede_suja"]),
+    ]
+    # O que sobrou das outras duas, desfazendo-se para longe do canto.
+    esc_r += parede_partida("ruina_qy", (-0.74, -0.94, 0.09 + ALT_R / 2.0),
+                            (0.76, 0.22, ALT_R), M["parede_suja"], resto=0.20)
+    esc_r += parede_partida("ruina_qx", (1.09, 0.72, 0.09 + ALT_R / 2.0),
+                            (0.22, 0.55, ALT_R), M["parede_suja"], resto=0.24)
+    # A porta na parede de `-y` e a janela na de `+x`, cada uma na sua.
+    esc_r += vao_cego("ruina_porta", "-y", (0.42, -0.94, 0.09 + ALT_R / 2.0),
+                      (1.56, 0.22, ALT_R), -0.18, -0.20, 0.60, 0.94, M)
+    # ⚠️ A JANELA AFASTA-SE DA QUINA, e isto custou um render. Ela nasceu a
+    # `u = -0.30`, que a punha a 0,05 do canto: o vão é uma placa RECUADA na
+    # parede, e recuada tão perto da quina ela atravessa a parede vizinha e
+    # aparece do outro lado como uma BARRA PRETA de pé, do chão ao topo. Na
+    # captura inteira aquilo lê-se como uma coluna escura que não existe.
+    # Vão perto de quina precisa de meia largura de folga, e mais um pouco.
+    esc_r += vao_cego("ruina_jan", "+x", (1.09, -0.19, 0.09 + ALT_R / 2.0),
+                      (0.22, 1.28, ALT_R), 0.06, 0.18, 0.52, 0.42, M)
+    esc_r += [
+        # A viga do telhado, caída do alto do canto para o entulho. É ela que
+        # liga as duas metades e conta o que aconteceu.
+        caixa("ruina_viga", (0.30, -0.35, 0.90), (2.3, 0.13, 0.13),
+              M["barrote"], rot=(0, 27, -22)),
+        caixa("ruina_ripa", (0.10, -1.10, 0.42), (1.5, 0.09, 0.09),
+              M["barrote"], rot=(0, 30, 8)),
+        caixa("ruina_telha", (-0.55, -1.12, 0.24), (0.5, 0.4, 0.09),
+              M["telhado_velho"], rot=(0, 0, -18)),
+        # Entulho, todo do lado que caiu — amontoado num canto lê como pilha,
+        # espalhado pelos quatro lê como sujeira.
+        caixa("ruina_entulho_a", (-0.95, -0.62, 0.26), (0.55, 0.48, 0.34),
+              M["parede_suja"], rot=(0, 0, 14)),
+        caixa("ruina_entulho_b", (-0.52, 0.10, 0.22), (0.44, 0.4, 0.26),
+              M["parede_suja"], rot=(0, 0, -20)),
+        caixa("ruina_entulho_c", (0.20, 0.62, 0.19), (0.38, 0.34, 0.2),
+              M["parede_suja"], rot=(0, 0, 9)),
+    ]
+    grupos["escritorio_ruina"] = esc_r
 
     # ⚠️ OS DOIS PRÉDIOS DO PÁTIO ENCOLHEM AQUI, e não nas literais deles.
     #

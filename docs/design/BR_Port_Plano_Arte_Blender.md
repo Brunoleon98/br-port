@@ -287,6 +287,48 @@ os outros 24 em **2 min 40**. Quatro minutos de máquina ao todo. O que custou
 mesmo foi o que ninguém tinha medido: **altura, no gerador do mapa, é PIXEL** —
 ver §1.1 de `docs/BRP_SPATIAL_CONTRACT.md` e a regra no `CLAUDE.md`.
 
+### Fora das etapas — os dois prédios em RUÍNA, e os letreiros (05/09)
+
+Correção de leitura, pedida depois de olhar o enquadramento novo: *"as
+construções atuais parecem avançadas para um porto inicial"*.
+
+**Os letreiros do mapa saíram.** As três placas — ESCRITÓRIO, ARMAZÉM, ZONA DE
+ESPERA — foram removidas a pedido, com o `Letreiro.gd`, a variação `Letreiro`
+do tema e o bloco D7 do teste de design. O argumento contra tirá-las era que os
+dois prédios do porto passariam a ler-se como casas da vila; o que se fez em
+vez de as manter foi resolver isso pelos PRÉDIOS, que é onde o Bruno pediu que
+o investimento fosse.
+
+**O `galpao_velho` não era uma ruína, e a causa estava escrita.** Ele reusava a
+lista `paredes` do `galpao` — plinto, caixa de `parede` BRANCA, portão fechado,
+calha e três janelas de vidro azul — e trocava só a cor do telhado. Medido: os
+dois estados diferiam em pouco mais do que o matiz do telhado. O comentário do
+escritório, dez linhas abaixo no mesmo arquivo, já dizia a regra que ele não
+seguia: *"a ruína não é o prédio pintado de velho: é MENOS prédio"*.
+
+Hoje ele tem paredes próprias em `parede_suja`, um terço delas desabado em
+pedaços irregulares, vão nenhum com vidro, o portão fora do trilho com a folha
+atravessada, metade do telhado no chão e a armação à vista — barrotes, terça e
+cumeeira.
+
+**E a ruína do escritório falhava pelo lado oposto.** Ela seguia a regra e
+mesmo assim não lia: duas caixas cinzentas e um pau, que ampliadas saíam como
+uma PILHA DE LAJES DE CONCRETO. *Menos prédio não é menos arquitetura* — o que
+faz o olho ler "ruína" e não "entulho" é reconhecer o que falta, e para isso
+alguma coisa tem de ficar de pé com um vão dentro. Hoje é um CANTO: as duas
+paredes que a câmera vê, cada uma com o seu vão, e o resto a desfazer-se.
+
+**Três armadilhas apanhadas ampliando, e nenhuma delas dava erro:**
+
+| O que se via a 5× | O que era |
+|---|---|
+| uma escada de três degraus | a parede caída descia por passos IGUAIS — regularidade denuncia geometria gerada, a mesma lição da vila que lia como cerca |
+| uma barra preta de pé na quina | as duas paredes do canto chegavam ao mesmo `x` e as faces exteriores ficavam coplanares |
+| ripas a pairar sobre o ar | os barrotes corriam até 1,58 e a parede acaba em 0,65; sem terça nem apoio, lêem como gravetos |
+
+As três estão registadas no `CLAUDE.md`, e as duas primeiras são corolários de
+regras que ele já tinha.
+
 ### Fora das etapas — a escala dos dois prédios do pátio (03/09)
 
 Não é etapa do plano: é correção de playtest, e entra aqui porque mexeu em

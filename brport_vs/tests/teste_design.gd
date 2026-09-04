@@ -112,8 +112,6 @@ func _rodar() -> void:
 	_d5_sem_sobreposicao()
 	print("=== D6: alvo de toque cabe no dedo ===")
 	_d6_alvos_de_toque()
-	print("=== D7: os letreiros pousam no que nomeiam ===")
-	_d7_letreiros()
 	print("=== D8: o pipeline BRP concorda com a projeção do mapa ===")
 	_d8_contrato_brp()
 	print("=== D9: trabalho parado avisa onde se resolve ===")
@@ -798,67 +796,6 @@ func _d6_alvos_de_toque() -> void:
 		_confere("%s cabe no dedo (%.0fx%.0f)" % [c.name, c.size.x, c.size.y],
 			c.size.y >= TOQUE_MIN and c.size.x >= TOQUE_MIN,
 			"mínimo é %.0f em cada lado" % TOQUE_MIN)
-
-
-# ── D7 ── placa que nomeia um prédio tem de tocar o prédio
-#
-# ⚠️ ESTE BLOCO PASSAVA COM UMA PLACA A PAIRAR, e passou durante duas sessões.
-# Ele conferia o pé do mastro contra o QUADRO DE 512 do prop — e um prédio
-# desenhado ocupa 103px desse quadro, de modo que sobravam ~200px de folga em
-# cada lado. Medido em 05/09: o pé do letreiro do armazém caía 12px ACIMA do
-# telhado, a placa lia-se como etiqueta colada no ar, e o D7 dizia "apoiado".
-# É a mesma forma do defeito que o D2 já tinha corrigido — âncora é um ponto,
-# o prop é um retângulo — aplicada ao alvo errado.
-#
-# Agora são duas perguntas, e as duas contra o DESENHO:
-#
-#   1. o pé entra no telhado nos DOIS estados (ruína e consertado). No estado
-#      mais baixo é onde ele quase não chega;
-#   2. a chapa não pousa em cima do telhado do estado mais ALTO. Foi o defeito
-#      que a primeira versão do `Letreiro.gd` cometeu ao descontar a altura da
-#      chapa duas vezes: o mastro caía no piso de 6px e a placa cobria a telha.
-func _d7_letreiros() -> void:
-	var pares := {"LetreiroArmazem": "Armazem", "LetreiroEscritorio": "Escritorio"}
-	var cenario := _main.get_node("MapaWrap/Cenario")
-	for letreiro in pares:
-		var l := _main.get_node_or_null("MapaWrap/Letreiros/%s" % letreiro) as Control
-		var predio := cenario.get_node_or_null(String(pares[letreiro])) as TextureRect
-		if l == null or predio == null:
-			_confere("%s e %s existem" % [letreiro, pares[letreiro]], false)
-			continue
-		var mastro := l.get_node_or_null("Mastro") as Control
-		if mastro == null:
-			_confere("%s tem mastro" % letreiro, false)
-			continue
-		# A suíte roda o jogo POR FORA e não processa frames, então o `_ready`
-		# do letreiro ainda não correu quando se chega aqui. `plantar()` é
-		# idempotente e existe para isto — ver o comentário dele.
-		l.call("plantar")
-
-		var estados: Array = l.get("estados")
-		_confere("%s declara os dois estados do prédio" % letreiro,
-			estados.size() == 2,
-			"tem %d — sem os dois, o mastro não sabe qual telhado é o mais baixo"
-			% estados.size())
-		if estados.size() != 2:
-			continue
-
-		var pe := _no_mapa(l) + mastro.position + Vector2(mastro.size.x / 2.0, mastro.size.y)
-		var base := _no_mapa(predio)
-		var topo_alto := INF
-		for t in estados:
-			var u := (t as Texture2D).get_image().get_used_rect()
-			var desenho := Rect2(base + Vector2(u.position), Vector2(u.size))
-			topo_alto = minf(topo_alto, desenho.position.y)
-			_confere("%s apoiado no desenho de %s" % [letreiro, pares[letreiro]],
-				desenho.has_point(pe),
-				"pé em %s, desenho do prédio %s" % [pe, desenho])
-
-		var fundo_da_chapa := _no_mapa(l).y + mastro.position.y
-		_confere("%s não pousa em cima do telhado" % letreiro,
-			fundo_da_chapa < topo_alto,
-			"a chapa acaba em y=%.0f e o telhado mais alto começa em y=%.0f"
-			% [fundo_da_chapa, topo_alto])
 
 
 # ── D9 ── o aviso de trabalho parado tem de aparecer ONDE ele se resolve
