@@ -242,6 +242,12 @@ câmera do Blender a `ROT_X=60°`, `ROT_Z=45°`, `ESCALA_ORTO` derivada delas.
   diferença — o primeiro assimétrico saiu 40px fora.
 - **O quadro de todo prop tem 512 e o centro dele é a origem do mundo.**
   Posicionar um prop na cena é subtrair meio quadro, não acertar no olho.
+- **E desprojetar um prop de volta ao mundo pede a ALTURA em que ele pousa.**
+  Quem está em terra pousa a `ALT_CAIS`; quem está na água, a 0 — é o que o
+  `_origem`/`_mundo` do teste de design faz. Desprojetar tudo a 0 desloca cada
+  prop de terra em **+0,87 em mx E em my**, o que é pouco para se notar e
+  suficiente para mudar a que DEGRAU ele pertence. Custou uma tabela inteira
+  de posições errada em 04/09, e ela parecia plausível.
 - **Só as faces `+x` e `-y` são visíveis** por esta câmera. Detalhar as outras
   é render que ninguém vê.
 - **Ordem de nó É profundidade.** Quem tem `mx+my` maior está mais perto da
