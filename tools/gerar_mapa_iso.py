@@ -55,6 +55,91 @@ PIER_ALCANCE = 4.5
 # (my inicial, my final, mx da beira) de cada píer — alinhados aos degraus.
 PIERES = [(2.0, 4.4, 6.0), (10.0, 12.4, 10.0), (18.0, 20.4, 14.0)]
 
+# ── AS DUAS PONTAS DE AREIA ──────────────────────────────────────────────
+#
+# A leitura de composição das cinco referências (`docs/design/referencias/`)
+# responde à pergunta que travou esta metade da Etapa 1 durante dois dias, e
+# a resposta NÃO é a que se supunha:
+#
+#   "A areia fica onde o PORTO NÃO ESTÁ — nas duas pontas da costa, para além
+#    do primeiro e do último berço, emoldurando o porto."
+#
+# Nunca entre a água e o cais: nas cinco imagens o cais é pedra descendo
+# direto à água, e a praia aparece nos dois cantos do quadro, com pedras e
+# coqueiros. Logo isto não é uma faixa ao longo do cais inteiro — são dois
+# REMATES, e por isso o porto (avental, asfalto, junta, mancha, enrocamento)
+# simplesmente PARA nos dois trechos abaixo.
+#
+# ⚠️ ONDE PARAR FOI MEDIDO, e não escolhido. As duas pontas não são simétricas
+# porque o que está lá hoje não é simétrico. Costa VISÍVEL na janela do jogo
+# (720x660) e o que ocupa cada corte:
+#
+#   corte norte   costa       corte sul    costa       ocupado hoje
+#   ─────────────────────     ──────────────────────────────────────────
+#     0,4         112 px        21,0       283 px      coqueiro, pilha, palete,
+#     0,8         125 px                               empilhadeira, carga
+#   → 1,2         139 px        22,0       250 px      empilhadeira, carga
+#     1,6         152 px      → 22,5       233 px      empilhadeira, carga
+#                              23,0       216 px      empilhadeira, carga
+#                              24,0        49 px      carga
+#
+# O norte para em 1,2 porque 1,6 comeria a carga do pátio e só traria 13 px;
+# o sul para em 22,5 porque é onde a conta vira — 22,0 traz 17 px a mais e
+# custa mais três props, e 24,0 (o degrau seguinte, que parecia o corte
+# natural) **derruba a costa visível de 233 para 49 px**, porque é ali que a
+# costa sai do quadro pelo canto de baixo. Seria repetir a mata de 04/09:
+# desenhar praia onde ninguém a vê.
+PRAIA_FOLGA = (0.8, 2.1)   # cais que sobra além do primeiro e do último berço
+PONTA_NORTE = PIERES[0][0] - PRAIA_FOLGA[0]     # 1,2 — daqui para trás, praia
+PONTA_SUL = PIERES[-1][1] + PRAIA_FOLGA[1]      # 22,5 — daqui para a frente
+
+PRAIA_PROF = 1.3           # a rampa de areia, em mx, da crista à linha de água
+PRAIA_SUBMERSA = 1.15      # o baixio de areia que se vê pela água rasa
+
+
+def na_praia(my: float) -> bool:
+    """Este `my` fica numa das duas pontas, fora do porto?
+
+    Irmã de `_sob_pier`, e usada do mesmo jeito: tudo o que o porto constrói
+    ao longo da margem pergunta por ela antes de se desenhar.
+    """
+    return my < PONTA_NORTE or my > PONTA_SUL
+
+
+def trechos_de_porto(my0: float, my1: float) -> list:
+    """A parte de (my0, my1) onde o porto existe. Zero ou um trecho."""
+    a, b = max(my0, PONTA_NORTE), min(my1, PONTA_SUL)
+    return [(a, b)] if a < b else []
+
+
+def trechos_de_praia(my0: float, my1: float) -> list:
+    """A parte de (my0, my1) onde o porto NÃO existe. Zero, um ou dois."""
+    out = []
+    if my0 < PONTA_NORTE:
+        out.append((my0, min(my1, PONTA_NORTE)))
+    if my1 > PONTA_SUL:
+        out.append((max(my0, PONTA_SUL), my1))
+    return out
+
+
+def praias() -> list:
+    """(índice, my inicial, my final) de cada ponta de areia. São DUAS.
+
+    ⚠️ FORAM TRÊS, uma por degrau, e essa foi a versão errada. A costa é uma
+    ESCADA: entre o degrau 2 e o 3 ela anda 4 unidades em `mx` de uma vez, e
+    uma praia por degrau desenhava duas rampas soltas com um degrau verde de
+    2,7 unidades entre elas — terra a pique onde devia haver areia a virar a
+    esquina. É exatamente a armadilha que o `costa_deslocada` já traz escrita
+    um andar acima ("a versão anterior tratava cada degrau como uma faixa
+    solta"), e ela mordeu de novo aqui.
+
+    A praia acompanha o CONTORNO, como a faixa de profundidade e o
+    enrocamento — e por isso é um trecho de `my` por ponta, degraus incluídos.
+    """
+    return [(0, DEGRAUS[0][0], PONTA_NORTE),
+            (1, PONTA_SUL, DEGRAUS[-1][1] + COSTURA)]
+
+
 # ── MALHA VIÁRIA E VILA ──────────────────────────────────────────────────
 # TUDO AQUI É MEDIDO A PARTIR DA BEIRA DO CAIS, nunca em `mx` absoluto, e a
 # razão é a janela: a terra visível é uma faixa que acompanha a costa, e o
@@ -118,6 +203,27 @@ C = {
     "agua": "#0d4d6b", "agua_funda": "#0f5a7d", "agua_media": "#1b7fa8",
     "agua_rasa": "#3fb6cf", "agua_baixio": "#57c6dc", "espuma": "#eafaff",
     "pedra": "#5a666b", "pedra_clara": "#7c888e", "pedra_media": "#6b767b",
+    # AREIA — a metade que faltava da Etapa 1 (A5), em 04/09. O tom seco é o
+    # AMOSTRADO da referência (#e8d9a8, tabela de paleta do
+    # `docs/design/referencias/README.md`); os outros saem dele por uma rampa
+    # de VALOR, e não por gosto, porque a lição de 02/09 vale aqui inteira:
+    # cor escolhida só pelo matiz achata a imagem.
+    #
+    # As razões são as do concreto do cais, que já estão medidas no mapa:
+    # `cais_dir` vale 0,67 do `cais_topo` e `cais_esq` 0,80. A face do
+    # barranco é a que olha para a água, logo leva a razão do `dir`; o pé
+    # lavado pela onda desce mais, porque areia molhada é mesmo escura.
+    "areia": "#e8d9a8", "areia_face": "#bda06a",
+    "areia_seca": "#d3c08a", "areia_funda": "#a8ddd0",
+    #
+    # ⚠️ O `areia_funda` NÃO É AREIA, e a primeira versão dele era. Pintar
+    # areia (#d8cb9c) por cima da água turquesa a 0,40 dá **#8bc8c2**, que
+    # mede 0,06 de Weber contra o baixio — some — e a faixa lavada, pelo mesmo
+    # caminho, dava um **#a4b094 azeitona** que na captura lia como lama, não
+    # como baixio de areia. Fundo de areia visto pela água não é a cor da
+    # areia misturada: é água CLARA e pouco saturada, e por isso este tom é
+    # escolhido pelo VALOR (209 contra os 176 do baixio, Weber 0,19) em vez
+    # de sair de uma mistura. Mesma lição da água de 02/09, do outro lado.
     # A sombra sob o muro do cais acompanha a água: escura o bastante para o pé
     # do cais continuar a assentar, no matiz novo. No matiz antigo ela lia como
     # uma mancha cinza sobre turquesa.
@@ -264,6 +370,55 @@ def costa(de: float, ate: float) -> list:
     """
     perto = [p(mx, my) for mx, my in costa_deslocada(de)]
     longe = [p(mx, my) for mx, my in costa_deslocada(ate)]
+    return perto + list(reversed(longe))
+
+
+def _corta_em_my(v: list, mya: float, myb: float) -> list:
+    """Recorta a polilinha da costa ao intervalo [mya, myb] de `my`.
+
+    Existe porque as duas pontas deixaram de ser cais: a sombra que o muro
+    lança na água tem de PARAR onde o muro para, e a areia molhada tem de
+    existir só onde há areia. Sem isto, ou se pinta sombra de muro ao pé de
+    uma praia, ou se redesenha a costa inteira duas vezes.
+
+    O espelho de degrau (`my` constante) é caso à parte de propósito: ele não
+    se recorta, entra inteiro ou não entra — recortá-lo por interpolação daria
+    divisão por zero e, pior, um vértice no meio da quina.
+    """
+    def em(a, b, t):
+        """Interpola os DOIS ou TRÊS componentes: as linhas da rampa carregam
+        um terceiro, a altura, e cortá-lo fora deixaria a ponta da faixa
+        pousada no chão."""
+        return tuple(a[k] + (b[k] - a[k]) * t for k in range(len(a)))
+
+    out = []
+    for i in range(len(v) - 1):
+        a, b = v[i], v[i + 1]
+        y0, y1 = a[1], b[1]
+        if abs(y1 - y0) < 1e-9:
+            trecho = [a, b] if mya <= y0 <= myb else []
+        else:
+            t0, t1 = 0.0, 1.0
+            for sinal, lim in ((1.0, myb), (-1.0, mya)):
+                den, num = sinal * (y1 - y0), sinal * (y0 - lim)
+                t = -num / den
+                if den > 0:
+                    t1 = min(t1, t)
+                else:
+                    t0 = max(t0, t)
+            trecho = [] if t0 >= t1 else [em(a, b, t0), em(a, b, t1)]
+        for q in trecho:
+            if not out or abs(q[0] - out[-1][0]) > 1e-9 or abs(q[1] - out[-1][1]) > 1e-9:
+                out.append(q)
+    return out
+
+
+def costa_entre(de: float, ate: float, mya: float, myb: float) -> list:
+    """`costa(de, ate)`, mas só no trecho de `my` pedido."""
+    perto = [p(mx, my) for mx, my in _corta_em_my(costa_deslocada(de), mya, myb)]
+    longe = [p(mx, my) for mx, my in _corta_em_my(costa_deslocada(ate), mya, myb)]
+    if len(perto) < 2 or len(longe) < 2:
+        return []
     return perto + list(reversed(longe))
 
 
@@ -919,6 +1074,263 @@ def arvore(mx: float, my: float, raio: float, r: random.Random,
     return s
 
 
+# ── A AREIA DAS DUAS PONTAS ──────────────────────────────────────────────
+#
+# ⚠️ A PRIMEIRA IDEIA ERA PINTAR O AVENTAL DE AREIA, e ela não podia funcionar:
+# o chão do cais é uma laje a `ALT_CAIS` do plano da água e o muro cai a pique
+# dela. Areia por cima disso é um muro cor de areia, e o olho lê muro. O que faz
+# praia é a terra DESCER até a água — então nos trechos de praia a laje acaba na
+# crista e o que vai da crista à linha de água é uma RAMPA, desenhada aqui.
+#
+# A linha de água continua exatamente onde estava, de propósito: a camada de
+# espuma, as faixas de profundidade e a tabela de âncoras todas a usam, e mover
+# a costa por causa da areia seria pagar a etapa três vezes.
+#
+# TUDO AQUI SAI DO CONTORNO (`costa_deslocada`), e nunca da `borda` de um
+# degrau. A rampa tem de virar a esquina da escada junto com a costa; medida
+# por degrau, ela partia-se em duas com um degrau de terra a pique no meio.
+
+
+def contorno_recuado(d: float) -> list:
+    """O contorno da costa recuado `d` para DENTRO da terra.
+
+    ⚠️ NÃO É O `costa_deslocada` COM O SINAL TROCADO, e a diferença custou uma
+    rodada inteira. Aquele empurra cada VÉRTICE na diagonal (+d em mx, -d em
+    my), o que serve perfeitamente para uma faixa de água; mas ao longo de um
+    muro isso desloca também o `my`, e a crista da praia saía 1,3 unidade
+    adiantada em relação à linha de água. No fim do cais aquilo abriu um
+    TRIÂNGULO DE ÁGUA FUNDA entre o muro e a duna — água a nascer no meio da
+    terra, e a captura mostrou-a como uma cunha azul-escura.
+
+    Aqui cada segmento recua pela sua PRÓPRIA normal, e cada quina leva o
+    remate que pede: onde a terra abraça a quina (o degrau que sobe) entram
+    DOIS pontos, um chanfro, porque a praia dá a volta por fora; onde ela é
+    uma ponta de terra entra UM, o cruzamento das duas linhas recuadas, senão
+    o recuo passava para lá da própria costa.
+    """
+    v = contorno_costa()
+    seg = []
+    for i in range(len(v) - 1):
+        (x0, y0), (x1, y1) = v[i], v[i + 1]
+        if abs(x1 - x0) < 1e-9:                       # muro: a terra é -mx
+            seg.append(((x0 - d, y0), (x1 - d, y1), True))
+        else:                                          # espelho: a terra é +my
+            seg.append(((x0, y0 + d), (x1, y1 + d), False))
+    out = [seg[0][0]]
+    for i, (_a, b, muro) in enumerate(seg):
+        if i + 1 == len(seg):
+            out.append(b)
+            break
+        c = seg[i + 1][0]
+        quina = v[i + 1]
+        if muro:
+            out.append((b[0], quina[1]))
+            out.append((quina[0], c[1]))
+        else:
+            out.append((c[0], b[1]))
+    return out
+
+
+def _meandro(my: float, fase: float) -> float:
+    """Uma serpentina lenta ao longo da costa, entre -1 e 1.
+
+    ⚠️ A PRIMEIRA VERSÃO SACUDIA CADA AMOSTRA e não serpenteava nada: era
+    ruído de 11 px de período e, na tela, as três faixas da rampa saíam como
+    três FITAS paralelas de largura constante — o defeito que a rampa em três
+    tons existe para evitar. O que o olho lê como orla é meandro LONGO; duas
+    senóides de períodos diferentes bastam, e continuam reproduzíveis sem
+    semente nenhuma.
+    """
+    return 0.62 * math.sin(my * 0.83 + fase) + 0.38 * math.sin(my * 2.1 + fase * 1.7)
+
+
+def linha_da_praia(t0: float, amp: float, fase: float, my_a: float,
+                   my_b: float, passo: float = 0.30) -> list:
+    """Uma das linhas da rampa, já em pixels e já recortada ao trecho.
+
+    `t0 = 0` é a crista (recuada `PRAIA_PROF`, à altura do cais); `t0 = 1` é a
+    linha de água, à altura zero. A rampa é reta entre as duas, então o recuo
+    e a altura andam sempre juntos — inclusive na ondulação, senão a linha
+    serpenteia no chão e fica reta no ar.
+
+    O `amp` só sacode muro e espelho, nunca o chanfro da quina: torcer o
+    chanfro desmancharia justamente a volta que a praia dá ao degrau.
+    """
+    recuo = PRAIA_PROF * (1.0 - t0)
+    v = contorno_recuado(recuo)
+    pontos = []
+    for i in range(len(v) - 1):
+        (x0, y0), (x1, y1) = v[i], v[i + 1]
+        muro = abs(x1 - x0) < 1e-9
+        espelho = abs(y1 - y0) < 1e-9
+        n = max(1, int(max(abs(x1 - x0), abs(y1 - y0)) / passo))
+        for k in range(n + 1):
+            f = k / n
+            mx, my = x0 + (x1 - x0) * f, y0 + (y1 - y0) * f
+            desvio = PRAIA_PROF * amp * _meandro(my, fase) if amp else 0.0
+            if muro:
+                mx -= desvio
+            elif espelho:
+                my += desvio
+            else:
+                desvio = 0.0
+            pontos.append((mx, my, (recuo + desvio) / PRAIA_PROF))
+    return [p(mx, my, ALT_CAIS * q)
+            for mx, my, q in _corta_em_my(pontos, my_a, my_b)]
+
+
+def _faixa_da_rampa(a: tuple, b: tuple, my_a: float, my_b: float, cor: str,
+                    opac: float = 1.0) -> str:
+    """Uma faixa da rampa entre duas linhas, cada uma (t0, amplitude, fase)."""
+    perto = linha_da_praia(*a, my_a, my_b)
+    longe = linha_da_praia(*b, my_a, my_b)
+    if len(perto) < 2 or len(longe) < 2:
+        return ""
+    return poli(perto + list(reversed(longe)), cor, opac)
+
+
+# As três linhas de cada ponta, num lugar só: o chão (`praia_chao`) e a areia
+# (`praia_areia`) desenham a partir da CRISTA, e se as duas divergissem sairia
+# uma fresta entre o relvado e a duna. As fases mudam de uma ponta para a
+# outra para as duas praias não saírem com o mesmo meandro.
+CRISTA = [(0.0, 0.16, 0.4), (0.0, 0.16, 3.3)]
+LAVADO = [(0.78, 0.16, 1.5), (0.78, 0.16, 4.9)]
+LINHA_DE_AGUA = (1.0, 0.0, 0.0)
+
+
+def praia_chao(indice: int, my_a: float, my_b: float) -> str:
+    """O bloco de terra da praia: do fundo do mundo só até a crista.
+
+    Nos trechos de porto quem desenha isto é a `laje`, que segue até `borda` e
+    fecha com o muro. Aqui não há muro nenhum para fechar — quem fecha é a
+    rampa, desenhada depois, junto com o enrocamento.
+    """
+    crista = linha_da_praia(*CRISTA[indice], my_a, my_b)
+    if len(crista) < 2:
+        return ""
+    s = poli([p(FUNDO_TERRA, my_a, ALT_CAIS)] + crista
+             + [p(FUNDO_TERRA, my_b, ALT_CAIS)], C["solo"])
+
+    # ⚠️ E O CAPIM VEM AQUI, E NÃO COM A AREIA. Ele nasceu em `praia_areia`,
+    # que é desenhada lá no fim junto com o enrocamento — depois da rua e
+    # DEPOIS DA VILA. Na captura viam-se tufos por cima do telhado das casas e
+    # do passeio: o mundo estava certo (o capim para 0,15 antes da calçada),
+    # a ORDEM é que não, porque uma casa levanta-se 20 px e o que se desenha
+    # depois dela cai-lhe em cima. O chão da praia corre antes de tudo o que
+    # se constrói em terra, e é o lugar do que cresce nele.
+    r = random.Random(SEMENTE_CHAO + 210 + indice)
+    # Capim de restinga na terra atrás da crista. Sem ele o trecho fica verde
+    # chapado entre a rua e a areia. E quem decide o orçamento é o
+    # `no_quadro`: o que cai fora do PNG não se desenha, que é a lição da mata
+    # de 04/09 — 136 copas sorteadas, 7 dentro do ecrã.
+    fundo = RUA_RECUO - RUA_LARG - CALCADA - PRAIA_PROF - 0.15
+    for mx, my, (nmx, nmy), _t in andar_costa(-PRAIA_PROF, (0.16, 0.34), r):
+        if not (my_a <= my <= my_b):
+            continue
+        dentro = r.uniform(0.10, max(0.3, fundo))
+        gx, gy = mx - nmx * dentro, my - nmy * dentro
+        if not no_quadro(gx, gy):
+            continue
+        if r.random() < 0.20:
+            rr = r.uniform(0.16, 0.34)
+            pts = []
+            for k in range(8):
+                ang = math.radians(k * 45.0)
+                pts.append(p(gx + rr * math.cos(ang) * r.uniform(0.8, 1.2),
+                             gy + rr * 0.8 * math.sin(ang) * r.uniform(0.8, 1.2),
+                             ALT_CAIS))
+            s += poli(pts, C["mato"], 0.9)
+        else:
+            ex, ey = p(gx, gy, ALT_CAIS)
+            s += tufo_de_capim(ex, ey, r)
+
+    # E umas árvores baixas, que é o que a referência pede a seguir às pedras.
+    # ⚠️ COQUEIRO AQUI NÃO CABE, e isso foi medido: o coqueiro é PROP, tem a
+    # copa 110 px acima da âncora, e a restinga norte inteira cai a menos de
+    # 92 px do topo do quadro — um coqueiro ali sairia decapitado pela barra
+    # do HUD. A árvore da mata é baixa e serve, e a `no_quadro` da COPA (e não
+    # do pé) é que decide se ela entra.
+    arvores = []
+    for mx, my, (nmx, nmy), _t in andar_costa(-PRAIA_PROF, (1.5, 3.4), r):
+        if not (my_a <= my <= my_b) or r.random() < 0.45:
+            continue
+        dentro = r.uniform(0.5, max(0.6, fundo - 0.3))
+        ax, ay = mx - nmx * dentro, my - nmy * dentro
+        if not no_quadro(ax, ay) or not no_quadro(ax, ay, ALT_CAIS + 70.0, 0.0):
+            continue
+        arvores.append((ax, ay, r.uniform(0.30, 0.52), r.random()))
+    for ax, ay, raio, luz in sorted(arvores, key=lambda c: c[0] + c[1]):
+        s += arvore(ax, ay, raio, r, luz)
+    return s
+
+
+def praia_areia(indice: int, my_a: float, my_b: float) -> str:
+    """A rampa de areia, o pé molhado, o fundo submerso, as pedras e o capim.
+
+    ⚠️ A RAMPA SAIU EM TRÊS TONS NA PRIMEIRA VERSÃO, e três era um a mais.
+    Uma chapa de 58 px na tela não tem lado nenhum, isso é verdade — mas duas
+    fronteiras internas a 0,27 e 0,13 da largura da rampa dão duas fitas de 16
+    e 8 px de largura CONSTANTE, e na captura elas leram-se como as listras de
+    uma bandeira. Ficaram duas: areia clara (que é o que a referência pede,
+    "uma faixa clara") e o pé molhado, com a fronteira a serpentear largo.
+    """
+    r = random.Random(SEMENTE_CHAO + 170 + indice)
+    s = _faixa_da_rampa(CRISTA[indice], LAVADO[indice], my_a, my_b, C["areia"])
+    s += _faixa_da_rampa(LAVADO[indice], LINHA_DE_AGUA, my_a, my_b, C["areia_face"])
+
+    # Manchas secas no alto da duna — o mesmo remédio do `manchas_chao` para o
+    # pátio: tirar a chapa sem se fazer notar.
+    for mx, my, (nmx, nmy), _t in andar_costa(0.0, (0.9, 2.0), r):
+        if not (my_a <= my <= my_b) or r.random() < 0.35:
+            continue
+        t = r.uniform(0.06, 0.44)
+        d = -PRAIA_PROF * (1.0 - t)
+        cx, cy = p(mx + nmx * d, my + nmy * d, ALT_CAIS * (1.0 - t))
+        s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.0f" ry="%.0f" fill="%s" '
+              'opacity="0.45" transform="rotate(%.0f %.0f %.0f)"/>\n'
+              % (cx, cy, r.uniform(9.0, 20.0), r.uniform(3.0, 6.0),
+                 C["areia_seca"], r.uniform(-38, -14), cx, cy))
+
+    # O baixio de areia, já do lado da água: duas faixas, a larga quase
+    # transparente só para a de dentro não acabar numa aresta. Elas não são
+    # opacas de todo porque a renda de espuma já está desenhada ali por baixo.
+    for ate, opac in ((PRAIA_SUBMERSA * 1.9, 0.30), (PRAIA_SUBMERSA, 0.90)):
+        faixa = costa_entre(0.0, ate, my_a, my_b)
+        if faixa:
+            s += poli(faixa, C["areia_funda"], opac)
+
+    # As pedras. A referência pede "faixa clara com pedras e coqueiros", e a
+    # receita já existe: o sólido facetado do enrocamento (`com_saia`). O que
+    # muda é a DENSIDADE — enrocamento é blindagem contínua, pedra de praia é
+    # avulsa —, e por isso aqui são poucas, maiores e espalhadas entre o meio
+    # da rampa e o baixio.
+    tons = [C["pedra"], C["pedra_media"], C["pedra_clara"]]
+    pedras = []
+    for mx, my, (nmx, nmy), _t in andar_costa(0.0, (0.75, 1.8), r):
+        if not (my_a <= my <= my_b):
+            continue
+        t = r.uniform(0.34, 1.26)          # acima de 1 já é dentro da água
+        d = -PRAIA_PROF * (1.0 - t)
+        bx, by = mx + nmx * d, my + nmy * d
+        if not no_quadro(bx, by, 0.0):
+            continue
+        px, py = p(bx, by, ALT_CAIS * max(0.0, 1.0 - t))
+        rx = r.uniform(5.0, 11.0)
+        ry = rx * r.uniform(0.46, 0.62)
+        n = r.choice((5, 6))
+        a0 = r.uniform(0.0, math.tau)
+        canto = []
+        for k in range(n):
+            a = a0 + math.tau * k / n + r.uniform(-0.25, 0.25)
+            f = r.uniform(0.78, 1.0)
+            canto.append((px + math.cos(a) * rx * f, py + math.sin(a) * ry * f))
+        pedras.append((py, canto, rx * r.uniform(0.32, 0.60), tons[r.randrange(3)]))
+    for _py, canto, h, topo in sorted(pedras, key=lambda q: q[0]):
+        s += com_saia(canto, h, topo)
+
+    return s
+
+
 def _sombrear(hexa: str, fator: float) -> str:
     n = int(hexa[1:], 16)
     r, g, b = (n >> 16) & 255, (n >> 8) & 255, n & 255
@@ -1324,9 +1736,23 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # Agora o pátio ocupa o degrau inteiro (`- COSTURA` no fim, só para não
     # abrir fresta) e as vias são DESENHADAS, com traçado que serve para
     # alguma coisa — ver `vias()`.
+    # O CHÃO DAS DUAS PONTAS vem antes do laço dos degraus, e não dentro dele:
+    # a ponta sul atravessa o salto entre o degrau 2 e o 3, e não pertence a
+    # nenhum dos dois. O `solo` e a mata que o laço desenha caem por cima, na
+    # mesma cor — é o mesmo chão.
+    for j, a, b in praias():
+        s += praia_chao(j, a, b)
+
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
-        s += laje(FUNDO_TERRA, my0, borda, my1 + COSTURA, ALT_CAIS,
-                  C["cais_topo"], C["cais_dir"], C["cais_esq"])
+        # ⚠️ A LAJE DO CAIS PARA ONDE O PORTO PARA. Nas duas pontas (ver
+        # `na_praia`) o que existe é terra que DESCE até a água, e uma laje
+        # com muro a pique ali seria exatamente o "avental cor de areia" que
+        # esta etapa não podia ser. O chão da praia vai só até a crista; a
+        # rampa da crista à água é desenhada com o enrocamento, mais abaixo.
+        for a, b in trechos_de_porto(my0, my1 + COSTURA):
+            s += laje(FUNDO_TERRA, a, borda, b, ALT_CAIS,
+                      C["cais_topo"], C["cais_dir"], C["cais_esq"])
+
         # SOLO TROPICAL do fundo do mundo até a calçada de trás da rua. É o
         # chão em que a vila se assenta, e é o que estava faltando: antes esta
         # faixa inteira era pátio, o que punha asfalto atrás das casas.
@@ -1349,18 +1775,21 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
         # PÁTIO: só entre a calçada da frente e o avental. É esta a área que
         # trabalha, e é ela que troca de terra batida para asfalto.
         frente_da_rua = borda - RUA_RECUO + RUA_LARG + CALCADA
-        s += poli([p(frente_da_rua, my0, ALT_CAIS), p(borda - APRON, my0, ALT_CAIS),
-                   p(borda - APRON, my1 + COSTURA, ALT_CAIS),
-                   p(frente_da_rua, my1 + COSTURA, ALT_CAIS)],
-                  C["asfalto"] if com_pavimento else C["terra"])
-        s += manchas_chao(i, frente_da_rua, my0, borda - APRON, my1, com_pavimento)
-        if com_pavimento:
-            # Faixa do avental, rente à borda interna dele — mais para dentro
-            # riscaria o número da doca, que é pintado logo ao lado.
-            s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="#e0a81f" '
-                  'stroke-width="2.5" fill="none"/>\n' % (
-                      *p(borda - APRON + 0.05, my0 + 0.3, ALT_CAIS),
-                      *p(borda - APRON + 0.05, my1 - 0.3, ALT_CAIS)))
+        # E o pátio para junto com a laje: asfalto que morre numa praia é o
+        # porto a existir onde ele não está.
+        for a, b in trechos_de_porto(my0, my1 + COSTURA):
+            s += poli([p(frente_da_rua, a, ALT_CAIS), p(borda - APRON, a, ALT_CAIS),
+                       p(borda - APRON, b, ALT_CAIS),
+                       p(frente_da_rua, b, ALT_CAIS)],
+                      C["asfalto"] if com_pavimento else C["terra"])
+            s += manchas_chao(i, frente_da_rua, a, borda - APRON, b, com_pavimento)
+            if com_pavimento:
+                # Faixa do avental, rente à borda interna dele — mais para
+                # dentro riscaria o número da doca, pintado logo ao lado.
+                s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="#e0a81f" '
+                      'stroke-width="2.5" fill="none"/>\n' % (
+                          *p(borda - APRON + 0.05, a + 0.3, ALT_CAIS),
+                          *p(borda - APRON + 0.05, b - 0.3, ALT_CAIS)))
 
     s += vias(com_pavimento)
     s += vila(nivel_vila, com_pavimento)
@@ -1397,15 +1826,22 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # dois números seriam iguais.
     rc = random.Random(SEMENTE_CHAO + 40)
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
-        quina = [p(borda - APRON, my0, ALT_CAIS), p(borda, my0, ALT_CAIS),
-                 p(borda, my1 + COSTURA, ALT_CAIS),
-                 p(borda - APRON, my1 + COSTURA, ALT_CAIS)]
+        # E o recorte já não é o degrau inteiro: é o trecho de PORTO dele.
+        # Concreto desgastado numa praia é o mesmo erro que o desgaste no
+        # relvado, um degrau acima.
+        porto = trechos_de_porto(my0, my1 + COSTURA)
+        if not porto:
+            continue
+        pmy0, pmy1 = porto[0]
+        quina = [p(borda - APRON, pmy0, ALT_CAIS), p(borda, pmy0, ALT_CAIS),
+                 p(borda, pmy1, ALT_CAIS),
+                 p(borda - APRON, pmy1, ALT_CAIS)]
         s += '  <clipPath id="cais%d"><polygon points="%s"/></clipPath>\n' % (
             i, " ".join("%.1f,%.1f" % q for q in quina))
         s += '  <g clip-path="url(#cais%d)">\n' % i
         for _ in range(9):
             cx, cy = p(rc.uniform(borda - APRON, borda),
-                       rc.uniform(my0, my1), ALT_CAIS)
+                       rc.uniform(pmy0, pmy1), ALT_CAIS)
             raio = rc.uniform(16.0, 40.0)
             s += ('    <ellipse cx="%.0f" cy="%.0f" rx="%.0f" ry="%.0f" fill="%s" '
                   'opacity="0.35"/>\n' % (cx, cy, raio, raio / 2.0, C["cais_mancha"]))
@@ -1413,8 +1849,8 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
         # A junta vive na FAIXA DE CONCRETO que sobra entre o pátio e a beira
         # (o pátio come até `borda - 1.3`). Levá-la mais para dentro riscava a
         # terra batida, que não tem junta nenhuma.
-        my = my0 + 1.2
-        while my < my1 - 0.3:
+        my = pmy0 + 1.2
+        while my < pmy1 - 0.3:
             s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="%s" stroke-width="1.8" '
                   'opacity="0.85" fill="none"/>\n'
                   % (*p(borda - 1.25, my, ALT_CAIS), *p(borda, my, ALT_CAIS),
@@ -1437,7 +1873,11 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # vira pedra, vira listra. O que faz o olho ler enrocamento é o CONTORNO
     # irregular — pedras de tamanhos diferentes, encavaladas, cada uma tapando
     # um pedaço da anterior.
-    s += poli(costa(0.0, 1.15), C["sombra_agua"], 0.30)
+    # E ela para nas duas pontas: onde a terra desce em rampa não há muro
+    # nenhum a lançar sombra, e uma faixa escura ao pé de uma praia lê-se como
+    # sujeira na água.
+    s += poli(costa_entre(0.0, 1.15, PONTA_NORTE, PONTA_SUL),
+              C["sombra_agua"], 0.30)
 
     #
     # A SEGUNDA correção veio do playtest: as pedras eram espalhadas por
@@ -1477,7 +1917,9 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
         # frente da entrada de um píer. Sem isto a faixa cruzava a raiz do
         # tabuado e as pedras liam-se como se estivessem POR CIMA dele — o
         # muro é que continua atrás, e é o que se vê.
-        if _sob_pier(my):
+        # Nem sob o píer nem nas duas pontas: enrocamento é blindagem de cais,
+        # e a praia tem as pedras dela — poucas e avulsas, em `praia_areia`.
+        if _sob_pier(my) or na_praia(my):
             continue
         for _ in range(2):
             fora = r.uniform(0.0, 0.42)
@@ -1503,6 +1945,14 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
 
     for _py, canto, h, topo in sorted(pedras, key=lambda q: q[0]):
         s += com_saia(canto, h, topo)
+
+    # ---- as duas pontas de areia ----
+    # Vêm aqui, e não no laço dos degraus, pela mesma razão que o enrocamento:
+    # é a última camada da margem, e tudo o que o cais desenha na beira já
+    # passou. O chão delas foi desenhado lá atrás (`praia_chao`); o que falta
+    # é a rampa que desce até a água.
+    for j, a, b in praias():
+        s += praia_areia(j, a, b)
 
     # ---- píeres ----
     # Em jogo o píer TROCA DE ESTADO (vaga por construir -> píer construído), e
@@ -1536,8 +1986,13 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
         k = 0
         # Recuo entre 1,3 (avental) e 2,98 (meio-fio da rua). O teste de design
         # pegou os antigos 2,8–3,1 em cima do asfalto da via.
+        # ⚠️ ERAM SETE, e a sétima ficava em my=26,4 — dentro da ponta sul de
+        # areia desde 04/09. Contêiner pousado na restinga, atrás de uma
+        # praia. Não se mudou de sítio porque o pátio entre my=16 e 22,5 já
+        # tem o coqueiro, a pilha e o palete a menos de 20 px uns dos outros:
+        # empurrá-la para lá trocava um defeito visível por outro.
         for recuo, my in [(2.05, 1.4), (2.6, 3.2), (2.05, 9.9), (2.6, 11.7),
-                          (2.05, 18.2), (2.6, 20.0), (2.05, 26.4)]:
+                          (2.05, 18.2), (2.6, 20.0)]:
             borda = _borda_em(my)
             mx = borda - recuo
             c = cores[k % len(cores)]
@@ -1631,9 +2086,23 @@ def tabela_ancoras() -> dict:
             "my": [my1 - RUA_LARG - CALCADA, my1 + CALCADA],
         })
 
+    # ⚠️ E AS DUAS PONTAS DE AREIA, publicadas pela mesma razão que os
+    # cotovelos: elas são chão em que NÃO se pousa equipamento de porto, e
+    # nada no `Main.tscn` sabia disso. A empilhadeira ficou na restinga da
+    # ponta sul assim que ela existiu, e nenhuma asserção reprovou.
+    #
+    # O `recuo` é o MAIOR que a crista alcança (a ondulação incluída), de modo
+    # que a faixa de areia publicada seja sempre um pouco mais larga do que a
+    # desenhada: um cerco que erra tem de errar para o lado seguro.
+    areia = []
+    for _j, my_a, my_b in praias():
+        areia.append({"my": [round(my_a, 2), round(my_b, 2)],
+                      "recuo": round(PRAIA_PROF * (1.0 + CRISTA[_j][1]), 3)})
+
     return {
         "projecao": {"cx": CX, "cy": CY, "meia_larg": MEIA_LARG,
                      "meia_alt": MEIA_ALT, "alt_cais": ALT_CAIS},
+        "praias": areia,
         "pegadas": {k: list(v) for k, v in sorted(PEGADAS.items())},
         "mapa": {"largura": LARG, "altura": ALT},
         "pieres": pieres,

@@ -58,6 +58,7 @@ var _d10_completo := false
 var _d11_completo := false
 var _d12_completo := false
 var _d13_completo := false
+var _d15_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -133,6 +134,10 @@ func _rodar() -> void:
 	_d14_vila()
 	_confere("o bloco D14 correu até ao fim", _d14_completo)
 
+	print("=== D15: as duas pontas de areia, e quem pode pisá-las ===")
+	_d15_praias()
+	_confere("o bloco D15 correu até ao fim", _d15_completo)
+
 	root.remove_child(_main)
 	_main.free()
 
@@ -143,6 +148,104 @@ func _rodar() -> void:
 	else:
 		print("=== %d PROBLEMA(S) DE DESIGN ===" % _falhas)
 		quit(1)
+
+
+# ── D15 ── as duas pontas de areia
+#
+# ⚠️ ESTE BLOCO NASCEU COM UM DEFEITO JÁ COMETIDO. Assim que as praias
+# existiram, a empilhadeira e um contêiner do pátio ficaram em cima da
+# restinga da ponta sul — equipamento de porto pousado na praia — e as catorze
+# asserções do D2 disseram todas PASS, porque para elas aquilo continuava a
+# ser "terra fora do asfalto". É a mesma forma do buraco de 02/09: uma faixa
+# nova no mapa que nenhum teste lê.
+#
+# São três perguntas:
+#
+#   1. NINGUÉM pisa a AREIA. Nem o coqueiro: a rampa desce até a água, e um
+#      prop plantado nela fica com o pé no ar;
+#   2. só quem é da praia fica no `my` de uma praia. Coqueiro pode (a
+#      referência pede "pedras e coqueiros"); empilhadeira, palete, pilha de
+#      caixotes e contêiner, não;
+#   3. cada ponta tem costa VISÍVEL que chegue. É a lição da mata de 04/09
+#      posta como asserção: `PONTA_SUL = 24` (o degrau seguinte, que parecia o
+#      corte natural) derruba a costa visível de 233 para 49 px, porque é ali
+#      que ela sai do quadro — e nada, sem isto, o diria.
+const PRAIA_SO_PARA := ["Coqueiro"]
+
+# Medido em 04/09: a ponta norte tem 139 px de costa dentro do quadro e a sul
+# 233. O piso é generoso de propósito — ele existe para pegar uma praia que
+# saiu do ecrã, não para congelar os números de hoje.
+const COSTA_MINIMA_PX := 100.0
+
+
+func _d15_praias() -> void:
+	var praias: Array = _ancoras.get("praias", [])
+	_confere("a tabela de âncoras publica as praias", not praias.is_empty(),
+		"sem praias não há o que conferir — o gerador deixou de as publicar?")
+	if praias.is_empty():
+		return
+
+	var alt := float(_ancoras["projecao"]["alt_cais"])
+	var pegadas: Dictionary = _ancoras.get("pegadas", {})
+	for no in _main.get_node("MapaWrap/Cenario").get_children():
+		if not (no is TextureRect):
+			continue
+		var nome := String(no.name)
+		if _comeca_com_algum(nome, VIVEM_NA_AGUA):
+			continue
+		var m := _mundo(_origem(no as Control), alt)
+		var pegada: Array = pegadas.get(_id_do_prop((no as TextureRect).texture), [])
+		var meia_x: float = (float(pegada[0]) / 2.0) if not pegada.is_empty() else 0.0
+		var meia_y: float = (float(pegada[1]) / 2.0) if not pegada.is_empty() else 0.0
+		for praia in praias:
+			var lim: Array = praia["my"]
+			# INTERSEÇÃO DE INTERVALOS, como no D2: a pegada de um prop pode
+			# atravessar a fronteira da praia sem ter a âncora lá dentro.
+			if m.y + meia_y <= float(lim[0]) or m.y - meia_y >= float(lim[1]):
+				continue
+			var borda := float(_faixa_de(m.y)["borda"])
+			var areia0: float = borda - float(praia["recuo"])
+			var na_areia: bool = m.x + meia_x > areia0 and m.x - meia_x < borda
+			_confere("%s fora da areia" % nome, not na_areia,
+				"a pegada ocupa mx %.2f..%.2f e a areia %.2f..%.2f"
+				% [m.x - meia_x, m.x + meia_x, areia0, borda])
+			_confere("%s pode ficar na ponta de praia" % nome,
+				_comeca_com_algum(nome, PRAIA_SO_PARA),
+				"está em my=%.2f, dentro da praia %.1f..%.1f — equipamento de "
+				% [m.y, float(lim[0]), float(lim[1])]
+				+ "porto não fica onde o porto acabou")
+
+	# (3) a praia aparece? Anda-se a linha de água do trecho e mede-se quanto
+	# dela cai dentro da janela que o jogador vê — que é o `MapaWrap`, e não o
+	# PNG: o mapa tem 720 de altura e a janela corta em 660.
+	var janela := (_main.get_node("MapaWrap") as Control).size
+	for praia in praias:
+		var lim: Array = praia["my"]
+		var visivel := 0.0
+		var ant := Vector2.INF
+		var my: float = float(lim[0])
+		while my <= float(lim[1]):
+			var faixa := _faixa_de(my)
+			var ponto := _tela(float(faixa["borda"]), my, 0.0)
+			var dentro: bool = (ponto.x >= 0.0 and ponto.x <= janela.x
+				and ponto.y >= 0.0 and ponto.y <= janela.y)
+			if dentro and ant != Vector2.INF:
+				visivel += ponto.distance_to(ant)
+			ant = ponto if dentro else Vector2.INF
+			my += 0.05
+		_confere("a praia %.1f..%.1f aparece na tela" % [float(lim[0]), float(lim[1])],
+			visivel >= COSTA_MINIMA_PX,
+			"só %.0f px de costa dentro da janela, e o piso é %.0f"
+			% [visivel, COSTA_MINIMA_PX])
+	_d15_completo = true
+
+
+# O inverso de `_mundo`: do mundo para o pixel do mapa.
+func _tela(mx: float, my: float, altura: float) -> Vector2:
+	var pr: Dictionary = _ancoras["projecao"]
+	return Vector2(
+		float(pr["cx"]) + (mx - my) * float(pr["meia_larg"]),
+		float(pr["cy"]) + (mx + my) * float(pr["meia_alt"]) - altura)
 
 
 # ── projeção, para saber em que faixa do porto um pixel caiu ──

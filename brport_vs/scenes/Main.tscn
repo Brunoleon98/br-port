@@ -377,6 +377,14 @@ mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
 
+[node name="Empilhadeira" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -155.0
+offset_top = 189.50
+offset_right = 357.0
+offset_bottom = 701.50
+mouse_filter = 2
+texture = ExtResource("prop_empilhadeira")
 [node name="Cabeco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 56.5
@@ -393,25 +401,6 @@ offset_right = 916.0
 offset_bottom = 726.0
 mouse_filter = 2
 texture = ExtResource("5")
-
-[node name="Coqueiro2Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = -115.4
-offset_top = 233.30
-offset_right = 396.6
-offset_bottom = 745.30
-mouse_filter = 2
-texture = ExtResource("prop_coqueiro_tronco")
-
-[node name="Coqueiro2Copa" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = -115.4
-offset_top = 233.30
-offset_right = 396.6
-offset_bottom = 745.30
-mouse_filter = 2
-pivot_offset = Vector2(256, 178)
-texture = ExtResource("prop_coqueiro_copa")
 
 [node name="PilhaCaixotes" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
@@ -446,14 +435,25 @@ offset_right = 438.0
 offset_bottom = 763.0
 mouse_filter = 2
 texture = ExtResource("prop_pallet")
-[node name="Empilhadeira" type="TextureRect" parent="MapaWrap/Cenario"]
+[node name="Coqueiro2Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -155.0
-offset_top = 288.50
-offset_right = 357.0
-offset_bottom = 800.50
+offset_left = -140.0
+offset_top = 302.00
+offset_right = 372.0
+offset_bottom = 814.00
 mouse_filter = 2
-texture = ExtResource("prop_empilhadeira")
+texture = ExtResource("prop_coqueiro_tronco")
+
+[node name="Coqueiro2Copa" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -140.0
+offset_top = 302.00
+offset_right = 372.0
+offset_bottom = 814.00
+mouse_filter = 2
+pivot_offset = Vector2(256, 178)
+texture = ExtResource("prop_coqueiro_copa")
+
 [node name="Ancoragem2" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 436.0

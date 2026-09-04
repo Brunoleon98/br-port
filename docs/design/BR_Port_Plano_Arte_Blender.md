@@ -346,15 +346,84 @@ numa fileira só: o que a orla de uma cidade pequena faz é DESFIAR-SE.
   PROP desenhado por cima do mapa, passaria por cima dela. As árvores foram
   para o quintal, dentro do lote: na projeção a copa sobe e recua na tela, ou
   seja, para longe da rua.
-- **A faixa de areia nas pontas da costa** (a metade que resta da Etapa 1).
-  Continua por fazer, e continua barata — são dois remates, não uma reforma
-  da costa. Ficou de fora por ser outro item, não por ter travado.
+- ~~**A faixa de areia nas pontas da costa**~~ — **feita em 04/09**, e tem
+  seção própria logo abaixo desta.
 
 **O que guarda isto:** o bloco **D14** do `teste_design.gd`, que não existia.
 Ele confere que nenhuma casa se come com a vizinha, que nenhuma cai debaixo da
 silhueta de um prédio do pátio, e que as duas fileiras se separam por mais de
 um telhado. Os `lotes` eram publicados na tabela de âncoras desde sempre e
 NENHUM teste os lia. Quatro defeitos foram injetados e os quatro reprovaram.
+
+#### ✅ A AREIA DAS DUAS PONTAS ficou em 04/09 — a Etapa 1 só deve o enquadramento
+
+A leitura de composição (`docs/design/referencias/README.md`) diz onde ela vai:
+**onde o porto não está** — nas duas pontas da costa, para além do primeiro e
+do último berço —, e nunca entre a água e o cais. Logo o que se fez não foi
+pintar uma faixa: foi **o porto PARAR** nos dois trechos. Ali não há avental,
+asfalto, junta, mancha de desgaste nem enrocamento; há terra que desce numa
+rampa de areia até a água, com restinga atrás e pedras avulsas em cima.
+
+**Onde parar foi medido, e as duas pontas não são simétricas** porque o que
+está lá hoje não é simétrico. Costa VISÍVEL na janela do jogo (720×660):
+
+| corte norte | costa | | corte sul | costa | ocupado hoje |
+|---:|---:|---|---:|---:|---|
+| 0,4 | 112 px | | 21,0 | 283 px | coqueiro, pilha, palete, empilhadeira, carga |
+| 0,8 | 125 px | | 22,0 | 250 px | empilhadeira, carga |
+| **1,2** | **139 px** | | **22,5** | **233 px** | empilhadeira, carga |
+| 1,6 | 152 px | | 23,0 | 216 px | empilhadeira, carga |
+| | | | 24,0 | **49 px** | carga |
+
+O norte para em 1,2 porque 1,6 comeria a carga do pátio e só traz 13 px. O sul
+para em 22,5 porque é onde a conta vira: 22,0 traz 17 px a mais e custa mais
+três props, e **24,0 — o degrau seguinte, que parecia o corte natural —
+derruba a costa visível de 233 para 49 px**, porque é ali que ela sai do
+quadro pelo canto de baixo. Teria sido repetir a mata de 04/09: desenhar no
+sítio que ninguém vê.
+
+**Resultado medido:** a praia é **27% da costa visível** (139 px ao norte, 233
+ao sul, contra 982 de cais) e ocupa **2,9% da tela em areia** mais **8,2% em
+restinga** — que antes eram asfalto de pátio e avental de concreto.
+
+**A paleta sai da tabela de referência, mas só o tom seco.** `areia`
+(`#e8d9a8`) é o valor AMOSTRADO; o pé da rampa (`#bda06a`) sai dele pela razão
+de valor que o concreto do cais já usa (0,75 contra os 0,67 do `cais_dir`).
+Amplitude da rampa **54,4** de luminância, contra 64,5 do cais que ela
+substitui — mais rasa de propósito, porque areia é difusa e concreto tem face.
+
+**E a espuma continua a ler-se, que era o risco desta etapa.** Traço claro
+sobre fundo claro foi o que achatou a água em 02/09, e aqui a espuma passou a
+cair sobre areia em vez de sobre água: medido, Weber **0,52** sobre o pé da
+rampa contra **0,40** sobre o baixio. Melhorou.
+
+**Três coisas que só a captura mostrou**, e as três estão no `CLAUDE.md`:
+
+1. **Recuar um contorno não é `costa_deslocada` com o sinal trocado.** Aquele
+   empurra cada vértice na diagonal, e ao longo do muro isso desloca também o
+   `my`: a crista saía 1,3 unidade adiantada da linha de água e abriu-se um
+   **triângulo de água funda dentro da terra**, no fim do cais.
+2. **A praia por degrau parte-se em duas.** A primeira versão desenhava uma
+   praia por degrau e a ponta sul saía como duas rampas soltas com um degrau
+   verde a pique entre elas. A praia acompanha o CONTORNO, e é isso que a faz
+   virar a esquina — a mesma lição que o `costa_deslocada` já traz escrita.
+3. **Três tons na rampa eram um a mais**, e o baixio de areia não é areia
+   misturada com água: pintar `#d8cb9c` a 0,40 sobre a água dá um azeitona
+   que mede 0,06 de Weber contra o baixio e lê como lama.
+
+**O que guarda isto:** o bloco **D15** do `teste_design.gd`. Ele confere que
+nenhum prop pisa a areia, que só coqueiro fica no `my` de uma praia, e que
+cada ponta tem **mais de 100 px** de costa dentro da janela — a lição da mata
+posta como asserção. Quatro defeitos foram injetados e os quatro reprovaram,
+incluindo o `PONTA_SUL = 24` da tabela acima, que reprovou com os 49 px.
+
+**O que NÃO ficou:** um **coqueiro na ponta norte**. A referência pede "pedras
+e coqueiros" e a ponta sul tem o dela, movido para a restinga; a norte não
+cabe, e isso é geometria e não gosto — o coqueiro é prop e tem a copa 110 px
+acima da âncora, e a restinga norte inteira cai a menos de 92 px do topo do
+quadro, então ele sairia decapitado pela barra do HUD. Ela leva árvores baixas
+da mata em vez disso, e o próprio gerador as recusa pelo mesmo teste: **3 na
+ponta sul, 0 na norte**.
 
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.

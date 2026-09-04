@@ -433,6 +433,36 @@ tranca isso.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
+- **Recuar um contorno para DENTRO não é `costa_deslocada` com o sinal
+  trocado.** Aquele empurra cada vértice na diagonal (+d em mx, −d em my), o
+  que serve para uma faixa de água; ao longo de um MURO isso desloca também o
+  `my`, e a linha recuada sai adiantada da original. Ao fazer a praia de 04/09
+  a crista ficou 1,3 unidade à frente da linha de água e abriu-se um triângulo
+  de **água funda dentro da terra**, no fim do cais. Recuo é pela normal de
+  cada segmento, e cada quina leva o remate que pede: chanfro onde a terra
+  abraça a quina, cruzamento das duas linhas onde ela é uma ponta.
+- **Faixa que acompanha a costa desenha-se pelo CONTORNO, nunca degrau a
+  degrau.** A regra já estava escrita no `costa_deslocada` — "a versão anterior
+  tratava cada degrau como uma faixa solta" — e mordeu outra vez um andar
+  acima: a praia feita por degrau saiu como duas rampas soltas com um degrau
+  de terra a pique entre elas, no sítio onde a costa vira.
+- **Fronteira paralela à costa precisa de meandro LONGO.** Sacudir cada
+  amostra dá ruído de 11 px de período, que na tela não é nada: três tons de
+  areia com as fronteiras assim sacudidas saíram como três FITAS de largura
+  constante. Duas senóides de períodos diferentes resolvem — e três faixas
+  eram uma a mais, porque a referência pede "uma faixa clara" e não um
+  arco-íris.
+- **Areia vista pela água não é a cor da areia misturada com a água.** Pintar
+  `#d8cb9c` a 0,40 sobre o turquesa dá `#8bc8c2`, que mede **0,06** de Weber
+  contra o baixio — some —, e a faixa lavada pelo mesmo caminho dá um
+  azeitona que lê como lama. Baixio de areia é água CLARA e pouco saturada:
+  escolhe-se pelo VALOR (209 contra os 176 do baixio) em vez de sair de uma
+  mistura. É a irmã da regra do matiz, do outro lado.
+- **O que CRESCE no chão pertence à camada do chão.** O capim da restinga
+  nasceu junto com a areia, que é desenhada no fim com o enrocamento — depois
+  da rua e depois da vila —, e apareceu por cima dos telhados e do passeio. O
+  mundo estava certo (ele para 0,15 antes da calçada); a ORDEM é que não,
+  porque uma casa levanta-se 20 px e o que vem depois cai-lhe em cima.
 - **Freestyle foi testado e REJEITADO** — fecha o vazado da treliça e engorda
   peça pequena. Contorno, se voltar, vem pelo compositor (profundidade +
   normal), não por Freestyle.
