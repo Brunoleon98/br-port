@@ -207,6 +207,15 @@ O custo medido do recuo foi dois lotes da vila a sair do quadro, de 11 para 9.
 Baixar o `MEIA_LARG` deve trazê-los de volta, mas isso **não está medido** — o
 `CX`/`CY` do mapa está afinado para 30/15 e refazer a conta é o passo 2.
 
+> ⚠️ **Esta contagem é de 03/09 e a vila mudou em 04/09**, com uma segunda
+> fileira e quarteirões: são 26 lotes gerados e 12 com a âncora no quadro. A
+> "terra vazia entre a fileira de casas e o `FUNDO_TERRA`" de que fala o
+> parágrafo acima está agora ocupada — pela fileira de trás e pela mata, que
+> deixou de ser desenhada fora do ecrã. **O que isto muda para o passo 1:** o
+> lado de TERRA precisa de ainda menos do que precisava, e o argumento a favor
+> de baixar o `MEIA_LARG` deixou de ser "há terra vazia" e passou a ser só o
+> enquadramento. A costa continua a acabar em `my = 34`.
+
 ### Fora das etapas — a escala dos dois prédios do pátio (03/09)
 
 Não é etapa do plano: é correção de playtest, e entra aqui porque mexeu em
@@ -248,6 +257,104 @@ janela lateral para `-x`, que ninguém vê. O corpo foi RECONSTRUÍDO com o
 comprimento em `y` e cada detalhe reposto na face visível — inclusive o eixo
 das rodas, que num veículo deitado em `my` aponta em `x` (o `_roda()` ganhou
 um parâmetro para isso).
+
+### Fora das etapas — vegetação e distribuição das casas (04/09)
+
+O último item de arte que a análise do playtest deixou aberto: *"a vegetação é
+bem pobre, e as casas poderiam ser melhor distribuídas, para isso pode
+consultar mapas de cidades portuárias de diversos tamanhos"*. Nada disto é
+Blender — é `tools/gerar_mapa_iso.py` inteiro.
+
+**O que a medição achou, e não era o que se supunha.** A queixa lia-se como
+"há pouca vegetação", e a resposta óbvia seria gerar mais. Era o contrário:
+
+| Medido em 04/09 | Antes | Depois |
+|---|---:|---:|
+| Copas de mata **desenhadas** no quadro | **7** (de 136 sorteadas) | **108** (36 por degrau, e o degrau 3 fica a zero porque está fora) |
+| Objetos legíveis na faixa de terra | 15 | 55 |
+| Casas geradas · com a âncora dentro do quadro | 16 · **8** | 26 · **12** |
+| Vão mais repetido entre casas | 1,95 — **11 de 15 (73%)** | 6,14 — **1 de 24 (4%)** |
+| Amplitude de luminância DENTRO da copa | 20,3 (`mangue`→`mato`) | **92,3** (saia→realce) |
+| Contraste da copa contra o relvado (Weber) | 0,21 | **0,45** |
+| Manchas de concreto pintadas no verde | 2.324 px | **0** |
+| Verde na faixa de terra | 48,6% | 42,0% |
+
+A última linha é o preço, e está aqui de propósito: a vila cresceu e comeu
+6,6 pontos de verde. O verde continua a ser a cor dominante da terra, e agora
+é verde ESTRUTURADO — árvore com sombra e volume — em vez de relvado chapado.
+
+**Quatro causas, e três delas eram código a apontar para fora do ecrã:**
+
+1. **O viés da mata apontava para o fundo do mundo.** `vies = random ** 2.2`
+   esmagava as copas contra `mx0`, que é o `FUNDO_TERRA` — e o nome da
+   constante já diz o que ela é, "o quanto a terra recua para trás (fora do
+   ecrã)". Medido por degrau, a fração da faixa de mata dentro do PNG: **11%,
+   50%, 10% e 0%**. O comentário da função descrevia a intenção com todas as
+   letras — "a densidade cresce para o fundo" — e o fundo é o que ninguém vê.
+   Hoje o viés aponta para a frente, `no_quadro()` corta o que sai do PNG, e o
+   orçamento é de árvores DESENHADAS e não de sorteios.
+2. **A copa eram duas elipses concêntricas** — deslocadas 8 a 14 px numa copa
+   de 40, 70% de sobreposição. É a forma que o enrocamento já tinha tentado e
+   descartado em 03/09 ("elipse com cópia menor por cima lê como elipse
+   chapada com sombra"). A receita das pedras saiu de lá com nome próprio,
+   `com_saia()`, e a copa passou a ser sombra projetada + tronco + dois ou
+   três lobos com saia. O par de tons é o AMOSTRADO da referência
+   (`#3e8f3a` corpo, `#6fbf4e` realce), que não existia como cor no mapa.
+3. **O capim eram três riscos retos** — exatamente o defeito que o
+   `manchas_chao` já tinha registado por escrito ("leram como SETAS verdes,
+   não como planta") e corrigido, sem que ninguém visitasse a função irmã. As
+   duas passaram a chamar `tufo_de_capim()`.
+4. **O desgaste do CAIS estava a ser pintado no relvado.** O centro de cada
+   mancha de concreto saía de `uniform(FUNDO_TERRA, borda)` — o bloco de terra
+   inteiro — em vez da faixa de concreto. Onze manchas cinza-azuladas de 19 a
+   37 px de raio caíam na mata e na vila. A junta de dilatação, dez linhas
+   abaixo, sempre esteve certa, e o comentário dela dizia porquê.
+
+**E as casas: de pente a quarteirão.** 73% dos vãos mediam exatamente 1,95, o
+`VILA_PASSO`, batido como metrónomo. As plantas de cidade portuária que a
+leitura das referências manda consultar dizem duas coisas — quarteirões curtos
+cortados por travessas, e casas encostadas na frente de rua (em Paraty e em
+São Sebastião a frente é feita de geminadas, sem recuo). Então o passo tem
+agora dois regimes: dentro do quarteirão 3 a 5 lotes quase colados, com um par
+em cada três geminado; entre quarteirões, uma travessa de 1,5 a 1,9. O
+alinhamento à rua é por QUARTEIRÃO e não por casa — sortear o recuo casa a
+casa desmancha a frente de rua, que é o que se lê como cidade de longe.
+
+**A segunda fileira, e a suposição que ela desmentiu.** O código dizia, em
+comentário: *"uma fileira só, e não duas: a segunda cairia fora da esquerda do
+ecrã a partir do terceiro degrau"*. A frase estava certa e a conclusão errada
+— medido, a segunda fileira tem **11,7 unidades no quadro contra 17,3 da
+primeira, 67%**. Ela some no degrau 3, como o comentário dizia; só que o
+degrau 3 já estava fora inteiro.
+
+**E ela obrigou a uma régua nova, também medida:** um telhado desta vila tem
+~78 px na tela, e a separação entre fileiras é `Δmx × MEIA_LARG`. Com a
+travessa de trás de 0,55 isso dava **57 px** — a casa de trás ficava 73%
+tapada e a captura mostrava três telhados fundidos num borrão de telha. Com
+1,60 dá 88 px e o telhado de trás sai inteiro. O preço: a segunda fileira
+encolhe de 11,6 para 8,5 unidades visíveis.
+A fileira de trás é também mais rarefeita (quarteirões de 2 a 3, travessas de
+2,2 a 3,4) e planta-se mais nela — 0,85 contra 0,55 de probabilidade por lote.
+Uma vila que acaba numa parede de telhados é tão errada quanto uma que acaba
+numa fileira só: o que a orla de uma cidade pequena faz é DESFIAR-SE.
+
+**Duas coisas que NÃO se fizeram, e por quê:**
+
+- **Árvore de rua no passeio, que é o que a referência pede.** Entre a calçada
+  e a frente do lote há **0,13 unidades — 4 px**: não cabe tronco. E plantar
+  NA calçada punha a copa a pender sobre o asfalto, onde o caminhão, que é
+  PROP desenhado por cima do mapa, passaria por cima dela. As árvores foram
+  para o quintal, dentro do lote: na projeção a copa sobe e recua na tela, ou
+  seja, para longe da rua.
+- **A faixa de areia nas pontas da costa** (a metade que resta da Etapa 1).
+  Continua por fazer, e continua barata — são dois remates, não uma reforma
+  da costa. Ficou de fora por ser outro item, não por ter travado.
+
+**O que guarda isto:** o bloco **D14** do `teste_design.gd`, que não existia.
+Ele confere que nenhuma casa se come com a vizinha, que nenhuma cai debaixo da
+silhueta de um prédio do pátio, e que as duas fileiras se separam por mais de
+um telhado. Os `lotes` eram publicados na tabela de âncoras desde sempre e
+NENHUM teste os lia. Quatro defeitos foram injetados e os quatro reprovaram.
 
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.

@@ -400,6 +400,36 @@ tranca isso.
   caminhão nasceu com um desvanecer de 1,1 s no INÍCIO do ciclo, e as cinco
   fotos do CI assentam em poucos frames: o caminhão saía invisível de todas
   elas. Animação nova começa no estado VISÍVEL, e o desvanecer vai no fim.
+- **Antes de gerar MAIS, veja onde o que já se gera está a cair.** A queixa
+  "a vegetação é bem pobre" tinha 136 copas de mata geradas e **7** dentro do
+  quadro: o viés da densidade (`random ** 2.2`) empurrava-as contra
+  `FUNDO_TERRA`, que é, pelo próprio nome, a parte do mundo fora do ecrã. O
+  comentário da função dizia a intenção com todas as letras — "a densidade
+  cresce para o fundo". Medido por degrau, a fração da faixa de mata visível
+  era 11% / 50% / 10% / **0%**. Toda faixa deste mapa medida a partir do cais
+  tem uma janela visível estreita, e o orçamento de desenho é de peças
+  DESENHADAS, nunca de sorteios — `no_quadro()` existe para isso.
+- **Fileira dupla só lê se a separação passar de UM elemento.** Em isométrico
+  duas fileiras separadas por `Δmx` ficam a `Δmx × MEIA_LARG` px na tela. A
+  segunda fileira da vila nasceu com 57px de separação para telhados de 78: a
+  casa de trás saía 73% tapada e as duas fileiras liam como um borrão de
+  telha. É a irmã da regra "duas faces no MESMO plano dão um buraco preto" —
+  sobreposição que o olho não consegue desfazer não é profundidade, é sujeira.
+- **Peça pequena sem aresta lê como mancha, e a receita já existe.** A copa de
+  árvore eram duas elipses concêntricas deslocadas 8-14px numa copa de 40 — a
+  MESMA forma que o enrocamento tinha tentado e descartado em 03/09. `com_saia()`
+  em `gerar_mapa_iso.py` é essa receita com nome: polígono irregular de topo e
+  uma saia por aresta virada para baixo. Antes de desenhar volume pequeno,
+  procure-a — e antes de corrigir um defeito de leitura, procure se a função
+  IRMÃ já o corrigiu (o capim tinha a correção escrita num dos dois sítios e
+  não no outro; a mancha de desgaste do cais estava a ser pintada no relvado
+  enquanto a junta, dez linhas abaixo, sabia exatamente onde parar).
+- **Comentário que explica como a constante ao lado apodrece é um pedido para
+  ela ser derivada.** O `VILA_VAZIOS` — onde os prédios do pátio tapam a vila
+  — eram dois intervalos escritos à mão com vinte linhas a avisar que
+  envelheciam calados, e envelheceram. Hoje saem de `vaos_da_vila()`, e a
+  derivação achou o que a versão à mão escondia: a coluna da tela não chega,
+  porque um prédio tapa para CIMA e só até à altura do sprite dele.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
