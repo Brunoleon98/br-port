@@ -93,6 +93,11 @@ remates nas pontas do que já existe, e não uma faixa ao longo de todo o cais.
 Ela também resolve metade do problema de cima — as pontas da costa são
 justamente onde hoje o mundo acaba em diagonal reta.
 
+✅ **Feita em 04/09.** "Barato" acabou por ser meio certo: o desenho é pouco,
+mas "onde o porto não está" obriga o porto a PARAR — asfalto, avental, junta,
+mancha e enrocamento —, e isso mexeu em 11% da tela e obrigou a mudar de sítio
+uma empilhadeira e um contêiner que ficaram na restinga.
+
 ### O resto da composição
 
 - **A água ocupa perto de metade do quadro**, e a maior parte dela é água
@@ -160,7 +165,7 @@ um jogo que não existe.
 |---|---|---|
 | Água rasa | turquesa `#3fb6cf`–`#57c6dc` | `#4a96b4` — mais cinza |
 | Água funda | `#1b7fa8` | `#1d4f68` — bem mais escuro |
-| Areia | `#e8d9a8` | não existe faixa de areia |
+| Areia | `#e8d9a8` | ✅ **em uso desde 04/09** — `areia`, nas duas pontas |
 | Telha | `#c2502e` a `#e07a3c` | `#c85420` — está certo |
 | Parede | creme `#f2e6cf`, e cada casa de uma cor | `#eef2f5` — frio e uniforme |
 | Vegetação | `#3e8f3a` com `#6fbf4e` no realce | `#2d7a3a` — sem realce |
@@ -182,9 +187,15 @@ tropical e quente; o nosso mapa é de mar frio. São constantes no dicionário
 > feita, e a rampa foi estendida para baixo no mesmo matiz. O plano de arte
 > traz os números.
 >
-> ✅ **A AREIA deixou de estar bloqueada em 03/09** — a leitura de composição
-> no topo desta página diz onde ela vai: nas duas pontas da costa, para além
-> do primeiro e do último berço, e não entre a água e o cais. Falta fazê-la.
+> ✅ **A AREIA deixou de estar bloqueada em 03/09 e FICOU FEITA em 04/09** — a
+> leitura de composição no topo desta página diz onde ela vai, e é onde ela
+> está: nas duas pontas da costa, para além do primeiro e do último berço, e
+> não entre a água e o cais. Nos dois trechos o porto PARA — sem avental, sem
+> asfalto, sem enrocamento — e a terra desce numa rampa de areia até a água,
+> com restinga e pedras avulsas. Medido: **27% da costa visível** é praia. A
+> coluna "o projeto hoje" desta tabela deixou de dizer "não existe faixa de
+> areia"; o tom seco é o `#e8d9a8` amostrado, e o resto da rampa sai dele por
+> valor. Os números estão no `BR_Port_Plano_Arte_Blender.md`.
 
 ### Personagens
 

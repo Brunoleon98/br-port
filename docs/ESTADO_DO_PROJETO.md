@@ -33,10 +33,15 @@ com rótulo navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os
 cartões claros ganharam sombra e borda de 2px. Os escuros ficaram como estavam,
 de propósito: a sombra do tema é mais clara que o fundo deles, e faria halo.
 
-**A água é tropical desde 02/09.** Era mar frio (`#4a96b4`) num jogo de litoral
-brasileiro; passou a turquesa com os valores amostrados da referência — primeira
-metade da Etapa 1. O enquadramento (`MEIA_LARG`) e a faixa de areia continuam
-por fazer, e o plano de arte diz por quê.
+**A água é tropical desde 02/09 e o porto tem PRAIA nas duas pontas desde
+04/09.** A água era mar frio (`#4a96b4`) e passou a turquesa amostrada da
+referência. A areia é a outra metade da Etapa 1, e ela não vai entre a água e
+o cais: vai **onde o porto não está** — para além do primeiro e do último
+berço, emoldurando-o. Nos dois trechos o porto PARA (sem avental, asfalto,
+junta, mancha nem enrocamento) e a terra desce numa rampa de areia até a água,
+com restinga, árvores baixas e pedras avulsas. Medido: **27% da costa visível**
+é praia (139 px ao norte, 233 ao sul, contra 982 de cais). Da Etapa 1 só falta
+o enquadramento (`MEIA_LARG`), e o plano de arte diz por quê.
 
 **O jogo é TRANQUILO, e os valores são realistas** (02/09). Medido em 600
 partidas por perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a
@@ -106,30 +111,15 @@ partida), e a metade de máquina do A1 (APK e build Web a cada push).
 |---|---|---|
 | **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **Três etapas feitas** — a 1 (paleta tropical do mapa), a 6 (o botão âmbar e a sombra nos cartões claros) e a 2 (a cauda dos props: contêiner, caixote, boia e marcador). Faltam a 3, a 4 e a 5, e a metade cara da 1 (`MEIA_LARG`) |
+| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas** — a 1 (paleta tropical **e a areia das duas pontas**, 04/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Faltam a 3 e a 4, e a metade cara da 1 (`MEIA_LARG`) |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a primeira jogada no telefone devolveu (02–03/09)
 
-O A1 pagou-se logo: um **bug que trava o jogo** que nenhuma das cinco suítes
-podia ver — `_spawn_boats()` abre contra-oferta em 30% dos jogos novos, no
-autoload, antes de o `Main` existir para ouvir o sinal, e **30% das instalações
-novas ficavam presas no dia 1** sem uma linha de erro. Corrigido e trancado
-pelo bloco F6 do `teste_fumaca.gd`.
-
-**A análise inteira está triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`,
-item a item, com o que se mediu em cada um.** Nenhum outro item era bug. Em
-02 e 03/09 fechou-se **tudo o que não depende do Bruno**: os cinco itens de
-interface (aviso de trabalhador parado, os quatro chips do HUD tocáveis,
-calendário e **pagar a dívida adiantado** — este a triagem tinha PERDIDO, e só
-apareceu ao reler a transcrição linha a linha), o "piegas" do diário, e a arte
-que ele repetiu: caminhão a atravessar o mapa, prédios encolhidos, pedras com
-volume, espuma animada e o trabalhador do cartão refeito.
-
-**Os prédios em cima da rua tiveram DUAS causas** — pegada que não cabia no
-pátio, e a rua ter COTOVELOS que faixa reta nenhuma declarava, com cinco props
-lá dentro. As duas fechadas em 03/09; o gerador publica `cotovelos` e o D2
-confere-os. A conta está na análise e a lição no `CLAUDE.md`.
+**A análise inteira está triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e
+em 02, 03 e 04/09 fechou-se **tudo o que não depende do Bruno** — o bug que
+travava 30% das instalações novas, os cinco itens de interface, o diário, e a
+arte inteira. Como isso foi feito está em `docs/arquivo/HISTORICO.md`.
 
 **O que sobra, e por quê** — a análise tem a medida de cada um:
 
@@ -146,18 +136,21 @@ está agora fechada por inteiro no que não depende do Bruno.**
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume.
 
-Da arte, **quatro das seis etapas estão feitas** — a 1 (paleta), a 2 (a cauda
-dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da interface).
-Faltam a 3 (contorno pelo compositor) e a 4 (materiais dirigidos), mais a
-metade cara da 1 — o enquadramento.
+Da arte, **quatro das seis etapas estão feitas** — a 1 (paleta, e a areia das
+duas pontas em 04/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão,
+03/09) e a 6 (o chrome da interface). Faltam a 3 (contorno pelo compositor) e
+a 4 (materiais dirigidos), mais a metade cara da 1 — o enquadramento. A areia
+fechou **a metade barata da Etapa 1**: a leitura de composição de 03/09 é que
+a destravou, e o que ela custou não foi desenho, foi o porto ter de parar.
 
 **O enquadramento deixou de estar bloqueado em 03/09:** o Bruno escolheu
 `MEIA_LARG = 20` olhando o mapa gerado em três larguras, e a leitura de
 composição das cinco referências está escrita em
-`docs/design/referencias/README.md` (inclusive onde vai a areia: nas pontas da
-costa, não entre a água e o cais). Só que **medido, em 20 o mundo acaba dentro
-do quadro** — então a ordem é estender a costa primeiro e mexer na projeção
-depois. O plano de arte tem a tabela.
+`docs/design/referencias/README.md`. Só que **medido, em 20 o mundo acaba
+dentro do quadro** — então a ordem é estender a costa primeiro e mexer na
+projeção depois. O plano de arte tem a tabela. Os **dois remates de praia** que
+essa ordem pedia já estão feitos (04/09); falta a costa para além de `my = 34`
+e a terra para trás de `mx = -8`.
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
@@ -190,7 +183,7 @@ conta e o modo de a refazer estão em
 | `tools/ler_registros.py` | **O leitor** — resume N partidas de uma vez, e põe o jogador MEDIDO ao lado dos perfis que o simulador supõe |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se — são dois arquivos em duas linguagens que nada obriga a concordar |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela. O bloco **D14** (04/09) guarda a vila: casa que não se come com a vizinha, casa que não nasce debaixo de um prédio, e as duas fileiras a separarem-se por mais de um telhado |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela. O bloco **D14** (04/09) guarda a vila; o **D15** (04/09) guarda as duas pontas de areia: ninguém pisa a areia, só coqueiro fica no `my` de uma praia, e cada ponta tem de ter mais de 100 px de costa dentro da janela |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, e nenhum `{token}` de texto chega cru à tela |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os 3 tons da Dona Cida, as 8 falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Os números da narração saem das constantes, nunca escritos à mão |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
@@ -304,7 +297,8 @@ fora do quadro a fora do quadro, com duas silhuetas porque a rua vira 90° em
 cada cotovelo — e a **espuma lava a costa**, em duas camadas próprias e em
 contrafase (ela era assada no SVG, e por isso não havia onda nenhuma para
 animar). As **pedras do enrocamento** deixaram de ser elipses chapadas e são
-sólidos facetados. Desde 04/09 a **mata atrás da vila tem árvores de verdade** — sombra
+sólidos facetados — e desde 04/09 o enrocamento **para nas duas pontas**, onde
+o cais deu lugar a praia e as pedras são avulsas em cima da areia. Desde 04/09 a **mata atrás da vila tem árvores de verdade** — sombra
 projetada, tronco e copa em lobos facetados, no par de verdes AMOSTRADO da
 referência —, e há árvore no quintal das casas. Os coqueiros chapados
 saíram do SVG do mapa — `gerar_mapa_iso.py --sem-coqueiros` — pela mesma razão

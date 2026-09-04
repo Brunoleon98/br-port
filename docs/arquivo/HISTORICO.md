@@ -13,6 +13,30 @@
 
 ## O caminho, do mais recente para o mais antigo
 
+**O QUE SAIU DO ESTADO EM 04/09** — a primeira jogada num telefone, agora que
+a análise dela está fechada em tudo o que não dependia do Bruno.
+
+O A1 pagou-se logo: um **bug que trava o jogo** que nenhuma das cinco suítes
+podia ver — `_spawn_boats()` abre contra-oferta em 30% dos jogos novos, no
+autoload, antes de o `Main` existir para ouvir o sinal, e **30% das instalações
+novas ficavam presas no dia 1** sem uma linha de erro. Corrigido e trancado
+pelo bloco F6 do `teste_fumaca.gd`. Nenhum outro item da análise era bug.
+
+Em 02 e 03/09 fecharam-se os cinco itens de interface (aviso de trabalhador
+parado, os quatro chips do HUD tocáveis, calendário e **pagar a dívida
+adiantado** — este a triagem tinha PERDIDO, e só apareceu ao reler a
+transcrição linha a linha), o "piegas" do diário, e a arte que ele repetiu:
+caminhão a atravessar o mapa, prédios encolhidos, pedras com volume, espuma
+animada e o trabalhador do cartão refeito. Em 04/09 fecharam-se os dois
+últimos itens de arte — a vegetação e a distribuição das casas, e a faixa de
+areia nas duas pontas da costa.
+
+**Os prédios em cima da rua tiveram DUAS causas** — pegada que não cabia no
+pátio, e a rua ter COTOVELOS que faixa reta nenhuma declarava, com cinco props
+lá dentro. As duas fechadas em 03/09; o gerador publica `cotovelos` e o D2
+confere-os. A conta está na análise e a lição no `CLAUDE.md`.
+
+
 **O QUE SAIU DO ESTADO EM 03/09**, porque descreve o caminho e não o jogo de
 hoje. Os números da Etapa 2 do plano de arte (~14 peças no contêiner) foram
 escritos para um prop de 2,4 unidades que **saiu do projeto em 31/08**; o
