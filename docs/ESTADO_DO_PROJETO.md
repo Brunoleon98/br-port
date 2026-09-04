@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 03/09/2026
+> **Última atualização:** 04/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -28,18 +28,15 @@ para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada u
 muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
 saem de ruína para telhado novo.
 
-**O botão que move o jogo tem cor própria desde 02/09** — "Avançar dia" passou a
-âmbar com rótulo navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e
-os cartões claros ganharam sombra deslocada e borda de 2px. Antes eram dois
-botões navy iguais na barra inferior. **Os cartões escuros ficaram como estavam,
-de propósito:** a sombra do tema é mais clara que o fundo deles, e desenharia um
-halo.
+**O botão que move o jogo tem cor própria desde 02/09** — "Avançar dia" é âmbar
+com rótulo navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os
+cartões claros ganharam sombra e borda de 2px. Os escuros ficaram como estavam,
+de propósito: a sombra do tema é mais clara que o fundo deles, e faria halo.
 
-**A água é tropical desde 02/09.** O mapa era de mar frio (`#4a96b4`) num jogo
-cujo cenário é o litoral brasileiro; a paleta passou a turquesa com os valores
-amostrados das imagens de referência — primeira metade da Etapa 1 do plano de
-arte. O enquadramento (`MEIA_LARG`) e a faixa de areia continuam por fazer, e o
-plano de arte diz por quê.
+**A água é tropical desde 02/09.** Era mar frio (`#4a96b4`) num jogo de litoral
+brasileiro; passou a turquesa com os valores amostrados da referência — primeira
+metade da Etapa 1. O enquadramento (`MEIA_LARG`) e a faixa de areia continuam
+por fazer, e o plano de arte diz por quê.
 
 **O jogo é TRANQUILO, e os valores são realistas** (02/09). Medido em 600
 partidas por perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a
@@ -51,19 +48,16 @@ A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
 agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
 Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
-**A partida grava-se desde 02/09.** Uma linha JSON por turno, por semana, por
-obra e por contra-oferta, num `.jsonl` por partida — com quanto tempo o jogador
-ficou em cada turno, que é a pergunta do A7 que nenhuma outra medida responde.
-O nome de quem jogou NÃO entra no arquivo (`docs/decisoes/006`). O menu de pausa
-tem "Copiar registro da partida", que é a única porta que ele tem para sair de
-um telefone; `tools/ler_registros.py` lê vários de uma vez e resume.
+**A partida grava-se desde 02/09.** Uma linha JSON por turno, semana, obra e
+contra-oferta, num `.jsonl` por partida — com o tempo que o jogador ficou em
+cada turno, que é a pergunta do A7. O nome de quem jogou NÃO entra no arquivo
+(`docs/decisoes/006`). Sai pelo menu de pausa; `tools/ler_registros.py` resume.
 
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
-autoload `Audio.gd` com dois buses (Música e SFX), sliders de volume no menu de
-pausa e todo o disparo ligado aos sinais do `GameState`. Os efeitos são de
-RASCUNHO — a música e os sons finais do Suno/ElevenLabs entram trocando arquivo
-por arquivo, sem mexer em código. **Ninguém que os fez os ouviu:** o contêiner
-não tem placa de som (ver `docs/design/BR_Port_Plano_Audio.md` §2).
+autoload `Audio.gd` com dois buses, sliders no menu de pausa e o disparo ligado
+aos sinais do `GameState`. Os efeitos são de RASCUNHO — os finais entram
+trocando arquivo por arquivo. **Ninguém que os fez os ouviu:** o contêiner não
+tem placa de som (ver `docs/design/BR_Port_Plano_Audio.md` §2).
 
 **Não se arrasta trabalhador a cada turno:** há "Alocar todos" e
 toque-para-alocar, com o arrasto ainda funcionando.
@@ -73,10 +67,23 @@ mapa (píer, barco, guindaste, trabalhador) e o cartão na barra logo abaixo
 dele (valor, turnos, trabalhador). Os nomes dos lugares são placas com mastro,
 e o número de cada doca está pintado no cais.
 
-**O porto tem uma cidade atrás dele.** Rua paralela ao cais, calçada, acesso a
-cada berço, e uma fileira de casas. A vila tem nível (`--nivel-vila=N` no
+**O porto tem uma cidade atrás dele, e desde 04/09 ela é uma CIDADE.** Rua
+paralela ao cais, calçada, acesso a cada berço, e **duas fileiras de casas em
+quarteirões** — 3 a 5 lotes quase colados, com um par em cada três geminado,
+cortados por travessas. Era uma fileira só com o vão sempre igual: 73% dos
+vãos mediam exatamente o `VILA_PASSO`, e aquilo lia como cerca. A fileira de
+trás é mais rala e mais arborizada, para a vila DESFIAR contra a mata em vez
+de acabar numa parede de telhados. A vila tem nível (`--nivel-vila=N` no
 gerador do mapa): 1 é casa térrea, 2 sobrado, 3 prédio — é assim que ela cresce
 a cada Fase, sem o jogo precisar saber.
+
+**E a mata deixou de ser desenhada fora do ecrã** (04/09). Das 136 copas que o
+gerador sorteava, **7** caíam dentro do quadro: o viés da densidade apontava
+para `FUNDO_TERRA`, que é pelo nome a parte do mundo que ninguém vê. Hoje são
+108 desenhadas, cada uma com sombra projetada, tronco e copa em lobos com
+aresta — a receita das pedras do enrocamento, agora com nome (`com_saia()`).
+De lambuja, achou-se que **o desgaste do CAIS estava a ser pintado no
+relvado**: onze manchas de concreto espalhadas pela mata e pela vila.
 ---
 
 ## Onde estamos na fila
@@ -119,23 +126,22 @@ apareceu ao reler a transcrição linha a linha), o "piegas" do diário, e a art
 que ele repetiu: caminhão a atravessar o mapa, prédios encolhidos, pedras com
 volume, espuma animada e o trabalhador do cartão refeito.
 
-**Os prédios em cima da rua tiveram DUAS causas, e a segunda esteve escondida
-atrás da primeira.** A pegada não cabia no pátio (corrigido alargando-o) e os
-prédios eram grandes demais (28% menores, `ESCALA_PREDIO = 0,72`) — e mesmo
-assim continuavam no asfalto, porque **a rua tem COTOVELOS**: entre um degrau
-e o seguinte ela vira, e o cotovelo corre 5,5 unidades em `mx` atravessando o
-pátio de lado a lado. As quatro faixas `rua` que as âncoras publicavam não o
-cobriam, e nenhuma delas mentia. **Cinco props** estavam lá dentro. O gerador
-publica `cotovelos` desde 03/09 e o bloco D2 confere-os.
+**Os prédios em cima da rua tiveram DUAS causas** — pegada que não cabia no
+pátio, e a rua ter COTOVELOS que faixa reta nenhuma declarava, com cinco props
+lá dentro. As duas fechadas em 03/09; o gerador publica `cotovelos` e o D2
+confere-os. A conta está na análise e a lição no `CLAUDE.md`.
 
 **O que sobra, e por quê** — a análise tem a medida de cada um:
 
 | Fica | Porque não se fecha aqui |
 |---|---|
 | Layout do rodapé · espaço reservado no HUD | São o mesmo problema: sete faixas e 29px de folga. Dar lugar a conteúdo de Fase 2 é TIRAR o que já é usado — gosto, e o gate A5 é dele |
-| Vegetação pobre · casas mal distribuídas | **O único item de arte ainda aberto**, e é composição: a leitura das referências manda consultar mapas de cidades portuárias reais. Cabe numa sessão própria |
 | Economia (3 itens) | Só via `/balancear`, e ele mesmo amarrou-a ao pacote de Fase 2 ("para fazer tudo isso") |
 | Fala da madeira podre | Espera o A4 |
+
+~~Vegetação pobre · casas mal distribuídas~~ — **fechado em 04/09** (medição no
+plano de arte, "Fora das etapas"). Era o último item de arte da análise: **ela
+está agora fechada por inteiro no que não depende do Bruno.**
 
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume.
@@ -161,16 +167,12 @@ da Fase 2, para quem o abrir a ler antes de codar a economia. O que continua a
 valer é a regra: **codar a economia da Fase 2 sem a responder é construir em
 cima de uma pergunta**, e por isso o item começa por aqui.
 
-O valor de contrato cresce ×2,9 e depois ×2,5 por fase; a parcela cresce ×2,0 e
-×1,5. **A receita corre mais depressa do que a dívida**, então a tensão que faz
-a Fase 1 medir o que mede desaparece a partir da semana 5. Subir as parcelas,
-assumir que é de propósito, ou trocar o que pressiona — **não está decidido**, e
-codar a economia da Fase 2 sem resolver isto é construir em cima de uma
-pergunta — resolver, quando chegar a altura. Os números e o modo de refazer a conta estão em
+O contrato cresce ×2,9 e depois ×2,5 por fase; a parcela cresce ×2,0 e ×1,5 —
+**a receita corre mais depressa do que a dívida**, e a tensão da Fase 1
+desaparece a partir da semana 5. Subir as parcelas, assumir que é de propósito,
+ou trocar o que pressiona: **não está decidido**. É projeção e não medição — a
+conta e o modo de a refazer estão em
 `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
-
-É **projeção, não medição**: a Fase 1 é medida no jogo que existe, as outras
-duas são a mesma conta com os números que o GDD dá para elas.
 
 ---
 
@@ -188,7 +190,7 @@ duas são a mesma conta com os números que o GDD dá para elas.
 | `tools/ler_registros.py` | **O leitor** — resume N partidas de uma vez, e põe o jogador MEDIDO ao lado dos perfis que o simulador supõe |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se — são dois arquivos em duas linguagens que nada obriga a concordar |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela. O bloco **D14** (04/09) guarda a vila: casa que não se come com a vizinha, casa que não nasce debaixo de um prédio, e as duas fileiras a separarem-se por mais de um telhado |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, e nenhum `{token}` de texto chega cru à tela |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os 3 tons da Dona Cida, as 8 falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Os números da narração saem das constantes, nunca escritos à mão |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
@@ -302,7 +304,9 @@ fora do quadro a fora do quadro, com duas silhuetas porque a rua vira 90° em
 cada cotovelo — e a **espuma lava a costa**, em duas camadas próprias e em
 contrafase (ela era assada no SVG, e por isso não havia onda nenhuma para
 animar). As **pedras do enrocamento** deixaram de ser elipses chapadas e são
-sólidos facetados. Os coqueiros chapados
+sólidos facetados. Desde 04/09 a **mata atrás da vila tem árvores de verdade** — sombra
+projetada, tronco e copa em lobos facetados, no par de verdes AMOSTRADO da
+referência —, e há árvore no quintal das casas. Os coqueiros chapados
 saíram do SVG do mapa — `gerar_mapa_iso.py --sem-coqueiros` — pela mesma razão
 que os píeres: o que se mexe não pode estar assado no fundo.
 

@@ -134,7 +134,21 @@ C = {
     "parede_dir": "#c1b8a6", "parede_esq": "#dcd1bc", "verde": "#3e8f3a",
     "vidro": "#7fb6cc", "porta": "#5a3a20", "terra": "#8a7a63",
     "terra_clara": "#9c8b71", "terra_escura": "#75664f", "poca": "#6b6f66",
-    "mato": "#5c7343", "asfalto_claro": "#7d8993", "asfalto_escuro": "#616c76",
+    "mato": "#5c7343",
+    # COPA DE ÁRVORE — o par AMOSTRADO da referência (`docs/design/
+    # referencias/README.md`: "Vegetação #3e8f3a com #6fbf4e no realce"). Ele
+    # não existia como cor: a copa era pintada em `mato` (#5c7343), que é o
+    # verde-azeitona do capinzal e não o da folha.
+    #
+    # ⚠️ E O VALOR AMOSTRADO SOZINHO ACHATARIA A COPA, que é a armadilha da
+    # §3 da skill `/arte`. Medido: #3e8f3a tem luminância 119,6 contra 134,3
+    # do `solo` em que a árvore pousa — 0,11 de contraste de Weber, e a regra
+    # do CLAUDE.md diz que prop da cor do chão onde pousa DESAPARECE. O que
+    # separa a árvore do relvado não é o tom do topo, é a SAIA (0,45) e a
+    # sombra projetada; o topo amostrado fica onde a referência o pôs.
+    "copa": "#3e8f3a",
+    "copa_luz": "#6fbf4e",
+    "tronco": "#5a4632", "asfalto_claro": "#7d8993", "asfalto_escuro": "#616c76",
     # Solo tropical e mangue. Entraram em 31/08: até então o chão ATRÁS da rua
     # era a mesma laje de asfalto do pátio, estendida até FUNDO_TERRA, e ocupava
     # perto de 40% do enquadramento sem nada em cima. Um porto não tem
@@ -368,41 +382,94 @@ def manchas_chao(indice: int, mx0: float, my0: float, mx1: float, my1: float,
         # SETAS verdes, não como planta. O que corrige é tufo e escala: folha
         # CURVA, baixa, fina, várias juntas — mato aparece em moita, e é a
         # moita que o olho reconhece.
+        # A receita do tufo vive em `tufo_de_capim`, num lugar só. Ela nasceu
+        # aqui e ficou aqui — e a `vegetacao_do_solo`, que tinha os mesmos
+        # três riscos retos, nunca soube dela. Duas cópias da mesma regra é
+        # exatamente o que faz um defeito injetado não reprovar.
         for _ in range(11):
-            cmx, cmy = r.uniform(mx0, mx1), r.uniform(my0, my1)
-            for _ in range(r.randint(4, 7)):
-                tx, ty = p(cmx + r.uniform(-0.5, 0.5),
-                           cmy + r.uniform(-0.5, 0.5), ALT_CAIS)
-                dx = r.uniform(-3.5, 3.5)
-                alt = r.uniform(4.0, 7.0)
-                out.append('    <path d="M%.0f %.0f q%.1f %.1f %.1f %.1f" '
-                           'stroke="%s" stroke-width="1.3" fill="none" '
-                           'stroke-linecap="round" opacity="0.7"/>\n'
-                           % (tx, ty, dx * 0.25, -alt * 0.7, dx, -alt, C["mato"]))
+            cx, cy = p(r.uniform(mx0, mx1), r.uniform(my0, my1), ALT_CAIS)
+            out.append(tufo_de_capim(cx, cy, r))
     out.append('  </g>\n')
     return "".join(out)
 
 
+def no_quadro(mx: float, my: float, h: float = ALT_CAIS,
+              folga: float = 60.0) -> bool:
+    """O ponto cai dentro do PNG que o jogo mostra?
+
+    Existe por causa da medição de 04/09, e ela é o achado desta passagem: das
+    136 copas que a orla de mata gerava, **7** tinham o centro dentro do
+    quadro. A causa não era o número, era o VIÉS — `r.random() ** 2.2` esmaga
+    as copas contra `mx0`, que é `FUNDO_TERRA`, e o nome dessa constante já
+    diz o que ela é: "o quanto a terra recua para trás (FORA DO ECRÃ)". O
+    comentário da função descrevia a intenção com todas as letras — "a
+    densidade cresce para o fundo" — e o fundo é justamente o que ninguém vê.
+
+    Medido por degrau, a fração da faixa de mata que cai no quadro:
+    11%, 50%, 10% e **0%**. No último degrau a mata inteira está fora, à
+    esquerda. Adiantar de nada aumentar a contagem sem mexer nisto.
+
+    A folga é generosa de propósito: uma copa cujo pé cai 40px fora ainda
+    aparece pela metade, e cortar pelo pé deixaria uma borda reta de árvores.
+    """
+    x, y = p(mx, my, h)
+    return -folga <= x <= LARG + folga and -folga <= y <= ALT + folga
+
+
+def tufo_de_capim(px: float, py: float, r: random.Random,
+                  n: tuple = (4, 7), alt: tuple = (4.0, 7.0)) -> str:
+    """Uma moita de capim: folhas CURVAS, baixas, finas, várias juntas.
+
+    ⚠️ ESTA LIÇÃO JÁ ESTAVA APRENDIDA, e num só dos dois lugares. O
+    `manchas_chao` registou-a por escrito — "três riscos retos saindo de um
+    ponto leram como SETAS verdes, não como planta" — e corrigiu-se; a
+    `vegetacao_do_solo`, que fazia exatamente os mesmos três riscos retos com
+    traço de 1,7, nunca foi visitada. Ampliada 3x na captura de 03/09 ela sai
+    como um punhado de tracinhos verdes fluorescentes espetados no relvado.
+
+    Agora é um lugar só, e as duas chamam-no.
+    """
+    s = ""
+    for _ in range(r.randint(*n)):
+        tx, ty = px + r.uniform(-6.0, 6.0), py + r.uniform(-3.0, 3.0)
+        dx = r.uniform(-3.5, 3.5)
+        a = r.uniform(*alt)
+        s += ('  <path d="M%.0f %.0f q%.1f %.1f %.1f %.1f" stroke="%s" '
+              'stroke-width="1.3" fill="none" stroke-linecap="round" '
+              'opacity="0.7"/>\n'
+              % (tx, ty, dx * 0.25, -a * 0.7, dx, -a, C["mato"]))
+    return s
+
+
 def vegetacao_do_solo(indice: int, mx0: float, my0: float, mx1: float,
                       my1: float) -> str:
-    """Povoa o solo atrás da rua: orla de mata no fundo, moita e capim à frente.
+    """Povoa o solo atrás da rua: mata fechada no fundo, moita e capim à frente.
 
     O guia de terrenos do pacote pede "solo tropical, mangue e restinga" e
     "vegetação: gramínea, moita". Aqui isso é DESENHO no mapa, e não tile: o
     chão deste jogo é um SVG gerado, e uma moita que muda de estado não existe.
 
-    DUAS COISAS QUE A PRIMEIRA VERSÃO ERROU, e ficam registradas:
+    TRÊS COISAS QUE AS VERSÕES ANTERIORES ERRARAM, e ficam registadas:
 
     1. Manchas grandes e claras leem como FALHA de grama, não como relevo — o
        terreno parecia um campo de golfe malcuidado. Agora são poucas, escuras
        e a 0,22 de opacidade: servem para tirar a chapa, não para se ver.
     2. Havia uma faixa de mangue no fundo do mundo (`mx0`), que cai fora do
        enquadramento e ninguém vê. Além disso mangue é vegetação de BEIRA DE
-       ÁGUA, e ali é o miolo da terra — atrás da vila o que existe é mata. A
-       água aqui é o cais, que é construído.
+       ÁGUA, e ali é o miolo da terra — atrás da vila o que existe é mata.
+    3. ⚠️ **O VIÉS DA DENSIDADE APONTAVA PARA FORA DO ECRÃ** (04/09, e é o
+       achado desta passagem). Ver `no_quadro`: 7 copas de 136 apareciam. A
+       correção é dupla e nenhuma metade chega sozinha —
+         · o viés passou a apontar para a FRENTE (`1 - random ** 2.0`), que é
+           o lado da vila, onde a câmera olha; e
+         · o que cai fora do quadro não se desenha, para o orçamento de
+           polígono ir todo para o que se vê.
+       A leitura de composição das referências pedia densidade ("em qualquer
+       recorte de 200x200 há 6 a 12 objetos; no nosso mapa há 1 a 3") e a
+       resposta não era gerar mais: era gerar no sítio certo.
 
-    A densidade cresce para o fundo: rala junto à rua, fechada na orla. É o que
-    diz ao olho que a mata vem de trás e a cidade avança sobre ela.
+    A mata continua a fechar-se para o fundo — só que "fundo" agora acaba
+    onde o quadro acaba, e não onde o mundo acaba.
     """
     r = random.Random(SEMENTE_CHAO + 91 + indice)
     s = ""
@@ -421,35 +488,38 @@ def vegetacao_do_solo(indice: int, mx0: float, my0: float, mx1: float,
                          ALT_CAIS))
         s += poli(pts, C["solo_escuro"], 0.22)
 
-    # 2. Orla de mata: copas sobrepostas, do fundo para a frente. São elipses
-    # com uma segunda elipse mais escura por baixo — a esta escala é o que
-    # separa "árvore" de "borrão verde".
+    # 2. Orla de mata, do fundo para a frente. Cada árvore é sombra + tronco +
+    # copa em lobos (`arvore`) — a receita das pedras do enrocamento.
     copas = []
-    for _ in range(34):
-        vies = r.random() ** 2.2          # esmagado contra o fundo
-        mx = mx0 + 0.2 + vies * (largura * 0.72)
+    tentativas = 0
+    # ⚠️ O ORÇAMENTO É DE ÁRVORES DESENHADAS, NÃO DE SORTEIOS. Um número fixo
+    # de sorteios dá densidades diferentes por degrau, porque a fração da
+    # faixa que cabe no quadro é 11%, 50%, 10% e 0% — o degrau 2 ficava com um
+    # punhado de árvores ao lado de um degrau 1 fechado, sem que nada no
+    # código dissesse porquê. Contar o que se desenha iguala-os.
+    while len(copas) < 36 and tentativas < 900:
+        tentativas += 1
+        # ⚠️ O EXPOENTE MANDA NA COMPOSIÇÃO INTEIRA. `random ** 2.2` empilhava
+        # tudo em `mx0`; `1 - random ** 2.0` empilha na frente, junto à vila,
+        # e deixa as poucas do fundo a fechar a orla.
+        vies = 1.0 - r.random() ** 2.0
+        mx = mx0 + 0.2 + vies * (largura * 0.96)
         my = r.uniform(my0 - 0.4, my1 + 0.4)
-        copas.append((mx, my, r.uniform(0.42, 0.86)))
-    copas.sort(key=lambda c: c[0] + c[1])
-    for mx, my, raio in copas:
-        base, topo = [], []
-        for k in range(9):
-            ang = math.radians(k * 40.0)
-            j = r.uniform(0.78, 1.22)
-            base.append(p(mx + raio * math.cos(ang) * j,
-                          my + raio * 0.78 * math.sin(ang) * j, ALT_CAIS))
-            topo.append(p(mx + raio * math.cos(ang) * j * 0.92,
-                          my + raio * 0.78 * math.sin(ang) * j * 0.92,
-                          ALT_CAIS + ALTURA_DE_MATO * r.uniform(0.9, 1.5)))
-        s += poli(base, C["mangue"], 0.9)      # a sombra da própria copa
-        s += poli(topo, C["mato"] if r.random() < 0.6 else C["solo_escuro"], 1.0)
+        raio = r.uniform(0.34, 0.78)
+        if not no_quadro(mx, my):
+            continue
+        copas.append((mx, my, raio, r.random()))
+    # Desenhadas de trás para a frente: a saia de quem está à frente tem de
+    # cair sobre quem está atrás, como no enrocamento e na vila.
+    for mx, my, raio, luz in sorted(copas, key=lambda c: c[0] + c[1]):
+        s += arvore(mx, my, raio, r, luz)
 
     # 3. Moitas e capim, do meio para a frente, onde a mata já rareou.
     for _ in range(30):
         vies = r.random() ** 0.7
         mx = mx0 + largura * 0.35 + vies * (largura * 0.62)
         my = r.uniform(my0, my1)
-        if mx > mx1 - 0.25:
+        if mx > mx1 - 0.25 or not no_quadro(mx, my):
             continue
         if r.random() < 0.3:
             rr = r.uniform(0.14, 0.30)
@@ -461,14 +531,8 @@ def vegetacao_do_solo(indice: int, mx0: float, my0: float, mx1: float,
                              ALT_CAIS))
             s += poli(pts, C["mato"], 0.9)
         else:
-            for k in range(3):
-                a = p(mx + k * 0.05, my + k * 0.035, ALT_CAIS)
-                b = p(mx + k * 0.05 - 0.035, my + k * 0.035,
-                      ALT_CAIS + r.uniform(0.4, 0.8) * ALTURA_DE_MATO)
-                s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="%s" '
-                      'stroke-width="1.7" stroke-linecap="round" fill="none" '
-                      'opacity="0.85"/>\n'
-                      % (a[0], a[1], b[0], b[1], C["capim"]))
+            gx, gy = p(mx, my, ALT_CAIS)
+            s += tufo_de_capim(gx, gy, r)
     return s
 
 
@@ -624,7 +688,7 @@ VILA_NIVEIS = {
 }
 VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 
-# Onde NÃO cabe casa, em `my`.
+# ── ONDE NÃO CABE CASA: os vãos que os prédios do pátio obrigam a abrir ──
 #
 # O escritório e o armazém são props do CENÁRIO, postos em `Main.tscn`, e o
 # gerador do mapa não sabe deles. O resultado era o que se via na captura de
@@ -632,33 +696,66 @@ VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 # sair por baixo de cada um. Não é erro de profundidade — a ordem está certa —,
 # é que ali havia duas construções no mesmo lugar.
 #
-# Os intervalos abaixo são o `my` de cada prédio mais a folga da silhueta dele.
-# Se alguém mover o escritório ou o armazém em `Main.tscn`, tem de mexer aqui —
-# não há como o gerador descobrir sozinho, e é por isso que está escrito.
+# ⚠️ ATÉ 04/09 ISTO ERAM DOIS INTERVALOS ESCRITOS À MÃO, e o comentário que
+# eles carregavam avisava, com todas as letras, que envelheciam calados: "os
+# dois termos da conta mudaram em 03/09... quem mexer só num dos lados deixa o
+# vão no sítio antigo — e um vão no sítio errado não dá erro: dá uma casa
+# fatiada por um telhado e um buraco na fileira a seis unidades dali."
+#
+# Um comentário que descreve como a constante ao lado apodrece é um pedido para
+# a constante deixar de existir. Agora ela é DERIVADA, por `vaos_da_vila()`, e
+# a conta que estava escrita em prosa está escrita em código.
+#
 # A CONTA, porque ela não é óbvia: a casa que um prédio tapa NÃO está no `my`
 # dele. As duas coisas vivem em `mx` diferentes — a vila lá atrás, o prédio no
 # pátio —, e na projeção quem decide a coluna da tela é `mx - my`. Igualando:
 #
-#     my_casa = mx_vila - (mx_predio - my_predio) ± (meia_largura_px / MEIA_LARG)
+#     my_casa = mx_vila - (mx_predio - my_predio)
 #
-# Com o escritório em (2,6 / 6,7) e a vila do degrau 0 em mx=-2,5, o centro cai
-# em my=1,6 — quase seis unidades ANTES do prédio. A primeira tentativa pôs o
-# vão em 5,6..8,9, que é onde o prédio está, e por isso não tirou casa nenhuma
-# de baixo dele.
-#
-# ⚠️ E OS DOIS TERMOS DA CONTA MUDARAM EM 03/09. O alargamento do pátio mexeu
-# no `VILA_RECUO` (o `mx_vila`) E nas âncoras dos dois prédios em `Main.tscn`.
-# Quem mexer só num dos lados deixa o vão no sítio antigo — e um vão no sítio
-# errado não dá erro: dá uma casa fatiada por um telhado e um buraco na fileira
-# a seis unidades dali.
-#
-# O raio usado é ~0,6 da meia-largura do sprite: tapar tudo o que a silhueta
-# alcança abriria um vão de sete unidades e deixaria um buraco na fileira. O
-# que incomoda é a casa FATIADA pela quina, não a que espreita atrás.
-VILA_VAZIOS = [
-    (0.1, 3.1),      # Escritorio, sprite de 154px em (mx 2,6 / my 6,7)
-    (7.6, 11.3),     # Armazem, sprite de 185px em (mx 6,6 / my 14,5)
+# ⚠️ E A COLUNA DA TELA NÃO CHEGA, o que a versão escrita à mão escondia por
+# ter uma linha por prédio. Medido em 04/09: o armazém, em (6,6 / 14,5), cai na
+# MESMA coluna que a vila do degrau 0 em my=5,4 — e não tapa casa nenhuma lá,
+# porque está 273px abaixo na tela e o sprite dele tem 185. Derivar só pela
+# coluna abriria um vão a mais, num sítio onde não há nada a esconder. É por
+# isso que a altura do sprite entra na conta: um prédio tapa para CIMA, e só
+# até onde ele chega.
+
+# (nome, mx, my, sprite em px) de cada prédio do pátio, lido de `Main.tscn`.
+# A largura manda no vão em `my`; a altura manda em QUAL fileira ele alcança.
+PREDIOS_DO_PATIO = [
+    ("Escritorio", 2.6, 6.7, 154.0),
+    ("Armazem", 6.6, 14.5, 185.0),
 ]
+
+
+def vaos_da_vila(recuo: float = None) -> list:
+    """Os intervalos de `my` onde não se põe casa, um por prédio do pátio.
+
+    O raio é ~0,6 da meia-largura do sprite: tapar tudo o que a silhueta
+    alcança abriria um vão de sete unidades e deixaria um buraco na fileira. O
+    que incomoda é a casa FATIADA pela quina, não a que espreita atrás.
+
+    `recuo` é o da fileira que se está a povoar: a fileira de trás está noutro
+    `mx`, logo o prédio tapa nela um `my` DIFERENTE. Passar o vão da fileira
+    da frente para a de trás abriria o buraco no sítio errado — que é o mesmo
+    defeito que esta função existe para não repetir.
+    """
+    if recuo is None:
+        recuo = VILA_RECUO
+    vaos = []
+    for _nome, pmx, pmy, sprite in PREDIOS_DO_PATIO:
+        meia = 0.6 * (sprite / 2.0) / MEIA_LARG
+        _, py = p(pmx, pmy, ALT_CAIS)
+        for my0, my1, borda in DEGRAUS:
+            mx_vila = borda - recuo
+            centro = mx_vila - (pmx - pmy)
+            if not (my0 <= centro < my1):
+                continue
+            # O prédio tapa para CIMA, e só até à altura do sprite dele.
+            _, hy = p(mx_vila, centro, ALT_CAIS)
+            if 0.0 <= py - hy <= sprite:
+                vaos.append((centro - meia, centro + meia))
+    return vaos
 
 
 # ── PEGADAS: quanto CHÃO um prop ocupa, e não onde a âncora dele caiu ────
@@ -700,6 +797,128 @@ PEGADAS = {
 }
 
 
+# ── A RECEITA DO VOLUME PEQUENO: polígono irregular + saia ───────────────
+#
+# Saiu do enrocamento, onde foi descoberta em 03/09, e está aqui com nome
+# próprio porque a copa de árvore precisava exatamente dela. As duas formas
+# que o enrocamento tentou antes são as MESMAS que a copa tinha:
+#
+#   · elipse extrudada (tampo do tamanho da base) → ficha de pôquer;
+#   · elipse com uma cópia menor deslocada para cima → elipse chapada com
+#     sombra, que é o defeito de origem outra vez.
+#
+# O que faz um volume pequeno ler como volume é ARESTA: contorno quebrado e
+# duas faces de tons diferentes, como em toda a outra peça deste mapa.
+def com_saia(canto: list, h: float, topo: str) -> str:
+    """Tampo irregular com uma saia por aresta virada para BAIXO na tela.
+
+    As arestas de cima não levam saia: ficam por trás do tampo, e desenhá-las
+    é pintar por baixo de quem vai tapar. A face virada para a direita é a
+    mais escura, seguindo a mesma luz de `madeira_esq` / `madeira_dir`.
+    """
+    s = ""
+    n = len(canto)
+    for k in range(n):
+        a, b = canto[k], canto[(k + 1) % n]
+        ex, ey = b[0] - a[0], b[1] - a[1]
+        nx, ny = ey, -ex
+        if ny <= 0.0:
+            continue
+        tom = _sombrear(topo, 0.62 if nx > 0.0 else 0.76)
+        s += ('  <polygon points="%.1f,%.1f %.1f,%.1f %.1f,%.1f %.1f,%.1f" '
+              'fill="%s"/>\n'
+              % (a[0], a[1], b[0], b[1], b[0], b[1] + h, a[0], a[1] + h, tom))
+    return s + ('  <polygon points="%s" fill="%s"/>\n'
+                % (" ".join("%.1f,%.1f" % c for c in canto), topo))
+
+
+def _lobo(px: float, py: float, rx: float, ry: float, r: random.Random) -> list:
+    """Um contorno de 6 ou 7 vértices com raio e ângulo sacudidos.
+
+    Polígono REGULAR sai cristal, e a esta escala um cristal lê-se como erro
+    de desenho — a mesma razão pela qual as pedras do enrocamento não são
+    hexágonos certinhos.
+    """
+    n = r.choice((6, 7))
+    a0 = r.uniform(0.0, math.tau)
+    canto = []
+    for k in range(n):
+        a = a0 + math.tau * k / n + r.uniform(-0.22, 0.22)
+        f = r.uniform(0.76, 1.0)
+        canto.append((px + math.cos(a) * rx * f, py + math.sin(a) * ry * f))
+    return canto
+
+
+def arvore(mx: float, my: float, raio: float, r: random.Random,
+           luz: float = 0.5) -> str:
+    """Uma árvore do chão: sombra projetada, tronco e copa em lobos.
+
+    ⚠️ A COPA ERA DUAS ELIPSES CONCÊNTRICAS, e isso não lia como árvore.
+    Medido na captura de 03/09, ampliada 3x: a elipse escura de baixo (a
+    "sombra da própria copa") e a clara de cima estavam separadas por 8 a 14
+    px numa copa de 40 px — 70% de sobreposição. O que saía era uma mancha
+    escura com halo, que é exatamente o que o enrocamento fazia antes de
+    ganhar arestas. A copa herdou a correção das pedras (`com_saia`).
+
+    As três peças, e o que cada uma faz:
+
+    1. **A sombra PROJETADA no chão**, deslocada para +mx/+my. Ela é o que
+       tira a árvore do plano — sem sombra, o lobo mais escuro passa a ler-se
+       como a sombra, e a copa volta a ser chapada.
+    2. **O tronco**, que é o que levanta a copa. Sem ele os lobos flutuam.
+    3. **A copa em LOBOS**, dois ou três, o mais alto com o realce amostrado
+       da referência (`copa_luz`). Um lobo só, por mais bem desenhado que
+       esteja, tem uma silhueta convexa — e copa de árvore não é convexa.
+
+    `luz` de 0 a 1 escolhe o quanto o topo puxa para o realce: uma fileira de
+    árvores todas do mesmo tom lê como carimbo repetido.
+    """
+    s = ""
+    # 1. Sombra. O deslocamento é PROPORCIONAL ao raio: sombra que não anda
+    # com o tamanho da árvore lê como mancha de tinta debaixo de todas elas.
+    #
+    # ⚠️ E ELA TEM DE SER MENOR QUE A COPA. A primeira versão desta função
+    # deu-lhe 1,05 do raio e 0,34 de opacidade: na captura ampliada saía uma
+    # elipse pálida do tamanho da árvore, mal deslocada — e o olho não a lia
+    # como sombra, lia como falha de grama, que é exatamente a queixa que a
+    # variação de tom desta mesma função já tinha registado ("manchas grandes
+    # e claras leem como FALHA de grama"). Sombra pequena, escura e afastada
+    # lê como sombra; grande e pálida lê como buraco no relvado.
+    sx, sy = p(mx + raio * 0.72, my + raio * 0.52, ALT_CAIS)
+    s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.1f" ry="%.1f" fill="%s" '
+          'opacity="0.30"/>\n'
+          % (sx, sy, raio * MEIA_LARG * 0.66, raio * MEIA_LARG * 0.33,
+             C["mangue"]))
+
+    # 2. Tronco — curto e fino, só o suficiente para a copa não pousar.
+    tronco = raio * r.uniform(0.55, 0.85) * MEIA_LARG
+    bx, by = p(mx, my, ALT_CAIS)
+    largura = max(2.0, raio * MEIA_LARG * 0.16)
+    s += poli([(bx - largura, by), (bx + largura, by),
+               (bx + largura * 0.7, by - tronco), (bx - largura * 0.7, by - tronco)],
+              C["tronco"])
+
+    # 3. Copa. Os lobos sobem e vão para trás do anterior — desenhados do mais
+    # baixo para o mais alto, para a saia de cada um cair sobre o de baixo.
+    lobos = []
+    n = r.choice((2, 3))
+    for k in range(n):
+        f = (k + 1.0) / n
+        lx = bx + r.uniform(-0.30, 0.30) * raio * MEIA_LARG
+        ly = by - tronco - (0.25 + 0.55 * f) * raio * MEIA_LARG
+        rr = raio * MEIA_LARG * r.uniform(0.62, 0.92) * (1.0 - 0.16 * k)
+        lobos.append((ly, _lobo(lx, ly, rr, rr * 0.72, r),
+                      rr * r.uniform(0.34, 0.52)))
+    topo_base = C["copa"]
+    for i, (_ly, canto, h) in enumerate(sorted(lobos, key=lambda q: -q[0])):
+        # O lobo mais alto puxa para o realce amostrado; os de baixo ficam no
+        # tom do corpo. Copa toda de um tom é a mesma chapa de sempre.
+        alto = i == len(lobos) - 1
+        tom = C["copa_luz"] if (alto and r.random() < 0.10 + luz * 0.35) else topo_base
+        s += com_saia(canto, h, tom)
+    return s
+
+
 def _sombrear(hexa: str, fator: float) -> str:
     n = int(hexa[1:], 16)
     r, g, b = (n >> 16) & 255, (n >> 8) & 255, n & 255
@@ -734,55 +953,195 @@ def casa(mx0, my0, mx1, my1, altura, parede, telha, janelas) -> str:
     return s
 
 
-def lotes_da_vila() -> list:
-    """(mx0, my0, dmx, dmy, variante) de cada casa, medido do cais.
+# ── A VILA É UM QUARTEIRÃO, NÃO UM PENTE ─────────────────────────────────
+#
+# Medido em 04/09, no mapa de 03/09: 16 lotes, e **11 dos 15 vãos entre casas
+# mediam exatamente 1,95** — o `VILA_PASSO`, batido como um metrónomo. Casa,
+# vão, casa, vão, todas do mesmo tamanho e à mesma distância. É por isso que a
+# fileira lia como cerca e não como cidade: um loteamento novo tem esse ritmo;
+# uma vila de porto, não.
+#
+# As plantas de cidade portuária que a leitura das referências manda consultar
+# (`docs/design/referencias/README.md`) dizem duas coisas que valem aqui, e a
+# morfologia urbana confirma-as: o tecido divide-se em QUARTEIRÕES CURTOS
+# cortados por ruas transversais, e dentro do quarteirão as casas encostam-se
+# — em São Sebastião e em Paraty a frente de rua é feita de casas geminadas,
+# sem recuo, e o vão aparece na esquina e não entre vizinhos.
+#
+# Então o passo deixou de ser constante e passou a ter DOIS regimes:
+#
+#   · dentro do quarteirão, 3 a 5 lotes com 0,10 a 0,38 entre eles, e um par
+#     em cada três COLADO (geminado, vão zero);
+#   · entre quarteirões, uma TRAVESSA de 1,5 a 1,9 — a rua que desce para o
+#     cais, e que é o que dá esquina à vila.
+#
+# O alinhamento à rua é POR QUARTEIRÃO e não por casa: as casas de um mesmo
+# quarteirão partilham a linha de frente, com um desvio pequeno. Sortear o
+# recuo casa a casa, que era o que se fazia, desmancha a frente de rua — e a
+# frente de rua contínua é justamente o que se lê como cidade de longe.
+VILA_LOTES_POR_QUARTEIRAO = (3, 5)
+VILA_TRAVESSA = (1.5, 1.9)      # o vão da rua transversal, em `my`
+VILA_VAO = (0.10, 0.38)         # entre vizinhos do mesmo quarteirão
+VILA_GEMINADA = 0.34            # com que frequência dois vizinhos encostam
 
-    Uma casa por passo de `my` ao longo de cada degrau, na fileira logo atrás
-    da rua. Uma fileira só, e não duas: a segunda cairia fora da esquerda do
-    ecrã a partir do terceiro degrau, e casa que ninguém vê é desenho pago em
-    nada.
+
+def _fileira(recuo: float, semente: int, fundo: bool = False) -> list:
+    """Os lotes de UMA fileira, medidos do cais. Ver `lotes_da_vila`.
+
+    `fundo` rareia a fileira de trás: quarteirões mais curtos e travessas mais
+    largas. Uma vila que acaba numa parede de telhados é tão errada quanto uma
+    que acaba numa fileira só — o que a orla de uma cidade pequena faz é
+    DESFIAR-SE, e o que enche o vão são as árvores dos quintais.
     """
-    r = random.Random(SEMENTE_CHAO + 210)
+    r = random.Random(semente)
+    vaos = vaos_da_vila(recuo)
+    quarteirao = (2, 3) if fundo else VILA_LOTES_POR_QUARTEIRAO
+    travessa = (2.2, 3.4) if fundo else VILA_TRAVESSA
     saida = []
     for my0, my1, borda in DEGRAUS:
-        my = my0 + 0.45
-        while my + VILA_PASSO * 0.7 < my1:
-            recuo = r.uniform(0.0, 0.22)
-            dmy = VILA_PASSO - r.uniform(0.7, 0.95)
-            if not any(a - dmy < my < b for a, b in VILA_VAZIOS):
-                saida.append((borda - VILA_RECUO + recuo, my,
-                              VILA_PROF - r.uniform(0.0, 0.18), dmy,
-                              r.randrange(3)))
-            my += VILA_PASSO
+        my = my0 + 0.35
+        # A linha de frente do quarteirão. `frente` é o recuo partilhado.
+        frente = r.uniform(0.0, 0.20)
+        restam = r.randint(*quarteirao)
+        par = None            # a variante a herdar, quando a casa é geminada
+        while my < my1 - 0.5:
+            dmy = r.uniform(0.72, 1.28)
+            if my + dmy > my1 - 0.15:
+                break
+            dmx = VILA_PROF - r.uniform(0.0, 0.26)
+            mx = borda - recuo + frente + r.uniform(0.0, 0.05)
+            # ⚠️ E O QUE CAI FORA DO QUADRO NÃO ENTRA, pelo mesmo motivo que a
+            # mata: medido em 04/09, só **17,3 das 40 unidades** da fileira da
+            # frente estão dentro do PNG — 43%. O degrau 3 inteiro está fora, à
+            # esquerda, e gerava cinco casas que ninguém nunca viu. A folga é
+            # larga porque um telhado assoma no quadro muito antes do canto do
+            # lote lá chegar.
+            if not no_quadro(mx, my, folga=110.0):
+                pass
+            # O vão só vale se a casa INTEIRA couber fora dele: testar o
+            # canto, como se fazia, deixava passar a casa que entra no vão
+            # pela outra ponta.
+            elif not any(a < my + dmy and my < b for a, b in vaos):
+                saida.append((mx, my, dmx, dmy,
+                              r.randrange(3) if par is None else par, fundo))
+            restam -= 1
+            if restam <= 0:
+                my += dmy + r.uniform(*travessa)
+                frente = r.uniform(0.0, 0.20)
+                restam = r.randint(*quarteirao)
+                par = None
+            elif r.random() < VILA_GEMINADA:
+                # ⚠️ GEMINADA HERDA A VARIANTE DA VIZINHA, e sem isso ela sai
+                # pior do que não existir. Duas casas encostadas com telhados
+                # de ALTURAS e cores diferentes não leem como par geminado:
+                # leem como um telhado fatiado pelo outro, porque o beiral de
+                # 0,12 de cada lado faz os dois sobreporem-se 0,24 e o mais
+                # alto corta o mais baixo ao meio. Com a mesma variante os
+                # dois telhados encaixam e o que se vê é UM prédio comprido,
+                # que é o que uma casa geminada é.
+                par = saida[-1][4] if saida else None
+                my += dmy                      # parede partilhada
+            else:
+                par = None
+                my += dmy + r.uniform(*VILA_VAO)
     return saida
 
 
+# ── A SEGUNDA FILEIRA, E POR QUE ELA DEIXOU DE SER "NÃO SE VÊ" ───────────
+#
+# A `lotes_da_vila` dizia, em comentário: "uma fileira só, e não duas: a
+# segunda cairia fora da esquerda do ecrã a partir do terceiro degrau, e casa
+# que ninguém vê é desenho pago em nada". A frase estava certa E a conclusão
+# errada, e é a terceira vez neste projeto que medir sai mais barato do que
+# supor: medido em 04/09, a segunda fileira tem **11,7 unidades dentro do
+# quadro contra 17,3 da primeira — 67%**. Ela cai fora do ecrã no degrau 3,
+# como o comentário dizia; só que o degrau 3 já estava fora inteiro, e nos
+# outros três ela aparece.
+#
+# O que mudou não foi a geometria, foi haver `no_quadro`: com ele, uma fileira
+# que só é visível em parte simplesmente não gera o resto, e o argumento "casa
+# que ninguém vê é desenho pago em nada" deixa de se aplicar.
+#
+# E a segunda fileira é o que faz a vila ler como CIDADE. A leitura das
+# referências pede uma FAIXA atrás do cais, "nunca um bloco", e uma faixa de
+# uma casa de espessura não é faixa: é cerca. Com duas, aparece a coisa que o
+# olho reconhece como tecido urbano — um telhado atrás do vão entre dois
+# telhados da frente.
+# ⚠️ E A TRAVESSA DE TRÁS TEM DE VALER MAIS DE UM TELHADO. Medido em 04/09,
+# e é a regra que faltava: um telhado desta vila mede ~78 px na tela, e a
+# separação entre fileiras é `Δmx * MEIA_LARG`. Com a travessa de 0,55 que
+# esta constante teve primeiro, isso dava **57 px** — a casa de trás ficava
+# 73% tapada pela da frente, e a captura mostrava três telhados fundidos num
+# borrão de telha em vez de duas fileiras. Com 1,60 dá 88 px, e o telhado de
+# trás sai inteiro por cima do da frente.
+#
+# O preço está medido e é aceitável: a segunda fileira encolhe de 11,6 para
+# 8,5 unidades visíveis — ainda metade da primeira, que tem 17,3.
+VILA_TRAVESSA_FUNDO = 1.60
+VILA_RECUO_2 = VILA_RECUO + VILA_PROF + VILA_TRAVESSA_FUNDO
+
+
+def lotes_da_vila() -> list:
+    """(mx0, my0, dmx, dmy, variante, fundo) de cada casa, medido do cais.
+
+    Duas fileiras, e o que decide quais casas existem é o quadro: ver
+    `_fileira` e `VILA_RECUO_2`.
+    """
+    return _fileira(VILA_RECUO, SEMENTE_CHAO + 210) \
+        + _fileira(VILA_RECUO_2, SEMENTE_CHAO + 211, fundo=True)
+
+
 def vila(nivel: int, pavimentado: bool) -> str:
-    """As casas atrás da rua, no nível pedido.
+    """As casas atrás da rua, no nível pedido, e as árvores entre elas.
 
     Desenhadas de trás para a frente (por `mx + my` crescente), senão uma casa
-    de trás aparece por cima da que está à frente dela.
+    de trás aparece por cima da que está à frente dela — e a mesma ordem serve
+    às árvores, que por isso entram nesta lista e não numa passagem própria.
+
+    ⚠️ AS ÁRVORES DA VILA SÃO O GANHO DE DENSIDADE, e o sítio delas foi
+    medido antes de escolhido. A referência pede árvore de rua ("uma cidade
+    planta árvores regularmente espaçadas ao longo do passeio"), mas **entre a
+    calçada e a frente do lote há 0,13 unidades**, que são 4 px: não cabe
+    tronco nenhum. E plantar na calçada punha a copa a pender sobre o asfalto,
+    onde o caminhão — que é PROP, desenhado por cima do mapa — passaria por
+    cima dela.
+    Então elas vão para o QUINTAL, à frente e atrás da casa, dentro do lote.
+    Na projeção a copa sobe e recua na tela, ou seja, para longe da rua: uma
+    árvore no quintal da frente tapa parte da própria casa, que é o que ela faz
+    na vida real, e nunca a estrada.
     """
     if nivel <= 0:
         return ""
     perfis = VILA_NIVEIS[min(nivel, max(VILA_NIVEIS))]
     r = random.Random(SEMENTE_CHAO + 300 + nivel)
     s = ""
-    for mx0, my0, dmx, dmy, variante in sorted(lotes_da_vila(),
-                                               key=lambda l: l[0] + l[1]):
+    for mx0, my0, dmx, dmy, variante, fundo in sorted(lotes_da_vila(),
+                                                      key=lambda l: l[0] + l[1]):
         altura, telha, janelas = perfis[variante]
+        # Na fileira de trás planta-se mais: é ela que desfia a vila contra a
+        # mata, e é a árvore — não o vão vazio — que faz a orla parecer orla.
+        pomar = 0.85 if fundo else 0.55
         # Quintal: a casa não ocupa o lote todo, e o que sobra é chão batido
         # mesmo no mapa pavimentado — quintal não é asfalto.
         s += _faixa_mx(mx0 - 0.28, mx0 + dmx + 0.5, my0 - 0.3, my0 + dmy + 0.3,
                        C["terra_clara"] if pavimentado else C["terra_escura"], 0.5)
+        # Árvore do QUINTAL DE TRÁS, desenhada antes da casa para a casa a
+        # tapar em parte — é o que a põe atrás em vez de colada por cima.
+        if r.random() < pomar:
+            s += arvore(mx0 - r.uniform(0.10, 0.26),
+                        my0 + r.uniform(-0.1, dmy + 0.1),
+                        r.uniform(0.30, 0.52), r, r.random())
         s += casa(mx0, my0, mx0 + dmx, my0 + dmy, altura,
                   C[VILA_PAREDES[variante]], telha, janelas)
-        # Um pé de mato no quintal — é o que faz a casa parecer morada.
-        if r.random() < 0.7:
+        # Árvore do quintal da FRENTE, entre a casa e o passeio.
+        if r.random() < pomar - 0.05:
+            s += arvore(mx0 + dmx + r.uniform(0.10, 0.34),
+                        my0 + r.uniform(0.0, dmy),
+                        r.uniform(0.26, 0.44), r, r.random())
+        elif r.random() < 0.7:
             gx, gy = p(mx0 + dmx + r.uniform(0.12, 0.4),
                        my0 + r.uniform(0.1, dmy), ALT_CAIS)
-            s += ('  <ellipse cx="%.0f" cy="%.0f" rx="5" ry="2.6" fill="%s" '
-                  'opacity="0.7"/>\n' % (gx, gy, C["mato"]))
+            s += tufo_de_capim(gx, gy, r, n=(3, 5), alt=(3.0, 5.5))
     return s
 
 
@@ -975,7 +1334,17 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
         s += poli([p(FUNDO_TERRA, my0, ALT_CAIS), p(fundo_da_rua, my0, ALT_CAIS),
                    p(fundo_da_rua, my1 + COSTURA, ALT_CAIS),
                    p(FUNDO_TERRA, my1 + COSTURA, ALT_CAIS)], C["solo"])
-        s += vegetacao_do_solo(i, FUNDO_TERRA, my0, fundo_da_rua, my1)
+        # ⚠️ A MATA ACABA NO FUNDO DO LOTE, e não no fundo da calçada. Ela ia
+        # até `fundo_da_rua`, o que a punha a crescer POR DENTRO da vila —
+        # cada árvore ali era tapada pela casa desenhada depois (a vila vem
+        # ~20 linhas abaixo), ou seja, polígono pago e nunca visto. Medido:
+        # a janela visível da mata acabava exatamente em `borda - VILA_RECUO`
+        # nos três degraus que aparecem, então o corte não perdia nada — e com
+        # a segunda fileira ele recuou mais um lote, para `VILA_RECUO_2`. A
+        # mata é o FUNDO da vila; onde há casa, quem planta é `vila()`.
+        # As árvores DA vila são outra coisa e vivem em `vila()`, sorteadas
+        # junto com as casas para a profundidade sair certa entre elas.
+        s += vegetacao_do_solo(i, FUNDO_TERRA, my0, borda - VILA_RECUO_2, my1)
 
         # PÁTIO: só entre a calçada da frente e o avental. É esta a área que
         # trabalha, e é ela que troca de terra batida para asfalto.
@@ -1001,13 +1370,46 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # manchas, água já tem faixas. Junta de dilatação resolve duas coisas de
     # uma vez: quebra a chapa E dá escala, porque o olho conhece o tamanho de
     # uma placa de concreto e usa isso para medir o resto do porto.
+    #
+    # ⚠️ E O DESGASTE ESTAVA A SER PINTADO NO RELVADO. Até 04/09 o centro de
+    # cada mancha saía de `uniform(FUNDO_TERRA, borda)` — o bloco de terra
+    # INTEIRO, do fundo do mundo à beira do cais —, e não da faixa de concreto.
+    # Onze manchas de concreto (#a8b2b8, cinza-azulado) caíam em cima da mata e
+    # da vila, e mediam 19 a 37 px de raio: no relvado elas lêem como falha de
+    # grama, que é a queixa "a vegetação é bem pobre" a ser causada por um
+    # descuido do CAIS. Medido na captura: 2.324 px do tom resultante, num
+    # recorte de 320x300 da área verde.
+    #
+    # A junta de dilatação, dez linhas abaixo, sempre esteve certa — e o
+    # comentário dela diz porquê, com todas as letras: "levá-la mais para
+    # dentro riscava a terra batida, que não tem junta nenhuma". A mesma frase
+    # valia para a mancha, e a mancha estava logo acima sem ninguém reparar.
+    # Duas regras irmãs, uma escrita e a outra não.
+    #
+    # O recorte é o mesmo idioma do `manchas_chao`: sem ele uma mancha de 40 px
+    # de raio numa faixa de 39 px de largura transborda para a água.
+    #
+    # E o `clip-path` FUNCIONA no importador do Godot — medido em 04/09, e vale
+    # escrever porque o ThorVG não desenha tudo o que o SVG permite (`<text>`,
+    # por exemplo, sai vazio, e é por isso que os números das docas são
+    # estêncil). Antes desta correção havia 2.324 px de mancha de concreto na
+    # área verde da captura; depois, zero — se o recorte fosse ignorado, os
+    # dois números seriam iguais.
     rc = random.Random(SEMENTE_CHAO + 40)
-    for my0, my1, borda in DEGRAUS:
+    for i, (my0, my1, borda) in enumerate(DEGRAUS):
+        quina = [p(borda - APRON, my0, ALT_CAIS), p(borda, my0, ALT_CAIS),
+                 p(borda, my1 + COSTURA, ALT_CAIS),
+                 p(borda - APRON, my1 + COSTURA, ALT_CAIS)]
+        s += '  <clipPath id="cais%d"><polygon points="%s"/></clipPath>\n' % (
+            i, " ".join("%.1f,%.1f" % q for q in quina))
+        s += '  <g clip-path="url(#cais%d)">\n' % i
         for _ in range(9):
-            cx, cy = p(rc.uniform(FUNDO_TERRA, borda), rc.uniform(my0, my1), ALT_CAIS)
+            cx, cy = p(rc.uniform(borda - APRON, borda),
+                       rc.uniform(my0, my1), ALT_CAIS)
             raio = rc.uniform(16.0, 40.0)
-            s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.0f" ry="%.0f" fill="%s" '
+            s += ('    <ellipse cx="%.0f" cy="%.0f" rx="%.0f" ry="%.0f" fill="%s" '
                   'opacity="0.35"/>\n' % (cx, cy, raio, raio / 2.0, C["cais_mancha"]))
+        s += '  </g>\n'
         # A junta vive na FAIXA DE CONCRETO que sobra entre o pátio e a beira
         # (o pátio come até `borda - 1.3`). Levá-la mais para dentro riscava a
         # terra batida, que não tem junta nenhuma.
@@ -1100,24 +1502,7 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
                            tons[r.randrange(3)]))
 
     for _py, canto, h, topo in sorted(pedras, key=lambda q: q[0]):
-        n = len(canto)
-        for k in range(n):
-            a, b = canto[k], canto[(k + 1) % n]
-            ex, ey = b[0] - a[0], b[1] - a[1]
-            # Normal exterior da aresta. Só se desenha a saia das arestas
-            # viradas para BAIXO na tela — as de cima ficam por trás do tampo,
-            # e desenhá-las seria pintar por baixo de quem vai tapar.
-            nx, ny = ey, -ex
-            if ny <= 0.0:
-                continue
-            # Duas faces, como as paredes: a que olha para a direita é a mais
-            # escura, seguindo a mesma luz de `madeira_esq` / `madeira_dir`.
-            tom = _sombrear(topo, 0.62 if nx > 0.0 else 0.76)
-            s += ('  <polygon points="%.1f,%.1f %.1f,%.1f %.1f,%.1f %.1f,%.1f" '
-                  'fill="%s"/>\n'
-                  % (a[0], a[1], b[0], b[1], b[0], b[1] + h, a[0], a[1] + h, tom))
-        s += ('  <polygon points="%s" fill="%s"/>\n'
-              % (" ".join("%.1f,%.1f" % c for c in canto), topo))
+        s += com_saia(canto, h, topo)
 
     # ---- píeres ----
     # Em jogo o píer TROCA DE ESTADO (vaga por construir -> píer construído), e
@@ -1221,6 +1606,10 @@ def tabela_ancoras() -> dict:
             "avental": [borda - APRON, borda],
             "rua": [borda - RUA_RECUO - CALCADA, borda - RUA_RECUO + RUA_LARG + CALCADA],
             "vila": [borda - VILA_RECUO, borda - VILA_RECUO + VILA_PROF],
+            # A fileira de trás, publicada para o D14 poder conferir que as
+            # duas se separam por mais de um telhado — a régua tem de sair do
+            # gerador, senão o teste passa a ter a sua própria cópia dela.
+            "vila_fundo": [borda - VILA_RECUO_2, borda - VILA_RECUO_2 + VILA_PROF],
         })
 
     # ⚠️ E OS COTOVELOS, que são rua tanto quanto as faixas retas.
@@ -1251,6 +1640,8 @@ def tabela_ancoras() -> dict:
         "faixas": faixas,
         "cotovelos": cotovelos,
         "lotes": [{"mx": round(l[0], 2), "my": round(l[1], 2),
+                   "dmx": round(l[2], 2), "dmy": round(l[3], 2),
+                   "fundo": bool(l[5]),
                    "canto": px(l[0], l[1], ALT_CAIS)} for l in lotes_da_vila()],
     }
 

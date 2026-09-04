@@ -20,9 +20,24 @@ O que mudou é que decide o resto. Rodar 600 partidas por causa de um typo em
 documento é desperdício; não rodar por causa de um `# TUNING:` é negligência.
 
 ```sh
+git fetch origin main          # ⚠️ NÃO É OPCIONAL — ver abaixo
 git status --short
-git diff --stat $(git merge-base HEAD origin/main)..HEAD
+git diff --stat origin/main..HEAD
 ```
+
+⚠️ **Sem o `fetch`, este diff mente — e mente para o lado caro.** Uma sessão
+remota arranca de um clone, e o `origin/main` local dele é uma fotografia da
+altura em que o contêiner subiu; se um PR foi fundido depois disso, o ponteiro
+está para trás. Mordeu em 04/09: o `merge-base` caiu num commit anterior a
+duas sessões já fundidas, o diff varreu **223 arquivos** em vez de 9, e a
+tabela da §3 respondeu que a mudança tinha tocado o `GameState.gd` e o catálogo
+`blender/` — nenhum dos dois verdade. Quem acreditasse teria rodado 600
+partidas por nada; quem faz a leitura ao contrário, num dia em que a economia
+mudou de verdade, não roda o que devia.
+
+**E a §3 pergunta-se pelo CONTEÚDO, não só pelo nome do arquivo.** Um
+`# TUNING:` pode mudar sem o nome do arquivo dizer nada de novo:
+`git diff origin/main..HEAD | grep "TUNING:"`.
 
 **Numa sessão remota o `$G` já está pronto e o projeto já foi importado** —
 quem faz isso é `.claude/hooks/session-start.sh`, e ele diz numa linha o que

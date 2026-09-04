@@ -129,6 +129,10 @@ func _rodar() -> void:
 	_d13_travessia_do_caminhao()
 	_confere("o bloco D13 correu até ao fim", _d13_completo)
 
+	print("=== D14: a vila cabe no lote dela, e sai de baixo dos prédios ===")
+	_d14_vila()
+	_confere("o bloco D14 correu até ao fim", _d14_completo)
+
 	root.remove_child(_main)
 	_main.free()
 
@@ -142,6 +146,131 @@ func _rodar() -> void:
 
 
 # ── projeção, para saber em que faixa do porto um pixel caiu ──
+# ── D14 ── a vila: cada casa no seu lote, e nenhuma debaixo de um prédio
+#
+# ⚠️ ESTE BLOCO NÃO EXISTIA, e a coisa que ele guarda já tinha apodrecido uma
+# vez. A tabela de âncoras publica os `lotes` desde sempre e NENHUM teste os
+# lia — enquanto isso, o gerador do mapa carregava dois intervalos escritos à
+# mão (`VILA_VAZIOS`) que diziam onde o escritório e o armazém tapam a fileira,
+# com um comentário de vinte linhas a avisar que eles envelhecem calados:
+# "quem mexer só num dos lados deixa o vão no sítio antigo — e um vão no sítio
+# errado não dá erro: dá uma casa fatiada por um telhado e um buraco na
+# fileira a seis unidades dali". Em 03/09 os dois termos da conta mudaram e
+# alguém teve de reparar à mão.
+#
+# Agora o gerador DERIVA os vãos e este bloco confere o resultado. São três
+# perguntas, e cada uma pega um defeito diferente:
+#
+#   1. nenhuma casa se sobrepõe a outra da MESMA fileira — o gerador de
+#      quarteirões anda em `my` por passos que dependem de `dmy`, e um passo
+#      menor que a casa põe duas paredes no mesmo sítio sem dar erro;
+#   2. nenhuma casa cai debaixo da silhueta de um prédio do pátio — é o vão
+#      derivado a ser conferido contra o `Main.tscn`, que é a única fonte que
+#      sabe onde os props estão de verdade;
+#   3. a fileira de trás fica a mais de um telhado de distância da da frente —
+#      medido em 04/09: com a travessa de 0,55 a separação era de 57px contra
+#      ~78px de telhado, e as duas fileiras liam como um borrão de telha.
+#
+# A pegada de uma casa em `my` é `dmy` mais o beiral de 0,12 de cada lado, que
+# é o que a `casa()` desenha — conferir só `my..my+dmy` deixaria passar
+# exatamente a sobreposição de telhado que se quer evitar.
+const BEIRAL_DA_CASA := 0.12
+const LARGURA_DE_TELHADO := 78.0     # px, medido: (VILA_PROF + 0.24 + 1.0) * 30
+
+var _d14_completo := false
+
+
+func _d14_vila() -> void:
+	var lotes: Array = _ancoras.get("lotes", [])
+	_confere("a tabela de âncoras publica os lotes da vila", not lotes.is_empty(),
+		"sem lotes não há o que conferir — o gerador deixou de os publicar?")
+	if lotes.is_empty():
+		return
+
+	# (1) duas casas da mesma fileira não ocupam o mesmo `my`.
+	#
+	# ⚠️ E A CONTAGEM SÓ SE TESTA ACIMA DE UM: com uma casa por fileira este
+	# laço não compara nada e passa sempre. Por isso a asserção de que há mais
+	# de uma casa em cada fileira vem ANTES, e não como detalhe.
+	for fundo in [false, true]:
+		var fila: Array = []
+		for l in lotes:
+			if bool(l.get("fundo", false)) == fundo:
+				fila.append(l)
+		var nome := "de trás" if fundo else "da frente"
+		_confere("a fileira %s tem mais de uma casa" % nome, fila.size() > 1,
+			"tem %d — com uma só, o teste de sobreposição não compara nada"
+			% fila.size())
+		fila.sort_custom(func(a, b): return float(a["my"]) < float(b["my"]))
+		for i in range(fila.size() - 1):
+			var a: Dictionary = fila[i]
+			var b: Dictionary = fila[i + 1]
+			var fim_a := float(a["my"]) + float(a["dmy"]) + BEIRAL_DA_CASA
+			var ini_b := float(b["my"]) - BEIRAL_DA_CASA
+			# Geminada encosta de propósito: a parede é partilhada e os dois
+			# beirais também. O que não pode é uma casa entrar na outra.
+			_confere("as casas da fileira %s em my=%.2f e %.2f não se comem"
+				% [nome, float(a["my"]), float(b["my"])],
+				ini_b >= fim_a - 2.0 * BEIRAL_DA_CASA - 0.02,
+				"a de trás acaba em %.2f e a da frente começa em %.2f"
+				% [fim_a, ini_b])
+
+	# (2) nenhuma casa debaixo da silhueta de um prédio do pátio.
+	var cenario := _main.get_node("MapaWrap/Cenario")
+	var alt := float(_ancoras["projecao"]["alt_cais"])
+	var meia_larg := float(_ancoras["projecao"]["meia_larg"])
+	var conferidos := 0
+	for no in cenario.get_children():
+		if not (no is TextureRect):
+			continue
+		var tex: Texture2D = (no as TextureRect).texture
+		if tex == null:
+			continue
+		var usado := tex.get_image().get_used_rect()
+		if float(usado.size.x) < SILHUETA_QUE_EXIGE_PEGADA:
+			continue                       # coqueiro, caminhão: não tapam vila
+		conferidos += 1
+		var base := _origem(no as Control)
+		for l in lotes:
+			var canto: Array = l["canto"]
+			var centro := Vector2(float(canto[0])
+					+ float(l["dmy"]) * 0.5 * -meia_larg
+					+ float(l["dmx"]) * 0.5 * meia_larg,
+				float(canto[1]))
+			var dx: float = absf(centro.x - base.x)
+			var dy: float = base.y - centro.y
+			# O prédio tapa para CIMA e só até à altura do sprite dele — a
+			# mesma conta que `vaos_da_vila()` faz no gerador. Conferir só a
+			# coluna da tela reprovaria casas que estão 273px abaixo.
+			var tapa := dx < float(usado.size.x) * 0.30 \
+				and dy >= 0.0 and dy <= float(usado.size.y)
+			_confere("%s não tapa a casa em my=%.2f" % [no.name, float(l["my"])],
+				not tapa,
+				"a casa cai a %.0fpx da coluna do prédio e %.0fpx acima da base "
+				% [dx, dy] + "dele, num sprite de %dx%d" % [usado.size.x, usado.size.y])
+	_confere("houve prédio grande para conferir contra a vila", conferidos > 0,
+		"nenhum prop passou de %.0fpx — o filtro comeu tudo" % SILHUETA_QUE_EXIGE_PEGADA)
+
+	# (3) as duas fileiras separam-se por mais de um telhado.
+	#
+	# ⚠️ E A COMPARAÇÃO É DENTRO DO MESMO DEGRAU. A primeira versão tirou o
+	# `mx` mínimo da fileira da frente e o máximo da de trás sobre TODOS os
+	# lotes — e o cais avança 4 unidades por degrau, então isso comparava a
+	# vila do degrau 0 com a do degrau 3 e dava -274px. As duas faixas saem do
+	# gerador, uma por degrau, exatamente para não ter de as reconstruir aqui.
+	for faixa in _ancoras.get("faixas", []):
+		var vila: Array = faixa["vila"]
+		var fundo_: Array = faixa["vila_fundo"]
+		var separacao: float = (float(vila[0]) - float(fundo_[0])) * meia_larg
+		_confere("no degrau my=%s a fileira de trás sai de trás da da frente"
+			% [faixa["my"]],
+			separacao > LARGURA_DE_TELHADO,
+			"%.0fpx de separação para um telhado de %.0fpx — as duas fileiras "
+			% [separacao, LARGURA_DE_TELHADO] + "leem como um borrão de telha")
+
+	_d14_completo = true
+
+
 func _mundo(pos: Vector2, altura: float) -> Vector2:
 	var pr: Dictionary = _ancoras["projecao"]
 	var dx: float = (pos.x - float(pr["cx"])) / float(pr["meia_larg"])

@@ -102,6 +102,12 @@ justamente onde hoje o mundo acaba em diagonal reta.
 - **A cidade é uma FAIXA atrás do cais**, paralela a ele, nunca um bloco. Ela
   engorda para trás com as Fases (térrea → sobrado com comércio → prédio), e é
   o que este projeto já faz com `--nivel-vila=N`.
+  ✅ **E ela passou a ser faixa em 04/09, com duas fileiras.** Era uma fileira
+  só — o gerador dizia em comentário que a segunda "cairia fora da esquerda do
+  ecrã", e medido isso é falso: a segunda fileira tem 11,7 unidades no quadro
+  contra 17,3 da primeira. Uma faixa de uma casa de espessura não é faixa, é
+  cerca. Régua nova e medida: **a travessa entre fileiras tem de valer mais de
+  um telhado** (~78 px aqui) ou as duas leem como um borrão de telha.
 - **Entre a cidade e o cais há sempre uma avenida**, com faixa amarela e
   passeio dos dois lados. O projeto já tem a rua; a referência mostra que ela
   é mais LARGA do que a nossa e carrega trânsito.
@@ -142,6 +148,11 @@ um jogo que não existe.
   quente na quina superior de cada volume.
 - **Densidade**: em qualquer recorte de 200×200px há 6 a 12 objetos. No nosso
   mapa há 1 a 3. É a diferença mais visível de todas.
+  ✅ **Atacada em 04/09, e a causa não era a contagem.** Os objetos legíveis na
+  faixa de terra passaram de 15 para 55, e o que os multiplicou foi descobrir
+  que **95% da mata era desenhada fora do ecrã**: o viés da densidade apontava
+  para `FUNDO_TERRA`, que é, pelo nome, a parte do mundo que ninguém vê. Antes
+  de gerar mais, veja onde o que já se gera está a cair.
 
 ### Paleta (amostrada das imagens)
 
@@ -153,6 +164,7 @@ um jogo que não existe.
 | Telha | `#c2502e` a `#e07a3c` | `#c85420` — está certo |
 | Parede | creme `#f2e6cf`, e cada casa de uma cor | `#eef2f5` — frio e uniforme |
 | Vegetação | `#3e8f3a` com `#6fbf4e` no realce | `#2d7a3a` — sem realce |
+| ↳ *copa de árvore* | *idem* | ✅ **em uso desde 04/09** — `copa` e `copa_luz` |
 | Asfalto | `#6b6f76` com faixa amarela viva | `#6f7b85` — está certo |
 
 **O ajuste mais barato e mais visível é a água e a areia.** A referência é
