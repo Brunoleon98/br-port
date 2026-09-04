@@ -28,10 +28,10 @@ para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada u
 muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
 saem de ruína para telhado novo.
 
-**O botão que move o jogo tem cor própria desde 02/09** — "Avançar dia" é âmbar
-com rótulo navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os
-cartões claros ganharam sombra e borda de 2px. Os escuros ficaram como estavam,
-de propósito: a sombra do tema é mais clara que o fundo deles, e faria halo.
+**O botão que move o jogo tem cor própria** — "Avançar dia" é âmbar com rótulo
+navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os cartões
+claros têm sombra e borda de 2px. Os escuros não, de propósito: a sombra do
+tema é mais clara que o fundo deles e faria halo.
 
 **A câmera afastou-se em 05/09, e a Etapa 1 fechou.** Vê-se agora um DISTRITO
 e não três berços: o `MEIA_LARG` efetivo passou de 30 para os 20 que o Bruno
@@ -61,23 +61,24 @@ A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
 agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
 Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
-**A partida grava-se desde 02/09.** Uma linha JSON por turno, semana, obra e
-contra-oferta, num `.jsonl` por partida — com o tempo que o jogador ficou em
-cada turno, que é a pergunta do A7. O nome de quem jogou NÃO entra no arquivo
-(`docs/decisoes/006`). Sai pelo menu de pausa; `tools/ler_registros.py` resume.
+**A partida grava-se desde 02/09.** Uma linha JSON por acontecimento, com o
+tempo que o jogador ficou em cada turno — a pergunta do A7. O nome de quem
+jogou NÃO entra no arquivo (`docs/decisoes/006`). Sai pelo menu de pausa;
+`tools/ler_registros.py` resume.
 
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
 autoload `Audio.gd` com dois buses e sliders no menu de pausa. São de RASCUNHO,
 e **ninguém que os fez os ouviu** — o contêiner não tem placa de som
 (`docs/design/BR_Port_Plano_Audio.md` §2).
 
-**Não se arrasta trabalhador a cada turno:** há "Alocar todos" e
-toque-para-alocar, com o arrasto ainda funcionando.
-
 **Nada de interface pousa sobre o mapa.** A doca tem duas metades: a vaga no
 mapa (píer, barco, guindaste, trabalhador) e o cartão na barra logo abaixo
-dele (valor, turnos, trabalhador). Os nomes dos lugares são placas com mastro,
-e o número de cada doca está pintado no cais.
+dele (valor, turnos, trabalhador). O número de cada doca está pintado no cais.
+Os nomes dos lugares são placas com mastro que **se plantam sozinhas**
+(`scripts/Letreiro.gd`, 05/09): a chapa mede-se pelo texto e o mastro morde o
+telhado, pelos dois estados do prédio. Antes eram offsets à mão, e traziam a
+placa do armazém a pairar 12px acima do telhado com o D7 a dizer "apoiado" —
+ele conferia o quadro de 512 do prop, não o desenho.
 
 **O porto tem uma cidade atrás dele, e desde 04/09 ela é uma CIDADE.** Rua
 paralela ao cais, calçada, acesso a cada berço, e **duas fileiras de casas em
@@ -237,7 +238,7 @@ conta e o modo de a refazer estão em
 | `tools/gerar_gdd_md.py` | Gera as 80 acima. Recusa-se a adivinhar: forma de dado que ele não conheça **reprova**, em vez de sumir do markdown |
 ### Sistemas que funcionam
 - Turno diário com botão "Avançar dia" (sem relógio real)
-- Drag-and-drop de trabalhadores para as docas
+- Alocação de trabalhador por toque, por "Alocar todos" ou por arrasto
 - Economia: caixa, receita por barco, renda do píer, custos semanais
 - Reputação Comercial (0–100, 5 faixas) — e ela **decide a contra-oferta**:
   reputação alta faz o cliente aceitar pagar cheio com mais frequência
@@ -310,12 +311,11 @@ pesqueiro tem casco próprio — não é o mesmo casco com carga trocada. O
 **trabalhador aparece de pé no tabuado** quando alocado, e mexe-se enquanto a
 operação corre.
 
-O **retrato do trabalhador** deixou de ser placeholder em 03/09: era um
-desenho pintado, de outra leva e outra linguagem, e passou a sair do mesmo
-estúdio Blender de tudo o resto (`trabalhador_retrato`). É o único prop que
-olha para a frente — rodado 45° em Z, porque um retrato de 3/4 num cartão de
-108px mostra sobretudo o capacete. O boneco do PÍER continua com as cinco
-caixas dele: 22px e 70px não são o mesmo orçamento de pixel.
+O **retrato do trabalhador** sai do mesmo estúdio Blender de tudo o resto
+(`trabalhador_retrato`) e é o único prop que olha para a frente — rodado 45°
+em Z, porque um retrato de 3/4 num cartão de 108px mostra sobretudo o
+capacete. O boneco do PÍER continua com as cinco caixas dele: 22px e 70px não
+são o mesmo orçamento de pixel.
 
 A **Zona de Espera é só visual**: os barcos ancorados são decorativos e não
 representam fila de verdade — barcos continuam nascendo direto nas docas.

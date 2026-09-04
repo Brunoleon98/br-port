@@ -6,6 +6,11 @@
 [ext_resource type="Texture2D" path="res://art/porto_mapa_espuma0.svg" id="espuma0"]
 [ext_resource type="Texture2D" path="res://art/porto_mapa_espuma1.svg" id="espuma1"]
 [ext_resource type="PackedScene" path="res://scenes/dock/Dock.tscn" id="4"]
+[ext_resource type="Script" path="res://scripts/Letreiro.gd" id="letreiro"]
+[ext_resource type="Texture2D" path="res://art/props/escritorio_ruina.png" id="letr_esc_ruina"]
+[ext_resource type="Texture2D" path="res://art/props/escritorio.png" id="letr_esc_pronto"]
+[ext_resource type="Texture2D" path="res://art/props/galpao_velho.png" id="letr_arm_ruina"]
+[ext_resource type="Texture2D" path="res://art/props/galpao.png" id="letr_arm_pronto"]
 [ext_resource type="PackedScene" path="res://scenes/dock/DocaCartao.tscn" id="6"]
 [ext_resource type="Texture2D" path="res://art/props/barco_medio.png" id="5"]
 [ext_resource type="Texture2D" path="res://art/icones/caixa.svg" id="ic_caixa"]
@@ -513,11 +518,14 @@ offset_bottom = 476.67
 ; do mapa. Precisavam ser tão grandes justamente porque não pertenciam a
 ; lugar nenhum: texto solto sobre cenário colorido só se lê no grito. Agora
 ; cada um é uma PLACA — chapa escura, contorno âmbar, mastro descendo até o
-; prédio — e, por pertencer ao mundo, cabe em 14px.
+; prédio — e, por pertencer ao mundo, cabe em 13px.
 ;
-; O mastro é fixo e o quadro flutua acima do telhado mais alto dos dois
-; estados (ruína e consertado), então a placa não pula quando o jogador
-; conserta o prédio.
+; ⚠️ E A GEOMETRIA DELES DEIXOU DE VIVER AQUI, em 05/09. Estes offsets eram
+; escritos à mão e carregavam dois defeitos que nenhuma asserção via: a placa
+; do armazém pairava 12px acima do telhado, e a do escritório era mais larga
+; do que o escritório. Quem os planta agora é `scripts/Letreiro.gd`, que mede
+; a chapa pelo texto e o mastro pelos DOIS estados do prédio; o que fica na
+; cena é só o nome, a que prédio pertence e onde começar a procurar.
 
 [node name="Letreiros" type="Control" parent="MapaWrap"]
 layout_mode = 0
@@ -527,25 +535,15 @@ mouse_filter = 2
 
 [node name="LetreiroEscritorio" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
-offset_left = 198.33
-offset_top = 84.17
-offset_right = 330.33
-offset_bottom = 132.17
-mouse_filter = 2
-
-[node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroEscritorio"]
-layout_mode = 0
-offset_left = 64.0
-offset_top = 24.0
-offset_right = 68.0
+offset_right = 132.0
 offset_bottom = 48.0
 mouse_filter = 2
-color = Color(0.29, 0.325, 0.353, 1)
+script = ExtResource("letreiro")
+prop = "Escritorio"
+estados = Array[Texture2D]([ExtResource("letr_esc_ruina"), ExtResource("letr_esc_pronto")])
 
 [node name="Placa" type="PanelContainer" parent="MapaWrap/Letreiros/LetreiroEscritorio"]
 layout_mode = 0
-offset_right = 132.0
-offset_bottom = 28.0
 mouse_filter = 2
 theme_type_variation = &"Letreiro"
 
@@ -555,29 +553,26 @@ mouse_filter = 2
 horizontal_alignment = 1
 text = "ESCRITÓRIO"
 theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 13
 
-[node name="LetreiroArmazem" type="Control" parent="MapaWrap/Letreiros"]
+[node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroEscritorio"]
 layout_mode = 0
-offset_left = 112.33
-offset_top = 162.83
-offset_right = 240.33
-offset_bottom = 210.83
-mouse_filter = 2
-
-[node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroArmazem"]
-layout_mode = 0
-offset_left = 62.0
-offset_top = 24.0
-offset_right = 66.0
-offset_bottom = 48.0
+offset_right = 4.0
+offset_bottom = 24.0
 mouse_filter = 2
 color = Color(0.29, 0.325, 0.353, 1)
 
-[node name="Placa" type="PanelContainer" parent="MapaWrap/Letreiros/LetreiroArmazem"]
+[node name="LetreiroArmazem" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
 offset_right = 128.0
-offset_bottom = 28.0
+offset_bottom = 48.0
+mouse_filter = 2
+script = ExtResource("letreiro")
+prop = "Armazem"
+estados = Array[Texture2D]([ExtResource("letr_arm_ruina"), ExtResource("letr_arm_pronto")])
+
+[node name="Placa" type="PanelContainer" parent="MapaWrap/Letreiros/LetreiroArmazem"]
+layout_mode = 0
 mouse_filter = 2
 theme_type_variation = &"Letreiro"
 
@@ -587,10 +582,15 @@ mouse_filter = 2
 horizontal_alignment = 1
 text = "ARMAZÉM"
 theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 13
 
-; A da zona de espera fica numa estaca fincada na água, que é onde uma placa
-; de fundeadouro fica mesmo. Mastro mais comprido: não há telhado por baixo.
+[node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroArmazem"]
+layout_mode = 0
+offset_right = 4.0
+offset_bottom = 24.0
+mouse_filter = 2
+color = Color(0.29, 0.325, 0.353, 1)
+
 [node name="LetreiroZona" type="Control" parent="MapaWrap/Letreiros"]
 layout_mode = 0
 offset_left = 428.33
@@ -598,20 +598,10 @@ offset_top = 241.5
 offset_right = 524.33
 offset_bottom = 319.5
 mouse_filter = 2
-
-[node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroZona"]
-layout_mode = 0
-offset_left = 46.0
-offset_top = 42.0
-offset_right = 50.0
-offset_bottom = 78.0
-mouse_filter = 2
-color = Color(0.235, 0.267, 0.29, 1)
+script = ExtResource("letreiro")
 
 [node name="Placa" type="PanelContainer" parent="MapaWrap/Letreiros/LetreiroZona"]
 layout_mode = 0
-offset_right = 96.0
-offset_bottom = 46.0
 mouse_filter = 2
 theme_type_variation = &"Letreiro"
 
@@ -621,18 +611,15 @@ mouse_filter = 2
 horizontal_alignment = 1
 text = "ZONA DE
 ESPERA"
-theme_override_colors/font_color = Color(0.784, 0.878, 0.945, 1)
+theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
 theme_override_font_sizes/font_size = 13
 
-; ================= BARRA DE DOCAS =================
-; Os três alvos de alocação, alinhados logo abaixo do mapa. Antes eram chips
-; pousadas nos píeres: cobriam o barco e o guindaste, e ficavam em diagonal
-; pela tela, cada uma num lugar diferente a cada partida. Aqui o polegar sabe
-; sempre onde estão, e o mapa fica livre para mostrar o porto.
-;
-; Continuam aceitando ARRASTO, e o píer no mapa também — quem já jogava
-; arrastando não perde nada, só ganhou um segundo alvo maior.
-
+[node name="Mastro" type="ColorRect" parent="MapaWrap/Letreiros/LetreiroZona"]
+layout_mode = 0
+offset_right = 4.0
+offset_bottom = 36.0
+mouse_filter = 2
+color = Color(0.235, 0.267, 0.29, 1)
 [node name="BarraDocas" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0

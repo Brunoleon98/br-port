@@ -307,10 +307,10 @@ content_margin_bottom = 7.0
 
 [sub_resource type="StyleBoxFlat" id="letreiro"]
 bg_color = Color(0.09, 0.161, 0.239, 0.94)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
 border_color = Color(0.878, 0.604, 0.063, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
