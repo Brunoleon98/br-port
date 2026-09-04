@@ -1388,6 +1388,13 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     #
     # O recorte é o mesmo idioma do `manchas_chao`: sem ele uma mancha de 40 px
     # de raio numa faixa de 39 px de largura transborda para a água.
+    #
+    # E o `clip-path` FUNCIONA no importador do Godot — medido em 04/09, e vale
+    # escrever porque o ThorVG não desenha tudo o que o SVG permite (`<text>`,
+    # por exemplo, sai vazio, e é por isso que os números das docas são
+    # estêncil). Antes desta correção havia 2.324 px de mancha de concreto na
+    # área verde da captura; depois, zero — se o recorte fosse ignorado, os
+    # dois números seriam iguais.
     rc = random.Random(SEMENTE_CHAO + 40)
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
         quina = [p(borda - APRON, my0, ALT_CAIS), p(borda, my0, ALT_CAIS),
