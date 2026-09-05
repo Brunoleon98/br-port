@@ -79,12 +79,10 @@ zinco com nervura no sentido da água, chapa corrugada, fita de vidro rente ao
 beiral, portão de enrolar laranja e **plataforma de carga** com defensas e
 degraus. A cumeeira não subiu um pixel: a doca come parte da parede.
 
-**E o porto abre em RUÍNAS de verdade desde 05/09.** O `galpao_velho` reusava
-as paredes do galpão acabado e trocava só a cor do telhado — paredes brancas,
-janelas inteiras, portão fechado. Agora são paredes sujas, um terço delas
-desabado, meio telhado com a armação à vista e o portão fora do trilho; e a
-ruína do escritório, que era duas lajes cinzentas, é um CANTO de pé com porta e
-janela vazias. O plano de arte tem as três armadilhas que a passagem apanhou.
+**E o porto abre em RUÍNAS de verdade.** Paredes sujas com um terço desabado,
+meio telhado com a armação à vista, o portão fora do trilho; a ruína do
+escritório é um CANTO de pé com porta e janela vazias. Como se lá chegou está
+em `docs/arquivo/HISTORICO.md`.
 
 **O porto tem uma CIDADE atrás dele.** Rua paralela ao cais, calçada, acesso a
 cada berço e **duas fileiras de casas em quarteirões** — 3 a 5 lotes quase
@@ -113,7 +111,7 @@ em `docs/arquivo/HISTORICO.md`.
 |---|---|---|
 | **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas, a 1 INTEIRA e metade da 4** — a 1 (paleta tropical, a areia das duas pontas e o enquadramento, 05/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Da 4, o **corrugado** ficou em 05/09, e ficou na peça pela qual a etapa se mede; falta a 3 inteira e, da 4, ripa, ferrugem e cal |
+| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas, a 1 INTEIRA e metade da 4** — a 1 (paleta tropical, a areia das duas pontas e o enquadramento, 05/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Da 4, o **corrugado** ficou em 05/09 e a **3 foi medida e REJEITADA** no mesmo dia. Falta, da 4, ripa, ferrugem e cal |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a primeira jogada no telefone devolveu (02–03/09)
@@ -137,9 +135,11 @@ leitor que o resume.
 Da arte, **quatro das seis etapas estão feitas, a 1 está fechada por inteiro e
 a 4 está a meio** — a 1 (paleta, areia das duas pontas e enquadramento), a 2 (a
 cauda dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da
-interface). Falta a 3 (contorno pelo compositor); da 4 (materiais dirigidos), o
-**corrugado** ficou em 05/09 — na parede e no telhado do armazém, que é a peça
-pela qual a etapa se mede —, e ripa, ferrugem e cal continuam por fazer.
+interface). A **3 fechou por rejeição**: num estilo que desenha o detalhe com fronteiras de
+valor, um filtro de borda redesenha o desenho — a parede do galpão perde 14% de
+desvio local e a treliça 21% de saturação. Quem separa a silhueta é o contraluz
+do rig, e já separava. Da 4, o **corrugado** ficou em 05/09 na peça pela qual a
+etapa se mede; ripa, ferrugem e cal continuam por fazer.
 
 **Como o enquadramento se fez** está em `docs/arquivo/HISTORICO.md`; o que
 fica a valer é `docs/BRP_SPATIAL_CONTRACT.md` §1.1.

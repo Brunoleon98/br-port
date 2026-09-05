@@ -1766,36 +1766,187 @@ def _encolher(grupos: dict, nomes: tuple, k: float) -> None:
 
 
 # ---------------------------------------------------------------- cena
-def ligar_contorno(cena, espessura: float = 1.6) -> None:
-    """Contorno de silhueta por Freestyle.
+# ---------------------------------------------------------- contorno (Etapa 3)
+CONTORNO_COR = (0.09, 0.10, 0.13)     # o escuro da cena, nunca preto puro
+CONTORNO_FORCA = 0.45                 # quanto o traço escurece o que está por baixo
+CONTORNO_PERTO, CONTORNO_LONGE = 36.0, 44.0   # a faixa de profundidade útil
+CONTORNO_LIMIAR = (0.10, 0.34)        # onde a rampa abre e fecha
+# ⚠️ QUANTOS PIXELS O TRAÇO RECUA PARA DENTRO DA SILHUETA, e é o número que faz
+# esta função não ser o Freestyle outra vez.
+#
+# A primeira versão multiplicava a borda pelo alfa cru, e o resultado foi
+# EXATAMENTE o defeito que fez rejeitar o Freestyle, por outro caminho: os
+# montantes da treliça da lança têm 2px, o Sobel dá 1px de traço de cada lado,
+# e a peça inteira virou traço. Medido, a silhueta não mudou um pixel (1133
+# opacos antes e depois — os vazados ficaram abertos, que era o critério
+# escrito), e mesmo assim a lança passou de LARANJA a castanho-escuro: o
+# Freestyle fechava o vazado, este apagava a cor. O critério da etapa estava
+# incompleto.
+#
+# Erodir o alfa 1px antes de multiplicar resolve pela raiz, e resolve-o pela
+# pergunta certa: uma peça de 2px não tem interior nenhum depois da erosão,
+# logo não recebe traço; uma face grande perde só o pixel da beira, e o traço
+# assenta 1px para dentro dela. É a "espessura proporcional à profundidade" que
+# o plano pedia, substituída pelo que nesta câmera de facto varia — não a
+# distância, que é fixa em ortográfica, mas o TAMANHO DA PEÇA na tela.
+CONTORNO_RECUO = 2
 
-    É o que mais aproxima um render 3D da arte ilustrada — e também o que mais
-    facilmente estraga tudo, porque traço de espessura fixa engrossa em relação
-    à peça conforme a peça encolhe. Fica atrás da flag `--contorno` até se
-    provar na tela do jogo, não na do render.
+
+def ligar_contorno_compositor(cena) -> None:
+    """Contorno pelos passes de normal e de Z — a Etapa 3, TESTADA E REJEITADA.
+
+    ⚠️ **ISTO NÃO ESTÁ LIGADO, E NÃO É PARA LIGAR.** Fica atrás de `--contorno`
+    como a PROVA, que se refaz em vinte segundos:
+
+        python3 tools/gerar_props_iso.py --contorno /tmp/x lanca_n3 galpao
+
+    A Etapa 3 do plano de arte pedia contorno pelo compositor depois de o
+    Freestyle ser rejeitado, e a razão da rejeição parecia ser a técnica: o
+    Freestyle desenha uma LINHA GEOMÉTRICA de espessura fixa, e numa treliça
+    com montantes de 0,045 a linha é mais larga que a peça — os vazados fecham
+    e a treliça vira uma barra. Um traço nascido da IMAGEM não pode fechar um
+    vazado, porque onde há vazado há fundo e o fundo tem alfa zero. A ideia
+    estava certa e o resultado medido diz que o problema era outro.
+
+    **O que se mediu, nas duas peças pelas quais o plano manda medir:**
+
+    | | treliça da lança | parede do galpão |
+    |---|---|---|
+    | sem contorno | saturação 117,9 | saturação 53,0 · desvio 29,7 |
+    | traço rente à silhueta | **93,3 (−21%)** | 47,0 · 24,9 |
+    | traço recuado 2px | 112,1 (−5%) | 46,9 · **25,6 (−14%)** |
+
+    Duas conclusões, e a segunda é a que importa:
+
+    1. **Na peça FINA o traço apaga a COR, não a forma.** A silhueta não mudou
+       um pixel (1133 opacos com e sem, os vazados abertos — o critério escrito
+       na Etapa 3 passava), e mesmo assim a lança saiu de laranja a castanho.
+       O Freestyle fechava o vazado; este descolore. O critério da etapa media
+       a metade errada. Recuar o traço 2px salva a cor — e, salvando-a, deixa
+       a lança exatamente como estava: na peça fina o contorno ou estraga ou
+       não existe.
+    2. **Na peça GRANDE o traço redesenha o que o desenho já dizia.** E é aqui
+       que a etapa morre, por uma razão que não é de técnica nenhuma: **este
+       projeto desenha o detalhe COM fronteiras de valor** — o corrugado do
+       contêiner e o do armazém, as fiadas do telhado, as cantoneiras — porque
+       a essa escala relevo não sobrevive ao antisserrilhado. Um filtro de
+       borda procura exatamente fronteiras de valor. Ele encontra o desenho e
+       desenha-o outra vez por cima: a chapa corrugada, que é uma superfície
+       com nervura, passa a ler-se como um gradeado, e o desvio local (que é a
+       textura da parede) CAI 14% em vez de subir.
+
+    E há um terceiro facto que fecha a questão, e estava escrito ao lado desde
+    a Etapa 2: o rig de três pontos do `preparar_cena()` tem um CONTRALUZ que
+    existe para isto — *"põe um fio de luz na quina de cima, e é esse fio que
+    separa a peça do fundo; faz o trabalho de um contorno desenhado sem ter de
+    desenhar contorno nenhum"*. Ele separa a silhueta sem tocar nas fronteiras
+    de valor de dentro do prop, que é precisamente o que o contorno não
+    consegue.
+
+    Como se monta, e por que cada passo (o desenho está correto — o que falhou
+    foi a ideia, não a construção):
+
+    · **Sobel na NORMAL** apanha os vincos — a quina entre duas faces do mesmo
+      objeto, que é onde o volume se lê. É o que o Freestyle chamava `crease`
+      e que estava desligado lá, porque com espessura fixa ele engordava tudo.
+    · **Sobel no Z** apanha a silhueta e as bordas de oclusão — o mastro à
+      frente da lança, o píer à frente da água. O Z vem em unidades de mundo e
+      o fundo vem em 1e10, então passa por um `Map Range` com `clamp`: o fundo
+      encosta em 1,0 e o degrau prop→fundo vira o traço mais forte de todos.
+    · **O máximo dos dois**, e não a soma: somar dá traço duplo onde vinco e
+      silhueta coincidem, que é justamente na quina de cima de cada peça.
+    · **Multiplicado pelo ALFA do próprio render.** É a peça-chave. O Sobel
+      centra-se na borda, então metade do traço cai FORA da silhueta, em
+      pixel transparente; sem esta multiplicação o prop ganharia um halo
+      escuro que o mapa mostraria como sujeira à volta de tudo. Com ela o
+      traço é INTERNO, que é o que um sprite chapado pede.
+
+    O plano pedia *"espessura proporcional à profundidade"*, e isso não se
+    aplica aqui: a câmera é ORTOGRÁFICA e todos os props são renderizados à
+    mesma escala de mundo→pixel — é o contrato da projeção. Não há perto e
+    longe para variar; há uma escala só. O que de facto varia, e por isso é o
+    que o `CONTORNO_RECUO` usa, é o TAMANHO DA PEÇA na tela.
     """
-    cena.render.use_freestyle = True
     vl = cena.view_layers[0]
-    vl.use_freestyle = True
+    vl.use_pass_normal = True
+    vl.use_pass_z = True
 
-    # Ligar `use_freestyle` já cria um lineset — e cria-o SEM estilo. Criar
-    # outro por cima não resolve: o Freestyle percorre todos e rebenta no
-    # primeiro com 'NoneType' has no attribute use_chaining. Reaproveita-se o
-    # que existe e garante-se estilo em cada um.
-    conjuntos = vl.freestyle_settings.linesets
-    conjunto = conjuntos[0] if len(conjuntos) else conjuntos.new("contorno")
-    for cj in conjuntos:
-        if cj.linestyle is None:
-            cj.linestyle = bpy.data.linestyles.new("contorno_%s" % cj.name)
+    cena.use_nodes = True
+    cena.render.use_compositing = True
+    nt = cena.node_tree
+    for no in list(nt.nodes):
+        nt.nodes.remove(no)
 
-    conjunto.select_silhouette = True
-    conjunto.select_border = True
-    conjunto.select_crease = False
-    estilo = conjunto.linestyle
-    # Escuro da própria cena, não preto: preto puro num porto ensolarado lê
-    # como desenho técnico colado por cima da imagem.
-    estilo.color = (0.10, 0.09, 0.12)
-    estilo.thickness = espessura
+    camadas = nt.nodes.new("CompositorNodeRLayers")
+    saida = nt.nodes.new("CompositorNodeComposite")
+
+    def _sobel(entrada):
+        f = nt.nodes.new("CompositorNodeFilter")
+        f.filter_type = "SOBEL"
+        f.inputs["Fac"].default_value = 1.0
+        nt.links.new(entrada, f.inputs["Image"])
+        return f.outputs["Image"]
+
+    # Z -> faixa útil, com o fundo (1e10) preso em 1,0.
+    faixa = nt.nodes.new("CompositorNodeMapRange")
+    faixa.use_clamp = True
+    faixa.inputs["From Min"].default_value = CONTORNO_PERTO
+    faixa.inputs["From Max"].default_value = CONTORNO_LONGE
+    faixa.inputs["To Min"].default_value = 0.0
+    faixa.inputs["To Max"].default_value = 1.0
+    nt.links.new(camadas.outputs["Depth"], faixa.inputs["Value"])
+
+    borda_z = _sobel(faixa.outputs["Value"])
+    borda_n = _sobel(camadas.outputs["Normal"])
+
+    maior = nt.nodes.new("CompositorNodeMixRGB")
+    maior.blend_type = "LIGHTEN"
+    maior.inputs["Fac"].default_value = 1.0
+    nt.links.new(borda_z, maior.inputs[1])
+    nt.links.new(borda_n, maior.inputs[2])
+
+    # A rampa é o que separa "borda" de "ruído do denoiser". Aberta demais,
+    # cada mancha do `material_gasto` vira um risco.
+    rampa = nt.nodes.new("CompositorNodeValToRGB")
+    rampa.color_ramp.elements[0].position = CONTORNO_LIMIAR[0]
+    rampa.color_ramp.elements[1].position = CONTORNO_LIMIAR[1]
+    nt.links.new(maior.outputs["Image"], rampa.inputs["Fac"])
+
+    # ⚠️ O TRAÇO SÓ VIVE ONDE HÁ ESPAÇO PARA ELE, e é isto que separa este
+    # contorno do Freestyle. Ver `CONTORNO_RECUO` e a docstring.
+    recuo = nt.nodes.new("CompositorNodeDilateErode")
+    recuo.mode = "STEP"
+    recuo.distance = -CONTORNO_RECUO
+    nt.links.new(camadas.outputs["Alpha"], recuo.inputs["Mask"])
+
+    dentro = nt.nodes.new("CompositorNodeMixRGB")
+    dentro.blend_type = "MULTIPLY"
+    dentro.inputs["Fac"].default_value = 1.0
+    nt.links.new(rampa.outputs["Image"], dentro.inputs[1])
+    nt.links.new(recuo.outputs["Mask"], dentro.inputs[2])
+
+    forca = nt.nodes.new("CompositorNodeMixRGB")
+    forca.blend_type = "MULTIPLY"
+    forca.inputs["Fac"].default_value = 1.0
+    forca.inputs[2].default_value = (CONTORNO_FORCA,) * 3 + (1.0,)
+    nt.links.new(dentro.outputs["Image"], forca.inputs[1])
+
+    traco = nt.nodes.new("CompositorNodeMixRGB")
+    traco.blend_type = "MIX"
+    traco.inputs[2].default_value = CONTORNO_COR + (1.0,)
+    nt.links.new(forca.outputs["Image"], traco.inputs["Fac"])
+    nt.links.new(camadas.outputs["Image"], traco.inputs[1])
+
+    # ⚠️ E O ALFA TEM DE SER REPOSTO À MÃO. O `MixRGB` devolve o alfa da
+    # entrada 1, que aqui é a imagem — mas o traço passou por multiplicações
+    # que mexem no canal alfa dos nós intermédios, e sem este `Set Alpha` o
+    # PNG sai com a silhueta comida na borda, que é exatamente onde o traço
+    # está. O `asset_validator` apanharia isto como recorte.
+    repor = nt.nodes.new("CompositorNodeSetAlpha")
+    repor.mode = "REPLACE_ALPHA"
+    nt.links.new(traco.outputs["Image"], repor.inputs["Image"])
+    nt.links.new(camadas.outputs["Alpha"], repor.inputs["Alpha"])
+    nt.links.new(repor.outputs["Image"], saida.inputs["Image"])
 
 
 def preparar_cena():
@@ -1950,11 +2101,14 @@ def render_sombra(cena, grupo, caminho: str) -> None:
     forca_mundo = cena.world.node_tree.nodes["Background"].inputs[1].default_value
     rot_chave = tuple(chave.rotation_euler)
 
-    # Freestyle desligado no passe de sombra: ligado, ele contorna o PLANO
-    # apanhador e o contorno dele entra na composição — um losango escuro de
-    # 16 unidades à volta do prop. O plano é andaime, não desenho.
-    freestyle = cena.render.use_freestyle
-    cena.render.use_freestyle = False
+    # ⚠️ O CONTORNO FICA DE FORA DESTE PASSE, e a razão sobreviveu à troca de
+    # técnica. O Freestyle, ligado aqui, contornava o PLANO apanhador de 16
+    # unidades e o contorno dele entrava na composição como um losango escuro
+    # à volta do prop; o contorno pelo compositor faria pior, porque o plano é
+    # maior que o quadro e o traço sairia como uma moldura inteira. O plano é
+    # andaime, não desenho.
+    compositor = cena.render.use_compositing
+    cena.render.use_compositing = False
 
     for luz in apagadas:
         luz.hide_render = True
@@ -1975,7 +2129,7 @@ def render_sombra(cena, grupo, caminho: str) -> None:
     for o in grupo:
         o.visible_camera = True
     bpy.data.objects.remove(plano, do_unlink=True)
-    cena.render.use_freestyle = freestyle
+    cena.render.use_compositing = compositor
     for luz in apagadas:
         luz.hide_render = False
     cena.world.node_tree.nodes["Background"].inputs[1].default_value = forca_mundo
@@ -2065,7 +2219,7 @@ def main() -> int:
 
     cena = preparar_cena()
     if contorno:
-        ligar_contorno(cena)
+        ligar_contorno_compositor(cena)
     M = paleta_completa()
     grupos = montar(M)
 

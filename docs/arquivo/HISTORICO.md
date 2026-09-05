@@ -504,3 +504,17 @@ esquerda. Ele passou a ser derivado do centroide dos berços, e a água voltou a
 
 ---
 
+## As duas ruínas do pátio, e por que não liam (05/09)
+
+O `galpao_velho` reusava as paredes do galpão acabado e trocava só a cor do
+telhado — paredes brancas, janelas inteiras, portão fechado —, e o porto abria
+"em ruínas" com um galpão de paredes novas. A ruína do escritório falhava pelo
+lado oposto: seguia a regra ("menos prédio") e saía como uma pilha de lajes de
+concreto, porque menos prédio não é menos ARQUITETURA. Hoje o armazém tem
+paredes próprias com um terço desabado e o escritório é um CANTO de pé com os
+seus vãos. As três armadilhas que a passagem apanhou — a escada de degraus
+iguais, a barra preta na quina coplanar e os barrotes a pairar — estão no
+`CLAUDE.md` e no plano de arte.
+
+---
+

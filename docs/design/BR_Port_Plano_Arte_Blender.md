@@ -41,7 +41,7 @@ Foi medida com o Blender e o Godot rodando, não no olho.
 | **Objetos por recorte de 200×200px** | 6–12 | 1–3 | Blender + gerador de mapa |
 | **Peças por prop** | dezenas, com ferragem e abertura | 2 a 42 (mediana 19) | Blender |
 | **Enquadramento** | um distrito | três berços | gerador de mapa (`MEIA_LARG`) |
-| **Contorno de silhueta** | sim, suave | não (Freestyle testado e rejeitado) | Blender, com outra técnica |
+| **Contorno de silhueta** | sim, suave | **feito pelo contraluz do rig**, e não por traço — as duas técnicas de traço foram testadas e rejeitadas (Etapa 3) | resolvido |
 | **Oclusão de ambiente** | em toda fresta | só a sombra de contato | Blender |
 | **Água/areia** | tropical quente, com praia | mar frio, sem areia | gerador de mapa (constantes) |
 | **Rosto de personagem** | sim | não | textura — **não é geometria** |
@@ -79,11 +79,13 @@ tela num pátio cheio. É lá que está o ganho barato.
    padrões dirigidos.
 4. **Oclusão de ambiente e luz quente.** O Cycles já está lá; é ajuste de
    parâmetro e um passe de AO.
-5. **Contorno de silhueta.** O Freestyle foi testado e **rejeitado com razão**
-   (fecha o vazado da treliça, engorda peça pequena). A saída não é insistir
-   nele: é fazer o contorno **no compositor**, a partir dos buffers de
-   profundidade e normal, onde a espessura pode depender da distância e o
-   vazado não fecha. Isto é conhecimento novo — ver §5.
+5. ~~**Contorno de silhueta.**~~ **Resolvido, e não como se supunha.** O
+   Freestyle foi rejeitado com razão (fecha o vazado da treliça, engorda peça
+   pequena) e o compositor — a saída que este item propunha — foi construído,
+   medido e rejeitado também, por outra razão: num estilo que desenha o
+   detalhe com fronteiras de valor, um filtro de borda redesenha o desenho.
+   Quem faz o trabalho é o contraluz do rig de três pontos. Os números estão
+   na Etapa 3.
 6. **Props que faltam.** Caminhão, empilhadeira, poste, cabeço avulso, pilha
    de caixotes, silo, pórtico, vagão, toldo de comércio. Cada um é meia hora
    de kit.
@@ -721,10 +723,59 @@ diferentes —, então o caixote passou a ser duas caixas tortas em madeiras
 distintas, e não uma caixa listrada. **O contêiner é o ganho claro desta
 metade; o caixote melhorou e continua a ser a peça mais difícil do convés.**
 
-### Etapa 3 — Contorno pelo compositor
+### Etapa 3 — Contorno pelo compositor  ❌ FEITA E REJEITADA em 05/09
 - Passe de normal + profundidade, detecção de borda no compositor, espessura
   proporcional à profundidade, composição por cima do beauty.
-- **Mede-se por:** o guindaste. Se a treliça continuar vazada, funcionou.
+- **Media-se por:** o guindaste. Se a treliça continuar vazada, funcionou.
+
+#### Foi construída, foi medida, e a treliça não era a medida certa
+
+O contorno pelo compositor está escrito e funciona
+(`ligar_contorno_compositor`, atrás de `--contorno`). Sobel na normal para os
+vincos, Sobel no Z mapeado para a silhueta, o máximo dos dois, rampa de
+limiar, e — a peça-chave — multiplicado pelo alfa do próprio render, senão o
+prop ganha um halo escuro em pixel transparente. **Ele fica no repositório
+como a PROVA**, que se refaz em vinte segundos; o que não fica é ligado.
+
+**O que se mediu, nas duas peças pelas quais este plano manda medir:**
+
+| | treliça da lança | parede do galpão |
+|---|---|---|
+| sem contorno | saturação **117,9** | saturação 53,0 · desvio **29,7** |
+| traço rente à silhueta | **93,3 (−21%)** | 47,0 · 24,9 |
+| traço recuado 2px | 112,1 (−5%) | 46,9 · **25,6 (−14%)** |
+
+**1. Na peça FINA o traço apaga a COR, não a forma — e o critério escrito
+media a metade errada.** A silhueta não mudou um pixel: 1133 opacos com e sem
+contorno, os vazados todos abertos. Pelo critério da etapa, *funcionou*. E a
+lança saiu de LARANJA a castanho: os montantes têm 2px, o Sobel dá 1px de
+traço de cada lado, e a peça inteira virou traço. O Freestyle fechava o
+vazado; este descolore. Recuar o traço 2px para dentro da silhueta salva a cor
+(−5%) — e, salvando-a, deixa a lança exatamente como estava. **Na peça fina o
+contorno ou estraga ou não existe.**
+
+**2. Na peça GRANDE o traço redesenha o que o desenho já dizia — e é aqui que
+a etapa morre, por uma razão que não é de técnica nenhuma.** Este projeto
+desenha o detalhe COM fronteiras de valor: o corrugado do contêiner, o do
+armazém, as fiadas do telhado, as cantoneiras. É decisão registada e é por uma
+razão medida — a essa escala o relevo não sobrevive ao antisserrilhado. Um
+filtro de borda procura exatamente fronteiras de valor. Ele encontra o desenho
+e desenha-o outra vez por cima: a chapa corrugada, que é uma superfície com
+nervura, passa a ler-se como um gradeado, e **o desvio local da parede — que é
+a textura dela — CAI 14% em vez de subir**.
+
+**3. E o trabalho já estava feito por outra peça.** O rig de três pontos do
+`preparar_cena()` tem um contraluz cujo comentário, escrito na Etapa 2, diz o
+que ele é para fazer: *"põe um fio de luz na quina de cima, e é esse fio que
+separa a peça do fundo — faz o trabalho de um contorno desenhado sem ter de
+desenhar contorno nenhum"*. Ele separa a silhueta **sem tocar nas fronteiras
+de valor de dentro do prop**, que é precisamente o que o contorno não
+consegue. A linha da §2 que dizia "contorno de silhueta: não" estava a
+comparar o jogo com a referência olhando a técnica em vez do efeito.
+
+**O Freestyle foi apagado nesta passagem.** Ele estava atrás da mesma flag,
+rejeitado desde 30/08 e sem chamador; manter duas implementações rejeitadas
+por trás de um argumento só é convite a alguém ligar a errada.
 
 ### Etapa 4 — Materiais dirigidos  ⏳ o CORRUGADO ficou em 05/09
 - Família de padrões: ripa, corrugado, fiada de telha, ferrugem que escorre

@@ -577,9 +577,29 @@ tranca isso.
   da rua e depois da vila —, e apareceu por cima dos telhados e do passeio. O
   mundo estava certo (ele para 0,15 antes da calçada); a ORDEM é que não,
   porque uma casa levanta-se 20 px e o que vem depois cai-lhe em cima.
-- **Freestyle foi testado e REJEITADO** — fecha o vazado da treliça e engorda
-  peça pequena. Contorno, se voltar, vem pelo compositor (profundidade +
-  normal), não por Freestyle.
+- **⚠️ CONTORNO DE TRAÇO ESTÁ FECHADO: as DUAS técnicas foram testadas e
+  rejeitadas.** O Freestyle fecha o vazado da treliça e engorda peça pequena
+  (30/08). O contorno pelo compositor — a saída que o plano propunha — foi
+  construído e medido em 05/09, e falha por outra razão, mais funda: **este
+  estilo desenha o detalhe COM fronteiras de valor** (o corrugado, as fiadas,
+  as cantoneiras, porque a esta escala relevo não sobrevive ao
+  antisserrilhado), e um filtro de borda procura exatamente fronteiras de
+  valor — ele acha o desenho e desenha-o outra vez. Medido: a parede do galpão
+  PERDE 14% de desvio local, e a treliça perde 21% de saturação com o traço
+  rente à silhueta. **Quem faz o trabalho do contorno é o contraluz do rig de
+  três pontos**, que separa a silhueta sem tocar no que está dentro do prop. A
+  prova refaz-se com `gerar_props_iso.py --contorno`; não a ligue.
+- **E na peça FINA o contorno apaga a COR, não a forma.** Vale para qualquer
+  efeito de borda que venha a seguir: a silhueta da lança não mudou UM pixel
+  (1133 opacos com e sem, vazados abertos) e ela saiu de laranja a castanho.
+  Contar pixel de silhueta não mede o dano; medir saturação mede.
+- **Prop NÃO é artefato byte-reprodutível, e o resto dos gerados é.** Os dois
+  mapas, os sons e a tabela dos números têm de sair idênticos, e o CI compara.
+  Um PNG de prop não: o denoiser do Cycles varia ±2/255 em algumas dezenas de
+  pixels entre corridas, e os props que não estão em `SOMBRA` ainda levam um
+  carimbo de data do Blender no PNG (os de `SOMBRA` escapam porque o
+  `compor_sombra` os reescreve com o gravador do projeto). `cmp` num prop não
+  responde "a imagem mudou" — para isso, compare os PIXELS.
 - A sombra de contato tem **azimute próprio (250°)**, diferente do azimute do
   mapa: no azimute do mapa ela cai atrás do prop e não se vê.
 - **O importador de SVG do Godot é o ThorVG e não desenha `<text>`.** Texto no
