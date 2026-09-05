@@ -777,16 +777,84 @@ comparar o jogo com a referência olhando a técnica em vez do efeito.
 rejeitado desde 30/08 e sem chamador; manter duas implementações rejeitadas
 por trás de um argumento só é convite a alguém ligar a errada.
 
-### Etapa 4 — Materiais dirigidos  ⏳ o CORRUGADO ficou em 05/09
+### Etapa 4 — Materiais dirigidos  ✅ FECHADA em 05/09, com uma baixa
 - Família de padrões: ripa, corrugado, fiada de telha, ferrugem que escorre
   de cima para baixo, cal descascada nas quinas.
 - **Mede-se por:** o galpão a 100% e a 25% — padrão que só funciona de perto
   não serve.
-- ✅ **O corrugado está feito, e na peça pela qual a etapa se mede** — parede e
-  telhado do armazém, conferidos nas duas escalas (ver *Fora das etapas — o
-  armazém acabado*). Ele saiu pela receita do contêiner: painéis de valor
-  diferente, não vincos de relevo.
-- ⏳ **Ripa, ferrugem e cal continuam por fazer**, e são para todos os props.
+
+#### Os cinco padrões, e onde cada um foi parar
+
+| Padrão | Onde ficou | Como |
+|---|---|---|
+| **corrugado** | parede e telhado do armazém (05/09) | **peça**, não material — `chapa_vinco` em `na_face` |
+| **ripa** | convés do píer n2 e laje do n3 | `material_ripado`, junta + tom por tábua |
+| **ferrugem que escorre** | casco dos dois cargueiros | `material_escorrido`, ruído esticado em Z |
+| **fiada de telha** | já era geometria desde 30/08 | `telhado_duas_aguas` |
+| **cal descascada nas quinas** | ❌ **não se faz nesta geometria** | ver abaixo |
+
+**A diferença entre `material_gasto` e um padrão dirigido é uma só, e é a que
+dá nome à etapa:** a mancha dele é isotrópica e não sabe onde é em cima.
+Ferrugem sabe — ela nasce numa solda e a chuva puxa-a para baixo. Tábua sabe —
+ela corre num sentido. Quem faz a anisotropia é o `Mapping`, esticando a
+coordenada antes do ruído: a escala do `Noise` é um número só e não sabe
+fazê-la sozinha.
+
+**⚠️ E ELES NÃO ENTRAM NA PALETA, ENTRAM PEÇA A PEÇA.** `madeira` veste o
+tabuado de 4,5×2,4 e também o caixote de 25px: ripar a entrada da paleta poria
+oito tábuas dentro de um caixote. É a regra do `DESGASTE` outra vez, aplicada a
+um padrão em vez de a um ruído — e é por isso que o pesqueiro (67px) não
+enferruja e os cargueiros (97px) enferrujam.
+
+#### O que a ripa achou: o píer MELHOR parecia menos construído que o pior
+
+Medido antes de desenhar: o convés do n2 é a **maior superfície do jogo** —
+4,5 × 2,4, cerca de 138px de silhueta, e aparece três vezes na tela. Ele era
+uma chapa lisa de `madeira`, e lia-se como uma folha de compensado. O n1, que é
+o pontão provisório, gasta geometria em nove ripas com fresta. Ou seja: o
+jogador comprava a melhoria e o convés ficava mais liso.
+
+A laje de concreto do n3 tinha o mesmo defeito, e leva o mesmo padrão com os
+números do MATERIAL: painel de 0,90 (18px) em vez de tábua de 0,30 (6px), junta
+fina, quase nenhuma variação de tom — concreto lançado em fôrma varia pouco,
+tábua serrada varia muito, e é essa diferença que impede os dois píeres de se
+parecerem. As juntas correm atravessadas, que é como uma junta de dilatação
+corre e evita repetir a direção do tabuado.
+
+**⚠️ Duas coisas que a ripa ensinou, e a segunda custou uma captura:**
+
+1. **O tom por tábua é o que separa isto de um pente.** Riscar linhas escuras a
+   passo constante é o que a vila já ensinou a não fazer — *"73% dos vãos
+   mediam o VILA_PASSO, e aquilo lia como cerca"*. A junta diz onde uma tábua
+   acaba; o TOM diz que são peças diferentes. Ele sai de um `White Noise` 1D
+   alimentado pelo ÍNDICE da tábua (`floor`), não pela posição — assim a tábua
+   inteira tem um valor só, em vez de um degradê ao longo dela.
+2. **Uma rampa de dois pontos não faz junta que sobreviva à escala.** Linear de
+   0 a `junta`, ela só chega ao escuro total no último pixel: num passo de 6px
+   o que se via no jogo rodando eram bandas de tom, não tábuas. O terceiro
+   ponto dá à sombra um PATAMAR — escura de verdade em metade da largura dela.
+   É a mesma lição das fiadas do telhado: o que o olho lê a esta escala é a
+   sombra ENTRE as peças, e sombra precisa de corpo.
+
+#### ❌ A cal descascada não se faz, e a causa é a geometria de caixa
+
+O caminho óbvio é o nó `Geometry > Pointiness`, que mede convexidade e devia
+valer ~0,5 no pano e mais na quina. Só que **ele é um atributo de VÉRTICE**, e
+uma caixa chanfrada não tem vértice nenhum no meio da face: estão todos na
+aresta. O valor no pano não é medido, é INTERPOLADO dos cantos — não existe
+campo plano contra o qual comparar.
+
+**Medido**, a saída crua do `Pointiness` no galpão em ruína: varia de **29 a
+181** (0..255), mediana **146**, e **31% da parede acima de mediana+10**. Uma
+distribuição larga e contínua, quando o efeito precisa de uma bimodal.
+Aplicado, ele pintou a parede INTEIRA de reboco e a ruína — que tinha acabado
+de ser refeita — virou um barracão castanho.
+
+Subdividir resolveria em teoria e não na prática: para uma orla de 2px seriam
+precisos vértices a cada ~0,1 unidade, e com a densidade que este kit usa o
+efeito sai como um vinhetamento de 12px. **Cal descascada, se voltar, vem de
+uma coordenada — distância à aresta da própria caixa —, nunca da curvatura da
+malha.** A função foi apagada; fica a lição.
 
 ### Etapa 5 — Personagem com rosto  ✅ FEITA em 03/09
 - Folha de rostos por gerador de imagem, aplicada num plano da cabeça.

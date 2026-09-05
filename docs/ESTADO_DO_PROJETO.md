@@ -33,13 +33,10 @@ navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os cartões
 claros têm sombra e borda de 2px. Os escuros não, de propósito: a sombra do
 tema é mais clara que o fundo deles e faria halo.
 
-**A câmera afastou-se em 05/09, e a Etapa 1 fechou.** Vê-se agora um DISTRITO
-e não três berços: o `MEIA_LARG` efetivo passou de 30 para os 20 que o Bruno
-escolheu em 03/09, e a câmera centra-se no centroide dos três berços em vez de
-num ponto herdado. O mundo teve de crescer primeiro — um degrau de costa em
-cada ponta (`my` de −14 a 42) e o fundo da terra de −8 para −16 —, senão o
-jogador via o mapa ACABAR por três lados. Medido, o porto mantém
-~47,5% do quadro e o que cresce é o distrito à volta.
+**A câmera mostra um DISTRITO e não três berços.** O `MEIA_LARG` efetivo é 20,
+e ela centra-se no centroide dos berços. O mundo cresceu para isso — um degrau
+de costa em cada ponta (`my` de −14 a 42) e o fundo da terra em −16 —, senão o
+jogador via o mapa ACABAR por três lados. O porto mantém ~47,5% do quadro.
 
 **A água é tropical e o porto tem PRAIA nas duas pontas.** A areia não vai
 entre a água e o cais: vai **onde o porto não está** — para além do primeiro e
@@ -111,7 +108,7 @@ em `docs/arquivo/HISTORICO.md`.
 |---|---|---|
 | **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas, a 1 INTEIRA e metade da 4** — a 1 (paleta tropical, a areia das duas pontas e o enquadramento, 05/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Da 4, o **corrugado** ficou em 05/09 e a **3 foi medida e REJEITADA** no mesmo dia. Falta, da 4, ripa, ferrugem e cal |
+| **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA** (o traço redesenha o que o corrugado já diz). Da 4, a cal descascada também caiu por medição. É a trilha inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a primeira jogada no telefone devolveu (02–03/09)
@@ -138,8 +135,9 @@ cauda dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da
 interface). A **3 fechou por rejeição**: num estilo que desenha o detalhe com fronteiras de
 valor, um filtro de borda redesenha o desenho — a parede do galpão perde 14% de
 desvio local e a treliça 21% de saturação. Quem separa a silhueta é o contraluz
-do rig, e já separava. Da 4, o **corrugado** ficou em 05/09 na peça pela qual a
-etapa se mede; ripa, ferrugem e cal continuam por fazer.
+do rig, e já separava. A **4 fechou com uma baixa**: corrugado, ripa e ferrugem
+entraram; a cal descascada nas quinas não se faz nesta geometria, e o porquê
+está medido no plano de arte.
 
 **Como o enquadramento se fez** está em `docs/arquivo/HISTORICO.md`; o que
 fica a valer é `docs/BRP_SPATIAL_CONTRACT.md` §1.1.
@@ -292,6 +290,12 @@ duas pontas**, onde o cais deu lugar a praia. A **mata atrás da vila tem
 árvores de verdade** e há árvore no quintal das casas. Os coqueiros chapados
 saíram do SVG do mapa — `--sem-coqueiros` — pela mesma razão que os píeres: o
 que se mexe não pode estar assado no fundo.
+
+**E as chapas lisas acabaram.** O convés do n2 é tabuado com junta e tom por
+tábua, a laje do n3 tem junta atravessada e os dois cargueiros têm ferrugem que
+escorre — padrões DIRIGIDOS, atribuídos peça a peça e nunca pela paleta. O n2
+era a maior superfície do jogo sem desenho, e o píer melhor lia mais liso que o
+provisório.
 
 **O píer, a lança e o casco têm TRÊS NÍVEIS desde 05/09** — é a evolução do
 porto ficando visível. O píer vai de ripas de madeira com fresta a laje de

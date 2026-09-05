@@ -156,6 +156,11 @@ PALETA = {
     # A telha caída e o barrote à mostra. O `telhado_velho` é a água inteira;
     # estes dois são o que sobra dela.
     "barrote": "#6b543c",
+    # ── A FAMÍLIA DE PADRÕES DIRIGIDOS (Etapa 4) ─────────────────────────
+    # A ferrugem que escorre pelo casco. Ela é MAIS CLARA que o navio (86 de
+    # luminância contra 66): num casco navy a mancha escura desapareceria, e o
+    # que se vê num cargueiro real é justamente o rasto claro descendo.
+    "ferrugem": "#8a4b2a",
     # ── O ARMAZÉM DEIXOU DE SER UMA CASA GRANDE (05/09) ──────────────────
     #
     # O VINCO DA CHAPA CORRUGADA. Mesma receita do contêiner, e pela mesma
@@ -242,6 +247,8 @@ DESGASTE = {
     "concreto": 3.0, "concreto_borda": 4.0, "pneu": 10.0,
     # A água de zinco é superfície grande; o vinco é um painel de 4px.
     "zinco": 3.0, "zinco_vinco": 8.0, "chapa_vinco": 8.0,
+    # `ferrugem` NÃO entra aqui: quem lhe dá superfície é o padrão dirigido que
+    # a usa, e um ruído por cima de outro ruído é lixa.
 }
 
 
@@ -277,6 +284,204 @@ def material_gasto(nome: str, hexa: str, escala: float):
     nt.links.new(rampa.outputs["Color"], b.inputs["Base Color"])
     b.inputs["Roughness"].default_value = 0.62
     b.inputs["Specular IOR Level"].default_value = 0.30
+    return m
+
+
+# ---------------------------------------------------- materiais DIRIGIDOS
+#
+# A Etapa 4 do plano de arte pede "uma família de padrões: ripa, corrugado,
+# fiada de telha, ferrugem que escorre, cal descascada nas quinas". O
+# `material_gasto` acima dá MANCHA — ruído isotrópico, sem direção nenhuma —, e
+# mancha diz "esta superfície tem textura" e mais nada. Um padrão DIRIGIDO diz
+# de que a superfície é FEITA: tábuas correm num sentido, ferrugem escorre para
+# baixo.
+#
+# Estão aqui a RIPA e a FERRUGEM. Dos outros três:
+#
+# · o CORRUGADO ficou em 05/09 e saiu como PEÇA (`chapa_vinco` em `na_face`),
+#   não como material — a face do armazém tem 49px e o passo tinha de bater com
+#   as aberturas ao lado. Mesma família, ferramenta diferente: o padrão vira
+#   material quando a superfície é grande e contínua, e vira peça quando é
+#   pequena e o passo tem de concordar com um vizinho;
+# · a FIADA DE TELHA já era geometria em `telhado_duas_aguas` desde 30/08, e
+#   refazê-la como material seria desenhar por cima do desenho — que é
+#   exatamente o que a Etapa 3 mediu e rejeitou;
+# · a CAL DESCASCADA NAS QUINAS foi tentada e NÃO SE FAZ nesta geometria. Ver
+#   o bloco abaixo, que é a lição e fica no lugar da função.
+#
+# ⚠️ A CAL DESCASCADA MORRE NO `Pointiness`, E A CAUSA É A GEOMETRIA DE CAIXA.
+# O caminho óbvio é o nó `Geometry > Pointiness`, que mede convexidade e devia
+# valer ~0,5 no pano e mais na quina. Só que **ele é um atributo de VÉRTICE**, e
+# uma caixa chanfrada não tem vértice nenhum no meio da face: todos estão na
+# aresta. O valor no pano não é medido, é INTERPOLADO dos cantos — não existe
+# campo plano contra o qual comparar. Medido no galpão em ruína, a saída crua
+# do `Pointiness` varia de 29 a 181 (0..255) com mediana 146 e **31% da parede
+# acima de mediana+10**: uma distribuição larga e contínua, quando o efeito
+# precisa de uma bimodal. Aplicado, ele pintou a parede INTEIRA de reboco e a
+# ruína virou um barracão castanho.
+#
+# Subdividir a parede resolveria em teoria e não na prática: para uma orla de
+# 2px seriam precisos vértices a cada ~0,1 unidade, e com a densidade que este
+# kit usa (um vértice a cada 0,85) o efeito sai como um vinhetamento de 12px.
+# Cal descascada, se voltar, vem de uma coordenada — distância à aresta da
+# própria caixa —, nunca da curvatura da malha.
+#
+# ⚠️ E ELES NÃO ENTRAM NA PALETA, ENTRAM PEÇA A PEÇA. `madeira` veste o tabuado
+# de 4,5×2,4 e também o caixote de 25px: ripar a entrada da paleta poria oito
+# tábuas dentro de um caixote, que é a regra do `DESGASTE` outra vez — número
+# grande em peça pequena vira lixa. Cada um destes é um material NOVO, atribuído
+# aos objetos em que cabe.
+#
+# ⚠️ E O CORRUGADO NÃO ESTÁ AQUI, de propósito. Ele ficou em 05/09 no armazém e
+# saiu como PEÇA (`chapa_vinco` em `na_face`), não como material, porque a face
+# tem 49px e o passo tinha de ser exato. Mesma família, ferramenta diferente: o
+# padrão vira material quando a superfície é grande e contínua, e vira peça
+# quando ela é pequena e o passo tem de bater com uma abertura ao lado.
+
+
+def _coord_do_eixo(nt, eixo: str):
+    """A coordenada de OBJETO num eixo, que é onde todo padrão dirigido começa.
+
+    Objeto e não UV: nenhuma peça deste projeto tem UV, e coordenada de objeto
+    é o que faz o passo ficar em unidades de MUNDO — que é a única escala que
+    este arquivo conhece, e a que a conta de pixels usa.
+    """
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+    nt.links.new(coord.outputs["Object"], sep.inputs["Vector"])
+    return sep.outputs[eixo]
+
+
+def material_ripado(nome: str, hexa: str, passo: float,
+                    eixo: str = "Y", contraste: float = 0.88,
+                    junta: float = 0.24, escuro_junta: float = 0.44):
+    """Tábuas paralelas: uma JUNTA escura por tábua e um TOM próprio em cada.
+
+    ⚠️ O TOM POR TÁBUA É O QUE SEPARA ISTO DE UM PENTE. Riscar linhas escuras a
+    passo constante dá exatamente aquilo que a vila já ensinou a não fazer —
+    *"73% dos vãos mediam o VILA_PASSO, e aquilo lia como cerca"*. O que faz um
+    tabuado ler como tabuado é cada tábua ter a sua cor: a junta diz onde uma
+    acaba, o tom diz que são peças diferentes. Sai de um `White Noise` 1D
+    alimentado pelo ÍNDICE da tábua (`floor`), não pela posição — assim a tábua
+    inteira tem um valor só, em vez de um degradê ao longo dela.
+
+    `junta` é a fração da tábua que a sombra ocupa, e só de UM lado. Nos dois
+    lados a sombra da tábua encontra a da vizinha e sai o dobro da largura: num
+    tabuado de 0,30 (6px) isso dá 2px de junta para 4px de tábua, e o convés lê
+    como grelha.
+    """
+    m = bpy.data.materials.new(nome)
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+
+    c = _coord_do_eixo(nt, eixo)
+
+    div = nt.nodes.new("ShaderNodeMath")
+    div.operation = "DIVIDE"
+    div.inputs[1].default_value = passo
+    nt.links.new(c, div.inputs[0])
+
+    piso = nt.nodes.new("ShaderNodeMath")
+    piso.operation = "FLOOR"
+    nt.links.new(div.outputs["Value"], piso.inputs[0])
+
+    # A posição DENTRO da tábua, por subtração — sem depender do nome do
+    # operador de fração, que já mudou de identificador entre versões.
+    dentro = nt.nodes.new("ShaderNodeMath")
+    dentro.operation = "SUBTRACT"
+    nt.links.new(div.outputs["Value"], dentro.inputs[0])
+    nt.links.new(piso.outputs["Value"], dentro.inputs[1])
+
+    ruido = nt.nodes.new("ShaderNodeTexWhiteNoise")
+    ruido.noise_dimensions = "1D"
+    nt.links.new(piso.outputs["Value"], ruido.inputs["W"])
+
+    # Máscara da junta: 0 na sombra, 1 no corpo da tábua.
+    #
+    # ⚠️ COM DOIS PONTOS SÓ, A JUNTA NÃO SOBREVIVE À ESCALA. Uma rampa linear
+    # de 0 a `junta` só chega ao escuro TOTAL no último pixel, e num passo de
+    # 6px o que se vê é um degradê de um pixel — medido no jogo rodando, o
+    # convés lia como bandas de tom e não como tábuas. O terceiro ponto dá à
+    # sombra um PATAMAR: ela é escura de verdade em metade da sua largura e só
+    # depois sobe. É a mesma lição das fiadas do telhado — o que o olho lê a
+    # esta escala é a sombra ENTRE as peças, e sombra precisa de corpo.
+    mascara = nt.nodes.new("ShaderNodeValToRGB")
+    mascara.color_ramp.elements[0].position = 0.0
+    mascara.color_ramp.elements[0].color = (0, 0, 0, 1)
+    patamar = mascara.color_ramp.elements.new(junta * 0.45)
+    patamar.color = (0, 0, 0, 1)
+    mascara.color_ramp.elements[2].position = junta
+    mascara.color_ramp.elements[2].color = (1, 1, 1, 1)
+    nt.links.new(dentro.outputs["Value"], mascara.inputs["Fac"])
+
+    combina = nt.nodes.new("ShaderNodeMath")
+    combina.operation = "MULTIPLY"
+    nt.links.new(ruido.outputs["Value"], combina.inputs[0])
+    nt.links.new(mascara.outputs["Color"], combina.inputs[1])
+
+    # UMA rampa resolve as três cores — junta, tábua escura, tábua clara — e
+    # evita nós de mistura, cuja assinatura mudou entre versões do Blender.
+    rampa = nt.nodes.new("ShaderNodeValToRGB")
+    rampa.color_ramp.elements[0].position = 0.0
+    rampa.color_ramp.elements[0].color = _escurecer(hexa, escuro_junta)
+    e_meio = rampa.color_ramp.elements.new(0.14)
+    e_meio.color = _escurecer(hexa, contraste)
+    rampa.color_ramp.elements[2].position = 1.0
+    rampa.color_ramp.elements[2].color = _escurecer(hexa, 1.0)
+    nt.links.new(combina.outputs["Value"], rampa.inputs["Fac"])
+
+    nt.links.new(rampa.outputs["Color"], b.inputs["Base Color"])
+    b.inputs["Roughness"].default_value = 0.72
+    b.inputs["Specular IOR Level"].default_value = 0.0
+    return m
+
+
+def material_escorrido(nome: str, hexa: str, cor_corrida: str,
+                       escala: float = 7.0, alongamento: float = 0.16,
+                       inicio: float = 0.52, fim: float = 0.70):
+    """Ferrugem que ESCORRE: manchas esticadas no eixo Z, de cima para baixo.
+
+    A diferença entre isto e o `material_gasto` é uma só, e é a que dá o nome à
+    etapa: a mancha dele é isotrópica e não sabe onde é em cima. Ferrugem sabe.
+    Ela nasce numa solda, num rebite ou numa amurada e a chuva puxa-a para
+    baixo, então o rasto é comprido no vertical e estreito no horizontal.
+
+    Quem faz isso é o `Mapping`, esticando a COORDENADA em Z antes do ruído —
+    a escala do `Noise` é um número só e não sabe fazer anisotropia sozinha.
+    `alongamento` de 0,16 estica as manchas cerca de seis vezes.
+
+    ⚠️ E A RAMPA COMEÇA ALTA (0,52) DE PROPÓSITO. Ferrugem que cobre metade do
+    casco não é um navio enferrujado, é um navio castanho — a peça perde a cor
+    que a identifica, que é exatamente o que o contorno da Etapa 3 fez à lança.
+    Aqui só o topo do ruído vira rasto; o resto do casco fica casco.
+    """
+    m = bpy.data.materials.new(nome)
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    mapa = nt.nodes.new("ShaderNodeMapping")
+    mapa.inputs["Scale"].default_value = (1.0, 1.0, alongamento)
+    nt.links.new(coord.outputs["Object"], mapa.inputs["Vector"])
+
+    ruido = nt.nodes.new("ShaderNodeTexNoise")
+    ruido.inputs["Scale"].default_value = escala
+    ruido.inputs["Detail"].default_value = 4.0
+    ruido.inputs["Roughness"].default_value = 0.62
+    nt.links.new(mapa.outputs["Vector"], ruido.inputs["Vector"])
+
+    rampa = nt.nodes.new("ShaderNodeValToRGB")
+    rampa.color_ramp.elements[0].position = inicio
+    rampa.color_ramp.elements[0].color = _escurecer(hexa, 1.0)
+    rampa.color_ramp.elements[1].position = fim
+    rampa.color_ramp.elements[1].color = _escurecer(cor_corrida, 1.0)
+    nt.links.new(ruido.outputs["Fac"], rampa.inputs["Fac"])
+
+    nt.links.new(rampa.outputs["Color"], b.inputs["Base Color"])
+    b.inputs["Roughness"].default_value = 0.78
+    b.inputs["Specular IOR Level"].default_value = 0.0
     return m
 
 
@@ -760,8 +965,22 @@ def montar(M: dict) -> dict:
                 M["madeira_velha"], rot=(0, 2 if i % 2 else -3, 0)))
     grupos["pier_vazio"] = estacas_velhas
 
+    # ⚠️ O CONVÉS DO n2 ERA UMA CHAPA LISA, e é a MAIOR superfície do jogo:
+    # 4,5 × 2,4, cerca de 138px de silhueta, e ela aparece três vezes na tela.
+    # O n1 gasta geometria em nove ripas com fresta — a fresta é o que diz
+    # "provisório" —, e o n2, que é a MELHORIA, não tinha desenho nenhum: lia
+    # como uma folha de compensado. O píer melhor parecia menos construído que
+    # o pior.
+    #
+    # Aqui a ripa é MATERIAL e não peça, e a escolha é o contrário da do n1 por
+    # uma razão de leitura: no n2 as tábuas estão JUSTAS, então o que existe é
+    # a junta, não o vão. Vinte caixas para desenhar vinte juntas seria pagar
+    # geometria por uma linha de sombra.
+    TABUA = 0.30                  # 6px na tela — o passo que o contêiner mediu
     tabuado = [caixa("tabuado", (0, 0, ALT_PIER - z(2.2)),
-                     (PIER_ALCANCE, PIER_LARG, z(4.4)), M["madeira"])]
+                     (PIER_ALCANCE, PIER_LARG, z(4.4)),
+                     material_ripado("tabuado_ripado", PALETA["madeira"],
+                                     TABUA, eixo="Y"))]
 
     # Carga no convés. Um píer limpo parece cenário; com caixotes à espera de
     # embarque parece que ali se trabalha. Fica na ponta do mar (+mx) e do lado
@@ -1020,8 +1239,21 @@ def montar(M: dict) -> dict:
             estacas_aco.append(caixa(f"aco_{i}_{lado}", (x, y, ALT_PIER / 2 - z(13.0)),
                                      (0.20, 0.20, ALT_PIER + z(26.0)), M["metal"]))
     deck_n3 = [
+        # A LAJE TINHA O MESMO DEFEITO DO CONVÉS DO n2 — 4,5 × 2,4 de cinzento
+        # chapado —, e leva a mesma família de padrão com os números do
+        # MATERIAL e não os da madeira: painel de 0,90 (18px) em vez de tábua
+        # de 0,30, junta fina, e quase nenhuma variação de tom entre painéis.
+        # Concreto lançado em fôrma varia pouco; tábua serrada varia muito, e é
+        # essa diferença que impede os dois píeres de se parecerem.
+        #
+        # E as juntas correm ATRAVESSADAS (eixo `X`), não ao comprido: junta de
+        # dilatação de um cais é transversal, e assim as duas lajes não repetem
+        # a direção do tabuado que o nível anterior já usou.
         caixa("laje", (0, 0, ALT_PIER - z(2.4)),
-              (PIER_ALCANCE, PIER_LARG, z(4.8)), M["concreto"]),
+              (PIER_ALCANCE, PIER_LARG, z(4.8)),
+              material_ripado("laje_junta", PALETA["concreto"], 0.90,
+                              eixo="X", contraste=0.955, junta=0.10,
+                              escuro_junta=0.74)),
         # Meio-fio na borda do mar. Sem ele a laje acaba numa aresta e lê como
         # tampo; com ele lê como cais — a mesma peça que a rua do mapa usa.
         caixa("laje_meiofio", (0, -PIER_LARG / 2 + 0.05, ALT_PIER + z(1.4)),
@@ -1199,7 +1431,13 @@ def montar(M: dict) -> dict:
                  raio * 1.12, 0.06, 10, PALETA_MAT["metal"]),
         ]
 
-    grupos["barco_medio"] = casco("_m", CARGA, 0.62, M["casco"], M["faixa"]) \
+    # ⚠️ SÓ OS CARGUEIROS ENFERRUJAM, e o pesqueiro não — não por narrativa,
+    # por tamanho: ele tem 67px de silhueta contra os 97 dos outros, e um rasto
+    # de ferrugem que precisa de correr o pontal inteiro não cabe. É a mesma
+    # conta do `DESGASTE`, aplicada a um padrão em vez de a um ruído.
+    casco_ferrugem = material_escorrido("casco_ferrugem", PALETA["casco"],
+                                        PALETA["ferrugem"])
+    grupos["barco_medio"] = casco("_m", CARGA, 0.62, casco_ferrugem, M["faixa"]) \
         + superestrutura("_m", -1.15, 0.95, (1.1, 0.85, 0.62)) \
         + chamine("_m", -1.55, 1.48, 0.13, 0.5) + [
         caixa("carga_a", (0.75, 0.22, 0.85), (0.6, 0.42, 0.42), M["laranja"]),
@@ -1207,7 +1445,8 @@ def montar(M: dict) -> dict:
         caixa("carga_c", (0.05, 0.0, 0.82), (0.55, 0.5, 0.38), M["amarelo"]),
         caixa("mastro_m", (1.55, 0.0, 1.25), (0.06, 0.06, 1.0), M["metal_claro"])]
 
-    grupos["barco_grande"] = casco("_g", CARGA, 0.62, M["casco"], M["faixa"], 5) \
+    grupos["barco_grande"] = casco("_g", CARGA, 0.62, casco_ferrugem,
+                                   M["faixa"], 5) \
         + superestrutura("_g", -1.35, 1.00, (0.95, 0.8, 0.72)) \
         + chamine("_g", -1.7, 1.58, 0.15, 0.56) + [
         caixa("pilha_a", (0.95, 0.22, 0.86), (0.7, 0.42, 0.44), M["laranja"]),

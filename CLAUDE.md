@@ -547,6 +547,30 @@ tranca isso.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
+- **Padrão dirigido não entra na PALETA, entra peça a peça.** É a regra acima
+  aplicada a padrão em vez de a ruído: `madeira` veste o tabuado de 4,5×2,4 e
+  também o caixote de 25px, então ripar a entrada da paleta poria oito tábuas
+  dentro de um caixote. Pela mesma conta o pesqueiro (67px) não enferruja e os
+  cargueiros (97px) enferrujam.
+- **A MELHORIA não pode ser mais lisa do que aquilo que ela substitui.** O
+  convés do píer n2 era uma chapa de `madeira` — a maior superfície do jogo,
+  138px, três vezes na tela — e o n1, que é o pontão provisório, gasta
+  geometria em nove ripas com fresta. O jogador comprava o upgrade e o convés
+  ficava LISO. Ao construir dois estados de uma peça, confira que o melhor tem
+  mais desenho, não menos.
+- **Sombra entre peças precisa de PATAMAR, não de rampa.** Uma rampa linear de
+  dois pontos só chega ao escuro total no último pixel: num tabuado de passo
+  6px o que se via no jogo eram bandas de tom, não tábuas. Três pontos — escuro,
+  escuro, claro — dão à sombra metade da largura dela em valor cheio. Vale para
+  toda junta, fiada ou vinco desenhado por material.
+- **⚠️ `Pointiness` NÃO SEPARA QUINA DE PANO NUMA CAIXA, e não dá erro.** Ele é
+  atributo de VÉRTICE, e uma caixa chanfrada não tem vértice nenhum no meio da
+  face — o valor no pano é interpolado dos cantos, e não existe campo plano
+  contra o qual comparar. Medido no galpão em ruína: varia de 29 a 181 com
+  mediana 146 e 31% da parede acima de mediana+10, quando o efeito precisa de
+  uma distribuição bimodal. Aplicado, pintou a parede inteira. Efeito que
+  depende de aresta, neste kit, sai de uma COORDENADA (distância à aresta da
+  caixa), nunca da curvatura da malha.
 - **Recuar um contorno para DENTRO não é `costa_deslocada` com o sinal
   trocado.** Aquele empurra cada vértice na diagonal (+d em mx, −d em my), o
   que serve para uma faixa de água; ao longo de um MURO isso desloca também o
