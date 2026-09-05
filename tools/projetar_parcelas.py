@@ -97,81 +97,99 @@ def ler_parcelas_do_gdd(gdd: Path) -> dict[int, tuple[int, int]]:
     return parcelas
 
 
-def valor_medio(faixa: tuple[int, int], k: dict, frac_cais: float = 0.0) -> float:
-    """Valor bruto médio de um barco, na FORMA que o jogo usa.
+def faixas_das_classes(faixa: tuple[int, int], k: dict) -> dict:
+    """Onde cai a faixa de cada CLASSE de navio dentro da faixa de uma fase.
 
-    O jogo não sorteia uniforme na faixa: divide em barco pequeno e grande,
-    com chances diferentes. Na Fase 1 o corte cai em R$200 dentro de R$80–300,
-    ou seja a 40% da faixa — e é essa proporção que se leva para as outras
-    fases, porque o GDD só dá os extremos. Uniforme na faixa inteira daria
-    R$550 na Fase 2 contra os R$500 desta forma: a diferença é pequena, mas
-    inventá-la para cima seria enfeitar a conta a favor da conclusão.
+    O jogo não sorteia uniforme entre os extremos: cada classe tem a sua faixa,
+    e o GDD só dá o mínimo e o máximo de cada fase. O que se leva da Fase 1
+    para as outras são as PROPORÇÕES — onde começa e acaba o pesqueiro dentro
+    do intervalo total, onde o cargueiro, onde o longo curso. Inventar uma
+    uniforme seria enfeitar a conta a favor da conclusão.
     """
+    classes = k["CLASSES_DE_NAVIO"]
+    base_lo = min(float(c["valor_min"]) for c in classes.values())
+    base_hi = max(float(c["valor_max"]) for c in classes.values())
+    largura = max(base_hi - base_lo, 1e-9)
     lo, hi = faixa
-    corte_f1 = ((k["BOAT_VALUE_SMALL_MAX"] - k["BOAT_VALUE_SMALL_MIN"])
-                / float(k["BOAT_VALUE_LARGE_MAX"] - k["BOAT_VALUE_SMALL_MIN"]))
-    corte = lo + corte_f1 * (hi - lo)
-    medio_pequeno = (lo + corte) / 2.0
-    medio_grande = (corte + hi) / 2.0
-    # ⚠️ O CAIS REFORÇADO MUDA A MISTURA, e esquecê-lo aqui é o modelo mentir
-    # exatamente nos perfis que jogam bem. Ele multiplica a chance de navio
-    # grande, então o barco médio passa a valer mais sem nenhuma constante de
-    # VALOR ter mudado — e foi assim que o portão reprovou quando os upgrades
-    # entraram: Descuidado (que quase não compra o cais) passava a 7%, Mediano
-    # e Ótimo saíam 21% e 22% ABAIXO do medido. Um perfil fora é métrica; os
-    # que compram fora e o que não compra dentro é o modelo a ignorar a compra.
-    #
-    # `frac_cais` é a FRAÇÃO das partidas em que ele acabou de pé, pela mesma
-    # razão que as outras estruturas entram assim: arredondar para sim/não
-    # projetaria um porto que ninguém joga.
-    p = chance_de_navio_grande(k, frac_cais)
-    return (1.0 - p) * medio_pequeno + p * medio_grande
+    out = {}
+    for nome, c in classes.items():
+        f_min = (float(c["valor_min"]) - base_lo) / largura
+        f_max = (float(c["valor_max"]) - base_lo) / largura
+        out[nome] = (lo + f_min * (hi - lo), lo + f_max * (hi - lo))
+    return out
 
 
-def chance_de_navio_grande(k: dict, frac_cais: float) -> float:
-    """A chance de o barco ser grande, já com o cais reforçado por dentro."""
-    return min(1.0, float(k["BOAT_LARGE_CHANCE"])
-               * (1.0 + (float(k["CAIS_CHANCE_GRANDE"]) - 1.0) * frac_cais))
+def mistura_de_classes(k: dict, niveis: dict) -> dict:
+    """Com que frequência cada CLASSE de navio chega, dado até que nível o
+    porto do perfil chegou.
+
+    ⚠️ ISTO NÃO SE DEDUZ DAS FRAÇÕES DE ESTRUTURA, e foi por isso que a medição
+    passou a exportar `niveis` em 06/09. O nível 2 é "duas estruturas
+    quaisquer": somar a fração do armazém com a do pátio não diz em quantas
+    partidas houve DUAS ao mesmo tempo. E o nível é o que decide tudo aqui —
+    o perfil Descuidado chega ao nível 2 em 96% das partidas e ao 3 em
+    NENHUMA, então o navio de longo curso não existe na economia dele.
+
+    Os pesos renormalizam-se dentro das classes disponíveis, exatamente como o
+    `_sortear_classe()` do jogo faz: um porto de nível 1 vê só pesqueiro, e o
+    peso das outras redistribui-se sem nenhum número escrito para esse caso.
+    """
+    classes = k["CLASSES_DE_NAVIO"]
+    out = {nome: 0.0 for nome in classes}
+    for nivel_txt, frac in niveis.items():
+        if frac <= 0.0:
+            continue
+        nivel = int(nivel_txt)
+        disponiveis = {n: c for n, c in classes.items()
+                       if int(c["nivel"]) <= nivel}
+        soma = sum(float(c["peso"]) for c in disponiveis.values())
+        if soma <= 0.0:
+            continue
+        for nome, c in disponiveis.items():
+            out[nome] += frac * float(c["peso"]) / soma
+    return out
 
 
-def medias_por_tamanho(faixa: tuple[int, int], k: dict) -> tuple[float, float]:
-    """O valor médio do barco pequeno e o do grande, na forma que o jogo usa."""
-    lo, hi = faixa
-    corte_f1 = ((k["BOAT_VALUE_SMALL_MAX"] - k["BOAT_VALUE_SMALL_MIN"])
-                / float(k["BOAT_VALUE_LARGE_MAX"] - k["BOAT_VALUE_SMALL_MIN"]))
-    corte = lo + corte_f1 * (hi - lo)
-    return (lo + corte) / 2.0, (corte + hi) / 2.0
+def valor_medio(faixa: tuple[int, int], k: dict, niveis: dict) -> float:
+    """Valor bruto médio de um navio, na FORMA que o jogo usa."""
+    faixas = faixas_das_classes(faixa, k)
+    mistura = mistura_de_classes(k, niveis)
+    total = 0.0
+    for nome, (lo, hi) in faixas.items():
+        total += mistura[nome] * (lo + hi) / 2.0
+    return total
 
 
-def valor_com_motivos(faixa: tuple[int, int], k: dict, frac_cais: float,
+def valor_com_motivos(faixa: tuple[int, int], k: dict, niveis: dict,
                       estruturas: dict) -> float:
     """O valor médio recebido: o bruto MAIS o que a estrutura acrescenta.
 
     ⚠️ O BÓNUS DEIXOU DE SER UM MULTIPLICADOR ÚNICO EM 06/09, e um modelo que o
-    trate como tal erra para os dois lados de uma vez. Ele agora depende do
-    MOTIVO do barco, e o motivo sorteia-se por TAMANHO — o armazém paga em 45%
-    dos pesqueiros e 35% dos navios grandes, o pátio só nos grandes. Como o
-    cais reforçado empurra a mistura para o grande, quem o compra muda também a
-    frequência de cada bónus, sem nenhuma constante de valor ter mudado. É a
-    mesma armadilha que o `frac_cais` acima descreve, um andar abaixo: o
-    portão de calibração reprova se esta conta ficar a somar +50% em tudo.
+    trate como tal erra para os dois lados de uma vez. Ele depende do MOTIVO do
+    barco, e o motivo sorteia-se DENTRO DA CLASSE — o armazém paga em 45% dos
+    pesqueiros e 25% dos navios de longo curso, o pátio não paga em pesqueiro
+    nenhum. Como a trava do nível decide quais classes chegam, quem levanta o
+    porto muda também a frequência de cada bónus, sem nenhuma constante de
+    valor ter mudado. O portão de calibração reprova se esta conta voltar a
+    somar +50% em tudo: medido nesse estado, ele saiu 15,7% acima do medido.
     """
-    medio_pequeno, medio_grande = medias_por_tamanho(faixa, k)
-    p = chance_de_navio_grande(k, frac_cais)
-    motivos = k["MOTIVOS"]
+    faixas = faixas_das_classes(faixa, k)
+    mistura = mistura_de_classes(k, niveis)
+    classes = k["CLASSES_DE_NAVIO"]
     total = 0.0
-    for coluna, prob, medio in (("peso_pequeno", 1.0 - p, medio_pequeno),
-                                ("peso_grande", p, medio_grande)):
-        soma = sum(float(m[coluna]) for m in motivos.values())
+    for nome, (lo, hi) in faixas.items():
+        medio = (lo + hi) / 2.0
+        pesos = classes[nome]["motivos"]
+        soma = sum(float(v) for v in pesos.values())
         if soma <= 0.0:
             continue
-        for dados in motivos.values():
-            fatia = float(dados[coluna]) / soma
+        for motivo, peso in pesos.items():
+            dados = k["MOTIVOS"][motivo]
             estrutura = str(dados["estrutura"])
             bonus = 0.0
             if estrutura:
                 bonus = float(dados["bonus"]) * estruturas.get(estrutura, 0.0)
-            total += prob * fatia * medio * (1.0 + bonus)
+            total += mistura[nome] * (float(peso) / soma) * medio * (1.0 + bonus)
     return total
 
 
@@ -205,7 +223,7 @@ PORTO_COMPLETO = {"armazem": 1.0, "patio": 1.0, "escritorio": 1.0}
 
 def margem_semanal(k: dict, barcos: float, faixa: tuple[int, int],
                    trabalhadores: float, passivo_extra: int,
-                   estruturas: dict) -> dict:
+                   estruturas: dict, niveis: dict) -> dict:
     """A conta de uma semana, na mesma ordem em que o jogo a faz.
 
     `estruturas` é a FRAÇÃO das partidas em que cada uma acabou de pé, e não um
@@ -213,8 +231,8 @@ def margem_semanal(k: dict, barcos: float, faixa: tuple[int, int],
     terceiro píer em nenhuma: arredondar isso para "tem" ou "não tem" seria
     projetar um porto que ninguém joga.
     """
-    bruto = valor_medio(faixa, k, estruturas.get("cais", 0.0))
-    liquido = valor_com_motivos(faixa, k, estruturas.get("cais", 0.0), estruturas)
+    bruto = valor_medio(faixa, k, niveis)
+    liquido = valor_com_motivos(faixa, k, niveis, estruturas)
     liquido *= (1.0 - desconto_medio_do_rival(k, barcos))
     contratos = barcos * liquido
 
@@ -251,12 +269,11 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
             continue
         previsto = margem_semanal(
             k, barcos, faixas[1], float(dados["trabalhadores_medios"]), 0,
-            dados["estruturas"])["margem"]
+            dados["estruturas"], dados["niveis"])["margem"]
         desvio = abs(previsto - medido)
         erro = desvio / max(abs(medido), 1.0)
         # Passa por percentagem OU por piso absoluto — ver PISO_EM_BARCOS.
-        piso = PISO_EM_BARCOS * valor_medio(faixas[1], k,
-                                            dados["estruturas"].get("cais", 0.0))
+        piso = PISO_EM_BARCOS * valor_medio(faixas[1], k, dados["niveis"])
         passa = erro <= TOLERANCIA or desvio <= piso
         marca = "ok" if passa else "FORA"
         queixas.append("  %-11s medido R$%-7d  modelo R$%-7d  erro %5.1f%%  %s"
@@ -283,7 +300,20 @@ def main() -> int:
     medicao = json.loads(Path(args.medicao).read_text(encoding="utf-8"))
     k = json.loads(Path(args.constantes).read_text(encoding="utf-8"))
     faixas = ler_faixas_do_gdd(GDD)
+    # ⚠️ A FASE 1 SAI DO CÓDIGO, NÃO DO GDD, e é a regra do projeto: onde os
+    # dois divergirem, quem manda é o código. Divergiram em 06/09 — o GDD tem
+    # R$8.000–70.000 e as classes de navio passaram a ir de R$12.000 a
+    # R$88.000 —, e o portão reprovou os TRÊS perfis por ~23% de uma vez. Três
+    # fora ao mesmo tempo nunca é métrica: é o modelo a ler a faixa errada. As
+    # Fases 2 e 3 continuam a sair do GDD, porque delas o código não sabe nada.
+    classes = k["CLASSES_DE_NAVIO"]
+    faixas[1] = (min(int(c["valor_min"]) for c in classes.values()),
+                 max(int(c["valor_max"]) for c in classes.values()))
     parcelas = ler_parcelas_do_gdd(GDD)
+    # E a Parcela 1 também: o GDD tem R$550.000 congelados e o jogo cobra o que
+    # está em `PARCELA_AMOUNT`. Imprimir o número do GDD ao lado de uma Fase 1
+    # medida com outro seria a mesma divergência calada, um campo ao lado.
+    parcelas[1] = (parcelas[1][0], int(k["PARCELA_AMOUNT"]))
 
     print("=== Parcelas 2 e 3 — projeção a partir da Fase 1 medida ===")
     print("Medição: %d partidas por perfil, semente %d (simular_balanceamento.gd)"
@@ -343,8 +373,10 @@ def main() -> int:
             barcos = barcos_f1 * (d / docas)
             trabalhadores = trabalhadores_f1 + cfg["docas_por_fase"] * (fase - 1)
             passivo = cfg["passivo_por_fase"] * (fase - 1)
+            # O porto das fases seguintes é o que acabou a Fase 1: o mesmo
+            # nível, e por isso as mesmas classes de navio a atracar.
             m = margem_semanal(k, barcos, faixas[fase], trabalhadores, passivo,
-                               perfil["estruturas"])
+                               perfil["estruturas"], perfil["niveis"])
             acumulado = m["margem"] * semanas_por_fase
             caixa += acumulado
             semana, valor = parcelas[fase]
@@ -360,9 +392,13 @@ def main() -> int:
     # A leitura sai da conta, não de quem lê a tabela. O ponto não é se as
     # parcelas fecham: é a VELOCIDADE relativa das duas curvas.
     print("=== Leitura ===")
-    v1 = valor_medio(faixas[1], k)
-    v2 = valor_medio(faixas[2], k)
-    v3 = valor_medio(faixas[3], k)
+    # O contrato médio de um PORTO COMPLETO: é a comparação que interessa
+    # entre fases, e é a única leitura em que o nível não varia — quem chega à
+    # Fase 2 chegou lá com o porto de pé.
+    porto_no_topo = {"1": 0.0, "2": 0.0, "3": 1.0}
+    v1 = valor_medio(faixas[1], k, porto_no_topo)
+    v2 = valor_medio(faixas[2], k, porto_no_topo)
+    v3 = valor_medio(faixas[3], k, porto_no_topo)
     _, p1 = parcelas[1]
     _, p2 = parcelas[2]
     _, p3 = parcelas[3]

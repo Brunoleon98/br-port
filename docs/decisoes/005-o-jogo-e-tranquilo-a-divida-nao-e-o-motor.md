@@ -89,6 +89,14 @@ fase com menos porto do que podia ter.
 > partida em 600 constrói tudo num porto que não rende e chega curta) e o vão
 > em barcos, que encolheu de 43,6 para 38,4 — é o preço do turno extra do
 > granel.
+>
+> ⚠️ **E em 06/09 a trava do nível de navio entrou** (`docs/decisoes/009`). O
+> que está em vigor é **100% · 80,2% · 37,3%**, com o teto de 100% de volta.
+> **A frase mais importante desta página mudou de métrica:** "quem separa os
+> jogadores é o porto que conseguem levantar" mede-se agora pela MARGEM em
+> regime (R$674.019 contra R$103.290), e não pela contagem de barcos — o porto
+> pobre só recebe pesqueiro, descarrega num turno e chega a atender MAIS barcos
+> do que o rico.
 
 Contra uma Parcela 1 de R$550.000 — que é o número desta medição de 02/09. É a forma que a decisão pede: o mediano
 ganha quatro em cada cinco — tranquilo —, e o descuidado perde duas em cada

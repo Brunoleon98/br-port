@@ -53,12 +53,13 @@ func _caixa_para_tudo() -> int:
 # O motivo é o ÚLTIMO argumento e nasce em "pescado" de propósito: é o único
 # que não tem estrutura por trás, então um barco de teste feito por aqui paga
 # exatamente o que diz e nenhum bloco antigo passou a ganhar bónus escondido
-# quando o motivo entrou (06/09).
+# quando o motivo entrou (06/09). A classe segue o mesmo princípio: "pesqueiro"
+# é a de nível 1, a única que chega a um porto em ruínas.
 func _fake_boat(value: int, op_turns: int, rival: bool,
-		motivo: String = "pescado") -> Dictionary:
+		motivo: String = "pescado", classe: String = "pesqueiro") -> Dictionary:
 	return {
-		"id": 999, "value": value, "motivo": motivo,
-		"op_turns": op_turns, "large": op_turns > 1,
+		"id": 999, "value": value, "motivo": motivo, "classe": classe,
+		"op_turns": op_turns,
 		"progress": 0, "rival": rival, "matched": false, "matched_value": 0,
 	}
 
@@ -880,40 +881,41 @@ func _t5l_motivo_da_escala() -> void:
 			% ("nenhum de fora" if sem_linha == "" else sem_linha),
 		sem_linha == "")
 
-	# (2) OS PESOS SOMAM 100 EM CADA COLUNA. É o que a tabela dos números
-	# publica, e é assim que se lê a mistura sem fazer conta nenhuma.
-	for coluna in ["peso_pequeno", "peso_grande"]:
+	# (2) OS PESOS DE MOTIVO SOMAM 100 EM CADA CLASSE. É o que a tabela dos
+	# números publica, e é assim que se lê a mistura sem fazer conta nenhuma.
+	for classe in GS.CLASSES_DE_NAVIO:
+		var pesos: Dictionary = GS.CLASSES_DE_NAVIO[classe]["motivos"]
 		var soma := 0
-		for id in GS.MOTIVOS:
-			soma += int(GS.MOTIVOS[id][coluna])
-		_check("os pesos de %s somam 100 (%d)" % [coluna, soma], soma == 100)
+		for id in pesos:
+			soma += int(pesos[id])
+		_check("os motivos do %s somam 100 (%d)" % [classe, soma], soma == 100)
 
-	# (3) O SORTEIO RESPEITA O TAMANHO, e TODO MOTIVO DA TABELA CHEGA AO JOGO.
+	# (3) O SORTEIO RESPEITA A CLASSE, e TODO MOTIVO DA TABELA CHEGA AO JOGO.
 	#
 	# ⚠️ SÃO DUAS PERGUNTAS E A PRIMEIRA VERSÃO SÓ FAZIA UMA. Ela montava o
 	# conjunto esperado A PARTIR DOS PESOS e comparava com o sorteado — o que
-	# lê a mesma fonte do defeito: com o peso do granel a zero nas duas
-	# colunas, ele deixava de ser esperado E de ser sorteado, e a asserção
-	# passava contente. Injetado em 06/09, não reprovou nada. Quem tem de
-	# reprovar isso é uma pergunta que NÃO sai dos pesos: um motivo escrito na
-	# tabela e que nunca aparece é a irmã do `barco_medio` que era renderizado,
-	# validado e nunca entrava em doca nenhuma.
+	# lê a mesma fonte do defeito: com o peso do granel a zero, ele deixava de
+	# ser esperado E de ser sorteado, e a asserção passava contente. Injetado
+	# em 06/09, não reprovou nada. Quem tem de reprovar isso é uma pergunta que
+	# NÃO sai dos pesos: um motivo escrito na tabela e que nunca aparece é a
+	# irmã do `barco_medio` que era renderizado, validado e nunca entrava em
+	# doca nenhuma.
 	var vistos_no_total := {}
-	for grande in [false, true]:
-		var coluna := "peso_grande" if grande else "peso_pequeno"
+	for classe in GS.CLASSES_DE_NAVIO:
+		var pesos: Dictionary = GS.CLASSES_DE_NAVIO[classe]["motivos"]
 		var vistos := {}
 		for i in range(400):
 			# Tipo à mão: o `GS` é o autoload pego por `get_node()`, e o Godot
 			# recusa-se a inferir a partir de um Node destipado.
-			var sorteado: String = GS._sortear_motivo(grande)
+			var sorteado: String = GS._sortear_motivo(String(classe))
 			vistos[sorteado] = true
 			vistos_no_total[sorteado] = true
 		var sobra := ""
 		for id in vistos:
-			if int(GS.MOTIVOS[id][coluna]) == 0:
+			if not pesos.has(id) or int(pesos[id]) == 0:
 				sobra = id
-		_check("barco %s nunca sorteia motivo de peso zero (%s)"
-				% ["grande" if grande else "pequeno", sobra if sobra != "" else "nenhum"],
+		_check("o %s nunca traz motivo fora da tabela dele (%s)"
+				% [classe, sobra if sobra != "" else "nenhum"],
 			sobra == "")
 	var nunca_aparece := ""
 	for id in GS.MOTIVOS:
@@ -923,11 +925,84 @@ func _t5l_motivo_da_escala() -> void:
 			% ("todos" if nunca_aparece == "" else nunca_aparece),
 		nunca_aparece == "")
 
+	# (3b) AS TRÊS CLASSES, E A TRAVA DO NÍVEL. Esta é a pergunta nova de
+	# 06/09: o porto em ruínas não pode receber navio grande, e o porto
+	# completo tem de receber os três — senão a classe de cima seria arte
+	# gerada que nunca chega à tela, que é o defeito que o D17 existe para
+	# pegar do outro lado.
+	GS.clear_save()
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	_check("porto em ruínas é nível 1 (%d)" % int(GS.nivel_do_porto()),
+		int(GS.nivel_do_porto()) == 1)
+	var so_pesqueiro := {}
+	for i in range(300):
+		so_pesqueiro[String(GS._make_boat()["classe"])] = true
+	_check("e recebe SÓ o pesqueiro (%s)" % [so_pesqueiro.keys()],
+		so_pesqueiro.size() == 1 and so_pesqueiro.has("pesqueiro"))
+
+	GS.cash = 10000000
+	GS.comprar_estrutura("pier_2")
+	GS.comprar_estrutura("patio")
+	_check("com duas estruturas o porto sobe a nível 2 (%d)" % int(GS.nivel_do_porto()),
+		int(GS.nivel_do_porto()) == 2)
+	var ate_medio := {}
+	for i in range(300):
+		ate_medio[String(GS._make_boat()["classe"])] = true
+	_check("e recebe pesqueiro e cargueiro, mas ainda não o grande (%s)"
+			% [ate_medio.keys()],
+		ate_medio.size() == 2 and ate_medio.has("medio")
+			and not ate_medio.has("grande"))
+
+	# ⚠️ O NÍVEL É O MENOR DOS DOIS, E SÓ AQUI ISSO SE PROVA. Nos outros
+	# estados o píer e o guindaste andam ao mesmo nível, e trocar o `mini` por
+	# um `maxi` no `nivel_do_porto()` passava em tudo — foi injetado em 06/09 e
+	# não reprovou nada. O estado que APERTA é este: pórtico comprado, cais
+	# ainda não, ou seja guindaste no nível 3 e píer no 2. Com o `maxi`, o
+	# navio de longo curso atracaria num cais que não o aguenta.
+	GS.cash = 10000000
+	GS.comprar_estrutura("guindaste")
+	_check("com pórtico e sem cais o porto FICA no nível 2 (píer %d, guindaste %d, porto %d)"
+			% [int(GS.nivel_pier()), int(GS.nivel_guindaste()), int(GS.nivel_do_porto())],
+		int(GS.nivel_guindaste()) == 3 and int(GS.nivel_pier()) == 2
+			and int(GS.nivel_do_porto()) == 2)
+	var sem_cais := {}
+	for i in range(300):
+		sem_cais[String(GS._make_boat()["classe"])] = true
+	_check("e o longo curso continua sem atracar (%s)" % [sem_cais.keys()],
+		not sem_cais.has("grande"))
+
+	GS.cash = 10000000
+	GS.comprar_estrutura("cais")
+	_check("com pórtico e cais o porto chega a nível 3 (%d)" % int(GS.nivel_do_porto()),
+		int(GS.nivel_do_porto()) == 3)
+	var todas := {}
+	for i in range(300):
+		todas[String(GS._make_boat()["classe"])] = true
+	_check("e aí sim recebe as três classes (%s)" % [todas.keys()],
+		todas.size() == GS.CLASSES_DE_NAVIO.size())
+
+	# E o valor de cada barco tem de estar DENTRO da faixa da classe dele: uma
+	# faixa que não fosse lida daria um pesqueiro de R$70.000, que passaria em
+	# tudo o resto porque nada mais pergunta de onde o número veio.
+	var fora_da_faixa := ""
+	for i in range(300):
+		var b: Dictionary = GS._make_boat()
+		var d: Dictionary = GS.CLASSES_DE_NAVIO[String(b["classe"])]
+		if int(b["value"]) < int(d["valor_min"]) or int(b["value"]) > int(d["valor_max"]):
+			fora_da_faixa = "%s a %d" % [b["classe"], int(b["value"])]
+	_check("o valor cai na faixa da classe (%s)"
+			% ("todos" if fora_da_faixa == "" else fora_da_faixa),
+		fora_da_faixa == "")
+
 	# (4) O PÁTIO PAGA NO CONTÊINER E EM MAIS NADA. É o par simétrico do teste
 	# do armazém no T5b: com um barco só, um bónus que voltasse a ser global
 	# passaria nos dois.
 	GS.clear_save()
 	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
 	GS.cash = 10000000
 	_check("o pátio foi comprado para o teste", GS.comprar_estrutura("patio") == true)
 	var esperado_conteiner := int(round(1000 * (1.0 + GS.PATIO_BONUS_CARGA)))
@@ -948,39 +1023,54 @@ func _t5l_motivo_da_escala() -> void:
 	# 05/09 mediu, e o granel fica em 2 em vez de descer ao mesmo lugar.
 	GS.clear_save()
 	GS.new_game()
-	_check("sem pórtico, o navio grande leva 2 turnos (%d)"
-			% GS._turnos_de_operacao(true, "conteiner"),
-		GS._turnos_de_operacao(true, "conteiner") == 2)
-	_check("sem pórtico, o granel leva 3 (%d)"
-			% GS._turnos_de_operacao(true, "granel"),
-		GS._turnos_de_operacao(true, "granel") == 3)
-	_check("e o pesqueiro leva 1 (%d)" % GS._turnos_de_operacao(false, "pescado"),
-		GS._turnos_de_operacao(false, "pescado") == 1)
+	# ⚠️ RESOLVER A OFERTA ANTES DE COMPRAR. `new_game()` chama `_spawn_boats()`,
+	# que tem 30% de abrir contra-oferta, e fora de "playing" o
+	# `comprar_estrutura()` recusa calado. Este bloco passou a reprovar quando
+	# o bloco de cima ganhou sorteios novos e empurrou o RNG — a semente está
+	# fixa no topo do T5l, mas o ESTADO dela anda com quem a usa.
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	_check("sem pórtico, o cargueiro leva 2 turnos (%d)"
+			% GS._turnos_de_operacao("medio", "conteiner"),
+		GS._turnos_de_operacao("medio", "conteiner") == 2)
+	_check("sem pórtico, o cargueiro de granel leva 3 (%d)"
+			% GS._turnos_de_operacao("medio", "granel"),
+		GS._turnos_de_operacao("medio", "granel") == 3)
+	_check("e o pesqueiro leva 1 (%d)" % GS._turnos_de_operacao("pesqueiro", "pescado"),
+		GS._turnos_de_operacao("pesqueiro", "pescado") == 1)
 	GS.cash = 10000000
 	GS.comprar_estrutura("pier_2")
 	_check("o pórtico foi comprado para o teste",
 		GS.comprar_estrutura("guindaste") == true)
-	_check("com pórtico, o navio grande volta a 1 turno (%d)"
-			% GS._turnos_de_operacao(true, "conteiner"),
-		GS._turnos_de_operacao(true, "conteiner") == 1)
-	_check("com pórtico, o granel desce a 2 e nao a 1 (%d)"
-			% GS._turnos_de_operacao(true, "granel"),
-		GS._turnos_de_operacao(true, "granel") == 2)
+	_check("com pórtico, o cargueiro volta a 1 turno (%d)"
+			% GS._turnos_de_operacao("medio", "conteiner"),
+		GS._turnos_de_operacao("medio", "conteiner") == 1)
+	_check("com pórtico, o granel dele desce a 2 e nao a 1 (%d)"
+			% GS._turnos_de_operacao("medio", "granel"),
+		GS._turnos_de_operacao("medio", "granel") == 2)
 	_check("e o pesqueiro nunca desce abaixo de 1 (%d)"
-			% GS._turnos_de_operacao(false, "pescado"),
-		GS._turnos_de_operacao(false, "pescado") == 1)
+			% GS._turnos_de_operacao("pesqueiro", "pescado"),
+		GS._turnos_de_operacao("pesqueiro", "pescado") == 1)
+	# O navio de longo curso leva 3 e SÓ EXISTE com pórtico: os 3 turnos dele
+	# nunca chegam a jogar-se, e é essa a diferença entre ler a tabela e ler o
+	# jogo. Com pórtico ele fica em 2, que é o dobro do cargueiro.
+	_check("o longo curso com pórtico leva 2 turnos (%d)"
+			% GS._turnos_de_operacao("grande", "conteiner"),
+		GS._turnos_de_operacao("grande", "conteiner") == 2)
 
 	# (6) E O BARCO NASCE COM ELE. Um motivo que não chegasse ao dicionário do
 	# barco só rebentaria na primeira docagem, num `MOTIVOS[motivo]` com chave
 	# vazia — e o `_make_boat()` é o único sítio que o põe lá.
 	GS.clear_save()
 	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
 	var fora := ""
 	for i in range(50):
 		var b: Dictionary = GS._make_boat()
 		if not b.has("motivo") or not GS.MOTIVOS.has(String(b["motivo"])):
 			fora = "barco %d" % i
-		elif int(b["op_turns"]) != GS._turnos_de_operacao(bool(b["large"]), String(b["motivo"])):
+		elif int(b["op_turns"]) != GS._turnos_de_operacao(String(b["classe"]), String(b["motivo"])):
 			fora = "turnos do barco %d" % i
 	_check("todo barco nasce com motivo conhecido e turnos coerentes (%s)"
 			% ("todos" if fora == "" else fora),

@@ -113,7 +113,12 @@ porto inteiro, e quem tem mais berço perde mais. Trocar isso por um quinto
 multiplicador devolveria os 56,2 e devolveria também um jogo em que servir é
 sempre a mesma operação, que é o que esta decisão existe para acabar.
 
-**E o jogo perfeito deixou de ganhar 100%.** Uma partida em 600. Foi
+**E o jogo perfeito deixou de ganhar 100%.** Uma partida em 600.
+
+> ✅ **VOLTOU AOS 100% em 06/09**, com a trava do nível (`docs/decisoes/009`):
+> o porto que constrói tudo passou a receber navio melhor, e a obra paga-se.
+> A exceção medida abaixo continua a ser o que se mediu neste estado do jogo.
+ Foi
 diagnosticada e não é ruído nem defeito: naquela partida o Ótimo levantou **as
 sete estruturas** (R$1.055.000 de obra), serviu 32 barcos contra os 50,5 de
 média, não perdeu nenhum, e chegou ao Sr. Ribeiro com R$210.616. É a armadilha

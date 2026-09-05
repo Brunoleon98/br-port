@@ -41,29 +41,27 @@ const ArteLanca := [
 	preload("res://art/props/lanca_n3.png"),
 ]
 
-# OS TRÊS CASCOS, escolhidos pelo VALOR do contrato. Não são sprites ilustrados
-# em 3/4: aqueles têm a perspectiva assada dentro da imagem e ficam atravessados
-# em cima de um píer isométrico, que é o erro que já custou duas levas de arte.
+# OS TRÊS CASCOS, um por CLASSE de navio. Não são sprites ilustrados em 3/4:
+# aqueles têm a perspectiva assada dentro da imagem e ficam atravessados em
+# cima de um píer isométrico, que é o erro que já custou duas levas de arte.
 #
-# ⚠️ O `barco_medio` EXISTIA E NUNCA ENTRAVA EM DOCA. Ele era gerado, validado
-# pelo `asset_validator` e usado só como enfeite na Zona de Espera: o jogo
-# escolhia entre dois cascos por um booleano. O valor do contrato já vai de
-# R$8.000 a R$70.000 e não custava nada dizê-lo com o casco — é a mesma
-# informação que o cartão dá em número, dita pela silhueta.
-const ArtePequeno := preload("res://art/props/barco_pequeno.png")
-const ArteMedio := preload("res://art/props/barco_medio.png")
-const ArteGrande := preload("res://art/props/barco_grande.png")
+# ⚠️ O `barco_medio` EXISTIA E NUNCA ENTRAVA EM DOCA até 05/09 — era gerado,
+# validado e usado só como enfeite na Zona de Espera, porque o jogo escolhia
+# entre dois cascos por um booleano. Depois disso passou a ser escolhido pelo
+# VALOR do contrato; desde 06/09 é a CLASSE que o escolhe, que é a mesma
+# informação sem o intermediário: a classe já traz a faixa de valor consigo, e
+# o casco passou a dizer o que o porto consegue receber.
+const CASCOS := {
+	"pesqueiro": preload("res://art/props/barco_pequeno.png"),
+	"medio": preload("res://art/props/barco_medio.png"),
+	"grande": preload("res://art/props/barco_grande.png"),
+}
 
 
-## O casco que um contrato deste valor merece. O corte fica no meio da faixa
-## dos grandes, que é onde o `_make_boat()` já separa as duas gerações — assim
-## a silhueta acompanha o número em vez de inventar uma escala própria.
-static func arte_do_barco(valor: int, grande: bool) -> Texture2D:
-	if not grande:
-		return ArtePequeno
-	var meio: int = (GameState.BOAT_VALUE_LARGE_MIN
-		+ GameState.BOAT_VALUE_LARGE_MAX) / 2
-	return ArteGrande if valor >= meio else ArteMedio
+## O casco desta classe de navio. Acesso DIRETO: uma classe sem casco tem de
+## rebentar aqui e não desenhar o barco errado calada.
+static func arte_do_barco(classe: String) -> Texture2D:
+	return CASCOS[classe]
 
 var dock_index: int = -1
 
@@ -150,7 +148,7 @@ func refresh() -> void:
 		_barco.texture = null
 		return
 
-	_barco.texture = arte_do_barco(int(boat["value"]), boat.get("large", false))
+	_barco.texture = arte_do_barco(String(boat["classe"]))
 	_animar_barco(int(boat["id"]))
 
 	if boat.get("rival", false) and not boat.get("matched", false):

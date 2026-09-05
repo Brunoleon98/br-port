@@ -310,6 +310,33 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
                 dados["requer"] or "—"))
         linhas.append("")
 
+    cls = next((c for c in constantes if c["nome"] == "CLASSES_DE_NAVIO"), None)
+    if cls is not None:
+        linhas += [
+            "## Classes de navio — o que o porto consegue receber",
+            "",
+            "O `nivel` é o do PORTO, e é o MENOR entre o do píer e o do guindaste:",
+            "não adianta ter onde encostar sem ter com que descarregar. Um porto em",
+            "ruínas é nível 1 e só recebe pesqueiro; o nível 3 exige o cais reforçado,",
+            "que já exige o pórtico pela cadeia de `requer`.",
+            "",
+            "Os `turnos` são a operação SEM pórtico — ele corta um. Os 3 do longo",
+            "curso nunca chegam a jogar-se, porque a classe só existe no nível 3 e o",
+            "nível 3 exige o pórtico.",
+            "",
+            "| Classe | Nível | Valor | Peso | Turnos | Motivos |",
+            "|---|---:|---|---:|---:|---|",
+        ]
+        for _id, dados in CLASSES_LIDAS.items():
+            motivos = ", ".join(
+                "%s %d" % (nome, int(peso))
+                for nome, peso in dados["motivos"].items())
+            linhas.append("| %s | %d | R$ %s–%s | %d | %d | %s |" % (
+                dados["nome"], int(dados["nivel"]),
+                formatar(int(dados["valor_min"])), formatar(int(dados["valor_max"])),
+                int(dados["peso"]), int(dados["turnos"]), motivos))
+        linhas.append("")
+
     mot = next((c for c in constantes if c["nome"] == "MOTIVOS"), None)
     if mot is not None:
         linhas += [
@@ -317,20 +344,19 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
             "",
             "O efeito é sempre o da ESTRUTURA a que o motivo está preso, nunca do",
             "motivo sozinho: um motivo que pagasse mais por si seria só outro sorteio",
-            "de valor com um nome por cima. Os pesos são por TAMANHO de barco e somam",
-            "100 em cada coluna — o pesqueiro não traz contêiner, e o graneleiro não",
-            "é pesqueiro.",
+            "de valor com um nome por cima.",
+            "Os pesos de sorteio de cada motivo estão na tabela das CLASSES, logo",
+            "acima: a pergunta que o jogo faz é \"que carga traz este navio\".",
             "",
-            "| Motivo | Estrutura | Bónus | Turno extra | Peso pequeno | Peso grande |",
-            "|---|---|---:|---:|---:|---:|",
+            "| Motivo | Estrutura | Bónus | Turno extra |",
+            "|---|---|---:|---:|",
         ]
         for _id, dados in MOTIVOS_LIDOS.items():
             bonus = float(dados["bonus"])
-            linhas.append("| %s | %s | %s | %s | %d | %d |" % (
+            linhas.append("| %s | %s | %s | %s |" % (
                 dados["nome"], dados["estrutura"] or "—",
                 ("+%d%%" % round(bonus * 100)) if bonus > 0 else "—",
-                ("+%d" % int(dados["turnos_extra"])) if int(dados["turnos_extra"]) else "—",
-                int(dados["peso_pequeno"]), int(dados["peso_grande"])))
+                ("+%d" % int(dados["turnos_extra"])) if int(dados["turnos_extra"]) else "—"))
         linhas.append("")
 
     linhas += [
@@ -345,6 +371,7 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
 
 ESTRUTURAS_LIDAS: dict = {}
 MOTIVOS_LIDOS: dict = {}
+CLASSES_LIDAS: dict = {}
 
 
 def ler_estruturas(dump: dict) -> None:
@@ -363,6 +390,8 @@ def ler_estruturas(dump: dict) -> None:
     ESTRUTURAS_LIDAS.update(dump.get("ESTRUTURAS", {}))
     MOTIVOS_LIDOS.clear()
     MOTIVOS_LIDOS.update(dump.get("MOTIVOS", {}))
+    CLASSES_LIDAS.clear()
+    CLASSES_LIDAS.update(dump.get("CLASSES_DE_NAVIO", {}))
 
 
 def conferir_contra_godot(valores: dict, dump: dict) -> list[str]:

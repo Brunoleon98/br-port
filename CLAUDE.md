@@ -141,22 +141,26 @@ Teste e import rodam sem tela.
    espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
    os números já viveram no GDD e nas constantes ao mesmo tempo, e divergiram.
 4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
-   O balanceamento medido é **99,8% / 80,5% / 35,2%** por perfil, com a mediana
-   do jogador mediano em R$745.875 contra uma parcela de R$530.000. Mexer sem
+   O balanceamento medido é **100% / 80,2% / 37,3%** por perfil, com a mediana
+   do jogador mediano em R$716.179 contra uma parcela de R$530.000. Mexer sem
    medir quebra isso.
    **O alvo é TRANQUILO, e é decisão registrada** (`docs/decisoes/005`): a
    dívida deixou de ser o motor. Os 100% / 47% / 0% que este arquivo afirmou
    até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
    história, não meta. Quem discrimina os jogadores agora é **o porto que
-   conseguem levantar**: o Ótimo atende 50,5 barcos, o Descuidado 12,1.
+   conseguem levantar** — e desde a trava de 06/09 quem mede isso é a MARGEM
+   em regime (R$674.019 contra R$103.290), não a contagem de barcos: o porto
+   pobre só recebe pesqueiro, descarrega num turno e atende MAIS barcos do que
+   o rico (46,1 contra 13,6). `docs/decisoes/009`.
    ⚠️ **A PARCELA MOVE O DESCUIDADO E QUASE NÃO MOVE O MEDIANO**, e não é
    acaso: cada R$10.000 valem ~3 pontos a um e ~0,5 ao outro, porque a mediana
    do Mediano fecha muito acima da parcela e a do Descuidado logo abaixo dela.
    Botão só move quem está em cima da linha — e um varrimento que não acha o
    ponto costuma estar a varrer o eixo errado (`docs/decisoes/008`).
-   ⚠️ **E o jogo perfeito perde 1 partida em 600**, desde 06/09. Está
-   diagnosticada: o Ótimo levanta as sete estruturas num sorteio mau e chega
-   curto. Não é ruído — é a exceção medida ao "teto garantido" da 005.
+   ⚠️ **E o jogo perfeito voltou aos 100%** com a trava do nível: a exceção
+   medida em 06/09 — o Ótimo a levantar as sete estruturas num sorteio mau e a
+   chegar curto — desapareceu, porque o porto que constrói tudo também passou a
+   receber navio melhor.
    **Medir é com `-- 600`.** As 30 partidas que o CI roda são teste de fumaça
    (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
    de ±18 pontos — comparar aquele número com estes é comparar sorteio.
@@ -243,6 +247,13 @@ Teste e import rodam sem tela.
    chega ao jogo?", que é a irmã do `barco_medio` renderizado, validado e nunca
    posto em doca nenhuma. Antes de escrever o esperado, pergunte de onde ele
    vem: se vem de onde o defeito vai morar, o teste é um espelho.
+   **E `mini` TROCADO POR `maxi` PODE PASSAR EM TUDO.** Em 06/09 a trava do
+   nível do navio é `mini(nivel_pier(), nivel_guindaste())`, e trocar o `mini`
+   por `maxi` não reprovou uma única asserção — porque em quase todo estado do
+   jogo os dois níveis são IGUAIS, e aí min e max dão o mesmo. O estado que
+   APERTA é um só: pórtico comprado e cais ainda não. Antes de dar um defeito
+   por não pegado, pergunte em que estado as duas versões DIVERGEM — e monte
+   esse estado, que costuma ser um só entre muitos.
    **E confira que quem reprovou foi a guarda que se estava a testar.** No
    mesmo dia, o primeiro defeito injetado nesse sorteio reprovou — pela
    asserção dos PESOS, que somam 100 e denunciam qualquer peso mexido. A do
@@ -721,8 +732,22 @@ tranca isso.
   **ajustar-se ao conteúdo**; altura fixa só quando há área de rolagem. Três
   painéis saíram com uma faixa branca debaixo do botão por causa disto, e o
   mesmo painel muda de tamanho conforme o caso.
+- **Mecânica nova precisa de um sítio onde se LEIA, ou não existe.** A trava do
+  nível do navio (06/09) seria invisível — o jogador veria o navio grande
+  deixar de aparecer sem saber que é o porto dele que não o aguenta. Hoje o
+  painel Construir abre com "Porto nível 1 — recebe pesqueiro / Ainda não
+  aguenta: cargueiro, navio de longo curso", e a linha PERCORRE a tabela das
+  classes em vez de as listar à mão. É a mesma regra do motivo no cartão da
+  doca, e a mesma do `barco_medio`: o que o jogo tem e não mostra não conta.
 - Nada de interface pousa sobre o mapa. Uma doca tem duas metades:
   `Dock.tscn` (cenário) e `DocaCartao.tscn` (texto e alvo de toque).
+- **⚠️ O PAINEL É BRANCO E A COR NEUTRA DO JOGO É PARA FUNDO ESCURO** — e isto
+  já mordeu TRÊS vezes com a mesma cor. O cinzento-azulado 0,51/0,6/0,706 mede
+  **2,93:1** sobre branco, abaixo do corte de texto GRANDE da WCAG (3,0), e
+  todo texto de painel é menor do que isso. Foi apanhado no calendário em
+  03/09, e o painel Construir carregava-o em OITO rótulos até 06/09 sem que
+  nada perguntasse. Sobre branco use 0,35/0,42/0,50, que mede 5,46:1 e passa o
+  AA. O bloco **D19** do teste de design percorre os rótulos e mede.
 - **Texto que passa a vir de uma TABELA cresce, e Label que não cabe não dá
   erro — corta.** O motivo da escala pôs no cartão da doca uma palavra vinda de
   `MOTIVOS`, e "Armazenagem" tem quase o dobro de "Granel". Medido: o interior

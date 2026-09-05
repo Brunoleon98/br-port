@@ -26,6 +26,13 @@ discrimina os jogadores é o porto que eles conseguem levantar.
 | Mediano | ~80% — ganha com folga |
 | Descuidado | ~35% — perde a maioria, sem ser garantido |
 
+⚠️ **E A TAXA DE VITÓRIA NÃO É A MÉTRICA DE DISCRIMINAÇÃO, NEM OS BARCOS
+ATENDIDOS.** Desde a trava de nível (06/09, `docs/decisoes/009`) o porto pobre
+só recebe pesqueiro, que descarrega num turno, e chega a atender MAIS barcos do
+que o porto rico — 13,6 contra 46,1, mas com margem de R$103.290 contra
+R$674.019. **Quem separa os perfis é a MARGEM EM REGIME.** Ler a contagem levaria
+a concluir que a trava aproximou os jogadores, quando ela os separou.
+
 ⚠️ **A `PARCELA_AMOUNT` É O BOTÃO DO DESCUIDADO, e quase não move o Mediano.**
 Medido em 06/09 (`docs/decisoes/008`): cada R$10.000 valem ~3 pontos a um e
 ~0,5 ao outro. A razão não é mágica e vale para qualquer botão novo — a mediana
@@ -35,9 +42,10 @@ ponto, desconfie do EIXO antes de desistir**: a `007` varreu preços de upgrade,
 concluiu que nada recuperava o Descuidado sem custar o Mediano, e estava certa
 — a parcela é que não estava no varrimento.
 
-⚠️ **E o Ótimo não é 100% redondo desde 06/09: perde 1 partida em 600.** Está
-diagnosticada — ele levanta as sete estruturas num sorteio mau e chega curto —,
-e é jogável, não defeito. Um Ótimo que caia MUITO abaixo disso, sim, é defeito.
+⚠️ **O Ótimo está em 100% redondos**, e voltou lá com a trava de nível. Ele
+esteve em 99,8% entre as duas passagens de 06/09 por uma razão diagnosticada
+(levantar as sete estruturas num sorteio mau e chegar curto); um Ótimo abaixo
+de ~99% é defeito, não sorteio.
 
 Se o pedido implica outro alvo, **isso é decisão de design e não é sua**:
 pergunte, e registre em `docs/decisoes/` antes de tocar em constante nenhuma.
@@ -176,7 +184,7 @@ em três sítios de uma vez. Procure e conserte:
 | `docs/ESTADO_DO_PROJETO.md` | o resumo da economia, nas primeiras linhas |
 | `docs/decisoes/005` | o alvo, e a tabela das tentativas |
 | `simular_balanceamento.gd` | o aviso de amostra curta cita as taxas |
-| `projetar_parcelas.py` | o bloco "Leitura" — imprime no CI a cada corrida — **e o MODELO, se o efeito de uma estrutura mudou de forma** |
+| `projetar_parcelas.py` | o bloco "Leitura" — imprime no CI a cada corrida — **e o MODELO, se o efeito de uma estrutura mudou de forma**. ⚠️ Ele lê a Fase 1 do CÓDIGO e as Fases 2/3 do GDD: se a faixa de contrato mudar, os três perfis reprovam de uma vez e isso NÃO é métrica |
 | `gerar_tabela_numeros.py` | se entrou um `const` de dicionário: literal composto não vai à tabela sozinho, e some sem erro (foi o caso de `MOTIVOS` em 06/09) |
 | `BR_Port_GDD_V7_ERRATA_ECONOMIA.md` | o fecho da pergunta cita as taxas |
 | `docs/design/BR_Port_GDD_V7.jsx` | faixas de contrato e parcelas, se a escala mudou |
@@ -186,7 +194,7 @@ O grep abaixo achou os oito na última vez; se achar menos, alguém renomeou
 alguma coisa e a lista é que envelheceu.
 
 ```sh
-grep -rn '80,5\|35,2\|R\$745\|50,5\|530\.000' --include=*.md --include=*.gd --include=*.py .
+grep -rn '80,2\|37,3\|R\$716\|674\.019\|530\.000' --include=*.md --include=*.gd --include=*.py .
 ```
 
 **Melhor que atualizar é DERIVAR.** Onde a prosa puder ler o número da medição

@@ -72,16 +72,20 @@ signal negociacao_resolvida(acao: String, resultado: String, tentativa: int)
 # (píer, armazém) é o que pesa — que é o que um porto é.
 #
 # TUNING — medido, não estimado. 600 partidas por perfil em
-# tools/simular_balanceamento.gd: **ótimo 99,8% · mediano 80,5% · descuidado
-# 35,2%**. A mediana do mediano fecha em R$745.875 contra uma parcela de
+# tools/simular_balanceamento.gd: **ótimo 100% · mediano 80,2% · descuidado
+# 37,3%**. A mediana do mediano fecha em R$716.179 contra uma parcela de
 # R$530.000. Mexer aqui SEM rodar o simulador quebra isso.
 #
 # O ALVO MUDOU, e é decisão registrada (docs/decisoes/005): o jogo é TRANQUILO.
 # Os 47% do jogador mediano eram a fantasia de sobrevivência que essa decisão
 # substituiu — a dívida deixou de ser o motor, e quem discrimina os jogadores
-# passou a ser o PORTO QUE ELES CONSEGUEM LEVANTAR, não se pagam a parcela: o
-# Ótimo atende 50,5 barcos e chega a 15,9/semana, o Descuidado atende 12,1 e
-# fica em 3,2/semana. A manutenção alta é o que faz essa diferença doer, porque
+# passou a ser o PORTO QUE ELES CONSEGUEM LEVANTAR, não se pagam a parcela.
+#
+# ⚠️ E DESDE A TRAVA DE 06/09 QUEM MEDE ISSO É A MARGEM, NÃO A CONTAGEM DE
+# BARCOS (`docs/decisoes/009`): o porto pobre só recebe pesqueiro, que
+# descarrega num turno, e chega a atender MAIS barcos do que o porto rico. A
+# margem em regime é R$674.019 contra R$103.290 — 6,5× —, e os barcos atendidos
+# são 46,1 contra 13,6, que já não conta a mesma história. A manutenção alta é o que faz essa diferença doer, porque
 # custo fixo pesa proporcionalmente muito mais em quem tem pouca vazão.
 const START_CASH := 400000
 const SALARY_PER_WORKER := 6000          # TUNING sobre a linha "Margem operacional base" do GDD, reescalada
@@ -158,9 +162,14 @@ const ESTRUTURAS := {
 		"desc": "corta um turno de cada operação",
 		"custo": 120000, "ordem": 6, "requer": "pier_2",
 	},
+	# ⚠️ O CAIS DEIXOU DE SER UM MULTIPLICADOR EM 06/09. Ele dava "+60% de
+	# chance de navio grande" — um efeito estatístico que ninguém vê acontecer,
+	# e que punha um cargueiro de R$70.000 a atracar num píer de ripas de
+	# madeira desde o primeiro dia. Agora ele DESTRAVA a classe de longo curso,
+	# que se lê na primeira vez que ela chega (`CLASSES_DE_NAVIO`).
 	"cais": {
 		"nome": "Reforçar o cais",
-		"desc": "+60% de chance de navio grande atracar",
+		"desc": "o navio de longo curso passa a atracar",
 		"custo": 150000, "ordem": 7, "requer": "guindaste",
 	},
 }
@@ -176,10 +185,6 @@ const ESTRUTURAS := {
 # mais leve. Para tudo o que não é granel a conta dá o mesmo de antes — grande
 # 2 → 1, pequeno 1 → 1 —, que é o número que o balanceamento de 05/09 mediu.
 const GUINDASTE_CORTA_TURNOS := 1        # TUNING
-# O cais reforçado muda a MISTURA de barcos, não o valor de nenhum: um cais de
-# concreto aguenta navio maior, e navio maior paga mais. Multiplicador sobre o
-# `BOAT_LARGE_CHANCE`, preso a 1,0 para não passar de "só navio grande".
-const CAIS_CHANCE_GRANDE := 1.60         # TUNING
 
 # ⚠️ O BÓNUS DO ARMAZÉM DEIXOU DE SER GLOBAL EM 06/09. Ele era +20% em TODO
 # barco atendido, o que fazia o armazém valorizar também o peixe que sai do
@@ -218,21 +223,22 @@ const ESCRITORIO_DESCONTO_SALARIO := 0.50   # TUNING
 # ele diz onde gastar o próximo dinheiro — e o cais reforçado, que empurra a
 # mistura para o barco grande, passa a decidir também QUAIS motivos aparecem.
 #
-# `peso_pequeno` e `peso_grande` são pesos de sorteio por tamanho de barco, em
-# centos: o pesqueiro não traz contêiner e o graneleiro não é pesqueiro. Somam
-# 100 em cada coluna, e é assim que se lê a mistura sem fazer conta.
+# ⚠️ OS PESOS DE SORTEIO NÃO ESTÃO AQUI, e é de propósito: eles vivem em
+# `CLASSES_DE_NAVIO`, porque a pergunta que o jogo faz é "que carga traz ESTE
+# navio". Até 06/09 eram duas colunas aqui dentro (`peso_pequeno` e
+# `peso_grande`); com três classes seriam três, e a cada classe nova uma coluna
+# a mais numa tabela que não é sobre navios.
 const MOTIVOS := {
 	"pescado": {
 		"nome": "Pescado", "estrutura": "", "bonus": 0.0, "turnos_extra": 0,
-		"peso_pequeno": 55, "peso_grande": 0,
 	},
 	"armazenagem": {
 		"nome": "Armazenagem", "estrutura": "armazem", "bonus": ARMAZEM_BONUS,
-		"turnos_extra": 0, "peso_pequeno": 45, "peso_grande": 35,
+		"turnos_extra": 0,
 	},
 	"conteiner": {
 		"nome": "Contêiner", "estrutura": "patio", "bonus": PATIO_BONUS_CARGA,
-		"turnos_extra": 0, "peso_pequeno": 0, "peso_grande": 40,
+		"turnos_extra": 0,
 	},
 	# O granel é o único que paga em TURNO em vez de em dinheiro, e de
 	# propósito: quatro motivos que fossem quatro multiplicadores seriam o
@@ -240,23 +246,61 @@ const MOTIVOS := {
 	# que é o custo que o guindaste existe para pagar.
 	"granel": {
 		"nome": "Granel", "estrutura": "guindaste", "bonus": 0.0,
-		"turnos_extra": 1, "peso_pequeno": 0, "peso_grande": 25,
+		"turnos_extra": 1,
 	},
 }
 
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
 const PIER_RATE_PER_SLOT := 5000        # GDD "Margem operacional base", reescalado: renda fixa semanal
 
-# GDD "Valor de contratos". A FAIXA do GDD (R$80–300) é de antes da reescala
-# de 02/09 e não vale mais como valor absoluto; o que dela sobrevive é a
-# PROPORÇÃO — barco pequeno contra grande, e barco contra infraestrutura.
-# O que faz a parcela caber nunca foi inflar o barco: é a quantidade de
-# turnos (ver TURNS_PER_WEEK abaixo).
-const BOAT_VALUE_SMALL_MIN := 8000
-const BOAT_VALUE_SMALL_MAX := 20000
-const BOAT_VALUE_LARGE_MIN := 20000
-const BOAT_VALUE_LARGE_MAX := 70000
-const BOAT_LARGE_CHANCE := 0.4          # TUNING
+# ── AS TRÊS CLASSES DE NAVIO ──
+#
+# QUE NAVIO O PORTO CONSEGUE RECEBER. Até 06/09 era um booleano `large` com
+# 40% de chance, e o cais reforçado multiplicava essa chance — o que punha um
+# cargueiro de R$70.000 a atracar num píer de ripas de madeira com um
+# pau-de-carga ao lado. A queixa foi essa, e tem razão: o porto em ruínas não
+# tem onde encostar um navio daqueles.
+#
+# ⚠️ A TRAVA É O NÍVEL, E O NÍVEL JÁ ESTÁ DESENHADO NA TELA. `nivel_pier()` e
+# `nivel_guindaste()` existem desde 05/09 porque a ARTE do píer e da lança tem
+# três estados; agora eles decidem também quem atraca. É a razão de a trava não
+# ser estado invisível: o jogador vê o píer virar concreto e a lança virar
+# pórtico, e é exatamente aí que o navio maior aparece.
+#
+# ⚠️ E O `CAIS_CHANCE_GRANDE` SAIU. O cais era "+60% de chance de navio grande"
+# — um efeito estatístico que ninguém consegue ver acontecer. Agora é o que
+# DESTRAVA a classe grande, que se lê na primeira vez que ela chega.
+#
+# `nivel` é o do PORTO, que é o menor dos dois (píer e guindaste): não adianta
+# ter onde encostar sem ter com que descarregar, nem o contrário.
+#
+# `turnos` é a operação SEM pórtico. Ele corta um (`GUINDASTE_CORTA_TURNOS`),
+# e o grande está desenhado à volta disso: os 3 turnos dele nunca se jogam,
+# porque a classe só existe no nível 3 e o nível 3 exige o pórtico. Quem lê 3
+# aqui está a ler o navio, não o que o porto faz com ele.
+#
+# `motivos` são os pesos de sorteio DENTRO da classe, e somam 100 em cada uma.
+# Vivem aqui e não em `MOTIVOS` porque a pergunta é "que carga traz este
+# navio?" e não "que navio traz esta carga" — um pesqueiro não traz contêiner,
+# e escrever isso do lado do motivo obrigava a uma coluna por classe.
+const CLASSES_DE_NAVIO := {
+	"pesqueiro": {
+		"nome": "Pesqueiro", "nivel": 1, "peso": 40, "turnos": 1,
+		"valor_min": 12000, "valor_max": 28000,
+		"motivos": {"pescado": 55, "armazenagem": 45},
+	},
+	"medio": {
+		"nome": "Cargueiro", "nivel": 2, "peso": 40, "turnos": 2,
+		"valor_min": 22000, "valor_max": 50000,
+		"motivos": {"armazenagem": 40, "conteiner": 40, "granel": 20},
+	},
+	"grande": {
+		"nome": "Navio de longo curso", "nivel": 3, "peso": 20, "turnos": 3,
+		"valor_min": 56000, "valor_max": 88000,
+		"motivos": {"armazenagem": 25, "conteiner": 45, "granel": 30},
+	},
+}
+
 const BOAT_ARRIVAL_CHANCE := 0.75       # TUNING: chance POR doca vazia de chegar barco no turno
 
 # ── Contra-oferta do Arlindo (GDD: "Limiar de paciência do cliente") ──
@@ -347,7 +391,11 @@ const SAVE_PATH := "user://savegame.json"
 # `_lancar_receita()` indexa `MOTIVOS[motivo]` — o barco carregado rebentaria
 # na primeira docagem, que é exatamente o tipo de estrago que a versão existe
 # para evitar.
-const SAVE_VERSION := 6
+#
+# 7 (06/09): o barco trocou o booleano `large` por uma CLASSE, e a classe é a
+# chave de `CLASSES_DE_NAVIO`. Um save da 6 traz `large` e nenhuma classe: o
+# cartão, o casco e a conta dos turnos indexariam com chave vazia.
+const SAVE_VERSION := 7
 
 # ── OS DOIS NOMES ──
 # O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7).
@@ -1302,58 +1350,100 @@ func _lancar_receita(destino: Dictionary, bruto: int, motivo: String) -> int:
 
 
 # ── GERAÇÃO DE BARCOS ──
-# Sorteia o motivo pelos pesos da coluna do tamanho. O sorteio é por PESO e
-# não por faixa escrita à mão porque a mistura tem de se ler na tabela: quem
-# quiser saber com que frequência aparece um granel lê 25 na coluna, sem
-# reconstruir intervalos de cabeça.
-func _sortear_motivo(grande: bool) -> String:
-	var coluna := "peso_grande" if grande else "peso_pequeno"
+# O NÍVEL DO PORTO é o MENOR dos dois, e não a média nem o do píer sozinho:
+# não adianta ter onde encostar sem ter com que descarregar, nem o contrário.
+# É ele que decide que classes de navio chegam.
+func nivel_do_porto() -> int:
+	return mini(nivel_pier(), nivel_guindaste())
+
+
+# ⚠️ O NÍVEL 2 NÃO TEM DONO, E POR ISSO NENHUMA `desc` O PROMETE. Ele sai de
+# `estruturas.size() >= 2` — duas estruturas QUAISQUER —, que era uma leitura
+# escrita em 05/09 para a ARTE do píer e da lança engrossarem à medida que o
+# porto se levanta. Escrever "e o cargueiro passa a atracar" na descrição do
+# Píer 2 seria mentira: quem comprar o escritório e o pátio chega lá sem tocar
+# num píer. O nível 3 tem dono — é o cais, que já exige o guindaste pela cadeia
+# de `requer` —, e é só na descrição dele que a promessa aparece.
+#
+# Quem conta a regra ao jogador, então: o painel Construir, que mostra o nível
+# do porto e o que cada um recebe (`UpgradePanel.gd`), a arte do píer e da
+# lança, que mudam nesses mesmos degraus, e o cartão da doca, que nomeia a
+# classe do navio que chegou.
+
+
+# As classes que o porto de hoje consegue receber, na ordem da tabela. Nunca
+# volta vazia: o pesqueiro é de nível 1 e o porto em ruínas já é nível 1.
+func classes_disponiveis() -> Array:
+	var nivel := nivel_do_porto()
+	var out: Array = []
+	for id in CLASSES_DE_NAVIO:
+		if int(CLASSES_DE_NAVIO[id]["nivel"]) <= nivel:
+			out.append(id)
+	return out
+
+
+# Sorteio por PESO entre as classes disponíveis. Os pesos são os da tabela e
+# não se renormalizam à mão: tirar uma classe da lista redistribui sozinho o
+# peso dela pelas que ficam, que é o que faz o porto em ruínas ver só
+# pesqueiro sem nenhum número escrito para esse caso.
+func _sortear_classe() -> String:
+	var disponiveis := classes_disponiveis()
 	var total := 0
-	for id in MOTIVOS:
-		total += int(MOTIVOS[id][coluna])
+	for id in disponiveis:
+		total += int(CLASSES_DE_NAVIO[id]["peso"])
 	var sorteio := _rng.randi_range(1, total)
 	var acumulado := 0
-	for id in MOTIVOS:
-		acumulado += int(MOTIVOS[id][coluna])
+	for id in disponiveis:
+		acumulado += int(CLASSES_DE_NAVIO[id]["peso"])
 		if sorteio <= acumulado:
-			return id
-	# Inalcançável: o sorteio vai de 1 a `total`, que é a soma dos pesos. Está
-	# aqui porque o GDScript exige retorno em todo caminho, e devolver a base é
-	# o único valor que não inventa dinheiro nem turno se algum dia chegar cá.
+			return String(id)
+	# Inalcançável — o sorteio vai de 1 à soma dos pesos. O GDScript exige
+	# retorno em todo caminho, e a classe base é a única que não inventa
+	# dinheiro nem turno se algum dia se chegar aqui.
+	return "pesqueiro"
+
+
+# Sorteia o motivo pelos pesos DA CLASSE. Por peso e não por faixa escrita à
+# mão porque a mistura tem de se ler na tabela: quem quiser saber com que
+# frequência um cargueiro traz granel lê 20 ao lado dele.
+func _sortear_motivo(classe: String) -> String:
+	var pesos: Dictionary = CLASSES_DE_NAVIO[classe]["motivos"]
+	var total := 0
+	for id in pesos:
+		total += int(pesos[id])
+	var sorteio := _rng.randi_range(1, total)
+	var acumulado := 0
+	for id in pesos:
+		acumulado += int(pesos[id])
+		if sorteio <= acumulado:
+			return String(id)
 	return "pescado"
 
 
-# Quantos turnos uma operação leva: o tamanho do barco, mais o que o motivo
-# pesar, menos o que o pórtico corta. Nunca abaixo de um — barco que
-# descarregasse em zero turnos entraria e sairia no mesmo avanço de dia, sem
-# o jogador ter o que fazer.
-func _turnos_de_operacao(grande: bool, motivo: String) -> int:
-	var turnos := (2 if grande else 1) + int(MOTIVOS[motivo]["turnos_extra"])
+# Quantos turnos uma operação leva: o da CLASSE, mais o que o motivo pesar,
+# menos o que o pórtico corta. Nunca abaixo de um — barco que descarregasse em
+# zero turnos entraria e sairia no mesmo avanço de dia, sem o jogador ter o
+# que fazer.
+func _turnos_de_operacao(classe: String, motivo: String) -> int:
+	var turnos := int(CLASSES_DE_NAVIO[classe]["turnos"]) \
+		+ int(MOTIVOS[motivo]["turnos_extra"])
 	if tem_estrutura("guindaste"):
 		turnos -= GUINDASTE_CORTA_TURNOS
 	return maxi(1, turnos)
 
 
 func _make_boat() -> Dictionary:
-	# O cais reforçado aumenta a chance de navio grande. `min` porque um
-	# multiplicador sem teto passaria de 1,0 e o porto deixaria de ver pesqueiro.
-	var chance_grande: float = BOAT_LARGE_CHANCE
-	if tem_estrutura("cais"):
-		chance_grande = min(1.0, chance_grande * CAIS_CHANCE_GRANDE)
-	var large := _rng.randf() < chance_grande
-	var value: int
-	if large:
-		value = _rng.randi_range(BOAT_VALUE_LARGE_MIN, BOAT_VALUE_LARGE_MAX)
-	else:
-		value = _rng.randi_range(BOAT_VALUE_SMALL_MIN, BOAT_VALUE_SMALL_MAX)
-	var motivo := _sortear_motivo(large)
+	var classe := _sortear_classe()
+	var dados: Dictionary = CLASSES_DE_NAVIO[classe]
+	var value := _rng.randi_range(int(dados["valor_min"]), int(dados["valor_max"]))
+	var motivo := _sortear_motivo(classe)
 	_uid += 1
 	return {
 		"id": _uid,
 		"value": value,
+		"classe": classe,
 		"motivo": motivo,
-		"op_turns": _turnos_de_operacao(large, motivo),
-		"large": large,
+		"op_turns": _turnos_de_operacao(classe, motivo),
 		"progress": 0,
 		"rival": false,
 		"matched": false,

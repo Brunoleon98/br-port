@@ -9,7 +9,16 @@ extends Control
 # achar que o jogo travou.
 
 const COR_FEITO := Color(0.102, 0.478, 0.251)
-const COR_BLOQUEADO := Color(0.51, 0.6, 0.706)
+
+# ⚠️ ESTE PAINEL É BRANCO, E A COR NEUTRA DO JOGO É PARA FUNDO ESCURO. O
+# cinzento-azulado (0,51/0,6/0,706) que marca texto neutro sobre a barra escura
+# mede **2,93:1** aqui — reprova até o corte de texto GRANDE da WCAG (3,0), e
+# estas linhas são de 13 e 14px, que pedem 4,5:1. O mesmo erro já tinha sido
+# apanhado no calendário em 03/09 e ficou registado no `CLAUDE.md`; o painel
+# Construir carregava-o desde então, na descrição de cada estrutura.
+#
+# 0,35/0,42/0,50 mede **5,46:1** sobre branco e passa o AA para texto pequeno.
+const COR_SECUNDARIA := Color(0.35, 0.42, 0.50)
 
 # Comprar emite `cash_changed` E `roster_changed`, e o botão que disparou a
 # compra está dentro do que vai ser destruído. Remontar na hora significaria
@@ -71,6 +80,32 @@ func _build_ui() -> void:
 	caixa.add_theme_font_size_override("font_size", 14)
 	vbox.add_child(caixa)
 
+	# O NÍVEL DO PORTO, e o que ele recebe. Sem esta linha a trava de 06/09
+	# seria estado invisível: o jogador veria o navio grande deixar de aparecer
+	# e não teria como saber que é o porto dele que não o aguenta. É a mesma
+	# razão de o motivo estar escrito no cartão da doca — mecânica que não se
+	# lê em algum lado é mecânica que não existe.
+	#
+	# ⚠️ ELA PERCORRE `CLASSES_DE_NAVIO` e não uma lista escrita à mão: uma
+	# classe nova tem de aparecer aqui sozinha, senão volta o defeito do
+	# `barco_medio` — gerado, validado, e sem chegar à tela.
+	var nivel := int(GameState.nivel_do_porto())
+	var recebe := PackedStringArray()
+	var falta := PackedStringArray()
+	for id in GameState.CLASSES_DE_NAVIO:
+		var dados: Dictionary = GameState.CLASSES_DE_NAVIO[id]
+		if int(dados["nivel"]) <= nivel:
+			recebe.append(String(dados["nome"]))
+		else:
+			falta.append(String(dados["nome"]))
+	var porto := Label.new()
+	porto.text = "Porto nível %d — recebe %s" % [nivel, ", ".join(recebe).to_lower()]
+	if falta.size() > 0:
+		porto.text += "\nAinda não aguenta: %s" % ", ".join(falta).to_lower()
+	porto.add_theme_font_size_override("font_size", 13)
+	porto.add_theme_color_override("font_color", COR_SECUNDARIA)
+	vbox.add_child(porto)
+
 	# Ordenar pela chave `ordem` e não pela do dicionário: a ordem de um
 	# Dictionary em GDScript é a de inserção, e depender disso é frágil.
 	var ids := GameState.ESTRUTURAS.keys()
@@ -107,7 +142,7 @@ func _linha_estrutura(id: String) -> Control:
 	efeito.text = String(def["desc"])
 	efeito.autowrap_mode = TextServer.AUTOWRAP_WORD
 	efeito.add_theme_font_size_override("font_size", 12)
-	efeito.add_theme_color_override("font_color", COR_BLOQUEADO)
+	efeito.add_theme_color_override("font_color", COR_SECUNDARIA)
 	col.add_child(efeito)
 
 	if feito:
