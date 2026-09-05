@@ -861,6 +861,14 @@ armadilha de uma função, no comentário dela.
   de 3 de cada 10 corridas por uma razão que nada tem a ver com o que ele
   testa. Teste intermitente no CI é pior do que teste nenhum: ensina a ignorar
   vermelho.
+  ⚠️ **E FIXAR A SEMENTE NO TOPO DO BLOCO NÃO CHEGA: o ESTADO dela anda com
+  quem a usa.** Em 06/09 acrescentaram-se 1.500 sorteios ao meio de um bloco de
+  teste, e o `new_game()` de um bloco POSTERIOR — que passava havia semanas —
+  passou a calhar numa contra-oferta, onde `comprar_estrutura()` recusa calado.
+  Nada mudou nesse bloco; mudou o que veio antes. Todo bloco que jogue resolve
+  a oferta pendente antes de contar com o estado (`if GS.phase ==
+  "rival_offer": GS.resolve_rival_offer(true)`), em vez de confiar na semente
+  de quem o precede.
 - Comentário explica **por que**, e de preferência conta o que se tentou antes
   e não funcionou. O repositório inteiro é escrito assim; siga.
 - Nada de emoji na interface — os 20 ícones vivem em `art/icones/` e são

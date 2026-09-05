@@ -1002,6 +1002,19 @@ VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 # PNG passou a ser renderizado 1,5x menor; deixar os números antigos abriria
 # na vila um vão meia casa maior do que o prédio precisa, sem erro nenhum a
 # apontá-lo — só um buraco na fileira.
+# ⚠️ O `my` DESTES DOIS ESTÁ ADIANTADO, E ESTÁ MEDIDO (06/09). Desprojetando os
+# nós de `Main.tscn` com a projeção que `porto_mapa_ancoras.json` publica — e
+# pousando-os a `alt_cais`, como manda o contrato —, o escritório está em
+# (2,600 / 5,600) e o armazém em (6,600 / 13,450). O `mx` bate exato; o `my`
+# aqui escrito está 1,10 e 1,05 unidades à frente, o que desloca o vão da vila
+# ~21 px em x — meia casa. O D14 não pega porque lê ESTA constante, que é a
+# mesma fonte do defeito.
+#
+# NÃO se corrigiu ainda de propósito: trocar os dois números é uma linha, mas
+# regera os quatro mapas e a tabela de âncoras, que o CI compara byte a byte, e
+# a correção DURÁVEL é outra — o comentário acima diz "lido de `Main.tscn`" e
+# ele não é lido, é copiado à mão. Quem pegar nisto derive-o da cena, que é a
+# regra deste arquivo sobre constante que apodrece calada.
 PREDIOS_DO_PATIO = [
     ("Escritorio", 2.6, 6.7, 103.0),
     ("Armazem", 6.6, 14.5, 124.0),
