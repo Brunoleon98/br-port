@@ -485,3 +485,22 @@ margem de erro não engolir a conclusão. Daí o
 `tools/simular_balanceamento.gd`.
 
 ---
+
+## O enquadramento de 05/09, e o que ele custou (Etapa 1 da arte)
+
+Não foi o Blender — `pip install bpy` leva 17 s e regerar os 39 props 3,5 min,
+tudo medido antes de prometer. Custou a descoberta de que **altura, no gerador
+do mapa, é PIXEL**: baixar o `MEIA_LARG` de 30 para 20 encolheria a planta e
+deixaria o `ALT_CAIS`, as paredes da vila e cada traço onde estavam — o porto
+esticado 1,5× para cima, e nenhuma das cinco suítes a lê-lo. A saída é a mesma
+regra dos props: escala-se no GRUPO. O mapa continua a ser DESENHADO a 30 num
+quadro de 1080 e o `viewBox` do SVG entrega 720. São dois espaços desde então,
+e a fronteira é a função `tela()` — `docs/BRP_SPATIAL_CONTRACT.md` §1.1.
+
+**E a largura era só metade do enquadramento.** A outra é o CENTRO: com o ponto
+herdado, o porto saía encostado à direita com um bloco de mata a ocupar a
+esquerda. Ele passou a ser derivado do centroide dos berços, e a água voltou aos
+"perto de metade do quadro" que a leitura das referências pede.
+
+---
+

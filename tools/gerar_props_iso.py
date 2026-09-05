@@ -156,6 +156,37 @@ PALETA = {
     # A telha caída e o barrote à mostra. O `telhado_velho` é a água inteira;
     # estes dois são o que sobra dela.
     "barrote": "#6b543c",
+    # ── O ARMAZÉM DEIXOU DE SER UMA CASA GRANDE (05/09) ──────────────────
+    #
+    # O VINCO DA CHAPA CORRUGADA. Mesma receita do contêiner, e pela mesma
+    # razão: a face comprida do galpão tem 49px e a curta 34px, então doze
+    # vincos de relevo dariam 2,5px cada — a LIXA que o `DESGASTE` já
+    # registou. Quem desenha o corrugado aqui é a DIFERENÇA DE VALOR (21%
+    # abaixo do `parede`), em painéis de 4 a 5px, e não o relevo.
+    "chapa_vinco": "#b2c0c9",
+    # O TELHADO DE ZINCO.
+    #
+    # ⚠️ ELE NASCEU COM O VALOR DO TELHADO DE TELHA, E ISSO NÃO CHEGOU.
+    # A primeira versão foi escolhida pela regra do §3 da skill `/arte` lida
+    # ao contrário — trocar o MATIZ sem tocar no VALOR —, e a conta fechava:
+    # `#5f6e7a` dá 108 de luminância relativa contra os 105 do `telhado` de
+    # telha. Medido no jogo rodando, o telhado ficou a **0,12 de Weber**
+    # contra o asfalto do pátio... que é EXATAMENTE o que a telha já dava
+    # (0,13). E aí está a lição: **a telha nunca se separou do chão pelo
+    # VALOR, separou-se pelo MATIZ** — terracota contra cinza-azulado. Copiar
+    # a luminância dela copiou a metade que não fazia o trabalho, e o zinco,
+    # sendo cinza-azulado como o asfalto, ficou sem separação nenhuma.
+    #
+    # É a irmã da armadilha que a água registou em 02/09, do outro lado: lá
+    # trocou-se o matiz e esqueceu-se o valor, e a imagem achatou; aqui
+    # copiou-se o valor certo de uma cor que não vivia dele.
+    #
+    # A correção é DESCER: `#4e5b66` mede 0,26 de Weber contra o mesmo
+    # asfalto. Custa 15 pontos de luminância média ao PROP (122,7 → 107,5) e
+    # **zero ao mapa** — medida a captura inteira, média e amplitude ficam em
+    # 116,3 e 151, contra 116,5 e 151 antes. Um prédio não move a composição;
+    # move a própria leitura.
+    "zinco": "#4e5b66", "zinco_vinco": "#3e4a54",
 }
 
 
@@ -209,6 +240,8 @@ DESGASTE = {
     # O vão é pequeno e quer marca; o barrote é uma ripa fina, idem.
     "vao": 9.0, "barrote": 9.0, "piso_ruina": 4.0,
     "concreto": 3.0, "concreto_borda": 4.0, "pneu": 10.0,
+    # A água de zinco é superfície grande; o vinco é um painel de 4px.
+    "zinco": 3.0, "zinco_vinco": 8.0, "chapa_vinco": 8.0,
 }
 
 
@@ -586,7 +619,8 @@ def porta(nome, face, centro, tam, u, larg, alt, M, base=None):
     return pecas
 
 
-def telhado_duas_aguas(nome, centro, tam, altura, mat, mat_cume, fiadas=5):
+def telhado_duas_aguas(nome, centro, tam, altura, mat, mat_cume, fiadas=5,
+                       nervuras=0, mat_nerv=None):
     """Telhado de duas águas com fiadas de telha visíveis.
 
     A laje chapada que havia antes lia como tampa. O que dá a leitura de
@@ -595,7 +629,24 @@ def telhado_duas_aguas(nome, centro, tam, altura, mat, mat_cume, fiadas=5):
 
     A cumeeira corre em X, e a água desce em Y, porque é assim que as duas
     faces visíveis (+X e −Y) mostram uma água inteira e o beiral da outra.
+
+    ⚠️ `nervuras` TROCA O SENTIDO DO TRAÇO, e é essa troca que separa telha
+    de CHAPA METÁLICA. A fiada corre em X, paralela à cumeeira, e na tela sai
+    como um feixe de linhas descendo para a direita — é o desenho de um
+    telhado de telha, e é o que faz um galpão ler como casa grande. A nervura
+    do zinco corre no sentido da ÁGUA (em Y, da cumeeira ao beiral) e sai como
+    um feixe subindo para a direita: o mesmo custo de geometria, a leitura
+    trocada. Passar `nervuras=N` desliga as fiadas (`fiadas=0`) por conta de
+    quem chama — os dois traços ao mesmo tempo dariam uma grelha, que não é
+    nem um telhado nem o outro.
+
+    A largura da nervura sai da face dividida pelo número delas, e não de um
+    número escolhido a olho: é a mesma conta do corrugado do contêiner, que
+    mediu que o que se lê a esta escala são painéis de ~6px de valor
+    diferente, e não vincos de 2,5px.
     """
+    if mat_nerv is None:
+        mat_nerv = mat_cume
     cx, cy, cz = centro
     sx, sy = tam[0], tam[1]          # a espessura da laje não interessa aqui
     beiral = 0.18
@@ -609,6 +660,16 @@ def telhado_duas_aguas(nome, centro, tam, altura, mat, mat_cume, fiadas=5):
                      (sx + 2 * beiral, comp, 0.10), mat,
                      rot=(-sinal * ang, 0, 0))
         pecas.append(agua)
+        # Nervura do zinco: corre com a água, da cumeeira ao beiral.
+        for i in range(nervuras):
+            u = (i + 0.5) / float(nervuras) - 0.5
+            pecas.append(caixa("%s_nerv_%s%d" % (nome, lado, i),
+                               (cx + u * (sx + 2 * beiral),
+                                cy + sinal * meia / 2.0,
+                                cz + altura / 2.0 + 0.02),
+                               ((sx + 2 * beiral) / (nervuras * 2.0),
+                                comp * 0.96, 0.12),
+                               mat_nerv, rot=(-sinal * ang, 0, 0)))
         # Fiadas: ressaltos finos paralelos à cumeeira. Não são telhas — são a
         # sombra entre elas, que é o que o olho lê a esta escala.
         for i in range(1, fiadas):
@@ -1251,26 +1312,202 @@ def montar(M: dict) -> dict:
         cone("m_luz", (0, 0, 1.13), 0.05, 0.035, 0.09, 6, M["luz_poste"]),
     ]
 
-    # -- GALPÃO nos dois estados: mesmas paredes, telhado diferente ------
-    # O galpão era uma caixa com um buraco. Agora tem plinto, portão de
-    # correr com trilho, janela alta de galpão, calha e telhado de duas
-    # águas com fiada — e o custo disso foi meia dúzia de chamadas ao kit.
-    GAL = ((0, 0, 0.85), (3.4, 2.4, 1.7))
+    # -- O ARMAZÉM ACABADO: um GALPÃO, e não a maior casa da vila --------
+    #
+    # ⚠️ ELE ERA UMA CASA, E A CAUSA ESTAVA NAS QUATRO PEÇAS QUE O DESENHAVAM
+    # (05/09). Parede lisa `parede`, telhado de TELHA com fiada horizontal,
+    # três janelas de moldura e travessa, e um portão que era a `porta()` do
+    # kit esticada — a mesma função que faz a porta do escritório. Posto ao
+    # lado das casas da vila, que têm parede clara e telhado de telha, ele
+    # lia-se como o que era: a maior casa do bairro. O Bruno disse-o assim:
+    # *"o galpão ainda lê como casinha e não como armazém — portão chato, sem
+    # plataforma de carga, sem corrugado"*.
+    #
+    # É a IRMÃ do defeito que o `galpao_velho` teve até ao mesmo dia, e do
+    # outro lado do par: lá o estado ANTES partilhava as peças do DEPOIS; aqui
+    # o estado DEPOIS nunca teve vocabulário próprio nenhum. As duas metades
+    # do par só se distinguem se cada uma souber o que é.
+    #
+    # As quatro trocas, por ordem de quanto cada uma vale na tela:
+    #
+    #   1. TELHADO DE ZINCO com a nervura no sentido da água. É a maior
+    #      superfície do prop e é ela que grita "casa" num bairro de telha.
+    #      A cor sai da telha por matiz E por valor, e o porquê de terem de
+    #      ser os dois está medido no comentário do `zinco`, na paleta.
+    #   2. PLATAFORMA DE CARGA. O plinto de 0,18 virou uma doca de 0,44 —
+    #      altura de estrado de caminhão —, com deck saliente na face `+x`,
+    #      defensas de borracha e dois degraus. O portão passou a assentar
+    #      NELA, e é a soleira alta que diz que ali se carrega.
+    #   3. CHAPA CORRUGADA nas duas faces visíveis, pela receita do
+    #      contêiner: painéis de valor diferente, não vincos de relevo.
+    #   4. PORTÃO DE ENROLAR, laranja, com o tambor por cima e as guias dos
+    #      lados — no lugar do retângulo castanho chapado que havia.
+    #
+    # ⚠️ A ALTURA NÃO CRESCEU UM PIXEL, e isso é decisão e não acaso. A
+    # cumeeira continua em 2,32 (0,44 de doca + 1,26 de parede + 0,62 de
+    # telhado, contra os 1,70 + 0,62 de antes): a doca COME parte da parede em
+    # vez de se empilhar debaixo dela. Empilhar teria devolvido metade do
+    # defeito que o `ESCALA_PREDIO` de 03/09 existe para corrigir — os dois
+    # prédios do pátio a levantarem-se ~4x a altura de uma casa e a derramarem
+    # a silhueta por cima da estrada.
+    DOCA_ALT = 0.44                   # altura de estrado de caminhão
+    GAL = ((0, 0, 1.07), (3.4, 2.4, 1.26))
     paredes = [
-        caixa("gal_plinto", (0, 0, 0.09), (3.5, 2.5, 0.18), M["parede_suja"]),
+        # A DOCA. `concreto_borda` (luminância 152) contra a parede (241) e
+        # contra o asfalto do pátio (121): ela lê como faixa escura na base
+        # dos dois lados, que é o que uma plataforma de carga é.
+        caixa("gal_doca", (0, 0, DOCA_ALT / 2.0), (3.5, 2.5, DOCA_ALT),
+              M["concreto_borda"]),
         caixa("gal_parede", *GAL, M["parede"]),
     ]
-    paredes += porta("gal_portao", "-y", *GAL, 0.0, 1.5, 1.25, M, base=0.18)
-    paredes += [na_face("gal_trilho", "-y", *GAL, 0.0, 0.70, 1.9, 0.07, 0.06,
-                        M["metal"], 0.02)]
-    for i, u in enumerate((-1.0, 0.0, 1.0)):
-        paredes += janela("gal_jan%d" % i, "+x", *GAL, u, 0.38, 0.46, 0.36, M,
-                          peitoril=False)
+
+    # ⚠️ O DECK SAI PELA FACE `+x`, E NÃO PELA `-y`, POR CAUSA DA PEGADA.
+    #
+    # As duas faces são visíveis, mas o espaço à volta delas não é o mesmo, e
+    # a diferença não se adivinha — mede-se em `porto_mapa_ancoras.json`. O
+    # armazém está em `mx = 6,60`, `my = 13,45`, e a folga que sobra da pegada
+    # de hoje é **0,236** unidades em `+my`, até o COTOVELO da rua em 14,68,
+    # contra **0,746** em `+mx`, até o avental em 8,70.
+    #
+    # Traduzido em avanço de deck: em `-y` cabem 0,25 e nem um a mais; em `+x`
+    # cabem 0,45 e ainda sobra meia unidade de cada lado. E foi CONFERIDO com
+    # o defeito injetado — pôr a pegada em `my` nos 3,46 que este mesmo deck
+    # exigiria do lado `-y` faz o bloco D2 reprovar com
+    # *"a pegada entra no cotovelo da rua"*, e sair com código 1.
+    #
+    # A história ainda ajuda: em `+x` a plataforma dá para o avental, que é
+    # por onde a carga do navio chega. Mas quem decidiu foi a régua.
+    DECK_FRENTE = 2.08                # x da testa do deck
+    paredes += [
+        caixa("gal_deck", (1.84, 0.10, 0.18), (0.48, 2.00, 0.36),
+              M["concreto_borda"]),
+        # ⚠️ O TAMPO É UMA PEÇA À PARTE, e não é enfeite: tampo e testa da
+        # mesma cor FUNDEM-SE — é a regra do caixote que era `madeira` num
+        # tabuado de `madeira`, aplicada dentro de um prop. O `concreto`
+        # (192) sobre o `concreto_borda` (152) é a aresta que dá volume ao
+        # deck. E ele fica 0,04 ABAIXO do topo da doca, para que os dois
+        # tampos não fiquem coplanares onde se sobrepõem — o losango preto
+        # que este arquivo já registou três vezes.
+        caixa("gal_deck_topo", (1.84, 0.10, 0.37), (0.52, 2.04, 0.06),
+              M["concreto"]),
+        # Dois degraus, encaixados um no outro e no deck: nada aqui encosta,
+        # tudo se sobrepõe uma fração.
+        caixa("gal_degrau0", (1.89, -1.155, 0.08), (0.30, 0.17, 0.16),
+              M["concreto_borda"]),
+        caixa("gal_degrau1", (1.89, -0.98, 0.16), (0.30, 0.24, 0.32),
+              M["concreto_borda"]),
+    ]
+    # Defensas de borracha: na testa do deck e ao lado do portão. São o que
+    # diz que um caminhão encosta aqui, e a esta escala funcionam pelo mesmo
+    # motivo que as cantoneiras do contêiner — escuro lê-se a 3px.
+    for i, u in enumerate((0.62, -0.42)):
+        paredes.append(na_face("gal_defensa%d" % i, "+x",
+                               (1.84, 0.10, 0.18), (0.48, 2.00, 0.36),
+                               u, 0.0, 0.24, 0.22, 0.10, M["pneu"], -0.02))
+    for i, u in enumerate((-0.90, 0.90)):
+        paredes.append(na_face("gal_defensa_y%d" % i, "-y",
+                               (0, 0, DOCA_ALT / 2.0), (3.5, 2.5, DOCA_ALT),
+                               u, 0.0, 0.24, 0.22, 0.10, M["pneu"], -0.02))
+
+    # O PORTÃO DE ENROLAR. Ele é uma FORMA e não um detalhe — 26px de largura
+    # numa face de 49 —, e é a mesma lição que a porta do contêiner mediu.
+    #
+    # LARANJA, e a escolha é de composição: o telhado saiu de terracota, e
+    # tirar o quente do prédio sem o repor deixaria o armazém cinzento no meio
+    # de um pátio cinzento. O quente muda de sítio em vez de desaparecer, e
+    # `laranja` é a cor que os guindastes do porto já usam — o prédio passa a
+    # pertencer ao maquinário e não ao bairro.
+    # ⚠️ A JUNTA ESCURA NO TOPO DA DOCA, e ela existe porque MEDIR desmentiu o
+    # desenho. Na paleta a doca (`concreto_borda`, 152) fica bem abaixo da
+    # parede (241) e devia separar-se sozinha; no render, com a luz da cena,
+    # a doca sai a ~150 e os VINCOS da chapa saem a ~135 — a faixa da base e
+    # a textura da parede caem na MESMA banda de valor, e o que devia ser o
+    # degrau que diz "plataforma" lê-se como mais uma sombra do corrugado.
+    # A saída é a mesma do contêiner: quem separa a esta escala não é o tom,
+    # é a LINHA escura. Três pixels de `metal` no topo da doca fazem o que
+    # 90 pontos de luminância na paleta não fizeram.
+    #
+    # ⚠️ ELA PARA ANTES DAS QUINAS E ANTES DO TOPO. A primeira versão tinha a
+    # largura da doca (3,5) e o topo em 0,44, que é a altura da doca: as
+    # pontas saíam para fora da quina como duas farpas escuras no vazio, e a
+    # face de cima ficava COPLANAR com o tampo da doca — as duas armadilhas
+    # que este arquivo já regista, apanhadas de uma vez só numa peça de 1px.
+    paredes.append(na_face("gal_junta", "-y", (0, 0, DOCA_ALT / 2.0),
+                           (3.5, 2.5, DOCA_ALT), 0.0, 0.17, 3.40, 0.06, 0.06,
+                           M["metal"], 0.005))
+
+    # ⚠️ A ALTURA DO PORTÃO SAI DA FITA DE VIDRO, e não do que parece bem
+    # sozinho. A parede tem 1,26 e nela cabem, por esta ordem de baixo para
+    # cima: soleira, portão, tambor, fita e beiral. A primeira versão pôs o
+    # portão a 0,80 e a fita sobrou 1,5px de espessura média — o beiral come
+    # os 0,10 de cima da parede (0,18 de aba × tan 30°) e o tambor comia por
+    # baixo. Com 0,72 a fita ganha 3,9px e continua livre dos dois.
+    V_PORTAO = (DOCA_ALT + 0.36) - GAL[0][2]      # soleira na doca, 0,72 de alto
+    paredes += [
+        na_face("gal_portao", "-y", *GAL, 0.0, V_PORTAO, 1.5, 0.72, 0.06,
+                M["laranja"], -0.025),
+    ]
+    # As lâminas: DUAS faixas largas de valor diferente, e não seis riscos.
+    # Um risco de 0,05 daria 0,9px e desapareceria no antisserrilhado.
+    for i, dv in enumerate((0.20, -0.20)):
+        paredes.append(na_face("gal_lamina%d" % i, "-y", *GAL, 0.0,
+                               V_PORTAO + dv, 1.42, 0.18, 0.05,
+                               M["laranja_esc"], -0.010))
+    paredes += [
+        # O tambor por cima e as guias dos lados: é o que distingue portão de
+        # enrolar de retângulo pintado na parede.
+        na_face("gal_tambor", "-y", *GAL, 0.0, V_PORTAO + 0.425, 1.70, 0.13,
+                0.10, M["metal_claro"], 0.02),
+        na_face("gal_guia0", "-y", *GAL, -0.80, V_PORTAO, 0.10, 0.78, 0.07,
+                M["metal"], 0.015),
+        na_face("gal_guia1", "-y", *GAL, 0.80, V_PORTAO, 0.10, 0.78, 0.07,
+                M["metal"], 0.015),
+    ]
+
+    # A PORTA DA PLATAFORMA, na face `+x`: um deck sem porta é uma varanda.
+    #
+    # Ela é MENOR que o portão e não leva tambor, de propósito. Na primeira
+    # versão as duas tinham quase a mesma largura e o mesmo desenho, e o prop
+    # ampliado lia-se como GARAGEM de duas vagas — dois portões iguais em duas
+    # faces é uma leitura, e um armazém com o portão principal e uma porta de
+    # serviço é outra. Uma delas tem de mandar.
+    paredes += [
+        na_face("gal_porta_x", "+x", *GAL, 0.10, V_PORTAO, 0.80, 0.72, 0.06,
+                M["laranja"], -0.025),
+        na_face("gal_lamina_x0", "+x", *GAL, 0.10, V_PORTAO + 0.20,
+                0.74, 0.18, 0.05, M["laranja_esc"], -0.010),
+        na_face("gal_lamina_x1", "+x", *GAL, 0.10, V_PORTAO - 0.20,
+                0.74, 0.18, 0.05, M["laranja_esc"], -0.010),
+        na_face("gal_verga_x", "+x", *GAL, 0.10, V_PORTAO + 0.40,
+                0.94, 0.08, 0.07, M["metal"], 0.015),
+    ]
+
+    # ⚠️ A JANELA ALTA CORRIDA SUBSTITUI AS TRÊS JANELAS DE MOLDURA, e a troca
+    # é metade da leitura. Janela com moldura, travessa e peitoril é janela de
+    # CASA, e três delas em fila numa parede branca são a assinatura de uma
+    # casa — a `janela()` do kit desenha exatamente isso, e desenha bem. Um
+    # galpão ilumina-se por uma fita de vidro rente ao beiral, que na tela é
+    # uma linha clara de 3px e não três retângulos com sombra em volta.
+    for face, larg in (("-y", 2.9), ("+x", 1.9)):
+        paredes.append(na_face("gal_fita_%s" % face[1], face, *GAL,
+                               0.0, 0.44, larg, 0.22, 0.05, M["vidro"], -0.03))
+
+    # CHAPA CORRUGADA: painéis de valor, nos campos de parede que sobram.
+    # Eles PARAM antes do portão e antes da fita de vidro — corrugado por cima
+    # de abertura daria a grelha que a `telhado_duas_aguas` também evita.
+    for i, u in enumerate((-1.49, -1.06, 1.06, 1.49)):
+        paredes.append(na_face("gal_vinco%d" % i, "-y", *GAL, u, -0.16,
+                               0.30, 0.78, 0.05, M["chapa_vinco"], -0.032))
+    for i, u in enumerate((-0.98, -0.62, 0.92)):
+        paredes.append(na_face("gal_vinco_x%d" % i, "+x", *GAL, u, -0.16,
+                               0.28, 0.72, 0.05, M["chapa_vinco"], -0.032))
+
     grupos["galpao"] = paredes + [
-        na_face("gal_calha", "-y", *GAL, 0.0, 0.86, 3.5, 0.09, 0.12,
-                M["metal_claro"], 0.06),
+        na_face("gal_calha", "-y", *GAL, 0.0, 0.64, 3.5, 0.09, 0.09,
+                M["metal_claro"], 0.03),
     ] + telhado_duas_aguas("gal_tel", (0, 0, 1.70), (3.4, 2.4), 0.62,
-                           M["telhado"], M["telha_cume"])
+                           M["zinco"], M["metal"], fiadas=0, nervuras=6,
+                           mat_nerv=M["zinco_vinco"])
     # ⚠️ O ARMAZÉM EM RUÍNA DEIXOU DE PARTILHAR AS PAREDES DO ACABADO (05/09),
     # e essa partilha era o defeito inteiro. Ele reusava `paredes` — plinto,
     # caixa de `parede` BRANCA LIMPA, portão fechado, calha e três janelas de
@@ -1506,11 +1743,14 @@ ESCALA_PREDIO = 0.72
 def _encolher(grupos: dict, nomes: tuple, k: float) -> None:
     """Escala uniforme, em torno da origem do mundo, dos grupos pedidos.
 
-    ⚠️ CADA OBJETO UMA VEZ SÓ. `galpao` e `galpao_velho` PARTILHAM a lista de
-    paredes (é de propósito: mesmas paredes, telhado diferente), e o mesmo vale
-    para o escritório. Escalar grupo a grupo passaria duas vezes pelas peças
-    partilhadas e elas sairiam a `k²` — um armazém com paredes menores que o
-    próprio telhado, sem erro nenhum a apontá-lo.
+    ⚠️ CADA OBJETO UMA VEZ SÓ, e a razão MUDOU sem a regra mudar. Até 05/09
+    `galpao` e `galpao_velho` partilhavam a lista de paredes, e o `set()` era
+    o que impedia que as peças comuns fossem escaladas duas vezes e saíssem a
+    `k²` — um armazém com paredes menores que o próprio telhado, sem erro
+    nenhum a apontá-lo. Hoje os quatro grupos têm geometria própria (partilhar
+    peças entre o estado ANTES e o DEPOIS era o defeito, não a economia), mas
+    o `set()` fica: é ele que deixa acrescentar um grupo a esta chamada sem ter
+    de saber o que ele reaproveita.
 
     Escalar em torno da origem — `location` e `scale` pelo mesmo fator — mantém
     a base assente no chão, porque a base está em z≈0. Escalar só o `scale`

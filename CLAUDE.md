@@ -342,6 +342,33 @@ tranca isso.
   escritório: **a ruína não é o prédio pintado de velho, é MENOS prédio** —
   parede caída, vidro nenhum, meio telhado. Partilhar peças entre dois estados
   poupa render e custa a leitura, que é o que o estado existe para dar.
+- **E o estado DEPOIS precisa de vocabulário próprio, não só o ANTES.** É a
+  mesma regra com o sinal trocado, e foi o que sobrou depois de a ruína ser
+  consertada em 05/09: o armazém ACABADO continuou a ser desenhado só com o
+  repertório doméstico — parede lisa, telha, `janela()` com moldura, a
+  `porta()` do kit esticada — e lia-se como a maior casa da vila. Prédio que
+  tem função no jogo precisa das peças DA FUNÇÃO: um armazém quer plataforma
+  de carga, portão de enrolar, chapa corrugada e fita de vidro corrida.
+- **⚠️ COPIAR O VALOR DE UMA COR QUE NÃO VIVIA DELE NÃO COPIA NADA.** Irmã da
+  regra do matiz, logo abaixo, e do outro lado dela. O telhado de zinco do
+  armazém foi escolhido para ter a luminância do telhado de telha (108 contra
+  105), e medido no jogo ficou a **0,12 de Weber** contra o asfalto do pátio —
+  que é o que a telha já dava (0,13). A telha nunca se separou do chão pelo
+  VALOR; separou-se pelo MATIZ, e copiar a luminância copiou a metade que não
+  fazia o trabalho. **Antes de preservar um número, descubra se era ele que
+  segurava a leitura** — e a resposta mede-se contra o FUNDO, não na paleta.
+- **A paleta mente sobre o que se vai separar no render.** No dicionário a doca
+  do armazém (152) fica noventa pontos abaixo da parede (241); com a luz da
+  cena, a doca sai a ~150 e os vincos da chapa a ~135 — a faixa da base e a
+  textura da parede na MESMA banda. Quem separou foram três pixels de `metal`
+  no topo da doca. A esta escala quem separa não é o tom, é a LINHA escura, e
+  isso confere-se no render e não na tabela de cores.
+- **Peça que avança o CHÃO de um prop avança a PEGADA, e as faces não têm a
+  mesma folga.** Antes de escolher em que face sai um deck, uma escada ou um
+  toldo que pousa, meça a folga de cada uma em `porto_mapa_ancoras.json` — o
+  armazém tem 0,236 unidades em `+my` (até o cotovelo da rua) e 0,746 em `+mx`
+  (até o avental), e a plataforma de carga foi para `+x` por causa disso e não
+  por gosto. A história do prop confirma ou não a régua; nunca a substitui.
 - **Trocar cor olhando só o MATIZ achata a imagem.** Em 02/09 a água passou de
   mar frio a turquesa tropical com valores amostrados da referência, e ficou
   bonita e chapada: pôr as duas pontas amostradas nas duas pontas da rampa

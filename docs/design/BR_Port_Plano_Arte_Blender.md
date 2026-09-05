@@ -329,6 +329,98 @@ paredes que a câmera vê, cada uma com o seu vão, e o resto a desfazer-se.
 As três estão registadas no `CLAUDE.md`, e as duas primeiras são corolários de
 regras que ele já tinha.
 
+### Fora das etapas — o ARMAZÉM ACABADO, o outro lado do par (05/09)
+
+A ruína do armazém foi consertada mais acima nesta página, e o conserto
+deixou o par desequilibrado: o estado ANTES ganhou vocabulário próprio e o
+estado DEPOIS continuou a ser o que sempre tinha sido — uma casa grande. O
+Bruno disse-o assim: *"o galpão ainda lê como casinha e não como armazém —
+portão chato, sem plataforma de carga, sem corrugado"*.
+
+**E a causa era a mesma de sempre, com o sinal trocado.** Lá, o estado antes
+partilhava as peças do depois; aqui, o estado depois nunca teve vocabulário
+nenhum. As quatro peças que o desenhavam eram todas do repertório doméstico:
+parede lisa, telhado de TELHA com fiada horizontal, três `janela()` com
+moldura e travessa, e a `porta()` do kit esticada — a mesma função que faz a
+porta do escritório. Posto ao lado das casas da vila, que têm parede clara e
+telhado de telha, ele lia-se como o que era: **a maior casa do bairro**.
+
+**As quatro trocas, por ordem do que cada uma vale na tela:**
+
+| O que mudou | Porquê |
+|---|---|
+| **Telhado de zinco**, com a nervura no sentido da água | É a maior superfície do prop. A fiada corre em X e sai como um feixe descendo para a direita — o desenho de um telhado de telha. A nervura corre em Y e sai a subir para a direita: o mesmo custo de geometria, a leitura trocada (`telhado_duas_aguas(..., nervuras=N)`) |
+| **Plataforma de carga** | O plinto de 0,18 virou uma doca de 0,44 — altura de estrado de caminhão — com deck saliente na face `+x`, defensas de borracha, dois degraus e a soleira do portão assente NELA |
+| **Chapa corrugada** nas duas faces visíveis | Pela receita do contêiner: painéis de valor diferente, não vincos de relevo |
+| **Portão de enrolar**, laranja, com tambor e guias | No lugar do retângulo castanho chapado. 26px de largura numa face de 49 — é uma FORMA, não um detalhe |
+
+Mais a **fita de vidro corrida** rente ao beiral, que substituiu as três
+janelas de moldura: janela com moldura, travessa e peitoril é janela de casa,
+e três em fila numa parede clara são a assinatura de uma.
+
+#### Isto adianta metade da Etapa 4, e vale dizer qual metade
+
+A Etapa 4 pede *"ripa, corrugado, fiada de telha, ferrugem que escorre, cal
+descascada"* e **mede-se pelo galpão**. O corrugado ficou feito — e ficou
+feito na peça pela qual a etapa se mede, nas duas escalas que ela exige (o
+prop a 5x e o mapa a 1x). **Ripa, ferrugem e cal continuam por fazer**, e são
+para todos os props, não só para este. A etapa não fecha aqui.
+
+#### Cinco coisas que a passagem mediu, e três desmentiram o desenho
+
+**1. A altura não cresceu um pixel, e isso foi decisão.** A cumeeira continua
+em 2,32 — a doca COME parte da parede (0,44 + 1,26 + 0,62) em vez de se
+empilhar debaixo dela. Empilhar teria devolvido metade do defeito que o
+`ESCALA_PREDIO` de 03/09 existe para corrigir: os dois prédios do pátio a
+levantarem-se ~4x a altura de uma casa e a derramarem a silhueta pela estrada.
+
+**2. ⚠️ COPIAR O VALOR DE UMA COR QUE NÃO VIVIA DELE NÃO COPIA NADA.** O
+telhado de zinco foi escolhido pela regra do §3 da skill `/arte` lida ao
+contrário — trocar o matiz sem tocar no valor —, e a conta fechava: `#5f6e7a`
+mede 108 de luminância contra os 105 do `telhado` de telha. Medido no jogo
+rodando, ele ficou a **0,12 de Weber** contra o asfalto do pátio... que é
+exatamente o que a telha já dava (**0,13**). A telha **nunca se separou do
+chão pelo valor — separou-se pelo MATIZ**, terracota contra cinza-azulado; e
+o zinco, sendo cinza-azulado como o asfalto, ficou sem separação nenhuma.
+Descer para `#4e5b66` dá **0,26**. É a irmã da armadilha da água de 02/09, do
+outro lado: lá trocou-se o matiz e esqueceu-se o valor; aqui copiou-se o valor
+certo de uma cor que não vivia dele.
+
+**3. O custo dessa descida, medido:** 15 pontos de luminância média AO PROP
+(122,7 → 107,5) e **zero ao mapa** — a captura inteira fica em 116,3 de média
+e 151 de amplitude, contra 116,5 e 151 antes. Um prédio não move a composição;
+move a própria leitura.
+
+**4. ⚠️ O DECK SAIU PELA FACE `+x` POR CAUSA DA PEGADA, e a régua decidiu
+antes da história.** As duas faces são visíveis, mas o espaço à volta delas
+não é o mesmo: medido em `porto_mapa_ancoras.json`, o armazém tem **0,236**
+unidades de folga em `+my` (até o cotovelo da rua, em 14,68) contra **0,746**
+em `+mx` (até o avental, em 8,70). Em `-y` cabem 0,25 de avanço e nem um a
+mais; em `+x` cabem 0,45 e ainda sobra meia unidade de cada lado. **Conferido
+com defeito injetado:** pôr a pegada em `my` nos 3,46 que este mesmo deck
+exigiria do lado `-y` faz o bloco D2 reprovar com *"a pegada entra no cotovelo
+da rua"* e sair com código 1. A história só confirmou: em `+x` a plataforma dá
+para o avental, que é por onde a carga do navio chega.
+
+**5. ⚠️ A DOCA NÃO SE SEPARAVA DA PAREDE PELO TOM, E A PALETA DIZIA QUE SIM.**
+Na paleta a doca (`concreto_borda`, 152) fica muito abaixo da parede (241). No
+render, com a luz da cena, a doca sai a ~150 e os VINCOS da chapa saem a ~135:
+a faixa da base e a textura da parede caem na **mesma banda de valor**, e o
+degrau que devia dizer "plataforma" lia-se como mais uma sombra do corrugado.
+Quem separou foram três pixels de `metal` no topo da doca — a mesma lição das
+cantoneiras do contêiner: **a esta escala quem separa não é o tom, é a LINHA
+escura**.
+
+E duas armadilhas velhas apanhadas outra vez, as duas nessa linha de 1px: ela
+tinha a largura da doca e as pontas saíam da quina como farpas no vazio, e o
+topo dela ficava coplanar com o tampo da doca. Param antes das duas agora.
+
+**O que NÃO se fez, e porquê:** o lanternim de cumeeira (a clarabóia elevada
+que todo galpão tem) ficou de fora — são 0,29 de altura, +11,6% na silhueta, e
+desfaria um terço do que o `ESCALA_PREDIO` comprou. E a ruína não foi tocada:
+o `telhado_velho` castanho já lê como zinco enferrujado ao lado do zinco novo,
+e ela acabou de ser refeita.
+
 ### Fora das etapas — os três níveis do píer, da lança e do casco (05/09)
 
 Pedido: *"variações de píer, guindastes e navios, para marcar a transição e
@@ -634,11 +726,16 @@ metade; o caixote melhorou e continua a ser a peça mais difícil do convés.**
   proporcional à profundidade, composição por cima do beauty.
 - **Mede-se por:** o guindaste. Se a treliça continuar vazada, funcionou.
 
-### Etapa 4 — Materiais dirigidos
+### Etapa 4 — Materiais dirigidos  ⏳ o CORRUGADO ficou em 05/09
 - Família de padrões: ripa, corrugado, fiada de telha, ferrugem que escorre
   de cima para baixo, cal descascada nas quinas.
 - **Mede-se por:** o galpão a 100% e a 25% — padrão que só funciona de perto
   não serve.
+- ✅ **O corrugado está feito, e na peça pela qual a etapa se mede** — parede e
+  telhado do armazém, conferidos nas duas escalas (ver *Fora das etapas — o
+  armazém acabado*). Ele saiu pela receita do contêiner: painéis de valor
+  diferente, não vincos de relevo.
+- ⏳ **Ripa, ferrugem e cal continuam por fazer**, e são para todos os props.
 
 ### Etapa 5 — Personagem com rosto  ✅ FEITA em 03/09
 - Folha de rostos por gerador de imagem, aplicada num plano da cabeça.

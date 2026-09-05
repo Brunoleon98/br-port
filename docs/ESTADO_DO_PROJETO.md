@@ -38,9 +38,8 @@ e não três berços: o `MEIA_LARG` efetivo passou de 30 para os 20 que o Bruno
 escolheu em 03/09, e a câmera centra-se no centroide dos três berços em vez de
 num ponto herdado. O mundo teve de crescer primeiro — um degrau de costa em
 cada ponta (`my` de −14 a 42) e o fundo da terra de −8 para −16 —, senão o
-jogador via o mapa ACABAR por três lados. Medido, o porto mantém ~47,5% do
-quadro nas três larguras e o que cresce é o distrito à volta: a terra natural
-vai de 14,4% a 30 para 22,3% a 20.
+jogador via o mapa ACABAR por três lados. Medido, o porto mantém
+~47,5% do quadro e o que cresce é o distrito à volta.
 
 **A água é tropical e o porto tem PRAIA nas duas pontas.** A areia não vai
 entre a água e o cais: vai **onde o porto não está** — para além do primeiro e
@@ -73,6 +72,12 @@ cartão na barra logo abaixo (valor, turnos, trabalhador). O número de cada doc
 está pintado no cais. **As três placas com mastro saíram** — o mapa não carrega
 mais texto nenhum; quem distingue os prédios do porto das casas da vila são os
 próprios prédios.
+
+**E o ARMAZÉM é um armazém dos dois lados do par.** O acabado lia como a maior
+casa do bairro — parede lisa, telha, três janelas de moldura. Hoje é telhado de
+zinco com nervura no sentido da água, chapa corrugada, fita de vidro rente ao
+beiral, portão de enrolar laranja e **plataforma de carga** com defensas e
+degraus. A cumeeira não subiu um pixel: a doca come parte da parede.
 
 **E o porto abre em RUÍNAS de verdade desde 05/09.** O `galpao_velho` reusava
 as paredes do galpão acabado e trocava só a cor do telhado — paredes brancas,
@@ -108,7 +113,7 @@ em `docs/arquivo/HISTORICO.md`.
 |---|---|---|
 | **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas, e a 1 INTEIRA** — a 1 (paleta tropical, a areia das duas pontas e o enquadramento, 05/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Faltam a 3 e a 4 |
+| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas, a 1 INTEIRA e metade da 4** — a 1 (paleta tropical, a areia das duas pontas e o enquadramento, 05/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Da 4, o **corrugado** ficou em 05/09, e ficou na peça pela qual a etapa se mede; falta a 3 inteira e, da 4, ripa, ferrugem e cal |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a primeira jogada no telefone devolveu (02–03/09)
@@ -129,25 +134,15 @@ está fechada por inteiro no que não depende do Bruno.
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume.
 
-Da arte, **quatro das seis etapas estão feitas, e a 1 está fechada por
-inteiro** — a 1 (paleta, areia das duas pontas e enquadramento), a 2 (a cauda
-dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da
-interface). Faltam a 3 (contorno pelo compositor) e a 4 (materiais dirigidos).
+Da arte, **quatro das seis etapas estão feitas, a 1 está fechada por inteiro e
+a 4 está a meio** — a 1 (paleta, areia das duas pontas e enquadramento), a 2 (a
+cauda dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da
+interface). Falta a 3 (contorno pelo compositor); da 4 (materiais dirigidos), o
+**corrugado** ficou em 05/09 — na parede e no telhado do armazém, que é a peça
+pela qual a etapa se mede —, e ripa, ferrugem e cal continuam por fazer.
 
-**O enquadramento fechou em 05/09**, e o que ele custou não foi o Blender —
-`pip install bpy` leva 17 s e regerar os 39 props 3,5 min, tudo medido antes de
-prometer. Custou a descoberta de que **altura, no gerador do mapa, é PIXEL**:
-baixar o `MEIA_LARG` de 30 para 20 encolheria a planta e deixaria o `ALT_CAIS`,
-as paredes da vila e cada traço onde estavam — o porto esticado 1,5× para cima,
-e nenhuma das cinco suítes a lê-lo. A saída é a mesma regra dos props: escala-se
-no GRUPO. O mapa continua a ser DESENHADO a 30 num quadro de 1080 e o `viewBox`
-do SVG entrega 720. São dois espaços agora, e a fronteira é a função `tela()` —
-`docs/BRP_SPATIAL_CONTRACT.md` §1.1 e a regra no `CLAUDE.md`.
-
-**E a largura era só metade do enquadramento.** A outra é o CENTRO: com o ponto
-herdado, o porto saía encostado à direita com um bloco de mata a ocupar a
-esquerda. Ele passou a ser derivado do centroide dos berços, e a água voltou aos
-"perto de metade do quadro" que a leitura das referências pede.
+**Como o enquadramento se fez** está em `docs/arquivo/HISTORICO.md`; o que
+fica a valer é `docs/BRP_SPATIAL_CONTRACT.md` §1.1.
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
@@ -279,7 +274,9 @@ reaproveitam e por quê.
 As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
 nos dois estados, então o prédio não salta ao ser consertado. Mas as PEÇAS não
 se partilham entre os dois: foi isso que fez o galpão em ruína ter paredes
-novas até 05/09.
+novas até 05/09. **E cada estado precisa do seu vocabulário** — o mesmo defeito
+com o sinal trocado: consertada a ruína, o armazém ACABADO ficou o único prédio
+do porto desenhado só com repertório doméstico, e lia-se como casa.
 
 **A cauda dos props tem corpo** (Etapa 2): contêiner corrugado, carga
 empilhada, boia e marcador com faixa refletiva, e as catorze peças pequenas do
