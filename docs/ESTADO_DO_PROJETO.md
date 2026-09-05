@@ -23,10 +23,11 @@
 
 ## O jogo hoje, em três linhas
 
-**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$400.000 e cinco estruturas
-para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada uma
-muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
-saem de ruína para telhado novo.
+**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$400.000 e **sete
+estruturas** — píeres 2 e 3, armazém, pátio, escritório e os dois UPGRADES
+(guindaste de pórtico e cais reforçado). Comprar cada uma muda o mapa: o pátio
+sai de terra batida para asfalto, os prédios saem de ruína, e os upgrades
+trocam a torre e a laje do píer.
 
 **O botão que move o jogo tem cor própria** — "Avançar dia" é âmbar com rótulo
 navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os cartões
@@ -129,15 +130,12 @@ está fechada por inteiro no que não depende do Bruno.
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume.
 
-Da arte, **quatro das seis etapas estão feitas, a 1 está fechada por inteiro e
-a 4 está a meio** — a 1 (paleta, areia das duas pontas e enquadramento), a 2 (a
-cauda dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da
-interface). A **3 fechou por rejeição**: num estilo que desenha o detalhe com fronteiras de
-valor, um filtro de borda redesenha o desenho — a parede do galpão perde 14% de
-desvio local e a treliça 21% de saturação. Quem separa a silhueta é o contraluz
-do rig, e já separava. A **4 fechou com uma baixa**: corrugado, ripa e ferrugem
-entraram; a cal descascada nas quinas não se faz nesta geometria, e o porquê
-está medido no plano de arte.
+**A trilha de arte ACABOU: as seis etapas estão fechadas**, duas delas por
+rejeição medida — a 3 inteira (um filtro de borda redesenha o desenho, num
+estilo que desenha o detalhe com fronteiras de valor) e a cal descascada da 4
+(o `Pointiness` não separa quina de pano numa caixa). Os números de cada uma
+estão no `BR_Port_Plano_Arte_Blender.md`; o que fica a valer está no
+`CLAUDE.md`.
 
 **Como o enquadramento se fez** está em `docs/arquivo/HISTORICO.md`; o que
 fica a valer é `docs/BRP_SPATIAL_CONTRACT.md` §1.1.
@@ -235,8 +233,11 @@ conta e o modo de a refazer estão em
 - Contra-oferta do Arlindo (3 presets + mood face do cliente)
 - Parcela única de **R$550.000** ao Sr. Ribeiro, vencendo ao fim da semana 4
   (8 turnos por semana, 4 semanas — 32 dias de partida)
-- **Cinco estruturas para reconstruir** — píer 2, píer 3, armazém, pátio e
-  escritório —, cada uma mudando o mapa. O porto abre em ruínas com 1 doca
+- **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
+  upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
+  com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase
+  (`docs/decisoes/007`): o guindaste corta o turno do navio grande, o cais
+  aumenta a chance de ele aparecer
 - Autosave local a cada turno
 - **Sete telas narrativas**: nomes do cais e do jogador (abertura), primeira
   página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8

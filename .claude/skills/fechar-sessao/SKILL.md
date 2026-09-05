@@ -74,7 +74,7 @@ também deve.
 
 | Se mexeu em… | Rode | Espera |
 |---|---|---|
-| preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | 100% / 79,5% / 35,7% ainda de pé |
+| preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | 100% / 79,5% / 31,0% ainda de pé |
 | **qualquer `const` do `GameState.gd`** | o despejo + a tabela (abaixo) | `TABELA OK` |
 | **a economia, de qualquer maneira** | `tools/projetar_parcelas.py` (abaixo) | o modelo ainda calibra nos 3 perfis |
 | `tools/gerar_mapa_iso.py` | regerar os dois mapas (abaixo) | `git diff -- brport_vs/art` limpo |
