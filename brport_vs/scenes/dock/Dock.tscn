@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/Dock.gd" id="1"]
 [ext_resource type="Texture2D" path="res://art/props/trabalhador.png" id="prop_trabalhador"]
-[ext_resource type="Texture2D" path="res://art/props/guindaste_lanca.png" id="prop_lanca"]
+[ext_resource type="Texture2D" path="res://art/props/lanca_n2.png" id="prop_lanca"]
 
 [node name="Dock" type="Control"]
 custom_minimum_size = Vector2(262, 168)

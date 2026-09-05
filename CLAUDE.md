@@ -363,6 +363,14 @@ tranca isso.
 - **Vão recuado perto de uma quina atravessa a parede vizinha.** Irmã da
   anterior: um `vao_cego` é uma placa RECUADA, e a menos de meia largura da
   quina ela sai do outro lado. Meia largura de folga, e mais um pouco.
+- **Asset GERADO não é asset EM CENA, e nada perguntava a diferença.** O
+  `barco_medio` era renderizado a cada leva, entrava no manifest, passava o
+  `asset_validator` e as cinco suítes — e o jogo nunca o punha numa doca:
+  escolhia entre dois cascos por um booleano, e o terceiro só existia como
+  enfeite na Zona de Espera. Toda a maquinaria de validação deste projeto
+  pergunta se o que está na CENA existe no disco; nenhuma perguntava o
+  contrário. Ao acrescentar um prop, acrescente também quem o mostra — e a
+  asserção de que ele chega à tela.
 - **Peça invisível conta como peça, e é por isso que contar não chega.** A
   boia levou uma corrente que ficou DENTRO do cone do corpo: o contador dizia
   cinco, o render mostrava quatro. Contagem de peças só vale depois de olhar

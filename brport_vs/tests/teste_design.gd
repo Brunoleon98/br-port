@@ -65,6 +65,7 @@ var _d12_completo := false
 var _d13_completo := false
 var _d15_completo := false
 var _d16_completo := false
+var _d17_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -145,6 +146,10 @@ func _rodar() -> void:
 	print("=== D16: o mundo transborda o quadro pelos quatro lados ===")
 	_d16_bordas_do_mundo()
 	_confere("o bloco D16 correu até ao fim", _d16_completo)
+
+	print("=== D17: os três níveis do píer e da lança ===")
+	_d17_niveis_do_porto()
+	_confere("o bloco D17 correu até ao fim", _d17_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -321,6 +326,79 @@ func _linha_no_quadro(a: Vector2, b: Vector2, alt: float,
 			visivel += ponto.distance_to(ant)
 		ant = ponto if dentro else Vector2.INF
 	return visivel
+
+
+# ── D17 ── os três níveis do píer e da lança
+#
+# O GDD 7 pede três níveis para grua e cais, e a arte deles existe antes da
+# mecânica — como a vila, que cresce por `--nivel-vila=N`. Isso cria uma
+# armadilha que não existia enquanto havia uma lança só:
+#
+# **O `pivot_offset` do nó `Lanca` é UM para as três.** Ele nomeia o topo da
+# torre, e a torre vive dentro do PÍER; uma lança construída a partir de outro
+# topo desprende-se dela ao girar, e o defeito só aparece a meio de uma varrida
+# — nunca numa captura parada. Aqui exige-se que o pivô caia dentro do desenho
+# de cada uma das três: uma lança que não cubra o próprio centro de rotação
+# gira em torno de um ponto fora dela.
+#
+# E exige-se também que os três níveis EXISTAM e sejam distintos: dois arquivos
+# iguais passariam em tudo o resto e o jogador nunca veria o porto evoluir.
+const NIVEIS := 3
+
+
+func _d17_niveis_do_porto() -> void:
+	var doca := _main.get_node_or_null("MapaWrap/Docas/Doca0")
+	if doca == null:
+		_confere("há uma doca para conferir os níveis", false)
+		return
+	var lanca := doca.get_node_or_null("Lanca") as Control
+	if lanca == null:
+		_confere("a doca tem nó Lanca", false)
+		return
+	var pivo := lanca.pivot_offset
+
+	var consts: Dictionary = doca.get_script().get_script_constant_map()
+	for chave in ["ArtePier", "ArteLanca"]:
+		var lista: Array = consts[chave]
+		_confere("%s declara os %d níveis" % [chave, NIVEIS],
+			lista.size() == NIVEIS, "declara %d" % lista.size())
+	var lancas: Array = consts["ArteLanca"]
+	var vistos: Array = []
+	for i in range(lancas.size()):
+		var img := (lancas[i] as Texture2D).get_image()
+		var usado := img.get_used_rect()
+		# O pivô é o topo da torre, e a torre está no PÍER. A lança tem de o
+		# cobrir, senão gira em torno de um ponto que não lhe pertence.
+		_confere("a lança do nível %d cobre o pivô %s" % [i + 1, pivo],
+			usado.has_point(Vector2i(pivo)),
+			"o desenho dela ocupa %s" % usado)
+		# Níveis iguais não são níveis. Compara-se a caixa desenhada, que é o
+		# que o jogador vê mudar — não os bytes, que mudam por ruído.
+		_confere("o nível %d da lança é distinto dos anteriores" % [i + 1],
+			not vistos.has(usado), "tem o mesmo desenho %s de outro nível" % usado)
+		vistos.append(usado)
+
+	# ── e os TRÊS CASCOS, escolhidos pelo valor do contrato.
+	#
+	# ⚠️ O `barco_medio` ESTEVE GERADO E SEM USO em doca nenhuma até 05/09: o
+	# jogo escolhia entre dois cascos por um booleano, e o terceiro só aparecia
+	# como enfeite na Zona de Espera. Passou pelo `asset_validator`, pelo
+	# manifest e por cinco suítes sem que nada notasse — porque nenhuma delas
+	# perguntava se o que se GERA chega à tela. Esta asserção pergunta.
+	var GS: Node = root.get_node("GameState")
+	var faixa_min: int = int(GS.BOAT_VALUE_LARGE_MIN)
+	var faixa_max: int = int(GS.BOAT_VALUE_LARGE_MAX)
+	var cascos: Array = []
+	for caso in [[int(GS.BOAT_VALUE_SMALL_MIN), false],
+			[faixa_min + 1, true], [faixa_max, true]]:
+		var tex = doca.call("arte_do_barco", int(caso[0]), bool(caso[1]))
+		_confere("o contrato de %s tem casco" % GS.moeda(int(caso[0])), tex != null)
+		if tex != null:
+			cascos.append((tex as Texture2D).get_image().get_used_rect())
+	_confere("os três cascos são três desenhos diferentes",
+		cascos.size() == 3 and cascos[0] != cascos[1] and cascos[1] != cascos[2],
+		"medidos %s" % [cascos])
+	_d17_completo = true
 
 
 # O inverso de `_mundo`: do mundo para o pixel do mapa.

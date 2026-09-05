@@ -42,20 +42,16 @@ jogador via o mapa ACABAR por três lados. Medido, o porto mantém ~47,5% do
 quadro nas três larguras e o que cresce é o distrito à volta: a terra natural
 vai de 14,4% a 30 para 22,3% a 20.
 
-**A água é tropical desde 02/09 e o porto tem PRAIA nas duas pontas desde
-04/09.** A água era mar frio (`#4a96b4`) e passou a turquesa amostrada da
-referência. A areia não vai entre a água e o cais: vai **onde o porto não
-está** — para além do primeiro e do último berço, emoldurando-o. Nos dois
-trechos o porto PARA (sem avental, asfalto, junta, mancha nem enrocamento) e a
-terra desce numa rampa de areia até a água, com restinga, árvores baixas e
-pedras avulsas. Com o enquadramento novo as duas pontas ficaram maiores, e são
-elas que emolduram o porto nos cantos de cima e de baixo.
+**A água é tropical e o porto tem PRAIA nas duas pontas.** A areia não vai
+entre a água e o cais: vai **onde o porto não está** — para além do primeiro e
+do último berço. Nos dois trechos o porto PARA (sem avental, asfalto, junta nem
+enrocamento) e a terra desce numa rampa de areia até a água, com restinga e
+pedras. Com o enquadramento novo elas emolduram o porto nos dois cantos.
 
-**O jogo é TRANQUILO, e os valores são realistas** (02/09). Medido em 600
-partidas por perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a
-mediana do mediano em R$685.271 contra uma parcela de R$550.000. Um contrato
-vale R$8.000–70.000, a manutenção custa R$40.000/semana e reconstruir um píer
-custa R$150.000 — números de porto, não de banca de feira.
+**O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
+perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a mediana do mediano
+em R$685.271 contra uma parcela de R$550.000. Um contrato vale R$8.000–70.000 e
+a manutenção custa R$40.000/semana — números de porto, não de banca de feira.
 
 A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
 agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
@@ -85,15 +81,12 @@ desabado, meio telhado com a armação à vista e o portão fora do trilho; e a
 ruína do escritório, que era duas lajes cinzentas, é um CANTO de pé com porta e
 janela vazias. O plano de arte tem as três armadilhas que a passagem apanhou.
 
-**O porto tem uma cidade atrás dele, e desde 04/09 ela é uma CIDADE.** Rua
-paralela ao cais, calçada, acesso a cada berço, e **duas fileiras de casas em
-quarteirões** — 3 a 5 lotes quase colados, com um par em cada três geminado,
-cortados por travessas. Era uma fileira só com o vão sempre igual: 73% dos
-vãos mediam exatamente o `VILA_PASSO`, e aquilo lia como cerca. A fileira de
-trás é mais rala e mais arborizada, para a vila DESFIAR contra a mata em vez
-de acabar numa parede de telhados. A vila tem nível (`--nivel-vila=N` no
-gerador do mapa): 1 é casa térrea, 2 sobrado, 3 prédio — é assim que ela cresce
-a cada Fase, sem o jogo precisar saber.
+**O porto tem uma CIDADE atrás dele.** Rua paralela ao cais, calçada, acesso a
+cada berço e **duas fileiras de casas em quarteirões** — 3 a 5 lotes quase
+colados, um par em cada três geminado, cortados por travessas. Era uma fileira
+só com o vão sempre igual, e aquilo lia como cerca; a de trás é mais rala e
+arborizada, para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`):
+térrea, sobrado, prédio — é assim que cresce a cada Fase, sem o jogo saber.
 
 **E a mata atrás dela é desenhada onde se vê** — copas com sombra projetada,
 tronco e lobos com aresta, pela receita `com_saia()`. Como se lá chegou está em
@@ -108,8 +101,6 @@ itens param à espera do Bruno. Aqui fica só a posição.
 **Fechados**, dos quinze itens: B1 a B8 e A2, A3, A4 (construídas), mais a
 metade de máquina do A1 (APK e build Web a cada push). O que cada um era está
 em `docs/arquivo/HISTORICO.md`.
-
-**A trilha do projeto acabou** — B1 a B6 e B8 estão todos fechados.
 
 **Abertos e esperando o Bruno** — nenhum deles precisa de uma sessão ligada:
 
@@ -271,8 +262,7 @@ existem vem de `GameState.docks`, e "Ampliar píer" acende a terceira, que até
 lá mostra as estacas velhas sob contorno tracejado.
 
 A interface **não é montada por código**: vive em cenas `.tscn` com um tema
-(`ui/tema_brport.tres`). Trocar arte é editar cena e tema, não reescrever
-script.
+(`ui/tema_brport.tres`).
 
 **O mapa não carrega interface em cima.** O texto e o alvo de toque de cada
 doca vivem em `scenes/dock/DocaCartao.tscn`, numa fileira de três cartões
@@ -281,11 +271,10 @@ trabalhador. Os nomes são **placas com mastro** apoiadas no prédio ou numa
 estaca, e o número de cada doca é **tinta de piso**, em estêncil, porque o
 importador de SVG do Godot não desenha `<text>`.
 
-**Os ícones do HUD já são arte de verdade** (29/08): 20 SVGs em `art/icones/`,
-todos conferidos a 19px sobre os três fundos que a interface tem (pílula
-escura, cartão branco, botão navy) com `tools/folha_icones.gd`. Cada um foi
-colorido para o fundo onde cai — dois não são reaproveitáveis em qualquer
-lugar, e o cabeçalho de `Icones.gd` diz quais e por quê.
+**Os ícones do HUD já são arte de verdade**: 20 SVGs conferidos a 19px sobre
+os três fundos da interface com `tools/folha_icones.gd`. Cada um foi colorido
+para o fundo onde cai — o cabeçalho de `Icones.gd` diz quais não se
+reaproveitam e por quê.
 
 As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
 nos dois estados, então o prédio não salta ao ser consertado. Mas as PEÇAS não
@@ -307,8 +296,19 @@ duas pontas**, onde o cais deu lugar a praia. A **mata atrás da vila tem
 saíram do SVG do mapa — `--sem-coqueiros` — pela mesma razão que os píeres: o
 que se mexe não pode estar assado no fundo.
 
-Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande), e o
-pesqueiro tem casco próprio — não é o mesmo casco com carga trocada. O
+**O píer, a lança e o casco têm TRÊS NÍVEIS desde 05/09** — é a evolução do
+porto ficando visível. O píer vai de ripas de madeira com fresta a laje de
+concreto sobre estacas de aço, com defensas de pneu e contêiner empilhado; a
+lança, de um pau-de-carga sem contrapeso a uma lança longa com spreader. Quem
+escolhe é `GameState.nivel_porto()`, que só LÊ quantas estruturas estão de pé —
+a mecânica de upgrade que o GDD 7 prevê é da Fase 2 e continua por fazer, como
+a vila, que já cresce por `--nivel-vila=N` sem o jogo saber. **A torre é a mesma
+nos três**, porque o `pivot_offset` da lança é um só.
+
+Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande) e desde
+05/09 os TRÊS atracam, escolhidos pelo valor do contrato — o médio era gerado,
+validado e nunca entrava em doca. O pesqueiro tem casco próprio, não é o mesmo
+casco com carga trocada. O
 **trabalhador aparece de pé no tabuado** quando alocado, e mexe-se enquanto a
 operação corre.
 

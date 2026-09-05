@@ -329,6 +329,46 @@ paredes que a câmera vê, cada uma com o seu vão, e o resto a desfazer-se.
 As três estão registadas no `CLAUDE.md`, e as duas primeiras são corolários de
 regras que ele já tinha.
 
+### Fora das etapas — os três níveis do píer, da lança e do casco (05/09)
+
+Pedido: *"variações de píer, guindastes e navios, para marcar a transição e
+evolução do porto"*. O GDD 7 já tinha decidido a forma disto —
+*"estruturas principais (grua, cais, armazém) têm upgrade in-place de até 3
+níveis"* (`docs/gdd/perguntas.md`) —, então o que se fez foi a ARTE dos três
+níveis, não a mecânica.
+
+**A mecânica é da Fase 2 e continua por fazer, de propósito.** Quem escolhe o
+nível é `GameState.nivel_porto()`, que só LÊ quantas estruturas já estão de pé:
+0–1 → n1, 2–3 → n2, 4–5 → n3. Não guarda estado, não decide nada e não
+acrescenta constante nenhuma — os 100% / 79,5% / 35,7% medidos ficam intocados
+**por construção**, e não por cuidado. É o mesmo padrão da vila, que cresce por
+`--nivel-vila=N` "sem o jogo precisar saber disso".
+
+| | píer | lança |
+|---|---|---|
+| **n1** | estacas e ripas de madeira crua com fresta, dois cabeços, sem carga | pau-de-carga curto: um braço só, sem contralança nem contrapeso |
+| **n2** | o de sempre — tabuado inteiro, contêiner e caixotes | a de sempre |
+| **n3** | laje de concreto sobre estacas de aço, meio-fio, cinco defensas de pneu, quatro cabeços e contêiner empilhado | lança longa, contrapeso maior e **spreader** em vez de moitão |
+
+E os **navios** passaram a ser três em doca, escolhidos pelo VALOR do contrato
+— pesqueiro, cargueiro e cargueiro grande. O `barco_medio` já existia,
+renderizado e validado, e **nunca entrava numa doca**: o jogo escolhia entre
+dois cascos por um booleano. O contrato já vale de R$8.000 a R$70.000 e não
+custava nada dizê-lo com a silhueta.
+
+⚠️ **A torre é a mesma nos três níveis, e isso é uma restrição e não uma
+economia.** O `pivot_offset` do nó `Lanca` em `Dock.tscn` é UM para as três
+lanças, e ele nomeia o topo da torre — que vive dentro do PÍER. Uma torre mais
+alta no n3 desencaixaria a lança ao girar, e o defeito só apareceria a meio de
+uma varrida, nunca numa captura parada. O bloco **D17** tranca as três coisas:
+o pivô cai dentro do desenho de cada lança, os três níveis são desenhos
+distintos, e os três cascos chegam à tela.
+
+⚠️ **E empilhar não é passar uma altura maior.** O contêiner de cima do n3
+nasceu com `altura_px` dobrada, que o `_no_conves` lê como caixa MAIS ALTA
+assente no convés: o segundo engoliu o primeiro e o render saiu com um cubo
+azul do tamanho da cabine do guindaste.
+
 ### Fora das etapas — a escala dos dois prédios do pátio (03/09)
 
 Não é etapa do plano: é correção de playtest, e entra aqui porque mexeu em

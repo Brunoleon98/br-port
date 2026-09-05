@@ -143,6 +143,11 @@ PALETA = {
     # chapado ao lado do `parede_suja` lê como recorte falhado. É o navio do
     # tema levado ao escuro, que é a sombra que o resto do mapa já usa.
     "vao": "#2b3138",
+    # O cais REFORÇADO do nível 3: concreto, e o mesmo tom que o mapa já
+    # desenha no cais de pedra (`cais_topo`), para o píer de betão ler como
+    # continuação dele e não como uma peça de outro jogo.
+    "concreto": "#b9c2c8", "concreto_borda": "#8e9aa2",
+    "pneu": "#33383c",
     # O PISO que sobra quando as paredes caem: o `parede_suja` levado ao
     # escuro. Sem ele a ruína inteira sai num cinzento só e as peças fundem-se
     # umas nas outras — a mesma regra do caixote que era `madeira` num tabuado
@@ -203,6 +208,7 @@ DESGASTE = {
     "rede": 14.0, "corda": 13.0,
     # O vão é pequeno e quer marca; o barrote é uma ripa fina, idem.
     "vao": 9.0, "barrote": 9.0, "piso_ruina": 4.0,
+    "concreto": 3.0, "concreto_borda": 4.0, "pneu": 10.0,
 }
 
 
@@ -900,11 +906,153 @@ def montar(M: dict) -> dict:
         caixa("g_cabo", (GX, CARRO_Y, TOPO - 0.72), (0.035, 0.035, 1.05), M["metal"]),
         caixa("g_moitao", (GX, CARRO_Y, TOPO - 1.32), (0.19, 0.15, 0.22), M["amarelo"]),
     ]
+    # ── OS TRÊS NÍVEIS DO PÍER E DA LANÇA ───────────────────────────
+    #
+    # O GDD 7 já decidiu isto: *"estruturas principais (grua, cais, armazém)
+    # têm upgrade in-place de até 3 níveis"*. A MECÂNICA desse upgrade é da
+    # Fase 2 e não existe; a ARTE existe desde já, exatamente como a vila, que
+    # tem `--nivel-vila=N` no gerador do mapa e cresce a cada Fase "sem o jogo
+    # precisar saber disso". Quem escolhe o nível é `GameState.nivel_porto()`,
+    # que só LÊ o que já está construído — não decide nada e não acrescenta
+    # número nenhum ao balanceamento.
+    #
+    # ⚠️ A TORRE É A MESMA NOS TRÊS, e isso não é economia de render: é o
+    # `pivot_offset` do nó `Lanca` em `Dock.tscn`, que é UM para as três lanças.
+    # Torre mais alta no nível 3 desencaixaria a lança do topo dela ao girar, e
+    # o defeito só apareceria a meio de uma varrida. `GX`, `GY` e `TOPO` ficam
+    # onde estão; o que muda é o CONVÉS por baixo e o BRAÇO por cima.
+    #
+    # O que separa os três é o material e o equipamento, não o tamanho:
+    #
+    #   n1  estacas e tabuado de madeira crua, com frestas. Dois cabeços e mais
+    #       nada — um pontão a que se amarra um barco;
+    #   n2  o de sempre: tabuado inteiro, contêiner e caixotes à espera;
+    #   n3  laje de concreto sobre estacas de aço, meio-fio, defensas de pneu na
+    #       borda do mar e contêiner empilhado. É porto, e não pontão.
+
+    # -- n1: o pontão de tábuas -------------------------------------------
+    # Tabuado de RIPAS com fresta, e não uma laje: a fresta é o que diz
+    # "provisório". Uma laje pintada de madeira velha leria como o n2 sujo, que
+    # é o erro que o galpão em ruína cometeu ao partilhar as paredes do acabado.
+    RIPAS = 9
+    passo = PIER_LARG / RIPAS
+    deck_n1 = []
+    for i in range(RIPAS):
+        y = -PIER_LARG / 2 + passo * (i + 0.5)
+        deck_n1.append(caixa("ripa%d" % i, (0, y, ALT_PIER - z(2.2)),
+                             (PIER_ALCANCE, passo - 0.045, z(4.4)),
+                             M["madeira"] if i % 2 else M["madeira_esc"]))
+    for i, (mx, my) in enumerate(((-1.6, 0.72), (1.5, 0.72))):
+        px, py, pz = pos(mx, my, 15.0)
+        deck_n1 += [
+            caixa("n1_cabeco%d" % i, (px, py, pz + z(9.0) / 2), (0.16, 0.16, z(9.0)),
+                  M["metal"]),
+            caixa("n1_cabeco%d_topo" % i, (px, py, pz + z(10.5)),
+                  (0.22, 0.22, z(3.0)), M["metal_claro"]),
+        ]
+
+    # -- n3: o cais de concreto -------------------------------------------
+    estacas_aco = []
+    for i in range(4):
+        x = -PIER_ALCANCE / 2 + 0.5 + i * (PIER_ALCANCE - 1.0) / 3
+        for lado, y in enumerate((-PIER_LARG / 2 + 0.28, PIER_LARG / 2 - 0.28)):
+            estacas_aco.append(caixa(f"aco_{i}_{lado}", (x, y, ALT_PIER / 2 - z(13.0)),
+                                     (0.20, 0.20, ALT_PIER + z(26.0)), M["metal"]))
+    deck_n3 = [
+        caixa("laje", (0, 0, ALT_PIER - z(2.4)),
+              (PIER_ALCANCE, PIER_LARG, z(4.8)), M["concreto"]),
+        # Meio-fio na borda do mar. Sem ele a laje acaba numa aresta e lê como
+        # tampo; com ele lê como cais — a mesma peça que a rua do mapa usa.
+        caixa("laje_meiofio", (0, -PIER_LARG / 2 + 0.05, ALT_PIER + z(1.4)),
+              (PIER_ALCANCE, 0.10, z(3.4)), M["concreto_borda"]),
+    ]
+    # Defensas de pneu, penduradas na borda. São a assinatura de um cais que
+    # recebe navio, e escuras sobre concreto claro leem-se a 3px.
+    for i in range(5):
+        x = -PIER_ALCANCE / 2 + 0.55 + i * (PIER_ALCANCE - 1.1) / 4
+        deck_n3.append(cone("defensa%d" % i, (x, -PIER_LARG / 2 - 0.02, ALT_PIER - z(6.0)),
+                            0.13, 0.13, 0.09, 8, M["pneu"], rot=(90, 0, 0)))
+    for i, (mx, my) in enumerate(((-1.7, 0.74), (-0.5, 0.74), (0.7, 0.74), (1.7, 0.74))):
+        px, py, pz = pos(mx, my, 15.0)
+        deck_n3 += [
+            caixa("n3_cabeco%d" % i, (px, py, pz + z(9.0) / 2), (0.17, 0.17, z(9.0)),
+                  M["metal"]),
+            caixa("n3_cabeco%d_topo" % i, (px, py, pz + z(10.5)),
+                  (0.24, 0.24, z(3.0)), M["amarelo"]),
+        ]
+    # Contêiner EMPILHADO: é o que um cais forte tem e um pontão não.
+    #
+    # ⚠️ E EMPILHAR NÃO É PASSAR UMA ALTURA MAIOR. A primeira tentativa deu ao
+    # de cima `altura_px` maior, e o `_no_conves` interpreta isso como uma CAIXA
+    # MAIS ALTA assente no convés — o segundo contêiner engoliu o primeiro e o
+    # que saiu no render foi um cubo azul do tamanho da cabine do guindaste.
+    # Duas caixas iguais, uma com o centro um andar acima.
+    CONT_H = 13.0
+    for j, (dmx, dmy, cor) in enumerate(
+            ((0.0, 0.0, "laranja"), (0.10, 0.05, "azul"))):
+        px, py, pz = pos(CONT_MX + dmx, CONT_MY + dmy,
+                         15.0 + CONT_H / 2.0 + j * CONT_H)
+        deck_n3.append(caixa("n3_cont%d" % j, (px, py, pz),
+                             (1.00, 0.46, z(CONT_H)), M[cor]))
+        # A cantoneira escura no canto: é a assinatura que faz ler "contêiner"
+        # e não "caixa", e a esta escala é a única peça que cabe.
+        for sx in (-1, 1):
+            deck_n3.append(caixa("n3_cont%d_canto%d" % (j, sx),
+                                 (px + sx * 0.46, py - 0.20, pz),
+                                 (0.08, 0.07, z(CONT_H) * 0.96), M["metal"]))
+
+    # -- as três lanças ---------------------------------------------------
+    # ⚠️ TODAS COMEÇAM EM `TOPO`, no eixo da torre. É esse ponto que o
+    # `pivot_offset` do `Dock.tscn` nomeia, e uma lança que não o cubra
+    # desprende-se da torre ao girar. O bloco D17 do teste de design tranca isto
+    # medindo o alfa do PNG no pixel do pivô.
+    lanca_n1 = trelica("l1_lanca", (GX, GY - 0.14, TOPO), (GX, BARCO_Y + 0.75, TOPO),
+                       0.10, M["madeira_esc"], montantes=4, esp=0.040)
+    CARRO1 = BARCO_Y + 1.05
+    lanca_n1 += [
+        # Sem contralança e sem contrapeso: um pau-de-carga é um braço só, e é
+        # essa silhueta desequilibrada que diz "improvisado".
+        caixa("l1_tirante", (GX, GY + 0.30, TOPO + 0.05), (0.05, 0.9, 0.05),
+              M["metal"], rot=(24, 0, 0)),
+        caixa("l1_cabo", (GX, CARRO1, TOPO - 0.60), (0.03, 0.03, 1.0), M["metal"]),
+        caixa("l1_gancho", (GX, CARRO1, TOPO - 1.16), (0.11, 0.09, 0.16), M["metal"]),
+    ]
+
+    lanca_n3 = trelica("l3_lanca", (GX, GY - 0.20, TOPO), (GX, BARCO_Y - 0.45, TOPO),
+                       0.16, M["laranja"], montantes=9, esp=0.048)
+    lanca_n3 += trelica("l3_contra", (GX, GY + 0.20, TOPO), (GX, GY + 1.25, TOPO),
+                        0.13, M["laranja"], montantes=4, esp=0.046)
+    CARRO3 = BARCO_Y + 0.30
+    lanca_n3 += [
+        caixa("l3_contrapeso", (GX, GY + 1.42, TOPO - 0.08),
+              (0.34, 0.34, 0.38), M["metal"]),
+        caixa("l3_torreta", (GX, GY, TOPO + 0.50), (0.10, 0.10, 0.82), M["metal"]),
+        barra("l3_tirante_frente", (GX, GY, TOPO + 0.86),
+              (GX, BARCO_Y - 0.10, TOPO + 0.06), 0.030, M["metal"]),
+        barra("l3_tirante_tras", (GX, GY, TOPO + 0.86),
+              (GX, GY + 1.25, TOPO + 0.06), 0.030, M["metal"]),
+        caixa("l3_carro", (GX, CARRO3, TOPO - 0.16), (0.19, 0.30, 0.14), M["metal"]),
+        caixa("l3_cabo_a", (GX - 0.10, CARRO3, TOPO - 0.78), (0.03, 0.03, 1.1), M["metal"]),
+        caixa("l3_cabo_b", (GX + 0.10, CARRO3, TOPO - 0.78), (0.03, 0.03, 1.1), M["metal"]),
+        # SPREADER em vez de moitão: a moldura que agarra um contêiner pelos
+        # quatro cantos. É a peça que diz, sem texto, que este guindaste move
+        # contêiner e o outro movia caixote.
+        caixa("l3_spreader", (GX, CARRO3, TOPO - 1.40), (0.24, 1.05, 0.10),
+              M["amarelo"]),
+    ]
+    for sy in (-0.44, 0.44):
+        lanca_n3.append(caixa("l3_trava%.2f" % sy, (GX, CARRO3 + sy, TOPO - 1.50),
+                              (0.16, 0.12, 0.12), M["metal"]))
+
     # Base e mastro entram no PRÓPRIO píer: um guindaste é o que faz uma
     # estrutura de madeira ler como porto e não como pontão de pesca. A lança
     # fica solta porque é ela que gira — e o que se move não pode estar assado.
-    grupos["pier_construido"] = estacas + tabuado + g_base + g_mastro
-    grupos["guindaste_lanca"] = g_lanca
+    grupos["pier_n1"] = estacas + deck_n1 + g_base + g_mastro
+    grupos["pier_n2"] = estacas + tabuado + g_base + g_mastro
+    grupos["pier_n3"] = estacas_aco + deck_n3 + g_base + g_mastro
+    grupos["lanca_n1"] = lanca_n1
+    grupos["lanca_n2"] = g_lanca
+    grupos["lanca_n3"] = lanca_n3
     # NÃO existe um "pier_ampliado" assado. Existiu, e foi retirado em 31/08:
     # era o píer com a lança já colada, e o jogo monta essa imagem em tempo de
     # execução com as duas peças acima, justamente para poder girar a lança.
@@ -1717,9 +1865,9 @@ def main() -> int:
     # trabalho depende dela. O tabuado tem largura conhecida pela conta do mapa:
     # (comprimento + largura) * MEIA_LARG_TELA — a escala do PNG, e não a do
     # desenho do mapa: é no PNG que se mede.
-    if "pier_construido" in alvos:
+    if "pier_n2" in alvos:
         esperado = (PIER_ALCANCE + PIER_LARG) * MEIA_LARG_TELA
-        medido = largura_opaca("%s/pier_construido.png" % saida.rstrip("/"))
+        medido = largura_opaca("%s/pier_n2.png" % saida.rstrip("/"))
         erro = abs(medido - esperado)
         print("\nverificação da projeção:")
         print("  tabuado esperado %.0f px, medido %d px (erro %.0f px)"
