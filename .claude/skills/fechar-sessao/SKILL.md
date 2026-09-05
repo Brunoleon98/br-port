@@ -128,11 +128,11 @@ virou massa marrom, um arbusto que era um balde, e rótulos enterrados debaixo
 dos sprites — tudo com a suíte verde.
 
 ```sh
-tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as cinco de uma vez
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as seis de uma vez
 ```
 
-São as mesmas cinco que o CI anexa a cada PR — a tela inicial, o porto
-reconstruído, o boletim, o menu de pausa e a folha de ícones — e ele já diz na
+São as mesmas seis que o CI anexa a cada PR — a tela inicial, o porto a MEIO
+(nível 2), o porto reconstruído, o boletim, o menu de pausa e a folha de ícones — e ele já diz na
 página da corrida **qual** delas mudou. O que o CI não faz é julgar; olhar
 continua a ser aqui.
 

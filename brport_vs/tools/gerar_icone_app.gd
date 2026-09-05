@@ -47,7 +47,7 @@ func _process(_delta: float) -> bool:
 		return true
 
 	# Clássico: fundo cheio, âncora a ~60% do quadro, e um fio âmbar em baixo
-	# que é a linha-d'água — o mesmo âmbar dos letreiros do mapa.
+	# que é a linha-d'água — o mesmo âmbar do resto da interface.
 	_escrever("icone_app.png", 512, _svg_completo(traco, true))
 	# Adaptativo: a frente é SÓ a âncora, transparente, dentro da zona segura.
 	_escrever("icone_app_frente.png", 432, _svg_completo(traco, false))

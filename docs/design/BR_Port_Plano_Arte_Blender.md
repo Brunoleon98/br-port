@@ -216,6 +216,159 @@ Baixar o `MEIA_LARG` deve trazê-los de volta, mas isso **não está medido** �
 > de baixar o `MEIA_LARG` deixou de ser "há terra vazia" e passou a ser só o
 > enquadramento. A costa continua a acabar em `my = 34`.
 
+#### ✅ O ENQUADRAMENTO FICOU EM 05/09 — a Etapa 1 está fechada
+
+**A ferramenta é `tools/medir_enquadramento.py` + `medir_enquadramento.gd`.**
+A medição de 03/09 foi feita à mão e não ficou no repositório, o que obrigava a
+sessão seguinte a acreditar nela. Agora ela repete-se num comando, e rasteriza
+com o ThorVG — o MESMO importador de SVG do jogo, e o único rasterizador que
+existe neste contêiner.
+
+**Ela achou o que a de 03/09 não tinha como achar: são TRÊS fronteiras, não
+uma.** Aquela contava a distância do canto superior esquerdo à terra; esta mede
+quantos pixels da FRONTEIRA DO MUNDO caem dentro da janela, e o mundo acaba por
+três lados diferentes. Com o mundo de 04/09, a `MEIA_LARG = 20`:
+
+| fronteira | onde sai | dentro do quadro |
+|---|---|---:|
+| `mx = FUNDO_TERRA` | canto superior esquerdo | **313 px** |
+| `my = DEGRAUS[0][0]` (o começo da costa) | canto superior **direito** | **200 px** |
+| `my = DEGRAUS[-1][1]` (o fim dela) | canto inferior esquerdo | **113 px** |
+
+O passo 1 desta seção falava em "mais degraus para além de `my = 34`, terra
+para trás de `mx = -8`" — e não mencionava a ponta NORTE, que é a segunda
+maior das três. Ela existia desde sempre e nunca aparecera porque a `30` o
+mundo transborda dos quatro lados sozinho.
+
+**O que se fez, e é o mínimo medido:** um degrau em cada ponta
+(`my` de −14 a 42, contra os −6 a 34) e `FUNDO_TERRA` de −8 para −16 (o mínimo
+é −15). Os três vão a **zero**; dois degraus por ponta não trazem nada que se
+veja.
+
+#### E a LARGURA é só metade do enquadramento — a outra é o CENTRO
+
+Estendido o mundo e baixada a câmera, a primeira captura saiu com o porto
+encostado à direita e um bloco de mata e telhado a ocupar a esquerda inteira:
+**61% do quadro em terra**. A leitura das referências é explícita nas duas
+pontas — *"a água ocupa perto de metade do quadro, e a maior parte dela é água
+aberta sem nada; vazio de propósito, é o que dá escala ao porto"* e *"a cidade
+é uma FAIXA atrás do cais, nunca um bloco"* — e nenhuma das duas estava a ser
+respeitada.
+
+A causa é que o `CX`/`CY` continuava a manter no centro o ponto do mundo que lá
+estava a 30. Ele passou a ser DERIVADO: o **centroide dos três berços**
+(`_centro_do_porto()`), o que centra a câmera no porto de que ela é. Se um
+berço mudar de sítio, a câmera vai atrás dele.
+
+| | terra | terra natural | azul aberto | fronteira no quadro |
+|---|---:|---:|---:|---:|
+| **30** (o de sempre) | 67,8% | 26,3% | 5,5% | 0 px |
+| 20, mundo de 04/09, centro antigo | 54,7% | 24,3% | 25,1% | **626 px** |
+| 20, mundo estendido, centro antigo | 61,0% | 31,9% | 16,3% | 0 px |
+| **20, mundo estendido, centrado no porto** | **47,3%** | **22,3%** | 25,8% | **0 px** |
+
+⚠️ **E o "azul vazio" deixou de ser a medida que interessa** — repare que a
+linha final tem quase o mesmo valor da segunda, que era a ruim. Na segunda ele
+era o mundo a ACABAR; na última é mar aberto, que é o que a referência pede.
+Quem responde por isso é a coluna da direita, e é para isso que ela existe.
+
+**E isto desmente a medição de 03/09 no ponto em que ela desmentia a etapa.**
+"A terra visível SATURA em ~24% e depois cai" era verdade do MUNDO, não da
+projeção. Centrado no porto e com o mundo estendido, a fração de porto no
+quadro fica PARADA em ~47,5% nas três larguras, e o que cresce é o distrito à
+volta dele: terra natural **14,4% → 18,4% → 22,3%** de 30 para 20. É
+exatamente o que a etapa prometia — *"a referência mostra um distrito"* — e não
+se via porque o mundo acabava antes.
+
+**O custo real, medido antes de prometer** (o documento supunha "~1 GB de
+`bpy`, e merece a sua própria passagem"): `pip install bpy` leva **17 s** (373
+MB), `gerar_props_iso.py` regera os 15 props em **68 s** e `gerar_brp.py todos`
+os outros 24 em **2 min 40**. Quatro minutos de máquina ao todo. O que custou
+mesmo foi o que ninguém tinha medido: **altura, no gerador do mapa, é PIXEL** —
+ver §1.1 de `docs/BRP_SPATIAL_CONTRACT.md` e a regra no `CLAUDE.md`.
+
+### Fora das etapas — os dois prédios em RUÍNA, e os letreiros (05/09)
+
+Correção de leitura, pedida depois de olhar o enquadramento novo: *"as
+construções atuais parecem avançadas para um porto inicial"*.
+
+**Os letreiros do mapa saíram.** As três placas — ESCRITÓRIO, ARMAZÉM, ZONA DE
+ESPERA — foram removidas a pedido, com o `Letreiro.gd`, a variação `Letreiro`
+do tema e o bloco D7 do teste de design. O argumento contra tirá-las era que os
+dois prédios do porto passariam a ler-se como casas da vila; o que se fez em
+vez de as manter foi resolver isso pelos PRÉDIOS, que é onde o Bruno pediu que
+o investimento fosse.
+
+**O `galpao_velho` não era uma ruína, e a causa estava escrita.** Ele reusava a
+lista `paredes` do `galpao` — plinto, caixa de `parede` BRANCA, portão fechado,
+calha e três janelas de vidro azul — e trocava só a cor do telhado. Medido: os
+dois estados diferiam em pouco mais do que o matiz do telhado. O comentário do
+escritório, dez linhas abaixo no mesmo arquivo, já dizia a regra que ele não
+seguia: *"a ruína não é o prédio pintado de velho: é MENOS prédio"*.
+
+Hoje ele tem paredes próprias em `parede_suja`, um terço delas desabado em
+pedaços irregulares, vão nenhum com vidro, o portão fora do trilho com a folha
+atravessada, metade do telhado no chão e a armação à vista — barrotes, terça e
+cumeeira.
+
+**E a ruína do escritório falhava pelo lado oposto.** Ela seguia a regra e
+mesmo assim não lia: duas caixas cinzentas e um pau, que ampliadas saíam como
+uma PILHA DE LAJES DE CONCRETO. *Menos prédio não é menos arquitetura* — o que
+faz o olho ler "ruína" e não "entulho" é reconhecer o que falta, e para isso
+alguma coisa tem de ficar de pé com um vão dentro. Hoje é um CANTO: as duas
+paredes que a câmera vê, cada uma com o seu vão, e o resto a desfazer-se.
+
+**Três armadilhas apanhadas ampliando, e nenhuma delas dava erro:**
+
+| O que se via a 5× | O que era |
+|---|---|
+| uma escada de três degraus | a parede caída descia por passos IGUAIS — regularidade denuncia geometria gerada, a mesma lição da vila que lia como cerca |
+| uma barra preta de pé na quina | as duas paredes do canto chegavam ao mesmo `x` e as faces exteriores ficavam coplanares |
+| ripas a pairar sobre o ar | os barrotes corriam até 1,58 e a parede acaba em 0,65; sem terça nem apoio, lêem como gravetos |
+
+As três estão registadas no `CLAUDE.md`, e as duas primeiras são corolários de
+regras que ele já tinha.
+
+### Fora das etapas — os três níveis do píer, da lança e do casco (05/09)
+
+Pedido: *"variações de píer, guindastes e navios, para marcar a transição e
+evolução do porto"*. O GDD 7 já tinha decidido a forma disto —
+*"estruturas principais (grua, cais, armazém) têm upgrade in-place de até 3
+níveis"* (`docs/gdd/perguntas.md`) —, então o que se fez foi a ARTE dos três
+níveis, não a mecânica.
+
+**A mecânica é da Fase 2 e continua por fazer, de propósito.** Quem escolhe o
+nível é `GameState.nivel_porto()`, que só LÊ quantas estruturas já estão de pé:
+0–1 → n1, 2–3 → n2, 4–5 → n3. Não guarda estado, não decide nada e não
+acrescenta constante nenhuma — os 100% / 79,5% / 35,7% medidos ficam intocados
+**por construção**, e não por cuidado. É o mesmo padrão da vila, que cresce por
+`--nivel-vila=N` "sem o jogo precisar saber disso".
+
+| | píer | lança |
+|---|---|---|
+| **n1** | estacas e ripas de madeira crua com fresta, dois cabeços, sem carga | pau-de-carga curto: um braço só, sem contralança nem contrapeso |
+| **n2** | o de sempre — tabuado inteiro, contêiner e caixotes | a de sempre |
+| **n3** | laje de concreto sobre estacas de aço, meio-fio, cinco defensas de pneu, quatro cabeços e contêiner empilhado | lança longa, contrapeso maior e **spreader** em vez de moitão |
+
+E os **navios** passaram a ser três em doca, escolhidos pelo VALOR do contrato
+— pesqueiro, cargueiro e cargueiro grande. O `barco_medio` já existia,
+renderizado e validado, e **nunca entrava numa doca**: o jogo escolhia entre
+dois cascos por um booleano. O contrato já vale de R$8.000 a R$70.000 e não
+custava nada dizê-lo com a silhueta.
+
+⚠️ **A torre é a mesma nos três níveis, e isso é uma restrição e não uma
+economia.** O `pivot_offset` do nó `Lanca` em `Dock.tscn` é UM para as três
+lanças, e ele nomeia o topo da torre — que vive dentro do PÍER. Uma torre mais
+alta no n3 desencaixaria a lança ao girar, e o defeito só apareceria a meio de
+uma varrida, nunca numa captura parada. O bloco **D17** tranca as três coisas:
+o pivô cai dentro do desenho de cada lança, os três níveis são desenhos
+distintos, e os três cascos chegam à tela.
+
+⚠️ **E empilhar não é passar uma altura maior.** O contêiner de cima do n3
+nasceu com `altura_px` dobrada, que o `_no_conves` lê como caixa MAIS ALTA
+assente no convés: o segundo engoliu o primeiro e o render saiu com um cubo
+azul do tamanho da cabine do guindaste.
+
 ### Fora das etapas — a escala dos dois prédios do pátio (03/09)
 
 Não é etapa do plano: é correção de playtest, e entra aqui porque mexeu em
@@ -355,7 +508,7 @@ silhueta de um prédio do pátio, e que as duas fileiras se separam por mais de
 um telhado. Os `lotes` eram publicados na tabela de âncoras desde sempre e
 NENHUM teste os lia. Quatro defeitos foram injetados e os quatro reprovaram.
 
-#### ✅ A AREIA DAS DUAS PONTAS ficou em 04/09 — a Etapa 1 só deve o enquadramento
+#### ✅ A AREIA DAS DUAS PONTAS ficou em 04/09
 
 A leitura de composição (`docs/design/referencias/README.md`) diz onde ela vai:
 **onde o porto não está** — nas duas pontas da costa, para além do primeiro e

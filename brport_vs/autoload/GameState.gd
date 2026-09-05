@@ -1074,6 +1074,29 @@ func tem_estrutura(id: String) -> bool:
 	return estruturas.has(id)
 
 
+## O NÍVEL DO PORTO, de 1 a 3 — quanto dele já foi levantado.
+##
+## É uma leitura DERIVADA e mais nada: não decide, não guarda estado próprio e
+## não tem constante de balanceamento nenhuma. Existe porque o GDD 7 decidiu
+## que "estruturas principais (grua, cais, armazém) têm upgrade in-place de até
+## 3 níveis", e a ARTE desses níveis já existe (`pier_n1..n3`, `lanca_n1..n3`).
+## A MECÂNICA do upgrade é da Fase 2 e não está feita — quando estiver, ela
+## substitui esta função e nada mais precisa de mudar.
+##
+## ⚠️ E É POR ISSO QUE ELA NÃO É UM CAMPO NEM UMA FASE. O `advance_turn()`
+## retorna calado fora de `"playing"` e o simulador de balanceamento só sabe
+## resolver duas fases; qualquer estado novo aqui apareceria como partida que
+## não termina. Derivar do que já existe deixa os 100% / 79,5% / 35,7% medidos
+## intocados por construção.
+func nivel_porto() -> int:
+	var feitas: int = estruturas.size()
+	if feitas >= 4:
+		return 3
+	if feitas >= 2:
+		return 2
+	return 1
+
+
 # Por que não dá para comprar: "" quando dá. O painel mostra este texto, então
 # o jogador nunca fica com um botão apagado sem explicação.
 func impedimento_estrutura(id: String) -> String:

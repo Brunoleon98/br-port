@@ -17,15 +17,47 @@ origem, grade e camadas para todo asset novo, de qualquer categoria.
 
 | Grandeza | Valor | Onde vive |
 |---|---|---|
-| Meia-largura da célula | `MEIA_LARG = 30` px | `tools/gerar_mapa_iso.py`, `tools/gerar_props_iso.py` |
-| Meia-altura da célula | `MEIA_ALT = 15` px | idem |
-| Razão | **2:1** | consequência das duas acima |
+| Meia-largura da célula, **no desenho** | `MEIA_LARG = 30` px | `tools/gerar_mapa_iso.py`, `tools/gerar_props_iso.py` |
+| Meia-altura da célula, no desenho | `MEIA_ALT = 15` px | idem |
+| **Zoom da câmera** | `ZOOM = 2/3` | idem — os dois arquivos |
+| Meia-largura **na tela** | **20** px = `MEIA_LARG × ZOOM` | derivada; é o que a tabela de âncoras publica |
+| Razão | **2:1** | consequência, e o `ZOOM` não a toca |
 | Ângulo da aresta do chão | **26,565°** = `atan(15/30)` | consequência |
 | Câmera | ortográfica, `ROT_X = 60°`, `ROT_Z = 45°` | `gerar_props_iso.py` |
-| `ortho_scale` | **12,0680** = `RESOLUCAO / (MEIA_LARG / cos 45°)` | derivada, nunca digitada |
+| `ortho_scale` | **18,1019** = `RESOLUCAO / (MEIA_LARG × ZOOM / cos 45°)` | derivada, nunca digitada |
 | Quadro do prop | **512 × 512** px | `RESOLUCAO` |
 
-Uma célula 1×1 do mundo projeta um losango de **60 × 30 px**.
+Uma célula 1×1 do mundo projeta um losango de **40 × 20 px** na tela (60 × 30
+no desenho).
+
+### 1.1 Os dois espaços, desde 05/09
+
+O contrato ganhou um terceiro membro, e ele é uma câmera e não uma escala.
+
+O mapa é **desenhado** a `MEIA_LARG = 30` num quadro de 1080 × 1080 e o
+`viewBox` do SVG entrega-o em 720 × 720 — é isso o `ZOOM`. A razão de o fazer
+assim, e não escrevendo 20 na constante, está no bloco do enquadramento no topo
+de `gerar_mapa_iso.py`: **altura, naquele arquivo, é pixel**, e mais de cem
+literais (o `ALT_CAIS`, as paredes da vila, a largura de cada traço) estão
+afinados para os 30. Baixar a constante encolheria a planta e deixaria as
+alturas paradas — o porto esticado 1,5× para cima, sem erro nenhum a apontá-lo.
+
+| Espaço | O que é | Quem fala |
+|---|---|---|
+| **desenho** | o que `p()` devolve; `MEIA_LARG = 30` | tudo o que desenha o mapa |
+| **tela** | o PNG de 720 que o jogo carrega; `MEIA_LARG = 20` | `tela()`, a tabela de âncoras, o manifest BRP, `Main.tscn`, `Main.gd`, o teste de design |
+
+O prop **não tem `viewBox`**: ele é PNG e cai na cena a 1:1. Quem o encolhe é
+o `ortho_scale` — e só ele. A geometria construída em `gerar_props_iso.py` não
+muda um milímetro, porque `z()` continua a converter altura pela escala de
+desenho: o fator de altura e o `ortho_scale` encolheriam na mesma proporção e
+cancelam-se. **Afastar uma câmera não estica o que ela filma.**
+
+⚠️ Toda constante em PIXEL medida num destes espaços é uma constante que
+envelhece quando o `ZOOM` muda. Em 05/09 foram cinco: a silhueta do caminhão no
+teste de design, o corte que exige pegada, a largura de telhado da vila, o
+tamanho dos sprites do pátio e o avanço da espuma. Nenhuma delas dava erro —
+duas reprovavam o que estava certo e uma deixava de reprovar seja o que for.
 
 **Os 60° não são escolha de gosto.** A razão vertical/horizontal de um passo no
 chão é `sen(elevação)`; com 15/30 = 0,5 a elevação é 30°, logo a rotação X é
@@ -41,16 +73,22 @@ fixa: **X = 60°**. É o número que faltava.
 `gerar_mapa_iso.py` trata altura como **pixels livres**: `ALT_PIER = 15`,
 `ALT_CAIS = 26`, um armazém com 44. É convenção de desenho.
 
-O Blender faz projeção de verdade: **uma unidade de altura projeta 36,74 px**.
+O Blender faz projeção de verdade: **uma unidade de altura projeta 36,74 px de
+DESENHO** (24,49 na tela, depois do `ZOOM`).
 
-Por isso os props falam a língua do mapa — **altura em PIXELS DO MAPA** — e a
-conversão está em `z()`, num lugar só. Ignorar isto põe um píer 2,4× mais alto
-que o cais desenhado ao lado; já aconteceu.
+Por isso os props falam a língua do mapa — **altura em PIXELS DO MAPA, os de
+desenho** — e a conversão está em `z()`, num lugar só. Ignorar isto põe um píer
+2,4× mais alto que o cais desenhado ao lado; já aconteceu.
 
 ```
 z(altura_px) = altura_px / 36,74
 z(15) = 0,4082 unidades de mundo
 ```
+
+**E o 36,74 é de DESENHO de propósito**, o único número deste documento que
+não passou pelo `ZOOM`. Ele e o `ortho_scale` sairiam ambos ×1,5 e o quociente
+é o mesmo — usar o de tela nos dois lugares levantaria cada prop 1,5×. Ver
+§1.1.
 
 ## 3. Origem
 

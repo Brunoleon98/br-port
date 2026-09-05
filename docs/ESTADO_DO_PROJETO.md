@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 04/09/2026
+> **Última atualização:** 05/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -28,67 +28,69 @@ para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada u
 muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
 saem de ruína para telhado novo.
 
-**O botão que move o jogo tem cor própria desde 02/09** — "Avançar dia" é âmbar
-com rótulo navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os
-cartões claros ganharam sombra e borda de 2px. Os escuros ficaram como estavam,
-de propósito: a sombra do tema é mais clara que o fundo deles, e faria halo.
+**O botão que move o jogo tem cor própria** — "Avançar dia" é âmbar com rótulo
+navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os cartões
+claros têm sombra e borda de 2px. Os escuros não, de propósito: a sombra do
+tema é mais clara que o fundo deles e faria halo.
 
-**A água é tropical desde 02/09 e o porto tem PRAIA nas duas pontas desde
-04/09.** A água era mar frio (`#4a96b4`) e passou a turquesa amostrada da
-referência. A areia é a outra metade da Etapa 1, e ela não vai entre a água e
-o cais: vai **onde o porto não está** — para além do primeiro e do último
-berço, emoldurando-o. Nos dois trechos o porto PARA (sem avental, asfalto,
-junta, mancha nem enrocamento) e a terra desce numa rampa de areia até a água,
-com restinga, árvores baixas e pedras avulsas. Medido: **27% da costa visível**
-é praia (139 px ao norte, 233 ao sul, contra 982 de cais). Da Etapa 1 só falta
-o enquadramento (`MEIA_LARG`), e o plano de arte diz por quê.
+**A câmera afastou-se em 05/09, e a Etapa 1 fechou.** Vê-se agora um DISTRITO
+e não três berços: o `MEIA_LARG` efetivo passou de 30 para os 20 que o Bruno
+escolheu em 03/09, e a câmera centra-se no centroide dos três berços em vez de
+num ponto herdado. O mundo teve de crescer primeiro — um degrau de costa em
+cada ponta (`my` de −14 a 42) e o fundo da terra de −8 para −16 —, senão o
+jogador via o mapa ACABAR por três lados. Medido, o porto mantém ~47,5% do
+quadro nas três larguras e o que cresce é o distrito à volta: a terra natural
+vai de 14,4% a 30 para 22,3% a 20.
 
-**O jogo é TRANQUILO, e os valores são realistas** (02/09). Medido em 600
-partidas por perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a
-mediana do mediano em R$685.271 contra uma parcela de R$550.000. Um contrato
-vale R$8.000–70.000, a manutenção custa R$40.000/semana e reconstruir um píer
-custa R$150.000 — números de porto, não de banca de feira.
+**A água é tropical e o porto tem PRAIA nas duas pontas.** A areia não vai
+entre a água e o cais: vai **onde o porto não está** — para além do primeiro e
+do último berço. Nos dois trechos o porto PARA (sem avental, asfalto, junta nem
+enrocamento) e a terra desce numa rampa de areia até a água, com restinga e
+pedras. Com o enquadramento novo elas emolduram o porto nos dois cantos.
+
+**O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
+perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a mediana do mediano
+em R$685.271 contra uma parcela de R$550.000. Um contrato vale R$8.000–70.000 e
+a manutenção custa R$40.000/semana — números de porto, não de banca de feira.
 
 A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
 agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
 Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
-**A partida grava-se desde 02/09.** Uma linha JSON por turno, semana, obra e
-contra-oferta, num `.jsonl` por partida — com o tempo que o jogador ficou em
-cada turno, que é a pergunta do A7. O nome de quem jogou NÃO entra no arquivo
-(`docs/decisoes/006`). Sai pelo menu de pausa; `tools/ler_registros.py` resume.
+**A partida grava-se.** Uma linha JSON por acontecimento, com o tempo que o
+jogador ficou em cada turno — a pergunta do A7. O nome de quem jogou NÃO entra
+no arquivo (`docs/decisoes/006`). Sai pelo menu de pausa;
+`tools/ler_registros.py` resume.
 
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
-autoload `Audio.gd` com dois buses, sliders no menu de pausa e o disparo ligado
-aos sinais do `GameState`. Os efeitos são de RASCUNHO — os finais entram
-trocando arquivo por arquivo. **Ninguém que os fez os ouviu:** o contêiner não
-tem placa de som (ver `docs/design/BR_Port_Plano_Audio.md` §2).
+autoload `Audio.gd` com dois buses e sliders no menu de pausa. São de RASCUNHO,
+e **ninguém que os fez os ouviu** — o contêiner não tem placa de som
+(`docs/design/BR_Port_Plano_Audio.md` §2).
 
-**Não se arrasta trabalhador a cada turno:** há "Alocar todos" e
-toque-para-alocar, com o arrasto ainda funcionando.
+**Nada de interface pousa sobre o mapa, e desde 05/09 nem os nomes.** A doca
+tem duas metades: a vaga no mapa (píer, barco, guindaste, trabalhador) e o
+cartão na barra logo abaixo (valor, turnos, trabalhador). O número de cada doca
+está pintado no cais. **As três placas com mastro saíram** — o mapa não carrega
+mais texto nenhum; quem distingue os prédios do porto das casas da vila são os
+próprios prédios.
 
-**Nada de interface pousa sobre o mapa.** A doca tem duas metades: a vaga no
-mapa (píer, barco, guindaste, trabalhador) e o cartão na barra logo abaixo
-dele (valor, turnos, trabalhador). Os nomes dos lugares são placas com mastro,
-e o número de cada doca está pintado no cais.
+**E o porto abre em RUÍNAS de verdade desde 05/09.** O `galpao_velho` reusava
+as paredes do galpão acabado e trocava só a cor do telhado — paredes brancas,
+janelas inteiras, portão fechado. Agora são paredes sujas, um terço delas
+desabado, meio telhado com a armação à vista e o portão fora do trilho; e a
+ruína do escritório, que era duas lajes cinzentas, é um CANTO de pé com porta e
+janela vazias. O plano de arte tem as três armadilhas que a passagem apanhou.
 
-**O porto tem uma cidade atrás dele, e desde 04/09 ela é uma CIDADE.** Rua
-paralela ao cais, calçada, acesso a cada berço, e **duas fileiras de casas em
-quarteirões** — 3 a 5 lotes quase colados, com um par em cada três geminado,
-cortados por travessas. Era uma fileira só com o vão sempre igual: 73% dos
-vãos mediam exatamente o `VILA_PASSO`, e aquilo lia como cerca. A fileira de
-trás é mais rala e mais arborizada, para a vila DESFIAR contra a mata em vez
-de acabar numa parede de telhados. A vila tem nível (`--nivel-vila=N` no
-gerador do mapa): 1 é casa térrea, 2 sobrado, 3 prédio — é assim que ela cresce
-a cada Fase, sem o jogo precisar saber.
+**O porto tem uma CIDADE atrás dele.** Rua paralela ao cais, calçada, acesso a
+cada berço e **duas fileiras de casas em quarteirões** — 3 a 5 lotes quase
+colados, um par em cada três geminado, cortados por travessas. Era uma fileira
+só com o vão sempre igual, e aquilo lia como cerca; a de trás é mais rala e
+arborizada, para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`):
+térrea, sobrado, prédio — é assim que cresce a cada Fase, sem o jogo saber.
 
-**E a mata deixou de ser desenhada fora do ecrã** (04/09). Das 136 copas que o
-gerador sorteava, **7** caíam dentro do quadro: o viés da densidade apontava
-para `FUNDO_TERRA`, que é pelo nome a parte do mundo que ninguém vê. Hoje são
-108 desenhadas, cada uma com sombra projetada, tronco e copa em lobos com
-aresta — a receita das pedras do enrocamento, agora com nome (`com_saia()`).
-De lambuja, achou-se que **o desgaste do CAIS estava a ser pintado no
-relvado**: onze manchas de concreto espalhadas pela mata e pela vila.
+**E a mata atrás dela é desenhada onde se vê** — copas com sombra projetada,
+tronco e lobos com aresta, pela receita `com_saia()`. Como se lá chegou está em
+`docs/arquivo/HISTORICO.md`.
 ---
 
 ## Onde estamos na fila
@@ -96,14 +98,9 @@ relvado**: onze manchas de concreto espalhadas pela mata e pela vila.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-**Fechados**, dos quinze itens: B1 (arranque de sessão), A2 (números com fonte
-única), A3 (reputação com efeito), A4 (as sete telas narrativas — construídas),
-B4 (fumaça de cena), B3 (o CI publica captura e antes/depois), B5 e B8
-(documentação em camadas e orçamento de sessão), B6 (o GDD legível), B2 (as
-três skills: `/balancear`, `/fechar-sessao` e `/arte`), B7 (o registro de
-partida), e a metade de máquina do A1 (APK e build Web a cada push).
-
-**A trilha do projeto acabou** — B1 a B6 e B8 estão todos fechados.
+**Fechados**, dos quinze itens: B1 a B8 e A2, A3, A4 (construídas), mais a
+metade de máquina do A1 (APK e build Web a cada push). O que cada um era está
+em `docs/arquivo/HISTORICO.md`.
 
 **Abertos e esperando o Bruno** — nenhum deles precisa de uma sessão ligada:
 
@@ -111,17 +108,14 @@ partida), e a metade de máquina do A1 (APK e build Web a cada push).
 |---|---|---|
 | **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas** — a 1 (paleta tropical **e a areia das duas pontas**, 04/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Faltam a 3 e a 4, e a metade cara da 1 (`MEIA_LARG`) |
+| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas, e a 1 INTEIRA** — a 1 (paleta tropical, a areia das duas pontas e o enquadramento, 05/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Faltam a 3 e a 4 |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a primeira jogada no telefone devolveu (02–03/09)
 
 **A análise inteira está triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e
-em 02, 03 e 04/09 fechou-se **tudo o que não depende do Bruno** — o bug que
-travava 30% das instalações novas, os cinco itens de interface, o diário, e a
-arte inteira. Como isso foi feito está em `docs/arquivo/HISTORICO.md`.
-
-**O que sobra, e por quê** — a análise tem a medida de cada um:
+em 02–05/09 fechou-se **tudo o que não depende do Bruno**. O que sobra, e por
+quê — a análise tem a medida de cada um:
 
 | Fica | Porque não se fecha aqui |
 |---|---|
@@ -129,28 +123,31 @@ arte inteira. Como isso foi feito está em `docs/arquivo/HISTORICO.md`.
 | Economia (3 itens) | Só via `/balancear`, e ele mesmo amarrou-a ao pacote de Fase 2 ("para fazer tudo isso") |
 | Fala da madeira podre | Espera o A4 |
 
-~~Vegetação pobre · casas mal distribuídas~~ — **fechado em 04/09** (medição no
-plano de arte, "Fora das etapas"). Era o último item de arte da análise: **ela
-está agora fechada por inteiro no que não depende do Bruno.**
+~~Vegetação pobre · casas mal distribuídas~~ — **fechado em 04/09**. A análise
+está fechada por inteiro no que não depende do Bruno.
 
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume.
 
-Da arte, **quatro das seis etapas estão feitas** — a 1 (paleta, e a areia das
-duas pontas em 04/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão,
-03/09) e a 6 (o chrome da interface). Faltam a 3 (contorno pelo compositor) e
-a 4 (materiais dirigidos), mais a metade cara da 1 — o enquadramento. A areia
-fechou **a metade barata da Etapa 1**: a leitura de composição de 03/09 é que
-a destravou, e o que ela custou não foi desenho, foi o porto ter de parar.
+Da arte, **quatro das seis etapas estão feitas, e a 1 está fechada por
+inteiro** — a 1 (paleta, areia das duas pontas e enquadramento), a 2 (a cauda
+dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da
+interface). Faltam a 3 (contorno pelo compositor) e a 4 (materiais dirigidos).
 
-**O enquadramento deixou de estar bloqueado em 03/09:** o Bruno escolheu
-`MEIA_LARG = 20` olhando o mapa gerado em três larguras, e a leitura de
-composição das cinco referências está escrita em
-`docs/design/referencias/README.md`. Só que **medido, em 20 o mundo acaba
-dentro do quadro** — então a ordem é estender a costa primeiro e mexer na
-projeção depois. O plano de arte tem a tabela. Os **dois remates de praia** que
-essa ordem pedia já estão feitos (04/09); falta a costa para além de `my = 34`
-e a terra para trás de `mx = -8`.
+**O enquadramento fechou em 05/09**, e o que ele custou não foi o Blender —
+`pip install bpy` leva 17 s e regerar os 39 props 3,5 min, tudo medido antes de
+prometer. Custou a descoberta de que **altura, no gerador do mapa, é PIXEL**:
+baixar o `MEIA_LARG` de 30 para 20 encolheria a planta e deixaria o `ALT_CAIS`,
+as paredes da vila e cada traço onde estavam — o porto esticado 1,5× para cima,
+e nenhuma das cinco suítes a lê-lo. A saída é a mesma regra dos props: escala-se
+no GRUPO. O mapa continua a ser DESENHADO a 30 num quadro de 1080 e o `viewBox`
+do SVG entrega 720. São dois espaços agora, e a fronteira é a função `tela()` —
+`docs/BRP_SPATIAL_CONTRACT.md` §1.1 e a regra no `CLAUDE.md`.
+
+**E a largura era só metade do enquadramento.** A outra é o CENTRO: com o ponto
+herdado, o porto saía encostado à direita com um bloco de mata a ocupar a
+esquerda. Ele passou a ser derivado do centroide dos berços, e a água voltou aos
+"perto de metade do quadro" que a leitura das referências pede.
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
@@ -202,7 +199,8 @@ conta e o modo de a refazer estão em
 | `brport_vs/art/icones/` | **Os 20 ícones da interface**, em SVG chapado |
 | `brport_vs/scripts/Icones.gd` | Registro dos ícones + helpers de rótulo e botão — o único lugar que sabe qual arquivo é qual ícone |
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
-| `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo — inclui a malha viária, a vila (`--nivel-vila=N`) e os números de doca pintados no cais |
+| `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo — inclui a malha viária, a vila (`--nivel-vila=N`) e os números de doca pintados no cais. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`**: a câmera é o `ZOOM`, e a câmera centra-se sozinha nos berços |
+| `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | **A régua do enquadramento** — gera o mapa em várias larguras e mede quanto do quadro é porto, quanto é distrito, quanto é mar, e sobretudo **quantos pixels da FRONTEIRA DO MUNDO entram na janela**, que é a pergunta que decide a etapa. Rasteriza com o ThorVG, que é o mesmo importador do jogo |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
@@ -226,9 +224,9 @@ conta e o modo de a refazer estão em
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados no cronograma, mantidos como registro das decisões) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
 
-| `tools/capturar_evidencia.sh` | **As cinco fotografias que provam o que ficou** — semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
+| `tools/capturar_evidencia.sh` | **As seis fotografias que provam o que ficou** — e uma delas é o nível 2 do porto, que os dois extremos não mostram — semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
-| `.github/workflows/captura.yml` | As cinco imagens anexadas a cada PR, e o antes/depois contra a base |
+| `.github/workflows/captura.yml` | As seis imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere que as quatro camadas existem e que nenhuma referência de documento aponta para arquivo que não há |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
@@ -236,7 +234,7 @@ conta e o modo de a refazer estão em
 | `tools/gerar_gdd_md.py` | Gera as 80 acima. Recusa-se a adivinhar: forma de dado que ele não conheça **reprova**, em vez de sumir do markdown |
 ### Sistemas que funcionam
 - Turno diário com botão "Avançar dia" (sem relógio real)
-- Drag-and-drop de trabalhadores para as docas
+- Alocação de trabalhador por toque, por "Alocar todos" ou por arrasto
 - Economia: caixa, receita por barco, renda do píer, custos semanais
 - Reputação Comercial (0–100, 5 faixas) — e ela **decide a contra-oferta**:
   reputação alta faz o cliente aceitar pagar cheio com mais frequência
@@ -264,8 +262,7 @@ existem vem de `GameState.docks`, e "Ampliar píer" acende a terceira, que até
 lá mostra as estacas velhas sob contorno tracejado.
 
 A interface **não é montada por código**: vive em cenas `.tscn` com um tema
-(`ui/tema_brport.tres`). Trocar arte é editar cena e tema, não reescrever
-script.
+(`ui/tema_brport.tres`).
 
 **O mapa não carrega interface em cima.** O texto e o alvo de toque de cada
 doca vivem em `scenes/dock/DocaCartao.tscn`, numa fileira de três cartões
@@ -274,47 +271,52 @@ trabalhador. Os nomes são **placas com mastro** apoiadas no prédio ou numa
 estaca, e o número de cada doca é **tinta de piso**, em estêncil, porque o
 importador de SVG do Godot não desenha `<text>`.
 
-**Os ícones do HUD já são arte de verdade** (29/08): 20 SVGs em `art/icones/`,
-todos conferidos a 19px sobre os três fundos que a interface tem (pílula
-escura, cartão branco, botão navy) com `tools/folha_icones.gd`. Cada um foi
-colorido para o fundo onde cai — dois não são reaproveitáveis em qualquer
-lugar, e o cabeçalho de `Icones.gd` diz quais e por quê.
+**Os ícones do HUD já são arte de verdade**: 20 SVGs conferidos a 19px sobre
+os três fundos da interface com `tools/folha_icones.gd`. Cada um foi colorido
+para o fundo onde cai — o cabeçalho de `Icones.gd` diz quais não se
+reaproveitam e por quê.
 
 As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
-nos dois estados, então o prédio não salta ao ser consertado. Mesma razão que
-fez o píer partilhar geometria entre vazio e construído.
+nos dois estados, então o prédio não salta ao ser consertado. Mas as PEÇAS não
+se partilham entre os dois: foi isso que fez o galpão em ruína ter paredes
+novas até 05/09.
 
-**A cauda dos props tem corpo desde 02/09** (Etapa 2): contêiner corrugado com
-cantoneiras e portas, carga empilhada em duas madeiras, boia e marcador com
-faixa refletiva, mais as catorze peças pequenas do pátio em
-`blender/brp_porto.py`.
+**A cauda dos props tem corpo** (Etapa 2): contêiner corrugado, carga
+empilhada, boia e marcador com faixa refletiva, e as catorze peças pequenas do
+pátio em `blender/brp_porto.py`.
 
-O cenário usa os props: **coqueiros low-poly** (que oscilam em rajada, copa e
-tronco em peças separadas), **guindaste** nas docas construídas (a lança
-varre), **carga no convés** e **boias + marcador** na Zona de Espera. Desde
-03/09 o **caminhão atravessa o mapa inteiro pela estrada** — 43,5 unidades, de
-fora do quadro a fora do quadro, com duas silhuetas porque a rua vira 90° em
-cada cotovelo — e a **espuma lava a costa**, em duas camadas próprias e em
-contrafase (ela era assada no SVG, e por isso não havia onda nenhuma para
-animar). As **pedras do enrocamento** deixaram de ser elipses chapadas e são
-sólidos facetados — e desde 04/09 o enrocamento **para nas duas pontas**, onde
-o cais deu lugar a praia e as pedras são avulsas em cima da areia. Desde 04/09 a **mata atrás da vila tem árvores de verdade** — sombra
-projetada, tronco e copa em lobos facetados, no par de verdes AMOSTRADO da
-referência —, e há árvore no quintal das casas. Os coqueiros chapados
-saíram do SVG do mapa — `gerar_mapa_iso.py --sem-coqueiros` — pela mesma razão
-que os píeres: o que se mexe não pode estar assado no fundo.
+O cenário usa os props: **coqueiros low-poly** que oscilam em rajada,
+**guindaste** nas docas construídas (a lança varre), **carga no convés** e
+**boias + marcador** na Zona de Espera. O **caminhão atravessa o mapa inteiro
+pela estrada**, de fora do quadro a fora do quadro, com duas silhuetas porque a
+rua vira 90° em cada cotovelo; a **espuma lava a costa** em duas camadas em
+contrafase; as **pedras do enrocamento** são sólidos facetados e ele **para nas
+duas pontas**, onde o cais deu lugar a praia. A **mata atrás da vila tem
+árvores de verdade** e há árvore no quintal das casas. Os coqueiros chapados
+saíram do SVG do mapa — `--sem-coqueiros` — pela mesma razão que os píeres: o
+que se mexe não pode estar assado no fundo.
 
-Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande), e o
-pesqueiro tem casco próprio — não é o mesmo casco com carga trocada. O
+**O píer, a lança e o casco têm TRÊS NÍVEIS desde 05/09** — é a evolução do
+porto ficando visível. O píer vai de ripas de madeira com fresta a laje de
+concreto sobre estacas de aço, com defensas de pneu e contêiner empilhado; a
+lança, de um pau-de-carga sem contrapeso a uma lança longa com spreader. Quem
+escolhe é `GameState.nivel_porto()`, que só LÊ quantas estruturas estão de pé —
+a mecânica de upgrade que o GDD 7 prevê é da Fase 2 e continua por fazer, como
+a vila, que já cresce por `--nivel-vila=N` sem o jogo saber. **A torre é a mesma
+nos três**, porque o `pivot_offset` da lança é um só.
+
+Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande) e desde
+05/09 os TRÊS atracam, escolhidos pelo valor do contrato — o médio era gerado,
+validado e nunca entrava em doca. O pesqueiro tem casco próprio, não é o mesmo
+casco com carga trocada. O
 **trabalhador aparece de pé no tabuado** quando alocado, e mexe-se enquanto a
 operação corre.
 
-O **retrato do trabalhador** deixou de ser placeholder em 03/09: era um
-desenho pintado, de outra leva e outra linguagem, e passou a sair do mesmo
-estúdio Blender de tudo o resto (`trabalhador_retrato`). É o único prop que
-olha para a frente — rodado 45° em Z, porque um retrato de 3/4 num cartão de
-108px mostra sobretudo o capacete. O boneco do PÍER continua com as cinco
-caixas dele: 22px e 70px não são o mesmo orçamento de pixel.
+O **retrato do trabalhador** sai do mesmo estúdio Blender de tudo o resto
+(`trabalhador_retrato`) e é o único prop que olha para a frente — rodado 45°
+em Z, porque um retrato de 3/4 num cartão de 108px mostra sobretudo o
+capacete. O boneco do PÍER continua com as cinco caixas dele: 22px e 70px não
+são o mesmo orçamento de pixel.
 
 A **Zona de Espera é só visual**: os barcos ancorados são decorativos e não
 representam fila de verdade — barcos continuam nascendo direto nas docas.

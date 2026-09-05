@@ -14,3 +14,12 @@ perder origem, escala nem ordem de desenho.
 
 Quem os quiser no jogo tem de reabrir a decisão 001 primeiro — não é uma
 questão de arrastar o arquivo.
+
+---
+
+⚠️ **`gerar_brp.py todos <dir>` despeja os 24 assets no MESMO diretório**, e
+nove deles são estes — os que não entram no jogo. Regerar o catálogo apontando
+para `brport_vs/art/props` deixa lá nove PNGs que ninguém pediu, e o
+`asset_validator.gd` acha-os na primeira pasta em que procura e passa: a
+duplicata não dá erro, dá dois arquivos a divergirem no dia seguinte. Regere
+para um diretório temporário e copie de lá o que pertence a cada pasta.

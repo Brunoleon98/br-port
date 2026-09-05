@@ -92,7 +92,7 @@ jobs:
         # SÓ EM PULL REQUEST, e só se a base já souber tirar a mesma foto. Uma
         # base anterior a este item não conhece `--semente=` nem `--fixed-fps`:
         # cada corrida dela daria outro porto e outra fase das animações, e o
-        # antes/depois diria "mudou" em todas as cinco imagens, sempre. Melhor
+        # antes/depois diria "mudou" em todas as imagens, sempre. Melhor
         # não comparar e dizer porquê do que comparar contra ruído.
         if: github.event_name == 'pull_request'
         run: |

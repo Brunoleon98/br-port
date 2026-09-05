@@ -41,19 +41,124 @@ MEIA_ALT = 15            # a razão 2:1 com MEIA_LARG é o que define o ângulo
 ALT_CAIS = 26            # altura do cais acima da água
 ALT_PIER = 15            # o tabuado fica mais baixo que o cais
 
-CX, CY = 452, 8
-LARG, ALT = 720, 720
+# ── O ENQUADRAMENTO: a câmera AFASTA-SE, e o desenho não muda ────────────
+#
+# O Bruno escolheu `MEIA_LARG = 20` em 03/09, olhando o mapa gerado em três
+# larguras. A tentação é escrever 20 aqui em cima e regerar — e ela está
+# errada por uma razão que só aparece medindo: **altura, neste arquivo, é
+# PIXEL**. O `ALT_CAIS = 26`, o `ALT_PIER = 15`, as paredes da vila, o `h` de
+# cada `com_saia`, a largura de cada traço: são todos números absolutos,
+# afinados para um mundo em que uma unidade vale 30 px. Baixar só o
+# `MEIA_LARG` encolheria a PLANTA e deixaria as ALTURAS onde estavam — o
+# porto inteiro esticado 1,5x para cima, que é o defeito que o CLAUDE.md
+# regista duas vezes ("em isométrico é a ALTURA que projeta a silhueta") e
+# que nenhuma das cinco suítes leria.
+#
+# Escalar os ~100 literais à mão é a outra armadilha escrita: "encolher um
+# prop escala-se no GRUPO, nunca reescrevendo as literais — são trinta
+# números e trinta chances de um ficar por escalar".
+#
+# Então o mundo continua a ser DESENHADO na mesma escala de sempre, num quadro
+# maior, e o `viewBox` do SVG encolhe o quadro inteiro para os 720 px que o
+# jogo carrega. É exatamente o que afastar uma câmera faz, é uniforme por
+# construção — altura, traço, textura e planta juntos — e é uma linha.
+#
+# Ficam DOIS espaços, e a fronteira entre eles é a função `tela()`:
+#
+#   DESENHO   o que `p()` devolve. `MEIA_LARG = 30`, quadro de LARGxALT.
+#             Todo literal deste arquivo vive aqui, e nenhum deles mudou.
+#   TELA      o PNG de SAIDAxSAIDA que o `Main.tscn` carrega, e o espaço em
+#             que a tabela de âncoras publica tudo. `MEIA_LARG` efetivo = 20.
+#
+# Quem lê a tabela de âncoras (o teste de design, o validador de assets) e
+# quem posiciona prop no `Main.tscn` fala TELA. Quem desenha, DESENHO.
+ZOOM = 2.0 / 3.0         # 30 * ZOOM = os 20 escolhidos em 03/09
+SAIDA = 720              # o PNG que o jogo carrega
+
+LARG = ALT = round(SAIDA / ZOOM)
+
+# A JANELA que o jogador vê não é o PNG: o `MapaWrap` do `Main.tscn` tem 720 de
+# largura e corta a altura em 660. Compor contra os 720x720 do arquivo é compor
+# contra 60px que ninguém vê.
+JANELA = (720, 660)
+
 
 # Costa em degraus. Cada entrada: (my inicial, my final, mx da beira do cais).
 # O salto de 4 em mx contra 8 em my é o que satisfaz Δmx > Δmy/3.
-DEGRAUS = [(-6.0, 8.0, 6.0), (8.0, 16.0, 10.0), (16.0, 24.0, 14.0), (24.0, 34.0, 18.0)]
-FUNDO_TERRA = -8.0       # o quanto a terra recua para trás (fora do ecrã)
+#
+# ⚠️ O PRIMEIRO E O ÚLTIMO DEGRAU NÃO TÊM PORTO NENHUM, e existem só para o
+# mundo TRANSBORDAR do quadro. É o passo 1 da ordem que a medição de 03/09
+# fixou: com a câmera a 30 o mundo saía dos quatro lados sozinho, e ao afastá-
+# la para 20 as três fronteiras dele entravam no ecrã — 313 px do fundo da
+# terra no canto superior esquerdo, 200 px do começo da costa no superior
+# direito e 113 px do fim dela no inferior esquerdo. Um degrau de cada lado
+# põe as três a ZERO, e dois não trazem nada que se veja (medido:
+# `tools/medir_enquadramento.py`).
+#
+# Eles são praia por construção, e não por escolha: `na_praia()` chama praia a
+# tudo o que está fora dos berços, e não há berço nenhum aqui.
+DEGRAUS = [(-14.0, -6.0, 2.0),
+           (-6.0, 8.0, 6.0), (8.0, 16.0, 10.0), (16.0, 24.0, 14.0),
+           (24.0, 34.0, 18.0), (34.0, 42.0, 22.0)]
+# O quanto a terra recua para trás. Era -8 e a palavra do comentário era "fora
+# do ecrã" — deixou de ser verdade ao afastar a câmera: a -8 a terra acabava
+# numa diagonal reta contra água funda, 121 px dentro do canto superior
+# esquerdo. Medido, o mínimo é -15; -16 é esse mínimo com uma unidade de folga,
+# e o que passa dela é polígono que `no_quadro()` corta de qualquer maneira.
+FUNDO_TERRA = -16.0
 ALTURA_DE_MATO = 9.0     # px do mapa que um tufo de capim se levanta do chão
 COSTURA = 0.06           # sobreposição entre degraus (ver `gerar`)
 PIER_ALCANCE = 4.5
 
 # (my inicial, my final, mx da beira) de cada píer — alinhados aos degraus.
 PIERES = [(2.0, 4.4, 6.0), (10.0, 12.4, 10.0), (18.0, 20.4, 14.0)]
+def _centro_do_porto() -> tuple:
+    """O ponto do mundo que fica no meio da janela: o centroide dos berços.
+
+    ⚠️ A LARGURA É METADE DO ENQUADRAMENTO; a outra metade é O QUÊ se vê, e
+    ela custou uma volta. Com a câmera a 20 e o centro no ponto que lá estava
+    a 30, o quadro saía com o porto encostado à direita e um bloco de mata e
+    telhado a ocupar a esquerda inteira — 61% do quadro em terra. A leitura das
+    referências é explícita nas duas pontas: *"a água ocupa perto de metade do
+    quadro, e a maior parte dela é água aberta sem nada — vazio de propósito, é
+    o que dá escala ao porto"*, e *"a cidade é uma FAIXA atrás do cais, nunca
+    um bloco"*.
+
+    Centrado aqui, a água mede 52,7% (`tools/medir_enquadramento.py`). E o
+    centro é DERIVADO: se um berço mudar de sítio, a câmera vai atrás dele em
+    vez de ficar num par de números que ninguém sabe de onde saiu.
+    """
+    return (math.fsum(b for _a, _b, b in PIERES) / len(PIERES) + PIER_ALCANCE / 2.0,
+            math.fsum((a + b) / 2.0 for a, b, _c in PIERES) / len(PIERES))
+
+
+def _camera() -> tuple:
+    """`CX`/`CY` de DESENHO que põem `_centro_do_porto()` no meio da janela.
+
+    ⚠️ ARREDONDADOS, E ISSO NÃO É ZELO — é o que faz o mapa sair igual em toda
+    máquina. O CI regera os dois SVG e compara BYTE A BYTE com os versionados,
+    e o gerador imprime coordenada com `%.1f`: um erro de 1e-14 no `CX` desloca
+    meio pixel na impressão e reprova a corrida inteira.
+    
+    E foi exatamente o que aconteceu em 05/09. O `sum()` de floats **mudou na
+    Python 3.12**, que passou a somar por compensação de Neumaier; o runner do
+    CI é `ubuntu-latest` e subiu de versão. Medido, o mesmo arquivo:
+    
+        3.10 e 3.11   CX = 508.49999999999994
+        3.12 e 3.13   CX = 508.50000000000006
+    
+    Dá 190 linhas de diferença nos dois mapas — `83.3` contra `83.2` — sem
+    nenhuma coordenada do mundo ter mudado. O `math.fsum` acima resolve a
+    causa (ele é corretamente arredondado em toda versão); o `round` aqui
+    resolve a CLASSE do problema, porque congela a entrada de tudo o que vem
+    depois num número que as duas somas dão igual.
+    """
+    mx, my = _centro_do_porto()
+    return (round(JANELA[0] / 2.0 / ZOOM - (mx - my) * MEIA_LARG, 6),
+            round(JANELA[1] / 2.0 / ZOOM - (mx + my) * MEIA_ALT, 6))
+
+
+CX, CY = _camera()
 
 # ── AS DUAS PONTAS DE AREIA ──────────────────────────────────────────────
 #
@@ -283,7 +388,19 @@ C = {
 
 
 def p(mx: float, my: float, h: float = 0.0) -> tuple:
+    """Mundo -> pixel de DESENHO. Ver o bloco do enquadramento, lá em cima."""
     return (CX + (mx - my) * MEIA_LARG, CY + (mx + my) * MEIA_ALT - h)
+
+
+def tela(mx: float, my: float, h: float = 0.0) -> tuple:
+    """Mundo -> pixel do PNG que o jogo carrega. A fronteira dos dois espaços.
+
+    Existe num lugar só de propósito: é ela que a tabela de âncoras usa, e
+    quem publicasse pixel de DESENHO poria todos os props do `Main.tscn` 1,5x
+    fora do sítio sem erro nenhum a apontá-lo.
+    """
+    x, y = p(mx, my, h)
+    return (x * ZOOM, y * ZOOM)
 
 
 def contorno_costa() -> list:
@@ -877,9 +994,17 @@ VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 
 # (nome, mx, my, sprite em px) de cada prédio do pátio, lido de `Main.tscn`.
 # A largura manda no vão em `my`; a altura manda em QUAL fileira ele alcança.
+# (nome, mx, my, largura do sprite em PIXEL DO PNG). A largura é a do estado
+# MAIOR de cada prédio — o escritório pronto tem 103px e a ruína 82; o armazém
+# 124 nos dois estados —, porque o vão tem de servir aos dois.
+#
+# ⚠️ ELA ENCOLHEU COM A CÂMERA em 05/09 (era 154 e 185). É pixel de PNG, e o
+# PNG passou a ser renderizado 1,5x menor; deixar os números antigos abriria
+# na vila um vão meia casa maior do que o prédio precisa, sem erro nenhum a
+# apontá-lo — só um buraco na fileira.
 PREDIOS_DO_PATIO = [
-    ("Escritorio", 2.6, 6.7, 154.0),
-    ("Armazem", 6.6, 14.5, 185.0),
+    ("Escritorio", 2.6, 6.7, 103.0),
+    ("Armazem", 6.6, 14.5, 124.0),
 ]
 
 
@@ -899,15 +1024,19 @@ def vaos_da_vila(recuo: float = None) -> list:
         recuo = VILA_RECUO
     vaos = []
     for _nome, pmx, pmy, sprite in PREDIOS_DO_PATIO:
-        meia = 0.6 * (sprite / 2.0) / MEIA_LARG
-        _, py = p(pmx, pmy, ALT_CAIS)
+        # ⚠️ O SPRITE É PIXEL DE TELA E O `p()` DEVOLVE PIXEL DE DESENHO, que
+        # desde 05/09 são coisas diferentes (ver o bloco do enquadramento).
+        # Misturar os dois daria um vão 1,5x maior do que devia — e um vão
+        # errado não dá erro, dá buraco na fileira de casas.
+        meia = 0.6 * (sprite / 2.0) / (MEIA_LARG * ZOOM)
+        _, py = tela(pmx, pmy, ALT_CAIS)
         for my0, my1, borda in DEGRAUS:
             mx_vila = borda - recuo
             centro = mx_vila - (pmx - pmy)
             if not (my0 <= centro < my1):
                 continue
             # O prédio tapa para CIMA, e só até à altura do sprite dele.
-            _, hy = p(mx_vila, centro, ALT_CAIS)
+            _, hy = tela(mx_vila, centro, ALT_CAIS)
             if 0.0 <= py - hy <= sprite:
                 vaos.append((centro - meia, centro + meia))
     return vaos
@@ -1603,14 +1732,14 @@ def espuma(semente: int) -> str:
 def gerar_espuma(semente: int) -> str:
     return ('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" '
             'viewBox="0 0 %d %d">\n%s</svg>\n'
-            % (LARG, ALT, LARG, ALT, espuma(semente)))
+            % (SAIDA, SAIDA, LARG, ALT, espuma(semente)))
 
 
 def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
           com_predios: bool = True, com_pavimento: bool = True,
           nivel_vila: int = 1) -> str:
     s = '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d">\n' % (
-        LARG, ALT, LARG, ALT)
+        SAIDA, SAIDA, LARG, ALT)
 
     # ---- água: rampa de profundidade a partir da costa ----
     # Do mais fundo (fundo do ecrã) para o mais raso (encostado na terra), cada
@@ -2033,13 +2162,19 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
 # olhando. Exportar a tabela transforma "olhar" em asserção: o teste de design
 # lê este JSON e confere cada prop contra ele.
 #
-# Tudo em pixels do mapa, com h=0 — que é onde o quadro de 512 de cada prop
-# tem o seu centro (ver `para_pixel` em gerar_props_iso.py).
+# Tudo em pixels do PNG QUE O JOGO CARREGA — espaço de TELA, e não de desenho
+# —, com h=0, que é onde o quadro de 512 de cada prop tem o seu centro (ver
+# `para_pixel` em gerar_props_iso.py). É por isso que o `px()` abaixo chama
+# `tela()` e não `p()`: ver o bloco do enquadramento no topo do arquivo.
+#
+# E a PROJEÇÃO publicada é a efetiva — `MEIA_LARG * ZOOM` —, porque é com ela
+# que o teste de design desprojeta um prop de volta ao mundo. Publicar os 30
+# do desenho daria uma tabela inteira de posições plausível e errada.
 
 
 def tabela_ancoras() -> dict:
     def px(mx, my, h=0.0):
-        x, y = p(mx, my, h)
+        x, y = tela(mx, my, h)
         return [round(x, 1), round(y, 1)]
 
     pieres = []
@@ -2100,11 +2235,16 @@ def tabela_ancoras() -> dict:
                       "recuo": round(PRAIA_PROF * (1.0 + CRISTA[_j][1]), 3)})
 
     return {
-        "projecao": {"cx": CX, "cy": CY, "meia_larg": MEIA_LARG,
-                     "meia_alt": MEIA_ALT, "alt_cais": ALT_CAIS},
+        # O `fundo_terra` é UNIDADE DE MUNDO e por isso não leva `ZOOM`. Ele
+        # entra aqui para o bloco D16 do teste de design poder conferir que o
+        # mundo transborda o quadro pelos quatro lados — que é o contrato
+        # escrito no cabeçalho deste arquivo e que, até 05/09, nada verificava.
+        "projecao": {"cx": round(CX * ZOOM, 4), "cy": round(CY * ZOOM, 4),
+                     "meia_larg": MEIA_LARG * ZOOM, "meia_alt": MEIA_ALT * ZOOM,
+                     "alt_cais": ALT_CAIS * ZOOM, "fundo_terra": FUNDO_TERRA},
         "praias": areia,
         "pegadas": {k: list(v) for k, v in sorted(PEGADAS.items())},
-        "mapa": {"largura": LARG, "altura": ALT},
+        "mapa": {"largura": SAIDA, "altura": SAIDA},
         "pieres": pieres,
         "faixas": faixas,
         "cotovelos": cotovelos,
@@ -2132,7 +2272,7 @@ def main() -> int:
             conteudo_e = gerar_espuma(SEMENTES_ESPUMA[i])
             with open(destino_e, "w", encoding="utf-8") as f:
                 f.write(conteudo_e)
-            print("%s — camada de espuma %d, %dx%d" % (destino_e, i, LARG, ALT))
+            print("%s — camada de espuma %d, %dx%d" % (destino_e, i, SAIDA, SAIDA))
             return 0
     com_pieres = "--sem-pieres" not in sys.argv
     com_coqueiros = "--sem-coqueiros" not in sys.argv
@@ -2148,7 +2288,7 @@ def main() -> int:
     with open(destino, "w", encoding="utf-8") as f:   # trunca de imediato, e um
         f.write(conteudo)                             # erro deixaria o mapa vazio
     print("%s — %dx%d, chão transbordando de propósito (o ecrã é a janela)%s" % (
-        destino, LARG, ALT, ("" if com_pieres else "  [SEM os píeres]")
+        destino, SAIDA, SAIDA, ("" if com_pieres else "  [SEM os píeres]")
         + ("" if com_coqueiros else "  [SEM os coqueiros]")
         + ("" if com_predios else "  [SEM os prédios]")
         + ("" if com_pavimento else "  [terra batida]")
@@ -2157,14 +2297,14 @@ def main() -> int:
     # O centro de cada píer no chão. É por aqui que o Main.tscn ancora o prop:
     # o render mira a origem do chão, então o canto do TextureRect é este ponto
     # menos meio quadro.
-    print("\nCentro de cada píer, em pixels do mapa (h=0):")
+    print("\nCentro de cada píer, em pixels do PNG (h=0):")
     for i, (my0, my1, borda) in enumerate(PIERES):
-        x, y = p(borda + PIER_ALCANCE / 2, (my0 + my1) / 2, 0)
+        x, y = tela(borda + PIER_ALCANCE / 2, (my0 + my1) / 2, 0)
         print("  Vaga %d: (%.0f, %.0f)" % (i + 1, x, y))
 
     print("\nAncoras de barco (centro, encostado em cada píer):")
     for i, (my0, my1, borda) in enumerate(PIERES):
-        x, y = p(borda + PIER_ALCANCE / 2, my1 + 1.6, 0)
+        x, y = tela(borda + PIER_ALCANCE / 2, my1 + 1.6, 0)
         print("  Doca %d: (%.0f, %.0f)" % (i + 1, x, y))
 
     # A tabela sai ao lado do mapa, sempre. É o contrato que o teste de design

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c7cvlmtw533jl"
-path="res://.godot/imported/pier_construido.png-49f16b56807751abbdb111d082ea26f3.ctex"
+uid="uid://ctq1qugj3ypcx"
+path="res://.godot/imported/pier_n3.png-508b8c49c9875eea855377d5580fe32c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/pier_construido.png"
-dest_files=["res://.godot/imported/pier_construido.png-49f16b56807751abbdb111d082ea26f3.ctex"]
+source_file="res://art/props/pier_n3.png"
+dest_files=["res://.godot/imported/pier_n3.png-508b8c49c9875eea855377d5580fe32c.ctex"]
 
 [params]
 

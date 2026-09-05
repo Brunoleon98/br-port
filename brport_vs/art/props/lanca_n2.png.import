@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bx5i8m2ydeacl"
-path="res://.godot/imported/guindaste_lanca.png-88a495a61a000d6cd12b383d297af814.ctex"
+uid="uid://bdeiwbf815tld"
+path="res://.godot/imported/lanca_n2.png-cc7d8d8508fae6095053ff19d546bbc0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/guindaste_lanca.png"
-dest_files=["res://.godot/imported/guindaste_lanca.png-88a495a61a000d6cd12b383d297af814.ctex"]
+source_file="res://art/props/lanca_n2.png"
+dest_files=["res://.godot/imported/lanca_n2.png-cc7d8d8508fae6095053ff19d546bbc0.ctex"]
 
 [params]
 

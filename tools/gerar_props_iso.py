@@ -63,6 +63,23 @@ from mathutils import Vector
 # desalinha os props do chão.
 MEIA_LARG, MEIA_ALT = 30.0, 15.0
 
+# ── E O ZOOM, que é o terceiro membro do contrato desde 05/09 ────────────
+#
+# O mapa deixou de ser desenhado na escala em que é entregue: ele desenha a
+# `MEIA_LARG = 30` num quadro maior e o `viewBox` do SVG encolhe o quadro
+# inteiro (ver o bloco do enquadramento em `gerar_mapa_iso.py`). O prop não
+# tem `viewBox`: ele é PNG, e cai no `Main.tscn` a 1:1. Então quem encolhe o
+# prop é a CÂMERA — o `ESCALA_ORTO` abaixo, e mais nada.
+#
+# ⚠️ E É SÓ O `ESCALA_ORTO`. O `z()` continua a converter altura pela escala
+# de DESENHO, e por isso a geometria construída neste arquivo não muda um
+# milímetro: o `ALTURA_PX` de tela encolheria na mesma proporção do
+# `ESCALA_ORTO`, os dois cancelam-se, e mexer nele levantaria cada prop 1,5x
+# — o mesmo defeito que o mapa evita não reescrevendo os literais dele.
+# Afastar uma câmera não estica o que ela filma.
+ZOOM = 2.0 / 3.0
+MEIA_LARG_TELA = MEIA_LARG * ZOOM
+
 # Câmera ortográfica: a razão vertical/horizontal de um passo no chão é
 # sen(elevação). Com 15/30 = 0,5 -> elevação 30° -> rotação X = 60°.
 # (O 54,736° dos tutoriais é isométrico VERDADEIRO, 1,732:1. Aqui daria errado.)
@@ -70,10 +87,10 @@ ROT_X, ROT_Z = 60.0, 45.0
 
 RESOLUCAO = 512
 
-# Uma unidade de mundo na horizontal tem de valer MEIA_LARG pixels. Numa câmera
-# ortográfica a 45° de azimute isso é (RESOLUCAO / ortho_scale) * cos(45°),
-# então ortho_scale = RESOLUCAO / (MEIA_LARG / cos(45°)).
-ESCALA_ORTO = RESOLUCAO / (MEIA_LARG / math.cos(math.radians(45.0)))
+# Uma unidade de mundo na horizontal tem de valer MEIA_LARG_TELA pixels do PNG.
+# Numa câmera ortográfica a 45° de azimute isso é (RESOLUCAO / ortho_scale) *
+# cos(45°), então ortho_scale = RESOLUCAO / (MEIA_LARG_TELA / cos(45°)).
+ESCALA_ORTO = RESOLUCAO / (MEIA_LARG_TELA / math.cos(math.radians(45.0)))
 
 # ALTURA: o ponto onde os dois mundos quase não se falam.
 #
@@ -85,7 +102,11 @@ ESCALA_ORTO = RESOLUCAO / (MEIA_LARG / math.cos(math.radians(45.0)))
 # Ignorar isso põe um píer renderizado 2,4x mais alto que o cais desenhado ao
 # lado dele. Por isso os props falam a mesma língua do mapa: altura em PIXELS
 # DO MAPA, convertida aqui num lugar só.
-ALTURA_PX = (RESOLUCAO / ESCALA_ORTO) * math.cos(math.radians(90.0 - ROT_X))
+# ⚠️ E ESTE FATOR SAI DA ESCALA DE DESENHO, não da de tela — ver o bloco do
+# ZOOM acima. É `MEIA_LARG / cos(45°) * cos(30°)`, escrito assim para se ler
+# que é a mesma conta do `ESCALA_ORTO` com o outro `MEIA_LARG`.
+ALTURA_PX = (MEIA_LARG / math.cos(math.radians(45.0))) \
+    * math.cos(math.radians(90.0 - ROT_X))
 
 
 def z(altura_px: float) -> float:
@@ -115,6 +136,26 @@ PALETA = {
     "boia": "#d94f2a", "corda": "#c9b48a",
     "colete": "#e0561f", "capacete": "#e0a81f", "pele": "#b07b52",
     "calca": "#24466e", "rede": "#8d9aa6", "casco_pesca": "#2f6f4a", "parede_suja": "#9a9c93", "vidro": "#7fb6cc",
+    # O VÃO: o dentro de uma janela sem vidro ou de uma porta que já não há.
+    # É a peça que faz uma ruína ler como ruína, e ela é uma COR e não um
+    # buraco — furar a parede daria duas faces coplanares no batente, que é o
+    # losango preto que este arquivo já registou duas vezes. Não é preto: preto
+    # chapado ao lado do `parede_suja` lê como recorte falhado. É o navio do
+    # tema levado ao escuro, que é a sombra que o resto do mapa já usa.
+    "vao": "#2b3138",
+    # O cais REFORÇADO do nível 3: concreto, e o mesmo tom que o mapa já
+    # desenha no cais de pedra (`cais_topo`), para o píer de betão ler como
+    # continuação dele e não como uma peça de outro jogo.
+    "concreto": "#b9c2c8", "concreto_borda": "#8e9aa2",
+    "pneu": "#33383c",
+    # O PISO que sobra quando as paredes caem: o `parede_suja` levado ao
+    # escuro. Sem ele a ruína inteira sai num cinzento só e as peças fundem-se
+    # umas nas outras — a mesma regra do caixote que era `madeira` num tabuado
+    # de `madeira`, aplicada dentro de um prop em vez de contra o cenário.
+    "piso_ruina": "#6f736c",
+    # A telha caída e o barrote à mostra. O `telhado_velho` é a água inteira;
+    # estes dois são o que sobra dela.
+    "barrote": "#6b543c",
 }
 
 
@@ -165,6 +206,9 @@ DESGASTE = {
     "metal": 12.0, "metal_claro": 12.0, "laranja": 11.0, "amarelo": 13.0,
     "laranja_esc": 11.0,
     "rede": 14.0, "corda": 13.0,
+    # O vão é pequeno e quer marca; o barrote é uma ripa fina, idem.
+    "vao": 9.0, "barrote": 9.0, "piso_ruina": 4.0,
+    "concreto": 3.0, "concreto_borda": 4.0, "pneu": 10.0,
 }
 
 
@@ -450,6 +494,77 @@ def janela(nome, face, centro, tam, u, v, larg, alt, M, peitoril=True):
         pecas.append(na_face(nome + "_peitoril", face, centro, tam,
                              u, v - alt / 2.0 - 0.11,
                              larg + 0.26, 0.08, 0.13, M["parede_dir"], 0.045))
+    return pecas
+
+
+def vao_cego(nome, face, centro, tam, u, v, larg, alt, M, batente=True):
+    """Uma abertura SEM nada atrás: janela partida, porta que já não há.
+
+    É a peça de ruína que faltava, e ela é a `janela()` ao contrário — lá o que
+    faz ler é o vidro claro com a moldura a fazer sombra; aqui é o VÃO ESCURO,
+    e o batente é o que resta dele: duas barras, e não quatro.
+
+    ⚠️ E ela é uma PLACA RECUADA, não um furo. Furar a parede punha o batente
+    coplanar com a face e devolvia o losango preto do z-buffer que este arquivo
+    já registou duas vezes — e num prop de 40px o resultado não se lê como
+    buraco, lê como falha de render.
+    """
+    pecas = [na_face(nome + "_vao", face, centro, tam, u, v,
+                     larg, alt, 0.05, M["vao"], -0.045)]
+    if batente:
+        # Só o topo e um lado: o batente inteiro devolveria a janela ARRUMADA,
+        # que é exatamente o que a ruína não é.
+        pecas.append(na_face(nome + "_verga", face, centro, tam, u,
+                             v + alt / 2.0 + 0.035, larg + 0.14, 0.07, 0.06,
+                             M["parede_dir"], 0.01))
+        pecas.append(na_face(nome + "_umbral", face, centro, tam,
+                             u - larg / 2.0 - 0.035, v - 0.06,
+                             0.07, alt - 0.12, 0.06, M["parede_dir"], 0.01))
+    return pecas
+
+
+# O perfil de uma parede que caiu: (largura, altura, profundidade), todas
+# relativas ao trecho inteiro. Os números são IRREGULARES de propósito e são
+# literais e não sorteio — o gerador é determinístico e o CI compara o PNG.
+#
+# ⚠️ A PRIMEIRA VERSÃO DESCIA EM DEGRAUS IGUAIS e saiu uma ESCADA. Três caixas
+# da mesma largura, descendo por um passo constante, é exatamente o desenho de
+# um lance de escada — e ampliada a 5x era isso que se via, com a janela
+# partida encaixada num dos degraus como se fosse um patamar. É a irmã da
+# regra que a vila já registou ("73% dos vãos mediam exatamente o VILA_PASSO, e
+# aquilo lia como cerca"): o que denuncia geometria gerada não é a forma, é a
+# REGULARIDADE dela.
+#
+# Aqui a largura varia de 0,22 a 0,40, a altura não é monótona (o segundo
+# pedaço é MAIS alto que o primeiro, que é o que uma parede faz quando racha em
+# vez de desmoronar por igual) e os dois últimos são mais finos, porque parede
+# que caiu partiu-se também na espessura.
+_PERFIL_QUEDA = ((0.24, 0.86, 1.00), (0.22, 1.00, 0.96),
+                 (0.32, 0.47, 0.78), (0.22, 0.24, 0.62))
+
+
+def parede_partida(nome, centro, tam, mat, resto=0.42):
+    """Um trecho de parede que DESABOU: o topo em pedaços irregulares.
+
+    O topo reto de uma caixa lê como parede por acabar; o que lê como parede
+    CAÍDA é a linha de cima quebrada — e quebrada de verdade, ver `_PERFIL_QUEDA`.
+    `resto` é a fração da altura a que o último pedaço chega.
+    """
+    cx, cy, cz = centro
+    sx, sy, sz = tam
+    base = cz - sz / 2.0
+    esq = cx - sx / 2.0
+    pecas = []
+    n = len(_PERFIL_QUEDA)
+    for i, (larg, alto, fundo) in enumerate(_PERFIL_QUEDA):
+        f = i / float(n - 1)
+        # A envolvente desce de 1 até `resto`; o perfil sacode-a por cima.
+        h = sz * (1.0 - (1.0 - resto) * f) * alto
+        w = sx * larg
+        pecas.append(caixa("%s%d" % (nome, i),
+                           (esq + w / 2.0, cy, base + h / 2.0),
+                           (w + 0.02, sy * fundo, h), mat))
+        esq += w
     return pecas
 
 
@@ -791,11 +906,153 @@ def montar(M: dict) -> dict:
         caixa("g_cabo", (GX, CARRO_Y, TOPO - 0.72), (0.035, 0.035, 1.05), M["metal"]),
         caixa("g_moitao", (GX, CARRO_Y, TOPO - 1.32), (0.19, 0.15, 0.22), M["amarelo"]),
     ]
+    # ── OS TRÊS NÍVEIS DO PÍER E DA LANÇA ───────────────────────────
+    #
+    # O GDD 7 já decidiu isto: *"estruturas principais (grua, cais, armazém)
+    # têm upgrade in-place de até 3 níveis"*. A MECÂNICA desse upgrade é da
+    # Fase 2 e não existe; a ARTE existe desde já, exatamente como a vila, que
+    # tem `--nivel-vila=N` no gerador do mapa e cresce a cada Fase "sem o jogo
+    # precisar saber disso". Quem escolhe o nível é `GameState.nivel_porto()`,
+    # que só LÊ o que já está construído — não decide nada e não acrescenta
+    # número nenhum ao balanceamento.
+    #
+    # ⚠️ A TORRE É A MESMA NOS TRÊS, e isso não é economia de render: é o
+    # `pivot_offset` do nó `Lanca` em `Dock.tscn`, que é UM para as três lanças.
+    # Torre mais alta no nível 3 desencaixaria a lança do topo dela ao girar, e
+    # o defeito só apareceria a meio de uma varrida. `GX`, `GY` e `TOPO` ficam
+    # onde estão; o que muda é o CONVÉS por baixo e o BRAÇO por cima.
+    #
+    # O que separa os três é o material e o equipamento, não o tamanho:
+    #
+    #   n1  estacas e tabuado de madeira crua, com frestas. Dois cabeços e mais
+    #       nada — um pontão a que se amarra um barco;
+    #   n2  o de sempre: tabuado inteiro, contêiner e caixotes à espera;
+    #   n3  laje de concreto sobre estacas de aço, meio-fio, defensas de pneu na
+    #       borda do mar e contêiner empilhado. É porto, e não pontão.
+
+    # -- n1: o pontão de tábuas -------------------------------------------
+    # Tabuado de RIPAS com fresta, e não uma laje: a fresta é o que diz
+    # "provisório". Uma laje pintada de madeira velha leria como o n2 sujo, que
+    # é o erro que o galpão em ruína cometeu ao partilhar as paredes do acabado.
+    RIPAS = 9
+    passo = PIER_LARG / RIPAS
+    deck_n1 = []
+    for i in range(RIPAS):
+        y = -PIER_LARG / 2 + passo * (i + 0.5)
+        deck_n1.append(caixa("ripa%d" % i, (0, y, ALT_PIER - z(2.2)),
+                             (PIER_ALCANCE, passo - 0.045, z(4.4)),
+                             M["madeira"] if i % 2 else M["madeira_esc"]))
+    for i, (mx, my) in enumerate(((-1.6, 0.72), (1.5, 0.72))):
+        px, py, pz = pos(mx, my, 15.0)
+        deck_n1 += [
+            caixa("n1_cabeco%d" % i, (px, py, pz + z(9.0) / 2), (0.16, 0.16, z(9.0)),
+                  M["metal"]),
+            caixa("n1_cabeco%d_topo" % i, (px, py, pz + z(10.5)),
+                  (0.22, 0.22, z(3.0)), M["metal_claro"]),
+        ]
+
+    # -- n3: o cais de concreto -------------------------------------------
+    estacas_aco = []
+    for i in range(4):
+        x = -PIER_ALCANCE / 2 + 0.5 + i * (PIER_ALCANCE - 1.0) / 3
+        for lado, y in enumerate((-PIER_LARG / 2 + 0.28, PIER_LARG / 2 - 0.28)):
+            estacas_aco.append(caixa(f"aco_{i}_{lado}", (x, y, ALT_PIER / 2 - z(13.0)),
+                                     (0.20, 0.20, ALT_PIER + z(26.0)), M["metal"]))
+    deck_n3 = [
+        caixa("laje", (0, 0, ALT_PIER - z(2.4)),
+              (PIER_ALCANCE, PIER_LARG, z(4.8)), M["concreto"]),
+        # Meio-fio na borda do mar. Sem ele a laje acaba numa aresta e lê como
+        # tampo; com ele lê como cais — a mesma peça que a rua do mapa usa.
+        caixa("laje_meiofio", (0, -PIER_LARG / 2 + 0.05, ALT_PIER + z(1.4)),
+              (PIER_ALCANCE, 0.10, z(3.4)), M["concreto_borda"]),
+    ]
+    # Defensas de pneu, penduradas na borda. São a assinatura de um cais que
+    # recebe navio, e escuras sobre concreto claro leem-se a 3px.
+    for i in range(5):
+        x = -PIER_ALCANCE / 2 + 0.55 + i * (PIER_ALCANCE - 1.1) / 4
+        deck_n3.append(cone("defensa%d" % i, (x, -PIER_LARG / 2 - 0.02, ALT_PIER - z(6.0)),
+                            0.13, 0.13, 0.09, 8, M["pneu"], rot=(90, 0, 0)))
+    for i, (mx, my) in enumerate(((-1.7, 0.74), (-0.5, 0.74), (0.7, 0.74), (1.7, 0.74))):
+        px, py, pz = pos(mx, my, 15.0)
+        deck_n3 += [
+            caixa("n3_cabeco%d" % i, (px, py, pz + z(9.0) / 2), (0.17, 0.17, z(9.0)),
+                  M["metal"]),
+            caixa("n3_cabeco%d_topo" % i, (px, py, pz + z(10.5)),
+                  (0.24, 0.24, z(3.0)), M["amarelo"]),
+        ]
+    # Contêiner EMPILHADO: é o que um cais forte tem e um pontão não.
+    #
+    # ⚠️ E EMPILHAR NÃO É PASSAR UMA ALTURA MAIOR. A primeira tentativa deu ao
+    # de cima `altura_px` maior, e o `_no_conves` interpreta isso como uma CAIXA
+    # MAIS ALTA assente no convés — o segundo contêiner engoliu o primeiro e o
+    # que saiu no render foi um cubo azul do tamanho da cabine do guindaste.
+    # Duas caixas iguais, uma com o centro um andar acima.
+    CONT_H = 13.0
+    for j, (dmx, dmy, cor) in enumerate(
+            ((0.0, 0.0, "laranja"), (0.10, 0.05, "azul"))):
+        px, py, pz = pos(CONT_MX + dmx, CONT_MY + dmy,
+                         15.0 + CONT_H / 2.0 + j * CONT_H)
+        deck_n3.append(caixa("n3_cont%d" % j, (px, py, pz),
+                             (1.00, 0.46, z(CONT_H)), M[cor]))
+        # A cantoneira escura no canto: é a assinatura que faz ler "contêiner"
+        # e não "caixa", e a esta escala é a única peça que cabe.
+        for sx in (-1, 1):
+            deck_n3.append(caixa("n3_cont%d_canto%d" % (j, sx),
+                                 (px + sx * 0.46, py - 0.20, pz),
+                                 (0.08, 0.07, z(CONT_H) * 0.96), M["metal"]))
+
+    # -- as três lanças ---------------------------------------------------
+    # ⚠️ TODAS COMEÇAM EM `TOPO`, no eixo da torre. É esse ponto que o
+    # `pivot_offset` do `Dock.tscn` nomeia, e uma lança que não o cubra
+    # desprende-se da torre ao girar. O bloco D17 do teste de design tranca isto
+    # medindo o alfa do PNG no pixel do pivô.
+    lanca_n1 = trelica("l1_lanca", (GX, GY - 0.14, TOPO), (GX, BARCO_Y + 0.75, TOPO),
+                       0.10, M["madeira_esc"], montantes=4, esp=0.040)
+    CARRO1 = BARCO_Y + 1.05
+    lanca_n1 += [
+        # Sem contralança e sem contrapeso: um pau-de-carga é um braço só, e é
+        # essa silhueta desequilibrada que diz "improvisado".
+        caixa("l1_tirante", (GX, GY + 0.30, TOPO + 0.05), (0.05, 0.9, 0.05),
+              M["metal"], rot=(24, 0, 0)),
+        caixa("l1_cabo", (GX, CARRO1, TOPO - 0.60), (0.03, 0.03, 1.0), M["metal"]),
+        caixa("l1_gancho", (GX, CARRO1, TOPO - 1.16), (0.11, 0.09, 0.16), M["metal"]),
+    ]
+
+    lanca_n3 = trelica("l3_lanca", (GX, GY - 0.20, TOPO), (GX, BARCO_Y - 0.45, TOPO),
+                       0.16, M["laranja"], montantes=9, esp=0.048)
+    lanca_n3 += trelica("l3_contra", (GX, GY + 0.20, TOPO), (GX, GY + 1.25, TOPO),
+                        0.13, M["laranja"], montantes=4, esp=0.046)
+    CARRO3 = BARCO_Y + 0.30
+    lanca_n3 += [
+        caixa("l3_contrapeso", (GX, GY + 1.42, TOPO - 0.08),
+              (0.34, 0.34, 0.38), M["metal"]),
+        caixa("l3_torreta", (GX, GY, TOPO + 0.50), (0.10, 0.10, 0.82), M["metal"]),
+        barra("l3_tirante_frente", (GX, GY, TOPO + 0.86),
+              (GX, BARCO_Y - 0.10, TOPO + 0.06), 0.030, M["metal"]),
+        barra("l3_tirante_tras", (GX, GY, TOPO + 0.86),
+              (GX, GY + 1.25, TOPO + 0.06), 0.030, M["metal"]),
+        caixa("l3_carro", (GX, CARRO3, TOPO - 0.16), (0.19, 0.30, 0.14), M["metal"]),
+        caixa("l3_cabo_a", (GX - 0.10, CARRO3, TOPO - 0.78), (0.03, 0.03, 1.1), M["metal"]),
+        caixa("l3_cabo_b", (GX + 0.10, CARRO3, TOPO - 0.78), (0.03, 0.03, 1.1), M["metal"]),
+        # SPREADER em vez de moitão: a moldura que agarra um contêiner pelos
+        # quatro cantos. É a peça que diz, sem texto, que este guindaste move
+        # contêiner e o outro movia caixote.
+        caixa("l3_spreader", (GX, CARRO3, TOPO - 1.40), (0.24, 1.05, 0.10),
+              M["amarelo"]),
+    ]
+    for sy in (-0.44, 0.44):
+        lanca_n3.append(caixa("l3_trava%.2f" % sy, (GX, CARRO3 + sy, TOPO - 1.50),
+                              (0.16, 0.12, 0.12), M["metal"]))
+
     # Base e mastro entram no PRÓPRIO píer: um guindaste é o que faz uma
     # estrutura de madeira ler como porto e não como pontão de pesca. A lança
     # fica solta porque é ela que gira — e o que se move não pode estar assado.
-    grupos["pier_construido"] = estacas + tabuado + g_base + g_mastro
-    grupos["guindaste_lanca"] = g_lanca
+    grupos["pier_n1"] = estacas + deck_n1 + g_base + g_mastro
+    grupos["pier_n2"] = estacas + tabuado + g_base + g_mastro
+    grupos["pier_n3"] = estacas_aco + deck_n3 + g_base + g_mastro
+    grupos["lanca_n1"] = lanca_n1
+    grupos["lanca_n2"] = g_lanca
+    grupos["lanca_n3"] = lanca_n3
     # NÃO existe um "pier_ampliado" assado. Existiu, e foi retirado em 31/08:
     # era o píer com a lança já colada, e o jogo monta essa imagem em tempo de
     # execução com as duas peças acima, justamente para poder girar a lança.
@@ -1014,13 +1271,111 @@ def montar(M: dict) -> dict:
                 M["metal_claro"], 0.06),
     ] + telhado_duas_aguas("gal_tel", (0, 0, 1.70), (3.4, 2.4), 0.62,
                            M["telhado"], M["telha_cume"])
-    grupos["galpao_velho"] = paredes + telhado_duas_aguas(
-        "gal_telv", (0, 0, 1.70), (3.4, 2.4), 0.52,
-        M["telhado_velho"], M["madeira_esc"], fiadas=4) + [
-        caixa("gal_buraco", (0.7, -0.55, 1.86), (0.85, 0.75, 0.34),
-              M["madeira_esc"], rot=(0, 0, 6)),
-        caixa("gal_tabua", (-1.1, -1.35, 0.55), (0.09, 0.09, 1.2),
-              M["madeira_velha"], rot=(0, 22, 0))]
+    # ⚠️ O ARMAZÉM EM RUÍNA DEIXOU DE PARTILHAR AS PAREDES DO ACABADO (05/09),
+    # e essa partilha era o defeito inteiro. Ele reusava `paredes` — plinto,
+    # caixa de `parede` BRANCA LIMPA, portão fechado, calha e três janelas de
+    # vidro azul — e trocava só a cor do telhado. Na captura o porto abria com
+    # um galpão de paredes novas e janelas inteiras, e o Bruno leu exatamente
+    # isso: "as construções atuais parecem avançadas para um porto inicial".
+    #
+    # O comentário do escritório, dez linhas abaixo, já dizia a regra certa —
+    # "a ruína não é o prédio pintado de velho: é MENOS prédio" — e o armazém
+    # nunca a tinha seguido. Agora segue: parede SUJA, um terço dela desabado,
+    # vidro nenhum, portão fora do trilho e metade do telhado no chão, com os
+    # barrotes à vista onde ele faltou.
+    #
+    # A escala do render diz o que cabe: o prop tem 124px de largura, então
+    # cada peça de ruína tem de valer por si a 3 ou 4px de espessura. É por
+    # isso que os barrotes são TRÊS e não oito, e que o vão é uma cor e não um
+    # furo (ver `vao_cego`).
+    GAL_V = ((0, 0, 0.85), (3.4, 2.4, 1.7))
+    corte = 1.05                      # daqui para +x a parede caiu
+    galv = [
+        caixa("galv_plinto", (0, 0, 0.09), (3.5, 2.5, 0.18), M["parede_suja"]),
+        caixa("galv_parede", (-corte / 2.0, 0, 0.85), (3.4 - corte, 2.4, 1.7),
+              M["parede_suja"]),
+    ]
+    # O terço que caiu, em degraus, e o entulho dele no chão logo à frente.
+    galv += parede_partida("galv_ruina", (3.4 / 2.0 - corte / 2.0, 0, 0.85),
+                           (corte, 2.4, 1.7), M["parede_suja"], resto=0.30)
+    # O PORTÃO SAIU DO TRILHO: o vão fica, e a folha está atravessada NELE.
+    #
+    # ⚠️ E O VÃO ENCOLHEU. A primeira versão herdou a largura do portão do
+    # galpão acabado (1,5 de 3,4) e o resultado, ampliado, era um RETÂNGULO
+    # PRETO CHAPADO do tamanho de meia parede — que não lê como abertura, lê
+    # como falha de recorte. É a mesma armadilha que o `pilha_caixotes` e a
+    # copa da árvore registaram: mancha escura grande e sem aresta não é
+    # volume, é buraco no PNG. O que faz o vão ler como vão é ele ser MENOR
+    # que a parede e ter alguma coisa a cortá-lo — aqui a folha caída, de
+    # través, e a verga por cima.
+    galv += vao_cego("galv_portao", "-y", *GAL_V, -0.62, -0.14, 1.02, 1.08, M)
+    galv += [
+        # A folha, encostada de través DENTRO do vão: parte dela sobre o
+        # escuro, parte sobre a parede.
+        caixa("galv_folha", (-0.80, -1.24, 0.60), (0.62, 0.07, 1.16),
+              M["madeira_velha"], rot=(0, 0, 0)),
+        caixa("galv_folha2", (-0.24, -1.22, 0.44), (0.10, 0.07, 0.92),
+              M["madeira_velha"], rot=(14, 0, 0)),
+        # O trilho de que ela saiu, torto, ainda na parede.
+        na_face("galv_trilho", "-y", *GAL_V, -0.62, 0.44, 1.3, 0.06, 0.05,
+                M["metal"], 0.02),
+    ]
+    # Duas janelas partidas na face +x — e não três, porque a terceira caía no
+    # trecho que desabou. A segunda vai TAPADA COM TÁBUA, que é o sinal de
+    # "alguém ainda fecha isto" e o que distingue abandono de destroço.
+    galv += vao_cego("galv_jan0", "+x", *GAL_V, -1.0, 0.38, 0.46, 0.36, M)
+    galv += vao_cego("galv_jan1", "+x", *GAL_V, 0.0, 0.38, 0.46, 0.36, M,
+                     batente=False)
+    for k, (dv, ang) in enumerate(((0.06, 9.0), (-0.08, -6.0))):
+        galv.append(na_face("galv_tabua%d" % k, "+x", *GAL_V, 0.0, 0.38 + dv,
+                            0.60, 0.09, 0.05, M["madeira_velha"], 0.02))
+        galv[-1].rotation_euler[0] = math.radians(ang)
+    # METADE DO TELHADO. A água cobre só o lado que ficou de pé; sobre o
+    # trecho caído ficam os barrotes, que é a silhueta que o olho conhece como
+    # ruína. Eles descem no mesmo ângulo do telhado, senão leem como grade.
+    galv += telhado_duas_aguas("galv_tel", (-0.92, 0, 1.70), (1.56, 2.4), 0.52,
+                               M["telhado_velho"], M["barrote"], fiadas=2)
+    ang_tel = math.degrees(math.atan2(0.52, 2.4 / 2.0 + 0.18))
+    comp_agua = math.hypot(0.52, 2.4 / 2.0 + 0.18)
+    # ⚠️ BARROTE PRECISA DE CUMEEIRA E DE TERÇA, senão ele flutua. A primeira
+    # versão pôs seis ripas inclinadas e nada a segurá-las: na sombra projetada
+    # via-se três barras paralelas a pairar sobre o chão, e no prop liam-se como
+    # gravetos espetados no telhado. O que faz uma armação ler como armação é a
+    # peça HORIZONTAL que a atravessa.
+    galv.append(caixa("galv_cume", (0.42, 0, 1.70 + 0.52), (1.5, 0.11, 0.09),
+                      M["barrote"]))
+    # ⚠️ E ELES PARAM ONDE A PAREDE PARA. A primeira armação corria até 1,58 e
+    # a parede caída acaba em 0,65: três ripas ficavam a pairar sobre o ar, e a
+    # sombra projetada mostrava-as como barras soltas no chão. Barrote é peça
+    # apoiada; sem apoio lê como graveto espetado.
+    for i, u in enumerate((0.02, 0.42, 0.82)):
+        for lado, sinal in (("a", -1), ("b", 1)):
+            galv.append(caixa("galv_barrote_%s%d" % (lado, i),
+                              (u, sinal * (2.4 / 2.0 + 0.18) / 2.0,
+                               1.70 + 0.52 / 2.0),
+                              (0.07, comp_agua, 0.06),
+                              M["barrote"], rot=(-sinal * ang_tel, 0, 0)))
+    # A terça: a ripa horizontal a meia-água, dos dois lados.
+    for lado, sinal in (("a", -1), ("b", 1)):
+        galv.append(caixa("galv_terca_%s" % lado,
+                          (0.42, sinal * (2.4 / 2.0 + 0.18) / 2.0,
+                           1.70 + 0.52 / 2.0 + 0.02),
+                          (1.34, 0.06, 0.05), M["barrote"]))
+    # Entulho: telha caída e um bloco de parede, os dois FORA da pegada do
+    # prédio para se verem contra o chão, e não contra o plinto.
+    galv += [
+        # ⚠️ TUDO ISTO CABE NA PEGADA de `gerar_mapa_iso.py` (±1,89 em x,
+        # ±1,39 em y, antes da escala do prédio). O D2 confere a pegada
+        # DECLARADA e não a geometria: entulho que passe dela vai parar no
+        # asfalto sem uma única asserção a reprovar.
+        caixa("galv_telha", (1.30, -1.32, 0.07), (0.62, 0.5, 0.09),
+              M["telhado_velho"], rot=(0, 0, 24)),
+        caixa("galv_bloco", (1.78, -0.9, 0.13), (0.42, 0.38, 0.26),
+              M["parede_suja"], rot=(0, 0, 15)),
+        caixa("galv_bloco2", (1.62, 0.92, 0.10), (0.34, 0.3, 0.2),
+              M["parede_suja"], rot=(0, 0, -18)),
+    ]
+    grupos["galpao_velho"] = galv
 
     # -- ESCRITÓRIO nos dois estados. O armazém reaproveita galpao/galpao_velho.
     # A ruína não é o prédio "pintado de velho": é MENOS prédio — parede caída,
@@ -1041,14 +1396,81 @@ def montar(M: dict) -> dict:
       + janela("esc_j3", "+x", *ESC, 0.42, -0.05, 0.56, 0.44, M) \
       + telhado_duas_aguas("esc_tel", (0, 0, 1.56), (2.4, 2.0), 0.50,
                            M["telhado"], M["telha_cume"])
-    grupos["escritorio_ruina"] = [
-        caixa("ruina_parede_alta", (-0.55, 0, 0.55), (1.3, 2.0, 1.1), M["parede_suja"]),
-        caixa("ruina_parede_baixa", (0.75, 0, 0.22), (1.1, 2.0, 0.44), M["parede_suja"]),
-        caixa("ruina_viga", (0.1, 0.35, 1.05), (2.3, 0.12, 0.12), M["madeira_esc"],
-              rot=(0, 9, 0)),
-        caixa("ruina_entulho_a", (-1.35, -0.85, 0.16), (0.7, 0.6, 0.32), M["madeira_esc"]),
-        caixa("ruina_entulho_b", (0.95, -0.95, 0.12), (0.5, 0.45, 0.24), M["parede_suja"],
-              rot=(0, 0, 22))]
+    # ⚠️ E A RUÍNA DO ESCRITÓRIO FALHAVA PELO LADO OPOSTO À DO ARMAZÉM. Ela
+    # seguia a regra ("menos prédio") e mesmo assim não lia: eram duas caixas
+    # cinzentas e um pau, e ampliada a 5x saía como uma PILHA DE LAJES DE
+    # CONCRETO — nada ali dizia que aquilo tinha sido um edifício. Menos prédio
+    # não é menos ARQUITETURA: o que faz o olho ler "ruína" e não "entulho" é
+    # reconhecer o que falta, e para isso é preciso que alguma coisa fique de
+    # pé com um vão dentro.
+    #
+    # Então fica um CANTO: a parede de trás inteira, a lateral inteira, a porta
+    # onde ela estava e uma janela sem vidro. O resto desaba em degraus, e a
+    # viga do telhado cai da parede que ficou para o entulho — é ela que liga
+    # as duas metades e conta o que aconteceu.
+    ESC_R = ((0, 0, 0.78), (2.4, 2.0, 1.56))
+    ALT_R = 1.42
+    esc_r = [
+        # O PISO. É a peça que diz "aqui havia um prédio" mesmo onde já não há
+        # parede nenhuma, e é a razão de ele ter tom próprio: a ruína inteira
+        # em `parede_suja` saía como um bloco cinzento só.
+        caixa("ruina_piso", (0, 0, 0.09), (2.5, 2.1, 0.18), M["piso_ruina"]),
+        # O CANTO QUE FICOU DE PÉ, e ele é o achado desta passagem. A versão
+        # anterior partia UMA parede ao meio e desabava metade; ampliada, saíam
+        # duas lâminas cinzentas de pé e nada dizia que aquilo tinha sido um
+        # edifício. O que o olho reconhece como ruína de PRÉDIO é o canto: duas
+        # paredes que se encontram, cada uma com o seu vão, e o resto a
+        # desfazer-se para longe delas. As duas escolhidas são as duas que a
+        # câmera vê — a de `-y` e a de `+x` (só essas duas faces existem para
+        # esta projeção).
+        # ⚠️ AS DUAS ENCAIXAM EM L, E NÃO SE SOBREPÕEM. A primeira versão
+        # cruzava-as no canto — a de `-y` ia até x=1,20 e a de `+x` também —, e
+        # as duas faces `+x` ficavam NO MESMO PLANO por toda a altura. É a
+        # armadilha que este arquivo já regista duas vezes ("duas faces no
+        # mesmo plano dão um buraco preto, e não dão erro"), e o resultado foi
+        # exatamente esse: uma BARRA PRETA de pé na quina, do chão ao topo, que
+        # se lia como uma coluna que não existe. Aqui a parede de `-y` leva a
+        # quina inteira e a de `+x` começa onde ela acaba.
+        caixa("ruina_parede_y", (0.42, -0.94, 0.09 + ALT_R / 2.0),
+              (1.56, 0.22, ALT_R), M["parede_suja"]),
+        caixa("ruina_parede_x", (1.09, -0.19, 0.09 + ALT_R / 2.0),
+              (0.22, 1.28, ALT_R), M["parede_suja"]),
+    ]
+    # O que sobrou das outras duas, desfazendo-se para longe do canto.
+    esc_r += parede_partida("ruina_qy", (-0.74, -0.94, 0.09 + ALT_R / 2.0),
+                            (0.76, 0.22, ALT_R), M["parede_suja"], resto=0.20)
+    esc_r += parede_partida("ruina_qx", (1.09, 0.72, 0.09 + ALT_R / 2.0),
+                            (0.22, 0.55, ALT_R), M["parede_suja"], resto=0.24)
+    # A porta na parede de `-y` e a janela na de `+x`, cada uma na sua.
+    esc_r += vao_cego("ruina_porta", "-y", (0.42, -0.94, 0.09 + ALT_R / 2.0),
+                      (1.56, 0.22, ALT_R), -0.18, -0.20, 0.60, 0.94, M)
+    # ⚠️ A JANELA AFASTA-SE DA QUINA, e isto custou um render. Ela nasceu a
+    # `u = -0.30`, que a punha a 0,05 do canto: o vão é uma placa RECUADA na
+    # parede, e recuada tão perto da quina ela atravessa a parede vizinha e
+    # aparece do outro lado como uma BARRA PRETA de pé, do chão ao topo. Na
+    # captura inteira aquilo lê-se como uma coluna escura que não existe.
+    # Vão perto de quina precisa de meia largura de folga, e mais um pouco.
+    esc_r += vao_cego("ruina_jan", "+x", (1.09, -0.19, 0.09 + ALT_R / 2.0),
+                      (0.22, 1.28, ALT_R), 0.06, 0.18, 0.52, 0.42, M)
+    esc_r += [
+        # A viga do telhado, caída do alto do canto para o entulho. É ela que
+        # liga as duas metades e conta o que aconteceu.
+        caixa("ruina_viga", (0.30, -0.35, 0.90), (2.3, 0.13, 0.13),
+              M["barrote"], rot=(0, 27, -22)),
+        caixa("ruina_ripa", (0.10, -1.10, 0.42), (1.5, 0.09, 0.09),
+              M["barrote"], rot=(0, 30, 8)),
+        caixa("ruina_telha", (-0.55, -1.12, 0.24), (0.5, 0.4, 0.09),
+              M["telhado_velho"], rot=(0, 0, -18)),
+        # Entulho, todo do lado que caiu — amontoado num canto lê como pilha,
+        # espalhado pelos quatro lê como sujeira.
+        caixa("ruina_entulho_a", (-0.95, -0.62, 0.26), (0.55, 0.48, 0.34),
+              M["parede_suja"], rot=(0, 0, 14)),
+        caixa("ruina_entulho_b", (-0.52, 0.10, 0.22), (0.44, 0.4, 0.26),
+              M["parede_suja"], rot=(0, 0, -20)),
+        caixa("ruina_entulho_c", (0.20, 0.62, 0.19), (0.38, 0.34, 0.2),
+              M["parede_suja"], rot=(0, 0, 9)),
+    ]
+    grupos["escritorio_ruina"] = esc_r
 
     # ⚠️ OS DOIS PRÉDIOS DO PÁTIO ENCOLHEM AQUI, e não nas literais deles.
     #
@@ -1441,10 +1863,11 @@ def main() -> int:
 
     # A projeção sai certa ou sai errada; não há meio termo, e o resto do
     # trabalho depende dela. O tabuado tem largura conhecida pela conta do mapa:
-    # (comprimento + largura) * MEIA_LARG.
-    if "pier_construido" in alvos:
-        esperado = (PIER_ALCANCE + PIER_LARG) * MEIA_LARG
-        medido = largura_opaca("%s/pier_construido.png" % saida.rstrip("/"))
+    # (comprimento + largura) * MEIA_LARG_TELA — a escala do PNG, e não a do
+    # desenho do mapa: é no PNG que se mede.
+    if "pier_n2" in alvos:
+        esperado = (PIER_ALCANCE + PIER_LARG) * MEIA_LARG_TELA
+        medido = largura_opaca("%s/pier_n2.png" % saida.rstrip("/"))
         erro = abs(medido - esperado)
         print("\nverificação da projeção:")
         print("  tabuado esperado %.0f px, medido %d px (erro %.0f px)"

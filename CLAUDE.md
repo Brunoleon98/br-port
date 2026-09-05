@@ -66,7 +66,7 @@ $G --headless --path brport_vs --script res://scripts/validation/asset_validator
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
 
-tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as cinco de uma vez
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as seis de uma vez
 
 # Blender como biblioteca Python (~1 GB, minutos)
 pip install "bpy==4.5.0"                                      # precisa de Python 3.11
@@ -93,6 +93,16 @@ lugar onde o export do APK se verifica — ele corre a cada push e deixa o
 `brport-apk` e o `brport-web` em Artifacts. O Web só precisa dos templates
 (~1,2 GB), que o CI cacheia; a receita completa, pelos dois caminhos, está em
 `brport_vs/COMO_RODAR.md`.
+
+⚠️ **O CI regera e compara BYTE A BYTE, e o `sum()` de floats mudou na Python
+3.12.** Ela passou a somar por compensação de Neumaier; o runner é
+`ubuntu-latest` e subiu de versão sozinho. Medido em 05/09, o mesmo arquivo:
+`CX = 508.49999999999994` na 3.10/3.11 contra `508.50000000000006` na 3.12/3.13
+— 1e-14 que o `%.1f` do gerador arredonda para o outro lado e vira **190 linhas
+de diferença** nos dois mapas, com o PR vermelho e nenhuma coordenada do mundo
+mudada. Num gerador cuja saída o CI compara assim: `math.fsum` em vez de `sum`,
+e **arredonde o que alimenta tudo o resto** — número que sai de divisão e entra
+em toda coordenada tem de ser exato, senão a máquina decide o desenho.
 
 ⚠️ **Valor de Godot 3 numa chave de Godot 4 não dá erro — dá outra coisa.**
 `window/handheld/orientation="portrait"` é sintaxe da 3; na 4 a chave é um enum
@@ -144,7 +154,7 @@ Teste e import rodam sem tela.
    de ±18 pontos — comparar aquele número com estes é comparar sorteio.
    O próprio simulador avisa quando a rodada é curta demais para medir.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
-   ficou bonito. O CI já anexa as cinco a cada PR (artefato `brport-captura`) e
+   ficou bonito. O CI já anexa as seis a cada PR (artefato `brport-captura`) e
    diz na página da corrida qual mudou — mas dizer que mudou não é dizer que
    ficou bom, e essa parte continua a ser de quem olha.
    **Captura só se compara com semente E passo de tempo fixos.** É o que o
@@ -232,7 +242,30 @@ Teste e import rodam sem tela.
 
 `tools/gerar_mapa_iso.py`, `tools/gerar_props_iso.py` e `brport_vs/scenes/Main.tscn`
 têm de concordar. As constantes: `MEIA_LARG=30`, `MEIA_ALT=15` (razão 2:1),
-câmera do Blender a `ROT_X=60°`, `ROT_Z=45°`, `ESCALA_ORTO` derivada delas.
+`ZOOM=2/3`, câmera do Blender a `ROT_X=60°`, `ROT_Z=45°`, `ESCALA_ORTO`
+derivada delas.
+
+- **São DOIS espaços desde 05/09, e a fronteira é `tela()`.** O mapa DESENHA a
+  30 num quadro de 1080 e o `viewBox` do SVG entrega 720 — a câmera é o `ZOOM`,
+  e o `MEIA_LARG` efetivo é 20. Quem desenha fala DESENHO; a tabela de âncoras,
+  o `Main.tscn`, o `Main.gd`, o manifest BRP e o teste de design falam TELA.
+  **A razão de não escrever 20 na constante:** altura, naquele arquivo, é
+  PIXEL — o `ALT_CAIS`, as paredes da vila, a largura de cada traço —, e baixar
+  só o `MEIA_LARG` encolheria a PLANTA deixando as ALTURAS paradas, com o porto
+  esticado 1,5× para cima e nenhuma das cinco suítes a lê-lo. Escala-se no
+  GRUPO, que é a mesma regra dos props.
+- **O prop não tem `viewBox`: quem o encolhe é o `ortho_scale`, e só ele.** O
+  `z()` continua na escala de DESENHO de propósito — o fator de altura e o
+  `ortho_scale` cancelam-se, e mexer nele levantaria cada prop 1,5×. Afastar
+  uma câmera não estica o que ela filma.
+- **Constante em PIXEL é constante que envelhece quando o `ZOOM` muda, e ela
+  não dá erro.** Foram cinco em 05/09: a silhueta do caminhão e o corte que
+  exige pegada no teste de design, a largura de telhado da vila, os sprites do
+  pátio e o avanço da espuma. Duas reprovavam o que estava certo; **uma deixou
+  de reprovar seja o que for** — o corte de 130px passou a ficar acima de todos
+  os props, e a asserção que exige pegada nunca mais teria exigido nenhuma.
+  Ao mexer na câmera, procure todo número medido em pixel e pergunte de que
+  escala ele é.
 
 - **Altura é em PIXELS DO MAPA**, não em unidades do Blender. A conversão está
   em `z()` num lugar só. Ignorar isso põe um píer 2,4× mais alto que o cais
@@ -242,6 +275,20 @@ câmera do Blender a `ROT_X=60°`, `ROT_Z=45°`, `ESCALA_ORTO` derivada delas.
   diferença — o primeiro assimétrico saiu 40px fora.
 - **O quadro de todo prop tem 512 e o centro dele é a origem do mundo.**
   Posicionar um prop na cena é subtrair meio quadro, não acertar no olho.
+- **E desprojetar um prop de volta ao mundo pede a ALTURA em que ele pousa.**
+  Quem está em terra pousa a `ALT_CAIS`; quem está na água, a 0 — é o que o
+  `_origem`/`_mundo` do teste de design faz. Desprojetar tudo a 0 desloca cada
+  prop de terra em **+0,87 em mx E em my**, o que é pouco para se notar e
+  suficiente para mudar a que DEGRAU ele pertence. Custou uma tabela inteira
+  de posições errada em 04/09, e ela parecia plausível.
+- **Mas REESCALAR a projeção é uma semelhança, e aí a altura cancela-se.**
+  Desprojetar num espaço e reprojetar noutro dá `novo = P + (velho − Q) × ZOOM`
+  — a altura entra e sai, desde que o `alt_cais` encolha junto com a câmera.
+  A regra acima continua a valer para ler o MUNDO de um prop; para mover 37
+  props de uma escala para outra ela não muda nada, e saber isso é a diferença
+  entre uma migração de uma linha e uma tabela feita à mão. O que prova que
+  correu bem é a âncora: as três docas têm de cair a 0,00 px do que a tabela
+  publica.
 - **Só as faces `+x` e `-y` são visíveis** por esta câmera. Detalhar as outras
   é render que ninguém vê.
 - **Ordem de nó É profundidade.** Quem tem `mx+my` maior está mais perto da
@@ -286,6 +333,15 @@ tranca isso.
 - **O que troca de estado numa partida não pode estar assado no fundo.** Píer,
   armazém, escritório e pátio são props ou mapas alternativos. A vila é a
   exceção, e de propósito: ela troca entre FASES, não entre turnos.
+- **E o estado ANTES não pode partilhar as peças do estado DEPOIS.** O
+  `galpao_velho` reusava a lista de paredes do `galpao` — plinto, caixa branca
+  limpa, portão fechado, calha e três janelas de vidro — e trocava só a cor do
+  telhado. O porto abria "em ruínas" com um galpão de paredes novas, e a
+  queixa que isso gerou foi "as construções parecem avançadas para um porto
+  inicial". A regra certa já estava escrita ao lado, no comentário do
+  escritório: **a ruína não é o prédio pintado de velho, é MENOS prédio** —
+  parede caída, vidro nenhum, meio telhado. Partilhar peças entre dois estados
+  poupa render e custa a leitura, que é o que o estado existe para dar.
 - **Trocar cor olhando só o MATIZ achata a imagem.** Em 02/09 a água passou de
   mar frio a turquesa tropical com valores amostrados da referência, e ficou
   bonita e chapada: pôr as duas pontas amostradas nas duas pontas da rampa
@@ -309,6 +365,22 @@ tranca isso.
   caixa aberta. Mordeu duas vezes em 02/09 — no tampo do caixote e numa chapa
   de metal sobre o contêiner. Peça que pousa noutra afunda uma fração ou sobe
   uma fração; nunca encosta.
+  **E DUAS PAREDES QUE SE CRUZAM NUMA QUINA são o mesmo caso** (05/09): se as
+  duas chegam ao mesmo `x`, as duas faces exteriores ficam coplanares por toda
+  a altura e sai uma BARRA PRETA de pé na quina, que se lê como uma coluna que
+  não existe. Elas encaixam em L — uma leva a quina inteira, a outra começa
+  onde ela acaba — e nunca se cruzam.
+- **Vão recuado perto de uma quina atravessa a parede vizinha.** Irmã da
+  anterior: um `vao_cego` é uma placa RECUADA, e a menos de meia largura da
+  quina ela sai do outro lado. Meia largura de folga, e mais um pouco.
+- **Asset GERADO não é asset EM CENA, e nada perguntava a diferença.** O
+  `barco_medio` era renderizado a cada leva, entrava no manifest, passava o
+  `asset_validator` e as cinco suítes — e o jogo nunca o punha numa doca:
+  escolhia entre dois cascos por um booleano, e o terceiro só existia como
+  enfeite na Zona de Espera. Toda a maquinaria de validação deste projeto
+  pergunta se o que está na CENA existe no disco; nenhuma perguntava o
+  contrário. Ao acrescentar um prop, acrescente também quem o mostra — e a
+  asserção de que ele chega à tela.
 - **Peça invisível conta como peça, e é por isso que contar não chega.** A
   boia levou uma corrente que ficou DENTRO do cone do corpo: o contador dizia
   cinco, o render mostrava quatro. Contagem de peças só vale depois de olhar
@@ -325,6 +397,14 @@ tranca isso.
   conferia a ÂNCORA, que é um ponto, e o ponto estava no lugar certo. **Prop
   grande responde pela PEGADA**, e a largura do pátio sai de uma conta —
   `RUA_RECUO - RUA_LARG - CALCADA - APRON` — que hoje está escrita no gerador.
+- **E conferir o QUADRO de um prop não é conferir o PROP.** Irmã da regra
+  acima, e ela passou despercebida por duas sessões: o D7 exigia que o pé do
+  mastro de um letreiro caísse dentro do quadro do prédio — que tem 512px,
+  para um prédio DESENHADO de 103. Sobravam duzentos pixels de folga de cada
+  lado, e a placa do armazém pairava 12px acima do telhado com o teste a dizer
+  "apoiado". Toda asserção de encaixe mede-se contra `get_used_rect()`, nunca
+  contra o quadro — o quadro é o mesmo em todos os props e não sabe nada sobre
+  nenhum deles.
 - **Conferir os quatro cantos de um retângulo contra uma faixa não é conferir
   o retângulo.** Foi assim que a primeira versão daquele teste deixou passar o
   defeito que ela existia para pegar: os cantos caíam a 2,82 e a 5,58, a rua
@@ -385,6 +465,13 @@ tranca isso.
   não sabe onde ele cai.** O caminhão nasceu num ponto que passava em todas as
   asserções e saía na captura com metade dele debaixo do letreiro do
   ESCRITÓRIO. Prop que se põe para ser VISTO confere-se na foto, não na régua.
+  **E o letreiro deixou de carregar a geometria dele na cena** (05/09): ele
+  mede a chapa pelo texto e planta o mastro no telhado, pelos dois estados do
+  prédio (`scripts/Letreiro.gd`). Os offsets cravados que ele tinha traziam a
+  placa mais larga do que o prédio que nomeia e uma delas a pairar — os dois
+  são a mesma coisa que este arquivo repete sobre altura e sobre cor: número
+  em pixel escrito à mão envelhece calado quando o que ele descreve muda de
+  tamanho.
 - **Encolher um prop escala-se no GRUPO, nunca reescrevendo as literais.**
   Porta contra parede, janela contra porta, beiral contra telhado: são trinta
   números e trinta chances de um ficar por escalar. E cada objeto UMA vez —

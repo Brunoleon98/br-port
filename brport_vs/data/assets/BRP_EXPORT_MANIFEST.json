@@ -1,7 +1,7 @@
 {
   "contrato": {
-    "meia_larg": 30.0,
-    "meia_alt": 15.0,
+    "meia_larg": 20.0,
+    "meia_alt": 10.0,
     "rot_x": 60.0,
     "rot_z": 45.0,
     "angulo_aresta": 26.565,
@@ -9,7 +9,7 @@
       512,
       512
     ],
-    "altura_px_por_unidade": 36.74,
+    "altura_px_por_unidade": 24.49,
     "doc": "docs/BRP_SPATIAL_CONTRACT.md"
   },
   "assets": [

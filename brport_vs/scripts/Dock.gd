@@ -19,15 +19,50 @@ extends Control
 # Props ISOMÉTRICOS, gerados por tools/gerar_props_iso.py. São quadros de 512
 # cujo centro é a origem do mundo — a cena os ancora por aí, então trocar de
 # textura nunca desloca o píer.
-const ArtePierPronto := preload("res://art/props/pier_construido.png")
 const ArtePierVazio := preload("res://art/props/pier_vazio.png")
 
-# Os dois barcos partilham o mesmo casco e diferem pela carga. Não são sprites
-# ilustrados em 3/4: aqueles têm a perspectiva assada dentro da imagem e ficam
-# atravessados em cima de um píer isométrico, que é o erro que já custou duas
-# levas de arte.
-const ArteGrande := preload("res://art/props/barco_grande.png")
+# O PÍER E A LANÇA TÊM TRÊS NÍVEIS, e quem escolhe é `GameState.nivel_porto()`
+# — uma leitura do que já está construído, não uma mecânica nova. O GDD 7
+# decidiu os três níveis; a arte existe desde já, como a vila, que cresce por
+# `--nivel-vila=N` sem o jogo precisar saber disso.
+#
+# ⚠️ AS TRÊS LANÇAS GIRAM NO MESMO PONTO. O `pivot_offset` do nó `Lanca` é UM,
+# e as três foram construídas a partir do mesmo topo de torre para caberem
+# nele. O bloco D17 do teste de design tranca isso.
+const ArtePier := [
+	preload("res://art/props/pier_n1.png"),
+	preload("res://art/props/pier_n2.png"),
+	preload("res://art/props/pier_n3.png"),
+]
+const ArteLanca := [
+	preload("res://art/props/lanca_n1.png"),
+	preload("res://art/props/lanca_n2.png"),
+	preload("res://art/props/lanca_n3.png"),
+]
+
+# OS TRÊS CASCOS, escolhidos pelo VALOR do contrato. Não são sprites ilustrados
+# em 3/4: aqueles têm a perspectiva assada dentro da imagem e ficam atravessados
+# em cima de um píer isométrico, que é o erro que já custou duas levas de arte.
+#
+# ⚠️ O `barco_medio` EXISTIA E NUNCA ENTRAVA EM DOCA. Ele era gerado, validado
+# pelo `asset_validator` e usado só como enfeite na Zona de Espera: o jogo
+# escolhia entre dois cascos por um booleano. O valor do contrato já vai de
+# R$8.000 a R$70.000 e não custava nada dizê-lo com o casco — é a mesma
+# informação que o cartão dá em número, dita pela silhueta.
 const ArtePequeno := preload("res://art/props/barco_pequeno.png")
+const ArteMedio := preload("res://art/props/barco_medio.png")
+const ArteGrande := preload("res://art/props/barco_grande.png")
+
+
+## O casco que um contrato deste valor merece. O corte fica no meio da faixa
+## dos grandes, que é onde o `_make_boat()` já separa as duas gerações — assim
+## a silhueta acompanha o número em vez de inventar uma escala própria.
+static func arte_do_barco(valor: int, grande: bool) -> Texture2D:
+	if not grande:
+		return ArtePequeno
+	var meio: int = (GameState.BOAT_VALUE_LARGE_MIN
+		+ GameState.BOAT_VALUE_LARGE_MAX) / 2
+	return ArteGrande if valor >= meio else ArteMedio
 
 var dock_index: int = -1
 
@@ -94,13 +129,15 @@ func refresh() -> void:
 	# A lança só existe onde há píer: numa vaga por construir há só estacas.
 	_mostrar_lanca(esta_construida())
 
+	var nivel: int = int(GameState.nivel_porto())
+	_lanca.texture = ArteLanca[nivel - 1]
 	if not esta_construida():
 		_pier.texture = ArtePierVazio
 		_parar_barco()
 		_barco.texture = null
 		return
 
-	_pier.texture = ArtePierPronto
+	_pier.texture = ArtePier[nivel - 1]
 	var dock: Dictionary = GameState.docks[dock_index]
 	var boat = dock["boat"]
 
@@ -109,7 +146,7 @@ func refresh() -> void:
 		_barco.texture = null
 		return
 
-	_barco.texture = ArteGrande if boat.get("large", false) else ArtePequeno
+	_barco.texture = arte_do_barco(int(boat["value"]), boat.get("large", false))
 	_animar_barco(int(boat["id"]))
 
 	if boat.get("rival", false) and not boat.get("matched", false):

@@ -40,7 +40,12 @@ import bpy                                        # noqa: E402
 import gerar_props_iso as base                    # noqa: E402
 
 # Reexportados para os catálogos não precisarem saber de onde vieram.
-MEIA_LARG, MEIA_ALT = base.MEIA_LARG, base.MEIA_ALT
+# ⚠️ O MANIFEST FALA EM PIXEL DE PNG, e por isso estas são as de TELA. O
+# `asset_validator.gd` confere-as contra `projecao.meia_larg` da tabela de
+# âncoras, que desde 05/09 publica a escala efetiva (ver o bloco do
+# enquadramento em `gerar_mapa_iso.py`) — publicar aqui os 30 do desenho
+# faria o validador reprovar um pipeline que está certo.
+MEIA_LARG, MEIA_ALT = base.MEIA_LARG_TELA, base.MEIA_ALT * base.ZOOM
 ROT_X, ROT_Z = base.ROT_X, base.ROT_Z
 RESOLUCAO = base.RESOLUCAO
 z, pos = base.z, base.pos
@@ -235,7 +240,7 @@ def escrever_manifest(caminho: str, entradas: dict) -> None:
             "rot_x": ROT_X, "rot_z": ROT_Z,
             "angulo_aresta": round(math.degrees(math.atan(MEIA_ALT / MEIA_LARG)), 3),
             "quadro": [RESOLUCAO, RESOLUCAO],
-            "altura_px_por_unidade": round(base.ALTURA_PX, 2),
+            "altura_px_por_unidade": round(base.ALTURA_PX * base.ZOOM, 2),
             "doc": "docs/BRP_SPATIAL_CONTRACT.md"},
          "assets": sorted(antigo.values(), key=lambda e: e["file"])},
         ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

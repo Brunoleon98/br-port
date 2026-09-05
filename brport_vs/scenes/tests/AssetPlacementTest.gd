@@ -90,14 +90,14 @@ const CENA := [
 	# ── água: doca, guindaste, trabalhador, barcos, boia ──
 	["doca_concreto",   "props",  1.4,  4.6, 0.0, "doca de concreto"],
 	# O guindaste do JOGO são duas peças: a torre vem assada em
-	# `pier_construido` e só a lança é prop, porque é ela que gira. A primeira
+	# `pier_n2` e só a lança é prop, porque é ela que gira. A primeira
 	# versão desta bancada usava `guindaste_base` e `guindaste_mastro`, que já
 	# não existem — o gerador deixou de os produzir quando a torre foi para
 	# dentro do píer, e ninguém reparou porque só esta cena os carregava. Uma
 	# bancada que monta o asset de um jeito que o jogo não usa não verifica
 	# nada.
-	["pier_construido", "props",  1.4,  4.6, 0.0, ""],
-	["guindaste_lanca", "props",  1.4,  4.6, 0.0, "píer + lança, como no jogo"],
+	["pier_n2", "props",  1.4,  4.6, 0.0, ""],
+	["lanca_n2", "props",  1.4,  4.6, 0.0, "píer + lança, como no jogo"],
 	["trabalhador",     "props",  0.6,  4.2, 15.0, ""],
 	["cabeco",          "props", -0.4,  6.4, 0.0, ""],
 	["barco_pequeno",   "props",  2.4,  7.6, 0.0, "barco de pesca"],

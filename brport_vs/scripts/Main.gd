@@ -333,8 +333,13 @@ func _animar_boias() -> void:
 ##
 ## A INTENÇÃO REGISTADA, para quem vier depois: isto é a base para mostrar a
 ## chegada de uma entrega a um navio, quando existir o serviço de compra.
-const MEIA_LARG := 30.0     # o contrato da projeção; o D13 confere contra as âncoras
-const MEIA_ALT := 15.0
+# ⚠️ ESTA É A ESCALA DE TELA, e desde 05/09 ela já não é a que o gerador do
+# mapa usa para desenhar: ele desenha a 30 num quadro maior e o `viewBox` do
+# SVG encolhe o quadro (ver o bloco do enquadramento em `gerar_mapa_iso.py`).
+# Aqui manda o PNG, porque é em pixel de PNG que o caminhão anda. O D13
+# confere estes dois contra as âncoras, que publicam a efetiva.
+const MEIA_LARG := 20.0
+const MEIA_ALT := 10.0
 
 ## Onde a CENA põe o caminhão: um ponto já dentro do quadro, e é de propósito.
 ## A primeira passagem começa aqui para que as cinco capturas do CI o apanhem
@@ -343,40 +348,63 @@ const MEIA_ALT := 15.0
 ##
 ## ⚠️ E "dentro do quadro" não chega: tem de ser dentro do quadro E À VISTA.
 ## O primeiro ponto escolhido foi o alto do degrau 0, que passava no D13 e
-## saía na foto com metade do caminhão debaixo do letreiro do ESCRITÓRIO — os
-## letreiros são interface, desenham-se por cima de tudo, e nenhuma asserção
-## sobre o mapa sabe onde eles caem. Este ponto é o meio do degrau 1, o trecho
-## mais desimpedido da estrada; o D13 tranca que ele está na rota e inteiro
-## dentro do `MapaWrap` (que tem `clip_contents`), e o resto é olhar a foto.
+## saía na foto com metade do caminhão debaixo da placa do ESCRITÓRIO — as
+## placas eram interface, desenhavam-se por cima de tudo, e nenhuma asserção
+## sobre o mapa sabia onde elas caíam. (Elas saíram em 05/09; a lição não, e é
+## por isso que continua aqui: prop que se põe para ser VISTO confere-se na
+## foto.) Este ponto é o meio do degrau 1, o trecho mais desimpedido da
+## estrada; o D13 tranca que ele está na rota e inteiro dentro do `MapaWrap`.
 const CAMINHAO_ORIGEM := Vector2(3.75, 9.5)
 
 ## A escada da rua, em (mx, my). Primeiro e último ponto estão FORA do quadro —
-## 43,5 unidades ao todo, ~1.459px de tela.
+## 76 unidades ao todo, ~1.700px de tela — e as pontas são as do MUNDO, não
+## números escolhidos: o primeiro e o último degrau da costa acabam onde o
+## caminhão já está 58px acima do topo e 63px à esquerda da margem.
 ##
 ## O `mx` de cada trecho reto é o MEIO do asfalto daquele degrau
 ## (`borda - RUA_RECUO + RUA_LARG/2`), e o `my` de cada cotovelo é o meio da
 ## faixa que o `vias()` desenha para virar (`my1 - RUA_LARG/2`). Nenhum destes
 ## números é de gosto, e o D13 confere-os todos contra as âncoras.
+##
+## ⚠️ ELA CRESCEU EM 05/09, e por duas razões que se somam: a costa ganhou um
+## degrau em cada ponta (a rua acompanha-a inteira) e a câmera afastou-se, de
+## modo que o pedaço de estrada que cabe no quadro é maior. Os dois pontos das
+## pontas eram `-2,0` e `29,5`, escolhidos para caírem fora do quadro ANTIGO —
+## e o D13 reprovou-os assim que o quadro cresceu, que é exatamente o que ele
+## existe para fazer. Os de agora saem da mesma pergunta, resolvida contra o
+## desenho do caminhão e não contra o quadro de 512 dele.
 const ROTA_ESTRADA: Array[Vector2] = [
-	Vector2(-0.25, -2.0),    # entra por cima do topo do quadro
+	Vector2(-4.25, -14.0),   # entra por cima do topo do quadro
+	Vector2(-4.25, -6.55),
+	Vector2(-0.25, -6.55),   # cotovelo do degrau 0 para o 1
 	Vector2(-0.25, 7.45),
-	Vector2(3.75, 7.45),     # cotovelo do degrau 0 para o 1
+	Vector2(3.75, 7.45),     # cotovelo do 1 para o 2
 	Vector2(3.75, 15.45),
-	Vector2(7.75, 15.45),    # cotovelo do 1 para o 2
+	Vector2(7.75, 15.45),    # cotovelo do 2 para o 3
 	Vector2(7.75, 23.45),
-	Vector2(11.75, 23.45),   # cotovelo do 2 para o 3
-	Vector2(11.75, 29.5),    # sai pela esquerda do quadro
+	Vector2(11.75, 23.45),   # cotovelo do 3 para o 4
+	Vector2(11.75, 33.45),
+	Vector2(15.75, 33.45),   # cotovelo do 4 para o 5
+	Vector2(15.75, 42.0),    # sai pela esquerda do quadro
 ]
 
 ## Velocidade constante em pixels por segundo. É ela que dá a duração de cada
 ## trecho, e não um número por trecho: com durações iguais o caminhão
 ## disparava nos cotovelos curtos e arrastava-se nos degraus longos.
 ##
-## 38px/s dá ~38s de travessia e ~2,5s para ele andar o próprio comprimento
-## (94px de silhueta) — devagar de propósito: isto é fundo de cena, não é o
+## 25,3px/s dá ~69s de travessia e ~2,5s para ele andar o próprio comprimento
+## (63px de silhueta) — devagar de propósito: isto é fundo de cena, não é o
 ## que se olha. Depressa, um prop que atravessa o quadro inteiro puxa o olho
 ## para longe das docas.
-const CAMINHAO_VELOCIDADE := 38.0
+##
+## ⚠️ ELE ENCOLHEU COM A CÂMERA em 05/09, e tinha de encolher: velocidade em
+## PIXEL, com o mundo a ser desenhado 1,5x menor, é o caminhão a andar 1,5x
+## mais depressa NO MUNDO por uma mudança que foi só de enquadramento. Os 38
+## davam 26s de travessia onde antes davam 38. A travessia passou de 38s para
+## 69s na mesma mudança, e isso é o mundo a ser maior: o que se manteve — que é
+## o que a linha acima escolhe — é o caminhão a andar o próprio comprimento em
+## 2,5s, que é a régua com que o olho lê velocidade.
+const CAMINHAO_VELOCIDADE := 38.0 * 2.0 / 3.0
 
 const CaminhaoMy := preload("res://art/props/caminhao.png")
 const CaminhaoMx := preload("res://art/props/caminhao_mx.png")
@@ -490,9 +518,12 @@ const ESPUMA_ENTRA := 1.6
 const ESPUMA_RECUA := 3.4
 
 ## Quanto a espuma avança sobre a terra no auge da lavagem. O sentido é o da
-## NORMAL DA COSTA: `+mx` move (+30, +15) por unidade na tela, e 4px disso é o
-## suficiente para se ler sem descolar a espuma da beira que ela desenha.
-const ESPUMA_AVANCO := Vector2(4.0, 2.0)
+## NORMAL DA COSTA: `+mx` move (+MEIA_LARG, +MEIA_ALT) por unidade na tela, e
+## 0,133 unidades disso é o suficiente para se ler sem descolar a espuma da
+## beira que ela desenha. Era `Vector2(4, 2)` cravado, que valia essas 0,133
+## unidades à escala antiga e valeria 0,2 à nova — a espuma a subir metade de
+## um passo a mais na areia por uma mudança de câmera.
+const ESPUMA_AVANCO := Vector2(MEIA_LARG, MEIA_ALT) * 0.1333
 
 
 func _animar_espuma() -> void:
