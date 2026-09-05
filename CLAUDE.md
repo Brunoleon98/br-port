@@ -505,6 +505,14 @@ tranca isso.
   `galpao` e `galpao_velho` partilham as paredes de propósito, então escalar
   grupo a grupo passaria duas vezes nas peças comuns e elas sairiam a `k²`,
   sem erro nenhum a apontá-lo.
+- **⚠️ "A PEÇA É PARTILHADA POR RESTRIÇÃO" merece ser medida antes de aceite.**
+  A torre do guindaste era a mesma nos três níveis, e o comentário dizia que o
+  `pivot_offset` único da lança obrigava a isso. Obriga UM PONTO — o topo —,
+  não a coluna inteira; e como a torre é a coluna que ocupa a silhueta e a
+  lança é o braço fino lá em cima, o porto inicial e o completo liam como o
+  mesmo guindaste. Quando um comentário justifica uma partilha, pergunte de que
+  TAMANHO é a amarra: quase sempre é menor do que a peça que ela está a
+  segurar.
 - **Rodar um prop 90° manda metade dos detalhes para a face que a câmera não
   vê.** Só `+x` e `-y` são visíveis. Rodar o caminhão para o eixo da estrada
   punha o para-brisa a olhar certo e a janela lateral para `-x` — invisível, e

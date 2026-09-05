@@ -1139,27 +1139,118 @@ def montar(M: dict) -> dict:
     TOPO = ALT_PIER + 2.70                # altura do encontro lança/torre
     BARCO_Y = -2.30                       # até onde a lança precisa chegar
 
-    # Base: sapata, chapa e parafusos. Três peças que custam nada e dizem que a
-    # torre foi PARAFUSADA no píer em vez de nascer dele.
-    g_base = [
-        caixa("g_sapata", (GX, GY, ALT_PIER + 0.10), (0.66, 0.66, 0.20), M["metal"]),
-        caixa("g_chapa", (GX, GY, ALT_PIER + 0.24), (0.52, 0.52, 0.08), M["laranja"]),
+    # ⚠️ A TORRE É DE CADA NÍVEL, E ANTES ERA UMA SÓ — o defeito estava à vista
+    # e ninguém o via, porque a asserção olhava para o lado errado.
+    #
+    # Até aqui `g_base` e `g_mastro` entravam nos TRÊS píeres, e só a LANÇA
+    # mudava. Só que a lança é o braço fino lá em cima e a torre é a coluna que
+    # ocupa a silhueta inteira: posto o porto inicial ao lado do completo, o
+    # jogador via o mesmo guindaste duas vezes. Foi essa a queixa — *"parecem
+    # ser o mesmo, sendo que o porto inicial possui o mesmo guindaste do porto
+    # mais avançado"* —, e ela estava certa.
+    #
+    # O que de facto está preso é UM PONTO: `TOPO`, `GX` e `GY`, porque o
+    # `pivot_offset` do nó `Lanca` em `Dock.tscn` é um só para as três lanças e
+    # nomeia o topo da torre. Tudo o que fica ABAIXO desse ponto é livre — e o
+    # comentário antigo dizia "a torre é a mesma nos três" como se a amarra
+    # fosse a torre inteira, quando é só onde ela acaba.
+    #
+    #   n1  pau-de-carga: um poste de MADEIRA com dois estais e nada mais. Sem
+    #       treliça, sem cabine — quem opera puxa o cabo à mão;
+    #   n2  a treliça laranja de sempre, com a cabine encostada;
+    #   n3  pórtico: treliça mais larga, casa de máquinas no convés, cabine
+    #       maior e escada. É a mesma altura, e lê-se como o dobro.
+    def _sapata(nome, lado, alt, mat):
+        return caixa(nome, (GX, GY, ALT_PIER + alt / 2.0), (lado, lado, alt), mat)
+
+    # -- n1: o pau-de-carga ----------------------------------------------
+    # Madeira, e é a única grua do jogo que não é laranja. O laranja é a cor do
+    # MAQUINÁRIO do porto; um pontão provisório não tem maquinário, tem um pau
+    # amarrado. Tirar a cor é o que faz a diferença ler de longe.
+    mastro_n1 = [
+        _sapata("m1_sapata", 0.34, 0.14, M["metal"]),
+        caixa("m1_poste", (GX, GY, (ALT_PIER + 0.14 + TOPO + 0.05) / 2.0),
+              (0.13, 0.13, TOPO + 0.05 - ALT_PIER - 0.14), M["madeira_esc"]),
+    ]
+    # Duas cintas de metal: sem elas o poste lê como uma ripa espetada.
+    for h in (0.85, 1.95):
+        mastro_n1.append(caixa("m1_cinta%.2f" % h, (GX, GY, ALT_PIER + h),
+                               (0.17, 0.17, 0.07), M["metal"]))
+    # Os estais. São eles que dizem "isto está amarrado, não construído".
+    #
+    # ⚠️ E ELES POUSAM NO CONVÉS, o que não é óbvio de conferir. A primeira
+    # versão amarrava a ±0,95 de `GY`, e o de trás caía em `y = 1,50` — meia
+    # unidade PARA ALÉM da beira, que está em 1,20. No render ele acabava no
+    # ar, e nada reprovava: um cabo que não chega a lado nenhum passa em todas
+    # as asserções que este projeto tem. Com ±0,62 os dois pousam, e levam
+    # olhal para pousarem em ALGUMA COISA.
+    for sy in (-0.62, 0.62):
+        mastro_n1.append(barra("m1_estai%.2f" % sy, (GX, GY, TOPO - 0.25),
+                               (GX, GY + sy, ALT_PIER + 0.08), 0.026, M["metal"]))
+        mastro_n1.append(caixa("m1_olhal%.2f" % sy, (GX, GY + sy, ALT_PIER + 0.06),
+                               (0.11, 0.11, 0.12), M["metal"]))
+
+    # -- n2: a treliça de sempre -----------------------------------------
+    base_n2 = [
+        _sapata("m2_sapata", 0.66, 0.20, M["metal"]),
+        caixa("m2_chapa", (GX, GY, ALT_PIER + 0.24), (0.52, 0.52, 0.08), M["laranja"]),
     ]
     for sx in (-0.21, 0.21):
         for sy in (-0.21, 0.21):
-            g_base.append(caixa("g_parafuso_%.2f_%.2f" % (sx, sy),
-                                (GX + sx, GY + sy, ALT_PIER + 0.30),
-                                (0.08, 0.08, 0.08), M["metal"]))
-
-    # Torre vazada + cabine do operador encostada nela.
-    g_mastro = trelica("g_torre", (GX, GY, ALT_PIER + 0.28), (GX, GY, TOPO + 0.05),
-                       0.19, M["laranja"], montantes=6, esp=0.052)
-    g_mastro += [
-        caixa("g_cabine", (GX + 0.30, GY - 0.02, TOPO - 0.55),
+            base_n2.append(caixa("m2_parafuso_%.2f_%.2f" % (sx, sy),
+                                 (GX + sx, GY + sy, ALT_PIER + 0.30),
+                                 (0.08, 0.08, 0.08), M["metal"]))
+    mastro_n2 = base_n2 + trelica(
+        "m2_torre", (GX, GY, ALT_PIER + 0.28), (GX, GY, TOPO + 0.05),
+        0.19, M["laranja"], montantes=6, esp=0.052)
+    mastro_n2 += [
+        caixa("m2_cabine", (GX + 0.30, GY - 0.02, TOPO - 0.55),
               (0.30, 0.34, 0.34), M["laranja"]),
-        caixa("g_cabine_vidro", (GX + 0.36, GY - 0.02, TOPO - 0.50),
+        caixa("m2_cabine_vidro", (GX + 0.36, GY - 0.02, TOPO - 0.50),
               (0.22, 0.30, 0.24), M["vidro"]),
     ]
+
+    # -- n3: o pórtico ---------------------------------------------------
+    # ⚠️ ELE NÃO PODE CRESCER PARA CIMA, então cresce para os LADOS e para
+    # BAIXO. A treliça vai de 0,19 a 0,27 de meia-largura (+42%), ganha uma
+    # casa de máquinas no convés e uma cabine que desce até meia altura — o
+    # olho lê "maior" pela ÁREA da coluna, não pela altura, e a altura é o
+    # único número que este prop não pode mexer.
+    mastro_n3 = [
+        _sapata("m3_sapata", 0.86, 0.24, M["metal"]),
+        caixa("m3_chapa", (GX, GY, ALT_PIER + 0.28), (0.70, 0.70, 0.08), M["laranja"]),
+    ]
+    mastro_n3 += trelica("m3_torre", (GX, GY, ALT_PIER + 0.32),
+                         (GX, GY, TOPO + 0.05), 0.27, M["laranja"],
+                         montantes=8, esp=0.058)
+    mastro_n3 += [
+        # ⚠️ CASA DE MÁQUINAS À FRENTE DA TORRE, E NÃO ATRÁS DELA. Ela nasceu
+        # em `+y`, que parecia o lado certo — é o lado de terra, e a lança
+        # varre para `-y`. Só que `+y` é `-my`, ou seja SOBE no ecrã: no render
+        # ela ficou por trás do contêiner empilhado, que está mais à frente em
+        # `x`. Peça de 0,54 pintada e tapada é a regra da boia outra vez.
+        # Em `-y` ela fica entre a torre e a água, que é onde a máquina de um
+        # guindaste de cais de facto vive, e a lança passa 2,7 acima dela.
+        caixa("m3_casa", (GX, GY - 0.72, ALT_PIER + 0.34),
+              (0.54, 0.46, 0.48), M["laranja"]),
+        caixa("m3_casa_teto", (GX, GY - 0.72, ALT_PIER + 0.60),
+              (0.60, 0.52, 0.06), M["metal_claro"]),
+        caixa("m3_casa_porta", (GX + 0.29, GY - 0.72, ALT_PIER + 0.28),
+              (0.04, 0.22, 0.34), M["metal"]),
+        # Cabine maior e mais baixa: um pórtico tem posto de operação a meia
+        # altura, e descê-la separa a silhueta da do n2 mesmo de longe.
+        caixa("m3_cabine", (GX + 0.38, GY - 0.04, TOPO - 1.05),
+              (0.34, 0.40, 0.44), M["laranja"]),
+        caixa("m3_cabine_vidro", (GX + 0.46, GY - 0.04, TOPO - 0.98),
+              (0.24, 0.34, 0.30), M["vidro"]),
+    ]
+    # Escada lateral, do convés até a cabine. Duas barras e nada mais: a esta
+    # escala os degraus viram serrilha.
+    for sy in (-0.06, 0.06):
+        mastro_n3.append(barra("m3_escada%.2f" % sy,
+                               (GX - 0.30, GY + sy, ALT_PIER + 0.30),
+                               (GX - 0.30, GY + sy, TOPO - 1.15), 0.022,
+                               M["metal_claro"]))
 
     # Lança e contralança. O contrapeso não é enfeite: é ele que equilibra a
     # silhueta e impede a peça de ler como poste com um braço.
@@ -1340,9 +1431,9 @@ def montar(M: dict) -> dict:
     # Base e mastro entram no PRÓPRIO píer: um guindaste é o que faz uma
     # estrutura de madeira ler como porto e não como pontão de pesca. A lança
     # fica solta porque é ela que gira — e o que se move não pode estar assado.
-    grupos["pier_n1"] = estacas + deck_n1 + g_base + g_mastro
-    grupos["pier_n2"] = estacas + tabuado + g_base + g_mastro
-    grupos["pier_n3"] = estacas_aco + deck_n3 + g_base + g_mastro
+    grupos["pier_n1"] = estacas + deck_n1 + mastro_n1
+    grupos["pier_n2"] = estacas + tabuado + mastro_n2
+    grupos["pier_n3"] = estacas_aco + deck_n3 + mastro_n3
     grupos["lanca_n1"] = lanca_n1
     grupos["lanca_n2"] = g_lanca
     grupos["lanca_n3"] = lanca_n3

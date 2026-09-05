@@ -297,14 +297,13 @@ escorre — padrões DIRIGIDOS, atribuídos peça a peça e nunca pela paleta. O
 era a maior superfície do jogo sem desenho, e o píer melhor lia mais liso que o
 provisório.
 
-**O píer, a lança e o casco têm TRÊS NÍVEIS desde 05/09** — é a evolução do
-porto ficando visível. O píer vai de ripas de madeira com fresta a laje de
-concreto sobre estacas de aço, com defensas de pneu e contêiner empilhado; a
-lança, de um pau-de-carga sem contrapeso a uma lança longa com spreader. Quem
-escolhe é `GameState.nivel_porto()`, que só LÊ quantas estruturas estão de pé —
-a mecânica de upgrade que o GDD 7 prevê é da Fase 2 e continua por fazer, como
-a vila, que já cresce por `--nivel-vila=N` sem o jogo saber. **A torre é a mesma
-nos três**, porque o `pivot_offset` da lança é um só.
+**O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas de
+madeira a laje de concreto sobre estacas de aço; a lança, de pau-de-carga a
+lança longa com spreader; a torre, de poste de madeira com estais a pórtico com
+casa de máquinas. A torre era partilhada até se ver no telefone que o porto
+inicial e o completo liam como o mesmo guindaste — só o TOPO é que não se mexe,
+por causa do `pivot_offset` único. Quem escolhe são `nivel_pier()` e
+`nivel_guindaste()`, cada um preso ao seu upgrade (`docs/decisoes/007`).
 
 Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande) e desde
 05/09 os TRÊS atracam, escolhidos pelo valor do contrato — o médio era gerado,

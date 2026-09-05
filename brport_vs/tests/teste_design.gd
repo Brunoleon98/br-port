@@ -378,6 +378,31 @@ func _d17_niveis_do_porto() -> void:
 			not vistos.has(usado), "tem o mesmo desenho %s de outro nível" % usado)
 		vistos.append(usado)
 
+	# ⚠️ E O LADO DA TORRE, QUE ESTE BLOCO NÃO CONFERIA. As três asserções
+	# acima olham para a LANÇA e exigem que ela cubra o pivô; nenhuma perguntava
+	# se a TORRE — que vive no píer — chega lá. Enquanto os três píeres
+	# partilhavam a mesma torre isso não podia falhar, e por isso não se notou
+	# a falta. Assim que cada nível ganhou torre própria, passou a haver três
+	# maneiras de a lança girar em torno do vazio, e nenhuma delas dava erro:
+	# a captura mostra o guindaste parado, e parado ele parece inteiro.
+	#
+	# É a mesma forma do buraco que o `barco_medio` abriu logo abaixo — uma
+	# metade do par verificada e a outra não.
+	var pieres: Array = consts["ArtePier"]
+	var caixas_pier: Array = []
+	for i in range(pieres.size()):
+		var img_p := (pieres[i] as Texture2D).get_image()
+		var usado_p := img_p.get_used_rect()
+		_confere("a torre do píer nível %d alcança o pivô %s" % [i + 1, pivo],
+			usado_p.has_point(Vector2i(pivo))
+				and img_p.get_pixelv(Vector2i(pivo)).a > 0.5,
+			"o desenho ocupa %s e o alfa no pivô é %.2f"
+				% [usado_p, img_p.get_pixelv(Vector2i(pivo)).a])
+		_confere("o nível %d do píer é distinto dos anteriores" % [i + 1],
+			not caixas_pier.has(usado_p),
+			"tem o mesmo desenho %s de outro nível" % usado_p)
+		caixas_pier.append(usado_p)
+
 	# ── e os TRÊS CASCOS, escolhidos pelo valor do contrato.
 	#
 	# ⚠️ O `barco_medio` ESTEVE GERADO E SEM USO em doca nenhuma até 05/09: o

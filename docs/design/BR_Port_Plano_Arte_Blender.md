@@ -450,13 +450,38 @@ renderizado e validado, e **nunca entrava numa doca**: o jogo escolhia entre
 dois cascos por um booleano. O contrato já vale de R$8.000 a R$70.000 e não
 custava nada dizê-lo com a silhueta.
 
-⚠️ **A torre é a mesma nos três níveis, e isso é uma restrição e não uma
-economia.** O `pivot_offset` do nó `Lanca` em `Dock.tscn` é UM para as três
-lanças, e ele nomeia o topo da torre — que vive dentro do PÍER. Uma torre mais
-alta no n3 desencaixaria a lança ao girar, e o defeito só apareceria a meio de
-uma varrida, nunca numa captura parada. O bloco **D17** tranca as três coisas:
-o pivô cai dentro do desenho de cada lança, os três níveis são desenhos
-distintos, e os três cascos chegam à tela.
+⚠️ **A TORRE ERA A MESMA NOS TRÊS, E ISSO ERA O DEFEITO — não a restrição.**
+
+Esta página afirmou durante uma sessão que a torre partilhada era uma
+imposição do `pivot_offset`. É meia verdade, e a metade que falta é a que
+importa: o pivô é UM PONTO — `TOPO`, `GX`, `GY` —, não a coluna inteira. Tudo
+o que fica abaixo dele sempre foi livre.
+
+E o preço de não ver isso apareceu no telefone. A lança é o braço fino lá em
+cima; a torre é a coluna que ocupa a silhueta. Com a mesma torre nos três, o
+porto inicial e o completo liam como **o mesmo guindaste** — foi a queixa
+exata: *"parecem ser o mesmo, sendo que o porto inicial possui o mesmo
+guindaste do porto mais avançado"*.
+
+Hoje cada nível tem torre própria, e o topo é que não se mexe:
+
+| | torre |
+|---|---|
+| **n1** | pau-de-carga: poste de MADEIRA, duas cintas, dois estais em olhal. Sem treliça e sem cabine — é a única grua do jogo que não é laranja, porque o laranja é a cor do maquinário e um pontão provisório não tem maquinário |
+| **n2** | a treliça laranja de sempre, meia-largura 0,19, cabine pequena junto ao topo |
+| **n3** | pórtico: treliça a 0,27 (+42% de largura), casa de máquinas no convés, cabine maior a meia altura e escada |
+
+**⚠️ O n3 não pode crescer para CIMA, então cresce para os LADOS e para
+BAIXO.** A altura do topo é o único número que este prop não pode tocar; a
+leitura de "maior" vem da ÁREA da coluna e das peças ao pé dela.
+
+O bloco **D17** trancava só metade disto — as três asserções olhavam para a
+LANÇA e exigiam que ela cobrisse o pivô, e nenhuma perguntava se a TORRE
+chegava lá. Enquanto a torre era uma só isso não podia falhar, e por isso a
+falta não se notava; com três torres passaram a existir três maneiras de a
+lança girar em torno do vazio, nenhuma delas com erro. Hoje o D17 confere os
+dois lados, e **o defeito foi injetado para o provar**: encurtar o poste do n1
+em 0,90 faz reprovar com *"o alfa no pivô é 0.00"* e sair com código 1.
 
 ⚠️ **E empilhar não é passar uma altura maior.** O contêiner de cima do n3
 nasceu com `altura_px` dobrada, que o `_no_conves` lê como caixa MAIS ALTA
