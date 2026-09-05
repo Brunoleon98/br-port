@@ -94,6 +94,16 @@ lugar onde o export do APK se verifica — ele corre a cada push e deixa o
 (~1,2 GB), que o CI cacheia; a receita completa, pelos dois caminhos, está em
 `brport_vs/COMO_RODAR.md`.
 
+⚠️ **O CI regera e compara BYTE A BYTE, e o `sum()` de floats mudou na Python
+3.12.** Ela passou a somar por compensação de Neumaier; o runner é
+`ubuntu-latest` e subiu de versão sozinho. Medido em 05/09, o mesmo arquivo:
+`CX = 508.49999999999994` na 3.10/3.11 contra `508.50000000000006` na 3.12/3.13
+— 1e-14 que o `%.1f` do gerador arredonda para o outro lado e vira **190 linhas
+de diferença** nos dois mapas, com o PR vermelho e nenhuma coordenada do mundo
+mudada. Num gerador cuja saída o CI compara assim: `math.fsum` em vez de `sum`,
+e **arredonde o que alimenta tudo o resto** — número que sai de divisão e entra
+em toda coordenada tem de ser exato, senão a máquina decide o desenho.
+
 ⚠️ **Valor de Godot 3 numa chave de Godot 4 não dá erro — dá outra coisa.**
 `window/handheld/orientation="portrait"` é sintaxe da 3; na 4 a chave é um enum
 INTEIRO, e o exportador faz `int()` dela. `int("portrait")` é **0**, que é

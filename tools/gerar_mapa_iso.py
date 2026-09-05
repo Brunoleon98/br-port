@@ -128,15 +128,34 @@ def _centro_do_porto() -> tuple:
     centro é DERIVADO: se um berço mudar de sítio, a câmera vai atrás dele em
     vez de ficar num par de números que ninguém sabe de onde saiu.
     """
-    return (sum(b for _a, _b, b in PIERES) / len(PIERES) + PIER_ALCANCE / 2.0,
-            sum((a + b) / 2.0 for a, b, _c in PIERES) / len(PIERES))
+    return (math.fsum(b for _a, _b, b in PIERES) / len(PIERES) + PIER_ALCANCE / 2.0,
+            math.fsum((a + b) / 2.0 for a, b, _c in PIERES) / len(PIERES))
 
 
 def _camera() -> tuple:
-    """`CX`/`CY` de DESENHO que põem `_centro_do_porto()` no meio da janela."""
+    """`CX`/`CY` de DESENHO que põem `_centro_do_porto()` no meio da janela.
+
+    ⚠️ ARREDONDADOS, E ISSO NÃO É ZELO — é o que faz o mapa sair igual em toda
+    máquina. O CI regera os dois SVG e compara BYTE A BYTE com os versionados,
+    e o gerador imprime coordenada com `%.1f`: um erro de 1e-14 no `CX` desloca
+    meio pixel na impressão e reprova a corrida inteira.
+    
+    E foi exatamente o que aconteceu em 05/09. O `sum()` de floats **mudou na
+    Python 3.12**, que passou a somar por compensação de Neumaier; o runner do
+    CI é `ubuntu-latest` e subiu de versão. Medido, o mesmo arquivo:
+    
+        3.10 e 3.11   CX = 508.49999999999994
+        3.12 e 3.13   CX = 508.50000000000006
+    
+    Dá 190 linhas de diferença nos dois mapas — `83.3` contra `83.2` — sem
+    nenhuma coordenada do mundo ter mudado. O `math.fsum` acima resolve a
+    causa (ele é corretamente arredondado em toda versão); o `round` aqui
+    resolve a CLASSE do problema, porque congela a entrada de tudo o que vem
+    depois num número que as duas somas dão igual.
+    """
     mx, my = _centro_do_porto()
-    return (JANELA[0] / 2.0 / ZOOM - (mx - my) * MEIA_LARG,
-            JANELA[1] / 2.0 / ZOOM - (mx + my) * MEIA_ALT)
+    return (round(JANELA[0] / 2.0 / ZOOM - (mx - my) * MEIA_LARG, 6),
+            round(JANELA[1] / 2.0 / ZOOM - (mx + my) * MEIA_ALT, 6))
 
 
 CX, CY = _camera()

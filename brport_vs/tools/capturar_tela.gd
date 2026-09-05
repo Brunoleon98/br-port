@@ -74,7 +74,11 @@ func _process(_delta: float) -> bool:
 	# tiros do mapa e pelo menos um no do menu de pausa. Assim, se um dia uma
 	# constante deslocar a fronteira da semana, o CI diz o que aconteceu em vez
 	# de anexar a imagem errada.
-	print("Overlay: %d painel(eis)" % _paineis_abertos())
+	# A FASE VAI JUNTO, e não é enfeite: quando esta contagem diverge entre
+	# máquinas, o que se quer saber primeiro é em que estado o jogo ficou — e
+	# sem isto o log do CI diz "viu 1" e mais nada, o que obriga a adivinhar.
+	print("Overlay: %d painel(eis)  [fase %s, turno %d, %d estrutura(s)]"
+		% [_paineis_abertos(), GS.phase, GS.turn, GS.estruturas.size()])
 
 	var img: Image = root.get_texture().get_image()
 	var erro := img.save_png(_saida)
