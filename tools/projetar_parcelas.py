@@ -41,6 +41,23 @@ GDD = RAIZ / "docs" / "design" / "BR_Port_GDD_V7.jsx"
 # bastante para reprovar um modelo que perdeu uma parcela da conta.
 TOLERANCIA = 0.05
 
+# ⚠️ O PORTÃO PRECISA DE UMA MEDIÇÃO, E 30 PARTIDAS NÃO SÃO UMA MEDIÇÃO. É o
+# que o próprio simulador imprime em letras garrafais na rodada curta, e o CI
+# alimentava este portão com esse número — até 06/09, quando ele reprovou o
+# Mediano por 5,4% contra uma tolerância de 5%.
+#
+# O modelo estava certo. Medido com cinco sementes a 30 partidas, a MARGEM EM
+# REGIME oscila sozinha: o Ótimo entre R$604.597 e R$722.194 (±9% em torno dos
+# R$674.019 de 600 partidas), o Mediano entre R$446.201 e R$502.417 (±6%), o
+# Descuidado entre R$87.335 e R$106.535 (±9%). Comparar um modelo contra um
+# alvo que se move mais do que a tolerância é um portão que reprova por
+# sorteio — e a semente do CI calhava dar o Mediano mais baixo dos cinco.
+#
+# O corte é o mesmo que o simulador usa para separar medida de fumaça. Abaixo
+# dele o portão RECLAMA em vez de calar-se ou de acusar o modelo: dizer "não
+# sei" alto é o que impede que ele volte a ser alimentado com sorteio.
+PARTIDAS_PARA_CALIBRAR = 100
+
 # ...E UM PISO ABSOLUTO, em barcos. A percentagem sozinha deixou de servir
 # quando a economia passou a ter CUSTO FIXO GRANDE (manutenção de R$40.000/sem
 # contra o R$30 de antes, em 02/09): a margem de um perfil de baixa vazão passou
@@ -261,6 +278,20 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
     Descuidado é o mais exigente dos três, porque o porto dele está incompleto
     e a conta tem de acertar mesmo assim.
     """
+    partidas = int(medicao.get("partidas", 0))
+    if partidas < PARTIDAS_PARA_CALIBRAR:
+        raise ModeloNaoCalibra(
+            "a medição tem %d partidas por perfil, e o portão precisa de pelo "
+            "menos %d.\n"
+            "  Abaixo disso a MARGEM MEDIDA oscila mais do que a tolerância de "
+            "%.0f%% — medido\n"
+            "  em 06/09: ±6%% a ±9%% conforme a semente. Reprovar aí seria "
+            "reprovar sorteio,\n"
+            "  e aprovar seria aprovar sorteio.\n"
+            "  Rode `simular_balanceamento.gd -- 600 20260825 <saida.json>` e "
+            "passe esse arquivo."
+            % (partidas, PARTIDAS_PARA_CALIBRAR, 100 * TOLERANCIA))
+
     queixas = []
     for nome, dados in medicao["perfis"].items():
         barcos = float(dados["atendidos_em_regime"])
@@ -288,6 +319,18 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
 
 
 def main() -> int:
+    # `ModeloNaoCalibra` sai como MENSAGEM e não como traceback: ela existe
+    # para ser lida por quem vê o CI vermelho, e uma pilha de chamadas em cima
+    # dela esconde a única linha que interessa.
+    try:
+        return _main()
+    except ModeloNaoCalibra as e:
+        print("O modelo não tem licença para projetar:\n  %s" % e,
+              file=sys.stderr)
+        return 1
+
+
+def _main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--medicao", required=True,
                    help="JSON de simular_balanceamento.gd -- N SEMENTE saida.json")

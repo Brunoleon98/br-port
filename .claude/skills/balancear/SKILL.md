@@ -163,6 +163,13 @@ Mediano e no Ótimo — o portão reprovou, com razão. É a irmã da armadilha 
 constante de VALOR ter mudado. **Dois perfis fora e o terceiro dentro é o
 modelo a ignorar uma compra**, não métrica.
 
+⚠️ **E CONFIRA COM QUANTAS PARTIDAS ELE FOI ALIMENTADO.** O portão recusa-se a
+calibrar abaixo de 100 — e recusa-se em voz alta, com a razão. Até 06/09 o CI
+dava-lhe as 30 partidas de fumaça e ele reprovou um modelo CERTO: a margem em
+regime de 30 partidas oscila ±6% a ±9% conforme a semente, mais do que a
+tolerância de 5% contra a qual é comparada. Portão que compara contra um número
+medido tem de saber quanto esse número se mexe sozinho.
+
 **Se o projetor deixar de calibrar, leia o erro antes de mexer no modelo.** Um
 perfil fora e dois dentro (0,1% e 0,5%) não é modelo partido — é a métrica: com
 custo fixo grande, a margem de quem tem pouca vazão é a diferença pequena entre

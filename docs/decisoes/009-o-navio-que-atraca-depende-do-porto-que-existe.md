@@ -139,7 +139,7 @@ o número que mede isso passa a ser a margem, não a contagem.
 
 ---
 
-## Três coisas que a passagem apanhou, e nenhuma dava erro
+## Quatro coisas que a passagem apanhou, e nenhuma dava erro
 
 **⚠️ O PROJETOR LIA A FAIXA DA FASE 1 NO GDD.** O GDD tem R$8.000–70.000
 congelados e as classes passaram a ir de R$12.000 a R$88.000: o portão de
@@ -160,3 +160,17 @@ receber.
 ao mesmo nível. O estado que APERTA é um só: pórtico comprado, cais ainda não
 (guindaste 3, píer 2). É a lição que o `CLAUDE.md` já regista sobre guardas
 duplicadas, aplicada a um `min` de dois números.
+
+**⚠️ E O PORTÃO DO PROJETOR ESTAVA A SER ALIMENTADO COM FUMAÇA.** O CI reprovou
+depois do PR aberto, e não por causa da trava: ele passava ao portão a medição
+de **30 partidas** — a que o simulador imprime rotulada de TESTE DE FUMAÇA — e
+comparava-a com uma tolerância de 5%. O Mediano saiu a 5,4% com o modelo certo.
+Medido com cinco sementes a 30 partidas, a margem em regime oscila sozinha: o
+Ótimo entre R$604.597 e R$722.194 (±9%), o Mediano entre R$446.201 e R$502.417
+(±6%), o Descuidado entre R$87.335 e R$106.535 (±9%) — mais do que a tolerância
+contra a qual é comparada, e a semente do CI calhava dar o Mediano mais baixo
+dos cinco. O comentário do workflow afirmava o contrário com todas as letras
+("os três erros ficam abaixo de 2% com 30 partidas"), e era dessa afirmação que
+vinha a escolha. Hoje o CI mede com 600 (~20 s, menos do que o download do
+Godot no mesmo job) e o projetor recusa-se a calibrar abaixo de 100 partidas,
+em voz alta, em vez de acusar o modelo.

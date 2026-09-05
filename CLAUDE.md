@@ -165,6 +165,16 @@ Teste e import rodam sem tela.
    (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
    de ±18 pontos — comparar aquele número com estes é comparar sorteio.
    O próprio simulador avisa quando a rodada é curta demais para medir.
+   ⚠️ **E PORTÃO ALIMENTADO COM FUMAÇA REPROVA POR SORTEIO.** O CI passava ao
+   portão de calibração do `projetar_parcelas.py` a medição de 30 partidas — a
+   mesma que o simulador imprime rotulada de TESTE DE FUMAÇA — e comparava-a
+   com uma tolerância de 5%. Em 06/09 ele reprovou o Mediano por 5,4% **com o
+   modelo certo**: medido com cinco sementes, a margem em regime de 30 partidas
+   oscila ±6% a ±9% sozinha, e a semente do CI calhava dar o valor mais baixo.
+   Quando um portão compara contra um número MEDIDO, pergunte quanto esse
+   número se mexe sozinho antes de escolher a tolerância — e se ele se mexer
+   mais do que ela, o defeito é do portão, não do que ele reprova. Hoje o CI
+   mede com 600 e o projetor recusa-se a calibrar abaixo de 100 partidas.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
    ficou bonito. O CI já anexa as seis a cada PR (artefato `brport-captura`) e
    diz na página da corrida qual mudou — mas dizer que mudou não é dizer que

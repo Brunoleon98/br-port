@@ -154,8 +154,7 @@ jobs:
         # se repete. Este passo põe os dois a encontrar-se a cada corrida.
         #
         # Os números que saem daqui NÃO são playtest: são partidas de máquina,
-        # com tempo de deliberação perto de zero. Mesma distinção que separa as
-        # 30 partidas do simulador aqui das 600 que medem balanceamento.
+        # com tempo de deliberação perto de zero.
         run: |
           set -euo pipefail
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
@@ -310,14 +309,24 @@ jobs:
             --contra-godot /tmp/constantes.json
 
       - name: Conferir o simulador de balanceamento
-        # Rodada mínima só para garantir que a ferramenta continua funcionando
-        # depois de mudanças no GameState — ela usa a API do jogo por fora e
-        # quebraria em silêncio. Não julga o balanceamento, só que roda.
+        # Rodada para garantir que a ferramenta continua funcionando depois de
+        # mudanças no GameState — ela usa a API do jogo por fora e quebraria em
+        # silêncio. Não julga o balanceamento, só que roda.
+        #
+        # ⚠️ SÃO 600 E NÃO 30 PORQUE O PASSO SEGUINTE PRECISA DE UMA MEDIÇÃO.
+        # Este arquivo alimenta o portão de calibração do `projetar_parcelas`,
+        # e 30 partidas não são uma medição — é o que o próprio simulador
+        # imprime em letras garrafais na rodada curta. Em 06/09 o portão
+        # reprovou o Mediano por 5,4% contra uma tolerância de 5%, com o modelo
+        # certo: medido com cinco sementes, a margem em regime de 30 partidas
+        # oscila ±6% a ±9% sozinha, e a semente daqui calhava dar o valor mais
+        # baixo. As 600 levam ~20 s — menos do que o download do Godot neste
+        # mesmo job.
         run: |
           set -euo pipefail
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
             --headless --path brport_vs \
-            --script res://tools/simular_balanceamento.gd -- 30 20260825 \
+            --script res://tools/simular_balanceamento.gd -- 600 20260825 \
             /tmp/medicao.json \
             2>&1 | tee /tmp/sim.txt
 
@@ -331,7 +340,7 @@ jobs:
           # Leitura, que é a única que este passo procurava. O laço dele só
           # sabe resolver as fases `rival_offer` e `debt_payment`, e
           # `advance_turn()` retorna CALADO fora de `playing` — de modo que
-          # uma fase nova no GameState faria as 30 partidas girarem até ao
+          # uma fase nova no GameState faria as partidas girarem até ao
           # limite de segurança e o CI passaria na mesma, com a medição toda
           # errada. Foi a razão de a tela de nomes do A4 ser overlay e não
           # fase; esta linha é para a próxima vez, em que ninguém se lembrar.
@@ -347,11 +356,15 @@ jobs:
         # verdade: mexer num `# TUNING:` de um jeito que desloque a economia
         # sem o modelo saber reprova aqui.
         #
-        # A calibração aguenta as 30 partidas de fumaça porque a margem semanal
-        # é média de muitos turnos — bem menos ruidosa do que a taxa de
-        # vitória, que a estas alturas tem ±18 pontos de margem. Medido: os
-        # três erros ficam abaixo de 2% com 30 partidas e abaixo de 1,2% com
-        # 600.
+        # ⚠️ ESTA AFIRMAÇÃO ESTAVA ERRADA E CUSTOU UM CI VERMELHO. Ela dizia
+        # que "a calibração aguenta as 30 partidas de fumaça porque a margem
+        # semanal é média de muitos turnos", com "os três erros abaixo de 2%".
+        # Em 06/09 o portão reprovou o Mediano por 5,4% contra uma tolerância
+        # de 5%, com o modelo certo: medido com cinco sementes a 30 partidas, a
+        # margem em regime oscila ±6% a ±9% sozinha — mais do que a tolerância
+        # que ela é comparada. O passo acima passou a rodar 600, e o próprio
+        # projetor recusa-se a calibrar abaixo de 100 partidas em vez de
+        # reprovar por sorteio.
         run: |
           set -euo pipefail
           python3 tools/projetar_parcelas.py \
