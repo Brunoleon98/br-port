@@ -124,10 +124,55 @@ def valor_medio(faixa: tuple[int, int], k: dict, frac_cais: float = 0.0) -> floa
     # `frac_cais` é a FRAÇÃO das partidas em que ele acabou de pé, pela mesma
     # razão que as outras estruturas entram assim: arredondar para sim/não
     # projetaria um porto que ninguém joga.
-    p_grande = float(k["BOAT_LARGE_CHANCE"])
-    p_grande = min(1.0, p_grande * (1.0 + (float(k["CAIS_CHANCE_GRANDE"]) - 1.0)
-                                    * frac_cais))
-    return (1.0 - p_grande) * medio_pequeno + p_grande * medio_grande
+    p = chance_de_navio_grande(k, frac_cais)
+    return (1.0 - p) * medio_pequeno + p * medio_grande
+
+
+def chance_de_navio_grande(k: dict, frac_cais: float) -> float:
+    """A chance de o barco ser grande, já com o cais reforçado por dentro."""
+    return min(1.0, float(k["BOAT_LARGE_CHANCE"])
+               * (1.0 + (float(k["CAIS_CHANCE_GRANDE"]) - 1.0) * frac_cais))
+
+
+def medias_por_tamanho(faixa: tuple[int, int], k: dict) -> tuple[float, float]:
+    """O valor médio do barco pequeno e o do grande, na forma que o jogo usa."""
+    lo, hi = faixa
+    corte_f1 = ((k["BOAT_VALUE_SMALL_MAX"] - k["BOAT_VALUE_SMALL_MIN"])
+                / float(k["BOAT_VALUE_LARGE_MAX"] - k["BOAT_VALUE_SMALL_MIN"]))
+    corte = lo + corte_f1 * (hi - lo)
+    return (lo + corte) / 2.0, (corte + hi) / 2.0
+
+
+def valor_com_motivos(faixa: tuple[int, int], k: dict, frac_cais: float,
+                      estruturas: dict) -> float:
+    """O valor médio recebido: o bruto MAIS o que a estrutura acrescenta.
+
+    ⚠️ O BÓNUS DEIXOU DE SER UM MULTIPLICADOR ÚNICO EM 06/09, e um modelo que o
+    trate como tal erra para os dois lados de uma vez. Ele agora depende do
+    MOTIVO do barco, e o motivo sorteia-se por TAMANHO — o armazém paga em 45%
+    dos pesqueiros e 35% dos navios grandes, o pátio só nos grandes. Como o
+    cais reforçado empurra a mistura para o grande, quem o compra muda também a
+    frequência de cada bónus, sem nenhuma constante de valor ter mudado. É a
+    mesma armadilha que o `frac_cais` acima descreve, um andar abaixo: o
+    portão de calibração reprova se esta conta ficar a somar +50% em tudo.
+    """
+    medio_pequeno, medio_grande = medias_por_tamanho(faixa, k)
+    p = chance_de_navio_grande(k, frac_cais)
+    motivos = k["MOTIVOS"]
+    total = 0.0
+    for coluna, prob, medio in (("peso_pequeno", 1.0 - p, medio_pequeno),
+                                ("peso_grande", p, medio_grande)):
+        soma = sum(float(m[coluna]) for m in motivos.values())
+        if soma <= 0.0:
+            continue
+        for dados in motivos.values():
+            fatia = float(dados[coluna]) / soma
+            estrutura = str(dados["estrutura"])
+            bonus = 0.0
+            if estrutura:
+                bonus = float(dados["bonus"]) * estruturas.get(estrutura, 0.0)
+            total += prob * fatia * medio * (1.0 + bonus)
+    return total
 
 
 def desconto_medio_do_rival(k: dict, barcos_por_semana: float) -> float:
@@ -169,7 +214,7 @@ def margem_semanal(k: dict, barcos: float, faixa: tuple[int, int],
     projetar um porto que ninguém joga.
     """
     bruto = valor_medio(faixa, k, estruturas.get("cais", 0.0))
-    liquido = bruto * (1.0 + float(k["ARMAZEM_BONUS"]) * estruturas.get("armazem", 0.0))
+    liquido = valor_com_motivos(faixa, k, estruturas.get("cais", 0.0), estruturas)
     liquido *= (1.0 - desconto_medio_do_rival(k, barcos))
     contratos = barcos * liquido
 

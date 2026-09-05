@@ -72,16 +72,16 @@ signal negociacao_resolvida(acao: String, resultado: String, tentativa: int)
 # (píer, armazém) é o que pesa — que é o que um porto é.
 #
 # TUNING — medido, não estimado. 600 partidas por perfil em
-# tools/simular_balanceamento.gd: **ótimo 100% · mediano 79,5% · descuidado
-# 31,0%**. A mediana do mediano fecha em R$796.970 contra uma parcela de
-# R$550.000. Mexer aqui SEM rodar o simulador quebra isso.
+# tools/simular_balanceamento.gd: **ótimo 99,8% · mediano 80,5% · descuidado
+# 35,2%**. A mediana do mediano fecha em R$745.875 contra uma parcela de
+# R$530.000. Mexer aqui SEM rodar o simulador quebra isso.
 #
 # O ALVO MUDOU, e é decisão registrada (docs/decisoes/005): o jogo é TRANQUILO.
 # Os 47% do jogador mediano eram a fantasia de sobrevivência que essa decisão
 # substituiu — a dívida deixou de ser o motor, e quem discrimina os jogadores
 # passou a ser o PORTO QUE ELES CONSEGUEM LEVANTAR, não se pagam a parcela: o
-# Ótimo atende 56,2 barcos e chega a 13,8/semana, o Descuidado atende 12,6 e
-# fica em 3,3/semana. A manutenção alta é o que faz essa diferença doer, porque
+# Ótimo atende 50,5 barcos e chega a 15,9/semana, o Descuidado atende 12,1 e
+# fica em 3,2/semana. A manutenção alta é o que faz essa diferença doer, porque
 # custo fixo pesa proporcionalmente muito mais em quem tem pouca vazão.
 const START_CASH := 400000
 const SALARY_PER_WORKER := 6000          # TUNING sobre a linha "Margem operacional base" do GDD, reescalada
@@ -126,12 +126,12 @@ const ESTRUTURAS := {
 	},
 	"armazem": {
 		"nome": "Consertar o armazém",
-		"desc": "+20% no valor de cada barco atendido",
+		"desc": "+50% no barco que vem deixar carga",
 		"custo": 180000, "ordem": 3, "requer": "",
 	},
 	"patio": {
 		"nome": "Pavimentar o pátio",
-		"desc": "dobra a renda semanal do píer",
+		"desc": "dobra a renda do píer e +30% no contêiner",
 		"custo": 115000, "ordem": 4, "requer": "",
 	},
 	"escritorio": {
@@ -155,7 +155,7 @@ const ESTRUTURAS := {
 	# do que inventar uma Fase que o resto do jogo não conhece.
 	"guindaste": {
 		"nome": "Guindaste de pórtico",
-		"desc": "navio grande descarrega em 1 turno",
+		"desc": "corta um turno de cada operação",
 		"custo": 120000, "ordem": 6, "requer": "pier_2",
 	},
 	"cais": {
@@ -165,21 +165,84 @@ const ESTRUTURAS := {
 	},
 }
 
-# O guindaste de pórtico corta o tempo de operação do navio grande. É o único
-# dos sete que mexe na VAZÃO em vez de no valor: os outros multiplicam dinheiro,
-# este devolve turnos, e turno devolvido vira barco a mais.
-const GUINDASTE_TURNOS_GRANDE := 1       # TUNING
+# O guindaste de pórtico corta o tempo de operação. É o único dos sete que mexe
+# na VAZÃO em vez de no valor: os outros multiplicam dinheiro, este devolve
+# turnos, e turno devolvido vira barco a mais.
+#
+# ⚠️ ELE CORTA UM TURNO DE QUALQUER OPERAÇÃO, e não "põe o navio grande em 1".
+# A diferença só aparece desde que o granel existe: escrito como destino fixo,
+# o pórtico levaria uma operação de três turnos ao mesmo lugar que uma de dois,
+# e o barco mais pesado do jogo passaria a descarregar tão depressa quanto o
+# mais leve. Para tudo o que não é granel a conta dá o mesmo de antes — grande
+# 2 → 1, pequeno 1 → 1 —, que é o número que o balanceamento de 05/09 mediu.
+const GUINDASTE_CORTA_TURNOS := 1        # TUNING
 # O cais reforçado muda a MISTURA de barcos, não o valor de nenhum: um cais de
 # concreto aguenta navio maior, e navio maior paga mais. Multiplicador sobre o
 # `BOAT_LARGE_CHANCE`, preso a 1,0 para não passar de "só navio grande".
 const CAIS_CHANCE_GRANDE := 1.60         # TUNING
 
-const ARMAZEM_BONUS := 0.20             # TUNING
+# ⚠️ O BÓNUS DO ARMAZÉM DEIXOU DE SER GLOBAL EM 06/09. Ele era +20% em TODO
+# barco atendido, o que fazia o armazém valorizar também o peixe que sai do
+# cais direto para o mercado. Agora só vale para o barco cujo MOTIVO é deixar
+# carga armazenada — ver o bloco `MOTIVOS` logo abaixo. A percentagem subiu de
+# 0,20 para compensar: o bónus passou a cair em ~4 de cada 10 barcos em vez de
+# em todos, e sem subir o armazém deixaria de se pagar.
+const ARMAZEM_BONUS := 0.50             # TUNING
+# O pátio pavimentado tem DOIS efeitos, e são de naturezas diferentes: dobra a
+# renda semanal do píer (abaixo) e valoriza o contêiner que ele empilha. O
+# segundo é o que dá motivo à pilha desenhada no mapa.
+const PATIO_BONUS_CARGA := 0.30         # TUNING
 const PATIO_BONUS_PIER := 1.00          # TUNING
 # O escritório mexia na manutenção (R$30/sem): pouparia R$18 por semana e
 # nunca se pagaria. Agora corta SALÁRIO, que é o custo que cresce com o
 # porto — é o que torna a compra uma decisão e não uma armadilha.
 const ESCRITORIO_DESCONTO_SALARIO := 0.50   # TUNING
+
+# ── MOTIVO DA ESCALA ──
+#
+# POR QUE o navio veio ao porto. Até 05/09 um barco tinha VALOR e TAMANHO e
+# mais nada: dois barcos de R$45.000 pediam exatamente a mesma coisa, e servir
+# era sempre a mesma operação. O motivo é o que os faz pedir coisas diferentes.
+#
+# ⚠️ CADA MOTIVO PRENDE-SE A UMA ESTRUTURA QUE JÁ EXISTE, e é essa a decisão.
+# Reparo pede oficina naval e reabastecimento pede posto de combustível — as
+# duas são Fase 2 pelo GDD, que chama a fase 02 de "Cais com Oficina" e põe o
+# posto como primeiro upgrade de infraestrutura. Inventá-las aqui seria codar a
+# economia da Fase 2 antes de responder a pergunta que a
+# `BR_Port_GDD_V7_ERRATA_ECONOMIA.md` deixou aberta. Carga e descarga cabem na
+# Fase 1, e é só delas que este bloco trata (`docs/decisoes/008`).
+#
+# ⚠️ E O EFEITO É DA ESTRUTURA, NUNCA DO MOTIVO SOZINHO. Um motivo que pagasse
+# mais por si seria só outro sorteio de valor, com um nome bonito por cima: o
+# jogador veria a etiqueta mudar e não teria o que decidir. Preso à estrutura,
+# ele diz onde gastar o próximo dinheiro — e o cais reforçado, que empurra a
+# mistura para o barco grande, passa a decidir também QUAIS motivos aparecem.
+#
+# `peso_pequeno` e `peso_grande` são pesos de sorteio por tamanho de barco, em
+# centos: o pesqueiro não traz contêiner e o graneleiro não é pesqueiro. Somam
+# 100 em cada coluna, e é assim que se lê a mistura sem fazer conta.
+const MOTIVOS := {
+	"pescado": {
+		"nome": "Pescado", "estrutura": "", "bonus": 0.0, "turnos_extra": 0,
+		"peso_pequeno": 55, "peso_grande": 0,
+	},
+	"armazenagem": {
+		"nome": "Armazenagem", "estrutura": "armazem", "bonus": ARMAZEM_BONUS,
+		"turnos_extra": 0, "peso_pequeno": 45, "peso_grande": 35,
+	},
+	"conteiner": {
+		"nome": "Contêiner", "estrutura": "patio", "bonus": PATIO_BONUS_CARGA,
+		"turnos_extra": 0, "peso_pequeno": 0, "peso_grande": 40,
+	},
+	# O granel é o único que paga em TURNO em vez de em dinheiro, e de
+	# propósito: quatro motivos que fossem quatro multiplicadores seriam o
+	# mesmo motivo quatro vezes. Sem pórtico ele ocupa o berço um turno a mais,
+	# que é o custo que o guindaste existe para pagar.
+	"granel": {
+		"nome": "Granel", "estrutura": "guindaste", "bonus": 0.0,
+		"turnos_extra": 1, "peso_pequeno": 0, "peso_grande": 25,
+	},
+}
 
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
 const PIER_RATE_PER_SLOT := 5000        # GDD "Margem operacional base", reescalado: renda fixa semanal
@@ -248,7 +311,14 @@ const TURNS_PER_WEEK := 8
 const WEEKS_TOTAL := 4
 const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
 
-const PARCELA_AMOUNT := 550000            # GDD "Parcelas validadas" / Protótipo VS — parcela única
+# ⚠️ A PARCELA É O BOTÃO QUE MOVE O DESCUIDADO, E É SÓ ELE. Medido em
+# `docs/decisoes/008`: com os motivos ligados, cada R$10.000 de parcela valem
+# ~3 pontos de vitória para ele e ~0,5 para o mediano — os dois perfis não
+# estão na mesma parte da distribuição, e é por isso que este número afina um
+# sem estragar o outro. Desceu de R$550.000 em 06/09 para devolver ao
+# descuidado os ~35% que a decisão 005 registou e que os upgrades de 05/09
+# tinham levado a 31,0%.
+const PARCELA_AMOUNT := 530000            # GDD "Parcelas validadas" / Protótipo VS — parcela única
 const PARCELA_DUE_TURN := TURNS_PER_WEEK * 4   # vence ao fim da semana 4
 
 # ── SAVE ──
@@ -271,7 +341,13 @@ const SAVE_PATH := "user://savegame.json"
 # lê. A 3 nunca saiu daqui, então podia ter-se reaproveitado o número — mas
 # reaproveitar exige lembrar que se pode, e a regra vale mais barata do que a
 # exceção: a forma mudou, a versão sobe.
-const SAVE_VERSION := 5
+#
+# 6 (06/09): o barco passou a nascer com um MOTIVO, e a contabilidade ganhou a
+# linha do pátio ao lado da do armazém. Um save da 5 traz barcos sem motivo, e
+# `_lancar_receita()` indexa `MOTIVOS[motivo]` — o barco carregado rebentaria
+# na primeira docagem, que é exatamente o tipo de estrago que a versão existe
+# para evitar.
+const SAVE_VERSION := 6
 
 # ── OS DOIS NOMES ──
 # O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7).
@@ -326,11 +402,18 @@ var nome_jogador: String = ""
 # despesa DECOMPOSTAS, e `metrics` só guarda totais acumulados da partida —
 # de onde não se consegue tirar uma semana.
 #
-# O bónus do armazém é contado à parte do valor do barco. No jogo ele vem
-# embutido (`_valor_recebido`), e embutido não dá para o mostrar como a linha
-# própria que o boletim tem.
+# O bónus que uma estrutura acrescenta ao barco é contado à PARTE do valor
+# dele. No jogo os dois vêm somados (`_lancar_receita`), e somado não dá para
+# o mostrar como a linha própria que o boletim tem.
+#
+# ⚠️ AS LINHAS `armazem` E `patio` CHAMAM-SE COMO AS ESTRUTURAS, e isso é
+# contrato: `_lancar_receita()` roteia o bónus por `destino[estrutura]`. Um
+# motivo novo cujo `bonus` seja maior que zero e cuja estrutura não tenha linha
+# aqui criaria a chave em silêncio — o Dictionary do GDScript aceita — e o
+# dinheiro sumia da soma da receita sem erro nenhum. O bloco T5h da suíte
+# tranca isso.
 const SEMANA_ZERADA := {
-	"docagens": 0, "armazem": 0, "pier": 0,
+	"docagens": 0, "armazem": 0, "patio": 0, "pier": 0,
 	"salarios": 0, "manutencao": 0, "parcela": 0,
 }
 var semana_atual: Dictionary = SEMANA_ZERADA.duplicate()
@@ -343,7 +426,7 @@ var semana_atual: Dictionary = SEMANA_ZERADA.duplicate()
 # `dia_anterior` é o que ficou do turno que acabou. Sem os dois, tocar no caixa
 # a meio de um turno mostraria uma soma parcial que muda enquanto se olha.
 const DIA_ZERADO := {
-	"docagens": 0, "armazem": 0, "pier": 0,
+	"docagens": 0, "armazem": 0, "patio": 0, "pier": 0,
 	"salarios": 0, "manutencao": 0, "parcela": 0,
 	"servidos": 0, "perdidos": 0, "turno": 0,
 }
@@ -829,17 +912,14 @@ func advance_turn() -> void:
 			boat["progress"] = int(boat["progress"]) + 1
 			if int(boat["progress"]) >= int(boat["op_turns"]):
 				var bruto: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
-				var value := _valor_recebido(bruto)
+				# Observação para o Boletim, e nada mais: o valor que entra no
+				# caixa é o mesmo nas duas chamadas. Elas separam o bruto do
+				# bónus da estrutura, para o boletim ter as linhas próprias que
+				# o arquivo de escrita pede.
+				var value := _lancar_receita(dia_atual, bruto, String(boat["motivo"]))
+				_lancar_receita(semana_atual, bruto, String(boat["motivo"]))
 				cash += value
 				metrics["revenue"] += value
-				# Observação para o Boletim, e nada mais: o `value` acima é o
-				# que entra no caixa e não muda. Aqui só se separa o que dele
-				# veio do armazém, para o boletim ter a linha própria que o
-				# arquivo de escrita pede.
-				semana_atual["docagens"] += bruto
-				semana_atual["armazem"] += value - bruto
-				dia_atual["docagens"] += bruto
-				dia_atual["armazem"] += value - bruto
 				dia_atual["servidos"] += 1
 				metrics["boats_served"] += 1
 				_change_reputation(REPUTATION_GAIN_SERVED)
@@ -938,7 +1018,7 @@ func _process_week_end(ended_week: int) -> void:
 # das constantes.
 func resumo_da_semana(semana: int) -> Dictionary:
 	var receita: int = int(semana_atual["docagens"]) + int(semana_atual["armazem"]) \
-		+ int(semana_atual["pier"])
+		+ int(semana_atual["patio"]) + int(semana_atual["pier"])
 	var despesa: int = int(semana_atual["salarios"]) + int(semana_atual["manutencao"]) \
 		+ int(semana_atual["parcela"])
 	var media := 0.0
@@ -950,6 +1030,7 @@ func resumo_da_semana(semana: int) -> Dictionary:
 		"semana": semana,
 		"docagens": int(semana_atual["docagens"]),
 		"armazem": int(semana_atual["armazem"]),
+		"patio": int(semana_atual["patio"]),
 		"pier": int(semana_atual["pier"]),
 		"salarios": int(semana_atual["salarios"]),
 		"manutencao": int(semana_atual["manutencao"]),
@@ -998,9 +1079,7 @@ func projecao_do_dia() -> Dictionary:
 		if int(barco["progress"]) + 1 < int(barco["op_turns"]):
 			continue
 		var bruto: int = int(barco["matched_value"]) if barco.get("matched", false) else int(barco["value"])
-		var valor := _valor_recebido(bruto)
-		proj["docagens"] += bruto
-		proj["armazem"] += valor - bruto
+		_lancar_receita(proj, bruto, String(barco["motivo"]))
 		proj["servidos"] += 1
 	# O fecho de semana e a parcela caem no MESMO dia que fariam cair no jogo
 	# real — usar `_custos_da_semana()` em vez de repetir a conta é a mesma
@@ -1166,7 +1245,7 @@ func comprar_estrutura(id: String) -> bool:
 	estruturas.append(id)
 
 	# Os píeres são os únicos que mexem no roster. O resto é econômico e age
-	# nos lugares onde o dinheiro é contado (ver _valor_recebido e
+	# nos lugares onde o dinheiro é contado (ver _lancar_receita e
 	# _process_week_end).
 	if id == "pier_2" or id == "pier_3":
 		upgrade_purchased = true          # compat: a suíte antiga ainda olha isto
@@ -1202,13 +1281,59 @@ func buy_upgrade() -> bool:
 # Quanto o porto realmente recebe por um barco. O armazém entra aqui porque é
 # aqui que o dinheiro é contado — espalhar o bônus pelos sítios que somam caixa
 # é como se esquece um deles.
-func _valor_recebido(bruto: int) -> int:
-	if tem_estrutura("armazem"):
-		return int(round(bruto * (1.0 + ARMAZEM_BONUS)))
-	return bruto
+# Lança a receita de UM barco servido num dos dicionários de contabilidade e
+# devolve o que entra no caixa. O bruto vai na linha das docagens; o bónus do
+# motivo vai na linha da ESTRUTURA que o pagou — e a linha chama-se como a
+# estrutura de propósito, para não haver um segundo mapa a dizer qual é qual.
+#
+# É uma função só porque `advance_turn()` e `projecao_do_dia()` precisam do
+# MESMO número: uma paga e a outra mostra o que se pagaria, e duas cópias desta
+# conta divergiriam calado — foi o que já aconteceu com `_custos_da_semana()`.
+func _lancar_receita(destino: Dictionary, bruto: int, motivo: String) -> int:
+	var dados: Dictionary = MOTIVOS[motivo]   # direto: motivo desconhecido tem de rebentar
+	destino["docagens"] += bruto
+	var estrutura: String = dados["estrutura"]
+	var bonus: float = dados["bonus"]
+	if estrutura == "" or bonus <= 0.0 or not tem_estrutura(estrutura):
+		return bruto
+	var extra := int(round(bruto * bonus))
+	destino[estrutura] += extra
+	return bruto + extra
 
 
 # ── GERAÇÃO DE BARCOS ──
+# Sorteia o motivo pelos pesos da coluna do tamanho. O sorteio é por PESO e
+# não por faixa escrita à mão porque a mistura tem de se ler na tabela: quem
+# quiser saber com que frequência aparece um granel lê 25 na coluna, sem
+# reconstruir intervalos de cabeça.
+func _sortear_motivo(grande: bool) -> String:
+	var coluna := "peso_grande" if grande else "peso_pequeno"
+	var total := 0
+	for id in MOTIVOS:
+		total += int(MOTIVOS[id][coluna])
+	var sorteio := _rng.randi_range(1, total)
+	var acumulado := 0
+	for id in MOTIVOS:
+		acumulado += int(MOTIVOS[id][coluna])
+		if sorteio <= acumulado:
+			return id
+	# Inalcançável: o sorteio vai de 1 a `total`, que é a soma dos pesos. Está
+	# aqui porque o GDScript exige retorno em todo caminho, e devolver a base é
+	# o único valor que não inventa dinheiro nem turno se algum dia chegar cá.
+	return "pescado"
+
+
+# Quantos turnos uma operação leva: o tamanho do barco, mais o que o motivo
+# pesar, menos o que o pórtico corta. Nunca abaixo de um — barco que
+# descarregasse em zero turnos entraria e sairia no mesmo avanço de dia, sem
+# o jogador ter o que fazer.
+func _turnos_de_operacao(grande: bool, motivo: String) -> int:
+	var turnos := (2 if grande else 1) + int(MOTIVOS[motivo]["turnos_extra"])
+	if tem_estrutura("guindaste"):
+		turnos -= GUINDASTE_CORTA_TURNOS
+	return maxi(1, turnos)
+
+
 func _make_boat() -> Dictionary:
 	# O cais reforçado aumenta a chance de navio grande. `min` porque um
 	# multiplicador sem teto passaria de 1,0 e o porto deixaria de ver pesqueiro.
@@ -1221,11 +1346,13 @@ func _make_boat() -> Dictionary:
 		value = _rng.randi_range(BOAT_VALUE_LARGE_MIN, BOAT_VALUE_LARGE_MAX)
 	else:
 		value = _rng.randi_range(BOAT_VALUE_SMALL_MIN, BOAT_VALUE_SMALL_MAX)
+	var motivo := _sortear_motivo(large)
 	_uid += 1
 	return {
 		"id": _uid,
 		"value": value,
-		"op_turns": (GUINDASTE_TURNOS_GRANDE if tem_estrutura("guindaste") else 2) if large else 1,
+		"motivo": motivo,
+		"op_turns": _turnos_de_operacao(large, motivo),
 		"large": large,
 		"progress": 0,
 		"rival": false,

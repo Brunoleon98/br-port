@@ -66,6 +66,7 @@ var _d13_completo := false
 var _d15_completo := false
 var _d16_completo := false
 var _d17_completo := false
+var _d18_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -150,6 +151,10 @@ func _rodar() -> void:
 	print("=== D17: os três níveis do píer e da lança ===")
 	_d17_niveis_do_porto()
 	_confere("o bloco D17 correu até ao fim", _d17_completo)
+
+	print("=== D18: o texto do cartão de doca cabe no cartão ===")
+	_d18_texto_do_cartao()
+	_confere("o bloco D18 correu até ao fim", _d18_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -1305,3 +1310,65 @@ func _tela_da_rota(ponto: Vector2, origem: Vector2, pr: Dictionary) -> Vector2:
 	var d := ponto - origem
 	return Vector2((d.x - d.y) * float(pr["meia_larg"]),
 		(d.x + d.y) * float(pr["meia_alt"]))
+
+
+# ── D18 ── o texto do cartão de doca cabe no cartão
+#
+# O motivo da escala (06/09) entrou na linha do progresso, e nome de motivo é
+# texto que CRESCE: "Armazenagem" tem quase o dobro de "Granel". Texto que não
+# cabe num Label do Godot não dá erro nenhum — sai cortado, e a captura do CI
+# mostra "Armazenage" sem ninguém reparar.
+#
+# ⚠️ MEDE-SE O PIOR CASO, MONTADO À MÃO. Ler o que os três cartões mostram
+# agora não serve: o cartão de uma doca vazia diz "aguardando barco" e passaria
+# sempre. O pior caso é o motivo de nome mais longo com acordo fechado e o
+# valor mais alto que o jogo paga ao lado — e é ele que tem de caber.
+func _d18_texto_do_cartao() -> void:
+	# O autoload vem da árvore e não pelo nome: dentro de um script rodado por
+	# `--script` o `GameState` não resolve como identificador.
+	var GS: Node = root.get_node("GameState")
+	var cartao := _main.get_node("BarraDocas").get_child(0) as Control
+	var sb := cartao.get_theme_stylebox("panel", "CartaoDoca")
+	var interior: float = cartao.size.x
+	if sb != null:
+		interior -= sb.content_margin_left + sb.content_margin_right
+	_confere("o cartão tem interior medível (%.0f px)" % interior, interior > 0.0)
+
+	var maior := ""
+	for id in GS.MOTIVOS:
+		var nome: String = GS.MOTIVOS[id]["nome"]
+		if nome.length() > maior.length():
+			maior = nome
+
+	var cabecalho := cartao.get_node("Coluna/Cabecalho") as HBoxContainer
+	var linha := cartao.get_node("Coluna/ProgressoLinha") as HBoxContainer
+	var rotulo_nome := cartao.get_node("Coluna/Cabecalho/Nome") as Label
+	var rotulo_valor := cartao.get_node("Coluna/Cabecalho/Valor") as Label
+	var rotulo_prog := cartao.get_node("Coluna/ProgressoLinha/Progresso") as Label
+	var rotulo_trab := cartao.get_node("Coluna/TrabalhadorLinha/Trabalhador") as Label
+	var linha_trab := cartao.get_node("Coluna/TrabalhadorLinha") as HBoxContainer
+
+	rotulo_nome.text = "DOCA %d" % GS.BERCOS_NO_MAPA
+	rotulo_valor.text = GS.moeda(int(GS.BOAT_VALUE_LARGE_MAX))
+	_confere("o cabeçalho cabe (%.0f de %.0f px)"
+			% [cabecalho.get_combined_minimum_size().x, interior],
+		cabecalho.get_combined_minimum_size().x <= interior,
+		"[%s | %s]" % [rotulo_nome.text, rotulo_valor.text])
+
+	# Os dois formatos que o cartão escreve, com o nome mais longo nos dois.
+	for texto in [
+			"%s  ·  %d/%d turnos" % [maior, 0, 3],
+			"%s  ·  %d/%d  ·  acordo" % [maior, 0, 3]]:
+		rotulo_prog.text = texto
+		_confere("a linha do progresso cabe (%.0f de %.0f px)"
+				% [linha.get_combined_minimum_size().x, interior],
+			linha.get_combined_minimum_size().x <= interior, "[%s]" % texto)
+
+	rotulo_trab.text = "#%d  ·  toque p/ liberar" % GS.BERCOS_NO_MAPA
+	_confere("a linha do trabalhador cabe (%.0f de %.0f px)"
+			% [linha_trab.get_combined_minimum_size().x, interior],
+		linha_trab.get_combined_minimum_size().x <= interior,
+		"[%s]" % rotulo_trab.text)
+
+	_d18_completo = true
+

@@ -22,15 +22,22 @@ discrimina os jogadores é o porto que eles conseguem levantar.
 
 | Perfil | Alvo |
 |---|---|
-| Ótimo | 100% |
+| Ótimo | ~100% |
 | Mediano | ~80% — ganha com folga |
-| Descuidado | ~31% — perde a maioria, sem ser garantido |
+| Descuidado | ~35% — perde a maioria, sem ser garantido |
 
-⚠️ **O número do Descuidado desceu de ~35% para 31,0% em 05/09**, e não por um
-preço ter mudado: os dois upgrades de guindaste e cais (`docs/decisoes/007`)
-deram mais uma coisa para comprar, e quem compra mal compra tarde. Nenhum ponto
-do varrimento o recupera sem custar o Mediano. **Trazê-lo de volta é decisão do
-Bruno** — o botão seria a `PARCELA_AMOUNT`, e é outra medição.
+⚠️ **A `PARCELA_AMOUNT` É O BOTÃO DO DESCUIDADO, e quase não move o Mediano.**
+Medido em 06/09 (`docs/decisoes/008`): cada R$10.000 valem ~3 pontos a um e
+~0,5 ao outro. A razão não é mágica e vale para qualquer botão novo — a mediana
+do Mediano fecha muito acima da parcela e a do Descuidado logo abaixo dela, e
+um botão só move quem está em cima da linha. **Quando um varrimento não achar o
+ponto, desconfie do EIXO antes de desistir**: a `007` varreu preços de upgrade,
+concluiu que nada recuperava o Descuidado sem custar o Mediano, e estava certa
+— a parcela é que não estava no varrimento.
+
+⚠️ **E o Ótimo não é 100% redondo desde 06/09: perde 1 partida em 600.** Está
+diagnosticada — ele levanta as sete estruturas num sorteio mau e chega curto —,
+e é jogável, não defeito. Um Ótimo que caia MUITO abaixo disso, sim, é defeito.
 
 Se o pedido implica outro alvo, **isso é decisão de design e não é sua**:
 pergunte, e registre em `docs/decisoes/` antes de tocar em constante nenhuma.
@@ -139,6 +146,15 @@ for t in tests/run_tests tests/teste_design tests/teste_audio \
 done
 ```
 
+⚠️ **E SE UM EFEITO DEIXAR DE SER GLOBAL, O MODELO DO PROJETOR TEM DE APRENDER
+ISSO.** Ele resume o jogo numa conta fechada, e uma conta fechada só sabe o que
+lhe ensinaram: em 06/09 o bónus do armazém passou a depender do MOTIVO do
+barco, e o modelo, que ainda o somava a tudo, saiu **15,7% acima do medido** no
+Mediano e no Ótimo — o portão reprovou, com razão. É a irmã da armadilha que a
+`007` registou com o `cais`: efeito novo que muda o barco médio sem nenhuma
+constante de VALOR ter mudado. **Dois perfis fora e o terceiro dentro é o
+modelo a ignorar uma compra**, não métrica.
+
 **Se o projetor deixar de calibrar, leia o erro antes de mexer no modelo.** Um
 perfil fora e dois dentro (0,1% e 0,5%) não é modelo partido — é a métrica: com
 custo fixo grande, a margem de quem tem pouca vazão é a diferença pequena entre
@@ -160,7 +176,8 @@ em três sítios de uma vez. Procure e conserte:
 | `docs/ESTADO_DO_PROJETO.md` | o resumo da economia, nas primeiras linhas |
 | `docs/decisoes/005` | o alvo, e a tabela das tentativas |
 | `simular_balanceamento.gd` | o aviso de amostra curta cita as taxas |
-| `projetar_parcelas.py` | o bloco "Leitura" — imprime no CI a cada corrida |
+| `projetar_parcelas.py` | o bloco "Leitura" — imprime no CI a cada corrida — **e o MODELO, se o efeito de uma estrutura mudou de forma** |
+| `gerar_tabela_numeros.py` | se entrou um `const` de dicionário: literal composto não vai à tabela sozinho, e some sem erro (foi o caso de `MOTIVOS` em 06/09) |
 | `BR_Port_GDD_V7_ERRATA_ECONOMIA.md` | o fecho da pergunta cita as taxas |
 | `docs/design/BR_Port_GDD_V7.jsx` | faixas de contrato e parcelas, se a escala mudou |
 | **`.claude/skills/`** | **as duas skills afirmam as taxas** — esta, no alvo da §0, e a `/fechar-sessao`, na coluna "espera" da tabela dela. Foram esquecidas em 05/09 e apanhadas pela varredura da própria `/fechar-sessao`: quem muda uma receita tem de procurar quem a copiou, e a receita copiou-se a si mesma |
@@ -169,7 +186,7 @@ O grep abaixo achou os oito na última vez; se achar menos, alguém renomeou
 alguma coisa e a lista é que envelheceu.
 
 ```sh
-grep -rn '79,5\|31,0\|R\$796\|56,2' --include=*.md --include=*.gd --include=*.py .
+grep -rn '80,5\|35,2\|R\$745\|50,5\|530\.000' --include=*.md --include=*.gd --include=*.py .
 ```
 
 **Melhor que atualizar é DERIVAR.** Onde a prosa puder ler o número da medição

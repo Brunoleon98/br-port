@@ -141,14 +141,22 @@ Teste e import rodam sem tela.
    espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
    os números já viveram no GDD e nas constantes ao mesmo tempo, e divergiram.
 4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
-   O balanceamento medido é **100% / 79,5% / 31,0%** por perfil, com a mediana
-   do jogador mediano em R$796.970 contra uma parcela de R$550.000. Mexer sem
+   O balanceamento medido é **99,8% / 80,5% / 35,2%** por perfil, com a mediana
+   do jogador mediano em R$745.875 contra uma parcela de R$530.000. Mexer sem
    medir quebra isso.
    **O alvo é TRANQUILO, e é decisão registrada** (`docs/decisoes/005`): a
    dívida deixou de ser o motor. Os 100% / 47% / 0% que este arquivo afirmou
    até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
    história, não meta. Quem discrimina os jogadores agora é **o porto que
-   conseguem levantar**: o Ótimo atende 56,2 barcos, o Descuidado 12,6.
+   conseguem levantar**: o Ótimo atende 50,5 barcos, o Descuidado 12,1.
+   ⚠️ **A PARCELA MOVE O DESCUIDADO E QUASE NÃO MOVE O MEDIANO**, e não é
+   acaso: cada R$10.000 valem ~3 pontos a um e ~0,5 ao outro, porque a mediana
+   do Mediano fecha muito acima da parcela e a do Descuidado logo abaixo dela.
+   Botão só move quem está em cima da linha — e um varrimento que não acha o
+   ponto costuma estar a varrer o eixo errado (`docs/decisoes/008`).
+   ⚠️ **E o jogo perfeito perde 1 partida em 600**, desde 06/09. Está
+   diagnosticada: o Ótimo levanta as sete estruturas num sorteio mau e chega
+   curto. Não é ruído — é a exceção medida ao "teto garantido" da 005.
    **Medir é com `-- 600`.** As 30 partidas que o CI roda são teste de fumaça
    (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
    de ±18 pontos — comparar aquele número com estes é comparar sorteio.
@@ -226,6 +234,21 @@ Teste e import rodam sem tela.
    um defeito e o próximo, rode o validador uma vez e exija que ele PASSE; e
    guarde o original com `cp`, nunca com `git`, que não sabe o que ainda não foi
    commitado.
+   **E ASSERÇÃO QUE MONTA O ESPERADO DA MESMA FONTE DO DEFEITO NÃO TESTA
+   NADA.** Em 06/09 o teste do sorteio de motivos montava a lista do que devia
+   aparecer LENDO OS PESOS, e comparava com o que apareceu: pôr o peso de um
+   motivo a zero tirava-o dos dois lados ao mesmo tempo, e a asserção passava
+   contente com o motivo desaparecido do jogo. O defeito só reprovou depois de
+   entrar uma pergunta que NÃO sai dos pesos — "todo motivo escrito na tabela
+   chega ao jogo?", que é a irmã do `barco_medio` renderizado, validado e nunca
+   posto em doca nenhuma. Antes de escrever o esperado, pergunte de onde ele
+   vem: se vem de onde o defeito vai morar, o teste é um espelho.
+   **E confira que quem reprovou foi a guarda que se estava a testar.** No
+   mesmo dia, o primeiro defeito injetado nesse sorteio reprovou — pela
+   asserção dos PESOS, que somam 100 e denunciam qualquer peso mexido. A do
+   conjunto, que era a que se queria provar, nunca chegou a ser exercida. O
+   defeito seguinte teve de mexer em dois pesos ao mesmo tempo, para a soma
+   continuar em 100 e só a guarda certa poder reprovar.
    **E o defeito pode pegar e o teste passar na mesma.** Aconteceu em 02/09:
    tirar `tests/*` do filtro de export não reprovou nada, porque o teste
    perguntava `contains("tests/*")` e o `scenes/tests/*` que ficou no arquivo
@@ -700,6 +723,14 @@ tranca isso.
   mesmo painel muda de tamanho conforme o caso.
 - Nada de interface pousa sobre o mapa. Uma doca tem duas metades:
   `Dock.tscn` (cenário) e `DocaCartao.tscn` (texto e alvo de toque).
+- **Texto que passa a vir de uma TABELA cresce, e Label que não cabe não dá
+  erro — corta.** O motivo da escala pôs no cartão da doca uma palavra vinda de
+  `MOTIVOS`, e "Armazenagem" tem quase o dobro de "Granel". Medido: o interior
+  do cartão dá 200px, e o nome mais longo no CABEÇALHO, ao lado do valor a
+  19px, pede 233 — sairia cortado na captura sem nada a apontá-lo. Quem põe
+  texto de tabela na interface mede o PIOR CASO montado à mão, e não o que os
+  três cartões calham mostrar: um deles diz "aguardando barco" e passaria
+  sempre. O bloco D18 do teste de design faz essa conta.
 - Alvo de toque mínimo 44px. O teste de design cobre.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta
@@ -792,6 +823,13 @@ armadilha de uma função, no comentário dela.
   pior valor de omissão que há, porque se lê como medida** — no mesmo dia, um
   contador por turno que era zerado e nunca incrementado fez o relatório
   afirmar "0 barcos servidos" num porto que atendeu 184.
+- **`destino[chave] += x` num Dictionary CRIA a chave em silêncio.** É a irmã
+  do `.get(chave, omissão)` acima, do outro lado: ali um erro de digitação vira
+  número plausível na LEITURA, aqui vira dinheiro escrito numa chave que a soma
+  da receita não lê — e some sem erro nenhum. Aconteceria em 06/09 se um motivo
+  novo se prendesse a uma estrutura sem linha na contabilidade; a linha chama-se
+  como a estrutura de propósito, e o bloco T5l tranca que toda estrutura que
+  paga tenha a sua.
 - **Teste que JOGA fixa a semente.** `new_game()` chama `_spawn_boats()`, que
   tem 30% de abrir contra-oferta — e nessa fase o `advance_turn()` retorna
   CALADO. Um bloco de teste que avance o turno logo a seguir reprova em cerca

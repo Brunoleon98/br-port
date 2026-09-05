@@ -310,6 +310,29 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
                 dados["requer"] or "—"))
         linhas.append("")
 
+    mot = next((c for c in constantes if c["nome"] == "MOTIVOS"), None)
+    if mot is not None:
+        linhas += [
+            "## Motivos de escala — por que o navio veio",
+            "",
+            "O efeito é sempre o da ESTRUTURA a que o motivo está preso, nunca do",
+            "motivo sozinho: um motivo que pagasse mais por si seria só outro sorteio",
+            "de valor com um nome por cima. Os pesos são por TAMANHO de barco e somam",
+            "100 em cada coluna — o pesqueiro não traz contêiner, e o graneleiro não",
+            "é pesqueiro.",
+            "",
+            "| Motivo | Estrutura | Bónus | Turno extra | Peso pequeno | Peso grande |",
+            "|---|---|---:|---:|---:|---:|",
+        ]
+        for _id, dados in MOTIVOS_LIDOS.items():
+            bonus = float(dados["bonus"])
+            linhas.append("| %s | %s | %s | %s | %d | %d |" % (
+                dados["nome"], dados["estrutura"] or "—",
+                ("+%d%%" % round(bonus * 100)) if bonus > 0 else "—",
+                ("+%d" % int(dados["turnos_extra"])) if int(dados["turnos_extra"]) else "—",
+                int(dados["peso_pequeno"]), int(dados["peso_grande"])))
+        linhas.append("")
+
     linhas += [
         "---",
         "",
@@ -321,15 +344,25 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
 
 
 ESTRUTURAS_LIDAS: dict = {}
+MOTIVOS_LIDOS: dict = {}
 
 
 def ler_estruturas(dump: dict) -> None:
-    """As ESTRUTURAS saem do despejo do Godot, não do parser: é um literal
-    aninhado, e reimplementar aqui um leitor de dicionário GDScript seria um
-    segundo parser para manter — exatamente a fonte dupla que este script
-    existe para eliminar."""
+    """As ESTRUTURAS e os MOTIVOS saem do despejo do Godot, não do parser: são
+    literais aninhados, e reimplementar aqui um leitor de dicionário GDScript
+    seria um segundo parser para manter — exatamente a fonte dupla que este
+    script existe para eliminar.
+
+    ⚠️ E TÊM DE TER TABELA PRÓPRIA, senão somem. `avaliar()` devolve None para
+    literal composto e `montar_markdown()` salta o que é None — um dicionário
+    novo entraria no GameState, passaria a conferência contra o Godot (que
+    ignora os None) e nunca apareceria na tabela. É o gerador silencioso que o
+    cabeçalho deste arquivo descreve, só que pelo outro lado.
+    """
     ESTRUTURAS_LIDAS.clear()
     ESTRUTURAS_LIDAS.update(dump.get("ESTRUTURAS", {}))
+    MOTIVOS_LIDOS.clear()
+    MOTIVOS_LIDOS.update(dump.get("MOTIVOS", {}))
 
 
 def conferir_contra_godot(valores: dict, dump: dict) -> list[str]:

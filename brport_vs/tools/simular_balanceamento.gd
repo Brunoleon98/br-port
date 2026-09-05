@@ -133,6 +133,7 @@ func _rodar() -> void:
 	_imprimir_tabela(resultados, partidas)
 	_imprimir_regime(resultados)
 	_imprimir_reputacao(resultados)
+	_imprimir_motivos(resultados)
 	_imprimir_diagnostico(resultados)
 
 	# O despejo em JSON existe para o projetor das Parcelas 2 e 3
@@ -158,6 +159,34 @@ func _rodar() -> void:
 # ela variar entre jogadores e ao longo da partida. Se estiver no teto quando a
 # decisão acontece, o efeito é um bónus fixo para toda a gente — que é o mesmo
 # que não existir, com mais código.
+# A MISTURA DE MOTIVOS que o jogo sorteou de verdade, contra a que os pesos
+# prometem. Existe porque o peso de um motivo e a frequência dele não são a
+# mesma coisa: o `BOAT_LARGE_CHANCE` decide primeiro o TAMANHO, e o cais
+# reforçado multiplica essa chance — o porto que compra o cais vê mais
+# contêiner e mais granel sem nenhum peso ter mudado. Sem esta tabela, um peso
+# escrito errado e uma mistura deslocada pela mistura de barcos leem-se igual.
+func _imprimir_motivos(resultados: Array) -> void:
+	print("=== Mistura de motivos (barcos que chegaram) ===")
+	var ids: Array = GS.MOTIVOS.keys()
+	var cabecalho := "%-12s │ %8s" % ["Perfil", "barcos"]
+	for id in ids:
+		cabecalho += " │ %11s" % String(GS.MOTIVOS[id]["nome"])
+	print(cabecalho)
+	for r in resultados:
+		var m: Dictionary = r["motivos"]
+		var total := 0
+		for id in ids:
+			total += int(m.get(id, 0))
+		var linha := "%-12s │ %8d" % [r["perfil"]["nome"], total]
+		for id in ids:
+			linha += " │ %10.1f%%" % (100.0 * float(int(m.get(id, 0))) / maxf(1.0, float(total)))
+		print(linha)
+	print("")
+	print("  Os pesos de `MOTIVOS` são por TAMANHO de barco; a percentagem")
+	print("  acima é sobre o total, e move-se com a mistura de tamanhos.")
+	print("")
+
+
 func _imprimir_reputacao(resultados: Array) -> void:
 	print("=== Reputação NO MOMENTO da contra-oferta ===")
 	print("%-12s │ %8s │ %8s │ %8s │ %8s │ %13s │ %8s │ %8s" % [
@@ -300,6 +329,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	var estruturas_de_pe := {}
 	var docas_totais := 0
 	var trabalhadores_totais := 0
+	var motivos_vistos := {}
 
 	for run in range(partidas):
 		# Duas sementes independentes: uma para o mundo (chegada de barco,
@@ -328,6 +358,14 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		var caixa_semana := []
 		var obra_semana := []
 		var atendidos_semana := []
+		# A MISTURA DE MOTIVOS, contada por barco NASCIDO e não por barco
+		# servido: é a mistura que a tabela dos números publica em `MOTIVOS`, e
+		# é contra ela que se confere se os pesos que se escreveram são os que
+		# o jogo sorteia. Contada por `id` porque o mesmo barco aparece em
+		# muitos turnos seguidos — contar por varredura somaria cada um tantas
+		# vezes quantos turnos ele levar a descarregar, e o granel (que leva
+		# mais) sairia inflado exatamente pela razão que o distingue.
+		var ids_vistos := {}
 		var caixa_anterior: int = GS.cash
 		var atendidos_anterior := 0
 		var obra_na_semana := 0
@@ -336,6 +374,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 
 		while GS.phase != "game_over" and seguranca < 300:
 			seguranca += 1
+			_contar_motivos(motivos_vistos, ids_vistos)
 
 			if GS.phase == "rival_offer":
 				# A reputação NO MOMENTO da oferta é o número que interessa ao
@@ -424,7 +463,24 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"apostas_ganhas": apostas_ganhas,
 		"docas_medias": float(docas_totais) / float(partidas),
 		"trabalhadores_medios": float(trabalhadores_totais) / float(partidas),
+		"motivos": motivos_vistos,
 	}
+
+
+# Anota o motivo de cada barco NOVO que está em doca. `ids_vistos` é por
+# partida: o `_uid` do GameState recomeça a cada `new_game()`, então guardar os
+# ids entre partidas juntaria barcos diferentes com o mesmo número.
+func _contar_motivos(acumulado: Dictionary, ids_vistos: Dictionary) -> void:
+	for i in range(GS.docks.size()):
+		var barco = GS.docks[i]["boat"]
+		if barco == null:
+			continue
+		var id: int = int(barco["id"])
+		if ids_vistos.has(id):
+			continue
+		ids_vistos[id] = true
+		var motivo: String = String(barco["motivo"])
+		acumulado[motivo] = int(acumulado.get(motivo, 0)) + 1
 
 
 # Em que fração das partidas cada estrutura acabou construída.

@@ -50,9 +50,15 @@ func _caixa_para_tudo() -> int:
 	return total
 
 
-func _fake_boat(value: int, op_turns: int, rival: bool) -> Dictionary:
+# O motivo é o ÚLTIMO argumento e nasce em "pescado" de propósito: é o único
+# que não tem estrutura por trás, então um barco de teste feito por aqui paga
+# exatamente o que diz e nenhum bloco antigo passou a ganhar bónus escondido
+# quando o motivo entrou (06/09).
+func _fake_boat(value: int, op_turns: int, rival: bool,
+		motivo: String = "pescado") -> Dictionary:
 	return {
-		"id": 999, "value": value, "op_turns": op_turns, "large": op_turns > 1,
+		"id": 999, "value": value, "motivo": motivo,
+		"op_turns": op_turns, "large": op_turns > 1,
 		"progress": 0, "rival": rival, "matched": false, "matched_value": 0,
 	}
 
@@ -63,6 +69,7 @@ var _t5h_completo := false
 var _t5i_completo := false
 var _t5j_completo := false
 var _t5k_completo := false
+var _t5l_completo := false
 
 
 # Os testes rodam no primeiro frame, não em _initialize(): dentro de
@@ -279,17 +286,30 @@ func _run() -> void:
 		GS.comprar_estrutura("armazem") == true and GS.comprar_estrutura("armazem") == false)
 	_check("estrutura ja construida diz isso",
 		GS.impedimento_estrutura("armazem") == "Já construída.")
+	# ⚠️ SÃO DOIS BARCOS, E TÊM DE SER. Desde 06/09 o armazém não paga em tudo:
+	# paga no barco que vem DEIXAR CARGA e em mais nenhum. Com um barco só, um
+	# defeito que devolvesse o bónus global passaria — é a mesma armadilha de
+	# "contagem só se testa acima de um", com um motivo no lugar da contagem.
 	var esperado := int(round(200 * (1.0 + GS.ARMAZEM_BONUS)))
 	_garantir(1, 1)
-	GS.docks[0]["boat"] = _fake_boat(200, 1, false)
+	GS.docks[0]["boat"] = _fake_boat(200, 1, false, "armazenagem")
 	GS.docks[0]["worker_id"] = null
 	GS.metrics["revenue"] = 0
 	_check("trabalhador alocado para o teste do armazem",
 		GS.assign_worker(1, 0) == true)
 	GS.advance_turn()
-	_check("armazem soma %d%% ao barco (200 -> %d)" % [
+	_check("armazem soma %d%% ao barco de armazenagem (200 -> %d)" % [
 		int(GS.ARMAZEM_BONUS * 100), esperado],
 		int(GS.metrics["revenue"]) == esperado)
+
+	GS.docks[0]["boat"] = _fake_boat(200, 1, false, "pescado")
+	GS.docks[0]["worker_id"] = null
+	GS.metrics["revenue"] = 0
+	_check("trabalhador alocado para o teste do pescado",
+		GS.assign_worker(1, 0) == true)
+	GS.advance_turn()
+	_check("e nao soma nada ao pescado (200 -> %d)" % int(GS.metrics["revenue"]),
+		int(GS.metrics["revenue"]) == 200)
 
 	print("=== T5c: save de outra versao nao entra ===")
 	# O bug que este teste tranca: quando o porto passou a abrir com 1 doca em
@@ -417,6 +437,10 @@ func _run() -> void:
 	print("=== T5k: quitar a parcela antes do prazo ===")
 	_t5k_parcela_adiantada()
 	_check("o bloco T5k correu até ao fim", _t5k_completo)
+
+	print("=== T5l: o motivo da escala ===")
+	_t5l_motivo_da_escala()
+	_check("o bloco T5l correu até ao fim", _t5l_completo)
 
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
@@ -645,11 +669,15 @@ func _t5i_resumo_do_dia() -> void:
 	GS.workers[0]["busy_turns"] = 0
 
 	var bruto := 10000
-	var esperado: int = GS._valor_recebido(bruto)
+	# `_lancar_receita()` escreve num dicionário de contabilidade e devolve o
+	# total. Passar-lhe uma CÓPIA de `DIA_ZERADO` é como se pergunta quanto um
+	# barco pagaria sem mexer em nada do jogo.
+	var esperado: int = GS._lancar_receita(
+		GS.DIA_ZERADO.duplicate(), bruto, String(barco["motivo"]))
 	var proj: Dictionary = GS.projecao_do_dia()
 	_check("a projecao ve o barco que completaria hoje (servidos=%d receita=%d esperado=%d)"
-			% [int(proj["servidos"]), int(proj["docagens"]) + int(proj["armazem"]), esperado],
-		int(proj["servidos"]) == 1 and int(proj["docagens"]) + int(proj["armazem"]) == esperado)
+			% [int(proj["servidos"]), int(proj["docagens"]) + int(proj["armazem"]) + int(proj["patio"]), esperado],
+		int(proj["servidos"]) == 1 and int(proj["docagens"]) + int(proj["armazem"]) + int(proj["patio"]) == esperado)
 	# E NÃO MEXEU EM NADA — a doca continua com o barco, e o caixa não mudou.
 	var caixa_antes: int = GS.cash
 	_check("a projecao nao mexeu na doca", GS.docks[0]["boat"] != null)
@@ -659,8 +687,8 @@ func _t5i_resumo_do_dia() -> void:
 	var resumo: Dictionary = GS.resumo_do_dia()
 	var ontem: Dictionary = resumo["ontem"]
 	_check("depois de avançar, 'ontem' tem o que a projecao prometeu (servidos=%d receita=%d)"
-			% [int(ontem["servidos"]), int(ontem["docagens"]) + int(ontem["armazem"])],
-		int(ontem["servidos"]) == 1 and int(ontem["docagens"]) + int(ontem["armazem"]) == esperado)
+			% [int(ontem["servidos"]), int(ontem["docagens"]) + int(ontem["armazem"]) + int(ontem["patio"])],
+		int(ontem["servidos"]) == 1 and int(ontem["docagens"]) + int(ontem["armazem"]) + int(ontem["patio"]) == esperado)
 	# E o TURNO tem de ser o dia que fechou, e não o sentinela zero — sem isto
 	# o painel leria "o primeiro dia ainda não fechou" para sempre, mesmo com
 	# receita e barcos servidos dentro do dicionário.
@@ -827,3 +855,136 @@ func _t5k_parcela_adiantada() -> void:
 		GS.phase == "game_over" and bool(GS.won))
 
 	_t5k_completo = true
+
+
+# ── T5l ──────────────────────────────────────────────────────────────────
+#
+# O MOTIVO DA ESCALA (06/09). Um barco passou a nascer com um motivo, e o
+# efeito dele é o da ESTRUTURA a que está preso — não do motivo sozinho.
+# Este bloco tranca as quatro coisas que podem envelhecer caladas.
+func _t5l_motivo_da_escala() -> void:
+	GS._rng.seed = 20260906
+	GS.clear_save()
+	GS.new_game()
+
+	# (1) O CONTRATO DA CONTABILIDADE. `_lancar_receita()` roteia o bónus por
+	# `destino[estrutura]`, e o Dictionary do GDScript CRIA a chave em vez de
+	# reclamar: um motivo novo preso a uma estrutura sem linha própria somaria
+	# dinheiro numa chave que a receita não lê, e ele sumia sem erro nenhum.
+	var sem_linha := ""
+	for id in GS.MOTIVOS:
+		var m: Dictionary = GS.MOTIVOS[id]
+		if float(m["bonus"]) > 0.0 and not GS.DIA_ZERADO.has(String(m["estrutura"])):
+			sem_linha = id
+	_check("todo motivo que paga tem linha na contabilidade (%s)"
+			% ("nenhum de fora" if sem_linha == "" else sem_linha),
+		sem_linha == "")
+
+	# (2) OS PESOS SOMAM 100 EM CADA COLUNA. É o que a tabela dos números
+	# publica, e é assim que se lê a mistura sem fazer conta nenhuma.
+	for coluna in ["peso_pequeno", "peso_grande"]:
+		var soma := 0
+		for id in GS.MOTIVOS:
+			soma += int(GS.MOTIVOS[id][coluna])
+		_check("os pesos de %s somam 100 (%d)" % [coluna, soma], soma == 100)
+
+	# (3) O SORTEIO RESPEITA O TAMANHO, e TODO MOTIVO DA TABELA CHEGA AO JOGO.
+	#
+	# ⚠️ SÃO DUAS PERGUNTAS E A PRIMEIRA VERSÃO SÓ FAZIA UMA. Ela montava o
+	# conjunto esperado A PARTIR DOS PESOS e comparava com o sorteado — o que
+	# lê a mesma fonte do defeito: com o peso do granel a zero nas duas
+	# colunas, ele deixava de ser esperado E de ser sorteado, e a asserção
+	# passava contente. Injetado em 06/09, não reprovou nada. Quem tem de
+	# reprovar isso é uma pergunta que NÃO sai dos pesos: um motivo escrito na
+	# tabela e que nunca aparece é a irmã do `barco_medio` que era renderizado,
+	# validado e nunca entrava em doca nenhuma.
+	var vistos_no_total := {}
+	for grande in [false, true]:
+		var coluna := "peso_grande" if grande else "peso_pequeno"
+		var vistos := {}
+		for i in range(400):
+			# Tipo à mão: o `GS` é o autoload pego por `get_node()`, e o Godot
+			# recusa-se a inferir a partir de um Node destipado.
+			var sorteado: String = GS._sortear_motivo(grande)
+			vistos[sorteado] = true
+			vistos_no_total[sorteado] = true
+		var sobra := ""
+		for id in vistos:
+			if int(GS.MOTIVOS[id][coluna]) == 0:
+				sobra = id
+		_check("barco %s nunca sorteia motivo de peso zero (%s)"
+				% ["grande" if grande else "pequeno", sobra if sobra != "" else "nenhum"],
+			sobra == "")
+	var nunca_aparece := ""
+	for id in GS.MOTIVOS:
+		if not vistos_no_total.has(id):
+			nunca_aparece = id
+	_check("todo motivo da tabela chega ao jogo (%s)"
+			% ("todos" if nunca_aparece == "" else nunca_aparece),
+		nunca_aparece == "")
+
+	# (4) O PÁTIO PAGA NO CONTÊINER E EM MAIS NADA. É o par simétrico do teste
+	# do armazém no T5b: com um barco só, um bónus que voltasse a ser global
+	# passaria nos dois.
+	GS.clear_save()
+	GS.new_game()
+	GS.cash = 10000000
+	_check("o pátio foi comprado para o teste", GS.comprar_estrutura("patio") == true)
+	var esperado_conteiner := int(round(1000 * (1.0 + GS.PATIO_BONUS_CARGA)))
+	var recibo: Dictionary = GS.DIA_ZERADO.duplicate()
+	var pago_conteiner: int = GS._lancar_receita(recibo, 1000, "conteiner")
+	_check("o pátio soma %d%% ao contêiner (1000 -> %d)"
+			% [int(GS.PATIO_BONUS_CARGA * 100), pago_conteiner],
+		pago_conteiner == esperado_conteiner
+			and int(recibo["patio"]) == esperado_conteiner - 1000)
+	var pago_pescado: int = GS._lancar_receita(GS.DIA_ZERADO.duplicate(), 1000, "pescado")
+	_check("e nao soma nada ao pescado (1000 -> %d)" % pago_pescado,
+		pago_pescado == 1000)
+
+	# (5) O TURNO DO GRANEL, E O QUE O PÓRTICO FAZ COM ELE. As três leituras
+	# de uma vez, porque é entre elas que a conta pode escorregar: sem pórtico
+	# o granel ocupa o berço um turno a mais que o outro navio grande; COM
+	# pórtico o grande comum volta a 1, que é o número que o balanceamento de
+	# 05/09 mediu, e o granel fica em 2 em vez de descer ao mesmo lugar.
+	GS.clear_save()
+	GS.new_game()
+	_check("sem pórtico, o navio grande leva 2 turnos (%d)"
+			% GS._turnos_de_operacao(true, "conteiner"),
+		GS._turnos_de_operacao(true, "conteiner") == 2)
+	_check("sem pórtico, o granel leva 3 (%d)"
+			% GS._turnos_de_operacao(true, "granel"),
+		GS._turnos_de_operacao(true, "granel") == 3)
+	_check("e o pesqueiro leva 1 (%d)" % GS._turnos_de_operacao(false, "pescado"),
+		GS._turnos_de_operacao(false, "pescado") == 1)
+	GS.cash = 10000000
+	GS.comprar_estrutura("pier_2")
+	_check("o pórtico foi comprado para o teste",
+		GS.comprar_estrutura("guindaste") == true)
+	_check("com pórtico, o navio grande volta a 1 turno (%d)"
+			% GS._turnos_de_operacao(true, "conteiner"),
+		GS._turnos_de_operacao(true, "conteiner") == 1)
+	_check("com pórtico, o granel desce a 2 e nao a 1 (%d)"
+			% GS._turnos_de_operacao(true, "granel"),
+		GS._turnos_de_operacao(true, "granel") == 2)
+	_check("e o pesqueiro nunca desce abaixo de 1 (%d)"
+			% GS._turnos_de_operacao(false, "pescado"),
+		GS._turnos_de_operacao(false, "pescado") == 1)
+
+	# (6) E O BARCO NASCE COM ELE. Um motivo que não chegasse ao dicionário do
+	# barco só rebentaria na primeira docagem, num `MOTIVOS[motivo]` com chave
+	# vazia — e o `_make_boat()` é o único sítio que o põe lá.
+	GS.clear_save()
+	GS.new_game()
+	var fora := ""
+	for i in range(50):
+		var b: Dictionary = GS._make_boat()
+		if not b.has("motivo") or not GS.MOTIVOS.has(String(b["motivo"])):
+			fora = "barco %d" % i
+		elif int(b["op_turns"]) != GS._turnos_de_operacao(bool(b["large"]), String(b["motivo"])):
+			fora = "turnos do barco %d" % i
+	_check("todo barco nasce com motivo conhecido e turnos coerentes (%s)"
+			% ("todos" if fora == "" else fora),
+		fora == "")
+
+	_t5l_completo = true
+
