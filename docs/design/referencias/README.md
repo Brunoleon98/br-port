@@ -73,6 +73,21 @@ descobre a borda dele.
 depois.** E as referências dizem para onde estendê-lo — elas enchem o quadro
 inteiro nesta escala, sem uma única borda à vista.
 
+> ✅ **FEITO em 05/09, e a medição de 03/09 acima ficou curta num ponto: são
+> TRÊS fronteiras, não uma.** Além da cunha do canto superior esquerdo (o
+> `FUNDO_TERRA`), entravam no quadro 200 px do começo da costa pelo canto
+> superior DIREITO e 113 px do fim dela pelo inferior esquerdo — 626 px ao
+> todo. O mundo ganhou um degrau de costa em cada ponta (`my` de −14 a 42) e o
+> fundo da terra foi de −8 para −16; as três vão a zero, e o bloco D17 do teste
+> de design tranca isso.
+>
+> **E a largura era só metade do enquadramento.** A outra é o CENTRO: com o
+> ponto herdado o porto saía encostado à direita, 61% do quadro em terra. Ele
+> passou a sair do centroide dos berços, e a água voltou aos "perto de metade
+> do quadro" que a leitura abaixo pede. Os números estão em
+> `BR_Port_Plano_Arte_Blender.md`, e a régua que os produz é
+> `tools/medir_enquadramento.py`.
+
 ### Onde vai a AREIA — e não é onde se supôs
 
 A pergunta em aberto era: *a costa deste mapa é cais de pedra de ponta a

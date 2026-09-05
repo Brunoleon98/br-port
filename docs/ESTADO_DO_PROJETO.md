@@ -23,10 +23,11 @@
 
 ## O jogo hoje, em três linhas
 
-**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$400.000 e cinco estruturas
-para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada uma
-muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
-saem de ruína para telhado novo.
+**O porto abre em ruínas, e elas parecem ruínas.** 1 doca, 1 trabalhador,
+R$400.000 e cinco estruturas para consertar — píeres 2 e 3, armazém, pátio e
+escritório. Comprar cada uma muda o mapa: o pátio sai de terra batida para
+asfalto com carga, o armazém de meio telhado com a armação à vista para
+telhado novo, e o escritório de um canto de parede de pé para prédio inteiro.
 
 **O botão que move o jogo tem cor própria** — "Avançar dia" é âmbar com rótulo
 navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os cartões
@@ -106,7 +107,7 @@ em `docs/arquivo/HISTORICO.md`.
 
 | Item | O que falta | Por que só ele |
 |---|---|---|
-| **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
+| **A1** | A passagem SEGUINTE no APK. A primeira foi em 02/09 e está triada em `docs/arquivo/PLAYTEST_01_ANALISE.md` | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
 | **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas, e a 1 INTEIRA** — a 1 (paleta tropical, a areia das duas pontas e o enquadramento, 05/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Faltam a 3 e a 4 |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
@@ -126,8 +127,7 @@ quê — a análise tem a medida de cada um:
 ~~Vegetação pobre · casas mal distribuídas~~ — **fechado em 04/09**. A análise
 está fechada por inteiro no que não depende do Bruno.
 
-**Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
-leitor que o resume.
+**Livres, sem gate:** A8.
 
 Da arte, **quatro das seis etapas estão feitas, e a 1 está fechada por
 inteiro** — a 1 (paleta, areia das duas pontas e enquadramento), a 2 (a cauda

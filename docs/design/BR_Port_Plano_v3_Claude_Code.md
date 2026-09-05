@@ -580,7 +580,15 @@ medir → aplicar → recortar → medir outra vez.
 ⚠️ **E a suposição do custo estava errada num terceiro caso.** Esta seção dizia
 que a skill "precisa de 1 GB de `bpy` para ser testada". Metade não precisa: a
 Etapa 1 (paleta) e a Etapa 6 (interface) rodam sem Blender nenhum, e foi assim
-que a Etapa 1 saiu. E `tools/conferir_lote_de_arte.py`, que parecia estar do
+que a PALETA saiu.
+
+> ⚠️ **A outra metade da Etapa 1 precisou de Blender, e o custo dele também
+> estava supersticioso** (medido em 05/09): `pip install "bpy==4.5.0"` leva
+> **17 s** (373 MB), `gerar_props_iso.py` regera os 15 props em **68 s** e
+> `blender/gerar_brp.py todos` os outros 24 em **2 min 40**. Quatro minutos de
+> máquina para o que este documento chamou de "a metade arriscada". O que
+> custou mesmo foi outra coisa — que altura, no gerador do mapa, é PIXEL — e
+> essa não estava medida em lado nenhum. E `tools/conferir_lote_de_arte.py`, que parecia estar do
 lado caro, precisa só de `numpy` e `pillow` — **medido, 8 segundos**. Quem
 visse o `ModuleNotFoundError` e concluísse "isto é Blender" adiaria uma
 ferramenta que não custa nada. As receitas da skill foram todas corridas; duas
