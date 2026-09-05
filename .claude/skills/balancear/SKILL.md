@@ -24,7 +24,13 @@ discrimina os jogadores é o porto que eles conseguem levantar.
 |---|---|
 | Ótimo | 100% |
 | Mediano | ~80% — ganha com folga |
-| Descuidado | ~35% — perde a maioria, sem ser garantido |
+| Descuidado | ~31% — perde a maioria, sem ser garantido |
+
+⚠️ **O número do Descuidado desceu de ~35% para 31,0% em 05/09**, e não por um
+preço ter mudado: os dois upgrades de guindaste e cais (`docs/decisoes/007`)
+deram mais uma coisa para comprar, e quem compra mal compra tarde. Nenhum ponto
+do varrimento o recupera sem custar o Mediano. **Trazê-lo de volta é decisão do
+Bruno** — o botão seria a `PARCELA_AMOUNT`, e é outra medição.
 
 Se o pedido implica outro alvo, **isso é decisão de design e não é sua**:
 pergunte, e registre em `docs/decisoes/` antes de tocar em constante nenhuma.
@@ -157,12 +163,13 @@ em três sítios de uma vez. Procure e conserte:
 | `projetar_parcelas.py` | o bloco "Leitura" — imprime no CI a cada corrida |
 | `BR_Port_GDD_V7_ERRATA_ECONOMIA.md` | o fecho da pergunta cita as taxas |
 | `docs/design/BR_Port_GDD_V7.jsx` | faixas de contrato e parcelas, se a escala mudou |
+| **`.claude/skills/`** | **as duas skills afirmam as taxas** — esta, no alvo da §0, e a `/fechar-sessao`, na coluna "espera" da tabela dela. Foram esquecidas em 05/09 e apanhadas pela varredura da própria `/fechar-sessao`: quem muda uma receita tem de procurar quem a copiou, e a receita copiou-se a si mesma |
 
 O grep abaixo achou os oito na última vez; se achar menos, alguém renomeou
 alguma coisa e a lista é que envelheceu.
 
 ```sh
-grep -rn '47%\|79,5\|35,7\|R\$685' --include=*.md --include=*.gd --include=*.py .
+grep -rn '79,5\|31,0\|R\$796\|56,2' --include=*.md --include=*.gd --include=*.py .
 ```
 
 **Melhor que atualizar é DERIVAR.** Onde a prosa puder ler o número da medição

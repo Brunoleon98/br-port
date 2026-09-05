@@ -83,14 +83,19 @@ tirar() {
 	fi
 }
 
-# Onze turnos já abrem o Boletim e ele não fecha sozinho — por isso o mapa é
-# fotografado a DEZ, que é o fim da semana 1 com o porto todo de pé.
-tirar inicio  0 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/inicio.png"
-tirar porto   0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/porto.png" completo
+# ⚠️ OS TIROS DE MAPA PEDEM `limpo`, E ISSO SUBSTITUIU UM NÚMERO DE SORTE.
+# Aqui dizia-se "onze turnos já abrem o Boletim, por isso o mapa é fotografado
+# a DEZ" — um turno escolhido para cair rente à fronteira da semana. Quando os
+# upgrades mudaram a vazão do porto, o 10 passou para o outro lado dela e a
+# foto do `porto` saiu com a tabela por cima do mapa. `limpo` manda a
+# ferramenta fechar os painéis de ROTINA, e o tiro deixa de depender de onde a
+# semana calha.
+tirar inicio  0 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/inicio.png" limpo
+tirar porto   0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/porto.png" completo limpo
 # O NÍVEL DO MEIO. O píer, a lança e os prédios têm três níveis desde 05/09, e
 # `inicio` e `porto` só mostram os dois extremos — o do meio não tinha como ser
 # olhado, e o gate A5 é olhar. `meio` compra as duas primeiras estruturas, que é
-# o que `GameState.nivel_porto()` lê como n2.
+# o que `nivel_pier()` e `nivel_guindaste()` leem como n2.
 #
 # ⚠️ A ZERO TURNOS, e isto custou uma corrida vermelha. Ela nasceu a 10, por
 # cópia do `porto`, e no runner do CI apareceu um painel por cima — a foto é
@@ -98,7 +103,7 @@ tirar porto   0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/porto.png" c
 # oportunidades de o deixar numa fase que abre painel. Esta foto existe para
 # mostrar a ARTE do nível 2, não a economia: sem turno nenhum não há fase que
 # abra nada, e o porto já está montado porque a compra não depende de jogar.
-tirar meio    0 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/meio.png" meio
+tirar meio    0 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/meio.png" meio limpo
 tirar boletim 1 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.png" completo
 tirar pausa   1 --script res://tools/capturar_tela.gd -- 8  "$SAIDA/pausa.png" completo pausa
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"

@@ -23,24 +23,21 @@
 
 ## O jogo hoje, em três linhas
 
-**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$400.000 e cinco estruturas
-para consertar — píeres 2 e 3, armazém, pátio e escritório. Comprar cada uma
-muda o mapa: o pátio sai de terra batida para asfalto com carga, os prédios
-saem de ruína para telhado novo.
+**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$400.000 e **sete
+estruturas** — píeres 2 e 3, armazém, pátio, escritório e os dois UPGRADES
+(guindaste de pórtico e cais reforçado). Comprar cada uma muda o mapa: o pátio
+sai de terra batida para asfalto, os prédios saem de ruína, e os upgrades
+trocam a torre e a laje do píer.
 
 **O botão que move o jogo tem cor própria** — "Avançar dia" é âmbar com rótulo
 navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os cartões
 claros têm sombra e borda de 2px. Os escuros não, de propósito: a sombra do
 tema é mais clara que o fundo deles e faria halo.
 
-**A câmera afastou-se em 05/09, e a Etapa 1 fechou.** Vê-se agora um DISTRITO
-e não três berços: o `MEIA_LARG` efetivo passou de 30 para os 20 que o Bruno
-escolheu em 03/09, e a câmera centra-se no centroide dos três berços em vez de
-num ponto herdado. O mundo teve de crescer primeiro — um degrau de costa em
-cada ponta (`my` de −14 a 42) e o fundo da terra de −8 para −16 —, senão o
-jogador via o mapa ACABAR por três lados. Medido, o porto mantém ~47,5% do
-quadro nas três larguras e o que cresce é o distrito à volta: a terra natural
-vai de 14,4% a 30 para 22,3% a 20.
+**A câmera mostra um DISTRITO e não três berços.** O `MEIA_LARG` efetivo é 20,
+e ela centra-se no centroide dos berços. O mundo cresceu para isso — um degrau
+de costa em cada ponta (`my` de −14 a 42) e o fundo da terra em −16 —, senão o
+jogador via o mapa ACABAR por três lados. O porto mantém ~47,5% do quadro.
 
 **A água é tropical e o porto tem PRAIA nas duas pontas.** A areia não vai
 entre a água e o cais: vai **onde o porto não está** — para além do primeiro e
@@ -49,12 +46,12 @@ enrocamento) e a terra desce numa rampa de areia até a água, com restinga e
 pedras. Com o enquadramento novo elas emolduram o porto nos dois cantos.
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
-perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a mediana do mediano
-em R$685.271 contra uma parcela de R$550.000. Um contrato vale R$8.000–70.000 e
+perfil: ótimo 100% · mediano 79,5% · descuidado 31,0%, com a mediana do mediano
+em R$796.970 contra uma parcela de R$550.000. Um contrato vale R$8.000–70.000 e
 a manutenção custa R$40.000/semana — números de porto, não de banca de feira.
 
 A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
-agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
+agora é **o porto que conseguem levantar** — 56,2 barcos atendidos contra 12,6.
 Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
 **A partida grava-se.** Uma linha JSON por acontecimento, com o tempo que o
@@ -74,12 +71,16 @@ está pintado no cais. **As três placas com mastro saíram** — o mapa não ca
 mais texto nenhum; quem distingue os prédios do porto das casas da vila são os
 próprios prédios.
 
-**E o porto abre em RUÍNAS de verdade desde 05/09.** O `galpao_velho` reusava
-as paredes do galpão acabado e trocava só a cor do telhado — paredes brancas,
-janelas inteiras, portão fechado. Agora são paredes sujas, um terço delas
-desabado, meio telhado com a armação à vista e o portão fora do trilho; e a
-ruína do escritório, que era duas lajes cinzentas, é um CANTO de pé com porta e
-janela vazias. O plano de arte tem as três armadilhas que a passagem apanhou.
+**E o ARMAZÉM é um armazém dos dois lados do par.** O acabado lia como a maior
+casa do bairro — parede lisa, telha, três janelas de moldura. Hoje é telhado de
+zinco com nervura no sentido da água, chapa corrugada, fita de vidro rente ao
+beiral, portão de enrolar laranja e **plataforma de carga** com defensas e
+degraus. A cumeeira não subiu um pixel: a doca come parte da parede.
+
+**E o porto abre em RUÍNAS de verdade.** Paredes sujas com um terço desabado,
+meio telhado com a armação à vista, o portão fora do trilho; a ruína do
+escritório é um CANTO de pé com porta e janela vazias. Como se lá chegou está
+em `docs/arquivo/HISTORICO.md`.
 
 **O porto tem uma CIDADE atrás dele.** Rua paralela ao cais, calçada, acesso a
 cada berço e **duas fileiras de casas em quarteirões** — 3 a 5 lotes quase
@@ -108,7 +109,7 @@ em `docs/arquivo/HISTORICO.md`.
 |---|---|---|
 | **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **Quatro etapas feitas, e a 1 INTEIRA** — a 1 (paleta tropical, a areia das duas pontas e o enquadramento, 05/09), a 2 (a cauda dos props), a 5 (o trabalhador do cartão) e a 6 (o chrome da interface). Faltam a 3 e a 4 |
+| **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA** (o traço redesenha o que o corrugado já diz). Da 4, a cal descascada também caiu por medição. É a trilha inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a primeira jogada no telefone devolveu (02–03/09)
@@ -129,25 +130,15 @@ está fechada por inteiro no que não depende do Bruno.
 **Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
 leitor que o resume.
 
-Da arte, **quatro das seis etapas estão feitas, e a 1 está fechada por
-inteiro** — a 1 (paleta, areia das duas pontas e enquadramento), a 2 (a cauda
-dos props), a 5 (o trabalhador do cartão, 03/09) e a 6 (o chrome da
-interface). Faltam a 3 (contorno pelo compositor) e a 4 (materiais dirigidos).
+**A trilha de arte ACABOU: as seis etapas estão fechadas**, duas delas por
+rejeição medida — a 3 inteira (um filtro de borda redesenha o desenho, num
+estilo que desenha o detalhe com fronteiras de valor) e a cal descascada da 4
+(o `Pointiness` não separa quina de pano numa caixa). Os números de cada uma
+estão no `BR_Port_Plano_Arte_Blender.md`; o que fica a valer está no
+`CLAUDE.md`.
 
-**O enquadramento fechou em 05/09**, e o que ele custou não foi o Blender —
-`pip install bpy` leva 17 s e regerar os 39 props 3,5 min, tudo medido antes de
-prometer. Custou a descoberta de que **altura, no gerador do mapa, é PIXEL**:
-baixar o `MEIA_LARG` de 30 para 20 encolheria a planta e deixaria o `ALT_CAIS`,
-as paredes da vila e cada traço onde estavam — o porto esticado 1,5× para cima,
-e nenhuma das cinco suítes a lê-lo. A saída é a mesma regra dos props: escala-se
-no GRUPO. O mapa continua a ser DESENHADO a 30 num quadro de 1080 e o `viewBox`
-do SVG entrega 720. São dois espaços agora, e a fronteira é a função `tela()` —
-`docs/BRP_SPATIAL_CONTRACT.md` §1.1 e a regra no `CLAUDE.md`.
-
-**E a largura era só metade do enquadramento.** A outra é o CENTRO: com o ponto
-herdado, o porto saía encostado à direita com um bloco de mata a ocupar a
-esquerda. Ele passou a ser derivado do centroide dos berços, e a água voltou aos
-"perto de metade do quadro" que a leitura das referências pede.
+**Como o enquadramento se fez** está em `docs/arquivo/HISTORICO.md`; o que
+fica a valer é `docs/BRP_SPATIAL_CONTRACT.md` §1.1.
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
@@ -242,8 +233,11 @@ conta e o modo de a refazer estão em
 - Contra-oferta do Arlindo (3 presets + mood face do cliente)
 - Parcela única de **R$550.000** ao Sr. Ribeiro, vencendo ao fim da semana 4
   (8 turnos por semana, 4 semanas — 32 dias de partida)
-- **Cinco estruturas para reconstruir** — píer 2, píer 3, armazém, pátio e
-  escritório —, cada uma mudando o mapa. O porto abre em ruínas com 1 doca
+- **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
+  upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
+  com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase
+  (`docs/decisoes/007`): o guindaste corta o turno do navio grande, o cais
+  aumenta a chance de ele aparecer
 - Autosave local a cada turno
 - **Sete telas narrativas**: nomes do cais e do jogador (abertura), primeira
   página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
@@ -279,7 +273,9 @@ reaproveitam e por quê.
 As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
 nos dois estados, então o prédio não salta ao ser consertado. Mas as PEÇAS não
 se partilham entre os dois: foi isso que fez o galpão em ruína ter paredes
-novas até 05/09.
+novas até 05/09. **E cada estado precisa do seu vocabulário** — o mesmo defeito
+com o sinal trocado: consertada a ruína, o armazém ACABADO ficou o único prédio
+do porto desenhado só com repertório doméstico, e lia-se como casa.
 
 **A cauda dos props tem corpo** (Etapa 2): contêiner corrugado, carga
 empilhada, boia e marcador com faixa refletiva, e as catorze peças pequenas do
@@ -296,14 +292,19 @@ duas pontas**, onde o cais deu lugar a praia. A **mata atrás da vila tem
 saíram do SVG do mapa — `--sem-coqueiros` — pela mesma razão que os píeres: o
 que se mexe não pode estar assado no fundo.
 
-**O píer, a lança e o casco têm TRÊS NÍVEIS desde 05/09** — é a evolução do
-porto ficando visível. O píer vai de ripas de madeira com fresta a laje de
-concreto sobre estacas de aço, com defensas de pneu e contêiner empilhado; a
-lança, de um pau-de-carga sem contrapeso a uma lança longa com spreader. Quem
-escolhe é `GameState.nivel_porto()`, que só LÊ quantas estruturas estão de pé —
-a mecânica de upgrade que o GDD 7 prevê é da Fase 2 e continua por fazer, como
-a vila, que já cresce por `--nivel-vila=N` sem o jogo saber. **A torre é a mesma
-nos três**, porque o `pivot_offset` da lança é um só.
+**E as chapas lisas acabaram.** O convés do n2 é tabuado com junta e tom por
+tábua, a laje do n3 tem junta atravessada e os dois cargueiros têm ferrugem que
+escorre — padrões DIRIGIDOS, atribuídos peça a peça e nunca pela paleta. O n2
+era a maior superfície do jogo sem desenho, e o píer melhor lia mais liso que o
+provisório.
+
+**O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas de
+madeira a laje de concreto sobre estacas de aço; a lança, de pau-de-carga a
+lança longa com spreader; a torre, de poste de madeira com estais a pórtico com
+casa de máquinas. A torre era partilhada até se ver no telefone que o porto
+inicial e o completo liam como o mesmo guindaste — só o TOPO é que não se mexe,
+por causa do `pivot_offset` único. Quem escolhe são `nivel_pier()` e
+`nivel_guindaste()`, cada um preso ao seu upgrade (`docs/decisoes/007`).
 
 Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande) e desde
 05/09 os TRÊS atracam, escolhidos pelo valor do contrato — o médio era gerado,

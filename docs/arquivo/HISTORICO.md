@@ -485,3 +485,36 @@ margem de erro não engolir a conclusão. Daí o
 `tools/simular_balanceamento.gd`.
 
 ---
+
+## O enquadramento de 05/09, e o que ele custou (Etapa 1 da arte)
+
+Não foi o Blender — `pip install bpy` leva 17 s e regerar os 39 props 3,5 min,
+tudo medido antes de prometer. Custou a descoberta de que **altura, no gerador
+do mapa, é PIXEL**: baixar o `MEIA_LARG` de 30 para 20 encolheria a planta e
+deixaria o `ALT_CAIS`, as paredes da vila e cada traço onde estavam — o porto
+esticado 1,5× para cima, e nenhuma das cinco suítes a lê-lo. A saída é a mesma
+regra dos props: escala-se no GRUPO. O mapa continua a ser DESENHADO a 30 num
+quadro de 1080 e o `viewBox` do SVG entrega 720. São dois espaços desde então,
+e a fronteira é a função `tela()` — `docs/BRP_SPATIAL_CONTRACT.md` §1.1.
+
+**E a largura era só metade do enquadramento.** A outra é o CENTRO: com o ponto
+herdado, o porto saía encostado à direita com um bloco de mata a ocupar a
+esquerda. Ele passou a ser derivado do centroide dos berços, e a água voltou aos
+"perto de metade do quadro" que a leitura das referências pede.
+
+---
+
+## As duas ruínas do pátio, e por que não liam (05/09)
+
+O `galpao_velho` reusava as paredes do galpão acabado e trocava só a cor do
+telhado — paredes brancas, janelas inteiras, portão fechado —, e o porto abria
+"em ruínas" com um galpão de paredes novas. A ruína do escritório falhava pelo
+lado oposto: seguia a regra ("menos prédio") e saía como uma pilha de lajes de
+concreto, porque menos prédio não é menos ARQUITETURA. Hoje o armazém tem
+paredes próprias com um terço desabado e o escritório é um CANTO de pé com os
+seus vãos. As três armadilhas que a passagem apanhou — a escada de degraus
+iguais, a barra preta na quina coplanar e os barrotes a pairar — estão no
+`CLAUDE.md` e no plano de arte.
+
+---
+

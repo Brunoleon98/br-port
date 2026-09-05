@@ -1057,6 +1057,21 @@ def vaos_da_vila(recuo: float = None) -> list:
 #     escritório  parede 2,4 × 2,0  →  telhado 2,76 × 2,36
 #     armazém     parede 3,4 × 2,4  →  telhado 3,76 × 2,76
 #
+# ⚠️ E NO ARMAZÉM O TELHADO DEIXOU DE MANDAR (05/09). Ele ganhou uma
+# PLATAFORMA DE CARGA na face `+x`, e a testa dela — deck, tampo e defensas
+# de borracha — chega a `x = 2,16` contra os 1,88 do beiral. Quem responde
+# pela pegada em `mx` é a plataforma: 4,32 (2 × 2,16) em vez de 3,76. Em `my`
+# nada mudou, porque tudo o que sai na face `-y` (calha, tambor, defensas)
+# para dentro dos 1,38 do beiral.
+#
+# É exatamente o defeito de 02/09 outra vez, e por isso está escrito aqui em
+# vez de descoberto na captura: peça nova que avança o CHÃO do prop avança a
+# pegada, e a âncora — que é um ponto — não sabe disso. Com 4,32 sobram 0,52
+# unidades até o asfalto e 0,54 até o avental; foi por esses números que o
+# deck foi para `+x` e não para `-y`, onde a folga até o cotovelo da rua é de
+# 0,236 e o mesmo deck exigiria 3,46 em `my` — pegada que o D2 REPROVA, e que
+# foi injetada de propósito para o provar.
+#
 # ⚠️ E MULTIPLICADOS POR `ESCALA_PREDIO`, que em 03/09 passou a 0,72. Os dois
 # prédios encolheram porque o playtest os leu como "muito grandes, e em cima
 # da estrada": a base estava legal, mas o armazém ocupava 90% da largura do
@@ -1076,8 +1091,11 @@ PEGADAS = {
     # de caber o prédio consertado, senão consertar empurraria o prop para cima
     # do asfalto e o teste só reprovaria depois da compra.
     "escritorio_ruina": (2.76 * ESCALA_PREDIO, 2.36 * ESCALA_PREDIO),
-    "galpao": (3.76 * ESCALA_PREDIO, 2.76 * ESCALA_PREDIO),
-    "galpao_velho": (3.76 * ESCALA_PREDIO, 2.76 * ESCALA_PREDIO),
+    "galpao": (4.32 * ESCALA_PREDIO, 2.76 * ESCALA_PREDIO),
+    # A ruína ainda não tem plataforma — mas responde pela do prédio
+    # consertado, pela mesma razão que a do escritório: o vão que ela ocupa
+    # tem de caber o que vai nascer ali.
+    "galpao_velho": (4.32 * ESCALA_PREDIO, 2.76 * ESCALA_PREDIO),
 }
 
 

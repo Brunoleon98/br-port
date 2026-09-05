@@ -141,14 +141,14 @@ Teste e import rodam sem tela.
    espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
    os números já viveram no GDD e nas constantes ao mesmo tempo, e divergiram.
 4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
-   O balanceamento medido é **100% / 79,5% / 35,7%** por perfil, com a mediana
-   do jogador mediano em R$685.271 contra uma parcela de R$550.000. Mexer sem
+   O balanceamento medido é **100% / 79,5% / 31,0%** por perfil, com a mediana
+   do jogador mediano em R$796.970 contra uma parcela de R$550.000. Mexer sem
    medir quebra isso.
    **O alvo é TRANQUILO, e é decisão registrada** (`docs/decisoes/005`): a
    dívida deixou de ser o motor. Os 100% / 47% / 0% que este arquivo afirmou
    até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
    história, não meta. Quem discrimina os jogadores agora é **o porto que
-   conseguem levantar**: o Ótimo atende 46,3 barcos, o Descuidado 12,5.
+   conseguem levantar**: o Ótimo atende 56,2 barcos, o Descuidado 12,6.
    **Medir é com `-- 600`.** As 30 partidas que o CI roda são teste de fumaça
    (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
    de ±18 pontos — comparar aquele número com estes é comparar sorteio.
@@ -342,6 +342,33 @@ tranca isso.
   escritório: **a ruína não é o prédio pintado de velho, é MENOS prédio** —
   parede caída, vidro nenhum, meio telhado. Partilhar peças entre dois estados
   poupa render e custa a leitura, que é o que o estado existe para dar.
+- **E o estado DEPOIS precisa de vocabulário próprio, não só o ANTES.** É a
+  mesma regra com o sinal trocado, e foi o que sobrou depois de a ruína ser
+  consertada em 05/09: o armazém ACABADO continuou a ser desenhado só com o
+  repertório doméstico — parede lisa, telha, `janela()` com moldura, a
+  `porta()` do kit esticada — e lia-se como a maior casa da vila. Prédio que
+  tem função no jogo precisa das peças DA FUNÇÃO: um armazém quer plataforma
+  de carga, portão de enrolar, chapa corrugada e fita de vidro corrida.
+- **⚠️ COPIAR O VALOR DE UMA COR QUE NÃO VIVIA DELE NÃO COPIA NADA.** Irmã da
+  regra do matiz, logo abaixo, e do outro lado dela. O telhado de zinco do
+  armazém foi escolhido para ter a luminância do telhado de telha (108 contra
+  105), e medido no jogo ficou a **0,12 de Weber** contra o asfalto do pátio —
+  que é o que a telha já dava (0,13). A telha nunca se separou do chão pelo
+  VALOR; separou-se pelo MATIZ, e copiar a luminância copiou a metade que não
+  fazia o trabalho. **Antes de preservar um número, descubra se era ele que
+  segurava a leitura** — e a resposta mede-se contra o FUNDO, não na paleta.
+- **A paleta mente sobre o que se vai separar no render.** No dicionário a doca
+  do armazém (152) fica noventa pontos abaixo da parede (241); com a luz da
+  cena, a doca sai a ~150 e os vincos da chapa a ~135 — a faixa da base e a
+  textura da parede na MESMA banda. Quem separou foram três pixels de `metal`
+  no topo da doca. A esta escala quem separa não é o tom, é a LINHA escura, e
+  isso confere-se no render e não na tabela de cores.
+- **Peça que avança o CHÃO de um prop avança a PEGADA, e as faces não têm a
+  mesma folga.** Antes de escolher em que face sai um deck, uma escada ou um
+  toldo que pousa, meça a folga de cada uma em `porto_mapa_ancoras.json` — o
+  armazém tem 0,236 unidades em `+my` (até o cotovelo da rua) e 0,746 em `+mx`
+  (até o avental), e a plataforma de carga foi para `+x` por causa disso e não
+  por gosto. A história do prop confirma ou não a régua; nunca a substitui.
 - **Trocar cor olhando só o MATIZ achata a imagem.** Em 02/09 a água passou de
   mar frio a turquesa tropical com valores amostrados da referência, e ficou
   bonita e chapada: pôr as duas pontas amostradas nas duas pontas da rampa
@@ -478,6 +505,14 @@ tranca isso.
   `galpao` e `galpao_velho` partilham as paredes de propósito, então escalar
   grupo a grupo passaria duas vezes nas peças comuns e elas sairiam a `k²`,
   sem erro nenhum a apontá-lo.
+- **⚠️ "A PEÇA É PARTILHADA POR RESTRIÇÃO" merece ser medida antes de aceite.**
+  A torre do guindaste era a mesma nos três níveis, e o comentário dizia que o
+  `pivot_offset` único da lança obrigava a isso. Obriga UM PONTO — o topo —,
+  não a coluna inteira; e como a torre é a coluna que ocupa a silhueta e a
+  lança é o braço fino lá em cima, o porto inicial e o completo liam como o
+  mesmo guindaste. Quando um comentário justifica uma partilha, pergunte de que
+  TAMANHO é a amarra: quase sempre é menor do que a peça que ela está a
+  segurar.
 - **Rodar um prop 90° manda metade dos detalhes para a face que a câmera não
   vê.** Só `+x` e `-y` são visíveis. Rodar o caminhão para o eixo da estrada
   punha o para-brisa a olhar certo e a janela lateral para `-x` — invisível, e
@@ -520,6 +555,30 @@ tranca isso.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
+- **Padrão dirigido não entra na PALETA, entra peça a peça.** É a regra acima
+  aplicada a padrão em vez de a ruído: `madeira` veste o tabuado de 4,5×2,4 e
+  também o caixote de 25px, então ripar a entrada da paleta poria oito tábuas
+  dentro de um caixote. Pela mesma conta o pesqueiro (67px) não enferruja e os
+  cargueiros (97px) enferrujam.
+- **A MELHORIA não pode ser mais lisa do que aquilo que ela substitui.** O
+  convés do píer n2 era uma chapa de `madeira` — a maior superfície do jogo,
+  138px, três vezes na tela — e o n1, que é o pontão provisório, gasta
+  geometria em nove ripas com fresta. O jogador comprava o upgrade e o convés
+  ficava LISO. Ao construir dois estados de uma peça, confira que o melhor tem
+  mais desenho, não menos.
+- **Sombra entre peças precisa de PATAMAR, não de rampa.** Uma rampa linear de
+  dois pontos só chega ao escuro total no último pixel: num tabuado de passo
+  6px o que se via no jogo eram bandas de tom, não tábuas. Três pontos — escuro,
+  escuro, claro — dão à sombra metade da largura dela em valor cheio. Vale para
+  toda junta, fiada ou vinco desenhado por material.
+- **⚠️ `Pointiness` NÃO SEPARA QUINA DE PANO NUMA CAIXA, e não dá erro.** Ele é
+  atributo de VÉRTICE, e uma caixa chanfrada não tem vértice nenhum no meio da
+  face — o valor no pano é interpolado dos cantos, e não existe campo plano
+  contra o qual comparar. Medido no galpão em ruína: varia de 29 a 181 com
+  mediana 146 e 31% da parede acima de mediana+10, quando o efeito precisa de
+  uma distribuição bimodal. Aplicado, pintou a parede inteira. Efeito que
+  depende de aresta, neste kit, sai de uma COORDENADA (distância à aresta da
+  caixa), nunca da curvatura da malha.
 - **Recuar um contorno para DENTRO não é `costa_deslocada` com o sinal
   trocado.** Aquele empurra cada vértice na diagonal (+d em mx, −d em my), o
   que serve para uma faixa de água; ao longo de um MURO isso desloca também o
@@ -550,9 +609,29 @@ tranca isso.
   da rua e depois da vila —, e apareceu por cima dos telhados e do passeio. O
   mundo estava certo (ele para 0,15 antes da calçada); a ORDEM é que não,
   porque uma casa levanta-se 20 px e o que vem depois cai-lhe em cima.
-- **Freestyle foi testado e REJEITADO** — fecha o vazado da treliça e engorda
-  peça pequena. Contorno, se voltar, vem pelo compositor (profundidade +
-  normal), não por Freestyle.
+- **⚠️ CONTORNO DE TRAÇO ESTÁ FECHADO: as DUAS técnicas foram testadas e
+  rejeitadas.** O Freestyle fecha o vazado da treliça e engorda peça pequena
+  (30/08). O contorno pelo compositor — a saída que o plano propunha — foi
+  construído e medido em 05/09, e falha por outra razão, mais funda: **este
+  estilo desenha o detalhe COM fronteiras de valor** (o corrugado, as fiadas,
+  as cantoneiras, porque a esta escala relevo não sobrevive ao
+  antisserrilhado), e um filtro de borda procura exatamente fronteiras de
+  valor — ele acha o desenho e desenha-o outra vez. Medido: a parede do galpão
+  PERDE 14% de desvio local, e a treliça perde 21% de saturação com o traço
+  rente à silhueta. **Quem faz o trabalho do contorno é o contraluz do rig de
+  três pontos**, que separa a silhueta sem tocar no que está dentro do prop. A
+  prova refaz-se com `gerar_props_iso.py --contorno`; não a ligue.
+- **E na peça FINA o contorno apaga a COR, não a forma.** Vale para qualquer
+  efeito de borda que venha a seguir: a silhueta da lança não mudou UM pixel
+  (1133 opacos com e sem, vazados abertos) e ela saiu de laranja a castanho.
+  Contar pixel de silhueta não mede o dano; medir saturação mede.
+- **Prop NÃO é artefato byte-reprodutível, e o resto dos gerados é.** Os dois
+  mapas, os sons e a tabela dos números têm de sair idênticos, e o CI compara.
+  Um PNG de prop não: o denoiser do Cycles varia ±2/255 em algumas dezenas de
+  pixels entre corridas, e os props que não estão em `SOMBRA` ainda levam um
+  carimbo de data do Blender no PNG (os de `SOMBRA` escapam porque o
+  `compor_sombra` os reescreve com o gravador do projeto). `cmp` num prop não
+  responde "a imagem mudou" — para isso, compare os PIXELS.
 - A sombra de contato tem **azimute próprio (250°)**, diferente do azimute do
   mapa: no azimute do mapa ela cai atrás do prop e não se vê.
 - **O importador de SVG do Godot é o ThorVG e não desenha `<text>`.** Texto no

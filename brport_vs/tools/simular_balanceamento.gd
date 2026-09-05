@@ -267,7 +267,7 @@ func _avisar_se_amostra_curta(partidas: int) -> void:
 	print("")
 	print("⚠️  TESTE DE FUMAÇA, NÃO MEDIÇÃO — %d partidas por perfil." % partidas)
 	print("    A margem chega a ±%.0f pontos. NÃO compare estas taxas com as do" % pior)
-	print("    CLAUDE.md (100% / 79,5% / 35,7%, medidas em 600 partidas): a diferença")
+	print("    CLAUDE.md (100% / 79,5% / 31,0%, medidas em 600 partidas): a diferença")
 	print("    que você vê provavelmente é sorteio.")
 	print("    Para medir de verdade: ... --script res://tools/simular_balanceamento.gd -- 600")
 	print("")
@@ -494,7 +494,14 @@ func _escolher_acao(perfil: Dictionary, rng: RandomNumberGenerator) -> String:
 #
 # `folga_para_upgrade` continua sendo o que separa os perfis: o jogador atento
 # compra assim que dá, o descuidado só quando sobra muito.
-const ORDEM_DE_COMPRA := ["pier_2", "patio", "armazem", "pier_3", "escritorio"]
+# ⚠️ ESTA LISTA É CRAVADA, E ESQUECÊ-LA É UMA MEDIÇÃO QUE MENTE SEM AVISAR.
+# Ela não percorre `ESTRUTURAS`: uma estrutura nova que não entre aqui nunca é
+# comprada por perfil nenhum, e as 600 partidas saem IDÊNTICAS às de antes —
+# o que se lê como "o upgrade não mexeu no balanceamento" quando o que
+# aconteceu foi ninguém o ter comprado. Os dois upgrades vão no fim porque são
+# os últimos da cadeia de `requer`.
+const ORDEM_DE_COMPRA := ["pier_2", "patio", "armazem", "pier_3", "escritorio",
+	"guindaste", "cais"]
 
 
 # Devolve o que gastou. O valor importa: o delta de caixa de uma semana em que

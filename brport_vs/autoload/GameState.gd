@@ -73,14 +73,14 @@ signal negociacao_resolvida(acao: String, resultado: String, tentativa: int)
 #
 # TUNING — medido, não estimado. 600 partidas por perfil em
 # tools/simular_balanceamento.gd: **ótimo 100% · mediano 79,5% · descuidado
-# 35,7%**. A mediana do mediano fecha em R$685.271 contra uma parcela de
+# 31,0%**. A mediana do mediano fecha em R$796.970 contra uma parcela de
 # R$550.000. Mexer aqui SEM rodar o simulador quebra isso.
 #
 # O ALVO MUDOU, e é decisão registrada (docs/decisoes/005): o jogo é TRANQUILO.
 # Os 47% do jogador mediano eram a fantasia de sobrevivência que essa decisão
 # substituiu — a dívida deixou de ser o motor, e quem discrimina os jogadores
 # passou a ser o PORTO QUE ELES CONSEGUEM LEVANTAR, não se pagam a parcela: o
-# Ótimo atende 46,3 barcos e chega a 13,8/semana, o Descuidado atende 12,5 e
+# Ótimo atende 56,2 barcos e chega a 13,8/semana, o Descuidado atende 12,6 e
 # fica em 3,3/semana. A manutenção alta é o que faz essa diferença doer, porque
 # custo fixo pesa proporcionalmente muito mais em quem tem pouca vazão.
 const START_CASH := 400000
@@ -139,7 +139,40 @@ const ESTRUTURAS := {
 		"desc": "-50% nos salários da semana",
 		"custo": 80000, "ordem": 5, "requer": "",
 	},
+	# ── OS DOIS UPGRADES DE NÍVEL ──
+	#
+	# O GDD 7 decidiu que "estruturas principais (grua, cais, armazém) têm
+	# upgrade in-place de até 3 níveis", e a ARTE dos três já existia desde
+	# 05/09 — `pier_n1..n3` e `lanca_n1..n3`, escolhidas por uma leitura
+	# derivada. Estes dois são a MECÂNICA que faltava, e entram como estrutura
+	# comprável e não como fase nova, de propósito: fase nova travaria o
+	# `advance_turn()` e o simulador de balanceamento, que só sabe resolver
+	# duas (ver a nota em `nivel_pier()`).
+	#
+	# ⚠️ ELES SÃO OS ÚLTIMOS DA CADEIA, E É ISSO QUE FAZ O BLOQUEIO. Sem
+	# conceito de Fase no VS, quem tranca um upgrade até o porto estar de pé é
+	# o `requer` que já existia — e trancar pelo pré-requisito é mais honesto
+	# do que inventar uma Fase que o resto do jogo não conhece.
+	"guindaste": {
+		"nome": "Guindaste de pórtico",
+		"desc": "navio grande descarrega em 1 turno",
+		"custo": 120000, "ordem": 6, "requer": "pier_2",
+	},
+	"cais": {
+		"nome": "Reforçar o cais",
+		"desc": "+60% de chance de navio grande atracar",
+		"custo": 150000, "ordem": 7, "requer": "guindaste",
+	},
 }
+
+# O guindaste de pórtico corta o tempo de operação do navio grande. É o único
+# dos sete que mexe na VAZÃO em vez de no valor: os outros multiplicam dinheiro,
+# este devolve turnos, e turno devolvido vira barco a mais.
+const GUINDASTE_TURNOS_GRANDE := 1       # TUNING
+# O cais reforçado muda a MISTURA de barcos, não o valor de nenhum: um cais de
+# concreto aguenta navio maior, e navio maior paga mais. Multiplicador sobre o
+# `BOAT_LARGE_CHANCE`, preso a 1,0 para não passar de "só navio grande".
+const CAIS_CHANCE_GRANDE := 1.60         # TUNING
 
 const ARMAZEM_BONUS := 0.20             # TUNING
 const PATIO_BONUS_PIER := 1.00          # TUNING
@@ -1029,7 +1062,7 @@ func pay_debt() -> void:
 # pagar a dívida antes do tempo").
 #
 # O VALOR É O MESMO, e de propósito: desconto por antecipação mexeria na
-# economia medida (100% / 79,5% / 35,7%) e isso não se faz sem passar pelo
+# economia medida (100% / 79,5% / 31,0%) e isso não se faz sem passar pelo
 # `/balancear`. O que se ganha aqui não é dinheiro — é deixar de carregar a
 # dívida e o lembrete dela pelo resto da partida, e é uma escolha, porque o
 # mesmo caixa também compra estrutura.
@@ -1086,15 +1119,25 @@ func tem_estrutura(id: String) -> bool:
 ## ⚠️ E É POR ISSO QUE ELA NÃO É UM CAMPO NEM UMA FASE. O `advance_turn()`
 ## retorna calado fora de `"playing"` e o simulador de balanceamento só sabe
 ## resolver duas fases; qualquer estado novo aqui apareceria como partida que
-## não termina. Derivar do que já existe deixa os 100% / 79,5% / 35,7% medidos
+## não termina. Ler estrutura comprada em vez de criar fase deixa o motor do
+## turno intocado — os upgrades mexeram no balanceamento pelo CUSTO deles, que
+## é o que se mede, e não por um estado novo que o simulador não saiba resolver.
 ## intocados por construção.
-func nivel_porto() -> int:
-	var feitas: int = estruturas.size()
-	if feitas >= 4:
+## ⚠️ SÃO DUAS LEITURAS DESDE QUE OS UPGRADES EXISTEM, e não uma.
+## Enquanto o nível era derivado da contagem, píer e guindaste subiam juntos
+## porque nada os separava. Agora cada um tem o seu upgrade, e comprar o
+## guindaste não pode engrossar a laje do píer — o jogador veria mudar o que
+## não comprou. `nivel_porto()` saiu; quem chamava era o `Dock.gd`.
+func nivel_pier() -> int:
+	if tem_estrutura("cais"):
 		return 3
-	if feitas >= 2:
-		return 2
-	return 1
+	return 2 if estruturas.size() >= 2 else 1
+
+
+func nivel_guindaste() -> int:
+	if tem_estrutura("guindaste"):
+		return 3
+	return 2 if estruturas.size() >= 2 else 1
 
 
 # Por que não dá para comprar: "" quando dá. O painel mostra este texto, então
@@ -1167,7 +1210,12 @@ func _valor_recebido(bruto: int) -> int:
 
 # ── GERAÇÃO DE BARCOS ──
 func _make_boat() -> Dictionary:
-	var large := _rng.randf() < BOAT_LARGE_CHANCE
+	# O cais reforçado aumenta a chance de navio grande. `min` porque um
+	# multiplicador sem teto passaria de 1,0 e o porto deixaria de ver pesqueiro.
+	var chance_grande: float = BOAT_LARGE_CHANCE
+	if tem_estrutura("cais"):
+		chance_grande = min(1.0, chance_grande * CAIS_CHANCE_GRANDE)
+	var large := _rng.randf() < chance_grande
 	var value: int
 	if large:
 		value = _rng.randi_range(BOAT_VALUE_LARGE_MIN, BOAT_VALUE_LARGE_MAX)
@@ -1177,7 +1225,7 @@ func _make_boat() -> Dictionary:
 	return {
 		"id": _uid,
 		"value": value,
-		"op_turns": 2 if large else 1,
+		"op_turns": (GUINDASTE_TURNOS_GRANDE if tem_estrutura("guindaste") else 2) if large else 1,
 		"large": large,
 		"progress": 0,
 		"rival": false,

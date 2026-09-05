@@ -875,7 +875,8 @@ aqui. Um autoload carrega também em `--script`, então ele estaria de pé duran
 as 600 partidas × 3 perfis do simulador: a gravar por omissão, medir o
 balanceamento escreveria 1.800 arquivos e o custo de os escrever entraria na
 medida. Quem arma é o `Main._ready()`, e mais ninguém. Medido depois de tudo
-montado: **100% / 79,5% / 35,7%**, idêntico ao de antes.
+montado: **100% / 79,5% / 35,7%**, idêntico ao de antes. (Os upgrades de
+05/09 levaram o Descuidado a 31,0% — ver `docs/decisoes/007`.)
 
 **O que o leitor responde e nenhuma partida responde:** o `simular_balanceamento.gd`
 mede a dificuldade com perfis cujos números — `chance_esquecer_doca`,
@@ -934,6 +935,36 @@ isso seria repetir o erro do plano velho ao contrário.
 Seis gates humanos em quinze itens. É essa a conta que este plano orça — e a
 razão de A1 estar em segundo lugar é que ele é o gate que está há mais tempo
 adiado.
+
+### ⏳ Fora da fila, e à espera do Bruno a reordenar: o MOTIVO da escala
+
+Ideia do Bruno em 05/09, escrita aqui para não se perder na conversa e **sem
+número de fila**, porque quem reordena a fila é ele:
+
+> *"uma nova mecânica onde os navios irão para o porto por causa de diversos
+> motivos, podendo ser reabastecimento, carga ou descarga de materiais,
+> reparos, e por aí vai"*
+
+Hoje um barco tem VALOR e TAMANHO e mais nada: `_make_boat()` sorteia
+`large` e um valor na faixa, e servir é sempre a mesma operação. Dar um MOTIVO
+a cada escala é a primeira coisa que faria dois barcos do mesmo valor pedirem
+coisas diferentes do jogador.
+
+**O que isto toca, para o dimensionamento não ser adivinhado:**
+
+- **`_make_boat()` e o cartão da doca** — o motivo precisa de nascer com o
+  barco e de se ler no cartão, senão é estado invisível;
+- **a economia, e por isso passa pela `/balancear`.** Se o motivo mudar
+  duração, valor ou o que é preciso ter construído, ele mexe na vazão — que é
+  exatamente o eixo que os upgrades de `docs/decisoes/007` acabaram de mover;
+- **as estruturas**, se um motivo exigir uma delas (reparo pede oficina, que
+  não existe; reabastecimento pede combustível, que não existe). Aqui a
+  mecânica encosta na Fase 2, e a pergunta adiada em 03/09 volta;
+- **`Narrativa.gd`**, se cada motivo trouxer fala.
+
+⚠️ **E ela NÃO pode ser uma fase do `GameState`** — é a mesma regra que os
+upgrades de 05/09 seguiram, e pela mesma razão: fase nova trava o
+`advance_turn()` e o simulador, e o balanceamento medido deixa de valer.
 
 ---
 

@@ -41,7 +41,7 @@ Foi medida com o Blender e o Godot rodando, não no olho.
 | **Objetos por recorte de 200×200px** | 6–12 | 1–3 | Blender + gerador de mapa |
 | **Peças por prop** | dezenas, com ferragem e abertura | 2 a 42 (mediana 19) | Blender |
 | **Enquadramento** | um distrito | três berços | gerador de mapa (`MEIA_LARG`) |
-| **Contorno de silhueta** | sim, suave | não (Freestyle testado e rejeitado) | Blender, com outra técnica |
+| **Contorno de silhueta** | sim, suave | **feito pelo contraluz do rig**, e não por traço — as duas técnicas de traço foram testadas e rejeitadas (Etapa 3) | resolvido |
 | **Oclusão de ambiente** | em toda fresta | só a sombra de contato | Blender |
 | **Água/areia** | tropical quente, com praia | mar frio, sem areia | gerador de mapa (constantes) |
 | **Rosto de personagem** | sim | não | textura — **não é geometria** |
@@ -79,11 +79,13 @@ tela num pátio cheio. É lá que está o ganho barato.
    padrões dirigidos.
 4. **Oclusão de ambiente e luz quente.** O Cycles já está lá; é ajuste de
    parâmetro e um passe de AO.
-5. **Contorno de silhueta.** O Freestyle foi testado e **rejeitado com razão**
-   (fecha o vazado da treliça, engorda peça pequena). A saída não é insistir
-   nele: é fazer o contorno **no compositor**, a partir dos buffers de
-   profundidade e normal, onde a espessura pode depender da distância e o
-   vazado não fecha. Isto é conhecimento novo — ver §5.
+5. ~~**Contorno de silhueta.**~~ **Resolvido, e não como se supunha.** O
+   Freestyle foi rejeitado com razão (fecha o vazado da treliça, engorda peça
+   pequena) e o compositor — a saída que este item propunha — foi construído,
+   medido e rejeitado também, por outra razão: num estilo que desenha o
+   detalhe com fronteiras de valor, um filtro de borda redesenha o desenho.
+   Quem faz o trabalho é o contraluz do rig de três pontos. Os números estão
+   na Etapa 3.
 6. **Props que faltam.** Caminhão, empilhadeira, poste, cabeço avulso, pilha
    de caixotes, silo, pórtico, vagão, toldo de comércio. Cada um é meia hora
    de kit.
@@ -329,6 +331,98 @@ paredes que a câmera vê, cada uma com o seu vão, e o resto a desfazer-se.
 As três estão registadas no `CLAUDE.md`, e as duas primeiras são corolários de
 regras que ele já tinha.
 
+### Fora das etapas — o ARMAZÉM ACABADO, o outro lado do par (05/09)
+
+A ruína do armazém foi consertada mais acima nesta página, e o conserto
+deixou o par desequilibrado: o estado ANTES ganhou vocabulário próprio e o
+estado DEPOIS continuou a ser o que sempre tinha sido — uma casa grande. O
+Bruno disse-o assim: *"o galpão ainda lê como casinha e não como armazém —
+portão chato, sem plataforma de carga, sem corrugado"*.
+
+**E a causa era a mesma de sempre, com o sinal trocado.** Lá, o estado antes
+partilhava as peças do depois; aqui, o estado depois nunca teve vocabulário
+nenhum. As quatro peças que o desenhavam eram todas do repertório doméstico:
+parede lisa, telhado de TELHA com fiada horizontal, três `janela()` com
+moldura e travessa, e a `porta()` do kit esticada — a mesma função que faz a
+porta do escritório. Posto ao lado das casas da vila, que têm parede clara e
+telhado de telha, ele lia-se como o que era: **a maior casa do bairro**.
+
+**As quatro trocas, por ordem do que cada uma vale na tela:**
+
+| O que mudou | Porquê |
+|---|---|
+| **Telhado de zinco**, com a nervura no sentido da água | É a maior superfície do prop. A fiada corre em X e sai como um feixe descendo para a direita — o desenho de um telhado de telha. A nervura corre em Y e sai a subir para a direita: o mesmo custo de geometria, a leitura trocada (`telhado_duas_aguas(..., nervuras=N)`) |
+| **Plataforma de carga** | O plinto de 0,18 virou uma doca de 0,44 — altura de estrado de caminhão — com deck saliente na face `+x`, defensas de borracha, dois degraus e a soleira do portão assente NELA |
+| **Chapa corrugada** nas duas faces visíveis | Pela receita do contêiner: painéis de valor diferente, não vincos de relevo |
+| **Portão de enrolar**, laranja, com tambor e guias | No lugar do retângulo castanho chapado. 26px de largura numa face de 49 — é uma FORMA, não um detalhe |
+
+Mais a **fita de vidro corrida** rente ao beiral, que substituiu as três
+janelas de moldura: janela com moldura, travessa e peitoril é janela de casa,
+e três em fila numa parede clara são a assinatura de uma.
+
+#### Isto adianta metade da Etapa 4, e vale dizer qual metade
+
+A Etapa 4 pede *"ripa, corrugado, fiada de telha, ferrugem que escorre, cal
+descascada"* e **mede-se pelo galpão**. O corrugado ficou feito — e ficou
+feito na peça pela qual a etapa se mede, nas duas escalas que ela exige (o
+prop a 5x e o mapa a 1x). **Ripa, ferrugem e cal continuam por fazer**, e são
+para todos os props, não só para este. A etapa não fecha aqui.
+
+#### Cinco coisas que a passagem mediu, e três desmentiram o desenho
+
+**1. A altura não cresceu um pixel, e isso foi decisão.** A cumeeira continua
+em 2,32 — a doca COME parte da parede (0,44 + 1,26 + 0,62) em vez de se
+empilhar debaixo dela. Empilhar teria devolvido metade do defeito que o
+`ESCALA_PREDIO` de 03/09 existe para corrigir: os dois prédios do pátio a
+levantarem-se ~4x a altura de uma casa e a derramarem a silhueta pela estrada.
+
+**2. ⚠️ COPIAR O VALOR DE UMA COR QUE NÃO VIVIA DELE NÃO COPIA NADA.** O
+telhado de zinco foi escolhido pela regra do §3 da skill `/arte` lida ao
+contrário — trocar o matiz sem tocar no valor —, e a conta fechava: `#5f6e7a`
+mede 108 de luminância contra os 105 do `telhado` de telha. Medido no jogo
+rodando, ele ficou a **0,12 de Weber** contra o asfalto do pátio... que é
+exatamente o que a telha já dava (**0,13**). A telha **nunca se separou do
+chão pelo valor — separou-se pelo MATIZ**, terracota contra cinza-azulado; e
+o zinco, sendo cinza-azulado como o asfalto, ficou sem separação nenhuma.
+Descer para `#4e5b66` dá **0,26**. É a irmã da armadilha da água de 02/09, do
+outro lado: lá trocou-se o matiz e esqueceu-se o valor; aqui copiou-se o valor
+certo de uma cor que não vivia dele.
+
+**3. O custo dessa descida, medido:** 15 pontos de luminância média AO PROP
+(122,7 → 107,5) e **zero ao mapa** — a captura inteira fica em 116,3 de média
+e 151 de amplitude, contra 116,5 e 151 antes. Um prédio não move a composição;
+move a própria leitura.
+
+**4. ⚠️ O DECK SAIU PELA FACE `+x` POR CAUSA DA PEGADA, e a régua decidiu
+antes da história.** As duas faces são visíveis, mas o espaço à volta delas
+não é o mesmo: medido em `porto_mapa_ancoras.json`, o armazém tem **0,236**
+unidades de folga em `+my` (até o cotovelo da rua, em 14,68) contra **0,746**
+em `+mx` (até o avental, em 8,70). Em `-y` cabem 0,25 de avanço e nem um a
+mais; em `+x` cabem 0,45 e ainda sobra meia unidade de cada lado. **Conferido
+com defeito injetado:** pôr a pegada em `my` nos 3,46 que este mesmo deck
+exigiria do lado `-y` faz o bloco D2 reprovar com *"a pegada entra no cotovelo
+da rua"* e sair com código 1. A história só confirmou: em `+x` a plataforma dá
+para o avental, que é por onde a carga do navio chega.
+
+**5. ⚠️ A DOCA NÃO SE SEPARAVA DA PAREDE PELO TOM, E A PALETA DIZIA QUE SIM.**
+Na paleta a doca (`concreto_borda`, 152) fica muito abaixo da parede (241). No
+render, com a luz da cena, a doca sai a ~150 e os VINCOS da chapa saem a ~135:
+a faixa da base e a textura da parede caem na **mesma banda de valor**, e o
+degrau que devia dizer "plataforma" lia-se como mais uma sombra do corrugado.
+Quem separou foram três pixels de `metal` no topo da doca — a mesma lição das
+cantoneiras do contêiner: **a esta escala quem separa não é o tom, é a LINHA
+escura**.
+
+E duas armadilhas velhas apanhadas outra vez, as duas nessa linha de 1px: ela
+tinha a largura da doca e as pontas saíam da quina como farpas no vazio, e o
+topo dela ficava coplanar com o tampo da doca. Param antes das duas agora.
+
+**O que NÃO se fez, e porquê:** o lanternim de cumeeira (a clarabóia elevada
+que todo galpão tem) ficou de fora — são 0,29 de altura, +11,6% na silhueta, e
+desfaria um terço do que o `ESCALA_PREDIO` comprou. E a ruína não foi tocada:
+o `telhado_velho` castanho já lê como zinco enferrujado ao lado do zinco novo,
+e ela acabou de ser refeita.
+
 ### Fora das etapas — os três níveis do píer, da lança e do casco (05/09)
 
 Pedido: *"variações de píer, guindastes e navios, para marcar a transição e
@@ -340,7 +434,7 @@ níveis, não a mecânica.
 **A mecânica é da Fase 2 e continua por fazer, de propósito.** Quem escolhe o
 nível é `GameState.nivel_porto()`, que só LÊ quantas estruturas já estão de pé:
 0–1 → n1, 2–3 → n2, 4–5 → n3. Não guarda estado, não decide nada e não
-acrescenta constante nenhuma — os 100% / 79,5% / 35,7% medidos ficam intocados
+acrescenta constante nenhuma — os 100% / 79,5% / 31,0% medidos ficam intocados
 **por construção**, e não por cuidado. É o mesmo padrão da vila, que cresce por
 `--nivel-vila=N` "sem o jogo precisar saber disso".
 
@@ -356,13 +450,38 @@ renderizado e validado, e **nunca entrava numa doca**: o jogo escolhia entre
 dois cascos por um booleano. O contrato já vale de R$8.000 a R$70.000 e não
 custava nada dizê-lo com a silhueta.
 
-⚠️ **A torre é a mesma nos três níveis, e isso é uma restrição e não uma
-economia.** O `pivot_offset` do nó `Lanca` em `Dock.tscn` é UM para as três
-lanças, e ele nomeia o topo da torre — que vive dentro do PÍER. Uma torre mais
-alta no n3 desencaixaria a lança ao girar, e o defeito só apareceria a meio de
-uma varrida, nunca numa captura parada. O bloco **D17** tranca as três coisas:
-o pivô cai dentro do desenho de cada lança, os três níveis são desenhos
-distintos, e os três cascos chegam à tela.
+⚠️ **A TORRE ERA A MESMA NOS TRÊS, E ISSO ERA O DEFEITO — não a restrição.**
+
+Esta página afirmou durante uma sessão que a torre partilhada era uma
+imposição do `pivot_offset`. É meia verdade, e a metade que falta é a que
+importa: o pivô é UM PONTO — `TOPO`, `GX`, `GY` —, não a coluna inteira. Tudo
+o que fica abaixo dele sempre foi livre.
+
+E o preço de não ver isso apareceu no telefone. A lança é o braço fino lá em
+cima; a torre é a coluna que ocupa a silhueta. Com a mesma torre nos três, o
+porto inicial e o completo liam como **o mesmo guindaste** — foi a queixa
+exata: *"parecem ser o mesmo, sendo que o porto inicial possui o mesmo
+guindaste do porto mais avançado"*.
+
+Hoje cada nível tem torre própria, e o topo é que não se mexe:
+
+| | torre |
+|---|---|
+| **n1** | pau-de-carga: poste de MADEIRA, duas cintas, dois estais em olhal. Sem treliça e sem cabine — é a única grua do jogo que não é laranja, porque o laranja é a cor do maquinário e um pontão provisório não tem maquinário |
+| **n2** | a treliça laranja de sempre, meia-largura 0,19, cabine pequena junto ao topo |
+| **n3** | pórtico: treliça a 0,27 (+42% de largura), casa de máquinas no convés, cabine maior a meia altura e escada |
+
+**⚠️ O n3 não pode crescer para CIMA, então cresce para os LADOS e para
+BAIXO.** A altura do topo é o único número que este prop não pode tocar; a
+leitura de "maior" vem da ÁREA da coluna e das peças ao pé dela.
+
+O bloco **D17** trancava só metade disto — as três asserções olhavam para a
+LANÇA e exigiam que ela cobrisse o pivô, e nenhuma perguntava se a TORRE
+chegava lá. Enquanto a torre era uma só isso não podia falhar, e por isso a
+falta não se notava; com três torres passaram a existir três maneiras de a
+lança girar em torno do vazio, nenhuma delas com erro. Hoje o D17 confere os
+dois lados, e **o defeito foi injetado para o provar**: encurtar o poste do n1
+em 0,90 faz reprovar com *"o alfa no pivô é 0.00"* e sair com código 1.
 
 ⚠️ **E empilhar não é passar uma altura maior.** O contêiner de cima do n3
 nasceu com `altura_px` dobrada, que o `_no_conves` lê como caixa MAIS ALTA
@@ -629,16 +748,138 @@ diferentes —, então o caixote passou a ser duas caixas tortas em madeiras
 distintas, e não uma caixa listrada. **O contêiner é o ganho claro desta
 metade; o caixote melhorou e continua a ser a peça mais difícil do convés.**
 
-### Etapa 3 — Contorno pelo compositor
+### Etapa 3 — Contorno pelo compositor  ❌ FEITA E REJEITADA em 05/09
 - Passe de normal + profundidade, detecção de borda no compositor, espessura
   proporcional à profundidade, composição por cima do beauty.
-- **Mede-se por:** o guindaste. Se a treliça continuar vazada, funcionou.
+- **Media-se por:** o guindaste. Se a treliça continuar vazada, funcionou.
 
-### Etapa 4 — Materiais dirigidos
+#### Foi construída, foi medida, e a treliça não era a medida certa
+
+O contorno pelo compositor está escrito e funciona
+(`ligar_contorno_compositor`, atrás de `--contorno`). Sobel na normal para os
+vincos, Sobel no Z mapeado para a silhueta, o máximo dos dois, rampa de
+limiar, e — a peça-chave — multiplicado pelo alfa do próprio render, senão o
+prop ganha um halo escuro em pixel transparente. **Ele fica no repositório
+como a PROVA**, que se refaz em vinte segundos; o que não fica é ligado.
+
+**O que se mediu, nas duas peças pelas quais este plano manda medir:**
+
+| | treliça da lança | parede do galpão |
+|---|---|---|
+| sem contorno | saturação **117,9** | saturação 53,0 · desvio **29,7** |
+| traço rente à silhueta | **93,3 (−21%)** | 47,0 · 24,9 |
+| traço recuado 2px | 112,1 (−5%) | 46,9 · **25,6 (−14%)** |
+
+**1. Na peça FINA o traço apaga a COR, não a forma — e o critério escrito
+media a metade errada.** A silhueta não mudou um pixel: 1133 opacos com e sem
+contorno, os vazados todos abertos. Pelo critério da etapa, *funcionou*. E a
+lança saiu de LARANJA a castanho: os montantes têm 2px, o Sobel dá 1px de
+traço de cada lado, e a peça inteira virou traço. O Freestyle fechava o
+vazado; este descolore. Recuar o traço 2px para dentro da silhueta salva a cor
+(−5%) — e, salvando-a, deixa a lança exatamente como estava. **Na peça fina o
+contorno ou estraga ou não existe.**
+
+**2. Na peça GRANDE o traço redesenha o que o desenho já dizia — e é aqui que
+a etapa morre, por uma razão que não é de técnica nenhuma.** Este projeto
+desenha o detalhe COM fronteiras de valor: o corrugado do contêiner, o do
+armazém, as fiadas do telhado, as cantoneiras. É decisão registada e é por uma
+razão medida — a essa escala o relevo não sobrevive ao antisserrilhado. Um
+filtro de borda procura exatamente fronteiras de valor. Ele encontra o desenho
+e desenha-o outra vez por cima: a chapa corrugada, que é uma superfície com
+nervura, passa a ler-se como um gradeado, e **o desvio local da parede — que é
+a textura dela — CAI 14% em vez de subir**.
+
+**3. E o trabalho já estava feito por outra peça.** O rig de três pontos do
+`preparar_cena()` tem um contraluz cujo comentário, escrito na Etapa 2, diz o
+que ele é para fazer: *"põe um fio de luz na quina de cima, e é esse fio que
+separa a peça do fundo — faz o trabalho de um contorno desenhado sem ter de
+desenhar contorno nenhum"*. Ele separa a silhueta **sem tocar nas fronteiras
+de valor de dentro do prop**, que é precisamente o que o contorno não
+consegue. A linha da §2 que dizia "contorno de silhueta: não" estava a
+comparar o jogo com a referência olhando a técnica em vez do efeito.
+
+**O Freestyle foi apagado nesta passagem.** Ele estava atrás da mesma flag,
+rejeitado desde 30/08 e sem chamador; manter duas implementações rejeitadas
+por trás de um argumento só é convite a alguém ligar a errada.
+
+### Etapa 4 — Materiais dirigidos  ✅ FECHADA em 05/09, com uma baixa
 - Família de padrões: ripa, corrugado, fiada de telha, ferrugem que escorre
   de cima para baixo, cal descascada nas quinas.
 - **Mede-se por:** o galpão a 100% e a 25% — padrão que só funciona de perto
   não serve.
+
+#### Os cinco padrões, e onde cada um foi parar
+
+| Padrão | Onde ficou | Como |
+|---|---|---|
+| **corrugado** | parede e telhado do armazém (05/09) | **peça**, não material — `chapa_vinco` em `na_face` |
+| **ripa** | convés do píer n2 e laje do n3 | `material_ripado`, junta + tom por tábua |
+| **ferrugem que escorre** | casco dos dois cargueiros | `material_escorrido`, ruído esticado em Z |
+| **fiada de telha** | já era geometria desde 30/08 | `telhado_duas_aguas` |
+| **cal descascada nas quinas** | ❌ **não se faz nesta geometria** | ver abaixo |
+
+**A diferença entre `material_gasto` e um padrão dirigido é uma só, e é a que
+dá nome à etapa:** a mancha dele é isotrópica e não sabe onde é em cima.
+Ferrugem sabe — ela nasce numa solda e a chuva puxa-a para baixo. Tábua sabe —
+ela corre num sentido. Quem faz a anisotropia é o `Mapping`, esticando a
+coordenada antes do ruído: a escala do `Noise` é um número só e não sabe
+fazê-la sozinha.
+
+**⚠️ E ELES NÃO ENTRAM NA PALETA, ENTRAM PEÇA A PEÇA.** `madeira` veste o
+tabuado de 4,5×2,4 e também o caixote de 25px: ripar a entrada da paleta poria
+oito tábuas dentro de um caixote. É a regra do `DESGASTE` outra vez, aplicada a
+um padrão em vez de a um ruído — e é por isso que o pesqueiro (67px) não
+enferruja e os cargueiros (97px) enferrujam.
+
+#### O que a ripa achou: o píer MELHOR parecia menos construído que o pior
+
+Medido antes de desenhar: o convés do n2 é a **maior superfície do jogo** —
+4,5 × 2,4, cerca de 138px de silhueta, e aparece três vezes na tela. Ele era
+uma chapa lisa de `madeira`, e lia-se como uma folha de compensado. O n1, que é
+o pontão provisório, gasta geometria em nove ripas com fresta. Ou seja: o
+jogador comprava a melhoria e o convés ficava mais liso.
+
+A laje de concreto do n3 tinha o mesmo defeito, e leva o mesmo padrão com os
+números do MATERIAL: painel de 0,90 (18px) em vez de tábua de 0,30 (6px), junta
+fina, quase nenhuma variação de tom — concreto lançado em fôrma varia pouco,
+tábua serrada varia muito, e é essa diferença que impede os dois píeres de se
+parecerem. As juntas correm atravessadas, que é como uma junta de dilatação
+corre e evita repetir a direção do tabuado.
+
+**⚠️ Duas coisas que a ripa ensinou, e a segunda custou uma captura:**
+
+1. **O tom por tábua é o que separa isto de um pente.** Riscar linhas escuras a
+   passo constante é o que a vila já ensinou a não fazer — *"73% dos vãos
+   mediam o VILA_PASSO, e aquilo lia como cerca"*. A junta diz onde uma tábua
+   acaba; o TOM diz que são peças diferentes. Ele sai de um `White Noise` 1D
+   alimentado pelo ÍNDICE da tábua (`floor`), não pela posição — assim a tábua
+   inteira tem um valor só, em vez de um degradê ao longo dela.
+2. **Uma rampa de dois pontos não faz junta que sobreviva à escala.** Linear de
+   0 a `junta`, ela só chega ao escuro total no último pixel: num passo de 6px
+   o que se via no jogo rodando eram bandas de tom, não tábuas. O terceiro
+   ponto dá à sombra um PATAMAR — escura de verdade em metade da largura dela.
+   É a mesma lição das fiadas do telhado: o que o olho lê a esta escala é a
+   sombra ENTRE as peças, e sombra precisa de corpo.
+
+#### ❌ A cal descascada não se faz, e a causa é a geometria de caixa
+
+O caminho óbvio é o nó `Geometry > Pointiness`, que mede convexidade e devia
+valer ~0,5 no pano e mais na quina. Só que **ele é um atributo de VÉRTICE**, e
+uma caixa chanfrada não tem vértice nenhum no meio da face: estão todos na
+aresta. O valor no pano não é medido, é INTERPOLADO dos cantos — não existe
+campo plano contra o qual comparar.
+
+**Medido**, a saída crua do `Pointiness` no galpão em ruína: varia de **29 a
+181** (0..255), mediana **146**, e **31% da parede acima de mediana+10**. Uma
+distribuição larga e contínua, quando o efeito precisa de uma bimodal.
+Aplicado, ele pintou a parede INTEIRA de reboco e a ruína — que tinha acabado
+de ser refeita — virou um barracão castanho.
+
+Subdividir resolveria em teoria e não na prática: para uma orla de 2px seriam
+precisos vértices a cada ~0,1 unidade, e com a densidade que este kit usa o
+efeito sai como um vinhetamento de 12px. **Cal descascada, se voltar, vem de
+uma coordenada — distância à aresta da própria caixa —, nunca da curvatura da
+malha.** A função foi apagada; fica a lição.
 
 ### Etapa 5 — Personagem com rosto  ✅ FEITA em 03/09
 - Folha de rostos por gerador de imagem, aplicada num plano da cabeça.
