@@ -57,9 +57,9 @@ A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
 agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
 Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
-**A partida grava-se desde 02/09.** Uma linha JSON por acontecimento, com o
-tempo que o jogador ficou em cada turno — a pergunta do A7. O nome de quem
-jogou NÃO entra no arquivo (`docs/decisoes/006`). Sai pelo menu de pausa;
+**A partida grava-se.** Uma linha JSON por acontecimento, com o tempo que o
+jogador ficou em cada turno — a pergunta do A7. O nome de quem jogou NÃO entra
+no arquivo (`docs/decisoes/006`). Sai pelo menu de pausa;
 `tools/ler_registros.py` resume.
 
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
@@ -224,9 +224,9 @@ conta e o modo de a refazer estão em
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados no cronograma, mantidos como registro das decisões) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
 
-| `tools/capturar_evidencia.sh` | **As cinco fotografias que provam o que ficou** — semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
+| `tools/capturar_evidencia.sh` | **As seis fotografias que provam o que ficou** — e uma delas é o nível 2 do porto, que os dois extremos não mostram — semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
-| `.github/workflows/captura.yml` | As cinco imagens anexadas a cada PR, e o antes/depois contra a base |
+| `.github/workflows/captura.yml` | As seis imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere que as quatro camadas existem e que nenhuma referência de documento aponta para arquivo que não há |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |

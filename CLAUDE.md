@@ -66,7 +66,7 @@ $G --headless --path brport_vs --script res://scripts/validation/asset_validator
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
 
-tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as cinco de uma vez
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as seis de uma vez
 
 # Blender como biblioteca Python (~1 GB, minutos)
 pip install "bpy==4.5.0"                                      # precisa de Python 3.11
@@ -144,7 +144,7 @@ Teste e import rodam sem tela.
    de ±18 pontos — comparar aquele número com estes é comparar sorteio.
    O próprio simulador avisa quando a rodada é curta demais para medir.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
-   ficou bonito. O CI já anexa as cinco a cada PR (artefato `brport-captura`) e
+   ficou bonito. O CI já anexa as seis a cada PR (artefato `brport-captura`) e
    diz na página da corrida qual mudou — mas dizer que mudou não é dizer que
    ficou bom, e essa parte continua a ser de quem olha.
    **Captura só se compara com semente E passo de tempo fixos.** É o que o

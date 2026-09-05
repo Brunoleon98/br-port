@@ -138,7 +138,12 @@ func _montar() -> void:
 	# estados (terra batida e pavimentado) e props que trocam de textura; sem
 	# isto só dava para conferir na tela o estado inicial, e o segundo mapa
 	# ficava sem ninguém olhando.
-	if args.size() >= 3 and args[2] == "completo":
+	# `meio` compra só as DUAS primeiras, e existe porque o píer, a lança e os
+	# prédios ganharam três níveis em 05/09: `GameState.nivel_porto()` dá n1 com
+	# 0–1 estruturas, n2 com 2–3 e n3 com 4–5. Sem este modo, as capturas do CI
+	# mostravam só os dois EXTREMOS — o do meio não tinha como ser olhado, e o
+	# gate A5 é olhar.
+	if args.size() >= 3 and args[2] in ["completo", "meio"]:
 		# new_game() sorteia a mão inicial e tem 30% de abrir oferta do rival.
 		# Com o jogo em "rival_offer" toda compra é recusada com "Resolva o que
 		# está na tela primeiro", e a foto saía do porto EM RUÍNAS com o nome
@@ -160,10 +165,19 @@ func _montar() -> void:
 		var ids: Array = GS.ESTRUTURAS.keys()
 		var tabela: Dictionary = GS.ESTRUTURAS
 		ids.sort_custom(func(a, b): return int(tabela[a]["ordem"]) < int(tabela[b]["ordem"]))
+		if args[2] == "meio":
+			ids = ids.slice(0, 2)
 		for eid in ids:
 			if not GS.comprar_estrutura(eid):
 				push_error("captura: nao consegui comprar %s (%s)"
 					% [eid, GS.impedimento_estrutura(eid)])
+		# A foto tem de PROVAR o nível que promete. Comprar e não conferir é
+		# como o `completo` que saía com o porto a meio depois da reescala —
+		# nome certo, imagem errada, e sem erro nenhum.
+		var nivel_dito: int = 3 if args[2] == "completo" else 2
+		if int(GS.nivel_porto()) != nivel_dito:
+			push_error("captura: pedi nivel %d e o porto esta no %d (%d estruturas)"
+				% [nivel_dito, int(GS.nivel_porto()), GS.estruturas.size()])
 
 	_main = load("res://scenes/Main.tscn").instantiate()
 	root.add_child(_main)

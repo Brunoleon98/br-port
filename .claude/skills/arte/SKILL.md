@@ -140,7 +140,7 @@ git diff --stat -- brport_vs/art/porto_mapa_ancoras.json   # vazio = certo
 
 ```sh
 tools/capturar_evidencia.sh brport_vs /tmp/depois "$G"
-for f in inicio porto boletim pausa icones; do
+for f in inicio meio porto boletim pausa icones; do
   cmp -s /tmp/antes/$f.png /tmp/depois/$f.png && echo "$f igual" || echo "$f MUDOU"
 done
 ```
@@ -208,7 +208,7 @@ uma decisão; não registado, seria um esquecimento que a sessão seguinte repet
 ## 8. O gate é do Bruno, e o CI já o preparou
 
 **A entrega da arte não é o commit — é ele olhar.** O workflow `captura.yml`
-anexa a cada PR as cinco imagens do antes E do depois e diz qual mudou, no
+anexa a cada PR as seis imagens do antes E do depois e diz qual mudou, no
 resumo da corrida e no log. Isso existe para a olhada custar um zip em vez de
 uma sessão.
 

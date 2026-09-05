@@ -87,6 +87,11 @@ tirar() {
 # fotografado a DEZ, que é o fim da semana 1 com o porto todo de pé.
 tirar inicio  0 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/inicio.png"
 tirar porto   0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/porto.png" completo
+# O NÍVEL DO MEIO. O píer, a lança e os prédios têm três níveis desde 05/09, e
+# `inicio` e `porto` só mostram os dois extremos — o do meio não tinha como ser
+# olhado, e o gate A5 é olhar. `meio` compra as duas primeiras estruturas, que é
+# o que `GameState.nivel_porto()` lê como n2.
+tirar meio    0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/meio.png" meio
 tirar boletim 1 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.png" completo
 tirar pausa   1 --script res://tools/capturar_tela.gd -- 8  "$SAIDA/pausa.png" completo pausa
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
