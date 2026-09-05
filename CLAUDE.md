@@ -141,14 +141,14 @@ Teste e import rodam sem tela.
    espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
    os números já viveram no GDD e nas constantes ao mesmo tempo, e divergiram.
 4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
-   O balanceamento medido é **100% / 79,5% / 35,7%** por perfil, com a mediana
-   do jogador mediano em R$685.271 contra uma parcela de R$550.000. Mexer sem
+   O balanceamento medido é **100% / 79,5% / 31,0%** por perfil, com a mediana
+   do jogador mediano em R$796.970 contra uma parcela de R$550.000. Mexer sem
    medir quebra isso.
    **O alvo é TRANQUILO, e é decisão registrada** (`docs/decisoes/005`): a
    dívida deixou de ser o motor. Os 100% / 47% / 0% que este arquivo afirmou
    até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
    história, não meta. Quem discrimina os jogadores agora é **o porto que
-   conseguem levantar**: o Ótimo atende 46,3 barcos, o Descuidado 12,5.
+   conseguem levantar**: o Ótimo atende 56,2 barcos, o Descuidado 12,6.
    **Medir é com `-- 600`.** As 30 partidas que o CI roda são teste de fumaça
    (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
    de ±18 pontos — comparar aquele número com estes é comparar sorteio.

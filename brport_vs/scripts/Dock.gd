@@ -21,10 +21,11 @@ extends Control
 # textura nunca desloca o píer.
 const ArtePierVazio := preload("res://art/props/pier_vazio.png")
 
-# O PÍER E A LANÇA TÊM TRÊS NÍVEIS, e quem escolhe é `GameState.nivel_porto()`
-# — uma leitura do que já está construído, não uma mecânica nova. O GDD 7
-# decidiu os três níveis; a arte existe desde já, como a vila, que cresce por
-# `--nivel-vila=N` sem o jogo precisar saber disso.
+# O PÍER E A LANÇA TÊM TRÊS NÍVEIS, e desde os upgrades quem escolhe são DUAS
+# leituras — `nivel_pier()` e `nivel_guindaste()`, cada uma presa ao seu
+# upgrade comprável. Eram uma só enquanto o nível era derivado da contagem de
+# estruturas; separar foi o que impediu que comprar o guindaste engrossasse a
+# laje do píer, que é o jogador ver mudar o que não comprou.
 #
 # ⚠️ AS TRÊS LANÇAS GIRAM NO MESMO PONTO. O `pivot_offset` do nó `Lanca` é UM,
 # e as três foram construídas a partir do mesmo topo de torre para caberem
@@ -129,15 +130,18 @@ func refresh() -> void:
 	# A lança só existe onde há píer: numa vaga por construir há só estacas.
 	_mostrar_lanca(esta_construida())
 
-	var nivel: int = int(GameState.nivel_porto())
-	_lanca.texture = ArteLanca[nivel - 1]
+	# Dois níveis independentes: o guindaste é do `guindaste`, a laje é do
+	# `cais`. Uma leitura só faria o jogador ver mudar o que não comprou.
+	var nivel_lanca: int = int(GameState.nivel_guindaste())
+	var nivel_pier: int = int(GameState.nivel_pier())
+	_lanca.texture = ArteLanca[nivel_lanca - 1]
 	if not esta_construida():
 		_pier.texture = ArtePierVazio
 		_parar_barco()
 		_barco.texture = null
 		return
 
-	_pier.texture = ArtePier[nivel - 1]
+	_pier.texture = ArtePier[nivel_pier - 1]
 	var dock: Dictionary = GameState.docks[dock_index]
 	var boat = dock["boat"]
 

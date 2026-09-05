@@ -45,12 +45,12 @@ enrocamento) e a terra desce numa rampa de areia até a água, com restinga e
 pedras. Com o enquadramento novo elas emolduram o porto nos dois cantos.
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
-perfil: ótimo 100% · mediano 79,5% · descuidado 35,7%, com a mediana do mediano
-em R$685.271 contra uma parcela de R$550.000. Um contrato vale R$8.000–70.000 e
+perfil: ótimo 100% · mediano 79,5% · descuidado 31,0%, com a mediana do mediano
+em R$796.970 contra uma parcela de R$550.000. Um contrato vale R$8.000–70.000 e
 a manutenção custa R$40.000/semana — números de porto, não de banca de feira.
 
 A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
-agora é **o porto que conseguem levantar** — 46,3 barcos atendidos contra 12,5.
+agora é **o porto que conseguem levantar** — 56,2 barcos atendidos contra 12,6.
 Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
 **A partida grava-se.** Uma linha JSON por acontecimento, com o tempo que o

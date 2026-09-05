@@ -76,6 +76,11 @@ fase com menos porto do que podia ter.
 | Mediano | **79,5%** | R$685.271 | 35,5 | 11,4/sem |
 | Descuidado | **35,7%** | R$519.720 | 12,5 | 3,3/sem |
 
+> ⚠️ **Esta tabela é de 02/09 e continua a ser o que se mediu então.** Em
+> 05/09 os dois upgrades de guindaste e cais entraram (`docs/decisoes/007`) e
+> o Descuidado passou a **31,0%**; os outros dois perfis ficaram onde estavam,
+> e o vão em barcos atendidos abriu de 46,3 × 12,5 para 56,2 × 12,6.
+
 Contra uma Parcela 1 de R$550.000. É a forma que a decisão pede: o mediano
 ganha quatro em cada cinco — tranquilo —, e o descuidado perde duas em cada
 três, sem que perder seja garantido.

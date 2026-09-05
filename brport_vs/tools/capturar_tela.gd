@@ -61,7 +61,10 @@ func _process(_delta: float) -> bool:
 	if _frames < FRAMES_ATE_ASSENTAR:
 		if GS.phase == "rival_offer":
 			GS.negotiate_rival("igualar")
-			_fechar_painel_do_rival()
+		# A contra-oferta fecha sempre — ela nunca é o assunto de foto nenhuma.
+		# O BOLETIM só fecha se quem chamou pediu `limpo`, porque há um tiro
+		# que existe para o fotografar.
+		_fechar_paineis_de_rotina(OS.get_cmdline_user_args().has("limpo"))
 		return false
 
 	# QUANTOS PAINÉIS ESTÃO POR CIMA. A linha existe porque a captura do porto
@@ -143,8 +146,9 @@ func _montar() -> void:
 	# isto só dava para conferir na tela o estado inicial, e o segundo mapa
 	# ficava sem ninguém olhando.
 	# `meio` compra só as DUAS primeiras, e existe porque o píer, a lança e os
-	# prédios ganharam três níveis em 05/09: `GameState.nivel_porto()` dá n1 com
-	# 0–1 estruturas, n2 com 2–3 e n3 com 4–5. Sem este modo, as capturas do CI
+	# prédios ganharam três níveis em 05/09: n1 sem porto, n2 com duas
+	# estruturas de pé, e n3 quando o UPGRADE respectivo é comprado. Sem este
+	# modo, as capturas do CI
 	# mostravam só os dois EXTREMOS — o do meio não tinha como ser olhado, e o
 	# gate A5 é olhar.
 	if args.size() >= 3 and args[2] in ["completo", "meio"]:
@@ -178,10 +182,15 @@ func _montar() -> void:
 		# A foto tem de PROVAR o nível que promete. Comprar e não conferir é
 		# como o `completo` que saía com o porto a meio depois da reescala —
 		# nome certo, imagem errada, e sem erro nenhum.
+		# ⚠️ SÃO DOIS NÍVEIS DESDE QUE OS UPGRADES EXISTEM, e conferir só um
+		# deixaria passar exatamente o defeito que esta asserção existe para
+		# pegar: comprar tudo menos o `cais` daria guindaste n3 sobre laje n2,
+		# e a foto do porto "completo" sairia com metade do upgrade.
 		var nivel_dito: int = 3 if args[2] == "completo" else 2
-		if int(GS.nivel_porto()) != nivel_dito:
-			push_error("captura: pedi nivel %d e o porto esta no %d (%d estruturas)"
-				% [nivel_dito, int(GS.nivel_porto()), GS.estruturas.size()])
+		if int(GS.nivel_pier()) != nivel_dito or int(GS.nivel_guindaste()) != nivel_dito:
+			push_error("captura: pedi nivel %d e o porto esta em pier %d / guindaste %d (%d estruturas)"
+				% [nivel_dito, int(GS.nivel_pier()), int(GS.nivel_guindaste()),
+				   GS.estruturas.size()])
 
 	_main = load("res://scenes/Main.tscn").instantiate()
 	root.add_child(_main)
@@ -195,7 +204,7 @@ func _montar() -> void:
 	for t in range(turnos):
 		if GS.phase == "rival_offer":
 			GS.negotiate_rival("metade")
-			_fechar_painel_do_rival()
+			_fechar_paineis_de_rotina(false)
 			continue
 		if GS.phase != "playing":
 			break
@@ -208,16 +217,36 @@ func _montar() -> void:
 # sempre com o modal por cima e o mapa escurecido pelo dim — que era exatamente
 # o que se queria fotografar.
 #
-# Só o painel da contra-oferta é fechado (é o único que carrega `dock_index`):
-# as telas de fim de jogo e da parcela continuam fotografáveis.
-func _fechar_painel_do_rival() -> void:
+# ⚠️ E O BOLETIM ENTROU NESTA LISTA quando os upgrades mudaram o fluxo de
+# turnos — mas só sob pedido, e a diferença importa.
+#
+# O tiro do mapa era fotografado ao turno 10 "porque onze já abrem o Boletim":
+# um número escolhido para cair rente à fronteira da semana. Bastou a vazão
+# mudar para o 10 passar do outro lado dela, e a foto do `porto` saiu com a
+# tabela por cima do mapa — que é exatamente o defeito que a contagem de
+# painéis existe para denunciar, e que o comentário dela previu por escrito.
+# Amarrar uma foto a um turno que "por acaso" cai antes da fronteira é o mesmo
+# número cravado que este arquivo já perdeu duas vezes.
+#
+# Quem quer mapa limpo passa `limpo` e o Boletim fecha; quem quer fotografá-lo
+# não passa. A contra-oferta fecha nos dois casos: ela não é assunto de foto
+# nenhuma, e deixá-la aberta escurece o mapa inteiro com o dim.
+#
+# As telas de fim de jogo e da PARCELA continuam fotografáveis de propósito:
+# essas são o assunto de outras fotos, e fechá-las tiraria o que se quer ver.
+func _fechar_paineis_de_rotina(fechar_boletim: bool) -> void:
 	if _main == null:
 		return
 	var overlay := _main.get_node_or_null("Overlay")
 	if overlay == null:
 		return
 	for painel in overlay.get_children():
-		if "dock_index" in painel:
+		var rotina := "dock_index" in painel
+		var script: Script = painel.get_script()
+		if fechar_boletim and script != null \
+				and script.resource_path.ends_with("PainelBoletim.gd"):
+			rotina = true
+		if rotina:
 			overlay.remove_child(painel)
 			painel.queue_free()
 

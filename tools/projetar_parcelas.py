@@ -97,7 +97,7 @@ def ler_parcelas_do_gdd(gdd: Path) -> dict[int, tuple[int, int]]:
     return parcelas
 
 
-def valor_medio(faixa: tuple[int, int], k: dict) -> float:
+def valor_medio(faixa: tuple[int, int], k: dict, frac_cais: float = 0.0) -> float:
     """Valor bruto médio de um barco, na FORMA que o jogo usa.
 
     O jogo não sorteia uniforme na faixa: divide em barco pequeno e grande,
@@ -113,7 +113,20 @@ def valor_medio(faixa: tuple[int, int], k: dict) -> float:
     corte = lo + corte_f1 * (hi - lo)
     medio_pequeno = (lo + corte) / 2.0
     medio_grande = (corte + hi) / 2.0
+    # ⚠️ O CAIS REFORÇADO MUDA A MISTURA, e esquecê-lo aqui é o modelo mentir
+    # exatamente nos perfis que jogam bem. Ele multiplica a chance de navio
+    # grande, então o barco médio passa a valer mais sem nenhuma constante de
+    # VALOR ter mudado — e foi assim que o portão reprovou quando os upgrades
+    # entraram: Descuidado (que quase não compra o cais) passava a 7%, Mediano
+    # e Ótimo saíam 21% e 22% ABAIXO do medido. Um perfil fora é métrica; os
+    # que compram fora e o que não compra dentro é o modelo a ignorar a compra.
+    #
+    # `frac_cais` é a FRAÇÃO das partidas em que ele acabou de pé, pela mesma
+    # razão que as outras estruturas entram assim: arredondar para sim/não
+    # projetaria um porto que ninguém joga.
     p_grande = float(k["BOAT_LARGE_CHANCE"])
+    p_grande = min(1.0, p_grande * (1.0 + (float(k["CAIS_CHANCE_GRANDE"]) - 1.0)
+                                    * frac_cais))
     return (1.0 - p_grande) * medio_pequeno + p_grande * medio_grande
 
 
@@ -155,7 +168,7 @@ def margem_semanal(k: dict, barcos: float, faixa: tuple[int, int],
     terceiro píer em nenhuma: arredondar isso para "tem" ou "não tem" seria
     projetar um porto que ninguém joga.
     """
-    bruto = valor_medio(faixa, k)
+    bruto = valor_medio(faixa, k, estruturas.get("cais", 0.0))
     liquido = bruto * (1.0 + float(k["ARMAZEM_BONUS"]) * estruturas.get("armazem", 0.0))
     liquido *= (1.0 - desconto_medio_do_rival(k, barcos))
     contratos = barcos * liquido
@@ -197,7 +210,8 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
         desvio = abs(previsto - medido)
         erro = desvio / max(abs(medido), 1.0)
         # Passa por percentagem OU por piso absoluto — ver PISO_EM_BARCOS.
-        piso = PISO_EM_BARCOS * valor_medio(faixas[1], k)
+        piso = PISO_EM_BARCOS * valor_medio(faixas[1], k,
+                                            dados["estruturas"].get("cais", 0.0))
         passa = erro <= TOLERANCIA or desvio <= piso
         marca = "ok" if passa else "FORA"
         queixas.append("  %-11s medido R$%-7d  modelo R$%-7d  erro %5.1f%%  %s"

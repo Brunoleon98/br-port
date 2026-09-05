@@ -875,7 +875,8 @@ aqui. Um autoload carrega também em `--script`, então ele estaria de pé duran
 as 600 partidas × 3 perfis do simulador: a gravar por omissão, medir o
 balanceamento escreveria 1.800 arquivos e o custo de os escrever entraria na
 medida. Quem arma é o `Main._ready()`, e mais ninguém. Medido depois de tudo
-montado: **100% / 79,5% / 35,7%**, idêntico ao de antes.
+montado: **100% / 79,5% / 35,7%**, idêntico ao de antes. (Os upgrades de
+05/09 levaram o Descuidado a 31,0% — ver `docs/decisoes/007`.)
 
 **O que o leitor responde e nenhuma partida responde:** o `simular_balanceamento.gd`
 mede a dificuldade com perfis cujos números — `chance_esquecer_doca`,

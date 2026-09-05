@@ -434,7 +434,7 @@ níveis, não a mecânica.
 **A mecânica é da Fase 2 e continua por fazer, de propósito.** Quem escolhe o
 nível é `GameState.nivel_porto()`, que só LÊ quantas estruturas já estão de pé:
 0–1 → n1, 2–3 → n2, 4–5 → n3. Não guarda estado, não decide nada e não
-acrescenta constante nenhuma — os 100% / 79,5% / 35,7% medidos ficam intocados
+acrescenta constante nenhuma — os 100% / 79,5% / 31,0% medidos ficam intocados
 **por construção**, e não por cuidado. É o mesmo padrão da vila, que cresce por
 `--nivel-vila=N` "sem o jogo precisar saber disso".
 

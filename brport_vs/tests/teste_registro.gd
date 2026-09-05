@@ -12,7 +12,7 @@ extends SceneTree
 #    escreveria 1.800 arquivos e o custo de os escrever entraria na medida —
 #    exatamente a família de defeito que já custou 24 de 30 partidas travadas
 #    quando alguém pôs uma tela nova como FASE em vez de overlay. O
-#    balanceamento medido (100% / 79,5% / 35,7%) tem de continuar a ser o
+#    balanceamento medido (100% / 79,5% / 31,0%) tem de continuar a ser o
 #    mesmo com este item dentro, e é este bloco que o tranca.
 #
 # 2. **QUE ESCREVER NÃO APAGUE.** `FileAccess.WRITE` TRUNCA. Não há modo
