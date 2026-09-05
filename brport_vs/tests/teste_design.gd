@@ -66,6 +66,8 @@ var _d13_completo := false
 var _d15_completo := false
 var _d16_completo := false
 var _d17_completo := false
+var _d18_completo := false
+var _d19_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -150,6 +152,14 @@ func _rodar() -> void:
 	print("=== D17: os três níveis do píer e da lança ===")
 	_d17_niveis_do_porto()
 	_confere("o bloco D17 correu até ao fim", _d17_completo)
+
+	print("=== D18: o texto do cartão de doca cabe no cartão ===")
+	_d18_texto_do_cartao()
+	_confere("o bloco D18 correu até ao fim", _d18_completo)
+
+	print("=== D19: o texto do painel Construir passa a WCAG no branco ===")
+	_d19_contraste_do_painel()
+	_confere("o bloco D19 correu até ao fim", _d19_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -403,25 +413,32 @@ func _d17_niveis_do_porto() -> void:
 			"tem o mesmo desenho %s de outro nível" % usado_p)
 		caixas_pier.append(usado_p)
 
-	# ── e os TRÊS CASCOS, escolhidos pelo valor do contrato.
+	# ── e os CASCOS, um por CLASSE de navio.
 	#
 	# ⚠️ O `barco_medio` ESTEVE GERADO E SEM USO em doca nenhuma até 05/09: o
 	# jogo escolhia entre dois cascos por um booleano, e o terceiro só aparecia
 	# como enfeite na Zona de Espera. Passou pelo `asset_validator`, pelo
 	# manifest e por cinco suítes sem que nada notasse — porque nenhuma delas
 	# perguntava se o que se GERA chega à tela. Esta asserção pergunta.
+	#
+	# ⚠️ E ELA PERCORRE A TABELA, nunca uma lista escrita à mão: uma classe de
+	# navio nova sem casco tem de reprovar aqui, e uma lista cravada seria a
+	# `ORDEM_DE_COMPRA` do simulador outra vez — a estrutura entra, ninguém a
+	# percorre, e a suíte diz que está tudo bem.
 	var GS: Node = root.get_node("GameState")
-	var faixa_min: int = int(GS.BOAT_VALUE_LARGE_MIN)
-	var faixa_max: int = int(GS.BOAT_VALUE_LARGE_MAX)
 	var cascos: Array = []
-	for caso in [[int(GS.BOAT_VALUE_SMALL_MIN), false],
-			[faixa_min + 1, true], [faixa_max, true]]:
-		var tex = doca.call("arte_do_barco", int(caso[0]), bool(caso[1]))
-		_confere("o contrato de %s tem casco" % GS.moeda(int(caso[0])), tex != null)
+	for classe in GS.CLASSES_DE_NAVIO:
+		var tex = doca.call("arte_do_barco", String(classe))
+		_confere("a classe %s tem casco" % classe, tex != null)
 		if tex != null:
 			cascos.append((tex as Texture2D).get_image().get_used_rect())
-	_confere("os três cascos são três desenhos diferentes",
-		cascos.size() == 3 and cascos[0] != cascos[1] and cascos[1] != cascos[2],
+	var distintos := {}
+	for r in cascos:
+		distintos[r] = true
+	_confere("cada classe tem um desenho próprio (%d de %d)"
+			% [distintos.size(), GS.CLASSES_DE_NAVIO.size()],
+		cascos.size() == GS.CLASSES_DE_NAVIO.size()
+			and distintos.size() == cascos.size(),
 		"medidos %s" % [cascos])
 	_d17_completo = true
 
@@ -1305,3 +1322,146 @@ func _tela_da_rota(ponto: Vector2, origem: Vector2, pr: Dictionary) -> Vector2:
 	var d := ponto - origem
 	return Vector2((d.x - d.y) * float(pr["meia_larg"]),
 		(d.x + d.y) * float(pr["meia_alt"]))
+
+
+# ── D18 ── o texto do cartão de doca cabe no cartão
+#
+# O motivo da escala (06/09) entrou na linha do progresso, e nome de motivo é
+# texto que CRESCE: "Armazenagem" tem quase o dobro de "Granel". Texto que não
+# cabe num Label do Godot não dá erro nenhum — sai cortado, e a captura do CI
+# mostra "Armazenage" sem ninguém reparar.
+#
+# ⚠️ MEDE-SE O PIOR CASO, MONTADO À MÃO. Ler o que os três cartões mostram
+# agora não serve: o cartão de uma doca vazia diz "aguardando barco" e passaria
+# sempre. O pior caso é o motivo de nome mais longo com acordo fechado e o
+# valor mais alto que o jogo paga ao lado — e é ele que tem de caber.
+func _d18_texto_do_cartao() -> void:
+	# O autoload vem da árvore e não pelo nome: dentro de um script rodado por
+	# `--script` o `GameState` não resolve como identificador.
+	var GS: Node = root.get_node("GameState")
+	var cartao := _main.get_node("BarraDocas").get_child(0) as Control
+	var sb := cartao.get_theme_stylebox("panel", "CartaoDoca")
+	var interior: float = cartao.size.x
+	if sb != null:
+		interior -= sb.content_margin_left + sb.content_margin_right
+	_confere("o cartão tem interior medível (%.0f px)" % interior, interior > 0.0)
+
+	var maior := ""
+	for id in GS.MOTIVOS:
+		var nome: String = GS.MOTIVOS[id]["nome"]
+		if nome.length() > maior.length():
+			maior = nome
+
+	var cabecalho := cartao.get_node("Coluna/Cabecalho") as HBoxContainer
+	var linha := cartao.get_node("Coluna/ProgressoLinha") as HBoxContainer
+	var rotulo_nome := cartao.get_node("Coluna/Cabecalho/Nome") as Label
+	var rotulo_valor := cartao.get_node("Coluna/Cabecalho/Valor") as Label
+	var rotulo_prog := cartao.get_node("Coluna/ProgressoLinha/Progresso") as Label
+	var rotulo_trab := cartao.get_node("Coluna/TrabalhadorLinha/Trabalhador") as Label
+	var linha_trab := cartao.get_node("Coluna/TrabalhadorLinha") as HBoxContainer
+
+	rotulo_nome.text = "DOCA %d" % GS.BERCOS_NO_MAPA
+	# O valor mais alto que o jogo paga sai da tabela das classes, não de uma
+	# constante: com três classes, o teto é o da última.
+	var teto := 0
+	for classe in GS.CLASSES_DE_NAVIO:
+		teto = maxi(teto, int(GS.CLASSES_DE_NAVIO[classe]["valor_max"]))
+	rotulo_valor.text = GS.moeda(teto)
+	_confere("o cabeçalho cabe (%.0f de %.0f px)"
+			% [cabecalho.get_combined_minimum_size().x, interior],
+		cabecalho.get_combined_minimum_size().x <= interior,
+		"[%s | %s]" % [rotulo_nome.text, rotulo_valor.text])
+
+	# Os dois formatos que o cartão escreve, com o nome mais longo nos dois.
+	for texto in [
+			"%s  ·  %d/%d turnos" % [maior, 0, 3],
+			"%s  ·  %d/%d  ·  acordo" % [maior, 0, 3]]:
+		rotulo_prog.text = texto
+		_confere("a linha do progresso cabe (%.0f de %.0f px)"
+				% [linha.get_combined_minimum_size().x, interior],
+			linha.get_combined_minimum_size().x <= interior, "[%s]" % texto)
+
+	rotulo_trab.text = "#%d  ·  toque p/ liberar" % GS.BERCOS_NO_MAPA
+	_confere("a linha do trabalhador cabe (%.0f de %.0f px)"
+			% [linha_trab.get_combined_minimum_size().x, interior],
+		linha_trab.get_combined_minimum_size().x <= interior,
+		"[%s]" % rotulo_trab.text)
+
+	_d18_completo = true
+
+
+# ── D19 ── o texto do painel Construir passa a WCAG sobre o branco
+#
+# ⚠️ COR CALIBRADA PARA UM FUNDO NÃO ATRAVESSA PARA OUTRO. O cinzento-azulado
+# neutro do jogo é para a barra ESCURA; sobre o cartão branco deste painel ele
+# mede 2,93:1 e reprova até o corte de texto grande. Isso foi apanhado no
+# calendário em 03/09 e ficou escrito no `CLAUDE.md` — e o painel Construir
+# continuou com ele na descrição de cada estrutura até 06/09, quando a linha do
+# nível do porto entrou e o repetiu. Nenhuma suíte perguntava.
+#
+# O corte é o AA: 4,5:1 para texto abaixo de 18px, 3,0:1 daí para cima.
+func _d19_contraste_do_painel() -> void:
+	var cena: PackedScene = load("res://scenes/panels/UpgradePanel.tscn")
+	var painel: Control = cena.instantiate()
+	painel.theme = load("res://ui/tema_brport.tres")
+	_main.add_child(painel)
+
+	var fundo := _fundo_do_cartao(painel)
+	_confere("achei o fundo do cartão (%s)" % fundo, fundo.a > 0.0)
+
+	var reprovados := 0
+	var pior := 99.0
+	var pior_texto := ""
+	for no in _todos_os_labels(painel):
+		var cor: Color = no.get_theme_color("font_color")
+		var tamanho: int = no.get_theme_font_size("font_size")
+		var corte: float = 3.0 if tamanho >= 18 else 4.5
+		var razao := _contraste(cor, fundo)
+		if razao < pior:
+			pior = razao
+			pior_texto = "%s a %dpx" % [no.text.substr(0, 28), tamanho]
+		if razao < corte:
+			reprovados += 1
+	_confere("nenhum rótulo reprova a WCAG (pior: %.2f:1 em %s)"
+			% [pior, pior_texto], reprovados == 0,
+		"%d rótulo(s) abaixo do corte" % reprovados)
+
+	_main.remove_child(painel)
+	painel.queue_free()
+	_d19_completo = true
+
+
+# O fundo em que os rótulos deste painel caem: o `bg_color` do StyleBox do
+# PanelContainer do cartão. Ler o tema em vez de escrever a cor à mão é o que
+# faz este teste continuar a valer quando o tema mudar.
+func _fundo_do_cartao(painel: Control) -> Color:
+	for filho in painel.get_children():
+		if filho is PanelContainer:
+			var sb := (filho as PanelContainer).get_theme_stylebox("panel")
+			if sb is StyleBoxFlat:
+				return (sb as StyleBoxFlat).bg_color
+	return Color(0, 0, 0, 0)
+
+
+func _todos_os_labels(no: Node) -> Array:
+	var out: Array = []
+	if no is Label and not (no as Label).text.is_empty():
+		out.append(no)
+	for filho in no.get_children():
+		out.append_array(_todos_os_labels(filho))
+	return out
+
+
+func _luminancia(c: Color) -> float:
+	var canais := [c.r, c.g, c.b]
+	var lin: Array = []
+	for v in canais:
+		lin.append(v / 12.92 if v <= 0.04045 else pow((v + 0.055) / 1.055, 2.4))
+	return 0.2126 * float(lin[0]) + 0.7152 * float(lin[1]) + 0.0722 * float(lin[2])
+
+
+func _contraste(a: Color, b: Color) -> float:
+	var la := _luminancia(a)
+	var lb := _luminancia(b)
+	return (maxf(la, lb) + 0.05) / (minf(la, lb) + 0.05)
+

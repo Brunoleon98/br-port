@@ -80,8 +80,25 @@ fase com menos porto do que podia ter.
 > 05/09 os dois upgrades de guindaste e cais entraram (`docs/decisoes/007`) e
 > o Descuidado passou a **31,0%**; os outros dois perfis ficaram onde estavam,
 > e o vão em barcos atendidos abriu de 46,3 × 12,5 para 56,2 × 12,6.
+>
+> ⚠️ **E em 06/09 o motivo da escala entrou** (`docs/decisoes/008`), com a
+> parcela a descer para **R$530.000** para devolver ao Descuidado os ~35% que
+> esta decisão registou. O que está em vigor é **99,8% · 80,5% · 35,2%**, com
+> 50,5 / 38,1 / 12,1 barcos atendidos. Duas afirmações desta página passaram a
+> ter exceção medida, e estão na 008: o teto de 100% do jogo perfeito (uma
+> partida em 600 constrói tudo num porto que não rende e chega curta) e o vão
+> em barcos, que encolheu de 43,6 para 38,4 — é o preço do turno extra do
+> granel.
+>
+> ⚠️ **E em 06/09 a trava do nível de navio entrou** (`docs/decisoes/009`). O
+> que está em vigor é **100% · 80,2% · 37,3%**, com o teto de 100% de volta.
+> **A frase mais importante desta página mudou de métrica:** "quem separa os
+> jogadores é o porto que conseguem levantar" mede-se agora pela MARGEM em
+> regime (R$674.019 contra R$103.290), e não pela contagem de barcos — o porto
+> pobre só recebe pesqueiro, descarrega num turno e chega a atender MAIS barcos
+> do que o rico.
 
-Contra uma Parcela 1 de R$550.000. É a forma que a decisão pede: o mediano
+Contra uma Parcela 1 de R$550.000 — que é o número desta medição de 02/09. É a forma que a decisão pede: o mediano
 ganha quatro em cada cinco — tranquilo —, e o descuidado perde duas em cada
 três, sem que perder seja garantido.
 
@@ -92,6 +109,12 @@ três, sem que perder seja garantido.
 | R$600.000 | 100% | 69,5% | 11,7% |
 | **R$550.000** | **100%** | **79,5%** | **35,7%** |
 | R$500.000 | 100% | 88,2% | 60,7% |
+
+> Esta tabela é do porto de 02/09, sem upgrades e sem motivos. **O botão
+> continuou a ser o mesmo nas duas vezes em que se mexeu no jogo desde então**,
+> e em 06/09 mediu-se por que ele funciona: o Mediano e o Descuidado não estão
+> na mesma parte da distribuição, e a parcela só move quem está em cima da
+> linha (`docs/decisoes/008`).
 
 ## E o que a decisão mudou na forma de ler o balanceamento
 

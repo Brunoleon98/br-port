@@ -84,17 +84,31 @@ func refresh() -> void:
 	var valor: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
 	_valor.text = GameState.moeda(valor)
 
+	# O MOTIVO abre a linha do progresso, e não o cabeçalho. Medido a 06/09: o
+	# interior do cartão dá 200px, e "DOCA 1 · Armazenagem" ao lado do valor a
+	# 19px pede 233 — o nome mais longo estouraria o cartão sem erro nenhum,
+	# só com o texto cortado. Na linha do progresso, a 13px, o pior caso cabe.
+	var motivo: String = GameState.MOTIVOS[String(boat["motivo"])]["nome"]
+
 	if sob_oferta:
 		_estilo("CartaoDocaRival")
 		_progresso_icone.visible = true
+		# Aqui o motivo sai da frente: quem está a decidir o preço não precisa
+		# de saber o que o navio traz, e as duas coisas juntas com o ícone do
+		# rival não cabem na linha.
 		_progresso.text = "oferta do rival"
 		_progresso.add_theme_color_override("font_color", COR_ESPERANDO)
 		_trabalhador.text = ""
 		return
 
-	_progresso.text = "%d/%d turno(s)%s" % [
-		int(boat["progress"]), int(boat["op_turns"]),
-		"  ·  acordo" if boat.get("matched", false) else ""]
+	# Com acordo fechado a palavra "turnos" sai: o pior caso dos três pedaços
+	# mede 189px dos 200 disponíveis, e escrevê-la passaria de 200.
+	if boat.get("matched", false):
+		_progresso.text = "%s  ·  %d/%d  ·  acordo" % [
+			motivo, int(boat["progress"]), int(boat["op_turns"])]
+	else:
+		_progresso.text = "%s  ·  %d/%d turnos" % [
+			motivo, int(boat["progress"]), int(boat["op_turns"])]
 	_progresso.add_theme_color_override("font_color", COR_CALMA)
 
 	# Barco parado esperando gente é o que o jogador precisa notar — e é a

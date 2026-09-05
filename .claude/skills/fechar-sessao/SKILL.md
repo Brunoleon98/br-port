@@ -74,7 +74,7 @@ também deve.
 
 | Se mexeu em… | Rode | Espera |
 |---|---|---|
-| preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | 100% / 79,5% / 31,0% ainda de pé |
+| preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | 100% / 80,2% / 37,3% ainda de pé |
 | **qualquer `const` do `GameState.gd`** | o despejo + a tabela (abaixo) | `TABELA OK` |
 | **a economia, de qualquer maneira** | `tools/projetar_parcelas.py` (abaixo) | o modelo ainda calibra nos 3 perfis |
 | `tools/gerar_mapa_iso.py` | regerar os dois mapas (abaixo) | `git diff -- brport_vs/art` limpo |
@@ -112,7 +112,7 @@ python3 tools/projetar_parcelas.py --medicao /tmp/medicao.json \
 
 **Sobre o simulador:** medir é com `-- 600`. As 30 partidas do CI são teste de
 fumaça — provam que a ferramenta não quebrou junto com o `GameState` — e têm
-margem de ±18 pontos. Comparar aquele número com os 79,5% é comparar sorteio; o
+margem de ±18 pontos. Comparar aquele número com os 80,2% é comparar sorteio; o
 próprio simulador avisa quando a rodada é curta demais.
 
 **Sobre o validador do Blender:** ele não roda no CI, e de propósito — precisa

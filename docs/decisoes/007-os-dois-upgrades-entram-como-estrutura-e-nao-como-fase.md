@@ -85,6 +85,14 @@ que conseguem levantar"*.
 Se o alvo dos ~35% for para manter à letra, isso é mexer noutra constante
 (`PARCELA_AMOUNT` é o botão) e é outra medição.
 
+> ✅ **FOI, em 06/09, e o botão era mesmo esse** (`docs/decisoes/008`). A
+> parcela desceu para R$530.000 e o Descuidado voltou a 35,2%. A frase acima —
+> *"nenhum ponto o recupera sem custar o Mediano"* — continua verdadeira do
+> varrimento que esta página fez, e era um varrimento de PREÇOS DE UPGRADE: a
+> parcela não estava nele. A lição fica: **um varrimento que não acha o ponto
+> pode estar a varrer o eixo errado**, e o eixo certo é aquele em que os dois
+> perfis estão em partes diferentes da distribuição.
+
 ---
 
 ## Duas coisas que a passagem apanhou, e nenhuma dava erro

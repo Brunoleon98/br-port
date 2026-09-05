@@ -40,6 +40,7 @@ func setup(resumo: Dictionary) -> void:
 	_bloco("RECEITAS", [
 		["Docagens", int(_resumo["docagens"])],
 		["Armazém", int(_resumo["armazem"])],
+		["Pátio de contêineres", int(_resumo["patio"])],
 		["Aluguel de píer", int(_resumo["pier"])],
 	], int(_resumo["receita"]))
 

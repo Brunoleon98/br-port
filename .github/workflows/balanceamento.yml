@@ -2,16 +2,20 @@ name: Balanceamento
 
 # A MEDIÇÃO DE VERDADE, fora do caminho de cada PR. Item B3 do plano v3.
 #
-# O `testes.yml` roda 30 partidas por perfil. Isso é teste de FUMAÇA — prova
-# que o simulador não quebrou junto com o `GameState` — e não serve para medir:
-# a margem é de ±18 pontos, e já custou uma investigação inteira quando 36,7%
-# foi lido como regressão contra os 47,3% registrados, sendo a mesma medida.
+# O `testes.yml` também roda 600 por perfil desde 06/09, mas por outra razão: o
+# portão de calibração das Parcelas precisa de uma MEDIÇÃO, e as 30 de antes
+# eram fumaça — a margem em regime delas oscila ±6% a ±9% conforme a semente, e
+# o portão reprovou um modelo certo por causa disso.
 #
-# Aqui rodam 600 por perfil, que é onde a margem cai para ±4. Semanal em vez de
-# a cada PR, e a razão NÃO é o custo: medido no contêiner, as 600 partidas
-# levam 26 segundos. A razão é o ruído — um número com ±4 pontos anexado a
-# todo PR convida a ler sorteio como regressão, que é exatamente o erro que
-# esta ferramenta existe para evitar.
+# O que continua a separar os dois workflows é a LEITURA. Lá o número existe
+# para alimentar o portão; aqui ele é publicado como medida, com a taxa de
+# vitória e a comparação entre perfis — e é isso que não se quer anexado a cada
+# PR. A margem da taxa cai para ±4 com 600 partidas, e já custou uma
+# investigação inteira quando 36,7% foi lido como regressão contra os 47,3%
+# registrados, sendo a mesma medida. Medido no contêiner, as 600 levam 26
+# segundos. A razão de ser semanal NÃO é o custo — é o ruído: um número com ±4
+# pontos anexado a todo PR convida a ler sorteio como regressão, que é
+# exatamente o erro que esta ferramenta existe para evitar.
 #
 # O que este workflow REPROVA é o que não depende de julgamento: o simulador
 # chegar ao fim, nenhuma partida travar, e o modelo das Parcelas 2 e 3

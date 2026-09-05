@@ -876,7 +876,10 @@ as 600 partidas × 3 perfis do simulador: a gravar por omissão, medir o
 balanceamento escreveria 1.800 arquivos e o custo de os escrever entraria na
 medida. Quem arma é o `Main._ready()`, e mais ninguém. Medido depois de tudo
 montado: **100% / 79,5% / 35,7%**, idêntico ao de antes. (Os upgrades de
-05/09 levaram o Descuidado a 31,0% — ver `docs/decisoes/007`.)
+05/09 levaram o Descuidado a 31,0% — ver `docs/decisoes/007` —, e o motivo da
+escala mais a trava de nível de 06/09 puseram o balanceamento em
+100% / 80,2% / 37,3% com a parcela a R$530.000 — ver `docs/decisoes/008` e
+`009`.)
 
 **O que o leitor responde e nenhuma partida responde:** o `simular_balanceamento.gd`
 mede a dificuldade com perfis cujos números — `chance_esquecer_doca`,
@@ -936,7 +939,32 @@ Seis gates humanos em quinze itens. É essa a conta que este plano orça — e a
 razão de A1 estar em segundo lugar é que ele é o gate que está há mais tempo
 adiado.
 
-### ⏳ Fora da fila, e à espera do Bruno a reordenar: o MOTIVO da escala
+### ✅ FEITO (06/09) — o MOTIVO da escala
+
+**Construído e medido em `docs/decisoes/008`.** Entraram quatro motivos de
+carga e descarga — Pescado, Armazenagem, Contêiner, Granel —, cada um preso a
+uma estrutura que já existia; **reparo e reabastecimento ficaram de fora**,
+porque o GDD põe a oficina naval e o posto de combustível na Fase 2, e essa é
+a economia que a errata deixou por responder. A parcela desceu para R$530.000
+na mesma medição, e o Descuidado voltou aos ~35%.
+
+**E no mesmo dia entrou a trava do tamanho** (`docs/decisoes/009`), a pedido do
+Bruno: *"não faz sentido navios grandes e mais lucrativos conseguirem
+desembarcar em píer e guindastes iniciais"*. São três classes de navio presas ao
+NÍVEL DO PORTO — pesqueiro, cargueiro e navio de longo curso —, e o
+`CAIS_CHANCE_GRANDE` saiu, porque o cais deixou de multiplicar uma chance
+invisível e passou a destravar uma classe. O balanceamento ficou em
+**100% / 80,2% / 37,3%**, com o teto de 100% do jogo perfeito de volta.
+
+**Fica aberto do mesmo pedido, e não foi tocado:** cascos por serviço (o
+porta-contêineres, o graneleiro e o de carga geral desenhados no Blender) e
+CAMIÕES por serviço na estrada, com mais de um a circular. Os dois são arte,
+pedem `bpy`, e nenhum encosta na economia — a trava vinha primeiro porque é ela
+que define as classes que a arte vai desenhar.
+
+O que se segue está escrito abaixo, como estava quando a ideia chegou.
+
+---
 
 Ideia do Bruno em 05/09, escrita aqui para não se perder na conversa e **sem
 número de fila**, porque quem reordena a fila é ele:

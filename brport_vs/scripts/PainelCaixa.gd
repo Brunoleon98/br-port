@@ -46,7 +46,8 @@ func _bloco_do_dia(rotulo_secao: String, dia: Dictionary) -> void:
 		return
 	secao("%s — DIA %d" % [rotulo_secao, turno])
 
-	var receita: int = int(dia["docagens"]) + int(dia["armazem"]) + int(dia["pier"])
+	var receita: int = int(dia["docagens"]) + int(dia["armazem"]) \
+		+ int(dia["patio"]) + int(dia["pier"])
 	var despesa: int = int(dia["salarios"]) + int(dia["manutencao"]) + int(dia["parcela"])
 
 	# LINHA COM ZERO NÃO ENTRA — a mesma regra do Boletim. Um dia comum não tem
@@ -58,6 +59,7 @@ func _bloco_do_dia(rotulo_secao: String, dia: Dictionary) -> void:
 	_vbox.add_child(grade)
 	for linha in [["Docagens", int(dia["docagens"])],
 			["Armazém", int(dia["armazem"])],
+			["Pátio de contêineres", int(dia["patio"])],
 			["Aluguel de píer", int(dia["pier"])],
 			["Salários", -int(dia["salarios"])],
 			["Manutenção", -int(dia["manutencao"])],

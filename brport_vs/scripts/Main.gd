@@ -16,6 +16,10 @@ extends Control
 # abaixo dele — e é este script que as mantém apontando para o mesmo índice.
 # ============================================================
 
+# O script da doca, para chamar o `arte_do_barco()` dele sem duplicar a tabela
+# de cascos. Um segundo dicionário de cascos seria a fonte dupla que este
+# projeto já pagou noutros sítios.
+const DockScript := preload("res://scripts/Dock.gd")
 const WorkerScene := preload("res://scenes/worker/Worker.tscn")
 const CounterOfferScene := preload("res://scenes/panels/CounterOfferPanel.tscn")
 const DebtPaymentScene := preload("res://scenes/panels/DebtPaymentPanel.tscn")
@@ -171,6 +175,20 @@ func _recuperar_fase() -> void:
 		_on_game_over(GameState.won, GameState.end_reason)
 
 
+# A classe mais alta que o porto de hoje consegue receber — é a que fica
+# ancorada à espera de vaga. Percorre a tabela em vez de a listar à mão, pela
+# mesma razão que o painel Construir o faz: classe nova tem de aparecer sozinha.
+func _classe_ancorada() -> String:
+	var melhor := "pesqueiro"
+	var nivel := -1
+	for id in GameState.classes_disponiveis():
+		var n: int = int(GameState.CLASSES_DE_NAVIO[id]["nivel"])
+		if n > nivel:
+			nivel = n
+			melhor = String(id)
+	return melhor
+
+
 # Os barcos da Zona de Espera são cenário: não têm lógica, mas parados fazem o
 # porto parecer uma fotografia. Vivem dentro do Cenario, e não soltos no
 # MapaWrap, porque a ordem lá dentro é a profundidade isométrica — metade do
@@ -183,6 +201,13 @@ func _animar_ancorados() -> void:
 		var barco := $MapaWrap/Cenario.get_node_or_null(nome) as TextureRect
 		if barco == null:
 			continue
+		# ⚠️ O CASCO ANCORADO SEGUE A TRAVA DO PORTO. A cena traz um cargueiro
+		# assado, e desde a trava de 06/09 isso passou a contradizer a
+		# mecânica: o porto em ruínas não recebe cargueiro, e a Zona de Espera
+		# mostrava dois ancorados desde o primeiro dia. É a mesma regra que já
+		# vale para o píer e para o galpão — o que troca de estado numa partida
+		# não pode estar assado no fundo.
+		barco.texture = DockScript.arte_do_barco(_classe_ancorada())
 		var base := barco.position
 		var tw := barco.create_tween().set_loops()
 		if fases[i] > 0.0:

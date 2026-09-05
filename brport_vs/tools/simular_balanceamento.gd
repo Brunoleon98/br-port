@@ -133,6 +133,7 @@ func _rodar() -> void:
 	_imprimir_tabela(resultados, partidas)
 	_imprimir_regime(resultados)
 	_imprimir_reputacao(resultados)
+	_imprimir_motivos(resultados)
 	_imprimir_diagnostico(resultados)
 
 	# O despejo em JSON existe para o projetor das Parcelas 2 e 3
@@ -158,6 +159,51 @@ func _rodar() -> void:
 # ela variar entre jogadores e ao longo da partida. Se estiver no teto quando a
 # decisão acontece, o efeito é um bónus fixo para toda a gente — que é o mesmo
 # que não existir, com mais código.
+# A MISTURA DE CLASSES E DE MOTIVOS que o jogo sorteou de verdade, contra a que
+# os pesos prometem. Existe porque o peso e a frequência não são a mesma coisa:
+# desde 06/09 a CLASSE do navio está travada pelo nível do porto, então quem
+# não levanta o porto nunca vê as classes de cima — e vê, em troca, mais
+# pesqueiro do que o peso dele diz. Sem esta tabela, um peso escrito errado e
+# uma mistura deslocada pela TRAVA leem-se igual.
+func _imprimir_motivos(resultados: Array) -> void:
+	print("=== Mistura de classes (navios que chegaram) ===")
+	var classes: Array = GS.CLASSES_DE_NAVIO.keys()
+	var cab := "%-12s │ %8s" % ["Perfil", "navios"]
+	for id in classes:
+		cab += " │ %19s" % String(GS.CLASSES_DE_NAVIO[id]["nome"])
+	print(cab)
+	for r in resultados:
+		var c: Dictionary = r["classes"]
+		var total := 0
+		for id in classes:
+			total += int(c.get(id, 0))
+		var linha := "%-12s │ %8d" % [r["perfil"]["nome"], total]
+		for id in classes:
+			linha += " │ %18.1f%%" % (100.0 * float(int(c.get(id, 0))) / maxf(1.0, float(total)))
+		print(linha)
+	print("")
+
+	print("=== Mistura de motivos (barcos que chegaram) ===")
+	var ids: Array = GS.MOTIVOS.keys()
+	var cabecalho := "%-12s │ %8s" % ["Perfil", "barcos"]
+	for id in ids:
+		cabecalho += " │ %11s" % String(GS.MOTIVOS[id]["nome"])
+	print(cabecalho)
+	for r in resultados:
+		var m: Dictionary = r["motivos"]
+		var total := 0
+		for id in ids:
+			total += int(m.get(id, 0))
+		var linha := "%-12s │ %8d" % [r["perfil"]["nome"], total]
+		for id in ids:
+			linha += " │ %10.1f%%" % (100.0 * float(int(m.get(id, 0))) / maxf(1.0, float(total)))
+		print(linha)
+	print("")
+	print("  Os pesos de `MOTIVOS` são por TAMANHO de barco; a percentagem")
+	print("  acima é sobre o total, e move-se com a mistura de tamanhos.")
+	print("")
+
+
 func _imprimir_reputacao(resultados: Array) -> void:
 	print("=== Reputação NO MOMENTO da contra-oferta ===")
 	print("%-12s │ %8s │ %8s │ %8s │ %8s │ %13s │ %8s │ %8s" % [
@@ -235,6 +281,7 @@ func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: 
 			"obra_por_semana": r["obra_por_semana"],
 			"atendidos_em_regime": 0.0 if b.is_empty() else b[b.size() - 1],
 			"estruturas": r["estruturas"],
+			"niveis": r["niveis"],
 			"docas_medias": r["docas_medias"],
 			"trabalhadores_medios": r["trabalhadores_medios"],
 		}
@@ -300,6 +347,9 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	var estruturas_de_pe := {}
 	var docas_totais := 0
 	var trabalhadores_totais := 0
+	var motivos_vistos := {}
+	var classes_vistas := {}
+	var niveis_atingidos := {}
 
 	for run in range(partidas):
 		# Duas sementes independentes: uma para o mundo (chegada de barco,
@@ -328,6 +378,14 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		var caixa_semana := []
 		var obra_semana := []
 		var atendidos_semana := []
+		# A MISTURA DE MOTIVOS, contada por barco NASCIDO e não por barco
+		# servido: é a mistura que a tabela dos números publica em `MOTIVOS`, e
+		# é contra ela que se confere se os pesos que se escreveram são os que
+		# o jogo sorteia. Contada por `id` porque o mesmo barco aparece em
+		# muitos turnos seguidos — contar por varredura somaria cada um tantas
+		# vezes quantos turnos ele levar a descarregar, e o granel (que leva
+		# mais) sairia inflado exatamente pela razão que o distingue.
+		var ids_vistos := {}
 		var caixa_anterior: int = GS.cash
 		var atendidos_anterior := 0
 		var obra_na_semana := 0
@@ -336,6 +394,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 
 		while GS.phase != "game_over" and seguranca < 300:
 			seguranca += 1
+			_contar_motivos(motivos_vistos, classes_vistas, ids_vistos)
 
 			if GS.phase == "rival_offer":
 				# A reputação NO MOMENTO da oferta é o número que interessa ao
@@ -391,6 +450,13 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		for id in GS.ESTRUTURAS:
 			if GS.tem_estrutura(id):
 				estruturas_de_pe[id] = int(estruturas_de_pe.get(id, 0)) + 1
+		# A que NÍVEL o porto chegou. Não se deduz das frações de estrutura:
+		# o nível 2 é "duas estruturas quaisquer", e somar frações de coisas
+		# diferentes não diz em quantas partidas houve DUAS ao mesmo tempo.
+		# O projetor precisa deste número desde 06/09, porque é ele que diz
+		# quais classes de navio o porto chegou a receber.
+		var nv := int(GS.nivel_do_porto())
+		niveis_atingidos[nv] = int(niveis_atingidos.get(nv, 0)) + 1
 		docas_totais += GS.docks.size()
 		trabalhadores_totais += GS.workers.size()
 		for w in range(caixa_semana.size()):
@@ -419,12 +485,43 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"obra_por_semana": _media_por_semana(obra_por_semana, amostras_por_semana),
 		"atendidos_por_semana": _media_por_semana(atendidos_por_semana, amostras_por_semana),
 		"estruturas": _fracao_de_pe(estruturas_de_pe, partidas),
+		"niveis": _fracao_dos_niveis(niveis_atingidos, partidas),
 		"reputacao_nas_ofertas": reputacoes_de_oferta,
 		"apostas_feitas": apostas_feitas,
 		"apostas_ganhas": apostas_ganhas,
 		"docas_medias": float(docas_totais) / float(partidas),
 		"trabalhadores_medios": float(trabalhadores_totais) / float(partidas),
+		"motivos": motivos_vistos,
+		"classes": classes_vistas,
 	}
+
+
+# Anota a classe e o motivo de cada barco NOVO que está em doca. `ids_vistos` é
+# por partida: o `_uid` do GameState recomeça a cada `new_game()`, então guardar
+# os ids entre partidas juntaria barcos diferentes com o mesmo número.
+func _contar_motivos(acumulado: Dictionary, classes: Dictionary,
+		ids_vistos: Dictionary) -> void:
+	for i in range(GS.docks.size()):
+		var barco = GS.docks[i]["boat"]
+		if barco == null:
+			continue
+		var id: int = int(barco["id"])
+		if ids_vistos.has(id):
+			continue
+		ids_vistos[id] = true
+		var motivo: String = String(barco["motivo"])
+		acumulado[motivo] = int(acumulado.get(motivo, 0)) + 1
+		var classe: String = String(barco["classe"])
+		classes[classe] = int(classes.get(classe, 0)) + 1
+
+
+# Em que fração das partidas o porto acabou em cada nível. A chave é texto
+# porque o JSON não tem chave inteira, e o projetor lê-a do outro lado.
+func _fracao_dos_niveis(contagem: Dictionary, partidas: int) -> Dictionary:
+	var out := {}
+	for nivel in [1, 2, 3]:
+		out[str(nivel)] = float(int(contagem.get(nivel, 0))) / float(partidas)
+	return out
 
 
 # Em que fração das partidas cada estrutura acabou construída.

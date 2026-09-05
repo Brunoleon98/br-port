@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 05/09/2026
+> **Última atualização:** 06/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -30,34 +30,49 @@ sai de terra batida para asfalto, os prédios saem de ruína, e os upgrades
 trocam a torre e a laje do píer.
 
 **O botão que move o jogo tem cor própria** — "Avançar dia" é âmbar com rótulo
-navy (medido: branco sobre âmbar reprova a WCAG, navy passa), e os cartões
-claros têm sombra e borda de 2px. Os escuros não, de propósito: a sombra do
-tema é mais clara que o fundo deles e faria halo.
+navy (branco sobre âmbar reprova a WCAG). Cartão claro leva sombra e borda de
+2px; escuro não, senão a sombra do tema faria halo.
 
 **A câmera mostra um DISTRITO e não três berços.** O `MEIA_LARG` efetivo é 20,
-e ela centra-se no centroide dos berços. O mundo cresceu para isso — um degrau
-de costa em cada ponta (`my` de −14 a 42) e o fundo da terra em −16 —, senão o
-jogador via o mapa ACABAR por três lados. O porto mantém ~47,5% do quadro.
+e ela centra-se no centroide dos berços. O mundo cresceu para isso (`my` de −14
+a 42, fundo da terra em −16), senão o jogador via o mapa ACABAR por três lados.
 
-**A água é tropical e o porto tem PRAIA nas duas pontas.** A areia não vai
-entre a água e o cais: vai **onde o porto não está** — para além do primeiro e
-do último berço. Nos dois trechos o porto PARA (sem avental, asfalto, junta nem
-enrocamento) e a terra desce numa rampa de areia até a água, com restinga e
-pedras. Com o enquadramento novo elas emolduram o porto nos dois cantos.
+**A água é tropical e o porto tem PRAIA nas duas pontas.** A areia vai **onde o
+porto não está** — para além do primeiro e do último berço. Ali o porto PARA
+(sem avental, asfalto, junta nem enrocamento) e a terra desce numa rampa de
+areia até a água, com restinga e pedras.
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
-perfil: ótimo 100% · mediano 79,5% · descuidado 31,0%, com a mediana do mediano
-em R$796.970 contra uma parcela de R$550.000. Um contrato vale R$8.000–70.000 e
+perfil: ótimo 100% · mediano 80,2% · descuidado 37,3%, com a mediana do mediano
+em R$716.179 contra uma parcela de R$530.000. Um contrato vale R$12.000–88.000 e
 a manutenção custa R$40.000/semana — números de porto, não de banca de feira.
 
 A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
-agora é **o porto que conseguem levantar** — 56,2 barcos atendidos contra 12,6.
-Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
+agora é **o porto que conseguem levantar**, e desde a trava de 06/09 quem mede
+isso é a MARGEM em regime — R$674.019 contra R$103.290 — e não a contagem de
+barcos, que passou a favorecer o porto pobre (ele só recebe pesqueiro, que
+descarrega num turno). Mexer em preço sem rodar `simular_balanceamento.gd`
+quebra isto.
 
-**A partida grava-se.** Uma linha JSON por acontecimento, com o tempo que o
-jogador ficou em cada turno — a pergunta do A7. O nome de quem jogou NÃO entra
-no arquivo (`docs/decisoes/006`). Sai pelo menu de pausa;
-`tools/ler_registros.py` resume.
+**E o navio que atraca depende do porto que existe** (`docs/decisoes/009`). São
+três classes travadas pelo NÍVEL DO PORTO, que é o menor entre o do píer e o do
+guindaste: pesqueiro no nível 1, cargueiro no 2, navio de longo curso no 3 — que
+exige o cais reforçado. O porto em ruínas recebe **só pesqueiro**, e o perfil
+Descuidado nunca vê um navio de longo curso em 600 partidas. O painel Construir
+abre a dizer o nível e o que falta; o `CAIS_CHANCE_GRANDE` saiu, porque o cais
+deixou de multiplicar uma chance invisível e passou a DESTRAVAR uma classe.
+
+**E o navio vem ao porto POR ALGUMA COISA.** Cada barco nasce com um MOTIVO —
+Pescado, Armazenagem, Contêiner ou Granel —, que se lê na linha do cartão da
+doca. O efeito é sempre o da ESTRUTURA a que o motivo está preso, nunca do
+motivo sozinho: o armazém deixou de ser +20% em tudo e paga +50% em quem vem
+deixar carga, o pátio paga +30% no contêiner, e o granel ocupa o berço um turno
+a mais até o pórtico existir. **Reparo e reabastecimento ficaram de fora de
+propósito** — o GDD põe a oficina e o posto na Fase 2 (`docs/decisoes/008`).
+
+**A partida grava-se.** Uma linha JSON por acontecimento, com o tempo em cada
+turno — a pergunta do A7. O nome de quem jogou NÃO entra no arquivo
+(`docs/decisoes/006`). Sai pelo menu de pausa; `tools/ler_registros.py` resume.
 
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
 autoload `Audio.gd` com dois buses e sliders no menu de pausa. São de RASCUNHO,
@@ -65,33 +80,24 @@ e **ninguém que os fez os ouviu** — o contêiner não tem placa de som
 (`docs/design/BR_Port_Plano_Audio.md` §2).
 
 **Nada de interface pousa sobre o mapa, e desde 05/09 nem os nomes.** A doca
-tem duas metades: a vaga no mapa (píer, barco, guindaste, trabalhador) e o
-cartão na barra logo abaixo (valor, turnos, trabalhador). O número de cada doca
-está pintado no cais. **As três placas com mastro saíram** — o mapa não carrega
-mais texto nenhum; quem distingue os prédios do porto das casas da vila são os
-próprios prédios.
+tem duas metades: a vaga no mapa e o cartão na barra abaixo. O número de cada
+doca está pintado no cais, e as placas com mastro saíram — quem distingue os
+prédios do porto das casas da vila são os próprios prédios.
 
-**E o ARMAZÉM é um armazém dos dois lados do par.** O acabado lia como a maior
-casa do bairro — parede lisa, telha, três janelas de moldura. Hoje é telhado de
-zinco com nervura no sentido da água, chapa corrugada, fita de vidro rente ao
-beiral, portão de enrolar laranja e **plataforma de carga** com defensas e
-degraus. A cumeeira não subiu um pixel: a doca come parte da parede.
-
-**E o porto abre em RUÍNAS de verdade.** Paredes sujas com um terço desabado,
-meio telhado com a armação à vista, o portão fora do trilho; a ruína do
-escritório é um CANTO de pé com porta e janela vazias. Como se lá chegou está
-em `docs/arquivo/HISTORICO.md`.
+**O ARMAZÉM é um armazém dos dois lados do par** (telhado de zinco, chapa
+corrugada, portão de enrolar, plataforma de carga) e **o porto abre em RUÍNAS
+de verdade** — parede desabada, meio telhado com a armação à vista, portão fora
+do trilho. Como se lá chegou está em `docs/arquivo/HISTORICO.md`.
 
 **O porto tem uma CIDADE atrás dele.** Rua paralela ao cais, calçada, acesso a
 cada berço e **duas fileiras de casas em quarteirões** — 3 a 5 lotes quase
-colados, um par em cada três geminado, cortados por travessas. Era uma fileira
-só com o vão sempre igual, e aquilo lia como cerca; a de trás é mais rala e
-arborizada, para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`):
-térrea, sobrado, prédio — é assim que cresce a cada Fase, sem o jogo saber.
+colados, cortados por travessas; a de trás é mais rala e arborizada, para a
+vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`): térrea, sobrado,
+prédio — é assim que cresce a cada Fase, sem o jogo saber.
 
 **E a mata atrás dela é desenhada onde se vê** — copas com sombra projetada,
-tronco e lobos com aresta, pela receita `com_saia()`. Como se lá chegou está em
-`docs/arquivo/HISTORICO.md`.
+pela receita `com_saia()`.
+
 ---
 
 ## Onde estamos na fila
@@ -124,21 +130,10 @@ quê — a análise tem a medida de cada um:
 | Economia (3 itens) | Só via `/balancear`, e ele mesmo amarrou-a ao pacote de Fase 2 ("para fazer tudo isso") |
 | Fala da madeira podre | Espera o A4 |
 
-~~Vegetação pobre · casas mal distribuídas~~ — **fechado em 04/09**. A análise
-está fechada por inteiro no que não depende do Bruno.
-
-**Livres, sem gate:** A8. O **B7 fechou em 02/09** — o registro de partida e o
-leitor que o resume.
-
-**A trilha de arte ACABOU: as seis etapas estão fechadas**, duas delas por
-rejeição medida — a 3 inteira (um filtro de borda redesenha o desenho, num
-estilo que desenha o detalhe com fronteiras de valor) e a cal descascada da 4
-(o `Pointiness` não separa quina de pano numa caixa). Os números de cada uma
-estão no `BR_Port_Plano_Arte_Blender.md`; o que fica a valer está no
-`CLAUDE.md`.
-
-**Como o enquadramento se fez** está em `docs/arquivo/HISTORICO.md`; o que
-fica a valer é `docs/BRP_SPATIAL_CONTRACT.md` §1.1.
+**Livres, sem gate:** A8. Tudo o mais que a análise pedia e não depende dele
+está fechado — o que aconteceu em cada passagem vive em `docs/arquivo/`, e o
+que fica a valer da trilha de arte está no `CLAUDE.md` e em
+`docs/BRP_SPATIAL_CONTRACT.md` §1.1.
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
@@ -171,7 +166,7 @@ conta e o modo de a refazer estão em
 | `tools/ler_registros.py` | **O leitor** — resume N partidas de uma vez, e põe o jogador MEDIDO ao lado dos perfis que o simulador supõe |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se — são dois arquivos em duas linguagens que nada obriga a concordar |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela. O bloco **D14** (04/09) guarda a vila; o **D15** (04/09) guarda as duas pontas de areia: ninguém pisa a areia, só coqueiro fica no `my` de uma praia, e cada ponta tem de ter mais de 100 px de costa dentro da janela |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela. O bloco **D14** (04/09) guarda a vila; o **D15** (04/09) guarda as duas pontas de areia; o **D18** (06/09) mede o PIOR CASO de texto do cartão de doca contra os 200px de interior dele; o **D19** (06/09) mede a WCAG de cada rótulo do painel Construir contra o branco do cartão |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, e nenhum `{token}` de texto chega cru à tela |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os 3 tons da Dona Cida, as 8 falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Os números da narração saem das constantes, nunca escritos à mão |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
@@ -193,7 +188,7 @@ conta e o modo de a refazer estão em
 | `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo — inclui a malha viária, a vila (`--nivel-vila=N`) e os números de doca pintados no cais. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`**: a câmera é o `ZOOM`, e a câmera centra-se sozinha nos berços |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | **A régua do enquadramento** — gera o mapa em várias larguras e mede quanto do quadro é porto, quanto é distrito, quanto é mar, e sobretudo **quantos pixels da FRONTEIRA DO MUNDO entram na janela**, que é a pergunta que decide a etapa. Rasteriza com o ThorVG, que é o mesmo importador do jogo |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
-| `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade |
+| `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade. Desde 06/09 imprime a **mistura de classes e de motivos** que o jogo sorteou, e exporta a que NÍVEL cada perfil chegou — é dele que o projetor tira quais navios cada porto recebe |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos da interface, a 19px e ampliado — **rodar a cada ícone novo** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
@@ -231,7 +226,14 @@ conta e o modo de a refazer estão em
   reputação alta faz o cliente aceitar pagar cheio com mais frequência
   (`docs/decisoes/003`)
 - Contra-oferta do Arlindo (3 presets + mood face do cliente)
-- Parcela única de **R$550.000** ao Sr. Ribeiro, vencendo ao fim da semana 4
+- **Motivo de escala por barco** — quatro motivos de carga e descarga, cada um
+  preso a uma estrutura que já existe. Ele nasce com o barco, entra no save e
+  aparece no cartão da doca (`docs/decisoes/008`)
+- **Três classes de navio, travadas pelo nível do porto** — pesqueiro,
+  cargueiro e navio de longo curso, cada uma com a sua faixa de valor, os seus
+  turnos e a sua mistura de motivos. A classe decide o casco desenhado no píer
+  (`docs/decisoes/009`)
+- Parcela única de **R$530.000** ao Sr. Ribeiro, vencendo ao fim da semana 4
   (8 turnos por semana, 4 semanas — 32 dias de partida)
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
   upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
@@ -281,37 +283,29 @@ do porto desenhado só com repertório doméstico, e lia-se como casa.
 empilhada, boia e marcador com faixa refletiva, e as catorze peças pequenas do
 pátio em `blender/brp_porto.py`.
 
-O cenário usa os props: **coqueiros low-poly** que oscilam em rajada,
-**guindaste** nas docas construídas (a lança varre), **carga no convés** e
-**boias + marcador** na Zona de Espera. O **caminhão atravessa o mapa inteiro
-pela estrada**, de fora do quadro a fora do quadro, com duas silhuetas porque a
-rua vira 90° em cada cotovelo; a **espuma lava a costa** em duas camadas em
-contrafase; as **pedras do enrocamento** são sólidos facetados e ele **para nas
-duas pontas**, onde o cais deu lugar a praia. A **mata atrás da vila tem
-árvores de verdade** e há árvore no quintal das casas. Os coqueiros chapados
-saíram do SVG do mapa — `--sem-coqueiros` — pela mesma razão que os píeres: o
-que se mexe não pode estar assado no fundo.
+O cenário usa os props: **coqueiros** que oscilam em rajada, **guindaste** nas
+docas construídas (a lança varre), **carga no convés** e **boias + marcador** na
+Zona de Espera. O **caminhão atravessa o mapa inteiro pela estrada**, com duas
+silhuetas porque a rua vira 90° em cada cotovelo; a **espuma lava a costa** em
+duas camadas em contrafase; o **enrocamento para nas duas pontas**, onde o cais
+deu lugar a praia. Os coqueiros chapados saíram do SVG — `--sem-coqueiros` —
+pela mesma razão que os píeres: o que se mexe não pode estar assado no fundo.
 
 **E as chapas lisas acabaram.** O convés do n2 é tabuado com junta e tom por
-tábua, a laje do n3 tem junta atravessada e os dois cargueiros têm ferrugem que
-escorre — padrões DIRIGIDOS, atribuídos peça a peça e nunca pela paleta. O n2
-era a maior superfície do jogo sem desenho, e o píer melhor lia mais liso que o
-provisório.
+tábua, a laje do n3 tem junta atravessada e os cargueiros têm ferrugem que
+escorre — padrões DIRIGIDOS, peça a peça e nunca pela paleta.
 
-**O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas de
-madeira a laje de concreto sobre estacas de aço; a lança, de pau-de-carga a
-lança longa com spreader; a torre, de poste de madeira com estais a pórtico com
-casa de máquinas. A torre era partilhada até se ver no telefone que o porto
-inicial e o completo liam como o mesmo guindaste — só o TOPO é que não se mexe,
-por causa do `pivot_offset` único. Quem escolhe são `nivel_pier()` e
-`nivel_guindaste()`, cada um preso ao seu upgrade (`docs/decisoes/007`).
+**O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas a
+laje de concreto sobre estacas de aço; a lança, de pau-de-carga a lança longa
+com spreader; a torre, de poste de madeira a pórtico com casa de máquinas. Quem
+escolhe são `nivel_pier()` e `nivel_guindaste()`, cada um preso ao seu upgrade
+(`docs/decisoes/007`) — e desde 06/09 são elas que decidem também **que navio
+atraca** (`009`), o que faz a trava ser visível em vez de estatística.
 
-Os **3 barcos do GDD** existem (pesqueiro, cargueiro médio e grande) e desde
-05/09 os TRÊS atracam, escolhidos pelo valor do contrato — o médio era gerado,
-validado e nunca entrava em doca. O pesqueiro tem casco próprio, não é o mesmo
-casco com carga trocada. O
-**trabalhador aparece de pé no tabuado** quando alocado, e mexe-se enquanto a
-operação corre.
+Os **3 barcos do GDD** existem e os TRÊS atracam — desde 06/09 escolhidos pela
+CLASSE, que é o que o porto consegue receber. O pesqueiro tem casco próprio,
+não é o mesmo casco com carga trocada. O **trabalhador aparece de pé no
+tabuado** quando alocado, e mexe-se enquanto a operação corre.
 
 O **retrato do trabalhador** sai do mesmo estúdio Blender de tudo o resto
 (`trabalhador_retrato`) e é o único prop que olha para a frente — rodado 45°
@@ -319,10 +313,9 @@ em Z, porque um retrato de 3/4 num cartão de 108px mostra sobretudo o
 capacete. O boneco do PÍER continua com as cinco caixas dele: 22px e 70px não
 são o mesmo orçamento de pixel.
 
-A **Zona de Espera é só visual**: os barcos ancorados são decorativos e não
-representam fila de verdade — barcos continuam nascendo direto nas docas.
-Torná-la mecânica muda o balanceamento medido (ver o aviso em
-`docs/arquivo/BLOCO4_BRIEFING_VISUAL.md`).
+A **Zona de Espera é só visual**: os barcos ancorados são decorativos — os de
+verdade nascem direto nas docas. Torná-la mecânica muda o balanceamento medido
+(`docs/arquivo/BLOCO4_BRIEFING_VISUAL.md`).
 
 Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o Diário
 do Porto, a cena narrativa de fim de Fase 1 e a lista "VS — OUT" do GDD.
