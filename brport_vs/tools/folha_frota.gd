@@ -9,10 +9,10 @@ extends SceneTree
 # JOGO lhes dá.
 #
 # ⚠️ ELA EXISTE POR UMA REGRA DESTE REPOSITÓRIO: prop que a captura não vê é
-# prop que ninguém revê. As seis fotos do CI mostram o porto de uma partida
+# prop que ninguém revê. As cinco fotos de JOGO do CI mostram uma partida
 # sorteada — medido em 07/09, no dia em que os seis cascos por serviço
 # entraram, elas mostravam DOIS deles: as três docas calharam com o mesmo
-# motivo e a Zona de Espera com outro. Quatro cascos e seis camiões ficavam
+# motivo e a Zona de Espera com outro. Quatro cascos e sete camiões ficavam
 # gerados, validados por duas suítes, e sem ninguém os poder olhar. É a mesma
 # forma do buraco do `barco_medio`, e a `folha_icones.gd` já era a resposta
 # para os ícones: uma folha que percorre a tabela não depende de sorteio.
