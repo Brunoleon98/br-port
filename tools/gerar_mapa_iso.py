@@ -842,6 +842,13 @@ def face_my(my, mx0, mx1, z0, z1, cor) -> str:
     return poli([p(mx0, my, z1), p(mx1, my, z1), p(mx1, my, z0), p(mx0, my, z0)], cor)
 
 
+# O tamanho de um lote reservado, num lugar só: o desenho, a tabela de âncoras
+# e o teste leem daqui. Ver a varredura no `gerar()`.
+LOTE_COMP = 1.6
+LOTE_LARG = 1.4
+LOTES_RESERVADOS = [(4.7, 8.2), (3.8, 20.1)]   # (recuo do cais, my inicial)
+
+
 def lote_reservado(mx0, my0, mx1, my1, base) -> str:
     """Terreno demarcado à espera de construção: chão, contorno e estacas.
 
@@ -2229,10 +2236,24 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
         # tracejado. O lote reservado é a mesma ideia em terra — chão limpo
         # mais escuro, contorno tracejado e quatro estacas de topografia nos
         # cantos. Não inventa mecânica nenhuma: é uma marca no chão.
-        for recuo, my, comp in [(2.45, 2.6, 2.0), (2.45, 18.6, 2.0)]:
+        # ⚠️ OS DOIS SÍTIOS SÃO MEDIDOS, E OS PRIMEIROS ESTAVAM ERRADOS. Eles
+        # nasceram a olho em (2,45 / 2,6) e (2,45 / 18,6) — e o `my` de cada um
+        # calhava ser exatamente onde começa o ACESSO AO BERÇO que o `vias()`
+        # desenha logo acima. Ninguém viu enquanto o camião passava reto pela
+        # rua; assim que ele passou a entrar na doca, foi encostar em cima da
+        # demarcação. Os dois também transbordavam para o avental: 1,7 de
+        # largura a partir de um recuo de 2,45 acaba em `borda - 0,75`, e o
+        # pátio acaba em `borda - APRON`.
+        #
+        # Varrido o pátio inteiro contra os acessos, os cotovelos, os dois
+        # prédios e os props da cena, um lote de 2,0 x 1,7 tem UMA posição
+        # livre — e são precisas duas, uma por estrutura de Fase 2. A 1,6 x 1,4
+        # abrem-se duas com folga de 0,73 e 0,30 unidades, e são estas. O
+        # bloco D20 do teste de design tranca-as contra os acessos publicados.
+        for recuo, my in LOTES_RESERVADOS:
             borda = _borda_em(my)
-            s += lote_reservado(borda - recuo, my, borda - recuo + 1.7,
-                                my + comp, B)
+            s += lote_reservado(borda - recuo, my, borda - recuo + LOTE_LARG,
+                                my + LOTE_COMP, B)
 
     if not com_predios:
         s += "</svg>\n"
@@ -2327,6 +2348,39 @@ def tabela_ancoras() -> dict:
             "my": [my1 - RUA_LARG - CALCADA, my1 + CALCADA],
         })
 
+    # ⚠️ E OS ACESSOS AOS BERÇOS, publicados pela mesma razão que os cotovelos:
+    # eles são asfalto que nenhuma faixa declara. O `vias()` desenha, para cada
+    # píer, uma ligação da rua até o avental — é ela que explica para que serve
+    # a estrada —, e até 07/09 ela existia só no desenho. O camião que passa
+    # levava a carga da doca do mesmo índice e passava reto; para ele ENTRAR na
+    # doca é por aqui que ele entra, e sem estes números o D13 não teria contra
+    # o que conferir o desvio.
+    #
+    # Os limites saem das MESMAS expressões que o `vias()` usa para desenhar.
+    acessos = []
+    for j, (my0, my1, borda) in enumerate(PIERES):
+        meio = (my0 + my1) / 2.0
+        acessos.append({
+            "doca": j + 1,
+            "mx": [round(borda - RUA_RECUO + RUA_LARG, 3), round(borda - APRON, 3)],
+            "my": [round(meio - 0.6, 3), round(meio + 0.6, 3)],
+            # O ponto da ROTA onde o camião vira: o meio do asfalto daquele
+            # degrau, na altura do berço. Sai da mesma conta que dá o `mx` de
+            # cada trecho reto da `ROTA_ESTRADA` do `Main.gd`.
+            "entrada": [round(borda - RUA_RECUO + RUA_LARG / 2.0, 3), round(meio, 3)],
+        })
+
+    # E OS LOTES RESERVADOS, publicados para o D20 os poder conferir contra os
+    # acessos. Um deles já esteve em cima de um; sem os números aqui, a única
+    # coisa que denunciava isso era um camião estacionado por cima da marca.
+    reservados = []
+    for recuo, my in LOTES_RESERVADOS:
+        b = _borda_em(my)
+        reservados.append({
+            "mx": [round(b - recuo, 3), round(b - recuo + LOTE_LARG, 3)],
+            "my": [round(my, 3), round(my + LOTE_COMP, 3)],
+        })
+
     # ⚠️ E AS DUAS PONTAS DE AREIA, publicadas pela mesma razão que os
     # cotovelos: elas são chão em que NÃO se pousa equipamento de porto, e
     # nada no `Main.tscn` sabia disso. A empilhadeira ficou na restinga da
@@ -2354,6 +2408,8 @@ def tabela_ancoras() -> dict:
         "pieres": pieres,
         "faixas": faixas,
         "cotovelos": cotovelos,
+        "acessos": acessos,
+        "lotes_reservados": reservados,
         "lotes": [{"mx": round(l[0], 2), "my": round(l[1], 2),
                    "dmx": round(l[2], 2), "dmy": round(l[3], 2),
                    "fundo": bool(l[5]),

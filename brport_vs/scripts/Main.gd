@@ -498,11 +498,56 @@ const CAMINHOES := {
 	},
 }
 
+## ONDE CADA CAMIÃO SAI DA RUA PARA ENTRAR NO BERÇO.
+##
+## O `vias()` já desenhava, para cada píer, uma ligação da rua até o avental —
+## é ela que explica para que serve a estrada. Até 07/09 nada a percorria: o
+## camião levava a carga da doca do mesmo índice e passava reto. O pedido da
+## segunda jogada foi dar-lhe o destino: *"ao alocar um navio de um determinado
+## serviço, um caminhão relacionado pode aparecer na estrada e ir para a doca
+## desse navio. Caso o navio vá embora, esse caminhão vai embora também."*
+##
+## ⚠️ OS NÚMEROS SÃO REPETIDOS DO GERADOR, E É O D13 QUE OS TRANCA. O mapa
+## publica `acessos` na tabela de âncoras — entrada, `mx` e `my` de cada
+## acesso —, saídos das mesmas expressões que os desenham; isto aqui é a cópia
+## que roda dentro do jogo, que não lê o JSON. Repetição sem asserção é o
+## contrato a divergir calado, e é a mesma razão de o `ROTA_ESTRADA` ser
+## conferido ponto a ponto.
+##
+## `entrada` é o ponto DA ROTA onde ele vira (o meio do asfalto do degrau, na
+## altura do berço); `paragem` é onde ele encosta, no fundo do acesso.
+const ACESSOS_DOCA: Array[Dictionary] = [
+	{"entrada": Vector2(-0.25, 3.2), "paragem": Vector2(3.45, 3.2)},
+	{"entrada": Vector2(3.75, 11.2), "paragem": Vector2(7.45, 11.2)},
+	{"entrada": Vector2(7.75, 19.2), "paragem": Vector2(11.45, 19.2)},
+]
+
+## O quanto a paragem recua do fim do acesso, para o DESENHO caber lá dentro.
+##
+## Medido nos quatro PNGs de `mx`: o que mais avança à frente da âncora é o
+## porta-contêiner, com 28px = 1,40 unidades; o acesso acaba no avental
+## (`borda - APRON`). Recuar 1,25 põe o nariz do maior praticamente na beira do
+## avental e mantém a âncora bem dentro do asfalto. É medida, não gosto — e é
+## por isso que o D13 confere a paragem contra o acesso publicado.
+const BERCO_RECUO := 1.25
+
 # O motivo que cada caminhão leva na volta que está a fazer. Ele é escolhido
 # quando o caminhão entra no mapa e NÃO muda a meio da travessia: um camião
 # que trocasse de carroçaria a meio da rua é um camião a transformar-se à
 # vista. Índice = índice do nó `Caminhao<N>`.
 var _carga_na_estrada: Array[String] = []
+
+# O `id` do barco por causa do qual o camião está PARADO no berço, ou -1 se ele
+# não está parado. É o `id` e não o índice da doca porque um barco que sai e
+# outro que chega na mesma passagem deixam a doca ocupada as duas vezes: sem o
+# `id`, o camião ficaria eternamente parado a servir barcos que já foram
+# embora. Índice = índice do nó `Caminhao<N>`.
+var _visita_na_doca: Array[int] = []
+
+# O canto do quadro de 512 que corresponde ao ponto de partida da cena. Era uma
+# variável local do `_animar_caminhoes()` enquanto a volta era um tween em laço;
+# com a volta a rearmar-se sozinha, ela tem de sobreviver entre voltas.
+var _base_do_caminhao: Array[Vector2] = []
 
 
 ## A silhueta que um trecho pede: a de `mx` se ele anda em `mx`, a de `my` se
@@ -523,14 +568,51 @@ func tela_da_rota(ponto: Vector2, origem: Vector2) -> Vector2:
 	return Vector2((d.x - d.y) * MEIA_LARG, (d.x + d.y) * MEIA_ALT)
 
 
+## `a` vem depois de `b` na rota? Comparar por `my` chega quase sempre — a rota
+## nunca recua nele —, e o desempate por `mx` resolve os cotovelos, que andam
+## com o `my` parado.
+func _adiante(a: Vector2, b: Vector2) -> bool:
+	return a.y > b.y or (is_equal_approx(a.y, b.y) and a.x > b.x)
+
+
 ## Os pontos da rota a partir de `desde`, inclusive — os que ainda estão à
-## FRENTE de onde se começa. Comparar por `my` chega: a rota nunca recua nele.
+## FRENTE de onde se começa.
 func _pontos_da_rota(desde: Vector2) -> Array[Vector2]:
 	var pontos: Array[Vector2] = [desde]
 	for ponto in ROTA_ESTRADA:
-		if ponto.y > desde.y or (is_equal_approx(ponto.y, desde.y) and ponto.x > desde.x):
+		if _adiante(ponto, desde):
 			pontos.append(ponto)
 	return pontos
+
+
+## Os pontos da rota de `desde` até `ate`, ambos inclusive. `ate` é sempre um
+## ponto de entrada de acesso, que fica num trecho RETO — por isso basta cortar
+## a lista pelos dois lados, sem inventar vértice nenhum.
+func _pontos_entre(desde: Vector2, ate: Vector2) -> Array[Vector2]:
+	var pontos: Array[Vector2] = [desde]
+	for ponto in ROTA_ESTRADA:
+		if _adiante(ponto, desde) and _adiante(ate, ponto):
+			pontos.append(ponto)
+	pontos.append(ate)
+	return pontos
+
+
+## O `id` do barco que está a ser servido na doca `i`, ou -1 se não há visita a
+## fazer. A pergunta é a do pedido — *"ao ALOCAR um navio"* —, e por isso são as
+## DUAS condições: barco no berço E trabalhador nele. Um camião encostado num
+## berço sem ninguém a trabalhar diria que o porto está a operar quando não
+## está, e é justamente esse o aviso que o jogo dá em letra âmbar por baixo do
+## mapa.
+func _visita_da_doca(i: int) -> int:
+	if i >= GameState.docks.size():
+		return -1
+	var doca: Dictionary = GameState.docks[i]
+	if doca["worker_id"] == null:
+		return -1
+	var barco = doca["boat"]
+	if barco == null:
+		return -1
+	return int(barco["id"])
 
 
 ## Quantos segundos leva a percorrer o que resta da rota a partir de `desde`.
@@ -574,21 +656,28 @@ func _animar_caminhoes() -> void:
 	var cenario := $MapaWrap.get_node_or_null("Cenario")
 	if cenario == null:
 		return
-	_carga_na_estrada.resize(CAMINHAO_ORIGENS.size())
+	var n := CAMINHAO_ORIGENS.size()
+	_carga_na_estrada.resize(n)
+	_visita_na_doca.resize(n)
+	_base_do_caminhao.resize(n)
+	_visita_na_doca.fill(-1)
 
 	# O CICLO É IGUAL PARA OS TRÊS: pausa + travessia inteira. É esse número
 	# que a espera de arranque reparte, e é por ele ser igual que a repartição
 	# vale para sempre.
+	#
+	# ⚠️ ELE DEIXOU DE SER O ÚNICO RITMO em 07/09, e de propósito: um camião que
+	# encosta num berço fica lá enquanto o navio estiver a ser servido, e isso
+	# não tem duração fixa nenhuma — depende dos turnos de operação e de quando
+	# o jogador avança o dia. A repartição continua a valer para as voltas SEM
+	# visita, que são as que mantêm a estrada viva; quem visita sai da roda e
+	# volta a ela quando parte do berço.
 	var ciclo := CAMINHAO_INTERVALO + _tempo_da_rota(ROTA_ESTRADA[0])
-	var n := CAMINHAO_ORIGENS.size()
 	# ⚠️ A ESPERA DE ARRANQUE É DERIVADA, e o número não se escreve à mão.
 	# A estrada visível é um terço da rota, então três camiões todos à vista ao
 	# mesmo tempo estão, por construção, amontoados num terço do ciclo: sem
 	# isto ver-se-iam os três de enfiada e depois quarenta e sete segundos de
-	# rua vazia. A espera acerta cada um no seu terço do ciclo, uma vez só, e a
-	# partir daí passa um camião a cada `ciclo/3` — e continua a passar mesmo
-	# que a rota mude de comprimento ou a velocidade mude, porque tudo isto sai
-	# de `_tempo_da_rota()`.
+	# rua vazia. A espera acerta cada um no seu terço do ciclo, uma vez só.
 	var fase_zero := _tempo_da_rota(CAMINHAO_ORIGENS[0]) + CAMINHAO_INTERVALO
 
 	for i in range(n):
@@ -597,46 +686,170 @@ func _animar_caminhoes() -> void:
 			continue
 		var origem: Vector2 = CAMINHAO_ORIGENS[i]
 		# A cena põe o nó no ponto de partida dele; `base` é o canto do quadro
-		# de 512 que corresponde a esse ponto, e tudo o resto é medido a partir
-		# dali.
-		var base := caminhao.position
+		# de 512 que corresponde a esse ponto, e tudo o resto é medido dali.
+		_base_do_caminhao[i] = caminhao.position
 		var espera := fase_zero + float(i) * ciclo / float(n) \
 			- _tempo_da_rota(origem)
 		while espera < CAMINHAO_INTERVALO:
 			espera += ciclo
 
-		# Primeira passagem: começa onde a cena o pôs (dentro do quadro) e sai.
-		var primeira := caminhao.create_tween()
-		_trechos_da_rota(primeira, caminhao, i, base, origem, origem)
-		primeira.tween_interval(espera)
-		primeira.tween_callback(func() -> void:
-			# E daqui em diante o ciclo completo, de fora do mapa a fora do
-			# mapa, com a pausa comum a todos.
-			var ciclo_tw := caminhao.create_tween().set_loops()
-			ciclo_tw.tween_interval(CAMINHAO_INTERVALO)
-			_trechos_da_rota(ciclo_tw, caminhao, i, base, origem,
-				ROTA_ESTRADA[0])
-		)
+		# ⚠️ A PRIMEIRA PASSAGEM COMEÇA JÁ, e onde a cena o pôs. Ela existe para
+		# que os três estejam à vista no primeiro frame — sem isso a estrada
+		# abre vazia e fica assim até o primeiro deles entrar pelo topo. A
+		# `espera` que reparte o ciclo vem DEPOIS dela, que é onde ela estava
+		# quando isto era um tween em laço.
+		#
+		# Que ela possa desviar-se para o berço não é enfeite: é o que faz a
+		# mecânica caber numa captura, porque uma volta inteira leva ~69s e
+		# nenhuma fotografia espera tanto. Só dois dos três a alcançam, e é
+		# geometria e não escolha — a origem do terceiro fica depois do acesso
+		# dele. Ver o tiro `docas` do `capturar_evidencia.sh`.
+		_entrar_no_mapa(i, origem, espera + CAMINHAO_INTERVALO)
 
 
-## Enfia na `tw` um trecho por par de pontos da rota, a partir de `desde`.
-## `base` é a posição de tela do `origem_do_no` — o ponto que a cena ancorou.
-func _trechos_da_rota(tw: Tween, caminhao: TextureRect, indice: int,
-		base: Vector2, origem_do_no: Vector2, desde: Vector2) -> void:
-	var pontos := _pontos_da_rota(desde)
-
-	# O primeiro salto é um TELEPORTE, não um trecho: é ele que põe o caminhão
-	# no princípio da rota antes de a percorrer. É também o momento em que ele
-	# escolhe a carga — está fora do mapa, ou é a primeira vez que aparece.
+## Arma UMA volta: a pausa, e depois a travessia que a pausa precede.
+##
+## ⚠️ ISTO ERA UM TWEEN EM LAÇO ATÉ 07/09, e a visita ao berço é a razão de
+## deixar de o ser. Um laço só sabe repetir a mesma coisa: com o desvio, cada
+## volta é diferente da anterior — desvia-se ou não conforme a doca do mesmo
+## índice —, e a decisão tem de ser tomada NO ARRANQUE de cada uma, com o
+## camião fora do mapa. Uma volta que se rearma faz isso; um laço obrigaria a
+## reconstruir o tween a meio, que é onde moram os defeitos que ele pediu para
+## evitar.
+func _lancar_volta(i: int, pausa: float) -> void:
+	var caminhao := _no_do_caminhao(i)
+	if caminhao == null:
+		return
+	var tw := caminhao.create_tween()
+	tw.tween_interval(maxf(pausa, CAMINHAO_INTERVALO))
+	# A DECISÃO É TOMADA NO FIM DA PAUSA, e não ao armar: entre armar e chegar a
+	# hora passam segundos em que o jogador pode ter avançado o dia. Decidir no
+	# momento em que ele entra no mapa é decidir com o estado que o jogador vê.
 	tw.tween_callback(func() -> void:
-		_carga_na_estrada[indice] = _motivo_da_estrada(indice)
+		_entrar_no_mapa(i, ROTA_ESTRADA[0], CAMINHAO_INTERVALO))
+
+
+## O camião entra no mapa: escolhe a carga, e vai até o acesso da doca dele.
+## `pausa_apos` é o que ele espera antes da volta seguinte — só a primeira
+## passagem passa aqui um valor diferente do intervalo comum, e é ela que
+## reparte os três pelo ciclo.
+func _entrar_no_mapa(i: int, desde: Vector2, pausa_apos: float) -> void:
+	var caminhao := _no_do_caminhao(i)
+	if caminhao == null:
+		return
+	# ⚠️ A CARGA ESCOLHE-SE AQUI E NÃO MUDA ATÉ A VOLTA SEGUINTE. Ele está fora
+	# do mapa neste instante; um camião que trocasse de carroçaria a meio da rua
+	# é um camião a transformar-se à vista.
+	_carga_na_estrada[i] = _motivo_da_estrada(i)
+
+	# ⚠️ ELE PASSA SEMPRE PELO PONTO DE ENTRADA DO ACESSO, visite ou não.
+	#
+	# A primeira versão decidia a visita aqui, à entrada do mapa — e isso punha
+	# a decisão a um minuto de distância do jogador: alocar um trabalhador não
+	# fazia nada até o camião dar a volta inteira. Decidir NO ACESSO é decidir
+	# no instante em que a escolha importa, e é a decisão mais segura de todas:
+	# ali ele está parado num vértice conhecido, e o que se faz é começar o
+	# percurso seguinte — nunca remendar um a meio, que é onde moram os defeitos
+	# que a segunda jogada pediu para evitar.
+	var acesso: Dictionary = ACESSOS_DOCA[i] if i < ACESSOS_DOCA.size() else {}
+	if not acesso.is_empty() and _adiante(acesso["entrada"], desde):
+		_percorrer(caminhao, i, _pontos_entre(desde, acesso["entrada"]),
+			func() -> void: _no_acesso(i, pausa_apos))
+		return
+
+	_percorrer(caminhao, i, _pontos_da_rota(desde), func() -> void:
+		_lancar_volta(i, pausa_apos)
+	)
+
+
+## Chegou à altura do berço: entra, ou segue viagem.
+func _no_acesso(i: int, pausa_apos: float) -> void:
+	var caminhao := _no_do_caminhao(i)
+	if caminhao == null:
+		return
+	var acesso: Dictionary = ACESSOS_DOCA[i]
+	var visita := _visita_da_doca(i)
+	if visita < 0:
+		_percorrer(caminhao, i, _pontos_da_rota(acesso["entrada"]),
+			func() -> void: _lancar_volta(i, pausa_apos))
+		return
+	_percorrer(caminhao, i, [acesso["entrada"], acesso["paragem"]],
+		func() -> void:
+			# ENCOSTOU. A partir daqui não há tween nenhum a correr: quem o
+			# manda embora é `_docas_mudaram()`, e enquanto o navio estiver no
+			# berço ele fica. Era isto o pedido.
+			_visita_na_doca[i] = visita
+	)
+
+
+## O camião larga o berço: sai de marcha-atrás pelo acesso e retoma a estrada.
+##
+## ⚠️ ELE SAI DE RÉ, E ISSO É UMA ESCOLHA COM CUSTO. Só há duas silhuetas por
+## carga — uma por eixo —, e as duas foram desenhadas para o sentido POSITIVO,
+## que é o único que a rota usava. O acesso percorre-se para dentro em `+mx` e
+## para fora em `-mx`: uma das duas pernas ia ser de ré fizesse-se o que se
+## fizesse. Um terceiro jogo de PNGs viraria a cabine para `-mx` e mostraria a
+## traseira — não é rodar o prop, é reconstruí-lo, porque só as faces `+x` e
+## `-y` se veem —, e são mais quatro peças de arte para 74px de movimento lento
+## na beira do quadro. Encostar de frente e sair de ré é o que um camião de
+## carga faz numa baía; a alternativa era ele entrar de ré, que seria a mesma
+## perna invertida e menos legível.
+func _sair_do_berco(i: int) -> void:
+	var caminhao := _no_do_caminhao(i)
+	if caminhao == null:
+		return
+	var acesso: Dictionary = ACESSOS_DOCA[i]
+	var entrada: Vector2 = acesso["entrada"]
+	_percorrer(caminhao, i, ([acesso["paragem"], entrada]
+		+ _pontos_da_rota(entrada).slice(1)), func() -> void:
+			_lancar_volta(i, CAMINHAO_INTERVALO)
+	)
+
+
+## Um barco saiu de um berço onde havia um camião encostado? Então ele vai
+## embora também. Chamada pelo `_refresh_docks()`, que é o ponto único por onde
+## o estado das docas chega à tela.
+##
+## ⚠️ ELA COMPARA O `id` DO BARCO, e não "há barco na doca". Um barco que acaba
+## e outro que chega no mesmo avanço de dia deixam a doca ocupada as duas vezes,
+## e um camião que só perguntasse "ainda há barco?" ficaria parado para sempre a
+## servir cargas que já foram embora — e com a carroçaria da primeira.
+func _docas_mudaram() -> void:
+	for i in range(_visita_na_doca.size()):
+		if _visita_na_doca[i] < 0:
+			continue
+		if _visita_da_doca(i) == _visita_na_doca[i]:
+			continue
+		_visita_na_doca[i] = -1
+		_sair_do_berco(i)
+
+
+## O nó do camião `i`, ou `null` se a cena ainda não está de pé. Um lugar só
+## porque cinco funções o buscavam, e cada cópia é uma chance de uma delas
+## esquecer a guarda.
+func _no_do_caminhao(i: int) -> TextureRect:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return null
+	return cenario.get_node_or_null("Caminhao%d" % i) as TextureRect
+
+
+## Enfia num tween novo um trecho por par de pontos consecutivos, e chama
+## `ao_fim` quando o último acabar. O primeiro ponto é um TELEPORTE: é ele que
+## põe o camião no princípio do percurso antes de o percorrer.
+func _percorrer(caminhao: TextureRect, indice: int, pontos: Array,
+		ao_fim: Callable) -> void:
+	var base: Vector2 = _base_do_caminhao[indice]
+	var origem_do_no: Vector2 = CAMINHAO_ORIGENS[indice]
+	var tw := caminhao.create_tween()
+	tw.tween_callback(func() -> void:
 		caminhao.position = base + tela_da_rota(pontos[0], origem_do_no)
 		# ⚠️ A SILHUETA DE PARTIDA SAI DO PRIMEIRO TRECHO, e não de um `my`
 		# cravado. Ela esteve cravada enquanto houve uma origem só, que calhava
 		# ser num trecho reto; com três origens um `my` fixo poria um caminhão
 		# atravessado no primeiro frame de quem começasse num cotovelo.
-		caminhao.texture = silhueta_do_trecho(pontos[0], pontos[min(1, pontos.size() - 1)],
-			_carga_na_estrada[indice])
+		caminhao.texture = silhueta_do_trecho(pontos[0],
+			pontos[min(1, pontos.size() - 1)], _carga_na_estrada[indice])
 		_ordenar_por_profundidade(caminhao)
 	)
 	for i in range(pontos.size() - 1):
@@ -654,6 +867,7 @@ func _trechos_da_rota(tw: Tween, caminhao: TextureRect, indice: int,
 			caminhao.position = origem.lerp(destino, t)
 			_ordenar_por_profundidade(caminhao)
 		, 0.0, 1.0, origem.distance_to(destino) / CAMINHAO_VELOCIDADE)
+	tw.tween_callback(ao_fim)
 
 
 ## Põe `no` no índice que a profundidade dele pede, entre os irmãos.
@@ -890,6 +1104,11 @@ func _refresh_docks() -> void:
 	# Sem isto o cartão só mudava quando o roster mudava — e barco novo a chegar
 	# não mexe no roster, que é exatamente o momento em que o aviso faz falta.
 	_repintar_trabalhadores()
+	# E OBRIGA A OLHAR PARA A ESTRADA, pela mesma razão: um camião encostado num
+	# berço está lá por causa de um barco, e quando esse barco sai ele vai
+	# embora. Este é o ponto único por onde o estado das docas chega à tela, e
+	# por isso é aqui — não em cada um dos sinais que mexem numa doca.
+	_docas_mudaram()
 
 
 # Repinta o que depende de "há trabalho parado?", sem reconstruir cartão nenhum:

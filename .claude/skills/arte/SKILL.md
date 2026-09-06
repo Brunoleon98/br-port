@@ -155,7 +155,7 @@ tiro ao `capturar_evidencia.sh` não dá antes/depois enquanto o PR não fundir.
 Até 07/09 ele usava o script do HEAD contra o checkout da base, e a corrida
 ficava vermelha com "File not found" por o PR ter acrescentado evidência.
 
-⚠️ **E CINCO DAS SETE SÃO UMA PARTIDA SORTEADA.** Arte que só aparece em
+⚠️ **E SEIS DAS OITO SÃO UMA PARTIDA SORTEADA.** Arte que só aparece em
 alguns estados do jogo — um casco por serviço, um camião por carga — pode não
 entrar em nenhuma delas: medido em 07/09, os seis cascos novos apareceram em
 DUAS fotos e os oito camiões numa. Quem prova esse tipo de arte é a folha de
@@ -223,7 +223,7 @@ uma decisão; não registado, seria um esquecimento que a sessão seguinte repet
 ## 8. O gate é do Bruno, e o CI já o preparou
 
 **A entrega da arte não é o commit — é ele olhar.** O workflow `captura.yml`
-anexa a cada PR as sete imagens do antes E do depois e diz qual mudou, no
+anexa a cada PR as oito imagens do antes E do depois e diz qual mudou, no
 resumo da corrida e no log. Isso existe para a olhada custar um zip em vez de
 uma sessão.
 
