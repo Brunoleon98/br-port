@@ -58,6 +58,15 @@ mkdir -p "$SAIDA"
 comum=(--path "$PROJETO" --resolution 720x1280 --rendering-driver opengl3
        --audio-driver Dummy --fixed-fps 60)
 
+# ⚠️ UMA FOTO NOVA SÓ EXISTE A PARTIR DA MAIN, e isso é do workflow. O
+# `captura.yml` fotografa também a BASE do PR, e até 07/09 fazia-o com o
+# script DESTE commit apontado ao projeto da base: no dia em que se
+# acrescentou a `frota`, o Godot respondeu "File not found" no checkout da
+# base e a corrida ficou vermelha por o PR ter acrescentado evidência. Hoje o
+# antes é tirado pelo script da própria base, e uma foto que só o HEAD tem
+# aparece na tabela como "novo" — mas quem acrescentar um tiro aqui deve
+# esperar exatamente isso na primeira corrida, e não um antes/depois.
+#
 # `xvfb-run -a` porque a captura precisa de contexto gráfico: teste e import
 # rodam sem tela, esta não.
 # tirar <nome> <painéis esperados, ou "-"> <argumentos do Godot...>

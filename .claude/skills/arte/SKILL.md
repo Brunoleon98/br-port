@@ -149,6 +149,12 @@ done
 não desenha cenário. Se ela mudou, a mudança vazou para onde não devia. O
 mesmo vale para `frota.png` numa mudança que não seja de casco nem de camião.
 
+⚠️ **FOTO NOVA NÃO TEM ANTES, e a primeira corrida diz "novo".** O
+`captura.yml` fotografa a base do PR com o script DA BASE — acrescentar um
+tiro ao `capturar_evidencia.sh` não dá antes/depois enquanto o PR não fundir.
+Até 07/09 ele usava o script do HEAD contra o checkout da base, e a corrida
+ficava vermelha com "File not found" por o PR ter acrescentado evidência.
+
 ⚠️ **E CINCO DAS SETE SÃO UMA PARTIDA SORTEADA.** Arte que só aparece em
 alguns estados do jogo — um casco por serviço, um camião por carga — pode não
 entrar em nenhuma delas: medido em 07/09, os seis cascos novos apareceram em
