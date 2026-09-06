@@ -944,31 +944,36 @@ adiado.
 **A devolução inteira e a triagem estão em `docs/arquivo/PLAYTEST_02_ANALISE.md`.**
 Aqui fica só o que a fila precisa de saber.
 
-**O PRIMEIRO BLOCO ESTÁ FEITO** (07/09, PR #34), escolhido por ele: os defeitos
-medidos mais as duas de interface. O cone saiu do asfalto para o pátio — e a
-isenção que ele tinha no D2 *era* o defeito. Os seis blocos de cor chapada
-deram lugar a dois LOTES RESERVADOS. Os camiões encolheram para 0,72 (1,96 →
-1,41 unidades contra 1,99 do escritório). O "Alocar todos" ganhou a variação
-`BotaoDestaque`, e o balanço deixou de ser beco sem saída.
+**TRÊS BLOCOS FECHADOS EM 07/09**, todos escolhidos por ele:
 
-⚠️ **Sobrou o 4b, e a diagnose mudou o que ele é.** Tingindo cada peça do
-`vias()` e medindo o render, **a rua está LIGADA**: o cotovelo encosta na faixa
-na mesma linha de meio-fio. Os três círculos caem sobre os três COTOVELOS — o
-que acaba no nada é a ponta da faixa depois da curva, um topo quadrado virado
-para a vila com o asfalto a reaparecer 4 unidades adiante. Não há asserção a
-escrever, porque geometricamente não falta nada: é defeito de LEITURA, e o
-conserto é de desenho — chanfrar a esquina, ou continuar o lado de fora como
-rua de vila. **Ele deixou de ser um defeito solto e passou a ser a cabeça do
-bloco da ESTRADA**, com o 11, o 2 e o 4a.
+| Bloco | Itens | PR | Registo |
+|---|---|---|---|
+| Defeitos medidos + interface | 14, 10, 1, 22, 25 | #34 | a própria análise |
+| O camião entra na doca | 3 | #35 | `docs/decisoes/011` |
+| A estrada | 2, 4a, 11 e **um terço do 4b** | #36 | `docs/decisoes/012` |
 
-**Oito itens de arte** — detalhe da rua, o guindaste de madeira do n1, variedade
-de barcos de PESCA, curvas em vez de retas, gradiente de água e areia mais
-fauna, caminhos de terra para as casas, prédios em obra e avançados, e afastar
-a zona de espera.
+⚠️ **O QUE FICOU MEDIDO E POR FAZER**, que é o que a fila precisa de saber:
 
-**Dois itens de sistema, dos três** — via de mão dupla e o camião que vai à doca
-do navio que serve. O terceiro (o fecho do painel de balanço, que trancava o
-menu de pausa e com ele o `.jsonl` da partida) foi feito em 07/09.
+- **O 4b está a um terço.** A diagnose mudou o que ele é: a rua está LIGADA — o
+  cotovelo encosta na faixa na mesma linha de meio-fio —, e o que acaba no nada
+  é a ponta da faixa depois da curva. Não há asserção a escrever, porque
+  geometricamente não falta nada: é defeito de LEITURA. A viela da vila passou
+  a sair dessa face e cobre **1,36 das 4,00 unidades dela — 34%, igual nos
+  quatro cotovelos**. Achatar o resto é chanfrar a esquina.
+- **A rua parou em 1,8** de largura. A conta que aperta não é a do pátio (essa
+  aguentaria 2,2) mas a janela em `my` entre o acesso ao berço e o cotovelo, que
+  vale `3,98 - RUA_LARG` contra os 1,987 do armazém: fecha a 1,99. Passar disso
+  obriga a empurrar o `RUA_RECUO`, e há só 1,48 de folga até à frente da vila —
+  mexe no enquadramento inteiro.
+
+**Cinco itens de arte, dos oito** — o guindaste de madeira do n1, variedade de
+barcos de PESCA, curvas em vez de retas, gradiente de água e areia mais fauna,
+prédios em obra e avançados, e afastar a zona de espera. Os outros dois — o
+detalhe da rua e os caminhos de terra — saíram no bloco da estrada.
+
+**Os três itens de sistema estão FEITOS** — a via de mão dupla, o camião que vai
+à doca do navio que serve, e o fecho do painel de balanço, que trancava o menu
+de pausa e com ele o `.jsonl` da partida.
 
 ⚠️ **E três coisas que NÃO são itens de fila, e é por isso que estão aqui em vez
 de numeradas:**

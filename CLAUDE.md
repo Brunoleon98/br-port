@@ -87,6 +87,17 @@ continua escrita aqui porque ela vale mesmo quando o hook não correu.
 leem esse arquivo. Antes dele, este documento mandava baixar a 4.6.1 e o CI
 rodava a 4.6.3 — a sessão testava numa versão e o PR era barrado noutra.
 
+⚠️ **PR PARA OUTRA BRANCH NÃO TEM CI NENHUM, E MUDAR A BASE NÃO O ACORDA.**
+Os dois workflows disparam em `pull_request: branches: [main]`, e mais nada:
+uma PR encadeada — aberta contra a branch de outra PR, que é o que se faz
+quando um bloco assenta no anterior — nasce **sem check nenhum**, e o painel
+mostra-a limpa por não ter o que mostrar. Reapontá-la para a `main` depois
+também não basta: isso gera um evento `edited`, que não está nos tipos por
+omissão do `pull_request`. Aconteceu em 07/09 com a PR #36. O que a põe a
+correr é um `synchronize`, ou seja **um commit de verdade** — e o que serve é
+justamente o que já se devia fazer, fundir a `main` para dentro. Nunca um
+commit vazio, que este arquivo proíbe noutro sítio pela mesma razão.
+
 **O APK NÃO se constrói aqui, e o Web sim.** O `dl.google.com` responde 403 por
 política da organização, então o SDK do Android é inalcançável e o CI é o único
 lugar onde o export do APK se verifica — ele corre a cada push e deixa o

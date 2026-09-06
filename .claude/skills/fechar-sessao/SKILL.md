@@ -187,6 +187,13 @@ skill já apontou para um binário do Godot em `/tmp` numa versão que deixou de
 ser a do CI, e ninguém a teria olhado se a varredura só procurasse lições
 novas: quem muda uma receita tem de procurar quem a copiou.
 
+⚠️ **E A §7 DO PLANO É A QUE MAIS FICA PARA TRÁS — duas vezes no mesmo dia.**
+Fechar um bloco atualiza o `ESTADO_DO_PROJETO.md` quase por reflexo, porque é
+o que esta skill cobra; a camada do RUMO fica a descrever o bloco como por
+começar, e a sessão seguinte lê dali o que fazer a seguir. Em 07/09 ela dizia
+"nada disto foi começado" com um bloco já fundido, e depois "o primeiro bloco
+está feito" com três. **Estado e rumo atualizam-se juntos, ou o rumo mente.**
+
 | O que se aprendeu | Onde vive |
 |---|---|
 | Regra que vale sempre e para todos | `CLAUDE.md` — o único que carrega sozinho |
