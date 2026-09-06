@@ -531,6 +531,64 @@ amostrada da captura para os cascos, o asfalto para os camiões); ela entrou no
 `capturar_evidencia.sh` como sétima imagem. É a `folha_icones.gd` outra vez, e
 pela mesma razão.
 
+### Fora das etapas — a RUA DE MÃO DUPLA e o que ela arrastou (07/09)
+
+Itens 2, 4a e 11 da segunda jogada. **Nenhum precisou de Blender**: é tudo
+`gerar_mapa_iso.py` e posição de nó na cena.
+
+**A rua passou de 1,1 para 1,8**, e a largura foi MEDIDA. O comentário que já
+estava no arquivo apontava para a conta errada: ele diz que o pátio é
+`RUA_RECUO - RUA_LARG - CALCADA - APRON` e que o armazém cabe até 2,2 de rua.
+Cabe — em `mx`. Quem fecha primeiro é a janela em **`my`** entre o ACESSO AO
+BERÇO e o COTOVELO, que vale `3,98 - RUA_LARG` e é onde os dois prédios do
+pátio vivem:
+
+| rua | janela em `my` | armazém precisa de 1,987 |
+|---|---|---|
+| 1,8 | 2,18 | cabe, 0,19 de folga |
+| 1,9 | 2,08 | cabe, 0,09 |
+| 2,0 | 1,98 | **não cabe, por 7 milésimos** |
+
+**Alargar a rua deslocou SETE props**, e o D2 apanhou os sete: os dois prédios
+do pátio (que o cotovelo mais largo passou a alcançar em `my`), a barreira, o
+poste, o poste de luz e o cone (que ficaram sobre o asfalto novo) e a pilha de
+caixotes e o palete (dentro do terceiro cotovelo). O armazém foi recentrado no
+pátio novo; os outros andaram com o meio-fio.
+
+**As passadeiras saem do `my` dos prédios**, não de um número escrito à mão —
+eles andaram nesta mesma passagem, e uma zebra cravada ficaria a marcar a
+travessia de um prédio que já não está ali. As barras correm no sentido do
+tráfego, que aqui é `my`.
+
+**A viela de terra responde a duas queixas com uma medida.** O pedido era
+"caminhos de terra para as casas"; medido, entre a calçada e a frente da casa
+da frente há **0,13 unidades** — o mesmo número que já tinha mandado as
+árvores da vila para o quintal, e que não deixa passar caminho nenhum. O
+espaço que existe é o de **1,60 entre as duas fileiras**, e a fileira de trás
+não tinha acesso nenhum. A viela sai da face do cotovelo — a que o Bruno
+circulou a vermelho — e serve essa fileira.
+
+**⚠️ O QUE NÃO FICOU: o item 4b está a um terço.** A face que "acaba no nada"
+tem 4,00 unidades de largura em cada um dos quatro cotovelos, e a boca da
+viela cobre 1,36 delas — **34%**, medido, igual nos quatro. O resto continua a
+ser uma aresta de meio-fio virada para a vila. Sai da rua uma estrada agora, o
+que era a metade que faltava; achatar a aresta que sobra é chanfrar a esquina,
+e isso é desenho para outra passagem.
+
+**E ela expôs dois defeitos latentes no `vaos_da_vila()`**, os dois calados até
+os prédios se mexerem:
+
+1. Ele só abria vão quando a coluna EXATA do prédio caía dentro do degrau
+   (`my0 <= centro < my1`), e por isso perdia o degrau vizinho — a silhueta do
+   armazém tem 124 px e alcança casas a 37 px da coluna dele, que num degrau ao
+   lado ficam a menos de meia unidade de `my`. Hoje é interseção de intervalos.
+2. O limiar dele (`0,6` da meia-largura) dá EXATAMENTE o mesmo número que o do
+   D14 (`0,30` da largura) — zero de folga — e os dois medem de pontos
+   diferentes: o gerador do canto do lote, o teste do centro da casa. Com o
+   `dmy` sorteado entre 0,72 e 1,28 essa diferença chega a 0,315 unidades, e
+   uma casa podia escapar ao vão e aparecer fatiada. Hoje o vão leva essa
+   margem.
+
 ### Fora das etapas — a escala dos dois prédios do pátio (03/09)
 
 Não é etapa do plano: é correção de playtest, e entra aqui porque mexeu em

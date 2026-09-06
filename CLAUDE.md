@@ -464,6 +464,23 @@ tranca isso.
   caixa lisa isso passou. Ao ganhar tampo e cinta, o corpo continuou fundido
   com o convés e só as peças novas ficaram visíveis — o caixote saiu da
   renderização parecendo um banquinho, com tampo e pernas. A suíte passou.
+- **⚠️ O COMENTÁRIO QUE DIZ QUAL CONTA APERTA PODE APONTAR PARA A ERRADA.** O
+  `RUA_LARG` tinha ao lado a conta do pátio (`RUA_RECUO - RUA_LARG - CALCADA -
+  APRON`) e a afirmação de que o armazém cabe — e cabe, em `mx`. Ao alargar a
+  rua em 07/09, quem fechou primeiro foi a janela em **`my`** entre o acesso ao
+  berço e o cotovelo, que nem estava escrita: ela vale `3,98 - RUA_LARG` e o
+  armazém precisa de 1,987, o que põe o teto em 1,99 e não em 2,2. **Antes de
+  confiar na restrição que o comentário nomeia, procure as outras** — e depois
+  varra o valor, que é como se acha a que aperta.
+- **⚠️ E DERIVAÇÃO E TESTE COM LIMIARES IGUAIS TÊM ZERO DE MARGEM.** O
+  `vaos_da_vila()` abre o vão a `0,6` da meia-largura do sprite e o D14 mede a
+  `0,30` da largura — o MESMO número. Só que um mede do canto do lote e o outro
+  do centro da casa, e essa diferença chega a 0,315 unidades: uma casa cujo
+  centro cai dentro do limiar do teste e cujo canto cai fora do da derivação
+  escapa ao vão e sai fatiada pelo prédio. Passou despercebido enquanto nenhuma
+  casa calhou naquela fatia de 6 px, e apareceu no dia em que os prédios se
+  mexeram. **Dois números iguais medidos de sítios diferentes não são a mesma
+  guarda** — o que gera tem de ser mais folgado do que o que confere.
 - **⚠️ NADA PERGUNTAVA SE DOIS DESENHOS DO MAPA SE SOBREPÕEM.** Toda a
   maquinaria de cerco deste projeto mede PEGADA DE PROP contra faixa publicada
   — e um desenho do gerador não é prop. Os dois lotes reservados do pátio

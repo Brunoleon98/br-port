@@ -277,8 +277,37 @@ APRON = 1.3              # concreto entre o pátio e a beira do cais
 # na RUA_LARG ou na CALCADA muda o pátio na mesma proporção — e prédio que não
 # cabe não dá erro nenhum, só sai por cima do asfalto.
 RUA_RECUO = 6.8          # da beira do cais até a face de TERRA da rua
-RUA_LARG = 1.1
+
+# ⚠️ A RUA TEM DUAS FAIXAS DESDE 07/09, e a largura foi MEDIDA e não escolhida.
+#
+# ⚠️ E A CONTA ACIMA NÃO É A QUE APERTA. Ela diz que o pátio aguenta o armazém
+# até 2,2 de rua, e por isso a primeira tentativa foi a 2,0. Reprovou: quem
+# fecha antes é a janela em MY entre o ACESSO AO BERÇO e o COTOVELO, que é onde
+# os dois prédios do pátio vivem. Ela vale `my1 - RUA_LARG - CALCADA` menos o
+# fim do acesso, ou seja 3,98 - RUA_LARG — e o armazém ocupa 1,987 em `my`:
+#
+#     rua 1,8 -> janela 2,18   cabe, 0,19 de folga
+#     rua 1,9 -> janela 2,08   cabe, 0,09
+#     rua 2,0 -> janela 1,98   NÃO CABE, por 7 milésimos
+#
+# Duas faixas de 0,9 contra um camião de 0,45 — ele ocupa metade da sua faixa,
+# que era o ponto. A outra saída seria empurrar o `RUA_RECUO` para trás, e essa
+# mexe no enquadramento inteiro: entre a calçada e a frente da vila há 1,48 de
+# folga, e a vila é medida do cais como tudo o mais. Ficou por fazer.
+RUA_LARG = 1.8
+PASSADEIRA_COMP = 0.75   # o quanto a zebra ocupa ao longo da rua
 CALCADA = 0.22
+
+# A FAIXA POR ONDE O CAMIÃO ANDA, e ela deixou de ser o meio da rua.
+#
+# Com uma faixa só, andar no meio do asfalto era a única leitura possível. Com
+# duas, andar no meio é andar EM CIMA DA LINHA — e a linha é justamente o que
+# faz a rua ler como de mão dupla. O camião segue sempre em `+my`, que na tela
+# é para baixo e para a esquerda; quem segue nesse sentido tem a água à direita,
+# e é essa a faixa de fora. Sai daqui a entrada de cada acesso ao berço, de
+# modo que virar para a doca seja virar à DIREITA.
+def faixa_do_caminhao(borda) -> float:
+    return borda - RUA_RECUO + RUA_LARG * 0.75
 # A vila acompanha a rua: 0,13 de folga entre o fundo da calçada e a frente do
 # lote, que é o que havia antes e o que mantém as casas fora do passeio.
 VILA_RECUO = 8.5         # fundo dos lotes, também medido do cais
@@ -924,6 +953,33 @@ def _faixa_mx(mx0, mx1, my0, my1, cor, opac=1.0) -> str:
                  p(mx1, my1, ALT_CAIS), p(mx0, my1, ALT_CAIS)], cor, opac)
 
 
+def passadeira(borda, my_centro) -> str:
+    """Faixa de pedestres a atravessar a rua, na altura de um prédio do pátio.
+
+    ⚠️ AS BARRAS CORREM NO SENTIDO DO TRÁFEGO, que aqui é `my`. Desenhá-las
+    atravessadas seria desenhar uma escada deitada na estrada: numa zebra o que
+    se repete ao longo da via é o VÃO, e cada barra acompanha quem passa por
+    cima dela. Como a rua deste mapa corre em `my`, as barras correm em `my` e
+    repetem-se em `mx`.
+
+    Ela só existe com o pavimento — pintura de piso num porto de terra batida
+    seria marcação sem estrada, a mesma regra da linha central logo abaixo.
+    """
+    dentro = borda - RUA_RECUO
+    fora = dentro + RUA_LARG
+    s = ""
+    # A largura da barra e o passo saem da rua: quatro barras por faixa, com
+    # vão igual à barra. Números cravados envelheceriam quando a rua mudasse de
+    # largura — e ela mudou em 07/09, que é a razão desta função existir.
+    passo = RUA_LARG / 8.0
+    mx = dentro + passo * 0.5
+    while mx + passo * 0.5 <= fora:
+        s += _faixa_mx(mx, mx + passo * 0.5, my_centro - PASSADEIRA_COMP / 2.0,
+                       my_centro + PASSADEIRA_COMP / 2.0, C["faixa_via"], 0.85)
+        mx += passo
+    return s
+
+
 def vias(pavimentado: bool) -> str:
     """A rua do porto, com calçada, e o acesso de cada berço.
 
@@ -953,6 +1009,18 @@ def vias(pavimentado: bool) -> str:
                            my1 - RUA_LARG, my1, C["asfalto_via"])
 
         if pavimentado:
+            # AS PASSADEIRAS, na altura de cada prédio do pátio. O pedido dizia
+            # "faixas de pedestres perto do armazém e escritório, por exemplo",
+            # e é literalmente isso: quem trabalha no pátio atravessa a rua
+            # para chegar à vila, e a passadeira é o que diz que aquilo é uma
+            # rua com gente e não uma pista.
+            #
+            # ⚠️ O `my` SAI DOS PRÉDIOS, não de um número escrito aqui. Eles
+            # andaram em 07/09 quando a rua alargou, e uma passadeira cravada
+            # ficaria a marcar a travessia de um prédio que já não está ali.
+            for _n, _pmx, pmy, _spr in PREDIOS_DO_PATIO:
+                if my0 <= pmy < my1:
+                    s += passadeira(borda, pmy)
             meio = (dentro(borda) + fora(borda)) / 2.0
             my = my0 + 0.5
             while my < my1 - 1.4:
@@ -1118,15 +1186,40 @@ def vaos_da_vila(recuo: float = None) -> list:
         # desde 05/09 são coisas diferentes (ver o bloco do enquadramento).
         # Misturar os dois daria um vão 1,5x maior do que devia — e um vão
         # errado não dá erro, dá buraco na fileira de casas.
-        meia = 0.6 * (sprite / 2.0) / (MEIA_LARG * ZOOM)
+        # ⚠️ E LEVA A MARGEM DO PONTO DE REFERÊNCIA, que faltava.
+        #
+        # O `0,6` da meia-largura dá exatamente o mesmo número que o `0,30` da
+        # largura com que o D14 mede — zero de folga entre os dois. Só que eles
+        # NÃO MEDEM DO MESMO SÍTIO: aqui o `centro` sai do canto do lote
+        # (`borda - recuo`), e o teste mede do CENTRO da casa, que está
+        # `(dmx - dmy) / 2` ao lado. Com `dmy` sorteado entre 0,72 e 1,28, essa
+        # diferença chega a 0,315 unidades — e uma casa cujo CENTRO cai dentro
+        # do limiar do teste, mas cujo CANTO cai fora do meu, escapa ao vão e
+        # aparece fatiada pelo prédio. Foi o que o D14 apanhou em 07/09, e só
+        # depois de os prédios se mexerem: até aí nenhuma casa calhava naquela
+        # fatia de 6 px.
+        meia = 0.6 * (sprite / 2.0) / (MEIA_LARG * ZOOM) + (VILA_PROF - 0.72) / 2.0
         _, py = tela(pmx, pmy, ALT_CAIS)
         for my0, my1, borda in DEGRAUS:
             mx_vila = borda - recuo
             centro = mx_vila - (pmx - pmy)
-            if not (my0 <= centro < my1):
+            # ⚠️ O QUE INTERESSA É O VÃO SE ENCOSTAR AO DEGRAU, não o centro
+            # dele cair lá dentro. A versão anterior exigia `my0 <= centro <
+            # my1` e por isso perdia o degrau VIZINHO: a silhueta do armazém
+            # tem 109 px e alcança casas a 33 px da coluna dele, que num
+            # degrau ao lado ficam a menos de meia unidade de `my` — mas o
+            # centro exato cai fora da faixa, e nenhum vão se abria. Só se viu
+            # em 07/09, quando a rua alargou e os dois prédios tiveram de
+            # andar: o D14 apanhou uma casa que o armazém tapava e que a
+            # fileira não tinha aberto. Interseção de intervalos, como sempre.
+            if centro + meia <= my0 or centro - meia >= my1:
                 continue
-            # O prédio tapa para CIMA, e só até à altura do sprite dele.
-            _, hy = tela(mx_vila, centro, ALT_CAIS)
+            # O prédio tapa para CIMA, e só até à altura do sprite dele. A
+            # altura mede-se DENTRO do degrau, no meio do pedaço de vão que
+            # cai nele — medi-la no `centro` seria medi-la num `my` que este
+            # degrau não tem.
+            meio_no_degrau = min(max(centro, my0), my1)
+            _, hy = tela(mx_vila, meio_no_degrau, ALT_CAIS)
             if 0.0 <= py - hy <= sprite:
                 vaos.append((centro - meia, centro + meia))
     return vaos
@@ -1740,6 +1833,48 @@ def lotes_da_vila() -> list:
         + _fileira(VILA_RECUO_2, SEMENTE_CHAO + 211, fundo=True)
 
 
+def viela_da_vila(pavimentado: bool) -> str:
+    """A viela de terra entre as duas fileiras de casas.
+
+    ⚠️ ELA RESPONDE A DUAS QUEIXAS DA MESMA JOGADA, e a medida é que as juntou.
+    A primeira pedia *"caminhos de terra para as casas"*; a segunda circulava a
+    vermelho os sítios onde *"a estrada acaba no nada"*. Medido: entre a
+    calçada e a frente da casa da frente há **0,13 unidades**, quatro pixels —
+    não cabe caminho nenhum ali, e é a mesma medida que já tinha mandado as
+    árvores da vila para o quintal. O espaço que existe é o de **1,60 entre as
+    duas fileiras**, e é para lá que a face que "acaba no nada" aponta: o
+    cotovelo da rua acaba numa aresta virada para a vila, e essa aresta cai
+    exatamente na boca deste vão.
+    A viela sai dela e serve a fileira de trás, que até 07/09 não tinha
+    acesso nenhum — uma fileira de casas sem rua, que é a mesma queixa vista
+    do outro lado.
+
+    ⚠️ E ELA COMEÇA NO COTOVELO DO DEGRAU ANTERIOR, por isso o primeiro degrau
+    não a leva: sem cotovelo atrás dela a viela nasceria solta no relvado, que
+    é o defeito que ela existe para corrigir.
+    """
+    s = ""
+    for i, (my0, my1, borda) in enumerate(DEGRAUS):
+        if i == 0:
+            continue
+        mx0 = borda - VILA_RECUO_2 + VILA_PROF + 0.12
+        mx1 = borda - VILA_RECUO - 0.12
+        if mx1 - mx0 < 0.4:
+            continue
+        # Ela acaba na última casa de trás do quarteirão, e não num `my`
+        # escolhido: viela que passa da última casa é viela que acaba no nada,
+        # que é justamente o que se está a corrigir.
+        fim = None
+        for lmx0, lmy0, dmx, dmy, _v, fundo in lotes_da_vila():
+            if fundo and my0 <= lmy0 < my1:
+                fim = max(fim, lmy0 + dmy) if fim is not None else lmy0 + dmy
+        if fim is None:
+            continue
+        s += _faixa_mx(mx0, mx1, my0, min(fim + 0.45, my1),
+                       C["terra_clara"] if pavimentado else C["terra_escura"])
+    return s
+
+
 def vila(nivel: int, pavimentado: bool) -> str:
     """As casas atrás da rua, no nível pedido, e as árvores entre elas.
 
@@ -1763,7 +1898,10 @@ def vila(nivel: int, pavimentado: bool) -> str:
         return ""
     perfis = VILA_NIVEIS[min(nivel, max(VILA_NIVEIS))]
     r = random.Random(SEMENTE_CHAO + 300 + nivel)
-    s = ""
+    # A VIELA VEM PRIMEIRO, porque é CHÃO. O que cresce no chão pertence à
+    # camada do chão — a mesma lição que o capim da restinga pagou ao aparecer
+    # por cima dos telhados.
+    s = viela_da_vila(pavimentado)
     for mx0, my0, dmx, dmy, variante, fundo in sorted(lotes_da_vila(),
                                                       key=lambda l: l[0] + l[1]):
         altura, telha, janelas = perfis[variante]
@@ -2367,7 +2505,7 @@ def tabela_ancoras() -> dict:
             # O ponto da ROTA onde o camião vira: o meio do asfalto daquele
             # degrau, na altura do berço. Sai da mesma conta que dá o `mx` de
             # cada trecho reto da `ROTA_ESTRADA` do `Main.gd`.
-            "entrada": [round(borda - RUA_RECUO + RUA_LARG / 2.0, 3), round(meio, 3)],
+            "entrada": [round(faixa_do_caminhao(borda), 3), round(meio, 3)],
         })
 
     # E OS LOTES RESERVADOS, publicados para o D20 os poder conferir contra os

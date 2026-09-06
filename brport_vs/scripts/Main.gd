@@ -402,9 +402,9 @@ const MEIA_ALT := 10.0
 ## acima de 22,5 estão as praias, onde o porto acabou e equipamento nenhum
 ## pousa (D15) —, e os três repartem o que sobra da estrada visível.
 const CAMINHAO_ORIGENS: Array[Vector2] = [
-	Vector2(-0.25, 1.6),
-	Vector2(3.75, 9.5),
-	Vector2(7.75, 21.0),
+	Vector2(0.55, 1.60),
+	Vector2(4.55, 9.50),
+	Vector2(8.55, 21.00),
 ]
 
 ## A escada da rua, em (mx, my). Primeiro e último ponto estão FORA do quadro —
@@ -412,10 +412,17 @@ const CAMINHAO_ORIGENS: Array[Vector2] = [
 ## números escolhidos: o primeiro e o último degrau da costa acabam onde o
 ## caminhão já está 58px acima do topo e 63px à esquerda da margem.
 ##
-## O `mx` de cada trecho reto é o MEIO do asfalto daquele degrau
-## (`borda - RUA_RECUO + RUA_LARG/2`), e o `my` de cada cotovelo é o meio da
-## faixa que o `vias()` desenha para virar (`my1 - RUA_LARG/2`). Nenhum destes
-## números é de gosto, e o D13 confere-os todos contra as âncoras.
+## ⚠️ O `mx` DE CADA TRECHO RETO DEIXOU DE SER O MEIO DA RUA em 07/09, quando
+## ela ganhou duas faixas. Andar no meio de uma rua de mão dupla é andar EM CIMA
+## DA LINHA, e a linha é justamente o que a faz ler como de mão dupla. Ele é
+## agora o meio da faixa DE FORA (`borda - RUA_RECUO + RUA_LARG * 0.75`) — o
+## camião segue sempre em `+my`, e quem segue nesse sentido tem a água à
+## direita. Sai daí que virar para a doca é virar à DIREITA, e que a entrada de
+## cada acesso, que o mapa publica, cai nesta faixa.
+##
+## O `my` de cada cotovelo é, pela mesma razão, a meia faixa do lado de dentro
+## da curva (`my1 - RUA_LARG/4`): a virar em `+mx` a direita é `+my`. Nenhum
+## destes números é de gosto, e o D13 confere-os todos contra as âncoras.
 ##
 ## ⚠️ ELA CRESCEU EM 05/09, e por duas razões que se somam: a costa ganhou um
 ## degrau em cada ponta (a rua acompanha-a inteira) e a câmera afastou-se, de
@@ -425,18 +432,18 @@ const CAMINHAO_ORIGENS: Array[Vector2] = [
 ## existe para fazer. Os de agora saem da mesma pergunta, resolvida contra o
 ## desenho do caminhão e não contra o quadro de 512 dele.
 const ROTA_ESTRADA: Array[Vector2] = [
-	Vector2(-4.25, -14.0),   # entra por cima do topo do quadro
-	Vector2(-4.25, -6.55),
-	Vector2(-0.25, -6.55),   # cotovelo do degrau 0 para o 1
-	Vector2(-0.25, 7.45),
-	Vector2(3.75, 7.45),     # cotovelo do 1 para o 2
-	Vector2(3.75, 15.45),
-	Vector2(7.75, 15.45),    # cotovelo do 2 para o 3
-	Vector2(7.75, 23.45),
-	Vector2(11.75, 23.45),   # cotovelo do 3 para o 4
-	Vector2(11.75, 33.45),
-	Vector2(15.75, 33.45),   # cotovelo do 4 para o 5
-	Vector2(15.75, 42.0),    # sai pela esquerda do quadro
+	Vector2(-3.45, -14.00),   # entra por cima do topo do quadro
+	Vector2(-3.45, -6.45),
+	Vector2(0.55, -6.45),     # cotovelo do degrau 0 para o 1
+	Vector2(0.55, 7.55),
+	Vector2(4.55, 7.55),      # cotovelo do 1 para o 2
+	Vector2(4.55, 15.55),
+	Vector2(8.55, 15.55),     # cotovelo do 2 para o 3
+	Vector2(8.55, 23.55),
+	Vector2(12.55, 23.55),    # cotovelo do 3 para o 4
+	Vector2(12.55, 33.55),
+	Vector2(16.55, 33.55),    # cotovelo do 4 para o 5
+	Vector2(16.55, 42.00),    # sai pela esquerda do quadro
 ]
 
 ## Velocidade constante em pixels por segundo. É ela que dá a duração de cada
@@ -517,9 +524,9 @@ const CAMINHOES := {
 ## `entrada` é o ponto DA ROTA onde ele vira (o meio do asfalto do degrau, na
 ## altura do berço); `paragem` é onde ele encosta, no fundo do acesso.
 const ACESSOS_DOCA: Array[Dictionary] = [
-	{"entrada": Vector2(-0.25, 3.2), "paragem": Vector2(3.45, 3.2)},
-	{"entrada": Vector2(3.75, 11.2), "paragem": Vector2(7.45, 11.2)},
-	{"entrada": Vector2(7.75, 19.2), "paragem": Vector2(11.45, 19.2)},
+	{"entrada": Vector2(0.55, 3.2), "paragem": Vector2(3.45, 3.2)},
+	{"entrada": Vector2(4.55, 11.2), "paragem": Vector2(7.45, 11.2)},
+	{"entrada": Vector2(8.55, 19.2), "paragem": Vector2(11.45, 19.2)},
 ]
 
 ## O quanto a paragem recua do fim do acesso, para o DESENHO caber lá dentro.

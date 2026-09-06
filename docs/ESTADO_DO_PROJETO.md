@@ -87,9 +87,11 @@ corrugada, portão de enrolar, plataforma de carga) e **o porto abre em RUÍNAS
 de verdade** — parede desabada, meio telhado com a armação à vista, portão fora
 do trilho. Como se lá chegou está em `docs/arquivo/HISTORICO.md`.
 
-**O porto tem uma CIDADE atrás dele.** Rua paralela ao cais, calçada, acesso a
-cada berço e **duas fileiras de casas em quarteirões**; a de trás é mais rala,
-para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`): térrea,
+**O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8 de largura,
+com linha central e passadeiras na altura de cada prédio do pátio), calçada,
+acesso a cada berço, **duas fileiras de casas em quarteirões** e uma **viela de
+terra entre elas**, que é o único acesso da fileira de trás; a de trás é mais
+rala, para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`): térrea,
 sobrado, prédio — é assim que cresce a cada Fase, sem o jogo saber.
 
 **E a mata atrás dela é desenhada onde se vê**, pela receita `com_saia()`.
@@ -118,19 +120,20 @@ em `docs/arquivo/HISTORICO.md`.
 
 **Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
 
-**Dois blocos fechados** (07/09), ambos escolhidos por ele. O primeiro foram os
-defeitos medidos e as duas de interface — **14** o cone, **10** os lotes
-reservados, **1** os camiões a 0,72, **22** o `BotaoDestaque`, **25** o balanço
-que fecha. O segundo foi o **3** (`docs/decisoes/011`): o camião sai da rua pelo
-acesso ao berço e encosta na doca do navio que está a ser servido, saindo quando
-ele sai. A visita é «barco E trabalhador» — alocar passou a ter consequência no
-mapa —, e continuam a ser três: um camião encostado não está na estrada, então o
-porto a operar tem a rua mais VAZIA, não mais cheia.
+**Três blocos fechados em 07/09**, todos escolhidos por ele, e o detalhe de
+cada um está onde ele vive:
 
-⚠️ **O 4b FICOU POR FAZER, e a diagnose mudou o que ele é**: a rua está LIGADA,
-e o que acaba no nada é a ponta da faixa depois de cada cotovelo. Não há
-asserção a escrever — é defeito de LEITURA, e o conserto é de desenho. A
-medição e as duas saídas estão na análise; vale fazer junto com o **11**.
+| Bloco | Itens | Onde |
+|---|---|---|
+| Defeitos medidos + interface | 14, 10, 1, 22, 25 | a análise, e o PR #34 |
+| O camião entra na doca | 3 | `docs/decisoes/011` |
+| A estrada | 2, 4a, 11 e um terço do 4b | `docs/decisoes/012` |
+
+⚠️ **Duas coisas ficaram medidas e por fazer.** O **4b** está a um terço: a face
+de cada cotovelo tem 4,00 unidades e a boca da viela cobre 1,36 — 34%, igual
+nos quatro; achatar o resto é chanfrar a esquina. E a rua parou em **1,8** de
+largura porque a janela entre o acesso ao berço e o cotovelo fecha a 1,99; ir
+além disso obriga a empurrar o `RUA_RECUO`, e isso mexe no enquadramento.
 
 O resto continua por começar, e **a ordem é dele**.
 
