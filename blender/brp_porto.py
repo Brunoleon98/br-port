@@ -244,6 +244,42 @@ def _pecas_do_caminhao(M, eixo, servico):
     return p
 
 
+# ⚠️ O CAMIÃO ERA DO TAMANHO DO ESCRITÓRIO, e está medido (playtest 2, 06/09).
+# A carreta tinha 1,96 unidades de comprimento; o escritório tem 1,99 × 1,70 e
+# a casa da vila 1,35 de profundidade — um camião tão comprido quanto o prédio
+# inteiro, e mais comprido do que uma casa é larga. Na rua, os 0,62 de largura
+# ocupavam 56% dos 1,10 do asfalto.
+#
+# ⚠️ E A MEDIDA TINHA DUAS SAÍDAS. Ela também diz que os PRÉDIOS estão
+# pequenos — um escritório de porto do tamanho de um camião é o mesmo defeito
+# visto do outro lado. Encolher o camião é a metade contida: não toca em
+# pegada, em vão da vila nem no enquadramento, e ainda liberta largura de rua
+# para a via de mão dupla. Foi a escolha do Bruno, com o número na mão.
+#
+# 0,72 põe a carreta em 1,41 (contra 1,99 do escritório e 1,35 da casa) e a
+# largura em 0,45 numa rua de 1,10 — 41% dela, que deixa passar dois.
+#
+# ⚠️ E ESCALA-SE NO GRUPO, nunca reescrevendo as literais. São trinta números
+# por camião — chassi, cabine, vidro, friso, monte de granel, cantoneira,
+# eixo — e trinta chances de um ficar por escalar. É a regra que o galpão
+# pagou quando encolheu. Cada objeto UMA vez: aqui não há partilha (o
+# construtor cria peças novas a cada chamada), e o `set()` fica na mesma,
+# porque é ele que deixa acrescentar um camião sem saber o que ele reaproveita.
+ESCALA_CAMINHAO = 0.72
+
+
+def _encolher(objetos, k):
+    """Escala uniforme em torno da origem do mundo.
+
+    `location` e `scale` pelo mesmo fator mantêm a base assente no chão, porque
+    a base está em z≈0. Escalar só o `scale` deixaria as peças nos lugares
+    antigos e o camião desmontava-se.
+    """
+    for o in set(objetos):
+        o.location = tuple(c * k for c in o.location)
+        o.scale = tuple(c * k for c in o.scale)
+
+
 def _registrar_caminhoes(M, est):
     """Os oito props: quatro serviços × duas orientações.
 
@@ -254,9 +290,10 @@ def _registrar_caminhoes(M, est):
     for servico in CAMINHOES:
         for eixo, sufixo, celulas in (("my", "", (1, 2)), ("mx", "_mx", (2, 1))):
             nome = "caminhao_%s%s" % (servico, sufixo)
+            pecas = _pecas_do_caminhao(M, eixo, servico)
+            _encolher(pecas, ESCALA_CAMINHAO)
             origem(nome)
-            est.registrar(nome, _pecas_do_caminhao(M, eixo, servico),
-                          celulas=celulas)
+            est.registrar(nome, pecas, celulas=celulas)
 
 
 def empilhadeira(M, est):

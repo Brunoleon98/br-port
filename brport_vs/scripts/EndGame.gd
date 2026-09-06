@@ -76,3 +76,20 @@ func _mostrar_balanco() -> void:
 		get_tree().reload_current_scene()
 	)
 	_vbox.add_child(recomecar)
+
+	# ⚠️ O BALANÇO ERA UM BECO SEM SAÍDA, e a segunda jogada no telefone bateu
+	# nele (06/09): *"seria legal conseguir fechar essa tela, para que eu
+	# pudesse ir nas configurações e pegar as informações completas da partida
+	# ao invés de apenas esse print"*. Com um botão só — "Jogar de novo" — o
+	# menu de pausa ficava inalcançável, e com ele o `Copiar registro da
+	# partida`, que é justamente o `.jsonl` que responde melhor do que o print.
+	#
+	# ⚠️ E FECHAR NÃO PODE ABRIR OUTRO BECO. Quem fecha isto tem de conseguir
+	# voltar: o menu de pausa ganhou "Ver o balanço" enquanto a partida está em
+	# `game_over`, e é por isso que o rótulo diz por onde se volta. Um botão
+	# que fecha sem dizer isso troca um beco por outro.
+	var fechar := Button.new()
+	fechar.text = "Fechar — volta pelo menu de pausa"
+	fechar.custom_minimum_size = Vector2(0, TOQUE_MIN)
+	fechar.pressed.connect(queue_free)
+	_vbox.add_child(fechar)

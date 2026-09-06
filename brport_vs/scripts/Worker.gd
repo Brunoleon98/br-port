@@ -61,6 +61,22 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func refresh() -> void:
+	# ⚠️ ELE É CHAMADO DE FORA ANTES DE O NÓ ESTAR PRONTO, e aí os três
+	# `@onready` ainda são `null` — o que sai é um "Invalid assignment of
+	# property 'text' ... on a base object of type 'Nil'" no `stderr`, e MAIS
+	# NADA: a suíte de fumaça continua a imprimir `FUMACA OK`, porque erro de
+	# execução não incrementa contador de falha nenhum. Medido em 07/09 na
+	# main: cinco, doze e seis erros em três corridas do mesmo código, sem uma
+	# linha vermelha.
+	#
+	# Quem chama é o `_repintar_trabalhadores()` do `Main.gd`, que percorre os
+	# filhos do contentor — e um filho acrescentado neste frame ainda não
+	# correu o `_ready()`. O `setup()` aqui ao lado já tinha a guarda, e o
+	# `Dock.gd` também: faltava no caminho que vem de fora. Guardar DENTRO do
+	# `refresh()` fecha os três de uma vez, e não custa repintura nenhuma —
+	# o `_ready()` chama-o assim que o nó fica pronto.
+	if not is_node_ready():
+		return
 	var w = _find_self()
 	if w == null:
 		return

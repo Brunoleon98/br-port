@@ -1182,7 +1182,13 @@ func _on_meta_cartao_input(event: InputEvent) -> void:
 
 
 func _on_pause_pressed() -> void:
-	_abrir_painel(PauseMenuScene)
+	# `connect` por NOME, e não `menu.ver_balanco.connect(...)`: o
+	# `_abrir_painel` devolve um `Control`, e um `Control` não declara este
+	# sinal — a forma com ponto não compila. É a mesma razão de o `GS` destipado
+	# obrigar a escrever o tipo à mão.
+	var menu := _abrir_painel(PauseMenuScene)
+	menu.connect("ver_balanco", func() -> void:
+		_on_game_over(GameState.won, GameState.end_reason))
 
 
 func _on_rival_offer_triggered(dock_index: int) -> void:

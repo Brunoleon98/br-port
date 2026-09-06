@@ -825,7 +825,23 @@ func _d1_encaixe_das_docas() -> void:
 #
 # As exceções são nomeadas e explicadas: um caminhão na rua é um caminhão na
 # rua, e barco em terra seria o defeito oposto.
-const PODEM_PISAR_A_RUA := ["Caminhao", "ConeTransito"]
+# ⚠️ O CONE SAIU DESTA LISTA EM 07/09, E A ISENÇÃO ERA O DEFEITO. A segunda
+# jogada no telefone circulou-o a vermelho — "o cone no meio da estrada não faz
+# sentido" — e a medida deu-lhe razão: ele estava em `mx=7,80` com o asfalto
+# daquele degrau a ocupar 6,98..8,52, ou seja no MEIO da faixa. Nenhuma
+# asserção o pegava porque ele tinha sido escrito aqui como exceção.
+#
+# Um cone sinaliza obra ou passagem fechada; no meio de uma rua aberta ele lê
+# como um objeto esquecido. Hoje ele está no pátio, a 14 px da barreira, que é
+# a peça com que ele forma sentido. **Só o caminhão pisa a rua** — e esse
+# ANDA nela, que é outra coisa.
+#
+# ⚠️ E O SÍTIO SAIU DA FOTO, NÃO DA ASSERÇÃO. A primeira mudança pôs o cone em
+# `mx=9,00`, que passa nesta regra com 0,48 unidades de folga — e na captura
+# ele ficava colado ao meio-fio, sozinho, com a barreira a 35 px. O comentário
+# dizia "ao lado da barreira" e a imagem dizia outra coisa. A régua responde se
+# ele PISA a rua; se ele se LÊ como parte do mesmo canteiro, só a foto responde.
+const PODEM_PISAR_A_RUA := ["Caminhao"]
 const VIVEM_NA_AGUA := ["BarcoEspera", "Ancoragem", "Bote"]
 
 # Acima disto a âncora deixa de responder pelo prop e a pegada passa a ser

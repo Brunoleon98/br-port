@@ -69,6 +69,25 @@ jobs:
             exit 1
           fi
 
+      - name: Nenhuma suíte pode imprimir SCRIPT ERROR
+        # ⚠️ UM ERRO DE EXECUÇÃO DENTRO DE UM TESTE NÃO REPROVA NADA. Está no
+        # `CLAUDE.md` desde 02/09 — o erro sai no `stderr`, o contador de
+        # falhas fica em zero, e a suíte imprime a linha de sucesso na mesma —
+        # e até 07/09 nada CONFERIA isso. Medido nesse dia, na main e sem uma
+        # linha vermelha: cinco, doze e seis erros em três corridas do mesmo
+        # código (o `Worker.refresh()` a mexer em `@onready` ainda nulos, por
+        # um caminho que vinha de fora).
+        #
+        # Este passo é a guarda que faltava, e vem ANTES dos outros de
+        # propósito: com ele, "passou" volta a querer dizer "correu".
+        run: |
+          set -euo pipefail
+          if grep -q "SCRIPT ERROR" /tmp/saida.txt; then
+            echo "::error::A suíte imprimiu SCRIPT ERROR — passou sem correr até ao fim."
+            grep -n "SCRIPT ERROR" -A 6 /tmp/saida.txt
+            exit 1
+          fi
+
       - name: Rodar o teste de design
         # Confere o que a suíte de lógica não vê: se os props caem em cima do
         # que o gerador do mapa desenhou, se a ordem dos nós respeita a
@@ -86,6 +105,13 @@ jobs:
             exit 1
           fi
 
+          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
+          if grep -q "SCRIPT ERROR" /tmp/design.txt; then
+            echo "::error::O teste de design imprimiu SCRIPT ERROR — passou sem correr até ao fim."
+            grep -n "SCRIPT ERROR" -A 6 /tmp/design.txt
+            exit 1
+          fi
+
       - name: Rodar o teste de áudio
         # Ninguém — nem o CI, nem a máquina de quem desenvolve — consegue OUVIR
         # os sons: não há placa de som. Este passo cobre exatamente o que dá
@@ -100,6 +126,13 @@ jobs:
 
           if ! grep -q "AUDIO OK" /tmp/audio.txt; then
             echo "::error::O encanamento de áudio está quebrado (veja a saída acima)."
+            exit 1
+          fi
+
+          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
+          if grep -q "SCRIPT ERROR" /tmp/audio.txt; then
+            echo "::error::O teste de áudio imprimiu SCRIPT ERROR — passou sem correr até ao fim."
+            grep -n "SCRIPT ERROR" -A 6 /tmp/audio.txt
             exit 1
           fi
 
@@ -126,6 +159,13 @@ jobs:
             exit 1
           fi
 
+          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
+          if grep -q "SCRIPT ERROR" /tmp/fumaca.txt; then
+            echo "::error::O teste de fumaça imprimiu SCRIPT ERROR — passou sem correr até ao fim."
+            grep -n "SCRIPT ERROR" -A 6 /tmp/fumaca.txt
+            exit 1
+          fi
+
       - name: Rodar o teste do registro de partida
         # Item B7. O bloco que mais importa aqui é o R1: o `Registro` é um
         # autoload e por isso está de pé também durante as 600 partidas × 3
@@ -142,6 +182,13 @@ jobs:
 
           if ! grep -q "REGISTRO OK" /tmp/registro.txt; then
             echo "::error::O registro de partida está quebrado (veja a saída acima)."
+            exit 1
+          fi
+
+          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
+          if grep -q "SCRIPT ERROR" /tmp/registro.txt; then
+            echo "::error::O teste do registro imprimiu SCRIPT ERROR — passou sem correr até ao fim."
+            grep -n "SCRIPT ERROR" -A 6 /tmp/registro.txt
             exit 1
           fi
 
@@ -193,6 +240,13 @@ jobs:
 
           if ! grep -q "ASSET OK" /tmp/assets.txt; then
             echo "::error::Algum asset do pipeline BRP está fora do contrato."
+            exit 1
+          fi
+
+          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
+          if grep -q "SCRIPT ERROR" /tmp/assets.txt; then
+            echo "::error::O validador de assets imprimiu SCRIPT ERROR — passou sem correr até ao fim."
+            grep -n "SCRIPT ERROR" -A 6 /tmp/assets.txt
             exit 1
           fi
 

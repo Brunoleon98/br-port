@@ -842,6 +842,31 @@ def face_my(my, mx0, mx1, z0, z1, cor) -> str:
     return poli([p(mx0, my, z1), p(mx1, my, z1), p(mx1, my, z0), p(mx0, my, z0)], cor)
 
 
+def lote_reservado(mx0, my0, mx1, my1, base) -> str:
+    """Terreno demarcado à espera de construção: chão, contorno e estacas.
+
+    ⚠️ O CONTORNO É TRACEJADO, e é o que faz a marca ler como PROVISÓRIA. Um
+    retângulo de contorno cheio no asfalto lê como pintura de estacionamento;
+    tracejado lê como demarcação. É o mesmo sinal que a vaga de doca por
+    construir já dava com as estacas sob contorno tracejado.
+
+    ⚠️ E AS QUATRO ESTACAS SÃO O QUE O SEPARA DE UMA MANCHA. A esta escala um
+    quadrilátero de tom ligeiramente diferente no asfalto some — a regra do
+    `pilha_caixotes`, faces vizinhas do mesmo tom fundem-se. As estacas têm
+    altura, e altura é a única coisa que uma marca no chão não tem.
+    """
+    chao = [p(mx0, my0, base), p(mx1, my0, base),
+            p(mx1, my1, base), p(mx0, my1, base)]
+    s = poli(chao, C["asfalto_escuro"])
+    s += ('  <polygon points="%s" fill="none" stroke="%s" stroke-width="1.6" '
+          'stroke-dasharray="7 5"/>\n'
+          % (" ".join("%.1f,%.1f" % pt for pt in chao), C["faixa_via"]))
+    for cx, cy in ((mx0, my0), (mx1, my0), (mx1, my1), (mx0, my1)):
+        s += caixa(cx - 0.07, cy - 0.07, cx + 0.07, cy + 0.07, base, 7,
+                   C["madeira"], C["madeira_dir"], C["madeira_dir"])
+    return s
+
+
 def predio(mx0, my0, mx1, my1, base, altura, telhado, telhado_dir, telhado_esq,
            janelas: int = 2) -> str:
     """Prédio com porta, janelas e telhado que sobressai.
@@ -2183,26 +2208,31 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # estar assado no fundo. Mesma regra dos píeres e dos coqueiros.
     # Carga empilhada no pátio: só faz sentido com o chão pavimentado.
     if com_pavimento:
-        cores = [("#c23030", "#7a1a1a", "#8f2020"), ("#2f74b0", "#1d4a75", "#245a8c"),
-                 ("#e0a81f", "#9c7a15", "#b8901a"), ("#2d7a3a", "#19512d", "#1f6236")]
-        # Recuo do CAIS, como tudo o mais que vive em terra. Em `mx` absoluto
-        # dois destes caíam na rua e outros dois no meio da vila, porque o
-        # cais avança 4 unidades por degrau e eles não avançavam com ele.
-        k = 0
-        # Recuo entre 1,3 (avental) e 2,98 (meio-fio da rua). O teste de design
-        # pegou os antigos 2,8–3,1 em cima do asfalto da via.
-        # ⚠️ ERAM SETE, e a sétima ficava em my=26,4 — dentro da ponta sul de
-        # areia desde 04/09. Contêiner pousado na restinga, atrás de uma
-        # praia. Não se mudou de sítio porque o pátio entre my=16 e 22,5 já
-        # tem o coqueiro, a pilha e o palete a menos de 20 px uns dos outros:
-        # empurrá-la para lá trocava um defeito visível por outro.
-        for recuo, my in [(2.05, 1.4), (2.6, 3.2), (2.05, 9.9), (2.6, 11.7),
-                          (2.05, 18.2), (2.6, 20.0)]:
+        # ── OS DOIS LOTES RESERVADOS ────────────────────────────────────
+        #
+        # ⚠️ AQUI HAVIA SEIS CAIXAS DE COR CHAPADA, e a segunda jogada no
+        # telefone leu-as pelo que eram: *"não entendi pq existem os
+        # placeholders azul, vermelho, amarelo e verde"*. Ele tem razão, e a
+        # razão é de vocabulário: eram volumes de cor primária sem canto
+        # escuro, sem corrugado e sem sombra, num jogo que TEM vocabulário de
+        # contêiner — o do convés do píer e o da carreta. Uma caixa que não
+        # usa o vocabulário da coisa que representa lê como marcador de
+        # posição, porque é isso que ela é.
+        #
+        # O que ele pediu no lugar foi *"uma marcação de que algo no futuro
+        # será construído ali, por exemplo, a estação de reabastecimento e a
+        # oficina de consertos"* — as duas estruturas que o GDD põe na Fase 2
+        # e que `docs/decisoes/008` deixou de fora de propósito.
+        #
+        # ⚠️ E O VOCABULÁRIO DE "AINDA NÃO CONSTRUÍDO" JÁ EXISTIA NO JOGO: a
+        # terceira vaga de doca mostra as estacas velhas sob contorno
+        # tracejado. O lote reservado é a mesma ideia em terra — chão limpo
+        # mais escuro, contorno tracejado e quatro estacas de topografia nos
+        # cantos. Não inventa mecânica nenhuma: é uma marca no chão.
+        for recuo, my, comp in [(2.45, 2.6, 2.0), (2.45, 18.6, 2.0)]:
             borda = _borda_em(my)
-            mx = borda - recuo
-            c = cores[k % len(cores)]
-            s += caixa(mx, my, mx + 1.15, my + 1.5, B, 13, c[0], c[1], c[2])
-            k += 1
+            s += lote_reservado(borda - recuo, my, borda - recuo + 1.7,
+                                my + comp, B)
 
     if not com_predios:
         s += "</svg>\n"

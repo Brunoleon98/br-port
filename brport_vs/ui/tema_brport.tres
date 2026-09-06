@@ -96,7 +96,15 @@ content_margin_bottom = 10.0
 ; O BOTÃO QUE MOVE O JOGO. A leitura da referência pede "cada botão com cor
 ; própria" numa barra de SEIS; esta interface tem DOIS, e com dois a distinção
 ; útil não é seis cores — é primário contra secundário. "Avançar dia" é o que
-; faz o turno andar; "Alocar todos" é conveniência. Só o primeiro muda de cor.
+; faz o turno andar, e só ELE leva o âmbar cheio.
+;
+; ⚠️ MAS "ALOCAR TODOS" NÃO É CONVENIÊNCIA, e é isso que a segunda jogada no
+; telefone desmentiu (06/09): "tem sido melhor para alocar os funcionários" —
+; é por ali que o jogador aloca, e o botão estava desenhado como rodapé. Ele
+; ganhou a variação `BotaoDestaque` abaixo: mesmo navy no fundo, BORDA e
+; rótulo âmbar. Fundo âmbar nos dois seria duas em destaque, que é nenhuma em
+; destaque; a borda dá corpo sem disputar. É a mesma regra que o cartão escuro
+; já usava — sobre fundo escuro ganha-se corpo por borda, não por sombra.
 ;
 ; ⚠️ O TEXTO É NAVY, E ISSO FOI MEDIDO. Branco sobre este âmbar dá 2,39:1 de
 ; contraste — reprova até no corte de texto grande da WCAG (3,0). Navy sobre
@@ -114,6 +122,47 @@ content_margin_bottom = 10.0
 shadow_color = Color(0.44, 0.3, 0.03, 0.32)
 shadow_size = 5
 shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="destaque_normal"]
+; O secundário COM ÊNFASE. Medido: o âmbar do tema sobre este navy dá 7,12:1,
+; bem acima do AA; a borda tem 2px porque a 1px ela desaparece no
+; antisserrilhado de um canto de raio 10.
+bg_color = Color(0.11, 0.204, 0.329, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+shadow_color = Color(0.11, 0.204, 0.329, 0.22)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="destaque_hover"]
+bg_color = Color(0.141, 0.275, 0.431, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.949, 0.675, 0.11, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+shadow_color = Color(0.11, 0.204, 0.329, 0.28)
+shadow_size = 7
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="primario_hover"]
 bg_color = Color(0.949, 0.675, 0.11, 1)
@@ -389,6 +438,15 @@ PanelContainer/styles/panel = SubResource("cartao")
 ProgressBar/styles/background = SubResource("barra_fundo")
 ProgressBar/styles/fill = SubResource("barra_cheia")
 Cartao/base_type = "PanelContainer"
+BotaoDestaque/base_type = &"Button"
+BotaoDestaque/colors/font_color = Color(0.961, 0.725, 0.227, 1)
+BotaoDestaque/colors/font_hover_color = Color(1, 1, 1, 1)
+BotaoDestaque/colors/font_pressed_color = Color(0.961, 0.725, 0.227, 1)
+BotaoDestaque/colors/font_disabled_color = Color(0.51, 0.6, 0.706, 1)
+BotaoDestaque/styles/normal = SubResource("destaque_normal")
+BotaoDestaque/styles/hover = SubResource("destaque_hover")
+BotaoDestaque/styles/pressed = SubResource("botao_press")
+BotaoDestaque/styles/disabled = SubResource("botao_off")
 BotaoPrimario/base_type = &"Button"
 BotaoPrimario/colors/font_color = Color(0.11, 0.204, 0.329, 1)
 BotaoPrimario/colors/font_hover_color = Color(0.11, 0.204, 0.329, 1)

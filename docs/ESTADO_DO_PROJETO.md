@@ -28,9 +28,9 @@ estruturas** — píeres 2 e 3, armazém, pátio, escritório e os dois UPGRADES
 sai de terra batida para asfalto, os prédios saem de ruína, e os upgrades
 trocam a torre e a laje do píer.
 
-**O botão que move o jogo tem cor própria** — "Avançar dia" é âmbar com rótulo
-navy (branco sobre âmbar reprova a WCAG). Cartão claro leva sombra e borda de
-2px; escuro não, senão a sombra do tema faria halo.
+**A barra de ação tem DOIS botões e uma hierarquia** — "Avançar dia" é âmbar
+cheio com rótulo navy, e "Alocar todos" é navy com borda e rótulo âmbar
+(`BotaoDestaque`, 07/09): âmbar nos dois seria nenhum em destaque.
 
 **A câmera mostra um DISTRITO e não três berços.** O `MEIA_LARG` efetivo é 20,
 e ela centra-se no centroide dos berços. O mundo cresceu para isso (`my` de −14
@@ -89,10 +89,9 @@ de verdade** — parede desabada, meio telhado com a armação à vista, portão
 do trilho. Como se lá chegou está em `docs/arquivo/HISTORICO.md`.
 
 **O porto tem uma CIDADE atrás dele.** Rua paralela ao cais, calçada, acesso a
-cada berço e **duas fileiras de casas em quarteirões** — 3 a 5 lotes quase
-colados, cortados por travessas; a de trás é mais rala e arborizada, para a
-vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`): térrea, sobrado,
-prédio — é assim que cresce a cada Fase, sem o jogo saber.
+cada berço e **duas fileiras de casas em quarteirões**; a de trás é mais rala,
+para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`): térrea,
+sobrado, prédio — é assim que cresce a cada Fase, sem o jogo saber.
 
 **E a mata atrás dela é desenhada onde se vê** — copas com sombra projetada,
 pela receita `com_saia()`.
@@ -112,27 +111,37 @@ em `docs/arquivo/HISTORICO.md`.
 
 | Item | O que falta | Por que só ele |
 |---|---|---|
-| **A1** | A passagem SEGUINTE no telefone — a primeira foi em 02/09 e está em `docs/arquivo/PLAYTEST_01_ANALISE.md` | Ver leitura abaixo |
+| **A1** | ~~Jogar~~ — 02/09 e 06/09, e os 25 itens já triados. Fica **a ordem do resto** | Ver abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
 | **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais o que ficou fora delas, e a frota de 07/09. É a trilha inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
-### O que a primeira jogada no telefone devolveu (02–03/09)
+### O que a SEGUNDA jogada devolveu (06/09) — 25 itens, triados
 
-**A análise inteira está triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e
-em 02–05/09 fechou-se **tudo o que não depende do Bruno**. O que sobra, e por
-quê — a análise tem a medida de cada um:
+**Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
 
-| Fica | Porque não se fecha aqui |
-|---|---|
-| Layout do rodapé · espaço reservado no HUD | São o mesmo problema: sete faixas e 29px de folga. Dar lugar a conteúdo de Fase 2 é TIRAR o que já é usado — gosto, e o gate A5 é dele |
-| Economia (3 itens) | Só via `/balancear`, e ele mesmo amarrou-a ao pacote de Fase 2 ("para fazer tudo isso") |
-| Fala da madeira podre | Espera o A4 |
+**O primeiro bloco está feito** (07/09), escolhido por ele. **14** — o cone saiu
+do asfalto para o pátio, ao lado da barreira, e saiu da isenção do D2, que era a
+origem do defeito. **10** — os seis blocos de cor chapada deram lugar a dois
+LOTES RESERVADOS (chão escuro, contorno tracejado, estacas): o vocabulário de
+"por construir" que a terceira vaga de doca já usava. **1** — os camiões a 0,72,
+de 1,96 para 1,41 unidades contra 1,99 do escritório. **22** — o "Alocar todos"
+com a variação `BotaoDestaque` (7,12:1). **25** — o balanço fecha, e o menu de
+pausa reabre-o.
 
-**Livres, sem gate:** A8. Tudo o mais que a análise pedia e não depende dele
-está fechado — o que aconteceu em cada passagem vive em `docs/arquivo/`, e o
-que fica a valer da trilha de arte está no `CLAUDE.md` e em
-`docs/BRP_SPATIAL_CONTRACT.md` §1.1.
+⚠️ **O 4b FICOU POR FAZER, e a diagnose mudou o que ele é**: a rua está LIGADA,
+e o que acaba no nada é a ponta da faixa depois de cada cotovelo. Não há
+asserção a escrever — é defeito de LEITURA, e o conserto é de desenho. A
+medição e as duas saídas estão na análise; vale fazer junto com o **11**.
+
+O resto continua por começar, e **a ordem é dele**.
+
+### O que a primeira jogada devolveu (02–03/09)
+
+**Triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e fechou-se tudo o que não
+dependia do Bruno. Ficam o layout do rodapé (gosto, gate A5), três itens de
+economia (só via `/balancear`, e ele amarrou-os ao pacote de Fase 2) e a fala da
+madeira podre (espera o A4). **Livre, sem gate: A8.**
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
@@ -206,9 +215,8 @@ conta e o modo de a refazer estão em
 | `tools/gerar_tabela_numeros.py` | Gera a tabela acima e cruza a leitura de texto com o que o Godot avalia |
 | `brport_vs/tools/despejar_constantes.gd` | Despeja as constantes que o Godot avalia de verdade, em JSON. Espera `CONSTANTES OK` |
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
-| `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados no cronograma, mantidos como registro das decisões) |
+| `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
-
 | `tools/capturar_evidencia.sh` | **As sete fotografias que provam o que ficou** — cinco de jogo (uma é o nível 2 do porto) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
 | `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os seis cascos e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
@@ -218,6 +226,7 @@ conta e o modo de a refazer estão em
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
 | `docs/gdd/` | **O GDD 7 legível**, 80 páginas GERADAS do `.jsx` — uma seção por arquivo. Não editar. Descreve as Fases 1 a 5 e está congelado antes da reescala: onde divergir do jogo, quem manda é o código |
 | `tools/gerar_gdd_md.py` | Gera as 80 acima. Recusa-se a adivinhar: forma de dado que ele não conheça **reprova**, em vez de sumir do markdown |
+
 ### Sistemas que funcionam
 - Turno diário com botão "Avançar dia" (sem relógio real)
 - Alocação de trabalhador por toque, por "Alocar todos" ou por arrasto
@@ -238,8 +247,8 @@ conta e o modo de a refazer estão em
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
   upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
   com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase
-  (`docs/decisoes/007`): o guindaste corta o turno do navio grande, o cais
-  aumenta a chance de ele aparecer
+  (`docs/decisoes/007`): o guindaste corta o turno do navio grande, e o cais
+  DESTRAVA a classe dele (`009` — a chance invisível saiu)
 - Autosave local a cada turno
 - **Sete telas narrativas**: nomes do cais e do jogador (abertura), primeira
   página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
@@ -257,29 +266,26 @@ de cima. As docas são **3 vagas fixas sobre os píeres** — quantas
 existem vem de `GameState.docks`, e "Ampliar píer" acende a terceira, que até
 lá mostra as estacas velhas sob contorno tracejado.
 
-A interface **não é montada por código**: vive em cenas `.tscn` com um tema
+A interface **não é montada por código**: cenas `.tscn` com um tema
 (`ui/tema_brport.tres`).
 
 **O mapa não carrega interface em cima.** O texto e o alvo de toque de cada
-doca vivem em `scenes/dock/DocaCartao.tscn`, numa fileira de três cartões
-abaixo do mapa; o píer continua alvo de arrasto e ACENDE quando aceita o
-trabalhador. Os nomes são **placas com mastro** apoiadas no prédio ou numa
-estaca, e o número de cada doca é **tinta de piso**, em estêncil, porque o
-importador de SVG do Godot não desenha `<text>`.
+doca vivem em `scenes/dock/DocaCartao.tscn`, abaixo do mapa; o píer continua
+alvo de arrasto e ACENDE quando aceita o trabalhador. O número de cada doca é
+**tinta de piso**, em estêncil, porque o importador de SVG do Godot não desenha
+`<text>`.
 
 **Os ícones do HUD já são arte de verdade**: 20 SVGs conferidos a 19px sobre
 os três fundos da interface com `tools/folha_icones.gd`. Cada um foi colorido
 para o fundo onde cai — o cabeçalho de `Icones.gd` diz quais não se
 reaproveitam e por quê.
 
-As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
-nos dois estados, então o prédio não salta ao ser consertado. Mas as PEÇAS não
-se partilham entre os dois, e cada estado tem o seu vocabulário próprio: as
-duas lições estão no `CLAUDE.md`, e o que custaram, em `docs/arquivo/`.
+As **estruturas trocam de textura, não de nó** — mesmo quadro nos dois estados,
+então o prédio não salta ao ser consertado. Mas as PEÇAS não se partilham, e
+cada estado tem vocabulário próprio: as duas lições estão no `CLAUDE.md`.
 
-**A cauda dos props tem corpo** (Etapa 2): contêiner corrugado, carga
-empilhada, boia e marcador com faixa refletiva, e as catorze peças pequenas do
-pátio em `blender/brp_porto.py`.
+**A cauda dos props tem corpo** (Etapa 2): contêiner corrugado, carga empilhada,
+boia e marcador, e as catorze peças pequenas do pátio em `blender/brp_porto.py`.
 
 O cenário usa os props: **coqueiros** que oscilam em rajada, **guindaste** nas
 docas construídas (a lança varre), **carga no convés** e **boias + marcador** na
@@ -290,9 +296,9 @@ duas camadas em contrafase; o **enrocamento para nas duas pontas**, onde o cais
 deu lugar a praia. Os coqueiros chapados saíram do SVG — `--sem-coqueiros` —
 pela mesma razão que os píeres: o que se mexe não pode estar assado no fundo.
 
-**E as chapas lisas acabaram.** O convés do n2 é tabuado com junta e tom por
-tábua, a laje do n3 tem junta atravessada e os cargueiros têm ferrugem que
-escorre — padrões DIRIGIDOS, peça a peça e nunca pela paleta.
+**E as chapas lisas acabaram.** Tabuado com junta no n2, junta atravessada no
+n3, ferrugem que escorre nos cargueiros — padrões DIRIGIDOS, peça a peça e
+nunca pela paleta.
 
 **O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas a
 laje de concreto sobre estacas de aço; a lança, de pau-de-carga a lança longa
@@ -309,18 +315,17 @@ afirmação: pescado e armazenagem são o mesmo peixe indo para sítios diferent
 Os camiões são quatro, um por motivo. O **trabalhador aparece de pé no
 tabuado** quando alocado, e mexe-se enquanto a operação corre.
 
-O **retrato do trabalhador** sai do mesmo estúdio Blender de tudo o resto
-(`trabalhador_retrato`) e é o único prop que olha para a frente — rodado 45°
-em Z, porque um retrato de 3/4 num cartão de 108px mostra sobretudo o
-capacete. O boneco do PÍER continua com as cinco caixas dele: 22px e 70px não
-são o mesmo orçamento de pixel.
+O **retrato do trabalhador** sai do mesmo estúdio Blender e é o único prop que
+olha para a frente; o boneco do PÍER continua com as cinco caixas dele, porque
+22px e 70px não são o mesmo orçamento de pixel (`docs/arquivo/`).
 
-A **Zona de Espera é só visual**: os barcos ancorados são decorativos — os de
-verdade nascem direto nas docas. Torná-la mecânica muda o balanceamento medido
-(`docs/arquivo/BLOCO4_BRIEFING_VISUAL.md`).
+A **Zona de Espera é só visual**: os ancorados são decorativos, e torná-la
+mecânica muda o balanceamento medido (`docs/arquivo/BLOCO4_BRIEFING_VISUAL.md`).
 
 Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o Diário
-do Porto, a cena narrativa de fim de Fase 1 e a lista "VS — OUT" do GDD.
+do Porto e a lista "VS — OUT" do GDD. **A cena de fim de Fase 1 saiu desta
+lista em 07/09**: ela existe desde o A4, em dois tempos, e desde a segunda
+jogada FECHA — o balanço tem botão de fechar e o menu de pausa reabre-o.
 
 ---
 ---
@@ -332,14 +337,11 @@ Aponte este arquivo e diga o que quer fazer:
 > "Continuando o BR Port — leia `docs/ESTADO_DO_PROJETO.md` e a fila na §7 do
 > plano. Quero trabalhar em X."
 
-O `CLAUDE.md` não precisa de ser apontado: ele carrega sozinho, e traz as
-regras, a receita de rodar tudo e as armadilhas que já custaram trabalho.
+O `CLAUDE.md` carrega sozinho e traz as regras, a receita de rodar tudo e as
+armadilhas. **Numa sessão remota não é preciso montar nada** — o hook de
+arranque deixa o Godot pronto e diz numa linha que o fez; se essa linha não
+aparecer, a receita manual está lá.
 
-**Numa sessão remota não é preciso montar nada** — o hook de arranque deixa o
-Godot pronto e diz numa linha que o fez. Se essa linha não aparecer na primeira
-mensagem, a receita manual está no `CLAUDE.md`.
-
-Para fechar o trabalho, a skill **`/fechar-sessao`** conduz o que a mudança
-exige. Para mexer em preço ou em constante `# TUNING:`, **`/balancear`** — e
-medir é com 600 partidas por perfil, nunca com as 30 que o CI roda como teste de
-fumaça.
+Para fechar, a skill **`/fechar-sessao`**. Para mexer em preço ou constante
+`# TUNING:`, **`/balancear`** — e medir é com 600 partidas por perfil, nunca com
+as 30 que o CI roda como teste de fumaça.
