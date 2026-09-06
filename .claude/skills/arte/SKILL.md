@@ -140,13 +140,22 @@ git diff --stat -- brport_vs/art/porto_mapa_ancoras.json   # vazio = certo
 
 ```sh
 tools/capturar_evidencia.sh brport_vs /tmp/depois "$G"
-for f in inicio meio porto boletim pausa icones; do
+for f in inicio meio porto boletim pausa icones frota; do
   cmp -s /tmp/antes/$f.png /tmp/depois/$f.png && echo "$f igual" || echo "$f MUDOU"
 done
 ```
 
 `icones.png` **tem de ficar igual** numa mudança de mapa — a folha de contato
-não desenha cenário. Se ela mudou, a mudança vazou para onde não devia.
+não desenha cenário. Se ela mudou, a mudança vazou para onde não devia. O
+mesmo vale para `frota.png` numa mudança que não seja de casco nem de camião.
+
+⚠️ **E CINCO DAS SETE SÃO UMA PARTIDA SORTEADA.** Arte que só aparece em
+alguns estados do jogo — um casco por serviço, um camião por carga — pode não
+entrar em nenhuma delas: medido em 07/09, os seis cascos novos apareceram em
+DUAS fotos e os oito camiões numa. Quem prova esse tipo de arte é a folha de
+contato, que percorre a tabela e não depende de sorteio. Se a etapa acrescentar
+uma variante que o jogo escolhe, acrescente-a a uma folha — ou ela fica gerada,
+validada e por olhar.
 
 ⚠️ **A captura inteira mente por omissão.** A água achatada da §3 passou por ela
 sem levantar suspeita; o que a denunciou foi o recorte:

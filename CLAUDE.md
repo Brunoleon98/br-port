@@ -66,7 +66,7 @@ $G --headless --path brport_vs --script res://scripts/validation/asset_validator
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
 
-tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as seis de uma vez
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as sete de uma vez
 
 # Blender como biblioteca Python (~1 GB, minutos)
 pip install "bpy==4.5.0"                                      # precisa de Python 3.11
@@ -176,9 +176,11 @@ Teste e import rodam sem tela.
    mais do que ela, o defeito é do portão, não do que ele reprova. Hoje o CI
    mede com 600 e o projetor recusa-se a calibrar abaixo de 100 partidas.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
-   ficou bonito. O CI já anexa as seis a cada PR (artefato `brport-captura`) e
+   ficou bonito. O CI já anexa as sete a cada PR (artefato `brport-captura`) e
    diz na página da corrida qual mudou — mas dizer que mudou não é dizer que
-   ficou bom, e essa parte continua a ser de quem olha.
+   ficou bom, e essa parte continua a ser de quem olha. **Cinco delas mostram
+   uma PARTIDA SORTEADA**, e o que varia com o sorteio não se prova ali: para
+   isso são as duas folhas de contato, a dos ícones e a da frota.
    **Captura só se compara com semente E passo de tempo fixos.** É o que o
    `tools/capturar_evidencia.sh` faz, e as duas fazem falta: com a semente
    sozinha, duas corridas do MESMO código davam 1.030 pixels diferentes,
@@ -476,6 +478,21 @@ tranca isso.
   "apoiado". Toda asserção de encaixe mede-se contra `get_used_rect()`, nunca
   contra o quadro — o quadro é o mesmo em todos os props e não sabe nada sobre
   nenhum deles.
+- **⚠️ E A CAIXA DESENHADA NÃO É O DESENHO.** Irmã da regra acima, do outro
+  lado: ali o quadro de 512 não sabia nada do prop, aqui o `get_used_rect()`
+  sabe demasiado pouco. Ele funcionou enquanto os três cascos eram de portes
+  diferentes; assim que eles passaram a partilhar o costado e a mudar só o
+  CONVÉS, o porta-contêineres e o graneleiro médios deram a MESMA caixa — 97 ×
+  83 no mesmo sítio — e a asserção reprovou dois desenhos bem distintos. E os
+  bytes também não servem, pela regra do denoiser mais abaixo. O que responde é
+  reduzir os dois a 16×16 e comparar: cada célula é a média de ~1.000 pixels, o
+  que apaga o ruído de ±2/255 por construção.
+- **PARTILHA TOTAL OU NENHUMA, numa tabela de arte.** O pesqueiro usa o mesmo
+  casco nos dois motivos dele de propósito — pescado e armazenagem são o mesmo
+  peixe indo para sítios diferentes, e o barco não muda com o destino da carga.
+  Um cargueiro que apontasse dois serviços para o mesmo PNG seria copiar-colar,
+  e numa tabela as duas coisas leem-se IGUAL. Exigir 1 ou N separa-as: partilhar
+  é uma afirmação sobre a classe inteira, nunca sobre um par de chaves.
 - **Conferir os quatro cantos de um retângulo contra uma faixa não é conferir
   o retângulo.** Foi assim que a primeira versão daquele teste deixou passar o
   defeito que ela existia para pegar: os cantos caíam a 2,82 e a 5,58, a rua
@@ -566,6 +583,14 @@ tranca isso.
   caminhão nasceu com um desvanecer de 1,1 s no INÍCIO do ciclo, e as cinco
   fotos do CI assentam em poucos frames: o caminhão saía invisível de todas
   elas. Animação nova começa no estado VISÍVEL, e o desvanecer vai no fim.
+  ⚠️ **E A CAPTURA DE JOGO SÓ MOSTRA O QUE O SORTEIO ESCOLHEU.** Em 07/09 os
+  cascos passaram a ser seis (um por par de classe e motivo) e os camiões oito;
+  as cinco fotos de jogo mostraram **dois** cascos e **um** camião, porque quem
+  decide o que atraca é a partida. Passaram no `asset_validator`, no D13 e no
+  D17 — nenhuma dessas perguntas é "dá para olhar". Arte que varia com sorteio
+  prova-se com uma FOLHA DE CONTATO que percorre a tabela: é o que a
+  `folha_icones.gd` já fazia para os ícones e o que a `folha_frota.gd` passou a
+  fazer para a frota.
 - **Antes de gerar MAIS, veja onde o que já se gera está a cair.** A queixa
   "a vegetação é bem pobre" tinha 136 copas de mata geradas e **7** dentro do
   quadro: o viés da densidade (`random ** 2.2`) empurrava-as contra
@@ -596,6 +621,13 @@ tranca isso.
   envelheciam calados, e envelheceram. Hoje saem de `vaos_da_vila()`, e a
   derivação achou o que a versão à mão escondia: a coluna da tela não chega,
   porque um prédio tapa para CIMA e só até à altura do sprite dele.
+  ⚠️ **E ACONTECEU OUTRA VEZ NO ANDAR DE BAIXO, com o mesmo par de prédios.**
+  O `PREDIOS_DO_PATIO` dizia no comentário "lido de `Main.tscn`" e NÃO era
+  lido: era copiado, e o `my` estava 1,10 e 1,05 unidades adiantado — meia
+  casa de vão fora do sítio, com o D14 a passar porque lê a mesma constante
+  onde o defeito mora. Um comentário que diga "lido de X" e não leia X é a
+  forma mais barata desta armadilha: **se está escrito que sai de algum lado,
+  faça-o sair de lá.**
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
@@ -832,6 +864,14 @@ armadilha de uma função, no comentário dela.
   no `stderr`, o contador de falhas fica em zero, e nada reprova. Todo bloco de
   teste novo põe uma bandeira na ÚLTIMA linha e quem o chama confere que ela
   ficou verdadeira; só assim "passou" quer dizer "correu".
+- **⚠️ E `preload` DE UM SCRIPT QUE FALA DO AUTOLOAD, A PARTIR DE UM
+  `--script`, DÁ UM GDScript VAZIO.** A terceira cara da regra abaixo, e a que
+  menos se parece com ela: `const D := preload("res://scripts/Dock.gd")` numa
+  ferramenta de `--script` compila o `Dock.gd` ANTES de os autoloads existirem,
+  e o que sai não é erro de compilação — é um `GDScript` sem funções, que só se
+  denuncia como *"Nonexistent function 'arte_do_barco' in base 'GDScript'"* na
+  hora de o usar. Num `--script`, carregue-o com `load()` dentro do `_process`,
+  quando a árvore já está de pé.
 - **O autoload não resolve pelo nome dentro de um `class_name`.**
   `GameState.x` funciona num script de cena, que o Godot compila com os
   autoloads já registrados; NÃO funciona dentro de uma classe alcançada a

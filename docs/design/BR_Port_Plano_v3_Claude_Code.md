@@ -956,11 +956,30 @@ NÍVEL DO PORTO — pesqueiro, cargueiro e navio de longo curso —, e o
 invisível e passou a destravar uma classe. O balanceamento ficou em
 **100% / 80,2% / 37,3%**, com o teto de 100% do jogo perfeito de volta.
 
-**Fica aberto do mesmo pedido, e não foi tocado:** cascos por serviço (o
-porta-contêineres, o graneleiro e o de carga geral desenhados no Blender) e
-CAMIÕES por serviço na estrada, com mais de um a circular. Os dois são arte,
-pedem `bpy`, e nenhum encosta na economia — a trava vinha primeiro porque é ela
-que define as classes que a arte vai desenhar.
+### ✅ FEITO (07/09) — a FROTA por serviço, os dois itens que faltavam
+
+**Construído e registado em `docs/decisoes/010`.** Os cascos por serviço e os
+camiões por serviço eram o que sobrava do pedido de 05/09, e a trava vinha
+primeiro porque é ela que define as classes que a arte desenha.
+
+**Seis cascos**, um por par (classe, motivo): o casco é o mesmo e o CONVÉS é
+que muda — grade de contêineres com guias de célula, tampas de porão sobre
+braçola, paletes com pau-de-carga aberto sobre o costado. O pesqueiro
+continua com um casco só, e isso é afirmação: pescado e armazenagem são o mesmo
+peixe indo para sítios diferentes.
+
+**Quatro camiões**, um por motivo, em duas silhuetas cada — e **três na estrada
+ao mesmo tempo**, cada um a levar a carga da DOCA DO MESMO ÍNDICE. Sem sorteio:
+o `RandomNumberGenerator` do jogo é o que o simulador usa. A repartição dos três
+no ciclo é derivada do comprimento da rota, não escrita à mão.
+
+**Nada disto encostou na economia** — nenhuma constante `# TUNING:` foi tocada,
+e o balanceamento continua 100% / 80,2% / 37,3%.
+
+**E a captura ganhou uma sétima imagem**, por uma falha medida: as cinco fotos
+de jogo mostraram dois dos seis cascos e um dos oito camiões, porque quem
+escolhe o que atraca é o sorteio da partida. `folha_frota.gd` percorre as
+tabelas e desenha a frota inteira.
 
 O que se segue está escrito abaixo, como estava quando a ideia chegou.
 

@@ -488,6 +488,49 @@ nasceu com `altura_px` dobrada, que o `_no_conves` lê como caixa MAIS ALTA
 assente no convés: o segundo engoliu o primeiro e o render saiu com um cubo
 azul do tamanho da cabine do guindaste.
 
+### Fora das etapas — a FROTA por serviço (07/09)
+
+Não é etapa do plano: é o desenho a alcançar duas mecânicas que já existiam. O
+porquê está em `docs/decisoes/010`; aqui fica o que a passagem MEDIU.
+
+**Seis cascos onde havia três, e o casco é o mesmo.** O que muda por serviço é
+o CONVÉS — grade de contêineres com guias de célula, tampas de porão sobre
+braçola, paletes com pau-de-carga. Custo: 45 s de render para os seis, num
+gerador que já tinha o kit todo.
+
+**E três coisas que a passagem desmentiu:**
+
+| Escrito | Medido |
+|---|---|
+| a grade de contêineres separa-se por FRESTA | 0,05 de folga dá 1px e o antisserrilhado come-a. Quem desenha a grade é a COR: as caixas encostam-se e alternam em xadrez |
+| uma antepara fecha a pilha nas pontas | 0,10 × 0,50 saiu como uma PAREDE escura a tapar a carga. Duas colunas nos bordos deixam ver a pilha entre elas, que é o que uma guia faz |
+| o pau-de-carga erguido lê como guindaste | erguido NO PLANO DO MASTRO ele projeta-se como uma CRUZ — o desenho de uma antena. Girado 38° para o costado que se vê, sai por cima da amurada e passa a ler como carga a embarcar |
+
+**E o baú do camião atravessava a cabine.** A primeira versão dava-lhe 0,16 de
+comprimento a mais e 0,08 de avanço — o "nariz" do furgão, que é um traço real
+—, e a caixa entrava 0,10 dentro da cabine: a cor do serviço quase
+desaparecia atrás do branco. Quem separa os quatro camiões é a SILHUETA
+(carreta longa e baixa, baú alto, frigorífico curto, basculante com o monte
+acima da borda), e ela não precisava daquela ajuda.
+
+**E a ponta solta do pátio fechou junto.** O `PREDIOS_DO_PATIO` do
+`gerar_mapa_iso.py` dizia no comentário "lido de `Main.tscn`" e não era lido:
+era copiado à mão, e o `my` dos dois prédios estava 1,10 e 1,05 unidades
+adiantado — o vão da vila abria ~21 px ao lado do prédio que ele existe para
+desocupar. Hoje sai da cena, desprojetado a `ALT_CAIS` como manda o contrato e
+arredondado a três casas para o CI não reprovar por 1e-14. Provado a mover o
+escritório 4 unidades na cena: o `my` derivado andou 4 e os dois mapas
+mudaram. Custou 940 linhas de SVG em cada mapa, todas na vila.
+
+**A folha de contato da frota nasceu de uma falha medida das capturas.** Os
+seis cascos e os oito camiões passaram nas cinco suítes e apareceram nas cinco
+fotos de jogo em **dois** e **um** exemplares — porque quem escolhe o que
+atraca é o sorteio da partida. `brport_vs/tools/folha_frota.gd` percorre as
+tabelas do jogo e desenha a frota inteira sobre o chão de cada peça (a água
+amostrada da captura para os cascos, o asfalto para os camiões); ela entrou no
+`capturar_evidencia.sh` como sétima imagem. É a `folha_icones.gd` outra vez, e
+pela mesma razão.
+
 ### Fora das etapas — a escala dos dois prédios do pátio (03/09)
 
 Não é etapa do plano: é correção de playtest, e entra aqui porque mexeu em
