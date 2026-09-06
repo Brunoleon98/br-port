@@ -920,7 +920,7 @@ isso seria repetir o erro do plano velho ao contrário.
 | # | Trilha | Entrega | Gate humano |
 |---|---|---|---|
 | 1 | B1 | Arranque de sessão automático | — |
-| 2 | ✅ **A1** | **Build no telefone** ✅ máquina · instalado 02/09 · **jogado 02/09** — a análise está em `docs/arquivo/PLAYTEST_01_ANALISE.md` | ✅ feito (a passagem seguinte é do A7) |
+| 2 | ✅ **A1** | **Build no telefone** ✅ máquina · **jogado 02/09 e 06/09** — as análises estão em `docs/arquivo/PLAYTEST_01_ANALISE.md` e `PLAYTEST_02_ANALISE.md` | ✅ feito (a passagem seguinte é do A7) |
 | 3 | A2 | Números com fonte única + Parcelas 2/3 verificadas | Só se a conta não fechar |
 | 4 | ✅ B2 | `/balancear`, `/fechar-sessao` e `/arte` | — |
 | 5 | **A3** | **Reputação com efeito** | **Escolher o caminho — bloqueia** |
@@ -938,6 +938,49 @@ isso seria repetir o erro do plano velho ao contrário.
 Seis gates humanos em quinze itens. É essa a conta que este plano orça — e a
 razão de A1 estar em segundo lugar é que ele é o gate que está há mais tempo
 adiado.
+
+### 📋 A SEGUNDA JOGADA NO TELEFONE (06/09) — 25 itens, triados
+
+**A devolução inteira e a triagem estão em `docs/arquivo/PLAYTEST_02_ANALISE.md`.**
+Aqui fica só o que a fila precisa de saber.
+
+**Quatro defeitos MEDIDOS, e nenhum tinha teste que o pegasse** — o cone de
+trânsito no meio do asfalto (o D2 tinha-o ISENTADO da regra), os seis blocos de
+cor chapada do pátio (nada pergunta se um desenho do mapa tem vocabulário), três
+acessos da vila que acabam no nada (nada confere que a rua CHEGA a algum sítio)
+e o camião com 1,96 unidades contra um escritório de 1,99 (nada compara o
+tamanho de um prop com o de outro). Os quatro são pequenos, e cada um leva a
+asserção que faltava.
+
+**Oito itens de arte** — detalhe da rua, o guindaste de madeira do n1, variedade
+de barcos de PESCA, curvas em vez de retas, gradiente de água e areia mais
+fauna, caminhos de terra para as casas, prédios em obra e avançados, e afastar
+a zona de espera.
+
+**Três itens de sistema** — via de mão dupla, o camião que vai à doca do navio
+que serve, e o fecho do painel de balanço (que hoje tranca o menu de pausa e
+com ele o arquivo `.jsonl` da partida).
+
+⚠️ **E três coisas que NÃO são itens de fila, e é por isso que estão aqui em vez
+de numeradas:**
+
+1. **Os itens 17–21 são um segundo jogo** — menu-celular, mapa da cidade,
+   imobiliária, concessionária, delivery, mercado, missões, barras de status e
+   de estresse, app de análise. Ele escreve que quer o mapa da cidade e a loja
+   **na Fase 1**, o que muda o âmbito dela. **A pergunta da
+   `BR_Port_GDD_V7_ERRATA_ECONOMIA.md` continua sem resposta** — é sobre a
+   economia das fases seguintes, e é exactamente o chão onde isto assentaria.
+2. **Os itens 13, 16, 20 e 23 reabrem decisões registadas** — `005` (o jogo é
+   tranquilo), `007` (upgrades como estrutura única) e `009` (a trava por nível
+   do porto). Reabrir é legítimo; não é corrigir um defeito, e não entra na fila
+   com a mesma etiqueta.
+3. **O item 1 é uma pergunta de escala.** A medida diz que o camião é do tamanho
+   do escritório — encolher o camião é metade do preço, crescer os prédios mexe
+   em pegada, vão da vila e enquadramento. Qual dos dois está errado é decisão
+   de arte, e está registada com o número na mão.
+
+**A ordem sugerida** está no fim da análise. Sugestão, não fila: quem reordena a
+fila é o Bruno.
 
 ### ✅ FEITO (06/09) — o MOTIVO da escala
 

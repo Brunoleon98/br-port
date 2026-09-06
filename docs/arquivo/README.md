@@ -30,6 +30,7 @@ aqui.
 | Documento | Data | O que registra |
 |---|---|---|
 | `PLAYTEST_01_ANALISE.md` | 02/09 | **A primeira jogada no telefone** — a devolução do Bruno na íntegra e a triagem dela. Fechou o gate A1, e trouxe o bug que travava 30% das instalações novas no dia 1 |
+| `PLAYTEST_02_ANALISE.md` | 06/09 | **A segunda jogada**, depois dos três níveis, da trava e da frota por serviço. 25 itens; quatro defeitos MEDIDOS (o cone no meio do asfalto, os seis blocos de cor chapada do pátio, os acessos que acabam no nada, e o camião do tamanho do escritório) e três coisas que não são melhorias — um segundo jogo, quatro decisões reabertas e uma pergunta de escala |
 | `HISTORICO.md` | 25/08–02/09 | O caminho do projeto bloco a bloco, e os defeitos que cada playtest achou. Saiu do `ESTADO_DO_PROJETO.md`, que o carregava junto com o estado atual |
 | `BLOCO3_MARCO_INTERMEDIARIO.md` | 26/08 | O playtest humano de 5 partidas, a medição do balanceamento e a decisão de ajustar antes de ir para a arte |
 | `BLOCO4_BRIEFING_VISUAL.md` | 27/08 | A ordem de trabalho da arte: style guide, mapa com placeholder, sprites |

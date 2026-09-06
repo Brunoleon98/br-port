@@ -112,27 +112,27 @@ em `docs/arquivo/HISTORICO.md`.
 
 | Item | O que falta | Por que só ele |
 |---|---|---|
-| **A1** | A passagem SEGUINTE no telefone — a primeira foi em 02/09 e está em `docs/arquivo/PLAYTEST_01_ANALISE.md` | Ver leitura abaixo |
+| **A1** | ~~Jogar~~ — jogado em 02/09 e 06/09. O que fica aberto é **triar com ele** os 25 itens de `docs/arquivo/PLAYTEST_02_ANALISE.md` | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
 | **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais o que ficou fora delas, e a frota de 07/09. É a trilha inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
-### O que a primeira jogada no telefone devolveu (02–03/09)
+### O que a SEGUNDA jogada devolveu (06/09) — 25 itens, por triar com ele
 
-**A análise inteira está triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e
-em 02–05/09 fechou-se **tudo o que não depende do Bruno**. O que sobra, e por
-quê — a análise tem a medida de cada um:
+**Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
+Quatro defeitos MEDIDOS e pequenos (o cone no meio do asfalto, os blocos de cor
+chapada do pátio, os acessos que acabam no nada, o camião do tamanho do
+escritório), oito de arte, três de sistema — e três coisas que não são itens de
+fila: os pedidos 17–21 são um segundo jogo, 13/16/20/23 reabrem as decisões
+`005`, `007` e `009`, e o 1 é uma pergunta de escala. **Nada disto foi
+começado**: a ordem é dele.
 
-| Fica | Porque não se fecha aqui |
-|---|---|
-| Layout do rodapé · espaço reservado no HUD | São o mesmo problema: sete faixas e 29px de folga. Dar lugar a conteúdo de Fase 2 é TIRAR o que já é usado — gosto, e o gate A5 é dele |
-| Economia (3 itens) | Só via `/balancear`, e ele mesmo amarrou-a ao pacote de Fase 2 ("para fazer tudo isso") |
-| Fala da madeira podre | Espera o A4 |
+### O que a primeira jogada devolveu (02–03/09)
 
-**Livres, sem gate:** A8. Tudo o mais que a análise pedia e não depende dele
-está fechado — o que aconteceu em cada passagem vive em `docs/arquivo/`, e o
-que fica a valer da trilha de arte está no `CLAUDE.md` e em
-`docs/BRP_SPATIAL_CONTRACT.md` §1.1.
+**Triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e fechou-se tudo o que não
+dependia do Bruno. Ficam o layout do rodapé (gosto, gate A5), três itens de
+economia (só via `/balancear`, e ele amarrou-os ao pacote de Fase 2) e a fala da
+madeira podre (espera o A4). **Livre, sem gate: A8.**
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
