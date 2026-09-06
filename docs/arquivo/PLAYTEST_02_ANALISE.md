@@ -169,8 +169,28 @@ Os outros estão dimensionados por leitura, e isso está dito onde é o caso.
 |---|---|---|
 | **14** · o cone na rua | `ConeTransito` está em `mx=7,80`; o asfalto daquele degrau ocupa `6,98..8,52`. Ele está no MEIO da faixa, não na beira | O bloco **D2** tem `PODEM_PISAR_A_RUA := ["Caminhao", "ConeTransito"]` — o cone foi ISENTADO da regra, e a isenção é a origem do defeito. Um cone sinaliza obra; ali não há obra |
 | **10** · os blocos coloridos | Seis caixas de 1,15 × 1,5 unidades, 13 px de altura, em `#c23030` / `#2f74b0` / `#e0a81f` / `#2d7a3a`, desenhadas no SVG do pátio (linha ~2186 do `gerar_mapa_iso.py`) e só com `--com-pavimento` | Nenhuma suíte pergunta se um desenho do MAPA tem vocabulário. Eles leem como placeholder porque são: caixa chapada de cor primária, sem canto escuro, sem corrugado, sem sombra — o projeto TEM vocabulário de contêiner (o do convés do píer, o da carreta) e estes não o usam |
-| **4b** · acessos que acabam no nada | Os três tocos circulados saem da rua para a vila e param antes de qualquer casa | O **D2** confere que prop nenhum pisa a rua; nada confere que a rua CHEGA a algum sítio |
+| **4b** · acessos que acabam no nada | Os três círculos caem, um a um, sobre os TRÊS COTOVELOS da rua (`my` 8, 16 e 24). Medido no render com cada peça do `vias()` tingida: a rede está LIGADA — o cotovelo encosta na faixa do degrau com 0,00 de folga nas duas pontas. O que acaba no nada é a PONTA DA FAIXA depois da curva: em `my=16` a faixa do degrau 2 (`mx 3,20..4,30`) termina num topo de meio-fio quadrado virado para a vila, e a rua reaparece 4 unidades adiante, no degrau 3 | O **D2** confere que prop nenhum pisa a rua; nada confere que a rua CHEGA a algum sítio — e nenhuma asserção seria capaz de pegar este, porque geometricamente não há buraco nenhum. É defeito de LEITURA: um salto de 4 unidades de uma vez, sem chanfro nem esquina, lê como três ruas que param |
 | **1** · escala do camião | A carreta tem 1,96 unidades de comprimento. O ESCRITÓRIO tem 1,99 × 1,70 e a casa da vila 1,35 de profundidade. **Um camião é tão comprido quanto o escritório inteiro** — e mais comprido do que uma casa é larga. A rua tem 1,10 de largura contra os 0,62 do camião: ele ocupa 56% dela | O `asset_validator` mede quadro, alfa e recorte; o **D2** mede pegada contra faixas. Nenhum dos dois compara o tamanho de um prop com o de OUTRO — a escala relativa não tem guarda |
+
+⚠️ **O 4b NÃO É UM BURACO NA REDE, e isso muda qual é o conserto.** A primeira
+leitura desta tabela dizia "tocos de acesso que saem da rua para a vila" — e
+estava errada. Tingindo separadamente as três peças que o `vias()` desenha
+(faixa do degrau, cotovelo, acesso ao berço) e medindo o render pixel a pixel,
+a rua sai LIGADA de ponta a ponta: em `my=15,0` o cotovelo começa em `mx=3,4` e
+em `my=14,0` a faixa começa em `mx=3,3` — a mesma linha de meio-fio, dentro do
+antisserrilhado. Não falta retângulo nenhum.
+
+O que o Bruno circulou é o **lado de fora de cada curva**. A escada salta 4
+unidades em `mx` de uma vez, e quem desce a rua vê a faixa acabar num topo
+quadrado com meio-fio, de frente para o relvado, enquanto o asfalto continua
+quatro unidades ao lado. Três cotovelos, três círculos.
+
+Logo não há asserção a escrever: **um teste de geometria não pega um defeito de
+leitura.** As duas saídas são de desenho, e nenhuma é de uma linha — ou a
+esquina ganha chanfro para que a curva se leia como curva, ou o lado de fora
+dela continua como rua de vila. A segunda é a que responde à queixa dele com as
+palavras dele, e é irmã do item **11** (caminhos de terra para as casas): vale
+fazer as duas na mesma passagem, como o **4a** vale fazer junto com o **2**.
 
 ⚠️ **O item 1 tem duas saídas, e a escolha não é óbvia.** Encolher os camiões é
 contido; mas a medida também diz que os PRÉDIOS estão pequenos — um escritório

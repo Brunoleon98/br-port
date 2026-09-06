@@ -553,13 +553,13 @@ tranca isso.
   não sabe onde ele cai.** O caminhão nasceu num ponto que passava em todas as
   asserções e saía na captura com metade dele debaixo do letreiro do
   ESCRITÓRIO. Prop que se põe para ser VISTO confere-se na foto, não na régua.
-  **E o letreiro deixou de carregar a geometria dele na cena** (05/09): ele
-  mede a chapa pelo texto e planta o mastro no telhado, pelos dois estados do
-  prédio (`scripts/Letreiro.gd`). Os offsets cravados que ele tinha traziam a
-  placa mais larga do que o prédio que nomeia e uma delas a pairar — os dois
-  são a mesma coisa que este arquivo repete sobre altura e sobre cor: número
-  em pixel escrito à mão envelhece calado quando o que ele descreve muda de
-  tamanho.
+  ⚠️ **E OS LETREIROS JÁ NÃO EXISTEM** — foram removidos a pedido, com o
+  `Letreiro.gd` e a variação de tema (ver `BR_Port_Plano_Arte_Blender.md`). A
+  lição fica porque não era sobre placas: antes de morrerem eles carregavam
+  offsets cravados que punham uma placa mais larga do que o prédio que nomeia e
+  outra a pairar 12px acima do telhado, com o teste a dizer "apoiado". É o que
+  este arquivo repete sobre altura e sobre cor — **número em pixel escrito à
+  mão envelhece calado quando o que ele descreve muda de tamanho**.
 - **Encolher um prop escala-se no GRUPO, nunca reescrevendo as literais.**
   Porta contra parede, janela contra porta, beiral contra telhado: são trinta
   números e trinta chances de um ficar por escalar. E cada objeto UMA vez —

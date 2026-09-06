@@ -361,10 +361,10 @@ mouse_filter = 2
 texture = ExtResource("prop_poste_luz")
 [node name="ConeTransito" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -141
-offset_top = 90.17
-offset_right = 371
-offset_bottom = 602.17
+offset_left = -75
+offset_top = 93.1667
+offset_right = 437
+offset_bottom = 605.1667
 mouse_filter = 2
 texture = ExtResource("prop_cone_transito")
 [node name="Coqueiro1Tronco" type="TextureRect" parent="MapaWrap/Cenario"]
@@ -642,6 +642,8 @@ theme_override_constants/separation = 8
 [node name="Alocar" type="Button" parent="AcoesTurno"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.25
+theme_type_variation = &"BotaoDestaque"
 tooltip_text = "Põe cada trabalhador livre numa doca que esteja esperando, do barco mais valioso para o menos"
 text = "Alocar todos"
 theme_override_constants/icon_max_width = 24

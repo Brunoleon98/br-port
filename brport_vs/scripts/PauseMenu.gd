@@ -11,6 +11,13 @@ extends Control
 # de confirmar: mexer no volume e ouvir mudar É a confirmação.
 
 
+## Pedido para reabrir o balanço da partida. É SINAL e não uma chamada direta
+## ao `Main`: este menu vive no `_overlay_layer` e não conhece quem o abriu —
+## alcançar o pai pelo caminho seria um `get_parent().get_parent()` que quebra
+## calado no dia em que a árvore mudar.
+signal ver_balanco
+
+
 func _ready() -> void:
 	_build_ui()
 
@@ -94,6 +101,20 @@ func _build_ui() -> void:
 	)
 	vbox.add_child(btn_registro)
 	vbox.add_child(aviso)
+
+	# ⚠️ A PORTA DE VOLTA AO BALANÇO, e ela existe por causa do botão de fechar
+	# que o `EndGame.gd` ganhou em 07/09. Fechar o balanço para chegar AQUI
+	# (que é o que a segunda jogada pediu) não pode custar o balanço para
+	# sempre — seria trocar um beco sem saída por outro. Só aparece com a
+	# partida terminada: no meio de um jogo não há balanço nenhum a ver.
+	if GameState.phase == "game_over":
+		var btn_balanco := Button.new()
+		btn_balanco.text = "Ver o balanço da partida"
+		btn_balanco.pressed.connect(func():
+			ver_balanco.emit()
+			queue_free()
+		)
+		vbox.add_child(btn_balanco)
 
 	var btn_new := Button.new()
 	btn_new.text = "Novo jogo (apaga progresso)"
