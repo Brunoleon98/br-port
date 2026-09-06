@@ -70,13 +70,12 @@ a mais até o pórtico existir. **Reparo e reabastecimento ficaram de fora de
 propósito** — o GDD põe a oficina e o posto na Fase 2 (`docs/decisoes/008`).
 
 **A partida grava-se.** Uma linha JSON por acontecimento, com o tempo em cada
-turno — a pergunta do A7. O nome de quem jogou NÃO entra no arquivo
-(`docs/decisoes/006`). Sai pelo menu de pausa; `tools/ler_registros.py` resume.
+turno (A7); o nome de quem jogou NÃO entra (`docs/decisoes/006`). Sai pelo menu
+de pausa, e `tools/ler_registros.py` resume.
 
 **O jogo tem som.** Dez efeitos sintetizados por `tools/gerar_sons.py`, um
 autoload `Audio.gd` com dois buses e sliders no menu de pausa. São de RASCUNHO,
-e **ninguém que os fez os ouviu** — o contêiner não tem placa de som
-(`docs/design/BR_Port_Plano_Audio.md` §2).
+e **ninguém que os fez os ouviu** (`docs/design/BR_Port_Plano_Audio.md` §2).
 
 **Nada de interface pousa sobre o mapa, e desde 05/09 nem os nomes.** A doca
 tem duas metades: a vaga no mapa e o cartão na barra abaixo. O número de cada
@@ -93,8 +92,7 @@ cada berço e **duas fileiras de casas em quarteirões**; a de trás é mais ral
 para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`): térrea,
 sobrado, prédio — é assim que cresce a cada Fase, sem o jogo saber.
 
-**E a mata atrás dela é desenhada onde se vê** — copas com sombra projetada,
-pela receita `com_saia()`.
+**E a mata atrás dela é desenhada onde se vê**, pela receita `com_saia()`.
 
 ---
 
@@ -120,14 +118,14 @@ em `docs/arquivo/HISTORICO.md`.
 
 **Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
 
-**O primeiro bloco está feito** (07/09), escolhido por ele. **14** — o cone saiu
-do asfalto para o pátio, ao lado da barreira, e saiu da isenção do D2, que era a
-origem do defeito. **10** — os seis blocos de cor chapada deram lugar a dois
-LOTES RESERVADOS (chão escuro, contorno tracejado, estacas): o vocabulário de
-"por construir" que a terceira vaga de doca já usava. **1** — os camiões a 0,72,
-de 1,96 para 1,41 unidades contra 1,99 do escritório. **22** — o "Alocar todos"
-com a variação `BotaoDestaque` (7,12:1). **25** — o balanço fecha, e o menu de
-pausa reabre-o.
+**Dois blocos fechados** (07/09), ambos escolhidos por ele. O primeiro foram os
+defeitos medidos e as duas de interface — **14** o cone, **10** os lotes
+reservados, **1** os camiões a 0,72, **22** o `BotaoDestaque`, **25** o balanço
+que fecha. O segundo foi o **3** (`docs/decisoes/011`): o camião sai da rua pelo
+acesso ao berço e encosta na doca do navio que está a ser servido, saindo quando
+ele sai. A visita é «barco E trabalhador» — alocar passou a ter consequência no
+mapa —, e continuam a ser três: um camião encostado não está na estrada, então o
+porto a operar tem a rua mais VAZIA, não mais cheia.
 
 ⚠️ **O 4b FICOU POR FAZER, e a diagnose mudou o que ele é**: a rua está LIGADA,
 e o que acaba no nada é a ponta da faixa depois de cada cotovelo. Não há
@@ -217,10 +215,10 @@ conta e o modo de a refazer estão em
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
-| `tools/capturar_evidencia.sh` | **As sete fotografias que provam o que ficou** — cinco de jogo (uma é o nível 2 do porto) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
+| `tools/capturar_evidencia.sh` | **As oito fotografias que provam o que ficou** — seis de jogo (o nível 2 do porto, e o porto A OPERAR com os camiões nos berços) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
 | `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os seis cascos e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
-| `.github/workflows/captura.yml` | As sete imagens anexadas a cada PR, e o antes/depois contra a base |
+| `.github/workflows/captura.yml` | As oito imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere que as quatro camadas existem e que nenhuma referência de documento aponta para arquivo que não há |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
@@ -266,8 +264,7 @@ de cima. As docas são **3 vagas fixas sobre os píeres** — quantas
 existem vem de `GameState.docks`, e "Ampliar píer" acende a terceira, que até
 lá mostra as estacas velhas sob contorno tracejado.
 
-A interface **não é montada por código**: cenas `.tscn` com um tema
-(`ui/tema_brport.tres`).
+A interface **não é montada por código**: cenas `.tscn` com um tema.
 
 **O mapa não carrega interface em cima.** O texto e o alvo de toque de cada
 doca vivem em `scenes/dock/DocaCartao.tscn`, abaixo do mapa; o píer continua
@@ -288,17 +285,16 @@ cada estado tem vocabulário próprio: as duas lições estão no `CLAUDE.md`.
 boia e marcador, e as catorze peças pequenas do pátio em `blender/brp_porto.py`.
 
 O cenário usa os props: **coqueiros** que oscilam em rajada, **guindaste** nas
-docas construídas (a lança varre), **carga no convés** e **boias + marcador** na
-Zona de Espera. **Três caminhões atravessam o mapa pela estrada**, cada um com
+docas construídas, **carga no convés** e **boias + marcador** na Zona de Espera. **Três caminhões atravessam o mapa pela estrada**, cada um com
 a carga da doca do mesmo índice e em duas silhuetas porque a rua vira 90° em
-cada cotovelo; a **espuma lava a costa** em
+cada cotovelo — e **entram na doca** quando ela tem barco e trabalhador,
+saindo quando o barco sai (`011`); a **espuma lava a costa** em
 duas camadas em contrafase; o **enrocamento para nas duas pontas**, onde o cais
 deu lugar a praia. Os coqueiros chapados saíram do SVG — `--sem-coqueiros` —
 pela mesma razão que os píeres: o que se mexe não pode estar assado no fundo.
 
-**E as chapas lisas acabaram.** Tabuado com junta no n2, junta atravessada no
-n3, ferrugem que escorre nos cargueiros — padrões DIRIGIDOS, peça a peça e
-nunca pela paleta.
+**E as chapas lisas acabaram**: tabuado com junta no n2, junta atravessada no
+n3, ferrugem nos cargueiros — padrões DIRIGIDOS, peça a peça, nunca pela paleta.
 
 **O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas a
 laje de concreto sobre estacas de aço; a lança, de pau-de-carga a lança longa
@@ -319,8 +315,8 @@ O **retrato do trabalhador** sai do mesmo estúdio Blender e é o único prop qu
 olha para a frente; o boneco do PÍER continua com as cinco caixas dele, porque
 22px e 70px não são o mesmo orçamento de pixel (`docs/arquivo/`).
 
-A **Zona de Espera é só visual**: os ancorados são decorativos, e torná-la
-mecânica muda o balanceamento medido (`docs/arquivo/BLOCO4_BRIEFING_VISUAL.md`).
+A **Zona de Espera é só visual**, e torná-la mecânica muda o balanceamento
+medido (`docs/arquivo/BLOCO4_BRIEFING_VISUAL.md`).
 
 Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o Diário
 do Porto e a lista "VS — OUT" do GDD. **A cena de fim de Fase 1 saiu desta

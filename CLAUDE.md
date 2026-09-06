@@ -66,7 +66,7 @@ $G --headless --path brport_vs --script res://scripts/validation/asset_validator
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
 
-tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as sete de uma vez
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as oito de uma vez
 
 # Blender como biblioteca Python (~1 GB, minutos)
 pip install "bpy==4.5.0"                                      # precisa de Python 3.11
@@ -176,7 +176,7 @@ Teste e import rodam sem tela.
    mais do que ela, o defeito é do portão, não do que ele reprova. Hoje o CI
    mede com 600 e o projetor recusa-se a calibrar abaixo de 100 partidas.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
-   ficou bonito. O CI já anexa as sete a cada PR (artefato `brport-captura`) e
+   ficou bonito. O CI já anexa as oito a cada PR (artefato `brport-captura`) e
    diz na página da corrida qual mudou — mas dizer que mudou não é dizer que
    ficou bom, e essa parte continua a ser de quem olha. **Cinco delas mostram
    uma PARTIDA SORTEADA**, e o que varia com o sorteio não se prova ali: para
@@ -464,6 +464,23 @@ tranca isso.
   caixa lisa isso passou. Ao ganhar tampo e cinta, o corpo continuou fundido
   com o convés e só as peças novas ficaram visíveis — o caixote saiu da
   renderização parecendo um banquinho, com tampo e pernas. A suíte passou.
+- **⚠️ NADA PERGUNTAVA SE DOIS DESENHOS DO MAPA SE SOBREPÕEM.** Toda a
+  maquinaria de cerco deste projeto mede PEGADA DE PROP contra faixa publicada
+  — e um desenho do gerador não é prop. Os dois lotes reservados do pátio
+  nasceram a olho em 07/09 e caíram em cima dos ACESSOS AOS BERÇOS, que o
+  `vias()` desenha e que nenhuma faixa declarava; ficaram assim uma sessão
+  inteira, invisíveis, porque o camião passava reto pela rua. Viram-se no
+  primeiro frame em que ele entrou na doca e foi encostar em cima da
+  demarcação. Ao acrescentar desenho ao mapa, publique-o na tabela de âncoras e
+  confira-o contra o que já lá está — **interseção de intervalos nos dois
+  eixos**, que é a mesma regra dos quatro cantos.
+- **E a guarda que DUAS outras já implicam nunca reprova.** Irmã da regra de
+  injetar defeito, um andar acima: a primeira asserção do desvio varria-o contra
+  o retângulo do acesso, e o desvio é uma reta entre dois pontos que outras duas
+  asserções já prendem aos números publicados — com aquelas de pé, esta não
+  tinha como falhar. Antes de escrever a terceira asserção sobre a mesma coisa,
+  pergunte que estado a violaria **sem violar as outras**; se não houver, ela é
+  confiança de graça.
 - **Prédio que não cabe no pátio não dá erro — dá prédio em cima do asfalto.**
   O armazém ocupa 3,76 unidades em `mx` e o pátio tinha 1,68: 0,70 dele ficavam
   na rua e 0,08 pendurados sobre a água. O teste de design passava porque

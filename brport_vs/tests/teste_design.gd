@@ -1503,6 +1503,187 @@ func _d13_travessia_do_caminhao() -> void:
 
 	no0.position = pos_antes
 	tela.call("_ordenar_por_profundidade", no0)
+
+	# ── 6 ── O DESVIO PARA O BERÇO (07/09).
+	#
+	# O camião deixou de passar reto: quando a doca do mesmo índice tem barco E
+	# trabalhador, ele sai da rua pelo acesso que o `vias()` desenha, encosta no
+	# fundo dele e fica até o barco sair. Estas asserções seguram as três coisas
+	# que podem apodrecer calado — os números repetidos do gerador, o desvio
+	# fora do asfalto, e a condição da visita.
+	var acessos_mapa: Array = _ancoras.get("acessos", [])
+	var acessos_jogo: Array = consts["ACESSOS_DOCA"]
+	var recuo := float(consts["BERCO_RECUO"])
+
+	# ⚠️ UM ACESSO POR VAGA DE DOCA, e a contagem sai da CENA — não de
+	# `GameState.docks`, que é quantas o jogador comprou até agora e vale 1 num
+	# porto em ruínas. As vagas são as que o mapa desenha píer para, e uma vaga
+	# nova sem acesso deixaria um camião sem sítio para onde ir.
+	var vagas: int = (tela.get_node("MapaWrap/Docas") as Node).get_child_count()
+	_confere("há um acesso publicado por vaga de doca (%d)" % vagas,
+		acessos_mapa.size() == vagas,
+		"o mapa publica %d" % acessos_mapa.size())
+	_confere("e o Main.gd conhece os mesmos %d" % acessos_mapa.size(),
+		acessos_jogo.size() == acessos_mapa.size(),
+		"o Main.gd tem %d" % acessos_jogo.size())
+
+	var erro_acesso := ""
+	for i in range(mini(acessos_jogo.size(), acessos_mapa.size())):
+		var do_mapa: Dictionary = acessos_mapa[i]
+		var do_jogo: Dictionary = acessos_jogo[i]
+		var mx: Array = do_mapa["mx"]
+		var entrada: Vector2 = do_jogo["entrada"]
+		var paragem: Vector2 = do_jogo["paragem"]
+		var pub: Array = do_mapa["entrada"]
+
+		# a) A entrada é a MESMA que o gerador publica. Ela é o meio do asfalto
+		#    do degrau na altura do berço — quem mexer no `RUA_RECUO` move-a, e
+		#    sem isto a cópia do `Main.gd` ficava no sítio antigo.
+		if entrada.distance_to(Vector2(float(pub[0]), float(pub[1]))) > 0.01 \
+				and erro_acesso == "":
+			erro_acesso = "a entrada da doca %d está em (%.2f, %.2f) e o mapa publica (%.2f, %.2f)" \
+				% [i + 1, entrada.x, entrada.y, float(pub[0]), float(pub[1])]
+
+		# b) A paragem é o fundo do acesso menos o recuo — derivada, não escrita.
+		var esperada := float(mx[1]) - recuo
+		if not is_equal_approx(paragem.x, esperada) and erro_acesso == "":
+			erro_acesso = "a paragem da doca %d está em mx %.2f e o acesso acaba em %.2f (recuo %.2f)" \
+				% [i + 1, paragem.x, float(mx[1]), recuo]
+		if not is_equal_approx(paragem.y, entrada.y) and erro_acesso == "":
+			erro_acesso = "a doca %d entra em my %.2f e para em my %.2f — o acesso é reto" \
+				% [i + 1, entrada.y, paragem.y]
+
+		# c) A ENTRADA É UM PONTO POR ONDE A ROTA PASSA — num trecho RETO, e
+		#    dentro do `my` desse trecho.
+		#
+		#    ⚠️ AQUI ESTEVE UMA GUARDA QUE NÃO CONSEGUIA REPROVAR, e ela durou
+		#    o tempo de se tentar injetar-lhe um defeito. Era um varrimento do
+		#    desvio contra o retângulo do acesso — e o desvio é uma reta em `my`
+		#    constante entre dois pontos que as alíneas (a) e (b) já prendem aos
+		#    números publicados: com aquelas duas de pé, esta não tinha como
+		#    falhar. Guarda que nunca reprova é pior do que guarda nenhuma,
+		#    porque dá confiança.
+		#
+		#    A pergunta que SOBRA é outra, e essa é violável: o camião entra no
+		#    acesso a partir da rota, e se a entrada não cair num trecho reto
+		#    dela o `_pontos_entre()` devolve um percurso com um salto. Mover um
+		#    píer em `my` faz exatamente isso.
+		var na_rota := false
+		for k in range(rota.size() - 1):
+			var a2: Vector2 = rota[k]
+			var b2: Vector2 = rota[k + 1]
+			if abs(b2.x - a2.x) > 0.01:
+				continue                     # cotovelo: anda em mx
+			if not is_equal_approx(a2.x, entrada.x):
+				continue
+			if entrada.y >= min(a2.y, b2.y) - 0.01 \
+					and entrada.y <= max(a2.y, b2.y) + 0.01:
+				na_rota = true
+		if not na_rota and erro_acesso == "":
+			erro_acesso = "a entrada da doca %d, em (%.2f, %.2f), não cai em trecho reto nenhum da rota" \
+				% [i + 1, entrada.x, entrada.y]
+		# E o acesso tem de começar DEPOIS da beira de fora da rua, senão o
+		# desvio não é desvio nenhum — ele já estaria lá.
+		if float(mx[0]) <= entrada.x + 0.01 and erro_acesso == "":
+			erro_acesso = "o acesso da doca %d começa em mx %.2f, atrás da entrada (%.2f)" \
+				% [i + 1, float(mx[0]), entrada.x]
+	_confere("cada desvio bate com o acesso que o mapa desenha", erro_acesso == "",
+		erro_acesso)
+
+	# d) E O CAMIÃO ENCOSTADO CABE NO QUADRO. Ele para mais perto da água do que
+	#    qualquer ponto da rota, e o terceiro berço é o mais baixo de todos: se
+	#    algum sai do mapa, é ali.
+	var fora_parado := ""
+	for i in range(acessos_jogo.size()):
+		var caminhao := cenario.get_node_or_null("Caminhao%d" % i) as Control
+		if caminhao == null:
+			continue
+		var paragem2: Vector2 = acessos_jogo[i]["paragem"]
+		var pos := caminhao.position + _tela_da_rota(paragem2, origens[i], pr) \
+			+ Vector2(MEIO_QUADRO, MEIO_QUADRO)
+		var caixa := Rect2(pos + desenho.position, desenho.size)
+		if not visivel.encloses(caixa) and fora_parado == "":
+			fora_parado = "o Caminhao%d encostado fica em %s e o mapa é %s" \
+				% [i, caixa, visivel]
+	_confere("e o camião encostado no berço está inteiro dentro do mapa",
+		fora_parado == "", fora_parado)
+
+	# ── 7 ── A CONDIÇÃO DA VISITA, perguntada a quem decide.
+	#
+	# ⚠️ NÃO SE RECALCULA A REGRA AQUI. A primeira versão do bloco 4 recalculava
+	# a silhueta e por isso concordava consigo própria; esta pergunta ao
+	# `_visita_da_doca()`, que é quem o jogo usa. E monta os três estados que
+	# ela separa — sem barco, com barco e sem trabalhador, com os dois —,
+	# porque a regra tem DUAS guardas e um estado só nunca diz qual apertou.
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var doca0: Dictionary = GS.docks[0]
+	var barco_antes = doca0["boat"]
+	var trab_antes = doca0["worker_id"]
+
+	doca0["boat"] = null
+	doca0["worker_id"] = null
+	_confere("doca vazia não chama camião nenhum",
+		int(tela.call("_visita_da_doca", 0)) == -1)
+
+	doca0["boat"] = {"id": 4242, "motivo": "pescado", "classe": "pesqueiro"}
+	_confere("barco sem trabalhador também não",
+		int(tela.call("_visita_da_doca", 0)) == -1,
+		"o pedido é «ao ALOCAR um navio», e sem operário o porto não está a operar")
+
+	doca0["worker_id"] = 1
+	_confere("barco COM trabalhador chama o camião, pelo id do barco",
+		int(tela.call("_visita_da_doca", 0)) == 4242,
+		"devolveu %d" % int(tela.call("_visita_da_doca", 0)))
+
+	# E o id tem de ser o do BARCO: é ele que distingue um navio que sai de
+	# outro que chega no mesmo avanço de dia.
+	doca0["boat"] = {"id": 4243, "motivo": "granel", "classe": "cargueiro"}
+	_confere("e troca de barco na mesma doca é uma visita nova",
+		int(tela.call("_visita_da_doca", 0)) == 4243,
+		"devolveu %d" % int(tela.call("_visita_da_doca", 0)))
+
+	doca0["boat"] = barco_antes
+	doca0["worker_id"] = trab_antes
+
+	# ── 8 ── NENHUM LOTE RESERVADO EM CIMA DE UM ACESSO.
+	#
+	# ⚠️ ESTA ASSERÇÃO EXISTE PORQUE OS DOIS PRIMEIROS ESTAVAM ASSIM. Eles foram
+	# postos a olho em 07/09, e o `my` de cada um calhava ser exatamente onde
+	# começa o acesso ao berço — invisível enquanto o camião passava reto pela
+	# rua, e evidente no primeiro frame em que ele entrou na doca e foi encostar
+	# em cima da demarcação. Nada perguntava se dois desenhos do MAPA se
+	# sobrepõem: o D2 mede pegada de PROP contra faixa, e um lote não é prop.
+	var reservados: Array = _ancoras.get("lotes_reservados", [])
+	_confere("o mapa publica os lotes reservados", not reservados.is_empty())
+	var choque := ""
+	for lote in reservados:
+		var lmx: Array = lote["mx"]
+		var lmy: Array = lote["my"]
+		for acesso2 in acessos_mapa:
+			var amx: Array = acesso2["mx"]
+			var amy: Array = acesso2["my"]
+			# Interseção de intervalos nos dois eixos — conferir cantos contra
+			# faixa não é conferir o retângulo, e isso já custou um bloco.
+			if float(lmx[0]) < float(amx[1]) and float(lmx[1]) > float(amx[0]) \
+					and float(lmy[0]) < float(amy[1]) and float(lmy[1]) > float(amy[0]) \
+					and choque == "":
+				choque = "o lote mx %.2f..%.2f my %.2f..%.2f cai no acesso da doca %d" \
+					% [float(lmx[0]), float(lmx[1]), float(lmy[0]), float(lmy[1]),
+						int(acesso2["doca"])]
+	_confere("nenhum lote reservado pisa um acesso ao berço", choque == "", choque)
+
+	# E nenhum deles transborda para o avental, que é o outro lado do mesmo
+	# descuido: 1,7 de largura a partir de um recuo de 2,45 acabava lá dentro.
+	var no_avental := ""
+	for lote in reservados:
+		var lmy: Array = lote["my"]
+		var faixa := _faixa_de((float(lmy[0]) + float(lmy[1])) / 2.0)
+		var avental: Array = faixa["avental"]
+		if float(lote["mx"][1]) > float(avental[0]) + 0.01 and no_avental == "":
+			no_avental = "um lote acaba em mx %.2f e o avental começa em %.2f" \
+				% [float(lote["mx"][1]), float(avental[0])]
+	_confere("e nenhum deles transborda para o avental", no_avental == "", no_avental)
 	_d13_completo = true
 
 

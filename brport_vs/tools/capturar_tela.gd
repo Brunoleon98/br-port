@@ -47,6 +47,17 @@ var _frames := 0
 var _saida := SAIDA_PADRAO
 var _semente := SEMENTE_PADRAO
 
+## Frames a MAIS antes de disparar, com o passo de tempo fixo do `--fixed-fps`.
+##
+## ⚠️ ELES SÃO TEMPO SIMULADO, e é isso que os torna comparáveis. Os quinze
+## frames de assentar chegam para o layout, e não chegam para nada que se mexa:
+## o camião leva ~4,7s a sair da rua e encostar no berço, que a 60 quadros por
+## segundo são 282 frames. Sem isto, a visita à doca existia no código, passava
+## em sete asserções e não aparecia em fotografia nenhuma — que é a forma exata
+## do buraco do `barco_medio`. Com `--fixed-fps` cada frame vale 1/60s
+## exatamente, então a foto continua a ser byte a byte reprodutível.
+var _frames_extra := 0
+
 
 func _process(_delta: float) -> bool:
 	if not _montado:
@@ -58,7 +69,7 @@ func _process(_delta: float) -> bool:
 	# depois de um ciclo, e a foto sai com tudo empilhado no canto se for tirada
 	# no primeiro frame.
 	_frames += 1
-	if _frames < FRAMES_ATE_ASSENTAR:
+	if _frames < FRAMES_ATE_ASSENTAR + _frames_extra:
 		if GS.phase == "rival_offer":
 			GS.negotiate_rival("igualar")
 		# A contra-oferta fecha sempre — ela nunca é o assunto de foto nenhuma.
@@ -103,6 +114,14 @@ func _montar() -> void:
 	# que o caixa cravado já tinha causado aqui.
 	var args: Array = []
 	for bruto in OS.get_cmdline_user_args():
+		if bruto.begins_with("--frames="):
+			var qtd := bruto.substr(9)
+			if not qtd.is_valid_int():
+				push_error("captura: --frames= precisa de um inteiro, veio '%s'" % qtd)
+				quit(1)
+				return
+			_frames_extra = int(qtd)
+			continue
 		if bruto.begins_with("--semente="):
 			var valor := bruto.substr(10)
 			if not valor.is_valid_int():
@@ -210,6 +229,17 @@ func _montar() -> void:
 			break
 		_alocar_todos()
 		GS.advance_turn()
+
+	# ⚠️ E UMA ALOCAÇÃO NO FIM, sob pedido. O laço aloca ANTES de cada avanço,
+	# de modo que a foto sai sempre com os trabalhadores livres e as docas à
+	# espera — que é um estado verdadeiro do jogo, e é por isso que os tiros do
+	# mapa ficam como estão. Mas há uma mecânica que só existe com o porto A
+	# OPERAR: o camião que sai da rua e encosta no berço do navio que está a ser
+	# servido. Sem esta linha ela não aparece em fotografia nenhuma, que é a
+	# forma exata do buraco do `barco_medio`.
+	if OS.get_cmdline_user_args().has("alocar"):
+		_alocar_todos()
+		_main._refresh_all()
 
 
 # Resolver a oferta direto no GameState NÃO fecha o painel: quem o fecha é o

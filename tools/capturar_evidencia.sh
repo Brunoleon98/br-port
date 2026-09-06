@@ -113,6 +113,18 @@ tirar porto   0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/porto.png" c
 # mostrar a ARTE do nível 2, não a economia: sem turno nenhum não há fase que
 # abra nada, e o porto já está montado porque a compra não depende de jogar.
 tirar meio    0 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/meio.png" meio limpo
+# O PORTO A OPERAR, com os camiões nos berços. Ela existe pela mesma razão que
+# a folha da frota: a visita à doca só acontece com barco E trabalhador na
+# mesma doca, e os cinco tiros acima fotografam sempre o instante em que os
+# trabalhadores estão livres — o laço deles aloca ANTES de cada avanço, nunca
+# depois do último. A mecânica passava em oito asserções e não aparecia em
+# imagem nenhuma.
+#
+# `--frames=400` são 6,7 segundos de tempo SIMULADO (o `--fixed-fps 60` fixa o
+# passo, então a foto continua reprodutível): o camião leva ~1,4s a chegar ao
+# acesso e ~3,3s a descê-lo. Dois dos três encostam; o terceiro parte depois do
+# acesso dele e segue pela estrada, que é o outro estado que se quer ver.
+tirar docas   0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png" completo limpo alocar --frames=400
 tirar boletim 1 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.png" completo
 tirar pausa   1 --script res://tools/capturar_tela.gd -- 8  "$SAIDA/pausa.png" completo pausa
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
