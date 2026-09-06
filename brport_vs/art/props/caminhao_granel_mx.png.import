@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://rdm840hqod3o"
-path="res://.godot/imported/barco_grande.png-f17fab3124678c0a841db6b6e3093693.ctex"
+uid="uid://38ppxb8jbpo5"
+path="res://.godot/imported/caminhao_granel_mx.png-d05f12a5f104b608140799a403c25f66.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/barco_grande.png"
-dest_files=["res://.godot/imported/barco_grande.png-f17fab3124678c0a841db6b6e3093693.ctex"]
+source_file="res://art/props/caminhao_granel_mx.png"
+dest_files=["res://.godot/imported/caminhao_granel_mx.png-d05f12a5f104b608140799a403c25f66.ctex"]
 
 [params]
 

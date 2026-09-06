@@ -77,10 +77,14 @@ const CENA := [
 	["coqueiro_jovem",  "brp",   -6.2, -0.4, 0.0, ""],
 	["arbusto",         "brp",   -3.2, -2.2, 0.0, ""],
 
-	# ── o caminhão em TRÊS posições: é o critério de aprovação do prompt ──
-	["caminhao",        "props", -2.4,  1.4, 0.0, "caminhão 1/3"],
-	["caminhao",        "props", -1.0,  4.4, 0.0, "caminhão 2/3"],
-	["caminhao",        "props",  0.6,  7.0, 0.0, "caminhão 3/3"],
+	# ── o caminhão em TRÊS posições: é o critério de aprovação do prompt.
+	# São três CARGAS diferentes desde 07/09 — o critério continua a ser a
+	# origem, a escala e a ordem visual, e ele fica mais duro assim: três
+	# carroçarias de comprimentos diferentes têm de encostar todas no mesmo
+	# ponto de contato.
+	["caminhao_granel",      "props", -2.4,  1.4, 0.0, "caminhão 1/3"],
+	["caminhao_conteiner",   "props", -1.0,  4.4, 0.0, "caminhão 2/3"],
+	["caminhao_armazenagem", "props",  0.6,  7.0, 0.0, "caminhão 3/3"],
 
 	# ── pátio ──
 	["empilhadeira",    "props", -2.8,  5.6, 0.0, ""],
@@ -101,7 +105,7 @@ const CENA := [
 	["trabalhador",     "props",  0.6,  4.2, 15.0, ""],
 	["cabeco",          "props", -0.4,  6.4, 0.0, ""],
 	["barco_pequeno",   "props",  2.4,  7.6, 0.0, "barco de pesca"],
-	["barco_grande",    "props",  3.6,  2.6, 0.0, "cargueiro"],
+	["barco_grande_conteiner", "props",  3.6,  2.6, 0.0, "porta-contêineres"],
 	["boia",            "props",  4.2,  5.6, 0.0, "boia"],
 	["gaivota",         "brp",    2.0, -1.4, 60.0, "gaivota · voo"],
 ]
@@ -109,7 +113,7 @@ const CENA := [
 ## A bancada: cada asset novo sozinho, para o vizinho não o tapar.
 ## Colunas de 2 em 2 células, linhas de 2 em 2.
 const BANCADA := [
-	["caminhao",       "props", "caminhão"],
+	["caminhao_pescado", "props", "caminhão de peixe"],
 	["empilhadeira",   "props", "empilhadeira"],
 	["pilha_caixotes", "props", "caixotes"],
 	["doca_concreto",  "props", "doca concreto"],

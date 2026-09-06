@@ -115,7 +115,7 @@ func _ready() -> void:
 	_animar_coqueiros()
 	_animar_boias()
 	_animar_luzes()
-	_animar_caminhao()
+	_animar_caminhoes()
 	_animar_espuma()
 
 	# Turno 1 abria com a faixa de mensagem VAZIA — um cartão creme com nada
@@ -189,6 +189,14 @@ func _classe_ancorada() -> String:
 	return melhor
 
 
+## O n-ésimo motivo que esta classe pode trazer, em roda. Percorre a tabela em
+## vez de a listar à mão: motivo novo numa classe entra aqui sozinho, e uma
+## classe cujos motivos mudem não deixa este lugar a pedir um casco que não há.
+func _motivo_da_classe(classe: String, n: int) -> String:
+	var motivos: Array = GameState.CLASSES_DE_NAVIO[classe]["motivos"].keys()
+	return String(motivos[n % motivos.size()])
+
+
 # Os barcos da Zona de Espera são cenário: não têm lógica, mas parados fazem o
 # porto parecer uma fotografia. Vivem dentro do Cenario, e não soltos no
 # MapaWrap, porque a ordem lá dentro é a profundidade isométrica — metade do
@@ -196,6 +204,7 @@ func _classe_ancorada() -> String:
 # que é o que denuncia a animação como truque.
 func _animar_ancorados() -> void:
 	var fases := [0.0, 0.85]
+	var classe_ancorada := _classe_ancorada()
 	var i := 0
 	for nome in ["BarcoEspera1", "BarcoEspera2"]:
 		var barco := $MapaWrap/Cenario.get_node_or_null(nome) as TextureRect
@@ -207,7 +216,14 @@ func _animar_ancorados() -> void:
 		# mostrava dois ancorados desde o primeiro dia. É a mesma regra que já
 		# vale para o píer e para o galpão — o que troca de estado numa partida
 		# não pode estar assado no fundo.
-		barco.texture = DockScript.arte_do_barco(_classe_ancorada())
+		# ⚠️ E O CASCO PEDE UM MOTIVO desde 07/09, porque é o motivo que
+		# desenha o convés. O de cada ancorado sai da tabela da classe, pelo
+		# ÍNDICE: dois barcos parados lado a lado com o mesmo convés seriam a
+		# mesma foto duas vezes, e escolher ao acaso gastaria sorteios do jogo
+		# numa decisão que é só de cenário (a regra do `Registro` que nasce
+		# desarmado, aplicada à semente).
+		barco.texture = DockScript.arte_do_barco(
+			classe_ancorada, _motivo_da_classe(classe_ancorada, i))
 		var base := barco.position
 		var tw := barco.create_tween().set_loops()
 		if fases[i] > 0.0:
@@ -366,10 +382,10 @@ func _animar_boias() -> void:
 const MEIA_LARG := 20.0
 const MEIA_ALT := 10.0
 
-## Onde a CENA põe o caminhão: um ponto já dentro do quadro, e é de propósito.
-## A primeira passagem começa aqui para que as cinco capturas do CI o apanhem
-## na estrada — prop que a captura não vê é prop que ninguém revê. Só depois
-## dela é que o ciclo passa a começar fora do mapa, como foi pedido.
+## ONDE A CENA PÕE OS TRÊS CAMIÕES — pontos já dentro do quadro, e é de
+## propósito. A primeira passagem começa aqui para que as seis capturas do CI
+## os apanhem na estrada: prop que a captura não vê é prop que ninguém revê. Só
+## depois dela é que cada ciclo passa a começar fora do mapa, como foi pedido.
 ##
 ## ⚠️ E "dentro do quadro" não chega: tem de ser dentro do quadro E À VISTA.
 ## O primeiro ponto escolhido foi o alto do degrau 0, que passava no D13 e
@@ -377,9 +393,19 @@ const MEIA_ALT := 10.0
 ## placas eram interface, desenhavam-se por cima de tudo, e nenhuma asserção
 ## sobre o mapa sabia onde elas caíam. (Elas saíram em 05/09; a lição não, e é
 ## por isso que continua aqui: prop que se põe para ser VISTO confere-se na
-## foto.) Este ponto é o meio do degrau 1, o trecho mais desimpedido da
-## estrada; o D13 tranca que ele está na rota e inteiro dentro do `MapaWrap`.
-const CAMINHAO_ORIGEM := Vector2(3.75, 9.5)
+## foto.) O D13 tranca que os três estão na rota e inteiros dentro do
+## `MapaWrap`, e o D15 que nenhum deles pousa numa das duas pontas de praia.
+##
+## ⚠️ SÃO TRÊS, E OS TRÊS COMEÇAM EM TRECHOS RETOS. Num cotovelo o caminhão
+## anda em `mx` e precisa da outra silhueta: parado ali, ele sairia na captura
+## atravessado. A escolha é limitada pelos dois lados — abaixo de `my` 1,2 e
+## acima de 22,5 estão as praias, onde o porto acabou e equipamento nenhum
+## pousa (D15) —, e os três repartem o que sobra da estrada visível.
+const CAMINHAO_ORIGENS: Array[Vector2] = [
+	Vector2(-0.25, 1.6),
+	Vector2(3.75, 9.5),
+	Vector2(7.75, 21.0),
+]
 
 ## A escada da rua, em (mx, my). Primeiro e último ponto estão FORA do quadro —
 ## 76 unidades ao todo, ~1.700px de tela — e as pontas são as do MUNDO, não
@@ -431,8 +457,52 @@ const ROTA_ESTRADA: Array[Vector2] = [
 ## 2,5s, que é a régua com que o olho lê velocidade.
 const CAMINHAO_VELOCIDADE := 38.0 * 2.0 / 3.0
 
-const CaminhaoMy := preload("res://art/props/caminhao.png")
-const CaminhaoMx := preload("res://art/props/caminhao_mx.png")
+## A pausa entre uma travessia e a seguinte, DENTRO do ciclo de cada caminhão.
+##
+## ⚠️ ELA É A MESMA PARA OS TRÊS, e tem de ser. O período do ciclo é
+## `intervalo + travessia`, e só com períodos iguais a distância entre os três
+## fica constante para sempre; um intervalo por caminhão fá-los-ia deslizar uns
+## para cima dos outros ao fim de algumas voltas. Quem os separa é a ESPERA de
+## arranque, que se calcula uma vez e nunca mais.
+const CAMINHAO_INTERVALO := 5.0
+
+## OS QUATRO CAMIÕES, UM POR MOTIVO DE ESCALA.
+##
+## Até 06/09 era um caminhão só, e as duas texturas dele eram o mesmo veículo
+## em dois eixos. A estrada mostrava a mesma caçamba laranja fosse o porto a
+## receber pescado ou contêiner — e desde `docs/decisoes/008` o jogo SABE a
+## diferença. Agora o que passa é o que se está a servir: quem escolhe é
+## `_motivo_da_estrada()`, pela doca do mesmo índice.
+##
+## ⚠️ A CHAVE É O ID DO MOTIVO, e é isso que faz esta tabela ser percorrível.
+## O bloco D13 do teste de design varre `GameState.MOTIVOS` e exige casco de
+## camião para cada um — um motivo novo sem camião reprova ali, do mesmo modo
+## que o D17 exige casco de navio para cada par (classe, motivo). Foi a falta
+## dessa pergunta que deixou o `barco_medio` gerado e sem uso durante semanas.
+const CAMINHOES := {
+	"pescado": {
+		"my": preload("res://art/props/caminhao_pescado.png"),
+		"mx": preload("res://art/props/caminhao_pescado_mx.png"),
+	},
+	"armazenagem": {
+		"my": preload("res://art/props/caminhao_armazenagem.png"),
+		"mx": preload("res://art/props/caminhao_armazenagem_mx.png"),
+	},
+	"conteiner": {
+		"my": preload("res://art/props/caminhao_conteiner.png"),
+		"mx": preload("res://art/props/caminhao_conteiner_mx.png"),
+	},
+	"granel": {
+		"my": preload("res://art/props/caminhao_granel.png"),
+		"mx": preload("res://art/props/caminhao_granel_mx.png"),
+	},
+}
+
+# O motivo que cada caminhão leva na volta que está a fazer. Ele é escolhido
+# quando o caminhão entra no mapa e NÃO muda a meio da travessia: um camião
+# que trocasse de carroçaria a meio da rua é um camião a transformar-se à
+# vista. Índice = índice do nó `Caminhao<N>`.
+var _carga_na_estrada: Array[String] = []
 
 
 ## A silhueta que um trecho pede: a de `mx` se ele anda em `mx`, a de `my` se
@@ -440,64 +510,146 @@ const CaminhaoMx := preload("res://art/props/caminhao_mx.png")
 ## recalcular a mesma escolha do lado do teste seria o teste a concordar
 ## consigo próprio, e foi assim que a primeira versão dele deixou passar um
 ## caminhão que usava a mesma silhueta nos oito trechos.
-func silhueta_do_trecho(de: Vector2, para: Vector2) -> Texture2D:
-	return CaminhaoMx if abs(para.x - de.x) > 0.01 else CaminhaoMy
+func silhueta_do_trecho(de: Vector2, para: Vector2, motivo: String) -> Texture2D:
+	var par: Dictionary = CAMINHOES[motivo]
+	return par["mx"] if abs(para.x - de.x) > 0.01 else par["my"]
 
 
-## O deslocamento de tela de um ponto da rota, medido a partir de onde a cena
-## põe o caminhão. Só precisa das duas constantes da projeção — `CX`, `CY` e a
-## altura do cais cancelam-se na diferença.
-func tela_da_rota(ponto: Vector2) -> Vector2:
-	var d := ponto - CAMINHAO_ORIGEM
+## O deslocamento de tela entre dois pontos da rota. Só precisa das duas
+## constantes da projeção — `CX`, `CY` e a altura do cais cancelam-se na
+## diferença.
+func tela_da_rota(ponto: Vector2, origem: Vector2) -> Vector2:
+	var d := ponto - origem
 	return Vector2((d.x - d.y) * MEIA_LARG, (d.x + d.y) * MEIA_ALT)
 
 
-func _animar_caminhao() -> void:
+## Os pontos da rota a partir de `desde`, inclusive — os que ainda estão à
+## FRENTE de onde se começa. Comparar por `my` chega: a rota nunca recua nele.
+func _pontos_da_rota(desde: Vector2) -> Array[Vector2]:
+	var pontos: Array[Vector2] = [desde]
+	for ponto in ROTA_ESTRADA:
+		if ponto.y > desde.y or (is_equal_approx(ponto.y, desde.y) and ponto.x > desde.x):
+			pontos.append(ponto)
+	return pontos
+
+
+## Quantos segundos leva a percorrer o que resta da rota a partir de `desde`.
+## Sai da MESMA conta que a animação usa — comprimento a dividir pela
+## velocidade —, e é ela que dá a espera de arranque de cada caminhão.
+func _tempo_da_rota(desde: Vector2) -> float:
+	var pontos := _pontos_da_rota(desde)
+	var px := 0.0
+	for i in range(pontos.size() - 1):
+		px += tela_da_rota(pontos[i + 1], pontos[i]).length()
+	return px / CAMINHAO_VELOCIDADE
+
+
+## O que passa na estrada é O QUE ESTÁ A SER SERVIDO NA DOCA DO MESMO ÍNDICE.
+##
+## Três docas, três camiões, um para um: a carga que sai do berço sai também
+## pela rua, e o jogador que olhe para uma coisa vê a outra. Sem sorteio
+## nenhum, e de propósito — o `RandomNumberGenerator` do jogo é o que o
+## simulador de balanceamento usa, e um enfeite a gastar sorteios mexeria na
+## sequência que as 600 partidas por perfil medem. É a mesma regra do
+## `Registro`, que nasce desarmado para não gravar 1.800 arquivos.
+##
+## Doca vazia ou por construir cai no que o PORTO consegue receber — os motivos
+## das classes já destravadas (`docs/decisoes/009`), em roda pelo índice. Assim
+## o porto em ruínas manda peixe e carga geral pela estrada, e o porto de nível
+## 3 manda contêiner: a estrada conta a mesma história que o cais.
+func _motivo_da_estrada(i: int) -> String:
+	if i < GameState.docks.size():
+		var barco = GameState.docks[i]["boat"]
+		if barco != null:
+			return String(barco["motivo"])
+	var motivos: Array = []
+	for classe in GameState.classes_disponiveis():
+		for m in GameState.CLASSES_DE_NAVIO[classe]["motivos"]:
+			if not motivos.has(m):
+				motivos.append(m)
+	return String(motivos[i % motivos.size()])
+
+
+func _animar_caminhoes() -> void:
 	var cenario := $MapaWrap.get_node_or_null("Cenario")
 	if cenario == null:
 		return
-	var caminhao := cenario.get_node_or_null("Caminhao") as TextureRect
-	if caminhao == null:
-		return
-	var base := caminhao.position - tela_da_rota(CAMINHAO_ORIGEM)
+	_carga_na_estrada.resize(CAMINHAO_ORIGENS.size())
 
-	# Primeira passagem: começa onde a cena o pôs (dentro do quadro) e sai.
-	var primeira := caminhao.create_tween()
-	_trechos_da_rota(primeira, caminhao, base, CAMINHAO_ORIGEM)
-	primeira.tween_callback(func() -> void:
-		# E daqui em diante o ciclo completo, de fora do mapa a fora do mapa.
-		var ciclo := caminhao.create_tween().set_loops()
-		ciclo.tween_interval(5.0)
-		_trechos_da_rota(ciclo, caminhao, base, ROTA_ESTRADA[0])
-	)
+	# O CICLO É IGUAL PARA OS TRÊS: pausa + travessia inteira. É esse número
+	# que a espera de arranque reparte, e é por ele ser igual que a repartição
+	# vale para sempre.
+	var ciclo := CAMINHAO_INTERVALO + _tempo_da_rota(ROTA_ESTRADA[0])
+	var n := CAMINHAO_ORIGENS.size()
+	# ⚠️ A ESPERA DE ARRANQUE É DERIVADA, e o número não se escreve à mão.
+	# A estrada visível é um terço da rota, então três camiões todos à vista ao
+	# mesmo tempo estão, por construção, amontoados num terço do ciclo: sem
+	# isto ver-se-iam os três de enfiada e depois quarenta e sete segundos de
+	# rua vazia. A espera acerta cada um no seu terço do ciclo, uma vez só, e a
+	# partir daí passa um camião a cada `ciclo/3` — e continua a passar mesmo
+	# que a rota mude de comprimento ou a velocidade mude, porque tudo isto sai
+	# de `_tempo_da_rota()`.
+	var fase_zero := _tempo_da_rota(CAMINHAO_ORIGENS[0]) + CAMINHAO_INTERVALO
+
+	for i in range(n):
+		var caminhao := cenario.get_node_or_null("Caminhao%d" % i) as TextureRect
+		if caminhao == null:
+			continue
+		var origem: Vector2 = CAMINHAO_ORIGENS[i]
+		# A cena põe o nó no ponto de partida dele; `base` é o canto do quadro
+		# de 512 que corresponde a esse ponto, e tudo o resto é medido a partir
+		# dali.
+		var base := caminhao.position
+		var espera := fase_zero + float(i) * ciclo / float(n) \
+			- _tempo_da_rota(origem)
+		while espera < CAMINHAO_INTERVALO:
+			espera += ciclo
+
+		# Primeira passagem: começa onde a cena o pôs (dentro do quadro) e sai.
+		var primeira := caminhao.create_tween()
+		_trechos_da_rota(primeira, caminhao, i, base, origem, origem)
+		primeira.tween_interval(espera)
+		primeira.tween_callback(func() -> void:
+			# E daqui em diante o ciclo completo, de fora do mapa a fora do
+			# mapa, com a pausa comum a todos.
+			var ciclo_tw := caminhao.create_tween().set_loops()
+			ciclo_tw.tween_interval(CAMINHAO_INTERVALO)
+			_trechos_da_rota(ciclo_tw, caminhao, i, base, origem,
+				ROTA_ESTRADA[0])
+		)
 
 
 ## Enfia na `tw` um trecho por par de pontos da rota, a partir de `desde`.
-func _trechos_da_rota(tw: Tween, caminhao: TextureRect, base: Vector2,
-		desde: Vector2) -> void:
-	var pontos: Array[Vector2] = [desde]
-	for ponto in ROTA_ESTRADA:
-		# Só os pontos que ainda estão À FRENTE de onde se começa. Comparar por
-		# `my` chega: a rota nunca recua nele.
-		if ponto.y > desde.y or (is_equal_approx(ponto.y, desde.y) and ponto.x > desde.x):
-			pontos.append(ponto)
+## `base` é a posição de tela do `origem_do_no` — o ponto que a cena ancorou.
+func _trechos_da_rota(tw: Tween, caminhao: TextureRect, indice: int,
+		base: Vector2, origem_do_no: Vector2, desde: Vector2) -> void:
+	var pontos := _pontos_da_rota(desde)
 
 	# O primeiro salto é um TELEPORTE, não um trecho: é ele que põe o caminhão
-	# no princípio da rota antes de a percorrer.
+	# no princípio da rota antes de a percorrer. É também o momento em que ele
+	# escolhe a carga — está fora do mapa, ou é a primeira vez que aparece.
 	tw.tween_callback(func() -> void:
-		caminhao.position = base + tela_da_rota(pontos[0])
-		caminhao.texture = CaminhaoMy
+		_carga_na_estrada[indice] = _motivo_da_estrada(indice)
+		caminhao.position = base + tela_da_rota(pontos[0], origem_do_no)
+		# ⚠️ A SILHUETA DE PARTIDA SAI DO PRIMEIRO TRECHO, e não de um `my`
+		# cravado. Ela esteve cravada enquanto houve uma origem só, que calhava
+		# ser num trecho reto; com três origens um `my` fixo poria um caminhão
+		# atravessado no primeiro frame de quem começasse num cotovelo.
+		caminhao.texture = silhueta_do_trecho(pontos[0], pontos[min(1, pontos.size() - 1)],
+			_carga_na_estrada[indice])
 		_ordenar_por_profundidade(caminhao)
 	)
 	for i in range(pontos.size() - 1):
 		var de: Vector2 = pontos[i]
 		var para: Vector2 = pontos[i + 1]
-		var origem := base + tela_da_rota(de)
-		var destino := base + tela_da_rota(para)
+		var origem := base + tela_da_rota(de, origem_do_no)
+		var destino := base + tela_da_rota(para, origem_do_no)
 		# A silhueta certa para o eixo do trecho — é isto que faz a curva ler
 		# como curva em vez de o caminhão deslizar de lado.
-		var textura := silhueta_do_trecho(de, para)
-		tw.tween_callback(func() -> void: caminhao.texture = textura)
+		tw.tween_callback(func() -> void:
+			caminhao.texture = silhueta_do_trecho(de, para,
+				_carga_na_estrada[indice])
+		)
 		tw.tween_method(func(t: float) -> void:
 			caminhao.position = origem.lerp(destino, t)
 			_ordenar_por_profundidade(caminhao)
