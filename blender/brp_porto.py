@@ -39,21 +39,68 @@ def _roda(nome, x, y, raio_px, largura, mat, eixo="y"):
                 largura, 16, mat, rot=rot)
 
 
-def _pecas_do_caminhao(M, eixo):
-    """As peças do caminhão, deitado no eixo pedido ("my" ou "mx").
+# ── OS QUATRO CAMIÕES, UM POR MOTIVO DE ESCALA ──────────────────────────
+#
+# Até 06/09 havia UM caminhão, em duas silhuetas — e as duas eram o mesmo
+# veículo, porque a rua vira 90° e só as faces `+x` e `-y` são visíveis. A
+# estrada do porto mostrava sempre a mesma caçamba laranja, fosse o porto a
+# receber pescado ou contêiner.
+#
+# Desde os motivos da escala (`docs/decisoes/008`) o jogo SABE o que cada barco
+# traz. O que sai do porto pela estrada passou a poder dizê-lo: quem escolhe é
+# o `Main.gd`, pela carga da doca do mesmo índice, e a chave é o id do motivo —
+# por isso estes nomes são `pescado`, `armazenagem`, `conteiner` e `granel` e
+# não "frigorífico", "baú", "carreta" e "basculante". Nome de prop que não é a
+# chave da tabela do jogo é uma tradução a mais para envelhecer.
+#
+# ⚠️ O QUE SEPARA QUATRO CAMIÕES A 60px É A SILHUETA, NÃO A COR. Quatro
+# carroçarias do mesmo tamanho pintadas de quatro cores seriam quatro etiquetas
+# — a mesma armadilha do armazém em ruína, que era o galpão com o telhado
+# repintado. Por isso cada um tem comprimento, altura e número de eixos
+# próprios: a carreta é longa e baixa, o baú é curto e alto, o frigorífico é o
+# mais curto de todos, e o basculante leva o monte de granel acima da borda.
+CAMINHOES = {
+    # A carreta: o chassi mais longo do jogo e o contêiner do PÁTIO em cima
+    # dele. O contêiner é o mesmo vocabulário — corpo laranja, vinco de valor,
+    # cantoneira escura — de propósito: é a mesma caixa que o pátio empilha, e
+    # vê-la a sair pela estrada é o que liga as duas pontas.
+    "conteiner":   dict(chassi=1.96, cabine=0.44, cor_cab="cabine",
+                        eixos=(0.78, -0.18, -0.54, -0.86)),
+    "granel":      dict(chassi=1.48, cabine=0.46, cor_cab="amarelo",
+                        eixos=(0.52, -0.30, -0.72)),
+    "armazenagem": dict(chassi=1.56, cabine=0.44, cor_cab="azul",
+                        eixos=(0.58, -0.28, -0.70)),
+    # O mais curto: um frigorífico de peixe é um caminhão de bairro, não uma
+    # carreta de porto.
+    "pescado":     dict(chassi=1.10, cabine=0.42, cor_cab="cabine",
+                        eixos=(0.34, -0.36)),
+}
+
+
+def _pecas_do_caminhao(M, eixo, servico):
+    """As peças de um caminhão, no eixo pedido ("my" ou "mx") e do serviço dado.
 
     ⚠️ UM CONSTRUTOR, DUAS ORIENTAÇÕES, e é por isso que ele existe. A rua do
     porto é uma ESCADA: corre em `my` dentro de cada degrau e salta 4 unidades
     em `mx` no cotovelo que liga um degrau ao seguinte (ver `vias()` no
     `gerar_mapa_iso.py`). Um caminhão que a percorra de ponta a ponta VIRA 90°
     em cada cotovelo, e para virar precisa das duas silhuetas. Duas cópias
-    desta função divergiriam no dia em que uma ganhasse um farol.
+    desta função divergiriam no dia em que uma ganhasse um farol — e com
+    quatro serviços seriam OITO cópias a divergir.
 
     ⚠️ E NÃO SE OBTÊM RODANDO O GRUPO. Só as faces `+x` e `-y` são visíveis
     por esta câmera: rodar 90° manda metade dos detalhes para a face que
     ninguém vê. Cada orientação repõe o para-brisa, a janela e o friso na face
     visível que lhes corresponde — é isso que as duas listas abaixo dizem.
+
+    ⚠️ E A TRASEIRA NUNCA É VISÍVEL, nas duas. Para o caminhão de `my` a
+    traseira é `+y`; para o de `mx` é `-x`; nenhuma das duas está de frente
+    para esta câmera. Por isso o portão de enrolar do baú NÃO foi desenhado
+    atrás, que era onde ele estaria num caminhão de verdade: a assinatura de
+    cada carroçaria tem de caber nas duas faces que se veem, ou é render que
+    ninguém vê.
     """
+    d = CAMINHOES[servico]
     p = []
     RODA, LARG = 5.0, 0.62
     ao_longo_de_y = eixo == "my"
@@ -71,14 +118,18 @@ def _pecas_do_caminhao(M, eixo):
     # `+my` do mapa), +x quando corre em `mx`.
     face_frente = "-y" if ao_longo_de_y else "+x"
     face_lado = "+x" if ao_longo_de_y else "-y"
-    sinal_frente = -1.0 if ao_longo_de_y else 1.0
+    sf = -1.0 if ao_longo_de_y else 1.0          # sinal da frente
 
+    chassi, cab_comp = d["chassi"], d["cabine"]
     p.append(caixa("cam_chassi", loc(0.0, 0.0, z(RODA + 2.0)),
-                   dim(1.48, LARG) + (z(4.0),), M["metal"]))
+                   dim(chassi, LARG) + (z(4.0),), M["metal"]))
 
-    cab_c = loc(sinal_frente * 0.50, 0.0, z(RODA + 11.5))
-    cab_t = dim(0.46, LARG) + (z(15.0),)
-    p.append(caixa("cam_cabine", cab_c, cab_t, M["azul"]))
+    # A cabine encosta na frente do chassi — a posição SAI do comprimento, e
+    # não de um número por serviço: quatro chassis diferentes com a cabine
+    # escrita à mão dariam quatro chances de uma ficar a pairar no ar.
+    cab_c = loc(sf * (chassi / 2.0 - cab_comp / 2.0), 0.0, z(RODA + 11.5))
+    cab_t = dim(cab_comp, LARG) + (z(15.0),)
+    p.append(caixa("cam_cabine", cab_c, cab_t, M[d["cor_cab"]]))
     p += janela("cam_vidro_f", face_frente, cab_c, cab_t, 0.0, 0.030, 0.30,
                 0.16, M, peitoril=False)
     p += janela("cam_vidro_l", face_lado, cab_c, cab_t, 0.0, 0.030, 0.26,
@@ -86,56 +137,126 @@ def _pecas_do_caminhao(M, eixo):
     p.append(na_face("cam_grade", face_frente, cab_c, cab_t, 0.0, -0.16,
                      0.34, 0.08, 0.03, M["metal_claro"], 0.01))
 
-    # Caçamba atrás, mais alta que a cabine — é o que dá silhueta de caminhão
-    # em vez de furgão. O friso corre no comprimento dela, então vai na face
-    # que a mostra de PERFIL, que é a lateral.
-    cac_c = loc(-sinal_frente * 0.46, 0.0, z(RODA + 13.0))
-    cac_t = dim(0.86, LARG + 0.04) + (z(18.0),)
-    p.append(caixa("cam_cacamba", cac_c, cac_t, M["laranja"]))
-    p.append(na_face("cam_friso", face_lado, cac_c, cac_t, 0.0, 0.0,
-                     0.80, 0.03, 0.02, M["metal_claro"], 0.005))
-    p.append(caixa("cam_tampa", loc(-sinal_frente * 0.90, 0.0, z(RODA + 13.0)),
-                   dim(0.06, LARG) + (z(17.0),), M["metal"]))
+    # A carroçaria enche o que sobra do chassi, encostada à traseira. Os 0,06
+    # de folga para a cabine são o que impede as duas de partilharem uma face
+    # — duas faces no mesmo plano dão o losango preto que este projeto já
+    # registou três vezes.
+    corpo_comp = chassi - cab_comp - 0.06
+    corpo_x = -sf * (chassi / 2.0 - corpo_comp / 2.0)
+    def corpo_c(alt_px):
+        return loc(corpo_x, 0.0, z(RODA + alt_px))
 
-    # Três eixos ao longo do comprimento, dois lados na largura. O eixo da roda
-    # aponta na LARGURA — num veículo deitado em `my` isso é `x`.
+    if servico == "granel":
+        # BASCULANTE, e o granel À VISTA acima da borda. Uma caçamba vazia é
+        # uma caixa; o que diz "granel" é o monte, e ele tem de passar da
+        # borda, senão fica dentro e a câmera não o vê.
+        cac_t = dim(corpo_comp, LARG + 0.04) + (z(16.0),)
+        p.append(caixa("cam_cacamba", corpo_c(12.0), cac_t, M["metal"]))
+        p.append(na_face("cam_friso", face_lado, corpo_c(12.0), cac_t, 0.0, 0.0,
+                         corpo_comp * 0.92, 0.03, 0.02, M["metal_claro"], 0.005))
+        # Duas camadas: a carga rente à borda e a crista mais estreita por
+        # cima. Uma camada só saía como um tampo plano — a caçamba fechada.
+        p.append(caixa("cam_carga", corpo_c(20.0),
+                       dim(corpo_comp - 0.06, LARG - 0.04) + (z(4.0),),
+                       M["madeira_velha"]))
+        p.append(caixa("cam_crista", corpo_c(23.0),
+                       dim(corpo_comp - 0.34, LARG - 0.20) + (z(3.0),),
+                       M["madeira_velha"]))
+
+    elif servico == "armazenagem":
+        # BAÚ. A assinatura dele é a ALTURA e o avanço sobre a cabine — é o que
+        # se lê de longe. O friso laranja separa-o do frigorífico branco-e-azul
+        # sem repetir a silhueta dele.
+        # ⚠️ O BAÚ NÃO AVANÇA SOBRE A CABINE. A primeira versão dava-lhe
+        # 0,16 de comprimento a mais e um deslocamento de 0,08 para a frente —
+        # o "nariz" do furgão, que é um traço real —, e o que saiu foi a caixa
+        # a ATRAVESSAR a cabine por 0,10: a teal do serviço quase desaparecia
+        # atrás do branco. Quem separa este dos outros três é a ALTURA (24px
+        # contra os 16 do basculante), e ela não precisa de ajuda.
+        bau_t = dim(corpo_comp + 0.02, LARG + 0.04) + (z(24.0),)
+        bau_c = loc(corpo_x, 0.0, z(RODA + 16.0))
+        p.append(caixa("cam_bau", bau_c, bau_t, M["cabine"]))
+        p.append(na_face("cam_friso", face_lado, bau_c, bau_t, 0.0, -0.06,
+                         corpo_comp * 0.94, 0.09, 0.02, M["laranja"], 0.005))
+        # Duas nervuras verticais: um baú é chapa em painéis, e a esta escala
+        # dois vincos chegam para o dizer. Mais seria a lixa do `DESGASTE`.
+        for i, u in enumerate((-0.18, 0.18)):
+            p.append(na_face("cam_nerv%d" % i, face_lado, bau_c, bau_t, u, 0.06,
+                             0.04, 0.22, 0.02, M["parede_dir"], 0.004))
+
+    elif servico == "pescado":
+        # FRIGORÍFICO. Curto, azul, e com a unidade de frio a espreitar por
+        # cima da cabine — é essa saliência no topo da frente que diz "peixe" a
+        # 40px, e não a cor sozinha.
+        bau_t = dim(corpo_comp + 0.10, LARG) + (z(19.0),)
+        bau_c = loc(corpo_x + sf * 0.05, 0.0, z(RODA + 13.5))
+        p.append(caixa("cam_bau", bau_c, bau_t, M["azul"]))
+        p.append(na_face("cam_faixa", face_lado, bau_c, bau_t, 0.0, 0.04,
+                         corpo_comp * 0.92, 0.07, 0.02, M["refletivo"], 0.005))
+        # A unidade de frio: pequena de propósito. A 0,16 x 0,50 ela saía como
+        # um TAMPO escuro sobre metade do baú, e o que se lia era um caminhão
+        # de teto preto. O que diz "frigorífico" é a saliência, não a área.
+        p.append(caixa("cam_frio",
+                       loc(corpo_x + sf * (corpo_comp / 2.0 - 0.02), 0.0,
+                           z(RODA + 23.0)),
+                       dim(0.11, LARG - 0.24) + (z(5.0),), M["metal_claro"]))
+
+    else:                                       # conteiner
+        # CARRETA. Prancha rasa e o contêiner do pátio em cima — e o contêiner
+        # é a peça, não a caixa laranja: sem cantoneira e sem vinco ele lê como
+        # um baú cor de tijolo.
+        p.append(caixa("cam_prancha", corpo_c(6.0),
+                       dim(corpo_comp, LARG + 0.02) + (z(3.0),), M["metal"]))
+        cont_comp = corpo_comp - 0.16
+        cont_t = dim(cont_comp, LARG - 0.02) + (z(15.0),)
+        cont_c = corpo_c(15.0)
+        p.append(caixa("cam_cont", cont_c, cont_t, M["laranja"]))
+        for i in range(4):
+            u = (i - 1.5) * (cont_comp / 4.4)
+            p.append(na_face("cam_vinco%d" % i, face_lado, cont_c, cont_t, u,
+                             0.0, cont_comp / 6.4, z(15.0) * 0.72, 0.05,
+                             M["laranja_esc"], -0.030))
+        # Cantoneiras: o canto escuro é a assinatura do contêiner, e é ela que
+        # o separa do baú do caminhão de armazenagem.
+        #
+        # ⚠️ E AQUI ELAS SÃO MONTANTES INTEIROS, não os quatro quadrados que o
+        # contêiner do pátio usa. A razão é a escala: aquele tem 23px de face
+        # comprida e este 29px de comprimento sobre 10 de altura — um quadrado
+        # de 0,09 dá 2px, que a esta altura some entre o vinco e a beira. Duas
+        # verticais de ponta a ponta mais a longarina de baixo desenham a mesma
+        # coisa (o esqueleto escuro do contêiner) com traços que se veem.
+        for i, su in enumerate((-1, 1)):
+            p.append(na_face("cam_canto%d" % i, face_lado, cont_c, cont_t,
+                             su * (cont_comp / 2 - 0.045), 0.0,
+                             0.09, z(15.0) * 0.96, 0.05, M["metal"], -0.026))
+        p.append(na_face("cam_longarina", face_lado, cont_c, cont_t, 0.0,
+                         -z(15.0) / 2 + 0.03, cont_comp * 0.98, 0.06, 0.05,
+                         M["metal"], -0.026))
+
+    # Os eixos vêm da tabela: a carreta tem quatro, o frigorífico dois. O eixo
+    # da roda aponta na LARGURA — num veículo deitado em `my` isso é `x`.
     eixo_roda = "x" if ao_longo_de_y else "y"
-    for i, ao_longo in enumerate((sinal_frente * 0.52, -sinal_frente * 0.30,
-                                  -sinal_frente * 0.72)):
+    for i, ao_longo in enumerate(d["eixos"]):
         for j, atravessado in enumerate((LARG / 2, -LARG / 2)):
-            xy = loc(ao_longo, atravessado, 0.0)
+            xy = loc(sf * ao_longo, atravessado, 0.0)
             p.append(_roda("cam_roda_%d%d" % (i, j), xy[0], xy[1], RODA, 0.12,
                            M["metal"], eixo=eixo_roda))
     return p
 
 
-def caminhao(M, est):
-    """Caminhão da estrada, deitado NO EIXO DELA (`my`), cabine para o `+my`.
+def _registrar_caminhoes(M, est):
+    """Os oito props: quatro serviços × duas orientações.
 
-    O jogo já desenha caminhões estacionados no SVG do mapa; este é o prop,
-    para quando um caminhão precisar SE MEXER — que é a regra do projeto: o
-    que troca de estado dentro de uma partida não pode estar assado no fundo.
-    Hoje ele atravessa o mapa inteiro pela rua; a intenção registada é usá-lo
-    para mostrar a chegada de uma entrega a um navio.
+    O jogo já sabe que um caminhão que anda em `mx` precisa de outra silhueta;
+    o que passou a saber é QUAL das quatro. A tabela do `Main.gd` indexa por
+    `<motivo>` e `<motivo>_mx`, e é por isso que os nomes se escrevem assim.
     """
-    p = _pecas_do_caminhao(M, "my")
-    origem("caminhao")
-    est.registrar("caminhao", p, celulas=(1, 2),
-                  cena_godot="res://scenes/props/Caminhao.tscn")
-
-
-def caminhao_mx(M, est):
-    """O mesmo caminhão virado para `+mx`, para os COTOVELOS da rua.
-
-    A rua salta 4 unidades em `mx` a cada degrau da costa, e nesse trecho o
-    caminhão anda atravessado ao anterior. Sem esta segunda silhueta ele faria
-    a curva a deslizar de lado — o defeito que o CLAUDE.md avisa não se
-    consertar rodando no Godot.
-    """
-    p = _pecas_do_caminhao(M, "mx")
-    origem("caminhao_mx")
-    est.registrar("caminhao_mx", p, celulas=(2, 1),
-                  cena_godot="res://scenes/props/Caminhao.tscn")
+    for servico in CAMINHOES:
+        for eixo, sufixo, celulas in (("my", "", (1, 2)), ("mx", "_mx", (2, 1))):
+            nome = "caminhao_%s%s" % (servico, sufixo)
+            origem(nome)
+            est.registrar(nome, _pecas_do_caminhao(M, eixo, servico),
+                          celulas=celulas)
 
 
 def empilhadeira(M, est):
@@ -550,7 +671,7 @@ def trabalhador_retrato(M, est):
                   cena_godot="res://scenes/worker/Worker.tscn")
 
 
-CATALOGO = (caminhao, caminhao_mx, empilhadeira, cabeco, poste, pilha_caixotes,
+CATALOGO = (_registrar_caminhoes, empilhadeira, cabeco, poste, pilha_caixotes,
             doca_concreto, pallet, pneus, cone_transito, barreira, bote,
             guincho, trabalhador_retrato)
 

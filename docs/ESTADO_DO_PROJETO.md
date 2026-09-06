@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 06/09/2026
+> **Última atualização:** 07/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -13,11 +13,10 @@
 > | O que fazer a seguir, e quais itens só o Bruno fecha | `docs/design/BR_Port_Plano_v3_Claude_Code.md` |
 > | Por que se decidiu assim | `docs/decisoes/NNN-*.md`, uma por arquivo |
 >
-> São **dois** documentos para retomar o trabalho: este e o plano. Até 02/09
-> eram cinco em cadeia — este mandava começar por um briefing de 29/08, que
-> mandava ler outro, e a tabela abaixo apontava para um terceiro. O caminho
-> percorrido está em `docs/arquivo/HISTORICO.md`; o que aconteceu em cada
-> sessão, em `docs/arquivo/`.
+> São **dois** documentos para retomar o trabalho: este e o plano — até 02/09
+> eram cinco em cadeia. O caminho percorrido está em
+> `docs/arquivo/HISTORICO.md`; o que aconteceu em cada sessão, em
+> `docs/arquivo/`.
 
 ---
 
@@ -113,9 +112,9 @@ em `docs/arquivo/HISTORICO.md`.
 
 | Item | O que falta | Por que só ele |
 |---|---|---|
-| **A1** | ~~Jogar dez minutos no APK~~ — **a primeira passagem aconteceu em 02/09**, e o que ela achou está em `docs/arquivo/PLAYTEST_01_ANALISE.md`. O que fica aberto é a passagem SEGUINTE, depois de a fila abaixo andar | Ver leitura abaixo |
+| **A1** | A passagem SEGUINTE no telefone — a primeira foi em 02/09 e está em `docs/arquivo/PLAYTEST_01_ANALISE.md` | Ver leitura abaixo |
 | **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
-| **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA** (o traço redesenha o que o corrugado já diz). Da 4, a cal descascada também caiu por medição. É a trilha inteira à espera do olho dele |
+| **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais o que ficou fora delas, e a frota de 07/09. É a trilha inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a primeira jogada no telefone devolveu (02–03/09)
@@ -210,9 +209,10 @@ conta e o modo de a refazer estão em
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados no cronograma, mantidos como registro das decisões) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
 
-| `tools/capturar_evidencia.sh` | **As seis fotografias que provam o que ficou** — e uma delas é o nível 2 do porto, que os dois extremos não mostram — semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
+| `tools/capturar_evidencia.sh` | **As sete fotografias que provam o que ficou** — cinco de jogo (uma é o nível 2 do porto) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
+| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os seis cascos e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
-| `.github/workflows/captura.yml` | As seis imagens anexadas a cada PR, e o antes/depois contra a base |
+| `.github/workflows/captura.yml` | As sete imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere que as quatro camadas existem e que nenhuma referência de documento aponta para arquivo que não há |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
@@ -274,10 +274,8 @@ reaproveitam e por quê.
 
 As **estruturas trocam de textura, não de nó** — o prop ocupa o mesmo quadro
 nos dois estados, então o prédio não salta ao ser consertado. Mas as PEÇAS não
-se partilham entre os dois: foi isso que fez o galpão em ruína ter paredes
-novas até 05/09. **E cada estado precisa do seu vocabulário** — o mesmo defeito
-com o sinal trocado: consertada a ruína, o armazém ACABADO ficou o único prédio
-do porto desenhado só com repertório doméstico, e lia-se como casa.
+se partilham entre os dois, e cada estado tem o seu vocabulário próprio: as
+duas lições estão no `CLAUDE.md`, e o que custaram, em `docs/arquivo/`.
 
 **A cauda dos props tem corpo** (Etapa 2): contêiner corrugado, carga
 empilhada, boia e marcador com faixa refletiva, e as catorze peças pequenas do
@@ -285,8 +283,9 @@ pátio em `blender/brp_porto.py`.
 
 O cenário usa os props: **coqueiros** que oscilam em rajada, **guindaste** nas
 docas construídas (a lança varre), **carga no convés** e **boias + marcador** na
-Zona de Espera. O **caminhão atravessa o mapa inteiro pela estrada**, com duas
-silhuetas porque a rua vira 90° em cada cotovelo; a **espuma lava a costa** em
+Zona de Espera. **Três caminhões atravessam o mapa pela estrada**, cada um com
+a carga da doca do mesmo índice e em duas silhuetas porque a rua vira 90° em
+cada cotovelo; a **espuma lava a costa** em
 duas camadas em contrafase; o **enrocamento para nas duas pontas**, onde o cais
 deu lugar a praia. Os coqueiros chapados saíram do SVG — `--sem-coqueiros` —
 pela mesma razão que os píeres: o que se mexe não pode estar assado no fundo.
@@ -302,9 +301,12 @@ escolhe são `nivel_pier()` e `nivel_guindaste()`, cada um preso ao seu upgrade
 (`docs/decisoes/007`) — e desde 06/09 são elas que decidem também **que navio
 atraca** (`009`), o que faz a trava ser visível em vez de estatística.
 
-Os **3 barcos do GDD** existem e os TRÊS atracam — desde 06/09 escolhidos pela
-CLASSE, que é o que o porto consegue receber. O pesqueiro tem casco próprio,
-não é o mesmo casco com carga trocada. O **trabalhador aparece de pé no
+**O CASCO DIZ O QUE O NAVIO TRAZ, e o camião o que sai pela estrada**
+(`docs/decisoes/010`). São seis cascos, um por par (classe, motivo): o costado é
+o mesmo e o CONVÉS é que muda — pilha alinhada com guias, tampas de porão sobre
+braçola, paletes com pau-de-carga aberto. O pesqueiro tem um casco só, e isso é
+afirmação: pescado e armazenagem são o mesmo peixe indo para sítios diferentes.
+Os camiões são quatro, um por motivo. O **trabalhador aparece de pé no
 tabuado** quando alocado, e mexe-se enquanto a operação corre.
 
 O **retrato do trabalhador** sai do mesmo estúdio Blender de tudo o resto
@@ -333,10 +335,9 @@ Aponte este arquivo e diga o que quer fazer:
 O `CLAUDE.md` não precisa de ser apontado: ele carrega sozinho, e traz as
 regras, a receita de rodar tudo e as armadilhas que já custaram trabalho.
 
-**Numa sessão remota não é preciso montar nada.** O hook de arranque já baixou o
-Godot, já rodou o `--import` e diz numa linha que o fez. Se essa linha não
-apareceu na primeira mensagem, o hook não correu — a receita manual está no
-`CLAUDE.md`, e lê a versão de `.godot-version`, que é onde ela vive.
+**Numa sessão remota não é preciso montar nada** — o hook de arranque deixa o
+Godot pronto e diz numa linha que o fez. Se essa linha não aparecer na primeira
+mensagem, a receita manual está no `CLAUDE.md`.
 
 Para fechar o trabalho, a skill **`/fechar-sessao`** conduz o que a mudança
 exige. Para mexer em preço ou em constante `# TUNING:`, **`/balancear`** — e

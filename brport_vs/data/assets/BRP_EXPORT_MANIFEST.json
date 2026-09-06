@@ -115,10 +115,10 @@
       "sombra_de_contato": true
     },
     {
-      "id": "BRP_porto_caminhao_base",
+      "id": "BRP_porto_caminhao_armazenagem_base",
       "category": "porto",
       "stage": "base",
-      "file": "caminhao.png",
+      "file": "caminhao_armazenagem.png",
       "format": "png-rgba",
       "frame_size": [
         512,
@@ -135,14 +135,14 @@
       ],
       "selectable": false,
       "habitat": "terra",
-      "godot_scene": "res://scenes/props/Caminhao.tscn",
+      "godot_scene": "",
       "sombra_de_contato": true
     },
     {
-      "id": "BRP_porto_caminhao_mx_base",
+      "id": "BRP_porto_caminhao_armazenagem_mx_base",
       "category": "porto",
       "stage": "base",
-      "file": "caminhao_mx.png",
+      "file": "caminhao_armazenagem_mx.png",
       "format": "png-rgba",
       "frame_size": [
         512,
@@ -159,7 +159,151 @@
       ],
       "selectable": false,
       "habitat": "terra",
-      "godot_scene": "res://scenes/props/Caminhao.tscn",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_conteiner_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_conteiner.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_conteiner_mx_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_conteiner_mx.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_granel_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_granel.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_granel_mx_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_granel_mx.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_pescado_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_pescado.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_pescado_mx_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_pescado_mx.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
       "sombra_de_contato": true
     },
     {

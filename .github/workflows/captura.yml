@@ -94,6 +94,19 @@ jobs:
         # cada corrida dela daria outro porto e outra fase das animações, e o
         # antes/depois diria "mudou" em todas as imagens, sempre. Melhor
         # não comparar e dizer porquê do que comparar contra ruído.
+        #
+        # ⚠️ E O SCRIPT DA BASE FOTOGRAFA A BASE — `/tmp/base/tools/...`, e não
+        # o deste commit. Até 07/09 era o do HEAD apontado ao projeto da base,
+        # e isso deu vermelho no dia em que o PR acrescentou uma foto: a
+        # `folha_frota.gd` existe neste commit e não existe na base, o Godot
+        # respondeu "File not found", e a corrida reprovou por o PR ter
+        # acrescentado evidência. O antes é a base COMO ELA É, tirado como ela
+        # sabe tirar; uma foto que só o HEAD tem simplesmente não tem antes, e
+        # a tabela abaixo diz "novo".
+        #
+        # A guarda do `SEMENTE_PADRAO` continua a valer e é sobre outra coisa:
+        # ela pergunta se a base é DETERMINÍSTICA, não se ela conhece as
+        # mesmas fotos.
         if: github.event_name == 'pull_request'
         run: |
           set -euo pipefail
@@ -108,7 +121,8 @@ jobs:
 
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
             --headless --path /tmp/base/brport_vs --import
-          tools/capturar_evidencia.sh /tmp/base/brport_vs "$PWD/fotos/antes" \
+          /tmp/base/tools/capturar_evidencia.sh /tmp/base/brport_vs \
+            "$PWD/fotos/antes" \
             ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
           echo "BASE_COMPARAVEL=sim" >> "$GITHUB_ENV"
 
@@ -133,7 +147,9 @@ jobs:
               echo "|---|---:|---|"
               for png in fotos/depois/*.png; do
                 nome=$(basename "$png")
-                if cmp -s "$png" "fotos/antes/$nome"; then
+                if [ ! -f "fotos/antes/$nome" ]; then
+                  estado="novo"
+                elif cmp -s "$png" "fotos/antes/$nome"; then
                   estado="igual"
                 else
                   estado="**MUDOU**"

@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" path="res://art/porto_mapa_espuma1.svg" id="espuma1"]
 [ext_resource type="PackedScene" path="res://scenes/dock/Dock.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/dock/DocaCartao.tscn" id="6"]
-[ext_resource type="Texture2D" path="res://art/props/barco_medio.png" id="5"]
+[ext_resource type="Texture2D" path="res://art/props/barco_medio_conteiner.png" id="5"]
 [ext_resource type="Texture2D" path="res://art/icones/caixa.svg" id="ic_caixa"]
 [ext_resource type="Texture2D" path="res://art/icones/dia.svg" id="ic_dia"]
 [ext_resource type="Texture2D" path="res://art/icones/reputacao.svg" id="ic_reputacao"]
@@ -28,7 +28,7 @@
 [ext_resource type="Texture2D" path="res://art/props/barreira.png" id="prop_barreira"]
 [ext_resource type="Texture2D" path="res://art/props/poste_luz.png" id="prop_poste_luz"]
 [ext_resource type="Texture2D" path="res://art/props/guincho.png" id="prop_guincho"]
-[ext_resource type="Texture2D" path="res://art/props/caminhao.png" id="prop_caminhao"]
+[ext_resource type="Texture2D" path="res://art/props/caminhao_granel.png" id="prop_caminhao"]
 [ext_resource type="Texture2D" path="res://art/props/poste.png" id="prop_poste"]
 [ext_resource type="Texture2D" path="res://art/props/cabeco.png" id="prop_cabeco"]
 [ext_resource type="Texture2D" path="res://art/props/empilhadeira.png" id="prop_empilhadeira"]
@@ -264,6 +264,15 @@ mouse_filter = 2
 ; rua nova. Agora ficam no passeio, entre a rua e as casas, que é onde um
 ; coqueiro fica numa cidade de porto.
 
+[node name="Caminhao0" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 46
+offset_top = -164.3333
+offset_right = 558
+offset_bottom = 347.6667
+mouse_filter = 2
+texture = ExtResource("prop_caminhao")
+
 [node name="Escritorio" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 23
@@ -273,12 +282,12 @@ offset_bottom = 416.17
 mouse_filter = 2
 texture = ExtResource("prop_escritorio_ruina")
 
-[node name="Caminhao" type="TextureRect" parent="MapaWrap/Cenario"]
+[node name="Caminhao1" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -32
-offset_top = -45.33
+offset_top = -45.3333
 offset_right = 480
-offset_bottom = 466.67
+offset_bottom = 466.6667
 mouse_filter = 2
 texture = ExtResource("prop_caminhao")
 
@@ -376,6 +385,15 @@ offset_bottom = 619.5
 mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 texture = ExtResource("prop_coqueiro_copa")
+
+[node name="Caminhao2" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -182
+offset_top = 109.6667
+offset_right = 330
+offset_bottom = 621.6667
+mouse_filter = 2
+texture = ExtResource("prop_caminhao")
 
 [node name="Empilhadeira" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0

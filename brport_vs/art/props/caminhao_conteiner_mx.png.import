@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b33kc56h6uvq1"
-path="res://.godot/imported/caminhao_mx.png-7e1ba9c7714a0ed081ab5cd41c0d12c6.ctex"
+uid="uid://vq075fg8bsyr"
+path="res://.godot/imported/caminhao_conteiner_mx.png-4a033e0397a148c63ab1ebf6a359b847.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/caminhao_mx.png"
-dest_files=["res://.godot/imported/caminhao_mx.png-7e1ba9c7714a0ed081ab5cd41c0d12c6.ctex"]
+source_file="res://art/props/caminhao_conteiner_mx.png"
+dest_files=["res://.godot/imported/caminhao_conteiner_mx.png-4a033e0397a148c63ab1ebf6a359b847.ctex"]
 
 [params]
 

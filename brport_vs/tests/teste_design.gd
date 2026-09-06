@@ -33,17 +33,34 @@ const MEIO_QUADRO := 256.0
 # Meia célula do chão. Mais que isto e o prop já se lê deslocado do desenho.
 const TOLERANCIA_PX := 2.0
 
-# Onde o caminhão é DESENHADO dentro do quadro de 512, relativo ao ponto de
-# ancoragem — medido no alfa dos dois PNGs e unido, que é o pior caso de cada
-# lado. O quadro inteiro tem 512px e o desenho ocupa ~67x58 no meio dele:
+# Onde um caminhão é DESENHADO dentro do quadro de 512, relativo ao ponto de
+# ancoragem. O quadro inteiro tem 512px e o desenho ocupa ~70x64 no meio dele:
 # perguntar se o QUADRO saiu do mapa daria "ainda dentro" com o caminhão já
 # invisível havia muito.
 #
-# ⚠️ É PIXEL DE PNG, e por isso ENCOLHEU com a câmera em 05/09 (era
-# Rect2(-38,-46,100,86)). Constante medida num sprite é constante que envelhece
-# quando o sprite é regerado — e esta envelheceria a dizer que o caminhão é
-# maior do que é, o que faz o teste reprovar uma rota que está boa.
-const DESENHO_CAMINHAO := Rect2(-26, -31, 67, 58)
+# ⚠️ ELE DEIXOU DE SER UMA CONSTANTE EM 07/09, e a razão está escrita na que
+# ele substitui: "constante medida num sprite é constante que envelhece quando
+# o sprite é regerado". Era `Rect2(-26,-31,67,58)`, o alfa dos DOIS PNGs unido,
+# e já tinha envelhecido uma vez com a câmera de 05/09. Com quatro cargas em
+# duas orientações seriam oito PNGs de tamanhos diferentes a caber numa
+# medida só — e a boa é a maior, que ninguém saberia qual é.
+#
+# Agora ela mede-se: `_desenho_dos_caminhoes()` une o `get_used_rect()` dos
+# oito. É a mesma regra que o D7 aprendeu do outro lado — encaixe mede-se
+# contra `get_used_rect()`, nunca contra o quadro, que é igual em todos os
+# props e não sabe nada sobre nenhum.
+func _desenho_dos_caminhoes(tela: Control) -> Rect2:
+	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var uniao := Rect2()
+	var primeiro := true
+	for motivo in (consts["CAMINHOES"] as Dictionary).values():
+		for tex in (motivo as Dictionary).values():
+			var r := (tex as Texture2D).get_image().get_used_rect()
+			var caixa := Rect2(Vector2(r.position) - Vector2(MEIO_QUADRO, MEIO_QUADRO),
+				Vector2(r.size))
+			uniao = caixa if primeiro else uniao.merge(caixa)
+			primeiro = false
+	return uniao
 
 # Alvo de toque mínimo. 44 é o piso das diretrizes de iOS e Android; abaixo
 # disso o polegar erra e o jogador acha que o jogo não respondeu.
@@ -425,22 +442,113 @@ func _d17_niveis_do_porto() -> void:
 	# navio nova sem casco tem de reprovar aqui, e uma lista cravada seria a
 	# `ORDEM_DE_COMPRA` do simulador outra vez — a estrutura entra, ninguém a
 	# percorre, e a suíte diz que está tudo bem.
+	# ⚠️ E DESDE 07/09 A PERGUNTA É PELO PAR (CLASSE, MOTIVO). O casco passou a
+	# dizer o que o navio TRAZ, e o par que o jogo consegue sortear é a tabela
+	# de motivos DENTRO de cada classe — percorrê-la é o que faz um motivo novo
+	# numa classe reprovar aqui em vez de rebentar em jogo, quando
+	# `arte_do_barco()` for indexado com uma chave que não existe.
 	var GS: Node = root.get_node("GameState")
-	var cascos: Array = []
+	var por_arquivo := {}          # caminho -> caixa desenhada
+	var classes_do_arquivo := {}   # caminho -> quantas classes o usam
 	for classe in GS.CLASSES_DE_NAVIO:
-		var tex = doca.call("arte_do_barco", String(classe))
-		_confere("a classe %s tem casco" % classe, tex != null)
-		if tex != null:
-			cascos.append((tex as Texture2D).get_image().get_used_rect())
-	var distintos := {}
-	for r in cascos:
-		distintos[r] = true
-	_confere("cada classe tem um desenho próprio (%d de %d)"
-			% [distintos.size(), GS.CLASSES_DE_NAVIO.size()],
-		cascos.size() == GS.CLASSES_DE_NAVIO.size()
-			and distintos.size() == cascos.size(),
-		"medidos %s" % [cascos])
+		var da_classe := {}
+		for motivo in GS.CLASSES_DE_NAVIO[classe]["motivos"]:
+			var tex = doca.call("arte_do_barco", String(classe), String(motivo))
+			_confere("a classe %s com motivo %s tem casco" % [classe, motivo],
+				tex != null)
+			if tex == null:
+				continue
+			var caminho: String = (tex as Texture2D).resource_path
+			da_classe[caminho] = true
+			por_arquivo[caminho] = tex as Texture2D
+			if not classes_do_arquivo.has(caminho):
+				classes_do_arquivo[caminho] = {}
+			classes_do_arquivo[caminho][classe] = true
+
+		# ⚠️ PARTILHA TOTAL OU NENHUMA, e é esta a asserção que distingue a
+		# decisão do descuido. O pesqueiro usa o MESMO casco nos dois motivos
+		# dele de propósito: pescado e armazenagem são o mesmo peixe indo para
+		# o mercado ou para a câmara, e o barco não muda com o destino da
+		# carga. Um cargueiro que apontasse dois serviços para o mesmo PNG
+		# seria copiar-colar — e as duas coisas leem-se igual numa tabela.
+		# Exigir 1 ou N separa-as: partilhar é uma afirmação sobre a CLASSE
+		# inteira, nunca sobre um par de motivos.
+		var motivos: Dictionary = GS.CLASSES_DE_NAVIO[classe]["motivos"]
+		_confere("a classe %s tem um casco por motivo, ou um só para todos"
+				% classe,
+			da_classe.size() == 1 or da_classe.size() == motivos.size(),
+			"tem %d cascos para %d motivos — dois motivos a partilhar um "
+				% [da_classe.size(), motivos.size()]
+				+ "desenho e outros não é copiar-colar, não é decisão")
+
+	# Nenhum casco atravessa classes: o porte tem de se ler antes do serviço.
+	for caminho in classes_do_arquivo:
+		_confere("%s é de uma classe só" % String(caminho).get_file(),
+			(classes_do_arquivo[caminho] as Dictionary).size() == 1,
+			"é usado por %s" % [(classes_do_arquivo[caminho] as Dictionary).keys()])
+
+	# E dois ARQUIVOS diferentes não podem ter o mesmo desenho: seria o
+	# `barco_medio` outra vez — arte gerada, validada, e sem nada a dizer.
+	var repetido := _repetido_entre(por_arquivo.values())
+	_confere("os %d cascos declarados têm desenhos distintos" % por_arquivo.size(),
+		repetido == "", repetido)
 	_d17_completo = true
+
+
+# ── DOIS PROPS SÃO O MESMO DESENHO? ─────────────────────────────────────
+#
+# ⚠️ A CAIXA DESENHADA NÃO É O DESENHO, e esta asserção nasceu a acreditar que
+# fosse. Até 06/09 ela comparava `get_used_rect()`, e funcionava por acidente:
+# os três cascos eram de portes diferentes, então caixas diferentes. Assim que
+# os cascos passaram a partilhar o costado e a mudar só o CONVÉS, o
+# porta-contêineres e o graneleiro médios deram exatamente a mesma caixa — 97
+# x 83 no mesmo sítio — e o teste reprovou dois desenhos que são bem
+# distintos. É a irmã da lição do D7: conferir o quadro de um prop não é
+# conferir o prop, e a caixa dele também não.
+#
+# ⚠️ E TAMBÉM NÃO SE COMPARAM OS BYTES. O `CLAUDE.md` mede-o: o denoiser do
+# Cycles varia ±2/255 em algumas dezenas de pixels entre corridas, e os props
+# que não levam sombra composta ainda trazem um carimbo de data do Blender —
+# `cmp` num prop responde "mudou" sempre.
+#
+# O que sobra é reduzir os dois a 16x16 e comparar. Cada célula é a média de
+# ~1.000 pixels, o que apaga o ruído do denoiser por construção, e um convés
+# trocado move várias células muito acima do piso.
+const ASSINATURA := 16
+const ASSINATURA_MIN := 0.02      # 5/255 — bem acima dos ±2/255 do denoiser
+
+
+func _assinatura(tex: Texture2D) -> PackedFloat32Array:
+	var img := (tex.get_image() as Image).duplicate() as Image
+	img.resize(ASSINATURA, ASSINATURA, Image.INTERPOLATE_BILINEAR)
+	var v := PackedFloat32Array()
+	for y in range(ASSINATURA):
+		for x in range(ASSINATURA):
+			var c := img.get_pixel(x, y)
+			v.append(c.r)
+			v.append(c.g)
+			v.append(c.b)
+			v.append(c.a)
+	return v
+
+
+## O primeiro par de texturas que desenha a mesma coisa, ou "" se não houver.
+func _repetido_entre(texturas: Array) -> String:
+	var assinaturas := []
+	for tex in texturas:
+		assinaturas.append(_assinatura(tex as Texture2D))
+	for i in range(texturas.size()):
+		for j in range(i + 1, texturas.size()):
+			var a: PackedFloat32Array = assinaturas[i]
+			var b: PackedFloat32Array = assinaturas[j]
+			var pior := 0.0
+			for k in range(a.size()):
+				pior = maxf(pior, absf(a[k] - b[k]))
+			if pior < ASSINATURA_MIN:
+				return "%s e %s desenham a mesma coisa (diferença máxima %.4f)" \
+					% [(texturas[i] as Texture2D).resource_path.get_file(),
+						(texturas[j] as Texture2D).resource_path.get_file(), pior]
+	return ""
 
 
 # O inverso de `_mundo`: do mundo para o pixel do mapa.
@@ -1171,12 +1279,13 @@ func _d12_toque_na_parcela() -> void:
 func _d13_travessia_do_caminhao() -> void:
 	var tela: Control = _main
 	var cenario: Node = tela.get_node("MapaWrap/Cenario")
-	var caminhao: Control = cenario.get_node("Caminhao")
 	var pr: Dictionary = _ancoras["projecao"]
 	var alt := float(pr["alt_cais"])
 	var consts: Dictionary = tela.get_script().get_script_constant_map()
 	var rota: Array = consts["ROTA_ESTRADA"]
-	var origem_rota: Vector2 = consts["CAMINHAO_ORIGEM"]
+	var origens: Array = consts["CAMINHAO_ORIGENS"]
+	var caminhoes: Dictionary = consts["CAMINHOES"]
+	var desenho := _desenho_dos_caminhoes(tela)
 
 	# Zero: a projeção que o `Main.gd` usa para andar é a MESMA do mapa. Ele
 	# repete `MEIA_LARG`/`MEIA_ALT` porque roda dentro do jogo e não lê o JSON;
@@ -1234,84 +1343,150 @@ func _d13_travessia_do_caminhao() -> void:
 	_confere("a rota inteira anda sobre asfalto, cotovelos incluídos",
 		fora == "", fora)
 
-	# ── 2 ── as duas pontas ficam FORA do quadro visível.
+	# ── 2 ── OS TRÊS CAMIÕES, e cada um no seu ponto de partida.
 	#
-	# Fora não é "o ponto de ancoragem fora": é o desenho todo fora. O quadro
-	# do prop tem 512px e o caminhão ocupa um retângulo pequeno lá dentro, e é
-	# esse que se mede — pelo ponto de ancoragem o caminhão sairia meio dentro.
+	# ⚠️ ERA UM SÓ, e a lição de os passar a percorrer é a mesma que o D17 já
+	# tinha aprendido com o `barco_medio`: um par verificado e o resto não. Com
+	# três nós na cena e três origens numa constante, conferir só o primeiro
+	# deixaria dois camiões livres para nascer em cima da vila.
 	var janela := (tela.get_node("MapaWrap") as Control).size
-	var base := caminhao.position - _tela_da_rota(origem_rota, origem_rota, pr)
+	var visivel := Rect2(Vector2.ZERO, janela)
+	_confere("há um nó Caminhao por origem declarada (%d)" % origens.size(),
+		cenario.get_node_or_null("Caminhao%d" % origens.size()) == null
+			and cenario.get_node_or_null("Caminhao0") != null,
+		"a cena e o `CAMINHAO_ORIGENS` do Main.gd não contam o mesmo")
+
+	for i in range(origens.size()):
+		var caminhao := cenario.get_node_or_null("Caminhao%d" % i) as Control
+		_confere("a cena tem o nó Caminhao%d" % i, caminhao != null)
+		if caminhao == null:
+			continue
+		var origem_rota: Vector2 = origens[i]
+		# A cena tem de o pôr num ponto DA rota, não ao lado dela.
+		var m_cena := _mundo(_origem(caminhao), alt)
+		_confere("a cena põe o Caminhao%d no ponto de partida dele" % i,
+			m_cena.distance_to(origem_rota) < 0.02,
+			"está em (%.2f, %.2f) e devia estar em (%.2f, %.2f)"
+				% [m_cena.x, m_cena.y, origem_rota.x, origem_rota.y])
+
+		# E aí ele tem de estar INTEIRO dentro do quadro, senão as
+		# capturas do CI apanham-no cortado ao meio. A medida é a união dos
+		# oito PNGs: o nó não sabe qual carga vai levar quando a cena abre.
+		var na_cena := Rect2(caminhao.position + Vector2(MEIO_QUADRO, MEIO_QUADRO)
+			+ desenho.position, desenho.size)
+		_confere("e o Caminhao%d está inteiro dentro do mapa" % i,
+			visivel.encloses(na_cena),
+			"o desenho fica em %s e o mapa é %s" % [na_cena, visivel])
+
+		# ⚠️ E COMEÇA NUM TRECHO RETO. Parado num cotovelo ele precisaria da
+		# silhueta de `mx` no primeiro frame, e o que a captura apanharia é um
+		# caminhão atravessado na estrada. É uma pergunta sobre a ORIGEM, não
+		# sobre a rota: a rota tem cotovelos de propósito.
+		var num_reto := false
+		for k in range(rota.size() - 1):
+			var a: Vector2 = rota[k]
+			var b: Vector2 = rota[k + 1]
+			if abs(b.x - a.x) > 0.01:
+				continue                    # cotovelo: anda em mx
+			if not is_equal_approx(a.x, origem_rota.x):
+				continue
+			if origem_rota.y >= min(a.y, b.y) - 0.01 \
+					and origem_rota.y <= max(a.y, b.y) + 0.01:
+				num_reto = true
+		_confere("o Caminhao%d parte de um trecho reto" % i, num_reto,
+			"(%.2f, %.2f) cai num cotovelo, e ali a silhueta é a de mx"
+				% [origem_rota.x, origem_rota.y])
+
+	# ── 3 ── as duas pontas da ROTA ficam FORA do quadro visível.
+	#
+	# Fora não é "o ponto de ancoragem fora": é o desenho todo fora. Mede-se
+	# a partir do Caminhao0, que é o nó cuja `base` a rota usa.
+	var no0 := cenario.get_node("Caminhao0") as Control
+	var origem0: Vector2 = origens[0]
 	for ponta in [[0, "a entrada"], [rota.size() - 1, "a saída"]]:
 		var idx: int = ponta[0]
-		var pos: Vector2 = base + _tela_da_rota(rota[idx], origem_rota, pr) \
+		var pos: Vector2 = no0.position + _tela_da_rota(rota[idx], origem0, pr) \
 			+ Vector2(MEIO_QUADRO, MEIO_QUADRO)
-		var caixa := Rect2(pos + DESENHO_CAMINHAO.position, DESENHO_CAMINHAO.size)
-		var visivel := Rect2(Vector2.ZERO, janela)
-		_confere("%s do caminhão está fora do quadro" % ponta[1],
+		var caixa := Rect2(pos + desenho.position, desenho.size)
+		_confere("%s da rota está fora do quadro" % ponta[1],
 			not visivel.intersects(caixa),
 			"o desenho fica em %s e o mapa é %s" % [caixa, visivel])
 
-	# E o contrário para onde a CENA o põe: aí ele tem de estar inteiro
-	# dentro, senão as cinco capturas do CI apanham-no cortado ao meio.
-	var na_cena := Rect2(caminhao.position + Vector2(MEIO_QUADRO, MEIO_QUADRO)
-		+ DESENHO_CAMINHAO.position, DESENHO_CAMINHAO.size)
-	_confere("e onde a cena o põe ele está inteiro dentro",
-		Rect2(Vector2.ZERO, janela).encloses(na_cena),
-		"o desenho fica em %s" % na_cena)
-
-	# E a cena tem de o pôr num ponto DA rota, não ao lado dela.
-	var m_cena := _mundo(_origem(caminhao), alt)
-	_confere("a cena põe-no no ponto de partida da rota",
-		m_cena.distance_to(origem_rota) < 0.02,
-		"está em (%.2f, %.2f) e devia estar em (%.2f, %.2f)"
-			% [m_cena.x, m_cena.y, origem_rota.x, origem_rota.y])
-
-	# ── 3 ── a silhueta certa por trecho. Trecho que anda em `mx` usa o sprite
-	# de `mx`; trecho que anda em `my`, o de `my`. Um só sprite para os dois
-	# eixos foi a primeira versão, e o caminhão virava de lado nos cotovelos.
+	# ── 4 ── a silhueta certa por trecho, E POR CARGA.
+	#
+	# Trecho que anda em `mx` usa o sprite de `mx`; trecho que anda em `my`, o
+	# de `my`. Um só sprite para os dois eixos foi a primeira versão, e o
+	# caminhão virava de lado nos cotovelos.
 	#
 	# E a pergunta é feita a QUEM DECIDE — `silhueta_do_trecho()` —, não
 	# recalculada aqui. A primeira versão deste bloco recalculava, e por isso
 	# não reprovou quando se pôs a mesma silhueta nos oito trechos: o teste
 	# estava a concordar consigo próprio.
+	#
+	# ⚠️ E ELA PERCORRE `GameState.MOTIVOS`, não a tabela do `Main.gd`. É a
+	# mesma diferença do D17: perguntar à tabela da arte se ela está completa é
+	# ela a concordar consigo própria; quem manda é o que o JOGO consegue
+	# sortear. Um motivo novo sem camião reprova aqui.
+	var GS: Node = root.get_node("GameState")
 	var errado := ""
 	var vistas := {}
-	for i in range(rota.size() - 1):
-		var de: Vector2 = rota[i]
-		var para: Vector2 = rota[i + 1]
-		var anda_em_mx: bool = abs(para.x - de.x) > 0.01
-		var usada: Texture2D = tela.call("silhueta_do_trecho", de, para)
-		var caminho: String = usada.resource_path
-		vistas[caminho] = true
-		if anda_em_mx != caminho.ends_with("caminhao_mx.png") and errado == "":
-			errado = "o trecho %d anda em %s e usa %s" \
-				% [i, "mx" if anda_em_mx else "my", caminho.get_file()]
-	_confere("cada trecho usa a silhueta do eixo em que anda", errado == "", errado)
-	_confere("e as duas silhuetas entram em campo", vistas.size() == 2,
+	for motivo in GS.MOTIVOS:
+		var id := String(motivo)
+		_confere("o motivo %s tem camião" % id, caminhoes.has(id),
+			"`CAMINHOES` do Main.gd conhece %s" % [caminhoes.keys()])
+		if not caminhoes.has(id):
+			continue
+		for i in range(rota.size() - 1):
+			var de: Vector2 = rota[i]
+			var para: Vector2 = rota[i + 1]
+			var anda_em_mx: bool = abs(para.x - de.x) > 0.01
+			var usada: Texture2D = tela.call("silhueta_do_trecho", de, para, id)
+			var caminho: String = usada.resource_path
+			vistas[caminho] = true
+			if anda_em_mx != caminho.ends_with("_mx.png") and errado == "":
+				errado = "o trecho %d de %s anda em %s e usa %s" \
+					% [i, id, "mx" if anda_em_mx else "my", caminho.get_file()]
+			if not caminho.get_file().begins_with("caminhao_%s" % id) and errado == "":
+				errado = "o trecho %d de %s usa %s, que é de outra carga" \
+					% [i, id, caminho.get_file()]
+	_confere("cada trecho usa a silhueta do eixo e da carga", errado == "", errado)
+	_confere("e as %d silhuetas entram em campo" % (GS.MOTIVOS.size() * 2),
+		vistas.size() == GS.MOTIVOS.size() * 2,
 		"só se viu %s" % str(vistas.keys()))
 
-	# ── 4 ── a reordenação. Ordem de irmão É profundidade neste plano, e a
+	# E os oito são oito DESENHOS, não oito nomes. É a mesma pergunta que o D17
+	# faz aos cascos, e pela mesma razão: quatro carroçarias iguais pintadas de
+	# quatro cores seriam quatro etiquetas, e a suíte não saberia a diferença.
+	var texturas: Array = []
+	for motivo in caminhoes.values():
+		for tex in (motivo as Dictionary).values():
+			texturas.append(tex)
+	var iguais := _repetido_entre(texturas)
+	_confere("os %d camiões têm desenhos distintos" % texturas.size(),
+		iguais == "", iguais)
+
+	# ── 5 ── a reordenação. Ordem de irmão É profundidade neste plano, e a
 	# travessia atravessa a profundidade de meia cena: índice fixo estaria
 	# certo num sítio e errado no outro.
-	var pos_antes := caminhao.position
-	var indice_antes := caminhao.get_index()
-	caminhao.position = base + _tela_da_rota(rota[rota.size() - 1], origem_rota, pr)
-	tela.call("_ordenar_por_profundidade", caminhao)
-	var indice_depois := caminhao.get_index()
+	var pos_antes := no0.position
+	var indice_antes := no0.get_index()
+	no0.position = no0.position + _tela_da_rota(rota[rota.size() - 1], origem0, pr)
+	tela.call("_ordenar_por_profundidade", no0)
+	var indice_depois := no0.get_index()
 	_confere("no fim da travessia ele já mudou de ordem entre os irmãos",
 		indice_depois > indice_antes,
 		"ficou no índice %d, e começou no %d" % [indice_depois, indice_antes])
 	var erro_ordem := ""
 	for i in range(cenario.get_child_count()):
 		var outro := cenario.get_child(i) as Control
-		if outro == null or outro == caminhao:
+		if outro == null or outro == no0:
 			continue
-		if outro.position.y < caminhao.position.y and i > indice_depois and erro_ordem == "":
+		if outro.position.y < no0.position.y and i > indice_depois and erro_ordem == "":
 			erro_ordem = "%s está acima na tela mas depois na ordem" % outro.name
 	_confere("e no lugar certo da fila de profundidade", erro_ordem == "", erro_ordem)
 
-	caminhao.position = pos_antes
-	tela.call("_ordenar_por_profundidade", caminhao)
+	no0.position = pos_antes
+	tela.call("_ordenar_por_profundidade", no0)
 	_d13_completo = true
 
 

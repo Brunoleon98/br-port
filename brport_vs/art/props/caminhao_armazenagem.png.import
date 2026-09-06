@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dm0ycjwpp20as"
-path="res://.godot/imported/barco_medio.png-b30e72e54d82f89c5bd3d00eaaba9008.ctex"
+uid="uid://do16hjnnmnvcg"
+path="res://.godot/imported/caminhao_armazenagem.png-bc4f5a717e7db0e56bf1859f7983718a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/barco_medio.png"
-dest_files=["res://.godot/imported/barco_medio.png-b30e72e54d82f89c5bd3d00eaaba9008.ctex"]
+source_file="res://art/props/caminhao_armazenagem.png"
+dest_files=["res://.godot/imported/caminhao_armazenagem.png-bc4f5a717e7db0e56bf1859f7983718a.ctex"]
 
 [params]
 

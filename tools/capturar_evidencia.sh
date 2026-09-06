@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # ============================================================
-# BR Port — as quatro fotografias que provam o que ficou
+# BR Port — as fotografias que provam o que ficou
 #
 # Item B3 do plano v3: "o CI prova que nada quebrou; não mostra o que ficou".
-# Este script produz a evidência visual — a tela do jogo em três estados e a
-# folha de contato dos ícones — para o CI a anexar a cada PR e para quem
-# trabalha aqui poder gerar exatamente as mesmas quatro imagens.
+# Este script produz a evidência visual — a tela do jogo em vários estados e as
+# duas folhas de contato — para o CI a anexar a cada PR e para quem trabalha
+# aqui poder gerar exatamente as mesmas imagens.
 #
 # Uso:
 #   tools/capturar_evidencia.sh <caminho-do-projeto> <pasta-de-saida> [godot]
@@ -58,6 +58,15 @@ mkdir -p "$SAIDA"
 comum=(--path "$PROJETO" --resolution 720x1280 --rendering-driver opengl3
        --audio-driver Dummy --fixed-fps 60)
 
+# ⚠️ UMA FOTO NOVA SÓ EXISTE A PARTIR DA MAIN, e isso é do workflow. O
+# `captura.yml` fotografa também a BASE do PR, e até 07/09 fazia-o com o
+# script DESTE commit apontado ao projeto da base: no dia em que se
+# acrescentou a `frota`, o Godot respondeu "File not found" no checkout da
+# base e a corrida ficou vermelha por o PR ter acrescentado evidência. Hoje o
+# antes é tirado pelo script da própria base, e uma foto que só o HEAD tem
+# aparece na tabela como "novo" — mas quem acrescentar um tiro aqui deve
+# esperar exatamente isso na primeira corrida, e não um antes/depois.
+#
 # `xvfb-run -a` porque a captura precisa de contexto gráfico: teste e import
 # rodam sem tela, esta não.
 # tirar <nome> <painéis esperados, ou "-"> <argumentos do Godot...>
@@ -107,12 +116,20 @@ tirar meio    0 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/meio.png" me
 tirar boletim 1 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.png" completo
 tirar pausa   1 --script res://tools/capturar_tela.gd -- 8  "$SAIDA/pausa.png" completo pausa
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
+# A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
+# cascos passaram a ser seis — um por par de classe e motivo — e os camiões
+# oito; as cinco fotos de jogo mostraram DOIS cascos e um camião, porque quem
+# escolhe o que atraca é o sorteio da partida. Quatro cascos e sete camiões
+# ficavam gerados, validados por duas suítes, e sem ninguém os poder olhar —
+# que é o buraco do `barco_medio` outra vez. Uma folha que percorre a tabela
+# não depende de sorteio, como a dos ícones já não dependia.
+tirar frota   - --script res://tools/folha_frota.gd   --    "$SAIDA/frota.png"
 
 # UMA IMAGEM CHAPADA TAMBÉM É UM PNG. Se o contexto gráfico falhar em silêncio
 # — driver de software em falta no runner, por exemplo — a ferramenta salva um
 # retângulo de uma cor só e diz "Tela salva", que é a foto mentirosa contra a
 # qual o CLAUDE.md avisa. Medido: um PNG 720x1280 de cor única pesa 2,7 KB
-# (preto) a 4,5 KB (cinza); as quatro imagens de verdade pesam 87 KB a 517 KB.
+# (preto) a 4,5 KB (cinza); as imagens de verdade pesam 87 KB a 517 KB.
 # O corte fica em 20 KB, com quatro vezes de folga para o lado que interessa.
 MINIMO=20000
 for png in "$SAIDA"/*.png; do

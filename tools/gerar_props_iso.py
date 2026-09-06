@@ -1522,31 +1522,219 @@ def montar(M: dict) -> dict:
                  raio * 1.12, 0.06, 10, PALETA_MAT["metal"]),
         ]
 
+    # ── O QUE O NAVIO TRAZ, DESENHADO NO CONVÉS ─────────────────────────
+    #
+    # Até 06/09 havia um casco por CLASSE, e os dois cargueiros levavam as
+    # mesmas quatro caixinhas coloridas: o jogo já sabia que um trazia
+    # contêiner e o outro granel (é o motivo da escala, `docs/decisoes/008`) e
+    # o desenho não dizia nada disso. É a mesma falta que o `barco_medio`
+    # tinha do outro lado — ali o prop existia e não chegava à tela, aqui a
+    # MECÂNICA existe e não chega ao desenho.
+    #
+    # ⚠️ O CONVÉS É QUE MUDA, E NÃO O CASCO. Um porta-contêineres e um
+    # graneleiro do mesmo porte têm a mesma silhueta de casco; o que os separa
+    # é o que está em cima. Refazer o casco por serviço seria seis cascos a
+    # divergir — a regra do `_pecas_do_caminhao`, que existe por isto mesmo.
+    #
+    # ⚠️ E CADA UM PRECISA DO VOCABULÁRIO DA FUNÇÃO DELE, que é a regra que o
+    # armazém pagou em 05/09: repintar as mesmas caixas de outra cor daria
+    # três navios com o mesmo desenho e três etiquetas. Aqui são três
+    # gramáticas diferentes — GRADE alinhada, TAMPA de porão, PALETE solto —
+    # e é a gramática que se lê a 97px, não a cor.
+    ALT_CONVES = 0.62                     # o topo do casco de carga
+    CONT_TAM = (0.64, 0.42, 0.36)         # contêiner de convés: 14 x 9 px na tela
+
+    def deck_conteiner(sufixo, x0, baias, andares):
+        """Porta-contêineres: a PILHA ALINHADA, em grade e com guias.
+
+        ⚠️ A GRADE NÃO SE FAZ COM FRESTA. Uma folga de 0,05 entre caixas dá 1px
+        na tela e o antisserrilhado come-a — a mesma conta que fez o corrugado
+        do contêiner do pátio ser diferença de VALOR e não relevo. Quem desenha
+        a grade aqui é a cor: as caixas encostam-se e alternam em xadrez, e o
+        olho lê as fronteiras de tom como fronteiras de caixa.
+
+        As GUIAS de proa e de popa são o outro metade: duas verticais escuras
+        de 2px a fechar a pilha nas pontas. São a peça que distingue "pilha
+        arrumada num navio" de "caixas empilhadas no convés" — e a esta escala
+        uma vertical escura lê onde uma linha desenhada não leria.
+        """
+        cores = (M["laranja"], M["azul"], M["amarelo"])
+        passo = CONT_TAM[0]
+        pecas = []
+        for i in range(baias):
+            x = x0 + i * passo
+            for j, y in enumerate((0.215, -0.215)):
+                for k in range(andares):
+                    zc = ALT_CONVES + CONT_TAM[2] * (k + 0.5)
+                    pecas.append(caixa("cx%s_%d%d%d" % (sufixo, i, j, k),
+                                       (x, y, zc), CONT_TAM,
+                                       cores[(i + j + k) % 3]))
+        comprimento = passo * baias
+        alto = CONT_TAM[2] * andares
+        meio_x = x0 + comprimento / 2.0 - passo / 2.0
+        for lado, sx in (("proa", 1), ("popa", -1)):
+            # DUAS COLUNAS e não uma antepara: a primeira versão era uma caixa
+            # de 0,50 de fundo, e a 11px de largura ela saía como uma PAREDE
+            # escura a fechar a pilha — lia-se como carga tapada, não como
+            # guia. Duas colunas nos bordos deixam ver a pilha entre elas, que
+            # é o que uma guia de célula faz.
+            for j, y in enumerate((0.40, -0.40)):
+                pecas.append(caixa("guia%s_%s%d" % (sufixo, lado, j),
+                                   (meio_x + sx * comprimento / 2.0, y,
+                                    ALT_CONVES + alto / 2.0 + 0.03),
+                                   (0.09, 0.11, alto + 0.06), M["metal"]))
+        # Passadiço de peação, na face que a câmera vê. Ele corre por cima da
+        # junta entre o primeiro e o segundo andar e é o que impede a pilha de
+        # ler como um bloco só de cor — uma horizontal escura a meia altura.
+        pecas.append(caixa("peacao" + sufixo,
+                           (meio_x, -0.455, ALT_CONVES + CONT_TAM[2] + 0.02),
+                           (comprimento * 0.96, 0.05, 0.06), M["metal"]))
+        return pecas
+
+    def deck_granel(sufixo, x0, poroes, guindastes):
+        """Graneleiro: PORÕES E ESCOTILHAS, e o convés vazio de propósito.
+
+        A carga de um graneleiro está DENTRO. O que se vê é a fileira de tampas
+        de porão sobre a braçola, e é essa fileira — clara sobre o convés,
+        repetida a passo certo — que faz o navio ler como graneleiro sem uma
+        única caixa em cima.
+
+        ⚠️ A BRAÇOLA NÃO ENCOSTA NA TAMPA, e não é detalhe: duas faces à mesma
+        altura dão o losango preto que este projeto já registou duas vezes. Ela
+        fica meio milímetro abaixo, e o que se vê é o fio escuro à volta da
+        tampa — que é justamente o que faz a tampa parecer tampa.
+        """
+        passo = 0.62
+        pecas = []
+        for i in range(poroes):
+            x = x0 + i * passo
+            # Braçola: mais larga e mais baixa que a tampa, em metal escuro.
+            pecas.append(caixa("brac%s%d" % (sufixo, i), (x, 0.0, ALT_CONVES + 0.03),
+                               (0.54, 0.94, 0.10), M["metal"]))
+            pecas.append(caixa("tampa%s%d" % (sufixo, i), (x, 0.0, ALT_CONVES + 0.11),
+                               (0.50, 0.88, 0.07), M["metal_claro"]))
+            # Três vincos na tampa: uma tampa de porão é chapa dobrada, e a
+            # esta escala três vincos chegam para o dizer. Mais seria a lixa
+            # que o `DESGASTE` já registou.
+            for k, dy in ((0, -0.26), (1, 0.0), (2, 0.26)):
+                pecas.append(caixa("vinc%s%d%d" % (sufixo, i, k),
+                                   (x, dy, ALT_CONVES + 0.145),
+                                   (0.50, 0.05, 0.03), M["metal"]))
+        for i in range(guindastes):
+            # Guindaste de bordo entre porões: é a peça que dá altura a um
+            # convés que, por definição, não tem carga em cima.
+            x = x0 + (i * 2 + 1) * passo - passo / 2.0
+            pecas += [
+                caixa("gcol%s%d" % (sufixo, i), (x, 0.0, ALT_CONVES + 0.42),
+                      (0.16, 0.16, 0.84), M["amarelo"]),
+                caixa("gcab%s%d" % (sufixo, i), (x, 0.0, ALT_CONVES + 0.92),
+                      (0.26, 0.24, 0.20), M["metal_claro"]),
+                caixa("glan%s%d" % (sufixo, i), (x + 0.42, 0.0, ALT_CONVES + 1.20),
+                      (0.94, 0.08, 0.08), M["amarelo"], rot=(0, -22, 0)),
+            ]
+        return pecas
+
+    def deck_geral(sufixo, x0, paletes):
+        """Carga geral: PALETES no convés e paus-de-carga para os embarcar.
+
+        O contrário do porta-contêineres, e de propósito: ali tudo é grade,
+        aqui nada alinha. Palete de altura diferente, saco por cima de uns e
+        não de outros — é a irregularidade que diz "carga geral", como a grade
+        dizia "contêiner".
+
+        Os dois mastros com pau-de-carga são a silhueta clássica do cargueiro
+        de linha, e fazem aqui o trabalho que a pilha faz no outro: dar altura
+        e dizer, de longe, de que navio se trata.
+        """
+        pecas = []
+        # Palete: estrado escuro e carga clara por cima. O estrado é a peça que
+        # impede a carga de flutuar — a queixa nº 1 da auditoria do pacote.
+        # ⚠️ A ORDEM DA LISTA É POR COLUNA, e não por par. Ela nasceu agrupada
+        # (dois paletes em cada `dx`), e o médio — que leva CINCO — ficava com
+        # um monte apertado a meia nau e o resto do convés vazio: ao lado do
+        # porta-contêineres e do graneleiro lia-se como navio por carregar.
+        # Assim, os cinco primeiros já cobrem as três colunas.
+        arranjo = ((0.00, 0.22, 0.30, "corda"), (0.56, -0.20, 0.32, "corda"),
+                   (1.12, 0.20, 0.26, "corda"), (0.00, -0.24, 0.24, "madeira"),
+                   (0.56, 0.24, 0.22, "madeira"), (1.12, -0.22, 0.30, "madeira"))
+        for i in range(min(paletes, len(arranjo))):
+            dx, dy, alt, cor = arranjo[i]
+            x = x0 + dx
+            pecas.append(caixa("est%s%d" % (sufixo, i), (x, dy, ALT_CONVES + 0.04),
+                               (0.40, 0.34, 0.08), M["madeira_esc"]))
+            pecas.append(caixa("cga%s%d" % (sufixo, i),
+                               (x, dy, ALT_CONVES + 0.08 + alt / 2.0),
+                               (0.36, 0.30, alt), M[cor]))
+            # Cinta: um traço escuro a meia altura da carga. Sem ela um saco
+            # claro e um estrado escuro leem como uma peça só de dois tons.
+            pecas.append(caixa("cin%s%d" % (sufixo, i),
+                               (x, dy, ALT_CONVES + 0.08 + alt * 0.55),
+                               (0.37, 0.31, 0.04), M["madeira_esc"]))
+        # ⚠️ O PAU-DE-CARGA APONTA PARA O COSTADO, e não só para cima. Erguido
+        # no plano do mastro ele projeta-se, nesta câmera, como uma cruz — dois
+        # traços a cortar o mastro, que é o desenho de uma antena e não o de um
+        # guindaste. Girado 38° para `-y` (o costado que se vê), ele sai por
+        # cima da amurada como quem está a embarcar carga, que é a leitura que
+        # justifica os paletes ao lado. O deslocamento do centro segue a mesma
+        # rotação: uma caixa girada em torno do centro dela só fica no sítio se
+        # o centro andar com ela.
+        BRACO = 1.00
+        rx, rz = math.radians(24.0), math.radians(38.0)
+        dir_pau = (math.cos(rx) * math.cos(rz), -math.cos(rx) * math.sin(rz),
+                   math.sin(rx))
+        for i, dx in enumerate((-0.30, 1.42)):
+            x = x0 + dx
+            pivo = (x, 0.0, ALT_CONVES + 1.12)
+            pecas += [
+                caixa("mst%s%d" % (sufixo, i), (x, 0.0, ALT_CONVES + 0.80),
+                      (0.11, 0.11, 1.60), M["metal_claro"]),
+                caixa("pau%s%d" % (sufixo, i),
+                      tuple(pivo[k] + dir_pau[k] * BRACO / 2.0 for k in range(3)),
+                      (BRACO, 0.08, 0.08), M["metal_claro"], rot=(0, -24, -38)),
+            ]
+        return pecas
+
     # ⚠️ SÓ OS CARGUEIROS ENFERRUJAM, e o pesqueiro não — não por narrativa,
     # por tamanho: ele tem 67px de silhueta contra os 97 dos outros, e um rasto
     # de ferrugem que precisa de correr o pontal inteiro não cabe. É a mesma
     # conta do `DESGASTE`, aplicada a um padrão em vez de a um ruído.
     casco_ferrugem = material_escorrido("casco_ferrugem", PALETA["casco"],
                                         PALETA["ferrugem"])
-    grupos["barco_medio"] = casco("_m", CARGA, 0.62, casco_ferrugem, M["faixa"]) \
-        + superestrutura("_m", -1.15, 0.95, (1.1, 0.85, 0.62)) \
-        + chamine("_m", -1.55, 1.48, 0.13, 0.5) + [
-        caixa("carga_a", (0.75, 0.22, 0.85), (0.6, 0.42, 0.42), M["laranja"]),
-        caixa("carga_b", (0.75, -0.25, 0.82), (0.55, 0.4, 0.38), M["azul"]),
-        caixa("carga_c", (0.05, 0.0, 0.82), (0.55, 0.5, 0.38), M["amarelo"]),
-        caixa("mastro_m", (1.55, 0.0, 1.25), (0.06, 0.06, 1.0), M["metal_claro"])]
 
-    grupos["barco_grande"] = casco("_g", CARGA, 0.62, casco_ferrugem,
-                                   M["faixa"], 5) \
-        + superestrutura("_g", -1.35, 1.00, (0.95, 0.8, 0.72)) \
-        + chamine("_g", -1.7, 1.58, 0.15, 0.56) + [
-        caixa("pilha_a", (0.95, 0.22, 0.86), (0.7, 0.42, 0.44), M["laranja"]),
-        caixa("pilha_b", (0.95, -0.25, 0.86), (0.7, 0.42, 0.44), M["azul"]),
-        caixa("pilha_c", (0.95, 0.0, 1.30), (0.68, 0.42, 0.42), M["amarelo"]),
-        caixa("pilha_d", (0.05, 0.1, 0.86), (0.6, 0.5, 0.44), M["azul"]),
-        caixa("grua_g", (-0.5, 0.0, 1.65), (0.13, 0.13, 2.0), M["metal_claro"]),
-        caixa("lanca_g", (0.25, 0.0, 2.5), (1.6, 0.11, 0.11), M["metal_claro"],
-              rot=(0, -18, 0))]
+    def cargueiro(sufixo, vigias, sup, cham, deck):
+        """Casco de carga + superestrutura + chaminé + o convés do SERVIÇO.
+
+        Os três serviços partilham tudo menos o convés, e é isso que faz o
+        porte (médio contra longo curso) continuar a ler-se: quem muda com a
+        classe é a superestrutura e a fileira de vigias; quem muda com o motivo
+        da escala é só o que está em cima do convés.
+        """
+        return casco(sufixo, CARGA, ALT_CONVES, casco_ferrugem, M["faixa"],
+                     vigias) \
+            + superestrutura(sufixo, sup[0], sup[1], sup[2]) \
+            + chamine(sufixo, cham[0], cham[1], cham[2], cham[3]) + deck
+
+    # O médio: superestrutura larga e baixa, três baias, quatro porões.
+    SUP_M = (-1.15, 0.95, (1.1, 0.85, 0.62))
+    CHAM_M = (-1.55, 1.48, 0.13, 0.5)
+    grupos["barco_medio_conteiner"] = cargueiro(
+        "_mc", 4, SUP_M, CHAM_M, deck_conteiner("_mc", -0.30, 3, 2))
+    grupos["barco_medio_granel"] = cargueiro(
+        "_mn", 4, SUP_M, CHAM_M, deck_granel("_mn", -0.35, 4, 1))
+    grupos["barco_medio_geral"] = cargueiro(
+        "_mg", 4, SUP_M, CHAM_M, deck_geral("_mg", -0.15, 5))
+
+    # O de longo curso: superestrutura mais alta e estreita, e mais de tudo em
+    # cima do convés — é assim que os 97px de casco iguais continuam a dizer
+    # qual dos dois é o maior.
+    SUP_G = (-1.35, 1.00, (0.95, 0.8, 0.72))
+    CHAM_G = (-1.7, 1.58, 0.15, 0.56)
+    grupos["barco_grande_conteiner"] = cargueiro(
+        "_gc", 5, SUP_G, CHAM_G, deck_conteiner("_gc", -0.50, 4, 3))
+    grupos["barco_grande_granel"] = cargueiro(
+        "_gn", 5, SUP_G, CHAM_G, deck_granel("_gn", -0.55, 5, 2))
+    grupos["barco_grande_geral"] = cargueiro(
+        "_gg", 5, SUP_G, CHAM_G, deck_geral("_gg", -0.30, 6))
 
     # -- TRABALHADOR no píer: até agora ele só existia como "#1" na chip.
     # De pé no tabuado, a doca ocupada lê-se sem ter de ler texto.

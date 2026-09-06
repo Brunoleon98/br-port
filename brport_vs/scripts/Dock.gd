@@ -41,27 +41,50 @@ const ArteLanca := [
 	preload("res://art/props/lanca_n3.png"),
 ]
 
-# OS TRÊS CASCOS, um por CLASSE de navio. Não são sprites ilustrados em 3/4:
-# aqueles têm a perspectiva assada dentro da imagem e ficam atravessados em
-# cima de um píer isométrico, que é o erro que já custou duas levas de arte.
+# OS CASCOS, por CLASSE e por MOTIVO da escala. Não são sprites ilustrados em
+# 3/4: aqueles têm a perspectiva assada dentro da imagem e ficam atravessados
+# em cima de um píer isométrico, que é o erro que já custou duas levas de arte.
 #
 # ⚠️ O `barco_medio` EXISTIA E NUNCA ENTRAVA EM DOCA até 05/09 — era gerado,
 # validado e usado só como enfeite na Zona de Espera, porque o jogo escolhia
 # entre dois cascos por um booleano. Depois disso passou a ser escolhido pelo
 # VALOR do contrato; desde 06/09 é a CLASSE que o escolhe, que é a mesma
-# informação sem o intermediário: a classe já traz a faixa de valor consigo, e
-# o casco passou a dizer o que o porto consegue receber.
+# informação sem o intermediário: a classe já traz a faixa de valor consigo.
+#
+# ⚠️ E DESDE 07/09 A CLASSE NÃO CHEGA. Os motivos da escala
+# (`docs/decisoes/008`) deram ao jogo a informação de que carga cada navio
+# traz, e os dois cargueiros continuavam a levar as mesmas caixinhas
+# coloridas: a mecânica existia e o desenho não a dizia. Agora o casco sai do
+# par (classe, motivo) — a classe dá o PORTE e o motivo dá o CONVÉS.
+#
+# ⚠️ O PESQUEIRO TEM UM CASCO SÓ, E É AFIRMAÇÃO E NÃO ESQUECIMENTO. Ele chega
+# com `pescado` ou com `armazenagem`, que é o mesmo peixe a ir para o mercado
+# ou para a câmara do armazém — o DESTINO da carga muda, o barco não. Escrever
+# a mesma textura duas vezes é o que faz esta tabela ser percorrível pelo D17
+# sem uma exceção escrita em código.
 const CASCOS := {
-	"pesqueiro": preload("res://art/props/barco_pequeno.png"),
-	"medio": preload("res://art/props/barco_medio.png"),
-	"grande": preload("res://art/props/barco_grande.png"),
+	"pesqueiro": {
+		"pescado": preload("res://art/props/barco_pequeno.png"),
+		"armazenagem": preload("res://art/props/barco_pequeno.png"),
+	},
+	"medio": {
+		"armazenagem": preload("res://art/props/barco_medio_geral.png"),
+		"conteiner": preload("res://art/props/barco_medio_conteiner.png"),
+		"granel": preload("res://art/props/barco_medio_granel.png"),
+	},
+	"grande": {
+		"armazenagem": preload("res://art/props/barco_grande_geral.png"),
+		"conteiner": preload("res://art/props/barco_grande_conteiner.png"),
+		"granel": preload("res://art/props/barco_grande_granel.png"),
+	},
 }
 
 
-## O casco desta classe de navio. Acesso DIRETO: uma classe sem casco tem de
-## rebentar aqui e não desenhar o barco errado calada.
-static func arte_do_barco(classe: String) -> Texture2D:
-	return CASCOS[classe]
+## O casco deste navio. Acesso DIRETO nos dois níveis: uma classe sem casco, ou
+## um motivo que a classe possa sortear e para o qual não haja convés
+## desenhado, têm de rebentar aqui e não desenhar o barco errado calados.
+static func arte_do_barco(classe: String, motivo: String) -> Texture2D:
+	return CASCOS[classe][motivo]
 
 var dock_index: int = -1
 
@@ -148,7 +171,7 @@ func refresh() -> void:
 		_barco.texture = null
 		return
 
-	_barco.texture = arte_do_barco(String(boat["classe"]))
+	_barco.texture = arte_do_barco(String(boat["classe"]), String(boat["motivo"]))
 	_animar_barco(int(boat["id"]))
 
 	if boat.get("rival", false) and not boat.get("matched", false):

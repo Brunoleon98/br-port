@@ -128,13 +128,18 @@ virou massa marrom, um arbusto que era um balde, e rótulos enterrados debaixo
 dos sprites — tudo com a suíte verde.
 
 ```sh
-tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as seis de uma vez
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as sete de uma vez
 ```
 
-São as mesmas seis que o CI anexa a cada PR — a tela inicial, o porto a MEIO
-(nível 2), o porto reconstruído, o boletim, o menu de pausa e a folha de ícones — e ele já diz na
-página da corrida **qual** delas mudou. O que o CI não faz é julgar; olhar
-continua a ser aqui.
+São as mesmas sete que o CI anexa a cada PR — a tela inicial, o porto a MEIO
+(nível 2), o porto reconstruído, o boletim, o menu de pausa e as duas folhas de
+contato (ícones e frota) — e ele já diz na página da corrida **qual** delas
+mudou. O que o CI não faz é julgar; olhar continua a ser aqui.
+
+⚠️ **E CINCO DELAS SÃO UMA PARTIDA SORTEADA.** O que só aparece em alguns
+estados do jogo pode não entrar em nenhuma: medido em 07/09, dos seis cascos
+novos apareceram DOIS. É para isso que servem as folhas de contato, que
+percorrem a tabela — arte que o jogo escolhe prova-se lá, ou fica por olhar.
 
 Para um tiro só, à mão:
 

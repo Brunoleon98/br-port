@@ -33,7 +33,9 @@ Uso:
 
 import json
 import math
+import pathlib
 import random
+import re
 import sys
 
 MEIA_LARG = 30
@@ -1002,23 +1004,66 @@ VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
 # PNG passou a ser renderizado 1,5x menor; deixar os números antigos abriria
 # na vila um vão meia casa maior do que o prédio precisa, sem erro nenhum a
 # apontá-lo — só um buraco na fileira.
-# ⚠️ O `my` DESTES DOIS ESTÁ ADIANTADO, E ESTÁ MEDIDO (06/09). Desprojetando os
-# nós de `Main.tscn` com a projeção que `porto_mapa_ancoras.json` publica — e
-# pousando-os a `alt_cais`, como manda o contrato —, o escritório está em
-# (2,600 / 5,600) e o armazém em (6,600 / 13,450). O `mx` bate exato; o `my`
-# aqui escrito está 1,10 e 1,05 unidades à frente, o que desloca o vão da vila
-# ~21 px em x — meia casa. O D14 não pega porque lê ESTA constante, que é a
-# mesma fonte do defeito.
+# ⚠️ A POSIÇÃO JÁ NÃO SE COPIA — DERIVA-SE DA CENA (07/09), e a correção veio
+# do defeito que a cópia à mão tinha deixado passar. O comentário acima dizia
+# "lido de `Main.tscn`" e ele NÃO era lido: era copiado. Medido em 06/09,
+# desprojetando os nós da cena com esta mesma projeção e pousando-os a
+# `ALT_CAIS`, como manda o contrato, o `mx` batia exato e o `my` estava 1,10 e
+# 1,05 unidades ADIANTADO — o vão da vila abria ~21 px ao lado do prédio que ele
+# existe para desocupar, meia casa fora do sítio. E o D14 não pegava, porque lê
+# esta constante, que era a mesma fonte do defeito: um teste que monta o
+# esperado de onde o defeito mora é um espelho.
 #
-# NÃO se corrigiu ainda de propósito: trocar os dois números é uma linha, mas
-# regera os quatro mapas e a tabela de âncoras, que o CI compara byte a byte, e
-# a correção DURÁVEL é outra — o comentário acima diz "lido de `Main.tscn`" e
-# ele não é lido, é copiado à mão. Quem pegar nisto derive-o da cena, que é a
-# regra deste arquivo sobre constante que apodrece calada.
-PREDIOS_DO_PATIO = [
-    ("Escritorio", 2.6, 6.7, 103.0),
-    ("Armazem", 6.6, 14.5, 124.0),
-]
+# ⚠️ E O `round(..., 3)` NÃO É COSMÉTICO. Estes números entram em toda
+# coordenada da vila, e a saída do gerador é comparada BYTE A BYTE pelo CI: um
+# `my` que saia de duas divisões e chegue com 1e-14 de resíduo desloca meio
+# pixel na impressão a `%.1f` e reprova a corrida numa versão de Python e não
+# noutra. É a mesma regra do `_camera()`, aplicada à outra entrada.
+PREDIOS_DO_PATIO_SPRITE = (
+    # (nome do nó em `Main.tscn`, largura do sprite em PIXEL DO PNG)
+    ("Escritorio", 103.0),
+    ("Armazem", 124.0),
+)
+
+# O quadro de todo prop isométrico tem 512 e o centro dele é a origem do mundo.
+MEIO_QUADRO = 256.0
+CENA_PRINCIPAL = pathlib.Path(__file__).resolve().parent.parent \
+    / "brport_vs" / "scenes" / "Main.tscn"
+
+
+def _predios_do_patio() -> list:
+    """(nome, mx, my, largura do sprite) de cada prédio do pátio, LIDO da cena.
+
+    O prédio está onde o `Main.tscn` o põe, e o vão da vila tem de estar onde o
+    prédio está. Ler daqui é o que faz mover um prédio na cena mover o vão
+    junto — e é o que impede a constante de apodrecer calada, que é a regra
+    deste arquivo.
+
+    Falta um nó? REBENTA. Um prédio do pátio que a cena deixe de ter não pode
+    virar um vão silenciosamente ausente na vila.
+    """
+    texto = CENA_PRINCIPAL.read_text("utf-8")
+    saida = []
+    for nome, largura in PREDIOS_DO_PATIO_SPRITE:
+        bloco = re.search(
+            r'\[node name="%s" type="\w+" parent="MapaWrap/Cenario"\]'
+            r'(.*?)(?=\n\[node |\Z)' % nome, texto, re.S)
+        if bloco is None:
+            raise SystemExit("gerar_mapa_iso: %s não está em %s"
+                             % (nome, CENA_PRINCIPAL))
+        esq = float(re.search(r"offset_left = (-?[\d.]+)", bloco.group(1)).group(1))
+        topo = float(re.search(r"offset_top = (-?[\d.]+)", bloco.group(1)).group(1))
+        # O inverso de `tela(mx, my, ALT_CAIS)`. A altura entra: quem está em
+        # terra pousa a `ALT_CAIS`, e desprojetar a 0 desloca o prédio +0,87 em
+        # mx E em my — pouco para se notar, e suficiente para mudar o degrau.
+        u = ((esq + MEIO_QUADRO) / ZOOM - CX) / MEIA_LARG
+        v = ((topo + MEIO_QUADRO) / ZOOM - CY + ALT_CAIS) / MEIA_ALT
+        saida.append((nome, round((u + v) / 2.0, 3), round((v - u) / 2.0, 3),
+                      largura))
+    return saida
+
+
+PREDIOS_DO_PATIO = _predios_do_patio()
 
 
 def vaos_da_vila(recuo: float = None) -> list:
