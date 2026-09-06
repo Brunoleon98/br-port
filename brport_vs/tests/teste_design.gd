@@ -1369,7 +1369,7 @@ func _d13_travessia_do_caminhao() -> void:
 			"está em (%.2f, %.2f) e devia estar em (%.2f, %.2f)"
 				% [m_cena.x, m_cena.y, origem_rota.x, origem_rota.y])
 
-		# E aí ele tem de estar INTEIRO dentro do quadro, senão as seis
+		# E aí ele tem de estar INTEIRO dentro do quadro, senão as
 		# capturas do CI apanham-no cortado ao meio. A medida é a união dos
 		# oito PNGs: o nó não sabe qual carga vai levar quando a cena abre.
 		var na_cena := Rect2(caminhao.position + Vector2(MEIO_QUADRO, MEIO_QUADRO)

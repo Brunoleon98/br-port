@@ -217,7 +217,7 @@ uma decisão; não registado, seria um esquecimento que a sessão seguinte repet
 ## 8. O gate é do Bruno, e o CI já o preparou
 
 **A entrega da arte não é o commit — é ele olhar.** O workflow `captura.yml`
-anexa a cada PR as seis imagens do antes E do depois e diz qual mudou, no
+anexa a cada PR as sete imagens do antes E do depois e diz qual mudou, no
 resumo da corrida e no log. Isso existe para a olhada custar um zip em vez de
 uma sessão.
 

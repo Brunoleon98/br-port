@@ -120,7 +120,7 @@ tirar frota   - --script res://tools/folha_frota.gd   --    "$SAIDA/frota.png"
 # — driver de software em falta no runner, por exemplo — a ferramenta salva um
 # retângulo de uma cor só e diz "Tela salva", que é a foto mentirosa contra a
 # qual o CLAUDE.md avisa. Medido: um PNG 720x1280 de cor única pesa 2,7 KB
-# (preto) a 4,5 KB (cinza); as quatro imagens de verdade pesam 87 KB a 517 KB.
+# (preto) a 4,5 KB (cinza); as imagens de verdade pesam 87 KB a 517 KB.
 # O corte fica em 20 KB, com quatro vezes de folga para o lado que interessa.
 MINIMO=20000
 for png in "$SAIDA"/*.png; do

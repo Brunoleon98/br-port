@@ -212,7 +212,7 @@ conta e o modo de a refazer estão em
 | `tools/capturar_evidencia.sh` | **As sete fotografias que provam o que ficou** — cinco de jogo (uma é o nível 2 do porto) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
 | `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os seis cascos e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
-| `.github/workflows/captura.yml` | As seis imagens anexadas a cada PR, e o antes/depois contra a base |
+| `.github/workflows/captura.yml` | As sete imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere que as quatro camadas existem e que nenhuma referência de documento aponta para arquivo que não há |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |

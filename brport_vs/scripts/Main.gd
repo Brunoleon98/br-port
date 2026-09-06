@@ -383,7 +383,7 @@ const MEIA_LARG := 20.0
 const MEIA_ALT := 10.0
 
 ## ONDE A CENA PÕE OS TRÊS CAMIÕES — pontos já dentro do quadro, e é de
-## propósito. A primeira passagem começa aqui para que as seis capturas do CI
+## propósito. A primeira passagem começa aqui para que as capturas do CI
 ## os apanhem na estrada: prop que a captura não vê é prop que ninguém revê. Só
 ## depois dela é que cada ciclo passa a começar fora do mapa, como foi pedido.
 ##
