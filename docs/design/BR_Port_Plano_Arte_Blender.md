@@ -531,6 +531,44 @@ amostrada da captura para os cascos, o asfalto para os camiões); ela entrou no
 `capturar_evidencia.sh` como sétima imagem. É a `folha_icones.gd` outra vez, e
 pela mesma razão.
 
+### Fora das etapas — a FROTA DE PESCA por PORTE (08/09)
+
+Item 7 da segunda jogada. O porquê está em `docs/decisoes/014`; aqui fica o que
+a passagem MEDIU. Custo: **~6 s de render** para os três, e três voltas de olho
+— que foi onde o tempo foi.
+
+**Três barcos onde havia um, e o eixo não é o motivo.** A trava de `009` prende
+o pesqueiro ao nível 1, então o porto em ruínas só recebia pesqueiro — e havia
+um. Quem escolhe entre os três é o VALOR do contrato, que já nasce com o barco:
+zero sorteios gastos, nenhum campo novo no save. O contorno **escala-se**
+(0,62 · 1,00 · 1,24) e cada porte tem gramática própria — convés aberto com
+caixas de peixe, pau-de-carga sobre a cabine, arco de popa com a rede içada.
+
+**E três coisas que a passagem desmentiu, todas vistas no render ampliado:**
+
+| Escrito | Medido |
+|---|---|
+| a popa do arrasteiro fica no fundo, como num arrasteiro de popa real | nesta câmera o `-x` É o fundo: o tambor saiu invisível e o pórtico leu como parede. A casa do leme recua para `-x` e o arrasto avança para `+x` — que continua a ser a planta certa, e agora também a legível |
+| dois tangones abrem a silhueta | a 82px eles saíram no MESMO ângulo de tela do pórtico e do tambor: três cinzentos fundidos num andaime, com o mastro perdido lá dentro. Um prop desta escala tem lugar para UMA silhueta memorável. Tangões fora; ficou uma vertical e uma diagonal |
+| 26° chegam para o pau-de-carga descer | a 26° ele sai HORIZONTAL na tela. Ângulo de peça inclinada mede-se na imagem, nunca no mundo — a câmera comprime a direção (1,1) e estica a (1,−1). A 42° ele desce |
+
+**E duas correções que o desenho velho estava a dever.** A traineira levava o
+pau-de-carga NO PLANO DO MASTRO e lia como uma CRUZ — a mesma armadilha que os
+cargueiros corrigiram em 07/09, com a lição escrita ao lado da correção e nunca
+aplicada ao irmão. E a amurada dela era `cabine` com a cabine também `cabine`:
+duas peças do mesmo tom encostadas, e o barco inteiro a ler como mancha clara.
+As três amuradas são hoje vermelha, azul e amarela.
+
+**O laranja do pórtico é vocabulário, não gosto.** As lanças dos guindastes
+deste porto são laranja; equipamento de içar tem cor própria aqui. E é UM
+acento: o pau-de-carga voltou ao cinzento porque duas peças laranja no mesmo
+prop deixam o laranja de apontar para coisa nenhuma.
+
+**E a captura ganhou uma nona imagem, `pesca`.** Nenhuma das oito mostrava o
+porto em ruínas A TRABALHAR: o `inicio` é o turno zero, com as docas vazias, e
+as outras são portos de nível 2 e 3, que por `009` recebem cargueiro. A frota
+de pesca inteira chegaria à tela do jogador no primeiro dia e a foto nenhuma.
+
 ### Fora das etapas — a RUA DE MÃO DUPLA e o que ela arrastou (07/09)
 
 Itens 2, 4a e 11 da segunda jogada. **Nenhum precisou de Blender**: é tudo

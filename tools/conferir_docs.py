@@ -126,8 +126,12 @@ def main():
         if tam > TETO_ESTADO:
             falhas.append(
                 "docs/ESTADO_DO_PROJETO.md tem %d bytes, acima do teto de %d. "
-                "Ou o histórico desceu para docs/arquivo/HISTORICO.md, ou o teto "
-                "sobe de propósito em tools/conferir_docs.py." % (tam, TETO_ESTADO))
+                "A ordem é: (1) o que virou histórico desce para "
+                "docs/arquivo/HISTORICO.md; (2) o que duplica outro documento "
+                "vira um ponteiro para ele; (3) só então o teto sobe, de "
+                "propósito e com a razão no commit — subi-lo É legítimo. "
+                "E nunca partir o estado em duas partes: ele lê-se inteiro."
+                % (tam, TETO_ESTADO))
 
     if falhas:
         print("DOCS FALHOU — %d problema(s):" % len(falhas))

@@ -1453,12 +1453,31 @@ def montar(M: dict) -> dict:
     PESCA = [(1.55, 0.0), (1.05, 0.42), (-0.95, 0.46), (-1.40, 0.32),
              (-1.40, -0.32), (-0.95, -0.46), (1.05, -0.42)]
 
-    def casco(sufixo, contorno, altura, cor_casco, cor_faixa, vigias=4):
+    def escalar(contorno, k):
+        """O mesmo contorno noutro porte.
+
+        ⚠️ ESCALA-SE O CONTORNO, NUNCA SE REESCREVEM OS PONTOS. É a regra que
+        o `galpao` já paga ("encolher um prop escala-se no GRUPO"), aplicada um
+        andar acima: catorze números escritos três vezes seriam catorze
+        oportunidades de um ficar por escalar, e um casco com a proa de um
+        porte e a popa de outro não dá erro nenhum — dá um barco torto.
+        """
+        return [(x * k, y * k) for x, y in contorno]
+
+    def casco(sufixo, contorno, altura, cor_casco, cor_faixa, vigias=4,
+              postes=6):
         """Casco, faixa de amurada, guarda-corpo e vigias.
 
         O casco sozinho lia como uma CUNHA DE COR. O que separa navio de cunha
         é o vazado do guarda-corpo e a fileira de vigias: dois detalhes que dão
         escala — o olho conhece o tamanho de uma vigia e mede o resto por ela.
+
+        ⚠️ `vigias=0` É UM PEDIDO, e não um descuido. Um bote aberto não tem
+        vigia nenhuma: vigia é janela de compartimento ABAIXO do convés, e um
+        casco de 42px que não tem compartimento nenhum passaria a ter oito
+        furos a dizer que tem. O `postes` desce pela mesma conta — seis
+        montantes num corrimão de 42px ficam a menos de 2px um do outro, e o
+        vazado que eles existem para dar fecha-se.
         """
         meio = max(p[0] for p in contorno) * 0.55
         largura = max(p[1] for p in contorno) * 0.80
@@ -1473,7 +1492,7 @@ def montar(M: dict) -> dict:
         ]
         pecas += corrimao("cor" + sufixo, (-meio, -largura, altura),
                           (meio, -largura, altura), 0.20,
-                          PALETA_MAT["metal_claro"], postes=6, esp=0.030)
+                          PALETA_MAT["metal_claro"], postes=postes, esp=0.030)
         # Vigias na face que a câmera vê. O casco não é uma caixa, mas nesta
         # escala a fileira só precisa de acompanhar a linha de água.
         for i in range(vigias):
@@ -1486,14 +1505,232 @@ def montar(M: dict) -> dict:
                                (0.08, 0.03, 0.08), PALETA_MAT["vidro"]))
         return pecas
 
-    grupos["barco_pequeno"] = casco("_p", PESCA, 0.44, M["casco_pesca"], M["cabine"]) + [
+    # ── A FROTA DE PESCA TEM TRÊS PORTES ────────────────────────────────
+    #
+    # Até 08/09 havia UM barco de pesca, e ele era o único que o porto em
+    # ruínas recebia: a trava de `docs/decisoes/009` prende o pesqueiro ao
+    # nível 1, então o jogador que ainda não construiu nada via o MESMO barco
+    # em todas as docas, em todos os turnos, a partida inteira. É o buraco do
+    # `barco_medio` virado do avesso mais uma vez — ali um prop existia e não
+    # chegava à tela; aqui um prop chegava à tela e mais nenhum existia.
+    #
+    # ⚠️ E O EIXO NÃO É O MOTIVO — a afirmação de `docs/decisoes/010` fica de
+    # pé. O pesqueiro chega com `pescado` ou com `armazenagem`, que é o mesmo
+    # peixe indo para o mercado ou para a câmara, e o DESTINO da carga continua
+    # a não mudar o barco. O que o muda é o PORTE, e o porte sai do valor do
+    # contrato: um bote de linha não traz uma escala de R$28.000. Os três
+    # partilham o `casco()` e separam-se pelo que têm em cima — a mesma regra
+    # que separa o porta-contêineres do graneleiro, aplicada a um eixo
+    # diferente.
+    #
+    # ⚠️ CADA PORTE TEM VOCABULÁRIO PRÓPRIO, e não é o mesmo barco esticado.
+    # É a regra que o armazém pagou em 05/09 e que a frota de 07/09 repetiu:
+    # escalar o mesmo desenho três vezes daria três barcos iguais e três
+    # etiquetas de tamanho. São três gramáticas — o CONVÉS ABERTO com caixas
+    # de peixe e motor de popa, o PAU-DE-CARGA sobre a cabine, e o PÓRTICO DE
+    # POPA com tangones e tambor de rede.
+    #
+    # ⚠️ E NENHUM DELES ENFERRUJA, mesmo o maior. A conta que isentou o
+    # pesqueiro em 07/09 era de tamanho (67px contra 97), e o arrasteiro tem
+    # 83 — perto o suficiente para a pergunta voltar. A resposta continua a ser
+    # não, e agora por outra razão: um rasto de ferrugem em UM dos três faria a
+    # ferrugem ler como marca de porte, e o que separa estes três é a
+    # gramática do convés. Quem enferruja é a classe de carga, inteira.
+    BOTE = escalar(PESCA, 0.62)
+    ARRASTO = escalar(PESCA, 1.24)
+
+    # O BOTE: convés aberto, e é a ausência que o desenha. Sem cabine, sem
+    # vigia, sem pau-de-carga — o que se vê lá dentro são as caixas do peixe,
+    # que num barco maior estariam no porão.
+    grupos["barco_pesca_bote"] = casco(
+        "_pb", BOTE, 0.30, M["casco_pesca"], M["faixa"], vigias=0, postes=4) + [
+        # Console de pilotagem: um barco aberto não tem ponte, tem um posto de
+        # pé com um para-brisa. A 8px ele é o que diz que ali vai alguém.
+        caixa("console_pb", (-0.42, 0.0, 0.49), (0.34, 0.40, 0.38), M["cabine"]),
+        caixa("parabrisa_pb", (-0.42, 0.0, 0.60), (0.35, 0.41, 0.11), M["vidro"]),
+        caixa("teto_pb", (-0.42, 0.0, 0.71), (0.40, 0.46, 0.05), M["metal_claro"]),
+        # Mastro de luz: o único vertical do barco. Sem ele a silhueta é uma
+        # linha deitada, e uma linha deitada na água lê como tábua.
+        caixa("mastro_pb", (-0.10, 0.0, 0.70), (0.08, 0.08, 0.80), M["madeira_esc"]),
+        caixa("luz_pb", (-0.10, 0.0, 1.14), (0.11, 0.11, 0.11), M["luz_poste"]),
+        # As caixas do peixe, que são a carga à vista: num barco maior elas
+        # estariam no porão, e é isso que faz o convés aberto ler como bote.
+        #
+        # ⚠️ ALTERNAM DE TOM, E A PRIMEIRA VERSÃO ERRADA A ESCOLHA. Ela usava
+        # `cabine` numa delas e punha uma caixa de gelo do MESMO branco ao
+        # lado: as duas fundiram-se numa mancha só que ficou a maior peça do
+        # barco, e o branco competia com o console. É a lição do
+        # `pilha_caixotes` — faces vizinhas do mesmo tom fundem-se — apanhada
+        # dentro de um prop de 44px. Agora alternam entre os dois tons de
+        # MADEIRA, e o único branco é a caixa de gelo, pequena e na proa.
+        caixa("cxp_pb0", (0.02, 0.13, 0.36), (0.26, 0.22, 0.18), M["corda"]),
+        caixa("cxp_pb1", (0.02, -0.13, 0.36), (0.26, 0.22, 0.18), M["madeira"]),
+        caixa("cxp_pb2", (0.30, 0.13, 0.36), (0.26, 0.22, 0.18), M["madeira"]),
+        caixa("cxp_pb3", (0.30, -0.13, 0.36), (0.26, 0.22, 0.18), M["corda"]),
+        caixa("gelo_pb", (0.62, 0.0, 0.37), (0.26, 0.24, 0.20), M["cabine"]),
+        # Motor de popa: pendurado ATRÁS do espelho de popa, como um motor de
+        # popa está. É a peça que diz "pequeno" sem depender de comparação.
+        caixa("motor_pb", (-0.97, 0.0, 0.34), (0.16, 0.22, 0.28), M["metal"]),
+        caixa("rabeta_pb", (-1.00, 0.0, 0.10), (0.09, 0.09, 0.30), M["metal"]),
+    ]
+
+    # A TRAINEIRA: o porte do meio, e o casco, a cabine, o mastro e a rede são
+    # os de sempre. Duas coisas mudaram, e as DUAS por defeitos que este
+    # arquivo já tinha registados noutro prop:
+    #
+    # ⚠️ 1. O PAU-DE-CARGA LIA COMO UMA CRUZ. Erguido no plano do mastro, ele
+    # projeta-se nesta câmera como dois traços a cortar a vertical — o desenho
+    # de uma antena, não o de um guindaste. A lição está escrita ao lado, no
+    # `deck_geral` dos cargueiros, e foi aplicada lá em 07/09; ao pesqueiro
+    # nunca chegou, porque ninguém voltou a olhar para o prop depois de o
+    # fazer. Girado 38° para `-y`, ele sai por cima da amurada como quem está
+    # a içar o cesto do peixe, que é a leitura que o justifica.
+    #
+    # ⚠️ 2. A AMURADA ERA BRANCA E A CABINE TAMBÉM. Duas peças de `cabine`
+    # encostadas uma na outra — a lição do `pilha_caixotes` outra vez, e a
+    # razão de o barco inteiro ler como uma mancha clara com um fundo verde. A
+    # faixa passou a azul; o verde do fundo é o que os TRÊS partilham, e é a
+    # amurada que os separa (vermelha, azul, amarela) sem que a cor tenha de
+    # fazer o trabalho da gramática.
+    PAU_PIVO, PAU_BRACO = (0.136, 0.0, 1.065), 1.3
+    prx, prz = math.radians(26.0), math.radians(38.0)
+    dir_pau_p = (math.cos(prx) * math.cos(prz), -math.cos(prx) * math.sin(prz),
+                 math.sin(prx))
+    grupos["barco_pesca_traineira"] = casco(
+        "_p", PESCA, 0.44, M["casco_pesca"], M["azul"]) + [
         caixa("cabine_p", (-0.75, 0.0, 0.70), (0.85, 0.62, 0.50), M["cabine"]),
         caixa("mastro_p", (0.25, 0.0, 1.25), (0.09, 0.09, 1.7), M["madeira_esc"]),
-        # Pau-de-carga inclinado: é o que diz "pesqueiro" à primeira vista.
-        caixa("pau", (0.72, 0.0, 1.35), (1.3, 0.07, 0.07), M["madeira_esc"],
-              rot=(0, -26, 0)),
+        caixa("pau", tuple(PAU_PIVO[k] + dir_pau_p[k] * PAU_BRACO / 2.0
+                           for k in range(3)),
+              (PAU_BRACO, 0.07, 0.07), M["madeira_esc"], rot=(0, -26, -38)),
         caixa("rede_p", (-0.15, 0.0, 0.60), (0.7, 0.5, 0.26), M["rede"]),
         caixa("boia_p", (1.05, 0.30, 0.52), (0.2, 0.2, 0.18), M["boia"])]
+
+    # O ARRASTEIRO: a POPA é que trabalha, e é ela que tem de estar à frente.
+    #
+    # ⚠️ NESTA CÂMERA O `-x` É O FUNDO DA IMAGEM, e a primeira versão pôs lá o
+    # arrasto inteiro — pórtico, tambor e rede atrás de uma casa do leme a
+    # meia-nau. O tambor saiu invisível e o pórtico leu como uma parede ao
+    # fundo. A ordem certa é a que a traineira já usava sem o dizer: a cabine
+    # recua para `-x` e o que se quer VER avança para `+x`. Aqui isso põe a
+    # casa do leme à frente e o convés de trabalho atrás dela, que é
+    # exatamente a planta de um arrasteiro de popa — a leitura e a verdade
+    # do barco calharam do mesmo lado.
+    #
+    # ⚠️ E A SEGUNDA VERSÃO ERRADA A QUANTIDADE, não a posição. Ela tinha dois
+    # TANGONES a abrir do mastro por cima do convés, e a 82px eles saíram no
+    # mesmo ângulo de tela do pórtico: as três peças cinzentas fundiram-se num
+    # ANDAIME só, com o mastro desaparecido lá dentro. A esta escala um prop
+    # tem lugar para UMA silhueta memorável, não para cinco a competir — e a
+    # que ganha é o arco de popa com a rede pendurada, porque é a única que não
+    # existe em mais nenhum prop deste jogo. Os tangões saíram (são de barco de
+    # camarão, não de arrasteiro de popa) e o que ficou por cima é UM mastro
+    # vertical com uma verga curta e UM pau inclinado — uma vertical e uma
+    # diagonal, que se distinguem uma da outra.
+    #
+    # ⚠️ E O PÓRTICO É `laranja` POR VOCABULÁRIO, não por gosto. As lanças dos
+    # guindastes deste porto são laranja; equipamento de içar, aqui, tem cor
+    # própria. Em cinzento ele encostava no telhado da casa do leme e nos dois
+    # tons de metal do tambor — a lição do `pilha_caixotes` aplicada entre
+    # peças do mesmo prop, e a razão de as três cinzentas se terem fundido.
+    grupos["barco_pesca_arrasteiro"] = casco(
+        "_pa", ARRASTO, 0.56, M["casco_pesca"], M["amarelo"], vigias=5,
+        postes=8) + [
+        # Casa do leme: mais alta e mais estreita que a cabine da traineira, e
+        # com fita de vidro. NÃO sai da `superestrutura()` dos cargueiros de
+        # propósito — aquela é a peça que diz "cargueiro", e um pesqueiro que a
+        # vestisse leria como o cargueiro mais pequeno do porto. Encolheu de
+        # (0,95 × 0,78 × 0,84) porque a 82px ela ocupava perto de metade da
+        # imagem e o convés de trabalho — que é o assunto do barco — sobrava.
+        caixa("leme_pa", (0.60, 0.0, 0.90), (0.80, 0.70, 0.78), M["cabine"]),
+        caixa("fita_pa", (0.60, 0.0, 1.08), (0.81, 0.71, 0.20), M["vidro"]),
+        caixa("teto_pa", (0.60, 0.0, 1.32), (0.88, 0.78, 0.07), M["metal_claro"]),
+        # Mastro com verga: a VERTICAL do prop. Nasce no teto da casa do leme,
+        # que é onde um arrasteiro o tem, e a verga curta lá em cima é o que
+        # impede a haste sozinha de ler como antena.
+        caixa("mastro_pa", (0.60, 0.0, 1.76), (0.10, 0.10, 0.80), M["metal_claro"]),
+        # ⚠️ NO TOPO VAI UMA CAIXA, E NÃO UMA VERGA. A verga que aqui esteve
+        # tinha 0,52 de vão e saiu como uma CRUZ perfeita — a mesma leitura que
+        # o pau-de-carga do cargueiro pagou em 07/09 e a traineira nesta
+        # sessão, e desta vez sem nem sequer haver um pau. Uma horizontal
+        # simétrica no topo de uma vertical é um crucifixo em qualquer escala.
+        # A caixa do radar dá a mesma "haste com equipamento" sem a simetria.
+        caixa("radar_pa", (0.60, 0.0, 2.03), (0.13, 0.22, 0.14), M["metal_claro"]),
+    ]
+    # O PAU DE CARGA, a diagonal. A conta é a do pau-de-carga do cargueiro,
+    # escrita por extenso porque a correspondência entre o `rot` e a direção
+    # não é óbvia: `rot=(0, ry, rz)` dá
+    # `dir = (cos ry · cos rz, cos ry · sen rz, −sen ry)`.
+    # Aqui ele desce (ry > 0) e aponta para a POPA (cos rz < 0) e para o
+    # costado que se vê (sen rz < 0) — a ponta acaba por cima do convés de
+    # trabalho, que é o que ele serve.
+    #
+    # ⚠️ 26° NÃO CHEGAM, e o número tem de sair do RENDER. A 26° o pau saía,
+    # nesta projeção, como uma BARRA HORIZONTAL por cima do convés — no mesmo
+    # ângulo de tela da travessa do pórtico e do tambor, que é o andaime outra
+    # vez com uma peça a menos. A 42° ele desce visivelmente e a vertical do
+    # mastro passa a ter com o que contrastar. Ângulo de peça inclinada neste
+    # projeto mede-se na imagem, nunca no mundo: a câmera comprime a direção
+    # (1,1) e estica a (1,−1), e 26° de mundo não são 26° de tela.
+    #
+    # ⚠️ E ELE É CINZENTO. Em `laranja` ficavam DUAS peças laranja no prop, e
+    # aí o laranja deixa de apontar para alguma coisa — a cor de acento só
+    # acentua enquanto for uma. O arco é a silhueta que este barco tem para
+    # dar; o pau é apoio.
+    PAU_A, apivo = 0.90, (0.60, 0.0, 1.66)
+    arx, arz = math.radians(42.0), math.radians(-145.0)
+    dir_a = (math.cos(arx) * math.cos(arz), math.cos(arx) * math.sin(arz),
+             -math.sin(arx))
+    grupos["barco_pesca_arrasteiro"] += [
+        caixa("pau_pa", tuple(apivo[k] + dir_a[k] * PAU_A / 2.0 for k in range(3)),
+              (PAU_A, 0.09, 0.09), M["metal_claro"], rot=(0, 42, -145)),
+        # Escotilha do porão, no convés de trabalho e não na proa: é por ali
+        # que o peixe desce. A braçola fica meio milímetro abaixo da tampa —
+        # a mesma receita do graneleiro, e pela mesma razão.
+        #
+        # ⚠️ A TAMPA É `concreto` E NÃO `metal_claro`: com os dois cinzentos do
+        # kit, tampa e braçola mediam 0,17 de contraste de Weber e a escotilha
+        # inteira saía como uma mancha escura no convés — o buraco que ela é o
+        # contrário de. Tampa de porão de pesqueiro é isolada e clara.
+        caixa("brac_pa", (-0.05, 0.0, 0.60), (0.52, 0.48, 0.10), M["metal"]),
+        caixa("tampa_pa", (-0.05, 0.0, 0.68), (0.48, 0.42, 0.07), M["concreto"]),
+        # O guincho do arrasto, entre a escotilha e o tambor. Peça pequena e
+        # escura, mas é ela que explica por que o convés está vazio: ele está
+        # vazio porque é ali que se trabalha.
+        caixa("guincho_pa", (-0.48, 0.0, 0.66), (0.22, 0.26, 0.22), M["metal"]),
+        # Tambor de rede: um cilindro DEITADO atravessado no convés. É a peça
+        # que diz que a rede vem por cima da popa e não pelo costado. Os dois
+        # discos das pontas são `metal_claro` para o cilindro ler como
+        # cilindro — em `metal` sobre `rede` ele era um vulto escuro.
+        # ⚠️ E ELE É PEQUENO. A 0,22 de raio saía com 10px de raio e 17 de
+        # comprimento, e a esta escala isso não é um tambor: é um TANQUE
+        # atravessado a meia-nau, a competir com o arco pela silhueta. Um
+        # tambor de rede é um acessório e vive encostado à popa, junto do
+        # pórtico por onde a rede sai.
+        cone("tambor_pa", (-1.02, 0.0, 0.74), 0.15, 0.15, 0.62, 12, M["rede"],
+             rot=(90, 0, 0)),
+        cone("tamb_pa_bb", (-1.02, -0.32, 0.74), 0.175, 0.175, 0.06, 12,
+             M["metal_claro"], rot=(90, 0, 0)),
+        cone("tamb_pa_eb", (-1.02, 0.32, 0.74), 0.175, 0.175, 0.06, 12,
+             M["metal_claro"], rot=(90, 0, 0)),
+        # Pórtico de popa: duas colunas e a travessa. A travessa é mais FUNDA
+        # que as colunas (0,15 contra 0,12) para as faces de `x` não ficarem
+        # coplanares — a quina que dá a barra preta, registada duas vezes.
+        caixa("port_pa_bb", (-1.42, -0.40, 1.06), (0.12, 0.12, 1.00), M["laranja"]),
+        caixa("port_pa_eb", (-1.42, 0.40, 1.06), (0.12, 0.12, 1.00), M["laranja"]),
+        caixa("port_pa_trav", (-1.42, 0.0, 1.60), (0.15, 1.02, 0.14), M["laranja"]),
+        # A rede içada, pendurada por dentro do arco. Era uma CHAPA de `rede`,
+        # e falhou por duas razões ao mesmo tempo: um retângulo não lê como
+        # rede, e o `rede` (#8d9aa6) encosta no `metal_claro` (#6d7880) — duas
+        # peças do mesmo tom fundem-se, que é a lição do `pilha_caixotes`.
+        # Agora é um SACO afunilado em `corda`, que separa por matiz e por
+        # forma: um cone de boca larga e fundo estreito é a silhueta de um
+        # saco de arrasto e de mais nada.
+        cone("rede_pa", (-1.31, 0.0, 1.16), 0.13, 0.33, 0.64, 10, M["corda"]),
+        # Guincho da âncora, na proa. Um convés de proa completamente vazio
+        # num barco com este porte lê como barco por acabar.
+        caixa("ancora_pa", (1.34, 0.0, 0.66), (0.26, 0.30, 0.20), M["metal_claro"]),
+    ]
 
     def superestrutura(sufixo, x, z, tam, com_ponte=True):
         """Cabine com janelas em fita, teto e chaminé com faixa.

@@ -61,6 +61,12 @@ Descuidado nunca vê um navio de longo curso em 600 partidas. O painel Construir
 abre a dizer o nível e o que falta; o `CAIS_CHANCE_GRANDE` saiu, porque o cais
 deixou de multiplicar uma chance invisível e passou a DESTRAVAR uma classe.
 
+**E A FROTA DE PESCA TEM TRÊS PORTES** (`docs/decisoes/014`) — bote, traineira
+e arrasteiro —, e quem escolhe entre eles é o VALOR do contrato. Importa porque
+o porto em ruínas **só recebe pesqueiro**: quem ainda não construiu nada via o
+mesmo barco a partida inteira. O motivo continua a não mudar o barco de pesca,
+que é a afirmação de `010` — o eixo novo é o porte.
+
 **E o navio vem ao porto POR ALGUMA COISA.** Cada barco nasce com um MOTIVO —
 Pescado, Armazenagem, Contêiner ou Granel —, que se lê na linha do cartão da
 doca. O efeito é sempre o da ESTRUTURA a que o motivo está preso, nunca do
@@ -123,10 +129,10 @@ em `docs/arquivo/HISTORICO.md`.
 
 **Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
 
-**Quatro blocos fechados** — defeitos medidos e interface (14, 10, 1, 22, 25),
-o camião que entra na doca (3), a estrada (2, 4a, 11) e a esquina chanfrada
-(4b). O que custaram está em `docs/arquivo/HISTORICO.md`; o porquê, nas
-decisões `011` a `013`.
+**Cinco blocos fechados** — defeitos medidos e interface (14, 10, 1, 22, 25),
+o camião que entra na doca (3), a estrada (2, 4a, 11), a esquina chanfrada (4b)
+e a frota de pesca (7). O que custaram está em `docs/arquivo/HISTORICO.md`; o
+porquê, nas decisões `011` a `014`.
 
 ⚠️ **Sobrou UMA coisa medida e por fazer, e não é defeito:** a rua parou em
 **1,8** porque a janela em `my` entre o acesso ao berço e o cotovelo fecha a
@@ -138,17 +144,15 @@ O resto continua por começar, e **a ordem é dele**.
 ### O que a primeira jogada devolveu (02–03/09)
 
 **Triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e fechou-se tudo o que não
-dependia do Bruno. Ficam o layout do rodapé (gosto, gate A5), três itens de
-economia (só via `/balancear`, e ele amarrou-os ao pacote de Fase 2) e a fala da
-madeira podre (espera o A4). **Livre, sem gate: A8.**
+dependia do Bruno. Sobram o layout do rodapé (gate A5), três itens de economia
+(via `/balancear`, amarrados ao pacote de Fase 2) e a fala da madeira podre
+(A4). **Livre, sem gate: A8.**
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
-**Decisão do Bruno: responde-se quando a Fase 2 for feita, e não antes.** Não é
-pendência aberta nem trava sessão nenhuma — é uma nota presa ao trabalho da
-Fase 2, e a regra que vale é: **codar a economia dela sem a responder é
-construir em cima de uma pergunta**. A conta que a levanta, e o modo de a
-refazer, estão em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
+Não trava sessão nenhuma: **responde-se quando a Fase 2 for feita**, e codar a
+economia dela antes é construir em cima de uma pergunta. A conta está em
+`docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 
 ---
 
@@ -166,7 +170,7 @@ refazer, estão em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 | `tools/ler_registros.py` | **O leitor** — resume N partidas de uma vez, e põe o jogador MEDIDO ao lado dos perfis que o simulador supõe |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se — são dois arquivos em duas linguagens que nada obriga a concordar |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela. O bloco **D14** (04/09) guarda a vila; o **D15** (04/09) guarda as duas pontas de areia; o **D18** (06/09) mede o PIOR CASO de texto do cartão de doca contra os 200px de interior dele; o **D19** (06/09) mede a WCAG de cada rótulo do painel Construir contra o branco do cartão; o **D20** (08/09) é o primeiro que olha para a COR: rasteriza os dois mapas e percorre a rota do camião a exigir que ela nunca caia em calçada |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade, se a interface cabe na tela e, desde o **D20**, com que COR o mapa pinta a rota do camião. Que defeito pariu cada bloco está em `docs/arquivo/HISTORICO.md`; o que cada um faz, no comentário dele |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, e nenhum `{token}` de texto chega cru à tela |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os 3 tons da Dona Cida, as 8 falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Os números da narração saem das constantes, nunca escritos à mão |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
@@ -186,7 +190,7 @@ refazer, estão em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 | `brport_vs/scripts/Icones.gd` | Registro dos ícones + helpers de rótulo e botão — o único lugar que sabe qual arquivo é qual ícone |
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
 | `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo — inclui a malha viária, a vila (`--nivel-vila=N`) e os números de doca pintados no cais. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`**: a câmera é o `ZOOM`, e a câmera centra-se sozinha nos berços |
-| `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | **A régua do enquadramento** — gera o mapa em várias larguras e mede quanto do quadro é porto, quanto é distrito, quanto é mar, e sobretudo **quantos pixels da FRONTEIRA DO MUNDO entram na janela**, que é a pergunta que decide a etapa. Rasteriza com o ThorVG, que é o mesmo importador do jogo |
+| `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | **A régua do enquadramento** — mede o mapa em várias larguras e, sobretudo, **quantos pixels da FRONTEIRA DO MUNDO entram na janela**. Rasteriza com o ThorVG, que é o importador do jogo |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade. Desde 06/09 imprime a **mistura de classes e de motivos** que o jogo sorteou, e exporta a que NÍVEL cada perfil chegou — é dele que o projetor tira quais navios cada porto recebe |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
@@ -209,8 +213,8 @@ refazer, estão em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
-| `tools/capturar_evidencia.sh` | **As oito fotografias que provam o que ficou** — seis de jogo (o nível 2 do porto, e o porto A OPERAR com os camiões nos berços) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
-| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os seis cascos e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
+| `tools/capturar_evidencia.sh` | **As nove fotografias que provam o que ficou** — sete de jogo (o nível 2 do porto, o porto A OPERAR com os camiões nos berços, e desde 08/09 o porto EM RUÍNAS a trabalhar, que é o único estado onde a frota de pesca atraca) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
+| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os cascos (por classe, motivo e porte) e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Reprova se transbordar a tela, em vez de recortar. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As oito imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
@@ -304,6 +308,12 @@ braçola, paletes com pau-de-carga aberto. O pesqueiro tem um casco só, e isso 
 afirmação: pescado e armazenagem são o mesmo peixe indo para sítios diferentes.
 Os camiões são quatro, um por motivo. O **trabalhador aparece de pé no
 tabuado** quando alocado, e mexe-se enquanto a operação corre.
+
+**E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA.** São três portes com gramática
+própria — o bote de convés aberto com as caixas de peixe à vista, a traineira
+de pau-de-carga, e o arrasteiro com o arco de popa laranja e a rede içada —, e
+a faixa de valor da classe escolhe qual atraca. Zero sorteios gastos: o valor
+já nascia com o barco.
 
 O **retrato do trabalhador** sai do mesmo estúdio Blender e é o único prop que
 olha para a frente; o boneco do PÍER continua com as cinco caixas dele, porque

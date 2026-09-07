@@ -969,10 +969,23 @@ conserto é de desenho — chanfrar a esquina, ou continuar o lado de fora como
 rua de vila. **Ele deixou de ser um defeito solto e passou a ser a cabeça do
 bloco da ESTRADA**, com o 11, o 2 e o 4a.
 
-**Oito itens de arte** — detalhe da rua, o guindaste de madeira do n1, variedade
-de barcos de PESCA, curvas em vez de retas, gradiente de água e areia mais
-fauna, caminhos de terra para as casas, prédios em obra e avançados, e afastar
-a zona de espera.
+✅ **O 7 FECHOU em 08/09** (`docs/decisoes/014`): a frota de pesca tem três
+portes — bote, traineira e arrasteiro —, e quem escolhe entre eles é o VALOR do
+contrato, que já nasce com o barco. **Zero sorteios gastos e nenhum campo novo
+no save**, e a afirmação de `010` fica de pé: o pesqueiro continua a levar o
+mesmo barco nos dois motivos dele, porque o eixo novo é o PORTE e não o
+destino da carga. Era o buraco maior que restava, e por uma razão de fila e não
+de gosto: a trava de `009` prende o pesqueiro ao nível 1, então **o porto em
+ruínas só recebe pesqueiro** — o jogador que ainda não construiu nada via o
+mesmo barco a partida inteira, e o perfil Descuidado nunca sai de lá. De
+caminho fecharam-se dois defeitos que o desenho devia (o pau-de-carga da
+traineira a ler como cruz, e a amurada branca sobre cabine branca) e entrou a
+nona captura, `pesca`: o porto em ruínas A TRABALHAR, que nenhuma das oito
+mostrava.
+
+**Sete itens de arte** — detalhe da rua, o guindaste de madeira do n1, curvas em
+vez de retas, gradiente de água e areia mais fauna, caminhos de terra para as
+casas, prédios em obra e avançados, e afastar a zona de espera.
 
 **Dois itens de sistema, dos três** — via de mão dupla e o camião que vai à doca
 do navio que serve. O terceiro (o fecho do painel de balanço, que trancava o

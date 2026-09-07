@@ -212,6 +212,31 @@ vive agora em `docs/arquivo/HISTORICO.md` — **o que envelheceu desce para lá 
 vez de ficar aqui com uma data ao lado.** O `conferir_docs.py` toca o alarme
 quando o arquivo volta a crescer, mas o alarme não escreve o documento.
 
+### O teto, e o que fazer ao bater nele
+
+**Só o `ESTADO_DO_PROJETO.md` tem teto** — 26.000 bytes, em
+`tools/conferir_docs.py`. Nenhum outro documento deste projeto tem, e não é
+esquecimento: o modo de falhar medido foi ESTE arquivo dobrar calado, porque é
+o único que se lê inteiro para saber onde o jogo está.
+
+Ao bater nele, a ordem é esta, e ela importa:
+
+1. **Descer o que virou histórico** para `docs/arquivo/HISTORICO.md`. É quase
+   sempre isto: o estado descreve o AGORA, e uma frase que só faz sentido com
+   uma data ao lado já é história.
+2. **Comprimir o que duplica outro documento** num ponteiro para ele. São
+   quatro camadas; o estado que reconta a decisão em vez de a citar está a
+   pagar bytes por prosa que já existe noutro sítio.
+3. **Só então subir o teto**, de propósito e com a razão no commit. O
+   conferidor diz por escrito que isso é legítimo — o que ele existe para
+   apanhar é o crescimento sem ninguém reparar, não o tamanho em si.
+
+⚠️ **E NUNCA partir o ESTADO numa "parte 2".** Ele é uma fotografia lida
+inteira, e o próprio cabeçalho dele conta que até 02/09 eram cinco documentos
+em cadeia — partir seria refazer aquilo com outro nome. Quem PODE partir um dia
+é o `HISTORICO.md` (32 KB, sem teto, só cresce), e por período; não é urgente, e
+não é este arquivo.
+
 ## 7. Commit
 
 - Mensagem **em inglês**; código, comentário e documento em português.

@@ -531,9 +531,10 @@ decisão dele:
 | O camião entra na doca | 3 | `docs/decisoes/011` |
 | A estrada: mão dupla, passadeiras, viela | 2, 4a, 11 e um terço do 4b | `docs/decisoes/012` |
 | A esquina chanfrada | o resto do 4b | `docs/decisoes/013` |
+| A frota de pesca por porte | 7 | `docs/decisoes/014` |
 
 Nenhum deles encostou na economia: o `GameState.gd` não mudou em nenhum, e o
-balanceamento atravessou os quatro em 100% / 80,2% / 37,3%.
+balanceamento atravessou os cinco em 100% / 80,2% / 37,3%.
 
 **O último rendeu mais do que o item.** Ao medir o cotovelo para o chanfrar
 apareceu uma fita de calçada atravessada na pista, na entrada dos cinco
@@ -543,3 +544,22 @@ perguntava COR**. Daí saiu o bloco D20, o primeiro que rasteriza o mapa e lê o
 que está pintado.
 
 ---
+
+## Os blocos do `teste_design.gd`, e quando cada um nasceu
+
+O `ESTADO_DO_PROJETO.md` carregou esta chamada nominal até 08/09, e ela é
+histórico: o que cada bloco faz está escrito no comentário dele, e a data de
+nascimento só interessa a quem quer saber que defeito o pariu. Quem quiser a
+lista viva lê o arquivo — ele imprime bloco a bloco.
+
+| Bloco | Quando | O defeito que o pariu |
+|---|---|---|
+| **D2** | 03/09 | props em cima da rua — e depois os COTOVELOS dela, que faixa reta nenhuma declarava |
+| **D7** | 05/09 | conferir o QUADRO de 512px de um prop não é conferir o prop; o letreiro pairava 12px acima do telhado com o teste a dizer "apoiado" |
+| **D13** | 07/09 | um camião por motivo, a silhueta certa em cada eixo da rua |
+| **D14** | 04/09 | a vila fatiada pelos prédios do pátio — e o `PREDIOS_DO_PATIO` que dizia "lido de `Main.tscn`" e era copiado à mão |
+| **D15** | 04/09 | as duas pontas de areia, onde o porto para |
+| **D17** | 06/09 | o `barco_medio` gerado, validado e em doca nenhuma. Em 07/09 passou a perguntar pelo par (classe, motivo); em 08/09 ganhou o eixo do PORTE — percorre a faixa de valor da classe pela porta que o jogo usa e exige que todos saiam, e na ordem |
+| **D18** | 06/09 | texto vindo de tabela cresce, e `Label` que não cabe corta sem erro |
+| **D19** | 06/09 | o cinzento neutro do jogo mede 2,93:1 sobre o branco do painel — abaixo do corte da WCAG, e em oito rótulos |
+| **D20** | 08/09 | a fita de calçada atravessada na pista. Toda a maquinaria de cerco perguntava POSIÇÃO; nenhuma perguntava COR |

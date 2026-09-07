@@ -286,6 +286,13 @@ Teste e import rodam sem tela.
    tinha sido corrigido — verdadeiro, e de ontem. Rasterize o arquivo
    (`load_svg_from_string`, que é o mesmo ThorVG); o cache do importador é uma
    resposta velha, e num teste isso mente nas duas direções.
+   **E "TODOS APARECEM" NÃO IMPLICA "NA ORDEM CERTA", nem o contrário.** Duas
+   guardas sobre a mesma tabela e nenhuma delas de graça: uma conta pode
+   devolver os três portes de barco ao CONTRÁRIO e cumprir a alcançabilidade,
+   e pode manter a ordem perfeita alcançando só dois. Quando duas perguntas se
+   parecem, o teste é montar o estado em que UMA falha e a outra passa; se esse
+   estado não existir, a segunda é confiança de graça — e se existir dos dois
+   lados, são duas asserções e não uma.
    **E DEFEITO INJETADO LONGE DA LINHA AMOSTRADA NÃO CHEGA A ELA.** Um bloco
    que percorre um caminho só vê o que o caminho cruza. Pintar a passadeira com
    a cor da calçada não reprovou o D20 e não foi falha dele: com passo
@@ -350,6 +357,14 @@ derivada delas.
   publica.
 - **Só as faces `+x` e `-y` são visíveis** por esta câmera. Detalhar as outras
   é render que ninguém vê.
+- **E o `-x` É O FUNDO DA IMAGEM, o que é outra pergunta.** A regra acima diz
+  que FACE se vê; esta diz que PONTA do prop fica à frente. Peça alta em `-x`
+  projeta-se para cima e para trás, e o que estiver baixo atrás dela desaparece:
+  o arrasteiro nasceu com a casa do leme a meia-nau e o arrasto todo a `-x`, e o
+  tambor de rede saiu invisível com o pórtico a ler como parede ao fundo. Ao
+  compor um prop com um lado que trabalha e um lado que não, o que se quer VER
+  avança para `+x` — e vale a pena perguntar se a coisa de verdade também é
+  assim, porque muitas vezes é (um arrasteiro tem mesmo a ponte à frente).
 - **Ordem de nó É profundidade.** Quem tem `mx+my` maior está mais perto da
   câmera e tapa quem tem menor. Vale em `Dock.tscn` e em `MapaWrap/Cenario`.
   O teste de design confere isto.
@@ -644,6 +659,21 @@ tranca isso.
   mesmo guindaste. Quando um comentário justifica uma partilha, pergunte de que
   TAMANHO é a amarra: quase sempre é menor do que a peça que ela está a
   segurar.
+- **⚠️ ÂNGULO DE PEÇA INCLINADA MEDE-SE NA IMAGEM, NUNCA NO MUNDO.** É a irmã
+  da regra do chanfro a 45°, aplicada a uma peça em vez de a uma faixa: a
+  câmera comprime a direção (1,1) e estica a (1,−1), então graus de mundo não
+  são graus de tela. O pau-de-carga do arrasteiro desce 26° no Blender e saiu
+  HORIZONTAL no render — no mesmo ângulo de tela da travessa do pórtico e do
+  tambor, e as três peças cinzentas fundiram-se num andaime só. A 42° ele
+  desce. Escolha o número olhando o PNG, e escreva no comentário que foi
+  medido lá.
+- **⚠️ E UM PROP DESTA ESCALA TEM LUGAR PARA UMA SILHUETA MEMORÁVEL, NÃO PARA
+  CINCO.** O arrasteiro nasceu com pórtico de popa, dois tangones, tambor,
+  mastro e pau — cinco peças de metal a 82px, e o que se lia era um borrão de
+  andaime com o mastro perdido lá dentro. Cortar quatro fez a quinta aparecer.
+  O mesmo vale para a COR DE ACENTO: ela só acentua enquanto for UMA. Com o
+  pórtico e o pau ambos laranja o laranja deixou de apontar para coisa nenhuma;
+  o pau voltou ao cinzento e o arco passou a ser o barco.
 - **Rodar um prop 90° manda metade dos detalhes para a face que a câmera não
   vê.** Só `+x` e `-y` são visíveis. Rodar o caminhão para o eixo da estrada
   punha o para-brisa a olhar certo e a janela lateral para `-x` — invisível, e
@@ -661,6 +691,19 @@ tranca isso.
   prova-se com uma FOLHA DE CONTATO que percorre a tabela: é o que a
   `folha_icones.gd` já fazia para os ícones e o que a `folha_frota.gd` passou a
   fazer para a frota.
+  ⚠️ **E ARTE PRESA A UM ESTADO DO JOGO NÃO É SORTEIO — É PIOR.** O sorteio ao
+  menos pode calhar; um estado que nenhuma foto monta não calha nunca. Os
+  barcos de pesca só atracam no porto de NÍVEL 1, e das oito imagens do CI o
+  `inicio` era o turno ZERO (docas vazias) e as outras eram portos de nível 2 e
+  3: a frota inteira do começo do jogo não tinha foto nenhuma, e é o estado onde
+  o perfil Descuidado passa a partida toda. Ao acrescentar arte que uma
+  condição do jogo destrava, pergunte QUAL das capturas monta essa condição —
+  e se nenhuma monta, o tiro novo faz parte da entrega.
+  ⚠️ **E FOLHA DE CONTATO QUE CRESCE SOZINHA TEM DE REPROVAR AO TRANSBORDAR.**
+  Ela é uma captura de 720×1280 e ganha linhas a cada porte, motivo ou classe
+  nova: o que passar da última linha é recortado sem uma palavra, e o prop fica
+  exatamente como estava — gerado, validado e por olhar, que é o buraco que a
+  folha existe para tapar. A conta da altura reprova em vez de recortar.
 - **Antes de gerar MAIS, veja onde o que já se gera está a cair.** A queixa
   "a vegetação é bem pobre" tinha 136 copas de mata geradas e **7** dentro do
   quadro: o viés da densidade (`random ** 2.2`) empurrava-as contra
@@ -685,6 +728,13 @@ tranca isso.
   IRMÃ já o corrigiu (o capim tinha a correção escrita num dos dois sítios e
   não no outro; a mancha de desgaste do cais estava a ser pintada no relvado
   enquanto a junta, dez linhas abaixo, sabia exatamente onde parar).
+  ⚠️ **E AO CORRIGIR UM, VARRA OS IRMÃOS — a lição escrita não anda sozinha
+  até eles.** Em 07/09 o pau-de-carga dos cargueiros foi girado para o costado
+  porque no plano do mastro ele lia como uma CRUZ, e a armadilha ficou escrita
+  ao lado da correção; o pesqueiro, que tem o mesmo mastro com o mesmo pau,
+  ficou com a cruz por mais uma sessão inteira, porque ninguém voltou a abrir o
+  prop. Correção de leitura fecha-se com um `grep` pela FORMA que a causou, não
+  pela peça onde ela apareceu.
 - **Comentário que explica como a constante ao lado apodrece é um pedido para
   ela ser derivada.** O `VILA_VAZIOS` — onde os prédios do pátio tapam a vila
   — eram dois intervalos escritos à mão com vinte linhas a avisar que
