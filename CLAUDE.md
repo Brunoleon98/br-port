@@ -572,6 +572,15 @@ tranca isso.
   bytes também não servem, pela regra do denoiser mais abaixo. O que responde é
   reduzir os dois a 16×16 e comparar: cada célula é a média de ~1.000 pixels, o
   que apaga o ruído de ±2/255 por construção.
+- **⚠️ E NUMA PEÇA COM CABOS A CAIXA MENTE QUASE DE GRAÇA.** A terceira cara
+  das duas regras acima, e a mais barata de cair: um cabo, um estai ou um
+  amantilho tem dois pixels de largura e ESTICA o `get_used_rect()` para o
+  outro lado do prop. Logo `used_rect.has_point(p)` custa quase nada de
+  satisfazer — o D17 exigia que a lança cobrisse o próprio centro de rotação e
+  media a moldura, e uma lança inteira desenhada FORA do eixo continuava a
+  passar, porque uma corda qualquer atravessava o ponto. Pergunte quanto
+  DESENHO há à volta do ponto (a fração de pixels opacos num raio pequeno), e
+  nunca se o ponto cai na caixa.
 - **PARTILHA TOTAL OU NENHUMA, numa tabela de arte.** O pesqueiro usa o mesmo
   casco nos dois motivos dele de propósito — pescado e armazenagem são o mesmo
   peixe indo para sítios diferentes, e o barco não muda com o destino da carga.
@@ -591,6 +600,21 @@ tranca isso.
   bónus nenhum). Só com os dois construídos um defeito injetado na cópia
   reprovou. É a mesma lição de "contagem só se testa acima de um", aplicada a
   um bónus em vez de uma quantidade.
+- **⚠️ CONTRASTE GASTO ENTRE DUAS PEÇAS DO PROP PODE DEIXAR O PROP INVISÍVEL.**
+  As regras acima dizem que a paleta mente e que o contraste é contra o FUNDO;
+  esta diz de que maneira se esquece isso. Ao desenhar o pau de carga do n1
+  escolheu-se `tronco` para o pau SEPARAR DO MASTRO — 0,45 de Weber entre os
+  dois, de sobra — e mediu-se aí. No jogo o pau passa por cima da AREIA e deu
+  0,21: some. **Duas peças que se separam bem uma da outra podem estar as duas
+  na banda do fundo.** A conta que decide a cor é sempre peça contra fundo; a
+  separação entre peças é a segunda pergunta, nunca a primeira.
+- **⚠️ E UM PROP SÓ ATRAVESSA DOIS FUNDOS: nenhum tom ganha os dois.** No mesmo
+  prop, o gancho pende sobre o BAIXIO (claro, ~106) e o pau corre sobre a AREIA
+  (~159), com água funda (~67) à volta. `metal_claro` mede 0,75 sobre a água
+  funda e **0,01** sobre o baixio. Quando um tom não vence os dois fundos, quem
+  resolve não é a cor — é a MASSA: o gancho voltou ao metal escuro e passou a
+  ser encontrado por ser a única ferragem grande, depois de os olhais dos
+  estais encolherem de 0,11 para 0,075.
 - **Cor calibrada para um fundo não atravessa para outro sem medir de novo.**
   O cinzento-azulado que marca texto neutro sobre o fundo ESCURO do jogo
   (0,51/0,6/0,706, usado no aviso de trabalhador ocioso) foi reaproveitado

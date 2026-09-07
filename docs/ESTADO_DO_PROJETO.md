@@ -58,8 +58,7 @@ três classes travadas pelo NÍVEL DO PORTO, que é o menor entre o do píer e o
 guindaste: pesqueiro no nível 1, cargueiro no 2, navio de longo curso no 3 — que
 exige o cais reforçado. O porto em ruínas recebe **só pesqueiro**, e o perfil
 Descuidado nunca vê um navio de longo curso em 600 partidas. O painel Construir
-abre a dizer o nível e o que falta; o `CAIS_CHANCE_GRANDE` saiu, porque o cais
-deixou de multiplicar uma chance invisível e passou a DESTRAVAR uma classe.
+abre a dizer o nível e o que falta.
 
 **E A FROTA DE PESCA TEM TRÊS PORTES** (`docs/decisoes/014`) — bote, traineira
 e arrasteiro —, e quem escolhe entre eles é o VALOR do contrato. Importa porque
@@ -70,10 +69,9 @@ que é a afirmação de `010` — o eixo novo é o porte.
 **E o navio vem ao porto POR ALGUMA COISA.** Cada barco nasce com um MOTIVO —
 Pescado, Armazenagem, Contêiner ou Granel —, que se lê na linha do cartão da
 doca. O efeito é sempre o da ESTRUTURA a que o motivo está preso, nunca do
-motivo sozinho: o armazém deixou de ser +20% em tudo e paga +50% em quem vem
-deixar carga, o pátio paga +30% no contêiner, e o granel ocupa o berço um turno
-a mais até o pórtico existir. **Reparo e reabastecimento ficaram de fora de
-propósito** — o GDD põe a oficina e o posto na Fase 2 (`docs/decisoes/008`).
+motivo sozinho, e **reparo e reabastecimento ficaram de fora de propósito**,
+porque o GDD põe a oficina e o posto na Fase 2. Os números por estrutura estão
+em `docs/decisoes/008` e na tabela gerada.
 
 **A partida grava-se.** Uma linha JSON por acontecimento, com o tempo em cada
 turno (A7); o nome de quem jogou NÃO entra (`docs/decisoes/006`). Sai pelo menu
@@ -129,10 +127,10 @@ em `docs/arquivo/HISTORICO.md`.
 
 **Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
 
-**Cinco blocos fechados** — defeitos medidos e interface (14, 10, 1, 22, 25),
-o camião que entra na doca (3), a estrada (2, 4a, 11), a esquina chanfrada (4b)
-e a frota de pesca (7). O que custaram está em `docs/arquivo/HISTORICO.md`; o
-porquê, nas decisões `011` a `014`.
+**Seis blocos fechados** — defeitos medidos e interface (14, 10, 1, 22, 25),
+o camião que entra na doca (3), a estrada (2, 4a, 11), a esquina chanfrada (4b),
+a frota de pesca (7) e o pau de carga do píer n1 (6). O que custaram está em
+`docs/arquivo/HISTORICO.md`; o porquê, nas decisões `011` a `015`.
 
 ⚠️ **Sobrou UMA coisa medida e por fazer, e não é defeito:** a rua parou em
 **1,8** porque a janela em `my` entre o acesso ao berço e o cotovelo fecha a
@@ -295,8 +293,10 @@ pela mesma razão que os píeres: o que se mexe não pode estar assado no fundo.
 n3, ferrugem nos cargueiros — padrões DIRIGIDOS, peça a peça, nunca pela paleta.
 
 **O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas a
-laje de concreto sobre estacas de aço; a lança, de pau-de-carga a lança longa
-com spreader; a torre, de poste de madeira a pórtico com casa de máquinas. Quem
+laje de concreto sobre estacas de aço; a lança, de **um pau só com amantilho** a
+lança longa com spreader; a torre, de mastro de madeira a pórtico com casa de
+máquinas. O n1 é um pau de carga de verdade desde 09/09 — era uma treliça, e
+sobre a areia lia-se como passadiça (`docs/decisoes/015`). Quem
 escolhe são `nivel_pier()` e `nivel_guindaste()`, cada um preso ao seu upgrade
 (`docs/decisoes/007`) — e desde 06/09 são elas que decidem também **que navio
 atraca** (`009`), o que faz a trava ser visível em vez de estatística.

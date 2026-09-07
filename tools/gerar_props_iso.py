@@ -1155,27 +1155,46 @@ def montar(M: dict) -> dict:
     # comentário antigo dizia "a torre é a mesma nos três" como se a amarra
     # fosse a torre inteira, quando é só onde ela acaba.
     #
-    #   n1  pau-de-carga: um poste de MADEIRA com dois estais e nada mais. Sem
-    #       treliça, sem cabine — quem opera puxa o cabo à mão;
+    #   n1  pau de carga: mastro de MADEIRA com dois estais, e um pau só
+    #       preso por gooseneck com amantilho ao topo. Sem treliça, sem
+    #       cabine — quem opera puxa o cabo à mão;
     #   n2  a treliça laranja de sempre, com a cabine encostada;
     #   n3  pórtico: treliça mais larga, casa de máquinas no convés, cabine
     #       maior e escada. É a mesma altura, e lê-se como o dobro.
     def _sapata(nome, lado, alt, mat):
         return caixa(nome, (GX, GY, ALT_PIER + alt / 2.0), (lado, lado, alt), mat)
 
-    # -- n1: o pau-de-carga ----------------------------------------------
+    # -- n1: o pau de carga ----------------------------------------------
     # Madeira, e é a única grua do jogo que não é laranja. O laranja é a cor do
     # MAQUINÁRIO do porto; um pontão provisório não tem maquinário, tem um pau
     # amarrado. Tirar a cor é o que faz a diferença ler de longe.
+    #
+    # ⚠️ O MASTRO PASSA DO GOOSENECK, e é isso que torna o resto possível. Até
+    # 08/09 ele acabava em `TOPO + 0,05` — rente ao ponto onde a lança se
+    # prende — e daí não havia de onde pendurar um amantilho: qualquer linha
+    # saída dali nasceria paralela ao pau e não desenharia triângulo nenhum. A
+    # peça que faltava para o n1 ler como pau de carga estava ABAIXO da lança,
+    # não dentro dela.
+    ALTO_N1 = TOPO + 0.80
     mastro_n1 = [
         _sapata("m1_sapata", 0.34, 0.14, M["metal"]),
-        caixa("m1_poste", (GX, GY, (ALT_PIER + 0.14 + TOPO + 0.05) / 2.0),
-              (0.13, 0.13, TOPO + 0.05 - ALT_PIER - 0.14), M["madeira_esc"]),
+        # DUAS SEÇÕES, e a de cima mais fina. A 4 px de largura um mastro não
+        # tem textura que se veja; o que se vê é a silhueta a estreitar, e é
+        # ela que separa "mastro" de "ripa espetada" — que era a razão de as
+        # cintas existirem quando o poste era uma caixa só.
+        caixa("m1_poste", (GX, GY, ALT_PIER + 0.95), (0.15, 0.15, 1.66),
+              M["madeira_esc"]),
+        caixa("m1_mastareu", (GX, GY, (ALT_PIER + 1.70 + ALTO_N1) / 2.0),
+              (0.105, 0.105, ALTO_N1 - ALT_PIER - 1.70), M["madeira_esc"]),
+        # O cabeço remata o topo. Sem ele o mastaréu lê como pau serrado.
+        caixa("m1_cabeco", (GX, GY, ALTO_N1 + 0.04), (0.16, 0.16, 0.09),
+              M["metal"]),
     ]
-    # Duas cintas de metal: sem elas o poste lê como uma ripa espetada.
-    for h in (0.85, 1.95):
+    # Duas cintas de metal, cada uma na secção que abraça — a de cima cai em
+    # cima da junta das duas, que é onde uma amarração de verdade iria.
+    for h, lado in ((0.80, 0.19), (1.74, 0.145)):
         mastro_n1.append(caixa("m1_cinta%.2f" % h, (GX, GY, ALT_PIER + h),
-                               (0.17, 0.17, 0.07), M["metal"]))
+                               (lado, lado, 0.07), M["metal"]))
     # Os estais. São eles que dizem "isto está amarrado, não construído".
     #
     # ⚠️ E ELES POUSAM NO CONVÉS, o que não é óbvio de conferir. A primeira
@@ -1184,11 +1203,17 @@ def montar(M: dict) -> dict:
     # ar, e nada reprovava: um cabo que não chega a lado nenhum passa em todas
     # as asserções que este projeto tem. Com ±0,62 os dois pousam, e levam
     # olhal para pousarem em ALGUMA COISA.
+    #
+    # ⚠️ E OS OLHAIS ENCOLHERAM, por causa do GANCHO. Eles mediam 0,11 no
+    # mesmo `metal` do gancho que pende do pau — quatro blocos cinzentos do
+    # mesmo tamanho no mesmo prop, e o olho não tinha como saber qual deles
+    # levanta carga. Quem trabalha ficou claro e maior; quem só amarra ficou
+    # pequeno. É a regra do acento aplicada a ferragem em vez de a cor.
     for sy in (-0.62, 0.62):
-        mastro_n1.append(barra("m1_estai%.2f" % sy, (GX, GY, TOPO - 0.25),
+        mastro_n1.append(barra("m1_estai%.2f" % sy, (GX, GY, TOPO + 0.30),
                                (GX, GY + sy, ALT_PIER + 0.08), 0.026, M["metal"]))
-        mastro_n1.append(caixa("m1_olhal%.2f" % sy, (GX, GY + sy, ALT_PIER + 0.06),
-                               (0.11, 0.11, 0.12), M["metal"]))
+        mastro_n1.append(caixa("m1_olhal%.2f" % sy, (GX, GY + sy, ALT_PIER + 0.05),
+                               (0.075, 0.075, 0.10), M["metal"]))
 
     # -- n2: a treliça de sempre -----------------------------------------
     base_n2 = [
@@ -1389,17 +1414,93 @@ def montar(M: dict) -> dict:
     # ⚠️ TODAS COMEÇAM EM `TOPO`, no eixo da torre. É esse ponto que o
     # `pivot_offset` do `Dock.tscn` nomeia, e uma lança que não o cubra
     # desprende-se da torre ao girar. O bloco D17 do teste de design tranca isto
-    # medindo o alfa do PNG no pixel do pivô.
-    lanca_n1 = trelica("l1_lanca", (GX, GY - 0.14, TOPO), (GX, BARCO_Y + 0.75, TOPO),
-                       0.10, M["madeira_esc"], montantes=4, esp=0.040)
-    CARRO1 = BARCO_Y + 1.05
+    # de duas maneiras — a moldura tem de conter o pivô E tem de haver DESENHO
+    # à volta dele. A segunda entrou em 09/09: a moldura sozinha é quase de
+    # graça de satisfazer, porque um cabo fino a estica para o outro lado do
+    # prop.
+    # ⚠️ O n1 ERA UMA TRELIÇA, E TRELIÇA É A ASSINATURA DO n2 E DO n3. O
+    # comentário do mastro prometia "sem treliça" desde 06/09 e o MASTRO
+    # cumpria; a lança não, e ninguém foi lá conferir. Posto o porto em ruínas
+    # ao lado do completo, o que se via era a mesma máquina três vezes, mais
+    # castanha e mais pequena — que é exatamente a queixa que a torre já tinha
+    # levado um andar abaixo, e a regra que este projeto já paga noutro sítio:
+    # a ruína não é o prédio pintado de velho, é MENOS prédio.
+    #
+    # E no jogo era pior do que na bancada. A doca 1 é a que fica encostada à
+    # PRAIA, e é a única que o porto em ruínas tem: o vazado da treliça deixava
+    # passar a areia clara por trás, e as quatro travessas liam-se como os
+    # degraus de uma passadiça de madeira descendo para o areal. Vê-se na
+    # captura `pesca`, que existe desde 08/09 exatamente para mostrar este
+    # estado — foi ela que denunciou isto.
+    #
+    # O que substitui é a gramática do aparelho de verdade: UM PAU só, preso
+    # ao mastro por um gooseneck, e um AMANTILHO do topo do mastro à ponta do
+    # pau. O triângulo mastro/pau/amantilho é o que diz "pau de carga" — não a
+    # quantidade de peça, que aqui até desceu de 25 para 8.
+    #
+    # ⚠️ E O ÂNGULO DO PAU FOI ESCOLHIDO NA IMAGEM, nunca no mundo, que é a
+    # regra que o pau-de-carga do arrasteiro já pagou. A câmera come 0,82 de
+    # subida no mundo só para o pau sair HORIZONTAL na tela: a treliça de
+    # antes era perfeitamente horizontal no Blender e caía 26,6° no ecrã, com
+    # ar de coisa a ceder. Com `SOBE_N1` o pau cai 13,7°, que continua a
+    # apontar para o barco — ele atraca em `-y`, abaixo e à esquerda — sem ler
+    # como rampa. Medido no PNG, não estimado.
+    SOBE_N1 = 0.42
+    PONTA_N1 = (GX, BARCO_Y + 0.75, TOPO + SOBE_N1)
+    lanca_n1 = [
+        # O GOOSENECK, que é o que prende o pau ao mastro — e, de caminho, o
+        # que garante desenho OPACO no pixel do pivô. Ver o aviso das três
+        # lanças acima: a ponta de um pau fino podia lá cair de raspão.
+        caixa("l1_gooseneck", (GX, GY, TOPO), (0.13, 0.13, 0.16), M["metal"]),
+        # ⚠️ `madeira_esc`, E ISTO FOI MEDIDO NO JOGO E NÃO NA PALETA. A
+        # primeira versão usava `tronco` para separar o pau do mastro: 0,45 de
+        # Weber no dicionário, o que parecia de sobra. Só que a doca 1 é a que
+        # encosta na PRAIA, o pau passa por cima da areia, e a face que a
+        # câmera vê dele é a ILUMINADA — ela sai a ~103 contra areia a ~159, e
+        # o pau desaparecia. A conta que importa nunca é peça contra peça: é
+        # peça contra o FUNDO por onde ela passa, no render.
+        #
+        # E são DUAS SEÇÕES, pela mesma razão do mastro: a 40 px de
+        # comprimento o que se vê de um pau é a silhueta, e um pau afila. Numa
+        # peça só ele lia como tábua.
+        #
+        # Sem contralança e sem contrapeso, aqui e de propósito: um pau de
+        # carga é um braço só, e é essa silhueta desequilibrada que diz
+        # "improvisado" ao lado do pórtico do n3.
+        barra("l1_pau", (GX, GY - 0.05, TOPO - 0.02),
+              (GX, (GY - 0.05 + PONTA_N1[1]) / 2.0,
+               (TOPO - 0.02 + PONTA_N1[2]) / 2.0 + 0.01), 0.095,
+              M["madeira_esc"]),
+        barra("l1_pau_ponta",
+              (GX, (GY - 0.05 + PONTA_N1[1]) / 2.0 + 0.10,
+               (TOPO - 0.02 + PONTA_N1[2]) / 2.0 - 0.01), PONTA_N1, 0.065,
+              M["madeira_esc"]),
+        # O AMANTILHO. Ele é `metal` e não `corda` por medição, não por gosto:
+        # sobre a AREIA da doca 1 a corda mede 0,10 de Weber e desaparece,
+        # enquanto o metal mede 0,60. Cor calibrada para a água não atravessa
+        # para o areal — é a mesma armadilha do cinzento neutro nos painéis.
+        barra("l1_amantilho", (GX, GY + 0.02, ALTO_N1 - 0.02),
+              (PONTA_N1[0], PONTA_N1[1] + 0.06, PONTA_N1[2] + 0.02),
+              0.028, M["metal"]),
+    ]
+    # O aparelho de carga. ⚠️ ELE FOI CLARO E VOLTOU A ESCURO, pela mesma
+    # medição: `metal_claro` sobre a água FUNDA mede 0,75 de Weber, mas o que
+    # está debaixo do gancho na doca 1 é o BAIXIO, que é quase tão claro
+    # quanto a areia — medido a 106 —, e ali o claro deu **0,01**. Quem
+    # encontra o gancho não é o tom: é ele ser a única ferragem GRANDE do prop,
+    # depois de os olhais encolherem.
+    CARRO1 = BARCO_Y + 0.75
     lanca_n1 += [
-        # Sem contralança e sem contrapeso: um pau-de-carga é um braço só, e é
-        # essa silhueta desequilibrada que diz "improvisado".
-        caixa("l1_tirante", (GX, GY + 0.30, TOPO + 0.05), (0.05, 0.9, 0.05),
-              M["metal"], rot=(24, 0, 0)),
-        caixa("l1_cabo", (GX, CARRO1, TOPO - 0.60), (0.03, 0.03, 1.0), M["metal"]),
-        caixa("l1_gancho", (GX, CARRO1, TOPO - 1.16), (0.11, 0.09, 0.16), M["metal"]),
+        caixa("l1_cabo", (GX, CARRO1, TOPO + SOBE_N1 - 0.51),
+              (0.030, 0.030, 1.02), M["metal"]),
+        caixa("l1_moitao", (GX, CARRO1, TOPO - 0.58), (0.11, 0.10, 0.15),
+              M["metal"]),
+        # A haste e o bico. O bico ENTRA na haste em vez de encostar nela: duas
+        # faces no mesmo plano dão o losango preto de sempre.
+        caixa("l1_gancho", (GX, CARRO1, TOPO - 0.71), (0.06, 0.06, 0.22),
+              M["metal"]),
+        caixa("l1_gancho_bico", (GX, CARRO1 - 0.065, TOPO - 0.79),
+              (0.055, 0.13, 0.06), M["metal"]),
     ]
 
     lanca_n3 = trelica("l3_lanca", (GX, GY - 0.20, TOPO), (GX, BARCO_Y - 0.45, TOPO),
