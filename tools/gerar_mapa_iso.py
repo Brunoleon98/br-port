@@ -947,10 +947,74 @@ def predio(mx0, my0, mx1, my1, base, altura, telhado, telhado_dir, telhado_esq,
 # cada berço e tem casa do outro lado — e é o que se desenha aqui.
 
 
+def _chao(pontos, cor, opac=1.0) -> str:
+    """Polígono deitado no plano do chão, em coordenadas de mundo."""
+    return poli([p(mx, my, ALT_CAIS) for mx, my in pontos], cor, opac)
+
+
 def _faixa_mx(mx0, mx1, my0, my1, cor, opac=1.0) -> str:
     """Retângulo deitado no plano do chão, em coordenadas de mundo."""
-    return poli([p(mx0, my0, ALT_CAIS), p(mx1, my0, ALT_CAIS),
-                 p(mx1, my1, ALT_CAIS), p(mx0, my1, ALT_CAIS)], cor, opac)
+    return _chao([(mx0, my0), (mx1, my0), (mx1, my1), (mx0, my1)], cor, opac)
+
+
+# Meia largura do meio-fio: 6cm de nada que fazem a rua ter margem em vez de
+# acabar. Ele vive numa constante porque o cotovelo o desenha pelo CONTORNO, e
+# um segundo `0.05` escrito lá dentro seria a mesma linha em dois sítios.
+MEIOFIO = 0.05
+
+# ── O COTOVELO É UM POLÍGONO, E AS DUAS PONTAS SALIENTES SÃO CHANFRADAS ──
+#
+# ⚠️ ELE ERA UM RETÂNGULO, E ERA ESSA A QUEIXA. A segunda jogada circulou a
+# vermelho três sítios onde *"a estrada acaba no nada"*, um por cotovelo
+# visível. Medido em 07/09 (`docs/decisoes/012`), a rede está LIGADA — não
+# falta retângulo nenhum, e é por isso que não há asserção de geometria a
+# escrever. O que falta é a ESQUINA: um retângulo que salta 4 unidades de uma
+# vez deixa, de cada lado da curva, uma ponta de 90° a apontar para fora, e
+# ponta de asfalto no meio do relvado lê-se como estrada que acabou. A viela de
+# 07/09 tapou 34% da face virada para a vila; o resto é isto.
+#
+# CHANFRA-SE SÓ AS DUAS PONTAS SALIENTES, e são mesmo só duas: a que aponta
+# para a vila (o lado de fora da curva) e a que aponta para o avental (o lado
+# de dentro da seguinte). As outras duas quinas são REENTRANTES — é por ali que
+# a rua continua —, e "arredondá-las" seria ACRESCENTAR asfalto fora do
+# retângulo que a tabela de âncoras publica, que é exatamente o defeito que os
+# lotes reservados pagaram em 07/09: desenho do mapa que nenhuma faixa declara.
+#
+# O CORTE SAI DA LARGURA DA RUA e não de um número escrito aqui. Meia rua é o
+# raio de giro que se lê a esta escala, e a rua já mudou de largura uma vez
+# (1,10 -> 1,80, em 07/09): um chanfro cravado teria ficado com o tamanho da
+# rua velha, sem erro nenhum a apontá-lo. Ele tem de caber na PROFUNDIDADE do
+# cotovelo, que é a própria largura da rua — daí a metade, e não dois terços.
+CHANFRO_COTOVELO = RUA_LARG / 2.0
+
+
+def cotovelo_pontos(borda, prox, my1, folga: float = 0.0) -> list:
+    """Os vértices do cotovelo, inflado de `folga` (calçada, meio-fio).
+
+    A `folga` empurra o contorno para fora nos quatro lados, o que faz o mesmo
+    polígono servir de asfalto, de meio-fio e de calçada — desenhá-los como
+    três retângulos independentes é o que deixava a calçada com a esquina
+    quadrada por baixo de um asfalto já chanfrado.
+
+    ⚠️ E O CORTE CRESCE COM A FOLGA, senão a calçada sai o DOBRO da largura em
+    cima do chanfro. Afastar a esquina de `folga` em `mx` E em `my` afasta a
+    reta a 45° de `folga * raiz(2)`, e a primeira versão desta função usava o
+    mesmo corte nos três contornos: medido no render, a faixa de passeio saltava
+    de 3,9 px nas retas para 8,8 px no bisel, e lia-se como um muro em vez de um
+    meio-fio. Recuar o corte de `folga * (2 - raiz(2))` põe as duas retas
+    paralelas à distância certa. Sobra 1,58x, e isso não é defeito: é a projeção
+    — em isométrico a direção (1,1) comprime-se e a (1,-1) estica-se, e uma
+    faixa de largura constante NO MUNDO não tem largura constante NA TELA.
+    Corrigir isso seria escrever pixel dentro de geometria de mundo, que é a
+    fronteira que o `tela()` existe para não deixar atravessar.
+    """
+    corte = CHANFRO_COTOVELO + folga * (2.0 - math.sqrt(2.0))
+    mx0 = borda - RUA_RECUO - folga
+    mx1 = prox - RUA_RECUO + RUA_LARG + folga
+    my_a = my1 - RUA_LARG - folga
+    my_b = my1 + folga
+    return [(mx0, my_a), (mx1 - corte, my_a), (mx1, my_a + corte),
+            (mx1, my_b), (mx0 + corte, my_b), (mx0, my_b - corte)]
 
 
 def passadeira(borda, my_centro) -> str:
@@ -987,26 +1051,49 @@ def vias(pavimentado: bool) -> str:
     e o cotovelo que liga um trecho ao seguinte é desenhado com a MESMA
     largura da rua — desenhá-lo como um retângulo de canto a canto foi a
     primeira tentativa, e virava uma laje de asfalto do tamanho de um quarteirão.
+    Ele é um POLÍGONO desde 08/09, com as duas pontas salientes chanfradas: ver
+    `cotovelo_pontos`.
     """
     s = ""
     dentro = lambda b: b - RUA_RECUO
     fora = lambda b: b - RUA_RECUO + RUA_LARG
 
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
-        fim = my1 + COSTURA
+        vira = i + 1 < len(DEGRAUS)
+        prox = DEGRAUS[i + 1][2] if vira else None
+        # ⚠️ A FAIXA RETA ACABA ONDE O COTOVELO COMEÇA, e não no `my1`.
+        #
+        # Ela ia até lá, e com o cotovelo chanfrado isso passou a IMPORTAR: o
+        # retângulo da faixa reta encheria de volta o triângulo que o chanfro
+        # corta, e a esquina saía quadrada com o polígono a dizer que não era.
+        # Quem faz a costura entre os dois é o próprio cotovelo, que cobre a
+        # última largura de rua inteira — a `COSTURA` de sobreposição continua,
+        # do lado de DENTRO dele, para não deixar fio de fundo na junta.
+        fim = (my1 - RUA_LARG + COSTURA) if vira else (my1 + COSTURA)
         s += _faixa_mx(dentro(borda) - CALCADA, fora(borda) + CALCADA,
                        my0, fim, C["calcada"])
+        # ⚠️ A CALÇADA E O MEIO-FIO DO COTOVELO VÊM ANTES DO ASFALTO DA FAIXA,
+        # e até 08/09 a calçada vinha DEPOIS. Ela é 0,22 mais funda do que o
+        # asfalto nos quatro lados, e o que sobrava era uma FITA DE PASSEIO
+        # ATRAVESSADA NA PISTA, da largura da rua, na entrada de cada cotovelo.
+        # Medida no render, em (139,260): #aeb8bf, que é a calçada, onde tinha
+        # de estar o #49535b do asfalto.
+        #
+        # Nada perguntava, e não era descuido de ninguém: toda a maquinaria de
+        # cerco deste projeto mede POSIÇÃO em coordenadas de mundo, e a COR com
+        # que o mapa pinta um ponto não era pergunta de suíte nenhuma. Hoje é —
+        # o bloco D20 do teste de design rasteriza o mapa e lê a pista.
+        if vira:
+            s += _chao(cotovelo_pontos(borda, prox, my1, CALCADA), C["calcada"])
+            s += _chao(cotovelo_pontos(borda, prox, my1, MEIOFIO), C["meiofio"])
         s += _faixa_mx(dentro(borda), fora(borda), my0, fim, C["asfalto_via"])
-        # Meio-fio: 6cm de nada que fazem a rua ter margem em vez de acabar.
+        # O meio-fio da faixa reta acaba com ela: daí para a frente quem tem
+        # margem é o contorno do cotovelo, que já está desenhado por baixo.
         for m in (dentro(borda), fora(borda)):
-            s += _faixa_mx(m - 0.05, m + 0.05, my0, fim, C["meiofio"])
+            s += _faixa_mx(m - MEIOFIO, m + MEIOFIO, my0, fim, C["meiofio"])
 
-        if i + 1 < len(DEGRAUS):
-            prox = DEGRAUS[i + 1][2]
-            s += _faixa_mx(dentro(borda) - CALCADA, fora(prox) + CALCADA,
-                           my1 - RUA_LARG - CALCADA, my1 + CALCADA, C["calcada"])
-            s += _faixa_mx(dentro(borda), fora(prox),
-                           my1 - RUA_LARG, my1, C["asfalto_via"])
+        if vira:
+            s += _chao(cotovelo_pontos(borda, prox, my1), C["asfalto_via"])
 
         if pavimentado:
             # AS PASSADEIRAS, na altura de cada prédio do pátio. O pedido dizia
@@ -2387,7 +2474,7 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
         # prédios e os props da cena, um lote de 2,0 x 1,7 tem UMA posição
         # livre — e são precisas duas, uma por estrutura de Fase 2. A 1,6 x 1,4
         # abrem-se duas com folga de 0,73 e 0,30 unidades, e são estas. O
-        # bloco D20 do teste de design tranca-as contra os acessos publicados.
+        # bloco D13, §8, do teste de design tranca-as contra os acessos publicados.
         for recuo, my in LOTES_RESERVADOS:
             borda = _borda_em(my)
             s += lote_reservado(borda - recuo, my, borda - recuo + LOTE_LARG,
@@ -2460,6 +2547,11 @@ def tabela_ancoras() -> dict:
             "my": [my0, my1], "borda": borda,
             "avental": [borda - APRON, borda],
             "rua": [borda - RUA_RECUO - CALCADA, borda - RUA_RECUO + RUA_LARG + CALCADA],
+            # A PISTA SEM A CALÇADA. O `rua` acima é o CERCO (prédio em cima do
+            # passeio também está errado) e por isso inclui-a; o D20 lê a cor
+            # do que tem de ser rodagem, e ali a calçada é justamente o que não
+            # pode aparecer. São duas perguntas, e por isso são dois números.
+            "asfalto": [borda - RUA_RECUO, borda - RUA_RECUO + RUA_LARG],
             "vila": [borda - VILA_RECUO, borda - VILA_RECUO + VILA_PROF],
             # A fileira de trás, publicada para o D14 poder conferir que as
             # duas se separam por mais de um telhado — a régua tem de sair do
@@ -2481,9 +2573,19 @@ def tabela_ancoras() -> dict:
     cotovelos = []
     for i, (_my0, my1, borda) in enumerate(DEGRAUS[:-1]):
         prox = DEGRAUS[i + 1][2]
+        # ⚠️ O `mx`/`my` CONTINUA A SER O RETÂNGULO, e o desenho já não é um.
+        # Desde 08/09 o cotovelo tem as duas pontas salientes chanfradas, logo
+        # o retângulo publicado é MAIOR do que o asfalto — e é assim que tem de
+        # ser: ele é o cerco contra o qual o D2 mede pegada de prop, e um cerco
+        # que erra tem de errar para o lado seguro. O `chanfro` sai à parte,
+        # para quem precisa da forma DESENHADA (o D20) a poder reconstruir.
         cotovelos.append({
             "mx": [borda - RUA_RECUO - CALCADA, prox - RUA_RECUO + RUA_LARG + CALCADA],
             "my": [my1 - RUA_LARG - CALCADA, my1 + CALCADA],
+            "asfalto_mx": [round(borda - RUA_RECUO, 3),
+                           round(prox - RUA_RECUO + RUA_LARG, 3)],
+            "asfalto_my": [round(my1 - RUA_LARG, 3), round(my1, 3)],
+            "chanfro": round(CHANFRO_COTOVELO, 3),
         })
 
     # ⚠️ E OS ACESSOS AOS BERÇOS, publicados pela mesma razão que os cotovelos:
@@ -2508,7 +2610,7 @@ def tabela_ancoras() -> dict:
             "entrada": [round(faixa_do_caminhao(borda), 3), round(meio, 3)],
         })
 
-    # E OS LOTES RESERVADOS, publicados para o D20 os poder conferir contra os
+    # E OS LOTES RESERVADOS, publicados para o D13 §8 os poder conferir contra os
     # acessos. Um deles já esteve em cima de um; sem os números aqui, a única
     # coisa que denunciava isso era um camião estacionado por cima da marca.
     reservados = []
@@ -2541,6 +2643,13 @@ def tabela_ancoras() -> dict:
                      "meia_larg": MEIA_LARG * ZOOM, "meia_alt": MEIA_ALT * ZOOM,
                      "alt_cais": ALT_CAIS * ZOOM, "fundo_terra": FUNDO_TERRA},
         "praias": areia,
+        # AS CORES DA RUA, e elas saem do dicionário `C` de propósito. O D20
+        # compara a cor lida do render com estas; uma lista escrita à mão do
+        # lado do Godot envelheceria calada na primeira vez que alguém mexesse
+        # na paleta — que é a mesma razão de `medir_enquadramento` já receber a
+        # sua por JSON em vez de a repetir.
+        "cores_da_rua": {"asfalto": C["asfalto_via"], "calcada": C["calcada"],
+                         "meiofio": C["meiofio"]},
         "pegadas": {k: list(v) for k, v in sorted(PEGADAS.items())},
         "mapa": {"largura": SAIDA, "altura": SAIDA},
         "pieres": pieres,

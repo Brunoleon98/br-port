@@ -279,6 +279,19 @@ Teste e import rodam sem tela.
    a pergunta que se quer fazer — separe a lista e compare ITEM a item. Vale a
    mesma desconfiança ao ler chave de config: uma linha dentro de um
    COMENTÁRIO satisfaz uma busca no arquivo inteiro.
+   **E TESTE QUE LÊ ARTE GERADA LÊ O ARQUIVO, NUNCA O `load()` DA TEXTURA.**
+   `load("res://art/porto_mapa_iso.svg")` devolve o `.ctex` de
+   `.godot/imported/`, que é de quando o projeto foi importado: com o mapa
+   regerado na mesma sessão, o D20 reprovou a apontar para um defeito que já
+   tinha sido corrigido — verdadeiro, e de ontem. Rasterize o arquivo
+   (`load_svg_from_string`, que é o mesmo ThorVG); o cache do importador é uma
+   resposta velha, e num teste isso mente nas duas direções.
+   **E DEFEITO INJETADO LONGE DA LINHA AMOSTRADA NÃO CHEGA A ELA.** Um bloco
+   que percorre um caminho só vê o que o caminho cruza. Pintar a passadeira com
+   a cor da calçada não reprovou o D20 e não foi falha dele: com passo
+   `RUA_LARG/8`, a barra n.º 6 acaba em `dentro + 1,35`, que é ao milésimo a
+   faixa por onde o camião anda — o defeito passou rente. Ao injetar num teste
+   que amostra uma linha, ponha o defeito EM CIMA dela.
 
 ---
 
@@ -340,6 +353,16 @@ derivada delas.
 - **Ordem de nó É profundidade.** Quem tem `mx+my` maior está mais perto da
   câmera e tapa quem tem menor. Vale em `Dock.tscn` e em `MapaWrap/Cenario`.
   O teste de design confere isto.
+- **⚠️ CHANFRO A 45° INFLADO PELA FOLGA AFASTA-SE `√2` VEZES MAIS.** Vale para
+  toda peça que exista em versões concêntricas — asfalto, meio-fio, calçada. A
+  esquina inflada de `folga` em `mx` E em `my` põe a reta a 45° a `folga · √2`
+  da original, não a `folga`: medida no render, a faixa de passeio saltava de
+  **3,9 px** nas retas para **8,8 px** em cima do bisel, e lia-se como um muro.
+  Recuar o corte de `folga · (2 − √2)` acerta. Sobra 1,58×, e essa parte não se
+  corrige: em isométrico a direção (1,1) comprime-se e a (1,−1) estica-se, logo
+  **faixa de largura constante NO MUNDO não tem largura constante NA TELA** — e
+  igualá-la seria escrever pixel dentro de geometria de mundo, que é a fronteira
+  que o `tela()` existe para não deixar atravessar.
 - Mexer na projeção **obriga** a regerar props e mapas e a rodar o teste de
   design — que existe exatamente para pegar essa divergência.
 
@@ -491,6 +514,19 @@ tranca isso.
   demarcação. Ao acrescentar desenho ao mapa, publique-o na tabela de âncoras e
   confira-o contra o que já lá está — **interseção de intervalos nos dois
   eixos**, que é a mesma regra dos quatro cantos.
+- **⚠️ E NADA PERGUNTAVA COM QUE COR O MAPA PINTA UM PONTO.** A irmã da regra
+  acima, do outro lado: ali dois desenhos ocupavam o mesmo sítio, aqui a
+  GEOMETRIA ESTÁ TODA CERTA e quem erra é a ordem. A calçada do cotovelo saía
+  depois do asfalto da faixa reta e é 0,22 mais funda do que ele: sobrava uma
+  fita da cor do passeio ATRAVESSADA NA PISTA, da largura da rua, na entrada de
+  cada um dos cinco cotovelos, e viveu assim uma sessão inteira. Todo cerco
+  deste projeto pergunta POSIÇÃO — pegada contra faixa, lote contra acesso,
+  casa contra vão — e nenhum perguntava COR. Hoje o **D20** rasteriza os dois
+  mapas com o ThorVG e percorre a `ROTA_ESTRADA` a exigir que nenhum ponto dela
+  caia em calçada; a rota serve porque é escrita à mão no `Main.gd` e o mapa sai
+  do gerador — duas fontes, e não um espelho. E a pergunta é **«não é calçada»,
+  não «é asfalto»**: a rodagem leva pintura, e exigir o cinzento reprovaria uma
+  zebra bem desenhada (`docs/decisoes/013`).
 - **E a guarda que DUAS outras já implicam nunca reprova.** Irmã da regra de
   injetar defeito, um andar acima: a primeira asserção do desvio varria-o contra
   o retângulo do acesso, e o desvio é uma reta entre dois pontos que outras duas

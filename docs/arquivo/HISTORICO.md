@@ -518,3 +518,28 @@ iguais, a barra preta na quina coplanar e os barrotes a pairar — estão no
 
 ---
 
+
+## Os quatro blocos da segunda jogada (07–08/09)
+
+A devolução de 06/09 trouxe 25 itens, triados em `PLAYTEST_02_ANALISE.md`. O
+Bruno escolheu a ordem, um bloco de cada vez, e o detalhe de cada um vive na
+decisão dele:
+
+| Bloco | Itens | Onde |
+|---|---|---|
+| Defeitos medidos + interface | 14, 10, 1, 22, 25 | a análise, e o PR #34 |
+| O camião entra na doca | 3 | `docs/decisoes/011` |
+| A estrada: mão dupla, passadeiras, viela | 2, 4a, 11 e um terço do 4b | `docs/decisoes/012` |
+| A esquina chanfrada | o resto do 4b | `docs/decisoes/013` |
+
+Nenhum deles encostou na economia: o `GameState.gd` não mudou em nenhum, e o
+balanceamento atravessou os quatro em 100% / 80,2% / 37,3%.
+
+**O último rendeu mais do que o item.** Ao medir o cotovelo para o chanfrar
+apareceu uma fita de calçada atravessada na pista, na entrada dos cinco
+cotovelos, com a geometria toda certa e a ordem de desenho errada — invisível
+porque **toda a maquinaria de cerco deste projeto pergunta POSIÇÃO, e nenhuma
+perguntava COR**. Daí saiu o bloco D20, o primeiro que rasteriza o mapa e lê o
+que está pintado.
+
+---
