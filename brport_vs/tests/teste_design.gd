@@ -85,6 +85,7 @@ var _d16_completo := false
 var _d17_completo := false
 var _d18_completo := false
 var _d19_completo := false
+var _d20_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -177,6 +178,10 @@ func _rodar() -> void:
 	print("=== D19: o texto do painel Construir passa a WCAG no branco ===")
 	_d19_contraste_do_painel()
 	_confere("o bloco D19 correu até ao fim", _d19_completo)
+
+	print("=== D20: a pista é pista no desenho, do começo ao fim da rota ===")
+	_d20_a_rua_no_desenho()
+	_confere("o bloco D20 correu até ao fim", _d20_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -1837,3 +1842,117 @@ func _contraste(a: Color, b: Color) -> float:
 	var lb := _luminancia(b)
 	return (maxf(la, lb) + 0.05) / (minf(la, lb) + 0.05)
 
+
+
+# ── D20 ── a pista é PISTA no desenho, e não só nas coordenadas
+#
+# ⚠️ ESTE É O PRIMEIRO BLOCO QUE OLHA PARA A COR DO MAPA, e nasceu de um
+# defeito que viveu uma sessão inteira sem que nada o pudesse ver.
+#
+# Toda a maquinaria de cerco deste projeto pergunta POSIÇÃO: o D2 mede pegada
+# de prop contra faixa publicada, o D13 §8 mede lote reservado contra acesso, o
+# D14 mede casa contra vão da vila. Nenhuma delas pergunta COM QUE COR o mapa
+# pinta um ponto — e foi por aí que passou, desde 07/09, uma FITA DE PASSEIO
+# ATRAVESSADA NA PISTA, da largura da rua inteira, na entrada de cada um dos
+# cinco cotovelos. A geometria estava certa: todos os retângulos no sítio. Era
+# ORDEM DE DESENHO — a calçada do cotovelo saía DEPOIS do asfalto da faixa
+# reta, e é 0,22 mais funda do que ele nos quatro lados. Medida no render, em
+# (139,260): #aeb8bf, que é a calçada, onde tinha de estar o #49535b da pista.
+#
+# O QUE ELE LÊ é o SVG do disco, rasterizado pelo ThorVG — o mesmo importador
+# do jogo. É a escolha que o `medir_enquadramento` já tinha feito, e pela mesma
+# razão: medir o que o jogador vê, e não o que um segundo rasterizador acharia
+# que ele vê.
+#
+# ⚠️ E LÊ-SE O ARQUIVO, NÃO O `load()` DA TEXTURA, que foi a primeira versão e
+# durou uma corrida. `load("res://art/porto_mapa_iso.svg")` devolve o `.ctex`
+# de `.godot/imported/`, e essa cópia é de quando o projeto foi importado: com
+# o mapa regerado nesta sessão, o bloco reprovou a apontar para a fita de
+# passeio que já tinha sido CORRIGIDA — o defeito era verdadeiro e a corrida
+# era velha. Num teste que lê arte gerada, o arquivo é a fonte e o cache do
+# importador é uma resposta de ontem.
+#
+# POR ONDE ELE ANDA é a `ROTA_ESTRADA`, e isso não é preguiça: ela é uma
+# constante ESCRITA À MÃO no `Main.gd` e o mapa sai do gerador, logo as duas
+# pontas da asserção têm fontes independentes. O D13 já percorre esta rota
+# contra os RETÂNGULOS publicados; aqui ela é percorrida contra o DESENHO, que
+# é a pergunta que os retângulos não sabem responder.
+#
+# ⚠️ E A PERGUNTA É «NÃO É CALÇADA», não «é asfalto». A rodagem leva pintura —
+# linha central, passadeira —, e exigir o cinzento do asfalto reprovaria uma
+# zebra bem desenhada. O que nunca pode aparecer no meio da pista é o PASSEIO.
+const MAPAS_DA_RUA := ["res://art/porto_mapa_iso.svg",
+	"res://art/porto_mapa_iso_patio.svg"]
+
+# Quantas amostras por trecho da rota. 40 põe uma amostra a cada ~0,2 unidades
+# no trecho mais longo, que é menos de metade da fita de 0,22 que o bloco
+# existe para apanhar — amostrar mais grosso do que o defeito é não amostrar.
+const D20_AMOSTRAS := 40
+
+
+func _d20_a_rua_no_desenho() -> void:
+	var pr: Dictionary = _ancoras["projecao"]
+	var alt := float(pr["alt_cais"])
+	var cores: Dictionary = _ancoras.get("cores_da_rua", {})
+	_confere("o mapa publica as cores da rua", cores.has("calcada"))
+	if not cores.has("calcada"):
+		return
+	var calcada := Color(str(cores["calcada"]))
+
+	var consts: Dictionary = (_main.get_script() as GDScript).get_script_constant_map()
+	var rota: Array = consts["ROTA_ESTRADA"]
+
+	for caminho in MAPAS_DA_RUA:
+		var arq := FileAccess.open(caminho, FileAccess.READ)
+		_confere("%s existe" % caminho.get_file(), arq != null)
+		if arq == null:
+			continue
+		var img := Image.new()
+		var erro := img.load_svg_from_string(arq.get_as_text(), 1.0)
+		arq.close()
+		_confere("%s rasteriza" % caminho.get_file(), erro == OK)
+		if erro != OK:
+			continue
+		# ⚠️ O PNG TEM DE TER O TAMANHO QUE A TABELA PUBLICA. Sem isto, um mapa
+		# reimportado noutra escala faria cada amostra cair num sítio diferente
+		# do que se pede — e todas passariam, porque o relvado também não é
+		# calçada. Ler no sítio errado é pior do que não ler.
+		_confere("%s tem os %dx%d da tabela" % [caminho.get_file(),
+				int(_ancoras["mapa"]["largura"]), int(_ancoras["mapa"]["altura"])],
+			img.get_width() == int(_ancoras["mapa"]["largura"])
+				and img.get_height() == int(_ancoras["mapa"]["altura"]))
+
+		var lidas := 0
+		var pior := ""
+		for i in range(rota.size() - 1):
+			var de: Vector2 = rota[i]
+			var para: Vector2 = rota[i + 1]
+			for k in range(D20_AMOSTRAS + 1):
+				var m: Vector2 = de.lerp(para, float(k) / float(D20_AMOSTRAS))
+				var px := _tela(m.x, m.y, alt)
+				var ix := int(floor(px.x))
+				var iy := int(floor(px.y))
+				if ix < 0 or iy < 0 or ix >= img.get_width() or iy >= img.get_height():
+					continue        # a rota entra e sai do quadro de propósito
+				lidas += 1
+				var cor := img.get_pixel(ix, iy)
+				if _mesma_cor(cor, calcada) and pior == "":
+					pior = "em (%.2f, %.2f) — pixel (%d, %d) — o mapa pinta %s, que é a calçada" \
+						% [m.x, m.y, ix, iy, cor.to_html(false)]
+		# ⚠️ E CONFERE-SE QUANTAS FORAM LIDAS. Um recorte mal posto, ou uma rota
+		# que saísse inteira do quadro, daria zero amostras e um PASS contente:
+		# é o mesmo defeito que o CLAUDE.md descreve como "o defeito injetado
+		# não chegou a quem o havia de ver", só que do lado do teste.
+		_confere("%s: a rota dá pelo menos 200 amostras dentro do quadro (%d)"
+			% [caminho.get_file(), lidas], lidas >= 200)
+		_confere("%s: nenhum ponto da rota cai em calçada" % caminho.get_file(),
+			pior == "", pior)
+	_d20_completo = true
+
+
+# Duas cores chapadas são iguais ou não são; a folga é só para o
+# antisserrilhado, que num ponto no meio da faixa de rodagem não chega a
+# acontecer.
+func _mesma_cor(a: Color, b: Color) -> bool:
+	return absf(a.r - b.r) <= 4.0 / 255.0 and absf(a.g - b.g) <= 4.0 / 255.0 \
+		and absf(a.b - b.b) <= 4.0 / 255.0

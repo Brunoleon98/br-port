@@ -951,6 +951,14 @@ deram lugar a dois LOTES RESERVADOS. Os camiões encolheram para 0,72 (1,96 →
 1,41 unidades contra 1,99 do escritório). O "Alocar todos" ganhou a variação
 `BotaoDestaque`, e o balanço deixou de ser beco sem saída.
 
+✅ **O 4b FECHOU em 08/09** (`docs/decisoes/013`): as duas quinas salientes de
+cada cotovelo passaram a ser chanfradas em meia largura de rua, e a faixa reta
+acaba onde o cotovelo começa. Ao medir para o chanfrar apareceu um defeito que
+nenhuma suíte podia ver — **uma fita de calçada atravessada na pista** na
+entrada dos cinco cotovelos, geometria certa e ordem de desenho errada —, e daí
+saiu o bloco **D20**, o primeiro deste projeto que lê a COR do mapa. O que
+segue é a diagnose de 07/09, como estava quando o item ainda era o que faltava.
+
 ⚠️ **Sobrou o 4b, e a diagnose mudou o que ele é.** Tingindo cada peça do
 `vias()` e medindo o render, **a rua está LIGADA**: o cotovelo encosta na faixa
 na mesma linha de meio-fio. Os três círculos caem sobre os três COTOVELOS — o

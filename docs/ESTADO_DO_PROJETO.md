@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 07/09/2026
+> **Última atualização:** 08/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -94,6 +94,9 @@ terra entre elas**, que é o único acesso da fileira de trás; a de trás é ma
 rala, para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`): térrea,
 sobrado, prédio — é assim que cresce a cada Fase, sem o jogo saber.
 
+**E a rua VIRA em vez de acabar:** cada cotovelo leva chanfro de meia largura
+de rua nas duas quinas salientes (`docs/decisoes/013`).
+
 **E a mata atrás dela é desenhada onde se vê**, pela receita `com_saia()`.
 
 ---
@@ -120,20 +123,15 @@ em `docs/arquivo/HISTORICO.md`.
 
 **Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
 
-**Três blocos fechados em 07/09**, todos escolhidos por ele, e o detalhe de
-cada um está onde ele vive:
+**Quatro blocos fechados** — defeitos medidos e interface (14, 10, 1, 22, 25),
+o camião que entra na doca (3), a estrada (2, 4a, 11) e a esquina chanfrada
+(4b). O que custaram está em `docs/arquivo/HISTORICO.md`; o porquê, nas
+decisões `011` a `013`.
 
-| Bloco | Itens | Onde |
-|---|---|---|
-| Defeitos medidos + interface | 14, 10, 1, 22, 25 | a análise, e o PR #34 |
-| O camião entra na doca | 3 | `docs/decisoes/011` |
-| A estrada | 2, 4a, 11 e um terço do 4b | `docs/decisoes/012` |
-
-⚠️ **Duas coisas ficaram medidas e por fazer.** O **4b** está a um terço: a face
-de cada cotovelo tem 4,00 unidades e a boca da viela cobre 1,36 — 34%, igual
-nos quatro; achatar o resto é chanfrar a esquina. E a rua parou em **1,8** de
-largura porque a janela entre o acesso ao berço e o cotovelo fecha a 1,99; ir
-além disso obriga a empurrar o `RUA_RECUO`, e isso mexe no enquadramento.
+⚠️ **Sobrou UMA coisa medida e por fazer, e não é defeito:** a rua parou em
+**1,8** porque a janela em `my` entre o acesso ao berço e o cotovelo fecha a
+1,99 e o armazém precisa de 1,987. Passar disso empurra o `RUA_RECUO` — há
+1,48 de folga até à vila — e mexe no enquadramento inteiro. É sessão própria.
 
 O resto continua por começar, e **a ordem é dele**.
 
@@ -146,18 +144,11 @@ madeira podre (espera o A4). **Livre, sem gate: A8.**
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
-**Decisão do Bruno: responde-se quando a Fase 2 for feita, e não antes.** Ela
-não é pendência aberta nem trava sessão nenhuma — é uma nota presa ao trabalho
-da Fase 2, para quem o abrir a ler antes de codar a economia. O que continua a
-valer é a regra: **codar a economia da Fase 2 sem a responder é construir em
-cima de uma pergunta**, e por isso o item começa por aqui.
-
-O contrato cresce ×2,9 e depois ×2,5 por fase; a parcela cresce ×2,0 e ×1,5 —
-**a receita corre mais depressa do que a dívida**, e a tensão da Fase 1
-desaparece a partir da semana 5. Subir as parcelas, assumir que é de propósito,
-ou trocar o que pressiona: **não está decidido**. É projeção e não medição — a
-conta e o modo de a refazer estão em
-`docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
+**Decisão do Bruno: responde-se quando a Fase 2 for feita, e não antes.** Não é
+pendência aberta nem trava sessão nenhuma — é uma nota presa ao trabalho da
+Fase 2, e a regra que vale é: **codar a economia dela sem a responder é
+construir em cima de uma pergunta**. A conta que a levanta, e o modo de a
+refazer, estão em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 
 ---
 
@@ -175,7 +166,7 @@ conta e o modo de a refazer estão em
 | `tools/ler_registros.py` | **O leitor** — resume N partidas de uma vez, e põe o jogador MEDIDO ao lado dos perfis que o simulador supõe |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se — são dois arquivos em duas linguagens que nada obriga a concordar |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela. O bloco **D14** (04/09) guarda a vila; o **D15** (04/09) guarda as duas pontas de areia; o **D18** (06/09) mede o PIOR CASO de texto do cartão de doca contra os 200px de interior dele; o **D19** (06/09) mede a WCAG de cada rótulo do painel Construir contra o branco do cartão |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade e se a interface cabe na tela. O bloco **D14** (04/09) guarda a vila; o **D15** (04/09) guarda as duas pontas de areia; o **D18** (06/09) mede o PIOR CASO de texto do cartão de doca contra os 200px de interior dele; o **D19** (06/09) mede a WCAG de cada rótulo do painel Construir contra o branco do cartão; o **D20** (08/09) é o primeiro que olha para a COR: rasteriza os dois mapas e percorre a rota do camião a exigir que ela nunca caia em calçada |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, e nenhum `{token}` de texto chega cru à tela |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os 3 tons da Dona Cida, as 8 falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Os números da narração saem das constantes, nunca escritos à mão |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
@@ -322,9 +313,8 @@ A **Zona de Espera é só visual**, e torná-la mecânica muda o balanceamento
 medido (`docs/arquivo/BLOCO4_BRIEFING_VISUAL.md`).
 
 Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o Diário
-do Porto e a lista "VS — OUT" do GDD. **A cena de fim de Fase 1 saiu desta
-lista em 07/09**: ela existe desde o A4, em dois tempos, e desde a segunda
-jogada FECHA — o balanço tem botão de fechar e o menu de pausa reabre-o.
+do Porto e a lista "VS — OUT" do GDD. A cena de fim de Fase 1 já não está nesta
+lista: ela existe, em dois tempos, e o balanço FECHA — o menu de pausa reabre-o.
 
 ---
 ---
