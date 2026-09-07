@@ -103,13 +103,15 @@ def angulo_da_base(m):
     NÃO devolve média, e a razão vale a leitura. A heurística só funciona quando
     a parte de baixo do prop É um quadrilátero apoiado no chão. Num casco de
     barco, numa copa de coqueiro ou numa lança de guindaste não é, e aí ela
-    devolve um número com cara de medida que não mede nada — `barco_pequeno` dá
-    42,77° e o barco está perfeitamente certo.
+    devolve um número com cara de medida que não mede nada, e o barco está
+    perfeitamente certo.
 
     O que separa um caso do outro é as duas arestas CONCORDAREM. `guindaste_base`
     dá 26,57° e 26,57°; o guindaste do lote externo de 31/08 deu 34,86° e 34,43°
-    — os dois medíveis, e um deles fora do contrato. O casco de barco dá 4,6° e
-    21,2°, e é isso que diz "não me use". Quem decide o veredito é `medir()`.
+    — os dois medíveis, e um deles fora do contrato. O `barco_pesca_traineira`
+    dá 21,4° e 52,1°, e é isso que diz "não me use" — os três barcos de pesca
+    dão o mesmo desacordo, porque um casco não tem apoio plano nenhum. Quem
+    decide o veredito é `medir()`.
 
     Uma última armadilha, medida: a sombra de contato tem azimute próprio (250°)
     e contamina UMA das arestas, puxando-a alguns graus. Subir o limiar de

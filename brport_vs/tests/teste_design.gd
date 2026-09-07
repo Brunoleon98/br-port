@@ -452,37 +452,101 @@ func _d17_niveis_do_porto() -> void:
 	# de motivos DENTRO de cada classe — percorrê-la é o que faz um motivo novo
 	# numa classe reprovar aqui em vez de rebentar em jogo, quando
 	# `arte_do_barco()` for indexado com uma chave que não existe.
+	# ⚠️ E DESDE 08/09 HÁ UM TERCEIRO EIXO: o PORTE. A frota de pesca deixou de
+	# ser um barco só, e cada folha da tabela passou a ser uma LISTA ordenada
+	# do menor para o maior — quem escolhe entre eles é o VALOR do contrato
+	# (`docs/decisoes/014`). Percorrer só o par (classe, motivo) deixaria dois
+	# dos três barcos de pesca por conferir, que é o buraco do `barco_medio`
+	# num eixo novo.
 	var GS: Node = root.get_node("GameState")
 	var por_arquivo := {}          # caminho -> caixa desenhada
 	var classes_do_arquivo := {}   # caminho -> quantas classes o usam
 	for classe in GS.CLASSES_DE_NAVIO:
 		var da_classe := {}
-		for motivo in GS.CLASSES_DE_NAVIO[classe]["motivos"]:
-			var tex = doca.call("arte_do_barco", String(classe), String(motivo))
-			_confere("a classe %s com motivo %s tem casco" % [classe, motivo],
-				tex != null)
-			if tex == null:
+		var dados: Dictionary = GS.CLASSES_DE_NAVIO[classe]
+		for motivo in dados["motivos"]:
+			var portes = doca.get_script().get_script_constant_map()["CASCOS"] \
+				[classe][motivo]
+			_confere("a classe %s com motivo %s tem uma folha de cascos"
+					% [classe, motivo],
+				portes is Array and not (portes as Array).is_empty())
+			if not (portes is Array) or (portes as Array).is_empty():
 				continue
-			var caminho: String = (tex as Texture2D).resource_path
-			da_classe[caminho] = true
-			por_arquivo[caminho] = tex as Texture2D
-			if not classes_do_arquivo.has(caminho):
-				classes_do_arquivo[caminho] = {}
-			classes_do_arquivo[caminho][classe] = true
+
+			# A folha inteira é a chave da partilha: o que a afirmação do
+			# pesqueiro diz é que os dois motivos dele levam OS MESMOS TRÊS
+			# barcos, não que levam um barco igual cada.
+			var folha := ""
+			var caminhos := {}
+			for tex in portes:
+				var caminho: String = (tex as Texture2D).resource_path
+				folha += caminho + "|"
+				caminhos[caminho] = true
+				por_arquivo[caminho] = tex as Texture2D
+				if not classes_do_arquivo.has(caminho):
+					classes_do_arquivo[caminho] = {}
+				classes_do_arquivo[caminho][classe] = true
+			da_classe[folha] = true
+
+			# ⚠️ E DOIS PORTES DA MESMA FOLHA NÃO PODEM SER O MESMO ARQUIVO.
+			# Ali em cima, dois MOTIVOS a partilharem um casco é uma afirmação
+			# sobre o destino da carga; aqui dentro, dois PORTES a partilharem
+			# um desenho não afirma nada — é uma faixa de valor que existe na
+			# tabela e não existe na tela. E é também o que faz o `find()` do
+			# bloco seguinte poder responder.
+			_confere("a folha de %s/%s não repete arquivo (%d porte(s))"
+					% [classe, motivo, (portes as Array).size()],
+				caminhos.size() == (portes as Array).size(),
+				"%d arquivos para %d portes"
+					% [caminhos.size(), (portes as Array).size()])
+
+			# ⚠️ TODO PORTE TEM DE SER ALCANÇÁVEL PELA FAIXA DE VALOR DA
+			# CLASSE, e a pergunta faz-se pela PORTA QUE O JOGO USA — o
+			# `arte_do_barco()` com um valor, e não a conta da faixa sozinha.
+			# Um porte que nenhum contrato alcance é o `barco_medio` outra vez:
+			# desenhado, validado, e em doca nenhuma. Aqui isso não daria nem
+			# erro — daria uma linha a mais numa lista.
+			#
+			# ⚠️ E A ORDEM É PARTE DA AFIRMAÇÃO. A folha vai do menor para o
+			# maior porque a leitura é "o contrato maior traz o barco maior";
+			# uma conta que devolvesse os portes fora de ordem cumpriria a
+			# alcançabilidade e inverteria o sentido, sem uma asserção acima a
+			# reparar. São duas perguntas, e nenhuma implica a outra.
+			var vmin: int = int(dados["valor_min"])
+			var vmax: int = int(dados["valor_max"])
+			var portes_vistos := {}
+			var anterior := -1
+			var desordem := ""
+			for valor in range(vmin, vmax + 1):
+				var tex = doca.call("arte_do_barco", String(classe),
+					String(motivo), valor)
+				var idx: int = (portes as Array).find(tex)
+				portes_vistos[idx] = true
+				if idx < anterior and desordem == "":
+					desordem = "em R$%d o porte cai de %d para %d" \
+						% [valor, anterior + 1, idx + 1]
+				anterior = idx
+			_confere("os %d porte(s) de %s/%s saem todos na faixa R$%d–%d"
+					% [(portes as Array).size(), classe, motivo, vmin, vmax],
+				portes_vistos.size() == (portes as Array).size(),
+				"só %d deles chegam a sair" % portes_vistos.size())
+			_confere("o porte de %s/%s cresce com o valor do contrato"
+					% [classe, motivo],
+				desordem == "", desordem)
 
 		# ⚠️ PARTILHA TOTAL OU NENHUMA, e é esta a asserção que distingue a
-		# decisão do descuido. O pesqueiro usa o MESMO casco nos dois motivos
+		# decisão do descuido. O pesqueiro usa a MESMA folha nos dois motivos
 		# dele de propósito: pescado e armazenagem são o mesmo peixe indo para
 		# o mercado ou para a câmara, e o barco não muda com o destino da
 		# carga. Um cargueiro que apontasse dois serviços para o mesmo PNG
 		# seria copiar-colar — e as duas coisas leem-se igual numa tabela.
 		# Exigir 1 ou N separa-as: partilhar é uma afirmação sobre a CLASSE
 		# inteira, nunca sobre um par de motivos.
-		var motivos: Dictionary = GS.CLASSES_DE_NAVIO[classe]["motivos"]
-		_confere("a classe %s tem um casco por motivo, ou um só para todos"
+		var motivos: Dictionary = dados["motivos"]
+		_confere("a classe %s tem uma folha por motivo, ou uma só para todos"
 				% classe,
 			da_classe.size() == 1 or da_classe.size() == motivos.size(),
-			"tem %d cascos para %d motivos — dois motivos a partilhar um "
+			"tem %d folhas para %d motivos — dois motivos a partilhar um "
 				% [da_classe.size(), motivos.size()]
 				+ "desenho e outros não é copiar-colar, não é decisão")
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cnqn2pka5b2tu"
-path="res://.godot/imported/barco_pequeno.png-e6aa6ac38d0ce0f03153fef8f6704502.ctex"
+uid="uid://fen1o1abigoi"
+path="res://.godot/imported/barco_pesca_bote.png-31d83704b5ebeaba813f688930ffa825.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/props/barco_pequeno.png"
-dest_files=["res://.godot/imported/barco_pequeno.png-e6aa6ac38d0ce0f03153fef8f6704502.ctex"]
+source_file="res://art/props/barco_pesca_bote.png"
+dest_files=["res://.godot/imported/barco_pesca_bote.png-31d83704b5ebeaba813f688930ffa825.ctex"]
 
 [params]
 

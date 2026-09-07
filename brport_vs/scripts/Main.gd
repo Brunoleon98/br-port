@@ -197,6 +197,24 @@ func _motivo_da_classe(classe: String, n: int) -> String:
 	return String(motivos[n % motivos.size()])
 
 
+## O valor "de cenário" do ancorado nº `n`, para o casco dele sair pelo mesmo
+## caminho que o de um barco a sério.
+##
+## ⚠️ ELE É UM VALOR E NÃO UM ÍNDICE DE PORTE, e isso é de propósito: o
+## `arte_do_barco()` é UM ponto de entrada, e um segundo que recebesse o porte
+## já escolhido seria a mesma tabela lida por duas regras — a forma de a Zona
+## de Espera passar a desenhar um barco que o jogo não sabe montar. Os dois
+## ancorados caem a 45% e a 95% da faixa da classe, que com três portes dá o
+## do meio e o maior: dois barcos parados lado a lado com o mesmo casco seriam
+## a mesma foto duas vezes. Não sorteia, pela mesma razão do motivo — o RNG do
+## jogo é o que o simulador mede.
+func _valor_ancorado(classe: String, n: int) -> int:
+	var dados: Dictionary = GameState.CLASSES_DE_NAVIO[classe]
+	var vmin: int = int(dados["valor_min"])
+	var vmax: int = int(dados["valor_max"])
+	return vmin + int(round((vmax - vmin) * (0.45 + 0.5 * float(n))))
+
+
 # Os barcos da Zona de Espera são cenário: não têm lógica, mas parados fazem o
 # porto parecer uma fotografia. Vivem dentro do Cenario, e não soltos no
 # MapaWrap, porque a ordem lá dentro é a profundidade isométrica — metade do
@@ -222,8 +240,13 @@ func _animar_ancorados() -> void:
 		# mesma foto duas vezes, e escolher ao acaso gastaria sorteios do jogo
 		# numa decisão que é só de cenário (a regra do `Registro` que nasce
 		# desarmado, aplicada à semente).
+		# ⚠️ E DESDE 08/09 ELE PEDE UM VALOR, porque o valor do contrato é quem
+		# escolhe o PORTE do barco de pesca (`docs/decisoes/014`). Sem isto os
+		# dois ancorados do porto em ruínas sairiam com o mesmo casco — que é
+		# exactamente a queixa que a variedade da frota de pesca resolveu.
 		barco.texture = DockScript.arte_do_barco(
-			classe_ancorada, _motivo_da_classe(classe_ancorada, i))
+			classe_ancorada, _motivo_da_classe(classe_ancorada, i),
+			_valor_ancorado(classe_ancorada, i))
 		var base := barco.position
 		var tw := barco.create_tween().set_loops()
 		if fases[i] > 0.0:

@@ -97,6 +97,21 @@ func _montar() -> void:
 	y = _secao("CASCOS — o que o navio traz", _cascos(), CHAO_AGUA, y)
 	y = _secao("CAMIÕES — o que sai pela estrada", _camioes(), CHAO_RUA, y)
 
+	# ⚠️ FOLHA QUE TRANSBORDA CORTA EM SILÊNCIO, e uma folha cortada é pior do
+	# que nenhuma: ela existe para provar que a arte que o sorteio esconde
+	# chega a alguém, e um prop que caia abaixo da linha 1280 fica exatamente
+	# como estava — gerado, validado e por olhar. Ela cresce sozinha (um porte
+	# novo, um motivo novo, uma classe nova), então a conta tem de reprovar em
+	# vez de recortar.
+	var altura := float(ProjectSettings.get_setting(
+		"display/window/size/viewport_height"))
+	if y > altura:
+		print("FALHOU — a folha pede %.0f px de altura e a tela tem %.0f. "
+			% [y, altura]
+			+ "Ela cortaria as últimas peças sem o dizer.")
+		quit(1)
+		return
+
 
 ## Os cascos, percorrendo as classes e os motivos que cada uma pode trazer.
 ##
@@ -114,10 +129,19 @@ func _cascos() -> Array:
 	var itens: Array = []
 	for classe in GS.CLASSES_DE_NAVIO:
 		for motivo in GS.CLASSES_DE_NAVIO[classe]["motivos"]:
-			var tex: Texture2D = cascos[classe][motivo]
-			itens.append([tex,
-				String(GS.CLASSES_DE_NAVIO[classe]["nome"]),
-				String(GS.MOTIVOS[motivo]["nome"])])
+			# ⚠️ E DESDE 08/09 PERCORRE TAMBÉM O PORTE, que é o eixo novo da
+			# frota de pesca. Ele não é o motivo: o pesqueiro continua a levar
+			# o mesmo casco nos dois motivos dele, e o que muda entre os três é
+			# o VALOR do contrato (`docs/decisoes/014`). Percorrer só o motivo
+			# deixaria dois dos três barcos de pesca fora desta folha — o
+			# buraco que ela existe para não haver.
+			var portes: Array = cascos[classe][motivo]
+			for p in range(portes.size()):
+				var quantos := " · porte %d/%d" % [p + 1, portes.size()] \
+					if portes.size() > 1 else ""
+				itens.append([portes[p] as Texture2D,
+					String(GS.CLASSES_DE_NAVIO[classe]["nome"]),
+					String(GS.MOTIVOS[motivo]["nome"]) + quantos])
 	return itens
 
 

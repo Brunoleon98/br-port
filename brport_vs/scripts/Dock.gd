@@ -57,34 +57,76 @@ const ArteLanca := [
 # coloridas: a mecânica existia e o desenho não a dizia. Agora o casco sai do
 # par (classe, motivo) — a classe dá o PORTE e o motivo dá o CONVÉS.
 #
-# ⚠️ O PESQUEIRO TEM UM CASCO SÓ, E É AFIRMAÇÃO E NÃO ESQUECIMENTO. Ele chega
-# com `pescado` ou com `armazenagem`, que é o mesmo peixe a ir para o mercado
-# ou para a câmara do armazém — o DESTINO da carga muda, o barco não. Escrever
-# a mesma textura duas vezes é o que faz esta tabela ser percorrível pelo D17
-# sem uma exceção escrita em código.
+# ⚠️ O PESQUEIRO CONTINUA A NÃO MUDAR COM O MOTIVO, E ISSO É AFIRMAÇÃO. Ele
+# chega com `pescado` ou com `armazenagem`, que é o mesmo peixe a ir para o
+# mercado ou para a câmara do armazém — o DESTINO da carga muda, o barco não.
+# Escrever a mesma lista duas vezes é o que faz esta tabela ser percorrível
+# pelo D17 sem uma exceção escrita em código.
+#
+# ⚠️ E DESDE 08/09 CADA FOLHA É UMA LISTA, ordenada do menor porte para o
+# maior. O eixo novo é o PORTE, e ele NÃO é o motivo: a trava de
+# `docs/decisoes/009` prende o pesqueiro ao nível 1, então o porto em ruínas
+# recebia o mesmo barco em todas as docas, em todos os turnos, a partida
+# inteira. Quem escolhe entre os portes é o VALOR do contrato — um bote de
+# linha não traz uma escala de R$28.000 —, e é por isso que a variedade não
+# custou um sorteio: o valor já nasce com o barco (`docs/decisoes/014`).
+#
+# ⚠️ A LISTA DE UM ELEMENTO NÃO É UM CASO ESPECIAL, é a mesma tabela. As
+# classes de carga separam-se pelo CONVÉS e não pelo porte, e escrevê-las com
+# uma folha de um elemento é o que evita a forma variável — dicionário aqui e
+# lista ali — que faria esta tabela deixar de se percorrer.
 const CASCOS := {
 	"pesqueiro": {
-		"pescado": preload("res://art/props/barco_pequeno.png"),
-		"armazenagem": preload("res://art/props/barco_pequeno.png"),
+		"pescado": [
+			preload("res://art/props/barco_pesca_bote.png"),
+			preload("res://art/props/barco_pesca_traineira.png"),
+			preload("res://art/props/barco_pesca_arrasteiro.png"),
+		],
+		"armazenagem": [
+			preload("res://art/props/barco_pesca_bote.png"),
+			preload("res://art/props/barco_pesca_traineira.png"),
+			preload("res://art/props/barco_pesca_arrasteiro.png"),
+		],
 	},
 	"medio": {
-		"armazenagem": preload("res://art/props/barco_medio_geral.png"),
-		"conteiner": preload("res://art/props/barco_medio_conteiner.png"),
-		"granel": preload("res://art/props/barco_medio_granel.png"),
+		"armazenagem": [preload("res://art/props/barco_medio_geral.png")],
+		"conteiner": [preload("res://art/props/barco_medio_conteiner.png")],
+		"granel": [preload("res://art/props/barco_medio_granel.png")],
 	},
 	"grande": {
-		"armazenagem": preload("res://art/props/barco_grande_geral.png"),
-		"conteiner": preload("res://art/props/barco_grande_conteiner.png"),
-		"granel": preload("res://art/props/barco_grande_granel.png"),
+		"armazenagem": [preload("res://art/props/barco_grande_geral.png")],
+		"conteiner": [preload("res://art/props/barco_grande_conteiner.png")],
+		"granel": [preload("res://art/props/barco_grande_granel.png")],
 	},
 }
 
 
-## O casco deste navio. Acesso DIRETO nos dois níveis: uma classe sem casco, ou
-## um motivo que a classe possa sortear e para o qual não haja convés
+## Em que PORTE cai um contrato de `valor` nesta classe, entre `portes` faixas.
+##
+## ⚠️ A FAIXA INTEIRA DA CLASSE DIVIDIDA EM PARTES IGUAIS, e o `+ 1` não é
+## enfeite: `randi_range` é fechado nas duas pontas, então entre `valor_min` e
+## `valor_max` há `max - min + 1` inteiros. Sem ele o valor máximo cairia
+## sozinho numa faixa a mais, que ficaria alcançável por UM valor em dezasseis
+## mil — um porte gerado, validado e praticamente sem uso, que é a forma exata
+## do buraco do `barco_medio`. O bloco D17 percorre a faixa e exige que todos
+## os portes sejam alcançáveis.
+static func porte_do_barco(classe: String, valor: int, portes: int) -> int:
+	if portes <= 1:
+		return 0
+	var dados: Dictionary = GameState.CLASSES_DE_NAVIO[classe]
+	var vmin: int = int(dados["valor_min"])
+	var vmax: int = int(dados["valor_max"])
+	@warning_ignore("integer_division")
+	var faixa: int = ((valor - vmin) * portes) / (vmax - vmin + 1)
+	return clampi(faixa, 0, portes - 1)
+
+
+## O casco deste navio. Acesso DIRETO nos dois primeiros níveis: uma classe sem
+## casco, ou um motivo que a classe possa sortear e para o qual não haja convés
 ## desenhado, têm de rebentar aqui e não desenhar o barco errado calados.
-static func arte_do_barco(classe: String, motivo: String) -> Texture2D:
-	return CASCOS[classe][motivo]
+static func arte_do_barco(classe: String, motivo: String, valor: int) -> Texture2D:
+	var portes: Array = CASCOS[classe][motivo]
+	return portes[porte_do_barco(classe, valor, portes.size())]
 
 var dock_index: int = -1
 
@@ -171,7 +213,8 @@ func refresh() -> void:
 		_barco.texture = null
 		return
 
-	_barco.texture = arte_do_barco(String(boat["classe"]), String(boat["motivo"]))
+	_barco.texture = arte_do_barco(String(boat["classe"]), String(boat["motivo"]),
+		int(boat["value"]))
 	_animar_barco(int(boat["id"]))
 
 	if boat.get("rival", false) and not boat.get("matched", false):

@@ -125,6 +125,20 @@ tirar meio    0 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/meio.png" me
 # acesso e ~3,3s a descê-lo. Dois dos três encostam; o terceiro parte depois do
 # acesso dele e segue pela estrada, que é o outro estado que se quer ver.
 tirar docas   0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png" completo limpo alocar --frames=400
+# O PORTO EM RUÍNAS A OPERAR, que é onde a frota de PESCA vive.
+#
+# ⚠️ ELA ENTROU POR UM BURACO MEDIDO, e o buraco é do mesmo feitio do que fez
+# nascer a folha da frota. Os barcos de pesca só atracam no porto de NÍVEL 1
+# (`docs/decisoes/009`), e das oito imagens nenhuma o mostrava a trabalhar: o
+# `inicio` é o turno ZERO, com as docas ainda a dizer "aguardando barco", e o
+# `meio`, o `porto` e as `docas` são portos de nível 2 e 3, que recebem
+# cargueiro. Os três cascos de pesca de 08/09 chegariam à tela do jogador
+# logo no primeiro dia e a foto nenhuma — e o porto em ruínas é onde o perfil
+# Descuidado passa a partida inteira.
+#
+# Seis turnos com os trabalhadores alocados: barco na doca, e os dois
+# ancorados da Zona de Espera atrás dele.
+tirar pesca   0 --script res://tools/capturar_tela.gd -- 6  "$SAIDA/pesca.png" limpo alocar
 tirar boletim 1 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.png" completo
 tirar pausa   1 --script res://tools/capturar_tela.gd -- 8  "$SAIDA/pausa.png" completo pausa
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
