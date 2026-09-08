@@ -1415,7 +1415,7 @@ def montar(M: dict) -> dict:
     # `pivot_offset` do `Dock.tscn` nomeia, e uma lança que não o cubra
     # desprende-se da torre ao girar. O bloco D17 do teste de design tranca isto
     # de duas maneiras — a moldura tem de conter o pivô E tem de haver DESENHO
-    # à volta dele. A segunda entrou em 09/09: a moldura sozinha é quase de
+    # à volta dele. A segunda entrou em 08/09: a moldura sozinha é quase de
     # graça de satisfazer, porque um cabo fino a estica para o outro lado do
     # prop.
     # ⚠️ O n1 ERA UMA TRELIÇA, E TRELIÇA É A ASSINATURA DO n2 E DO n3. O

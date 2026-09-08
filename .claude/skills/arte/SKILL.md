@@ -10,6 +10,14 @@ tabela de âncoras que o CI compara, um teste de design que existe para pegar
 props e chão a divergirem, e — a parte que mais falha — **julgar se ficou bom**,
 que não é a mesma pergunta que "passou".
 
+> **Modelo — esta skill parte-se ao meio** (`docs/decisoes/016`). É **Opus** até
+> a decisão estar tomada: diagnosticar a queixa (§0–§1), escolher o que
+> substitui a peça que não lê, e ler as medições da §3 quando elas contrariam a
+> previsão. Daí para baixo é **Sonnet**: regerar (§4), capturar e recortar (§5),
+> as suítes (§6) e o rasto de prosa (§7). ⚠️ **Volta a subir** se a §5 mostrar
+> que ficou pior, ou se a §6 pedir asserção nova — o defeito injetado é Opus
+> sempre.
+
 **As regras do projeto estão em `CLAUDE.md` e carregam sozinhas.** Esta skill
 não as repete: ela conduz a ordem, e trava nos pontos onde o olho engana.
 

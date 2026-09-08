@@ -295,7 +295,7 @@ n3, ferrugem nos cargueiros — padrões DIRIGIDOS, peça a peça, nunca pela pa
 **O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas a
 laje de concreto sobre estacas de aço; a lança, de **um pau só com amantilho** a
 lança longa com spreader; a torre, de mastro de madeira a pórtico com casa de
-máquinas. O n1 é um pau de carga de verdade desde 09/09 — era uma treliça, e
+máquinas. O n1 é um pau de carga de verdade desde 08/09 — era uma treliça, e
 sobre a areia lia-se como passadiça (`docs/decisoes/015`). Quem
 escolhe são `nivel_pier()` e `nivel_guindaste()`, cada um preso ao seu upgrade
 (`docs/decisoes/007`) — e desde 06/09 são elas que decidem também **que navio

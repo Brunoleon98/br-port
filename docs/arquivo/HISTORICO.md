@@ -519,7 +519,7 @@ iguais, a barra preta na quina coplanar e os barrotes a pairar — estão no
 ---
 
 
-## Os blocos da segunda jogada (07–09/09)
+## Os blocos da segunda jogada (07–08/09)
 
 A devolução de 06/09 trouxe 25 itens, triados em `PLAYTEST_02_ANALISE.md`. O
 Bruno escolheu a ordem, um bloco de cada vez, e o detalhe de cada um vive na
@@ -569,7 +569,7 @@ lista viva lê o arquivo — ele imprime bloco a bloco.
 | **D13** | 07/09 | um camião por motivo, a silhueta certa em cada eixo da rua |
 | **D14** | 04/09 | a vila fatiada pelos prédios do pátio — e o `PREDIOS_DO_PATIO` que dizia "lido de `Main.tscn`" e era copiado à mão |
 | **D15** | 04/09 | as duas pontas de areia, onde o porto para |
-| **D17** | 06/09 | o `barco_medio` gerado, validado e em doca nenhuma. Em 07/09 passou a perguntar pelo par (classe, motivo); em 08/09 ganhou o eixo do PORTE — percorre a faixa de valor da classe pela porta que o jogo usa e exige que todos saiam, e na ordem. Em 09/09 apertou o pivô: a moldura da lança não é o desenho dela |
+| **D17** | 06/09 | o `barco_medio` gerado, validado e em doca nenhuma. Em 07/09 passou a perguntar pelo par (classe, motivo); em 08/09 ganhou o eixo do PORTE — percorre a faixa de valor da classe pela porta que o jogo usa e exige que todos saiam, e na ordem. Ainda em 08/09 apertou o pivô: a moldura da lança não é o desenho dela |
 | **D18** | 06/09 | texto vindo de tabela cresce, e `Label` que não cabe corta sem erro |
 | **D19** | 06/09 | o cinzento neutro do jogo mede 2,93:1 sobre o branco do painel — abaixo do corte da WCAG, e em oito rótulos |
 | **D20** | 08/09 | a fita de calçada atravessada na pista. Toda a maquinaria de cerco perguntava POSIÇÃO; nenhuma perguntava COR |

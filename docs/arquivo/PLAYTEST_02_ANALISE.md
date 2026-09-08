@@ -204,7 +204,7 @@ para ele a tomar com o número na mão.
 | Item | Tamanho | Nota |
 |---|---|---|
 | **4a** · detalhe da rua (faixa central, passadeiras) | pequeno, **depende do 2** | Faz sentido fazer junto com a via de mão dupla: alargar e detalhar na mesma passagem, senão desenha-se duas vezes |
-| ✅ **6** · o guindaste de madeira do n1 | pequeno | É o pau-de-carga do porto em ruínas — o primeiro guindaste que o jogador vê. **FEITO em 09/09**, `docs/decisoes/015` |
+| ✅ **6** · o guindaste de madeira do n1 | pequeno | É o pau-de-carga do porto em ruínas — o primeiro guindaste que o jogador vê. **FEITO em 08/09**, `docs/decisoes/015` |
 | **7** · variedade de BARCOS | médio | O trabalho de 07/09 deu seis cascos aos CARGUEIROS e deixou o pesqueiro com um só, e isso está registado como decisão (`010`). O que ele pede é o outro lado: a classe pesqueiro merece variação própria. É extensão do que já existe, não redesenho |
 | **8** · menos quadrado, mais curva | **grande, e é direção de arte** | Toca o gerador do mapa inteiro e o kit de props, que é de caixas por construção. Não é uma sessão |
 | **9** · gradiente de água e areia + fauna | médio | A paleta da água já foi medida em 02/09 (a amplitude de luminância, a espuma). Refazê-la exige repetir essa medição, senão achata outra vez. A fauna já tem estúdio (`brp_fauna.py`, a gaivota) |

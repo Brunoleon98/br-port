@@ -9,6 +9,13 @@ Mexer num número da economia é barato. O que é caro é o rasto: seis document
 afirmam o balanceamento, o CI reprova quem os deixa envelhecer, e a taxa de
 vitória é o número mais fácil de ler errado do projeto inteiro.
 
+> **Modelo** (`docs/decisoes/016`). **RODAR** o simulador é Sonnet — são 600
+> partidas e 26 segundos, e a receita está escrita. **LER** o que ele devolveu,
+> escolher que `# TUNING:` mexer e decidir se o resultado serve é **Opus**: a
+> taxa de vitória é o número mais fácil de ler errado do projeto, e esta skill
+> existe por causa disso. Arrastar o rasto dos seis documentos, depois, é
+> Sonnet.
+
 **As regras do projeto estão em `CLAUDE.md` e carregam sozinhas.** Esta skill
 não as repete — ela conduz a medição e garante que nada fica para trás.
 

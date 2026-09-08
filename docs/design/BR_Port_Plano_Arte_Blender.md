@@ -483,7 +483,7 @@ lança girar em torno do vazio, nenhuma delas com erro. Hoje o D17 confere os
 dois lados, e **o defeito foi injetado para o provar**: encurtar o poste do n1
 em 0,90 faz reprovar com *"o alfa no pivô é 0.00"* e sair com código 1.
 
-### E a LANÇA do n1 ainda era o n2 pintado de castanho (09/09)
+### E a LANÇA do n1 ainda era o n2 pintado de castanho (08/09)
 
 A tabela acima dizia "pau-de-carga curto" desde 05/09, e o comentário do gerador
 dizia "sem treliça". **Nenhum dos dois era verdade da LANÇA**: ela era uma

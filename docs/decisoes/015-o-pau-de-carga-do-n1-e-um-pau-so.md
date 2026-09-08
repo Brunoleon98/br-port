@@ -1,6 +1,6 @@
 # 015 — O pau de carga do n1 é UM PAU SÓ, e o pivô passou a exigir desenho
 
-**09/09/2026.** O fecho do item **6** da segunda jogada — *"o design do
+**08/09/2026.** O fecho do item **6** da segunda jogada — *"o design do
 guindaste de madeira pode ser melhorado"* —, escolhido pelo Bruno como arte
 pequena e independente.
 

@@ -983,7 +983,7 @@ traineira a ler como cruz, e a amurada branca sobre cabine branca) e entrou a
 nona captura, `pesca`: o porto em ruínas A TRABALHAR, que nenhuma das oito
 mostrava.
 
-✅ **O 6 FECHOU em 09/09** (`docs/decisoes/015`): a lança do n1 era uma treliça
+✅ **O 6 FECHOU em 08/09** (`docs/decisoes/015`): a lança do n1 era uma treliça
 — o n2 mais pequeno e castanho — e sobre a AREIA da única doca do porto em
 ruínas lia-se como uma passadiça de madeira. Passou a ser o aparelho de verdade:
 um pau só, gooseneck, amantilho do topo do mastro à ponta, e gancho. **Menos

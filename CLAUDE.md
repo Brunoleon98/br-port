@@ -976,6 +976,53 @@ Blender nenhum e o conferidor de lote precisa de `numpy` + `pillow`, que
 instalam em 8. Rodar a ferramenta antes de decidir é mais barato do que
 discutir o que ela diria.
 
+### Qual MODELO faz o quê — Sonnet por omissão, Opus para decidir
+
+`docs/decisoes/016`. **Sonnet 5 custa 2,5× menos do que Opus 5 nas duas
+pontas**, e este projeto usava Opus em tudo. O eixo que divide NÃO é "difícil
+contra fácil" — escrever um script de medição parece mais difícil do que olhar
+para um render, e é o contrário. **O eixo é quem ESCOLHE.**
+
+**A omissão é Sonnet.** Ele faz o que já foi decidido, e o projeto tem a receita
+escrita: rodar as suítes e ler o código de saída de cada uma; regerar mapas,
+props, sons e a tabela dos números; `--import`, capturas, recortes, folhas de
+contato e o antes/depois; aplicar uma alteração de cor, ângulo ou proporção JÁ
+escolhida e medir o que foi pedido; arrastar o rasto de prosa a partir de uma
+decisão já escrita; comprimir o `ESTADO_DO_PROJETO.md` para caber no teto;
+`grep`, inventário e `conferir_docs.py`; consertar vermelho de causa óbvia
+(import a faltar, caminho errado, `.import` por commitar); commit e push.
+
+**Sobe para Opus quando a sessão tem de DECIDIR:**
+
+- diagnosticar uma queixa que não diz o que corrigir — *"o design pode ser
+  melhorado"*, *"está sem graça"*, *"parece avançado demais"*;
+- escolher a gramática de um prop, ou o que substitui uma peça que não lê;
+- **escrever asserção nova e escolher o defeito injetado** (ver abaixo);
+- ler uma medição que contrariou a previsão e decidir o que ela quer dizer;
+- qualquer `# TUNING:`, e a leitura das 600 partidas;
+- reabrir decisão registada, ou mexer em contrato entre arquivos — projeção,
+  `MEIA_LARG`, `RUA_RECUO`, enquadramento, `SAVE_VERSION`;
+- triar playtest e ordenar a fila;
+- escrever `docs/decisoes/NNN` e a varredura de lições do `/fechar-sessao`.
+
+⚠️ **O DEFEITO INJETADO NUNCA DESCE, e é por medição.** A regra 7 acima tem doze
+parágrafos de maneiras de um defeito injetado não provar nada, e cada um é um
+caso real em que se acreditou num validador que nunca tinha visto defeito
+nenhum. É o sítio do projeto onde poupar sai mais caro.
+
+**A regra de paragem, que é o que torna isto seguro: a sessão barata NÃO
+decide.** Ao encontrar uma cor, um ângulo ou uma proporção por escolher; uma
+asserção nova, ou um defeito injetado que não reprovou; um `# TUNING:`; uma
+medição que contraria o que estava escrito; ou um teste vermelho cuja causa não
+é óbvia numa leitura — **pare e devolva**, em vez de escolher. E o contrário
+vale igual: assim que a decisão estiver escrita na `docs/decisoes/`, o resto da
+sessão desce para Sonnet, que costuma ser a maior parte dela.
+
+⚠️ **Nenhum modelo troca o próprio modelo — quem troca é o Bruno**, com
+`/model`. O que a sessão faz é ANUNCIAR numa linha qual modelo o próximo bloco
+pede, antes de o começar, e parar quando for para cima. Sob pedido dele, um
+bloco fechado de execução pode ir para um subagente com `model` próprio.
+
 **Quando abrir um subagente de varredura, e quando não.** Vale quando a
 pergunta é "onde está X" numa área que não se conhece e a resposta cabe em
 linhas — ele lê muito e devolve pouco. Não vale para ler um arquivo que já se
