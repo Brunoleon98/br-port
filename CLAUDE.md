@@ -572,6 +572,15 @@ tranca isso.
   bytes também não servem, pela regra do denoiser mais abaixo. O que responde é
   reduzir os dois a 16×16 e comparar: cada célula é a média de ~1.000 pixels, o
   que apaga o ruído de ±2/255 por construção.
+- **⚠️ E NUMA PEÇA COM CABOS A CAIXA MENTE QUASE DE GRAÇA.** A terceira cara
+  das duas regras acima, e a mais barata de cair: um cabo, um estai ou um
+  amantilho tem dois pixels de largura e ESTICA o `get_used_rect()` para o
+  outro lado do prop. Logo `used_rect.has_point(p)` custa quase nada de
+  satisfazer — o D17 exigia que a lança cobrisse o próprio centro de rotação e
+  media a moldura, e uma lança inteira desenhada FORA do eixo continuava a
+  passar, porque uma corda qualquer atravessava o ponto. Pergunte quanto
+  DESENHO há à volta do ponto (a fração de pixels opacos num raio pequeno), e
+  nunca se o ponto cai na caixa.
 - **PARTILHA TOTAL OU NENHUMA, numa tabela de arte.** O pesqueiro usa o mesmo
   casco nos dois motivos dele de propósito — pescado e armazenagem são o mesmo
   peixe indo para sítios diferentes, e o barco não muda com o destino da carga.
@@ -591,6 +600,21 @@ tranca isso.
   bónus nenhum). Só com os dois construídos um defeito injetado na cópia
   reprovou. É a mesma lição de "contagem só se testa acima de um", aplicada a
   um bónus em vez de uma quantidade.
+- **⚠️ CONTRASTE GASTO ENTRE DUAS PEÇAS DO PROP PODE DEIXAR O PROP INVISÍVEL.**
+  As regras acima dizem que a paleta mente e que o contraste é contra o FUNDO;
+  esta diz de que maneira se esquece isso. Ao desenhar o pau de carga do n1
+  escolheu-se `tronco` para o pau SEPARAR DO MASTRO — 0,45 de Weber entre os
+  dois, de sobra — e mediu-se aí. No jogo o pau passa por cima da AREIA e deu
+  0,21: some. **Duas peças que se separam bem uma da outra podem estar as duas
+  na banda do fundo.** A conta que decide a cor é sempre peça contra fundo; a
+  separação entre peças é a segunda pergunta, nunca a primeira.
+- **⚠️ E UM PROP SÓ ATRAVESSA DOIS FUNDOS: nenhum tom ganha os dois.** No mesmo
+  prop, o gancho pende sobre o BAIXIO (claro, ~106) e o pau corre sobre a AREIA
+  (~159), com água funda (~67) à volta. `metal_claro` mede 0,75 sobre a água
+  funda e **0,01** sobre o baixio. Quando um tom não vence os dois fundos, quem
+  resolve não é a cor — é a MASSA: o gancho voltou ao metal escuro e passou a
+  ser encontrado por ser a única ferragem grande, depois de os olhais dos
+  estais encolherem de 0,11 para 0,075.
 - **Cor calibrada para um fundo não atravessa para outro sem medir de novo.**
   O cinzento-azulado que marca texto neutro sobre o fundo ESCURO do jogo
   (0,51/0,6/0,706, usado no aviso de trabalhador ocioso) foi reaproveitado
@@ -951,6 +975,53 @@ adiada por "precisar de 1 GB de `bpy`" quando metade das etapas não precisa de
 Blender nenhum e o conferidor de lote precisa de `numpy` + `pillow`, que
 instalam em 8. Rodar a ferramenta antes de decidir é mais barato do que
 discutir o que ela diria.
+
+### Qual MODELO faz o quê — Sonnet por omissão, Opus para decidir
+
+`docs/decisoes/016`. **Sonnet 5 custa 2,5× menos do que Opus 5 nas duas
+pontas**, e este projeto usava Opus em tudo. O eixo que divide NÃO é "difícil
+contra fácil" — escrever um script de medição parece mais difícil do que olhar
+para um render, e é o contrário. **O eixo é quem ESCOLHE.**
+
+**A omissão é Sonnet.** Ele faz o que já foi decidido, e o projeto tem a receita
+escrita: rodar as suítes e ler o código de saída de cada uma; regerar mapas,
+props, sons e a tabela dos números; `--import`, capturas, recortes, folhas de
+contato e o antes/depois; aplicar uma alteração de cor, ângulo ou proporção JÁ
+escolhida e medir o que foi pedido; arrastar o rasto de prosa a partir de uma
+decisão já escrita; comprimir o `ESTADO_DO_PROJETO.md` para caber no teto;
+`grep`, inventário e `conferir_docs.py`; consertar vermelho de causa óbvia
+(import a faltar, caminho errado, `.import` por commitar); commit e push.
+
+**Sobe para Opus quando a sessão tem de DECIDIR:**
+
+- diagnosticar uma queixa que não diz o que corrigir — *"o design pode ser
+  melhorado"*, *"está sem graça"*, *"parece avançado demais"*;
+- escolher a gramática de um prop, ou o que substitui uma peça que não lê;
+- **escrever asserção nova e escolher o defeito injetado** (ver abaixo);
+- ler uma medição que contrariou a previsão e decidir o que ela quer dizer;
+- qualquer `# TUNING:`, e a leitura das 600 partidas;
+- reabrir decisão registada, ou mexer em contrato entre arquivos — projeção,
+  `MEIA_LARG`, `RUA_RECUO`, enquadramento, `SAVE_VERSION`;
+- triar playtest e ordenar a fila;
+- escrever `docs/decisoes/NNN` e a varredura de lições do `/fechar-sessao`.
+
+⚠️ **O DEFEITO INJETADO NUNCA DESCE, e é por medição.** A regra 7 acima tem doze
+parágrafos de maneiras de um defeito injetado não provar nada, e cada um é um
+caso real em que se acreditou num validador que nunca tinha visto defeito
+nenhum. É o sítio do projeto onde poupar sai mais caro.
+
+**A regra de paragem, que é o que torna isto seguro: a sessão barata NÃO
+decide.** Ao encontrar uma cor, um ângulo ou uma proporção por escolher; uma
+asserção nova, ou um defeito injetado que não reprovou; um `# TUNING:`; uma
+medição que contraria o que estava escrito; ou um teste vermelho cuja causa não
+é óbvia numa leitura — **pare e devolva**, em vez de escolher. E o contrário
+vale igual: assim que a decisão estiver escrita na `docs/decisoes/`, o resto da
+sessão desce para Sonnet, que costuma ser a maior parte dela.
+
+⚠️ **Nenhum modelo troca o próprio modelo — quem troca é o Bruno**, com
+`/model`. O que a sessão faz é ANUNCIAR numa linha qual modelo o próximo bloco
+pede, antes de o começar, e parar quando for para cima. Sob pedido dele, um
+bloco fechado de execução pode ir para um subagente com `model` próprio.
 
 **Quando abrir um subagente de varredura, e quando não.** Vale quando a
 pergunta é "onde está X" numa área que não se conhece e a resposta cabe em

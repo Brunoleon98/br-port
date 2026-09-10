@@ -983,9 +983,25 @@ traineira a ler como cruz, e a amurada branca sobre cabine branca) e entrou a
 nona captura, `pesca`: o porto em ruínas A TRABALHAR, que nenhuma das oito
 mostrava.
 
-**Sete itens de arte** — detalhe da rua, o guindaste de madeira do n1, curvas em
-vez de retas, gradiente de água e areia mais fauna, caminhos de terra para as
-casas, prédios em obra e avançados, e afastar a zona de espera.
+✅ **O 6 FECHOU em 08/09** (`docs/decisoes/015`): a lança do n1 era uma treliça
+— o n2 mais pequeno e castanho — e sobre a AREIA da única doca do porto em
+ruínas lia-se como uma passadiça de madeira. Passou a ser o aparelho de verdade:
+um pau só, gooseneck, amantilho do topo do mastro à ponta, e gancho. **Menos
+peça, não mais** — de 25 para 8 —, que é a regra da ruína aplicada a uma grua. O
+comentário do gerador prometia "sem treliça" desde 06/09 e o mastro cumpria; a
+lança não, e ninguém foi lá conferir.
+
+E rendeu um bloco de teste, como o 4b tinha rendido o D20: o **D17** prometia
+por escrito que o pivô "caia dentro do DESENHO" da lança e media `used_rect`,
+que é a MOLDURA — e numa lança as linhas finas do amantilho e do cabo esticam a
+moldura muito além da peça, de modo que uma lança construída a partir de outro
+topo de torre continuava a passar. Hoje ele mede quanto desenho há num raio de
+2 px do centro de rotação, e o defeito injetado mostra a guarda velha a passar
+enquanto só a nova reprova.
+
+**Seis itens de arte** — detalhe da rua, curvas em vez de retas, gradiente de
+água e areia mais fauna, caminhos de terra para as casas, prédios em obra e
+avançados, e afastar a zona de espera.
 
 **Dois itens de sistema, dos três** — via de mão dupla e o camião que vai à doca
 do navio que serve. O terceiro (o fecho do painel de balanço, que trancava o

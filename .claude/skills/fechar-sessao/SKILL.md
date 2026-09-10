@@ -9,6 +9,13 @@ O ritual de fecho. Existe porque três coisas se perdem sempre no fim: uma
 verificação que a mudança exigia e ninguém rodou, o `ESTADO_DO_PROJETO.md` a
 envelhecer em silêncio, e uma lição que ficou só na conversa.
 
+> **Modelo — esta é quase toda Sonnet** (`docs/decisoes/016`), e é aí que a
+> divisão poupa mais, porque o fecho é a cauda longa de toda sessão: as suítes,
+> a captura, o `ESTADO_DO_PROJETO.md` em dia e o commit são receita escrita.
+> ⚠️ **Uma parte não desce: a §5, a varredura do que se aprendeu.** Decidir se
+> uma lição vale SEMPRE (e por isso vai para o `CLAUDE.md`) ou só ali é
+> julgamento, e é a parte que este ritual existe para não perder.
+
 **As regras do projeto estão em `CLAUDE.md` e carregam sozinhas.** Esta skill
 não as repete — ela só garante que foram cumpridas antes de fechar.
 

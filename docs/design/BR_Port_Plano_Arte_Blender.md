@@ -440,7 +440,7 @@ acrescenta constante nenhuma — os 100% / 80,2% / 37,3% medidos ficam intocados
 
 | | píer | lança |
 |---|---|---|
-| **n1** | estacas e ripas de madeira crua com fresta, dois cabeços, sem carga | pau-de-carga curto: um braço só, sem contralança nem contrapeso |
+| **n1** | estacas e ripas de madeira crua com fresta, dois cabeços, sem carga | pau de carga: UM PAU só, com gooseneck, amantilho e gancho. Sem contralança nem contrapeso |
 | **n2** | o de sempre — tabuado inteiro, contêiner e caixotes | a de sempre |
 | **n3** | laje de concreto sobre estacas de aço, meio-fio, cinco defensas de pneu, quatro cabeços e contêiner empilhado | lança longa, contrapeso maior e **spreader** em vez de moitão |
 
@@ -467,7 +467,7 @@ Hoje cada nível tem torre própria, e o topo é que não se mexe:
 
 | | torre |
 |---|---|
-| **n1** | pau-de-carga: poste de MADEIRA, duas cintas, dois estais em olhal. Sem treliça e sem cabine — é a única grua do jogo que não é laranja, porque o laranja é a cor do maquinário e um pontão provisório não tem maquinário |
+| **n1** | mastro de MADEIRA em duas seções que afilam, com cabeço, duas cintas e dois estais em olhal. Sem treliça e sem cabine — é a única grua do jogo que não é laranja, porque o laranja é a cor do maquinário e um pontão provisório não tem maquinário |
 | **n2** | a treliça laranja de sempre, meia-largura 0,19, cabine pequena junto ao topo |
 | **n3** | pórtico: treliça a 0,27 (+42% de largura), casa de máquinas no convés, cabine maior a meia altura e escada |
 
@@ -482,6 +482,31 @@ falta não se notava; com três torres passaram a existir três maneiras de a
 lança girar em torno do vazio, nenhuma delas com erro. Hoje o D17 confere os
 dois lados, e **o defeito foi injetado para o provar**: encurtar o poste do n1
 em 0,90 faz reprovar com *"o alfa no pivô é 0.00"* e sair com código 1.
+
+### E a LANÇA do n1 ainda era o n2 pintado de castanho (08/09)
+
+A tabela acima dizia "pau-de-carga curto" desde 05/09, e o comentário do gerador
+dizia "sem treliça". **Nenhum dos dois era verdade da LANÇA**: ela era uma
+`trelica()` de 22 peças em `madeira_esc` — o n2 mais pequeno e mais escuro. O
+mastro cumpria a promessa que estava escrita; a lança não, e a página não
+perguntou.
+
+Fechado em `docs/decisoes/015`, e três coisas que ficam desta página:
+
+- **A peça que faltava estava ABAIXO da lança.** O mastro acabava rente ao
+  gooseneck, e de lá não há de onde pendurar um amantilho — qualquer linha
+  saída dali nasce paralela ao pau. Ele subiu para `TOPO + 0,80`, e só então o
+  triângulo mastro/pau/amantilho passou a ser desenhável. **O que prendia a
+  lança não estava na lança.**
+- **Peça contra o FUNDO, nunca peça contra peça.** O pau começou em `tronco`
+  para separar do mastro (0,45 de Weber no dicionário) e MEDIDO NO JOGO dava
+  0,21 contra a areia — a face que a câmera vê é a iluminada, que sai a ~103 e
+  não aos 97,5 da paleta. `madeira_esc` põe-no em 0,33. E o gancho fez a
+  viagem ao contrário: `metal_claro` mede 0,75 sobre água funda e **0,01**
+  sobre o baixio, que é o que está por baixo dele na doca 1.
+- **A única doca do porto em ruínas encosta à PRAIA**, e é por isso que o
+  vazado da treliça a fazia ler como passadiça. Arte de nível 1 mede-se contra
+  areia, não contra água — o que se vê na captura `pesca`.
 
 ⚠️ **E empilhar não é passar uma altura maior.** O contêiner de cima do n3
 nasceu com `altura_px` dobrada, que o `_no_conves` lê como caixa MAIS ALTA

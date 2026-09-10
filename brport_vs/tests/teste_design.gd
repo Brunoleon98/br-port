@@ -377,6 +377,27 @@ func _linha_no_quadro(a: Vector2, b: Vector2, alt: float,
 # iguais passariam em tudo o resto e o jogador nunca veria o porto evoluir.
 const NIVEIS := 3
 
+# O raio e o piso da pergunta "há desenho no centro de rotação?" — ver o
+# comentário na asserção que os usa.
+const RAIO_PIVO := 2
+const PISO_PIVO := 0.35
+
+
+func _densidade_no_pivo(img: Image, pivo: Vector2i, raio: int) -> float:
+	var opacos := 0
+	var total := 0
+	for dy in range(-raio, raio + 1):
+		for dx in range(-raio, raio + 1):
+			if dx * dx + dy * dy > raio * raio:
+				continue
+			total += 1
+			var p := pivo + Vector2i(dx, dy)
+			if p.x < 0 or p.y < 0 or p.x >= img.get_width() or p.y >= img.get_height():
+				continue
+			if img.get_pixelv(p).a > 0.5:
+				opacos += 1
+	return float(opacos) / float(total)
+
 
 func _d17_niveis_do_porto() -> void:
 	var doca := _main.get_node_or_null("MapaWrap/Docas/Doca0")
@@ -404,6 +425,26 @@ func _d17_niveis_do_porto() -> void:
 		_confere("a lança do nível %d cobre o pivô %s" % [i + 1, pivo],
 			usado.has_point(Vector2i(pivo)),
 			"o desenho dela ocupa %s" % usado)
+		# ⚠️ E A CAIXA NÃO É O DESENHO — a asserção acima prometia por escrito
+		# "que o pivô caia dentro do DESENHO" e media `used_rect`, que é a
+		# moldura. Numa lança isso quase não custa nada: o amantilho e o cabo
+		# de carga são linhas finas que ESTICAM a caixa muito além da peça, e
+		# uma lança inteira construída a partir de outro topo de torre continua
+		# a ter o pivô dentro da moldura enquanto uma corda qualquer passar por
+		# cima dele. É a mesma forma do D7 ("conferir o QUADRO de um prop não é
+		# conferir o PROP") e da regra dos quatro cantos.
+		#
+		# A pergunta certa é quanto DESENHO há à volta do centro de rotação.
+		# Medido em 08/09: n1 100%, n2 62%, n3 54% num raio de 2 px — as duas
+		# treliças ficam abaixo de 100% porque o pixel exato do pivô calha num
+		# vazado, que é legítimo. O piso é generoso de propósito: ele existe
+		# para pegar uma lança desenhada FORA do próprio eixo, não para
+		# congelar os números de hoje.
+		_confere("a lança do nível %d tem desenho À VOLTA do pivô" % [i + 1],
+			_densidade_no_pivo(img, Vector2i(pivo), RAIO_PIVO) >= PISO_PIVO,
+			"só %.0f%% dos pixels num raio de %d px estão desenhados"
+				% [100.0 * _densidade_no_pivo(img, Vector2i(pivo), RAIO_PIVO),
+				   RAIO_PIVO])
 		# Níveis iguais não são níveis. Compara-se a caixa desenhada, que é o
 		# que o jogador vê mudar — não os bytes, que mudam por ruído.
 		_confere("o nível %d da lança é distinto dos anteriores" % [i + 1],
