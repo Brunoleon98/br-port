@@ -46,6 +46,17 @@
    ]
   }
  ],
+ "cores_da_agua": {
+  "costeiras": [
+   "#57c6dc",
+   "#3fb6cf",
+   "#1b7fa8"
+  ],
+  "largo": [
+   "#0d4d6b",
+   "#0f5a7d"
+  ]
+ },
  "cores_da_rua": {
   "asfalto": "#49535b",
   "calcada": "#aeb8bf",

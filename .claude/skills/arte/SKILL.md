@@ -10,13 +10,21 @@ tabela de âncoras que o CI compara, um teste de design que existe para pegar
 props e chão a divergirem, e — a parte que mais falha — **julgar se ficou bom**,
 que não é a mesma pergunta que "passou".
 
-> **Modelo — esta skill parte-se ao meio** (`docs/decisoes/016`). É **Opus** até
-> a decisão estar tomada: diagnosticar a queixa (§0–§1), escolher o que
-> substitui a peça que não lê, e ler as medições da §3 quando elas contrariam a
-> previsão. Daí para baixo é **Sonnet**: regerar (§4), capturar e recortar (§5),
-> as suítes (§6) e o rasto de prosa (§7). ⚠️ **Volta a subir** se a §5 mostrar
-> que ficou pior, ou se a §6 pedir asserção nova — o defeito injetado é Opus
-> sempre.
+> **As FASES desta skill** (`docs/decisoes/016`; a tabela geral está no
+> `CLAUDE.md`). As secções abaixo não são as fases — estas são:
+>
+> | # | Aqui é | Modelo |
+> |---|---|---|
+> | **F1** | diagnosticar a queixa (§0–§1) e desenhar a medição: contra que FUNDO se mede, que varrer, em que intervalo | **Opus** |
+> | **F2** | a captura do ANTES (§1) e a varredura desenhada na F1 | **Sonnet** |
+> | **F3** | ler o que ela deu — e é aqui que a previsão cai, como o `tronco` que media 0,45 na paleta e 0,21 no jogo (§3) | **Opus** |
+> | **F4** | escolher a gramática, a cor e o ângulo — **na imagem**, nunca no mundo | **Opus** |
+> | **F5** | regerar (§4), capturar, recortar e pôr lado a lado (§5) | **Sonnet** |
+> | **F6** | asserção nova + defeito injetado, se apareceu | **Opus** |
+> | **F7** | as suítes (§6) e o rasto de prosa (§7) | **Sonnet** |
+>
+> ⚠️ **A F5 pode mandar de volta à F4.** Se o antes/depois mostrar que ficou
+> pior, sobe outra vez — foi o que aconteceu duas vezes com o gancho do n1.
 
 **As regras do projeto estão em `CLAUDE.md` e carregam sozinhas.** Esta skill
 não as repete: ela conduz a ordem, e trava nos pontos onde o olho engana.

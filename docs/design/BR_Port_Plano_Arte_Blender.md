@@ -508,6 +508,24 @@ Fechado em `docs/decisoes/015`, e três coisas que ficam desta página:
   vazado da treliça a fazia ler como passadiça. Arte de nível 1 mede-se contra
   areia, não contra água — o que se vê na captura `pesca`.
 
+### A Zona de Espera fundeava na água dos berços (11/09)
+
+Item 15, fechado em `docs/decisoes/017`. Três coisas que ficam desta página:
+
+- **A queixa dizia "afastada" e o eixo era a PROFUNDIDADE.** O mapa pinta três
+  bandas de água que acompanham a costa (baixio até 1,0, rasa até 2,6, média até
+  6,0) e o largo para lá delas. Um barco atracado fica a 2,25 — dentro da rasa.
+  Três das cinco peças do fundeadouro estavam em `agua_media`, as duas boias
+  incluídas: liam como atracados porque estavam na água dos atracados.
+- **Distância em unidades não responde a "que profundidade".** A conta por banda
+  deu 6,85 para uma peça que a tinta diz `agua_media` — perto de um degrau, a
+  costa mais próxima não é a borda da própria banda. Pergunta-se ao desenho.
+- **O número saiu da varredura E da imagem, nessa ordem.** 3,5 é o primeiro
+  passo em que os cinco caem no largo, mas a fronteira não é monótona (entre 2,0
+  e 3,0 sobe, desce e sobe), então parar nele seria assentar em cima dela. Entre
+  3,5, 4,5 e 6,0 renderizados, o 6,0 encosta os navios na borda do quadro e o
+  3,5 ainda lê como "ao lado". Ficou **4,5**.
+
 ⚠️ **E empilhar não é passar uma altura maior.** O contêiner de cima do n3
 nasceu com `altura_px` dobrada, que o `_no_conves` lê como caixa MAIS ALTA
 assente no convés: o segundo engoliu o primeiro e o render saiu com um cubo

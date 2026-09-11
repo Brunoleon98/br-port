@@ -80,6 +80,30 @@ bloco fechado de execução ("roda as seis suítes e reporta") para um subagente
 Sonnet. O `CLAUDE.md` já desaconselha subagente para o que a sessão tem em
 contexto, por isso isto fica como opção sob pedido e não como omissão.
 
+## 4b. ⚠️ A premissa está certa e é INCOMPLETA — medido em 11/09
+
+Esta decisão assenta na razão de preço entre os dois modelos, e ela vale. O que
+ela não dizia é onde o dinheiro está de facto numa sessão longa.
+
+Medido na sessão que a escreveu, ao fim de nove dias e cinco itens: **672 mil
+tokens de contexto e 65 milhões de tokens de LEITURA DE CACHE**. A forma da
+conta é clara — a maior parte do gasto não é produzir trabalho novo, é
+**reprocessar o histórico a cada turno**.
+
+Três consequências, e a terceira é a que muda o modo de trabalhar:
+
+1. **Trocar de modelo a meio da conversa ajuda menos do que parece.** O
+   contexto viaja junto; só o preço por token é que desce.
+2. **Um subagente com modelo próprio poupa pouco** quando a tarefa é curta: ele
+   evita que a saída dela entre no contexto do pai, e nada mais.
+3. **Sessão NOVA no modelo certo é o corte grande** — arranca perto de zero. E
+   só é possível se o ponto de partida estiver escrito num DOCUMENTO em vez de
+   viver na conversa. É por isso que a F1 termina com o desenho da medição
+   registado (o do item 5 está na §7 do plano), e não com um resumo em chat.
+
+Isto não muda a divisão de trabalho; muda o que se faz com uma sessão que já
+ficou grande: **fecha-se e abre-se outra**, em vez de a arrastar.
+
 ## 5. Onde a regra vive
 
 - **`CLAUDE.md`** — as duas listas e a regra de paragem, porque é a camada que

@@ -542,6 +542,26 @@ tranca isso.
   do gerador — duas fontes, e não um espelho. E a pergunta é **«não é calçada»,
   não «é asfalto»**: a rodagem leva pintura, e exigir o cinzento reprovaria uma
   zebra bem desenhada (`docs/decisoes/013`).
+- **⚠️ E CASAR HEXADECIMAL EXATO SÓ SERVE EM TINTA CHAPADA.** A regra acima
+  abriu a porta de perguntar COR ao mapa; esta diz onde ela não passa. A rua é
+  chapada e compara-se exata com a folga do antisserrilhado; a ÁGUA leva coisa
+  por cima — manchas de corrente em gradiente radial e duas camadas de espuma,
+  todas semitransparentes. O pixel do berço da doca 3 sai `#3aacc7` onde a
+  paleta diz `#3fb6cf`: fora dos 4/255, e o primeiro D21 reprovou um berço que
+  estava certo. Onde o alvo leva camadas por cima, separe por LUMINÂNCIA com o
+  limiar DERIVADO das cores publicadas — a meio entre a família escura e a
+  clara —, nunca por igualdade de tom. Aqui isso dá 92,6 com 16 pontos de folga
+  de cada lado, e mancha nenhuma atravessa.
+- **⚠️ E DISTÂNCIA EM UNIDADES NÃO SOBREVIVE A UM DEGRAU DA COSTA.** A conta
+  óbvia — `mx` do prop menos a borda do cais da banda de `my` dele — deu **6,85**
+  para uma peça que o mapa pinta de `agua_media`, cuja banda acaba aos 6,0.
+  Não há erro na conta: perto de um degrau o ponto de costa mais próximo não é a
+  borda da própria banda, é a face do degrau ao lado, e as faixas de
+  profundidade seguem o CONTORNO. Toda medida "a que distância da costa" neste
+  mapa pergunta-se ao desenho, não à aritmética — e pela mesma razão uma
+  varredura dessa distância **não é monótona**: entre 2,0 e 3,0 o número de
+  props no largo sobe, desce e sobe, e parar no primeiro valor que serve é
+  assentar em cima de uma fronteira que se mexe.
 - **E a guarda que DUAS outras já implicam nunca reprova.** Irmã da regra de
   injetar defeito, um andar acima: a primeira asserção do desvio varria-o contra
   o retângulo do acesso, e o desvio é uma reta entre dois pontos que outras duas
@@ -1010,6 +1030,31 @@ parágrafos de maneiras de um defeito injetado não provar nada, e cada um é um
 caso real em que se acreditou num validador que nunca tinha visto defeito
 nenhum. É o sítio do projeto onde poupar sai mais caro.
 
+### As SETE FASES de uma sessão, numeradas — diga o número, e o modelo sai daí
+
+Esta é a tabela a citar em conversa: **"estou na F3"**, **"pare na F4"**. Ela
+vale para qualquer item da fila; as três skills trazem a versão delas, com os
+mesmos números.
+
+| # | Fase | O que é | Modelo |
+|---|---|---|---|
+| **F1** | **Escolher e desenhar** | ler a fila, escolher o item, e desenhar a MEDIÇÃO — que constante varrer, em que intervalo, contra o quê, e o que conta por bom | **Opus** |
+| **F2** | **Medir o ANTES** | rodar o que a F1 desenhou: 600 partidas × 3 perfis, ou a captura das nove, ou a varredura. É receita e não tem escolha nenhuma dentro | **Sonnet** |
+| **F3** | **Ler a medição** | dizer o que o número quer dizer, e decidir se contraria a previsão | **Opus** |
+| **F4** | **Decidir a mudança** | qual `# TUNING:`, qual cor, qual ângulo, qual gramática — e quanto | **Opus** |
+| **F5** | **Aplicar e remedir** | escrever a alteração já escolhida e correr a mesma medição da F2 | **Sonnet** |
+| **F6** | **Asserção nova** | escrever a guarda que faltava e escolher o DEFEITO INJETADO. ⚠️ Nunca desce, por medição — ver o aviso acima | **Opus** |
+| **F7** | **Fechar** | as suítes, o rasto de prosa pelos documentos, o `ESTADO_DO_PROJETO.md` no teto, o commit e o push | **Sonnet** |
+
+**A F6 não acontece em toda sessão** — só quando a mudança descobre uma
+pergunta que nenhuma guarda fazia. Quando acontece, ela volta a subir e o resto
+da F7 desce outra vez.
+
+⚠️ **A F3 é a que se perde com mais facilidade, e é a mais cara de errar.** É
+tentador deixar a F2 correr direto para a F5 porque "o número está ali" — mas o
+número não diz o que fazer com ele, e a taxa de vitória é o valor mais fácil de
+ler errado deste projeto. Entre medir e mexer há sempre uma leitura.
+
 **A regra de paragem, que é o que torna isto seguro: a sessão barata NÃO
 decide.** Ao encontrar uma cor, um ângulo ou uma proporção por escolher; uma
 asserção nova, ou um defeito injetado que não reprovou; um `# TUNING:`; uma
@@ -1017,6 +1062,28 @@ medição que contraria o que estava escrito; ou um teste vermelho cuja causa n�
 é óbvia numa leitura — **pare e devolva**, em vez de escolher. E o contrário
 vale igual: assim que a decisão estiver escrita na `docs/decisoes/`, o resto da
 sessão desce para Sonnet, que costuma ser a maior parte dela.
+
+⚠️ **E O QUE CUSTA NUMA SESSÃO LONGA NÃO É O MODELO, É A CONVERSA.** A premissa
+da `016` é a razão de preço entre os dois, e ela está certa — mas medido nesta
+sessão ao fim de nove dias e cinco itens: **672 mil tokens de contexto, 65
+MILHÕES de tokens de leitura de cache**, e a maior parte do gasto não é produzir
+trabalho novo, é reprocessar o histórico a cada turno. Daí três coisas:
+
+- **trocar de modelo a meio** continua a carregar o contexto todo, só que a
+  preço mais baixo — ajuda menos do que parece;
+- **sessão NOVA no modelo certo**, apontada ao documento que descreve o ponto
+  de partida, arranca perto de zero e corta muito mais;
+- por isso é que o desenho de uma medição vive num DOCUMENTO e não só na
+  conversa: é o que torna a sessão descartável sem perder o trabalho.
+
+⚠️ **E PR FUNDIDO NÃO QUER DIZER BRANCH FUNDIDA.** A branch designada deste
+projeto reaproveita o nome entre sessões, e a receita de a reiniciar da `main`
+depois de um PR fundir é `git checkout -B <nome> origin/main` — que DESCARTA o
+que a branch tiver a mais. Em 11/09 isso apanhou um commit fechado e empurrado
+DEPOIS de o PR ter sido fundido: ele só sobreviveu por estar no remoto. Antes de
+reapontar, pergunte o que fica de fora — `git log --oneline origin/main..HEAD` —
+e recupere pelo remoto (`git reset --hard origin/<nome>`) em vez de assumir que
+a main tem tudo.
 
 ⚠️ **Nenhum modelo troca o próprio modelo — quem troca é o Bruno**, com
 `/model`. O que a sessão faz é ANUNCIAR numa linha qual modelo o próximo bloco

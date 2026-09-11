@@ -999,9 +999,60 @@ topo de torre continuava a passar. Hoje ele mede quanto desenho há num raio de
 2 px do centro de rotação, e o defeito injetado mostra a guarda velha a passar
 enquanto só a nova reprova.
 
-**Seis itens de arte** — detalhe da rua, curvas em vez de retas, gradiente de
-água e areia mais fauna, caminhos de terra para as casas, prédios em obra e
-avançados, e afastar a zona de espera.
+✅ **O 15 FECHOU em 11/09** (`docs/decisoes/017`): a Zona de Espera fundeava na
+água dos berços — três das cinco peças em `agua_media`, as duas boias incluídas
+—, e por isso lia como mais barcos atracados. Afastou-se 4,5 em `mx`, escolhido
+por varredura contra o DESENHO do mapa e depois na imagem, e rendeu o **D21**.
+
+⚠️ **E a lista de arte abaixo estava PARADA.** Ela nomeava "detalhe da rua" e
+"caminhos de terra para as casas" — o **4a** e o **11**, que fecharam na
+`docs/decisoes/012` com o bloco da estrada. O 11 tem a resposta medida: entre a
+calçada e a frente da casa há 0,13 unidades, não cabe caminho nenhum, e o espaço
+que existe é o de 1,60 entre as duas fileiras, que virou a viela.
+
+**Três itens de arte, e dois deles querem sessão própria** — prédios em obra e
+avançados (12, médio); curvas em vez de retas (8) e gradiente de água e areia
+mais fauna (9), que estão fora da ordem sugerida de propósito.
+
+### ⏳ O ITEM 5 ESTÁ NA F2 — a medição desenhada, por rodar (11/09)
+
+A F1 está feita (`CLAUDE.md`, tabela das sete fases). O que falta é rodar, e
+está tudo decidido aqui para a leitura não decidir sozinha.
+
+**O que varrer:** `START_CASH` ∈ {400, 360, 320, 300, 250, 200, 150} mil, tudo
+o resto fixo, **semente 20260825** nas sete. Sete corridas de 600 partidas,
+~26 s cada, ~4 minutos no total. O 400 é a linha de base.
+
+**Os pontos não são redondos por gosto.** Os perfis compram quando
+`caixa >= custo × folga` — Ótimo 1×, Mediano 2×, Descuidado 4× —, e a estrutura
+mais barata é o escritório a R$80.000:
+
+| Estrutura | Custo | Mediano (2×) | Descuidado (4×) |
+|---|---:|---:|---:|
+| escritório | 80.000 | 160.000 ✅ | **320.000 ✅** |
+| pátio | 115.000 | 230.000 ✅ | 460.000 ❌ |
+| guindaste | 120.000 | 240.000 ✅ | 480.000 ❌ |
+| píer 2 / cais | 150.000 | 300.000 ✅ | 600.000 ❌ |
+| armazém | 180.000 | 360.000 ✅ | 720.000 ❌ |
+| píer 3 | 260.000 | 520.000 ❌ | 1.040.000 ❌ |
+
+⚠️ **O penhasco está em 320.000.** Abaixo disso o Descuidado não abre com
+compra nenhuma — e a `/balancear` já mediu o que vem a seguir: ele acumula,
+paga a parcela, e a dificuldade **INVERTE** (Descuidado 51,7% contra Mediano
+13,8%). A varredura tem de ATRAVESSAR o penhasco para o ver, não parar antes.
+O Mediano tem os dele mais abaixo: perde o armazém a 360.000 e o píer 2 / cais
+a 300.000.
+
+**O que conta por bom** — os quatro, e a leitura é na MARGEM EM REGIME, não na
+taxa de vitória (`docs/decisoes/009`):
+
+1. a ordem NÃO inverte — Ótimo ≥ Mediano ≥ Descuidado;
+2. Ótimo ≥ 99%; abaixo disso é defeito, não sorteio;
+3. a banda de `005` de pé — Mediano ~80%, Descuidado ~35%;
+4. nenhum perfil em aresta de faca (a taxa mexe muito e a mediana quase nada).
+
+A pergunta: **quanto pode o `START_CASH` cair antes de a ordem inverter ou a
+banda partir?** O valor a escolher é o mais baixo que ainda cumpre os quatro.
 
 **Dois itens de sistema, dos três** — via de mão dupla e o camião que vai à doca
 do navio que serve. O terceiro (o fecho do painel de balanço, que trancava o

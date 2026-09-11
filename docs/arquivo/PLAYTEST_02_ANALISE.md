@@ -203,14 +203,14 @@ para ele a tomar com o número na mão.
 
 | Item | Tamanho | Nota |
 |---|---|---|
-| **4a** · detalhe da rua (faixa central, passadeiras) | pequeno, **depende do 2** | Faz sentido fazer junto com a via de mão dupla: alargar e detalhar na mesma passagem, senão desenha-se duas vezes |
+| ✅ **4a** · detalhe da rua (faixa central, passadeiras) | pequeno, **depende do 2** | **FEITO em 08/09** com o bloco da estrada, `docs/decisoes/012`. | Faz sentido fazer junto com a via de mão dupla: alargar e detalhar na mesma passagem, senão desenha-se duas vezes |
 | ✅ **6** · o guindaste de madeira do n1 | pequeno | É o pau-de-carga do porto em ruínas — o primeiro guindaste que o jogador vê. **FEITO em 08/09**, `docs/decisoes/015` |
 | **7** · variedade de BARCOS | médio | O trabalho de 07/09 deu seis cascos aos CARGUEIROS e deixou o pesqueiro com um só, e isso está registado como decisão (`010`). O que ele pede é o outro lado: a classe pesqueiro merece variação própria. É extensão do que já existe, não redesenho |
 | **8** · menos quadrado, mais curva | **grande, e é direção de arte** | Toca o gerador do mapa inteiro e o kit de props, que é de caixas por construção. Não é uma sessão |
 | **9** · gradiente de água e areia + fauna | médio | A paleta da água já foi medida em 02/09 (a amplitude de luminância, a espuma). Refazê-la exige repetir essa medição, senão achata outra vez. A fauna já tem estúdio (`brp_fauna.py`, a gaivota) |
-| **11** · caminhos de terra para as casas | pequeno-médio | Sai do gerador do mapa, ao lado do `vias()` |
-| **12** · prédios em obra e avançados | médio | A vila já tem `--nivel-vila=N` e três níveis; isto é acrescentar estados, não construir a máquina |
-| **15** · zona de espera afastada + barcos reais | pequeno | Metade já foi feita em 07/09 (o ancorado segue a classe e o motivo). Falta afastar |
+| ✅ **11** · caminhos de terra para as casas | pequeno-médio | **FEITO em 08/09**, `docs/decisoes/012` — e a resposta foi MEDIDA: entre a calçada e a frente da casa há 0,13 unidades, não cabe caminho. O espaço é o de 1,60 entre as fileiras, e virou a viela |
+| **12** · prédios em obra e avançados | médio-**grande** | A vila já tem `--nivel-vila=N` e três níveis, e para os prédios EM OBRA isto é mesmo acrescentar estados. ⚠️ **Mas o item cru pede mais do que esta linha dizia** (visto em 11/09): *"comércios variados, pracinha, igreja"* são TIPOS novos de prédio, não estados; e *"para irem aparecendo à medida que o porto cresce"*, com *"indicadores que farão a cidade ao redor ir crescendo junto do porto"*, amarra a vila ao estado do porto — que hoje é o contrário por decisão: ela troca entre FASES, não entre turnos. Fazer o 12 começa por decidir o âmbito |
+| ✅ **15** · zona de espera afastada + barcos reais | pequeno | **FEITO em 11/09**, `docs/decisoes/017` — afastada 4,5 em `mx`, para fora das três bandas que acompanham a costa |
 
 ### 🖥️ Interface
 
@@ -224,8 +224,8 @@ para ele a tomar com o número na mão.
 
 | Item | O que ele toca |
 |---|---|
-| **5** · caixa inicial menor, ou os 400.000 como empréstimo | `START_CASH = 400000` contra a `PARCELA_AMOUNT = 530000`. Mexe no eixo que o balanceamento de 06/09 mediu em 100% / 80,2% / 37,3%. O empréstimo é a resposta narrativa da queixa nº 1 do playtest 1 ("é estranho o porto ter dívida mas o jogador começar com 400.000") |
-| **24** · desconto por quitar antes | Pequeno em código, mas é um botão que move o eixo da dívida. Medir |
+| **5** · caixa inicial menor, ou os 400.000 como empréstimo | ⚠️ **SÃO DOIS PEDIDOS, e só um é economia** (visto na F1 de 11/09). **5a** baixar o `START_CASH` mexe no eixo que o balanceamento mediu em 100% / 80,2% / 37,3%; **5b** chamar-lhes EMPRÉSTIMO não mexe em número nenhum — é `Narrativa.gd` e o rótulo da dívida. E a queixa original, a nº 1 do playtest 1, era sobre ESTRANHEZA e não dificuldade (*"é estranho o porto ter dívida mas o jogador começar com 400.000"*): quem responde a ela de frente é o 5b. O desenho da varredura do 5a está na §7 do plano |
+| **24** · desconto por quitar antes | ⚠️ **NÃO É MENSURÁVEL HOJE, e isso não é opinião** (medido na F1 de 11/09). O `simular_balanceamento.gd` só resolve a fase `debt_payment` — **nenhum dos três perfis quita adiantado, nunca**, e o comentário do `pagar_parcela_adiantado()` no `GameState.gd` já o dizia por escrito. Varrer um desconto daria LINHA RETA, e linha reta aqui não quer dizer "não importa": quer dizer que o instrumento é cego, que é a mesma família do defeito injetado numa regra que o teste não exercita. O trabalho dele é de INSTRUMENTO antes de ser de constante — e mudar os três perfis re-baseia os 100% / 80,2% / 37,3% mesmo com desconto zero, porque um perfil que gasta 530.000 antes do prazo deixa de ter esse dinheiro para construir. A saída que não contamina é um QUARTO perfil ("Antecipado"), com o risco a conferir de o `projetar_parcelas.py` reprovar com um perfil a mais |
 | **23** · upgrade por píer | **Grande, e reabre `docs/decisoes/007`**, que decidiu os upgrades como estrutura única. Ele já antecipa as duas consequências certas: rever preços e desenhar níveis diferentes coexistindo no mapa |
 | **16** · navios só a partir da fase 4 | **Reabre `docs/decisoes/009`**, de 06/09 — a trava por nível do porto. Não é ajuste: é outra régua |
 | **20** · barras de status e estresse | **Reabre `docs/decisoes/005`** (o jogo é tranquilo, a dívida não é o motor) e cria dois eixos novos que entram na reputação. Ele mesmo escreve que "deverá ser bem balanceado devido à complexidade" |
