@@ -427,6 +427,15 @@ Para medir qualquer mudança: constantes marcadas `# TUNING:` no topo de
 ---
 ---
 
+## Por que o trabalhador tem DOIS bonecos
+
+Desceu do `ESTADO_DO_PROJETO.md` em 11/09, porque é caminho percorrido e não
+descrição do jogo de hoje. O retrato do cartão tem 70 px e olha para a frente; o
+boneco que fica de pé no tabuado tem 22 px e continua com as cinco caixas com
+que nasceu. **22 px e 70 px não são o mesmo orçamento de pixel** — é a mesma
+conta que separa "arte para interface enche o quadro" de "arte para o mapa,
+não", que está no `CLAUDE.md`.
+
 ## Histórico de correções relevantes
 
 O playtest de 30/08 encontrou um bug de estado e três defeitos de imagem:
@@ -519,7 +528,7 @@ iguais, a barra preta na quina coplanar e os barrotes a pairar — estão no
 ---
 
 
-## Os blocos da segunda jogada (07–08/09)
+## Os blocos da segunda jogada (07–11/09)
 
 A devolução de 06/09 trouxe 25 itens, triados em `PLAYTEST_02_ANALISE.md`. O
 Bruno escolheu a ordem, um bloco de cada vez, e o detalhe de cada um vive na
@@ -533,9 +542,19 @@ decisão dele:
 | A esquina chanfrada | o resto do 4b | `docs/decisoes/013` |
 | A frota de pesca por porte | 7 | `docs/decisoes/014` |
 | O pau de carga do píer n1 | 6 | `docs/decisoes/015` |
+| A Zona de Espera ao largo | 15 | `docs/decisoes/017` |
 
 Nenhum deles encostou na economia: o `GameState.gd` não mudou em nenhum, e o
-balanceamento atravessou os seis em 100% / 80,2% / 37,3%.
+balanceamento atravessou os sete em 100% / 80,2% / 37,3%.
+
+**E o 15 rendeu um bloco novo, como o 4b e o 6 tinham rendido.** A queixa dizia
+"afastada" e o defeito era outro: das cinco peças do fundeadouro, TRÊS caíam em
+`agua_media` — a banda do meio, que acompanha a costa —, incluindo as duas boias
+que existem para o MARCAR. Liam como mais barcos atracados porque estavam na
+água dos atracados. Daí saiu o **D21**, que pergunta ao mapa que água ele pinta
+debaixo de cada prop; e ele não casa hexadecimal como o D20, porque a água leva
+manchas e espuma por cima e o berço da doca 3 sai `#3aacc7` onde a paleta diz
+`#3fb6cf`. `docs/decisoes/017`.
 
 **E o 6 rendeu o mesmo, um andar acima.** A lança do n1 era uma treliça — o n2
 mais pequeno e castanho —, e sobre a AREIA da única doca do porto em ruínas ela
@@ -572,4 +591,5 @@ lista viva lê o arquivo — ele imprime bloco a bloco.
 | **D17** | 06/09 | o `barco_medio` gerado, validado e em doca nenhuma. Em 07/09 passou a perguntar pelo par (classe, motivo); em 08/09 ganhou o eixo do PORTE — percorre a faixa de valor da classe pela porta que o jogo usa e exige que todos saiam, e na ordem. Ainda em 08/09 apertou o pivô: a moldura da lança não é o desenho dela |
 | **D18** | 06/09 | texto vindo de tabela cresce, e `Label` que não cabe corta sem erro |
 | **D19** | 06/09 | o cinzento neutro do jogo mede 2,93:1 sobre o branco do painel — abaixo do corte da WCAG, e em oito rótulos |
+| **D21** | 11/09 | a Zona de Espera fundeada na água dos berços, e nada a perguntar onde ela estava — a maquinaria de cerco mede pegada contra faixa PUBLICADA, e o fundeadouro não tem faixa nenhuma |
 | **D20** | 08/09 | a fita de calçada atravessada na pista. Toda a maquinaria de cerco perguntava POSIÇÃO; nenhuma perguntava COR |

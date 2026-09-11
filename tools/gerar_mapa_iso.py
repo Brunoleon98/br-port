@@ -2650,6 +2650,21 @@ def tabela_ancoras() -> dict:
         # sua por JSON em vez de a repetir.
         "cores_da_rua": {"asfalto": C["asfalto_via"], "calcada": C["calcada"],
                          "meiofio": C["meiofio"]},
+        # AS FAIXAS DE ÁGUA, pela mesma razão e para a mesma pergunta. O que o
+        # D21 quer saber é se a Zona de Espera fundeia AO LARGO, e a divisão
+        # que responde isso está aqui e não num número: `costeiras` são as três
+        # bandas que ACOMPANHAM a costa — o baixio, a rasa e a média, desenhadas
+        # a `costa(0, d)` — e `largo` é o que fica para lá delas, que é o fundo
+        # do mapa. Um barco atracado está numa costeira por construção; um
+        # fundeado não pode estar.
+        #
+        # ⚠️ E ISTO É UMA DIVISÃO, NÃO UMA LISTA DE TONS. Quem acrescentar uma
+        # quarta banda costeira tem de a pôr aqui, senão ela passa a contar como
+        # largo e o D21 deixa de reprovar o que existe para reprovar.
+        "cores_da_agua": {
+            "costeiras": [C["agua_baixio"], C["agua_rasa"], C["agua_media"]],
+            "largo": [C["agua"], C["agua_funda"]],
+        },
         "pegadas": {k: list(v) for k, v in sorted(PEGADAS.items())},
         "mapa": {"largura": SAIDA, "altura": SAIDA},
         "pieres": pieres,

@@ -999,9 +999,20 @@ topo de torre continuava a passar. Hoje ele mede quanto desenho há num raio de
 2 px do centro de rotação, e o defeito injetado mostra a guarda velha a passar
 enquanto só a nova reprova.
 
-**Seis itens de arte** — detalhe da rua, curvas em vez de retas, gradiente de
-água e areia mais fauna, caminhos de terra para as casas, prédios em obra e
-avançados, e afastar a zona de espera.
+✅ **O 15 FECHOU em 11/09** (`docs/decisoes/017`): a Zona de Espera fundeava na
+água dos berços — três das cinco peças em `agua_media`, as duas boias incluídas
+—, e por isso lia como mais barcos atracados. Afastou-se 4,5 em `mx`, escolhido
+por varredura contra o DESENHO do mapa e depois na imagem, e rendeu o **D21**.
+
+⚠️ **E a lista de arte abaixo estava PARADA.** Ela nomeava "detalhe da rua" e
+"caminhos de terra para as casas" — o **4a** e o **11**, que fecharam na
+`docs/decisoes/012` com o bloco da estrada. O 11 tem a resposta medida: entre a
+calçada e a frente da casa há 0,13 unidades, não cabe caminho nenhum, e o espaço
+que existe é o de 1,60 entre as duas fileiras, que virou a viela.
+
+**Três itens de arte, e dois deles querem sessão própria** — prédios em obra e
+avançados (12, médio); curvas em vez de retas (8) e gradiente de água e areia
+mais fauna (9), que estão fora da ordem sugerida de propósito.
 
 **Dois itens de sistema, dos três** — via de mão dupla e o camião que vai à doca
 do navio que serve. O terceiro (o fecho do painel de balanço, que trancava o

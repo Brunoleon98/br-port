@@ -86,6 +86,7 @@ var _d17_completo := false
 var _d18_completo := false
 var _d19_completo := false
 var _d20_completo := false
+var _d21_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -182,6 +183,10 @@ func _rodar() -> void:
 	print("=== D20: a pista é pista no desenho, do começo ao fim da rota ===")
 	_d20_a_rua_no_desenho()
 	_confere("o bloco D20 correu até ao fim", _d20_completo)
+
+	print("=== D21: quem espera fundeia AO LARGO, quem atraca fica na costeira ===")
+	_d21_a_zona_de_espera()
+	_confere("o bloco D21 correu até ao fim", _d21_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -2053,6 +2058,134 @@ func _d20_a_rua_no_desenho() -> void:
 		_confere("%s: nenhum ponto da rota cai em calçada" % caminho.get_file(),
 			pior == "", pior)
 	_d20_completo = true
+
+
+# ── D21 ── quem ESPERA fundeia ao largo; quem ATRACA fica na costeira
+#
+# Irmão do D20, e pela mesma porta: ali perguntava-se com que cor o mapa pinta a
+# PISTA, aqui com que cor ele pinta a ÁGUA debaixo de cada prop. Toda a
+# maquinaria de cerco deste projeto mede posição contra faixa publicada, e a
+# Zona de Espera não tem faixa nenhuma — ela é um punhado de props postos no
+# `Cenario` a olho, e nada perguntava se estavam no sítio certo.
+#
+# ⚠️ E ELA ESTAVA NO SÍTIO ERRADO DESDE QUE EXISTE. Medido em 11/09, antes de
+# a mexer: dos cinco props, TRÊS caíam em `agua_media` — a banda do meio, que
+# acompanha a costa — e só dois no largo. As duas boias que MARCAM o fundeadouro
+# estavam à profundidade de um berço. A queixa do playtest era *"a área de
+# espera pode ficar mais afastada do porto"*, e a razão pela qual ela lia como
+# "mais barcos atracados" é esta: estava na água dos atracados.
+#
+# A pergunta NÃO é "está a N unidades do porto". Distância em unidades não
+# sobrevive a um degrau da costa — a mesma conta dá 6,85 para um prop que o mapa
+# pinta de `agua_media`, porque perto do degrau a costa mais próxima não é a
+# borda da própria banda. Quem sabe onde acaba a água costeira é o mapa.
+#
+# ⚠️ E AQUI NÃO SE CASA O HEXADECIMAL, ao contrário do D20, porque a ÁGUA LEVA
+# COISA POR CIMA. A rua é tinta chapada e compara-se exata; a água leva manchas
+# de corrente em gradiente e duas camadas de espuma, todas semitransparentes, e
+# o pixel do berço da doca 3 sai a `#3aacc7` onde a paleta diz `#3fb6cf` — fora
+# da folga de 4/255 que o `_mesma_cor` dá ao antisserrilhado. A primeira versão
+# deste bloco reprovou esse berço, e estava errada ela e não o porto.
+#
+# O que separa as duas famílias com folga é a LUMINÂNCIA, e o limiar sai
+# DERIVADO das cores que o mapa publica — a meio caminho entre a costeira mais
+# escura (108,7) e o largo mais claro (76,6), o que dá 92,6 com 16 pontos de
+# folga de cada lado. Mancha nenhuma atravessa isso: o berço manchado mede
+# 149,7 e o fundeadouro mede 70,6.
+#
+# São DUAS perguntas e não uma, e nenhuma implica a outra: alguém que alargue a
+# banda média até engolir o fundeadouro reprova a primeira e não a segunda;
+# alguém que encolha as costeiras até sumirem reprova a segunda e não a primeira
+# (o berço passaria a estar em mar aberto, que é tão errado como o contrário).
+const ZONA_DE_ESPERA := ["BarcoEspera", "Ancoragem"]
+
+
+func _luz(c: Color) -> float:
+	return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) * 255.0
+
+
+func _d21_a_zona_de_espera() -> void:
+	var cores: Dictionary = _ancoras.get("cores_da_agua", {})
+	_confere("a tabela de âncoras publica as faixas de água",
+		cores.has("costeiras") and cores.has("largo"))
+	if not cores.has("costeiras") or not cores.has("largo"):
+		return
+
+	# O limiar DERIVADO. Escrito à mão ele envelheceria calado na primeira vez
+	# que alguém mexesse na rampa da água — que é exatamente o que já aconteceu
+	# com a paleta em 02/09.
+	var escura_costeira := INF
+	for hexa in cores["costeiras"]:
+		escura_costeira = minf(escura_costeira, _luz(Color(str(hexa))))
+	var clara_largo := -INF
+	for hexa in cores["largo"]:
+		clara_largo = maxf(clara_largo, _luz(Color(str(hexa))))
+	_confere("as duas famílias de água separam-se em luminância",
+		escura_costeira > clara_largo + 8.0,
+		"costeira mais escura %.1f contra largo mais claro %.1f"
+			% [escura_costeira, clara_largo])
+	if escura_costeira <= clara_largo + 8.0:
+		return
+	var limiar := (escura_costeira + clara_largo) / 2.0
+
+	var arq := FileAccess.open("res://art/porto_mapa_iso.svg", FileAccess.READ)
+	_confere("o mapa do porto existe", arq != null)
+	if arq == null:
+		return
+	var img := Image.new()
+	# Pelo arquivo, nunca pelo `load()` da textura: o `.ctex` importado é de
+	# quando o projeto foi importado, e num teste isso mente nas duas direções.
+	var erro := img.load_svg_from_string(arq.get_as_text(), 1.0)
+	arq.close()
+	_confere("o mapa do porto rasteriza", erro == OK)
+	if erro != OK:
+		return
+
+	# Os props saem por VARREDURA do cenário e não de uma lista escrita aqui —
+	# um sexto prop no fundeadouro entra sozinho, que é a regra do `teste_fumaca`
+	# ("achadas por varredura, não por lista") aplicada a este bloco.
+	var cenario := _main.get_node_or_null("MapaWrap/Cenario") as Control
+	_confere("há um Cenario para varrer", cenario != null)
+	if cenario == null:
+		return
+	var achados: Array = []
+	for no in cenario.get_children():
+		if not (no is Control):
+			continue
+		for prefixo in ZONA_DE_ESPERA:
+			if String(no.name).begins_with(prefixo):
+				achados.append(no)
+				break
+	# Lista vazia passaria em tudo o que vem a seguir sem ter olhado para nada.
+	_confere("a varredura achou a Zona de Espera", achados.size() >= 2,
+		"achou %d prop(s) com prefixo %s" % [achados.size(), ZONA_DE_ESPERA])
+
+	for no in achados:
+		var p := _no_mapa(no as Control) + Vector2(MEIO_QUADRO, MEIO_QUADRO)
+		var px := Vector2i(p)
+		var dentro := px.x >= 0 and px.y >= 0 \
+			and px.x < img.get_width() and px.y < img.get_height()
+		_confere("%s cai dentro do mapa" % no.name, dentro, "âncora em %s" % px)
+		if not dentro:
+			continue
+		var luz := _luz(img.get_pixelv(px))
+		_confere("%s fundeia AO LARGO, fora das faixas da costa" % no.name,
+			luz < limiar,
+			"o mapa pinta ali uma água de luminância %.1f, e o largo acaba em %.1f"
+				% [luz, limiar])
+
+	# A outra metade do par: um barco ATRACADO está em água costeira. Sem isto,
+	# encolher as costeiras até sumirem faria a asserção de cima passar com o
+	# fundeadouro exactamente onde está o berço.
+	for pier in _ancoras["pieres"]:
+		var b: Array = pier["barco"]
+		var luz := _luz(img.get_pixelv(Vector2i(int(b[0]), int(b[1]))))
+		_confere("o berço da doca %d está em água COSTEIRA" % int(pier["doca"]),
+			luz > limiar,
+			"o mapa pinta ali uma água de luminância %.1f, abaixo do limiar %.1f"
+				% [luz, limiar])
+
+	_d21_completo = true
 
 
 # Duas cores chapadas são iguais ou não são; a folga é só para o

@@ -203,14 +203,14 @@ para ele a tomar com o número na mão.
 
 | Item | Tamanho | Nota |
 |---|---|---|
-| **4a** · detalhe da rua (faixa central, passadeiras) | pequeno, **depende do 2** | Faz sentido fazer junto com a via de mão dupla: alargar e detalhar na mesma passagem, senão desenha-se duas vezes |
+| ✅ **4a** · detalhe da rua (faixa central, passadeiras) | pequeno, **depende do 2** | **FEITO em 08/09** com o bloco da estrada, `docs/decisoes/012`. | Faz sentido fazer junto com a via de mão dupla: alargar e detalhar na mesma passagem, senão desenha-se duas vezes |
 | ✅ **6** · o guindaste de madeira do n1 | pequeno | É o pau-de-carga do porto em ruínas — o primeiro guindaste que o jogador vê. **FEITO em 08/09**, `docs/decisoes/015` |
 | **7** · variedade de BARCOS | médio | O trabalho de 07/09 deu seis cascos aos CARGUEIROS e deixou o pesqueiro com um só, e isso está registado como decisão (`010`). O que ele pede é o outro lado: a classe pesqueiro merece variação própria. É extensão do que já existe, não redesenho |
 | **8** · menos quadrado, mais curva | **grande, e é direção de arte** | Toca o gerador do mapa inteiro e o kit de props, que é de caixas por construção. Não é uma sessão |
 | **9** · gradiente de água e areia + fauna | médio | A paleta da água já foi medida em 02/09 (a amplitude de luminância, a espuma). Refazê-la exige repetir essa medição, senão achata outra vez. A fauna já tem estúdio (`brp_fauna.py`, a gaivota) |
-| **11** · caminhos de terra para as casas | pequeno-médio | Sai do gerador do mapa, ao lado do `vias()` |
+| ✅ **11** · caminhos de terra para as casas | pequeno-médio | **FEITO em 08/09**, `docs/decisoes/012` — e a resposta foi MEDIDA: entre a calçada e a frente da casa há 0,13 unidades, não cabe caminho. O espaço é o de 1,60 entre as fileiras, e virou a viela |
 | **12** · prédios em obra e avançados | médio | A vila já tem `--nivel-vila=N` e três níveis; isto é acrescentar estados, não construir a máquina |
-| **15** · zona de espera afastada + barcos reais | pequeno | Metade já foi feita em 07/09 (o ancorado segue a classe e o motivo). Falta afastar |
+| ✅ **15** · zona de espera afastada + barcos reais | pequeno | **FEITO em 11/09**, `docs/decisoes/017` — afastada 4,5 em `mx`, para fora das três bandas que acompanham a costa |
 
 ### 🖥️ Interface
 

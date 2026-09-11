@@ -542,6 +542,26 @@ tranca isso.
   do gerador — duas fontes, e não um espelho. E a pergunta é **«não é calçada»,
   não «é asfalto»**: a rodagem leva pintura, e exigir o cinzento reprovaria uma
   zebra bem desenhada (`docs/decisoes/013`).
+- **⚠️ E CASAR HEXADECIMAL EXATO SÓ SERVE EM TINTA CHAPADA.** A regra acima
+  abriu a porta de perguntar COR ao mapa; esta diz onde ela não passa. A rua é
+  chapada e compara-se exata com a folga do antisserrilhado; a ÁGUA leva coisa
+  por cima — manchas de corrente em gradiente radial e duas camadas de espuma,
+  todas semitransparentes. O pixel do berço da doca 3 sai `#3aacc7` onde a
+  paleta diz `#3fb6cf`: fora dos 4/255, e o primeiro D21 reprovou um berço que
+  estava certo. Onde o alvo leva camadas por cima, separe por LUMINÂNCIA com o
+  limiar DERIVADO das cores publicadas — a meio entre a família escura e a
+  clara —, nunca por igualdade de tom. Aqui isso dá 92,6 com 16 pontos de folga
+  de cada lado, e mancha nenhuma atravessa.
+- **⚠️ E DISTÂNCIA EM UNIDADES NÃO SOBREVIVE A UM DEGRAU DA COSTA.** A conta
+  óbvia — `mx` do prop menos a borda do cais da banda de `my` dele — deu **6,85**
+  para uma peça que o mapa pinta de `agua_media`, cuja banda acaba aos 6,0.
+  Não há erro na conta: perto de um degrau o ponto de costa mais próximo não é a
+  borda da própria banda, é a face do degrau ao lado, e as faixas de
+  profundidade seguem o CONTORNO. Toda medida "a que distância da costa" neste
+  mapa pergunta-se ao desenho, não à aritmética — e pela mesma razão uma
+  varredura dessa distância **não é monótona**: entre 2,0 e 3,0 o número de
+  props no largo sobe, desce e sobe, e parar no primeiro valor que serve é
+  assentar em cima de uma fronteira que se mexe.
 - **E a guarda que DUAS outras já implicam nunca reprova.** Irmã da regra de
   injetar defeito, um andar acima: a primeira asserção do desvio varria-o contra
   o retângulo do acesso, e o desvio é uma reta entre dois pontos que outras duas

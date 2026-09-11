@@ -127,10 +127,10 @@ em `docs/arquivo/HISTORICO.md`.
 
 **Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
 
-**Seis blocos fechados** — defeitos medidos e interface (14, 10, 1, 22, 25),
-o camião que entra na doca (3), a estrada (2, 4a, 11), a esquina chanfrada (4b),
-a frota de pesca (7) e o pau de carga do píer n1 (6). O que custaram está em
-`docs/arquivo/HISTORICO.md`; o porquê, nas decisões `011` a `015`.
+**Sete blocos fechados** — defeitos e interface (14, 10, 1, 22, 25), o camião
+na doca (3), a estrada (2, 4a, 11), a esquina chanfrada (4b), a frota de pesca
+(7), o pau de carga do n1 (6) e a Zona de Espera ao largo (15). O custo está em
+`docs/arquivo/HISTORICO.md`; o porquê, nas decisões `011` a `017`.
 
 ⚠️ **Sobrou UMA coisa medida e por fazer, e não é defeito:** a rua parou em
 **1,8** porque a janela em `my` entre o acesso ao berço e o cotovelo fecha a
@@ -274,8 +274,8 @@ para o fundo onde cai — o cabeçalho de `Icones.gd` diz quais não se
 reaproveitam e por quê.
 
 As **estruturas trocam de textura, não de nó** — mesmo quadro nos dois estados,
-então o prédio não salta ao ser consertado. Mas as PEÇAS não se partilham, e
-cada estado tem vocabulário próprio: as duas lições estão no `CLAUDE.md`.
+então o prédio não salta ao ser consertado; as peças, essas, não se partilham
+(`CLAUDE.md`).
 
 **A cauda dos props tem corpo** (Etapa 2): contêiner corrugado, carga empilhada,
 boia e marcador, e as catorze peças pequenas do pátio em `blender/brp_porto.py`.
@@ -316,11 +316,13 @@ a faixa de valor da classe escolhe qual atraca. Zero sorteios gastos: o valor
 já nascia com o barco.
 
 O **retrato do trabalhador** sai do mesmo estúdio Blender e é o único prop que
-olha para a frente; o boneco do PÍER continua com as cinco caixas dele, porque
-22px e 70px não são o mesmo orçamento de pixel (`docs/arquivo/`).
+olha para a frente; o boneco do PÍER é outro, e continua com as cinco caixas
+dele (`docs/arquivo/`).
 
 A **Zona de Espera é só visual**, e torná-la mecânica muda o balanceamento
-medido (`docs/arquivo/BLOCO4_BRIEFING_VISUAL.md`).
+medido. Desde 11/09 ela fundeia **ao largo**, fora das três bandas de água que
+acompanham a costa — estava na água dos berços, e lia como mais barcos
+atracados (`docs/decisoes/017`).
 
 Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o Diário
 do Porto e a lista "VS — OUT" do GDD. A cena de fim de Fase 1 já não está nesta
