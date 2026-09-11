@@ -1014,7 +1014,7 @@ que existe é o de 1,60 entre as duas fileiras, que virou a viela.
 avançados (12, médio); curvas em vez de retas (8) e gradiente de água e areia
 mais fauna (9), que estão fora da ordem sugerida de propósito.
 
-### ⏳ O ITEM 5 ESTÁ NA F2 — a medição desenhada, por rodar (11/09)
+### ⏳ O ITEM 5 ESTÁ NA F2 — F2 feita, F3 por ler (11/09)
 
 A F1 está feita (`CLAUDE.md`, tabela das sete fases). O que falta é rodar, e
 está tudo decidido aqui para a leitura não decidir sozinha.
@@ -1053,6 +1053,24 @@ taxa de vitória (`docs/decisoes/009`):
 
 A pergunta: **quanto pode o `START_CASH` cair antes de a ordem inverter ou a
 banda partir?** O valor a escolher é o mais baixo que ainda cumpre os quatro.
+
+**A medição, as sete corridas — 600 partidas cada, semente 20260825, EXIT=0 em
+todas.** Só os números; a leitura fica para a F3.
+
+| START_CASH | Ótimo taxa | Ótimo mediana caixa | Ótimo margem regime | Mediano taxa | Mediano mediana caixa | Mediano margem regime | Descuidado taxa | Descuidado mediana caixa | Descuidado margem regime |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 400.000 | 100,0% | R$1.309.646 | R$674.019 | 80,2% | R$716.179 | R$502.571 | 37,3% | R$503.039 | R$103.290 |
+| 360.000 | 99,7% | R$1.220.755 | R$670.219 | 63,5% | R$599.031 | R$472.583 | 17,2% | R$459.193 | R$92.609 |
+| 320.000 | 99,3% | R$1.117.445 | R$673.627 | 46,8% | R$517.652 | R$433.017 | 6,8% | R$421.983 | R$82.141 |
+| 300.000 | 99,2% | R$1.080.316 | R$674.359 | 37,8% | R$494.336 | R$427.473 | 3,5% | R$415.465 | R$77.393 |
+| 250.000 | 95,8% | R$928.064 | R$663.183 | 2,0% | R$324.178 | R$314.076 | 0,7% | R$393.128 | R$66.080 |
+| 200.000 | 86,5% | R$775.341 | R$650.792 | 0,5% | R$265.186 | R$244.784 | 0,2% | R$351.941 | R$61.590 |
+| 150.000 | 58,7% | R$588.812 | R$599.970 | 0,0% | R$258.065 | R$187.187 | 0,0% | R$303.965 | R$60.013 |
+
+Margem em regime é a de `009` (semana 4, delta de caixa menos obra da mesma
+semana). Mediana do caixa final é a de "caixa no vencimento" do simulador:
+conta quem chegou ao turno 32 com caixa ≥ 0, venceu ou não; exclui só quem
+quebrou antes (caixa negativo).
 
 **Dois itens de sistema, dos três** — via de mão dupla e o camião que vai à doca
 do navio que serve. O terceiro (o fecho do painel de balanço, que trancava o
