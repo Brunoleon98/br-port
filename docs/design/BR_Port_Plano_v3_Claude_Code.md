@@ -1014,6 +1014,46 @@ que existe é o de 1,60 entre as duas fileiras, que virou a viela.
 avançados (12, médio); curvas em vez de retas (8) e gradiente de água e areia
 mais fauna (9), que estão fora da ordem sugerida de propósito.
 
+### ⏳ O ITEM 5 ESTÁ NA F2 — a medição desenhada, por rodar (11/09)
+
+A F1 está feita (`CLAUDE.md`, tabela das sete fases). O que falta é rodar, e
+está tudo decidido aqui para a leitura não decidir sozinha.
+
+**O que varrer:** `START_CASH` ∈ {400, 360, 320, 300, 250, 200, 150} mil, tudo
+o resto fixo, **semente 20260825** nas sete. Sete corridas de 600 partidas,
+~26 s cada, ~4 minutos no total. O 400 é a linha de base.
+
+**Os pontos não são redondos por gosto.** Os perfis compram quando
+`caixa >= custo × folga` — Ótimo 1×, Mediano 2×, Descuidado 4× —, e a estrutura
+mais barata é o escritório a R$80.000:
+
+| Estrutura | Custo | Mediano (2×) | Descuidado (4×) |
+|---|---:|---:|---:|
+| escritório | 80.000 | 160.000 ✅ | **320.000 ✅** |
+| pátio | 115.000 | 230.000 ✅ | 460.000 ❌ |
+| guindaste | 120.000 | 240.000 ✅ | 480.000 ❌ |
+| píer 2 / cais | 150.000 | 300.000 ✅ | 600.000 ❌ |
+| armazém | 180.000 | 360.000 ✅ | 720.000 ❌ |
+| píer 3 | 260.000 | 520.000 ❌ | 1.040.000 ❌ |
+
+⚠️ **O penhasco está em 320.000.** Abaixo disso o Descuidado não abre com
+compra nenhuma — e a `/balancear` já mediu o que vem a seguir: ele acumula,
+paga a parcela, e a dificuldade **INVERTE** (Descuidado 51,7% contra Mediano
+13,8%). A varredura tem de ATRAVESSAR o penhasco para o ver, não parar antes.
+O Mediano tem os dele mais abaixo: perde o armazém a 360.000 e o píer 2 / cais
+a 300.000.
+
+**O que conta por bom** — os quatro, e a leitura é na MARGEM EM REGIME, não na
+taxa de vitória (`docs/decisoes/009`):
+
+1. a ordem NÃO inverte — Ótimo ≥ Mediano ≥ Descuidado;
+2. Ótimo ≥ 99%; abaixo disso é defeito, não sorteio;
+3. a banda de `005` de pé — Mediano ~80%, Descuidado ~35%;
+4. nenhum perfil em aresta de faca (a taxa mexe muito e a mediana quase nada).
+
+A pergunta: **quanto pode o `START_CASH` cair antes de a ordem inverter ou a
+banda partir?** O valor a escolher é o mais baixo que ainda cumpre os quatro.
+
 **Dois itens de sistema, dos três** — via de mão dupla e o camião que vai à doca
 do navio que serve. O terceiro (o fecho do painel de balanço, que trancava o
 menu de pausa e com ele o `.jsonl` da partida) foi feito em 07/09.

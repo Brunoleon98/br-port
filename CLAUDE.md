@@ -1063,6 +1063,28 @@ medição que contraria o que estava escrito; ou um teste vermelho cuja causa n�
 vale igual: assim que a decisão estiver escrita na `docs/decisoes/`, o resto da
 sessão desce para Sonnet, que costuma ser a maior parte dela.
 
+⚠️ **E O QUE CUSTA NUMA SESSÃO LONGA NÃO É O MODELO, É A CONVERSA.** A premissa
+da `016` é a razão de preço entre os dois, e ela está certa — mas medido nesta
+sessão ao fim de nove dias e cinco itens: **672 mil tokens de contexto, 65
+MILHÕES de tokens de leitura de cache**, e a maior parte do gasto não é produzir
+trabalho novo, é reprocessar o histórico a cada turno. Daí três coisas:
+
+- **trocar de modelo a meio** continua a carregar o contexto todo, só que a
+  preço mais baixo — ajuda menos do que parece;
+- **sessão NOVA no modelo certo**, apontada ao documento que descreve o ponto
+  de partida, arranca perto de zero e corta muito mais;
+- por isso é que o desenho de uma medição vive num DOCUMENTO e não só na
+  conversa: é o que torna a sessão descartável sem perder o trabalho.
+
+⚠️ **E PR FUNDIDO NÃO QUER DIZER BRANCH FUNDIDA.** A branch designada deste
+projeto reaproveita o nome entre sessões, e a receita de a reiniciar da `main`
+depois de um PR fundir é `git checkout -B <nome> origin/main` — que DESCARTA o
+que a branch tiver a mais. Em 11/09 isso apanhou um commit fechado e empurrado
+DEPOIS de o PR ter sido fundido: ele só sobreviveu por estar no remoto. Antes de
+reapontar, pergunte o que fica de fora — `git log --oneline origin/main..HEAD` —
+e recupere pelo remoto (`git reset --hard origin/<nome>`) em vez de assumir que
+a main tem tudo.
+
 ⚠️ **Nenhum modelo troca o próprio modelo — quem troca é o Bruno**, com
 `/model`. O que a sessão faz é ANUNCIAR numa linha qual modelo o próximo bloco
 pede, antes de o começar, e parar quando for para cima. Sob pedido dele, um
