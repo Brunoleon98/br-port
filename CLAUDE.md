@@ -1030,6 +1030,31 @@ parágrafos de maneiras de um defeito injetado não provar nada, e cada um é um
 caso real em que se acreditou num validador que nunca tinha visto defeito
 nenhum. É o sítio do projeto onde poupar sai mais caro.
 
+### As SETE FASES de uma sessão, numeradas — diga o número, e o modelo sai daí
+
+Esta é a tabela a citar em conversa: **"estou na F3"**, **"pare na F4"**. Ela
+vale para qualquer item da fila; as três skills trazem a versão delas, com os
+mesmos números.
+
+| # | Fase | O que é | Modelo |
+|---|---|---|---|
+| **F1** | **Escolher e desenhar** | ler a fila, escolher o item, e desenhar a MEDIÇÃO — que constante varrer, em que intervalo, contra o quê, e o que conta por bom | **Opus** |
+| **F2** | **Medir o ANTES** | rodar o que a F1 desenhou: 600 partidas × 3 perfis, ou a captura das nove, ou a varredura. É receita e não tem escolha nenhuma dentro | **Sonnet** |
+| **F3** | **Ler a medição** | dizer o que o número quer dizer, e decidir se contraria a previsão | **Opus** |
+| **F4** | **Decidir a mudança** | qual `# TUNING:`, qual cor, qual ângulo, qual gramática — e quanto | **Opus** |
+| **F5** | **Aplicar e remedir** | escrever a alteração já escolhida e correr a mesma medição da F2 | **Sonnet** |
+| **F6** | **Asserção nova** | escrever a guarda que faltava e escolher o DEFEITO INJETADO. ⚠️ Nunca desce, por medição — ver o aviso acima | **Opus** |
+| **F7** | **Fechar** | as suítes, o rasto de prosa pelos documentos, o `ESTADO_DO_PROJETO.md` no teto, o commit e o push | **Sonnet** |
+
+**A F6 não acontece em toda sessão** — só quando a mudança descobre uma
+pergunta que nenhuma guarda fazia. Quando acontece, ela volta a subir e o resto
+da F7 desce outra vez.
+
+⚠️ **A F3 é a que se perde com mais facilidade, e é a mais cara de errar.** É
+tentador deixar a F2 correr direto para a F5 porque "o número está ali" — mas o
+número não diz o que fazer com ele, e a taxa de vitória é o valor mais fácil de
+ler errado deste projeto. Entre medir e mexer há sempre uma leitura.
+
 **A regra de paragem, que é o que torna isto seguro: a sessão barata NÃO
 decide.** Ao encontrar uma cor, um ângulo ou uma proporção por escolher; uma
 asserção nova, ou um defeito injetado que não reprovou; um `# TUNING:`; uma

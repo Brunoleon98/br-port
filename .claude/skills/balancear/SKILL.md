@@ -9,12 +9,23 @@ Mexer num número da economia é barato. O que é caro é o rasto: seis document
 afirmam o balanceamento, o CI reprova quem os deixa envelhecer, e a taxa de
 vitória é o número mais fácil de ler errado do projeto inteiro.
 
-> **Modelo** (`docs/decisoes/016`). **RODAR** o simulador é Sonnet — são 600
-> partidas e 26 segundos, e a receita está escrita. **LER** o que ele devolveu,
-> escolher que `# TUNING:` mexer e decidir se o resultado serve é **Opus**: a
-> taxa de vitória é o número mais fácil de ler errado do projeto, e esta skill
-> existe por causa disso. Arrastar o rasto dos seis documentos, depois, é
-> Sonnet.
+> **As FASES desta skill** (`docs/decisoes/016`; a tabela geral está no
+> `CLAUDE.md`). Numa sessão de economia fica **mais em Opus** do que numa de
+> arte, porque a taxa de vitória é o número mais fácil de ler errado do projeto
+> — esta skill existe por causa disso.
+>
+> | # | Aqui é | Modelo |
+> |---|---|---|
+> | **F1** | escolher o item e DESENHAR a varredura: que `# TUNING:`, que intervalo, que semente, o que se segura fixo | **Opus** |
+> | **F2** | rodar `simular_balanceamento.gd -- 600`, o ANTES | **Sonnet** |
+> | **F3** | ler os três perfis e a margem em regime, e dizer o que mudou de facto | **Opus** |
+> | **F4** | escolher o valor novo | **Opus** |
+> | **F5** | aplicar e remedir com a MESMA semente | **Sonnet** |
+> | **F6** | asserção nova + defeito injetado, se apareceu | **Opus** |
+> | **F7** | tabela dos números, projetor das Parcelas, os seis documentos, commit | **Sonnet** |
+>
+> ⚠️ **Medir é com `-- 600`.** As 30 do CI são fumaça e têm ±18 pontos de
+> margem — comparar aquele número com estes é comparar sorteio.
 
 **As regras do projeto estão em `CLAUDE.md` e carregam sozinhas.** Esta skill
 não as repete — ela conduz a medição e garante que nada fica para trás.
