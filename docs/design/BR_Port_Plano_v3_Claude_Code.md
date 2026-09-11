@@ -1014,48 +1014,35 @@ que existe é o de 1,60 entre as duas fileiras, que virou a viela.
 avançados (12, médio); curvas em vez de retas (8) e gradiente de água e areia
 mais fauna (9), que estão fora da ordem sugerida de propósito.
 
-### ⏳ O ITEM 5 ESTÁ NA F2 — F2 feita, F3 por ler (11/09)
+### ✅ O ITEM 5a FECHOU — o `START_CASH` fica em 400.000 (11/09)
 
-A F1 está feita (`CLAUDE.md`, tabela das sete fases). O que falta é rodar, e
-está tudo decidido aqui para a leitura não decidir sozinha.
+**`docs/decisoes/018`**, e a resposta é NÃO MEXER. Varridos sete pontos e 4.200
+partidas: **o único que cumpre os critérios é a linha de base**. A pergunta era
+*"quanto pode o caixa inicial cair antes de a banda partir?"*, e ela parte no
+primeiro passo — R$40.000 a menos custam 16,7 pontos ao Mediano e 20,1 ao
+Descuidado, com margem de erro de ±3,2 e ±3,9.
 
-**O que varrer:** `START_CASH` ∈ {400, 360, 320, 300, 250, 200, 150} mil, tudo
-o resto fixo, **semente 20260825** nas sete. Sete corridas de 600 partidas,
-~26 s cada, ~4 minutos no total. O 400 é a linha de base.
+⚠️ **E a previsão desta secção estava errada em duas coisas**, que é o mais
+caro que a medição devolveu. Ficam aqui porque foram escritas aqui:
 
-**Os pontos não são redondos por gosto.** Os perfis compram quando
-`caixa >= custo × folga` — Ótimo 1×, Mediano 2×, Descuidado 4× —, e a estrutura
-mais barata é o escritório a R$80.000:
+- **a inversão da dificuldade não existe neste eixo.** Ela está medida na
+  `/balancear`, mas com as ESTRUTURAS encarecidas e o caixa parado — o
+  cauteloso guarda os 400.000 e chega à parcela. Baixando o caixa inicial ele
+  continua sem construir e chega ao vencimento com 304.000: não há inversão
+  porque não há o que acumular;
+- **o penhasco dos 320.000 não existe.** A conta `caixa >= custo × folga`
+  responde pelo TURNO 1, e a partida tem 32 — o Descuidado levanta o escritório
+  em 100% das partidas até aos 200.000 e em 86% a 150.000, sem degrau nenhum. O
+  penhasco real é do MEDIANO, entre 300.000 e 250.000, e é o porto que desaba
+  (píer 3 de 65% para 1%).
 
-| Estrutura | Custo | Mediano (2×) | Descuidado (4×) |
-|---|---:|---:|---:|
-| escritório | 80.000 | 160.000 ✅ | **320.000 ✅** |
-| pátio | 115.000 | 230.000 ✅ | 460.000 ❌ |
-| guindaste | 120.000 | 240.000 ✅ | 480.000 ❌ |
-| píer 2 / cais | 150.000 | 300.000 ✅ | 600.000 ❌ |
-| armazém | 180.000 | 360.000 ✅ | 720.000 ❌ |
-| píer 3 | 260.000 | 520.000 ❌ | 1.040.000 ❌ |
-
-⚠️ **O penhasco está em 320.000.** Abaixo disso o Descuidado não abre com
-compra nenhuma — e a `/balancear` já mediu o que vem a seguir: ele acumula,
-paga a parcela, e a dificuldade **INVERTE** (Descuidado 51,7% contra Mediano
-13,8%). A varredura tem de ATRAVESSAR o penhasco para o ver, não parar antes.
-O Mediano tem os dele mais abaixo: perde o armazém a 360.000 e o píer 2 / cais
-a 300.000.
-
-**O que conta por bom** — os quatro, e a leitura é na MARGEM EM REGIME, não na
-taxa de vitória (`docs/decisoes/009`):
-
-1. a ordem NÃO inverte — Ótimo ≥ Mediano ≥ Descuidado;
-2. Ótimo ≥ 99%; abaixo disso é defeito, não sorteio;
-3. a banda de `005` de pé — Mediano ~80%, Descuidado ~35%;
-4. nenhum perfil em aresta de faca (a taxa mexe muito e a mediana quase nada).
-
-A pergunta: **quanto pode o `START_CASH` cair antes de a ordem inverter ou a
-banda partir?** O valor a escolher é o mais baixo que ainda cumpre os quatro.
+**O que sobra do item 5 é o 5b** — chamar EMPRÉSTIMO aos 400.000 —, que não
+mexe em número nenhum e é `Narrativa.gd` mais o rótulo da dívida. **É ele que
+responde à queixa que gerou os dois**, que era sobre ESTRANHEZA e não sobre
+dificuldade.
 
 **A medição, as sete corridas — 600 partidas cada, semente 20260825, EXIT=0 em
-todas.** Só os números; a leitura fica para a F3.
+todas.** A leitura está na `018`.
 
 | START_CASH | Ótimo taxa | Ótimo mediana caixa | Ótimo margem regime | Mediano taxa | Mediano mediana caixa | Mediano margem regime | Descuidado taxa | Descuidado mediana caixa | Descuidado margem regime |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|

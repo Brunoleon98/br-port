@@ -175,6 +175,22 @@ Teste e import rodam sem tela.
    número se mexe sozinho antes de escolher a tolerância — e se ele se mexer
    mais do que ela, o defeito é do portão, não do que ele reprova. Hoje o CI
    mede com 600 e o projetor recusa-se a calibrar abaixo de 100 partidas.
+   ⚠️ **E RESULTADO MEDIDO NUMA CONSTANTE NÃO SE PREVÊ NOUTRA — nem quando as
+   duas entram na mesma razão.** A `/balancear` regista que encarecer as
+   ESTRUTURAS inverte a dificuldade (o cauteloso não constrói, acumula e paga a
+   parcela). Em 11/09 a F1 leu isso como uma propriedade da razão
+   `caixa / custo`, previu a mesma inversão baixando o `START_CASH` e desenhou
+   uma varredura inteira para a apanhar: ela **não veio em nenhum dos sete
+   pontos**. Encarecer a estrutura mexe só em QUEM CONSTRÓI; baixar o caixa
+   mexe nisso e no NÍVEL ABSOLUTO contra a parcela, e o segundo domina — o
+   acumulador só ganha se tiver o que acumular. Antes de prever com uma
+   medição antiga, confira que ela mexeu na MESMA constante (`018`).
+   ⚠️ **E CONTA QUE RESPONDE PELO PRIMEIRO TURNO NÃO DESCREVE 32 DELES.** Na
+   mesma F1, `caixa >= custo × folga` pôs um penhasco em 320.000 — abaixo disso
+   o Descuidado "não abre com compra nenhuma". Medido, ele levanta o escritório
+   em 100% das partidas até aos 200.000 e em 86% a 150.000, porque acumula
+   receita e compra no turno 9. Um limiar só vira penhasco quando a partida
+   acaba antes de o perfil poupar a diferença.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
    ficou bonito. O CI já anexa as oito a cada PR (artefato `brport-captura`) e
    diz na página da corrida qual mudou — mas dizer que mudou não é dizer que

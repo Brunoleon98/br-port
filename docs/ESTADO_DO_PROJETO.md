@@ -53,6 +53,10 @@ barcos, que passou a favorecer o porto pobre (ele só recebe pesqueiro, que
 descarrega num turno). Mexer em preço sem rodar `simular_balanceamento.gd`
 quebra isto.
 
+**E o `START_CASH` está TRANCADO em 400.000** (`docs/decisoes/018`): varrido
+até 150.000, o único ponto que cumpre os critérios é a linha de base —
+R$40.000 a menos custam 16,7 pontos ao Mediano.
+
 **E o navio que atraca depende do porto que existe** (`docs/decisoes/009`). São
 três classes travadas pelo NÍVEL DO PORTO, que é o menor entre o do píer e o do
 guindaste: pesqueiro no nível 1, cargueiro no 2, navio de longo curso no 3 — que
@@ -133,9 +137,8 @@ na doca (3), a estrada (2, 4a, 11), a esquina chanfrada (4b), a frota de pesca
 `docs/arquivo/HISTORICO.md`; o porquê, nas decisões `011` a `017`.
 
 ⚠️ **Sobrou UMA coisa medida e por fazer, e não é defeito:** a rua parou em
-**1,8** porque a janela em `my` entre o acesso ao berço e o cotovelo fecha a
-1,99 e o armazém precisa de 1,987. Passar disso empurra o `RUA_RECUO` — há
-1,48 de folga até à vila — e mexe no enquadramento inteiro. É sessão própria.
+**1,8** — alargá-la empurra o `RUA_RECUO` e mexe no enquadramento inteiro. A
+conta está na `012`. É sessão própria.
 
 O resto continua por começar, e **a ordem é dele**.
 
