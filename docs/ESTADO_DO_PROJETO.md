@@ -213,7 +213,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
-| `tools/capturar_evidencia.sh` | **As dez fotografias que provam o que ficou** — sete de jogo (o nível 2 do porto, o porto A OPERAR com os camiões nos berços, e o porto EM RUÍNAS a trabalhar, que é o único estado onde a frota de pesca atraca), a primeira página do DIÁRIO (painel de leitura, altura calibrada contra o texto) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
+| `tools/capturar_evidencia.sh` | **As fotografias que provam o que ficou** — as de jogo (o porto a OPERAR, e o porto EM RUÍNAS a trabalhar, único estado onde a frota de pesca atraca), o DIÁRIO e as folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. Quantas são, diz o próprio script. É o que o CI roda a cada PR |
 | `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os cascos (por classe, motivo e porte) e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Reprova se transbordar a tela, em vez de recortar. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
@@ -238,8 +238,8 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   cargueiro e navio de longo curso, cada uma com a sua faixa de valor, os seus
   turnos e a sua mistura de motivos. A classe decide o casco desenhado no píer
   (`docs/decisoes/009`)
-- Parcela única de **R$530.000** ao Sr. Ribeiro no fim da semana 4; paga no
-  vencimento, entra no boletim antes de a semana zerar (32 dias de partida)
+- Parcela única de **R$530.000** ao Sr. Ribeiro no fim da semana 4; paga ou
+  recusada, a semana só fecha depois da decisão (32 dias de partida)
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
   upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
   com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase

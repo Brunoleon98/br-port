@@ -1212,6 +1212,19 @@ armadilha de uma função, no comentário dela.
   novo se prendesse a uma estrutura sem linha na contabilidade; a linha chama-se
   como a estrutura de propósito, e o bloco T5l tranca que toda estrutura que
   paga tenha a sua.
+- **⚠️ ADIAR UM LANÇAMENTO PARA DEPOIS DE UMA DECISÃO ABRE UMA SAÍDA POR
+  RESPOSTA, e a que não se escreveu fica órfã.** A revisão externa de 12/09
+  achou um defeito verdadeiro — o boletim da semana 4 fechava ANTES de o Sr.
+  Ribeiro receber, e escondia a maior despesa da semana —, e o conserto adiou
+  o fecho para o `pay_debt()`. Só que a fase `debt_payment` tem DUAS portas:
+  quem paga e quem não pode pagar. Pelo lado da derrota o fecho nunca
+  acontecia — `semana_atual` chegava ao fim da partida com meia semana dentro,
+  `historico_semanas` ficava com TRÊS entradas em vez de quatro e o boletim
+  não abria —, e **as cinco suítes passavam**, porque a asserção que veio com
+  o conserto provava o adiamento só pelo lado de quem PAGA. Ao mover trabalho
+  para depois de uma decisão, conte as RESPOSTAS e feche em todas; e a guarda
+  que fecha é a própria FASE que adiou, nunca uma aproximação dela — assim ela
+  também torna o fecho idempotente de graça.
 - **Teste que JOGA fixa a semente.** `new_game()` chama `_spawn_boats()`, que
   tem 30% de abrir contra-oferta — e nessa fase o `advance_turn()` retorna
   CALADO. Um bloco de teste que avance o turno logo a seguir reprova em cerca

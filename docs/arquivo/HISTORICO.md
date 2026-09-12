@@ -23,6 +23,19 @@ de 25.925 bytes virava 26.274 num checkout Windows e reprovava. O conferidor
 agora mede LF normalizado. Os três caminhos ficaram presos em regressão ou em
 validação executável.
 
+**E A TRIAGEM DELA, NO MESMO DIA, ACHOU O BURACO DO PRÓPRIO CONSERTO.** Os três
+achados reproduziram-se — a parcela escondida, a perda para o rival ausente do
+resumo diário, e o teto do estado que vira 26.236 bytes num checkout CRLF —, e
+os dois últimos estavam certos e fechados. O primeiro só metade: adiar o fecho
+da semana 4 para o `pay_debt()` deixou a OUTRA porta da mesma fase sem fecho
+nenhum, e quem não conseguia pagar acabava a partida com a semana 4 por fechar,
+o boletim por abrir e `historico_semanas` com três entradas. As cinco suítes
+passavam, porque a asserção que veio junto media só o lado de quem paga. O
+`fail_debt()` passou a fechar pela mesma guarda de fase, dois defeitos injetados
+mostram cada metade a reprovar sozinha, e as 600 partidas × 4 perfis devolvem
+100,0% / 80,2% / 37,3% e margens de R$674.019 / R$502.571 / R$103.290 — iguais
+ao dígito, que é o que prova que o conserto não tocou na economia.
+
 **O QUE SAIU DO ESTADO EM 04/09** — a primeira jogada num telefone, agora que
 a análise dela está fechada em tudo o que não dependia do Bruno.
 

@@ -905,6 +905,50 @@ func _t5k_parcela_adiantada() -> void:
 		int(GS.semana_atual["parcela"]) == 0)
 	GS.semana_fechada.disconnect(capturar_resumo)
 
+	# 8. A OUTRA SAÍDA DA MESMA ESPERA. O ponto 7 prova o adiamento pelo lado de
+	#    quem PAGA; o adiamento tem duas portas, e a de quem NÃO pode pagar
+	#    deixava a semana 4 por fechar para sempre — boletim nenhum, e
+	#    `semana_atual` a chegar ao fim da partida com meia semana dentro.
+	#    O estado que APERTA é um só: vencimento com o caixa abaixo da parcela.
+	_fresh_playing()
+	for dock2 in GS.docks:
+		dock2["boat"] = null
+		dock2["worker_id"] = null
+	GS.turn = GS.PARCELA_DUE_TURN
+	GS.cash = GS.PARCELA_AMOUNT - 1
+	GS.parcela_paid = false
+	GS.historico_semanas = [0, 0, 0]
+	GS.semana_atual = GS.SEMANA_ZERADA.duplicate()
+	GS.semana_atual["docagens"] = 54321
+	var resumos_na_derrota := []
+	var capturar_derrota := func(resumo: Dictionary) -> void:
+		resumos_na_derrota.append(resumo.duplicate(true))
+	GS.semana_fechada.connect(capturar_derrota)
+	GS.advance_turn()
+	_check("com o caixa curto, o vencimento tambem para em debt_payment",
+		GS.phase == "debt_payment" and resumos_na_derrota.is_empty())
+	GS.fail_debt()
+	_check("recusar a parcela FECHA a semana 4  <-- o adiamento orfao",
+		resumos_na_derrota.size() == 1)
+	# Quatro semanas jogadas, quatro entradas. O número vem da forma da partida
+	# (`TURNS_TOTAL / TURNS_PER_WEEK`), não do acumulador onde o defeito mora.
+	_check("e a quarta semana entra no historico na derrota",
+		GS.historico_semanas.size() == GS.TURNS_TOTAL / GS.TURNS_PER_WEEK)
+	if resumos_na_derrota.size() == 1:
+		var resumo_perdido: Dictionary = resumos_na_derrota[0]
+		# Quem não pagou não vê a parcela no boletim — a receita da semana tem
+		# de estar lá na mesma, senão o que fechou foi uma semana já zerada.
+		_check("o boletim da derrota traz a semana, e sem parcela",
+			int(resumo_perdido["parcela"]) == 0
+				and int(resumo_perdido["docagens"]) == 54321)
+	_check("e a semana zera, mesmo tendo-se perdido o porto",
+		int(GS.semana_atual["docagens"]) == 0)
+	# Chamar duas vezes não pode fechar duas: a fase já é "game_over".
+	GS.fail_debt()
+	_check("recusar duas vezes fecha a semana uma vez so",
+		resumos_na_derrota.size() == 1)
+	GS.semana_fechada.disconnect(capturar_derrota)
+
 	_t5k_completo = true
 
 

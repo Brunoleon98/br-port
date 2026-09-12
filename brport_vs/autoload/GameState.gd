@@ -1252,6 +1252,18 @@ func _baixar_parcela(no_dia: Dictionary) -> void:
 
 
 func fail_debt() -> void:
+	# RECUSAR TAMBÉM É DECIDIR, e o fecho da semana 4 estava à espera de uma
+	# decisão — não de um pagamento. Sem esta metade o adiamento do
+	# `_process_week_end()` fica órfão no caminho da derrota: a semana nunca
+	# fecha, o boletim nunca abre e `semana_atual` vai para o fim da partida
+	# com meia semana dentro. Medido em 12/09: `historico_semanas` acabava com
+	# TRÊS entradas em vez de quatro, e nenhuma suíte perguntava.
+	#
+	# A fase é a guarda exata, e não uma aproximação: "debt_payment" só se
+	# escreve no mesmo ramo que adia o resumo, com a mesma condição. Ela também
+	# torna esta função idempotente — a segunda chamada já encontra "game_over".
+	if phase == "debt_payment":
+		_fechar_resumo_da_semana(week_of(turn - 1))
 	_end_game(false, "Não foi possível pagar a parcela ao Sr. Ribeiro. Porto perdido.")
 
 
