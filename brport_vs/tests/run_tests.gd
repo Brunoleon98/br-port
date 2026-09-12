@@ -807,7 +807,14 @@ func _t5k_parcela_adiantada() -> void:
 	_fresh_playing()
 
 	# 1. Sem caixa, a porta está fechada — e não tira dinheiro nenhum.
-	GS.cash = GS.PARCELA_AMOUNT - 1
+	#
+	# ⚠️ CONTRA O VALOR DE HOJE, não contra o principal. Desde o desconto por
+	# antecipação (`docs/decisoes/019`) esses dois números são diferentes, e
+	# montar o estado com `PARCELA_AMOUNT - 1` deixaria caixa de SOBRA para o
+	# valor abatido: a porta abriria e esta asserção reprovaria o que está
+	# certo. O estado que aperta é um só, e é um centavo abaixo do de hoje.
+	var hoje: int = GS.valor_da_parcela_hoje()
+	GS.cash = hoje - 1
 	_check("sem caixa para a parcela, nao da para quitar",
 		not GS.pode_pagar_parcela_adiantado())
 	var caixa_antes: int = GS.cash
@@ -815,13 +822,20 @@ func _t5k_parcela_adiantada() -> void:
 		not GS.pagar_parcela_adiantado() and GS.cash == caixa_antes)
 
 	# 2. Com caixa, quita — e o dinheiro sai exatamente uma vez.
+	#
+	# O QUE SAI TEM DE SER O QUE O PAINEL MOSTROU. O valor é lido ANTES de
+	# pagar e comparado com o que o caixa perdeu: é a pergunta de encanamento
+	# que separa "a conta do desconto está certa" de "a conta do desconto é a
+	# que chega ao caixa", e um `_baixar_parcela(dia_atual)` que esquecesse o
+	# argumento passaria na primeira e reprovaria nesta.
 	GS.cash = GS.PARCELA_AMOUNT + 1000
 	_check("com caixa, a porta abre", GS.pode_pagar_parcela_adiantado())
 	var antes: int = GS.cash
+	var cobrado: int = GS.valor_da_parcela_hoje()
 	_check("quitar devolve verdadeiro", GS.pagar_parcela_adiantado())
-	_check("saiu exatamente a parcela do caixa (%d, esperado %d)"
-			% [antes - int(GS.cash), GS.PARCELA_AMOUNT],
-		antes - int(GS.cash) == GS.PARCELA_AMOUNT)
+	_check("saiu do caixa exatamente o valor mostrado (%d, esperado %d)"
+			% [antes - int(GS.cash), cobrado],
+		antes - int(GS.cash) == cobrado)
 	_check("a parcela ficou marcada como paga", bool(GS.parcela_paid))
 
 	# 3. Já paga, a porta fecha — quitar duas vezes cobraria duas vezes.
@@ -840,9 +854,9 @@ func _t5k_parcela_adiantada() -> void:
 	# 4. O resumo do dia mostra a parcela no dia EM CURSO (o inverso do
 	#    `pay_debt()`, que a lança no dia que acabou de fechar).
 	_check("a parcela adiantada entra no dia em curso",
-		int(GS.dia_atual["parcela"]) == GS.PARCELA_AMOUNT)
+		int(GS.dia_atual["parcela"]) == cobrado)
 	_check("e no boletim da semana em curso",
-		int(GS.semana_atual["parcela"]) == GS.PARCELA_AMOUNT)
+		int(GS.semana_atual["parcela"]) == cobrado)
 
 	# 5. Fora de "playing" a porta fecha: o turno está parado à espera de uma
 	#    decisão, e pagar por baixo dela seria decidir por cima do jogador.
@@ -860,6 +874,75 @@ func _t5k_parcela_adiantada() -> void:
 	GS._check_end()
 	_check("no fim do prazo, com a parcela paga, o porto e salvo",
 		GS.phase == "game_over" and bool(GS.won))
+
+	# 7. O DESCONTO POR ANTECIPAÇÃO — item 24, `docs/decisoes/019`. A forma é
+	#    que foi decidida (proporcional ao tempo, não fixa), então é a FORMA
+	#    que se tranca aqui, e não o valor da taxa: assim a guarda sobrevive a
+	#    quem afinar o `JUROS_POR_TURNO` e continua a reprovar quem inverter o
+	#    sentido dela.
+	_fresh_playing()
+
+	# 7a. NO VENCIMENTO NÃO HÁ O QUE DESCONTAR, e é o piso em zero que o diz.
+	#     Este é o estado que APERTA para a guarda do `maxi(turnos, 0)`: em
+	#     qualquer turno anterior ela não faz nada.
+	GS.turn = GS.PARCELA_DUE_TURN
+	_check("no vencimento a parcela custa o principal cheio",
+		GS.valor_da_parcela_hoje() == GS.PARCELA_AMOUNT)
+	GS.turn = GS.PARCELA_DUE_TURN + 1
+	_check("e passado o prazo ela nao ENCARECE",
+		GS.valor_da_parcela_hoje() == GS.PARCELA_AMOUNT)
+
+	# 7b. PROPORCIONAL AO TEMPO: quanto mais cedo, mais barato, sem empates.
+	#     Uma versão FIXA — a que a F4 rejeitou — passaria em 7a e reprovaria
+	#     aqui, que é a razão de esta asserção existir separada daquela.
+	var custos := []
+	for t in [4, 12, 20, 28, GS.PARCELA_DUE_TURN]:
+		GS.turn = int(t)
+		custos.append(GS.valor_da_parcela_hoje())
+	var sobe := true
+	for i in range(custos.size() - 1):
+		if int(custos[i]) >= int(custos[i + 1]):
+			sobe = false
+	_check("quitar mais cedo custa ESTRITAMENTE menos (%s)" % str(custos), sobe)
+
+	# 7c. E A CONTA É GENÉRICA, que é o pedido do Bruno e não um detalhe de
+	#     estilo: o empréstimo bancário da Fase 2 vai chamá-la com outro
+	#     principal. Nada mais neste projeto lhe passa um principal diferente
+	#     do da parcela, então sem esta asserção alguém podia "simplificar" a
+	#     função para ler `PARCELA_AMOUNT` por dentro e nenhuma suíte saberia
+	#     — é a armadilha do `PREDIOS_DO_PATIO` que dizia "lido de X" e não lia.
+	var outro := 100000
+	_check("o desconto acompanha o PRINCIPAL que recebe, nao a parcela",
+		GS.desconto_por_antecipacao(outro, 10)
+			== int(round(outro * GS.JUROS_POR_TURNO * 10)))
+	_check("e dobrar o principal dobra o desconto",
+		GS.desconto_por_antecipacao(outro * 2, 10)
+			== GS.desconto_por_antecipacao(outro, 10) * 2)
+
+	# 7d. QUEM PAGA NO VENCIMENTO PAGA O PRINCIPAL. As duas portas partilham
+	#     `_baixar_parcela`, que recebe o valor de fora.
+	#
+	#     ⚠️ E O ENGANO ÓBVIO AQUI NÃO É SEQUER POSSÍVEL, o que se mediu antes
+	#     de escrever esta guarda: passar `valor_da_parcela_hoje()` à porta do
+	#     vencimento não muda UM centavo, porque em "debt_payment" o turno é
+	#     sempre `DUE + 1` e o piso em zero zera o desconto. Injetado, esse
+	#     defeito não reprovou nada — e não por falha do teste: as duas versões
+	#     são a mesma conta nesse estado. Esta asserção guarda a outra coisa,
+	#     que é possível: a porta do vencimento cobrar um valor que não é o
+	#     principal.
+	_fresh_playing()
+	for dock3 in GS.docks:
+		dock3["boat"] = null
+		dock3["worker_id"] = null
+	GS.turn = GS.PARCELA_DUE_TURN
+	GS.cash = GS.PARCELA_AMOUNT + 50000
+	GS.parcela_paid = false
+	GS.advance_turn()
+	var caixa_no_vencimento: int = GS.cash
+	GS.pay_debt()
+	_check("quem paga no vencimento paga o principal inteiro (%d)"
+			% [caixa_no_vencimento - int(GS.cash)],
+		caixa_no_vencimento - int(GS.cash) == GS.PARCELA_AMOUNT)
 
 	# 7. A porta ORIGINAL, no vencimento. Fechar a semana antes desta decisão
 	#    emitia um boletim com parcela zero e depois lançava os R$530 mil num

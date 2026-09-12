@@ -93,21 +93,22 @@ já foram lidas como regressão de balanceamento uma vez.
 | `TURNS_TOTAL` | 32 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:356` |
 | `PARCELA_AMOUNT` | 530.000 | GDD 7 | GDD "Parcelas validadas" / Protótipo VS — parcela única | `GameState.gd:365` |
 | `PARCELA_DUE_TURN` | 32 | regra | vence ao fim da semana 4 | `GameState.gd:366` |
+| `JUROS_POR_TURNO` | 0.0025 | TUNING | TUNING: fração do principal abatida por turno de antecipação | `GameState.gd:381` |
 
 ## SAVE
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `SAVE_PATH` | `user://savegame.json` | regra |  | `GameState.gd:369` |
-| `SAVE_VERSION` | 7 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:398` |
+| `SAVE_PATH` | `user://savegame.json` | regra |  | `GameState.gd:384` |
+| `SAVE_VERSION` | 7 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:413` |
 
 ## OS DOIS NOMES
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:407` |
-| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:414` |
-| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:419` |
+| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:422` |
+| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:429` |
+| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:434` |
 
 ## Estruturas — o que o jogador compra
 

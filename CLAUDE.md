@@ -213,6 +213,25 @@ Teste e import rodam sem tela.
    cinzento padrão do Godot. O `capturar_cena.gd` já o aplica, e também chama
    `setup()` com os argumentos extra — sem isso os painéis que dependem dele
    saem VAZIOS e a captura passa por "a cena abre" sem mostrar nada.
+   ⚠️ **E O AUTOLOAD NÃO NASCE VAZIO — ele tenta `load_game()` ANTES de
+   `new_game()`.** Logo toda ferramenta que fotografe uma cena solta herda o
+   autosave que estiver em `user://`, e a bateria tira as fotos de JOGO
+   primeiro, que gravam. Medido em 12/09: o painel da parcela afirmava que
+   R$498.200 eram "menos de uma das estruturas que faltam" porque o save da
+   foto anterior já tinha as SETE construídas — com partida nova a mesma
+   quantia compra quatro. **Foto que depende do que está no disco não compara
+   nada**, e é a regra de a ferramenta DERIVAR o estado outra vez: o
+   `capturar_tela.gd` já fazia `clear_save()` + semente + `new_game()`, o
+   `capturar_cena.gd` não fazia, e o que prova o conserto é rodar a bateria
+   DUAS vezes e exigir os mesmos bytes.
+   ⚠️ **E A GUARDA QUE PULA O `setup()` CAVA O BURACO QUE O COMENTÁRIO AO LADO
+   DESCREVE.** No mesmo dia: o `capturar_cena.gd` só chamava `setup()` quando
+   havia argumentos extra na linha de comando, e os quatro painéis cujo
+   `setup()` não EXIGE argumento — Calendário, Docas, Parcela, Reputação —
+   nunca o recebiam. A captura saía com o escurecer e um cartão de altura zero,
+   imprimia "Tela salva em" e passava por boa; o Diário escapou por montar no
+   `_ready()`, e foi por isso que isto viveu escondido. **Condição de atalho
+   numa ferramenta de evidência é uma foto que ninguém tirou.**
    Para olhar um detalhe pequeno, `tools/recortar_captura.gd` amplia sem
    suavizar: a 19px um ícone não se julga a olho na captura inteira, e foi
    ampliando que se viu que o ícone `doca` era um fantasma no painel branco.
@@ -1205,6 +1224,16 @@ armadilha de uma função, no comentário dela.
   pior valor de omissão que há, porque se lê como medida** — no mesmo dia, um
   contador por turno que era zerado e nunca incrementado fez o relatório
   afirmar "0 barcos servidos" num porto que atendeu 184.
+- **⚠️ FORMATAR PARA O OLHO PODE APAGAR O NÚMERO, e "0." lê-se como zero.**
+  Irmã da regra acima — ali o zero de omissão passava por medida; aqui é o
+  número de verdade que se perde a caminho do papel. O `gerar_tabela_numeros.py`
+  fixava `"%.2f"` e depois fazia `rstrip("0")`: correto para os 0,50 e 0,28 que
+  o jogo tinha, e destruidor para o primeiro valor abaixo de 0,005 — o
+  `JUROS_POR_TURNO` (0,0025) foi para a tabela como **`0.`**, sem erro nenhum,
+  numa ferramenta cujo lema é recusar-se a adivinhar. **Precisão fixa num
+  formatador é uma aposta sobre valores que ainda não existem.** As casas saem
+  do valor; e a guarda que isto pedia é barata — **releia o que formatou e
+  exija que volte ao que era**, senão a tabela perde o número sem uma palavra.
 - **`destino[chave] += x` num Dictionary CRIA a chave em silêncio.** É a irmã
   do `.get(chave, omissão)` acima, do outro lado: ali um erro de digitação vira
   número plausível na LEITURA, aqui vira dinheiro escrito numa chave que a soma

@@ -1070,7 +1070,7 @@ semana). Mediana do caixa final é a de "caixa no vencimento" do simulador:
 conta quem chegou ao turno 32 com caixa ≥ 0, venceu ou não; exclui só quem
 quebrou antes (caixa negativo).
 
-### ⏳ O ITEM 24 — instrumento feito e medido, a F4 por decidir (12/09)
+### ✅ O ITEM 24 FECHOU — desconto proporcional ao tempo (12/09)
 
 O par do 5 na ordem sugerida (*"5 e 24 juntos, por `/balancear`"*). A F1 dizia
 que ele **não era mensurável**: os três perfis só resolvem a fase
@@ -1102,11 +1102,32 @@ e "quitar no vencimento" são dois turnos de diferença, e quem tinha a parcela
 no turno 30 também a tinha no 32. Zero diferença, e não é sorteio: é partida
 por partida a mesma.
 
-**A pergunta da F4, que é onde isto para:** vale um desconto que opera numa
-janela de dois turnos para o jogador mediano? As saídas visíveis são um
-desconto proporcional ao tempo antecipado (que a dois turnos seria ínfimo), um
-desconto fixo (que o Ótimo levaria de graça, com R$1.309.646 em caixa, e o
-Mediano quase nunca), ou não fazer e registar porquê. **Nenhuma está escolhida.**
+✅ **A F4 FOI DECIDIDA PELO BRUNO: desconto PROPORCIONAL ao tempo antecipado**,
+a 0,25% do principal por turno (`docs/decisoes/019`), com a razão de ele poder
+ser reaproveitado no empréstimo bancário mais adiante — e é por isso que a conta
+recebe principal e prazo em vez de os ir buscar às constantes da parcela.
+
+**Varridas quatro taxas, 600 partidas cada.** Os três perfis antigos ficam
+IDÊNTICOS AO DÍGITO em todas — eles nunca passam por esta porta. A fronteira
+está entre 0,35% e 0,50%: a 0,50% o desconto baixa o limiar o suficiente para
+adiantar a mediana um turno (30 → 29) e render 3 vitórias, e abaixo disso não
+tem força para mover o turno. Escolheu-se 0,25% pelo TETO — 7,75% do principal
+ao longo do prazo inteiro, contra os 10,85% de 0,35% —, porque o teto cresce
+com o prazo e a Fase 2 vai esticá-lo.
+
+⚠️ **E a previsão da F3 estava certa no sinal e curta no tamanho.** Ela dizia
+que a dois turnos o desconto seria ínfimo, e é: R$2.650. Mas a margem em regime
+do Antecipado sobe **R$6.286**, porque a mediana não é a distribuição — há uma
+cauda de partidas que antecipa muito antes, e são elas que recebem o abatimento
+a sério. Ler a mediana como se fosse o efeito teria subestimado a mecânica por
+mais do dobro.
+
+⚠️ **E ELA ENVELHECEU A TABELA DOS NÚMEROS SEM NINGUÉM PEDIR.** O
+`JUROS_POR_TURNO` é a primeira constante pequena do projeto, e o formatador do
+gerador fixava `"%.2f"` antes de um `rstrip("0")` — 0,0025 foi para a tabela
+como **`0.`**, sem erro nenhum. Defeito anterior a esta sessão, invisível por
+falta de um valor abaixo de 0,005. Hoje as casas saem do valor, e uma guarda
+nova reprova o que não reler como era depois de formatado.
 
 ⚠️ **E DOIS DEFEITOS DE INSTRUMENTO apareceram, ambos corrigidos:**
 

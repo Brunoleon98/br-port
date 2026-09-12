@@ -214,7 +214,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
 | `tools/capturar_evidencia.sh` | **As fotografias que provam o que ficou** — as de jogo (o porto a OPERAR, e o porto EM RUÍNAS a trabalhar, único estado onde a frota de pesca atraca), o DIÁRIO e as folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. Quantas são, diz o próprio script. É o que o CI roda a cada PR |
-| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os cascos (por classe, motivo e porte) e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Reprova se transbordar a tela, em vez de recortar. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
+| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — cascos e camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Reprova se transbordar, em vez de recortar. O porquê está no `CLAUDE.md`: foto de jogo só mostra o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
@@ -239,7 +239,9 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   turnos e a sua mistura de motivos. A classe decide o casco desenhado no píer
   (`docs/decisoes/009`)
 - Parcela única de **R$530.000** ao Sr. Ribeiro no fim da semana 4; paga ou
-  recusada, a semana só fecha depois da decisão (32 dias de partida)
+  recusada, a semana só fecha depois da decisão (32 dias de partida). **Quitar
+  antes abate 0,25% por turno** — o juro que o banco deixa de correr
+  (`docs/decisoes/019`); a conta é genérica, para servir ao empréstimo da Fase 2
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
   upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
   com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase

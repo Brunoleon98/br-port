@@ -149,6 +149,18 @@ tirar pausa   1 --script res://tools/capturar_tela.gd -- 8  "$SAIDA/pausa.png" c
 # cinco suítes verdes. Painel de LEITURA tem a altura calibrada contra o texto,
 # e texto é o que mais muda — então ele fotografa-se.
 tirar diario  - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelDiario.tscn "$SAIDA/diario.png"
+# A PARCELA, COM O DESCONTO À VISTA — e o estado é montado de propósito. O
+# abatimento por antecipação (`docs/decisoes/019`) só existe com a parcela por
+# pagar e o vencimento ainda longe; um `GameState` recém-nascido está no FIM do
+# prazo, onde o desconto é zero por construção, e a foto sairia verdadeira e
+# sobre outra coisa. `turn=8` põe-na na semana 1, com 24 turnos de antecipação
+# e R$31.800 de abatimento — que é a única forma de alguém OLHAR a mecânica.
+#
+# Este painel era incapturável até 12/09, e em silêncio: o `capturar_cena.gd`
+# só chamava `setup()` quando havia argumentos extra, e os quatro painéis de
+# `setup()` sem argumento obrigatório saíam como um escurecer vazio que passava
+# por bom. O Diário escapou por montar no `_ready()`.
+tirar parcela - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelParcela.tscn "$SAIDA/parcela.png" turn=8 cash=900000
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

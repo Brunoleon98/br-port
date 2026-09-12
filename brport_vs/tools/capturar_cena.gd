@@ -28,6 +28,8 @@ var _montado := false
 var _frames := 0
 # Argumentos extra, entregues a `setup()` da cena quando ela tiver um.
 var _extra: Array = []
+# Pares `campo=valor` a escrever no GameState antes de a cena nascer.
+var _estado: Array = []
 
 
 func _process(_delta: float) -> bool:
@@ -47,6 +49,8 @@ func _process(_delta: float) -> bool:
 		# sem dar informação. Medido ao fotografar o Diário do Porto.
 		if no is Control:
 			(no as Control).theme = load(TEMA)
+		_estado_conhecido()
+		_montar_estado()
 		root.add_child(no)
 		_chamar_setup(no)
 		return false
@@ -81,8 +85,16 @@ func _process(_delta: float) -> bool:
 # Os argumentos extra da linha de comando são passados a `setup()` em ordem.
 # São convertidos por forma: "true"/"false" viram bool e o que for só dígitos
 # vira int, porque `setup(won: bool, ...)` recusa a String "true".
+# ⚠️ E CHAMA-SE MESMO SEM ARGUMENTOS NENHUNS. Até 12/09 a primeira condição
+# aqui era `_extra.is_empty()`, e com ela um painel cujo `setup()` não EXIGE
+# argumentos — `setup(_sem_argumentos: Variant = null)`, que são quatro deles:
+# Calendário, Docas, Parcela e Reputação — nunca recebia a chamada. A captura
+# saía com o escurecer e um cartão de altura zero, imprimia "Tela salva em" e
+# passava por boa. É exatamente o buraco que o comentário acima descreve, com
+# a guarda a cavá-lo. O Diário escapou por montar no `_ready()`, e foi por
+# isso que isto viveu escondido.
 func _chamar_setup(no: Node) -> void:
-	if _extra.is_empty() or not no.has_method("setup"):
+	if not no.has_method("setup"):
 		return
 	var convertidos := []
 	for bruto in _extra:
@@ -101,5 +113,54 @@ func _ler_argumentos() -> void:
 		_cena = args[0]
 	if args.size() > 1:
 		_saida = args[1]
-	if args.size() > 2:
-		_extra = args.slice(2)
+	# Os extra dividem-se por FORMA: `chave=valor` monta o estado do jogo antes
+	# de a cena nascer; o resto vai para o `setup()` em ordem.
+	for bruto in args.slice(2):
+		if bruto.contains("=") and not bruto.begins_with("res://"):
+			_estado.append(bruto)
+		else:
+			_extra.append(bruto)
+
+
+# ⚠️ E PARTE-SE SEMPRE DE UMA PARTIDA NOVA, porque o autoload NÃO nasce vazio.
+# O `GameState._ready()` tenta `load_game()` antes de `new_game()`, então uma
+# cena fotografada por esta ferramenta herdava o autosave que estivesse em
+# `user://` — e a bateria tira as fotos de JOGO primeiro, que gravam. Medido em
+# 12/09: o painel da parcela dizia "R$498.200 são MENOS DE UMA das estruturas
+# que faltam" porque o save deixado pela foto anterior já tinha as SETE
+# construídas; com partida nova a mesma quantia compra quatro. O Diário vinha
+# pelo mesmo cano. Foto de comparação que depende do que está no disco não
+# compara nada — é a regra "ferramenta que finge um estado tem de o DERIVAR
+# dele", e o `capturar_tela.gd` já a cumpria ao lado.
+func _estado_conhecido() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	# A SEMENTE ANTES do `new_game()`, que já sorteia a mão inicial — a mesma
+	# armadilha que o `capturar_tela.gd` e o simulador documentam.
+	seed(20260825)
+	GS.new_game()
+
+
+# ⚠️ PAINEL QUE SÓ DIZ ALGO NUM ESTADO DO JOGO PRECISA DE MONTAR ESSE ESTADO.
+# O desconto por antecipação (`docs/decisoes/019`) só aparece com a parcela por
+# pagar e o vencimento ainda longe; um `GameState` recém-nascido está no fim do
+# prazo, e a captura saía a mostrar o caso SEM desconto — bonita, verdadeira e
+# sobre outra coisa. É a regra do `CLAUDE.md` sobre arte presa a uma condição
+# do jogo, aplicada a um painel em vez de a um prop.
+#
+# Só campos que JÁ EXISTEM: um nome errado rebenta em vez de criar um campo
+# novo em silêncio, que é a armadilha do `.get(chave, omissão)`.
+func _montar_estado() -> void:
+	if _estado.is_empty():
+		return
+	var GS: Node = root.get_node("GameState")
+	for par in _estado:
+		var corte: int = par.find("=")
+		var chave: String = par.substr(0, corte)
+		var valor: String = par.substr(corte + 1)
+		if not chave in GS:
+			push_error("GameState não tem o campo %s" % chave)
+			quit(1)
+			return
+		GS.set(chave, int(valor) if valor.is_valid_int() else valor)
+		print("  estado: %s = %s" % [chave, valor])
