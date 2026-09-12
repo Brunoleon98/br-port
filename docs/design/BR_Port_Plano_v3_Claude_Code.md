@@ -1014,7 +1014,7 @@ que existe é o de 1,60 entre as duas fileiras, que virou a viela.
 avançados (12, médio); curvas em vez de retas (8) e gradiente de água e areia
 mais fauna (9), que estão fora da ordem sugerida de propósito.
 
-### ✅ O ITEM 5a FECHOU — o `START_CASH` fica em 400.000 (11/09)
+### ✅ O ITEM 5 FECHOU INTEIRO — 5a medido, 5b escrito (11/09)
 
 **`docs/decisoes/018`**, e a resposta é NÃO MEXER. Varridos sete pontos e 4.200
 partidas: **o único que cumpre os critérios é a linha de base**. A pergunta era
@@ -1036,10 +1036,21 @@ caro que a medição devolveu. Ficam aqui porque foram escritas aqui:
   penhasco real é do MEDIANO, entre 300.000 e 250.000, e é o porto que desaba
   (píer 3 de 65% para 1%).
 
-**O que sobra do item 5 é o 5b** — chamar EMPRÉSTIMO aos 400.000 —, que não
-mexe em número nenhum e é `Narrativa.gd` mais o rótulo da dívida. **É ele que
-responde à queixa que gerou os dois**, que era sobre ESTRANHEZA e não sobre
-dificuldade.
+✅ **E O 5b FECHOU, mas não como esta secção o descrevia.** Ele estava escrito
+como *"chamar EMPRÉSTIMO aos 400.000 — `Narrativa.gd` e o rótulo da dívida"*, e
+as duas metades estavam erradas: chamar-lhes empréstimo **contradiz o Sr.
+Ribeiro** (*"O Seu Maneco assinou isso. Agora é seu"* — a dívida é do avô, e o
+empréstimo dele já foi gasto no porto em ruínas), e poria o banco a cobrar
+32,5% em quatro semanas. E não havia rótulo a corrigir: "Parcela" está certo
+nos sete scripts onde aparece.
+
+**A queixa era uma LACUNA.** Faltava uma frase a dizer de onde vem o dinheiro —
+o diário fala da dívida, da madeira podre e do rival, e o caixa aparece no HUD
+sem uma palavra. São três linhas no diário, com o valor a sair de um token novo
+(`{caixaInicial}`, do `START_CASH`), duas guardas novas no F4 e o
+`PainelDiario` remedido: o texto crescido transbordou a área rolável e a
+primeira tela passava a acabar a meio da frase que fecha o diário, com as cinco
+suítes verdes. A `018` conta as duas armadilhas.
 
 **A medição, as sete corridas — 600 partidas cada, semente 20260825, EXIT=0 em
 todas.** A leitura está na `018`.

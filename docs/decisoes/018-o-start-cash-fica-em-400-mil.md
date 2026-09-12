@@ -8,11 +8,11 @@ Nada aqui encosta na economia: o `GameState.gd` não mudou, e o `START_CASH`
 está hoje exactamente onde estava. O balanceamento continua **100% / 80,2% /
 37,3%**, com a parcela em R$530.000.
 
-**O item 5 eram dois pedidos e este era o de economia.** O outro — **5b**,
-chamar EMPRÉSTIMO aos 400.000 — não mexe em número nenhum, e é ele que responde
-de frente à queixa que gerou os dois (*"é estranho o porto ter dívida mas o
-jogador começar com 400.000"*, playtest 1, nº 1), que era sobre ESTRANHEZA e
-não sobre dificuldade. Continua por fazer.
+**O item 5 eram dois pedidos e este era o de economia.** O outro — **5b** — é o
+que responde de frente à queixa que gerou os dois (*"é estranho o porto ter
+dívida mas o jogador começar com 400.000"*, playtest 1, nº 1), que era sobre
+ESTRANHEZA e não sobre dificuldade. **Fechou no mesmo dia, e a §8 conta como** —
+não da maneira que a triagem tinha escrito.
 
 ---
 
@@ -151,5 +151,52 @@ aplicou por isso, e fica registado para não voltar a aparecer numa F1.
   reabrir e não como item de fila.
 - **Não se mexeu em custo de estrutura.** É o outro eixo desta medição, e
   varrê-lo é outra sessão com outro desenho.
-- **Não se tocou no `GameState.gd`.** As seis corridas alteradas correram sobre
-  uma cópia restaurada no fim, e o `git diff` saiu vazio antes do commit.
+- **Não se tocou no `GameState.gd`** para o 5a. As seis corridas alteradas
+  correram sobre uma cópia restaurada no fim, e o `git diff` saiu vazio antes
+  do commit. O que o 5b lhe acrescentou foi um token, e nenhuma `const`.
+
+## 8. O 5b fechou (12/09), e a triagem estava errada sobre o que ele era
+
+A triagem escreveu que o 5b era *"chamar EMPRÉSTIMO aos 400.000 — `Narrativa.gd`
+e o rótulo da dívida"*. Medido, são duas coisas erradas:
+
+**Chamar-lhes empréstimo contradiz o jogo.** O Sr. Ribeiro já diz, duas telas
+depois: *"A Parcela vence hoje. (…) O Seu Maneco assinou isso. Agora é seu."* A
+dívida é **do avô**, herdada com o porto, e o empréstimo dele já foi gasto no
+porto — que é precisamente por isso que ele abre em ruínas. Chamar empréstimo ao
+caixa poria o Ribeiro a cobrar R$530.000 sobre R$400.000 em quatro semanas, que
+é **32,5% ao mês**: agiotagem, e não o personagem escrito (*"não é punição, é
+contrato"*).
+
+**E não havia rótulo nenhum a corrigir.** "Parcela" está certo nos sete scripts
+onde aparece. O que faltava era uma frase a dizer **de onde vem o dinheiro**, e
+ela nunca existiu: o diário fala da dívida, da madeira podre e do rival; o
+Ribeiro explica a dívida; o caixa aparece no HUD sem uma palavra. Herda-se o
+ativo e o passivo do mesmo homem, e isso não é estranho — só não estava escrito.
+**A queixa era uma LACUNA, não um erro.**
+
+Três linhas no diário, com o valor vindo de um token novo (`{caixaInicial}`,
+resolvido do `START_CASH` pelo `GameState.texto()`), porque número em prosa não
+se escreve à mão — e esta constante acabou de ser varrida em sete pontos.
+
+⚠️ **E crescer o texto quebrou o painel, com as cinco suítes verdes.** O
+`PainelDiario` tem altura fixa e texto ROLÁVEL, e estava calibrado para o texto
+caber inteiro. As quatro linhas novas (~100 px) fizeram-no transbordar: apareceu
+barra de rolagem e a primeira tela passou a acabar a meio de *"Talvez o avô
+soubesse o que tava fazendo quando"* — a frase que fecha o diário —, com o botão
+logo abaixo a convidar a sair sem rolar. Quem apanhou foi a captura, não teste
+nenhum. `ALTURA` 660 → 760 e `ALTURA_TEXTO` 520 → 620, que a tela tinha de sobra.
+
+**E o F4 ganhou duas guardas, uma por pergunta** — provadas com defeito injetado
+e independentes, cada uma a pegar o que a outra deixa passar:
+
+| Defeito injetado | `valor à mão` | `é o do START_CASH` |
+|---|:---:|:---:|
+| o valor escrito na prosa em vez do token | **FALHA** | passa |
+| o resolvedor a usar `PARCELA_AMOUNT` | passa | **FALHA** |
+
+⚠️ **E a segunda sozinha nunca teria pegado a primeira**, o que é a razão de
+serem duas: um valor escrito à mão **coincide com a constante no dia em que é
+escrito**. `moeda(400000)` é exatamente o que a prosa diria, então a guarda do
+VALOR passa contente — e só divergiria na sessão seguinte, quando ninguém está a
+olhar. Quem pega o defeito é a guarda da FORMA, que não pergunta o número.

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 08/09/2026
+> **Última atualização:** 12/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -54,8 +54,8 @@ descarrega num turno). Mexer em preço sem rodar `simular_balanceamento.gd`
 quebra isto.
 
 **E o `START_CASH` está TRANCADO em 400.000** (`docs/decisoes/018`): varrido
-até 150.000, o único ponto que cumpre os critérios é a linha de base —
-R$40.000 a menos custam 16,7 pontos ao Mediano.
+até 150.000, o único ponto que cumpre os critérios é a linha de base. E o
+diário **CONTA de onde ele vem** — herança do avô, não empréstimo.
 
 **E o navio que atraca depende do porto que existe** (`docs/decisoes/009`). São
 três classes travadas pelo NÍVEL DO PORTO, que é o menor entre o do píer e o do
@@ -67,8 +67,7 @@ abre a dizer o nível e o que falta.
 **E A FROTA DE PESCA TEM TRÊS PORTES** (`docs/decisoes/014`) — bote, traineira
 e arrasteiro —, e quem escolhe entre eles é o VALOR do contrato. Importa porque
 o porto em ruínas **só recebe pesqueiro**: quem ainda não construiu nada via o
-mesmo barco a partida inteira. O motivo continua a não mudar o barco de pesca,
-que é a afirmação de `010` — o eixo novo é o porte.
+mesmo barco a partida inteira.
 
 **E o navio vem ao porto POR ALGUMA COISA.** Cada barco nasce com um MOTIVO —
 Pescado, Armazenagem, Contêiner ou Granel —, que se lê na linha do cartão da
@@ -131,10 +130,10 @@ em `docs/arquivo/HISTORICO.md`.
 
 **Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
 
-**Sete blocos fechados** — defeitos e interface (14, 10, 1, 22, 25), o camião
+**Oito blocos fechados** — defeitos e interface (14, 10, 1, 22, 25), o camião
 na doca (3), a estrada (2, 4a, 11), a esquina chanfrada (4b), a frota de pesca
-(7), o pau de carga do n1 (6) e a Zona de Espera ao largo (15). O custo está em
-`docs/arquivo/HISTORICO.md`; o porquê, nas decisões `011` a `017`.
+(7), o pau de carga do n1 (6), a Zona de Espera ao largo (15) e o caixa inicial
+(5). O custo está em `docs/arquivo/HISTORICO.md`; o porquê, nas `011` a `018`.
 
 ⚠️ **Sobrou UMA coisa medida e por fazer, e não é defeito:** a rua parou em
 **1,8** — alargá-la empurra o `RUA_RECUO` e mexe no enquadramento inteiro. A
@@ -214,10 +213,10 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
-| `tools/capturar_evidencia.sh` | **As nove fotografias que provam o que ficou** — sete de jogo (o nível 2 do porto, o porto A OPERAR com os camiões nos berços, e desde 08/09 o porto EM RUÍNAS a trabalhar, que é o único estado onde a frota de pesca atraca) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
+| `tools/capturar_evidencia.sh` | **As dez fotografias que provam o que ficou** — sete de jogo (o nível 2 do porto, o porto A OPERAR com os camiões nos berços, e o porto EM RUÍNAS a trabalhar, que é o único estado onde a frota de pesca atraca), a primeira página do DIÁRIO (painel de leitura, altura calibrada contra o texto) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
 | `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os cascos (por classe, motivo e porte) e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Reprova se transbordar a tela, em vez de recortar. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
-| `.github/workflows/captura.yml` | As oito imagens anexadas a cada PR, e o antes/depois contra a base |
+| `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere que as quatro camadas existem e que nenhuma referência de documento aponta para arquivo que não há |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
@@ -324,8 +323,7 @@ dele (`docs/arquivo/`).
 
 A **Zona de Espera é só visual**, e torná-la mecânica muda o balanceamento
 medido. Desde 11/09 ela fundeia **ao largo**, fora das três bandas de água que
-acompanham a costa — estava na água dos berços, e lia como mais barcos
-atracados (`docs/decisoes/017`).
+acompanham a costa (`docs/decisoes/017`).
 
 Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o Diário
 do Porto e a lista "VS — OUT" do GDD. A cena de fim de Fase 1 já não está nesta
