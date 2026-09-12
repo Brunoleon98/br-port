@@ -295,6 +295,17 @@ Teste e import rodam sem tela.
    a pergunta que se quer fazer — separe a lista e compare ITEM a item. Vale a
    mesma desconfiança ao ler chave de config: uma linha dentro de um
    COMENTÁRIO satisfaz uma busca no arquivo inteiro.
+   ⚠️ **E A SAÍDA DAS FERRAMENTAS DESTE PROJETO É UM CONTRATO — a mensagem
+   nova pode colidir com uma sentinela.** Aqui quem decide aprovação é uma
+   STRING na saída e não o código de saída, e de propósito: a linha final de
+   cada suíte, `(Tela|Folha) salva em` no `capturar_evidencia.sh`, `=== Leitura
+   ===` e `possível travamento` no CI, `FORA` no `projetar_parcelas.py`. Em
+   12/09 uma linha NOVA que anunciava uma exclusão legítima dizia "FORA DO
+   PORTÃO" e reprovou o projetor inteiro — código 1 a dizer que o modelo não
+   calibra, quando ele calibrava. É a regra acima do outro lado: ali a busca
+   achava o que não devia num ARQUIVO, aqui numa MENSAGEM que se acabou de
+   escrever. Antes de imprimir texto novo numa ferramenta, procure que strings
+   alguém procura na saída dela.
    **E TESTE QUE LÊ ARTE GERADA LÊ O ARQUIVO, NUNCA O `load()` DA TEXTURA.**
    `load("res://art/porto_mapa_iso.svg")` devolve o `.ctex` de
    `.godot/imported/`, que é de quando o projeto foi importado: com o mapa
@@ -1077,7 +1088,7 @@ mesmos números.
 | # | Fase | O que é | Modelo |
 |---|---|---|---|
 | **F1** | **Escolher e desenhar** | ler a fila, escolher o item, e desenhar a MEDIÇÃO — que constante varrer, em que intervalo, contra o quê, e o que conta por bom | **Opus** |
-| **F2** | **Medir o ANTES** | rodar o que a F1 desenhou: 600 partidas × 3 perfis, ou a bateria de capturas, ou a varredura. É receita e não tem escolha nenhuma dentro | **Sonnet** |
+| **F2** | **Medir o ANTES** | rodar o que a F1 desenhou: 600 partidas por perfil, ou a bateria de capturas, ou a varredura. É receita e não tem escolha nenhuma dentro | **Sonnet** |
 | **F3** | **Ler a medição** | dizer o que o número quer dizer, e decidir se contraria a previsão | **Opus** |
 | **F4** | **Decidir a mudança** | qual `# TUNING:`, qual cor, qual ângulo, qual gramática — e quanto | **Opus** |
 | **F5** | **Aplicar e remedir** | escrever a alteração já escolhida e correr a mesma medição da F2 | **Sonnet** |
@@ -1180,7 +1191,7 @@ armadilha de uma função, no comentário dela.
 - **Autoload novo nasce DESLIGADO, e quem o liga é o JOGO.** Um autoload
   carrega também em `--script` — é por isso que a suíte pega o `GameState` por
   `root.get_node()`. Logo, tudo o que ele faça por omissão acontece TAMBÉM
-  durante as 600 partidas × 3 perfis do simulador e durante as cinco suítes. O
+  durante as 600 partidas por perfil do simulador e durante as cinco suítes. O
   `Registro.gd` só grava depois de `armar()`, e a única linha do projeto que
   arma é o `Main._ready()`. É a irmã da regra "tela nova é overlay, nunca fase
   do `GameState`": ambas são coisas que funcionam no jogo e envenenam calado
