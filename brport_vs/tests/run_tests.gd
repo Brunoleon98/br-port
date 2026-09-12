@@ -107,6 +107,12 @@ func _run() -> void:
 
 		_check("[%s] fase voltou para playing" % ("igualar" if accept else "recusar"), GS.phase == "playing")
 		_check("[%s] botao AVANCAR DIA reabilitado  <-- o bug reportado" % ("igualar" if accept else "recusar"), btn.disabled == false)
+		if not accept:
+			# A métrica final já contava esta perda; o resumo diário não. Testar as
+			# duas juntas impede que os dois retratos da mesma partida divirjam.
+			_check("[recusar] a perda entra também no dia",
+				int(GS.metrics["boats_lost"]) == 1
+					and int(GS.dia_atual["perdidos"]) == 1)
 
 		root.remove_child(main)
 		main.free()
@@ -854,6 +860,50 @@ func _t5k_parcela_adiantada() -> void:
 	GS._check_end()
 	_check("no fim do prazo, com a parcela paga, o porto e salvo",
 		GS.phase == "game_over" and bool(GS.won))
+
+	# 7. A porta ORIGINAL, no vencimento. Fechar a semana antes desta decisão
+	#    emitia um boletim com parcela zero e depois lançava os R$530 mil num
+	#    acumulador novo, que nunca mais era mostrado.
+	_fresh_playing()
+	for dock in GS.docks:
+		dock["boat"] = null
+		dock["worker_id"] = null
+	GS.turn = GS.PARCELA_DUE_TURN
+	GS.cash = GS.PARCELA_AMOUNT + 100000
+	GS.parcela_paid = false
+	GS.semana_atual = GS.SEMANA_ZERADA.duplicate()
+	GS.semana_atual["docagens"] = 12345
+	var resumos_no_vencimento := []
+	var capturar_resumo := func(resumo: Dictionary) -> void:
+		resumos_no_vencimento.append(resumo.duplicate(true))
+	GS.semana_fechada.connect(capturar_resumo)
+	GS.advance_turn()
+	_check("no vencimento, o boletim espera a decisao",
+		GS.phase == "debt_payment" and resumos_no_vencimento.is_empty())
+	# É justamente uma tela em que o jogo fica parado; fechar o aplicativo aqui
+	# não pode perder o acumulador que o boletim ainda vai consumir.
+	GS.semana_atual = GS.SEMANA_ZERADA.duplicate()
+	GS.phase = "playing"
+	_check("o autosave preserva a semana enquanto a parcela espera",
+		GS.load_game() and GS.phase == "debt_payment"
+			and int(GS.semana_atual["docagens"]) == 12345
+			and int(GS.semana_atual["manutencao"]) == GS.MAINTENANCE_WEEKLY)
+	GS.pay_debt()
+	_check("depois do pagamento, a semana fecha uma vez",
+		resumos_no_vencimento.size() == 1)
+	if resumos_no_vencimento.size() == 1:
+		var resumo_final: Dictionary = resumos_no_vencimento[0]
+		_check("o boletim final inclui a parcela",
+			int(resumo_final["parcela"]) == GS.PARCELA_AMOUNT)
+		_check("e desconta a parcela do resultado",
+			int(resumo_final["resultado"])
+				== int(resumo_final["receita"])
+					- int(resumo_final["salarios"])
+					- int(resumo_final["manutencao"])
+					- GS.PARCELA_AMOUNT)
+	_check("o acumulador so zera depois do boletim",
+		int(GS.semana_atual["parcela"]) == 0)
+	GS.semana_fechada.disconnect(capturar_resumo)
 
 	_t5k_completo = true
 
