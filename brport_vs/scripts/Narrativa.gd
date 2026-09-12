@@ -275,11 +275,20 @@ static func fim_de_fase() -> String:
 	var semanas: String = _maiuscula(por_extenso(_gs().WEEKS_TOTAL))
 	var dias: String = _maiuscula(por_extenso(_gs().TURNS_TOTAL)
 		.replace("uma", "um").replace("duas", "dois"))
+	# O ARCO, e não o VS. A Fase 1 do GDD tem três parcelas e este jogo paga a
+	# primeira — dizer só "Uma parcela" fazia a vitória soar a dívida quitada,
+	# que ela não é. O feminino do `por_extenso` serve aqui sem correção:
+	# "três parcelas", "faltam duas".
+	var total: String = por_extenso(_gs().PARCELAS_NA_FASE)
+	var restantes: String = por_extenso(_gs().PARCELAS_NA_FASE - 1)
 	var modelo := """%s semanas.
 
 %s dias.
-Uma parcela.
+A primeira de %s parcelas.
 E ela venceu.
+
+Faltam %s.
+Mas a primeira é a que prova que dá.
 
 O {portName} respira.
 
@@ -304,7 +313,7 @@ Mas tem alguma coisa diferente.
 
 Não no píer.
 
-Em quem tá olhando.""" % [semanas, dias]
+Em quem tá olhando.""" % [semanas, dias, total, restantes]
 	return _gs().texto(modelo)
 
 

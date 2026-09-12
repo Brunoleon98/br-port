@@ -124,6 +124,38 @@ func paragrafo_rolavel(texto: String, altura: int) -> ScrollContainer:
 	return rolo
 
 
+## QUANTO PEDE ESTE TEXTO, em pixels, na fonte que o tema vai mesmo usar.
+##
+## ⚠️ EXISTE PORQUE ALTURA DE ÁREA ROLÁVEL ESCRITA À MÃO ENVELHECE CALADA. O
+## `paragrafo_rolavel` recebia um número — 430 no fim de fase —, e área rolável
+## não CORTA, esconde: metade da narração, o remate incluído, ficava por baixo
+## da dobra com o botão logo abaixo a convidar a sair. O diário levou a mesma
+## mordida em 11/09 e foi remedido à mão; o painel irmão não, porque ninguém o
+## voltou a fotografar. Medir tira o número da mão de quem escreve o texto.
+##
+## A largura é a do cartão menos o que o tema gasta de margem — pedida ao
+## próprio rótulo depois de ele estar na árvore, e não adivinhada.
+func altura_do_texto(texto: String, largura: int) -> int:
+	var fonte: Font = get_theme_font("font", "Label")
+	var tamanho: int = get_theme_font_size("font_size", "Label")
+	if fonte == null or largura <= 0:
+		return 0
+	var bruto: float = fonte.get_multiline_string_size(
+		texto, HORIZONTAL_ALIGNMENT_LEFT, float(largura), tamanho).y
+	# ⚠️ E O `line_spacing` DO TEMA ENTRA POR FORA. O `get_multiline_string_size`
+	# devolve a soma das linhas e mais nada; o `Label` acrescenta o espaçamento
+	# ENTRE elas, que aqui vale 3 px. Sem esta parcela a conta sai ~12% curta e
+	# a última dobra do texto fica escondida — que é exatamente o defeito que
+	# esta função existe para acabar, a reaparecer dentro dela.
+	#
+	# Medido no fim de fase: bruto 748 px (34 linhas x 22), o rótulo pede 847,
+	# e 847 - 748 = 99 = 33 x 3. Bate ao pixel com o que o `Label` calcula.
+	var altura_linha: float = fonte.get_height(tamanho)
+	var linhas: int = int(round(bruto / altura_linha)) if altura_linha > 0.0 else 0
+	var espaco: int = get_theme_constant("line_spacing", "Label")
+	return int(ceil(bruto + maxi(linhas - 1, 0) * espaco))
+
+
 # Cabeçalho de bloco — RECEITAS, DESPESAS. Cinza e menor que o corpo, porque a
 # função dele é agrupar e sair da frente, não competir com os números.
 func secao(texto: String) -> Label:

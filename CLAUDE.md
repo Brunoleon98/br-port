@@ -1061,6 +1061,19 @@ tranca isso.
   captura.** Altura de painel com texto é CALIBRADA contra o texto, e o
   `PainelDiario` até dizia no comentário que já tinha sido medida uma vez: quem
   cresce o texto refotografa o painel e confere qual é a última linha visível.
+  ⚠️ **E A ALTURA ESCRITA À MÃO ESCONDEU METADE DA PEÇA DURANTE ONZE DIAS.** A
+  lição acima foi aprendida no diário em 11/09 e remediada lá; o painel IRMÃO —
+  o fim de Fase 1, o mesmo `paragrafo_rolavel` — nunca foi reaberto. Ele dava
+  430 px a um texto que pede **847**: o remate (*"Em quem tá olhando."*, a linha
+  para onde a peça inteira anda) nunca esteve na tela sem rolar, com o botão
+  logo abaixo a convidar a sair. É a regra "ao corrigir um, VARRA OS IRMÃOS"
+  a cobrar a fatura — e a correção certa não é medir outra vez à mão: a altura
+  passou a sair de `altura_do_texto()`, e o **D22** tranca-a.
+  ⚠️ **E MEDIR TEXTO PEDE O `line_spacing` POR FORA.** O
+  `get_multiline_string_size()` devolve só a soma das linhas; o `Label`
+  acrescenta o espaçamento ENTRE elas. No fim de fase isso são 99 px em 847
+  (33 × 3) — ~12% —, e a conta sem eles esconde a última dobra, que é o mesmo
+  defeito a reaparecer dentro da função escrita para o acabar.
 - Alvo de toque mínimo 44px. O teste de design cobre.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta

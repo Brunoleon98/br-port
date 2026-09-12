@@ -644,6 +644,17 @@ func _f4_numeros_do_fim() -> void:
 	_confere("e os %s dias que elas dão" % dias,
 		texto.to_lower().contains("%s dias" % dias),
 		"não achou \"%s dias\" em: %s" % [dias, texto.left(40)])
+	# E O ARCO: a Fase 1 do GDD tem três parcelas e o VS paga a primeira. O
+	# esperado sai da CONSTANTE, então mexer nela move os dois lados — e mexer
+	# no TEXTO à mão reprova, que é o ponto.
+	var total: String = Narrativa.por_extenso(GS.PARCELAS_NA_FASE)
+	var restantes: String = Narrativa.por_extenso(GS.PARCELAS_NA_FASE - 1)
+	_confere("e que esta é a primeira de %s parcelas" % total,
+		texto.to_lower().contains("primeira de %s parcelas" % total),
+		"não achou em: " + texto.left(60))
+	_confere("e quantas faltam (%s)" % restantes,
+		texto.to_lower().contains("faltam %s" % restantes),
+		"não achou em: " + texto.left(80))
 	# E NENHUM DÍGITO na narração inteira, que é a metade que faltava: sem
 	# isto, alguém volta a escrever "32 dias" e as duas asserções acima
 	# continuam contentes, porque elas só perguntam o que ESTÁ lá.

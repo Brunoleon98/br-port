@@ -389,6 +389,15 @@ esperavam pelo ouvido dele:
    decisão"*. A derivação por `%d` consertou o número que envelhecia e estragou
    a prosa, e a guarda que comparava o dígito era o que a mantinha assim.
 5. **"A Parcela vence hoje"** — rótulo de interface dentro de fala.
+6. **E o Bruno decidiu o que o desvio 1 deixara em aberto:** a narração diz
+   agora que esta é **a primeira de três parcelas**, e que faltam duas — "é bom
+   um começo". O três sai de `PARCELAS_NA_FASE`, não da prosa: é o arco do GDD
+   (três parcelas em doze semanas) contra o VS, que joga o primeiro terço.
+7. **E ao crescer o texto viu-se que ele nunca coubera.** O painel dava 430 px
+   a uma peça que pede 847 — **metade dela, o remate incluído, vivia debaixo da
+   dobra desde 01/09**, com o botão a convidar a sair antes. O diário levou a
+   mesma mordida em 11/09 e foi remedido; o irmão não. A altura passa a sair do
+   texto (`altura_do_texto()`), e o **D22** tranca-a.
 
 **E rendeu a asserção que faltava**, no F4: *toda fala escrita chega ao jogo?* A
 segunda fonte é o `Main.gd`, e ela apanhou um terceiro caso na estreia (o

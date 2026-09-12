@@ -371,6 +371,21 @@ const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
 const PARCELA_AMOUNT := 530000            # GDD "Parcelas validadas" / Protótipo VS — parcela única
 const PARCELA_DUE_TURN := TURNS_PER_WEEK * 4   # vence ao fim da semana 4
 
+# QUANTAS PARCELAS TEM A FASE 1 INTEIRA, que não é o que o VS joga.
+#
+# O GDD 7 fecha a Fase 1 com TRÊS parcelas em doze semanas (R$3.300.000 no
+# total — `docs/gdd/conceitos/dividas.md`), e o VS é o primeiro terço disso:
+# quatro semanas, uma parcela. Os dois números são verdade ao mesmo tempo, e é
+# por isso que a narração de fim de fase pode dizer "a primeira de três" sem
+# mentir sobre o jogo que existe.
+#
+# ⚠️ NÃO É `# TUNING:` — não entra em conta nenhuma e o simulador não a lê. Ela
+# existe para a PROSA poder falar do arco sem escrever o número à mão, que é o
+# defeito que a própria narração já teve ("Doze semanas / Três parcelas", a
+# Fase 1 do GDD colada num jogo de quatro semanas). O `projetar_parcelas.py`
+# conhece as outras duas pelo GDD; aqui basta saber quantas são.
+const PARCELAS_NA_FASE := 3
+
 # TUNING: o que o banco devolve por TURNO de antecipação, como fração do
 # principal. É o item 24 do segundo playtest — "quitar antes pode diminuir o
 # valor, já que teria menos juros" —, e a forma sai daí: o desconto é o juro
