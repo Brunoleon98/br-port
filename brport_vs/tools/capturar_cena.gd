@@ -64,7 +64,11 @@ func _process(_delta: float) -> bool:
 		push_error("falhou ao gravar %s (erro %d)" % [_saida, erro])
 		quit(1)
 		return true
-	print("captura: %s  (%dx%d)" % [_saida, img.get_width(), img.get_height()])
+	# "Tela salva em" é CONTRATO com o `capturar_evidencia.sh`, que procura essa
+	# linha em vez de olhar o código de saída — um erro de compilação do GDScript
+	# sai com 0 sem a ferramenta ter feito nada. Antes daqui dizia "captura:", e
+	# por isso esta ferramenta não podia entrar na bateria do CI.
+	print("Tela salva em %s  (%dx%d)" % [_saida, img.get_width(), img.get_height()])
 	quit(0)
 	return true
 

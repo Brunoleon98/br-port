@@ -139,12 +139,27 @@ grep -E 'Ótimo|Mediano|Descuidado' /tmp/depois.txt | head -3
 | mudar o ritmo de expansão | os `custo` das `ESTRUTURAS` |
 | mudar a receita | as quatro `BOAT_VALUE_*` |
 
-**Cuidado com a proporção entre `START_CASH` e a primeira estrutura.** Os
-perfis do simulador só compram quando `caixa >= custo × folga` (Mediano 2×,
-Descuidado 4×). Se a primeira estrutura ficar cara face ao caixa inicial, o
-cauteloso NUNCA constrói — acumula, paga a parcela, e a dificuldade **inverte**:
-medido, o Descuidado a 51,7% contra o Mediano a 13,8%. Ordem invertida é sinal
-disto, não de a economia estar difícil.
+**Cuidado ao ENCARECER as estruturas.** Os perfis do simulador só compram
+quando `caixa >= custo × folga` (Mediano 2×, Descuidado 4×). Se a primeira
+estrutura ficar cara face ao caixa inicial, o cauteloso NUNCA constrói —
+acumula, paga a parcela, e a dificuldade **inverte**: medido, o Descuidado a
+51,7% contra o Mediano a 13,8%. Ordem invertida é sinal disto, não de a
+economia estar difícil.
+
+⚠️ **E isto é uma propriedade do CUSTO, não da razão `caixa / custo` —
+não a extrapole para o `START_CASH` (`docs/decisoes/018`).** A tentação é ler a
+inversão como um efeito da proporção entre os dois e prever a mesma coisa
+baixando o caixa inicial. Medido em sete pontos dos 400.000 aos 150.000: **a
+ordem nunca inverte.** São dois eixos — encarecer a estrutura mexe só em QUEM
+CONSTRÓI; baixar o caixa mexe nisso **e** no nível absoluto contra a parcela, e
+o segundo domina. O acumulador só ganha se tiver o que acumular.
+
+⚠️ **E `caixa >= custo × folga` não faz penhasco nenhum numa partida de 32
+turnos.** Ela responde pelo TURNO 1; quem decide é `caixa inicial + receita
+acumulada`. Medido, a fração de partidas em que o Descuidado levanta o
+escritório dos 400.000 aos 150.000 é `100 · 100 · 100 · 100 · 100 · 98 · 86` —
+suave, sem degrau. Um limiar de compra só é penhasco quando o jogo acaba antes
+de o perfil poupar a diferença.
 
 ---
 

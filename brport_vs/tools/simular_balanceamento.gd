@@ -60,6 +60,24 @@ const MARGEM_UTIL := 10.0
 #   folga_para_upgrade — múltiplo do custo do upgrade que o jogador
 #     exige ter em caixa antes de comprar. 1.0 = compra assim que dá;
 #     4.0 = só compra com muita folga (na prática, quase nunca compra).
+#   quita_adiantado — tenta `pagar_parcela_adiantado()` a cada turno em que o
+#     caixa dê. Só o quarto perfil o faz; ver o bloco abaixo.
+#
+# ⚠️ O QUARTO PERFIL EXISTE PORQUE O INSTRUMENTO ERA CEGO, e não por gosto.
+# O item 24 do playtest pede desconto por quitar a dívida antes do prazo, e
+# medi-lo era impossível: os três perfis acima só resolvem a fase
+# "debt_payment", ou seja **nenhum deles quita adiantado nunca**. Varrer um
+# desconto daria LINHA RETA — e linha reta aqui não é "não importa", é a mesma
+# família do defeito injetado numa regra que o teste não exercita.
+#
+# E ele é um QUARTO em vez de uma mudança nos três porque mexer nos três
+# re-baseia os 100% / 80,2% / 37,3% mesmo com desconto ZERO: um perfil que
+# gasta R$530.000 antes do prazo deixa de ter esse dinheiro para construir, e
+# a medição em vigor deixaria de descrever o que descreve. Acrescentar é
+# seguro por construção — as sementes saem de `semente + run * K`, derivadas
+# do índice da PARTIDA e não do estado acumulado, e é por isso que o
+# comentário do laço promete "trocar de perfil e continuar caindo nos MESMOS
+# barcos".
 const PERFIS := [
 	{
 		"nome": "Ótimo",
@@ -68,6 +86,7 @@ const PERFIS := [
 		"estilo_negociacao": "otimo",
 		"chance_igualar_rival": 1.0,
 		"folga_para_upgrade": 1.0,
+		"quita_adiantado": false,
 	},
 	{
 		"nome": "Mediano",
@@ -76,6 +95,7 @@ const PERFIS := [
 		"estilo_negociacao": "medio",
 		"chance_igualar_rival": 0.70,
 		"folga_para_upgrade": 2.0,
+		"quita_adiantado": false,
 	},
 	{
 		"nome": "Descuidado",
@@ -84,6 +104,26 @@ const PERFIS := [
 		"estilo_negociacao": "ruim",
 		"chance_igualar_rival": 0.40,
 		"folga_para_upgrade": 4.0,
+		"quita_adiantado": false,
+	},
+	# ⚠️ CLONE EXATO DO MEDIANO, e a única diferença é a antecipação. É o que
+	# torna a leitura atribuível: qualquer vão entre os dois é da dívida paga
+	# antes, e de mais nada.
+	#
+	# O Mediano e não outro porque é o único dos três com espaço para o
+	# desconto mover algo. O Ótimo satura em 100% e não discrimina (a mesma
+	# armadilha da barra de reputação que já estava no teto quando se foi
+	# afiná-la); o Descuidado fecha com mediana de R$503.039 contra uma parcela
+	# de R$530.000 — abaixo dela —, logo quase nunca teria como antecipar, e
+	# mediria a ausência de oportunidade em vez do efeito do desconto.
+	{
+		"nome": "Antecipado",
+		"descricao": "o Mediano que quita a parcela assim que o caixa dá, em vez de esperar o vencimento",
+		"chance_esquecer_doca": 0.15,
+		"estilo_negociacao": "medio",
+		"chance_igualar_rival": 0.70,
+		"folga_para_upgrade": 2.0,
+		"quita_adiantado": true,
 	},
 ]
 
@@ -284,6 +324,8 @@ func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: 
 			"niveis": r["niveis"],
 			"docas_medias": r["docas_medias"],
 			"trabalhadores_medios": r["trabalhadores_medios"],
+			"antecipou_fracao": r["antecipou_fracao"],
+			"turno_de_antecipacao_mediana": r["turno_de_antecipacao_mediana"],
 		}
 	var f := FileAccess.open(caminho, FileAccess.WRITE)
 	if f == null:
@@ -350,6 +392,13 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	var motivos_vistos := {}
 	var classes_vistas := {}
 	var niveis_atingidos := {}
+	# ⚠️ SEM ESTES DOIS, A MEDIÇÃO DO ITEM 24 FICA CEGA OUTRA VEZ. Se a taxa do
+	# Antecipado não se mexer, há duas explicações incompatíveis — o desconto não
+	# importa, ou ele nunca conseguiu antecipar — e sem contar as antecipações
+	# não há como escolher entre elas. É o mesmo erro que o perfil existe para
+	# corrigir, um andar acima.
+	var antecipou := 0
+	var turnos_de_antecipacao := []
 
 	for run in range(partidas):
 		# Duas sementes independentes: uma para o mundo (chegada de barco,
@@ -414,6 +463,17 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 				continue
 
 			obra_na_semana += _construir(perfil)
+
+			# ⚠️ DEPOIS DA OBRA, e a ordem é desenho e não acaso. Quitar antes de
+			# construir faria o Antecipado diferir do Mediano em DUAS coisas — a
+			# antecipação e a prioridade de obra —, e a leitura não saberia de
+			# qual delas é o vão. O comentário do `pagar_parcela_adiantado()` já
+			# nomeia essa tensão: o mesmo caixa também compra estrutura. Aqui ele
+			# constrói como o Mediano e quita com o que sobra.
+			if perfil["quita_adiantado"] and GS.pode_pagar_parcela_adiantado():
+				if GS.pagar_parcela_adiantado():
+					antecipou += 1
+					turnos_de_antecipacao.append(GS.turn)
 
 			_alocar(perfil, rng)
 			var semana_antes: int = GS.current_week()
@@ -493,6 +553,9 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"trabalhadores_medios": float(trabalhadores_totais) / float(partidas),
 		"motivos": motivos_vistos,
 		"classes": classes_vistas,
+		"antecipou": antecipou,
+		"antecipou_fracao": float(antecipou) / float(partidas),
+		"turno_de_antecipacao_mediana": _mediana(turnos_de_antecipacao),
 	}
 
 
@@ -678,6 +741,24 @@ func _imprimir_tabela(resultados: Array, partidas: int) -> void:
 		print("    taxa de vitória %.1f%% ± %.1f  ·  caixa no vencimento (mediana) R$%d  ·  reputação final média %.0f" % [
 			100.0 * float(r["vitorias"]) / float(partidas), margem,
 			int(r["caixa_vencimento_mediana"]), float(r["reputacao_media"])])
+		# Só para quem tenta antecipar, e a linha é o que impede a leitura de
+		# confundir "o desconto não importa" com "ele nunca antecipou".
+		if bool(r["perfil"]["quita_adiantado"]):
+			print("    ANTECIPOU em %.1f%% das partidas (%d de %d), no turno %d (mediana de %d turnos)" % [
+				100.0 * float(r["antecipou_fracao"]), int(r["antecipou"]), partidas,
+				int(r["turno_de_antecipacao_mediana"]), GS.PARCELA_DUE_TURN])
+			# ⚠️ E A MEDIANA DO VENCIMENTO ACIMA NÃO SE COMPARA COM A DOS OUTROS
+			# PERFIS. Quem antecipa não entra na fase "debt_payment" (o
+			# `_set_phase` dela exige `not parcela_paid`), então aquele número é
+			# lido SÓ nas partidas em que ele não conseguiu antecipar — que são
+			# justamente as mais pobres, onde nunca juntou a parcela. É uma
+			# sub-amostra enviesada pelo próprio tratamento, e ler 509.403
+			# contra os 716.179 do Mediano como "antecipar custa 207.000" seria
+			# falso. Quem se compara é o caixa FINAL, contado em toda partida.
+			print("    (a mediana do vencimento acima é só das %d partidas SEM antecipação"
+				% [partidas - int(r["antecipou"])])
+			print("     — o número comparável entre perfis é o caixa FINAL: R$%d)"
+				% [int(r["caixa_final_mediana"])])
 		if int(r["travadas"]) > 0:
 			print("    ⚠️  %d partida(s) não terminaram — possível travamento." % int(r["travadas"]))
 	print("")

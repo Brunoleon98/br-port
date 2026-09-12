@@ -575,14 +575,22 @@ func moeda(valor: int) -> String:
 # de trocar, e a que esquecer mostra `{portName}` cru ao jogador.
 #
 # Mesma razão do `moeda()` logo acima: quatro telas mostram dinheiro e não pode
-# haver quatro versões da regra. Aqui são sete telas e dois tokens.
+# haver quatro versões da regra. Aqui são sete telas e três tokens.
 #
 # O nome do JOGADOR não tem padrão de propósito — inventar um seria pôr palavra
 # na boca de quem não a escolheu. Quem deixa em branco fica sem vocativo, e as
 # falas que o usariam têm variante para isso (ver Narrativa.gd).
+#
+# O `{caixaInicial}` sai do START_CASH e existe porque o diário CONTA de onde
+# vem o dinheiro do jogador. Escrever o valor na prosa é o defeito que a
+# narração de fim de fase já teve uma vez ("Doze semanas / Três parcelas", que
+# era a Fase 1 do GDD e não o VS): número em fala envelhece calado quando a
+# constante muda, e a constante já foi varrida uma vez (`docs/decisoes/018`).
 func texto(modelo: String) -> String:
 	var porto := nome_porto if nome_porto != "" else NOME_PORTO_PADRAO
-	return modelo.replace("{portName}", porto).replace("{playerName}", nome_jogador)
+	return modelo.replace("{portName}", porto) \
+		.replace("{playerName}", nome_jogador) \
+		.replace("{caixaInicial}", moeda(START_CASH))
 
 
 # Se ainda não perguntámos os nomes. É derivado do estado, e não um booleano à

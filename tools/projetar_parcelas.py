@@ -273,10 +273,30 @@ def margem_semanal(k: dict, barcos: float, faixa: tuple[int, int],
 def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
     """O modelo reconstrói a Fase 1 medida? Se não, não fala das outras.
 
-    Os três perfis entram, inclusive o que perde sempre. Calibrar só contra o
+    Os perfis entram todos, inclusive o que perde sempre. Calibrar só contra o
     porto bem jogado seria escolher o caso que favorece o modelo — e o perfil
-    Descuidado é o mais exigente dos três, porque o porto dele está incompleto
-    e a conta tem de acertar mesmo assim.
+    Descuidado é o mais exigente, porque o porto dele está incompleto e a conta
+    tem de acertar mesmo assim.
+
+    ⚠️ MENOS QUEM QUITA A DÍVIDA ADIANTADO, e a exclusão é medida. Este laço
+    nasceu quando os três perfis eram todos comparáveis ao modelo, e essa
+    premissa nunca foi escrita. O perfil "Antecipado" (item 24, 12/09) paga a
+    parcela DENTRO da semana 4 em vez de no vencimento, e a `margem_em_regime`
+    passa a carregar uma despesa FINANCEIRA que este modelo — que soma
+    contratos e passivo e subtrai salários e manutenção — não modela nem tem
+    por que modelar. Medido: ele prevê R$498.671, exactamente o mesmo que prevê
+    para o Mediano (mesmos barcos, mesmas estruturas, mesmos níveis), contra
+    R$154.537 medidos — 222,7% de erro, e o portão saía com código 1.
+
+    Não é a economia que está errada nem o modelo: é o perfil que não pertence
+    a este portão. É a irmã da lição que o CLAUDE.md já carrega sobre portão
+    alimentado com fumaça — quando um portão reprova, a primeira pergunta é se
+    ele está a comparar coisas comparáveis.
+
+    A exclusão sai do DADO (`antecipou_fracao`, que o simulador mede) e nunca
+    de uma lista de nomes escrita à mão, que envelheceria no dia em que
+    entrasse um quinto perfil. E ela é barulhenta: um perfil saltado em
+    silêncio é como a premissa não escrita volta.
     """
     partidas = int(medicao.get("partidas", 0))
     if partidas < PARTIDAS_PARA_CALIBRAR:
@@ -294,6 +314,24 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
 
     queixas = []
     for nome, dados in medicao["perfis"].items():
+        # Acesso direto e não `.get`: uma medição sem este campo é de uma versão
+        # anterior do simulador, e isso tem de rebentar em vez de virar zero
+        # plausível — o CI regera a medição a cada corrida.
+        if float(dados["antecipou_fracao"]) > 0.0:
+            # ⚠️ "FORA" É PALAVRA SENTINELA e não cabe nesta mensagem. Quem chama
+            # decide a reprovação com `any("FORA" in l for l in linhas)`, então a
+            # primeira versão desta linha dizia "FORA DO PORTÃO" e reprovava o
+            # projetor inteiro ao anunciar uma exclusão — código 1 a dizer que o
+            # modelo não calibra, quando ele calibra. É a regra do `contains()`
+            # que o CLAUDE.md já carrega, a morder em texto de RELATÓRIO em vez
+            # de em arquivo de configuração.
+            queixas.append(
+                "  %-11s saltado — quita a parcela adiantado em %.1f%% das "
+                "partidas," % (nome, 100 * float(dados["antecipou_fracao"])))
+            queixas.append(
+                "              e a margem dele carrega uma despesa financeira que "
+                "este modelo não modela.")
+            continue
         barcos = float(dados["atendidos_em_regime"])
         medido = float(dados["margem_em_regime"])
         if barcos <= 0:

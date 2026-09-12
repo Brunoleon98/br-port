@@ -437,8 +437,8 @@ func _recusa_texto(texto: String) -> bool:
 # nome: têm resolvedor próprio (o vocativo do Sr. Ribeiro, o valor da parcela,
 # a semana e o dia do boletim) e por isso podem aparecer no texto BRUTO — mas
 # não podem sobreviver ao resolvedor, que é o que a segunda metade confere.
-const TOKENS_CONHECIDOS := ["portName", "playerName", "vocativo", "valor",
-	"semana", "dia"]
+const TOKENS_CONHECIDOS := ["portName", "playerName", "caixaInicial",
+	"vocativo", "valor", "semana", "dia"]
 
 
 func _f4_narrativa() -> void:
@@ -463,6 +463,41 @@ func _f4_narrativa() -> void:
 					TOKENS_CONHECIDOS.has(token),
 					"tokens válidos: " + ", ".join(TOKENS_CONHECIDOS))
 	_confere("achou texto para conferir (%d pedaços)" % textos, textos >= 20)
+
+	# ── Dinheiro em prosa, e são DUAS perguntas que nada fazia ──
+	#
+	# Esta pergunta pela FORMA: nenhuma fala escreve um valor à mão. A regra já
+	# existia no CLAUDE.md e já custou uma vez — a narração de fim de fase dizia
+	# "Doze semanas / Três parcelas", que é a Fase 1 do GDD e não o VS —, e nada
+	# a trancava. Vale a FORMA e não o valor de propósito: um valor escrito à mão
+	# COINCIDE com a constante no dia em que é escrito, e só divergiria na
+	# sessão seguinte, quando ninguém está a olhar. O `START_CASH` já foi
+	# varrido em sete pontos uma vez (`docs/decisoes/018`).
+	var re_dinheiro := RegEx.new()
+	re_dinheiro.compile("R\\$\\s*\\d")
+	var com_dinheiro: Array = []
+	for nome in constantes:
+		for pedaco in _strings_de(constantes[nome]):
+			if re_dinheiro.search(pedaco) != null:
+				com_dinheiro.append(nome)
+	_confere("nenhuma fala escreve valor à mão (achadas: %d)" % com_dinheiro.size(),
+		com_dinheiro.is_empty(),
+		"use um token resolvido por GameState.texto(): " + ", ".join(com_dinheiro))
+
+	# E esta pela FONTE: o número que chega à tela é o da constante, e não outra
+	# qualquer. A guarda acima não a implica — o texto bruto passa com o token no
+	# lugar, mesmo que o resolvedor o troque por `PARCELA_AMOUNT` num
+	# copiar-colar. E o `_sem_token_cru` abaixo também não: ele prova que o token
+	# foi resolvido, nunca por quê.
+	#
+	# ⚠️ E SÃO DUAS, NÃO TRÊS. Havia aqui uma terceira — que o diário CONTÉM
+	# `{caixaInicial}` —, e ela nunca falharia sozinha: apagar a frase derruba
+	# esta também (o valor deixa de aparecer), e escrever o valor à mão derruba a
+	# de cima. Asserção que nenhuma mudança viola em exclusivo é confiança de
+	# graça, e o CLAUDE.md manda procurar esse estado antes de a escrever.
+	_confere("o diário conta o caixa inicial, e com o valor do START_CASH (%s)"
+		% GS.moeda(GS.START_CASH),
+		GS.texto(Narrativa.DIARIO_PRIMEIRA_PAGINA).contains(GS.moeda(GS.START_CASH)))
 
 	# E agora o outro lado: o que sai dos resolvedores não pode ter token
 	# nenhum. Com nome de jogador e sem, porque o vocativo é o caso que muda.

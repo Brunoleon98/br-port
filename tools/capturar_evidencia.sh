@@ -129,8 +129,8 @@ tirar docas   0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png" c
 #
 # ⚠️ ELA ENTROU POR UM BURACO MEDIDO, e o buraco é do mesmo feitio do que fez
 # nascer a folha da frota. Os barcos de pesca só atracam no porto de NÍVEL 1
-# (`docs/decisoes/009`), e das oito imagens nenhuma o mostrava a trabalhar: o
-# `inicio` é o turno ZERO, com as docas ainda a dizer "aguardando barco", e o
+# (`docs/decisoes/009`), e das oito imagens de então nenhuma o mostrava a
+# trabalhar: o `inicio` é o turno ZERO, com as docas a dizer "aguardando", e o
 # `meio`, o `porto` e as `docas` são portos de nível 2 e 3, que recebem
 # cargueiro. Os três cascos de pesca de 08/09 chegariam à tela do jogador
 # logo no primeiro dia e a foto nenhuma — e o porto em ruínas é onde o perfil
@@ -141,6 +141,14 @@ tirar docas   0 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png" c
 tirar pesca   0 --script res://tools/capturar_tela.gd -- 6  "$SAIDA/pesca.png" limpo alocar
 tirar boletim 1 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.png" completo
 tirar pausa   1 --script res://tools/capturar_tela.gd -- 8  "$SAIDA/pausa.png" completo pausa
+# O DIÁRIO, e ele entrou por uma falha MEDIDA como a da frota. É a PRIMEIRA
+# tela que o jogador lê e nenhum dos tiros acima a monta — ela abre uma vez,
+# encadeada à tela de nomes, e nenhuma partida fotografada passa por lá. Em
+# 11/09 acrescentaram-se três linhas ao texto: ele transbordou a área rolável e
+# a primeira tela passou a acabar a meio da frase que fecha o diário, com as
+# cinco suítes verdes. Painel de LEITURA tem a altura calibrada contra o texto,
+# e texto é o que mais muda — então ele fotografa-se.
+tirar diario  - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelDiario.tscn "$SAIDA/diario.png"
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

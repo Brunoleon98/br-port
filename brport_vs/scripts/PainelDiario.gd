@@ -22,9 +22,17 @@ extends PainelNarrativo
 # medida (360x480 com 330 de texto) rolava a meio da terceira frase e ainda
 # deixava 70px vazios debaixo do botão — a caixa era maior do que o conteúdo
 # num sítio e menor noutro ao mesmo tempo.
+#
+# ⚠️ ESTA ALTURA É CALIBRADA CONTRA O TEXTO, e cresce com ele. Ao acrescentar
+# a frase do caixa inicial (4 linhas, ~100px) o texto passou os 520 de então:
+# apareceu barra de rolagem e a primeira tela acabava a MEIO de "Talvez o avô
+# soubesse o que tava fazendo quando" — a frase que fecha o diário —, com o
+# botão logo abaixo a convidar a sair sem rolar. As cinco suítes passaram
+# todas; quem apanhou foi a captura. Quem mexer no texto do diário
+# refotografa este painel e confere que a última linha é "Talvez.".
 const LARGURA := 440
-const ALTURA := 660
-const ALTURA_TEXTO := 520
+const ALTURA := 760
+const ALTURA_TEXTO := 620
 
 
 func _ready() -> void:

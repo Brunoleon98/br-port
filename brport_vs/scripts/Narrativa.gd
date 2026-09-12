@@ -44,6 +44,21 @@ extends RefCounted
 
 # ── DIÁRIO DO PORTO — primeira página ──
 # Abre uma vez, na semana 1. Primeira pessoa, incerteza com leveza.
+#
+# ⚠️ A FRASE DO CAIXA RESPONDE A UMA QUEIXA DE PLAYTEST, e a forma dela foi
+# escolhida contra outra. A queixa era "é estranho o porto ter dívida mas o
+# jogador começar com R$400.000", e a triagem propôs chamar EMPRÉSTIMO ao caixa
+# inicial. Isso contradiz o que o Sr. Ribeiro já diz duas telas depois — "O Seu
+# Maneco assinou isso. Agora é seu" —: a dívida é do avô, herdada com o porto, e
+# o empréstimo dele já foi gasto no porto, que é por isso que ele está em
+# ruínas. Chamar empréstimo ao caixa poria o Ribeiro a cobrar R$530.000 sobre
+# R$400.000 em quatro semanas, que é agiotagem e não é o personagem escrito
+# ("não é punição, é contrato").
+#
+# O que faltava não era rótulo nenhum: era uma frase a dizer de onde vem o
+# dinheiro, e ela nunca existiu. Herda-se o ativo e o passivo do mesmo homem, e
+# isso não é estranho — só não estava escrito. O valor sai do `{caixaInicial}`
+# e nunca da prosa; o bloco F4 do `teste_fumaca.gd` tranca as duas metades.
 const DIARIO_PRIMEIRA_PAGINA := """Nunca pensei que ia escrever nesse diário.
 
 O avô escrevia aqui toda semana — vinte e três anos de {portName}, letra miúda, tinta azul. Eu achava bobagem.
@@ -51,6 +66,9 @@ O avô escrevia aqui toda semana — vinte e três anos de {portName}, letra mi�
 Hoje abri a primeira página em branco.
 
 O {portName} tem dívida, tem madeira podre no píer e tem um rival que sabe o meu nome antes de eu saber o dele direito.
+
+O avô também deixou {caixaInicial} na conta. Contei três vezes.
+Não é dinheiro meu — é o prazo que ele me comprou.
 
 Mas tem gente que acreditou o suficiente pra estar aqui na semana 1.
 Dona Cida. Toninho. Zezão.

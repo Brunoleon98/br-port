@@ -66,7 +66,7 @@ $G --headless --path brport_vs --script res://scripts/validation/asset_validator
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
 
-tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as oito de uma vez
+tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # todas de uma vez
 
 # Blender como biblioteca Python (~1 GB, minutos)
 pip install "bpy==4.5.0"                                      # precisa de Python 3.11
@@ -175,8 +175,24 @@ Teste e import rodam sem tela.
    número se mexe sozinho antes de escolher a tolerância — e se ele se mexer
    mais do que ela, o defeito é do portão, não do que ele reprova. Hoje o CI
    mede com 600 e o projetor recusa-se a calibrar abaixo de 100 partidas.
+   ⚠️ **E RESULTADO MEDIDO NUMA CONSTANTE NÃO SE PREVÊ NOUTRA — nem quando as
+   duas entram na mesma razão.** A `/balancear` regista que encarecer as
+   ESTRUTURAS inverte a dificuldade (o cauteloso não constrói, acumula e paga a
+   parcela). Em 11/09 a F1 leu isso como uma propriedade da razão
+   `caixa / custo`, previu a mesma inversão baixando o `START_CASH` e desenhou
+   uma varredura inteira para a apanhar: ela **não veio em nenhum dos sete
+   pontos**. Encarecer a estrutura mexe só em QUEM CONSTRÓI; baixar o caixa
+   mexe nisso e no NÍVEL ABSOLUTO contra a parcela, e o segundo domina — o
+   acumulador só ganha se tiver o que acumular. Antes de prever com uma
+   medição antiga, confira que ela mexeu na MESMA constante (`018`).
+   ⚠️ **E CONTA QUE RESPONDE PELO PRIMEIRO TURNO NÃO DESCREVE 32 DELES.** Na
+   mesma F1, `caixa >= custo × folga` pôs um penhasco em 320.000 — abaixo disso
+   o Descuidado "não abre com compra nenhuma". Medido, ele levanta o escritório
+   em 100% das partidas até aos 200.000 e em 86% a 150.000, porque acumula
+   receita e compra no turno 9. Um limiar só vira penhasco quando a partida
+   acaba antes de o perfil poupar a diferença.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
-   ficou bonito. O CI já anexa as oito a cada PR (artefato `brport-captura`) e
+   ficou bonito. O CI já anexa TODAS a cada PR (artefato `brport-captura`) e
    diz na página da corrida qual mudou — mas dizer que mudou não é dizer que
    ficou bom, e essa parte continua a ser de quem olha. **Cinco delas mostram
    uma PARTIDA SORTEADA**, e o que varia com o sorteio não se prova ali: para
@@ -737,8 +753,8 @@ tranca isso.
   fazer para a frota.
   ⚠️ **E ARTE PRESA A UM ESTADO DO JOGO NÃO É SORTEIO — É PIOR.** O sorteio ao
   menos pode calhar; um estado que nenhuma foto monta não calha nunca. Os
-  barcos de pesca só atracam no porto de NÍVEL 1, e das oito imagens do CI o
-  `inicio` era o turno ZERO (docas vazias) e as outras eram portos de nível 2 e
+  barcos de pesca só atracam no porto de NÍVEL 1, e das oito imagens do CI de
+  então o `inicio` era o turno ZERO (docas vazias) e as outras portos de nível 2 e
   3: a frota inteira do começo do jogo não tinha foto nenhuma, e é o estado onde
   o perfil Descuidado passa a partida toda. Ao acrescentar arte que uma
   condição do jogo destrava, pergunte QUAL das capturas monta essa condição —
@@ -913,6 +929,19 @@ tranca isso.
   de fase dizia "Doze semanas / Três parcelas", que é a Fase 1 do GDD e não o
   VS. Texto com número cravado é um número a mais para envelhecer — o mesmo
   problema que a tabela dos números existe para resolver.
+  ⚠️ **E O VALOR À MÃO COINCIDE COM A CONSTANTE NO DIA EM QUE É ESCRITO**, que
+  é o que torna este defeito invisível: uma guarda que compare o NÚMERO passa
+  contente (`moeda(400000)` é exactamente o que a prosa diz) e só divergiria na
+  sessão seguinte. Quem o pega pergunta pela FORMA — nenhuma fala escreve `R$`
+  seguido de dígito —, e é o que o F4 faz desde 11/09 (`docs/decisoes/018`).
+- **⚠️ QUEIXA DE ESTRANHEZA PODE SER LACUNA, e aí não há rótulo a corrigir.** A
+  triagem leu *"é estranho o porto ter dívida mas o jogador começar com
+  R$400.000"* como um nome errado e propôs chamar EMPRÉSTIMO ao caixa — que
+  contradiz o que o Sr. Ribeiro já diz (*"O Seu Maneco assinou isso. Agora é
+  seu"*: a dívida é do avô) e poria o banco a cobrar 32,5% em quatro semanas.
+  Não faltava rótulo: **faltava uma frase a dizer de onde vem o dinheiro**, e
+  ela nunca existiu. Antes de renomear o que o jogador achou estranho, leia o
+  que o jogo já diz sobre aquilo — a resposta costuma estar meia escrita.
 
 ### Interface
 
@@ -962,6 +991,15 @@ tranca isso.
   texto de tabela na interface mede o PIOR CASO montado à mão, e não o que os
   três cartões calham mostrar: um deles diz "aguardando barco" e passaria
   sempre. O bloco D18 do teste de design faz essa conta.
+- **⚠️ E ÁREA ROLÁVEL NÃO CORTA — ESCONDE, que não deixa marca.** A regra acima
+  é sobre `Label` que corta; num `paragrafo_rolavel` o que não cabe desce para
+  baixo da dobra sem sinal nenhum. Acrescentar quatro linhas ao diário (~100px)
+  fez a primeira tela acabar a meio de *"Talvez o avô soubesse o que tava
+  fazendo quando"* — a frase que FECHA o texto —, com o botão logo abaixo a
+  convidar a sair sem rolar. **As cinco suítes passaram; quem apanhou foi a
+  captura.** Altura de painel com texto é CALIBRADA contra o texto, e o
+  `PainelDiario` até dizia no comentário que já tinha sido medida uma vez: quem
+  cresce o texto refotografa o painel e confere qual é a última linha visível.
 - Alvo de toque mínimo 44px. O teste de design cobre.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta
@@ -1039,7 +1077,7 @@ mesmos números.
 | # | Fase | O que é | Modelo |
 |---|---|---|---|
 | **F1** | **Escolher e desenhar** | ler a fila, escolher o item, e desenhar a MEDIÇÃO — que constante varrer, em que intervalo, contra o quê, e o que conta por bom | **Opus** |
-| **F2** | **Medir o ANTES** | rodar o que a F1 desenhou: 600 partidas × 3 perfis, ou a captura das nove, ou a varredura. É receita e não tem escolha nenhuma dentro | **Sonnet** |
+| **F2** | **Medir o ANTES** | rodar o que a F1 desenhou: 600 partidas × 3 perfis, ou a bateria de capturas, ou a varredura. É receita e não tem escolha nenhuma dentro | **Sonnet** |
 | **F3** | **Ler a medição** | dizer o que o número quer dizer, e decidir se contraria a previsão | **Opus** |
 | **F4** | **Decidir a mudança** | qual `# TUNING:`, qual cor, qual ângulo, qual gramática — e quanto | **Opus** |
 | **F5** | **Aplicar e remedir** | escrever a alteração já escolhida e correr a mesma medição da F2 | **Sonnet** |

@@ -1014,45 +1014,115 @@ que existe é o de 1,60 entre as duas fileiras, que virou a viela.
 avançados (12, médio); curvas em vez de retas (8) e gradiente de água e areia
 mais fauna (9), que estão fora da ordem sugerida de propósito.
 
-### ⏳ O ITEM 5 ESTÁ NA F2 — a medição desenhada, por rodar (11/09)
+### ✅ O ITEM 5 FECHOU INTEIRO — 5a medido, 5b escrito (11/09)
 
-A F1 está feita (`CLAUDE.md`, tabela das sete fases). O que falta é rodar, e
-está tudo decidido aqui para a leitura não decidir sozinha.
+**`docs/decisoes/018`**, e a resposta é NÃO MEXER. Varridos sete pontos e 4.200
+partidas: **o único que cumpre os critérios é a linha de base**. A pergunta era
+*"quanto pode o caixa inicial cair antes de a banda partir?"*, e ela parte no
+primeiro passo — R$40.000 a menos custam 16,7 pontos ao Mediano e 20,1 ao
+Descuidado, com margem de erro de ±3,2 e ±3,9.
 
-**O que varrer:** `START_CASH` ∈ {400, 360, 320, 300, 250, 200, 150} mil, tudo
-o resto fixo, **semente 20260825** nas sete. Sete corridas de 600 partidas,
-~26 s cada, ~4 minutos no total. O 400 é a linha de base.
+⚠️ **E a previsão desta secção estava errada em duas coisas**, que é o mais
+caro que a medição devolveu. Ficam aqui porque foram escritas aqui:
 
-**Os pontos não são redondos por gosto.** Os perfis compram quando
-`caixa >= custo × folga` — Ótimo 1×, Mediano 2×, Descuidado 4× —, e a estrutura
-mais barata é o escritório a R$80.000:
+- **a inversão da dificuldade não existe neste eixo.** Ela está medida na
+  `/balancear`, mas com as ESTRUTURAS encarecidas e o caixa parado — o
+  cauteloso guarda os 400.000 e chega à parcela. Baixando o caixa inicial ele
+  continua sem construir e chega ao vencimento com 304.000: não há inversão
+  porque não há o que acumular;
+- **o penhasco dos 320.000 não existe.** A conta `caixa >= custo × folga`
+  responde pelo TURNO 1, e a partida tem 32 — o Descuidado levanta o escritório
+  em 100% das partidas até aos 200.000 e em 86% a 150.000, sem degrau nenhum. O
+  penhasco real é do MEDIANO, entre 300.000 e 250.000, e é o porto que desaba
+  (píer 3 de 65% para 1%).
 
-| Estrutura | Custo | Mediano (2×) | Descuidado (4×) |
-|---|---:|---:|---:|
-| escritório | 80.000 | 160.000 ✅ | **320.000 ✅** |
-| pátio | 115.000 | 230.000 ✅ | 460.000 ❌ |
-| guindaste | 120.000 | 240.000 ✅ | 480.000 ❌ |
-| píer 2 / cais | 150.000 | 300.000 ✅ | 600.000 ❌ |
-| armazém | 180.000 | 360.000 ✅ | 720.000 ❌ |
-| píer 3 | 260.000 | 520.000 ❌ | 1.040.000 ❌ |
+✅ **E O 5b FECHOU, mas não como esta secção o descrevia.** Ele estava escrito
+como *"chamar EMPRÉSTIMO aos 400.000 — `Narrativa.gd` e o rótulo da dívida"*, e
+as duas metades estavam erradas: chamar-lhes empréstimo **contradiz o Sr.
+Ribeiro** (*"O Seu Maneco assinou isso. Agora é seu"* — a dívida é do avô, e o
+empréstimo dele já foi gasto no porto em ruínas), e poria o banco a cobrar
+32,5% em quatro semanas. E não havia rótulo a corrigir: "Parcela" está certo
+nos sete scripts onde aparece.
 
-⚠️ **O penhasco está em 320.000.** Abaixo disso o Descuidado não abre com
-compra nenhuma — e a `/balancear` já mediu o que vem a seguir: ele acumula,
-paga a parcela, e a dificuldade **INVERTE** (Descuidado 51,7% contra Mediano
-13,8%). A varredura tem de ATRAVESSAR o penhasco para o ver, não parar antes.
-O Mediano tem os dele mais abaixo: perde o armazém a 360.000 e o píer 2 / cais
-a 300.000.
+**A queixa era uma LACUNA.** Faltava uma frase a dizer de onde vem o dinheiro —
+o diário fala da dívida, da madeira podre e do rival, e o caixa aparece no HUD
+sem uma palavra. São três linhas no diário, com o valor a sair de um token novo
+(`{caixaInicial}`, do `START_CASH`), duas guardas novas no F4 e o
+`PainelDiario` remedido: o texto crescido transbordou a área rolável e a
+primeira tela passava a acabar a meio da frase que fecha o diário, com as cinco
+suítes verdes. A `018` conta as duas armadilhas.
 
-**O que conta por bom** — os quatro, e a leitura é na MARGEM EM REGIME, não na
-taxa de vitória (`docs/decisoes/009`):
+**A medição, as sete corridas — 600 partidas cada, semente 20260825, EXIT=0 em
+todas.** A leitura está na `018`.
 
-1. a ordem NÃO inverte — Ótimo ≥ Mediano ≥ Descuidado;
-2. Ótimo ≥ 99%; abaixo disso é defeito, não sorteio;
-3. a banda de `005` de pé — Mediano ~80%, Descuidado ~35%;
-4. nenhum perfil em aresta de faca (a taxa mexe muito e a mediana quase nada).
+| START_CASH | Ótimo taxa | Ótimo mediana caixa | Ótimo margem regime | Mediano taxa | Mediano mediana caixa | Mediano margem regime | Descuidado taxa | Descuidado mediana caixa | Descuidado margem regime |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 400.000 | 100,0% | R$1.309.646 | R$674.019 | 80,2% | R$716.179 | R$502.571 | 37,3% | R$503.039 | R$103.290 |
+| 360.000 | 99,7% | R$1.220.755 | R$670.219 | 63,5% | R$599.031 | R$472.583 | 17,2% | R$459.193 | R$92.609 |
+| 320.000 | 99,3% | R$1.117.445 | R$673.627 | 46,8% | R$517.652 | R$433.017 | 6,8% | R$421.983 | R$82.141 |
+| 300.000 | 99,2% | R$1.080.316 | R$674.359 | 37,8% | R$494.336 | R$427.473 | 3,5% | R$415.465 | R$77.393 |
+| 250.000 | 95,8% | R$928.064 | R$663.183 | 2,0% | R$324.178 | R$314.076 | 0,7% | R$393.128 | R$66.080 |
+| 200.000 | 86,5% | R$775.341 | R$650.792 | 0,5% | R$265.186 | R$244.784 | 0,2% | R$351.941 | R$61.590 |
+| 150.000 | 58,7% | R$588.812 | R$599.970 | 0,0% | R$258.065 | R$187.187 | 0,0% | R$303.965 | R$60.013 |
 
-A pergunta: **quanto pode o `START_CASH` cair antes de a ordem inverter ou a
-banda partir?** O valor a escolher é o mais baixo que ainda cumpre os quatro.
+Margem em regime é a de `009` (semana 4, delta de caixa menos obra da mesma
+semana). Mediana do caixa final é a de "caixa no vencimento" do simulador:
+conta quem chegou ao turno 32 com caixa ≥ 0, venceu ou não; exclui só quem
+quebrou antes (caixa negativo).
+
+### ⏳ O ITEM 24 — instrumento feito e medido, a F4 por decidir (12/09)
+
+O par do 5 na ordem sugerida (*"5 e 24 juntos, por `/balancear`"*). A F1 dizia
+que ele **não era mensurável**: os três perfis só resolvem a fase
+`debt_payment`, logo nenhum quitava adiantado nunca e varrer um desconto daria
+linha reta. **O instrumento está feito**, e é um QUARTO perfil — "Antecipado",
+clone exacto do Mediano mais a antecipação, para o vão ser atribuível.
+
+**Os três perfis antigos ficaram INTACTOS, e isso é medido**, não suposto:
+100,0% / 80,2% / 37,3% e margens de R$674.019 / R$502.571 / R$103.290, iguais
+ao dígito. As sementes saem de `semente + run * K`, derivadas do índice da
+partida e não do estado acumulado — é a promessa que o comentário do laço já
+fazia ("trocar de perfil e continuar caindo nos MESMOS barcos").
+
+**A medição, 600 partidas, semente 20260825:**
+
+| | Mediano | Antecipado |
+|---|---:|---:|
+| taxa de vitória | 80,2% | **80,2%** |
+| vitórias | 481 | **481** |
+| barcos atendidos / perdidos | 35,5 / 6,4 | 35,5 / 6,4 |
+| margem em regime | R$502.571 | R$154.537 |
+| antecipou | — | **66,5% (399 de 600)** |
+| turno da antecipação (mediana) | — | **30**, de 32 |
+
+⚠️ **A LEITURA: ele antecipa no turno 30 de 32, e são as MESMAS 481 vitórias.**
+Não é que o efeito seja pequeno — é que a janela quase não existe. O caixa do
+Mediano só cruza os R$530.000 no fim da partida, então "quitar assim que dá"
+e "quitar no vencimento" são dois turnos de diferença, e quem tinha a parcela
+no turno 30 também a tinha no 32. Zero diferença, e não é sorteio: é partida
+por partida a mesma.
+
+**A pergunta da F4, que é onde isto para:** vale um desconto que opera numa
+janela de dois turnos para o jogador mediano? As saídas visíveis são um
+desconto proporcional ao tempo antecipado (que a dois turnos seria ínfimo), um
+desconto fixo (que o Ótimo levaria de graça, com R$1.309.646 em caixa, e o
+Mediano quase nunca), ou não fazer e registar porquê. **Nenhuma está escolhida.**
+
+⚠️ **E DOIS DEFEITOS DE INSTRUMENTO apareceram, ambos corrigidos:**
+
+1. **A mediana do "caixa no vencimento" não se compara entre perfis.** Quem
+   antecipa nunca entra na fase `debt_payment` (o `_set_phase` exige `not
+   parcela_paid`), então aquele número é lido só nas partidas em que ele
+   FALHOU a antecipação — as mais pobres. Ler os R$509.403 dele contra os
+   R$716.179 do Mediano como "antecipar custa R$207.000" seria falso. O
+   simulador agora diz isso na cara e dá o caixa FINAL ao lado.
+2. **O portão do `projetar_parcelas.py` reprovava, com razão dele e sem razão
+   nenhuma.** Ele itera sobre TODOS os perfis, e essa premissa nunca foi
+   escrita: o modelo é de margem OPERACIONAL e o Antecipado carrega uma
+   despesa FINANCEIRA dentro da janela. Medido: modelo R$498.671 — o mesmo que
+   prevê para o Mediano — contra R$154.537, **222,7% de erro** e código 1.
+   Hoje ele salta quem antecipa, pela fração MEDIDA e não por uma lista de
+   nomes, e anuncia que saltou.
 
 **Dois itens de sistema, dos três** — via de mão dupla e o camião que vai à doca
 do navio que serve. O terceiro (o fecho do painel de balanço, que trancava o
