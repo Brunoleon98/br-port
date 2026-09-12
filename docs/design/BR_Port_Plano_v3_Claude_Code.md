@@ -1070,6 +1070,60 @@ semana). Mediana do caixa final é a de "caixa no vencimento" do simulador:
 conta quem chegou ao turno 32 com caixa ≥ 0, venceu ou não; exclui só quem
 quebrou antes (caixa negativo).
 
+### ⏳ O ITEM 24 — instrumento feito e medido, a F4 por decidir (12/09)
+
+O par do 5 na ordem sugerida (*"5 e 24 juntos, por `/balancear`"*). A F1 dizia
+que ele **não era mensurável**: os três perfis só resolvem a fase
+`debt_payment`, logo nenhum quitava adiantado nunca e varrer um desconto daria
+linha reta. **O instrumento está feito**, e é um QUARTO perfil — "Antecipado",
+clone exacto do Mediano mais a antecipação, para o vão ser atribuível.
+
+**Os três perfis antigos ficaram INTACTOS, e isso é medido**, não suposto:
+100,0% / 80,2% / 37,3% e margens de R$674.019 / R$502.571 / R$103.290, iguais
+ao dígito. As sementes saem de `semente + run * K`, derivadas do índice da
+partida e não do estado acumulado — é a promessa que o comentário do laço já
+fazia ("trocar de perfil e continuar caindo nos MESMOS barcos").
+
+**A medição, 600 partidas, semente 20260825:**
+
+| | Mediano | Antecipado |
+|---|---:|---:|
+| taxa de vitória | 80,2% | **80,2%** |
+| vitórias | 481 | **481** |
+| barcos atendidos / perdidos | 35,5 / 6,4 | 35,5 / 6,4 |
+| margem em regime | R$502.571 | R$154.537 |
+| antecipou | — | **66,5% (399 de 600)** |
+| turno da antecipação (mediana) | — | **30**, de 32 |
+
+⚠️ **A LEITURA: ele antecipa no turno 30 de 32, e são as MESMAS 481 vitórias.**
+Não é que o efeito seja pequeno — é que a janela quase não existe. O caixa do
+Mediano só cruza os R$530.000 no fim da partida, então "quitar assim que dá"
+e "quitar no vencimento" são dois turnos de diferença, e quem tinha a parcela
+no turno 30 também a tinha no 32. Zero diferença, e não é sorteio: é partida
+por partida a mesma.
+
+**A pergunta da F4, que é onde isto para:** vale um desconto que opera numa
+janela de dois turnos para o jogador mediano? As saídas visíveis são um
+desconto proporcional ao tempo antecipado (que a dois turnos seria ínfimo), um
+desconto fixo (que o Ótimo levaria de graça, com R$1.309.646 em caixa, e o
+Mediano quase nunca), ou não fazer e registar porquê. **Nenhuma está escolhida.**
+
+⚠️ **E DOIS DEFEITOS DE INSTRUMENTO apareceram, ambos corrigidos:**
+
+1. **A mediana do "caixa no vencimento" não se compara entre perfis.** Quem
+   antecipa nunca entra na fase `debt_payment` (o `_set_phase` exige `not
+   parcela_paid`), então aquele número é lido só nas partidas em que ele
+   FALHOU a antecipação — as mais pobres. Ler os R$509.403 dele contra os
+   R$716.179 do Mediano como "antecipar custa R$207.000" seria falso. O
+   simulador agora diz isso na cara e dá o caixa FINAL ao lado.
+2. **O portão do `projetar_parcelas.py` reprovava, com razão dele e sem razão
+   nenhuma.** Ele itera sobre TODOS os perfis, e essa premissa nunca foi
+   escrita: o modelo é de margem OPERACIONAL e o Antecipado carrega uma
+   despesa FINANCEIRA dentro da janela. Medido: modelo R$498.671 — o mesmo que
+   prevê para o Mediano — contra R$154.537, **222,7% de erro** e código 1.
+   Hoje ele salta quem antecipa, pela fração MEDIDA e não por uma lista de
+   nomes, e anuncia que saltou.
+
 **Dois itens de sistema, dos três** — via de mão dupla e o camião que vai à doca
 do navio que serve. O terceiro (o fecho do painel de balanço, que trancava o
 menu de pausa e com ele o `.jsonl` da partida) foi feito em 07/09.
