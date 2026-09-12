@@ -964,6 +964,37 @@ tranca isso.
   contente (`moeda(400000)` é exactamente o que a prosa diz) e só divergiria na
   sessão seguinte. Quem o pega pergunta pela FORMA — nenhuma fala escreve `R$`
   seguido de dígito —, e é o que o F4 faz desde 11/09 (`docs/decisoes/018`).
+- **⚠️ FALA ESCRITA NÃO É FALA OUVIDA, e nada perguntava a diferença.** É o
+  `barco_medio` na narrativa, e a terceira vez que este projeto o apanha:
+  `perdeu_para_arlindo` e `bom_contrato` viviam em `CIDA_LINHAS` desde 01/09 e
+  **nenhuma linha do projeto as disparava** — um quarto da voz da Dona Cida em
+  jogo, mudo. O bloco do fumaça não podia apanhar, porque perguntava *"todo id
+  da tabela tem fala?"*, lendo a tabela dos DOIS lados. A pergunta que pega é a
+  inversa, e a sua segunda fonte é o `Main.gd`: a tabela vive na Narrativa e o
+  gatilho no Main, logo não é espelho. **Ao escrever fala nova, escreva o
+  gatilho no mesmo commit** — e ao varrer código como texto, corte as linhas de
+  COMENTÁRIO antes, senão o próprio comentário que explica a armadilha
+  satisfaz a busca.
+- **⚠️ E DERIVAR O NÚMERO DA CONSTANTE PODE ESTRAGAR A PROSA.** A regra acima
+  manda o número sair da constante, e está certa — mas `"%d semanas"` pôs
+  **"4 semanas." e "32 turnos de decisão."** na narração de fim de fase, e
+  dígito no meio de uma peça literária lê como leitura de instrumento. Pior: a
+  guarda que provava a ligação comparava o DÍGITO, então era ela que mantinha o
+  defeito de pé — reprovou o texto certo no dia em que ele foi escrito por
+  extenso. Derive **e escreva por extenso** (`por_extenso()`), faça a guarda
+  procurar a forma escrita, e acrescente a metade que falta: **nenhum dígito na
+  narração**, senão ninguém impede o regresso.
+- **⚠️ E FALA QUE AFIRMA O ESTADO TEM DE SER VERDADE NO PRIMEIRO TURNO.** O tom
+  mau do boletim abre a dizer *"A semana anterior foi melhor"*, e o
+  `tom_do_boletim()` escolhia-o só por `resultado < 0`, sem olhar se havia
+  semana anterior. Medido em 12/09: quem aloca trabalhador nunca cai ali (0 de
+  60 partidas), quem **não aloca ninguém cai sempre** (60 de 60, a −R$16.000) —
+  ou seja, quem ouvia a frase errada era exatamente o principiante, no primeiro
+  boletim que via. O estado que APERTA uma fala é o mais pobre, não o médio.
+  ⚠️ **E o número dentro da fala sai de onde o EVENTO sai.** A mesma varredura
+  achou *"Dois contratos recusados essa semana"* num gatilho que é a queda de
+  FAIXA da reputação — nunca dois contratos. Não havia o que corrigir no
+  número: ele não saía de lado nenhum.
 - **⚠️ QUEIXA DE ESTRANHEZA PODE SER LACUNA, e aí não há rótulo a corrigir.** A
   triagem leu *"é estranho o porto ter dívida mas o jogador começar com
   R$400.000"* como um nome errado e propôs chamar EMPRÉSTIMO ao caixa — que

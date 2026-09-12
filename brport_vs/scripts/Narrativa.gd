@@ -88,6 +88,17 @@ const CIDA_BOLETIM_RUIM := """Conseguimos a façanha de gastar mais do que ganha
 A semana anterior foi melhor — mas "melhor" aqui é comparativo de "ruim", então não comemora não.
 A parcela não vai ter dó."""
 
+# ⚠️ E O PRIMEIRO BOLETIM NÃO TEM COM QUE COMPARAR. O tom RUIM abre a dizer "a
+# semana anterior foi melhor", e na semana 1 não há semana anterior — a Dona
+# Cida afirmava uma coisa que o estado não garante, logo no primeiro boletim
+# que o jogador vê. Medido em 12/09: quem aloca trabalhador nunca cai aqui (0
+# de 60 partidas), quem não aloca ninguém cai SEMPRE (60 de 60, a -R$16.000) —
+# ou seja, é exatamente o principiante que ainda não percebeu a alocação que
+# ouvia a frase errada. A última linha sobrevive porque é a que trabalha.
+const CIDA_BOLETIM_PRIMEIRA_RUIM := """Primeira semana fechada no vermelho, chefia.
+Não tenho com o que comparar ainda — mas sair mais do que entra é sair mais do que entra.
+A parcela não vai ter dó."""
+
 const CIDA_BOLETIM_NEUTRO := """Os números fecharam. Receita cobre despesas, sobrou margem.
 Nada extraordinário — mas porto que fecha no azul é porto que abre segunda-feira."""
 
@@ -105,7 +116,10 @@ const CIDA_LIMIAR_OTIMO := 0.30
 # A chave é o id do evento; quem dispara é o `Main`.
 const CIDA_LINHAS := {
 	"reputacao_subiu": "O pessoal tá falando bem do cais, chefia. Raro. Aproveita.",
-	"reputacao_caiu": "Dois contratos recusados essa semana. Arlindo vai saber antes de nós.",
+	# Dizia "Dois contratos recusados essa semana", e o gatilho é a queda de
+	# FAIXA da reputação — nunca dois contratos. Número em fala tem de sair de
+	# onde o evento sai, e este não saía de lado nenhum.
+	"reputacao_caiu": "Andaram recusando contrato, chefia. Arlindo vai saber antes de nós.",
 	"caixa_baixo": "A conta tá mais fina que folha de papel. A parcela não vai esperar.",
 	"perdeu_para_arlindo": "Perdeu pro Arlindo. Mas perdeu perdendo bem — não por desatenção.",
 	"bom_contrato": "Esse contrato fecha o mês. Anota aí.",
@@ -140,7 +154,9 @@ const RIBEIRO_ENTRADA := """Boa tarde{vocativo}. Rivaldo Ribeiro, Banco Porto Mi
 Fui amigo do seu avô — uns trinta anos, se não me engano.
 Vim pessoalmente porque o {portName} merece esse respeito."""
 
-const RIBEIRO_A_DIVIDA := """A Parcela vence hoje: {valor}. Tenho o documento aqui se quiser conferir.
+# "a parcela", minúscula: "Parcela" é o rótulo do HUD, e um homem a falar não
+# diz maiúsculas. Era a marca mais clara de manual de instruções no roteiro.
+const RIBEIRO_A_DIVIDA := """A parcela vence hoje: {valor}. Tenho o documento aqui se quiser conferir.
 O Seu Maneco assinou isso. Agora é seu."""
 
 const RIBEIRO_PAGOU := """Perfeito. Eu sabia que dava.
@@ -204,7 +220,10 @@ static func ribeiro_a_divida(valor: int) -> String:
 # qualquer semana que fechasse no azul.
 static func tom_do_boletim(resultado: int, media_anterior: float, tem_historico: bool) -> String:
 	if resultado < 0:
-		return CIDA_BOLETIM_RUIM
+		# A ORDEM IMPORTA: o `tem_historico` tem de ser perguntado ANTES de se
+		# escolher o tom mau, senão a semana 1 recebe a fala que compara com a
+		# semana 0. Era assim até 12/09, e nada reprovava.
+		return CIDA_BOLETIM_RUIM if tem_historico else CIDA_BOLETIM_PRIMEIRA_RUIM
 	if not tem_historico:
 		return CIDA_BOLETIM_NEUTRO
 	if float(resultado) > media_anterior * (1.0 + CIDA_LIMIAR_OTIMO):
@@ -219,12 +238,46 @@ static func tom_do_boletim(resultado: int, media_anterior: float, tem_historico:
 # do GDD e não o VS — e um texto com número escrito à mão é um número a mais
 # para envelhecer, que é exatamente o problema que a tabela dos números existe
 # para resolver.
-static func fim_de_fase() -> String:
-	var semanas: int = _gs().WEEKS_TOTAL
-	var turnos: int = _gs().TURNS_TOTAL
-	var modelo := """%d semanas.
+## Número por extenso, de 0 a 99. Existe porque DERIVAR DA CONSTANTE E IMPRIMIR
+## COM `%d` TROCA UM PROBLEMA POR OUTRO: a narração de fim de fase passou a
+## dizer "4 semanas." e "32 turnos", e dígito no meio de uma peça literária lê
+## como planilha. O `%d` consertou o número que envelhecia e estragou a prosa,
+## e ninguém reparou porque a guarda existente pergunta pela FORMA do dinheiro,
+## não pela dos numerais. Aqui o número continua a sair da constante — só chega
+## à página escrito como quem fala.
+static func por_extenso(n: int) -> String:
+	const UNS := ["zero", "uma", "duas", "três", "quatro", "cinco", "seis",
+		"sete", "oito", "nove", "dez", "onze", "doze", "treze", "catorze",
+		"quinze", "dezasseis", "dezassete", "dezoito", "dezanove"]
+	const DEZ := ["", "", "vinte", "trinta", "quarenta", "cinquenta",
+		"sessenta", "setenta", "oitenta", "noventa"]
+	if n < 0 or n > 99:
+		return str(n)
+	if n < 20:
+		return UNS[n]
+	var d := n / 10
+	var u := n % 10
+	return DEZ[d] if u == 0 else DEZ[d] + " e " + UNS[u]
 
-%d turnos de decisão.
+
+## Só a PRIMEIRA letra. O `capitalize()` do Godot maiusculiza cada palavra, e
+## "trinta e dois" sairia "Trinta E Dois" — o que só se vê com um número acima
+## de vinte, que é precisamente o caso que o VS tem.
+static func _maiuscula(t: String) -> String:
+	return t.substr(0, 1).to_upper() + t.substr(1) if t != "" else t
+
+
+static func fim_de_fase() -> String:
+	# O MASCULINO onde o substantivo o pede: "quatro semanas" é igual, mas
+	# "trinta e dois dias" não pode sair "trinta e duas". O `por_extenso` fala
+	# no feminino porque o caso mais comum aqui é semana; o dia corrige-se na
+	# saída, num sítio só.
+	var semanas: String = _maiuscula(por_extenso(_gs().WEEKS_TOTAL))
+	var dias: String = _maiuscula(por_extenso(_gs().TURNS_TOTAL)
+		.replace("uma", "um").replace("duas", "dois"))
+	var modelo := """%s semanas.
+
+%s dias.
 Uma parcela.
 E ela venceu.
 
@@ -251,7 +304,7 @@ Mas tem alguma coisa diferente.
 
 Não no píer.
 
-Em quem tá olhando.""" % [semanas, turnos]
+Em quem tá olhando.""" % [semanas, dias]
 	return _gs().texto(modelo)
 
 

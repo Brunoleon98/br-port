@@ -55,6 +55,12 @@ signal semana_fechada(resumo: Dictionary)
 # e que o gravador esteja DESARMADO ali (ver o cabeçalho do `Registro.gd`).
 signal negociacao_resolvida(acao: String, resultado: String, tentativa: int)
 
+# UM CONTRATO FECHOU, e por quanto. Existe para a faixa de mensagem poder
+# reagir ao TAMANHO do negócio — a Dona Cida tinha a fala escrita desde 01/09 e
+# nada a disparava, porque nenhum sinal dizia o valor. Carrega a classe junto
+# para quem ouve poder comparar com a faixa dela em vez de com um número solto.
+signal contrato_fechado(valor: int, classe: String)
+
 # ── TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1) ──
 #
 # ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em
@@ -995,6 +1001,7 @@ func advance_turn() -> void:
 				dia_atual["servidos"] += 1
 				metrics["boats_served"] += 1
 				_change_reputation(REPUTATION_GAIN_SERVED)
+				contrato_fechado.emit(bruto, String(boat["classe"]))
 				var w = _find_worker(dock["worker_id"])
 				if w != null:
 					w["busy_turns"] = 0

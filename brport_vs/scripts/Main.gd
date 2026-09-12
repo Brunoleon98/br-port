@@ -1018,6 +1018,14 @@ func _connect_game_state() -> void:
 	# plano é explícito em que tela nova não pode mudar o ritmo do turno.
 	GameState.estrutura_comprada.connect(func(_id): _cida("upgrade_pronto"))
 	GameState.rival_offer_triggered.connect(func(_d): _cida("arlindo_indireto"))
+	# ⚠️ ESTAS DUAS ESTAVAM ESCRITAS E MUDAS desde 01/09 — um quarto da voz da
+	# Dona Cida em jogo. `perdeu_para_arlindo` e `bom_contrato` viviam na
+	# tabela, passavam o bloco F4 do fumaça e nenhuma linha do projeto as
+	# disparava. O F4 não podia apanhar: ele pergunta "todo id da tabela tem
+	# fala?", lendo a tabela dos DOIS lados — o espelho que o `CLAUDE.md`
+	# nomeia. Quem apanhou foi a pergunta inversa, hoje no bloco F6.
+	GameState.negociacao_resolvida.connect(_cida_negociacao)
+	GameState.contrato_fechado.connect(_cida_contrato)
 	GameState.reputation_changed.connect(_cida_reputacao)
 	GameState.cash_changed.connect(_cida_caixa)
 	GameState.turn_advanced.connect(_cida_semana)
@@ -1255,6 +1263,35 @@ func _on_message(text: String, kind: String) -> void:
 # sistema: quem chama isto chama-o depois do evento, e a mensagem do GameState
 # (que diz o que aconteceu em números) já passou. A fala dela é a leitura
 # humana por cima, não a substituição.
+# O barco foi mesmo para o Porto Farol. A fala existe para o jogador que
+# NEGOCIOU e perdeu — "perdeu perdendo bem" —, então só sai no resultado
+# "perdido" e nunca quando ele fecha negócio.
+func _cida_negociacao(_acao: String, resultado: String, _tentativa: int) -> void:
+	if resultado == "perdido":
+		_cida("perdeu_para_arlindo")
+
+
+# O QUE CONTA POR "BOM CONTRATO" sai da faixa da própria CLASSE, e não de um
+# número escrito aqui: o quarto de cima do que aquela classe pode valer. Assim
+# a fala continua rara quando o porto cresce e passa a receber navio grande —
+# um limiar em reais viraria "todo navio de longo curso fecha o mês", que é o
+# contrário de "Anota aí".
+#
+# Não mexe em dinheiro nenhum: é faixa de mensagem, não decisão nem tela, e por
+# isso não toca no ritmo que a economia mede.
+const BOM_CONTRATO_QUARTIL := 0.75
+
+
+func _cida_contrato(valor: int, classe: String) -> void:
+	if not GameState.CLASSES_DE_NAVIO.has(classe):
+		return
+	var faixa: Dictionary = GameState.CLASSES_DE_NAVIO[classe]
+	var minimo: int = int(faixa["valor_min"])
+	var maximo: int = int(faixa["valor_max"])
+	if valor >= minimo + int(round((maximo - minimo) * BOM_CONTRATO_QUARTIL)):
+		_cida("bom_contrato")
+
+
 func _cida(id: String) -> void:
 	var linha := Narrativa.cida(id)
 	if linha != "":

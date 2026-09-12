@@ -83,6 +83,7 @@ func _rodar() -> void:
 	print("=== F4: o texto narrativo não chega ao jogador com token cru ===")
 	_f4_narrativa()
 	_f4_numeros_do_fim()
+	_f4_toda_fala_chega_ao_jogo()
 
 	print("=== F5: o projeto continua exportável para o telefone ===")
 	_f5_exportavel_para_android()
@@ -581,14 +582,77 @@ func _sem_token_cru(caso: String) -> void:
 # A narração de fim de fase conta o jogo que EXISTE. O rascunho de escrita
 # falava de doze semanas e três parcelas, que é a Fase 1 do GDD e não o VS —
 # e um número escrito à mão no texto é um número a mais para envelhecer.
+# ⚠️ TODA FALA ESCRITA CHEGA AO JOGO? É a pergunta INVERSA, e nada a fazia.
+#
+# O bloco ao lado confere que todo id da tabela tem texto — e lê a tabela dos
+# DOIS lados, logo não pode reprovar uma fala que ninguém dispara: apagar o
+# gatilho deixa-a contente. Medido em 12/09: `perdeu_para_arlindo` e
+# `bom_contrato` estavam escritas desde 01/09 e MUDAS, um quarto da voz da Dona
+# Cida em jogo. É o `barco_medio` outra vez (renderizado, validado, e nunca
+# posto em doca nenhuma), e a terceira vez que este projeto o apanha.
+#
+# A SEGUNDA FONTE é o `Main.gd`: a tabela vive na Narrativa e o gatilho no
+# Main, então comparar os dois não é um espelho. Lê-se o ARQUIVO e não o nó,
+# porque abrir a cena para isto custaria a árvore inteira.
+#
+# E as linhas de COMENTÁRIO saem antes da busca: este mesmo bloco nomeia as
+# duas falas na prosa acima, e sem o corte elas contar-se-iam a si próprias —
+# que é a regra do `contains()` do CLAUDE.md a morder de novo.
+func _f4_toda_fala_chega_ao_jogo() -> void:
+	var fonte := FileAccess.get_file_as_string("res://scripts/Main.gd")
+	_confere("o Main.gd foi lido", fonte != "")
+	var disparados := {}
+	for linha in fonte.split("\n"):
+		var limpa := linha.strip_edges()
+		if limpa.begins_with("#"):
+			continue
+		if not limpa.contains("_cida("):
+			continue
+		# TODAS as strings da linha, e não a primeira a seguir ao parêntesis:
+		# o `reputacao_caiu` vive dentro de um ternário na própria chamada
+		# (`_cida("subiu" if ... else "caiu")`), e uma busca que parasse na
+		# primeira dava-o por mudo. Apanhado por esta asserção na estreia dela.
+		var partes := limpa.split("\"")
+		var k := 1
+		while k < partes.size():
+			disparados[String(partes[k])] = true
+			k += 2
+	var mudas := []
+	for id in Narrativa.CIDA_LINHAS:
+		if not disparados.has(String(id)):
+			mudas.append(String(id))
+	_confere("as %d falas da Dona Cida chegam todas ao jogo" % Narrativa.CIDA_LINHAS.size(),
+		mudas.is_empty(), "mudas: " + ", ".join(mudas))
+
+
+# ⚠️ E ELA PROCURA O NÚMERO POR EXTENSO, não o dígito. A primeira versão
+# comparava `"%d semanas"` com a constante — o que provava a ligação, e de
+# caminho TRANCAVA A PROSA no formato de planilha: em 12/09 a narração passou a
+# dizer "Quatro semanas." e esta guarda reprovou um texto que estava certo.
+# Dígito no meio de uma peça literária lê como leitura de instrumento, e a
+# guarda tinha virado a razão de ele continuar lá. A ligação à constante
+# continua provada, porque o esperado sai de `por_extenso(GS.WEEKS_TOTAL)` —
+# mexer na constante move os dois lados, mas mexer no TEXTO à mão reprova.
 func _f4_numeros_do_fim() -> void:
 	var texto: String = Narrativa.fim_de_fase()
-	var semanas: int = GS.WEEKS_TOTAL
-	_confere("o fim de fase diz as %d semanas que o jogo tem" % semanas,
-		texto.begins_with("%d semanas" % semanas),
+	var semanas: String = Narrativa.por_extenso(GS.WEEKS_TOTAL)
+	var dias: String = Narrativa.por_extenso(GS.TURNS_TOTAL) \
+		.replace("uma", "um").replace("duas", "dois")
+	_confere("o fim de fase diz as %s semanas que o jogo tem" % semanas,
+		texto.to_lower().begins_with("%s semanas" % semanas),
 		"começa com: " + texto.left(30))
-	_confere("e os %d turnos que elas dão" % GS.TURNS_TOTAL,
-		texto.contains("%d turnos" % GS.TURNS_TOTAL))
+	_confere("e os %s dias que elas dão" % dias,
+		texto.to_lower().contains("%s dias" % dias),
+		"não achou \"%s dias\" em: %s" % [dias, texto.left(40)])
+	# E NENHUM DÍGITO na narração inteira, que é a metade que faltava: sem
+	# isto, alguém volta a escrever "32 dias" e as duas asserções acima
+	# continuam contentes, porque elas só perguntam o que ESTÁ lá.
+	var tem_digito := false
+	for c in texto:
+		if c >= "0" and c <= "9":
+			tem_digito = true
+	_confere("e não escreve número nenhum em dígito",
+		not tem_digito, "saiu: " + texto.left(60))
 
 
 # ── F5 ──────────────────────────────────────────────────────────────────

@@ -369,6 +369,33 @@ e o CI passaria na mesma, porque só procurava a linha `=== Leitura ===`. Está
 medido, está consertado (o CI reprova `possível travamento`) e está escrito no
 `CLAUDE.md`.
 
+🔧 **CINCO CORREÇÕES DE TEXTO EM 12/09, e o gate continua de pé.** Ao montar o
+roteiro de leitura apareceram coisas que não eram gosto — e por isso não
+esperavam pelo ouvido dele:
+
+1. **Duas das oito falas da Dona Cida nunca tocavam.** `perdeu_para_arlindo` e
+   `bom_contrato` estavam na tabela desde 01/09 e nenhuma linha do projeto as
+   disparava — um quarto da voz dela em jogo. O fumaça não podia apanhar: lia a
+   tabela dos dois lados. Hoje a primeira sai de `negociacao_resolvida` e a
+   segunda de um sinal novo, `contrato_fechado`, com o limiar derivado da faixa
+   da própria classe (o quarto de cima) em vez de um número em reais.
+2. **A Dona Cida comparava com uma semana que não existe.** *"A semana anterior
+   foi melhor"* no PRIMEIRO boletim. Medido: 0 de 60 partidas para quem aloca,
+   **60 de 60 para quem não aloca ninguém** — o principiante. Entrou um quarto
+   tom só para esse caso.
+3. **Uma fala inventava um número.** *"Dois contratos recusados essa semana"*
+   num gatilho que é a queda de FAIXA da reputação.
+4. **A narração de fim de fase saía em dígitos** — *"4 semanas", "32 turnos de
+   decisão"*. A derivação por `%d` consertou o número que envelhecia e estragou
+   a prosa, e a guarda que comparava o dígito era o que a mantinha assim.
+5. **"A Parcela vence hoje"** — rótulo de interface dentro de fala.
+
+**E rendeu a asserção que faltava**, no F4: *toda fala escrita chega ao jogo?* A
+segunda fonte é o `Main.gd`, e ela apanhou um terceiro caso na estreia (o
+`reputacao_caiu`, que vive dentro de um ternário e o varredor não via). Dois
+defeitos injetados, e a economia medida **idêntica ao dígito** — 100,0% / 80,2%
+/ 37,3%.
+
 ⏳ **Falta o gate:** ler o texto em voz alta. Três desvios do rascunho de
 escrita precisam do julgamento do Bruno — a narração de fim de fase teve de
 passar de doze semanas para as `WEEKS_TOTAL` que o VS tem, as falas com
