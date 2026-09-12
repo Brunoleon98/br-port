@@ -61,6 +61,12 @@ def documentos():
                 yield os.path.join(dp, f)
 
 
+def tamanho_com_lf(caminho):
+    """Mede o conteúdo versionado, não o EOL escolhido pelo checkout."""
+    with open(caminho, "rb") as arquivo:
+        return len(arquivo.read().replace(b"\r\n", b"\n"))
+
+
 def main():
     falhas = []
     docs = sorted(documentos())
@@ -122,7 +128,10 @@ def main():
     # ── 5. O estado não voltou a inchar sem ninguém decidir ────────────────
     estado = os.path.join(RAIZ, "docs/ESTADO_DO_PROJETO.md")
     if os.path.exists(estado):
-        tam = os.path.getsize(estado)
+        # `core.autocrlf=true` acrescenta um byte por linha no Windows. Medir o
+        # arquivo cru fazia o mesmo blob passar no CI Linux e reprovar num
+        # checkout Windows limpo (25.925 contra 26.274 bytes em 12/09/2026).
+        tam = tamanho_com_lf(estado)
         if tam > TETO_ESTADO:
             falhas.append(
                 "docs/ESTADO_DO_PROJETO.md tem %d bytes, acima do teto de %d. "
@@ -140,7 +149,7 @@ def main():
         return 1
 
     print("%d documentos, %d no arquivo, estado com %d bytes." % (
-        len(docs), len(os.listdir(dir_arquivo)) - 1, os.path.getsize(estado)))
+        len(docs), len(os.listdir(dir_arquivo)) - 1, tam))
     print("=== DOCS OK — as camadas estão de pé e as referências resolvem ===")
     return 0
 

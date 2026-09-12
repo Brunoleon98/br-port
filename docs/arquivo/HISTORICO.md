@@ -13,6 +13,16 @@
 
 ## O caminho, do mais recente para o mais antigo
 
+**A REVISÃO EXTERNA DE 12/09 FECHOU TRÊS DIVERGÊNCIAS.** A parcela paga no
+vencimento era lançada depois de o boletim da semana 4 ter sido emitido e
+zerado: o caixa estava certo, mas o relatório inflava o resultado em
+R$530.000. O fecho agora espera a decisão do Sr. Ribeiro. Recusar o rival já
+somava a perda na métrica final, mas não no dia; os dois retratos passaram a
+andar juntos. E o teto do `ESTADO_DO_PROJETO.md` media CRLF bruto: o mesmo blob
+de 25.925 bytes virava 26.274 num checkout Windows e reprovava. O conferidor
+agora mede LF normalizado. Os três caminhos ficaram presos em regressão ou em
+validação executável.
+
 **O QUE SAIU DO ESTADO EM 04/09** — a primeira jogada num telefone, agora que
 a análise dela está fechada em tudo o que não dependia do Bruno.
 

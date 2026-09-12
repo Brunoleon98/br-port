@@ -162,7 +162,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
-| `brport_vs/tests/run_tests.gd` | ~72 asserções de regressão (a lógica), incluindo `T5f` — a reputação a mexer na contra-oferta |
+| `brport_vs/tests/run_tests.gd` | Regressões da lógica, inclusive parcela no vencimento e perdas para o rival |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 10 efeitos de rascunho. Sem dependência: só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
@@ -218,7 +218,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
-| `tools/conferir_docs.py` | Confere que as quatro camadas existem e que nenhuma referência de documento aponta para arquivo que não há |
+| `tools/conferir_docs.py` | Confere as quatro camadas, referências e o teto do estado com EOL normalizado |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
 | `docs/gdd/` | **O GDD 7 legível**, 80 páginas GERADAS do `.jsx` — uma seção por arquivo. Não editar. Descreve as Fases 1 a 5 e está congelado antes da reescala: onde divergir do jogo, quem manda é o código |
 | `tools/gerar_gdd_md.py` | Gera as 80 acima. Recusa-se a adivinhar: forma de dado que ele não conheça **reprova**, em vez de sumir do markdown |
@@ -238,8 +238,8 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   cargueiro e navio de longo curso, cada uma com a sua faixa de valor, os seus
   turnos e a sua mistura de motivos. A classe decide o casco desenhado no píer
   (`docs/decisoes/009`)
-- Parcela única de **R$530.000** ao Sr. Ribeiro, vencendo ao fim da semana 4
-  (8 turnos por semana, 4 semanas — 32 dias de partida)
+- Parcela única de **R$530.000** ao Sr. Ribeiro no fim da semana 4; paga no
+  vencimento, entra no boletim antes de a semana zerar (32 dias de partida)
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
   upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
   com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase

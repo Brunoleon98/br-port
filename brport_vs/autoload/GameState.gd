@@ -945,6 +945,7 @@ func _perder_para_rival() -> void:
 	var dock: Dictionary = docks[pending_rival_dock]
 	metrics["rival_refused"] += 1
 	metrics["boats_lost"] += 1
+	dia_atual["perdidos"] += 1
 	dock["boat"] = null
 	dock["worker_id"] = null
 	_close_rival_offer()
@@ -1000,9 +1001,13 @@ func advance_turn() -> void:
 	cash_changed.emit(cash)
 
 	if prev_turn % TURNS_PER_WEEK == 0:
-		_process_week_end(week_of(prev_turn))
+		# No vencimento, os custos da semana precisam sair ANTES de o caixa dizer
+		# se a parcela cabe, mas o boletim só pode fechar DEPOIS de a decisão: é
+		# nele que a parcela paga neste dia tem de aparecer.
+		var espera_parcela := prev_turn == PARCELA_DUE_TURN and not parcela_paid
+		_process_week_end(week_of(prev_turn), espera_parcela)
 
-	# A VIRADA DO DIA vem DEPOIS do fecho de semana e ANTES do corte por dívida
+	# A VIRADA DO DIA vem DEPOIS dos lançamentos do fecho e ANTES do corte por dívida
 	# — o dia que fechou já tem os números completos (pier/salários/manutenção
 	# inclusive, se foi dia de fechar semana) antes de ir para `dia_anterior`.
 	# Se a dívida vencer HOJE, `pay_debt()` ainda escreve na parcela DESTE
@@ -1041,7 +1046,7 @@ func _custos_da_semana() -> Dictionary:
 	return {"pier": pier_income, "salarios": salarios, "manutencao": MAINTENANCE_WEEKLY}
 
 
-func _process_week_end(ended_week: int) -> void:
+func _process_week_end(ended_week: int, adiar_resumo: bool = false) -> void:
 	var custos := _custos_da_semana()
 	var pier_income: int = int(custos["pier"])
 	var salarios: int = int(custos["salarios"])
@@ -1062,6 +1067,15 @@ func _process_week_end(ended_week: int) -> void:
 	dia_atual["pier"] = pier_income
 	dia_atual["salarios"] = salarios
 	dia_atual["manutencao"] = int(custos["manutencao"])
+	if adiar_resumo:
+		return
+	_fechar_resumo_da_semana(ended_week)
+
+
+# Separado da cobrança dos custos porque a última semana para entre as duas
+# metades: os custos já saíram, o Sr. Ribeiro recebe a parcela e só então o
+# boletim pode fotografar e zerar a semana.
+func _fechar_resumo_da_semana(ended_week: int) -> void:
 	var resumo := resumo_da_semana(ended_week)
 	historico_semanas.append(int(resumo["resultado"]))
 	semana_atual = SEMANA_ZERADA.duplicate()
@@ -1187,6 +1201,10 @@ func pay_debt() -> void:
 	# "debt_payment", então o dia em que a dívida venceu é `dia_anterior` —
 	# não `dia_atual`, que já é o dia seguinte, ainda por jogar.
 	_baixar_parcela(dia_anterior)
+	# O fecho da semana 4 ficou de propósito à espera desta decisão: antes
+	# daqui o resumo esconderia a maior despesa da semana e inflaria o resultado
+	# exatamente pelo valor da parcela.
+	_fechar_resumo_da_semana(week_of(turn - 1))
 	_set_phase("playing")
 	turn_advanced.emit(turn, current_week())
 	_check_end()
