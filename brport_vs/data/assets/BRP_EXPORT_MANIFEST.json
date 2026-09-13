@@ -445,9 +445,13 @@
       "rows": 1,
       "fps": 0,
       "animations": {
-        "fly": {
+        "voo": {
           "frames": 6,
           "loop": true
+        },
+        "toque": {
+          "frames": 4,
+          "loop": false
         }
       },
       "origin": "voo",
@@ -455,7 +459,7 @@
         1,
         1
       ],
-      "selectable": false,
+      "selectable": true,
       "habitat": "ar",
       "godot_scene": "res://scenes/fauna/Gaivota.tscn",
       "sombra_de_contato": false
@@ -482,6 +486,39 @@
       "selectable": false,
       "habitat": "terra",
       "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_fauna_maria_farinha_base",
+      "category": "fauna",
+      "stage": "base",
+      "file": "maria_farinha.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "andar_lado": {
+          "frames": 6,
+          "loop": true
+        },
+        "toca": {
+          "frames": 5,
+          "loop": false
+        }
+      },
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": true,
+      "habitat": "areia",
+      "godot_scene": "res://scenes/fauna/MariaFarinha.tscn",
       "sombra_de_contato": true
     },
     {
@@ -847,6 +884,39 @@
       "selectable": false,
       "habitat": "terra",
       "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_fauna_tartaruga_verde_base",
+      "category": "fauna",
+      "stage": "base",
+      "file": "tartaruga_verde.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "nado": {
+          "frames": 6,
+          "loop": true
+        },
+        "mergulho": {
+          "frames": 5,
+          "loop": false
+        }
+      },
+      "origin": "waterline",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": true,
+      "habitat": "agua_rasa",
+      "godot_scene": "res://scenes/fauna/TartarugaVerde.tscn",
       "sombra_de_contato": false
     },
     {

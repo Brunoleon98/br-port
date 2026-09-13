@@ -879,6 +879,26 @@ quadro, então ele sairia decapitado pela barra do HUD. Ela leva árvores baixas
 da mata em vez disso, e o próprio gerador as recusa pelo mesmo teste: **3 na
 ponta sul, 0 na norte**.
 
+#### ✅ O gradiente costeiro e a fauna fecharam o item 9 (13/09)
+
+Sem mudar uma cor, água e areia passaram das bandas chapadas para rampas
+contínuas. O campo mede a distância de cada pixel ao mesmo contorno reto e
+modula a largura pelas duas senóides longas da praia; é um PNG determinístico
+embutido nos dois SVGs. Gradiente global, tiras de 1 px, gradiente por segmento
+e polígonos aninhados foram olhados e rejeitados, respectivamente por saturar
+as pontas, criar moiré, abrir costuras e formar raios nas concavidades.
+
+| Medida | Antes | Depois |
+|---|---:|---:|
+| amplitude `agua_funda`→`agua_baixio` | 99,408 | **99,408** |
+| Weber da espuma contra `agua_rasa` | 0,558 | **0,558** |
+| Weber de `areia_funda` contra baixio | 0,186 | **0,186** |
+
+O `brp_fauna.py` também deixou de ser só prova de pipeline: a gaivota foi
+refeita como silhueta e ganhou gaivotão, maria-farinha e tartaruga-verde
+juvenil no jogo. Os três têm volume de seleção no Blender, cena Godot, movimento
+ocioso e reação ao toque. O A5 ainda julga a imagem e o A6 ainda julga o som.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

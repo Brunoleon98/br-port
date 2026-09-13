@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3]
+[gd_scene load_steps=43 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
@@ -38,6 +38,10 @@
 [ext_resource type="Texture2D" path="res://art/props/galpao.png" id="prop_galpao"]
 [ext_resource type="Texture2D" path="res://art/props/escritorio_ruina.png" id="prop_escritorio_ruina"]
 [ext_resource type="Texture2D" path="res://art/props/escritorio.png" id="prop_escritorio"]
+[ext_resource type="PackedScene" path="res://scenes/fauna/Gaivota.tscn" id="fauna_gaivota"]
+[ext_resource type="PackedScene" path="res://scenes/fauna/MariaFarinha.tscn" id="fauna_maria"]
+[ext_resource type="PackedScene" path="res://scenes/fauna/TartarugaVerde.tscn" id="fauna_tartaruga"]
+[ext_resource type="Script" path="res://scripts/AmbienteCosteiro.gd" id="fauna_ambiente"]
 
 [sub_resource type="StyleBoxFlat" id="pilula"]
 bg_color = Color(0.09, 0.16, 0.24, 1)
@@ -483,6 +487,20 @@ offset_right = 797.00
 offset_bottom = 801.83
 mouse_filter = 2
 texture = ExtResource("5")
+[node name="Fauna" type="Node2D" parent="MapaWrap"]
+script = ExtResource("fauna_ambiente")
+
+; Um representante por habitat. Os pontos vêm do mesmo `tela()` do gerador:
+; gaivota sobre água aberta, maria-farinha na praia norte e tartaruga-verde
+; juvenil no baixio sul.
+[node name="Gaivota" parent="MapaWrap/Fauna" instance=ExtResource("fauna_gaivota")]
+position = Vector2(639, 265.5)
+
+[node name="MariaFarinha" parent="MapaWrap/Fauna" instance=ExtResource("fauna_maria")]
+position = Vector2(566, 76.5)
+
+[node name="TartarugaVerde" parent="MapaWrap/Fauna" instance=ExtResource("fauna_tartaruga")]
+position = Vector2(219, 531.5)
 [node name="Docas" type="Control" parent="MapaWrap"]
 layout_mode = 0
 offset_right = 720.0

@@ -8,7 +8,7 @@
 
 ---
 
-## 0. ESTADO — o encanamento está FEITO (30/08)
+## 0. ESTADO — encanamento feito; ambiente e fauna ligados (13/09)
 
 O que este briefing pedia na §6 foi executado, e é o que está no jogo hoje:
 
@@ -18,14 +18,16 @@ O que este briefing pedia na §6 foi executado, e é o que está no jogo hoje:
 | Autoload tocador | `brport_vs/autoload/Audio.gd` |
 | Ouvinte único de `message` | `Audio._ao_mensagem` — cobre os 13 pontos |
 | Anti-empilhamento | prioridade por frame + espera mínima por som |
-| Sons de rascunho | `tools/gerar_sons.py` → 10 WAV, 320 kB |
+| Sons de rascunho | `tools/gerar_sons.py` → 14 WAV; quatro são mar/fauna |
+| Ambiente costeiro | mar a cada 6,5–9,5 s; gaivota a cada 42–72 s |
+| Toque na fauna | chamado da gaivota, areia da maria-farinha e mergulho da tartaruga |
 | Sliders de volume | `PauseMenu.gd`, gravados em `user://audio.cfg` |
 | Clique em botão | `node_added` liga sozinho em todo `BaseButton` |
 | O que dá para verificar | `tests/teste_audio.gd`, no CI |
 
-**O que FALTA:** a música (as 8 camadas do guia), o ambiente de porto, o loop
-do guindaste, e a troca dos efeitos de rascunho pelos reais. Nada disso muda
-código — é trocar arquivo por arquivo na pasta `audio/sfx/`, mantendo o nome.
+**O que FALTA:** música (as 8 camadas do guia), ambiente industrial/loop do
+guindaste e a troca dos 14 rascunhos pelos sons aprovados. O mar e a fauna já
+têm eventos, prioridade e intervalo; o gate continua sendo ouvir no aparelho.
 
 O resto deste documento continua válido como levantamento e como registro do
 raciocínio.
@@ -154,9 +156,9 @@ Todos já existem em `brport_vs/autoload/GameState.gd`:
 - **Guindaste operando**: `Dock.gd` já anima a lança (`_mostrar_lanca`). O
   `sfx_crane_operate` é loop de 3 s e devia acompanhar essa animação, não o
   turno.
-- **Barco balançando / água**: não há ambiente nenhum hoje. É o que dá
-  "presença" ao porto e não está no guia como camada separada — decidir se
-  vira faixa de ambiente ou parte da música ociosa.
+- **Barco balançando / água**: desde 13/09 há arrebentação curta em intervalos
+  irregulares, no bus SFX e abaixo das ações do jogo em prioridade. Continua
+  rascunho; música ociosa e ambiente industrial são decisões separadas.
 
 ---
 

@@ -107,7 +107,9 @@ const CENA := [
 	["barco_pesca_traineira", "props",  2.4,  7.6, 0.0, "barco de pesca"],
 	["barco_grande_conteiner", "props",  3.6,  2.6, 0.0, "porta-contêineres"],
 	["boia",            "props",  4.2,  5.6, 0.0, "boia"],
-	["gaivota",         "brp",    2.0, -1.4, 60.0, "gaivota · voo"],
+	["gaivota",         "props",  2.0, -1.4, 60.0, "gaivotão · voo"],
+	["maria_farinha",   "props", -5.0, -3.0, 0.0, "maria-farinha · areia"],
+	["tartaruga_verde", "props",  1.2,  1.2, 0.0, "tartaruga-verde · baixio"],
 ]
 
 ## A bancada: cada asset novo sozinho, para o vizinho não o tapar.
@@ -129,7 +131,9 @@ const BANCADA := [
 	["mercado",        "brp",   "mercado"],
 	["coqueiro_jovem", "brp",   "coqueiro"],
 	["arbusto",        "brp",   "arbusto"],
-	["gaivota",        "brp",   "gaivota"],
+	["gaivota",        "props", "gaivotão"],
+	["maria_farinha",  "props", "maria-farinha"],
+	["tartaruga_verde", "props", "tartaruga-verde"],
 	["terreno_costa",  "brp",   "tile costa"],
 ]
 

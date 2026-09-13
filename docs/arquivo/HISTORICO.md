@@ -13,6 +13,23 @@
 
 ## O caminho, do mais recente para o mais antigo
 
+**O ITEM 9 DO SEGUNDO PLAYTEST FECHOU EM 13/09 — GRADIENTE E FAUNA.** Os seis
+tons chapados da água e os quatro da areia continuaram com a mesma paleta, mas
+passaram a um campo contínuo por distância à costa. A primeira tentativa de
+gradiente global saturou as pontas; tiras vetoriais de 1 px produziram moiré;
+gradientes por segmento abriram costuras retangulares; e polígonos aninhados
+criaram raios nas concavidades. O que ficou foi um PNG determinístico embutido
+no SVG, com `math.fsum`, entradas arredondadas e `zlib.Z_FIXED`; a fronteira
+respira com as duas senóides longas que já definiam a praia. O contorno da
+costa e a tabela de âncoras não mudaram — o item 8 continuou fora.
+
+**A paleta não achatou:** amplitude de luminância funda→baixio
+**99,408→99,408**, Weber da espuma **0,558→0,558** e areia submersa contra
+baixio **0,186**. Entraram três espécies costeiras e três habitats: gaivotão
+no ar, maria-farinha na praia e tartaruga-verde juvenil no baixio. Cada uma
+tem movimento ocioso e reação ao toque; o mar toca a cada 6,5–9,5 s e o chamado
+da gaivota a cada 42–72 s. Os quatro WAV novos são rascunhos até o Bruno ouvir.
+
 **OS TRÊS NPCs GANHARAM ROSTO EM 13/09** — o item que a primeira leitura em voz
 alta deixou na fila (`docs/decisoes/020`). Nove bustos no estúdio partilhado,
 três expressões cada, e uma tabela que liga cada uma das 24 falas à cara que

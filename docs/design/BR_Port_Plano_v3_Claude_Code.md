@@ -52,7 +52,7 @@ caminho com apoio de IA"*. Vale a pena olhar a diferença de frente, porque ela
 Três razões, e só uma delas é "IA escreve código depressa":
 
 1. **A produção virou geração por script.** O mapa, os props, os ícones e os
-   dez efeitos de som são saída de programa, não desenho feito à mão. O custo
+   14 efeitos de som são saída de programa, não desenho feito à mão. O custo
    do primeiro prop foi alto; o do décimo é meia hora, e cai a cada peça de kit
    que entra. O plano velho orçava arte como quem encomenda arte.
 2. **O Godot e o Blender rodam dentro da sessão.** O plano supunha ida e volta
@@ -69,7 +69,7 @@ Três razões, e só uma delas é "IA escreve código depressa":
 
 O plano velho orçou **produção** e deu o **julgamento** de graça.
 
-Hoje é o inverso. Gerar dez efeitos de som custa segundos; **ouvi-los continua
+Hoje é o inverso. Gerar 14 efeitos de som custa segundos; **ouvi-los continua
 exigindo uma pessoa com placa de som**, e não há nenhuma neste contêiner.
 Densificar um prop é um laço em Python; dizer se ficou bonito é o Bruno abrindo
 uma captura. Rodar 600 partidas por perfil leva dez segundos; saber se o jogo é
@@ -1267,9 +1267,17 @@ por varredura contra o DESENHO do mapa e depois na imagem, e rendeu o **D21**.
 calçada e a frente da casa há 0,13 unidades, não cabe caminho nenhum, e o espaço
 que existe é o de 1,60 entre as duas fileiras, que virou a viela.
 
-**Três itens de arte, e dois deles querem sessão própria** — prédios em obra e
-avançados (12, médio); curvas em vez de retas (8) e gradiente de água e areia
-mais fauna (9), que estão fora da ordem sugerida de propósito.
+**O ITEM 9 FECHOU EM 13/09:** água e areia deixaram de ser bandas chapadas sem
+trocar a paleta nem o contorno da costa. O campo contínuo por distância usa o
+meandro longo já medido; amplitude funda→baixio ficou em **99,408→99,408**, o
+Weber da espuma em **0,558→0,558** e o baixio de areia em **0,186**. Entraram
+gaivotão, maria-farinha e tartaruga-verde juvenil, cada um com movimento,
+reação e som ao toque; mar e gaivota também soam em intervalos irregulares.
+O gate visual continua sendo o A5 e o auditivo, o A6.
+
+**Restam dois itens de arte, ambos separados:** prédios em obra e avançados
+(12, médio) e curvas em vez de retas (8, grande). O 8 não foi puxado para o 9:
+o contorno e a tabela de âncoras permanecem iguais.
 
 ### ✅ O ITEM 5 FECHOU INTEIRO — 5a medido, 5b escrito (11/09)
 
