@@ -213,6 +213,25 @@ Teste e import rodam sem tela.
    cinzento padrão do Godot. O `capturar_cena.gd` já o aplica, e também chama
    `setup()` com os argumentos extra — sem isso os painéis que dependem dele
    saem VAZIOS e a captura passa por "a cena abre" sem mostrar nada.
+   ⚠️ **E O AUTOLOAD NÃO NASCE VAZIO — ele tenta `load_game()` ANTES de
+   `new_game()`.** Logo toda ferramenta que fotografe uma cena solta herda o
+   autosave que estiver em `user://`, e a bateria tira as fotos de JOGO
+   primeiro, que gravam. Medido em 12/09: o painel da parcela afirmava que
+   R$498.200 eram "menos de uma das estruturas que faltam" porque o save da
+   foto anterior já tinha as SETE construídas — com partida nova a mesma
+   quantia compra quatro. **Foto que depende do que está no disco não compara
+   nada**, e é a regra de a ferramenta DERIVAR o estado outra vez: o
+   `capturar_tela.gd` já fazia `clear_save()` + semente + `new_game()`, o
+   `capturar_cena.gd` não fazia, e o que prova o conserto é rodar a bateria
+   DUAS vezes e exigir os mesmos bytes.
+   ⚠️ **E A GUARDA QUE PULA O `setup()` CAVA O BURACO QUE O COMENTÁRIO AO LADO
+   DESCREVE.** No mesmo dia: o `capturar_cena.gd` só chamava `setup()` quando
+   havia argumentos extra na linha de comando, e os quatro painéis cujo
+   `setup()` não EXIGE argumento — Calendário, Docas, Parcela, Reputação —
+   nunca o recebiam. A captura saía com o escurecer e um cartão de altura zero,
+   imprimia "Tela salva em" e passava por boa; o Diário escapou por montar no
+   `_ready()`, e foi por isso que isto viveu escondido. **Condição de atalho
+   numa ferramenta de evidência é uma foto que ninguém tirou.**
    Para olhar um detalhe pequeno, `tools/recortar_captura.gd` amplia sem
    suavizar: a 19px um ícone não se julga a olho na captura inteira, e foi
    ampliando que se viu que o ícone `doca` era um fantasma no painel branco.
@@ -295,6 +314,17 @@ Teste e import rodam sem tela.
    a pergunta que se quer fazer — separe a lista e compare ITEM a item. Vale a
    mesma desconfiança ao ler chave de config: uma linha dentro de um
    COMENTÁRIO satisfaz uma busca no arquivo inteiro.
+   ⚠️ **E A SAÍDA DAS FERRAMENTAS DESTE PROJETO É UM CONTRATO — a mensagem
+   nova pode colidir com uma sentinela.** Aqui quem decide aprovação é uma
+   STRING na saída e não o código de saída, e de propósito: a linha final de
+   cada suíte, `(Tela|Folha) salva em` no `capturar_evidencia.sh`, `=== Leitura
+   ===` e `possível travamento` no CI, `FORA` no `projetar_parcelas.py`. Em
+   12/09 uma linha NOVA que anunciava uma exclusão legítima dizia "FORA DO
+   PORTÃO" e reprovou o projetor inteiro — código 1 a dizer que o modelo não
+   calibra, quando ele calibrava. É a regra acima do outro lado: ali a busca
+   achava o que não devia num ARQUIVO, aqui numa MENSAGEM que se acabou de
+   escrever. Antes de imprimir texto novo numa ferramenta, procure que strings
+   alguém procura na saída dela.
    **E TESTE QUE LÊ ARTE GERADA LÊ O ARQUIVO, NUNCA O `load()` DA TEXTURA.**
    `load("res://art/porto_mapa_iso.svg")` devolve o `.ctex` de
    `.godot/imported/`, que é de quando o projeto foi importado: com o mapa
@@ -934,6 +964,63 @@ tranca isso.
   contente (`moeda(400000)` é exactamente o que a prosa diz) e só divergiria na
   sessão seguinte. Quem o pega pergunta pela FORMA — nenhuma fala escreve `R$`
   seguido de dígito —, e é o que o F4 faz desde 11/09 (`docs/decisoes/018`).
+- **⚠️ FALA ESCRITA NÃO É FALA OUVIDA, e nada perguntava a diferença.** É o
+  `barco_medio` na narrativa, e a terceira vez que este projeto o apanha:
+  `perdeu_para_arlindo` e `bom_contrato` viviam em `CIDA_LINHAS` desde 01/09 e
+  **nenhuma linha do projeto as disparava** — um quarto da voz da Dona Cida em
+  jogo, mudo. O bloco do fumaça não podia apanhar, porque perguntava *"todo id
+  da tabela tem fala?"*, lendo a tabela dos DOIS lados. A pergunta que pega é a
+  inversa, e a sua segunda fonte é o `Main.gd`: a tabela vive na Narrativa e o
+  gatilho no Main, logo não é espelho. **Ao escrever fala nova, escreva o
+  gatilho no mesmo commit** — e ao varrer código como texto, corte as linhas de
+  COMENTÁRIO antes, senão o próprio comentário que explica a armadilha
+  satisfaz a busca.
+- **⚠️ E DERIVAR O NÚMERO DA CONSTANTE PODE ESTRAGAR A PROSA.** A regra acima
+  manda o número sair da constante, e está certa — mas `"%d semanas"` pôs
+  **"4 semanas." e "32 turnos de decisão."** na narração de fim de fase, e
+  dígito no meio de uma peça literária lê como leitura de instrumento. Pior: a
+  guarda que provava a ligação comparava o DÍGITO, então era ela que mantinha o
+  defeito de pé — reprovou o texto certo no dia em que ele foi escrito por
+  extenso. Derive **e escreva por extenso** (`por_extenso()`), faça a guarda
+  procurar a forma escrita, e acrescente a metade que falta: **nenhum dígito na
+  narração**, senão ninguém impede o regresso.
+- **⚠️ E FALA QUE AFIRMA O ESTADO TEM DE SER VERDADE NO PRIMEIRO TURNO.** O tom
+  mau do boletim abre a dizer *"A semana anterior foi melhor"*, e o
+  `tom_do_boletim()` escolhia-o só por `resultado < 0`, sem olhar se havia
+  semana anterior. Medido em 12/09: quem aloca trabalhador nunca cai ali (0 de
+  60 partidas), quem **não aloca ninguém cai sempre** (60 de 60, a −R$16.000) —
+  ou seja, quem ouvia a frase errada era exatamente o principiante, no primeiro
+  boletim que via. O estado que APERTA uma fala é o mais pobre, não o médio.
+  ⚠️ **E o número dentro da fala sai de onde o EVENTO sai.** A mesma varredura
+  achou *"Dois contratos recusados essa semana"* num gatilho que é a queda de
+  FAIXA da reputação — nunca dois contratos. Não havia o que corrigir no
+  número: ele não saía de lado nenhum.
+- **⚠️ A FRASE PODE SER VERDADEIRA EM PORTUGUÊS E FALSA NESTE MUNDO.** A Dona
+  Cida dizia *"porto que fecha no azul é porto que abre segunda-feira"* — bonita,
+  idiomática, e **errada: um porto opera 24/7 e não abre na segunda.** Nenhuma
+  das cinco suítes podia apanhar, e nenhuma régua de escrita também: não há
+  token cru, não há número à mão, não há contradição interna. Só quem conhece o
+  mundo vê. É a razão de o gate do A4 ser uma pessoa a LER, e não uma asserção
+  — e a primeira leitura em voz alta (13/09) achou-a à segunda frase.
+- **⚠️ E MELHORAR A PROSA PODE INTRODUZIR UM ERRO DE FACTO.** Na véspera, a
+  narração de fim de fase dizia *"32 turnos de decisão"* — vocabulário de
+  máquina, e trocá-lo por *"Trinta e dois dias"* foi uma melhoria de leitura
+  real. Só que "turno" não promete calendário e "dia" promete: logo abaixo de
+  *"Quatro semanas"*, a frase passou a afirmar que quatro semanas dão trinta e
+  dois dias. **Dão vinte e oito.** O `TURNS_PER_WEEK` é 8 e a interface inteira
+  já chamava turno de dia, então a contradição existia dispersa pelo jogo e só
+  ficou visível quando os dois números se encostaram na mesma peça. Ao trocar
+  uma palavra técnica por uma palavra do mundo, pergunte o que a nova palavra
+  PROMETE — e se o resto do jogo cumpre a promessa.
+- **⚠️ MANEIRISMO QUE APARECE UMA VEZ NÃO É MANEIRISMO — É TROPEÇO.** O Arlindo
+  fecha a negociação perdida com *"sobrinho"*, e a primeira pergunta da leitura
+  foi *"como assim sobrinho?"*. A palavra está CERTA e documentada — o GDD
+  assina *"chama todo mundo de sobrinho ou querido, independente da idade"* —,
+  e mesmo assim a intenção não chegou: no GDD ele fala assim em toda cena, no
+  VS diz sete linhas e usa o maneirismo numa. **A dose é parte da escrita.**
+  A correção não foi tirar a palavra: foi plantar o "querido" na abertura, para
+  a segunda ocorrência ler como assinatura. Antes de cortar o que soou
+  estranho, conte quantas vezes ele aparece — pode faltar, e não sobrar.
 - **⚠️ QUEIXA DE ESTRANHEZA PODE SER LACUNA, e aí não há rótulo a corrigir.** A
   triagem leu *"é estranho o porto ter dívida mas o jogador começar com
   R$400.000"* como um nome errado e propôs chamar EMPRÉSTIMO ao caixa — que
@@ -1000,6 +1087,19 @@ tranca isso.
   captura.** Altura de painel com texto é CALIBRADA contra o texto, e o
   `PainelDiario` até dizia no comentário que já tinha sido medida uma vez: quem
   cresce o texto refotografa o painel e confere qual é a última linha visível.
+  ⚠️ **E A ALTURA ESCRITA À MÃO ESCONDEU METADE DA PEÇA DURANTE ONZE DIAS.** A
+  lição acima foi aprendida no diário em 11/09 e remediada lá; o painel IRMÃO —
+  o fim de Fase 1, o mesmo `paragrafo_rolavel` — nunca foi reaberto. Ele dava
+  430 px a um texto que pede **847**: o remate (*"Em quem tá olhando."*, a linha
+  para onde a peça inteira anda) nunca esteve na tela sem rolar, com o botão
+  logo abaixo a convidar a sair. É a regra "ao corrigir um, VARRA OS IRMÃOS"
+  a cobrar a fatura — e a correção certa não é medir outra vez à mão: a altura
+  passou a sair de `altura_do_texto()`, e o **D22** tranca-a.
+  ⚠️ **E MEDIR TEXTO PEDE O `line_spacing` POR FORA.** O
+  `get_multiline_string_size()` devolve só a soma das linhas; o `Label`
+  acrescenta o espaçamento ENTRE elas. No fim de fase isso são 99 px em 847
+  (33 × 3) — ~12% —, e a conta sem eles esconde a última dobra, que é o mesmo
+  defeito a reaparecer dentro da função escrita para o acabar.
 - Alvo de toque mínimo 44px. O teste de design cobre.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta
@@ -1077,7 +1177,7 @@ mesmos números.
 | # | Fase | O que é | Modelo |
 |---|---|---|---|
 | **F1** | **Escolher e desenhar** | ler a fila, escolher o item, e desenhar a MEDIÇÃO — que constante varrer, em que intervalo, contra o quê, e o que conta por bom | **Opus** |
-| **F2** | **Medir o ANTES** | rodar o que a F1 desenhou: 600 partidas × 3 perfis, ou a bateria de capturas, ou a varredura. É receita e não tem escolha nenhuma dentro | **Sonnet** |
+| **F2** | **Medir o ANTES** | rodar o que a F1 desenhou: 600 partidas por perfil, ou a bateria de capturas, ou a varredura. É receita e não tem escolha nenhuma dentro | **Sonnet** |
 | **F3** | **Ler a medição** | dizer o que o número quer dizer, e decidir se contraria a previsão | **Opus** |
 | **F4** | **Decidir a mudança** | qual `# TUNING:`, qual cor, qual ângulo, qual gramática — e quanto | **Opus** |
 | **F5** | **Aplicar e remedir** | escrever a alteração já escolhida e correr a mesma medição da F2 | **Sonnet** |
@@ -1180,7 +1280,7 @@ armadilha de uma função, no comentário dela.
 - **Autoload novo nasce DESLIGADO, e quem o liga é o JOGO.** Um autoload
   carrega também em `--script` — é por isso que a suíte pega o `GameState` por
   `root.get_node()`. Logo, tudo o que ele faça por omissão acontece TAMBÉM
-  durante as 600 partidas × 3 perfis do simulador e durante as cinco suítes. O
+  durante as 600 partidas por perfil do simulador e durante as cinco suítes. O
   `Registro.gd` só grava depois de `armar()`, e a única linha do projeto que
   arma é o `Main._ready()`. É a irmã da regra "tela nova é overlay, nunca fase
   do `GameState`": ambas são coisas que funcionam no jogo e envenenam calado
@@ -1194,6 +1294,16 @@ armadilha de uma função, no comentário dela.
   pior valor de omissão que há, porque se lê como medida** — no mesmo dia, um
   contador por turno que era zerado e nunca incrementado fez o relatório
   afirmar "0 barcos servidos" num porto que atendeu 184.
+- **⚠️ FORMATAR PARA O OLHO PODE APAGAR O NÚMERO, e "0." lê-se como zero.**
+  Irmã da regra acima — ali o zero de omissão passava por medida; aqui é o
+  número de verdade que se perde a caminho do papel. O `gerar_tabela_numeros.py`
+  fixava `"%.2f"` e depois fazia `rstrip("0")`: correto para os 0,50 e 0,28 que
+  o jogo tinha, e destruidor para o primeiro valor abaixo de 0,005 — o
+  `JUROS_POR_TURNO` (0,0025) foi para a tabela como **`0.`**, sem erro nenhum,
+  numa ferramenta cujo lema é recusar-se a adivinhar. **Precisão fixa num
+  formatador é uma aposta sobre valores que ainda não existem.** As casas saem
+  do valor; e a guarda que isto pedia é barata — **releia o que formatou e
+  exija que volte ao que era**, senão a tabela perde o número sem uma palavra.
 - **`destino[chave] += x` num Dictionary CRIA a chave em silêncio.** É a irmã
   do `.get(chave, omissão)` acima, do outro lado: ali um erro de digitação vira
   número plausível na LEITURA, aqui vira dinheiro escrito numa chave que a soma
@@ -1201,6 +1311,19 @@ armadilha de uma função, no comentário dela.
   novo se prendesse a uma estrutura sem linha na contabilidade; a linha chama-se
   como a estrutura de propósito, e o bloco T5l tranca que toda estrutura que
   paga tenha a sua.
+- **⚠️ ADIAR UM LANÇAMENTO PARA DEPOIS DE UMA DECISÃO ABRE UMA SAÍDA POR
+  RESPOSTA, e a que não se escreveu fica órfã.** A revisão externa de 12/09
+  achou um defeito verdadeiro — o boletim da semana 4 fechava ANTES de o Sr.
+  Ribeiro receber, e escondia a maior despesa da semana —, e o conserto adiou
+  o fecho para o `pay_debt()`. Só que a fase `debt_payment` tem DUAS portas:
+  quem paga e quem não pode pagar. Pelo lado da derrota o fecho nunca
+  acontecia — `semana_atual` chegava ao fim da partida com meia semana dentro,
+  `historico_semanas` ficava com TRÊS entradas em vez de quatro e o boletim
+  não abria —, e **as cinco suítes passavam**, porque a asserção que veio com
+  o conserto provava o adiamento só pelo lado de quem PAGA. Ao mover trabalho
+  para depois de uma decisão, conte as RESPOSTAS e feche em todas; e a guarda
+  que fecha é a própria FASE que adiou, nunca uma aproximação dela — assim ela
+  também torna o fecho idempotente de graça.
 - **Teste que JOGA fixa a semente.** `new_game()` chama `_spawn_boats()`, que
   tem 30% de abrir contra-oferta — e nessa fase o `advance_turn()` retorna
   CALADO. Um bloco de teste que avance o turno logo a seguir reprova em cerca

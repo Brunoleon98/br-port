@@ -122,7 +122,7 @@ em `docs/arquivo/HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | ~~Jogar~~ — 02/09 e 06/09, e os 25 itens já triados. Fica **a ordem do resto** | Ver abaixo |
-| **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
+| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e devolveu 7 notas — 6 aplicadas, 1 na fila. Falta reler o que mudou. O que ela achou está no A4 do plano |
 | **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais o que ficou fora delas, e a frota de 07/09. É a trilha inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
@@ -170,9 +170,9 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/ler_registros.py` | **O leitor** — resume N partidas de uma vez, e põe o jogador MEDIDO ao lado dos perfis que o simulador supõe |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se — são dois arquivos em duas linguagens que nada obriga a concordar |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — se os props caem em cima do que o mapa desenhou, se a ordem dos nós respeita a profundidade, se a interface cabe na tela e, desde o **D20**, com que COR o mapa pinta a rota do camião. Que defeito pariu cada bloco está em `docs/arquivo/HISTORICO.md`; o que cada um faz, no comentário dele |
-| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` do projeto instancia (achadas por varredura, não por lista), todo ícone de `Icones.gd` tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, e nenhum `{token}` de texto chega cru à tela |
-| `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os 3 tons da Dona Cida, as 8 falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Os números da narração saem das constantes, nunca escritos à mão |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — props em cima do que o mapa desenhou, ordem dos nós contra a profundidade, interface a caber na tela, e a COR com que o mapa pinta a rota do camião. Que defeito pariu cada bloco está em `docs/arquivo/HISTORICO.md` |
+| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia (por varredura), todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru à tela, e **toda fala escrita chega ao jogo** (a pergunta inversa, contra o `Main.gd`) |
+| `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os quatro tons da Dona Cida, as falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
@@ -192,7 +192,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/gerar_mapa_iso.py` | Gera o mapa isométrico a partir de coordenadas de mundo — inclui a malha viária, a vila (`--nivel-vila=N`) e os números de doca pintados no cais. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`**: a câmera é o `ZOOM`, e a câmera centra-se sozinha nos berços |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | **A régua do enquadramento** — mede o mapa em várias larguras e, sobretudo, **quantos pixels da FRONTEIRA DO MUNDO entram na janela**. Rasteriza com o ThorVG, que é o importador do jogo |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
-| `brport_vs/tools/simular_balanceamento.gd` | Simulador — roda N partidas com 3 perfis de jogador e mede a dificuldade. Desde 06/09 imprime a **mistura de classes e de motivos** que o jogo sorteou, e exporta a que NÍVEL cada perfil chegou — é dele que o projetor tira quais navios cada porto recebe |
+| `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, e mede a dificuldade. **Quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado**, que quita antes do prazo (`018`). Imprime a mistura de classes e motivos e o NÍVEL a que cada um chegou, que é de onde o projetor tira os navios |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos da interface, a 19px e ampliado — **rodar a cada ícone novo** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
@@ -213,8 +213,8 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
-| `tools/capturar_evidencia.sh` | **As dez fotografias que provam o que ficou** — sete de jogo (o nível 2 do porto, o porto A OPERAR com os camiões nos berços, e o porto EM RUÍNAS a trabalhar, que é o único estado onde a frota de pesca atraca), a primeira página do DIÁRIO (painel de leitura, altura calibrada contra o texto) e duas folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. É o que o CI roda a cada PR |
-| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — os cascos (por classe, motivo e porte) e os oito camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Reprova se transbordar a tela, em vez de recortar. Existe porque as fotos de JOGO mostram só o que o sorteio escolheu |
+| `tools/capturar_evidencia.sh` | **As fotografias que provam o que ficou** — as de jogo, os painéis e as folhas de contato. Semente e passo fixos, estado montado, tela chapada reprovada: duas corridas dão os mesmos bytes. É o que o CI roda a cada PR |
+| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — cascos e camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Reprova se transbordar, em vez de recortar. O porquê está no `CLAUDE.md`: foto de jogo só mostra o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
@@ -238,8 +238,11 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   cargueiro e navio de longo curso, cada uma com a sua faixa de valor, os seus
   turnos e a sua mistura de motivos. A classe decide o casco desenhado no píer
   (`docs/decisoes/009`)
-- Parcela única de **R$530.000** ao Sr. Ribeiro no fim da semana 4; paga no
-  vencimento, entra no boletim antes de a semana zerar (32 dias de partida)
+- Parcela única de **R$530.000** no fim da semana 4; paga ou recusada, a semana
+  só fecha depois da decisão. **Quitar antes abate 0,25% por turno** — o juro
+  que o banco deixa de correr (`019`), numa conta genérica que serve ao
+  empréstimo da Fase 2. ⚠️ **A semana tem 8 turnos e a partida 32 "dias", o que
+  o Bruno mandou passar a 7 em 13/09** — é item de fila, e move a economia
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
   upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
   com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase

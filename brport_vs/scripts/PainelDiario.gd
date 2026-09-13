@@ -43,4 +43,8 @@ func _ready() -> void:
 	# fundo claro do cartão, ao contrário de `doca` (Icones.gd avisa).
 	titulo(Icones.DIA, Narrativa.DIARIO_CABECALHO)
 	paragrafo_rolavel(Narrativa.diario(), ALTURA_TEXTO)
-	botao_fechar("Começar a semana 1")
+	# "primeira semana" e não "semana 1" — o rótulo do botão é a MESMA frase que
+	# a leitura em voz alta de 13/09 mandou trocar no diário, e escapou à
+	# primeira varredura por não viver no `Narrativa.gd`. Fala do jogo também é
+	# texto, mesmo quando está num botão.
+	botao_fechar("Começar a primeira semana")

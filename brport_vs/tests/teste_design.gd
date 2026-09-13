@@ -87,6 +87,7 @@ var _d18_completo := false
 var _d19_completo := false
 var _d20_completo := false
 var _d21_completo := false
+var _d22_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -187,6 +188,10 @@ func _rodar() -> void:
 	print("=== D21: quem espera fundeia AO LARGO, quem atraca fica na costeira ===")
 	_d21_a_zona_de_espera()
 	_confere("o bloco D21 correu até ao fim", _d21_completo)
+
+	print("=== D22: a narração de fim de fase cabe sem rolar ===")
+	_d22_narracao_cabe()
+	_confere("o bloco D22 correu até ao fim", _d22_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -2186,6 +2191,61 @@ func _d21_a_zona_de_espera() -> void:
 				% [luz, limiar])
 
 	_d21_completo = true
+
+
+# ── D22 ── o remate da Fase 1 está NA TELA, não debaixo da dobra
+#
+# ⚠️ ÁREA ROLÁVEL NÃO CORTA — ESCONDE, e ninguém perguntava por este painel.
+# O `paragrafo_rolavel` recebia 430 px escritos à mão e a narração pede 847:
+# METADE da peça viveu debaixo da dobra desde 01/09, com o botão "Ver o
+# balanço" logo abaixo a convidar a sair antes do remate — *"Em quem tá
+# olhando."*, que é a linha para onde tudo aquilo anda. As cinco suítes
+# passavam; quem apanhou foi a fotografia, e só porque o texto foi crescido.
+#
+# O diário levou a MESMA mordida em 11/09 e foi remedido; este painel é o irmão
+# e ninguém o voltou a abrir. É a regra "ao corrigir um, varra os irmãos" a
+# cobrar a fatura.
+#
+# ⚠️ O QUE ESTA GUARDA PROVA, E O QUE NÃO PROVA. Ela mede com o
+# `altura_do_texto()` — a MESMA função com que o painel se dimensiona —, logo
+# não apanha um erro DENTRO dessa função: apanha o que de facto se repete, que
+# é o TEXTO a crescer para além do que o painel mostra. Que a função bate com o
+# motor foi medido à parte e está escrito no comentário dela (847 = 748 + 33x3,
+# ao pixel). Não se instancia o painel montado de propósito: o `Label` só sabe
+# medir depois de um passe de layout, e nenhuma das suítes deste projeto passa
+# frames.
+func _d22_narracao_cabe() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS.new_game()
+	GS.nome_porto = "Cais Mirim"
+
+	var tela: Control = load("res://scenes/EndGame.tscn").instantiate()
+	tela.theme = load("res://ui/tema_brport.tres")
+	root.add_child(tela)
+
+	var Nar = load("res://scripts/Narrativa.gd")
+	var texto: String = Nar.fim_de_fase()
+	var pede: int = tela.altura_do_texto(texto, int(tela.LARGURA) - int(tela.MARGEM_CARTAO))
+	var teto: int = int(tela.ALTURA_NARRACAO_MAX)
+	_confere("a narração inteira cabe sem rolar (pede %d, teto %d)" % [pede, teto],
+		pede > 0 and pede <= teto)
+
+	# E ACABA NO REMATE — sem isto, um texto truncado antes de chegar ao painel
+	# passaria na asserção acima justamente por ser curto.
+	_confere("e a peça acaba no remate dela",
+		texto.strip_edges().ends_with("Em quem tá olhando."),
+		"acaba em: " + texto.strip_edges().right(30))
+
+	# E O TETO NÃO EMPURRA O CARTÃO PARA FORA DOS 1280 DO RETRATO. O que o
+	# painel gasta à volta do texto sai das constantes que o balanço já usa
+	# (cartão menos área de texto), em vez de um número novo escrito aqui.
+	var moldura: int = int(tela.ALTURA) - int(tela.ALTURA_TEXTO)
+	_confere("e o cartão cheio cabe na tela (%d + %d de moldura)" % [teto, moldura],
+		teto + moldura <= 1280)
+
+	tela.queue_free()
+	_d22_completo = true
 
 
 # Duas cores chapadas são iguais ou não são; a folga é só para o

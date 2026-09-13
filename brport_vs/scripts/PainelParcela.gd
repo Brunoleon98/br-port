@@ -12,9 +12,11 @@ extends PainelNarrativo
 # toque do projeto) não cabe lá sem tirar outra coisa que já é usada. Tocar no
 # cartão é a mesma língua que os quatro chips do HUD já falam desde 03/09.
 #
-# O VALOR É O MESMO do vencimento, e o painel diz isso em voz alta: desconto
-# por antecipação mexeria na economia medida, e isso passa pelo `/balancear`.
-# Sem essa linha, o jogador que abrisse aqui esperaria um abatimento.
+# O VALOR DE HOJE É MENOR DO QUE O DO VENCIMENTO desde 12/09 (item 24,
+# `docs/decisoes/019`), e é AQUI que essa mecânica existe: o desconto encolhe
+# um pouco a cada dia, e um número que só aparecesse depois de pago não seria
+# uma escolha — seria uma surpresa. O painel mostra os três números (o cheio, o
+# abatimento de hoje e o que sai do caixa) e diz que o abatimento míngua.
 # ============================================================
 
 const LARGURA := 420
@@ -25,7 +27,9 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
 	titulo(Icones.PARCELA, "Parcela do Sr. Ribeiro")
 
-	var valor: int = GameState.PARCELA_AMOUNT
+	var cheio: int = GameState.PARCELA_AMOUNT
+	var valor: int = GameState.valor_da_parcela_hoje()
+	var abatimento: int = cheio - valor
 	if GameState.parcela_paid:
 		total("Paga — porto salvo")
 		paragrafo("A dívida com o Banco Porto Mirim está quitada.")
@@ -33,8 +37,15 @@ func setup(_sem_argumentos: Variant = null) -> void:
 		return
 
 	var dias: int = maxi(GameState.PARCELA_DUE_TURN - GameState.turn + 1, 0)
+	# O TOTAL é o que sai do caixa hoje — a linha única que o olho procura
+	# primeiro (`RotuloTotal`). O cheio e o abatimento ficam na prosa abaixo:
+	# dois números em destaque seriam nenhum em destaque.
 	total(GameState.moeda(valor))
 	paragrafo("Vence no dia %d — %d dia(s) daqui." % [GameState.PARCELA_DUE_TURN, dias])
+	if abatimento > 0:
+		paragrafo(("Cheia são %s. Antecipar abate %s pelos juros que o banco " +
+			"deixa de correr — e esse abatimento encolhe a cada dia.")
+			% [GameState.moeda(cheio), GameState.moeda(abatimento)])
 
 	fio()
 	var falta: int = valor - int(GameState.cash)
@@ -46,11 +57,10 @@ func setup(_sem_argumentos: Variant = null) -> void:
 
 	paragrafo("No caixa: %s — já dá para quitar agora."
 		% GameState.moeda(int(GameState.cash)))
-	# A TROCA FICA ESCRITA, porque ela é a decisão. Quitar não desconta nada;
-	# o que sai daqui é o mesmo dinheiro que compraria estrutura, e é isso que
-	# faz disto uma escolha em vez de um botão óbvio.
-	paragrafo(("Antecipar não muda o valor — o que muda é deixar de carregar a " +
-		"dívida. O mesmo caixa também constrói: %s são %s.")
+	# A TROCA FICA ESCRITA, porque ela é a decisão. O abatimento não paga o
+	# custo de oportunidade: o que sai daqui é dinheiro que compraria estrutura,
+	# e é isso que faz disto uma escolha em vez de um botão óbvio.
+	paragrafo(("O mesmo caixa também constrói: %s são %s.")
 		% [GameState.moeda(valor), _o_que_isso_compra(valor)])
 
 	var quitar := Button.new()

@@ -21,6 +21,15 @@ const LARGURA := 440
 const ALTURA := 600
 const ALTURA_TEXTO := 430
 
+# O TETO da narração, e só o teto: a altura de verdade sai do TEXTO
+# (`altura_do_texto`). 900 é o que sobra dos 1280 da tela depois do título, do
+# botão e das margens do cartão, com folga para o cartão não encostar na borda.
+# Enquanto a peça couber aqui, o jogador lê-a inteira sem rolar — que é a
+# diferença entre ver o remate e sair no botão antes dele.
+const ALTURA_NARRACAO_MAX := 900
+# O que o tema gasta de margem lateral dentro do cartão, medido no render.
+const MARGEM_CARTAO := 36
+
 var _venceu := false
 var _motivo := ""
 
@@ -28,16 +37,23 @@ var _motivo := ""
 func setup(won: bool, reason: String) -> void:
 	_venceu = won
 	_motivo = reason
-	montar(LARGURA, ALTURA)
+	# A NARRAÇÃO AJUSTA-SE AO TEXTO e o balanço mantém a altura fixa: são duas
+	# telas de tamanhos muito diferentes a partilhar um painel, e uma altura só
+	# servia mal as duas. Com o rolo à medida do texto já não há rolo nenhum,
+	# e é por isso que aqui se pode pedir o cartão ajustado ao conteúdo.
 	if _venceu:
+		montar(LARGURA, 0)
 		_mostrar_narracao()
 	else:
+		montar(LARGURA, ALTURA)
 		_mostrar_balanco()
 
 
 func _mostrar_narracao() -> void:
 	titulo(Icones.VITORIA, "Fim da Fase 1")
-	paragrafo_rolavel(Narrativa.fim_de_fase(), ALTURA_TEXTO)
+	var texto := Narrativa.fim_de_fase()
+	var pedido := altura_do_texto(texto, LARGURA - MARGEM_CARTAO)
+	paragrafo_rolavel(texto, mini(pedido, ALTURA_NARRACAO_MAX))
 	var botao := Button.new()
 	botao.text = "Ver o balanço"
 	botao.custom_minimum_size = Vector2(0, TOQUE_MIN)

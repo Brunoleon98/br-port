@@ -213,7 +213,24 @@ def formatar(valor: object) -> str:
     if isinstance(valor, float):
         # Sempre com uma casa, no mínimo: PATIO_BONUS_PIER é 1.00 (dobra a
         # renda) e imprimir "1" faz um multiplicador parecer uma contagem.
-        return ("%.2f" % valor).rstrip("0") + ("0" if float(valor).is_integer() else "")
+        #
+        # ⚠️ E NUNCA COM MENOS CASAS DO QUE O NÚMERO TEM. A versão anterior
+        # fixava "%.2f" e depois fazia `rstrip("0")` — o que come os zeros que
+        # SÃO o número. Entrou em 12/09 a primeira constante pequena do
+        # projeto (JUROS_POR_TURNO, 0,0025) e ela foi para a tabela como "0.",
+        # sem erro nenhum. As casas saem do valor; o corte a dez existe só
+        # para o lixo de ponto flutuante de uma constante calculada.
+        texto = ("%.10f" % valor).rstrip("0")
+        if texto.endswith("."):
+            texto += "0"
+        # A GUARDA QUE FALTAVA, e é ela que torna a linha acima confiável:
+        # valor que não volta ao que era depois de formatado é valor PERDIDO,
+        # e perdido em silêncio, que é o defeito que esta função acabou de ter.
+        if abs(float(texto) - float(valor)) > 1e-12:
+            raise ErroDeLeitura(
+                "formatar %r deu %r, que relê como %r — a tabela perderia o "
+                "valor sem dizer nada" % (valor, texto, float(texto)))
+        return texto
     if valor is None:
         return "—"
     return "`%s`" % valor

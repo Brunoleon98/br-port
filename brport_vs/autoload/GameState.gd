@@ -55,6 +55,12 @@ signal semana_fechada(resumo: Dictionary)
 # e que o gravador esteja DESARMADO ali (ver o cabeçalho do `Registro.gd`).
 signal negociacao_resolvida(acao: String, resultado: String, tentativa: int)
 
+# UM CONTRATO FECHOU, e por quanto. Existe para a faixa de mensagem poder
+# reagir ao TAMANHO do negócio — a Dona Cida tinha a fala escrita desde 01/09 e
+# nada a disparava, porque nenhum sinal dizia o valor. Carrega a classe junto
+# para quem ouve poder comparar com a faixa dela em vez de com um número solto.
+signal contrato_fechado(valor: int, classe: String)
+
 # ── TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1) ──
 #
 # ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em
@@ -364,6 +370,36 @@ const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
 # tinham levado a 31,0%.
 const PARCELA_AMOUNT := 530000            # GDD "Parcelas validadas" / Protótipo VS — parcela única
 const PARCELA_DUE_TURN := TURNS_PER_WEEK * 4   # vence ao fim da semana 4
+
+# QUANTAS PARCELAS TEM A FASE 1 INTEIRA, que não é o que o VS joga.
+#
+# O GDD 7 fecha a Fase 1 com TRÊS parcelas em doze semanas (R$3.300.000 no
+# total — `docs/gdd/conceitos/dividas.md`), e o VS é o primeiro terço disso:
+# quatro semanas, uma parcela. Os dois números são verdade ao mesmo tempo, e é
+# por isso que a narração de fim de fase pode dizer "a primeira de três" sem
+# mentir sobre o jogo que existe.
+#
+# ⚠️ NÃO É `# TUNING:` — não entra em conta nenhuma e o simulador não a lê. Ela
+# existe para a PROSA poder falar do arco sem escrever o número à mão, que é o
+# defeito que a própria narração já teve ("Doze semanas / Três parcelas", a
+# Fase 1 do GDD colada num jogo de quatro semanas). O `projetar_parcelas.py`
+# conhece as outras duas pelo GDD; aqui basta saber quantas são.
+const PARCELAS_NA_FASE := 3
+
+# TUNING: o que o banco devolve por TURNO de antecipação, como fração do
+# principal. É o item 24 do segundo playtest — "quitar antes pode diminuir o
+# valor, já que teria menos juros" —, e a forma sai daí: o desconto é o juro
+# que o banco deixa de correr, logo é PROPORCIONAL ao tempo e não fixo.
+#
+# ⚠️ FIXO FOI MEDIDO E REJEITADO, e a razão é a distribuição: o Ótimo fecha
+# com R$1.309.646 em caixa e levaria o abatimento de graça, enquanto o Mediano
+# só cruza a parcela no fim da partida e quase nunca o veria. Botão que só move
+# quem não precisa dele (`docs/decisoes/008`).
+#
+# O TETO É O PRAZO INTEIRO: 31 turnos × 0,25% = 7,75% do principal. Quem quita
+# no dia do vencimento não desconta nada, e é por isso que o `pay_debt()` não
+# passa por aqui.
+const JUROS_POR_TURNO := 0.0025           # TUNING: fração do principal abatida por turno de antecipação
 
 # ── SAVE ──
 const SAVE_PATH := "user://savegame.json"
@@ -980,6 +1016,7 @@ func advance_turn() -> void:
 				dia_atual["servidos"] += 1
 				metrics["boats_served"] += 1
 				_change_reputation(REPUTATION_GAIN_SERVED)
+				contrato_fechado.emit(bruto, String(boat["classe"]))
 				var w = _find_worker(dock["worker_id"])
 				if w != null:
 					w["busy_turns"] = 0
@@ -1200,7 +1237,8 @@ func pay_debt() -> void:
 	# `advance_turn()` já fez a virada do dia antes de suspender em
 	# "debt_payment", então o dia em que a dívida venceu é `dia_anterior` —
 	# não `dia_atual`, que já é o dia seguinte, ainda por jogar.
-	_baixar_parcela(dia_anterior)
+	# O PRINCIPAL INTEIRO: aqui não há antecipação nenhuma para descontar.
+	_baixar_parcela(dia_anterior, PARCELA_AMOUNT)
 	# O fecho da semana 4 ficou de propósito à espera desta decisão: antes
 	# daqui o resumo esconderia a maior despesa da semana e inflaria o resultado
 	# exatamente pelo valor da parcela.
@@ -1211,47 +1249,94 @@ func pay_debt() -> void:
 	save_game()
 
 
+# ── QUITAR ANTES DO PRAZO — item 24, `docs/decisoes/019` ──
+## O DESCONTO DE UMA DÍVIDA QUITADA ANTES DO PRAZO, em dinheiro.
+##
+## ⚠️ RECEBE O PRINCIPAL E O PRAZO EM VEZ DE OS IR BUSCAR À PARCELA, e isso é
+## pedido e não gosto: o empréstimo bancário da Fase 2 vai querer esta mesma
+## conta com outro principal e outro prazo, e uma versão que leia
+## `PARCELA_AMOUNT` por dentro teria de ser copiada para lá — que é como duas
+## contas da mesma coisa começam a divergir neste arquivo (ver o
+## `_custos_da_semana()`, que existe separado exatamente por isso).
+##
+## ⚠️ O PISO EM ZERO VIVE AQUI E SÓ AQUI. A primeira versão clampava também no
+## sítio que conta os turnos, e duas guardas iguais sobre a mesma coisa é
+## exatamente a armadilha que o `CLAUDE.md` regista: com a cópia de pé, tirar
+## esta não reprovava nada. Quem chama é dono do seu domínio; quem responde
+## pelo dinheiro é esta linha, que nunca devolve desconto negativo — um prazo
+## já vencido não pode ENCARECER a dívida.
+func desconto_por_antecipacao(principal: int, turnos: int) -> int:
+	return int(round(principal * JUROS_POR_TURNO * maxi(turnos, 0)))
+
+
+## O que a parcela custa SE for quitada agora. O jogador vê este número no
+## painel, e ele SOBE a cada dia que passa — é essa subida que faz a
+## antecipação ser uma escolha em vez de um botão sem prazo.
+func valor_da_parcela_hoje() -> int:
+	return PARCELA_AMOUNT - desconto_por_antecipacao(
+		PARCELA_AMOUNT, PARCELA_DUE_TURN - turn)
+
+
+func pode_pagar_parcela_adiantado() -> bool:
+	# Contra o valor COM desconto, não contra o principal: o abatimento também
+	# abre a porta mais cedo, e fechá-la no número cheio mostraria um preço que
+	# o jogador não consegue pagar.
+	return phase == "playing" and not parcela_paid and cash >= valor_da_parcela_hoje()
+
+
 # Pagar ANTES do prazo — item do primeiro playtest ("pode haver a opção de
 # pagar a dívida antes do tempo").
 #
-# O VALOR É O MESMO, e de propósito: desconto por antecipação mexeria na
-# economia medida (100% / 79,5% / 31,0%) e isso não se faz sem passar pelo
-# `/balancear`. O que se ganha aqui não é dinheiro — é deixar de carregar a
-# dívida e o lembrete dela pelo resto da partida, e é uma escolha, porque o
-# mesmo caixa também compra estrutura.
+# O VALOR SAI MAIS BARATO QUANTO MAIS CEDO SE PAGA, desde 12/09 — item 24 do
+# segundo playtest, decidido em `docs/decisoes/019`. Até aí era o principal
+# cheio, e o comentário aqui dizia que um desconto "mexeria na economia
+# medida": MEDIDO, não mexe. Os três perfis antigos nunca passam por esta
+# porta, e o quarto (Antecipado) quita no turno 30 de 32, onde o desconto vale
+# 0,5% — a janela é que quase não existe, não o efeito.
 #
-# O simulador de balanceamento NUNCA passa por aqui (ele só resolve a fase
-# "debt_payment"), então a medição em vigor continua a descrever exatamente o
-# que descrevia: a partida que paga no vencimento.
-func pode_pagar_parcela_adiantado() -> bool:
-	return phase == "playing" and not parcela_paid and cash >= PARCELA_AMOUNT
-
-
+# O que se ganha continua a ser sobretudo deixar de carregar a dívida, e a
+# escolha continua a ser uma escolha: o mesmo caixa também compra estrutura.
 func pagar_parcela_adiantado() -> bool:
 	if not pode_pagar_parcela_adiantado():
 		return false
 	# Aqui é o INVERSO do `pay_debt()`: o dia em curso ainda não foi jogado,
 	# então a parcela cai em `dia_atual` — que vira `dia_anterior` na próxima
 	# virada, e é lá que o resumo do dia a vai mostrar.
-	_baixar_parcela(dia_atual)
+	_baixar_parcela(dia_atual, valor_da_parcela_hoje())
 	roster_changed.emit()
 	save_game()
 	return true
 
 
-func _baixar_parcela(no_dia: Dictionary) -> void:
-	cash -= PARCELA_AMOUNT
+# O VALOR VEM DE FORA porque as duas portas pagam quantias diferentes: no
+# vencimento sai o principal inteiro, antecipado sai o principal menos o juro
+# que o banco deixa de correr. Derivá-lo aqui dentro obrigaria esta função a
+# saber por que porta entrou, que é precisamente o que o argumento evita.
+func _baixar_parcela(no_dia: Dictionary, valor: int) -> void:
+	cash -= valor
 	# Só para o Boletim. A parcela vence NO fecho da semana 4, então cai na
 	# semana em curso — que é onde o jogador espera vê-la, porque foi essa a
 	# semana em que o dinheiro saiu.
-	semana_atual["parcela"] += PARCELA_AMOUNT
-	no_dia["parcela"] += PARCELA_AMOUNT
+	semana_atual["parcela"] += valor
+	no_dia["parcela"] += valor
 	parcela_paid = true
 	cash_changed.emit(cash)
-	message.emit("Parcela de %s paga ao Sr. Ribeiro." % moeda(PARCELA_AMOUNT), "good")
+	message.emit("Parcela de %s paga ao Sr. Ribeiro." % moeda(valor), "good")
 
 
 func fail_debt() -> void:
+	# RECUSAR TAMBÉM É DECIDIR, e o fecho da semana 4 estava à espera de uma
+	# decisão — não de um pagamento. Sem esta metade o adiamento do
+	# `_process_week_end()` fica órfão no caminho da derrota: a semana nunca
+	# fecha, o boletim nunca abre e `semana_atual` vai para o fim da partida
+	# com meia semana dentro. Medido em 12/09: `historico_semanas` acabava com
+	# TRÊS entradas em vez de quatro, e nenhuma suíte perguntava.
+	#
+	# A fase é a guarda exata, e não uma aproximação: "debt_payment" só se
+	# escreve no mesmo ramo que adia o resumo, com a mesma condição. Ela também
+	# torna esta função idempotente — a segunda chamada já encontra "game_over".
+	if phase == "debt_payment":
+		_fechar_resumo_da_semana(week_of(turn - 1))
 	_end_game(false, "Não foi possível pagar a parcela ao Sr. Ribeiro. Porto perdido.")
 
 

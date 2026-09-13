@@ -198,6 +198,15 @@ skill já apontou para um binário do Godot em `/tmp` numa versão que deixou de
 ser a do CI, e ninguém a teria olhado se a varredura só procurasse lições
 novas: quem muda uma receita tem de procurar quem a copiou.
 
+⚠️ **E CONTAGEM EM PROSA DE UMA LISTA QUE CRESCE TIRA-SE, não se corrige.**
+Medido em 12/09: quatro documentos diziam "as oito" capturas e um dizia "as
+nove", porque a nona entrou em 08/09 e o rasto parou a meio — e a décima
+estava a entrar. O mesmo vale para "3 perfis" do simulador, que o
+`ESTADO_DO_PROJETO.md` afirmava no dia em que passaram a ser quatro. Onde o
+número não informa, escreva "todas" ou "por perfil"; onde informa (o
+inventário do estado), ele tem de ser conferido contra a fonte. `grep` pelo
+número velho E pelo novo.
+
 | O que se aprendeu | Onde vive |
 |---|---|
 | Regra que vale sempre e para todos | `CLAUDE.md` — o único que carrega sozinho |

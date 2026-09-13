@@ -369,6 +369,124 @@ e o CI passaria na mesma, porque só procurava a linha `=== Leitura ===`. Está
 medido, está consertado (o CI reprova `possível travamento`) e está escrito no
 `CLAUDE.md`.
 
+🔧 **CINCO CORREÇÕES DE TEXTO EM 12/09, e o gate continua de pé.** Ao montar o
+roteiro de leitura apareceram coisas que não eram gosto — e por isso não
+esperavam pelo ouvido dele:
+
+1. **Duas das oito falas da Dona Cida nunca tocavam.** `perdeu_para_arlindo` e
+   `bom_contrato` estavam na tabela desde 01/09 e nenhuma linha do projeto as
+   disparava — um quarto da voz dela em jogo. O fumaça não podia apanhar: lia a
+   tabela dos dois lados. Hoje a primeira sai de `negociacao_resolvida` e a
+   segunda de um sinal novo, `contrato_fechado`, com o limiar derivado da faixa
+   da própria classe (o quarto de cima) em vez de um número em reais.
+2. **A Dona Cida comparava com uma semana que não existe.** *"A semana anterior
+   foi melhor"* no PRIMEIRO boletim. Medido: 0 de 60 partidas para quem aloca,
+   **60 de 60 para quem não aloca ninguém** — o principiante. Entrou um quarto
+   tom só para esse caso.
+3. **Uma fala inventava um número.** *"Dois contratos recusados essa semana"*
+   num gatilho que é a queda de FAIXA da reputação.
+4. **A narração de fim de fase saía em dígitos** — *"4 semanas", "32 turnos de
+   decisão"*. A derivação por `%d` consertou o número que envelhecia e estragou
+   a prosa, e a guarda que comparava o dígito era o que a mantinha assim.
+5. **"A Parcela vence hoje"** — rótulo de interface dentro de fala.
+6. **E o Bruno decidiu o que o desvio 1 deixara em aberto:** a narração diz
+   agora que esta é **a primeira de três parcelas**, e que faltam duas — "é bom
+   um começo". O três sai de `PARCELAS_NA_FASE`, não da prosa: é o arco do GDD
+   (três parcelas em doze semanas) contra o VS, que joga o primeiro terço.
+7. **E ao crescer o texto viu-se que ele nunca coubera.** O painel dava 430 px
+   a uma peça que pede 847 — **metade dela, o remate incluído, vivia debaixo da
+   dobra desde 01/09**, com o botão a convidar a sair antes. O diário levou a
+   mesma mordida em 11/09 e foi remedido; o irmão não. A altura passa a sair do
+   texto (`altura_do_texto()`), e o **D22** tranca-a.
+
+**E rendeu a asserção que faltava**, no F4: *toda fala escrita chega ao jogo?* A
+segunda fonte é o `Main.gd`, e ela apanhou um terceiro caso na estreia (o
+`reputacao_caiu`, que vive dentro de um ternário e o varredor não via). Dois
+defeitos injetados, e a economia medida **idêntica ao dígito** — 100,0% / 80,2%
+/ 37,3%.
+
+📖 **A PRIMEIRA LEITURA EM VOZ ALTA ACONTECEU (13/09), e devolveu sete coisas.**
+Seis eram texto e estão feitas; a sétima é item de fila:
+
+1. *"semana 1"* virou **"primeira semana"**, no cabeçalho do diário e no corpo.
+2. Três linhas da Dona Cida reescritas: a tautologia que eu tinha posto no
+   primeiro boletim (*"sair mais do que entra é sair mais do que entra"*), o
+   jogo de palavras do tom mau (*"comparativo de ruim"*) e o elogio contido.
+3. ⚠️ **UM ERRO DE MUNDO:** *"porto que fecha no azul é porto que abre
+   segunda-feira"* — **o porto opera 24/7 e não abre na segunda.** Nenhuma
+   suíte podia apanhar: a frase é verdadeira em português e falsa neste mundo.
+4. ⚠️ **E UM ERRO DE ARITMÉTICA QUE EU TINHA ACABADO DE INTRODUZIR:** a
+   narração dizia *"Quatro semanas. / Trinta e dois dias."*, e quatro semanas
+   dão **vinte e oito**. Até 12/09 a linha dizia "turnos", que não prometia
+   nada; trocá-la por "dias" — uma melhoria de prosa — destapou a conta. A
+   linha saiu.
+   **E o que ela destapou é maior, e é decisão do Bruno:** `TURNS_PER_WEEK` é
+   8, e a interface inteira chama turno de DIA (o botão "Avançar dia", o
+   "Vence no dia 32"). Ou a semana deste jogo tem oito dias de propósito, ou
+   "dia" é o rótulo errado em todo lado. Nada no código está inconsistente
+   consigo; o que colide é o vocabulário com o calendário.
+5. **"Sobrinho" fica, e ganha companhia.** A pergunta foi *"como assim
+   sobrinho?"* — e o GDD sustenta a palavra (`gdd/sistemas/voz_personagens.md`:
+   *"chama todo mundo de sobrinho ou querido, independente da idade"*). O
+   defeito não era a palavra, era a DOSE: no GDD ele fala assim o tempo todo,
+   no VS diz sete linhas e usa o maneirismo UMA vez, na última. Entrou
+   "querido" na abertura; duas ocorrências fazem padrão, uma faz tropeço.
+
+### 📅 ITEM NOVO — a semana passa a ter SETE dias, e a economia move-se
+
+**Decidido pelo Bruno em 13/09**, ao ler a narração em voz alta: o jogo diz
+"dia" em toda a interface e `TURNS_PER_WEEK` é 8, o que faz quatro semanas
+darem trinta e dois dias. **O ideal é sete.** A implicação é dele e está dita:
+*"daí vai precisar rebalancear algumas coisas"*.
+
+**O que a mudança CUSTA em código: uma linha.** Medido em 13/09 — nada no
+projeto crava 8 nem 32. `TURNS_TOTAL` e `PARCELA_DUE_TURN` derivam de
+`TURNS_PER_WEEK`, e os quinze sítios que os leem (HUD, calendário, painel da
+parcela, registro, quatro blocos de teste) leem a constante. O calendário até
+melhora de graça: ele usa `TURNS_PER_WEEK` como número de colunas, e sete
+colunas são uma semana de verdade.
+
+⚠️ **O QUE ELA CUSTA NA ECONOMIA É OUTRA COISA, e não é "12,5% menos turnos".**
+O aperto verdadeiro é que **o custo semanal não encolhe com a semana**: o
+`MAINTENANCE_WEEKLY` (R$40.000) e o `SALARY_PER_WORKER` são cobrados POR
+SEMANA, uma vez, e passam a ser pagos com sete turnos de receita em vez de
+oito. A margem por semana cai, e o porto pobre — que já vive de margem fina — é
+quem sente primeiro. A partida também encurta de 32 para 28 turnos contra uma
+parcela que não mudou.
+
+⚠️ **E A PREVISÃO ACIMA NÃO SERVE DE MEDIÇÃO.** Este arquivo regista duas vezes
+o custo de prever numa constante com o resultado medido noutra (`018`, e a
+inversão da dificuldade que não veio). A F1 desenha a varredura; o número sai
+das 600 partidas.
+
+**O rasto que ela envelhece** é o maior de qualquer item da fila: a tabela dos
+números, o projetor das Parcelas (que modela a Fase 1 MEDIDA), os seis
+documentos que afirmam o balanceamento, e a prosa onde "32" ou "oito turnos"
+estejam escritos — `CLAUDE.md`, o `ESTADO_DO_PROJETO.md`, a `003`, o
+`gdd/sistemas/economia.md` e o histórico. É sessão própria, por `/balancear`.
+
+### 🎭 ITEM NOVO — retrato do personagem com REAÇÃO, junto da fala
+
+Pedido na primeira leitura (13/09): *"seria legal aparecer o sprite dos
+personagens, poderia ser o sprite com a reação do personagem mais a mensagem"*.
+
+**Medido antes de estimar.** A metade do estúdio já existe: o
+`trabalhador_retrato` sai de `blender/brp_porto.py` com `tipo="retrato"` e
+âncora própria, e o `asset_validator` já sabe conferir esse tipo — é o único
+prop do jogo que olha para a frente. **O que não existe:** retrato nenhum da
+Dona Cida, do Arlindo ou do Sr. Ribeiro, e nenhuma noção de EXPRESSÃO.
+
+**O que o item é, em três partes:** (a) retratos dos três no estúdio partilhado,
+cada um com um punhado de expressões; (b) uma tabela que ligue cada fala à
+expressão que ela pede — e ela tem de percorrer as falas, senão volta o buraco
+das duas linhas mudas; (c) a faixa de mensagem passa a cartão com retrato, o
+que mexe no `_on_message` e no tema.
+
+⚠️ **E a alínea (c) esbarra numa regra deste arquivo:** *nada de interface
+pousa sobre o mapa*. Um cartão com retrato é maior do que a faixa de hoje, e
+onde ele cabe sem tapar o porto é a primeira pergunta a medir — não a última.
+É sessão própria, e da trilha de ARTE.
+
 ⏳ **Falta o gate:** ler o texto em voz alta. Três desvios do rascunho de
 escrita precisam do julgamento do Bruno — a narração de fim de fase teve de
 passar de doze semanas para as `WEEKS_TOTAL` que o VS tem, as falas com
@@ -1070,7 +1188,7 @@ semana). Mediana do caixa final é a de "caixa no vencimento" do simulador:
 conta quem chegou ao turno 32 com caixa ≥ 0, venceu ou não; exclui só quem
 quebrou antes (caixa negativo).
 
-### ⏳ O ITEM 24 — instrumento feito e medido, a F4 por decidir (12/09)
+### ✅ O ITEM 24 FECHOU — desconto proporcional ao tempo (12/09)
 
 O par do 5 na ordem sugerida (*"5 e 24 juntos, por `/balancear`"*). A F1 dizia
 que ele **não era mensurável**: os três perfis só resolvem a fase
@@ -1102,11 +1220,32 @@ e "quitar no vencimento" são dois turnos de diferença, e quem tinha a parcela
 no turno 30 também a tinha no 32. Zero diferença, e não é sorteio: é partida
 por partida a mesma.
 
-**A pergunta da F4, que é onde isto para:** vale um desconto que opera numa
-janela de dois turnos para o jogador mediano? As saídas visíveis são um
-desconto proporcional ao tempo antecipado (que a dois turnos seria ínfimo), um
-desconto fixo (que o Ótimo levaria de graça, com R$1.309.646 em caixa, e o
-Mediano quase nunca), ou não fazer e registar porquê. **Nenhuma está escolhida.**
+✅ **A F4 FOI DECIDIDA PELO BRUNO: desconto PROPORCIONAL ao tempo antecipado**,
+a 0,25% do principal por turno (`docs/decisoes/019`), com a razão de ele poder
+ser reaproveitado no empréstimo bancário mais adiante — e é por isso que a conta
+recebe principal e prazo em vez de os ir buscar às constantes da parcela.
+
+**Varridas quatro taxas, 600 partidas cada.** Os três perfis antigos ficam
+IDÊNTICOS AO DÍGITO em todas — eles nunca passam por esta porta. A fronteira
+está entre 0,35% e 0,50%: a 0,50% o desconto baixa o limiar o suficiente para
+adiantar a mediana um turno (30 → 29) e render 3 vitórias, e abaixo disso não
+tem força para mover o turno. Escolheu-se 0,25% pelo TETO — 7,75% do principal
+ao longo do prazo inteiro, contra os 10,85% de 0,35% —, porque o teto cresce
+com o prazo e a Fase 2 vai esticá-lo.
+
+⚠️ **E a previsão da F3 estava certa no sinal e curta no tamanho.** Ela dizia
+que a dois turnos o desconto seria ínfimo, e é: R$2.650. Mas a margem em regime
+do Antecipado sobe **R$6.286**, porque a mediana não é a distribuição — há uma
+cauda de partidas que antecipa muito antes, e são elas que recebem o abatimento
+a sério. Ler a mediana como se fosse o efeito teria subestimado a mecânica por
+mais do dobro.
+
+⚠️ **E ELA ENVELHECEU A TABELA DOS NÚMEROS SEM NINGUÉM PEDIR.** O
+`JUROS_POR_TURNO` é a primeira constante pequena do projeto, e o formatador do
+gerador fixava `"%.2f"` antes de um `rstrip("0")` — 0,0025 foi para a tabela
+como **`0.`**, sem erro nenhum. Defeito anterior a esta sessão, invisível por
+falta de um valor abaixo de 0,005. Hoje as casas saem do valor, e uma guarda
+nova reprova o que não reler como era depois de formatado.
 
 ⚠️ **E DOIS DEFEITOS DE INSTRUMENTO apareceram, ambos corrigidos:**
 
