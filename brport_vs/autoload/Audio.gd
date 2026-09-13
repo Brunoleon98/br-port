@@ -54,6 +54,11 @@ const SONS := {
 	"obra":    {"arquivo": "sfx_construir",   "prioridade": 70, "espera": 0.20},
 	"vitoria": {"arquivo": "sfx_vitoria",     "prioridade": 99, "espera": 1.00},
 	"derrota": {"arquivo": "sfx_derrota",     "prioridade": 99, "espera": 1.00},
+	# Ambiente cede até ao clique; interação de fauna só passa à frente do mar.
+	"mar":      {"arquivo": "sfx_amb_mar",          "prioridade": 5, "espera": 5.50},
+	"gaivota": {"arquivo": "sfx_fauna_gaivota",    "prioridade": 8, "espera": 8.00},
+	"areia":   {"arquivo": "sfx_fauna_areia",      "prioridade": 8, "espera": 0.30},
+	"mergulho": {"arquivo": "sfx_fauna_mergulho", "prioridade": 12, "espera": 0.45},
 }
 
 # Quantos podem soar ao mesmo tempo. Com um pedido por frame, três chegam de

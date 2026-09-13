@@ -163,8 +163,8 @@ um jogo que não existe.
 
 | Elemento | Referência | O projeto hoje |
 |---|---|---|
-| Água rasa | turquesa `#3fb6cf`–`#57c6dc` | `#4a96b4` — mais cinza |
-| Água funda | `#1b7fa8` | `#1d4f68` — bem mais escuro |
+| Água rasa | turquesa `#3fb6cf`–`#57c6dc` | ✅ mesmos extremos, em gradiente contínuo desde 13/09 |
+| Água funda | `#1b7fa8` | ✅ `#0f5a7d`→`#1b7fa8`, sem banda chapada desde 13/09 |
 | Areia | `#e8d9a8` | ✅ **em uso desde 04/09** — `areia`, nas duas pontas |
 | Telha | `#c2502e` a `#e07a3c` | `#c85420` — está certo |
 | Parede | creme `#f2e6cf`, e cada casa de uma cor | `#eef2f5` — frio e uniforme |

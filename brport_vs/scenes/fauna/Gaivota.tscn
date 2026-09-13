@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/Fauna.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/props/gaivota.png" id="2"]
+
+[sub_resource type="CircleShape2D" id="toque"]
+radius = 30.0
+
+[node name="Gaivota" type="Node2D"]
+script = ExtResource("1")
+especie = "gaivota"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+
+[node name="Toque" type="Area2D" parent="."]
+input_pickable = true
+
+[node name="Forma" type="CollisionShape2D" parent="Toque"]
+shape = SubResource("toque")
