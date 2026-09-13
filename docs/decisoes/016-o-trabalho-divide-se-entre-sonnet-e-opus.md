@@ -35,7 +35,7 @@ que é a mais recente e é típica:
 | Ver que o que prendia a lança era o MASTRO, que vive noutro grupo | **sim** |
 | Reparar que o D17 prometia o desenho e media a moldura | **sim** |
 | Escolher o defeito injetado que faz a guarda velha passar e só a nova reprovar | **sim** |
-| Regerar os props, `--import`, tirar as nove capturas, comparar | não |
+| Regerar os props, `--import`, tirar as capturas, comparar | não |
 | Escrever o script que mede a luminância da peça contra o fundo | não |
 | Recortar, ampliar, montar o antes/depois | não |
 | Rodar as seis suítes e ler o código de saída de cada uma | não |

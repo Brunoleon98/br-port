@@ -671,6 +671,222 @@
       "sombra_de_contato": false
     },
     {
+      "id": "BRP_porto_retrato_arlindo_contrariado_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_arlindo_contrariado.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_arlindo_pressao_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_arlindo_pressao.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_arlindo_sorriso_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_arlindo_sorriso.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_cida_contente_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_cida_contente.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_cida_preocupada_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_cida_preocupada.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_cida_seria_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_cida_seria.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_ribeiro_cordial_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_ribeiro_cordial.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_ribeiro_formal_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_ribeiro_formal.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_ribeiro_grave_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_ribeiro_grave.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
       "id": "BRP_fauna_tartaruga_verde_base",
       "category": "fauna",
       "stage": "base",

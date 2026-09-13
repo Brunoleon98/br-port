@@ -1123,6 +1123,17 @@ função, para não se repetir):
    116px de diâmetro numa cabeça de 50, e no cartão o boneco aparecia de
    CHAPÉU DE PALHA.
 
+#### E em 13/09 a etapa ganhou mais três rostos, com outro corte
+
+`docs/decisoes/020`. A Dona Cida, o Arlindo e o Sr. Ribeiro entraram pelo mesmo
+estúdio e pela mesma rotação de 45°, mas em **BUSTO** e não de corpo inteiro —
+e a razão é medida, não de gosto: o retrato do trabalhador identifica uma
+unidade (capacete e colete, que são silhueta), estes carregam uma EXPRESSÃO, e
+de corpo inteiro a cara tem 16px e o olho 2 num cartão de 96px. Cortado no
+peito a cara fica com 44px, e a diferença entre uma boca reta e uma
+descontente passa a ser de 2px, que se veem. **O que a peça tem de MOSTRAR
+decide o enquadramento dela**, e essa parte não estava escrita aqui.
+
 E duas coisas que só a captura no jogo disse, com todas as asserções verdes: o
 boneco **enche o quadro** (um `TextureRect` em `KEEP_ASPECT_CENTERED` escala o
 PNG inteiro, transparência incluída — com 251px de boneco num quadro de 512 ele

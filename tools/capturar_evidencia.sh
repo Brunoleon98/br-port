@@ -161,6 +161,18 @@ tirar diario  - --script res://tools/capturar_cena.gd -- res://scenes/panels/Pai
 # `setup()` sem argumento obrigatório saíam como um escurecer vazio que passava
 # por bom. O Diário escapou por montar no `_ready()`.
 tirar parcela - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelParcela.tscn "$SAIDA/parcela.png" turn=8 cash=900000
+# AS DUAS CENAS COM GENTE DENTRO, e nenhuma delas tinha foto. Desde 13/09 a
+# Dona Cida, o Arlindo e o Sr. Ribeiro têm RETRATO ao lado da fala, e das doze
+# imagens desta bateria só o boletim mostrava um dos três — as outras duas
+# cenas nunca foram fotografadas por ninguém, nem antes dos retratos. É o
+# buraco da frota outra vez: arte que existe, é validada por duas suítes e não
+# aparece em imagem nenhuma que se possa olhar.
+#
+# O VALOR DA PARCELA VEM DA CONSTANTE (`@PARCELA_AMOUNT`) e não escrito aqui:
+# a fala dele diz o número, e um número cravado numa ferramenta de evidência
+# envelhece calado — ver o cabeçalho do `_chamar_setup`.
+tirar ribeiro - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @PARCELA_AMOUNT
+tirar contraoferta - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

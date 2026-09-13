@@ -223,6 +223,13 @@ Teste e import rodam sem tela.
    ficou bom, e essa parte continua a ser de quem olha. **Cinco delas mostram
    uma PARTIDA SORTEADA**, e o que varia com o sorteio não se prova ali: para
    isso são as duas folhas de contato, a dos ícones e a da frota.
+   ⚠️ **E A SEMENTE DO JOGO NÃO É A SEMENTE GLOBAL.** O `seed()` do Godot
+   semeia o gerador global; o `GameState` sorteia com um
+   `RandomNumberGenerator` próprio, que o `_ready()` dele `randomize()` — quem
+   quiser foto reprodutível escreve `GS._rng.seed`. O `capturar_tela.gd`
+   fazia-o e o `capturar_cena.gd` não, e isso só apareceu no dia em que um
+   painel fotografado passou a ler o sorteio: duas corridas do mesmo código
+   deram R$16.104 e R$0.
    **Captura só se compara com semente E passo de tempo fixos.** É o que o
    `tools/capturar_evidencia.sh` faz, e as duas fazem falta: com a semente
    sozinha, duas corridas do MESMO código davam 1.030 pixels diferentes,
@@ -367,6 +374,11 @@ Teste e import rodam sem tela.
    tinha sido corrigido — verdadeiro, e de ontem. Rasterize o arquivo
    (`load_svg_from_string`, que é o mesmo ThorVG); o cache do importador é uma
    resposta velha, e num teste isso mente nas duas direções.
+  ⚠️ **E VALE IGUAL PARA A CAPTURA: regerou arte, `--import` ANTES de
+  fotografar.** Em 13/09 duas rondas de retratos foram fotografadas ao asset
+  VELHO — o Godot desenha o `.ctex` de `.godot/imported/`, e a foto saiu
+  bonita, verdadeira na aparência e sobre o desenho de antes. É pior do que
+  não fotografar, porque se passou a discutir o que já estava corrigido.
    **E "TODOS APARECEM" NÃO IMPLICA "NA ORDEM CERTA", nem o contrário.** Duas
    guardas sobre a mesma tabela e nenhuma delas de graça: uma conta pode
    devolver os três portes de barco ao CONTRÁRIO e cumprir a alcançabilidade,
@@ -436,6 +448,26 @@ derivada delas.
   entre uma migração de uma linha e uma tabela feita à mão. O que prova que
   correu bem é a âncora: as três docas têm de cair a 0,00 px do que a tabela
   publica.
+- **⚠️ DUAS PEÇAS À MESMA ALTURA NO MUNDO NÃO ESTÃO À MESMA ALTURA NA IMAGEM,
+  se estiverem a FUNDOS diferentes.** Nesta câmera cada unidade de
+  profundidade vale meia unidade de altura na tela, então uma placa na face da
+  frente (`y = -fundo/2`) desce meia profundidade em relação a uma peça no
+  meio (`y = 0`). Medido nos retratos de 13/09: a gola pousada na face do peito
+  saiu a FLUTUAR dez pixels abaixo do pescoço, com um buraco de blusa pelo
+  meio, e a conta do mundo dizia que estavam encostadas. Peça que tem de
+  ENCOSTAR noutra partilha o fundo dela — a gola virou uma caixa à volta do
+  pescoço. É a irmã da regra do chanfro a 45°: ali a folga esticava-se na
+  diagonal, aqui a altura desloca-se com a profundidade.
+- **E NUMA PEÇA QUE ENVOLVE OUTRA, É O FUNDO QUE DECIDE QUEM SE VÊ.** A gola
+  dos três retratos tinha 50 de fundo e o degrau do ombro 68: a face da frente
+  do degrau fica nove pixels à FRENTE da dela, e o colarinho claro das três
+  personagens simplesmente não aparecia no render — sem erro nenhum, só um
+  pescoço sem gola. Quem tem de ser visto é mais fundo do que o que o rodeia.
+- **E pela mesma conta a profundidade projeta-se para CIMA: cortar fundo não
+  achata, tira TELHADO.** O primeiro busto tinha 96 de fundo na cabeça e 104 no
+  cabelo, e saiu um capote a comer o quadro com a cara lá em baixo. Encolher o
+  fundo devolveu o espaço à face — e não emagreceu nada, porque o que se via
+  daquele fundo era a face de cima.
 - **Só as faces `+x` e `-y` são visíveis** por esta câmera. Detalhar as outras
   é render que ninguém vê.
 - **E o `-x` É O FUNDO DA IMAGEM, o que é outra pergunta.** A regra acima diz
@@ -551,6 +583,13 @@ tranca isso.
   **Cor de texto sobre fundo colorido mede-se com a WCAG**, não se escolhe: o
   âmbar do tema com rótulo branco dá 2,39:1 e reprova até o corte de texto
   grande (3,0); com rótulo navy dá 5,27:1 e passa o AA.
+- **⚠️ CORTE DE QUINA E ESTREITAMENTO FORTES, NO MESMO PRISMA, DÃO GEOMETRIA
+  DEGENERADA.** O chanfro corre por cima de tudo no fim, e numa quina já
+  cortada a 46px que ainda encolhe 22% em `x` ele dobra-se sobre si mesmo: os
+  três bustos de 13/09 saíram com uma BARRA PRETA de ponta a ponta no topo do
+  ombro. A 38 de corte e 0,86 de estreitamento desaparece — as duas coisas são
+  boas sozinhas, é somá-las que sai caro, e o sintoma não se parece nada com a
+  causa.
 - **Duas faces no MESMO plano dão um buraco preto, e não dão erro.** Um tampo
   que acaba à altura exata do topo do corpo põe duas faces coplanares, o
   z-buffer escolhe ao acaso e o prop sai com um losango preto que se lê como
@@ -753,6 +792,33 @@ tranca isso.
   caixa do grupo, ela juntava o `x` de um braço com o `y` de uma bota e o `z`
   do capacete e errava por 17px. Caixa de grupo serve para saber se algo cabe
   num sítio; não serve para dizer o que a câmera vê.
+- **⚠️ NUM ROSTO PEQUENO, A POSE VALE MAIS DO QUE A CARA.** Os nove retratos
+  de 13/09 tinham três bocas, três sobrancelhas e três olhos diferentes — e a
+  queixa foi que eram pouco expressivos, com razão: numa cara de 56px o que
+  muda entre duas expressões são seis pixels de boca e quatro de sobrancelha,
+  enquanto INCLINAR A CABEÇA muda a silhueta inteira, que é o que o olho lê
+  primeiro. Cabeça de lado lê como interesse antes de se chegar à boca; queixo
+  em baixo lê como peso. A pose roda sobre um pivô no MEIO do pescoço (sobre a
+  base do crânio abre-se uma fresta), em ângulos pequenos, e vem ANTES do giro
+  para a câmera — somar 45° ao Z é pré-multiplicar por Rz, porque o Z é o fator
+  de fora da Euler XYZ.
+- **⚠️ E PEÇA PEQUENA ENCOSTADA A PEÇA GRANDE DESAPARECE SEM ERRO NENHUM.** O
+  lápis atrás da orelha levou duas tentativas: no `x` da orelha ficou DENTRO
+  dela, e mais para dentro ficou dentro da cúpula do cabelo, que é um cone de
+  raio 76. A régua para pôr um acessório é o raio da peça VIZINHA e não a
+  largura da cabeça — e quem conta peças conta cinco na mesma, que é a regra da
+  boia com a corrente dentro do cone, à escala de uma cara.
+- **⚠️ E O QUE A PEÇA TEM DE MOSTRAR DECIDE O ENQUADRAMENTO DELA.** Irmã da
+  regra abaixo, um passo antes: ali o tamanho do widget decide a escala, aqui a
+  FUNÇÃO decide o corte. O `trabalhador_retrato` é de corpo inteiro porque
+  identifica uma unidade, e o que identifica é o capacete e o colete —
+  silhueta, que sobrevive a qualquer tamanho. Os três retratos de fala de 13/09
+  são BUSTOS porque carregam EXPRESSÃO, e expressão vive em meia dúzia de
+  pixels de cara: medido, de corpo inteiro a cara tem 16px e o olho 2 no cartão
+  de 96px, e as nove imagens seriam a mesma imagem. Cortado no peito, com a
+  cabeça a valer 61% da altura, a cara fica com 44px e o olho com 5. **Antes de
+  desenhar arte de interface, pergunte que informação ela tem de entregar e a
+  que tamanho** — a resposta muda o desenho, não só a escala.
 - **Peça de INTERFACE mede-se no tamanho do widget, não no do quadro.** Um prop
   do mapa fica pequeno no PNG de 512 e é o Godot que o põe no sítio; um retrato
   num `TextureRect` com `KEEP_ASPECT_CENTERED` escala o PNG INTEIRO, a
@@ -999,6 +1065,13 @@ tranca isso.
   contente (`moeda(400000)` é exactamente o que a prosa diz) e só divergiria na
   sessão seguinte. Quem o pega pergunta pela FORMA — nenhuma fala escreve `R$`
   seguido de dígito —, e é o que o F4 faz desde 11/09 (`docs/decisoes/018`).
+- **⚠️ E A GUARDA QUE APANHOU ISSO COBRIA UM PERSONAGEM SÓ.** Em 13/09 o mesmo
+  defeito estava vivo ao lado: `ARLINDO_VENCEU` e `ARLINDO_PERDEU` escritas
+  desde 01/09 e nunca disparadas — a negociação fechava calada, ganhasse quem
+  ganhasse —, e o F4 passava contente porque varre `CIDA_LINHAS` e mais nada.
+  É a regra "ao corrigir um, VARRA OS IRMÃOS" aplicada a uma GUARDA em vez de a
+  um prop: quem escreve a asserção para uma tabela pergunta logo quais são as
+  outras tabelas da mesma forma, senão o defeito sobrevive à sua própria lição.
 - **⚠️ FALA ESCRITA NÃO É FALA OUVIDA, e nada perguntava a diferença.** É o
   `barco_medio` na narrativa, e a terceira vez que este projeto o apanha:
   `perdeu_para_arlindo` e `bom_contrato` viviam em `CIDA_LINHAS` desde 01/09 e
@@ -1359,6 +1432,13 @@ armadilha de uma função, no comentário dela.
   para depois de uma decisão, conte as RESPOSTAS e feche em todas; e a guarda
   que fecha é a própria FASE que adiou, nunca uma aproximação dela — assim ela
   também torna o fecho idempotente de graça.
+- **⚠️ `is_inside_tree()` NÃO PROVA QUE O NÓ NÃO FOI MANDADO EMBORA.** O
+  `queue_free()` marca o nó e só o tira da árvore no fim do frame, então um
+  painel já condenado responde "estou cá" a quem perguntar assim. Uma asserção
+  nova de 13/09 usava isto para provar que a tela ficava aberta e PASSOU com o
+  defeito posto — quem reprovava era a asserção do texto ao lado, e sem ela o
+  defeito passava inteiro. A pergunta que distingue é a da FILA:
+  `is_queued_for_deletion()`.
 - **Teste que JOGA fixa a semente.** `new_game()` chama `_spawn_boats()`, que
   tem 30% de abrir contra-oferta — e nessa fase o `advance_turn()` retorna
   CALADO. Um bloco de teste que avance o turno logo a seguir reprova em cerca

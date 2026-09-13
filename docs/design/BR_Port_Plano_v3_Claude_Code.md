@@ -581,7 +581,30 @@ mexer nelas, é aceitar um alvo novo para o Mediano, o que é reabrir a `005`.
 Decidido isso, a F5 é uma linha e a medição já está toda aqui.
 
 
-### 🎭 ITEM NOVO — retrato do personagem com REAÇÃO, junto da fala
+### 🎭 ITEM NOVO — retrato do personagem com REAÇÃO, junto da fala  🔨 (a) e (b) FEITAS, (c) nos PAINÉIS (13/09)
+
+✅ **`docs/decisoes/020`.** Os três têm cara: nove bustos no estúdio partilhado
+(`brp_porto.py`, `retratos_de_fala`), três expressões cada, e uma tabela
+(`Narrativa.EXPRESSOES`) que **percorre as falas** — 24 delas — e diz qual cara
+cada uma pede. Aparecem no Boletim, na cena da parcela e na contra-oferta.
+
+Rendeu o bloco **F7** do fumaça, com quatro perguntas contra quatro fontes
+diferentes (a mais nova é *"toda cara desenhada é usada por alguma fala?"*, que
+é o `barco_medio` do lado da arte), e apanhou um defeito de verdade a caminho:
+**`ARLINDO_VENCEU` e `ARLINDO_PERDEU` estavam MUDAS desde 01/09** — a
+negociação fechava calada, ganhasse quem ganhasse. Hoje a contra-oferta tem
+segundo tempo, como a cena da parcela.
+
+⏳ **FALTA A FAIXA DE MENSAGEM DO RODAPÉ, e ela está MEDIDA.** Ela não pousa
+sobre o mapa (vive no rodapé, entre os trabalhadores e o cartão da meta), tem
+52px de altura e o rodapé acaba em 1251 de 1280 — **29px de folga**. Logo: cabe
+um retrato de ~44px de graça, onde a expressão já não se lê, ou um de 76px que
+gasta 24 da folga. **Escolher entre os dois é do Bruno**, porque o rodapé cheio
+é decisão dele em aberto desde o primeiro playtest. Feita a escolha, é um nó no
+`Main.tscn` e três linhas no `Main.gd`; a tabela já cobre as oito linhas de
+loop da Dona Cida.
+
+O que segue é o item como foi escrito em 13/09.
 
 Pedido na primeira leitura (13/09): *"seria legal aparecer o sprite dos
 personagens, poderia ser o sprite com a reação do personagem mais a mensagem"*.

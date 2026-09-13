@@ -135,6 +135,37 @@ PALETA = {
     "refletivo": "#f2f5f7",
     "boia": "#d94f2a", "corda": "#c9b48a",
     "colete": "#e0561f", "capacete": "#e0a81f", "pele": "#b07b52",
+    # ── AS TRÊS PELES E O CABELO GRISALHO, para os retratos de fala ──────
+    #
+    # O elenco do VS é de litoral brasileiro e tinha UMA cor de pele, porque
+    # até aqui só existia um boneco. Com três rostos no mesmo cartão, a pele
+    # deixa de ser um detalhe e passa a ser metade do que distingue um do
+    # outro a 96px — é a regra da silhueta aplicada à cara.
+    #
+    # ⚠️ E NENHUMA DAS TRÊS É UMA ESCOLHA DO GDD: ele descreve o TOM de fala
+    # de cada personagem e não a aparência de nenhum (`gdd/sistemas/npcs.md`).
+    # Trocar qualquer uma é mudar uma chave aqui e regerar — está assim de
+    # propósito, para a decisão poder ser do Bruno sem custar geometria.
+    "pele_clara": "#c99a70", "pele_escura": "#8a5a3b",
+    # ⚠️ E CADA TOM DE PELE PRECISA DO DEGRAU ABAIXO DELE, porque é a
+    # SOMBRA que desenha o nariz — geometria não desenha nariz nenhum num
+    # rosto de 44px (as faces laterais de uma peça saliente têm menos de um
+    # pixel, e o resto apanha a mesma luz da cara). O `pele` serve de sombra
+    # ao `pele_clara` e o `pele_escura` ao `pele`; o mais escuro dos três é
+    # que não tinha degrau nenhum por baixo, e passa a ter.
+    "pele_sombra": "#6e4630",
+    # A lapela do terno do Sr. Ribeiro: o `casco` um passo abaixo. Duas
+    # peças do mesmo tom encostadas fundem-se (a regra do caixote de
+    # `madeira` no tabuado de `madeira`), e sem este degrau o peito dele
+    # volta a ser a chapa navy que a primeira versão era.
+    "terno_lapela": "#1a3554",
+    # O grisalho do Sr. Ribeiro. Não é o `metal_claro` (#6d7880), que é a cor
+    # de CHAPA deste kit e veste o poste e o guincho: um cabelo com a mesma
+    # tinta de uma peça de metal lê como capacete, e a cabeça dele é metade da
+    # silhueta que o distingue dos outros dois. Este é o mesmo cinza dois
+    # passos mais claro (161 de luminância contra 118), que é a distância que
+    # o põe acima da pele em vez de abaixo dela.
+    "cabelo_grisalho": "#9aa3a8",
     "calca": "#24466e", "rede": "#8d9aa6", "casco_pesca": "#2f6f4a", "parede_suja": "#9a9c93", "vidro": "#7fb6cc",
     # O VÃO: o dentro de uma janela sem vidro ou de uma porta que já não há.
     # É a peça que faz uma ruína ler como ruína, e ela é uma COR e não um

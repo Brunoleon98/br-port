@@ -1,0 +1,282 @@
+# 020 — Os três rostos que falam, e a cara sai da FALA
+
+**13/09/2026.** O fecho da parte que se podia fechar do item novo do A4 — o
+🎭 **retrato do personagem com REAÇÃO**, pedido pelo Bruno na primeira leitura
+em voz alta: *"seria legal aparecer o sprite dos personagens, poderia ser o
+sprite com a reação do personagem mais a mensagem"*.
+
+**Nada aqui encosta na economia.** O `GameState.gd` não foi tocado, nenhuma
+constante `# TUNING:` mudou, e a decisão pendente da semana de sete turnos fica
+exatamente onde estava. O simulador corre sem travamento e **todas as capturas
+sem cara dentro continuam byte a byte iguais** às de antes da sessão — só as
+três telas onde alguém fala se mexeram. Essa contagem é a medida da contenção
+da mudança, e a bateria ganhou de caminho duas fotos que nunca existiram.
+
+**E também não encosta no que a sessão da água e da fauna está a mexer**: o
+`gerar_mapa_iso.py`, o `brp_fauna.py`, o `Audio.gd`, o `gerar_sons.py` e o
+`Main.tscn` ficaram fechados de propósito, e a §5 diz o que isso custou ao
+item.
+
+---
+
+## 1. O item tinha três partes, e duas fecharam inteiras
+
+O plano descreve-o assim: **(a)** retratos dos três no estúdio partilhado, cada
+um com um punhado de expressões; **(b)** uma tabela que ligue cada fala à
+expressão que ela pede — *"e ela tem de percorrer as falas, senão volta o
+buraco das duas linhas mudas"*; **(c)** a faixa de mensagem passa a cartão com
+retrato.
+
+O (a) e o (b) estão feitos. O (c) está feito **nos três painéis onde alguém
+fala** — o Boletim Financeiro, a cena da parcela e a contra-oferta — e **não**
+na faixa de mensagem do rodapé, que é a parte que o próprio plano manda medir
+antes (§5).
+
+---
+
+## 2. É BUSTO, e o `trabalhador_retrato` continua de corpo inteiro
+
+Os dois cartões pedem coisas diferentes, e a diferença mede-se.
+
+O retrato do trabalhador identifica uma **unidade**: o que o distingue é o
+capacete e o colete, que são silhueta, e silhueta sobrevive a qualquer
+tamanho. Estes três carregam uma **expressão**, e expressão vive em meia dúzia
+de pixels de cara.
+
+Medido no primeiro render, de corpo inteiro: **84px de rosto num PNG de 406**,
+o que a 96px no cartão dá **16px de cara e 2 de olho** — a essa escala as nove
+imagens deste bloco seriam a mesma imagem. Cortado no peito, com a cabeça a
+valer 55% da altura, a cara medida no cartão do jogo tem **56 x 62px**, o
+branco do olho tem 14 e a pupila 6 — e a diferença entre uma boca reta e uma
+boca descontente passa a ser de 3px, que se veem.
+
+**Três armadilhas de projeção, todas medidas no PNG e nenhuma óbvia:**
+
+1. **A profundidade projeta-se para CIMA.** A primeira cabeça tinha 96 de fundo
+   e o cabelo 104, e o que saiu foi um capote de cabelo a comer o quadro com a
+   cara lá em baixo. Cortar o fundo nesta câmera não achata nada — tira
+   TELHADO, que era o que roubava o espaço da cara.
+2. **O ombro tem de ser MUITO mais largo do que a cabeça.** A 178 contra 150
+   (dezoito por cento) saiu uma cabeça pousada num caixote, sem pescoço à vista
+   e sem nada que se lesse como ombro. Hoje são 300 contra 140.
+3. **Duas peças à mesma altura no mundo não estão à mesma altura na imagem se
+   estiverem a fundos diferentes.** A gola nasceu como placa na face do peito e
+   saiu a FLUTUAR dez pixels abaixo do pescoço, com um buraco de blusa pelo
+   meio: a placa vive em `y = -fundo/2` e o pescoço em `y = 0`, e cada unidade
+   de profundidade vale meia de altura na tela. Hoje é uma caixa à volta do
+   pescoço, que partilha o fundo dele e encosta.
+
+**O enquadramento é medido, não escolhido:** `_K = 1.68` e `_MEIO = 285.0` em
+`brp_porto.py` saem de renderizar e medir a caixa opaca do PNG, e põem o busto
+a ocupar de 446 a 480 dos 512 px do quadro, conforme o chapéu de cada um. É a armadilha que o retrato do trabalhador
+já tinha pago: um `TextureRect` em `KEEP_ASPECT_CENTERED` escala o quadro
+INTEIRO, transparência incluída.
+
+---
+
+## 3. Nove imagens, três alavancas — e o contraste medido contra o papel
+
+Cada expressão é uma combinação de **boca**, **sobrancelha** e **olho**, e não
+um desenho novo. A esta escala é o que existe: nariz não cabe (o trabalhador
+também não tem) e ruga é ruído.
+
+| | Dona Cida | Arlindo | Sr. Ribeiro |
+|---|---|---|---|
+| padrão | `seria` | `sorriso` | `cordial` |
+| e mais | `preocupada`, `contente` | `pressao`, `contrariado` | `formal`, `grave` |
+
+A escolha sai do TOM que o guia de voz descreve, e não do assunto: a Dona Cida
+é *"pragmática, brava, leal"*, e por isso a cara padrão dela é séria e não
+sorridente; o Arlindo *"sempre sorrindo quando ataca"*, e por isso o que muda
+quando a negociação aperta é o sorriso SAIR; o Sr. Ribeiro *"quando bravo fica
+MAIS educado"*, e por isso a cara grave dele é a cordial com a boca em baixo.
+
+**O contraste mede-se contra o FUNDO, e o fundo aqui é papel.** O balão de fala
+tem 245,4 de luminância (amostrado da captura) e o cartão tem 255. Medida a
+luminância média dos pixels opacos de cada PNG:
+
+| | Weber contra o balão |
+|---|---:|
+| Dona Cida | **0,65** |
+| Sr. Ribeiro | **0,56** |
+| Arlindo | **0,53** |
+
+Todos muito acima do 0,26 que este projeto trata como "separa" e longe do 0,12
+que some. **E foi por isto que o boné do Arlindo é navy e não branco**: um boné
+de capitão de verdade é branco, e `cabine` (#eef2f5) mede **0,016** contra o
+balão — sobre o cartão claro deste jogo não seria um boné, seria um buraco com
+contorno.
+
+⚠️ **A APARÊNCIA DOS TRÊS É DECISÃO DESTA PASSAGEM, e não do GDD.** As fichas
+(`gdd/sistemas/npcs.md`) e o guia de voz dão tom, maneirismo e papel; não há
+uma linha sobre a aparência de nenhum deles. Ficou escrito de maneira a poder
+ser mudado barato: o que distingue cada um são três ou quatro peças nomeadas e
+uma cor de pele que sai da paleta — trocar qualquer delas é **uma linha e um
+render de três segundos**. O gate é o A5, e é o Bruno que olha.
+
+---
+
+## 4. A tabela percorre as FALAS, e é isso que a torna testável
+
+A tentação é listar as três expressões de cada um e deixar o painel escolher —
+e aí uma fala nova nasce sem cara, cai no `null`, e o balão fica sem retrato
+sem nada a apontá-lo. Com a tabela do lado das falas (`Narrativa.EXPRESSOES`),
+o bloco **F7** do teste de fumaça pode fazer quatro perguntas, **cada uma
+contra uma fonte diferente**:
+
+1. toda fala tem cara — `EXPRESSOES` contra as tabelas de TEXTO;
+2. toda cara tem arquivo — `EXPRESSOES` contra o DISCO;
+3. **toda cara desenhada é usada** — `Retratos.gd` contra `EXPRESSOES`;
+4. toda fala chega ao jogo — as tabelas contra os PAINÉIS.
+
+A 3 é a pergunta do `barco_medio` do lado da arte: nove PNG renderizados,
+validados pelo `asset_validator` e sem ninguém a pedi-los seria exactamente o
+defeito que este projeto já apanhou três vezes.
+
+**Cinco defeitos injetados, e um deles apanhou uma asserção fraca minha.** A
+guarda comportamental usava `is_inside_tree()` para dizer que o painel não
+fechou — e `queue_free()` só tira o nó da árvore no fim do frame, de modo que
+um painel já condenado ainda responde "estou cá". Ela passou com o defeito
+posto, e só a asserção do texto ao lado reprovava; a pergunta que distingue é a
+da FILA (`is_queued_for_deletion()`). É a lição do `CLAUDE.md` sobre saber qual
+guarda está a segurar a asserção, apanhada em flagrante.
+
+### E encontrou-se um defeito de verdade a caminho
+
+`ARLINDO_VENCEU` e `ARLINDO_PERDEU` estavam escritas desde 01/09 e **nenhuma
+linha do jogo as disparava**: a negociação resolvia-se e o painel fechava
+calado, ganhasse quem ganhasse. É a **quarta** vez que este projeto apanha a
+mesma coisa (o `barco_medio`, as duas falas da Dona Cida em 12/09, e agora
+estas), e o bloco F4 não podia apanhar porque varre `CIDA_LINHAS` e mais nada.
+
+Hoje a contra-oferta tem **segundo tempo**, como a cena da parcela: resolvida a
+negociação, a tela fica com a despedida dele e um botão de fechar. Não mexe em
+dinheiro nenhum — o `negotiate_rival()` já resolveu tudo antes —, e por isso
+não toca no que o simulador mede, que nunca abre cena. E as duas falas ganharam
+a cara que pediam: `contrariado` para quem perdeu, `sorriso` para quem levou o
+cliente.
+
+---
+
+## 5. A SEGUNDA PASSAGEM: *"faltam detalhes e está muito quadrado"*
+
+Foi a primeira coisa que o Bruno disse ao olhar, e estava certa: os bustos
+eram uma cabeça-caixa em cima de um tronco-caixa, com a cara feita de cinco
+placas. O que se fez, por ordem do que cada coisa vale na imagem:
+
+| O que mudou | Porquê |
+|---|---|
+| **Nada é caixa: tudo é prisma OITAVADO** | Quatro quinas vivas dizem "tijolo" antes de qualquer detalhe ser visto. Cortar a quina custa quatro vértices por peça e nenhum render a mais — e é a única forma de curva que este kit tem, porque o chanfro do modificador arredonda 1,7px e não muda silhueta nenhuma |
+| **A cabeça são DUAS peças** | Maxilar que estreita para o queixo, crânio que estreita para o alto: maçã do rosto e queixo com quatro números |
+| **Ombro em degrau** | O trapézio entre o ombro e o pescoço tira a prateleira de 300px de ponta a ponta que o topo do tronco era |
+| **Olho com BRANCO** | Uma placa só é um ponto; esclera + pupila dão três pixels de informação. Mesma receita do vinco do corrugado: quem desenha detalhe nesta escala é a fronteira de VALOR entre duas placas |
+| **Nariz de SOMBRA** | Nariz de geometria não existe aqui — as faces laterais de uma peça saliente têm menos de um pixel e o resto apanha a mesma luz da cara. É uma placa um tom abaixo da pele, e foi por isto que a paleta ganhou um degrau a mais |
+| **Orelhas** | Dois pixels cada, e tiram a vertical perfeita de 174px que o lado da cabeça era |
+| **Cabelo em três camadas** | Cúpula, franja e bandas laterais, em vez de uma laje. E a cúpula é um cone de doze lados: uma caixa em cima de uma cabeça oitavada devolvia o tijolo pelo telhado |
+| **Roupa com peças da FUNÇÃO** | Lapela e nó de gravata no Sr. Ribeiro, pontas de gola no Arlindo, gola clara na Dona Cida. É a regra do armazém — prédio com função precisa das peças da função — aplicada a um busto |
+| **O retrato cresceu 58%** | De 96x96 para **112x152**, e a caixa deixou de ser quadrada: o PNG é quadrado mas o busto não, e num `KEEP_ASPECT_CENTERED` quem manda é o quadro — 33px de transparência de cada lado a pagar largura que o balão queria. Com a caixa na proporção do busto e o modo `COVERED`, a margem é que fica de fora |
+
+**E a passagem custou três defeitos de render, todos de faces que se tocam:**
+
+1. **Barras pretas no ombro.** Um prisma oitavado com corte de 46px e
+   estreitamento de 0,78 dá geometria degenerada quando o chanfro passa por
+   cima: o topo do tronco saiu com uma barra preta de ponta a ponta nos três.
+   A 38 e 0,86 desaparece. **Corte e estreitamento fortes ao mesmo tempo, num
+   prisma, não se acumulam de graça.**
+2. **Retângulos pretos nas têmporas.** O cabelo lateral do Sr. Ribeiro acabava
+   nos mesmos 300 do topo da cabeça: duas faces de cima coplanares, o z-buffer
+   a escolher ao acaso. É o losango preto deste projeto pela terceira vez.
+3. **O colarinho não existia.** Ele estava lá, e o TRAPÉZIO tapava-o: o degrau
+   do ombro tem 68 de fundo e a gola tinha 50, portanto a face da frente do
+   degrau fica nove pixels à frente dela. **Numa peça que envolve outra, o
+   fundo é que decide quem se vê** — e não havia erro nenhum a dizê-lo, só um
+   pescoço sem gola.
+
+⚠️ **E DUAS RONDAS DE CAPTURA FORAM TIRADAS AO ASSET VELHO.** O `--import` não
+correu depois de regerar os PNG, e o Godot desenha o `.ctex` de
+`.godot/imported/` — a foto saía com a versão anterior, bonita e mentirosa. O
+`CLAUDE.md` já regista isto para TESTE que lê arte gerada; vale igual para a
+CAPTURA, e agora está escrito lá também.
+
+⚠️ **E A CAPTURA DE CENA NUNCA SEMEOU O JOGO.** O `capturar_cena.gd` semeava o
+gerador GLOBAL do Godot e o `GameState` sorteia com um `RandomNumberGenerator`
+próprio — o `capturar_tela.gd` já semeava os dois e explicava porquê ao lado,
+esta cópia tinha metade da receita. Enquanto os painéis fotografados não liam
+sorteio nenhum ninguém notou; a captura nova da contra-oferta deu **R$16.104
+numa corrida e R$0 noutra**, porque numa delas não havia barco na doca. Hoje
+semeia o `_rng`, monta o barco por `barco=0`, e as treze imagens da bateria
+saem byte a byte iguais em duas corridas seguidas.
+
+## 6. A TERCEIRA PASSAGEM: a pose, que vale mais do que a cara
+
+Segundo pedido do Bruno: *"deixar os personagens com mais detalhes e mais
+expressivos"*. A parte do DETALHE era mais peça (e entrou: dentes no sorriso,
+pupila que se mexe, barba por fazer no Arlindo, pés-de-galinha e ruga na testa
+do Sr. Ribeiro, lenço de bolso, lápis atrás da orelha da Dona Cida). A parte da
+EXPRESSÃO não era: era pose.
+
+⚠️ **AS NOVE IMAGENS ESTAVAM NA MESMA POSE, e é isso que as fazia parecer a
+mesma imagem.** Com a cabeça parada, o que muda entre duas expressões são seis
+pixels de boca e quatro de sobrancelha — a cara inteira mede 56 px. Inclinar a
+cabeça muda a SILHUETA, que é o que se lê primeiro e o que sobrevive a qualquer
+tamanho: uma cabeça de lado lê como interesse antes de o olho chegar à boca, e
+uma de queixo em baixo lê como peso. É a lição da silhueta dos props deste
+projeto, aplicada a uma pessoa — e é de longe a alavanca mais forte das cinco.
+
+A tabela das caras passou a ter cinco colunas: **boca, sobrancelha, olho,
+olhar e pose**. A pose é `(roll, pitch, yaw)` em graus, aplicada à cabeça
+inteira sobre um pivô no MEIO DO PESCOÇO — sobre a base do crânio um roll de 6°
+abre uma fresta de pele, porque a cabeça roda sobre um pivô e não sobre uma
+rótula. Ângulos pequenos: a maior é o Arlindo contrariado, a virar-se 9° para
+o lado enquanto desvia os olhos.
+
+**E o olhar é o mais barato de todos.** A pupila é uma placa dentro da esclera;
+movê-la três pixels muda quem está a ser olhado. A Dona Cida preocupada baixa
+os olhos, o Arlindo contrariado desvia-os.
+
+⚠️ **A ORDEM DA POSE E DA CÂMERA NÃO É INDIFERENTE, e é de graça se se souber
+porquê.** A pose corre ANTES do `_girar_para_a_camera`, que soma 45° ao Z de
+cada peça — e somar ao Z é, na ordem Euler XYZ, exatamente pré-multiplicar por
+`Rz(45°)`, porque o Z é o fator de fora. Logo a pose acontece no espaço do
+busto, de frente, e a câmera vem depois. Ao contrário, a cabeça inclinar-se-ia
+num eixo diagonal que não é nenhum dos três que se pediram.
+
+⚠️ **E PEÇA PEQUENA ENCOSTADA A PEÇA GRANDE DESAPARECE SEM ERRO NENHUM.** O
+lápis da Dona Cida levou duas tentativas: a ±76 estava dentro da ORELHA (que
+vive exatamente ali) e a ±68 dentro da CÚPULA do cabelo, que é um cone de raio
+76. A régua de onde pôr um acessório é o raio da peça VIZINHA, não a largura da
+cabeça — e a única maneira de saber que ele não estava lá foi olhar o render,
+porque contagem de peças diz cinco na mesma.
+
+**O brinco saiu quando o lápis entrou**, pela regra do acento único: dois
+pontos dourados na mesma cara e nenhum aponta para nada. Entre um brinco e a
+ferramenta da profissão dela, fica a ferramenta — é a mesma escolha que pôs o
+boné no Arlindo e a gravata no Sr. Ribeiro.
+
+## 7. O que NÃO entrou: a faixa de mensagem, e o número que o diz
+
+O plano avisa que a alínea (c) *"esbarra numa regra deste arquivo: nada de
+interface pousa sobre o mapa"*, e manda medir onde o cartão cabe **antes** de o
+escrever. Medido, nos offsets do `Main.tscn`:
+
+- a faixa de mensagem **não pousa sobre o mapa** — ela vive no RODAPÉ, entre os
+  trabalhadores (acaba em 984) e o cartão da meta (começa em 1054);
+- ela tem **52px de altura** (994 a 1046), o que dá para um retrato de ~44px
+  sem crescer nada — e a 44px a expressão deixa de se ler, pela conta da §2;
+- o rodapé inteiro acaba em **1251 de 1280**: são **29px de folga**, e pôr lá
+  um retrato de 76px gastaria 24 deles.
+
+Ou seja: a faixa cabe um retrato pequeno de graça, ou um retrato legível ao
+preço de quase toda a folga do rodapé — **e o rodapé cheio é uma decisão em
+aberto do Bruno desde o primeiro playtest** (*"o rodapé tem sete faixas e 29px
+de folga, e um botão de 44px não cabe"*). Não é uma escolha para se fazer de
+passagem.
+
+Some-se a isso que o `Main.tscn` está a ser editado em paralelo na sessão da
+água e da fauna, e que a metade de Cida que vive na faixa são as **oito linhas
+de loop** dela — que continuam a tocar, sem cara, exactamente como antes.
+
+**O que falta, então, é uma linha de decisão e um nó**: escolher entre os 44px
+de graça e os 76px que custam 24 da folga, e pôr um `TextureRect` dentro do
+`MensagemCartao`. A tabela de expressões já cobre as oito linhas de loop, e o
+F7 já as tranca.

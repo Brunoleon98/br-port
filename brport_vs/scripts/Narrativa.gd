@@ -110,6 +110,22 @@ Mas foi uma boa semana. Pronto, eu disse."""
 # excepcional. Fonte: o próprio arquivo de escrita ("+30%").
 const CIDA_LIMIAR_OTIMO := 0.30
 
+# OS QUATRO TONS POR ID, e é o id que o resto do jogo passa a usar.
+#
+# ⚠️ ELE EXISTE PORQUE O RETRATO PRECISA DE SABER QUAL TOM SAIU. Até 13/09 o
+# `tom_do_boletim()` devolvia o TEXTO, o que bastava enquanto a fala era só
+# texto; com uma cara ao lado, quem abre o painel tem de escolher também a
+# expressão — e escolhê-la comparando strings de fala seria o pior espelho
+# possível. A outra saída era uma segunda função a decidir o tom, e duas
+# versões da mesma conta divergem: este projeto já pagou isso com os números
+# do GDD contra os das constantes. Uma decisão só, um id, duas tabelas a lê-lo.
+const CIDA_BOLETIM := {
+	"ruim": CIDA_BOLETIM_RUIM,
+	"primeira_ruim": CIDA_BOLETIM_PRIMEIRA_RUIM,
+	"neutro": CIDA_BOLETIM_NEUTRO,
+	"otimo": CIDA_BOLETIM_OTIMO,
+}
+
 
 # ── DONA CIDA — as linhas do loop ──
 # Reagem a evento, não a turno: uma linha por semana viraria papel de parede.
@@ -152,6 +168,22 @@ const ARLINDO_ULTIMA_TENTATIVA := "Minha oferta não expira. A paciência do sen
 const ARLINDO_VENCEU := "Sempre bom fazer negócio. Boa sorte pro {portName}."
 const ARLINDO_PERDEU := "Dessa vez não. Mas tem mais semanas pela frente, sobrinho."
 
+# ⚠️ AS DUAS ÚLTIMAS ESTAVAM MUDAS DESDE 01/09, e é a QUARTA vez que este
+# projeto apanha a mesma coisa. Elas estavam escritas, passavam no bloco que
+# pergunta *"todo id da tabela tem fala?"* — e nenhuma linha do jogo as
+# disparava: a negociação resolvia-se e o painel fechava calado, ganhasse quem
+# ganhasse. O F4 não podia apanhar, porque ele varre `CIDA_LINHAS` e mais
+# nada. É o `barco_medio` outra vez (gerado, validado, e nunca posto em doca
+# nenhuma), e a lição continua a mesma: fala nova entra com o GATILHO no mesmo
+# commit. Hoje o gatilho é o segundo tempo do painel da contra-oferta, e o
+# fumaça varre esta tabela como já varria a da Dona Cida.
+const ARLINDO_FALAS := {
+	"abertura": ARLINDO_ABERTURA,
+	"ultima_tentativa": ARLINDO_ULTIMA_TENTATIVA,
+	"venceu": ARLINDO_VENCEU,
+	"perdeu": ARLINDO_PERDEU,
+}
+
 
 # ── SR. RIBEIRO — a cena da parcela ──
 # Cena tensa, sem penalidade mecânica: o que ele traz é peso, não número. O
@@ -177,6 +209,72 @@ const RIBEIRO_DESPEDIDA := """Uma coisa antes de ir.
 O Seu Maneco me disse uma vez que o maior erro de um portuário é achar que pode resolver tudo sozinho.
 Se precisar de crédito pra crescer — e vai precisar — o banco existe pra isso.
 Não deixa chegar no desespero pra me ligar."""
+
+# As cinco por id, pela mesma razão das do Arlindo: é por aqui que a expressão
+# se prende à fala, e é isto que o fumaça percorre.
+const RIBEIRO_FALAS := {
+	"entrada": RIBEIRO_ENTRADA,
+	"a_divida": RIBEIRO_A_DIVIDA,
+	"pagou": RIBEIRO_PAGOU,
+	"nao_pagou": RIBEIRO_NAO_PAGOU,
+	"despedida": RIBEIRO_DESPEDIDA,
+}
+
+
+# ── A CARA QUE CADA FALA PEDE ───────────────────────────────────────────────
+#
+# Item do plano pedido na leitura em voz alta de 13/09: *"o sprite com a
+# reação do personagem mais a mensagem"*. A reação é ESTA tabela; o arquivo de
+# cada expressão vive no `Retratos.gd`, como o arquivo de cada ícone vive no
+# `Icones.gd`.
+#
+# ⚠️ ELA PERCORRE AS FALAS, e não o contrário. A tentação é listar as três
+# expressões de cada um e deixar o painel escolher — e aí uma fala nova nasce
+# sem cara, cai no `null` e o balão fica sem retrato sem nada a apontá-lo. Com
+# a tabela do lado das FALAS, o bloco F6 do fumaça pode perguntar as três
+# coisas que interessam, cada uma contra uma fonte diferente: toda fala tem
+# expressão (contra as tabelas de texto acima), toda expressão tem PNG (contra
+# o disco) e toda expressão desenhada é usada por alguma fala (contra o
+# `Retratos.gd`) — que é a pergunta do `barco_medio`, do lado da arte.
+#
+# A escolha de cada uma sai do TOM que o guia de voz descreve, e não do
+# assunto: a Dona Cida é "pragmática, brava, leal", e por isso a cara padrão
+# dela é séria e não sorridente; o Arlindo "sempre sorrindo quando ataca", e
+# por isso o sorriso é o estado normal dele e o que muda é o sorriso SAIR; o
+# Sr. Ribeiro "quando bravo fica MAIS educado", e por isso a cara grave dele é
+# a cordial com a boca em baixo, nunca uma cara zangada.
+const EXPRESSOES := {
+	"cida": {
+		"ruim": "preocupada",
+		"primeira_ruim": "preocupada",
+		"neutro": "seria",
+		"otimo": "contente",
+		"reputacao_subiu": "contente",
+		"reputacao_caiu": "preocupada",
+		"caixa_baixo": "preocupada",
+		"perdeu_para_arlindo": "preocupada",
+		"bom_contrato": "contente",
+		"semana_nova": "seria",
+		"upgrade_pronto": "contente",
+		"arlindo_indireto": "seria",
+	},
+	"arlindo": {
+		"abertura": "sorriso",
+		"igualar": "sorriso",
+		"metade": "sorriso",
+		"manter": "sorriso",
+		"ultima_tentativa": "pressao",
+		"venceu": "sorriso",
+		"perdeu": "contrariado",
+	},
+	"ribeiro": {
+		"entrada": "cordial",
+		"a_divida": "formal",
+		"pagou": "cordial",
+		"nao_pagou": "grave",
+		"despedida": "cordial",
+	},
+}
 
 
 # ── BOLETIM DO DIA ──
@@ -220,21 +318,46 @@ static func ribeiro_a_divida(valor: int) -> String:
 	return _gs().texto(RIBEIRO_A_DIVIDA.replace("{valor}", _gs().moeda(valor)))
 
 
-# Qual dos três tons da Dona Cida a semana merece. `media_anterior` vem do
+# Qual dos quatro tons da Dona Cida a semana merece. `media_anterior` vem do
 # histórico; na primeira semana não há com que comparar, e aí o que decide é só
 # o sinal do resultado — comparar contra zero seria chamar de excepcional
 # qualquer semana que fechasse no azul.
+#
+# DEVOLVE O ID, e não o texto: quem abre o painel precisa das duas coisas que
+# saem dele — a fala e a cara —, e uma segunda função a repetir esta decisão
+# seria a divergência de sempre. Ver `CIDA_BOLETIM`.
 static func tom_do_boletim(resultado: int, media_anterior: float, tem_historico: bool) -> String:
 	if resultado < 0:
 		# A ORDEM IMPORTA: o `tem_historico` tem de ser perguntado ANTES de se
 		# escolher o tom mau, senão a semana 1 recebe a fala que compara com a
 		# semana 0. Era assim até 12/09, e nada reprovava.
-		return CIDA_BOLETIM_RUIM if tem_historico else CIDA_BOLETIM_PRIMEIRA_RUIM
+		return "ruim" if tem_historico else "primeira_ruim"
 	if not tem_historico:
-		return CIDA_BOLETIM_NEUTRO
+		return "neutro"
 	if float(resultado) > media_anterior * (1.0 + CIDA_LIMIAR_OTIMO):
-		return CIDA_BOLETIM_OTIMO
-	return CIDA_BOLETIM_NEUTRO
+		return "otimo"
+	return "neutro"
+
+
+# O texto de um dos tons, já com os nomes resolvidos.
+static func boletim(id: String) -> String:
+	return _gs().texto(String(CIDA_BOLETIM.get(id, "")))
+
+
+# A expressão que uma fala pede. Devolve vazio para um par desconhecido, que o
+# `Retratos.de()` traduz num balão sem cara — uma expressão que falta é um
+# retrato a menos, não um crash. Quem garante que não falta nenhuma é o F6.
+static func expressao(personagem: String, id: String) -> String:
+	var caras: Dictionary = EXPRESSOES.get(personagem, {})
+	return String(caras.get(id, ""))
+
+
+# O retrato pronto para o painel: personagem + id da fala -> textura.
+#
+# Existe aqui e não em cada painel para que a ligação fala->cara passe por UM
+# ponto, que é a mesma razão do `GameState.texto()` e do `moeda()`.
+static func retrato(personagem: String, id: String) -> Texture2D:
+	return Retratos.de(personagem, expressao(personagem, id))
 
 
 # A narração de fim de Fase 1.

@@ -93,17 +93,15 @@ de RASCUNHO e ainda esperam o Bruno ouvir (`BR_Port_Plano_Audio.md` §2).
 **Nada de interface pousa sobre o mapa.** A doca separa a vaga no cenário do
 cartão na barra; o número é tinta no cais, sem placa a tapar o desenho.
 
-**O ARMAZÉM é um armazém dos dois lados do par** (telhado de zinco, chapa
-corrugada, portão de enrolar, plataforma de carga) e **o porto abre em RUÍNAS
-de verdade** — parede desabada, meio telhado com a armação à vista, portão fora
-do trilho. Como se lá chegou está em `docs/arquivo/HISTORICO.md`.
+**O ARMAZÉM é um armazém dos dois lados do par** (zinco, chapa corrugada,
+portão de enrolar, plataforma de carga) e **o porto abre em RUÍNAS de verdade**
+— parede desabada, meio telhado, portão fora do trilho (`docs/arquivo/`).
 
-**O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8 de largura,
-com linha central e passadeiras na altura de cada prédio do pátio), calçada,
-acesso a cada berço, **duas fileiras de casas em quarteirões** e uma **viela de
-terra entre elas**, que é o único acesso da fileira de trás; a de trás é mais
-rala, para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`): térrea,
-sobrado, prédio — é assim que cresce a cada Fase, sem o jogo saber.
+**O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
+central e passadeiras), calçada, acesso a cada berço, **duas fileiras de casas
+em quarteirões** e uma **viela de terra entre elas**, que é o único acesso da
+fileira de trás — mais rala, para a vila DESFIAR contra a mata. Ela tem nível
+(`--nivel-vila=N`): térrea, sobrado, prédio, e é assim que cresce a cada Fase.
 
 **E a rua VIRA em vez de acabar:** cada cotovelo leva chanfro de meia largura
 de rua nas duas quinas salientes (`docs/decisoes/013`).
@@ -126,19 +124,23 @@ em `docs/arquivo/HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | ~~Jogar~~ — 02/09 e 06/09, e os 25 itens já triados. Fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e devolveu 7 notas — 6 aplicadas, 1 na fila. Falta reler o que mudou. O que ela achou está no A4 do plano |
-| **A5** | Olhar cada antes/depois da arte | As seis etapas, a frota e o gradiente/fauna do item 9 estão construídos. A etapa 3 foi medida e rejeitada; todo o resto ainda espera o olho dele |
+| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e devolveu 7 notas — 6
+aplicadas e a 7ª (os retratos) construída. Falta reler o que mudou. O que ela
+achou está no A4 do plano |
+| **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** —
+1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais o que ficou
+fora delas, a frota de 07/09 e o gradiente com fauna do item 9. É a trilha
+inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a SEGUNDA jogada devolveu (06/09) — 25 itens, triados
 
 **Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
 
-**Nove blocos fechados** — defeitos e interface (14, 10, 1, 22, 25), o camião
-na doca (3), a estrada (2, 4a, 11), a esquina chanfrada (4b), a frota de pesca
-(7), o pau de carga do n1 (6), a Zona de Espera ao largo (15) e o caixa inicial
-(5), mais gradiente de água e areia com fauna (9). O custo está no histórico;
-o porquê dos blocos anteriores, nas decisões `011` a `018`.
+**Nove blocos fechados** — 14, 10, 1, 22, 25, 3, a estrada (2, 4a, 11), 4b, a
+frota (7), o pau de carga (6), a Zona de Espera (15), o caixa (5) e o gradiente
+com fauna (9). O custo está em `docs/arquivo/HISTORICO.md`; o porquê, nas `011`
+a `018`.
 
 ⚠️ **Sobrou UMA coisa medida e por fazer, e não é defeito:** a rua parou em
 **1,8** — alargá-la empurra o `RUA_RECUO` e mexe no enquadramento inteiro. A
@@ -177,7 +179,8 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface e leitura raster do mapa; espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia (por varredura), todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru à tela, e **toda fala escrita chega ao jogo** (a pergunta inversa, contra o `Main.gd`) |
-| `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os quatro tons da Dona Cida, as falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
+| `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os quatro tons da Dona Cida, as falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
+| `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Os nove bustos saem do estúdio partilhado (`docs/decisoes/020`) |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
@@ -245,12 +248,10 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   turnos e a sua mistura de motivos. A classe decide o casco desenhado no píer
   (`docs/decisoes/009`)
 - Parcela única de **R$530.000** no fim da semana 4; paga ou recusada, a semana
-  só fecha depois da decisão. **Quitar antes abate 0,25% por turno** — o juro
-  que o banco deixa de correr (`019`), numa conta genérica que serve ao
-  empréstimo da Fase 2. ⚠️ **A semana tem 8 turnos e a partida 32
-  "dias"; passar a 7 está MEDIDO** (13/09, 16 corridas no plano) — o dano puro
-  é 98,7 / 42,8 / 21,5, e o ponto que fecha pede um SEGUNDO botão, que espera
-  o Bruno
+  só fecha depois da decisão. **Quitar antes abate 0,25% por turno** (`019`),
+  numa conta genérica que serve ao empréstimo da Fase 2. ⚠️ **A semana tem 8
+  turnos e a partida 32 "dias"; passar a 7 está MEDIDO** — 16 corridas na §7 do
+  plano, e o ponto que fecha pede um SEGUNDO botão, que espera o Bruno
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
   upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
   com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase
@@ -261,6 +262,11 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
+- **E OS TRÊS NPCs TÊM ROSTO** (`docs/decisoes/020`): nove bustos com pose
+  própria — cabeça inclinada, olhar dirigido —, ao lado da fala no boletim, na
+  parcela e na contra-oferta, que ganhou segundo tempo porque a despedida do
+  Arlindo estava escrita desde 01/09 e nunca tinha sido dita. A cara sai da
+  FALA, por tabela. Falta a faixa do rodapé: medida, à espera de layout
 - **Registro de partida em `.jsonl`**, um arquivo por partida, com o tempo de
   deliberação de cada turno. Sai pelo botão do menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,
@@ -289,8 +295,9 @@ As **estruturas trocam de textura, não de nó** — mesmo quadro nos dois estad
 então o prédio não salta ao ser consertado; as peças, essas, não se partilham
 (`CLAUDE.md`).
 
-**A cauda dos props tem corpo** (Etapa 2): contêiner corrugado, carga empilhada,
-boia e marcador, e as catorze peças pequenas do pátio em `blender/brp_porto.py`.
+**A cauda dos props tem corpo** (Etapa 2): contêiner, carga, boia, marcador e
+as catorze peças do pátio, em `blender/brp_porto.py` — que desde 13/09 faz
+também os nove retratos de fala.
 
 O cenário usa os props: **coqueiros** que oscilam em rajada, **guindaste** nas
 docas construídas, **carga no convés** e **boias + marcador** na Zona de Espera. **Três caminhões atravessam o mapa pela estrada**, cada um com
@@ -305,31 +312,27 @@ pela mesma razão que os píeres: o que se mexe não pode estar assado no fundo.
 n3, ferrugem nos cargueiros — padrões DIRIGIDOS, peça a peça, nunca pela paleta.
 
 **O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas a
-laje de concreto sobre estacas de aço; a lança, de **um pau só com amantilho** a
-lança longa com spreader; a torre, de mastro de madeira a pórtico com casa de
-máquinas. O n1 é um pau de carga de verdade desde 08/09 — era uma treliça, e
-sobre a areia lia-se como passadiça (`docs/decisoes/015`). Quem
-escolhe são `nivel_pier()` e `nivel_guindaste()`, cada um preso ao seu upgrade
-(`docs/decisoes/007`) — e desde 06/09 são elas que decidem também **que navio
-atraca** (`009`), o que faz a trava ser visível em vez de estatística.
+laje de concreto sobre estacas de aço; a lança, de **um pau só com amantilho**
+(`015`) a lança longa com spreader; a torre, de mastro de madeira a pórtico.
+Quem escolhe são `nivel_pier()` e `nivel_guindaste()`, cada um preso ao seu
+upgrade (`docs/decisoes/007`) — e desde 06/09 são elas que decidem também **que
+navio atraca** (`009`), o que faz a trava ser visível em vez de estatística.
 
 **O CASCO DIZ O QUE O NAVIO TRAZ, e o camião o que sai pela estrada**
-(`docs/decisoes/010`). São seis cascos, um por par (classe, motivo): o costado é
-o mesmo e o CONVÉS é que muda — pilha alinhada com guias, tampas de porão sobre
-braçola, paletes com pau-de-carga aberto. O pesqueiro tem um casco só, e isso é
-afirmação: pescado e armazenagem são o mesmo peixe indo para sítios diferentes.
+(`docs/decisoes/010`). Seis cascos, um por par (classe, motivo): o costado é o
+mesmo e o CONVÉS é que muda. O pesqueiro tem um casco só, e isso é afirmação:
+pescado e armazenagem são o mesmo peixe indo para sítios diferentes.
 Os camiões são quatro, um por motivo. O **trabalhador aparece de pé no
 tabuado** quando alocado, e mexe-se enquanto a operação corre.
 
-**E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA.** São três portes com gramática
-própria — o bote de convés aberto com as caixas de peixe à vista, a traineira
-de pau-de-carga, e o arrasteiro com o arco de popa laranja e a rede içada —, e
-a faixa de valor da classe escolhe qual atraca. Zero sorteios gastos: o valor
-já nascia com o barco.
+**E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA.** Três portes com gramática
+própria — bote de convés aberto, traineira de pau-de-carga, arrasteiro com arco
+de popa laranja —, e a faixa de valor da classe escolhe qual atraca. Zero
+sorteios gastos: o valor já nascia com o barco.
 
-O **retrato do trabalhador** sai do mesmo estúdio Blender e é o único prop que
-olha para a frente; o boneco do PÍER é outro, e continua com as cinco caixas
-dele (`docs/arquivo/`).
+Os **retratos** saem do mesmo estúdio Blender e são os únicos props que olham
+para a frente — o do trabalhador de corpo inteiro, os três NPCs em busto; o
+boneco do PÍER é outro, e continua com as cinco caixas dele (`docs/arquivo/`).
 
 A **Zona de Espera é só visual**, e torná-la mecânica muda o balanceamento
 medido. Desde 11/09 ela fundeia **ao largo**, fora do gradiente costeiro

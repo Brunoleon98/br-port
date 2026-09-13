@@ -22,6 +22,9 @@ const FRAMES_ATE_ASSENTAR := 12
 # O ponto único de estilo do projeto. Ver ui/tema_brport.tres.
 const TEMA := "res://ui/tema_brport.tres"
 
+# A mesma semente das outras capturas da bateria. Fixa, e num lugar só.
+const SEMENTE := 20260825
+
 var _cena := "res://scenes/tests/AssetPlacementTest.tscn"
 var _saida := "user://cena.png"
 var _montado := false
@@ -93,12 +96,36 @@ func _process(_delta: float) -> bool:
 # passava por boa. É exatamente o buraco que o comentário acima descreve, com
 # a guarda a cavá-lo. O Diário escapou por montar no `_ready()`, e foi por
 # isso que isto viveu escondido.
+#
+# ⚠️ E UM ARGUMENTO PODE VIR DO ESTADO, com `@`. A cena da parcela recebe o
+# valor a pagar, e escrevê-lo à mão na bateria (`530000`) seria pôr a foto a
+# dizer um número que a constante já sabe — no dia em que o `PARCELA_AMOUNT`
+# mudar, a captura mostra o Sr. Ribeiro a cobrar o valor de ontem, verdadeira
+# na aparência e falsa no facto. É a mesma regra que já tirou os R$100.000
+# cravados do `capturar_tela.gd`: ferramenta que finge um estado tem de o
+# DERIVAR. `@PARCELA_AMOUNT` lê a constante do `GameState`, e um nome que não
+# exista lá rebenta em vez de virar zero.
 func _chamar_setup(no: Node) -> void:
 	if not no.has_method("setup"):
 		return
+	var GS: Node = root.get_node("GameState")
 	var convertidos := []
 	for bruto in _extra:
-		if bruto == "true" or bruto == "false":
+		if bruto.begins_with("@"):
+			# A CONSTANTE NÃO É UMA PROPRIEDADE, e o `get()` devolveria `null`
+			# sem se queixar — o painel abriria a cobrar R$0. As constantes do
+			# script vêm do mapa delas; os campos vivos, do próprio nó.
+			var chave: String = bruto.substr(1)
+			var consts: Dictionary = GS.get_script().get_script_constant_map()
+			if consts.has(chave):
+				convertidos.append(consts[chave])
+			elif chave in GS:
+				convertidos.append(GS.get(chave))
+			else:
+				push_error("GameState não tem %s" % chave)
+				quit(1)
+				return
+		elif bruto == "true" or bruto == "false":
 			convertidos.append(bruto == "true")
 		elif bruto.is_valid_int():
 			convertidos.append(int(bruto))
@@ -132,12 +159,23 @@ func _ler_argumentos() -> void:
 # pelo mesmo cano. Foto de comparação que depende do que está no disco não
 # compara nada — é a regra "ferramenta que finge um estado tem de o DERIVAR
 # dele", e o `capturar_tela.gd` já a cumpria ao lado.
+#
+# ⚠️ E A SEMENTE GLOBAL NÃO SEMEIA O JOGO, o que fez desta ferramenta uma
+# fotógrafa não reprodutível durante cinco dias sem ninguém notar. O `seed()`
+# de baixo mexe no gerador GLOBAL do Godot; o `GameState` sorteia com um
+# `RandomNumberGenerator` próprio, que o `_ready()` dele `randomize()`. Enquanto
+# os painéis fotografados não liam sorteio nenhum isto não aparecia — no dia em
+# que entrou a captura da contra-oferta, duas corridas do MESMO código deram
+# R$16.104 e R$0, porque numa delas o sorteio não pôs barco na doca. O
+# `capturar_tela.gd` já semeava o `_rng` e explicava porquê ao lado; esta cópia
+# tinha só metade da receita.
 func _estado_conhecido() -> void:
 	var GS: Node = root.get_node("GameState")
 	GS.clear_save()
 	# A SEMENTE ANTES do `new_game()`, que já sorteia a mão inicial — a mesma
 	# armadilha que o `capturar_tela.gd` e o simulador documentam.
-	seed(20260825)
+	seed(SEMENTE)
+	GS._rng.seed = SEMENTE
 	GS.new_game()
 
 
@@ -158,6 +196,21 @@ func _montar_estado() -> void:
 		var corte: int = par.find("=")
 		var chave: String = par.substr(0, corte)
 		var valor: String = par.substr(corte + 1)
+		# ⚠️ `barco=N` NÃO É UM CAMPO, é uma montagem — e existe porque o painel
+		# da contra-oferta não diz nada sem um barco na doca. Deixá-lo ao
+		# sorteio da mão inicial é o que fez a foto sair a cobrar R$0 metade das
+		# vezes: com a semente fixa a mão é sempre a mesma, mas "sempre a mesma"
+		# incluía não ter barco nenhum naquela doca. Montar o estado é a regra
+		# desta ferramenta desde 12/09; isto é a mesma regra, para uma coisa que
+		# não cabe numa atribuição.
+		if chave == "barco":
+			var doca: int = int(valor)
+			GS.docks[doca]["boat"] = GS._make_boat()
+			GS.pending_rival_dock = doca
+			GS.rival_attempts_left = GS.RIVAL_PATIENCE
+			GS._set_phase("rival_offer")
+			print("  estado: barco na doca %d" % doca)
+			continue
 		if not chave in GS:
 			push_error("GameState não tem o campo %s" % chave)
 			quit(1)

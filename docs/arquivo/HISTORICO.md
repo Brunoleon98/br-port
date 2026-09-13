@@ -30,6 +30,43 @@ no ar, maria-farinha na praia e tartaruga-verde juvenil no baixio. Cada uma
 tem movimento ocioso e reação ao toque; o mar toca a cada 6,5–9,5 s e o chamado
 da gaivota a cada 42–72 s. Os quatro WAV novos são rascunhos até o Bruno ouvir.
 
+**OS TRÊS NPCs GANHARAM ROSTO EM 13/09** — o item que a primeira leitura em voz
+alta deixou na fila (`docs/decisoes/020`). Nove bustos no estúdio partilhado,
+três expressões cada, e uma tabela que liga cada uma das 24 falas à cara que
+ela pede. Três armadilhas de projeção pelo caminho, todas medidas no PNG: a
+profundidade projeta-se para CIMA (a primeira cabeça saiu com um capote de
+cabelo e 16px de cara no cartão), o ombro tem de ser o dobro da cabeça, e duas
+peças à mesma altura no MUNDO não estão à mesma altura na IMAGEM se estiverem a
+fundos diferentes — a gola saiu a flutuar dez pixels abaixo do pescoço. E a
+caminho apanhou-se um defeito de 01/09: `ARLINDO_VENCEU` e `ARLINDO_PERDEU`
+estavam escritas e mudas, porque a guarda que apanha fala não dita cobria a
+Dona Cida e mais ninguém. A faixa de mensagem do rodapé ficou de fora, medida:
+52px de cartão e 29px de folga no rodapé, e escolher entre um retrato de 44px
+ilegível e um de 76px que gasta a folga é decisão do Bruno.
+
+**E O PRIMEIRO OLHAR DELE MANDOU-OS DE VOLTA**, com uma frase certa: *"faltam
+detalhes e está muito quadrado"*. A segunda passagem tirou a caixa de tudo —
+prisma oitavado em cada peça, cabeça em duas partes, ombro em degrau, cabelo em
+três camadas, olho com branco, nariz de sombra, orelhas, lapela e gola — e o
+retrato cresceu 58% no cartão, com a caixa a deixar de ser quadrada porque o
+busto não é. Custou três defeitos de render, todos de faces que se tocam
+(barras pretas de um chanfro sobre quina cortada e estreitada, retângulos
+pretos de dois topos coplanares, e um colarinho que existia e ficava atrás do
+ombro), e destapou duas coisas nas ferramentas: a captura fotografava o asset
+VELHO quando o `--import` não corria, e o `capturar_cena.gd` nunca semeava o
+gerador do jogo — a foto nova da contra-oferta dava R$16.104 numa corrida e
+R$0 noutra.
+
+**E A TERCEIRA PASSAGEM FOI A POSE.** O pedido seguinte — *"mais detalhes e
+mais expressivos"* — tinha duas metades, e só uma era detalhe: as nove imagens
+estavam todas na MESMA pose, e com a cabeça parada o que separa duas
+expressões são seis pixels de boca. A tabela das caras passou a ter cinco
+alavancas (boca, sobrancelha, olho, olhar e pose), a cabeça roda sobre um pivô
+no meio do pescoço, e a pupila anda dentro da esclera. De detalhe entraram
+dentes no sorriso, barba por fazer, pés-de-galinha, ruga na testa, lenço de
+bolso e um lápis atrás da orelha da contabilista — que levou duas tentativas
+para não desaparecer dentro da orelha e da cúpula do cabelo.
+
 **A REVISÃO EXTERNA DE 12/09 FECHOU TRÊS DIVERGÊNCIAS.** A parcela paga no
 vencimento era lançada depois de o boletim da semana 4 ter sido emitido e
 zerado: o caixa estava certo, mas o relatório inflava o resultado em
