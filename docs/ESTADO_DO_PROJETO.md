@@ -250,11 +250,11 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
-- **E OS TRÊS NPCs TÊM ROSTO** (`docs/decisoes/020`): nove bustos, três
-  expressões cada, ao lado da fala no boletim, na parcela e na contra-oferta —
-  que ganhou segundo tempo, porque a despedida do Arlindo estava escrita desde
-  01/09 e nunca tinha sido dita. A cara sai da FALA, por tabela. Falta a faixa
-  do rodapé: medida, à espera de uma decisão de layout
+- **E OS TRÊS NPCs TÊM ROSTO** (`docs/decisoes/020`): nove bustos com pose
+  própria — cabeça inclinada, olhar dirigido —, ao lado da fala no boletim, na
+  parcela e na contra-oferta, que ganhou segundo tempo porque a despedida do
+  Arlindo estava escrita desde 01/09 e nunca tinha sido dita. A cara sai da
+  FALA, por tabela. Falta a faixa do rodapé: medida, à espera de layout
 - **Registro de partida em `.jsonl`**, um arquivo por partida, com o tempo de
   deliberação de cada turno. Sai pelo botão do menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,

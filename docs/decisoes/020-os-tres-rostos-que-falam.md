@@ -7,9 +7,10 @@ sprite com a reação do personagem mais a mensagem"*.
 
 **Nada aqui encosta na economia.** O `GameState.gd` não foi tocado, nenhuma
 constante `# TUNING:` mudou, e a decisão pendente da semana de sete turnos fica
-exatamente onde estava. O simulador corre sem travamento e as doze capturas de
-antes e depois são idênticas byte a byte **menos uma** — o boletim, que é onde
-a cara nova aparece. Essa foto é a medida da contenção da mudança.
+exatamente onde estava. O simulador corre sem travamento e **todas as capturas
+sem cara dentro continuam byte a byte iguais** às de antes da sessão — só as
+três telas onde alguém fala se mexeram. Essa contagem é a medida da contenção
+da mudança, e a bateria ganhou de caminho duas fotos que nunca existiram.
 
 **E também não encosta no que a sessão da água e da fauna está a mexer**: o
 `gerar_mapa_iso.py`, o `brp_fauna.py`, o `Audio.gd`, o `gerar_sons.py` e o

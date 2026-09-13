@@ -141,11 +141,15 @@ dos sprites — tudo com a suíte verde.
 tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # todas de uma vez
 ```
 
-São as mesmas que o CI anexa a cada PR — a tela inicial, o porto a MEIO (nível
-2), o porto reconstruído, o porto em ruínas a operar, o boletim, o menu de
-pausa, a primeira página do diário e as duas folhas de contato (ícones e
-frota) — e ele já diz na página da corrida **qual** delas mudou. O que o CI não
-faz é julgar; olhar continua a ser aqui.
+São as mesmas que o CI anexa a cada PR, e ele já diz na página da corrida
+**qual** delas mudou. O que o CI não faz é julgar; olhar continua a ser aqui.
+
+⚠️ **Quais são elas está no cabeçalho do próprio script, e não aqui.** Esta
+lista já esteve escrita nesta página e envelheceu duas vezes — a foto da
+parcela entrou em 12/09 e as duas cenas com personagem em 13/09, e a
+enumeração ficou a descrever uma bateria que já não era a que corria. É a
+regra desta secção §5 aplicada a ela mesma: contagem de lista que cresce
+tira-se, não se corrige.
 
 ⚠️ **E CINCO DELAS SÃO UMA PARTIDA SORTEADA.** O que só aparece em alguns
 estados do jogo pode não entrar em nenhuma: medido em 07/09, dos seis cascos
