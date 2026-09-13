@@ -865,20 +865,137 @@ def _passos_de_um_pixel(distancia: float) -> int:
 
 
 def _png_rgba(largura: int, altura: int, pixels: bytes) -> bytes:
-    """PNG determinístico, sem Pillow: filtro zero e zlib de estratégia fixa."""
+    """PNG byte-estável entre zlib e zlib-ng, sem depender do compressor.
+
+    Mesmo ``Z_FIXED`` só fixa a árvore de Huffman: zlib e zlib-ng ainda podem
+    escolher casamentos LZ diferentes. O runner Linux e o Python do Windows
+    acabavam, por isso, com pixels iguais dentro de PNGs de bytes diferentes.
+    Aqui o DEFLATE fixo e a procura LZ são nossos; zlib fica só com CRC/Adler.
+    """
     def bloco(tipo: bytes, dados: bytes) -> bytes:
         return (struct.pack(">I", len(dados)) + tipo + dados
                 + struct.pack(">I", zlib.crc32(tipo + dados) & 0xffffffff))
 
     passo = largura * 4
-    bruto = b"".join(b"\x00" + pixels[y:y + passo]
-                     for y in range(0, len(pixels), passo))
-    compressor = zlib.compressobj(9, zlib.DEFLATED, 15, 9, zlib.Z_FIXED)
-    idat = compressor.compress(bruto) + compressor.flush()
+    linhas = []
+    for y in range(0, len(pixels), passo):
+        linha = pixels[y:y + passo]
+        # Filtro Sub do PNG: depois do primeiro pixel, áreas chapadas viram
+        # sequências de zero e a procura LZ simples continua compacta.
+        filtrada = bytearray(linha[:4])
+        filtrada.extend((linha[i] - linha[i - 4]) & 0xff
+                        for i in range(4, len(linha)))
+        linhas.append(b"\x01" + bytes(filtrada))
+    bruto = b"".join(linhas)
+    idat = _zlib_fixo(bruto)
     return (b"\x89PNG\r\n\x1a\n"
             + bloco(b"IHDR", struct.pack(">IIBBBBB", largura, altura,
                                            8, 6, 0, 0, 0))
             + bloco(b"IDAT", idat) + bloco(b"IEND", b""))
+
+
+def _zlib_fixo(dados: bytes) -> bytes:
+    """Codifica um único bloco DEFLATE de Huffman fixo, deterministicamente."""
+    saida = bytearray()
+    acumulador = 0
+    n_bits = 0
+
+    def escrever(valor: int, quantidade: int) -> None:
+        nonlocal acumulador, n_bits
+        acumulador |= valor << n_bits
+        n_bits += quantidade
+        while n_bits >= 8:
+            saida.append(acumulador & 0xff)
+            acumulador >>= 8
+            n_bits -= 8
+
+    def inverter(valor: int, quantidade: int) -> int:
+        resultado = 0
+        for _ in range(quantidade):
+            resultado = (resultado << 1) | (valor & 1)
+            valor >>= 1
+        return resultado
+
+    def simbolo_fixo(simbolo: int) -> None:
+        if simbolo <= 143:
+            codigo, quantidade = 0x30 + simbolo, 8
+        elif simbolo <= 255:
+            codigo, quantidade = 0x190 + simbolo - 144, 9
+        elif simbolo <= 279:
+            codigo, quantidade = simbolo - 256, 7
+        else:
+            codigo, quantidade = 0xc0 + simbolo - 280, 8
+        escrever(inverter(codigo, quantidade), quantidade)
+
+    bases_comprimento = (3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17,
+                         19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99,
+                         115, 131, 163, 195, 227, 258)
+    extras_comprimento = (0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2,
+                          2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0)
+    tabela_comprimento = [None] * 259
+    for indice, base in enumerate(bases_comprimento):
+        quantidade = extras_comprimento[indice]
+        fim = base if indice == 28 else base + (1 << quantidade) - 1
+        for comprimento in range(base, fim + 1):
+            tabela_comprimento[comprimento] = (
+                257 + indice, comprimento - base, quantidade)
+
+    bases_distancia = (1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65,
+                       97, 129, 193, 257, 385, 513, 769, 1025, 1537,
+                       2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577)
+    extras_distancia = (0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6,
+                        6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12,
+                        13, 13)
+
+    # BFINAL=1, BTYPE=01 (Huffman fixo), na ordem de bits do DEFLATE.
+    escrever(0b011, 3)
+    ultima = [-1] * 65536
+    posicao = 0
+    limite = len(dados)
+    while posicao < limite:
+        comprimento = 0
+        distancia = 0
+        if posicao + 2 < limite:
+            chave = ((dados[posicao] * 251 + dados[posicao + 1]) * 251
+                     + dados[posicao + 2]) & 0xffff
+            anterior = ultima[chave]
+            if (anterior >= 0 and posicao - anterior <= 32768
+                    and dados[anterior:anterior + 3]
+                    == dados[posicao:posicao + 3]):
+                maximo = min(258, limite - posicao)
+                comprimento = 3
+                while (comprimento < maximo
+                       and dados[anterior + comprimento]
+                       == dados[posicao + comprimento]):
+                    comprimento += 1
+                distancia = posicao - anterior
+
+        if comprimento >= 3:
+            simbolo, extra, quantidade = tabela_comprimento[comprimento]
+            simbolo_fixo(simbolo)
+            escrever(extra, quantidade)
+            for indice, base in enumerate(bases_distancia):
+                bits = extras_distancia[indice]
+                if distancia <= base + (1 << bits) - 1:
+                    escrever(inverter(indice, 5), 5)
+                    escrever(distancia - base, bits)
+                    break
+            avancar = comprimento
+        else:
+            simbolo_fixo(dados[posicao])
+            avancar = 1
+
+        fim = min(posicao + avancar, limite - 2)
+        for i in range(posicao, fim):
+            chave = ((dados[i] * 251 + dados[i + 1]) * 251
+                     + dados[i + 2]) & 0xffff
+            ultima[chave] = i
+        posicao += avancar
+
+    simbolo_fixo(256)
+    if n_bits:
+        saida.append(acumulador & 0xff)
+    return b"\x78\x01" + bytes(saida) + struct.pack(">I", zlib.adler32(dados))
 
 
 def _rgb(hexa: str) -> tuple:

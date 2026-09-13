@@ -104,6 +104,14 @@ mudada. Num gerador cuja saída o CI compara assim: `math.fsum` em vez de `sum`,
 e **arredonde o que alimenta tudo o resto** — número que sai de divisão e entra
 em toda coordenada tem de ser exato, senão a máquina decide o desenho.
 
+⚠️ **`zlib.Z_FIXED` NÃO torna um PNG byte-estável entre zlib e zlib-ng.** A
+árvore de Huffman fica fixa, mas cada implementação ainda pode escolher
+casamentos LZ diferentes. Medido no PR 45: os pixels RGBA eram idênticos e só
+a linha base64 mudava nos dois mapas entre Python 3.14/zlib-ng no Windows e o
+runner Linux. O raster costeiro usa `_zlib_fixo()`, com procura LZ e DEFLATE
+próprios; não o troque por `compressobj()` enquanto o CI comparar o SVG byte a
+byte.
+
 ⚠️ **Valor de Godot 3 numa chave de Godot 4 não dá erro — dá outra coisa.**
 `window/handheld/orientation="portrait"` é sintaxe da 3; na 4 a chave é um enum
 INTEIRO, e o exportador faz `int()` dela. `int("portrait")` é **0**, que é
