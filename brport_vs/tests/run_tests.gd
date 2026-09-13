@@ -895,15 +895,34 @@ func _t5k_parcela_adiantada() -> void:
 	# 7b. PROPORCIONAL AO TEMPO: quanto mais cedo, mais barato, sem empates.
 	#     Uma versão FIXA — a que a F4 rejeitou — passaria em 7a e reprovaria
 	#     aqui, que é a razão de esta asserção existir separada daquela.
+	#
+	#     ⚠️ E O PRAZO PERCORRE-SE INTEIRO, em vez de ser amostrado em turnos
+	#     escritos à mão. A versão anterior era `[4, 12, 20, 28,
+	#     PARCELA_DUE_TURN]`, e aqueles 28 são o penúltimo turno de uma semana de
+	#     OITO. Medido em 13/09, ao varrer `TURNS_PER_WEEK` para 7: o prazo
+	#     passa a 28, a lista fica com o vencimento DUAS vezes, os dois custos
+	#     saem iguais e a asserção reprova o CÓDIGO CERTO. É o número em pixel
+	#     que o `CLAUDE.md` regista, com TURNOS no lugar de unidades de mundo:
+	#     número escrito à mão envelhece calado quando o que ele descreve muda
+	#     de tamanho. Percorrer o prazo custa o mesmo, não crava calendário
+	#     nenhum, e de caminho é mais forte — cobre todos os turnos em vez de
+	#     cinco, e um empate no meio deixa de ter onde se esconder.
 	var custos := []
-	for t in [4, 12, 20, 28, GS.PARCELA_DUE_TURN]:
-		GS.turn = int(t)
+	for t in range(1, GS.PARCELA_DUE_TURN + 1):
+		GS.turn = t
 		custos.append(GS.valor_da_parcela_hoje())
 	var sobe := true
+	var onde := ""
 	for i in range(custos.size() - 1):
 		if int(custos[i]) >= int(custos[i + 1]):
 			sobe = false
-	_check("quitar mais cedo custa ESTRITAMENTE menos (%s)" % str(custos), sobe)
+			if onde == "":
+				# SÓ o primeiro par que falha: despejar os 28 valores daria uma
+				# linha que ninguém lê, e o que se quer saber é ONDE empatou.
+				onde = " — turno %d custa %d e o %d custa %d" % [
+					i + 1, int(custos[i]), i + 2, int(custos[i + 1])]
+	_check("quitar mais cedo custa ESTRITAMENTE menos, nos %d turnos do prazo%s"
+		% [custos.size(), onde], sobe)
 
 	# 7c. E A CONTA É GENÉRICA, que é o pedido do Bruno e não um detalhe de
 	#     estilo: o empréstimo bancário da Fase 2 vai chamá-la com outro

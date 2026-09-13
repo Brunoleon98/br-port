@@ -465,6 +465,122 @@ documentos que afirmam o balanceamento, e a prosa onde "32" ou "oito turnos"
 estejam escritos — `CLAUDE.md`, o `ESTADO_DO_PROJETO.md`, a `003`, o
 `gdd/sistemas/economia.md` e o histórico. É sessão própria, por `/balancear`.
 
+#### 📐 A F1 E A F3 ESTÃO MEDIDAS (13/09) — 16 corridas, 600 partidas, semente 20260825
+
+**A F4 do Bruno foi a opção (a): preservar a margem POR TURNO.** Falta escolher
+o botão — ver o fim desta secção.
+
+⚠️ **O ANTES bate ao dígito** (100,0 / 80,2 / 37,3, margens 674.019 / 502.571 /
+103.290), então tudo o que segue é atribuível.
+
+**O DANO PURO — `TURNS_PER_WEEK = 7` e mais nada:**
+
+| | Ótimo | Mediano | Descuidado |
+|---|---:|---:|---:|
+| taxa | 100,0 → **98,7%** | 80,2 → **42,8%** | 37,3 → **21,5%** |
+| margem em regime | 674.019 → 591.086 (−12,3%) | 502.571 → 382.281 (−23,9%) | 103.290 → 83.467 (−19,2%) |
+| mediana no vencimento | 1.309.646 → 975.562 | 716.179 → **508.714** | 503.039 → 462.873 |
+
+⚠️ **ESTA SECÇÃO PREVIU O PERFIL ERRADO.** Ela diz que "o porto pobre é quem
+sente primeiro". **O Mediano sofre 2,4× mais** — −37,4 pontos contra −15,8. A
+razão é a `008` a funcionar ao contrário: um botão só move quem está em cima da
+linha, e sete turnos **puseram o Mediano em cima dela** (a mediana dele
+atravessa os R$530.000 de cima para baixo). O Descuidado já estava do lado
+errado e tinha menos para perder. **Uma mudança de cadência não move o jogador
+contra a linha — move a LINHA contra o jogador**, e é por isso que a intuição
+de "quem tem margem fina sente primeiro" falhou aqui.
+
+⚠️ **E A PERDA NÃO É 12,5% PARA TODOS.** O Ótimo perde 12,3%, que é exactamente
+o encolhimento da semana: com folga 1,0 ele compra assim que dá e chega ao mesmo
+porto. O Mediano perde o DOBRO porque a folga de 2,0 deixa de ser atingida —
+menos receita → porto menor → menos receita. **O laço de construção amplifica**,
+e a conta da F1 ("98% da margem são contratos, logo tudo cai ~12,5%") estava
+certa só para o perfil que constrói no limite.
+
+**EIXO 1 — a parcela sozinha, estruturas na base. NÃO FECHA:**
+
+| `PARCELA_AMOUNT` | Ótimo | Mediano | Descuidado |
+|---:|---:|---:|---:|
+| 530.000 | 98,7% | 42,8% | 21,5% |
+| 500.000 | 99,3% | 53,2% | 34,0% |
+| 480.000 | 99,7% | 59,0% | 42,8% |
+| 465.000 | 99,7% | 63,7% | 48,7% |
+| 440.000 | 99,7% | 68,8% | 63,8% |
+
+Onde o Descuidado chega aos 35% o Mediano está em 53,2%; onde o Mediano chega
+aos 80% o Descuidado já passou dos 64%. **A parcela deixou de discriminar**,
+porque com sete turnos as duas medianas colapsam uma sobre a outra (508.714 e
+462.873, a 46.000 de distância contra os 213.000 do ANTES) — é a aresta de faca
+da §6 da `/balancear`, com dois perfis em cima dela ao mesmo tempo.
+
+**EIXO 2 — o custo das ESTRUTURAS, parcela na base. Inverte, e não é monótono:**
+
+| custos × | Ótimo | Mediano | Descuidado |
+|---:|---:|---:|---:|
+| 1,000 | 98,7% | 42,8% | 21,5% |
+| 0,925 | 99,7% | 66,3% | 22,5% |
+| 0,875 | 100,0% | 82,5% | **15,8%** |
+| 0,800 | 100,0% | 96,7% | **11,3%** |
+| 0,750 | 100,0% | 99,5% | 19,3% |
+
+É a armadilha da §3 da `/balancear` com o sinal trocado: baratear faz o
+Descuidado (folga 4,0) **passar a construir**, gastar o caixa que o levava ao
+Sr. Ribeiro e chegar curto — a margem em regime dele SOBE (83.467 → 175.459)
+enquanto o caixa no vencimento CAI. E a curva volta a subir a 0,750: parar no
+primeiro valor que serve seria assentar numa fronteira que se mexe.
+
+**OS DOIS BOTÕES SÃO QUASE ORTOGONAIS**, e é o achado útil: estruturas
+×0,925→×0,875 movem o Mediano +16,2 e o Descuidado −6,7; a parcela 530k→500k
+move o Mediano +3,7 e o Descuidado +17,2. Um governa cada perfil.
+
+**A GRELHA, e o ponto que cumpre os critérios:**
+
+| | parcela 500.000 | 485.000 | 480.000 | 465.000 | 450.000 |
+|---|---|---|---|---|---|
+| estruturas ×0,9375 | 100 / 68,8 / 37,8 | 100 / 71,8 / 45,3 | — | — | — |
+| **×0,900** | **100 / 77,8 / 34,2** ✅ | 100 / 80,8 / 42,7 | — | — | — |
+| ×0,875 | 100 / 86,2 / 33,0 | — | 100 / 88,7 / 42,0 | 100 / 90,5 / 51,5 | 100 / 91,7 / 58,7 |
+
+⚠️ **COMPENSAR PROPORCIONALMENTE SOBRECOMPENSA.** O ponto que parece coerente —
+tudo × 7/8, que é estruturas ×0,875 e parcela 463.750 — mede **100 / 90,5 /
+51,5**, os dois perfis muito acima do alvo. É o corolário do laço acima: o custo
+de estrutura entra na realimentação e a receita não, logo devolver 12,5% no
+custo devolve MAIS do que 12,5% de porto. O que fecha é **×0,900 e R$500.000**,
+e nenhum dos dois é 7/8.
+
+**O candidato — estruturas ×0,900, parcela R$500.000, sete turnos:**
+
+| Critério (F1) | Medido | |
+|---|---|:-:|
+| Ótimo ≥ 99% | 100,0% | ✅ |
+| Mediano 80 ± 3,2 | 77,8% | ✅ |
+| Descuidado 35 ± 3,9 | 34,2% | ✅ |
+| ordem não inverte | 100 > 77,8 > 34,2 | ✅ |
+| projetor calibra | 0,3% / 1,8% / 5,9% — "→ calibrado" | ✅ |
+| sem aresta de faca | Mediano 35% acima da parcela e Descuidado 5,4% abaixo — **a geometria do ANTES** (35% e 5,1%) | ✅ |
+| rácio de margem Ótimo/Descuidado ≥ 6× | **5,71×** (era 6,52×) | ❌ |
+
+A margem POR TURNO — que é a opção (a) — fica preservada no Ótimo (84.252 →
+84.166) e no Mediano (62.821 → 64.294); o Descuidado ganha 14%, porque com
+estruturas mais baratas constrói mais, e é isso que baixa o rácio. **Esse
+critério dos 6× nasceu na F1 desta sessão e não vem da `005`** — é o único que
+não passa, e se conta ou não é decisão do Bruno.
+
+✅ **E o Antecipado volta a ser o clone que devia ser** (77,8 / 77,8, como no
+ANTES). Nos pontos intermédios do eixo da parcela ele descolava até 20 pontos:
+com o Mediano a viver em cima da linha, o desconto de 0,25%/turno da `019` — que
+lá valia três vitórias — passa a decidir a partida. No candidato o Mediano tem
+folga outra vez e o desconto volta a ser irrelevante. **Uma mecânica pode sair
+de inerte para decisiva sem ninguém lhe tocar**, bastando a distribuição
+deslocar-se para cima dela.
+
+⏳ **O QUE FALTA É UM BOTÃO, e é do Bruno.** A opção (a) aponta para a parcela, e
+a parcela sozinha não lá chega: o candidato usa **um segundo botão que não foi
+autorizado — baixar os custos das sete estruturas em 10%**. A alternativa, sem
+mexer nelas, é aceitar um alvo novo para o Mediano, o que é reabrir a `005`.
+Decidido isso, a F5 é uma linha e a medição já está toda aqui.
+
+
 ### 🎭 ITEM NOVO — retrato do personagem com REAÇÃO, junto da fala
 
 Pedido na primeira leitura (13/09): *"seria legal aparecer o sprite dos
