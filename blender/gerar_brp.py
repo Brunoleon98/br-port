@@ -30,7 +30,8 @@ ESTUDIOS = {
 # nada fora de `brport_vs/`. O prompt pede o arquivo em docs/; ter as duas
 # cópias seria a fonte dupla que este projeto já pagou caro uma vez (a errata
 # da economia). docs/arquivo/BRP_EXPORT_MANIFEST.md aponta para cá.
-MANIFEST = "brport_vs/data/assets/BRP_EXPORT_MANIFEST.json"
+RAIZ = pathlib.Path(__file__).resolve().parent.parent
+MANIFEST = str(RAIZ / "brport_vs/data/assets/BRP_EXPORT_MANIFEST.json")
 
 
 def main() -> int:
@@ -38,6 +39,12 @@ def main() -> int:
         print(__doc__.strip())
         return 2
     categoria, saida, pedidos = sys.argv[1], sys.argv[2], sys.argv[3:]
+    # `read_factory_settings`, chamado ao montar o estúdio, troca o diretório
+    # corrente do Blender para a raiz do disco no Windows. Se a saída continuar
+    # relativa, o render tenta escrever em C:\brport_vs e falha só no Blender
+    # standalone (o módulo `bpy` preserva o cwd e escondia a armadilha).
+    saida_p = pathlib.Path(saida)
+    saida = str((saida_p if saida_p.is_absolute() else RAIZ / saida_p).resolve())
 
     if categoria == "todos":
         for c in ESTUDIOS:
@@ -62,7 +69,7 @@ def main() -> int:
 
     # O .blend é a fonte que o prompt pede entregar. Ele fica em blender/, na
     # raiz — nunca dentro de brport_vs/art/, que é só o que o Godot importa.
-    destino = os.path.join("blender", blend)
+    destino = str(RAIZ / "blender" / blend)
     est.salvar_blend(destino)
     print("blend: %s" % destino)
     return 0

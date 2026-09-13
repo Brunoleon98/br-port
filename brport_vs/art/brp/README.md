@@ -1,19 +1,20 @@
-# `art/brp/` — assets FORA do escopo do vertical slice
+# `art/brp/` — assets do pacote ainda FORA do vertical slice
 
-Terreno, cidade e fauna produzidos pelo pipeline do pacote de arte
+Terreno, cidade e vegetação produzidos pelo pipeline do pacote de arte
 (`blender/`, FASES 3, 5 e 6 do prompt mestre).
 
-**Nada aqui entra em `Main.tscn`.** A decisão registrada em
-`docs/decisoes/001-pacote-de-arte-externo-e-o-gdd-7.md` mantém cidade e fauna
-na lista `VS — OUT` do GDD 7, e o chão do jogo é o SVG de
+**Nada que permaneceu aqui entra em `Main.tscn`.** O item 9 do segundo
+playtest reabriu só três animais; gaivotão, maria-farinha e tartaruga-verde
+passaram para `art/props/` e para a cena principal. Cidade, tiles e a vegetação
+experimental continuam fora, e o chão do jogo é o SVG de
 `tools/gerar_mapa_iso.py`, não estes tiles.
 
 Existem para `scenes/tests/AssetPlacementTest.tscn`, que é onde o critério de
 aprovação do prompt se verifica: o mesmo asset em três posições do mapa sem
 perder origem, escala nem ordem de desenho.
 
-Quem os quiser no jogo tem de reabrir a decisão 001 primeiro — não é uma
-questão de arrastar o arquivo.
+Quem quiser puxar o restante para o jogo ainda tem de reabrir a decisão 001 —
+o recorte de três espécies não autoriza o pacote inteiro.
 
 ---
 

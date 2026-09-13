@@ -31,12 +31,15 @@ Uso:
     python3 tools/gerar_mapa_iso.py brport_vs/art/porto_mapa_iso.svg
 """
 
+import base64
 import json
 import math
 import pathlib
 import random
 import re
+import struct
 import sys
+import zlib
 
 MEIA_LARG = 30
 MEIA_ALT = 15            # a razão 2:1 com MEIA_LARG é o que define o ângulo
@@ -845,6 +848,129 @@ def poli(pontos, cor: str, opacidade: float = 1.0) -> str:
         " ".join("%.1f,%.1f" % pt for pt in pontos), cor, extra)
 
 
+def _misturar_cor(a: str, b: str, t: float) -> str:
+    """Interpola RGB com entrada arredondada e acumulação estável."""
+    t = round(max(0.0, min(1.0, t)), 8)
+    ca, cb = a.lstrip("#"), b.lstrip("#")
+    canais = []
+    for i in (0, 2, 4):
+        va, vb = int(ca[i:i + 2], 16), int(cb[i:i + 2], 16)
+        canais.append(round(math.fsum((va * (1.0 - t), vb * t))))
+    return "#%02x%02x%02x" % tuple(canais)
+
+
+def _passos_de_um_pixel(distancia: float) -> int:
+    """Quantas amostras deixam cada transição com no máximo 1 px."""
+    return max(1, int(math.ceil(distancia * 2.0 * MEIA_LARG * ZOOM)))
+
+
+def _png_rgba(largura: int, altura: int, pixels: bytes) -> bytes:
+    """PNG determinístico, sem Pillow: filtro zero e zlib de estratégia fixa."""
+    def bloco(tipo: bytes, dados: bytes) -> bytes:
+        return (struct.pack(">I", len(dados)) + tipo + dados
+                + struct.pack(">I", zlib.crc32(tipo + dados) & 0xffffffff))
+
+    passo = largura * 4
+    bruto = b"".join(b"\x00" + pixels[y:y + passo]
+                     for y in range(0, len(pixels), passo))
+    compressor = zlib.compressobj(9, zlib.DEFLATED, 15, 9, zlib.Z_FIXED)
+    idat = compressor.compress(bruto) + compressor.flush()
+    return (b"\x89PNG\r\n\x1a\n"
+            + bloco(b"IHDR", struct.pack(">IIBBBBB", largura, altura,
+                                           8, 6, 0, 0, 0))
+            + bloco(b"IDAT", idat) + bloco(b"IEND", b""))
+
+
+def _rgb(hexa: str) -> tuple:
+    h = hexa.lstrip("#")
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def _entre_rgb(a: tuple, b: tuple, t: float) -> tuple:
+    t = round(max(0.0, min(1.0, t)), 8)
+    return tuple(round(math.fsum((a[i] * (1.0 - t), b[i] * t)))
+                 for i in range(3))
+
+
+def _distancia_ao_contorno(px: float, py: float, segmentos: list) -> tuple:
+    """(distância em px, my interpolado) até o segmento de costa mais perto."""
+    melhor_d2, melhor_my = float("inf"), 0.0
+    for x0, y0, x1, y1, my0, my1 in segmentos:
+        vx, vy = x1 - x0, y1 - y0
+        den = math.fsum((vx * vx, vy * vy))
+        t = 0.0 if den == 0.0 else max(0.0, min(1.0,
+            math.fsum(((px - x0) * vx, (py - y0) * vy)) / den))
+        qx = math.fsum((x0, vx * t))
+        qy = math.fsum((y0, vy * t))
+        dx, dy = px - qx, py - qy
+        d2 = math.fsum((dx * dx, dy * dy))
+        if d2 < melhor_d2:
+            melhor_d2 = d2
+            melhor_my = round(math.fsum((my0 * (1.0 - t), my1 * t)), 8)
+    return math.sqrt(melhor_d2), melhor_my
+
+
+def agua_costeira_gradiente() -> str:
+    """Campo de distância à costa, rasterizado dentro do SVG.
+
+    A costa não ganha curva nenhuma: o contorno continua sendo a escada
+    medida. O que arredonda nos cotovelos é só a propagação da COR, como luz
+    em volta de uma quina. Isso evita sobreposição de polígonos, frestas de
+    antialias e eixos de degradê incompatíveis nos seis degraus.
+    """
+    alcance = 6.0
+    costa = contorno_costa()
+    tela_costa = [tela(mx, my) for mx, my in costa]
+    segmentos = [(tela_costa[i][0], tela_costa[i][1],
+                  tela_costa[i + 1][0], tela_costa[i + 1][1],
+                  costa[i][1], costa[i + 1][1])
+                 for i in range(len(costa) - 1)]
+    baixio, rasa, media, espuma_ = (_rgb(C[n]) for n in
+                                    ("agua_baixio", "agua_rasa",
+                                     "agua_media", "espuma"))
+    pixels = bytearray()
+    px_por_unidade = 2.0 * MEIA_LARG * ZOOM
+    amplitude = PRAIA_PROF * CRISTA[0][1] / alcance
+    for y in range(SAIDA):
+        for x in range(SAIDA):
+            distancia_px, my = _distancia_ao_contorno(x + 0.5, y + 0.5,
+                                                       segmentos)
+            largura = 1.0 + amplitude * _meandro(my, CRISTA[0][2])
+            d = round(distancia_px / px_por_unidade / largura, 8)
+            if d >= alcance:
+                pixels.extend((0, 0, 0, 0))
+                continue
+            if d <= 1.0:
+                cor = _entre_rgb(baixio, rasa, d)
+                alfa = 1.0
+            elif d <= 2.6:
+                cor = _entre_rgb(rasa, media, (d - 1.0) / 1.6)
+                alfa = 1.0
+            else:
+                cor = media
+                alfa = 1.0 - (d - 2.6) / (alcance - 2.6)
+
+            # A espuma é a ponta da mesma rampa, não duas fitas por cima.
+            if d < 0.42:
+                if d <= 0.16:
+                    f = 0.55 - (0.55 - 0.34) * d / 0.16
+                else:
+                    f = 0.34 * (1.0 - (d - 0.16) / (0.42 - 0.16))
+                cor = _entre_rgb(cor, espuma_, f)
+            pixels.extend((*cor, round(alfa * 255.0)))
+
+    png = _png_rgba(SAIDA, SAIDA, bytes(pixels))
+    dados = base64.b64encode(png).decode("ascii")
+    return ('  <image x="0" y="0" width="%d" height="%d" '
+            'preserveAspectRatio="none" href="data:image/png;base64,%s"/>\n'
+            % (LARG, ALT, dados))
+
+
+def espuma_costeira_gradiente() -> str:
+    """A base da espuma já é composta no campo raster acima."""
+    return ""
+
+
 def laje(x0, y0, x1, y1, h, topo, dir_, esq) -> str:
     """Laje isométrica: as duas faces visíveis (+mx e +my) e o topo."""
     s = poli([p(x1, y0, h), p(x1, y1, h), p(x1, y1, 0), p(x1, y0, 0)], dir_)
@@ -1606,6 +1732,67 @@ def _faixa_da_rampa(a: tuple, b: tuple, my_a: float, my_b: float, cor: str,
     return poli(perto + list(reversed(longe)), cor, opac)
 
 
+def _linha_rampa_continua(indice: int, t: float, my_a: float,
+                          my_b: float) -> list:
+    """Interpola crista, lavado e água sem criar fronteira de cor."""
+    t_lavado, amp_lavado, fase_lavado = LAVADO[indice]
+    if t <= t_lavado:
+        f = t / t_lavado
+        amp = math.fsum((CRISTA[indice][1] * (1.0 - f), amp_lavado * f))
+        fase = math.fsum((CRISTA[indice][2] * (1.0 - f), fase_lavado * f))
+    else:
+        f = (t - t_lavado) / (1.0 - t_lavado)
+        amp = amp_lavado * (1.0 - f)
+        fase = fase_lavado
+    return linha_da_praia(round(t, 8), round(amp, 8), round(fase, 8),
+                          my_a, my_b)
+
+
+def _rampa_degrade(indice: int, my_a: float, my_b: float) -> str:
+    """Areia seca e pé molhado em polígonos opacos e aninhados."""
+    crista = linha_da_praia(*CRISTA[indice], my_a, my_b)
+    n = _passos_de_um_pixel(PRAIA_PROF)
+    s = ""
+    for i in range(n, 0, -1):
+        t = round(i / n, 8)
+        longe = _linha_rampa_continua(indice, t, my_a, my_b)
+        if len(crista) < 2 or len(longe) < 2:
+            continue
+        s += poli(crista + list(reversed(longe)),
+                  _misturar_cor(C["areia"], C["areia_face"], t))
+    return s
+
+
+def _baixio_de_areia(indice: int, my_a: float, my_b: float) -> str:
+    """Areia vista pela água, escolhida por VALOR e dissolvida no baixio.
+
+    Antes eram duas chapas sobrepostas, a larga a 0,30 e a curta a 0,90. A
+    mesma cobertura agora é uma rampa de opacidade: clara junto à linha de
+    água e transparente antes de chegar à água rasa. Não há mistura da cor da
+    areia com a água — `areia_funda` continua sendo o tom claro, pouco
+    saturado, medido para não sumir contra o baixio.
+    """
+    alcance = round(PRAIA_SUBMERSA * 1.9, 6)
+    costa_px = [p(mx, my) for mx, my in
+                _corta_em_my(costa_deslocada(0.0), my_a, my_b)]
+    n = _passos_de_um_pixel(alcance)
+    acumulada = 0.0
+    s = ""
+    for i in range(n, 0, -1):
+        d = round(alcance * i / n, 6)
+        longe = [p(mx, my) for mx, my in
+                 _corta_em_my(costa_deslocada(d), my_a, my_b)]
+        if len(costa_px) < 2 or len(longe) < 2:
+            continue
+        alvo = 0.90 * (1.0 - d / alcance)
+        alvo = max(acumulada, alvo)
+        camada = (alvo - acumulada) / max(1e-9, 1.0 - acumulada)
+        s += poli(costa_px + list(reversed(longe)), C["areia_funda"],
+                  round(camada, 4))
+        acumulada = alvo
+    return s
+
+
 # As três linhas de cada ponta, num lugar só: o chão (`praia_chao`) e a areia
 # (`praia_areia`) desenham a partir da CRISTA, e se as duas divergissem sairia
 # uma fresta entre o relvado e a duna. As fases mudam de uma ponta para a
@@ -1692,8 +1879,7 @@ def praia_areia(indice: int, my_a: float, my_b: float) -> str:
     "uma faixa clara") e o pé molhado, com a fronteira a serpentear largo.
     """
     r = random.Random(SEMENTE_CHAO + 170 + indice)
-    s = _faixa_da_rampa(CRISTA[indice], LAVADO[indice], my_a, my_b, C["areia"])
-    s += _faixa_da_rampa(LAVADO[indice], LINHA_DE_AGUA, my_a, my_b, C["areia_face"])
+    s = _rampa_degrade(indice, my_a, my_b)
 
     # Manchas secas no alto da duna — o mesmo remédio do `manchas_chao` para o
     # pátio: tirar a chapa sem se fazer notar.
@@ -1708,13 +1894,8 @@ def praia_areia(indice: int, my_a: float, my_b: float) -> str:
               % (cx, cy, r.uniform(9.0, 20.0), r.uniform(3.0, 6.0),
                  C["areia_seca"], r.uniform(-38, -14), cx, cy))
 
-    # O baixio de areia, já do lado da água: duas faixas, a larga quase
-    # transparente só para a de dentro não acabar numa aresta. Elas não são
-    # opacas de todo porque a renda de espuma já está desenhada ali por baixo.
-    for ate, opac in ((PRAIA_SUBMERSA * 1.9, 0.30), (PRAIA_SUBMERSA, 0.90)):
-        faixa = costa_entre(0.0, ate, my_a, my_b)
-        if faixa:
-            s += poli(faixa, C["areia_funda"], opac)
+    # O baixio de areia é uma rampa de opacidade, não duas fitas sobrepostas.
+    s += _baixio_de_areia(indice, my_a, my_b)
 
     # As pedras. A referência pede "faixa clara com pedras e coqueiros", e a
     # receita já existe: o sólido facetado do enrocamento (`com_saia`). O que
@@ -2119,17 +2300,16 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
              C["agua_funda"], C["agua_funda"], C["agua_funda"],
              C["agua_baixio"], C["agua_baixio"], C["agua_baixio"]))
     s += '  <rect width="%d" height="%d" fill="url(#fundo)"/>\n' % (LARG, ALT)
-    for de, ate, cor in [(0.0, 6.0, C["agua_media"]),
-                         (0.0, 2.6, C["agua_rasa"]),
-                         (0.0, 1.0, C["agua_baixio"])]:
-        s += poli(costa(de, ate), cor)
+
+    # A costa mantém as MESMAS três distâncias e os MESMOS tons medidos, mas
+    # em amostras de no máximo um pixel, com meandro longo de duas senóides.
+    s += agua_costeira_gradiente()
 
     # ESPUMA na linha de costa. O guia de terrenos do pacote é explícito:
     # "espuma somente nas bordas de praia, rochas, docas e colisões de barcos".
     # É a peça que faltava — a água encostava no cais com uma aresta dura, como
     # dois papéis colados, e é isso que fazia o mar parecer um preenchimento.
-    s += poli(costa(0.0, 0.42), C["espuma"], 0.34)
-    s += poli(costa(0.0, 0.16), C["espuma"], 0.55)
+    s += espuma_costeira_gradiente()
 
     # Renda da espuma: a borda regular acima ainda lê como fita. Estes traços
     # curtos e desiguais por cima dela quebram a régua.

@@ -254,6 +254,57 @@ def sfx_derrota(r):
     return _normaliza(_mistura(*partes), 0.74)
 
 
+def sfx_amb_mar(r):
+    """Uma arrebentação curta e macia para o ambiente costeiro.
+
+    Não é loop musical: o jogo chama esta onda em intervalos irregulares e o
+    envelope longo dissolve as bordas. Continua sendo rascunho não ouvido.
+    """
+    dur = 3.60
+    n = int(TAXA * dur)
+    agua = _passa_baixa(_ruido(dur, r), 1450)
+    env = []
+    for i in range(n):
+        t = i / max(n - 1, 1)
+        onda = math.sin(math.pi * t) ** 1.55
+        pulso = 0.72 + 0.28 * math.sin(math.tau * (1.35 * t + 0.08))
+        env.append(max(0.0, onda * pulso))
+    grave = _aplica(_tom(74.0, dur, "seno", detune=-0.08), env, 0.13)
+    return _normaliza(_mistura(_aplica(agua, env, 0.88), grave), 0.42)
+
+
+def sfx_fauna_gaivota(r):
+    """Dois chamados curtos e ásperos do gaivotão — rascunho sintético."""
+    partes = []
+    for atraso, freq in ((0.0, 1180.0), (0.28, 1320.0)):
+        dur = 0.24
+        env = _env(int(TAXA * dur), 0.06, 0.30, 0.36, 0.42)
+        voz = _aplica(_tom(freq, dur, "triangulo", detune=-0.32), env, 0.72)
+        ar = _aplica(_passa_baixa(_ruido(dur, r), 2600), env, 0.25)
+        partes.append(_atrasa(_mistura(voz, ar), atraso))
+    return _normaliza(_mistura(*partes), 0.46)
+
+
+def sfx_fauna_areia(r):
+    """Passos rápidos na areia para a maria-farinha, que não vocaliza."""
+    partes = []
+    for i in range(4):
+        dur = 0.075
+        grao = _aplica(_passa_baixa(_ruido(dur, r), 2100),
+                       _env(int(TAXA * dur), 0.03, 0.72), 0.65)
+        partes.append(_atrasa(grao, i * 0.065))
+    return _normaliza(_mistura(*partes), 0.34)
+
+
+def sfx_fauna_mergulho(r):
+    """Mergulho pequeno da tartaruga: água e uma bolha grave."""
+    dur = 0.58
+    env = _env(int(TAXA * dur), 0.05, 0.34, 0.22, 0.39)
+    agua = _aplica(_passa_baixa(_ruido(dur, r), 1850), env, 0.70)
+    bolha = _aplica(_tom(180.0, dur, "seno", detune=-0.52), env, 0.34)
+    return _normaliza(_mistura(agua, bolha), 0.42)
+
+
 EFEITOS = {
     "sfx_ui_click": sfx_ui_click,
     "sfx_ui_success": sfx_ui_success,
@@ -265,6 +316,10 @@ EFEITOS = {
     "sfx_construir": sfx_construir,
     "sfx_vitoria": sfx_vitoria,
     "sfx_derrota": sfx_derrota,
+    "sfx_amb_mar": sfx_amb_mar,
+    "sfx_fauna_gaivota": sfx_fauna_gaivota,
+    "sfx_fauna_areia": sfx_fauna_areia,
+    "sfx_fauna_mergulho": sfx_fauna_mergulho,
 }
 
 # Semente fixa por efeito: o ruído entra em três deles, e sem semente o mesmo

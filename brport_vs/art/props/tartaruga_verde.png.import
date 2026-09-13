@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dl0psnqxb2c3b"
-path="res://.godot/imported/gaivota.png-90caefceb956126a844e837c3aa22aae.ctex"
+uid="uid://balpx46vx2a6g"
+path="res://.godot/imported/tartaruga_verde.png-ed37dd9ed3f26eb4d2511d3ce7c24d96.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/brp/gaivota.png"
-dest_files=["res://.godot/imported/gaivota.png-90caefceb956126a844e837c3aa22aae.ctex"]
+source_file="res://art/props/tartaruga_verde.png"
+dest_files=["res://.godot/imported/tartaruga_verde.png-ed37dd9ed3f26eb4d2511d3ce7c24d96.ctex"]
 
 [params]
 

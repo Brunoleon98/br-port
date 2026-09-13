@@ -99,7 +99,7 @@ func _a1_arquivos() -> void:
 				"taxa %d, estéreo %s, formato %d" % [w.mix_rate, w.stereo, w.format])
 			# Efeito de interface longo demais atrasa a leitura da tela. O
 			# apito de navio é a exceção declarada.
-			var limite: float = 1.5 if id == "navio" else 1.0
+			var limite: float = 4.0 if id == "mar" else (1.5 if id == "navio" else 1.0)
 			_confere("%s: dura %.0f ms (teto %.0f)" % [id, s.get_length() * 1000.0,
 					limite * 1000.0],
 				s.get_length() > 0.0 and s.get_length() <= limite)

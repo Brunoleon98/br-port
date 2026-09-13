@@ -1,77 +1,128 @@
 """BRP — fauna e vegetação. FASES 6 e parte da 7 do prompt mestre.
 
-**Aviso de escopo.** Fauna está fora do vertical slice (decisão 001). O prompt
-pede doze espécies e nove variações de vegetação; aqui estão três peças, e a
-escolha é deliberada — cada uma prova um TIPO DE ÂNCORA diferente, que é o que
-a FASE 12 precisa validar:
+O segundo playtest reabriu uma parte limitada da fauna que a decisão 001 tinha
+deixado fora do vertical slice. O catálogo jogável cobre um representante de
+cada habitat visível no mapa, todos encontrados no litoral brasileiro:
 
-    gaivota         âncora `voo`      — não se cobra apoio no chão
-    coqueiro_jovem  âncora `base`     — apoio no chão, com sombra de contato
-    arbusto         âncora `base`     — peça baixa, para a regra de apoio
-                                        não passar só em peça alta
+    gaivota (gaivotão)          âncora `voo`       — ar
+    maria_farinha               âncora `base`      — areia seca
+    tartaruga_verde             âncora `waterline` — baixio
 
-Produzir as outras nove é repetir o mesmo laço; o que precisava ser provado era
-que o contrato aguenta um asset que NÃO toca o chão sem a validação reclamar.
+Coqueiro jovem e arbusto continuam aqui como provas de vegetação/ancoragem; a
+mudança não puxa as outras espécies previstas no pacote grande.
 
-**A gaivota é o asset mais fraco deste lote, e fica registrado.** Três versões:
-asas finas (sumiram nesta câmera, que olha de cima), asas grossas com ponta
-escura (leram como duas peças soltas), asa clara com bordo de fuga escuro (lê
-como um planador cinzento). O arbusto e o coqueiro consertaram-se com material
-e silhueta; a ave não.
-
-Não é falta de iteração — é o mesmo teto que o `docs/design/BR_Port_Plano_Arte_Blender.md`
-já mediu para o ROSTO do trabalhador: há coisas que primitiva composta não
-alcança a 40px. A saída é a mesma que está escrita lá, e não é modelar mais:
-é textura pintada num plano, com a silhueta resolvida no desenho em vez de na
-geometria. Quem for mexer nisto comece por aí, e não por mais uma caixa.
+**A gaivota anterior ocupava só cerca de 20 px do quadro e lia como planador.**
+A quarta versão troca caixas por prismas de silhueta: asa dobrada, cauda
+bifurcada e ponta escura fazem o desenho antes de qualquer detalhe. Ela também
+ganha escala de jogo — o quadro continua 512x512, mas a ave deixa de ser um
+punhado de pixels no meio dele. É a aplicação prática do diagnóstico antigo:
+resolver a ave no desenho visto de cima, e não empilhar mais primitivas.
 """
 
-from brp_studio import caixa, cone, barra, origem, z
+from brp_studio import caixa, cone, prisma, barra, origem, selecao, z
 
 
 def gaivota(M, est):
-    """Gaivota em voo. Corpo, cabeça, bico e duas asas em V raso.
+    """Gaivotão em voo, resolvido como silhueta vista de cima.
 
     Âncora de VOO: o pacote é explícito — "uma ave voando usa uma origem no
     centro do corpo e não uma origem no chão". Sem essa distinção a validação
     cobraria apoio de uma ave e o pipeline pararia num falso erro.
     """
-    # A primeira versão era um borrão branco: corpo branco, asas brancas e
-    # finas, tudo do mesmo tom sobre fundo transparente — nada separava a ave
-    # dela própria. O que conserta não é detalhe, é CONTRASTE: dorso e pontas
-    # escuros, que é aliás como uma gaivota real se lê contra o céu.
     p = []
-    p.append(cone("gav_corpo", (0.0, 0.0, z(0.0)), 0.085, 0.030, 0.30, 10,
-                  M["cabine"], rot=(0, 90, 0)))
-    p.append(caixa("gav_dorso", (-0.02, 0.0, z(1.6)), (0.20, 0.11, 0.035),
-                   M["metal"]))
-    p.append(cone("gav_cabeca", (0.14, 0.0, z(1.4)), 0.055, 0.045, 0.085, 10,
-                  M["cabine"]))
-    p.append(cone("gav_bico", (0.20, 0.0, z(1.4)), 0.020, 0.005, 0.07, 8,
-                  M["amarelo"], rot=(0, 90, 0)))
-    # Asa em DUAS peças por lado, com quebra no cotovelo: é a dobra que faz a
-    # silhueta de ave em vez de avião de papel. E mais grossas — a 0,022 elas
-    # desapareciam nesta câmera, que olha de cima.
+    corpo = [(0.82, 0.0), (0.46, 0.18), (-0.24, 0.15),
+             (-0.58, 0.34), (-0.48, 0.03), (-0.62, -0.34),
+             (-0.24, -0.15), (0.46, -0.18)]
+    p.append(prisma("gav_corpo", corpo, z(0.0), z(3.0), (0.92, 0.92),
+                    M["cabine"]))
+    # Asa em joelho: a ponta vem para trás do corpo e quebra o triângulo de
+    # avião de papel. Cada lado é um prisma único, uma forma lida de relance.
     for i, lado in enumerate((1, -1)):
-        # Asa CLARA inteira, com só um fio escuro no bordo de fuga. Na versão
-        # anterior a ponta era cinzenta e do tamanho da asa: lia como duas
-        # peças soltas em vez de uma asa só. Numa gaivota vista de cima o que
-        # há de escuro é uma orla fina, não metade da asa.
-        p.append(caixa("gav_asa%d" % i, (0.0, lado * 0.17, z(2.0)),
-                       (0.19, 0.34, 0.045), M["cabine"],
-                       rot=(lado * 12, 0, lado * -10)))
-        p.append(caixa("gav_ponta%d" % i, (-0.09, lado * 0.40, z(3.0)),
-                       (0.13, 0.22, 0.040), M["cabine"],
-                       rot=(lado * 18, 0, lado * -22)))
-        p.append(caixa("gav_fuga%d" % i, (-0.11, lado * 0.26, z(2.4)),
-                       (0.035, 0.50, 0.030), M["metal"],
-                       rot=(lado * 14, 0, lado * -14)))
-    p.append(caixa("gav_cauda", (-0.18, 0.0, z(0.8)), (0.10, 0.14, 0.030),
-                   M["metal"]))
+        asa = [(0.30, lado * 0.10), (0.06, lado * 0.24),
+               (-0.24, lado * 1.12), (-0.02, lado * 1.02),
+               (0.42, lado * 0.34)]
+        ponta = [(-0.24, lado * 1.12), (-0.02, lado * 1.02),
+                 (0.13, lado * 0.72), (-0.11, lado * 0.79)]
+        p.append(prisma("gav_asa%d" % i, asa, z(1.0), z(4.0),
+                        (0.96, 0.96), M["cabine"]))
+        p.append(prisma("gav_ponta%d" % i, ponta, z(4.1), z(5.0),
+                        (0.98, 0.98), M["metal"]))
+    p.append(prisma("gav_dorso", [(0.53, 0.0), (0.08, 0.09),
+                                   (-0.30, 0.0), (0.08, -0.09)],
+                    z(3.1), z(5.0), (0.95, 0.95), M["metal_claro"]))
+    p.append(prisma("gav_bico", [(0.98, 0.0), (0.76, 0.075),
+                                  (0.76, -0.075)],
+                    z(0.7), z(2.2), (0.92, 0.92), M["amarelo"]))
     origem("gaivota", tipo="voo")
-    est.registrar("gaivota", p, ancora="voo", celulas=(1, 1), habitat="ar",
-                  animacoes={"fly": {"frames": 6, "loop": True}},
+    selecao("gaivota", 0.0, 0.0, 1.0, 1.0)
+    est.registrar("gaivota", p, ancora="voo", selecionavel=True,
+                  celulas=(1, 1), habitat="ar",
+                  animacoes={"voo": {"frames": 6, "loop": True},
+                             "toque": {"frames": 4, "loop": False}},
                   cena_godot="res://scenes/fauna/Gaivota.tscn")
+
+
+def maria_farinha(M, est):
+    """Maria-farinha: caranguejo claro, largo e rente à areia."""
+    p = []
+    corpo = cone("mf_corpo", (0.0, 0.0, z(2.0)), 0.40, 0.32,
+                 z(4.0), 10, M["corda"])
+    corpo.scale.y = 0.72
+    p.append(corpo)
+    # Quatro pernas por lado em leque. O vazio entre elas é mais importante
+    # que a espessura: sem recorte o animal vira apenas uma pedra bege.
+    for lado in (1, -1):
+        for i, x in enumerate((-0.25, -0.08, 0.10, 0.25)):
+            y0 = lado * (0.20 + i * 0.02)
+            y1 = lado * (0.52 + i * 0.055)
+            p.append(barra("mf_perna_%d_%d" % (lado, i),
+                           (x, y0, z(1.6)), (x - 0.10, y1, z(0.8)),
+                           0.035, M["laranja"]))
+        # Pinça aberta, duas peças que deixam uma fenda legível.
+        p.append(barra("mf_pinca_a%d" % lado, (0.24, lado * 0.25, z(2.2)),
+                       (0.52, lado * 0.53, z(2.2)), 0.055, M["laranja"]))
+        p.append(barra("mf_pinca_b%d" % lado, (0.52, lado * 0.53, z(2.2)),
+                       (0.70, lado * 0.42, z(2.2)), 0.045, M["laranja"]))
+    origem("maria_farinha")
+    selecao("maria_farinha", 0.0, 0.0, 1.0, 1.0)
+    est.registrar("maria_farinha", p, selecionavel=True, celulas=(1, 1),
+                  habitat="areia",
+                  animacoes={"andar_lado": {"frames": 6, "loop": True},
+                             "toca": {"frames": 5, "loop": False}},
+                  cena_godot="res://scenes/fauna/MariaFarinha.tscn")
+
+
+def tartaruga_verde(M, est):
+    """Tartaruga-verde juvenil vista de cima, na linha de água."""
+    p = []
+    casco = cone("tv_casco", (0.0, 0.0, z(3.0)), 0.52, 0.40,
+                 z(6.0), 12, M["casco_pesca"])
+    casco.scale.y = 0.68
+    p.append(casco)
+    topo = cone("tv_placa", (-0.04, 0.0, z(6.4)), 0.35, 0.28,
+                z(1.3), 10, M["folha_clara"])
+    topo.scale.y = 0.66
+    p.append(topo)
+    cabeca = cone("tv_cabeca", (0.58, 0.0, z(2.6)), 0.18, 0.14,
+                  z(3.8), 10, M["folha"])
+    cabeca.scale.y = 0.78
+    p.append(cabeca)
+    for i, lado in enumerate((1, -1)):
+        frente = [(0.34, lado * 0.18), (0.13, lado * 0.34),
+                  (0.42, lado * 0.72), (0.64, lado * 0.60)]
+        tras = [(-0.32, lado * 0.16), (-0.48, lado * 0.25),
+                (-0.64, lado * 0.48), (-0.35, lado * 0.42)]
+        p.append(prisma("tv_nadadeira_f%d" % i, frente, z(1.0), z(3.4),
+                        (0.94, 0.94), M["folha"]))
+        p.append(prisma("tv_nadadeira_t%d" % i, tras, z(0.8), z(2.8),
+                        (0.94, 0.94), M["folha"]))
+    origem("tartaruga_verde", tipo="waterline")
+    selecao("tartaruga_verde", 0.0, 0.0, 1.0, 1.0)
+    est.registrar("tartaruga_verde", p, ancora="waterline", selecionavel=True,
+                  celulas=(1, 1), habitat="agua_rasa",
+                  animacoes={"nado": {"frames": 6, "loop": True},
+                             "mergulho": {"frames": 5, "loop": False}},
+                  cena_godot="res://scenes/fauna/TartarugaVerde.tscn")
 
 
 def coqueiro_jovem(M, est):
@@ -132,7 +183,8 @@ def arbusto(M, est):
                   animacoes={"wind_idle": {"frames": 6, "loop": True}})
 
 
-CATALOGO = (gaivota, coqueiro_jovem, arbusto)
+CATALOGO = (gaivota, maria_farinha, tartaruga_verde,
+            coqueiro_jovem, arbusto)
 
 
 def montar(M, est):
