@@ -206,7 +206,53 @@ numa corrida e R$0 noutra**, porque numa delas não havia barco na doca. Hoje
 semeia o `_rng`, monta o barco por `barco=0`, e as treze imagens da bateria
 saem byte a byte iguais em duas corridas seguidas.
 
-## 6. O que NÃO entrou: a faixa de mensagem, e o número que o diz
+## 6. A TERCEIRA PASSAGEM: a pose, que vale mais do que a cara
+
+Segundo pedido do Bruno: *"deixar os personagens com mais detalhes e mais
+expressivos"*. A parte do DETALHE era mais peça (e entrou: dentes no sorriso,
+pupila que se mexe, barba por fazer no Arlindo, pés-de-galinha e ruga na testa
+do Sr. Ribeiro, lenço de bolso, lápis atrás da orelha da Dona Cida). A parte da
+EXPRESSÃO não era: era pose.
+
+⚠️ **AS NOVE IMAGENS ESTAVAM NA MESMA POSE, e é isso que as fazia parecer a
+mesma imagem.** Com a cabeça parada, o que muda entre duas expressões são seis
+pixels de boca e quatro de sobrancelha — a cara inteira mede 56 px. Inclinar a
+cabeça muda a SILHUETA, que é o que se lê primeiro e o que sobrevive a qualquer
+tamanho: uma cabeça de lado lê como interesse antes de o olho chegar à boca, e
+uma de queixo em baixo lê como peso. É a lição da silhueta dos props deste
+projeto, aplicada a uma pessoa — e é de longe a alavanca mais forte das cinco.
+
+A tabela das caras passou a ter cinco colunas: **boca, sobrancelha, olho,
+olhar e pose**. A pose é `(roll, pitch, yaw)` em graus, aplicada à cabeça
+inteira sobre um pivô no MEIO DO PESCOÇO — sobre a base do crânio um roll de 6°
+abre uma fresta de pele, porque a cabeça roda sobre um pivô e não sobre uma
+rótula. Ângulos pequenos: a maior é o Arlindo contrariado, a virar-se 9° para
+o lado enquanto desvia os olhos.
+
+**E o olhar é o mais barato de todos.** A pupila é uma placa dentro da esclera;
+movê-la três pixels muda quem está a ser olhado. A Dona Cida preocupada baixa
+os olhos, o Arlindo contrariado desvia-os.
+
+⚠️ **A ORDEM DA POSE E DA CÂMERA NÃO É INDIFERENTE, e é de graça se se souber
+porquê.** A pose corre ANTES do `_girar_para_a_camera`, que soma 45° ao Z de
+cada peça — e somar ao Z é, na ordem Euler XYZ, exatamente pré-multiplicar por
+`Rz(45°)`, porque o Z é o fator de fora. Logo a pose acontece no espaço do
+busto, de frente, e a câmera vem depois. Ao contrário, a cabeça inclinar-se-ia
+num eixo diagonal que não é nenhum dos três que se pediram.
+
+⚠️ **E PEÇA PEQUENA ENCOSTADA A PEÇA GRANDE DESAPARECE SEM ERRO NENHUM.** O
+lápis da Dona Cida levou duas tentativas: a ±76 estava dentro da ORELHA (que
+vive exatamente ali) e a ±68 dentro da CÚPULA do cabelo, que é um cone de raio
+76. A régua de onde pôr um acessório é o raio da peça VIZINHA, não a largura da
+cabeça — e a única maneira de saber que ele não estava lá foi olhar o render,
+porque contagem de peças diz cinco na mesma.
+
+**O brinco saiu quando o lápis entrou**, pela regra do acento único: dois
+pontos dourados na mesma cara e nenhum aponta para nada. Entre um brinco e a
+ferramenta da profissão dela, fica a ferramenta — é a mesma escolha que pôs o
+boné no Arlindo e a gravata no Sr. Ribeiro.
+
+## 7. O que NÃO entrou: a faixa de mensagem, e o número que o diz
 
 O plano avisa que a alínea (c) *"esbarra numa regra deste arquivo: nada de
 interface pousa sobre o mapa"*, e manda medir onde o cartão cabe **antes** de o

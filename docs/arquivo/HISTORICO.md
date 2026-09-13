@@ -40,6 +40,16 @@ VELHO quando o `--import` não corria, e o `capturar_cena.gd` nunca semeava o
 gerador do jogo — a foto nova da contra-oferta dava R$16.104 numa corrida e
 R$0 noutra.
 
+**E A TERCEIRA PASSAGEM FOI A POSE.** O pedido seguinte — *"mais detalhes e
+mais expressivos"* — tinha duas metades, e só uma era detalhe: as nove imagens
+estavam todas na MESMA pose, e com a cabeça parada o que separa duas
+expressões são seis pixels de boca. A tabela das caras passou a ter cinco
+alavancas (boca, sobrancelha, olho, olhar e pose), a cabeça roda sobre um pivô
+no meio do pescoço, e a pupila anda dentro da esclera. De detalhe entraram
+dentes no sorriso, barba por fazer, pés-de-galinha, ruga na testa, lenço de
+bolso e um lápis atrás da orelha da contabilista — que levou duas tentativas
+para não desaparecer dentro da orelha e da cúpula do cabelo.
+
 **A REVISÃO EXTERNA DE 12/09 FECHOU TRÊS DIVERGÊNCIAS.** A parcela paga no
 vencimento era lançada depois de o boletim da semana 4 ter sido emitido e
 zerado: o caixa estava certo, mas o relatório inflava o resultado em

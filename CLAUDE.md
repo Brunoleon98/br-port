@@ -784,6 +784,22 @@ tranca isso.
   caixa do grupo, ela juntava o `x` de um braço com o `y` de uma bota e o `z`
   do capacete e errava por 17px. Caixa de grupo serve para saber se algo cabe
   num sítio; não serve para dizer o que a câmera vê.
+- **⚠️ NUM ROSTO PEQUENO, A POSE VALE MAIS DO QUE A CARA.** Os nove retratos
+  de 13/09 tinham três bocas, três sobrancelhas e três olhos diferentes — e a
+  queixa foi que eram pouco expressivos, com razão: numa cara de 56px o que
+  muda entre duas expressões são seis pixels de boca e quatro de sobrancelha,
+  enquanto INCLINAR A CABEÇA muda a silhueta inteira, que é o que o olho lê
+  primeiro. Cabeça de lado lê como interesse antes de se chegar à boca; queixo
+  em baixo lê como peso. A pose roda sobre um pivô no MEIO do pescoço (sobre a
+  base do crânio abre-se uma fresta), em ângulos pequenos, e vem ANTES do giro
+  para a câmera — somar 45° ao Z é pré-multiplicar por Rz, porque o Z é o fator
+  de fora da Euler XYZ.
+- **⚠️ E PEÇA PEQUENA ENCOSTADA A PEÇA GRANDE DESAPARECE SEM ERRO NENHUM.** O
+  lápis atrás da orelha levou duas tentativas: no `x` da orelha ficou DENTRO
+  dela, e mais para dentro ficou dentro da cúpula do cabelo, que é um cone de
+  raio 76. A régua para pôr um acessório é o raio da peça VIZINHA e não a
+  largura da cabeça — e quem conta peças conta cinco na mesma, que é a regra da
+  boia com a corrente dentro do cone, à escala de uma cara.
 - **⚠️ E O QUE A PEÇA TEM DE MOSTRAR DECIDE O ENQUADRAMENTO DELA.** Irmã da
   regra abaixo, um passo antes: ali o tamanho do widget decide a escala, aqui a
   FUNÇÃO decide o corte. O `trabalhador_retrato` é de corpo inteiro porque

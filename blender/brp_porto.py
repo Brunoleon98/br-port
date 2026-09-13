@@ -16,6 +16,8 @@ Todas as peças usam o kit de `tools/gerar_props_iso.py` e a câmera do contrato
 
 import math
 
+from mathutils import Euler, Matrix, Vector
+
 from brp_studio import (caixa, cone, prisma, barra, corrimao, na_face,
                         janela, moldura, poste_de_luz, origem, selecao, z)
 
@@ -827,7 +829,7 @@ def _cabeca_plano():
     return centro, tam
 
 
-def _placa(nome, u, v, larg, alt_px, mat, inclina=0.0):
+def _placa(nome, u, v, larg, alt_px, mat, inclina=0.0, fora=0.0):
     """Uma placa na face `-y` da cabeça — o único sítio onde a cara cabe.
 
     `inclina` gira a placa DENTRO da face, em torno do eixo Y do mundo, que é
@@ -839,7 +841,7 @@ def _placa(nome, u, v, larg, alt_px, mat, inclina=0.0):
     """
     centro, tam = _cabeca_plano()
     o = na_face(nome, "-y", centro, tam, _lg(u), _alt(v),
-                _lg(larg), _alt(alt_px), 0.02, mat)
+                _lg(larg), _alt(alt_px), 0.02, mat, fora)
     if inclina:
         o.rotation_euler.y = math.radians(inclina)
     return o
@@ -849,25 +851,97 @@ def _placa(nome, u, v, larg, alt_px, mat, inclina=0.0):
 # que existe é BOCA, SOBRANCELHA e OLHO: nariz não cabe (o trabalhador também
 # não tem) e ruga é ruído. Nove expressões saem de combinar três alavancas, o
 # que também é o que impede a décima de ser um desenho à parte.
+# A altura a que a cabeça gira. É o meio do pescoço e não a base do crânio:
+# sobre a base, um roll de 6° abre uma fresta de pele entre a cabeça e o
+# pescoço; sobre o meio do pescoço o movimento reparte-se e a fresta fecha.
+_PIVO_CABECA = 104.0
+
+
+def _pousar_cabeca(pecas, pose):
+    """Roda a cabeça inteira sobre o pescoço: roll, pitch e yaw, em graus.
+
+    ⚠️ A ORDEM IMPORTA, e é aqui que se paga se ela estiver trocada. Isto corre
+    ANTES do `_girar_para_a_camera`, que soma 45° ao Z de cada peça — e somar
+    45 ao Z é, na ordem Euler XYZ do Godot e do Blender, exatamente
+    pré-multiplicar por Rz(45°), porque o Z é o fator de FORA. Logo a pose
+    acontece no espaço do busto, de frente, e a câmera vem depois; ao
+    contrário, a cabeça inclinar-se-ia num eixo diagonal que não é nenhum dos
+    três que se pediram.
+
+    A rotação é sobre um PIVÔ, e não sobre a origem de cada peça: rodar cada
+    caixa sobre o próprio centro desmontaria a cabeça, que é a mesma armadilha
+    que o `_girar_para_a_camera` documenta ao lado.
+    """
+    roll, pitch, yaw = pose
+    if roll == 0.0 and pitch == 0.0 and yaw == 0.0:
+        return
+    pivo = Vector((0.0, 0.0, _niv(_PIVO_CABECA)))
+    giro = Euler((math.radians(pitch), math.radians(roll),
+                  math.radians(yaw)), "XYZ").to_matrix().to_4x4()
+    mover = Matrix.Translation(pivo) @ giro @ Matrix.Translation(-pivo)
+    for o in pecas:
+        o.matrix_world = mover @ o.matrix_world
+
+
+# AS CINCO ALAVANCAS DA EXPRESSÃO, e não um desenho por emoção. Três são da
+# CARA — boca, sobrancelha e olho —, e duas são do que a cara não consegue
+# fazer sozinha a este tamanho:
+#
+# ⚠️ A POSE É A ALAVANCA MAIS FORTE DAS CINCO, e foi a última a entrar. Com as
+# nove imagens na mesma pose, o que muda entre elas são seis pixels de boca e
+# quatro de sobrancelha; inclinar a cabeça muda a SILHUETA inteira, que é o que
+# se lê primeiro e o que sobrevive a qualquer tamanho. Uma cabeça de lado lê
+# como interesse antes de o olho chegar à boca, e uma de queixo em baixo lê
+# como peso. É a mesma lição da silhueta dos props, aplicada a uma pessoa.
+#
+# ⚠️ E O OLHAR NÃO É A CARA: é PARA ONDE ela olha. A pupila é uma placa dentro
+# da esclera, e movê-la três pixels muda quem está a ser olhado — o Arlindo
+# contrariado desvia os olhos, a Dona Cida preocupada baixa-os. Custa um
+# deslocamento e vale uma expressão inteira.
+#
+# `pose` é (roll, pitch, yaw) em graus: inclinar a cabeça para o ombro, baixar
+# ou levantar o queixo, virar para o lado. Ângulos pequenos — acima de uns 10°
+# o pescoço abre uma fresta, porque a cabeça roda sobre um pivô e não sobre uma
+# rótula.
 _CARAS = {
     # Dona Cida — pragmática, brava, leal. O tom dela no boletim tem quatro
     # entradas e três caras: o "primeira semana no vermelho" e o "de novo"
     # pedem a mesma preocupação.
-    ("cida", "seria"):          ("reta", "neutra", "aberto"),
-    ("cida", "preocupada"):     ("descontente", "franzida", "aberto"),
-    ("cida", "contente"):       ("sorriso", "erguida", "aberto"),
+    ("cida", "seria"): dict(
+        boca="reta", cenho="neutra", olho="aberto", olhar="frente",
+        pose=(0.0, 0.0, 0.0)),
+    ("cida", "preocupada"): dict(
+        boca="descontente", cenho="franzida", olho="aberto", olhar="baixo",
+        pose=(-3.0, 5.0, -4.0)),
+    ("cida", "contente"): dict(
+        boca="sorriso", cenho="erguida", olho="aberto", olhar="frente",
+        pose=(6.0, -3.0, 0.0)),
     # Arlindo — "sempre sorrindo quando ataca", diz o guia de voz. Por isso o
     # sorriso é o estado NORMAL dele e não a recompensa: o que muda quando a
     # negociação aperta é o sorriso SAIR.
-    ("arlindo", "sorriso"):     ("sorriso", "erguida", "aberto"),
-    ("arlindo", "pressao"):     ("reta", "franzida", "cerrado"),
-    ("arlindo", "contrariado"): ("descontente", "torta", "aberto"),
+    ("arlindo", "sorriso"): dict(
+        boca="sorriso", cenho="erguida", olho="aberto", olhar="frente",
+        pose=(4.0, -2.0, 6.0)),
+    # Queixo em baixo e olhos por baixo da aba: é assim que se olha alguém
+    # quando a conversa deixou de ser simpática.
+    ("arlindo", "pressao"): dict(
+        boca="reta", cenho="franzida", olho="cerrado", olhar="frente",
+        pose=(0.0, 6.0, 0.0)),
+    ("arlindo", "contrariado"): dict(
+        boca="descontente", cenho="torta", olho="aberto", olhar="lado",
+        pose=(-2.0, 1.0, -9.0)),
     # Sr. Ribeiro — "quando bravo fica MAIS educado, não menos". A cara grave
     # dele não é uma cara zangada: é a cordial com a boca em baixo e os olhos
     # cerrados, que é o que a educação faz com a contrariedade.
-    ("ribeiro", "cordial"):     ("sorriso_curto", "neutra", "aberto"),
-    ("ribeiro", "formal"):      ("reta", "neutra", "aberto"),
-    ("ribeiro", "grave"):       ("descontente", "franzida", "cerrado"),
+    ("ribeiro", "cordial"): dict(
+        boca="sorriso_curto", cenho="neutra", olho="aberto", olhar="frente",
+        pose=(3.0, -2.0, 3.0)),
+    ("ribeiro", "formal"): dict(
+        boca="reta", cenho="neutra", olho="aberto", olhar="frente",
+        pose=(0.0, 0.0, 0.0)),
+    ("ribeiro", "grave"): dict(
+        boca="descontente", cenho="franzida", olho="cerrado", olhar="frente",
+        pose=(0.0, 5.0, 0.0)),
 }
 
 # Quais expressões cada personagem tem. É esta tabela que o gerador percorre —
@@ -893,9 +967,15 @@ def _olhos(M, cara, escuro):
     corrugado: quem desenha detalhe neste tamanho é a fronteira de VALOR entre
     duas placas, nunca o relevo, que o antisserrilhado come.
     """
-    aberto = cara[2] == "aberto"
+    aberto = cara["olho"] == "aberto"
     alto = 24.0 if aberto else 12.0
     v = 24.0 if aberto else 18.0
+    # PARA ONDE ELE OLHA. A pupila anda dentro da esclera: três pixels de
+    # desvio mudam quem está a ser olhado, e é o mais barato que há para
+    # comprar expressão. Os limites saem do tamanho da esclera (36 x 24) menos
+    # o da pupila (15 x alto-7): mais do que isto e a pupila sai do olho.
+    desvio = {"frente": (0.0, 0.0), "lado": (8.0, 0.0),
+              "baixo": (0.0, -5.0), "cima": (0.0, 4.0)}[cara["olhar"]]
     pecas = []
     for lado, u in (("e", -32.0), ("d", 32.0)):
         pecas.append(_placa("olho_branco_%s" % lado, u, v, 36.0, alto,
@@ -905,8 +985,8 @@ def _olhos(M, cara, escuro):
         # plano dariam o z-buffer a escolher ao acaso, que é o losango preto
         # que este arquivo já registou duas vezes.
         pecas.append(na_face("olho_pupila_%s" % lado, "-y", *_cabeca_plano(),
-                             _lg(u), _alt(v - 1.0), _lg(15.0),
-                             _alt(alto - 7.0), 0.02, escuro, 0.012))
+                             _lg(u + desvio[0]), _alt(v - 1.0 + desvio[1]),
+                             _lg(15.0), _alt(alto - 7.0), 0.02, escuro, 0.012))
     return pecas
 
 
@@ -932,7 +1012,7 @@ def _sobrancelhas(M, cara, escuro):
     sobrancelha franzida e outra erguida, que é a cara `torta` do Arlindo por
     acidente em vez de por decisão.
     """
-    estilo = cara[1]
+    estilo = cara["cenho"]
     barras = []
     for lado, u, sinal in (("e", -32.0, 1.0), ("d", 32.0, -1.0)):
         # ⚠️ A ALTURA DELAS É LIMITADA PELA FRANJA, e não pela cara. A 56 a
@@ -963,13 +1043,18 @@ def _boca(M, cara, escuro):
     tela) não chegaria; a diferença que se vê é o canto ficar fora da barra,
     acima ou abaixo dela, que é como o pixel art desenha sorriso desde sempre.
     """
-    estilo = cara[0]
+    estilo = cara["boca"]
     if estilo == "reta":
         return [_placa("boca", 0.0, -44.0, 56.0, 12.0, escuro)]
     if estilo == "sorriso":
         pecas = [_placa("boca", 0.0, -50.0, 56.0, 12.0, escuro)]
         pecas += [_placa("boca_canto_%s" % l, u, -38.0, 14.0, 12.0, escuro)
                   for l, u in (("e", -35.0), ("d", 35.0))]
+        # OS DENTES, que são o que separa um sorriso de uma boca virada para
+        # cima. Uma placa clara de três pixels por cima da barra escura: a
+        # mesma receita do branco do olho, e vale o mesmo — a fronteira de
+        # valor é que desenha, não o relevo.
+        pecas.append(_placa("dentes", 0.0, -44.0, 30.0, 5.0, M["cabine"]))
         return pecas
     if estilo == "sorriso_curto":
         pecas = [_placa("boca", 0.0, -47.0, 38.0, 12.0, escuro)]
@@ -998,8 +1083,14 @@ def _corpo(M, pele, roupa, sombra):
     queixo à frente da boca. É a mesma armadilha que o colete do trabalhador
     registou, e aqui ela apanharia doze peças de uma vez.
     """
-    pecas = [prisma("ombros", _contorno_oitavado(_OMBRO_LARG, _OMBRO_FUNDO, 38.0),
-                    _niv(_OMBRO_Z[0]), _niv(_OMBRO_Z[1]), (0.86, 1.0), roupa)]
+    # DUAS LISTAS, e é o que permite a cabeça ter POSE. O que está acima do
+    # pescoço roda com ela — cabelo, boné, cara, orelhas —, e o tronco fica
+    # quieto; devolver uma lista só obrigaria quem chama a adivinhar onde
+    # acaba um e começa o outro, pela ordem, que é o tipo de contrato que se
+    # parte em silêncio no dia em que alguém acrescenta uma peça no meio.
+    tronco = [prisma("ombros", _contorno_oitavado(_OMBRO_LARG, _OMBRO_FUNDO, 38.0),
+                     _niv(_OMBRO_Z[0]), _niv(_OMBRO_Z[1]), (0.86, 1.0), roupa)]
+    pecas = tronco
 
     # O TRAPÉZIO — o degrau entre o ombro e o pescoço. É ele que faz o ombro
     # CAIR para fora em vez de ser uma prateleira: sem ele o topo do tronco é
@@ -1022,6 +1113,7 @@ def _corpo(M, pele, roupa, sombra):
     # A CABEÇA SÃO DUAS PEÇAS: maxilar que estreita para o queixo, crânio que
     # estreita para o alto. Uma peça só dá o tijolo; duas dão maçã do rosto e
     # queixo com quatro números e sem custo de render.
+    pecas = []
     pecas.append(prisma("maxilar",
                         _contorno_oitavado(_CABECA_LARG, _CABECA_FUNDO, 20.0),
                         _niv(_CABECA_Z[0]), _niv(_CABECA_MAXILAR),
@@ -1044,7 +1136,7 @@ def _corpo(M, pele, roupa, sombra):
         pecas.append(prisma("orelha_%s" % lado, _contorno_oitavado(16.0, 30.0, 5.0),
                             _niv(228.0), _niv(266.0), (1.0, 1.0), pele))
         pecas[-1].location.x += u * _lg(_CABECA_LARG / 2.0 + 2.0)
-    return pecas
+    return tronco, pecas
 
 
 def _gola(nome, mat):
@@ -1066,6 +1158,9 @@ def _gola(nome, mat):
     # personagens simplesmente não estava no render — não havia erro nenhum a
     # dizê-lo, só um pescoço sem gola. Numa peça que envolve outra, o fundo é
     # que decide quem se vê.
+    # ⚠️ E ELA TEM DE CHEGAR AO QUEIXO. Encurtada de 20 para 14 ela descolou:
+    # ficou uma barra clara a flutuar no peito, com a pele do pescoço a
+    # aparecer por cima. Uma gola que não toca o pescoço não é uma gola.
     return prisma(nome, _contorno_oitavado(86.0, 76.0, 12.0),
                   _niv(_OMBRO_Z[1] - 2.0), _niv(_OMBRO_Z[1] + 20.0),
                   (1.0, 1.0), mat)
@@ -1089,7 +1184,8 @@ def _cida(M, cara):
     é o que sobrevive a 96px.
     """
     escuro = M["vao"]
-    pecas = _corpo(M, M["pele_escura"], M["casco_pesca"], M["pele_sombra"])
+    tronco, pecas = _corpo(M, M["pele_escura"], M["casco_pesca"],
+                           M["pele_sombra"])
 
     # O CABELO SÃO TRÊS CAMADAS e não um capacete. A versão de uma peça só era
     # uma laje castanha pousada na cabeça: aqui a franja desce sobre a testa,
@@ -1136,12 +1232,31 @@ def _cida(M, cara):
     # A gola da blusa é clara, e é a única peça clara do busto dela: sem ela o
     # peito é uma chapa verde de um terço da imagem — a mesma queixa do
     # armazém antes da plataforma de carga, à escala de um cartão.
-    pecas.append(_gola("gola", M["cabine"]))
-    # E o brinco, que é a peça de acento. Fica UMA: com o coque, os óculos e o
-    # brinco a chamar, o dourado deixaria de apontar para coisa nenhuma.
-    pecas.append(caixa("brinco", (_lg(70.0), 0.0, _niv(222.0)),
-                       (_lg(8.0), _pf(10.0), _alt(12.0)), M["capacete"]))
-    return pecas
+    tronco.append(_gola("gola", M["cabine"]))
+    # ⚠️ O BRINCO SAIU QUANDO O LÁPIS ENTROU, e é a regra do acento único: os
+    # dois eram dourados, e com dois pontos da mesma cor de acento nenhum deles
+    # aponta para coisa nenhuma. Entre um brinco e a ferramenta da profissão
+    # dela, fica a ferramenta — é a mesma escolha que pôs o boné no Arlindo e
+    # a gravata no Sr. Ribeiro.
+    # O LÁPIS ATRÁS DA ORELHA. É contabilista, e é a peça que diz a profissão
+    # dela sem uma palavra — o equivalente ao boné do Arlindo e à gravata do
+    # Sr. Ribeiro, que ambos tinham e ela não.
+    # ⚠️ ELE FICA ACIMA DA ORELHA E NÃO AO LADO DELA. A primeira versão estava
+    # exatamente no `x` da orelha (±76) e desapareceu dentro dela — duas peças
+    # à mesma distância do eixo, uma dentro da outra, e nada a dizê-lo.
+    # ⚠️ ELE FICA FORA DO CABELO, e isso custou duas tentativas: a ±76 estava
+    # dentro da orelha e a ±68 dentro da cúpula do cabelo (que tem raio 76).
+    # Peça pequena encostada a peça grande do mesmo prop desaparece sem erro
+    # nenhum — a régua aqui é o RAIO da peça vizinha, não o tamanho da cabeça.
+    lapis = caixa("lapis", (_lg(84.0), _pf(4.0), _niv(272.0)),
+                  (_lg(9.0), _pf(9.0), _alt(50.0)), M["capacete"])
+    lapis.rotation_euler.y = math.radians(-14.0)
+    pecas.append(lapis)
+    ponta = caixa("lapis_ponta", (_lg(90.0), _pf(4.0), _niv(246.0)),
+                  (_lg(9.0), _pf(9.0), _alt(11.0)), M["madeira_esc"])
+    ponta.rotation_euler.y = math.radians(-14.0)
+    pecas.append(ponta)
+    return tronco, pecas
 
 
 def _arlindo(M, cara):
@@ -1154,7 +1269,7 @@ def _arlindo(M, cara):
     regra do contraste contra o FUNDO, e aqui o fundo é papel.
     """
     escuro = M["vao"]
-    pecas = _corpo(M, M["pele"], M["vidro"], M["pele_escura"])
+    tronco, pecas = _corpo(M, M["pele"], M["vidro"], M["pele_escura"])
 
     # A COPA DO BONÉ É UM CILINDRO DE DOZE LADOS, não uma caixa: boné é a peça
     # redonda por excelência, e uma caixa em cima da cabeça lê como embalagem.
@@ -1187,17 +1302,26 @@ def _arlindo(M, cara):
 
     pecas += _olhos(M, cara, escuro) + _sobrancelhas(M, cara, escuro)
     pecas += _nariz(M, M["pele_escura"])
+    # A BARBA POR FAZER, e ela é RECUADA. Uma placa de sombra no maxilar, atrás
+    # das da boca: à mesma saliência que elas o z-buffer escolheria ao acaso
+    # justamente onde a boca cai, e a barba comeria o bigode.
+    pecas.append(_placa("barba", 0.0, -44.0, 84.0, 42.0, M["pele_escura"],
+                        0.0, -0.006))
     # O BIGODE É DUAS PEÇAS, com o meio mais alto: um retângulo de ponta a
     # ponta lê como boca fechada e apaga a boca de verdade que vem por baixo.
-    pecas.append(_placa("bigode", 0.0, -22.0, 26.0, 13.0, M["madeira_esc"]))
+    # ⚠️ O BIGODE É CLARO, e não da cor da boca. Em `madeira_esc` ele e a boca
+    # eram a mesma mancha escura no cartão — duas peças vizinhas do mesmo tom
+    # fundem-se, que é a regra do caixote no tabuado, aqui a dois pixels de
+    # distância. Um passo mais claro separa-os e o bigode passa a ser peça.
+    pecas.append(_placa("bigode", 0.0, -20.0, 26.0, 12.0, M["madeira"]))
     for lado, u in (("e", -22.0), ("d", 22.0)):
-        pecas.append(_placa("bigode_%s" % lado, u, -26.0, 20.0, 11.0,
-                            M["madeira_esc"]))
+        pecas.append(_placa("bigode_%s" % lado, u, -24.0, 20.0, 10.0,
+                            M["madeira"]))
     pecas += _boca(M, cara, escuro)
 
     # Gola aberta, que é o que o guia de voz descreve em roupa: familiaridade
     # como ferramenta. Fechada com gravata seria o Sr. Ribeiro.
-    pecas.append(_gola("gola", M["pele"]))
+    tronco.append(_gola("gola", M["pele"]))
     # A GOLA ABERTA SÃO DUAS PONTAS INCLINADAS, e não dois retângulos: chatos
     # e a direito eles leem como dois BOLSOS colados no peito, que foi o que
     # a primeira versão deu.
@@ -1205,14 +1329,14 @@ def _arlindo(M, cara):
         ponta = _no_peito("colarinho_%s" % lado, u, 12.0, 26.0, 58.0,
                           M["casco"])
         ponta.rotation_euler.y = math.radians(ang)
-        pecas.append(ponta)
-    return pecas
+        tronco.append(ponta)
+    return tronco, pecas
 
 
 def _ribeiro(M, cara):
     """Terno, gravata e a cabeça grisalha — o banco com um rosto simpático."""
     escuro = M["vao"]
-    pecas = _corpo(M, M["pele_clara"], M["casco"], M["pele"])
+    tronco, pecas = _corpo(M, M["pele_clara"], M["casco"], M["pele"])
 
     # A COROA DE CABELO, e não uma cabeleira. Ele é o mais velho dos três e a
     # careca é metade da silhueta que o distingue: cabelo só dos lados e uma
@@ -1237,21 +1361,33 @@ def _ribeiro(M, cara):
     pecas += _olhos(M, cara, escuro) + _sobrancelhas(M, cara, escuro)
     pecas += _nariz(M, M["pele"])
     pecas += _boca(M, cara, escuro)
+    # A IDADE DELE, em três placas de sombra: os pés-de-galinha e uma ruga na
+    # testa. É o mais velho dos três e o único careca; sem isto a careca fazia
+    # todo o trabalho sozinha, e careca não é idade — é penteado.
+    for lado, u in (("e", -46.0), ("d", 46.0)):
+        pecas.append(_placa("pe_de_galinha_%s" % lado, u, 20.0, 14.0, 5.0,
+                            M["pele"], 0.0, -0.006))
+    pecas.append(_placa("ruga_testa", 0.0, 66.0, 54.0, 5.0, M["pele"],
+                        0.0, -0.006))
 
     # Camisa, gravata e LAPELAS. As lapelas são o que separa um terno de uma
     # camisola de gola alta a esta escala: duas placas inclinadas a abrir um V
     # a partir do colarinho, num navy um passo mais escuro — porque duas peças
     # do mesmo tom encostadas fundem-se, e o peito voltaria a ser uma chapa.
-    pecas.append(_no_peito("camisa", 0.0, 8.0, 56.0, 40.0, M["cabine"]))
-    pecas.append(_no_peito("gravata", 0.0, 2.0, 20.0, 46.0, M["faixa"]))
-    pecas.append(_no_peito("gravata_no", 0.0, 24.0, 24.0, 14.0, M["faixa"]))
+    tronco.append(_no_peito("camisa", 0.0, 8.0, 56.0, 40.0, M["cabine"]))
+    tronco.append(_no_peito("gravata", 0.0, 2.0, 20.0, 46.0, M["faixa"]))
+    tronco.append(_no_peito("gravata_no", 0.0, 24.0, 24.0, 14.0, M["faixa"]))
     for lado, u, ang in (("e", -46.0, -22.0), ("d", 46.0, 22.0)):
         lapela = _no_peito("lapela_%s" % lado, u, 6.0, 34.0, 62.0,
                            M["terno_lapela"])
         lapela.rotation_euler.y = math.radians(ang)
-        pecas.append(lapela)
-    pecas.append(_gola("colarinho", M["cabine"]))
-    return pecas
+        tronco.append(lapela)
+    # O LENÇO DE BOLSO. Três pixels de branco no navy, e é o que faz o terno
+    # ler como terno de banco em vez de casaco: peça da FUNÇÃO, como a
+    # plataforma de carga do armazém.
+    tronco.append(_no_peito("lenco", -62.0, -12.0, 20.0, 10.0, M["cabine"]))
+    tronco.append(_gola("colarinho", M["cabine"]))
+    return tronco, pecas
 
 
 _PERSONAGENS = {"cida": _cida, "arlindo": _arlindo, "ribeiro": _ribeiro}
@@ -1270,7 +1406,9 @@ def retratos_de_fala(M, est):
         for expressao in expressoes:
             nome = "retrato_%s_%s" % (personagem, expressao)
             cara = _CARAS[(personagem, expressao)]
-            pecas = _PERSONAGENS[personagem](M, cara)
+            tronco, cabeca = _PERSONAGENS[personagem](M, cara)
+            _pousar_cabeca(cabeca, cara["pose"])
+            pecas = tronco + cabeca
             for peca in pecas:
                 peca.name = "%s_%s" % (nome, peca.name)
             _girar_para_a_camera(pecas)
