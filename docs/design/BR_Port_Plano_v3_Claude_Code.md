@@ -1275,8 +1275,83 @@ gaivotão, maria-farinha e tartaruga-verde juvenil, cada um com movimento,
 reação e som ao toque; mar e gaivota também soam em intervalos irregulares.
 O gate visual continua sendo o A5 e o auditivo, o A6.
 
-**Restam dois itens de arte, ambos separados:** prédios em obra e avançados
-(12, médio) e curvas em vez de retas (8, grande). O 8 não foi puxado para o 9:
+### ✅ O ITEM 12 FECHOU — três lotes da vila que não são casa (13/09)
+
+**`docs/decisoes/022`.** A vila ganhou uma **igreja** com torre, uma **praça**
+com coreto e meio-fio, e **duas obras**. Nenhum prop novo e nenhuma mecânica: a
+vila é assada no SVG, e a mudança é toda de desenho — a tabela de âncoras não
+mudou de geometria e só as sete imagens de mapa se mexeram.
+
+**O âmbito disse não a metade do pedido, e cada não tem um número.** "Casas de
+dois andares" já existiam (`--nivel-vila=2`). "Prédio em reforma" não pode ser
+um estado do armazém nem do escritório, porque `comprar_estrutura()` é
+INSTANTÂNEO — um estado em obra só existe se a obra durar, e isso é a economia
+medida. E "à medida que o porto cresce" reabriria a decisão de a vila trocar
+entre FASES e não entre turnos. **O indicador que o pedido quer entrou por outro
+caminho:** a obra de um nível é desenhada com a altura do nível SEGUINTE.
+
+**E "comércios variados" ficou de fora, medido:** um lote tem 51 px de largura e
+12 a 15 de parede, e a essa escala um toldo tem 20 px e uma vitrine 4 — não há
+detalhe que distinga um comércio de uma casa. Os três que entraram são os três
+que mudam a FORMA do lote: sem telhado, com uma vertical, sem casa.
+
+Rendeu duas guardas — uma no GERADOR (a torre cresce com o nível e sai do quadro
+na Fase em que a vila subir; ela reprova antes de escrever) e o bloco **D24**,
+o terceiro deste projeto a ler a COR do mapa. E rendeu a lição de que **a janela
+de uma prova tem de ser da escala da peça**: com um raio único, dois dos cinco
+defeitos injetados passaram inteiros.
+
+**Resta um item de arte, separado:** curvas em vez de retas (8, grande).
+
+### ⚠️ DOIS DEFEITOS VISTOS E MEDIDOS EM 13/09, por fazer
+
+Os dois saíram de o Bruno olhar a captura, e os dois estão MEDIDOS — a sessão
+que os pegar não precisa de os redescobrir.
+
+**1. A AREIA DA PRAIA ATRAVESSA A RUA.** Visível no `inicio.png`, na praia do
+degrau 0 (topo do quadro): a faixa de areia passa por cima do asfalto e a rua
+desaparece por baixo dela.
+
+⚠️ **É a IRMÃ NÃO VARRIDA de uma lição já escrita.** O `CLAUDE.md` regista, a
+propósito do capim da restinga: *"O que CRESCE no chão pertence à camada do
+chão. O capim nasceu junto com a areia, que é desenhada no fim com o
+enrocamento — depois da rua e depois da vila — e apareceu por cima dos telhados
+e do passeio."* O capim foi corrigido; **a areia, que era a causa, não**.
+
+⚠️ **E o D20 passa por lá e não vê.** A `ROTA_ESTRADA` começa em
+`(-3,45, -14,00)`, que é dentro da praia do degrau 0 — o bloco cruza mesmo o
+sítio do defeito. Ele só pergunta *"este ponto não é CALÇADA?"*, e areia não é
+calçada. **A guarda que falta é uma linha**: na rota, também não pode ser areia.
+
+**2. OS TRÊS ANIMAIS ESTÃO GRANDES DEMAIS**, e o número diz quanto:
+
+| peça | desenho | |
+|---|---:|---|
+| gaivota | **48 × 27** | |
+| maria-farinha | **44 × 25** | |
+| tartaruga-verde | **47 × 25** | |
+| trabalhador (uma PESSOA) | 15 × 26 | referência |
+| bote de pesca (um BARCO) | 44 × 41 | referência |
+
+**O caranguejo tem a largura do bote de pesca inteiro e três vezes a de uma
+pessoa.**
+
+⚠️ **E a correção não é reverter às cegas, porque o tamanho foi uma ESCOLHA
+registada.** O cabeçalho do `blender/brp_fauna.py` diz: *"A gaivota anterior
+ocupava só cerca de 20 px do quadro e lia como planador. A quarta versão troca
+caixas por prismas de silhueta... Ela também ganha escala de jogo."* Ou seja, o
+problema antigo era de DESENHO e resolveu-se com desenho **e** com tamanho — e a
+pergunta por responder é se a silhueta nova já se lê pequena, que é o que
+tornaria o crescimento desnecessário.
+
+**O alvo de toque não estorva:** ele é um `CircleShape2D` de raio 30, IRMÃO do
+`Sprite2D` e não filho — encolher o sprite não o encolhe. O compromisso a nomear
+é o outro: um sprite muito menor do que o círculo faz o bicho reagir a um toque
+ao lado dele.
+
+**Custa `bpy`:** os três saem de `blender/brp_fauna.py`, logo a sessão precisa do
+`pip install "bpy==4.5.0"` (~1 GB, minutos). A areia não precisa de Blender
+nenhum. O 8 não foi puxado para o 9:
 o contorno e a tabela de âncoras permanecem iguais.
 
 ### ✅ O ITEM 5 FECHOU INTEIRO — 5a medido, 5b escrito (11/09)
@@ -1416,6 +1491,41 @@ menu de pausa e com ele o `.jsonl` da partida) foi feito em 07/09.
 
 ⚠️ **E três coisas que NÃO são itens de fila, e é por isso que estão aqui em vez
 de numeradas:**
+
+### ✅ O ITEM 17 FECHOU — a CASCA do menu-celular (13/09)
+
+**`docs/decisoes/021`.** O botão entrou no HUD inferior, e a tela é um celular.
+**Só a casca:** o mapa da cidade, as lojas e as missões continuam fechados, e
+por escrito — cada um é um quadrado APAGADO no visor, que nunca foi botão, com
+uma linha a dizer que abrem na Fase 2. Um botão morto ensinaria o jogador a não
+voltar ao menu, e a nota do rodapé é o que faz de uma porta fechada uma porta.
+
+**As três decisões que a sessão tomou, todas com o número na mão:**
+
+- **celular, e não mais um cartão branco** — a moldura SUBSTITUI a margem do
+  cartão em vez de se somar a ela: 352 px úteis contra 372, **5,4%**. E o que
+  faz a metáfora ler é a PROPORÇÃO, não a moldura: a 400×390 (altura ao
+  conteúdo) lia-se como um cartão de cantos redondos; a 400×680, não;
+- **o espaço saiu da linha do Construir**, e não do `AcoesTurno`. As duas
+  cabiam — "AVANÇAR DIA" ficaria com 356 px e pede 188 —, mas a linha do avanço
+  é o que FECHA o turno e carrega o único destaque da tela. A do Construir é o
+  que se faz ENTRE turnos, que é o registo de um menu; o pior texto dela pede
+  240 px e ela ficou com 630;
+- **só entra o que NÃO TEM PORTA.** As quatro pílulas, o cartão da parcela e o
+  Construir já abrem o que abrem, e duas portas para a mesma pergunta é defeito
+  registado. Da peneira sobrou o **diário**, que abria uma vez no começo e não
+  tinha como ser relido. O menu de pausa NÃO foi absorvido: ele é sistema
+  (volume, registo, novo jogo), isto é mundo.
+
+E rendeu quatro guardas e uma correção que nada pedia: a **folha de contato dos
+ícones cortava em silêncio** — a irmã dela, a da frota, ganhou a conta de
+transbordo em 07/09 e ninguém veio pôr a mesma aqui; medido, ela cabia em 22 e o
+23.º saía fora dos 1280 sem uma palavra. O bloco **D23** mede o que esta mudança
+arriscou: o texto do Construir contra a largura que sobrou, o toque que abre, o
+contraste sobre o primeiro fundo ESCURO deste jogo, e a grelha contra o visor.
+
+**Restam o 18, o 19, o 20 e o 21**, e a razão de eles não terem entrado é a de
+sempre:
 
 1. **Os itens 17–21 são um segundo jogo** — menu-celular, mapa da cidade,
    imobiliária, concessionária, delivery, mercado, missões, barras de status e

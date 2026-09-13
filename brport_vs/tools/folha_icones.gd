@@ -17,16 +17,28 @@ extends SceneTree
 #     --resolution 720x1280 --script res://tools/folha_icones.gd -- [saida.png]
 #
 # A tela do projeto é retrato com aspecto travado: pedir uma resolução larga
-# devolve a folha espremida. Duas colunas é o que cabe em 720 de largura.
+# devolve a folha espremida. Três colunas é o que cabe em 720 de largura, e o
+# porquê desse número está na constante.
 # ============================================================
 
 const SAIDA_PADRAO := "user://folha_icones.png"
 const FRAMES_ATE_ASSENTAR := 8
 
 const PASTA := "res://art/icones"
-const COLUNAS := 2
-const CELULA := Vector2(330, 100)
+
+# ⚠️ TRÊS COLUNAS DESDE 13/09, E O NÚMERO SAIU DE UMA MEDIÇÃO. A duas colunas
+# a folha cabia em 20 ícones e rebentava aos 23: 12 linhas pedem 1326 px numa
+# tela de 1280, e a conta abaixo mostra que os três ícones do menu-celular não
+# caberiam. A célula encolheu de 330 para 222 porque o conteúdo dela mede 189
+# px — a amostra de 44 mais as três de 19, com as separações e as margens —,
+# de modo que as três colunas cabem nos 688 px úteis com folga.
+const COLUNAS := 3
+const CELULA := Vector2(222, 100)
 const MARGEM := 16
+# A separação é UMA constante porque o desenho e a conta do transbordo têm de
+# ler o mesmo número: escrita duas vezes, a guarda mediria uma folha que não é
+# a que se desenha.
+const SEPARACAO := 10
 
 const FUNDO_FOLHA := Color(0.878, 0.914, 0.965)
 const FUNDO_PILULA := Color(0.09, 0.16, 0.24)
@@ -77,12 +89,33 @@ func _montar() -> void:
 	var grade := GridContainer.new()
 	grade.columns = COLUNAS
 	grade.position = Vector2(MARGEM, MARGEM)
-	grade.add_theme_constant_override("h_separation", 10)
-	grade.add_theme_constant_override("v_separation", 10)
+	grade.add_theme_constant_override("h_separation", SEPARACAO)
+	grade.add_theme_constant_override("v_separation", SEPARACAO)
 	fundo.add_child(grade)
 
 	for nome in _nomes:
 		grade.add_child(_celula(nome))
+
+	# ⚠️ FOLHA QUE TRANSBORDA CORTA EM SILÊNCIO — e esta é a IRMÃ da folha da
+	# frota, que ganhou esta mesma conta em 07/09 sem ninguém vir aqui pô-la.
+	# É a regra do `CLAUDE.md` a cobrar a fatura: ao corrigir um, varra os
+	# irmãos. Medido em 13/09, antes do conserto: a duas colunas ela cabia em
+	# 22 ícones e o 23.º empurrava a última linha 46 px para fora da tela,
+	# ficando gerado, registado no `Icones.gd` e por olhar — que é o buraco
+	# que uma folha de contato existe para tapar. O `capturar_evidencia.sh`
+	# não podia apanhar: ele confere que o PNG tem mais de 20 KB e que a linha
+	# "Folha salva em" apareceu, e uma folha cortada cumpre as duas.
+	var linhas: int = int(ceil(float(_nomes.size()) / float(COLUNAS)))
+	var pede: float = MARGEM + linhas * CELULA.y + maxi(linhas - 1, 0) * SEPARACAO
+	var altura: float = float(ProjectSettings.get_setting(
+		"display/window/size/viewport_height"))
+	if pede > altura:
+		print("FALHOU — a folha pede %.0f px de altura e a tela tem %.0f. "
+			% [pede, altura]
+			+ "Ela cortaria os últimos ícones sem o dizer (%d ícones, %d linhas)."
+			% [_nomes.size(), linhas])
+		quit(1)
+		return
 
 
 func _listar_icones() -> PackedStringArray:

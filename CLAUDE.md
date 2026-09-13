@@ -748,6 +748,35 @@ tranca isso.
   0,21: some. **Duas peças que se separam bem uma da outra podem estar as duas
   na banda do fundo.** A conta que decide a cor é sempre peça contra fundo; a
   separação entre peças é a segunda pergunta, nunca a primeira.
+- **⚠️ PROVA POR PIXEL ÚNICO É FRÁGIL, E A JANELA TEM DE SER DA ESCALA DA
+  PEÇA.** A primeira metade já estava escrita no D17 — pergunte quanto DESENHO
+  há à volta do ponto, e nunca se o ponto cai na caixa. A segunda custou dois
+  defeitos injetados que **não pegaram** (13/09, D24): com um raio único de
+  12 px, tirar o campanário da igreja passava porque a janela ainda apanhava o
+  remate 7 px abaixo, e dar um telhado à obra passava porque à volta dela há
+  creme por todo o lado. Uma peça de 18 px pede uma janela de 9×9; uma laje de
+  50, uma de 21×21 — e o raio vive na PROVA, não numa constante do teste.
+  E o pixel único mentiu três vezes antes disso, sempre reprovando o que estava
+  certo: por mirar o meio de um volume (que em isométrico cai na FACE lateral e
+  não no topo), por cair debaixo de uma peça elevada (que se projeta para cima
+  e para TRÁS, tapando todo ponto de `mx + my` menor) e por cair dentro de uma
+  copa.
+- **⚠️ E A GUARDA QUE SE SATISFAZ COM O VIZINHO NÃO GUARDA NADA.** É o que
+  estava por trás dos dois defeitos acima, e apareceu três vezes no mesmo dia: a
+  prova do piso da praça contava os pixels da CALÇADA DA RUA, que passa a poucos
+  pixels dali — teria passado com a praça inteira apagada. Antes de escolher o
+  que provar, pergunte o que é EXCLUSIVO da peça: a praça passou a ser provada
+  pelo coreto, que é a única coisa que só ela tem. E quando a peça se define por
+  uma AUSÊNCIA, a prova é negativa — ter laje creme não distingue uma obra das
+  casas, que são do mesmo creme; **não ter telha por cima**, sim.
+- **⚠️ NÚMERO ABSOLUTO DENTRO DE PEÇA COM TAMANHO PRÓPRIO NÃO SOBREVIVE.** A
+  cruz da igreja ia de `cx0 - 0,14` a `cx0 + 0,22` — **0,36 unidades num
+  campanário de 0,30**, mais larga do que a torre que a sustenta, a cobrir o
+  topo inteiro em planta. Não deu erro nenhum; quem a apanhou foi a prova a ler
+  `tronco` onde a tabela prometia telha. É a irmã de "encolher um prop escala-se
+  no GRUPO, nunca reescrevendo as literais": ali o risco é deixar uma literal
+  por escalar, aqui é escrevê-la em unidades de mundo dentro de uma peça cuja
+  medida é uma fração de outra.
 - **⚠️ E UM PROP SÓ ATRAVESSA DOIS FUNDOS: nenhum tom ganha os dois.** No mesmo
   prop, o gancho pende sobre o BAIXIO (claro, ~106) e o pau corre sobre a AREIA
   (~159), com água funda (~67) à volta. `metal_claro` mede 0,75 sobre a água
@@ -1208,6 +1237,44 @@ tranca isso.
   acrescenta o espaçamento ENTRE elas. No fim de fase isso são 99 px em 847
   (33 × 3) — ~12% —, e a conta sem eles esconde a última dobra, que é o mesmo
   defeito a reaparecer dentro da função escrita para o acabar.
+- **⚠️ E O PAINEL SÓ É BRANCO ENQUANTO FOR UM CARTÃO.** A regra acima tranca a
+  cor NEUTRA sobre o branco; esta é a outra ponta, e apareceu no menu-celular de
+  13/09, a primeira tela deste jogo com fundo escuro: a cor de texto **padrão**
+  do tema é navy, porque os doze painéis anteriores eram cartões brancos, e
+  sobre a tela do aparelho ela sai navy sobre navy — **1,18:1**, invisível, sem
+  erro nenhum. Tela de fundo escuro leva variações de rótulo próprias, e o
+  **D23** mede-as (o neutro do jogo dá 5,05:1 ali, que é a primeira vez que ele
+  está no fundo para o qual foi feito).
+- **⚠️ O PIOR CASO DE UM RÓTULO SAI DO QUE O JOGO ESCREVE, não de um texto
+  suposto.** Irmã do D18, um passo antes: ali a lição é medir o pior caso em vez
+  do que os três cartões calham mostrar; aqui é que **o pior caso também não se
+  inventa**. O D23 montou à mão `"Construir · 7 estruturas"` e o jogo escreve
+  `"Construir · 7 disponíveis"` — a palavra real é mais longa (240 px contra
+  235), e a asserção media um caso mais fácil do que o que o jogador vê. Quem o
+  apanhou foi a CAPTURA. Monte o estado, e leia o `text` de quem o escreve.
+- **⚠️ MEDIR LARGURA DE `Control` TEM DUAS ARMADILHAS, e as duas dão folga que
+  não existe.** (a) **`custom_minimum_size` menor do que o conteúdo é
+  IGNORADO** — o botão de menu declara 46 e ocupa 54, porque o ícone de 26 mais
+  as margens de 14+14 do tema pedem mais; e o defeito injetado que baixava o
+  mínimo **não pegou nada**, porque não mexia no que a guarda mede. (b) **`size`
+  de um painel acabado de instanciar é o tamanho MÍNIMO**, e num `Button` o
+  mínimo sai do próprio texto: `pede <= botao.size.x` passava com 5 px de folga
+  e não reprovava alargar o vizinho, porque o esperado e o medido saíam da mesma
+  fonte. É a armadilha do espelho em forma de pixel. Derive a largura do
+  CONTENTOR — a linha menos o irmão menos a separação — e peça
+  `get_combined_minimum_size()` quando quiser o que uma peça ocupa mesmo.
+- **⚠️ NUMA GRELHA, UM NOME COMPRIDO ALARGA UMA COLUNA E NÃO TODAS.** Custou um
+  defeito injetado que falhou **por 4 px**: com cinco apps em três colunas, o
+  nome longo caía sozinho na coluna dele, então a conta não é `3 × maior`, é a
+  soma dos máximos por coluna. Ao montar o estado que aperta uma guarda de
+  grelha, pergunte em que COLUNA o defeito cai.
+- **⚠️ E PROPORÇÃO É O QUE FAZ UMA METÁFORA LER — antes do ícone e antes da
+  moldura.** O menu-celular nasceu com o `montar(largura, 0)` do andaime, que
+  ajusta a altura ao conteúdo, e saiu **400 × 390**: com cantos redondos, borda
+  e grelha de apps, lia-se como mais um cartão. A **680** (1:1,7) ninguém
+  pergunta o que é. É a única altura fixa deste projeto que não é defeito, e a
+  diferença está escrita na constante: a faixa branca que mordeu três painéis
+  era cartão SEM CONTEÚDO; ali é a tela de um telefone com lugar para o que vem.
 - Alvo de toque mínimo 44px. O teste de design cobre.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta
@@ -1412,6 +1479,14 @@ armadilha de uma função, no comentário dela.
   formatador é uma aposta sobre valores que ainda não existem.** As casas saem
   do valor; e a guarda que isto pedia é barata — **releia o que formatou e
   exija que volte ao que era**, senão a tabela perde o número sem uma palavra.
+- **⚠️ `open(..., "w")` TRUNCA ANTES DE O CONTEÚDO EXISTIR, e isso vale para
+  todo arquivo gerado.** O `main()` do `gerar_mapa_iso.py` tem o comentário
+  certo ao lado do SVG — gerar ANTES de abrir, "que trunca de imediato, e um
+  erro deixaria o mapa vazio" —, e a tabela de âncoras ao lado NÃO tinha a mesma
+  proteção: um `NameError` dentro de `tabela_ancoras()`, chamada de dentro do
+  `json.dump()`, deixou o `.json` com **zero bytes** e o commit anterior por
+  cima. É a regra "ao corrigir um, VARRA OS IRMÃOS" aplicada a dois `open()` no
+  mesmo arquivo.
 - **`destino[chave] += x` num Dictionary CRIA a chave em silêncio.** É a irmã
   do `.get(chave, omissão)` acima, do outro lado: ali um erro de digitação vira
   número plausível na LEITURA, aqui vira dinheiro escrito numa chave que a soma

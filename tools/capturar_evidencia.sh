@@ -173,6 +173,16 @@ tirar parcela - --script res://tools/capturar_cena.gd -- res://scenes/panels/Pai
 # envelhece calado — ver o cabeçalho do `_chamar_setup`.
 tirar ribeiro - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @PARCELA_AMOUNT
 tirar contraoferta - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0
+# O MENU-CELULAR (item 17). Ele é a primeira tela deste jogo com fundo ESCURO,
+# e a captura é a única coisa que responde se um rótulo herdou a cor de texto
+# de cartão branco e sumiu — o D23 mede o contraste das VARIAÇÕES do tema, que
+# é outra pergunta: um `Label` que esqueça a variação não reprova nada e sai
+# navy sobre navy.
+#
+# `turn=9` põe-no na semana 2, e é escolha e não sorte: a barra de status diz
+# "Dia N/32 · Semana S" e num `GameState` recém-nascido as duas metades leriam
+# 1 e 1, que é o único estado em que um erro de conta entre elas não apareceria.
+tirar menu    - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelMenu.tscn "$SAIDA/menu.png" turn=9
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

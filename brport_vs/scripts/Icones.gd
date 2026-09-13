@@ -36,6 +36,15 @@ const AMPLIAR_PIER := preload("res://art/icones/ampliar_pier.svg")
 const PAUSAR := preload("res://art/icones/pausar.svg")
 const AVANCAR := preload("res://art/icones/avancar.svg")
 const FEITO := preload("res://art/icones/feito.svg")
+const MENU := preload("res://art/icones/menu.svg")
+
+# O DIÁRIO e o CADEADO são do menu, e o cadeado é UM para todas as portas
+# fechadas de propósito. Quando uma delas abrir, ela ganha o ícone dela — o
+# genérico é o que um celular mostra por um app que ainda não está instalado,
+# e desenhar quatro ícones para quatro coisas que ainda não existem seria
+# escolher a gramática delas antes de as construir.
+const DIARIO := preload("res://art/icones/diario.svg")
+const BLOQUEADO := preload("res://art/icones/bloqueado.svg")
 
 const RIVAL := preload("res://art/icones/rival.svg")
 const ACORDO := preload("res://art/icones/acordo.svg")

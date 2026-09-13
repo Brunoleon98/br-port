@@ -71,7 +71,13 @@ func _ready() -> void:
 #
 # Altura fixa continua a existir para quem tem área de rolagem: aí o tamanho é
 # uma decisão de leitura, não uma consequência do texto.
-func montar(largura: int, altura: int, escuro: float = ESCURO_LEITURA) -> VBoxContainer:
+#
+# A VARIAÇÃO DO CARTÃO é um parâmetro porque o menu-celular não é um cartão
+# branco: o corpo dele é o aparelho, e ele tem de sair do TEMA como tudo o
+# resto. Com omissão vazia os doze painéis que já existem ficam exatamente
+# como estavam — o `theme_type_variation` só se toca quando alguém o pede.
+func montar(largura: int, altura: int, escuro: float = ESCURO_LEITURA,
+		variacao: String = "") -> VBoxContainer:
 	var fundo := ColorRect.new()
 	fundo.color = Color(0, 0, 0, escuro)
 	fundo.anchor_right = 1.0
@@ -79,6 +85,8 @@ func montar(largura: int, altura: int, escuro: float = ESCURO_LEITURA) -> VBoxCo
 	add_child(fundo)
 
 	var caixa := PanelContainer.new()
+	if variacao != "":
+		caixa.theme_type_variation = variacao
 	caixa.anchor_left = 0.5
 	caixa.anchor_top = 0.5
 	caixa.anchor_right = 0.5

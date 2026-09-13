@@ -209,7 +209,7 @@ para ele a tomar com o número na mão.
 | **8** · menos quadrado, mais curva | **grande, e é direção de arte** | Toca o gerador do mapa inteiro e o kit de props, que é de caixas por construção. Não é uma sessão |
 | **9** · gradiente de água e areia + fauna | médio | A paleta da água já foi medida em 02/09 (a amplitude de luminância, a espuma). Refazê-la exige repetir essa medição, senão achata outra vez. A fauna já tem estúdio (`brp_fauna.py`, a gaivota) |
 | ✅ **11** · caminhos de terra para as casas | pequeno-médio | **FEITO em 08/09**, `docs/decisoes/012` — e a resposta foi MEDIDA: entre a calçada e a frente da casa há 0,13 unidades, não cabe caminho. O espaço é o de 1,60 entre as fileiras, e virou a viela |
-| **12** · prédios em obra e avançados | médio-**grande** | A vila já tem `--nivel-vila=N` e três níveis, e para os prédios EM OBRA isto é mesmo acrescentar estados. ⚠️ **Mas o item cru pede mais do que esta linha dizia** (visto em 11/09): *"comércios variados, pracinha, igreja"* são TIPOS novos de prédio, não estados; e *"para irem aparecendo à medida que o porto cresce"*, com *"indicadores que farão a cidade ao redor ir crescendo junto do porto"*, amarra a vila ao estado do porto — que hoje é o contrário por decisão: ela troca entre FASES, não entre turnos. Fazer o 12 começa por decidir o âmbito |
+| ✅ **12** · prédios em obra e avançados | médio-**grande** | **FEITO em 13/09**, `docs/decisoes/022` — igreja, praça e duas obras na VILA. O âmbito recusou três coisas com número: as casas de dois andares já existiam, o prédio em obra não pode ser estado do armazém (a compra é instantânea) e amarrar a vila ao porto reabria decisão registada. "Comércios variados" não cabe a 51 px de lote |
 | ✅ **15** · zona de espera afastada + barcos reais | pequeno | **FEITO em 11/09**, `docs/decisoes/017` — afastada 4,5 em `mx`, para fora das três bandas que acompanham a costa |
 
 ### 🖥️ Interface
@@ -218,7 +218,8 @@ para ele a tomar com o número na mão.
 |---|---|---|
 | **25** · fechar o balanço | **pequeno, e é um beco sem saída de verdade** | `EndGame.gd` mostra o balanço com um botão só, "Jogar de novo". O menu de pausa — onde vive o botão que exporta o `.jsonl` da partida — fica inalcançável, e é justamente esse arquivo que responde melhor do que o print |
 | **22** · destaque do "Alocar todos" | pequeno | Ele é secundário ao lado do âmbar do "Avançar dia". O tema já tem a variação de destaque |
-| **17 · 18 · 19 · 21** · menu-celular, mapa da cidade, lojas, app de análise | **muito grande** | Ver a nota abaixo |
+| ✅ **17** · menu-celular | médio | **FEITO em 13/09**, `docs/decisoes/021` — a CASCA: o botão no rodapé, o aparelho, o diário lá dentro e as quatro portas fechadas ditas por escrito |
+| **18 · 19 · 21** · mapa da cidade, lojas, app de análise | **muito grande** | Ver a nota abaixo. O 17 abriu-lhes a porta e não respondeu à pergunta deles |
 
 ### 💰 Economia — nada disto se mexe sem `/balancear`, e três reabrem decisões
 

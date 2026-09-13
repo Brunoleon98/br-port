@@ -2080,6 +2080,388 @@ def casa(mx0, my0, mx1, my1, altura, parede, telha, janelas) -> str:
     return s
 
 
+# ── OS TRÊS LOTES QUE NÃO SÃO CASA ───────────────────────────────────────
+#
+# Item 12 do segundo playtest: *"modelos de prédio em reforma e construção,
+# assim como edifícios mais avançados, como casas de dois andares, comércios
+# variados, pracinha, igreja e etc, para irem aparecendo à medida que o porto
+# cresce"*.
+#
+# ⚠️ O ÂMBITO FOI DECIDIDO POR MEDIÇÃO, e ele diz não a uma parte do pedido.
+# O que sobrou está em `docs/decisoes/022`; o resumo é este:
+#
+#   · "casas de dois andares" JÁ EXISTEM — é o `--nivel-vila=2`, desde 04/09;
+#   · "prédio em obra" NÃO pode ser um terceiro estado do armazém nem do
+#     escritório, porque `comprar_estrutura()` é INSTANTÂNEO: desconta o caixa
+#     e acrescenta à lista, sem duração nenhuma. Um estado "em obra" só existe
+#     se a obra DURAR, e fazer a obra durar é mexer na vazão, que é a economia
+#     medida. Na VILA, ao contrário, ele não custa mecânica nenhuma;
+#   · "à medida que o porto cresce" ficaria caro e reabre decisão registada: a
+#     vila é ASSADA no SVG de propósito, e troca entre FASES e não entre
+#     turnos. O que ela ganha aqui é o INDICADOR que o pedido quer, por outro
+#     caminho — a obra de um nível é desenhada com a altura do nível SEGUINTE,
+#     de modo que a vila mostra o que vem a seguir em vez de só o que é.
+#
+# E a escala decidiu o desenho. Medido: uma casa tem 51 px de largura e 12 a
+# 15 px de parede na tela, e 24 dos 34 lotes caem dentro do quadro. A essa
+# escala não há detalhe nenhum a distinguir um comércio de uma casa — o que
+# distingue é a SILHUETA, que é a mesma lição do arrasteiro e dos retratos. Daí
+# os três que entraram serem os três que mudam a forma: um lote SEM TELHADO
+# (obra), um lote com uma VERTICAL (igreja) e um lote SEM CASA (praça).
+
+
+def _sem_telhado(mx0, my0, mx1, my1, altura) -> str:
+    """O prédio EM OBRA: laje, pilares, o piso de cima e o andaime.
+
+    ⚠️ A COR NÃO É CINZENTA, E ISSO FOI MEDIDO CONTRA O FUNDO. Concreto pede
+    um cinzento, e todo cinzento desta paleta cai na banda de um dos dois
+    quintais: o mapa pavimentado desenha `terra_clara` (lum 141) e o outro
+    `terra_escura` (lum 104), e `pedra_clara` mede **0,05 de Weber** sobre o
+    primeiro — some — enquanto `pedra_media` fica em 0,18 e 0,12, fraca nos
+    dois. É a regra do gancho do pau-de-carga: um prop atravessa dois fundos e
+    nenhum tom do meio ganha os dois. O creme mede 0,64 e 1,24, e laje de
+    concreto novo é mesmo clara.
+
+    E o que separa isto das CASAS não é a cor, que é a mesma — é não ter
+    telhado. Numa fileira de telhas, o lote sem telha é o que salta, e essa
+    leitura sobrevive a qualquer escala. É a regra da ruína com o sinal
+    trocado: ali menos prédio era abandono, aqui é prédio por acabar.
+    """
+    laje = 3.0
+    pilar = (mx1 - mx0) * 0.14
+    s = _faixa_mx(mx0 - 0.10, mx1 + 0.10, my0 - 0.10, my1 + 0.10,
+                  C["terra_escura"], 0.55)
+    # A laje do térreo, e a do piso de cima meio metro abaixo do topo: são as
+    # duas horizontais que dizem "isto vai ter andares".
+    s += caixa(mx0, my0, mx1, my1, ALT_CAIS, laje,
+               C["casa_a"], _sombrear(C["casa_a"], 0.80),
+               _sombrear(C["casa_a"], 0.91))
+    meia = ALT_CAIS + laje + (altura - laje) * 0.52
+    for x0, y0 in ((mx0, my0), (mx0, my1 - pilar),
+                   (mx1 - pilar, my0), (mx1 - pilar, my1 - pilar)):
+        s += caixa(x0, y0, x0 + pilar, y0 + pilar, ALT_CAIS + laje,
+                   altura - laje, C["casa_a"],
+                   _sombrear(C["casa_a"], 0.78), _sombrear(C["casa_a"], 0.89))
+    s += caixa(mx0, my0, mx1, my1, meia, 2.2,
+               C["casa_a"], _sombrear(C["casa_a"], 0.80),
+               _sombrear(C["casa_a"], 0.91))
+    # O ANDAIME, na face virada para a rua. Escuro de propósito: `tronco` mede
+    # 0,48 e 0,30 sobre os dois quintais, e é o par claro/escuro dentro da
+    # própria peça que a faz ler como estrutura em vez de caixa branca.
+    #
+    # ⚠️ E ELE VAI NAS DUAS FACES VISÍVEIS, com travessa grossa. A primeira
+    # versão punha três travessas finas só em `+my`, e a 4x de ampliação a
+    # peça lia-se lindamente enquanto na captura a 1x era uma CAIXA CREME: o
+    # creme ganha do fundo (0,64 e 1,24 de Weber) mas não se separa das casas
+    # vizinhas, que são do mesmo creme. É a regra do armazém — a esta escala
+    # quem separa não é o tom, é a linha escura —, e uma linha escura numa só
+    # das duas faces é meia linha.
+    topo = ALT_CAIS + laje + (altura - laje)
+    for k in range(3):
+        z = ALT_CAIS + laje + (altura - laje) * (0.18 + 0.36 * k)
+        if z < topo - 1.4:
+            s += face_my(my1 + 0.06, mx0 - 0.04, mx1 + 0.04, z, z + 2.0,
+                         C["tronco"])
+            s += face_mx(mx1 + 0.06, my0 - 0.04, my1 + 0.04, z, z + 2.0,
+                         C["tronco"])
+    for x in (mx0 + (mx1 - mx0) * 0.20, mx0 + (mx1 - mx0) * 0.74):
+        s += face_my(my1 + 0.06, x, x + 0.07, ALT_CAIS + laje, topo,
+                     C["tronco"])
+    for y in (my0 + (my1 - my0) * 0.24, my0 + (my1 - my0) * 0.76):
+        s += face_mx(mx1 + 0.06, y, y + 0.07, ALT_CAIS + laje, topo,
+                     C["tronco"])
+    return s
+
+
+def _igreja(mx0, my0, mx1, my1, altura, telha) -> str:
+    """A igreja: a nave, e sobretudo a TORRE.
+
+    ⚠️ QUEM FAZ O TRABALHO É A VERTICAL, e a nave quase não conta. A 51 px de
+    largura de lote não há vitral, portão nem frontão que se leiam; o que se lê
+    numa fileira de telhados todos deitados é uma coisa DE PÉ. A torre tem um
+    terço da largura do lote e sobe ao dobro da parede, que é o mínimo para ela
+    se soltar da linha dos beirais.
+
+    O telhado dela é `telha_c` — o cinzento-azulado — e não o barro dos
+    vizinhos, para a ponta que assoma acima da fileira não se confundir com
+    mais um telhado. É a única peça da vila que usa esta telha fora do nível 3.
+    """
+    # A NAVE É MAIS CURTA do que uma casa, para a torre ter o que dominar.
+    s = casa(mx0, my0 + (my1 - my0) * 0.30, mx1, my1, altura,
+             C["casa_a"], telha, 1)
+
+    # ⚠️ A TORRE AVANÇA PARA A RUA, e a primeira versão não avançava — ficava
+    # dentro da pegada da nave, e o telhado dela (que tem beiral) comia-lhe a
+    # base: o que saía acima da linha do beiral era um toco grosso que se lia
+    # como CHAMINÉ. É a regra do `-x` e a da peça pequena encostada à grande,
+    # as duas ao mesmo tempo. Uma torre de igreja fica na fachada, à frente da
+    # nave, e é isso que ela faz agora.
+    larg = (mx1 - mx0) * 0.40
+    tx0 = mx0 + (mx1 - mx0) * 0.06
+    ty0 = my1 - larg * 0.55
+    ty1 = ty0 + larg
+    # E SOBE TRÊS VEZES A PAREDE, não duas. Medido no render: a 2,0 a torre
+    # assomava 14 px acima do beiral, que à escala desta vila é a altura de um
+    # telhado — não se lê como vertical, lê-se como saliência.
+    alt_torre = altura * 3.0
+    s += caixa(tx0, ty0, tx0 + larg, ty1, ALT_CAIS, alt_torre,
+               C["casa_a"], _sombrear(C["casa_a"], 0.80),
+               _sombrear(C["casa_a"], 0.91))
+    # O vão do sino: um furo escuro no alto, que é o que diz torre e não poste.
+    s += face_my(ty1, tx0 + larg * 0.24, tx0 + larg * 0.76,
+                 ALT_CAIS + alt_torre * 0.72, ALT_CAIS + alt_torre * 0.90,
+                 C["porta"])
+    t = ALT_CAIS + alt_torre
+    # O REMATE ESCALONA em vez de ser uma tampa. Um telhado chato de 4 px sobre
+    # uma caixa é exatamente o desenho de uma chaminé; o que dá campanário é o
+    # degrau — um corpo mais estreito por cima, e só então a telha.
+    s += caixa(tx0 - 0.05, ty0 - 0.05, tx0 + larg + 0.05, ty1 + 0.05, t, 3,
+               C["telha_c"], _sombrear(C["telha_c"], 0.72),
+               _sombrear(C["telha_c"], 0.86))
+    est = larg * 0.60
+    ex0 = tx0 + (larg - est) / 2.0
+    ey0 = ty0 + (larg - est) / 2.0
+    s += caixa(ex0, ey0, ex0 + est, ey0 + est, t + 3, altura * 0.55,
+               C["telha_c"], _sombrear(C["telha_c"], 0.70),
+               _sombrear(C["telha_c"], 0.84))
+    # A CRUZ, e ela são dois traços. Não se "lê" a esta escala — o que faz é
+    # quebrar o topo, e um topo quebrado não é chaminé.
+    # ⚠️ A CRUZ MEDE-SE EM FRAÇÕES DO CAMPANÁRIO, e a primeira versão media-a
+    # em unidades de mundo: a barra ia de `cx0 - 0,14` a `cx0 + 0,22`, o que
+    # dá **0,36 unidades num campanário de 0,30** — uma cruz mais larga do que
+    # a torre que a sustenta, e que em planta cobria o topo inteiro. Não deu
+    # erro nenhum e quem a apanhou foi a prova do D24, a ler `tronco` onde a
+    # tabela prometia telha. É a irmã da regra "encolher um prop escala-se no
+    # GRUPO, nunca reescrevendo as literais", do outro lado: número absoluto
+    # dentro de uma peça que tem tamanho próprio não sobrevive ao primeiro
+    # lote de outra medida.
+    tc = t + 3 + altura * 0.55
+    cx0 = ex0 + est * 0.46
+    s += caixa(cx0, ey0 + est * 0.46, cx0 + est * 0.08, ey0 + est * 0.54,
+               tc, 6.0, C["tronco"], _sombrear(C["tronco"], 0.8),
+               _sombrear(C["tronco"], 0.9))
+    s += caixa(cx0 - est * 0.16, ey0 + est * 0.48, cx0 + est * 0.24,
+               ey0 + est * 0.52, tc + 3.4, 1.1, C["tronco"],
+               _sombrear(C["tronco"], 0.8), _sombrear(C["tronco"], 0.9))
+    return s
+
+
+def _pracinha(mx0, my0, mx1, my1, r: random.Random) -> str:
+    """A praça: o lote em que NÃO há casa.
+
+    É o mais barato dos três e talvez o que mais se veja, porque numa frente de
+    rua contínua o buraco é que chama o olho — a mesma razão de a travessa dar
+    esquina à vila. O coreto é pequeno de propósito: se ele crescesse ao ponto
+    de ler como construção, a praça deixaria de ser um vão e passaria a ser mais
+    um lote ocupado.
+    """
+    # ⚠️ O CHÃO É CALÇADA, E NÃO TERRA. A primeira versão usava `solo_claro`,
+    # que é a cor certa para um terreno e a errada para se VER: ele mede
+    # **0,07 de Weber** contra o `terra_clara` do quintal onde a praça pousa —
+    # some, exatamente como o gancho do pau-de-carga sobre o baixio. `calcada`
+    # mede 0,30 sobre esse quintal, 0,76 sobre o do mapa não pavimentado e
+    # 0,52 sobre o relvado à volta: ganha os três. E não é cor nova nenhuma —
+    # é o mesmo material do passeio da rua, que é o que uma praça tem mesmo.
+    # ⚠️ E ELA LEVA MEIO-FIO, porque o piso dela é a MESMA calçada do passeio.
+    # Medido na captura: sem ele a praça e o passeio da rua eram um bloco claro
+    # contínuo, e o que devia ler como um vão na frente de rua lia como um
+    # alargamento do passeio. Uma praça é mesmo calçada — o que a separa da
+    # rua, na vida real e aqui, é a guia. E ela é o `meiofio` da rua, não um
+    # tom novo: o mesmo material faz o mesmo trabalho.
+    s = _faixa_mx(mx0 - 0.26, mx1 + 0.36, my0 - 0.31, my1 + 0.31,
+                  C["meiofio"], 1.0)
+    s += _faixa_mx(mx0 - 0.20, mx1 + 0.30, my0 - 0.25, my1 + 0.25,
+                   C["calcada"], 1.0)
+    # Um caminho em cruz, que é o que diz praça e não largo de terra batida.
+    meiox, meioy = (mx0 + mx1) / 2.0, (my0 + my1) / 2.0
+    s += _faixa_mx(mx0 - 0.2, mx1 + 0.3, meioy - 0.07, meioy + 0.07,
+                   C["terra_clara"], 0.95)
+    s += _faixa_mx(meiox - 0.07, meiox + 0.07, my0 - 0.25, my1 + 0.25,
+                   C["terra_clara"], 0.95)
+    # O coreto: quatro pilares e um telhado, com metade da altura de uma casa.
+    lg = (mx1 - mx0) * 0.26
+    cx, cy = meiox - lg / 2.0, meioy - lg / 2.0
+    for dx, dy in ((0, 0), (0, lg - 0.05), (lg - 0.05, 0), (lg - 0.05, lg - 0.05)):
+        s += caixa(cx + dx, cy + dy, cx + dx + 0.05, cy + dy + 0.05,
+                   ALT_CAIS, 9, C["casa_a"], _sombrear(C["casa_a"], 0.78),
+                   _sombrear(C["casa_a"], 0.89))
+    s += caixa(cx - 0.10, cy - 0.10, cx + lg + 0.10, cy + lg + 0.10,
+               ALT_CAIS + 9, 3.5, C["telha_d"], _sombrear(C["telha_d"], 0.72),
+               _sombrear(C["telha_d"], 0.86))
+    # ⚠️ AS ÁRVORES VÃO PARA AS QUINAS, e não sorteadas pelo lote. Sorteadas,
+    # duas das três calharam em cima do coreto e taparam-no: o contador dizia
+    # quatro peças e o render mostrava três, que é a boia com a corrente dentro
+    # do cone outra vez. Numa praça pequena o meio é do coreto; o resto é dela.
+    # ⚠️ E ELAS FICAM NA BORDA DO PISO, NÃO DENTRO DELE. Nas quinas a 0,06 a
+    # copa cobria o quadrante inteiro — a praça tinha piso e não se via piso
+    # nenhum, que é a boia com a corrente dentro do cone à escala de um lote.
+    # Na borda a copa transborda para o quintal, como as árvores da vila já
+    # fazem, e o piso fica livre no meio.
+    # E são TRÊS, não quatro. Medido no raster: com uma copa em cada quina, o
+    # piso da praça aparecia só em manchas — 142 pixels soltos num lote de
+    # 51x47 —, e o ponto que o D24 mede calhava debaixo de uma delas. A copa
+    # projeta-se para cima e para trás e cobre muito mais chão do que a planta
+    # dela sugere; é a mesma conta que mandou as árvores da vila para o quintal.
+    for qx, qy in ((-0.10, -0.08), (-0.08, 1.02), (1.02, 0.98)):
+        if r.random() < 0.85:
+            s += arvore(mx0 + (mx1 - mx0) * qx + r.uniform(-0.04, 0.04),
+                        my0 + (my1 - my0) * qy + r.uniform(-0.05, 0.05),
+                        r.uniform(0.24, 0.34), r, r.random())
+    return s
+
+
+# ⚠️ QUEM É ESPECIAL ESCOLHE-SE ENTRE OS LOTES VISÍVEIS, e não entre todos.
+#
+# É a lição das 136 copas de mata com 7 dentro do quadro, aplicada a uma peça
+# de que só há UMA: sorteada entre os 34 lotes, a igreja tinha 29% de hipótese
+# de nascer fora do PNG — gerada, a passar em toda a validação, e por olhar.
+# Medido, 24 dos 34 estão dentro; a escolha corre só sobre esses, e o bloco
+# **D24** do teste de design exige que os três cheguem à tela.
+#
+# A igreja e a praça vão para a fileira da FRENTE, que é a que se vê inteira;
+# as obras, uma em cada fileira, porque uma cidade não cresce só na beira.
+def lotes_especiais(lotes: list) -> dict:
+    visiveis = [i for i, l in enumerate(lotes)
+                if no_quadro(l[0] + l[2] / 2.0, l[1] + l[3] / 2.0, folga=0.0)]
+    frente = [i for i in visiveis if not lotes[i][5]]
+    fundo = [i for i in visiveis if lotes[i][5]]
+    r = random.Random(SEMENTE_CHAO + 420)
+    especiais = {}
+    if frente:
+        # A igreja no MEIO da frente visível, e não sorteada: ela é a peça mais
+        # alta da vila, e o meio é o único sítio onde se tem a certeza de que a
+        # torre não assoma meio cortada pela borda do quadro.
+        especiais[frente[len(frente) // 2]] = "igreja"
+    livres = [i for i in frente if i not in especiais]
+    if livres:
+        especiais[livres[len(livres) // 4]] = "praca"
+    for grupo in (frente, fundo):
+        candidatos = [i for i in grupo if i not in especiais]
+        if candidatos:
+            especiais[r.choice(candidatos)] = "obra"
+    return especiais
+
+
+# ⚠️ COM CACHE, E NÃO UMA LINHA DE MÓDULO. A primeira versão era
+# `_tipos_publicados = lotes_especiais(lotes_da_vila())` aqui mesmo, e rebentou
+# com `NameError`: esta função vive ACIMA de `lotes_da_vila` no arquivo, e no
+# nível do módulo isso corre antes de ela existir. A função adiada resolve, e
+# o cache é o que garante que a vila e a tabela de âncoras dizem o MESMO lote
+# — com a semente fixa dariam o mesmo de qualquer forma, mas isso seria uma
+# coincidência e não uma garantia.
+_TIPOS_CACHE: dict = {}
+
+
+def tipos_dos_lotes() -> dict:
+    if not _TIPOS_CACHE:
+        _TIPOS_CACHE.update(lotes_especiais(lotes_da_vila()))
+    return _TIPOS_CACHE
+
+
+# ⚠️ A TORRE É A PEÇA MAIS ALTA DA VILA, E ELA CRESCE COM O NÍVEL.
+#
+# Ela sobe três vezes a parede, e a parede vai de 20 px no nível 1 a 64 no
+# nível 3 — ou seja, a torre passa de ~60 a ~192 px de desenho, mais o remate
+# e a cruz. Em isométrico altura projeta-se para CIMA, então o que cabe no
+# quadro hoje pode sair dele na Fase em que a vila subir, e sair do quadro não
+# dá erro nenhum: dá uma torre decapitada que ninguém vê porque ninguém gera o
+# nível 3 para olhar.
+#
+# Esta guarda corre a cada geração e percorre os TRÊS níveis, não só o que se
+# está a gerar. É a mesma escolha do `gerar_props_iso.py`, que confere a
+# própria projeção ao fim em vez de esperar que alguém repare.
+def pontos_de_prova(nivel: int = 1) -> dict:
+    """Por lote especial: onde olhar no PNG, e que cor lá tem de estar.
+
+    ⚠️ EXISTE PARA O D24 NÃO SER UM ESPELHO. O teste podia recalcular a altura
+    da torre e o topo da laje — e aí estaria a reconstruir a decisão que quer
+    conferir, que é a armadilha do sorteio de motivos. Assim o gerador publica
+    a INTENÇÃO ("no pixel (x, y) tem de estar o remate da igreja") e o teste
+    pergunta ao RASTER o que lá ficou: se o desenho sair na ordem errada, se
+    uma peça tapar a outra, ou se alguém trocar a cor, os dois deixam de bater.
+    """
+    lotes = lotes_da_vila()
+    perfis = VILA_NIVEIS[min(nivel, max(VILA_NIVEIS))]
+    saida = {}
+    for i, tipo in tipos_dos_lotes().items():
+        mx0, my0, dmx, dmy, variante, _fundo = lotes[i]
+        altura = perfis[variante][0]
+        # ⚠️ CADA PROVA TRAZ O SEU RAIO, e isto veio de dois defeitos injetados
+        # que NÃO pegaram. Com um raio único de 12 px: tirar o campanário da
+        # igreja passava, porque a janela ainda apanhava o remate 7 px abaixo;
+        # e dar um telhado à obra passava também, porque à volta dela há creme
+        # por todo o lado — a guarda satisfazia-se com o VIZINHO, que é a mesma
+        # armadilha que já tinha obrigado a tirar a prova do piso da praça de
+        # cima da calçada da rua. Uma peça de 18 px pede uma janela pequena;
+        # uma laje de 50, uma grande.
+        #
+        # E a obra ganhou uma prova NEGATIVA: o que a define não é ter laje
+        # creme (as casas também são cremes) — é NÃO TER TELHA por cima.
+        if tipo == "igreja":
+            # O remate da torre: a telha cinzenta, que é a única da vila fora
+            # do nível 3 e o que faz a torre não ler como chaminé.
+            # ⚠️ O PONTO É O TOPO DO CAMPANÁRIO, e a primeira versão apontava
+            # para METADE da altura do remate — que em isométrico não cai no
+            # topo da caixa, cai na FACE lateral dela. O teste lia o tom
+            # sombreado (`67737d` contra os `7f8c98` da tabela) e reprovava um
+            # desenho que estava certo. Uma prova tem de mirar a face que a
+            # projeção mostra, e para um volume essa face é o topo.
+            #
+            # E desloca-se do eixo, porque no meio do topo está a CRUZ.
+            larg = dmx * 0.40
+            tx0 = mx0 + dmx * 0.06
+            ty0 = my0 + dmy - larg * 0.55
+            est = larg * 0.60
+            ex0 = tx0 + (larg - est) / 2.0
+            ey0 = ty0 + (larg - est) / 2.0
+            topo_camp = ALT_CAIS + altura * 3.0 + 3 + altura * 0.55
+            saida[i] = {"tipo": tipo, "cor": "telha_c", "raio": 4, "minimo": 6,
+                        "px": [round(c, 1) for c in
+                               tela(ex0 + est * 0.26, ey0 + est * 0.26, topo_camp)]}
+        elif tipo == "obra":
+            # O TOPO da obra é laje, não telhado — é isso que a faz ler como
+            # prédio por acabar, e é a única coisa que a separa das vizinhas.
+            saida[i] = {"tipo": tipo, "cor": "casa_a", "raio": 10, "minimo": 40,
+                        "proibidas": ["telha_a", "telha_b", "telha_c", "telha_d"],
+                        "px": [round(c, 1) for c in tela(mx0 + dmx * 0.5, my0 + dmy * 0.5,
+                                                         ALT_CAIS + altura)]}
+        elif tipo == "praca":
+            # O piso: fora do caminho em cruz, que passa pelo meio.
+            # ⚠️ A PROVA É O CORETO, e não o piso. O piso é a MESMA calçada do
+            # passeio, que passa a poucos pixels dali: uma janela posta sobre
+            # ele contaria os pixels da RUA e passaria mesmo com a praça
+            # apagada — a guarda que se satisfaz com o vizinho. O coreto é a
+            # única peça que só a praça tem, é sólido, e fica no meio, onde
+            # nenhuma copa chega desde que as árvores foram para a borda.
+            saida[i] = {"tipo": tipo, "cor": "telha_d", "raio": 12, "minimo": 10,
+                        "px": [round(c, 1) for c in
+                               tela(mx0 + dmx * 0.5, my0 + dmy * 0.5,
+                                    ALT_CAIS + 9 + 3.5)]}
+    return saida
+
+
+def conferir_a_torre_cabe() -> list:
+    """Devolve as queixas; lista vazia quer dizer que cabe em todos os níveis."""
+    lotes = lotes_da_vila()
+    queixas = []
+    igrejas = [i for i, t in tipos_dos_lotes().items() if t == "igreja"]
+    for i in igrejas:
+        mx0, my0, dmx, dmy, variante, _fundo = lotes[i]
+        larg = dmx * 0.40
+        tx = mx0 + dmx * 0.06 + larg / 2.0
+        ty = my0 + dmy - larg * 0.55 + larg / 2.0
+        for nivel, perfis in sorted(VILA_NIVEIS.items()):
+            altura = perfis[variante][0]
+            # fuste + remate + campanário + cruz, na mesma ordem de `_igreja`
+            topo = ALT_CAIS + altura * 3.0 + 3 + altura * 0.55 + 6.0 + 3.4 + 1.1
+            _x, y = tela(tx, ty, topo)
+            if y < 0.0:
+                queixas.append(
+                    "a torre da igreja (lote %d) sai %0.0f px por cima do quadro "
+                    "no nível %d da vila" % (i, -y, nivel))
+    return queixas
+
+
 # ── A VILA É UM QUARTEIRÃO, NÃO UM PENTE ─────────────────────────────────
 #
 # Medido em 04/09, no mapa de 03/09: 16 lotes, e **11 dos 15 vãos entre casas
@@ -2287,9 +2669,17 @@ def vila(nivel: int, pavimentado: bool) -> str:
     # camada do chão — a mesma lição que o capim da restinga pagou ao aparecer
     # por cima dos telhados.
     s = viela_da_vila(pavimentado)
-    for mx0, my0, dmx, dmy, variante, fundo in sorted(lotes_da_vila(),
-                                                      key=lambda l: l[0] + l[1]):
+    lotes = lotes_da_vila()
+    especiais = tipos_dos_lotes()
+    # ⚠️ O ÍNDICE VEM DE ANTES DA ORDENAÇÃO. Os lotes desenham-se de trás para
+    # a frente, mas quem é a igreja decidiu-se sobre a lista COMO ELA SAI DE
+    # `lotes_da_vila()` — que é a mesma que a tabela de âncoras publica. Ordenar
+    # primeiro e indexar depois faria a igreja mudar de lote de cada vez que uma
+    # casa se mexesse, sem erro nenhum a apontá-lo.
+    for i, (mx0, my0, dmx, dmy, variante, fundo) in sorted(
+            enumerate(lotes), key=lambda par: par[1][0] + par[1][1]):
         altura, telha, janelas = perfis[variante]
+        tipo: str = especiais.get(i, "")
         # Na fileira de trás planta-se mais: é ela que desfia a vila contra a
         # mata, e é a árvore — não o vão vazio — que faz a orla parecer orla.
         pomar = 0.85 if fundo else 0.55
@@ -2303,8 +2693,26 @@ def vila(nivel: int, pavimentado: bool) -> str:
             s += arvore(mx0 - r.uniform(0.10, 0.26),
                         my0 + r.uniform(-0.1, dmy + 0.1),
                         r.uniform(0.30, 0.52), r, r.random())
-        s += casa(mx0, my0, mx0 + dmx, my0 + dmy, altura,
-                  C[VILA_PAREDES[variante]], telha, janelas)
+        if tipo == "praca":
+            s += _pracinha(mx0, my0, mx0 + dmx, my0 + dmy, r)
+        elif tipo == "igreja":
+            s += _igreja(mx0, my0, mx0 + dmx, my0 + dmy, altura, telha)
+        elif tipo == "obra":
+            # ⚠️ A OBRA É DESENHADA COM A ALTURA DO NÍVEL SEGUINTE, e é isto
+            # que responde ao "indicadores que farão a cidade ir crescendo" do
+            # pedido sem tocar em mecânica nenhuma: o que está em obra no nível
+            # 1 tem o tamanho do que estará pronto no nível 2. No último nível
+            # não há seguinte, e ela sobe um terço — a cidade não para de
+            # crescer só porque a Fase 5 acabou.
+            proximo = perfis[variante][0]
+            if nivel + 1 in VILA_NIVEIS:
+                proximo = VILA_NIVEIS[nivel + 1][variante][0]
+            else:
+                proximo = int(altura * 1.34)
+            s += _sem_telhado(mx0, my0, mx0 + dmx, my0 + dmy, proximo)
+        else:
+            s += casa(mx0, my0, mx0 + dmx, my0 + dmy, altura,
+                      C[VILA_PAREDES[variante]], telha, janelas)
         # Árvore do quintal da FRENTE, entre a casa e o passeio.
         if r.random() < pomar - 0.05:
             s += arvore(mx0 + dmx + r.uniform(0.10, 0.34),
@@ -2969,10 +3377,25 @@ def tabela_ancoras() -> dict:
         "cotovelos": cotovelos,
         "acessos": acessos,
         "lotes_reservados": reservados,
+        # ⚠️ O `tipo` ENTRA NA TABELA para o teste de design poder perguntar ao
+        # DESENHO se a igreja, a praça e a obra chegaram lá. Sem ele o bloco
+        # D24 teria de recalcular a escolha, e um teste que reconstrói a
+        # decisão que está a conferir é um espelho — a regra do sorteio de
+        # motivos. Assim a tabela diz a INTENÇÃO e o raster diz o RESULTADO.
         "lotes": [{"mx": round(l[0], 2), "my": round(l[1], 2),
                    "dmx": round(l[2], 2), "dmy": round(l[3], 2),
                    "fundo": bool(l[5]),
-                   "canto": px(l[0], l[1], ALT_CAIS)} for l in lotes_da_vila()],
+                   "tipo": tipos_dos_lotes().get(i, ""),
+                   "canto": px(l[0], l[1], ALT_CAIS)}
+                  for i, l in enumerate(lotes_da_vila())],
+        # As cores com que a vila pinta o que não é casa. O D24 lê-as daqui em
+        # vez de as escrever à mão, pela mesma razão que o D20 lê as da rua.
+        "cores_da_vila": {"calcada": C["calcada"], "telha_c": C["telha_c"],
+                          "casa_a": C["casa_a"], "tronco": C["tronco"],
+                          "telha_d": C["telha_d"], "meiofio": C["meiofio"],
+                          "telha_a": C["telha_a"], "telha_b": C["telha_b"]},
+        "provas_da_vila": [{"lote": i, **v}
+                           for i, v in sorted(pontos_de_prova().items())],
     }
 
 
@@ -3004,6 +3427,15 @@ def main() -> int:
     for a in sys.argv[1:]:
         if a.startswith("--nivel-vila="):
             nivel_vila = int(a.split("=", 1)[1])
+    # ⚠️ A GUARDA CORRE ANTES DE ESCREVER, e reprova em vez de avisar. Um mapa
+    # com a torre cortada sai bonito no nível 1 e decapitado no 3, e ninguém
+    # gera o nível 3 para olhar — é a irmã da folha de contato que transborda.
+    queixas = conferir_a_torre_cabe()
+    if queixas:
+        for q in queixas:
+            print("FALHOU — %s" % q, file=sys.stderr)
+        return 1
+
     conteudo = gerar(com_pieres, com_coqueiros, com_predios, com_pavimento,
                      nivel_vila)                  # gerar ANTES de abrir: open(...,"w")
     with open(destino, "w", encoding="utf-8") as f:   # trunca de imediato, e um

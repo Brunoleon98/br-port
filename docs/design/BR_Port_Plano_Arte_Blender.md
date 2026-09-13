@@ -1231,3 +1231,24 @@ Registrado porque cada um destes já custou tempo neste projeto:
 4. **Densificar sem olhar o resultado no jogo.** Prop bonito na folha de
    contato e ilegível a 25% é trabalho jogado fora — foi o que aconteceu com
    a primeira tentativa de desgaste, que virou lixa.
+
+---
+
+## A vila ganhou três lotes que não são casa (13/09, item 12)
+
+**`docs/decisoes/022`.** Igreja com torre, praça com coreto e meio-fio, e duas
+obras — lotes sem telhado. Tudo no `gerar_mapa_iso.py`: **não precisou de
+Blender**, porque a vila é assada no SVG e não é prop nenhum.
+
+**O que NÃO ficou, e por quê:** os *"comércios variados"* do pedido. Medido, um
+lote tem **51 px de largura e 12 a 15 de parede** na tela, e a essa escala um
+toldo tem 20 px e uma vitrine 4 — não há detalhe que separe um comércio de uma
+casa. O que separa é a silhueta, e os três que entraram são os três que a mudam.
+A pergunta pode ser refeita quando a Fase subir a vila ao nível 3, onde a parede
+passa a 43 px.
+
+**As cores saíram de medição contra o FUNDO, e duas contrariam o óbvio:** o
+esqueleto de obra não é cinzento (todo cinzento da paleta cai na banda de um dos
+dois quintais — `pedra_clara` mede 0,05 de Weber sobre o pavimentado), e o piso
+da praça não é terra (`solo_claro` mede 0,07). Creme e calçada ganham os dois
+fundos.

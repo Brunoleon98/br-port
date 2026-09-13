@@ -24,9 +24,7 @@
 
 **O porto abre em ruínas.** 1 doca, 1 trabalhador, R$400.000 e **sete
 estruturas** — píeres 2 e 3, armazém, pátio, escritório e os dois UPGRADES
-(guindaste de pórtico e cais reforçado). Comprar cada uma muda o mapa: o pátio
-sai de terra batida para asfalto, os prédios saem de ruína, e os upgrades
-trocam a torre e a laje do píer.
+(guindaste e cais reforçado). Comprar cada uma muda o mapa.
 
 **A barra de ação tem DOIS botões e uma hierarquia** — "Avançar dia" é âmbar
 cheio com rótulo navy, e "Alocar todos" é navy com borda e rótulo âmbar
@@ -36,77 +34,86 @@ cheio com rótulo navy, e "Alocar todos" é navy com borda e rótulo âmbar
 e ela centra-se no centroide dos berços. O mundo cresceu para isso (`my` de −14
 a 42, fundo da terra em −16), senão o jogador via o mapa ACABAR por três lados.
 
-**A água é tropical e agora lê como profundidade, não como fitas.** O campo de
-cor é contínuo pela distância à costa, com meandro longo de duas senóides; a
-areia seca, o pé molhado e o baixio também se dissolvem em rampas. A paleta
-medida não mudou: água funda→baixio ficou em **99,408→99,408** de amplitude,
-espuma em **0,558→0,558** de Weber e areia submersa contra baixio em **0,186**.
-O contorno reto ficou intacto — curvas continuam sendo o item 8, separado.
+**A água é tropical e lê como profundidade, não como fitas** — campo de cor
+contínuo pela distância à costa, com meandro longo de duas senóides, e a areia
+em rampas. A paleta medida não mudou (amplitude 99,408; espuma 0,558 de Weber).
+Curvas no contorno continuam a ser o item 8, separado.
 
-**Há fauna costeira jogável em três habitats.** Gaivotão no ar,
-maria-farinha na praia e tartaruga-verde juvenil no baixio têm movimento ocioso
-próprio; tocar neles dispara reação e som. O mar toca baixo a cada 6,5–9,5 s e
-a gaivota, bem mais rara, a cada 42–72 s. São rascunhos até o gate de escuta.
+**Há fauna costeira jogável em três habitats** — gaivotão, maria-farinha e
+tartaruga-verde juvenil, com movimento ocioso, reação e som ao toque. Rascunhos
+até o gate de escuta.
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
 perfil: ótimo 100% · mediano 80,2% · descuidado 37,3%, com a mediana do mediano
 em R$716.179 contra uma parcela de R$530.000. Um contrato vale R$12.000–88.000 e
 a manutenção custa R$40.000/semana — números de porto, não de banca de feira.
 
-A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
-agora é **o porto que conseguem levantar**, e desde a trava de 06/09 quem mede
-isso é a MARGEM em regime — R$674.019 contra R$103.290 — e não a contagem de
-barcos, que passou a favorecer o porto pobre. Mexer em preço sem rodar
-`simular_balanceamento.gd` quebra isto.
+A dívida deixou de ser o motor (`docs/decisoes/005`): separa os jogadores **o
+porto que conseguem levantar**, medido pela MARGEM em regime (R$674.019 contra
+R$103.290) e não pela contagem de barcos, que favorece o porto pobre. Mexer em
+preço sem rodar `simular_balanceamento.gd` quebra isto.
 
 **E o `START_CASH` está TRANCADO em 400.000** (`docs/decisoes/018`): varrido
-até 150.000, o único ponto que cumpre os critérios é a linha de base. E o
-diário **CONTA de onde ele vem** — herança do avô, não empréstimo.
+até 150.000, só a linha de base cumpre os critérios. O diário conta de onde ele
+vem — herança do avô, não empréstimo.
 
-**E o navio que atraca depende do porto que existe** (`docs/decisoes/009`). São
-três classes travadas pelo NÍVEL DO PORTO, que é o menor entre o do píer e o do
-guindaste: pesqueiro no nível 1, cargueiro no 2, navio de longo curso no 3 — que
-exige o cais reforçado. O porto em ruínas recebe **só pesqueiro**, e o perfil
-Descuidado nunca vê um navio de longo curso em 600 partidas. O painel Construir
-abre a dizer o nível e o que falta.
+**E o navio que atraca depende do porto que existe** (`docs/decisoes/009`): três
+classes travadas pelo NÍVEL DO PORTO, o menor entre píer e guindaste —
+pesqueiro no 1, cargueiro no 2, longo curso no 3, que exige o cais reforçado. O
+Descuidado nunca vê um longo curso em 600 partidas, e o painel Construir abre a
+dizer o nível e o que falta.
 
 **E A FROTA DE PESCA TEM TRÊS PORTES** (`docs/decisoes/014`) — bote, traineira
-e arrasteiro —, e quem escolhe entre eles é o VALOR do contrato. Importa porque
-o porto em ruínas **só recebe pesqueiro**: quem ainda não construiu nada via o
-mesmo barco a partida inteira.
+e arrasteiro, escolhidos pelo VALOR do contrato. Importa porque o porto em
+ruínas **só recebe pesqueiro**.
 
-**E o navio vem ao porto POR ALGUMA COISA.** Cada barco nasce com um MOTIVO —
-Pescado, Armazenagem, Contêiner ou Granel —, que se lê na linha do cartão da
-doca. O efeito é sempre o da ESTRUTURA a que o motivo está preso, nunca do
-motivo sozinho, e **reparo e reabastecimento ficaram de fora de propósito**,
-porque o GDD põe a oficina e o posto na Fase 2. Os números por estrutura estão
-em `docs/decisoes/008` e na tabela gerada.
+**E o navio vem ao porto POR ALGUMA COISA:** cada barco nasce com um MOTIVO —
+Pescado, Armazenagem, Contêiner ou Granel —, lido no cartão da doca. O efeito é
+o da ESTRUTURA a que o motivo está preso; reparo e reabastecimento ficaram de
+fora porque o GDD põe a oficina e o posto na Fase 2 (`docs/decisoes/008`).
 
-**A partida grava-se.** Uma linha JSON por acontecimento, com o tempo em cada
-turno (A7); o nome de quem jogou NÃO entra (`docs/decisoes/006`). Sai pelo menu
-de pausa, e `tools/ler_registros.py` resume.
+**A partida grava-se** — uma linha JSON por acontecimento, com o tempo de cada
+turno; sem o nome de quem jogou (`docs/decisoes/006`). Sai pelo menu de pausa, e
+`tools/ler_registros.py` resume.
 
-**O jogo tem som.** São 14 efeitos sintetizados por `tools/gerar_sons.py`,
-incluindo mar e fauna, num autoload com prioridade, dois buses e sliders. São
-de RASCUNHO e ainda esperam o Bruno ouvir (`BR_Port_Plano_Audio.md` §2).
+**O jogo tem som:** 14 efeitos sintetizados por `tools/gerar_sons.py`, num
+autoload com prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno
+ouvir (`BR_Port_Plano_Audio.md` §2).
 
-**Nada de interface pousa sobre o mapa.** A doca separa a vaga no cenário do
-cartão na barra; o número é tinta no cais, sem placa a tapar o desenho.
+**E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`docs/decisoes/021`). O
+botão sai da linha do Construir — medido, não havia altura livre no rodapé —, e
+a tela é um aparelho de 400×680, porque a PROPORÇÃO é o que faz a metáfora ler.
+Dentro há o **diário**, que abre uma vez no começo e não tinha como ser relido,
+e quatro portas ainda FECHADAS — cidade, lojas, missões, análise, os itens 18 a
+21 —, cada uma um quadrado apagado que nunca foi botão, com uma linha a dizer
+que abrem na Fase 2. O menu de pausa não foi absorvido: ele é sistema, isto é
+mundo. **É casca, e de propósito** — a economia das fases seguintes continua por
+responder.
 
-**O ARMAZÉM é um armazém dos dois lados do par** (zinco, chapa corrugada,
-portão de enrolar, plataforma de carga) e **o porto abre em RUÍNAS de verdade**
-— parede desabada, meio telhado, portão fora do trilho (`docs/arquivo/`).
+**Nada de interface pousa sobre o mapa:** a doca separa a vaga no cenário do
+cartão na barra, e o número é tinta no cais.
+
+**O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
+verdade** — parede desabada, meio telhado, portão fora do trilho
+(`docs/arquivo/`).
 
 **O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
-central e passadeiras), calçada, acesso a cada berço, **duas fileiras de casas
-em quarteirões** e uma **viela de terra entre elas**, que é o único acesso da
-fileira de trás — mais rala, para a vila DESFIAR contra a mata. Ela tem nível
-(`--nivel-vila=N`): térrea, sobrado, prédio, e é assim que cresce a cada Fase.
+central e passadeiras), calçada, acesso a cada berço, **duas fileiras de casas**
+e uma **viela de terra entre elas**, único acesso da fileira de trás — mais
+rala, para a vila DESFIAR contra a mata. Ela tem nível (`--nivel-vila=N`):
+térrea, sobrado, prédio, e é assim que cresce a cada Fase.
 
 **E a rua VIRA em vez de acabar:** cada cotovelo leva chanfro de meia largura
 de rua nas duas quinas salientes (`docs/decisoes/013`).
 
-**E a mata atrás dela é desenhada onde se vê**, pela receita `com_saia()`.
+**E TRÊS LOTES DA VILA NÃO SÃO CASA** (`docs/decisoes/022`): uma **igreja** com
+torre, uma **praça** com coreto e meio-fio, e **duas obras** — lotes sem telhado,
+que é o que salta numa fileira de telhas. A obra é desenhada com a altura do
+nível SEGUINTE, de modo que a vila mostra o que vem e não só o que é. Escolhidos
+entre os lotes VISÍVEIS (24 dos 34), porque a 51 px de largura quem distingue é
+a silhueta e não o detalhe — foi por isso que "comércios variados" ficou de fora.
+
+**E a mata atrás dela é desenhada onde se vê** (`com_saia()`).
 
 ---
 
@@ -185,7 +192,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
-| `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar. A 19px um ícone não se julga a olho |
+| `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, cartão de doca, cartão de trabalhador e letreiro. Os tokens de cor de mapa saíram daqui em 30/08: quem os define é o gerador do SVG |
@@ -194,15 +201,15 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/scenes/dock/DocaCartao.tscn` | A metade de INTERFACE da mesma doca: valor, turnos, trabalhador, alvo de toque |
 | `docs/design/BR_Port_Style_Guide_Flat_Design.md` | Paleta, peso de linha, espaçamento e proporções canônicas para toda arte futura |
 | `brport_vs/art/sprites/` | Sprites prontos (trabalhador, cargueiro, barco de pesca, caminhão, guindaste) |
-| `brport_vs/art/icones/` | **Os 20 ícones da interface**, em SVG chapado |
+| `brport_vs/art/icones/` | **Os 23 ícones da interface**, em SVG chapado |
 | `brport_vs/scripts/Icones.gd` | Registro dos ícones + helpers de rótulo e botão — o único lugar que sabe qual arquivo é qual ícone |
-| `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
+| `tools/preparar_sprites.py` | Conserta o alpha dos PNGs de IA e redimensiona |
 | `tools/gerar_mapa_iso.py` | Gera mapa, vila, vias e o campo costeiro contínuo; raster embutido determinístico, acumulado com `math.fsum`. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`** |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, e mede a dificuldade. **Quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado**, que quita antes do prazo (`018`). Imprime a mistura de classes e motivos e o NÍVEL a que cada um chegou, que é de onde o projetor tira os navios |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
-| `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos da interface, a 19px e ampliado — **rodar a cada ícone novo** |
+| `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos, a 19px e ampliado — **rodar a cada ícone novo**. Três colunas e **reprova ao transbordar**, como a da frota: a duas ela cortava no 23.º em silêncio |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `tools/conferir_lote_de_arte.py` | Confere lote de arte vindo de fora: alfa de verdade, tamanho e **ângulo da base contra o contrato de 26,57°**. Rodar antes de qualquer PNG externo entrar |
 | `docs/BRP_SPATIAL_CONTRACT.md` | **O contrato da projeção por escrito** — as constantes, os quatro participantes e a regra que faltava no guia do pacote de arte: `ROT_X = 60°` |
@@ -263,12 +270,11 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
 - **E OS TRÊS NPCs TÊM ROSTO** (`docs/decisoes/020`): nove bustos com pose
-  própria — cabeça inclinada, olhar dirigido —, ao lado da fala no boletim, na
-  parcela e na contra-oferta, que ganhou segundo tempo porque a despedida do
-  Arlindo estava escrita desde 01/09 e nunca tinha sido dita. A cara sai da
-  FALA, por tabela. Falta a faixa do rodapé: medida, à espera de layout
-- **Registro de partida em `.jsonl`**, um arquivo por partida, com o tempo de
-  deliberação de cada turno. Sai pelo botão do menu de pausa
+  própria, ao lado da fala no boletim, na parcela e na contra-oferta — que ganhou
+  segundo tempo porque a despedida do Arlindo nunca tinha sido dita. A cara sai
+  da FALA, por tabela. Falta a faixa do rodapé: medida, à espera de layout
+- **Registro de partida em `.jsonl`**, um por partida, com o tempo de cada
+  turno. Sai pelo menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,
   manutenção, parcela) — **só observa**, não entra em conta nenhuma do jogo
 - Fauna costeira tocável: gaivotão, maria-farinha e tartaruga-verde juvenil
@@ -286,7 +292,7 @@ alvo de arrasto e ACENDE quando aceita o trabalhador. O número de cada doca é
 **tinta de piso**, em estêncil, porque o importador de SVG do Godot não desenha
 `<text>`.
 
-**Os ícones do HUD já são arte de verdade**: 20 SVGs conferidos a 19px sobre
+**Os ícones do HUD já são arte de verdade**: 23 SVGs conferidos a 19px sobre
 os três fundos da interface com `tools/folha_icones.gd`. Cada um foi colorido
 para o fundo onde cai — o cabeçalho de `Icones.gd` diz quais não se
 reaproveitam e por quê.
@@ -325,14 +331,12 @@ pescado e armazenagem são o mesmo peixe indo para sítios diferentes.
 Os camiões são quatro, um por motivo. O **trabalhador aparece de pé no
 tabuado** quando alocado, e mexe-se enquanto a operação corre.
 
-**E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA.** Três portes com gramática
-própria — bote de convés aberto, traineira de pau-de-carga, arrasteiro com arco
-de popa laranja —, e a faixa de valor da classe escolhe qual atraca. Zero
-sorteios gastos: o valor já nascia com o barco.
+**E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA:** bote, traineira e arrasteiro,
+cada um com gramática própria, e a faixa de valor da classe escolhe qual atraca.
+Zero sorteios gastos.
 
 Os **retratos** saem do mesmo estúdio Blender e são os únicos props que olham
-para a frente — o do trabalhador de corpo inteiro, os três NPCs em busto; o
-boneco do PÍER é outro, e continua com as cinco caixas dele (`docs/arquivo/`).
+para a frente; o boneco do PÍER é outro (`docs/arquivo/`).
 
 A **Zona de Espera é só visual**, e torná-la mecânica muda o balanceamento
 medido. Desde 11/09 ela fundeia **ao largo**, fora do gradiente costeiro
