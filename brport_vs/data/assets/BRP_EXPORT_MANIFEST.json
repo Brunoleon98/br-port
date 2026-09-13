@@ -115,6 +115,39 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_fauna_cachorro_caramelo_base",
+      "category": "fauna",
+      "stage": "base",
+      "file": "cachorro_caramelo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "trote": {
+          "frames": 6,
+          "loop": true
+        },
+        "farejo": {
+          "frames": 4,
+          "loop": false
+        }
+      },
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": true,
+      "habitat": "vila",
+      "godot_scene": "res://scenes/fauna/CachorroCaramelo.tscn",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_caminhao_armazenagem_base",
       "category": "porto",
       "stage": "base",
@@ -304,6 +337,39 @@
       "selectable": false,
       "habitat": "terra",
       "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_fauna_capivara_base",
+      "category": "fauna",
+      "stage": "base",
+      "file": "capivara.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "andar_pastar": {
+          "frames": 6,
+          "loop": true
+        },
+        "refugio": {
+          "frames": 5,
+          "loop": false
+        }
+      },
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": true,
+      "habitat": "borda_de_mata",
+      "godot_scene": "res://scenes/fauna/Capivara.tscn",
       "sombra_de_contato": true
     },
     {
@@ -669,6 +735,39 @@
       "habitat": "terra",
       "godot_scene": "",
       "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_fauna_quero_quero_base",
+      "category": "fauna",
+      "stage": "base",
+      "file": "quero_quero.png",
+      "format": "png-rgba",
+      "frame_size": [
+        512,
+        512
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "andar_bicar": {
+          "frames": 6,
+          "loop": true
+        },
+        "voo_curto": {
+          "frames": 4,
+          "loop": false
+        }
+      },
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": true,
+      "habitat": "campo_aberto",
+      "godot_scene": "res://scenes/fauna/QueroQuero.tscn",
+      "sombra_de_contato": true
     },
     {
       "id": "BRP_porto_retrato_arlindo_contrariado_base",

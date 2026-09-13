@@ -92,6 +92,7 @@ var _d23_completo := false
 var _d24_completo := false
 var _d25_completo := false
 var _d26_completo := false
+var _d27_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -208,6 +209,10 @@ func _rodar() -> void:
 	print("=== D26: a fauna aparece, vive e sai do mundo ===")
 	_d26_ciclo_da_fauna()
 	_confere("o bloco D26 correu até ao fim", _d26_completo)
+
+	print("=== D27: cada animal nasce no habitat que lhe pertence ===")
+	_d27_habitats_da_fauna()
+	_confere("o bloco D27 correu até ao fim", _d27_completo)
 
 	print("=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===")
 	_d23_menu_celular()
@@ -2133,13 +2138,11 @@ func _d20_a_rua_no_desenho() -> void:
 	_d20_completo = true
 
 
-# ── D25 ── a fauna é menor do que gente, e o toque continua tocável
+# ── D25 ── a fauna respeita a régua do mundo, e o toque continua tocável
 #
-# A primeira fauna jogável ganhou desenho e escala na mesma passagem. O desenho
-# resolveu a leitura; a escala deixou gaivota, tartaruga e maria-farinha com a
-# largura de um barco. A régua independente já existia na própria arte: uma
-# pessoa mede 15 px. A ordem escolhida na imagem é gaivota > tartaruga >
-# caranguejo, em 15 / 14 / 12 px.
+# Uma pessoa mede 15 px na própria arte. A ave e os bichos pequenos não passam
+# dela; a capivara pode ser um pouco mais larga, mas continua bem abaixo do
+# barco de 44 px que serve de teto para os grandes elementos móveis.
 #
 # O alvo de toque é irmão do Sprite2D e não encolhe com ele. Fica no piso de
 # 44 px: menor faria o polegar errar; maior faria o animal reagir a um toque
@@ -2148,8 +2151,23 @@ const FAUNA_CENAS := {
 	"gaivota": "res://scenes/fauna/Gaivota.tscn",
 	"tartaruga_verde": "res://scenes/fauna/TartarugaVerde.tscn",
 	"maria_farinha": "res://scenes/fauna/MariaFarinha.tscn",
+	"cachorro_caramelo": "res://scenes/fauna/CachorroCaramelo.tscn",
+	"quero_quero": "res://scenes/fauna/QueroQuero.tscn",
+	"capivara": "res://scenes/fauna/Capivara.tscn",
 }
-const FAUNA_LARGURAS := {"gaivota": 15, "tartaruga_verde": 14, "maria_farinha": 12}
+const FAUNA_LARGURAS := {
+	"gaivota": 15,
+	"tartaruga_verde": 14,
+	"maria_farinha": 12,
+	"cachorro_caramelo": 15,
+	"quero_quero": 13,
+	"capivara": 17,
+}
+const FAUNA_ATE_UMA_PESSOA := [
+	"gaivota", "tartaruga_verde", "maria_farinha", "cachorro_caramelo",
+	"quero_quero",
+]
+const LARGURA_BARCO := 44
 
 
 func _d25_escala_da_fauna() -> void:
@@ -2167,8 +2185,14 @@ func _d25_escala_da_fauna() -> void:
 		larguras[especie] = largura
 		_confere("%s mede os %d px escolhidos" % [especie, FAUNA_LARGURAS[especie]],
 			largura == FAUNA_LARGURAS[especie], "mede %d px" % largura)
-		_confere("%s não é mais larga do que uma pessoa" % especie,
-			largura <= largura_pessoa, "%d px contra %d" % [largura, largura_pessoa])
+		if especie in FAUNA_ATE_UMA_PESSOA:
+			_confere("%s não é mais larga do que uma pessoa" % especie,
+				largura <= largura_pessoa,
+				"%d px contra %d" % [largura, largura_pessoa])
+		else:
+			_confere("a capivara fica entre a pessoa e o barco",
+				largura > largura_pessoa and largura < LARGURA_BARCO,
+				"%d px; pessoa %d; barco %d" % [largura, largura_pessoa, LARGURA_BARCO])
 
 		var forma: CircleShape2D = bicho.get_node("Toque/Forma").shape
 		var diametro := forma.radius * 2.0
@@ -2181,6 +2205,11 @@ func _d25_escala_da_fauna() -> void:
 			and larguras["tartaruga_verde"] > larguras["maria_farinha"],
 		"%s / %s / %s px" % [larguras["gaivota"], larguras["tartaruga_verde"],
 			larguras["maria_farinha"]])
+	_confere("a fauna terrestre lê capivara > cachorro > quero-quero",
+		larguras["capivara"] > larguras["cachorro_caramelo"]
+			and larguras["cachorro_caramelo"] > larguras["quero_quero"],
+		"%s / %s / %s px" % [larguras["capivara"], larguras["cachorro_caramelo"],
+			larguras["quero_quero"]])
 	_d25_completo = true
 
 
@@ -2218,10 +2247,22 @@ func _d26_ciclo_da_fauna() -> void:
 			bicho._process(0.63) # termina de emergir
 			entrada = bicho.position
 			bicho._process(0.50) # primeira corrida lateral
-		else:
+		elif especie == "tartaruga_verde":
 			bicho._process(0.91) # termina de subir à tona
 			entrada = bicho.position
 			bicho._process(1.00) # primeira braçada
+		elif especie == "cachorro_caramelo":
+			bicho._process(0.66) # termina de chegar pelo caminho curto
+			entrada = bicho.position
+			bicho._process(1.00) # trote antes da primeira farejada
+		elif especie == "quero_quero":
+			bicho._process(0.49) # pouso curto
+			entrada = bicho.position
+			bicho._process(0.80) # caminhada pelo gramado
+		elif especie == "capivara":
+			bicho._process(0.91) # sai da borda da mata
+			entrada = bicho.position
+			bicho._process(1.50) # caminhada lenta ao pasto
 		_confere("%s não fica parado enquanto está presente" % especie,
 			bicho.position.distance_to(entrada) > 1.0,
 			"moveu %.2f px" % bicho.position.distance_to(entrada))
@@ -2235,6 +2276,54 @@ func _d26_ciclo_da_fauna() -> void:
 				and not sprite.visible and not toque.input_pickable)
 		bicho.free()
 	_d26_completo = true
+
+
+# ── D27 ── quantidade e habitat são parte do desenho, não acaso de cena
+#
+# Há nove avistamentos, mas só seis espécies: os três bichos costeiros reaparecem
+# em outro ponto coerente. Os novos terrestres ficam sobre verde; o segundo
+# caranguejo, sobre areia; a segunda tartaruga, sobre água. Assim uma edição de
+# coordenada que ponha capivara na rua ou tartaruga em terra falha sem depender
+# de uma captura a olho.
+func _d27_habitats_da_fauna() -> void:
+	var grupo: Node2D = _main.get_node("MapaWrap/Fauna")
+	var mapa := (load("res://art/porto_mapa_iso.svg") as Texture2D).get_image()
+	var quantidades := {}
+	var avistamentos := 0
+	for bicho in grupo.get_children():
+		if not bicho.has_method("estado_atual"):
+			continue
+		var especie: String = bicho.especie
+		quantidades[especie] = int(quantidades.get(especie, 0)) + 1
+		avistamentos += 1
+
+	_confere("o mapa oferece nove avistamentos", avistamentos == 9,
+		"encontrados %d" % avistamentos)
+	for especie in FAUNA_CENAS:
+		var esperado := 2 if especie in ["gaivota", "maria_farinha", "tartaruga_verde"] else 1
+		_confere("%s tem %d ponto(s) de aparição" % [especie, esperado],
+			int(quantidades.get(especie, 0)) == esperado,
+			"encontrados %d" % int(quantidades.get(especie, 0)))
+
+	for nome in ["CachorroCaramelo", "QueroQuero", "Capivara"]:
+		var bicho: Node2D = grupo.get_node(nome)
+		var cor := mapa.get_pixelv(Vector2i(bicho.position))
+		_confere("%s aparece sobre terra verde" % nome,
+			cor.g > cor.r and cor.g > cor.b,
+			"posição %s, cor #%s" % [bicho.position, cor.to_html(false)])
+
+	var caranguejo: Node2D = grupo.get_node("MariaFarinhaSul")
+	var cor_areia := mapa.get_pixelv(Vector2i(caranguejo.position))
+	_confere("o novo caranguejo aparece na praia sul",
+		cor_areia.r > cor_areia.b and cor_areia.g > cor_areia.b,
+		"posição %s, cor #%s" % [caranguejo.position, cor_areia.to_html(false)])
+
+	var tartaruga: Node2D = grupo.get_node("TartarugaVerdeNorte")
+	var cor_agua := mapa.get_pixelv(Vector2i(tartaruga.position))
+	_confere("a nova tartaruga aparece no baixio norte",
+		cor_agua.b > cor_agua.r and cor_agua.g > cor_agua.r,
+		"posição %s, cor #%s" % [tartaruga.position, cor_agua.to_html(false)])
+	_d27_completo = true
 
 
 # ── D21 ── quem ESPERA fundeia ao largo; quem ATRACA fica na costeira

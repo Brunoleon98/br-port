@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3]
+[gd_scene load_steps=47 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
@@ -42,6 +42,9 @@
 [ext_resource type="PackedScene" path="res://scenes/fauna/Gaivota.tscn" id="fauna_gaivota"]
 [ext_resource type="PackedScene" path="res://scenes/fauna/MariaFarinha.tscn" id="fauna_maria"]
 [ext_resource type="PackedScene" path="res://scenes/fauna/TartarugaVerde.tscn" id="fauna_tartaruga"]
+[ext_resource type="PackedScene" path="res://scenes/fauna/CachorroCaramelo.tscn" id="fauna_cachorro"]
+[ext_resource type="PackedScene" path="res://scenes/fauna/QueroQuero.tscn" id="fauna_quero"]
+[ext_resource type="PackedScene" path="res://scenes/fauna/Capivara.tscn" id="fauna_capivara"]
 [ext_resource type="Script" path="res://scripts/AmbienteCosteiro.gd" id="fauna_ambiente"]
 
 [sub_resource type="StyleBoxFlat" id="pilula"]
@@ -491,18 +494,45 @@ texture = ExtResource("5")
 [node name="Fauna" type="Node2D" parent="MapaWrap"]
 script = ExtResource("fauna_ambiente")
 
-; Um ciclo por habitat. A gaivota usa a âncora só quando está fora de cena e
-; cruza de uma borda à outra; a maria-farinha regressa a esta toca da praia
-; norte; a tartaruga-verde sobe e mergulha em torno deste baixio sul. Tempos e
-; rotas vêm de sementes fixas em `Fauna.gd`, para a captura continuar repetível.
+; Seis espécies e nove avistamentos. As duplicatas ocupam habitats equivalentes
+; em praias/baixios opostos e têm sementes e atrasos próprios; os terrestres
+; ficam na vila, no campo aberto e na junção entre mata, grama e água. A
+; gaivota usa a âncora só fora de cena. Tudo continua repetível na captura.
 [node name="Gaivota" parent="MapaWrap/Fauna" instance=ExtResource("fauna_gaivota")]
 position = Vector2(639, 265.5)
+
+[node name="GaivotaLeste" parent="MapaWrap/Fauna" instance=ExtResource("fauna_gaivota")]
+position = Vector2(420, 310)
+atraso_inicial = 9.0
+semente = 202609151
 
 [node name="MariaFarinha" parent="MapaWrap/Fauna" instance=ExtResource("fauna_maria")]
 position = Vector2(566, 76.5)
 
+[node name="MariaFarinhaSul" parent="MapaWrap/Fauna" instance=ExtResource("fauna_maria")]
+position = Vector2(115, 555)
+atraso_inicial = 7.0
+semente = 202609152
+
 [node name="TartarugaVerde" parent="MapaWrap/Fauna" instance=ExtResource("fauna_tartaruga")]
 position = Vector2(219, 531.5)
+
+[node name="TartarugaVerdeNorte" parent="MapaWrap/Fauna" instance=ExtResource("fauna_tartaruga")]
+position = Vector2(610, 105)
+atraso_inicial = 11.0
+semente = 202609153
+
+[node name="CachorroCaramelo" parent="MapaWrap/Fauna" instance=ExtResource("fauna_cachorro")]
+position = Vector2(105, 190)
+atraso_inicial = 0.8
+
+[node name="QueroQuero" parent="MapaWrap/Fauna" instance=ExtResource("fauna_quero")]
+position = Vector2(455, 105)
+atraso_inicial = 3.1
+
+[node name="Capivara" parent="MapaWrap/Fauna" instance=ExtResource("fauna_capivara")]
+position = Vector2(60, 535)
+atraso_inicial = 5.6
 [node name="Docas" type="Control" parent="MapaWrap"]
 layout_mode = 0
 offset_right = 720.0

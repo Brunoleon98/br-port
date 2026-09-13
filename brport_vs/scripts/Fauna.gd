@@ -2,9 +2,10 @@ extends Node2D
 
 # Cada espécie tem um CICLO, não uma decoração eterna. A gaivota atravessa o
 # quadro; a maria-farinha pertence a uma toca; a tartaruga sobe, nada no baixio
-# e mergulha. Tudo usa tempo e sorteio determinísticos para as fotos do CI
-# continuarem comparáveis.
-@export_enum("gaivota", "maria_farinha", "tartaruga_verde") var especie := "gaivota"
+# e mergulha; e os bichos terrestres usam vila, campo e borda de mata. Tudo usa
+# tempo e sorteio determinísticos para as fotos do CI continuarem comparáveis.
+@export_enum("gaivota", "maria_farinha", "tartaruga_verde",
+		"cachorro_caramelo", "quero_quero", "capivara") var especie := "gaivota"
 @export var atraso_inicial := -1.0
 @export var semente := 0
 
@@ -19,20 +20,32 @@ const ATRASOS_INICIAIS := {
 	"gaivota": 0.35,
 	"maria_farinha": 1.80,
 	"tartaruga_verde": 3.60,
+	"cachorro_caramelo": 0.90,
+	"quero_quero": 2.40,
+	"capivara": 4.20,
 }
 const ESPERAS := {
 	"gaivota": Vector2(8.0, 16.0),
 	"maria_farinha": Vector2(5.5, 10.0),
 	"tartaruga_verde": Vector2(9.0, 17.0),
+	"cachorro_caramelo": Vector2(7.0, 13.0),
+	"quero_quero": Vector2(6.0, 12.0),
+	"capivara": Vector2(12.0, 20.0),
 }
 const DURACOES_PRESENTE := {
 	"maria_farinha": Vector2(7.0, 10.0),
 	"tartaruga_verde": Vector2(9.0, 14.0),
+	"cachorro_caramelo": Vector2(10.0, 14.0),
+	"quero_quero": Vector2(8.0, 12.0),
+	"capivara": Vector2(12.0, 17.0),
 }
 const SEMENTES := {
 	"gaivota": 202609131,
 	"maria_farinha": 202609132,
 	"tartaruga_verde": 202609133,
+	"cachorro_caramelo": 202609141,
+	"quero_quero": 202609142,
+	"capivara": 202609143,
 }
 
 @onready var _sprite: Sprite2D = $Sprite
@@ -128,6 +141,27 @@ func aparecer_agora() -> void:
 			_sprite.modulate = Color(0.62, 0.90, 1.0, 0.0)
 			_onda_alpha = 0.0
 			_mudar_estado(Estado.APARECENDO, 0.90)
+		"cachorro_caramelo":
+			_direcao = -1.0 if _sorteio.randi_range(0, 1) == 0 else 1.0
+			position = _origem + Vector2(-16.0 * _direcao, 1.0)
+			_sprite.flip_h = _direcao < 0.0
+			_sprite.scale = Vector2(0.88, 0.88)
+			_sprite.modulate.a = 0.0
+			_mudar_estado(Estado.APARECENDO, 0.65)
+		"quero_quero":
+			_direcao = -1.0 if _sorteio.randi_range(0, 1) == 0 else 1.0
+			position = _origem + Vector2(-8.0 * _direcao, 0.0)
+			_sprite.flip_h = _direcao < 0.0
+			_sprite.scale = Vector2(0.72, 0.72)
+			_sprite.modulate.a = 0.0
+			_mudar_estado(Estado.APARECENDO, 0.48)
+		"capivara":
+			_direcao = -1.0 if _sorteio.randi_range(0, 1) == 0 else 1.0
+			position = _origem + Vector2(-11.0 * _direcao, 4.0)
+			_sprite.flip_h = _direcao < 0.0
+			_sprite.scale = Vector2(0.82, 0.82)
+			_sprite.modulate.a = 0.0
+			_mudar_estado(Estado.APARECENDO, 0.90)
 
 
 func sumir_agora() -> void:
@@ -147,6 +181,12 @@ func sumir_agora() -> void:
 			_mudar_estado(Estado.SAINDO, 0.78)
 		"tartaruga_verde":
 			_mudar_estado(Estado.SAINDO, 0.86)
+		"cachorro_caramelo":
+			_mudar_estado(Estado.SAINDO, 1.25)
+		"quero_quero":
+			_mudar_estado(Estado.SAINDO, 0.72)
+		"capivara":
+			_mudar_estado(Estado.SAINDO, 1.55)
 
 
 func _preparar_gaivota() -> void:
@@ -184,6 +224,11 @@ func _entrar_presente() -> void:
 					_sortear(DURACOES_PRESENTE[especie]))
 		"tartaruga_verde":
 			position = _origem + Vector2(-14.0 * _direcao, 0.0)
+			_sprite.flip_h = _direcao < 0.0
+			_mudar_estado(Estado.PRESENTE,
+					_sortear(DURACOES_PRESENTE[especie]))
+		"cachorro_caramelo", "quero_quero", "capivara":
+			position = _origem
 			_sprite.flip_h = _direcao < 0.0
 			_mudar_estado(Estado.PRESENTE,
 					_sortear(DURACOES_PRESENTE[especie]))
@@ -241,6 +286,25 @@ func _animar_aparicao(p: float) -> void:
 					lerpf(0.90, 1.0, suave), 1.0, suave)
 			_onda_alpha = sin(p * PI) * 0.22
 			_onda_fase = p
+		"cachorro_caramelo":
+			position = (_origem + Vector2(-16.0 * _direcao, 1.0)).lerp(
+					_origem, suave)
+			_sprite.flip_h = _direcao < 0.0
+			_sprite.scale = Vector2.ONE * lerpf(0.88, 1.0, suave)
+			_sprite.modulate.a = suave
+			_sprite.position.y = sin(p * PI * 3.0) * 0.45
+		"quero_quero":
+			position = (_origem + Vector2(-8.0 * _direcao, 0.0)).lerp(
+					_origem, suave)
+			_sprite.flip_h = _direcao < 0.0
+			_sprite.scale = Vector2.ONE * lerpf(0.72, 1.0, suave)
+			_sprite.modulate.a = suave
+		"capivara":
+			position = (_origem + Vector2(-11.0 * _direcao, 4.0)).lerp(
+					_origem, suave)
+			_sprite.flip_h = _direcao < 0.0
+			_sprite.scale = Vector2.ONE * lerpf(0.82, 1.0, suave)
+			_sprite.modulate.a = suave
 
 
 func _animar_presenca(p: float) -> void:
@@ -251,6 +315,12 @@ func _animar_presenca(p: float) -> void:
 			_animar_maria_farinha()
 		"tartaruga_verde":
 			_animar_tartaruga(p)
+		"cachorro_caramelo":
+			_animar_cachorro()
+		"quero_quero":
+			_animar_quero_quero()
+		"capivara":
+			_animar_capivara()
 
 
 func _animar_voo(p: float, fuga: bool) -> void:
@@ -319,6 +389,96 @@ func _animar_tartaruga(p: float) -> void:
 	_onda_fase = _tempo_estado
 
 
+func _animar_cachorro() -> void:
+	var agora := _deslocamento_cachorro(_tempo_estado)
+	var antes := _deslocamento_cachorro(maxf(0.0, _tempo_estado - 0.04))
+	var trotando := clampf(absf(agora - antes) / 0.55, 0.0, 1.0)
+	var fase := fmod(_tempo_estado, 7.20)
+	var farejando := 1.0 if (fase >= 1.45 and fase < 2.75) \
+			or (fase >= 4.25 and fase < 5.30) else 0.0
+	position = _origem + Vector2(agora * _direcao,
+			sin(_tempo_estado * 11.0) * 0.42 * trotando)
+	_sprite.flip_h = _direcao < 0.0
+	_sprite.scale = Vector2(1.0 + trotando * 0.045,
+			1.0 - trotando * 0.055)
+	_sprite.rotation = sin(_tempo_estado * 11.0) * 0.025 * trotando \
+			+ farejando * 0.09
+	_sprite.position.y = farejando * (0.8 + 0.35 * sin(_tempo_estado * 5.0))
+
+
+func _deslocamento_cachorro(tempo: float) -> float:
+	# O cão percorre um trecho curto da vila e para para farejar: movimento
+	# urbano oportunista, sem atravessar rua, casas ou o porto inteiro.
+	var fase := fmod(tempo, 7.20)
+	if fase < 1.45:
+		return lerpf(0.0, 13.0, _suave(fase / 1.45))
+	if fase < 2.75:
+		return 13.0
+	if fase < 4.25:
+		return lerpf(13.0, -8.0, _suave((fase - 2.75) / 1.50))
+	if fase < 5.30:
+		return -8.0
+	if fase < 6.60:
+		return lerpf(-8.0, 0.0, _suave((fase - 5.30) / 1.30))
+	return 0.0
+
+
+func _animar_quero_quero() -> void:
+	var agora := _deslocamento_quero(_tempo_estado)
+	var antes := _deslocamento_quero(maxf(0.0, _tempo_estado - 0.04))
+	var andando := clampf(absf(agora - antes) / 0.45, 0.0, 1.0)
+	var fase := fmod(_tempo_estado, 5.10)
+	var bicando := 1.0 if (fase >= 1.15 and fase < 2.00) \
+			or (fase >= 3.15 and fase < 3.95) else 0.0
+	position = _origem + Vector2(agora * _direcao, 0.0)
+	_sprite.flip_h = _direcao < 0.0
+	_sprite.scale = Vector2(1.0 + andando * 0.035,
+			1.0 - andando * 0.055)
+	_sprite.position.y = bicando * absf(sin(_tempo_estado * 8.0)) * 1.25
+	_sprite.rotation = bicando * sin(_tempo_estado * 8.0) * 0.08
+
+
+func _deslocamento_quero(tempo: float) -> float:
+	var fase := fmod(tempo, 5.10)
+	if fase < 1.15:
+		return lerpf(0.0, 9.0, _suave(fase / 1.15))
+	if fase < 2.00:
+		return 9.0
+	if fase < 3.15:
+		return lerpf(9.0, -5.0, _suave((fase - 2.00) / 1.15))
+	if fase < 3.95:
+		return -5.0
+	return lerpf(-5.0, 0.0, _suave((fase - 3.95) / 1.15))
+
+
+func _animar_capivara() -> void:
+	var agora := _deslocamento_capivara(_tempo_estado)
+	var antes := _deslocamento_capivara(maxf(0.0, _tempo_estado - 0.04))
+	var andando := clampf(absf(agora - antes) / 0.38, 0.0, 1.0)
+	var fase := fmod(_tempo_estado, 8.40)
+	var pastando := 1.0 if fase >= 2.35 and fase < 5.10 else 0.0
+	position = _origem + Vector2(agora * _direcao,
+			sin(_tempo_estado * 4.2) * 0.20 * andando)
+	_sprite.flip_h = _direcao < 0.0
+	_sprite.scale = Vector2(1.0 + sin(_tempo_estado * 1.8) * 0.012,
+			1.0 - sin(_tempo_estado * 1.8) * 0.010)
+	_sprite.position.y = pastando * (0.65 + absf(sin(_tempo_estado * 2.4)) * 0.55)
+	_sprite.rotation = pastando * 0.055 + sin(_tempo_estado * 4.2) * 0.012 * andando
+
+
+func _deslocamento_capivara(tempo: float) -> float:
+	# Caminhada lenta entre abrigo e pasto. Ela não vagueia pela cidade: usa um
+	# corredor curto exatamente na borda em que mata, gramado e água se tocam.
+	var fase := fmod(tempo, 8.40)
+	if fase < 2.35:
+		return lerpf(0.0, 12.0, _suave(fase / 2.35))
+	if fase < 5.10:
+		return 12.0
+	if fase < 7.45:
+		return lerpf(12.0, 0.0, _suave((fase - 5.10) / 2.35))
+	return 0.0
+
+
 func _animar_saida(p: float) -> void:
 	var suave := _suave(p)
 	match especie:
@@ -341,6 +501,25 @@ func _animar_saida(p: float) -> void:
 					lerpf(1.0, 0.86, suave), 1.0, 1.0 - suave)
 			_onda_alpha = (1.0 - suave) * 0.26
 			_onda_fase = 1.0 + p * 2.0
+		"cachorro_caramelo":
+			position = _inicio_saida.lerp(
+					_origem + Vector2(28.0 * _direcao, 2.0), suave)
+			_sprite.flip_h = _direcao < 0.0
+			_sprite.scale = Vector2(1.04, 0.94 + sin(p * PI * 8.0) * 0.05)
+			_sprite.modulate.a = 1.0 - _suave(clampf((p - 0.58) / 0.42, 0.0, 1.0))
+		"quero_quero":
+			position = _inicio_saida.lerp(
+					_origem + Vector2(18.0 * _direcao, -10.0), suave)
+			_sprite.flip_h = _direcao < 0.0
+			var asa := 0.5 + 0.5 * sin(p * PI * 7.0)
+			_sprite.scale = Vector2(1.0, lerpf(0.76, 1.08, asa))
+			_sprite.modulate.a = 1.0 - suave
+		"capivara":
+			position = _inicio_saida.lerp(
+					_origem + Vector2(-22.0 * _direcao, 7.0), suave)
+			_sprite.flip_h = _direcao < 0.0
+			_sprite.scale = Vector2.ONE * lerpf(1.0, 0.82, suave)
+			_sprite.modulate.a = 1.0 - _suave(clampf((p - 0.52) / 0.48, 0.0, 1.0))
 
 
 func _ao_input(_viewport: Node, evento: InputEvent, _forma: int) -> void:

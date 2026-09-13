@@ -1346,6 +1346,33 @@ No fecho, D20, D21 e D24 passaram a medir o `Texture2D` importado que o jogo
 usa: a segunda rasterização do SVG em memória caía no ThorVG do Godot 4.6.3
 para Windows. As mesmas 290 amostras por mapa continuam cobrindo rua e areia.
 
+### ✅ A TERRA GANHOU FAUNA, E OS COSTEIROS GANHARAM NOVOS PONTOS (13/09)
+
+O mapa passou de três para **seis espécies em nove avistamentos**. Entraram
+cachorro caramelo na vila, quero-quero no campo aberto e capivara na interface
+entre gramado, mata e água. A escolha segue o comportamento observável no
+litoral brasileiro: o cão faz um circuito curto com pausas para farejar, a ave
+anda e bica no terreno aberto, e a capivara sai do abrigo para pastar e volta.
+O quero-quero foi ampliado de 11 para **13 px** e ganhou peito/cabeça escuros
+contra a asa branca depois de a primeira captura fazê-lo parecer uma pedra.
+
+Gaivota, maria-farinha e tartaruga-verde ganharam uma segunda instância, com
+semente e atraso próprios: outra travessia do céu, outra toca na praia sul e
+outro mergulho no baixio norte. Isso aumenta encontros sem transformar a cena
+num viveiro permanente; as nove instâncias continuam alternando espera,
+entrada, comportamento e saída.
+
+O novo **D27** conta as seis espécies, exige os nove pontos e lê a cor do mapa
+sob cada âncora terrestre/costeira. Mover temporariamente a capivara de
+`(60,535)` para o asfalto em `(100,450)` reprovou somente `Capivara aparece
+sobre terra verde`; restaurada a posição, o design voltou a passar. D25 agora
+prende as seis larguras e D26 percorre o ciclo das seis cenas.
+
+Os três PNGs e o `BRP_FaunaStudio.blend` foram regenerados no Blender 5.2 LTS;
+o módulo `bpy` 4.5 desta máquina falhou no render por alocação, mas continuou
+apto a validar o catálogo. `validate_brp_assets.py fauna` fechou em
+`BRP BLENDER OK`, e a revisão visual cobriu seis instantes determinísticos.
+
 ### ✅ O ITEM 5 FECHOU INTEIRO — 5a medido, 5b escrito (11/09)
 
 **`docs/decisoes/018`**, e a resposta é NÃO MEXER. Varridos sete pontos e 4.200
