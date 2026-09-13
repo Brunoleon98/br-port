@@ -1301,7 +1301,57 @@ o terceiro deste projeto a ler a COR do mapa. E rendeu a lição de que **a jane
 de uma prova tem de ser da escala da peça**: com um raio único, dois dos cinco
 defeitos injetados passaram inteiros.
 
-**Resta um item de arte, separado:** curvas em vez de retas (8, grande). O 8 não foi puxado para o 9:
+**Resta um item de arte, separado:** curvas em vez de retas (8, grande).
+
+### ⚠️ DOIS DEFEITOS VISTOS E MEDIDOS EM 13/09, por fazer
+
+Os dois saíram de o Bruno olhar a captura, e os dois estão MEDIDOS — a sessão
+que os pegar não precisa de os redescobrir.
+
+**1. A AREIA DA PRAIA ATRAVESSA A RUA.** Visível no `inicio.png`, na praia do
+degrau 0 (topo do quadro): a faixa de areia passa por cima do asfalto e a rua
+desaparece por baixo dela.
+
+⚠️ **É a IRMÃ NÃO VARRIDA de uma lição já escrita.** O `CLAUDE.md` regista, a
+propósito do capim da restinga: *"O que CRESCE no chão pertence à camada do
+chão. O capim nasceu junto com a areia, que é desenhada no fim com o
+enrocamento — depois da rua e depois da vila — e apareceu por cima dos telhados
+e do passeio."* O capim foi corrigido; **a areia, que era a causa, não**.
+
+⚠️ **E o D20 passa por lá e não vê.** A `ROTA_ESTRADA` começa em
+`(-3,45, -14,00)`, que é dentro da praia do degrau 0 — o bloco cruza mesmo o
+sítio do defeito. Ele só pergunta *"este ponto não é CALÇADA?"*, e areia não é
+calçada. **A guarda que falta é uma linha**: na rota, também não pode ser areia.
+
+**2. OS TRÊS ANIMAIS ESTÃO GRANDES DEMAIS**, e o número diz quanto:
+
+| peça | desenho | |
+|---|---:|---|
+| gaivota | **48 × 27** | |
+| maria-farinha | **44 × 25** | |
+| tartaruga-verde | **47 × 25** | |
+| trabalhador (uma PESSOA) | 15 × 26 | referência |
+| bote de pesca (um BARCO) | 44 × 41 | referência |
+
+**O caranguejo tem a largura do bote de pesca inteiro e três vezes a de uma
+pessoa.**
+
+⚠️ **E a correção não é reverter às cegas, porque o tamanho foi uma ESCOLHA
+registada.** O cabeçalho do `blender/brp_fauna.py` diz: *"A gaivota anterior
+ocupava só cerca de 20 px do quadro e lia como planador. A quarta versão troca
+caixas por prismas de silhueta... Ela também ganha escala de jogo."* Ou seja, o
+problema antigo era de DESENHO e resolveu-se com desenho **e** com tamanho — e a
+pergunta por responder é se a silhueta nova já se lê pequena, que é o que
+tornaria o crescimento desnecessário.
+
+**O alvo de toque não estorva:** ele é um `CircleShape2D` de raio 30, IRMÃO do
+`Sprite2D` e não filho — encolher o sprite não o encolhe. O compromisso a nomear
+é o outro: um sprite muito menor do que o círculo faz o bicho reagir a um toque
+ao lado dele.
+
+**Custa `bpy`:** os três saem de `blender/brp_fauna.py`, logo a sessão precisa do
+`pip install "bpy==4.5.0"` (~1 GB, minutos). A areia não precisa de Blender
+nenhum. O 8 não foi puxado para o 9:
 o contorno e a tabela de âncoras permanecem iguais.
 
 ### ✅ O ITEM 5 FECHOU INTEIRO — 5a medido, 5b escrito (11/09)
