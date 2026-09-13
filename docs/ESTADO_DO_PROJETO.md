@@ -72,13 +72,13 @@ Pescado, Armazenagem, Contêiner ou Granel —, lido no cartão da doca. O efeit
 o da ESTRUTURA a que o motivo está preso; reparo e reabastecimento ficaram de
 fora porque o GDD põe a oficina e o posto na Fase 2 (`docs/decisoes/008`).
 
-**A partida grava-se.** Uma linha JSON por acontecimento, com o tempo em cada
-turno (A7); o nome de quem jogou NÃO entra (`docs/decisoes/006`). Sai pelo menu
-de pausa, e `tools/ler_registros.py` resume.
+**A partida grava-se** — uma linha JSON por acontecimento, com o tempo de cada
+turno; sem o nome de quem jogou (`docs/decisoes/006`). Sai pelo menu de pausa, e
+`tools/ler_registros.py` resume.
 
-**O jogo tem som.** São 14 efeitos sintetizados por `tools/gerar_sons.py`,
-incluindo mar e fauna, num autoload com prioridade, dois buses e sliders. São
-de RASCUNHO e ainda esperam o Bruno ouvir (`BR_Port_Plano_Audio.md` §2).
+**O jogo tem som:** 14 efeitos sintetizados por `tools/gerar_sons.py`, num
+autoload com prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno
+ouvir (`BR_Port_Plano_Audio.md` §2).
 
 **E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`docs/decisoes/021`). O
 botão sai da linha do Construir — medido, não havia altura livre no rodapé —, e
@@ -90,12 +90,12 @@ que abrem na Fase 2. O menu de pausa não foi absorvido: ele é sistema, isto é
 mundo. **É casca, e de propósito** — a economia das fases seguintes continua por
 responder.
 
-**Nada de interface pousa sobre o mapa.** A doca separa a vaga no cenário do
-cartão na barra; o número é tinta no cais, sem placa a tapar o desenho.
+**Nada de interface pousa sobre o mapa:** a doca separa a vaga no cenário do
+cartão na barra, e o número é tinta no cais.
 
-**O ARMAZÉM é um armazém dos dois lados do par** (zinco, chapa corrugada,
-portão de enrolar, plataforma de carga) e **o porto abre em RUÍNAS de verdade**
-— parede desabada, meio telhado, portão fora do trilho (`docs/arquivo/`).
+**O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
+verdade** — parede desabada, meio telhado, portão fora do trilho
+(`docs/arquivo/`).
 
 **O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
 central e passadeiras), calçada, acesso a cada berço, **duas fileiras de casas**
@@ -106,7 +106,14 @@ térrea, sobrado, prédio, e é assim que cresce a cada Fase.
 **E a rua VIRA em vez de acabar:** cada cotovelo leva chanfro de meia largura
 de rua nas duas quinas salientes (`docs/decisoes/013`).
 
-**E a mata atrás dela é desenhada onde se vê**, pela receita `com_saia()`.
+**E TRÊS LOTES DA VILA NÃO SÃO CASA** (`docs/decisoes/022`): uma **igreja** com
+torre, uma **praça** com coreto e meio-fio, e **duas obras** — lotes sem telhado,
+que é o que salta numa fileira de telhas. A obra é desenhada com a altura do
+nível SEGUINTE, de modo que a vila mostra o que vem e não só o que é. Escolhidos
+entre os lotes VISÍVEIS (24 dos 34), porque a 51 px de largura quem distingue é
+a silhueta e não o detalhe — foi por isso que "comércios variados" ficou de fora.
+
+**E a mata atrás dela é desenhada onde se vê** (`com_saia()`).
 
 ---
 
@@ -185,7 +192,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
-| `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar. A 19px um ícone não se julga a olho |
+| `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, cartão de doca, cartão de trabalhador e letreiro. Os tokens de cor de mapa saíram daqui em 30/08: quem os define é o gerador do SVG |
@@ -196,7 +203,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/art/sprites/` | Sprites prontos (trabalhador, cargueiro, barco de pesca, caminhão, guindaste) |
 | `brport_vs/art/icones/` | **Os 23 ícones da interface**, em SVG chapado |
 | `brport_vs/scripts/Icones.gd` | Registro dos ícones + helpers de rótulo e botão — o único lugar que sabe qual arquivo é qual ícone |
-| `tools/preparar_sprites.py` | Conserta o alpha dos PNGs gerados por IA e redimensiona — rodar a cada leva nova |
+| `tools/preparar_sprites.py` | Conserta o alpha dos PNGs de IA e redimensiona |
 | `tools/gerar_mapa_iso.py` | Gera mapa, vila, vias e o campo costeiro contínuo; raster embutido determinístico, acumulado com `math.fsum`. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`** |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
@@ -263,12 +270,11 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
 - **E OS TRÊS NPCs TÊM ROSTO** (`docs/decisoes/020`): nove bustos com pose
-  própria — cabeça inclinada, olhar dirigido —, ao lado da fala no boletim, na
-  parcela e na contra-oferta, que ganhou segundo tempo porque a despedida do
-  Arlindo estava escrita desde 01/09 e nunca tinha sido dita. A cara sai da
-  FALA, por tabela. Falta a faixa do rodapé: medida, à espera de layout
-- **Registro de partida em `.jsonl`**, um arquivo por partida, com o tempo de
-  deliberação de cada turno. Sai pelo botão do menu de pausa
+  própria, ao lado da fala no boletim, na parcela e na contra-oferta — que ganhou
+  segundo tempo porque a despedida do Arlindo nunca tinha sido dita. A cara sai
+  da FALA, por tabela. Falta a faixa do rodapé: medida, à espera de layout
+- **Registro de partida em `.jsonl`**, um por partida, com o tempo de cada
+  turno. Sai pelo menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,
   manutenção, parcela) — **só observa**, não entra em conta nenhuma do jogo
 - Fauna costeira tocável: gaivotão, maria-farinha e tartaruga-verde juvenil
@@ -325,14 +331,12 @@ pescado e armazenagem são o mesmo peixe indo para sítios diferentes.
 Os camiões são quatro, um por motivo. O **trabalhador aparece de pé no
 tabuado** quando alocado, e mexe-se enquanto a operação corre.
 
-**E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA.** Três portes com gramática
-própria — bote de convés aberto, traineira de pau-de-carga, arrasteiro com arco
-de popa laranja —, e a faixa de valor da classe escolhe qual atraca. Zero
-sorteios gastos: o valor já nascia com o barco.
+**E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA:** bote, traineira e arrasteiro,
+cada um com gramática própria, e a faixa de valor da classe escolhe qual atraca.
+Zero sorteios gastos.
 
 Os **retratos** saem do mesmo estúdio Blender e são os únicos props que olham
-para a frente — o do trabalhador de corpo inteiro, os três NPCs em busto; o
-boneco do PÍER é outro, e continua com as cinco caixas dele (`docs/arquivo/`).
+para a frente; o boneco do PÍER é outro (`docs/arquivo/`).
 
 A **Zona de Espera é só visual**, e torná-la mecânica muda o balanceamento
 medido. Desde 11/09 ela fundeia **ao largo**, fora do gradiente costeiro

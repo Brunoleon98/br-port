@@ -748,6 +748,35 @@ tranca isso.
   0,21: some. **Duas peças que se separam bem uma da outra podem estar as duas
   na banda do fundo.** A conta que decide a cor é sempre peça contra fundo; a
   separação entre peças é a segunda pergunta, nunca a primeira.
+- **⚠️ PROVA POR PIXEL ÚNICO É FRÁGIL, E A JANELA TEM DE SER DA ESCALA DA
+  PEÇA.** A primeira metade já estava escrita no D17 — pergunte quanto DESENHO
+  há à volta do ponto, e nunca se o ponto cai na caixa. A segunda custou dois
+  defeitos injetados que **não pegaram** (13/09, D24): com um raio único de
+  12 px, tirar o campanário da igreja passava porque a janela ainda apanhava o
+  remate 7 px abaixo, e dar um telhado à obra passava porque à volta dela há
+  creme por todo o lado. Uma peça de 18 px pede uma janela de 9×9; uma laje de
+  50, uma de 21×21 — e o raio vive na PROVA, não numa constante do teste.
+  E o pixel único mentiu três vezes antes disso, sempre reprovando o que estava
+  certo: por mirar o meio de um volume (que em isométrico cai na FACE lateral e
+  não no topo), por cair debaixo de uma peça elevada (que se projeta para cima
+  e para TRÁS, tapando todo ponto de `mx + my` menor) e por cair dentro de uma
+  copa.
+- **⚠️ E A GUARDA QUE SE SATISFAZ COM O VIZINHO NÃO GUARDA NADA.** É o que
+  estava por trás dos dois defeitos acima, e apareceu três vezes no mesmo dia: a
+  prova do piso da praça contava os pixels da CALÇADA DA RUA, que passa a poucos
+  pixels dali — teria passado com a praça inteira apagada. Antes de escolher o
+  que provar, pergunte o que é EXCLUSIVO da peça: a praça passou a ser provada
+  pelo coreto, que é a única coisa que só ela tem. E quando a peça se define por
+  uma AUSÊNCIA, a prova é negativa — ter laje creme não distingue uma obra das
+  casas, que são do mesmo creme; **não ter telha por cima**, sim.
+- **⚠️ NÚMERO ABSOLUTO DENTRO DE PEÇA COM TAMANHO PRÓPRIO NÃO SOBREVIVE.** A
+  cruz da igreja ia de `cx0 - 0,14` a `cx0 + 0,22` — **0,36 unidades num
+  campanário de 0,30**, mais larga do que a torre que a sustenta, a cobrir o
+  topo inteiro em planta. Não deu erro nenhum; quem a apanhou foi a prova a ler
+  `tronco` onde a tabela prometia telha. É a irmã de "encolher um prop escala-se
+  no GRUPO, nunca reescrevendo as literais": ali o risco é deixar uma literal
+  por escalar, aqui é escrevê-la em unidades de mundo dentro de uma peça cuja
+  medida é uma fração de outra.
 - **⚠️ E UM PROP SÓ ATRAVESSA DOIS FUNDOS: nenhum tom ganha os dois.** No mesmo
   prop, o gancho pende sobre o BAIXIO (claro, ~106) e o pau corre sobre a AREIA
   (~159), com água funda (~67) à volta. `metal_claro` mede 0,75 sobre a água
@@ -1450,6 +1479,14 @@ armadilha de uma função, no comentário dela.
   formatador é uma aposta sobre valores que ainda não existem.** As casas saem
   do valor; e a guarda que isto pedia é barata — **releia o que formatou e
   exija que volte ao que era**, senão a tabela perde o número sem uma palavra.
+- **⚠️ `open(..., "w")` TRUNCA ANTES DE O CONTEÚDO EXISTIR, e isso vale para
+  todo arquivo gerado.** O `main()` do `gerar_mapa_iso.py` tem o comentário
+  certo ao lado do SVG — gerar ANTES de abrir, "que trunca de imediato, e um
+  erro deixaria o mapa vazio" —, e a tabela de âncoras ao lado NÃO tinha a mesma
+  proteção: um `NameError` dentro de `tabela_ancoras()`, chamada de dentro do
+  `json.dump()`, deixou o `.json` com **zero bytes** e o commit anterior por
+  cima. É a regra "ao corrigir um, VARRA OS IRMÃOS" aplicada a dois `open()` no
+  mesmo arquivo.
 - **`destino[chave] += x` num Dictionary CRIA a chave em silêncio.** É a irmã
   do `.get(chave, omissão)` acima, do outro lado: ali um erro de digitação vira
   número plausível na LEITURA, aqui vira dinheiro escrito numa chave que a soma

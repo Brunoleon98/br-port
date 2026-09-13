@@ -89,6 +89,7 @@ var _d20_completo := false
 var _d21_completo := false
 var _d22_completo := false
 var _d23_completo := false
+var _d24_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -193,6 +194,10 @@ func _rodar() -> void:
 	print("=== D22: a narração de fim de fase cabe sem rolar ===")
 	_d22_narracao_cabe()
 	_confere("o bloco D22 correu até ao fim", _d22_completo)
+
+	print("=== D24: a igreja, a praça e a obra chegaram ao DESENHO da vila ===")
+	_d24_a_vila_cresce()
+	_confere("o bloco D24 correu até ao fim", _d24_completo)
 
 	print("=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===")
 	_d23_menu_celular()
@@ -2006,6 +2011,22 @@ func _contraste(a: Color, b: Color) -> float:
 # ⚠️ E A PERGUNTA É «NÃO É CALÇADA», não «é asfalto». A rodagem leva pintura —
 # linha central, passadeira —, e exigir o cinzento do asfalto reprovaria uma
 # zebra bem desenhada. O que nunca pode aparecer no meio da pista é o PASSEIO.
+# A vila é a mesma nos dois mapas; a prova lê o do jogo.
+const MAPA_DA_VILA := "res://art/porto_mapa_iso.svg"
+# ⚠️ A JANELA COBRE A PEÇA, e o número saiu de uma medição. A 6 px de raio a
+# prova da praça dava ZERO: o piso dela aparece em manchas entre as copas e o
+# coreto — 142 pixels de calçada espalhados por um lote de 51x47 —, e um raio
+# pequeno cai inteiro dentro de uma copa. A 12 px a janela tem 625 pixels e
+# exigem-se 10, que é 1,6%: baixo o suficiente para uma peça entrecortada
+# contar, e alto o suficiente para um defeito real dar zero — medido, trocar a
+# calçada pelo `solo_claro` que some contra o quintal dá 0.
+# O raio e o mínimo vêm agora de CADA prova (ver `pontos_de_prova` no gerador):
+# uma peça de 18 px e uma laje de 50 não se medem com a mesma janela. O que
+# fica aqui é só a tolerância da prova negativa — alguns pixels de telha na
+# janela de uma obra são o beiral da casa vizinha a entrar pela borda, e não um
+# telhado em cima dela.
+const D24_INTRUSOS := 12
+
 const MAPAS_DA_RUA := ["res://art/porto_mapa_iso.svg",
 	"res://art/porto_mapa_iso_patio.svg"]
 
@@ -2493,3 +2514,123 @@ func _achar_grelha(no: Node) -> GridContainer:
 		if achado != null:
 			return achado
 	return null
+
+
+# ── D24 ── a igreja, a praça e a obra chegaram ao DESENHO da vila
+#
+# Item 12 do segundo playtest (`docs/decisoes/022`). A vila ganhou três lotes
+# que não são casa, e nenhuma guarda deste projeto perguntava por eles: o
+# `asset_validator` mede props, e a vila é ASSADA no SVG — não é prop nenhum.
+#
+# ⚠️ E A PERGUNTA É AO RASTER, NÃO À TABELA. Recalcular aqui onde a torre
+# devia estar seria reconstruir a decisão que se quer conferir — a armadilha
+# do espelho, que este projeto já pagou no sorteio de motivos. Em vez disso o
+# gerador PUBLICA um ponto de prova por lote especial ("no pixel (x, y) tem de
+# estar o remate da igreja") e este bloco pergunta ao PNG o que lá ficou
+# pintado. Se o desenho sair na ordem errada, se uma peça tapar a outra, ou se
+# alguém trocar a cor por uma que some no fundo, os dois deixam de bater.
+#
+# É a terceira vez que este projeto lê a COR do mapa: o D20 pergunta-a à rua e
+# o D21 à água. Aqui a tinta é chapada, como a da rua, então compara-se exato
+# com a folga do antisserrilhado — e não por luminância, que é o que a água
+# obrigou a fazer.
+func _d24_a_vila_cresce() -> void:
+	var provas: Array = _ancoras.get("provas_da_vila", [])
+	var cores: Dictionary = _ancoras.get("cores_da_vila", {})
+	_confere("o mapa publica as provas da vila", not provas.is_empty())
+	_confere("o mapa publica as cores da vila", not cores.is_empty())
+	if provas.is_empty() or cores.is_empty():
+		return
+
+	# ⚠️ OS TRÊS TIPOS TÊM DE EXISTIR. Sem isto, um `lotes_especiais` que
+	# devolvesse só obras passaria o resto do bloco inteiro — cada prova que
+	# existisse bateria, e as que faltassem não seriam procuradas por ninguém.
+	# É a mesma pergunta do "todo motivo escrito na tabela chega ao jogo?".
+	var vistos := {}
+	for prova in provas:
+		vistos[String(prova["tipo"])] = true
+	for tipo in ["igreja", "praca", "obra"]:
+		_confere("a vila tem %s" % tipo, vistos.has(tipo),
+			"tipos publicados: %s" % str(vistos.keys()))
+
+	var arq := FileAccess.open(MAPA_DA_VILA, FileAccess.READ)
+	_confere("%s existe" % MAPA_DA_VILA.get_file(), arq != null)
+	if arq == null:
+		return
+	var img := Image.new()
+	var erro := img.load_svg_from_string(arq.get_as_text(), 1.0)
+	arq.close()
+	_confere("%s rasteriza" % MAPA_DA_VILA.get_file(), erro == OK)
+	if erro != OK:
+		return
+	# O mesmo cuidado do D20: ler no sítio errado é pior do que não ler, e um
+	# PNG noutra escala poria cada prova num pixel qualquer — todas falhariam
+	# ou todas passariam, e nenhuma das duas respostas diria alguma coisa.
+	_confere("o mapa tem os %dx%d da tabela" % [int(_ancoras["mapa"]["largura"]),
+			int(_ancoras["mapa"]["altura"])],
+		img.get_width() == int(_ancoras["mapa"]["largura"])
+			and img.get_height() == int(_ancoras["mapa"]["altura"]))
+
+	for prova in provas:
+		var tipo := String(prova["tipo"])
+		var nome_cor := String(prova["cor"])
+		var ponto: Array = prova["px"]
+		var ix := int(floor(float(ponto[0])))
+		var iy := int(floor(float(ponto[1])))
+		if ix < 0 or iy < 0 or ix >= img.get_width() or iy >= img.get_height():
+			_confere("a prova do %s (lote %d) cai no quadro"
+				% [tipo, int(prova["lote"])], false,
+				"pixel (%d, %d) fora de %dx%d — a peça foi desenhada onde ninguém a vê"
+				% [ix, iy, img.get_width(), img.get_height()])
+			continue
+		# ⚠️ CONTA-SE O DESENHO NUMA JANELA, e não se lê UM pixel. A primeira
+		# versão comparava o pixel exato e reprovou três vezes seguidas peças
+		# que estavam lá: uma vez por mirar a face lateral de um volume em vez
+		# do topo, outra por cair debaixo do telhado do coreto — que em
+		# isométrico se projeta para cima e para TRÁS —, e outra num pixel de
+		# antisserrilhado entre duas peças. É a lição do D17, onde perguntar
+		# "o ponto cai na caixa?" deixava passar uma lança inteira fora do
+		# eixo: a pergunta é quanto DESENHO há à volta do ponto.
+		#
+		# 13x13 são 169 pixels e exigem-se 8 — 4,7%. Baixo o suficiente para
+		# uma peça de 5 px de largura contar, e alto o suficiente para não ser
+		# satisfeito por uma orla de antisserrilhado, que dá um ou dois.
+		var raio: int = int(prova["raio"])
+		var minimo: int = int(prova["minimo"])
+		var esperada := Color(String(cores[nome_cor]))
+		var achados := _contar_cor(img, ix, iy, raio, esperada)
+		_confere("o %s (lote %d) pinta %s à volta de (%d, %d) — %d px em %dx%d"
+				% [tipo, int(prova["lote"]), nome_cor, ix, iy, achados,
+				   raio * 2 + 1, raio * 2 + 1],
+			achados >= minimo,
+			"achou %d e o mínimo é %d; o mapa pinta %s no centro"
+				% [achados, minimo, img.get_pixel(ix, iy).to_html(false)])
+
+		# ⚠️ A PROVA NEGATIVA, quando a peça se define por uma AUSÊNCIA. A obra
+		# é creme como as casas: a contagem acima passa com ela ou sem ela,
+		# porque à volta há creme de sobra. O que a faz ser obra é o topo não
+		# ter telhado, e dar-lhe um telhado foi um defeito injetado que a guarda
+		# positiva deixou passar inteiro.
+		for nome_proibida in prova.get("proibidas", []):
+			var proibida := Color(String(cores[String(nome_proibida)]))
+			var intrusos := _contar_cor(img, ix, iy, raio, proibida)
+			_confere("e o %s (lote %d) não tem %s no topo — %d px"
+					% [tipo, int(prova["lote"]), String(nome_proibida), intrusos],
+				intrusos <= D24_INTRUSOS,
+				"achou %d pixels de telhado onde devia haver laje" % intrusos)
+
+	_d24_completo = true
+
+
+
+func _contar_cor(img: Image, ix: int, iy: int, raio: int, alvo: Color) -> int:
+	var n := 0
+	for dy in range(-raio, raio + 1):
+		for dx in range(-raio, raio + 1):
+			var jx := ix + dx
+			var jy := iy + dy
+			if jx < 0 or jy < 0 or jx >= img.get_width() or jy >= img.get_height():
+				continue
+			if _mesma_cor(img.get_pixel(jx, jy), alvo):
+				n += 1
+	return n

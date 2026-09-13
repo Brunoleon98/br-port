@@ -1275,8 +1275,33 @@ gaivotão, maria-farinha e tartaruga-verde juvenil, cada um com movimento,
 reação e som ao toque; mar e gaivota também soam em intervalos irregulares.
 O gate visual continua sendo o A5 e o auditivo, o A6.
 
-**Restam dois itens de arte, ambos separados:** prédios em obra e avançados
-(12, médio) e curvas em vez de retas (8, grande). O 8 não foi puxado para o 9:
+### ✅ O ITEM 12 FECHOU — três lotes da vila que não são casa (13/09)
+
+**`docs/decisoes/022`.** A vila ganhou uma **igreja** com torre, uma **praça**
+com coreto e meio-fio, e **duas obras**. Nenhum prop novo e nenhuma mecânica: a
+vila é assada no SVG, e a mudança é toda de desenho — a tabela de âncoras não
+mudou de geometria e só as sete imagens de mapa se mexeram.
+
+**O âmbito disse não a metade do pedido, e cada não tem um número.** "Casas de
+dois andares" já existiam (`--nivel-vila=2`). "Prédio em reforma" não pode ser
+um estado do armazém nem do escritório, porque `comprar_estrutura()` é
+INSTANTÂNEO — um estado em obra só existe se a obra durar, e isso é a economia
+medida. E "à medida que o porto cresce" reabriria a decisão de a vila trocar
+entre FASES e não entre turnos. **O indicador que o pedido quer entrou por outro
+caminho:** a obra de um nível é desenhada com a altura do nível SEGUINTE.
+
+**E "comércios variados" ficou de fora, medido:** um lote tem 51 px de largura e
+12 a 15 de parede, e a essa escala um toldo tem 20 px e uma vitrine 4 — não há
+detalhe que distinga um comércio de uma casa. Os três que entraram são os três
+que mudam a FORMA do lote: sem telhado, com uma vertical, sem casa.
+
+Rendeu duas guardas — uma no GERADOR (a torre cresce com o nível e sai do quadro
+na Fase em que a vila subir; ela reprova antes de escrever) e o bloco **D24**,
+o terceiro deste projeto a ler a COR do mapa. E rendeu a lição de que **a janela
+de uma prova tem de ser da escala da peça**: com um raio único, dois dos cinco
+defeitos injetados passaram inteiros.
+
+**Resta um item de arte, separado:** curvas em vez de retas (8, grande). O 8 não foi puxado para o 9:
 o contorno e a tabela de âncoras permanecem iguais.
 
 ### ✅ O ITEM 5 FECHOU INTEIRO — 5a medido, 5b escrito (11/09)
