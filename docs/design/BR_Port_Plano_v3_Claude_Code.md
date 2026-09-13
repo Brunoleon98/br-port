@@ -405,6 +405,55 @@ segunda fonte é o `Main.gd`, e ela apanhou um terceiro caso na estreia (o
 defeitos injetados, e a economia medida **idêntica ao dígito** — 100,0% / 80,2%
 / 37,3%.
 
+📖 **A PRIMEIRA LEITURA EM VOZ ALTA ACONTECEU (13/09), e devolveu sete coisas.**
+Seis eram texto e estão feitas; a sétima é item de fila:
+
+1. *"semana 1"* virou **"primeira semana"**, no cabeçalho do diário e no corpo.
+2. Três linhas da Dona Cida reescritas: a tautologia que eu tinha posto no
+   primeiro boletim (*"sair mais do que entra é sair mais do que entra"*), o
+   jogo de palavras do tom mau (*"comparativo de ruim"*) e o elogio contido.
+3. ⚠️ **UM ERRO DE MUNDO:** *"porto que fecha no azul é porto que abre
+   segunda-feira"* — **o porto opera 24/7 e não abre na segunda.** Nenhuma
+   suíte podia apanhar: a frase é verdadeira em português e falsa neste mundo.
+4. ⚠️ **E UM ERRO DE ARITMÉTICA QUE EU TINHA ACABADO DE INTRODUZIR:** a
+   narração dizia *"Quatro semanas. / Trinta e dois dias."*, e quatro semanas
+   dão **vinte e oito**. Até 12/09 a linha dizia "turnos", que não prometia
+   nada; trocá-la por "dias" — uma melhoria de prosa — destapou a conta. A
+   linha saiu.
+   **E o que ela destapou é maior, e é decisão do Bruno:** `TURNS_PER_WEEK` é
+   8, e a interface inteira chama turno de DIA (o botão "Avançar dia", o
+   "Vence no dia 32"). Ou a semana deste jogo tem oito dias de propósito, ou
+   "dia" é o rótulo errado em todo lado. Nada no código está inconsistente
+   consigo; o que colide é o vocabulário com o calendário.
+5. **"Sobrinho" fica, e ganha companhia.** A pergunta foi *"como assim
+   sobrinho?"* — e o GDD sustenta a palavra (`gdd/sistemas/voz_personagens.md`:
+   *"chama todo mundo de sobrinho ou querido, independente da idade"*). O
+   defeito não era a palavra, era a DOSE: no GDD ele fala assim o tempo todo,
+   no VS diz sete linhas e usa o maneirismo UMA vez, na última. Entrou
+   "querido" na abertura; duas ocorrências fazem padrão, uma faz tropeço.
+
+### 🎭 ITEM NOVO — retrato do personagem com REAÇÃO, junto da fala
+
+Pedido na primeira leitura (13/09): *"seria legal aparecer o sprite dos
+personagens, poderia ser o sprite com a reação do personagem mais a mensagem"*.
+
+**Medido antes de estimar.** A metade do estúdio já existe: o
+`trabalhador_retrato` sai de `blender/brp_porto.py` com `tipo="retrato"` e
+âncora própria, e o `asset_validator` já sabe conferir esse tipo — é o único
+prop do jogo que olha para a frente. **O que não existe:** retrato nenhum da
+Dona Cida, do Arlindo ou do Sr. Ribeiro, e nenhuma noção de EXPRESSÃO.
+
+**O que o item é, em três partes:** (a) retratos dos três no estúdio partilhado,
+cada um com um punhado de expressões; (b) uma tabela que ligue cada fala à
+expressão que ela pede — e ela tem de percorrer as falas, senão volta o buraco
+das duas linhas mudas; (c) a faixa de mensagem passa a cartão com retrato, o
+que mexe no `_on_message` e no tema.
+
+⚠️ **E a alínea (c) esbarra numa regra deste arquivo:** *nada de interface
+pousa sobre o mapa*. Um cartão com retrato é maior do que a faixa de hoje, e
+onde ele cabe sem tapar o porto é a primeira pergunta a medir — não a última.
+É sessão própria, e da trilha de ARTE.
+
 ⏳ **Falta o gate:** ler o texto em voz alta. Três desvios do rascunho de
 escrita precisam do julgamento do Bruno — a narração de fim de fase teve de
 passar de doze semanas para as `WEEKS_TOTAL` que o VS tem, as falas com

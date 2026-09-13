@@ -995,6 +995,32 @@ tranca isso.
   achou *"Dois contratos recusados essa semana"* num gatilho que é a queda de
   FAIXA da reputação — nunca dois contratos. Não havia o que corrigir no
   número: ele não saía de lado nenhum.
+- **⚠️ A FRASE PODE SER VERDADEIRA EM PORTUGUÊS E FALSA NESTE MUNDO.** A Dona
+  Cida dizia *"porto que fecha no azul é porto que abre segunda-feira"* — bonita,
+  idiomática, e **errada: um porto opera 24/7 e não abre na segunda.** Nenhuma
+  das cinco suítes podia apanhar, e nenhuma régua de escrita também: não há
+  token cru, não há número à mão, não há contradição interna. Só quem conhece o
+  mundo vê. É a razão de o gate do A4 ser uma pessoa a LER, e não uma asserção
+  — e a primeira leitura em voz alta (13/09) achou-a à segunda frase.
+- **⚠️ E MELHORAR A PROSA PODE INTRODUZIR UM ERRO DE FACTO.** Na véspera, a
+  narração de fim de fase dizia *"32 turnos de decisão"* — vocabulário de
+  máquina, e trocá-lo por *"Trinta e dois dias"* foi uma melhoria de leitura
+  real. Só que "turno" não promete calendário e "dia" promete: logo abaixo de
+  *"Quatro semanas"*, a frase passou a afirmar que quatro semanas dão trinta e
+  dois dias. **Dão vinte e oito.** O `TURNS_PER_WEEK` é 8 e a interface inteira
+  já chamava turno de dia, então a contradição existia dispersa pelo jogo e só
+  ficou visível quando os dois números se encostaram na mesma peça. Ao trocar
+  uma palavra técnica por uma palavra do mundo, pergunte o que a nova palavra
+  PROMETE — e se o resto do jogo cumpre a promessa.
+- **⚠️ MANEIRISMO QUE APARECE UMA VEZ NÃO É MANEIRISMO — É TROPEÇO.** O Arlindo
+  fecha a negociação perdida com *"sobrinho"*, e a primeira pergunta da leitura
+  foi *"como assim sobrinho?"*. A palavra está CERTA e documentada — o GDD
+  assina *"chama todo mundo de sobrinho ou querido, independente da idade"* —,
+  e mesmo assim a intenção não chegou: no GDD ele fala assim em toda cena, no
+  VS diz sete linhas e usa o maneirismo numa. **A dose é parte da escrita.**
+  A correção não foi tirar a palavra: foi plantar o "querido" na abertura, para
+  a segunda ocorrência ler como assinatura. Antes de cortar o que soou
+  estranho, conte quantas vezes ele aparece — pode faltar, e não sobrar.
 - **⚠️ QUEIXA DE ESTRANHEZA PODE SER LACUNA, e aí não há rótulo a corrigir.** A
   triagem leu *"é estranho o porto ter dívida mas o jogador começar com
   R$400.000"* como um nome errado e propôs chamar EMPRÉSTIMO ao caixa — que

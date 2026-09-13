@@ -70,14 +70,14 @@ O {portName} tem dívida, tem madeira podre no píer e tem um rival que sabe o m
 O avô também deixou {caixaInicial} na conta. Contei três vezes.
 Não é dinheiro meu — é o prazo que ele me comprou.
 
-Mas tem gente que acreditou o suficiente pra estar aqui na semana 1.
+Mas tem gente que acreditou o suficiente pra estar aqui na primeira semana.
 Dona Cida. Toninho. Zezão.
 
 Talvez o avô soubesse o que tava fazendo quando deixou tudo isso pra mim.
 
 Talvez."""
 
-const DIARIO_CABECALHO := "Porto Mirim, Semana 1"
+const DIARIO_CABECALHO := "Porto Mirim, primeira semana"
 
 
 # ── DONA CIDA — o boletim financeiro semanal ──
@@ -85,8 +85,8 @@ const DIARIO_CABECALHO := "Porto Mirim, Semana 1"
 # anteriores. A faixa do meio existe para a comemoração ser RARA: sem ela,
 # qualquer semana no azul soaria a festa e o tom perderia o valor.
 const CIDA_BOLETIM_RUIM := """Conseguimos a façanha de gastar mais do que ganhar. De novo.
-A semana anterior foi melhor — mas "melhor" aqui é comparativo de "ruim", então não comemora não.
-A parcela não vai ter dó."""
+A semana passada foi menos pior, se serve de consolo. Não serve.
+E o Sr. Ribeiro não aceita boa vontade."""
 
 # ⚠️ E O PRIMEIRO BOLETIM NÃO TEM COM QUE COMPARAR. O tom RUIM abre a dizer "a
 # semana anterior foi melhor", e na semana 1 não há semana anterior — a Dona
@@ -96,15 +96,15 @@ A parcela não vai ter dó."""
 # ou seja, é exatamente o principiante que ainda não percebeu a alocação que
 # ouvia a frase errada. A última linha sobrevive porque é a que trabalha.
 const CIDA_BOLETIM_PRIMEIRA_RUIM := """Primeira semana fechada no vermelho, chefia.
-Não tenho com o que comparar ainda — mas sair mais do que entra é sair mais do que entra.
-A parcela não vai ter dó."""
+Não tenho com o que comparar — é a primeira. Mas saiu mais do que entrou, e isso eu sei ler.
+A parcela não espera a gente aprender."""
 
 const CIDA_BOLETIM_NEUTRO := """Os números fecharam. Receita cobre despesas, sobrou margem.
-Nada extraordinário — mas porto que fecha no azul é porto que abre segunda-feira."""
+Nada extraordinário — mas porto que fecha a semana no azul é porto que não para."""
 
 const CIDA_BOLETIM_OTIMO := """Chefia. Olha esse resultado.
 Não vou fazer festa — porque a parcela da próxima semana vai precisar desse dinheiro todo.
-Mas por hoje: bem feito."""
+Mas foi uma boa semana. Pronto, eu disse."""
 
 # Acima de quanto da média das semanas anteriores o resultado conta como
 # excepcional. Fonte: o próprio arquivo de escrita ("+30%").
@@ -132,7 +132,13 @@ const CIDA_LINHAS := {
 # ── ARLINDO — a contra-oferta ──
 # Ele NÃO fala com o jogador: fala com o cliente, e o jogador ouve. É o que
 # torna a tela uma negociação assistida em vez de uma discussão.
-const ARLINDO_ABERTURA := "{portName} fez uma proposta. Entendo. Mas eu consigo cobrir isso — e um pouco mais."
+# ⚠️ O "QUERIDO" AQUI EXISTE PARA O "SOBRINHO" DO FIM FAZER SENTIDO. O GDD
+# assina o maneirismo — *"chama todo mundo de sobrinho ou querido,
+# independente da idade"* (`gdd/sistemas/voz_personagens.md`) —, mas no VS ele
+# só diz sete linhas, e um maneirismo que aparece UMA vez não lê como
+# maneirismo: lê como erro. Foi a primeira coisa que o playtest perguntou
+# ("como assim sobrinho?"). Duas ocorrências fazem padrão; uma faz tropeço.
+const ARLINDO_ABERTURA := "{portName} fez uma proposta. Entendo, querido. Mas eu consigo cobrir isso — e um pouco mais."
 
 # A reação sai do preset escolhido. As chaves batem com as três opções do
 # painel; ver RIVAL_DISCOUNT / RIVAL_HALF_DISCOUNT / manter, no GameState.
@@ -268,13 +274,17 @@ static func _maiuscula(t: String) -> String:
 
 
 static func fim_de_fase() -> String:
-	# O MASCULINO onde o substantivo o pede: "quatro semanas" é igual, mas
-	# "trinta e dois dias" não pode sair "trinta e duas". O `por_extenso` fala
-	# no feminino porque o caso mais comum aqui é semana; o dia corrige-se na
-	# saída, num sítio só.
+	# ⚠️ A LINHA DOS DIAS SAIU EM 13/09, e a razão é aritmética: ela dizia
+	# "Trinta e dois dias" logo abaixo de "Quatro semanas", e quatro semanas
+	# dão VINTE E OITO. O `TURNS_PER_WEEK` é 8, então o "dia" deste jogo não é
+	# um dia de calendário — a interface inteira chama turno de dia (o botão
+	# "Avançar dia", o "Vence no dia 32"), e pôr os dois números lado a lado
+	# na mesma peça fez a conta aparecer. Até 12/09 a linha dizia "turnos", que
+	# não prometia nada; trocá-la por "dias" foi o que destapou isto.
+	#
+	# O `por_extenso` fala no FEMININO, que é o que "semanas" e "parcelas"
+	# pedem — as duas únicas contagens que sobraram aqui.
 	var semanas: String = _maiuscula(por_extenso(_gs().WEEKS_TOTAL))
-	var dias: String = _maiuscula(por_extenso(_gs().TURNS_TOTAL)
-		.replace("uma", "um").replace("duas", "dois"))
 	# O ARCO, e não o VS. A Fase 1 do GDD tem três parcelas e este jogo paga a
 	# primeira — dizer só "Uma parcela" fazia a vitória soar a dívida quitada,
 	# que ela não é. O feminino do `por_extenso` serve aqui sem correção:
@@ -283,7 +293,6 @@ static func fim_de_fase() -> String:
 	var restantes: String = por_extenso(_gs().PARCELAS_NA_FASE - 1)
 	var modelo := """%s semanas.
 
-%s dias.
 A primeira de %s parcelas.
 E ela venceu.
 
@@ -313,7 +322,7 @@ Mas tem alguma coisa diferente.
 
 Não no píer.
 
-Em quem tá olhando.""" % [semanas, dias, total, restantes]
+Em quem tá olhando.""" % [semanas, total, restantes]
 	return _gs().texto(modelo)
 
 

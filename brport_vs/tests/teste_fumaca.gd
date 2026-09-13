@@ -636,14 +636,9 @@ func _f4_toda_fala_chega_ao_jogo() -> void:
 func _f4_numeros_do_fim() -> void:
 	var texto: String = Narrativa.fim_de_fase()
 	var semanas: String = Narrativa.por_extenso(GS.WEEKS_TOTAL)
-	var dias: String = Narrativa.por_extenso(GS.TURNS_TOTAL) \
-		.replace("uma", "um").replace("duas", "dois")
 	_confere("o fim de fase diz as %s semanas que o jogo tem" % semanas,
 		texto.to_lower().begins_with("%s semanas" % semanas),
 		"começa com: " + texto.left(30))
-	_confere("e os %s dias que elas dão" % dias,
-		texto.to_lower().contains("%s dias" % dias),
-		"não achou \"%s dias\" em: %s" % [dias, texto.left(40)])
 	# E O ARCO: a Fase 1 do GDD tem três parcelas e o VS paga a primeira. O
 	# esperado sai da CONSTANTE, então mexer nela move os dois lados — e mexer
 	# no TEXTO à mão reprova, que é o ponto.
