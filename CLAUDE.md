@@ -191,6 +191,24 @@ Teste e import rodam sem tela.
    em 100% das partidas até aos 200.000 e em 86% a 150.000, porque acumula
    receita e compra no turno 9. Um limiar só vira penhasco quando a partida
    acaba antes de o perfil poupar a diferença.
+   ⚠️ **E UMA MUDANÇA DE CADÊNCIA NÃO MOVE O JOGADOR CONTRA A LINHA — MOVE A
+   LINHA CONTRA ELE.** Medido em 13/09 ao varrer `TURNS_PER_WEEK` para 7: o
+   plano previa que "o porto pobre sente primeiro", e quem sofreu 2,4× mais foi
+   o **Mediano** (−37,4 pontos contra −15,8). A regra da `008` — botão só move
+   quem está em cima da linha — continua de pé; o que faltava é a outra metade,
+   que é **quem está em cima dela pode MUDAR**. A mediana do Mediano atravessou
+   a parcela de cima para baixo, e o Descuidado, já do lado errado, tinha menos
+   a perder. Antes de prever quem sente uma mudança, pergunte onde ela põe cada
+   mediana — e não onde elas estão hoje.
+   ⚠️ **E COMPENSAR PROPORCIONALMENTE SOBRECOMPENSA, quando a constante entra
+   num LAÇO.** Na mesma medição: encolher a semana 12,5% tirou 12,3% ao Ótimo —
+   exactamente a proporção, porque com folga 1,0 ele compra assim que dá e chega
+   ao mesmo porto — e **23,9% ao Mediano**, porque a folga de 2,0 deixa de ser
+   atingida e *menos receita → porto menor → menos receita*. Daí que devolver os
+   mesmos 12,5% no custo das estruturas devolva MAIS do que 12,5% de porto: o
+   ponto "coerente" de tudo × 7/8 mediu 100 / 90,5 / 51,5, muito acima do alvo.
+   **Constante que alimenta o que GERA a receita não se compensa por regra de
+   três** — compensa-se varrendo, e o ponto sai onde a medição o puser.
 5. Mexeu no visual? **Tire uma captura e olhe.** Teste verde não prova que
    ficou bonito. O CI já anexa TODAS a cada PR (artefato `brport-captura`) e
    diz na página da corrida qual mudou — mas dizer que mudou não é dizer que
@@ -314,6 +332,15 @@ Teste e import rodam sem tela.
    a pergunta que se quer fazer — separe a lista e compare ITEM a item. Vale a
    mesma desconfiança ao ler chave de config: uma linha dentro de um
    COMENTÁRIO satisfaz uma busca no arquivo inteiro.
+   ⚠️ **E NÚMERO DE TURNO CRAVADO NUMA ASSERÇÃO REPROVA O CÓDIGO CERTO.** É a
+   regra do "número em pixel escrito à mão" que este arquivo já carrega, com o
+   CALENDÁRIO no lugar do tamanho. O bloco 7b do `run_tests.gd` amostrava o
+   desconto da parcela em `[4, 12, 20, 28, PARCELA_DUE_TURN]`, e aqueles 28 são
+   o penúltimo turno de uma semana de OITO: com `TURNS_PER_WEEK = 7` o prazo
+   passa a 28, a lista fica com o vencimento DUAS vezes, os dois custos saem
+   iguais e a asserção reprova uma mudança que estava certa. **Amostrar um
+   intervalo derivado custa o mesmo que percorrê-lo inteiro** — e percorrer não
+   crava nada, além de cobrir os turnos que a amostra saltava.
    ⚠️ **E A SAÍDA DAS FERRAMENTAS DESTE PROJETO É UM CONTRATO — a mensagem
    nova pode colidir com uma sentinela.** Aqui quem decide aprovação é uma
    STRING na saída e não o código de saída, e de propósito: a linha final de

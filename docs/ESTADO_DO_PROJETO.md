@@ -49,9 +49,8 @@ a manutenção custa R$40.000/semana — números de porto, não de banca de fei
 A dívida deixou de ser o motor (`docs/decisoes/005`): quem separa os jogadores
 agora é **o porto que conseguem levantar**, e desde a trava de 06/09 quem mede
 isso é a MARGEM em regime — R$674.019 contra R$103.290 — e não a contagem de
-barcos, que passou a favorecer o porto pobre (ele só recebe pesqueiro, que
-descarrega num turno). Mexer em preço sem rodar `simular_balanceamento.gd`
-quebra isto.
+barcos, que passou a favorecer o porto pobre. Mexer em preço sem rodar
+`simular_balanceamento.gd` quebra isto.
 
 **E o `START_CASH` está TRANCADO em 400.000** (`docs/decisoes/018`): varrido
 até 150.000, o único ponto que cumpre os critérios é a linha de base. E o
@@ -241,8 +240,10 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 - Parcela única de **R$530.000** no fim da semana 4; paga ou recusada, a semana
   só fecha depois da decisão. **Quitar antes abate 0,25% por turno** — o juro
   que o banco deixa de correr (`019`), numa conta genérica que serve ao
-  empréstimo da Fase 2. ⚠️ **A semana tem 8 turnos e a partida 32 "dias", o que
-  o Bruno mandou passar a 7 em 13/09** — é item de fila, e move a economia
+  empréstimo da Fase 2. ⚠️ **A semana tem 8 turnos e a partida 32
+  "dias"; passar a 7 está MEDIDO** (13/09, 16 corridas no plano) — o dano puro
+  é 98,7 / 42,8 / 21,5, e o ponto que fecha pede um SEGUNDO botão, que espera
+  o Bruno
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
   upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
   com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase
