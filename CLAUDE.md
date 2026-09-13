@@ -1208,6 +1208,44 @@ tranca isso.
   acrescenta o espaçamento ENTRE elas. No fim de fase isso são 99 px em 847
   (33 × 3) — ~12% —, e a conta sem eles esconde a última dobra, que é o mesmo
   defeito a reaparecer dentro da função escrita para o acabar.
+- **⚠️ E O PAINEL SÓ É BRANCO ENQUANTO FOR UM CARTÃO.** A regra acima tranca a
+  cor NEUTRA sobre o branco; esta é a outra ponta, e apareceu no menu-celular de
+  13/09, a primeira tela deste jogo com fundo escuro: a cor de texto **padrão**
+  do tema é navy, porque os doze painéis anteriores eram cartões brancos, e
+  sobre a tela do aparelho ela sai navy sobre navy — **1,18:1**, invisível, sem
+  erro nenhum. Tela de fundo escuro leva variações de rótulo próprias, e o
+  **D23** mede-as (o neutro do jogo dá 5,05:1 ali, que é a primeira vez que ele
+  está no fundo para o qual foi feito).
+- **⚠️ O PIOR CASO DE UM RÓTULO SAI DO QUE O JOGO ESCREVE, não de um texto
+  suposto.** Irmã do D18, um passo antes: ali a lição é medir o pior caso em vez
+  do que os três cartões calham mostrar; aqui é que **o pior caso também não se
+  inventa**. O D23 montou à mão `"Construir · 7 estruturas"` e o jogo escreve
+  `"Construir · 7 disponíveis"` — a palavra real é mais longa (240 px contra
+  235), e a asserção media um caso mais fácil do que o que o jogador vê. Quem o
+  apanhou foi a CAPTURA. Monte o estado, e leia o `text` de quem o escreve.
+- **⚠️ MEDIR LARGURA DE `Control` TEM DUAS ARMADILHAS, e as duas dão folga que
+  não existe.** (a) **`custom_minimum_size` menor do que o conteúdo é
+  IGNORADO** — o botão de menu declara 46 e ocupa 54, porque o ícone de 26 mais
+  as margens de 14+14 do tema pedem mais; e o defeito injetado que baixava o
+  mínimo **não pegou nada**, porque não mexia no que a guarda mede. (b) **`size`
+  de um painel acabado de instanciar é o tamanho MÍNIMO**, e num `Button` o
+  mínimo sai do próprio texto: `pede <= botao.size.x` passava com 5 px de folga
+  e não reprovava alargar o vizinho, porque o esperado e o medido saíam da mesma
+  fonte. É a armadilha do espelho em forma de pixel. Derive a largura do
+  CONTENTOR — a linha menos o irmão menos a separação — e peça
+  `get_combined_minimum_size()` quando quiser o que uma peça ocupa mesmo.
+- **⚠️ NUMA GRELHA, UM NOME COMPRIDO ALARGA UMA COLUNA E NÃO TODAS.** Custou um
+  defeito injetado que falhou **por 4 px**: com cinco apps em três colunas, o
+  nome longo caía sozinho na coluna dele, então a conta não é `3 × maior`, é a
+  soma dos máximos por coluna. Ao montar o estado que aperta uma guarda de
+  grelha, pergunte em que COLUNA o defeito cai.
+- **⚠️ E PROPORÇÃO É O QUE FAZ UMA METÁFORA LER — antes do ícone e antes da
+  moldura.** O menu-celular nasceu com o `montar(largura, 0)` do andaime, que
+  ajusta a altura ao conteúdo, e saiu **400 × 390**: com cantos redondos, borda
+  e grelha de apps, lia-se como mais um cartão. A **680** (1:1,7) ninguém
+  pergunta o que é. É a única altura fixa deste projeto que não é defeito, e a
+  diferença está escrita na constante: a faixa branca que mordeu três painéis
+  era cartão SEM CONTEÚDO; ali é a tela de um telefone com lugar para o que vem.
 - Alvo de toque mínimo 44px. O teste de design cobre.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta

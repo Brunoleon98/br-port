@@ -402,6 +402,82 @@ content_margin_top = 9.0
 content_margin_right = 12.0
 content_margin_bottom = 9.0
 
+[sub_resource type="StyleBoxFlat" id="celular_corpo"]
+; O CORPO DO APARELHO. Mais escuro do que tudo o que a interface tem — a
+; pílula do HUD é 0.09/0.16/0.24 e este é 0.055/0.098/0.153 — porque ele é o
+; objeto e a tela é o que acende dentro dele. Sem essa diferença as duas
+; caixas leem como uma só e a moldura desaparece.
+bg_color = Color(0.055, 0.098, 0.153, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.141, 0.275, 0.431, 1)
+corner_radius_top_left = 26
+corner_radius_top_right = 26
+corner_radius_bottom_right = 26
+corner_radius_bottom_left = 26
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 10
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="celular_tela"]
+; A TELA. É o azul da pílula do HUD de propósito: o celular não traz cor nova
+; nenhuma ao jogo, só uma forma nova.
+bg_color = Color(0.09, 0.16, 0.24, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxFlat" id="app_aberto"]
+; O QUADRADO DE UM APP QUE ACENDE. Creme sobre a tela escura, que é o maior
+; contraste que a paleta tem — um app disponível tem de saltar da grelha.
+bg_color = Color(0.941, 0.965, 1, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="app_aberto_press"]
+bg_color = Color(0.816, 0.875, 0.941, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="app_fechado"]
+; O QUADRADO DE UM APP QUE AINDA NÃO EXISTE, e ele é um PAINEL e não um botão.
+; Um botão que não responde ensina o jogador a não tocar no menu; um quadrado
+; apagado nunca prometeu toque nenhum. Ele destaca-se da tela o suficiente
+; para se ver que ESTÁ LÁ, e de longe o suficiente do app aceso para não se
+; confundir com um.
+bg_color = Color(0.141, 0.235, 0.337, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
 [resource]
 default_font_size = 15
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -473,3 +549,31 @@ CartaoDocaRival/base_type = "PanelContainer"
 CartaoDocaRival/styles/panel = SubResource("cartao_doca_rival")
 CartaoDocaObra/base_type = "PanelContainer"
 CartaoDocaObra/styles/panel = SubResource("cartao_doca_obra")
+
+; ── O MENU-CELULAR ──
+; ⚠️ TODO TEXTO AQUI DENTRO É CLARO, e isto é a IRMÃ da armadilha que o D19
+; tranca. Lá a cor neutra do jogo (0.51/0.6/0.706, feita para fundo escuro)
+; caía sobre o painel BRANCO e media 2,93:1; aqui é o contrário — a cor de
+; texto padrão do tema é navy, feita para o cartão branco, e sobre a tela do
+; celular ela seria navy sobre navy. As duas variações abaixo existem para
+; que nenhum script do menu precise de pintar cor à mão.
+Celular/base_type = "PanelContainer"
+Celular/styles/panel = SubResource("celular_corpo")
+CelularTela/base_type = "PanelContainer"
+CelularTela/styles/panel = SubResource("celular_tela")
+AppAberto/base_type = &"Button"
+AppAberto/styles/normal = SubResource("app_aberto")
+AppAberto/styles/hover = SubResource("app_aberto")
+AppAberto/styles/pressed = SubResource("app_aberto_press")
+AppAberto/styles/disabled = SubResource("app_fechado")
+AppFechado/base_type = "PanelContainer"
+AppFechado/styles/panel = SubResource("app_fechado")
+; O nome de um app que acende, e a linha que explica os apagados.
+TextoCelular/base_type = "Label"
+TextoCelular/colors/font_color = Color(0.941, 0.965, 1, 1)
+TextoCelular/font_sizes/font_size = 13
+; O nome de um app apagado e a barra de status. É a cor neutra do jogo NO
+; FUNDO PARA O QUAL ELA FOI FEITA — mede 5,05:1 sobre a tela, e o D23 tranca.
+TextoCelularFraco/base_type = "Label"
+TextoCelularFraco/colors/font_color = Color(0.51, 0.6, 0.706, 1)
+TextoCelularFraco/font_sizes/font_size = 13

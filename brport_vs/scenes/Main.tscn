@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3]
+[gd_scene load_steps=44 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" path="res://art/icones/parcela.svg" id="ic_parcela"]
 [ext_resource type="Texture2D" path="res://art/icones/ampliar_pier.svg" id="ic_ampliar"]
 [ext_resource type="Texture2D" path="res://art/icones/avancar.svg" id="ic_avancar"]
+[ext_resource type="Texture2D" path="res://art/icones/menu.svg" id="ic_menu"]
 [ext_resource type="Texture2D" path="res://art/icones/trabalhador.svg" id="ic_trabalhador"]
 [ext_resource type="Texture2D" path="res://art/props/coqueiro_tronco.png" id="prop_coqueiro_tronco"]
 [ext_resource type="Texture2D" path="res://art/props/coqueiro_copa.png" id="prop_coqueiro_copa"]
@@ -624,14 +625,45 @@ layout_mode = 2
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 13
 
-[node name="Upgrade" type="Button" parent="."]
+; ⚠️ A LINHA DO CONSTRUIR PASSOU A SER PARTILHADA, E O ESPAÇO VEIO DAQUI.
+;
+; O item 17 pede um botão de menu no HUD inferior, e medido não havia onde o
+; pôr: a pilha do rodapé acaba em 1251 numa tela de 1280, e os 29 px que
+; sobram não chegam ao alvo de toque de 44. As três saídas foram medidas.
+;
+; Entrar no `AcoesTurno` como terceiro botão CABIA — "AVANÇAR DIA" pede 188 px
+; e ficaria com 356 —, mas custava a hierarquia: aquela linha é o que FECHA o
+; turno, e o âmbar cheio do avanço é o único destaque da tela. Um terceiro
+; elemento ali divide o olho com o botão mais importante do jogo.
+;
+; Esta linha, não: ela é o que se faz ENTRE turnos (construir não gasta dia),
+; que é o mesmo registo de um menu. E tinha largura a mais — medido, o pior
+; texto que o botão mostra é "Construir · 7 estruturas", que pede 235 px numa
+; linha de 692. O menu ocupa 54 — os 46 que declara são menos do que o ícone
+; e as margens do tema pedem —, e com os 8 de separação sobram 630 para o
+; Construir, ainda 2,7 vezes o que ele precisa. O bloco D23 tranca essa folga,
+; porque `Label` que não cabe CORTA e nenhum dos três estados que o jogo calha
+; mostrar é o pior caso.
+[node name="LinhaConstruir" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
 offset_top = 1139.0
 offset_right = 706.0
 offset_bottom = 1185.0
+theme_override_constants/separation = 8
+
+[node name="Upgrade" type="Button" parent="LinhaConstruir"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/icon_max_width = 26
 icon = ExtResource("ic_ampliar")
+
+[node name="Menu" type="Button" parent="LinhaConstruir"]
+custom_minimum_size = Vector2(46, 46)
+layout_mode = 2
+tooltip_text = "Menu"
+theme_override_constants/icon_max_width = 26
+icon = ExtResource("ic_menu")
 
 [node name="AcoesTurno" type="HBoxContainer" parent="."]
 layout_mode = 0

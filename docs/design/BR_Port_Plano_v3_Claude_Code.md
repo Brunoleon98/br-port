@@ -1417,6 +1417,41 @@ menu de pausa e com ele o `.jsonl` da partida) foi feito em 07/09.
 ⚠️ **E três coisas que NÃO são itens de fila, e é por isso que estão aqui em vez
 de numeradas:**
 
+### ✅ O ITEM 17 FECHOU — a CASCA do menu-celular (13/09)
+
+**`docs/decisoes/021`.** O botão entrou no HUD inferior, e a tela é um celular.
+**Só a casca:** o mapa da cidade, as lojas e as missões continuam fechados, e
+por escrito — cada um é um quadrado APAGADO no visor, que nunca foi botão, com
+uma linha a dizer que abrem na Fase 2. Um botão morto ensinaria o jogador a não
+voltar ao menu, e a nota do rodapé é o que faz de uma porta fechada uma porta.
+
+**As três decisões que a sessão tomou, todas com o número na mão:**
+
+- **celular, e não mais um cartão branco** — a moldura SUBSTITUI a margem do
+  cartão em vez de se somar a ela: 352 px úteis contra 372, **5,4%**. E o que
+  faz a metáfora ler é a PROPORÇÃO, não a moldura: a 400×390 (altura ao
+  conteúdo) lia-se como um cartão de cantos redondos; a 400×680, não;
+- **o espaço saiu da linha do Construir**, e não do `AcoesTurno`. As duas
+  cabiam — "AVANÇAR DIA" ficaria com 356 px e pede 188 —, mas a linha do avanço
+  é o que FECHA o turno e carrega o único destaque da tela. A do Construir é o
+  que se faz ENTRE turnos, que é o registo de um menu; o pior texto dela pede
+  240 px e ela ficou com 630;
+- **só entra o que NÃO TEM PORTA.** As quatro pílulas, o cartão da parcela e o
+  Construir já abrem o que abrem, e duas portas para a mesma pergunta é defeito
+  registado. Da peneira sobrou o **diário**, que abria uma vez no começo e não
+  tinha como ser relido. O menu de pausa NÃO foi absorvido: ele é sistema
+  (volume, registo, novo jogo), isto é mundo.
+
+E rendeu quatro guardas e uma correção que nada pedia: a **folha de contato dos
+ícones cortava em silêncio** — a irmã dela, a da frota, ganhou a conta de
+transbordo em 07/09 e ninguém veio pôr a mesma aqui; medido, ela cabia em 22 e o
+23.º saía fora dos 1280 sem uma palavra. O bloco **D23** mede o que esta mudança
+arriscou: o texto do Construir contra a largura que sobrou, o toque que abre, o
+contraste sobre o primeiro fundo ESCURO deste jogo, e a grelha contra o visor.
+
+**Restam o 18, o 19, o 20 e o 21**, e a razão de eles não terem entrado é a de
+sempre:
+
 1. **Os itens 17–21 são um segundo jogo** — menu-celular, mapa da cidade,
    imobiliária, concessionária, delivery, mercado, missões, barras de status e
    de estresse, app de análise. Ele escreve que quer o mapa da cidade e a loja

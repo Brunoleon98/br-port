@@ -33,6 +33,7 @@ const PainelCaixaScene := preload("res://scenes/panels/PainelCaixa.tscn")
 const PainelReputacaoScene := preload("res://scenes/panels/PainelReputacao.tscn")
 const PainelDocasScene := preload("res://scenes/panels/PainelDocas.tscn")
 const PainelCalendarioScene := preload("res://scenes/panels/PainelCalendario.tscn")
+const PainelMenuScene := preload("res://scenes/panels/PainelMenu.tscn")
 const PainelParcelaScene := preload("res://scenes/panels/PainelParcela.tscn")
 
 
@@ -54,7 +55,8 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 @onready var _message_label: Label = $MensagemCartao/Mensagem
 @onready var _advance_button: Button = $AcoesTurno/Avancar
 @onready var _alocar_button: Button = $AcoesTurno/Alocar
-@onready var _upgrade_button: Button = $Upgrade
+@onready var _upgrade_button: Button = $LinhaConstruir/Upgrade
+@onready var _menu_button: Button = $LinhaConstruir/Menu
 # Uma doca tem DUAS metades na tela: a vaga no mapa (píer, barco, guindaste,
 # trabalhador) e o cartão na barra de baixo (texto e alvo de toque). O Main é
 # quem sabe que as duas são a mesma doca de índice `i` — nenhuma das duas
@@ -102,6 +104,7 @@ func _ready() -> void:
 	_advance_button.pressed.connect(_on_advance_pressed)
 	_alocar_button.pressed.connect(_on_alocar_pressed)
 	_upgrade_button.pressed.connect(_on_upgrade_pressed)
+	_menu_button.pressed.connect(_on_menu_pressed)
 	_pause_button.pressed.connect(_on_pause_pressed)
 	_caixa_pilula.gui_input.connect(_on_caixa_pilula_input)
 	_dia_pilula.gui_input.connect(_on_dia_pilula_input)
@@ -1475,6 +1478,27 @@ func _on_pause_pressed() -> void:
 	var menu := _abrir_painel(PauseMenuScene)
 	menu.connect("ver_balanco", func() -> void:
 		_on_game_over(GameState.won, GameState.end_reason))
+
+
+# O MENU-CELULAR, e a porta de cada app dele.
+#
+# `connect` por NOME pela mesma razão do `ver_balanco` do menu de pausa: o
+# `_abrir_painel` devolve um `Control`, e um `Control` não declara este sinal
+# — a forma com ponto não compila.
+#
+# ⚠️ E O SINAL TRAZ A CENA, NÃO UM ID. Um id obrigaria o Main a ter a sua
+# própria tabela de "qual id abre o quê" — duas listas que nada obriga a
+# concordar, que é a fonte dupla que este projeto já pagou no `barco_medio` e
+# no `.get(chave, omissão)`. Assim quem sabe o que cada app abre é a tabela do
+# menu, num lugar só, e um app fechado não chega aqui: o tile dele nem é botão.
+func _on_menu_pressed() -> void:
+	var menu := _abrir_painel(PainelMenuScene)
+	menu.connect("abrir_app", _on_menu_app_pedido)
+	menu.call("setup")
+
+
+func _on_menu_app_pedido(cena: String) -> void:
+	_abrir_painel(load(cena) as PackedScene)
 
 
 func _on_rival_offer_triggered(dock_index: int) -> void:

@@ -88,6 +88,7 @@ var _d19_completo := false
 var _d20_completo := false
 var _d21_completo := false
 var _d22_completo := false
+var _d23_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -192,6 +193,10 @@ func _rodar() -> void:
 	print("=== D22: a narração de fim de fase cabe sem rolar ===")
 	_d22_narracao_cabe()
 	_confere("o bloco D22 correu até ao fim", _d22_completo)
+
+	print("=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===")
+	_d23_menu_celular()
+	_confere("o bloco D23 correu até ao fim", _d23_completo)
 
 	root.remove_child(_main)
 	_main.free()
@@ -1119,8 +1124,12 @@ func _d4_dentro_da_tela() -> void:
 
 # ── D5 ── a pilha do rodapé não pode se atropelar
 func _d5_sem_sobreposicao() -> void:
+	# ⚠️ "Upgrade" ERA UM FILHO DIRETO E PASSOU A VIVER EM "LinhaConstruir".
+	# A pilha percorre-se por NOME, então um nó que se mova de sítio some
+	# desta conta sem erro nenhum: quem o apanhou foi a asserção "%s existe",
+	# que está aqui por baixo exactamente para isso.
 	var pilha := ["MapaWrap", "BarraDocas", "TrabalhadoresTitulo", "Trabalhadores",
-		"MensagemCartao", "MetaCartao", "Upgrade", "AcoesTurno"]
+		"MensagemCartao", "MetaCartao", "LinhaConstruir", "AcoesTurno"]
 	var anterior: Control = null
 	for nome in pilha:
 		var c := _main.get_node_or_null(nome) as Control
@@ -1152,7 +1161,8 @@ func _d6_alvos_de_toque() -> void:
 	var alvos: Array[Control] = []
 	alvos.append(_main.get_node("AcoesTurno/Alocar"))
 	alvos.append(_main.get_node("AcoesTurno/Avancar"))
-	alvos.append(_main.get_node("Upgrade"))
+	alvos.append(_main.get_node("LinhaConstruir/Upgrade"))
+	alvos.append(_main.get_node("LinhaConstruir/Menu"))
 	alvos.append(_main.get_node("HudBar/Pausar"))
 	for c in _main.get_node("BarraDocas").get_children():
 		alvos.append(c)
@@ -2254,3 +2264,232 @@ func _d22_narracao_cabe() -> void:
 func _mesma_cor(a: Color, b: Color) -> bool:
 	return absf(a.r - b.r) <= 4.0 / 255.0 and absf(a.g - b.g) <= 4.0 / 255.0 \
 		and absf(a.b - b.b) <= 4.0 / 255.0
+
+
+# ── D23 ── o menu-celular: o que ele custou ao rodapé, e o que se lê dentro
+#
+# Item 17 do segundo playtest. O menu é a primeira tela deste projeto cujo
+# fundo é ESCURO, e a primeira peça de rodapé a dividir uma linha com outra —
+# duas coisas que nenhuma guarda perguntava. São quatro perguntas, e cada uma
+# tem um estado que a viola sem violar as outras (que é o teste de uma
+# asserção que não é confiança de graça):
+#
+#   1. o botão Construir cabe o PIOR texto depois de ceder largura ao menu;
+#   2. o toque no botão de menu abre mesmo o painel;
+#   3. os rótulos de dentro do celular passam a WCAG sobre a tela ESCURA;
+#   4. a grelha de apps cabe na tela do aparelho.
+func _d23_menu_celular() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260913
+	GS.new_game()
+	# Todo bloco que joga resolve a oferta pendente antes de contar com o
+	# estado: o `new_game()` tem 30% de abrir contra-oferta, e nessa fase o
+	# `advance_turn()` e o `comprar_estrutura()` retornam calados.
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+
+	# ── 1. O PIOR TEXTO DO BOTÃO CONSTRUIR ──
+	#
+	# ⚠️ O PIOR CASO É O TEXTO QUE O JOGO ESCREVE, NUM ESTADO ESCOLHIDO — e não
+	# um texto inventado aqui. A primeira versão deste bloco montava
+	# "Construir · 7 estruturas" à mão, e o jogo escreve "Construir · 7
+	# disponíveis": a palavra real é MAIS LONGA do que a suposta, então a
+	# asserção media um caso mais fácil do que o que o jogador vê. Quem o
+	# apanhou foi a captura, não o teste.
+	#
+	# O botão tem três estados, e o pior é o de mais estruturas por construir:
+	# "Porto completo" é curto, e o plural muda entre 1 e vários. O porto que
+	# este bloco acabou de montar é novo, logo faltam TODAS — e a asserção
+	# abaixo prova que é mesmo esse o estado, senão o pior caso passaria a ser
+	# outro sem ninguém dar por isso.
+	var construir: Button = tela.get_node("LinhaConstruir/Upgrade")
+	var quantas: int = GS.ESTRUTURAS.size()
+	_confere("o porto do teste tem as %d estruturas por construir (pior caso do rótulo)"
+			% quantas, construir.text.contains(str(quantas)),
+		"o botão diz '%s'" % construir.text)
+	var pior := construir.text
+	var fonte: Font = construir.get_theme_font("font")
+	var tam: int = construir.get_theme_font_size("font_size")
+	var estilo: StyleBox = construir.get_theme_stylebox("normal")
+	var margens: float = estilo.get_margin(SIDE_LEFT) + estilo.get_margin(SIDE_RIGHT)
+	var icone: float = float(construir.get_theme_constant("icon_max_width"))
+	var separacao: float = float(construir.get_theme_constant("h_separation"))
+	var pede: float = fonte.get_string_size(
+		pior, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x + margens + icone + separacao
+	# ⚠️ A LARGURA CONTRA A QUAL SE COMPARA É DERIVADA DA LINHA, e não o
+	# `size` do botão. A primeira versão deste bloco perguntava
+	# `pede <= construir.size.x` e PASSAVA com 5 px de folga — porque um painel
+	# que ainda não passou por um frame de layout devolve o tamanho MÍNIMO, que
+	# num `Button` é o do próprio texto mais as margens. Ou seja: o esperado e
+	# o medido saíam da mesma fonte, e alargar o botão de menu não reprovava
+	# nada. É a armadilha do espelho que o `CLAUDE.md` regista a propósito do
+	# sorteio de motivos, aqui em forma de pixel.
+	#
+	# A conta certa é a que a cena documenta: a linha tem uma largura, o menu
+	# leva um pedaço fixo dela, e o Construir fica com o resto.
+	var linha: HBoxContainer = tela.get_node("LinhaConstruir")
+	var largura_linha: float = linha.offset_right - linha.offset_left
+	var separa: float = float(linha.get_theme_constant("separation"))
+	# ⚠️ `get_combined_minimum_size()`, E NÃO `custom_minimum_size`. O botão
+	# declara 46 e ocupa 54: o ícone de 26 mais as margens de 14+14 do tema
+	# pedem mais do que o mínimo escrito, e um `custom_minimum_size` menor do
+	# que o conteúdo é simplesmente ignorado. Medir o número declarado daria
+	# 8 px de folga a mais do que existe.
+	var menu_largura: float = (tela.get_node("LinhaConstruir/Menu") as Control) \
+		.get_combined_minimum_size().x
+	var sobra: float = largura_linha - menu_largura - separa
+	_confere("o Construir cabe o pior texto (%s pede %.0f e sobram %.0f de %.0f)"
+			% [pior, pede, sobra, largura_linha], pede <= sobra,
+		"o botão de menu ficou com largura a mais e este texto sairia cortado")
+
+	# ── 2. O TOQUE NO MENU ABRE O PAINEL ──
+	#
+	# Mesma prova do D10: o sinal `pressed` de verdade, e não uma chamada
+	# direta a `_on_menu_pressed`. Um botão desligado do handler passa em todo
+	# o resto deste bloco.
+	var botao_menu: Button = tela.get_node("LinhaConstruir/Menu")
+	var overlay: Node = tela.get_node("Overlay")
+	var antes := overlay.get_child_count()
+	botao_menu.pressed.emit()
+	_confere("o toque no menu abriu um painel a mais",
+		overlay.get_child_count() == antes + 1)
+	if overlay.get_child_count() != antes + 1:
+		root.remove_child(tela)
+		tela.free()
+		return
+
+	var menu: Node = overlay.get_child(overlay.get_child_count() - 1)
+	var script: Script = menu.get_script()
+	_confere("e o painel aberto é o PainelMenu",
+		script != null and String(script.resource_path).ends_with("PainelMenu.gd"),
+		"script aberto: %s" % (script.resource_path if script != null else "nenhum"))
+
+	# ── 3. O TEXTO DENTRO DO CELULAR, SOBRE A TELA ESCURA ──
+	#
+	# ⚠️ IRMÃ DO D19, DO OUTRO LADO DA MESMA ARMADILHA. Lá a cor neutra do
+	# jogo (feita para fundo escuro) caía sobre o cartão BRANCO e media
+	# 2,93:1; aqui a cor de texto PADRÃO do tema é navy, feita para o cartão
+	# branco, e cairia sobre a tela navy do aparelho. Um rótulo deste painel
+	# que esqueça a variação sai invisível sem erro nenhum.
+	#
+	# E o fundo lido é o da TELA e não o do CORPO: são dois `PanelContainer`
+	# encaixados, e é dentro da tela que os rótulos caem.
+	var fundo := _fundo_da_tela_do_celular(menu)
+	_confere("achei a tela do celular (%s)" % fundo, fundo.a > 0.0)
+
+	var reprovados := 0
+	var pior_razao := 99.0
+	var pior_rotulo := ""
+	for no in _todos_os_labels(menu):
+		var cor: Color = no.get_theme_color("font_color")
+		var tamanho: int = no.get_theme_font_size("font_size")
+		var corte: float = 3.0 if tamanho >= 18 else 4.5
+		var razao := _contraste(cor, fundo)
+		if razao < pior_razao:
+			pior_razao = razao
+			pior_rotulo = "%s a %dpx" % [no.text.substr(0, 28), tamanho]
+		if razao < corte:
+			reprovados += 1
+	_confere("nenhum rótulo do celular reprova a WCAG (pior: %.2f:1 em %s)"
+			% [pior_razao, pior_rotulo], reprovados == 0,
+		"%d rótulo(s) abaixo do corte sobre a tela do aparelho" % reprovados)
+
+	# ── 4. A GRELHA DE APPS CABE NA TELA ──
+	#
+	# A grelha cresce sozinha — um app novo, um nome mais comprido — e num
+	# `GridContainer` isso alarga a COLUNA em silêncio: o celular tem largura
+	# fixa, então o que transborda desenha por fora do aparelho. É a conta que
+	# a folha de contato aprendeu a fazer, aplicada a uma tela em vez de a um
+	# PNG. A largura útil sai das margens do TEMA, não de um número escrito
+	# aqui.
+	var grade: GridContainer = _achar_grelha(menu)
+	_confere("achei a grelha de apps", grade != null)
+	if grade != null:
+		# ⚠️ A LARGURA ÚTIL SAI DO TEMA, NÃO DO `size` DOS NÓS. Um painel
+		# acabado de instanciar ainda não passou por um frame de layout, e
+		# perguntar o tamanho dele devolve ZERO — a asserção passaria a
+		# comparar contra nada e nunca reprovaria. Derivada, ela também não
+		# envelhece quando as margens do aparelho mudarem.
+		var corpo: StyleBox = menu.get_theme_stylebox("panel", "Celular")
+		var visor: StyleBox = menu.get_theme_stylebox("panel", "CelularTela")
+		var largura: float = float(menu.LARGURA)
+		var util: float = largura \
+			- corpo.get_margin(SIDE_LEFT) - corpo.get_margin(SIDE_RIGHT) \
+			- visor.get_margin(SIDE_LEFT) - visor.get_margin(SIDE_RIGHT)
+		var pedem: float = grade.get_combined_minimum_size().x
+		_confere("a grelha de apps cabe na tela (pede %.0f, tem %.0f)"
+				% [pedem, util], pedem <= util,
+			"um app ou um nome a mais e a grelha desenha por fora do aparelho")
+
+	# ── 5. O APP QUE ACENDE ABRE MESMO ──
+	#
+	# ⚠️ ESTAR NA TABELA NÃO É CHEGAR À TELA. É a pergunta do `barco_medio`
+	# (renderizado, validado, e nunca posto em doca nenhuma) e a da fala escrita
+	# que nada disparava, aqui numa grelha de apps: o tile do diário podia ser
+	# um quadrado bonito cujo `cena` aponta para um caminho errado, e as quatro
+	# asserções acima passariam todas.
+	#
+	# E o menu tem de SAIR ao abrir o app, senão ficam dois painéis empilhados.
+	# A pergunta é a da FILA e não `is_inside_tree()`: o `queue_free()` marca o
+	# nó e só o tira da árvore no fim do frame, então um painel já condenado
+	# responde "estou cá" a quem perguntar assim.
+	var tile: Button = _achar_tile_aceso(menu)
+	_confere("achei um app aceso na grelha", tile != null)
+	if tile != null:
+		var antes_app := overlay.get_child_count()
+		tile.pressed.emit()
+		_confere("o toque no app abriu um painel a mais",
+			overlay.get_child_count() == antes_app + 1)
+		_confere("e o menu saiu de cena em vez de ficar por baixo",
+			menu.is_queued_for_deletion())
+		var app: Node = overlay.get_child(overlay.get_child_count() - 1)
+		var script_app: Script = app.get_script()
+		_confere("e o que abriu é o PainelDiario",
+			script_app != null and String(script_app.resource_path).ends_with("PainelDiario.gd"),
+			"abriu: %s" % (script_app.resource_path if script_app != null else "nada"))
+
+	root.remove_child(tela)
+	tela.free()
+	_d23_completo = true
+
+
+# O primeiro tile que é BOTÃO — os apagados são `PanelContainer` de propósito,
+# e procurar por nome cravaria aqui qual app está aceso hoje.
+func _achar_tile_aceso(no: Node) -> Button:
+	if no is Button and String(no.name).begins_with("Tile_"):
+		return no as Button
+	for filho in no.get_children():
+		var achado := _achar_tile_aceso(filho)
+		if achado != null:
+			return achado
+	return null
+
+
+# O fundo em que os rótulos do menu caem: a TELA do aparelho, que é o
+# `PanelContainer` de variação "CelularTela". Procurado pela variação e não
+# pela posição na árvore — o corpo do celular é outro `PanelContainer`, e
+# apanhar o primeiro que aparecesse mediria o contraste contra a moldura.
+func _fundo_da_tela_do_celular(no: Node) -> Color:
+	if no is PanelContainer and String((no as PanelContainer).theme_type_variation) == "CelularTela":
+		var sb := (no as PanelContainer).get_theme_stylebox("panel")
+		if sb is StyleBoxFlat:
+			return (sb as StyleBoxFlat).bg_color
+	for filho in no.get_children():
+		var achado := _fundo_da_tela_do_celular(filho)
+		if achado.a > 0.0:
+			return achado
+	return Color(0, 0, 0, 0)
+
+
+func _achar_grelha(no: Node) -> GridContainer:
+	if no is GridContainer:
+		return no as GridContainer
+	for filho in no.get_children():
+		var achado := _achar_grelha(filho)
+		if achado != null:
+			return achado
+	return null

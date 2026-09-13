@@ -218,7 +218,8 @@ para ele a tomar com o número na mão.
 |---|---|---|
 | **25** · fechar o balanço | **pequeno, e é um beco sem saída de verdade** | `EndGame.gd` mostra o balanço com um botão só, "Jogar de novo". O menu de pausa — onde vive o botão que exporta o `.jsonl` da partida — fica inalcançável, e é justamente esse arquivo que responde melhor do que o print |
 | **22** · destaque do "Alocar todos" | pequeno | Ele é secundário ao lado do âmbar do "Avançar dia". O tema já tem a variação de destaque |
-| **17 · 18 · 19 · 21** · menu-celular, mapa da cidade, lojas, app de análise | **muito grande** | Ver a nota abaixo |
+| ✅ **17** · menu-celular | médio | **FEITO em 13/09**, `docs/decisoes/021` — a CASCA: o botão no rodapé, o aparelho, o diário lá dentro e as quatro portas fechadas ditas por escrito |
+| **18 · 19 · 21** · mapa da cidade, lojas, app de análise | **muito grande** | Ver a nota abaixo. O 17 abriu-lhes a porta e não respondeu à pergunta deles |
 
 ### 💰 Economia — nada disto se mexe sem `/balancear`, e três reabrem decisões
 

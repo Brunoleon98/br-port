@@ -261,10 +261,19 @@ func _f2_icones() -> void:
 	for casamento in re.search_all(fonte):
 		registrados[casamento.get_string(1)] = casamento.get_string(2)
 
-	# Vinte é o número que o CLAUDE.md afirma e que a folha de contato conferiu.
-	# Se o registro encolher sem ninguém dizer, isto pergunta porquê.
-	_confere("Icones.gd registra os 20 ícones (achou %d)" % registrados.size(),
-		registrados.size() == 20)
+	# ⚠️ AQUI DIZIA `registrados.size() == 20`, E ERA UM NÚMERO CRAVADO NUMA
+	# ASSERÇÃO — a mesma armadilha que o `CLAUDE.md` regista para o turno
+	# amostrado e para o offset do letreiro. Ele reprovava o ícone número 21
+	# sem nada estar errado, que é o vermelho que ensina a subir o número em
+	# vez de olhar; e o que ele queria perguntar — "o registro encolheu sem
+	# ninguém dizer?" — as duas varreduras abaixo já respondem melhor, uma em
+	# cada direção: toda constante tem arquivo, e todo arquivo tem constante.
+	#
+	# ⚠️ E A PRIMEIRA TENTATIVA DE CONSERTO FOI ESCREVER A SEGUNDA DELAS OUTRA
+	# VEZ, dez linhas acima de onde ela já estava. É a guarda que outra já
+	# implica, do `CLAUDE.md`: antes de acrescentar asserção sobre uma coisa
+	# que já tem duas, o que se procura é o estado que a violaria sem violar
+	# as outras — e aqui não havia nenhum.
 
 	for id in registrados:
 		var caminho: String = registrados[id]
