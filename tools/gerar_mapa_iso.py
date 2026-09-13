@@ -1986,7 +1986,7 @@ def praia_chao(indice: int, my_a: float, my_b: float) -> str:
 
 
 def praia_areia(indice: int, my_a: float, my_b: float) -> str:
-    """A rampa de areia, o pé molhado, o fundo submerso, as pedras e o capim.
+    """A rampa de areia, o pé molhado, o fundo submerso e as pedras.
 
     ⚠️ A RAMPA SAIU EM TRÊS TONS NA PRIMEIRA VERSÃO, e três era um a mais.
     Uma chapa de 58 px na tela não tem lado nenhum, isso é verdade — mas duas
@@ -2907,8 +2907,12 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # a ponta sul atravessa o salto entre o degrau 2 e o 3, e não pertence a
     # nenhum dos dois. O `solo` e a mata que o laço desenha caem por cima, na
     # mesma cor — é o mesmo chão.
+    # O chão inteiro da praia — terra e areia — vem antes da estrada e da
+    # vila. `praia_areia` era a irmã esquecida desta varredura e, desenhada
+    # tarde, cobria o asfalto embora as geometrias não se cruzassem.
     for j, a, b in praias():
         s += praia_chao(j, a, b)
+        s += praia_areia(j, a, b)
 
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
         # ⚠️ A LAJE DO CAIS PARA ONDE O PORTO PARA. Nas duas pontas (ver
@@ -3112,14 +3116,6 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
 
     for _py, canto, h, topo in sorted(pedras, key=lambda q: q[0]):
         s += com_saia(canto, h, topo)
-
-    # ---- as duas pontas de areia ----
-    # Vêm aqui, e não no laço dos degraus, pela mesma razão que o enrocamento:
-    # é a última camada da margem, e tudo o que o cais desenha na beira já
-    # passou. O chão delas foi desenhado lá atrás (`praia_chao`); o que falta
-    # é a rampa que desce até a água.
-    for j, a, b in praias():
-        s += praia_areia(j, a, b)
 
     # ---- píeres ----
     # Em jogo o píer TROCA DE ESTADO (vaga por construir -> píer construído), e
@@ -3355,6 +3351,12 @@ def tabela_ancoras() -> dict:
         # sua por JSON em vez de a repetir.
         "cores_da_rua": {"asfalto": C["asfalto_via"], "calcada": C["calcada"],
                          "meiofio": C["meiofio"]},
+        # O D20 lê estas cores no mapa rasterizado para garantir que a praia,
+        # que é chão, nunca volta a ser pintada por cima da rota da estrada.
+        "cores_da_areia": {"areia": C["areia"],
+                            "areia_seca": C["areia_seca"],
+                            "areia_face": C["areia_face"],
+                            "areia_funda": C["areia_funda"]},
         # AS FAIXAS DE ÁGUA, pela mesma razão e para a mesma pergunta. O que o
         # D21 quer saber é se a Zona de Espera fundeia AO LARGO, e a divisão
         # que responde isso está aqui e não num número: `costeiras` são as três

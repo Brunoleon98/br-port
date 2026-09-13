@@ -40,8 +40,11 @@ em rampas. A paleta medida não mudou (amplitude 99,408; espuma 0,558 de Weber).
 Curvas no contorno continuam a ser o item 8, separado.
 
 **Há fauna costeira jogável em três habitats** — gaivotão, maria-farinha e
-tartaruga-verde juvenil, com movimento ocioso, reação e som ao toque. Rascunhos
-até o gate de escuta.
+tartaruga-verde juvenil, com movimento, toque e som. Medem **15 / 12 / 14 px**,
+com alvo tátil de **44 px**; rascunhos até o gate de escuta.
+
+**Correções 13/09:** areia antes da rua (D20), fauna à escala/toque (D25);
+injeções isoladas, geometria intacta.
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
 perfil: ótimo 100% · mediano 80,2% · descuidado 37,3%, com a mediana do mediano

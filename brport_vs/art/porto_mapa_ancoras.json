@@ -57,6 +57,12 @@
    "#0f5a7d"
   ]
  },
+ "cores_da_areia": {
+  "areia": "#e8d9a8",
+  "areia_face": "#bda06a",
+  "areia_funda": "#a8ddd0",
+  "areia_seca": "#d3c08a"
+ },
  "cores_da_rua": {
   "asfalto": "#49535b",
   "calcada": "#aeb8bf",

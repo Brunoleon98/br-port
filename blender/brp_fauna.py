@@ -22,6 +22,29 @@ resolver a ave no desenho visto de cima, e não empilhar mais primitivas.
 from brp_studio import caixa, cone, prisma, barra, origem, selecao, z
 
 
+# Medido no render de 13/09 contra duas réguas do próprio jogo: o trabalhador
+# ocupa 15 px de largura e o bote de pesca, 44. As silhuetas novas continuam a
+# ler pequenas em 15 / 14 / 12 px; abaixo de 12 a maria-farinha perde as fendas
+# entre pernas e pinças e vira uma mancha. Escala-se o GRUPO inteiro a partir
+# da origem, nunca as literais internas — é a regra de todo prop deste estúdio.
+ESCALA_DE_JOGO = {
+    # O alfa antisserrilhado acrescenta um pixel à caixa; estes fatores são
+    # os que o render mediu nos alvos 15 / 14 / 12, não uma regra de três
+    # suposta a partir da caixa antiga.
+    "gaivota": 0.290,
+    "tartaruga_verde": 0.278,
+    "maria_farinha": 0.252,
+}
+
+
+def _escalar_grupo(objetos, fator: float):
+    """Reduz malha e posição em torno da origem, uma vez por objeto."""
+    for objeto in set(objetos):
+        objeto.location *= fator
+        objeto.scale *= fator
+    return objetos
+
+
 def gaivota(M, est):
     """Gaivotão em voo, resolvido como silhueta vista de cima.
 
@@ -54,7 +77,8 @@ def gaivota(M, est):
                                   (0.76, -0.075)],
                     z(0.7), z(2.2), (0.92, 0.92), M["amarelo"]))
     origem("gaivota", tipo="voo")
-    selecao("gaivota", 0.0, 0.0, 1.0, 1.0)
+    volume = selecao("gaivota", 0.0, 0.0, 1.0, 1.0)
+    _escalar_grupo(p + [volume], ESCALA_DE_JOGO["gaivota"])
     est.registrar("gaivota", p, ancora="voo", selecionavel=True,
                   celulas=(1, 1), habitat="ar",
                   animacoes={"voo": {"frames": 6, "loop": True},
@@ -84,7 +108,8 @@ def maria_farinha(M, est):
         p.append(barra("mf_pinca_b%d" % lado, (0.52, lado * 0.53, z(2.2)),
                        (0.70, lado * 0.42, z(2.2)), 0.045, M["laranja"]))
     origem("maria_farinha")
-    selecao("maria_farinha", 0.0, 0.0, 1.0, 1.0)
+    volume = selecao("maria_farinha", 0.0, 0.0, 1.0, 1.0)
+    _escalar_grupo(p + [volume], ESCALA_DE_JOGO["maria_farinha"])
     est.registrar("maria_farinha", p, selecionavel=True, celulas=(1, 1),
                   habitat="areia",
                   animacoes={"andar_lado": {"frames": 6, "loop": True},
@@ -117,7 +142,8 @@ def tartaruga_verde(M, est):
         p.append(prisma("tv_nadadeira_t%d" % i, tras, z(0.8), z(2.8),
                         (0.94, 0.94), M["folha"]))
     origem("tartaruga_verde", tipo="waterline")
-    selecao("tartaruga_verde", 0.0, 0.0, 1.0, 1.0)
+    volume = selecao("tartaruga_verde", 0.0, 0.0, 1.0, 1.0)
+    _escalar_grupo(p + [volume], ESCALA_DE_JOGO["tartaruga_verde"])
     est.registrar("tartaruga_verde", p, ancora="waterline", selecionavel=True,
                   celulas=(1, 1), habitat="agua_rasa",
                   animacoes={"nado": {"frames": 6, "loop": True},

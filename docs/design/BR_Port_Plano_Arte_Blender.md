@@ -899,6 +899,15 @@ refeita como silhueta e ganhou gaivotão, maria-farinha e tartaruga-verde
 juvenil no jogo. Os três têm volume de seleção no Blender, cena Godot, movimento
 ocioso e reação ao toque. O A5 ainda julga a imagem e o A6 ainda julga o som.
 
+Uma captura posterior mostrou que a escala de jogo tinha ultrapassado a do
+desenho: 48/47/44 px de largura faziam cada animal chegar ao tamanho do bote.
+Uma varredura das silhuetas finais fechou em **15 px para a gaivota, 14 para a
+tartaruga e 12 para a maria-farinha** — todos até a largura da pessoa, ainda na
+ordem gaivota > tartaruga > caranguejo. Abaixo de 12 px as pinças e pernas do
+caranguejo deixam de se separar. `ESCALA_DE_JOGO` reduz o grupo Blender inteiro,
+e não as suas peças; o alvo de toque independente ficou em 44 px de diâmetro.
+O D25 prende as três medidas, a ordem e o alvo tátil.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

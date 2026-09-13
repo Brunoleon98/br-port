@@ -90,6 +90,7 @@ var _d21_completo := false
 var _d22_completo := false
 var _d23_completo := false
 var _d24_completo := false
+var _d25_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -198,6 +199,10 @@ func _rodar() -> void:
 	print("=== D24: a igreja, a praça e a obra chegaram ao DESENHO da vila ===")
 	_d24_a_vila_cresce()
 	_confere("o bloco D24 correu até ao fim", _d24_completo)
+
+	print("=== D25: a fauna cabe na régua do próprio jogo ===")
+	_d25_escala_da_fauna()
+	_confere("o bloco D25 correu até ao fim", _d25_completo)
 
 	print("=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===")
 	_d23_menu_celular()
@@ -2011,6 +2016,12 @@ func _contraste(a: Color, b: Color) -> float:
 # ⚠️ E A PERGUNTA É «NÃO É CALÇADA», não «é asfalto». A rodagem leva pintura —
 # linha central, passadeira —, e exigir o cinzento do asfalto reprovaria uma
 # zebra bem desenhada. O que nunca pode aparecer no meio da pista é o PASSEIO.
+#
+# ⚠️ E A PRAIA ERA A IRMÃ NÃO VARRIDA. O capim saiu da camada tardia da
+# areia quando apareceu por cima de casas e passeio; a areia continuou nela e
+# apagava o asfalto no degrau 0. A rota já atravessava o defeito, mas perguntar
+# apenas por calçada deixava-o passar. Por isso a mesma amostra veta também os
+# quatro tons publicados da areia — outra pergunta, outra asserção.
 # A vila é a mesma nos dois mapas; a prova lê o do jogo.
 const MAPA_DA_VILA := "res://art/porto_mapa_iso.svg"
 # ⚠️ A JANELA COBRE A PEÇA, e o número saiu de uma medição. A 6 px de raio a
@@ -2044,6 +2055,15 @@ func _d20_a_rua_no_desenho() -> void:
 	if not cores.has("calcada"):
 		return
 	var calcada := Color(str(cores["calcada"]))
+	var cores_areia: Dictionary = _ancoras.get("cores_da_areia", {})
+	var nomes_areia := ["areia", "areia_seca", "areia_face", "areia_funda"]
+	var publica_areia := nomes_areia.all(func(nome): return cores_areia.has(nome))
+	_confere("o mapa publica os quatro tons da areia", publica_areia)
+	if not publica_areia:
+		return
+	var areias: Array[Color] = []
+	for nome in nomes_areia:
+		areias.append(Color(str(cores_areia[nome])))
 
 	var consts: Dictionary = (_main.get_script() as GDScript).get_script_constant_map()
 	var rota: Array = consts["ROTA_ESTRADA"]
@@ -2069,7 +2089,8 @@ func _d20_a_rua_no_desenho() -> void:
 				and img.get_height() == int(_ancoras["mapa"]["altura"]))
 
 		var lidas := 0
-		var pior := ""
+		var pior_calcada := ""
+		var pior_areia := ""
 		for i in range(rota.size() - 1):
 			var de: Vector2 = rota[i]
 			var para: Vector2 = rota[i + 1]
@@ -2082,9 +2103,15 @@ func _d20_a_rua_no_desenho() -> void:
 					continue        # a rota entra e sai do quadro de propósito
 				lidas += 1
 				var cor := img.get_pixel(ix, iy)
-				if _mesma_cor(cor, calcada) and pior == "":
-					pior = "em (%.2f, %.2f) — pixel (%d, %d) — o mapa pinta %s, que é a calçada" \
+				if _mesma_cor(cor, calcada) and pior_calcada == "":
+					pior_calcada = "em (%.2f, %.2f) — pixel (%d, %d) — o mapa pinta %s, que é a calçada" \
 						% [m.x, m.y, ix, iy, cor.to_html(false)]
+				if pior_areia == "":
+					for areia in areias:
+						if _mesma_cor(cor, areia):
+							pior_areia = "em (%.2f, %.2f) — pixel (%d, %d) — o mapa pinta %s, que é areia" \
+								% [m.x, m.y, ix, iy, cor.to_html(false)]
+							break
 		# ⚠️ E CONFERE-SE QUANTAS FORAM LIDAS. Um recorte mal posto, ou uma rota
 		# que saísse inteira do quadro, daria zero amostras e um PASS contente:
 		# é o mesmo defeito que o CLAUDE.md descreve como "o defeito injetado
@@ -2092,8 +2119,61 @@ func _d20_a_rua_no_desenho() -> void:
 		_confere("%s: a rota dá pelo menos 200 amostras dentro do quadro (%d)"
 			% [caminho.get_file(), lidas], lidas >= 200)
 		_confere("%s: nenhum ponto da rota cai em calçada" % caminho.get_file(),
-			pior == "", pior)
+			pior_calcada == "", pior_calcada)
+		_confere("%s: nenhum ponto da rota cai em areia" % caminho.get_file(),
+			pior_areia == "", pior_areia)
 	_d20_completo = true
+
+
+# ── D25 ── a fauna é menor do que gente, e o toque continua tocável
+#
+# A primeira fauna jogável ganhou desenho e escala na mesma passagem. O desenho
+# resolveu a leitura; a escala deixou gaivota, tartaruga e maria-farinha com a
+# largura de um barco. A régua independente já existia na própria arte: uma
+# pessoa mede 15 px. A ordem escolhida na imagem é gaivota > tartaruga >
+# caranguejo, em 15 / 14 / 12 px.
+#
+# O alvo de toque é irmão do Sprite2D e não encolhe com ele. Fica no piso de
+# 44 px: menor faria o polegar errar; maior faria o animal reagir a um toque
+# ainda mais longe do corpo minúsculo.
+const FAUNA_CENAS := {
+	"gaivota": "res://scenes/fauna/Gaivota.tscn",
+	"tartaruga_verde": "res://scenes/fauna/TartarugaVerde.tscn",
+	"maria_farinha": "res://scenes/fauna/MariaFarinha.tscn",
+}
+const FAUNA_LARGURAS := {"gaivota": 15, "tartaruga_verde": 14, "maria_farinha": 12}
+
+
+func _d25_escala_da_fauna() -> void:
+	var trabalhador: Texture2D = load("res://art/props/trabalhador.png")
+	var largura_pessoa := trabalhador.get_image().get_used_rect().size.x
+	_confere("a régua continua sendo uma pessoa de 15 px", largura_pessoa == 15,
+		"o trabalhador mede %d px" % largura_pessoa)
+
+	var larguras := {}
+	for especie in FAUNA_CENAS:
+		var bicho: Node2D = load(FAUNA_CENAS[especie]).instantiate()
+		var sprite: Sprite2D = bicho.get_node("Sprite")
+		var usado := sprite.texture.get_image().get_used_rect()
+		var largura := int(round(float(usado.size.x) * absf(sprite.scale.x)))
+		larguras[especie] = largura
+		_confere("%s mede os %d px escolhidos" % [especie, FAUNA_LARGURAS[especie]],
+			largura == FAUNA_LARGURAS[especie], "mede %d px" % largura)
+		_confere("%s não é mais larga do que uma pessoa" % especie,
+			largura <= largura_pessoa, "%d px contra %d" % [largura, largura_pessoa])
+
+		var forma: CircleShape2D = bicho.get_node("Toque/Forma").shape
+		var diametro := forma.radius * 2.0
+		_confere("%s conserva o alvo mínimo de 44 px" % especie,
+			is_equal_approx(diametro, TOQUE_MIN), "o alvo mede %.0f px" % diametro)
+		bicho.free()
+
+	_confere("a escala lê gaivota > tartaruga > maria-farinha",
+		larguras["gaivota"] > larguras["tartaruga_verde"]
+			and larguras["tartaruga_verde"] > larguras["maria_farinha"],
+		"%s / %s / %s px" % [larguras["gaivota"], larguras["tartaruga_verde"],
+			larguras["maria_farinha"]])
+	_d25_completo = true
 
 
 # ── D21 ── quem ESPERA fundeia ao largo; quem ATRACA fica na costeira
