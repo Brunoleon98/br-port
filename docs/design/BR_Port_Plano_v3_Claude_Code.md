@@ -432,6 +432,39 @@ Seis eram texto e estão feitas; a sétima é item de fila:
    no VS diz sete linhas e usa o maneirismo UMA vez, na última. Entrou
    "querido" na abertura; duas ocorrências fazem padrão, uma faz tropeço.
 
+### 📅 ITEM NOVO — a semana passa a ter SETE dias, e a economia move-se
+
+**Decidido pelo Bruno em 13/09**, ao ler a narração em voz alta: o jogo diz
+"dia" em toda a interface e `TURNS_PER_WEEK` é 8, o que faz quatro semanas
+darem trinta e dois dias. **O ideal é sete.** A implicação é dele e está dita:
+*"daí vai precisar rebalancear algumas coisas"*.
+
+**O que a mudança CUSTA em código: uma linha.** Medido em 13/09 — nada no
+projeto crava 8 nem 32. `TURNS_TOTAL` e `PARCELA_DUE_TURN` derivam de
+`TURNS_PER_WEEK`, e os quinze sítios que os leem (HUD, calendário, painel da
+parcela, registro, quatro blocos de teste) leem a constante. O calendário até
+melhora de graça: ele usa `TURNS_PER_WEEK` como número de colunas, e sete
+colunas são uma semana de verdade.
+
+⚠️ **O QUE ELA CUSTA NA ECONOMIA É OUTRA COISA, e não é "12,5% menos turnos".**
+O aperto verdadeiro é que **o custo semanal não encolhe com a semana**: o
+`MAINTENANCE_WEEKLY` (R$40.000) e o `SALARY_PER_WORKER` são cobrados POR
+SEMANA, uma vez, e passam a ser pagos com sete turnos de receita em vez de
+oito. A margem por semana cai, e o porto pobre — que já vive de margem fina — é
+quem sente primeiro. A partida também encurta de 32 para 28 turnos contra uma
+parcela que não mudou.
+
+⚠️ **E A PREVISÃO ACIMA NÃO SERVE DE MEDIÇÃO.** Este arquivo regista duas vezes
+o custo de prever numa constante com o resultado medido noutra (`018`, e a
+inversão da dificuldade que não veio). A F1 desenha a varredura; o número sai
+das 600 partidas.
+
+**O rasto que ela envelhece** é o maior de qualquer item da fila: a tabela dos
+números, o projetor das Parcelas (que modela a Fase 1 MEDIDA), os seis
+documentos que afirmam o balanceamento, e a prosa onde "32" ou "oito turnos"
+estejam escritos — `CLAUDE.md`, o `ESTADO_DO_PROJETO.md`, a `003`, o
+`gdd/sistemas/economia.md` e o histórico. É sessão própria, por `/balancear`.
+
 ### 🎭 ITEM NOVO — retrato do personagem com REAÇÃO, junto da fala
 
 Pedido na primeira leitura (13/09): *"seria legal aparecer o sprite dos

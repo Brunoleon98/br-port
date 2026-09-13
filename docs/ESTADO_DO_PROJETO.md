@@ -122,7 +122,7 @@ em `docs/arquivo/HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | ~~Jogar~~ — 02/09 e 06/09, e os 25 itens já triados. Fica **a ordem do resto** | Ver abaixo |
-| **A4** | Ler as falas em voz alta | Três desvios do rascunho de escrita esperam esse julgamento, listados no A4 do plano. Não há como julgar fala sem a dizer |
+| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e devolveu 7 notas — 6 aplicadas, 1 na fila. Falta reler o que mudou. O que ela achou está no A4 do plano |
 | **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais o que ficou fora delas, e a frota de 07/09. É a trilha inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
@@ -172,7 +172,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — props em cima do que o mapa desenhou, ordem dos nós contra a profundidade, interface a caber na tela, e a COR com que o mapa pinta a rota do camião. Que defeito pariu cada bloco está em `docs/arquivo/HISTORICO.md` |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia (por varredura), todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru à tela, e **toda fala escrita chega ao jogo** (a pergunta inversa, contra o `Main.gd`) |
-| `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os tons da Dona Cida (4 desde 12/09: o primeiro boletim não compara com uma semana que não existe), as falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Os números saem das constantes E vão por extenso: dígito na narração lê como planilha, e o F4 reprova qualquer um |
+| `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os quatro tons da Dona Cida, as falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
@@ -213,7 +213,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
-| `tools/capturar_evidencia.sh` | **As fotografias que provam o que ficou** — as de jogo (o porto a OPERAR, e o porto EM RUÍNAS a trabalhar, único estado onde a frota de pesca atraca), o DIÁRIO e as folhas de contato. Semente e passo de tempo fixos, painéis conferidos, tela chapada reprovada. Quantas são, diz o próprio script. É o que o CI roda a cada PR |
+| `tools/capturar_evidencia.sh` | **As fotografias que provam o que ficou** — as de jogo, os painéis e as folhas de contato. Semente e passo fixos, estado montado, tela chapada reprovada: duas corridas dão os mesmos bytes. É o que o CI roda a cada PR |
 | `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — cascos e camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Reprova se transbordar, em vez de recortar. O porquê está no `CLAUDE.md`: foto de jogo só mostra o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
@@ -238,10 +238,11 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   cargueiro e navio de longo curso, cada uma com a sua faixa de valor, os seus
   turnos e a sua mistura de motivos. A classe decide o casco desenhado no píer
   (`docs/decisoes/009`)
-- Parcela única de **R$530.000** ao Sr. Ribeiro no fim da semana 4; paga ou
-  recusada, a semana só fecha depois da decisão (32 dias de partida). **Quitar
-  antes abate 0,25% por turno** — o juro que o banco deixa de correr
-  (`docs/decisoes/019`); a conta é genérica, para servir ao empréstimo da Fase 2
+- Parcela única de **R$530.000** no fim da semana 4; paga ou recusada, a semana
+  só fecha depois da decisão. **Quitar antes abate 0,25% por turno** — o juro
+  que o banco deixa de correr (`019`), numa conta genérica que serve ao
+  empréstimo da Fase 2. ⚠️ **A semana tem 8 turnos e a partida 32 "dias", o que
+  o Bruno mandou passar a 7 em 13/09** — é item de fila, e move a economia
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
   upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
   com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase
