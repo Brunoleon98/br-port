@@ -54,13 +54,23 @@ const POR_EXPRESSAO := {
 
 # O tamanho a que o cartão mostra o retrato, e ele NÃO é escolha de gosto.
 #
-# ⚠️ A EXPRESSÃO TEM UM TAMANHO MÍNIMO, e é este. O busto foi desenhado com a
-# cabeça a valer 47% da altura justamente para caber cara aqui dentro: a 96px
-# a cara tem 44 e o olho tem 5, e a diferença entre uma boca reta e uma boca
-# descontente é de 2 pixels — que se veem. A 64px seria 1 pixel, e as nove
-# imagens seriam três. Quem encolher isto tem de reabrir a folha de contato e
-# olhar, e não confiar em que "ainda dá para ver que é uma pessoa".
-const TAMANHO := 96
+# ⚠️ A EXPRESSÃO TEM UM TAMANHO MÍNIMO. O busto foi desenhado com a cabeça a
+# valer 59% da altura justamente para caber cara aqui dentro: a este tamanho a
+# cara tem ~50px e o olho tem 6, e a diferença entre uma boca reta e uma boca
+# descontente é de 2 pixels — que se veem. Metade disto seria um pixel, e as
+# nove imagens seriam três. Quem encolher isto tem de reabrir a folha de
+# contato e olhar, e não confiar em que "ainda dá para ver que é uma pessoa".
+#
+# ⚠️ E A CAIXA NÃO É QUADRADA, porque o PNG é. Um busto é mais alto do que
+# largo — 338 x 460 dentro de um quadro de 512 —, e num `TextureRect` quadrado
+# com `KEEP_ASPECT_CENTERED` quem manda é o QUADRO: a imagem inteira encolhe
+# para caber, o busto sai com 86px de altura e sobram 33px de transparência de
+# cada lado, dentro do cartão, a pagar largura que o balão queria. Com a caixa
+# na proporção do BUSTO e o modo `COVERED` (mais o `clip_contents`), a margem
+# transparente é que fica de fora e o mesmo desenho aparece 29% maior sem
+# roubar um pixel ao texto.
+const LARGURA := 112
+const TAMANHO := 152
 
 
 # A textura de um personagem numa expressão. Devolve `null` para um par
@@ -78,17 +88,20 @@ static func de(personagem: String, expressao: String) -> Texture2D:
 # PNG de 512 sai minúsculo no cartão por mais certo que esteja o resto. Por
 # isso o estúdio enche o quadro (`_K` e `_MEIO` em `brp_porto.py`) — e por
 # isso o teste de fumaça mede a caixa opaca dos nove PNG em vez de confiar.
-static func imagem(retrato: Texture2D, tamanho: int = TAMANHO) -> TextureRect:
+static func imagem(retrato: Texture2D, altura: int = TAMANHO) -> TextureRect:
 	var img := TextureRect.new()
 	img.texture = retrato
-	img.custom_minimum_size = Vector2(tamanho, tamanho)
+	img.custom_minimum_size = Vector2(int(round(altura * float(LARGURA) / TAMANHO)), altura)
 	img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	# Sem isto o `COVERED` desenha para FORA da caixa e o busto passa por cima
+	# do balão de fala — o modo cobre a área e não corta nada sozinho.
+	img.clip_contents = true
 	# O retrato não recebe toque: ele é ilustração ao lado do texto, e um alvo
-	# de toque de 96px em cima de um painel de decisão rouba o clique do botão
+	# de toque de 92 x 124 em cima de um painel de decisão rouba o clique do botão
 	# que está por baixo em metade dos telefones.
 	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	# Alinhado ao TOPO do balão. Centrado, um retrato de 96px ao lado de uma
+	# Alinhado ao TOPO do balão. Centrado, um retrato deste tamanho ao lado de uma
 	# fala de duas linhas fica com a cara a meia altura do texto e a olhar para
 	# o nada; encostado em cima, ele olha para a primeira linha.
 	img.size_flags_vertical = Control.SIZE_SHRINK_BEGIN

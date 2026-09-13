@@ -172,7 +172,7 @@ tirar parcela - --script res://tools/capturar_cena.gd -- res://scenes/panels/Pai
 # a fala dele diz o número, e um número cravado numa ferramenta de evidência
 # envelhece calado — ver o cabeçalho do `_chamar_setup`.
 tirar ribeiro - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @PARCELA_AMOUNT
-tirar contraoferta - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" 0
+tirar contraoferta - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0
 tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

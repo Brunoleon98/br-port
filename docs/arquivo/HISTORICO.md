@@ -27,6 +27,19 @@ Dona Cida e mais ninguém. A faixa de mensagem do rodapé ficou de fora, medida:
 52px de cartão e 29px de folga no rodapé, e escolher entre um retrato de 44px
 ilegível e um de 76px que gasta a folga é decisão do Bruno.
 
+**E O PRIMEIRO OLHAR DELE MANDOU-OS DE VOLTA**, com uma frase certa: *"faltam
+detalhes e está muito quadrado"*. A segunda passagem tirou a caixa de tudo —
+prisma oitavado em cada peça, cabeça em duas partes, ombro em degrau, cabelo em
+três camadas, olho com branco, nariz de sombra, orelhas, lapela e gola — e o
+retrato cresceu 58% no cartão, com a caixa a deixar de ser quadrada porque o
+busto não é. Custou três defeitos de render, todos de faces que se tocam
+(barras pretas de um chanfro sobre quina cortada e estreitada, retângulos
+pretos de dois topos coplanares, e um colarinho que existia e ficava atrás do
+ombro), e destapou duas coisas nas ferramentas: a captura fotografava o asset
+VELHO quando o `--import` não corria, e o `capturar_cena.gd` nunca semeava o
+gerador do jogo — a foto nova da contra-oferta dava R$16.104 numa corrida e
+R$0 noutra.
+
 **A REVISÃO EXTERNA DE 12/09 FECHOU TRÊS DIVERGÊNCIAS.** A parcela paga no
 vencimento era lançada depois de o boletim da semana 4 ter sido emitido e
 zerado: o caixa estava certo, mas o relatório inflava o resultado em

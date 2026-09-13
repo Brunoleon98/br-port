@@ -215,6 +215,13 @@ Teste e import rodam sem tela.
    ficou bom, e essa parte continua a ser de quem olha. **Cinco delas mostram
    uma PARTIDA SORTEADA**, e o que varia com o sorteio não se prova ali: para
    isso são as duas folhas de contato, a dos ícones e a da frota.
+   ⚠️ **E A SEMENTE DO JOGO NÃO É A SEMENTE GLOBAL.** O `seed()` do Godot
+   semeia o gerador global; o `GameState` sorteia com um
+   `RandomNumberGenerator` próprio, que o `_ready()` dele `randomize()` — quem
+   quiser foto reprodutível escreve `GS._rng.seed`. O `capturar_tela.gd`
+   fazia-o e o `capturar_cena.gd` não, e isso só apareceu no dia em que um
+   painel fotografado passou a ler o sorteio: duas corridas do mesmo código
+   deram R$16.104 e R$0.
    **Captura só se compara com semente E passo de tempo fixos.** É o que o
    `tools/capturar_evidencia.sh` faz, e as duas fazem falta: com a semente
    sozinha, duas corridas do MESMO código davam 1.030 pixels diferentes,
@@ -359,6 +366,11 @@ Teste e import rodam sem tela.
    tinha sido corrigido — verdadeiro, e de ontem. Rasterize o arquivo
    (`load_svg_from_string`, que é o mesmo ThorVG); o cache do importador é uma
    resposta velha, e num teste isso mente nas duas direções.
+  ⚠️ **E VALE IGUAL PARA A CAPTURA: regerou arte, `--import` ANTES de
+  fotografar.** Em 13/09 duas rondas de retratos foram fotografadas ao asset
+  VELHO — o Godot desenha o `.ctex` de `.godot/imported/`, e a foto saiu
+  bonita, verdadeira na aparência e sobre o desenho de antes. É pior do que
+  não fotografar, porque se passou a discutir o que já estava corrigido.
    **E "TODOS APARECEM" NÃO IMPLICA "NA ORDEM CERTA", nem o contrário.** Duas
    guardas sobre a mesma tabela e nenhuma delas de graça: uma conta pode
    devolver os três portes de barco ao CONTRÁRIO e cumprir a alcançabilidade,
@@ -438,6 +450,11 @@ derivada delas.
   ENCOSTAR noutra partilha o fundo dela — a gola virou uma caixa à volta do
   pescoço. É a irmã da regra do chanfro a 45°: ali a folga esticava-se na
   diagonal, aqui a altura desloca-se com a profundidade.
+- **E NUMA PEÇA QUE ENVOLVE OUTRA, É O FUNDO QUE DECIDE QUEM SE VÊ.** A gola
+  dos três retratos tinha 50 de fundo e o degrau do ombro 68: a face da frente
+  do degrau fica nove pixels à FRENTE da dela, e o colarinho claro das três
+  personagens simplesmente não aparecia no render — sem erro nenhum, só um
+  pescoço sem gola. Quem tem de ser visto é mais fundo do que o que o rodeia.
 - **E pela mesma conta a profundidade projeta-se para CIMA: cortar fundo não
   achata, tira TELHADO.** O primeiro busto tinha 96 de fundo na cabeça e 104 no
   cabelo, e saiu um capote a comer o quadro com a cara lá em baixo. Encolher o
@@ -558,6 +575,13 @@ tranca isso.
   **Cor de texto sobre fundo colorido mede-se com a WCAG**, não se escolhe: o
   âmbar do tema com rótulo branco dá 2,39:1 e reprova até o corte de texto
   grande (3,0); com rótulo navy dá 5,27:1 e passa o AA.
+- **⚠️ CORTE DE QUINA E ESTREITAMENTO FORTES, NO MESMO PRISMA, DÃO GEOMETRIA
+  DEGENERADA.** O chanfro corre por cima de tudo no fim, e numa quina já
+  cortada a 46px que ainda encolhe 22% em `x` ele dobra-se sobre si mesmo: os
+  três bustos de 13/09 saíram com uma BARRA PRETA de ponta a ponta no topo do
+  ombro. A 38 de corte e 0,86 de estreitamento desaparece — as duas coisas são
+  boas sozinhas, é somá-las que sai caro, e o sintoma não se parece nada com a
+  causa.
 - **Duas faces no MESMO plano dão um buraco preto, e não dão erro.** Um tampo
   que acaba à altura exata do topo do corpo põe duas faces coplanares, o
   z-buffer escolhe ao acaso e o prop sai com um losango preto que se lê como

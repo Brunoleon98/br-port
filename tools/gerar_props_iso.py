@@ -147,6 +147,18 @@ PALETA = {
     # Trocar qualquer uma é mudar uma chave aqui e regerar — está assim de
     # propósito, para a decisão poder ser do Bruno sem custar geometria.
     "pele_clara": "#c99a70", "pele_escura": "#8a5a3b",
+    # ⚠️ E CADA TOM DE PELE PRECISA DO DEGRAU ABAIXO DELE, porque é a
+    # SOMBRA que desenha o nariz — geometria não desenha nariz nenhum num
+    # rosto de 44px (as faces laterais de uma peça saliente têm menos de um
+    # pixel, e o resto apanha a mesma luz da cara). O `pele` serve de sombra
+    # ao `pele_clara` e o `pele_escura` ao `pele`; o mais escuro dos três é
+    # que não tinha degrau nenhum por baixo, e passa a ter.
+    "pele_sombra": "#6e4630",
+    # A lapela do terno do Sr. Ribeiro: o `casco` um passo abaixo. Duas
+    # peças do mesmo tom encostadas fundem-se (a regra do caixote de
+    # `madeira` no tabuado de `madeira`), e sem este degrau o peito dele
+    # volta a ser a chapa navy que a primeira versão era.
+    "terno_lapela": "#1a3554",
     # O grisalho do Sr. Ribeiro. Não é o `metal_claro` (#6d7880), que é a cor
     # de CHAPA deste kit e veste o poste e o guincho: um cabelo com a mesma
     # tinta de uma peça de metal lê como capacete, e a cabeça dele é metade da

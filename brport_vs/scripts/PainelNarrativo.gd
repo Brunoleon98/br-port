@@ -214,6 +214,10 @@ func fala(texto: String, retrato: Texture2D = null) -> PanelContainer:
 	# Sem isto o balão encolhe ao tamanho do texto e a linha fica com um vão
 	# vazio à direita — o retrato empurra, e o balão tem de ocupar o resto.
 	balao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Na vertical é o contrário: o balão hugs o texto dele. Esticado à altura
+	# do retrato, uma fala de duas linhas ficaria numa caixa de 124px com um
+	# terço de creme vazio por baixo.
+	balao.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	linha.add_child(balao)
 	_vbox.add_child(linha)
 	return balao

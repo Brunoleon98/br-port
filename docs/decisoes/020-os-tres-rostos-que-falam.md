@@ -45,8 +45,9 @@ de pixels de cara.
 Medido no primeiro render, de corpo inteiro: **84px de rosto num PNG de 406**,
 o que a 96px no cartão dá **16px de cara e 2 de olho** — a essa escala as nove
 imagens deste bloco seriam a mesma imagem. Cortado no peito, com a cabeça a
-valer 61% da altura, a cara fica com **44px e o olho com 5**, e a diferença
-entre uma boca reta e uma boca descontente passa a ser de 2px, que se veem.
+valer 55% da altura, a cara medida no cartão do jogo tem **56 x 62px**, o
+branco do olho tem 14 e a pupila 6 — e a diferença entre uma boca reta e uma
+boca descontente passa a ser de 3px, que se veem.
 
 **Três armadilhas de projeção, todas medidas no PNG e nenhuma óbvia:**
 
@@ -93,11 +94,11 @@ MAIS educado"*, e por isso a cara grave dele é a cordial com a boca em baixo.
 tem 245,4 de luminância (amostrado da captura) e o cartão tem 255. Medida a
 luminância média dos pixels opacos de cada PNG:
 
-| | luminância | Weber contra o balão |
-|---|---:|---:|
-| Dona Cida | 82,1 | **0,67** |
-| Sr. Ribeiro | 111,2 | **0,55** |
-| Arlindo | 117,7 | **0,52** |
+| | Weber contra o balão |
+|---|---:|
+| Dona Cida | **0,65** |
+| Sr. Ribeiro | **0,56** |
+| Arlindo | **0,53** |
 
 Todos muito acima do 0,26 que este projeto trata como "separa" e longe do 0,12
 que some. **E foi por isto que o boné do Arlindo é navy e não branco**: um boné
@@ -156,7 +157,56 @@ cliente.
 
 ---
 
-## 5. O que NÃO entrou: a faixa de mensagem, e o número que o diz
+## 5. A SEGUNDA PASSAGEM: *"faltam detalhes e está muito quadrado"*
+
+Foi a primeira coisa que o Bruno disse ao olhar, e estava certa: os bustos
+eram uma cabeça-caixa em cima de um tronco-caixa, com a cara feita de cinco
+placas. O que se fez, por ordem do que cada coisa vale na imagem:
+
+| O que mudou | Porquê |
+|---|---|
+| **Nada é caixa: tudo é prisma OITAVADO** | Quatro quinas vivas dizem "tijolo" antes de qualquer detalhe ser visto. Cortar a quina custa quatro vértices por peça e nenhum render a mais — e é a única forma de curva que este kit tem, porque o chanfro do modificador arredonda 1,7px e não muda silhueta nenhuma |
+| **A cabeça são DUAS peças** | Maxilar que estreita para o queixo, crânio que estreita para o alto: maçã do rosto e queixo com quatro números |
+| **Ombro em degrau** | O trapézio entre o ombro e o pescoço tira a prateleira de 300px de ponta a ponta que o topo do tronco era |
+| **Olho com BRANCO** | Uma placa só é um ponto; esclera + pupila dão três pixels de informação. Mesma receita do vinco do corrugado: quem desenha detalhe nesta escala é a fronteira de VALOR entre duas placas |
+| **Nariz de SOMBRA** | Nariz de geometria não existe aqui — as faces laterais de uma peça saliente têm menos de um pixel e o resto apanha a mesma luz da cara. É uma placa um tom abaixo da pele, e foi por isto que a paleta ganhou um degrau a mais |
+| **Orelhas** | Dois pixels cada, e tiram a vertical perfeita de 174px que o lado da cabeça era |
+| **Cabelo em três camadas** | Cúpula, franja e bandas laterais, em vez de uma laje. E a cúpula é um cone de doze lados: uma caixa em cima de uma cabeça oitavada devolvia o tijolo pelo telhado |
+| **Roupa com peças da FUNÇÃO** | Lapela e nó de gravata no Sr. Ribeiro, pontas de gola no Arlindo, gola clara na Dona Cida. É a regra do armazém — prédio com função precisa das peças da função — aplicada a um busto |
+| **O retrato cresceu 58%** | De 96x96 para **112x152**, e a caixa deixou de ser quadrada: o PNG é quadrado mas o busto não, e num `KEEP_ASPECT_CENTERED` quem manda é o quadro — 33px de transparência de cada lado a pagar largura que o balão queria. Com a caixa na proporção do busto e o modo `COVERED`, a margem é que fica de fora |
+
+**E a passagem custou três defeitos de render, todos de faces que se tocam:**
+
+1. **Barras pretas no ombro.** Um prisma oitavado com corte de 46px e
+   estreitamento de 0,78 dá geometria degenerada quando o chanfro passa por
+   cima: o topo do tronco saiu com uma barra preta de ponta a ponta nos três.
+   A 38 e 0,86 desaparece. **Corte e estreitamento fortes ao mesmo tempo, num
+   prisma, não se acumulam de graça.**
+2. **Retângulos pretos nas têmporas.** O cabelo lateral do Sr. Ribeiro acabava
+   nos mesmos 300 do topo da cabeça: duas faces de cima coplanares, o z-buffer
+   a escolher ao acaso. É o losango preto deste projeto pela terceira vez.
+3. **O colarinho não existia.** Ele estava lá, e o TRAPÉZIO tapava-o: o degrau
+   do ombro tem 68 de fundo e a gola tinha 50, portanto a face da frente do
+   degrau fica nove pixels à frente dela. **Numa peça que envolve outra, o
+   fundo é que decide quem se vê** — e não havia erro nenhum a dizê-lo, só um
+   pescoço sem gola.
+
+⚠️ **E DUAS RONDAS DE CAPTURA FORAM TIRADAS AO ASSET VELHO.** O `--import` não
+correu depois de regerar os PNG, e o Godot desenha o `.ctex` de
+`.godot/imported/` — a foto saía com a versão anterior, bonita e mentirosa. O
+`CLAUDE.md` já regista isto para TESTE que lê arte gerada; vale igual para a
+CAPTURA, e agora está escrito lá também.
+
+⚠️ **E A CAPTURA DE CENA NUNCA SEMEOU O JOGO.** O `capturar_cena.gd` semeava o
+gerador GLOBAL do Godot e o `GameState` sorteia com um `RandomNumberGenerator`
+próprio — o `capturar_tela.gd` já semeava os dois e explicava porquê ao lado,
+esta cópia tinha metade da receita. Enquanto os painéis fotografados não liam
+sorteio nenhum ninguém notou; a captura nova da contra-oferta deu **R$16.104
+numa corrida e R$0 noutra**, porque numa delas não havia barco na doca. Hoje
+semeia o `_rng`, monta o barco por `barco=0`, e as treze imagens da bateria
+saem byte a byte iguais em duas corridas seguidas.
+
+## 6. O que NÃO entrou: a faixa de mensagem, e o número que o diz
 
 O plano avisa que a alínea (c) *"esbarra numa regra deste arquivo: nada de
 interface pousa sobre o mapa"*, e manda medir onde o cartão cabe **antes** de o

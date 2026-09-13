@@ -783,15 +783,44 @@ _niv = lambda px: z(px * _K - _MEIO)              # noqa: E731 — altura absolu
 # peito a valer mais pixels do que a cara, que é o contrário do que um retrato
 # é para. Cortar mais alto não muda proporção nenhuma da pessoa: muda o
 # enquadramento, que é o que se faz numa fotografia.
-_OMBRO_Z = (20.0, 78.0)
+_OMBRO_Z = (2.0, 80.0)
 _OMBRO_LARG, _OMBRO_FUNDO = 300.0, 78.0
-_PESCOCO_Z = (70.0, 128.0)
-_CABECA_Z = (128.0, 316.0)
-_CABECA_LARG, _CABECA_FUNDO = 140.0, 74.0
+_PESCOCO_Z = (70.0, 126.0)
+_CABECA_Z = (126.0, 300.0)
+_CABECA_LARG, _CABECA_FUNDO = 148.0, 74.0
+
+
+# Onde o maxilar acaba e o crânio começa. A cabeça é DUAS peças por causa
+# disto: uma cabeça de uma peça só é um tijolo, e foi a primeira queixa do
+# Bruno sobre estes retratos — *"faltam detalhes e está muito quadrado"*.
+_CABECA_MAXILAR = 202.0
+
+
+def _contorno_oitavado(larg, fundo, corte):
+    """Um retângulo com as quatro quinas cortadas.
+
+    ⚠️ É O QUE TIRA O TIJOLO, e é a única forma de curva que este kit tem.
+    Chanfro de modificador (`chanfrar`, 0,020) arredonda 1,7px numa peça de
+    207 — serve para a aresta apanhar luz e não muda silhueta nenhuma. O que
+    muda silhueta é cortar a quina na GEOMETRIA, e a esta escala 20px de corte
+    numa cabeça de 140 leem-se como maçã do rosto.
+    """
+    lx, fy = _lg(larg) / 2.0, _pf(fundo) / 2.0
+    cx, cy = _lg(corte), _pf(corte)
+    return [(-lx + cx, -fy), (lx - cx, -fy), (lx, -fy + cy), (lx, fy - cy),
+            (lx - cx, fy), (-lx + cx, fy), (-lx, fy - cy), (-lx, -fy + cy)]
 
 
 def _cabeca_plano():
-    """Centro e tamanho da cabeça, como `na_face` os quer."""
+    """Centro e tamanho da cabeça, como `na_face` os quer.
+
+    ⚠️ CONTINUA A SER A CAIXA e não o octógono, de propósito: a face `-y` da
+    peça oitavada está exatamente onde estaria a da caixa — o corte come as
+    QUINAS, não o meio. O que a cara tem de respeitar é a largura da parte
+    plana (±(larg/2 − corte)), e é por isso que os olhos vivem em ±32 e não
+    em ±34: a 34 com 30 de largura a placa passava por cima do bisel e saía
+    uma orelha de tinta escura.
+    """
     centro = (0.0, 0.0, _niv((_CABECA_Z[0] + _CABECA_Z[1]) / 2.0))
     tam = (_lg(_CABECA_LARG), _pf(_CABECA_FUNDO),
            _alt(_CABECA_Z[1] - _CABECA_Z[0]))
@@ -852,16 +881,46 @@ RETRATOS = {
 
 
 def _olhos(M, cara, escuro):
-    """Dois olhos, abertos ou cerrados.
+    """Dois olhos com BRANCO, e não duas manchas escuras.
 
-    Cerrado não é fechado: é a mesma placa com um terço da altura e descida
+    Cerrado não é fechado: é a mesma placa com metade da altura e descida
     para o meio do olho. Fechar de todo daria duas linhas, que a 5px lê como
     personagem a dormir.
+
+    ⚠️ E O BRANCO É O DETALHE QUE MAIS RENDE A ESTA ESCALA. Um olho de uma
+    placa só é um ponto; com a esclera por baixo e a pupila por cima ele passa
+    a ter três pixels de informação — e é a mesma receita do vinco do
+    corrugado: quem desenha detalhe neste tamanho é a fronteira de VALOR entre
+    duas placas, nunca o relevo, que o antisserrilhado come.
     """
-    alto = 24.0 if cara[2] == "aberto" else 12.0
-    v = 24.0 if cara[2] == "aberto" else 18.0
-    return [_placa("olho_%s" % lado, u, v, 30.0, alto, escuro)
-            for lado, u in (("e", -34.0), ("d", 34.0))]
+    aberto = cara[2] == "aberto"
+    alto = 24.0 if aberto else 12.0
+    v = 24.0 if aberto else 18.0
+    pecas = []
+    for lado, u in (("e", -32.0), ("d", 32.0)):
+        pecas.append(_placa("olho_branco_%s" % lado, u, v, 36.0, alto,
+                            M["cabine"]))
+        # A pupila é mais SALIENTE que a esclera (o `na_face` põe a placa a
+        # `esp/2` da face, e esta leva mais um passo): duas placas no mesmo
+        # plano dariam o z-buffer a escolher ao acaso, que é o losango preto
+        # que este arquivo já registou duas vezes.
+        pecas.append(na_face("olho_pupila_%s" % lado, "-y", *_cabeca_plano(),
+                             _lg(u), _alt(v - 1.0), _lg(15.0),
+                             _alt(alto - 7.0), 0.02, escuro, 0.012))
+    return pecas
+
+
+def _nariz(M, sombra):
+    """Duas placas de sombra — a lateral e a base.
+
+    Nariz de GEOMETRIA não existe a esta escala: uma peça saliente mostra as
+    faces laterais dela, que aqui têm menos de um pixel, e o resto apanha
+    exatamente a mesma luz da cara. Quem desenha nariz num rosto de 44px é a
+    SOMBRA que ele faz, que é uma placa um tom abaixo da pele — e é por isso
+    que a paleta ganhou um degrau a mais em cada tom de pele.
+    """
+    return [_placa("nariz_lado", 8.0, -4.0, 16.0, 32.0, sombra),
+            _placa("nariz_base", 1.0, -21.0, 28.0, 9.0, sombra)]
 
 
 def _sobrancelhas(M, cara, escuro):
@@ -875,16 +934,22 @@ def _sobrancelhas(M, cara, escuro):
     """
     estilo = cara[1]
     barras = []
-    for lado, u, sinal in (("e", -34.0, 1.0), ("d", 34.0, -1.0)):
-        v, ang = 56.0, 0.0
+    for lado, u, sinal in (("e", -32.0, 1.0), ("d", 32.0, -1.0)):
+        # ⚠️ A ALTURA DELAS É LIMITADA PELA FRANJA, e não pela cara. A 56 a
+        # sobrancelha caía debaixo do cabelo da Dona Cida — o cabelo é uma peça
+        # 4 unidades mais FUNDA do que a cabeça, portanto passa à frente das
+        # placas dela —, e ela ficava com uma expressão a menos sem nada a
+        # dizê-lo: a cara mudava só na boca. Aqui em baixo elas cabem entre o
+        # olho e a linha do cabelo nos três.
+        v, ang = 50.0, 0.0
         if estilo == "franzida":
             ang = 14.0 * sinal
         elif estilo == "erguida":
-            v, ang = 62.0, -7.0 * sinal
+            v, ang = 56.0, -7.0 * sinal
         elif estilo == "torta":
             # Uma erguida e uma franzida: o cético, e o que sobra a quem
             # perdeu e ainda não admitiu.
-            v, ang = (62.0, -10.0) if lado == "e" else (53.0, -14.0)
+            v, ang = (56.0, -10.0) if lado == "e" else (48.0, -14.0)
         barras.append(_placa("sobrancelha_%s" % lado, u, v, 40.0, 12.0,
                              escuro, inclina=ang))
     return barras
@@ -917,29 +982,68 @@ def _boca(M, cara, escuro):
     return pecas
 
 
-def _corpo(M, pele, roupa):
+def _corpo(M, pele, roupa, sombra):
     """Ombros, pescoço e cabeça — a parte que os três partilham.
 
-    ⚠️ O OMBRO É PRISMA E NÃO CAIXA, pela mesma razão que o tronco do
-    trabalhador: a 96px o que se lê é a silhueta, e uma silhueta de caixa é um
-    retângulo — nada nela diz "pessoa". Estreitar em baixo dá ombro com quatro
-    números. E o estreitamento é só em `x`: encolher a profundidade recuaria a
-    frente do peito e a gravata do Sr. Ribeiro ficaria DENTRO do terno, que é
-    o defeito que o colete do trabalhador já registou.
+    ⚠️ TUDO AQUI É PRISMA OITAVADO E NADA É CAIXA, e a razão está na primeira
+    queixa que estes retratos levaram: *"faltam detalhes e está muito
+    quadrado"*. A versão anterior era uma cabeça-caixa em cima de um tronco-
+    caixa, e a esta escala a silhueta é metade do trabalho — quatro quinas
+    vivas dizem "tijolo" antes de qualquer detalhe de cara ser visto.
+    Cortá-las custa quatro vértices por peça e nenhum render a mais.
+    #
+    ⚠️ E O ESTREITAMENTO É SÓ EM `x`, em toda peça deste bloco. Encolher
+    também a PROFUNDIDADE recuaria a face da frente, e todas as placas da cara
+    e do peito vivem nela: a gravata do Sr. Ribeiro ficaria DENTRO do terno e o
+    queixo à frente da boca. É a mesma armadilha que o colete do trabalhador
+    registou, e aqui ela apanharia doze peças de uma vez.
     """
-    meia_l, meia_f = _lg(_OMBRO_LARG) / 2.0, _pf(_OMBRO_FUNDO) / 2.0
-    contorno = [(-meia_l, -meia_f), (meia_l, -meia_f),
-                (meia_l, meia_f), (-meia_l, meia_f)]
-    pecas = [prisma("ombros", contorno, _niv(_OMBRO_Z[0]), _niv(_OMBRO_Z[1]),
-                    (0.88, 1.0), roupa)]
-    pecas.append(caixa("pescoco",
-                       (0.0, 0.0, _niv((_PESCOCO_Z[0] + _PESCOCO_Z[1]) / 2.0)),
-                       (_lg(44.0), _pf(40.0),
-                        _alt(_PESCOCO_Z[1] - _PESCOCO_Z[0])), pele))
-    pecas.append(caixa("cabeca",
-                       (0.0, 0.0, _niv((_CABECA_Z[0] + _CABECA_Z[1]) / 2.0)),
-                       (_lg(_CABECA_LARG), _pf(_CABECA_FUNDO),
-                        _alt(_CABECA_Z[1] - _CABECA_Z[0])), pele))
+    pecas = [prisma("ombros", _contorno_oitavado(_OMBRO_LARG, _OMBRO_FUNDO, 38.0),
+                    _niv(_OMBRO_Z[0]), _niv(_OMBRO_Z[1]), (0.86, 1.0), roupa)]
+
+    # O TRAPÉZIO — o degrau entre o ombro e o pescoço. É ele que faz o ombro
+    # CAIR para fora em vez de ser uma prateleira: sem ele o topo do tronco é
+    # uma linha reta de 300px de ponta a ponta, que é a leitura de caixote.
+    pecas.append(prisma("trapezio", _contorno_oitavado(150.0, 68.0, 20.0),
+                        _niv(_OMBRO_Z[1] - 6.0), _niv(_OMBRO_Z[1] + 18.0),
+                        (1.12, 1.0), roupa))
+
+    pecas.append(prisma("pescoco", _contorno_oitavado(46.0, 42.0, 8.0),
+                        _niv(_PESCOCO_Z[0]), _niv(_PESCOCO_Z[1]),
+                        (1.0, 1.0), pele))
+    # A SOMBRA DO QUEIXO no pescoço. Duas peças de pele encostadas com o mesmo
+    # tom fundem-se — é a regra do caixote de `madeira` no tabuado de
+    # `madeira`, dentro de um prop em vez de contra o cenário —, e sem ela o
+    # pescoço e o maxilar são uma coluna só.
+    pecas.append(prisma("pescoco_sombra", _contorno_oitavado(46.0, 42.0, 8.0),
+                        _niv(_PESCOCO_Z[1] - 14.0), _niv(_PESCOCO_Z[1]),
+                        (1.0, 1.0), sombra))
+
+    # A CABEÇA SÃO DUAS PEÇAS: maxilar que estreita para o queixo, crânio que
+    # estreita para o alto. Uma peça só dá o tijolo; duas dão maçã do rosto e
+    # queixo com quatro números e sem custo de render.
+    pecas.append(prisma("maxilar",
+                        _contorno_oitavado(_CABECA_LARG, _CABECA_FUNDO, 20.0),
+                        _niv(_CABECA_Z[0]), _niv(_CABECA_MAXILAR),
+                        (0.86, 1.0), pele))
+    pecas.append(prisma("cranio",
+                        _contorno_oitavado(_CABECA_LARG - 10.0, _CABECA_FUNDO, 18.0),
+                        _niv(_CABECA_MAXILAR), _niv(_CABECA_Z[1]),
+                        (_CABECA_LARG / (_CABECA_LARG - 10.0), 1.0), pele))
+
+    # AS ORELHAS, que valem dois pixels cada e mudam a silhueta: sem elas o
+    # lado da cabeça é uma vertical perfeita de 174px, e vertical perfeita é a
+    # assinatura de caixa.
+    #
+    # ⚠️ ELAS TÊM DE FICAR FORA DO CABELO, com folga. Encostadas ao cabelo dos
+    # lados (que os três têm, a ±58) saíam duas faces laterais coplanares e o
+    # z-buffer escolhia ao acaso: no primeiro render havia um RETÂNGULO PRETO
+    # em cada têmpora. É o losango preto deste arquivo, à escala de uma orelha
+    # — e a folga de 4px de pele entre as duas peças é o que o resolve.
+    for lado, u in (("e", -1.0), ("d", 1.0)):
+        pecas.append(prisma("orelha_%s" % lado, _contorno_oitavado(16.0, 30.0, 5.0),
+                            _niv(228.0), _niv(266.0), (1.0, 1.0), pele))
+        pecas[-1].location.x += u * _lg(_CABECA_LARG / 2.0 + 2.0)
     return pecas
 
 
@@ -955,8 +1059,16 @@ def _gola(nome, mat):
     estão à mesma altura na imagem se estiverem a fundos diferentes. Uma caixa
     à volta do pescoço partilha o fundo dele e encosta.
     """
-    return caixa(nome, (0.0, 0.0, _niv(_OMBRO_Z[1] + 2.0)),
-                 (_lg(78.0), _pf(50.0), _alt(20.0)), mat)
+    #
+    # ⚠️ E ELA TEM DE SER MAIS FUNDA DO QUE O TRAPÉZIO, senão desaparece. O
+    # degrau do ombro tem 68 de fundo e a gola tinha 50: a face da frente do
+    # trapézio fica NOVE pixels à frente da dela, e o colarinho branco das três
+    # personagens simplesmente não estava no render — não havia erro nenhum a
+    # dizê-lo, só um pescoço sem gola. Numa peça que envolve outra, o fundo é
+    # que decide quem se vê.
+    return prisma(nome, _contorno_oitavado(86.0, 76.0, 12.0),
+                  _niv(_OMBRO_Z[1] - 2.0), _niv(_OMBRO_Z[1] + 20.0),
+                  (1.0, 1.0), mat)
 
 
 def _no_peito(nome, u, v, larg, alt_px, mat):
@@ -977,34 +1089,58 @@ def _cida(M, cara):
     é o que sobrevive a 96px.
     """
     escuro = M["vao"]
-    pecas = _corpo(M, M["pele_escura"], M["casco_pesca"])
-    pecas.append(caixa("cabelo_topo", (0.0, 0.0, _niv(318.0)),
-                       (_lg(148.0), _pf(80.0), _alt(24.0)), M["madeira_esc"]))
-    for lado, u in (("e", -69.0), ("d", 69.0)):
-        pecas.append(caixa("cabelo_%s" % lado, (_lg(u), 0.0, _niv(256.0)),
-                           (_lg(14.0), _pf(76.0), _alt(112.0)),
-                           M["madeira_esc"]))
+    pecas = _corpo(M, M["pele_escura"], M["casco_pesca"], M["pele_sombra"])
+
+    # O CABELO SÃO TRÊS CAMADAS e não um capacete. A versão de uma peça só era
+    # uma laje castanha pousada na cabeça: aqui a franja desce sobre a testa,
+    # a copa fecha o alto e as bandas descem pelos lados até ao maxilar. É a
+    # mesma ideia do `com_saia()` do mapa — massa em cima, aba a descer — e é
+    # o que faz cabelo ler como cabelo em vez de chapéu.
+    # A COPA É UMA CÚPULA e não uma laje: doze lados a fechar para cima. Uma
+    # caixa em cima de uma cabeça oitavada devolvia o tijolo pelo telhado.
+    pecas.append(cone("cabelo_copa", (0.0, 0.0, _niv(306.0)),
+                      _lg(152.0) / 2.0, _lg(120.0) / 2.0, _alt(26.0), 12,
+                      M["madeira_esc"]))
+    pecas.append(prisma("cabelo_franja", _contorno_oitavado(150.0, 78.0, 21.0),
+                        _niv(286.0), _niv(306.0), (1.0, 1.0), M["madeira"]))
+    for lado, u in (("e", -1.0), ("d", 1.0)):
+        pecas.append(prisma("cabelo_%s" % lado,
+                            _contorno_oitavado(18.0, 76.0, 6.0),
+                            _niv(210.0), _niv(296.0), (0.8, 1.0),
+                            M["madeira_esc"]))
+        pecas[-1].location.x += u * _lg(58.0)
     # ⚠️ O COQUE É UM CILINDRO, e a primeira versão era uma caixa alta: saía
     # uma CHAMINÉ em cima da cabeça. Redondo e baixo lê como cabelo preso;
     # quadrado e alto lê como qualquer outra coisa.
-    pecas.append(cone("coque", (0.0, _pf(30.0), _niv(330.0)),
-                      _lg(62.0) / 2.0, _lg(54.0) / 2.0, _alt(30.0), 12,
+    pecas.append(cone("coque", (0.0, _pf(42.0), _niv(318.0)),
+                      _lg(72.0) / 2.0, _lg(62.0) / 2.0, _alt(26.0), 12,
                       M["madeira_esc"]))
-    # A GOLA DA BLUSA É CLARA, e é a única peça clara do busto dela. Sem
-    # ela o peito é uma chapa verde de um terço da imagem — a mesma queixa do
-    # armazém antes da plataforma de carga, à escala de um cartão.
-    pecas.append(_gola("gola", M["cabine"]))
+    pecas.append(cone("coque_liga", (0.0, _pf(40.0), _niv(304.0)),
+                      _lg(50.0) / 2.0, _lg(50.0) / 2.0, _alt(9.0), 12,
+                      M["colete"]))
+
+    pecas += _olhos(M, cara, escuro)
     # OS ÓCULOS SÃO MOLDURA E NÃO PLACA, e a diferença é a mesma que o kit já
     # aprendeu na janela: placa cheia fica NA FRENTE do olho e tapa exatamente
     # o que devia emoldurar — a personagem sairia de venda.
     centro, tam = _cabeca_plano()
-    for lado, u in (("e", -34.0), ("d", 34.0)):
+    for lado, u in (("e", -32.0), ("d", 32.0)):
         pecas += moldura("oculos_%s" % lado, "-y", centro, tam,
                          _lg(u), _alt(24.0), _lg(34.0), _alt(28.0), 0.02,
-                         M["metal"], 0.0, _lg(6.0))
+                         M["metal"], 0.02, _lg(6.0))
     pecas.append(_placa("oculos_ponte", 0.0, 24.0, 14.0, 6.0, M["metal"]))
-    pecas += _olhos(M, cara, escuro) + _sobrancelhas(M, cara, escuro)
+    pecas += _sobrancelhas(M, cara, escuro)
+    pecas += _nariz(M, M["pele_sombra"])
     pecas += _boca(M, cara, escuro)
+
+    # A gola da blusa é clara, e é a única peça clara do busto dela: sem ela o
+    # peito é uma chapa verde de um terço da imagem — a mesma queixa do
+    # armazém antes da plataforma de carga, à escala de um cartão.
+    pecas.append(_gola("gola", M["cabine"]))
+    # E o brinco, que é a peça de acento. Fica UMA: com o coque, os óculos e o
+    # brinco a chamar, o dourado deixaria de apontar para coisa nenhuma.
+    pecas.append(caixa("brinco", (_lg(70.0), 0.0, _niv(222.0)),
+                       (_lg(8.0), _pf(10.0), _alt(12.0)), M["capacete"]))
     return pecas
 
 
@@ -1018,58 +1154,102 @@ def _arlindo(M, cara):
     regra do contraste contra o FUNDO, e aqui o fundo é papel.
     """
     escuro = M["vao"]
-    pecas = _corpo(M, M["pele"], M["vidro"])
-    pecas.append(caixa("bone_copa", (0.0, 0.0, _niv(330.0)),
-                       (_lg(148.0), _pf(80.0), _alt(30.0)), M["casco"]))
-    # A aba avança em `-y`, que é a direção da câmera: é ela que põe sombra
-    # sobre os olhos e faz o boné ler como boné em vez de caixa na cabeça.
+    pecas = _corpo(M, M["pele"], M["vidro"], M["pele_escura"])
+
+    # A COPA DO BONÉ É UM CILINDRO DE DOZE LADOS, não uma caixa: boné é a peça
+    # redonda por excelência, e uma caixa em cima da cabeça lê como embalagem.
+    pecas.append(cone("bone_copa", (0.0, _pf(6.0), _niv(308.0)),
+                      _lg(150.0) / 2.0, _lg(138.0) / 2.0, _alt(30.0), 12,
+                      M["casco"]))
     # ⚠️ A ABA TAPAVA AS SOBRANCELHAS, e duas das três caras dele são feitas
     # de sobrancelha. Ela avançava 50 de fundo, e nesta câmera avançar 50 é
     # descer 25 na imagem: a aba caía exactamente na linha das barras. Menos
     # avanço e mais altura resolve sem lhe tirar a sombra sobre os olhos, que
     # é o que faz um boné ler como boné.
-    pecas.append(caixa("bone_aba", (0.0, -_pf(36.0), _niv(318.0)),
-                       (_lg(152.0), _pf(30.0), _alt(10.0)), M["metal"]))
-    # A faixa dourada é a única peça de acento do prop, e fica UMA: com o boné
-    # e o bigode ambos a chamar, o dourado deixaria de apontar para coisa
-    # nenhuma — a lição do arrasteiro, aplicada a uma cara.
-    pecas.append(caixa("bone_faixa", (0.0, 0.0, _niv(314.0)),
-                       (_lg(149.0), _pf(81.0), _alt(11.0)), M["capacete"]))
-    for lado, u in (("e", -69.0), ("d", 69.0)):
-        pecas.append(caixa("costeleta_%s" % lado, (_lg(u), 0.0, _niv(254.0)),
-                           (_lg(12.0), _pf(74.0), _alt(76.0)),
-                           M["madeira_esc"]))
+    pecas.append(prisma("bone_aba", _contorno_oitavado(154.0, 34.0, 12.0),
+                        _niv(304.0), _niv(314.0), (1.0, 1.0), M["metal"]))
+    pecas[-1].location.y -= _pf(36.0)
+    pecas.append(cone("bone_faixa", (0.0, _pf(6.0), _niv(296.0)),
+                      _lg(152.0) / 2.0, _lg(152.0) / 2.0, _alt(12.0), 12,
+                      M["capacete"]))
+    # O EMBLEMA VAI NA FRENTE DA FAIXA e não pousado na aba: pousado, ele lê
+    # como uma peça solta em cima do boné — o que diz CAPITÃO é a marca no
+    # centro da testa, não um cubo dourado no ar.
+    pecas.append(caixa("emblema", (0.0, -_pf(40.0), _niv(302.0)),
+                       (_lg(26.0), _pf(6.0), _alt(18.0)), M["casco"]))
+
+    for lado, u in (("e", -1.0), ("d", 1.0)):
+        pecas.append(prisma("costeleta_%s" % lado,
+                            _contorno_oitavado(16.0, 76.0, 5.0),
+                            _niv(212.0), _niv(292.0), (0.9, 1.0),
+                            M["madeira_esc"]))
+        pecas[-1].location.x += u * _lg(58.0)
+
     pecas += _olhos(M, cara, escuro) + _sobrancelhas(M, cara, escuro)
-    pecas.append(_placa("bigode", 0.0, -24.0, 58.0, 13.0, M["madeira_esc"]))
+    pecas += _nariz(M, M["pele_escura"])
+    # O BIGODE É DUAS PEÇAS, com o meio mais alto: um retângulo de ponta a
+    # ponta lê como boca fechada e apaga a boca de verdade que vem por baixo.
+    pecas.append(_placa("bigode", 0.0, -22.0, 26.0, 13.0, M["madeira_esc"]))
+    for lado, u in (("e", -22.0), ("d", 22.0)):
+        pecas.append(_placa("bigode_%s" % lado, u, -26.0, 20.0, 11.0,
+                            M["madeira_esc"]))
     pecas += _boca(M, cara, escuro)
+
     # Gola aberta, que é o que o guia de voz descreve em roupa: familiaridade
     # como ferramenta. Fechada com gravata seria o Sr. Ribeiro.
     pecas.append(_gola("gola", M["pele"]))
+    # A GOLA ABERTA SÃO DUAS PONTAS INCLINADAS, e não dois retângulos: chatos
+    # e a direito eles leem como dois BOLSOS colados no peito, que foi o que
+    # a primeira versão deu.
+    for lado, u, ang in (("e", -30.0, -28.0), ("d", 30.0, 28.0)):
+        ponta = _no_peito("colarinho_%s" % lado, u, 12.0, 26.0, 58.0,
+                          M["casco"])
+        ponta.rotation_euler.y = math.radians(ang)
+        pecas.append(ponta)
     return pecas
 
 
 def _ribeiro(M, cara):
     """Terno, gravata e a cabeça grisalha — o banco com um rosto simpático."""
     escuro = M["vao"]
-    pecas = _corpo(M, M["pele_clara"], M["casco"])
+    pecas = _corpo(M, M["pele_clara"], M["casco"], M["pele"])
+
     # A COROA DE CABELO, e não uma cabeleira. Ele é o mais velho dos três e a
     # careca é metade da silhueta que o distingue: cabelo só dos lados e uma
-    # faixa fina a fechar por cima da nuca.
-    for lado, u in (("e", -69.0), ("d", 69.0)):
-        pecas.append(caixa("cabelo_%s" % lado, (_lg(u), 0.0, _niv(262.0)),
-                           (_lg(14.0), _pf(76.0), _alt(92.0)),
-                           M["cabelo_grisalho"]))
-    pecas.append(caixa("cabelo_nuca", (0.0, _pf(32.0), _niv(296.0)),
-                       (_lg(140.0), _pf(14.0), _alt(46.0)),
-                       M["cabelo_grisalho"]))
+    # faixa a fechar por cima da nuca, ambas oitavadas para acompanharem o
+    # crânio em vez de o encaixotarem.
+    for lado, u in (("e", -1.0), ("d", 1.0)):
+        pecas.append(prisma("cabelo_%s" % lado,
+                            _contorno_oitavado(18.0, 78.0, 6.0),
+                            _niv(214.0), _niv(294.0), (0.85, 1.0),
+                            M["cabelo_grisalho"]))
+        pecas[-1].location.x += u * _lg(58.0)
+    # ⚠️ E O TOPO DELE NÃO PODE COINCIDIR COM O TOPO DA CABEÇA. Acabava nos
+    # mesmos 300, e duas faces de cima coplanares deram um RETÂNGULO PRETO em
+    # cada têmpora — o losango preto deste arquivo, pela terceira vez neste
+    # prop. Acaba seis pixels abaixo, e a coroa passa a ler-se como cabelo a
+    # rarear em vez de um risco de tinta.
+    pecas.append(prisma("cabelo_nuca", _contorno_oitavado(132.0, 20.0, 6.0),
+                        _niv(268.0), _niv(304.0), (1.0, 1.0),
+                        M["cabelo_grisalho"]))
+    pecas[-1].location.y += _pf(32.0)
+
     pecas += _olhos(M, cara, escuro) + _sobrancelhas(M, cara, escuro)
+    pecas += _nariz(M, M["pele"])
     pecas += _boca(M, cara, escuro)
-    # Camisa e gravata: a camisa é um V estreito e a gravata desce dentro dele.
-    # O vermelho é a única cor quente do prop e é o que o olho encontra
-    # primeiro — num busto de terno navy sobre cartão branco, a gravata é a
-    # peça que diz "banco".
+
+    # Camisa, gravata e LAPELAS. As lapelas são o que separa um terno de uma
+    # camisola de gola alta a esta escala: duas placas inclinadas a abrir um V
+    # a partir do colarinho, num navy um passo mais escuro — porque duas peças
+    # do mesmo tom encostadas fundem-se, e o peito voltaria a ser uma chapa.
     pecas.append(_no_peito("camisa", 0.0, 8.0, 56.0, 40.0, M["cabine"]))
     pecas.append(_no_peito("gravata", 0.0, 2.0, 20.0, 46.0, M["faixa"]))
+    pecas.append(_no_peito("gravata_no", 0.0, 24.0, 24.0, 14.0, M["faixa"]))
+    for lado, u, ang in (("e", -46.0, -22.0), ("d", 46.0, 22.0)):
+        lapela = _no_peito("lapela_%s" % lado, u, 6.0, 34.0, 62.0,
+                           M["terno_lapela"])
+        lapela.rotation_euler.y = math.radians(ang)
+        pecas.append(lapela)
     pecas.append(_gola("colarinho", M["cabine"]))
     return pecas
 
