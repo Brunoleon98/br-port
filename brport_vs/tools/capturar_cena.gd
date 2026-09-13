@@ -93,12 +93,36 @@ func _process(_delta: float) -> bool:
 # passava por boa. É exatamente o buraco que o comentário acima descreve, com
 # a guarda a cavá-lo. O Diário escapou por montar no `_ready()`, e foi por
 # isso que isto viveu escondido.
+#
+# ⚠️ E UM ARGUMENTO PODE VIR DO ESTADO, com `@`. A cena da parcela recebe o
+# valor a pagar, e escrevê-lo à mão na bateria (`530000`) seria pôr a foto a
+# dizer um número que a constante já sabe — no dia em que o `PARCELA_AMOUNT`
+# mudar, a captura mostra o Sr. Ribeiro a cobrar o valor de ontem, verdadeira
+# na aparência e falsa no facto. É a mesma regra que já tirou os R$100.000
+# cravados do `capturar_tela.gd`: ferramenta que finge um estado tem de o
+# DERIVAR. `@PARCELA_AMOUNT` lê a constante do `GameState`, e um nome que não
+# exista lá rebenta em vez de virar zero.
 func _chamar_setup(no: Node) -> void:
 	if not no.has_method("setup"):
 		return
+	var GS: Node = root.get_node("GameState")
 	var convertidos := []
 	for bruto in _extra:
-		if bruto == "true" or bruto == "false":
+		if bruto.begins_with("@"):
+			# A CONSTANTE NÃO É UMA PROPRIEDADE, e o `get()` devolveria `null`
+			# sem se queixar — o painel abriria a cobrar R$0. As constantes do
+			# script vêm do mapa delas; os campos vivos, do próprio nó.
+			var chave: String = bruto.substr(1)
+			var consts: Dictionary = GS.get_script().get_script_constant_map()
+			if consts.has(chave):
+				convertidos.append(consts[chave])
+			elif chave in GS:
+				convertidos.append(GS.get(chave))
+			else:
+				push_error("GameState não tem %s" % chave)
+				quit(1)
+				return
+		elif bruto == "true" or bruto == "false":
 			convertidos.append(bruto == "true")
 		elif bruto.is_valid_int():
 			convertidos.append(int(bruto))

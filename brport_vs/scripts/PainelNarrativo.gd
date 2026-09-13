@@ -46,6 +46,14 @@ var fecha_com_voltar := true
 
 var _vbox: VBoxContainer
 
+# O retrato do último balão com cara. Guardado para quem precisa de o TROCAR
+# no meio da tela — a cena da parcela é em dois tempos, e a cara do Sr.
+# Ribeiro depois da decisão não é a mesma de antes dela. Sem isto o painel
+# teria de o ir buscar pela árvore (`get_parent().get_child(0)`), que é o tipo
+# de caminho cravado que se parte em silêncio no dia em que a linha ganha
+# outro filho.
+var _retrato_da_fala: TextureRect
+
 
 func _ready() -> void:
 	anchor_right = 1.0
@@ -181,15 +189,39 @@ func total(texto: String) -> Label:
 # misturam dois registros — o que o jogo informa e o que alguém diz — e sem
 # diferença visual a fala da Dona Cida lê como rodapé de planilha. O balão vem
 # do tema (variação "Fala"), como toda a aparência deste projeto.
-func fala(texto: String) -> PanelContainer:
+#
+# COM RETRATO, o balão entra numa linha ao lado da cara; sem ele, fica como
+# sempre esteve. E o que se devolve continua a ser o BALÃO nos dois casos —
+# não a linha —, porque há painel que guarda o rótulo dele para o trocar
+# depois (`balao.get_child(0)`, na cena da parcela). Devolver a linha partiria
+# esse painel sem erro nenhum: `get_child(0)` passaria a ser o retrato, e a
+# fala do Sr. Ribeiro deixaria de mudar entre os dois tempos da cena.
+func fala(texto: String, retrato: Texture2D = null) -> PanelContainer:
 	var balao := PanelContainer.new()
 	balao.theme_type_variation = "Fala"
 	var rotulo := Label.new()
 	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD
 	rotulo.text = texto
 	balao.add_child(rotulo)
-	_vbox.add_child(balao)
+	if retrato == null:
+		_vbox.add_child(balao)
+		return balao
+
+	var linha := HBoxContainer.new()
+	linha.add_theme_constant_override("separation", 10)
+	_retrato_da_fala = Retratos.imagem(retrato)
+	linha.add_child(_retrato_da_fala)
+	# Sem isto o balão encolhe ao tamanho do texto e a linha fica com um vão
+	# vazio à direita — o retrato empurra, e o balão tem de ocupar o resto.
+	balao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	linha.add_child(balao)
+	_vbox.add_child(linha)
 	return balao
+
+
+# A cara do último balão, para o painel a trocar quando a cena avança.
+func retrato_da_fala() -> TextureRect:
+	return _retrato_da_fala
 
 
 # Um fio para separar blocos. Vale mais que um espaço em branco: o espaço diz

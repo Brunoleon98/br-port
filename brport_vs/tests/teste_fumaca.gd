@@ -91,6 +91,10 @@ func _rodar() -> void:
 	print("=== F6: a abertura não deixa o turno preso numa fase que bloqueia ===")
 	_f6_abertura_nao_prende_o_turno()
 
+	print("=== F7: toda fala tem cara, toda cara tem arquivo, e toda cara é usada ===")
+	_f7_retratos()
+	_f7_despedida_do_arlindo_acontece()
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -843,3 +847,176 @@ func _primeiro_com_script(raiz: Node, nome_do_script: String) -> Node:
 		if fundo != null:
 			return fundo
 	return null
+
+
+# ── F7 ──────────────────────────────────────────────────────────────────
+# OS RETRATOS DE FALA, e são QUATRO perguntas diferentes, cada uma contra uma
+# fonte diferente. Escrevê-las como uma só seria um espelho: a tabela das caras
+# e a das falas vivem as duas na `Narrativa.gd`, e uma asserção que montasse o
+# esperado a partir da mesma tabela onde o defeito vai morar passaria contente.
+#
+#   1. toda fala tem cara      — `EXPRESSOES` contra as TABELAS DE TEXTO
+#   2. toda cara tem arquivo   — `EXPRESSOES` contra o `Retratos.gd` e o DISCO
+#   3. toda cara é usada       — `Retratos.gd` contra `EXPRESSOES`
+#   4. toda fala chega ao jogo — as tabelas contra os PAINÉIS, que é outro
+#                                arquivo e por isso não é espelho nenhum
+#
+# ⚠️ A 3 É A PERGUNTA DO `barco_medio`, do lado da arte: nove PNG renderizados,
+# validados pelo `asset_validator` e nenhuma linha do jogo a pedi-los seria
+# exatamente o defeito que este projeto já apanhou três vezes. E a 4 é a que
+# faltava: até 13/09 ela existia só para a Dona Cida, e por isso `ARLINDO_VENCEU`
+# e `ARLINDO_PERDEU` viveram MUDAS desde 01/09 — escritas, com token conferido,
+# e nunca disparadas por linha nenhuma.
+func _f7_retratos() -> void:
+	var Nar: GDScript = load("res://scripts/Narrativa.gd")
+	var Ret: GDScript = load("res://scripts/Retratos.gd")
+	var nar: Dictionary = Nar.get_script_constant_map()
+	var ret: Dictionary = Ret.get_script_constant_map()
+	var expressoes: Dictionary = nar["EXPRESSOES"]
+	var desenhadas: Dictionary = ret["POR_EXPRESSAO"]
+
+	# As falas de cada personagem, montadas das tabelas de TEXTO. É esta a
+	# segunda fonte da pergunta 1: acrescentar uma fala sem lhe dar cara
+	# reprova aqui, porque as duas tabelas são independentes.
+	var falas := {
+		"cida": _chaves(nar["CIDA_BOLETIM"]) + _chaves(nar["CIDA_LINHAS"]),
+		"arlindo": _chaves(nar["ARLINDO_FALAS"]) + _chaves(nar["ARLINDO_REACOES"]),
+		"ribeiro": _chaves(nar["RIBEIRO_FALAS"]),
+	}
+	# Uma varredura que não acha nada passa sem conferir coisa nenhuma.
+	_confere("achou as falas dos três personagens (%d)" % (
+		falas["cida"].size() + falas["arlindo"].size() + falas["ribeiro"].size()),
+		falas["cida"].size() >= 12 and falas["arlindo"].size() >= 7
+		and falas["ribeiro"].size() >= 5)
+
+	for personagem in falas:
+		var caras: Dictionary = expressoes.get(personagem, {})
+		var sem_cara: Array[String] = []
+		for id in falas[personagem]:
+			if not caras.has(id):
+				sem_cara.append(String(id))
+		_confere("%s: as %d falas todas têm expressão" % [
+			personagem, falas[personagem].size()],
+			sem_cara.is_empty(), "sem cara: " + ", ".join(sem_cara))
+
+		# E o contrário: uma expressão presa a um id que já não é fala nenhuma
+		# é uma linha morta na tabela, e ela envelheceria calada.
+		var orfas: Array[String] = []
+		for id in caras:
+			if not falas[personagem].has(String(id)):
+				orfas.append(String(id))
+		_confere("%s: nenhuma expressão presa a fala que já não existe" % personagem,
+			orfas.is_empty(), "órfãs: " + ", ".join(orfas))
+
+	# 2 — toda expressão nomeada tem PNG. O `Retratos.de()` devolve `null` para
+	# um par desconhecido; um `null` na tela é um balão sem cara e nada o diz.
+	# E o arquivo confere-se no DISCO e não pelo `preload`, pela mesma razão que
+	# o F2 lê o `Icones.gd` como texto: um PNG que suma derruba a compilação do
+	# `Retratos.gd`, e o teste morreria junto em vez de nomear o que falta.
+	var pedidas := 0
+	for personagem in expressoes:
+		var caras: Dictionary = expressoes[personagem]
+		for id in caras:
+			var expressao := String(caras[id])
+			var arquivo := "res://art/props/retrato_%s_%s.png" % [personagem, expressao]
+			_confere("%s/%s: a cara `%s` tem PNG" % [personagem, id, expressao],
+				ResourceLoader.exists(arquivo), "não existe " + arquivo)
+			pedidas += 1
+	_confere("conferiu as caras de todas as falas (%d)" % pedidas, pedidas >= 24)
+
+	# 3 — e nenhuma cara desenhada fica sem quem a peça.
+	for personagem in desenhadas:
+		var caras: Dictionary = desenhadas[personagem]
+		var usadas := {}
+		for id in expressoes.get(personagem, {}):
+			usadas[String(expressoes[personagem][id])] = true
+		var mudas: Array[String] = []
+		for expressao in caras:
+			if not usadas.has(String(expressao)):
+				mudas.append(String(expressao))
+		_confere("%s: as %d caras desenhadas são todas usadas" % [
+			personagem, caras.size()],
+			mudas.is_empty(), "nenhuma fala pede: " + ", ".join(mudas))
+
+	# 4 — e toda fala chega mesmo ao jogo. A segunda fonte são os PAINÉIS.
+	#
+	# O id conta como disparado quando aparece ENTRE ASPAS no painel, ou quando
+	# o painel nomeia a constante/resolvedor que o serve (`ribeiro_entrada()`,
+	# `ARLINDO_ULTIMA_TENTATIVA`) — que é uma regra derivada do nome, e não uma
+	# lista de exceções a envelhecer. As linhas de COMENTÁRIO saem antes da
+	# busca: este bloco nomeia falas na prosa acima, e sem o corte elas
+	# contar-se-iam a si próprias.
+	var fonte := _sem_comentarios(
+		FileAccess.get_file_as_string("res://scripts/CounterOfferPanel.gd")
+		+ FileAccess.get_file_as_string("res://scripts/DebtPaymentPanel.gd")).to_lower()
+	_confere("os dois painéis foram lidos", fonte.length() > 1000)
+	for personagem in ["arlindo", "ribeiro"]:
+		var mudas: Array[String] = []
+		for id in falas[personagem]:
+			var citada := fonte.contains('"%s"' % String(id))
+			var nomeada := fonte.contains("%s_%s" % [personagem, String(id)])
+			if not (citada or nomeada):
+				mudas.append(String(id))
+		_confere("%s: as %d falas chegam todas ao jogo" % [
+			personagem, falas[personagem].size()],
+			mudas.is_empty(), "mudas: " + ", ".join(mudas))
+
+
+# ⚠️ E A QUARTA PERGUNTA AINDA É SOBRE TEXTO, NÃO SOBRE COMPORTAMENTO. Ela
+# confere que o id aparece no painel; não que o painel CHEGA lá. Um `if` errado
+# na resolução deixava a despedida escrita no código e nunca executada — que é
+# a mesma família de defeito com outra roupa. Por isso o bloco acaba a JOGAR a
+# negociação: "igualar" fecha sempre o negócio (não depende de sorteio nenhum),
+# o cliente fica, e quem perde é o Arlindo — a tela tem de continuar aberta com
+# a despedida dele.
+func _f7_despedida_do_arlindo_acontece() -> void:
+	var cena := load("res://scenes/panels/CounterOfferPanel.tscn") as PackedScene
+	if cena == null:
+		_confere("CounterOfferPanel.tscn carrega", false)
+		return
+
+	GS.new_game()
+	if GS.docks[0]["boat"] == null:
+		GS.docks[0]["boat"] = GS._make_boat()
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE
+	GS._set_phase("rival_offer")
+
+	var painel: Node = cena.instantiate()
+	root.add_child(painel)
+	painel.setup(0)
+	_confere("a contra-oferta abre com a fala de abertura",
+		painel._fala_arlindo.text != "")
+
+	# O botão, e não a função por baixo dele: é o caminho que o jogador faz.
+	painel._btn_igualar.pressed.emit()
+
+	# ⚠️ `is_inside_tree()` NÃO SERVE AQUI, e passou a primeira vez que se
+	# injetou o defeito: `queue_free()` marca o nó e só o tira da árvore no fim
+	# do frame, de modo que um painel já condenado ainda responde "estou cá". A
+	# pergunta que distingue é a da FILA — e sem ela esta linha era confiança de
+	# graça, com a asserção do texto ao lado a fazer o trabalho todo.
+	_confere("resolvida a negociação, a tela NÃO fecha calada",
+		not painel.is_queued_for_deletion(),
+		"o painel foi mandado embora — a despedida dele voltou a ser muda")
+	_confere("e o Arlindo diz a fala de quem perdeu",
+		painel._fala_arlindo.text == GS.texto(Narrativa.ARLINDO_PERDEU),
+		"saiu: " + painel._fala_arlindo.text.left(60))
+	root.remove_child(painel)
+	painel.free()
+
+
+func _chaves(tabela: Dictionary) -> Array[String]:
+	var saida: Array[String] = []
+	for chave in tabela:
+		saida.append(String(chave))
+	return saida
+
+
+func _sem_comentarios(fonte: String) -> String:
+	var saida := ""
+	for linha in fonte.split("\n"):
+		if linha.strip_edges().begins_with("#"):
+			continue
+		saida += linha + "\n"
+	return saida

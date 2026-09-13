@@ -52,10 +52,15 @@ func setup(resumo: Dictionary) -> void:
 
 	_resultado()
 
-	fala(GameState.texto(Narrativa.tom_do_boletim(
+	# O TOM SAI UMA VEZ e serve as duas coisas: a fala e a cara. Pedir o tom
+	# duas vezes — uma para o texto, outra para a expressão — seria a mesma
+	# decisão tomada em dois sítios, que é como dois números do mesmo jogo
+	# divergem.
+	var tom: String = Narrativa.tom_do_boletim(
 		int(_resumo["resultado"]),
 		float(_resumo["media_anterior"]),
-		bool(_resumo["tem_historico"]))))
+		bool(_resumo["tem_historico"]))
+	fala(Narrativa.boletim(tom), Narrativa.retrato("cida", tom))
 
 	botao_fechar("Fechar o boletim")
 

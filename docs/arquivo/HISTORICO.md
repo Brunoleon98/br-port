@@ -13,6 +13,20 @@
 
 ## O caminho, do mais recente para o mais antigo
 
+**OS TRÊS NPCs GANHARAM ROSTO EM 13/09** — o item que a primeira leitura em voz
+alta deixou na fila (`docs/decisoes/020`). Nove bustos no estúdio partilhado,
+três expressões cada, e uma tabela que liga cada uma das 24 falas à cara que
+ela pede. Três armadilhas de projeção pelo caminho, todas medidas no PNG: a
+profundidade projeta-se para CIMA (a primeira cabeça saiu com um capote de
+cabelo e 16px de cara no cartão), o ombro tem de ser o dobro da cabeça, e duas
+peças à mesma altura no MUNDO não estão à mesma altura na IMAGEM se estiverem a
+fundos diferentes — a gola saiu a flutuar dez pixels abaixo do pescoço. E a
+caminho apanhou-se um defeito de 01/09: `ARLINDO_VENCEU` e `ARLINDO_PERDEU`
+estavam escritas e mudas, porque a guarda que apanha fala não dita cobria a
+Dona Cida e mais ninguém. A faixa de mensagem do rodapé ficou de fora, medida:
+52px de cartão e 29px de folga no rodapé, e escolher entre um retrato de 44px
+ilegível e um de 76px que gasta a folga é decisão do Bruno.
+
 **A REVISÃO EXTERNA DE 12/09 FECHOU TRÊS DIVERGÊNCIAS.** A parcela paga no
 vencimento era lançada depois de o boletim da semana 4 ter sido emitido e
 zerado: o caixa estava certo, mas o relatório inflava o resultado em

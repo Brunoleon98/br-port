@@ -17,7 +17,7 @@ Todas as peças usam o kit de `tools/gerar_props_iso.py` e a câmera do contrato
 import math
 
 from brp_studio import (caixa, cone, prisma, barra, corrimao, na_face,
-                        janela, poste_de_luz, origem, selecao, z)
+                        janela, moldura, poste_de_luz, origem, selecao, z)
 
 
 # Um losango 1x1 do mundo tem 60px de largura na tela. As medidas abaixo estão
@@ -708,9 +708,399 @@ def trabalhador_retrato(M, est):
                   cena_godot="res://scenes/worker/Worker.tscn")
 
 
+# ── OS TRÊS ROSTOS QUE FALAM ────────────────────────────────────────────────
+#
+# Pedido do Bruno na primeira leitura em voz alta (13/09): *"seria legal
+# aparecer o sprite dos personagens, poderia ser o sprite com a reação do
+# personagem mais a mensagem"*. Até aqui o jogo tinha sete telas narrativas e
+# nenhuma CARA — a Dona Cida, o Arlindo e o Sr. Ribeiro eram texto num balão,
+# e quem falava só se sabia pelo título do painel.
+#
+# ⚠️ SÃO BUSTOS, E O `trabalhador_retrato` É DE CORPO INTEIRO. Não é gosto: os
+# dois cartões pedem coisas diferentes, que é a mesma razão de existirem dois
+# bonecos de trabalhador. Aquele identifica uma UNIDADE, e o que o identifica é
+# o capacete e o colete — silhueta, que sobrevive a qualquer tamanho. Estes
+# carregam uma EXPRESSÃO, e expressão vive em meia dúzia de pixels de cara: de
+# corpo inteiro a 96px a cabeça tem 13px e o olho tem 2, e a essa escala as
+# nove imagens deste bloco seriam a mesma imagem. Cortado no peito, a cabeça
+# fica com 44px e o olho com 5 — que é onde a diferença entre uma boca reta e
+# uma boca descontente passa a existir.
+#
+# ⚠️ E O GDD DESCREVE COMO CADA UM FALA, NUNCA COMO CADA UM É. As fichas
+# (`gdd/sistemas/npcs.md`) e o guia de voz dão tom, maneirismo e papel; não há
+# uma linha sobre aparência de nenhum dos três. Logo a cara é DECISÃO desta
+# passagem, e está escrita de maneira a poder ser mudada barato: o que
+# distingue cada personagem são três ou quatro peças nomeadas e uma cor de
+# pele que sai da paleta — trocar qualquer delas é uma linha e um render de
+# três segundos. Ver `docs/decisoes/020`.
+#
+# O QUE SEPARA OS TRÊS A 96px É A CABEÇA, e por isso cada um tem uma silhueta
+# de topo diferente: o coque e os óculos da Dona Cida, o boné de aba do
+# Arlindo, a careca grisalha e a gravata do Sr. Ribeiro. Três chapéus seriam
+# três etiquetas — é a armadilha dos quatro camiões pintados de quatro cores,
+# escrita lá em cima.
+
+# As medidas voltam a estar em PIXELS DE DESENHO, pela razão que o
+# `trabalhador_retrato` explica: depois da rotação de 45° a largura, a altura e
+# a profundidade andam em três fatores diferentes, e escrever tudo em pixels
+# tira-os da frente.
+_LG, _PF = 42.426, 21.213
+
+# ⚠️ ESTES DOIS NÚMEROS SÃO MEDIDOS NO PNG, NÃO ESCOLHIDOS. `K` enche o quadro
+# (a mesma armadilha do retrato do trabalhador: um `TextureRect` em
+# `KEEP_ASPECT_CENTERED` escala o quadro INTEIRO, transparência incluída, e um
+# busto pequeno num quadro de 512 sai minúsculo no cartão) e `MEIO` centra-o.
+# O valor sai de renderizar e medir a caixa opaca do PNG — ver o bloco
+# `_f6_retratos` do teste de fumaça, que tranca as duas coisas.
+_K = 1.68
+_MEIO = 285.0
+
+_lg = lambda px: px * _K / _LG                    # noqa: E731 — largura
+_pf = lambda px: px * _K / _PF                    # noqa: E731 — profundidade
+_alt = lambda px: z(px * _K)                      # noqa: E731 — altura relativa
+_niv = lambda px: z(px * _K - _MEIO)              # noqa: E731 — altura absoluta
+
+# O busto, em pixels de desenho. A cabeça vale 192 dos ~316 de altura — 61%,
+# contra os 23% de um corpo inteiro, e é a proporção que faz isto ser um
+# retrato em vez de um boneco pequeno.
+#
+# ⚠️ E O OMBRO TEM DE SER MUITO MAIS LARGO DO QUE A CABEÇA. A segunda versão
+# deu-lhe 178 contra os 150 da cabeça — dezoito por cento —, e o que saiu foi
+# uma cabeça pousada num caixote, sem pescoço à vista e sem nada que se lesse
+# como ombro. Num busto de verdade o ombro vale duas cabeças e meia; aqui vale
+# duas, e é o que faz a silhueta ter um V em cima em vez de dois retângulos
+# empilhados.
+#
+# ⚠️ E A PROFUNDIDADE É MAGRA DE PROPÓSITO. Nesta câmera o fundo de uma caixa
+# projeta-se para CIMA — a quina de trás sobe meia profundidade acima do topo.
+# A primeira versão tinha a cabeça com 96 de fundo e o cabelo com 104, e o que
+# saiu foi um capacete de cabelo a comer o quadro todo com a cara lá em baixo:
+# 84px de rosto num PNG de 406, que a 96px no cartão dão 16. Cortar o fundo
+# não achata nada nesta projeção — tira TELHADO, que é o que estava a roubar
+# o espaço da cara.
+# ⚠️ O OMBRO COMEÇA EM 20 E NÃO EM ZERO, e é o CORTE do busto. Baixá-lo até
+# ao fundo dava um terço da imagem de peito liso — a versão anterior tinha o
+# peito a valer mais pixels do que a cara, que é o contrário do que um retrato
+# é para. Cortar mais alto não muda proporção nenhuma da pessoa: muda o
+# enquadramento, que é o que se faz numa fotografia.
+_OMBRO_Z = (20.0, 78.0)
+_OMBRO_LARG, _OMBRO_FUNDO = 300.0, 78.0
+_PESCOCO_Z = (70.0, 128.0)
+_CABECA_Z = (128.0, 316.0)
+_CABECA_LARG, _CABECA_FUNDO = 140.0, 74.0
+
+
+def _cabeca_plano():
+    """Centro e tamanho da cabeça, como `na_face` os quer."""
+    centro = (0.0, 0.0, _niv((_CABECA_Z[0] + _CABECA_Z[1]) / 2.0))
+    tam = (_lg(_CABECA_LARG), _pf(_CABECA_FUNDO),
+           _alt(_CABECA_Z[1] - _CABECA_Z[0]))
+    return centro, tam
+
+
+def _placa(nome, u, v, larg, alt_px, mat, inclina=0.0):
+    """Uma placa na face `-y` da cabeça — o único sítio onde a cara cabe.
+
+    `inclina` gira a placa DENTRO da face, em torno do eixo Y do mundo, que é
+    a normal desta face antes de o busto rodar para a câmera. Tem de ser aqui
+    e não depois: `_girar_para_a_camera` soma 45° ao Z, e o Godot compõe a
+    Euler XYZ como Rz·Ry·Rx — a inclinação da sobrancelha acontece primeiro, o
+    giro para a câmera a seguir, que é a ordem certa. Ao contrário, a
+    sobrancelha sairia torta no eixo errado e ninguém saberia porquê.
+    """
+    centro, tam = _cabeca_plano()
+    o = na_face(nome, "-y", centro, tam, _lg(u), _alt(v),
+                _lg(larg), _alt(alt_px), 0.02, mat)
+    if inclina:
+        o.rotation_euler.y = math.radians(inclina)
+    return o
+
+
+# AS TRÊS ALAVANCAS DA EXPRESSÃO, e não um desenho por emoção. A esta escala o
+# que existe é BOCA, SOBRANCELHA e OLHO: nariz não cabe (o trabalhador também
+# não tem) e ruga é ruído. Nove expressões saem de combinar três alavancas, o
+# que também é o que impede a décima de ser um desenho à parte.
+_CARAS = {
+    # Dona Cida — pragmática, brava, leal. O tom dela no boletim tem quatro
+    # entradas e três caras: o "primeira semana no vermelho" e o "de novo"
+    # pedem a mesma preocupação.
+    ("cida", "seria"):          ("reta", "neutra", "aberto"),
+    ("cida", "preocupada"):     ("descontente", "franzida", "aberto"),
+    ("cida", "contente"):       ("sorriso", "erguida", "aberto"),
+    # Arlindo — "sempre sorrindo quando ataca", diz o guia de voz. Por isso o
+    # sorriso é o estado NORMAL dele e não a recompensa: o que muda quando a
+    # negociação aperta é o sorriso SAIR.
+    ("arlindo", "sorriso"):     ("sorriso", "erguida", "aberto"),
+    ("arlindo", "pressao"):     ("reta", "franzida", "cerrado"),
+    ("arlindo", "contrariado"): ("descontente", "torta", "aberto"),
+    # Sr. Ribeiro — "quando bravo fica MAIS educado, não menos". A cara grave
+    # dele não é uma cara zangada: é a cordial com a boca em baixo e os olhos
+    # cerrados, que é o que a educação faz com a contrariedade.
+    ("ribeiro", "cordial"):     ("sorriso_curto", "neutra", "aberto"),
+    ("ribeiro", "formal"):      ("reta", "neutra", "aberto"),
+    ("ribeiro", "grave"):       ("descontente", "franzida", "cerrado"),
+}
+
+# Quais expressões cada personagem tem. É esta tabela que o gerador percorre —
+# e é dela que o `Retratos.gd` do jogo tem de ser o espelho, o que o bloco F6
+# do teste de fumaça confere contra o DISCO e não contra ela.
+RETRATOS = {
+    "cida": ("seria", "preocupada", "contente"),
+    "arlindo": ("sorriso", "pressao", "contrariado"),
+    "ribeiro": ("cordial", "formal", "grave"),
+}
+
+
+def _olhos(M, cara, escuro):
+    """Dois olhos, abertos ou cerrados.
+
+    Cerrado não é fechado: é a mesma placa com um terço da altura e descida
+    para o meio do olho. Fechar de todo daria duas linhas, que a 5px lê como
+    personagem a dormir.
+    """
+    alto = 24.0 if cara[2] == "aberto" else 12.0
+    v = 24.0 if cara[2] == "aberto" else 18.0
+    return [_placa("olho_%s" % lado, u, v, 30.0, alto, escuro)
+            for lado, u in (("e", -34.0), ("d", 34.0))]
+
+
+def _sobrancelhas(M, cara, escuro):
+    """Duas barras acima dos olhos, e a inclinação é a emoção inteira.
+
+    ⚠️ O SINAL INVERTE-SE ENTRE OS DOIS LADOS. Franzido é a ponta de DENTRO
+    para baixo nos dois — e "para baixo" é uma rotação num sentido do lado
+    esquerdo e no outro do direito. Escrever um ângulo só para os dois dá uma
+    sobrancelha franzida e outra erguida, que é a cara `torta` do Arlindo por
+    acidente em vez de por decisão.
+    """
+    estilo = cara[1]
+    barras = []
+    for lado, u, sinal in (("e", -34.0, 1.0), ("d", 34.0, -1.0)):
+        v, ang = 56.0, 0.0
+        if estilo == "franzida":
+            ang = 14.0 * sinal
+        elif estilo == "erguida":
+            v, ang = 62.0, -7.0 * sinal
+        elif estilo == "torta":
+            # Uma erguida e uma franzida: o cético, e o que sobra a quem
+            # perdeu e ainda não admitiu.
+            v, ang = (62.0, -10.0) if lado == "e" else (53.0, -14.0)
+        barras.append(_placa("sobrancelha_%s" % lado, u, v, 40.0, 12.0,
+                             escuro, inclina=ang))
+    return barras
+
+
+def _boca(M, cara, escuro):
+    """A boca é uma barra e dois cantos — nunca uma curva.
+
+    Curva não existe neste kit e não faria falta: a 96px o que se lê é para
+    onde apontam as PONTAS. Subi-las 6px de desenho (menos de um pixel de
+    tela) não chegaria; a diferença que se vê é o canto ficar fora da barra,
+    acima ou abaixo dela, que é como o pixel art desenha sorriso desde sempre.
+    """
+    estilo = cara[0]
+    if estilo == "reta":
+        return [_placa("boca", 0.0, -44.0, 56.0, 12.0, escuro)]
+    if estilo == "sorriso":
+        pecas = [_placa("boca", 0.0, -50.0, 56.0, 12.0, escuro)]
+        pecas += [_placa("boca_canto_%s" % l, u, -38.0, 14.0, 12.0, escuro)
+                  for l, u in (("e", -35.0), ("d", 35.0))]
+        return pecas
+    if estilo == "sorriso_curto":
+        pecas = [_placa("boca", 0.0, -47.0, 38.0, 12.0, escuro)]
+        pecas += [_placa("boca_canto_%s" % l, u, -38.0, 12.0, 12.0, escuro)
+                  for l, u in (("e", -25.0), ("d", 25.0))]
+        return pecas
+    pecas = [_placa("boca", 0.0, -40.0, 48.0, 12.0, escuro)]
+    pecas += [_placa("boca_canto_%s" % l, u, -51.0, 13.0, 12.0, escuro)
+              for l, u in (("e", -30.0), ("d", 30.0))]
+    return pecas
+
+
+def _corpo(M, pele, roupa):
+    """Ombros, pescoço e cabeça — a parte que os três partilham.
+
+    ⚠️ O OMBRO É PRISMA E NÃO CAIXA, pela mesma razão que o tronco do
+    trabalhador: a 96px o que se lê é a silhueta, e uma silhueta de caixa é um
+    retângulo — nada nela diz "pessoa". Estreitar em baixo dá ombro com quatro
+    números. E o estreitamento é só em `x`: encolher a profundidade recuaria a
+    frente do peito e a gravata do Sr. Ribeiro ficaria DENTRO do terno, que é
+    o defeito que o colete do trabalhador já registou.
+    """
+    meia_l, meia_f = _lg(_OMBRO_LARG) / 2.0, _pf(_OMBRO_FUNDO) / 2.0
+    contorno = [(-meia_l, -meia_f), (meia_l, -meia_f),
+                (meia_l, meia_f), (-meia_l, meia_f)]
+    pecas = [prisma("ombros", contorno, _niv(_OMBRO_Z[0]), _niv(_OMBRO_Z[1]),
+                    (0.88, 1.0), roupa)]
+    pecas.append(caixa("pescoco",
+                       (0.0, 0.0, _niv((_PESCOCO_Z[0] + _PESCOCO_Z[1]) / 2.0)),
+                       (_lg(44.0), _pf(40.0),
+                        _alt(_PESCOCO_Z[1] - _PESCOCO_Z[0])), pele))
+    pecas.append(caixa("cabeca",
+                       (0.0, 0.0, _niv((_CABECA_Z[0] + _CABECA_Z[1]) / 2.0)),
+                       (_lg(_CABECA_LARG), _pf(_CABECA_FUNDO),
+                        _alt(_CABECA_Z[1] - _CABECA_Z[0])), pele))
+    return pecas
+
+
+def _gola(nome, mat):
+    """O que fecha o pescoço: uma CAIXA em volta dele, nunca uma placa no peito.
+
+    ⚠️ E ESTA É A ARMADILHA DA PROFUNDIDADE OUTRA VEZ, do outro lado. A
+    primeira versão era uma placa na face da frente do tronco, à altura do
+    pescoço — e saiu um retângulo a FLUTUAR dez pixels abaixo dele, com um
+    buraco de blusa pelo meio. A conta explica: a placa vive em `y = -fundo/2`
+    e o pescoço em `y = 0`, e nesta câmera cada unidade de profundidade vale
+    meia unidade de altura na tela. Duas peças à mesma altura no mundo NÃO
+    estão à mesma altura na imagem se estiverem a fundos diferentes. Uma caixa
+    à volta do pescoço partilha o fundo dele e encosta.
+    """
+    return caixa(nome, (0.0, 0.0, _niv(_OMBRO_Z[1] + 2.0)),
+                 (_lg(78.0), _pf(50.0), _alt(20.0)), mat)
+
+
+def _no_peito(nome, u, v, larg, alt_px, mat):
+    """Uma placa na frente do peito — a camisa e a gravata."""
+    centro = (0.0, 0.0, _niv((_OMBRO_Z[0] + _OMBRO_Z[1]) / 2.0))
+    tam = (_lg(_OMBRO_LARG), _pf(_OMBRO_FUNDO),
+           _alt(_OMBRO_Z[1] - _OMBRO_Z[0]))
+    return na_face(nome, "-y", centro, tam, _lg(u), _alt(v),
+                   _lg(larg), _alt(alt_px), 0.02, mat)
+
+
+def _cida(M, cara):
+    """Cabelo preso, coque e óculos — e é o coque que a distingue de longe.
+
+    O coque fica ATRÁS E ACIMA de propósito. Atrás sozinho não existiria: a
+    câmera vê as faces `+x` e `-y`, e o que está em `+y` puro fica escondido
+    pela própria cabeça. Acima da linha do cabelo ele passa a ser SILHUETA, que
+    é o que sobrevive a 96px.
+    """
+    escuro = M["vao"]
+    pecas = _corpo(M, M["pele_escura"], M["casco_pesca"])
+    pecas.append(caixa("cabelo_topo", (0.0, 0.0, _niv(318.0)),
+                       (_lg(148.0), _pf(80.0), _alt(24.0)), M["madeira_esc"]))
+    for lado, u in (("e", -69.0), ("d", 69.0)):
+        pecas.append(caixa("cabelo_%s" % lado, (_lg(u), 0.0, _niv(256.0)),
+                           (_lg(14.0), _pf(76.0), _alt(112.0)),
+                           M["madeira_esc"]))
+    # ⚠️ O COQUE É UM CILINDRO, e a primeira versão era uma caixa alta: saía
+    # uma CHAMINÉ em cima da cabeça. Redondo e baixo lê como cabelo preso;
+    # quadrado e alto lê como qualquer outra coisa.
+    pecas.append(cone("coque", (0.0, _pf(30.0), _niv(330.0)),
+                      _lg(62.0) / 2.0, _lg(54.0) / 2.0, _alt(30.0), 12,
+                      M["madeira_esc"]))
+    # A GOLA DA BLUSA É CLARA, e é a única peça clara do busto dela. Sem
+    # ela o peito é uma chapa verde de um terço da imagem — a mesma queixa do
+    # armazém antes da plataforma de carga, à escala de um cartão.
+    pecas.append(_gola("gola", M["cabine"]))
+    # OS ÓCULOS SÃO MOLDURA E NÃO PLACA, e a diferença é a mesma que o kit já
+    # aprendeu na janela: placa cheia fica NA FRENTE do olho e tapa exatamente
+    # o que devia emoldurar — a personagem sairia de venda.
+    centro, tam = _cabeca_plano()
+    for lado, u in (("e", -34.0), ("d", 34.0)):
+        pecas += moldura("oculos_%s" % lado, "-y", centro, tam,
+                         _lg(u), _alt(24.0), _lg(34.0), _alt(28.0), 0.02,
+                         M["metal"], 0.0, _lg(6.0))
+    pecas.append(_placa("oculos_ponte", 0.0, 24.0, 14.0, 6.0, M["metal"]))
+    pecas += _olhos(M, cara, escuro) + _sobrancelhas(M, cara, escuro)
+    pecas += _boca(M, cara, escuro)
+    return pecas
+
+
+def _arlindo(M, cara):
+    """Boné de capitão, aba sobre os olhos e bigode.
+
+    ⚠️ O BONÉ É NAVY E NÃO BRANCO, e isso foi medido antes de desenhado. O
+    boné de capitão de verdade é branco, e `cabine` (#eef2f5) mede **0,016** de
+    Weber contra o balão de fala (245,4 de luminância): sobre o cartão claro
+    deste jogo um boné branco não é um boné, é um buraco com um contorno. É a
+    regra do contraste contra o FUNDO, e aqui o fundo é papel.
+    """
+    escuro = M["vao"]
+    pecas = _corpo(M, M["pele"], M["vidro"])
+    pecas.append(caixa("bone_copa", (0.0, 0.0, _niv(330.0)),
+                       (_lg(148.0), _pf(80.0), _alt(30.0)), M["casco"]))
+    # A aba avança em `-y`, que é a direção da câmera: é ela que põe sombra
+    # sobre os olhos e faz o boné ler como boné em vez de caixa na cabeça.
+    # ⚠️ A ABA TAPAVA AS SOBRANCELHAS, e duas das três caras dele são feitas
+    # de sobrancelha. Ela avançava 50 de fundo, e nesta câmera avançar 50 é
+    # descer 25 na imagem: a aba caía exactamente na linha das barras. Menos
+    # avanço e mais altura resolve sem lhe tirar a sombra sobre os olhos, que
+    # é o que faz um boné ler como boné.
+    pecas.append(caixa("bone_aba", (0.0, -_pf(36.0), _niv(318.0)),
+                       (_lg(152.0), _pf(30.0), _alt(10.0)), M["metal"]))
+    # A faixa dourada é a única peça de acento do prop, e fica UMA: com o boné
+    # e o bigode ambos a chamar, o dourado deixaria de apontar para coisa
+    # nenhuma — a lição do arrasteiro, aplicada a uma cara.
+    pecas.append(caixa("bone_faixa", (0.0, 0.0, _niv(314.0)),
+                       (_lg(149.0), _pf(81.0), _alt(11.0)), M["capacete"]))
+    for lado, u in (("e", -69.0), ("d", 69.0)):
+        pecas.append(caixa("costeleta_%s" % lado, (_lg(u), 0.0, _niv(254.0)),
+                           (_lg(12.0), _pf(74.0), _alt(76.0)),
+                           M["madeira_esc"]))
+    pecas += _olhos(M, cara, escuro) + _sobrancelhas(M, cara, escuro)
+    pecas.append(_placa("bigode", 0.0, -24.0, 58.0, 13.0, M["madeira_esc"]))
+    pecas += _boca(M, cara, escuro)
+    # Gola aberta, que é o que o guia de voz descreve em roupa: familiaridade
+    # como ferramenta. Fechada com gravata seria o Sr. Ribeiro.
+    pecas.append(_gola("gola", M["pele"]))
+    return pecas
+
+
+def _ribeiro(M, cara):
+    """Terno, gravata e a cabeça grisalha — o banco com um rosto simpático."""
+    escuro = M["vao"]
+    pecas = _corpo(M, M["pele_clara"], M["casco"])
+    # A COROA DE CABELO, e não uma cabeleira. Ele é o mais velho dos três e a
+    # careca é metade da silhueta que o distingue: cabelo só dos lados e uma
+    # faixa fina a fechar por cima da nuca.
+    for lado, u in (("e", -69.0), ("d", 69.0)):
+        pecas.append(caixa("cabelo_%s" % lado, (_lg(u), 0.0, _niv(262.0)),
+                           (_lg(14.0), _pf(76.0), _alt(92.0)),
+                           M["cabelo_grisalho"]))
+    pecas.append(caixa("cabelo_nuca", (0.0, _pf(32.0), _niv(296.0)),
+                       (_lg(140.0), _pf(14.0), _alt(46.0)),
+                       M["cabelo_grisalho"]))
+    pecas += _olhos(M, cara, escuro) + _sobrancelhas(M, cara, escuro)
+    pecas += _boca(M, cara, escuro)
+    # Camisa e gravata: a camisa é um V estreito e a gravata desce dentro dele.
+    # O vermelho é a única cor quente do prop e é o que o olho encontra
+    # primeiro — num busto de terno navy sobre cartão branco, a gravata é a
+    # peça que diz "banco".
+    pecas.append(_no_peito("camisa", 0.0, 8.0, 56.0, 40.0, M["cabine"]))
+    pecas.append(_no_peito("gravata", 0.0, 2.0, 20.0, 46.0, M["faixa"]))
+    pecas.append(_gola("colarinho", M["cabine"]))
+    return pecas
+
+
+_PERSONAGENS = {"cida": _cida, "arlindo": _arlindo, "ribeiro": _ribeiro}
+
+
+def retratos_de_fala(M, est):
+    """Os nove bustos — três personagens, três expressões cada.
+
+    Cada um é construído inteiro e no MESMO sítio do mundo: o `exportar()` do
+    estúdio esconde tudo e mostra um grupo de cada vez, então nove bustos
+    empilhados na origem renderizam-se sem se verem uns aos outros. Partilhar
+    o corpo entre as três expressões e trocar só a cara seria mais barato de
+    render e impossível de exportar — a unidade de exportação é o GRUPO.
+    """
+    for personagem, expressoes in RETRATOS.items():
+        for expressao in expressoes:
+            nome = "retrato_%s_%s" % (personagem, expressao)
+            cara = _CARAS[(personagem, expressao)]
+            pecas = _PERSONAGENS[personagem](M, cara)
+            for peca in pecas:
+                peca.name = "%s_%s" % (nome, peca.name)
+            _girar_para_a_camera(pecas)
+            origem(nome, tipo="retrato")
+            est.registrar(nome, pecas, ancora="retrato")
+
+
 CATALOGO = (_registrar_caminhoes, empilhadeira, cabeco, poste, pilha_caixotes,
             doca_concreto, pallet, pneus, cone_transito, barreira, bote,
-            guincho, trabalhador_retrato)
+            guincho, trabalhador_retrato, retratos_de_fala)
 
 
 def montar(M, est):
