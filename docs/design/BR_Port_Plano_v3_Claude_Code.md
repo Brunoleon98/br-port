@@ -1327,6 +1327,25 @@ três larguras, o teto da pessoa, a ordem e os três alvos. Dobrar só a gaivota
 reprovou exatamente as duas regras de largura de D25. O item 8 não foi puxado
 para esta correção.
 
+**3. Os avistamentos agora começam e terminam.** `Fauna.gd` ganhou uma máquina
+de quatro estados (`esperando`, `aparecendo`, `presente`, `saindo`) e sorteio
+determinístico. A gaivota entra além de uma borda, alterna rajadas de batida e
+planeio e sai por outra; a maria-farinha emerge da toca, corre com pausas de
+vigília, regressa e se enterra com poeira; a tartaruga sobe no baixio, avança
+com pulsos das nadadeiras e mergulha com ondulações. O toque durante a presença
+antecipa a saída própria da espécie; na espera, sprite **e** área tátil ficam
+desligados.
+
+O D26 percorre o ciclo público das três cenas e prende invisibilidade sem
+toque, entrada, movimento e saída completa. Manter propositalmente a gaivota
+visível na espera reprovou só as duas guardas novas dela. Uma sequência
+determinística de 20 s conferiu em imagem os três momentos sem mexer nos PNGs,
+nas escalas do D25 ou nas âncoras de habitat.
+
+No fecho, D20, D21 e D24 passaram a medir o `Texture2D` importado que o jogo
+usa: a segunda rasterização do SVG em memória caía no ThorVG do Godot 4.6.3
+para Windows. As mesmas 290 amostras por mapa continuam cobrindo rua e areia.
+
 ### ✅ O ITEM 5 FECHOU INTEIRO — 5a medido, 5b escrito (11/09)
 
 **`docs/decisoes/018`**, e a resposta é NÃO MEXER. Varridos sete pontos e 4.200

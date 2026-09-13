@@ -491,9 +491,10 @@ texture = ExtResource("5")
 [node name="Fauna" type="Node2D" parent="MapaWrap"]
 script = ExtResource("fauna_ambiente")
 
-; Um representante por habitat. Os pontos vêm do mesmo `tela()` do gerador:
-; gaivota sobre água aberta, maria-farinha na praia norte e tartaruga-verde
-; juvenil no baixio sul.
+; Um ciclo por habitat. A gaivota usa a âncora só quando está fora de cena e
+; cruza de uma borda à outra; a maria-farinha regressa a esta toca da praia
+; norte; a tartaruga-verde sobe e mergulha em torno deste baixio sul. Tempos e
+; rotas vêm de sementes fixas em `Fauna.gd`, para a captura continuar repetível.
 [node name="Gaivota" parent="MapaWrap/Fauna" instance=ExtResource("fauna_gaivota")]
 position = Vector2(639, 265.5)
 

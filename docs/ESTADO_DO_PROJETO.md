@@ -39,12 +39,12 @@ contínuo pela distância à costa, com meandro longo de duas senóides, e a are
 em rampas. A paleta medida não mudou (amplitude 99,408; espuma 0,558 de Weber).
 Curvas no contorno continuam a ser o item 8, separado.
 
-**Há fauna costeira jogável em três habitats** — gaivotão, maria-farinha e
-tartaruga-verde juvenil, com movimento, toque e som. Medem **15 / 12 / 14 px**,
-com alvo tátil de **44 px**; rascunhos até o gate de escuta.
+**A fauna tem ciclos tocáveis** — gaivota cruza o mapa;
+maria-farinha emerge, corre e se enterra; tartaruga sobe, nada e mergulha.
+Medem **15 / 12 / 14 px**, com alvo de **44 px**; som ainda aguarda o gate.
 
-**Correções 13/09:** areia antes da rua (D20), fauna à escala/toque (D25);
-injeções isoladas, geometria intacta.
+**Correções 13/09:** areia antes da rua (D20), escala/toque (D25) e ciclos da
+fauna sem toque invisível (D26); geometria intacta.
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
 perfil: ótimo 100% · mediano 80,2% · descuidado 37,3%, com a mediana do mediano
@@ -218,7 +218,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `docs/BRP_SPATIAL_CONTRACT.md` | **O contrato da projeção por escrito** — as constantes, os quatro participantes e a regra que faltava no guia do pacote de arte: `ROT_X = 60°` |
 | `blender/brp_studio.py` | O estúdio compartilhado — importa a câmera de `gerar_props_iso.py` em vez de a duplicar. Âncora, volume de seleção, nomenclatura e manifest |
 | `blender/gerar_brp.py` | Roda os quatro estúdios, exporta PNGs, salva `.blend` e junta o manifest; resolve saídas pela raiz porque o Blender muda o diretório no Windows |
-| `brport_vs/scripts/Fauna.gd` + `AmbienteCosteiro.gd` | Movimento e reação ao toque dos três animais; agenda o mar e o chamado raro da gaivota |
+| `brport_vs/scripts/Fauna.gd` + `AmbienteCosteiro.gd` | Ciclos de entrada, vida e saída dos três animais; toque, mar e chamado raro da gaivota |
 | `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
 | `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**. Roda no CI, espera `ASSET OK` |
 | `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
@@ -280,7 +280,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   turno. Sai pelo menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,
   manutenção, parcela) — **só observa**, não entra em conta nenhuma do jogo
-- Fauna costeira tocável: gaivotão, maria-farinha e tartaruga-verde juvenil
+- Fauna costeira tocável, com aparecimento, comportamento e saída por habitat
 
 ### O que já é arte de verdade, e o que ainda é placeholder
 **O mapa do porto é a tela do jogo** (`Main.tscn`): costa, cais, cidade, props

@@ -908,6 +908,13 @@ caranguejo deixam de se separar. `ESCALA_DE_JOGO` reduz o grupo Blender inteiro,
 e não as suas peças; o alvo de toque independente ficou em 44 px de diâmetro.
 O D25 prende as três medidas, a ordem e o alvo tátil.
 
+O ciclo natural ficou no runtime, sem novo render: a gaivota cruza as bordas
+com batidas e planeio; a maria-farinha emerge da toca, corre, vigia e se
+enterra; a tartaruga sobe, nada com pulsos das nadadeiras e mergulha entre
+ondulações. As quatro fases são determinísticas para a fotografia. O D26 exige
+que a espera esconda também o alvo de toque e que cada espécie realmente se
+mova e conclua a própria saída; uma sequência de 20 s fez a conferência visual.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

@@ -91,6 +91,7 @@ var _d22_completo := false
 var _d23_completo := false
 var _d24_completo := false
 var _d25_completo := false
+var _d26_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -203,6 +204,10 @@ func _rodar() -> void:
 	print("=== D25: a fauna cabe na régua do próprio jogo ===")
 	_d25_escala_da_fauna()
 	_confere("o bloco D25 correu até ao fim", _d25_completo)
+
+	print("=== D26: a fauna aparece, vive e sai do mundo ===")
+	_d26_ciclo_da_fauna()
+	_confere("o bloco D26 correu até ao fim", _d26_completo)
 
 	print("=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===")
 	_d23_menu_celular()
@@ -2073,11 +2078,14 @@ func _d20_a_rua_no_desenho() -> void:
 		_confere("%s existe" % caminho.get_file(), arq != null)
 		if arq == null:
 			continue
-		var img := Image.new()
-		var erro := img.load_svg_from_string(arq.get_as_text(), 1.0)
 		arq.close()
-		_confere("%s rasteriza" % caminho.get_file(), erro == OK)
-		if erro != OK:
+		# Mede o Texture2D que o jogo recebe. Rasterizar de novo 1,2 MB de SVG
+		# com `load_svg_from_string()` cai no ThorVG nativo do Godot 4.6.3 no
+		# Windows; a importação usa o mesmo rasterizador e é o caminho real.
+		var textura := load(caminho) as Texture2D
+		var img := textura.get_image() if textura != null else null
+		_confere("%s rasteriza" % caminho.get_file(), img != null)
+		if img == null:
 			continue
 		# ⚠️ O PNG TEM DE TER O TAMANHO QUE A TABELA PUBLICA. Sem isto, um mapa
 		# reimportado noutra escala faria cada amostra cair num sítio diferente
@@ -2176,6 +2184,59 @@ func _d25_escala_da_fauna() -> void:
 	_d25_completo = true
 
 
+# ── D26 ── avistamento tem começo, comportamento e fim
+#
+# Um animal invisível mas ainda clicável não saiu do mundo; um sprite que só
+# muda `visible` sem se mover não prova a animação; e uma gaivota que nasce no
+# meio do mar continua sendo decoração. Por isso a prova percorre a API real de
+# cada cena: espera sem toque, entrada, movimento próprio e saída sem toque.
+func _d26_ciclo_da_fauna() -> void:
+	for especie in FAUNA_CENAS:
+		var bicho: Node2D = load(FAUNA_CENAS[especie]).instantiate()
+		bicho.atraso_inicial = 99.0
+		root.add_child(bicho)
+		bicho.set_process(false)
+		var sprite: Sprite2D = bicho.get_node("Sprite")
+		var toque: Area2D = bicho.get_node("Toque")
+
+		_confere("%s espera fora do mundo" % especie,
+			bicho.estado_atual() == &"esperando" and not sprite.visible)
+		_confere("%s escondido não rouba toque" % especie,
+			not toque.input_pickable)
+
+		bicho.aparecer_agora()
+		var entrada := bicho.position
+		_confere("%s entra visível e tocável" % especie,
+			bicho.esta_presente() and sprite.visible and toque.input_pickable)
+		if especie == "gaivota":
+			_confere("a gaivota nasce além de uma borda do mapa",
+				entrada.x < 0.0 or entrada.x > 720.0
+					or entrada.y < 0.0 or entrada.y > 720.0,
+				"nasceu em %s" % entrada)
+			bicho._process(1.0)
+		elif especie == "maria_farinha":
+			bicho._process(0.63) # termina de emergir
+			entrada = bicho.position
+			bicho._process(0.50) # primeira corrida lateral
+		else:
+			bicho._process(0.91) # termina de subir à tona
+			entrada = bicho.position
+			bicho._process(1.00) # primeira braçada
+		_confere("%s não fica parado enquanto está presente" % especie,
+			bicho.position.distance_to(entrada) > 1.0,
+			"moveu %.2f px" % bicho.position.distance_to(entrada))
+
+		bicho.sumir_agora()
+		_confere("%s começa uma saída própria" % especie,
+			bicho.estado_atual() == &"saindo")
+		bicho._process(3.0)
+		_confere("%s termina fora do mundo e sem toque" % especie,
+			bicho.estado_atual() == &"esperando"
+				and not sprite.visible and not toque.input_pickable)
+		bicho.free()
+	_d26_completo = true
+
+
 # ── D21 ── quem ESPERA fundeia ao largo; quem ATRACA fica na costeira
 #
 # Irmão do D20, e pela mesma porta: ali perguntava-se com que cor o mapa pinta a
@@ -2248,13 +2309,13 @@ func _d21_a_zona_de_espera() -> void:
 	_confere("o mapa do porto existe", arq != null)
 	if arq == null:
 		return
-	var img := Image.new()
-	# Pelo arquivo, nunca pelo `load()` da textura: o `.ctex` importado é de
-	# quando o projeto foi importado, e num teste isso mente nas duas direções.
-	var erro := img.load_svg_from_string(arq.get_as_text(), 1.0)
 	arq.close()
-	_confere("o mapa do porto rasteriza", erro == OK)
-	if erro != OK:
+	# O projeto é importado antes da suíte: esta é a mesma textura vista pelo
+	# jogo, sem pedir uma segunda rasterização instável ao ThorVG no Windows.
+	var textura := load("res://art/porto_mapa_iso.svg") as Texture2D
+	var img := textura.get_image() if textura != null else null
+	_confere("o mapa do porto rasteriza", img != null)
+	if img == null:
 		return
 
 	# Os props saem por VARREDURA do cenário e não de uma lista escrita aqui —
@@ -2637,11 +2698,11 @@ func _d24_a_vila_cresce() -> void:
 	_confere("%s existe" % MAPA_DA_VILA.get_file(), arq != null)
 	if arq == null:
 		return
-	var img := Image.new()
-	var erro := img.load_svg_from_string(arq.get_as_text(), 1.0)
 	arq.close()
-	_confere("%s rasteriza" % MAPA_DA_VILA.get_file(), erro == OK)
-	if erro != OK:
+	var textura := load(MAPA_DA_VILA) as Texture2D
+	var img := textura.get_image() if textura != null else null
+	_confere("%s rasteriza" % MAPA_DA_VILA.get_file(), img != null)
+	if img == null:
 		return
 	# O mesmo cuidado do D20: ler no sítio errado é pior do que não ler, e um
 	# PNG noutra escala poria cada prova num pixel qualquer — todas falhariam
