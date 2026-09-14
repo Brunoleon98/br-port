@@ -2042,6 +2042,92 @@ func _contraste(a: Color, b: Color) -> float:
 # quatro tons publicados da areia — outra pergunta, outra asserção.
 # A vila é a mesma nos dois mapas; a prova lê o do jogo.
 const MAPA_DA_VILA := "res://art/porto_mapa_iso.svg"
+
+
+# ⚠️ A TEXTURA DO MAPA JÁ NÃO TEM O TAMANHO DA TABELA, E ISSO É DE PROPÓSITO.
+# Os quatro SVG de mapa declaram `width="720"` sobre um `viewBox` de 1080; até
+# 14/09 o importador entregava 720 e estes blocos amostravam pixel a pixel
+# contra as âncoras, que publicam TELA. Com `svg/scale=1.5` (`docs/decisoes/025`)
+# a textura passou a sair a 1080 e cada uma daquelas leituras passou a cair
+# 1,5x fora do sítio.
+#
+# A guarda que apanhou isso era a do D20 e a do D24 — "o PNG tem de ter o
+# tamanho que a tabela publica" —, e ela estava CERTA: ler no sítio errado é
+# pior do que não ler, porque o relvado também não é calçada e tudo passaria.
+# O que estava errado era o número 720 estar cravado nela: é a mesma família do
+# "número em pixel escrito à mão envelhece calado quando o que ele descreve
+# muda de tamanho" que este projeto já registou cinco vezes.
+#
+# Então a guarda deixa de comparar com 720 e passa a exigir o que ela sempre
+# quis dizer: que a imagem seja um múltiplo INTEIRO e IGUAL nos dois eixos do
+# que a tabela publica. Uma imagem de outra proporção, mais pequena, ou
+# esticada num eixo só continua a reprovar; uma reimportada a 1,5x, a 2x ou de
+# volta a 1x passa a ler no sítio certo sem ninguém tocar no teste.
+#
+# ⚠️ E O FATOR NÃO SE ESCREVE AQUI. Ele sai da imagem contra a tabela, que são
+# duas fontes: o `.import` decide uma e o gerador do SVG decide a outra. Um
+# fator escrito nesta constante seria o espelho de que o CLAUDE.md avisa —
+# montaria o esperado da mesma fonte de qualquer defeito.
+class MapaLido:
+	var img: Image
+	var escala: float = 1.0
+
+	# Tela -> pixel da imagem. Todo bloco que amostre o mapa passa por aqui.
+	func px(x: float, y: float) -> Vector2i:
+		return Vector2i(int(floor(x * escala)), int(floor(y * escala)))
+
+	func pxv(p: Vector2) -> Vector2i:
+		return px(p.x, p.y)
+
+	# Uma distância de TELA na régua da imagem — raios de janela, travessias.
+	func dist(d: float) -> float:
+		return d * escala
+
+	# Uma ÁREA de tela: a janela de uma prova cresce com o quadrado do fator,
+	# então o mínimo de pixels que se exige dela tem de crescer igual. Sem isto
+	# o D24 pediria 40 px numa janela 2,25x maior e passaria de graça.
+	func area(n: float) -> float:
+		return n * escala * escala
+
+	func dentro(p: Vector2i) -> bool:
+		return p.x >= 0 and p.y >= 0 \
+			and p.x < img.get_width() and p.y < img.get_height()
+
+
+# Abre um mapa e devolve-o com o fator de escala já conferido, ou `null`.
+#
+# ⚠️ LÊ O `load()` DA TEXTURA, e não o arquivo, e isso é medição e não descuido:
+# rasterizar 1,2 MB de SVG outra vez com `load_svg_from_string()` cai no ThorVG
+# nativo do Godot 4.6.3 no Windows. O projeto é importado antes da suíte, então
+# esta é a MESMA textura que o jogo recebe — o que a regra do CLAUDE.md sobre o
+# cache do importador exige é que ela esteja em dia, e o `--import` faz isso.
+func _mapa_lido(caminho: String) -> MapaLido:
+	var arq := FileAccess.open(caminho, FileAccess.READ)
+	_confere("%s existe" % caminho.get_file(), arq != null)
+	if arq == null:
+		return null
+	arq.close()
+	var textura := load(caminho) as Texture2D
+	var img := textura.get_image() if textura != null else null
+	_confere("%s rasteriza" % caminho.get_file(), img != null)
+	if img == null:
+		return null
+	var lt := int(_ancoras["mapa"]["largura"])
+	var at := int(_ancoras["mapa"]["altura"])
+	var fx := float(img.get_width()) / float(lt)
+	var fy := float(img.get_height()) / float(at)
+	var coerente := is_equal_approx(fx, fy) and fx >= 1.0 \
+		and is_equal_approx(fx, round(fx * 2.0) / 2.0)
+	_confere("%s é um múltiplo coerente dos %dx%d da tabela"
+			% [caminho.get_file(), lt, at], coerente,
+		"a imagem tem %dx%d, o que dá %.4f x %.4f"
+			% [img.get_width(), img.get_height(), fx, fy])
+	if not coerente:
+		return null
+	var m := MapaLido.new()
+	m.img = img
+	m.escala = fx
+	return m
 # ⚠️ A JANELA COBRE A PEÇA, e o número saiu de uma medição. A 6 px de raio a
 # prova da praça dava ZERO: o piso dela aparece em manchas entre as copas e o
 # coreto — 142 pixels de calçada espalhados por um lote de 51x47 —, e um raio
@@ -2063,6 +2149,34 @@ const MAPAS_DA_RUA := ["res://art/porto_mapa_iso.svg",
 # no trecho mais longo, que é menos de metade da fita de 0,22 que o bloco
 # existe para apanhar — amostrar mais grosso do que o defeito é não amostrar.
 const D20_AMOSTRAS := 40
+
+# ⚠️ E A PROVA É UMA JANELA, NÃO UM PIXEL — este foi o último bloco raster do
+# projeto a provar por pixel único, e ele reprovou o mapa CERTO em 14/09.
+#
+# A rota atravessa a fronteira entre o pavimento do pátio (`#ced4d7`) e o
+# asfalto (`#49535b`), e o pixel de antisserrilhado dessa fronteira sai a
+# `#b1b8bc` — que fica a **3/255** da calçada (`#aeb8bf`), dentro da folga de 4
+# que o `_mesma_cor` dá ao próprio antisserrilhado. O ponto está no asfalto: no
+# mapa SEM pátio a mesma coordenada é `#49535b` puro em toda a vizinhança.
+#
+# É a regra do CLAUDE.md *"casar hexadecimal exato só serve em tinta chapada"*
+# com a roupa trocada: a rua É chapada, mas a FRONTEIRA entre duas tintas
+# chapadas não é, e o valor por que ela passa pode calhar na banda de uma
+# TERCEIRA cor da paleta. E é a mesma lição do D17 e do D24 — pergunte quanto
+# DESENHO há à volta do ponto, nunca de que cor é o ponto.
+#
+# O QUE SEPARA AS DUAS FAMÍLIAS É A MASSA, e ela foi medida. A fita de calçada
+# que este bloco existe para apanhar (`docs/decisoes/013`) tem a largura da rua
+# e 0,22 unidades de profundidade — enche a janela. Um pixel de fronteira tem
+# um vizinho de cada lado. Medido na injeção, um cotovelo mal ordenado dá a
+# janela CHEIA (49 de 49) e o mapa certo dá no máximo 6.
+#
+# Os dois números são de TELA e escalam com a imagem: o raio com o fator, o
+# mínimo com o quadrado dele.
+var _sonda_calcada := 0
+var _sonda_areia := 0
+const D20_RAIO := 3       # 7x7 = 49 px de tela
+const D20_MINIMO := 9     # 18% da janela
 
 
 func _d20_a_rua_no_desenho() -> void:
@@ -2087,28 +2201,20 @@ func _d20_a_rua_no_desenho() -> void:
 	var rota: Array = consts["ROTA_ESTRADA"]
 
 	for caminho in MAPAS_DA_RUA:
-		var arq := FileAccess.open(caminho, FileAccess.READ)
-		_confere("%s existe" % caminho.get_file(), arq != null)
-		if arq == null:
+		# O `_mapa_lido` carrega a textura e confere a escala dela contra a
+		# tabela. Ler no sítio errado é pior do que não ler — o relvado também
+		# não é calçada, e todas as amostras passariam contentes.
+		var mapa := _mapa_lido(caminho)
+		if mapa == null:
 			continue
-		arq.close()
-		# Mede o Texture2D que o jogo recebe. Rasterizar de novo 1,2 MB de SVG
-		# com `load_svg_from_string()` cai no ThorVG nativo do Godot 4.6.3 no
-		# Windows; a importação usa o mesmo rasterizador e é o caminho real.
-		var textura := load(caminho) as Texture2D
-		var img := textura.get_image() if textura != null else null
-		_confere("%s rasteriza" % caminho.get_file(), img != null)
-		if img == null:
-			continue
-		# ⚠️ O PNG TEM DE TER O TAMANHO QUE A TABELA PUBLICA. Sem isto, um mapa
-		# reimportado noutra escala faria cada amostra cair num sítio diferente
-		# do que se pede — e todas passariam, porque o relvado também não é
-		# calçada. Ler no sítio errado é pior do que não ler.
-		_confere("%s tem os %dx%d da tabela" % [caminho.get_file(),
-				int(_ancoras["mapa"]["largura"]), int(_ancoras["mapa"]["altura"])],
-			img.get_width() == int(_ancoras["mapa"]["largura"])
-				and img.get_height() == int(_ancoras["mapa"]["altura"]))
+		var img := mapa.img
 
+		# A janela da prova, na régua desta imagem. Ver `D20_RAIO`/`D20_MINIMO`.
+		var raio: int = int(round(mapa.dist(float(D20_RAIO))))
+		var minimo: int = int(round(mapa.area(float(D20_MINIMO))))
+
+		_sonda_calcada = 0
+		_sonda_areia = 0
 		var lidas := 0
 		var pior_calcada := ""
 		var pior_areia := ""
@@ -2118,20 +2224,29 @@ func _d20_a_rua_no_desenho() -> void:
 			for k in range(D20_AMOSTRAS + 1):
 				var m: Vector2 = de.lerp(para, float(k) / float(D20_AMOSTRAS))
 				var px := _tela(m.x, m.y, alt)
-				var ix := int(floor(px.x))
-				var iy := int(floor(px.y))
-				if ix < 0 or iy < 0 or ix >= img.get_width() or iy >= img.get_height():
+				var q := mapa.px(px.x, px.y)
+				var ix := q.x
+				var iy := q.y
+				if not mapa.dentro(q):
 					continue        # a rota entra e sai do quadro de propósito
 				lidas += 1
 				var cor := img.get_pixel(ix, iy)
-				if _mesma_cor(cor, calcada) and pior_calcada == "":
-					pior_calcada = "em (%.2f, %.2f) — pixel (%d, %d) — o mapa pinta %s, que é a calçada" \
-						% [m.x, m.y, ix, iy, cor.to_html(false)]
+				var n_calcada := _contar_cor(img, ix, iy, raio, calcada)
+				_sonda_calcada = maxi(_sonda_calcada, n_calcada)
+				if n_calcada >= minimo and pior_calcada == "":
+					pior_calcada = ("em (%.2f, %.2f) — pixel (%d, %d) — %d px de "
+						+ "calçada em %dx%d, e o mínimo é %d; o centro pinta %s") \
+						% [m.x, m.y, ix, iy, n_calcada, raio * 2 + 1, raio * 2 + 1,
+						   minimo, cor.to_html(false)]
 				if pior_areia == "":
 					for areia in areias:
-						if _mesma_cor(cor, areia):
-							pior_areia = "em (%.2f, %.2f) — pixel (%d, %d) — o mapa pinta %s, que é areia" \
-								% [m.x, m.y, ix, iy, cor.to_html(false)]
+						var n_areia := _contar_cor(img, ix, iy, raio, areia)
+						_sonda_areia = maxi(_sonda_areia, n_areia)
+						if n_areia >= minimo:
+							pior_areia = ("em (%.2f, %.2f) — pixel (%d, %d) — %d px de "
+								+ "areia em %dx%d, e o mínimo é %d; o centro pinta %s") \
+								% [m.x, m.y, ix, iy, n_areia, raio * 2 + 1,
+								   raio * 2 + 1, minimo, cor.to_html(false)]
 							break
 		# ⚠️ E CONFERE-SE QUANTAS FORAM LIDAS. Um recorte mal posto, ou uma rota
 		# que saísse inteira do quadro, daria zero amostras e um PASS contente:
@@ -2143,6 +2258,8 @@ func _d20_a_rua_no_desenho() -> void:
 			pior_calcada == "", pior_calcada)
 		_confere("%s: nenhum ponto da rota cai em areia" % caminho.get_file(),
 			pior_areia == "", pior_areia)
+		print("SONDA %s: janela %dx%d, mínimo %d — máx calçada %d, máx areia %d"
+			% [caminho.get_file(), raio*2+1, raio*2+1, minimo, _sonda_calcada, _sonda_areia])
 	_d20_completo = true
 
 
@@ -2295,7 +2412,12 @@ func _d26_ciclo_da_fauna() -> void:
 # de uma captura a olho.
 func _d27_habitats_da_fauna() -> void:
 	var grupo: Node2D = _main.get_node("MapaWrap/Fauna")
-	var mapa := (load("res://art/porto_mapa_iso.svg") as Texture2D).get_image()
+	# A posição de cada bicho é TELA (é filho do `MapaWrap`); a textura pode
+	# estar noutra escala — ver o cabeçalho do `_mapa_lido`.
+	var lido := _mapa_lido("res://art/porto_mapa_iso.svg")
+	if lido == null:
+		return
+	var mapa := lido.img
 	var quantidades := {}
 	var avistamentos := 0
 	for bicho in grupo.get_children():
@@ -2315,19 +2437,19 @@ func _d27_habitats_da_fauna() -> void:
 
 	for nome in ["CachorroCaramelo", "QueroQuero", "Capivara"]:
 		var bicho: Node2D = grupo.get_node(nome)
-		var cor := mapa.get_pixelv(Vector2i(bicho.position))
+		var cor := mapa.get_pixelv(lido.pxv(bicho.position))
 		_confere("%s aparece sobre terra verde" % nome,
 			cor.g > cor.r and cor.g > cor.b,
 			"posição %s, cor #%s" % [bicho.position, cor.to_html(false)])
 
 	var caranguejo: Node2D = grupo.get_node("MariaFarinhaSul")
-	var cor_areia := mapa.get_pixelv(Vector2i(caranguejo.position))
+	var cor_areia := mapa.get_pixelv(lido.pxv(caranguejo.position))
 	_confere("o novo caranguejo aparece na praia sul",
 		cor_areia.r > cor_areia.b and cor_areia.g > cor_areia.b,
 		"posição %s, cor #%s" % [caranguejo.position, cor_areia.to_html(false)])
 
 	var tartaruga: Node2D = grupo.get_node("TartarugaVerdeNorte")
-	var cor_agua := mapa.get_pixelv(Vector2i(tartaruga.position))
+	var cor_agua := mapa.get_pixelv(lido.pxv(tartaruga.position))
 	_confere("a nova tartaruga aparece no baixio norte",
 		cor_agua.b > cor_agua.r and cor_agua.g > cor_agua.r,
 		"posição %s, cor #%s" % [tartaruga.position, cor_agua.to_html(false)])
@@ -2402,18 +2524,12 @@ func _d21_a_zona_de_espera() -> void:
 		return
 	var limiar := (escura_costeira + clara_largo) / 2.0
 
-	var arq := FileAccess.open("res://art/porto_mapa_iso.svg", FileAccess.READ)
-	_confere("o mapa do porto existe", arq != null)
-	if arq == null:
+	# As âncoras dos props e os berços publicados são TELA; a textura pode estar
+	# noutra escala — ver o cabeçalho do `_mapa_lido`.
+	var lido := _mapa_lido("res://art/porto_mapa_iso.svg")
+	if lido == null:
 		return
-	arq.close()
-	# O projeto é importado antes da suíte: esta é a mesma textura vista pelo
-	# jogo, sem pedir uma segunda rasterização instável ao ThorVG no Windows.
-	var textura := load("res://art/porto_mapa_iso.svg") as Texture2D
-	var img := textura.get_image() if textura != null else null
-	_confere("o mapa do porto rasteriza", img != null)
-	if img == null:
-		return
+	var img := lido.img
 
 	# Os props saem por VARREDURA do cenário e não de uma lista escrita aqui —
 	# um sexto prop no fundeadouro entra sozinho, que é a regra do `teste_fumaca`
@@ -2436,9 +2552,8 @@ func _d21_a_zona_de_espera() -> void:
 
 	for no in achados:
 		var p := _no_mapa(no as Control) + Vector2(MEIO_QUADRO, MEIO_QUADRO)
-		var px := Vector2i(p)
-		var dentro := px.x >= 0 and px.y >= 0 \
-			and px.x < img.get_width() and px.y < img.get_height()
+		var px := lido.pxv(p)
+		var dentro := lido.dentro(px)
 		_confere("%s cai dentro do mapa" % no.name, dentro, "âncora em %s" % px)
 		if not dentro:
 			continue
@@ -2453,7 +2568,7 @@ func _d21_a_zona_de_espera() -> void:
 	# fundeadouro exactamente onde está o berço.
 	for pier in _ancoras["pieres"]:
 		var b: Array = pier["barco"]
-		var luz := _luz(img.get_pixelv(Vector2i(int(b[0]), int(b[1]))))
+		var luz := _luz(img.get_pixelv(lido.px(float(b[0]), float(b[1]))))
 		_confere("o berço da doca %d está em água COSTEIRA" % int(pier["doca"]),
 			luz > limiar,
 			"o mapa pinta ali uma água de luminância %.1f, abaixo do limiar %.1f"
@@ -2731,11 +2846,12 @@ func _d28_contorno_das_pontas() -> void:
 
 	# (4) o mapa pinta água de um lado e terra do outro
 	#
-	var textura := load("res://art/porto_mapa_iso.svg") as Texture2D
-	var img := textura.get_image() if textura != null else null
-	_confere("o mapa do porto rasteriza", img != null)
-	if img == null:
+	# A linha publicada é TELA; a textura pode estar noutra escala — ver o
+	# cabeçalho do `_mapa_lido`.
+	var lido := _mapa_lido("res://art/porto_mapa_iso.svg")
+	if lido == null:
 		return
+	var img := lido.img
 	var lidas := 0
 	var trocados := 0
 	var pior := ""
@@ -2746,7 +2862,7 @@ func _d28_contorno_das_pontas() -> void:
 			var meio: Vector2 = (trecho[i] + trecho[i + 1]) * 0.5
 			var a := meio + n * D28_ATRAVESSA
 			var b := meio - n * D28_ATRAVESSA
-			if not (_d28_dentro(a, img) and _d28_dentro(b, img)):
+			if not (lido.dentro(lido.pxv(a)) and lido.dentro(lido.pxv(b))):
 				continue
 			# ⚠️ A EMENDA COM O CAIS NÃO ENTRA, e não é para esconder falha: ali
 			# a areia ainda não começou e o que está dos dois lados da linha é
@@ -2756,8 +2872,8 @@ func _d28_contorno_das_pontas() -> void:
 			# passar é o piso de leituras, logo abaixo.
 			if _perto_do_cais(_mundo(meio, 0.0).y, praias):
 				continue
-			var agua := img.get_pixel(int(a.x), int(a.y))
-			var terra := img.get_pixel(int(b.x), int(b.y))
+			var agua := img.get_pixelv(lido.pxv(a))
+			var terra := img.get_pixelv(lido.pxv(b))
 			var azul_agua := agua.b - agua.r
 			var azul_terra := terra.b - terra.r
 			if azul_agua - azul_terra < D28_MARGEM_AZUL:
@@ -2791,11 +2907,6 @@ func _d28_contorno_das_pontas() -> void:
 			"a areia começa em mx %.2f e o passeio acaba em %.2f"
 				% [areia0, float(faixa["rua"][1])])
 	_d28_completo = true
-
-
-func _d28_dentro(q: Vector2, img: Image) -> bool:
-	return q.x >= 0.0 and q.y >= 0.0 and q.x < float(img.get_width()) \
-		and q.y < float(img.get_height())
 
 
 func _dentro_de_praia(my: float, praias: Array) -> bool:
@@ -3080,31 +3191,23 @@ func _d24_a_vila_cresce() -> void:
 		_confere("a vila tem %s" % tipo, vistos.has(tipo),
 			"tipos publicados: %s" % str(vistos.keys()))
 
-	var arq := FileAccess.open(MAPA_DA_VILA, FileAccess.READ)
-	_confere("%s existe" % MAPA_DA_VILA.get_file(), arq != null)
-	if arq == null:
-		return
-	arq.close()
-	var textura := load(MAPA_DA_VILA) as Texture2D
-	var img := textura.get_image() if textura != null else null
-	_confere("%s rasteriza" % MAPA_DA_VILA.get_file(), img != null)
-	if img == null:
-		return
 	# O mesmo cuidado do D20: ler no sítio errado é pior do que não ler, e um
 	# PNG noutra escala poria cada prova num pixel qualquer — todas falhariam
-	# ou todas passariam, e nenhuma das duas respostas diria alguma coisa.
-	_confere("o mapa tem os %dx%d da tabela" % [int(_ancoras["mapa"]["largura"]),
-			int(_ancoras["mapa"]["altura"])],
-		img.get_width() == int(_ancoras["mapa"]["largura"])
-			and img.get_height() == int(_ancoras["mapa"]["altura"]))
+	# ou todas passariam, e nenhuma das duas respostas diria alguma coisa. Quem
+	# confere a escala é o `_mapa_lido`; as provas publicam TELA.
+	var lido := _mapa_lido(MAPA_DA_VILA)
+	if lido == null:
+		return
+	var img := lido.img
 
 	for prova in provas:
 		var tipo := String(prova["tipo"])
 		var nome_cor := String(prova["cor"])
 		var ponto: Array = prova["px"]
-		var ix := int(floor(float(ponto[0])))
-		var iy := int(floor(float(ponto[1])))
-		if ix < 0 or iy < 0 or ix >= img.get_width() or iy >= img.get_height():
+		var q := lido.px(float(ponto[0]), float(ponto[1]))
+		var ix := q.x
+		var iy := q.y
+		if not lido.dentro(q):
 			_confere("a prova do %s (lote %d) cai no quadro"
 				% [tipo, int(prova["lote"])], false,
 				"pixel (%d, %d) fora de %dx%d — a peça foi desenhada onde ninguém a vê"
@@ -3122,8 +3225,14 @@ func _d24_a_vila_cresce() -> void:
 		# 13x13 são 169 pixels e exigem-se 8 — 4,7%. Baixo o suficiente para
 		# uma peça de 5 px de largura contar, e alto o suficiente para não ser
 		# satisfeito por uma orla de antisserrilhado, que dá um ou dois.
-		var raio: int = int(prova["raio"])
-		var minimo: int = int(prova["minimo"])
+		# ⚠️ A JANELA E O MÍNIMO ESCALAM JUNTOS, E POR EXPOENTES DIFERENTES.
+		# O raio é uma DISTÂNCIA de tela e cresce com o fator; o mínimo é uma
+		# CONTAGEM de pixels dentro dela e cresce com o quadrado. Escalar só o
+		# raio pediria os mesmos 40 px numa janela 2,25x maior, e a prova
+		# passaria de graça — que é a versão em área do "não se aperta o teto de
+		# uma guarda até ela apanhar um segundo defeito", com o sinal trocado.
+		var raio: int = int(round(lido.dist(float(prova["raio"]))))
+		var minimo: int = int(round(lido.area(float(prova["minimo"]))))
 		var esperada := Color(String(cores[nome_cor]))
 		var achados := _contar_cor(img, ix, iy, raio, esperada)
 		_confere("o %s (lote %d) pinta %s à volta de (%d, %d) — %d px em %dx%d"
@@ -3143,7 +3252,7 @@ func _d24_a_vila_cresce() -> void:
 			var intrusos := _contar_cor(img, ix, iy, raio, proibida)
 			_confere("e o %s (lote %d) não tem %s no topo — %d px"
 					% [tipo, int(prova["lote"]), String(nome_proibida), intrusos],
-				intrusos <= D24_INTRUSOS,
+				float(intrusos) <= lido.area(float(D24_INTRUSOS)),
 				"achou %d pixels de telhado onde devia haver laje" % intrusos)
 
 	_d24_completo = true

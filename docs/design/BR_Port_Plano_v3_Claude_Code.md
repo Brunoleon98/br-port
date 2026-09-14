@@ -1385,6 +1385,34 @@ referido só por `scenes/tests/AssetPlacementTest.gd`, que não é exportado. É
 `barco_medio` outra vez, num prop que nunca chegou a doca nenhuma — ou ele entra
 no mapa, ou sai do catálogo. **Fica para o Bruno decidir qual.**
 
+### ✅ A ALAVANCA A ESTÁ FECHADA (14/09) — o mapa entrega os 1080 do arquivo
+
+`docs/decisoes/025`. O `svg/scale` dos quatro SVG de mapa passou a **1,5** e os
+três nós ganharam `expand_mode`. Medido com o ThorVG do jogo, na janela do
+`MapaWrap`: o **pico de cada fronteira sobe +52,6%** (o 1,5× teórico ao ponto) e
+**5,12% dos pixels mudam acima do piso de Weber**. Custa **+412.240 B no `.pck`**
+(+10,30%) e +9,89 MB de VRAM. O portão passou — a diferença vê-se a 1080×1920,
+peça a peça, no recorte a 3×.
+
+**Três coisas que este item previa saíram diferentes, e ficam escritas:**
+
+1. ⚠️ **A varredura de constantes em pixel não era precisa.** A alavanca A não
+   toca no gerador, e um `stroke-width` do `viewBox` de 1080 mede os MESMOS
+   px físicos no telefone antes e depois — subir o `svg/scale` remove uma
+   redução, não amplia um desenho. A armadilha vale para a **B**.
+2. ⚠️ **O mapa tem DUAS camadas.** O campo da água é um raster de 720×720
+   embutido no SVG — **43% da janela**, e nenhum `svg/scale` lhe dá informação.
+   Melhora na mesma (deixa de fazer três reamostragens), e não pixeliza porque
+   desenha campo contínuo. Subi-lo é sessão própria (§8 da `025`).
+3. ⚠️ **A bateria de 720 não responde à pergunta** — ela é travada a 720×1280, e
+   a 720 a textura de 1080 volta a ser reduzida. E o aparelho pequeno foi medido:
+   **melhora**, com os pontos soltos a caírem de 3,10% para 2,90% das fronteiras.
+
+**Sobra a metade que importa, e ela não é de configuração:** *resolução sozinha
+compra nitidez, não detalhe*. A tabela do que hoje está recusado POR TAMANHO
+continua inteira, na Etapa 7 do plano de arte — são cinco ou seis sessões, e a
+**ordem é do Bruno**.
+
 ### 🆕 A RESOLUÇÃO DOS ASSETS, E O DETALHE QUE ELA DESTRAVA — proposto em 14/09
 
 **Item novo, e a ORDEM é do Bruno** — ele não entra na fila numerada até ele o
@@ -1404,7 +1432,7 @@ que desenha em pixel, a tabela útil é a traduzida.
 
 | | O que muda | Custo | Ganho de pixel |
 |---|---|---|---|
-| **A — o mapa** | `svg/scale` 1.0 → 1.5 nos quatro SVG de mapa | 3 nós ganham `expand_mode`/`stretch_mode`; o import regera | **1,5× real** |
+| **A — o mapa** ✅ | `svg/scale` 1.0 → 1.5 nos quatro SVG de mapa | **medido: +412 KB no `.pck`, +9,89 MB de VRAM** (`025`) | **+52,6% de pico na fronteira** |
 | **B — os props** | `RESOLUCAO` 512 → 768 em `gerar_props_iso.py` | ~31 nós de `Main.tscn`/`Dock.tscn`, o manifest, o pivô da lança, e uma releva do kit inteiro | **1,5× real** |
 | **C — o viewport** | 720×1280 → 1080×1920 | todo `offset` de toda `.tscn`, o `MEIA_LARG`, as âncoras, o teste de design | **NENHUM** |
 
