@@ -39,6 +39,24 @@ que diz que arredondar as estacas do píer não muda nada.
 3. **A rua parou em 1,8** — alargá-la empurra o `RUA_RECUO` e o enquadramento
    inteiro (`012`). Continua a ser sessão própria.
 
+## E entrou um item NOVO na §7, proposto no fim do dia
+
+**A resolução dos assets, e o detalhe que ela destrava.** O Bruno perguntou se
+valia a pena aumentar a resolução do jogo para poder detalhar melhor. A §7 do
+plano tem o item inteiro e a Etapa 7 do plano de arte tem a metade de desenho.
+O resumo em três linhas:
+
+- **o viewport NÃO se mexe** — com `stretch/mode="canvas_items"` o jogo já
+  desenha a 1080 num telefone de 1080; o 720 é sistema de coordenadas;
+- **o mapa já carrega a precisão que falta** — os quatro SVG declaram 720 sobre
+  `viewBox` de 1080, e o importador está a deitar fora um terço deles;
+- **resolução sozinha compra nitidez, não detalhe.** O que ela paga é o
+  orçamento de detalhe, e o plano lista o que hoje está recusado POR TAMANHO,
+  com o número de cada recusa.
+
+Não é uma sessão: são cinco ou seis. **A ordem é do Bruno**, e nada disto entra
+na fila numerada até ele o pôr lá.
+
 ## O que espera o Bruno, e nenhuma sessão destrava
 
 - **A5** — olhar o antes/depois de toda a trilha de arte, agora com a costa e os
