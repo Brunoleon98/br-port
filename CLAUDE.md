@@ -1481,6 +1481,15 @@ tranca isso.
 Uma sessão que tenta fazer tudo entrega tudo pela metade, e a seguinte não sabe
 o que ficou por acabar. Meia página para evitar isso.
 
+⚠️ **E O TETO DO ESTADO RECUSA DEPOIS DE O COMMIT ESTAR ESCRITO, que é o
+momento em que menos apetece parar.** Em 14/09 o fecho encadeou
+`conferir_docs.py && git commit` sem olhar: o conferidor reprovou por 202 bytes,
+o `&&` não segurou nada porque o commit vinha de um comando à parte, e a sessão
+empurrou com o CI vermelho. Comprimir custou três minutos e não dependia de
+pensar em nada — **o custo era só a vontade de ter acabado**. Num fecho, rode
+TODAS as verificações e leia o código de saída de cada uma **antes** de escrever
+a mensagem de commit, e nunca no mesmo comando que ela.
+
 **Uma sessão fecha com o `ESTADO_DO_PROJETO.md` em dia, ou não fecha.** É o
 único artefato crítico que nenhum teste protege — e quando envelhece, a sessão
 seguinte trabalha com uma fotografia errada. Em 02/09 ele tinha dobrado de
