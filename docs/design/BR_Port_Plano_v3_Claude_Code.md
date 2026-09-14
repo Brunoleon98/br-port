@@ -1403,7 +1403,8 @@ peça a peça, no recorte a 3×.
 2. ⚠️ **O mapa tem DUAS camadas.** O campo da água é um raster de 720×720
    embutido no SVG — **43% da janela**, e nenhum `svg/scale` lhe dá informação.
    Melhora na mesma (deixa de fazer três reamostragens), e não pixeliza porque
-   desenha campo contínuo. Subi-lo é sessão própria (§8 da `025`).
+   desenha campo contínuo. **Subi-lo foi construído, medido e REJEITADO** —
+   `026`, abaixo.
 3. ⚠️ **A bateria de 720 não responde à pergunta** — ela é travada a 720×1280, e
    a 720 a textura de 1080 volta a ser reduzida. E o aparelho pequeno foi medido:
    **melhora**, com os pontos soltos a caírem de 3,10% para 2,90% das fronteiras.
@@ -1412,6 +1413,27 @@ peça a peça, no recorte a 3×.
 compra nitidez, não detalhe*. A tabela do que hoje está recusado POR TAMANHO
 continua inteira, na Etapa 7 do plano de arte — são cinco ou seis sessões, e a
 **ordem é do Bruno**.
+
+### ✅ E O RASTER DA ÁGUA FICA A 720 (14/09) — construído, medido, rejeitado
+
+`docs/decisoes/026`. O que sobrava da alavanca A. O campo da água foi levado
+para o espaço DESENHO e gerado a 1080×1080 — 2,25× os pixels —, e a régua da
+`025`, num modo novo de **dois arquivos**, respondeu com o mapa inteiro a
+1080: **pico da fronteira 29,73 → 29,71 na região do raster, e 0,00% da janela
+muda acima do piso de Weber.** Por canal, o maior \|Δ\| RGBA é **4/255**, e
+nenhum dos 1.069.200 pixels chega a 6.
+
+⚠️ **Resolução só se paga onde há FRONTEIRA para afiar, e este raster não tem
+nenhuma** — é uma rampa contínua de distância à costa, e tudo o que tem traço
+naquela água é vetor, que já ganhou na alavanca A. "43% da janela" é verdade e
+não quer dizer nada.
+
+O custo ficou medido para quem lá voltar: **1,8× o tempo de geração** dos dois
+mapas grandes (22,6 s → 40,8 s, em voltas alternadas), +1,24 MB de repositório —
+e o `.pck`
+**ENCOLHE** 39.296 B, porque o pacote leva o `.ctex` e nunca o SVG, e o campo
+nativo comprime melhor do que o mesmo campo ampliado. Dado melhor, resultado
+invisível: não paga trinta segundos de CI a cada push.
 
 ### 🆕 A RESOLUÇÃO DOS ASSETS, E O DETALHE QUE ELA DESTRAVA — proposto em 14/09
 

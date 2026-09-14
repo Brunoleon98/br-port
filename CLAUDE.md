@@ -301,6 +301,20 @@ Teste e import rodam sem tela.
    defeito que ele deveria pegar e veja-o reprovar antes de confiar nele. Um
    validador que nunca reprovou nada não é um validador — e, na primeira vez
    que se fez isto aqui, quem estava furado era o teste, não o validador.
+   ⚠️ **E A RÉGUA PRECISA DO MESMO DEFEITO INJETADO QUE O VALIDADOR — e precisa
+   mais.** Um validador que nunca reprovou dá um verde de graça; uma régua muda
+   dá um NÚMERO, e o número vira a conclusão da sessão. Em 14/09 a medição do
+   raster da água devolveu "0,00% dos pixels mudam" — e uma régua que estivesse
+   a comparar o arquivo consigo mesmo teria dito exatamente o mesmo. O que
+   separa as duas coisas são duas corridas de dois segundos: **o mesmo arquivo
+   dos dois lados tem de dar zero EXATO** (deu: Δ máx 0,00, o que prova que ela
+   não tem ruído próprio), **e um par que se sabe diferente tem de dar muito**
+   (o mapa do pátio deu 5,89% da janela e Δ máx 145). Só depois disso "zero"
+   quer dizer zero.
+   ⚠️ **E TEMPO COMPARA-SE EMPARELHADO, uma volta de cada.** O mesmo comando de
+   geração deu 18,71 s de manhã e 22–23 s à tarde neste contêiner: **20% de
+   deriva da máquina**, que é mais do que muita diferença que este projeto mede.
+   Duas corridas soltas em horas diferentes comparam a carga, não o código.
    **E confira que o defeito injetado pegou.** Dois já não pegaram: um usou uma
    variável de ambiente que a sessão já trazia definida, e outro quebrou o
    GDScript de tal jeito que o passo anterior falhou calado e reaproveitou o
@@ -518,6 +532,15 @@ derivada delas.
   desenha campo CONTÍNUO. Medir o quadro todo de uma vez misturaria o ganho do
   vetor com o zero do raster; a máscara sai de rasterizar o SVG uma segunda vez
   sem a `<image>`.
+  ⚠️ **E ELE FICA A 720 — construído a 1080, medido e REJEITADO** (`026`).
+  **Resolução só se paga onde há FRONTEIRA para afiar**, e este raster não tem
+  nenhuma: é uma rampa contínua da distância à costa, e tudo o que tem traço
+  naquela água — pedras, espuma, riscos de onda, linha de areia — é VETOR, e já
+  ganhou na alavanca A. A 1080 o pico da fronteira não se mexe (29,73 → 29,71) e
+  o maior Δ de canal na janela é **4/255**, com ZERO pixels a chegarem ao piso
+  de Weber — por 1,8x o tempo de geração dos dois mapas grandes. **"43% da
+  janela" e "2,25x de pixels" são verdade e não querem dizer nada:** a pergunta
+  nunca é quantos pixels a camada tem, é que fronteira há dentro dela.
   ⚠️ **E A BATERIA DE 720 NÃO RESPONDE À PERGUNTA DA RESOLUÇÃO.** Ela é travada
   a 720x1280, e a 720 a textura de 1080 é reduzida pela GPU de volta a quase o
   que era. O antes/depois honesto é a **1080x1920** — 1,5x exato nos dois eixos.
@@ -1690,6 +1713,12 @@ armadilha de uma função, no comentário dela.
   `json.dump()`, deixou o `.json` com **zero bytes** e o commit anterior por
   cima. É a regra "ao corrigir um, VARRA OS IRMÃOS" aplicada a dois `open()` no
   mesmo arquivo.
+  ⚠️ **E VALE PARA O SCRIPT DESCARTÁVEL QUE EDITA UM ARQUIVO DO PROJETO.** Em
+  14/09 um `io.open(p, "w", newline=...)` com o argumento mal escapado rebentou
+  **depois** de truncar, e um arquivo versionado de 253 linhas ficou com ZERO
+  bytes — salvo pelo `git checkout` só por já estar commitado. Edição em massa
+  monta o texto todo, escreve num temporário e faz `os.replace`; nunca abre o
+  original para escrita.
 - **`destino[chave] += x` num Dictionary CRIA a chave em silêncio.** É a irmã
   do `.get(chave, omissão)` acima, do outro lado: ali um erro de digitação vira
   número plausível na LEITURA, aqui vira dinheiro escrito numa chave que a soma

@@ -50,8 +50,8 @@ quatro SVG declaram 720 sobre `viewBox` de 1080 e o importador deitava fora um
 terço: com `svg/scale=1.5` e `expand_mode` nos três nós, o pico de cada
 fronteira sobe **+52,6%** e 5,12% da janela muda acima do piso de Weber. Custa
 +412 KB no `.pck`; a 720 **melhora**, não piora. ⚠️ **O campo da água é raster
-de 720 embutido** — 43% da janela, e a única parte cuja precisão não está no
-arquivo. Projeção, âncoras e pegada intactas.
+de 720 embutido, e assim FICA**: construído a 1080, não muda um pixel acima do
+piso de Weber (`026`). Projeção, âncoras e pegada intactas.
 
 **E OS CASCOS TÊM CURVA** (`024`, segunda fatia do item 8): medida a silhueta de
 cada prop, quem estava quadrado **não eram as construções** — era o casco (0,620
@@ -149,10 +149,8 @@ com o resumo na §7 do plano, o custo em `HISTORICO.md` e o porquê nas `011` a
 `025`. Fechou-se tudo o que não dependia do Bruno; sobram o rodapé (gate A5),
 três itens de economia (Fase 2) e a madeira podre (A4). **Livre: A8.**
 
-⚠️ **Sobraram DUAS coisas medidas e por fazer**, cada uma sessão própria: a rua
-parou em **1,8** (alargá-la empurra o `RUA_RECUO` e o enquadramento, `012`), e o
-**raster da água continua a 720** — 43% da janela, e a única parte do mapa cuja
-precisão não está no arquivo (`025` §8).
+⚠️ **Sobra UMA coisa medida e por fazer**, e é sessão própria: a rua parou em
+**1,8** — alargá-la empurra o `RUA_RECUO` e o enquadramento (`012`).
 
 O resto continua por começar, e **a ordem é dele**.
 
@@ -200,7 +198,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs de IA e redimensiona |
 | `tools/gerar_mapa_iso.py` | Gera mapa, vila, vias e o campo costeiro contínuo; raster determinístico, acumulado com `math.fsum`. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`** |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
-| `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo. Compara o que o jogador VÊ e separa o vetor do raster da água (`025`) |
+| `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo. Separa o vetor do raster da água e compara o que o jogador VÊ: um arquivo a duas escalas (`025`), ou dois arquivos à mesma (`026`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — que fração da silhueta de um prop corre nas três direções que uma caixa sabe desenhar, normalizada contra formas ideais da MESMA caixa envolvente. Diz "não sei" onde a peça é pequena ou esbelta demais para a pergunta (`024`) |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — prop não é artefato byte-reprodutível, e `cmp` responde sempre "mudou" |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |

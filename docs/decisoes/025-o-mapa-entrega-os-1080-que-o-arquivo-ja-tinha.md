@@ -12,7 +12,8 @@ aparelho, e o 720 é sistema de coordenadas.
 
 **Nada aqui encosta no `GameState.gd`, na projeção, nas âncoras ou na pegada
 publicada.** Das catorze imagens da bateria mudaram as **sete que mostram
-mapa**; as sete de painel e as duas folhas de contato saíram byte a byte iguais.
+mapa**; as cinco de painel e as duas folhas de contato saíram byte a byte
+iguais. Conferido na corrida do PR (run 34834184484).
 
 ---
 
@@ -125,6 +126,33 @@ e as duas espumas são camadas permanentes: os 17,80 MB são simultâneos.
 
 O `.pck` sai do `--export-pack`, que não precisa dos templates de exportação —
 é por isso que este número foi medido aqui, e não deixado para o CI.
+
+### E o que o jogador baixa mede-se no CI, porque aqui não se constrói
+
+O APK não sai deste contêiner (o `dl.google.com` responde 403 e o SDK do Android
+é inalcançável) e o Web precisa de ~1,2 GB de templates que só o CI cacheia.
+Os dois números vêm do `ls -la` do job **Export — APK e Web**, na corrida do PR
+contra a corrida da BASE — `6abb25d` na main (run 34826355691) contra `5b9cc5f`
+no PR 51 (run 34834184511), as duas verdes:
+
+| | antes | depois | |
+|---|---|---|---|
+| **APK** (debug, assinado) | 31.538.604 B | **31.952.300 B** | **+413.696 B, +1,31%** |
+| **`brport-web`** (a pasta, 5 arquivos) | 42.046.165 B | **42.458.485 B** | **+412.320 B, +0,98%** |
+| — dos quais `index.pck` | 4.002.856 B | 4.415.176 B | +412.320 B, +10,30% |
+
+**O `.pck` medido aqui era o limite INFERIOR, e acertou.** Previu o custo do Web
+a **80 bytes** — o Web cobra exactamente o que o pack cresceu, porque o
+`index.wasm` (37.700.666 B), o `index.js` e o `index.html` não mexem um byte — e
+o do APK a **1.456**, que é o alinhamento e a assinatura por cima do pack
+embutido. (O pack do Web sai 208 B menor do que o do `--export-pack`: são dois
+presets, e a diferença é constante nos dois lados.)
+
+⚠️ **O QUE MUDA ENTRE AS TRÊS LINHAS É O DENOMINADOR, e é ele que decide se o
+custo assusta.** Os mesmos ~412 KB são **+10,30% do pack, +1,31% do APK e +0,98%
+do Web**, porque o que domina os dois entregáveis é o runtime do Godot e não o
+jogo. Ler o número do pack como "o download cresceu 10%" seria dez vezes o que o
+jogador paga — e é a razão de estas duas linhas não poderem ficar por medir.
 
 ## 6. O portão: a diferença vê-se, e o aparelho pequeno não piora
 
