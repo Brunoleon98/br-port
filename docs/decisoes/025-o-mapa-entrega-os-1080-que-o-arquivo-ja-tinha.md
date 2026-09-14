@@ -126,6 +126,15 @@ e as duas espumas são camadas permanentes: os 17,80 MB são simultâneos.
 O `.pck` sai do `--export-pack`, que não precisa dos templates de exportação —
 é por isso que este número foi medido aqui, e não deixado para o CI.
 
+⚠️ **DUAS LINHAS DESTA TABELA FICARAM EM ABERTO, e não por esquecimento.** O
+**APK** não se constrói neste contêiner (o `dl.google.com` responde 403 por
+política da organização) e o **`brport-web`** precisa de ~1,2 GB de templates
+que só o CI cacheia. Os dois saem em Artifacts a cada push, e é lá que se leem.
+O `.pck` acima é o limite inferior de ambos — ele é o que os dois empacotam —,
+mas nenhum dos dois é só o `.pck`, e afirmar o contrário seria escrever um
+número que ninguém mediu. **A próxima sessão fecha esta tabela** lendo a corrida
+de `Brunoleon98/br-port#51`.
+
 ## 6. O portão: a diferença vê-se, e o aparelho pequeno não piora
 
 O portão era o do bote da `024` — *se a captura a 1,5× não mostrar diferença que

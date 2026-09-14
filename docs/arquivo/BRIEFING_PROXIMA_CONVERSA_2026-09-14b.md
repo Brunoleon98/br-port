@@ -21,6 +21,7 @@ o arquivo já tinha.
 | `.pck` — o que o APK e o `brport-web` carregam | 4.003.064 → **4.415.304 B (+10,30%)** |
 | VRAM (RGBA8, sem mipmaps) | 7,91 → 17,80 MB |
 | a 720 (aparelho pequeno) | **melhora**: pontos soltos de 3,10% para 2,90% das fronteiras |
+| **APK e `brport-web`** | ⚠️ **em aberto** — ver abaixo |
 
 **O portão passou**, e a prova é a captura a **1080×1920** ampliada 3×: as
 fiadas do telhado deixam de ser um borrão e viram linhas, as barras da
@@ -56,6 +57,25 @@ base a passar entre eles: a fita da `013` dá **42** contra um piso de 20 (mapa
 certo: 5) e a duna sobre a rua dá **66** (mapa certo: 0).
 
 ## O que sobrou desta sessão, e é pequeno
+
+0. ⚠️ **A TABELA DE CUSTO TEM DUAS LINHAS POR FECHAR, e é a primeira coisa a
+   fazer — leva minutos e não precisa de sessão própria.** O **APK** não se
+   constrói neste contêiner (o `dl.google.com` responde 403 por política da
+   organização) e o **`brport-web`** precisa de ~1,2 GB de templates que só o CI
+   cacheia. Os dois saem em Artifacts a cada push, na corrida de
+   [Brunoleon98/br-port#51](https://github.com/Brunoleon98/br-port/pull/51) —
+   que é o PR desta alavanca. O `.pck` medido (+412.240 B, +10,30%) é o limite
+   INFERIOR dos dois, porque é o que ambos empacotam; nenhum deles é só o
+   `.pck`, e escrever o número do `.pck` na linha do APK seria inventar uma
+   medição. Ler os dois tamanhos e fechar a tabela do §5 da `025`.
+
+   **E confira de caminho o `brport-captura` da mesma corrida:** ele diz quais
+   imagens mudaram contra a base, e a resposta esperada é **as sete que mostram
+   mapa** — as sete de painel e as duas folhas de contato saíram byte a byte
+   iguais aqui. Se o runner discordar, é achado e não ruído. Duas coisas que
+   NÃO são falha: o workflow fotografa também a base do PR, e o
+   `medir_resolucao_mapa.gd` é ferramenta nova — aparece como "novo" em vez de
+   antes/depois na primeira corrida.
 
 1. **O raster da água a 1080** (o `SAIDA` do `gerar_mapa_iso.py`). É 43% da
    janela e a única parte do mapa cuja precisão não está no arquivo. ⚠️ Subi-lo
@@ -103,13 +123,23 @@ certo: 5) e a duna sobre a rua dá **66** (mapa certo: 0).
 Continuando o BR Port. Leia primeiro CLAUDE.md, docs/ESTADO_DO_PROJETO.md,
 docs/decisoes/025 e docs/arquivo/BRIEFING_PROXIMA_CONVERSA_2026-09-14b.md.
 
-A alavanca A da resolução está FECHADA e medida — confirme que o PR dela foi
-integrado e NÃO a refaça. Em particular: não mexa no viewport (alavanca C,
-medida, não dá um pixel) e não varra o gerador do mapa à procura de constante
-em pixel por causa dela — a 025 §4 mostra, com a conta, que a largura física de
-todo traço é a mesma antes e depois.
+A alavanca A da resolução está FECHADA e medida (PR Brunoleon98/br-port#51) —
+NÃO a refaça. Em particular: não mexa no viewport (alavanca C, medida, não dá um
+pixel) e não varra o gerador do mapa à procura de constante em pixel por causa
+dela — a 025 §4 mostra, com a conta, que a largura física de todo traço é a
+mesma antes e depois.
 
-O que sobrou dela é UMA coisa pequena e é o que quero: SUBIR O RASTER DA ÁGUA.
+COMECE POR FECHAR A TABELA DE CUSTO DA 025, que tem duas linhas em aberto e
+leva minutos. O APK não se constrói neste contêiner (dl.google.com responde 403)
+e o brport-web precisa de 1,2 GB de templates que só o CI cacheia: os dois saem
+em Artifacts na corrida do PR #51. Leia os dois tamanhos, contra a corrida da
+base, e escreva-os no §5 da 025 — o .pck que eu medi (+412.240 B, +10,30%) é o
+limite INFERIOR deles e não substitui a medição. Confira de caminho o
+brport-captura da mesma corrida: a resposta esperada é que mudaram as SETE
+imagens que mostram mapa e mais nenhuma. Não é falha o workflow fotografar
+também a base, nem o medir_resolucao_mapa.gd aparecer como "novo".
+
+Depois disso, o item da sessão é UMA coisa pequena: SUBIR O RASTER DA ÁGUA.
 O campo de cor da água é um PNG de 720x720 embutido no SVG (`SAIDA` no
 gerar_mapa_iso.py), esticado sobre o viewBox de 1080 — são 43% da janela, e a
 única parte do mapa cuja precisão não está no arquivo.
