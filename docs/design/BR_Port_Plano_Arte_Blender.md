@@ -1250,7 +1250,27 @@ paga. As estacas do píer (9×32 → 13×48) continuam esbeltas, e a `024` mediu
 a gaivota vai de 15 para 22,5 px contra um corte de 24. E o tosado do casco
 passa de 1,2 para 1,8 px de tela, ainda abaixo dos 3 em que a régua vê uma curva.
 
-#### A armadilha desta etapa, e é a maior deste documento
+#### ✅ A metade de CONFIGURAÇÃO está feita (14/09), e a de DESENHO continua aqui
+
+`docs/decisoes/025`. O mapa importa a 1,5× desde 14/09: o pico de cada fronteira
+subiu **+52,6%** e 5,12% da janela mudou acima do piso de Weber. **Isso é
+nitidez, e esta etapa é sobre o que ela PAGA** — a tabela acima continua toda por
+desenhar, e cada linha dela é uma sessão própria.
+
+⚠️ **E O ORÇAMENTO NOVO NÃO É O MESMO EM TODO O MAPA.** O campo de cor da água é
+um raster de 720×720 embutido no SVG (43% da janela): ali a peça continua a ser
+desenhada na escala de ontem até alguém subir o `SAIDA` do gerador, que é sessão
+própria. O que ganhou orçamento foi o **vetor** — vila, rua, praia, cais,
+telhados, pedras.
+
+#### A armadilha desta etapa — e ela vale para a B, não para a A
+
+⚠️ **A ALAVANCA A JÁ PASSOU E NÃO A ENCONTROU, POR UMA RAZÃO QUE VALE SABER.**
+Ela não toca no gerador: o SVG é o mesmo arquivo, e um `stroke-width` escrito nas
+unidades do `viewBox` de 1080 mede os MESMOS pixels físicos no telefone antes e
+depois. Subir o `svg/scale` remove uma redução; não amplia um desenho. A
+armadilha abaixo é real para a alavanca **B** e para tudo o que se redesenhe nas
+unidades da SAÍDA — que é o resto desta etapa.
 
 ⚠️ **TODO NÚMERO EM PIXEL DESTE PROJETO FOI ESCOLHIDO OLHANDO O RENDER A 720.**
 A largura de cada traço do mapa, o passo do tabuado, as fiadas do telhado, a

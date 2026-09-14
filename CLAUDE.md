@@ -429,6 +429,13 @@ Teste e import rodam sem tela.
    troca de lado — e quando nem a contagem separa, a asserção pode simplesmente
    não valer o que custa: aquela foi construída, medida e RETIRADA, depois de se
    confirmar que o defeito que ela caçava reprovava noutra pergunta.
+   ⚠️ **E UM CORTE COLADO A UMA PONTA DA BANDA MEDIDA É SORTEIO.** A irmã das
+   duas regras abaixo, e a mais fácil de cometer depois de medir bem: em 14/09 a
+   janela nova do D20 dava **5** px no mapa certo e **42** com o defeito
+   injetado, e o corte que eu tinha escolhido era **41** — reprovava por UM
+   pixel. O número estava medido e mesmo assim não servia. Quando os dois lados
+   estão medidos, o corte vai para o MEIO da banda, e diz-se a folga que ficou
+   de cada lado (4x e 2,1x).
    ⚠️ **E NÃO SE APERTA O TETO DE UMA GUARDA ATÉ ELA APANHAR UM SEGUNDO
    DEFEITO.** É a irmã do "portão alimentado com fumaça", do outro lado: ali a
    tolerância era folgada demais para o ruído do número; aqui é a tentação de a
@@ -440,6 +447,24 @@ Teste e import rodam sem tela.
    fingir que ela defende mais** — escreva ao lado dela o que fica de fora, e
    quem prova o resto é a medição registada. Nem tudo o que se mede precisa de
    asserção.
+   ⚠️ **E DUAS PROTEÇÕES DIFERENTES PEDEM UM DEFEITO QUE QUEBRE AS DUAS.** Não é
+   a regra da "regra duplicada", é o contrário dela: ali a correção era apagar a
+   cópia, aqui as duas guardas defendem coisas distintas e ambas são precisas. A
+   areia não chega à pista por DOIS motivos — o recuo do mundo põe-na longe, e a
+   ordem de desenho põe a rua por cima —, e em 14/09 quebrar cada um sozinho não
+   reprovou nada. Antes de dar uma asserção por morta, conte quantas coisas
+   diferentes impedem o defeito de chegar até ela.
+   ⚠️ **E COR MISTURADA NUNCA CASA COM UM TOM PUBLICADO.** Na mesma caça, o
+   defeito das manchas secas não pegou porque elas saem a `opacity="0.45"`: a
+   asserção da areia do D20 só apanha areia OPACA, e isso nunca estava escrito.
+   Quando um defeito de COR não pega, pergunte primeiro se o que ele pinta chega
+   ao pixel puro.
+   **E ANTES DE CULPAR A MUDANÇA, MEÇA A VERSÃO ANTIGA COM O MESMO DEFEITO.**
+   A janela nova do D20 não apanhava a areia e a suspeita óbvia era a janela.
+   Baixar o mínimo a 1 — mais sensível do que o pixel único que lá estava —
+   continuou a dar zero, o que prova que a limitação é ANTERIOR e que a mudança
+   não perdeu poder nenhum. É barato, e é a diferença entre registar um achado e
+   reforçar um teste às cegas.
    **E DEFEITO INJETADO LONGE DA LINHA AMOSTRADA NÃO CHEGA A ELA.** Um bloco
    que percorre um caminho só vê o que o caminho cruza. Pintar a passadeira com
    a cor da calçada não reprovou o D20 e não foi falha dele: com passo
@@ -462,13 +487,44 @@ derivada delas.
   30 num quadro de 1080 e o `viewBox` do SVG entrega 720 — a câmera é o `ZOOM`,
   e o `MEIA_LARG` efetivo é 20. Quem desenha fala DESENHO; a tabela de âncoras,
   o `Main.tscn`, o `Main.gd`, o manifest BRP e o teste de design falam TELA.
-  ⚠️ **E O IMPORTADOR FECHA ESSA CONTA DEITANDO PRECISÃO FORA.** Os quatro SVG
-  de mapa declaram `width="720"` sobre `viewBox` de 1080, e o importador do
-  Godot rasteriza pelo `width` com `svg/scale=1.0`: o desenho existe a 1080 e
-  chega à textura a 720, depois de o que o `canvas_items` o volta a ampliar 1,5×
-  no aparelho. Uma redução seguida de uma ampliação. Subir o `svg/scale` é a
-  alavanca A da §7 do plano — e pede `expand_mode`/`stretch_mode` nos três nós
-  de mapa, que hoje desenham a textura no tamanho nativo dela.
+  ⚠️ **E A TEXTURA JÁ NÃO TEM O TAMANHO DO ESPAÇO TELA.** Os quatro SVG de mapa
+  declaram `width="720"` sobre `viewBox` de 1080, e o importador rasteriza pelo
+  `width`: até 14/09, com `svg/scale=1.0`, o desenho existia a 1080 e chegava à
+  textura a 720, que o `canvas_items` voltava a ampliar 1,5× no aparelho — uma
+  redução seguida de uma ampliação. Hoje eles importam a **1,5** e os três nós
+  de mapa têm `expand_mode = 1`, de modo que o rect continua com 720 de
+  COORDENADAS e a textura carrega 1080 PIXELS (`docs/decisoes/025`). Logo, o
+  espaço TELA continua a ser 720 e é isso que a tabela de âncoras publica; quem
+  amostra a textura por coordenada de tela tem de escalar, e quem o faz num
+  lugar só é o `_mapa_lido` do teste de design.
+  ⚠️ **E SUBIR O `svg/scale` REMOVE UMA REDUÇÃO — NÃO AMPLIA UM DESENHO.** Desde
+  14/09 os quatro mapas importam a **1,5** e a textura sai com os 1080 que o
+  arquivo já tinha (`docs/decisoes/025`). A armadilha que o plano previa — *"a
+  1,5x um traço de 1 px passa a 1,5 e um vinco calibrado para quase sumir
+  reaparece"* — **não vale aqui**, e a conta diz porquê: um `stroke-width` está
+  em unidades do `viewBox` de 1080, e num telefone de 1080 ele media 1,6 px
+  físicos antes (rasterizado a 1,067 e ampliado pelo `canvas_items`) e mede os
+  mesmos 1,6 px depois, agora nítidos. Ela vale para a alavanca **B**, que
+  redesenha props nas unidades da SAÍDA. Antes de varrer constantes em pixel por
+  causa de uma mudança de escala, pergunte se o que mudou foi o DESENHO ou só a
+  amostragem dele — e confirme na medição: se o desenho tivesse sido ampliado, a
+  rampa de cada fronteira ocuparia 1,5x mais pixels; ela ficou 14,3% mais
+  estreita.
+  ⚠️ **E O MAPA TEM DUAS CAMADAS COM ESCALAS DIFERENTES.** O campo de cor da
+  água é um PNG de **720x720 embutido** no SVG, esticado sobre o `viewBox` de
+  1080: são **43% da janela** onde a precisão que falta não está no arquivo, e
+  nenhum `svg/scale` lha dá. Ele melhora na mesma, por outra razão — deixa de
+  fazer três reamostragens e passa a fazer uma —, e não se denuncia porque
+  desenha campo CONTÍNUO. Medir o quadro todo de uma vez misturaria o ganho do
+  vetor com o zero do raster; a máscara sai de rasterizar o SVG uma segunda vez
+  sem a `<image>`.
+  ⚠️ **E A BATERIA DE 720 NÃO RESPONDE À PERGUNTA DA RESOLUÇÃO.** Ela é travada
+  a 720x1280, e a 720 a textura de 1080 é reduzida pela GPU de volta a quase o
+  que era. O antes/depois honesto é a **1080x1920** — 1,5x exato nos dois eixos.
+  E o aparelho pequeno foi medido e **melhora**: o downscale de 1,5:1 age como
+  supersampling parcial, com os pontos soltos a caírem de 3,10% para 2,90% das
+  fronteiras.
+
   **A razão de não escrever 20 na constante:** altura, naquele arquivo, é
   PIXEL — o `ALT_CAIS`, as paredes da vila, a largura de cada traço —, e baixar
   só o `MEIA_LARG` encolheria a PLANTA deixando as ALTURAS paradas, com o porto
@@ -733,6 +789,22 @@ tranca isso.
   limiar DERIVADO das cores publicadas — a meio entre a família escura e a
   clara —, nunca por igualdade de tom. Aqui isso dá 92,6 com 16 pontos de folga
   de cada lado, e mancha nenhuma atravessa.
+- **⚠️ E A FRONTEIRA ENTRE DUAS TINTAS CHAPADAS NÃO É CHAPADA.** A regra acima
+  diz onde o hexadecimal exato passa — em tinta chapada — e esta diz que a
+  exceção mora DENTRO dela. O D20 reprovou o mapa CERTO em 14/09: a rota do
+  camião atravessa a fronteira entre o pavimento do pátio (`#ced4d7`) e o
+  asfalto (`#49535b`), e o pixel de antisserrilhado dessa fronteira sai a
+  `#b1b8bc` — a **3/255** da calçada (`#aeb8bf`), dentro da folga de 4 que o
+  `_mesma_cor` dá ao próprio antisserrilhado. **O valor por que uma rampa passa
+  pode calhar na banda de uma TERCEIRA cor da paleta**, e nenhuma das duas tintas
+  tem culpa. O remédio é o que o D17 e o D24 já sabiam e o D20 era o último a não
+  saber: pergunte **quanto desenho há à volta do ponto**, nunca de que cor é o
+  ponto (`docs/decisoes/025`).
+- **⚠️ E A JANELA DE UMA PROVA ESCALA COM O FATOR, MAS O MÍNIMO ESCALA COM O
+  QUADRADO DELE.** O raio é uma DISTÂNCIA, a contagem de pixels dentro dele é
+  uma ÁREA. Escalar só o raio pede os mesmos 40 px numa janela 2,25x maior, e a
+  prova passa de graça — a versão em área de "não se aperta o teto de uma guarda
+  até ela apanhar um segundo defeito", com o sinal trocado.
 - **⚠️ E DISTÂNCIA EM UNIDADES NÃO SOBREVIVE A UM DEGRAU DA COSTA.** A conta
   óbvia — `mx` do prop menos a borda do cais da banda de `my` dele — deu **6,85**
   para uma peça que o mapa pinta de `agua_media`, cuja banda acaba aos 6,0.
@@ -1408,6 +1480,15 @@ tranca isso.
 
 Uma sessão que tenta fazer tudo entrega tudo pela metade, e a seguinte não sabe
 o que ficou por acabar. Meia página para evitar isso.
+
+⚠️ **E O TETO DO ESTADO RECUSA DEPOIS DE O COMMIT ESTAR ESCRITO, que é o
+momento em que menos apetece parar.** Em 14/09 o fecho encadeou
+`conferir_docs.py && git commit` sem olhar: o conferidor reprovou por 202 bytes,
+o `&&` não segurou nada porque o commit vinha de um comando à parte, e a sessão
+empurrou com o CI vermelho. Comprimir custou três minutos e não dependia de
+pensar em nada — **o custo era só a vontade de ter acabado**. Num fecho, rode
+TODAS as verificações e leia o código de saída de cada uma **antes** de escrever
+a mensagem de commit, e nunca no mesmo comando que ela.
 
 **Uma sessão fecha com o `ESTADO_DO_PROJETO.md` em dia, ou não fecha.** É o
 único artefato crítico que nenhum teste protege — e quando envelhece, a sessão

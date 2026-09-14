@@ -230,11 +230,26 @@ offset_bottom = 722.0
 mouse_filter = 2
 clip_contents = true
 
+; ⚠️ A TEXTURA TEM 1080 E O RECT TEM 720, E ISSO É DE PROPÓSITO. Os quatro SVG
+; de mapa declaram `width="720"` sobre um `viewBox` de 1080: a geometria está
+; desenhada a 1080 e, até 14/09, o importador entregava 720 — uma redução que o
+; `canvas_items` voltava a ampliar 1,5x no aparelho. Com `svg/scale=1.5` a
+; textura passa a sair com os 1080 que o arquivo já tinha, e num telefone de
+; 1080 de largura ela cai 1:1 na tela (`docs/decisoes/025`).
+;
+; O `expand_mode = 1` (IGNORE_SIZE) é o que permite ao rect ser MENOR do que a
+; textura: no default (KEEP_SIZE) o tamanho mínimo do nó passaria a ser o da
+; textura e o mapa cresceria para 1080x1080 de coordenadas, arrastando consigo
+; a pegada, as âncoras e todo prop posicionado em cima dele. O `stretch_mode`
+; fica no default (STRETCH_SCALE), que desenha a textura no rect inteiro — a
+; razão é 1:1 nos dois, então não há aspeto a preservar.
+
 [node name="Mapa" type="TextureRect" parent="MapaWrap"]
 layout_mode = 0
 offset_right = 720.0
 offset_bottom = 720.0
 mouse_filter = 2
+expand_mode = 1
 texture = ExtResource("3")
 
 ; A ESPUMA é camada, e não fundo. Ela fica ENTRE o mapa e o cenário: por cima
@@ -247,6 +262,7 @@ layout_mode = 0
 offset_right = 720.0
 offset_bottom = 720.0
 mouse_filter = 2
+expand_mode = 1
 texture = ExtResource("espuma0")
 
 [node name="Espuma1" type="TextureRect" parent="MapaWrap"]
@@ -254,6 +270,7 @@ layout_mode = 0
 offset_right = 720.0
 offset_bottom = 720.0
 mouse_filter = 2
+expand_mode = 1
 texture = ExtResource("espuma1")
 
 [node name="Cenario" type="Control" parent="MapaWrap"]

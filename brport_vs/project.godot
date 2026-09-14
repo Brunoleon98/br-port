@@ -91,7 +91,8 @@ textures/vram_compression/import_etc2_astc=true
 ; As alternativas foram TESTADAS e são piores. `keep_width` enche a tela mas
 ; empurra tudo para cima e deixa um terço dela vazia em baixo, porque cada
 ; elemento do Main.tscn está posicionado em absoluto a partir do topo e o mapa
-; é uma textura de 720x720 que não estica. `keep_height` corta pelos lados.
+; ocupa 720x720 de coordenadas e não estica (a textura tem 1080 px desde
+; 14/09, mas o rect dela não mudou). `keep_height` corta pelos lados.
 ; Encher uma tela alta a sério é trabalho de ARTE — um mapa mais alto —, não
 ; de configuração, e não se faz às escondidas dentro de um conserto de bug.
 ;

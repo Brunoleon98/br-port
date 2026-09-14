@@ -38,21 +38,27 @@ ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14
 contínuo pela distância à costa, com meandro longo de duas senóides, e a areia
 em rampas. A paleta medida não mudou (amplitude 99,408; espuma 0,558 de Weber).
 
-**E AS DUAS PONTAS SÃO COSTA DESENHADA** (`023`), a primeira fatia do item 8: a
+**E AS DUAS PONTAS SÃO COSTA DESENHADA** (`023`, primeira fatia do item 8): a
 maior reta da linha de água caiu de 224 px para 16 e as quinas de 126,9° para
 14°. **O cais continua reto**, que é o que ele é. Linha de água, baixio, espuma,
-pedras, rampa e o campo da água saem todos de `ponto_costeiro()`, uma família
+pedras, rampa e o campo da água saem de `ponto_costeiro()`, uma família
 concêntrica que não se cruza — é isso que impede costura. O **D28** tranca a
-forma; o raster continua lido por D20, D21, D24 e D27.
+forma; o raster é lido por D20, D21, D24 e D27.
 
-**E OS CASCOS TÊM CURVA** (`024`), a segunda fatia: medida a silhueta de cada
-prop contra o que uma caixa alinhada aos eixos sabe desenhar, quem estava
-quadrado **não eram as construções** — era o casco (0,620 sozinho, contra 0,563
-do galpão), e o contêiner por cima TAPAVA-O. Os nove barcos saem agora de
-`contorno_casco()` — entrada, corpo paralelo e esgorjadura —, com linha de fundo
-curva própria e o guarda-corpo a seguir o bordo. Armazém, escritório, convés do
-píer, treliça, pallet e contêiner **ficam quadrados, e é decisão**: são caixas de
-verdade. O **D29** tranca a forma da linha de fundo.
+**E O MAPA ENTREGA OS 1080 QUE O ARQUIVO JÁ TINHA** (`025`, alavanca A). Os
+quatro SVG declaram 720 sobre `viewBox` de 1080 e o importador deitava fora um
+terço: com `svg/scale=1.5` e `expand_mode` nos três nós, o pico de cada
+fronteira sobe **+52,6%** e 5,12% da janela muda acima do piso de Weber. Custa
++412 KB no `.pck`; a 720 **melhora**, não piora. ⚠️ **O campo da água é raster
+de 720 embutido** — 43% da janela, e a única parte cuja precisão não está no
+arquivo. Projeção, âncoras e pegada intactas.
+
+**E OS CASCOS TÊM CURVA** (`024`, segunda fatia do item 8): medida a silhueta de
+cada prop, quem estava quadrado **não eram as construções** — era o casco (0,620
+contra 0,563 do galpão), com o contêiner por cima a TAPÁ-LO. Os nove barcos saem
+de `contorno_casco()`, com linha de fundo curva própria e o guarda-corpo a
+seguir o bordo. Armazém, escritório, convés do píer, treliça, pallet e contêiner
+**ficam quadrados, e é decisão**: são caixas de verdade. O **D29** tranca-o.
 
 **A fauna tem seis espécies em nove pontos** — gaivota, maria-farinha e
 tartaruga na costa; cachorro, quero-quero e capivara em terra. Medem **15 / 12 /
@@ -87,17 +93,14 @@ o da ESTRUTURA a que o motivo está preso; oficina e posto são Fase 2 (`008`).
 **A partida grava-se** — uma linha JSON por acontecimento, com o tempo de cada
 turno, sem o nome de quem jogou (`006`). Sai pelo menu de pausa.
 
-**O jogo tem som:** 14 efeitos sintetizados por `tools/gerar_sons.py`, num
-autoload com prioridade, dois buses e sliders. São de RASCUNHO e esperam o
-Bruno ouvir.
+**O jogo tem som:** 14 efeitos de `tools/gerar_sons.py`, num autoload com
+prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
 
 **E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`). O botão sai da linha
-do Construir — não havia altura livre no rodapé —, e a tela é um aparelho de
-400×680, porque a PROPORÇÃO é o que faz a metáfora ler. Dentro há o **diário**,
-que abre uma vez no começo e não tinha como ser relido, e quatro portas
-FECHADAS — cidade, lojas, missões, análise (itens 18 a 21), cada uma um quadrado
-apagado que nunca foi botão. O menu de pausa é sistema; isto é mundo. **É casca,
-e de propósito.**
+do Construir, e a tela é um aparelho de 400×680, porque a PROPORÇÃO é o que faz
+a metáfora ler. Dentro há o **diário** (que abre uma vez e não tinha como ser
+relido) e quatro portas FECHADAS — cidade, lojas, missões, análise (itens 18 a
+21). O menu de pausa é sistema; isto é mundo. **É casca, e de propósito.**
 
 **Nada de interface pousa sobre o mapa:** a vaga é cenário, o cartão é barra, e
 o número é tinta no cais.
@@ -107,9 +110,8 @@ verdade** — parede desabada, meio telhado, portão fora do trilho.
 
 **O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
 central e passadeiras), calçada, acesso a cada berço, **duas fileiras de casas**
-e uma **viela de terra entre elas**, único acesso da de trás — mais rala, para a
-vila DESFIAR contra a mata. Tem nível (`--nivel-vila=N`): térrea, sobrado,
-prédio, e é assim que cresce a cada Fase.
+e uma **viela de terra entre elas** — a de trás mais rala, para a vila DESFIAR
+contra a mata. Tem nível (`--nivel-vila=N`): térrea, sobrado, prédio.
 
 **E a rua VIRA em vez de acabar:** cada cotovelo leva chanfro de meia largura
 de rua nas duas quinas salientes (`docs/decisoes/013`).
@@ -140,25 +142,19 @@ metade de máquina do A1 (APK e build Web a cada push). Ver `HISTORICO.md`.
 | **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais a frota de 07/09, o gradiente com fauna (9) e a costa das pontas (8). É a trilha inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
-### O que a SEGUNDA jogada devolveu (06/09) — 25 itens, triados
+### O que as duas jogadas devolveram (02–03/09 e 06/09)
 
-**Tudo em `docs/arquivo/PLAYTEST_02_ANALISE.md`**, e o resumo na §7 do plano.
+**Triadas em `docs/arquivo/PLAYTEST_01_ANALISE.md` e `PLAYTEST_02_ANALISE.md`**,
+com o resumo na §7 do plano, o custo em `HISTORICO.md` e o porquê nas `011` a
+`025`. Fechou-se tudo o que não dependia do Bruno; sobram o rodapé (gate A5),
+três itens de economia (Fase 2) e a madeira podre (A4). **Livre: A8.**
 
-**Nove blocos fechados** — 14, 10, 1, 22, 25, 3, a estrada (2, 4a, 11), 4b, a
-frota (7), o pau de carga (6), a Zona de Espera (15), o caixa (5) e o gradiente
-com fauna (9). Mais as **duas primeiras fatias do 8** (`023`, `024`). O custo
-está em `HISTORICO.md`; o porquê, nas `011` a `024`.
-
-⚠️ **Sobrou UMA coisa medida e por fazer:** a rua parou em **1,8** — alargá-la
-empurra o `RUA_RECUO` e o enquadramento inteiro (`012`). É sessão própria.
+⚠️ **Sobraram DUAS coisas medidas e por fazer**, cada uma sessão própria: a rua
+parou em **1,8** (alargá-la empurra o `RUA_RECUO` e o enquadramento, `012`), e o
+**raster da água continua a 720** — 43% da janela, e a única parte do mapa cuja
+precisão não está no arquivo (`025` §8).
 
 O resto continua por começar, e **a ordem é dele**.
-
-### O que a primeira jogada devolveu (02–03/09)
-
-**Triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e fechou-se tudo o que não
-dependia do Bruno. Sobram o rodapé (gate A5), três itens de economia (via
-`/balancear`, no pacote de Fase 2) e a madeira podre (A4). **Livre: A8.**
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
@@ -182,10 +178,10 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/ler_registros.py` | **O leitor** — resume N partidas e põe o jogador MEDIDO ao lado dos perfis supostos |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e que o gravador não grava desarmado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface e leitura raster do mapa; espera `DESIGN OK` |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface e leitura raster do mapa, em qualquer escala de import (`025`); espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, e **toda fala escrita chega ao jogo** |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
-| `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Os nove bustos saem do estúdio partilhado (`docs/decisoes/020`) |
+| `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Nove bustos (`020`) |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
@@ -193,7 +189,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
-| `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta do protótipo HTML, cantos, botões, cartão de doca, cartão de trabalhador e letreiro. Os tokens de cor de mapa saíram daqui em 30/08: quem os define é o gerador do SVG |
+| `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta, cantos, botões e cartões. Os tokens de cor de MAPA saíram daqui em 30/08: quem os define é o gerador do SVG |
 | `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem o mapa, os letreiros e a barra de docas |
 | `brport_vs/scenes/dock/Dock.tscn` | A metade de CENÁRIO de uma doca: píer, barco, guindaste, trabalhador |
 | `brport_vs/scenes/dock/DocaCartao.tscn` | A metade de INTERFACE da mesma doca: valor, turnos, trabalhador, alvo de toque |
@@ -204,10 +200,11 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs de IA e redimensiona |
 | `tools/gerar_mapa_iso.py` | Gera mapa, vila, vias e o campo costeiro contínuo; raster determinístico, acumulado com `math.fsum`. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`** |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
+| `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo. Compara o que o jogador VÊ e separa o vetor do raster da água (`025`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — que fração da silhueta de um prop corre nas três direções que uma caixa sabe desenhar, normalizada contra formas ideais da MESMA caixa envolvente. Diz "não sei" onde a peça é pequena ou esbelta demais para a pergunta (`024`) |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — prop não é artefato byte-reprodutível, e `cmp` responde sempre "mudou" |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
-| `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, em **quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado**, que quita antes do prazo (`018`). Imprime classes, motivos e o NÍVEL de cada um |
+| `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, em **quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado** (`018`). Imprime classes, motivos e o NÍVEL de cada um |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos, a 19px e ampliado — **rodar a cada ícone novo**. **Reprova ao transbordar**, como a da frota |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
@@ -230,7 +227,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
 | `tools/capturar_evidencia.sh` | Fotografias determinísticas de jogo, painéis e folhas de contato; é a evidência visual do CI |
-| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — cascos e camiões percorrendo as tabelas do jogo. Reprova se transbordar. O porquê está no `CLAUDE.md`: foto de jogo só mostra o que o sorteio escolheu |
+| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — cascos e camiões percorrendo as tabelas do jogo. Reprova se transbordar: foto de jogo só mostra o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
