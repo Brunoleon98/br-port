@@ -487,13 +487,16 @@ derivada delas.
   30 num quadro de 1080 e o `viewBox` do SVG entrega 720 — a câmera é o `ZOOM`,
   e o `MEIA_LARG` efetivo é 20. Quem desenha fala DESENHO; a tabela de âncoras,
   o `Main.tscn`, o `Main.gd`, o manifest BRP e o teste de design falam TELA.
-  ⚠️ **E O IMPORTADOR FECHA ESSA CONTA DEITANDO PRECISÃO FORA.** Os quatro SVG
-  de mapa declaram `width="720"` sobre `viewBox` de 1080, e o importador do
-  Godot rasteriza pelo `width` com `svg/scale=1.0`: o desenho existe a 1080 e
-  chega à textura a 720, depois de o que o `canvas_items` o volta a ampliar 1,5×
-  no aparelho. Uma redução seguida de uma ampliação. Subir o `svg/scale` é a
-  alavanca A da §7 do plano — e pede `expand_mode`/`stretch_mode` nos três nós
-  de mapa, que hoje desenham a textura no tamanho nativo dela.
+  ⚠️ **E A TEXTURA JÁ NÃO TEM O TAMANHO DO ESPAÇO TELA.** Os quatro SVG de mapa
+  declaram `width="720"` sobre `viewBox` de 1080, e o importador rasteriza pelo
+  `width`: até 14/09, com `svg/scale=1.0`, o desenho existia a 1080 e chegava à
+  textura a 720, que o `canvas_items` voltava a ampliar 1,5× no aparelho — uma
+  redução seguida de uma ampliação. Hoje eles importam a **1,5** e os três nós
+  de mapa têm `expand_mode = 1`, de modo que o rect continua com 720 de
+  COORDENADAS e a textura carrega 1080 PIXELS (`docs/decisoes/025`). Logo, o
+  espaço TELA continua a ser 720 e é isso que a tabela de âncoras publica; quem
+  amostra a textura por coordenada de tela tem de escalar, e quem o faz num
+  lugar só é o `_mapa_lido` do teste de design.
   ⚠️ **E SUBIR O `svg/scale` REMOVE UMA REDUÇÃO — NÃO AMPLIA UM DESENHO.** Desde
   14/09 os quatro mapas importam a **1,5** e a textura sai com os 1080 que o
   arquivo já tinha (`docs/decisoes/025`). A armadilha que o plano previa — *"a

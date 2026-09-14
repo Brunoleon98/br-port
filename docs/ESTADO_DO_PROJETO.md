@@ -150,8 +150,11 @@ com o resumo na §7 do plano, o custo em `HISTORICO.md` e o porquê nas `011` a
 (`023`, `024`); da primeira, tudo o que não dependia do Bruno — sobram o rodapé
 (gate A5), três itens de economia (Fase 2) e a madeira podre (A4). **Livre: A8.**
 
-⚠️ **Sobrou UMA coisa medida e por fazer:** a rua parou em **1,8** — alargá-la
-empurra o `RUA_RECUO` e o enquadramento inteiro (`012`). É sessão própria.
+⚠️ **Sobraram DUAS coisas medidas e por fazer:** a rua parou em **1,8** —
+alargá-la empurra o `RUA_RECUO` e o enquadramento inteiro (`012`) —, e o
+**raster da água continua a 720** (`SAIDA` no gerador), que é 43% da janela do
+mapa e a única parte cuja precisão não está no arquivo (`025` §8). As duas são
+sessão própria, e a segunda mede o custo de CI ANTES de mexer.
 
 O resto continua por começar, e **a ordem é dele**.
 

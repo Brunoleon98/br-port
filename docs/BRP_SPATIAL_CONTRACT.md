@@ -45,7 +45,17 @@ alturas paradas — o porto esticado 1,5× para cima, sem erro nenhum a apontá-
 | Espaço | O que é | Quem fala |
 |---|---|---|
 | **desenho** | o que `p()` devolve; `MEIA_LARG = 30` | tudo o que desenha o mapa |
-| **tela** | o PNG de 720 que o jogo carrega; `MEIA_LARG = 20` | `tela()`, a tabela de âncoras, o manifest BRP, `Main.tscn`, `Main.gd`, o teste de design |
+| **tela** | o sistema de coordenadas de 720 que o jogo usa; `MEIA_LARG = 20` | `tela()`, a tabela de âncoras, o manifest BRP, `Main.tscn`, `Main.gd`, o teste de design |
+
+⚠️ **E O ESPAÇO TELA NÃO É O TAMANHO DA TEXTURA, desde 14/09.** Os quatro SVG
+importam com `svg/scale=1.5` e a textura sai com **1080 px**, enquanto os três
+nós de mapa continuam com 720 de coordenadas (`expand_mode = 1`) — a geometria
+estava desenhada a 1080 e o importador deitava fora um terço dela
+(`docs/decisoes/025`). Nada disto mexe no contrato: o espaço TELA continua a ser
+720, é isso que a tabela publica, e toda âncora e pegada ficam onde estavam. O
+que muda é para quem **amostra pixels** da textura — aí a coordenada de tela
+multiplica-se pelo fator, e o fator sai da imagem contra a tabela, nunca de uma
+constante.
 
 O prop **não tem `viewBox`**: ele é PNG e cai na cena a 1:1. Quem o encolhe é
 o `ortho_scale` — e só ele. A geometria construída em `gerar_props_iso.py` não
@@ -137,7 +147,7 @@ duplica**. Ele publica:
 | `pieres` | por doca: `raiz`, `centro` e a âncora do `barco`, em px |
 | `faixas` | por degrau: `borda`, `avental`, `rua` e `vila`, em `my` |
 | `lotes` | canto e `mx`/`my` de cada lote da vila |
-| `mapa` | 720 × 720 |
+| `mapa` | 720 × 720 — o ESPAÇO, não o tamanho da textura (ver §1.1) |
 
 Criar um segundo arquivo de âncoras sem rotina de sincronização é proibido.
 
