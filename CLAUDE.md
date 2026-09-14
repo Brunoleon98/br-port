@@ -131,6 +131,18 @@ blocos, e nenhuma das cinco suítes lia aquela linha. Ao conferir uma chave de
 `project.godot`, confira o **TIPO** e não só o valor — e desconfie de toda
 string numa chave que a documentação da 4 descreve como enum.
 
+⚠️ **O `viewport_width=720` NÃO É A RESOLUÇÃO DE RENDER — é um sistema de
+coordenadas.** Com `window/stretch/mode="canvas_items"`, o Godot desenha na
+resolução NATIVA do aparelho e escala o conteúdo 2D: num telefone de 1080×2400
+o jogo já sai a 1080 de largura. Logo **subir o viewport para 1080×1920 não dá
+um pixel de informação** — daria um `offset` reescrito em toda `.tscn`, mais o
+`MEIA_LARG`, as âncoras e o teste de design, em troca de nada. Quem quiser mais
+detalhe sobe a resolução dos ASSETS, não a do viewport (a §7 do plano v3 tem as
+três alavancas medidas, e a Etapa 7 do plano de arte tem o desenho que elas
+pagam). O que o viewport decide de verdade é a PROPORÇÃO, e essa é outro
+problema: 9:16 num mundo 9:20 perde ~240 px de barra em cima e outros 240 em
+baixo, medido e escrito no `project.godot`.
+
 ⚠️ **O export Android reprova com a lista de erros VAZIA.** De uns vinte testes
 de configuração do Godot, só o do ETC2/ASTC põe `valid = false` sem escrever
 mensagem — e ele depende do SISTEMA em que se exporta, passando num Mac e
@@ -417,6 +429,17 @@ Teste e import rodam sem tela.
    troca de lado — e quando nem a contagem separa, a asserção pode simplesmente
    não valer o que custa: aquela foi construída, medida e RETIRADA, depois de se
    confirmar que o defeito que ela caçava reprovava noutra pergunta.
+   ⚠️ **E NÃO SE APERTA O TETO DE UMA GUARDA ATÉ ELA APANHAR UM SEGUNDO
+   DEFEITO.** É a irmã do "portão alimentado com fumaça", do outro lado: ali a
+   tolerância era folgada demais para o ruído do número; aqui é a tentação de a
+   fechar até o defeito seguinte cair dentro. No D29 (14/09) o primeiro defeito
+   reprovou os oito cascos e o segundo só UM; baixar o teto de 62% para 57%
+   apanharia seis dos oito — e deixaria o arrasteiro BOM a passar por dois
+   pontos, o que é vermelho na primeira vez que alguém mexer num casco. O teto
+   ficou onde estava. **Uma guarda defende o que defende; o que não se pode é
+   fingir que ela defende mais** — escreva ao lado dela o que fica de fora, e
+   quem prova o resto é a medição registada. Nem tudo o que se mede precisa de
+   asserção.
    **E DEFEITO INJETADO LONGE DA LINHA AMOSTRADA NÃO CHEGA A ELA.** Um bloco
    que percorre um caminho só vê o que o caminho cruza. Pintar a passadeira com
    a cor da calçada não reprovou o D20 e não foi falha dele: com passo
@@ -439,6 +462,13 @@ derivada delas.
   30 num quadro de 1080 e o `viewBox` do SVG entrega 720 — a câmera é o `ZOOM`,
   e o `MEIA_LARG` efetivo é 20. Quem desenha fala DESENHO; a tabela de âncoras,
   o `Main.tscn`, o `Main.gd`, o manifest BRP e o teste de design falam TELA.
+  ⚠️ **E O IMPORTADOR FECHA ESSA CONTA DEITANDO PRECISÃO FORA.** Os quatro SVG
+  de mapa declaram `width="720"` sobre `viewBox` de 1080, e o importador do
+  Godot rasteriza pelo `width` com `svg/scale=1.0`: o desenho existe a 1080 e
+  chega à textura a 720, depois de o que o `canvas_items` o volta a ampliar 1,5×
+  no aparelho. Uma redução seguida de uma ampliação. Subir o `svg/scale` é a
+  alavanca A da §7 do plano — e pede `expand_mode`/`stretch_mode` nos três nós
+  de mapa, que hoje desenham a textura no tamanho nativo dela.
   **A razão de não escrever 20 na constante:** altura, naquele arquivo, é
   PIXEL — o `ALT_CAIS`, as paredes da vila, a largura de cada traço —, e baixar
   só o `MEIA_LARG` encolheria a PLANTA deixando as ALTURAS paradas, com o porto

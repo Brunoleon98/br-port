@@ -20,7 +20,8 @@ contêiner por cima TAPAVA-O.
 Os nove barcos passaram a sair de `contorno_casco()`, com linha de fundo de
 curva própria e o guarda-corpo a seguir o bordo. O **D29** tranca a forma da
 linha de fundo. As seis suítes, o validador e o `conferir_docs.py` fecharam
-verdes; das catorze imagens da bateria mudaram as nove que mostram barco.
+verdes; da bateria mudaram só as imagens que mostram barco, e as de painel
+puro saíram byte a byte iguais.
 
 **Não refaça isto, e sobretudo não "arredonde o resto do kit".** O §4 da `024`
 lista, com número, o que é quadrado DE VERDADE — armazém, escritório, convés dos
@@ -65,24 +66,75 @@ na fila numerada até ele o pôr lá.
 - **A6** — ouvir os 14 efeitos. Este contêiner não tem placa de som;
 - **A1/A7** — jogar outra vez, e a ORDEM do resto da fila.
 
+## O próximo recorte, escolhido pelo Bruno: a ALAVANCA A
+
+Dos itens abaixo, o que ele escolheu para a próxima conversa é a **alavanca A
+da resolução dos assets** — o `svg/scale` dos quatro SVG de mapa. É a mais
+barata das três e a única que não pede um traço novo: a geometria já está
+desenhada a 1080 e o importador entrega 720.
+
+Condições do recorte, e elas são o que o mantém numa sessão:
+
+- **só o MAPA.** Os props (`RESOLUCAO` 512 → 768) são a alavanca B e são outra
+  sessão; o viewport é a alavanca C e **não se mexe**, medido;
+- **medir o ganho antes de aceitar**, e não a olho: rasterizar `porto_mapa_iso`
+  a 720 e a 1080 com o mesmo ThorVG e comparar a energia de gradiente que
+  sobrevive ao antisserrilhado;
+- **varrer o gerador à procura de constante medida em pixel.** A largura de
+  cada traço, o passo do tabuado e as fiadas foram escolhidos olhando o render
+  a 720 — a 1,5× um traço de 1 px passa a 1,5 e um vinco calibrado para quase
+  sumir pode reaparecer. É a família dos cinco números que o `ZOOM` custou em
+  05/09;
+- **medir o custo**, que ninguém mediu: o `.ctex`, o APK e o `brport-web` antes
+  e depois. O mapa a 1080² são 2,25× os pixels;
+- **o portão é o do bote da `024`:** se a diferença não se vir no telefone,
+  pare e registe a medição em vez de a deixar entrar.
+
+Os três nós de mapa (`Mapa`, `Espuma0`, `Espuma1`) desenham hoje a textura no
+tamanho nativo dela — vão precisar de `expand_mode`/`stretch_mode`, como os
+ícones do HUD já têm. E são DUAS texturas de mapa, não uma: o `Main.gd` troca
+entre `porto_mapa_iso` e `_patio` conforme o pátio esteja construído.
+
+## Os outros, e nenhum deles é urgente
+
+1. **O tronco do coqueiro** — índice 0,491, três na tela. A secção não ajuda (é
+   esbelto), mas **curvar o EIXO** curvaria a silhueta, e isso não foi medido.
+   É a única pergunta do item 8 que ficou em aberto.
+2. **`doca_concreto` não está no jogo** — referido só por
+   `scenes/tests/AssetPlacementTest.gd`, que não é exportado. O `barco_medio`
+   outra vez. Ou entra no mapa, ou sai do catálogo: **é decisão do Bruno**.
+3. **A rua parou em 1,8** — alargá-la empurra o `RUA_RECUO` e o enquadramento
+   inteiro (`012`). Sessão própria.
+4. **As alavancas B e C**, e o detalhe que a resolução destrava — §7 do plano e
+   Etapa 7 do plano de arte.
+
 ## Prompt pronto para colar
 
 ```text
 Continuando o BR Port. Leia primeiro CLAUDE.md, docs/ESTADO_DO_PROJETO.md,
-docs/design/BR_Port_Plano_v3_Claude_Code.md §7, docs/decisoes/024 e
-docs/arquivo/BRIEFING_PROXIMA_CONVERSA_2026-09-14.md.
+docs/design/BR_Port_Plano_v3_Claude_Code.md §7 (o item "A RESOLUÇÃO DOS
+ASSETS"), a Etapa 7 de docs/design/BR_Port_Plano_Arte_Blender.md,
+docs/decisoes/024 e docs/arquivo/BRIEFING_PROXIMA_CONVERSA_2026-09-14.md.
 
 Confirme que o PR do casco foi integrado e NÃO refaça os cascos nem arredonde o
 resto do kit — o §4 da 024 diz, com número, o que é quadrado de verdade.
 
-Trabalhe no único item do 8 que ficou em aberto: o TRONCO DO COQUEIRO. Comece
-pela F1: meça o que curvar o EIXO dele faz à silhueta (a secção já está medida e
-não ajuda), e decida com número se o ganho paga. São três na tela, 16x61 px.
+Trabalhe SÓ na ALAVANCA A: a resolução do MAPA, subindo o `svg/scale` dos
+quatro SVG que declaram width=720 sobre viewBox=1080. Não toque nos props
+(alavanca B) nem no viewport (alavanca C — medido, não dá um pixel).
 
-É sessão de Blender: pip install "bpy==4.5.0". Prop não é artefato
-byte-reprodutível — compare com tools/comparar_props.py e prove pela captura.
-Não toque na projeção, nas âncoras nem na pegada publicada. Feche com as seis
-suítes, o asset_validator, a captura antes/depois e o fechar-sessao.
+Comece pela F1 e meça o ANTES com número, não a olho: rasterize
+porto_mapa_iso.svg a 720 e a 1080 com o mesmo ThorVG do jogo e compare quanta
+fronteira de valor sobrevive ao antisserrilhado. Depois varra gerar_mapa_iso.py
+à procura de TODA constante medida em pixel e pergunte de que escala ela é — a
+1,5x um traço de 1 px passa a 1,5 e um vinco calibrado para quase sumir pode
+reaparecer. Meça também o custo: .ctex, APK e brport-web antes e depois.
 
-Se a medição disser que o ganho não paga, pare e registe a medição.
+Os três nós de mapa desenham a textura no tamanho nativo e vão pedir
+expand_mode/stretch_mode; são duas texturas, porque o Main.gd troca para a do
+pátio. Não toque na projeção, nas âncoras nem na pegada publicada.
+
+Feche com as seis suítes, o asset_validator, a captura antes/depois AMPLIADA e
+o fechar-sessao. Se a diferença não se vir no telefone, pare e registe a
+medição em vez de a deixar entrar.
 ```
