@@ -43,9 +43,20 @@ Dado melhor, resultado invisível — não paga trinta segundos de CI por push.
    (+1,31%)** e **Web +412.320 B (+0,98%)**. O `.pck` medido à mão previu o Web
    a 80 bytes e o APK a 1.456.
 
+## O A5 tem instrumento desde 14/09 — falta olhar
+
+A metade de máquina do gate está feita: a bateria foi corrida nos **30 pontos**
+da história em que um merge tocou em arte (02/09 → hoje), com o `.godot` apagado
+e reimportado em cada um, e daí saem **128 pares antes/depois** mais 14 fotos que
+nasceram pelo caminho. O que mudou em cada ponto sai do hash de cada PNG, não do
+olho de ninguém. A página está em <https://claude.ai/code/artifact/3eb1a5b1-bac8-4166-add8-a7e0d81f92ce>;
+o veredito de cada quadro é guardado, e **lê-se de volta com `read_db` na
+coleção `veredito`** — é assim que a resposta dele entra na fila em vez de se
+perder na conversa.
+
 ## O que espera o Bruno, e nenhuma sessão destrava
 
-- **A5** — olhar o antes/depois de toda a trilha de arte. É o gate mais atrasado;
+- **A5** — olhar. A página está montada; falta a metade dele;
 - **A4** — reler em voz alta o texto que mudou desde 13/09;
 - **A6** — ouvir os 14 efeitos. Este contêiner não tem placa de som;
 - **A1/A7** — jogar outra vez, e a ORDEM do resto da fila.

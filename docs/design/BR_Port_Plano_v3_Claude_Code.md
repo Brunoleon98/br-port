@@ -665,6 +665,24 @@ podem todos mudar o que precisa de ser desenhado.
 props. Teto realista, já medido: **~80% da leitura da referência** — o resto
 pede textura pintada, e isso está honestamente registrado.
 
+#### ✅ A metade de MÁQUINA está feita (14/09) — a trilha inteira, capturada
+
+A bateria foi corrida nos **30 pontos** da história em que um merge tocou em
+arte, do primeiro dia de captura reprodutível (02/09) até hoje, cada um com o
+`.godot` APAGADO e reimportado antes da foto — senão o Godot desenha o `.ctex`
+do ponto anterior, e a trilha inteira mentiria sem um erro. Daí saem **128 pares
+antes/depois** e 14 fotos que nasceram pelo caminho: a bateria cresceu de 5
+quadros para 14 ao longo da trilha. ⚠️ **O que mudou em cada ponto é DERIVADO do
+hash de cada PNG**, nunca escolhido a olho.
+
+Estão numa página que se abre e se percorre — toca-se na imagem e ela pisca
+entre antes e depois no mesmo sítio —, e **o veredito de cada quadro fica
+guardado**, de modo que a resposta volte como fila de trabalho em vez de voltar
+como conversa: <https://claude.ai/code/artifact/3eb1a5b1-bac8-4166-add8-a7e0d81f92ce>. Lê-se de
+volta com `read_db` na coleção `veredito`.
+
+Falta a metade dele, que é olhar.
+
 ---
 
 ### A6 — O áudio de verdade

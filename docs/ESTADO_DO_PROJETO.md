@@ -45,9 +45,8 @@ pedras, rampa e o campo da água saem de `ponto_costeiro()`, uma família
 concêntrica que não se cruza — é isso que impede costura. O **D28** tranca a
 forma; o raster é lido por D20, D21, D24 e D27.
 
-**E O MAPA ENTREGA OS 1080 QUE O ARQUIVO JÁ TINHA** (`025`, alavanca A). Os
-quatro SVG declaram 720 sobre `viewBox` de 1080 e o importador deitava fora um
-terço: com `svg/scale=1.5` e `expand_mode` nos três nós, o pico de cada
+**E O MAPA ENTREGA OS 1080 QUE O ARQUIVO JÁ TINHA** (`025`, alavanca A):
+com `svg/scale=1.5` e `expand_mode` nos três nós, o pico de cada
 fronteira sobe **+52,6%** e 5,12% da janela muda acima do piso de Weber. Custa
 +412 KB no `.pck`; a 720 **melhora**, não piora. ⚠️ **O campo da água é raster
 de 720 embutido, e assim FICA**: construído a 1080, não muda um pixel acima do
@@ -139,7 +138,7 @@ metade de máquina do A1 (APK e build Web a cada push). Ver `HISTORICO.md`.
 |---|---|---|
 | **A1** | ~~Jogar~~ — 02/09 e 06/09, e os 25 itens já triados. Fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e devolveu 7 notas — 6 aplicadas e a 7ª (os retratos) construída. Falta reler o que mudou; está no A4 do plano |
-| **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais a frota de 07/09, o gradiente com fauna (9) e a costa das pontas (8). É a trilha inteira à espera do olho dele |
+| **A5** | **Olhar** — a metade de máquina está feita | A trilha inteira foi capturada nos 30 pontos que tocaram em arte e montada numa página com o veredito guardado (§A5 do plano). Só falta o olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que as duas jogadas devolveram (02–03/09 e 06/09)
@@ -185,6 +184,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
 | `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
+| `tools/trilha_de_arte.{sh,py}` | **A trilha de arte, para o gate A5** — corre a bateria em cada ponto que tocou em arte e monta o antes/depois. O que mudou sai do hash de cada PNG |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta, cantos, botões e cartões. Os tokens de cor de MAPA saíram daqui em 30/08: quem os define é o gerador do SVG |
