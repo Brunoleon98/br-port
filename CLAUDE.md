@@ -104,6 +104,17 @@ mudada. Num gerador cuja saída o CI compara assim: `math.fsum` em vez de `sum`,
 e **arredonde o que alimenta tudo o resto** — número que sai de divisão e entra
 em toda coordenada tem de ser exato, senão a máquina decide o desenho.
 
+⚠️ **PODA QUE REORDENA UM `argmin` MUDA O RESULTADO, e aqui isso é o PNG.** O
+campo de cor da água mede, para cada um de 518 mil pixels, a distância ao
+segmento de costa mais perto — e usa o `my` do VENCEDOR. Com a costa das pontas
+desenhada foram 10 segmentos para ~500, e a força bruta passou de 5 s para 182 s
+por mapa; o índice espacial que a substituiu só é legítimo porque (a) descarta
+apenas segmentos que **não podem** ganhar, por um piso de distância, e (b) mantém
+a ORDEM original, que é quem desempata. Trocar a ordem teria mudado a cor de
+pixels que ninguém pediu para mudar, sem erro nenhum. Otimização num gerador que
+o CI compara byte a byte prova-se assim: **corra a versão lenta e a rápida e
+exija os mesmos bytes**, na entrada velha E na nova.
+
 ⚠️ **`zlib.Z_FIXED` NÃO torna um PNG byte-estável entre zlib e zlib-ng.** A
 árvore de Huffman fica fixa, mas cada implementação ainda pode escolher
 casamentos LZ diferentes. Medido no PR 45: os pixels RGBA eram idênticos e só
@@ -386,6 +397,26 @@ Teste e import rodam sem tela.
    parecem, o teste é montar o estado em que UMA falha e a outra passa; se esse
    estado não existir, a segunda é confiança de graça — e se existir dos dois
    lados, são duas asserções e não uma.
+   ⚠️ **E MÉTRICA DE FORMA LIDA DE NÚMERO PUBLICADO MEDE O ARREDONDAMENTO.**
+   Em 14/09 a guarda nova da costa (D28) media "a maior reta" juntando segmentos
+   cujo ângulo batesse a menos de meio grau — e o defeito injetado, a costa de
+   volta à escada, **não a reprovou**: a tabela publica pixel com UMA casa
+   decimal, e meio pixel de arredondamento num segmento de 6,7 px vale 0,43
+   grau. Cada par de segmentos colineares parecia dobrar, e a reta de 224 px
+   saía partida em trinta. O que reprovou foi a asserção da QUINA, ao lado — a
+   armadilha do "confira QUAL guarda reprovou" com outra roupa. A métrica que
+   pega é a de uma **régua pousada em cima do desenho**: até onde ela vai sem
+   que a linha se afaste mais de um pixel dela. Antes de medir forma, pergunte
+   quanto ruído o número que se vai ler já traz consigo.
+   ⚠️ **E PROVA DE FRONTEIRA POR PRIMEIRA TRAVESSIA NÃO SOBREVIVE AO ENFEITE.**
+   No mesmo bloco, a asserção que procurava a borda da água atravessando a linha
+   de 1 em 1 px reprovou o mapa CERTO por 9 px: sobre a rampa da praia pousam
+   pedras cinzento-azuladas, e a varredura vinda da areia dava a água por
+   começada em cima da primeira delas. Fronteira mede-se por **contagem** (uma
+   pedra de dois pixels desloca o total em dois) e não pela primeira amostra que
+   troca de lado — e quando nem a contagem separa, a asserção pode simplesmente
+   não valer o que custa: aquela foi construída, medida e RETIRADA, depois de se
+   confirmar que o defeito que ela caçava reprovava noutra pergunta.
    **E DEFEITO INJETADO LONGE DA LINHA AMOSTRADA NÃO CHEGA A ELA.** Um bloco
    que percorre um caminho só vê o que o caminho cruza. Pintar a passadeira com
    a cor da calçada não reprovou o D20 e não foi falha dele: com passo
@@ -1003,6 +1034,24 @@ tranca isso.
   de **água funda dentro da terra**, no fim do cais. Recuo é pela normal de
   cada segmento, e cada quina leva o remate que pede: chanfro onde a terra
   abraça a quina, cruzamento das duas linhas onde ela é uma ponta.
+- **⚠️ REAMOSTRAR UMA CAMINHADA COM SORTEIO MOVE TUDO O QUE ELA ESPALHA.** O
+  `andar_costa` percorre a costa a passos irregulares tirados de um `Random`, e
+  dele saem o enrocamento do cais, a espuma, as pedras da praia, o capim e as
+  árvores da restinga. Ao desenhar as pontas em 14/09, densificar a linha teria
+  mudado o número de sorteios ANTES do cais e trocado de sítio as ~300 pedras do
+  enrocamento — meia sessão de diferença visual no porto por causa de uma
+  correção na praia. A caminhada continua a medir-se na ESCADA, com os mesmos
+  comprimentos de segmento e a mesma sequência de sorteios; o que mudou foi só
+  o ponto onde cada coisa cai. **Quem mexe na geometria de uma varredura
+  sorteada pergunta primeiro o que mais bebe daquele mesmo `Random`.**
+- **⚠️ E FAMÍLIA DE CURVAS CONCÊNTRICA É O QUE IMPEDE COSTURA.** Tudo o que
+  acompanha a costa — linha de água, baixio, espuma, pedras, as três linhas da
+  rampa e o campo de cor da água — sai de `ponto_costeiro()`, uma função só, com
+  o fileto de cada quina em volta de um centro FIXO e o raio a crescer com a
+  distância à terra. Duas curvas assim nunca se cruzam, e quando o raio chega a
+  zero a curva volta a ser a quina de sempre — que é como o cais fica byte a
+  byte igual sem uma linha de exceção. **Uma costura é duas contas a discordar;
+  a saída não é afiná-las, é haver uma só.**
 - **Faixa que acompanha a costa desenha-se pelo CONTORNO, nunca degrau a
   degrau.** A regra já estava escrita no `costa_deslocada` — "a versão anterior
   tratava cada degrau como uma faixa solta" — e mordeu outra vez um andar
