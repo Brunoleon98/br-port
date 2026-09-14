@@ -752,6 +752,45 @@ tranca isso.
   passar, porque uma corda qualquer atravessava o ponto. Pergunte quanto
   DESENHO há à volta do ponto (a fração de pixels opacos num raio pequeno), e
   nunca se o ponto cai na caixa.
+- **⚠️ CONTAR `caixa()` DESCREVE A CONSTRUÇÃO, E NÃO A LEITURA.** O kit tem 178
+  chamadas a `caixa()` contra 42 a `cone()`, e daí não sai qual prop lê
+  quadrado: quem responde é a SILHUETA, que nesta câmera só sabe três direções
+  quando a peça é uma caixa alinhada aos eixos (±26,57° e a vertical). É o que
+  `tools/medir_silhueta_props.py` mede, e a resposta contrariou o palpite —
+  renderizado sozinho, o CASCO do cargueiro mediu 0,620 contra 0,563 do galpão,
+  e o contêiner por cima não fazia o navio ler quadrado: **tapava** o casco
+  (`docs/decisoes/024`).
+- **⚠️ E O CHANFRO QUE O KIT INTEIRO APLICA É INVISÍVEL POR CONSTRUÇÃO.**
+  Varrido: um filete só entra na imagem a partir de **3 px** de raio e só LÊ a
+  partir de **6**. O `chanfrar()` usa 0,020 unidades, e uma unidade vale 20 px
+  de tela — **0,4 px**. Curva que se decide num prop mede-se em 0,15 e 0,30 de
+  mundo, nunca em 0,02. E daí sai um portão de TAMANHO: a 40 px de largura um
+  filete de 6 px já leva a caixa para baixo da linha do cilindro — deixou de
+  ser quina arredondada e passou a ser outra forma.
+- **⚠️ REFERÊNCIA DE FORMA TEM DE TER A CAIXA ENVOLVENTE DA PEÇA, senão mede o
+  TAMANHO e a ESBELTEZ.** Um contorno fechado dá 360° de curva no total, então
+  o preço das quinas é fixo em pixels e pesa tanto mais quanto menor for a
+  peça. Duas consequências medidas: **abaixo de ~24 px de diagonal a caixa
+  ideal e a forma redonda medem o mesmo** (a pergunta não tem resposta, e a
+  ferramenta recusa-se a dar número em vez de dar um plausível); e **numa peça
+  ESBELTA a caixa e o cilindro medem quase o mesmo** — 0,640 contra 0,635 a
+  10×35. Peça comprida não se conserta arredondando a secção: a estaca do píer
+  media 1,065, o valor mais alto do kit, e uma estaca cilíndrica tem os mesmos
+  dois lados verticais. O ganho não paga, e registou-se em vez de se arredondar.
+- **⚠️ ESCALAR UM CONTORNO CURVO ACHATA A CURVA DELE.** O fundo do casco era a
+  amurada escalada por `(0,88, 0,42)`: a curva chegava lá 58% menor e o que
+  sobrava desviava-se menos de 1 px ao longo de 60 px — a régua lia uma reta, e
+  era ela que continuava a fazer o casco medir quadrado depois de o convés já
+  curvar. Anel de baixo de um prisma leva contorno PRÓPRIO, não um fator.
+- **⚠️ E CURVAR UMA LINHA SEM CURVAR O QUE ASSENTAVA NELA DEIXA-O ATRAVESSADO.**
+  Enquanto o bordo do casco era reto, o guarda-corpo reto coincidia com ele por
+  acidente; com o bordo curvo ficou a cortar o convés em diagonal, com as
+  pontas a morrer no meio da chapa. É "ao corrigir um, VARRA OS IRMÃOS" com a
+  geometria no lugar do prop: quem muda uma linha muda tudo o que a seguia.
+- **⚠️ E MUDAR A FORMA DE UM PROP NÃO PODE MUDAR A CAIXA ENVOLVENTE DELE.** Os
+  extremos do casco — proa, popa e boca máxima — ficaram no mesmo pixel de
+  propósito: o barco cai em `Dock.tscn` num `offset` fixo, e um casco meio
+  pixel mais gordo mexeria nele sem dar erro nenhum.
 - **PARTILHA TOTAL OU NENHUMA, numa tabela de arte.** O pesqueiro usa o mesmo
   casco nos dois motivos dele de propósito — pescado e armazenagem são o mesmo
   peixe indo para sítios diferentes, e o barco não muda com o destino da carga.
@@ -1097,6 +1136,10 @@ tranca isso.
   carimbo de data do Blender no PNG (os de `SOMBRA` escapam porque o
   `compor_sombra` os reescreve com o gravador do projeto). `cmp` num prop não
   responde "a imagem mudou" — para isso, compare os PIXELS.
+- **E quem responde "este prop mudou?" é `tools/comparar_props.py`**, que reduz
+  os dois a 16×16 — a mesma régua do bloco dos cascos distintos. Calibrado: duas
+  corridas do mesmo código dão 0,000 e os PNGs diferem nos bytes (carimbo de
+  data), um pixel de deslocamento dá 0,022, e um prop trocado por outro dá 0,42.
 - A sombra de contato tem **azimute próprio (250°)**, diferente do azimute do
   mapa: no azimute do mapa ela cai atrás do prop e não se vê.
 - **O importador de SVG do Godot é o ThorVG e não desenha `<text>`.** Texto no

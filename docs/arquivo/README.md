@@ -41,6 +41,7 @@ aqui.
 | `BLOCO4_BRIEFING_CONTINUACAO.md` | 28/08 | Ponto de entrada do Bloco 4, com três caminhos que foram todos fechados |
 | `BLOCO5_BRIEFING_CONTINUACAO.md` | 29/08 | Ponto de entrada do Bloco 5, e o histórico das três oscilações da direção de arte |
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-13.md` | 13/09 | Fecho da areia/fauna e prompt pronto para o primeiro recorte orgânico da costa |
+| `BRIEFING_PROXIMA_CONVERSA_2026-09-14.md` | 14/09 | Fecho das duas fatias do item 8 — a costa das pontas e o casco dos barcos — e o que sobrou dele |
 | `BLOCO5_PROMPTS_BLENDER_RICO.md` | 29/08 | Os prompts do enriquecimento dos props em Blender |
 | `BRP_IMPLEMENTATION_NOTES.md` | 31/08 | O que foi e o que NÃO foi feito no pipeline Blender → Godot |
 | `BRP_VALIDATION_REPORT.md` | 31/08 | Os resultados medidos daquele pipeline |

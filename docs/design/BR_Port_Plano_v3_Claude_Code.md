@@ -1329,10 +1329,61 @@ segmentos media o **arredondamento da tabela** e deixou passar a escada inteira
 foi construída, medida e **retirada** por reprovar o mapa certo por 7 px, sem
 que o defeito que ela caçava deixasse de ser apanhado.
 
-**O item 8 continua aberto**: falta o kit de props, que é de caixas por
-construção — outra sessão, e provavelmente mais do que uma. E os cotovelos da
+**O item 8 continuava aberto** por causa do kit de props — e é a fatia logo
+abaixo que o mediu. E os cotovelos da
 rua ficaram de fora de propósito: curvá-los é geometria funcional (o asfalto que
 o D20 percorre, o desvio que o camião faz), que o recorte proibia.
+
+### ✅ A SEGUNDA FATIA DO 8 FECHOU — o casco ganha curva (14/09)
+
+**`docs/decisoes/024`.** O alvo era o kit de props, *"de caixas por construção"*,
+e a medição **inverteu o alvo**: quem estava quadrado não eram as construções.
+
+`tools/medir_silhueta_props.py` pergunta que fração da silhueta de cada prop
+corre nas três direções que uma caixa alinhada aos eixos sabe desenhar,
+normalizada contra formas ideais da MESMA caixa envolvente. Renderizado sozinho,
+sem contêiner nem cabine, o **casco** do cargueiro mediu **0,620** — acima do
+galpão (0,563) e de tudo o mais. O contêiner por cima não fazia o navio ler
+quadrado: **tapava** o casco, e por isso os cargueiros de carga solta mediam
+0,203 enquanto os porta-contêineres mediam 0,516.
+
+Os nove barcos saem agora de `contorno_casco()` — entrada, corpo paralelo e
+esgorjadura, a 18 passos por bordo —, com **linha de fundo de curva própria**
+(escalar um contorno curvo achata-o 58%, e era a reta que sobrava) e o
+**guarda-corpo a seguir o bordo**. A caixa envolvente não mudou um pixel: o
+barco cai em `Dock.tscn` num `offset` fixo. Medido: casco sozinho 0,620 → 0,547;
+linha de fundo do cargueiro 70,2 px → 50,6; maior reta do navio inteiro 62–66 px
+→ 52. Das catorze imagens da bateria mudaram as nove que mostram barco.
+
+**E o resto do kit fica quadrado, com número.** Armazém (0,563), escritório
+(0,398), convés dos píeres (0,50–0,61), treliça das lanças, pallet, caixote,
+barreira e os contêineres do convés **são caixas de verdade** — é o *"o cais é
+concreto"* da `023` aplicado aos props. A fauna, o cone, o cabeço e o poste de
+luz ficam **fora da pergunta**: abaixo de ~24 px de diagonal a régua não separa
+uma caixa ideal de uma forma redonda. Os caminhões ficam fora por outro número:
+um filete só entra na imagem a 3 px de raio e só lê a 6, e eles têm 35 a 49 px
+de diagonal — enquanto o `chanfrar()` que o kit inteiro aplica vale **0,4 px**.
+
+Duas medições que foram feitas e devolveram NÃO, e ficam registadas em vez de
+arredondadas: **as estacas do píer** (1,065, o valor mais alto do kit) medem o
+mesmo redondas, porque são esbeltas e é a esbelteza que as faz medir alto; e o
+**bote** é pequeno demais para a curva — ela cabe inteira dentro do pixel de
+tolerância da régua, e três versões dele são a mesma imagem a 6×.
+
+Rendeu o **D29**, o primeiro bloco a perguntar a forma de um PROP, e uma lição
+sobre o alcance de uma guarda: dos dois defeitos injetados, o segundo (fundo
+outra vez escalado) só reprovou **um** dos oito cascos, e o teto ficou onde
+estava em vez de se apertar até o apanhar — a alternativa deixava um casco bom a
+passar por dois pontos.
+
+**Sobrou uma pergunta aberta, pequena:** o `coqueiro_tronco` mede 0,491 com três
+na tela, e a secção dele não ajuda (é esbelto) — mas **curvar o EIXO** curvaria a
+silhueta, e isso não foi medido. Cabe numa sessão pequena.
+
+**E a varredura achou um prop FORA DO JOGO:** `doca_concreto` (136 × 88) é
+referido só por `scenes/tests/AssetPlacementTest.gd`, que não é exportado. É o
+`barco_medio` outra vez, num prop que nunca chegou a doca nenhuma — ou ele entra
+no mapa, ou sai do catálogo. **Fica para o Bruno decidir qual.**
 
 ### ✅ OS DOIS DEFEITOS VISTOS EM 13/09 FECHARAM, MEDIDOS (13/09)
 

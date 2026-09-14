@@ -219,6 +219,10 @@ func _rodar() -> void:
 	_d28_contorno_das_pontas()
 	_confere("o bloco D28 correu até ao fim", _d28_completo)
 
+	print("=== D29: o casco de um navio não tem bordo reto ===")
+	_d29_linha_de_fundo_do_casco()
+	_confere("o bloco D29 correu até ao fim", _d29_completo)
+
 	print("=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===")
 	_d23_menu_celular()
 	_confere("o bloco D23 correu até ao fim", _d23_completo)
@@ -3156,3 +3160,128 @@ func _contar_cor(img: Image, ix: int, iy: int, raio: int, alvo: Color) -> int:
 			if _mesma_cor(img.get_pixel(jx, jy), alvo):
 				n += 1
 	return n
+
+
+# ── D29 ── o casco de um navio não tem bordo reto
+#
+# Nada neste projeto perguntava a FORMA DE UM PROP. O D28 pergunta a forma de
+# uma linha PUBLICADA (o contorno da costa, que sai do gerador numa tabela); o
+# D17 pergunta quanto desenho há à volta de um ponto; o D7 pergunta encaixe; a
+# guarda dos cascos distintos pergunta se dois props desenham a mesma coisa.
+# Um casco que voltasse a ser um polígono de sete pontos passaria em todos
+# eles, contente — e foi assim que ele viveu como a peça mais quadrada do kit
+# até 14/09 (`docs/decisoes/024`).
+#
+# A PERGUNTA É A LINHA DE FUNDO, e é ela por uma razão: nada num barco fica
+# abaixo do casco. Nem mastro, nem contêiner, nem guindaste, nem chaminé. Logo
+# o pixel mais baixo de cada coluna é do CASCO e de mais nada, e dá para medir
+# a forma dele sem separar peça nenhuma de um PNG já composto. O bordo de cima
+# não serviria: ali passam a superestrutura e a carga.
+#
+# ⚠️ E A POSIÇÃO SAI COM PRECISÃO SUBPIXEL, senão o que se mede é a escada do
+# pixel e não a linha. É a lição do D28 outra vez, do outro lado: lá a métrica
+# media o arredondamento da tabela publicada, aqui mediria o degrau da
+# rasterização. A borda sai da rampa de alfa, entre o último pixel opaco e o
+# primeiro transparente.
+#
+# A régua é a mesma do D28 — uma corda pousada em cima da linha, que se estende
+# enquanto a linha não se afastar mais de um pixel dela.
+const D29_TOL := 1.0            # px — o quanto a linha pode fugir da corda
+const D29_RETA_MAX := 0.62      # fração do comprimento do casco
+# ⚠️ E O CORTE DE TAMANHO É MEDIDO, NÃO ESCOLHIDO — e não é uma lista de nomes.
+# O bote tem 42 px e a meia-boca da linha de fundo dele 2,4: a curva INTEIRA
+# cabe dentro do pixel de tolerância desta régua, e por isso ele mede 0,60 com
+# casco curvo e 0,57 com casco de sete pontos — para o lado errado, por ruído.
+# Dar-lhe fundo chato levou-o a 0,62 e, a 6x de ampliação, as três versões são
+# a mesma imagem. Abaixo deste comprimento a pergunta não tem resposta, e a
+# guarda diz isso em vez de inventar uma. O primeiro casco em que a curva
+# sobrevive à tolerância é a traineira, com 65.
+const D29_LARG_MIN := 60
+
+var _d29_completo := false
+
+
+## A linha de fundo de um sprite: o pixel mais baixo de cada coluna, subpixel.
+func _linha_de_fundo(img: Image) -> PackedVector2Array:
+	var pts := PackedVector2Array()
+	for x in range(img.get_width()):
+		var y1 := -1
+		for y in range(img.get_height() - 1, -1, -1):
+			if img.get_pixel(x, y).a >= 0.5:
+				y1 = y
+				break
+		if y1 < 0:
+			continue
+		var y_borda := float(y1)
+		if y1 + 1 < img.get_height():
+			var a1 := img.get_pixel(x, y1).a
+			var a2 := img.get_pixel(x, y1 + 1).a
+			if a1 - a2 > 1e-6:
+				y_borda = float(y1) + (a1 - 0.5) / (a1 - a2)
+		pts.append(Vector2(float(x), y_borda))
+	return pts
+
+
+## A maior corrida da linha que não se afasta `tol` da corda que a fecha.
+func _maior_reta(pts: PackedVector2Array, tol: float) -> float:
+	var n := pts.size()
+	var melhor := 0.0
+	var i := 0
+	while i < n:
+		var j := i + 1
+		var ultimo := i
+		while j < n:
+			var v := pts[j] - pts[i]
+			var comp := v.length()
+			if comp < 1e-9:
+				j += 1
+				continue
+			var pior := 0.0
+			for k in range(i, j + 1):
+				var rel := pts[k] - pts[i]
+				pior = maxf(pior, absf(rel.x * v.y - rel.y * v.x) / comp)
+			if pior > tol:
+				break
+			ultimo = j
+			melhor = maxf(melhor, comp)
+			j += 1
+		i = maxi(ultimo, i + 1)
+	return melhor
+
+
+func _d29_linha_de_fundo_do_casco() -> void:
+	# A lista sai da tabela da arte, como no bloco dos cascos distintos: uma
+	# lista cravada aqui seria o `barco_medio` mais uma vez, e um casco novo
+	# entraria sem ninguém lhe perguntar a forma.
+	var doca := load("res://scripts/Dock.gd") as GDScript
+	var cascos := {}
+	for classe in doca.get_script_constant_map()["CASCOS"].values():
+		for portes in (classe as Dictionary).values():
+			for tex in portes:
+				cascos[(tex as Texture2D).resource_path] = tex as Texture2D
+	_confere("a tabela da arte declara cascos", cascos.size() > 0)
+
+	var medidos := 0
+	for caminho in cascos:
+		var img := ((cascos[caminho] as Texture2D).get_image() as Image).duplicate() as Image
+		var pts := _linha_de_fundo(img)
+		if pts.size() < D29_LARG_MIN:
+			# Pequeno demais para a pergunta — ver D29_LARG_MIN.
+			print("    (%s tem %d px e fica de fora: a curva cabe na "
+				% [String(caminho).get_file(), pts.size()]
+				+ "tolerância da régua)")
+			continue
+		medidos += 1
+		var larg := float(pts.size())
+		var reta := _maior_reta(pts, D29_TOL) / larg
+		_confere("a linha de fundo de %s não é uma reta (%.0f%% do casco, "
+				% [String(caminho).get_file(), reta * 100.0]
+				+ "teto %.0f%%)" % (D29_RETA_MAX * 100.0),
+			reta <= D29_RETA_MAX,
+			"a maior corrida reta cobre %.0f%% do comprimento — um casco de "
+				% (reta * 100.0)
+				+ "bordo reto é uma cunha, não um navio")
+	_confere("D29 mediu algum casco", medidos >= 3,
+		"mediu %d — se todos ficarem abaixo de %d px a guarda não guarda nada"
+			% [medidos, D29_LARG_MIN])
+	_d29_completo = true
