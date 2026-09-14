@@ -1219,6 +1219,61 @@ propósito.
 
 ---
 
+### 🆕 Etapa 7 — A resolução dos assets, e o desenho que ela paga (proposta 14/09)
+
+**Pedida pelo Bruno, e a ORDEM é dele.** A §7 do plano v3 tem o item inteiro,
+com as três alavancas, os custos e o portão. Aqui fica só a metade de ARTE: o
+que se desenha com o orçamento novo, porque **resolução sozinha compra nitidez
+e não detalhe** — um mapa a 1,5× é o mesmo desenho com menos serrilhado.
+
+**O orçamento novo, em número.** A 1,5× cada peça ganha 50% de largura e 125%
+de área. O que isso muda é a fronteira que este documento e o `CLAUDE.md` já
+mediram dezenas de vezes: **abaixo de ~3 px uma peça não sobrevive ao
+antisserrilhado, e abaixo de ~2,5 px ela vira lixa.** A 1,5×, uma peça de 2 px
+passa a 3 e uma de 2,5 passa a 3,75 — ou seja, **a faixa que hoje se recusa por
+ser pequena demais é exactamente a faixa que passa a caber.**
+
+#### O que se desenha, por família, e de onde sai o número
+
+| Peça | O que falta hoje, e o número que a recusou | O que cabe a 1,5× |
+|---|---|---|
+| **a vila** | "comércios variados" ficou de fora na `022`: lote de 51 px, parede de 12–15, toldo de 20, vitrine de 4 | lote de **77**, parede de 18–22 — toldo, vitrine, tabuleta e portada passam a distinguir-se de uma casa |
+| **o caixote** | as ripas e a marca estampada foram TENTADAS na Etapa 2 e retiradas: 11 px de corpo, três tons viram listras | 16 px de corpo — a ripa volta à pergunta, e desta vez com medição em vez de tentativa |
+| **o contêiner do convés** | 14 peças numa face de 31 px dariam 2,5 px cada, então o corrugado virou diferença de VALOR | face de **46 px** — o vinco volta a poder ser relevo, e não só tom |
+| **os oito caminhões** | 35–49 px de diagonal, abaixo do portão do filete da `024` | **52–73 px** — entram no portão, e a cabine pode arredondar |
+| **os prédios** | a `024` mediu que armazém e escritório são caixas DE VERDADE e ficam quadrados | continuam quadrados — o que ganham é **peça de função**: calha, telha corrida, fita de vidro, degrau de portão |
+| **a frota** | a ferrugem só entrou nos cargueiros (97 px) e o pesqueiro (67) ficou de fora por tamanho | o pesqueiro passa a 100 px — a pergunta da ferrugem reabre, com a `014` a dizer que o eixo é o PORTE |
+
+⚠️ **E O QUE NÃO SE DESENHA, MEDIDO** — para a etapa não prometer o que não
+paga. As estacas do píer (9×32 → 13×48) continuam esbeltas, e a `024` mediu que
+é a esbelteza que as faz medir quadrado, não a secção. A fauna quase não chega:
+a gaivota vai de 15 para 22,5 px contra um corte de 24. E o tosado do casco
+passa de 1,2 para 1,8 px de tela, ainda abaixo dos 3 em que a régua vê uma curva.
+
+#### A armadilha desta etapa, e é a maior deste documento
+
+⚠️ **TODO NÚMERO EM PIXEL DESTE PROJETO FOI ESCOLHIDO OLHANDO O RENDER A 720.**
+A largura de cada traço do mapa, o passo do tabuado, as fiadas do telhado, a
+escala do ruído, a espessura da junta — todos foram calibrados contra o
+antisserrilhado da escala de hoje. A 1,5×, um traço de 1 px passa a 1,5 e **um
+vinco calibrado para quase desaparecer pode reaparecer**; um ruído escolhido
+para ler como textura pode virar sujeira visível.
+
+É a mesma família do *"constante em PIXEL é constante que envelhece quando o
+`ZOOM` muda, e ela não dá erro"*, que em 05/09 custou cinco números — dois
+reprovavam o que estava certo e **um deixou de reprovar seja o que for**. A
+diferença é que ali foi a câmera e aqui é a rasterização, e que agora há muito
+mais número em pixel escrito do que havia então.
+
+**Logo esta etapa não é "subir o número e regerar".** Ela é: subir o número,
+tirar a bateria, **ampliar e OLHAR peça a peça**, e varrer o gerador à procura
+de toda constante medida em pixel para perguntar de que escala ela é. O portão
+é o do bote da `024` — se a diferença não se vir no telefone, pára e regista.
+
+**Mede-se por:** a bateria antes/depois com semente e `--fixed-fps` fixos; as
+duas folhas de contato ampliadas; e o tamanho do `.ctex`, do APK e da VRAM, que
+é o único eixo desta etapa que pode reprovar por motivo que não é visual.
+
 ## 5. A pergunta do conhecimento de Blender
 
 **Sim, precisa — mas não do jeito que a pergunta sugere.** O que falta não é

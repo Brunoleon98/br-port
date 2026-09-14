@@ -589,16 +589,29 @@ def cone(nome, centro, r1, r2, alt, lados, mat, rot=(0, 0, 0)):
     return o
 
 
-def prisma(nome, contorno, z0, z1, escala_baixo, mat):
+def prisma(nome, contorno, z0, z1, escala_baixo, mat, contorno_baixo=None):
     """Contorno fechado puxado para baixo e estreitado.
 
     É o que torna forma não-caixa possível em código: em vez de esculpir, você
     lista os pontos do contorno. O casco de barco sai daqui — e sai idêntico
     toda vez, ao contrário de um desenho.
+
+    ⚠️ ESCALAR UM CONTORNO CURVO ACHATA A CURVA DELE, e num casco isso deixou a
+    linha de fundo reta depois de o convés já estar curvo. Com `escala_baixo =
+    (0,88, 0,42)` a variação de meia-boca encolhe 58%, e o que sobra desvia-se
+    menos de um pixel ao longo de 60 px — ou seja, a régua lê uma reta. Quem
+    quiser um fundo com curva PRÓPRIA passa `contorno_baixo` e o `escala_baixo`
+    deixa de ser usado; os dois contornos têm de ter o mesmo número de pontos,
+    porque é ponto a ponto que as faces do costado se fecham.
     """
-    ex, ey = escala_baixo
+    if contorno_baixo is None:
+        ex, ey = escala_baixo
+        contorno_baixo = [(x * ex, y * ey) for x, y in contorno]
+    elif len(contorno_baixo) != len(contorno):
+        raise ValueError("%s: contorno de %d pontos e fundo de %d"
+                         % (nome, len(contorno), len(contorno_baixo)))
     verts = [(x, y, z1) for x, y in contorno] + \
-            [(x * ex, y * ey, z0) for x, y in contorno]
+            [(x, y, z0) for x, y in contorno_baixo]
     n = len(contorno)
     faces = [[i, (i + 1) % n, n + (i + 1) % n, n + i] for i in range(n)]
     faces.append(list(range(n - 1, -1, -1)))
@@ -937,6 +950,36 @@ def corrimao(nome, a, b, altura, mat, postes=5, esp=0.035):
         p = a.lerp(b, t)
         pecas.append(barra("%s_poste%d" % (nome, i), p,
                            p + Vector((0, 0, altura)), esp * 1.1, mat))
+    return pecas
+
+
+def corrimao_bordo(nome, pontos, altura, mat, esp=0.030) -> list:
+    """Guarda-corpo que acompanha uma linha quebrada em vez de uma reta.
+
+    ⚠️ CURVAR O CASCO SEM CURVAR O CORRIMÃO DEIXA-O ATRAVESSADO NO CONVÉS.
+    Enquanto o bordo era uma reta de três unidades, o `corrimao()` reto
+    coincidia com ele por acidente; assim que o bordo virou curva, o corrimão
+    ficou a cortar o convés em diagonal, com as pontas a morrer no meio da
+    chapa vermelha. Nenhuma asserção podia apanhar — é a mesma família do
+    "ao corrigir um, VARRA OS IRMÃOS": quem muda a linha muda o que assentava
+    nela.
+
+    Um montante por ponto e dois corrimãos por vão; os montantes ficam FORA do
+    laço dos vãos para as juntas não levarem dois montantes no mesmo sítio,
+    que é a armadilha das duas faces coplanares aplicada a uma peça repetida.
+    """
+    pecas = []
+    for i, (a, b) in enumerate(zip(pontos, pontos[1:])):
+        A, B = Vector(a), Vector(b)
+        pecas.append(barra("%s_alto%d" % (nome, i), A + Vector((0, 0, altura)),
+                           B + Vector((0, 0, altura)), esp, mat))
+        pecas.append(barra("%s_meio%d" % (nome, i),
+                           A + Vector((0, 0, altura * 0.55)),
+                           B + Vector((0, 0, altura * 0.55)), esp, mat))
+    for i, ponto in enumerate(pontos):
+        P = Vector(ponto)
+        pecas.append(barra("%s_poste%d" % (nome, i), P,
+                           P + Vector((0, 0, altura)), esp * 1.1, mat))
     return pecas
 
 
@@ -1580,10 +1623,101 @@ def montar(M: dict) -> dict:
     # da carga: os três liam-se como o mesmo barco com adereços trocados. Agora
     # ele tem casco PRÓPRIO, mais curto e mais estreito, e o que carrega é
     # pau-de-carga e rede — silhueta diferente, não pintura diferente.
-    CARGA = [(2.30, 0.0), (1.55, 0.58), (-1.45, 0.62), (-2.05, 0.44),
-             (-2.05, -0.44), (-1.45, -0.62), (1.55, -0.58)]
-    PESCA = [(1.55, 0.0), (1.05, 0.42), (-0.95, 0.46), (-1.40, 0.32),
-             (-1.40, -0.32), (-0.95, -0.46), (1.05, -0.42)]
+    #
+    # ⚠️ E O CASCO ERA A PEÇA MAIS QUADRADA DO KIT INTEIRO — medido em 14/09,
+    # e ao contrário do que o palpite dizia. O `medir_silhueta_props.py`
+    # pergunta que fração da silhueta corre nas três direções que uma caixa
+    # alinhada aos eixos sabe desenhar (+-26,57° e a vertical), normalizada
+    # contra formas ideais DA MESMA caixa envolvente. Renderizado sozinho, sem
+    # contêiner nem cabine, o casco do cargueiro grande mediu **0,620** —
+    # acima do galpão (0,563) e de tudo o resto que tem tamanho para a
+    # pergunta ter resposta.
+    #
+    # E a leitura óbvia estava invertida: o porta-contêineres media 0,516 e o
+    # irmão de carga geral 0,203, o que parecia dizer "a caixa que se vê é o
+    # contêiner". Não é. O contêiner é uma caixa DE VERDADE e não se mexe; o
+    # que ele fazia era TAPAR o casco. Quem estava reto era o bordo.
+    #
+    # A causa tinha nome e comprimento: destes sete pontos, o lado de
+    # (1,55, 0,58) a (-1,45, 0,62) é uma RETA DE 3 UNIDADES, e nesta câmera ela
+    # cai exatamente em cima de um dos eixos — 56 px de reta contínua no PNG,
+    # a mais comprida do kit depois do convés dos píeres, que é retângulo de
+    # propósito. Um casco não tem bordo reto: tem entrada, corpo paralelo e
+    # esgorjadura.
+    #
+    # ⚠️ E O TOSADO (a amurada a subir para a proa) FICOU DE FORA, MEDIDO.
+    # Uma unidade de altura vale 24,5 px de tela e o casco tem 0,62 delas; o
+    # tosado de um navio real anda por 8% do pontal, o que dá **1,2 px** —
+    # abaixo dos 3 px em que a régua começa sequer a ver uma curva (a varredura
+    # de filete está na `docs/decisoes/024`). Seria geometria paga e invisível.
+    # O que se vê desta câmera é a PLANTA, e é a planta que se curva.
+    def contorno_casco(frente, re, boca, boca_re, cheio=0.42, recuo=0.22,
+                       n=18):
+        """A meia-boca de proa a popa, amostrada como curva e não como quina.
+
+        Três trechos, que é como um casco se desenha: a ENTRADA abre da roda de
+        proa até à boca máxima, o CORPO PARALELO segura-a, e a ESGORJADURA
+        afina até ao painel de popa. Os extremos são os mesmos de antes —
+        `frente`, `re` e `boca` não se mexem — para a caixa envolvente do prop
+        não mudar um pixel: o barco cai em `Dock.tscn` num `offset` fixo, e
+        um casco mais gordo ou mais curto mexeria nele sem dar erro nenhum.
+
+        ⚠️ O PASSO TEM DE FICAR ABAIXO DA MENOR RETA QUE A RÉGUA CONTA. Com
+        n=18 o segmento mais comprido do corpo paralelo dá ~4 px na tela, e a
+        régua do `medir_silhueta_props.py` só chama reta a uma corda de 6 px ou
+        mais — ou seja, a curva é lida como curva e não como um polígono novo.
+        Com n=6 sairiam quinas, que é trocar uma reta comprida por seis curtas.
+        """
+        comp = frente - re
+        x_cheio = frente - cheio * comp
+        x_recuo = re + recuo * comp
+
+        def meia_boca(x):
+            if x >= x_cheio:                      # entrada
+                u = (frente - x) / (frente - x_cheio)
+                return boca * math.sin(math.pi / 2 * u) ** 0.85
+            if x >= x_recuo:                      # corpo paralelo
+                return boca
+            # ⚠️ O `min(1,0)` NÃO É ZELO. O último passo cai em `re` com uma
+            # sobra de 1e-16, `v` passa de 1, o cosseno fica NEGATIVO e um
+            # negativo elevado a 1,3 é um COMPLEXO — o gerador rebentava no
+            # pesqueiro e passava no cargueiro, porque o erro do último passo
+            # depende do comprimento.
+            v = min(1.0, (x_recuo - x) / (x_recuo - re))    # esgorjadura
+            return boca_re + (boca - boca_re) * math.cos(math.pi / 2 * v) ** 1.3
+
+        bordo = []
+        for i in range(1, n + 1):
+            x = frente - comp * i / float(n)
+            bordo.append((round(x, 4), round(meia_boca(x), 4)))
+        # Proa como ponto e popa como painel: a popa é um corte, não uma quina.
+        # ⚠️ O ESPELHO LEVA O ÚLTIMO PONTO, senão não há painel de popa. Com
+        # `reversed(bordo[:-1])` o contorno saltava de (re, +boca_re) para o
+        # bordo de baixo uma amostra à frente, e o que fechava a popa era uma
+        # DIAGONAL atravessada — um casco cortado de esguelha, sem erro nenhum
+        # a apontá-lo.
+        return ([(frente, 0.0)] + bordo
+                + [(x, -y) for x, y in reversed(bordo)])
+
+    def casco_e_fundo(frente, re, boca, boca_re):
+        """O par de contornos de um casco: a amurada e a linha de fundo.
+
+        ⚠️ E O FUNDO TEM CURVA PRÓPRIA, MEDIDO. Enquanto ele era a amurada
+        escalada por `(0,88, 0,42)`, a curva chegava lá achatada 58% e o que a
+        régua lia na silhueta era uma RETA DE 60 px — a mais comprida que
+        sobrou depois de o convés curvar, e por isso a que continuava a fazer o
+        casco medir quadrado. Um casco de verdade afina MAIS em baixo do que em
+        cima: a linha de fundo tem entrada mais longa e esgorjadura mais longa
+        do que a amurada, e é isso que os dois jogos de `cheio`/`recuo` dizem.
+        Os dois contornos saem da mesma função e com o mesmo `n`, que é o que
+        os deixa fechar face a face sem uma linha de exceção.
+        """
+        return (contorno_casco(frente, re, boca, boca_re, 0.42, 0.22),
+                contorno_casco(frente * 0.88, re * 0.88,
+                               boca * 0.42, boca_re * 0.42, 0.60, 0.38))
+
+    CARGA, CARGA_FUNDO = casco_e_fundo(2.30, -2.05, 0.62, 0.44)
+    PESCA, PESCA_FUNDO = casco_e_fundo(1.55, -1.40, 0.46, 0.32)
 
     def escalar(contorno, k):
         """O mesmo contorno noutro porte.
@@ -1596,7 +1730,11 @@ def montar(M: dict) -> dict:
         """
         return [(x * k, y * k) for x, y in contorno]
 
-    def casco(sufixo, contorno, altura, cor_casco, cor_faixa, vigias=4,
+    def escalar_par(par, k):
+        """Amurada e fundo do mesmo casco noutro porte, pela mesma razão."""
+        return (escalar(par[0], k), escalar(par[1], k))
+
+    def casco(sufixo, contorno, fundo, altura, cor_casco, cor_faixa, vigias=4,
               postes=6):
         """Casco, faixa de amurada, guarda-corpo e vigias.
 
@@ -1614,7 +1752,8 @@ def montar(M: dict) -> dict:
         meio = max(p[0] for p in contorno) * 0.55
         largura = max(p[1] for p in contorno) * 0.80
         pecas = [
-            prisma("casco" + sufixo, contorno, 0.0, altura, (0.88, 0.42), cor_casco),
+            prisma("casco" + sufixo, contorno, 0.0, altura, None, cor_casco,
+                   contorno_baixo=fundo),
             prisma("faixa" + sufixo, contorno, altura - 0.12, altura + 0.02,
                    (0.99, 0.97), cor_faixa),
             # Convés: um plano claro dentro da amurada, senão o interior do
@@ -1622,9 +1761,19 @@ def montar(M: dict) -> dict:
             prisma("conves" + sufixo, contorno, altura - 0.06, altura - 0.02,
                    (0.80, 0.62), PALETA_MAT["cabine"]),
         ]
-        pecas += corrimao("cor" + sufixo, (-meio, -largura, altura),
-                          (meio, -largura, altura), 0.20,
-                          PALETA_MAT["metal_claro"], postes=postes, esp=0.030)
+        # O guarda-corpo segue o BORDO — ver `corrimao_bordo`. Os montantes
+        # saem do próprio contorno, afinados para o número pedido, e recuam
+        # 20% da meia-boca, que é onde o corrimão reto ficava no corpo
+        # paralelo: assim o n1 e o n3 não saltam de sítio.
+        borda = sorted([p for p in contorno
+                        if p[1] < 0 and -meio <= p[0] <= meio],
+                       key=lambda p: p[0])
+        if len(borda) > postes:
+            salto = (len(borda) - 1) / float(max(postes - 1, 1))
+            borda = [borda[int(round(i * salto))] for i in range(postes)]
+        pecas += corrimao_bordo(
+            "cor" + sufixo, [(x, y * 0.80, altura) for x, y in borda],
+            0.20, PALETA_MAT["metal_claro"], esp=0.030)
         # Vigias na face que a câmera vê. O casco não é uma caixa, mas nesta
         # escala a fileira só precisa de acompanhar a linha de água.
         for i in range(vigias):
@@ -1668,14 +1817,25 @@ def montar(M: dict) -> dict:
     # não, e agora por outra razão: um rasto de ferrugem em UM dos três faria a
     # ferrugem ler como marca de porte, e o que separa estes três é a
     # gramática do convés. Quem enferruja é a classe de carga, inteira.
-    BOTE = escalar(PESCA, 0.62)
-    ARRASTO = escalar(PESCA, 1.24)
+    BOTE = escalar_par((PESCA, PESCA_FUNDO), 0.62)
+    ARRASTO = escalar_par((PESCA, PESCA_FUNDO), 1.24)
+    # ⚠️ E O BOTE É PEQUENO DEMAIS PARA ESTA CURVA — medido, e ele fica como
+    # está. A 0,62 do pesqueiro o fundo dele tem 2,4 px de meia-boca: a curva
+    # INTEIRA cabe dentro do pixel de tolerância com que a régua mede reta, e a
+    # maior reta da linha de fundo dele mexeu-se de 0,574 para 0,597 do
+    # comprimento — para o lado errado, e por ruído. Tentou-se dar-lhe fundo
+    # chato (0,70 em vez de 0,42, que é o que um bote aberto de linha tem
+    # mesmo): deu 0,621, e a 6x de ampliação as três versões são a MESMA
+    # imagem. É a lição do `medir_silhueta_props.py` aplicada a um pedaço de
+    # prop — abaixo de certo tamanho a pergunta não tem resposta, e a resposta
+    # certa é não mexer em vez de arredondar por arredondar.
 
     # O BOTE: convés aberto, e é a ausência que o desenha. Sem cabine, sem
     # vigia, sem pau-de-carga — o que se vê lá dentro são as caixas do peixe,
     # que num barco maior estariam no porão.
     grupos["barco_pesca_bote"] = casco(
-        "_pb", BOTE, 0.30, M["casco_pesca"], M["faixa"], vigias=0, postes=4) + [
+        "_pb", BOTE[0], BOTE[1], 0.30, M["casco_pesca"], M["faixa"],
+        vigias=0, postes=4) + [
         # Console de pilotagem: um barco aberto não tem ponte, tem um posto de
         # pé com um para-brisa. A 8px ele é o que diz que ali vai alguém.
         caixa("console_pb", (-0.42, 0.0, 0.49), (0.34, 0.40, 0.38), M["cabine"]),
@@ -1729,7 +1889,7 @@ def montar(M: dict) -> dict:
     dir_pau_p = (math.cos(prx) * math.cos(prz), -math.cos(prx) * math.sin(prz),
                  math.sin(prx))
     grupos["barco_pesca_traineira"] = casco(
-        "_p", PESCA, 0.44, M["casco_pesca"], M["azul"]) + [
+        "_p", PESCA, PESCA_FUNDO, 0.44, M["casco_pesca"], M["azul"]) + [
         caixa("cabine_p", (-0.75, 0.0, 0.70), (0.85, 0.62, 0.50), M["cabine"]),
         caixa("mastro_p", (0.25, 0.0, 1.25), (0.09, 0.09, 1.7), M["madeira_esc"]),
         caixa("pau", tuple(PAU_PIVO[k] + dir_pau_p[k] * PAU_BRACO / 2.0
@@ -1766,8 +1926,8 @@ def montar(M: dict) -> dict:
     # tons de metal do tambor — a lição do `pilha_caixotes` aplicada entre
     # peças do mesmo prop, e a razão de as três cinzentas se terem fundido.
     grupos["barco_pesca_arrasteiro"] = casco(
-        "_pa", ARRASTO, 0.56, M["casco_pesca"], M["amarelo"], vigias=5,
-        postes=8) + [
+        "_pa", ARRASTO[0], ARRASTO[1], 0.56, M["casco_pesca"], M["amarelo"],
+        vigias=5, postes=8) + [
         # Casa do leme: mais alta e mais estreita que a cabine da traineira, e
         # com fita de vidro. NÃO sai da `superestrutura()` dos cargueiros de
         # propósito — aquela é a peça que diz "cargueiro", e um pesqueiro que a
@@ -2078,8 +2238,8 @@ def montar(M: dict) -> dict:
         classe é a superestrutura e a fileira de vigias; quem muda com o motivo
         da escala é só o que está em cima do convés.
         """
-        return casco(sufixo, CARGA, ALT_CONVES, casco_ferrugem, M["faixa"],
-                     vigias) \
+        return casco(sufixo, CARGA, CARGA_FUNDO, ALT_CONVES, casco_ferrugem,
+                     M["faixa"], vigias) \
             + superestrutura(sufixo, sup[0], sup[1], sup[2]) \
             + chamine(sufixo, cham[0], cham[1], cham[2], cham[3]) + deck
 

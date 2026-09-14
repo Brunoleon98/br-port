@@ -1329,10 +1329,164 @@ segmentos media o **arredondamento da tabela** e deixou passar a escada inteira
 foi construída, medida e **retirada** por reprovar o mapa certo por 7 px, sem
 que o defeito que ela caçava deixasse de ser apanhado.
 
-**O item 8 continua aberto**: falta o kit de props, que é de caixas por
-construção — outra sessão, e provavelmente mais do que uma. E os cotovelos da
+**O item 8 continuava aberto** por causa do kit de props — e é a fatia logo
+abaixo que o mediu. E os cotovelos da
 rua ficaram de fora de propósito: curvá-los é geometria funcional (o asfalto que
 o D20 percorre, o desvio que o camião faz), que o recorte proibia.
+
+### ✅ A SEGUNDA FATIA DO 8 FECHOU — o casco ganha curva (14/09)
+
+**`docs/decisoes/024`.** O alvo era o kit de props, *"de caixas por construção"*,
+e a medição **inverteu o alvo**: quem estava quadrado não eram as construções.
+
+`tools/medir_silhueta_props.py` pergunta que fração da silhueta de cada prop
+corre nas três direções que uma caixa alinhada aos eixos sabe desenhar,
+normalizada contra formas ideais da MESMA caixa envolvente. Renderizado sozinho,
+sem contêiner nem cabine, o **casco** do cargueiro mediu **0,620** — acima do
+galpão (0,563) e de tudo o mais. O contêiner por cima não fazia o navio ler
+quadrado: **tapava** o casco, e por isso os cargueiros de carga solta mediam
+0,203 enquanto os porta-contêineres mediam 0,516.
+
+Os nove barcos saem agora de `contorno_casco()` — entrada, corpo paralelo e
+esgorjadura, a 18 passos por bordo —, com **linha de fundo de curva própria**
+(escalar um contorno curvo achata-o 58%, e era a reta que sobrava) e o
+**guarda-corpo a seguir o bordo**. A caixa envolvente não mudou um pixel: o
+barco cai em `Dock.tscn` num `offset` fixo. Medido: casco sozinho 0,620 → 0,547;
+linha de fundo do cargueiro 70,2 px → 50,6; maior reta do navio inteiro 62–66 px
+→ 52. Das catorze imagens da bateria mudaram as nove que mostram barco.
+
+**E o resto do kit fica quadrado, com número.** Armazém (0,563), escritório
+(0,398), convés dos píeres (0,50–0,61), treliça das lanças, pallet, caixote,
+barreira e os contêineres do convés **são caixas de verdade** — é o *"o cais é
+concreto"* da `023` aplicado aos props. A fauna, o cone, o cabeço e o poste de
+luz ficam **fora da pergunta**: abaixo de ~24 px de diagonal a régua não separa
+uma caixa ideal de uma forma redonda. Os caminhões ficam fora por outro número:
+um filete só entra na imagem a 3 px de raio e só lê a 6, e eles têm 35 a 49 px
+de diagonal — enquanto o `chanfrar()` que o kit inteiro aplica vale **0,4 px**.
+
+Duas medições que foram feitas e devolveram NÃO, e ficam registadas em vez de
+arredondadas: **as estacas do píer** (1,065, o valor mais alto do kit) medem o
+mesmo redondas, porque são esbeltas e é a esbelteza que as faz medir alto; e o
+**bote** é pequeno demais para a curva — ela cabe inteira dentro do pixel de
+tolerância da régua, e três versões dele são a mesma imagem a 6×.
+
+Rendeu o **D29**, o primeiro bloco a perguntar a forma de um PROP, e uma lição
+sobre o alcance de uma guarda: dos dois defeitos injetados, o segundo (fundo
+outra vez escalado) só reprovou **um** dos oito cascos, e o teto ficou onde
+estava em vez de se apertar até o apanhar — a alternativa deixava um casco bom a
+passar por dois pontos.
+
+**Sobrou uma pergunta aberta, pequena:** o `coqueiro_tronco` mede 0,491 com três
+na tela, e a secção dele não ajuda (é esbelto) — mas **curvar o EIXO** curvaria a
+silhueta, e isso não foi medido. Cabe numa sessão pequena.
+
+**E a varredura achou um prop FORA DO JOGO:** `doca_concreto` (136 × 88) é
+referido só por `scenes/tests/AssetPlacementTest.gd`, que não é exportado. É o
+`barco_medio` outra vez, num prop que nunca chegou a doca nenhuma — ou ele entra
+no mapa, ou sai do catálogo. **Fica para o Bruno decidir qual.**
+
+### 🆕 A RESOLUÇÃO DOS ASSETS, E O DETALHE QUE ELA DESTRAVA — proposto em 14/09
+
+**Item novo, e a ORDEM é do Bruno** — ele não entra na fila numerada até ele o
+pôr lá. Nasceu da pergunta dele: *"valia a pena aumentar a resolução do jogo
+para que o mapa e outras coisas tivessem mais pixels para poder detalhar
+melhor"*, com o pedido de o emparelhar com uma melhoria do desenho.
+
+#### O que a pesquisa devolveu, e o que ela muda na pergunta
+
+Em pixels FÍSICOS, **1080 de largura é o padrão de facto** num telefone de hoje
+(360×800 de viewport CSS a DPR 3 é 1080×2400; o iPhone fica em 1170–1290).
+Praticamente ninguém tem 720 de largura física. As tabelas que dizem "360×800 é
+a resolução mais usada" medem viewport de browser, não pixel — e para um jogo,
+que desenha em pixel, a tabela útil é a traduzida.
+
+#### São TRÊS alavancas, e a pergunta mistura duas delas
+
+| | O que muda | Custo | Ganho de pixel |
+|---|---|---|---|
+| **A — o mapa** | `svg/scale` 1.0 → 1.5 nos quatro SVG de mapa | 3 nós ganham `expand_mode`/`stretch_mode`; o import regera | **1,5× real** |
+| **B — os props** | `RESOLUCAO` 512 → 768 em `gerar_props_iso.py` | ~31 nós de `Main.tscn`/`Dock.tscn`, o manifest, o pivô da lança, e uma releva do kit inteiro | **1,5× real** |
+| **C — o viewport** | 720×1280 → 1080×1920 | todo `offset` de toda `.tscn`, o `MEIA_LARG`, as âncoras, o teste de design | **NENHUM** |
+
+⚠️ **A ALAVANCA C NÃO DÁ UM PIXEL, e é a que parece a óbvia.** O
+`project.godot` usa `stretch/mode="canvas_items"`, o que quer dizer que num
+1080×2400 **o jogo já desenha a 1080 de largura**: o 720 é sistema de
+coordenadas, não resolução de render. Subir o viewport reescreveria o projeto
+inteiro para não acrescentar informação nenhuma. É o pior custo-benefício dos
+três, e é aí que a pergunta costuma ir parar.
+
+⚠️ **E O MAPA JÁ CARREGA A PRECISÃO QUE FALTA.** Os quatro SVG de mapa —
+`porto_mapa_iso`, `_patio` e as duas espumas — declaram `width="720"` sobre
+`viewBox="0 0 1080 1080"`: **a geometria está desenhada a 1080** e o importador
+rasteriza a 720, depois de o que o `canvas_items` volta a ampliar 1,5× no
+aparelho. Ou seja, hoje o mapa passa por uma REDUÇÃO seguida de uma AMPLIAÇÃO.
+A alavanca A não pede um traço novo — pede que se pare de deitar fora o que já
+está no arquivo. **Os 23 ícones já estão certos** (declaram 48 sobre `viewBox`
+de 24 e desenham-se a 19 px), então o HUD fica de fora.
+
+#### ⚠️ E RESOLUÇÃO SOZINHA COMPRA NITIDEZ, NÃO DETALHE
+
+Esta é a metade que o pedido do Bruno já traz e que o item não pode perder. Um
+mapa a 1,5× é o MESMO desenho com menos serrilhado. O que a resolução compra de
+verdade é **um orçamento de detalhe maior** — e este projeto sabe exactamente
+onde esse orçamento está apertado, porque recusou coisas por medição e escreveu
+o número ao lado de cada recusa. **É essa lista que a alavanca A e a B
+destravam, e ela é o verdadeiro conteúdo deste item:**
+
+| O que ficou de fora POR TAMANHO | hoje | a 1,5× |
+|---|---|---|
+| "comércios variados" na vila (`022`): lote 51 px, parede 12–15, toldo 20, vitrine 4 | não distingue de casa | lote **77**, parede 18–22, toldo 30, vitrine 6 |
+| o corrugado do contêiner: 14 peças numa face de 31 px dão 2,5 px cada (a "lixa" do `DESGASTE`) | virou diferença de VALOR | face **46**, 3,7 px por peça |
+| o filete de um prop: entra na imagem a 3 px de raio, lê a 6 (`024`) | 0,15 / 0,30 de mundo | **0,10 / 0,20** |
+| os oito caminhões: 35–49 px de diagonal, abaixo do portão do filete (`024`) | fora da pergunta | **52–73 px, dentro** |
+| "relevo de 0,9 px não sobrevive ao antisserrilhado" | some | 1,35 px |
+| a régua da forma não separa caixa de redondo abaixo de 24 px de diagonal (`024`) | 9 props fora | o corte passa a valer **16 px** do desenho de hoje |
+
+**E o que NÃO se destrava, medido — para o item não prometer o que não paga:**
+
+- **as estacas do píer** passam de 9×32 para 13×48 e continuam esbeltas; a `024`
+  mediu que é a ESBELTEZA que as faz medir alto, não a quadratura, e a estaca
+  cilíndrica mede o mesmo em qualquer escala;
+- **a fauna** quase não chega: a gaivota vai de 15 para 22,5 px e o corte é 24.
+  Só a capivara (17 → 25,5) atravessa, e rente;
+- **o tosado do casco** vai de 1,2 para 1,8 px de tela — continua abaixo dos 3
+  em que a régua começa sequer a ver uma curva. Continua a não se desenhar.
+
+#### A F1, quando ele puser isto na fila
+
+1. **Medir o ganho do mapa antes de mexer nele.** Rasterizar `porto_mapa_iso` a
+   720 e a 1080 com o MESMO ThorVG do jogo e comparar — não a olho: a energia de
+   gradiente acima do piso do antisserrilhado diz quantas fronteiras de valor
+   sobrevivem, e é a métrica que o `medir_silhueta_props.py` já usa por dentro.
+   ⚠️ **E a armadilha é que nem todo traço do SVG foi desenhado para 1080.** A
+   largura de cada traço, o passo do tabuado e as fiadas foram ESCOLHIDOS
+   olhando o render a 720; a 1,5× um traço de 1 px passa a 1,5, e um vinco que
+   foi calibrado para quase desaparecer pode reaparecer. É a família do
+   "constante em PIXEL envelhece quando o `ZOOM` muda", que já custou cinco
+   números em 05/09. A prova é a captura ampliada, não a contagem.
+2. **Medir o custo, que ninguém mediu ainda.** O mapa a 1080² são 2,25× os
+   pixels, e 31 props a 768² são 2,25× de VRAM. Sair com o tamanho do `.ctex`,
+   do APK e do `brport-web` antes e depois, e com o tempo de arranque no
+   aparelho — é o único item desta lista que pode reprovar por motivo que não é
+   visual.
+3. **O portão, e é o do bote da `024`:** se a captura a 1,5× não mostrar
+   diferença que se veja **no telefone**, pare e registe a medição. Nitidez que
+   só aparece a 6× de ampliação num monitor não é nitidez que o jogador vê.
+
+#### Tamanho honesto
+
+**Não é uma sessão.** A alavanca A é uma sessão pequena (import, três nós,
+bateria, antes/depois). A alavanca B é uma sessão inteira só para a mecânica —
+releva de 25 props, manifest, o pivô da lança que sai em pixels do PNG, o
+`asset_validator`, e a releva do `brp_*` ao lado. E cada linha da tabela de
+detalhe destravado é **uma sessão própria**, com a sua F1: são cinco ou seis.
+
+**E não resolve a tela alta.** O jogo é 9:16 num mundo 9:20, e com
+`stretch/aspect="keep"` sobram ~240 px de barra em cima e outros 240 em baixo
+num 1080×2400 — **um quinto da tela**, medido e escrito no `project.godot`, com
+as duas alternativas já testadas e piores. Isso é um item SEPARADO, é trabalho
+de arte (um mapa mais alto) e não de configuração, e não se resolve às
+escondidas dentro deste.
 
 ### ✅ OS DOIS DEFEITOS VISTOS EM 13/09 FECHARAM, MEDIDOS (13/09)
 
