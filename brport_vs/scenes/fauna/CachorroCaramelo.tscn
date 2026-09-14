@@ -1,14 +1,14 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/Fauna.gd" id="1"]
-[ext_resource type="Texture2D" path="res://art/props/maria_farinha.png" id="2"]
+[ext_resource type="Texture2D" path="res://art/props/cachorro_caramelo.png" id="2"]
 
 [sub_resource type="CircleShape2D" id="toque"]
 radius = 22.0
 
-[node name="MariaFarinha" type="Node2D"]
+[node name="CachorroCaramelo" type="Node2D"]
 script = ExtResource("1")
-especie = "maria_farinha"
+especie = "cachorro_caramelo"
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")

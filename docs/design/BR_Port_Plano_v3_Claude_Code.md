@@ -1303,56 +1303,75 @@ defeitos injetados passaram inteiros.
 
 **Resta um item de arte, separado:** curvas em vez de retas (8, grande).
 
-### ⚠️ DOIS DEFEITOS VISTOS E MEDIDOS EM 13/09, por fazer
+### ✅ OS DOIS DEFEITOS VISTOS EM 13/09 FECHARAM, MEDIDOS (13/09)
 
-Os dois saíram de o Bruno olhar a captura, e os dois estão MEDIDOS — a sessão
-que os pegar não precisa de os redescobrir.
+**1. A areia já não atravessa a rua.** A causa era ordem, não geometria:
+`praia_areia()` ficou na mesma varredura inicial de chão que `praia_chao()`,
+antes de `vias()` e `vila()`. O D20 agora lê os quatro tons publicados em
+`cores_da_areia` e os veta ao longo da `ROTA_ESTRADA`, separadamente da guarda
+de calçada, nos dois mapas. Recolocar a areia temporariamente depois da rua
+reprovou **só as duas novas asserções**, no mesmo ponto `(0,55, -6,45)`; a
+guarda de calçada continuou verde. Removida a chave nova de cores, a tabela de
+âncoras é idêntica à anterior: contorno, rota e toda a geometria ficaram iguais.
 
-**1. A AREIA DA PRAIA ATRAVESSA A RUA.** Visível no `inicio.png`, na praia do
-degrau 0 (topo do quadro): a faixa de areia passa por cima do asfalto e a rua
-desaparece por baixo dela.
+**2. A fauna voltou à régua do jogo sem perder silhueta.** A varredura visual
+com os desenhos finais escolheu gaivota **15 × 9**, tartaruga-verde **14 × 8** e
+maria-farinha **12 × 7**: todos cabem na largura da pessoa (15 px) e leem na
+ordem gaivota > tartaruga > caranguejo. Abaixo de 12 px o caranguejo perde os
+vãos entre pinças e pernas. Os fatores medidos moram em `ESCALA_DE_JOGO` e
+reduzem cada grupo inteiro no `brp_fauna.py`, renderizado com `bpy==4.5.0`.
 
-⚠️ **É a IRMÃ NÃO VARRIDA de uma lição já escrita.** O `CLAUDE.md` regista, a
-propósito do capim da restinga: *"O que CRESCE no chão pertence à camada do
-chão. O capim nasceu junto com a areia, que é desenhada no fim com o
-enrocamento — depois da rua e depois da vila — e apareceu por cima dos telhados
-e do passeio."* O capim foi corrigido; **a areia, que era a causa, não**.
+O círculo de toque, irmão do sprite, caiu de 60/62 para **44 px de diâmetro**:
+continua no mínimo tátil, mas já não reage tão longe do bicho. O D25 prende as
+três larguras, o teto da pessoa, a ordem e os três alvos. Dobrar só a gaivota
+reprovou exatamente as duas regras de largura de D25. O item 8 não foi puxado
+para esta correção.
 
-⚠️ **E o D20 passa por lá e não vê.** A `ROTA_ESTRADA` começa em
-`(-3,45, -14,00)`, que é dentro da praia do degrau 0 — o bloco cruza mesmo o
-sítio do defeito. Ele só pergunta *"este ponto não é CALÇADA?"*, e areia não é
-calçada. **A guarda que falta é uma linha**: na rota, também não pode ser areia.
+**3. Os avistamentos agora começam e terminam.** `Fauna.gd` ganhou uma máquina
+de quatro estados (`esperando`, `aparecendo`, `presente`, `saindo`) e sorteio
+determinístico. A gaivota entra além de uma borda, alterna rajadas de batida e
+planeio e sai por outra; a maria-farinha emerge da toca, corre com pausas de
+vigília, regressa e se enterra com poeira; a tartaruga sobe no baixio, avança
+com pulsos das nadadeiras e mergulha com ondulações. O toque durante a presença
+antecipa a saída própria da espécie; na espera, sprite **e** área tátil ficam
+desligados.
 
-**2. OS TRÊS ANIMAIS ESTÃO GRANDES DEMAIS**, e o número diz quanto:
+O D26 percorre o ciclo público das três cenas e prende invisibilidade sem
+toque, entrada, movimento e saída completa. Manter propositalmente a gaivota
+visível na espera reprovou só as duas guardas novas dela. Uma sequência
+determinística de 20 s conferiu em imagem os três momentos sem mexer nos PNGs,
+nas escalas do D25 ou nas âncoras de habitat.
 
-| peça | desenho | |
-|---|---:|---|
-| gaivota | **48 × 27** | |
-| maria-farinha | **44 × 25** | |
-| tartaruga-verde | **47 × 25** | |
-| trabalhador (uma PESSOA) | 15 × 26 | referência |
-| bote de pesca (um BARCO) | 44 × 41 | referência |
+No fecho, D20, D21 e D24 passaram a medir o `Texture2D` importado que o jogo
+usa: a segunda rasterização do SVG em memória caía no ThorVG do Godot 4.6.3
+para Windows. As mesmas 290 amostras por mapa continuam cobrindo rua e areia.
 
-**O caranguejo tem a largura do bote de pesca inteiro e três vezes a de uma
-pessoa.**
+### ✅ A TERRA GANHOU FAUNA, E OS COSTEIROS GANHARAM NOVOS PONTOS (13/09)
 
-⚠️ **E a correção não é reverter às cegas, porque o tamanho foi uma ESCOLHA
-registada.** O cabeçalho do `blender/brp_fauna.py` diz: *"A gaivota anterior
-ocupava só cerca de 20 px do quadro e lia como planador. A quarta versão troca
-caixas por prismas de silhueta... Ela também ganha escala de jogo."* Ou seja, o
-problema antigo era de DESENHO e resolveu-se com desenho **e** com tamanho — e a
-pergunta por responder é se a silhueta nova já se lê pequena, que é o que
-tornaria o crescimento desnecessário.
+O mapa passou de três para **seis espécies em nove avistamentos**. Entraram
+cachorro caramelo na vila, quero-quero no campo aberto e capivara na interface
+entre gramado, mata e água. A escolha segue o comportamento observável no
+litoral brasileiro: o cão faz um circuito curto com pausas para farejar, a ave
+anda e bica no terreno aberto, e a capivara sai do abrigo para pastar e volta.
+O quero-quero foi ampliado de 11 para **13 px** e ganhou peito/cabeça escuros
+contra a asa branca depois de a primeira captura fazê-lo parecer uma pedra.
 
-**O alvo de toque não estorva:** ele é um `CircleShape2D` de raio 30, IRMÃO do
-`Sprite2D` e não filho — encolher o sprite não o encolhe. O compromisso a nomear
-é o outro: um sprite muito menor do que o círculo faz o bicho reagir a um toque
-ao lado dele.
+Gaivota, maria-farinha e tartaruga-verde ganharam uma segunda instância, com
+semente e atraso próprios: outra travessia do céu, outra toca na praia sul e
+outro mergulho no baixio norte. Isso aumenta encontros sem transformar a cena
+num viveiro permanente; as nove instâncias continuam alternando espera,
+entrada, comportamento e saída.
 
-**Custa `bpy`:** os três saem de `blender/brp_fauna.py`, logo a sessão precisa do
-`pip install "bpy==4.5.0"` (~1 GB, minutos). A areia não precisa de Blender
-nenhum. O 8 não foi puxado para o 9:
-o contorno e a tabela de âncoras permanecem iguais.
+O novo **D27** conta as seis espécies, exige os nove pontos e lê a cor do mapa
+sob cada âncora terrestre/costeira. Mover temporariamente a capivara de
+`(60,535)` para o asfalto em `(100,450)` reprovou somente `Capivara aparece
+sobre terra verde`; restaurada a posição, o design voltou a passar. D25 agora
+prende as seis larguras e D26 percorre o ciclo das seis cenas.
+
+Os três PNGs e o `BRP_FaunaStudio.blend` foram regenerados no Blender 5.2 LTS;
+o módulo `bpy` 4.5 desta máquina falhou no render por alocação, mas continuou
+apto a validar o catálogo. `validate_brp_assets.py fauna` fechou em
+`BRP BLENDER OK`, e a revisão visual cobriu seis instantes determinísticos.
 
 ### ✅ O ITEM 5 FECHOU INTEIRO — 5a medido, 5b escrito (11/09)
 

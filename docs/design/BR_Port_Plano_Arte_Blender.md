@@ -899,6 +899,41 @@ refeita como silhueta e ganhou gaivotão, maria-farinha e tartaruga-verde
 juvenil no jogo. Os três têm volume de seleção no Blender, cena Godot, movimento
 ocioso e reação ao toque. O A5 ainda julga a imagem e o A6 ainda julga o som.
 
+Uma captura posterior mostrou que a escala de jogo tinha ultrapassado a do
+desenho: 48/47/44 px de largura faziam cada animal chegar ao tamanho do bote.
+Uma varredura das silhuetas finais fechou em **15 px para a gaivota, 14 para a
+tartaruga e 12 para a maria-farinha** — todos até a largura da pessoa, ainda na
+ordem gaivota > tartaruga > caranguejo. Abaixo de 12 px as pinças e pernas do
+caranguejo deixam de se separar. `ESCALA_DE_JOGO` reduz o grupo Blender inteiro,
+e não as suas peças; o alvo de toque independente ficou em 44 px de diâmetro.
+O D25 prende as três medidas, a ordem e o alvo tátil.
+
+O ciclo natural ficou no runtime, sem novo render: a gaivota cruza as bordas
+com batidas e planeio; a maria-farinha emerge da toca, corre, vigia e se
+enterra; a tartaruga sobe, nada com pulsos das nadadeiras e mergulha entre
+ondulações. As quatro fases são determinísticas para a fotografia. O D26 exige
+que a espera esconda também o alvo de toque e que cada espécie realmente se
+mova e conclua a própria saída; uma sequência de 20 s fez a conferência visual.
+
+#### ✅ A fauna terrestre entrou no mesmo estúdio (13/09)
+
+O catálogo ganhou **cachorro caramelo, quero-quero e capivara**, todos com
+origem `base`, volume de seleção e cena Godot declarados no manifest. Medidos
+no jogo, fecham em **15 × 10, 13 × 11 e 17 × 11 px**: a capivara passa da
+pessoa em comprimento, mas permanece muito abaixo do bote de 44 px. O
+quero-quero precisou de uma segunda passagem — peito/cabeça navy, asa branca e
+13 px — porque a primeira silhueta cinza de 11 px se confundia com pedra.
+
+No runtime, o cão trota e fareja na vila; o quero-quero caminha e bica no campo
+aberto, com voo curto na saída; a capivara anda devagar, pasta e volta ao abrigo
+da mata. Os três costeiros também aparecem em uma segunda posição de habitat,
+com tempos e sementes desencontrados. O D27 amarra os nove avistamentos às
+cores reais de gramado, areia e água sob suas âncoras.
+
+O render final usou o executável Blender 5.2 LTS, porque o `bpy==4.5.0` local
+esgotou a própria alocação durante a imagem. O mesmo `bpy` executou a validação
+geométrica sem erro: **`BRP BLENDER OK`** para as oito entradas do estúdio.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

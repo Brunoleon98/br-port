@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://art/props/gaivota.png" id="2"]
 
 [sub_resource type="CircleShape2D" id="toque"]
-radius = 30.0
+radius = 22.0
 
 [node name="Gaivota" type="Node2D"]
 script = ExtResource("1")
