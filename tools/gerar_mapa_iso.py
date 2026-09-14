@@ -473,23 +473,305 @@ def costa_deslocada(d: float) -> list:
             for i, (mx, my) in enumerate(v)]
 
 
+# ── AS DUAS PONTAS SÃO COSTA DE VERDADE, E O CAIS É RETO ─────────────────
+#
+# Item 8 do segundo playtest, primeira fatia: *"as coisas são bastante
+# quadradas, seja nas construções, como no mapa e seu desenho"*. Medida a
+# costa antes de mexer nela, a queixa tem endereço exato — e NÃO é a praia
+# inteira:
+#
+#   praia norte   3 corridas retas, a maior de 179 px, 2 quinas de 126,9 graus
+#   praia sul     5 corridas retas, a maior de 224 px, 4 quinas de 126,9 graus
+#
+# A CRISTA JÁ RESPIRA desde 02/09 (o `_meandro`, amp 0,16), e vê-se na
+# captura: a fronteira entre o relvado e a duna serpenteia. Quem é régua é a
+# LINHA DE ÁGUA, que tinha `LINHA_DE_AGUA = (1.0, 0.0, 0.0)` — amplitude zero
+# — e por isso desenhava um V de dois traços perfeitos em cada ponta.
+#
+# ⚠️ E O CAIS NÃO GANHA CURVA NENHUMA, de propósito. Cais é concreto: um porto
+# de verdade tem a beira reta, e curvá-la mexeria no `borda` de que TUDO em
+# terra é medido (`APRON`, `RUA_RECUO`, `VILA_RECUO`, os píeres, as âncoras).
+# A máscara abaixo é zero entre `PONTA_NORTE` e `PONTA_SUL` e sobe suave para
+# fora delas — o que muda é só a parte do mundo onde o porto não chegou.
+#
+# COMO ISTO NÃO SE DESMANCHA: tudo o que acompanha a costa (a linha de água, o
+# baixio, a espuma, as pedras, a rampa da areia, o campo de cor da água) sai da
+# MESMA família de curvas — uma concêntrica, com o fileto de cada quina em
+# volta de um centro FIXO e o raio a crescer com a distância. É a lição que o
+# `costa_deslocada` já trazia escrita ("a versão anterior tratava cada degrau
+# como uma faixa solta") levada ao passo seguinte: aqui nem as quinas são
+# soltas. Duas curvas da mesma família nunca se cruzam, e por isso não há
+# costura possível entre a areia e a água.
+ONDA_AMP = 0.34          # unidades de mundo, medidas ao longo da normal
+ONDA_ENTRADA = 1.8       # o arco em que a ondulação nasce, saindo do cais
+ONDA_ALCANCE = 2.4       # até onde ela sobrevive, água adentro e terra adentro
+PASSO_COSTA = 0.12       # a densidade da reamostragem, em unidades
+
+# AS QUINAS DE PRAIA, e cada uma é de um tipo. A primeira de cada degrau é uma
+# ENSEADA (a água faz um canto de 90 graus dentro da terra) e a segunda é uma
+# PONTA (a terra é que faz o canto). O centro do fileto da enseada fica na
+# ÁGUA, então o raio ENCOLHE ao afastar-se — a enseada fecha-se, que é o que a
+# distância à costa faz mesmo; o da ponta fica na TERRA e o raio CRESCE.
+# Quando o raio chega a zero a curva volta a ser a quina de sempre, e é por
+# isso que esta construção reproduz o `costa_deslocada` letra por letra no
+# trecho do cais: lá não há fileto nenhum.
+#
+# Os raios não são iguais entre si de propósito: duas pontas com a mesma curva
+# leem-se como um carimbo. O da enseada sul é o mais curto porque `PONTA_SUL`
+# está a 1,5 dela — o fileto come `raio` de cada perna, e o que passasse disso
+# começaria a curvar dentro do cais.
+QUINAS_DE_PRAIA = (((2.0, -6.0), 1.35, -1.0), ((6.0, -6.0), 1.05, 1.0),
+                   ((14.0, 24.0), 1.15, -1.0), ((18.0, 24.0), 1.45, 1.0),
+                   ((18.0, 34.0), 1.50, -1.0), ((22.0, 34.0), 1.20, 1.0))
+
+
+def _suave(t: float) -> float:
+    """Smoothstep: 0 e 1 com derivada nula, para a costa não ganhar um vinco."""
+    t = max(0.0, min(1.0, t))
+    return t * t * (3.0 - 2.0 * t)
+
+
+def _mascara_de_praia(my: float) -> float:
+    """1 onde a costa é natural, 0 onde ela é cais, e a rampa entre as duas."""
+    if my <= PONTA_NORTE:
+        return _suave((PONTA_NORTE - my) / ONDA_ENTRADA)
+    if my >= PONTA_SUL:
+        return _suave((my - PONTA_SUL) / ONDA_ENTRADA)
+    return 0.0
+
+
+def _onda(s: float) -> float:
+    """A serpentina da linha de água, em unidades, ao longo do arco `s`.
+
+    Duas senóides como no `_meandro`, e pela mesma razão medida em 02/09:
+    sacudir cada amostra dá ruído de 11 px de período, que na tela não é nada.
+    Os períodos são 8,5 e 3,9 unidades; o raio de curvatura mínimo que isto
+    produz é 2,7, maior do que o maior afastamento que alguém lhe pede (2,19
+    do baixio), senão as curvas da família cruzavam-se entre si.
+    """
+    return ONDA_AMP * math.fsum((0.58 * math.sin(math.fsum((s * 0.74, 0.7))),
+                                 0.42 * math.sin(math.fsum((s * 1.61, 2.9)))))
+
+
+def _atenua(d: float) -> float:
+    """A ondulação morre ao afastar-se da linha de água, para os dois lados."""
+    return max(0.0, 1.0 - abs(d) / ONDA_ALCANCE)
+
+
+def _quinas() -> list:
+    """A geometria de cada fileto: centro, raio base, ângulos e de que lado.
+
+    Sai uma vez do contorno base e não muda: o centro é FIXO e é o que faz a
+    família ser concêntrica.
+    """
+    v = contorno_costa()
+    fora = []
+    for i in range(1, len(v) - 1):
+        qx, qy = v[i]
+        alvo = next((q for q in QUINAS_DE_PRAIA
+                     if abs(q[0][0] - qx) < 1e-9 and abs(q[0][1] - qy) < 1e-9),
+                    None)
+        # ⚠️ A QUINA DE CAIS ENTRA NA TABELA TAMBÉM, com raio zero. Ela não
+        # ganha fileto nenhum — o cais é reto —, mas precisa de estar aqui pelo
+        # OUTRO motivo: é no encontro das duas pernas deslocadas que a quina
+        # existe, e uma perna que acabasse na própria normal cortaria o canto.
+        # Foi o que aconteceu na primeira versão: as duas quinas do cais saíam
+        # chanfradas de `d`, a sombra do muro encolhia e nada apontava para isso.
+        _pt, raio, lado = alvo if alvo is not None else ((qx, qy), 0.0, 0.0)
+        (ax, ay), (bx, by) = v[i - 1], v[i + 1]
+        u0 = _unidade(qx - ax, qy - ay)       # chega por aqui
+        u1 = _unidade(bx - qx, by - qy)       # sai por ali
+        # O centro está à distância `raio` das duas pernas, do lado para onde a
+        # linha vira. A quina é sempre de 90 graus neste mapa, então o ponto de
+        # tangência fica a `raio` da quina em cada perna.
+        n0 = (u0[1], -u0[0])                  # normal do lado da ÁGUA
+        n1 = (u1[1], -u1[0])
+        centro = (qx - u0[0] * raio - n0[0] * raio * lado,
+                  qy - u0[1] * raio - n0[1] * raio * lado)
+        p0 = (qx - u0[0] * raio, qy - u0[1] * raio)
+        p1 = (qx + u1[0] * raio, qy + u1[1] * raio)
+        a0 = math.atan2(p0[1] - centro[1], p0[0] - centro[0])
+        a1 = math.atan2(p1[1] - centro[1], p1[0] - centro[0])
+        while a1 - a0 > math.pi:
+            a1 -= math.tau
+        while a0 - a1 > math.pi:
+            a1 += math.tau
+        # ⚠️ E QUANTO DA PERNA A QUINA COME, que é o que faltava à primeira
+        # versão. Numa quina sem fileto a linha deslocada acaba no ENCONTRO das
+        # duas pernas, e não na normal do vértice: seguir a perna até ao fim e
+        # só então saltar para o encontro faz a linha ANDAR PARA TRÁS `d`
+        # unidades — um bico de 0,33 sobre si mesma a 0,45 de distância, que
+        # não dá erro nenhum e sai no desenho como uma farpa. Estes dois
+        # produtos escalares dizem, com o sinal, se a quina come perna (a
+        # enseada) ou se a estica (a ponta).
+        fora.append({"i": i, "quina": (qx, qy), "centro": centro, "raio": raio,
+                     "lado": lado, "a0": a0, "a1": a1, "n0": n0, "n1": n1,
+                     "come0": -(n1[0] * u0[0] + n1[1] * u0[1]),
+                     "come1": n0[0] * u1[0] + n0[1] * u1[1],
+                     "p0": p0, "p1": p1})
+    return fora
+
+
+def _unidade(dx: float, dy: float) -> tuple:
+    comp = math.hypot(dx, dy)
+    return (dx / comp, dy / comp) if comp > 1e-12 else (0.0, 0.0)
+
+
+_QUINAS = None
+_ARCOS = None
+
+
+def _geometria_da_costa() -> tuple:
+    """(vértices, comprimentos, arco acumulado, quinas por índice)."""
+    global _QUINAS, _ARCOS
+    if _QUINAS is None:
+        v = contorno_costa()
+        comp = [math.hypot(v[i + 1][0] - v[i][0], v[i + 1][1] - v[i][1])
+                for i in range(len(v) - 1)]
+        arco = [0.0]
+        for c in comp:
+            arco.append(math.fsum((arco[-1], c)))
+        _ARCOS = (v, comp, arco)
+        _QUINAS = {q["i"]: q for q in _quinas()}
+    return _ARCOS + (_QUINAS,)
+
+
+def _cruzamento(p0: tuple, u0: tuple, p1: tuple, u1: tuple) -> tuple:
+    """Onde as duas pernas deslocadas se encontram — a quina de sempre.
+
+    No contorno base as pernas são paralelas aos eixos, então isto devolve
+    coordenada EXATA e o trecho do cais sai byte a byte igual ao que o
+    `costa_deslocada` escrevia.
+    """
+    if abs(u0[0]) < 1e-12:                     # perna vertical, depois horizontal
+        return (p0[0], p1[1])
+    if abs(u0[1]) < 1e-12:
+        return (p1[0], p0[1])
+    den = u0[0] * u1[1] - u0[1] * u1[0]
+    if abs(den) < 1e-12:
+        return p1
+    t = ((p1[0] - p0[0]) * u1[1] - (p1[1] - p0[1]) * u1[0]) / den
+    return (p0[0] + u0[0] * t, p0[1] + u0[1] * t)
+
+
+def ponto_costeiro(i: int, f: float, d: float) -> tuple:
+    """O ponto DESENHADO da costa: segmento `i`, fração `f`, a `d` da terra.
+
+    `d` positivo é água adentro e negativo é terra adentro. Devolve
+    (mx, my, normal, tangente), com a normal a apontar para o mar — a mesma
+    convenção do `andar_costa`, que é quem espalha pedra e espuma por aqui.
+
+    É O ÚNICO SÍTIO que sabe a forma da costa desenhada. A `linha_costeira`
+    (os polígonos), o `andar_costa` (o que se espalha) e o campo de cor da
+    água saem todos daqui, e é isso que garante que a areia e a água não
+    tenham costura: uma costura é duas contas a discordar, e aqui só há uma.
+    """
+    v, comp, arco, quinas = _geometria_da_costa()
+    (x0, y0), (x1, y1) = v[i], v[i + 1]
+    u = _unidade(x1 - x0, y1 - y0)
+    n = (u[1], -u[0])
+    base = (math.fsum((x0, (x1 - x0) * f)), math.fsum((y0, (y1 - y0) * f)))
+    s = math.fsum((arco[i], comp[i] * f))
+
+    # ── a quina, quando o ponto cai dentro do fileto ──
+    for chave, dist, entrada in ((i + 1, comp[i] * (1.0 - f), True),
+                                 (i, comp[i] * f, False)):
+        q = quinas.get(chave)
+        if q is None:
+            continue
+        comido = (q["come0"] if entrada else q["come1"]) * d
+        if dist > max(q["raio"], comido, 0.0) and not (
+                q["raio"] <= 0.0 and dist <= 1e-9):
+            continue
+        raio = q["raio"] + q["lado"] * d
+        fatia = (0.5 * (1.0 - dist / q["raio"]) if entrada
+                 else 0.5 + 0.5 * (dist / q["raio"])) if q["raio"] > 0.0 else 0.5
+        if raio <= 1e-9:
+            # O fileto fechou-se — a enseada some ao afastar-se dela, e a
+            # ponta some ao entrar em terra. Aí a costa volta a ser a quina de
+            # sempre, e o ponto é o encontro das duas pernas deslocadas: a
+            # MESMA conta que o `costa_deslocada` faz desde 30/08.
+            pin = (math.fsum((q["quina"][0], q["n0"][0] * d)),
+                   math.fsum((q["quina"][1], q["n0"][1] * d)))
+            pout = (math.fsum((q["quina"][0], q["n1"][0] * d)),
+                    math.fsum((q["quina"][1], q["n1"][1] * d)))
+            pt = _cruzamento(pin, (-q["n0"][1], q["n0"][0]),
+                             pout, (-q["n1"][1], q["n1"][0]))
+            return (pt[0], pt[1], q["n0"] if entrada else q["n1"], u)
+        ang = math.fsum((q["a0"], (q["a1"] - q["a0"]) * fatia))
+        radial = (math.cos(ang), math.sin(ang))
+        para_o_mar = (radial[0] * q["lado"], radial[1] * q["lado"])
+        # A ondulação mede-se sempre PARA O MAR; no fileto o mar está no
+        # sentido `lado` do raio, então somá-la ao raio é multiplicá-la por
+        # `lado`.
+        #
+        # ⚠️ E A FASE ATRAVESSA O FILETO, em vez de ser a da quina. Com a fase
+        # congelada no vértice, a onda SALTAVA no ponto de tangência — a curva
+        # entrava no arco com um degrau de até 0,15 unidades, e o que se media
+        # ali era uma quina de 106 graus no meio de uma praia que o resto do
+        # contorno já tinha amaciado. Aqui o arco continua a contagem de arco
+        # da perna que chega e entrega-a à perna que sai, e por isso as duas
+        # emendas são contínuas por construção.
+        s_fileto = math.fsum((arco[chave], q["raio"] * (2.0 * fatia - 1.0)))
+        my_fileto = math.fsum((q["p0"][1], (q["p1"][1] - q["p0"][1]) * fatia))
+        onda = (_onda(s_fileto) * _mascara_de_praia(my_fileto) * _atenua(d))
+        raio_final = max(0.0, math.fsum((raio, q["lado"] * onda)))
+        return (math.fsum((q["centro"][0], radial[0] * raio_final)),
+                math.fsum((q["centro"][1], radial[1] * raio_final)),
+                para_o_mar, (-para_o_mar[1], para_o_mar[0]))
+
+    # ── perna reta: desloca pela normal e soma a ondulação ──
+    onda = _onda(s) * _mascara_de_praia(base[1]) * _atenua(d)
+    total = math.fsum((d, onda))
+    return (math.fsum((base[0], n[0] * total)),
+            math.fsum((base[1], n[1] * total)), n, u)
+
+
+def linha_costeira(d: float, passo: float = PASSO_COSTA) -> list:
+    """A linha inteira a `d` da terra: densa nas pontas, e a escada no cais.
+
+    O cais sai com os MESMOS vértices que o `costa_deslocada` escrevia — nada
+    de reamostrar o que é reto, que só engordaria o SVG.
+    """
+    v, comp, _arco, quinas = _geometria_da_costa()
+    pontos = []
+    for i in range(len(v) - 1):
+        mole = (_mascara_de_praia(v[i][1]) > 0.0
+                or _mascara_de_praia(v[i + 1][1]) > 0.0
+                or quinas.get(i, {}).get("raio", 0.0) > 0.0
+                or quinas.get(i + 1, {}).get("raio", 0.0) > 0.0)
+        n = max(1, int(math.ceil(comp[i] / passo))) if mole else 1
+        for k in range(n + 1):
+            mx, my, _n, _t = ponto_costeiro(i, k / n, d)
+            if (not pontos or abs(mx - pontos[-1][0]) > 1e-9
+                    or abs(my - pontos[-1][1]) > 1e-9):
+                pontos.append((mx, my))
+    return pontos
+
+
 def andar_costa(d: float, passo: tuple, r: random.Random):
     """Percorre a linha de água a `d` da terra, a passos irregulares.
 
     Devolve (mx, my, normal, tangente) — a normal aponta para o mar, e é ela
     que garante que nada do que se espalha por aqui caia do lado da terra.
+
+    ⚠️ A CAMINHADA É NA ESCADA E O PONTO É O DESENHADO, e isso não é desleixo.
+    O passo sai do comprimento do segmento da ESCADA, como desde 30/08, para a
+    sequência de sorteios não mudar: o enrocamento do cais são 300 pedras
+    tiradas deste mesmo `r`, e bastaria reamostrar a costa para TODAS elas
+    trocarem de sítio — meia sessão de diferença visual no porto por causa de
+    uma correção na praia. Quem muda é só o ponto onde cada coisa cai, que
+    passa a ser a costa que o mapa desenha.
     """
     v = costa_deslocada(d)
     for i in range(len(v) - 1):
         (x0, y0), (x1, y1) = v[i], v[i + 1]
         muro = abs(x1 - x0) < 1e-6
-        normal = (1.0, 0.0) if muro else (0.0, -1.0)
-        tangente = (0.0, 1.0) if muro else (1.0, 0.0)
         comprimento = abs(y1 - y0) if muro else abs(x1 - x0)
         andado = 0.0
         while andado < comprimento:
-            f = andado / comprimento
-            yield (x0 + (x1 - x0) * f, y0 + (y1 - y0) * f, normal, tangente)
+            mx, my, normal, tangente = ponto_costeiro(i, andado / comprimento, d)
+            yield (mx, my, normal, tangente)
             andado += r.uniform(*passo)
 
 
@@ -1027,31 +1309,88 @@ def _distancia_ao_contorno(px: float, py: float, segmentos: list) -> tuple:
     return math.sqrt(melhor_d2), melhor_my
 
 
+# Quantos pixels de lado tem o bloco do índice espacial, e o raio dele.
+BLOCO_AGUA = 8
+_RAIO_BLOCO = math.hypot(BLOCO_AGUA, BLOCO_AGUA) / 2.0
+
+
+def _caixa_dos_segmentos(segmentos: list) -> list:
+    return [(min(s[0], s[2]), min(s[1], s[3]), max(s[0], s[2]), max(s[1], s[3]))
+            for s in segmentos]
+
+
+def _longe_da_caixa(cx0, cy0, cx1, cy1, caixa) -> float:
+    """Piso da distância entre um retângulo e a caixa de um segmento."""
+    dx = max(0.0, caixa[0] - cx1, cx0 - caixa[2])
+    dy = max(0.0, caixa[1] - cy1, cy0 - caixa[3])
+    return math.hypot(dx, dy)
+
+
 def agua_costeira_gradiente() -> str:
     """Campo de distância à costa, rasterizado dentro do SVG.
 
-    A costa não ganha curva nenhuma: o contorno continua sendo a escada
-    medida. O que arredonda nos cotovelos é só a propagação da COR, como luz
-    em volta de uma quina. Isso evita sobreposição de polígonos, frestas de
-    antialias e eixos de degradê incompatíveis nos seis degraus.
+    ⚠️ A COSTA GANHOU CURVA NAS DUAS PONTAS (item 8), e este campo tem de ler
+    a MESMA linha que a areia desenha — senão a faixa de baixio fica a
+    acompanhar a escada enquanto a areia serpenteia, e abre-se uma costura de
+    meia unidade entre as duas. É por isso que aqui entra a `linha_costeira` e
+    não o contorno base. No cais ela devolve exatamente os mesmos vértices de
+    sempre, então o porto continua igual ao que era.
+    #
+    O que arredonda nos cotovelos do CAIS continua a ser só a propagação da
+    COR, como luz em volta de uma quina: ali a linha é reta, e é assim que tem
+    de ser.
+
+    ⚠️ E O ÍNDICE ESPACIAL NÃO É AFINAÇÃO, É O QUE TORNA ISTO POSSÍVEL. Com a
+    escada eram 10 segmentos e a força bruta custava segundos; com as pontas
+    desenhadas são ~500, e 518 mil pixels contra 500 segmentos seriam minutos
+    em cada um dos quatro mapas que o CI regera. O índice divide a tela em
+    blocos de 8 px, mede o CENTRO de cada um contra todos os segmentos e
+    guarda só os que ainda podem ganhar em algum pixel do bloco — um segmento
+    cuja caixa esteja mais longe do que `centro + meia diagonal` não ganha em
+    lado nenhum dali. A conta continua a ser a mesma: a lista de candidatos
+    mantém a ORDEM original, de modo que um empate é desempatado como antes, e
+    o PNG sai byte a byte igual ao da força bruta (conferido com o contorno
+    velho antes de a costa mudar).
     """
     alcance = 6.0
-    costa = contorno_costa()
+    costa = linha_costeira(0.0)
     tela_costa = [tela(mx, my) for mx, my in costa]
     segmentos = [(tela_costa[i][0], tela_costa[i][1],
                   tela_costa[i + 1][0], tela_costa[i + 1][1],
                   costa[i][1], costa[i + 1][1])
                  for i in range(len(costa) - 1)]
+    caixas = _caixa_dos_segmentos(segmentos)
     baixio, rasa, media, espuma_ = (_rgb(C[n]) for n in
                                     ("agua_baixio", "agua_rasa",
                                      "agua_media", "espuma"))
     pixels = bytearray()
     px_por_unidade = 2.0 * MEIA_LARG * ZOOM
     amplitude = PRAIA_PROF * CRISTA[0][1] / alcance
+    # Além deste raio o pixel é transparente faça o meandro o que fizer: a
+    # largura da rampa nunca passa de `1 + amplitude`.
+    corte = alcance * px_por_unidade * (1.0 + amplitude) + 1.0
+    vizinhos = {}
+    for by in range(0, SAIDA, BLOCO_AGUA):
+        for bx in range(0, SAIDA, BLOCO_AGUA):
+            cx, cy = bx + BLOCO_AGUA / 2.0, by + BLOCO_AGUA / 2.0
+            centro, _my = _distancia_ao_contorno(cx, cy, segmentos)
+            if centro - _RAIO_BLOCO >= corte:
+                vizinhos[(bx, by)] = None          # bloco inteiro transparente
+                continue
+            limite = centro + _RAIO_BLOCO
+            vizinhos[(bx, by)] = [
+                (s, c) for s, c in zip(segmentos, caixas)
+                if _longe_da_caixa(bx, by, bx + BLOCO_AGUA, by + BLOCO_AGUA,
+                                   c) <= limite]
     for y in range(SAIDA):
+        by = y - y % BLOCO_AGUA
         for x in range(SAIDA):
+            perto = vizinhos[(x - x % BLOCO_AGUA, by)]
+            if perto is None:
+                pixels.extend((0, 0, 0, 0))
+                continue
             distancia_px, my = _distancia_ao_contorno(x + 0.5, y + 0.5,
-                                                       segmentos)
+                                                       [s for s, _c in perto])
             largura = 1.0 + amplitude * _meandro(my, CRISTA[0][2])
             d = round(distancia_px / px_por_unidade / largura, 8)
             if d >= alcance:
@@ -1813,28 +2152,25 @@ def linha_da_praia(t0: float, amp: float, fase: float, my_a: float,
     e a altura andam sempre juntos — inclusive na ondulação, senão a linha
     serpenteia no chão e fica reta no ar.
 
-    O `amp` só sacode muro e espelho, nunca o chanfro da quina: torcer o
-    chanfro desmancharia justamente a volta que a praia dá ao degrau.
+    ⚠️ E O `amp` DEIXOU DE SALTAR A QUINA. Ele sacudia muro e espelho e punha
+    `desvio = 0` no chanfro, porque torcer o chanfro desmanchava a volta que a
+    praia dava ao degrau. Com a costa desenhada pela família concêntrica isso
+    deixou de ser preciso: a volta é um ARCO, e empurrá-lo para dentro ou para
+    fora é só mudar o raio dele — quem faz essa conta é o `ponto_costeiro`, e
+    a linha continua fechada.
     """
     recuo = PRAIA_PROF * (1.0 - t0)
-    v = contorno_recuado(recuo)
+    v, comp, _arco, _q = _geometria_da_costa()
     pontos = []
     for i in range(len(v) - 1):
         (x0, y0), (x1, y1) = v[i], v[i + 1]
-        muro = abs(x1 - x0) < 1e-9
-        espelho = abs(y1 - y0) < 1e-9
-        n = max(1, int(max(abs(x1 - x0), abs(y1 - y0)) / passo))
+        n = max(1, int(comp[i] / passo))
         for k in range(n + 1):
             f = k / n
-            mx, my = x0 + (x1 - x0) * f, y0 + (y1 - y0) * f
-            desvio = PRAIA_PROF * amp * _meandro(my, fase) if amp else 0.0
-            if muro:
-                mx -= desvio
-            elif espelho:
-                my += desvio
-            else:
-                desvio = 0.0
-            pontos.append((mx, my, (recuo + desvio) / PRAIA_PROF))
+            base_my = math.fsum((y0, (y1 - y0) * f))
+            desvio = PRAIA_PROF * amp * _meandro(base_my, fase) if amp else 0.0
+            mx, my, _n, _t = ponto_costeiro(i, f, -math.fsum((recuo, desvio)))
+            pontos.append((mx, my, math.fsum((recuo, desvio)) / PRAIA_PROF))
     return [p(mx, my, ALT_CAIS * q)
             for mx, my, q in _corta_em_my(pontos, my_a, my_b)]
 
@@ -1891,14 +2227,14 @@ def _baixio_de_areia(indice: int, my_a: float, my_b: float) -> str:
     """
     alcance = round(PRAIA_SUBMERSA * 1.9, 6)
     costa_px = [p(mx, my) for mx, my in
-                _corta_em_my(costa_deslocada(0.0), my_a, my_b)]
+                _corta_em_my(linha_costeira(0.0), my_a, my_b)]
     n = _passos_de_um_pixel(alcance)
     acumulada = 0.0
     s = ""
     for i in range(n, 0, -1):
         d = round(alcance * i / n, 6)
         longe = [p(mx, my) for mx, my in
-                 _corta_em_my(costa_deslocada(d), my_a, my_b)]
+                 _corta_em_my(linha_costeira(d), my_a, my_b)]
         if len(costa_px) < 2 or len(longe) < 2:
             continue
         alvo = 0.90 * (1.0 - d / alcance)
@@ -3330,10 +3666,41 @@ def tabela_ancoras() -> dict:
     # O `recuo` é o MAIOR que a crista alcança (a ondulação incluída), de modo
     # que a faixa de areia publicada seja sempre um pouco mais larga do que a
     # desenhada: um cerco que erra tem de errar para o lado seguro.
+    # ⚠️ E O RECUO DEIXOU DE SER UMA FÓRMULA, porque a crista deixou de ser uma
+    # linha paralela ao cais. Ele valia `PRAIA_PROF * (1 + amp)` — a conta da
+    # ondulação de 02/09 — e com a costa desenhada a linha de água também anda
+    # para dentro da terra, levando a duna com ela. Uma fórmula que não some as
+    # duas coisas publica um cerco MAIS ESTREITO do que a areia que o mapa
+    # pinta, e um cerco que erra para o lado errado deixa passar exatamente o
+    # que existe para pegar. Aqui ele é MEDIDO na crista desenhada, com um
+    # centésimo de folga.
     areia = []
     for _j, my_a, my_b in praias():
+        fundo = 0.0
+        v, comp, _arc, _qs = _geometria_da_costa()
+        for i in range(len(v) - 1):
+            # ⚠️ SÓ OS MUROS. Medir `borda - mx` no ESPELHO de um degrau dá 4
+            # unidades de "recuo" e não quer dizer nada: ali a praia corre em
+            # `my`, não em `mx`, e a primeira versão desta medição publicou um
+            # cerco de 5,01 que chamaria areia a meio pátio. O cerco é em `mx`
+            # desde que existe, e é em `mx` que ele se mede.
+            if abs(v[i + 1][0] - v[i][0]) > 1e-9:
+                continue
+            n = max(1, int(math.ceil(comp[i] / 0.05)))
+            for k in range(n + 1):
+                f = k / n
+                base_my = v[i][1] + (v[i + 1][1] - v[i][1]) * f
+                desvio = PRAIA_PROF * CRISTA[_j][1] * _meandro(base_my,
+                                                               CRISTA[_j][2])
+                mx, my, _n, _t = ponto_costeiro(i, f, -(PRAIA_PROF + desvio))
+                # E só onde a amostra continua no degrau do seu próprio muro:
+                # dentro do fileto a crista dá a volta à quina e entra no `my`
+                # do degrau seguinte, onde `borda` salta 4 unidades de uma vez
+                # e a subtração deixa de querer dizer o que diz.
+                if my_a <= my <= my_b and abs(_borda_em(my) - v[i][0]) < 1e-9:
+                    fundo = max(fundo, _borda_em(my) - mx)
         areia.append({"my": [round(my_a, 2), round(my_b, 2)],
-                      "recuo": round(PRAIA_PROF * (1.0 + CRISTA[_j][1]), 3)})
+                      "recuo": round(fundo + 0.01, 3)})
 
     return {
         # O `fundo_terra` é UNIDADE DE MUNDO e por isso não leva `ZOOM`. Ele
@@ -3344,6 +3711,19 @@ def tabela_ancoras() -> dict:
                      "meia_larg": MEIA_LARG * ZOOM, "meia_alt": MEIA_ALT * ZOOM,
                      "alt_cais": ALT_CAIS * ZOOM, "fundo_terra": FUNDO_TERRA},
         "praias": areia,
+        # ⚠️ O CONTORNO DESENHADO, em pixels do PNG — e ele é NOVO por uma razão
+        # que este projeto já pagou três vezes: toda a maquinaria de cerco aqui
+        # pergunta POSIÇÃO ou COR a um ponto, e nenhuma perguntava a FORMA de
+        # uma linha. A costa das duas pontas deixou de ser a escada (item 8) e
+        # nada saberia dizer se ela voltou a ser: o desenho continuaria a
+        # passar em D15, D20, D21 e D27 com um V de dois traços em cada ponta.
+        #
+        # Sai daqui a INTENÇÃO (a linha que o gerador desenhou) e o raster diz
+        # o RESULTADO (de que cor é cada lado dela) — as duas fontes que o D24
+        # ensinou a separar. É decimado a ~0,3 unidades porque o que se mede
+        # com ele é a forma, e 500 pontos não dizem mais sobre forma do que 170.
+        "contorno": [[round(x, 1), round(y, 1)] for x, y in
+                     (tela(mx, my) for mx, my in linha_costeira(0.0, 0.3))],
         # AS CORES DA RUA, e elas saem do dicionário `C` de propósito. O D20
         # compara a cor lida do render com estas; uma lista escrita à mão do
         # lado do Godot envelheceria calada na primeira vez que alguém mexesse

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 13/09/2026
+> **Última atualização:** 14/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -37,7 +37,15 @@ a 42, fundo da terra em −16), senão o jogador via o mapa ACABAR por três lad
 **A água é tropical e lê como profundidade, não como fitas** — campo de cor
 contínuo pela distância à costa, com meandro longo de duas senóides, e a areia
 em rampas. A paleta medida não mudou (amplitude 99,408; espuma 0,558 de Weber).
-Curvas no contorno continuam a ser o item 8, separado.
+
+**E AS DUAS PONTAS SÃO COSTA DESENHADA** (`docs/decisoes/023`), a primeira fatia
+do item 8: a linha de água deixou de ser uma escada de traços retos — a maior
+reta caiu de 224 px para 16, e as quinas de 126,9° para 14°. **O cais continua
+reto**, que é o que ele é: a ondulação nasce fora de `PONTA_NORTE`/`PONTA_SUL` e
+no trecho do porto a linha bate com a de antes a 1e-15. Linha de água, baixio,
+espuma, pedras, rampa e o campo da água saem todos de `ponto_costeiro()`, uma
+família concêntrica que não se cruza — é isso que impede costura. O **D28**
+tranca a forma, e o raster continua a ser lido por D20, D21, D24 e D27.
 
 **A fauna tem seis espécies em nove pontos.** Os costeiros reaparecem: gaivota
 cruza, maria-farinha se enterra e tartaruga mergulha. Em terra,
@@ -55,19 +63,16 @@ porto que conseguem levantar**, medido pela MARGEM em regime (R$674.019 contra
 R$103.290) e não pela contagem de barcos, que favorece o porto pobre. Mexer em
 preço sem rodar `simular_balanceamento.gd` quebra isto.
 
-**E o `START_CASH` está TRANCADO em 400.000** (`docs/decisoes/018`): varrido
-até 150.000, só a linha de base cumpre os critérios. O diário conta de onde ele
-vem — herança do avô, não empréstimo.
+**E o `START_CASH` está TRANCADO em 400.000** (`018`): varrido até 150.000, só
+a linha de base passa. O diário diz de onde vem — herança do avô, não empréstimo.
 
-**E o navio que atraca depende do porto que existe** (`docs/decisoes/009`): três
-classes travadas pelo NÍVEL DO PORTO, o menor entre píer e guindaste —
-pesqueiro no 1, cargueiro no 2, longo curso no 3, que exige o cais reforçado. O
-Descuidado nunca vê um longo curso em 600 partidas, e o painel Construir abre a
-dizer o nível e o que falta.
+**E o navio que atraca depende do porto que existe** (`009`): três classes
+travadas pelo NÍVEL DO PORTO, o menor entre píer e guindaste — pesqueiro no 1,
+cargueiro no 2, longo curso no 3, que exige o cais reforçado. O Descuidado nunca
+vê um longo curso em 600 partidas, e o painel Construir diz o nível e o que falta.
 
-**E A FROTA DE PESCA TEM TRÊS PORTES** (`docs/decisoes/014`) — bote, traineira
-e arrasteiro, escolhidos pelo VALOR do contrato. Importa porque o porto em
-ruínas **só recebe pesqueiro**.
+**E A FROTA DE PESCA TEM TRÊS PORTES** (`014`) — bote, traineira e arrasteiro,
+pelo VALOR do contrato. Importa porque o porto em ruínas **só recebe pesqueiro**.
 
 **E o navio vem ao porto POR ALGUMA COISA:** cada barco nasce com um MOTIVO —
 Pescado, Armazenagem, Contêiner ou Granel —, lido no cartão da doca. O efeito é
@@ -75,8 +80,7 @@ o da ESTRUTURA a que o motivo está preso; reparo e reabastecimento ficaram de
 fora porque o GDD põe a oficina e o posto na Fase 2 (`docs/decisoes/008`).
 
 **A partida grava-se** — uma linha JSON por acontecimento, com o tempo de cada
-turno; sem o nome de quem jogou (`docs/decisoes/006`). Sai pelo menu de pausa, e
-`tools/ler_registros.py` resume.
+turno, sem o nome de quem jogou (`006`). Sai pelo menu de pausa; o leitor resume.
 
 **O jogo tem som:** 14 efeitos sintetizados por `tools/gerar_sons.py`, num
 autoload com prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno
@@ -92,8 +96,8 @@ que abrem na Fase 2. O menu de pausa não foi absorvido: ele é sistema, isto é
 mundo. **É casca, e de propósito** — a economia das fases seguintes continua por
 responder.
 
-**Nada de interface pousa sobre o mapa:** a doca separa a vaga no cenário do
-cartão na barra, e o número é tinta no cais.
+**Nada de interface pousa sobre o mapa:** a vaga é cenário, o cartão é barra, e
+o número é tinta no cais.
 
 **O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
 verdade** — parede desabada, meio telhado, portão fora do trilho
@@ -109,11 +113,10 @@ térrea, sobrado, prédio, e é assim que cresce a cada Fase.
 de rua nas duas quinas salientes (`docs/decisoes/013`).
 
 **E TRÊS LOTES DA VILA NÃO SÃO CASA** (`docs/decisoes/022`): uma **igreja** com
-torre, uma **praça** com coreto e meio-fio, e **duas obras** — lotes sem telhado,
-que é o que salta numa fileira de telhas. A obra é desenhada com a altura do
-nível SEGUINTE, de modo que a vila mostra o que vem e não só o que é. Escolhidos
-entre os lotes VISÍVEIS (24 dos 34), porque a 51 px de largura quem distingue é
-a silhueta e não o detalhe — foi por isso que "comércios variados" ficou de fora.
+torre, uma **praça** com coreto e **duas obras** — lotes sem telhado, que é o que
+salta numa fileira de telhas, desenhados com a altura do nível SEGUINTE. Saem dos
+lotes VISÍVEIS (24 dos 34): a 51 px quem distingue é a silhueta, e foi por isso
+que "comércios variados" ficou de fora.
 
 **E a mata atrás dela é desenhada onde se vê** (`com_saia()`).
 
@@ -133,13 +136,8 @@ em `docs/arquivo/HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | ~~Jogar~~ — 02/09 e 06/09, e os 25 itens já triados. Fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e devolveu 7 notas — 6
-aplicadas e a 7ª (os retratos) construída. Falta reler o que mudou. O que ela
-achou está no A4 do plano |
-| **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** —
-1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais o que ficou
-fora delas, a frota de 07/09 e o gradiente com fauna do item 9. É a trilha
-inteira à espera do olho dele |
+| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e devolveu 7 notas — 6 aplicadas e a 7ª (os retratos) construída. Falta reler o que mudou; está no A4 do plano |
+| **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais a frota de 07/09, o gradiente com fauna (9) e a costa das pontas (8). É a trilha inteira à espera do olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que a SEGUNDA jogada devolveu (06/09) — 25 itens, triados
@@ -148,21 +146,19 @@ inteira à espera do olho dele |
 
 **Nove blocos fechados** — 14, 10, 1, 22, 25, 3, a estrada (2, 4a, 11), 4b, a
 frota (7), o pau de carga (6), a Zona de Espera (15), o caixa (5) e o gradiente
-com fauna (9). O custo está em `docs/arquivo/HISTORICO.md`; o porquê, nas `011`
-a `018`.
+com fauna (9). Mais a **primeira fatia do 8** (`023`). O custo está em
+`docs/arquivo/HISTORICO.md`; o porquê, nas `011` a `023`.
 
-⚠️ **Sobrou UMA coisa medida e por fazer, e não é defeito:** a rua parou em
-**1,8** — alargá-la empurra o `RUA_RECUO` e mexe no enquadramento inteiro. A
-conta está na `012`. É sessão própria.
+⚠️ **Sobrou UMA coisa medida e por fazer:** a rua parou em **1,8** — alargá-la
+empurra o `RUA_RECUO` e o enquadramento inteiro (`012`). É sessão própria.
 
 O resto continua por começar, e **a ordem é dele**.
 
 ### O que a primeira jogada devolveu (02–03/09)
 
 **Triada em `docs/arquivo/PLAYTEST_01_ANALISE.md`**, e fechou-se tudo o que não
-dependia do Bruno. Sobram o layout do rodapé (gate A5), três itens de economia
-(via `/balancear`, amarrados ao pacote de Fase 2) e a fala da madeira podre
-(A4). **Livre, sem gate: A8.**
+dependia do Bruno. Sobram o rodapé (gate A5), três itens de economia (via
+`/balancear`, no pacote de Fase 2) e a madeira podre (A4). **Livre: A8.**
 
 ### A pergunta da Fase 2 — adiada de propósito (03/09)
 
@@ -182,10 +178,10 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
-| `brport_vs/autoload/Registro.gd` | Gravador `.jsonl`; nasce desarmado e o jogo arma-o, nunca o simulador |
-| `tools/ler_registros.py` | **O leitor** — resume N partidas de uma vez, e põe o jogador MEDIDO ao lado dos perfis que o simulador supõe |
+| `brport_vs/autoload/Registro.gd` | Gravador `.jsonl`; nasce desarmado, e quem o arma é o jogo |
+| `tools/ler_registros.py` | **O leitor** — resume N partidas e põe o jogador MEDIDO ao lado dos perfis supostos |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se — são dois arquivos em duas linguagens que nada obriga a concordar |
-| `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e sobretudo que o gravador NÃO grava quando não foi armado. Espera `REGISTRO OK` |
+| `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface e leitura raster do mapa; espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia (por varredura), todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru à tela, e **toda fala escrita chega ao jogo** (a pergunta inversa, contra o `Main.gd`) |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só** — diário, os quatro tons da Dona Cida, as falas de loop, o Arlindo, o Sr. Ribeiro e o fim de fase, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
@@ -209,7 +205,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/gerar_mapa_iso.py` | Gera mapa, vila, vias e o campo costeiro contínuo; raster embutido determinístico, acumulado com `math.fsum`. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`** |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
-| `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, e mede a dificuldade. **Quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado**, que quita antes do prazo (`018`). Imprime a mistura de classes e motivos e o NÍVEL a que cada um chegou, que é de onde o projetor tira os navios |
+| `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil. **Quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado**, que quita antes do prazo (`018`). Imprime classes, motivos e o NÍVEL de cada um, de onde o projetor tira os navios |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos, a 19px e ampliado — **rodar a cada ícone novo**. Três colunas e **reprova ao transbordar**, como a da frota: a duas ela cortava no 23.º em silêncio |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
@@ -223,7 +219,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
 | `.claude/skills/arte/SKILL.md` | **O ritual da arte** — qual etapa precisa de Blender, a armadilha de trocar matiz sem olhar o valor, o recorte ampliado, e o rasto que a mudança envelhece |
 | `.claude/skills/balancear/SKILL.md` | **O ritual da economia** — medir antes e depois com a mesma semente, separar escala de ratio, e arrastar atrás os oito lugares que afirmam o balanceamento |
-| `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto. Nunca derruba a sessão: todo caminho de erro devolve a receita manual |
+| `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto. Todo caminho de erro devolve a receita manual |
 | `.godot-version` | A versão do Godot, num lugar só. Lida pelo hook e pelo CI |
 | `docs/design/BR_Port_Numeros_Fase_1.md` | **A tabela dos números, GERADA** do `GameState.gd`. Não editar à mão — o CI reprova se envelhecer |
 | `tools/gerar_tabela_numeros.py` | Gera a tabela acima e cruza a leitura de texto com o que o Godot avalia |
@@ -232,13 +228,13 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
 | `tools/capturar_evidencia.sh` | Fotografias determinísticas de jogo, painéis e folhas de contato; é a evidência visual do CI |
-| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — cascos e camiões percorrendo as tabelas do jogo, cada um sobre o chão dele. Reprova se transbordar, em vez de recortar. O porquê está no `CLAUDE.md`: foto de jogo só mostra o que o sorteio escolheu |
+| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — cascos e camiões percorrendo as tabelas do jogo. Reprova se transbordar. O porquê está no `CLAUDE.md`: foto de jogo só mostra o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências e o teto do estado com EOL normalizado |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
-| `docs/gdd/` | **O GDD 7 legível**, 80 páginas GERADAS do `.jsx` — uma seção por arquivo. Não editar. Descreve as Fases 1 a 5 e está congelado antes da reescala: onde divergir do jogo, quem manda é o código |
+| `docs/gdd/` | **O GDD 7 legível**, 80 páginas GERADAS do `.jsx`, uma seção por arquivo. Não editar. Congelado antes da reescala: onde divergir do jogo, manda o código |
 | `tools/gerar_gdd_md.py` | Gera as 80 acima. Recusa-se a adivinhar: forma de dado que ele não conheça **reprova**, em vez de sumir do markdown |
 
 ### Sistemas que funcionam
@@ -249,9 +245,8 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
   reputação alta faz o cliente aceitar pagar cheio com mais frequência
   (`docs/decisoes/003`)
 - Contra-oferta do Arlindo (3 presets + mood face do cliente)
-- **Motivo de escala por barco** — quatro motivos de carga e descarga, cada um
-  preso a uma estrutura que já existe. Ele nasce com o barco, entra no save e
-  aparece no cartão da doca (`docs/decisoes/008`)
+- **Motivo de escala por barco** — quatro motivos, cada um preso a uma estrutura
+  que já existe. Nasce com o barco, entra no save e aparece no cartão (`008`)
 - **Três classes de navio, travadas pelo nível do porto** — pesqueiro,
   cargueiro e navio de longo curso, cada uma com a sua faixa de valor, os seus
   turnos e a sua mistura de motivos. A classe decide o casco desenhado no píer

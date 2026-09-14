@@ -93,6 +93,7 @@ var _d24_completo := false
 var _d25_completo := false
 var _d26_completo := false
 var _d27_completo := false
+var _d28_completo := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -213,6 +214,10 @@ func _rodar() -> void:
 	print("=== D27: cada animal nasce no habitat que lhe pertence ===")
 	_d27_habitats_da_fauna()
 	_confere("o bloco D27 correu até ao fim", _d27_completo)
+
+	print("=== D28: as duas pontas são costa desenhada, e o cais é reto ===")
+	_d28_contorno_das_pontas()
+	_confere("o bloco D28 correu até ao fim", _d28_completo)
 
 	print("=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===")
 	_d23_menu_celular()
@@ -1988,7 +1993,6 @@ func _contraste(a: Color, b: Color) -> float:
 	return (maxf(la, lb) + 0.05) / (minf(la, lb) + 0.05)
 
 
-
 # ── D20 ── a pista é PISTA no desenho, e não só nas coordenadas
 #
 # ⚠️ ESTE É O PRIMEIRO BLOCO QUE OLHA PARA A COR DO MAPA, e nasceu de um
@@ -2517,6 +2521,295 @@ func _mesma_cor(a: Color, b: Color) -> bool:
 		and absf(a.b - b.b) <= 4.0 / 255.0
 
 
+# ── D28 ── as duas pontas são COSTA DESENHADA, e o cais continua reto
+#
+# Item 8 do segundo playtest, primeira fatia. Medida a costa antes de mexer
+# nela, a queixa *"o mapa é quadrado"* tinha endereço: a linha de água das duas
+# pontas eram três e cinco traços perfeitamente retos, o maior de 224 px, com
+# quinas de 126,9 graus entre eles. A crista da duna já serpenteava desde
+# 02/09 — quem era régua era a água.
+#
+# ⚠️ E NADA NESTE PROJETO PERGUNTAVA A FORMA DE UMA LINHA. O D15 pergunta se a
+# praia aparece e quem a pisa, o D20 e o D21 perguntam de que COR o mapa pinta
+# um ponto, o D27 pergunta que terreno há debaixo de cada bicho — e uma costa
+# que voltasse a ser uma escada passaria em todos eles, contente. É o buraco
+# que este bloco tapa, e ele tem de ser tapado dos DOIS lados: uma guarda que
+# só exigisse curva seria satisfeita por alguém que curvasse o CAIS, que é
+# concreto e tem de ser reto.
+#
+# São quatro perguntas, e cada uma tem um estado que a viola sem violar as
+# outras:
+#
+#   1. a linha publicada é contínua e cobre o mundo de ponta a ponta;
+#   2. nas PRAIAS não há reta longa nem quina dura;
+#   3. no CAIS há reta longa, e é a mesma de sempre;
+#   4. o mapa pinta ÁGUA de um lado dela e TERRA do outro — que é o que prova
+#      que a linha publicada é a linha desenhada, e não uma tabela que
+#      envelheceu ao lado do desenho.
+#
+# A quarta mede a DIFERENÇA de azul entre os dois lados em vez de casar um
+# hexadecimal: junto à linha de água a espuma cobre o baixio até 55%, e sobre a
+# rampa há pedras cinzentas avulsas — casar tom exato ali reprovaria uma costa
+# bem desenhada, que é a armadilha que o D21 já traz escrita.
+const D28_CORRIDA_PRAIA := 60.0    # px: a maior reta que uma ponta pode ter
+const D28_CORRIDA_CAIS := 150.0    # px: a menor reta que o cais tem de ter
+# ⚠️ O LIMIAR DA QUINA É 90 GRAUS DE TELA, e o número não é de gosto: numa
+# projeção 2:1 um ângulo reto do MUNDO lê-se como 126,9 graus, e é ele que se
+# está a proibir. Medido em cima do desenho, com a janela de 5 px: a costa
+# curva das duas pontas mede 62,9 (a volta do fileto, que a projeção comprime),
+# e a escada de volta mede 126,9. O limiar fica a meio, com 27 graus de folga
+# de um lado e 37 do outro.
+const D28_QUINA_PRAIA := 90.0      # graus de TELA entre dois trechos de 5 px
+const D28_PASSO_MAX := 18.0        # px: o maior salto entre pontos publicados
+# ⚠️ E A LEITURA DE COR É A ÚNICA PERGUNTA QUE NÃO É UM ESPELHO. As três
+# primeiras leem a linha que a tabela publica, e a tabela sai da mesma função
+# que desenha — o que elas provam é uma PROPRIEDADE dessa linha (é curva; o
+# cais não é), que é coisa diferente de a comparar consigo mesma. Esta pergunta
+# ao PNG: de que cor o mapa pinta os dois lados dela. Medido com a costa de
+# volta à escada, dez das 123 leituras passam a ter areia dos dois lados — é a
+# quina da enseada, onde uma perpendicular sai da praia e volta a ela.
+#
+# (Uma tabela publicada 12 px fora do desenho, pelo contrário, reprova na
+# COBERTURA das praias e não aqui: a 10 px de afastamento a leitura de cor
+# ainda cai do lado certo. São perguntas diferentes, e é bom que sejam.)
+#
+# ⚠️ E CHEGOU A HAVER UMA QUINTA, que media a que distância a borda desenhada
+# cai da publicada, e foi RETIRADA por reprovar o mapa certo por 7 a 10 px: a
+# rampa acaba em pé molhado (escuro, e uma conta de azulidade dá-o por água),
+# sobre ela pousam pedras cinzento-azuladas, e na emenda com o cais não há
+# areia nenhuma. O defeito que ela existia para apanhar — a tabela deslocada 12
+# px — reprova na mesma, aqui e na cobertura das praias.
+const D28_ATRAVESSA := 10.0        # px para cada lado da linha, ao ler a cor
+const D28_MARGEM_AZUL := 0.10      # o quanto a água tem de ser mais azul
+
+
+# ⚠️ A RETA MEDE-SE POR CORDA, E NÃO JUNTANDO SEGMENTOS COLINEARES. A primeira
+# versão deste bloco juntava segmentos cujo ângulo batesse a menos de meio
+# grau, e o defeito injetado — a costa de volta à escada — NÃO REPROVOU a
+# asserção da reta: a tabela publica pixel com uma casa decimal, e num
+# segmento de 6,7 px meio pixel de arredondamento vale 0,43 grau. O que se
+# estava a medir era o ruído do arredondamento, não a forma da linha. Aqui a
+# pergunta é a de uma régua pousada em cima do desenho: até onde ela vai sem
+# que a linha se afaste mais do que um pixel dela.
+const D28_TOLERANCIA := 1.0        # px que a linha pode fugir da régua
+
+
+func _d28_maior_reta(pontos: Array) -> float:
+	var maior := 0.0
+	for i in range(pontos.size() - 1):
+		for j in range(i + 1, pontos.size()):
+			var corda: Vector2 = pontos[j] - pontos[i]
+			var comp := corda.length()
+			if comp <= maior:
+				continue
+			var reto := true
+			for k in range(i + 1, j):
+				var q: Vector2 = pontos[k] - pontos[i]
+				if absf(q.cross(corda) / comp) > D28_TOLERANCIA:
+					reto = false
+					break
+			if reto:
+				maior = comp
+			else:
+				break
+	return maior
+
+
+func _d28_maior_quina(pontos: Array) -> float:
+	"""A maior curva entre dois trechos de 5 px, que é o que o olho lê como quina."""
+	var maior := 0.0
+	for i in range(pontos.size()):
+		var antes := _d28_direcao(pontos, i, -1)
+		var depois := _d28_direcao(pontos, i, 1)
+		if antes == Vector2.ZERO or depois == Vector2.ZERO:
+			continue
+		maior = maxf(maior, absf(rad_to_deg(antes.angle_to(depois))))
+	return maior
+
+
+func _d28_direcao(pontos: Array, i: int, sentido: int) -> Vector2:
+	var andado := 0.0
+	var j := i
+	while andado < 5.0:
+		var k := j + sentido
+		if k < 0 or k >= pontos.size():
+			return Vector2.ZERO
+		andado += pontos[k].distance_to(pontos[j])
+		j = k
+	return (pontos[j] - pontos[i]) * float(sentido)
+
+
+func _d28_contorno_das_pontas() -> void:
+	var contorno: Array = _ancoras.get("contorno", [])
+	_confere("a tabela publica o contorno desenhado", contorno.size() >= 100,
+		"são %d pontos, e uma costa de seis degraus não cabe em menos" % contorno.size())
+	if contorno.size() < 100:
+		return
+	var praias: Array = _ancoras.get("praias", [])
+	if praias.is_empty():
+		return
+
+	var pontos: Array = []
+	for q in contorno:
+		pontos.append(Vector2(float(q[0]), float(q[1])))
+
+	# (1) contínua, e cobrindo cada ponta de uma ponta à outra
+	#
+	# ⚠️ E O SALTO SÓ SE MEDE NA PRAIA. No CAIS a linha é reta e publica-se com
+	# os vértices de sempre — dois pontos a 179 px um do outro, que é o cais
+	# inteiro de um degrau e não um buraco. Medir o salto lá reprovaria a única
+	# parte do desenho que não mudou.
+	var maior_salto := 0.0
+	var cobertura := {}
+	for i in range(pontos.size()):
+		var my := _mundo(pontos[i], 0.0).y
+		for j in range(praias.size()):
+			var praia: Dictionary = praias[j]
+			if my < float(praia["my"][0]) or my > float(praia["my"][1]):
+				continue
+			if not cobertura.has(j):
+				cobertura[j] = [my, my]
+			cobertura[j][0] = minf(cobertura[j][0], my)
+			cobertura[j][1] = maxf(cobertura[j][1], my)
+			if i > 0 and _dentro_de_praia(_mundo(pontos[i - 1], 0.0).y, praias):
+				maior_salto = maxf(maior_salto,
+					pontos[i].distance_to(pontos[i - 1]))
+	_confere("o contorno das pontas não tem buraco nenhum",
+		maior_salto <= D28_PASSO_MAX,
+		"o maior salto entre dois pontos publicados de praia é de %.1f px"
+			% maior_salto)
+	for j in range(praias.size()):
+		var praia: Dictionary = praias[j]
+		var pede: float = float(praia["my"][1]) - float(praia["my"][0])
+		var tem: float = (cobertura[j][1] - cobertura[j][0]) if cobertura.has(j) else 0.0
+		_confere("o contorno atravessa a praia %.1f..%.1f inteira"
+			% [float(praia["my"][0]), float(praia["my"][1])],
+			tem >= pede - 0.25,
+			"a linha cobre %.2f das %.2f unidades dela" % [tem, pede])
+
+	# (2) e (3): a forma, praia a praia e no cais
+	var de_praia: Array = []
+	var do_cais: Array = []
+	var atual: Array = []
+	var na_praia_antes := false
+	for i in range(pontos.size()):
+		var my := _mundo(pontos[i], 0.0).y
+		var e_praia := false
+		for praia in praias:
+			if my >= float(praia["my"][0]) and my <= float(praia["my"][1]):
+				e_praia = true
+		if i > 0 and e_praia != na_praia_antes:
+			(de_praia if na_praia_antes else do_cais).append(atual.duplicate())
+			atual = [pontos[i - 1]]
+		atual.append(pontos[i])
+		na_praia_antes = e_praia
+	(de_praia if na_praia_antes else do_cais).append(atual)
+
+	var pior_reta := 0.0
+	var pior_quina := 0.0
+	for trecho in de_praia:
+		pior_reta = maxf(pior_reta, _d28_maior_reta(trecho))
+		pior_quina = maxf(pior_quina, _d28_maior_quina(trecho))
+	_confere("nenhuma ponta tem reta maior do que %.0f px" % D28_CORRIDA_PRAIA,
+		pior_reta <= D28_CORRIDA_PRAIA,
+		"a maior reta de praia mede %.1f px" % pior_reta)
+	_confere("nenhuma ponta tem quina de ângulo reto (mais de %.0f graus de tela)"
+		% D28_QUINA_PRAIA, pior_quina <= D28_QUINA_PRAIA,
+		"a maior quina de praia mede %.1f graus, e um ângulo reto do mundo dá 126,9"
+			% pior_quina)
+
+	var melhor_cais := 0.0
+	for trecho in do_cais:
+		melhor_cais = maxf(melhor_cais, _d28_maior_reta(trecho))
+	_confere("o cais continua reto — a maior reta dele passa de %.0f px"
+		% D28_CORRIDA_CAIS, melhor_cais >= D28_CORRIDA_CAIS,
+		"a maior reta de cais mede %.1f px, e cais é concreto" % melhor_cais)
+
+	# (4) o mapa pinta água de um lado e terra do outro
+	#
+	var textura := load("res://art/porto_mapa_iso.svg") as Texture2D
+	var img := textura.get_image() if textura != null else null
+	_confere("o mapa do porto rasteriza", img != null)
+	if img == null:
+		return
+	var lidas := 0
+	var trocados := 0
+	var pior := ""
+	for trecho in de_praia:
+		for i in range(trecho.size() - 1):
+			var t: Vector2 = (trecho[i + 1] - trecho[i]).normalized()
+			var n := Vector2(t.y, -t.x)         # o lado da água
+			var meio: Vector2 = (trecho[i] + trecho[i + 1]) * 0.5
+			var a := meio + n * D28_ATRAVESSA
+			var b := meio - n * D28_ATRAVESSA
+			if not (_d28_dentro(a, img) and _d28_dentro(b, img)):
+				continue
+			# ⚠️ A EMENDA COM O CAIS NÃO ENTRA, e não é para esconder falha: ali
+			# a areia ainda não começou e o que está dos dois lados da linha é
+			# CONCRETO — o muro de um lado e o enrocamento do outro, os dois
+			# cinzentos. Medido, eram as duas únicas leituras que não separavam
+			# em 139. O que impede alguém de alargar esta janela até a asserção
+			# passar é o piso de leituras, logo abaixo.
+			if _perto_do_cais(_mundo(meio, 0.0).y, praias):
+				continue
+			var agua := img.get_pixel(int(a.x), int(a.y))
+			var terra := img.get_pixel(int(b.x), int(b.y))
+			var azul_agua := agua.b - agua.r
+			var azul_terra := terra.b - terra.r
+			if azul_agua - azul_terra < D28_MARGEM_AZUL:
+				trocados += 1
+				if pior == "":
+					pior = "no pixel (%d, %d): a %.0f px de um lado o mapa pinta #%s e do outro #%s" \
+						% [int(meio.x), int(meio.y), D28_ATRAVESSA,
+						   agua.to_html(false), terra.to_html(false)]
+				continue
+			lidas += 1
+	_confere("a linha publicada dá pelo menos 120 leituras dentro do quadro (%d)"
+		% lidas, lidas >= 120)
+	_confere("de um lado da linha o mapa pinta água e do outro pinta terra",
+		trocados == 0, "%d de %d leituras não separam — %s" % [trocados, lidas, pior])
+
+
+	# (5) e a areia continua longe da rua — o CERCO, antes de o raster o ver
+	#
+	# O D20 já percorre a rota da estrada a vetar os quatro tons de areia, e é
+	# ele quem responde pelo desenho. Esta é a outra metade, e chega primeiro:
+	# o recuo publicado é medido na crista DESENHADA, então alguém que suba a
+	# amplitude da ondulação até a duna encostar no passeio reprova aqui com o
+	# número na mão, em vez de esperar que uma amostra da rota calhe na areia.
+	for praia in praias:
+		var faixa: Dictionary = _faixa_de(float(praia["my"][0]) + 0.1)
+		var borda := float(faixa["borda"])
+		var areia0: float = borda - float(praia["recuo"])
+		_confere("a areia da praia %.1f..%.1f para antes do passeio"
+			% [float(praia["my"][0]), float(praia["my"][1])],
+			areia0 > float(faixa["rua"][1]),
+			"a areia começa em mx %.2f e o passeio acaba em %.2f"
+				% [areia0, float(faixa["rua"][1])])
+	_d28_completo = true
+
+
+func _d28_dentro(q: Vector2, img: Image) -> bool:
+	return q.x >= 0.0 and q.y >= 0.0 and q.x < float(img.get_width()) \
+		and q.y < float(img.get_height())
+
+
+func _dentro_de_praia(my: float, praias: Array) -> bool:
+	for praia in praias:
+		if my >= float(praia["my"][0]) and my <= float(praia["my"][1]):
+			return true
+	return false
+
+
+func _perto_do_cais(my: float, praias: Array) -> bool:
+	"""A meia unidade da emenda entre a praia e o cais, dos dois lados."""
+	for praia in praias:
+		if absf(my - float(praia["my"][0])) < 0.6 \
+				or absf(my - float(praia["my"][1])) < 0.6:
+			return true
+	return false
+
+
 # ── D23 ── o menu-celular: o que ele custou ao rodapé, e o que se lê dentro
 #
 # Item 17 do segundo playtest. O menu é a primeira tela deste projeto cujo
@@ -2850,7 +3143,6 @@ func _d24_a_vila_cresce() -> void:
 				"achou %d pixels de telhado onde devia haver laje" % intrusos)
 
 	_d24_completo = true
-
 
 
 func _contar_cor(img: Image, ix: int, iy: int, raio: int, alvo: Color) -> int:

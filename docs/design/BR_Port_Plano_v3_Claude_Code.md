@@ -1303,6 +1303,37 @@ defeitos injetados passaram inteiros.
 
 **Resta um item de arte, separado:** curvas em vez de retas (8, grande).
 
+### ✅ A PRIMEIRA FATIA DO 8 FECHOU — a costa das duas pontas (14/09)
+
+**`docs/decisoes/023`.** O recorte do briefing de 13/09, cumprido inteiro: a
+linha de água das duas praias deixou de ser uma escada de traços retos, e o
+**cais continua reto**, que é o que ele é.
+
+Medido antes de mexer, e é onde a queixa tinha endereço: a crista da duna **já
+serpenteava** desde 02/09 — quem era régua era a linha de água, que tinha
+amplitude zero numa constante. A maior reta caiu de **224 px para 16**, e as
+quinas de **126,9° para 14°**; no trecho do cais a linha nova bate com a velha
+a 1e-15 unidades, e as âncoras dos píeres não se mexeram.
+
+Tudo o que acompanha a costa sai agora de `ponto_costeiro()` — uma família
+concêntrica de curvas, com o fileto de cada quina em volta de um centro FIXO e
+o raio a crescer com a distância. Duas curvas dela nunca se cruzam, e é isso que
+torna impossível a costura entre a areia e a água. O raster da água precisou de
+índice espacial (10 segmentos passaram a ~500, e 182 s por mapa voltaram a 12),
+provado **byte a byte igual** à força bruta nas duas costas.
+
+Rendeu o **D28**, o primeiro bloco deste projeto a perguntar a FORMA de uma
+linha — e duas lições que custaram: a métrica da reta por ângulos entre
+segmentos media o **arredondamento da tabela** e deixou passar a escada inteira
+(hoje é uma régua de corda, com um pixel de tolerância), e uma quinta asserção
+foi construída, medida e **retirada** por reprovar o mapa certo por 7 px, sem
+que o defeito que ela caçava deixasse de ser apanhado.
+
+**O item 8 continua aberto**: falta o kit de props, que é de caixas por
+construção — outra sessão, e provavelmente mais do que uma. E os cotovelos da
+rua ficaram de fora de propósito: curvá-los é geometria funcional (o asfalto que
+o D20 percorre, o desvio que o camião faz), que o recorte proibia.
+
 ### ✅ OS DOIS DEFEITOS VISTOS EM 13/09 FECHARAM, MEDIDOS (13/09)
 
 **1. A areia já não atravessa a rua.** A causa era ordem, não geometria:
