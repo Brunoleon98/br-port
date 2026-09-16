@@ -562,6 +562,36 @@ derivada delas.
   `z()` continua na escala de DESENHO de propósito — o fator de altura e o
   `ortho_scale` cancelam-se, e mexer nele levantaria cada prop 1,5×. Afastar
   uma câmera não estica o que ela filma.
+  ⚠️ **E O PROP TEM DUAS MEDIDAS DESDE 16/09: 512 de COORDENADA e 768 de
+  PIXEL** (`docs/decisoes/029`, a alavanca B). O `ESCALA_ORTO` sai do
+  `RESOLUCAO_TELA` e NÃO do `RESOLUCAO` — presos um ao outro, a câmera
+  afasta-se na mesma proporção em que o quadro cresce e a alavanca entrega
+  256 px de moldura vazia em vez de um pixel de desenho. Quem desfaz a
+  diferença é `expand_mode = 1` nos 31 nós de prop (a mesma linha dos três nós
+  de mapa), a `scale` que o `Fauna.gd` escreve nos seis `Sprite2D`, e o
+  `PropIso` para toda régua que leia `get_used_rect()`. O **D31** tranca-o.
+  ⚠️ **E A ALAVANCA B NÃO REDESENHA NADA, ao contrário do que o item previa.**
+  A previsão era que "os props são desenhados nas unidades da SAÍDA", logo todo
+  número em pixel do gerador teria de ser varrido. Medido: a geometria dele
+  está em unidades de MUNDO (`chanfrar()` 0,020; `TABUA` 0,30; o ruído), e os
+  "31px na tela" dos comentários são OBSERVAÇÕES do que esses valores produzem,
+  não entradas. Com o `ortho_scale` parado, o mesmo mundo é amostrado mais
+  fino: pelo `comparar_props.py`, que reduz os dois a 16×16 e é cego à
+  resolução, **51 dos 61 props medem no máximo 0,0059** — contra 0,022 de um
+  pixel de deslocamento e 0,42 de um prop trocado por outro. É a mesma razão
+  estrutural pela qual a A também não a encontrou: **antes de varrer constantes
+  por causa de uma mudança de escala, pergunte se o que mudou foi o DESENHO ou
+  só a amostragem dele.**
+  ⚠️ **E OS QUATRO QUE MUDARAM NÃO DESMENTEM ISSO — DENUNCIAM OUTRA COISA.**
+  Três retratos do Sr. Ribeiro mediram 0,08 porque a GRAVATA e a CAMISA
+  estavam coplanares, e a resolução mais fina passou a desenhar o empate: a
+  gravata saía partida ao meio, escura em cima e rosa lavado em baixo. O
+  defeito era de 01/09 e o que o revelou foi a alavanca. **Subir a resolução
+  não cria geometria degenerada: tira-lhe o disfarce** — e quem o apanhou foi
+  a régua que compara levas, não suíte nenhuma.
+  O que a alavanca envelheceu foi o outro lado: os números em pixel de quem
+  MEDE o PNG — `MEIO_QUADRO`, o pivô da lança, a régua da pessoa de 15 px, o
+  `D29_LARG_MIN`, o `ZOOM` das duas folhas de contato.
 - **Constante em PIXEL é constante que envelhece quando o `ZOOM` muda, e ela
   não dá erro.** Foram cinco em 05/09: a silhueta do caminhão e o corte que
   exige pegada no teste de design, a largura de telhado da vila, os sprites do
@@ -577,8 +607,11 @@ derivada delas.
 - **`pos()` inverte o sinal de Y.** No Blender a direita da tela é (+X, +Y);
   no mapa o `+my` puxa para a ESQUERDA. Um prop simétrico não denuncia a
   diferença — o primeiro assimétrico saiu 40px fora.
-- **O quadro de todo prop tem 512 e o centro dele é a origem do mundo.**
-  Posicionar um prop na cena é subtrair meio quadro, não acertar no olho.
+- **O quadro de todo prop tem 512 de COORDENADA e o centro dele é a origem do
+  mundo.** Posicionar um prop na cena é subtrair meio quadro, não acertar no
+  olho — e desde 16/09 meio quadro são **256 na cena e 384 no PNG**, que até
+  aquele dia eram o mesmo número (`029`). Toda régua que leia a textura e
+  responda em coordenada passa pelo `PropIso`.
 - **E desprojetar um prop de volta ao mundo pede a ALTURA em que ele pousa.**
   Quem está em terra pousa a `ALT_CAIS`; quem está na água, a 0 — é o que o
   `_origem`/`_mundo` do teste de design faz. Desprojetar tudo a 0 desloca cada

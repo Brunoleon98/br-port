@@ -18,7 +18,7 @@ mudança não puxa as outras espécies previstas no pacote grande.
 **A gaivota anterior ocupava só cerca de 20 px do quadro e lia como planador.**
 A quarta versão troca caixas por prismas de silhueta: asa dobrada, cauda
 bifurcada e ponta escura fazem o desenho antes de qualquer detalhe. Ela também
-ganha escala de jogo — o quadro continua 512x512, mas a ave deixa de ser um
+ganha escala de jogo — o quadro continua o mesmo, mas a ave deixa de ser um
 punhado de pixels no meio dele. É a aplicação prática do diagnóstico antigo:
 resolver a ave no desenho visto de cima, e não empilhar mais primitivas.
 """

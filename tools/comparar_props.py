@@ -13,9 +13,17 @@ O que responde é reduzir os dois a 16x16 e comparar: cada célula é a média d
 
 ⚠️ E A CAIXA DESENHADA NÃO É O DESENHO. Dois props bem distintos podem ter o
 MESMO `get_used_rect()` — aconteceu com o porta-contêineres e o graneleiro
-médios, 97 x 83 no mesmo sítio —, então a redução faz-se sobre o QUADRO INTEIRO
-de 512, e não sobre o recorte: recortar antes de reduzir é comparar duas peças
-depois de as alinhar, que esconde exactamente o que se quer ver.
+médios, 97 x 83 no mesmo sítio —, então a redução faz-se sobre o QUADRO INTEIRO,
+e não sobre o recorte: recortar antes de reduzir é comparar duas peças depois de
+as alinhar, que esconde exactamente o que se quer ver.
+
+⚠️ E A REDUÇÃO A 16x16 É O QUE TORNA ESTA RÉGUA CEGA À RESOLUÇÃO — de propósito.
+Os dois lados passam a ter 16 células seja o quadro de 512 ou de 768, então a
+alavanca B (`docs/decisoes/029`) não move um número aqui. O que ela MOVE é a
+calibração de uma das três: "um pixel de deslocamento dá 0,022" foi medido num
+quadro de 512, e num de 768 o mesmo pixel desloca dois terços disso. Comparar
+uma leva de 512 com uma de 768 continua a funcionar (as células são a mesma
+grelha), e é por isso que ela serve para julgar esta alavanca.
 
 USO
 ---

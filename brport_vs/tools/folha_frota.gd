@@ -51,6 +51,18 @@ const FUNDO_FOLHA := Color(0.09, 0.16, 0.24)
 const TINTA := Color(0.878, 0.914, 0.965)
 const TINTA_FRACA := Color(0.62, 0.70, 0.78)
 
+# ⚠️ E O ZOOM CONTA-SE SOBRE O TAMANHO DO JOGO, não sobre o pixel do arquivo.
+# Desde a alavanca B o prop tem 768 px de textura para 512 de coordenada
+# (`docs/decisoes/029`): multiplicar o `get_used_rect()` cru por 2 daria TRÊS
+# vezes o tamanho do jogo, as células cresceriam 1,5x e a folha reprovaria por
+# transbordo — sem que nada no catálogo tivesse mudado. Com o fator da textura
+# pelo meio a folha fica do mesmo tamanho e mostra 1,5x mais desenho dentro
+# dela, que é o que a alavanca comprou.
+#
+# O NEAREST fica: a ampliação deixou de ser 2:1 de texel e passou a 4:3, logo
+# um em cada três pixels aparece dobrado — artefacto de lupa, e o preço de ver
+# o pixel como ele é em vez de o ver borrado. Quem quiser a amostragem do jogo
+# olha a `folha_props`, que é a que promete "o tamanho do jogo".
 const ZOOM := 2
 const MARGEM := 12
 const RODAPE := 36                                 # as duas linhas de nome, por baixo
@@ -183,16 +195,19 @@ func _secao(titulo: String, itens: Array, chao: Color, y0: float) -> float:
 	root.add_child(rotulo)
 	var y := y0 + 26.0
 
-	var maior := Vector2i.ZERO
+	var maior := Vector2.ZERO
 	var recortes: Array = []
+	var tamanhos: Array = []
 	for item in itens:
 		var img := (item[0] as Texture2D).get_image()
 		var r := img.get_used_rect()
 		recortes.append(r)
-		maior.x = maxi(maior.x, r.size.x)
-		maior.y = maxi(maior.y, r.size.y)
+		var tam := Vector2(r.size) * PropIso.escala(item[0] as Texture2D) * float(ZOOM)
+		tamanhos.append(tam)
+		maior.x = maxf(maior.x, tam.x)
+		maior.y = maxf(maior.y, tam.y)
 
-	var celula := Vector2(maior.x * ZOOM + MARGEM, maior.y * ZOOM + RODAPE)
+	var celula := Vector2(maior.x + MARGEM, maior.y + RODAPE)
 	var colunas: int = maxi(1, int((tela - MARGEM) / celula.x))
 	var i := 0
 	for item in itens:
@@ -221,7 +236,7 @@ func _secao(titulo: String, itens: Array, chao: Color, y0: float) -> float:
 		arte.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		arte.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		arte.stretch_mode = TextureRect.STRETCH_SCALE
-		arte.size = Vector2(r.size) * ZOOM
+		arte.size = tamanhos[i]
 		arte.position = canto + Vector2(
 			(celula.x - 8 - arte.size.x) / 2.0,
 			(celula.y - RODAPE - arte.size.y) / 2.0)

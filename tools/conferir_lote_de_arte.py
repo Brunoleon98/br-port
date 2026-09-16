@@ -15,7 +15,10 @@ referência:
 2. Em que ângulo a base foi desenhada?
    O contrato do projeto é 2:1 — 26,57°. O gerador de imagem não erra o
    desenho, erra o ÂNGULO, e ângulo errado não se conserta rodando no Godot.
-3. Que tamanho e formato tem, contra os 512×512 RGBA dos props em produção.
+3. Que tamanho e formato tem, contra os 768×768 RGBA dos props em produção
+   (eram 512 até a alavanca B de 16/09 — `docs/decisoes/029`; o quadro em
+   COORDENADA continua a ser 512, e é o `PropIso` do lado do Godot que os
+   reconcilia).
 
 Não decide nada: mede e classifica. Quem decide se o asset entra é quem olha a
 captura. Sem dependência além de Pillow e numpy.

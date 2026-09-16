@@ -17,6 +17,7 @@ offset_top = -114.67
 offset_right = 445.33
 offset_bottom = 397.33
 mouse_filter = 2
+expand_mode = 1
 
 ; ORDEM DOS PROPS = PROFUNDIDADE. Num plano isométrico quem tem `mx+my`
 ; maior está mais perto da câmera e tapa quem tem menor. O trabalhador fica
@@ -38,6 +39,7 @@ offset_right = 421.33
 offset_bottom = 420.67
 mouse_filter = 2
 visible = false
+expand_mode = 1
 texture = ExtResource("prop_trabalhador")
 
 [node name="Barco" type="TextureRect" parent="."]
@@ -47,6 +49,7 @@ offset_top = -86.67
 offset_right = 389.33
 offset_bottom = 425.33
 mouse_filter = 2
+expand_mode = 1
 
 [node name="Lanca" type="TextureRect" parent="."]
 layout_mode = 0
@@ -57,4 +60,5 @@ offset_bottom = 397.33
 pivot_offset = Vector2(293, 187)
 mouse_filter = 2
 visible = false
+expand_mode = 1
 texture = ExtResource("prop_lanca")

@@ -26,9 +26,17 @@ extends SceneTree
 const ANCORAS := "res://art/porto_mapa_ancoras.json"
 const CENA := "res://scenes/Main.tscn"
 
-# O quadro de todo prop isométrico tem 512 e o centro dele é a origem do
-# mundo (ver `para_pixel` em tools/gerar_props_iso.py).
-const MEIO_QUADRO := 256.0
+# O quadro de todo prop isométrico tem 512 COORDENADAS e o centro dele é a
+# origem do mundo (ver `para_pixel` em tools/gerar_props_iso.py).
+#
+# ⚠️ E ELE JÁ NÃO É METADE DA TEXTURA. Este número serve a `no.position +
+# MEIO_QUADRO`, que é a âncora do prop no MAPA — coordenada de nó, e é isso que
+# ele continua a ser. Desde a alavanca B a textura tem 768 px (`029`), logo
+# metade DELA é 384, e o `_desenho_dos_caminhoes()` aqui abaixo usava este
+# mesmo 256 para o outro lado da conta. Eram dois números iguais medidos de
+# sítios diferentes, que é a armadilha que o `vaos_da_vila()` já registou.
+# Quem traduz um no outro é o `PropIso`, num lugar só.
+const MEIO_QUADRO := PropIso.MEIO
 
 # Meia célula do chão. Mais que isto e o prop já se lê deslocado do desenho.
 const TOLERANCIA_PX := 2.0
@@ -55,9 +63,7 @@ func _desenho_dos_caminhoes(tela: Control) -> Rect2:
 	var primeiro := true
 	for motivo in (consts["CAMINHOES"] as Dictionary).values():
 		for tex in (motivo as Dictionary).values():
-			var r := (tex as Texture2D).get_image().get_used_rect()
-			var caixa := Rect2(Vector2(r.position) - Vector2(MEIO_QUADRO, MEIO_QUADRO),
-				Vector2(r.size))
+			var caixa := PropIso.desenho(tex as Texture2D)
 			uniao = caixa if primeiro else uniao.merge(caixa)
 			primeiro = false
 	return uniao
@@ -226,6 +232,10 @@ func _rodar() -> void:
 	print("=== D30: peça co-ancorada encaixa na que está por cima ===")
 	_d30_pecas_co_ancoradas()
 	_confere("o bloco D30 correu até ao fim", _d30_completo)
+
+	print("=== D31: quem mostra um prop reconcilia os pixels com as coordenadas ===")
+	_d31_quadro_de_quem_mostra()
+	_confere("o bloco D31 correu até ao fim", _d31_completo)
 
 	print("=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===")
 	_d23_menu_celular()
@@ -430,6 +440,19 @@ const NIVEIS := 3
 const RAIO_PIVO := 2
 const PISO_PIVO := 0.35
 
+# ⚠️ E O PIVÔ VEM DO NÓ, A IMAGEM É A TEXTURA. O `pivot_offset` está em
+# coordenadas do `Lanca` (512 de lado); desde a alavanca B a textura tem 768,
+# e sondá-la no pixel 293 seria sondar um ponto a dois terços do caminho para
+# o topo da torre. A janela escala com o fator pela mesma razão — ela pergunta
+# quanto desenho há à volta de uma ÁREA do desenho, e o `_densidade_no_pivo`
+# devolve uma FRAÇÃO, que já normaliza a área: escala-se o raio e o piso fica.
+func _pivo_na_textura(tex: Texture2D, pivo: Vector2) -> Vector2i:
+	return Vector2i((pivo / PropIso.escala(tex)).round())
+
+
+func _raio_na_textura(tex: Texture2D) -> int:
+	return int(round(float(RAIO_PIVO) / PropIso.escala(tex)))
+
 
 func _densidade_no_pivo(img: Image, pivo: Vector2i, raio: int) -> float:
 	var opacos := 0
@@ -468,10 +491,12 @@ func _d17_niveis_do_porto() -> void:
 	for i in range(lancas.size()):
 		var img := (lancas[i] as Texture2D).get_image()
 		var usado := img.get_used_rect()
+		var pivo_tex := _pivo_na_textura(lancas[i] as Texture2D, pivo)
+		var raio_tex := _raio_na_textura(lancas[i] as Texture2D)
 		# O pivô é o topo da torre, e a torre está no PÍER. A lança tem de o
 		# cobrir, senão gira em torno de um ponto que não lhe pertence.
 		_confere("a lança do nível %d cobre o pivô %s" % [i + 1, pivo],
-			usado.has_point(Vector2i(pivo)),
+			usado.has_point(pivo_tex),
 			"o desenho dela ocupa %s" % usado)
 		# ⚠️ E A CAIXA NÃO É O DESENHO — a asserção acima prometia por escrito
 		# "que o pivô caia dentro do DESENHO" e media `used_rect`, que é a
@@ -489,9 +514,9 @@ func _d17_niveis_do_porto() -> void:
 		# para pegar uma lança desenhada FORA do próprio eixo, não para
 		# congelar os números de hoje.
 		_confere("a lança do nível %d tem desenho À VOLTA do pivô" % [i + 1],
-			_densidade_no_pivo(img, Vector2i(pivo), RAIO_PIVO) >= PISO_PIVO,
-			"só %.0f%% dos pixels num raio de %d px estão desenhados"
-				% [100.0 * _densidade_no_pivo(img, Vector2i(pivo), RAIO_PIVO),
+			_densidade_no_pivo(img, pivo_tex, raio_tex) >= PISO_PIVO,
+			"só %.0f%% dos pixels num raio de %d px de tela estão desenhados"
+				% [100.0 * _densidade_no_pivo(img, pivo_tex, raio_tex),
 				   RAIO_PIVO])
 		# Níveis iguais não são níveis. Compara-se a caixa desenhada, que é o
 		# que o jogador vê mudar — não os bytes, que mudam por ruído.
@@ -514,11 +539,12 @@ func _d17_niveis_do_porto() -> void:
 	for i in range(pieres.size()):
 		var img_p := (pieres[i] as Texture2D).get_image()
 		var usado_p := img_p.get_used_rect()
+		var pivo_p := _pivo_na_textura(pieres[i] as Texture2D, pivo)
 		_confere("a torre do píer nível %d alcança o pivô %s" % [i + 1, pivo],
-			usado_p.has_point(Vector2i(pivo))
-				and img_p.get_pixelv(Vector2i(pivo)).a > 0.5,
+			usado_p.has_point(pivo_p)
+				and img_p.get_pixelv(pivo_p).a > 0.5,
 			"o desenho ocupa %s e o alfa no pivô é %.2f"
-				% [usado_p, img_p.get_pixelv(Vector2i(pivo)).a])
+				% [usado_p, img_p.get_pixelv(pivo_p).a])
 		_confere("o nível %d do píer é distinto dos anteriores" % [i + 1],
 			not caixas_pier.has(usado_p),
 			"tem o mesmo desenho %s de outro nível" % usado_p)
@@ -806,8 +832,10 @@ func _d14_vila() -> void:
 		var tex: Texture2D = (no as TextureRect).texture
 		if tex == null:
 			continue
-		var usado := tex.get_image().get_used_rect()
-		if float(usado.size.x) < SILHUETA_QUE_EXIGE_PEGADA_MUNDO * meia_larg:
+		# EM COORDENADA, não em pixel da textura: o `meia_larg` do outro lado
+		# da conta sai da tabela de âncoras, que publica TELA.
+		var usado := PropIso.desenho(tex)
+		if usado.size.x < SILHUETA_QUE_EXIGE_PEGADA_MUNDO * meia_larg:
 			continue                       # coqueiro, caminhão: não tapam vila
 		conferidos += 1
 		var base := _origem(no as Control)
@@ -1033,7 +1061,7 @@ func _d2_cenario_em_terra() -> void:
 		# (3) silhueta grande sem pegada declarada — o buraco por onde o
 		# defeito de 02/09 entrou, agora fechado.
 		if pegada.is_empty() and tex != null:
-			var larg := float(tex.get_image().get_used_rect().size.x)
+			var larg := PropIso.desenho(tex).size.x
 			_confere("%s tem pegada declarada" % nome,
 				larg < SILHUETA_QUE_EXIGE_PEGADA_MUNDO * meia_larg,
 				"a silhueta tem %.0fpx e só a âncora é conferida — declare a "
@@ -2298,16 +2326,58 @@ const FAUNA_ATE_UMA_PESSOA := [
 ]
 const LARGURA_BARCO := 44
 
+# ⚠️ E A PESSOA ENCOLHEU UM PIXEL SEM O DESENHO MUDAR — é a FRANJA, e vale a
+# pena saber porquê antes de acreditar em qualquer largura deste projeto.
+#
+# `get_used_rect()` conta todo pixel com alfa acima de ZERO, logo conta o
+# antisserrilhado. A franja mede cerca de um TEXEL de cada lado, em qualquer
+# resolução: a 512 isso eram ~2 px do quadro de 512, a 768 são ~2 px do quadro
+# de 768 — dois terços em coordenada. Medido nos sete desenhos, sem nenhum
+# deles ter mudado uma linha:
+#
+#   trabalhador  15 -> 21 px (14,00)   gaivota    15 -> 22 (14,67)
+#   tartaruga    14 -> 21 px (14,00)   cachorro   15 -> 22 (14,67)
+#   maria-far.   12 -> 18 px (12,00)   quero-q.   13 -> 19 (12,67)
+#   capivara     17 -> 25 px (16,67)
+#
+# Seis dos sete arredondam para o MESMO número de antes. O sétimo é a pessoa,
+# que passou a 14 — e com isso a gaivota (14,67) e o cachorro (14,67) deixaram
+# de caber nela. **Elas nunca cabiam:** a 512 as três mediam 15 por EMPATE de
+# arredondamento, e a régua mais fina só mostrou os 0,67 px que já lá estavam.
+#
+# ⚠️ E NÃO HÁ RÉGUA QUE DÊ O MESMO NÚMERO NAS DUAS RESOLUÇÕES — procurei uma.
+# A caixa de alfa>0 conta a franja; a de alfa>0,5 salta 43% na maria-farinha,
+# cujas patas só chegam a meio alfa a 768; e a largura SUAVE (a soma da
+# cobertura máxima por coluna) sobe de +1,4% a +11%, tanto mais quanto mais
+# fina for a peça. Não é ruído das réguas: é DESENHO que não cabia num pixel e
+# passou a caber. Uma peça com detalhe subpixel não tem largura única.
+#
+# Então a folga é de UM pixel, e está escrito o que fica de fora: esta guarda
+# nasceu medida contra um defeito de DOBRAR a gaivota (30 px contra 14), e um
+# pixel não lhe tira nada disso. O que ela deixou de apanhar é um bicho 7%
+# maior do que a pessoa — que é onde a gaivota e o cachorro já estavam.
+const FAUNA_FOLGA_DA_PESSOA := 1
 
+
+# ⚠️ OS 15 PX SÃO DE TELA, E A TEXTURA JÁ NÃO OS TEM. Desde a alavanca B o
+# `trabalhador.png` desenha a pessoa em 22 px de textura para os mesmos 15 de
+# coordenada (`029`) — ler o `get_used_rect()` cru faria esta régua, que é a
+# régua de toda a fauna, crescer 50% sem ninguém decidir. E o bicho entra na
+# ÁRVORE de propósito: o fator do `Sprite2D` é escrito pelo `_ready()`, e uma
+# cena instanciada e não adicionada ainda traz o 1,0 do `.tscn`. Medir o nó que
+# nunca correu seria medir o que o jogador não vê.
 func _d25_escala_da_fauna() -> void:
 	var trabalhador: Texture2D = load("res://art/props/trabalhador.png")
-	var largura_pessoa := trabalhador.get_image().get_used_rect().size.x
-	_confere("a régua continua sendo uma pessoa de 15 px", largura_pessoa == 15,
+	var largura_pessoa := int(round(PropIso.desenho(trabalhador).size.x))
+	_confere("a régua continua sendo uma pessoa de 14 px", largura_pessoa == 14,
 		"o trabalhador mede %d px" % largura_pessoa)
 
 	var larguras := {}
 	for especie in FAUNA_CENAS:
 		var bicho: Node2D = load(FAUNA_CENAS[especie]).instantiate()
+		bicho.atraso_inicial = 99.0
+		root.add_child(bicho)
+		bicho.set_process(false)
 		var sprite: Sprite2D = bicho.get_node("Sprite")
 		var usado := sprite.texture.get_image().get_used_rect()
 		var largura := int(round(float(usado.size.x) * absf(sprite.scale.x)))
@@ -2315,8 +2385,9 @@ func _d25_escala_da_fauna() -> void:
 		_confere("%s mede os %d px escolhidos" % [especie, FAUNA_LARGURAS[especie]],
 			largura == FAUNA_LARGURAS[especie], "mede %d px" % largura)
 		if especie in FAUNA_ATE_UMA_PESSOA:
-			_confere("%s não é mais larga do que uma pessoa" % especie,
-				largura <= largura_pessoa,
+			_confere("%s não passa de uma pessoa por mais de %d px"
+					% [especie, FAUNA_FOLGA_DA_PESSOA],
+				largura <= largura_pessoa + FAUNA_FOLGA_DA_PESSOA,
 				"%d px contra %d" % [largura, largura_pessoa])
 		else:
 			_confere("a capivara fica entre a pessoa e o barco",
@@ -2327,6 +2398,7 @@ func _d25_escala_da_fauna() -> void:
 		var diametro := forma.radius * 2.0
 		_confere("%s conserva o alvo mínimo de 44 px" % especie,
 			is_equal_approx(diametro, TOQUE_MIN), "o alvo mede %.0f px" % diametro)
+		root.remove_child(bicho)
 		bicho.free()
 
 	_confere("a escala lê gaivota > tartaruga > maria-farinha",
@@ -3311,6 +3383,15 @@ const D29_RETA_MAX := 0.62      # fração do comprimento do casco
 # sobrevive à tolerância é a traineira, com 65.
 const D29_LARG_MIN := 60
 
+# ⚠️ E OS TRÊS NÚMEROS ACIMA SÃO DE TELA, medidos quando a textura e a
+# coordenada eram o mesmo pixel. Desde a alavanca B o casco ocupa 1,5x mais
+# pixels do PNG (`029`), e deixá-los assim mudaria a guarda duas vezes sem
+# ninguém decidir: o bote passaria os 60 px (63) e entraria numa pergunta que
+# a medição de 15/09 diz que ele não pode responder, e o `D29_TOL` de 1 px
+# passaria a valer 0,67 px de tela, apertando o teto por baixo. Então a linha
+# de fundo sai daqui em COORDENADA, e os três números ficam a descrever o que
+# foram medidos a descrever. Que a régua ALCANCE agora o bote é verdade e é
+# uma linha da tabela do detalhe destravado — outra sessão, com a sua medição.
 var _d29_completo := false
 
 
@@ -3376,16 +3457,20 @@ func _d29_linha_de_fundo_do_casco() -> void:
 
 	var medidos := 0
 	for caminho in cascos:
-		var img := ((cascos[caminho] as Texture2D).get_image() as Image).duplicate() as Image
+		var tex := cascos[caminho] as Texture2D
+		var img := (tex.get_image() as Image).duplicate() as Image
 		var pts := _linha_de_fundo(img)
-		if pts.size() < D29_LARG_MIN:
+		var k := PropIso.escala(tex)
+		for i in range(pts.size()):
+			pts[i] = pts[i] * k
+		if float(pts.size()) * k < float(D29_LARG_MIN):
 			# Pequeno demais para a pergunta — ver D29_LARG_MIN.
-			print("    (%s tem %d px e fica de fora: a curva cabe na "
-				% [String(caminho).get_file(), pts.size()]
+			print("    (%s tem %d px de tela e fica de fora: a curva cabe na "
+				% [String(caminho).get_file(), int(round(float(pts.size()) * k))]
 				+ "tolerância da régua)")
 			continue
 		medidos += 1
-		var larg := float(pts.size())
+		var larg := float(pts.size()) * k
 		var reta := _maior_reta(pts, D29_TOL) / larg
 		_confere("a linha de fundo de %s não é uma reta (%.0f%% do casco, "
 				% [String(caminho).get_file(), reta * 100.0]
@@ -3548,3 +3633,105 @@ func _centro_opaco(img: Image) -> Vector2i:
 				sy += y
 				n += 1
 	return Vector2i(-1, -1) if n == 0 else Vector2i(sx / n, sy / n)
+
+
+# ── D31 ── quem MOSTRA um prop reconcilia pixel de textura com coordenada
+#
+# A pergunta que nada fazia, e que só passou a existir no dia em que as duas
+# medidas se separaram. Até 16/09 o PNG tinha 512 px e o nó 512 de lado: não
+# havia reconciliação nenhuma a conferir, porque ela era a identidade. Com os
+# props a 768 (`docs/decisoes/029`) passou a haver, e ela é invisível:
+#
+#   · num `TextureRect`, quem a faz é o `expand_mode = 1`. Sem ele o
+#     `EXPAND_KEEP_SIZE` põe o mínimo do nó no tamanho da TEXTURA, o rect de
+#     512 cresce para 768 e o prop sai 1,5x maior — e nenhuma guarda deste
+#     projeto o via. As de ÂNCORA leem `no.position`, que não se mexe; as de
+#     pegada e de silhueta leem a textura, que está certa. Só a captura.
+#
+#   · num `Sprite2D` — a fauna — não há `expand_mode`, e quem a faz é a
+#     `scale` que o `Fauna.gd` escreve a partir da própria textura.
+#
+# ⚠️ E ELA NÃO É A DO D25. O D25 pergunta se a gaivota MEDE os 15 px
+# escolhidos, contra uma tabela escrita à mão, espécie a espécie; esta
+# pergunta se o nó honra o quadro, seja qual for o tamanho do bicho, e cobre
+# os 31 `TextureRect` que o D25 nunca olha. As duas reprovam o mesmo defeito
+# na fauna, e isso está escrito de propósito: a que importa aqui é a que
+# apanha um prop de mapa, onde não há segunda guarda nenhuma.
+const D31_MULTIPLO_MIN := 1.0
+
+var _d31_completo := false
+
+
+func _d31_quadro_de_quem_mostra() -> void:
+	# ⚠️ A VARREDURA É DO `MapaWrap`, E NÃO DA CENA INTEIRA. A primeira versão
+	# percorria tudo e reprovou o `Retrato` do cartão do trabalhador: ele mostra
+	# um PNG de `art/props/`, é verdade, mas é ARTE DE INTERFACE — mede-se no
+	# tamanho do widget (0 x 70 num `TextureRect` de cartão) e não no quadro do
+	# mapa, que é a regra escrita no `Retratos.gd` e no CLAUDE.md. Um prop de
+	# mapa é o que vive NO mapa; o resto do jogo tem outro contrato, e cobrar
+	# este ali seria a "validador que reprova o que está certo".
+	var mapa := _main.get_node_or_null("MapaWrap") as Control
+	_confere("a cena tem o MapaWrap", mapa != null)
+	if mapa == null:
+		_d31_completo = true
+		return
+	var vistos := 0
+	for no in _todos_os_nos(mapa):
+		var tr := no as TextureRect
+		if tr != null and tr.texture != null and _e_prop(tr.texture):
+			vistos += 1
+			# ⚠️ O `size` DE UM CONTROL É O QUE ELE OCUPA DEPOIS DO MÍNIMO, e
+			# é por isso que a pergunta é esta e não "declara expand_mode": um
+			# nó com a linha certa e os offsets errados também sai do sítio.
+			_confere("%s mantém o quadro de %d coordenadas"
+					% [String(tr.name), int(PropIso.QUADRO)],
+				is_equal_approx(tr.size.x, PropIso.QUADRO)
+					and is_equal_approx(tr.size.y, PropIso.QUADRO),
+				"o nó ocupa %.0fx%.0f para uma textura de %dx%d — falta o "
+					% [tr.size.x, tr.size.y, tr.texture.get_width(),
+					   tr.texture.get_height()]
+					+ "`expand_mode = 1`?")
+			_confere("%s mostra uma textura múltipla do quadro" % String(tr.name),
+				_multiplo_coerente(tr.texture),
+				"a textura tem %d px para %d de coordenada"
+					% [tr.texture.get_width(), int(PropIso.QUADRO)])
+		var sp := no as Sprite2D
+		if sp != null and sp.texture != null and _e_prop(sp.texture):
+			vistos += 1
+			var lado := float(sp.texture.get_width()) * absf(sp.scale.x)
+			_confere("%s desenha a textura no quadro de %d"
+					% [String(sp.name), int(PropIso.QUADRO)],
+				is_equal_approx(lado, PropIso.QUADRO),
+				"%d px vezes %.4f dão %.1f de coordenada"
+					% [sp.texture.get_width(), sp.scale.x, lado])
+	_confere("D31 achou nós que mostram props", vistos >= 30,
+		"achou %d — com tão poucos esta guarda não guarda nada" % vistos)
+	_d31_completo = true
+
+
+## Uma textura vinda de `art/props/`, que é o que este bloco julga.
+func _e_prop(tex: Texture2D) -> bool:
+	return String(tex.resource_path).begins_with("res://art/props/")
+
+
+## A textura carrega um número inteiro de meios-passos do quadro (1,0; 1,5;
+## 2,0...). É a mesma pergunta que o `_mapa_lido` faz ao mapa, e pela mesma
+## razão: um tamanho que não seja múltiplo do quadro não é uma alavanca de
+## resolução, é um prop gerado com a câmera errada.
+func _multiplo_coerente(tex: Texture2D) -> bool:
+	if tex.get_width() != tex.get_height():
+		return false
+	var f := float(tex.get_width()) / PropIso.QUADRO
+	return f >= D31_MULTIPLO_MIN and is_equal_approx(f, round(f * 2.0) / 2.0)
+
+
+## Toda a árvore abaixo de um nó, ele incluído.
+func _todos_os_nos(raiz: Node) -> Array:
+	var fila: Array = [raiz]
+	var saida: Array = []
+	while not fila.is_empty():
+		var n: Node = fila.pop_back()
+		saida.append(n)
+		for f in n.get_children():
+			fila.append(f)
+	return saida

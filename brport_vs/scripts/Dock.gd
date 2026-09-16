@@ -17,8 +17,15 @@ extends Control
 # constrói nem pinta nada: só escolhe qual textura e qual animação valem agora.
 
 # Props ISOMÉTRICOS, gerados por tools/gerar_props_iso.py. São quadros de 512
-# cujo centro é a origem do mundo — a cena os ancora por aí, então trocar de
-# textura nunca desloca o píer.
+# COORDENADAS cujo centro é a origem do mundo — a cena os ancora por aí, então
+# trocar de textura nunca desloca o píer.
+#
+# ⚠️ E O PIXEL JÁ NÃO É A COORDENADA: desde a alavanca B o PNG tem 768 px
+# dentro do mesmo quadro (`docs/decisoes/029`). Quem desfaz a diferença é o
+# `expand_mode = 1` dos nós em `Dock.tscn`, e quem a traduz para uma régua é o
+# `PropIso`. Este arquivo só troca texturas, então não tem conta nenhuma a
+# fazer — mas o `pivot_offset` do nó `Lanca` é de COORDENADA, e o gerador
+# imprime as duas linhas para não haver dúvida sobre qual copiar.
 const ArtePierVazio := preload("res://art/props/pier_vazio.png")
 
 # O PÍER E A LANÇA TÊM TRÊS NÍVEIS, e desde os upgrades quem escolhe são DUAS

@@ -51,6 +51,19 @@ const SEMENTES := {
 @onready var _sprite: Sprite2D = $Sprite
 @onready var _toque: Area2D = $Toque
 
+# ⚠️ O `Sprite2D` DESENHA A TEXTURA AO TAMANHO NATIVO, e desde a alavanca B o
+# nativo tem 768 px para 512 de coordenada (`docs/decisoes/029`). Um
+# `TextureRect` desfaz isso com `expand_mode = 1`; um `Sprite2D` não tem essa
+# porta, e sem este fator os seis bichos saíam 1,5x maiores — a gaivota com 23
+# px onde a régua deste projeto diz que uma pessoa mede 15.
+#
+# Ele NÃO pode viver no `.tscn`: `_restaurar_sprite()` escreve
+# `_sprite.scale` a cada avistamento, e o que estivesse na cena era apagado no
+# primeiro. Então ele entra em TODA escrita de escala, e é por isso que elas
+# são todas `_escala_png * <o que a animação quer>` — as animações continuam a
+# falar de 1,0, que é o que as torna legíveis.
+var _escala_png := Vector2.ONE
+
 var _sorteio := RandomNumberGenerator.new()
 var _origem := Vector2.ZERO
 var _estado := Estado.ESPERANDO
@@ -75,6 +88,7 @@ var _onda_fase := 0.0
 
 func _ready() -> void:
 	_origem = position
+	_escala_png = Vector2.ONE * PropIso.escala(_sprite.texture)
 	_sorteio.seed = semente if semente != 0 else int(SEMENTES[especie])
 	_toque.input_event.connect(_ao_input)
 	_entrar_espera(atraso_inicial if atraso_inicial >= 0.0
@@ -129,7 +143,7 @@ func aparecer_agora() -> void:
 		"maria_farinha":
 			_direcao = -1.0 if _sorteio.randi_range(0, 1) == 0 else 1.0
 			position = _origem
-			_sprite.scale = Vector2(0.48, 0.08)
+			_sprite.scale = _escala_png * Vector2(0.48, 0.08)
 			_sprite.modulate = Color(1.0, 1.0, 1.0, 0.0)
 			_buraco_alpha = 0.18
 			_mudar_estado(Estado.APARECENDO, 0.62)
@@ -137,7 +151,7 @@ func aparecer_agora() -> void:
 			_direcao = -1.0 if _sorteio.randi_range(0, 1) == 0 else 1.0
 			position = _origem + Vector2(-14.0 * _direcao, 7.0)
 			_sprite.flip_h = _direcao < 0.0
-			_sprite.scale = Vector2(0.58, 0.58)
+			_sprite.scale = _escala_png * Vector2(0.58, 0.58)
 			_sprite.modulate = Color(0.62, 0.90, 1.0, 0.0)
 			_onda_alpha = 0.0
 			_mudar_estado(Estado.APARECENDO, 0.90)
@@ -145,21 +159,21 @@ func aparecer_agora() -> void:
 			_direcao = -1.0 if _sorteio.randi_range(0, 1) == 0 else 1.0
 			position = _origem + Vector2(-16.0 * _direcao, 1.0)
 			_sprite.flip_h = _direcao < 0.0
-			_sprite.scale = Vector2(0.88, 0.88)
+			_sprite.scale = _escala_png * Vector2(0.88, 0.88)
 			_sprite.modulate.a = 0.0
 			_mudar_estado(Estado.APARECENDO, 0.65)
 		"quero_quero":
 			_direcao = -1.0 if _sorteio.randi_range(0, 1) == 0 else 1.0
 			position = _origem + Vector2(-8.0 * _direcao, 0.0)
 			_sprite.flip_h = _direcao < 0.0
-			_sprite.scale = Vector2(0.72, 0.72)
+			_sprite.scale = _escala_png * Vector2(0.72, 0.72)
 			_sprite.modulate.a = 0.0
 			_mudar_estado(Estado.APARECENDO, 0.48)
 		"capivara":
 			_direcao = -1.0 if _sorteio.randi_range(0, 1) == 0 else 1.0
 			position = _origem + Vector2(-11.0 * _direcao, 4.0)
 			_sprite.flip_h = _direcao < 0.0
-			_sprite.scale = Vector2(0.82, 0.82)
+			_sprite.scale = _escala_png * Vector2(0.82, 0.82)
 			_sprite.modulate.a = 0.0
 			_mudar_estado(Estado.APARECENDO, 0.90)
 
@@ -263,7 +277,7 @@ func _restaurar_sprite() -> void:
 	modulate = Color.WHITE
 	_sprite.position = Vector2.ZERO
 	_sprite.rotation = 0.0
-	_sprite.scale = Vector2.ONE
+	_sprite.scale = _escala_png * Vector2.ONE
 	_sprite.modulate = Color.WHITE
 	_sprite.flip_h = false
 
@@ -273,7 +287,7 @@ func _animar_aparicao(p: float) -> void:
 	match especie:
 		"maria_farinha":
 			position = _origem + Vector2(_direcao * (1.0 - suave) * 2.5, 0.0)
-			_sprite.scale = Vector2(lerpf(0.48, 1.0, suave),
+			_sprite.scale = _escala_png * Vector2(lerpf(0.48, 1.0, suave),
 					lerpf(0.08, 1.0, suave))
 			_sprite.modulate.a = suave
 			_poeira_alpha = sin(p * PI) * 0.34
@@ -281,7 +295,7 @@ func _animar_aparicao(p: float) -> void:
 		"tartaruga_verde":
 			position = (_origem + Vector2(-14.0 * _direcao, 7.0)).lerp(
 					_origem + Vector2(-14.0 * _direcao, 0.0), suave)
-			_sprite.scale = Vector2.ONE * lerpf(0.58, 1.0, suave)
+			_sprite.scale = _escala_png * Vector2.ONE * lerpf(0.58, 1.0, suave)
 			_sprite.modulate = Color(lerpf(0.62, 1.0, suave),
 					lerpf(0.90, 1.0, suave), 1.0, suave)
 			_onda_alpha = sin(p * PI) * 0.22
@@ -290,20 +304,20 @@ func _animar_aparicao(p: float) -> void:
 			position = (_origem + Vector2(-16.0 * _direcao, 1.0)).lerp(
 					_origem, suave)
 			_sprite.flip_h = _direcao < 0.0
-			_sprite.scale = Vector2.ONE * lerpf(0.88, 1.0, suave)
+			_sprite.scale = _escala_png * Vector2.ONE * lerpf(0.88, 1.0, suave)
 			_sprite.modulate.a = suave
 			_sprite.position.y = sin(p * PI * 3.0) * 0.45
 		"quero_quero":
 			position = (_origem + Vector2(-8.0 * _direcao, 0.0)).lerp(
 					_origem, suave)
 			_sprite.flip_h = _direcao < 0.0
-			_sprite.scale = Vector2.ONE * lerpf(0.72, 1.0, suave)
+			_sprite.scale = _escala_png * Vector2.ONE * lerpf(0.72, 1.0, suave)
 			_sprite.modulate.a = suave
 		"capivara":
 			position = (_origem + Vector2(-11.0 * _direcao, 4.0)).lerp(
 					_origem, suave)
 			_sprite.flip_h = _direcao < 0.0
-			_sprite.scale = Vector2.ONE * lerpf(0.82, 1.0, suave)
+			_sprite.scale = _escala_png * Vector2.ONE * lerpf(0.82, 1.0, suave)
 			_sprite.modulate.a = suave
 
 
@@ -335,9 +349,9 @@ func _animar_voo(p: float, fuga: bool) -> void:
 	var batendo := fuga or fase < 0.92
 	if batendo:
 		var pulso := 0.5 + 0.5 * cos(_tempo_estado * (10.5 if fuga else 8.2))
-		_sprite.scale = Vector2(1.02, lerpf(0.82, 1.0, pulso))
+		_sprite.scale = _escala_png * Vector2(1.02, lerpf(0.82, 1.0, pulso))
 	else:
-		_sprite.scale = Vector2(1.0, 0.98)
+		_sprite.scale = _escala_png * Vector2(1.0, 0.98)
 	_sprite.rotation = sin(p * PI) * signf(_voo_curva) * 0.055
 	var borda := minf(clampf(p / 0.045, 0.0, 1.0),
 			clampf((1.0 - p) / 0.055, 0.0, 1.0))
@@ -351,7 +365,7 @@ func _animar_maria_farinha() -> void:
 	position = _origem + Vector2(agora * _direcao, 0.0)
 	_sprite.flip_h = _direcao < 0.0
 	_sprite.rotation = sin(_tempo_estado * 9.0) * 0.035 * correndo
-	_sprite.scale = Vector2(1.0 + correndo * 0.08, 1.0 - correndo * 0.04)
+	_sprite.scale = _escala_png * Vector2(1.0 + correndo * 0.08, 1.0 - correndo * 0.04)
 	_buraco_alpha = 0.30
 	_poeira_alpha = correndo * 0.10
 
@@ -383,7 +397,7 @@ func _animar_tartaruga(p: float) -> void:
 	# O pulso pequeno sugere a propulsão das nadadeiras dianteiras sem deformar
 	# o casco; uma pausa a cada ciclo quebra o metrônomo de um seno contínuo.
 	var impulso := maxf(0.0, sin(_tempo_estado * 3.3))
-	_sprite.scale = Vector2(1.0 + impulso * 0.035, 1.0 - impulso * 0.025)
+	_sprite.scale = _escala_png * Vector2(1.0 + impulso * 0.035, 1.0 - impulso * 0.025)
 	_sprite.rotation = sin(_tempo_estado * 1.1) * 0.045
 	_onda_alpha = 0.10 + impulso * 0.08
 	_onda_fase = _tempo_estado
@@ -399,7 +413,7 @@ func _animar_cachorro() -> void:
 	position = _origem + Vector2(agora * _direcao,
 			sin(_tempo_estado * 11.0) * 0.42 * trotando)
 	_sprite.flip_h = _direcao < 0.0
-	_sprite.scale = Vector2(1.0 + trotando * 0.045,
+	_sprite.scale = _escala_png * Vector2(1.0 + trotando * 0.045,
 			1.0 - trotando * 0.055)
 	_sprite.rotation = sin(_tempo_estado * 11.0) * 0.025 * trotando \
 			+ farejando * 0.09
@@ -432,7 +446,7 @@ func _animar_quero_quero() -> void:
 			or (fase >= 3.15 and fase < 3.95) else 0.0
 	position = _origem + Vector2(agora * _direcao, 0.0)
 	_sprite.flip_h = _direcao < 0.0
-	_sprite.scale = Vector2(1.0 + andando * 0.035,
+	_sprite.scale = _escala_png * Vector2(1.0 + andando * 0.035,
 			1.0 - andando * 0.055)
 	_sprite.position.y = bicando * absf(sin(_tempo_estado * 8.0)) * 1.25
 	_sprite.rotation = bicando * sin(_tempo_estado * 8.0) * 0.08
@@ -460,7 +474,7 @@ func _animar_capivara() -> void:
 	position = _origem + Vector2(agora * _direcao,
 			sin(_tempo_estado * 4.2) * 0.20 * andando)
 	_sprite.flip_h = _direcao < 0.0
-	_sprite.scale = Vector2(1.0 + sin(_tempo_estado * 1.8) * 0.012,
+	_sprite.scale = _escala_png * Vector2(1.0 + sin(_tempo_estado * 1.8) * 0.012,
 			1.0 - sin(_tempo_estado * 1.8) * 0.010)
 	_sprite.position.y = pastando * (0.65 + absf(sin(_tempo_estado * 2.4)) * 0.55)
 	_sprite.rotation = pastando * 0.055 + sin(_tempo_estado * 4.2) * 0.012 * andando
@@ -488,7 +502,7 @@ func _animar_saida(p: float) -> void:
 			var corrida := _suave(clampf(p / 0.68, 0.0, 1.0))
 			position = _inicio_saida.lerp(_origem, corrida)
 			var enterra := _suave(clampf((p - 0.56) / 0.44, 0.0, 1.0))
-			_sprite.scale = Vector2(lerpf(1.08, 0.42, enterra),
+			_sprite.scale = _escala_png * Vector2(lerpf(1.08, 0.42, enterra),
 					lerpf(0.96, 0.06, enterra))
 			_sprite.modulate.a = 1.0 - enterra
 			_poeira_alpha = sin(enterra * PI) * 0.42
@@ -496,7 +510,7 @@ func _animar_saida(p: float) -> void:
 		"tartaruga_verde":
 			position = _inicio_saida + Vector2(6.0 * _direcao * suave,
 					7.0 * suave)
-			_sprite.scale = Vector2.ONE * lerpf(1.0, 0.32, suave)
+			_sprite.scale = _escala_png * Vector2.ONE * lerpf(1.0, 0.32, suave)
 			_sprite.modulate = Color(lerpf(1.0, 0.55, suave),
 					lerpf(1.0, 0.86, suave), 1.0, 1.0 - suave)
 			_onda_alpha = (1.0 - suave) * 0.26
@@ -505,20 +519,20 @@ func _animar_saida(p: float) -> void:
 			position = _inicio_saida.lerp(
 					_origem + Vector2(28.0 * _direcao, 2.0), suave)
 			_sprite.flip_h = _direcao < 0.0
-			_sprite.scale = Vector2(1.04, 0.94 + sin(p * PI * 8.0) * 0.05)
+			_sprite.scale = _escala_png * Vector2(1.04, 0.94 + sin(p * PI * 8.0) * 0.05)
 			_sprite.modulate.a = 1.0 - _suave(clampf((p - 0.58) / 0.42, 0.0, 1.0))
 		"quero_quero":
 			position = _inicio_saida.lerp(
 					_origem + Vector2(18.0 * _direcao, -10.0), suave)
 			_sprite.flip_h = _direcao < 0.0
 			var asa := 0.5 + 0.5 * sin(p * PI * 7.0)
-			_sprite.scale = Vector2(1.0, lerpf(0.76, 1.08, asa))
+			_sprite.scale = _escala_png * Vector2(1.0, lerpf(0.76, 1.08, asa))
 			_sprite.modulate.a = 1.0 - suave
 		"capivara":
 			position = _inicio_saida.lerp(
 					_origem + Vector2(-22.0 * _direcao, 7.0), suave)
 			_sprite.flip_h = _direcao < 0.0
-			_sprite.scale = Vector2.ONE * lerpf(1.0, 0.82, suave)
+			_sprite.scale = _escala_png * Vector2.ONE * lerpf(1.0, 0.82, suave)
 			_sprite.modulate.a = 1.0 - _suave(clampf((p - 0.52) / 0.48, 0.0, 1.0))
 
 
