@@ -589,6 +589,72 @@ def cone(nome, centro, r1, r2, alt, lados, mat, rot=(0, 0, 0)):
     return o
 
 
+# ── O TRONCO DO COQUEIRO, arqueado ────────────────────────────────────────
+#
+# `CURVA_TRONCO` é o giro TOTAL do pé ao topo, em graus de MUNDO, somado ao
+# caimento de 4° que o tronco sempre teve. ⚠️ Graus de mundo NÃO são graus de
+# tela — esta câmera comprime a direção (1,1) e estica a (1,-1) —, então o
+# número escolhe-se olhando o PNG e medindo o desvio em PIXEL, nunca aqui.
+CAIMENTO_TRONCO = 4.0      # o que o tronco já tinha, e continua a ter no pé
+# ⚠️ OS 30° SÃO MEDIDOS NA IMAGEM, e a varredura está em `docs/decisoes/028`:
+# a flecha da silhueta contra a corda dá 1,73 px no tronco reto (que é o RUÍDO
+# da régua, não zero — 16 px de largura, seis faces e antisserrilhado), 2,53 aos
+# 15°, 3,66 aos 30° e 4,54 aos 45°. Aos 30 o topo anda 8,8 px, mais de meia
+# largura do próprio tronco. Aos 45 o tronco PERDE 23% da altura na tela e lê
+# como cajado, não como palmeira — o corte não fica colado a nenhuma ponta.
+CURVA_TRONCO = 30.0        # graus a mais do pé ao topo; 0 = a reta de sempre
+SEG_TRONCO = 6             # segmentos do arco
+FOLGA_TRONCO = 0.12        # sobreposição entre segmentos, em fração do passo
+
+ALT_TRONCO = 2.3
+RAIO_TRONCO = (0.17, 0.11)
+
+
+def tronco_arqueado(M):
+    """Os segmentos do tronco, e o DESLOCAMENTO do topo em relação à reta.
+
+    A 0° de curva devolve UM cone idêntico ao que o coqueiro sempre teve — é o
+    que torna a varredura honesta, porque o ponto de partida dela é o prop
+    commitado e não uma aproximação dele.
+    """
+    a0 = math.radians(CAIMENTO_TRONCO)
+    # O pé fica onde já estava: o cone de sempre tem o CENTRO em (0, 0, 1,15) e
+    # roda sobre ele, o que põe o pé em y = +0,080. Mexer nisso deslocaria o
+    # coqueiro inteiro dentro do quadro de 512 sem que nada reprovasse.
+    d0 = (0.0, -math.sin(a0), math.cos(a0))
+    pe = (0.0, -d0[1] * ALT_TRONCO / 2.0, 1.15 - d0[2] * ALT_TRONCO / 2.0)
+    topo_reto = (pe[0] + d0[0] * ALT_TRONCO,
+                 pe[1] + d0[1] * ALT_TRONCO,
+                 pe[2] + d0[2] * ALT_TRONCO)
+
+    if abs(CURVA_TRONCO) < 1e-9:
+        return ([cone("tronco", (0, 0, 1.15), RAIO_TRONCO[0], RAIO_TRONCO[1],
+                      ALT_TRONCO, 6, M["tronco"], rot=(CAIMENTO_TRONCO, 0, 0))],
+                (0.0, 0.0, 0.0))
+
+    n = max(2, SEG_TRONCO)
+    passo = ALT_TRONCO / n
+    pecas = []
+    p = list(pe)
+    for i in range(n):
+        # O ângulo da TANGENTE cresce linearmente com o comprimento de arco —
+        # é o que faz um arco de círculo, e não um joelho no meio do tronco.
+        a = a0 + math.radians(CURVA_TRONCO) * (i + 0.5) / n
+        d = (0.0, -math.sin(a), math.cos(a))
+        t0, t1 = i / float(n), (i + 1) / float(n)
+        r1 = RAIO_TRONCO[0] + (RAIO_TRONCO[1] - RAIO_TRONCO[0]) * t0
+        r2 = RAIO_TRONCO[0] + (RAIO_TRONCO[1] - RAIO_TRONCO[0]) * t1
+        alt = passo * (1.0 + FOLGA_TRONCO)
+        centro = (p[0] + d[0] * passo / 2.0,
+                  p[1] + d[1] * passo / 2.0,
+                  p[2] + d[2] * passo / 2.0)
+        pecas.append(cone("tronco%d" % i, centro, r1, r2, alt, 6, M["tronco"],
+                          rot=(math.degrees(a), 0, 0)))
+        p = [p[0] + d[0] * passo, p[1] + d[1] * passo, p[2] + d[2] * passo]
+
+    return pecas, (p[0] - topo_reto[0], p[1] - topo_reto[1], p[2] - topo_reto[2])
+
+
 def prisma(nome, contorno, z0, z1, escala_baixo, mat, contorno_baixo=None):
     """Contorno fechado puxado para baixo e estreitado.
 
@@ -2287,19 +2353,36 @@ def montar(M: dict) -> dict:
     ]
 
     # -- COQUEIRO: copa e tronco separados, para o balanço ---------------
-    grupos["coqueiro_tronco"] = [
-        cone("tronco", (0, 0, 1.15), 0.17, 0.11, 2.3, 6, M["tronco"], rot=(4, 0, 0)),
+    #
+    # ⚠️ O TRONCO ARQUEIA-SE NO EIXO, e a curva é do EIXO e não da SECÇÃO. A
+    # `024` mediu que arredondar a secção de uma peça esbelta não paga — a 16x61
+    # o cilindro ideal mede 0,741 contra 0,768 da caixa, 92% do caminho até ela
+    # —, e deixou a outra metade em aberto: *curvar o eixo curvaria a silhueta*.
+    #
+    # Os segmentos SOBREPÕEM-SE de propósito (`FOLGA_TRONCO`). Encostados topo a
+    # topo, cada junta seria um par de faces coplanares, e o z-buffer escolhe ao
+    # acaso: é o losango preto que já mordeu duas vezes neste kit, aqui
+    # multiplicado pelo número de juntas.
+    tronco, topo_tronco = tronco_arqueado(M)
+    grupos["coqueiro_tronco"] = tronco + [
         cone("raiz", (0, 0, 0.12), 0.3, 0.18, 0.25, 6, M["madeira_esc"])]
     # A copa era uma ESTRELA CHAPADA: sete cones retos saindo de um ponto, e a
     # esta escala lia como uma folha de papel recortada. Palmeira de verdade
     # tem folha que sai para cima e CAI — são dois segmentos por folha, e é a
     # dobra entre eles que faz a copa ter volume.
+    # ⚠️ A COPA ANDA COM O TOPO DO TRONCO, senão ela fica a pairar ao lado de
+    # uma palmeira torta. O `+0,14` em `y` NÃO é isso e fica onde está: ele é
+    # anterior ao arco e desloca a copa contra a PROJEÇÃO (nesta câmera a
+    # profundidade projeta-se para cima), não contra o caimento. O que a curva
+    # acrescenta é o DELTA do topo, derivado da geometria em vez de escrito.
+    desvio_copa = topo_tronco
     copa = []
     for i in range(8):
         a = i * (360.0 / 8) + (7 if i % 2 else 0)
         r = math.radians(a)
         cor = M["folha"] if i % 2 else M["folha_clara"]
-        base = (0.30 * math.cos(r), 0.30 * math.sin(r) + 0.14, 2.34)
+        base = (0.30 * math.cos(r) + desvio_copa[0],
+                0.30 * math.sin(r) + 0.14 + desvio_copa[1], 2.34 + desvio_copa[2])
         copa.append(cone("folha%d_a" % i, base, 0.16, 0.11, 0.62, 4, cor,
                          rot=(52, 0, a + 90)))
         ponta = (base[0] + 0.62 * math.cos(r), base[1] + 0.62 * math.sin(r),
@@ -2307,8 +2390,9 @@ def montar(M: dict) -> dict:
         copa.append(cone("folha%d_b" % i, ponta, 0.12, 0.015, 0.95, 4, cor,
                          rot=(104, 0, a + 90)))
     for j, (dx, dy) in enumerate([(0.09, 0.07), (-0.06, 0.10), (0.02, -0.09)]):
-        copa.append(cone("coco%d" % j, (dx, dy, 2.24), 0.085, 0.085, 0.14, 6,
-                         M["madeira_esc"]))
+        copa.append(cone("coco%d" % j, (dx + desvio_copa[0], dy + desvio_copa[1],
+                                       2.24 + desvio_copa[2]),
+                         0.085, 0.085, 0.14, 6, M["madeira_esc"]))
     grupos["coqueiro_copa"] = copa
 
     # -- CENÁRIO solto ---------------------------------------------------

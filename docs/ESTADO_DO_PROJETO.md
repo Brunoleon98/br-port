@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 14/09/2026
+> **Última atualização:** 16/09/2026
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -173,7 +173,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/ler_registros.py` | **O leitor** — resume N partidas e põe o jogador MEDIDO ao lado dos perfis supostos |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e que o gravador não grava desarmado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface e leitura raster do mapa, em qualquer escala de import (`025`); espera `DESIGN OK` |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface e leitura raster do mapa em qualquer escala (`025`), e o encaixe das metades co-ancoradas de um prop (`028`); espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, e **toda fala escrita chega ao jogo** |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Nove bustos (`020`) |
@@ -196,14 +196,14 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs de IA e redimensiona |
 | `tools/gerar_mapa_iso.py` | Gera mapa, vila, vias e o campo costeiro contínuo; raster determinístico, acumulado com `math.fsum`. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`** |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
-| `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo. Separa o vetor do raster da água e compara o que o jogador VÊ: um arquivo a duas escalas (`025`), ou dois arquivos à mesma (`026`) |
-| `tools/medir_silhueta_props.py` | **A régua da forma** — que fração da silhueta de um prop corre nas três direções que uma caixa sabe desenhar, normalizada contra formas ideais da MESMA caixa envolvente. Diz "não sei" onde a peça é pequena ou esbelta demais para a pergunta (`024`) |
+| `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo. Separa o vetor do raster da água e compara o que o jogador VÊ (`025`, `026`) |
+| `tools/medir_silhueta_props.py` | **A régua da forma** — que fração da silhueta corre nas três direções que uma caixa sabe desenhar, contra formas ideais da MESMA caixa. Diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
 | `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão — acha 11, e o destino de cada uma é do Bruno |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — prop não é artefato byte-reprodutível, e `cmp` responde sempre "mudou" |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, em **quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado** (`018`). Imprime classes, motivos e o NÍVEL de cada um |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
-| `brport_vs/tools/folha_props.gd` | **A folha dos 51 props de mapa, a 1:1** — a metade que faltava da medição do A5. Duas páginas, e reprova se o catálogo pedir uma terceira |
+| `brport_vs/tools/folha_props.gd` | **A folha dos 51 props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta debaixo da âncora dele (`027`). Duas páginas, e reprova se o catálogo pedir uma terceira |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos, a 19px e ampliado — **rodar a cada ícone novo**. **Reprova ao transbordar**, como a da frota |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `tools/conferir_lote_de_arte.py` | Confere lote de arte vindo de fora: alfa de verdade, tamanho e **ângulo da base contra o contrato de 26,57°**. Rodar antes de qualquer PNG externo entrar |
@@ -298,7 +298,7 @@ então o prédio não salta ao ser consertado; as peças, essas, não se partilh
 catorze peças do pátio, em `blender/brp_porto.py`, que faz também os nove
 retratos de fala.
 
-O cenário usa os props: **coqueiros** que oscilam em rajada, **guindaste** nas
+O cenário usa os props: **coqueiros de tronco ARQUEADO** (`028`) que oscilam em rajada, **guindaste** nas
 docas construídas, **carga no convés** e **boias + marcador** na Zona de Espera. **Três caminhões atravessam o mapa pela estrada**, cada um com
 a carga da doca do mesmo índice e em duas silhuetas porque a rua vira 90° em
 cada cotovelo — e **entram na doca** quando ela tem barco e trabalhador,
