@@ -223,6 +223,10 @@ func _rodar() -> void:
 	_d29_linha_de_fundo_do_casco()
 	_confere("o bloco D29 correu até ao fim", _d29_completo)
 
+	print("=== D30: peça co-ancorada encaixa na que está por cima ===")
+	_d30_pecas_co_ancoradas()
+	_confere("o bloco D30 correu até ao fim", _d30_completo)
+
 	print("=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===")
 	_d23_menu_celular()
 	_confere("o bloco D23 correu até ao fim", _d23_completo)
@@ -3394,3 +3398,153 @@ func _d29_linha_de_fundo_do_casco() -> void:
 		"mediu %d — se todos ficarem abaixo de %d px a guarda não guarda nada"
 			% [medidos, D29_LARG_MIN])
 	_d29_completo = true
+
+
+# ── D30 ── a metade de cima de um prop pousa na PONTA da de baixo
+#
+# Alguns props do cenário são DOIS quadros no MESMO `offset`: o coqueiro é copa
+# e tronco separados, para a copa balançar sem o tronco andar, e o poste é
+# mastro-com-braço mais a luminária. As metades são PNGs independentes, e nada
+# perguntava se elas se encontram — uma copa a pairar ao lado de um tronco não
+# dá erro nenhum, não reprova o `asset_validator` (que valida cada asset
+# sozinho) nem o D2 (que mede pegada contra a rua). É a gola que saiu a
+# FLUTUAR dez pixels abaixo do pescoço em 13/09, à escala do mapa.
+#
+# ⚠️ ELA FICOU FRÁGIL NO DIA EM QUE O TRONCO ARQUEOU (`docs/decisoes/028`).
+# Enquanto o tronco era reto o topo dele estava sempre no mesmo sítio; hoje
+# DERIVA da curvatura, e a copa anda com ele. Derivado não é provado: quem
+# mexer numa das metades sem a outra abre exactamente este buraco.
+#
+# ⚠️ O PAR SAI DA CENA, não de uma lista escrita aqui — são os nós do cenário
+# que partilham a mesma posição. Foi a derivação que achou o SEGUNDO par, que
+# eu não sabia que existia; uma lista teria guardado só o coqueiro.
+#
+# ⚠️ E A PRIMEIRA MÉTRICA REPROVOU O QUE ESTAVA CERTO. Ela pedia que a peça de
+# cima COBRISSE o topo da de baixo (a fração de desenho numa janela, a régua do
+# D17), e o poste deu 0,11: a luminária não cobre a ponta do braço, ela
+# CONTINUA a partir dela. Duas metades de um prop não se sobrepõem — encaixam.
+# O que vale para as duas é onde está a MASSA da peça de cima: em cima da ponta
+# da de baixo, e não a meio dela nem ao lado.
+#
+# A distância normaliza-se pela ALTURA DESENHADA da peça de baixo, e isso é de
+# propósito: um corte em pixel envelheceria no dia em que o `ZOOM` mudasse, e
+# as duas medidas encolhem juntas. Banda medida dos dois lados, POR ESTE
+# código e não por uma régua ao lado — encaixado dá 0,075 (o poste) e 0,110 (o
+# coqueiro); a copa que NÃO seguiu o tronco curvo, injetada, dá 0,400. O corte
+# vai ao meio: 2,4x de folga de um lado e 1,5x do outro.
+#
+# ⚠️ E ELA DEFENDE O QUE DEFENDE: o defeito medido é uma copa parada enquanto o
+# tronco arqueia 30°. Um descolamento de um ou dois pixels passa por baixo
+# disto, e está escrito em vez de o teto ser apertado até caber.
+const D30_DESCOLAMENTO := 0.26
+
+var _d30_completo := false
+
+
+func _d30_pecas_co_ancoradas() -> void:
+	var cenario := _main.get_node_or_null("MapaWrap/Cenario") as Control
+	_confere("a cena tem o Cenario", cenario != null)
+	if cenario == null:
+		return
+
+	# Agrupa por POSIÇÃO: duas metades do mesmo prop partilham o `offset`.
+	var por_ponto := {}
+	for filho in cenario.get_children():
+		var tr := filho as TextureRect
+		if tr == null or tr.texture == null:
+			continue
+		var chave := "%.2f,%.2f" % [_no_mapa(tr).x, _no_mapa(tr).y]
+		if not por_ponto.has(chave):
+			por_ponto[chave] = []
+		(por_ponto[chave] as Array).append(tr)
+
+	var pares := 0
+	var vistos := {}
+	for chave in por_ponto:
+		var pecas: Array = por_ponto[chave]
+		if pecas.size() < 2:
+			continue
+		# Quem está por CIMA é quem tem o desenho mais alto no quadro.
+		var ordenadas: Array = []
+		for tr in pecas:
+			var t := (tr as TextureRect).texture
+			var img := (t.get_image() as Image)
+			ordenadas.append([img.get_used_rect().position.y, img,
+				String(t.resource_path.get_file())])
+		ordenadas.sort_custom(func(a, b): return a[0] < b[0])
+		var cima: Image = ordenadas[0][1]
+		var centro := _centro_opaco(cima)
+		for i in range(1, ordenadas.size()):
+			var baixo: Image = ordenadas[i][1]
+			var topo := _topo_opaco(baixo)
+			# ⚠️ A ALTURA MEDE-SE COM A MESMA RÉGUA DOS PONTOS. O
+			# `get_used_rect()` conta a SOMBRA de contacto, que é outra peça e
+			# se estende para fora do prop: com ela no denominador, mexer na
+			# sombra mexia neste número sem ninguém tocar no encaixe — e a
+			# banda medida deixaria de descrever o que o código mede.
+			var alt := _altura_opaca(baixo)
+			if topo.x < 0 or alt <= 0.0 or centro.x < 0:
+				continue
+			# Os três coqueiros são o mesmo par de PNGs em três sítios: medir
+			# uma vez chega, e repetir a mesma asserção três vezes não é três
+			# guardas, é uma a imprimir-se três vezes.
+			var id := "%s+%s" % [String(ordenadas[i][2]), String(ordenadas[0][2])]
+			if vistos.has(id):
+				continue
+			vistos[id] = true
+			pares += 1
+			var d := Vector2(centro).distance_to(Vector2(topo)) / alt
+			_confere("a '%s' pousa na ponta da '%s' (%.3f da altura dela, "
+					% [String(ordenadas[0][2]), String(ordenadas[i][2]), d]
+					+ "teto %.2f)" % D30_DESCOLAMENTO,
+				d <= D30_DESCOLAMENTO,
+				"as duas metades partilham a âncora e a de cima ficou a "
+					+ "pairar longe da ponta da de baixo")
+	_confere("D30 achou algum par co-ancorado", pares >= 1,
+		"achou %d — sem par nenhum esta guarda não guarda nada" % pares)
+	_d30_completo = true
+
+
+## O ponto mais ALTO do desenho de uma peça (x mediano dessa linha).
+func _topo_opaco(img: Image) -> Vector2i:
+	var r := img.get_used_rect()
+	if r.size.x <= 0:
+		return Vector2i(-1, -1)
+	for y in range(r.position.y, r.position.y + r.size.y):
+		var xs: Array = []
+		for x in range(r.position.x, r.position.x + r.size.x):
+			if img.get_pixel(x, y).a > 0.5:
+				xs.append(x)
+		if not xs.is_empty():
+			return Vector2i(int(xs[xs.size() / 2]), y)
+	return Vector2i(-1, -1)
+
+
+## A altura do DESENHO de uma peça, pela mesma régua de alfa dos pontos.
+func _altura_opaca(img: Image) -> float:
+	var r := img.get_used_rect()
+	var y0 := -1
+	var y1 := -1
+	for y in range(r.position.y, r.position.y + r.size.y):
+		for x in range(r.position.x, r.position.x + r.size.x):
+			if img.get_pixel(x, y).a > 0.5:
+				if y0 < 0:
+					y0 = y
+				y1 = y
+				break
+	return 0.0 if y0 < 0 else float(y1 - y0 + 1)
+
+
+## O centro de massa do desenho de uma peça.
+func _centro_opaco(img: Image) -> Vector2i:
+	var r := img.get_used_rect()
+	var sx := 0
+	var sy := 0
+	var n := 0
+	for y in range(r.position.y, r.position.y + r.size.y):
+		for x in range(r.position.x, r.position.x + r.size.x):
+			if img.get_pixel(x, y).a > 0.5:
+				sx += x
+				sy += y
+				n += 1
+	return Vector2i(-1, -1) if n == 0 else Vector2i(sx / n, sy / n)

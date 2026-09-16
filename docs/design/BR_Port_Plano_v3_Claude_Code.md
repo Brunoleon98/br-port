@@ -1442,9 +1442,27 @@ outra vez escalado) só reprovou **um** dos oito cascos, e o teto ficou onde
 estava em vez de se apertar até o apanhar — a alternativa deixava um casco bom a
 passar por dois pontos.
 
-**Sobrou uma pergunta aberta, pequena:** o `coqueiro_tronco` mede 0,491 com três
-na tela, e a secção dele não ajuda (é esbelto) — mas **curvar o EIXO** curvaria a
-silhueta, e isso não foi medido. Cabe numa sessão pequena.
+#### ✅ E A PERGUNTA ABERTA FECHOU (16/09) — o tronco arqueia 30° (`028`)
+
+Era a única que a `024` deixou em pé: *"a secção do `coqueiro_tronco` não ajuda,
+mas curvar o EIXO curvaria a silhueta, e isso não foi medido."* Medido, o tronco
+arqueia **30°** e as três palmeiras deixaram de ler como postes.
+
+⚠️ **E O ÍNDICE DA SILHUETA NÃO RESPONDE POR ELE — foi esse o achado.** A 16×61
+o cilindro ideal mede 0,741 contra 0,768 da caixa (92% do caminho até ela), e o
+tronco já media **0,491**: ele nunca leu quadrado. Pior, ao curvar o índice
+desaba para −0,47 aos 15° e **volta a subir** aos 30 e aos 45 — não é monótono,
+e é artefacto: um tronco arqueado deixa de ENCHER a caixa que normaliza o
+índice. Quem respondeu foi a flecha do eixo, cujo **ruído próprio é 1,73 px** no
+tronco reto — medido antes de os números valerem. Aos 30° a flecha é 2,1x esse
+piso e o topo anda 8,8 px; aos 45° o tronco perde 23% da altura e lê como
+cajado. ⚠️ **E a conta previa o dobro** (6 px contra os 3,0 medidos): a câmera
+comprime a direção em que ele cai.
+
+E daí saiu uma guarda, o **D30**: nada perguntava se as duas metades de um prop
+co-ancorado se encontram. O par sai da CENA — e a derivação achou um segundo que
+ninguém esperava (`poste` + `poste_luz`), que **reprovou a primeira métrica**,
+porque a luminária não COBRE a ponta do braço: continua a partir dela.
 
 **E a varredura achou um prop FORA DO JOGO:** `doca_concreto` (136 × 88) é
 referido só por `scenes/tests/AssetPlacementTest.gd`, que não é exportado. É o

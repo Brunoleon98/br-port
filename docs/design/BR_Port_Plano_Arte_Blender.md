@@ -47,7 +47,13 @@ Foi medida com o Blender e o Godot rodando, não no olho.
 | **Rosto de personagem** | sim | não | textura — **não é geometria** |
 | **Chrome da interface** | gradiente, sombra, cor por botão | chapado navy/creme | tema do Godot — **não é Blender** |
 
-A contagem de peças por prop, hoje (`tools/gerar_props_iso.py`):
+A contagem de peças por prop **quando esta etapa foi escrita** — e ela
+envelheceu, de propósito deixada como está: metade destes nomes já não existe
+(`conteiner` e `caixote` saíram em 31/08, `barco_grande` e `barco_pequeno`
+viraram seis cascos por serviço) e o `coqueiro_tronco` passou de 2 peças para 7
+ao arquear em 16/09 (`docs/decisoes/028`). Quem quiser a contagem de hoje
+pergunta ao `tools/gerar_props_iso.py`, que é quem a sabe; o que este bloco
+continua a dizer, e que não envelheceu, é **onde estava a cauda**:
 
 ```
 pier_ampliado 112 · guindaste_lanca 59 · pier_construido 53 · escritorio 42

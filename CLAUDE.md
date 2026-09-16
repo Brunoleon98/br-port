@@ -918,6 +918,22 @@ tranca isso.
   10×35. Peça comprida não se conserta arredondando a secção: a estaca do píer
   media 1,065, o valor mais alto do kit, e uma estaca cilíndrica tem os mesmos
   dois lados verticais. O ganho não paga, e registou-se em vez de se arredondar.
+- **⚠️ E ÍNDICE NORMALIZADO SÓ VALE ENQUANTO A PEÇA ENCHE A CAIXA QUE O
+  NORMALIZA.** A regra acima diz que a referência tem de ter a caixa envolvente
+  da peça; esta diz quando isso deixa de bastar. Ao arquear o tronco do
+  coqueiro, o índice desabou de 0,491 para −0,47 aos 15° e **voltou a subir**
+  aos 30 e aos 45 — não monótono, e nada disso é a peça a ficar redonda: um
+  tronco curvo deixa de ENCHER a caixa dele (a largura vai de 16 para 29 px sem
+  o desenho engordar), e comparar uma fita curva com a caixa e a elipse CHEIAS
+  daquele retângulo mede o vazio à volta. E o mesmo prop já media 0,491 contra
+  0,741 do CILINDRO ideal — ou seja, nunca leu quadrado, e o número que o item
+  herdou dizia o contrário (`docs/decisoes/028`).
+- **⚠️ E RÉGUA DE FORMA TEM RUÍDO PRÓPRIO, que não é zero.** A irmã da regra do
+  validador injetado, para números em vez de verdes: ali o mesmo arquivo dos
+  dois lados tem de dar zero EXATO; aqui a peça CERTA dá 1,73 px de flecha, que
+  é a largura de 16 px, as seis faces e o antisserrilhado. Sem medir esse piso,
+  os 2,53 px de uma curva de 15° passariam por curva. **Meça o piso antes de os
+  números valerem.**
 - **⚠️ ESCALAR UM CONTORNO CURVO ACHATA A CURVA DELE.** O fundo do casco era a
   amurada escalada por `(0,88, 0,42)`: a curva chegava lá 58% menor e o que
   sobrava desviava-se menos de 1 px ao longo de 60 px — a régua lia uma reta, e
@@ -1027,6 +1043,15 @@ tranca isso.
   medida. Hoje são duas perguntas separadas, e a geométrica projeta mesmo os
   cantos. **Validador que reprova o que está certo gasta-se depressa** — na
   vez seguinte alguém sobe o limite em vez de olhar.
+- **⚠️ DUAS METADES DE UM PROP ENCAIXAM — NÃO SE SOBREPÕEM.** É a "validador
+  que reprova o que está certo" com a métrica no lugar do limite. A guarda nova
+  do D30 pedia que a peça de cima COBRISSE o topo da de baixo (a fração de
+  desenho numa janela, a régua do D17), e o `poste_luz` deu 0,11: a luminária
+  não cobre a ponta do braço, **ela continua a partir dela**. O que vale para as
+  duas metades é onde está a MASSA da de cima — em cima da ponta da de baixo, e
+  não a meio dela nem ao lado. E quem achou o par que denunciou isso foi a
+  DERIVAÇÃO (nós do cenário que partilham a posição): uma lista escrita à mão
+  teria guardado só o coqueiro, e a métrica errada teria passado.
 - **E caixa alinhada aos eixos de um GRUPO tem quinas que não existem.** Ao
   medir a projeção peça a peça a resposta bateu com o render; medindo pela
   caixa do grupo, ela juntava o `x` de um braço com o `y` de uma bota e o `z`
