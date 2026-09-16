@@ -51,8 +51,18 @@ extends SceneTree
 # fração disso. Corra-a nos dois mapas, que são opacos; nas espumas o número
 # sai e não quer dizer nada.
 #
+# E A MESMA RÉGUA RESPONDE À OUTRA PERGUNTA, com um segundo SVG
+# -------------------------------------------------------------
+# A alavanca A comparava o MESMO arquivo lido a duas escalas. Subir a resolução
+# do RASTER da água muda o ARQUIVO e não a escala de leitura: os dois SVG
+# importam a 1,5 e só o PNG embutido difere. Com um segundo caminho na linha de
+# comando, o "antes" passa a ser `<svg>` a 1,5 e o "depois" `<svg_depois>` a
+# 1,5 — sem reamostragem nenhuma pelo meio, porque aqui não há GPU a ampliar
+# coisa alguma. A máscara sai do arquivo do DEPOIS, que é o que se está a
+# julgar.
+#
 # Uso: $G --headless --path brport_vs \
-#        --script res://tools/medir_resolucao_mapa.gd -- <svg> <dir_saida>
+#        --script res://tools/medir_resolucao_mapa.gd -- <svg> <dir_saida> [svg_depois]
 
 const PISO := 6.0          # 6/255 de luminância ~ 0,05 de Weber a meio tom
 const JANELA_ALT := 660    # o `MapaWrap` corta o mapa em 660 dos 720
@@ -66,37 +76,55 @@ func _init() -> void:
 		return
 	var caminho: String = args[0]
 	var dir: String = args[1]
+	var caminho_b: String = args[2] if args.size() > 2 else ""
 	DirAccess.make_dir_recursive_absolute(dir)
 
-	var f := FileAccess.open(caminho, FileAccess.READ)
-	if f == null:
-		printerr("não abre: %s" % caminho)
+	var fonte := _ler(caminho)
+	if fonte == "":
 		quit(1)
 		return
-	var fonte := f.get_as_text()
-	f.close()
+	var fonte_b := ""
+	if caminho_b != "":
+		fonte_b = _ler(caminho_b)
+		if fonte_b == "":
+			quit(1)
+			return
 
 	# A mesma fonte sem o raster da água. É uma `<image>` só, e o regex dela é
 	# barato porque o `href` não tem `>` dentro (base64 não o usa).
 	var re := RegEx.new()
 	re.compile("<image[^>]*/>")
-	var sem_raster := re.sub(fonte, "", true)
-	var achou := re.search(fonte) != null
+	var dois := caminho_b != ""
+	var manda := fonte_b if dois else fonte
+	var sem_raster := re.sub(manda, "", true)
+	var achou := re.search(manda) != null
 
 	var base := caminho.get_file().get_basename()
 	print("=== %s ===" % base)
+	print("modo: %s" % ("dois arquivos, os dois a 1,5"
+		if dois else "um arquivo, 720 ampliado contra 1080"))
 	print("raster embutido: %s" % ("sim" if achou else "NÃO"))
 
-	# ANTES: 720 ampliado para 1080 pela GPU. DEPOIS: 1080 nativo.
-	var antes := _rasterizar(fonte, 1.0)
-	var depois := _rasterizar(fonte, 1.5)
+	# UM ARQUIVO: 720 ampliado para 1080 pela GPU, contra 1080 nativo.
+	# DOIS ARQUIVOS: os dois a 1,5, que é como o jogo importa os dois.
+	var antes := _rasterizar(fonte, 1.5 if dois else 1.0)
+	var depois := _rasterizar(fonte_b if dois else fonte, 1.5)
 	if antes == null or depois == null:
 		quit(1)
 		return
 	var lado := depois.get_width()
-	antes.resize(lado, lado, Image.INTERPOLATE_BILINEAR)
+	if not dois:
+		antes.resize(lado, lado, Image.INTERPOLATE_BILINEAR)
+	elif antes.get_width() != lado or antes.get_height() != depois.get_height():
+		# Dois SVG de quadros diferentes não se comparam pixel a pixel, e
+		# reamostrar um deles inventaria a diferença que se foi medir.
+		printerr("os dois SVG rasterizam em tamanhos diferentes: %dx%d contra %dx%d"
+			% [antes.get_width(), antes.get_height(),
+			   lado, depois.get_height()])
+		quit(1)
+		return
 
-	var mascara := _mascara_do_raster(fonte, sem_raster, lado) if achou else null
+	var mascara := _mascara_do_raster(manda, sem_raster, lado) if achou else null
 
 	var janela := int(round(float(JANELA_ALT) / 720.0 * float(lado)))
 	print("quadro %dx%d, janela %dx%d" % [lado, lado, lado, janela])
@@ -140,13 +168,23 @@ func _init() -> void:
 		print("           |ΔL| médio %5.2f   p99 %6.2f   máx %6.2f"
 			% [e["medio"], e["p99"], e["maximo"]])
 
-	var saida := {"svg": base, "piso": PISO, "lado": lado,
-				  "janela": janela, "regioes": res}
+	var saida := {"svg": base, "svg_depois": caminho_b, "piso": PISO,
+				  "lado": lado, "janela": janela, "regioes": res}
 	var jf := FileAccess.open(dir.path_join("%s.json" % base), FileAccess.WRITE)
 	jf.store_string(JSON.stringify(saida, "  "))
 	jf.close()
 	print("gravado em %s" % dir.path_join("%s.json" % base))
 	quit(0)
+
+
+func _ler(caminho: String) -> String:
+	var f := FileAccess.open(caminho, FileAccess.READ)
+	if f == null:
+		printerr("não abre: %s" % caminho)
+		return ""
+	var texto := f.get_as_text()
+	f.close()
+	return texto
 
 
 func _rasterizar(fonte: String, escala: float) -> Image:

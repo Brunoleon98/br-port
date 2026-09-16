@@ -45,20 +45,18 @@ pedras, rampa e o campo da água saem de `ponto_costeiro()`, uma família
 concêntrica que não se cruza — é isso que impede costura. O **D28** tranca a
 forma; o raster é lido por D20, D21, D24 e D27.
 
-**E O MAPA ENTREGA OS 1080 QUE O ARQUIVO JÁ TINHA** (`025`, alavanca A). Os
-quatro SVG declaram 720 sobre `viewBox` de 1080 e o importador deitava fora um
-terço: com `svg/scale=1.5` e `expand_mode` nos três nós, o pico de cada
-fronteira sobe **+52,6%** e 5,12% da janela muda acima do piso de Weber. Custa
-+412 KB no `.pck`; a 720 **melhora**, não piora. ⚠️ **O campo da água é raster
-de 720 embutido** — 43% da janela, e a única parte cuja precisão não está no
-arquivo. Projeção, âncoras e pegada intactas.
+**E O MAPA ENTREGA OS 1080 QUE O ARQUIVO JÁ TINHA** (`025`, alavanca A):
+com `svg/scale=1.5` e `expand_mode` nos três nós, o pico de cada
+fronteira sobe **+52,6%** e 5,12% da janela muda acima do piso de Weber, e a
+720 **melhora**. ⚠️ **O campo da água é raster
+de 720 embutido, e assim FICA**: construído a 1080, não muda um pixel acima do
+piso de Weber (`026`). Projeção, âncoras e pegada intactas.
 
-**E OS CASCOS TÊM CURVA** (`024`, segunda fatia do item 8): medida a silhueta de
-cada prop, quem estava quadrado **não eram as construções** — era o casco (0,620
-contra 0,563 do galpão), com o contêiner por cima a TAPÁ-LO. Os nove barcos saem
-de `contorno_casco()`, com linha de fundo curva própria e o guarda-corpo a
-seguir o bordo. Armazém, escritório, convés do píer, treliça, pallet e contêiner
-**ficam quadrados, e é decisão**: são caixas de verdade. O **D29** tranca-o.
+**E OS CASCOS TÊM CURVA** (`024`): medida a silhueta, quem estava quadrado **não
+eram as construções** — era o casco (0,620 contra 0,563 do galpão), com o
+contêiner a TAPÁ-LO. Os nove barcos saem de `contorno_casco()`. Armazém,
+escritório, píer, treliça, pallet e contêiner **ficam quadrados, e é decisão**:
+são caixas de verdade. O **D29** tranca-o.
 
 **A fauna tem seis espécies em nove pontos** — gaivota, maria-farinha e
 tartaruga na costa; cachorro, quero-quero e capivara em terra. Medem **15 / 12 /
@@ -96,11 +94,10 @@ turno, sem o nome de quem jogou (`006`). Sai pelo menu de pausa.
 **O jogo tem som:** 14 efeitos de `tools/gerar_sons.py`, num autoload com
 prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
 
-**E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`). O botão sai da linha
-do Construir, e a tela é um aparelho de 400×680, porque a PROPORÇÃO é o que faz
-a metáfora ler. Dentro há o **diário** (que abre uma vez e não tinha como ser
-relido) e quatro portas FECHADAS — cidade, lojas, missões, análise (itens 18 a
-21). O menu de pausa é sistema; isto é mundo. **É casca, e de propósito.**
+**E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`): aparelho de 400×680,
+com o **diário** (que abre uma vez e não tinha como ser relido) e quatro portas
+FECHADAS — cidade, lojas, missões, análise (itens 18 a 21). **É casca, e de
+propósito.**
 
 **Nada de interface pousa sobre o mapa:** a vaga é cenário, o cartão é barra, e
 o número é tinta no cais.
@@ -138,8 +135,8 @@ metade de máquina do A1 (APK e build Web a cada push). Ver `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | ~~Jogar~~ — 02/09 e 06/09, e os 25 itens já triados. Fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e devolveu 7 notas — 6 aplicadas e a 7ª (os retratos) construída. Falta reler o que mudou; está no A4 do plano |
-| **A5** | Olhar cada antes/depois da arte | **AS SEIS ETAPAS ESTÃO FECHADAS** — 1, 2, 4, 5 e 6 feitas; a **3 construída, medida e REJEITADA**. Mais a frota de 07/09, o gradiente com fauna (9) e a costa das pontas (8). É a trilha inteira à espera do olho dele |
+| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e as 7 notas dela estão fechadas. Falta reler o que mudou desde então — A4 do plano |
+| **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos numa página com veredito guardado, **e a folha de contato dos props**, que faltava desde sempre (§A5 do plano). Só falta o olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que as duas jogadas devolveram (02–03/09 e 06/09)
@@ -149,10 +146,8 @@ com o resumo na §7 do plano, o custo em `HISTORICO.md` e o porquê nas `011` a
 `025`. Fechou-se tudo o que não dependia do Bruno; sobram o rodapé (gate A5),
 três itens de economia (Fase 2) e a madeira podre (A4). **Livre: A8.**
 
-⚠️ **Sobraram DUAS coisas medidas e por fazer**, cada uma sessão própria: a rua
-parou em **1,8** (alargá-la empurra o `RUA_RECUO` e o enquadramento, `012`), e o
-**raster da água continua a 720** — 43% da janela, e a única parte do mapa cuja
-precisão não está no arquivo (`025` §8).
+⚠️ **Sobra UMA coisa medida e por fazer**, e é sessão própria: a rua parou em
+**1,8** — alargá-la empurra o `RUA_RECUO` e o enquadramento (`012`).
 
 O resto continua por começar, e **a ordem é dele**.
 
@@ -187,6 +182,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
 | `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
+| `tools/trilha_de_arte.{sh,py}` | **A trilha de arte, para o gate A5** — corre a bateria em cada ponto que tocou em arte e monta o antes/depois. O que mudou sai do hash de cada PNG |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta, cantos, botões e cartões. Os tokens de cor de MAPA saíram daqui em 30/08: quem os define é o gerador do SVG |
@@ -200,12 +196,14 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs de IA e redimensiona |
 | `tools/gerar_mapa_iso.py` | Gera mapa, vila, vias e o campo costeiro contínuo; raster determinístico, acumulado com `math.fsum`. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`** |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
-| `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo. Compara o que o jogador VÊ e separa o vetor do raster da água (`025`) |
+| `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo. Separa o vetor do raster da água e compara o que o jogador VÊ: um arquivo a duas escalas (`025`), ou dois arquivos à mesma (`026`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — que fração da silhueta de um prop corre nas três direções que uma caixa sabe desenhar, normalizada contra formas ideais da MESMA caixa envolvente. Diz "não sei" onde a peça é pequena ou esbelta demais para a pergunta (`024`) |
+| `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão — acha 11, e o destino de cada uma é do Bruno |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — prop não é artefato byte-reprodutível, e `cmp` responde sempre "mudou" |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, em **quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado** (`018`). Imprime classes, motivos e o NÍVEL de cada um |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
+| `brport_vs/tools/folha_props.gd` | **A folha dos 51 props de mapa, a 1:1** — a metade que faltava da medição do A5. Duas páginas, e reprova se o catálogo pedir uma terceira |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos, a 19px e ampliado — **rodar a cada ícone novo**. **Reprova ao transbordar**, como a da frota |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `tools/conferir_lote_de_arte.py` | Confere lote de arte vindo de fora: alfa de verdade, tamanho e **ângulo da base contra o contrato de 26,57°**. Rodar antes de qualquer PNG externo entrar |
