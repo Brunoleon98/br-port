@@ -200,6 +200,13 @@ tirar frota   - --script res://tools/folha_frota.gd   --    "$SAIDA/frota.png"
 # percorresse, e foi assim que a pasta `art/brp` inteira ficou oito assets
 # gerados, validados a cada corrida do CI e invisíveis.
 #
+# ⚠️ E O CHÃO DE CADA CÉLULA É AMOSTRADO DO MAPA desde 16/09, em vez do fundo
+# único que a folha usava. A âncora sai da CENA e a cor sai do raster do mapa —
+# duas fontes, como no D20 e no D21 —, e a célula leva uma faixa por chão
+# distinto: quem pisa dois (a gaivota, a maria-farinha, o coqueiro) fica em cima
+# da emenda. O que não cai em sítio nenhum do mapa sai LISTRADO e escrito, para
+# a folha não mentir sobre o que mediu.
+#
 # ⚠️ AS DUAS PÁGINAS SÃO PARTE DO CONTRATO, e não um detalhe de arrumação. A
 # ferramenta conta quantas páginas o catálogo pede e REPROVA se não forem as
 # que se pediram aqui: um prop novo que empurre para uma terceira página fica

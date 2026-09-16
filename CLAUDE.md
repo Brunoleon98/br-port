@@ -264,6 +264,11 @@ Teste e import rodam sem tela.
    as coordenadas que saem da projeção são do MAPA. Somar os 62 é a diferença
    entre olhar o prop e olhar o telhado ao lado dele — três recortes já foram
    ao lugar errado por causa disto.
+   ⚠️ **E VALE IGUAL PARA QUEM ANDA PELA ÁRVORE DE NÓS, que é onde ele se
+   disfarça.** Uma ferramenta que some os `offset` de pai em pai apanha o do
+   `MapaWrap` sem o ver, e o erro não se parece nada com um recorte torto — sai
+   uma cor plausível, do sítio errado. Quem lê coordenada de mapa começa a
+   contar NO `MapaWrap`, e não na raiz da cena (mordeu na `folha_props`, 16/09).
 6. **Captura de painel sem tema é uma fotografia mentirosa.** No jogo quem
    aplica o tema é o `_abrir_painel()`; cena instanciada solta nasce com o
    cinzento padrão do Godot. O `capturar_cena.gd` já o aplica, e também chama
@@ -686,6 +691,13 @@ tranca isso.
   `porta()` do kit esticada — e lia-se como a maior casa da vila. Prédio que
   tem função no jogo precisa das peças DA FUNÇÃO: um armazém quer plataforma
   de carga, portão de enrolar, chapa corrugada e fita de vidro corrida.
+- **⚠️ E REDUZIR UMA JANELA A UMA COR PEDE A MEDIANA, NUNCA A MÉDIA.** A regra
+  acima diz que cor misturada não casa com tom publicado; esta diz como não a
+  fabricar sem querer. A média de uma janela INVENTA um valor que não está no
+  desenho — e que pode calhar na banda de uma terceira cor da paleta, como o
+  pixel de antisserrilhado que reprovou o D20. O pixel MEDIANO por luminância é
+  um pixel de verdade, e não se deixa mover por uma pedra, um risco de junta ou
+  um tufo de capim dentro da janela (`docs/decisoes/027`).
 - **⚠️ COPIAR O VALOR DE UMA COR QUE NÃO VIVIA DELE NÃO COPIA NADA.** Irmã da
   regra do matiz, logo abaixo, e do outro lado dela. O telhado de zinco do
   armazém foi escolhido para ter a luminância do telhado de telha (108 contra
@@ -1632,6 +1644,15 @@ trabalho novo, é reprocessar o histórico a cada turno. Daí três coisas:
   de partida, arranca perto de zero e corta muito mais;
 - por isso é que o desenho de uma medição vive num DOCUMENTO e não só na
   conversa: é o que torna a sessão descartável sem perder o trabalho.
+
+⚠️ **E BURACO PREVISTO NUM BRIEFING PERGUNTA-SE DE QUE FONTE FOI LIDO.** O
+briefing de 15/09 avisava que a folha de props ia ficar com cinco famílias sem
+âncora — as construções em ruína, os nove cascos, o píer vazio —, e estava
+errado: ele lera a TABELA de âncoras, onde eles de facto não estão, e a CENA
+responde por 50 dos 51 props, porque prop alternativo partilha o NÓ que o jogo
+troca. Meia sessão estava desenhada à volta de um remendo que não fazia falta.
+Um briefing é a previsão de quem já fechou a conversa: antes de herdar o buraco
+que ele anuncia, **pergunte a que fonte ele o perguntou, e pergunte à outra**.
 
 ⚠️ **E PR FUNDIDO NÃO QUER DIZER BRANCH FUNDIDA.** A branch designada deste
 projeto reaproveita o nome entre sessões, e a receita de a reiniciar da `main`

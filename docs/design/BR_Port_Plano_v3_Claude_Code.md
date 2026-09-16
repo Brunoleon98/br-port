@@ -670,10 +670,16 @@ pede textura pintada, e isso está honestamente registrado.
 A bateria foi corrida nos **30 pontos** da história em que um merge tocou em
 arte, do primeiro dia de captura reprodutível (02/09) até hoje, cada um com o
 `.godot` APAGADO e reimportado antes da foto — senão o Godot desenha o `.ctex`
-do ponto anterior, e a trilha inteira mentiria sem um erro. Daí saem **128 pares
-antes/depois** e 14 fotos que nasceram pelo caminho: a bateria cresceu de 5
-quadros para 14 ao longo da trilha. ⚠️ **O que mudou em cada ponto é DERIVADO do
-hash de cada PNG**, nunca escolhido a olho.
+do ponto anterior, e a trilha inteira mentiria sem um erro. Daí saem os pares
+antes/depois de cada quadro, mais os quadros que NASCERAM pelo caminho — a
+bateria começou com cinco e só cresceu. ⚠️ **O que mudou em cada ponto é
+DERIVADO do hash de cada PNG**, nunca escolhido a olho.
+
+⚠️ **E a contagem dos pares tirou-se daqui de propósito**, pela regra do
+`CLAUDE.md` sobre contagem em prosa de uma lista que cresce: esta seção dizia
+**128 pares e 14 fotos** e o briefing de 16/09 dizia **133 e 23**, dois números
+para a mesma corrida, e nenhum dos dois se confere sem repetir a trilha inteira.
+Quem quiser o número abre a página, que o conta sozinho.
 
 Estão numa página que se abre e se percorre — toca-se na imagem e ela pisca
 entre antes e depois no mesmo sítio —, e **o veredito de cada quadro fica
@@ -689,19 +695,39 @@ nome por baixo; os dez de INTERFACE ficam de fora por medição (os retratos de
 fala medem 338×450 contra os 153×140 do maior prop de mapa, e fariam a folha
 caber oito peças) e porque se julgam no cartão do painel, que é o widget deles.
 
-⚠️ **O FUNDO É UM SÓ, E É A LIMITAÇÃO ASSUMIDA.** Contraste depende do FUNDO, e
-esta folha responde *"dá para olhar?"*, não *"separa do fundo?"*. A segunda
-pergunta pede o fundo AMOSTRADO do mapa debaixo da âncora de cada prop — o que
-o D20 e o D21 já fazem para outra coisa —, e é a sessão seguinte.
+#### ✅ E O CHÃO DE CADA CÉLULA É AMOSTRADO DO MAPA (16/09) — a folha C
+
+O fundo era UM SÓ e estava escrito como limitação assumida: contraste depende do
+FUNDO, e a folha respondia *"dá para olhar?"*, não *"separa do fundo?"*. Hoje a
+**ÂNCORA sai da CENA** — o `offset` do nó que desenha o prop — e a **COR sai do
+raster do MAPA**, que sai do gerador: duas fontes, como no D20 e no D21, e nunca
+um espelho. A célula leva uma **faixa por chão distinto**, com o prop em cima da
+emenda, porque a gaivota pousa na água funda E no baixio, a maria-farinha no
+baixio E na areia seca, e o coqueiro no passeio E no capim (`docs/decisoes/027`).
+
+⚠️ **E O BURACO PREVISTO NÃO ERA O BURACO.** O briefing contava com cinco
+famílias sem âncora — as alternativas em ruína, os nove cascos, o píer vazio —
+porque olhava para a TABELA de âncoras, onde eles de facto não estão. Medido, a
+CENA responde por 50 dos 51: a ruína e o prédio pronto partilham o nó que o
+`Main.gd` troca, e os cascos, as lanças e os píeres partilham as vagas da doca.
+Sobra **o órfão `doca_concreto`**, que sai sobre um chão LISTRADO e escrito.
 
 ⚠️ **E AGRUPAR POR `habitat` FOI TENTADO E MEDIDO COMO IMPOSSÍVEL.** O campo
 existe nas 44 entradas do manifest, mas só 26 dos 51 props lá estão e **20
 desses 26 são `terra`**: ele foi desenhado para a fauna. O agrupamento sairia
 de uma lista à mão, e nem equilibrava.
 
-Duas guardas novas, com defeito injetado nas duas: um nome que não cabe na
-célula reprova (207 px contra 159), e seis props a mais reprovam por pedirem uma
-terceira página (`FALHOU — o catálogo tem 57 props e cabem 28 por página`).
+As duas guardas do primeiro dia continuam: um nome que não cabe na célula
+reprova (207 px contra 159), e seis props a mais reprovam por pedirem uma
+terceira página. A folha C trouxe **quatro**, e as quatro reprovaram com o
+defeito injetado: uma família presa a um nó que a cena não tem; uma família
+presa ao slot ERRADO (a cena põe lá uma textura que a família não conhece); um
+prop sem âncora que não está declarado; e um declarado que afinal já tem âncora
+— a lista dos sem-âncora é conferida **dos dois lados**, senão envelhece calada.
+⚠️ **E está medido o que o rótulo defende:** quem aperta é a PRIMEIRA linha
+(`caminhao_armazenagem_mx` pede 155 px de 159), e a segunda só transborda ao
+QUARTO chão (170 px) — nenhum prop de hoje pisa quatro, e isso escreve-se em vez
+de se apertar o teto.
 
 Falta a metade dele, que é olhar.
 
