@@ -52,12 +52,11 @@ fronteira sobe **+52,6%** e 5,12% da janela muda acima do piso de Weber. Custa
 de 720 embutido, e assim FICA**: construído a 1080, não muda um pixel acima do
 piso de Weber (`026`). Projeção, âncoras e pegada intactas.
 
-**E OS CASCOS TÊM CURVA** (`024`, segunda fatia do item 8): medida a silhueta de
-cada prop, quem estava quadrado **não eram as construções** — era o casco (0,620
-contra 0,563 do galpão), com o contêiner por cima a TAPÁ-LO. Os nove barcos saem
-de `contorno_casco()`, com linha de fundo curva própria e o guarda-corpo a
-seguir o bordo. Armazém, escritório, convés do píer, treliça, pallet e contêiner
-**ficam quadrados, e é decisão**: são caixas de verdade. O **D29** tranca-o.
+**E OS CASCOS TÊM CURVA** (`024`): medida a silhueta, quem estava quadrado **não
+eram as construções** — era o casco (0,620 contra 0,563 do galpão), com o
+contêiner a TAPÁ-LO. Os nove barcos saem de `contorno_casco()`. Armazém,
+escritório, píer, treliça, pallet e contêiner **ficam quadrados, e é decisão**:
+são caixas de verdade. O **D29** tranca-o.
 
 **A fauna tem seis espécies em nove pontos** — gaivota, maria-farinha e
 tartaruga na costa; cachorro, quero-quero e capivara em terra. Medem **15 / 12 /
@@ -200,6 +199,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
 | `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo. Separa o vetor do raster da água e compara o que o jogador VÊ: um arquivo a duas escalas (`025`), ou dois arquivos à mesma (`026`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — que fração da silhueta de um prop corre nas três direções que uma caixa sabe desenhar, normalizada contra formas ideais da MESMA caixa envolvente. Diz "não sei" onde a peça é pequena ou esbelta demais para a pergunta (`024`) |
+| `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão — acha 11, e o destino de cada uma é do Bruno |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — prop não é artefato byte-reprodutível, e `cmp` responde sempre "mudou" |
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, em **quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado** (`018`). Imprime classes, motivos e o NÍVEL de cada um |
