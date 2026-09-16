@@ -750,8 +750,12 @@ tranca isso.
   escolhia entre dois cascos por um booleano, e o terceiro só existia como
   enfeite na Zona de Espera. Toda a maquinaria de validação deste projeto
   pergunta se o que está na CENA existe no disco; nenhuma perguntava o
-  contrário. Ao acrescentar um prop, acrescente também quem o mostra — e a
-  asserção de que ele chega à tela.
+  contrário — até 16/09, quando `tools/arte_orfa.py` passou a fazê-la. Ele
+  encontrou **11 de 109 arquivos** sem uma referência: a pasta `art/brp`
+  INTEIRA (que o mapa em SVG substituiu), dois SVG de píer na raiz e o
+  `doca_concreto`. É relatório e não portão, porque o destino de cada um é
+  decisão do Bruno. Ao acrescentar um prop, acrescente também quem o mostra — e
+  a asserção de que ele chega à tela.
 - **Peça invisível conta como peça, e é por isso que contar não chega.** A
   boia levou uma corrente que ficou DENTRO do cone do corpo: o contador dizia
   cinco, o render mostrava quatro. Contagem de peças só vale depois de olhar
@@ -1119,6 +1123,12 @@ tranca isso.
   nova: o que passar da última linha é recortado sem uma palavra, e o prop fica
   exatamente como estava — gerado, validado e por olhar, que é o buraco que a
   folha existe para tapar. A conta da altura reprova em vez de recortar.
+  ⚠️ **E QUANDO ELA TEM PÁGINAS, QUEM CHAMA DIZ QUANTAS ESPERA.** A dos props
+  não cabe numa tela (51 props a 1:1, 28 por página), e uma folha que decida
+  sozinha o número de páginas escreve a página nova onde ninguém a vai buscar —
+  o `capturar_evidencia.sh` nomeia cada arquivo. Ela recebe `<página> <total>`,
+  conta o que o catálogo pede e REPROVA se não bater: acrescentar a chamada faz
+  parte de acrescentar o prop.
 - **Antes de gerar MAIS, veja onde o que já se gera está a cair.** A queixa
   "a vegetação é bem pobre" tinha 136 copas de mata geradas e **7** dentro do
   quadro: o viés da densidade (`random ** 2.2`) empurrava-as contra
@@ -1163,6 +1173,14 @@ tranca isso.
   onde o defeito mora. Um comentário que diga "lido de X" e não leia X é a
   forma mais barata desta armadilha: **se está escrito que sai de algum lado,
   faça-o sair de lá.**
+- **⚠️ CAMPO PREENCHIDO A 100% PODE ESTAR PREENCHIDO PARA OUTRA PERGUNTA.** O
+  manifest tem `habitat` nas 44 entradas, e em 14/09 propus agrupar a folha de
+  contato por ele. Medido antes de codar: dos 51 props de MAPA só 26 estão no
+  manifest, e **20 desses 26 são `terra`** — os outros seis são habitats de uma
+  peça cada (`vila`, `ar`, `areia`...). O campo foi desenhado para a FAUNA, onde
+  cada bicho tem o seu. Cobertura não é distribuição: antes de agrupar por um
+  campo, conte quantos valores DISTINTOS ele tem no conjunto que interessa — um
+  campo quase constante não agrupa, e o resto sairia de uma lista à mão.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
@@ -1719,6 +1737,11 @@ armadilha de uma função, no comentário dela.
   bytes — salvo pelo `git checkout` só por já estar commitado. Edição em massa
   monta o texto todo, escreve num temporário e faz `os.replace`; nunca abre o
   original para escrita.
+  ⚠️ **E O `os.replace` PERDE O MODO DO ARQUIVO** — é o preço do remédio acima,
+  e cobrou-o na mesma tarde: o `capturar_evidencia.sh` reescrito assim ficou
+  644, e a bateria morreu com código **126 em 0 s**, que não se parece nada com
+  um erro de captura. Ao trocar um arquivo por um temporário, copie o modo
+  (`os.chmod(tmp, os.stat(p).st_mode)`) antes do `replace`.
 - **`destino[chave] += x` num Dictionary CRIA a chave em silêncio.** É a irmã
   do `.get(chave, omissão)` acima, do outro lado: ali um erro de digitação vira
   número plausível na LEITURA, aqui vira dinheiro escrito numa chave que a soma

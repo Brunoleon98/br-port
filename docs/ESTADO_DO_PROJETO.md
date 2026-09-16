@@ -47,8 +47,8 @@ forma; o raster é lido por D20, D21, D24 e D27.
 
 **E O MAPA ENTREGA OS 1080 QUE O ARQUIVO JÁ TINHA** (`025`, alavanca A):
 com `svg/scale=1.5` e `expand_mode` nos três nós, o pico de cada
-fronteira sobe **+52,6%** e 5,12% da janela muda acima do piso de Weber. Custa
-+412 KB no `.pck`; a 720 **melhora**, não piora. ⚠️ **O campo da água é raster
+fronteira sobe **+52,6%** e 5,12% da janela muda acima do piso de Weber, e a
+720 **melhora**. ⚠️ **O campo da água é raster
 de 720 embutido, e assim FICA**: construído a 1080, não muda um pixel acima do
 piso de Weber (`026`). Projeção, âncoras e pegada intactas.
 
@@ -94,11 +94,10 @@ turno, sem o nome de quem jogou (`006`). Sai pelo menu de pausa.
 **O jogo tem som:** 14 efeitos de `tools/gerar_sons.py`, num autoload com
 prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
 
-**E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`). O botão sai da linha
-do Construir, e a tela é um aparelho de 400×680, porque a PROPORÇÃO é o que faz
-a metáfora ler. Dentro há o **diário** (que abre uma vez e não tinha como ser
-relido) e quatro portas FECHADAS — cidade, lojas, missões, análise (itens 18 a
-21). O menu de pausa é sistema; isto é mundo. **É casca, e de propósito.**
+**E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`): aparelho de 400×680,
+com o **diário** (que abre uma vez e não tinha como ser relido) e quatro portas
+FECHADAS — cidade, lojas, missões, análise (itens 18 a 21). **É casca, e de
+propósito.**
 
 **Nada de interface pousa sobre o mapa:** a vaga é cenário, o cartão é barra, e
 o número é tinta no cais.
@@ -136,8 +135,8 @@ metade de máquina do A1 (APK e build Web a cada push). Ver `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | ~~Jogar~~ — 02/09 e 06/09, e os 25 itens já triados. Fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e devolveu 7 notas — 6 aplicadas e a 7ª (os retratos) construída. Falta reler o que mudou; está no A4 do plano |
-| **A5** | **Olhar** — a metade de máquina está feita | A trilha inteira foi capturada nos 30 pontos que tocaram em arte e montada numa página com o veredito guardado (§A5 do plano). Só falta o olho dele |
+| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e as 7 notas dela estão fechadas. Falta reler o que mudou desde então — A4 do plano |
+| **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos numa página com veredito guardado, **e a folha de contato dos props**, que faltava desde sempre (§A5 do plano). Só falta o olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que as duas jogadas devolveram (02–03/09 e 06/09)
@@ -204,6 +203,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, em **quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado** (`018`). Imprime classes, motivos e o NÍVEL de cada um |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
+| `brport_vs/tools/folha_props.gd` | **A folha dos 51 props de mapa, a 1:1** — a metade que faltava da medição do A5. Duas páginas, e reprova se o catálogo pedir uma terceira |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos, a 19px e ampliado — **rodar a cada ícone novo**. **Reprova ao transbordar**, como a da frota |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `tools/conferir_lote_de_arte.py` | Confere lote de arte vindo de fora: alfa de verdade, tamanho e **ângulo da base contra o contrato de 26,57°**. Rodar antes de qualquer PNG externo entrar |

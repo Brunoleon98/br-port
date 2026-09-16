@@ -193,6 +193,21 @@ tirar icones  - --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # não depende de sorteio, como a dos ícones já não dependia.
 tirar frota   - --script res://tools/folha_frota.gd   --    "$SAIDA/frota.png"
 
+# OS PROPS DE MAPA, todos, a 1:1. A segunda metade da medição do gate A5 — o
+# plano diz "captura antes/depois lado a lado, E a folha de contato dos props"
+# —, e a que faltava desde sempre. A `folha_icones` cobre os ícones e a
+# `folha_frota` os cascos e camiões; o resto do catálogo não tinha foto que o
+# percorresse, e foi assim que a pasta `art/brp` inteira ficou oito assets
+# gerados, validados a cada corrida do CI e invisíveis.
+#
+# ⚠️ AS DUAS PÁGINAS SÃO PARTE DO CONTRATO, e não um detalhe de arrumação. A
+# ferramenta conta quantas páginas o catálogo pede e REPROVA se não forem as
+# que se pediram aqui: um prop novo que empurre para uma terceira página fica
+# vermelho em vez de sair sem foto. Acrescentar a linha faz parte de
+# acrescentar o prop.
+tirar props1  - --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 2
+tirar props2  - --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 2
+
 # UMA IMAGEM CHAPADA TAMBÉM É UM PNG. Se o contexto gráfico falhar em silêncio
 # — driver de software em falta no runner, por exemplo — a ferramenta salva um
 # retângulo de uma cor só e diz "Tela salva", que é a foto mentirosa contra a

@@ -681,6 +681,28 @@ guardado**, de modo que a resposta volte como fila de trabalho em vez de voltar
 como conversa: <https://claude.ai/artifact/8k28N6G5ALgU3rSkQaVWxu>. Lê-se de
 volta com `read_db` na coleção `veredito`.
 
+#### ✅ E A FOLHA DE CONTATO DOS PROPS (16/09) — a outra metade da medição
+
+`brport_vs/tools/folha_props.gd`, nas duas páginas que a bateria tira desde
+hoje. Os **51 props de mapa a 1:1**, no tamanho em que chegam ao mapa, com o
+nome por baixo; os dez de INTERFACE ficam de fora por medição (os retratos de
+fala medem 338×450 contra os 153×140 do maior prop de mapa, e fariam a folha
+caber oito peças) e porque se julgam no cartão do painel, que é o widget deles.
+
+⚠️ **O FUNDO É UM SÓ, E É A LIMITAÇÃO ASSUMIDA.** Contraste depende do FUNDO, e
+esta folha responde *"dá para olhar?"*, não *"separa do fundo?"*. A segunda
+pergunta pede o fundo AMOSTRADO do mapa debaixo da âncora de cada prop — o que
+o D20 e o D21 já fazem para outra coisa —, e é a sessão seguinte.
+
+⚠️ **E AGRUPAR POR `habitat` FOI TENTADO E MEDIDO COMO IMPOSSÍVEL.** O campo
+existe nas 44 entradas do manifest, mas só 26 dos 51 props lá estão e **20
+desses 26 são `terra`**: ele foi desenhado para a fauna. O agrupamento sairia
+de uma lista à mão, e nem equilibrava.
+
+Duas guardas novas, com defeito injetado nas duas: um nome que não cabe na
+célula reprova (207 px contra 159), e seis props a mais reprovam por pedirem uma
+terceira página (`FALHOU — o catálogo tem 57 props e cabem 28 por página`).
+
 Falta a metade dele, que é olhar.
 
 ---
