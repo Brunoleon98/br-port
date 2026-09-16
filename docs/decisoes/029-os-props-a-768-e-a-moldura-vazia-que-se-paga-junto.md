@@ -108,6 +108,21 @@ lhe tocar na geometria.
 
 Os 25 props do gerador levam **4m55s**; o catálogo inteiro, ~17 min.
 
+⚠️ **O APK E O `brport-web` FALTAM, E FALTAM POR UMA RAZÃO DE MÁQUINA.** O
+`dl.google.com` responde 403 aqui, então o export do APK só se verifica no CI —
+e o CI deste projeto corre a cada push no `main` e a cada *pull request*, nunca
+num branch solto. O **antes** já está medido, da corrida 35143708422 sobre o
+commit que é a base desta branch:
+
+| artefato | antes (512) | depois (768) |
+|---|---|---|
+| `brport-apk` | 31.607.335 B | lê-se na 1ª corrida do PR |
+| `brport-web` | 13.799.272 B | idem |
+
+O `.pck` é o que se mede aqui sem templates (`--export-pack Android`), e ele já
+diz o tamanho da conta: **+1,87 MB**. Quem abrir o PR fecha a tabela com dois
+números, e não com uma estimativa.
+
 ⚠️ **E 89,6% DESSE QUADRO É MOLDURA VAZIA.** Medido nos 61: o desenho ocupa
 **10,4%** do quadro. Só os dez retratos enchem mais de metade dele; os 51 props
 de mapa ocupam de 0,04% (o poste) a 7,4% (o píer n1). Dos 143,92 MB de VRAM,
