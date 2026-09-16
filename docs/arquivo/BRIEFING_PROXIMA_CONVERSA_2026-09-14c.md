@@ -49,7 +49,7 @@ A metade de máquina do gate está feita: a bateria foi corrida nos **30 pontos*
 da história em que um merge tocou em arte (02/09 → hoje), com o `.godot` apagado
 e reimportado em cada um, e daí saem **128 pares antes/depois** mais 14 fotos que
 nasceram pelo caminho. O que mudou em cada ponto sai do hash de cada PNG, não do
-olho de ninguém. A página está em <https://claude.ai/code/artifact/3eb1a5b1-bac8-4166-add8-a7e0d81f92ce>;
+olho de ninguém. A página está em <https://claude.ai/artifact/8k28N6G5ALgU3rSkQaVWxu>;
 o veredito de cada quadro é guardado, e **lê-se de volta com `read_db` na
 coleção `veredito`** — é assim que a resposta dele entra na fila em vez de se
 perder na conversa.

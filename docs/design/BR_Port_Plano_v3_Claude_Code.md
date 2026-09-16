@@ -678,7 +678,7 @@ hash de cada PNG**, nunca escolhido a olho.
 Estão numa página que se abre e se percorre — toca-se na imagem e ela pisca
 entre antes e depois no mesmo sítio —, e **o veredito de cada quadro fica
 guardado**, de modo que a resposta volte como fila de trabalho em vez de voltar
-como conversa: <https://claude.ai/code/artifact/3eb1a5b1-bac8-4166-add8-a7e0d81f92ce>. Lê-se de
+como conversa: <https://claude.ai/artifact/8k28N6G5ALgU3rSkQaVWxu>. Lê-se de
 volta com `read_db` na coleção `veredito`.
 
 Falta a metade dele, que é olhar.

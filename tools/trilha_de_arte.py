@@ -194,7 +194,8 @@ def quadro(par, ident):
     if novo:
         imgs = ('<img class="so" loading="lazy" width="720" height="1280" '
                 'src="%s" alt="%s">' % (src(par["depois"]), html.escape(leg)))
-        botao = ""
+        botao = ('<button class="abrir" type="button" '
+                 'aria-label="Ver no tamanho original">&#9974;</button>')
     else:
         imgs = ('<img class="depois" loading="lazy" width="720" height="1280" '
                 'src="%s" alt="%s, depois"><img class="antes" loading="lazy" '
@@ -206,7 +207,9 @@ def quadro(par, ident):
                  '<span class="estado">depois</span></button>'
                  '<span class="costura"></span>'
                  '<span class="selo esq">antes</span>'
-                 '<span class="selo dir">depois</span>')
+                 '<span class="selo dir">depois</span>'
+                 '<button class="abrir" type="button" '
+                 'aria-label="Ver no tamanho original">&#9974;</button>')
     return (
         '<figure class="quadro" data-id="%s" data-novo="%s">'
         '<div class="moldura">%s%s</div>'
@@ -321,8 +324,23 @@ h1{font-size:clamp(30px,6vw,46px); line-height:1.02;}
 h2{font-size:clamp(20px,3.4vw,27px); margin-top:52px;}
 .intro{color:var(--fraca); max-width:62ch; margin:8px 0 22px; font-size:15px;}
 .tira{display:grid; gap:22px; margin-top:16px;
-  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));}
-.manchete .tira{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));}
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));}
+.manchete .tira{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));}
+
+/* ABRIR UM QUADRO mostra-o no tamanho em que foi tirado (720 de largura), e
+   não esticado para a largura da coluna: ampliar não devolve o que a grelha
+   encolheu. O `depois` passa a definir a caixa e o `antes` sobrepõe-se. */
+.quadro.grande{grid-column:1/-1;}
+.quadro.grande .moldura{aspect-ratio:auto; max-width:720px; height:auto;}
+.quadro.grande .moldura img.depois,
+.quadro.grande .moldura img.so{position:static; width:100%; height:auto;
+  object-fit:contain;}
+.abrir{position:absolute; top:8px; right:8px; z-index:2; width:30px;
+  height:30px; border:1px solid var(--linha); border-radius:2px;
+  background:var(--painel); color:var(--tinta); cursor:pointer;
+  font:600 14px/1 "Barlow Condensed",sans-serif; padding:0;}
+.abrir:hover{border-color:var(--ambar); color:var(--ambar);}
+.abrir:focus-visible{outline:2px solid var(--ambar); outline-offset:2px;}
 
 .quadro{margin:0; display:flex; flex-direction:column; gap:8px;}
 .moldura{position:relative; aspect-ratio:9/16; max-width:100%;
@@ -411,7 +429,7 @@ body.lado .piscar{display:none;}
   <div class="medidas">
     <div><span class="n medida">__PONTOS__</span><span class="q">pontos da trilha</span></div>
     <div><span class="n medida">__PARES__</span><span class="q">antes/depois</span></div>
-    <div><span class="n medida">__NOVOS__</span><span class="q">fotos que nasceram</span></div>
+    <div><span class="n medida">__NOVOS__</span><span class="q">nasceram na trilha</span></div>
     <div><span class="n medida">720×1280</span><span class="q">semente e passo fixos</span></div>
   </div>
 </div></div>
@@ -468,6 +486,14 @@ body.lado .piscar{display:none;}
     q.classList.toggle("ver-antes");
     b.querySelector(".estado").textContent =
       q.classList.contains("ver-antes") ? "antes" : "depois";
+  });
+
+  // abrir no tamanho original
+  document.addEventListener("click", function(e){
+    var b = e.target.closest ? e.target.closest(".abrir") : null;
+    if(!b) return;
+    e.stopPropagation();
+    b.closest(".quadro").classList.toggle("grande");
   });
 
   // modo
@@ -548,7 +574,7 @@ body.lado .piscar{display:none;}
 PAGINA = (PAGINA
           .replace("__PONTOS__", str(len(d["pontos"])))
           .replace("__PARES__", str(total_pares + n_manchete_par))
-          .replace("__NOVOS__", str(total_novos))
+          .replace("__NOVOS__", str(total_novos + n_manchete_novo))
           .replace("__MANCHETE__", manchete)
           .replace("__MANCHETE_NOTA__",
                    "Cinco têm antes e depois; as outras %d não existiam em "
