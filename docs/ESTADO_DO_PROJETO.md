@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 16/09/2026
+> **Última atualização:** 17/09/2026 — R1 da §7.1; o jogo não mudou
 >
 > | Precisa saber | Leia |
 > |---|---|
@@ -13,10 +13,8 @@
 > | O que fazer a seguir, e quais itens só o Bruno fecha | `docs/design/BR_Port_Plano_v3_Claude_Code.md` |
 > | Por que se decidiu assim | `docs/decisoes/NNN-*.md`, uma por arquivo |
 >
-> São **dois** documentos para retomar o trabalho: este e o plano — até 02/09
-> eram cinco em cadeia. O caminho percorrido está em
-> `docs/arquivo/HISTORICO.md`; o que aconteceu em cada sessão, em
-> `docs/arquivo/`.
+> Retome por este estado e pelo plano. Histórico: `docs/arquivo/HISTORICO.md`;
+> sessões fechadas: `docs/arquivo/`.
 
 ---
 
@@ -125,31 +123,36 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-**Fechados**, dos quinze itens: B1 a B8 e A2, A3, A4 (construídas), mais a
-metade de máquina do A1 (APK e build Web a cada push). Ver `HISTORICO.md`.
+**R1 da §7.1 fechado (17/09):** a Leitura do simulador escolhe os perfis por
+identidade e não por índice, e o veredito que a `005` já tinha esvaziado saiu
+(`030`); o jogo não mudou. **Próximo: R2** (logs e capturas). R3–R9
+pendentes, gates humanos abertos.
+
+**Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
+histórico em `HISTORICO.md`.
 
 **Abertos e esperando o Bruno** — nenhum deles precisa de uma sessão ligada:
 
 | Item | O que falta | Por que só ele |
 |---|---|---|
-| **A1** | ~~Jogar~~ — 02/09 e 06/09, e os 25 itens já triados. Fica **a ordem do resto** | Ver abaixo |
+| **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e as 7 notas dela estão fechadas. Falta reler o que mudou desde então — A4 do plano |
-| **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos numa página com veredito guardado, **e a folha de contato dos props**, que faltava desde sempre (§A5 do plano). Só falta o olho dele |
+| **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
 ### O que as duas jogadas devolveram (02–03/09 e 06/09)
 
 **Triadas em `docs/arquivo/PLAYTEST_01_ANALISE.md` e `PLAYTEST_02_ANALISE.md`**,
-com o resumo na §7 do plano e o porquê nas `011` a `029`. Fechou-se tudo o que
-não dependia do Bruno; sobram o rodapé (gate A5), três itens de economia (Fase
-2) e a madeira podre (A4). **Livre: A8.** O resto é a ordem dele.
+com o resumo na §7 do plano e o porquê nas `011` a `030`. Sobram o rodapé (gate
+A5), três itens de economia (Fase 2) e a madeira podre (A4). **Antes de A8,
+entra a fila de correções da §7.1.**
 
 ⚠️ **Duas coisas medidas e por fazer**, cada uma sessão própria: a rua parou em
 **1,8** (alargá-la empurra o `RUA_RECUO` e o enquadramento, `012`) e o quadro
 dos props é 89,6% moldura vazia (cortá-lo mexe na origem do mundo, `029`).
 
-**A pergunta da Fase 2 fica adiada de propósito** (03/09) e não trava sessão
-nenhuma — a conta está em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
+**Fase 2 adiada** (03/09), sem travar esta fila; conta em
+`docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 
 ---
 
@@ -167,7 +170,7 @@ nenhuma — a conta está em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 | `tools/ler_registros.py` | **O leitor** — resume N partidas e põe o jogador MEDIDO ao lado dos perfis supostos |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e que o gravador não grava desarmado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa (`025`), metades co-ancoradas (`028`) e a reconciliação de pixel com coordenada nos nós que mostram prop (D31, `029`); espera `DESIGN OK` |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`); espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, e **toda fala escrita chega ao jogo** |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Nove bustos (`020`) |
@@ -179,8 +182,8 @@ nenhuma — a conta está em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 | `tools/trilha_de_arte.{sh,py}` | **A trilha de arte, para o gate A5** — corre a bateria em cada ponto que tocou em arte e monta o antes/depois. O que mudou sai do hash de cada PNG |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
-| `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta, cantos, botões e cartões. Os tokens de cor de MAPA saíram daqui em 30/08: quem os define é o gerador do SVG |
-| `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem o mapa, os letreiros e a barra de docas |
+| `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta, cantos, botões e cartões. A cor de MAPA não vive aqui: quem a define é o gerador do SVG |
+| `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem o mapa e a barra de docas |
 | `brport_vs/scenes/dock/Dock.tscn` | A metade de CENÁRIO de uma doca: píer, barco, guindaste, trabalhador |
 | `brport_vs/scenes/dock/DocaCartao.tscn` | A metade de INTERFACE da mesma doca: valor, turnos, trabalhador, alvo de toque |
 | `docs/design/BR_Port_Style_Guide_Flat_Design.md` | Paleta, peso de linha, espaçamento e proporções canônicas para toda arte futura |
@@ -198,6 +201,7 @@ nenhuma — a conta está em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Imprime classes, motivos e o NÍVEL |
+| `brport_vs/tools/leitura_do_simulador.gd` | A conclusão dele, fora do `SceneTree` para se poder provar com fixture — bloco T7. Identidade ausente ou dupla: código 1 (`030`) |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
 | `brport_vs/tools/folha_props.gd` | **A folha dos 51 props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Duas páginas, e reprova ao transbordar |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos, a 19px e ampliado — **rodar a cada ícone novo**. **Reprova ao transbordar**, como a da frota |
@@ -341,11 +345,8 @@ Aponte este arquivo e diga o que quer fazer:
 > "Continuando o BR Port — leia `docs/ESTADO_DO_PROJETO.md` e a fila na §7 do
 > plano. Quero trabalhar em X."
 
-O `CLAUDE.md` carrega sozinho e traz as regras, a receita de rodar tudo e as
-armadilhas. **Numa sessão remota não é preciso montar nada** — o hook de
-arranque deixa o Godot pronto e diz numa linha que o fez; se essa linha não
-aparecer, a receita manual está lá.
+O `CLAUDE.md` traz as regras e a receita manual se o hook não preparar o Godot.
 
 Para fechar, a skill **`/fechar-sessao`**. Para mexer em preço ou constante
-`# TUNING:`, **`/balancear`** — e medir é com 600 partidas por perfil, nunca com
-as 30 que o CI roda como teste de fumaça.
+`# TUNING:`, **`/balancear`**. Medição: 600 partidas por perfil; confira o
+comando efetivo no workflow, sem herdar a antiga referência a 30 no CI.

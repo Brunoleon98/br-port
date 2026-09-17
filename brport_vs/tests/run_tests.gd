@@ -6,6 +6,7 @@ extends SceneTree
 
 var _fails := 0
 var GS
+var _t7_completo := false
 
 
 func _check(label: String, ok: bool) -> void:
@@ -492,6 +493,10 @@ func _run() -> void:
 			losses += 1
 	_check("40 partidas completadas sem travar", wins + losses == 40)
 	print("  -> vitorias=%d derrotas=%d" % [wins, losses])
+
+	print("=== T7: a Leitura do simulador escolhe por identidade, nao por posicao ===")
+	_t7_leitura_do_simulador()
+	_check("o bloco T7 correu até ao fim", _t7_completo)
 
 	print("")
 	if _fails == 0:
@@ -1274,3 +1279,153 @@ func _t5l_motivo_da_escala() -> void:
 
 	_t5l_completo = true
 
+
+# ── T7 ──────────────────────────────────────────────────────────────────
+# A CONCLUSÃO DO SIMULADOR LIA O RESULTADO PELA POSIÇÃO NA LISTA, e por isso
+# passou a falar do perfil errado no dia em que a lista cresceu. Com o
+# Antecipado acrescentado no fim (12/09), `resultados[size - 1]` deixou de ser
+# o Descuidado: medido em 600 partidas com a semente do CI, a tabela dizia
+# Descuidado 37,3% e a Leitura publicava "jogar mal ganha 80%", com o vão a sair
+# 20 pontos em vez de 62,7 — e os dois vereditos que dependiam desses números
+# dispararam ao contrário do que a tabela media.
+#
+# Nenhuma das seis suítes podia apanhar isto, porque nenhuma tocava no
+# simulador: ele é um `SceneTree` que roda 4 perfis × 600 partidas antes de
+# chegar à frase. Foi por isso que a conclusão saiu para
+# `tools/leitura_do_simulador.gd` — aritmética sobre um Array, que se alimenta
+# com fixture.
+#
+# ⚠️ A FIXTURE É SINTÉTICA E DE PROPÓSITO. Nenhum número daqui é medição do
+# jogo, e o esperado está escrito à mão: montá-lo a partir da mesma busca de
+# perfil que está sob teste faria disto um espelho, que é a armadilha do bloco
+# dos motivos em 06/09.
+#
+# ⚠️ E O ÓTIMO DA FIXTURE B NÃO ESTÁ NO TETO POR UMA RAZÃO MEDIDA. Com o Ótimo a
+# 100%, a diferença em PONTOS e a diferença RELATIVA dão o mesmo número (100 −
+# 30 = 70, e (100 − 30)/100 = 70%), e trocar uma pela outra não reprovaria nada
+# — que é justamente o estado do jogo hoje. A B põe o Ótimo a 80% para as duas
+# contas divergirem (50 pontos contra 62,5%), e é ela também que dá amostras de
+# tamanhos diferentes: com todos os perfis a 10 partidas, reaproveitar o
+# denominador do Ótimo nos outros também passaria despercebido.
+func _t7_leitura_do_simulador() -> void:
+	var Leitura := load("res://tools/leitura_do_simulador.gd")
+
+	# Fixture A — a do briefing. Ótimo 10/10, Descuidado 3/10, Antecipado 8/10.
+	var a := [
+		_perfil_falso("Ótimo", 10, 10),
+		_perfil_falso("Mediano", 7, 10),
+		_perfil_falso("Descuidado", 3, 10),
+		_perfil_falso("Antecipado", 8, 10),
+	]
+	var la: Dictionary = Leitura.ler(a)
+	var ln: Array = la["linhas"]
+	_check("A: a leitura sai válida", bool(la["ok"]))
+	_check("A: o Ótimo entra com a taxa e a amostra dele",
+		_t7_tem(ln, "Jogo perfeito (Ótimo) ganha 100.0% de 10 partidas"))
+	_check("A: jogar mal é o DESCUIDADO, a 30%",
+		_t7_tem(ln, "Jogar mal (Descuidado) ganha 30.0% de 10 partidas"))
+	_check("A: o vão sai em pontos percentuais, e são 70",
+		_t7_tem(ln, "70.0 pontos percentuais"))
+	# 80% é a taxa do Antecipado, e era o que a versão defeituosa publicava. Se
+	# ela aparecer em linha nenhuma da conclusão, a identidade não está a decidir.
+	_check("A: a taxa do Antecipado NÃO chega à conclusão", not _t7_tem(ln, "80.0%"))
+	# A sentinela que os dois workflows procuram para dizer que a corrida chegou
+	# ao fim. Ela é contrato, e sai daqui.
+	_check("A: a linha que o CI procura continua a sair", _t7_tem(ln, "=== Leitura ==="))
+
+	# 1. Permutar a ordem não muda nada.
+	var permutada := [a[3], a[2], a[0], a[1]]
+	var lp: Dictionary = Leitura.ler(permutada)
+	_check("permutar a ordem devolve exatamente as mesmas linhas", lp["linhas"] == ln)
+
+	# 2. Um perfil sintético a 1/10 muda o RANKING e não muda a identidade: ele
+	#    passa a ser o último da lista E o mínimo observado ao mesmo tempo, que
+	#    são as duas maneiras erradas de escolher.
+	var com_extra := a.duplicate()
+	com_extra.append(_perfil_falso("Sortudo", 1, 10))
+	var lx: Dictionary = Leitura.ler(com_extra)
+	_check("acrescentar um perfil 1/10 não muda quem é o Descuidado", lx["linhas"] == ln)
+
+	# Fixture B — amostras de tamanhos diferentes, e o Ótimo fora do teto.
+	var b := [
+		_perfil_falso("Ótimo", 16, 20),
+		_perfil_falso("Mediano", 7, 10),
+		_perfil_falso("Descuidado", 3, 10),
+	]
+	var lb: Dictionary = Leitura.ler(b)
+	var lnb: Array = lb["linhas"]
+	_check("B: a leitura sai válida", bool(lb["ok"]))
+	_check("B: o Ótimo usa o denominador dele (20)",
+		_t7_tem(lnb, "Jogo perfeito (Ótimo) ganha 80.0% de 20 partidas"))
+	_check("B: o Descuidado usa o denominador DELE (10)",
+		_t7_tem(lnb, "Jogar mal (Descuidado) ganha 30.0% de 10 partidas"))
+	_check("B: o vão são 50 pontos", _t7_tem(lnb, "50.0 pontos percentuais"))
+	# 3/20 = 15%: é o que sai de reaproveitar o denominador do Ótimo.
+	_check("B: o denominador do Ótimo NÃO serve o Descuidado", not _t7_tem(lnb, "15.0%"))
+	# (80 − 30)/80 = 62,5%: é o que sai de trocar pontos por diferença relativa.
+	_check("B: a diferença não é relativa", not _t7_tem(lnb, "62.5"))
+
+	# 3. Identidade ausente e identidade duplicada reprovam, cada uma com o seu
+	#    motivo — e nenhuma das duas publica taxa ou conclusão.
+	var sem_ruim := [a[0], a[1], a[3]]
+	var ls: Dictionary = Leitura.ler(sem_ruim)
+	_check("sem Descuidado, a leitura recusa", not bool(ls["ok"]))
+	_check("sem Descuidado, ela diz que não o achou",
+		_t7_tem(ls["linhas"], "não achei o perfil \"Descuidado\""))
+	_check("sem Descuidado, não publica taxa nenhuma", not _t7_tem(ls["linhas"], "ganha"))
+	_check("sem Descuidado, não publica vão nenhum",
+		not _t7_tem(ls["linhas"], "pontos percentuais"))
+
+	var duplicado := a.duplicate()
+	duplicado.append(_perfil_falso("Descuidado", 9, 10))
+	var ld: Dictionary = Leitura.ler(duplicado)
+	_check("com Descuidado duplicado, a leitura recusa", not bool(ld["ok"]))
+	_check("com Descuidado duplicado, ela diz quantas vezes apareceu",
+		_t7_tem(ld["linhas"], "aparece 2 vezes"))
+	_check("com Descuidado duplicado, não publica taxa nenhuma",
+		not _t7_tem(ld["linhas"], "ganha"))
+
+	# 4. Amostra zero não vira 0% — vira recusa. Zero lê-se como medida, e é o
+	#    pior valor de omissão que há.
+	var vazio := [a[0], _perfil_falso("Descuidado", 0, 0)]
+	var lv: Dictionary = Leitura.ler(vazio)
+	_check("amostra vazia recusa", not bool(lv["ok"]))
+	_check("amostra vazia diz que não há partida com desfecho",
+		_t7_tem(lv["linhas"], "não tem partida nenhuma"))
+	_check("amostra vazia não publica taxa", not _t7_tem(lv["linhas"], "ganha"))
+	_check("amostra vazia não publica vão", not _t7_tem(lv["linhas"], "pontos percentuais"))
+
+	# Os papéis que a Leitura declara têm de EXISTIR na tabela do simulador. São
+	# dois arquivos, e nada os obriga a concordar: renomear um perfil em PERFIS
+	# faria a Leitura recusar em produção sem ninguém saber porquê. As duas
+	# fontes são distintas de propósito — ler os dois lados do mesmo arquivo
+	# seria um espelho.
+	var Sim := load("res://tools/simular_balanceamento.gd")
+	var perfis: Array = Sim.get_script_constant_map()["PERFIS"]
+	var nomes := []
+	for pf in perfis:
+		nomes.append(String(pf["nome"]))
+	_check("o papel PERFIL_BOM existe em PERFIS", Leitura.PERFIL_BOM in nomes)
+	_check("o papel PERFIL_RUIM existe em PERFIS", Leitura.PERFIL_RUIM in nomes)
+	_check("os dois papéis são perfis diferentes", Leitura.PERFIL_BOM != Leitura.PERFIL_RUIM)
+
+	_t7_completo = true
+
+
+# Um registro de perfil com o mínimo que a Leitura lê. O que não é vitória cai
+# em "chegou curto": os três contadores PARTICIONAM as partidas no simulador, e
+# é dessa soma que o denominador de cada perfil sai.
+func _perfil_falso(nome: String, vitorias: int, partidas: int) -> Dictionary:
+	return {
+		"perfil": {"nome": nome},
+		"vitorias": vitorias,
+		"quebrou_antes": 0,
+		"chegou_sem_dinheiro": partidas - vitorias,
+	}
+
+
+func _t7_tem(linhas: Array, trecho: String) -> bool:
+	for l in linhas:
+		if trecho in String(l):
+			return true
+	return false

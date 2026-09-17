@@ -390,6 +390,17 @@ Teste e import rodam sem tela.
    APERTA é um só: pórtico comprado e cais ainda não. Antes de dar um defeito
    por não pegado, pergunte em que estado as duas versões DIVERGEM — e monte
    esse estado, que costuma ser um só entre muitos.
+   ⚠️ **E ESSE ESTADO PODE SER O QUE O JOGO NÃO FAZ — aí a fixture REALISTA é a
+   que não prova nada.** A regra acima manda montar o estado em que as duas
+   versões divergem; esta diz o que fazer quando ele é justamente o estado raro.
+   Em 17/09, na Leitura do simulador, trocar PONTOS percentuais por diferença
+   RELATIVA não reprovou asserção nenhuma: com o Ótimo a 100%, `100 − 30 = 70` e
+   `(100 − 30)/100 = 70%` dão o mesmo número — e o Ótimo a 100% é o jogo de
+   hoje. O defeito só cai com o Ótimo FORA do teto (a 80%: 50 pontos contra
+   62,5%), que é um estado sintético de propósito. **Fixture copiada da medição
+   real é a mais fácil de escrever e a que mais vezes calha no ponto cego**;
+   depois de a escrever, calcule à mão o que o defeito daria ali e exija que os
+   dois números sejam diferentes.
    **E confira que quem reprovou foi a guarda que se estava a testar.** No
    mesmo dia, o primeiro defeito injetado nesse sorteio reprovou — pela
    asserção dos PESOS, que somam 100 e denunciam qualquer peso mexido. A do
@@ -1845,6 +1856,34 @@ armadilha de uma função, no comentário dela.
   644, e a bateria morreu com código **126 em 0 s**, que não se parece nada com
   um erro de captura. Ao trocar um arquivo por um temporário, copie o modo
   (`os.chmod(tmp, os.stat(p).st_mode)`) antes do `replace`.
+- **⚠️ QUEM LÊ UM RESULTADO DE UMA LISTA QUE CRESCE LÊ POR IDENTIDADE, NUNCA
+  POR ÍNDICE.** A conclusão do simulador tirava o "jogar mal" de
+  `resultados[size - 1]`, o que era o Descuidado enquanto os perfis eram três;
+  com o Antecipado no fim (12/09) passou a ser ele, e a Leitura publicou 80%
+  onde a tabela, duas linhas acima, media 37,3% — com os dois vereditos que
+  dependem do número a dispararem ao contrário do que ela mede. Não dá erro
+  nenhum, e o índice continua válido. **Índice é posição; papel é identidade**,
+  e num `Array` de resultados só a segunda sobrevive à lista crescer ou a ser
+  reordenada. Recuse identidade ausente E duplicada: escolher o primeiro de dois
+  homónimos é decidir por posição outra vez. E a identidade não se inventa —
+  aqui é o NOME, porque o despejo JSON e o `projetar_parcelas.py` já o usavam
+  (`docs/decisoes/030`).
+  ⚠️ **E VEREDITO NUM RELATÓRIO É POLÍTICA, e não cai quando a decisão que o
+  sustentava é substituída.** No mesmo arquivo, *"o ERRO NÃO CUSTA, é este o
+  sintoma de 'fácil demais'"* acima de 50% sobreviveu quinze dias à `005`, que
+  substituiu a fantasia de sobrevivência por *"a decisão errada custa TEMPO e
+  OPORTUNIDADE, não a partida"* — e nenhum limiar novo foi escrito para o lugar
+  do velho. É a irmã de "número em pixel escrito à mão envelhece calado", com um
+  JULGAMENTO em vez de um número, e é pior: o número errado lê-se como número,
+  o veredito errado lê-se como conclusão. Limiar sem decisão viva a segurá-lo
+  sai, e no lugar fica a descrição factual.
+  ⚠️ **E CONCLUSÃO QUE VIVE DENTRO DE QUEM A PRODUZ NÃO SE PROVA.** A razão de
+  nenhuma das seis suítes poder ter apanhado aquilo: a frase morava num
+  `SceneTree` que roda 4 perfis × 600 partidas antes de chegar a ela, e isso não
+  se alimenta com fixture. Separá-la num arquivo de aritmética pura custou umas
+  linhas e é o que torna o bloco T7 possível — e ela devolve LINHAS em vez de
+  imprimir, porque o que se tem de provar é o TEXTO final: neste projeto a
+  formatação já engoliu um número sozinha (o `0.` do `JUROS_POR_TURNO`).
 - **`destino[chave] += x` num Dictionary CRIA a chave em silêncio.** É a irmã
   do `.get(chave, omissão)` acima, do outro lado: ali um erro de digitação vira
   número plausível na LEITURA, aqui vira dinheiro escrito numa chave que a soma
