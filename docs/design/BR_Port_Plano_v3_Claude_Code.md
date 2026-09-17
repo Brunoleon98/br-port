@@ -1,6 +1,9 @@
 # BR Port — Plano v3: o projeto refeito para ser tocado com Claude Code
 
 **Versão 3.0 · 30/08/2026**
+**Fila atualizada em 17/09/2026:** correções da revisão externa incorporadas
+na §7.1. Próxima sessão: **R1 — interpretação do simulador**. Esta atualização
+é planejamento; não declara correções implementadas nem gates humanos fechados.
 **Substitui o cronograma do Roadmap v2.1 (Fases 4–7) e o Plano de Produção da
 Fase 2 inteiro.**
 
@@ -89,7 +92,7 @@ que abre com um estado conhecido e fecha com uma coisa provada.
 **Abre com:** `CLAUDE.md` (carrega sozinho) + `docs/ESTADO_DO_PROJETO.md` +
 o item da fila escolhido para a sessão.
 
-**Fecha com:** commit, as três suítes verdes, e — se mexeu no visual — uma
+**Fecha com:** commit, as suítes exigidas pelo CI verdes, e — se mexeu no visual — uma
 captura que alguém olhou. É o ritual que já está escrito em `CLAUDE.md`, seção
 "Antes de fechar qualquer mudança"; este plano só o adota como definição de
 pronto.
@@ -644,8 +647,8 @@ mede).
 1. Paleta e enquadramento (muda tudo, e é barato)
 2. A cauda dos props — contentor, caixote, boia, marcador, mais caminhão,
    empilhadeira, poste, cabeço, pilha de caixotes
-3. Contorno pelo compositor (**não** Freestyle — foi testado e rejeitado, fecha
-   o vazado da treliça)
+3. Contorno: compositor **e** Freestyle já testados e rejeitados; não é etapa
+   pendente (ver a medição no plano de arte)
 4. Materiais dirigidos
 5. O rosto do trabalhador (folha de rostos por gerador, aplicada num plano)
 6. Interface encorpada — e esta não é Blender
@@ -735,8 +738,10 @@ Falta a metade dele, que é olhar.
 
 ### A6 — O áudio de verdade
 
-**Entrega:** música-tema da Fase 1, ambiente em loop, e os dez rascunhos
-substituídos ou promovidos.
+**Entrega:** música-tema da Fase 1, ambiente em loop, e os efeitos de rascunho
+substituídos ou promovidos após escuta. O inventário atual é o de
+`tools/gerar_sons.py`, do registro do áudio e dos WAVs; R9 (§7.1) acrescenta
+análise técnica, sem confundi-la com aprovação auditiva ou trocar os assets.
 
 **Por que depois:** o encanamento já está feito e testado; o que falta é
 material sonoro, e material sonoro **só pode ser aprovado por quem ouve**.
@@ -1236,6 +1241,11 @@ segundos.
 
 ## 7. A fila
 
+**Ordem operacional vigente em 17/09: a §7.1 abaixo entra antes de novas
+melhorias e da publicação.** Os marcos A/B e o histórico de playtest continuam
+valendo. Esta fila de correções não reabre o GDD, economia, projeção ou arte.
+Cada R é uma entrega própria; a próxima conversa assume apenas **R1**.
+
 Não é um calendário, e de propósito. **O calendário deste projeto depende quase
 inteiramente de quando o Bruno se senta para julgar** — e prometer datas para
 isso seria repetir o erro do plano velho ao contrário.
@@ -1258,9 +1268,169 @@ isso seria repetir o erro do plano velho ao contrário.
 | 14 | A8 | Publicar no itch.io | Conta, página, capturas |
 | 15 | **A9** | **A decisão da Fase 6** | **Só o Bruno** |
 
-Seis gates humanos em quinze itens. É essa a conta que este plano orça — e a
-razão de A1 estar em segundo lugar é que ele é o gate que está há mais tempo
-adiado.
+A tabela acima conserva a estrutura original dos marcos. A1 já teve as duas
+jogadas registradas; não reabrir sua primeira instalação. A posição atual e os
+gates ainda abertos são os do `docs/ESTADO_DO_PROJETO.md`. A fila operacional
+de correções é a seguinte, antes de retomar os itens de expansão abaixo.
+
+### 7.1 Revisão de 17/09 — correções incorporadas e próxima sessão
+
+**Origem:** `docs/REVISAO_GERAL_2026-09-17.md` e pesquisa externa revisada
+entregue pelo Bruno. A pesquisa desenha decisões e provas; não é medição do
+código atual. Reproduzir cada achado antes de agir e não repetir correção que
+outra branch já tenha fechado. As letras A–I abaixo são as frentes da pesquisa,
+**não** os marcos A1–A9 deste plano. IDs R1–R9 são só itens desta fila.
+
+**Critério:** primeiro impedir que a automação publique evidência falsa ou
+induza a próxima sessão a errar; depois corrigir feedback e leitura, e impedir
+recorrência. Separar reparo curto de refatoração. Uma sessão promete um item;
+não executar toda a lista numa conversa. Os tamanhos são estimativas, não
+resultados medidos nem novo cronograma de horas.
+
+| Ordem | Item / vínculo | Entrega e prova mínima | Estado / tamanho |
+|---|---|---|---|
+| 1 | **R1 — E**, revisão §2.1 / B3 | A Leitura seleciona Ótimo e Descuidado por identidade; permutar/adicionar perfis não muda o significado; texto final confere | **Próxima sessão**; curta, com F1/F6 |
+| 2 | **R2 — I**, revisão §2.8 e §2.11 / B3 | Logs preservados e varridos em todos os scripts; captura avança turnos reais e respeita modais; erro com saída zero reprova | Pendente; dividir logs e fluxo se necessário |
+| 3 | **R3 — F**, revisão §2.6–2.7 / B1, B2, B5 | Corrigir instruções/contagens e ligar fatos à fonte executada; omissão de suíte ou documentação divergente reprova | Pendente; reparo curto, guarda em fatia própria |
+| 4 | **R4 — B**, revisão §2.2–2.3 / A4 | Falas verdadeiras no snapshot; obra instantânea sem duração fictícia; primeira semana sem comparação inexistente | Pendente; curta + releitura do Bruno |
+| 5 | **R5 — A**, revisão §2.2 / A4 | Entrada única de mensagens, fila e consulta recuperável; duas emissões no mesmo frame sobrevivem | Pendente; sistema pequeno, layout a medir |
+| 6 | **R6 — C**, revisão §2.4 / A5, B4 | Contraste efetivo e cobertura de painéis/estados; defeito fora do painel original é detectado | Pendente; correção pontual antes da cobertura ampla |
+| 7 | **R7 — D**, revisão §2.4 / A5, B4 | Tema governa cores da UI; lint de novas exceções + migração por papel; override fora da exceção exata reprova | Pendente; combinar trabalho comum com R6 |
+| 8 | **R8 — H**, revisão §3 / A4 | Frases completas de dias/tentativas, incluindo adjetivos; narração por extenso preservada | Pendente; curta, pode acompanhar revisão textual |
+| 9 | **R9 — G**, revisão §3 / A6 | True peak/descontinuidade/espectro como análise; protocolo de escuta entregue; nenhum WAV normalizado por omissão | Pendente; análise e escuta são entregas distintas |
+
+**R1 — identidade e interpretação.** O perfil que representa “jogar mal” é o
+Descuidado, não o último da lista nem necessariamente o mínimo observado.
+O Antecipado continua separado. Confirmar os identificadores reais no
+simulador. Reutilizar os resultados existentes; não mudar políticas, sorteio,
+constantes ou schema protegido. Validar ausência/duplicação de identidade;
+diferença de taxas é em **pontos percentuais**. Calcular o denominador de cada
+perfil e recusar amostra vazia; não usar o total do Ótimo como se garantisse
+o total dos outros. Incluir fixture com tamanhos de amostra diferentes.
+A frase “erro não custa” só
+pode sobreviver com critério explícito sustentado pela medida; preferir a
+comparação factual dos perfis e não reabrir a dívida como motor do jogo.
+
+Prova independente de R1: fixture sintética com Ótimo 10/10, Descuidado 3/10 e
+Antecipado 8/10; esperado literal 30% e diferença 70 pontos. Um perfil extra
+1/10 muda o ranking, não a identidade do Descuidado. Permuta mantém a leitura.
+Mutantes separados: último índice; mínimo observado como Descuidado; só o
+rótulo final trocado; percentual relativo em vez de pontos. Medir e verificar
+o texto impresso, não só o objeto anterior à formatação. Integrar às suítes
+existentes quando couber; marcador novo não exige suíte nova.
+
+**R2 — evidência legal.** Preservar stdout/stderr, exigir marcador terminal e
+ausência de `SCRIPT ERROR`/erros relevantes em cada execução. Cobrir captura,
+gravação de partidas, despejo e simulador, conforme o workflow real. Log
+ausente/vazio ou erro posterior ao marcador também reprova; upload de
+diagnóstico deve ocorrer em falha. Não apagar logs antes da inspeção.
+O avanço usa o caminho do jogador e a variação efetiva de turno; resolver a
+oferta não consome avanço. Não avançar sob modal bloqueante. A foto do boletim
+deve manter o boletim aberto no turno correto — não exigir zero modais em
+toda foto. Definir limite de tentativas para travamento. Mutantes: consumir a
+iteração da decisão; avançar sob modal; remover um log; erro real com saída
+zero. Alterar pixels apenas em cópia temporária para provar o comparador.
+
+**R3 — fonte operacional, não manifesto duplicado.** Conferir suítes/strings
+no workflow, mapas no gerador/comando, capturas na ferramenta e amostra no
+comando realmente executado. O baseline da revisão informa seis suítes,
+quatro mapas, 16 capturas, 600 partidas por perfil e 14 efeitos; revalidar,
+não transformar esta lista em outra fonte eterna. Atualizar skills, hook,
+instruções e docs que as repetem. Um texto gerado incorreto é corrigido pela
+fonte no seu processo próprio; nunca editar sua saída manualmente. Para
+“arte feita e rejeitada”, preservar o registro de decisão, pois contar arquivos
+não prova o resultado. Preferir estender `tools/conferir_docs.py`; blocos
+verificáveis só onde a contagem informa. Mutantes: sétima suíte/quinto mapa em
+fixture sem atualizar texto; suíte omitida; texto diz 600 e comando roda 30.
+
+**R4 — regras pequenas.** Oito falas não justificam motor fuzzy ou DSL nova.
+Usar IDs/textos e predicados explícitos sobre o snapshot do evento, com
+expectativas textuais revisadas. Não inventar limiar financeiro: usar critério
+existente ou remover “caixa no limite”. A obra instantânea não “demorou”.
+Alternativas não podem introduzir fatos sem condição; repetição/cooldown são
+decisões editoriais a medir. Mutantes: condição retirada, frase falsa
+reintroduzida, comparação antes de existir semana anterior. A aprovação do
+predicado não substitui a releitura A4.
+
+**R5 — fila não é troca de ordem.** Registrar as duas fontes e arbitrar a
+prévia, sem copiar do áudio o descarte de perdedores. FIFO comum, prioridade
+para a próxima apresentação e coalescência apenas por duplicata semântica;
+mensagens diferentes da mesma compra não se fundem. Recuperação em memória
+da sessão, sem migrar save. Medir onde cabe consultar o histórico; não ocupar
+o mapa nem escolher o retrato do rodapé ainda pendente do Bruno. Retenção e
+tempo de exibição precisam de F1: velocidade de leitura focada não prova
+leitura incidental mobile. Mutantes: perder a segunda entrada, interromper a
+atual antes do mínimo, agrupar textos diferentes. Gate: texto recuperável,
+legível e toque mínimo de 44 px na convenção do projeto.
+
+**R6 — resultado visual, não só tema.** Reutilizar a variação candidata de
+5,46:1 e medir a cor final em todos os painéis/estados relevantes: herança,
+override, modulação e fundo real. 4,5:1 é o gate proposto para texto pequeno;
+não arredondar para aprovar. 7:1 é referência ampliada opcional, não garantia
+sob sol; APCA não substitui o gate estável. Texto inativo tem exceção WCAG,
+mas o motivo do bloqueio precisa ser lido. Composição não resolvida é
+pendência, não verde automático. Mutantes: par abaixo do limite no painel
+não coberto antes; override ruim com tema correto; estado excluído do
+percurso. Controle positivo/negativo calibra a régua antes da auditoria.
+
+**R7 — escopo da UI.** Classificar overrides antes de removê-los, usando tema
+e variações por papel. Exceção exata por propriedade/local, com justificativa;
+não liberar arquivo inteiro. Scanner de `.gd`, `.tscn` e recursos relevantes
+não deve acusar cores de mapas/arte procedural. Considerar multiline,
+comentários e construção dinâmica; complementar com runtime em R6. Mutantes:
+override em cena, nova chamada no arquivo que já tinha outra exceção e
+variação inexistente. Bloquear novas exceções pode anteceder a migração toda.
+
+**R8 — frase inteira.** Cobrir “dia(s) restante(s)”, “dia(s) daqui” e
+“tentativa(s)”, identificados pela revisão. Helpers pequenos de mensagem ou
+plural do catálogo se este já existir; não criar pipeline de tradução só por
+três ocorrências. Zero, um, dois e 32 têm expectativas literais, incluindo
+adjetivos. Preservar `por_extenso()` na narração. Mutantes: zero singular,
+adjetivo singular com dois e retorno de “(s)” em string da UI. Não misturar
+esta correção com a decisão sobre se o dia atual conta na parcela (§2.5).
+
+**R9 — medir sem ouvir.** Duração, sample peak, RMS, bordas, DC e saturação já
+foram medidos: o ganho novo é true peak, descontinuidade interna, espectro e
+eventual mistura representativa. LUFS de 90 ms depende de janela/padding e
+não define alvo por SFX. A referência histórica Sony para portátil é da mix,
+não obrigação Android nem normalização de cada ativo. FFmpeg só como análise,
+se viável; sem dependência pesada ou alteração de WAVs. Soma offline não é
+mix real sem comprovar buses/ganhos/efeitos. Mutantes em cópias: pico entre
+amostras que o sample peak não pega, salto no meio com bordas zeradas e banda
+rotulada errada. Sem limiar perceptual validado, emitir descritor/alerta.
+Bruno ouve no telefone-alvo, volume fixo, isolado e em contexto; registrar
+reconhecimento, dominância e fadiga. Continua proibido dizer que “ficou bom”
+sem essa escuta.
+
+**Contrato de conclusão dos R:** antes preservado, mudança pequena, depois
+comparável, teste positivo, mutante efetivamente detectado e restauração
+verde. O esperado não nasce da mesma regra defeituosa. Marcador final é
+necessário, não suficiente: conferir erros e cobertura. Registrar resultados
+medidos e pendências humanas separadamente. F1/F3/F4/F6 são decisão; F2/F5/F7
+são execução, conforme a regra de modelos vigente no `CLAUDE.md`. O usuário
+troca o modelo; não afirmar que a sessão o trocou sozinha.
+
+**Restrições:** sem balanceamento, política de perfis, projeção, versão de
+save, mudança de viewport ou regeneração de bytes protegidos nesta fila por
+conveniência. Se a correção cruzar um desses contratos, registrar a dependência
+e seguir seu processo próprio; não atualizar baseline para silenciar erro.
+Sem instalação de SDK Android/Blender para tarefas documentais. Código,
+comentários e docs em pt-BR; commits em inglês; nada de emoji novo na UI.
+
+**Pendências preservadas, fora desta fatia:** divergência dos dias da parcela
+(§2.5, decisão de contagem); consumidores de arte/protótipos e destino dos
+órfãos (§2.9, decisão do Bruno para arquivos); slider de música vazio (§2.10,
+decisão do Bruno); higiene da §2.12 em trabalho próprio. Continuam os gates
+A4/A5/A6, semana de sete dias, rua, moldura dos props e demais itens de
+playtest, com seus estados e medições anteriores. Esta revisão não apaga nem
+declara nenhum deles concluído. Critério de interrupção: se a cor impedir
+ação essencial no telefone, R6 sobe; se uma mensagem perdida contiver decisão
+essencial, R5 sobe, com razão registrada. A8 retoma após triagem/fecho dos
+bloqueadores e dos gates pertinentes, sem publicar automaticamente.
+
+**Próxima conversa:** F1 de R1. Localizar seleção e impressão no simulador,
+conferir os papéis no código, medir o antes e fechar somente essa fatia com
+guarda independente. R2 é o próximo candidato, não parte prometida de R1.
 
 ### 📋 A SEGUNDA JOGADA NO TELEFONE (06/09) — 25 itens, triados
 
@@ -2065,10 +2235,11 @@ Fase 2 não se coda sem perguntar antes — por isso está aqui e não na fila.
 
 1. A conversa nova abre com este documento ao lado do `ESTADO_DO_PROJETO.md`, e
    escolhe **um** item da fila.
-2. O primeiro item que não é do Claude é o **A1** — o telefone. Enquanto o jogo
-   não rodar num, tudo o que se sabe sobre ele rodando num telefone é palpite.
-3. A decisão do **A3** pode ser dada em duas linhas e destrava a fila a partir do
-   quinto item.
+2. Em 17/09, o item escolhido é **R1 da §7.1**, a interpretação do simulador.
+   A1 já teve jogo no telefone e A3 já tem efeito medido; não voltar ao ponto
+   de partida histórico desta seção.
+3. Leitura, julgamento visual e escuta continuam gates do Bruno. A atualização
+   do planejamento não os fecha e não implementa os R seguintes.
 
 E fica escrita a regra que este plano existe para instalar:
 

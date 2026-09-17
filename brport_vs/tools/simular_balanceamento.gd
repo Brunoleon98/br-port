@@ -174,7 +174,7 @@ func _rodar() -> void:
 	_imprimir_regime(resultados)
 	_imprimir_reputacao(resultados)
 	_imprimir_motivos(resultados)
-	_imprimir_diagnostico(resultados)
+	var leitura_ok := _imprimir_diagnostico(resultados)
 
 	# O despejo em JSON existe para o projetor das Parcelas 2 e 3
 	# (tools/projetar_parcelas.py) ter contra o que se calibrar. Sem ele o
@@ -188,7 +188,9 @@ func _rodar() -> void:
 	# De novo no fim: log de CI se lê de baixo para cima, e o aviso do
 	# cabeçalho fica a centenas de linhas de distância da conclusão.
 	_avisar_se_amostra_curta(partidas)
-	quit(0)
+	# O despejo e os avisos vêm ANTES de encerrar mal, de propósito: quem tem de
+	# diagnosticar uma recusa precisa da medição que a produziu.
+	quit(0 if leitura_ok else 1)
 
 
 # A economia semana a semana. A média das 4 semanas esconde o que interessa:
@@ -773,34 +775,17 @@ func _margem_de_erro(p: float, n: int) -> float:
 	return 100.0 * 1.96 * sqrt(max(p * (1.0 - p), 0.0) / float(n))
 
 
-func _imprimir_diagnostico(resultados: Array) -> void:
-	print("=== Leitura ===")
-	var otimo: Dictionary = resultados[0]
-	var descuidado: Dictionary = resultados[resultados.size() - 1]
-	var n := int(otimo["vitorias"]) + int(otimo["quebrou_antes"]) + int(otimo["chegou_sem_dinheiro"])
-	var taxa_otimo := 100.0 * float(otimo["vitorias"]) / float(n)
-	var taxa_descuidado := 100.0 * float(descuidado["vitorias"]) / float(n)
-
-	if taxa_otimo < 60.0:
-		print("· Jogo perfeito ganha só %.0f%% — está DIFÍCIL demais no teto: nem jogando" % taxa_otimo)
-		print("  certo dá para confiar na vitória, e isso lê como injustiça, não desafio.")
-	elif taxa_otimo > 90.0:
-		print("· Jogo perfeito ganha %.0f%% — o teto está garantido, o que é bom." % taxa_otimo)
-	else:
-		print("· Jogo perfeito ganha %.0f%% — teto ainda com sorte demais no meio." % taxa_otimo)
-
-	if taxa_descuidado > 50.0:
-		print("· Jogar mal ganha %.0f%% — o ERRO NÃO CUSTA. É este o sintoma de 'fácil demais'." % taxa_descuidado)
-	elif taxa_descuidado < 15.0:
-		print("· Jogar mal ganha %.0f%% — errar custa caro, a pressão da parcela existe." % taxa_descuidado)
-	else:
-		print("· Jogar mal ganha %.0f%% — errar custa, sem virar punição seca." % taxa_descuidado)
-
-	var vao := taxa_otimo - taxa_descuidado
-	print("· Vão entre jogar bem e jogar mal: %.0f pontos." % vao)
-	if vao < 25.0:
-		print("  Vão estreito = a decisão do jogador pesa pouco no resultado. Antes de mexer")
-		print("  em valor de barco ou de parcela, vale perguntar o que o jogador decide aqui.")
-	print("")
-	print("Para testar uma mudança: edite uma constante `# TUNING:` em")
-	print("autoload/GameState.gd e rode de novo com a MESMA semente.")
+# A conclusão vive em `leitura_do_simulador.gd` para poder ser provada sem se
+# rodarem 4 perfis × 600 partidas. Aqui só se imprime o que ela devolveu, e o
+# `false` dela encerra o simulador com código 1 — ver o comentário de lá.
+#
+# `load()` e não `preload`: num `--script` um `preload` de script compila antes
+# de a árvore estar de pé, e o que sai não é erro de compilação, é um GDScript
+# vazio que só se denuncia na chamada. Aquele arquivo não fala do autoload, mas
+# a receita barata é a mesma dos outros.
+func _imprimir_diagnostico(resultados: Array) -> bool:
+	var Leitura := load("res://tools/leitura_do_simulador.gd")
+	var leitura: Dictionary = Leitura.ler(resultados)
+	for linha in leitura["linhas"]:
+		print(linha)
+	return bool(leitura["ok"])
