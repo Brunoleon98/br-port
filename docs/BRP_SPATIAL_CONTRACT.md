@@ -24,8 +24,10 @@ origem, grade e camadas para todo asset novo, de qualquer categoria.
 | Razão | **2:1** | consequência, e o `ZOOM` não a toca |
 | Ângulo da aresta do chão | **26,565°** = `atan(15/30)` | consequência |
 | Câmera | ortográfica, `ROT_X = 60°`, `ROT_Z = 45°` | `gerar_props_iso.py` |
-| `ortho_scale` | **18,1019** = `RESOLUCAO / (MEIA_LARG × ZOOM / cos 45°)` | derivada, nunca digitada |
-| Quadro do prop | **512 × 512** px | `RESOLUCAO` |
+| `ortho_scale` | **18,1019** = `RESOLUCAO_TELA / (MEIA_LARG × ZOOM / cos 45°)` | derivada, nunca digitada |
+| Quadro do prop, **em coordenada** | **512 × 512** | `RESOLUCAO_TELA` |
+| Quadro do prop, **em pixel** | **768 × 768** px | `RESOLUCAO` |
+| Fator entre os dois | **1,5** | `FATOR_RES`, derivado |
 
 Uma célula 1×1 do mundo projeta um losango de **40 × 20 px** na tela (60 × 30
 no desenho).
@@ -104,7 +106,23 @@ não passou pelo `ZOOM`. Ele e o `ortho_scale` sairiam ambos ×1,5 e o quociente
 
 **Ponto (0,0) do quadro = origem do mundo, ao nível do chão.** A câmera mira a
 origem do chão, não o meio do prop. Consequência prática: **posicionar um prop
-na cena é subtrair meio quadro (256 px), não acertar no olho.**
+na cena é subtrair meio quadro (256 de COORDENADA), não acertar no olho.**
+
+⚠️ **E MEIO QUADRO SÃO DOIS NÚMEROS DESDE 16/09** (`docs/decisoes/029`, a
+alavanca B). O quadro tem 512 de coordenada e 768 px de textura, logo metade
+dele é **256 na cena** e **384 no PNG** — e até àquele dia os dois eram 256, o
+que fazia toda régua deste projeto poder medir num e responder no outro sem
+nunca dizer qual. Quem os reconcilia:
+
+| Quem mostra | Como reconcilia |
+|---|---|
+| `TextureRect` (os 31 nós de `Main.tscn` e `Dock.tscn`) | `expand_mode = 1` — o rect fica com 512, a textura carrega 768 |
+| `Sprite2D` (as seis cenas de fauna) | `scale`, escrita pelo `Fauna.gd` a partir da própria textura |
+| toda régua que leia `get_used_rect()` | `PropIso.escala()` / `PropIso.desenho()`, em `brport_vs/scripts/PropIso.gd` |
+
+O **D31** do teste de design percorre a cena e exige essa reconciliação em
+todos eles: é a guarda que não existia porque, até ali, não havia o que
+reconciliar.
 
 Todo asset novo ganha um `ORIGIN_anchor` — um `Empty` no ponto de contato:
 

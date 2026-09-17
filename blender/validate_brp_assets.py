@@ -35,10 +35,15 @@ from gerar_brp import ESTUDIOS                               # noqa: E402
 # A PRIMEIRA é geométrica: o render corta o que não cabe no quadro, e o corte
 # só aparece quando alguém olha. Agora ela é medida como deve ser — os oito
 # cantos da caixa projetados com a MESMA `para_pixel()` que o resto do kit usa,
-# conferidos contra os 512px. É a única forma de a resposta ser verdadeira,
+# conferidos contra o `RESOLUCAO`. É a única forma de a resposta ser verdadeira,
 # porque o que toca a borda num plano isométrico não é a altura: é a QUINA, que
 # desce meia profundidade abaixo da base.
-MARGEM_QUADRO = 4          # px de folga, para o chanfro e o antisserrilhado
+# px de folga, para o chanfro e o antisserrilhado. Fica em pixel do PNG de
+# propósito: os dois defeitos que ela apanha são da RASTERIZAÇÃO, e um
+# antisserrilhado mede um pixel em qualquer resolução. Com o quadro a 768
+# (`docs/decisoes/029`) ela vale 2,7 px de coordenada em vez de 4 — mais
+# apertada, que é o lado seguro de uma guarda de recorte.
+MARGEM_QUADRO = 4
 
 # A SEGUNDA é de GOSTO, e vale só para prop que vive no mapa: 8 unidades já é
 # um prop que ocupa meia tela de jogo. Ela não se aplica a um `retrato`, que

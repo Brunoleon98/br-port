@@ -599,7 +599,7 @@ def trabalhador_retrato(M, est):
     uma faixa só.
 
     ⚠️ E ELE ENCHE O QUADRO, ao contrário de todos os outros props. Um prop do
-    mapa fica pequeno no PNG de 512 e é o Godot que o põe no sítio; este é
+    mapa fica pequeno no PNG e é o Godot que o põe no sítio; este é
     mostrado num `TextureRect` de 70px com `KEEP_ASPECT_CENTERED`, e nesse
     modo o que escala é o QUADRO INTEIRO, transparência incluída. A quarta
     tentativa ficou com 460px de quadro para 251 de boneco e no cartão saiu um
@@ -751,9 +751,21 @@ _LG, _PF = 42.426, 21.213
 # ⚠️ ESTES DOIS NÚMEROS SÃO MEDIDOS NO PNG, NÃO ESCOLHIDOS. `K` enche o quadro
 # (a mesma armadilha do retrato do trabalhador: um `TextureRect` em
 # `KEEP_ASPECT_CENTERED` escala o quadro INTEIRO, transparência incluída, e um
-# busto pequeno num quadro de 512 sai minúsculo no cartão) e `MEIO` centra-o.
-# O valor sai de renderizar e medir a caixa opaca do PNG — ver o bloco
-# `_f6_retratos` do teste de fumaça, que tranca as duas coisas.
+# busto pequeno no quadro sai minúsculo no cartão) e `MEIO` centra-o. O valor
+# saiu de renderizar e medir a caixa opaca do PNG.
+#
+# ⚠️ E A ALAVANCA B NÃO OS TOCA, apesar de o comentário acima falar de pixel.
+# Os dois entram na conta ANTES do `z()`, logo estão em pixels de DESENHO e
+# viram unidades de mundo: o que eles decidem é a fração do quadro que o busto
+# ocupa, e essa é a mesma a 512 e a 768 porque o `ortho_scale` não se mexeu
+# (`docs/decisoes/029`). Medido: o busto ocupava 338 x 479 de 512 e passou a
+# ocupar 507 x 690 de 768 — as mesmas proporções.
+#
+# ⚠️ E A LINHA QUE DIZIA "ver o bloco `_f6_retratos` do teste de fumaça, que
+# tranca as duas coisas" NÃO ERA VERDADE: o bloco chama-se `_f7_retratos` e faz
+# quatro perguntas de TABELA (toda fala tem cara, toda cara tem arquivo, toda
+# cara é usada, toda fala chega ao jogo) — nenhuma delas mede a caixa opaca.
+# Ninguém tranca estes dois números; quem os julga é a folha de contato.
 _K = 1.68
 _MEIO = 285.0
 
@@ -1166,13 +1178,38 @@ def _gola(nome, mat):
                   (1.0, 1.0), mat)
 
 
-def _no_peito(nome, u, v, larg, alt_px, mat):
-    """Uma placa na frente do peito — a camisa e a gravata."""
+# A espessura de uma placa de peito, e o degrau entre duas que se cruzam.
+#
+# ⚠️ DUAS PLACAS DE PEITO NO MESMO `fora` SÃO COPLANARES, e isto custou um
+# defeito que viveu escondido pela resolução. A gravata do Sr. Ribeiro e a
+# camisa por baixo dela estavam ambas em `fora = 0`: as duas caixas ocupam a
+# MESMA lasca de espaço à frente do peito, o Cycles resolve o empate por
+# amostra e o resultado depende de onde cai o centro de cada pixel. A 512 os
+# 64 samples misturavam as duas num vermelho plausível; a 768 (`docs/decisoes/
+# 029`) o empate passou a desenhar-se — a gravata saiu partida ao meio, escura
+# em cima, rosa lavado em baixo, com uma costura horizontal a direito.
+#
+# É a regra que o `CLAUDE.md` já carrega para os props do mapa — *"peça que
+# pousa noutra afunda uma fração ou sobe uma fração; nunca encosta"* —, e o
+# que ela acrescenta é que **subir a resolução não cria este defeito: revela-o**.
+# Quem reprovou não foi suíte nenhuma: foi o `comparar_props.py` a dizer que
+# quatro retratos MUDARAM entre 512 e 768 quando os outros 57 não mudaram.
+_PLACA_ESP = 0.02
+
+
+def _no_peito(nome, u, v, larg, alt_px, mat, camada=0):
+    """Uma placa na frente do peito — a camisa e a gravata.
+
+    `camada` empilha em profundidade: 0 é rente ao peito, 1 fica uma espessura
+    à frente, e assim por diante. Duas peças que se CRUZAM levam camadas
+    diferentes; duas que não se tocam podem partilhar a mesma.
+    """
     centro = (0.0, 0.0, _niv((_OMBRO_Z[0] + _OMBRO_Z[1]) / 2.0))
     tam = (_lg(_OMBRO_LARG), _pf(_OMBRO_FUNDO),
            _alt(_OMBRO_Z[1] - _OMBRO_Z[0]))
     return na_face(nome, "-y", centro, tam, _lg(u), _alt(v),
-                   _lg(larg), _alt(alt_px), 0.02, mat)
+                   _lg(larg), _alt(alt_px), _PLACA_ESP, mat,
+                   _PLACA_ESP * camada)
 
 
 def _cida(M, cara):
@@ -1374,9 +1411,13 @@ def _ribeiro(M, cara):
     # camisola de gola alta a esta escala: duas placas inclinadas a abrir um V
     # a partir do colarinho, num navy um passo mais escuro — porque duas peças
     # do mesmo tom encostadas fundem-se, e o peito voltaria a ser uma chapa.
+    # ⚠️ AS TRÊS CRUZAM-SE, LOGO SÃO TRÊS CAMADAS. A gravata corre por cima da
+    # camisa de v=-21 a v=25 e o nó por cima da gravata de v=17 a v=31: no
+    # mesmo `fora` isso são três caixas a disputar a mesma lasca de espaço.
+    # Ver o bloco do `_no_peito`.
     tronco.append(_no_peito("camisa", 0.0, 8.0, 56.0, 40.0, M["cabine"]))
-    tronco.append(_no_peito("gravata", 0.0, 2.0, 20.0, 46.0, M["faixa"]))
-    tronco.append(_no_peito("gravata_no", 0.0, 24.0, 24.0, 14.0, M["faixa"]))
+    tronco.append(_no_peito("gravata", 0.0, 2.0, 20.0, 46.0, M["faixa"], 1))
+    tronco.append(_no_peito("gravata_no", 0.0, 24.0, 24.0, 14.0, M["faixa"], 2))
     for lado, u, ang in (("e", -46.0, -22.0), ("d", 46.0, 22.0)):
         lapela = _no_peito("lapela_%s" % lado, u, 6.0, 34.0, 62.0,
                            M["terno_lapela"])
@@ -1385,7 +1426,9 @@ def _ribeiro(M, cara):
     # O LENÇO DE BOLSO. Três pixels de branco no navy, e é o que faz o terno
     # ler como terno de banco em vez de casaco: peça da FUNÇÃO, como a
     # plataforma de carga do armazém.
-    tronco.append(_no_peito("lenco", -62.0, -12.0, 20.0, 10.0, M["cabine"]))
+    # O lenço cai DENTRO da lapela esquerda (u -72..-52 contra -63..-29), então
+    # leva camada própria pela mesma conta da gravata.
+    tronco.append(_no_peito("lenco", -62.0, -12.0, 20.0, 10.0, M["cabine"], 1))
     tronco.append(_gola("colarinho", M["cabine"]))
     return tronco, pecas
 

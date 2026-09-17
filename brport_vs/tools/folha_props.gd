@@ -129,6 +129,13 @@ const TINTA := Color(0.878, 0.914, 0.965)
 const TINTA_FRACA := Color(0.62, 0.70, 0.78)
 const TINTA_RECURSO := Color(0.95, 0.75, 0.30)
 
+# ⚠️ "1:1" É O TAMANHO DO JOGO, E ISSO DEIXOU DE SER O PIXEL DO ARQUIVO. Desde
+# a alavanca B um prop tem 768 px de textura para 512 de coordenada
+# (`docs/decisoes/029`): desenhar o `get_used_rect()` cru poria esta folha a
+# 1,5x do jogo — o píer a 210 px em vez de 140 —, as células cresceriam na
+# mesma proporção e a conta das páginas reprovaria, a dizer que é preciso uma
+# terceira. Nenhuma das duas coisas é sobre o catálogo. O fator sai de cada
+# textura, pelo `PropIso`, e é por isso que já não há um ZOOM constante aqui.
 const ZOOM := 1                                    # 1:1 — o tamanho do jogo
 const MARGEM := 10
 const RODAPE := 32                                 # as duas linhas de nome
@@ -527,18 +534,23 @@ func _montar() -> bool:
 	# um cone tem 30px ao lado de um píer de 140 é informação.
 	var texturas := {}
 	var recortes := {}
-	var maior := Vector2i.ZERO
+	var tamanhos := {}
+	var maior := Vector2.ZERO
 	for n in nomes:
 		var tex: Texture2D = load("%s/%s" % [PASTA, n])
 		texturas[n] = tex
 		var rc := tex.get_image().get_used_rect()
 		recortes[n] = rc
-		maior.x = maxi(maior.x, rc.size.x)
-		maior.y = maxi(maior.y, rc.size.y)
+		# O recorte é em pixel da textura (é ele que o `AtlasTexture` corta); o
+		# TAMANHO em que ele se desenha é em coordenada, que é o do jogo.
+		var tam := Vector2(rc.size) * PropIso.escala(tex) * float(ZOOM)
+		tamanhos[n] = tam
+		maior.x = maxf(maior.x, tam.x)
+		maior.y = maxf(maior.y, tam.y)
 
 	var larg := float(ProjectSettings.get_setting("display/window/size/viewport_width"))
 	var alt := float(ProjectSettings.get_setting("display/window/size/viewport_height"))
-	var celula := Vector2(maior.x * ZOOM + MARGEM, maior.y * ZOOM + RODAPE)
+	var celula := Vector2(maior.x + MARGEM, maior.y + RODAPE)
 	var colunas: int = maxi(1, int((larg - MARGEM) / celula.x))
 	var linhas: int = maxi(1, int((alt - CABECALHO - MARGEM) / celula.y))
 	var por_pagina := colunas * linhas
@@ -653,10 +665,15 @@ func _montar() -> bool:
 		atlas.region = Rect2(rc)
 		var arte := TextureRect.new()
 		arte.texture = atlas
-		arte.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		# ⚠️ O FILTRO ERA `NEAREST`, E ISSO SÓ ERA VERDADE A 1:1 DE PIXEL. Com a
+		# textura a 768 dentro de uma célula de coordenada, `NEAREST` deitaria
+		# fora um pixel em cada três e a folha mostraria uma aliasagem que o
+		# jogo não tem — o jogo desenha com o filtro padrão do projeto. A folha
+		# promete "o tamanho do jogo"; então mostra também a amostragem dele.
+		arte.texture_filter = CanvasItem.TEXTURE_FILTER_PARENT_NODE
 		arte.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		arte.stretch_mode = TextureRect.STRETCH_SCALE
-		arte.size = Vector2(rc.size) * ZOOM
+		arte.size = tamanhos[n]
 		arte.position = canto + Vector2(
 			(piso_tam.x - arte.size.x) / 2.0,
 			(piso_tam.y - arte.size.y) / 2.0)

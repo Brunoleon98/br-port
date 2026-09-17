@@ -1269,6 +1269,31 @@ desenhada na escala de ontem até alguém subir o `SAIDA` do gerador, que é ses
 própria. O que ganhou orçamento foi o **vetor** — vila, rua, praia, cais,
 telhados, pedras.
 
+#### ✅ E A METADE DE CONFIGURAÇÃO DA **B** TAMBÉM FECHOU (16/09)
+
+`docs/decisoes/029`. Os props passaram a **768 px** dentro do mesmo quadro de
+512 coordenadas, e o orçamento de desenho desta etapa está de pé: **as seis
+linhas da tabela acima continuam por desenhar**, e cada uma é uma sessão
+própria. O que se ganhou já foi medido — pico do gradiente **+31,5%** nos props,
+a 1080×1920.
+
+⚠️ **E A ARMADILHA ABAIXO NÃO ERA REAL PARA A B, AO CONTRÁRIO DO QUE ESTE
+DOCUMENTO PREVIA.** Ela pressupõe que o gerador escreve nas unidades da SAÍDA;
+medido, ele escreve em unidades de MUNDO — o `chanfrar()` usa 0,020, o `TABUA`
+0,30 —, e os *"31 px na tela"* dos comentários são observações do que esses
+valores produzem. Com o `ortho_scale` preso à escala de TELA, o mesmo desenho é
+só amostrado mais fino: 51 dos 61 props medem 0,0059 pelo `comparar_props.py`.
+
+**Ela continua real para o resto desta etapa**, que é onde peça nova se desenha
+em pixels do render — e aí a pergunta é a mesma: o que mudou foi o DESENHO ou a
+amostragem dele?
+
+⚠️ **E SUBIR A RESOLUÇÃO REVELA GEOMETRIA DEGENERADA.** A gravata do Sr.
+Ribeiro era coplanar com a camisa desde 01/09; a 512 os 64 samples misturavam
+as duas num vermelho plausível, e a 768 ela saiu partida ao meio. Quem desenhar
+peça nova com o orçamento novo deve contar com isto: **o que o antisserrilhado
+escondia deixa de esconder.**
+
 #### A armadilha desta etapa — e ela vale para a B, não para a A
 
 ⚠️ **A ALAVANCA A JÁ PASSOU E NÃO A ENCONTROU, POR UMA RAZÃO QUE VALE SABER.**

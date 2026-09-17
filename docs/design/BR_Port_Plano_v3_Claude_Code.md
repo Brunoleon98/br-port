@@ -1519,6 +1519,41 @@ e o `.pck`
 nativo comprime melhor do que o mesmo campo ampliado. Dado melhor, resultado
 invisível: não paga trinta segundos de CI a cada push.
 
+### ✅ A ALAVANCA B ESTÁ FECHADA (16/09) — e o que ela custa tem nome
+
+`docs/decisoes/029`. `RESOLUCAO` passou a **768** e os 69 assets foram
+regerados. Quem desfaz a diferença na tela são 31 `expand_mode = 1`, a `scale`
+que o `Fauna.gd` escreve nos nove `Sprite2D`, e o `PropIso` para toda régua que
+leia a textura. O **D31** tranca-o, com três defeitos injetados.
+
+**O portão passa na visibilidade:** a 1080×1920, onde os props estão, o pico do
+gradiente sobe **+31,5%** e **18,7%** dos pixels mudam acima do piso de Weber.
+No recorte a 3× a treliça do guindaste passa de borrão a diagonais separadas e
+as balaustradas do cargueiro passam a contar-se.
+
+⚠️ **E O PREÇO POR PIXEL VISÍVEL É 15 A 27 VEZES O DA A**, porque a resolução
+paga-se no quadro inteiro e **89,6% do quadro é moldura vazia** — medido nos 61
+props, o desenho ocupa 10,4%. O que torna a B barata é **cortar o quadro**, que
+mexe no contrato "o centro do quadro é a origem do mundo" e é item próprio.
+**Pagar ou não os 80 MB é decisão do Bruno**, com os dois lados na `029`.
+
+**Três coisas saíram diferentes do que este item previa, e ficam escritas:**
+
+1. ⚠️ **A B TAMBÉM NÃO REDESENHA.** O item dizia que "os props são desenhados
+   nas unidades da SAÍDA" e que a varredura de constantes em pixel valia aqui.
+   Medido: a geometria do gerador está em unidades de MUNDO, e 51 dos 61 props
+   medem **0,0059** de mudança pelo `comparar_props.py` (um pixel de
+   deslocamento dá 0,022). O que envelheceu foi quem MEDE o PNG.
+2. ⚠️ **QUATRO PROPS MUDARAM, E DENUNCIARAM GEOMETRIA DEGENERADA.** A gravata e
+   a camisa do Sr. Ribeiro eram coplanares desde 01/09; a 512 os samples
+   misturavam-nas, a 768 a gravata saiu partida ao meio. **Subir a resolução
+   não cria o defeito: tira-lhe o disfarce.**
+3. ⚠️ **A PESSOA "ENCOLHEU" UM PIXEL** sem o desenho mudar, porque a franja do
+   antisserrilhado vale um texel em qualquer resolução. E **não há régua que dê
+   o mesmo número nas duas** — a caixa conta a franja, o meio-alfa salta 43% na
+   maria-farinha, a largura suave sobe até 11%. Peça com detalhe subpixel não
+   tem largura única.
+
 ### 🆕 A RESOLUÇÃO DOS ASSETS, E O DETALHE QUE ELA DESTRAVA — proposto em 14/09
 
 **Item novo, e a ORDEM é do Bruno** — ele não entra na fila numerada até ele o
@@ -1539,7 +1574,7 @@ que desenha em pixel, a tabela útil é a traduzida.
 | | O que muda | Custo | Ganho de pixel |
 |---|---|---|---|
 | **A — o mapa** ✅ | `svg/scale` 1.0 → 1.5 nos quatro SVG de mapa | **medido: +412 KB no `.pck`, +9,89 MB de VRAM** (`025`) | **+52,6% de pico na fronteira** |
-| **B — os props** | `RESOLUCAO` 512 → 768 em `gerar_props_iso.py` | ~31 nós de `Main.tscn`/`Dock.tscn`, o manifest, o pivô da lança, e uma releva do kit inteiro | **1,5× real** |
+| **B — os props** ✅ | `RESOLUCAO` 512 → 768 em `gerar_props_iso.py` | **medido: +1.867 KB no `.pck`, +79,95 MB de VRAM** (`029`) | **+31,5% de pico nos props** |
 | **C — o viewport** | 720×1280 → 1080×1920 | todo `offset` de toda `.tscn`, o `MEIA_LARG`, as âncoras, o teste de design | **NENHUM** |
 
 ⚠️ **A ALAVANCA C NÃO DÁ UM PIXEL, e é a que parece a óbvia.** O

@@ -94,6 +94,20 @@ lugar onde o export do APK se verifica — ele corre a cada push e deixa o
 (~1,2 GB), que o CI cacheia; a receita completa, pelos dois caminhos, está em
 `brport_vs/COMO_RODAR.md`.
 
+**Mas o `.pck` mede-se aqui, e sem template nenhum** — é o que responde "quanto
+custa isto ao pacote?" sem esperar uma corrida do CI:
+`$G --headless --path brport_vs --export-pack Android /tmp/brport.pck`. O APK e
+o `brport-web` continuam a ler-se dos artefatos, e o **antes** costuma já estar
+lá: a última corrida do `main` mediu-os no commit que a branch tem por base.
+
+⚠️ **E O DELTA DO `.pck` É O DELTA DO APK, medido** (`029`): a alavanca B fez os
+três crescerem os MESMOS ~1,87 MB, com o APK a 1,0009× e o web a 1,0025× do que
+o `.pck` local dizia — **0,09% de erro**. Logo não se espera pelo CI para saber
+quanto um asset custa ao pacote.
+⚠️ **Mas a PERCENTAGEM é outra em cada um, e só uma é a do jogador.** Os mesmos
+1,87 MB são +42,29% do `.pck` e **+5,91% do APK**, porque o APK é sobretudo o
+binário do Godot. Ao citar custo, diga contra que denominador.
+
 ⚠️ **O CI regera e compara BYTE A BYTE, e o `sum()` de floats mudou na Python
 3.12.** Ela passou a somar por compensação de Neumaier; o runner é
 `ubuntu-latest` e subiu de versão sozinho. Medido em 05/09, o mesmo arquivo:
@@ -562,6 +576,46 @@ derivada delas.
   `z()` continua na escala de DESENHO de propósito — o fator de altura e o
   `ortho_scale` cancelam-se, e mexer nele levantaria cada prop 1,5×. Afastar
   uma câmera não estica o que ela filma.
+  ⚠️ **E O PROP TEM DUAS MEDIDAS DESDE 16/09: 512 de COORDENADA e 768 de
+  PIXEL** (`docs/decisoes/029`, a alavanca B). O `ESCALA_ORTO` sai do
+  `RESOLUCAO_TELA` e NÃO do `RESOLUCAO` — presos um ao outro, a câmera
+  afasta-se na mesma proporção em que o quadro cresce e a alavanca entrega
+  256 px de moldura vazia em vez de um pixel de desenho. Quem desfaz a
+  diferença é `expand_mode = 1` nos 31 nós de prop (a mesma linha dos três nós
+  de mapa), a `scale` que o `Fauna.gd` escreve nos seis `Sprite2D`, e o
+  `PropIso` para toda régua que leia `get_used_rect()`. O **D31** tranca-o.
+  ⚠️ **E A ALAVANCA B NÃO REDESENHA NADA, ao contrário do que o item previa.**
+  A previsão era que "os props são desenhados nas unidades da SAÍDA", logo todo
+  número em pixel do gerador teria de ser varrido. Medido: a geometria dele
+  está em unidades de MUNDO (`chanfrar()` 0,020; `TABUA` 0,30; o ruído), e os
+  "31px na tela" dos comentários são OBSERVAÇÕES do que esses valores produzem,
+  não entradas. Com o `ortho_scale` parado, o mesmo mundo é amostrado mais
+  fino: pelo `comparar_props.py`, que reduz os dois a 16×16 e é cego à
+  resolução, **51 dos 61 props medem no máximo 0,0059** — contra 0,022 de um
+  pixel de deslocamento e 0,42 de um prop trocado por outro. É a mesma razão
+  estrutural pela qual a A também não a encontrou: **antes de varrer constantes
+  por causa de uma mudança de escala, pergunte se o que mudou foi o DESENHO ou
+  só a amostragem dele.**
+  ⚠️ **E OS QUATRO QUE MUDARAM NÃO DESMENTEM ISSO — DENUNCIAM OUTRA COISA.**
+  Três retratos do Sr. Ribeiro mediram 0,08 porque a GRAVATA e a CAMISA
+  estavam coplanares, e a resolução mais fina passou a desenhar o empate: a
+  gravata saía partida ao meio, escura em cima e rosa lavado em baixo. O
+  defeito era de 01/09 e o que o revelou foi a alavanca. **Subir a resolução
+  não cria geometria degenerada: tira-lhe o disfarce** — e quem o apanhou foi
+  a régua que compara levas, não suíte nenhuma.
+  O que a alavanca envelheceu foi o outro lado: os números em pixel de quem
+  MEDE o PNG — `MEIO_QUADRO`, o pivô da lança, a régua da pessoa de 15 px, o
+  `D29_LARG_MIN`, o `ZOOM` das duas folhas de contato.
+  ⚠️ **E RESOLUÇÃO PAGA-SE NO QUADRO INTEIRO E ENTREGA NO DESENHO.** É a irmã
+  da regra da `026` — *"só se paga onde há FRONTEIRA para afiar"* — do lado do
+  CUSTO em vez do ganho. Medido nos 61 props: **o desenho ocupa 10,4% do
+  quadro, e 89,6% é moldura vazia** (o poste 0,04%, o píer 7,4%; só os dez
+  retratos passam de metade). Daí a B custar **+80 MB de VRAM e +42,3% de
+  `.pck`** para mudar 1,56% da janela, contra os +9,89 MB e 5,12% da A — **15 a
+  27 vezes o preço por pixel visível**, e nenhuma das duas medidas mente.
+  Antes de subir a resolução de um asset, meça que fração dele é desenho: o que
+  torna esta alavanca barata é CORTAR o quadro, e isso mexe em "o centro do
+  quadro é a origem do mundo" (`029`, e é item próprio).
 - **Constante em PIXEL é constante que envelhece quando o `ZOOM` muda, e ela
   não dá erro.** Foram cinco em 05/09: a silhueta do caminhão e o corte que
   exige pegada no teste de design, a largura de telhado da vila, os sprites do
@@ -577,8 +631,11 @@ derivada delas.
 - **`pos()` inverte o sinal de Y.** No Blender a direita da tela é (+X, +Y);
   no mapa o `+my` puxa para a ESQUERDA. Um prop simétrico não denuncia a
   diferença — o primeiro assimétrico saiu 40px fora.
-- **O quadro de todo prop tem 512 e o centro dele é a origem do mundo.**
-  Posicionar um prop na cena é subtrair meio quadro, não acertar no olho.
+- **O quadro de todo prop tem 512 de COORDENADA e o centro dele é a origem do
+  mundo.** Posicionar um prop na cena é subtrair meio quadro, não acertar no
+  olho — e desde 16/09 meio quadro são **256 na cena e 384 no PNG**, que até
+  aquele dia eram o mesmo número (`029`). Toda régua que leia a textura e
+  responda em coordenada passa pelo `PropIso`.
 - **E desprojetar um prop de volta ao mundo pede a ALTURA em que ele pousa.**
   Quem está em terra pousa a `ALT_CAIS`; quem está na água, a 0 — é o que o
   `_origem`/`_mundo` do teste de design faz. Desprojetar tudo a 0 desloca cada

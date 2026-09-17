@@ -45,12 +45,15 @@ pedras, rampa e o campo da água saem de `ponto_costeiro()`, uma família
 concêntrica que não se cruza — é isso que impede costura. O **D28** tranca a
 forma; o raster é lido por D20, D21, D24 e D27.
 
-**E O MAPA ENTREGA OS 1080 QUE O ARQUIVO JÁ TINHA** (`025`, alavanca A):
-com `svg/scale=1.5` e `expand_mode` nos três nós, o pico de cada
-fronteira sobe **+52,6%** e 5,12% da janela muda acima do piso de Weber, e a
-720 **melhora**. ⚠️ **O campo da água é raster
-de 720 embutido, e assim FICA**: construído a 1080, não muda um pixel acima do
-piso de Weber (`026`). Projeção, âncoras e pegada intactas.
+**A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM.** O mapa entrega os 1080 que
+o arquivo já tinha (`025`, A): pico de fronteira **+52,6%**, 5,12% da janela. Os
+props passaram a **768 px num quadro de 512 COORDENADAS** (`029`, B): pico
+**+31,5%** neles, com `expand_mode` em 31 nós, a `scale` da fauna e o `PropIso`
+a traduzir; o **D31** tranca. ⚠️ Custa **+80 MB de VRAM** — 15 a 27× o preço da
+A por pixel visível, porque **89,6% do quadro é moldura vazia**; cortá-lo é item
+próprio, e pagar ou não é do Bruno. ⚠️ O campo da água fica a 720 (`026`).
+A projeção, as âncoras e a pegada ficaram intactas nas duas. A **C** (o
+viewport) está medida e não dá um pixel.
 
 **E OS CASCOS TÊM CURVA** (`024`): medida a silhueta, quem estava quadrado **não
 eram as construções** — era o casco (0,620 contra 0,563 do galpão), com o
@@ -60,21 +63,17 @@ são caixas de verdade. O **D29** tranca-o.
 
 **A fauna tem seis espécies em nove pontos** — gaivota, maria-farinha e
 tartaruga na costa; cachorro, quero-quero e capivara em terra. Medem **15 / 12 /
-14 / 15 / 13 / 17 px**, com toque de **44 px** e ciclos sem toque invisível
-(D25–D27).
+14 / 15 / 13 / 17 px** contra uma pessoa de 14, com toque de **44 px** e ciclos
+sem toque invisível (D25–D27).
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
 perfil: ótimo 100% · mediano 80,2% · descuidado 37,3%, com a mediana do mediano
 em R$716.179 contra uma parcela de R$530.000. Um contrato vale R$12.000–88.000 e
-a manutenção custa R$40.000/semana — números de porto, não de banca de feira.
-
-A dívida deixou de ser o motor (`005`): separa os jogadores **o porto que
-conseguem levantar**, medido pela MARGEM em regime (R$674.019 contra R$103.290)
-e não pela contagem de barcos, que favorece o porto pobre. Mexer em preço sem
-rodar `simular_balanceamento.gd` quebra isto.
-
-**E o `START_CASH` está TRANCADO em 400.000** (`018`): varrido até 150.000, só
-a linha de base passa. O diário diz de onde vem — herança do avô, não empréstimo.
+a manutenção custa R$40.000/semana. A dívida deixou de ser o motor (`005`):
+separa os jogadores **o porto que conseguem levantar**, medido pela MARGEM em
+regime (R$674.019 contra R$103.290) e não pela contagem de barcos. O
+`START_CASH` está TRANCADO em 400.000 (`018`) — e o diário diz de onde vem,
+herança do avô. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
 **E o navio que atraca depende do porto que existe** (`009`): três classes
 travadas pelo NÍVEL DO PORTO, o menor entre píer e guindaste — pesqueiro no 1,
@@ -114,9 +113,8 @@ contra a mata. Tem nível (`--nivel-vila=N`): térrea, sobrado, prédio.
 de rua nas duas quinas salientes (`docs/decisoes/013`).
 
 **E TRÊS LOTES DA VILA NÃO SÃO CASA** (`022`): uma **igreja** com torre, uma
-**praça** com coreto e **duas obras** — lotes sem telhado, desenhados com a
-altura do nível SEGUINTE. Saem dos lotes VISÍVEIS (24 dos 34): a 51 px quem
-distingue é a silhueta, e foi por isso que "comércios variados" ficou de fora.
+**praça** com coreto e **duas obras**, dos lotes VISÍVEIS — a 51 px quem
+distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 
 **E a mata atrás dela é desenhada onde se vê** (`com_saia()`).
 
@@ -142,20 +140,16 @@ metade de máquina do A1 (APK e build Web a cada push). Ver `HISTORICO.md`.
 ### O que as duas jogadas devolveram (02–03/09 e 06/09)
 
 **Triadas em `docs/arquivo/PLAYTEST_01_ANALISE.md` e `PLAYTEST_02_ANALISE.md`**,
-com o resumo na §7 do plano, o custo em `HISTORICO.md` e o porquê nas `011` a
-`025`. Fechou-se tudo o que não dependia do Bruno; sobram o rodapé (gate A5),
-três itens de economia (Fase 2) e a madeira podre (A4). **Livre: A8.**
+com o resumo na §7 do plano e o porquê nas `011` a `029`. Fechou-se tudo o que
+não dependia do Bruno; sobram o rodapé (gate A5), três itens de economia (Fase
+2) e a madeira podre (A4). **Livre: A8.** O resto é a ordem dele.
 
-⚠️ **Sobra UMA coisa medida e por fazer**, e é sessão própria: a rua parou em
-**1,8** — alargá-la empurra o `RUA_RECUO` e o enquadramento (`012`).
+⚠️ **Duas coisas medidas e por fazer**, cada uma sessão própria: a rua parou em
+**1,8** (alargá-la empurra o `RUA_RECUO` e o enquadramento, `012`) e o quadro
+dos props é 89,6% moldura vazia (cortá-lo mexe na origem do mundo, `029`).
 
-O resto continua por começar, e **a ordem é dele**.
-
-### A pergunta da Fase 2 — adiada de propósito (03/09)
-
-Não trava sessão nenhuma: **responde-se quando a Fase 2 for feita**, e codar a
-economia dela antes é construir em cima de uma pergunta. A conta está em
-`docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
+**A pergunta da Fase 2 fica adiada de propósito** (03/09) e não trava sessão
+nenhuma — a conta está em `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
 
 ---
 
@@ -173,7 +167,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/ler_registros.py` | **O leitor** — resume N partidas e põe o jogador MEDIDO ao lado dos perfis supostos |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e que o gravador não grava desarmado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface e leitura raster do mapa em qualquer escala (`025`), e o encaixe das metades co-ancoradas de um prop (`028`); espera `DESIGN OK` |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa (`025`), metades co-ancoradas (`028`) e a reconciliação de pixel com coordenada nos nós que mostram prop (D31, `029`); espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, e **toda fala escrita chega ao jogo** |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Nove bustos (`020`) |
@@ -196,14 +190,16 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs de IA e redimensiona |
 | `tools/gerar_mapa_iso.py` | Gera mapa, vila, vias e o campo costeiro contínuo; raster determinístico, acumulado com `math.fsum`. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`** |
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
-| `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo. Separa o vetor do raster da água e compara o que o jogador VÊ (`025`, `026`) |
-| `tools/medir_silhueta_props.py` | **A régua da forma** — que fração da silhueta corre nas três direções que uma caixa sabe desenhar, contra formas ideais da MESMA caixa. Diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
+| `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução do MAPA** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo (`025`, `026`) |
+| `tools/medir_nitidez_captura.py` | **A régua da resolução dos PROPS** — a mesma métrica em duas capturas a 1080×1920, com a máscara tirada da diferença (`029`) |
+| `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`) |
+| `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
 | `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão — acha 11, e o destino de cada uma é do Bruno |
-| `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — prop não é artefato byte-reprodutível, e `cmp` responde sempre "mudou" |
-| `tools/gerar_props_iso.py` | Gera os props isométricos (píer, barcos, guindaste, coqueiro, galpão, cenário) em Blender por script, na projeção do mapa. Confere a própria projeção ao fim |
-| `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas por perfil, em **quatro perfis**: Ótimo, Mediano, Descuidado e **Antecipado** (`018`). Imprime classes, motivos e o NÍVEL de cada um |
+| `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
+| `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
+| `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Imprime classes, motivos e o NÍVEL |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
-| `brport_vs/tools/folha_props.gd` | **A folha dos 51 props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta debaixo da âncora dele (`027`). Duas páginas, e reprova se o catálogo pedir uma terceira |
+| `brport_vs/tools/folha_props.gd` | **A folha dos 51 props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Duas páginas, e reprova ao transbordar |
 | `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos, a 19px e ampliado — **rodar a cada ícone novo**. **Reprova ao transbordar**, como a da frota |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
 | `tools/conferir_lote_de_arte.py` | Confere lote de arte vindo de fora: alfa de verdade, tamanho e **ângulo da base contra o contrato de 26,57°**. Rodar antes de qualquer PNG externo entrar |
@@ -215,7 +211,7 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 | `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**. Roda no CI, espera `ASSET OK` |
 | `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
 | `.claude/skills/arte/SKILL.md` | **O ritual da arte** — qual etapa precisa de Blender, a armadilha de trocar matiz sem olhar o valor, o recorte ampliado, e o rasto que a mudança envelhece |
-| `.claude/skills/balancear/SKILL.md` | **O ritual da economia** — medir antes e depois com a mesma semente, separar escala de ratio, e arrastar atrás os oito lugares que afirmam o balanceamento |
+| `.claude/skills/balancear/SKILL.md` | **O ritual da economia** — medir antes e depois com a mesma semente e arrastar atrás os oito lugares que afirmam o balanceamento |
 | `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto. Todo caminho de erro devolve a receita manual |
 | `.godot-version` | A versão do Godot, num lugar só. Lida pelo hook e pelo CI |
 | `docs/design/BR_Port_Numeros_Fase_1.md` | **A tabela dos números, GERADA** do `GameState.gd`. Não editar à mão — o CI reprova se envelhecer |
@@ -239,34 +235,31 @@ economia dela antes é construir em cima de uma pergunta. A conta está em
 - Alocação de trabalhador por toque, por "Alocar todos" ou por arrasto
 - Economia: caixa, receita por barco, renda do píer, custos semanais
 - Reputação Comercial (0–100, 5 faixas) — e ela **decide a contra-oferta**:
-  reputação alta faz o cliente aceitar pagar cheio com mais frequência
-  (`docs/decisoes/003`)
+  reputação alta faz o cliente pagar cheio com mais frequência (`003`)
 - Contra-oferta do Arlindo (3 presets + mood face do cliente)
 - **Motivo de escala por barco** — quatro motivos, cada um preso a uma estrutura
   que já existe. Nasce com o barco, entra no save e aparece no cartão (`008`)
 - **Três classes de navio, travadas pelo nível do porto** — pesqueiro,
-  cargueiro e navio de longo curso, cada uma com a sua faixa de valor, os seus
-  turnos e a sua mistura de motivos. A classe decide o casco desenhado no píer
-  (`docs/decisoes/009`)
+  cargueiro e longo curso, cada uma com a sua faixa de valor, os seus turnos e a
+  sua mistura de motivos. A classe decide o casco no píer (`009`)
 - Parcela única de **R$530.000** no fim da semana 4; paga ou recusada, a semana
   só fecha depois da decisão. **Quitar antes abate 0,25% por turno** (`019`),
   numa conta genérica que serve ao empréstimo da Fase 2. ⚠️ **A semana tem 8
   turnos e a partida 32 "dias"; passar a 7 está MEDIDO** — 16 corridas na §7 do
   plano, e o ponto que fecha pede um SEGUNDO botão, que espera o Bruno
 - **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
-  upgrades (guindaste, cais) —, cada uma mudando o mapa. O porto abre em ruínas
-  com 1 doca. Os upgrades trancam-se pela cadeia `requer`, não por fase
-  (`docs/decisoes/007`): o guindaste corta o turno do navio grande, e o cais
-  DESTRAVA a classe dele (`009` — a chance invisível saiu)
+  upgrades —, cada uma mudando o mapa. O porto abre em ruínas com 1 doca. Os
+  upgrades trancam-se pela cadeia `requer`, não por fase (`007`): o guindaste
+  corta o turno do navio grande, e o cais DESTRAVA a classe dele (`009`)
 - Autosave local a cada turno
 - **Sete telas narrativas**: nomes do cais e do jogador (abertura), primeira
   página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
-- **E OS TRÊS NPCs TÊM ROSTO** (`docs/decisoes/020`): nove bustos com pose
-  própria, ao lado da fala no boletim, na parcela e na contra-oferta — que ganhou
-  segundo tempo porque a despedida do Arlindo nunca tinha sido dita. A cara sai
-  da FALA, por tabela. Falta a faixa do rodapé: medida, à espera de layout
+- **E OS TRÊS NPCs TÊM ROSTO** (`020`): nove bustos com pose própria, ao lado
+  da fala no boletim, na parcela e na contra-oferta — que ganhou segundo tempo
+  porque a despedida do Arlindo nunca tinha sido dita. A cara sai da FALA, por
+  tabela. Falta a faixa do rodapé: medida, à espera de layout
 - **Registro de partida em `.jsonl`**, um por partida, com o tempo de cada
   turno. Sai pelo menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,
@@ -298,31 +291,30 @@ então o prédio não salta ao ser consertado; as peças, essas, não se partilh
 catorze peças do pátio, em `blender/brp_porto.py`, que faz também os nove
 retratos de fala.
 
-O cenário usa os props: **coqueiros de tronco ARQUEADO** (`028`) que oscilam em rajada, **guindaste** nas
-docas construídas, **carga no convés** e **boias + marcador** na Zona de Espera. **Três caminhões atravessam o mapa pela estrada**, cada um com
-a carga da doca do mesmo índice e em duas silhuetas porque a rua vira 90° em
-cada cotovelo — e **entram na doca** quando ela tem barco e trabalhador,
-saindo quando o barco sai (`011`); a **espuma lava a costa** dentro do mesmo
-campo contínuo da água; o **enrocamento para nas duas pontas**, onde o cais
-deu lugar a praia. Os coqueiros chapados saíram do SVG — `--sem-coqueiros` —
+O cenário usa os props: **coqueiros de tronco ARQUEADO** (`028`) que oscilam em
+rajada, **guindaste** nas docas construídas, **carga no convés** e **boias +
+marcador** na Zona de Espera. **Três caminhões atravessam o mapa pela estrada**,
+cada um com a carga da doca do mesmo índice e em duas silhuetas porque a rua
+vira 90° — e **entram na doca** quando ela tem barco e trabalhador (`011`); a
+**espuma lava a costa** no mesmo campo contínuo da água; o **enrocamento para
+nas duas pontas**. Os coqueiros chapados saíram do SVG — `--sem-coqueiros` —
 pela mesma razão que os píeres: o que se mexe não pode estar assado no fundo.
 
 **E as chapas lisas acabaram**: tabuado com junta no n2, junta atravessada no
 n3, ferrugem nos cargueiros — padrões DIRIGIDOS, peça a peça, nunca pela paleta.
 
 **O píer, a lança, a TORRE e o casco têm TRÊS NÍVEIS.** O píer vai de ripas a
-laje de concreto sobre estacas de aço; a lança, de **um pau só com amantilho**
+laje de concreto sobre estacas de aço; a lança, de um pau só com amantilho
 (`015`) a lança longa com spreader; a torre, de mastro de madeira a pórtico.
 Quem escolhe são `nivel_pier()` e `nivel_guindaste()`, cada um preso ao seu
 upgrade (`docs/decisoes/007`) — e desde 06/09 são elas que decidem também **que
 navio atraca** (`009`), o que faz a trava ser visível em vez de estatística.
 
-**O CASCO DIZ O QUE O NAVIO TRAZ, e o camião o que sai pela estrada**
-(`docs/decisoes/010`). Seis cascos, um por par (classe, motivo): o costado é o
-mesmo e o CONVÉS é que muda. O pesqueiro tem um casco só, e isso é afirmação:
-pescado e armazenagem são o mesmo peixe indo para sítios diferentes.
-Os camiões são quatro, um por motivo. O **trabalhador aparece de pé no
-tabuado** quando alocado, e mexe-se enquanto a operação corre.
+**O CASCO DIZ O QUE O NAVIO TRAZ, e o camião o que sai pela estrada** (`010`).
+Seis cascos, um por par (classe, motivo): o costado é o mesmo e o CONVÉS é que
+muda. O pesqueiro tem um casco só, e isso é afirmação: pescado e armazenagem são
+o mesmo peixe indo para sítios diferentes. Os camiões são quatro, um por motivo.
+O **trabalhador aparece de pé no tabuado** quando alocado.
 
 **E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA:** bote, traineira e arrasteiro,
 cada um com gramática própria; a faixa de valor da classe escolhe qual atraca.

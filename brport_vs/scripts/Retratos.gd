@@ -62,7 +62,8 @@ const POR_EXPRESSAO := {
 # contato e olhar, e não confiar em que "ainda dá para ver que é uma pessoa".
 #
 # ⚠️ E A CAIXA NÃO É QUADRADA, porque o PNG é. Um busto é mais alto do que
-# largo — 338 x 460 dentro de um quadro de 512 —, e num `TextureRect` quadrado
+# largo — 62% da largura do quadro por 90% da altura, o que era 338 x 460 num
+# quadro de 512 e é 507 x 690 num de 768 (`029`) —, e num `TextureRect` quadrado
 # com `KEEP_ASPECT_CENTERED` quem manda é o QUADRO: a imagem inteira encolhe
 # para caber, o busto sai com 86px de altura e sobram 33px de transparência de
 # cada lado, dentro do cartão, a pagar largura que o balão queria. Com a caixa
@@ -85,7 +86,9 @@ static func de(personagem: String, expressao: String) -> Texture2D:
 #
 # ⚠️ `KEEP_ASPECT_CENTERED` ESCALA O QUADRO INTEIRO, transparência incluída, e
 # é a armadilha que o retrato do trabalhador já pagou: um busto pequeno num
-# PNG de 512 sai minúsculo no cartão por mais certo que esteja o resto. Por
+# PNG de 512 saía minúsculo no cartão por mais certo que estivesse o resto — e
+# a alavanca B não muda isto num pixel, porque o que decide é a FRAÇÃO do
+# quadro que o busto ocupa, e ela é a mesma a 512 e a 768. Por
 # isso o estúdio enche o quadro (`_K` e `_MEIO` em `brp_porto.py`) — e por
 # isso o teste de fumaça mede a caixa opaca dos nove PNG em vez de confiar.
 static func imagem(retrato: Texture2D, altura: int = TAMANHO) -> TextureRect:

@@ -6,8 +6,8 @@
     "rot_z": 45.0,
     "angulo_aresta": 26.565,
     "quadro": [
-      512,
-      512
+      768,
+      768
     ],
     "altura_px_por_unidade": 24.49,
     "doc": "docs/BRP_SPATIAL_CONTRACT.md"
@@ -20,8 +20,8 @@
       "file": "arbusto.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -49,8 +49,8 @@
       "file": "barreira.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -73,8 +73,8 @@
       "file": "bote.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -97,8 +97,8 @@
       "file": "cabeco.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -121,8 +121,8 @@
       "file": "cachorro_caramelo.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -154,8 +154,8 @@
       "file": "caminhao_armazenagem.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -178,8 +178,8 @@
       "file": "caminhao_armazenagem_mx.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -202,8 +202,8 @@
       "file": "caminhao_conteiner.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -226,8 +226,8 @@
       "file": "caminhao_conteiner_mx.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -250,8 +250,8 @@
       "file": "caminhao_granel.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -274,8 +274,8 @@
       "file": "caminhao_granel_mx.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -298,8 +298,8 @@
       "file": "caminhao_pescado.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -322,8 +322,8 @@
       "file": "caminhao_pescado_mx.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -346,8 +346,8 @@
       "file": "capivara.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -379,8 +379,8 @@
       "file": "casa_costeira.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -403,8 +403,8 @@
       "file": "cone_transito.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -427,8 +427,8 @@
       "file": "coqueiro_jovem.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -456,8 +456,8 @@
       "file": "doca_concreto.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -480,8 +480,8 @@
       "file": "empilhadeira.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -504,8 +504,8 @@
       "file": "gaivota.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -537,8 +537,8 @@
       "file": "guincho.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -561,8 +561,8 @@
       "file": "maria_farinha.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -594,8 +594,8 @@
       "file": "mercado.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -618,8 +618,8 @@
       "file": "pallet.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -642,8 +642,8 @@
       "file": "pilha_caixotes.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -666,8 +666,8 @@
       "file": "pneus.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -690,8 +690,8 @@
       "file": "poste.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -714,8 +714,8 @@
       "file": "poste_luz.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -743,8 +743,8 @@
       "file": "quero_quero.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -776,8 +776,8 @@
       "file": "retrato_arlindo_contrariado.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -800,8 +800,8 @@
       "file": "retrato_arlindo_pressao.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -824,8 +824,8 @@
       "file": "retrato_arlindo_sorriso.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -848,8 +848,8 @@
       "file": "retrato_cida_contente.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -872,8 +872,8 @@
       "file": "retrato_cida_preocupada.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -896,8 +896,8 @@
       "file": "retrato_cida_seria.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -920,8 +920,8 @@
       "file": "retrato_ribeiro_cordial.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -944,8 +944,8 @@
       "file": "retrato_ribeiro_formal.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -968,8 +968,8 @@
       "file": "retrato_ribeiro_grave.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -992,8 +992,8 @@
       "file": "tartaruga_verde.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -1025,8 +1025,8 @@
       "file": "terreno_agua.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -1049,8 +1049,8 @@
       "file": "terreno_areia.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -1073,8 +1073,8 @@
       "file": "terreno_costa.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -1097,8 +1097,8 @@
       "file": "terreno_rua.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,
@@ -1121,8 +1121,8 @@
       "file": "trabalhador_retrato.png",
       "format": "png-rgba",
       "frame_size": [
-        512,
-        512
+        768,
+        768
       ],
       "columns": 1,
       "rows": 1,

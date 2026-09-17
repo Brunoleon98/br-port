@@ -218,10 +218,18 @@ func _montar() -> void:
 		var s := Sprite2D.new()
 		s.texture = load(caminho)
 		s.name = "%s_%d_%d" % [arquivo, int(mx * 10), int(my * 10)]
-		# O quadro tem 512 e o centro dele É a origem do mundo. Com `centered`
-		# ligado, pôr o prop no lugar é atribuir a posição — não há meio quadro
-		# para subtrair, nem ajuste no olho.
+		# O quadro tem 512 COORDENADAS e o centro dele É a origem do mundo. Com
+		# `centered` ligado, pôr o prop no lugar é atribuir a posição — não há
+		# meio quadro para subtrair, nem ajuste no olho.
+		#
+		# ⚠️ MAS A ESCALA NÃO SE HERDA. Um `Sprite2D` desenha a textura ao
+		# tamanho NATIVO, e desde a alavanca B o nativo tem 768 px para os 512
+		# de coordenada (`docs/decisoes/029`): sem este fator esta cena — que
+		# existe para provar que o asset não perde "origem, escala nem ordem de
+		# desenho" — mostraria tudo 1,5x maior. É o mesmo que o `Fauna.gd` faz,
+		# e pela mesma razão.
 		s.centered = true
+		s.scale = Vector2.ONE * PropIso.escala(s.texture)
 		s.position = _tela(mx, my, alt)
 		add_child(s)
 

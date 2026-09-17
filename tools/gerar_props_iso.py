@@ -85,19 +85,56 @@ MEIA_LARG_TELA = MEIA_LARG * ZOOM
 # (O 54,736° dos tutoriais é isométrico VERDADEIRO, 1,732:1. Aqui daria errado.)
 ROT_X, ROT_Z = 60.0, 45.0
 
-RESOLUCAO = 512
+# ── E A RESOLUÇÃO É O QUARTO MEMBRO DO CONTRATO desde 16/09 ─────────────
+#
+# Alavanca B do item da resolução (`docs/decisoes/029`). A A fez o mesmo ao
+# mapa e não tocou num traço: ali o desenho já existia a 1080 e o importador
+# deitava-o fora, então bastou parar de o reduzir (`025`). Aqui NÃO há nada
+# guardado — o prop é renderizado, e a única forma de ele ter mais pixels é
+# renderizá-lo com mais.
+#
+# SÃO DOIS NÚMEROS, E CONFUNDI-LOS É NÃO MUDAR NADA. O `RESOLUCAO_TELA` é o
+# quadro em COORDENADAS: 512 de lado, com a origem do mundo no centro, e é o
+# que `Main.tscn`, `Dock.tscn`, o teste de design e a tabela de âncoras leem.
+# Ele NÃO se mexe. O `RESOLUCAO` é o quadro em PIXELS, e é só ele que sobe.
+#
+# ⚠️ E O `ESCALA_ORTO` TEM DE SAIR DO PRIMEIRO. Ele estava escrito a partir do
+# `RESOLUCAO`, e assim os dois sobem juntos: a câmera afasta-se na mesma
+# proporção em que o quadro cresce, o prop sai do mesmo TAMANHO em pixels com
+# 256 px de moldura vazia a mais, e a alavanca não entrega um pixel. Com o
+# `ortho_scale` preso à escala de TELA a câmera continua a enquadrar o mesmo
+# volume de mundo e os 768 px caem todos dentro do desenho.
+#
+# Quem mostra o PNG desfaz a diferença com `expand_mode = 1`: o rect continua
+# com 512 de coordenadas e a textura carrega 768 pixels, exactamente como os
+# três nós de mapa fazem desde a `025`.
+RESOLUCAO_TELA = 512
+RESOLUCAO = 768
 
-# Uma unidade de mundo na horizontal tem de valer MEIA_LARG_TELA pixels do PNG.
-# Numa câmera ortográfica a 45° de azimute isso é (RESOLUCAO / ortho_scale) *
-# cos(45°), então ortho_scale = RESOLUCAO / (MEIA_LARG_TELA / cos(45°)).
-ESCALA_ORTO = RESOLUCAO / (MEIA_LARG_TELA / math.cos(math.radians(45.0)))
+# O que converte um do outro. Todo número medido em pixel do PNG passa por
+# aqui — é ele que separa "medi no desenho" de "medi na tela", e as duas
+# respostas deixaram de ser o mesmo número.
+FATOR_RES = float(RESOLUCAO) / float(RESOLUCAO_TELA)
+
+# Uma unidade de mundo na horizontal tem de valer MEIA_LARG_TELA pixels de
+# TELA. Numa câmera ortográfica a 45° de azimute isso é (RESOLUCAO_TELA /
+# ortho_scale) * cos(45°), então ortho_scale = RESOLUCAO_TELA /
+# (MEIA_LARG_TELA / cos(45°)) — e no PNG a mesma unidade vale FATOR_RES vezes
+# mais, que é o ponto inteiro da alavanca.
+ESCALA_ORTO = RESOLUCAO_TELA / (MEIA_LARG_TELA / math.cos(math.radians(45.0)))
 
 # ALTURA: o ponto onde os dois mundos quase não se falam.
 #
 # `gerar_mapa_iso.py` trata altura como PIXELS livres — ALT_PIER=15, ALT_CAIS=26,
 # um armazém com 44. É uma convenção de desenho, não uma projeção.
 # O Blender faz projeção DE VERDADE: uma unidade de altura projeta
-# (RESOLUCAO/ortho_scale) * cos(elevação) = 36,74 px.
+# (RESOLUCAO/ortho_scale) * cos(elevação) = 24,49 px de TELA — 36,74 no PNG,
+# que é o mesmo desenho com FATOR_RES vezes mais pixels.
+#
+# ⚠️ ESTE COMENTÁRIO DIZIA 36,74 DESDE ANTES DO ZOOM DE 05/09, e a conta ao
+# lado dele dava 24,49 havia onze dias: é o "número em pixel escrito à mão"
+# que este projeto já registou cinco vezes, desta vez num comentário em vez de
+# numa constante. Ninguém o lê, então ninguém o desmente.
 #
 # Ignorar isso põe um píer renderizado 2,4x mais alto que o cais desenhado ao
 # lado dele. Por isso os props falam a mesma língua do mapa: altura em PIXELS
@@ -538,8 +575,10 @@ def chanfrar(objs, largura: float = 0.020, segmentos: int = 2) -> None:
     que apanha a luz de raspão, e o volume aparece sem que nada mais mude.
 
     A largura é pequena porque ela ENCOLHE a silhueta — cada canto recua cerca
-    de `largura`. Com 0,020 o tabuado perde ~1,7 px dos 207, dentro da margem
-    de 4 px da verificação de projeção lá embaixo. Subir isto sem olhar aquela
+    de `largura`. Com 0,020 o tabuado perde ~1,13 px dos 138 de TELA, dentro
+    da margem de 4 px da verificação de projeção lá embaixo. (Dizia "1,7 px
+    dos 207", que é a conta de antes do ZOOM de 05/09 e nunca foi refeita — os
+    207 são 6,9 × MEIA_LARG, e o que se mede é 6,9 × MEIA_LARG_TELA.) Subir isto sem olhar aquela
     conta é como se quebra o alinhamento com o mapa.
     """
     for o in objs:
@@ -747,13 +786,17 @@ def trelica(nome, a, b, lado: float, mat, montantes: int = 6,
 
 
 def para_pixel(p) -> tuple:
-    """Ponto do mundo -> pixel dentro do PNG de 512.
+    """Ponto do mundo -> pixel dentro do PNG, que tem RESOLUCAO de lado.
 
     A câmera mira a origem, então a origem cai no centro do quadro. O resto é
-    projetar em cima dos eixos da câmera. Serve para DERIVAR o pivot_offset da
-    lança em Dock.tscn em vez de o acertar no olho — o pivô errado faz a lança
-    girar em torno de um ponto que não é o topo do mastro, e aí ela desencaixa
-    da torre a cada varrida.
+    projetar em cima dos eixos da câmera.
+
+    ⚠️ ISTO DEVOLVE PIXEL DO PNG, E O NÓ DO GODOT FALA TELA. Enquanto os dois
+    quadros tinham 512 os dois números eram o mesmo e ninguém tinha de
+    escolher; desde a alavanca B não são, e quem quiser o número que vai para
+    um `.tscn` chama `para_pixel_tela()`. É a armadilha que o `MEIO_QUADRO` do
+    teste de design tem do outro lado: dois números iguais medidos de sítios
+    diferentes não são a mesma medida.
     """
     rx, rz = math.radians(ROT_X), math.radians(ROT_Z)
     direita = Vector((math.cos(rz), math.sin(rz), 0.0))
@@ -763,6 +806,12 @@ def para_pixel(p) -> tuple:
     p = Vector(p)
     return (RESOLUCAO / 2.0 + p.dot(direita) * px_por_unidade,
             RESOLUCAO / 2.0 - p.dot(cima) * px_por_unidade)
+
+
+def para_pixel_tela(p) -> tuple:
+    """O mesmo ponto, em pixel do NÓ — que é o que um `.tscn` quer ler."""
+    px, py = para_pixel(p)
+    return (px / FATOR_RES, py / FATOR_RES)
 
 
 # ------------------------------------------------------------ kit de detalhe
@@ -3388,31 +3437,57 @@ def main() -> int:
 
     # A projeção sai certa ou sai errada; não há meio termo, e o resto do
     # trabalho depende dela. O tabuado tem largura conhecida pela conta do mapa:
-    # (comprimento + largura) * MEIA_LARG_TELA — a escala do PNG, e não a do
-    # desenho do mapa: é no PNG que se mede.
+    # (comprimento + largura) * MEIA_LARG_TELA — a escala de TELA, e não a do
+    # desenho do mapa.
+    #
+    # ⚠️ E ELA MEDE-SE EM TELA, NÃO NO PNG, desde que os dois deixaram de ser o
+    # mesmo número. `largura_opaca` conta pixels do arquivo, então o que sai
+    # dela divide-se pelo FATOR_RES antes de encontrar o esperado. Escalar o
+    # ESPERADO em vez do MEDIDO daria a mesma resposta e escalaria também a
+    # tolerância sem ninguém decidir: os 4 px são a folga do chanfro, que vale
+    # 1,13 px de TELA em qualquer resolução — em pixel de PNG ela cresceria com
+    # o FATOR_RES e a guarda ficaria mais frouxa a cada alavanca.
     if "pier_n2" in alvos:
         esperado = (PIER_ALCANCE + PIER_LARG) * MEIA_LARG_TELA
-        medido = largura_opaca("%s/pier_n2.png" % saida.rstrip("/"))
+        bruto = largura_opaca("%s/pier_n2.png" % saida.rstrip("/"))
+        medido = bruto / FATOR_RES
         erro = abs(medido - esperado)
         print("\nverificação da projeção:")
-        print("  tabuado esperado %.0f px, medido %d px (erro %.0f px)"
-              % (esperado, medido, erro))
+        print("  tabuado esperado %.0f px de tela, medido %.1f (%d px do PNG,"
+              " /%.2f) — erro %.1f px" % (esperado, medido, bruto, FATOR_RES, erro))
         if erro > 4:
             print("  FALHOU — a projeção não bate com gerar_mapa_iso.py")
             return 1
         print("  ok — os PNGs caem no mapa em escala 1:1")
 
     # O pivô da lança NÃO se acerta no olho: girar em torno de um ponto que não
-    # é o topo da torre desencaixa a lança da torre a cada varrida. Sai daqui,
-    # em pixels do PNG, e vai DIRETO para o `pivot_offset` do nó Lanca em
-    # Dock.tscn: o nó tem exatamente 512x512, o tamanho da textura, então o
-    # pixel do PNG e o pixel do nó são o mesmo número.
-    if "guindaste_lanca" in alvos:
+    # é o topo da torre desencaixa a lança da torre a cada varrida. Sai daqui e
+    # vai DIRETO para o `pivot_offset` do nó Lanca em Dock.tscn.
+    #
+    # ⚠️ E ELE DEIXOU DE SER O PIXEL DO PNG. Dizia-se aqui que "o nó tem
+    # exatamente 512x512, o tamanho da textura, então o pixel do PNG e o pixel
+    # do nó são o mesmo número" — verdade enquanto foi verdade, e a frase que
+    # esconde a armadilha da alavanca B: o nó continua com 512 e a textura tem
+    # 768. O `pivot_offset` é do NÓ, logo a linha que se copia é a de TELA. A
+    # do PNG fica impressa ao lado porque é ela que se confere contra o render.
+    #
+    # ⚠️ E ELE NÃO IMPRIMIA NADA HAVIA MUITO. A condição pedia
+    # `"guindaste_lanca" in alvos` e o catálogo não tem nenhum grupo com esse
+    # nome — são `lanca_n1`, `lanca_n2` e `lanca_n3` desde que a lança ganhou
+    # três níveis. Um `if` que nunca é verdade não dá erro: a ferramenta corria
+    # inteira, saía com 0, e a única linha que derivava o pivô ficou muda.
+    # É o "comentário que diz «lido de X» e não lê X" em forma de guarda —
+    # achado ao subir a resolução, quando alguém foi finalmente ler o número.
+    # O `lanca_n2` é o gatilho porque é a lança que o `Dock.tscn` carrega, e o
+    # pivô é o mesmo nos três níveis de propósito (`pivot_offset` é um só).
+    if "lanca_n2" in alvos:
         gx = PIER_ALCANCE / 2 - 0.95
         px, py = para_pixel((gx, 0.55, ALT_PIER + 2.70))
+        tx, ty = para_pixel_tela((gx, 0.55, ALT_PIER + 2.70))
         print("\npivô da lança (topo da torre):")
-        print("  no PNG: (%.0f, %.0f) px" % (px, py))
-        print("  pivot_offset em Dock.tscn: Vector2(%.0f, %.0f)" % (px, py))
+        print("  no PNG de %d: (%.0f, %.0f) px" % (RESOLUCAO, px, py))
+        print("  pivot_offset em Dock.tscn (nó de %d): Vector2(%.0f, %.0f)"
+              % (RESOLUCAO_TELA, tx, ty))
     return 0
 
 

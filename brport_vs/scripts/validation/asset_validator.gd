@@ -89,14 +89,30 @@ func _assets(manifesto: Dictionary) -> void:
 		var ficha: Dictionary = entrada
 		var arquivo: String = ficha["file"]
 		var achado := ""
+		var onde: Array[String] = []
 		for pasta in ["props", "brp", "sprites", "tiles"]:
 			var tentativa := "res://art/%s/%s" % [pasta, arquivo]
 			if ResourceLoader.exists(tentativa):
-				achado = tentativa
-				break
+				onde.append(pasta)
+				if achado == "":
+					achado = tentativa
 		if achado == "":
 			_erro("%s: no manifest e não no disco" % arquivo)
 			continue
+
+		# ⚠️ O MESMO NOME EM DUAS PASTAS, E A BUSCA ACIMA FICA COM A PRIMEIRA.
+		# O `art/brp/README.md` avisa disto por escrito desde que existe:
+		# `gerar_brp.py todos <dir>` despeja os 24 assets no MESMO diretório, e
+		# nove deles vivem noutro — apontá-lo a `art/props` deixa lá cópias que
+		# ninguém pediu. A busca acha a de `props`, passa, e ficam dois arquivos
+		# a divergir a partir do dia seguinte.
+		#
+		# Até 16/09 isto era só um aviso num README, e um aviso num README não
+		# é uma guarda: caí nele nesta mesma sessão, ao regerar o catálogo para
+		# a alavanca B. Custa cinco linhas e fecha a porta.
+		_confere("%s existe numa pasta só" % arquivo, onde.size() == 1,
+			"está em art/%s — a busca fica com a primeira e a outra envelhece "
+				% "/, art/".join(onde) + "em silêncio")
 
 		_conferidos += 1
 		var tex: Texture2D = load(achado)
