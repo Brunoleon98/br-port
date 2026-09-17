@@ -94,6 +94,12 @@ lugar onde o export do APK se verifica — ele corre a cada push e deixa o
 (~1,2 GB), que o CI cacheia; a receita completa, pelos dois caminhos, está em
 `brport_vs/COMO_RODAR.md`.
 
+**Mas o `.pck` mede-se aqui, e sem template nenhum** — é o que responde "quanto
+custa isto ao pacote?" sem esperar uma corrida do CI:
+`$G --headless --path brport_vs --export-pack Android /tmp/brport.pck`. O APK e
+o `brport-web` continuam a ler-se dos artefatos, e o **antes** costuma já estar
+lá: a última corrida do `main` mediu-os no commit que a branch tem por base.
+
 ⚠️ **O CI regera e compara BYTE A BYTE, e o `sum()` de floats mudou na Python
 3.12.** Ela passou a somar por compensação de Neumaier; o runner é
 `ubuntu-latest` e subiu de versão sozinho. Medido em 05/09, o mesmo arquivo:
@@ -592,6 +598,16 @@ derivada delas.
   O que a alavanca envelheceu foi o outro lado: os números em pixel de quem
   MEDE o PNG — `MEIO_QUADRO`, o pivô da lança, a régua da pessoa de 15 px, o
   `D29_LARG_MIN`, o `ZOOM` das duas folhas de contato.
+  ⚠️ **E RESOLUÇÃO PAGA-SE NO QUADRO INTEIRO E ENTREGA NO DESENHO.** É a irmã
+  da regra da `026` — *"só se paga onde há FRONTEIRA para afiar"* — do lado do
+  CUSTO em vez do ganho. Medido nos 61 props: **o desenho ocupa 10,4% do
+  quadro, e 89,6% é moldura vazia** (o poste 0,04%, o píer 7,4%; só os dez
+  retratos passam de metade). Daí a B custar **+80 MB de VRAM e +42,3% de
+  `.pck`** para mudar 1,56% da janela, contra os +9,89 MB e 5,12% da A — **15 a
+  27 vezes o preço por pixel visível**, e nenhuma das duas medidas mente.
+  Antes de subir a resolução de um asset, meça que fração dele é desenho: o que
+  torna esta alavanca barata é CORTAR o quadro, e isso mexe em "o centro do
+  quadro é a origem do mundo" (`029`, e é item próprio).
 - **Constante em PIXEL é constante que envelhece quando o `ZOOM` muda, e ela
   não dá erro.** Foram cinco em 05/09: a silhueta do caminhão e o corte que
   exige pegada no teste de design, a largura de telhado da vila, os sprites do
