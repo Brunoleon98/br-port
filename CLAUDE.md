@@ -100,6 +100,14 @@ custa isto ao pacote?" sem esperar uma corrida do CI:
 o `brport-web` continuam a ler-se dos artefatos, e o **antes** costuma já estar
 lá: a última corrida do `main` mediu-os no commit que a branch tem por base.
 
+⚠️ **E O DELTA DO `.pck` É O DELTA DO APK, medido** (`029`): a alavanca B fez os
+três crescerem os MESMOS ~1,87 MB, com o APK a 1,0009× e o web a 1,0025× do que
+o `.pck` local dizia — **0,09% de erro**. Logo não se espera pelo CI para saber
+quanto um asset custa ao pacote.
+⚠️ **Mas a PERCENTAGEM é outra em cada um, e só uma é a do jogador.** Os mesmos
+1,87 MB são +42,29% do `.pck` e **+5,91% do APK**, porque o APK é sobretudo o
+binário do Godot. Ao citar custo, diga contra que denominador.
+
 ⚠️ **O CI regera e compara BYTE A BYTE, e o `sum()` de floats mudou na Python
 3.12.** Ela passou a somar por compensação de Neumaier; o runner é
 `ubuntu-latest` e subiu de versão sozinho. Medido em 05/09, o mesmo arquivo:

@@ -108,20 +108,29 @@ lhe tocar na geometria.
 
 Os 25 props do gerador levam **4m55s**; o catálogo inteiro, ~17 min.
 
-⚠️ **O APK E O `brport-web` FALTAM, E FALTAM POR UMA RAZÃO DE MÁQUINA.** O
-`dl.google.com` responde 403 aqui, então o export do APK só se verifica no CI —
-e o CI deste projeto corre a cada push no `main` e a cada *pull request*, nunca
-num branch solto. O **antes** já está medido, da corrida 35143708422 sobre o
-commit que é a base desta branch:
+### E o APK e o `brport-web`, lidos do CI
 
-| artefato | antes (512) | depois (768) |
-|---|---|---|
-| `brport-apk` | 31.607.335 B | lê-se na 1ª corrida do PR |
-| `brport-web` | 13.799.272 B | idem |
+O `dl.google.com` responde 403 aqui, então o export do APK só se verifica no CI,
+que corre a cada push no `main` e a cada *pull request*. O **antes** saiu da
+corrida 35143708422 (sobre o commit que é a base desta branch) e o **depois** da
+35166240746, a primeira do PR 54:
 
-O `.pck` é o que se mede aqui sem templates (`--export-pack Android`), e ele já
-diz o tamanho da conta: **+1,87 MB**. Quem abrir o PR fecha a tabela com dois
-números, e não com uma estimativa.
+| artefato | antes (512) | depois (768) | Δ |
+|---|---|---|---|
+| `brport-apk` | 31.607.335 B | 33.476.268 B | **+1.868.933 B (+5,91%)** |
+| `brport-web` | 13.799.272 B | 15.671.290 B | **+1.872.018 B (+13,57%)** |
+| `.pck`, medido aqui | 4.415.560 B | 6.282.820 B | +1.867.260 B (+42,29%) |
+
+⚠️ **E O `.pck` MEDIDO AQUI PREVÊ O APK, o que faz dele a régua de custo deste
+projeto.** Os três crescem os MESMOS ~1,87 MB: o delta do APK é 1,0009× o do
+`.pck` e o do web 1,0025×, ou seja o `--export-pack Android` deste contêiner
+responde à pergunta do pacote com **0,09% de erro** e sem esperar uma corrida.
+
+⚠️ **E A MESMA CONTA TEM TRÊS PERCENTAGENS, das quais só uma é a do jogador.**
++42,29% no `.pck` soa a alarme e é verdade; no APK que alguém descarrega são
+**+5,91%**, porque o APK é sobretudo o binário do Godot e o `.pck` é um sexto
+dele. Ao citar o custo de um asset, diga contra QUE denominador — a mesma
+mudança parece sete vezes maior no `.pck` do que no download.
 
 ⚠️ **E 89,6% DESSE QUADRO É MOLDURA VAZIA.** Medido nos 61: o desenho ocupa
 **10,4%** do quadro. Só os dez retratos enchem mais de metade dele; os 51 props
