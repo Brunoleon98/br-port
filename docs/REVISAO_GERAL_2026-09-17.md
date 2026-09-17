@@ -14,6 +14,10 @@
 >
 > **O que passou verde está na §4**, para não voltar como suspeita. **O que o
 > briefing afirmou e o repositório desmentiu está na §5.**
+>
+> **O pedido de pesquisa externa que sai daqui** — para atacar os consertos
+> propostos antes de os implementar — está em
+> `docs/REVISAO_GERAL_2026-09-17_PESQUISA_EXTERNA.md`.
 
 ---
 
@@ -346,6 +350,12 @@ Medido nos 14 WAV versionados (32 kHz, mono):
   `conferir_docs.py`). A próxima sessão que
   o tocar bate no teto; comprimir antes de precisar (o §6 da `/fechar-sessao`
   diz como).
+- `conferir_docs.py` define "referência" pela SINTAXE, não pela intenção: um
+  documento que cite o nome de um arquivo `.md` de OUTRO projeto reprova. Custou
+  uma corrida vermelha ao escrever o pedido de pesquisa desta sessão, que
+  precisava de nomear as convenções de outras ferramentas. É conservador de
+  propósito e o remédio é escrever o nome sem a extensão; fica registado porque
+  a mensagem não diz isso.
 - A régua de silhueta leva 2 min 13 s nos 61 props; se entrar no CI um dia,
   entra como relatório e não como portão (24 e 028 já dizem que o índice não
   responde em peça pequena ou esbelta).
@@ -435,3 +445,32 @@ Medido nos 14 WAV versionados (32 kHz, mono):
    a percorrer todos os painéis, para não haver quinta vez.
 5. **2.6 + 2.8 + 2.11** — o rasto de números e as guardas do CI, numa sessão
    de Sonnet só.
+
+---
+
+## 7. As lições desta revisão, e onde vão quando cada achado fechar
+
+A varredura do `/fechar-sessao` pergunta, para cada coisa descoberta, **onde
+ela está escrita**. Três valem SEMPRE e por isso são candidatas ao `CLAUDE.md`
+— mas **nenhuma entra lá hoje**, e é decisão desta sessão: neste projeto a
+regra viaja com a correção e com a guarda que a tranca ("e quem tranca isto é
+o bloco DX"). Uma regra no arquivo que carrega sozinho, a descrever um defeito
+que continua vivo três diretórios adiante, ensina a próxima sessão a conviver
+com ele. Ficam aqui, com o endereço de destino escrito:
+
+| Lição | Vai para | Quando |
+|---|---|---|
+| **Item lido de uma lista por POSIÇÃO envelhece quando a lista cresce** — `resultados[size-1]` era o Descuidado e virou o Antecipado sem uma linha mudar na Leitura. É a irmã de "número em pixel escrito à mão envelhece calado", com um índice no lugar do pixel: o que apodrece não é o valor, é a suposição de que a lista acabou ali | `CLAUDE.md` (Estilo de código) | com o conserto de 2.1 e a asserção que exige o nome |
+| **Fala DISPARADA não é fala VISTA** — a quarta cara do `barco_medio`. As três primeiras já estão escritas (gerada e nunca em cena; escrita e nunca disparada; renderizada e nunca em doca); esta é a que faltava, e a pergunta que a pega é a do OUTRO lado do frame: o que sobrou no `Label` depois de todos os emits do mesmo evento | `CLAUDE.md` (Narrativa) | com o conserto de 2.2 e a guarda "fala vista" |
+| **Régua nova calibra-se contra um número que o projeto JÁ publica** — a régua de contraste desta sessão deu 5,04:1 onde o D23 publica 5,05:1 e 2,93:1 onde o `CLAUDE.md` publica 2,93:1, e só depois disso os outros números dela valeram. É a regra 7 ("o mesmo arquivo dos dois lados dá zero EXATO") aplicada a uma régua que não compara arquivos, e sai mais barata: o projeto tem números publicados por toda a parte | `CLAUDE.md` (regra 7), se o Bruno achar que vale a linha | quando qualquer um dos achados fechar |
+
+**E uma armadilha de função, que espera o conserto para ser escrita ao lado
+dela:** `capturar_tela.gd -- N` gasta uma iteração na oferta do rival sem
+avançar o turno, e avança turnos por baixo de um modal aberto — a foto do
+`boletim` mostra um estado que o jogador não alcança (2.8). O comentário vai no
+laço, contando o que se mediu, e não aqui.
+
+**Nada mais desta sessão é lição nova.** Tudo o resto que ela achou é o
+`CLAUDE.md` a ser desobedecido em sítios que ele já nomeia — o `.get(chave,
+omissão)`, a cor neutra sobre branco, a contagem em prosa de lista que cresce,
+"ao corrigir um, VARRA OS IRMÃOS". A regra estava escrita nas quatro vezes.
