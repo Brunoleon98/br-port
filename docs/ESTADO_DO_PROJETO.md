@@ -4,14 +4,12 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 17/09/2026 — R1 da §7.1; o jogo não mudou
+> **Última atualização:** 18/09/2026 — R2 da §7.1; o jogo não mudou
 >
-> | Precisa saber | Leia |
-> |---|---|
-> | O que nunca se faz aqui, e como rodar Godot e Blender | `CLAUDE.md`, na raiz — **carrega sozinho, não precisa abrir** |
-> | Como o jogo está hoje | este arquivo |
-> | O que fazer a seguir, e quais itens só o Bruno fecha | `docs/design/BR_Port_Plano_v3_Claude_Code.md` |
-> | Por que se decidiu assim | `docs/decisoes/NNN-*.md`, uma por arquivo |
+> **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
+> não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
+> `docs/design/BR_Port_Plano_v3_Claude_Code.md`, e o porquê de cada escolha em
+> `docs/decisoes/NNN-*.md`, uma por arquivo.
 >
 > Retome por este estado e pelo plano. Histórico: `docs/arquivo/HISTORICO.md`;
 > sessões fechadas: `docs/arquivo/`.
@@ -123,10 +121,12 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-**R1 da §7.1 fechado (17/09):** a Leitura do simulador escolhe os perfis por
-identidade e não por índice, e o veredito que a `005` já tinha esvaziado saiu
-(`030`); o jogo não mudou. **Próximo: R2** (logs e capturas). R3–R9
-pendentes, gates humanos abertos.
+**R1 e R2 da §7.1 fechados (17–18/09), e o jogo não mudou em nenhum:** a
+Leitura escolhe os perfis por identidade (`030`); e a evidência do CI passou a
+responder por ERRO e por TURNO (`031`) — os onze passos que rodam `--script`
+têm guarda de erro, a lista de quem a tem sai do workflow em vez de ser escrita
+à mão, os logs da captura ficam, e ela avança por turno efetivo sem atravessar
+modal. **Próximo: R3.** R4–R9 pendentes, gates humanos abertos.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -140,12 +140,10 @@ histórico em `HISTORICO.md`.
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
-### O que as duas jogadas devolveram (02–03/09 e 06/09)
+### As duas jogadas (02–06/09)
 
-**Triadas em `docs/arquivo/PLAYTEST_01_ANALISE.md` e `PLAYTEST_02_ANALISE.md`**,
-com o resumo na §7 do plano e o porquê nas `011` a `030`. Sobram o rodapé (gate
-A5), três itens de economia (Fase 2) e a madeira podre (A4). **Antes de A8,
-entra a fila de correções da §7.1.**
+Triadas, com índice em `docs/arquivo/README.md`; o porquê nas `011` a `031`.
+Sobram o rodapé (A5), economia de Fase 2 e a madeira podre (A4).
 
 ⚠️ **Duas coisas medidas e por fazer**, cada uma sessão própria: a rua parou em
 **1,8** (alargá-la empurra o `RUA_RECUO` e o enquadramento, `012`) e o quadro
@@ -202,21 +200,21 @@ dos props é 89,6% moldura vazia (cortá-lo mexe na origem do mundo, `029`).
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Imprime classes, motivos e o NÍVEL |
 | `brport_vs/tools/leitura_do_simulador.gd` | A conclusão dele, fora do `SceneTree` para se poder provar com fixture — bloco T7. Identidade ausente ou dupla: código 1 (`030`) |
-| `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor |
+| `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor. Avança por TURNO efetivo, pelo botão do jogo, e pára diante de modal (`031`) |
 | `brport_vs/tools/folha_props.gd` | **A folha dos 51 props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Duas páginas, e reprova ao transbordar |
-| `brport_vs/tools/folha_icones.gd` | Folha de contato dos ícones nos 3 fundos, a 19px e ampliado — **rodar a cada ícone novo**. **Reprova ao transbordar**, como a da frota |
+| `brport_vs/tools/folha_icones.gd` | Folha dos ícones nos 3 fundos, a 19px e ampliado — a cada ícone novo. **Reprova ao transbordar** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows) |
-| `tools/conferir_lote_de_arte.py` | Confere lote de arte vindo de fora: alfa de verdade, tamanho e **ângulo da base contra o contrato de 26,57°**. Rodar antes de qualquer PNG externo entrar |
+| `tools/conferir_lote_de_arte.py` | Confere lote vindo de fora: alfa, tamanho e **ângulo da base contra os 26,57°**. Antes de qualquer PNG externo entrar |
 | `docs/BRP_SPATIAL_CONTRACT.md` | **O contrato da projeção por escrito** — as constantes, os quatro participantes e o `ROT_X = 60°` |
 | `blender/brp_studio.py` | O estúdio compartilhado — importa a câmera de `gerar_props_iso.py` em vez de a duplicar. Âncora, volume de seleção, nomenclatura e manifest |
-| `blender/gerar_brp.py` | Roda os quatro estúdios, exporta PNGs, salva `.blend` e junta o manifest; resolve saídas pela raiz porque o Blender muda o diretório no Windows |
+| `blender/gerar_brp.py` | Roda os quatro estúdios, exporta PNGs, salva `.blend` e junta o manifest |
 | `brport_vs/scripts/Fauna.gd` + `AmbienteCosteiro.gd` | Ciclos de seis espécies em nove pontos; habitats, toque, mar e gaivota |
 | `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
 | `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**. Roda no CI, espera `ASSET OK` |
 | `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
 | `.claude/skills/arte/SKILL.md` | **O ritual da arte** — qual etapa precisa de Blender, a armadilha de trocar matiz sem olhar o valor, o recorte ampliado, e o rasto que a mudança envelhece |
-| `.claude/skills/balancear/SKILL.md` | **O ritual da economia** — medir antes e depois com a mesma semente e arrastar atrás os oito lugares que afirmam o balanceamento |
-| `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto. Todo caminho de erro devolve a receita manual |
+| `.claude/skills/balancear/SKILL.md` | **O ritual da economia** — medir antes e depois com a mesma semente, e o rasto que isso envelhece |
+| `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto |
 | `.godot-version` | A versão do Godot, num lugar só. Lida pelo hook e pelo CI |
 | `docs/design/BR_Port_Numeros_Fase_1.md` | **A tabela dos números, GERADA** do `GameState.gd`. Não editar à mão — o CI reprova se envelhecer |
 | `tools/gerar_tabela_numeros.py` | Gera a tabela acima e cruza a leitura de texto com o que o Godot avalia |
@@ -225,11 +223,12 @@ dos props é 89,6% moldura vazia (cortá-lo mexe na origem do mundo, `029`).
 | `docs/design/` | GDD 7, guias, Validation Guide, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `index.html` (raiz) | O protótipo HTML original, já validado |
 | `tools/capturar_evidencia.sh` | Fotografias determinísticas de jogo, painéis e folhas de contato; é a evidência visual do CI |
-| `brport_vs/tools/folha_frota.gd` | **A folha de contato da frota** — cascos e camiões percorrendo as tabelas do jogo. Reprova se transbordar: foto de jogo só mostra o que o sorteio escolheu |
+| `brport_vs/tools/folha_frota.gd` | **A folha da frota** — cascos e camiões percorrendo as tabelas: foto de jogo só mostra o que o sorteio escolheu |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências e o teto do estado com EOL normalizado |
+| `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
 | `docs/REVISAO_GERAL_2026-09-17.md` | Revisão geral de 17/09: defeitos e melhorias, com evidência |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
 | `docs/gdd/` | **O GDD 7 legível**, 80 páginas GERADAS do `.jsx`, uma seção por arquivo. Não editar. Congelado antes da reescala: onde divergir do jogo, manda o código |
@@ -335,7 +334,6 @@ Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o Diári
 do Porto e a lista "VS — OUT" do GDD. A cena de fim de Fase 1 já não está aqui:
 existe, em dois tempos, e o balanço FECHA — o menu de pausa reabre-o.
 
----
 ---
 
 ## Como retomar numa conversa nova

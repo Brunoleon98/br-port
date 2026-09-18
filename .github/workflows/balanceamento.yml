@@ -87,6 +87,17 @@ jobs:
           grep -q "CONSTANTES OK" medicao/constantes.txt || {
             echo "::error::O despejo das constantes não chegou ao fim."; exit 1; }
 
+          # E A LINHA DE SUCESSO NÃO DIZ QUE NÃO HOUVE ERRO — é a guarda que o
+          # `testes.yml` tem em seis passos e que este workflow não tinha em
+          # nenhum. Os padrões são os de lá, e o motivo de não ser `ERROR` está
+          # escrito no passo "Nenhuma suíte pode imprimir SCRIPT ERROR": a
+          # corrida saudável do Godot imprime `ERROR:` ao encerrar.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" medicao/constantes.txt; then
+            echo "::error::O despejo das constantes imprimiu erro — passou sem correr até ao fim."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 medicao/constantes.txt
+            exit 1
+          fi
+
       - name: Medir
         run: |
           set -euo pipefail
@@ -110,6 +121,17 @@ jobs:
           # arriscava reprovar justamente quando estava tudo certo.
           if grep -q "possível travamento" medicao/leitura.txt; then
             echo "::error::Partidas não terminaram — alguma fase nova bloqueia o turno."
+            exit 1
+          fi
+
+          # A guarda de erro, pela razão do passo acima. Aqui ela é a única
+          # coisa entre um erro de execução e um NÚMERO PUBLICADO: este
+          # workflow existe para medir, o resumo da corrida FILTRA as linhas
+          # `ERROR`/`WARNING` antes de as mostrar, e sem esta guarda uma
+          # medição meio corrida seria publicada com a mesma cara de sempre.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" medicao/leitura.txt; then
+            echo "::error::O simulador imprimiu erro — a medição não vale."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 medicao/leitura.txt
             exit 1
           fi
 

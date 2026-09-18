@@ -1,8 +1,8 @@
 # BR Port — Plano v3: o projeto refeito para ser tocado com Claude Code
 
 **Versão 3.0 · 30/08/2026**
-**Fila atualizada em 17/09/2026:** correções da revisão externa incorporadas
-na §7.1. Próxima sessão: **R1 — interpretação do simulador**. Esta atualização
+**Fila atualizada em 18/09/2026:** correções da revisão externa incorporadas
+na §7.1. R1 e R2 fechados; próxima sessão: **R3 — fonte operacional**. Esta atualização
 é planejamento; não declara correções implementadas nem gates humanos fechados.
 **Substitui o cronograma do Roadmap v2.1 (Fases 4–7) e o Plano de Produção da
 Fase 2 inteiro.**
@@ -978,7 +978,9 @@ a ter resposta.
 Três coisas apareceram na construção e não estavam previstas aqui:
 
 - **A foto do porto saía com o Boletim Financeiro tapando o mapa inteiro.** Com
-  a semente fixa, doze turnos calham num fim de semana e o painel abre. A
+  a semente fixa, doze turnos calhavam num fim de semana e o painel abria — e
+  em 18/09 o R2 mostrou que aqueles "doze turnos" nunca foram doze: o laço
+  contava VOLTAS e a oferta do rival comia uma sem virar o dia (`031`). A
   imagem chamava-se "porto" e mostrava uma tabela — a fotografia mentirosa do
   `CLAUDE.md` outra vez, e desta vez sem um `push_error` sequer a denunciá-la.
   A ferramenta passou a IMPRIMIR quantos painéis estão por cima, e o script
@@ -1290,8 +1292,8 @@ resultados medidos nem novo cronograma de horas.
 | Ordem | Item / vínculo | Entrega e prova mínima | Estado / tamanho |
 |---|---|---|---|
 | 1 | **R1 — E**, revisão §2.1 / B3 | A Leitura seleciona Ótimo e Descuidado por identidade; permutar/adicionar perfis não muda o significado; texto final confere | **Próxima sessão**; curta, com F1/F6 |
-| 2 | **R2 — I**, revisão §2.8 e §2.11 / B3 | Logs preservados e varridos em todos os scripts; captura avança turnos reais e respeita modais; erro com saída zero reprova | Pendente; dividir logs e fluxo se necessário |
-| 3 | **R3 — F**, revisão §2.6–2.7 / B1, B2, B5 | Corrigir instruções/contagens e ligar fatos à fonte executada; omissão de suíte ou documentação divergente reprova | Pendente; reparo curto, guarda em fatia própria |
+| 2 | ✅ **R2 — I**, revisão §2.8 e §2.11 / B3 | Logs preservados e varridos em todos os scripts; captura avança turnos reais e respeita modais; erro com saída zero reprova | **Feito 18/09** (`docs/decisoes/031`), as duas metades |
+| 3 | **R3 — F**, revisão §2.6–2.7 / B1, B2, B5 — **próxima sessão** | Corrigir instruções/contagens e ligar fatos à fonte executada; omissão de suíte ou documentação divergente reprova | Pendente; reparo curto, guarda em fatia própria |
 | 4 | **R4 — B**, revisão §2.2–2.3 / A4 | Falas verdadeiras no snapshot; obra instantânea sem duração fictícia; primeira semana sem comparação inexistente | Pendente; curta + releitura do Bruno |
 | 5 | **R5 — A**, revisão §2.2 / A4 | Entrada única de mensagens, fila e consulta recuperável; duas emissões no mesmo frame sobrevivem | Pendente; sistema pequeno, layout a medir |
 | 6 | **R6 — C**, revisão §2.4 / A5, B4 | Contraste efetivo e cobertura de painéis/estados; defeito fora do painel original é detectado | Pendente; correção pontual antes da cobertura ampla |
@@ -1330,6 +1332,27 @@ deve manter o boletim aberto no turno correto — não exigir zero modais em
 toda foto. Definir limite de tentativas para travamento. Mutantes: consumir a
 iteração da decisão; avançar sob modal; remover um log; erro real com saída
 zero. Alterar pixels apenas em cópia temporária para provar o comparador.
+
+✅ **Fechado em 18/09, as duas metades** (`docs/decisoes/031`). Contados no
+workflow real: onze passos rodam `--script`, e a guarda de erro existia em
+seis. Ela passou a existir nos onze, e o `tools/conferir_guardas_ci.py` deixou
+de a deixar escrita à mão — deriva a lista do workflow e reprova quem rode
+`--script` sem preservar a saída, sem marcador ou sem varredura. Na captura,
+`tirar()` ganhou as três perguntas (log existe e não está vazio; nenhum erro;
+o turno declarado) e os dezasseis logs deixaram de ser apagados. A ferramenta
+passou a avançar por TURNO EFETIVO, pelo `_on_advance_pressed()` do jogo, e a
+parar diante de modal que não tenha licença para fechar; o menu de pausa abre
+depois de jogar. ⚠️ **O apêndice do briefing subestimava o defeito:** não era
+uma iteração comida, eram duas nesta semente, e `-- 34` entregava o turno 27
+com TRÊS Boletins empilhados. Sete mutantes reprovaram, com controle positivo
+verde entre cada um. Cinco das dezasseis capturas mudaram — as cinco que
+mudaram de turno —, e o julgamento delas continua a ser do A5.
+
+⚠️ **E o padrão da guarda NÃO é `ERROR`, que reprovaria o código certo:** cinco
+das seis suítes encerram uma corrida VERDE com `ERROR: 1 resources still in use
+at exit`, e o `teste_fumaca` imprime um erro de JSON de propósito. Medido: o
+prefixo não separa as classes — `push_error()` sai como `ERROR:`. Quem separa é
+`at: push_error (`, e é esse o par de padrões em vigor.
 
 **R3 — fonte operacional, não manifesto duplicado.** Conferir suítes/strings
 no workflow, mapas no gerador/comando, capturas na ferramenta e amostra no
@@ -2235,7 +2258,8 @@ Fase 2 não se coda sem perguntar antes — por isso está aqui e não na fila.
 
 1. A conversa nova abre com este documento ao lado do `ESTADO_DO_PROJETO.md`, e
    escolhe **um** item da fila.
-2. Em 17/09, o item escolhido é **R1 da §7.1**, a interpretação do simulador.
+2. Em 18/09, R1 e R2 estão fechados; o item seguinte é **R3 da §7.1**, a
+   reconciliação da fonte operacional.
    A1 já teve jogo no telefone e A3 já tem efeito medido; não voltar ao ponto
    de partida histórico desta seção.
 3. Leitura, julgamento visual e escuta continuam gates do Bruno. A atualização

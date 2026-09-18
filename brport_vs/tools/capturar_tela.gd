@@ -20,9 +20,18 @@ extends SceneTree
 # oferta do rival é resolvida para a tela sair limpa. Um terceiro argumento
 # `completo` compra todas as estruturas antes de montar a cena, para
 # fotografar o porto reconstruído (mapa pavimentado, píeres e prédios de pé).
-# Um quarto argumento `pausa` abre o menu de pausa por cima. Para fotografar o
-# PAINEL da contra-oferta em vez da tela principal, use --  0  e rode com
-# uma semente que abra oferta no primeiro turno.
+# Para fotografar o PAINEL da contra-oferta em vez da tela principal, use
+# --  0  e rode com uma semente que abra oferta no primeiro turno.
+#
+# `limpo`, `pausa` e `alocar` são bandeiras e leem-se em QUALQUER posição
+# depois da saída — fecham os painéis de rotina, abrem o menu de pausa no fim
+# e alocam os trabalhadores antes do disparo.
+#
+# ⚠️ E `turnos` SÃO TURNOS, não voltas de laço: a ferramenta avança até o
+# `turn` do jogo subir essa quantidade, pelo mesmo botão que o jogador carrega,
+# e PÁRA se houver um painel por cima que ela não tenha licença para fechar.
+# Quem chama confere na linha `Overlay:` em que turno ela parou — é assim que
+# um tiro promete o Boletim aberto no turno certo em vez de o atravessar.
 #
 # `--semente=N`, em qualquer posição, escolhe o mundo sorteado. O PADRÃO É
 # FIXO de propósito: a captura é publicada como artefato de cada PR (item B3
@@ -58,6 +67,17 @@ var _semente := SEMENTE_PADRAO
 ## exatamente, então a foto continua a ser byte a byte reprodutível.
 var _frames_extra := 0
 
+## As três bandeiras que não são POSIÇÃO, e por que deixaram de ser.
+##
+## `limpo` sempre se leu por pertença (`has`), e `pausa` lia-se por posição —
+## `args[3] == "pausa"`. Era a armadilha que o cabeçalho do `_montar()` já
+## descreve para as opções `--`: quem escrevesse `completo limpo pausa` punha o
+## `limpo` na casa 3 e o menu de pausa simplesmente não abria, com a foto a
+## sair por boa. Lidas todas aqui, a ordem em que se escrevem deixa de contar.
+var _limpo := false
+var _pausa := false
+var _alocar := false
+
 
 func _process(_delta: float) -> bool:
 	if not _montado:
@@ -75,7 +95,7 @@ func _process(_delta: float) -> bool:
 		# A contra-oferta fecha sempre — ela nunca é o assunto de foto nenhuma.
 		# O BOLETIM só fecha se quem chamou pediu `limpo`, porque há um tiro
 		# que existe para o fotografar.
-		_fechar_paineis_de_rotina(OS.get_cmdline_user_args().has("limpo"))
+		_fechar_paineis_de_rotina(_limpo)
 		return false
 
 	# QUANTOS PAINÉIS ESTÃO POR CIMA. A linha existe porque a captura do porto
@@ -131,6 +151,10 @@ func _montar() -> void:
 			_semente = int(valor)
 			continue
 		args.append(bruto)
+
+	_limpo = args.has("limpo")
+	_pausa = args.has("pausa")
+	_alocar = args.has("alocar")
 
 	var turnos := TURNOS_PADRAO
 	if args.size() >= 1 and str(args[0]).is_valid_int():
@@ -214,21 +238,76 @@ func _montar() -> void:
 	_main = load("res://scenes/Main.tscn").instantiate()
 	root.add_child(_main)
 
-	# `pausa` fotografa o menu de pausa, que é onde vivem os sliders de volume.
-	# Sem isto a única forma de conferir aquele painel era abrir o editor — e é
-	# um painel construído por código, portanto o que mais escapa ao olho.
-	if args.size() >= 4 and args[3] == "pausa":
-		_main._on_pause_pressed()
-
-	for t in range(turnos):
+	# ⚠️ O AVANÇO É POR TURNO EFETIVO, E PELO CAMINHO DO JOGADOR.
+	#
+	# Até 17/09 isto era `for t in range(turnos)` com um `continue` na oferta
+	# do rival, e o `continue` gastava a iteração sem virar turno nenhum:
+	# `-- 10` entregava o turno 9. Não era um turno de erro fixo — com esta
+	# semente, `-- 34` entregava o turno 27, sete iterações comidas, e o erro
+	# cresce com N porque cada oferta come mais uma.
+	#
+	# E o laço avançava POR BAIXO DO MODAL. O botão "Avançar dia" do jogo fica
+	# debaixo do escurecer de todo `PainelNarrativo` — um `ColorRect` ancorado
+	# a tela cheia, no `CanvasLayer` do Overlay, com o `mouse_filter` de
+	# omissão —, de modo que com um painel aberto o toque não lhe chega. Este
+	# laço chamava `GS.advance_turn()` direto e não tinha como saber disso:
+	# medido, `-- 12` dava "Dia 11/32" com o Boletim por cima a dizer "Semana 1
+	# de 4", e `-- 34` empilhava TRÊS Boletins. Nenhuma dessas fotos é um
+	# estado que alguém alcance a jogar, que é tudo o que uma captura serve
+	# para provar.
+	#
+	# Quem avança agora é `_main._on_advance_pressed()`, o mesmo que o botão
+	# chama. A condição de parar é a do botão (`phase != "playing"` desliga-o)
+	# mais a do escurecer: com um painel por cima, ou ele é de ROTINA e fecha
+	# como o jogador o fecharia, ou o avanço acaba ali.
+	var alvo: int = int(GS.turn) + turnos
+	# O TETO É DE VOLTAS, não de turnos, e é a contrapartida de o laço ter
+	# deixado de contar iterações: a oferta do rival passou a poder repetir a
+	# volta sem virar turno, e uma fase que esta ferramenta não saiba responder
+	# giraria aqui para sempre. Não é hipótese: um erro de execução dentro do
+	# `_process` de um `SceneTree` não aborta nada — repete-se a cada frame, e
+	# uma sonda escreveu 11 MB de log em dois minutos a provar isso.
+	# Duas voltas por turno pedido chegam de sobra, que a oferta não se repete
+	# no mesmo turno; as oito de folga são para o caso de N ser zero.
+	var teto: int = turnos * 2 + 8
+	var voltas := 0
+	while int(GS.turn) < alvo:
+		voltas += 1
+		if voltas > teto:
+			push_error("captura: %d voltas para avancar %d turno(s) — parado no turno %d, fase %s"
+				% [voltas, turnos, int(GS.turn), GS.phase])
+			quit(1)
+			return
+		# A oferta do rival é uma DECISÃO, e responder a uma decisão não é
+		# gastar um dia: o `while` olha o turno, portanto esta volta não conta.
 		if GS.phase == "rival_offer":
 			GS.negotiate_rival("metade")
 			_fechar_paineis_de_rotina(false)
 			continue
 		if GS.phase != "playing":
 			break
+		if _paineis_abertos() > 0:
+			_fechar_paineis_de_rotina(_limpo)
+			# Sobrou painel: ou é o Boletim num tiro que o quer fotografar, ou
+			# é uma tela que o jogo espera que alguém responda. Nos dois casos
+			# o dia acaba aqui — e quem chamou confere o turno em que acabou.
+			if _paineis_abertos() > 0:
+				break
 		_alocar_todos()
-		GS.advance_turn()
+		_main._on_advance_pressed()
+
+	# `pausa` fotografa o menu de pausa, que é onde vivem os sliders de volume.
+	# Sem isto a única forma de conferir aquele painel era abrir o editor — e é
+	# um painel construído por código, portanto o que mais escapa ao olho.
+	#
+	# ⚠️ E ELE ABRE DEPOIS DE JOGAR, que é a única ordem possível. Estava
+	# ANTES do laço, e nessa ordem os oito turnos daquele tiro corriam por
+	# baixo do menu de pausa — o mesmo defeito do Boletim, na tela que o
+	# jogador usa justamente para PARAR o jogo. Com o laço a recusar-se a
+	# avançar sob modal, abrir aqui é o que o torna fotografável: joga-se, e
+	# só então se pausa.
+	if _pausa:
+		_main._on_pause_pressed()
 
 	# ⚠️ E UMA ALOCAÇÃO NO FIM, sob pedido. O laço aloca ANTES de cada avanço,
 	# de modo que a foto sai sempre com os trabalhadores livres e as docas à
@@ -237,7 +316,7 @@ func _montar() -> void:
 	# OPERAR: o camião que sai da rua e encosta no berço do navio que está a ser
 	# servido. Sem esta linha ela não aparece em fotografia nenhuma, que é a
 	# forma exata do buraco do `barco_medio`.
-	if OS.get_cmdline_user_args().has("alocar"):
+	if _alocar:
 		_alocar_todos()
 		_main._refresh_all()
 

@@ -273,6 +273,22 @@ Teste e import rodam sem tela.
    porque os tweens em laço andam por *delta* e não por frame. Quem tirar a
    captura à mão sem `--fixed-fps 60` tem uma foto para olhar, não uma para
    comparar.
+   ⚠️ **E FERRAMENTA DE EVIDÊNCIA QUE CONTA VOLTAS NÃO ENTREGA O QUE PROMETE.**
+   O `capturar_tela.gd -- N` contava iterações de laço, e a oferta do rival
+   gastava uma sem virar o dia: medido em 18/09, `-- 10` entregava o turno 9,
+   `-- 34` entregava o 27. Ferramenta que promete um ESTADO avança até o estado
+   — `while GS.turn < alvo`, e um teto de voltas para o caso de o estado nunca
+   chegar (`docs/decisoes/031`).
+   ⚠️ **E CONTAR O QUE ESTÁ ABERTO NO FIM NÃO DIZ O QUE ESTAVA ABERTO
+   DURANTE.** A contagem de painéis existe desde que o `porto` saiu com o
+   Boletim por cima, e não podia apanhar o defeito irmão: a ferramenta avançava
+   turnos por BAIXO do modal — no jogo o botão "Avançar dia" fica debaixo do
+   escurecer de todo `PainelNarrativo`, que é um `ColorRect` a tela cheia no
+   `CanvasLayer`, logo aquelas fotos são estados que ninguém alcança a jogar.
+   Medido: com o defeito injetado, o tiro do boletim chegou ao turno 13 **com
+   um painel**, que é exatamente o número que a guarda velha exigia. Guarda de
+   ESTADO FINAL não prova PROCESSO — cada tiro passou a declarar também o TURNO
+   em que pára, e é isso que reprova.
    E ao recortar a captura para conferir um detalhe, lembre que
    **o mapa não começa no topo da tela**: `MapaWrap` tem `offset_top = 62`, e
    as coordenadas que saem da projeção são do MAPA. Somar os 62 é a diferença
@@ -434,6 +450,28 @@ Teste e import rodam sem tela.
    achava o que não devia num ARQUIVO, aqui numa MENSAGEM que se acabou de
    escrever. Antes de imprimir texto novo numa ferramenta, procure que strings
    alguém procura na saída dela.
+   ⚠️ **E GUARDA DE «NÃO HOUVE ERRO» ESCOLHE-SE MEDINDO O QUE A CORRIDA
+   SAUDÁVEL IMPRIME.** O marcador diz que a ferramenta chegou ao fim; não diz
+   que ela não se queixou pelo caminho, e o Godot encerra com 0 nas duas
+   situações. Só que a guarda óbvia — `grep ERROR` — reprovaria quase tudo o
+   que está certo: medido em 18/09, em corridas VERDES, **cinco das seis
+   suítes** e o simulador encerram com `ERROR: 1 resources still in use at
+   exit` — e no simulador isso sai DEPOIS do marcador —, e o `teste_fumaca`
+   imprime um `ERROR: Parse JSON failed` **de propósito**, que é o save
+   inválido que ele injeta para provar que o jogo o recusa.
+   ⚠️ **E O PREFIXO NÃO SEPARA AS CLASSES:** medido numa sonda, `push_error()`
+   sai como `ERROR:` e não como `USER ERROR:` — a queixa da FERRAMENTA tem o
+   prefixo do barulho do MOTOR. Quem separa é a ORIGEM, escrita na linha `at:`:
+   só quem chamou `push_error` traz `at: push_error (`. O par em vigor é
+   `SCRIPT ERROR|at: push_error \(`, e quem DERIVA do workflow a lista de quem
+   o tem é `tools/conferir_guardas_ci.py` — ela era escrita à mão, e foi por
+   isso que faltou em cinco dos onze passos (`docs/decisoes/031`).
+   ⚠️ **E O ESCOPO DA GUARDA É O ESCOPO DO DEFEITO.** A primeira versão desse
+   portão exigia a varredura de todo arquivo de um passo que rodasse
+   `--script`, e reprovou a saída de um leitor em **Python** — onde uma exceção
+   sai com código ≠ 0 e o `set -e` apanha. Sair com zero depois de um erro é
+   problema do Godot e só dele. Antes de alargar uma guarda ao passo inteiro,
+   pergunte de QUE ferramenta é o defeito que ela caça.
    **E TESTE QUE LÊ ARTE GERADA LÊ O ARQUIVO, NUNCA O `load()` DA TEXTURA.**
    `load("res://art/porto_mapa_iso.svg")` devolve o `.ctex` de
    `.godot/imported/`, que é de quando o projeto foi importado: com o mapa
