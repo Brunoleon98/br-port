@@ -77,10 +77,14 @@ signal contrato_fechado(valor: int, classe: String)
 # pequena da taxa de serviço, a manutenção é custo fixo de verdade, e o capital
 # (píer, armazém) é o que pesa — que é o que um porto é.
 #
-# TUNING — medido, não estimado. 600 partidas por perfil em
-# tools/simular_balanceamento.gd: **ótimo 100% · mediano 80,2% · descuidado
-# 37,3%**. A mediana do mediano fecha em R$716.179 contra uma parcela de
-# R$530.000. Mexer aqui SEM rodar o simulador quebra isso.
+# TUNING — medido, não estimado, com 600 partidas por perfil em
+# tools/simular_balanceamento.gd. Mexer aqui SEM rodar o simulador quebra isso.
+#
+# ⚠️ AS TAXAS MEDIDAS NÃO SE REPETEM AQUI, e é decisão de 18/09 (docs/decisoes/
+# 032): elas viviam em cinco sítios e três deles envelheceram caladinhos, com
+# o resumo semanal do CI a publicar um número que já não era medido havia
+# duas semanas. Hoje o endereço é UM — o CLAUDE.md, secção "Antes de fechar" —
+# e `tools/conferir_docs.py` reprova o segundo que aparecer.
 #
 # O ALVO MUDOU, e é decisão registrada (docs/decisoes/005): o jogo é TRANQUILO.
 # Os 47% do jogador mediano eram a fantasia de sobrevivência que essa decisão

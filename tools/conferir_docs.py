@@ -67,6 +67,160 @@ def tamanho_com_lf(caminho):
         return len(arquivo.read().replace(b"\r\n", b"\n"))
 
 
+# ── A FONTE OPERACIONAL, e o que ela tranca (R3, `docs/decisoes/032`) ──────
+#
+# As quatro perguntas abaixo não são sobre DOCUMENTOS: são sobre AFIRMAÇÕES que
+# documentos fazem a respeito do que a máquina realmente corre. Em 17/09 a
+# revisão achou seis documentos a anunciar uma bateria de CINCO suítes — o
+# `teste_registro` entrara no CI em 02/09 —, três ferramentas a publicar taxas
+# de balanceamento que tinham deixado de ser medidas, e o ritual de fecho a
+# mandar regerar DOIS dos quatro mapas. Nada disso é referência partida, que é
+# o que este conferidor já sabia ver; é texto verdadeiro no dia em que foi
+# escrito e falso hoje.
+#
+# A regra que sai daqui: **a lista vive no workflow, e o texto responde por ela.**
+WORKFLOW = ".github/workflows/testes.yml"
+
+# O triplo do balanceamento tem UM endereço vivo. Não é preciosismo: ele esteve
+# em cinco, três divergiram, e um deles era o resumo que o CI publica toda
+# segunda-feira. As pastas abaixo guardam HISTÓRIA — uma decisão registada e o
+# arquivo das sessões descrevem o que se mediu NAQUELE dia, e reescrevê-las
+# seria apagar o registo.
+ENDERECO_DO_TRIPLO = "CLAUDE.md"
+HISTORIA = ("docs/arquivo", "docs/decisoes", "docs/REVISAO_GERAL")
+TRIPLO = re.compile(
+    r"\b100(?:,0)?\s*%\s*[/·]\s*\d{1,3},\d\s*%\s*[/·]\s*\d{1,3},\d\s*%")
+
+
+def _normal(s):
+    """`100%` e `100,0%` são o mesmo número — e uma vírgula a mais abria um
+    segundo endereço sem a guarda ver. Medido: o plano v3 tinha as duas
+    grafias, e só uma reprovava."""
+    return re.sub(r"\s+", "", s).replace("100,0%", "100%")
+
+# ⚠️ O QUE ESTA GUARDA NÃO COBRE, escrito ao lado dela. Ela compara contra o
+# triplo ATUAL, lido do `CLAUDE.md`, e não contra o padrão: uma medição ANTIGA
+# em prosa datada — os `100% / 47,8% / 0%` de 01/09 que o plano v3 narra duas
+# vezes, com a data e o aviso de que a economia foi reescalada — não é um
+# segundo endereço, é o registo de um dia. Foi medido: a versão que reprovava
+# pelo PADRÃO apanhava esses dois e teria mandado reescrever história para
+# ficar verde, que é o contrário do que este repositório faz.
+#
+# Em código (`.yml`, `.gd`, `.py`) a régua é mais apertada, e de propósito:
+# ali um triplo ou é o de hoje ou não devia estar escrito. Foi exatamente
+# assim que o resumo semanal do CI publicou 79,5% / 35,7% durante duas
+# semanas depois de esses números deixarem de ser medidos.
+CODIGO_QUE_AFIRMA = (".github/workflows", "tools", "brport_vs/tools",
+                     "brport_vs/tests", "brport_vs/autoload")
+
+
+def _triplo_atual(regras):
+    m = TRIPLO.search(regras)
+    return m.group(0) if m else None
+
+
+def _sem_continuacoes(texto):
+    """Junta as linhas partidas por `\` — sem isto um comando de workflow é
+    lido como três linhas soltas, e um `grep` por ele não casa nada. Custou um
+    verde de graça no próprio dia em que esta função foi escrita."""
+    return re.sub(r"\\\n\s*", " ", texto)
+
+
+def conferir_fonte_operacional(docs):
+    falhas = []
+    caminho_wf = os.path.join(RAIZ, WORKFLOW)
+    if not os.path.exists(caminho_wf):
+        return ["falta %s — sem ele não há fonte operacional a conferir." % WORKFLOW]
+    wf = _sem_continuacoes(open(caminho_wf, encoding="utf-8").read())
+
+    # ── 1. As SUÍTES que o CI roda têm de estar nomeadas no CLAUDE.md ──────
+    suites = sorted(set(re.findall(
+        r"--script\s+res://((?:tests|scripts/validation)/[a-z_]+)\.gd", wf)))
+    if not suites:
+        falhas.append("não achei suíte nenhuma em %s — ou elas sumiram, ou "
+                      "este conferidor deixou de as entender." % WORKFLOW)
+    regras = open(os.path.join(RAIZ, "CLAUDE.md"), encoding="utf-8").read()
+    for s in suites:
+        nome = s.split("/")[-1]
+        if nome not in regras:
+            falhas.append(
+                "o CI roda `%s.gd` e o CLAUDE.md não o nomeia. Suíte omitida é "
+                "suíte que ninguém roda à mão — foi assim que o teste_registro "
+                "passou duas semanas fora de seis documentos." % s)
+
+    # ── 2. Os MAPAS que o CI regera são os que o ritual manda regerar ──────
+    do_ci = set(re.findall(r"gerar_mapa_iso\.py[^\n]*?(brport_vs/art/[a-z_0-9]+\.svg)", wf))
+    ritual = os.path.join(RAIZ, ".claude/skills/fechar-sessao/SKILL.md")
+    if do_ci and os.path.exists(ritual):
+        texto = _sem_continuacoes(open(ritual, encoding="utf-8").read())
+        da_skill = set(re.findall(
+            r"gerar_mapa_iso\.py[^\n]*?(brport_vs/art/[a-z_0-9]+\.svg)", texto))
+        if da_skill != do_ci:
+            falhas.append(
+                "o CI regera %d mapa(s) e o /fechar-sessao regera %d: %s. "
+                "Quem seguir o ritual deixa a diferença por regerar e descobre "
+                "no CI vermelho." % (
+                    len(do_ci), len(da_skill),
+                    ", ".join(sorted(x.split("/")[-1] for x in do_ci ^ da_skill))))
+
+    # ── 3. O texto não pode dizer um número de partidas que o CI não roda ──
+    m = re.search(r"simular_balanceamento\.gd\s+--\s+(\d+)", wf)
+    if m:
+        n = m.group(1)
+        frase = re.compile(r"(?:as\s+)?(\d+)\s+partidas\s+(?:que\s+)?(?:o\s+)?(?:que o\s+)?CI"
+                           r"|(\d+)\s+partidas\s+do\s+CI")
+        for doc in docs:
+            rel = os.path.relpath(doc, RAIZ)
+            if rel.startswith(HISTORIA):
+                continue
+            for achado in frase.finditer(open(doc, encoding="utf-8").read()):
+                dito = achado.group(1) or achado.group(2)
+                if dito != n:
+                    falhas.append(
+                        "%s diz «%s partidas … CI» e o comando roda %s."
+                        % (rel, dito, n))
+
+    # ── 4. O triplo do balanceamento vive num sítio só ─────────────────────
+    atual = _triplo_atual(regras)
+    if atual is None:
+        falhas.append(
+            "o %s não publica as taxas medidas do balanceamento. Elas têm de "
+            "viver em algum sítio, e o endereço é esse." % ENDERECO_DO_TRIPLO)
+    else:
+        for doc in docs:
+            rel = os.path.relpath(doc, RAIZ)
+            if rel.startswith(HISTORIA) or rel == ENDERECO_DO_TRIPLO:
+                continue
+            if any(_normal(m.group(0)) == _normal(atual)
+                   for m in TRIPLO.finditer(open(doc, encoding="utf-8").read())):
+                falhas.append(
+                    "%s repete as taxas de hoje (%s). Elas vivem só no %s: "
+                    "estiveram em cinco sítios, três divergiram, e um deles "
+                    "era o resumo que o CI publica toda segunda-feira."
+                    % (rel, atual, ENDERECO_DO_TRIPLO))
+
+    # ── 4b. Em CÓDIGO, um triplo ou é o de hoje ou não devia estar lá ──────
+    for base in CODIGO_QUE_AFIRMA:
+        raiz_cod = os.path.join(RAIZ, base)
+        if not os.path.isdir(raiz_cod):
+            continue
+        for dp, dn, fn in os.walk(raiz_cod):
+            dn[:] = [d for d in dn if d not in IGNORAR_PASTAS]
+            for f in fn:
+                if not f.endswith((".yml", ".yaml", ".gd", ".py")):
+                    continue
+                caminho = os.path.join(dp, f)
+                rel = os.path.relpath(caminho, RAIZ)
+                for achado in TRIPLO.finditer(open(caminho, encoding="utf-8").read()):
+                    if atual is None or _normal(achado.group(0)) != _normal(atual):
+                        falhas.append(
+                            "%s afirma «%s», que não é a medição de hoje. Em "
+                            "código o triplo ou é o atual ou não se escreve: "
+                            "aponte para o %s."
+                            % (rel, achado.group(0), ENDERECO_DO_TRIPLO))
+    return falhas
+
+
 def main():
     falhas = []
     docs = sorted(documentos())
@@ -125,6 +279,9 @@ def main():
     else:
         falhas.append("falta a pasta %s/" % ARQUIVO)
 
+    # ── 5. O texto responde pela fonte que a máquina corre ─────────────────
+    falhas += conferir_fonte_operacional(docs)
+
     # ── 5. O estado não voltou a inchar sem ninguém decidir ────────────────
     estado = os.path.join(RAIZ, "docs/ESTADO_DO_PROJETO.md")
     if os.path.exists(estado):
@@ -150,7 +307,7 @@ def main():
 
     print("%d documentos, %d no arquivo, estado com %d bytes." % (
         len(docs), len(os.listdir(dir_arquivo)) - 1, tam))
-    print("=== DOCS OK — as camadas estão de pé e as referências resolvem ===")
+    print("=== DOCS OK — as camadas estão de pé, as referências resolvem e o texto bate com o que o CI corre ===")
     return 0
 
 

@@ -176,9 +176,10 @@ Na mesma passagem a economia inteira foi **reescalada para valores realistas** �
 contratos de R$8.000 a R$70.000 na Fase 1, manutenção de R$40.000/semana,
 estruturas de R$80.000 a R$260.000, Parcela 1 de R$550.000. A escala uniforme
 foi medida e é cosmética; o que mudou o jogo foram os RATIOS. Medido em 600
-partidas por perfil, com a parcela em R$530.000 desde 06/09: **100% / 80,2% /
-37,3%** (era 100% / 79,5% / 31,0% em 05/09, e o Descuidado 35,7% antes dos
-upgrades de guindaste e cais — `docs/decisoes/007`).
+partidas por perfil, com a parcela em R$530.000 desde 06/09, e as taxas estão
+no `CLAUDE.md` — num sítio só, de propósito (`docs/decisoes/032`). Em 05/09 o
+Descuidado media 31,0%, e 35,7% antes dos upgrades de guindaste e cais
+(`docs/decisoes/007`).
 
 ⚠️ **E a faixa de contrato da Fase 1 mudou em 06/09**: o navio passou a ter
 CLASSE, travada pelo nível do porto, e as três faixas somadas vão de R$12.000 a

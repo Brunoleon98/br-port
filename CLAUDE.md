@@ -62,6 +62,7 @@ $G --headless --path brport_vs --script res://tests/run_tests.gd
 $G --headless --path brport_vs --script res://tests/teste_design.gd
 $G --headless --path brport_vs --script res://tests/teste_audio.gd
 $G --headless --path brport_vs --script res://tests/teste_fumaca.gd
+$G --headless --path brport_vs --script res://tests/teste_registro.gd
 $G --headless --path brport_vs --script res://scripts/validation/asset_validator.gd
 xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
   --script res://tools/capturar_tela.gd -- 12 foto.png completo
@@ -181,6 +182,14 @@ Teste e import rodam sem tela.
    `tests/teste_audio.gd` — o encanamento de som. Espera `AUDIO OK`.
    `tests/teste_fumaca.gd` — a cena abre, o ícone existe, o save não migra.
    Espera `FUMACA OK`.
+   `tests/teste_registro.gd` — o gravador de partida. Espera `REGISTRO OK`.
+   `scripts/validation/asset_validator.gd` — o contrato dos assets. Espera
+   `ASSET OK`.
+   ⚠️ **SÃO SEIS, e esta lista dizia quatro.** O `teste_registro` entrou no CI
+   em 02/09 e não era citado em documento nenhum dos seis que o repetiam —
+   nem aqui, nem no hook, nem nas três skills, nem no `COMO_RODAR`. Quem
+   manda hoje é o `testes.yml`, e `tools/conferir_docs.py` reprova quem
+   divergir dele (`docs/decisoes/032`).
 3. Mexeu em QUALQUER `const` do `GameState.gd`? Regere a tabela dos números —
    `despejar_constantes.gd` + `tools/gerar_tabela_numeros.py --contra-godot`,
    espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
@@ -206,9 +215,13 @@ Teste e import rodam sem tela.
    medida em 06/09 — o Ótimo a levantar as sete estruturas num sorteio mau e a
    chegar curto — desapareceu, porque o porto que constrói tudo também passou a
    receber navio melhor.
-   **Medir é com `-- 600`.** As 30 partidas que o CI roda são teste de fumaça
-   (provam que a ferramenta não quebrou junto com o `GameState`) e têm margem
-   de ±18 pontos — comparar aquele número com estes é comparar sorteio.
+   **Medir é com `-- 600`, e é o que o CI roda desde 05/09.** ⚠️ Esta linha
+   anunciava uma amostra de fumaça no CI e ficou a descrever um comando que
+   deixou de existir no dia em que o portão das Parcelas passou a precisar de
+   uma MEDIÇÃO — no arquivo que carrega sozinho, portanto lido em toda sessão
+   (`docs/decisoes/032`). Uma rodada CURTA continua a ser teste de fumaça
+   (prova que a ferramenta não quebrou junto com o `GameState`) e tem margem
+   de dezenas de pontos: comparar aquele número com estes é comparar sorteio.
    O próprio simulador avisa quando a rodada é curta demais para medir.
    ⚠️ **E PORTÃO ALIMENTADO COM FUMAÇA REPROVA POR SORTEIO.** O CI passava ao
    portão de calibração do `projetar_parcelas.py` a medição de 30 partidas — a
@@ -273,6 +286,22 @@ Teste e import rodam sem tela.
    porque os tweens em laço andam por *delta* e não por frame. Quem tirar a
    captura à mão sem `--fixed-fps 60` tem uma foto para olhar, não uma para
    comparar.
+   ⚠️ **E FERRAMENTA DE EVIDÊNCIA QUE CONTA VOLTAS NÃO ENTREGA O QUE PROMETE.**
+   O `capturar_tela.gd -- N` contava iterações de laço, e a oferta do rival
+   gastava uma sem virar o dia: medido em 18/09, `-- 10` entregava o turno 9,
+   `-- 34` entregava o 27. Ferramenta que promete um ESTADO avança até o estado
+   — `while GS.turn < alvo`, e um teto de voltas para o caso de o estado nunca
+   chegar (`docs/decisoes/031`).
+   ⚠️ **E CONTAR O QUE ESTÁ ABERTO NO FIM NÃO DIZ O QUE ESTAVA ABERTO
+   DURANTE.** A contagem de painéis existe desde que o `porto` saiu com o
+   Boletim por cima, e não podia apanhar o defeito irmão: a ferramenta avançava
+   turnos por BAIXO do modal — no jogo o botão "Avançar dia" fica debaixo do
+   escurecer de todo `PainelNarrativo`, que é um `ColorRect` a tela cheia no
+   `CanvasLayer`, logo aquelas fotos são estados que ninguém alcança a jogar.
+   Medido: com o defeito injetado, o tiro do boletim chegou ao turno 13 **com
+   um painel**, que é exatamente o número que a guarda velha exigia. Guarda de
+   ESTADO FINAL não prova PROCESSO — cada tiro passou a declarar também o TURNO
+   em que pára, e é isso que reprova.
    E ao recortar a captura para conferir um detalhe, lembre que
    **o mapa não começa no topo da tela**: `MapaWrap` tem `offset_top = 62`, e
    as coordenadas que saem da projeção são do MAPA. Somar os 62 é a diferença
@@ -334,6 +363,28 @@ Teste e import rodam sem tela.
    geração deu 18,71 s de manhã e 22–23 s à tarde neste contêiner: **20% de
    deriva da máquina**, que é mais do que muita diferença que este projeto mede.
    Duas corridas soltas em horas diferentes comparam a carga, não o código.
+   ⚠️ **E RECEITA DERIVADA QUE NÃO CASA NADA DÁ UM VERDE DE GRAÇA.** É a regra
+   da amostra vazia com a roupa de um bloco de shell, e mordeu na sessão que a
+   escreveu: o `/fechar-sessao` passou a derivar do `testes.yml` os comandos que
+   regeram os mapas, o `grep` casou **zero** deles — no workflow eles estão
+   partidos por continuações `\` —, nada correu, o `git diff` saiu vazio e isso
+   leu-se como sucesso. **Conte o que a derivação achou antes de acreditar no
+   silêncio dela** (`docs/decisoes/032`).
+   ⚠️ **E NÚMERO PARTIDO POR UMA QUEBRA DE LINHA ESCAPA A TODO `grep` DE
+   LINHA.** A prosa deste repositório quebra aos ~79 caracteres, então qualquer
+   facto de vários tokens pode ficar a cavalo de duas linhas. Em 18/09 o sétimo
+   sítio a repetir as taxas do balanceamento estava escrito `100,0% / 80,2%` +
+   `/ 37,3%` — e sobreviveu a uma revisão externa E a uma varredura à mão,
+   ambas feitas com `grep -n`. Régua que procura FACTO lê o arquivo inteiro com
+   `\s*` a atravessar a quebra; e normalize a grafia, que `100,0%` contra
+   `100%` abriu um segundo endereço sem a guarda ver.
+   ⚠️ **E CONTAGEM QUE INSTRUI CONFERE-SE; CONTAGEM QUE NARRA FICA.** A regra
+   irmã — *"contagem em prosa de lista que cresce tira-se"* — diz o que fazer;
+   esta diz onde NÃO fazer. O `grep` por "as cinco suítes" dá dezenas de
+   acertos e quase todos são história verdadeira (*"nenhuma das cinco suítes
+   lia aquela linha"* descreve o dia em que eram cinco). Corrigi-los é
+   reescrever o registo para ficar verde. Antes de trocar um número, pergunte
+   se ele manda fazer alguma coisa.
    **E confira que o defeito injetado pegou.** Dois já não pegaram: um usou uma
    variável de ambiente que a sessão já trazia definida, e outro quebrou o
    GDScript de tal jeito que o passo anterior falhou calado e reaproveitou o
@@ -434,6 +485,28 @@ Teste e import rodam sem tela.
    achava o que não devia num ARQUIVO, aqui numa MENSAGEM que se acabou de
    escrever. Antes de imprimir texto novo numa ferramenta, procure que strings
    alguém procura na saída dela.
+   ⚠️ **E GUARDA DE «NÃO HOUVE ERRO» ESCOLHE-SE MEDINDO O QUE A CORRIDA
+   SAUDÁVEL IMPRIME.** O marcador diz que a ferramenta chegou ao fim; não diz
+   que ela não se queixou pelo caminho, e o Godot encerra com 0 nas duas
+   situações. Só que a guarda óbvia — `grep ERROR` — reprovaria quase tudo o
+   que está certo: medido em 18/09, em corridas VERDES, **cinco das seis
+   suítes** e o simulador encerram com `ERROR: 1 resources still in use at
+   exit` — e no simulador isso sai DEPOIS do marcador —, e o `teste_fumaca`
+   imprime um `ERROR: Parse JSON failed` **de propósito**, que é o save
+   inválido que ele injeta para provar que o jogo o recusa.
+   ⚠️ **E O PREFIXO NÃO SEPARA AS CLASSES:** medido numa sonda, `push_error()`
+   sai como `ERROR:` e não como `USER ERROR:` — a queixa da FERRAMENTA tem o
+   prefixo do barulho do MOTOR. Quem separa é a ORIGEM, escrita na linha `at:`:
+   só quem chamou `push_error` traz `at: push_error (`. O par em vigor é
+   `SCRIPT ERROR|at: push_error \(`, e quem DERIVA do workflow a lista de quem
+   o tem é `tools/conferir_guardas_ci.py` — ela era escrita à mão, e foi por
+   isso que faltou em cinco dos onze passos (`docs/decisoes/031`).
+   ⚠️ **E O ESCOPO DA GUARDA É O ESCOPO DO DEFEITO.** A primeira versão desse
+   portão exigia a varredura de todo arquivo de um passo que rodasse
+   `--script`, e reprovou a saída de um leitor em **Python** — onde uma exceção
+   sai com código ≠ 0 e o `set -e` apanha. Sair com zero depois de um erro é
+   problema do Godot e só dele. Antes de alargar uma guarda ao passo inteiro,
+   pergunte de QUE ferramenta é o defeito que ela caça.
    **E TESTE QUE LÊ ARTE GERADA LÊ O ARQUIVO, NUNCA O `load()` DA TEXTURA.**
    `load("res://art/porto_mapa_iso.svg")` devolve o `.ctex` de
    `.godot/imported/`, que é de quando o projeto foi importado: com o mapa
@@ -1927,6 +2000,6 @@ armadilha de uma função, no comentário dela.
   de quem o precede.
 - Comentário explica **por que**, e de preferência conta o que se tentou antes
   e não funcionou. O repositório inteiro é escrito assim; siga.
-- Nada de emoji na interface — os 20 ícones vivem em `art/icones/` e são
+- Nada de emoji na interface — os ícones vivem em `art/icones/` e são
   registrados em `scripts/Icones.gd`.
 - `.gd.uid` e `.import` **entram no Git** (o `.gitignore` explica por quê).

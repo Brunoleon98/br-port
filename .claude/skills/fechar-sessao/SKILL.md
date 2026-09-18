@@ -63,20 +63,23 @@ $G --headless --path brport_vs --import   # sem .godot a suíte falha com uma
                                           # com o que se está testando
 ```
 
-## 2. A base: os cinco do Godot, sempre
+## 2. A base: as suítes do Godot, todas, sempre
 
 São segundos cada um e o CI roda os cinco em todo push. Não há mudança neste
 repositório barata o bastante para os pular.
 
 ```sh
-for t in tests/run_tests tests/teste_design tests/teste_audio \
-         tests/teste_fumaca scripts/validation/asset_validator; do
+# A lista SAI DO WORKFLOW, e não daqui: ela esteve escrita à mão com cinco
+# nomes e o `teste_registro` entrou no CI em 02/09 sem que nenhum dos seis
+# documentos que a repetiam soubesse (`docs/decisoes/032`).
+for t in $(grep -oE 'res://(tests|scripts/validation)/[a-z_]+\.gd' \
+             .github/workflows/testes.yml | sed 's|res://||;s|\.gd$||' | sort -u); do
   $G --headless --path brport_vs --script res://$t.gd
 done
 ```
 
-Espera-se, na ordem: `TODOS OS TESTES PASSARAM`, `DESIGN OK`, `AUDIO OK`,
-`FUMACA OK`, `ASSET OK`. O código de saída não chega: um erro de compilação do GDScript sai
+Cada uma tem a sua linha final — `TODOS OS TESTES PASSARAM`, `DESIGN OK`,
+`AUDIO OK`, `FUMACA OK`, `REGISTRO OK`, `ASSET OK`. O código de saída não chega: um erro de compilação do GDScript sai
 com 0 sem rodar nada — é por isso que o CI também exige a linha final, e você
 também deve.
 
@@ -84,10 +87,10 @@ também deve.
 
 | Se mexeu em… | Rode | Espera |
 |---|---|---|
-| preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | 100% / 80,2% / 37,3% ainda de pé |
+| preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | as taxas do `CLAUDE.md` ainda de pé |
 | **qualquer `const` do `GameState.gd`** | o despejo + a tabela (abaixo) | `TABELA OK` |
 | **a economia, de qualquer maneira** | `tools/projetar_parcelas.py` (abaixo) | o modelo ainda calibra nos 3 perfis |
-| `tools/gerar_mapa_iso.py` | regerar os dois mapas (abaixo) | `git diff -- brport_vs/art` limpo |
+| `tools/gerar_mapa_iso.py` | regerar **os quatro** mapas (abaixo) | `git diff -- brport_vs/art` limpo |
 | `tools/gerar_sons.py` | `python3 tools/gerar_sons.py brport_vs/audio/sfx` | `git diff -- brport_vs/audio` limpo |
 | catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
 | **qualquer documento** | `python3 tools/conferir_docs.py` | `DOCS OK` |
@@ -95,12 +98,24 @@ também deve.
 | qualquer coisa visível | uma captura, e **olhar para ela** (seção 4) | — |
 
 ```sh
-# Os dois mapas — o do porto e o do pátio. Regerar um só e esquecer o outro
-# deixa a tabela de âncoras a descrever um porto que já não existe.
+# OS QUATRO MAPAS. Este bloco listava DOIS — o do porto e o do pátio — e os
+# dois da espuma entraram em 03/09 sem ele saber: quem seguisse esta receita
+# deixava metade por regerar e descobria no CI vermelho.
+#
+# ⚠️ E A PRIMEIRA CORREÇÃO FOI UM VERDE DE GRAÇA. Ela derivava os comandos do
+# `testes.yml` com um `grep`, e o `grep` não casou nada — os comandos lá estão
+# partidos por continuações `\`. Zero comandos correram, o `git diff` saiu
+# vazio e isso leu-se como sucesso. Receita derivada que não casa nada não
+# reprova: conte o que ela achou antes de acreditar no silêncio (`032`).
+#
+# A lista é explícita, e quem a prende ao workflow é `tools/conferir_docs.py`:
+# ele reprova se estes quatro alvos divergirem dos que o CI regera.
 python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
   --sem-pavimento brport_vs/art/porto_mapa_iso.svg
 python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
   brport_vs/art/porto_mapa_iso_patio.svg
+python3 tools/gerar_mapa_iso.py --espuma=0 brport_vs/art/porto_mapa_espuma0.svg
+python3 tools/gerar_mapa_iso.py --espuma=1 brport_vs/art/porto_mapa_espuma1.svg
 git diff --stat -- brport_vs/art        # tem de sair vazio
 ```
 
@@ -120,7 +135,7 @@ python3 tools/projetar_parcelas.py --medicao /tmp/medicao.json \
   --constantes /tmp/constantes.json
 ```
 
-**Sobre o simulador:** medir é com `-- 600`. As 30 partidas do CI são teste de
+**Sobre o simulador:** medir é com `-- 600`, que é o que o CI roda desde 05/09. Uma rodada curta é teste de
 fumaça — provam que a ferramenta não quebrou junto com o `GameState` — e têm
 margem de ±18 pontos. Comparar aquele número com os 80,2% é comparar sorteio; o
 próprio simulador avisa quando a rodada é curta demais.

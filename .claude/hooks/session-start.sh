@@ -99,5 +99,16 @@ if [ "$IMPORT_OK" -eq 1 ]; then
 else
   echo "BR Port: Godot ${VERSAO} em \$G ($BIN), mas o --import falhou (veja /tmp/brport_import.txt). Rode-o antes de qualquer teste."
 fi
-echo "  Suítes: \$G --headless --path brport_vs --script res://tests/{run_tests,teste_design,teste_audio,teste_fumaca}.gd e res://scripts/validation/asset_validator.gd"
+# ⚠️ A LISTA SAI DO WORKFLOW, e não escrita aqui. Ela tinha quatro nomes mais
+# o validador, e o `teste_registro` entrava no CI em 02/09 sem que esta linha
+# — nem as três skills, nem o CLAUDE.md, nem o COMO_RODAR — soubesse: seis
+# documentos a anunciar uma bateria que já não era a que corria
+# (`docs/decisoes/032`). Derivada, ela não tem como envelhecer.
+SUITES=$(grep -oE 'res://(tests|scripts/validation)/[a-z_]+\.gd' \
+           "$RAIZ/.github/workflows/testes.yml" 2>/dev/null | sort -u | tr '\n' ' ')
+if [ -n "$SUITES" ]; then
+  echo "  Suítes (do testes.yml): \$G --headless --path brport_vs --script <uma de> $SUITES"
+else
+  echo "  Suítes: veja os passos --script de .github/workflows/testes.yml"
+fi
 echo "  Blender (bpy, ~1 GB) fica SOB DEMANDA, fora do arranque: pip install \"bpy==4.5.0\" — só faz falta em sessão de arte."

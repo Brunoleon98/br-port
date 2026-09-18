@@ -31,6 +31,20 @@ jobs:
       - name: Ler a versão do Godot
         run: echo "GODOT_VERSION=$(tr -d '[:space:]' < .godot-version)" >> "$GITHUB_ENV"
 
+      - name: Nenhum passo de CI pode rodar --script sem guarda
+        # Vem AQUI, antes do download do Godot, porque custa um segundo e
+        # responde a uma pergunta sobre este arquivo — não sobre o jogo. Um
+        # workflow que perdeu a guarda não merece quinze minutos de corrida.
+        #
+        # A guarda de erro existia em seis passos e faltava em cinco, medido em
+        # 18/09, e não por descuido de ninguém: ela era escrita à mão, passo a
+        # passo, e o passo seguinte nascia sem ela. Esta é a pergunta que impede
+        # a recorrência — a lista de quem a tem deixou de ser escrita e passou a
+        # ser DERIVADA do workflow.
+        run: |
+          set -euo pipefail
+          python3 tools/conferir_guardas_ci.py
+
       - name: Reaproveitar o Godot já baixado
         id: cache-godot
         uses: actions/cache@v4
@@ -80,11 +94,28 @@ jobs:
         #
         # Este passo é a guarda que faltava, e vem ANTES dos outros de
         # propósito: com ele, "passou" volta a querer dizer "correu".
+        #
+        # ⚠️ E O PADRÃO NÃO PODE SER `ERROR`, QUE REPROVARIA TUDO O QUE ESTÁ
+        # CERTO. Medido em 18/09, em corridas verdes deste mesmo código: CINCO
+        # das seis suítes acabam com `ERROR: 1 resources still in use at exit`,
+        # que é contabilidade de encerramento do motor, e o `teste_fumaca`
+        # imprime ainda um `ERROR: Parse JSON failed` de PROPÓSITO — é o save
+        # inválido que ele injeta para provar que o jogo o recusa. Um `grep
+        # ERROR` aqui deixaria o CI vermelho em cinco passos, um deles por um
+        # teste a fazer exatamente o seu trabalho.
+        #
+        # ⚠️ E O PREFIXO NÃO SEPARA AS DUAS CLASSES. Medido numa sonda no mesmo
+        # dia, `push_error()` sai como `ERROR:` e não como `USER ERROR:`, de
+        # modo que a queixa de uma FERRAMENTA do projeto tem o prefixo da
+        # conversa do motor. Quem as separa é a origem, escrita na linha `at:`:
+        # só quem chamou `push_error` traz `at: push_error (`. São esses dois
+        # padrões — o erro de execução do GDScript e a queixa do próprio
+        # código — e fica de fora, deliberadamente, todo `ERROR:` do motor.
         run: |
           set -euo pipefail
-          if grep -q "SCRIPT ERROR" /tmp/saida.txt; then
-            echo "::error::A suíte imprimiu SCRIPT ERROR — passou sem correr até ao fim."
-            grep -n "SCRIPT ERROR" -A 6 /tmp/saida.txt
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/saida.txt; then
+            echo "::error::A suíte imprimiu erro — passou sem correr até ao fim."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/saida.txt
             exit 1
           fi
 
@@ -105,10 +136,11 @@ jobs:
             exit 1
           fi
 
-          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
-          if grep -q "SCRIPT ERROR" /tmp/design.txt; then
-            echo "::error::O teste de design imprimiu SCRIPT ERROR — passou sem correr até ao fim."
-            grep -n "SCRIPT ERROR" -A 6 /tmp/design.txt
+          # A guarda de erro, pela razão (e com os padrões) do passo homónimo
+          # lá em cima.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/design.txt; then
+            echo "::error::O teste de design imprimiu erro — passou sem correr até ao fim."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/design.txt
             exit 1
           fi
 
@@ -129,10 +161,11 @@ jobs:
             exit 1
           fi
 
-          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
-          if grep -q "SCRIPT ERROR" /tmp/audio.txt; then
-            echo "::error::O teste de áudio imprimiu SCRIPT ERROR — passou sem correr até ao fim."
-            grep -n "SCRIPT ERROR" -A 6 /tmp/audio.txt
+          # A guarda de erro, pela razão (e com os padrões) do passo homónimo
+          # lá em cima.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/audio.txt; then
+            echo "::error::O teste de áudio imprimiu erro — passou sem correr até ao fim."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/audio.txt
             exit 1
           fi
 
@@ -159,10 +192,11 @@ jobs:
             exit 1
           fi
 
-          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
-          if grep -q "SCRIPT ERROR" /tmp/fumaca.txt; then
-            echo "::error::O teste de fumaça imprimiu SCRIPT ERROR — passou sem correr até ao fim."
-            grep -n "SCRIPT ERROR" -A 6 /tmp/fumaca.txt
+          # A guarda de erro, pela razão (e com os padrões) do passo homónimo
+          # lá em cima.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/fumaca.txt; then
+            echo "::error::O teste de fumaça imprimiu erro — passou sem correr até ao fim."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/fumaca.txt
             exit 1
           fi
 
@@ -185,10 +219,11 @@ jobs:
             exit 1
           fi
 
-          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
-          if grep -q "SCRIPT ERROR" /tmp/registro.txt; then
-            echo "::error::O teste do registro imprimiu SCRIPT ERROR — passou sem correr até ao fim."
-            grep -n "SCRIPT ERROR" -A 6 /tmp/registro.txt
+          # A guarda de erro, pela razão (e com os padrões) do passo homónimo
+          # lá em cima.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/registro.txt; then
+            echo "::error::O teste do registro imprimiu erro — passou sem correr até ao fim."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/registro.txt
             exit 1
           fi
 
@@ -216,6 +251,20 @@ jobs:
             exit 1
           fi
 
+          # A guarda de erro, pela razão (e com os padrões) do passo homónimo
+          # lá em cima. Faltava aqui desde que este passo existe: a linha de
+          # sucesso diz que o gravador chegou ao fim e não diz que ele não se
+          # queixou pelo caminho — cinco partidas com um erro por turno
+          # imprimiriam `GRAVACAO OK` na mesma.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/gravacao.txt; then
+            echo "::error::O gravador de partidas imprimiu erro — passou sem correr até ao fim."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/gravacao.txt
+            exit 1
+          fi
+
+          # O leitor é PYTHON, e por isso não leva a mesma guarda: uma exceção
+          # lá sai com código != 0 e o `set -e` apanha-a. O problema de sair
+          # com zero depois de um erro é do Godot, e só dele.
           python3 tools/ler_registros.py --pasta /tmp/registros 2>&1 | tee /tmp/leitura.txt
 
           if ! grep -q "LEITURA OK" /tmp/leitura.txt; then
@@ -243,10 +292,11 @@ jobs:
             exit 1
           fi
 
-          # A guarda do SCRIPT ERROR, pela razão do passo homónimo lá em cima.
-          if grep -q "SCRIPT ERROR" /tmp/assets.txt; then
-            echo "::error::O validador de assets imprimiu SCRIPT ERROR — passou sem correr até ao fim."
-            grep -n "SCRIPT ERROR" -A 6 /tmp/assets.txt
+          # A guarda de erro, pela razão (e com os padrões) do passo homónimo
+          # lá em cima.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/assets.txt; then
+            echo "::error::O validador de assets imprimiu erro — passou sem correr até ao fim."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/assets.txt
             exit 1
           fi
 
@@ -359,6 +409,16 @@ jobs:
             exit 1
           fi
 
+          # A guarda de erro, pela razão (e com os padrões) do passo homónimo
+          # lá em cima. Aqui ela importa duas vezes: o que sai deste passo
+          # alimenta a tabela dos números E o portão das Parcelas, de modo que
+          # um despejo meio feito envenena dois passos a jusante em silêncio.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/constantes.txt; then
+            echo "::error::O despejo das constantes imprimiu erro — passou sem correr até ao fim."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/constantes.txt
+            exit 1
+          fi
+
           python3 tools/gerar_tabela_numeros.py --conferir \
             --contra-godot /tmp/constantes.json
 
@@ -400,6 +460,18 @@ jobs:
           # fase; esta linha é para a próxima vez, em que ninguém se lembrar.
           if grep -q "possível travamento" /tmp/sim.txt; then
             echo "::error::Partidas não terminaram no simulador — alguma fase nova bloqueia o turno."
+            exit 1
+          fi
+
+          # A guarda de erro, pela razão (e com os padrões) do passo homónimo
+          # lá em cima — e este é o passo que mais precisa de que o padrão
+          # seja o certo: medido em 18/09, a corrida SAUDÁVEL de 600 partidas
+          # imprime `ERROR: 1 resources still in use at exit` ao encerrar, e
+          # imprime-o DEPOIS do `=== Leitura ===`. Um `grep ERROR` aqui ficaria
+          # vermelho em toda corrida verde.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/sim.txt; then
+            echo "::error::O simulador imprimiu erro — a medição não vale."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/sim.txt
             exit 1
           fi
 

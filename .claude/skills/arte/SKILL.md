@@ -43,7 +43,7 @@ das imagens, com a tabela de paleta AMOSTRADA delas).
 |---|---|---|
 | 1 — Paleta e enquadramento | dicionário `C` e `MEIA_LARG` de `gerar_mapa_iso.py` | **a paleta não**; o enquadramento sim |
 | 2 — A cauda dos props | contêiner, caixote, boia: 2 peças → dezenas | sim |
-| 3 — Contorno pelo compositor | normal + profundidade, borda no compositor | sim |
+| 3 — Contorno pelo compositor | ❌ **construída e REJEITADA** em 05/09 — o traço acha o desenho e desenha-o outra vez (`CLAUDE.md`; `BR_Port_Plano_Arte_Blender.md`) | não |
 | 4 — Materiais dirigidos | ripa, corrugado, ferrugem que escorre | sim |
 | 5 — Personagem com rosto | folha de rostos num plano da cabeça | textura, não geometria |
 | 6 — Interface encorpada | `ui/tema_brport.tres` e as cenas | **não** |
@@ -171,7 +171,7 @@ tiro ao `capturar_evidencia.sh` não dá antes/depois enquanto o PR não fundir.
 Até 07/09 ele usava o script do HEAD contra o checkout da base, e a corrida
 ficava vermelha com "File not found" por o PR ter acrescentado evidência.
 
-⚠️ **E SEIS DAS OITO SÃO UMA PARTIDA SORTEADA.** Arte que só aparece em
+⚠️ **E CINCO DAS CAPTURAS SÃO UMA PARTIDA SORTEADA.** Arte que só aparece em
 alguns estados do jogo — um casco por serviço, um camião por carga — pode não
 entrar em nenhuma delas: medido em 07/09, os seis cascos novos apareceram em
 DUAS fotos e os oito camiões numa. Quem prova esse tipo de arte é a folha de
@@ -213,7 +213,7 @@ contra os props gerados por script ele diz "sem apoio plano para medir" na
 maioria — é esperado: poste e trabalhador não têm base plana, e a ferramenta
 existe para lote EXTERNO, onde o ângulo da base é justamente o que engana.
 
-O `asset_validator.gd` (`ASSET OK`) já é um dos cinco e cobre o lado do Godot:
+O `asset_validator.gd` (`ASSET OK`) já é uma das suítes e cobre o lado do Godot:
 quadro, alfa, recorte e a projeção do manifest contra as âncoras.
 
 ---

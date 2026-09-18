@@ -45,6 +45,7 @@ aqui.
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-14b.md` | 14/09 | Fecho da alavanca A da resolução — o mapa a entregar os 1080 do arquivo — e o raster da água que sobrou |
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-14c.md` | 14/09 | O raster da água construído a 1080, medido e REJEITADO — e a tabela de custo da `025` fechada com o APK e o Web |
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-16.md` | 16/09 | A trilha de arte e a folha dos props — as duas metades de máquina do gate A5 — e a folha C, que é a sessão seguinte |
+| `BRIEFING_PROXIMA_CONVERSA_2026-09-18.md` | 18/09 | Fecho do R2 e do R3 da §7.1 — a evidência do CI a responder por erro e por turno, e o texto a responder pela fonte que a máquina corre — e o prompt do R4 |
 | `BLOCO5_PROMPTS_BLENDER_RICO.md` | 29/08 | Os prompts do enriquecimento dos props em Blender |
 | `BRP_IMPLEMENTATION_NOTES.md` | 31/08 | O que foi e o que NÃO foi feito no pipeline Blender → Godot |
 | `BRP_VALIDATION_REPORT.md` | 31/08 | Os resultados medidos daquele pipeline |

@@ -282,9 +282,13 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
         "| `Protótipo` | Veio do protótipo HTML já validado (Playtest V3) |",
         "| `regra` | Regra do jogo, não número de balanceamento |",
         "",
+        # ⚠️ ESTA FRASE ENVELHECEU DENTRO DO GERADOR, e o CI compara a saída
+        # dele byte a byte — logo a mentira era regerada a cada corrida. Ela
+        # dizia "as 30 partidas que o CI roda", e o CI roda 600 desde 05/09.
+        # Texto gerado corrige-se na FONTE, nunca no arquivo (`032`).
         "**Mexeu num `TUNING`? Meça.** `simular_balanceamento.gd -- 600` — e 600",
-        "não é exagero: as 30 partidas que o CI roda têm margem de ±18 pontos e",
-        "já foram lidas como regressão de balanceamento uma vez.",
+        "não é exagero: uma rodada curta tem margem de dezenas de pontos, e já",
+        "foi lida como regressão de balanceamento uma vez.",
         "",
     ]
 
