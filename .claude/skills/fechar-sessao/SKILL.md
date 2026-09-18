@@ -283,6 +283,20 @@ não é este arquivo.
 - Nada de identificador de modelo em commit, PR ou comentário.
 - Só empurre para a branch designada da sessão, com `git push -u origin <branch>`.
 - PR só se pedirem.
+- **O briefing da próxima conversa entra NESTE commit**, em
+  `docs/arquivo/`, num `BRIEFING_PROXIMA_CONVERSA` datado, com a linha dele no
+  índice de `docs/arquivo/README.md`.
+
+⚠️ **NUNCA depois do merge.** Uma sessão nova arranca da `main`: um briefing
+escrito a seguir fica órfão numa branch que ninguém volta a abrir, e a conversa
+seguinte não o acha no repositório. Mordeu em 18/09 — o R4 fundiu no PR 58 e o
+prompt do A4 e do R5 ficou de fora, a precisar de um segundo PR só para ele.
+Ele faz parte do fecho, como o `ESTADO_DO_PROJETO.md` faz.
+
+**E entrega-se ao Bruno em BLOCO COPIÁVEL na conversa, antes de ele fundir** —
+não como arquivo anexado. O arquivo fica no repositório, que é onde a sessão
+seguinte o vai buscar; o bloco é para ele colar onde precisar sem depender de
+um anexo guardado.
 
 ## Falha segura
 

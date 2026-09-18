@@ -194,6 +194,17 @@ os marcadores; **quais mutantes reprovaram e por quê**; o que ficou pendente do
 Bruno; o que ficou de fora e por quê. Atualize a §7.1 só até a fase comprovada,
 e o `ESTADO_DO_PROJETO.md` dentro do teto.
 
+⚠️ **E O BRIEFING DA CONVERSA SEGUINTE ENTRA NO MESMO COMMIT DE FECHO**, em
+`docs/arquivo/`, num `BRIEFING_PROXIMA_CONVERSA` datado, com a linha dele no índice
+de `docs/arquivo/README.md` — **nunca depois do merge**. Uma sessão nova arranca
+da `main`, então um briefing escrito a seguir fica órfão numa branch que ninguém
+volta a abrir. Foi o que aconteceu com ESTE arquivo: o R4 fundiu no PR 58 e ele
+ficou de fora, a precisar de um segundo PR só para ele. A regra está no
+`CLAUDE.md` e no `/fechar-sessao` desde 18/09.
+
+**E entrega-se ao Bruno em BLOCO COPIÁVEL na conversa, antes de ele fundir** —
+não como arquivo anexado.
+
 ⚠️ **E O CI NÃO RODA AO EMPURRAR A BRANCH.** `testes.yml` e `captura.yml`
 disparam em `push` só na `main` e em `pull_request`. Até o PR abrir, "verde"
 quer dizer apenas "verde neste contêiner" — e o export do APK, que este

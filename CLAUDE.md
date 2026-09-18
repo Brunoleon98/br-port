@@ -1751,6 +1751,18 @@ tamanho sem ninguém decidir, e carregava dentro DUAS parcelas do Sr. Ribeiro
 lidas como atuais. Hoje `tools/conferir_docs.py` toca o alarme antes de dobrar
 outra vez, mas o alarme não escreve o documento.
 
+⚠️ **E O BRIEFING DA PRÓXIMA CONVERSA ENTRA NO MESMO PR, nunca depois dele.**
+Uma sessão nova arranca da `main`: um briefing escrito depois do merge fica
+órfão numa branch que ninguém volta a abrir, e a conversa seguinte não o acha
+no repositório. Mordeu em 18/09 — o R4 fundiu no PR 58 e o prompt do A4 e do R5
+ficou de fora, a precisar de um segundo PR só para ele. Ele faz parte do commit
+de fecho, como o `ESTADO_DO_PROJETO.md` faz.
+
+**E vai para o Bruno em BLOCO COPIÁVEL, antes de ele fundir** — não como
+arquivo anexado. O arquivo continua a viver em `docs/arquivo/`, que é onde a
+sessão seguinte o vai buscar; o que ele quer na conversa é o texto à mão, para
+colar onde precisar sem depender de um anexo guardado.
+
 **Prometa UM item da fila, não três.** A fila da §7 do plano é ordenada, e os
 itens têm tamanhos honestos: um item por sessão é o ritmo que os últimos blocos
 mediram. Sobrou tempo? Comece o seguinte e diga onde parou — melhor do que três
