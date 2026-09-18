@@ -1525,6 +1525,40 @@ tranca isso.
   gatilho no mesmo commit** — e ao varrer código como texto, corte as linhas de
   COMENTÁRIO antes, senão o próprio comentário que explica a armadilha
   satisfaz a busca.
+- **⚠️ E FALA DISPARADA NÃO É FALA VISTA — a QUARTA cara do `barco_medio`.**
+  A de cima pergunta se alguém a dispara, e alguém dispara. Esta é do outro
+  lado do frame: **o que sobrou no `Label` depois de TODOS os emits daquele
+  evento.** O `GameState` emite o sinal narrativo uma linha ANTES do
+  `message.emit` da mesma chamada, e os dois escrevem no mesmo rótulo. Medido
+  em 18/09, cinco sementes, partidas inteiras: `upgrade_pronto` escrita 35
+  vezes e vista ZERO, `caixa_baixo` 11 e zero, `reputacao_caiu` 12 e zero.
+  ⚠️ **E A MEMÓRIA É QUEIMADA JUNTO COM A FALA**: o `_cida_caixa` marca a
+  travessia e o `_cida_semana` marca a semana mesmo quando a linha é tapada —
+  não é "tapada", é consumida, e não volta naquela travessia.
+  ⚠️ **E A REVISÃO CONTOU QUATRO PARES; ERAM CINCO.** Faltavam
+  `_fechar_negocio` e `_perder_para_rival`, que chamam `_change_reputation()` e
+  emitem `message` logo a seguir — é "ao corrigir um, VARRA OS IRMÃOS" com um
+  SINAL no lugar do prop. Quem conserta um par procura os outros pelo PADRÃO
+  (sinal seguido de `message.emit` na mesma chamada), nunca pela lista de quem
+  já se conhece. O bloco **F8** do `teste_fumaca` tranca isto (`033`).
+- **⚠️ E O PREDICADO DE UMA FALA LÊ-SE ONDE ELA É ESCRITA, não onde o sinal
+  dispara.** `turn_advanced` sai ANTES de `_check_end() -> _spawn_boats()`, e o
+  laço de serviço já esvaziou toda doca sem trabalhador: medido, em **315**
+  viradas de turno `docas_esperando()` deu **zero todas as vezes**, e um
+  instante depois deu barco à espera em **148 de 310** (48%). Uma variante que
+  dissesse *"Barcos na fila"* no instante do sinal seria uma frase que ninguém
+  jamais leria — o `barco_medio` outra vez, e desta vez a caminho de ser
+  escrito de propósito. **Antes de condicionar uma fala, meça o predicado NO
+  INSTANTE EM QUE ELA APARECE** — e se a condição nunca puder ser verdade ali,
+  o que está errado é o momento, não a frase.
+- **⚠️ E CONSERTAR A ORDEM EXPÕE AS FRASES QUE A ORDEM ESCONDIA.** `caixa_baixo`
+  afirma *"A parcela não vai esperar"*, e `pagar_parcela_adiantado()` existe
+  desde o playtest: medido com um perfil que quita assim que pode, **12
+  travessias com a parcela já paga e ZERO com ela por pagar** — para esse
+  jogador a frase era falsa em todas as ocorrências, e estava escondida pela
+  mesma mensagem que a engolia. Um defeito de VISIBILIDADE e um defeito de
+  VERDADE na mesma fala não se consertam em sessões diferentes: o primeiro
+  mascara o segundo, e fechar só o primeiro entrega a frase falsa à tela.
 - **⚠️ E DERIVAR O NÚMERO DA CONSTANTE PODE ESTRAGAR A PROSA.** A regra acima
   manda o número sair da constante, e está certa — mas `"%d semanas"` pôs
   **"4 semanas." e "32 turnos de decisão."** na narração de fim de fase, e
@@ -1866,6 +1900,24 @@ armadilha de uma função, no comentário dela.
   no `stderr`, o contador de falhas fica em zero, e nada reprova. Todo bloco de
   teste novo põe uma bandeira na ÚLTIMA linha e quem o chama confere que ela
   ficou verdadeira; só assim "passou" quer dizer "correu".
+- **⚠️ E `await process_frame` RETOMA ANTES DO FLUSH DA FILA ADIADA.** Ele
+  volta no INÍCIO do frame seguinte, e o que foi posto em `call_deferred`
+  naquele frame ainda não correu. Medido em 18/09: com um `await` só, o rótulo
+  que a fala escreve por `call_deferred` ainda tinha a mensagem do sistema, e a
+  asserção reprovava o código CERTO; com dois, a fala já lá está. **São dois, e
+  escreva ao lado que foi medido.**
+  ⚠️ **E A RÉGUA CAIU NO MESMO BURACO ANTES DA GUARDA** — a primeira medição
+  depois da correção deu **zero em todas as falas**, o que se lê como "não
+  acontece nada" e não como "li cedo demais". É a irmã de "receita derivada que
+  não casa nada dá um verde de graça", com FRAMES no lugar do `grep`: **quando
+  uma régua nova devolve zero em TUDO, a primeira pergunta é se ela consegue
+  devolver outra coisa.**
+- **⚠️ E `_process` DE UM `SceneTree` QUE DEVOLVE `true` MATA A ÁRVORE NO FIM
+  DO FRAME.** Enquanto nenhum bloco espera, isso não se nota — quem encerra é o
+  `quit()` explícito e o `true` chega depois. No dia em que um bloco passou a
+  usar `await`, o `await` nunca voltou: a suíte imprimiu o marcador com o bloco
+  inteiro por correr, verde e sem ter testado nada. Num `--script` que precise
+  de esperar frames, `_process` devolve `false` e quem encerra é só o `quit()`.
 - **⚠️ E `preload` DE UM SCRIPT QUE FALA DO AUTOLOAD, A PARTIR DE UM
   `--script`, DÁ UM GDScript VAZIO.** A terceira cara da regra abaixo, e a que
   menos se parece com ela: `const D := preload("res://scripts/Dock.gd")` numa

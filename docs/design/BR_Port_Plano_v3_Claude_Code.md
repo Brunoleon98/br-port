@@ -1294,8 +1294,8 @@ resultados medidos nem novo cronograma de horas.
 | 1 | **R1 — E**, revisão §2.1 / B3 | A Leitura seleciona Ótimo e Descuidado por identidade; permutar/adicionar perfis não muda o significado; texto final confere | **Próxima sessão**; curta, com F1/F6 |
 | 2 | ✅ **R2 — I**, revisão §2.8 e §2.11 / B3 | Logs preservados e varridos em todos os scripts; captura avança turnos reais e respeita modais; erro com saída zero reprova | **Feito 18/09** (`docs/decisoes/031`), as duas metades |
 | 3 | ✅ **R3 — F**, revisão §2.6–2.7 / B1, B2, B5 | Corrigir instruções/contagens e ligar fatos à fonte executada; omissão de suíte ou documentação divergente reprova | **Feito 18/09** (`docs/decisoes/032`) |
-| 4 | **R4 — B**, revisão §2.2–2.3 / A4 — **próxima sessão** | Falas verdadeiras no snapshot; obra instantânea sem duração fictícia; primeira semana sem comparação inexistente | Pendente; curta + releitura do Bruno |
-| 5 | **R5 — A**, revisão §2.2 / A4 | Entrada única de mensagens, fila e consulta recuperável; duas emissões no mesmo frame sobrevivem | Pendente; sistema pequeno, layout a medir |
+| 4 | ✅ **R4 — B**, revisão §2.2–2.3 / A4 | Falas verdadeiras no snapshot; obra instantânea sem duração fictícia; primeira semana sem comparação inexistente | **Código e guarda feitos 18/09** (`docs/decisoes/033`); a releitura A4 é do Bruno |
+| 5 | **R5 — A**, revisão §2.2 / A4 — **próxima sessão** | Entrada única de mensagens, fila e consulta recuperável; duas emissões no mesmo frame sobrevivem | Pendente; sistema pequeno, layout a medir. O R4 deixou-lhe as três falas que ainda se tapam umas às outras, medidas |
 | 6 | **R6 — C**, revisão §2.4 / A5, B4 | Contraste efetivo e cobertura de painéis/estados; defeito fora do painel original é detectado | Pendente; correção pontual antes da cobertura ampla |
 | 7 | **R7 — D**, revisão §2.4 / A5, B4 | Tema governa cores da UI; lint de novas exceções + migração por papel; override fora da exceção exata reprova | Pendente; combinar trabalho comum com R6 |
 | 8 | **R8 — H**, revisão §3 / A4 | Frases completas de dias/tentativas, incluindo adjetivos; narração por extenso preservada | Pendente; curta, pode acompanhar revisão textual |
@@ -1374,6 +1374,37 @@ Alternativas não podem introduzir fatos sem condição; repetição/cooldown s�
 decisões editoriais a medir. Mutantes: condição retirada, frase falsa
 reintroduzida, comparação antes de existir semana anterior. A aprovação do
 predicado não substitui a releitura A4.
+
+✅ **Código e guarda fechados em 18/09** (`docs/decisoes/033`); a releitura em
+voz alta (A4) é do Bruno e fica por fazer. Medido antes de mexer, cinco
+sementes e partidas inteiras: **`upgrade_pronto` foi escrita 35 vezes e VISTA
+zero**, `caixa_baixo` 11 e zero, `reputacao_caiu` 12 e zero. ⚠️ **A revisão
+contou quatro pares e eram cinco** — faltavam `_fechar_negocio` e
+`_perder_para_rival`, que emitem `message` logo depois de mexer na reputação.
+
+⚠️ **E a evidência da §2.3 tinha envelhecido, mas o defeito não.** A `porto.png`
+já não mostrava *"caixa no limite"* com R$981.779: o R2 mexeu no avanço e a foto
+andou. A frase continuava sem condição — o que mudou é que **deixou de chegar à
+tela**, de modo que (c) estava mascarado por (a) e os dois não se separavam.
+
+⚠️ **E o predicado lê-se onde a linha é ESCRITA, não onde o sinal dispara.** Foi
+o achado que mudou o desenho a meio: `docas_esperando()` deu **zero em 315**
+viradas de turno no instante do `turn_advanced`, e barco à espera em **148 de
+310** um instante depois, já com o sorteio do dia feito. Condicionar ali teria
+escrito duas frases que ninguém jamais leria.
+
+Nenhum limiar novo entrou: `caixa_curto()` é a meia parcela que o aviso já
+usava, `docas_esperando()` saiu de dentro do `trabalho_parado()` e a recusa sai
+de `metrics["rival_refused"]`. Seis mutantes reprovaram, com controle positivo
+verde entre cada um, e os três que esta ficha nomeia estão cobertos. Seis
+suítes verdes, `DOCS OK`, `GUARDAS OK`, 16 capturas reprodutíveis — cinco
+mudaram, todas no mesmo turno, só a faixa de mensagem. Nenhum `# TUNING:`,
+nenhuma semente, nenhum pixel de arte.
+
+⚠️ **O que ficou de fora, medido:** `caixa_baixo`, `caixa_baixo_quitado` e
+`reputacao_caiu` continuam invisíveis — mas agora perdem para outra fala da
+Dona Cida escrita depois delas na mesma ação, e não para a mensagem do sistema.
+Isso é prioridade entre falas e é a fila: **R5**.
 
 **R5 — fila não é troca de ordem.** Registrar as duas fontes e arbitrar a
 prévia, sem copiar do áudio o descarte de perdedores. FIFO comum, prioridade

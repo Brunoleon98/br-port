@@ -136,12 +136,34 @@ const CIDA_LINHAS := {
 	# FAIXA da reputação — nunca dois contratos. Número em fala tem de sair de
 	# onde o evento sai, e este não saía de lado nenhum.
 	"reputacao_caiu": "Andaram recusando contrato, chefia. Arlindo vai saber antes de nós.",
+	# ⚠️ DUAS VARIANTES PORQUE A PARCELA PODE JÁ TER SIDO PAGA. O
+	# `pagar_parcela_adiantado()` existe desde o playtest, então um jogador que
+	# quite no turno 5 ouviria "a parcela não vai esperar" nos 27 turnos
+	# seguintes — verdadeira em português e falsa neste mundo. Quem separa é
+	# `parcela_paid`, que já existe; nenhum limiar novo entra aqui.
 	"caixa_baixo": "A conta tá mais fina que folha de papel. A parcela não vai esperar.",
+	"caixa_baixo_quitado": "Caixa raspando, chefia. Ao menos o Sr. Ribeiro já tá pago.",
 	"perdeu_para_arlindo": "Perdeu pro Arlindo. Mas perdeu perdendo bem — não por desatenção.",
 	"bom_contrato": "Esse contrato fecha o mês. Anota aí.",
-	"semana_nova": "Semana nova. Barcos na fila, caixa no limite. Dia típico.",
-	"upgrade_pronto": "Zezão terminou. Demorou o dobro do previsto, mas ficou bom.",
+	# ⚠️ QUATRO VARIANTES, E NENHUMA AFIRMA O QUE A CONDIÇÃO DELA NÃO GARANTE.
+	# A linha única dizia "Barcos na fila, caixa no limite" em TODA semana ≥ 2,
+	# sem olhar nem uma coisa nem outra: medido em 18/09, na semente padrão ela
+	# saía com o cais vazio e R$384.000 em caixa. Os dois critérios já existem
+	# — `docas_esperando()` e `caixa_curto()` —, e é de propósito que saem do
+	# GameState em vez de serem recontados aqui.
+	"semana_nova_fila_curto": "Semana nova. Barcos na fila, caixa no limite. Dia típico.",
+	"semana_nova_fila_folgado": "Semana nova. Barcos na fila e dinheiro no caixa. Aproveita.",
+	"semana_nova_parado_curto": "Semana nova. Cais parado e a parcela correndo. Não gosto disso.",
+	"semana_nova_parado_folgado": "Semana nova. Tudo quieto por enquanto, chefia.",
+	# ⚠️ A OBRA É INSTANTÂNEA: `comprar_estrutura()` emite "pronto" na mesma
+	# chamada. A linha dizia "Demorou o dobro do previsto", que não descreve
+	# nada que aconteça neste jogo — o ceticismo dela fica, a duração sai.
+	"upgrade_pronto": "Zezão terminou. Ficou bom — e olha que eu duvidei.",
+	# ⚠️ "TUDO QUE A GENTE RECUSA" PRESSUPÕE UMA RECUSA, e a primeira oferta do
+	# Arlindo chega antes de existir qualquer uma. Quem conta é
+	# `metrics["rival_refused"]`, que já existe.
 	"arlindo_indireto": "O Porto Farol tá aceitando tudo que a gente recusa. Coincidência, chefia?",
+	"arlindo_primeira": "O Porto Farol tá de olho no que passa por aqui, chefia.",
 }
 
 
@@ -252,11 +274,16 @@ const EXPRESSOES := {
 		"reputacao_subiu": "contente",
 		"reputacao_caiu": "preocupada",
 		"caixa_baixo": "preocupada",
+		"caixa_baixo_quitado": "preocupada",
 		"perdeu_para_arlindo": "preocupada",
 		"bom_contrato": "contente",
-		"semana_nova": "seria",
+		"semana_nova_fila_curto": "seria",
+		"semana_nova_fila_folgado": "contente",
+		"semana_nova_parado_curto": "preocupada",
+		"semana_nova_parado_folgado": "seria",
 		"upgrade_pronto": "contente",
 		"arlindo_indireto": "seria",
+		"arlindo_primeira": "seria",
 	},
 	"arlindo": {
 		"abertura": "sorriso",

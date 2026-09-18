@@ -60,12 +60,17 @@ func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
 		_falhas += 1
 
 
+# ⚠️ DEVOLVE `false`, e quem encerra é o `quit()` do `_rodar()`. Devolver
+# `true` mata a árvore no fim deste frame — e o bloco F8 precisa de ESPERAR um
+# frame, porque a fala da Dona Cida entra por `call_deferred`. Com `true` a
+# corrida acabava antes de o `await` voltar, e as asserções do F8 nunca
+# corriam: verde sem ter testado nada.
 func _process(_delta: float) -> bool:
 	if _feito:
-		return true
+		return false
 	_feito = true
 	_rodar()
-	return true
+	return false
 
 
 func _rodar() -> void:
@@ -94,6 +99,14 @@ func _rodar() -> void:
 	print("=== F7: toda fala tem cara, toda cara tem arquivo, e toda cara é usada ===")
 	_f7_retratos()
 	_f7_despedida_do_arlindo_acontece()
+
+	print("=== F8: a fala da Dona Cida é VISTA, e afirma só o que a condição garante ===")
+	await _f8_a_fala_e_vista()
+	# A BANDEIRA DA ÚLTIMA LINHA. Um erro de execução a meio de um bloco aborta
+	# a função e o contador de falhas fica em zero — a suíte imprimiria o
+	# marcador com as asserções por correr. Aqui isso é mais fácil de acontecer
+	# do que nos outros, porque este bloco é uma corrotina.
+	_confere("o bloco F8 correu até ao fim", _f8_terminou)
 
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
@@ -557,8 +570,16 @@ func _f4_narrativa() -> void:
 
 	# Toda linha registrada da Dona Cida tem de devolver texto. Uma chave com
 	# erro de digitação devolve vazio, e vazio na tela é um balão de fala mudo.
+	# ⚠️ O NÚMERO CRAVADO SAIU, e não foi para ficar verde. Dizia
+	# `linhas.size() == 8`, e a tabela cresceu para 13 ao ganhar as variantes
+	# que o R4 condicionou — uma contagem à mão numa lista que cresce é um
+	# número a envelhecer, e este INSTRUI (reprova), logo confere-se em vez de
+	# se manter. O que ele protegia — alguém apagar uma fala — continua
+	# protegido, e por duas fontes em vez de por um literal: o bloco F6 exige
+	# que toda fala tenha expressão E que toda expressão tenha fala, então
+	# apagar uma linha deixa a expressão órfã e reprova lá.
 	var linhas: Dictionary = constantes.get("CIDA_LINHAS", {})
-	_confere("as 8 linhas de loop da Dona Cida estão lá", linhas.size() == 8)
+	_confere("a tabela de falas da Dona Cida não está vazia", linhas.size() > 0)
 	for id in linhas:
 		_confere("Cida: %s tem fala" % id, Narrativa.cida(String(id)) != "")
 
@@ -619,7 +640,11 @@ func _f4_toda_fala_chega_ao_jogo() -> void:
 		var limpa := linha.strip_edges()
 		if limpa.begins_with("#"):
 			continue
-		if not limpa.contains("_cida("):
+		# ⚠️ `_cida` E `_cida_agora`. A busca era por `_cida(` e as quatro
+		# variantes da semana nova saem por `_cida_agora(`, que existe para não
+		# adiar duas vezes — elas ficariam mudas para esta guarda, que é
+		# exatamente o verde de graça que ela existe para não dar.
+		if not limpa.contains("_cida"):
 			continue
 		# TODAS as strings da linha, e não a primeira a seguir ao parêntesis:
 		# o `reputacao_caiu` vive dentro de um ternário na própria chamada
@@ -1029,3 +1054,215 @@ func _sem_comentarios(fonte: String) -> String:
 			continue
 		saida += linha + "\n"
 	return saida
+
+
+# ── F8 ──────────────────────────────────────────────────────────────────
+# A FALA FOI VISTA?
+#
+# O bloco F4 pergunta *"toda fala DISPARA?"* — e ela dispara. Esta é a pergunta
+# do OUTRO lado do frame: o que sobrou no Label depois de todos os emits
+# daquele evento. É a quarta cara do `barco_medio`, depois de "gerado e nunca
+# em cena", "escrito e nunca disparado" e "arte que o sorteio nunca escolhe".
+#
+# Medido em 18/09, cinco sementes, partidas inteiras, ANTES da correção:
+# `upgrade_pronto` foi escrita 35 vezes e vista ZERO; `caixa_baixo` 11 e zero;
+# `reputacao_caiu` 12 e zero. O `GameState` emite o sinal narrativo uma linha
+# ANTES do `message.emit` da mesma chamada, e os dois escrevem no mesmo Label.
+#
+# ⚠️ ESTE BLOCO TEM DE ESPERAR UM FRAME. A fala entra por `call_deferred`; uma
+# versão que lesse o Label logo a seguir à chamada dá VAZIO em tudo — e vazio
+# lê-se como "não há fala", que é o verde de graça com outra roupa. Foi
+# exactamente o que aconteceu à régua de medição na primeira corrida.
+#
+# ⚠️ E O QUE ESTE BLOCO NÃO DEFENDE: que a fala seja VERDADEIRA. Ele prova que
+# a condição escolhe a variante certa e que a linha chega à tela; se a frase
+# descreve mesmo este mundo é o gate A4 — uma pessoa a ler em voz alta. Foi
+# assim que se apanhou *"porto que fecha no azul abre segunda-feira"*, que
+# nenhuma asserção podia ver.
+const F8_CAMINHO_LABEL := "MensagemCartao/Mensagem"
+
+var _f8_terminou := false
+var _f8_main: Node = null
+var _f8_sistema: Array[String] = []
+
+
+func _f8_abrir() -> bool:
+	# DERIVA O ESTADO, nunca o herda: o autoload tenta `load_game()` antes de
+	# `new_game()`, e sem isto o bloco leria o autosave do bloco anterior.
+	GS.clear_save()
+	GS._rng.seed = 20260902
+	GS.new_game()
+	GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
+	# Oferta pendente resolve-se antes de contar com o estado: em "rival_offer"
+	# toda compra é recusada calada.
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var cena := load("res://scenes/Main.tscn") as PackedScene
+	if cena == null:
+		_confere("F8: Main.tscn carrega", false)
+		return false
+	_f8_main = cena.instantiate()
+	root.add_child(_f8_main)
+	_f8_sistema.clear()
+	GS.message.connect(_f8_recolher)
+	return true
+
+
+func _f8_recolher(texto: String, _kind: String) -> void:
+	_f8_sistema.append(texto)
+
+
+func _f8_fechar() -> void:
+	if GS.message.is_connected(_f8_recolher):
+		GS.message.disconnect(_f8_recolher)
+	if _f8_main != null:
+		_f8_main.free()
+		_f8_main = null
+
+
+# ⚠️ DOIS FRAMES, E FOI MEDIDO. `await process_frame` retoma no INÍCIO do frame
+# seguinte, e a fila de `call_deferred` daquele frame ainda não correu: com um
+# só, o Label devolvia a mensagem do SISTEMA e as asserções reprovavam o código
+# certo. Com dois, a fala já lá está.
+func _f8_esperar() -> void:
+	await process_frame
+	await process_frame
+
+
+func _f8_label() -> String:
+	if _f8_main == null:
+		return ""
+	var l = _f8_main.get_node_or_null(F8_CAMINHO_LABEL)
+	return "" if l == null else String(l.text)
+
+
+func _f8_avancar_ate(alvo: int) -> void:
+	var voltas := 0
+	while GS.turn < alvo and voltas < 60:
+		voltas += 1
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+			continue
+		GS.advance_turn()
+
+
+# Põe (ou tira) um barco à espera na doca 0, para montar à mão o estado que a
+# fala da semana nova lê. O esperado deste bloco é escrito à mão a partir daqui
+# — nunca recalculado dos mesmos predicados que a fala usa, que seria o espelho.
+func _f8_por_barco_a_espera(sim: bool) -> void:
+	for d in GS.docks:
+		d["boat"] = null
+		d["worker_id"] = null
+	if sim:
+		var barco: Dictionary = GS._make_boat()
+		barco["rival"] = false
+		GS.docks[0]["boat"] = barco
+
+
+func _f8_a_fala_e_vista() -> void:
+	# ── F8a. A compra: `estrutura_comprada` e o "pronto" do sistema.
+	if not _f8_abrir():
+		return
+	GS.comprar_estrutura("pier_2")
+	await _f8_esperar()
+	var visto := _f8_label()
+	# A GUARDA SÓ VALE SE O PERIGO ESTIVER MONTADO. Sem a mensagem do sistema
+	# nesta chamada não há par nenhum a testar, e a asserção seguinte passaria
+	# por um caminho que não é o que ela existe para defender.
+	_confere("F8a: a compra emite mesmo uma mensagem do sistema no mesmo frame",
+		_f8_sistema.size() > 0, "nenhuma — o par que este bloco testa não está montado")
+	_confere("F8a: e a fala do upgrade é o que fica no Label",
+		visto == Narrativa.cida("upgrade_pronto"),
+		"ficou: " + visto)
+	_f8_fechar()
+
+	# ── F8b. A obra é INSTANTÂNEA, logo a fala dela não pode falar de tempo.
+	# Guarda estreita de propósito: defende o regresso da frase medida falsa
+	# ("Demorou o dobro do previsto"), não a verdade das falas em geral.
+	var upgrade: String = Narrativa.cida("upgrade_pronto").to_lower()
+	var tempo := ["demor", "atras", "levou", "semana", "dia", "mês", "mes ", "hora"]
+	var achadas: Array[String] = []
+	for palavra in tempo:
+		if upgrade.contains(palavra):
+			achadas.append(palavra)
+	_confere("F8b: a fala da obra instantânea não afirma duração",
+		achadas.is_empty(), "diz: " + ", ".join(achadas))
+
+	# ── F8c. A semana nova escolhe pela CONDIÇÃO.
+	# Chama `_semana_nova()` direto: o estado é montado à mão e o esperado é
+	# escrito à mão a partir dele, nunca recalculado dos mesmos predicados que
+	# a fala usa — isso seria o espelho, e um peso posto a zero desapareceria
+	# dos dois lados ao mesmo tempo.
+	if not _f8_abrir():
+		return
+	_f8_por_barco_a_espera(true)
+	GS.cash = GS.PARCELA_AMOUNT / 2 - 1
+	_f8_main._semana_nova()
+	_confere("F8c: com barco à espera e caixa curto, sai a variante das duas",
+		_f8_label() == Narrativa.cida("semana_nova_fila_curto"),
+		"ficou: " + _f8_label())
+	_f8_por_barco_a_espera(false)
+	GS.cash = GS.PARCELA_AMOUNT
+	_f8_main._semana_nova()
+	_confere("F8c: sem barco e com caixa folgado, sai a variante de nenhuma das duas",
+		_f8_label() == Narrativa.cida("semana_nova_parado_folgado"),
+		"ficou: " + _f8_label())
+	_f8_fechar()
+
+	# ── F8c2. E O PREDICADO É LIDO ONDE A LINHA É ESCRITA, não onde o sinal
+	# dispara. É o que separa uma fala verdadeira de uma que descreve um
+	# instante que o jogador nunca vê: `turn_advanced` sai ANTES do sorteio do
+	# dia, e medido em 18/09 `docas_esperando()` deu ZERO em 315 viradas ali,
+	# contra barco à espera em 74 de 155 um instante depois.
+	#
+	# A prova monta o estado A, dispara, TROCA para o estado B e exige que a
+	# variante seja a de B. Se o predicado fosse lido no sinal, sairia a de A.
+	if not _f8_abrir():
+		return
+	_f8_main._cida_semana(8, 1)          # regista a semana anterior, sem falar
+	_f8_por_barco_a_espera(false)        # estado A: cais parado
+	GS.cash = GS.PARCELA_AMOUNT
+	_f8_main._cida_semana(9, 2)          # dispara — a escolha fica para depois
+	_f8_por_barco_a_espera(true)         # estado B: barco à espera
+	GS.cash = GS.PARCELA_AMOUNT / 2 - 1
+	await _f8_esperar()
+	_confere("F8c2: a variante é a do estado em que a linha é ESCRITA, não a do sinal",
+		_f8_label() == Narrativa.cida("semana_nova_fila_curto"),
+		"ficou: " + _f8_label() + " (a do sinal seria: "
+			+ Narrativa.cida("semana_nova_parado_folgado") + ")")
+	_f8_fechar()
+
+	# ── F8d. A PRIMEIRA SEMANA NÃO COMPARA COM UMA ANTERIOR que não existe.
+	if not _f8_abrir():
+		return
+	_f8_avancar_ate(2)
+	await _f8_esperar()
+	var na_tela := _f8_label()
+	var e_semana_nova := false
+	for id in Narrativa.CIDA_LINHAS:
+		if String(id).begins_with("semana_nova") and Narrativa.cida(String(id)) == na_tela:
+			e_semana_nova = true
+	_confere("F8d: a semana 1 não diz 'semana nova' — não há anterior com que comparar",
+		not e_semana_nova, "ficou: " + na_tela)
+	_f8_fechar()
+
+	# ── F8e. "A parcela não vai esperar" só sai enquanto ela não foi paga.
+	# `pagar_parcela_adiantado()` quita a qualquer momento, e sem esta escolha
+	# a frase ficava falsa desse turno até ao fim da partida.
+	if not _f8_abrir():
+		return
+	# ⚠️ O CAIXA SAI DO VALOR DO DIA, e não do `PARCELA_AMOUNT`. A parcela
+	# adiantada tem desconto (`valor_da_parcela_hoje()`), e montar pelo valor
+	# cheio deixava o caixa em R$306.074 depois de pagar — acima do limiar, sem
+	# travessia nenhuma, e a asserção reprovava por não haver o que ver.
+	GS.cash = int(GS.valor_da_parcela_hoje()) + 1000
+	var quitou: bool = GS.pagar_parcela_adiantado()
+	await _f8_esperar()
+	_confere("F8e: a montagem quitou mesmo a parcela adiantada", quitou,
+		"sem isto a asserção seguinte testa o outro ramo")
+	_confere("F8e: com a parcela paga, a fala do caixa curto é a que não a cobra",
+		_f8_label() == Narrativa.cida("caixa_baixo_quitado"),
+		"ficou: " + _f8_label())
+	_f8_fechar()
+
+	_f8_terminou = true
