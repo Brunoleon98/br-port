@@ -166,9 +166,9 @@ Godot_v4.6.3-stable_win64.exe --path . --resolution 720x1280 --script res://tool
 O `10` é quantos turnos jogar antes da foto (0 = tela inicial). No Linux sem
 monitor, prefixe com `xvfb-run -a` e acrescente `--rendering-driver opengl3`.
 
-**Para as cinco de uma vez** — a tela inicial, o porto reconstruído, o boletim,
-o menu de pausa e a folha de contato dos ícones — há um atalho, e é o mesmo
-que o CI roda a cada PR:
+**Para TODAS de uma vez** — telas de jogo, painéis e folhas de contato; quais
+são exatamente está no cabeçalho do próprio script, que é quem as define — há
+um atalho, e é o mesmo que o CI roda a cada PR:
 
 ```
 tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"
@@ -249,7 +249,7 @@ python3 -m http.server 8000 --directory ../build/web
 ### O que NÃO vai dentro do pacote
 
 Os presets excluem `tests/`, `tools/`, `scripts/validation/` e as cenas de
-proto e de teste. O primeiro export levou tudo — as cinco suítes, o simulador,
+proto e de teste. O primeiro export levou tudo — as suítes, o simulador,
 as capturas — para dentro do `.pck`: peso que o jogador baixa para nunca usar.
 Ao acrescentar uma ferramenta nova, confira se ela cai numa dessas pastas.
 

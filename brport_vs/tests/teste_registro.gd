@@ -7,13 +7,14 @@ extends SceneTree
 #
 # 1. **QUE O GRAVADOR NÃO GRAVE ONDE NÃO DEVE.** É o bloco R1 e é o mais
 #    importante daqui. Um autoload carrega também em `--script`, então o
-#    `Registro` está de pé durante as 600 partidas × 3 perfis do simulador de
+#    `Registro` está de pé durante as 600 partidas por perfil do simulador de
 #    balanceamento. Se ele gravasse por omissão, medir o balanceamento
 #    escreveria 1.800 arquivos e o custo de os escrever entraria na medida —
 #    exatamente a família de defeito que já custou 24 de 30 partidas travadas
 #    quando alguém pôs uma tela nova como FASE em vez de overlay. O
-#    balanceamento medido (100% / 79,5% / 31,0%) tem de continuar a ser o
-#    mesmo com este item dentro, e é este bloco que o tranca.
+#    balanceamento medido (o CLAUDE.md publica-o, e é o único sítio que o faz)
+#    tem de continuar a ser o mesmo com este item dentro, e é este bloco que o
+#    tranca.
 #
 # 2. **QUE ESCREVER NÃO APAGUE.** `FileAccess.WRITE` TRUNCA. Não há modo
 #    "append" no Godot 4, e a versão ingénua deste gravador dá um arquivo de

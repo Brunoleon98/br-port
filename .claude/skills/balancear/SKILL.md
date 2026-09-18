@@ -18,7 +18,7 @@ vitória é o número mais fácil de ler errado do projeto inteiro.
 > |---|---|---|
 > | **F1** | escolher o item e DESENHAR a varredura: que `# TUNING:`, que intervalo, que semente, o que se segura fixo | **Opus** |
 > | **F2** | rodar `simular_balanceamento.gd -- 600`, o ANTES | **Sonnet** |
-> | **F3** | ler os três perfis e a margem em regime, e dizer o que mudou de facto | **Opus** |
+> | **F3** | ler os perfis e a margem em regime, e dizer o que mudou de facto | **Opus** |
 > | **F4** | escolher o valor novo | **Opus** |
 > | **F5** | aplicar e remedir com a MESMA semente | **Sonnet** |
 > | **F6** | asserção nova + defeito injetado, se apareceu | **Opus** |
@@ -80,7 +80,7 @@ $G --headless --path brport_vs --script res://tools/simular_balanceamento.gd \
    -- 600 20260825 /tmp/antes.json | tee /tmp/antes.txt
 ```
 
-**600, e a mesma semente.** As 30 partidas que o `testes.yml` roda a cada push
+**600, e a mesma semente.** É o que o `testes.yml` roda a cada push
 são teste de fumaça: têm ±18 pontos de margem, e comparar 36,7% com 47,3% é
 comparar sorteio. O próprio simulador avisa quando a amostra é curta demais.
 
@@ -180,7 +180,7 @@ python3 tools/gerar_tabela_numeros.py --conferir --contra-godot /tmp/constantes.
 python3 tools/projetar_parcelas.py --medicao /tmp/depois.json \
    --constantes /tmp/constantes.json   # espera "calibrado"
 
-# 4. As cinco suítes — dois testes já reprovaram por dinheiro cravado
+# 4. As suítes — dois testes já reprovaram por dinheiro cravado
 for t in tests/run_tests tests/teste_design tests/teste_audio \
          tests/teste_fumaca scripts/validation/asset_validator; do
   $G --headless --path brport_vs --script res://$t.gd

@@ -20,9 +20,15 @@ name: Balanceamento
 # O que este workflow REPROVA é o que não depende de julgamento: o simulador
 # chegar ao fim, nenhuma partida travar, e o modelo das Parcelas 2 e 3
 # reconstruir a semana em regime que acabou de ser medida. As taxas de vitória
-# ele publica e não julga — o alvo (100% / 79,5% / 35,7%) vive em
-# `docs/decisoes/005` e no `CLAUDE.md`, e cravá-lo aqui seria dar-lhe um
-# terceiro endereço para envelhecer.
+# ele publica e não julga — o alvo vive no `CLAUDE.md` e em
+# `docs/decisoes/005`, e cravá-lo aqui seria dar-lhe um terceiro endereço para
+# envelhecer.
+#
+# ⚠️ E ELE FOI CRAVADO AQUI NA MESMA, duas linhas depois deste aviso e outra
+# vez no resumo da corrida, com 79,5% / 35,7% — números que deixaram de ser
+# medidos em 12/09 e continuaram a ser PUBLICADOS a cada segunda-feira. Um
+# comentário que diz "não cravar" não impede ninguém; quem impede é o portão
+# do `conferir_docs.py`, desde 18/09 (`docs/decisoes/032`).
 
 on:
   schedule:
@@ -136,8 +142,9 @@ jobs:
           fi
 
       - name: Conferir o modelo das Parcelas 2 e 3
-        # Contra as 600 partidas o erro do modelo fica abaixo de 1,2%, contra
-        # os 2% que as 30 do CI permitem. É a versão apertada da mesma guarda.
+        # Contra as 600 partidas o erro do modelo fica abaixo de 1,2%. O
+        # `testes.yml` roda as mesmas 600 desde 05/09 — esta linha dizia "as 30
+        # do CI" e ficou a descrever um comando que já não existia.
         run: |
           set -euo pipefail
           python3 tools/projetar_parcelas.py \
@@ -163,9 +170,9 @@ jobs:
               | grep -v '^\(WARNING\|ERROR\|   at:\)' || true
             echo '```'
             echo
-            echo "O alvo registrado é 100% / 79,5% / 35,7% (\`docs/decisoes/005\`),"
-            echo "com margem de ±4 pontos a 600 partidas. Este passo não julga a"
-            echo "medição — publica-a."
+            echo "O alvo registrado vive no \`CLAUDE.md\` e na"
+            echo "\`docs/decisoes/005\` — num sítio só, de propósito. A margem é de"
+            echo "±4 pontos a 600 partidas. Este passo não julga a medição: publica-a."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Guardar a medição
