@@ -1020,7 +1020,7 @@ func _connect_game_state() -> void:
 	# Uma tela por evento seria um clique a cada coisa que acontece — e o
 	# plano é explícito em que tela nova não pode mudar o ritmo do turno.
 	GameState.estrutura_comprada.connect(func(_id): _cida("upgrade_pronto"))
-	GameState.rival_offer_triggered.connect(func(_d): _cida("arlindo_indireto"))
+	GameState.rival_offer_triggered.connect(_cida_rival)
 	# ⚠️ ESTAS DUAS ESTAVAM ESCRITAS E MUDAS desde 01/09 — um quarto da voz da
 	# Dona Cida em jogo. `perdeu_para_arlindo` e `bom_contrato` viviam na
 	# tabela, passavam o bloco F4 do fumaça e nenhuma linha do projeto as
@@ -1262,10 +1262,13 @@ func _on_message(text: String, kind: String) -> void:
 			_message_label.add_theme_color_override("font_color", COR_NEUTRA)
 
 
-# Uma linha da Dona Cida na faixa de mensagem. Ela NÃO tapa a mensagem do
-# sistema: quem chama isto chama-o depois do evento, e a mensagem do GameState
-# (que diz o que aconteceu em números) já passou. A fala dela é a leitura
-# humana por cima, não a substituição.
+# ⚠️ ESTE COMENTÁRIO AFIRMAVA O CONTRÁRIO DO QUE ACONTECIA, e foi por isso que
+# ninguém foi ver: dizia que a fala "NÃO tapa a mensagem do sistema, porque
+# quem chama isto chama-o depois do evento". Só `_cida_negociacao` e
+# `_cida_contrato` são chamados assim; os outros cinco vêm de sinais que o
+# GameState emite ANTES do `message.emit` da mesma chamada. Quem garante a
+# ordem agora é o `_cida`, num lugar só — e é lá que está a medição.
+#
 # O barco foi mesmo para o Porto Farol. A fala existe para o jogador que
 # NEGOCIOU e perdeu — "perdeu perdendo bem" —, então só sai no resultado
 # "perdido" e nunca quando ele fecha negócio.
@@ -1295,7 +1298,42 @@ func _cida_contrato(valor: int, classe: String) -> void:
 		_cida("bom_contrato")
 
 
+# ⚠️ A FALA ENTRA NO FIM DO FRAME, e não no instante do sinal. O comentário
+# acima afirmava que ela não tapa a mensagem do sistema "porque quem chama isto
+# chama-o depois do evento" — e isso era verdade só para os gatilhos que o Main
+# chama à mão. Nos que vêm do GameState era o CONTRÁRIO: `estrutura_comprada`
+# sai uma linha ANTES do `message.emit("… — pronto")`, e os dois escrevem no
+# mesmo Label na mesma chamada.
+#
+# Medido em 18/09, cinco sementes, partidas inteiras: `upgrade_pronto` foi
+# escrita 35 vezes e VISTA nenhuma; `caixa_baixo` 11 e nenhuma; `reputacao_caiu`
+# 12 e nenhuma. São cinco pares — os três que a revisão contou em `cash_changed`
+# mais os dois que `_fechar_negocio` e `_perder_para_rival` escondiam.
+#
+# O `call_deferred` conserta os cinco de uma vez e mantém a regra num lugar só,
+# em vez de reordenar cinco sítios do GameState e deixar o sexto por nascer.
+# O preço é o inverso: agora é a mensagem do sistema que fica por baixo. Mostrar
+# as DUAS é a fila do R5, e é item próprio — isto entrega a fala VISTA, que é o
+# que a §7.1 promete aqui.
+# A PRIMEIRA OFERTA CHEGA ANTES DE EXISTIR RECUSA NENHUMA, e a fala afirmava
+# que o Porto Farol aceita "tudo que a gente recusa". Quem conta as recusas é
+# `metrics["rival_refused"]`, que já existe — nenhum limiar novo.
+func _cida_rival(_doca: int) -> void:
+	if int(GameState.metrics.get("rival_refused", 0)) > 0:
+		_cida("arlindo_indireto")
+	else:
+		_cida("arlindo_primeira")
+
+
 func _cida(id: String) -> void:
+	_cida_agora.call_deferred(id)
+
+
+# Escreve já. Existe em separado para quem precisa de RESOLVER o id no mesmo
+# instante em que a linha é escrita — se `_semana_nova()` chamasse `_cida()`
+# ficaria com DUAS camadas de adiamento e passaria à frente das falas adiadas
+# uma vez só, invertendo a prioridade entre elas sem que nada o dissesse.
+func _cida_agora(id: String) -> void:
 	var linha := Narrativa.cida(id)
 	if linha != "":
 		_on_message(linha, "")
@@ -1334,10 +1372,19 @@ func _cida_reputacao(valor: float) -> void:
 var _caixa_estava_curto := false
 
 
-func _cida_caixa(valor: int) -> void:
-	var curto: bool = valor < GameState.PARCELA_AMOUNT / 2
+func _cida_caixa(_valor: int) -> void:
+	# O CRITÉRIO SAI DO GAMESTATE, que é o mesmo que a fala da semana nova lê.
+	# Estava escrito aqui como `valor < PARCELA_AMOUNT / 2`, e a segunda
+	# leitora teria feito uma cópia.
+	var curto: bool = GameState.caixa_curto()
 	if curto and not _caixa_estava_curto:
-		_cida("caixa_baixo")
+		# ⚠️ E A PARCELA PODE JÁ TER SIDO PAGA — `pagar_parcela_adiantado()`
+		# quita a qualquer momento. "A parcela não vai esperar" seria falsa
+		# desde esse turno até ao fim da partida.
+		if GameState.parcela_paid:
+			_cida("caixa_baixo_quitado")
+		else:
+			_cida("caixa_baixo")
 	_caixa_estava_curto = curto
 
 
@@ -1350,8 +1397,36 @@ func _cida_semana(_turno: int, semana: int) -> void:
 	# A semana 1 não é "semana nova": é a primeira, e o jogador acabou de ler o
 	# diário. A fala é sobre voltar ao trabalho, não sobre começar.
 	if _semana_vista > 0:
-		_cida("semana_nova")
+		_semana_nova.call_deferred()
 	_semana_vista = semana
+
+
+# ⚠️ O PREDICADO LÊ-SE ONDE A LINHA É ESCRITA, e não onde o sinal dispara.
+# `turn_advanced` sai ANTES de `_check_end() -> _spawn_boats()`, e o laço de
+# serviço já esvaziou toda doca sem trabalhador: medido em 18/09, em 315
+# viradas de turno sobre cinco sementes e duas formas de jogar,
+# `docas_esperando()` deu ZERO todas as vezes. Uma variante que dissesse
+# "Barcos na fila" ali seria uma frase que ninguém jamais leria — o
+# `barco_medio` outra vez, agora na narrativa.
+#
+# Um instante depois, com o sorteio do dia já feito, a mesma conta dá barco à
+# espera em 74 de 155 viradas. E é esse o estado que o jogador tem à frente
+# quando lê a faixa.
+#
+# ⚠️ OS IDs SÃO LITERAIS, e de propósito: o bloco F4 do `teste_fumaca` varre
+# este arquivo à procura das strings de `_cida`, e um id composto por
+# concatenação seria mudo para ela — a guarda daria um verde de graça.
+func _semana_nova() -> void:
+	var fila: bool = GameState.docas_esperando() > 0
+	var curto: bool = GameState.caixa_curto()
+	if fila and curto:
+		_cida_agora("semana_nova_fila_curto")
+	elif fila:
+		_cida_agora("semana_nova_fila_folgado")
+	elif curto:
+		_cida_agora("semana_nova_parado_curto")
+	else:
+		_cida_agora("semana_nova_parado_folgado")
 
 
 func _on_semana_fechada(resumo: Dictionary) -> void:

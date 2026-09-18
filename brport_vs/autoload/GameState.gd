@@ -813,15 +813,37 @@ func trabalho_parado() -> Vector2i:
 	for w in workers:
 		if int(w["busy_turns"]) == 0 and worker_dock_index(int(w["id"])) < 0:
 			livres += 1
-	var esperando := 0
-	for i in range(docks.size()):
-		if doca_aceita_trabalhador(i):
-			esperando += 1
+	var esperando := docas_esperando()
 	# Nem trabalhador parado sem doca, nem doca sem trabalhador é "trabalho
 	# parado" — nos dois casos não há nada que o jogador possa fazer agora.
 	if livres == 0 or esperando == 0:
 		return Vector2i.ZERO
 	return Vector2i(livres, esperando)
+
+
+# Quantas docas têm barco à espera de trabalhador. Sai daqui, e não de dentro
+# do `trabalho_parado()`, porque são duas perguntas diferentes: aquele devolve
+# (0, 0) quando NÃO HÁ trabalhador livre — não há nada a fazer —, e "há barco
+# na fila?" continua a ser sim. A fala da semana nova precisa da segunda, e
+# pedir a primeira dir-lhe-ia que o cais está parado com três barcos atracados.
+func docas_esperando() -> int:
+	var esperando := 0
+	for i in range(docks.size()):
+		if doca_aceita_trabalhador(i):
+			esperando += 1
+	return esperando
+
+
+# O CAIXA ESTÁ CURTO? O critério vivia dentro do `_cida_caixa` do Main, e
+# passou a haver um segundo leitor (a fala da semana nova). Duas cópias da
+# mesma linha é uma que pode envelhecer calada — e esta decide o que a Dona
+# Cida AFIRMA, de modo que divergirem seria ela dizer "caixa no limite" e
+# "conta fina" em estados diferentes.
+#
+# Meia parcela não é número novo: é o que o aviso de caixa curto já usava
+# desde que existe.
+func caixa_curto() -> bool:
+	return cash < PARCELA_AMOUNT / 2
 
 
 # Há trabalhador livre E doca esperando? É o que decide se o botão de alocar

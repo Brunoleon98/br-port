@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 18/09/2026 — R2 e R3 da §7.1; o jogo não mudou
+> **Última atualização:** 18/09/2026 — R4 da §7.1; a voz da Dona Cida chega à tela
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -121,16 +121,27 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-**R1 e R2 da §7.1 fechados (17–18/09), e o jogo não mudou em nenhum:** a
-Leitura escolhe os perfis por identidade (`030`); e a evidência do CI passou a
-responder por ERRO e por TURNO (`031`) — os onze passos que rodam `--script`
-têm guarda de erro, a lista de quem a tem sai do workflow em vez de ser escrita
-à mão, os logs da captura ficam, e ela avança por turno efetivo sem atravessar
-modal. E o **R3** pôs o texto a responder pela fonte que a máquina corre
-(`032`): as suítes saem do workflow, e o `conferir_docs.py` reprova suíte
-omitida, mapa por regerar, contagem de partidas que o comando não roda e um
-segundo endereço para as taxas medidas. **Próximo: R4.** R5–R9 pendentes,
-gates humanos abertos.
+**R1 a R3 da §7.1 fechados (17–18/09), e o jogo não mudou em nenhum** — a
+Leitura por identidade (`030`), a evidência do CI a responder por erro e por
+turno (`031`) e o texto a responder pela fonte que a máquina corre (`032`).
+O detalhe de cada um vive na decisão dele.
+
+**R4 fechado (18/09), e é o primeiro que MUDA o jogo desde 13/09** (`033`): a
+voz da Dona Cida passou a chegar à tela. Ela era escrita no mesmo `Label` que
+a mensagem do sistema e uma linha antes dela — medido, `upgrade_pronto` saía
+35 vezes numa varredura de cinco sementes e era vista **zero**. Hoje a fala
+entra no fim do frame, num lugar só; o preço é a mensagem do sistema ficar por
+baixo, e mostrar as duas é o R5. As falas que afirmavam estado passaram a
+olhá-lo, com critérios que já existiam: a obra instantânea deixou de "demorar",
+a semana nova tem quatro variantes sobre barco-à-espera × caixa-curto, e o
+aviso de caixa curto deixou de cobrar uma parcela que o jogador já quitou.
+⚠️ **E o predicado lê-se onde a linha é escrita**, não onde o sinal dispara —
+no instante do sinal o sorteio do dia ainda não correu, e "Barcos na fila"
+nunca poderia ser verdade. O bloco **F8** do fumaça tranca a pergunta nova
+("a fala foi VISTA?"), com seis mutantes reprovados.
+
+**Próximo: R5** — a fila de mensagens. Ele herda três falas que ainda se tapam
+umas às outras, já medidas no `033`. R6–R9 pendentes, gates humanos abertos.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -140,7 +151,7 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e as 7 notas dela estão fechadas. Falta reler o que mudou desde então — A4 do plano |
+| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e as 7 notas dela estão fechadas. Falta reler o que mudou desde então — e o R4 acrescentou texto novo: as variantes da semana nova, a do caixa já quitado, a da primeira oferta do Arlindo e a fala do Zezão sem a duração. Um predicado verde não aprova uma frase |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 

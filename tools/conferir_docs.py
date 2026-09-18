@@ -41,7 +41,15 @@ ARQUIVO = "docs/arquivo"
 # modo de falhar medido foi o crescimento CALADO, não o tamanho em si. Subir
 # este número é perfeitamente legítimo; o que não é legítimo é o documento
 # dobrar sem ninguém reparar. Em 02/09 o arquivo ficou com ~18 KB.
-TETO_ESTADO = 26000
+#
+# ⚠️ SUBIU DE 26.000 EM 18/09, por decisão do Bruno e ao terceiro toque. A
+# ordem escrita no ritual de fecho é descer o histórico, comprimir o que
+# duplica outro documento e SÓ ENTÃO subir o teto — e os dois primeiros passos
+# tinham sido dados duas vezes no mesmo dia, deixando 45 bytes de folga. Ao
+# terceiro, comprimir passa a apagar registo útil em vez de duplicação, que é
+# o contrário do que este alarme existe para proteger. O detalhe dos itens já
+# fechados desceu para a decisão de cada um; o que ficou é o AGORA.
+TETO_ESTADO = 28000
 
 # `00_INDICE.md` é citado na decisão 001 como um arquivo que NÃO veio no pacote
 # de arte — é prosa sobre uma ausência, não uma referência a resolver. É a
