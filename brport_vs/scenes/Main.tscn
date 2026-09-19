@@ -654,10 +654,22 @@ offset_right = 706.0
 offset_bottom = 1046.0
 theme_override_styles/panel = SubResource("faixa_msg")
 
-[node name="Mensagem" type="Label" parent="MensagemCartao"]
+[node name="Linha" type="HBoxContainer" parent="MensagemCartao"]
 layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Mensagem" type="Label" parent="MensagemCartao/Linha"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
 autowrap_mode = 2
 theme_override_font_sizes/font_size = 13
+
+[node name="Pendentes" type="Label" parent="MensagemCartao/Linha"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.35, 0.42, 0.5, 1)
+theme_override_font_sizes/font_size = 12
 
 [node name="MetaCartao" type="PanelContainer" parent="."]
 layout_mode = 0

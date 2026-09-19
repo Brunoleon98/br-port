@@ -27,7 +27,7 @@ extends SceneTree
 # ============================================================
 
 const SONDA := "res://tools/sonda_mensagens.gd"
-const CAMINHO_LABEL := "MensagemCartao/Mensagem"
+const CAMINHO_LABEL := "MensagemCartao/Linha/Mensagem"
 const CAMINHO_OVERLAY := "Overlay"
 
 # As mesmas cinco do R4, para o antes e o depois se poderem comparar.
@@ -90,6 +90,8 @@ func _abrir(semente: int) -> bool:
 	root.add_child(_sonda)
 	_label = _sonda.get_node_or_null(CAMINHO_LABEL) as Label
 	_overlay = _sonda.get_node_or_null(CAMINHO_OVERLAY)
+	_apresentadas.clear()
+	_sonda._fila.apresentou.connect(_recolher_apresentada)
 	return true
 
 
@@ -101,26 +103,52 @@ func _fechar() -> void:
 	_overlay = null
 
 
+var _apresentadas: Array[String] = []
+
+
+func _recolher_apresentada(texto: String, _kind: String) -> void:
+	_apresentadas.append(texto)
+
+
 func _esperar() -> void:
 	await process_frame
 	await process_frame
 
 
+# CORRE O RELÓGIO DA FILA ATÉ ESVAZIAR. Em headless os frames passam em
+# microssegundos, então esperar o tempo real mediria a velocidade da máquina e
+# não o desenho — o que se quer saber é o que a fila ENTREGARIA, e quanto
+# tempo ela pediria para o fazer.
+func _drenar() -> void:
+	var voltas := 0
+	while _sonda._fila.avancar(99.0) and voltas < 500:
+		voltas += 1
+
+
 # O CORAÇÃO DA RÉGUA: faz UMA ação e guarda tudo o que ela escreveu.
 func _acao(modo: String, semente: int, nome: String, alvo: Callable) -> void:
 	var antes: int = _sonda.registo.size()
+	var antes_vistas: int = _apresentadas.size()
 	alvo.call()
 	await _esperar()
+	_drenar()
 	var escritas: Array[Dictionary] = []
 	var reg: Array = _sonda.registo
 	for i in range(antes, reg.size()):
 		escritas.append(reg[i])
+	var vistas: Array[String] = []
+	var ocupado := 0.0
+	for i in range(antes_vistas, _apresentadas.size()):
+		vistas.append(_apresentadas[i])
+		ocupado += FilaDeMensagens.tempo_minimo(_apresentadas[i])
 	_acoes.append({
 		"modo": modo,
 		"semente": semente,
 		"turno": int(GS.turn),
 		"acao": nome,
 		"escritas": escritas,
+		"vistas": vistas,
+		"ocupado": ocupado,
 		"modal": _modais() > 0,
 	})
 
@@ -236,32 +264,44 @@ func _relatorio() -> void:
 		if bool(a["modal"]):
 			acoes_com_modal += 1
 		total += n
-		vistas += 1
 		var nome: String = String(a["acao"])
 		var d: Dictionary = por_acao.get(nome, {"acoes": 0, "escritas": 0, "max": 0})
 		d["acoes"] = int(d["acoes"]) + 1
 		d["escritas"] = int(d["escritas"]) + n
 		d["max"] = maxi(int(d["max"]), n)
 		por_acao[nome] = d
+		# ⚠️ A CONTA É DE MULTICONJUNTO, e não um `has()`. "Tapada" mudou de
+		# significado com a fila — antes era toda escrita menos a última da
+		# ação, porque só a última sobrevivia ao frame; agora é a que não
+		# chegou a ser apresentada, e a única maneira de isso acontecer é a
+		# fusão por duplicata. Ora duplicata é precisamente o caso em que o
+		# mesmo texto aparece DUAS vezes do lado escrito e uma do apresentado:
+		# com `has()` as duas contavam por vistas, e o total não fechava com a
+		# subtração — 49 contra 42, e foi essa discordância que apanhou o erro.
+		var restam := {}
+		for t in (a["vistas"] as Array):
+			restam[t] = int(restam.get(t, 0)) + 1
 		for i in range(n):
 			var f: String = _fonte(escritas[i])
+			var txt: String = String(escritas[i]["texto"])
 			por_fonte[f] = int(por_fonte[f]) + 1
-			# A ÚLTIMA É A QUE FICA. Todas as outras foram escritas e apagadas
-			# no mesmo frame, sem o jogador ter como as ler.
-			if i < n - 1:
+			if int(restam.get(txt, 0)) > 0:
+				restam[txt] = int(restam[txt]) - 1
+				vistas += 1
+			else:
 				tapadas_por_fonte[f] = int(tapadas_por_fonte[f]) + 1
-			textos[String(escritas[i]["texto"])] = true
+			textos[txt] = true
 
-	print("=== ANTES — a faixa de mensagem como está hoje ===")
+	print("=== A FAIXA DE MENSAGEM, MEDIDA ===")
 	print("%d partidas (%d sementes x %d modos), %d ações do jogador"
 		% [SEMENTES.size() * MODOS.size(), SEMENTES.size(), MODOS.size(), _acoes.size()])
 	print("")
 	print("escritas na faixa: %d   (sistema %d · Dona Cida %d)"
 		% [total, por_fonte["sistema"], por_fonte["cida"]])
-	print("VISTAS (a última de cada ação): %d" % vistas)
-	var tapadas: int = total - vistas
+	print("APRESENTADAS: %d" % vistas)
+	var tapadas: int = int(tapadas_por_fonte["sistema"]) + int(tapadas_por_fonte["cida"])
 	var pct: float = 0.0 if total == 0 else 100.0 * float(tapadas) / float(total)
-	print("TAPADAS: %d  (%.1f%% de tudo o que o jogo diz)" % [tapadas, pct])
+	print("NUNCA APRESENTADAS: %d  (%.1f%% de tudo o que o jogo diz)" % [tapadas, pct])
 	print("   sendo sistema %d e Dona Cida %d"
 		% [tapadas_por_fonte["sistema"], tapadas_por_fonte["cida"]])
 	print("")
@@ -282,9 +322,39 @@ func _relatorio() -> void:
 	print("ações que acabaram com painel aberto (pausa forçada): %d de %d"
 		% [acoes_com_modal, acoes_com_escrita])
 	_por_fala()
+	_tempo_de_faixa()
 	_medir_textos(textos.keys())
 	print("")
 	print("=== FILA MEDIDA ===")
+
+
+# QUANTO TEMPO A FAIXA FICA OCUPADA POR AÇÃO. É a CONSEQUÊNCIA do tempo
+# mínimo, e é ela que se pode medir aqui — a velocidade a que uma pessoa lê,
+# não. A §7.1 avisa-o com todas as letras: "velocidade de leitura focada não
+# prova leitura incidental mobile".
+func _tempo_de_faixa() -> void:
+	var tempos: Array[float] = []
+	var soma := 0.0
+	var maior := 0.0
+	for a in _acoes:
+		var t: float = float(a["ocupado"])
+		if t <= 0.0:
+			continue
+		tempos.append(t)
+		soma += t
+		maior = maxf(maior, t)
+	if tempos.is_empty():
+		return
+	tempos.sort()
+	print("")
+	print("tempo que a faixa fica ocupada, por ação:")
+	print("   mediana %.1f s · média %.1f s · a pior %.1f s"
+		% [tempos[tempos.size() / 2], soma / tempos.size(), maior])
+	var acima := 0
+	for t in tempos:
+		if t > 5.0:
+			acima += 1
+	print("   ações que pedem mais de 5 s: %d de %d" % [acima, tempos.size()])
 
 
 # CADA FALA DA DONA CIDA: quantas vezes foi ESCRITA e quantas SOBROU no Label.
@@ -302,7 +372,7 @@ func _por_fala() -> void:
 				continue
 			var id: String = String(e["id"])
 			escrita[id] = int(escrita.get(id, 0)) + 1
-			if i == lista.size() - 1:
+			if (a["vistas"] as Array).has(String(e["texto"])):
 				vista[id] = int(vista.get(id, 0)) + 1
 	print("")
 	print("cada fala da Dona Cida — escrita x vista:")

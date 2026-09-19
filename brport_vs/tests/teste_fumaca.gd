@@ -1079,11 +1079,12 @@ func _sem_comentarios(fonte: String) -> String:
 # descreve mesmo este mundo é o gate A4 — uma pessoa a ler em voz alta. Foi
 # assim que se apanhou *"porto que fecha no azul abre segunda-feira"*, que
 # nenhuma asserção podia ver.
-const F8_CAMINHO_LABEL := "MensagemCartao/Mensagem"
+const F8_CAMINHO_LABEL := "MensagemCartao/Linha/Mensagem"
 
 var _f8_terminou := false
 var _f8_main: Node = null
 var _f8_sistema: Array[String] = []
+var _f8_apresentadas: Array[String] = []
 
 
 func _f8_abrir() -> bool:
@@ -1104,12 +1105,38 @@ func _f8_abrir() -> bool:
 	_f8_main = cena.instantiate()
 	root.add_child(_f8_main)
 	_f8_sistema.clear()
+	_f8_apresentadas.clear()
+	# ⚠️ A PERGUNTA MUDOU DE LADO COM A FILA (R5). Até 19/09 "vista" queria
+	# dizer "sobrou no Label depois de todos os emits", porque a última escrita
+	# apagava as outras. Com a fila nada é apagado: cada mensagem tem a sua vez,
+	# e a pergunta certa passou a ser **foi APRESENTADA?**. Ler o Label agora
+	# responderia pela última da fila e chamaria "não vista" a uma frase que
+	# esteve na tela os seus dois segundos.
+	_f8_main._fila.apresentou.connect(_f8_recolher_apresentada)
 	GS.message.connect(_f8_recolher)
 	return true
 
 
 func _f8_recolher(texto: String, _kind: String) -> void:
 	_f8_sistema.append(texto)
+
+
+func _f8_recolher_apresentada(texto: String, _kind: String) -> void:
+	_f8_apresentadas.append(texto)
+
+
+# CORRE O RELÓGIO DA FILA ATÉ ELA ESVAZIAR, e devolve a última frase mostrada.
+# O teto existe pela mesma razão do teto de voltas do `capturar_tela.gd`: uma
+# fila que não drenasse penduraria a suíte em vez de reprovar.
+func _f8_drenar() -> String:
+	var voltas := 0
+	while _f8_main._fila.avancar(99.0) and voltas < 200:
+		voltas += 1
+	return "" if _f8_apresentadas.is_empty() else _f8_apresentadas[-1]
+
+
+func _f8_foi_apresentada(texto: String) -> bool:
+	return _f8_apresentadas.has(texto)
 
 
 func _f8_fechar() -> void:
@@ -1165,15 +1192,22 @@ func _f8_a_fala_e_vista() -> void:
 		return
 	GS.comprar_estrutura("pier_2")
 	await _f8_esperar()
-	var visto := _f8_label()
+	_f8_drenar()
 	# A GUARDA SÓ VALE SE O PERIGO ESTIVER MONTADO. Sem a mensagem do sistema
-	# nesta chamada não há par nenhum a testar, e a asserção seguinte passaria
-	# por um caminho que não é o que ela existe para defender.
+	# nesta chamada não há par nenhum a testar, e as asserções seguintes
+	# passariam por um caminho que não é o que elas existem para defender.
 	_confere("F8a: a compra emite mesmo uma mensagem do sistema no mesmo frame",
 		_f8_sistema.size() > 0, "nenhuma — o par que este bloco testa não está montado")
-	_confere("F8a: e a fala do upgrade é o que fica no Label",
-		visto == Narrativa.cida("upgrade_pronto"),
-		"ficou: " + visto)
+	_confere("F8a: a fala do upgrade é apresentada",
+		_f8_foi_apresentada(Narrativa.cida("upgrade_pronto")),
+		"apresentadas: " + ", ".join(_f8_apresentadas))
+	# ⚠️ E ESTA É A ASSERÇÃO DO R5, o mutante "perder a segunda entrada": as
+	# DUAS mensagens da mesma compra chegam à tela. Até 19/09 uma tapava a
+	# outra no mesmo frame, e qual delas sobrevivia era só uma questão de quem
+	# escrevia por último — o R4 trocou o vencedor e não o jogo.
+	_confere("F8a: e a mensagem do sistema da mesma compra também",
+		_f8_foi_apresentada(_f8_sistema[-1] if _f8_sistema.size() > 0 else ""),
+		"apresentadas: " + ", ".join(_f8_apresentadas))
 	_f8_fechar()
 
 	# ── F8b. A obra é INSTANTÂNEA, logo a fala dela não pode falar de tempo.
@@ -1199,14 +1233,14 @@ func _f8_a_fala_e_vista() -> void:
 	GS.cash = GS.PARCELA_AMOUNT / 2 - 1
 	_f8_main._semana_nova()
 	_confere("F8c: com barco à espera e caixa curto, sai a variante das duas",
-		_f8_label() == Narrativa.cida("semana_nova_fila_curto"),
-		"ficou: " + _f8_label())
+		_f8_drenar() == Narrativa.cida("semana_nova_fila_curto"),
+		"ficou: " + _f8_drenar())
 	_f8_por_barco_a_espera(false)
 	GS.cash = GS.PARCELA_AMOUNT
 	_f8_main._semana_nova()
 	_confere("F8c: sem barco e com caixa folgado, sai a variante de nenhuma das duas",
-		_f8_label() == Narrativa.cida("semana_nova_parado_folgado"),
-		"ficou: " + _f8_label())
+		_f8_drenar() == Narrativa.cida("semana_nova_parado_folgado"),
+		"ficou: " + _f8_drenar())
 	_f8_fechar()
 
 	# ── F8c2. E O PREDICADO É LIDO ONDE A LINHA É ESCRITA, não onde o sinal
@@ -1227,8 +1261,8 @@ func _f8_a_fala_e_vista() -> void:
 	GS.cash = GS.PARCELA_AMOUNT / 2 - 1
 	await _f8_esperar()
 	_confere("F8c2: a variante é a do estado em que a linha é ESCRITA, não a do sinal",
-		_f8_label() == Narrativa.cida("semana_nova_fila_curto"),
-		"ficou: " + _f8_label() + " (a do sinal seria: "
+		_f8_drenar() == Narrativa.cida("semana_nova_fila_curto"),
+		"ficou: " + _f8_drenar() + " (a do sinal seria: "
 			+ Narrativa.cida("semana_nova_parado_folgado") + ")")
 	_f8_fechar()
 
@@ -1237,13 +1271,16 @@ func _f8_a_fala_e_vista() -> void:
 		return
 	_f8_avancar_ate(2)
 	await _f8_esperar()
-	var na_tela := _f8_label()
+	_f8_drenar()
+	# ⚠️ E AGORA A PERGUNTA É SOBRE TUDO O QUE FOI APRESENTADO, não sobre o que
+	# sobrou: com a fila, uma fala da semana 1 não seria apagada pela seguinte
+	# — apareceria na sua vez, e ler só a última deixaria de a ver.
 	var e_semana_nova := false
 	for id in Narrativa.CIDA_LINHAS:
-		if String(id).begins_with("semana_nova") and Narrativa.cida(String(id)) == na_tela:
+		if String(id).begins_with("semana_nova") and _f8_foi_apresentada(Narrativa.cida(String(id))):
 			e_semana_nova = true
 	_confere("F8d: a semana 1 não diz 'semana nova' — não há anterior com que comparar",
-		not e_semana_nova, "ficou: " + na_tela)
+		not e_semana_nova, "apresentadas: " + ", ".join(_f8_apresentadas))
 	_f8_fechar()
 
 	# ── F8e. "A parcela não vai esperar" só sai enquanto ela não foi paga.
@@ -1258,11 +1295,12 @@ func _f8_a_fala_e_vista() -> void:
 	GS.cash = int(GS.valor_da_parcela_hoje()) + 1000
 	var quitou: bool = GS.pagar_parcela_adiantado()
 	await _f8_esperar()
+	_f8_drenar()
 	_confere("F8e: a montagem quitou mesmo a parcela adiantada", quitou,
 		"sem isto a asserção seguinte testa o outro ramo")
 	_confere("F8e: com a parcela paga, a fala do caixa curto é a que não a cobra",
-		_f8_label() == Narrativa.cida("caixa_baixo_quitado"),
-		"ficou: " + _f8_label())
+		_f8_foi_apresentada(Narrativa.cida("caixa_baixo_quitado")),
+		"apresentadas: " + ", ".join(_f8_apresentadas))
 	_f8_fechar()
 
 	# ── F8f. E A SEMANA NOVA SÓ COBRA A PARCELA SE ELA ESTIVER PENDENTE.
@@ -1279,13 +1317,13 @@ func _f8_a_fala_e_vista() -> void:
 	GS.parcela_paid = false
 	_f8_main._semana_nova()
 	_confere("F8f: com a parcela por pagar, é ela que a fala nomeia",
-		_f8_label() == Narrativa.cida("semana_nova_parado_curto"),
-		"ficou: " + _f8_label())
+		_f8_drenar() == Narrativa.cida("semana_nova_parado_curto"),
+		"ficou: " + _f8_drenar())
 	GS.parcela_paid = true
 	_f8_main._semana_nova()
 	_confere("F8f: com a parcela paga, sai a outra variante",
-		_f8_label() == Narrativa.cida("semana_nova_parado_curto_quitado"),
-		"ficou: " + _f8_label())
+		_f8_drenar() == Narrativa.cida("semana_nova_parado_curto_quitado"),
+		"ficou: " + _f8_drenar())
 	_confere("F8f: e essa outra não fala de parcela nenhuma",
 		not Narrativa.cida("semana_nova_parado_curto_quitado").to_lower().contains("parcela"),
 		"diz: " + Narrativa.cida("semana_nova_parado_curto_quitado"))
@@ -1301,18 +1339,40 @@ func _f8_a_fala_e_vista() -> void:
 	GS.cash = 10000000
 	GS.comprar_estrutura("pier_2")
 	await _f8_esperar()
+	_f8_drenar()
 	_confere("F8g: a primeira obra tem a reação de primeira vez",
-		_f8_label() == Narrativa.cida("upgrade_pronto"), "ficou: " + _f8_label())
+		_f8_foi_apresentada(Narrativa.cida("upgrade_pronto")),
+		"apresentadas: " + ", ".join(_f8_apresentadas))
+	# ⚠️ A SEGUNDA COMPRA NO MESMO FÔLEGO É A DUPLICATA SEMÂNTICA, e é aqui
+	# que ela se prova: a fala é a MESMA string, logo funde-se; as duas
+	# mensagens do sistema são DIFERENTES e não se fundem. É o caso que a nota
+	# do Bruno levantou — "mais de uma compra pode ser feita por turno".
+	var antes_da_segunda := _f8_apresentadas.size()
 	GS.comprar_estrutura("armazem")
 	await _f8_esperar()
-	_confere("F8g: a segunda ainda duvida",
-		_f8_label() == Narrativa.cida("upgrade_pronto"), "ficou: " + _f8_label())
-	# ⚠️ O ESTADO QUE APERTA É A TERCEIRA, e só ela: com duas ou com quatro as
-	# duas versões da conta dão a mesma resposta em metade dos casos.
+	_f8_drenar()
+	var novas: Array[String] = []
+	for i in range(antes_da_segunda, _f8_apresentadas.size()):
+		novas.append(_f8_apresentadas[i])
+	_confere("F8g: a segunda obra não repete a fala igual — funde-se",
+		not novas.has(Narrativa.cida("upgrade_pronto")),
+		"repetiu: " + ", ".join(novas))
+	_confere("F8g: mas a mensagem do sistema dela aparece — texto diferente não funde",
+		novas.has(_f8_sistema[-1] if _f8_sistema.size() > 0 else ""),
+		"novas: " + ", ".join(novas))
+	# ⚠️ E O ESTADO QUE APERTA O LIMIAR É A TERCEIRA, e só ela: à segunda a
+	# conta certa e a errada dão respostas diferentes — se o corte fosse 2, a
+	# linha da rotina teria saído já ali, e ela é um texto NOVO, logo não se
+	# funde e apareceria.
+	_confere("F8g: e à segunda a fala da rotina ainda não saiu",
+		not _f8_foi_apresentada(Narrativa.cida("upgrade_pronto_rotina")),
+		"apresentadas: " + ", ".join(_f8_apresentadas))
 	GS.comprar_estrutura("patio")
 	await _f8_esperar()
+	_f8_drenar()
 	_confere("F8g: da terceira em diante ela concede",
-		_f8_label() == Narrativa.cida("upgrade_pronto_rotina"), "ficou: " + _f8_label())
+		_f8_foi_apresentada(Narrativa.cida("upgrade_pronto_rotina")),
+		"apresentadas: " + ", ".join(_f8_apresentadas))
 	_f8_fechar()
 
 	_f8_terminou = true

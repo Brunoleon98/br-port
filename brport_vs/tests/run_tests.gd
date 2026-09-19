@@ -498,6 +498,10 @@ func _run() -> void:
 	_t7_leitura_do_simulador()
 	_check("o bloco T7 correu até ao fim", _t7_completo)
 
+	print("=== T8: a fila da faixa de mensagem ===")
+	_t8_fila_de_mensagens()
+	_check("o bloco T8 correu até ao fim", _t8_completo)
+
 	print("")
 	if _fails == 0:
 		print("=== TODOS OS TESTES PASSARAM ===")
@@ -1429,3 +1433,87 @@ func _t7_tem(linhas: Array, trecho: String) -> bool:
 		if trecho in String(l):
 			return true
 	return false
+
+
+# ── T8 ──────────────────────────────────────────────────────────────────────
+# A FILA DA FAIXA DE MENSAGEM (R5 da §7.1).
+#
+# ⚠️ AQUI E NÃO NO FUMAÇA, e é decisão: a `FilaDeMensagens` é aritmética pura —
+# não fala com o `GameState`, não toca em nó nenhum — e o fumaça precisaria de
+# instanciar o `Main` inteiro e correr frames para lhe fazer as mesmas
+# perguntas. É a mesma razão pela qual a Leitura do simulador saiu de dentro do
+# `SceneTree` para se poder provar com fixture (T7, `docs/decisoes/030`).
+#
+# ⚠️ E O TEMPO É PASSADO À MÃO, nunca esperado. Uma suíte que dormisse 2,4 s
+# por asserção mediria o relógio da máquina — e o `CLAUDE.md` já regista que
+# este contêiner deriva 20% ao longo do dia.
+var _t8_completo := false
+
+
+func _t8_fila_de_mensagens() -> void:
+	# ── a ordem comum é FIFO, e as duas fontes cabem lá dentro.
+	var f := FilaDeMensagens.new()
+	var vistas: Array[String] = []
+	f.apresentou.connect(func(t: String, _k: String) -> void: vistas.append(t))
+	f.enfileirar("primeira", "", "sistema")
+	f.enfileirar("segunda", "", "cida")
+	_check("T8: a primeira aparece logo, sem esperar", vistas == ["primeira"])
+	_check("T8: e a segunda fica à espera da vez", f.pendentes() == 1)
+
+	# ── NÃO INTERROMPE ANTES DO MÍNIMO. É o mutante que a §7.1 nomeia, e o
+	# único que só se apanha com o relógio na mão: um passo curto não troca
+	# nada, e o passo que fecha o mínimo troca.
+	var minimo := FilaDeMensagens.tempo_minimo("primeira")
+	_check("T8: um passo curto não troca a mensagem", not f.avancar(minimo * 0.5))
+	_check("T8: e ela continua na tela", vistas == ["primeira"])
+	_check("T8: o passo que fecha o mínimo troca", f.avancar(minimo * 0.6))
+	_check("T8: e agora é a segunda", vistas == ["primeira", "segunda"])
+
+	# ── PRIORIDADE É PARA A PRÓXIMA APRESENTAÇÃO, nunca para a atual.
+	# ⚠️ O ESTADO QUE APERTA tem de ter DUAS à espera e a urgente a chegar por
+	# último: com a fila vazia ela seria mostrada de imediato e o teste passaria
+	# sem nada ter sido ordenado.
+	var g := FilaDeMensagens.new()
+	var ordem: Array[String] = []
+	g.apresentou.connect(func(t: String, _k: String) -> void: ordem.append(t))
+	g.enfileirar("na tela", "", "sistema")
+	g.enfileirar("calma", "", "cida")
+	g.enfileirar("boa", "good", "sistema")
+	g.enfileirar("URGENTE", "bad", "sistema")
+	_check("T8: a urgente não rouba a vez de quem está na tela", ordem == ["na tela"])
+	while g.avancar(99.0):
+		pass
+	_check("T8: mas passa à frente das que esperavam",
+		ordem == ["na tela", "URGENTE", "boa", "calma"])
+
+	# ── COALESCÊNCIA SÓ POR DUPLICATA SEMÂNTICA.
+	var h := FilaDeMensagens.new()
+	var ditas: Array[String] = []
+	h.apresentou.connect(func(t: String, _k: String) -> void: ditas.append(t))
+	h.enfileirar("na tela", "", "sistema")
+	h.enfileirar("igual", "", "cida")
+	var fundiu := not h.enfileirar("igual", "", "cida")
+	_check("T8: texto igual à espera funde-se", fundiu)
+	_check("T8: e não ocupa lugar nenhum na fila", h.pendentes() == 1)
+	# ⚠️ E ESTA É A OUTRA METADE, o mutante "agrupar textos diferentes": duas
+	# mensagens distintas da MESMA compra não se fundem, por mais parecidas que
+	# sejam — a §7.1 exige-o por escrito.
+	var manteve := h.enfileirar("diferente", "", "sistema")
+	_check("T8: texto diferente nunca se funde", manteve and h.pendentes() == 2)
+
+	# ── NADA SE PERDE: o histórico guarda o que a fila ainda não mostrou.
+	_check("T8: o histórico tem as três, mesmo com duas por mostrar",
+		h.historico.size() == 3)
+	_check("T8: e a mais recente vem primeiro",
+		String(h.historico[0]["texto"]) == "diferente")
+
+	# ── O TEMPO MÍNIMO CRESCE COM O TEXTO, e tem piso e teto.
+	_check("T8: uma frase curta fica perto da base",
+		FilaDeMensagens.tempo_minimo("oi") >= FilaDeMensagens.BASE
+		and FilaDeMensagens.tempo_minimo("oi") < FilaDeMensagens.BASE + 0.2)
+	_check("T8: uma frase longa fica mais",
+		FilaDeMensagens.tempo_minimo("a".repeat(95)) > FilaDeMensagens.tempo_minimo("a".repeat(30)))
+	_check("T8: e nenhuma passa do teto",
+		FilaDeMensagens.tempo_minimo("a".repeat(500)) <= FilaDeMensagens.TETO)
+
+	_t8_completo = true

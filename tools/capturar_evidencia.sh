@@ -247,6 +247,13 @@ tirar contraoferta - -  --script res://tools/capturar_cena.gd -- res://scenes/pa
 # "Dia N/32 · Semana S" e num `GameState` recém-nascido as duas metades leriam
 # 1 e 1, que é o único estado em que um erro de conta entre elas não apareceria.
 tirar menu    - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelMenu.tscn "$SAIDA/menu.png" turn=9
+# O HISTÓRICO DA FAIXA (R5 da §7.1). Ele é a única resposta à pergunta "o que
+# passou enquanto eu olhava para o mapa?", e nenhum dos tiros acima o monta:
+# abre por um TOQUE na faixa de mensagem, depois de a sessão ter acumulado o
+# que dizer. Fotografá-lo com `capturar_cena.gd` daria a tela do vazio — uma
+# foto verdadeira de um estado que só existe no primeiro segundo do jogo, que
+# é a armadilha que o `capturar_cena` já levou uma vez com o `setup()` saltado.
+tirar mensagens 1 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/mensagens.png" completo limpo mensagens
 tirar icones  - -  --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

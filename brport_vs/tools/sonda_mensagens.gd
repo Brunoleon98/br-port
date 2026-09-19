@@ -1,18 +1,20 @@
 extends "res://scripts/Main.gd"
 
-# A SONDA DA FAIXA DE MENSAGEM — recolhe TODA escrita, das duas fontes.
+# A SONDA DA FAIXA DE MENSAGEM — recolhe tudo o que ENTRA na fila, das duas
+# fontes, e a sonda do que SAI é o sinal `apresentou` da própria fila.
 #
-# ⚠️ ELA NÃO REPLICA A ESCOLHA DE NENHUMA FALA, e é de propósito: o `_cida()`
-# resolve o id em texto e chama `_on_message`, que desde 18/09 é o funil único
-# das duas fontes. Uma sonda que se ligasse aos sinais do GameState teria de
-# repetir aqui a lógica que escolhe a variante — o espelho que o `CLAUDE.md`
-# descreve —, e mediria a cópia em vez do jogo.
+# ⚠️ ELA ESCUTA NOS DOIS PONTOS DE ENTRADA, e não num só. Até o R5 havia um
+# funil único — o `_on_message` — e bastava interceptá-lo; com a fila, o
+# `_cida_agora` passou a enfileirar direto, e uma sonda que só ouvisse o
+# `_on_message` relataria **zero falas da Dona Cida**. Foi o que aconteceu na
+# primeira corrida depois da fila: 443 escritas, todas do sistema, e
+# "-194 nunca apresentadas" — um número negativo, que é o sintoma a apontar
+# para a causa. É a regra do `CLAUDE.md` outra vez: quando uma régua devolve
+# zero em tudo, a primeira pergunta é se ela consegue devolver outra coisa.
 #
-# ⚠️ E A FONTE NÃO SE ADIVINHA PELO `kind`. A primeira versão desta sonda
-# chamava "Dona Cida" a toda escrita com kind vazio, porque é assim que o
-# `_cida_agora` chama o `_on_message` — e o `GameState` tem uma mensagem de
-# SISTEMA com kind vazio também ("Trabalhador #N liberado", `:880`). Quem sabe
-# de onde veio a linha é quem a escreveu, e é por isso que a marca sai daqui.
+# ⚠️ E ELA NÃO REPLICA ESCOLHA NENHUMA. O `Narrativa.cida(id)` aqui é a MESMA
+# consulta que o código real faz uma linha abaixo, não uma segunda decisão:
+# quem escolheu o `id` foi o jogo, e é esse id que a sonda regista.
 #
 # ⚠️ E ELA NÃO PODE SER `preload`ADA de um `--script`: este arquivo herda o
 # `Main.gd`, que fala do autoload pelo nome, e compilá-lo antes de a árvore
@@ -20,23 +22,14 @@ extends "res://scripts/Main.gd"
 # dentro do `_process`.
 var registo: Array[Dictionary] = []
 
-var _de_cida := false
-var _id_cida := ""
+
+func _on_message(text: String, kind: String) -> void:
+	registo.append({"texto": text, "kind": kind, "fonte": "sistema", "id": ""})
+	super(text, kind)
 
 
 func _cida_agora(id: String) -> void:
-	_de_cida = true
-	_id_cida = id
+	var linha := Narrativa.cida(id)
+	if linha != "":
+		registo.append({"texto": linha, "kind": "", "fonte": "cida", "id": id})
 	super(id)
-	_de_cida = false
-	_id_cida = ""
-
-
-func _on_message(text: String, kind: String) -> void:
-	registo.append({
-		"texto": text,
-		"kind": kind,
-		"fonte": "cida" if _de_cida else "sistema",
-		"id": _id_cida,
-	})
-	super(text, kind)

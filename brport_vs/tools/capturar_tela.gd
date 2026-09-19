@@ -77,6 +77,8 @@ var _frames_extra := 0
 var _limpo := false
 var _pausa := false
 var _alocar := false
+var _mensagens := false
+var _mensagens_aberto := false
 
 
 func _process(_delta: float) -> bool:
@@ -96,6 +98,31 @@ func _process(_delta: float) -> bool:
 		# O BOLETIM só fecha se quem chamou pediu `limpo`, porque há um tiro
 		# que existe para o fotografar.
 		_fechar_paineis_de_rotina(_limpo)
+		return false
+
+	# ⚠️ O HISTÓRICO DA FAIXA ABRE DEPOIS DE ASSENTAR, e não no fim do laço de
+	# turnos — e a diferença foi MEDIDA. Ele é um retrato do instante em que se
+	# toca, e as falas da Dona Cida entram por `call_deferred`: aberto na mesma
+	# volta em que o último turno acabou, a lista saía com CINCO enquanto a
+	# faixa por trás já anunciava "+7", porque três linhas daquele turno ainda
+	# não tinham corrido. A foto não estava errada — estava adiantada, que é
+	# pior, porque parece um defeito da fila.
+	#
+	# É a regra dos dois frames do `CLAUDE.md` com outra roupa: o que foi posto
+	# em `call_deferred` num frame só corre no fim dele.
+	#
+	# ⚠️ E ELE ABRE PELO TOQUE, não por uma chamada ao painel: a ferramenta usa
+	# o caminho do jogador, como o avanço por turno usa o botão. O
+	# `_on_faixa_input` tem uma regra própria — só reage ao SOLTAR — que uma
+	# chamada direta não exercitaria.
+	if _mensagens and not _mensagens_aberto:
+		_mensagens_aberto = true
+		var toque := InputEventMouseButton.new()
+		toque.button_index = MOUSE_BUTTON_LEFT
+		toque.pressed = false
+		_main._on_faixa_input(toque)
+		# O painel precisa de assentar como tudo o resto nesta ferramenta.
+		_frames_extra += FRAMES_ATE_ASSENTAR
 		return false
 
 	# QUANTOS PAINÉIS ESTÃO POR CIMA. A linha existe porque a captura do porto
@@ -155,6 +182,7 @@ func _montar() -> void:
 	_limpo = args.has("limpo")
 	_pausa = args.has("pausa")
 	_alocar = args.has("alocar")
+	_mensagens = args.has("mensagens")
 
 	var turnos := TURNOS_PADRAO
 	if args.size() >= 1 and str(args[0]).is_valid_int():
@@ -308,6 +336,7 @@ func _montar() -> void:
 	# só então se pausa.
 	if _pausa:
 		_main._on_pause_pressed()
+
 
 	# ⚠️ E UMA ALOCAÇÃO NO FIM, sob pedido. O laço aloca ANTES de cada avanço,
 	# de modo que a foto sai sempre com os trabalhadores livres e as docas à
