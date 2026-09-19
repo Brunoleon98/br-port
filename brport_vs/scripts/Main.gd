@@ -1019,7 +1019,7 @@ func _connect_game_state() -> void:
 	# delas abre painel: são a faixa de mensagem que o jogo já tem, com voz.
 	# Uma tela por evento seria um clique a cada coisa que acontece — e o
 	# plano é explícito em que tela nova não pode mudar o ritmo do turno.
-	GameState.estrutura_comprada.connect(func(_id): _cida("upgrade_pronto"))
+	GameState.estrutura_comprada.connect(func(_id): _obra_pronta.call_deferred())
 	GameState.rival_offer_triggered.connect(_cida_rival)
 	# ⚠️ ESTAS DUAS ESTAVAM ESCRITAS E MUDAS desde 01/09 — um quarto da voz da
 	# Dona Cida em jogo. `perdeu_para_arlindo` e `bom_contrato` viviam na
@@ -1424,9 +1424,45 @@ func _semana_nova() -> void:
 	elif fila:
 		_cida_agora("semana_nova_fila_folgado")
 	elif curto:
-		_cida_agora("semana_nova_parado_curto")
+		# ⚠️ A PARCELA SÓ ENTRA NA FRASE SE ELA EXISTIR. `caixa_curto()` é a
+		# meia parcela e não diz nada sobre ela estar paga; quem quita cedo
+		# ouviria "a parcela correndo" em todas as semanas seguintes, que é a
+		# frase verdadeira em português e falsa neste mundo. É o mesmo par que
+		# o `_cida_caixa()` já fazia uma dobra acima, e que aqui faltava.
+		if GameState.parcela_paid:
+			_cida_agora("semana_nova_parado_curto_quitado")
+		else:
+			_cida_agora("semana_nova_parado_curto")
 	else:
 		_cida_agora("semana_nova_parado_folgado")
+
+
+# A OBRA: a reação muda a partir da TERCEIRA, e a contagem é a do próprio jogo.
+#
+# "Olha que eu duvidei" é fala de primeira vez. As estruturas são SETE, e um
+# jogador que as levante todas ouviria a mesma dúvida sete vezes — a partir da
+# terceira ela já foi desmentida duas, e repeti-la lê como a Dona Cida não
+# estar a ver o porto crescer. É a regra da DOSE que o maneirismo do Arlindo
+# ensinou, com o sinal trocado: ali faltava repetição para o "sobrinho" fazer
+# padrão, aqui sobra.
+#
+# ⚠️ E A CONTAGEM SAI DE `estruturas`, que é onde o jogo a guarda. Um contador
+# próprio aqui seria uma segunda verdade a divergir da primeira — e esta não
+# precisa sequer de memória: `comprar_estrutura()` faz `estruturas.append(id)`
+# ANTES de emitir, logo no fim do frame a lista já conta esta obra.
+#
+# ⚠️ E MAIS DE UMA OBRA CABE NO MESMO TURNO. Duas compras são duas ações, cada
+# uma com a sua fala; a partir da terceira as duas dizem a MESMA linha, que é
+# a duplicata semântica que a fila do R5 tem de fundir — e as mensagens do
+# sistema das duas obras são DIFERENTES e não se fundem.
+const OBRA_ROTINA_A_PARTIR_DE := 3
+
+
+func _obra_pronta() -> void:
+	if GameState.estruturas.size() >= OBRA_ROTINA_A_PARTIR_DE:
+		_cida_agora("upgrade_pronto_rotina")
+	else:
+		_cida_agora("upgrade_pronto")
 
 
 func _on_semana_fechada(resumo: Dictionary) -> void:

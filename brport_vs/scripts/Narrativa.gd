@@ -142,7 +142,11 @@ const CIDA_LINHAS := {
 	# seguintes — verdadeira em português e falsa neste mundo. Quem separa é
 	# `parcela_paid`, que já existe; nenhum limiar novo entra aqui.
 	"caixa_baixo": "A conta tá mais fina que folha de papel. A parcela não vai esperar.",
-	"caixa_baixo_quitado": "Caixa raspando, chefia. Ao menos o Sr. Ribeiro já tá pago.",
+	# ⚠️ "CAIXA" É JARGÃO, e a leitura em voz alta de 19/09 apanhou-o: o jogo é
+	# para quem pode não saber finanças, e "caixa" só quer dizer dinheiro para
+	# quem já trabalhou com ele. O termo sai daqui e da fala da semana nova; o
+	# rótulo "Caixa:" do painel da parcela é do mesmo achado e fica registado.
+	"caixa_baixo_quitado": "O dinheiro tá no fim, chefia. Ao menos o Sr. Ribeiro já tá pago.",
 	"perdeu_para_arlindo": "Perdeu pro Arlindo. Mas perdeu perdendo bem — não por desatenção.",
 	"bom_contrato": "Esse contrato fecha o mês. Anota aí.",
 	# ⚠️ QUATRO VARIANTES, E NENHUMA AFIRMA O QUE A CONDIÇÃO DELA NÃO GARANTE.
@@ -151,14 +155,28 @@ const CIDA_LINHAS := {
 	# saía com o cais vazio e R$384.000 em caixa. Os dois critérios já existem
 	# — `docas_esperando()` e `caixa_curto()` —, e é de propósito que saem do
 	# GameState em vez de serem recontados aqui.
-	"semana_nova_fila_curto": "Semana nova. Barcos na fila, caixa no limite. Dia típico.",
+	"semana_nova_fila_curto": "Semana nova. Barcos na fila, dinheiro curto. Dia típico.",
 	"semana_nova_fila_folgado": "Semana nova. Barcos na fila e dinheiro no caixa. Aproveita.",
+	# ⚠️ E A PARCELA SÓ SE MENCIONA SE ELA ESTIVER MESMO PENDENTE. É a mesma
+	# armadilha que a `caixa_baixo_quitado` existe para tapar, e ela estava por
+	# tapar aqui: quem quita cedo — `pagar_parcela_adiantado()` — ouviria "a
+	# parcela correndo" em toda semana até ao fim da partida. Quem separa é
+	# `parcela_paid`, que já existe.
 	"semana_nova_parado_curto": "Semana nova. Cais parado e a parcela correndo. Não gosto disso.",
+	"semana_nova_parado_curto_quitado": "Semana nova. Cais parado e pouco dinheiro. Não gosto disso.",
 	"semana_nova_parado_folgado": "Semana nova. Tudo quieto por enquanto, chefia.",
 	# ⚠️ A OBRA É INSTANTÂNEA: `comprar_estrutura()` emite "pronto" na mesma
 	# chamada. A linha dizia "Demorou o dobro do previsto", que não descreve
 	# nada que aconteça neste jogo — o ceticismo dela fica, a duração sai.
+	# ⚠️ E DUAS VARIANTES PORQUE ELA SAI NAS SETE OBRAS. "Olha que eu duvidei"
+	# é uma reação de primeira vez; à terceira o ceticismo já foi desmentido
+	# duas vezes, e repeti-lo lê como a Dona Cida não estar a prestar atenção.
+	# Da terceira em diante ela concede — que é a mesma regra da DOSE do
+	# maneirismo do Arlindo, com o sinal trocado: ali faltava repetição para
+	# fazer padrão, aqui sobra. O corte sai de `estruturas.size()`, que é a
+	# contagem do próprio jogo.
 	"upgrade_pronto": "Zezão terminou. Ficou bom — e olha que eu duvidei.",
+	"upgrade_pronto_rotina": "Zezão terminou mais uma. Já nem pergunto se vai dar certo.",
 	# ⚠️ "TUDO QUE A GENTE RECUSA" PRESSUPÕE UMA RECUSA, e a primeira oferta do
 	# Arlindo chega antes de existir qualquer uma. Quem conta é
 	# `metrics["rival_refused"]`, que já existe.
@@ -280,8 +298,10 @@ const EXPRESSOES := {
 		"semana_nova_fila_curto": "seria",
 		"semana_nova_fila_folgado": "contente",
 		"semana_nova_parado_curto": "preocupada",
+		"semana_nova_parado_curto_quitado": "preocupada",
 		"semana_nova_parado_folgado": "seria",
 		"upgrade_pronto": "contente",
+		"upgrade_pronto_rotina": "contente",
 		"arlindo_indireto": "seria",
 		"arlindo_primeira": "seria",
 	},

@@ -1265,4 +1265,54 @@ func _f8_a_fala_e_vista() -> void:
 		"ficou: " + _f8_label())
 	_f8_fechar()
 
+	# ── F8f. E A SEMANA NOVA SÓ COBRA A PARCELA SE ELA ESTIVER PENDENTE.
+	# É o par do F8e uma dobra acima, e faltava: o `caixa_curto()` é meia
+	# parcela e não diz nada sobre ela estar paga, de modo que quem quitasse
+	# cedo ouviria "a parcela correndo" em toda semana até ao fim da partida.
+	# ⚠️ E A SEGUNDA ASSERÇÃO NÃO É A PRIMEIRA COM OUTRO NOME: uma pergunta
+	# QUAL variante sai, a outra pergunta o que a variante AFIRMA. Trocar os
+	# dois textos um pelo outro passaria a primeira e reprovaria a segunda.
+	if not _f8_abrir():
+		return
+	_f8_por_barco_a_espera(false)
+	GS.cash = GS.PARCELA_AMOUNT / 2 - 1
+	GS.parcela_paid = false
+	_f8_main._semana_nova()
+	_confere("F8f: com a parcela por pagar, é ela que a fala nomeia",
+		_f8_label() == Narrativa.cida("semana_nova_parado_curto"),
+		"ficou: " + _f8_label())
+	GS.parcela_paid = true
+	_f8_main._semana_nova()
+	_confere("F8f: com a parcela paga, sai a outra variante",
+		_f8_label() == Narrativa.cida("semana_nova_parado_curto_quitado"),
+		"ficou: " + _f8_label())
+	_confere("F8f: e essa outra não fala de parcela nenhuma",
+		not Narrativa.cida("semana_nova_parado_curto_quitado").to_lower().contains("parcela"),
+		"diz: " + Narrativa.cida("semana_nova_parado_curto_quitado"))
+	_f8_fechar()
+
+	# ── F8g. A OBRA MUDA DE REAÇÃO A PARTIR DA TERCEIRA.
+	# "Olha que eu duvidei" é reação de primeira vez, e as estruturas são
+	# SETE. A contagem sai de `estruturas`, que é onde o jogo a guarda — as
+	# compras aqui são de verdade, e não uma lista montada à mão, para que a
+	# asserção responda pelo que o jogador faz.
+	if not _f8_abrir():
+		return
+	GS.cash = 10000000
+	GS.comprar_estrutura("pier_2")
+	await _f8_esperar()
+	_confere("F8g: a primeira obra tem a reação de primeira vez",
+		_f8_label() == Narrativa.cida("upgrade_pronto"), "ficou: " + _f8_label())
+	GS.comprar_estrutura("armazem")
+	await _f8_esperar()
+	_confere("F8g: a segunda ainda duvida",
+		_f8_label() == Narrativa.cida("upgrade_pronto"), "ficou: " + _f8_label())
+	# ⚠️ O ESTADO QUE APERTA É A TERCEIRA, e só ela: com duas ou com quatro as
+	# duas versões da conta dão a mesma resposta em metade dos casos.
+	GS.comprar_estrutura("patio")
+	await _f8_esperar()
+	_confere("F8g: da terceira em diante ela concede",
+		_f8_label() == Narrativa.cida("upgrade_pronto_rotina"), "ficou: " + _f8_label())
+	_f8_fechar()
+
 	_f8_terminou = true

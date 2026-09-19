@@ -37,7 +37,11 @@ const SEMENTES := [20260902, 20260903, 20260904, 20260905, 20260906]
 # mensagem de sistema por barco servido e por obra; quem só avança gera o
 # mínimo que o jogo diz sozinho. O balanceamento não entra aqui — nada nesta
 # régua toca em constante nenhuma.
-const MODOS := ["ativo", "passivo"]
+# ⚠️ O TERCEIRO MODO EXISTE POR CAUSA DE UMA FALA SÓ. A variante da semana nova
+# com a parcela JÁ PAGA precisa de um jogador que quite adiantado, e nem o
+# ativo nem o passivo o fazem: sem ele a régua diria "zero" e zero, aqui,
+# lê-se como "esta fala nunca acontece" em vez de "ninguém a foi buscar".
+const MODOS := ["ativo", "passivo", "quitador"]
 
 var GS: Node
 var _feito := false
@@ -155,9 +159,16 @@ func _uma_partida(modo: String, semente: int) -> void:
 			continue
 		if GS.phase != "playing":
 			break
-		if modo == "ativo":
+		# O QUITADOR NÃO CONSTRÓI, e é de propósito: ele guarda para quitar a
+		# parcela cedo, e é depois disso que o estado que a fala nova lê
+		# existe — cais parado, dinheiro curto e o Sr. Ribeiro já pago.
+		if modo != "passivo":
 			await _acao(modo, semente, "alocar_todos",
 				func(): GS.assign_all_free_workers())
+		if modo == "quitador" and not GS.parcela_paid and GS.pode_pagar_parcela_adiantado():
+			await _acao(modo, semente, "quitar_adiantado",
+				func(): GS.pagar_parcela_adiantado())
+		if modo == "ativo":
 			var compra := _proxima_compra()
 			if compra != "":
 				await _acao(modo, semente, "comprar",
@@ -270,9 +281,42 @@ func _relatorio() -> void:
 	print("")
 	print("ações que acabaram com painel aberto (pausa forçada): %d de %d"
 		% [acoes_com_modal, acoes_com_escrita])
+	_por_fala()
 	_medir_textos(textos.keys())
 	print("")
 	print("=== FILA MEDIDA ===")
+
+
+# CADA FALA DA DONA CIDA: quantas vezes foi ESCRITA e quantas SOBROU no Label.
+# ⚠️ É a pergunta do `barco_medio` com a roupa da narrativa, e ela tem de ser
+# feita a toda fala NOVA: uma variante cuja condição o jogo nunca monta é uma
+# linha escrita, validada, disparada por nada — e as guardas todas passam.
+func _por_fala() -> void:
+	var escrita := {}
+	var vista := {}
+	for a in _acoes:
+		var lista: Array = a["escritas"]
+		for i in range(lista.size()):
+			var e: Dictionary = lista[i]
+			if String(e["fonte"]) != "cida":
+				continue
+			var id: String = String(e["id"])
+			escrita[id] = int(escrita.get(id, 0)) + 1
+			if i == lista.size() - 1:
+				vista[id] = int(vista.get(id, 0)) + 1
+	print("")
+	print("cada fala da Dona Cida — escrita x vista:")
+	var ids: Array = escrita.keys()
+	ids.sort()
+	for id in ids:
+		var v: int = int(vista.get(id, 0))
+		print("   %-34s escrita %3d · vista %3d%s"
+			% [id, int(escrita[id]), v, "   <<< NUNCA VISTA" if v == 0 else ""])
+	# A OUTRA METADE DA PERGUNTA: uma fala que nem sequer foi escrita não
+	# aparece na tabela acima, e é essa a que se perde em silêncio.
+	for id in Narrativa.CIDA_LINHAS.keys():
+		if not escrita.has(id):
+			print("   %-34s NUNCA ESCRITA — nenhuma partida montou a condição" % id)
 
 
 # A LARGURA É A DA FAIXA, e não um número suposto: o cartão mede 692 px

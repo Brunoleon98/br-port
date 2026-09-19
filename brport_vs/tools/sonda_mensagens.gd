@@ -21,12 +21,15 @@ extends "res://scripts/Main.gd"
 var registo: Array[Dictionary] = []
 
 var _de_cida := false
+var _id_cida := ""
 
 
 func _cida_agora(id: String) -> void:
 	_de_cida = true
+	_id_cida = id
 	super(id)
 	_de_cida = false
+	_id_cida = ""
 
 
 func _on_message(text: String, kind: String) -> void:
@@ -34,5 +37,6 @@ func _on_message(text: String, kind: String) -> void:
 		"texto": text,
 		"kind": kind,
 		"fonte": "cida" if _de_cida else "sistema",
+		"id": _id_cida,
 	})
 	super(text, kind)
