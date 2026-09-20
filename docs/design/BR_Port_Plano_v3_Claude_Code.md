@@ -1,8 +1,8 @@
 # BR Port — Plano v3: o projeto refeito para ser tocado com Claude Code
 
 **Versão 3.0 · 30/08/2026**
-**Fila atualizada em 18/09/2026:** correções da revisão externa incorporadas
-na §7.1. R1 a R5 fechados; próxima sessão: **R6 — contraste efetivo**. Esta atualização
+**Fila atualizada em 20/09/2026:** correções da revisão externa incorporadas
+na §7.1. R2 a R6 fechados; próxima sessão: **R7 — escopo da UI**. Esta atualização
 é planejamento; não declara correções implementadas nem gates humanos fechados.
 **Substitui o cronograma do Roadmap v2.1 (Fases 4–7) e o Plano de Produção da
 Fase 2 inteiro.**
@@ -1291,13 +1291,13 @@ resultados medidos nem novo cronograma de horas.
 
 | Ordem | Item / vínculo | Entrega e prova mínima | Estado / tamanho |
 |---|---|---|---|
-| 1 | **R1 — E**, revisão §2.1 / B3 | A Leitura seleciona Ótimo e Descuidado por identidade; permutar/adicionar perfis não muda o significado; texto final confere | **Próxima sessão**; curta, com F1/F6 |
+| 1 | **R1 — E**, revisão §2.1 / B3 | A Leitura seleciona Ótimo e Descuidado por identidade; permutar/adicionar perfis não muda o significado; texto final confere | Pendente; curta, com F1/F6 |
 | 2 | ✅ **R2 — I**, revisão §2.8 e §2.11 / B3 | Logs preservados e varridos em todos os scripts; captura avança turnos reais e respeita modais; erro com saída zero reprova | **Feito 18/09** (`docs/decisoes/031`), as duas metades |
 | 3 | ✅ **R3 — F**, revisão §2.6–2.7 / B1, B2, B5 | Corrigir instruções/contagens e ligar fatos à fonte executada; omissão de suíte ou documentação divergente reprova | **Feito 18/09** (`docs/decisoes/032`) |
 | 4 | ✅ **R4 — B**, revisão §2.2–2.3 / A4 | Falas verdadeiras no snapshot; obra instantânea sem duração fictícia; primeira semana sem comparação inexistente | **Código e guarda feitos 18/09** (`docs/decisoes/033`); a releitura A4 é do Bruno |
 | 5 | ✅ **R5 — A**, revisão §2.2 / A4 | Entrada única de mensagens, fila e consulta recuperável; duas emissões no mesmo frame sobrevivem | **Feito 20/09** (`docs/decisoes/034`); tapadas de 30,7% para 5,7% |
-| 6 | **R6 — C**, revisão §2.4 / A5, B4 — **próxima sessão** | Contraste efetivo e cobertura de painéis/estados; defeito fora do painel original é detectado | Pendente; correção pontual antes da cobertura ampla |
-| 7 | **R7 — D**, revisão §2.4 / A5, B4 | Tema governa cores da UI; lint de novas exceções + migração por papel; override fora da exceção exata reprova | Pendente; combinar trabalho comum com R6 |
+| 6 | ✅ **R6 — C**, revisão §2.4 / A5, B4 | Contraste efetivo e cobertura de painéis/estados; defeito fora do painel original é detectado | **Feito 20/09** (`docs/decisoes/035`); 22 reprovações em 19 estados, hoje zero |
+| 7 | **R7 — D**, revisão §2.4 / A5, B4 — **próxima sessão** | Tema governa cores da UI; lint de novas exceções + migração por papel; override fora da exceção exata reprova | Pendente; o R6 deixou 18 overrides, todos acima do portão medido |
 | 8 | **R8 — H**, revisão §3 / A4 | Frases completas de dias/tentativas, incluindo adjetivos; narração por extenso preservada | Pendente; curta, pode acompanhar revisão textual |
 | 9 | **R9 — G**, revisão §3 / A6 | True peak/descontinuidade/espectro como análise; protocolo de escuta entregue; nenhum WAV normalizado por omissão | Pendente; análise e escuta são entregas distintas |
 
@@ -1459,6 +1459,25 @@ mas o motivo do bloqueio precisa ser lido. Composição não resolvida é
 pendência, não verde automático. Mutantes: par abaixo do limite no painel
 não coberto antes; override ruim com tema correto; estado excluído do
 percurso. Controle positivo/negativo calibra a régua antes da auditoria.
+
+⚠️ **E AS TRÊS GUARDAS DE CONTRASTE PERGUNTAVAM POR UM PAINEL CADA.** O D19
+percorre o Construir, o D23 o menu-celular, o D32 a faixa — e o defeito vivia
+numa linha do TEMA, que toca nove painéis. Medidos os 19 estados: **22 textos
+abaixo do AA, por QUATRO causas**, e a §2.4 nomeava uma. O quinto endereço do
+mesmo neutro era a SUGESTÃO do campo (2,70:1), que nenhuma das quatro caças
+anteriores citava.
+
+⚠️ **E ESCURECER O ÂMBAR ATÉ PASSAR CUSTA A SEPARAÇÃO QUE ELE DÁ** — contra o
+navy vizinho, de 5,27:1 para 2,49:1. Aceite de propósito, porque ali quem
+separa é o MATIZ e não o valor; quem quiser a separação de volta muda a MASSA
+(âmbar de fundo, texto navy), que é leiaute e ficou por pedir.
+
+⚠️ **E A ISENÇÃO DO TEXTO INATIVO ESTAVA A ENGOLIR O MOTIVO DO BLOQUEIO.** O
+painel Construir escrevia a explicação dentro do botão desligado, a 2,16:1: a
+WCAG isenta-a com razão, e o jogador ficava sem a ler. Tirar o botão — que é um
+convite falso — encurtou o cartão em 60px. Guardas D33 e o motor partilhado
+`scripts/validation/contraste_ui.gd`; seis mutantes, cada um sozinho, e o do
+painel nunca coberto prova que o D19, o D23 e o D32 são cegos a ele.
 
 **R7 — escopo da UI.** Classificar overrides antes de removê-los, usando tema
 e variações por papel. Exceção exata por propriedade/local, com justificativa;

@@ -670,3 +670,15 @@ lista viva lê o arquivo — ele imprime bloco a bloco.
 | **D19** | 06/09 | o cinzento neutro do jogo mede 2,93:1 sobre o branco do painel — abaixo do corte da WCAG, e em oito rótulos |
 | **D21** | 11/09 | a Zona de Espera fundeada na água dos berços, e nada a perguntar onde ela estava — a maquinaria de cerco mede pegada contra faixa PUBLICADA, e o fundeadouro não tem faixa nenhuma |
 | **D20** | 08/09 | a fita de calçada atravessada na pista. Toda a maquinaria de cerco perguntava POSIÇÃO; nenhuma perguntava COR |
+
+
+## As duas jogadas (02–06/09), e a Fase 2 adiada
+
+O `ESTADO_DO_PROJETO.md` carregou este parágrafo até 20/09, quando saiu por
+ser história: as duas jogadas foram triadas, o índice delas está em
+`docs/arquivo/README.md`, e o porquê de cada correção vive nas decisões `011`
+a `031`. O que sobrou daquela triagem e continua aberto — o rodapé (A5), a
+economia de Fase 2 e a madeira podre (A4) — está nos gates do estado.
+
+**A Fase 2 foi adiada em 03/09**, sem travar a fila da §7; a conta dela está em
+`docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.

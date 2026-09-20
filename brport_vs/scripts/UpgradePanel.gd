@@ -152,11 +152,32 @@ func _linha_estrutura(id: String) -> Control:
 		col.add_child(pronto)
 		return cartao
 
+	# ⚠️ O MOTIVO DO BLOQUEIO NÃO PODE VIVER DENTRO DO BOTÃO DESLIGADO, e viveu
+	# até 20/09. A WCAG isenta o texto de um componente INATIVO (1.4.3), e o
+	# `font_disabled_color` sobre o `botao_off` mede 2,16:1 — legítimo para o
+	# rótulo de um botão que não se pode premir, e desastroso quando a única
+	# frase que explica POR QUE ele não se pode premir é esse mesmo rótulo. A
+	# isenção engolia a explicação: medido nos três cartões bloqueados do porto
+	# inicial, a frase estava na tela, lavada, e nada a media porque a régua a
+	# dava por isenta com razão.
+	#
+	# E não se conserta acrescentando uma linha: o cartão já cresce até 920px
+	# numa tela de 1280 e o "Fechar" fica rente à borda — três linhas novas
+	# empurravam-no para fora. Conserta-se TIRANDO: um botão que não se pode
+	# premir é um convite falso, e o que a estrutura bloqueada tem a dizer é
+	# uma frase, não uma ação. O cartão fica MAIS CURTO do que estava.
+	if impedimento != "":
+		var trava := Label.new()
+		trava.text = impedimento
+		trava.autowrap_mode = TextServer.AUTOWRAP_WORD
+		trava.add_theme_font_size_override("font_size", 13)
+		trava.add_theme_color_override("font_color", COR_SECUNDARIA)
+		col.add_child(trava)
+		return cartao
+
 	var btn := Button.new()
-	btn.text = "Construir por %s" % GameState.moeda(int(def["custo"])) if impedimento == "" else impedimento
-	btn.disabled = impedimento != ""
+	btn.text = "Construir por %s" % GameState.moeda(int(def["custo"]))
 	btn.add_theme_font_size_override("font_size", 13)
-	if impedimento == "":
-		btn.pressed.connect(func(): GameState.comprar_estrutura(id))
+	btn.pressed.connect(func(): GameState.comprar_estrutura(id))
 	col.add_child(btn)
 	return cartao

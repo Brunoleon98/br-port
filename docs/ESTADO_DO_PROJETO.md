@@ -41,18 +41,16 @@ pedras, rampa e o campo da água saem de `ponto_costeiro()`, uma família
 concêntrica que não se cruza — é isso que impede costura. O **D28** tranca a
 forma; o raster é lido por D20, D21, D24 e D27.
 
-**A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM** — o mapa a 1080 (`025`,
-pico de fronteira +52,6%) e os props a 768 px num quadro de 512 COORDENADAS
-(`029`, +31,5%), com `expand_mode` em 31 nós e o `PropIso` a traduzir; o
-**D31** tranca. ⚠️ A B custa **+80 MB de VRAM** porque **89,6% do quadro é
-moldura vazia** — cortá-lo é item próprio e é do Bruno. O campo da água fica a
-720 (`026`); o viewport (C) está medido e não dá um pixel.
+**A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM** — mapa a 1080 (`025`) e
+props a 768 px num quadro de 512 COORDENADAS (`029`), com `expand_mode` em 31
+nós e o `PropIso` a traduzir; o **D31** tranca. ⚠️ A B custa **+80 MB de VRAM**
+porque **89,6% do quadro é moldura vazia** — cortá-lo é item próprio e é do
+Bruno. O campo da água fica a 720 (`026`); o viewport (C) não dá um pixel.
 
-**E OS CASCOS TÊM CURVA** (`024`): medida a silhueta, quem estava quadrado **não
-eram as construções** — era o casco (0,620 contra 0,563 do galpão), com o
-contêiner a TAPÁ-LO. Os nove barcos saem de `contorno_casco()`. Armazém,
-escritório, píer, treliça, pallet e contêiner **ficam quadrados, e é decisão**:
-são caixas de verdade. O **D29** tranca-o.
+**E OS CASCOS TÊM CURVA** (`024`): medida a silhueta, quem estava quadrado não
+eram as construções — era o casco, com o contêiner a TAPÁ-LO. Os nove barcos
+saem de `contorno_casco()`. Armazém, escritório, píer, treliça, pallet e
+contêiner **ficam quadrados, e é decisão**: são caixas de verdade. **D29**.
 
 **A fauna tem seis espécies em nove pontos** — gaivota, maria-farinha e
 tartaruga na costa; cachorro, quero-quero e capivara em terra. Medem **15 / 12 /
@@ -118,35 +116,35 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-**R1 a R3 da §7.1 fechados (17–18/09), e o jogo não mudou em nenhum** — a
-Leitura por identidade (`030`), a evidência do CI a responder por erro e por
-turno (`031`) e o texto a responder pela fonte que a máquina corre (`032`).
-O detalhe de cada um vive na decisão dele.
+**R1 a R4 fechados (17–18/09)** — Leitura por identidade (`030`), evidência do
+CI a responder por erro e por turno (`031`), texto a responder pela fonte que a
+máquina corre (`032`), e a voz da Dona Cida a chegar à tela (`033`). O detalhe
+de cada um vive na decisão dele; o R4 cobrou o inverso, que o R5 pagou.
 
-**R4 fechado (18/09)** (`033`): a voz da Dona Cida passou a chegar à tela — ela
-era escrita no mesmo `Label` que a mensagem do sistema e uma linha antes dela.
-O preço foi o inverso, e era a conta que o R5 pagou.
+**R5 fechado (20/09)** (`034`): a faixa tem FILA. As mensagens apagadas no
+frame em que nasciam caíram de **30,7% para 5,7%**, e o que resta são fusões
+por duplicata, que é o desenho. Tocar nela abre o histórico da sessão, em
+memória. Guardas T8, F8 e D32.
 
-**R5 fechado (20/09)** (`034`): a faixa tem FILA, e as duas vozes chegam.
-Medido em 15 partidas, 973 ações: das 861 escritas o jogador via 597 e **264
-eram apagadas no frame em que nasciam (30,7%)**; hoje são **49 (5,7%)**, e
-todas elas fusões por duplicata, que é o desenho. As falas que o R4 deixou
-invisíveis estão pagas — `caixa_baixo` foi de 10 escritas / 0 vistas para
-10/10. FIFO com tempo mínimo na tela (1,2 s + 0,022 s por caractere, derivado
-da CONSEQUÊNCIA e não de velocidade de leitura), prioridade só para a próxima
-apresentação, e fusão só quando o texto é o mesmo. **Tocar na faixa abre o
-histórico da sessão** — em memória, `SAVE_VERSION` intocado —, e um `+N` diz o
-que espera. Guardas **T8**, **F8** (que mudou de significado: "vista" era
-"sobrou no Label", é "foi apresentada") e **D32**; três mutantes reprovados.
+**E o gate A4 correu (19/09)**, nas sete falas novas desde 13/09; as quatro
+notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
+jargão, e a semana nova deixou de cobrar uma parcela já quitada.
 
-**E o gate A4 correu (19/09), nas sete falas novas desde 13/09.** Quatro notas
-do Bruno entraram: a obra muda de reação da TERCEIRA em diante, "caixa" saiu
-das falas por ser jargão, e a semana nova deixou de cobrar uma parcela já
-quitada. As duas variantes novas foram medidas antes de aceites — ambas
-alcançáveis, e mais frequentes do que as que corrigem.
+**R6 fechado (20/09)** (`035`): o contraste mede-se na cor FINAL contra o fundo
+REAL. As três guardas que havia percorriam **um painel cada**, e o defeito
+vivia numa linha do TEMA — `RotuloSecao`, que toca nove painéis. Medidos **19
+estados e 214 textos**: reprovavam **22**, por QUATRO causas, e a revisão
+nomeava uma. Hoje **zero**. Três cores foram para o tema (a variação de 5,46:1
+no `RotuloSecao` e na sugestão do campo; `RotuloAlerta`, o âmbar escurecido a
+5,06:1), e o motivo do bloqueio saiu de dentro do botão desligado, onde a
+isenção da WCAG o engolia a 2,16:1 — o cartão do Construir ficou 60px mais
+curto. Guarda **D33** sobre um motor partilhado com a ferramenta que imprime a
+tabela; seis mutantes, e o do painel nunca coberto prova que o D19, o D23 e o
+D32 são cegos a ele.
 
-**Próximo: R6** — contraste efetivo em todos os painéis e estados. R7–R9
-pendentes, gates humanos abertos.
+**Próximo: R7** — escopo da UI e o lint de overrides. Ficaram 18
+`add_theme_color_override`, todos acima do portão medido. R8–R9 pendentes,
+gates humanos abertos.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -156,21 +154,17 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**, a segunda nas sete falas que o R4 mudou; as quatro notas dela estão aplicadas e trancadas. Faltam **duas decisões de palavra**: o rótulo `"Caixa:"` do painel da parcela (`DebtPaymentPanel.gd:68`) e o `"dinheiro no caixa"` da fala da semana nova — o mesmo jargão que saiu das outras, nos dois sítios que ficaram |
+| **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**, a segunda nas sete falas que o R4 mudou; as quatro notas dela estão aplicadas e trancadas. Faltam **duas decisões de palavra**: o rótulo `"Caixa:"` do painel da parcela (`DebtPaymentPanel.gd:68`) e o `"dinheiro no caixa"` da fala da semana nova — o mesmo jargão que saiu das outras, nos dois sítios que ficaram. ⚠️ O rótulo mudou de COR em 20/09 (`035`) e continua a dizer "Caixa": a decisão é de palavra, e é dele |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
-### As duas jogadas (02–06/09)
+### Ainda por fazer, medido
 
-Triadas, com índice em `docs/arquivo/README.md`; o porquê nas `011` a `031`.
-Sobram o rodapé (A5), economia de Fase 2 e a madeira podre (A4).
-
-⚠️ **Duas coisas medidas e por fazer**, cada uma sessão própria: a rua parou em
-**1,8** (alargá-la empurra o `RUA_RECUO` e o enquadramento, `012`) e o quadro
-dos props é 89,6% moldura vazia (cortá-lo mexe na origem do mundo, `029`).
-
-**Fase 2 adiada** (03/09), sem travar esta fila; conta em
-`docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
+⚠️ **Duas coisas, cada uma sessão própria:** a rua parou em **1,8** (alargá-la
+empurra o `RUA_RECUO` e o enquadramento, `012`) e o quadro dos props é 89,6%
+moldura vazia (cortá-lo mexe na origem do mundo, `029`). Das duas jogadas de
+02–06/09 sobram o rodapé (A5), economia de Fase 2 e a madeira podre (A4) —
+history e triagem em `docs/arquivo/HISTORICO.md`.
 
 ---
 
@@ -195,6 +189,8 @@ dos props é 89,6% moldura vazia (cortá-lo mexe na origem do mundo, `029`).
 | `brport_vs/scripts/FilaDeMensagens.gd` | **A fila da faixa de mensagem** — FIFO, tempo mínimo por frase, fusão só por duplicata, histórico da sessão. Objeto do `Main` e nunca autoload (`034`) |
 | `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa, ao toque nela. Overlay, em memória, sem migrar save |
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
+| `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
+| `brport_vs/tools/medir_contraste_ui.gd` | A tabela dos 19 estados e 214 textos. Marcador `CONTRASTE MEDIDO` |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
