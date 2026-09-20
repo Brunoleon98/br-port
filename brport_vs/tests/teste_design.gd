@@ -241,6 +241,10 @@ func _rodar() -> void:
 	_d23_menu_celular()
 	_confere("o bloco D23 correu até ao fim", _d23_completo)
 
+	print("=== D32: a faixa de mensagem com fila — contador legível e faixa tocável ===")
+	_d32_faixa_de_mensagem()
+	_confere("o bloco D32 correu até ao fim", _d32_completo)
+
 	root.remove_child(_main)
 	_main.free()
 
@@ -3735,3 +3739,59 @@ func _todos_os_nos(raiz: Node) -> Array:
 		for f in n.get_children():
 			fila.append(f)
 	return saida
+
+
+# ── D32 ── a faixa de mensagem com fila (R5 da §7.1)
+#
+# A faixa ganhou duas coisas em 19/09: um contador "+N" do que espera a vez, e
+# o toque que abre o histórico. As duas são o GATE do R5 — "texto recuperável,
+# legível e toque mínimo de 44 px na convenção do projeto" — e nenhuma suíte
+# as podia ver.
+#
+# ⚠️ E A COR DO CONTADOR É A QUARTA VEZ QUE ESTE PROJETO TROPEÇA NA MESMA.
+# O neutro do jogo (0,51/0,6/0,706) mede **2,82:1** sobre o creme da faixa —
+# abaixo até do corte de texto GRANDE —, e é a cor que um rótulo novo herda
+# sem ninguém pensar. O que está lá mede 5,27:1. O `CLAUDE.md` regista as
+# outras três, no calendário, no painel Construir e no menu-celular.
+var _d32_completo := false
+
+const D32_AA_PEQUENO := 4.5
+
+
+func _d32_faixa_de_mensagem() -> void:
+	var cartao := _main.get_node_or_null("MensagemCartao") as PanelContainer
+	_confere("D32: a faixa existe", cartao != null)
+	if cartao == null:
+		return
+
+	# ── o alvo de toque. Ele é o cartão INTEIRO e não um ícone ao lado, e é
+	# por isso que passa com folga — mas quem o medir tem de o medir mesmo.
+	_confere("D32: a faixa é um alvo de toque legal",
+		cartao.size.y >= TOQUE_MIN,
+		"mede %.0f px de altura, o mínimo é %.0f" % [cartao.size.y, TOQUE_MIN])
+
+	# ── o contraste do contador contra o FUNDO REAL, que é o creme do
+	# StyleBox da faixa e não o branco do cartão de painel.
+	var pendentes := _main.get_node_or_null("MensagemCartao/Linha/Pendentes") as Label
+	_confere("D32: o contador do que espera existe", pendentes != null)
+	if pendentes == null:
+		return
+	var caixa := cartao.get_theme_stylebox("panel") as StyleBoxFlat
+	_confere("D32: e a faixa tem fundo próprio para medir contra", caixa != null)
+	if caixa == null:
+		return
+	var cor: Color = pendentes.get_theme_color("font_color")
+	var razao := _contraste(cor, caixa.bg_color)
+	_confere("D32: o contador passa o AA de texto pequeno sobre o creme da faixa",
+		razao >= D32_AA_PEQUENO, "mede %.2f:1, o corte é %.1f" % [razao, D32_AA_PEQUENO])
+
+	# ── E A PROVA DE QUE A MEDIÇÃO SABE REPROVAR. Sem isto, um `_contraste`
+	# avariado daria verde com qualquer cor — é a régua com o defeito injetado
+	# embutido, como o `CLAUDE.md` exige de toda régua nova.
+	var neutro_do_jogo := Color(0.51, 0.6, 0.706)
+	_confere("D32: e a régua reprova o neutro do jogo, que aqui não serve",
+		_contraste(neutro_do_jogo, caixa.bg_color) < D32_AA_PEQUENO,
+		"o neutro mediu %.2f:1 — se passou, a conta está avariada"
+			% _contraste(neutro_do_jogo, caixa.bg_color))
+
+	_d32_completo = true

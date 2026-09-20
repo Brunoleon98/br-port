@@ -349,6 +349,29 @@ Teste e import rodam sem tela.
    defeito que ele deveria pegar e veja-o reprovar antes de confiar nele. Um
    validador que nunca reprovou nada não é um validador — e, na primeira vez
    que se fez isto aqui, quem estava furado era o teste, não o validador.
+   ⚠️ **E UM VALOR IMPOSSÍVEL É O MESMO ALARME QUE O ZERO, e mais barato de
+   ver.** A irmã da regra do zero em tudo, do outro lado: ali a régua não
+   consegue devolver outra coisa; aqui ela devolve uma coisa que não pode
+   existir. Em 19/09 a régua da faixa de mensagem relatou **−194** mensagens
+   "nunca apresentadas" — uma contagem negativa —, e o sinal apontava para a
+   causa: a sonda pendurava-se num funil que tinha deixado de ser único.
+   **SONDA PRESA A UM PONTO DE PASSAGEM MORRE QUANDO O PONTO DEIXA DE
+   PASSAR TUDO**, e não se queixa; quem mexe no funil vai ver quem estava
+   pendurado nele.
+   ⚠️ **E `has()` NÃO CONTA DUPLICATAS, no relatório cujo assunto É a
+   duplicata.** Na mesma régua, já corrigida, a contagem discordava dela
+   própria — 49 pela subtração contra 42 pelo `has()`, porque um texto escrito
+   duas vezes e apresentado uma contava por duas vistas. Onde o caso
+   interessante é a repetição, a conta é de MULTICONJUNTO. E foi a discordância
+   entre os dois métodos que a apanhou: **uma régua que responde à mesma
+   pergunta por dois caminhos denuncia-se sozinha.**
+   ⚠️ **E MUTANTE QUE SÓ UMA SUÍTE APANHA NÃO É SUÍTE A MAIS — é o que a
+   outra não tem como ver.** Medido no R5 (`034`): dos três defeitos
+   injetados na fila de mensagens, o de "interromper antes do tempo mínimo"
+   reprovou **só** o bloco de aritmética pura. O bloco de integração drena a
+   fila com passos de 99 s — ele pergunta o que chega à tela, não quando —, e
+   é cego ao tempo por construção. Antes de dar um teste por redundante,
+   pergunte que defeito ele vê que o outro não vê.
    ⚠️ **E A RÉGUA PRECISA DO MESMO DEFEITO INJETADO QUE O VALIDADOR — e precisa
    mais.** Um validador que nunca reprovou dá um verde de graça; uma régua muda
    dá um NÚMERO, e o número vira a conclusão da sessão. Em 14/09 a medição do
@@ -514,6 +537,15 @@ Teste e import rodam sem tela.
    tinha sido corrigido — verdadeiro, e de ontem. Rasterize o arquivo
    (`load_svg_from_string`, que é o mesmo ThorVG); o cache do importador é uma
    resposta velha, e num teste isso mente nas duas direções.
+   ⚠️ **E FOTO ADIANTADA É PIOR DO QUE FOTO ERRADA, porque parece um defeito
+   do que se acabou de construir.** É a regra dos dois frames com a roupa de
+   uma captura. Em 19/09 o tiro novo do histórico de mensagens abria o painel
+   na mesma volta em que o laço de turnos acabava: a lista saía com CINCO
+   entradas enquanto a faixa por trás já anunciava "+7", porque três falas
+   daquele turno ainda estavam em `call_deferred`. A foto era verdadeira do
+   instante em que foi tirada e mentia sobre o sistema. **Ferramenta que
+   fotografa depois de agir espera o que a ação deixou pendente** — e num
+   projeto onde a fala entra por `call_deferred`, esperar é medido em frames.
   ⚠️ **E VALE IGUAL PARA A CAPTURA: regerou arte, `--import` ANTES de
   fotografar.** Em 13/09 duas rondas de retratos foram fotografadas ao asset
   VELHO — o Godot desenha o `.ctex` de `.godot/imported/`, e a foto saiu
@@ -1579,6 +1611,19 @@ tranca isso.
   achou *"Dois contratos recusados essa semana"* num gatilho que é a queda de
   FAIXA da reputação — nunca dois contratos. Não havia o que corrigir no
   número: ele não saía de lado nenhum.
+- **⚠️ PALAVRA DE OFÍCIO NUMA FALA É JARGÃO, e nenhuma asserção a vê.** A
+  leitura em voz alta de 19/09 apanhou "caixa": ele é o termo certo, está no
+  HUD e no painel da parcela — e só quer dizer *dinheiro* para quem já
+  trabalhou com ele. O jogo é de gestão para quem pode não saber finanças, e a
+  palavra passou a ser "dinheiro" nas falas. É a irmã da regra abaixo: ali a
+  frase é verdadeira em português e falsa neste mundo, aqui é verdadeira nos
+  dois e ilegível para quem joga. Só uma pessoa a ler vê qualquer uma das duas.
+- **⚠️ E CONDIÇÃO QUE UMA FALA JÁ APRENDEU, A IRMÃ DELA NÃO APRENDEU.** No
+  mesmo dia: `caixa_baixo` tinha a variante para a parcela já quitada desde
+  18/09, e a fala da SEMANA NOVA — escrita no mesmo commit, a ler o mesmo
+  `caixa_curto()` — continuava a dizer "a parcela correndo" a quem já a tinha
+  pago. "Ao corrigir um, VARRA OS IRMÃOS" com um PREDICADO no lugar do prop, e
+  quem o apanhou foi o Bruno a ler, não uma suíte.
 - **⚠️ A FRASE PODE SER VERDADEIRA EM PORTUGUÊS E FALSA NESTE MUNDO.** A Dona
   Cida dizia *"porto que fecha no azul é porto que abre segunda-feira"* — bonita,
   idiomática, e **errada: um porto opera 24/7 e não abre na segunda.** Nenhuma

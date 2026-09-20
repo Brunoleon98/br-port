@@ -2,7 +2,7 @@
 
 **Versão 3.0 · 30/08/2026**
 **Fila atualizada em 18/09/2026:** correções da revisão externa incorporadas
-na §7.1. R1, R2 e R3 fechados; próxima sessão: **R4 — regras pequenas**. Esta atualização
+na §7.1. R1 a R5 fechados; próxima sessão: **R6 — contraste efetivo**. Esta atualização
 é planejamento; não declara correções implementadas nem gates humanos fechados.
 **Substitui o cronograma do Roadmap v2.1 (Fases 4–7) e o Plano de Produção da
 Fase 2 inteiro.**
@@ -1295,8 +1295,8 @@ resultados medidos nem novo cronograma de horas.
 | 2 | ✅ **R2 — I**, revisão §2.8 e §2.11 / B3 | Logs preservados e varridos em todos os scripts; captura avança turnos reais e respeita modais; erro com saída zero reprova | **Feito 18/09** (`docs/decisoes/031`), as duas metades |
 | 3 | ✅ **R3 — F**, revisão §2.6–2.7 / B1, B2, B5 | Corrigir instruções/contagens e ligar fatos à fonte executada; omissão de suíte ou documentação divergente reprova | **Feito 18/09** (`docs/decisoes/032`) |
 | 4 | ✅ **R4 — B**, revisão §2.2–2.3 / A4 | Falas verdadeiras no snapshot; obra instantânea sem duração fictícia; primeira semana sem comparação inexistente | **Código e guarda feitos 18/09** (`docs/decisoes/033`); a releitura A4 é do Bruno |
-| 5 | **R5 — A**, revisão §2.2 / A4 — **próxima sessão** | Entrada única de mensagens, fila e consulta recuperável; duas emissões no mesmo frame sobrevivem | Pendente; sistema pequeno, layout a medir. O R4 deixou-lhe as três falas que ainda se tapam umas às outras, medidas |
-| 6 | **R6 — C**, revisão §2.4 / A5, B4 | Contraste efetivo e cobertura de painéis/estados; defeito fora do painel original é detectado | Pendente; correção pontual antes da cobertura ampla |
+| 5 | ✅ **R5 — A**, revisão §2.2 / A4 | Entrada única de mensagens, fila e consulta recuperável; duas emissões no mesmo frame sobrevivem | **Feito 20/09** (`docs/decisoes/034`); tapadas de 30,7% para 5,7% |
+| 6 | **R6 — C**, revisão §2.4 / A5, B4 — **próxima sessão** | Contraste efetivo e cobertura de painéis/estados; defeito fora do painel original é detectado | Pendente; correção pontual antes da cobertura ampla |
 | 7 | **R7 — D**, revisão §2.4 / A5, B4 | Tema governa cores da UI; lint de novas exceções + migração por papel; override fora da exceção exata reprova | Pendente; combinar trabalho comum com R6 |
 | 8 | **R8 — H**, revisão §3 / A4 | Frases completas de dias/tentativas, incluindo adjetivos; narração por extenso preservada | Pendente; curta, pode acompanhar revisão textual |
 | 9 | **R9 — G**, revisão §3 / A6 | True peak/descontinuidade/espectro como análise; protocolo de escuta entregue; nenhum WAV normalizado por omissão | Pendente; análise e escuta são entregas distintas |
@@ -1416,6 +1416,39 @@ tempo de exibição precisam de F1: velocidade de leitura focada não prova
 leitura incidental mobile. Mutantes: perder a segunda entrada, interromper a
 atual antes do mínimo, agrupar textos diferentes. Gate: texto recuperável,
 legível e toque mínimo de 44 px na convenção do projeto.
+
+✅ **Fechado em 20/09** (`docs/decisoes/034`). Medido com
+`tools/medir_fila_mensagens.gd`, 15 partidas em cinco sementes e três formas de
+jogar, 973 ações: das **861** escritas na faixa o jogador via **597**, e **264
+eram apagadas no mesmo frame em que nasciam — 30,7%**. Com a fila são **49
+(5,7%)**, e todas fusões por duplicata semântica. As falas que o R4 deixou
+invisíveis estão pagas: `caixa_baixo` passou de 10 escritas / 0 vistas para
+10/10, `reputacao_caiu` de 28/3 para 28/28.
+
+FIFO com tempo mínimo por frase, prioridade só para a próxima apresentação —
+nunca interrompendo a atual, que seria copiar do áudio o descarte do perdedor —
+e fusão só por texto idêntico; duas mensagens da mesma compra não se fundem. A
+recuperação é a própria faixa: 692×52 px de alvo, histórico da sessão em
+memória, `SAVE_VERSION` intocado. Um `+N` diz o que espera, porque texto que
+ninguém sabe que existe continua perdido.
+
+⚠️ **O tempo mínimo não saiu de velocidade de leitura publicada**, como esta
+ficha exigia: é a reta por ~2,4 s na frase mediana e ~3,3 s na mais longa, e o
+que se mediu foi a CONSEQUÊNCIA — a faixa ocupada 2,4 s na ação mediana e 9,9 s
+na pior. O desenho é feito para o número não ser crítico; afiná-lo com uma
+pessoa a jogar é o A5/A7.
+
+⚠️ **E o F8 mudou de SIGNIFICADO**, que era o que esta ficha previa: "vista"
+era *sobrou no `Label`*, passou a ser *foi apresentada*. Guardas T8 (a fila como
+aritmética pura), F8 e D32. Três mutantes, cada um sozinho com controle
+positivo verde entre eles — e o de "interromper antes do mínimo" reprovou **só
+o T8**, porque o F8 drena com passos de 99 s e é cego ao tempo.
+
+⚠️ **E a régua denunciou-se sozinha, duas vezes.** Depois da fila ela relatou
+**−194** nunca apresentadas — uma contagem negativa —, porque a sonda estava
+pendurada num funil que deixara de ser único; e depois discordou dela própria
+por 7, porque `has()` não conta duplicatas no relatório cujo assunto é a
+duplicata.
 
 **R6 — resultado visual, não só tema.** Reutilizar a variação candidata de
 5,46:1 e medir a cor final em todos os painéis/estados relevantes: herança,

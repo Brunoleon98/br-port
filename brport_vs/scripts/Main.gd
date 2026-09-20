@@ -30,6 +30,7 @@ const TelaNomesScene := preload("res://scenes/panels/TelaNomes.tscn")
 const PainelDiarioScene := preload("res://scenes/panels/PainelDiario.tscn")
 const PainelBoletimScene := preload("res://scenes/panels/PainelBoletim.tscn")
 const PainelCaixaScene := preload("res://scenes/panels/PainelCaixa.tscn")
+const PainelMensagensScene := preload("res://scenes/panels/PainelMensagens.tscn")
 const PainelReputacaoScene := preload("res://scenes/panels/PainelReputacao.tscn")
 const PainelDocasScene := preload("res://scenes/panels/PainelDocas.tscn")
 const PainelCalendarioScene := preload("res://scenes/panels/PainelCalendario.tscn")
@@ -52,7 +53,14 @@ const COR_NEUTRA := Color(0.11, 0.204, 0.329)
 @onready var _rep_label: Label = $HudBar/RepPilula/Linha/RepTexto
 @onready var _docks_label: Label = $HudBar/DocasPilula/Linha/DocasTexto
 @onready var _pause_button: Button = $HudBar/Pausar
-@onready var _message_label: Label = $MensagemCartao/Mensagem
+# A FILA DA FAIXA. Objeto do Main e não autoload, de propósito: um autoload
+# carregaria também nas seis suítes e nas 600 partidas por perfil do
+# simulador, que é o que o `Registro.gd` já ensinou a não fazer.
+var _fila := FilaDeMensagens.new()
+
+@onready var _message_cartao: PanelContainer = $MensagemCartao
+@onready var _message_label: Label = $MensagemCartao/Linha/Mensagem
+@onready var _pendentes_label: Label = $MensagemCartao/Linha/Pendentes
 @onready var _advance_button: Button = $AcoesTurno/Avancar
 @onready var _alocar_button: Button = $AcoesTurno/Alocar
 @onready var _upgrade_button: Button = $LinhaConstruir/Upgrade
@@ -125,6 +133,12 @@ func _ready() -> void:
 	# dentro, que na tela lê como falha e não como "ainda não aconteceu nada".
 	# A mensagem inicial não pode vir do GameState: `new_game()` roda no
 	# autoload, antes de esta cena existir para escutar o sinal.
+	_fila.apresentou.connect(_pintar)
+	# ⚠️ O TOQUE É NO CARTÃO INTEIRO, e não num botão ao lado: ele mede
+	# 692x52 px, muito acima do alvo mínimo de 44 do projeto, e é a peça que a
+	# pessoa está a olhar quando lhe falta o que passou. Um ícone de 19 px
+	# obrigaria a mirar o que ela nem sabe que existe.
+	_message_cartao.gui_input.connect(_on_faixa_input)
 	if _message_label.text == "":
 		_on_message("O porto é seu. Um píer de pé e o resto por levantar.", "")
 
@@ -1019,7 +1033,7 @@ func _connect_game_state() -> void:
 	# delas abre painel: são a faixa de mensagem que o jogo já tem, com voz.
 	# Uma tela por evento seria um clique a cada coisa que acontece — e o
 	# plano é explícito em que tela nova não pode mudar o ritmo do turno.
-	GameState.estrutura_comprada.connect(func(_id): _cida("upgrade_pronto"))
+	GameState.estrutura_comprada.connect(func(_id): _obra_pronta.call_deferred())
 	GameState.rival_offer_triggered.connect(_cida_rival)
 	# ⚠️ ESTAS DUAS ESTAVAM ESCRITAS E MUDAS desde 01/09 — um quarto da voz da
 	# Dona Cida em jogo. `perdeu_para_arlindo` e `bom_contrato` viviam na
@@ -1249,7 +1263,17 @@ func _on_alocar_pressed() -> void:
 	GameState.assign_all_free_workers()
 
 
+# ⚠️ ISTO JÁ NÃO ESCREVE NA TELA — ENFILEIRA. Era o funil único das duas
+# fontes e continua a sê-lo; o que mudou é que a faixa deixou de ser o que a
+# última escrita deixou lá. Medido antes de mexer, 15 partidas: das 861
+# escritas o jogador via 597, e 264 eram apagadas no mesmo frame em que
+# nasciam (`tools/medir_fila_mensagens.gd`, `docs/decisoes/034`).
 func _on_message(text: String, kind: String) -> void:
+	_fila.enfileirar(text, kind, "sistema")
+
+
+# Quem escreve na tela, e só ele. Chamado pela fila quando chega a vez.
+func _pintar(text: String, kind: String) -> void:
 	_message_label.text = text
 	match kind:
 		"good":
@@ -1260,6 +1284,31 @@ func _on_message(text: String, kind: String) -> void:
 			_message_label.add_theme_color_override("font_color", COR_RUIM)
 		_:
 			_message_label.add_theme_color_override("font_color", COR_NEUTRA)
+	_pintar_pendentes()
+
+
+# O CONTADOR EXISTE PARA O HISTÓRICO SER DESCOBERTO. Sem ele a fila drena
+# calada e a pessoa não tem como saber que houve mais — o texto ficaria
+# recuperável e ninguém iria buscá-lo, que é o `barco_medio` com a roupa de
+# uma tela.
+func _pintar_pendentes() -> void:
+	var n := _fila.pendentes()
+	_pendentes_label.text = "+%d" % n if n > 0 else ""
+
+
+func _process(delta: float) -> void:
+	if _fila.avancar(delta):
+		return
+	_pintar_pendentes()
+
+
+func _on_faixa_input(evento: InputEvent) -> void:
+	# A MESMA PERGUNTA DO `Worker.gd`: toque que SOLTA, botão esquerdo. Reagir
+	# ao premir dispara durante um arrasto que passe por cima da faixa.
+	if evento is InputEventMouseButton:
+		var b := evento as InputEventMouseButton
+		if b.button_index == MOUSE_BUTTON_LEFT and not b.pressed:
+			_abrir_painel(PainelMensagensScene).setup(_fila.historico)
 
 
 # ⚠️ ESTE COMENTÁRIO AFIRMAVA O CONTRÁRIO DO QUE ACONTECIA, e foi por isso que
@@ -1336,7 +1385,7 @@ func _cida(id: String) -> void:
 func _cida_agora(id: String) -> void:
 	var linha := Narrativa.cida(id)
 	if linha != "":
-		_on_message(linha, "")
+		_fila.enfileirar(linha, "", "cida")
 
 
 # A REPUTAÇÃO SÓ FALA QUANDO CRUZA UMA FAIXA, não a cada ponto. Ela mexe-se em
@@ -1424,9 +1473,45 @@ func _semana_nova() -> void:
 	elif fila:
 		_cida_agora("semana_nova_fila_folgado")
 	elif curto:
-		_cida_agora("semana_nova_parado_curto")
+		# ⚠️ A PARCELA SÓ ENTRA NA FRASE SE ELA EXISTIR. `caixa_curto()` é a
+		# meia parcela e não diz nada sobre ela estar paga; quem quita cedo
+		# ouviria "a parcela correndo" em todas as semanas seguintes, que é a
+		# frase verdadeira em português e falsa neste mundo. É o mesmo par que
+		# o `_cida_caixa()` já fazia uma dobra acima, e que aqui faltava.
+		if GameState.parcela_paid:
+			_cida_agora("semana_nova_parado_curto_quitado")
+		else:
+			_cida_agora("semana_nova_parado_curto")
 	else:
 		_cida_agora("semana_nova_parado_folgado")
+
+
+# A OBRA: a reação muda a partir da TERCEIRA, e a contagem é a do próprio jogo.
+#
+# "Olha que eu duvidei" é fala de primeira vez. As estruturas são SETE, e um
+# jogador que as levante todas ouviria a mesma dúvida sete vezes — a partir da
+# terceira ela já foi desmentida duas, e repeti-la lê como a Dona Cida não
+# estar a ver o porto crescer. É a regra da DOSE que o maneirismo do Arlindo
+# ensinou, com o sinal trocado: ali faltava repetição para o "sobrinho" fazer
+# padrão, aqui sobra.
+#
+# ⚠️ E A CONTAGEM SAI DE `estruturas`, que é onde o jogo a guarda. Um contador
+# próprio aqui seria uma segunda verdade a divergir da primeira — e esta não
+# precisa sequer de memória: `comprar_estrutura()` faz `estruturas.append(id)`
+# ANTES de emitir, logo no fim do frame a lista já conta esta obra.
+#
+# ⚠️ E MAIS DE UMA OBRA CABE NO MESMO TURNO. Duas compras são duas ações, cada
+# uma com a sua fala; a partir da terceira as duas dizem a MESMA linha, que é
+# a duplicata semântica que a fila do R5 tem de fundir — e as mensagens do
+# sistema das duas obras são DIFERENTES e não se fundem.
+const OBRA_ROTINA_A_PARTIR_DE := 3
+
+
+func _obra_pronta() -> void:
+	if GameState.estruturas.size() >= OBRA_ROTINA_A_PARTIR_DE:
+		_cida_agora("upgrade_pronto_rotina")
+	else:
+		_cida_agora("upgrade_pronto")
 
 
 func _on_semana_fechada(resumo: Dictionary) -> void:
