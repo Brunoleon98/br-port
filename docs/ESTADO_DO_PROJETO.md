@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 18/09/2026 — R4 da §7.1; a voz da Dona Cida chega à tela
+> **Última atualização:** 20/09/2026 — R5 da §7.1; a faixa de mensagem tem fila
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -41,15 +41,12 @@ pedras, rampa e o campo da água saem de `ponto_costeiro()`, uma família
 concêntrica que não se cruza — é isso que impede costura. O **D28** tranca a
 forma; o raster é lido por D20, D21, D24 e D27.
 
-**A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM.** O mapa entrega os 1080 que
-o arquivo já tinha (`025`, A): pico de fronteira **+52,6%**, 5,12% da janela. Os
-props passaram a **768 px num quadro de 512 COORDENADAS** (`029`, B): pico
-**+31,5%** neles, com `expand_mode` em 31 nós, a `scale` da fauna e o `PropIso`
-a traduzir; o **D31** tranca. ⚠️ Custa **+80 MB de VRAM** — 15 a 27× o preço da
-A por pixel visível, porque **89,6% do quadro é moldura vazia**; cortá-lo é item
-próprio, e pagar ou não é do Bruno. ⚠️ O campo da água fica a 720 (`026`).
-A projeção, as âncoras e a pegada ficaram intactas nas duas. A **C** (o
-viewport) está medida e não dá um pixel.
+**A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM** — o mapa a 1080 (`025`,
+pico de fronteira +52,6%) e os props a 768 px num quadro de 512 COORDENADAS
+(`029`, +31,5%), com `expand_mode` em 31 nós e o `PropIso` a traduzir; o
+**D31** tranca. ⚠️ A B custa **+80 MB de VRAM** porque **89,6% do quadro é
+moldura vazia** — cortá-lo é item próprio e é do Bruno. O campo da água fica a
+720 (`026`); o viewport (C) está medido e não dá um pixel.
 
 **E OS CASCOS TÊM CURVA** (`024`): medida a silhueta, quem estava quadrado **não
 eram as construções** — era o casco (0,620 contra 0,563 do galpão), com o
@@ -126,22 +123,30 @@ Leitura por identidade (`030`), a evidência do CI a responder por erro e por
 turno (`031`) e o texto a responder pela fonte que a máquina corre (`032`).
 O detalhe de cada um vive na decisão dele.
 
-**R4 fechado (18/09), e é o primeiro que MUDA o jogo desde 13/09** (`033`): a
-voz da Dona Cida passou a chegar à tela. Ela era escrita no mesmo `Label` que
-a mensagem do sistema e uma linha antes dela — medido, `upgrade_pronto` saía
-35 vezes numa varredura de cinco sementes e era vista **zero**. Hoje a fala
-entra no fim do frame, num lugar só; o preço é a mensagem do sistema ficar por
-baixo, e mostrar as duas é o R5. As falas que afirmavam estado passaram a
-olhá-lo, com critérios que já existiam: a obra instantânea deixou de "demorar",
-a semana nova tem quatro variantes sobre barco-à-espera × caixa-curto, e o
-aviso de caixa curto deixou de cobrar uma parcela que o jogador já quitou.
-⚠️ **E o predicado lê-se onde a linha é escrita**, não onde o sinal dispara —
-no instante do sinal o sorteio do dia ainda não correu, e "Barcos na fila"
-nunca poderia ser verdade. O bloco **F8** do fumaça tranca a pergunta nova
-("a fala foi VISTA?"), com seis mutantes reprovados.
+**R4 fechado (18/09)** (`033`): a voz da Dona Cida passou a chegar à tela — ela
+era escrita no mesmo `Label` que a mensagem do sistema e uma linha antes dela.
+O preço foi o inverso, e era a conta que o R5 pagou.
 
-**Próximo: R5** — a fila de mensagens. Ele herda três falas que ainda se tapam
-umas às outras, já medidas no `033`. R6–R9 pendentes, gates humanos abertos.
+**R5 fechado (20/09)** (`034`): a faixa tem FILA, e as duas vozes chegam.
+Medido em 15 partidas, 973 ações: das 861 escritas o jogador via 597 e **264
+eram apagadas no frame em que nasciam (30,7%)**; hoje são **49 (5,7%)**, e
+todas elas fusões por duplicata, que é o desenho. As falas que o R4 deixou
+invisíveis estão pagas — `caixa_baixo` foi de 10 escritas / 0 vistas para
+10/10. FIFO com tempo mínimo na tela (1,2 s + 0,022 s por caractere, derivado
+da CONSEQUÊNCIA e não de velocidade de leitura), prioridade só para a próxima
+apresentação, e fusão só quando o texto é o mesmo. **Tocar na faixa abre o
+histórico da sessão** — em memória, `SAVE_VERSION` intocado —, e um `+N` diz o
+que espera. Guardas **T8**, **F8** (que mudou de significado: "vista" era
+"sobrou no Label", é "foi apresentada") e **D32**; três mutantes reprovados.
+
+**E o gate A4 correu (19/09), nas sete falas novas desde 13/09.** Quatro notas
+do Bruno entraram: a obra muda de reação da TERCEIRA em diante, "caixa" saiu
+das falas por ser jargão, e a semana nova deixou de cobrar uma parcela já
+quitada. As duas variantes novas foram medidas antes de aceites — ambas
+alcançáveis, e mais frequentes do que as que corrigem.
+
+**Próximo: R6** — contraste efetivo em todos os painéis e estados. R7–R9
+pendentes, gates humanos abertos.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -151,7 +156,7 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **A 1ª leitura em voz alta aconteceu (13/09)** e as 7 notas dela estão fechadas. Falta reler o que mudou desde então — e o R4 acrescentou texto novo: as variantes da semana nova, a do caixa já quitado, a da primeira oferta do Arlindo e a fala do Zezão sem a duração. Um predicado verde não aprova uma frase |
+| **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**, a segunda nas sete falas que o R4 mudou; as quatro notas dela estão aplicadas e trancadas. Faltam **duas decisões de palavra**: o rótulo `"Caixa:"` do painel da parcela (`DebtPaymentPanel.gd:68`) e o `"dinheiro no caixa"` da fala da semana nova — o mesmo jargão que saiu das outras, nos dois sítios que ficaram |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 
@@ -187,6 +192,9 @@ dos props é 89,6% moldura vazia (cortá-lo mexe na origem do mundo, `029`).
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, e **toda fala escrita chega ao jogo** |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Nove bustos (`020`) |
+| `brport_vs/scripts/FilaDeMensagens.gd` | **A fila da faixa de mensagem** — FIFO, tempo mínimo por frase, fusão só por duplicata, histórico da sessão. Objeto do `Main` e nunca autoload (`034`) |
+| `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa, ao toque nela. Overlay, em memória, sem migrar save |
+| `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
@@ -269,6 +277,10 @@ dos props é 89,6% moldura vazia (cortá-lo mexe na origem do mundo, `029`).
   upgrades —, cada uma mudando o mapa. O porto abre em ruínas com 1 doca. Os
   upgrades trancam-se pela cadeia `requer`, não por fase (`007`): o guindaste
   corta o turno do navio grande, e o cais DESTRAVA a classe dele (`009`)
+- **A faixa de mensagem tem FILA** — as duas fontes (sistema e Dona Cida) uma
+  de cada vez, por ordem, com tempo mínimo na tela; tocar nela abre o histórico
+  da sessão. Nada se apaga: 30,7% do que o jogo dizia não chegava ao jogador,
+  hoje 5,7% (`034`)
 - Autosave local a cada turno
 - **Sete telas narrativas**: nomes do cais e do jogador (abertura), primeira
   página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
