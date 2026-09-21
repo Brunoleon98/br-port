@@ -347,6 +347,16 @@ Teste e import rodam sem tela.
    JOGADA deriva tudo de uma vez — é o `--painel=<nome>` do `capturar_tela.gd`,
    que abre cada um pela PORTA DO JOGADOR e traz de graça as guardas do turno e
    da contagem de painéis, que a cena solta não tem (`docs/decisoes/038`).
+   ⚠️ **E COBERTURA DECLARADA MENTE; COBERTURA MEDIDA NÃO.** Cada guarda de
+   captura responde pelo SEU tiro — a imagem saiu, o erro não apareceu, a
+   contagem e o turno batem — e **nenhuma responde pelo CATÁLOGO**, que é como
+   cinco painéis viveram sem foto. A saída fácil é o tiro declarar ao lado dele
+   o que cobre, e essa declaração mente: medido, um tiro que prometia o Caixa e
+   fotografava o Calendário passou a contagem (1 painel), o turno (13) e o
+   tamanho (306.639 bytes). Quem o apanhou foi a FOTO — as duas ferramentas
+   imprimem `Paineis: res://...` com a cena de cada painel na tela, e o
+   `tools/conferir_cobertura_paineis.py` lê os logs contra o que o `Main` abre
+   (`docs/decisoes/039`).
    ⚠️ **E INVENTÁRIO QUE OLHA UMA PASTA PERDE O QUE NÃO ESTÁ NELA.** Três
    sessões contaram os painéis deste jogo e as três disseram treze; são
    **quinze**. O `EndGame.tscn` não vive em `scenes/panels/` — está em
@@ -2182,6 +2192,12 @@ armadilha de uma função, no comentário dela.
   responde à mesma pergunta por dois caminhos denuncia-se sozinha"* aplicada a
   uma VARREDURA — e é ela que faz uma chamada de forma nova reprovar em vez de
   ser ignorada. Sem ela, a versão errada dizia verde (`docs/decisoes/037`).
+  ⚠️ **E A DEFINIÇÃO NÃO É UMA CHAMADA.** `func _abrir_painel(cena: PackedScene)`
+  casa tão bem quanto uma chamada de verdade: a primeira versão do portão das
+  capturas exigiu fotografia de um painel chamado `cena: PackedScene`. Quem
+  varre CHAMADAS exclui a definição (`(?<!func )`), e lê o argumento com
+  **parênteses equilibrados** — `[^)]*` para no primeiro fecho e parte ao meio a
+  chamada que traz outra dentro (`docs/decisoes/039`).
   ⚠️ **E O ARGUMENTO PODE TER PARÊNTESES *E* ASPAS DENTRO.** `int(dia["servidos"])`
   parte as duas expressões óbvias: a que casa a primeira string a seguir ao
   parêntesis lê `"servidos"` como argumento, e a que proíbe parênteses salta a

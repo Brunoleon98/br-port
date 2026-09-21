@@ -170,6 +170,23 @@ func _process(_delta: float) -> bool:
 	# sem isto o log do CI diz "viu 1" e mais nada, o que obriga a adivinhar.
 	print("Overlay: %d painel(eis)  [fase %s, turno %d, %d estrutura(s)]"
 		% [_paineis_abertos(), GS.phase, GS.turn, GS.estruturas.size()])
+	# ⚠️ E QUAL PAINEL, que é outra pergunta. A contagem diz QUANTOS e não QUAIS:
+	# um tiro que prometa o Caixa e fotografe o Calendário cumpre a contagem e
+	# entrega a foto errada. Mais fundo do que isso, era esta a pergunta que
+	# faltava ao projeto INTEIRO — nada perguntava se um painel tem fotografia,
+	# e foi assim que cinco deles viveram sem nenhuma (`docs/decisoes/038`).
+	#
+	# Com esta linha a cobertura passa a ser MEDIDA e não declarada: o
+	# `conferir_cobertura_paineis.py` lê os logs da bateria e compara o conjunto
+	# com o que o `Main` sabe abrir. Uma declaração à mão podia mentir; a foto
+	# não.
+	#
+	# ⚠️ E O RÓTULO É ASCII DE PROPÓSITO. A saída desta ferramenta é contrato —
+	# o `capturar_evidencia.sh` procura `Overlay:` e `Tela salva em` —, e um
+	# padrão com acento depende do locale de quem roda o `grep`. O que se perde
+	# é um til; o que se ganha é a guarda não mudar de comportamento entre o
+	# contêiner e o runner.
+	print("Paineis: %s" % _paineis_na_tela())
 
 	var img: Image = root.get_texture().get_image()
 	var erro := img.save_png(_saida)
@@ -464,6 +481,26 @@ func _fechar_paineis_de_rotina(fechar_boletim: bool) -> void:
 		if rotina:
 			overlay.remove_child(painel)
 			painel.queue_free()
+
+
+# A CENA de cada painel aberto, e não o script dele: é `.tscn` que o `Main`
+# guarda nos `preload`, então é `.tscn` que o portão compara. `(nenhum)` está
+# escrito por extenso porque uma linha VAZIA não se distingue de uma linha que
+# não chegou a ser impressa — a mesma razão de o `tirar()` perguntar primeiro
+# se o log existe.
+func _paineis_na_tela() -> String:
+	if _main == null:
+		return "(nenhum)"
+	var overlay := _main.get_node_or_null("Overlay")
+	if overlay == null:
+		return "(nenhum)"
+	var cenas := PackedStringArray()
+	for painel in overlay.get_children():
+		var cena: String = painel.scene_file_path
+		cenas.append(cena if cena != "" else "(sem cena)")
+	if cenas.is_empty():
+		return "(nenhum)"
+	return " ".join(cenas)
 
 
 func _paineis_abertos() -> int:

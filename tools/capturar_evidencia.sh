@@ -503,4 +503,23 @@ done
 # que avisos cada um saiu. São ~550 bytes cada, dezasseis deles, contra um
 # artefato de alguns megabytes — e as guardas do `tirar()` acima já os leram
 # um a um, de modo que apagá-los era apagar a prova DEPOIS de ela passar.
+# ⚠️ E NO FIM, A PERGUNTA QUE NENHUMA DAS GUARDAS ACIMA FAZ: **todo painel que
+# o jogo abre tem fotografia?** Cada `tirar()` responde pelo SEU tiro — a
+# imagem saiu, o erro não apareceu, a contagem e o turno batem — e nenhum
+# responde pelo catálogo. Foi por aí que cinco painéis viveram sem foto
+# nenhuma, e que três sessões seguidas os contaram como treze quando são quinze
+# (`docs/decisoes/038`).
+#
+# ⚠️ E A COBERTURA É MEDIDA, não declarada: as duas ferramentas de captura
+# imprimem `Paineis: res://...` com a cena de cada painel que estava na tela, e
+# o portão lê os LOGS que ficaram aqui ao lado. Um tiro que prometesse o Caixa
+# e fotografasse o Calendário cumpria a contagem de painéis e era apanhado
+# aqui. É também a razão de os logs não se apagarem.
+#
+# Corre por último porque precisa dos logs de todos os tiros, e em Python
+# porque aqui uma exceção sai com código ≠ 0 — o mesmo motivo do
+# `conferir_escopo_ui.py` e do `conferir_guardas_ci.py`.
+RAIZ_REPO=$(cd "$(dirname "$0")/.." && pwd)
+python3 "$RAIZ_REPO/tools/conferir_cobertura_paineis.py" "$SAIDA"
+
 ls -la "$SAIDA"
