@@ -14,10 +14,17 @@ há fila ordenada a dizer o que vem a seguir.
 ⚠️ **Confira o estado da branch antes de reapontar.** Se o PR já foi fundido, a
 receita é `git checkout -B <nome> origin/main`, e **antes disso**
 `git log --oneline origin/main..HEAD` para saber o que ficaria de fora.
-⚠️ **E o `origin/main` do contêiner pode estar VELHO.** Em 21/09 ele apontava
-para o PR #51 enquanto o GitHub já estava no #62 — 40 commits de diferença, e
-um `checkout -B origin/main` teria apagado a entrega inteira. Confirme o HEAD
-real com o GitHub antes de reapontar seja o que for.
+⚠️ **E O `origin/main` PODE FICAR VELHO POR UM MOTIVO QUE NÃO SE VÊ:
+`git fetch origin main <branch>` NÃO atualiza a `main` se a `<branch>` já não
+existir no remoto.** Ele aborta com `fatal: couldn't find remote ref` e código
+**128**, e nenhum dos dois refs se mexe — reproduzido em 21/09. Como a branch
+designada costuma ser apagada quando o PR funde, perguntar pelas duas na mesma
+linha é o caminho natural para o erro. Medido nesse dia: `origin/main` ficou no
+PR **#51** com o GitHub no **#62**, 40 commits — e um
+`git checkout -B <nome> origin/main` teria apagado a entrega inteira.
+**Peça um ref de cada vez**, leia o código de saída **sem cano** (num `| tail`
+o `$?` é do `tail`, e dá 0), e confirme o HEAD real com o GitHub antes de
+reapontar seja o que for.
 
 ---
 
@@ -32,8 +39,11 @@ real com o GitHub antes de reapontar seja o que for.
   com o R9 a entrar). A regra continua: comprimir antes de precisar.
 - Rode `python3 tools/conferir_docs.py`, `conferir_guardas_ci.py` e
   `conferir_escopo_ui.py` antes de se surpreender no CI.
-- **São sete verdes neste contêiner agora**, e não seis: as seis suítes mais
-  `python3 tools/medir_audio.py`, que espera `SINAL OK`.
+- **São DEZ verdes neste contêiner**: as **seis** suítes do Godot
+  (`TODOS OS TESTES PASSARAM`, `DESIGN OK`, `AUDIO OK`, `FUMACA OK`,
+  `REGISTRO OK`, `ASSET OK`) e **quatro** conferidores em Python (`DOCS OK`,
+  `GUARDAS OK`, `ESCOPO UI OK` e, novo em 21/09, `SINAL OK`). A bateria de
+  captura é a décima primeira, e só faz falta se o visual mudar.
 
 ---
 

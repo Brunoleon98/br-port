@@ -547,6 +547,13 @@ Teste e import rodam sem tela.
    achava o que não devia num ARQUIVO, aqui numa MENSAGEM que se acabou de
    escrever. Antes de imprimir texto novo numa ferramenta, procure que strings
    alguém procura na saída dela.
+   ⚠️ **E UM MARCADOR NOVO PODE CONTER UM VELHO POR DENTRO.** Em 21/09 a régua
+   do sinal de áudio ia chamar-se `MEDIDA DE AUDIO OK` — e essa string CONTÉM
+   `AUDIO OK`, que é exactamente o que o passo do `teste_audio.gd` procura no
+   `testes.yml`. Duas ferramentas diferentes a satisfazer o mesmo `grep`: o
+   passo do encanamento passaria a ficar verde com a régua do sinal, e ninguém
+   veria. Ela chama-se `SINAL OK`. **Marcador novo confere-se por SUBSTRING
+   contra os que já existem**, não por ser um nome diferente.
    ⚠️ **E GUARDA DE «NÃO HOUVE ERRO» ESCOLHE-SE MEDINDO O QUE A CORRIDA
    SAUDÁVEL IMPRIME.** O marcador diz que a ferramenta chegou ao fim; não diz
    que ela não se queixou pelo caminho, e o Godot encerra com 0 nas duas
@@ -2094,6 +2101,22 @@ responde por 50 dos 51 props, porque prop alternativo partilha o NÓ que o jogo
 troca. Meia sessão estava desenhada à volta de um remendo que não fazia falta.
 Um briefing é a previsão de quem já fechou a conversa: antes de herdar o buraco
 que ele anuncia, **pergunte a que fonte ele o perguntou, e pergunte à outra**.
+
+⚠️ **E `git fetch origin A B` NÃO ATUALIZA O `A` SE O `B` NÃO EXISTIR.** Ele
+aborta com `fatal: couldn't find remote ref B` e **código 128**, e nenhum dos
+dois refs se mexe — reproduzido em 21/09. O natural, ao abrir sessão, é
+perguntar pela `main` e pela branch designada na mesma linha; se a branch já
+foi apagada depois do PR fundir, a `main` local fica na fotografia de quando o
+contêiner subiu. Medido nesse dia: `origin/main` ficou no PR **#51** enquanto o
+GitHub estava no **#62** — 40 commits —, e daí saem duas leituras erradas que
+custam caro: `git diff origin/main..HEAD` varre a sessão inteira dos outros, e
+`git checkout -B <branch> origin/main` **apaga tudo o que foi fundido nesses
+40 commits**. Peça um ref de cada vez, e confirme o HEAD real com o GitHub
+antes de reapontar seja o que for.
+⚠️ **E ELE FALHA ALTO — quem o cala é o cano.** O `fatal` sai no `stderr` e o
+código é 128, mas `git fetch ... | tail -2` devolve **0**, que é o do `tail`.
+É a regra do "`$?` do comando certo" a morder na primeira linha da sessão, que
+é o pior sítio: tudo o que vem depois herda uma `main` velha.
 
 ⚠️ **E PR FUNDIDO NÃO QUER DIZER BRANCH FUNDIDA.** A branch designada deste
 projeto reaproveita o nome entre sessões, e a receita de a reiniciar da `main`

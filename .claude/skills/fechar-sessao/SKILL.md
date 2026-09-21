@@ -92,6 +92,7 @@ também deve.
 | **a economia, de qualquer maneira** | `tools/projetar_parcelas.py` (abaixo) | o modelo ainda calibra nos 3 perfis |
 | `tools/gerar_mapa_iso.py` | regerar **os quatro** mapas (abaixo) | `git diff -- brport_vs/art` limpo |
 | `tools/gerar_sons.py` | `python3 tools/gerar_sons.py brport_vs/audio/sfx` | `git diff -- brport_vs/audio` limpo |
+| **qualquer coisa de áudio** | `python3 tools/medir_audio.py` | `SINAL OK` — e é OUTRA pergunta que o `teste_audio.gd`: lá o encanamento, aqui a ONDA (true peak, estalo interno, espectro) |
 | catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
 | **qualquer documento** | `python3 tools/conferir_docs.py` | `DOCS OK` |
 | `BR_Port_GDD_V7.jsx` | `python3 tools/gerar_gdd_md.py` | `GDD OK`, e `git diff -- docs/gdd` limpo |
@@ -253,10 +254,18 @@ quando o arquivo volta a crescer, mas o alarme não escreve o documento.
 
 ### O teto, e o que fazer ao bater nele
 
-**Só o `ESTADO_DO_PROJETO.md` tem teto** — 26.000 bytes, em
-`tools/conferir_docs.py`. Nenhum outro documento deste projeto tem, e não é
-esquecimento: o modo de falhar medido foi ESTE arquivo dobrar calado, porque é
-o único que se lê inteiro para saber onde o jogo está.
+**Só o `ESTADO_DO_PROJETO.md` tem teto**, e **o número vive no
+`TETO_ESTADO` de `tools/conferir_docs.py`** — não aqui. Nenhum outro documento
+deste projeto tem teto, e não é esquecimento: o modo de falhar medido foi ESTE
+arquivo dobrar calado, porque é o único que se lê inteiro para saber onde o
+jogo está.
+
+⚠️ **E ESTA PÁGINA JÁ DIZIA 26.000 DEPOIS DE ELE SUBIR PARA 30.000.** É a
+armadilha que a §5 desta própria skill manda caçar — *contagem que INSTRUI
+confere-se* —, e ela mordeu na receita do fecho: quem seguisse esta linha
+comprimiria o estado para caber num teto que já não existia, ou julgaria-o
+perto do limite estando a 4.000 de folga. Um número que o CI lê de uma
+constante não se copia para prosa: **cita-se a constante.**
 
 Ao bater nele, a ordem é esta, e ela importa:
 
