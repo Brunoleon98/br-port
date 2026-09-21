@@ -47,19 +47,6 @@
 [ext_resource type="PackedScene" path="res://scenes/fauna/Capivara.tscn" id="fauna_capivara"]
 [ext_resource type="Script" path="res://scripts/AmbienteCosteiro.gd" id="fauna_ambiente"]
 
-[sub_resource type="StyleBoxFlat" id="faixa_msg"]
-bg_color = Color(1, 0.984, 0.922, 1)
-border_width_left = 4
-border_color = Color(0.851, 0.467, 0.024, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-content_margin_left = 12.0
-content_margin_top = 6.0
-content_margin_right = 12.0
-content_margin_bottom = 6.0
-
 [node name="Main" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -636,7 +623,7 @@ offset_left = 14.0
 offset_top = 994.0
 offset_right = 706.0
 offset_bottom = 1046.0
-theme_override_styles/panel = SubResource("faixa_msg")
+theme_type_variation = &"FaixaMensagem"
 
 [node name="Linha" type="HBoxContainer" parent="MensagemCartao"]
 layout_mode = 2
@@ -647,6 +634,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
+theme_type_variation = &"TextoFaixa"
 theme_override_font_sizes/font_size = 13
 
 [node name="Pendentes" type="Label" parent="MensagemCartao/Linha"]

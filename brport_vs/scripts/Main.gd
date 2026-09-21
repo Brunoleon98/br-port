@@ -38,10 +38,9 @@ const PainelMenuScene := preload("res://scenes/panels/PainelMenu.tscn")
 const PainelParcelaScene := preload("res://scenes/panels/PainelParcela.tscn")
 
 
-const COR_BOA := Color(0.102, 0.478, 0.251)
-const COR_AVISO := Color(0.851, 0.467, 0.024)
-const COR_RUIM := Color(0.761, 0.188, 0.188)
-const COR_NEUTRA := Color(0.11, 0.204, 0.329)
+# As quatro cores da faixa de mensagem VIVEM NO TEMA desde 22/09, em
+# `TextoFaixa`, `TextoFaixaBom`, `TextoFaixaAviso` e `TextoFaixaRuim`. O que
+# este script escolhe é a VARIAÇÃO, nunca a cor — ver `_pintar()`.
 
 @onready var _overlay_layer: CanvasLayer = $Overlay
 @onready var _cash_label: Label = $HudBar/CaixaPilula/Linha/Caixa
@@ -1141,12 +1140,16 @@ func _refresh_meta() -> void:
 		# só aparece quando há o que fazer com ele — antes disso, tocar abriria
 		# um painel que só sabe dizer quanto falta, e a linha aqui já diz isso.
 		_meta_label.text = "%s — toque para quitar agora" % progresso
-		# ⚠️ PELO TEMA, e não pelo `COR_AVISO`. Este rótulo tem 13px e cai no
-		# cartão BRANCO do HUD: o âmbar de marca media 3,18:1 ali, contra um
-		# corte de 4,5 — e é o convite a quitar a parcela, a linha mais cara de
-		# não se ler do jogo. `RotuloAlerta` é o mesmo âmbar a 5,06:1
-		# (`docs/decisoes/035`). O `COR_AVISO` continua para os rótulos da
-		# barra ESCURA, onde ele foi medido e mede 5,53:1.
+		# ⚠️ PELO TEMA, e não pelo âmbar de marca. Este rótulo tem 13px e cai
+		# no cartão BRANCO do HUD: o âmbar de marca media 3,18:1 ali, contra
+		# um corte de 4,5 — e é o convite a quitar a parcela, a linha mais
+		# cara de não se ler do jogo. `RotuloAlerta` é o mesmo âmbar
+		# escurecido, a 5,06:1 (`docs/decisoes/035`).
+		#
+		# ⚠️ E O ÂMBAR DE MARCA JÁ NÃO É CONSTANTE DESTE ARQUIVO. Ele vive no
+		# tema: `TextoBarraAlerta` para a barra escura, a 5,53:1 (`041`), e a
+		# faixa de mensagem levou o MESMO escurecido daqui — porque sobre o
+		# creme dela o de marca media 3,07:1, e ninguém o media (`042`).
 		_meta_label.theme_type_variation = "RotuloAlerta"
 
 
@@ -1287,17 +1290,32 @@ func _on_message(text: String, kind: String) -> void:
 
 
 # Quem escreve na tela, e só ele. Chamado pela fila quando chega a vez.
+#
+# A VARIAÇÃO por `kind`, e o tema é que sabe a cor — como o
+# `_refresh_titulo_trabalhadores()` ao lado e o `DocaCartao._estilo()`.
+#
+# ⚠️ QUATRO LITERAIS, E NÃO UM DICIONÁRIO, e isso é decisão medida. A versão
+# arrumada era um `const VARIACAO_DA_FAIXA := {...}` com um `.get(kind, ...)`;
+# só que o `conferir_escopo_ui.py` procura `theme_type_variation = "<nome>"`,
+# e num dicionário o nome não está depois do `=`. As quatro variações ficariam
+# INVISÍVEIS ao portão que existe para as conferir, e um erro de digitação
+# cairia no `Label` base sem uma palavra — que é a armadilha escrita no
+# cabeçalho do próprio portão. A forma do código escolhe-se pelo que a régua
+# ALCANÇA, que é a mesma regra por que a `041` escolheu a leva (`042`).
+#
+# ⚠️ E O `kind` DESCONHECIDO CAI NO NEUTRO DE PROPÓSITO — é o que a fila
+# entrega para a voz da Dona Cida, que enfileira com `""`.
 func _pintar(text: String, kind: String) -> void:
 	_message_label.text = text
 	match kind:
 		"good":
-			_message_label.add_theme_color_override("font_color", COR_BOA)
+			_message_label.theme_type_variation = &"TextoFaixaBom"
 		"warn":
-			_message_label.add_theme_color_override("font_color", COR_AVISO)
+			_message_label.theme_type_variation = &"TextoFaixaAviso"
 		"bad":
-			_message_label.add_theme_color_override("font_color", COR_RUIM)
+			_message_label.theme_type_variation = &"TextoFaixaRuim"
 		_:
-			_message_label.add_theme_color_override("font_color", COR_NEUTRA)
+			_message_label.theme_type_variation = &"TextoFaixa"
 	_pintar_pendentes()
 
 

@@ -39,23 +39,30 @@
     "NEUTRO do título dos trabalhadores não estava nos 214 textos — os dois",
     "estados de HUD do percurso têm sempre trabalho parado, logo mediam sempre",
     "o âmbar. É a ordem que a entrada do `UpgradePanel` abaixo ainda pede para",
-    "si: primeiro o percurso alcança o estado, depois a cor migra."
+    "si: primeiro o percurso alcança o estado, depois a cor migra.",
+    "",
+    "⚠️ A SEGUNDA LEVA SAIU EM 22/09, e foi a FAIXA DE MENSAGEM inteira: o",
+    "stylebox creme, a barra âmbar dele e os quatro ramos do `_pintar()` — 6",
+    "das 17 chamadas, 3 das 11 entradas. Hoje são `FaixaMensagem`,",
+    "`TextoFaixa`, `TextoFaixaBom`, `TextoFaixaAviso` e `TextoFaixaRuim`.",
+    "",
+    "⚠️ E ESTA NÃO FOI UMA MIGRAÇÃO DE VALORES, ao contrário da primeira. A",
+    "entrada que saiu daqui AFIRMAVA que «o contraste dos quatro já é medido",
+    "pelo D33», e não era: o `_message_label` dava TRÊS linhas na tabela e as",
+    "três eram o mesmo estado NEUTRO. Os outros três nunca foram medidos",
+    "porque a régua não DRENAVA a fila — media sempre a mensagem de abertura.",
+    "Com o percurso a alcançá-los, o âmbar de marca mediu 3,07:1 sobre o creme",
+    "contra um corte de 4,5, no `kind` mais emitido do jogo. Ele foi para o",
+    "âmbar ESCURECIDO, o mesmo valor do `RotuloAlerta`, a 4,87:1; os outros",
+    "três migraram com o valor intacto. `docs/decisoes/042`.",
+    "",
+    "⚠️ LOGO «JÁ É MEDIDO PELO D33» É AFIRMAÇÃO A CONFERIR, NUNCA A HERDAR.",
+    "Duas entradas deste arquivo ainda a fazem, e as duas dizem o CONTRÁRIO —",
+    "que o estado NÃO é alcançado. Essas são de confiar, porque a régua a",
+    "confirma ao não publicar a linha; a afirmação que engana é a POSITIVA,",
+    "que só se confere contando as linhas na tabela."
   ],
   "excecoes": [
-    {
-      "arquivo": "scripts/Main.gd",
-      "receptor": "_message_label",
-      "propriedade": "font_color",
-      "classe": "ESTADO",
-      "chamadas": 4,
-      "cores": [
-        "COR_BOA = Color(0.102, 0.478, 0.251)",
-        "COR_AVISO = Color(0.851, 0.467, 0.024)",
-        "COR_RUIM = Color(0.761, 0.188, 0.188)",
-        "COR_NEUTRA = Color(0.11, 0.204, 0.329)"
-      ],
-      "justificativa": "A faixa de mensagem pinta-se pelo `kind` que a fila entrega — boa, aviso, ruim, neutra —, sobre o creme do cartão. É um rótulo com quatro estados, e o caminho do tema pede quatro variações só-de-cor trocadas em runtime. Fica declarado até a leva de variações da faixa; o contraste dos quatro já é medido pelo D33."
-    },
     {
       "arquivo": "scripts/DocaCartao.gd",
       "receptor": "_progresso",
@@ -100,28 +107,6 @@
         "Color(0.878, 0.604, 0.063)"
       ],
       "justificativa": "A borda âmbar do trabalhador SELECIONADO, num `StyleBoxFlat` duplicado do tema — o comentário ao lado explica por que se duplica: mexer no stylebox do tema mudaria TODOS os trabalhadores de uma vez. É BORDA e não texto, portanto fora do portão de contraste, e é a única cor de interface deste projeto que não chega por `font_color`. O caminho do tema é uma variação `TrabSelecionado` ao lado das quatro que já existem."
-    },
-    {
-      "arquivo": "scenes/Main.tscn",
-      "receptor": "sub_resource:faixa_msg",
-      "propriedade": "bg_color",
-      "classe": "BASE",
-      "chamadas": 1,
-      "cores": [
-        "Color(1, 0.984, 0.922, 1)"
-      ],
-      "justificativa": "O creme da faixa de mensagem — e é o FUNDO contra o qual o D33 mede os quatro estados do `_message_label`. Está aqui e não no tema, o que significa que a cor medida e a cor declarada vivem em arquivos diferentes. Migra com a faixa inteira."
-    },
-    {
-      "arquivo": "scenes/Main.tscn",
-      "receptor": "sub_resource:faixa_msg",
-      "propriedade": "border_color",
-      "classe": "BASE",
-      "chamadas": 1,
-      "cores": [
-        "Color(0.851, 0.467, 0.024, 1)"
-      ],
-      "justificativa": "A barra âmbar à esquerda da faixa de mensagem, o mesmo valor do `COR_AVISO` do `Main.gd`. Quarto endereço deste âmbar; sai com a faixa."
     },
     {
       "arquivo": "scenes/dock/DocaCartao.tscn",

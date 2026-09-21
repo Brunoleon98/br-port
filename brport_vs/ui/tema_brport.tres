@@ -501,6 +501,28 @@ content_margin_top = 10.0
 content_margin_right = 10.0
 content_margin_bottom = 10.0
 
+[sub_resource type="StyleBoxFlat" id="faixa_msg"]
+; A FAIXA DE MENSAGEM — o creme onde a fala do jogo e a da Dona Cida caem, e
+; o FUNDO contra o qual o D33 mede os quatro estados do rótulo de dentro. Até
+; 21/09 ele vivia no `Main.tscn`, o que punha a cor medida e a cor declarada
+; em arquivos diferentes.
+;
+; ⚠️ A BARRA ÂMBAR DE 4px FICA COM O ÂMBAR DE MARCA, e o texto não. Ela é
+; MASSA e não texto — fora do portão de contraste —, e é ela que continua a
+; apontar a faixa com a cor da marca depois de o texto de aviso escurecer.
+; É "quem resolve não é a cor, é a MASSA" com um rótulo no lugar do prop.
+bg_color = Color(1, 0.984, 0.922, 1)
+border_width_left = 4
+border_color = Color(0.851, 0.467, 0.024, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+
 [resource]
 default_font_size = 15
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -683,6 +705,42 @@ TextoBarra/colors/font_color = Color(0.51, 0.6, 0.706, 1)
 ; desta zona do ecrã é um só, e agora há um sítio onde isso está escrito.
 TextoBarraAlerta/base_type = "Label"
 TextoBarraAlerta/colors/font_color = Color(0.851, 0.467, 0.024, 1)
+
+; ── A FAIXA DE MENSAGEM, E OS QUATRO ESTADOS DELA ──
+; O rótulo da faixa pinta-se pelo `kind` que a fila entrega. O script trocava
+; a COR à mão nos quatro ramos; hoje troca a VARIAÇÃO, como o
+; `_refresh_titulo_trabalhadores()` acima e o `DocaCartao._estilo()` já fazem.
+;
+; ⚠️ SÃO SÓ COR, sem `font_size`: o rótulo mede 13px na cena e o `Pendentes`
+; ao lado 12, e um tamanho aqui mexeria no leiaute que o D18 e o D22 medem.
+; É a lição do `RotuloApoio`, e esta migração só devia mexer na COR.
+;
+; ⚠️ E O ÂMBAR NÃO É O MESMO DOS OUTROS TRÊS — foi por isto que esta leva
+; deixou de ser uma migração de valores. Sobre este creme o âmbar de marca
+; (0.851/0.467/0.024) mede 3,07:1 contra um corte de 4,5: REPROVA, e é o
+; `kind` mais emitido do jogo (6 dos 14). Ele vivia fora do alcance do D33
+; porque a régua nunca DRENAVA a fila — media sempre a mensagem de abertura,
+; que é neutra. Os outros três passavam e passam com os valores de sempre.
+FaixaMensagem/base_type = "PanelContainer"
+FaixaMensagem/styles/panel = SubResource("faixa_msg")
+; NEUTRA — a mensagem de sistema sem cor. Mede 12,13:1.
+TextoFaixa/base_type = "Label"
+TextoFaixa/colors/font_color = Color(0.11, 0.204, 0.329, 1)
+; BOA — o que correu bem. Mede 5,19:1.
+TextoFaixaBom/base_type = "Label"
+TextoFaixaBom/colors/font_color = Color(0.102, 0.478, 0.251, 1)
+; AVISO — o âmbar ESCURECIDO, o mesmo valor que o `RotuloAlerta` carrega para
+; o cartão branco. Mede 4,87:1 aqui (e 5,06:1 lá), contra os 3,07:1 do âmbar
+; de marca que estava neste lugar.
+;
+; ⚠️ É VARIAÇÃO PRÓPRIA E NÃO O `RotuloAlerta`, apesar do valor igual: são
+; dois FUNDOS, que é a diferença estrutural que o R7 manda respeitar. Se um
+; dia o cartão branco precisar de escurecer mais, o creme não o segue calado.
+TextoFaixaAviso/base_type = "Label"
+TextoFaixaAviso/colors/font_color = Color(0.58, 0.399, 0.042, 1)
+; RUIM — o que correu mal. Mede 5,38:1.
+TextoFaixaRuim/base_type = "Label"
+TextoFaixaRuim/colors/font_color = Color(0.761, 0.188, 0.188, 1)
 
 ; ── O MENU-CELULAR ──
 ; ⚠️ TODO TEXTO AQUI DENTRO É CLARO, e isto é a IRMÃ da armadilha que o D19

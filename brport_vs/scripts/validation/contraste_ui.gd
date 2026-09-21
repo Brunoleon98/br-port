@@ -105,8 +105,28 @@ func percurso() -> Array:
 		# Ele entra pela PORTA DO JOGADOR: `assign_all_free_workers()` é o que
 		# o botão "Alocar todos" chama. Estado escrito à mão poria o rótulo
 		# certo com o resto parado.
-		{"nome": "HUD (nada parado)", "cena": "res://scenes/Main.tscn",
-			"acao": ["assign_all_free_workers"], "so_hud": true},
+		#
+		# ⚠️ E ELE PASSOU A `acao_vista` EM 22/09, porque o `acao` corre antes
+		# de a cena existir: o "1 trabalhador alocado" que esta alocação emite
+		# saía para ninguém, e a faixa continuava a mostrar a abertura. O
+		# título dos trabalhadores é o mesmo; o que se ganhou foi a faixa BOA.
+		{"nome": "HUD (nada parado, faixa boa)", "cena": "res://scenes/Main.tscn",
+			"acao_vista": [["assign_all_free_workers"]], "so_hud": true},
+		# ⚠️ OS DOIS ESTADOS QUE FALTAVAM À FAIXA, e é onde o defeito morava:
+		# o `warn` é o `kind` mais emitido do jogo (6 dos 14) e media 3,07:1
+		# sobre o creme, contra um corte de 4,5. Nenhum dos dezanove estados
+		# anteriores o montava, e o registro de exceções afirmava que os
+		# quatro já eram medidos — eram três linhas, todas do NEUTRO (`042`).
+		#
+		# As portas são do jogador: alocar numa doca que já opera é o toque
+		# que o cartão recebe, e `pay_debt()` sem caixa é o botão do painel do
+		# Sr. Ribeiro. Nenhuma delas escreve o rótulo à mão.
+		{"nome": "HUD (faixa de aviso)", "cena": "res://scenes/Main.tscn",
+			"acao_vista": [["assign_all_free_workers"], ["assign_worker", 1, 0]],
+			"so_hud": true},
+		{"nome": "HUD (faixa ruim)", "cena": "res://scenes/Main.tscn",
+			"estado": {"phase": "debt_payment", "cash": 1000},
+			"acao_vista": [["pay_debt"]], "so_hud": true},
 	]
 
 
@@ -200,7 +220,54 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 			else:
 				args.append(bruto)
 		no.callv("setup", args)
+	if not _acao_vista(no, GS, caso):
+		return null
 	return no
+
+
+# ── A AÇÃO CUJO EFEITO SE QUER VER ─────────────────────────────────────────
+#
+# ⚠️ FALA DISPARADA NÃO É FALA VISTA, e foi assim que três dos quatro estados
+# da faixa de mensagem viveram fora da régua que existe para os medir. O
+# `acao` acima corre ANTES de a cena existir, logo o `message` dela sai para
+# ninguém; e mesmo emitido depois, o texto entra numa FILA com tempo mínimo —
+# o que fica na tela é a mensagem de ABERTURA, que é neutra. Medido em 22/09:
+# o estado "HUD (nada parado)" tinha uma mensagem BOA presa na fila com
+# `pendentes() == 1`, e a régua publicava a neutra de trás dela (`042`).
+#
+# Daí esta segunda lista, que corre sobre a cena JÁ MONTADA e drena a fila
+# DEPOIS DE CADA AÇÃO. Drenar só no fim não chega: a fila ordena por
+# PRIORIDADE (`bad` > `warn` > `good`), então duas ações seguidas entregam na
+# tela a de menor prioridade, e não a última. Medido também — com o dreno só
+# no fim, o caso do aviso publicava o verde da ação anterior.
+#
+# Cada entrada é `[metodo, arg...]`, porque a porta do jogador para o aviso
+# pede argumentos (alocar numa doca que já opera).
+const DRENO_PASSOS := 8
+const DRENO_SEGUNDOS := 99.0
+
+
+func _acao_vista(no: Node, GS: Node, caso: Dictionary) -> bool:
+	var lista: Array = caso.get("acao_vista", [])
+	if lista.is_empty():
+		return true
+	# ⚠️ CENA SEM FILA É DRENO QUE NÃO DRENA NADA, e um caso que pedisse o
+	# estado colorido publicaria calado a mensagem neutra — a amostra vazia
+	# com a roupa de um `get`. Quem não tem fila ENTRA NAS FALHAS.
+	if not ("_fila" in no):
+		falhas.append("cena de %s não tem fila de mensagem para drenar"
+			% caso["nome"])
+		return false
+	for chamada in lista:
+		var metodo: String = String(chamada[0])
+		if not GS.has_method(metodo):
+			falhas.append("GameState não tem o método %s (ação vista de %s)"
+				% [metodo, caso["nome"]])
+			return false
+		GS.callv(metodo, chamada.slice(1))
+		for _i in range(DRENO_PASSOS):
+			no._fila.avancar(DRENO_SEGUNDOS)
+	return true
 
 
 func _dispensar_paineis(main: Node) -> void:
