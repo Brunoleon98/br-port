@@ -1,0 +1,214 @@
+{
+  "leia_me": [
+    "As exceções à regra 'o tema é o ponto único de estilo'. Quem as confere é",
+    "`tools/conferir_escopo_ui.py`; quem decidiu a granularidade e a",
+    "classificação é `docs/decisoes/036`.",
+    "",
+    "A chave é o TRIO (arquivo, receptor, propriedade) — nunca o arquivo, que a",
+    "ficha da §7.1 proíbe liberar inteiro, e nunca a LINHA, que envelhece calada",
+    "a cada edição acima dela. As CORES e a CONTAGEM de chamadas entram no valor:",
+    "sem a contagem, uma segunda chamada com a mesma forma passaria por",
+    "declarada, que é exatamente o mutante que a ficha manda cobrir.",
+    "",
+    "Cada entrada traz uma `classe`, e são duas:",
+    "",
+    "  ESTADO — o MESMO nó toma cores diferentes conforme o jogo. O tema ainda",
+    "  governa isto (troca-se a `theme_type_variation` em runtime, como o",
+    "  `DocaCartao._estilo()` já faz com o painel), mas cada estado pede a sua",
+    "  variação E cada fundo pede a sua cor. É a exceção que se concede.",
+    "",
+    "  BASE — o nó tem UMA cor fixa. Isto pertence ao tema e está aqui só porque",
+    "  ainda não há variação para o papel. Não é exceção de direito: é dívida",
+    "  declarada, e o caminho dela é uma leva de variações por fundo.",
+    "",
+    "⚠️ NENHUM TOM GANHA DOIS FUNDOS, e é por isso que 'migrar para o tema' não é",
+    "uma linha só. O âmbar de marca mede 5,53:1 sobre a barra escura e 2,39:1",
+    "sobre o cartão branco; o `RotuloAlerta` que o R6 criou é o âmbar escurecido",
+    "para o branco, e sobre a barra escura ele NÃO serve. Uma migração cega",
+    "quebra o que está medido — `docs/decisoes/035`."
+  ],
+  "excecoes": [
+    {
+      "arquivo": "scripts/Main.gd",
+      "receptor": "_message_label",
+      "propriedade": "font_color",
+      "classe": "ESTADO",
+      "chamadas": 4,
+      "cores": [
+        "COR_BOA = Color(0.102, 0.478, 0.251)",
+        "COR_AVISO = Color(0.851, 0.467, 0.024)",
+        "COR_RUIM = Color(0.761, 0.188, 0.188)",
+        "COR_NEUTRA = Color(0.11, 0.204, 0.329)"
+      ],
+      "justificativa": "A faixa de mensagem pinta-se pelo `kind` que a fila entrega — boa, aviso, ruim, neutra —, sobre o creme do cartão. É um rótulo com quatro estados, e o caminho do tema pede quatro variações só-de-cor trocadas em runtime. Fica declarado até a leva de variações da faixa; o contraste dos quatro já é medido pelo D33."
+    },
+    {
+      "arquivo": "scripts/Main.gd",
+      "receptor": "_workers_title",
+      "propriedade": "font_color",
+      "classe": "ESTADO",
+      "chamadas": 3,
+      "cores": [
+        "COR_AVISO = Color(0.851, 0.467, 0.024)",
+        "Color(0.51, 0.6, 0.706)"
+      ],
+      "justificativa": "Âmbar quando há trabalho parado ou doca por servir, neutro quando não há. ⚠️ O âmbar aqui é o DE MARCA e não o `RotuloAlerta`: sobre a barra ESCURA ele mede 5,53:1 e foi calibrado para lá, enquanto o `RotuloAlerta` é o mesmo âmbar escurecido para o cartão BRANCO. Trocar um pelo outro é a migração cega que quebra o medido. ⚠️ E o neutro está escrito como literal, a mesma cor que `Main.tscn` já pinta no nó — é o gémeo do `COR_PASSADO`, e aqui não se resolve apagando, porque o script precisa de VOLTAR ao neutro depois de pintar âmbar. Sai quando houver variação de alerta para fundo escuro."
+    },
+    {
+      "arquivo": "scripts/DocaCartao.gd",
+      "receptor": "_progresso",
+      "propriedade": "font_color",
+      "classe": "ESTADO",
+      "chamadas": 4,
+      "cores": [
+        "COR_CALMA = Color(0.639, 0.792, 0.855)",
+        "COR_ESPERANDO = Color(0.961, 0.725, 0.227)"
+      ],
+      "justificativa": "Azul-claro em repouso, âmbar quando a doca está sob oferta do rival. O PAINEL deste cartão já troca variação em runtime (`_estilo()`, quatro delas); o rótulo de dentro ainda não tem as suas. ⚠️ E o estado âmbar NÃO é medido pelo percurso dos 19 estados — nenhum deles monta uma doca sob oferta —, o que é mais uma razão para ele ficar declarado em vez de migrado às escuras."
+    },
+    {
+      "arquivo": "scripts/UpgradePanel.gd",
+      "receptor": "titulo",
+      "propriedade": "font_color",
+      "classe": "ESTADO",
+      "chamadas": 1,
+      "cores": ["COR_FEITO = Color(0.102, 0.478, 0.251)"],
+      "justificativa": "Verde só quando a estrutura já está de pé; nos outros estados o título fica com a cor do tema. ⚠️ O percurso dos 19 estados abre o painel com o porto em RUÍNAS, logo nenhuma estrutura está construída e esta cor nunca entra nos 214 textos medidos. Migrar uma cor que o portão de contraste não alcança seria trocar uma dívida visível por uma invisível: primeiro o percurso ganha o estado, depois a cor vai para o tema."
+    },
+    {
+      "arquivo": "scripts/UpgradePanel.gd",
+      "receptor": "pronto.get_node(\"Texto\")",
+      "propriedade": "font_color",
+      "classe": "ESTADO",
+      "chamadas": 1,
+      "cores": ["COR_FEITO = Color(0.102, 0.478, 0.251)"],
+      "justificativa": "O rótulo 'Construída' ao lado do ícone, no mesmo verde e pelo mesmo motivo do título acima. Sai na mesma leva que ele, e pelo mesmo percurso que ainda não monta o estado."
+    },
+    {
+      "arquivo": "scripts/Worker.gd",
+      "receptor": "realce",
+      "propriedade": "border_color",
+      "classe": "ESTADO",
+      "chamadas": 1,
+      "cores": ["Color(0.878, 0.604, 0.063)"],
+      "justificativa": "A borda âmbar do trabalhador SELECIONADO, num `StyleBoxFlat` duplicado do tema — o comentário ao lado explica por que se duplica: mexer no stylebox do tema mudaria TODOS os trabalhadores de uma vez. É BORDA e não texto, portanto fora do portão de contraste, e é a única cor de interface deste projeto que não chega por `font_color`. O caminho do tema é uma variação `TrabSelecionado` ao lado das quatro que já existem."
+    },
+    {
+      "arquivo": "scenes/Main.tscn",
+      "receptor": "HudBar/CaixaPilula/Linha/Caixa",
+      "propriedade": "font_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.42, 0.85, 0.53, 1)"],
+      "justificativa": "O verde do dinheiro na pílula do HUD, sobre a barra escura. Uma cor fixa e um papel — 'o número bom' — que ainda não tem variação. Migra com as outras três pílulas, numa leva só: são quatro papéis do MESMO fundo, e separá-los em quatro sessões é o que faz cores gémeas nascerem."
+    },
+    {
+      "arquivo": "scenes/Main.tscn",
+      "receptor": "HudBar/DiaPilula/Linha/Dia",
+      "propriedade": "font_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.941, 0.965, 1, 1)"],
+      "justificativa": "O branco-gelo do contador de dias na barra escura. Mesma leva das outras pílulas; é o mesmo valor que a pílula das docas usa, e as duas partilharão uma variação só."
+    },
+    {
+      "arquivo": "scenes/Main.tscn",
+      "receptor": "HudBar/DocasPilula/Linha/DocasTexto",
+      "propriedade": "font_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.941, 0.965, 1, 1)"],
+      "justificativa": "O mesmo branco-gelo da pílula do dia, escrito uma segunda vez. Duas grafias do MESMO valor em dois nós — o defeito que este registro existe para tornar visível, e que só se resolve com a variação partilhada."
+    },
+    {
+      "arquivo": "scenes/Main.tscn",
+      "receptor": "HudBar/RepPilula/Linha/RepTexto",
+      "propriedade": "font_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.961, 0.725, 0.227, 1)"],
+      "justificativa": "O âmbar de marca da reputação, sobre a barra escura, onde ele mede bem. ⚠️ É o MESMO valor que o `COR_ESPERANDO` do `DocaCartao` e que o `BotaoDestaque` do tema — três endereços do mesmo âmbar, um deles já no tema. A variação para fundo escuro recolhe os três."
+    },
+    {
+      "arquivo": "scenes/Main.tscn",
+      "receptor": "TrabalhadoresTitulo",
+      "propriedade": "font_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.51, 0.6, 0.706, 1)"],
+      "justificativa": "O neutro do jogo no seu fundo certo, a barra escura — é aqui que aquela cor sempre devia ter vivido, e as quatro vezes em que ela mordeu foram sobre branco. ⚠️ É o PAR do literal do `Main.gd` que repõe este rótulo ao neutro: a mesma cor em dois sítios, um na cena e um no script. Saem juntos."
+    },
+    {
+      "arquivo": "scenes/Main.tscn",
+      "receptor": "sub_resource:pilula",
+      "propriedade": "bg_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.09, 0.16, 0.24, 1)"],
+      "justificativa": "O fundo das quatro pílulas do HUD, num `StyleBoxFlat` da própria cena. Chrome, não texto. Migra como stylebox do tema, junto com a borda abaixo — e é por causa destes que o portão olha para `bg_color` e `border_color` e não só para `font_color`: cor de interface também chega por stylebox, e nenhum inventário anterior a via."
+    },
+    {
+      "arquivo": "scenes/Main.tscn",
+      "receptor": "sub_resource:pilula",
+      "propriedade": "border_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.2, 0.34, 0.47, 1)"],
+      "justificativa": "A borda das pílulas do HUD. Sai com o `bg_color` acima, na mesma peça."
+    },
+    {
+      "arquivo": "scenes/Main.tscn",
+      "receptor": "sub_resource:faixa_msg",
+      "propriedade": "bg_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(1, 0.984, 0.922, 1)"],
+      "justificativa": "O creme da faixa de mensagem — e é o FUNDO contra o qual o D33 mede os quatro estados do `_message_label`. Está aqui e não no tema, o que significa que a cor medida e a cor declarada vivem em arquivos diferentes. Migra com a faixa inteira."
+    },
+    {
+      "arquivo": "scenes/Main.tscn",
+      "receptor": "sub_resource:faixa_msg",
+      "propriedade": "border_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.851, 0.467, 0.024, 1)"],
+      "justificativa": "A barra âmbar à esquerda da faixa de mensagem, o mesmo valor do `COR_AVISO` do `Main.gd`. Quarto endereço deste âmbar; sai com a faixa."
+    },
+    {
+      "arquivo": "scenes/dock/DocaCartao.tscn",
+      "receptor": "Coluna/Cabecalho/Nome",
+      "propriedade": "font_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.561, 0.702, 0.816, 1)"],
+      "justificativa": "O rótulo 'DOCA n' no cabeçalho do cartão, cor fixa sobre o cartão escuro. Migra com os outros três rótulos deste cartão: são um conjunto e partilham o fundo."
+    },
+    {
+      "arquivo": "scenes/dock/DocaCartao.tscn",
+      "receptor": "Coluna/Cabecalho/Valor",
+      "propriedade": "font_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.941, 0.965, 1, 1)"],
+      "justificativa": "O valor do contrato, a 19px — a linha que o olho tem de achar primeiro neste cartão. Terceiro endereço do branco-gelo, com as duas pílulas do HUD."
+    },
+    {
+      "arquivo": "scenes/dock/DocaCartao.tscn",
+      "receptor": "Coluna/ProgressoLinha/Progresso",
+      "propriedade": "font_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.639, 0.792, 0.855, 1)"],
+      "justificativa": "O valor INICIAL do rótulo que o script repinta por estado — é o par do `_progresso` do `DocaCartao.gd`, e o mesmo `COR_CALMA` escrito uma segunda vez. Os dois só saem juntos: apagar este deixaria o script a pintar sozinho, e apagar o do script deixaria a doca sem voltar do âmbar."
+    },
+    {
+      "arquivo": "scenes/dock/DocaCartao.tscn",
+      "receptor": "Coluna/TrabalhadorLinha/Trabalhador",
+      "propriedade": "font_color",
+      "classe": "BASE",
+      "chamadas": 1,
+      "cores": ["Color(0.961, 0.725, 0.227, 1)"],
+      "justificativa": "O âmbar do rótulo do trabalhador. ⚠️ Até 21/09 o script repintava este nó com o MESMO valor nos dois ramos — dois overrides que não mudavam um pixel e que calavam a cena: mexer na cor aqui não teria efeito nenhum, sem erro nenhum. Os dois foram apagados e esta linha ficou a ser a única que pinta, que é o que já devia ser."
+    }
+  ]
+}

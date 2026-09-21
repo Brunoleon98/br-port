@@ -546,6 +546,23 @@ RotuloTotal/font_sizes/font_size = 18
 ; variação faria o dia de hoje encolher para o tamanho do aviso do HUD.
 RotuloAlerta/base_type = "Label"
 RotuloAlerta/colors/font_color = Color(0.58, 0.399, 0.042, 1)
+; RotuloApoio — o texto de APOIO sobre fundo claro: o que descreve, explica ou
+; sai da frente sem ser cabeçalho de seção. Mesma cor do `RotuloSecao` e de
+; propósito; o que as separa não é o tom, é o TAMANHO.
+;
+; ⚠️ `RotuloSecao` TRAZ `font_size = 13` JUNTO COM A COR, e é por isso que ele
+; não serve de destino para quem só quer a cor. Medido em 21/09 ao migrar os
+; overrides: os quatro rótulos que pediam esta cor medem 12, 13, 15 e 12px —
+; vesti-los de `RotuloSecao` encolheria três deles e mexeria no leiaute que o
+; D18 e o D22 medem, numa migração que só devia mexer na COR. É a mesma razão
+; pela qual o `RotuloAlerta` acima não declara tamanho, escrita do outro lado:
+; ali o tamanho ficou fora para a variação servir 13, 15 e 17px.
+;
+; Logo esta variação é SÓ COR, e a diferença entre as duas é estrutural e não
+; cosmética — não são duas grafias da mesma coisa, que é o defeito que o R7
+; veio acabar (o `COR_PASSADO` a 0,52 contra os 0,50 do tema).
+RotuloApoio/base_type = "Label"
+RotuloApoio/colors/font_color = Color(0.35, 0.42, 0.5, 1)
 ; Fala — o balão dos NPCs.
 Fala/base_type = "PanelContainer"
 Fala/styles/panel = SubResource("fala")

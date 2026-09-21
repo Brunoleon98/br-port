@@ -436,6 +436,28 @@ static func por_extenso(n: int) -> String:
 	return DEZ[d] if u == 0 else DEZ[d] + " e " + UNS[u]
 
 
+## Concorda uma frase com uma CONTAGEM — "1 dia restante" / "2 dias restantes".
+##
+## Chama-se `concordar` e não `plural` porque o que ela acerta é a frase
+## inteira e não só o substantivo: o adjetivo e o particípio concordam junto,
+## e foi por não terem onde concordar que cinco rótulos deste jogo escreviam
+## "dia(s) restante(s)" e "trabalhador(es) alocado(s)" ao jogador.
+##
+## ⚠️ O SINGULAR É SÓ EM `n == 1`, e o caso que se esquece é o ZERO: em
+## português zero leva PLURAL — "0 dias restantes", nunca "0 dia restante".
+## Um `n <= 1` escrito por distração é a forma mais fácil de errar isto, e é
+## um dos mutantes que o bloco T9 injeta.
+##
+## ⚠️ E O ADJETIVO VIAJA COM O SUBSTANTIVO, de propósito. A alternativa era
+## receber substantivo e adjetivo em separado e concordá-los aqui — o que
+## obrigaria esta função a saber género e a distinguir "restante" (que não
+## muda) de "alocado" (que muda). Quem escreve a frase já sabe as duas formas;
+## esta só escolhe entre elas. É a mesma razão pela qual o `por_extenso` acima
+## fala no feminino e quem o chama é que sabe se serve.
+static func concordar(n: int, um: String, varios: String) -> String:
+	return "%d %s" % [n, um if n == 1 else varios]
+
+
 ## Só a PRIMEIRA letra. O `capitalize()` do Godot maiusculiza cada palavra, e
 ## "trinta e dois" sairia "Trinta E Dois" — o que só se vê com um número acima
 ## de vinte, que é precisamente o caso que o VS tem.

@@ -17,8 +17,9 @@ const COR_FEITO := Color(0.102, 0.478, 0.251)
 # apanhado no calendário em 03/09 e ficou registado no `CLAUDE.md`; o painel
 # Construir carregava-o desde então, na descrição de cada estrutura.
 #
-# 0,35/0,42/0,50 mede **5,46:1** sobre branco e passa o AA para texto pequeno.
-const COR_SECUNDARIA := Color(0.35, 0.42, 0.50)
+# A cor certa (0,35/0,42/0,50, 5,46:1 sobre branco) vive no tema desde 21/09,
+# na variação `RotuloApoio` — era uma `const COR_SECUNDARIA` aqui, que é o que
+# o R7 veio acabar: cor de interface escrita à mão é cor que diverge calada.
 
 # Comprar emite `cash_changed` E `roster_changed`, e o botão que disparou a
 # compra está dentro do que vai ser destruído. Remontar na hora significaria
@@ -103,7 +104,7 @@ func _build_ui() -> void:
 	if falta.size() > 0:
 		porto.text += "\nAinda não aguenta: %s" % ", ".join(falta).to_lower()
 	porto.add_theme_font_size_override("font_size", 13)
-	porto.add_theme_color_override("font_color", COR_SECUNDARIA)
+	porto.theme_type_variation = "RotuloApoio"
 	vbox.add_child(porto)
 
 	# Ordenar pela chave `ordem` e não pela do dicionário: a ordem de um
@@ -142,7 +143,7 @@ func _linha_estrutura(id: String) -> Control:
 	efeito.text = String(def["desc"])
 	efeito.autowrap_mode = TextServer.AUTOWRAP_WORD
 	efeito.add_theme_font_size_override("font_size", 12)
-	efeito.add_theme_color_override("font_color", COR_SECUNDARIA)
+	efeito.theme_type_variation = "RotuloApoio"
 	col.add_child(efeito)
 
 	if feito:
@@ -171,7 +172,7 @@ func _linha_estrutura(id: String) -> Control:
 		trava.text = impedimento
 		trava.autowrap_mode = TextServer.AUTOWRAP_WORD
 		trava.add_theme_font_size_override("font_size", 13)
-		trava.add_theme_color_override("font_color", COR_SECUNDARIA)
+		trava.theme_type_variation = "RotuloApoio"
 		col.add_child(trava)
 		return cartao
 

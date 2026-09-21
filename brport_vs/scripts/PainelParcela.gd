@@ -41,7 +41,10 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	# primeiro (`RotuloTotal`). O cheio e o abatimento ficam na prosa abaixo:
 	# dois números em destaque seriam nenhum em destaque.
 	total(GameState.moeda(valor))
-	paragrafo("Vence no dia %d — %d dia(s) daqui." % [GameState.PARCELA_DUE_TURN, dias])
+	# "daqui" fica FORA da concordância: é advérbio e não muda. O que concorda
+	# é "dia"/"dias", e só isso entra no helper.
+	paragrafo("Vence no dia %d — %s daqui." % [
+		GameState.PARCELA_DUE_TURN, Narrativa.concordar(dias, "dia", "dias")])
 	if abatimento > 0:
 		paragrafo(("Cheia são %s. Antecipar abate %s pelos juros que o banco " +
 			"deixa de correr — e esse abatimento encolhe a cada dia.")

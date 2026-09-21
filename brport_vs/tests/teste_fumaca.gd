@@ -108,6 +108,9 @@ func _rodar() -> void:
 	# do que nos outros, porque este bloco é uma corrotina.
 	_confere("o bloco F8 correu até ao fim", _f8_terminou)
 
+	print("=== F9: nenhuma contagem escreve o plural à mão ===")
+	_f9_concordancia_a_mao()
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -1082,6 +1085,7 @@ func _sem_comentarios(fonte: String) -> String:
 const F8_CAMINHO_LABEL := "MensagemCartao/Linha/Mensagem"
 
 var _f8_terminou := false
+var _f9_terminou := false
 var _f8_main: Node = null
 var _f8_sistema: Array[String] = []
 var _f8_apresentadas: Array[String] = []
@@ -1376,3 +1380,143 @@ func _f8_a_fala_e_vista() -> void:
 	_f8_fechar()
 
 	_f8_terminou = true
+
+
+# ── F9 ──────────────────────────────────────────────────────────────────
+# A superfície do plural, varrida em vez de listada.
+#
+# ⚠️ A REVISÃO NOMEOU TRÊS SÍTIOS, A BUSCA POR `(s)` ACHOU CINCO, E A BUSCA
+# PELA FORMA ACHOU OITO. Os três primeiros eram os que o jogador LIA errado
+# ("dia(s) restante(s)"); os outros dois estavam no `GameState`, que ninguém
+# tinha aberto; e os últimos três escreviam a concordância com um ternário à
+# mão (`"" if n == 1 else "s"`) — saída certa, regra duplicada em cinco sítios,
+# e num deles duas vezes na MESMA expressão. É a regra do `CLAUDE.md`: fecha-se
+# pelo `grep` da FORMA que causou o defeito, nunca pela peça onde ele apareceu.
+#
+# ⚠️ E ELA CORTA OS COMENTÁRIOS ANTES DE VARRER. Os comentários deste bloco e
+# os do `Narrativa.concordar` CITAM as duas formas proibidas, palavra por
+# palavra — sem o corte, o comentário que explica a armadilha satisfaz a busca
+# que a caça, que é o que já mordeu na varredura das falas.
+#
+# ⚠️ O ESCOPO É `scripts/` + `autoload/`, que é onde vive o texto que o jogador
+# LÊ. `tools/` e `tests/` ficam de fora de propósito: não vão no APK e falam
+# com quem desenvolve — a própria suíte imprime "%d TESTE(S) FALHARAM", que é
+# uma forma legítima ali e seria um defeito num rótulo do jogo.
+func _f9_concordancia_a_mao() -> void:
+	var arquivos := _f9_scripts_do_jogo()
+	_confere("F9: a varredura achou os scripts do jogo", arquivos.size() > 20,
+		"achou %d" % arquivos.size())
+
+	# ⚠️ O PAR LÊ-SE NO ARQUIVO INTEIRO E NÃO LINHA A LINHA, e esta guarda
+	# reprovou na estreia por causa disso: a prosa deste repositório quebra aos
+	# ~79 caracteres, e cinco das onze chamadas têm o `concordar(` numa linha e
+	# as duas formas na seguinte. Uma varredura de linha achou SEIS — e as
+	# outras cinco não reprovavam, escapavam caladas, que é o verde de graça.
+	# É a armadilha que o `CLAUDE.md` já regista para o `grep` de facto, e ela
+	# mordeu dentro da guarda escrita para a caçar.
+	var re := RegEx.new()
+	# ⚠️ E O PRIMEIRO ARGUMENTO PODE TER PARÊNTESES *E* ASPAS lá dentro — o
+	# PainelCaixa passa `int(dia["servidos"])`. Uma expressão que casasse a
+	# primeira string a seguir ao parêntesis leria `"servidos"` como a forma
+	# singular; uma que proibisse parênteses no argumento saltava as duas
+	# chamadas desse painel. Por isso o que se casa são as DUAS ÚLTIMAS strings
+	# antes do fecho, com um nível de parênteses permitido pelo meio.
+	re.compile("concordar\\s*\\((?:[^()]|\\([^()]*\\))*?\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*\\)")
+	var crus := []
+	var ternarios := []
+	var pares := []
+	var chamadas := 0
+	for caminho in arquivos:
+		var fonte := FileAccess.get_file_as_string(caminho)
+		var uteis := PackedStringArray()
+		for linha in fonte.split("\n"):
+			var limpa := linha.strip_edges()
+			if limpa.begins_with("#"):
+				continue
+			uteis.append(limpa)
+			if limpa.contains("(s)") or limpa.contains("(es)") or limpa.contains("(as)"):
+				crus.append("%s: %s" % [caminho.get_file(), limpa])
+			if limpa.contains("else \"s\"") or limpa.contains("else \"es\""):
+				ternarios.append("%s: %s" % [caminho.get_file(), limpa])
+		var texto := "\n".join(uteis)
+		# A DECLARAÇÃO não é chamada: o `Narrativa.gd` traz o `func concordar(`
+		# e ele contaria como uma décima segunda chamada que ninguém faz.
+		chamadas += texto.count("concordar(") - texto.count("func concordar(")
+		for m in re.search_all(texto):
+			pares.append([caminho.get_file(), m.get_string(1), m.get_string(2)])
+
+	_confere("F9: nenhum rótulo do jogo escreve \"(s)\" ao jogador",
+		crus.is_empty(), "\n    " + "\n    ".join(crus))
+	_confere("F9: nenhuma contagem concorda com um ternário à mão",
+		ternarios.is_empty(), "\n    " + "\n    ".join(ternarios))
+
+	# ⚠️ E OS PARES DERIVAM DO CÓDIGO, que é o que apanha o defeito na CHAMADA
+	# em vez de no helper. O T9 prova a aritmética com um par escrito no teste;
+	# um `concordar(n, "dia restante", "dias restante")` — o adjetivo por
+	# concordar na forma plural — passaria ali inteiro, porque o T9 nunca vê
+	# aquela chamada. Aqui vê-se.
+	# ⚠️ E A CONTA DERIVA-SE DUAS VEZES, por caminhos diferentes: quantas vezes
+	# a palavra aparece, e quantos pares a expressão conseguiu ler. Uma régua
+	# que responde à mesma pergunta por dois caminhos denuncia-se sozinha — foi
+	# a discordância entre elas que apanhou a quebra de linha acima, e é ela
+	# que impede uma chamada de forma nova de ser ignorada em silêncio.
+	_confere("F9: a expressão leu TODAS as chamadas a concordar() que existem",
+		pares.size() == chamadas,
+		"a palavra aparece %d vezes, a expressão leu %d pares" % [chamadas, pares.size()])
+	_confere("F9: e há chamadas para ler", pares.size() >= 8,
+		"achou %d" % pares.size())
+	var maus := []
+	for par in pares:
+		var um: String = par[1]
+		var varios: String = par[2]
+		if um == varios:
+			maus.append("%s: as duas formas são iguais (%s)" % [par[0], um])
+			continue
+		var pu := um.split(" ")
+		var pv := varios.split(" ")
+		if pu.size() != pv.size():
+			maus.append("%s: \"%s\" e \"%s\" não têm o mesmo número de palavras"
+				% [par[0], um, varios])
+			continue
+		for i in pv.size():
+			var palavra := String(pv[i])
+			if not palavra.ends_with("s") and not _F9_INVARIAVEIS.has(palavra):
+				maus.append("%s: \"%s\" não está no plural em \"%s\"" % [par[0], palavra, varios])
+	_confere("F9: em toda chamada, a forma plural está mesmo no plural",
+		maus.is_empty(), "\n    " + "\n    ".join(maus))
+
+	_f9_terminou = true
+	_confere("o bloco F9 correu até ao fim", _f9_terminou)
+
+
+# As palavras que NÃO concordam, e a razão de cada uma. A lista é curta de
+# propósito: ela é a porta por onde um adjetivo por concordar entraria sem a
+# asserção acima o ver, então cada entrada paga o seu lugar.
+#   esperando — gerúndio, invariável ("1 doca esperando" / "2 docas esperando")
+const _F9_INVARIAVEIS := ["esperando"]
+
+
+func _f9_scripts_do_jogo() -> PackedStringArray:
+	var achados := PackedStringArray()
+	for raiz in ["res://scripts", "res://autoload"]:
+		_f9_juntar(raiz, achados)
+	achados.sort()
+	return achados
+
+
+func _f9_juntar(dir_path: String, achados: PackedStringArray) -> void:
+	var d := DirAccess.open(dir_path)
+	if d == null:
+		return
+	d.list_dir_begin()
+	var nome := d.get_next()
+	while nome != "":
+		var completo := dir_path.path_join(nome)
+		if d.current_is_dir():
+			if not nome.begins_with("."):
+				_f9_juntar(completo, achados)
+		elif nome.ends_with(".gd"):
+			achados.append(completo)
+		nome = d.get_next()
+	d.list_dir_end()
+

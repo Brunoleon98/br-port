@@ -365,6 +365,15 @@ Teste e import rodam sem tela.
    interessante é a repetição, a conta é de MULTICONJUNTO. E foi a discordância
    entre os dois métodos que a apanhou: **uma régua que responde à mesma
    pergunta por dois caminhos denuncia-se sozinha.**
+   ⚠️ **PERCURSO RESPONDE PELO QUE SE VÊ; ARQUIVO RESPONDE PELO QUE EXISTE.**
+   Uma régua que caminha pelo jogo só mede o que o caminho ALCANÇA, e isso não
+   se nota porque ela publica um total grande. Medido em 21/09: dos sítios que
+   pintam cor à mão, o percurso de 19 estados do `medir_contraste_ui.gd` não
+   chega a três — o dia já vivido do calendário (ele abre no dia 1), a estrutura
+   já construída (abre com o porto em ruínas) e a doca sob oferta do rival. O
+   `COR_PASSADO` que o briefing entregou como CASO DE TESTE nunca esteve nos 214
+   textos, e os 5,42:1 dele eram conta à mão. Antes de tratar um inventário em
+   runtime como inventário, pergunte que estados ele NÃO monta.
    ⚠️ **E MUTANTE QUE SÓ UMA SUÍTE APANHA NÃO É SUÍTE A MAIS — é o que a
    outra não tem como ver.** Medido no R5 (`034`): dos três defeitos
    injetados na fila de mensagens, o de "interromper antes do tempo mínimo"
@@ -1650,6 +1659,22 @@ tranca isso.
   A correção não foi tirar a palavra: foi plantar o "querido" na abertura, para
   a segunda ocorrência ler como assinatura. Antes de cortar o que soou
   estranho, conte quantas vezes ele aparece — pode faltar, e não sobrar.
+- **⚠️ CONTAGEM QUE O JOGADOR LÊ CONCORDA A FRASE INTEIRA, e zero leva
+  PLURAL.** `Narrativa.concordar(n, um, varios)` recebe as duas frases
+  completas — "dia restante" / "dias restantes" —, e não substantivo e adjetivo
+  em separado: concordá-los dentro da função obrigaria-a a saber género e a
+  distinguir "restante" (que muda) de "esperando" (que não muda), que é um
+  dicionário de português. ⚠️ **O singular é SÓ em `n == 1`**, e o zero é o
+  ÚNICO estado em que um `n <= 1` escrito por distração diverge — com 1, 2 e 32
+  as duas versões dão o mesmo texto (`docs/decisoes/037`).
+  ⚠️ **E A BUSCA PELA PEÇA ACHA MENOS DO QUE A BUSCA PELA FORMA.** A revisão
+  nomeou TRÊS rótulos; o `grep` por `(s)` achou **cinco** (dois deles no
+  `GameState.gd`, que ninguém tinha aberto); e o `grep` pela FORMA achou
+  **oito** — os últimos três escreviam a concordância com um ternário à mão
+  (`"" if n == 1 else "s"`), com saída certa e a regra duplicada em cinco
+  sítios. Num deles a MESMA condição estava escrita duas vezes na mesma
+  expressão, uma para o substantivo e outra para o particípio. Hoje quem
+  pergunta é o bloco **F9** do `teste_fumaca`.
 - **⚠️ QUEIXA DE ESTRANHEZA PODE SER LACUNA, e aí não há rótulo a corrigir.** A
   triagem leu *"é estranho o porto ter dívida mas o jogador começar com
   R$400.000"* como um nome errado e propôs chamar EMPRÉSTIMO ao caixa — que
@@ -1747,6 +1772,38 @@ tranca isso.
   a ~180° um do outro, e a captura confirma. Quem quiser a separação de volta
   não muda a cor, muda a MASSA: âmbar de FUNDO com texto navy mede 5,27:1 e já
   existe no `BotaoPrimario`.
+- **⚠️ «ESTA COR É LEGÍVEL?» E «DE ONDE VEIO ESTA COR?» SÃO DUAS PERGUNTAS, e
+  quem só tem a primeira acrescenta cor à mão sem ver.** Medido em 21/09: no
+  MESMO commit em que migrou três overrides para o tema, o R6 **acrescentou um
+  quarto** — e o D33 estava certo em deixá-lo passar, porque a cor nova mede
+  5,46:1. O briefing seguinte anunciou "ficaram 18", que é 21 − 3 feito de
+  cabeça; contado no HEAD eram **19**. Hoje quem pergunta a segunda é
+  `tools/conferir_escopo_ui.py` (`ESCOPO UI OK`), e o registro das exceções é
+  `tools/excecoes_cor_ui.json` (`docs/decisoes/036`).
+  ⚠️ **E A SUPERFÍCIE ERA O DOBRO DO QUE SE DIZIA, porque cor de interface não
+  chega só por chamada.** Contado no que o jogo exporta: 19
+  `add_theme_color_override`, mas também **10 `theme_override_colors/*` em
+  cena**, **4 cores de `StyleBoxFlat`** em `sub_resource` e **1 pintada num
+  StyleBox em código** — 34 ao todo, e as 15 últimas nunca tinham sido contadas
+  por ninguém. Todo inventário anterior procurava a CHAMADA.
+  ⚠️ **E A EXCEÇÃO DECLARA-SE PELO TRIO (arquivo, receptor, propriedade), COM
+  CONTAGEM.** Por arquivo a ficha proíbe — e foi por arquivo que a chamada nova
+  passou, já que aquele arquivo tinha outras. Por LINHA não, que é a regra do
+  número em pixel escrito à mão com outra roupa. E a CONTAGEM entra na chave
+  porque sem ela uma segunda chamada da mesma forma — mesmo nó, mesma
+  propriedade, mesma cor — passa por declarada.
+  ⚠️ **E VARIAÇÃO QUE EMPACOTA TAMANHO COM COR NÃO SERVE A QUEM SÓ QUER A COR.**
+  O `RotuloSecao` traz `font_size = 13`, e os quatro rótulos que pediam a cor
+  dele medem 12, 13, 15 e 12 px: vesti-los dele encolheria três e mexeria no
+  leiaute que o D18 e o D22 medem, numa migração que só devia mexer na COR. Daí
+  o `RotuloApoio` ser **só cor** — o irmão do `RotuloAlerta`, que já não declara
+  tamanho pela razão simétrica. Duas variações com o mesmo valor não são a
+  divergência calada que se veio acabar quando a diferença entre elas é
+  ESTRUTURAL; o `COR_PASSADO` a 0,52 contra os 0,50 do tema era cosmética, e
+  por isso foi **apagado** em vez de renomeado.
+  ⚠️ **E `theme_type_variation` PARA UMA VARIAÇÃO QUE NÃO EXISTE NÃO DÁ ERRO** —
+  cai no tipo base e sai com a cor errada, que é a irmã do valor de Godot 3 numa
+  chave de Godot 4. O portão exige que toda variação usada esteja no tema.
 - **Texto que passa a vir de uma TABELA cresce, e Label que não cabe não dá
   erro — corta.** O motivo da escala pôs no cartão da doca uma palavra vinda de
   `MOTIVOS`, e "Armazenagem" tem quase o dobro de "Granel". Medido: o interior
@@ -2074,6 +2131,23 @@ armadilha de uma função, no comentário dela.
   644, e a bateria morreu com código **126 em 0 s**, que não se parece nada com
   um erro de captura. Ao trocar um arquivo por um temporário, copie o modo
   (`os.chmod(tmp, os.stat(p).st_mode)`) antes do `replace`.
+- **⚠️ RÉGUA QUE VARRE CÓDIGO LÊ O ARQUIVO INTEIRO, NUNCA LINHA A LINHA — e a
+  que não o faz não REPROVA, escapa CALADA.** O `CLAUDE.md` já registava isto
+  para o `grep` de facto em prosa; em 21/09 mordeu dentro da guarda escrita
+  para o caçar. O bloco F9 varria linha a linha e achou **6 das 11** chamadas:
+  o código deste repositório também quebra aos ~79 caracteres, e cinco delas
+  têm a chamada numa linha e os argumentos na seguinte. As cinco não entravam
+  na lista e não havia queixa nenhuma.
+  ⚠️ **E QUEM AS APANHOU FOI A CONTA POR DOIS CAMINHOS**: quantas vezes o nome
+  aparece no texto, contra quantos casos a expressão conseguiu ler, com a
+  asserção a exigir que os dois números sejam iguais. É *"uma régua que
+  responde à mesma pergunta por dois caminhos denuncia-se sozinha"* aplicada a
+  uma VARREDURA — e é ela que faz uma chamada de forma nova reprovar em vez de
+  ser ignorada. Sem ela, a versão errada dizia verde (`docs/decisoes/037`).
+  ⚠️ **E O ARGUMENTO PODE TER PARÊNTESES *E* ASPAS DENTRO.** `int(dia["servidos"])`
+  parte as duas expressões óbvias: a que casa a primeira string a seguir ao
+  parêntesis lê `"servidos"` como argumento, e a que proíbe parênteses salta a
+  chamada inteira. O que se casa são os ÚLTIMOS argumentos antes do fecho.
 - **⚠️ QUEM LÊ UM RESULTADO DE UMA LISTA QUE CRESCE LÊ POR IDENTIDADE, NUNCA
   POR ÍNDICE.** A conclusão do simulador tirava o "jogar mal" de
   `resultados[size - 1]`, o que era o Descuidado enquanto os perfis eram três;

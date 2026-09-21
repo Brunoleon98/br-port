@@ -668,7 +668,7 @@ theme_override_font_sizes/font_size = 13
 [node name="Pendentes" type="Label" parent="MensagemCartao/Linha"]
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_colors/font_color = Color(0.35, 0.42, 0.5, 1)
+theme_type_variation = &"RotuloApoio"
 theme_override_font_sizes/font_size = 12
 
 [node name="MetaCartao" type="PanelContainer" parent="."]

@@ -781,9 +781,11 @@ func assign_all_free_workers() -> int:
 
 	if postos > 0:
 		var sobraram := esperando.size() - postos
-		var texto := "%d trabalhador(es) alocado(s). Avance o dia para operar." % postos
+		var texto := "%s. Avance o dia para operar." % Narrativa.concordar(
+			postos, "trabalhador alocado", "trabalhadores alocados")
 		if sobraram > 0:
-			texto += " Faltou gente para %d doca(s)." % sobraram
+			texto += " Faltou gente para %s." % Narrativa.concordar(
+				sobraram, "doca", "docas")
 		message.emit(texto, "good")
 	return postos
 

@@ -31,7 +31,6 @@ const ALTURA := 0
 # texto neutro (0.51, 0.6, 0.706) foi calibrado para o FUNDO ESCURO do jogo —
 # aqui o cartão é branco, e o mesmo tom mede 2,93:1, abaixo até do corte de
 # texto grande (3,0). Este tom mede 5,42:1 no mesmo cartão.
-const COR_PASSADO := Color(0.35, 0.42, 0.52)
 
 const LARG_CELULA := 44.0
 const ALT_CELULA := 30.0
@@ -91,7 +90,12 @@ func _celula(dia: Dictionary) -> Control:
 		# um tamanho lá dentro encolheria o dia de hoje para o do aviso do HUD.
 		rotulo.add_theme_font_size_override("font_size", 17)
 	elif bool(dia["passado"]):
-		rotulo.add_theme_color_override("font_color", COR_PASSADO)
+		# ⚠️ ERA UM `COR_PASSADO := Color(0.35, 0.42, 0.52)` ESCRITO AQUI, e o
+		# tema dizia 0,50 — duas grafias quase iguais da mesma cor, a medir
+		# 5,42:1 e 5,46:1. Nenhuma reprovava nada, e era exatamente por isso
+		# que ninguém a via. O percurso dos 19 estados também não a media: ele
+		# abre o calendário no dia 1, onde não há dia passado nenhum.
+		rotulo.theme_type_variation = "RotuloApoio"
 	return rotulo
 
 

@@ -1127,7 +1127,8 @@ func _refresh_meta() -> void:
 
 	_meta_icone.texture = Icones.PARCELA
 	var dias_restantes: int = max(GameState.PARCELA_DUE_TURN - GameState.turn + 1, 0)
-	_meta_titulo.text = "Parcela do Sr. Ribeiro — %d dia(s) restante(s)" % dias_restantes
+	_meta_titulo.text = "Parcela do Sr. Ribeiro — %s" % Narrativa.concordar(
+		dias_restantes, "dia restante", "dias restantes")
 	_meta_bar.value = clamp(100.0 * float(GameState.cash) / float(alvo), 0.0, 100.0)
 	var falta: int = alvo - int(GameState.cash)
 	var progresso := "%s de %s" % [GameState.moeda(int(GameState.cash)), GameState.moeda(alvo)]
@@ -1249,20 +1250,17 @@ func _refresh_titulo_trabalhadores() -> void:
 		_workers_title.text = "Agora toque numa doca para enviar o #%d" % _selecionado
 		_workers_title.add_theme_color_override("font_color", COR_AVISO)
 	elif parado != Vector2i.ZERO:
-		_workers_title.text = "%s parado%s — %s esperando" % [
-			_plural(parado.x, "trabalhador", "trabalhadores"),
-			"" if parado.x == 1 else "s",
-			_plural(parado.y, "doca", "docas")]
+		# O adjetivo e o gerúndio viajam DENTRO da concordância. Antes eram
+		# três argumentos — o substantivo pelo `_plural`, o "s" do adjetivo por
+		# um ternário à parte, e o segundo substantivo —, e o ternário solto é
+		# exatamente a forma de errar que o helper existe para fechar.
+		_workers_title.text = "%s — %s" % [
+			Narrativa.concordar(parado.x, "trabalhador parado", "trabalhadores parados"),
+			Narrativa.concordar(parado.y, "doca esperando", "docas esperando")]
 		_workers_title.add_theme_color_override("font_color", COR_AVISO)
 	else:
 		_workers_title.text = "Trabalhadores — toque ou arraste para uma doca"
 		_workers_title.add_theme_color_override("font_color", Color(0.51, 0.6, 0.706))
-
-
-# "1 doca" / "2 docas". Existe porque o número vem de uma contagem e escrever
-# "1 docas" numa faixa de alerta desfaz o alerta.
-func _plural(n: int, singular: String, plural: String) -> String:
-	return "%d %s" % [n, singular if n == 1 else plural]
 
 
 func _on_alocar_pressed() -> void:
