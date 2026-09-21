@@ -52,6 +52,7 @@ aqui.
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-21b.md` | 21/09 | Fecho do R8 da §7.1 — a concordância de plural: os três sítios nomeados eram oito, zero leva plural, e as guardas T9 e F9 são cegas ao defeito uma da outra — e o prompt do R9 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-21c.md` | 21/09 | Prompt de um item FORA da §7.1 — os cinco painéis sem foto nenhuma, o `PainelCaixa` que não é capturável, e a guarda da bateria que não apanharia o erro dele |
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-21d.md` | 21/09 | Fecho das capturas E do portão de cobertura — os cinco painéis eram sete (são 15 e não 13), 24 tiros com `COBERTURA OK`, a varredura pergunta pela ORIGEM do erro e cada tiro tem teto de tempo — e a fila de volta ao R9 |
+| `BRIEFING_PROXIMA_CONVERSA_2026-09-21e.md` | 21/09 | Fecho do R9 e da §7.1 INTEIRA — o sinal dos sons medido sem ouvir (true peak, descontinuidade, espectro), dois alertas por aritmética e o resto descritor, o protocolo de escuta entregue ao Bruno — e a fila ordenada a acabar |
 | `BLOCO5_PROMPTS_BLENDER_RICO.md` | 29/08 | Os prompts do enriquecimento dos props em Blender |
 | `BRP_IMPLEMENTATION_NOTES.md` | 31/08 | O que foi e o que NÃO foi feito no pipeline Blender → Godot |
 | `BRP_VALIDATION_REPORT.md` | 31/08 | Os resultados medidos daquele pipeline |

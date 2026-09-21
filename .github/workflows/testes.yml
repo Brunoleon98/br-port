@@ -382,6 +382,37 @@ jobs:
             exit 1
           fi
 
+      - name: Medir o sinal dos sons (true peak, descontinuidade, espectro)
+        # ⚠️ ESTA NÃO É A PERGUNTA DO `teste_audio.gd`, e as duas têm de existir.
+        # Lá pergunta-se pelo ENCANAMENTO — o arquivo carrega, o bus existe, o
+        # sinal certo pede o som certo, a espera mínima segura a repetição. Aqui
+        # pergunta-se pelo SINAL dentro do arquivo, que nenhuma daquelas vê: um
+        # pico ENTRE amostras (o pico de amostra não o pega, medido: 0,950 de
+        # amostra com +2,50 dBTP reconstruídos) e um estalo no MEIO do arquivo
+        # (a conferência de bordas só olha a primeira e a última).
+        #
+        # ⚠️ E O PASSO ACIMA TAMBÉM NÃO RESPONDE POR ISTO. Ele compara os WAV
+        # byte a byte com o gerador, o que apanha DERIVA — não apanha um gerador
+        # alterado de propósito que passe a produzir um estalo. As duas
+        # perguntas são independentes.
+        #
+        # Python, como os outros conferidores: aqui uma exceção sai com código
+        # ≠ 0 e o `set -e` apanha, enquanto o Godot encerra com 0 depois de um
+        # erro. Sem dependência nenhuma, 1,5 s nos 14 arquivos.
+        run: |
+          set -euo pipefail
+          python3 tools/medir_audio.py 2>&1 | tee /tmp/sinal_audio.txt
+
+          # A linha de sucesso, e não o código de saída. ⚠️ E O MARCADOR É
+          # `SINAL OK` DE PROPÓSITO: "MEDIDA DE AUDIO OK" conteria `AUDIO OK`
+          # como substring, e o passo do `teste_audio.gd` procura exatamente
+          # essa string — dois marcadores a casar no mesmo grep é a armadilha
+          # do "FORA DO PORTÃO" que o CLAUDE.md já regista.
+          if ! grep -q "SINAL OK" /tmp/sinal_audio.txt; then
+            echo "::error::Um som satura a reconstrução ou tem estalo interno (veja a saída acima)."
+            exit 1
+          fi
+
       - name: Conferir que a tabela de âncoras está em dia
         # A tabela é gerada pelo mesmo script que gera os mapas. Se alguém
         # mexer nas coordenadas do mundo e esquecer de versionar a tabela, o
