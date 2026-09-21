@@ -95,6 +95,18 @@ func percurso() -> Array:
 			"estado": {"cash": 100000}, "so_hud": true},
 		{"nome": "HUD (já dá para quitar)", "cena": "res://scenes/Main.tscn",
 			"estado": {"cash": 900000}, "so_hud": true},
+		# ⚠️ E O TERCEIRO ESTADO DO TÍTULO DOS TRABALHADORES SÓ SE ALCANÇA
+		# AGINDO. `trabalho_parado()` devolve ZERO quando não há trabalhador
+		# livre, e o porto abre com UM livre e uma doca à espera — logo os dois
+		# casos acima mediam sempre o ÂMBAR, e o repouso NEUTRO nunca esteve
+		# nos 214 textos. Foi assim que uma cor escrita em dois sítios viveu
+		# fora do alcance da régua que existe para a medir.
+		#
+		# Ele entra pela PORTA DO JOGADOR: `assign_all_free_workers()` é o que
+		# o botão "Alocar todos" chama. Estado escrito à mão poria o rótulo
+		# certo com o resto parado.
+		{"nome": "HUD (nada parado)", "cena": "res://scenes/Main.tscn",
+			"acao": ["assign_all_free_workers"], "so_hud": true},
 	]
 
 
@@ -137,11 +149,38 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		if GS.docks[d].get("boat") == null:
 			GS._spawn_boats()
 		GS.docks[d]["rival_offer"] = true
+	# ⚠️ AÇÃO E NÃO CAMPO. Há estado que nenhum `set()` alcança porque ele é o
+	# RESULTADO de uma regra: `trabalho_parado()` só devolve ZERO depois de
+	# alguém alocar, e alocar é um método. Vem DEPOIS do estado e do barco, que
+	# é a ordem em que o jogador age — sobre o mundo já montado.
+	#
+	# Método que o `GameState` não tenha ENTRA NAS FALHAS, como o `_do_estado`
+	# já faz: chamada que vire `null` calado é a armadilha do `.get(chave,
+	# omissão)`, e aqui daria um estado por montar a passar por medido.
+	for metodo in caso.get("acao", []):
+		if not GS.has_method(metodo):
+			falhas.append("GameState não tem o método %s (ação de %s)"
+				% [metodo, caso["nome"]])
+			return null
+		GS.call(metodo)
 
 	if not ResourceLoader.exists(caso["cena"]):
 		falhas.append("cena não encontrada: %s" % caso["cena"])
 		return null
-	var no: Node = load(caso["cena"]).instantiate()
+	# ⚠️ CENA QUE NÃO CARREGA É INVISÍVEL, e foi assim que 46 textos sumiram sem
+	# uma palavra em 21/09. O `ResourceLoader.exists()` acima só diz que o
+	# ARQUIVO está lá; um `SubResource` órfão faz o `load()` devolver null, o
+	# `.instantiate()` num null ABORTA a função — e quem chama recebe o mesmo
+	# `null` que significa "já me queixei", faz `continue`, e a ferramenta
+	# encerra com `CONTRASTE MEDIDO` e três estados a menos. É a amostra vazia
+	# um andar acima: ali a cena montava e não produzia texto, e havia guarda;
+	# aqui ela nunca chegou a montar, e não havia nenhuma.
+	var cena: PackedScene = load(caso["cena"])
+	if cena == null:
+		falhas.append("cena não carregou: %s (estado %s)"
+			% [caso["cena"], caso["nome"]])
+		return null
+	var no: Node = cena.instantiate()
 	# O TEMA À MÃO, como o `_abrir_painel()` do Main faz: um painel solto nasce
 	# com o cinzento padrão do Godot, e a medição seria de outra interface.
 	if no is Control:

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 21/09/2026 — R9 da §7.1 (a análise; a escuta é do Bruno)
+> **Última atualização:** 21/09/2026 — a 1ª leva das cores de UI (`041`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -115,17 +115,22 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | Fechado | O que ficou, medido |
 |---|---|
 | **R1–R5** (17–20/09, `030`–`034`) | identidade na Leitura, evidência do CI por erro e por turno, texto pela fonte que a máquina corre, a voz da Dona Cida a chegar à tela, e a FILA da faixa: o que o jogador não via caiu de **30,7% para 5,7%** |
-| **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL (22 reprovações em 19 estados, hoje zero); *"de onde veio a cor?"* é outra pergunta e a superfície era **34** e não 18, com **27** declaradas em `tools/excecoes_cor_ui.json`; a frase concorda INTEIRA e **zero leva plural**, 8 sítios e não 3. Em todos, a superfície real era o DOBRO do que a revisão nomeava |
-| **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | quatro telas mexidas sem foto, e os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). **24 tiros**, os quinze cobertos, os cinco do HUD pela PORTA DO JOGADOR numa partida JOGADA. A varredura pergunta pela ORIGEM do erro (`GDScript backtrace`); a cobertura MEDE-SE nos logs, porque declarar mentiria. Treze mutantes |
-| **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto isolado >= 3,0x o p99,9 do próprio arquivo, corte varrido dos dois lados —, o resto DESCRITOR. X1b/X2b provam-na: o mesmo arquivo passa por pico, saturadas e bordas e mede **+2,50 dBTP**. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz), e a régua bate com o que o gerador DECLARA (138/138 Hz) |
+| **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL (22 reprovações, hoje zero); *"de onde veio a cor?"* é outra pergunta, e a superfície era **34** e não 18; a frase concorda INTEIRA e **zero leva plural**, 8 sítios e não 3. Em todos, a superfície real era o DOBRO do que a revisão nomeava |
+| **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). **24 tiros**, os quinze cobertos, os cinco do HUD pela PORTA DO JOGADOR numa partida jogada. A varredura pergunta pela ORIGEM do erro; a cobertura MEDE-SE nos logs, porque declarar mentiria |
+| **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto >= 3,0x o p99,9 do próprio arquivo —, o resto DESCRITOR. X1b/X2b provam-na: o mesmo arquivo passa por pico, saturadas e bordas e mede **+2,50 dBTP**. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz) |
 
 **E o gate A4 correu (19/09)**, nas sete falas novas desde 13/09; as quatro
 notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
 jargão, e a semana nova deixou de cobrar uma parcela já quitada.
 
 
-**A §7.1 fechou: R1–R9 todos feitos.** O que sobra são os gates humanos —
-e o A6 tem agora protocolo escrito (`docs/PROTOCOLO_DE_ESCUTA.md`).
+**A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
+(`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
+Bruno — a primeira escolha foi a **1ª leva das cores de UI** (`041`).
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **1ª leva de cor** (21/09, `041`) | a BARRA ESCURA inteira migrou para o tema: 27 chamadas em 19 locais → **17 em 11**, em sete variações novas. Prova de que NADA mudou: as 214 linhas do D33 com razão e texto idênticos, só a ORIGEM a mudar em 10; e as **24 fotos byte a byte**, com a bateria calibrada por duas corridas da mesma árvore. ⚠️ Dois achados: o registro diz onde a COR é declarada e não quem CONSOME a peça (o botão Pausar vestia a mesma pílula, e o `Main.tscn` deixou de carregar), e **cena que não carrega era invisível** — a régua dizia `CONTRASTE MEDIDO` com 46 textos a menos e o D33 `PASS em 147`. O percurso ganhou um 20º estado, por AÇÃO e não por campo |
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -172,7 +177,7 @@ history e triagem em `docs/arquivo/HISTORICO.md`.
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
 | `brport_vs/tools/medir_contraste_ui.gd` | A tabela dos 19 estados e 214 textos. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado, estrutura pronta nem doca sob oferta |
-| `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn`, corta comentário, aceita multilinha e exige que a variação exista (`036`) |
+| `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn`, corta comentário, aceita multilinha e exige que a variação exista (`036`). **Restam 17 chamadas em 11 locais**, em quatro levas, cada uma com a razão escrita de por que ainda não saiu (`041`) |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
