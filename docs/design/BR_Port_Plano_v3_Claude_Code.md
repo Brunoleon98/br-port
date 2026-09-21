@@ -1299,7 +1299,7 @@ resultados medidos nem novo cronograma de horas.
 | 6 | ✅ **R6 — C**, revisão §2.4 / A5, B4 | Contraste efetivo e cobertura de painéis/estados; defeito fora do painel original é detectado | **Feito 20/09** (`docs/decisoes/035`); 22 reprovações em 19 estados, hoje zero |
 | 7 | ✅ **R7 — D**, revisão §2.4 / A5, B4 | Tema governa cores da UI; lint de novas exceções + migração por papel; override fora da exceção exata reprova | **Feito 21/09** (`docs/decisoes/036`); a superfície era **34** e não 18, 7 migraram e 27 estão declarados |
 | 8 | ✅ **R8 — H**, revisão §3 / A4 | Frases completas de dias/tentativas, incluindo adjetivos; narração por extenso preservada | **Feito 21/09** (`docs/decisoes/037`); a superfície eram **8** frases e não 3, hoje 11 chamadas a `concordar()` |
-| 9 | **R9 — G**, revisão §3 / A6 — **próxima sessão** | True peak/descontinuidade/espectro como análise; protocolo de escuta entregue; nenhum WAV normalizado por omissão | Pendente; análise e escuta são entregas distintas |
+| 9 | ✅ **R9 — G**, revisão §3 / A6 | True peak/descontinuidade/espectro como análise; protocolo de escuta entregue; nenhum WAV normalizado por omissão | **Análise feita 21/09** (`docs/decisoes/040`), `tools/medir_audio.py` no CI com `SINAL OK`; **a ESCUTA é do Bruno** e está em `docs/PROTOCOLO_DE_ESCUTA.md` |
 
 **R1 — identidade e interpretação.** O perfil que representa “jogar mal” é o
 Descuidado, não o último da lista nem necessariamente o mínimo observado.
@@ -1533,6 +1533,24 @@ rotulada errada. Sem limiar perceptual validado, emitir descritor/alerta.
 Bruno ouve no telefone-alvo, volume fixo, isolado e em contexto; registrar
 reconhecimento, dominância e fadiga. Continua proibido dizer que “ficou bom”
 sem essa escuta.
+
+✅ **A ANÁLISE fechou em 21/09** (`docs/decisoes/040`). `tools/medir_audio.py`,
+biblioteca padrão só e 1,5 s nos 14 arquivos, no CI com o marcador `SINAL OK` —
+que **não pode conter `AUDIO OK`**, e por pouco não continha. São **dois
+alertas e mais nenhum**, ambos por aritmética sobre a onda: true peak
+>= 0 dBTP, e salto isolado >= 3,0x o p99,9 do próprio arquivo, com esse corte
+varrido dos dois lados. Todo o resto sai descritor, como a ficha manda.
+Os três mutantes reprovaram, e o par que justifica a ferramenta é o X1b/X2b: o
+MESMO arquivo passa por pico, saturadas e bordas — tudo o que o projeto já
+tinha — e mede +2,50 dBTP. ⚠️ **O achado não previsto:** seis dos catorze sons
+têm a maior parte da energia **abaixo de 500 Hz**, o aviso com 99%, e a régua
+confirma-se contra as frequências que o `gerar_sons.py` declara (138/138 Hz no
+apito). É descritor e não veredito.
+
+⚠️ **A ESCUTA continua inteira, e é o gate do Bruno.** Está desenhada em
+`docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, duas
+passagens (isolado e em contexto) e as três perguntas acionáveis. Nenhuma
+sessão a pode passar — este contêiner não tem placa de som.
 
 **Contrato de conclusão dos R:** antes preservado, mudança pequena, depois
 comparável, teste positivo, mutante efetivamente detectado e restauração

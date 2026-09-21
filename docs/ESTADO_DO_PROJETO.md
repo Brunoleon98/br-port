@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 21/09/2026 — R7 e R8 da §7.1
+> **Última atualização:** 21/09/2026 — R9 da §7.1 (a análise; a escuta é do Bruno)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -114,20 +114,18 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **R1–R5** (17–20/09) | identidade na Leitura (`030`), evidência do CI por erro e por turno (`031`), texto pela fonte que a máquina corre (`032`), a voz da Dona Cida a chegar à tela (`033`) e a FILA da faixa (`034`): o que o jogador não via caiu de **30,7% para 5,7%** (T8, F8, D32) |
-| **R6** (20/09, `035`) | contraste na cor FINAL contra o fundo REAL, composto alfa sobre alfa; as três guardas que havia percorriam **um painel cada** e o defeito vivia no TEMA. Dos **19 estados e 214 textos** reprovavam **22**, por quatro causas; hoje zero. **D33** |
-| **R7** (21/09, `036`) | *"é legível?"* e *"de onde veio?"* são duas perguntas e havia só a primeira. A superfície era **34** e não 18 — cor de UI chega também por CENA e por STYLEBOX. Sete migraram; os **27** que ficam estão declarados em `tools/excecoes_cor_ui.json` por (arquivo, receptor, propriedade). Portão `conferir_escopo_ui.py`, escopo derivado do `export_presets.cfg` |
-| **R8** (21/09, `037`) | a frase concorda INTEIRA e **zero leva plural**. A revisão nomeou 3 rótulos, o `grep` por `(s)` achou 5, o da FORMA achou **8**. Hoje 11 chamadas a `Narrativa.concordar`, com **T9** (aritmética) e **F9** (superfície) cegas ao defeito uma da outra |
-| **Capturas** (21/09, `038`) — fora da fila | o R7 e o R8 mexeram em quatro telas sem foto. Eram cinco pelo briefing e são **sete**: os painéis são **15 e não 13**, porque o `EndGame` não vive em `scenes/panels/` e a `TelaNomes` a ferramenta dispensa. **24 tiros**, os quinze cobertos. Os cinco do HUD abrem pela PORTA DO JOGADOR (`--painel=`) numa partida JOGADA — em partida nova nenhum diz nada —, e é daí que vem o `Dictionary` do `PainelCaixa`. A varredura de erro pergunta pela ORIGEM (`GDScript backtrace`), cada tiro tem teto de 180s; sete mutantes |
-| **Cobertura** (21/09, `039`) | cada guarda respondia pelo SEU tiro, nenhuma pelo CATÁLOGO. As ferramentas imprimem `Paineis: res://...` e o portão lê os logs contra o que o `Main` ABRE, nunca contra a pasta. Declarar mentiria: um tiro que prometia o Caixa e fotografava o Calendário passou contagem, turno e tamanho. Seis mutantes, **zero exceções** |
+| **R1–R5** (17–20/09, `030`–`034`) | identidade na Leitura, evidência do CI por erro e por turno, texto pela fonte que a máquina corre, a voz da Dona Cida a chegar à tela, e a FILA da faixa: o que o jogador não via caiu de **30,7% para 5,7%** |
+| **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL (22 reprovações em 19 estados, hoje zero); *"de onde veio a cor?"* é outra pergunta e a superfície era **34** e não 18, com **27** declaradas em `tools/excecoes_cor_ui.json`; a frase concorda INTEIRA e **zero leva plural**, 8 sítios e não 3. Em todos, a superfície real era o DOBRO do que a revisão nomeava |
+| **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | quatro telas mexidas sem foto, e os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). **24 tiros**, os quinze cobertos, os cinco do HUD pela PORTA DO JOGADOR numa partida JOGADA. A varredura pergunta pela ORIGEM do erro (`GDScript backtrace`); a cobertura MEDE-SE nos logs, porque declarar mentiria. Treze mutantes |
+| **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto isolado >= 3,0x o p99,9 do próprio arquivo, corte varrido dos dois lados —, o resto DESCRITOR. X1b/X2b provam-na: o mesmo arquivo passa por pico, saturadas e bordas e mede **+2,50 dBTP**. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz), e a régua bate com o que o gerador DECLARA (138/138 Hz) |
 
 **E o gate A4 correu (19/09)**, nas sete falas novas desde 13/09; as quatro
 notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
 jargão, e a semana nova deixou de cobrar uma parcela já quitada.
 
 
-**Próximo: R9** — áudio medido (true peak, espectro) + protocolo de escuta.
-Gates humanos abertos.
+**A §7.1 fechou: R1–R9 todos feitos.** O que sobra são os gates humanos —
+e o A6 tem agora protocolo escrito (`docs/PROTOCOLO_DE_ESCUTA.md`).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -139,7 +137,7 @@ histórico em `HISTORICO.md`.
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**; as quatro notas dele estão aplicadas e trancadas. Faltam **três decisões de palavra**, todas o mesmo jargão nos sítios que ficaram: o rótulo `"Caixa:"` (`DebtPaymentPanel.gd:68`, que mudou de COR em `035` e continua a dizê-lo), o `"dinheiro no caixa"` da fala da semana nova, e o `"0 dias daqui"` da parcela (`037`) |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
-| **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
+| **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
 
