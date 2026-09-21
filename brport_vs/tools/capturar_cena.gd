@@ -71,6 +71,12 @@ func _process(_delta: float) -> bool:
 		push_error("falhou ao gravar %s (erro %d)" % [_saida, erro])
 		quit(1)
 		return true
+	# A CENA QUE ESTA FERRAMENTA MONTOU, no mesmo rótulo que o `capturar_tela.gd`
+	# usa para os painéis que estão por cima do jogo. É daqui que o
+	# `conferir_cobertura_paineis.py` sabe que o Diário, a parcela, o Sr.
+	# Ribeiro, a contra-oferta, o menu-celular, a tela de nomes e o fim de Fase 1
+	# têm fotografia — medido no log, e não declarado ao lado do tiro.
+	print("Paineis: %s" % _cena)
 	# "Tela salva em" é CONTRATO com o `capturar_evidencia.sh`, que procura essa
 	# linha em vez de olhar o código de saída — um erro de compilação do GDScript
 	# sai com 0 sem a ferramenta ter feito nada. Antes daqui dizia "captura:", e

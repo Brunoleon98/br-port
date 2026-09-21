@@ -336,6 +336,35 @@ Teste e import rodam sem tela.
    imprimia "Tela salva em" e passava por boa; o Diário escapou por montar no
    `_ready()`, e foi por isso que isto viveu escondido. **Condição de atalho
    numa ferramenta de evidência é uma foto que ninguém tirou.**
+   ⚠️ **E PAINEL FOTOGRAFADO EM PARTIDA NOVA PROVA QUE A CENA ABRE E MAIS
+   NADA.** A cena solta nasce no turno 1 do porto em ruínas, e é exactamente aí
+   que os painéis do HUD não dizem nada: no dia 1 o calendário não tem dia
+   PASSADO, em ruínas o Construir não tem cartão VERDE, com uma doca a contagem
+   nunca passa de 1 — que é onde o singular e o plural dão o mesmo texto — e a
+   reputação está no patamar de partida, onde um "▸" que ande não se distingue
+   de um pregado. Escrever o estado à mão (`turn=9`) põe o rótulo certo com o
+   resto parado no dia 1: verdadeiro no rótulo, falso no resto. Uma partida
+   JOGADA deriva tudo de uma vez — é o `--painel=<nome>` do `capturar_tela.gd`,
+   que abre cada um pela PORTA DO JOGADOR e traz de graça as guardas do turno e
+   da contagem de painéis, que a cena solta não tem (`docs/decisoes/038`).
+   ⚠️ **E COBERTURA DECLARADA MENTE; COBERTURA MEDIDA NÃO.** Cada guarda de
+   captura responde pelo SEU tiro — a imagem saiu, o erro não apareceu, a
+   contagem e o turno batem — e **nenhuma responde pelo CATÁLOGO**, que é como
+   cinco painéis viveram sem foto. A saída fácil é o tiro declarar ao lado dele
+   o que cobre, e essa declaração mente: medido, um tiro que prometia o Caixa e
+   fotografava o Calendário passou a contagem (1 painel), o turno (13) e o
+   tamanho (306.639 bytes). Quem o apanhou foi a FOTO — as duas ferramentas
+   imprimem `Paineis: res://...` com a cena de cada painel na tela, e o
+   `tools/conferir_cobertura_paineis.py` lê os logs contra o que o `Main` abre
+   (`docs/decisoes/039`).
+   ⚠️ **E INVENTÁRIO QUE OLHA UMA PASTA PERDE O QUE NÃO ESTÁ NELA.** Três
+   sessões contaram os painéis deste jogo e as três disseram treze; são
+   **quinze**. O `EndGame.tscn` não vive em `scenes/panels/` — está em
+   `scenes/`, e por isso escapou a todos —, e a `TelaNomes` escapa por outro
+   caminho: o `capturar_tela.gd` dispensa-a DE PROPÓSITO, com `definir_nomes()`,
+   para ela não tapar o que se ia fotografar. **A convenção de pasta é uma
+   suposição sobre o conteúdo**, e quem conta pergunta ao que o jogo ABRE, não
+   ao que a pasta guarda.
    Para olhar um detalhe pequeno, `tools/recortar_captura.gd` amplia sem
    suavizar: a 19px um ícone não se julga a olho na captura inteira, e foi
    ampliando que se viu que o ícone `doca` era um fantasma no painel branco.
@@ -529,10 +558,29 @@ Teste e import rodam sem tela.
    ⚠️ **E O PREFIXO NÃO SEPARA AS CLASSES:** medido numa sonda, `push_error()`
    sai como `ERROR:` e não como `USER ERROR:` — a queixa da FERRAMENTA tem o
    prefixo do barulho do MOTOR. Quem separa é a ORIGEM, escrita na linha `at:`:
-   só quem chamou `push_error` traz `at: push_error (`. O par em vigor é
+   só quem chamou `push_error` traz `at: push_error (`. O par das SUÍTES é
    `SCRIPT ERROR|at: push_error \(`, e quem DERIVA do workflow a lista de quem
    o tem é `tools/conferir_guardas_ci.py` — ela era escrita à mão, e foi por
    isso que faltou em cinco dos onze passos (`docs/decisoes/031`).
+   ⚠️ **E SÃO TRÊS FORMAS, NÃO DUAS — o par das suítes conhece duas.** Medido
+   em 21/09, uma sonda por forma: `push_error()` e o erro de EXECUÇÃO trazem
+   ambos o bloco `GDScript backtrace`; o erro de COMPILAÇÃO traz `SCRIPT ERROR`
+   e NÃO traz backtrace (`at: GDScript::reload`); e a **chamada falhada** —
+   `Error calling method from 'callv'` — sai como `ERROR:` com `at:` em C++ e
+   backtrace, porque quem se queixa é o MOTOR sobre uma chamada que o NOSSO
+   script fez. Nenhum dos dois padrões a apanha, e foi assim que o `PainelCaixa`
+   saiu PRETO com a bateria verde. Quem escreve a origem é o Godot, no bloco do
+   backtrace — o ruído de encerramento não o tem. A **bateria de captura** varre
+   hoje `SCRIPT ERROR|GDScript backtrace`, e as suítes NÃO: o `teste_fumaca`
+   imprime de propósito um erro de JSON que traz backtrace, e alargar lá poria
+   uma suíte verde a vermelho (`docs/decisoes/038`).
+   ⚠️ **E A QUARTA FORMA DE FALHAR É NÃO ACABAR.** Chamada com o número errado
+   de argumentos dentro do `_process` de um `SceneTree` ABORTA a função, e um
+   `--script` que aborta antes do `quit()` repete o `_process` a cada frame e
+   NUNCA ENCERRA — sem log, sem foto e sem uma palavra. É a irmã da regra do
+   teto de voltas do laço de turnos, um andar acima: no CI aquilo não é
+   vermelho, é o job a morrer de timeout sem dizer qual passo foi. Toda bateria
+   de ferramentas leva teto de tempo POR TIRO (`timeout 180` no `tirar()`).
    ⚠️ **E O ESCOPO DA GUARDA É O ESCOPO DO DEFEITO.** A primeira versão desse
    portão exigia a varredura de todo arquivo de um passo que rodasse
    `--script`, e reprovou a saída de um leitor em **Python** — onde uma exceção
@@ -2144,6 +2192,12 @@ armadilha de uma função, no comentário dela.
   responde à mesma pergunta por dois caminhos denuncia-se sozinha"* aplicada a
   uma VARREDURA — e é ela que faz uma chamada de forma nova reprovar em vez de
   ser ignorada. Sem ela, a versão errada dizia verde (`docs/decisoes/037`).
+  ⚠️ **E A DEFINIÇÃO NÃO É UMA CHAMADA.** `func _abrir_painel(cena: PackedScene)`
+  casa tão bem quanto uma chamada de verdade: a primeira versão do portão das
+  capturas exigiu fotografia de um painel chamado `cena: PackedScene`. Quem
+  varre CHAMADAS exclui a definição (`(?<!func )`), e lê o argumento com
+  **parênteses equilibrados** — `[^)]*` para no primeiro fecho e parte ao meio a
+  chamada que traz outra dentro (`docs/decisoes/039`).
   ⚠️ **E O ARGUMENTO PODE TER PARÊNTESES *E* ASPAS DENTRO.** `int(dia["servidos"])`
   parte as duas expressões óbvias: a que casa a primeira string a seguir ao
   parêntesis lê `"servidos"` como argumento, e a que proíbe parênteses salta a
