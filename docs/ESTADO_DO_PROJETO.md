@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 20/09/2026 — R5 da §7.1; a faixa de mensagem tem fila
+> **Última atualização:** 21/09/2026 — R7 da §7.1; o tema governa a cor da UI
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -131,20 +131,24 @@ notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
 jargão, e a semana nova deixou de cobrar uma parcela já quitada.
 
 **R6 fechado (20/09)** (`035`): o contraste mede-se na cor FINAL contra o fundo
-REAL. As três guardas que havia percorriam **um painel cada**, e o defeito
-vivia numa linha do TEMA — `RotuloSecao`, que toca nove painéis. Medidos **19
-estados e 214 textos**: reprovavam **22**, por QUATRO causas, e a revisão
-nomeava uma. Hoje **zero**. Três cores foram para o tema (a variação de 5,46:1
-no `RotuloSecao` e na sugestão do campo; `RotuloAlerta`, o âmbar escurecido a
-5,06:1), e o motivo do bloqueio saiu de dentro do botão desligado, onde a
-isenção da WCAG o engolia a 2,16:1 — o cartão do Construir ficou 60px mais
-curto. Guarda **D33** sobre um motor partilhado com a ferramenta que imprime a
-tabela; seis mutantes, e o do painel nunca coberto prova que o D19, o D23 e o
-D32 são cegos a ele.
+REAL, composto alfa sobre alfa. As três guardas que havia percorriam **um
+painel cada**, e o defeito vivia numa linha do TEMA. Medidos **19 estados e 214
+textos**: reprovavam **22**, por QUATRO causas, e a revisão nomeava uma. Hoje
+**zero**. Guarda **D33**, sobre o motor que a ferramenta partilha.
 
-**Próximo: R7** — escopo da UI e o lint de overrides. Ficaram 18
-`add_theme_color_override`, todos acima do portão medido. R8–R9 pendentes,
-gates humanos abertos.
+**R7 fechado (21/09)** (`036`): *"esta cor é legível?"* e *"de onde veio esta
+cor?"* são duas perguntas, e havia só a primeira. No MESMO commit em que migrou
+três overrides, o R6 **acrescentou um quarto** — legítimo pelo D33, que mede
+5,46:1 — e o briefing anunciou 18 por subtração; eram **19**. E a superfície era
+**34**, não 19: cor de UI também chega por CENA (10) e por STYLEBOX (5), e nada
+as contava. Sete migraram (`RotuloApoio`, só cor), dois deles overrides que
+repintavam o que a cena já pintava. Os **27** que ficam estão DECLARADOS em
+`tools/excecoes_cor_ui.json`, por (arquivo, receptor, propriedade) com contagem
+e justificativa, em duas classes — ESTADO (a exceção) e BASE (dívida). Portão
+`conferir_escopo_ui.py`, escopo derivado do `export_presets.cfg`; oito mutantes.
+
+**Próximo: R8** — frase inteira (dias/tentativas). R9 pendente, gates humanos
+abertos.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -190,7 +194,8 @@ history e triagem em `docs/arquivo/HISTORICO.md`.
 | `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa, ao toque nela. Overlay, em memória, sem migrar save |
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
-| `brport_vs/tools/medir_contraste_ui.gd` | A tabela dos 19 estados e 214 textos. Marcador `CONTRASTE MEDIDO` |
+| `brport_vs/tools/medir_contraste_ui.gd` | A tabela dos 19 estados e 214 textos. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado, estrutura pronta nem doca sob oferta |
+| `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn`, corta comentário, aceita multilinha e exige que a variação exista (`036`) |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |

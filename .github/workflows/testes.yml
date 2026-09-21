@@ -45,6 +45,28 @@ jobs:
           set -euo pipefail
           python3 tools/conferir_guardas_ci.py
 
+      - name: Nenhuma cor de interface fora do tema sem exceção declarada
+        # Vem ao lado da guarda acima e pelo mesmo motivo: custa um segundo e
+        # responde a uma pergunta sobre os ARQUIVOS, não sobre o jogo rodando.
+        #
+        # ⚠️ ESTA NÃO É A PERGUNTA DO CONTRASTE, que o D33 já faz dentro do
+        # Godot. O que fez esta existir foi o R6: no mesmo commit em que migrou
+        # três overrides para o tema, ele ACRESCENTOU um quarto, e a cor nova
+        # passa o AA com folga — um portão de contraste não tinha como ver.
+        # Aqui a pergunta é de onde a cor VEIO, e o registro das exceções é
+        # `tools/excecoes_cor_ui.json`, uma entrada por (arquivo, receptor,
+        # propriedade), com a contagem de chamadas e a justificativa.
+        run: |
+          set -euo pipefail
+          python3 tools/conferir_escopo_ui.py 2>&1 | tee /tmp/escopo_ui.txt
+
+          # A linha de sucesso, e não o código de saída — a mesma regra do
+          # `conferir_docs.py` logo abaixo, e pelo mesmo motivo.
+          if ! grep -q "ESCOPO UI OK" /tmp/escopo_ui.txt; then
+            echo "::error::Cor de interface pintada fora do tema sem exceção declarada (veja a saída acima)."
+            exit 1
+          fi
+
       - name: Reaproveitar o Godot já baixado
         id: cache-godot
         uses: actions/cache@v4

@@ -118,8 +118,11 @@ func refresh() -> void:
 	_pulsar(esperando)
 
 	if dock["worker_id"] == null:
+		# A COR DESTE RÓTULO VEM DA CENA e não daqui. Até 21/09 os dois ramos
+		# repintavam-no com o MESMO `COR_ESPERANDO` que o `DocaCartao.tscn` já
+		# lhe dá — dois overrides que não mudavam um pixel, e que calavam a
+		# cena: mexer na cor lá não teria efeito nenhum, sem erro nenhum.
 		_trabalhador.text = "sem trabalhador"
-		_trabalhador.add_theme_color_override("font_color", COR_ESPERANDO)
 	else:
 		_trabalhador_icone.visible = true
 		var texto := "#%d" % int(dock["worker_id"])
@@ -127,7 +130,6 @@ func refresh() -> void:
 		if int(boat["progress"]) == 0:
 			texto += "  ·  toque p/ liberar"
 		_trabalhador.text = texto
-		_trabalhador.add_theme_color_override("font_color", COR_ESPERANDO)
 
 
 func _estilo(variacao: String) -> void:

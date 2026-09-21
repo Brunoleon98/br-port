@@ -1,8 +1,8 @@
 # BR Port — Plano v3: o projeto refeito para ser tocado com Claude Code
 
 **Versão 3.0 · 30/08/2026**
-**Fila atualizada em 20/09/2026:** correções da revisão externa incorporadas
-na §7.1. R2 a R6 fechados; próxima sessão: **R7 — escopo da UI**. Esta atualização
+**Fila atualizada em 21/09/2026:** correções da revisão externa incorporadas
+na §7.1. R2 a R7 fechados; próxima sessão: **R8 — frase inteira**. Esta atualização
 é planejamento; não declara correções implementadas nem gates humanos fechados.
 **Substitui o cronograma do Roadmap v2.1 (Fases 4–7) e o Plano de Produção da
 Fase 2 inteiro.**
@@ -1297,8 +1297,8 @@ resultados medidos nem novo cronograma de horas.
 | 4 | ✅ **R4 — B**, revisão §2.2–2.3 / A4 | Falas verdadeiras no snapshot; obra instantânea sem duração fictícia; primeira semana sem comparação inexistente | **Código e guarda feitos 18/09** (`docs/decisoes/033`); a releitura A4 é do Bruno |
 | 5 | ✅ **R5 — A**, revisão §2.2 / A4 | Entrada única de mensagens, fila e consulta recuperável; duas emissões no mesmo frame sobrevivem | **Feito 20/09** (`docs/decisoes/034`); tapadas de 30,7% para 5,7% |
 | 6 | ✅ **R6 — C**, revisão §2.4 / A5, B4 | Contraste efetivo e cobertura de painéis/estados; defeito fora do painel original é detectado | **Feito 20/09** (`docs/decisoes/035`); 22 reprovações em 19 estados, hoje zero |
-| 7 | **R7 — D**, revisão §2.4 / A5, B4 — **próxima sessão** | Tema governa cores da UI; lint de novas exceções + migração por papel; override fora da exceção exata reprova | Pendente; o R6 deixou 18 overrides, todos acima do portão medido |
-| 8 | **R8 — H**, revisão §3 / A4 | Frases completas de dias/tentativas, incluindo adjetivos; narração por extenso preservada | Pendente; curta, pode acompanhar revisão textual |
+| 7 | ✅ **R7 — D**, revisão §2.4 / A5, B4 | Tema governa cores da UI; lint de novas exceções + migração por papel; override fora da exceção exata reprova | **Feito 21/09** (`docs/decisoes/036`); a superfície era **34** e não 18, 7 migraram e 27 estão declarados |
+| 8 | **R8 — H**, revisão §3 / A4 — **próxima sessão** | Frases completas de dias/tentativas, incluindo adjetivos; narração por extenso preservada | Pendente; curta, pode acompanhar revisão textual |
 | 9 | **R9 — G**, revisão §3 / A6 | True peak/descontinuidade/espectro como análise; protocolo de escuta entregue; nenhum WAV normalizado por omissão | Pendente; análise e escuta são entregas distintas |
 
 **R1 — identidade e interpretação.** O perfil que representa “jogar mal” é o
@@ -1486,6 +1486,19 @@ não deve acusar cores de mapas/arte procedural. Considerar multiline,
 comentários e construção dinâmica; complementar com runtime em R6. Mutantes:
 override em cena, nova chamada no arquivo que já tinha outra exceção e
 variação inexistente. Bloquear novas exceções pode anteceder a migração toda.
+
+⚠️ **FEITO EM 21/09** (`docs/decisoes/036`), e o que a medição corrigiu da
+ficha: a superfície não eram 18 chamadas, eram **34 cores** — 19
+`add_theme_color_override`, 10 `theme_override_colors/*` em cena, 4 de
+`StyleBoxFlat` e 1 pintada num StyleBox em código. O R6 tinha ACRESCENTADO um
+override no commit em que migrou três, e nada contava. A exceção declara-se
+pelo TRIO (arquivo, receptor, propriedade) com CONTAGEM e justificativa; o
+escopo do scanner sai do `exclude_filter` do `export_presets.cfg` e a fronteira
+da arte sai da PROPRIEDADE (`modulate`, `ColorRect.color` e `draw_*` não passam
+pelo tema). Sete migraram para a variação `RotuloApoio`, que é **só cor** —
+`RotuloSecao` traz `font_size` e encolheria três dos quatro rótulos. Portão
+`tools/conferir_escopo_ui.py`, oito mutantes; **a migração dos 27 restantes
+fica por fazer, por leva e por FUNDO** — nenhum tom ganha dois.
 
 **R8 — frase inteira.** Cobrir “dia(s) restante(s)”, “dia(s) daqui” e
 “tentativa(s)”, identificados pela revisão. Helpers pequenos de mensagem ou
