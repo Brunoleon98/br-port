@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=26 format=3]
+[gd_resource type="Theme" load_steps=27 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -354,6 +354,29 @@ content_margin_top = 7.0
 content_margin_right = 12.0
 content_margin_bottom = 7.0
 
+; A PÍLULA DO HUD — ela vivia em `Main.tscn` até 21/09, e é o FUNDO contra o
+; qual o D33 mede os quatro números do topo. Enquanto esteve na cena, a cor
+; MEDIDA e a cor DECLARADA viviam em arquivos diferentes: quem lhe mexesse no
+; azul mexia nas quatro razões sem que o tema soubesse de nada.
+;
+; O azul é o mesmo da tela do celular (0.09/0.16/0.24) e é de propósito — o
+; menu não traz cor nova nenhuma ao jogo, só forma nova.
+[sub_resource type="StyleBoxFlat" id="pilula"]
+bg_color = Color(0.09, 0.16, 0.24, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.34, 0.47, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 9.0
+content_margin_top = 6.0
+content_margin_right = 9.0
+content_margin_bottom = 6.0
+
 [sub_resource type="StyleBoxFlat" id="campo_normal"]
 bg_color = Color(0.941, 0.965, 1, 1)
 border_width_left = 1
@@ -605,6 +628,61 @@ CartaoDocaRival/base_type = "PanelContainer"
 CartaoDocaRival/styles/panel = SubResource("cartao_doca_rival")
 CartaoDocaObra/base_type = "PanelContainer"
 CartaoDocaObra/styles/panel = SubResource("cartao_doca_obra")
+
+; ── A BARRA ESCURA, E SÃO DOIS FUNDOS E NÃO UM ──
+; ⚠️ A PÍLULA (#17293d) E O FUNDO DA CENA (#0d1a26) NÃO SÃO O MESMO FUNDO, e é
+; por isso que aqui há DUAS famílias de variação e não uma. O número do caixa
+; pousa na pílula; o `TrabalhadoresTitulo` pousa no `Fundo` da cena, 826px
+; abaixo. Este projeto já pagou quatro vezes para aprender que cor calibrada
+; para um fundo não atravessa para outro sem medir de novo.
+;
+; ⚠️ E OS VALORES SÃO OS MESMOS QUE ESTAVAM NOS OVERRIDES. Esta migração não
+; mexe num pixel, e é isso que a prova: as sete razões do D33 têm de sair
+; iguais à centésima e as fotos da bateria byte a byte idênticas. Migração que
+; muda um número não é migração — é mudança de cor a fingir-se de arrumação.
+Pilula/base_type = "PanelContainer"
+Pilula/styles/panel = SubResource("pilula")
+; ⚠️ E O BOTÃO PAUSAR VESTE A MESMA PÍLULA, por `styles/normal` em vez de
+; `styles/panel` — um `Button` não pode usar a variação acima, cujo
+; `base_type` é `PanelContainer`. Ele foi o quinto consumidor daquele
+; stylebox e o registro de exceções NÃO o listava, porque o registro diz onde
+; uma COR é declarada e não quem mais consome a peça que a carrega: ao tirar o
+; `SubResource` da cena, o `Main.tscn` deixou de carregar inteiro.
+;
+; Só o `normal` vem daqui, como na cena: o hover e o pressed continuam a sair
+; do `Button` do tema, e é isso que faz o botão responder ao toque como todos
+; os outros.
+BotaoPilula/base_type = &"Button"
+BotaoPilula/styles/normal = SubResource("pilula")
+; O número NEUTRO da pílula: o dia e a contagem de docas. Mede 13,63:1.
+; ⚠️ ELE ESTAVA ESCRITO DUAS VEZES, em dois nós, com o mesmo valor — o defeito
+; que o registro de exceções existia para tornar visível. É esta linha que o
+; fecha, e por isso ela vale por duas.
+TextoPilula/base_type = "Label"
+TextoPilula/colors/font_color = Color(0.941, 0.965, 1, 1)
+; O número BOM: o dinheiro, e é o único verde do HUD. Mede 8,37:1.
+TextoPilulaBom/base_type = "Label"
+TextoPilulaBom/colors/font_color = Color(0.42, 0.85, 0.53, 1)
+; O número em DESTAQUE: a reputação. Mede 8,37:1.
+; ⚠️ É O ÂMBAR CLARO — o mesmo do `BotaoDestaque` — e NÃO o `RotuloAlerta`,
+; que é este âmbar escurecido para o cartão BRANCO e que aqui seria escuro a
+; mais. Trocar um pelo outro é a migração cega que quebra o medido.
+TextoPilulaDestaque/base_type = "Label"
+TextoPilulaDestaque/colors/font_color = Color(0.961, 0.725, 0.227, 1)
+; O rótulo acima dos cartões de trabalhador, nos seus DOIS estados. O script
+; troca a VARIAÇÃO em runtime — como o `DocaCartao._estilo()` já faz com o
+; painel — em vez de pintar cor à mão nos três ramos do
+; `_refresh_titulo_trabalhadores()`.
+;
+; O repouso é a cor neutra do jogo NO FUNDO PARA O QUAL ELA FOI FEITA: mede
+; 6,00:1 aqui, contra os 2,93:1 que ela mediu quatro vezes sobre branco.
+TextoBarra/base_type = "Label"
+TextoBarra/colors/font_color = Color(0.51, 0.6, 0.706, 1)
+; ⚠️ ÂMBAR ESCURO, E NÃO O CLARO DA PÍLULA: mede 5,53:1 e é o MESMO valor que
+; o `trab_parado` acima usa na borda do cartão logo abaixo dele. O alerta
+; desta zona do ecrã é um só, e agora há um sítio onde isso está escrito.
+TextoBarraAlerta/base_type = "Label"
+TextoBarraAlerta/colors/font_color = Color(0.851, 0.467, 0.024, 1)
 
 ; ── O MENU-CELULAR ──
 ; ⚠️ TODO TEXTO AQUI DENTRO É CLARO, e isto é a IRMÃ da armadilha que o D19

@@ -1890,6 +1890,25 @@ tranca isso.
   número em pixel escrito à mão com outra roupa. E a CONTAGEM entra na chave
   porque sem ela uma segunda chamada da mesma forma — mesmo nó, mesma
   propriedade, mesma cor — passa por declarada.
+  ⚠️ **E A LEVA ESCOLHE-SE PELO QUE A RÉGUA ALCANÇA, nunca pelo tamanho
+  dela.** Migrar uma cor que o portão de contraste não monta troca dívida
+  VISÍVEL por invisível: o verde do `UpgradePanel` só existe com estrutura
+  construída e o âmbar do `DocaCartao` só com doca sob oferta, e o percurso não
+  monta nenhum dos dois. A primeira leva foi a barra escura por ser a única em
+  que ele já media tudo menos um estado — e esse ganhou-se ANTES de a cor
+  migrar, que é a ordem (`docs/decisoes/041`).
+  ⚠️ **E O REGISTRO DIZ ONDE A COR É DECLARADA, NUNCA QUEM CONSOME A PEÇA QUE A
+  CARREGA.** O stylebox `pilula` tinha duas cores declaradas e CINCO
+  consumidores — as quatro pílulas por `styles/panel` e o botão Pausar por
+  `styles/normal` —, e o portão não podia dizê-lo, porque uma referência ao
+  stylebox não é uma cor. Movê-lo para o tema pelo inventário das CORES deixou
+  o `Main.tscn` sem carregar. Antes de mover uma peça de estilo, procure todo
+  `SubResource("<id>")`: a peça tem consumidores que a cor não tem. E um
+  `Button` não veste variação de `PanelContainer`.
+  ⚠️ **E O FUNDO VERIFICA-SE PELA FRENTE.** Guarda nenhuma aqui mede a cor de um
+  FUNDO; o que se mede é o texto CONTRA ele. Logo a prova de que uma variação
+  de stylebox chegou mesmo aos nós é pintar o stylebox de outra cor e ver as
+  razões moverem-se em bloco — 12 reprovas, que são 4 números × 3 estados.
   ⚠️ **E VARIAÇÃO QUE EMPACOTA TAMANHO COM COR NÃO SERVE A QUEM SÓ QUER A COR.**
   O `RotuloSecao` traz `font_size = 13`, e os quatro rótulos que pediam a cor
   dele medem 12, 13, 15 e 12 px: vesti-los dele encolheria três e mexeria no
@@ -2164,6 +2183,15 @@ armadilha de uma função, no comentário dela.
   no `stderr`, o contador de falhas fica em zero, e nada reprova. Todo bloco de
   teste novo põe uma bandeira na ÚLTIMA linha e quem o chama confere que ela
   ficou verdadeira; só assim "passou" quer dizer "correu".
+- **⚠️ `ResourceLoader.exists()` SÓ DIZ QUE O ARQUIVO ESTÁ LÁ.** Com um
+  `SubResource` órfão o `load()` devolve `null`, o `.instantiate()` num `null`
+  ABORTA a função — e quem chamou recebe o mesmo `null` que já significava "não
+  montei, e já me queixei". Medido em 21/09: a régua do contraste encerrou com
+  `CONTRASTE MEDIDO` e código **0**, com 46 textos a menos, e o D33 publicou
+  `PASS em 147 medidos` com 90 em falta. Separe o `load()` do `instantiate()` e
+  queixe-se do `null`. É a regra da amostra vazia um andar acima: ali a cena
+  montava e não produzia texto, **e havia guarda**; aqui ela nunca chegou a
+  montar, e não havia nenhuma.
 - **⚠️ E `await process_frame` RETOMA ANTES DO FLUSH DA FILA ADIADA.** Ele
   volta no INÍCIO do frame seguinte, e o que foi posto em `call_deferred`
   naquele frame ainda não correu. Medido em 18/09: com um `await` só, o rótulo

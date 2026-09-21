@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3]
+[gd_scene load_steps=46 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
@@ -47,22 +47,6 @@
 [ext_resource type="PackedScene" path="res://scenes/fauna/Capivara.tscn" id="fauna_capivara"]
 [ext_resource type="Script" path="res://scripts/AmbienteCosteiro.gd" id="fauna_ambiente"]
 
-[sub_resource type="StyleBoxFlat" id="pilula"]
-bg_color = Color(0.09, 0.16, 0.24, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.2, 0.34, 0.47, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-content_margin_left = 9.0
-content_margin_top = 6.0
-content_margin_right = 9.0
-content_margin_bottom = 6.0
-
 [sub_resource type="StyleBoxFlat" id="faixa_msg"]
 bg_color = Color(1, 0.984, 0.922, 1)
 border_width_left = 4
@@ -106,7 +90,7 @@ theme_override_constants/separation = 6
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.5
-theme_override_styles/panel = SubResource("pilula")
+theme_type_variation = &"Pilula"
 
 [node name="Linha" type="HBoxContainer" parent="HudBar/CaixaPilula"]
 layout_mode = 2
@@ -126,14 +110,14 @@ stretch_mode = 5
 [node name="Caixa" type="Label" parent="HudBar/CaixaPilula/Linha"]
 layout_mode = 2
 horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.42, 0.85, 0.53, 1)
+theme_type_variation = &"TextoPilulaBom"
 theme_override_font_sizes/font_size = 16
 
 [node name="DiaPilula" type="PanelContainer" parent="HudBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.5
-theme_override_styles/panel = SubResource("pilula")
+theme_type_variation = &"Pilula"
 
 [node name="Linha" type="HBoxContainer" parent="HudBar/DiaPilula"]
 layout_mode = 2
@@ -153,14 +137,14 @@ stretch_mode = 5
 [node name="Dia" type="Label" parent="HudBar/DiaPilula/Linha"]
 layout_mode = 2
 horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_type_variation = &"TextoPilula"
 theme_override_font_sizes/font_size = 16
 
 [node name="RepPilula" type="PanelContainer" parent="HudBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.7
-theme_override_styles/panel = SubResource("pilula")
+theme_type_variation = &"Pilula"
 
 [node name="Linha" type="HBoxContainer" parent="HudBar/RepPilula"]
 layout_mode = 2
@@ -180,13 +164,13 @@ stretch_mode = 5
 [node name="RepTexto" type="Label" parent="HudBar/RepPilula/Linha"]
 layout_mode = 2
 horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.961, 0.725, 0.227, 1)
+theme_type_variation = &"TextoPilulaDestaque"
 theme_override_font_sizes/font_size = 16
 
 [node name="DocasPilula" type="PanelContainer" parent="HudBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("pilula")
+theme_type_variation = &"Pilula"
 
 [node name="Linha" type="HBoxContainer" parent="HudBar/DocasPilula"]
 layout_mode = 2
@@ -206,7 +190,7 @@ stretch_mode = 5
 [node name="DocasTexto" type="Label" parent="HudBar/DocasPilula/Linha"]
 layout_mode = 2
 horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.941, 0.965, 1, 1)
+theme_type_variation = &"TextoPilula"
 theme_override_font_sizes/font_size = 16
 
 [node name="Pausar" type="Button" parent="HudBar"]
@@ -214,7 +198,7 @@ custom_minimum_size = Vector2(46, 44)
 layout_mode = 2
 tooltip_text = "Pausar"
 theme_override_constants/icon_max_width = 20
-theme_override_styles/normal = SubResource("pilula")
+theme_type_variation = &"BotaoPilula"
 theme_override_font_sizes/font_size = 16
 icon = ExtResource("ic_pausar")
 
@@ -633,7 +617,7 @@ offset_top = 826.0
 offset_right = 706.0
 offset_bottom = 844.0
 text = "Trabalhadores — toque ou arraste para uma doca"
-theme_override_colors/font_color = Color(0.51, 0.6, 0.706, 1)
+theme_type_variation = &"TextoBarra"
 theme_override_font_sizes/font_size = 13
 
 [node name="Trabalhadores" type="HBoxContainer" parent="."]

@@ -3852,7 +3852,7 @@ var _d33_completo := false
 
 # Os estados que o percurso já entregou. Sobe quando ele crescer; nunca desce
 # sem que alguém escreva por quê.
-const D33_ESTADOS_MIN := 19
+const D33_ESTADOS_MIN := 20
 
 
 func _d33_contraste_efetivo() -> void:

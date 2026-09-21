@@ -53,6 +53,7 @@ aqui.
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-21c.md` | 21/09 | Prompt de um item FORA da §7.1 — os cinco painéis sem foto nenhuma, o `PainelCaixa` que não é capturável, e a guarda da bateria que não apanharia o erro dele |
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-21d.md` | 21/09 | Fecho das capturas E do portão de cobertura — os cinco painéis eram sete (são 15 e não 13), 24 tiros com `COBERTURA OK`, a varredura pergunta pela ORIGEM do erro e cada tiro tem teto de tempo — e a fila de volta ao R9 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-09-21e.md` | 21/09 | Fecho do R9 e da §7.1 INTEIRA — o sinal dos sons medido sem ouvir (true peak, descontinuidade, espectro), dois alertas por aritmética e o resto descritor, o protocolo de escuta entregue ao Bruno — e a fila ordenada a acabar |
+| `BRIEFING_PROXIMA_CONVERSA_2026-09-21f.md` | 21/09 | Fecho da 1ª LEVA das cores de UI — a barra escura inteira para o tema (27 chamadas em 19 locais → 17 em 11), com os valores intactos: as linhas do D33 idênticas e as 24 fotos byte a byte. E dois achados — o registro não diz quem CONSOME a peça, e cena que não carrega era invisível às duas réguas |
 | `BLOCO5_PROMPTS_BLENDER_RICO.md` | 29/08 | Os prompts do enriquecimento dos props em Blender |
 | `BRP_IMPLEMENTATION_NOTES.md` | 31/08 | O que foi e o que NÃO foi feito no pipeline Blender → Godot |
 | `BRP_VALIDATION_REPORT.md` | 31/08 | Os resultados medidos daquele pipeline |

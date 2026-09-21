@@ -1244,11 +1244,20 @@ func _on_worker_selecionado(worker_id: int) -> void:
 # O âmbar aqui MEDE (5,53:1 sobre a barra escura, passa o AA); no cartão do
 # trabalhador não mediria, e por isso lá o sinal é o fundo. Ver o comentário
 # do `trab_parado` no tema.
+#
+# ⚠️ E A COR JÁ NÃO SE PINTA AQUI: os três ramos trocam a VARIAÇÃO, que é o
+# que o `DocaCartao._estilo()` sempre fez com o painel. Enquanto o script
+# pintava, o valor do repouso estava escrito DUAS vezes — nesta função e no
+# `Main.tscn` —, e o D33 não via NENHUMA das duas: os dois estados de HUD que
+# o percurso montava têm sempre trabalho parado, logo mediam sempre o âmbar.
+# O percurso ganhou o estado "nada parado" ANTES de a cor ir para o tema, que
+# é a ordem que o registro de exceções manda e que a cor verde do
+# `UpgradePanel` ainda espera.
 func _refresh_titulo_trabalhadores() -> void:
 	var parado := GameState.trabalho_parado()
 	if _selecionado >= 0:
 		_workers_title.text = "Agora toque numa doca para enviar o #%d" % _selecionado
-		_workers_title.add_theme_color_override("font_color", COR_AVISO)
+		_workers_title.theme_type_variation = &"TextoBarraAlerta"
 	elif parado != Vector2i.ZERO:
 		# O adjetivo e o gerúndio viajam DENTRO da concordância. Antes eram
 		# três argumentos — o substantivo pelo `_plural`, o "s" do adjetivo por
@@ -1257,10 +1266,10 @@ func _refresh_titulo_trabalhadores() -> void:
 		_workers_title.text = "%s — %s" % [
 			Narrativa.concordar(parado.x, "trabalhador parado", "trabalhadores parados"),
 			Narrativa.concordar(parado.y, "doca esperando", "docas esperando")]
-		_workers_title.add_theme_color_override("font_color", COR_AVISO)
+		_workers_title.theme_type_variation = &"TextoBarraAlerta"
 	else:
 		_workers_title.text = "Trabalhadores — toque ou arraste para uma doca"
-		_workers_title.add_theme_color_override("font_color", Color(0.51, 0.6, 0.706))
+		_workers_title.theme_type_variation = &"TextoBarra"
 
 
 func _on_alocar_pressed() -> void:
