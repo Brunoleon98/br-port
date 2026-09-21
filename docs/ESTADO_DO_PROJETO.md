@@ -34,12 +34,11 @@ ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14
 contínuo pela distância à costa, com meandro longo de duas senóides, e a areia
 em rampas. A paleta medida não mudou (amplitude 99,408; espuma 0,558 de Weber).
 
-**E AS DUAS PONTAS SÃO COSTA DESENHADA** (`023`, primeira fatia do item 8): a
-maior reta da linha de água caiu de 224 px para 16 e as quinas de 126,9° para
-14°. **O cais continua reto**, que é o que ele é. Linha de água, baixio, espuma,
-pedras, rampa e o campo da água saem de `ponto_costeiro()`, uma família
-concêntrica que não se cruza — é isso que impede costura. O **D28** tranca a
-forma; o raster é lido por D20, D21, D24 e D27.
+**E AS DUAS PONTAS SÃO COSTA DESENHADA** (`023`): a maior reta da linha de
+água caiu de 224 px para 16 e as quinas de 126,9° para 14°. **O cais continua
+reto**, que é o que ele é. Linha de água, baixio, espuma, pedras, rampa e o
+campo da água saem de `ponto_costeiro()`, família concêntrica que não se cruza
+— é isso que impede costura. **D28** tranca a forma; o raster, D20/D21/D24/D27.
 
 **A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM** — mapa a 1080 (`025`) e
 props a 768 px num quadro de 512 COORDENADAS (`029`), com `expand_mode` em 31
@@ -89,9 +88,6 @@ com o **diário** (que abre uma vez e não tinha como ser relido) e quatro porta
 FECHADAS — cidade, lojas, missões, análise (itens 18 a 21). **É casca, e de
 propósito.**
 
-**Nada de interface pousa sobre o mapa:** a vaga é cenário, o cartão é barra, e
-o número é tinta no cais.
-
 **O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
 verdade** — parede desabada, meio telhado, portão fora do trilho.
 
@@ -116,13 +112,10 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-**R1 a R4 fechados (17–18/09)** — Leitura por identidade (`030`), evidência do
-CI a responder por erro e por turno (`031`), texto a responder pela fonte que a
-máquina corre (`032`), e a voz da Dona Cida a chegar à tela (`033`). O detalhe
-de cada um vive na decisão dele; o R4 cobrou o inverso, que o R5 pagou.
-
-**R5 fechado (20/09)** (`034`): a faixa tem FILA — o que o jogo dizia e o
-jogador não via caiu de **30,7% para 5,7%**. Guardas T8, F8 e D32.
+**R1 a R5 fechados (17–20/09)** — identidade na Leitura (`030`), evidência do
+CI por erro e por turno (`031`), texto pela fonte que a máquina corre (`032`),
+a voz da Dona Cida a chegar à tela (`033`) e a FILA da faixa (`034`), que levou
+o que o jogador não via de **30,7% para 5,7%** (T8, F8, D32).
 
 **E o gate A4 correu (19/09)**, nas sete falas novas desde 13/09; as quatro
 notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
@@ -130,27 +123,34 @@ jargão, e a semana nova deixou de cobrar uma parcela já quitada.
 
 **R6 fechado (20/09)** (`035`): o contraste mede-se na cor FINAL contra o fundo
 REAL, composto alfa sobre alfa. As três guardas que havia percorriam **um
-painel cada**, e o defeito vivia numa linha do TEMA. Medidos **19 estados e 214
-textos**: reprovavam **22**, por QUATRO causas, e a revisão nomeava uma. Hoje
-**zero**. Guarda **D33**, sobre o motor que a ferramenta partilha.
+painel cada**, e o defeito vivia numa linha do TEMA. Dos **19 estados e 214
+textos**, reprovavam **22** por QUATRO causas e a revisão nomeava uma; hoje
+zero. Guarda **D33**, sobre o motor que a ferramenta partilha.
 
 **R7 fechado (21/09)** (`036`): *"é legível?"* e *"de onde veio?"* são duas
-perguntas, e havia só a primeira — no commit em que migrou três overrides o R6
-**acrescentou um quarto**, legítimo pelo D33. A superfície era **34** e não 18:
-cor de UI também chega por CENA e por STYLEBOX, e nada as contava. Sete
-migraram (`RotuloApoio`, só cor); os **27** que ficam estão DECLARADOS em
-`tools/excecoes_cor_ui.json` por (arquivo, receptor, propriedade), com contagem
-e justificativa. Portão `conferir_escopo_ui.py`, escopo derivado do
-`export_presets.cfg`; oito mutantes.
+perguntas, e havia só a primeira. A superfície era **34** e não 18 — cor de UI
+também chega por CENA e por STYLEBOX. Sete migraram (`RotuloApoio`, só cor) e
+os **27** que ficam estão DECLARADOS em `tools/excecoes_cor_ui.json` por
+(arquivo, receptor, propriedade), com contagem. Portão `conferir_escopo_ui.py`,
+escopo derivado do `export_presets.cfg`; oito mutantes.
 
 **R8 fechado (21/09)** (`037`): a contagem que o jogador lê concorda a frase
 INTEIRA, e **zero leva plural**. A revisão nomeou 3 rótulos, o `grep` por `(s)`
-achou 5 e o `grep` pela FORMA achou **8** — os últimos três com a regra num
-ternário à mão, um deles duas vezes na mesma expressão. Hoje são 11 chamadas a
-`Narrativa.concordar`, o `_plural` privado do `Main` saiu, e as guardas são
-duas: **T9** a aritmética (o zero é o único estado que separa `n==1` de `n<=1`)
-e **F9** a superfície, com os pares DERIVADOS do código. Seis mutantes, e o M1
-e o M2 provam que cada uma é cega ao defeito da outra.
+achou 5 e o `grep` pela FORMA achou **8**. Hoje são 11 chamadas a
+`Narrativa.concordar` e as guardas são duas, cegas ao defeito uma da outra:
+**T9** a aritmética (o zero separa `n==1` de `n<=1`) e **F9** a superfície,
+derivada do código. Seis mutantes.
+
+**E OS PAINÉIS PASSARAM A TER FOTO (21/09)** (`038`): o R7 e o R8 mexeram em
+quatro telas que imagem nenhuma mostrava. Eram cinco pelo briefing e são
+**sete** — os painéis são **15 e não 13**, porque o `EndGame` não vive em
+`scenes/panels/` e a `TelaNomes` a ferramenta dispensa. A bateria tem **24
+tiros** e os quinze estão cobertos. Os cinco do HUD abrem pela PORTA DO JOGADOR
+(`--painel=`) numa partida JOGADA, porque em partida nova nenhum diz nada — e é
+daí que vem o `Dictionary` do `PainelCaixa`, que a linha de comando não sabia
+escrever. A varredura de erro pergunta pela ORIGEM (`GDScript backtrace`) e
+cada tiro tem teto de 180s; sete mutantes, e o M2b mede o que o padrão antigo
+deixava passar: bateria VERDE com o erro no log.
 
 **Próximo: R9** — áudio medido (true peak, espectro) + protocolo de escuta.
 Gates humanos abertos.
@@ -163,7 +163,7 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**, a segunda nas sete falas que o R4 mudou; as quatro notas dela estão aplicadas e trancadas. Faltam **duas decisões de palavra**: o rótulo `"Caixa:"` do painel da parcela (`DebtPaymentPanel.gd:68`) e o `"dinheiro no caixa"` da fala da semana nova — o mesmo jargão que saiu das outras, nos dois sítios que ficaram. ⚠️ O rótulo mudou de COR em 20/09 (`035`) e continua a dizer "Caixa": a decisão é de palavra, e é dele |
+| **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**; as quatro notas dele estão aplicadas e trancadas. Faltam **três decisões de palavra**, todas o mesmo jargão nos sítios que ficaram: o rótulo `"Caixa:"` (`DebtPaymentPanel.gd:68`, que mudou de COR em `035` e continua a dizê-lo), o `"dinheiro no caixa"` da fala da semana nova, e o `"0 dias daqui"` da parcela (`037`) |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | Ouvir | Este contêiner não tem placa de som. Ninguém que fez os efeitos os ouviu |
 

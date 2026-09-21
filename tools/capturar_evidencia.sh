@@ -77,11 +77,26 @@ comum=(--path "$PROJETO" --resolution 720x1280 --rendering-driver opengl3
 # `xvfb-run -a` porque a captura precisa de contexto gráfico: teste e import
 # rodam sem tela, esta não.
 # tirar <nome> <painéis esperados, ou "-"> <turno esperado, ou "-"> <args do Godot...>
+# ⚠️ E CADA TIRO TEM TETO DE TEMPO, que é a terceira forma de uma captura
+# falhar sem nunca reprovar. Medido em 21/09, a construir um mutante: uma
+# chamada com o número errado de argumentos dentro do `_process` de um
+# `SceneTree` ABORTA a função — e um `--script` que aborta antes do `quit()`
+# repete o `_process` a cada frame e NUNCA ENCERRA. A bateria não tinha teto
+# nenhum: ficou pendurada, sem log, sem foto e sem uma palavra, até alguém a
+# matar à mão. No CI isso não é vermelho, é o job inteiro a morrer de timeout
+# vinte minutos depois, sem dizer qual tiro foi.
+#
+# 180 s é sessenta vezes o tiro típico (a bateria inteira, 24 tiros, corre em
+# ~72 s) e ainda assim folgado para o mais lento, que é o `docas` com os
+# `--frames=400` de tempo simulado. O `timeout` devolve 124, que cai no mesmo
+# ramo de falha abaixo e diz o nome do tiro.
+TETO_SEGUNDOS=180
+
 tirar() {
 	local nome="$1"; local paineis="$2"; local turno="$3"; shift 3
 	local log="$SAIDA/$nome.log"
-	xvfb-run -a "$GODOT" "${comum[@]}" "$@" > "$log" 2>&1 || {
-		echo "::error::a captura '$nome' falhou:"; cat "$log"; return 1
+	timeout "$TETO_SEGUNDOS" xvfb-run -a "$GODOT" "${comum[@]}" "$@" > "$log" 2>&1 || {
+		echo "::error::a captura '$nome' falhou (código $?):"; cat "$log"; return 1
 	}
 	# LOG AUSENTE OU VAZIO É REPROVAÇÃO, e não "nada a relatar". Tudo o que vem
 	# a seguir são perguntas AO LOG: sem ele, cada uma delas responderia "não
@@ -111,12 +126,47 @@ tirar() {
 	# `push_error()` sai como `ERROR:` e não como `USER ERROR:`, de modo que a
 	# queixa da própria ferramenta ("nao consegui comprar X", que já aconteceu
 	# aqui) tem o mesmo prefixo da contabilidade de encerramento do motor.
-	# O que as separa é a origem, e ela vem escrita na linha `at:`: só quem
-	# chamou `push_error` traz `at: push_error (`. Fica de fora, de propósito,
-	# todo `ERROR:` do motor sem rasto de GDScript.
-	if grep -qE "SCRIPT ERROR|at: push_error \(" "$log"; then
+	# O que as separa é a ORIGEM.
+	#
+	# ⚠️ E A ORIGEM NÃO SE LÊ NUM CATÁLOGO DE MENSAGENS — o Godot ESCREVE-A.
+	# Até 21/09 o par era `SCRIPT ERROR|at: push_error \(`, e ele conhecia
+	# duas formas de erro de três. O `PainelCaixa` provou-o: o `setup()` dele
+	# exige um `Dictionary`, o `capturar_cena.gd` chamou-o com zero argumentos,
+	# e a queixa saiu como
+	#
+	#     ERROR: Error calling method from 'callv': ... expected 1 argument(s)
+	#        at: callv (core/object/object.cpp:888)
+	#        GDScript backtrace (most recent call first):
+	#            [0] _chamar_setup (res://tools/capturar_cena.gd:134)
+	#
+	# — `ERROR:` sem `SCRIPT` e `at:` a apontar para C++, porque quem se queixa
+	# é o MOTOR sobre uma chamada que o NOSSO script fez. Nenhum dos dois
+	# padrões casava, e a foto PRETA seria anexada ao PR com a bateria verde.
+	#
+	# Quem separa as três é o bloco `GDScript backtrace`, que o Godot só
+	# escreve quando o erro tem pilha de script. Medido nesta versão (4.6.3),
+	# numa sonda de cada forma:
+	#
+	#   push_error()                  ERROR:         COM backtrace
+	#   erro de execução (nil)        SCRIPT ERROR:  COM backtrace
+	#   erro de COMPILAÇÃO (parse)    SCRIPT ERROR:  SEM — `at: GDScript::reload`
+	#   chamada falhada (callv)       ERROR:         COM backtrace
+	#   ruído de encerramento         ERROR:         SEM — `at:` em C++
+	#
+	# Logo são estes dois: `SCRIPT ERROR` apanha o que não chega a correr, e
+	# `GDScript backtrace` apanha tudo o que correu e se queixou. O
+	# `at: push_error (` saiu por ser SUBCONJUNTO do segundo — medido, não
+	# suposto —, e a regra deste projeto é apagar a cópia.
+	#
+	# ⚠️ E O ALARGAMENTO PÁRA AQUI, que é o escopo do defeito. O `testes.yml` e
+	# o `balanceamento.yml` continuam com o par antigo de propósito: lá corre o
+	# `teste_fumaca`, que imprime um erro de JSON DE PROPÓSITO — o save inválido
+	# que ele injeta para provar que o jogo o recusa —, e esse traz backtrace.
+	# Esta bateria só roda ferramentas de captura, e nas 17 corridas saudáveis
+	# medidas hoje os logs não têm UMA linha `ERROR` sequer.
+	if grep -qE "SCRIPT ERROR|GDScript backtrace" "$log"; then
 		echo "::error::a captura '$nome' imprimiu erro — a foto não vale o que promete:" >&2
-		grep -nE "SCRIPT ERROR|at: push_error \(" -A 4 "$log" >&2
+		grep -nE "SCRIPT ERROR|GDScript backtrace" -A 4 "$log" >&2
 		return 1
 	fi
 	if [ "$paineis" != "-" ]; then
@@ -254,6 +304,142 @@ tirar menu    - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # foto verdadeira de um estado que só existe no primeiro segundo do jogo, que
 # é a armadilha que o `capturar_cena` já levou uma vez com o `setup()` saltado.
 tirar mensagens 1 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/mensagens.png" completo limpo mensagens
+
+# ══ OS CINCO PAINÉIS QUE NENHUMA FOTO MOSTRAVA ═══════════════════════════════
+#
+# Medido em 21/09: das treze telas do jogo, oito tinham tiro aqui e CINCO não —
+# Construir, Calendário, Docas, Reputação e Caixa. Três delas são exactamente
+# as que o R7 e o R8 mexeram naquele dia (`docs/decisoes/036` e `037`), e as
+# duas sessões olharam à mão, fora da bateria: o que não deixa antes/depois no
+# PR e não se repete sozinho. A regra 5 do `CLAUDE.md` manda tirar uma captura
+# e olhar quando se mexe no visual; isto é essa captura.
+#
+# ⚠️ E OS CINCO VÃO PELO `capturar_tela.gd`, e não pelo `capturar_cena.gd` que
+# fotografa os outros painéis. Três razões, todas medidas:
+#
+#   1. O ESTADO. Um painel instanciado solto nasce numa partida RECÉM-CRIADA, e
+#      é aí que estes cinco não dizem nada: no dia 1 o calendário não tem dia
+#      passado, no porto em ruínas o Construir não tem uma estrutura verde, e
+#      com UMA doca a contagem nunca passa de 1 — que é precisamente onde o
+#      singular e o plural do R8 dão o mesmo texto. O estado que estes painéis
+#      precisam é uma partida JOGADA, e jogar é o que esta ferramenta faz.
+#   2. O `PainelCaixa` PEDE UM `Dictionary`, que a linha de comando não sabe
+#      escrever. Aqui quem lho passa é o `_on_caixa_pilula_input` do jogo, com
+#      `GameState.resumo_do_dia()` — DERIVADO, que é a regra desta bateria.
+#   3. AS DUAS GUARDAS. Os tiros de `capturar_cena.gd` passam "- -" porque
+#      aquela ferramenta não imprime a linha `Overlay:`; por aqui cada um
+#      declara quantos painéis aceita e em que turno pára, como os de mapa.
+#
+# Cada um abre pela PORTA DO JOGADOR (`--painel=`, a tabela `PAINEIS` do
+# `capturar_tela.gd`): a mesma pílula do HUD que ele toca.
+
+# O CONSTRUIR COM OS TRÊS ESTADOS DE CARTÃO NA MESMA FOTO, que é o que `meio`
+# dá e nenhum outro estado dá: duas estruturas CONSTRUÍDAS (o verde e o
+# "Construída"), quatro com BOTÃO, e o cais BLOQUEADO — que é o cartão que o R6
+# encurtou em 60px ao tirar de lá o botão desligado, trocando-o pela frase
+# "Precisa antes de: Guindaste de pórtico." (`docs/decisoes/035`). Com o porto
+# em ruínas não há verde nenhum; com `completo` são sete verdes e mais nada.
+#
+# ⚠️ FICA DE FORA O IMPEDIMENTO POR DINHEIRO ("Faltam R$…"), e é por
+# construção: o `meio` soma ao caixa o custo de TODAS as estruturas antes de
+# comprar duas, então aqui nada é caro demais. O cartão bloqueado desta foto
+# é-o pelo `requer`, e é o mesmo desenho.
+#
+# A zero turnos pela razão do tiro `meio` ao lado: dez turnos são dez
+# oportunidades de o jogo parar numa fase que abre painel, e esta foto é sobre
+# os cartões, não sobre a economia.
+tirar construir  1 1  --script res://tools/capturar_tela.gd -- 0  "$SAIDA/construir.png" meio limpo --painel=construir
+# O CALENDÁRIO COM DIA PASSADO, que é o estado que a régua do contraste NÃO
+# monta. O percurso dos 19 estados do `medir_contraste_ui.gd` abre o calendário
+# no dia 1 — e foi por isso que a cor dos dias já vividos viveu escrita à mão
+# no painel, a 0,52, enquanto o tema dizia 0,50 (`docs/decisoes/036`). Hoje ela
+# é a variação `RotuloApoio`, e esta é a primeira foto em que alguém a vê.
+#
+# O dia 10 monta as três cores de uma vez — nove dias PASSADOS, o de HOJE em
+# âmbar a 17px, e o resto por vir — mais os dois marcadores que a legenda
+# traduz: o "•" do fecho de cada semana e o "!" do vencimento da parcela.
+# `limpo` porque o turno 9 abre o Boletim da semana 2, e sem ele o laço pára lá.
+tirar calendario 1 10 --script res://tools/capturar_tela.gd -- 9  "$SAIDA/calendario.png" limpo --painel=calendario
+# AS DOCAS COM A CONTAGEM ACIMA DE UM, que é a única forma de a frase do R8
+# provar alguma coisa. Medido: com o porto de uma doca `ocupadas` nunca passa
+# de 1, e a 1 a versão certa e a errada escrevem o mesmo texto. No turno 10 do
+# porto completo são DUAS ocupadas e uma à espera — o plural que sai do
+# `Narrativa.concordar` ao lado do "1 esperando trabalhador", que é o gerúndio
+# que o R8 decidiu NÃO concordar (`docs/decisoes/037`). As duas regras na mesma
+# linha, numa foto.
+#
+# ⚠️ O NOME É `painel_docas` PORQUE `docas` JÁ EXISTE — é o tiro do mapa com os
+# camiões nos berços, lá em cima. Renomear aquele para libertar o nome custaria
+# o antes/depois dele: o `captura.yml` casa as duas corridas pelo NOME do
+# arquivo, e uma foto renomeada aparece como uma removida e uma nova.
+#
+# ⚠️ E FICA DE FORA A SECÇÃO "A PRÓXIMA DOCA", com o impedimento da estrutura
+# que abre o berço seguinte: ela só existe com UMA ou DUAS docas, e aí a
+# contagem volta a não passar de 1. As duas metades deste painel não cabem no
+# mesmo estado; escolheu-se a que o R8 mexeu.
+tirar painel_docas 1 10 --script res://tools/capturar_tela.gd -- 9 "$SAIDA/painel_docas.png" completo limpo --painel=docas
+# A REPUTAÇÃO FORA DO PATAMAR DE PARTIDA. O jogo abre em 65,0 ("Respeitado"), e
+# uma foto tirada aí não distinguiria um "▸" que ANDA de um "▸" pregado na
+# terceira linha. Treze turnos do porto completo levam-na a 85,6, que é
+# "Referência" — o patamar de cima —, e o marcador em âmbar está lá.
+#
+# O número vem de JOGAR e não de um `reputation=85` escrito à mão: é a mesma
+# regra que tirou os R$100.000 cravados do `capturar_tela.gd`.
+tirar reputacao  1 13 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/reputacao.png" completo limpo --painel=reputacao
+# O CAIXA, QUE ERA INCAPTURÁVEL — e a foto prova as duas metades de uma vez.
+#
+# O `setup()` dele exige um `Dictionary` e o `capturar_cena.gd` chamava-o com
+# zero argumentos: o painel não montava, e a ferramenta imprimia "Tela salva
+# em" e saía com código 0 com uma foto PRETA (`docs/decisoes/037`). Por aqui o
+# argumento é `GameState.resumo_do_dia()`, montado pelo jogo.
+#
+# O TURNO 13 É ESCOLHA, e a conta é a do R8: "ONTEM — DIA 12" fecha com DOIS
+# barcos atendidos (o plural) e a projeção de hoje diz "1 barco atendido e 2
+# perdidos" — o singular e o plural na MESMA frase, que é a concordância
+# inteira a funcionar nos dois sentidos. E os dois blocos têm linha de receita,
+# de modo que a regra "linha com zero não entra" também se vê.
+#
+# ⚠️ E ESTE TIRO NÃO LEVA `alocar`, ao contrário do `docas` lá em cima: alocar
+# no fim daria trabalhador aos dois barcos à espera e a projeção perderia os
+# "2 perdidos", que é o aviso que este painel existe para dar.
+tirar caixa      1 13 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/caixa.png" completo limpo --painel=caixa
+# ══ E ERAM SETE, NÃO CINCO ══════════════════════════════════════════════════
+#
+# O briefing desta sessão contou treze telas — oito com tiro e cinco sem. No
+# disco são QUINZE, e as duas que faltavam à conta são as duas de baixo.
+# Nenhuma das duas é um descuido do briefing: a `TelaNomes` ele mandou
+# conferir, e o `EndGame` não vive em `scenes/panels/` — está em
+# `scenes/EndGame.tscn`, e por isso escapa a todo inventário que olhe a pasta.
+# É a regra do `CLAUDE.md`: antes de herdar o buraco que um briefing anuncia,
+# pergunte a que fonte ele o perguntou, e pergunte à outra.
+
+# A PRIMEIRA TELA QUE O JOGADOR VÊ, e nunca ninguém a olhou aqui. Ela não
+# aparece em tiro nenhum de jogo por construção: o `capturar_tela.gd` chama
+# `definir_nomes()` de propósito para a DISPENSAR, senão ela ficaria por cima
+# de tudo o que se queria fotografar. Logo, a única forma de a ver é solta.
+#
+# Ela monta no `_ready()` como o Diário, portanto não precisa de `setup()`.
+tirar nomes   - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/TelaNomes.tscn "$SAIDA/nomes.png"
+# O FIM DA FASE 1, primeiro tempo — a narração, que é o painel com mais
+# história por fotografar deste projeto. Ele deu 430px a um texto que pede 847:
+# o remate ("Em quem tá olhando.", a linha para onde a peça inteira anda) nunca
+# esteve na tela sem rolar, com o botão logo abaixo a convidar a sair. A altura
+# passou a sair de `altura_do_texto()` e o D22 tranca-a — e esta é a primeira
+# imagem em que alguém CONFIRMA que o remate cabe.
+#
+# `true` é a vitória, e é ela que leva a narração: quem perde vai direto ao
+# balanço, de propósito (ler um cais que continua de pé por cima de uma derrota
+# seria escárnio — está escrito no cabeçalho do `EndGame.gd`).
+#
+# ⚠️ FICA DE FORA O SEGUNDO TEMPO, o balanço, e a razão é a regra do zero: ele
+# lê `GameState.metrics`, que numa cena solta é uma partida recém-criada — a
+# foto diria "Barcos atendidos: 0" e isso LÊ-SE COMO MEDIDA. Fotografá-lo pede
+# uma partida jogada até ao turno 32, que é tiro de outra sessão.
+#
+# A frase da vitória é a que o `_check_end()` escreve, copiada — e este tempo
+# NÃO A MOSTRA (só o balanço usa o `_motivo`), de modo que ela envelhecer aqui
+# não muda um pixel desta foto.
+tirar fimfase - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase.png" true "Você quitou a parcela e manteve o porto no azul!"
 tirar icones  - -  --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

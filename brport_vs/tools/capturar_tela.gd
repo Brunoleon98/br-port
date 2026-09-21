@@ -27,6 +27,10 @@ extends SceneTree
 # depois da saída — fecham os painéis de rotina, abrem o menu de pausa no fim
 # e alocam os trabalhadores antes do disparo.
 #
+# `--painel=<nome>` abre um dos cinco painéis do HUD no fim, pela mesma porta
+# que o jogador toca. Ver a tabela `PAINEIS`: é por aqui que o `PainelCaixa`
+# passou a ser fotografável, porque quem lhe monta o `Dictionary` é o jogo.
+#
 # ⚠️ E `turnos` SÃO TURNOS, não voltas de laço: a ferramenta avança até o
 # `turn` do jogo subir essa quantidade, pelo mesmo botão que o jogador carrega,
 # e PÁRA se houver um painel por cima que ela não tenha licença para fechar.
@@ -79,6 +83,32 @@ var _pausa := false
 var _alocar := false
 var _mensagens := false
 var _mensagens_aberto := false
+
+## OS CINCO PAINÉIS QUE NENHUMA FOTO MOSTRAVA, e cada um abre PELA PORTA DO
+## JOGADOR — a mesma pílula do HUD que ele toca, não uma chamada ao painel.
+##
+## ⚠️ E É ISTO QUE RESOLVE O `PainelCaixa`, que era INCAPTURÁVEL. O `setup()`
+## dele exige um `Dictionary`, e a linha de comando não sabe escrever um: o
+## `capturar_cena.gd` chamava-o com zero argumentos, o painel não montava, e a
+## ferramenta imprimia "Tela salva em" e saía com código 0 com uma foto PRETA
+## (medido em 21/09, `docs/decisoes/037`). Inventar uma sintaxe de dicionário
+## na linha de comando seria FINGIR o estado; aqui quem passa o argumento é o
+## `_on_caixa_pilula_input` do jogo, com `GameState.resumo_do_dia()` — que é a
+## regra desta ferramenta desde sempre: o estado DERIVA-SE, não se escreve.
+##
+## O segundo campo diz se a porta é um TOQUE (as quatro pílulas do HUD pedem
+## um `InputEvent`, e o `_e_toque_de_soltar` do Main tem uma regra própria que
+## uma chamada direta não exercitaria) ou um botão. Nome que não esteja aqui
+## REBENTA: um `--painel=caixaa` que não abrisse nada sairia com a foto do
+## mapa e o nome do painel, que é a fotografia mentirosa outra vez.
+const PAINEIS := {
+	"construir": ["_on_upgrade_pressed", false],
+	"caixa": ["_on_caixa_pilula_input", true],
+	"calendario": ["_on_dia_pilula_input", true],
+	"reputacao": ["_on_rep_pilula_input", true],
+	"docas": ["_on_docas_pilula_input", true],
+}
+var _painel := ""
 
 
 func _process(_delta: float) -> bool:
@@ -168,6 +198,15 @@ func _montar() -> void:
 				quit(1)
 				return
 			_frames_extra = int(qtd)
+			continue
+		if bruto.begins_with("--painel="):
+			var nome := bruto.substr(9)
+			if not PAINEIS.has(nome):
+				push_error("captura: --painel= não conhece '%s'. São: %s"
+					% [nome, ", ".join(PAINEIS.keys())])
+				quit(1)
+				return
+			_painel = nome
 			continue
 		if bruto.begins_with("--semente="):
 			var valor := bruto.substr(10)
@@ -348,6 +387,44 @@ func _montar() -> void:
 	if _alocar:
 		_alocar_todos()
 		_main._refresh_all()
+
+
+	# ⚠️ E O PAINEL ABRE POR ÚLTIMO, DEPOIS DA ALOCAÇÃO. Os cinco leem o estado
+	# no `setup()`, uma vez, e nunca mais: o `PainelDocas` conta as docas
+	# ocupadas e o `PainelCaixa` projeta o dia a partir de quem tem trabalhador.
+	# Aberto antes do `_alocar_todos()`, cada um retrataria o estado de ANTES da
+	# última alocação enquanto o mapa por trás já mostrava o de depois — a foto
+	# adiantada de 19/09 com a tela e o painel trocados de lado.
+	#
+	# E é aqui, e não no `_process`, porque estes não dependem de nada adiado:
+	# o histórico da faixa abre lá por causa das falas em `call_deferred`, e
+	# aqui os quinze frames de assentar correm DEPOIS da abertura, que é o que
+	# dá ao cartão o ciclo de layout de que ele precisa.
+	if _painel != "":
+		_abrir_painel_do_jogador()
+
+
+# ⚠️ A PORTA TEM DE EXISTIR, e um nome trocado no `Main` não dá erro nenhum:
+# `call()` num método inexistente devolve `null` e segue. A foto sairia do mapa
+# com o nome do painel no arquivo — a fotografia mentirosa que a contagem de
+# painéis do `capturar_evidencia.sh` apanha, mas só depois de a corrida inteira
+# ter acontecido e só porque alguém escreveu o número lá. Perguntar aqui custa
+# uma linha e diz QUAL porta mudou de sítio.
+func _abrir_painel_do_jogador() -> void:
+	var dados: Array = PAINEIS[_painel]
+	var metodo: String = String(dados[0])
+	if not _main.has_method(metodo):
+		push_error("captura: o Main não tem %s — a porta do painel '%s' mudou de nome"
+			% [metodo, _painel])
+		quit(1)
+		return
+	if bool(dados[1]):
+		var toque := InputEventMouseButton.new()
+		toque.button_index = MOUSE_BUTTON_LEFT
+		toque.pressed = false
+		_main.call(metodo, toque)
+	else:
+		_main.call(metodo)
 
 
 # Resolver a oferta direto no GameState NÃO fecha o painel: quem o fecha é o
