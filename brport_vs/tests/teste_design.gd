@@ -248,6 +248,13 @@ func _rodar() -> void:
 	root.remove_child(_main)
 	_main.free()
 
+	# ⚠️ DEPOIS DE O `_main` SAIR, e de propósito: este bloco monta o `Main`
+	# ele próprio, em dois estados, e dois `Main` na mesma árvore disputam o
+	# `GameState` — o segundo herdaria o porto do primeiro.
+	print("=== D33: o contraste EFETIVO de toda a interface, painel a painel ===")
+	_d33_contraste_efetivo()
+	_confere("o bloco D33 correu até ao fim", _d33_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -1451,8 +1458,22 @@ func _d12_toque_na_parcela() -> void:
 	var rotulo: Label = tela.get_node("MetaCartao/MetaColuna/MetaTexto")
 	_confere("com caixa de sobra, o cartão convida ao toque",
 		rotulo.text.contains("toque"), "diz \"%s\"" % rotulo.text)
-	_confere("e o convite está na cor de aviso",
-		rotulo.get_theme_color("font_color").is_equal_approx(COR_AVISO))
+	# ⚠️ ESTA ASSERÇÃO PERGUNTAVA PELO `COR_AVISO` ATÉ 20/09, e apanhou a
+	# mudança que o tirou — que é o que ela existe para fazer. O rótulo já não
+	# pinta cor à mão: pede `RotuloAlerta` ao tema, porque o âmbar de marca
+	# media 3,18:1 neste cartão branco contra um corte de 4,5 e este é o
+	# convite a quitar a parcela (`docs/decisoes/035`). A pergunta continua a
+	# ser a MESMA — "o convite destaca-se?" — e agora ela é feita à cor FINAL,
+	# que é o que o jogador vê, em vez de ao mecanismo que a põe lá.
+	var cor_convite: Color = rotulo.get_theme_color("font_color")
+	_confere("e o convite sai na cor de alerta do tema",
+		cor_convite.is_equal_approx(
+			(load("res://ui/tema_brport.tres") as Theme)
+				.get_color("font_color", "RotuloAlerta")),
+		"saiu %s" % cor_convite)
+	_confere("e essa cor passa o AA sobre o cartão branco do HUD",
+		_contraste(cor_convite, Color(1, 1, 1)) >= 4.5,
+		"mede %.2f:1" % _contraste(cor_convite, Color(1, 1, 1)))
 
 	_confere_chip_abre(tela, overlay, "MetaCartao", "PainelParcela.gd",
 		["Parcela do Sr. Ribeiro", "quitar"])
@@ -3795,3 +3816,178 @@ func _d32_faixa_de_mensagem() -> void:
 			% _contraste(neutro_do_jogo, caixa.bg_color))
 
 	_d32_completo = true
+
+
+# ── D33 ── o contraste EFETIVO de toda a interface (R6 da §7.1)
+#
+# ⚠️ AS TRÊS GUARDAS DE CONTRASTE QUE HAVIA PERGUNTAVAM POR UM PAINEL CADA, e
+# foi por aí que o neutro do jogo passou pela QUARTA vez. O D19 percorre o
+# painel Construir, o D23 o menu-celular, o D32 o contador da faixa — e o
+# `RotuloSecao`, que é uma linha do TEMA, vive em NOVE painéis onde nenhuma das
+# três olha: Nomes, Calendário, Docas, Reputação, Caixa, Boletim,
+# contra-oferta, Sr. Ribeiro e todo `secao()` do andaime narrativo. Medido em
+# 20/09, antes de se mexer: 22 textos abaixo do AA em 19 estados.
+#
+# Os três não saem. Eles medem coisas que este não mede — o D19 confere que
+# ACHA o fundo do cartão, o D23 mede a LARGURA que o menu custou ao rodapé, o
+# D32 o alvo de toque da faixa. Antes de dar um teste por redundante, pergunte
+# que defeito ele vê que o outro não vê.
+#
+# O que este bloco acrescenta, e que nenhum outro fazia:
+#
+#   1. TODO o percurso, e derivado. As cenas de painel saem do DISCO: um painel
+#      novo que ninguém acrescente ao percurso reprova aqui, em vez de ficar
+#      por medir. Uma lista escrita à mão fecharia esse buraco em silêncio.
+#   2. O FUNDO REAL, composto alfa sobre alfa. "O painel é branco" não é uma
+#      resposta: a mesma variação mede 5,46:1 no cartão, 5,03:1 no balão da
+#      fala e 5,27:1 no creme da faixa.
+#   3. COMPOSIÇÃO NÃO RESOLVIDA É PENDÊNCIA, nunca verde. Onde o que está por
+#      trás é desconhecido — o cartão da doca tem alfa 0,96 sobre o MAPA — a
+#      medição dá as DUAS pontas, e se elas discordarem sobre passar, reprova.
+#   4. O MOTIVO DO BLOQUEIO. A WCAG isenta o texto de um componente inativo, e
+#      o painel Construir escrevia a explicação DENTRO do botão desligado: a
+#      isenção engolia-a, a 2,16:1, com a régua a dá-la por isenta com razão.
+#      Aqui, um painel com componente inativo tem de ter texto legível ao lado.
+var _d33_completo := false
+
+# Os estados que o percurso já entregou. Sobe quando ele crescer; nunca desce
+# sem que alguém escreva por quê.
+const D33_ESTADOS_MIN := 19
+
+
+func _d33_contraste_efetivo() -> void:
+	# `load()` e não `preload()`: num `--script`, um `preload` de script que
+	# alcance o autoload compila antes de ele existir e devolve um GDScript
+	# VAZIO, que só se denuncia como "Nonexistent function" ao ser usado.
+	var motor: RefCounted = load("res://scripts/validation/contraste_ui.gd").new()
+
+	# ── O CONTROLE POSITIVO E O NEGATIVO, ANTES DA AUDITORIA. Sem eles, um
+	# `contraste()` avariado daria um número plausível em cada uma das 214
+	# linhas e o bloco inteiro ficaria verde de graça — a régua muda que dá um
+	# NÚMERO, que é pior do que o validador mudo que dá um verde.
+	var ruim: PackedStringArray = motor.calibrar()
+	_confere("D33: a régua mede e sabe reprovar (5 controles)", ruim.is_empty(),
+		", ".join(ruim))
+	if not ruim.is_empty():
+		return
+
+	# ── O PERCURSO COBRE O DISCO. Derivado, não escrito à mão.
+	var no_percurso := {}
+	for caso in motor.percurso():
+		no_percurso[String(caso["cena"])] = true
+	var de_fora := PackedStringArray()
+	for cena in motor.paineis_em_disco():
+		if not no_percurso.has(cena):
+			de_fora.append(String(cena).get_file())
+	_confere("D33: o percurso cobre todo painel em scenes/panels/",
+		de_fora.is_empty(),
+		"fora do percurso: %s" % ", ".join(de_fora))
+
+	var GS: Node = root.get_node("GameState")
+	var tema: Theme = load("res://ui/tema_brport.tres")
+	var reprovados := PackedStringArray()
+	var pendentes := PackedStringArray()
+	var sem_motivo := PackedStringArray()
+	# As formas de rótulo que aparecem VIVAS em algum estado, e os inativos a
+	# confrontar com elas no fim — o percurso inteiro tem de estar medido
+	# antes de a pergunta poder ser feita.
+	var vivos := {}
+	var inativos: Array = []
+	var medidos := 0
+
+	for caso in motor.percurso():
+		var no: Node = motor.montar_caso(root, GS, caso, tema)
+		if no == null:
+			continue
+		var linhas: Array = motor.medir(no)
+		# ⚠️ ZERO TEXTOS NÃO É "ESTE PAINEL PASSOU". Um `setup()` que rebentou
+		# deixa a cena montada e VAZIA, e a medição conta zero — a amostra
+		# vazia a dar um verde de graça. Mordeu em dois casos ao construir isto.
+		_confere("D33: %s produziu texto para medir" % caso["nome"],
+			not linhas.is_empty())
+		medidos += linhas.size()
+
+		for l in linhas:
+			match String(l["estado"]):
+				"reprova":
+					reprovados.append("%s · %.2f:1 a %dpx (corte %.1f, %s) %s"
+						% [caso["nome"], l["razao"], l["px"], l["corte"],
+							l["fonte"], l["texto"]])
+				"pendente":
+					pendentes.append("%s · %s | %s"
+						% [caso["nome"], l["nota"], l["texto"]])
+				"isento":
+					inativos.append([String(caso["nome"]), String(l["texto"])])
+				"passa":
+					if l["fonte"] != "inativo":
+						vivos[_d33_forma(String(l["texto"]))] = true
+
+		root.remove_child(no)
+		no.queue_free()
+
+	_confere("D33: nenhum texto abaixo do AA em %d medidos" % medidos,
+		reprovados.is_empty(),
+		"\n      ".join(reprovados))
+	# ⚠️ PENDÊNCIA NÃO É VERDE AUTOMÁTICO. Onde a composição não fecha, a
+	# resposta honesta não é escolher a ponta do intervalo que convém.
+	_confere("D33: nenhuma composição por resolver", pendentes.is_empty(),
+		"\n      ".join(pendentes))
+	# ── O MOTIVO DO BLOQUEIO, e a pergunta certa custou duas tentativas.
+	#
+	# A WCAG isenta o texto de um componente INATIVO, e a isenção é legítima —
+	# o problema é quando ela engole a única frase que explica o bloqueio. A
+	# primeira versão desta guarda perguntava "o painel tem algum texto
+	# legível?", e isso é confiança de graça: todo painel tem um título. Ela
+	# teria passado com o defeito posto.
+	#
+	# A pergunta que SEPARA os dois casos reais é a da FORMA, e ela deriva do
+	# próprio percurso em vez de uma lista à mão:
+	#
+	#   "Pagar R$530.000"  no Sr. Ribeiro sem dinheiro — a MESMA frase existe
+	#      viva no estado em que ele pode pagar, logo o rótulo descreve a AÇÃO
+	#      e o motivo está noutro sítio ("Caixa: R$1.000", que hoje se lê).
+	#   "Precisa antes de: Reconstruir o Píer 2." — esta forma NUNCA aparece
+	#      viva em estado nenhum, porque ela só existe por estar bloqueada: o
+	#      rótulo é a EXPLICAÇÃO, e a isenção estava a escondê-la a 2,16:1.
+	#
+	# Os números saem da forma (R$530.000 e R$150.000 são o mesmo rótulo), que
+	# é o que faz a comparação ser entre FRASES e não entre estados de caixa.
+	for par in inativos:
+		if not vivos.has(_d33_forma(par[1])):
+			sem_motivo.append("%s · \"%s\"" % [par[0], par[1]])
+	_confere("D33: rótulo inativo descreve a AÇÃO, e nunca o motivo do bloqueio",
+		sem_motivo.is_empty(),
+		"esta forma só existe bloqueada, logo a isenção esconde-a: %s"
+			% ", ".join(sem_motivo))
+	# ⚠️ E O PERCURSO DECLARA QUANTOS ESTADOS TEM. É a regra da folha de
+	# contato — "quem chama diz quantas páginas espera" — com um estado no
+	# lugar da página: sem esta linha, apagar o segundo Sr. Ribeiro ou o
+	# segundo estado do HUD deixaria o bloco VERDE com menos cobertura, que é
+	# exactamente o mutante "estado excluído do percurso". A derivação do disco
+	# acima apanha o painel que sai; esta apanha o ESTADO. Contar os TEXTOS não
+	# serviria: uma frase a mais num painel esconderia um estado a menos.
+	_confere("D33: o percurso não encolheu (%d estados)" % motor.percurso().size(),
+		motor.percurso().size() >= D33_ESTADOS_MIN,
+		"são %d, e já foram %d — um estado caiu fora"
+			% [motor.percurso().size(), D33_ESTADOS_MIN])
+
+	# ⚠️ E O MOTOR NÃO SE QUEIXA POR EXCEÇÃO. O que ele não conseguiu montar
+	# fica em `falhas`; sem esta linha, um `setup()` com o argumento errado
+	# passaria por "medido" com a cena meia montada.
+	var falhas_motor: PackedStringArray = motor.falhas
+	_confere("D33: o motor montou todos os estados", falhas_motor.is_empty(),
+		", ".join(falhas_motor))
+
+	_d33_completo = true
+
+
+# A FORMA de um rótulo: sem dígitos, sem moeda e sem pontuação, em minúsculas.
+# "Pagar R$530.000" e "Pagar R$150.000" são a mesma frase dita sobre caixas
+# diferentes, e é a frase que se está a comparar.
+func _d33_forma(texto: String) -> String:
+	var fora := ""
+	for c in texto.to_lower():
+		if c.is_valid_int() or c in ".,:;!?$-—·\"":
+			continue
+		fora += c
+	return " ".join(fora.split(" ", false)).replace("r ", " ").strip_edges()

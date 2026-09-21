@@ -49,7 +49,18 @@ ARQUIVO = "docs/arquivo"
 # terceiro, comprimir passa a apagar registo útil em vez de duplicação, que é
 # o contrário do que este alarme existe para proteger. O detalhe dos itens já
 # fechados desceu para a decisão de cada um; o que ficou é o AGORA.
-TETO_ESTADO = 28000
+#
+# ⚠️ E SUBIU DE 28.000 EM 20/09, pela MESMA ordem e pela mesma razão. O R6
+# entrou com o estado a 199 bytes do teto; antes de o subir desceram as duas
+# jogadas de 02–06/09 para o `HISTORICO.md`, e o R1 a R5 e os números de `024`,
+# `025` e `029` viraram ponteiros para a decisão de cada um — 129 bytes ganhos,
+# contra ~900 que a entrega pedia. O que ficou é o AGORA, e comprimi-lo mais
+# começaria a apagar registo.
+#
+# ⚠️ E ELE MEDE O CRESCIMENTO, NÃO O TAMANHO. Se um dia duas entregas seguidas
+# o subirem sem que nada desça, o que está errado não é o número: é o documento
+# a voltar a crescer calado, que é o defeito de 02/09 outra vez.
+TETO_ESTADO = 29000
 
 # `00_INDICE.md` é citado na decisão 001 como um arquivo que NÃO veio no pacote
 # de arte — é prosa sobre uma ausência, não uma referência a resolver. É a

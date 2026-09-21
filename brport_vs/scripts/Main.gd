@@ -1133,13 +1133,20 @@ func _refresh_meta() -> void:
 	var progresso := "%s de %s" % [GameState.moeda(int(GameState.cash)), GameState.moeda(alvo)]
 	if falta > 0:
 		_meta_label.text = "%s — faltam %s" % [progresso, GameState.moeda(falta)]
+		_meta_label.theme_type_variation = StringName("")
 		_meta_label.remove_theme_color_override("font_color")
 	else:
 		# CARTÃO TOCÁVEL QUE NÃO SE ANUNCIA É CARTÃO QUE NINGUÉM TOCA. O convite
 		# só aparece quando há o que fazer com ele — antes disso, tocar abriria
 		# um painel que só sabe dizer quanto falta, e a linha aqui já diz isso.
 		_meta_label.text = "%s — toque para quitar agora" % progresso
-		_meta_label.add_theme_color_override("font_color", COR_AVISO)
+		# ⚠️ PELO TEMA, e não pelo `COR_AVISO`. Este rótulo tem 13px e cai no
+		# cartão BRANCO do HUD: o âmbar de marca media 3,18:1 ali, contra um
+		# corte de 4,5 — e é o convite a quitar a parcela, a linha mais cara de
+		# não se ler do jogo. `RotuloAlerta` é o mesmo âmbar a 5,06:1
+		# (`docs/decisoes/035`). O `COR_AVISO` continua para os rótulos da
+		# barra ESCURA, onde ele foi medido e mede 5,53:1.
+		_meta_label.theme_type_variation = "RotuloAlerta"
 
 
 # As vagas já existem na cena, uma por píer desenhado no mapa. Aqui só se diz

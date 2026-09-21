@@ -39,7 +39,11 @@ func setup(_sem_argumentos: Variant = null) -> void:
 		var linha := "%s%d ou mais — %s" % ["▸ " if aqui else "    ", int(piso), nome]
 		var rotulo := paragrafo(linha)
 		if aqui:
-			rotulo.add_theme_color_override("font_color", Color(0.878, 0.604, 0.063))
+			# A faixa em que se está, pelo tema. O âmbar de marca escrito à mão
+			# media 2,39:1 neste cartão branco; a variação mede 5,06:1
+			# (`docs/decisoes/035`). O "▸" continua a marcar a linha, e a
+			# separação contra o navy das outras faixas passou a ser de MATIZ.
+			rotulo.theme_type_variation = "RotuloAlerta"
 
 	fio()
 	secao("O QUE MUDA")

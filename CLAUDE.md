@@ -1699,6 +1699,54 @@ tranca isso.
   03/09, e o painel Construir carregava-o em OITO rótulos até 06/09 sem que
   nada perguntasse. Sobre branco use 0,35/0,42/0,50, que mede 5,46:1 e passa o
   AA. O bloco **D19** do teste de design percorre os rótulos e mede.
+  ⚠️ **E FORAM QUATRO, E À QUARTA ELA VEIO PELO TEMA.** Em 20/09 a mesma cor
+  estava na linha `RotuloSecao` de `tema_brport.tres`, que vive em NOVE painéis
+  — e as três guardas de contraste que havia percorriam **um painel cada** (o
+  D19 o Construir, o D23 o menu-celular, o D32 a faixa de mensagem). **Guarda
+  que pergunta por um sítio não responde pelos outros treze**, e um defeito que
+  desce do tema toca em todos de uma vez. Medidos os 19 estados, reprovavam
+  **22** textos por **quatro** causas distintas, e a revisão externa nomeava
+  uma. Hoje quem percorre tudo é o **D33**, e `tools/medir_contraste_ui.gd`
+  imprime a tabela do mesmo motor (`docs/decisoes/035`).
+  ⚠️ **E O QUINTO ENDEREÇO NÃO ERA UM RÓTULO**: era a SUGESTÃO do campo
+  (`font_placeholder_color`), a 2,70:1, que as quatro caças anteriores não
+  citavam por não estarem à procura de um `LineEdit`. Ao varrer uma cor,
+  pergunte que OUTROS papéis de texto existem além do rótulo.
+  ⚠️ **E "O PAINEL É BRANCO" NÃO É O FUNDO REAL.** A mesma variação mede
+  5,46:1 no cartão, **5,03:1** no balão da fala (#f0f6ff) e **5,27:1** no creme
+  da faixa; o neutro media 2,93 no cartão e **2,70** no campo. Mede-se contra o
+  `bg_color` composto alfa sobre alfa até ao primeiro opaco, com o `modulate`
+  aplicado ao texto e ao fundo por cadeias SEPARADAS — são duas, porque começam
+  em nós diferentes.
+  ⚠️ **E COMPOSIÇÃO QUE NÃO FECHA É PENDÊNCIA, NUNCA VERDE.** Onde o que está
+  por trás é desconhecido — o cartão da doca tem alfa 0,96 e pousa sobre o
+  MAPA —, a resposta honesta são DUAS: o pior sobre preto e o pior sobre
+  branco. Se as duas pontas concordarem em passar, passa; se discordarem,
+  reprova e vai à mão. Escolher a ponta que convém é a irmã de arredondar para
+  aprovar.
+- **⚠️ A ISENÇÃO DA WCAG PARA TEXTO INATIVO PODE ENGOLIR O MOTIVO DO
+  BLOQUEIO.** A 1.4.3 isenta o texto de um componente desligado, e a isenção é
+  legítima — o desastre é quando a única frase que explica POR QUE ele está
+  desligado é o rótulo dele. O painel Construir fazia `btn.text = ... else
+  impedimento`: a explicação saía a **2,16:1** e uma régua correta dava-a por
+  isenta com razão. E não se conserta acrescentando uma linha (o cartão já
+  crescia a ~920px numa tela de 1280, com o "Fechar" rente à borda):
+  conserta-se **tirando o botão**, que é um convite falso — o cartão ficou
+  60px mais curto. A pergunta que separa o caso bom do mau **deriva do
+  percurso**: a forma do rótulo inativo tem de aparecer VIVA nalgum estado.
+  "Pagar R$…" aparece, logo descreve a AÇÃO; "Precisa antes de: …" só existe
+  bloqueada, logo é a EXPLICAÇÃO. A primeira versão da guarda perguntava "o
+  painel tem algum texto legível?", que é confiança de graça — todo painel tem
+  um título, e ela passava com o defeito posto (`docs/decisoes/035`).
+  ⚠️ **E NENHUM TOM GANHA DOIS FUNDOS — na interface, quem resolve é trocar
+  TEXTO por FUNDO.** É a regra do pau-de-carga (*"UM PROP SÓ ATRAVESSA DOIS
+  FUNDOS"*) com um rótulo no lugar do prop. O âmbar de marca mede 2,39:1 sobre
+  o cartão branco, e escurecê-lo até passar o AA (5,06:1 a V=0,58) custa a
+  separação contra o navy à volta, de 5,27:1 para **2,49:1**. Aceitou-se, e a
+  razão é a mesma da telha: **quem separa ali é o MATIZ, não o valor** — estão
+  a ~180° um do outro, e a captura confirma. Quem quiser a separação de volta
+  não muda a cor, muda a MASSA: âmbar de FUNDO com texto navy mede 5,27:1 e já
+  existe no `BotaoPrimario`.
 - **Texto que passa a vir de uma TABELA cresce, e Label que não cabe não dá
   erro — corta.** O motivo da escala pôs no cartão da doca uma palavra vinda de
   `MOTIVOS`, e "Armazenagem" tem quase o dobro de "Granel". Medido: o interior

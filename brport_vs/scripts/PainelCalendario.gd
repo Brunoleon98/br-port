@@ -22,7 +22,11 @@ extends PainelNarrativo
 const LARGURA := 480
 const ALTURA := 0
 
-const COR_HOJE := Color(0.878, 0.604, 0.063)
+# ⚠️ O DIA DE HOJE SAI DO TEMA DESDE 20/09, e a constante que aqui estava era
+# o âmbar de marca: media 2,39:1 sobre este cartão, contra um corte de 4,5. A
+# variação `RotuloAlerta` é esse mesmo âmbar escurecido até 5,06:1
+# (`docs/decisoes/035`), e vive no tema porque o mesmo papel aparece no HUD e
+# na Reputação — três cópias à mão seriam três cores a divergirem.
 # ⚠️ MEDIDO, NÃO REAPROVEITADO. O cinzento-azulado que `Main.gd` usa para
 # texto neutro (0.51, 0.6, 0.706) foi calibrado para o FUNDO ESCURO do jogo —
 # aqui o cartão é branco, e o mesmo tom mede 2,93:1, abaixo até do corte de
@@ -82,7 +86,9 @@ func _celula(dia: Dictionary) -> Control:
 	rotulo.text = "%d%s" % [int(dia["turno"]), marca]
 
 	if bool(dia["hoje"]):
-		rotulo.add_theme_color_override("font_color", COR_HOJE)
+		rotulo.theme_type_variation = "RotuloAlerta"
+		# O TAMANHO FICA AQUI e não na variação: ela é usada a 13, 15 e 17px, e
+		# um tamanho lá dentro encolheria o dia de hoje para o do aviso do HUD.
 		rotulo.add_theme_font_size_override("font_size", 17)
 	elif bool(dia["passado"]):
 		rotulo.add_theme_color_override("font_color", COR_PASSADO)

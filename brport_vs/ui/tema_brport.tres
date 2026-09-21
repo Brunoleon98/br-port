@@ -492,7 +492,13 @@ Button/styles/disabled = SubResource("botao_off")
 Label/colors/font_color = Color(0.11, 0.204, 0.329, 1)
 Label/font_sizes/font_size = 15
 LineEdit/colors/font_color = Color(0.11, 0.204, 0.329, 1)
-LineEdit/colors/font_placeholder_color = Color(0.51, 0.6, 0.706, 1)
+; ⚠️ A SUGESTÃO DO CAMPO É TEXTO QUE O JOGADOR LÊ, e foi o QUINTO endereço do
+; mesmo neutro — nenhuma das quatro vezes anteriores o citava, porque ela não
+; é um rótulo: é um placeholder, e a tela dos nomes abre com os dois à vista
+; ("Cais Mirim" e o campo vazio do jogador). Media 2,70:1 sobre o campo, que é
+; #f0f6ff e não branco puro — a mesma cor mede 2,93 no cartão e 2,70 aqui, que
+; é a razão de se medir contra o fundo REAL e não contra "o painel é branco".
+LineEdit/colors/font_placeholder_color = Color(0.35, 0.42, 0.5, 1)
 LineEdit/colors/caret_color = Color(0.878, 0.604, 0.063, 1)
 LineEdit/font_sizes/font_size = 16
 LineEdit/styles/normal = SubResource("campo_normal")
@@ -500,13 +506,46 @@ LineEdit/styles/focus = SubResource("campo_foco")
 ; Variações de rótulo. Existem porque o tema é o ponto único de estilo: sem
 ; elas, cada painel pintaria o seu destaque à mão e não haveria dois iguais.
 ; RotuloSecao — cabeçalho de bloco (RECEITAS, DESPESAS). Cinza, menor.
+; ⚠️ ESTA LINHA CARREGOU O NEUTRO DO JOGO ATÉ 20/09, E ELE É PARA FUNDO
+; ESCURO. Sobre o cartão branco (0,51/0,6/0,706) media 2,93:1 — abaixo até do
+; corte de texto GRANDE da WCAG, que é 3,0 — e esta variação vive em NOVE
+; painéis: Nomes, Calendário, Docas, Reputação, Caixa, Boletim, contra-oferta,
+; Sr. Ribeiro e todo `secao()` do andaime narrativo. Foi a quarta vez que esta
+; cor mordeu sobre branco, e a primeira em que ela chegou lá pelo TEMA em vez
+; de por um script: as três guardas de contraste que havia percorriam um painel
+; cada (D19 o Construir, D23 o menu-celular, D32 a faixa de mensagem), e
+; nenhuma delas olha para os painéis narrativos. Quem mede os dezanove estados
+; é o D33, e quem os lista é `tools/medir_contraste_ui.gd`.
+; 0,35/0,42/0,50 mede 5,46:1 no cartão branco e 5,03:1 no balão da fala.
 RotuloSecao/base_type = "Label"
-RotuloSecao/colors/font_color = Color(0.51, 0.6, 0.706, 1)
+RotuloSecao/colors/font_color = Color(0.35, 0.42, 0.5, 1)
 RotuloSecao/font_sizes/font_size = 13
 ; RotuloTotal — a linha que o olho tem de encontrar primeiro. Navy, maior.
 RotuloTotal/base_type = "Label"
 RotuloTotal/colors/font_color = Color(0.11, 0.204, 0.329, 1)
 RotuloTotal/font_sizes/font_size = 18
+; RotuloAlerta — o texto que aponta para UM item: o dia de hoje no calendário,
+; a faixa de reputação em que se está, o convite a quitar a parcela no HUD.
+;
+; ⚠️ É O ÂMBAR DO TEMA ESCURECIDO, e a conta de por que é preciso escurecê-lo
+; está registada em `docs/decisoes/035`. O âmbar de marca (0,878/0,604/0,063)
+; mede 2,39:1 sobre branco — pior do que o neutro que esta mesma sessão
+; trocou — e nenhum valor dele passa o AA a 13px sem escurecer. Varrido no
+; matiz dele (H 39,8°, S 0,928): V=0,65 dá 4,18:1 e ainda reprova; V=0,58 dá
+; 5,06:1 com folga de 0,56 sobre o corte, e é este.
+;
+; ⚠️ E ISSO CUSTA A SEPARAÇÃO CONTRA O NAVY À VOLTA — de 5,27:1 para 2,49:1.
+; Está medido e é aceite de propósito: o que separa este âmbar do navy vizinho
+; é o MATIZ (estão a ~180° um do outro), não o valor, e este projeto já pagou
+; para aprender que a telha nunca se separou do chão pelo valor. Quem quiser a
+; separação de volta não muda a cor: muda a MASSA — âmbar de FUNDO com texto
+; navy, que o `BotaoPrimario` já faz e que mede 5,27:1. Isso é mudança de
+; leiaute e fica para quem a quiser pedir.
+;
+; O tamanho NÃO vive aqui: ela é usada a 13, 15 e 17px, e um tamanho na
+; variação faria o dia de hoje encolher para o tamanho do aviso do HUD.
+RotuloAlerta/base_type = "Label"
+RotuloAlerta/colors/font_color = Color(0.58, 0.399, 0.042, 1)
 ; Fala — o balão dos NPCs.
 Fala/base_type = "PanelContainer"
 Fala/styles/panel = SubResource("fala")
