@@ -22,13 +22,17 @@ receita é `git checkout -B <nome> origin/main`, e **antes disso**
 - Confira repositório, branch, `git status`, HEAD e o local contra o remoto
   **antes** de sincronizar. Preserve trabalho não publicado.
 - Leia `CLAUDE.md` (carrega sozinho) e `docs/ESTADO_DO_PROJETO.md`.
-- ⚠️ **O `ESTADO_DO_PROJETO.md` ESTÁ A 8 BYTES DO TETO** — 28.992 de 29.000, e
-  isto já não é folga nenhuma. Ele coube porque 21/09 comprimiu TRÊS vezes: o
-  R1–R5 virou um parágrafo só, o R6/R7/R8 e as duas entregas do dia viraram uma
-  TABELA, e uma linha duplicada saiu. A compressão fácil acabou. **Subir o teto
-  é o passo 3 da ordem que a ferramenta imprime, e é legítimo** — não foi feito
-  em 21/09 por ser decisão, e não por ser errado. Decida, e ponha a razão no
-  commit.
+- ⚠️ **O TETO DO ESTADO SUBIU PARA 30.000 EM 21/09**, a pedido do Bruno, e o
+  arquivo está a **28.992** — mil bytes de folga. O número saiu de uma taxa
+  medida: de 18/09 a 21/09 foram **seis itens fechados e +2.129 bytes**, ou
+  **~355 bytes por item já líquidos de compressão**, portanto isto compra ~3
+  itens. Antes de subir, 21/09 comprimiu TRÊS vezes (o R1–R5 num parágrafo, o
+  R6/R7/R8 e as duas entregas numa tabela, uma linha duplicada apagada): as
+  duas entregas somaram ~1.200 bytes de conteúdo e o arquivo subiu 75.
+  ⚠️ **E o que há para vigiar agora é a CADÊNCIA, não o número.** Se o alarme
+  tocar dentro de dois itens, ele já não está a apanhar crescimento calado — e
+  a subida seguinte é maior, não mais uma de mil. A razão inteira está no
+  comentário do `TETO_ESTADO`, em `tools/conferir_docs.py`.
 - Rode `python3 tools/conferir_docs.py`, `conferir_guardas_ci.py` e
   `conferir_escopo_ui.py` antes de se surpreender no CI.
 

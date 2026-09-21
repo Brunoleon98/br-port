@@ -60,7 +60,31 @@ ARQUIVO = "docs/arquivo"
 # ⚠️ E ELE MEDE O CRESCIMENTO, NÃO O TAMANHO. Se um dia duas entregas seguidas
 # o subirem sem que nada desça, o que está errado não é o número: é o documento
 # a voltar a crescer calado, que é o defeito de 02/09 outra vez.
-TETO_ESTADO = 29000
+#
+# ⚠️ E SUBIU DE 29.000 EM 21/09, a pedido do Bruno e com o estado ABAIXO do
+# teto (28.992 de 29.000, oito bytes). É a primeira vez que a subida não vem de
+# uma entrega bloqueada: veio de o dia ter fechado DOIS itens e a compressão já
+# ter sido feita TRÊS vezes — o R1 a R5 num parágrafo só, o R6/R7/R8 e as duas
+# entregas do dia numa TABELA, e uma linha que duplicava o parágrafo de baixo
+# apagada. As duas entregas somaram ~1.200 bytes de conteúdo e o arquivo subiu
+# **75**: a condição do aviso acima (*"sem que nada desça"*) não se cumpriu, e
+# é por isso que esta subida é legítima.
+#
+# ⚠️ E O NÚMERO SAI DA TAXA MEDIDA, não de um palpite. Do dia em que o teto
+# subiu para 28.000 (18/09, arquivo a 26.863) até hoje foram **seis itens
+# fechados** e +2.129 bytes — **~355 bytes por item, líquidos de compressão**.
+# Mil bytes compram portanto ~3 itens, que é a cadência com que este alarme tem
+# tocado desde 18/09 e a mesma com que a compressão dele tem produzido
+# melhoria de verdade (a tabela dos R lê-se melhor do que os cinco parágrafos
+# que ela substituiu).
+#
+# ⚠️ E A CADÊNCIA É O QUE HÁ PARA VIGIAR DAQUI PARA A FRENTE, mais do que o
+# número. Este projeto já escreveu que *"validador que reprova o que está certo
+# gasta-se depressa — na vez seguinte alguém sobe o limite em vez de olhar"*.
+# Se o alarme voltar a tocar dentro de DOIS itens, o que ele está a apanhar já
+# não é crescimento calado e sim o documento a acompanhar um projeto que tem 39
+# decisões: aí a subida seguinte é maior, e não mais uma de mil.
+TETO_ESTADO = 30000
 
 # `00_INDICE.md` é citado na decisão 001 como um arquivo que NÃO veio no pacote
 # de arte — é prosa sobre uma ausência, não uma referência a resolver. É a
