@@ -187,7 +187,8 @@ func _refresh(reacao: String = "", acao: String = "") -> void:
 	if restantes <= 1:
 		_mood_icone.texture = Icones.CLIENTE_IMPACIENTE
 		desc = "Cliente impaciente — se esta não colar, ele vai embora."
-	_mood_label.text = "%s (%d tentativa(s))" % [desc, restantes]
+	_mood_label.text = "%s (%s)" % [
+		desc, Narrativa.concordar(restantes, "tentativa", "tentativas")]
 
 	# Duas falas dele numa rodada só: o que achou da oferta, e a pressão da
 	# última tentativa. Juntas porque são o mesmo momento — separá-las em dois

@@ -1659,6 +1659,22 @@ tranca isso.
   A correção não foi tirar a palavra: foi plantar o "querido" na abertura, para
   a segunda ocorrência ler como assinatura. Antes de cortar o que soou
   estranho, conte quantas vezes ele aparece — pode faltar, e não sobrar.
+- **⚠️ CONTAGEM QUE O JOGADOR LÊ CONCORDA A FRASE INTEIRA, e zero leva
+  PLURAL.** `Narrativa.concordar(n, um, varios)` recebe as duas frases
+  completas — "dia restante" / "dias restantes" —, e não substantivo e adjetivo
+  em separado: concordá-los dentro da função obrigaria-a a saber género e a
+  distinguir "restante" (que muda) de "esperando" (que não muda), que é um
+  dicionário de português. ⚠️ **O singular é SÓ em `n == 1`**, e o zero é o
+  ÚNICO estado em que um `n <= 1` escrito por distração diverge — com 1, 2 e 32
+  as duas versões dão o mesmo texto (`docs/decisoes/037`).
+  ⚠️ **E A BUSCA PELA PEÇA ACHA MENOS DO QUE A BUSCA PELA FORMA.** A revisão
+  nomeou TRÊS rótulos; o `grep` por `(s)` achou **cinco** (dois deles no
+  `GameState.gd`, que ninguém tinha aberto); e o `grep` pela FORMA achou
+  **oito** — os últimos três escreviam a concordância com um ternário à mão
+  (`"" if n == 1 else "s"`), com saída certa e a regra duplicada em cinco
+  sítios. Num deles a MESMA condição estava escrita duas vezes na mesma
+  expressão, uma para o substantivo e outra para o particípio. Hoje quem
+  pergunta é o bloco **F9** do `teste_fumaca`.
 - **⚠️ QUEIXA DE ESTRANHEZA PODE SER LACUNA, e aí não há rótulo a corrigir.** A
   triagem leu *"é estranho o porto ter dívida mas o jogador começar com
   R$400.000"* como um nome errado e propôs chamar EMPRÉSTIMO ao caixa — que
@@ -2115,6 +2131,23 @@ armadilha de uma função, no comentário dela.
   644, e a bateria morreu com código **126 em 0 s**, que não se parece nada com
   um erro de captura. Ao trocar um arquivo por um temporário, copie o modo
   (`os.chmod(tmp, os.stat(p).st_mode)`) antes do `replace`.
+- **⚠️ RÉGUA QUE VARRE CÓDIGO LÊ O ARQUIVO INTEIRO, NUNCA LINHA A LINHA — e a
+  que não o faz não REPROVA, escapa CALADA.** O `CLAUDE.md` já registava isto
+  para o `grep` de facto em prosa; em 21/09 mordeu dentro da guarda escrita
+  para o caçar. O bloco F9 varria linha a linha e achou **6 das 11** chamadas:
+  o código deste repositório também quebra aos ~79 caracteres, e cinco delas
+  têm a chamada numa linha e os argumentos na seguinte. As cinco não entravam
+  na lista e não havia queixa nenhuma.
+  ⚠️ **E QUEM AS APANHOU FOI A CONTA POR DOIS CAMINHOS**: quantas vezes o nome
+  aparece no texto, contra quantos casos a expressão conseguiu ler, com a
+  asserção a exigir que os dois números sejam iguais. É *"uma régua que
+  responde à mesma pergunta por dois caminhos denuncia-se sozinha"* aplicada a
+  uma VARREDURA — e é ela que faz uma chamada de forma nova reprovar em vez de
+  ser ignorada. Sem ela, a versão errada dizia verde (`docs/decisoes/037`).
+  ⚠️ **E O ARGUMENTO PODE TER PARÊNTESES *E* ASPAS DENTRO.** `int(dia["servidos"])`
+  parte as duas expressões óbvias: a que casa a primeira string a seguir ao
+  parêntesis lê `"servidos"` como argumento, e a que proíbe parênteses salta a
+  chamada inteira. O que se casa são os ÚLTIMOS argumentos antes do fecho.
 - **⚠️ QUEM LÊ UM RESULTADO DE UMA LISTA QUE CRESCE LÊ POR IDENTIDADE, NUNCA
   POR ÍNDICE.** A conclusão do simulador tirava o "jogar mal" de
   `resultados[size - 1]`, o que era o Descuidado enquanto os perfis eram três;

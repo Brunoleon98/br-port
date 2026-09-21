@@ -7,6 +7,7 @@ extends SceneTree
 var _fails := 0
 var GS
 var _t7_completo := false
+var _t9_completo := false
 
 
 func _check(label: String, ok: bool) -> void:
@@ -501,6 +502,10 @@ func _run() -> void:
 	print("=== T8: a fila da faixa de mensagem ===")
 	_t8_fila_de_mensagens()
 	_check("o bloco T8 correu até ao fim", _t8_completo)
+
+	print("=== T9: a concordancia de plural, com o adjetivo junto ===")
+	_t9_concordancia()
+	_check("o bloco T9 correu até ao fim", _t9_completo)
 
 	print("")
 	if _fails == 0:
@@ -1517,3 +1522,54 @@ func _t8_fila_de_mensagens() -> void:
 		FilaDeMensagens.tempo_minimo("a".repeat(500)) <= FilaDeMensagens.TETO)
 
 	_t8_completo = true
+
+
+# ── T9 ──────────────────────────────────────────────────────────────────
+# `Narrativa.concordar(n, um, varios)` — a conta que faltava, e por causa da
+# qual cinco rótulos deste jogo escreviam "dia(s) restante(s)" ao jogador.
+#
+# ⚠️ O ESPERADO É LITERAL, E TEM DE SER. Montá-lo chamando o próprio helper
+# ("é isto que ele dá") seria o espelho que este projeto já registou: o defeito
+# mudaria os dois lados ao mesmo tempo e a asserção passaria contente. Cada
+# string abaixo está escrita à mão, e por isso mexer no helper reprova.
+#
+# ⚠️ E O CASO QUE SEPARA O CERTO DO ERRADO É O ZERO. Em português zero leva
+# PLURAL — "0 dias restantes" —, e um `n <= 1` escrito por distração dá
+# "0 dia restante" sem erro nenhum. Com 1, 2 e 32 as duas versões concordam:
+# é o estado ÚNICO em que elas divergem, e é o mutante M1.
+#
+# ⚠️ E OS PARES TRAZEM ADJETIVO E PARTICÍPIO de propósito, que é o que a ficha
+# da §7.1 pede: um par só com substantivo ("tentativa"/"tentativas") não
+# distingue um helper que concorda a frase de um que concorda só a primeira
+# palavra.
+func _t9_concordancia() -> void:
+	_check("T9: zero leva PLURAL, e é o caso que separa n==1 de n<=1",
+		Narrativa.concordar(0, "dia restante", "dias restantes") == "0 dias restantes")
+	_check("T9: um leva singular",
+		Narrativa.concordar(1, "dia restante", "dias restantes") == "1 dia restante")
+	_check("T9: dois leva plural, adjetivo incluído",
+		Narrativa.concordar(2, "dia restante", "dias restantes") == "2 dias restantes")
+	_check("T9: trinta e dois leva plural",
+		Narrativa.concordar(32, "dia restante", "dias restantes") == "32 dias restantes")
+
+	# O particípio, que é o outro lado do mesmo problema: era ele que o
+	# `GameState` escrevia como "trabalhador(es) alocado(s)".
+	_check("T9: um, com particípio",
+		Narrativa.concordar(1, "trabalhador alocado", "trabalhadores alocados")
+			== "1 trabalhador alocado")
+	_check("T9: dois, com particípio",
+		Narrativa.concordar(2, "trabalhador alocado", "trabalhadores alocados")
+			== "2 trabalhadores alocados")
+	_check("T9: zero, com particípio",
+		Narrativa.concordar(0, "trabalhador alocado", "trabalhadores alocados")
+			== "0 trabalhadores alocados")
+
+	# Substantivo sozinho, que é a forma que o `_plural` do Main já cobria —
+	# fica para provar que a troca não perdeu o caso antigo.
+	_check("T9: substantivo sozinho, um",
+		Narrativa.concordar(1, "tentativa", "tentativas") == "1 tentativa")
+	_check("T9: substantivo sozinho, dois",
+		Narrativa.concordar(2, "tentativa", "tentativas") == "2 tentativas")
+
+	_t9_completo = true
+

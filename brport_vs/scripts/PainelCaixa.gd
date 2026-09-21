@@ -73,13 +73,17 @@ func _bloco_do_dia(rotulo_secao: String, dia: Dictionary) -> void:
 	total("Resultado: %s" % GameState.moeda(resultado))
 
 	var partes := PackedStringArray()
+	# ⚠️ ERAM TRÊS TERNÁRIOS `"" if n == 1 else "s"` À MÃO, e o de cima escrevia
+	# a MESMA condição duas vezes na mesma expressão — uma para o substantivo e
+	# outra para o particípio. A saída estava certa; o que estava errado é a
+	# regra do plural viver em cinco sítios, e num deles ("%d esperando
+	# trabalhador", no PainelDocas) não viver em nenhum.
 	if int(dia["servidos"]) > 0:
-		partes.append("%d barco%s atendido%s" % [int(dia["servidos"]),
-			"" if int(dia["servidos"]) == 1 else "s",
-			"" if int(dia["servidos"]) == 1 else "s"])
+		partes.append(Narrativa.concordar(
+			int(dia["servidos"]), "barco atendido", "barcos atendidos"))
 	if int(dia["perdidos"]) > 0:
-		partes.append("%d perdido%s" % [int(dia["perdidos"]),
-			"" if int(dia["perdidos"]) == 1 else "s"])
+		partes.append(Narrativa.concordar(
+			int(dia["perdidos"]), "perdido", "perdidos"))
 	if not partes.is_empty():
 		paragrafo(" e ".join(partes))
 

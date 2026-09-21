@@ -38,11 +38,16 @@ func setup(_sem_argumentos: Variant = null) -> void:
 			esperando += 1
 	var partes := PackedStringArray()
 	if ocupadas > 0:
-		partes.append("%d ocupada%s" % [ocupadas, "" if ocupadas == 1 else "s"])
+		partes.append(Narrativa.concordar(ocupadas, "ocupada", "ocupadas"))
 	if esperando > 0:
+		# ⚠️ "esperando trabalhador" NÃO CONCORDA, e é de propósito: o gerúndio
+		# é invariável e "trabalhador" aqui é genérico, não uma contagem. Duas
+		# docas à espera não esperam dois trabalhadores nomeados. Se um dia
+		# soar mal, o que muda é a REDAÇÃO e não a concordância — e redação
+		# neste projeto é gate de quem lê em voz alta.
 		partes.append("%d esperando trabalhador" % esperando)
 	if livres > 0:
-		partes.append("%d livre%s" % [livres, "" if livres == 1 else "s"])
+		partes.append(Narrativa.concordar(livres, "livre", "livres"))
 	if not partes.is_empty():
 		paragrafo(" · ".join(partes))
 
