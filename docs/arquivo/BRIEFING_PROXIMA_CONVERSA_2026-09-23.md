@@ -33,10 +33,25 @@ DOIS rótulos cumpre o piso, e o rótulo órfão cai no `Label` base, que mede
 12,58:1 e **passa o contraste**. A contagem passou a ser EXATA, e o preço está
 escrito ao lado dela.
 
-⚠️ **`git fetch origin main <branch>` NÃO ATUALIZA A `main` SE A `<branch>` JÁ
-NÃO EXISTIR.** Aborta com código 128 e NENHUM dos dois refs se mexe. **Peça um
-ref de cada vez**, leia o código de saída **sem cano**, e confirme o HEAD com o
-GitHub.
+**O PR #66 FUNDIU** em 22/09 às 02:54Z, com os três checks verdes — incluindo o
+`Export — APK e Web`, que é o único que o contêiner não consegue provar (o
+`dl.google.com` responde 403 por política). A `main` ficou em `7aae555`, e o
+APK saiu com **33.481.606 bytes**.
+
+⚠️ **E A BRANCH `claude/loving-albattani-iei1b3` NÃO FOI APAGADA NA FUSÃO** —
+continua no remoto, apontada ao commit que a `main` já carrega. Isso inverte o
+aviso de sempre: aqui o `git fetch origin main <branch>` **não** aborta, porque
+a branch existe. A armadilha é a outra, e é a que o `CLAUDE.md` regista como
+cara: **PR fundido não quer dizer branch fundida.** Antes de a reapontar com
+`git checkout -B <nome> origin/main`, pergunte o que fica de fora —
+`git log --oneline origin/main..HEAD` — e recupere pelo remoto em vez de supor.
+Em 22/09 essa lista saiu VAZIA e reapontar foi seguro; **confira outra vez, não
+herde daqui.**
+
+⚠️ **E CONTINUA A VALER QUE `git fetch origin main <branch>` NÃO ATUALIZA A
+`main` SE A `<branch>` NÃO EXISTIR.** Aborta com código 128 e NENHUM dos dois
+refs se mexe. **Peça um ref de cada vez**, leia o código de saída **sem cano**,
+e confirme o HEAD com o GitHub.
 
 ---
 
@@ -96,6 +111,30 @@ os chamadores passam literais. Ficaram **registadas e não corrigidas** na
 não portão de propósito (`tools/arte_orfa.py`): **o destino de cada um é
 decisão do Bruno.** (`art/sprites/` é item à parte — referido só por
 `scenes/proto/`, que o export exclui.)
+
+### (e) Corrigir o corpo do PR #66, que está fundido e errado em cinco pontos
+
+**Pequeno, e é registo e não código** — o Bruno adiou-o de propósito para esta
+conversa. O PR foi escrito pela UI e fundido em 22/09
+(https://github.com/Brunoleon98/br-port/pull/66); edita-se o corpo de um PR
+fundido na mesma. Os números abaixo estão **conferidos contra o repositório**,
+não herdados do texto:
+
+| O que o corpo diz | O que é |
+|---|---|
+| *"Migrated four color overrides"*, e lista CINCO variações | foram **8 chamadas** — 4 `theme_override_colors` na cena mais 4 `add_theme_color_override` no script — para **5 variações** |
+| *"Removed three exceptions"* | foram **sete**: o registo foi de **8 entradas / 11 chamadas** para **1 / 1** (5 entradas na leva 3, 2 na leva 4) |
+| `brport_vs/scripts/contraste_ui.gd` | `brport_vs/scripts/**validation**/contraste_ui.gd` |
+| *"575 lines of state data moved with zero content changes"* | soma as duas levas e apaga a distinção que É o ponto: a 3ª deu **277 linhas com 50 a mudarem só a coluna ORIGEM**; a 4ª deu **298 e nenhuma mudou**, nem a origem, porque aquele verde nunca chegara a ser publicado |
+| *"byte-for-byte identity confirmed by positive control"* | são duas coisas distintas. A identidade byte a byte é das **24 fotos**, provada por hash; o **controle positivo** prova outra coisa — que a bateria VERIA a mudança (mexeu **13 das 24** na leva 3 e **1 das 24** na leva 4) |
+
+⚠️ **E o «from 20 to 24» do `D33_ESTADOS_MIN` está CERTO** como estado final,
+embora tenha passado por 23 pelo caminho. Não o corrija: contagem que narra um
+estado final não é erro, e mexer nela é reescrever registo para ficar bonito.
+
+Os números certos já vivem em `docs/decisoes/043` e `044`, que são a camada que
+manda — **o corpo do PR é conveniência, não fonte.** Se preferir, deixe como
+está e diga isso; o registo não fica errado por causa dele.
 
 ---
 
