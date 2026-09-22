@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — a saída de ré ganha guarda (`047`) e o A4 troca "caixa" por "dinheiro"
+> **Última atualização:** 23/09/2026 — o A4: "dinheiro", lucro/prejuízo, e o boletim medido (`048`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -133,7 +133,7 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Duas leituras (13/09, 19/09)**, notas aplicadas. Em 23/09 ele decidiu: **"caixa" → "dinheiro"** em todo texto de tela, o resultado do dia e da semana lê **lucro/prejuízo** (T10) e a fala diz "barcos esperando". O vencimento diz **hoje / amanhã / daqui a N** (a conta estava um dia adiantada; T11), o boletim diz ENTROU/SAIU e a fala "fecha a semana". Por ler: *"o primeiro mês"* do Sr. Ribeiro e a *"parcela da próxima semana"* do boletim ótimo |
+| **A4** | ⚠️ **Três leituras (13/09, 19/09, 23/09)**, notas aplicadas: **"dinheiro"** em vez de "caixa", **lucro/prejuízo**, vencimento **hoje/amanhã/daqui a N** (T10, T11), falas que não narram a tela, e o boletim **medido** — 2.005 afirmações falsas em 4.000 boletins, hoje zero (`048`) |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
@@ -193,6 +193,7 @@ rodapé (A5), economia de Fase 2 e a madeira podre (A4) — em `HISTORICO.md`.
 | `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
 | `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão. ⚠️ **«Órfão» e «apagável» são duas perguntas**: dos 11, nove tinham propósito escrito (a bancada `AssetPlacementTest`) e ficaram; saíram os 2 SVG de píer, superados por props PNG. Hoje **9 de 107** (`046`) |
+| `brport_vs/tools/medir_boletim.gd` | **A régua do boletim** — herda o simulador e confere cada afirmação da Dona Cida contra o estado, no instante em que ela fala. CI, `BOLETIM OK` (`048`) |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Imprime classes, motivos e o NÍVEL |
@@ -259,7 +260,7 @@ rodapé (A5), economia de Fase 2 e a madeira podre (A4) — em `HISTORICO.md`.
   hoje 5,7% (`034`)
 - Autosave local a cada turno
 - **Sete telas narrativas**: nomes do cais e do jogador (abertura), primeira
-  página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
+  página do diário, Boletim Financeiro semanal com os tons da Dona Cida, as 8
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
 - **E OS TRÊS NPCs TÊM ROSTO** (`020`): nove bustos com pose própria, ao lado

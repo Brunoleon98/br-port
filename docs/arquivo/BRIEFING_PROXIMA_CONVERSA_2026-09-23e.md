@@ -1,4 +1,4 @@
-# BR Port — prompt para a próxima conversa (a saída de ré tem guarda)
+# BR Port — prompt para a próxima conversa (a saída de ré tem guarda, e o A4 fechou as palavras)
 
 **Como usar:** abra uma conversa nova no repositório `Brunoleon98/br-port` e
 cole este texto. Não é preciso anexar o histórico da conversa anterior.
@@ -15,6 +15,13 @@ mutantes, cada um pela guarda certa.
 ⚠️ **E o M3 achou um segundo buraco:** o ramo `de_re` da `silhueta_do_trecho()`
 também não tinha guarda — o §4 e o §f perguntam trecho a trecho e nenhum passa
 esse argumento. **Função com guarda não é ramo com guarda** (`CLAUDE.md`).
+
+**E na mesma sessão o Bruno passou o A4 das palavras** (`048`): "dinheiro" em vez
+de "caixa", lucro/prejuízo, o vencimento em hoje/amanhã/daqui a N, falas que não
+narram a tela, e o **boletim medido** — `tools/medir_boletim.gd` achou **2.005
+afirmações falsas em 4.000 boletins** (uma delas falsa todas as vezes que saía);
+hoje zero, e a régua está no CI. O Sr. Ribeiro deixou de perdoar quem acaba de
+perder o porto.
 
 ---
 
@@ -48,7 +55,7 @@ confira rodando o conferidor antes de escrever o commit.
 |---|---|
 | **A6 — ouvir** | `docs/PROTOCOLO_DE_ESCUTA.md`, começando pela §4: o `sfx_ui_warn` tem 99% da energia abaixo de 500 Hz; o conserto é subir uma harmónica, **nunca o volume** |
 | **A5 — olhar** | as **27** fotos. `camioes.png`, `props3.png` e `escolhido.png` foram-lhe enviadas em 23/09 e **não há registo de que as tenha olhado** |
-| **A4 — duas coisas** | **Aplicado em 23/09, por decisão dele:** "caixa" → "dinheiro" em todo texto de tela (eram 8 sítios, não 3), resultado → **lucro/prejuízo** (`Narrativa.lucro_ou_prejuizo`, T10) e a fala da semana nova diz "barcos esperando". E também: o vencimento diz **"Vence hoje / amanhã / daqui a N dias"** — a conta antiga estava um dia adiantada e o "0 dias daqui" nunca chegava à tela (T11) —, o boletim diz **ENTROU / SAIU**, o fim de fase "Ganho com barcos" e a fala *"fecha a semana"*. **Por ler:** o Sr. Ribeiro diz *"é o primeiro mês"*, e o boletim ótimo fala da *"parcela da próxima semana"*, que é falsa se sair na semana 2 (a parcela é na 4) ou na 4 (já paga) — derivado do `tom_do_boletim()`, não medido. E ele perguntou se tinha mudado a semana: **não** — `TURNS_PER_WEEK` é 8 desde sempre; a 7 foi medida e não aplicada |
+| **A4 — fechado nas palavras** | Aplicado em 23/09 (`048`, T10–T13). Resta a leitura em voz alta das falas reescritas: entrada, resposta e despedida do Sr. Ribeiro, os seis tons do boletim, a derrota para o Arlindo e a vitória dele. A família "semana nova" ficou como ele a aprovou. E ele perguntou se tinha mudado a semana: **não** — `TURNS_PER_WEEK` é 8; a 7 foi medida e não aplicada |
 
 ### (b) O quadro dos props — F1/Opus, sessão própria (duas, a sério)
 
@@ -87,6 +94,9 @@ existem. Uma sessão inteira, e o pedido original avisava contra trânsito e bug
   ação sem tween REPROVA — senão a lista vazia passa (o M5 mediu-o).
 - ⚠️ **Fixture que alarga `GS.docks` repõe-no no fim**, e o bloco mata os
   tweens que criou: os blocos seguintes usam o mesmo `Main`.
+- ⚠️ **Afirmação que É a condição do tom é espelho.** A régua do boletim deu
+  verde com o ramo da parcela arrancado; só reprovou depois de listar uma
+  afirmação que lê um campo que a escolha não lê (`048`).
 
 ---
 

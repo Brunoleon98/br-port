@@ -10,6 +10,8 @@ var _t7_completo := false
 var _t9_completo := false
 var _t10_completo := false
 var _t11_completo := false
+var _t12_completo := false
+var _t13_completo := false
 
 
 func _check(label: String, ok: bool) -> void:
@@ -516,6 +518,14 @@ func _run() -> void:
 	print("=== T11: quando vence a parcela, no painel dela (cena real) ===")
 	_t11_quando_vence()
 	_check("o bloco T11 correu até ao fim", _t11_completo)
+
+	print("=== T12: o tom do boletim so afirma o que a semana confirma ===")
+	_t12_tom_do_boletim()
+	_check("o bloco T12 correu até ao fim", _t12_completo)
+
+	print("=== T13: a despedida do Sr. Ribeiro so vem depois de pagar (cena real) ===")
+	_t13_despedida_do_ribeiro()
+	_check("o bloco T13 correu até ao fim", _t13_completo)
 
 	print("")
 	if _fails == 0:
@@ -1640,6 +1650,70 @@ func _t11_quando_vence() -> void:
 		painel.free()
 	_fresh_playing()
 	_t11_completo = true
+
+
+# ── T12 ─────────────────────────────────────────────────────────────────
+# `Narrativa.tom_do_boletim(resumo)` — que tom a Dona Cida usa, e cada ramo é
+# uma AFIRMAÇÃO da fala que ele escolhe (`docs/decisoes/048`). A régua de
+# escala é `tools/medir_boletim.gd`, que joga 1.000 partidas; este bloco é a
+# de fixture, e existe porque ela apanha o que a outra não tem como montar.
+#
+# ⚠️ CADA FIXTURE É O ESTADO QUE APERTA UM RAMO, e três deles são os raros:
+#   - a parcela paga JÁ NA SEMANA 1 — o único estado que distingue perguntar a
+#     parcela antes ou depois da primeira semana; nas 1.000 partidas medidas
+#     ele nunca acontece, e é por isso que tem de estar aqui;
+#   - a semana anterior EXATAMENTE a zero — a fronteira entre `< 0` e `<= 0`,
+#     que é onde "de novo" e "semana passada não foi assim" se separam;
+#   - a parcela paga numa semana com histórico, que é a semana 4 de quem paga.
+# O esperado é o ID literal, e o resumo leva só as chaves que o `GameState`
+# publica — uma chave a menos rebenta, que é o que o acesso direto quer.
+func _t12_tom_do_boletim() -> void:
+	var casos := [
+		["parcela paga na semana com histórico", -100, true, 50.0, 200, 530000, "ruim_ribeiro"],
+		["parcela paga JÁ na semana 1", -100, false, 0.0, 0, 530000, "ruim_ribeiro"],
+		["primeira semana no vermelho", -100, false, 0.0, 0, 0, "primeira_ruim"],
+		["vermelho depois de vermelho", -100, true, -50.0, -50, 0, "ruim"],
+		["vermelho depois de uma semana a ZERO", -100, true, 50.0, 0, 0, "ruim_virou"],
+		["vermelho depois de azul", -100, true, 50.0, 80, 0, "ruim_virou"],
+		["azul sem histórico", 100, false, 0.0, 0, 0, "neutro"],
+		["azul acima de 30% da média", 1000, true, 100.0, 100, 0, "otimo"],
+		["azul perto da média", 110, true, 100.0, 100, 0, "neutro"],
+	]
+	for c in casos:
+		var resumo := {"resultado": c[1], "tem_historico": c[2], "media_anterior": c[3],
+			"anterior": c[4], "parcela": c[5]}
+		var tom := Narrativa.tom_do_boletim(resumo)
+		_check("T12: %s → %s (deu %s)" % [c[0], c[6], tom], tom == String(c[6]))
+	_t12_completo = true
+
+
+# ── T13 ─────────────────────────────────────────────────────────────────
+# A resposta do Sr. Ribeiro no segundo tempo da cena da parcela. A despedida
+# promete crédito para o porto crescer, e até 23/09 saía também a quem não
+# pagava — e `fail_debt()` encerra a partida. O bloco abre a CENA e lê o texto
+# que ela mostra nos dois caminhos, e o botão que a fecha.
+func _t13_despedida_do_ribeiro() -> void:
+	_fresh_playing()
+	var despedida: String = GS.texto(Narrativa.RIBEIRO_FALAS["despedida"])
+	for caso in [["pagou", true], ["nao_pagou", false]]:
+		var painel = load("res://scenes/panels/DebtPaymentPanel.tscn").instantiate()
+		root.add_child(painel)
+		painel.setup(GS.PARCELA_AMOUNT)
+		painel._mostrar_resposta(String(caso[0]))
+		var texto: String = painel._corpo.text
+		var botao := ""
+		for filho in painel._botoes.get_children():
+			if filho is Button and not filho.is_queued_for_deletion():
+				botao = (filho as Button).text
+		var com_despedida: bool = bool(caso[1])
+		_check("T13: «%s» %s a despedida" % [caso[0], "traz" if com_despedida else "não traz"],
+			texto.contains(despedida) == com_despedida)
+		_check("T13: «%s» fecha com «%s»" % [caso[0], botao],
+			botao.begins_with("Até a próxima") == com_despedida)
+		root.remove_child(painel)
+		painel.free()
+	_fresh_playing()
+	_t13_completo = true
 
 
 func _textos_de(no: Node) -> Array:

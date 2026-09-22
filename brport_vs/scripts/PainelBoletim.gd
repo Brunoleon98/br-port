@@ -56,10 +56,7 @@ func setup(resumo: Dictionary) -> void:
 	# duas vezes — uma para o texto, outra para a expressão — seria a mesma
 	# decisão tomada em dois sítios, que é como dois números do mesmo jogo
 	# divergem.
-	var tom: String = Narrativa.tom_do_boletim(
-		int(_resumo["resultado"]),
-		float(_resumo["media_anterior"]),
-		bool(_resumo["tem_historico"]))
+	var tom: String = Narrativa.tom_do_boletim(_resumo)
 	fala(Narrativa.boletim(tom), Narrativa.retrato("cida", tom))
 
 	botao_fechar("Fechar o boletim")

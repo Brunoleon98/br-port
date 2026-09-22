@@ -528,6 +528,33 @@ jobs:
             exit 1
           fi
 
+      - name: Conferir que o boletim da Dona Cida só afirma o que o estado confirma
+        # Cada tom do boletim AFIRMA coisas sobre a semana — "de novo", "a
+        # parcela" —, e o tom é escolhido por números. Medido em 23/09 com esta
+        # régua: 2.005 afirmações falsas em 4.000 boletins, uma delas falsa em
+        # TODAS as vezes que saía (`docs/decisoes/048`). Ela herda o simulador
+        # e joga as mesmas partidas, mais um perfil que nunca aloca ninguém;
+        # 200 por perfil levam ~11 s.
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs \
+            --script res://tools/medir_boletim.gd -- 200 20260825 \
+            2>&1 | tee /tmp/boletim.txt
+
+          if ! grep -q "BOLETIM OK" /tmp/boletim.txt; then
+            echo "::error::A Dona Cida afirma no boletim o que o estado desmente (veja a saída acima)."
+            exit 1
+          fi
+
+          # A guarda de erro, pela razão (e com os padrões) do passo homónimo
+          # lá em cima.
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/boletim.txt; then
+            echo "::error::A régua do boletim imprimiu erro — a medição não vale."
+            grep -nE "SCRIPT ERROR|at: push_error \(" -A 6 /tmp/boletim.txt
+            exit 1
+          fi
+
       - name: Conferir que o modelo das Parcelas 2 e 3 continua calibrado
         # O projetor tem de RECONSTRUIR a semana em regime que o simulador
         # acabou de medir, nos três perfis, antes de ter licença para falar das

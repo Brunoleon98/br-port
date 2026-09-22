@@ -1777,6 +1777,24 @@ tranca isso.
   achou *"Dois contratos recusados essa semana"* num gatilho que é a queda de
   FAIXA da reputação — nunca dois contratos. Não havia o que corrigir no
   número: ele não saía de lado nenhum.
+  ⚠️ **E O TOM ESCOLHIDO POR UM NÚMERO AFIRMA MAIS DO QUE O NÚMERO.** O
+  boletim escolhia o tom pelo resultado e pela média, e as falas afirmavam a
+  semana ANTERIOR e a PARCELA. Medido em 23/09 com `tools/medir_boletim.gd`:
+  **2.005 afirmações falsas em 4.000 boletins**, e *"a semana passada foi
+  menos pior"* falsa em 856 de 856 — nunca verdade. Cada afirmação de uma fala
+  tem de estar numa condição de quem a escolhe; e na régua, ⚠️ **afirmação
+  que É a condição do tom é espelho** — ela só reprova quando lê um campo que a
+  escolha não leu (`048`).
+- **⚠️ FALA QUE NARRA O QUE A TELA JÁ MOSTROU É FALA QUE NINGUÉM PRECISAVA.**
+  Queixa do Bruno em 23/09 sobre *"Mas vim pessoalmente porque sei que é o
+  primeiro mês"*: o Sr. Ribeiro explicava o próprio gesto, pela segunda vez na
+  mesma cena. Vale para toda fala já escrita e para as que vierem. Os sinais:
+  abrir narrando o evento (*"Perdeu pro Arlindo"*, *"Os números fecharam"*);
+  explicar o motivo do personagem; repetir na resposta o que a entrada ou a
+  despedida já dizem; frase que qualquer personagem diria (*"o banco existe
+  pra isso"*). **Cada linha traz o que a tela não diz** — um detalhe do mundo,
+  uma opinião, um subtexto: *"ele pagava sempre na véspera; dizia que no dia
+  já é tarde"* diz mais sobre o prazo do que *"vim pessoalmente"* (`048`).
 - **⚠️ PALAVRA DE OFÍCIO NUMA FALA É JARGÃO, e nenhuma asserção a vê.** A
   leitura em voz alta de 19/09 apanhou "caixa": ele é o termo certo, está no
   HUD e no painel da parcela — e só quer dizer *dinheiro* para quem já

@@ -84,9 +84,28 @@ const DIARIO_CABECALHO := "Porto Mirim, primeira semana"
 # Três tons, e o gatilho de cada um é o resultado da semana contra a média das
 # anteriores. A faixa do meio existe para a comemoração ser RARA: sem ela,
 # qualquer semana no azul soaria a festa e o tom perderia o valor.
+# ⚠️ CADA TOM AFIRMA MAIS DO QUE O NÚMERO QUE O ESCOLHE, e até 23/09 ninguém
+# conferia as afirmações. Medido com `tools/medir_boletim.gd` (200 partidas por
+# perfil, cinco perfis): o tom ruim dizia "a semana passada foi menos pior" e
+# isso foi falso em **856 de 856** vezes — nunca aconteceu —, "de novo" em 256
+# e "o Sr. Ribeiro não aceita boa vontade" em 252, porque a semana ruim mais
+# comum é a 4, em que o jogador ACABOU de pagar o Sr. Ribeiro. Hoje o tom lê
+# também a semana anterior e a parcela (`tom_do_boletim`), e cada variante só
+# afirma o que a condição dela garante (`docs/decisoes/048`).
+#
+# "De novo": a semana anterior também fechou no vermelho.
 const CIDA_BOLETIM_RUIM := """Conseguimos a façanha de gastar mais do que ganhar. De novo.
-A semana passada foi menos pior, se serve de consolo. Não serve.
-E o Sr. Ribeiro não aceita boa vontade."""
+Dinheiro não estica só porque a gente olha pra ele."""
+
+# A semana anterior NÃO fechou no vermelho — o "de novo" seria mentira.
+const CIDA_BOLETIM_RUIM_VIROU := """Conseguimos a façanha de gastar mais do que ganhar.
+Semana passada não foi assim. Alguém lembra o que a gente fez de diferente?"""
+
+# A semana que pagou a parcela. O vermelho é o Sr. Ribeiro, e reclamar dele
+# seria reclamar do jogador por ter pago — era o que o tom ruim fazia na semana
+# 4 em quase todas as partidas que pagavam.
+const CIDA_BOLETIM_RUIM_RIBEIRO := """Fechou no vermelho, chefia — mas quem levou foi o Sr. Ribeiro.
+Esse vermelho eu assino embaixo."""
 
 # ⚠️ E O PRIMEIRO BOLETIM NÃO TEM COM QUE COMPARAR. O tom RUIM abre a dizer "a
 # semana anterior foi melhor", e na semana 1 não há semana anterior — a Dona
@@ -95,15 +114,22 @@ E o Sr. Ribeiro não aceita boa vontade."""
 # de 60 partidas), quem não aloca ninguém cai SEMPRE (60 de 60, a -R$16.000) —
 # ou seja, é exatamente o principiante que ainda não percebeu a alocação que
 # ouvia a frase errada. A última linha sobrevive porque é a que trabalha.
-const CIDA_BOLETIM_PRIMEIRA_RUIM := """Primeira semana fechada no vermelho, chefia.
-Não tenho com o que comparar — é a primeira. Mas saiu mais do que entrou, e isso eu sei ler.
+# "Não tenho com o que comparar — é a primeira" repetia a linha de cima: a
+# fala dizia duas vezes que era a primeira semana. A parcela aqui é sempre
+# verdade — a semana que a pagasse sairia pelo tom do Sr. Ribeiro, antes deste.
+const CIDA_BOLETIM_PRIMEIRA_RUIM := """Primeira semana, e já no vermelho, chefia.
+Saiu mais do que entrou — isso eu sei ler sem comparar com nada.
 A parcela não espera a gente aprender."""
 
-const CIDA_BOLETIM_NEUTRO := """Os números fecharam. O que entrou cobre o que saiu, e sobrou.
-Nada extraordinário — mas porto que fecha a semana no azul é porto que não para."""
+# "Os números fecharam" era narrar o painel que o jogador tem à frente.
+const CIDA_BOLETIM_NEUTRO := """Entrou mais do que saiu. Sem milagre, sem susto.
+Porto que fecha a semana no azul é porto que não para."""
 
-const CIDA_BOLETIM_OTIMO := """Chefia. Olha esse resultado.
-Não vou fazer festa — porque a parcela da próxima semana vai precisar desse dinheiro todo.
+# "Olha esse resultado" narrava o painel, e "a parcela da próxima semana" foi
+# falsa em 641 de 1.229 boletins: o tom ótimo sai nas semanas 2 a 4, e a
+# parcela só vence na 4 — na 2 ela está a duas semanas, na 4 já foi paga. A
+# fala ficou sem parcela nenhuma, e com o mesmo fecho.
+const CIDA_BOLETIM_OTIMO := """Chefia. Não vou fazer festa, que festa dá azar.
 Mas foi uma boa semana. Pronto, eu disse."""
 
 # Acima de quanto da média das semanas anteriores o resultado conta como
@@ -121,6 +147,8 @@ const CIDA_LIMIAR_OTIMO := 0.30
 # do GDD contra os das constantes. Uma decisão só, um id, duas tabelas a lê-lo.
 const CIDA_BOLETIM := {
 	"ruim": CIDA_BOLETIM_RUIM,
+	"ruim_virou": CIDA_BOLETIM_RUIM_VIROU,
+	"ruim_ribeiro": CIDA_BOLETIM_RUIM_RIBEIRO,
 	"primeira_ruim": CIDA_BOLETIM_PRIMEIRA_RUIM,
 	"neutro": CIDA_BOLETIM_NEUTRO,
 	"otimo": CIDA_BOLETIM_OTIMO,
@@ -147,7 +175,8 @@ const CIDA_LINHAS := {
 	# quem já trabalhou com ele. O termo sai daqui e da fala da semana nova; o
 	# rótulo "Caixa:" do painel da parcela é do mesmo achado e fica registado.
 	"caixa_baixo_quitado": "O dinheiro tá no fim, chefia. Ao menos o Sr. Ribeiro já tá pago.",
-	"perdeu_para_arlindo": "Perdeu pro Arlindo. Mas perdeu perdendo bem — não por desatenção.",
+	# "Perdeu pro Arlindo" narrava o que o jogador acabou de ver acontecer.
+	"perdeu_para_arlindo": "O Arlindo vai contar essa na padaria amanhã. Deixa contar, chefia.",
 	"bom_contrato": "Esse contrato fecha a semana. Anota aí.",
 	# ⚠️ QUATRO VARIANTES, E NENHUMA AFIRMA O QUE A CONDIÇÃO DELA NÃO GARANTE.
 	# A linha única dizia "Barcos na fila, caixa no limite" em TODA semana ≥ 2,
@@ -205,7 +234,9 @@ const ARLINDO_REACOES := {
 }
 
 const ARLINDO_ULTIMA_TENTATIVA := "Minha oferta não expira. A paciência do senhor, sim."
-const ARLINDO_VENCEU := "Sempre bom fazer negócio. Boa sorte pro {portName}."
+# "A casa" é o maneirismo do guia de voz para o próprio porto, e "sempre bom
+# fazer negócio" podia sair da boca de qualquer um.
+const ARLINDO_VENCEU := "A casa agradece a preferência. Boa sorte pro {portName}."
 const ARLINDO_PERDEU := "Dessa vez não. Mas tem mais semanas pela frente, sobrinho."
 
 # ⚠️ AS DUAS ÚLTIMAS ESTAVAM MUDAS DESDE 01/09, e é a QUARTA vez que este
@@ -228,27 +259,41 @@ const ARLINDO_FALAS := {
 # ── SR. RIBEIRO — a cena da parcela ──
 # Cena tensa, sem penalidade mecânica: o que ele traz é peso, não número. O
 # número já está no botão.
+# ⚠️ "VIM PESSOALMENTE PORQUE..." EXPLICAVA O PRÓPRIO GESTO, e a resposta a quem
+# não pagava dizia-o outra vez. A queixa do Bruno em 23/09 foi exatamente esta
+# — "muito óbvia e sem graça" —, e a troca é por um DETALHE que diz o mesmo sem
+# o dizer: o avô pagava na véspera, e é no dia que o Sr. Ribeiro aparece.
 const RIBEIRO_ENTRADA := """Boa tarde{vocativo}. Rivaldo Ribeiro, Banco Porto Mirim.
 Fui amigo do seu avô — uns trinta anos, se não me engano.
-Vim pessoalmente porque o {portName} merece esse respeito."""
+Ele pagava sempre na véspera. Dizia que no dia já é tarde."""
 
 # "a parcela", minúscula: "Parcela" é o rótulo do HUD, e um homem a falar não
 # diz maiúsculas. Era a marca mais clara de manual de instruções no roteiro.
 const RIBEIRO_A_DIVIDA := """A parcela vence hoje: {valor}. Tenho o documento aqui se quiser conferir.
 O Seu Maneco assinou isso. Agora é seu."""
 
-const RIBEIRO_PAGOU := """Perfeito. Eu sabia que dava.
-Guarda esse recibo — o banco não esquece quem paga em dia, e eu também não.
-Se precisar de fôlego em algum momento, me procura antes de ter problema. Não depois."""
+# "Me procura antes de ter problema" repetia a despedida que vem logo a seguir,
+# no mesmo balão.
+const RIBEIRO_PAGOU := """Conferido. O Seu Maneco pagava na véspera — mas o dia também serve.
+O banco não esquece quem paga em dia. Eu também não."""
 
-const RIBEIRO_NAO_PAGOU := """Os juros já estão correndo. Não é punição, é contrato.
-Mas vim pessoalmente porque sei que é o primeiro mês.
-Uma vez eu deixo passar com uma conversa. Na segunda, o contrato fala por mim."""
+# ⚠️ A FALA ANTIGA PROMETIA O QUE O JOGO NÃO FAZ. Vinha do rascunho da Fase 1
+# do GDD, com três parcelas e tolerância — "uma vez eu deixo passar com uma
+# conversa" —, e no VS `fail_debt()` encerra a partida: "Porto perdido". O Sr.
+# Ribeiro dizia que perdoava a quem acabava de perder o porto, e ainda "vim
+# pessoalmente porque sei que é o primeiro mês", o gesto explicado pela segunda
+# vez e um mês que o jogo não tem. Quando bravo ele fica MAIS educado (guia de
+# voz), e é por aí que a frase pesa.
+const RIBEIRO_NAO_PAGOU := """Então o cais passa para o banco. Não é castigo — é o que está no papel.
+Sinto muito. O Seu Maneco passou trinta anos sem atrasar um dia."""
 
+# ⚠️ SÓ DEPOIS DE PAGAR. Ela promete crédito para o porto crescer, e era dita
+# também a quem acabava de o perder (`DebtPaymentPanel._mostrar_resposta`).
+# "O banco existe pra isso" era frase de folheto; o conselho do banqueiro é a
+# regra do crédito, dita por quem a cobra.
 const RIBEIRO_DESPEDIDA := """Uma coisa antes de ir.
-O Seu Maneco me disse uma vez que o maior erro de um portuário é achar que pode resolver tudo sozinho.
-Se precisar de crédito pra crescer — e vai precisar — o banco existe pra isso.
-Não deixa chegar no desespero pra me ligar."""
+O Seu Maneco dizia que o pior erro de um portuário é achar que dá conta de tudo sozinho.
+Quando precisar de crédito, me procure cedo. Crédito pedido no aperto sai mais caro."""
 
 # As cinco por id, pela mesma razão das do Arlindo: é por aqui que a expressão
 # se prende à fala, e é isto que o fumaça percorre.
@@ -286,6 +331,8 @@ const RIBEIRO_FALAS := {
 const EXPRESSOES := {
 	"cida": {
 		"ruim": "preocupada",
+		"ruim_virou": "preocupada",
+		"ruim_ribeiro": "seria",
 		"primeira_ruim": "preocupada",
 		"neutro": "seria",
 		"otimo": "contente",
@@ -365,7 +412,7 @@ static func ribeiro_a_divida(valor: int) -> String:
 	return _gs().texto(RIBEIRO_A_DIVIDA.replace("{valor}", _gs().moeda(valor)))
 
 
-# Qual dos quatro tons da Dona Cida a semana merece. `media_anterior` vem do
+# Qual dos tons da Dona Cida a semana merece. `media_anterior` vem do
 # histórico; na primeira semana não há com que comparar, e aí o que decide é só
 # o sinal do resultado — comparar contra zero seria chamar de excepcional
 # qualquer semana que fechasse no azul.
@@ -373,12 +420,28 @@ static func ribeiro_a_divida(valor: int) -> String:
 # DEVOLVE O ID, e não o texto: quem abre o painel precisa das duas coisas que
 # saem dele — a fala e a cara —, e uma segunda função a repetir esta decisão
 # seria a divergência de sempre. Ver `CIDA_BOLETIM`.
-static func tom_do_boletim(resultado: int, media_anterior: float, tem_historico: bool) -> String:
+#
+# ⚠️ RECEBE O RESUMO INTEIRO desde 23/09, e não três números: as falas afirmam
+# coisas sobre a semana ANTERIOR e sobre a PARCELA, e a escolha que só via o
+# resultado e a média deixava-as sair onde eram falsas (`docs/decisoes/048`).
+# Acesso DIRETO às chaves — é o `resumo_da_semana()` do GameState, e uma chave
+# que falte tem de rebentar em vez de virar zero.
+static func tom_do_boletim(resumo: Dictionary) -> String:
+	var resultado := int(resumo["resultado"])
+	var tem_historico := bool(resumo["tem_historico"])
+	var media_anterior := float(resumo["media_anterior"])
 	if resultado < 0:
+		# ⚠️ A PARCELA VEM PRIMEIRO, antes até da primeira semana: quem a
+		# quitasse já na semana 1 ouviria "a parcela não espera a gente
+		# aprender" com ela paga.
+		if int(resumo["parcela"]) > 0:
+			return "ruim_ribeiro"
 		# A ORDEM IMPORTA: o `tem_historico` tem de ser perguntado ANTES de se
 		# escolher o tom mau, senão a semana 1 recebe a fala que compara com a
 		# semana 0. Era assim até 12/09, e nada reprovava.
-		return "ruim" if tem_historico else "primeira_ruim"
+		if not tem_historico:
+			return "primeira_ruim"
+		return "ruim" if int(resumo["anterior"]) < 0 else "ruim_virou"
 	if not tem_historico:
 		return "neutro"
 	if float(resultado) > media_anterior * (1.0 + CIDA_LIMIAR_OTIMO):

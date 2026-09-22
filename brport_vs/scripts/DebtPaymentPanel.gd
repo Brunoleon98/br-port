@@ -15,8 +15,8 @@ extends PainelNarrativo
 #
 # O DIÁLOGO É EM DOIS TEMPOS. Entrada e dívida antes da decisão; a reação e a
 # despedida DEPOIS dela, no mesmo painel. Abrir um segundo painel para a
-# resposta seria dois cliques onde o momento pede um — e a despedida ("não
-# deixa chegar no desespero pra me ligar") é o que planta a Parcela seguinte.
+# resposta seria dois cliques onde o momento pede um — e a despedida ("quando
+# precisar de crédito, me procure cedo") é o que planta a Parcela seguinte.
 # ============================================================
 
 const LARGURA := 420
@@ -94,13 +94,17 @@ func _on_falhar() -> void:
 
 
 # A decisão já foi tomada e o dinheiro já mudou de mãos: os botões saem para
-# não haver como pagar duas vezes, e entra a resposta dele. A despedida é a
-# mesma nos dois casos — é dela que sai a promessa que a Parcela seguinte vem
-# cobrar.
+# não haver como pagar duas vezes, e entra a resposta dele.
+#
+# ⚠️ A DESPEDIDA SÓ VEM DEPOIS DE PAGAR. Ela era a mesma nos dois casos, e
+# promete crédito para o porto crescer — a quem acabava de o perder, porque
+# `fail_debt()` encerra a partida. O mesmo vale para o botão: "até a próxima"
+# a quem não vai haver próxima (`docs/decisoes/048`).
 func _mostrar_resposta(id: String) -> void:
-	_corpo.text = "%s\n\n%s" % [
-		GameState.texto(String(Narrativa.RIBEIRO_FALAS[id])),
-		GameState.texto(Narrativa.RIBEIRO_FALAS["despedida"])]
+	var pagou := id == "pagou"
+	_corpo.text = GameState.texto(String(Narrativa.RIBEIRO_FALAS[id]))
+	if pagou:
+		_corpo.text += "\n\n" + GameState.texto(Narrativa.RIBEIRO_FALAS["despedida"])
 	# E A CARA TROCA COM ELA. Quem pagou vê a cordial de volta; quem não pagou
 	# vê a grave, que neste personagem é a cordial com a boca em baixo — "quando
 	# bravo fica MAIS educado, não menos" (`gdd/sistemas/voz_personagens.md`).
@@ -110,7 +114,7 @@ func _mostrar_resposta(id: String) -> void:
 	for filho in _botoes.get_children():
 		filho.queue_free()
 	var sair := Button.new()
-	sair.text = "Até a próxima, Sr. Ribeiro"
+	sair.text = "Até a próxima, Sr. Ribeiro" if pagou else "Adeus, Sr. Ribeiro"
 	sair.custom_minimum_size = Vector2(0, TOQUE_MIN)
 	sair.pressed.connect(_fechar)
 	_botoes.add_child(sair)
