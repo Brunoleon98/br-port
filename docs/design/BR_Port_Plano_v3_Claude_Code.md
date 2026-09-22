@@ -1661,6 +1661,15 @@ gaivotão, maria-farinha e tartaruga-verde juvenil, cada um com movimento,
 reação e som ao toque; mar e gaivota também soam em intervalos irregulares.
 O gate visual continua sendo o A5 e o auditivo, o A6.
 
+### ✅ A RUA FICA EM 1,8, E O ITEM 2 FECHOU INTEIRO — a mão dupla (23/09)
+
+**`docs/decisoes/047`.** A "rua parada em 1,8" fecha sem mexer na largura:
+medido, a 1,9 o armazém entra no cotovelo e a 2,0 reprovam o armazém e a
+barreira, pela janela em `my` que o `RUA_RECUO` não toca — e o ganho seria de
+3,6 px. O que faltava era **alguém subir a rua**: dois camiões novos sobem pela
+faixa de dentro, de costas, com oito silhuetas `_retorno`. O item 2 da segunda
+jogada estava feito pela metade desde 07/09.
+
 ### ✅ O ITEM 12 FECHOU — três lotes da vila que não são casa (13/09)
 
 **`docs/decisoes/022`.** A vila ganhou uma **igreja** com torre, uma **praça**

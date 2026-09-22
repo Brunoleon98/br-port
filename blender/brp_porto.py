@@ -79,8 +79,12 @@ CAMINHOES = {
 }
 
 
-def _pecas_do_caminhao(M, eixo, servico):
+def _pecas_do_caminhao(M, eixo, servico, retorno=False):
     """As peças de um caminhão, no eixo pedido ("my" ou "mx") e do serviço dado.
+
+    `retorno` vira a FRENTE para o outro lado: o caminhão que sobe a rua em
+    `-my` e atravessa os cotovelos em `-mx`, na faixa de dentro (ver
+    `ROTA_RETORNO` no `Main.gd`). Ver o bloco da traseira, no fim.
 
     ⚠️ UM CONSTRUTOR, DUAS ORIENTAÇÕES, e é por isso que ele existe. A rua do
     porto é uma ESCADA: corre em `my` dentro de cada degrau e salta 4 unidades
@@ -117,14 +121,21 @@ def _pecas_do_caminhao(M, eixo, servico):
                 else (ao_longo, atravessado, alt))
 
     # A FRENTE aponta para onde ele anda: -y quando corre em `my` (que é o
-    # `+my` do mapa), +x quando corre em `mx`.
-    face_frente = "-y" if ao_longo_de_y else "+x"
+    # `+my` do mapa), +x quando corre em `mx`. Na VOLTA os dois trocam, e a
+    # face da frente passa a ser uma das que esta câmera não vê.
     face_lado = "+x" if ao_longo_de_y else "-y"
     sf = -1.0 if ao_longo_de_y else 1.0          # sinal da frente
+    if retorno:
+        sf = -sf
+    # A face visível que o caminhão MOSTRA de ponta: a frente na ida, a
+    # traseira no retorno. Só uma das duas pontas está de frente para a câmera.
+    face_ponta = "-y" if ao_longo_de_y else "+x"
+    face_frente = None if retorno else face_ponta
 
     chassi, cab_comp = d["chassi"], d["cabine"]
-    p.append(caixa("cam_chassi", loc(0.0, 0.0, z(RODA + 2.0)),
-                   dim(chassi, LARG) + (z(4.0),), M["metal"]))
+    chassi_c = loc(0.0, 0.0, z(RODA + 2.0))
+    chassi_t = dim(chassi, LARG) + (z(4.0),)
+    p.append(caixa("cam_chassi", chassi_c, chassi_t, M["metal"]))
 
     # A cabine encosta na frente do chassi — a posição SAI do comprimento, e
     # não de um número por serviço: quatro chassis diferentes com a cabine
@@ -132,12 +143,13 @@ def _pecas_do_caminhao(M, eixo, servico):
     cab_c = loc(sf * (chassi / 2.0 - cab_comp / 2.0), 0.0, z(RODA + 11.5))
     cab_t = dim(cab_comp, LARG) + (z(15.0),)
     p.append(caixa("cam_cabine", cab_c, cab_t, M[d["cor_cab"]]))
-    p += janela("cam_vidro_f", face_frente, cab_c, cab_t, 0.0, 0.030, 0.30,
-                0.16, M, peitoril=False)
+    if face_frente is not None:
+        p += janela("cam_vidro_f", face_frente, cab_c, cab_t, 0.0, 0.030, 0.30,
+                    0.16, M, peitoril=False)
+        p.append(na_face("cam_grade", face_frente, cab_c, cab_t, 0.0, -0.16,
+                         0.34, 0.08, 0.03, M["metal_claro"], 0.01))
     p += janela("cam_vidro_l", face_lado, cab_c, cab_t, 0.0, 0.030, 0.26,
                 0.15, M, peitoril=False)
-    p.append(na_face("cam_grade", face_frente, cab_c, cab_t, 0.0, -0.16,
-                     0.34, 0.08, 0.03, M["metal_claro"], 0.01))
 
     # A carroçaria enche o que sobra do chassi, encostada à traseira. Os 0,06
     # de folga para a cabine são o que impede as duas de partilharem uma face
@@ -154,6 +166,7 @@ def _pecas_do_caminhao(M, eixo, servico):
         # borda, senão fica dentro e a câmera não o vê.
         cac_t = dim(corpo_comp, LARG + 0.04) + (z(16.0),)
         p.append(caixa("cam_cacamba", corpo_c(12.0), cac_t, M["metal"]))
+        tras_c, tras_t = corpo_c(12.0), cac_t
         p.append(na_face("cam_friso", face_lado, corpo_c(12.0), cac_t, 0.0, 0.0,
                          corpo_comp * 0.92, 0.03, 0.02, M["metal_claro"], 0.005))
         # Duas camadas: a carga rente à borda e a crista mais estreita por
@@ -178,6 +191,7 @@ def _pecas_do_caminhao(M, eixo, servico):
         bau_t = dim(corpo_comp + 0.02, LARG + 0.04) + (z(24.0),)
         bau_c = loc(corpo_x, 0.0, z(RODA + 16.0))
         p.append(caixa("cam_bau", bau_c, bau_t, M["cabine"]))
+        tras_c, tras_t = bau_c, bau_t
         p.append(na_face("cam_friso", face_lado, bau_c, bau_t, 0.0, -0.06,
                          corpo_comp * 0.94, 0.09, 0.02, M["laranja"], 0.005))
         # Duas nervuras verticais: um baú é chapa em painéis, e a esta escala
@@ -193,6 +207,7 @@ def _pecas_do_caminhao(M, eixo, servico):
         bau_t = dim(corpo_comp + 0.10, LARG) + (z(19.0),)
         bau_c = loc(corpo_x + sf * 0.05, 0.0, z(RODA + 13.5))
         p.append(caixa("cam_bau", bau_c, bau_t, M["azul"]))
+        tras_c, tras_t = bau_c, bau_t
         p.append(na_face("cam_faixa", face_lado, bau_c, bau_t, 0.0, 0.04,
                          corpo_comp * 0.92, 0.07, 0.02, M["refletivo"], 0.005))
         # A unidade de frio: pequena de propósito. A 0,16 x 0,50 ela saía como
@@ -207,12 +222,13 @@ def _pecas_do_caminhao(M, eixo, servico):
         # CARRETA. Prancha rasa e o contêiner do pátio em cima — e o contêiner
         # é a peça, não a caixa laranja: sem cantoneira e sem vinco ele lê como
         # um baú cor de tijolo.
-        p.append(caixa("cam_prancha", corpo_c(6.0),
-                       dim(corpo_comp, LARG + 0.02) + (z(3.0),), M["metal"]))
+        prancha_t = dim(corpo_comp, LARG + 0.02) + (z(3.0),)
+        p.append(caixa("cam_prancha", corpo_c(6.0), prancha_t, M["metal"]))
         cont_comp = corpo_comp - 0.16
         cont_t = dim(cont_comp, LARG - 0.02) + (z(15.0),)
         cont_c = corpo_c(15.0)
         p.append(caixa("cam_cont", cont_c, cont_t, M["laranja"]))
+        tras_c, tras_t = cont_c, cont_t
         for i in range(4):
             u = (i - 1.5) * (cont_comp / 4.4)
             p.append(na_face("cam_vinco%d" % i, face_lado, cont_c, cont_t, u,
@@ -243,6 +259,47 @@ def _pecas_do_caminhao(M, eixo, servico):
             xy = loc(sf * ao_longo, atravessado, 0.0)
             p.append(_roda("cam_roda_%d%d" % (i, j), xy[0], xy[1], RODA, 0.12,
                            M["metal"], eixo=eixo_roda))
+
+    # ⚠️ NO RETORNO, A TRASEIRA É A PONTA QUE SE VÊ — e ela nunca tinha sido
+    # desenhada, porque na ida ficava na face escondida (ver o cabeçalho). Sem
+    # nada nela, o caminhão que sobe a rua mostraria de ponta uma caixa lisa,
+    # e o que diz "ele vai no outro sentido" é justamente a traseira: lanternas,
+    # para-choque e a porta. O para-brisa da frente fica na face que ninguém
+    # vê, e por isso não é desenhado.
+    if retorno:
+        fp = face_ponta
+        # O para-choque corre no chassi, que é a peça mais baixa e a mais
+        # recuada de todas.
+        p.append(na_face("cam_parachoque", fp, chassi_c, chassi_t, 0.0, 0.0,
+                         LARG * 0.94, chassi_t[2] * 0.9, 0.03,
+                         M["metal_claro"], 0.004))
+        # ⚠️ AS LANTERNAS DO CONTÊINER VÃO NA PRANCHA, e não no contêiner:
+        # vermelho sobre laranja não se separa (a regra da cor contra o FUNDO),
+        # e sobre a chapa escura da prancha sim.
+        if servico == "conteiner":
+            luz_c, luz_t = corpo_c(6.0), prancha_t
+        else:
+            luz_c, luz_t = tras_c, tras_t
+        for i, su in enumerate((-1, 1)):
+            p.append(na_face("cam_lanterna%d" % i, fp, luz_c, luz_t,
+                             su * (LARG / 2 - 0.09), -luz_t[2] / 2 + z(1.6),
+                             0.13, z(2.6), 0.02, M["faixa"], 0.006))
+        if servico == "granel":
+            # A tampa basculante: a dobradiça em cima é o que a separa de uma
+            # parede de caçamba.
+            p.append(na_face("cam_tampa", fp, tras_c, tras_t, 0.0,
+                             tras_t[2] / 2 - z(1.5), LARG * 0.9, z(1.5), 0.02,
+                             M["metal_claro"], 0.004))
+        else:
+            # Porta de duas folhas: a junta ao meio. No contêiner vão também
+            # as duas barras de fecho, que são a assinatura da porta dele.
+            p.append(na_face("cam_porta", fp, tras_c, tras_t, 0.0, 0.0,
+                             0.035, tras_t[2] * 0.86, 0.02, M["metal"], 0.004))
+            if servico == "conteiner":
+                for i, su in enumerate((-1, 1)):
+                    p.append(na_face("cam_fecho%d" % i, fp, tras_c, tras_t,
+                                     su * 0.11, 0.0, 0.03, tras_t[2] * 0.8,
+                                     0.02, M["laranja_esc"], 0.004))
     return p
 
 
@@ -283,16 +340,22 @@ def _encolher(objetos, k):
 
 
 def _registrar_caminhoes(M, est):
-    """Os oito props: quatro serviços × duas orientações.
+    """Os dezesseis props: quatro serviços × duas orientações × dois sentidos.
 
     O jogo já sabe que um caminhão que anda em `mx` precisa de outra silhueta;
     o que passou a saber é QUAL das quatro. A tabela do `Main.gd` indexa por
     `<motivo>` e `<motivo>_mx`, e é por isso que os nomes se escrevem assim.
     """
+    # ⚠️ E OS OITO DO RETORNO (`_retorno`, `_retorno_mx`): o mesmo construtor, com a
+    # frente virada. Um camião que suba a rua não se obtém espelhando o que
+    # desce — só as faces `+x` e `-y` se veem, e espelhar mandaria o lado para
+    # a face escondida —, por isso é reconstruído, como o de `mx` já era.
     for servico in CAMINHOES:
-        for eixo, sufixo, celulas in (("my", "", (1, 2)), ("mx", "_mx", (2, 1))):
+        for eixo, sufixo, celulas, retorno in (
+                ("my", "", (1, 2), False), ("mx", "_mx", (2, 1), False),
+                ("my", "_retorno", (1, 2), True), ("mx", "_retorno_mx", (2, 1), True)):
             nome = "caminhao_%s%s" % (servico, sufixo)
-            pecas = _pecas_do_caminhao(M, eixo, servico)
+            pecas = _pecas_do_caminhao(M, eixo, servico, retorno)
             _encolher(pecas, ESCALA_CAMINHAO)
             origem(nome)
             est.registrar(nome, pecas, celulas=celulas)

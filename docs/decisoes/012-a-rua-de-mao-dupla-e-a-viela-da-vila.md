@@ -30,6 +30,12 @@ A outra saída era empurrar o `RUA_RECUO` para trás. Entre a calçada e a frent
 da vila há 1,48 de folga, e a vila é medida do cais como tudo o mais: isso mexe
 no enquadramento inteiro, e ficou por fazer.
 
+> ⚠️ **Fechado em 23/09 pela `047`, e as duas frases acima estavam erradas.**
+> O `RUA_RECUO` move a rua em `mx` e a janela que aperta é em `my`: empurrá-lo
+> não destrava nada abaixo de 2,17. E os 1,48 eram até ao FUNDO do lote (à
+> frente da casa são 0,13). A rua fica em 1,8 — a 2,0 ela ganharia 3,6 px na
+> tela — e a mão dupla que faltava era de código: ninguém subia a rua.
+
 **E o camião deixou de andar no meio da rua.** Numa via de mão dupla, o meio é
 a linha — e a linha é o que a faz ler como de mão dupla. Ele anda agora na
 faixa de FORA, a do lado da água: quem segue em `+my` tem o mar à direita, e daí
