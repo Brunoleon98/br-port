@@ -17,8 +17,13 @@ extends PanelContainer
 # trabalhador para o píer não perde nada — o píer também continua sendo alvo.
 # ============================================================
 
-const COR_ESPERANDO := Color(0.961, 0.725, 0.227)
-const COR_CALMA := Color(0.639, 0.792, 0.855)
+# ⚠️ AS DUAS CORES DESTE CARTÃO SAÍRAM DAQUI em 22/09, para o tema
+# (`docs/decisoes/043`). O que era `COR_CALMA` é a variação
+# `TextoDocaProgresso` e o que era `COR_ESPERANDO` é a `TextoDocaProgressoRival`
+# — e os nomes ficam LITERAIS em cada ramo, nunca num dicionário nem por
+# `StringName(var)`: o `conferir_escopo_ui.py` procura o nome depois do `=`, e
+# um nome que ele não veja é um erro de digitação a cair no `Label` base sem
+# uma palavra. Foi o mutante X6 da `042`, e este arquivo tinha-o vivo.
 
 var dock_index: int = -1
 
@@ -62,10 +67,10 @@ func refresh() -> void:
 	_pulsar(false)
 
 	if not esta_construida():
-		_estilo("CartaoDocaObra")
+		theme_type_variation = &"CartaoDocaObra"
 		_valor.text = "—"
 		_progresso.text = "píer por construir"
-		_progresso.add_theme_color_override("font_color", COR_CALMA)
+		_progresso.theme_type_variation = &"TextoDocaProgresso"
 		_trabalhador.text = ""
 		return
 
@@ -73,10 +78,10 @@ func refresh() -> void:
 	var boat = dock["boat"]
 
 	if boat == null:
-		_estilo("CartaoDoca")
+		theme_type_variation = &"CartaoDoca"
 		_valor.text = "—"
 		_progresso.text = "aguardando barco"
-		_progresso.add_theme_color_override("font_color", COR_CALMA)
+		_progresso.theme_type_variation = &"TextoDocaProgresso"
 		_trabalhador.text = ""
 		return
 
@@ -91,13 +96,13 @@ func refresh() -> void:
 	var motivo: String = GameState.MOTIVOS[String(boat["motivo"])]["nome"]
 
 	if sob_oferta:
-		_estilo("CartaoDocaRival")
+		theme_type_variation = &"CartaoDocaRival"
 		_progresso_icone.visible = true
 		# Aqui o motivo sai da frente: quem está a decidir o preço não precisa
 		# de saber o que o navio traz, e as duas coisas juntas com o ícone do
 		# rival não cabem na linha.
 		_progresso.text = "oferta do rival"
-		_progresso.add_theme_color_override("font_color", COR_ESPERANDO)
+		_progresso.theme_type_variation = &"TextoDocaProgressoRival"
 		_trabalhador.text = ""
 		return
 
@@ -109,18 +114,22 @@ func refresh() -> void:
 	else:
 		_progresso.text = "%s  ·  %d/%d turnos" % [
 			motivo, int(boat["progress"]), int(boat["op_turns"])]
-	_progresso.add_theme_color_override("font_color", COR_CALMA)
+	_progresso.theme_type_variation = &"TextoDocaProgresso"
 
 	# Barco parado esperando gente é o que o jogador precisa notar — e é a
 	# única coisa nesta barra que pisca.
 	var esperando: bool = dock["worker_id"] == null and int(boat["progress"]) == 0
-	_estilo("CartaoDocaEspera" if esperando else "CartaoDoca")
+	if esperando:
+		theme_type_variation = &"CartaoDocaEspera"
+	else:
+		theme_type_variation = &"CartaoDoca"
 	_pulsar(esperando)
 
 	if dock["worker_id"] == null:
 		# A COR DESTE RÓTULO VEM DA CENA e não daqui. Até 21/09 os dois ramos
 		# repintavam-no com o MESMO `COR_ESPERANDO` que o `DocaCartao.tscn` já
-		# lhe dá — dois overrides que não mudavam um pixel, e que calavam a
+		# lhe dá (hoje a variação `TextoDocaTrabalhador`) — dois overrides que
+		# não mudavam um pixel, e que calavam a
 		# cena: mexer na cor lá não teria efeito nenhum, sem erro nenhum.
 		_trabalhador.text = "sem trabalhador"
 	else:
@@ -131,9 +140,6 @@ func refresh() -> void:
 			texto += "  ·  toque p/ liberar"
 		_trabalhador.text = texto
 
-
-func _estilo(variacao: String) -> void:
-	theme_type_variation = StringName(variacao)
 
 
 func _pulsar(ligado: bool) -> void:

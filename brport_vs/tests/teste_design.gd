@@ -3856,7 +3856,13 @@ var _d33_completo := false
 # 22 desde 22/09: os dois estados da faixa de mensagem que faltavam — o aviso
 # e o ruim. O terceiro, o BOM, já estava lá e mostrava a cor errada, porque a
 # régua não drenava a fila (`docs/decisoes/042`).
-const D33_ESTADOS_MIN := 20
+#
+# 23 desde a 3ª leva de cor: a doca SOB OFERTA DO RIVAL, que é o quarto e
+# último fundo do cartão da doca. Ele não era alcançado porque o percurso
+# escrevia uma chave morta, e o número ficou a 20 enquanto o comentário já
+# dizia 22 — o piso frouxo é o que deixa um estado sumir sem queixa
+# (`docs/decisoes/043`).
+const D33_ESTADOS_MIN := 23
 
 
 func _d33_contraste_efetivo() -> void:

@@ -1249,7 +1249,7 @@ func _on_worker_selecionado(worker_id: int) -> void:
 # do `trab_parado` no tema.
 #
 # ⚠️ E A COR JÁ NÃO SE PINTA AQUI: os três ramos trocam a VARIAÇÃO, que é o
-# que o `DocaCartao._estilo()` sempre fez com o painel. Enquanto o script
+# que o `DocaCartao.refresh()` sempre fez com o painel. Enquanto o script
 # pintava, o valor do repouso estava escrito DUAS vezes — nesta função e no
 # `Main.tscn` —, e o D33 não via NENHUMA das duas: os dois estados de HUD que
 # o percurso montava têm sempre trabalho parado, logo mediam sempre o âmbar.
@@ -1292,7 +1292,7 @@ func _on_message(text: String, kind: String) -> void:
 # Quem escreve na tela, e só ele. Chamado pela fila quando chega a vez.
 #
 # A VARIAÇÃO por `kind`, e o tema é que sabe a cor — como o
-# `_refresh_titulo_trabalhadores()` ao lado e o `DocaCartao._estilo()`.
+# `_refresh_titulo_trabalhadores()` ao lado e o `DocaCartao.refresh()`.
 #
 # ⚠️ QUATRO LITERAIS, E NÃO UM DICIONÁRIO, e isso é decisão medida. A versão
 # arrumada era um `const VARIACAO_DA_FAIXA := {...}` com um `.get(kind, ...)`;

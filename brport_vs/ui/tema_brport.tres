@@ -692,7 +692,7 @@ TextoPilulaBom/colors/font_color = Color(0.42, 0.85, 0.53, 1)
 TextoPilulaDestaque/base_type = "Label"
 TextoPilulaDestaque/colors/font_color = Color(0.961, 0.725, 0.227, 1)
 ; O rótulo acima dos cartões de trabalhador, nos seus DOIS estados. O script
-; troca a VARIAÇÃO em runtime — como o `DocaCartao._estilo()` já faz com o
+; troca a VARIAÇÃO em runtime — como o `DocaCartao.refresh()` já faz com o
 ; painel — em vez de pintar cor à mão nos três ramos do
 ; `_refresh_titulo_trabalhadores()`.
 ;
@@ -709,7 +709,7 @@ TextoBarraAlerta/colors/font_color = Color(0.851, 0.467, 0.024, 1)
 ; ── A FAIXA DE MENSAGEM, E OS QUATRO ESTADOS DELA ──
 ; O rótulo da faixa pinta-se pelo `kind` que a fila entrega. O script trocava
 ; a COR à mão nos quatro ramos; hoje troca a VARIAÇÃO, como o
-; `_refresh_titulo_trabalhadores()` acima e o `DocaCartao._estilo()` já fazem.
+; `_refresh_titulo_trabalhadores()` acima e o `DocaCartao.refresh()` já fazem.
 ;
 ; ⚠️ SÃO SÓ COR, sem `font_size`: o rótulo mede 13px na cena e o `Pendentes`
 ; ao lado 12, e um tamanho aqui mexeria no leiaute que o D18 e o D22 medem.
@@ -769,3 +769,52 @@ TextoCelular/font_sizes/font_size = 13
 TextoCelularFraco/base_type = "Label"
 TextoCelularFraco/colors/font_color = Color(0.51, 0.6, 0.706, 1)
 TextoCelularFraco/font_sizes/font_size = 13
+; ── O CARTÃO DA DOCA — a 3ª leva das cores declaradas (`docs/decisoes/043`) ──
+;
+; Os quatro rótulos do `DocaCartao`, que até 22/09 eram quatro
+; `theme_override_colors` na cena mais quatro `add_theme_color_override()` no
+; script. São SÓ COR: o `font_size` de cada um fica na cena, porque os quatro
+; medem 12, 19, 13 e 13 px e empacotá-los aqui mexeria no leiaute que o D18
+; mede — é a lição do `RotuloApoio`, e esta migração só devia mexer na COR.
+;
+; ⚠️ ESTE CARTÃO TEM QUATRO FUNDOS, e é o que torna a leva diferente das duas
+; anteriores: `CartaoDoca`, `CartaoDocaEspera`, `CartaoDocaRival` e
+; `CartaoDocaObra`, todos com alfa sobre o MAPA. Medidos os doze pares
+; alcançáveis (quatro papéis × os fundos em que cada um aparece), o pior é o
+; nome a 5,98:1 contra um corte de 4,5 — logo UM tom serve os quatro, e é o
+; que o código já fazia. O que faltava não era cor: era a régua chegar lá.
+;
+; ⚠️ E O BRANCO-GELO E O ÂMBAR REPETEM VALORES DAS PÍLULAS, de propósito e com
+; nome próprio. `TextoPilula` e `TextoPilulaDestaque` vivem na BARRA ESCURA;
+; estes vivem nos quatro cartões, que são outro fundo. Partilhar o nome
+; pouparia duas linhas e prenderia a barra ao cartão: mexer numa cor passaria
+; a mexer na outra sem que nada perguntasse. A regra do cabeçalho do registro
+; de exceções — NENHUM TOM GANHA DOIS FUNDOS — é sobre poder divergir, e duas
+; variações com o mesmo valor só são divergência calada quando a diferença
+; entre elas NÃO é estrutural. Aqui é o fundo, que é o mais estrutural que há.
+;
+; O nome da doca, a 12px. Mede 6,76 / 5,98 / 7,39 / 6,96:1 nos quatro fundos.
+TextoDocaNome/base_type = "Label"
+TextoDocaNome/colors/font_color = Color(0.561, 0.702, 0.816, 1)
+; O valor do contrato, a 19px — a linha que o olho tem de achar primeiro neste
+; cartão, e por isso o corte dela é o de TEXTO GRANDE (3,0). Mede 13,71 /
+; 12,13 / 15,00 / 14,13:1.
+TextoDocaValor/base_type = "Label"
+TextoDocaValor/colors/font_color = Color(0.941, 0.965, 1, 1)
+; A linha do progresso em repouso — o `COR_CALMA` do script, que a cena
+; escrevia uma segunda vez com o mesmo valor. Mede 8,52 / 7,54 / 9,32:1.
+TextoDocaProgresso/base_type = "Label"
+TextoDocaProgresso/colors/font_color = Color(0.639, 0.792, 0.855, 1)
+; ⚠️ E A MESMA LINHA SOB OFERTA DO RIVAL — o `COR_ESPERANDO`, o único ESTADO
+; desta leva. Mede 8,68:1 sobre o cartão vermelho, e ATÉ 22/09 NÃO ERA MEDIDO
+; DE TODO: o percurso do D33 não montava doca sob oferta, e o que o impedia
+; era uma linha morta (`docs/decisoes/043`).
+TextoDocaProgressoRival/base_type = "Label"
+TextoDocaProgressoRival/colors/font_color = Color(0.961, 0.725, 0.227, 1)
+; O rótulo do trabalhador. Mede 8,42:1 com gente alocada e 7,45:1 sem.
+; ⚠️ Tem o mesmo âmbar do `TextoDocaProgressoRival` e não é o mesmo papel: um
+; é a cor FIXA deste rótulo, o outro é um ESTADO que a linha de cima toma. O
+; registro de exceções classificava-os assim — BASE contra ESTADO — e juntá-los
+; num nome só prenderia um ao outro.
+TextoDocaTrabalhador/base_type = "Label"
+TextoDocaTrabalhador/colors/font_color = Color(0.961, 0.725, 0.227, 1)

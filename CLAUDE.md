@@ -1938,6 +1938,27 @@ tranca isso.
   e um erro de digitação cairia no `Label` base **sem uma palavra** — a
   armadilha escrita no cabeçalho do próprio portão. São quatro literais
   `&"..."`, como a `041` já escrevia.
+  ⚠️ **E ONDE A VARREDURA DE TEXTO NÃO ALCANÇA, QUEM ALCANÇA É UMA PERGUNTA EM
+  RUNTIME.** A regra acima diz para escolher a forma do código pelo que a régua
+  vê; esta diz o que fazer quando a forma já está escrita e não se pode mudar.
+  O `DocaCartao` punha a variação do painel por
+  `theme_type_variation = StringName(variacao)` — o mutante X6 da `042` VIVO em
+  produção, e medido: com o nome trocado à mão, o portão do escopo sai
+  **verde**. Nenhuma regex o apanha, porque a expressão é dinâmica. Quem o
+  apanhou foi uma guarda que lê o NÓ MONTADO e pergunta que variação ele está a
+  vestir: a regex lê a intenção, a guarda lê o resultado, e o resultado não tem
+  como ser contornado por forma de código nenhuma (`docs/decisoes/043`).
+  ⚠️ **E ESTADO QUE NÃO MONTA PUBLICA LINHAS PLAUSÍVEIS — é a irmã de «fala
+  disparada não é fala vista», um andar acima.** Ali a régua media o texto
+  errado; aqui ela mede o ESTADO errado, e o caso que o pediu não se queixa: ele
+  monta, mede, e publica linhas verdadeiras sobre outra coisa. O percurso do D33
+  montava a oferta do rival escrevendo `docks[d]["rival_offer"]`, **uma chave
+  que ninguém no projeto lê** — a irmã do `.get(chave, omissão)`, do lado de
+  quem ESCREVE —, e o cartão da doca nunca chegou ao quarto fundo dele. Medido:
+  com a guarda retirada, o mesmo arquivo fica VERDE e a tabela publica o estado
+  «sob oferta do rival» a mostrar a cor CALMA. **Caso que declara um estado
+  prova que o obteve**, e a prova é DERIVADA — vai ver a consequência no nó —,
+  nunca declarada ao lado dele.
   ⚠️ **E O REGISTRO DIZ ONDE A COR É DECLARADA, NUNCA QUEM CONSOME A PEÇA QUE A
   CARREGA.** O stylebox `pilula` tinha duas cores declaradas e CINCO
   consumidores — as quatro pílulas por `styles/panel` e o botão Pausar por

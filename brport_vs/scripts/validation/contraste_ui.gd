@@ -127,6 +127,18 @@ func percurso() -> Array:
 		{"nome": "HUD (faixa ruim)", "cena": "res://scenes/Main.tscn",
 			"estado": {"phase": "debt_payment", "cash": 1000},
 			"acao_vista": [["pay_debt"]], "so_hud": true},
+		# ⚠️ O CARTÃO DA DOCA SOB OFERTA DO RIVAL — o quarto e último fundo do
+		# cartão, e o que faltava à 3ª leva de cor (`docs/decisoes/043`). O
+		# registro de exceções dizia que ele NÃO era alcançado, e dizia bem:
+		# era a afirmação NEGATIVA, que a régua confirma ao não publicar a
+		# linha. O que o impedia era uma chave morta no `montar_caso` — ver o
+		# comentário lá.
+		#
+		# Ele muda os TRÊS rótulos de uma vez, porque o stylebox passa a
+		# `CartaoDocaRival`: o nome vai de 6,76 para 6,96, o valor de 13,71
+		# para 14,13 e o progresso troca de cor, para o âmbar a 8,68:1.
+		{"nome": "HUD (doca sob oferta do rival)", "cena": "res://scenes/Main.tscn",
+			"barco": 0, "so_hud": true},
 	]
 
 
@@ -164,11 +176,22 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		GS.resolve_rival_offer(true)
 	for chave in caso.get("estado", {}):
 		GS.set(chave, caso["estado"][chave])
+	# ⚠️ E A OFERTA DO RIVAL MONTA-SE COMO O JOGO A MONTA, campo a campo. Até
+	# 22/09 esta linha escrevia `GS.docks[d]["rival_offer"] = true` — uma chave
+	# que NINGUÉM no projeto lê, criada em silêncio pelo `Dictionary` (a regra
+	# do `destino[chave] += x` do `CLAUDE.md`). O painel da contra-oferta não
+	# dava por isso porque o `setup()` dele lê o barco; o CARTÃO da doca sim,
+	# e foi por isso que o estado vermelho dele nunca entrou na tabela. O jogo
+	# escreve estes três em `_spawn_boats()`, e é de lá que eles são copiados.
 	if caso.has("barco"):
 		var d: int = caso["barco"]
 		if GS.docks[d].get("boat") == null:
 			GS._spawn_boats()
-		GS.docks[d]["rival_offer"] = true
+		GS.docks[d]["boat"]["rival"] = true
+		GS.pending_rival_dock = d
+		# ⚠️ A FASE FICA EM "playing" DE PROPÓSITO. Pô-la em "rival_offer" faria
+		# o `montar_caso` de um caso SEGUINTE resolver a oferta na abertura, e
+		# o que se quer fotografar aqui é o cartão sob oferta — não o depois.
 	# ⚠️ AÇÃO E NÃO CAMPO. Há estado que nenhum `set()` alcança porque ele é o
 	# RESULTADO de uma regra: `trabalho_parado()` só devolve ZERO depois de
 	# alguém alocar, e alocar é um método. Vem DEPOIS do estado e do barco, que
@@ -222,7 +245,54 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		no.callv("setup", args)
 	if not _acao_vista(no, GS, caso):
 		return null
+	if not _barco_chegou(no, caso):
+		return null
 	return no
+
+
+# ── A OFERTA DO RIVAL CHEGOU MESMO AO CARTÃO? ───────────────────────────────
+#
+# ⚠️ ESTADO QUE NÃO MONTA PUBLICA LINHAS PLAUSÍVEIS, e é assim que ele engana.
+# Até 22/09 o `barco` deste percurso escrevia uma chave que ninguém lia: o
+# caso montava, media, e as quatro linhas do cartão saíam com a cor CALMA —
+# verdadeiras sobre um estado, e o estado errado. Nada se queixou, porque
+# nenhuma guarda perguntava se o que o caso PEDIU tinha acontecido.
+#
+# É a regra do defeito injetado com o sujeito trocado: ali confere-se que o
+# defeito pegou, aqui que o ESTADO pegou. E a pergunta é DERIVADA — o caso diz
+# `barco`, e a guarda vai ver a consequência disso no nó —, nunca declarada,
+# que é a cobertura que mente (`docs/decisoes/039`).
+func _barco_chegou(no: Node, caso: Dictionary) -> bool:
+	if not caso.has("barco"):
+		return true
+	var d: int = caso["barco"]
+	var cartoes: Array = _cartoes_de_doca(no)
+	if cartoes.is_empty():
+		# Painel solto não tem cartão nenhum, e o caso da contra-oferta é um
+		# desses: aí quem responde pelo barco é o `setup()` do próprio painel.
+		return true
+	for c in cartoes:
+		if int(c.get("dock_index")) != d:
+			continue
+		var v := String((c as Control).theme_type_variation)
+		if v == "CartaoDocaRival":
+			return true
+		falhas.append(
+			"%s pediu o barco %d sob oferta e o cartão vestiu «%s»"
+			% [caso["nome"], d, v])
+		return false
+	falhas.append("%s pediu o barco %d e não há cartão para essa doca"
+		% [caso["nome"], d])
+	return false
+
+
+func _cartoes_de_doca(no: Node) -> Array:
+	var out: Array = []
+	if no.get_script() != null and "dock_index" in no and no is PanelContainer:
+		out.append(no)
+	for f in no.get_children():
+		out.append_array(_cartoes_de_doca(f))
+	return out
 
 
 # ── A AÇÃO CUJO EFEITO SE QUER VER ─────────────────────────────────────────
