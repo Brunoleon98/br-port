@@ -1959,6 +1959,30 @@ tranca isso.
   «sob oferta do rival» a mostrar a cor CALMA. **Caso que declara um estado
   prova que o obteve**, e a prova é DERIVADA — vai ver a consequência no nó —,
   nunca declarada ao lado dele.
+  ⚠️ **E O PISO DESSA PROVA PODE PASSAR: a contagem tem de ser EXATA.** A
+  guarda irmã, no painel Construir, contava os rótulos verdes e pedia `>= o
+  número de estruturas compradas`, para não se prender ao desenho do cartão.
+  Medido: tirar a variação de UM dos DOIS rótulos de uma estrutura deixa a
+  contagem a cumprir o piso, e o rótulo órfão cai no `Label` base, que sobre o
+  cartão branco mede 12,58:1 e **passa o contraste**. Nada o via. É a condição
+  que a regra do «segundo defeito» nomeia, cumprida em vez de invocada — o
+  teto aperta-se quando o defeito seguinte cai fora dele E nada de legítimo cai
+  dentro, e uma contagem determinística não tem ruído para a proteger. Escreva
+  ao lado o preço: quem acrescentar um rótulo sobe o número de propósito
+  (`docs/decisoes/044`).
+  ⚠️ **E AGIR PARA ALCANÇAR UM ESTADO CAI DOS DOIS LADOS DO FRAME.** Parece um
+  mecanismo só e são dois opostos: a faixa de mensagem precisa da ação DEPOIS
+  da cena, porque o texto vive numa fila com tempo mínimo; o painel Construir
+  precisa dela ANTES, porque lê o `GameState` enquanto se monta. O `acao_vista`
+  nem sequer serve a um painel — exige que a cena TENHA fila para drenar, e um
+  painel não tem. Antes de reaproveitar o mecanismo que destravou o estado
+  anterior, pergunte de que lado do frame o novo é lido.
+  ⚠️ **E VERIFICAÇÃO QUE SE IA PROMOVER A REGRA GERAL PROCURA-SE PRIMEIRO A
+  EXCEÇÃO.** `comprar_estrutura()` devolve `false` calado, e a tentação era
+  reprovar toda ação do percurso que devolvesse `false`. Medido antes de
+  escrever: o caso do aviso da faixa chama `assign_worker` **para ser
+  recusado** — é a recusa que emite a mensagem que ele mede —, e a regra cega
+  teria reprovado o que está certo.
   ⚠️ **E O REGISTRO DIZ ONDE A COR É DECLARADA, NUNCA QUEM CONSOME A PEÇA QUE A
   CARREGA.** O stylebox `pilula` tinha duas cores declaradas e CINCO
   consumidores — as quatro pílulas por `styles/panel` e o botão Pausar por

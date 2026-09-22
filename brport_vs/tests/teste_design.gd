@@ -3862,7 +3862,11 @@ var _d33_completo := false
 # escrevia uma chave morta, e o número ficou a 20 enquanto o comentário já
 # dizia 22 — o piso frouxo é o que deixa um estado sumir sem queixa
 # (`docs/decisoes/043`).
-const D33_ESTADOS_MIN := 23
+#
+# 24 desde a 4ª leva: o painel Construir COM ESTRUTURA DE PÉ, que é o verde
+# do `UpgradePanel` — a mesma ordem outra vez, o percurso primeiro
+# (`docs/decisoes/044`).
+const D33_ESTADOS_MIN := 24
 
 
 func _d33_contraste_efetivo() -> void:

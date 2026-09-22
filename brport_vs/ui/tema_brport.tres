@@ -818,3 +818,18 @@ TextoDocaProgressoRival/colors/font_color = Color(0.961, 0.725, 0.227, 1)
 ; num nome só prenderia um ao outro.
 TextoDocaTrabalhador/base_type = "Label"
 TextoDocaTrabalhador/colors/font_color = Color(0.961, 0.725, 0.227, 1)
+; ── A ESTRUTURA JÁ CONSTRUÍDA — 4ª leva das cores declaradas (`docs/decisoes/044`)
+;
+; O verde do painel Construir, nos dois rótulos que ele veste quando
+; `tem_estrutura()` é verdadeiro: o título da linha, a 15px, e o "Construída"
+; ao lado do ícone, a 12px. É SÓ COR pela mesma razão das cinco do cartão —
+; os dois tamanhos ficam onde estão, que esta migração não mexe em leiaute.
+;
+; ⚠️ ELE NUNCA TINHA SIDO MEDIDO, e o registro de exceções dizia-o: o percurso
+; abria o painel com o porto em RUÍNAS, logo nenhuma estrutura estava de pé.
+; Era a afirmação NEGATIVA, e conferiu-se contando — 25 linhas no Construir e
+; ZERO delas por `override`. O percurso ganhou o estado ANTES de a cor migrar,
+; que é a ordem que o registro manda. Medido: **5,39:1** sobre o cartão
+; branco, contra um corte de 4,5.
+TextoEstruturaFeita/base_type = "Label"
+TextoEstruturaFeita/colors/font_color = Color(0.102, 0.478, 0.251, 1)

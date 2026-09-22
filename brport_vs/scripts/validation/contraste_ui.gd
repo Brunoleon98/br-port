@@ -139,6 +139,17 @@ func percurso() -> Array:
 		# para 14,13 e o progresso troca de cor, para o âmbar a 8,68:1.
 		{"nome": "HUD (doca sob oferta do rival)", "cena": "res://scenes/Main.tscn",
 			"barco": 0, "so_hud": true},
+		# ⚠️ O PAINEL CONSTRUIR COM ESTRUTURA DE PÉ — o verde que o registro de
+		# exceções dizia não ser alcançado, e dizia bem: o caso acima abre o
+		# painel com o porto em RUÍNAS, logo `tem_estrutura()` é falso em todas
+		# as sete linhas e a cor nunca entrava na tabela (`docs/decisoes/044`).
+		#
+		# As duas não têm `requer` e somam R$330.000; o caixa vai a 900.000
+		# para nenhuma OUTRA linha ficar bloqueada por dinheiro, que mudaria o
+		# texto dos botões e não é o que este caso mede.
+		{"nome": "Construir (com estrutura de pé)",
+			"cena": "res://scenes/panels/UpgradePanel.tscn",
+			"estado": {"cash": 900000}, "estruturas": ["pier_2", "armazem"]},
 	]
 
 
@@ -192,6 +203,24 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		# ⚠️ A FASE FICA EM "playing" DE PROPÓSITO. Pô-la em "rival_offer" faria
 		# o `montar_caso` de um caso SEGUINTE resolver a oferta na abertura, e
 		# o que se quer fotografar aqui é o cartão sob oferta — não o depois.
+	# ⚠️ E A ESTRUTURA CONSTRUÍDA ENTRA PELA PORTA DO JOGADOR, que é comprar.
+	# Vem ANTES da cena porque o painel Construir lê o `GameState` enquanto se
+	# monta — ao contrário da faixa de mensagem, que precisa do `acao_vista`
+	# por o texto dela viver numa FILA. E o `acao_vista` não serviria aqui de
+	# todo: ele exige que a cena TENHA fila, e um painel não tem (é o mutante
+	# X3 da `042`).
+	#
+	# ⚠️ E COMPRA RECUSADA É CALADA — `comprar_estrutura()` devolve `false` sem
+	# se queixar (sem caixa, sem o `requer`, ou em `rival_offer`). Num caso
+	# cujo PROPÓSITO é ter a estrutura de pé, isso é falha; e note-se que a
+	# regra NÃO é geral: o `assign_worker` do caso do aviso devolve `false` de
+	# propósito, porque o que ele mede é justamente a recusa.
+	for eid in caso.get("estruturas", []):
+		if not GS.comprar_estrutura(String(eid)):
+			falhas.append("%s não conseguiu comprar a estrutura %s"
+				% [caso["nome"], eid])
+			return null
+
 	# ⚠️ AÇÃO E NÃO CAMPO. Há estado que nenhum `set()` alcança porque ele é o
 	# RESULTADO de uma regra: `trabalho_parado()` só devolve ZERO depois de
 	# alguém alocar, e alocar é um método. Vem DEPOIS do estado e do barco, que
@@ -247,6 +276,8 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		return null
 	if not _barco_chegou(no, caso):
 		return null
+	if not _estrutura_chegou(no, caso):
+		return null
 	return no
 
 
@@ -284,6 +315,54 @@ func _barco_chegou(no: Node, caso: Dictionary) -> bool:
 	falhas.append("%s pediu o barco %d e não há cartão para essa doca"
 		% [caso["nome"], d])
 	return false
+
+
+# ── A ESTRUTURA COMPRADA CHEGOU MESMO AO PAINEL? ────────────────────────────
+#
+# A irmã do `_barco_chegou`, e escrita ao mesmo tempo de propósito: a `043`
+# aprendeu que um caso que pede um estado e não o obtém publica linhas
+# PLAUSÍVEIS, e a lição não anda sozinha até ao caso seguinte.
+#
+# A pergunta é DERIVADA — o caso diz quantas estruturas comprou, e a guarda vai
+# contar quantos rótulos do painel vestem a variação de «feito».
+#
+# ⚠️ E A CONTAGEM É EXATA, não um piso, e isso foi MEDIDO e não escolhido. A
+# primeira versão pedia `>= pedidas.size()`, para não se prender ao desenho do
+# cartão. Só que o mutante Y3 — UM dos dois rótulos a perder a variação —
+# passava por ela (2 >= 2) E passava o contraste, porque o `Label` base sobre
+# o cartão branco mede 12,58:1. Nada no projeto o via. É a condição que a
+# regra do «segundo defeito» nomeia: aperta-se um teto quando o defeito
+# seguinte cai fora dele e nada de legítimo cai dentro, e aqui a contagem é
+# determinística — duas estruturas de pé dão sempre quatro rótulos.
+#
+# O preço está escrito: quem acrescentar um terceiro rótulo verde por linha
+# reprova aqui, e tem de subir o número DE PROPÓSITO. É o que se quer — a
+# alternativa é a guarda contar o que o painel produz, que é o espelho.
+const MARCAS_POR_ESTRUTURA := 2   # o título da linha e o "Construída" ao lado
+
+
+func _estrutura_chegou(no: Node, caso: Dictionary) -> bool:
+	var pedidas: Array = caso.get("estruturas", [])
+	if pedidas.is_empty():
+		return true
+	var esperado: int = pedidas.size() * MARCAS_POR_ESTRUTURA
+	var marcados := _conta_variacao(no, "TextoEstruturaFeita")
+	if marcados == esperado:
+		return true
+	# Sem "(s)": o bloco F9 do `teste_fumaca` proíbe essa forma no projeto
+	# inteiro, e apanhou esta linha no dia em que ela foi escrita (`037`).
+	falhas.append("%s comprou %d estruturas: esperava %d rótulos verdes e achou %d"
+		% [caso["nome"], pedidas.size(), esperado, marcados])
+	return false
+
+
+func _conta_variacao(no: Node, nome: String) -> int:
+	var n := 0
+	if no is Control and String((no as Control).theme_type_variation) == nome:
+		n += 1
+	for f in no.get_children():
+		n += _conta_variacao(f, nome)
+	return n
 
 
 func _cartoes_de_doca(no: Node) -> Array:

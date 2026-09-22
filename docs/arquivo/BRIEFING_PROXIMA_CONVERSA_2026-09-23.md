@@ -1,4 +1,4 @@
-# BR Port — prompt para a próxima conversa (a 3ª leva de cor saiu)
+# BR Port — prompt para a próxima conversa (as levas 3 e 4 de cor saíram)
 
 **Como usar:** abra uma conversa nova no repositório `Brunoleon98/br-port` e
 cole este texto. Não é preciso anexar o histórico da conversa anterior.
@@ -6,13 +6,14 @@ cole este texto. Não é preciso anexar o histórico da conversa anterior.
 **Modelo:** depende do que o Bruno escolher na §2. Desde que a §7.1 acabou,
 cada conversa começa por uma escolha dele.
 
-**Situação:** a **terceira leva das cores declaradas** fechou em 22/09
-(`docs/decisoes/043`) — o cartão da doca inteiro foi para o tema. Restam
-**3 chamadas em 3 locais**, em duas levas pequenas.
+**Situação:** a **terceira e a quarta levas das cores declaradas** fecharam
+em 22/09 (`docs/decisoes/043` e `044`) — o cartão da doca inteiro e o verde do
+painel Construir foram para o tema. Resta **1 chamada em 1 local**.
 
-⚠️ **E ELA FOI MIGRAÇÃO DE VALORES, como a 1ª.** As 277 linhas dos 22 estados
-antigos saíram com razão, corte, px e texto idênticos; 50 mudaram só a coluna
-ORIGEM. **Nada no jogo mudou de cor.**
+⚠️ **E AS DUAS FORAM MIGRAÇÃO DE VALORES, como a 1ª.** Na 3ª, 277 linhas
+idênticas com 50 a mudarem só a ORIGEM; na 4ª, **298 linhas e nenhuma mudou** —
+nem a origem, porque aquele verde nunca chegara a ser publicado. **Nada no jogo
+mudou de cor.**
 
 ⚠️ **MAS ELA ACHOU UMA CHAVE MORTA.** O percurso do D33 montava a doca sob
 oferta do rival escrevendo `docks[d]["rival_offer"]` — uma chave que NINGUÉM
@@ -26,6 +27,12 @@ a variação por `theme_type_variation = StringName(variacao)`: com o nome
 trocado à mão, o portão do escopo sai **verde**. A função dissolveu-se em
 quatro literais — e a guarda nova apanha-o, porque lê o NÓ em vez do TEXTO.
 
+⚠️ **E NA 4ª O PISO DA GUARDA IRMÃ PASSAVA.** Ela contava os rótulos verdes do
+painel e pedia `>= o número de estruturas compradas`. Tirar a variação de UM dos
+DOIS rótulos cumpre o piso, e o rótulo órfão cai no `Label` base, que mede
+12,58:1 e **passa o contraste**. A contagem passou a ser EXATA, e o preço está
+escrito ao lado dela.
+
 ⚠️ **`git fetch origin main <branch>` NÃO ATUALIZA A `main` SE A `<branch>` JÁ
 NÃO EXISTIR.** Aborta com código 128 e NENHUM dos dois refs se mexe. **Peça um
 ref de cada vez**, leia o código de saída **sem cano**, e confirme o HEAD com o
@@ -38,9 +45,9 @@ GitHub.
 - Confira repositório, branch, `git status`, HEAD e o local contra o remoto
   **antes** de sincronizar. Preserve trabalho não publicado.
 - Leia `CLAUDE.md` (carrega sozinho) e `docs/ESTADO_DO_PROJETO.md`.
-- ⚠️ **O `ESTADO_DO_PROJETO.md` está a 29.354 de 30.000** — **646 de folga**,
-  mais do que os 378 de ontem porque 22/09 fundiu as três linhas das levas de
-  cor numa só. **Quem escrever ali a seguir comprime ANTES, não depois.**
+- ⚠️ **O `ESTADO_DO_PROJETO.md` está a 29.420 de 30.000** — **580 de folga**.
+  22/09 fundiu as quatro linhas das levas de cor numa só para as caber.
+  **Quem escrever ali a seguir comprime ANTES, não depois.**
 - **São DEZ verdes neste contêiner**: as seis suítes do Godot (`TODOS OS
   TESTES PASSARAM`, `DESIGN OK`, `AUDIO OK`, `FUMACA OK`, `REGISTRO OK`,
   `ASSET OK`) e quatro conferidores em Python (`DOCS OK`, `GUARDAS OK`,
@@ -67,12 +74,11 @@ GitHub.
 - **O quadro dos props, 89,6% moldura vazia.** Cortá-lo derruba ~10x a VRAM e
   mexe em *"o centro do quadro é a origem do mundo"* (`029`).
 
-### (c) As duas levas de cor que faltam — 3 chamadas em 3 locais
+### (c) A ÚLTIMA leva de cor — 1 chamada em 1 local
 
 | Leva | Estado |
 |---|---|
-| **verde do `UpgradePanel`** (2 / 2) | **percurso primeiro, cor depois**, e o mecanismo existe: o `acao_vista` da `042` corre métodos sobre a cena montada, e `comprar_estrutura` é um método. ⚠️ **E agora há uma segunda peça** — o `_barco_chegou` da `043` é o molde de como um caso PROVA que obteve o estado que pediu; o estado do verde pede a mesma guarda |
-| **borda do `Worker.gd`** (1 / 1) | é BORDA e não texto, fora do portão de contraste. Pede uma variação `TrabSelecionado`, e uma prova que não seja de contraste. ⚠️ **E ele carrega a segunda forma dinâmica do projeto**: `_aplicar_estilo()` passa o nome a `get_theme_stylebox(prop, TIPO)`, que o portão nem procura |
+| **borda do `Worker.gd`** (1 / 1) | é BORDA e não texto, portanto **fora do portão de contraste**, e a prova dela não pode ser de contraste — isso é **decisão por tomar, e a 044 não a tomou**. Pede uma variação `TrabSelecionado` ao lado das quatro que já existem. ⚠️ **E ele carrega a segunda forma dinâmica do projeto**: `_aplicar_estilo()` passa o nome a `get_theme_stylebox(prop, TIPO)`, que o portão nem procura. ⚠️ **A prova que existe para um stylebox é a da `042`** — pintá-lo de outra cor e ver as razões moverem-se —, e ela precisa de TEXTO por cima; aqui não há. Quem pegar nisto começa por escolher a régua, e isso é F1/Opus |
 
 ⚠️ **RESTAM DUAS FORMAS DINÂMICAS, e nenhuma é cor.** A do `Worker.gd` acima,
 e o `PainelNarrativo.montar()`, que recebe a variação por PARÂMETRO — é API, e

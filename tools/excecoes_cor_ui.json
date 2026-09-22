@@ -83,31 +83,26 @@
     "função dissolveu-se em quatro literais `&\"...\"`. ⚠️ Restam duas formas",
     "dinâmicas no projeto, e nenhuma é cor: o `PainelNarrativo.montar()`",
     "recebe a variação por PARÂMETRO, e o `Worker._aplicar_estilo()` passa o",
-    "nome a `get_theme_stylebox(prop, TIPO)`, que o portão nem procura."
+    "nome a `get_theme_stylebox(prop, TIPO)`, que o portão nem procura.",
+    "",
+    "⚠️ A QUARTA LEVA SAIU EM 22/09, e foi o VERDE DO `UpgradePanel`: o título da",
+    "linha e o «Construída» ao lado do ícone — 2 das 3 chamadas, 2 das 3",
+    "entradas. Hoje são a variação `TextoEstruturaFeita`, e ela mede 5,39:1.",
+    "",
+    "⚠️ E A ORDEM QUE ESTE ARQUIVO MANDA CUMPRIU-SE OUTRA VEZ: o percurso ganhou",
+    "o estado ANTES de a cor migrar. A entrada que saiu dizia que o verde não era",
+    "alcançado, e conferiu-se CONTANDO — 25 linhas no Construir e zero por",
+    "`override`. Prova do lado de lá: os 23 estados antigos saíram com 298 linhas",
+    "e NENHUMA mudou, nem a coluna ORIGEM, porque aquela cor nunca chegara a ser",
+    "publicada. `docs/decisoes/044`.",
+    "",
+    "⚠️ E O `acao_vista` NÃO SERVIA A ESTE PAINEL, ao contrário do que o briefing",
+    "previa. Ele exige que a cena TENHA fila de mensagem para drenar, e um painel",
+    "não tem — é o mutante X3 da `042` a disparar. O que este estado pedia era o",
+    "contrário: uma ação ANTES da cena, porque o painel lê o `GameState` enquanto",
+    "se monta. Daí a chave `estruturas`, que compra pela porta do jogador."
   ],
   "excecoes": [
-    {
-      "arquivo": "scripts/UpgradePanel.gd",
-      "receptor": "titulo",
-      "propriedade": "font_color",
-      "classe": "ESTADO",
-      "chamadas": 1,
-      "cores": [
-        "COR_FEITO = Color(0.102, 0.478, 0.251)"
-      ],
-      "justificativa": "Verde só quando a estrutura já está de pé; nos outros estados o título fica com a cor do tema. ⚠️ O percurso dos 19 estados abre o painel com o porto em RUÍNAS, logo nenhuma estrutura está construída e esta cor nunca entra nos 214 textos medidos. Migrar uma cor que o portão de contraste não alcança seria trocar uma dívida visível por uma invisível: primeiro o percurso ganha o estado, depois a cor vai para o tema."
-    },
-    {
-      "arquivo": "scripts/UpgradePanel.gd",
-      "receptor": "pronto.get_node(\"Texto\")",
-      "propriedade": "font_color",
-      "classe": "ESTADO",
-      "chamadas": 1,
-      "cores": [
-        "COR_FEITO = Color(0.102, 0.478, 0.251)"
-      ],
-      "justificativa": "O rótulo 'Construída' ao lado do ícone, no mesmo verde e pelo mesmo motivo do título acima. Sai na mesma leva que ele, e pelo mesmo percurso que ainda não monta o estado."
-    },
     {
       "arquivo": "scripts/Worker.gd",
       "receptor": "realce",
