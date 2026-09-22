@@ -73,7 +73,7 @@ func _mostrar_balanco() -> void:
 		"O balanço" if _venceu else "Fim de jogo")
 
 	var m: Dictionary = GameState.metrics
-	paragrafo_rolavel("%s\n\nBarcos atendidos: %d\nBarcos perdidos: %d\nOfertas do rival igualadas: %d\nReceita de barcos: %s\nRenda do píer: %s\nReputação final: %d (%s)" % [
+	paragrafo_rolavel("%s\n\nBarcos atendidos: %d\nBarcos perdidos: %d\nOfertas do rival igualadas: %d\nGanho com barcos: %s\nRenda do píer: %s\nReputação final: %d (%s)" % [
 		GameState.texto(_motivo),
 		int(m["boats_served"]), int(m["boats_lost"]), int(m["rival_matched"]),
 		GameState.moeda(int(m["revenue"])),

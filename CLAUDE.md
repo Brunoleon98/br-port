@@ -1790,6 +1790,14 @@ tranca isso.
   `caixa_curto()` — continuava a dizer "a parcela correndo" a quem já a tinha
   pago. "Ao corrigir um, VARRA OS IRMÃOS" com um PREDICADO no lugar do prop, e
   quem o apanhou foi o Bruno a ler, não uma suíte.
+- **⚠️ FRASE QUE VAI AO GATE FOTOGRAFA-SE NO ESTADO EM QUE APARECE.** O A4
+  carregou *"0 dias daqui"* por quatro dias como palavra a decidir, e ela nunca
+  chegava à tela — a conta só dava zero depois do vencimento. Fotografado o
+  painel no dia 32, o defeito era outro: *"1 dia daqui"* no próprio dia em que
+  vence, porque a conta contava os dias que ainda se JOGAM (certo para o "N dias
+  restantes" do HUD) e "daqui" pede a DISTÂNCIA. **O mesmo número serve a uma
+  palavra e mente noutra**; antes de pedir uma decisão de redação, monte o
+  estado e leia o que o jogador lê (`037`, T11).
 - **⚠️ A FRASE PODE SER VERDADEIRA EM PORTUGUÊS E FALSA NESTE MUNDO.** A Dona
   Cida dizia *"porto que fecha no azul é porto que abre segunda-feira"* — bonita,
   idiomática, e **errada: um porto opera 24/7 e não abre na segunda.** Nenhuma

@@ -23,6 +23,25 @@ const LARGURA := 420
 const ALTURA := 0
 
 
+## Quando vence, em palavra de calendário. `faltam` é a DISTÂNCIA até ao dia do
+## vencimento, e não os dias que ainda se jogam: a parcela cai no FIM do dia 32.
+##
+## ⚠️ A CONTA ANTIGA ESTAVA UM DIA ADIANTADA EM TODOS OS DIAS. Ela usava
+## `PARCELA_DUE_TURN - turn + 1`, que é quantos dias AINDA SE JOGAM contando o
+## de hoje — o número certo para o "N dias restantes" do HUD, e o errado para
+## "daqui": no próprio dia 32 o painel dizia "1 dia daqui", no mesmo dia em que o
+## Sr. Ribeiro chega a dizer "a parcela vence hoje". E o "0 dias daqui" que o gate
+## A4 listava nunca chegou à tela — a conta só dá zero depois do dia 32. Troca
+## pedida pelo Bruno em 23/09: hoje, amanhã, e daí para trás "daqui a N dias".
+func _quando_vence(faltam: int) -> String:
+	var dia: int = GameState.PARCELA_DUE_TURN
+	if faltam <= 0:
+		return "Vence hoje, dia %d." % dia
+	if faltam == 1:
+		return "Vence amanhã, dia %d." % dia
+	return "Vence no dia %d — daqui a %s." % [dia, Narrativa.concordar(faltam, "dia", "dias")]
+
+
 func setup(_sem_argumentos: Variant = null) -> void:
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
 	titulo(Icones.PARCELA, "Parcela do Sr. Ribeiro")
@@ -36,15 +55,11 @@ func setup(_sem_argumentos: Variant = null) -> void:
 		botao_fechar("Fechar")
 		return
 
-	var dias: int = maxi(GameState.PARCELA_DUE_TURN - GameState.turn + 1, 0)
 	# O TOTAL é o que sai do caixa hoje — a linha única que o olho procura
 	# primeiro (`RotuloTotal`). O cheio e o abatimento ficam na prosa abaixo:
 	# dois números em destaque seriam nenhum em destaque.
 	total(GameState.moeda(valor))
-	# "daqui" fica FORA da concordância: é advérbio e não muda. O que concorda
-	# é "dia"/"dias", e só isso entra no helper.
-	paragrafo("Vence no dia %d — %s daqui." % [
-		GameState.PARCELA_DUE_TURN, Narrativa.concordar(dias, "dia", "dias")])
+	paragrafo(_quando_vence(GameState.PARCELA_DUE_TURN - GameState.turn))
 	if abatimento > 0:
 		paragrafo(("Cheia são %s. Antecipar abate %s pelos juros que o banco " +
 			"deixa de correr — e esse abatimento encolhe a cada dia.")

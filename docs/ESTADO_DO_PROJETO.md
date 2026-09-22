@@ -133,7 +133,7 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Duas leituras (13/09, 19/09)**, notas aplicadas. Em 23/09 ele decidiu: **"caixa" → "dinheiro"** em todo texto de tela, o resultado do dia e da semana lê **lucro/prejuízo** (T10) e a fala diz "barcos esperando". Falta: o "0 dias daqui" não aparece — no dia 32 lê-se **"1 dia daqui"** —, e a Dona Cida diz *"fecha o mês"* num jogo sem mês |
+| **A4** | ⚠️ **Duas leituras (13/09, 19/09)**, notas aplicadas. Em 23/09 ele decidiu: **"caixa" → "dinheiro"** em todo texto de tela, o resultado do dia e da semana lê **lucro/prejuízo** (T10) e a fala diz "barcos esperando". O vencimento diz **hoje / amanhã / daqui a N** (a conta estava um dia adiantada; T11), o boletim diz ENTROU/SAIU e a fala "fecha a semana". Por ler: *"o primeiro mês"* do Sr. Ribeiro e a *"parcela da próxima semana"* do boletim ótimo |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 

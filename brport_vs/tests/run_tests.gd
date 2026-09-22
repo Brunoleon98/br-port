@@ -9,6 +9,7 @@ var GS
 var _t7_completo := false
 var _t9_completo := false
 var _t10_completo := false
+var _t11_completo := false
 
 
 func _check(label: String, ok: bool) -> void:
@@ -511,6 +512,10 @@ func _run() -> void:
 	print("=== T10: lucro ou prejuizo, e o zero que nao e nenhum ===")
 	_t10_lucro_ou_prejuizo()
 	_check("o bloco T10 correu até ao fim", _t10_completo)
+
+	print("=== T11: quando vence a parcela, no painel dela (cena real) ===")
+	_t11_quando_vence()
+	_check("o bloco T11 correu até ao fim", _t11_completo)
 
 	print("")
 	if _fails == 0:
@@ -1600,4 +1605,48 @@ func _t10_lucro_ou_prejuizo() -> void:
 	_check("T10: a abrir a linha, a primeira letra sobe",
 		Narrativa.lucro_ou_prejuizo(-16000, moeda, true) == "Prejuízo de R$16.000")
 	_t10_completo = true
+
+
+# ── T11 ─────────────────────────────────────────────────────────────────
+# O painel da parcela diz QUANDO ela vence, em palavra de calendário (23/09).
+#
+# ⚠️ A CONTA ANTIGA ESTAVA UM DIA ADIANTADA EM TODOS OS DIAS, e nenhuma
+# asserção a lia: no próprio dia do vencimento o painel dizia "1 dia daqui". Por
+# isso este bloco abre o PAINEL de verdade, pela cena, em três dias — o erro
+# morava no CHAMADOR (`PARCELA_DUE_TURN - turn + 1`), e uma asserção sobre a
+# função sozinha passaria com ele de volta.
+#
+# ⚠️ OS TRÊS DIAS SÃO OS TRÊS RAMOS: hoje, amanhã e "daqui a N". O esperado é
+# literal na forma e só o número do dia sai da constante — o defeito que se
+# caça não mora nela.
+func _t11_quando_vence() -> void:
+	_fresh_playing()
+	var vence: int = GS.PARCELA_DUE_TURN
+	var casos := [
+		[vence, "Vence hoje, dia %d." % vence],
+		[vence - 1, "Vence amanhã, dia %d." % vence],
+		[vence - 2, "Vence no dia %d — daqui a 2 dias." % vence],
+	]
+	for caso in casos:
+		GS.turn = int(caso[0])
+		GS.parcela_paid = false
+		var painel = load("res://scenes/panels/PainelParcela.tscn").instantiate()
+		root.add_child(painel)
+		painel.setup()
+		var textos := _textos_de(painel)
+		_check("T11: no dia %d o painel diz «%s»" % [int(caso[0]), String(caso[1])],
+			textos.has(String(caso[1])))
+		root.remove_child(painel)
+		painel.free()
+	_fresh_playing()
+	_t11_completo = true
+
+
+func _textos_de(no: Node) -> Array:
+	var textos: Array = []
+	if no is Label:
+		textos.append((no as Label).text)
+	for filho in no.get_children():
+		textos.append_array(_textos_de(filho))
+	return textos
 

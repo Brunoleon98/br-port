@@ -37,14 +37,14 @@ func setup(resumo: Dictionary) -> void:
 	# LINHA COM ZERO NÃO ENTRA. O armazém só rende depois de consertado e a
 	# parcela só vence numa semana das quatro; mostrá-las a R$0 nas outras é
 	# ruído que o olho tem de descartar toda semana para chegar ao que mudou.
-	_bloco("RECEITAS", [
+	_bloco("ENTROU", [
 		["Docagens", int(_resumo["docagens"])],
 		["Armazém", int(_resumo["armazem"])],
 		["Pátio de contêineres", int(_resumo["patio"])],
 		["Aluguel de píer", int(_resumo["pier"])],
 	], int(_resumo["receita"]))
 
-	_bloco("DESPESAS", [
+	_bloco("SAIU", [
 		["Salários", int(_resumo["salarios"])],
 		["Manutenção", int(_resumo["manutencao"])],
 		["Parcela", int(_resumo["parcela"])],

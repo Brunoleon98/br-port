@@ -99,7 +99,7 @@ const CIDA_BOLETIM_PRIMEIRA_RUIM := """Primeira semana fechada no vermelho, chef
 Não tenho com o que comparar — é a primeira. Mas saiu mais do que entrou, e isso eu sei ler.
 A parcela não espera a gente aprender."""
 
-const CIDA_BOLETIM_NEUTRO := """Os números fecharam. Receita cobre despesas, sobrou margem.
+const CIDA_BOLETIM_NEUTRO := """Os números fecharam. O que entrou cobre o que saiu, e sobrou.
 Nada extraordinário — mas porto que fecha a semana no azul é porto que não para."""
 
 const CIDA_BOLETIM_OTIMO := """Chefia. Olha esse resultado.
@@ -148,7 +148,7 @@ const CIDA_LINHAS := {
 	# rótulo "Caixa:" do painel da parcela é do mesmo achado e fica registado.
 	"caixa_baixo_quitado": "O dinheiro tá no fim, chefia. Ao menos o Sr. Ribeiro já tá pago.",
 	"perdeu_para_arlindo": "Perdeu pro Arlindo. Mas perdeu perdendo bem — não por desatenção.",
-	"bom_contrato": "Esse contrato fecha o mês. Anota aí.",
+	"bom_contrato": "Esse contrato fecha a semana. Anota aí.",
 	# ⚠️ QUATRO VARIANTES, E NENHUMA AFIRMA O QUE A CONDIÇÃO DELA NÃO GARANTE.
 	# A linha única dizia "Barcos na fila, caixa no limite" em TODA semana ≥ 2,
 	# sem olhar nem uma coisa nem outra: medido em 18/09, na semente padrão ela
