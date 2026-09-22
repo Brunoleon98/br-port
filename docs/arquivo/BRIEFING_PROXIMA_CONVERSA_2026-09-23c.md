@@ -15,6 +15,15 @@ os 9 que têm propósito escrito. O relatório diz **9 de 107**.
 ⚠️ **NADA NO JOGO MUDOU DE PIXEL nas duas.** A leva preservou os valores; a
 triagem tirou arte que nenhuma cena referia.
 
+**A branch tem TRÊS commits**, e o terceiro é só a varredura do fecho — a
+lição que faltava, no `CLAUDE.md`: `git diff --stat` nomeia o arquivo e não o
+que mudou dentro dele, e este projeto descreve diffs arquivo a arquivo.
+
+**E fora do repositório, o corpo do PR #66 foi corrigido** (ele fundiu com seis
+erros de facto: a contagem de chamadas e de exceções, o caminho da régua, o
+«zero content changes», a fusão de duas provas numa, e uma lista de arquivos
+com 9 dos 14). Não há nada a fazer com isso — fica dito para não se reabrir.
+
 ---
 
 ## ⚠️ LEIA ISTO ANTES DE ESCREVER EM QUALQUER DOCUMENTO
