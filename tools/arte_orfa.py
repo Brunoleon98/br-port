@@ -14,6 +14,28 @@ o que fazer com cada um — entra no jogo, ou sai do catálogo — é decisão d
 Bruno, não de quem varre. O `--reprovar` existe para o dia em que essa decisão
 estiver tomada: a partir daí, um órfão NOVO passa a ser vermelho.
 
+⚠️ «ÓRFÃO» E «APAGÁVEL» SÃO DUAS PERGUNTAS, e esta varredura só faz a
+primeira. Medido em 22/09, ao triar os onze que ela relatava: **nove deles
+têm propósito ESCRITO** — os oito de `art/brp/` e o `doca_concreto` servem a
+`scenes/tests/AssetPlacementTest.tscn`, que esta ferramenta exclui DE
+PROPÓSITO (teste não põe arte no jogo), e o `art/brp/README.md` até nomeia a
+condição para voltarem: reabrir a `docs/decisoes/001`. Só DOIS não eram
+referidos por coisa nenhuma — os SVG de píer da raiz, superados por props PNG
+do mesmo nome —, e foram esses que saíram (`docs/decisoes/046`). Quem ler o
+relatório e contar apagáveis conta a mais.
+
+⚠️ E APAGAR UM DOS NOVE REPROVA O `asset_validator`. Eles estão no
+`BRP_EXPORT_MANIFEST.json`, e o validador diz «no manifest e não no disco»:
+medido com o defeito posto, código 1 e nove problemas. A entrada do manifest
+sai junto com o arquivo, ou não sai nenhum dos dois.
+
+⚠️ E DISCO NÃO É PACOTE, que é o número que decide se vale a pena. Os onze
+mediam 687 KB em disco e **282 KB no `.pck`** (4,49%), porque o que embarca é
+o `.ctex` comprimido. Eles embarcam mesmo sem serem referidos, porque o
+preset é `export_filter="all_resources"` e o export não faz tree-shaking — o
+`exclude_filter` tira a CENA de teste e não tira a ARTE que ela usa. Os dois
+que saíram valiam 3.516 bytes: isto foi arrumação, não tamanho.
+
 ⚠️ E OS COMENTÁRIOS SÃO CORTADOS ANTES DA BUSCA, que é a armadilha desta
 varredura e já mordeu neste repositório: a lição escrita sobre um prop órfão
 NOMEIA o prop, e uma busca ingénua acha o nome no comentário que explica que

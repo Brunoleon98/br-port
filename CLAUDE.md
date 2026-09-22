@@ -1026,6 +1026,21 @@ tranca isso.
   `doca_concreto`. É relatório e não portão, porque o destino de cada um é
   decisão do Bruno. Ao acrescentar um prop, acrescente também quem o mostra — e
   a asserção de que ele chega à tela.
+  ⚠️ **E «ÓRFÃO» E «APAGÁVEL» SÃO DUAS PERGUNTAS — o relatório só faz a
+  primeira.** Triados em 22/09, os onze eram TRÊS grupos e não uma pilha:
+  **nove tinham propósito ESCRITO** (os oito de `art/brp` e o `doca_concreto`
+  servem a `scenes/tests/AssetPlacementTest.tscn`, que a ferramenta exclui de
+  propósito, e o `art/brp/README.md` nomeia a condição de regresso — reabrir a
+  `001`), e só DOIS não eram referidos por nada. Saíram esses dois. Quem ler o
+  relatório e contar apagáveis conta a mais (`docs/decisoes/046`).
+  ⚠️ **E DISCO NÃO É PACOTE: os onze mediam 687 KB em disco e 282 KB no
+  `.pck`**, porque o que embarca é o `.ctex` comprimido. ⚠️ **E eles embarcam
+  MESMO SEM SEREM REFERIDOS** — o preset é `export_filter="all_resources"` e o
+  Godot não faz tree-shaking: o `exclude_filter` tira a CENA de teste e não
+  tira a ARTE que ela usa. Antes de estimar o que apagar arte poupa, exporte o
+  `.pck` das duas maneiras; e apagar um dos nove reprova o `asset_validator`
+  («no manifest e não no disco»), logo a entrada do manifest sai junto ou não
+  sai nenhum dos dois.
 - **Peça invisível conta como peça, e é por isso que contar não chega.** A
   boia levou uma corrente que ficou DENTRO do cone do corpo: o contador dizia
   cinco, o render mostrava quatro. Contagem de peças só vale depois de olhar
