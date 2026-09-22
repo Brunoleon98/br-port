@@ -155,8 +155,8 @@ const CIDA_LINHAS := {
 	# saía com o cais vazio e R$384.000 em caixa. Os dois critérios já existem
 	# — `docas_esperando()` e `caixa_curto()` —, e é de propósito que saem do
 	# GameState em vez de serem recontados aqui.
-	"semana_nova_fila_curto": "Semana nova. Barcos na fila, dinheiro curto. Dia típico.",
-	"semana_nova_fila_folgado": "Semana nova. Barcos na fila e dinheiro no caixa. Aproveita.",
+	"semana_nova_fila_curto": "Semana nova. Barcos esperando, dinheiro curto. Dia típico.",
+	"semana_nova_fila_folgado": "Semana nova. Barcos esperando e dinheiro no caixa. Aproveita.",
 	# ⚠️ E A PARCELA SÓ SE MENCIONA SE ELA ESTIVER MESMO PENDENTE. É a mesma
 	# armadilha que a `caixa_baixo_quitado` existe para tapar, e ela estava por
 	# tapar aqui: quem quita cedo — `pagar_parcela_adiantado()` — ouviria "a
@@ -456,6 +456,29 @@ static func por_extenso(n: int) -> String:
 ## fala no feminino e quem o chama é que sabe se serve.
 static func concordar(n: int, um: String, varios: String) -> String:
 	return "%d %s" % [n, um if n == 1 else varios]
+
+
+## O resultado de um dia ou de uma semana, na palavra de quem não é da finança:
+## "lucro de R$12.000", "prejuízo de R$16.000" — e o ZERO, que não é nenhum dos
+## dois. Pedido do Bruno no gate A4 (23/09): "caixa" virou "dinheiro" e, onde
+## coubesse, "resultado" virou lucro ou prejuízo.
+##
+## ⚠️ O PREJUÍZO LEVA O VALOR SEM SINAL. A palavra já diz que saiu dinheiro;
+## "prejuízo de -R$16.000" seria dizê-lo duas vezes, e uma dupla negação lida
+## depressa inverte o sentido. E o zero não é "lucro de R$0": um dia sem barco
+## e sem custo não ganhou nada, e escrever lucro ali é afirmar o que não houve.
+##
+## A moeda entra como `Callable` porque esta classe é alcançada a partir de
+## `--script` e não pode chamar o autoload pelo nome (`CLAUDE.md`); quem chama
+## passa `GameState.moeda`, e o teste passa a do `GameState` que tem à mão.
+## `inicio` põe a primeira letra em maiúscula, para quando a frase abre a linha.
+static func lucro_ou_prejuizo(valor: int, moeda: Callable, inicio := false) -> String:
+	var t := "nem lucro nem prejuízo"
+	if valor > 0:
+		t = "lucro de %s" % moeda.call(valor)
+	elif valor < 0:
+		t = "prejuízo de %s" % moeda.call(-valor)
+	return _maiuscula(t) if inicio else t
 
 
 ## Só a PRIMEIRA letra. O `capitalize()` do Godot maiusculiza cada palavra, e

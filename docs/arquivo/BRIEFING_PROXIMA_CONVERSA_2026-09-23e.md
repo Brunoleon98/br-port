@@ -48,7 +48,7 @@ confira rodando o conferidor antes de escrever o commit.
 |---|---|
 | **A6 — ouvir** | `docs/PROTOCOLO_DE_ESCUTA.md`, começando pela §4: o `sfx_ui_warn` tem 99% da energia abaixo de 500 Hz; o conserto é subir uma harmónica, **nunca o volume** |
 | **A5 — olhar** | as **27** fotos. `camioes.png`, `props3.png` e `escolhido.png` foram-lhe enviadas em 23/09 e **não há registo de que as tenha olhado** |
-| **A4 — três palavras, QUATRO sítios** | `"Caixa:"` está em `DebtPaymentPanel.gd:68` **e em `UpgradePanel.gd:84`** (o briefing anterior nomeava um); `"dinheiro no caixa"` (`Narrativa.gd:159`, com cópia na fixture `contraste_ui.gd:437`); `"0 dias daqui"` (`PainelParcela.gd:46`). Com as palavras dele, aplicar é Sonnet, ~30 min |
+| **A4 — duas coisas** | **Aplicado em 23/09, por decisão dele:** "caixa" → "dinheiro" em todo texto de tela (eram 8 sítios, não 3), resultado → **lucro/prejuízo** (`Narrativa.lucro_ou_prejuizo`, T10) e a fala da semana nova diz "barcos esperando". **Falta:** (1) o "0 dias daqui" NÃO aparece — no dia 32 o painel diz **"1 dia daqui"** no dia em que vence (proposta: "vence hoje" / "vence amanhã"); (2) a Dona Cida diz *"Esse contrato fecha o mês"* num jogo sem mês. E ele perguntou se tinha mudado a semana: **não** — `TURNS_PER_WEEK` é 8 desde sempre; a 7 foi medida e não aplicada |
 
 ### (b) O quadro dos props — F1/Opus, sessão própria (duas, a sério)
 

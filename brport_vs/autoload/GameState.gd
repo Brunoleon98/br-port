@@ -1232,7 +1232,7 @@ func projecao_do_dia() -> Dictionary:
 
 func _check_end() -> void:
 	if cash < 0:
-		_end_game(false, "Caixa negativo. Operação inviável.")
+		_end_game(false, "O dinheiro acabou. Operação inviável.")
 		return
 	if turn > TURNS_TOTAL:
 		_end_game(parcela_paid, "Você quitou a parcela e manteve o porto no azul!" if parcela_paid else "Prazo encerrado com a parcela em aberto.")
@@ -1260,7 +1260,7 @@ func pay_debt() -> void:
 	if phase != "debt_payment":
 		return
 	if cash < PARCELA_AMOUNT:
-		message.emit("Caixa insuficiente para pagar a parcela.", "bad")
+		message.emit("Dinheiro insuficiente para pagar a parcela.", "bad")
 		return
 	# `advance_turn()` já fez a virada do dia antes de suspender em
 	# "debt_payment", então o dia em que a dívida venceu é `dia_anterior` —

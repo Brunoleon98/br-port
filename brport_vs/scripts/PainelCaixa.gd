@@ -29,7 +29,7 @@ var _resumo: Dictionary = {}
 func setup(resumo: Dictionary) -> void:
 	_resumo = resumo
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
-	titulo(Icones.CAIXA, "Resumo do Caixa")
+	titulo(Icones.CAIXA, "Dinheiro do dia")
 
 	_bloco_do_dia("ONTEM", _resumo["ontem"] as Dictionary)
 	fio()
@@ -70,7 +70,7 @@ func _bloco_do_dia(rotulo_secao: String, dia: Dictionary) -> void:
 
 	var resultado := receita - despesa
 	fio()
-	total("Resultado: %s" % GameState.moeda(resultado))
+	total(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true))
 
 	var partes := PackedStringArray()
 	# ⚠️ ERAM TRÊS TERNÁRIOS `"" if n == 1 else "s"` À MÃO, e o de cima escrevia

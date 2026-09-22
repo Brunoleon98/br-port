@@ -53,17 +53,17 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	fio()
 	var falta: int = valor - int(GameState.cash)
 	if falta > 0:
-		paragrafo("No caixa: %s. Faltam %s."
+		paragrafo("Seu dinheiro: %s. Faltam %s."
 			% [GameState.moeda(int(GameState.cash)), GameState.moeda(falta)])
 		botao_fechar("Fechar")
 		return
 
-	paragrafo("No caixa: %s — já dá para quitar agora."
+	paragrafo("Seu dinheiro: %s — já dá para quitar agora."
 		% GameState.moeda(int(GameState.cash)))
 	# A TROCA FICA ESCRITA, porque ela é a decisão. O abatimento não paga o
 	# custo de oportunidade: o que sai daqui é dinheiro que compraria estrutura,
 	# e é isso que faz disto uma escolha em vez de um botão óbvio.
-	paragrafo(("O mesmo caixa também constrói: %s são %s.")
+	paragrafo(("O mesmo dinheiro também constrói: %s são %s.")
 		% [GameState.moeda(valor), _o_que_isso_compra(valor)])
 
 	var quitar := Button.new()

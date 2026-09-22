@@ -434,7 +434,7 @@ func _amostra(qual: String) -> Variant:
 	match qual:
 		"historico":
 			return [
-				{"texto": "Semana nova. Barcos na fila e dinheiro no caixa."},
+				{"texto": "Semana nova. Barcos esperando e dinheiro no caixa."},
 				{"texto": "O píer 2 ficou pronto."},
 				{"texto": "Um barco foi embora sem ser atendido."},
 			]

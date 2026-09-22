@@ -8,6 +8,7 @@ var _fails := 0
 var GS
 var _t7_completo := false
 var _t9_completo := false
+var _t10_completo := false
 
 
 func _check(label: String, ok: bool) -> void:
@@ -506,6 +507,10 @@ func _run() -> void:
 	print("=== T9: a concordancia de plural, com o adjetivo junto ===")
 	_t9_concordancia()
 	_check("o bloco T9 correu até ao fim", _t9_completo)
+
+	print("=== T10: lucro ou prejuizo, e o zero que nao e nenhum ===")
+	_t10_lucro_ou_prejuizo()
+	_check("o bloco T10 correu até ao fim", _t10_completo)
 
 	print("")
 	if _fails == 0:
@@ -1572,4 +1577,27 @@ func _t9_concordancia() -> void:
 		Narrativa.concordar(2, "tentativa", "tentativas") == "2 tentativas")
 
 	_t9_completo = true
+
+
+# ── T10 ─────────────────────────────────────────────────────────────────
+# `Narrativa.lucro_ou_prejuizo()` — o "Resultado" do resumo do dia e do boletim
+# da semana, trocado a pedido do Bruno no gate A4 (23/09).
+#
+# ⚠️ O ESPERADO É LITERAL, pela mesma razão do T9: montá-lo chamando o helper
+# seria o espelho. E cada caso aperta um defeito diferente, que é o que as três
+# asserções existem para separar: o ZERO apanha um `>= 0` (que diria "lucro de
+# R$0" de um dia que não ganhou nada), o NEGATIVO apanha o valor passado com
+# sinal ("prejuízo de -R$16.000", a dupla negação), e a MAIÚSCULA apanha o
+# `inicio` ignorado, que é o que o `total()` dos dois painéis pede.
+func _t10_lucro_ou_prejuizo() -> void:
+	var moeda := Callable(GS, "moeda")
+	_check("T10: lucro, com separador de milhar",
+		Narrativa.lucro_ou_prejuizo(12000, moeda) == "lucro de R$12.000")
+	_check("T10: prejuízo SEM sinal — a palavra já diz que saiu",
+		Narrativa.lucro_ou_prejuizo(-16000, moeda) == "prejuízo de R$16.000")
+	_check("T10: zero não é lucro nem prejuízo",
+		Narrativa.lucro_ou_prejuizo(0, moeda) == "nem lucro nem prejuízo")
+	_check("T10: a abrir a linha, a primeira letra sobe",
+		Narrativa.lucro_ou_prejuizo(-16000, moeda, true) == "Prejuízo de R$16.000")
+	_t10_completo = true
 

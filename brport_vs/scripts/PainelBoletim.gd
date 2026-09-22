@@ -101,7 +101,7 @@ func _linha(grade: GridContainer, rotulo: String, valor: int) -> void:
 func _resultado() -> void:
 	var resultado := int(_resumo["resultado"])
 	fio()
-	total("Resultado líquido: %s" % GameState.moeda(resultado))
+	total(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true))
 	if not bool(_resumo["tem_historico"]):
 		return
 	var anterior := int(_resumo["anterior"])
@@ -115,4 +115,5 @@ func _resultado() -> void:
 			int(round(abs(float(resultado - anterior) / float(anterior)) * 100.0))]
 	else:
 		variacao = "  (%s)" % seta
-	paragrafo("Semana anterior: %s%s" % [GameState.moeda(anterior), variacao])
+	paragrafo("Semana anterior: %s%s" % [
+		Narrativa.lucro_ou_prejuizo(anterior, GameState.moeda), variacao])

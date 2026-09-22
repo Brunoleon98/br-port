@@ -65,7 +65,7 @@ func _montar_decisao() -> void:
 
 	var caixa := Label.new()
 	caixa.theme_type_variation = "RotuloSecao"
-	caixa.text = "Caixa: %s" % GameState.moeda(int(GameState.cash))
+	caixa.text = "Dinheiro: %s" % GameState.moeda(int(GameState.cash))
 	_botoes.add_child(caixa)
 
 	var pagar := Button.new()

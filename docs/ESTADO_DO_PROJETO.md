@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — a saída de ré ganha guarda (adenda da `047`)
+> **Última atualização:** 23/09/2026 — a saída de ré ganha guarda (`047`) e o A4 troca "caixa" por "dinheiro"
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -133,7 +133,7 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**; as quatro notas dele estão aplicadas e trancadas. Faltam **três decisões de palavra**, o mesmo jargão nos sítios que ficaram: `"Caixa:"` (`DebtPaymentPanel.gd:68` e `UpgradePanel.gd:84`), o `"dinheiro no caixa"` da fala da semana nova, e o `"0 dias daqui"` da parcela (`037`) |
+| **A4** | ⚠️ **Duas leituras (13/09, 19/09)**, notas aplicadas. Em 23/09 ele decidiu: **"caixa" → "dinheiro"** em todo texto de tela, o resultado do dia e da semana lê **lucro/prejuízo** (T10) e a fala diz "barcos esperando". Falta: o "0 dias daqui" não aparece — no dia 32 lê-se **"1 dia daqui"** —, e a Dona Cida diz *"fecha o mês"* num jogo sem mês |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
