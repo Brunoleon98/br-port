@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 22/09/2026 — a 5ª leva de cor e a triagem dos órfãos (`045`, `046`)
+> **Última atualização:** 23/09/2026 — a rua fica em 1,8 e a mão dupla (`047`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -92,7 +92,7 @@ propósito.**
 verdade** — parede desabada, meio telhado, portão fora do trilho.
 
 **O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
-central e passadeiras), calçada, acesso a cada berço, **duas fileiras de casas**
+central e passadeiras) — **três camiões descem e dois sobem** (`047`) —, calçada, acesso a cada berço, **duas fileiras de casas**
 e uma **viela de terra entre elas** — a de trás mais rala, para a vila DESFIAR
 contra a mata. Tem nível (`--nivel-vila=N`): térrea, sobrado, prédio.
 
@@ -118,7 +118,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL (22 reprovações, hoje zero); *"de onde veio a cor?"* é outra pergunta, e a superfície era **34** e não 18; a frase concorda INTEIRA e **zero leva plural**, 8 sítios e não 3. Em todos, a superfície real era o DOBRO do que a revisão nomeava |
 | **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). Os do HUD entram pela PORTA DO JOGADOR, numa partida jogada. A cobertura MEDE-SE nos logs, porque declarar mentiria |
 | **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto >= 3,0x o p99,9 do próprio arquivo —, o resto DESCRITOR. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz) |
-| **As CINCO levas de cor** (21–22/09, `041`–`045`) | barra escura, faixa de mensagem, cartão da doca, verde do Construir e a borda do trabalhador foram para o tema: **27 chamadas em 19 locais → ZERO**, com a lista de exceções vazia. Quatro foram migração de VALORES — nenhuma razão do D33 mudou e as fotos saíram byte a byte. ⚠️ **A 2ª não**: três dos quatro estados da faixa nunca tinham sido medidos, porque a régua não drenava a fila; alcançados, o âmbar deu 3,07:1 e escureceu. ⚠️ **A 3ª achou uma chave MORTA** e a 4ª que **o piso de uma contagem passava** — a mesma lição: **estado que não monta publica linhas plausíveis**. ⚠️ **A 5ª é a única fora do alcance das duas provas**: borda não é texto, e nenhuma foto selecionava trabalhador. Trouxe o **D34** (proveniência lida no nó) e o **25º tiro**. Percurso a **24 estados / 330 textos** |
+| **As CINCO levas de cor** (21–22/09, `041`–`045`) | **27 chamadas em 19 locais → ZERO**, lista de exceções vazia. Quatro migraram VALORES (fotos byte a byte); a 2ª não — a régua não drenava a fila, e alcançado o âmbar deu 3,07:1. ⚠️ **Estado que não monta publica linhas plausíveis** (a chave MORTA da 3ª, o piso da 4ª). A 5ª trouxe o **D34** (proveniência lida no nó) |
+| **A rua e a mão dupla** (23/09, `047`) — escolha do Bruno | a rua FICA em 1,8: a janela que aperta é em `my` e o `RUA_RECUO` não a toca; a 2,0 ganharia 3,6 px. Faltava quem SUBISSE: dois camiões na faixa de dentro, de costas, 8 silhuetas `_retorno` (+0,75% do `.pck`). ⚠️ **A assinatura do D13 não fazia a média que dizia** (`resize` amostra); hoje faz, corte 0,01. Bateria a **27 tiros** |
 
 **E o gate A4 correu (19/09)**, nas sete falas novas desde 13/09; as quatro
 notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
@@ -142,9 +143,8 @@ histórico em `HISTORICO.md`.
 
 ### Ainda por fazer, medido
 
-⚠️ **Duas coisas, cada uma sessão própria:** a rua parou em **1,8** (alargá-la
-empurra o `RUA_RECUO` e o enquadramento, `012`) e o quadro dos props é 89,6%
-moldura vazia (cortá-lo mexe na origem do mundo, `029`). Das duas jogadas de
+⚠️ **Uma coisa, sessão própria:** o quadro dos props é 89,6% moldura vazia
+(cortá-lo mexe na origem do mundo, `029`). A rua fechou em 1,8 (`047`). Das duas jogadas de
 02–06/09 sobram o rodapé (A5), economia de Fase 2 e a madeira podre (A4) —
 history e triagem em `docs/arquivo/HISTORICO.md`.
 
@@ -223,13 +223,13 @@ history e triagem em `docs/arquivo/HISTORICO.md`.
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
 | `docs/design/` | GDD 7, guias, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `tools/capturar_evidencia.sh` | Fotografias determinísticas de jogo, painéis e folhas de contato; é a evidência visual do CI |
-| `brport_vs/tools/folha_frota.gd` | **A folha da frota** — cascos e camiões percorrendo as tabelas: foto de jogo só mostra o que o sorteio escolheu |
+| `brport_vs/tools/folha_frota.gd` | **A folha da frota** — cascos e camiões percorrendo as tabelas: foto de jogo só mostra o que o sorteio escolheu. Duas folhas desde `047` |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências e o teto do estado com EOL normalizado |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
-| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). A bateria são **25 tiros** desde `045` |
+| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). A bateria são **27 tiros** desde `047` |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
 | `docs/REVISAO_GERAL_2026-09-17.md` | Revisão geral de 17/09: defeitos e melhorias, com evidência |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |

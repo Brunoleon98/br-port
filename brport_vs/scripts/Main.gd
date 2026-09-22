@@ -126,6 +126,7 @@ func _ready() -> void:
 	_animar_boias()
 	_animar_luzes()
 	_animar_caminhoes()
+	_animar_retorno()
 	_animar_espuma()
 
 	# Turno 1 abria com a faixa de mensagem VAZIA — um cartão creme com nada
@@ -485,6 +486,44 @@ const ROTA_ESTRADA: Array[Vector2] = [
 	Vector2(16.55, 42.00),    # sai pela esquerda do quadro
 ]
 
+## A MÃO DUPLA DE VERDADE: a rua no outro sentido, pela faixa de DENTRO.
+##
+## A rua tem duas faixas desde 07/09, e até aqui só uma era usada — todo camião
+## descia em `+my`, e a faixa do lado da vila ficava vazia. O pedido da segunda
+## jogada era este: *"caminhões aparecendo não só de cima e sumindo embaixo, mas
+## também ao contrário"*. Quem sobe em `-my` tem a vila à direita, e daí sai a
+## faixa: o meio da faixa de dentro (`borda - RUA_RECUO + RUA_LARG / 4`).
+##
+## ⚠️ E O COTOVELO TAMBÉM TEM DUAS FAIXAS. Quem sobe atravessa-o em `-mx`, e a
+## direita dele é `-my`: vai pela meia faixa de FORA da curva, `my1 -
+## RUA_LARG * 3/4`, que é a outra metade do asfalto que a ida já usa. Sai daí
+## que os dois nunca se cruzam em cima um do outro, nem na reta nem na curva.
+##
+## Os números são os do gerador pela mesma razão que a `ROTA_ESTRADA`, e o
+## D13 confere-os contra o asfalto publicado.
+const ROTA_RETORNO: Array[Vector2] = [
+	Vector2(15.65, 42.00),    # entra pela esquerda, por baixo
+	Vector2(15.65, 32.65),
+	Vector2(11.65, 32.65),    # cotovelo do degrau 5 para o 4
+	Vector2(11.65, 22.65),
+	Vector2(7.65, 22.65),     # cotovelo do 4 para o 3
+	Vector2(7.65, 14.65),
+	Vector2(3.65, 14.65),     # cotovelo do 3 para o 2
+	Vector2(3.65, 6.65),
+	Vector2(-0.35, 6.65),     # cotovelo do 2 para o 1
+	Vector2(-0.35, -7.35),
+	Vector2(-4.35, -7.35),    # cotovelo do 1 para o 0
+	Vector2(-4.35, -14.00),   # sai por cima do topo do quadro
+]
+
+## Onde a cena põe os dois camiões do retorno — em trechos retos e à vista,
+## pela mesma razão dos três da ida (a primeira captura tem de os apanhar), e
+## longe deles na mesma altura da rua, para não saírem colados na foto.
+const CAMINHAO_RETORNO_ORIGENS: Array[Vector2] = [
+	Vector2(-0.35, 5.00),
+	Vector2(7.65, 17.00),
+]
+
 ## Velocidade constante em pixels por segundo. É ela que dá a duração de cada
 ## trecho, e não um número por trecho: com durações iguais o caminhão
 ## disparava nos cotovelos curtos e arrastava-se nos degraus longos.
@@ -525,22 +564,35 @@ const CAMINHAO_INTERVALO := 5.0
 ## camião para cada um — um motivo novo sem camião reprova ali, do mesmo modo
 ## que o D17 exige casco de navio para cada par (classe, motivo). Foi a falta
 ## dessa pergunta que deixou o `barco_medio` gerado e sem uso durante semanas.
+##
+## ⚠️ E CADA UM TEM QUATRO SILHUETAS, não duas: os dois eixos, nos dois
+## SENTIDOS. O `_retorno` é o caminhão com a frente virada — sobe a rua pela
+## faixa de dentro e mostra a traseira à câmera. Não é espelho do que desce:
+## espelhar mandaria o lado para a face que esta câmera não vê.
 const CAMINHOES := {
 	"pescado": {
 		"my": preload("res://art/props/caminhao_pescado.png"),
 		"mx": preload("res://art/props/caminhao_pescado_mx.png"),
+		"my_retorno": preload("res://art/props/caminhao_pescado_retorno.png"),
+		"mx_retorno": preload("res://art/props/caminhao_pescado_retorno_mx.png"),
 	},
 	"armazenagem": {
 		"my": preload("res://art/props/caminhao_armazenagem.png"),
 		"mx": preload("res://art/props/caminhao_armazenagem_mx.png"),
+		"my_retorno": preload("res://art/props/caminhao_armazenagem_retorno.png"),
+		"mx_retorno": preload("res://art/props/caminhao_armazenagem_retorno_mx.png"),
 	},
 	"conteiner": {
 		"my": preload("res://art/props/caminhao_conteiner.png"),
 		"mx": preload("res://art/props/caminhao_conteiner_mx.png"),
+		"my_retorno": preload("res://art/props/caminhao_conteiner_retorno.png"),
+		"mx_retorno": preload("res://art/props/caminhao_conteiner_retorno_mx.png"),
 	},
 	"granel": {
 		"my": preload("res://art/props/caminhao_granel.png"),
 		"mx": preload("res://art/props/caminhao_granel_mx.png"),
+		"my_retorno": preload("res://art/props/caminhao_granel_retorno.png"),
+		"mx_retorno": preload("res://art/props/caminhao_granel_retorno_mx.png"),
 	},
 }
 
@@ -601,9 +653,20 @@ var _base_do_caminhao: Array[Vector2] = []
 ## recalcular a mesma escolha do lado do teste seria o teste a concordar
 ## consigo próprio, e foi assim que a primeira versão dele deixou passar um
 ## caminhão que usava a mesma silhueta nos oito trechos.
-func silhueta_do_trecho(de: Vector2, para: Vector2, motivo: String) -> Texture2D:
+##
+## ⚠️ E O SENTIDO TAMBÉM SAI DO TRECHO, desde que a rua passou a ter mão
+## dupla: andar em `-my` ou em `-mx` é ir com a frente virada, e pede a
+## silhueta `_retorno`. `de_re` é a exceção de quem recua — o camião que larga
+## o berço de marcha-atrás anda em `-mx` com a frente virada para `+mx`.
+func silhueta_do_trecho(de: Vector2, para: Vector2, motivo: String,
+		de_re := false) -> Texture2D:
 	var par: Dictionary = CAMINHOES[motivo]
-	return par["mx"] if abs(para.x - de.x) > 0.01 else par["my"]
+	var em_mx: bool = abs(para.x - de.x) > 0.01
+	var recua: bool = (para.x < de.x) if em_mx else (para.y < de.y)
+	if de_re:
+		recua = not recua
+	var eixo := "mx" if em_mx else "my"
+	return par[eixo + "_retorno"] if recua else par[eixo]
 
 
 ## O deslocamento de tela entre dois pontos da rota. Só precisa das duas
@@ -690,12 +753,98 @@ func _motivo_da_estrada(i: int) -> String:
 		var barco = GameState.docks[i]["boat"]
 		if barco != null:
 			return String(barco["motivo"])
+	var motivos := _motivos_do_porto()
+	return String(motivos[i % motivos.size()])
+
+
+## Os motivos que o PORTO consegue receber hoje — os das classes já
+## destravadas (`docs/decisoes/009`), sem repetir.
+func _motivos_do_porto() -> Array:
 	var motivos: Array = []
 	for classe in GameState.classes_disponiveis():
 		for m in GameState.CLASSES_DE_NAVIO[classe]["motivos"]:
 			if not motivos.has(m):
 				motivos.append(m)
-	return String(motivos[i % motivos.size()])
+	return motivos
+
+
+# ── O RETORNO: os dois camiões que sobem a rua pela faixa de dentro ──────
+#
+# São SÓ PASSAGEM, e de propósito. O camião da ida é o da doca do mesmo índice
+# e entra no berço; um camião que subisse e também entrasse teria de virar à
+# ESQUERDA e atravessar a faixa da ida, e a segunda jogada pediu duas coisas
+# que isso arrisca: *"cuidado para não gerar um trânsito muito grande"* e
+# *"para os caminhões não terem bugs"*. O que ele traz é o que o porto recebe —
+# a mesma roda de motivos das docas vazias, sem sorteio: o `RandomNumberGenerator`
+# do jogo é o que o simulador de balanceamento mede.
+var _base_do_retorno: Array[Vector2] = []
+var _voltas_do_retorno: Array[int] = []
+
+
+## `a` vem depois de `b` no RETORNO — o espelho de `_adiante()`: ele sobe, logo
+## o `my` desce, e nos cotovelos é o `mx` que desce.
+func _adiante_no_retorno(a: Vector2, b: Vector2) -> bool:
+	return a.y < b.y or (is_equal_approx(a.y, b.y) and a.x < b.x)
+
+
+## Os pontos do retorno a partir de `desde`, inclusive.
+func _pontos_do_retorno(desde: Vector2) -> Array[Vector2]:
+	var pontos: Array[Vector2] = [desde]
+	for ponto in ROTA_RETORNO:
+		if _adiante_no_retorno(ponto, desde):
+			pontos.append(ponto)
+	return pontos
+
+
+## Quantos segundos leva a percorrer `pontos`, pela velocidade de todos.
+func _tempo_dos_pontos(pontos: Array[Vector2]) -> float:
+	var px := 0.0
+	for i in range(pontos.size() - 1):
+		px += tela_da_rota(pontos[i + 1], pontos[i]).length()
+	return px / CAMINHAO_VELOCIDADE
+
+
+func _animar_retorno() -> void:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return
+	var origens := CAMINHAO_RETORNO_ORIGENS
+	var n := origens.size()
+	_base_do_retorno.resize(n)
+	_voltas_do_retorno.resize(n)
+	_voltas_do_retorno.fill(0)
+	# A mesma repartição da ida: ciclo igual para os dois, e a espera de
+	# arranque acerta cada um na sua metade, uma vez só.
+	var ciclo := CAMINHAO_INTERVALO + _tempo_dos_pontos(_pontos_do_retorno(ROTA_RETORNO[0]))
+	var fase_zero := _tempo_dos_pontos(_pontos_do_retorno(origens[0])) + CAMINHAO_INTERVALO
+	for j in range(n):
+		var caminhao := cenario.get_node_or_null("CaminhaoRetorno%d" % j) as TextureRect
+		if caminhao == null:
+			continue
+		_base_do_retorno[j] = caminhao.position
+		var espera := fase_zero + float(j) * ciclo / float(n) \
+			- _tempo_dos_pontos(_pontos_do_retorno(origens[j]))
+		while espera < CAMINHAO_INTERVALO:
+			espera += ciclo
+		# A primeira passagem começa já e onde a cena o pôs, como na ida.
+		_subir(j, origens[j], espera)
+
+
+## Uma subida inteira a partir de `desde`, e a pausa até à seguinte.
+func _subir(j: int, desde: Vector2, pausa_apos: float) -> void:
+	var caminhao := $MapaWrap.get_node_or_null("Cenario/CaminhaoRetorno%d" % j) as TextureRect
+	if caminhao == null:
+		return
+	var motivos := _motivos_do_porto()
+	var carga := String(motivos[(j + _voltas_do_retorno[j]) % motivos.size()])
+	_voltas_do_retorno[j] += 1
+	_percorrer_de(caminhao, _base_do_retorno[j], CAMINHAO_RETORNO_ORIGENS[j],
+		carga, _pontos_do_retorno(desde), func() -> void:
+			var tw := caminhao.create_tween()
+			tw.tween_interval(maxf(pausa_apos, CAMINHAO_INTERVALO))
+			tw.tween_callback(func() -> void:
+				_subir(j, ROTA_RETORNO[0], CAMINHAO_INTERVALO))
+	)
 
 
 func _animar_caminhoes() -> void:
@@ -830,26 +979,21 @@ func _no_acesso(i: int, pausa_apos: float) -> void:
 
 ## O camião larga o berço: sai de marcha-atrás pelo acesso e retoma a estrada.
 ##
-## ⚠️ ELE SAI DE RÉ, E ISSO É UMA ESCOLHA COM CUSTO. Só há duas silhuetas por
-## carga — uma por eixo —, e as duas foram desenhadas para o sentido POSITIVO,
-## que é o único que a rota usava. O acesso percorre-se para dentro em `+mx` e
-## para fora em `-mx`: uma das duas pernas ia ser de ré fizesse-se o que se
-## fizesse. Um terceiro jogo de PNGs viraria a cabine para `-mx` e mostraria a
-## traseira — não é rodar o prop, é reconstruí-lo, porque só as faces `+x` e
-## `-y` se veem —, e são mais quatro peças de arte para 74px de movimento lento
-## na beira do quadro. Encostar de frente e sair de ré é o que um camião de
-## carga faz numa baía; a alternativa era ele entrar de ré, que seria a mesma
-## perna invertida e menos legível.
+## ⚠️ ELE SAI DE RÉ, e continua a sair depois de a silhueta `_retorno_mx`
+## existir. Ela foi desenhada para o camião que SOBE a rua; com ela aqui, o
+## camião encostado viraria 180° de um frame para o outro, no fundo da baía,
+## sem manobra nenhuma. Encostar de frente e sair de ré é o que um camião de
+## carga faz numa baía — daí o `re_no_primeiro`, que pede a silhueta da frente
+## para a perna que anda em `-mx`.
 func _sair_do_berco(i: int) -> void:
 	var caminhao := _no_do_caminhao(i)
 	if caminhao == null:
 		return
 	var acesso: Dictionary = ACESSOS_DOCA[i]
 	var entrada: Vector2 = acesso["entrada"]
+	var ao_fim := func() -> void: _lancar_volta(i, CAMINHAO_INTERVALO)
 	_percorrer(caminhao, i, ([acesso["paragem"], entrada]
-		+ _pontos_da_rota(entrada).slice(1)), func() -> void:
-			_lancar_volta(i, CAMINHAO_INTERVALO)
-	)
+		+ _pontos_da_rota(entrada).slice(1)), ao_fim, true)
 
 
 ## Um barco saiu de um berço onde havia um camião encostado? Então ele vai
@@ -884,9 +1028,19 @@ func _no_do_caminhao(i: int) -> TextureRect:
 ## `ao_fim` quando o último acabar. O primeiro ponto é um TELEPORTE: é ele que
 ## põe o camião no princípio do percurso antes de o percorrer.
 func _percorrer(caminhao: TextureRect, indice: int, pontos: Array,
-		ao_fim: Callable) -> void:
-	var base: Vector2 = _base_do_caminhao[indice]
-	var origem_do_no: Vector2 = CAMINHAO_ORIGENS[indice]
+		ao_fim: Callable, re_no_primeiro := false) -> void:
+	_percorrer_de(caminhao, _base_do_caminhao[indice], CAMINHAO_ORIGENS[indice],
+		_carga_na_estrada[indice], pontos, ao_fim, re_no_primeiro)
+
+
+## O mesmo percurso, para qualquer camião: os da ida e os do retorno guardam a
+## base, a origem e a carga em listas diferentes, e o movimento é um só.
+##
+## A carga entra como VALOR, e pode: ela é escolhida à entrada do mapa e não
+## muda até à volta seguinte (ver `_entrar_no_mapa`).
+func _percorrer_de(caminhao: TextureRect, base: Vector2, origem_do_no: Vector2,
+		carga: String, pontos: Array, ao_fim: Callable,
+		re_no_primeiro := false) -> void:
 	var tw := caminhao.create_tween()
 	tw.tween_callback(func() -> void:
 		caminhao.position = base + tela_da_rota(pontos[0], origem_do_no)
@@ -895,7 +1049,7 @@ func _percorrer(caminhao: TextureRect, indice: int, pontos: Array,
 		# ser num trecho reto; com três origens um `my` fixo poria um caminhão
 		# atravessado no primeiro frame de quem começasse num cotovelo.
 		caminhao.texture = silhueta_do_trecho(pontos[0],
-			pontos[min(1, pontos.size() - 1)], _carga_na_estrada[indice])
+			pontos[min(1, pontos.size() - 1)], carga, re_no_primeiro)
 		_ordenar_por_profundidade(caminhao)
 	)
 	for i in range(pontos.size() - 1):
@@ -903,11 +1057,11 @@ func _percorrer(caminhao: TextureRect, indice: int, pontos: Array,
 		var para: Vector2 = pontos[i + 1]
 		var origem := base + tela_da_rota(de, origem_do_no)
 		var destino := base + tela_da_rota(para, origem_do_no)
+		var de_re := re_no_primeiro and i == 0
 		# A silhueta certa para o eixo do trecho — é isto que faz a curva ler
 		# como curva em vez de o caminhão deslizar de lado.
 		tw.tween_callback(func() -> void:
-			caminhao.texture = silhueta_do_trecho(de, para,
-				_carga_na_estrada[indice])
+			caminhao.texture = silhueta_do_trecho(de, para, carga, de_re)
 		)
 		tw.tween_method(func(t: float) -> void:
 			caminhao.position = origem.lerp(destino, t)

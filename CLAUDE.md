@@ -1604,6 +1604,13 @@ tranca isso.
   os dois a 16×16 — a mesma régua do bloco dos cascos distintos. Calibrado: duas
   corridas do mesmo código dão 0,000 e os PNGs diferem nos bytes (carimbo de
   data), um pixel de deslocamento dá 0,022, e um prop trocado por outro dá 0,42.
+  ⚠️ **E A RÉGUA IRMÃ, NO TESTE DE DESIGN, NÃO FAZIA A MESMA CONTA** — com o
+  mesmo comentário. O `comparar_props.py` faz a média (`reshape().mean`); a
+  `_assinatura()` do D13/D17 fazia `Image.resize(16, 16, INTERPOLATE_BILINEAR)`,
+  que numa redução de 48x **não faz média**, e o `TRILINEAR` mediu igual. Ela
+  deu 0,0039 a dois camiões com 1.106 pixels diferentes (0,062 pela média).
+  **Duas réguas com a mesma promessa conferem-se uma contra a outra no mesmo
+  par** — e redução que tem de ser média escreve-se como média (`047`).
 - A sombra de contato tem **azimute próprio (250°)**, diferente do azimute do
   mapa: no azimute do mapa ela cai atrás do prop e não se vê.
 - **O importador de SVG do Godot é o ThorVG e não desenha `<text>`.** Texto no

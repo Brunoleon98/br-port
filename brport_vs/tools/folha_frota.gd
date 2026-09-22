@@ -37,7 +37,7 @@ extends SceneTree
 #
 # Uso (Linux, sem monitor — precisa de xvfb):
 #   xvfb-run -a Godot --path brport_vs --rendering-driver opengl3 \
-#     --resolution 720x1280 --script res://tools/folha_frota.gd -- [saida.png]
+#     --resolution 720x1280 --script res://tools/folha_frota.gd -- saida.png cascos|camioes
 # ============================================================
 
 const SAIDA_PADRAO := "user://folha_frota.png"
@@ -98,6 +98,17 @@ func _montar() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.size() >= 1:
 		_saida = args[0]
+	# ⚠️ A SEÇÃO É OBRIGATÓRIA desde 23/09: `cascos` ou `camioes`. As duas
+	# couberam numa tela até os camiões ganharem o sentido do retorno — 16
+	# peças, uma linha a mais, e a conta abaixo reprovou por 25 px. Encolher a
+	# arte seria tirar à folha a razão de existir (olhar ampliado); a folha dos
+	# props já tinha páginas pela mesma razão, e cada página continua a reprovar
+	# se transbordar.
+	var secao: String = args[1] if args.size() >= 2 else ""
+	if secao != "cascos" and secao != "camioes":
+		push_error("folha_frota: diga a seção — cascos ou camioes (veio '%s')" % secao)
+		quit(1)
+		return
 
 	var fundo := ColorRect.new()
 	fundo.color = FUNDO_FOLHA
@@ -106,8 +117,11 @@ func _montar() -> void:
 	root.add_child(fundo)
 
 	var y := float(MARGEM)
-	y = _secao("CASCOS — o que o navio traz", _cascos(), CHAO_AGUA, y)
-	y = _secao("CAMIÕES — o que sai pela estrada", _camioes(), CHAO_RUA, y)
+	if secao == "cascos":
+		y = _secao("CASCOS — o que o navio traz", _cascos(), CHAO_AGUA, y)
+	else:
+		y = _secao("CAMIÕES — o que sai pela estrada, nos dois sentidos",
+			_camioes(), CHAO_RUA, y)
 
 	# ⚠️ FOLHA QUE TRANSBORDA CORTA EM SILÊNCIO, e uma folha cortada é pior do
 	# que nenhuma: ela existe para provar que a arte que o sorteio esconde
@@ -157,7 +171,7 @@ func _cascos() -> Array:
 	return itens
 
 
-## Os camiões, percorrendo os motivos do jogo e os dois eixos da rua.
+## Os camiões, percorrendo os motivos do jogo, os dois eixos e os dois sentidos.
 func _camioes() -> Array:
 	var GS: Node = root.get_node("GameState")
 	# ⚠️ `load()` e não `preload()`: um `const X := preload("...gd")` é a CLASSE
@@ -171,9 +185,13 @@ func _camioes() -> Array:
 	for motivo in GS.MOTIVOS:
 		if not tabela.has(motivo):
 			continue
-		for eixo in ["my", "mx"]:
+		# ⚠️ AS CHAVES SAEM DA TABELA, e não de `["my", "mx"]`. Era essa lista
+		# escrita à mão, e com a mão dupla (23/09) ela teria deixado os oito
+		# camiões do retorno — gerados, validados e no jogo — fora da única
+		# folha onde se olha para eles.
+		for eixo in (tabela[motivo] as Dictionary).keys():
 			itens.append([tabela[motivo][eixo] as Texture2D,
-				String(GS.MOTIVOS[motivo]["nome"]), eixo])
+				String(GS.MOTIVOS[motivo]["nome"]), String(eixo).replace("_", " · ")])
 	return itens
 
 

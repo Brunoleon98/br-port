@@ -461,7 +461,11 @@ tirar icones  - -  --script res://tools/folha_icones.gd  --    "$SAIDA/icones.pn
 # ficavam gerados, validados por duas suítes, e sem ninguém os poder olhar —
 # que é o buraco do `barco_medio` outra vez. Uma folha que percorre a tabela
 # não depende de sorteio, como a dos ícones já não dependia.
-tirar frota   - -  --script res://tools/folha_frota.gd   --    "$SAIDA/frota.png"
+# ⚠️ SÃO DUAS FOLHAS desde 23/09: com os oito camiões do retorno a folha
+# única pedia 1.305 px numa tela de 1.280, e a conta dela reprovou. Cada uma
+# continua a reprovar se transbordar.
+tirar frota   - -  --script res://tools/folha_frota.gd   --    "$SAIDA/frota.png" cascos
+tirar camioes - -  --script res://tools/folha_frota.gd   --    "$SAIDA/camioes.png" camioes
 
 # OS PROPS DE MAPA, todos, a 1:1. A segunda metade da medição do gate A5 — o
 # plano diz "captura antes/depois lado a lado, E a folha de contato dos props"
@@ -482,8 +486,11 @@ tirar frota   - -  --script res://tools/folha_frota.gd   --    "$SAIDA/frota.png
 # que se pediram aqui: um prop novo que empurre para uma terceira página fica
 # vermelho em vez de sair sem foto. Acrescentar a linha faz parte de
 # acrescentar o prop.
-tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 2
-tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 2
+# E SÃO TRÊS desde 23/09: os oito camiões do retorno levaram o catálogo de 51
+# a 59 props, e a ferramenta reprovou as duas páginas até esta linha entrar.
+tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 3
+tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 3
+tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 3
 
 # UMA IMAGEM CHAPADA TAMBÉM É UM PNG. Se o contexto gráfico falhar em silêncio
 # — driver de software em falta no runner, por exemplo — a ferramenta salva um

@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3]
+[gd_scene load_steps=47 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
@@ -30,6 +30,7 @@
 [ext_resource type="Texture2D" path="res://art/props/poste_luz.png" id="prop_poste_luz"]
 [ext_resource type="Texture2D" path="res://art/props/guincho.png" id="prop_guincho"]
 [ext_resource type="Texture2D" path="res://art/props/caminhao_granel.png" id="prop_caminhao"]
+[ext_resource type="Texture2D" path="res://art/props/caminhao_granel_retorno.png" id="prop_caminhao_retorno"]
 [ext_resource type="Texture2D" path="res://art/props/poste.png" id="prop_poste"]
 [ext_resource type="Texture2D" path="res://art/props/cabeco.png" id="prop_cabeco"]
 [ext_resource type="Texture2D" path="res://art/props/empilhadeira.png" id="prop_empilhadeira"]
@@ -269,6 +270,15 @@ offset_bottom = 355.667
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_caminhao")
+[node name="CaminhaoRetorno0" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -24
+offset_top = -131.333
+offset_right = 488
+offset_bottom = 380.667
+mouse_filter = 2
+expand_mode = 1
+texture = ExtResource("prop_caminhao_retorno")
 [node name="Escritorio" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 37.2
@@ -333,6 +343,15 @@ offset_bottom = 568.17
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_pneus")
+[node name="CaminhaoRetorno1" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -104
+offset_top = 68.667
+offset_right = 408
+offset_bottom = 580.667
+mouse_filter = 2
+expand_mode = 1
+texture = ExtResource("prop_caminhao_retorno")
 [node name="Barreira" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -69

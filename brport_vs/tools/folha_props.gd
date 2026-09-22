@@ -375,11 +375,15 @@ func _familias(ancoras: Dictionary) -> Dictionary:
 			for t in cascos[classe][motivo]:
 				barcos.append(t)
 
+	# A ida e o retorno são nós DIFERENTES da cena, e cada um mostra as suas
+	# silhuetas: o chão de cada célula sai do sítio onde o nó pousa.
 	var camioes: Array = []
+	var retorno: Array = []
 	for motivo in GS.MOTIVOS:
 		if mk["CAMINHOES"].has(motivo):
 			for eixo in ["my", "mx"]:
 				camioes.append(mk["CAMINHOES"][motivo][eixo])
+				retorno.append(mk["CAMINHOES"][motivo][eixo + "_retorno"])
 
 	# A vaga é a PRIMEIRA — as três caem no mesmo tipo de chão (o berço, que é
 	# água costeira), e repetir os nove cascos por doca daria 27 células a
@@ -392,6 +396,7 @@ func _familias(ancoras: Dictionary) -> Dictionary:
 		"./MapaWrap/Cenario/Armazem": [mk["ArmazemRuina"], mk["ArmazemPronto"]],
 		"./MapaWrap/Cenario/Escritorio": [mk["EscritorioRuina"], mk["EscritorioPronto"]],
 		"./MapaWrap/Cenario/Caminhao0": camioes,
+		"./MapaWrap/Cenario/CaminhaoRetorno0": retorno,
 	}
 
 
@@ -548,9 +553,51 @@ func _montar() -> bool:
 		maior.x = maxf(maior.x, tam.x)
 		maior.y = maxf(maior.y, tam.y)
 
+	# ⚠️ E O RÓTULO TAMBÉM NÃO PODE SER CORTADO. `Label` que não cabe corta sem
+	# dar erro (é o D18 do teste de design, noutra roupa), e um prop sem nome
+	# legível nesta folha é um prop que ninguém sabe ir procurar. Mede-se o
+	# PIOR do catálogo, não o que calha — e desde 16/09 são DUAS linhas: a
+	# segunda diz de que cor é o chão, e ela cresce quando um prop pisa dois.
+	# O pior caso sai do que a folha ESCREVE, nunca de um texto suposto.
+	#
+	# ⚠️ E ESTÁ MEDIDO O QUE CADA LINHA DEFENDE, que não é o mesmo. Quem estava
+	# apertado era a PRIMEIRA: `caminhao_armazenagem_mx` pedia 155 px num
+	# orçamento de 159, e o `_retorno_mx` (200 px) reprovou — é por isso que a
+	# célula passou a sair também do rótulo (ver abaixo). A segunda tem folga — dois chãos pedem 83 px e três pedem 126,
+	# e ela só transborda ao QUARTO (170 px, medido com a mesma chamada que a
+	# guarda faz). Nenhum prop do catálogo de hoje pisa quatro chãos, então um
+	# defeito que baixe o `CORTE_CHAO` a zero não chega a esta guarda — está
+	# medido, e escreve-se em vez de se apertar o teto até ele apanhar o
+	# defeito seguinte. Desde que a célula cresce com o rótulo, uma fonte maior
+	# já não reprova AQUI: medido, a 16 px a célula alarga para duas colunas e
+	# quem reprova é a conta das páginas (59 props pedem 5, pediram-se 3).
+	var fonte := ThemeDB.fallback_font
+	var pior := 0.0
+	var pior_texto := ""
+	for n in nomes:
+		for par in [[n.get_basename(), FONTE_NOME], [_linha_do_chao(n, chaos), FONTE_CHAO]]:
+			var w := fonte.get_string_size(String(par[0]),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, int(par[1])).x
+			if w > pior:
+				pior = w
+				pior_texto = String(par[0])
+	# ⚠️ E A CÉLULA SAI TAMBÉM DO RÓTULO, desde 23/09. Até ali ela saía só do
+	# maior DESENHO e o rótulo era conferido depois contra ela — com 4 px de
+	# folga, avisava o comentário acima. Os camiões do retorno trouxeram
+	# `caminhao_armazenagem_retorno_mx`, que pede 200 px numa célula de 159, e
+	# a guarda reprovou como devia. O remédio não é encurtar o nome do arquivo,
+	# que é o que o rótulo existe para mostrar: é a célula caber o que ela
+	# carrega, desenho E nome. A guarda que sobra é a da PÁGINA.
+	var larg_pagina := float(ProjectSettings.get_setting("display/window/size/viewport_width"))
+	if pior + 4.0 + 2.0 * MARGEM > larg_pagina:
+		print("FALHOU — o rótulo '%s' pede %.0f px e a página dá %.0f."
+			% [pior_texto, pior, larg_pagina - 2.0 * MARGEM - 4.0])
+		quit(1)
+		return false
+
 	var larg := float(ProjectSettings.get_setting("display/window/size/viewport_width"))
 	var alt := float(ProjectSettings.get_setting("display/window/size/viewport_height"))
-	var celula := Vector2(maior.x + MARGEM, maior.y + RODAPE)
+	var celula := Vector2(maxf(maior.x, pior + 4.0) + MARGEM, maior.y + RODAPE)
 	var colunas: int = maxi(1, int((larg - MARGEM) / celula.x))
 	var linhas: int = maxi(1, int((alt - CABECALHO - MARGEM) / celula.y))
 	var por_pagina := colunas * linhas
@@ -574,38 +621,6 @@ func _montar() -> bool:
 		quit(1)
 		return false
 
-	# ⚠️ E O RÓTULO TAMBÉM NÃO PODE SER CORTADO. `Label` que não cabe corta sem
-	# dar erro (é o D18 do teste de design, noutra roupa), e um prop sem nome
-	# legível nesta folha é um prop que ninguém sabe ir procurar. Mede-se o
-	# PIOR do catálogo, não o que calha — e desde 16/09 são DUAS linhas: a
-	# segunda diz de que cor é o chão, e ela cresce quando um prop pisa dois.
-	# O pior caso sai do que a folha ESCREVE, nunca de um texto suposto.
-	#
-	# ⚠️ E ESTÁ MEDIDO O QUE CADA LINHA DEFENDE, que não é o mesmo. Quem está
-	# apertado é a PRIMEIRA: `caminhao_armazenagem_mx` pede 155 px num
-	# orçamento de 159, e dois caracteres a mais no nome de um prop já
-	# reprovam. A segunda tem folga — dois chãos pedem 83 px e três pedem 126,
-	# e ela só transborda ao QUARTO (170 px, medido com a mesma chamada que a
-	# guarda faz). Nenhum prop do catálogo de hoje pisa quatro chãos, então um
-	# defeito que baixe o `CORTE_CHAO` a zero não chega a esta guarda — está
-	# medido, e escreve-se em vez de se apertar o teto até ele apanhar o
-	# defeito seguinte. Quem a exerce é a fonte: a 20 o rótulo do recurso pede
-	# 202 px e ela reprova.
-	var fonte := ThemeDB.fallback_font
-	var pior := 0.0
-	var pior_texto := ""
-	for n in nomes:
-		for par in [[n.get_basename(), FONTE_NOME], [_linha_do_chao(n, chaos), FONTE_CHAO]]:
-			var w := fonte.get_string_size(String(par[0]),
-				HORIZONTAL_ALIGNMENT_LEFT, -1, int(par[1])).x
-			if w > pior:
-				pior = w
-				pior_texto = String(par[0])
-	if pior > celula.x - 4.0:
-		print("FALHOU — o rótulo '%s' pede %.0f px e a célula dá %.0f."
-			% [pior_texto, pior, celula.x - 4.0])
-		quit(1)
-		return false
 
 	var fundo := ColorRect.new()
 	fundo.color = FUNDO_FOLHA

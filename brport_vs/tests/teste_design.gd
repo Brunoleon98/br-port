@@ -713,17 +713,47 @@ func _d17_niveis_do_porto() -> void:
 # O que sobra é reduzir os dois a 16x16 e comparar. Cada célula é a média de
 # ~1.000 pixels, o que apaga o ruído do denoiser por construção, e um convés
 # trocado move várias células muito acima do piso.
+#
+# ⚠️ E ESSA MÉDIA SÓ EXISTIA NO COMENTÁRIO até 23/09. A redução era
+# `Image.resize(16, 16, INTERPOLATE_BILINEAR)`, e numa redução de 48x (768 ->
+# 16) ela não faz a média dos 2.304 pixels de cada célula. Enquanto os props
+# eram grandes e de silhuetas diferentes, isso calhava de os separar; com os
+# camiões do retorno ela reprovou o frigorífico de ida contra o de retorno com
+# 0,0039 — dois desenhos com 1.106 pixels diferentes, a cabine numa ponta e na
+# outra, que pela média de verdade (medida em Python) diferem 0,062.
+# ⚠️ E `INTERPOLATE_TRILINEAR` DEU O MESMO 0,0039, medido — trocar o modo não
+# chegava. A média faz-se à mão: `shrink_x2()`, que é a média exata 2x2,
+# enquanto couber, e o resto por blocos.
 const ASSINATURA := 16
-const ASSINATURA_MIN := 0.02      # 5/255 — bem acima dos ±2/255 do denoiser
+# ⚠️ E O CORTE DESCEU DE 0,02 PARA 0,01 COM A MÉDIA. Os 0,02 (5/255) eram
+# para uma redução que não fazia média e deixava passar o ±2/255 do denoiser.
+# Com a média de 2.304 pixels por célula, algumas dezenas de pixels a ±2/255
+# valem ~0,0002; e o par DISTINTO mais perto entre os 25 desenhos (camiões e
+# cascos, medido em 23/09) é o frigorífico de ida contra o de retorno em `mx`,
+# a 0,0327. A 0,02 sobrava 1,6x desse lado; a 0,01 sobram 50x do ruído e 3,3x
+# do par mais perto — o corte vai para o MEIO da banda, não para a ponta.
+const ASSINATURA_MIN := 0.01
 
 
 func _assinatura(tex: Texture2D) -> PackedFloat32Array:
 	var img := (tex.get_image() as Image).duplicate() as Image
-	img.resize(ASSINATURA, ASSINATURA, Image.INTERPOLATE_BILINEAR)
 	var v := PackedFloat32Array()
+	# Quadro que não se divide em 16 células iguais não tem média por célula:
+	# recusar é melhor do que devolver uma assinatura que parece medida.
+	if img.get_width() % ASSINATURA != 0 or img.get_height() != img.get_width():
+		push_error("assinatura: %s tem %s, que não se divide em %d células"
+			% [tex.resource_path, img.get_size(), ASSINATURA])
+		return v
+	while img.get_width() % (2 * ASSINATURA) == 0:
+		img.shrink_x2()
+	var k := img.get_width() / ASSINATURA
 	for y in range(ASSINATURA):
 		for x in range(ASSINATURA):
-			var c := img.get_pixel(x, y)
+			var soma := Color(0, 0, 0, 0)
+			for dy in range(k):
+				for dx in range(k):
+					soma += img.get_pixel(x * k + dx, y * k + dy)
+			var c := soma / float(k * k)
 			v.append(c.r)
 			v.append(c.g)
 			v.append(c.b)
@@ -1682,6 +1712,12 @@ func _d13_travessia_do_caminhao() -> void:
 			if anda_em_mx != caminho.ends_with("_mx.png") and errado == "":
 				errado = "o trecho %d de %s anda em %s e usa %s" \
 					% [i, id, "mx" if anda_em_mx else "my", caminho.get_file()]
+			# A ida anda de FRENTE: a silhueta do retorno aqui seria o camião a
+			# descer de costas. O teste do eixo não o via, porque os dois
+			# `_mx` acabam igual.
+			if caminho.contains("_retorno") and errado == "":
+				errado = "o trecho %d de %s desce a rua e usa %s, que é do retorno" \
+					% [i, id, caminho.get_file()]
 			if not caminho.get_file().begins_with("caminhao_%s" % id) and errado == "":
 				errado = "o trecho %d de %s usa %s, que é de outra carga" \
 					% [i, id, caminho.get_file()]
@@ -1904,7 +1940,168 @@ func _d13_travessia_do_caminhao() -> void:
 			no_avental = "um lote acaba em mx %.2f e o avental começa em %.2f" \
 				% [float(lote["mx"][1]), float(avental[0])]
 	_confere("e nenhum deles transborda para o avental", no_avental == "", no_avental)
+
+	_d13_retorno(tela, cenario, consts, rota, regioes, desenho, visivel, pr)
 	_d13_completo = true
+
+
+# ── D13 §7 ── O RETORNO: a mão dupla de verdade (23/09)
+#
+# Os camiões que SOBEM a rua pela faixa de dentro. Os modos de falhar são os da
+# ida, mais três que só existem com duas faixas, e nenhum dá erro:
+#
+#   1. a faixa ERRADA — o retorno na faixa da ida é um camião a subir em cima
+#      de quem desce, e continua sobre asfalto, logo o §1 não o vê;
+#   2. o sentido ERRADO — a lista escrita ao contrário é a ida outra vez;
+#   3. a silhueta do outro sentido — um camião a subir de frente para baixo,
+#      que é deslizar de costas.
+#
+# ⚠️ A FAIXA SAI DO ASFALTO PUBLICADO, não da `faixa_do_caminhao()` do gerador:
+# a pergunta é "cada rota ocupa a SUA metade da pista", e a metade é uma
+# propriedade do asfalto (`asfalto` de cada degrau, `asfalto_my` de cada
+# cotovelo). Conferir o retorno contra um número derivado da ida seria o teste
+# a concordar consigo próprio. Por isso a ida é conferida aqui também: a
+# relação é entre as DUAS.
+func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
+		regioes: Array, desenho: Rect2, visivel: Rect2, pr: Dictionary) -> void:
+	var retorno: Array = consts["ROTA_RETORNO"]
+	var origens: Array = consts["CAMINHAO_RETORNO_ORIGENS"]
+	var caminhoes: Dictionary = consts["CAMINHOES"]
+	var alt := float(pr["alt_cais"])
+
+	_confere("o retorno tem os %d pontos da escada" % rota.size(),
+		retorno.size() == rota.size(), "tem %d" % retorno.size())
+
+	# ── a ── cada rota na SUA metade da pista, em todo trecho.
+	#
+	# O meio de cada faixa fica a um quarto da pista, a contar da borda de
+	# `mx` (ou `my`) mais BAIXO: o retorno a 0,25, a ida a 0,75. Nos retos a
+	# largura mede-se em `mx`; nos cotovelos, em `my`.
+	var cotovelos: Array = _ancoras.get("cotovelos", [])
+	var fora_da_faixa := ""
+	for par in [[rota, 0.75, "a ida"], [retorno, 0.25, "o retorno"]]:
+		var pontos: Array = par[0]
+		var fracao: float = par[1]
+		for i in range(pontos.size() - 1):
+			var de: Vector2 = pontos[i]
+			var para: Vector2 = pontos[i + 1]
+			var esperado := INF
+			var medido := 0.0
+			if abs(para.x - de.x) < 0.01:           # reto: anda em my
+				var faixa := _faixa_de((de.y + para.y) / 2.0)
+				var asf: Array = faixa["asfalto"]
+				esperado = float(asf[0]) + (float(asf[1]) - float(asf[0])) * fracao
+				medido = de.x
+			else:                                    # cotovelo: anda em mx
+				for c in cotovelos:
+					var amy: Array = c["asfalto_my"]
+					if de.y >= float(amy[0]) - 0.01 and de.y <= float(amy[1]) + 0.01:
+						# Quem desce vira à direita, que no cotovelo é `+my`:
+						# a ida vai pela metade de `my` ALTO e o retorno pela
+						# de `my` baixo — a mesma fração, contada do `my` baixo.
+						esperado = float(amy[0]) + (float(amy[1]) - float(amy[0])) \
+							* fracao
+				medido = de.y
+			if absf(medido - esperado) > 0.01 and fora_da_faixa == "":
+				fora_da_faixa = "%s, no trecho %d (%s -> %s), anda a %.2f e o meio da faixa dela é %.2f" \
+					% [par[2], i, de, para, medido, esperado]
+	_confere("a ida desce pela faixa de fora e o retorno sobe pela de dentro",
+		fora_da_faixa == "", fora_da_faixa)
+
+	# ── b ── o retorno SOBE: `my` a descer nos retos, `mx` a descer nos
+	# cotovelos, do primeiro ponto ao último.
+	var contra := ""
+	for i in range(retorno.size() - 1):
+		var de: Vector2 = retorno[i]
+		var para: Vector2 = retorno[i + 1]
+		var sobe: bool = para.y < de.y - 0.01 or (absf(para.y - de.y) < 0.01 and para.x < de.x - 0.01)
+		if not sobe and contra == "":
+			contra = "o trecho %d vai de %s para %s" % [i, de, para]
+	_confere("o retorno sobe a rua do princípio ao fim", contra == "", contra)
+
+	# ── c ── sobre asfalto, pelos mesmos cortes do §1.
+	var fora := ""
+	for i in range(retorno.size() - 1):
+		var de: Vector2 = retorno[i]
+		var para: Vector2 = retorno[i + 1]
+		for k in range(21):
+			var m: Vector2 = de.lerp(para, float(k) / 20.0)
+			var dentro := false
+			for r in regioes:
+				if m.x >= r[0] - 0.01 and m.x <= r[1] + 0.01 \
+						and m.y >= r[2] - 0.01 and m.y <= r[3] + 0.01:
+					dentro = true
+					break
+			if not dentro and fora == "":
+				fora = "no trecho %d, a %d%%, está em (%.2f, %.2f)" % [i, k * 5, m.x, m.y]
+	_confere("o retorno anda sobre asfalto, cotovelos incluídos", fora == "", fora)
+
+	# ── d ── os nós, cada um na sua origem, inteiro à vista e num reto.
+	_confere("há um nó CaminhaoRetorno por origem declarada (%d)" % origens.size(),
+		cenario.get_node_or_null("CaminhaoRetorno%d" % origens.size()) == null
+			and cenario.get_node_or_null("CaminhaoRetorno0") != null,
+		"a cena e o `CAMINHAO_RETORNO_ORIGENS` do Main.gd não contam o mesmo")
+	for j in range(origens.size()):
+		var no := cenario.get_node_or_null("CaminhaoRetorno%d" % j) as Control
+		if no == null:
+			_confere("a cena tem o nó CaminhaoRetorno%d" % j, false)
+			continue
+		var origem: Vector2 = origens[j]
+		var m_cena := _mundo(_origem(no), alt)
+		_confere("a cena põe o CaminhaoRetorno%d no ponto de partida dele" % j,
+			m_cena.distance_to(origem) < 0.02,
+			"está em (%.2f, %.2f) e devia estar em (%.2f, %.2f)"
+				% [m_cena.x, m_cena.y, origem.x, origem.y])
+		var na_cena := Rect2(no.position + Vector2(MEIO_QUADRO, MEIO_QUADRO)
+			+ desenho.position, desenho.size)
+		_confere("e o CaminhaoRetorno%d está inteiro dentro do mapa" % j,
+			visivel.encloses(na_cena),
+			"o desenho fica em %s e o mapa é %s" % [na_cena, visivel])
+		var num_reto := false
+		for k in range(retorno.size() - 1):
+			var a: Vector2 = retorno[k]
+			var b: Vector2 = retorno[k + 1]
+			if abs(b.x - a.x) < 0.01 and is_equal_approx(a.x, origem.x) \
+					and origem.y >= min(a.y, b.y) - 0.01 and origem.y <= max(a.y, b.y) + 0.01:
+				num_reto = true
+		_confere("o CaminhaoRetorno%d parte de um trecho reto do retorno" % j, num_reto,
+			"(%.2f, %.2f) não cai em nenhum" % [origem.x, origem.y])
+
+	# ── e ── as duas pontas fora do quadro, pelo desenho inteiro.
+	var no0 := cenario.get_node_or_null("CaminhaoRetorno0") as Control
+	if no0 != null:
+		var origem0: Vector2 = origens[0]
+		for ponta in [[0, "a entrada"], [retorno.size() - 1, "a saída"]]:
+			var pos: Vector2 = no0.position + _tela_da_rota(retorno[ponta[0]], origem0, pr) \
+				+ Vector2(MEIO_QUADRO, MEIO_QUADRO)
+			var caixa := Rect2(pos + desenho.position, desenho.size)
+			_confere("%s do retorno está fora do quadro" % ponta[1],
+				not visivel.intersects(caixa),
+				"o desenho fica em %s e o mapa é %s" % [caixa, visivel])
+
+	# ── f ── a silhueta do retorno, perguntada a QUEM DECIDE.
+	var GS: Node = root.get_node("GameState")
+	var errado := ""
+	var vistas := {}
+	for motivo in GS.MOTIVOS:
+		var id := String(motivo)
+		if not caminhoes.has(id):
+			continue                # o §4 já reprova o motivo sem camião
+		for i in range(retorno.size() - 1):
+			var de: Vector2 = retorno[i]
+			var para: Vector2 = retorno[i + 1]
+			var em_mx: bool = abs(para.x - de.x) > 0.01
+			var usada: Texture2D = tela.call("silhueta_do_trecho", de, para, id)
+			var arquivo := usada.resource_path.get_file()
+			vistas[arquivo] = true
+			var pede := "caminhao_%s_retorno%s.png" % [id, "_mx" if em_mx else ""]
+			if arquivo != pede and errado == "":
+				errado = "o trecho %d de %s sobe em %s e usa %s, e pede %s" \
+					% [i, id, "mx" if em_mx else "my", arquivo, pede]
+	_confere("cada trecho do retorno usa a silhueta de costas, do eixo e da carga",
+		errado == "", errado)
+	_confere("e as %d silhuetas do retorno entram em campo" % (GS.MOTIVOS.size() * 2),
+		vistas.size() == GS.MOTIVOS.size() * 2, "só se viu %s" % str(vistas.keys()))
 
 
 # O mesmo `tela_da_rota()` do `Main.gd`, mas com a projeção vinda das ÂNCORAS.
@@ -2259,7 +2456,13 @@ func _d20_a_rua_no_desenho() -> void:
 		areias.append(Color(str(cores_areia[nome])))
 
 	var consts: Dictionary = (_main.get_script() as GDScript).get_script_constant_map()
-	var rota: Array = consts["ROTA_ESTRADA"]
+	# As DUAS rotas, desde a mão dupla (23/09): a faixa de dentro passa mais
+	# perto da calçada da vila, e é ela que mais tem a perder com uma cor
+	# errada no mapa.
+	var trechos: Array = []
+	for rota in [consts["ROTA_ESTRADA"], consts["ROTA_RETORNO"]]:
+		for i in range(rota.size() - 1):
+			trechos.append([rota[i], rota[i + 1]])
 
 	for caminho in MAPAS_DA_RUA:
 		# O `_mapa_lido` carrega a textura e confere a escala dela contra a
@@ -2279,9 +2482,9 @@ func _d20_a_rua_no_desenho() -> void:
 		var lidas := 0
 		var pior_calcada := ""
 		var pior_areia := ""
-		for i in range(rota.size() - 1):
-			var de: Vector2 = rota[i]
-			var para: Vector2 = rota[i + 1]
+		for trecho in trechos:
+			var de: Vector2 = trecho[0]
+			var para: Vector2 = trecho[1]
 			for k in range(D20_AMOSTRAS + 1):
 				var m: Vector2 = de.lerp(para, float(k) / float(D20_AMOSTRAS))
 				var px := _tela(m.x, m.y, alt)

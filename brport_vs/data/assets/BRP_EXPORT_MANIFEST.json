@@ -196,6 +196,54 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_porto_caminhao_armazenagem_retorno_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_armazenagem_retorno.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_armazenagem_retorno_mx_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_armazenagem_retorno_mx.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_caminhao_conteiner_base",
       "category": "porto",
       "stage": "base",
@@ -224,6 +272,54 @@
       "category": "porto",
       "stage": "base",
       "file": "caminhao_conteiner_mx.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_conteiner_retorno_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_conteiner_retorno.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_conteiner_retorno_mx_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_conteiner_retorno_mx.png",
       "format": "png-rgba",
       "frame_size": [
         768,
@@ -292,6 +388,54 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_porto_caminhao_granel_retorno_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_granel_retorno.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_granel_retorno_mx_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_granel_retorno_mx.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_caminhao_pescado_base",
       "category": "porto",
       "stage": "base",
@@ -320,6 +464,54 @@
       "category": "porto",
       "stage": "base",
       "file": "caminhao_pescado_mx.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_pescado_retorno_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_pescado_retorno.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_caminhao_pescado_retorno_mx_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "caminhao_pescado_retorno_mx.png",
       "format": "png-rgba",
       "frame_size": [
         768,

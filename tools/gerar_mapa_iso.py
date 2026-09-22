@@ -294,9 +294,15 @@ RUA_RECUO = 6.8          # da beira do cais até a face de TERRA da rua
 #     rua 2,0 -> janela 1,98   NÃO CABE, por 7 milésimos
 #
 # Duas faixas de 0,9 contra um camião de 0,45 — ele ocupa metade da sua faixa,
-# que era o ponto. A outra saída seria empurrar o `RUA_RECUO` para trás, e essa
-# mexe no enquadramento inteiro: entre a calçada e a frente da vila há 1,48 de
-# folga, e a vila é medida do cais como tudo o mais. Ficou por fazer.
+# que era o ponto.
+#
+# ⚠️ E EMPURRAR O `RUA_RECUO` NÃO DESTRAVA NADA DISTO, ao contrário do que este
+# comentário dizia até 23/09 (`docs/decisoes/047`). A janela é em `my` e o
+# `RUA_RECUO` mexe em `mx`: o cotovelo tem a largura da rua em `my` onde quer
+# que ela esteja. Acima de 1,9 quem se mexe é o ACESSO AO BERÇO (1,2 em `my`)
+# ou o armazém; o pátio em `mx` só aperta aos 2,17. E os "1,48 de folga até à
+# vila" eram até ao FUNDO do lote — da calçada à frente da casa há 0,13.
+# A rua FICA em 1,8, e é decisão: a 2,0 ela ganha 3,6 px na tela.
 RUA_LARG = 1.8
 PASSADEIRA_COMP = 0.75   # o quanto a zebra ocupa ao longo da rua
 CALCADA = 0.22
