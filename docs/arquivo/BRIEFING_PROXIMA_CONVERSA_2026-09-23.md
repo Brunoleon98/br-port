@@ -45,9 +45,13 @@ GitHub.
 - Confira repositório, branch, `git status`, HEAD e o local contra o remoto
   **antes** de sincronizar. Preserve trabalho não publicado.
 - Leia `CLAUDE.md` (carrega sozinho) e `docs/ESTADO_DO_PROJETO.md`.
-- ⚠️ **O `ESTADO_DO_PROJETO.md` está a 29.420 de 30.000** — **580 de folga**.
-  22/09 fundiu as quatro linhas das levas de cor numa só para as caber.
-  **Quem escrever ali a seguir comprime ANTES, não depois.**
+- ⚠️ **O `ESTADO_DO_PROJETO.md` está a 29.420 bytes, com ~580 de folga** — e o
+  teto NÃO se copia daqui: ele vive no `TETO_ESTADO` de `tools/conferir_docs.py`,
+  que é quem o CI lê. (Esta linha já disse 26.000 depois de o teto subir, e quem
+  a seguisse comprimiria contra um número que não existia.) 22/09 fundiu as
+  quatro linhas das levas de cor numa só para as caber.
+  **Quem escrever ali a seguir comprime ANTES, não depois**, e confere a folga
+  rodando o conferidor em vez de acreditar neste número.
 - **São DEZ verdes neste contêiner**: as seis suítes do Godot (`TODOS OS
   TESTES PASSARAM`, `DESIGN OK`, `AUDIO OK`, `FUMACA OK`, `REGISTRO OK`,
   `ASSET OK`) e quatro conferidores em Python (`DOCS OK`, `GUARDAS OK`,
