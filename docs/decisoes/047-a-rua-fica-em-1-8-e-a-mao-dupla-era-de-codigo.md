@@ -102,9 +102,30 @@ eixo não o via, porque `_retorno_mx.png` também acaba em `_mx.png`.
 
 Base verde conferida entre cada um; original guardado por `cp`.
 
-⚠️ **O que fica sem guarda:** que o `_sair_do_berco()` passe `true` ao
-`re_no_primeiro`. Tirá-lo põe o camião a virar 180° no berço, e nenhum teste
-anima a saída. Está escrito aqui em vez de apertado.
+⚠️ **O que ficou sem guarda, e deixou de ficar na sessão seguinte:** que o
+`_sair_do_berco()` passe `true` ao `re_no_primeiro`. Tirá-lo põe o camião a
+virar 180° no berço, e nenhum teste animava a saída. Ver abaixo.
+
+## Adenda (23/09, sessão seguinte) — a saída de ré ganhou guarda
+
+**`_d13_saida_de_re()`**, no fim do D13. Cada camião chega ao berço pelo
+caminho do jogo (`_no_acesso()`, com barco e trabalhador na doca) e sai pelo do
+jogo (`_docas_mudaram()`, com o barco a ir embora); o bloco apanha o tween que
+o jogo criou pela diferença de `get_processed_tweens()` e anda-o com
+`custom_step()`, lendo a textura do NÓ a cada 0,25 s. O teste é síncrono, e um
+`await` nunca voltaria. A ré compara-se com o camião ENCOSTADO, que é o estado
+que ela substitui (`045`); as três docas, com as duas que faltam ao porto em
+ruínas postas como fixture e retiradas no fim.
+
+| mutante | o que reprovou |
+|---|---|
+| M1 sem o `true` (o que esta decisão nomeava) | a ré ≠ o encostado, e a silhueta de retorno na saída — **só** estas duas |
+| M2 o `de_re` em todos os trechos | «retoma de frente» e «sem retorno»; a ré continua certa |
+| M3 `silhueta_do_trecho()` ignora o `de_re` | as mesmas do M1 — ⚠️ **e esse ramo também não tinha guarda**: o §4 e o §f perguntam trecho a trecho e nenhum passa o `de_re` |
+| M4 os eixos trocados | o §4 e o §f primeiro; a prova da fixture («encostado olha para a água») também, e o comentário dela diz que não é a guarda da ré |
+| M5 a saída nunca arranca | **só** a exigência de haver um tween e duas silhuetas — sem ela, «sem retorno» passava sobre uma lista VAZIA |
+
+Base verde conferida entre cada um; original guardado por `cp`.
 
 ## As duas folhas de contato cresceram, e as duas reprovaram como deviam
 

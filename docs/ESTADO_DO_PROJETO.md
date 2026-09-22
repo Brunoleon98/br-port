@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — a rua fica em 1,8 e a mão dupla (`047`)
+> **Última atualização:** 23/09/2026 — a saída de ré ganha guarda (adenda da `047`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -119,15 +119,11 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). Os do HUD entram pela PORTA DO JOGADOR, numa partida jogada. A cobertura MEDE-SE nos logs, porque declarar mentiria |
 | **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto >= 3,0x o p99,9 do próprio arquivo —, o resto DESCRITOR. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz) |
 | **As CINCO levas de cor** (21–22/09, `041`–`045`) | **27 chamadas em 19 locais → ZERO**, lista de exceções vazia. Quatro migraram VALORES (fotos byte a byte); a 2ª não — a régua não drenava a fila, e alcançado o âmbar deu 3,07:1. ⚠️ **Estado que não monta publica linhas plausíveis** (a chave MORTA da 3ª, o piso da 4ª). A 5ª trouxe o **D34** (proveniência lida no nó) |
-| **A rua e a mão dupla** (23/09, `047`) — escolha do Bruno | a rua FICA em 1,8: a janela que aperta é em `my` e o `RUA_RECUO` não a toca; a 2,0 ganharia 3,6 px. Faltava quem SUBISSE: dois camiões na faixa de dentro, de costas, 8 silhuetas `_retorno` (+0,75% do `.pck`). ⚠️ **A assinatura do D13 não fazia a média que dizia** (`resize` amostra); hoje faz, corte 0,01. Bateria a **27 tiros** |
-
-**E o gate A4 correu (19/09)**, nas sete falas novas desde 13/09; as quatro
-notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
-jargão, e a semana nova deixou de cobrar uma parcela já quitada.
+| **A rua e a mão dupla** (23/09, `047`) — escolha do Bruno | a rua FICA em 1,8: a janela que aperta é em `my` e o `RUA_RECUO` não a toca; a 2,0 ganharia 3,6 px. Faltava quem SUBISSE: dois camiões na faixa de dentro, de costas, 8 silhuetas `_retorno` (+0,75% do `.pck`). ⚠️ **A assinatura do D13 não fazia a média que dizia** (`resize` amostra); hoje faz, corte 0,01. Bateria a **27 tiros**. Depois, a **saída de ré** ganhou guarda (`_d13_saida_de_re`, 5 mutantes) |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
-Bruno — as cinco primeiras foram as levas de cor (`041`–`045`).
+Bruno.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -137,16 +133,16 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**; as quatro notas dele estão aplicadas e trancadas. Faltam **três decisões de palavra**, o mesmo jargão nos sítios que ficaram: `"Caixa:"` (`DebtPaymentPanel.gd:68`), o `"dinheiro no caixa"` da fala da semana nova, e o `"0 dias daqui"` da parcela (`037`) |
+| **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**; as quatro notas dele estão aplicadas e trancadas. Faltam **três decisões de palavra**, o mesmo jargão nos sítios que ficaram: `"Caixa:"` (`DebtPaymentPanel.gd:68` e `UpgradePanel.gd:84`), o `"dinheiro no caixa"` da fala da semana nova, e o `"0 dias daqui"` da parcela (`037`) |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
 
 ⚠️ **Uma coisa, sessão própria:** o quadro dos props é 89,6% moldura vazia
-(cortá-lo mexe na origem do mundo, `029`). A rua fechou em 1,8 (`047`). Das duas jogadas de
-02–06/09 sobram o rodapé (A5), economia de Fase 2 e a madeira podre (A4) —
-history e triagem em `docs/arquivo/HISTORICO.md`.
+(cortá-lo mexe na origem do mundo, `029`). O retorno a entrar nos berços é
+desenho de cruzamento, por decidir (`047`). Das jogadas de 02–06/09 sobram o
+rodapé (A5), economia de Fase 2 e a madeira podre (A4) — em `HISTORICO.md`.
 
 ---
 

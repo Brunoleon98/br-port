@@ -523,6 +523,12 @@ Teste e import rodam sem tela.
    APERTA é um só: pórtico comprado e cais ainda não. Antes de dar um defeito
    por não pegado, pergunte em que estado as duas versões DIVERGEM — e monte
    esse estado, que costuma ser um só entre muitos.
+   ⚠️ **E FUNÇÃO COM GUARDA NÃO É RAMO COM GUARDA.** Em 23/09 a
+   `silhueta_do_trecho()` tinha duas asserções a perguntar-lhe trecho a trecho,
+   e nenhuma passava o `de_re` — o argumento opcional que decide a ré do camião:
+   apagar o ramo dele não reprovava nada. Antes de dar uma função por coberta,
+   pergunte que ARGUMENTOS as asserções lhe passam; o que tem valor por omissão
+   é, quase sempre, o que ninguém passa (`047`).
    ⚠️ **E ESSE ESTADO PODE SER O QUE O JOGO NÃO FAZ — aí a fixture REALISTA é a
    que não prova nada.** A regra acima manda montar o estado em que as duas
    versões divergem; esta diz o que fazer quando ele é justamente o estado raro.
@@ -2360,6 +2366,13 @@ armadilha de uma função, no comentário dela.
   usar `await`, o `await` nunca voltou: a suíte imprimiu o marcador com o bloco
   inteiro por correr, verde e sem ter testado nada. Num `--script` que precise
   de esperar frames, `_process` devolve `false` e quem encerra é só o `quit()`.
+- **⚠️ E ANIMAÇÃO PROVA-SE SEM ESPERAR FRAME NENHUM.** Num teste síncrono — o
+  `teste_design` devolve `true`, e um `await` lá nunca volta — o tween que o
+  jogo cria apanha-se pela diferença de `get_processed_tweens()` antes e depois
+  da ação, e anda-se com `custom_step()`, lendo o NÓ a cada passo, que é o que o
+  jogador vê. O passo tem de ser menor do que o trecho mais curto, senão um
+  trecho inteiro cabe num passo e nunca é lido; e a ação que não criou tween
+  tem de REPROVAR, senão a lista vazia passa por "nada de errado" (`047`).
 - **⚠️ E `preload` DE UM SCRIPT QUE FALA DO AUTOLOAD, A PARTIR DE UM
   `--script`, DÁ UM GDScript VAZIO.** A terceira cara da regra abaixo, e a que
   menos se parece com ela: `const D := preload("res://scripts/Dock.gd")` numa

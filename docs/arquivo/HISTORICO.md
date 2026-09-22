@@ -682,3 +682,14 @@ economia de Fase 2 e a madeira podre (A4) — está nos gates do estado.
 
 **A Fase 2 foi adiada em 03/09**, sem travar a fila da §7; a conta dela está em
 `docs/design/BR_Port_GDD_V7_ERRATA_ECONOMIA.md`.
+
+## O que o estado deixou de carregar em 23/09
+
+Desceram do `ESTADO_DO_PROJETO.md` para caber a guarda da saída de ré:
+
+**O gate A4 correu (19/09)**, nas sete falas novas desde 13/09; as quatro
+notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
+jargão, e a semana nova deixou de cobrar uma parcela já quitada.
+
+**Depois de a §7.1 fechar**, as cinco primeiras escolhas do Bruno foram as
+levas de cor (`041`–`045`); a sexta, a rua e a mão dupla (`047`).

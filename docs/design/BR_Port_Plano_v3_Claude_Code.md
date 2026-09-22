@@ -1668,7 +1668,9 @@ medido, a 1,9 o armazém entra no cotovelo e a 2,0 reprovam o armazém e a
 barreira, pela janela em `my` que o `RUA_RECUO` não toca — e o ganho seria de
 3,6 px. O que faltava era **alguém subir a rua**: dois camiões novos sobem pela
 faixa de dentro, de costas, com oito silhuetas `_retorno`. O item 2 da segunda
-jogada estava feito pela metade desde 07/09.
+jogada estava feito pela metade desde 07/09. Na sessão seguinte a **saída de ré
+do berço** ganhou guarda (`_d13_saida_de_re`, cinco mutantes, adenda da `047`);
+o retorno a entrar nos berços continua por decidir — é desenho de cruzamento.
 
 ### ✅ O ITEM 12 FECHOU — três lotes da vila que não são casa (13/09)
 

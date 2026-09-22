@@ -1942,6 +1942,7 @@ func _d13_travessia_do_caminhao() -> void:
 	_confere("e nenhum deles transborda para o avental", no_avental == "", no_avental)
 
 	_d13_retorno(tela, cenario, consts, rota, regioes, desenho, visivel, pr)
+	_d13_saida_de_re(tela, cenario, consts)
 	_d13_completo = true
 
 
@@ -2102,6 +2103,157 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 		errado == "", errado)
 	_confere("e as %d silhuetas do retorno entram em campo" % (GS.MOTIVOS.size() * 2),
 		vistas.size() == GS.MOTIVOS.size() * 2, "só se viu %s" % str(vistas.keys()))
+
+
+# ── D13 · A SAÍDA DO BERÇO, DE RÉ (23/09)
+#
+# O camião encostado larga o berço de marcha-atrás: anda em `-mx` com a frente
+# ainda virada para a água, e só no acesso retoma a estrada de frente. Quem o
+# pede é o `true` que `_sair_do_berco()` passa ao `re_no_primeiro`, e a `047`
+# deixou escrito que nada o guardava: tirá-lo põe o camião a virar 180° de um
+# frame para o outro no fundo da baía, e o §4 e o §f passavam na mesma, porque
+# perguntam a `silhueta_do_trecho()` trecho a trecho e nenhum ANIMA a saída —
+# nem passa o `de_re`.
+#
+# ⚠️ POR ISSO ESTE BLOCO ANDA O TWEEN, e à mão. O teste é síncrono — um `await`
+# aqui nunca voltaria, porque o `_process` devolve `true` —, então o tween que o
+# jogo cria é apanhado pela diferença de `get_processed_tweens()` e avançado com
+# `custom_step()`, lendo a textura do NÓ a cada passo. O que se confere é o que
+# o jogador veria, e não o que a função diria.
+#
+# ⚠️ E A RÉ COMPARA-SE COM O ESTADO QUE ELA SUBSTITUI (`045`): o camião
+# ENCOSTADO, que chega lá pelo caminho do jogo (`_no_acesso()`) e sai pelo do
+# jogo (`_docas_mudaram()`, com o barco a ir embora) — nunca uma silhueta
+# suposta. As três docas, e não só a que o porto em ruínas tem: as outras duas
+# entram como fixture e saem no fim.
+func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
+	var GS: Node = root.get_node("GameState")
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var caminhoes: Dictionary = consts["CAMINHOES"]
+	var n: int = (consts["ACESSOS_DOCA"] as Array).size()
+	var tweens_antes := get_processed_tweens()
+	var docas_antes: int = GS.docks.size()
+	var barco_antes = GS.docks[0]["boat"]
+	var trab_antes = GS.docks[0]["worker_id"]
+	while GS.docks.size() < n:
+		GS.docks.append({"boat": null, "worker_id": null})
+
+	var sem_estado := ""
+	var nao_encosta := ""
+	var vira := ""
+	var nao_retoma := ""
+	var de_costas := ""
+	for i in range(n):
+		var no := cenario.get_node_or_null("Caminhao%d" % i) as TextureRect
+		if no == null:
+			continue
+		var pos := no.position
+		var tex := no.texture
+		var indice := no.get_index()
+		var carga := String((tela.get("_carga_na_estrada") as Array)[i])
+		var par: Dictionary = caminhoes[carga]
+		var doca: Dictionary = GS.docks[i]
+		var id := 4300 + i
+		doca["boat"] = {"id": id, "motivo": carga, "classe": "pesqueiro"}
+		doca["worker_id"] = 1
+
+		var chegada := _andar_o_tween(no, func() -> void:
+			tela.call("_no_acesso", i, 5.0))
+		var visita := int((tela.get("_visita_na_doca") as Array)[i])
+		# O ESTADO TEM DE TER SIDO ALCANÇADO, e prova-se pela consequência: é o
+		# fim do tween da chegada que marca a visita (`043`, `044`).
+		if (int(chegada["tweens"]) != 1 or not chegada["acabou"] or visita != id) \
+				and sem_estado == "":
+			sem_estado = "doca %d: %d tween(s) na chegada, acabou=%s, visita %d (pede %d)" \
+				% [i + 1, int(chegada["tweens"]), str(chegada["acabou"]), visita, id]
+		var encostado := no.texture
+		# Esta é a prova da FIXTURE, e não a guarda da ré: trocar os eixos de
+		# `silhueta_do_trecho()` também a reprovaria, mas o §4 já o apanha antes.
+		if encostado != par["mx"] and nao_encosta == "":
+			nao_encosta = "doca %d encosta com %s, e a %s olha para a água em %s" \
+				% [i + 1, _arquivo(encostado), carga, _arquivo(par["mx"])]
+
+		doca["boat"] = null
+		var saida := _andar_o_tween(no, func() -> void: tela.call("_docas_mudaram"))
+		var vistas: Array = saida["vistas"]
+		if int(saida["tweens"]) != 1 or not saida["acabou"] or vistas.size() < 2:
+			if nao_retoma == "":
+				nao_retoma = "doca %d: %d tween(s) na saída, acabou=%s, viu %s" \
+					% [i + 1, int(saida["tweens"]), str(saida["acabou"]),
+						_arquivos(vistas)]
+		else:
+			if vistas[0] != encostado and vira == "":
+				vira = "doca %d: encostado com %s, e a ré sai com %s" \
+					% [i + 1, _arquivo(encostado), _arquivo(vistas[0])]
+			if vistas[1] != par["my"] and nao_retoma == "":
+				nao_retoma = "doca %d: depois da ré mostra %s, e a estrada em my pede %s" \
+					% [i + 1, _arquivo(vistas[1]), _arquivo(par["my"])]
+		for t in vistas:
+			if (t == par["mx_retorno"] or t == par["my_retorno"]) and de_costas == "":
+				de_costas = "doca %d: a saída passou por %s — %s" \
+					% [i + 1, _arquivo(t), _arquivos(vistas)]
+
+		no.position = pos
+		no.texture = tex
+		cenario.move_child(no, indice)
+		doca["boat"] = null
+		doca["worker_id"] = null
+
+	for tw in get_processed_tweens():
+		if not tweens_antes.has(tw):
+			tw.kill()
+	GS.docks.resize(docas_antes)
+	GS.docks[0]["boat"] = barco_antes
+	GS.docks[0]["worker_id"] = trab_antes
+
+	_confere("cada camião chega ao berço pelo caminho do jogo, e a visita fica marcada",
+		sem_estado == "", sem_estado)
+	_confere("encostado, olha para a água (a silhueta mx da carga dele)",
+		nao_encosta == "", nao_encosta)
+	_confere("e a ré sai com a MESMA silhueta com que estava encostado",
+		vira == "", vira)
+	_confere("depois da ré, retoma a estrada de frente", nao_retoma == "", nao_retoma)
+	_confere("e a saída inteira não passa por silhueta de retorno",
+		de_costas == "", de_costas)
+
+
+## Corre `acao` e anda até ao fim o tween que ela criou, a passos de 0,25 s,
+## guardando as texturas que o nó MOSTROU, pela ordem e sem repetir a seguida.
+## `tweens` diz quantos a ação criou: se não for um, não há o que andar, e quem
+## chama reprova — uma lista vazia passaria por "nenhuma silhueta errada".
+##
+## O passo é menor do que o trecho mais curto da rota (a ré, ~2,6 s), senão um
+## trecho inteiro caberia num passo e a textura dele nunca seria lida.
+func _andar_o_tween(no: TextureRect, acao: Callable) -> Dictionary:
+	var antes := get_processed_tweens()
+	acao.call()
+	var novos: Array = []
+	for tw in get_processed_tweens():
+		if not antes.has(tw):
+			novos.append(tw)
+	var vistas: Array = []
+	if novos.size() != 1:
+		return {"tweens": novos.size(), "acabou": false, "vistas": vistas}
+	var tw: Tween = novos[0]
+	var passos := 0
+	while tw.is_running() and passos < 2000:
+		tw.custom_step(0.25)
+		passos += 1
+		if vistas.is_empty() or vistas[-1] != no.texture:
+			vistas.append(no.texture)
+	return {"tweens": 1, "acabou": not tw.is_running(), "vistas": vistas}
+
+
+func _arquivo(tex: Texture2D) -> String:
+	return tex.resource_path.get_file() if tex != null else "(nada)"
+
+
+func _arquivos(texs: Array) -> String:
+	var nomes: Array = []
+	for t in texs:
+		nomes.append(_arquivo(t))
+	return ", ".join(nomes)
 
 
 # O mesmo `tela_da_rota()` do `Main.gd`, mas com a projeção vinda das ÂNCORAS.
