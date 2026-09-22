@@ -85,6 +85,25 @@ façanha"*, é que **o vermelho é da operação** — e essa afirmação lê a 
 da semana, um campo que a condição desses tons não lê. Com ela listada, o M1
 reprova em 252 boletins.
 
+## As palavras do mesmo gate, decididas antes na sessão
+
+O Bruno respondeu às três palavras que o A4 tinha por decidir, e cada resposta
+cresceu pela busca pela FORMA (`CLAUDE.md`, a regra do F9):
+
+- **"caixa" → "dinheiro"** em todo texto que o jogador lê — 8 sítios, e o
+  briefing nomeava 3; a fala da semana nova, aprovada por ele, mantém "dinheiro
+  no caixa". **"Resultado" → "lucro" ou "prejuízo"** no resumo do dia e no
+  boletim, com o prejuízo sem sinal e o zero como *"nem lucro nem prejuízo"*
+  (`Narrativa.lucro_ou_prejuizo`, T10); **RECEITAS/DESPESAS → ENTROU/SAIU**; e
+  *"Receita de barcos"* → *"Ganho com barcos"* no fim de fase.
+- **O vencimento diz "hoje / amanhã / daqui a N dias".** O *"0 dias daqui"* da
+  lista nunca chegava à tela; o que se lia era *"1 dia daqui"* no próprio dia 32,
+  porque a conta contava os dias que ainda se jogam e "daqui" pede a distância
+  (T11; nota na `037`).
+- **"Barcos na fila" → "barcos esperando"**, e *"fecha o mês"* → *"fecha a
+  semana"*: o jogo não tem mês — a semana continua com 8 dias, e a de 7 foi
+  medida e não aplicada.
+
 ## O que fica de fora
 
 - **A lista de afirmações é escrita à mão a partir do texto.** A régua garante

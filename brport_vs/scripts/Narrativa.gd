@@ -81,8 +81,9 @@ const DIARIO_CABECALHO := "Porto Mirim, primeira semana"
 
 
 # ── DONA CIDA — o boletim financeiro semanal ──
-# Três tons, e o gatilho de cada um é o resultado da semana contra a média das
-# anteriores. A faixa do meio existe para a comemoração ser RARA: sem ela,
+# Os tons saem do resultado da semana contra a média das anteriores, e o
+# vermelho divide-se pela semana anterior e pela parcela (ver
+# `tom_do_boletim`). A faixa do meio existe para a comemoração ser RARA: sem ela,
 # qualquer semana no azul soaria a festa e o tom perderia o valor.
 # ⚠️ CADA TOM AFIRMA MAIS DO QUE O NÚMERO QUE O ESCOLHE, e até 23/09 ninguém
 # conferia as afirmações. Medido com `tools/medir_boletim.gd` (200 partidas por
@@ -136,7 +137,7 @@ Mas foi uma boa semana. Pronto, eu disse."""
 # excepcional. Fonte: o próprio arquivo de escrita ("+30%").
 const CIDA_LIMIAR_OTIMO := 0.30
 
-# OS QUATRO TONS POR ID, e é o id que o resto do jogo passa a usar.
+# OS TONS POR ID, e é o id que o resto do jogo passa a usar.
 #
 # ⚠️ ELE EXISTE PORQUE O RETRATO PRECISA DE SABER QUAL TOM SAIU. Até 13/09 o
 # `tom_do_boletim()` devolvia o TEXTO, o que bastava enquanto a fala era só

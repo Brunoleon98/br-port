@@ -27,7 +27,7 @@ perder o porto.
 
 ## ⚠️ LEIA ISTO ANTES DE ESCREVER EM QUALQUER DOCUMENTO
 
-O `ESTADO_DO_PROJETO.md` tem **~400 bytes de folga**. O teto vive no
+O `ESTADO_DO_PROJETO.md` tem **~250 bytes de folga**. O teto vive no
 `TETO_ESTADO` de `tools/conferir_docs.py`. **Comprima ANTES de escrever**, e
 confira rodando o conferidor antes de escrever o commit.
 
@@ -35,6 +35,10 @@ confira rodando o conferidor antes de escrever o commit.
 
 ## 1. Comece pelo estado real
 
+- ⚠️ **A sessão de 23/09 fechou na branch `claude/eloquent-hopper-goxy6q`,
+  cinco commits à frente da `main` (`0bf6b42`), SEM PR aberto.** Antes de
+  qualquer checkout, confira no GitHub se o Bruno abriu e fundiu o PR dela; se
+  não, esse trabalho só existe na branch, e reiniciá-la da `main` apaga-o.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**,
   HEAD confirmado com o GitHub, e `git log --oneline origin/main..HEAD` antes de
   reapontar seja o que for.
@@ -43,6 +47,9 @@ confira rodando o conferidor antes de escrever o commit.
   quatro conferidores (`DOCS OK`, `GUARDAS OK`, `ESCOPO UI OK`, `SINAL OK`). A
   bateria tem **27 tiros** e fecha com `COBERTURA OK` — o conferidor recebe a
   PASTA das fotos, e um `--help` responde `COBERTURA FALHOU`.
+- **E a régua do boletim entrou no CI:** `tools/medir_boletim.gd -- 200`,
+  ~11 s, `BOLETIM OK` (`048`). Ela herda o simulador; quem mexer nele ou numa
+  fala do boletim corre-a.
 - O `bpy` não vem no arranque; `pip install "bpy==4.5.0"` levou ~3 min.
 
 ---
@@ -83,6 +90,15 @@ esquerda por cima da faixa da ida: pede regra de cedência, trava de berço
 ocupado (hoje o camião `i` serve a doca `i`) e guardas novas. As silhuetas
 existem. Uma sessão inteira, e o pedido original avisava contra trânsito e bugs.
 
+### (f) NOVO — a resposta do Sr. Ribeiro não tem foto
+
+O tiro `ribeiro` fotografa a ENTRADA; a resposta (pagou / não pagou) e a
+despedida — as falas mais mexidas em 23/09 — só foram fotografadas à mão, com
+um script descartável que herda o `capturar_cena.gd` e chama
+`_mostrar_resposta()`. O T13 guarda o texto; nada guarda que ele caiba no
+cartão. Pequeno: um tiro a mais na bateria, e pede que a cobertura por painel
+passe a distinguir TEMPOS do mesmo painel, que hoje não distingue.
+
 ---
 
 ## 3. Armadilhas que 23/09 (segunda sessão) mediu
@@ -97,6 +113,12 @@ existem. Uma sessão inteira, e o pedido original avisava contra trânsito e bug
 - ⚠️ **Afirmação que É a condição do tom é espelho.** A régua do boletim deu
   verde com o ramo da parcela arrancado; só reprovou depois de listar uma
   afirmação que lê um campo que a escolha não lê (`048`).
+- ⚠️ **Frase que vai ao gate fotografa-se no estado em que aparece.** O A4
+  carregou *"0 dias daqui"* quatro dias, e ele nunca chegava à tela; o defeito
+  real era *"1 dia daqui"* no próprio dia 32. **O mesmo número serve a uma
+  palavra e mente noutra** — "N dias restantes" conta hoje, "daqui" não.
+- ⚠️ **Fala que vem do rascunho do GDD pode prometer uma regra da Fase 1.** O
+  *"uma vez eu deixo passar"* era das três parcelas; no VS não pagar encerra.
 
 ---
 
