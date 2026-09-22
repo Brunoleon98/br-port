@@ -249,6 +249,40 @@ content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
 
+[sub_resource type="StyleBoxFlat" id="trab_selecionado"]
+; O cartão do trabalhador ESCOLHIDO. É o `trab_livre` com a borda âmbar e o
+; dobro da largura — e é sempre sobre o livre que ele pousa: `refresh()` só
+; chega ao ramo da seleção depois de descartar ocupado e alocado, e o
+; `_pode_ser_selecionado()` do `Main` limpa a seleção de quem deixou de estar
+; livre. Derivado em 22/09, não lido: alocar o trabalhador pela porta do
+; jogador põe o `_selecionado` em −1 e o cartão volta a `TrabAlocado`.
+;
+; ⚠️ A SELEÇÃO FALA POR DOIS CANAIS, cor E largura, e a MEDIÇÃO diz que o
+; segundo é o que trabalha. Uma borda tem DUAS adjacências, e medir só uma
+; engana: amostrados no pixel da captura (`escolhido.png`, x=14..17), o âmbar
+; dá 7,37:1 contra a barra escura por FORA — a fronteira do cartão vê-se de
+; sobra — e 2,24:1 contra o fundo do cartão por DENTRO. O que fica abaixo do
+; corte de 3,0 da WCAG 1.4.11 é distinguir os dois ESTADOS pela cor: âmbar
+; contra o verde de repouso mede 2,26:1. Quem separa «escolhido» de «livre»
+; é a LARGURA, de 2px para 4px — daí o D34 exigir os dois canais.
+;
+; Trocar o âmbar é decisão do Bruno, e não desta migração, que preservou o
+; valor que já estava no `Worker.gd`.
+bg_color = Color(0.929, 0.984, 0.949, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
 [sub_resource type="StyleBoxFlat" id="trab_alocado"]
 bg_color = Color(0.906, 0.941, 0.976, 1)
 border_width_left = 2
@@ -636,6 +670,8 @@ BotaoPrimario/styles/disabled = SubResource("botao_off")
 Cartao/styles/panel = SubResource("cartao")
 TrabLivre/base_type = "PanelContainer"
 TrabLivre/styles/panel = SubResource("trab_livre")
+TrabSelecionado/base_type = "PanelContainer"
+TrabSelecionado/styles/panel = SubResource("trab_selecionado")
 TrabParado/base_type = "PanelContainer"
 TrabParado/styles/panel = SubResource("trab_parado")
 TrabAlocado/base_type = "PanelContainer"
