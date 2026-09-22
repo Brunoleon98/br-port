@@ -3852,6 +3852,10 @@ var _d33_completo := false
 
 # Os estados que o percurso já entregou. Sobe quando ele crescer; nunca desce
 # sem que alguém escreva por quê.
+#
+# 22 desde 22/09: os dois estados da faixa de mensagem que faltavam — o aviso
+# e o ruim. O terceiro, o BOM, já estava lá e mostrava a cor errada, porque a
+# régua não drenava a fila (`docs/decisoes/042`).
 const D33_ESTADOS_MIN := 20
 
 

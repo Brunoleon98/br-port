@@ -1393,6 +1393,17 @@ tranca isso.
   o perfil Descuidado passa a partida toda. Ao acrescentar arte que uma
   condição do jogo destrava, pergunte QUAL das capturas monta essa condição —
   e se nenhuma monta, o tiro novo faz parte da entrega.
+  ⚠️ **E «AS FOTOS NÃO MUDARAM» PEDE UM CONTROLE POSITIVO, senão é verde de
+  graça.** A calibração — duas corridas da MESMA árvore com os mesmos hashes —
+  prova que a bateria não tem ruído PRÓPRIO; **não** prova que ela veria a
+  mudança que se acabou de fazer. Medido em 22/09, ao escurecer o texto de
+  aviso da faixa de mensagem: mudaram **zero** das 24. O controle responde —
+  pintar o texto NEUTRO da mesma faixa de vermelho mexeu **12 das 24**, logo a
+  bateria vê a faixa em metade das fotos, e **as doze mostram-na sempre no
+  estado neutro**. A cor mudada não aparece em foto nenhuma. É a regra do
+  mesmo arquivo dos dois lados com um PNG no lugar do arquivo: zero só quer
+  dizer zero depois de um par que se sabe diferente ter dado muito
+  (`docs/decisoes/042`).
   ⚠️ **E FOLHA DE CONTATO QUE CRESCE SOZINHA TEM DE REPROVAR AO TRANSBORDAR.**
   Ela é uma captura de 720×1280 e ganha linhas a cada porte, motivo ou classe
   nova: o que passar da última linha é recortado sem uma palavra, e o prop fica
@@ -1897,6 +1908,36 @@ tranca isso.
   monta nenhum dos dois. A primeira leva foi a barra escura por ser a única em
   que ele já media tudo menos um estado — e esse ganhou-se ANTES de a cor
   migrar, que é a ordem (`docs/decisoes/041`).
+  ⚠️ **E «JÁ É MEDIDO PELO D33» É AFIRMAÇÃO A CONFERIR, NUNCA A HERDAR.** O
+  registro de exceções afirmava que o contraste dos QUATRO estados da faixa de
+  mensagem já era medido, e o briefing da conversa repetia-o. Medido: o
+  `_message_label` dava **três linhas em 237**, e as três eram o mesmo estado
+  NEUTRO — os outros três nunca tinham sido medidos, e um deles reprovava. A
+  afirmação perigosa é a POSITIVA: quando uma entrada diz que o estado NÃO é
+  alcançado, a régua confirma-a ao não publicar a linha; «já é medido» só se
+  confere CONTANDO as linhas na tabela (`docs/decisoes/042`).
+  ⚠️ **E FALA DISPARADA NÃO É FALA VISTA — VALE PARA A RÉGUA DO CONTRASTE.** A
+  `033` registou isto para o jogador; a régua caiu no mesmo buraco, por duas
+  razões que se somam. O `acao` do percurso corre ANTES de a cena existir, logo
+  o `message` que ele provoca sai para ninguém; e mesmo emitido depois, o texto
+  entra numa FILA com tempo mínimo, e o que fica no rótulo é a mensagem de
+  ABERTURA. Medido: o estado "HUD (nada parado)" tinha uma mensagem BOA presa
+  com `pendentes() == 1`, e a régua publicava a neutra de trás dela — uma linha
+  com razão e veredito, a descrever OUTRO estado. **Quem mede uma tela que tem
+  fila, drena a fila.**
+  ⚠️ **E DRENAR SÓ NO FIM NÃO CHEGA, porque a fila ordena por PRIORIDADE.**
+  `bad > warn > good`, então duas ações seguidas entregam na tela a de MENOR
+  prioridade e não a última: medido, com um dreno único no fim o caso do aviso
+  publicava o VERDE da ação anterior. Drena-se depois de CADA ação, que é
+  também a ordem em que o jogador as veria.
+  ⚠️ **E A FORMA DO CÓDIGO ESCOLHE-SE PELO QUE A RÉGUA ALCANÇA.** O `_pintar()`
+  ia trocar quatro ramos por um dicionário com `.get()` — mais arrumado, e
+  invisível ao portão: o `conferir_escopo_ui.py` procura
+  `theme_type_variation = "<nome>"`, e num dicionário o nome não está depois do
+  `=`. As quatro variações ficariam fora da guarda que existe para as conferir,
+  e um erro de digitação cairia no `Label` base **sem uma palavra** — a
+  armadilha escrita no cabeçalho do próprio portão. São quatro literais
+  `&"..."`, como a `041` já escrevia.
   ⚠️ **E O REGISTRO DIZ ONDE A COR É DECLARADA, NUNCA QUEM CONSOME A PEÇA QUE A
   CARREGA.** O stylebox `pilula` tinha duas cores declaradas e CINCO
   consumidores — as quatro pílulas por `styles/panel` e o botão Pausar por
