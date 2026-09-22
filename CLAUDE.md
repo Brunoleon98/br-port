@@ -2254,6 +2254,16 @@ troca. Meia sessão estava desenhada à volta de um remendo que não fazia falta
 Um briefing é a previsão de quem já fechou a conversa: antes de herdar o buraco
 que ele anuncia, **pergunte a que fonte ele o perguntou, e pergunte à outra**.
 
+⚠️ **E `git diff --stat` NOMEIA O ARQUIVO, NUNCA O QUE MUDOU DENTRO DELE.**
+Este projeto descreve diffs arquivo a arquivo — em decisão, em briefing e em
+corpo de PR —, e a lista de nomes convida a inventar o motivo de cada um. Em
+22/09 escrevi que o `Main.gd` era «follow-through» da leva de cor do cartão da
+doca: eram **duas referências em COMENTÁRIO**, de `_estilo()` para `refresh()`,
+porque aquela função se dissolveu. O `--stat` tinha-me dado o nome e eu supus o
+resto. **Antes de escrever o que um arquivo mudou, abra o diff DELE** — e vale
+o dobro quando o texto vai para um registo público, que é onde a suposição
+passa a parecer facto.
+
 ⚠️ **E `git fetch origin A B` NÃO ATUALIZA O `A` SE O `B` NÃO EXISTIR.** Ele
 aborta com `fatal: couldn't find remote ref B` e **código 128**, e nenhum dos
 dois refs se mexe — reproduzido em 21/09. O natural, ao abrir sessão, é
