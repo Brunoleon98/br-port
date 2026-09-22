@@ -121,9 +121,10 @@ decisão do Bruno.** (`art/sprites/` é item à parte — referido só por
   `043` o cartão está em **13 das 24**, e a migração mexeu em zero. A
   identidade byte a byte só quer dizer alguma coisa depois de se saber que a
   régua veria a diferença.
-- ⚠️ **PISO FROUXO DEIXA UM ESTADO SUMIR SEM QUEIXA.** O `D33_ESTADOS_MIN`
-  estava em 20 com o comentário ao lado a dizer 22. Hoje está em 23, que é o
-  número real.
+- ⚠️ **PISO FROUXO DEIXA SUMIR SEM QUEIXA, e mordeu DUAS vezes em 22/09.** O
+  `D33_ESTADOS_MIN` estava em 20 com o comentário ao lado a dizer 22; hoje está
+  em **24**, que é o número real. E na 4ª leva o piso de uma CONTAGEM deixou
+  passar o mutante Y3 — as duas vezes o remédio foi o número exato.
 - ⚠️ **Guarda que passa de primeira é para desconfiar**, e o defeito injetado
   nunca desce de modelo.
 
@@ -134,7 +135,7 @@ decisão do Bruno.** (`art/sprites/` é item à parte — referido só por
 - Nada de `# TUNING:`, política de perfis, sementes do jogo, projeção,
   enquadramento, viewport ou `SAVE_VERSION` — salvo se a (b) for a escolhida.
 - Não mexa em gerador cuja saída o CI compara byte a byte.
-- **Não reabra o R1–R9 nem as três levas já saídas.**
+- **Não reabra o R1–R9 nem as quatro levas de cor já saídas.**
 - Código, comentários, nomes e documentos em pt-BR; commits e PR em inglês.
 - Achou algo de outro item? Registre com a evidência e siga.
 
