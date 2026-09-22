@@ -100,19 +100,35 @@
     "previa. Ele exige que a cena TENHA fila de mensagem para drenar, e um painel",
     "não tem — é o mutante X3 da `042` a disparar. O que este estado pedia era o",
     "contrário: uma ação ANTES da cena, porque o painel lê o `GameState` enquanto",
-    "se monta. Daí a chave `estruturas`, que compra pela porta do jogador."
+    "se monta. Daí a chave `estruturas`, que compra pela porta do jogador.",
+    "",
+    "⚠️ A QUINTA LEVA SAIU EM 22/09, e foi a ÚLTIMA: a borda âmbar do",
+    "trabalhador SELECIONADO — 1 chamada, 1 entrada. Hoje é a variação",
+    "`TrabSelecionado`, e esta lista está VAZIA. O `Worker._aplicar_estilo()`",
+    "duplicava o stylebox do tema e pintava-lhe a borda à mão; hoje veste a",
+    "variação e a função é uma linha. `docs/decisoes/045`.",
+    "",
+    "⚠️ E ELA NÃO SE PROVOU POR CONTRASTE NEM POR FOTO-COMO-ESTAVA, que são as",
+    "duas provas das quatro levas anteriores. É BORDA e não texto, logo o D33",
+    "não a vê; e NENHUMA das 24 fotos selecionava um trabalhador, logo o",
+    "controle positivo mexeria zero e não provaria nada — a armadilha da `042`.",
+    "A prova é de PROVENIÊNCIA, lida no nó montado: o `sb` que o nó carrega tem",
+    "de ser O MESMO recurso que o tema publica, e um `duplicate()` reprova.",
+    "Não é espelho: não pergunta qual é a cor, pergunta de onde veio o objeto.",
+    "",
+    "⚠️ E A SELEÇÃO FALA POR DOIS CANAIS — cor E largura (2px → 4px), e foi a",
+    "medição que disse qual deles trabalha. ⚠️ UMA BORDA TEM DUAS ADJACÊNCIAS,",
+    "e medir só uma engana: a primeira leitura desta sessão publicou 2,24:1 (o",
+    "lado de DENTRO, contra o fundo do cartão) como se fosse «a» medida. Pelo",
+    "pixel da captura, o lado de FORA mede 7,37:1 contra a barra escura — a",
+    "fronteira do cartão vê-se de sobra, e o corte de 3,0 da WCAG 1.4.11 passa.",
+    "",
+    "O que fica ABAIXO do corte é distinguir os dois ESTADOS pela cor: âmbar",
+    "contra o verde de repouso mede 2,26:1. Quem separa «escolhido» de «livre»",
+    "é a LARGURA — e é por isso que o D34 exige os DOIS canais, e que o mutante",
+    "Z3 (largura 4→2) reprova sozinho. O número fica REGISTADO e não vira",
+    "asserção: trocar o âmbar é decisão do Bruno, e uma guarda de 3:1 sobre a",
+    "troca de cor reprovaria o que esta migração preservou de propósito."
   ],
-  "excecoes": [
-    {
-      "arquivo": "scripts/Worker.gd",
-      "receptor": "realce",
-      "propriedade": "border_color",
-      "classe": "ESTADO",
-      "chamadas": 1,
-      "cores": [
-        "Color(0.878, 0.604, 0.063)"
-      ],
-      "justificativa": "A borda âmbar do trabalhador SELECIONADO, num `StyleBoxFlat` duplicado do tema — o comentário ao lado explica por que se duplica: mexer no stylebox do tema mudaria TODOS os trabalhadores de uma vez. É BORDA e não texto, portanto fora do portão de contraste, e é a única cor de interface deste projeto que não chega por `font_color`. O caminho do tema é uma variação `TrabSelecionado` ao lado das quatro que já existem."
-    }
-  ]
+  "excecoes": []
 }

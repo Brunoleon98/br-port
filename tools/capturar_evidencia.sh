@@ -241,6 +241,19 @@ tirar docas   0 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png
 # Seis turnos com os trabalhadores alocados: barco na doca, e os dois
 # ancorados da Zona de Espera atrás dele.
 tirar pesca   0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/pesca.png" limpo alocar
+# ⚠️ O TRABALHADOR ESCOLHIDO, que até 22/09 não estava em foto NENHUMA. O
+# cartão dele tem borda própria — âmbar, e do dobro da largura do repouso —, e
+# ela chega por um TOQUE: nada nos 24 tiros anteriores tocava num trabalhador,
+# logo a última cor de interface fora do tema atravessou quatro levas de
+# migração sem que a bateria pudesse vê-la. Um controle positivo sobre um
+# estado que nenhuma foto monta mexe em ZERO fotos e não prova nada
+# (`docs/decisoes/042`), e é por isso que este tiro faz parte da entrega da
+# leva e não de um item de captura à parte.
+#
+# SEM `alocar`: as duas bandeiras brigam. Alocar tira o trabalhador de livre, e
+# o `_pode_ser_selecionado()` limpa a seleção de quem deixou de o ser — a foto
+# sairia com o cartão em repouso e passaria por boa.
+tirar escolhido 0 1 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/escolhido.png" limpo escolher
 # O BOLETIM, E OS 12 SÃO UM TETO E NÃO UMA PROMESSA. Sem `limpo` a ferramenta
 # recusa-se a avançar por baixo dele, de modo que o laço acaba no turno em que
 # ele abre — o 9, primeiro dia da semana 2. Pedir MAIS do que isso é de

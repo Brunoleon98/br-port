@@ -31,15 +31,22 @@ func _ready() -> void:
 		refresh()
 
 
-func _aplicar_estilo(nome_no_tema: String) -> void:
-	var estilo := get_theme_stylebox("panel", nome_no_tema)
-	if _selecionado and estilo is StyleBoxFlat:
-		# Duplicar: mexer no stylebox do tema mudaria TODOS os trabalhadores.
-		var realce: StyleBoxFlat = estilo.duplicate()
-		realce.border_color = Color(0.878, 0.604, 0.063)
-		realce.set_border_width_all(4)
-		estilo = realce
-	add_theme_stylebox_override("panel", estilo)
+# ⚠️ E A COR JÁ NÃO SE PINTA AQUI. Até 22/09 esta função DUPLICAVA o stylebox
+# do tema e pintava-lhe a borda âmbar à mão — a última cor de interface do
+# projeto fora do tema, e a única que não chegava por `font_color`. O que a
+# duplicação evitava está certo (mexer no stylebox do tema mudaria TODOS os
+# trabalhadores), mas a saída não era duplicar: é haver uma VARIAÇÃO própria,
+# que é o que o `DocaCartao` já fazia com o painel dele.
+#
+# ⚠️ E ELA PODE SER UMA SÓ PORQUE A SELEÇÃO NUNCA POUSA NOUTRO CARTÃO. O
+# `refresh()` abaixo só chega ao ramo da seleção depois de descartar ocupado e
+# alocado, e o `_pode_ser_selecionado()` do `Main` limpa a seleção de quem
+# deixou de estar livre. Derivado, não lido: alocar o trabalhador pela porta do
+# jogador põe o `_selecionado` em −1 e o cartão volta a `TrabAlocado`. Quem
+# tranca isso é o **D34**, que também é quem reprova se alguém tornar
+# alcançável o par «selecionado + ocupado» — aí a amarra deixa de valer.
+func _aplicar_estilo(nome_no_tema: StringName) -> void:
+	add_theme_stylebox_override("panel", get_theme_stylebox("panel", nome_no_tema))
 
 
 func marcar_selecionado(valor: bool) -> void:
@@ -89,13 +96,13 @@ func refresh() -> void:
 	var dock_index := GameState.worker_dock_index(worker_id)
 
 	if busy > 0:
-		_aplicar_estilo("TrabOcupado")
+		_aplicar_estilo(&"TrabOcupado")
 		_estado.text = "Ocupado (%dt)" % busy
 	elif dock_index >= 0:
-		_aplicar_estilo("TrabAlocado")
+		_aplicar_estilo(&"TrabAlocado")
 		_estado.text = "Na Doca %d" % (dock_index + 1)
 	elif _selecionado:
-		_aplicar_estilo("TrabLivre")
+		_aplicar_estilo(&"TrabSelecionado")
 		_estado.text = "Escolhido"
 	elif GameState.has_pending_assignment():
 		# LIVRE E CUSTANDO DINHEIRO não é o mesmo estado que livre. O primeiro
@@ -108,10 +115,10 @@ func refresh() -> void:
 		# e não de olhar só este trabalhador: um operário livre num porto sem
 		# doca à espera está livre e pronto, e pintá-lo de âmbar seria pedir
 		# uma ação que não existe.
-		_aplicar_estilo("TrabParado")
+		_aplicar_estilo(&"TrabParado")
 		_estado.text = "Parado"
 	else:
-		_aplicar_estilo("TrabLivre")
+		_aplicar_estilo(&"TrabLivre")
 		_estado.text = "Livre"
 
 

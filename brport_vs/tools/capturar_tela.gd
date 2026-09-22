@@ -81,6 +81,7 @@ var _frames_extra := 0
 var _limpo := false
 var _pausa := false
 var _alocar := false
+var _escolher := false
 var _mensagens := false
 var _mensagens_aberto := false
 
@@ -238,6 +239,7 @@ func _montar() -> void:
 	_limpo = args.has("limpo")
 	_pausa = args.has("pausa")
 	_alocar = args.has("alocar")
+	_escolher = args.has("escolher")
 	_mensagens = args.has("mensagens")
 
 	var turnos := TURNOS_PADRAO
@@ -405,6 +407,20 @@ func _montar() -> void:
 		_alocar_todos()
 		_main._refresh_all()
 
+	# ⚠️ E UMA SELEÇÃO, sob pedido. O cartão do trabalhador ESCOLHIDO tem
+	# borda própria — âmbar e do dobro da largura —, e até 22/09 ele não estava
+	# em foto NENHUMA das 24: a seleção é um TOQUE, e nada na bateria tocava.
+	# A cor dele viveu assim quatro levas de migração, fora do alcance da única
+	# prova que as outras quatro usaram (a identidade byte a byte com controle
+	# positivo), porque um controle positivo sobre um estado que nenhuma foto
+	# monta mexe em ZERO fotos e não prova coisa nenhuma — `docs/decisoes/042`.
+	#
+	# Entra pela PORTA DO JOGADOR: `_on_worker_selecionado()` é o que o
+	# `_gui_input` do cartão emite. Escrever `_selecionado` à mão poria a
+	# borda certa com o resto do HUD parado.
+	if _escolher:
+		_escolher_trabalhador()
+
 
 	# ⚠️ E O PAINEL ABRE POR ÚLTIMO, DEPOIS DA ALOCAÇÃO. Os cinco leem o estado
 	# no `setup()`, uma vez, e nunca mais: o `PainelDocas` conta as docas
@@ -510,6 +526,25 @@ func _paineis_abertos() -> int:
 	if overlay == null:
 		return 0
 	return overlay.get_child_count()
+
+
+# ⚠️ E ELA REPROVA SE NÃO CONSEGUIR O ESTADO. Um tiro que peça a seleção e não
+# a obtenha sairia com o cartão em repouso, com o tamanho certo e o turno
+# certo, e passaria por bom — é «estado que não monta publica linhas
+# plausíveis» (`docs/decisoes/043`) com um PNG no lugar da linha. A prova é
+# DERIVADA: vai ver no `Main` quem ficou escolhido.
+func _escolher_trabalhador() -> void:
+	for w in GS.workers:
+		var wid := int(w["id"])
+		if int(w["busy_turns"]) > 0 or GS.worker_dock_index(wid) >= 0:
+			continue
+		_main._on_worker_selecionado(wid)
+		break
+	if _main._selecionado < 0:
+		push_error("capturar_tela: pediu-se `escolher` e nenhum trabalhador ficou escolhido")
+		quit(1)
+		return
+	print("Escolhido: trabalhador #%d" % _main._selecionado)
 
 
 func _alocar_todos() -> void:

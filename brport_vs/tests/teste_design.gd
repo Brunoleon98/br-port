@@ -255,6 +255,10 @@ func _rodar() -> void:
 	_d33_contraste_efetivo()
 	_confere("o bloco D33 correu até ao fim", _d33_completo)
 
+	print("=== D34: a borda do trabalhador escolhido — de onde ela vem ===")
+	_d34_borda_do_trabalhador()
+	_confere("o bloco D34 correu até ao fim", _d34_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -4005,3 +4009,179 @@ func _d33_forma(texto: String) -> String:
 			continue
 		fora += c
 	return " ".join(fora.split(" ", false)).replace("r ", " ").strip_edges()
+
+
+# ============================================================
+# D34 — A BORDA DO TRABALHADOR ESCOLHIDO VEM DO TEMA
+#
+# A quinta e última leva das cores declaradas (`docs/decisoes/045`). Ela é a
+# única que NENHUMA das duas provas anteriores alcança, e é por isso que este
+# bloco existe:
+#
+#   · o D33 mede TEXTO. Uma borda não tem `font_color`, logo ele é cego a ela;
+#   · as 24 fotos da bateria não selecionavam trabalhador nenhum — a seleção
+#     é um TOQUE —, logo o controle positivo mexeria ZERO e a identidade byte
+#     a byte não provaria nada (a armadilha da `042`). O tiro novo da bateria
+#     resolve metade disso; esta guarda é a outra metade.
+#
+# ⚠️ A PERGUNTA É DE PROVENIÊNCIA, E DE PROPÓSITO. Perguntar "a borda é
+# âmbar?" comparando com a cor do tema seria um ESPELHO — o esperado sairia da
+# mesma fonte onde o defeito moraria. O que não é espelho é perguntar de onde
+# veio o OBJETO: até 22/09 o nó carregava um `estilo.duplicate()` com a cor
+# pintada à mão, e hoje carrega o PRÓPRIO recurso que o tema publica. Um
+# duplicado reprova aqui e é invisível a toda régua de texto.
+#
+# ⚠️ E A SELEÇÃO FALA POR DOIS CANAIS — cor E largura (2px → 4px). Uma guarda
+# que olhasse só a cor deixaria passar um defeito na largura, e ao contrário;
+# por isso a comparação com o repouso exige que AMBOS difiram.
+# ============================================================
+var _d34_completo := false
+
+# As quatro variações que o `refresh()` do `Worker` sabe vestir, mais a da
+# seleção. Escrita aqui porque o que se está a provar é justamente que o nó
+# veste UMA DELAS e não um duplicado — derivá-la do próprio `Worker.gd` seria
+# o espelho outra vez.
+const D34_VARIACOES := ["TrabLivre", "TrabParado", "TrabAlocado", "TrabOcupado",
+	"TrabSelecionado"]
+
+
+func _d34_borda_do_trabalhador() -> void:
+	var motor: RefCounted = load("res://scripts/validation/contraste_ui.gd").new()
+	var GS: Node = root.get_node("GameState")
+	var tema: Theme = load("res://ui/tema_brport.tres")
+
+	# ⚠️ AS CINCO TÊM DE EXISTIR NO TEMA. `get_theme_stylebox()` de uma
+	# variação que não existe NÃO dá erro — cai no tipo base e sai com outro
+	# desenho, que é a irmã do valor de Godot 3 numa chave de Godot 4.
+	var sem_tema := PackedStringArray()
+	for nome in D34_VARIACOES:
+		if not tema.has_stylebox("panel", nome):
+			sem_tema.append(nome)
+	_confere("D34: as cinco variações de trabalhador existem no tema",
+		sem_tema.is_empty(), "faltam no tema: %s" % ", ".join(sem_tema))
+	if not sem_tema.is_empty():
+		return
+
+	var caso := {"nome": "HUD (trabalhador)", "cena": "res://scenes/Main.tscn",
+		"so_hud": true}
+	var main: Node = motor.montar_caso(root, GS, caso, tema)
+	_confere("D34: o HUD montou", main != null, "montar_caso devolveu null")
+	if main == null:
+		return
+
+	var cont: Node = main.get_node_or_null("Trabalhadores")
+	_confere("D34: o contentor de trabalhadores existe", cont != null,
+		"não achei o nó Trabalhadores no Main")
+	if cont == null:
+		root.remove_child(main)
+		main.queue_free()
+		return
+
+	var trabs: Array = cont.get_children()
+	# ⚠️ AMOSTRA VAZIA NÃO É "PASSOU". Sem esta linha, um HUD que nascesse sem
+	# trabalhador nenhum deixaria as asserções abaixo sem nada para medir e o
+	# bloco ficaria verde de graça.
+	_confere("D34: o HUD montou trabalhador para medir", not trabs.is_empty(),
+		"o contentor saiu vazio")
+	if trabs.is_empty():
+		root.remove_child(main)
+		main.queue_free()
+		return
+
+	var alvo = trabs[0]
+	var wid: int = alvo.worker_id
+	var repouso: StyleBox = alvo.get_theme_stylebox("panel")
+
+	# ── A SELEÇÃO ENTRA PELA PORTA DO JOGADOR. `_on_worker_selecionado()` é o
+	# que o `_gui_input` do cartão emite; escrever `_selecionado` à mão poria a
+	# variação certa com o resto do HUD parado.
+	main._on_worker_selecionado(wid)
+	var escolhido: StyleBox = alvo.get_theme_stylebox("panel")
+
+	# O caso prova que OBTEVE o estado, por derivação — a lição da `043`.
+	#
+	# ⚠️ E ELA É DIAGNÓSTICA, NÃO SUSTENTADORA, o que se mediu em vez de se
+	# supor: o mutante Z6b — o toque que não seleciona, com esta linha
+	# RETIRADA — continua a reprovar por outras três. Quem apanha o defeito é
+	# a proveniência logo abaixo, porque um cartão que não foi selecionado
+	# nunca veste o recurso do `TrabSelecionado`. Fica porque nomeia a CAUSA
+	# («o toque não selecionou») onde as outras nomeiam o sintoma, e porque
+	# custa uma linha; não fica a fingir que segura o bloco.
+	_confere("D34: o toque SELECIONOU mesmo (o estilo mudou)",
+		escolhido != repouso,
+		"depois de `_on_worker_selecionado(%d)` o cartão continua com o mesmo stylebox"
+			% wid)
+
+	# ── 1. PROVENIÊNCIA: é o recurso do tema, e não um duplicado.
+	var do_tema: StyleBox = tema.get_stylebox("panel", "TrabSelecionado")
+	_confere("D34: o cartão escolhido veste O PRÓPRIO `TrabSelecionado` do tema",
+		escolhido == do_tema,
+		"o nó carrega um stylebox que não é o do tema — um `duplicate()` com a cor pintada à mão mede igual e passa por toda régua de texto")
+
+	# ── 2. OS DOIS CANAIS, contra O CARTÃO QUE A SELEÇÃO SUBSTITUI.
+	#
+	# ⚠️ E ESSE É O `TrabLivre`, NÃO O REPOUSO QUE O HUD CALHA MOSTRAR. A
+	# primeira versão desta guarda comparava com `repouso` — o stylebox que o
+	# cartão tinha antes do toque — e o mutante Z4 PASSOU: o HUD abre com
+	# trabalho parado, logo o repouso é o `TrabParado` de borda LARANJA, e
+	# pintar a seleção do verde do `TrabLivre` continua a diferir dele. A
+	# guarda estava a ser segurada pela variação errada. Quem a seleção
+	# substitui é o cartão LIVRE — é o fundo dele que ela veste, derivado em
+	# 22/09 —, e é contra ele que os dois canais têm de falar.
+	#
+	# Não é espelho: o esperado sai do `TrabLivre` e o defeito mora no
+	# `TrabSelecionado`, que são dois recursos diferentes.
+	var livre: StyleBox = tema.get_stylebox("panel", "TrabLivre")
+	if livre is StyleBoxFlat and escolhido is StyleBoxFlat:
+		_confere("D34: a seleção muda a COR da borda do cartão livre",
+			escolhido.border_color != livre.border_color,
+			"a borda do escolhido é a mesma do cartão livre (%s) — o canal da cor desapareceu"
+				% escolhido.border_color.to_html(false))
+		_confere("D34: a seleção muda a LARGURA da borda do cartão livre",
+			escolhido.border_width_left != livre.border_width_left,
+			"as duas medem %d px — o segundo canal da seleção desapareceu"
+				% escolhido.border_width_left)
+		# E o fundo é o MESMO: a seleção fala por borda, não por fundo. Se
+		# alguém lhe mexer no `bg_color`, a variação deixou de ser «o livre
+		# com outra borda» e vira outro cartão.
+		_confere("D34: a seleção mantém o FUNDO do cartão livre",
+			escolhido.bg_color == livre.bg_color,
+			"o fundo mudou de %s para %s — a seleção passou a falar por fundo"
+				% [livre.bg_color.to_html(false), escolhido.bg_color.to_html(false)])
+	else:
+		_confere("D34: os dois styleboxes são StyleBoxFlat", false,
+			"não dá para ler borda de um stylebox que não é Flat")
+
+	# ── 3. A AMARRA QUE TORNA UMA VARIAÇÃO SUFICIENTE.
+	# `_aplicar_estilo()` deixou de compor a borda por cima de qualquer cartão:
+	# hoje há UMA variação para a seleção, e ela só está certa enquanto o jogo
+	# não conseguir selecionar quem não está livre. Alocar pela porta do
+	# jogador tem de LIMPAR a seleção — se alguém tornar esse par alcançável,
+	# é aqui que se descobre, e não no dia em que o âmbar sumir de um cartão.
+	var alocou := false
+	for d in range(GS.docks.size()):
+		if GS.assign_worker(wid, d):
+			alocou = true
+			break
+	_confere("D34: o caso conseguiu alocar o trabalhador", alocou,
+		"nenhuma doca aceitou — a amarra abaixo não chegou a ser exercida")
+	if alocou:
+		main._refresh_workers()
+		var depois: Node = null
+		for n in cont.get_children():
+			if n.worker_id == wid:
+				depois = n
+		_confere("D34: o trabalhador continua no contentor depois de alocado",
+			depois != null, "o nó do trabalhador %d sumiu" % wid)
+		if depois != null:
+			_confere("D34: alocar LIMPA a seleção (o par «escolhido + alocado» não existe)",
+				main._selecionado == -1,
+				"o Main ainda tem o trabalhador %d escolhido depois de ele ir para a doca"
+					% main._selecionado)
+			_confere("D34: o cartão alocado NÃO veste a variação da seleção",
+				depois.get_theme_stylebox("panel") != do_tema,
+				"um cartão alocado está a vestir `TrabSelecionado`")
+
+	root.remove_child(main)
+	main.queue_free()
+	_d34_completo = true

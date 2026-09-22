@@ -480,6 +480,26 @@ Teste e import rodam sem tela.
    de gosto (42px) era mais apertado. Em ambos os casos a correção é montar o
    estado em que a guarda sob teste é a que APERTA — caixa de sobra, vizinho
    mais perto — e não reforçar a asserção.
+   ⚠️ **E ASSERÇÃO RELACIONAL PEDE O ESTADO CERTO DO OUTRO LADO — «relacional»
+   não é, sozinho, o contrário de «espelho».** Mesma armadilha com duas
+   VARIAÇÕES no lugar de duas guardas. Em 22/09 o D34 perguntava se a seleção
+   muda a borda do trabalhador comparando-a com o **repouso OBSERVADO**, e o
+   mutante que matava o canal da cor **passou**: o HUD abre com trabalho
+   parado, logo o repouso é o `TrabParado` de borda LARANJA, e pintar a
+   seleção do verde do `TrabLivre` continua a diferir dele. Quem a seleção
+   substitui é o cartão LIVRE — derivado, não suposto —, e contra ele o
+   defeito reprova. **Antes de comparar dois estados, pergunte qual deles o
+   estado sob teste REALMENTE substitui**, que quase nunca é o que a tela
+   calha mostrar (`docs/decisoes/045`).
+   ⚠️ **E NEM TODA GUARDA NOVA PRECISA DE SER SUSTENTADORA — o que precisa é
+   que a AFIRMAÇÃO ao lado dela seja verdadeira.** É o X1b/Y2b visto do outro
+   lado: ali o par prova que a peça nova faz falta; aqui ele provou que NÃO
+   fazia. No mesmo dia, o mutante com a guarda da derivação retirada reprovou
+   na mesma por outras três, e o comentário que eu já tinha escrito — «sem
+   esta linha as outras passariam contentes» — era falso. A guarda ficou,
+   porque nomeia a CAUSA onde as outras nomeiam o sintoma; o comentário é que
+   passou a dizer a verdade. **Comentário que atribui poder a uma asserção
+   mede-se como se mede a asserção.**
    **E confira que a base está LIMPA antes de injetar o defeito seguinte.** No
    mesmo dia, o `git checkout` que devolvia o arquivo entre um defeito e outro
    restaurou a versão anterior ao trabalho inteiro — e os três testes seguintes
@@ -1006,6 +1026,21 @@ tranca isso.
   `doca_concreto`. É relatório e não portão, porque o destino de cada um é
   decisão do Bruno. Ao acrescentar um prop, acrescente também quem o mostra — e
   a asserção de que ele chega à tela.
+  ⚠️ **E «ÓRFÃO» E «APAGÁVEL» SÃO DUAS PERGUNTAS — o relatório só faz a
+  primeira.** Triados em 22/09, os onze eram TRÊS grupos e não uma pilha:
+  **nove tinham propósito ESCRITO** (os oito de `art/brp` e o `doca_concreto`
+  servem a `scenes/tests/AssetPlacementTest.tscn`, que a ferramenta exclui de
+  propósito, e o `art/brp/README.md` nomeia a condição de regresso — reabrir a
+  `001`), e só DOIS não eram referidos por nada. Saíram esses dois. Quem ler o
+  relatório e contar apagáveis conta a mais (`docs/decisoes/046`).
+  ⚠️ **E DISCO NÃO É PACOTE: os onze mediam 687 KB em disco e 282 KB no
+  `.pck`**, porque o que embarca é o `.ctex` comprimido. ⚠️ **E eles embarcam
+  MESMO SEM SEREM REFERIDOS** — o preset é `export_filter="all_resources"` e o
+  Godot não faz tree-shaking: o `exclude_filter` tira a CENA de teste e não
+  tira a ARTE que ela usa. Antes de estimar o que apagar arte poupa, exporte o
+  `.pck` das duas maneiras; e apagar um dos nove reprova o `asset_validator`
+  («no manifest e não no disco»), logo a entrada do manifest sai junto ou não
+  sai nenhum dos dois.
 - **Peça invisível conta como peça, e é por isso que contar não chega.** A
   boia levou uma corrente que ficou DENTRO do cone do corpo: o contador dizia
   cinco, o render mostrava quatro. Contagem de peças só vale depois de olhar
@@ -1872,6 +1907,18 @@ tranca isso.
   bloqueada, logo é a EXPLICAÇÃO. A primeira versão da guarda perguntava "o
   painel tem algum texto legível?", que é confiança de graça — todo painel tem
   um título, e ela passava com o defeito posto (`docs/decisoes/035`).
+  ⚠️ **E UMA BORDA TEM DUAS ADJACÊNCIAS, e medir só uma engana.** Texto tem um
+  fundo; uma borda tem o que está DENTRO e o que está FORA, e o número muda de
+  veredito entre os dois. Medido no pixel da captura em 22/09, a borda do
+  trabalhador escolhido dá **7,37:1** contra a barra escura por fora e
+  **2,24:1** contra o fundo do cartão por dentro — a primeira leitura da
+  sessão publicou o 2,24 como se fosse «a» medida e concluiu que a seleção
+  quase não se via. Vê-se: o corte de 3,0 da WCAG **1.4.11** (o que identifica
+  ESTADO de componente, e não o 4,5 do texto) passa com folga por fora. O que
+  ficava abaixo era outra pergunta — distinguir os dois ESTADOS pela cor, 2,26:1
+  entre o âmbar e o verde de repouso —, e quem a responde é a LARGURA, 2px para
+  4px. **Antes de julgar uma borda, diga contra QUAL dos dois lados mediu, e
+  separe «vê-se a fronteira?» de «distinguem-se os estados?»** (`045`).
   ⚠️ **E NENHUM TOM GANHA DOIS FUNDOS — na interface, quem resolve é trocar
   TEXTO por FUNDO.** É a regra do pau-de-carga (*"UM PROP SÓ ATRAVESSA DOIS
   FUNDOS"*) com um rótulo no lugar do prop. O âmbar de marca mede 2,39:1 sobre
@@ -2206,6 +2253,16 @@ responde por 50 dos 51 props, porque prop alternativo partilha o NÓ que o jogo
 troca. Meia sessão estava desenhada à volta de um remendo que não fazia falta.
 Um briefing é a previsão de quem já fechou a conversa: antes de herdar o buraco
 que ele anuncia, **pergunte a que fonte ele o perguntou, e pergunte à outra**.
+
+⚠️ **E `git diff --stat` NOMEIA O ARQUIVO, NUNCA O QUE MUDOU DENTRO DELE.**
+Este projeto descreve diffs arquivo a arquivo — em decisão, em briefing e em
+corpo de PR —, e a lista de nomes convida a inventar o motivo de cada um. Em
+22/09 escrevi que o `Main.gd` era «follow-through» da leva de cor do cartão da
+doca: eram **duas referências em COMENTÁRIO**, de `_estilo()` para `refresh()`,
+porque aquela função se dissolveu. O `--stat` tinha-me dado o nome e eu supus o
+resto. **Antes de escrever o que um arquivo mudou, abra o diff DELE** — e vale
+o dobro quando o texto vai para um registo público, que é onde a suposição
+passa a parecer facto.
 
 ⚠️ **E `git fetch origin A B` NÃO ATUALIZA O `A` SE O `B` NÃO EXISTIR.** Ele
 aborta com `fatal: couldn't find remote ref B` e **código 128**, e nenhum dos
