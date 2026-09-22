@@ -14,7 +14,7 @@
     "",
     "  ESTADO — o MESMO nó toma cores diferentes conforme o jogo. O tema ainda",
     "  governa isto (troca-se a `theme_type_variation` em runtime, como o",
-    "  `DocaCartao._estilo()` já faz com o painel), mas cada estado pede a sua",
+    "  `DocaCartao.refresh()` já faz com o painel), mas cada estado pede a sua",
     "  variação E cada fundo pede a sua cor. É a exceção que se concede.",
     "",
     "  BASE — o nó tem UMA cor fixa. Isto pertence ao tema e está aqui só porque",
@@ -60,43 +60,49 @@
     "Duas entradas deste arquivo ainda a fazem, e as duas dizem o CONTRÁRIO —",
     "que o estado NÃO é alcançado. Essas são de confiar, porque a régua a",
     "confirma ao não publicar a linha; a afirmação que engana é a POSITIVA,",
-    "que só se confere contando as linhas na tabela."
+    "que só se confere contando as linhas na tabela.",
+    "",
+    "⚠️ A TERCEIRA LEVA SAIU EM 22/09, e foi o CARTÃO DA DOCA inteiro: os",
+    "quatro rótulos da cena mais os quatro ramos do `refresh()` — 8 das 11",
+    "chamadas, 5 das 8 entradas. Hoje são `TextoDocaNome`, `TextoDocaValor`,",
+    "`TextoDocaProgresso`, `TextoDocaProgressoRival` e `TextoDocaTrabalhador`.",
+    "Foi migração de VALORES como a primeira: as 277 linhas dos estados",
+    "antigos saíram idênticas e só a coluna ORIGEM mudou, em 50 delas.",
+    "",
+    "⚠️ E A ENTRADA QUE SAIU DIZIA A VERDADE — o estado âmbar NÃO era medido.",
+    "Era a afirmação NEGATIVA, que a régua confirma ao não publicar a linha, e",
+    "por isso era de confiar. O que ela não dizia é POR QUE não era: o",
+    "`montar_caso` escrevia `docks[d][\"rival_offer\"]`, uma chave que ninguém",
+    "no projeto lê. O percurso ganhou o estado ANTES de a cor migrar, que é a",
+    "ordem que este arquivo manda, e o âmbar mede 8,68:1 sobre o cartão",
+    "vermelho. `docs/decisoes/043`.",
+    "",
+    "⚠️ E O X6 DA `042` ESTAVA VIVO NESTE CARTÃO. O `_estilo()` dele punha a",
+    "variação do PAINEL por `theme_type_variation = StringName(variacao)`, e",
+    "medido: com `\"CartaoDocaRivl\"` escrito à mão, este portão saiu VERDE. A",
+    "função dissolveu-se em quatro literais `&\"...\"`. ⚠️ Restam duas formas",
+    "dinâmicas no projeto, e nenhuma é cor: o `PainelNarrativo.montar()`",
+    "recebe a variação por PARÂMETRO, e o `Worker._aplicar_estilo()` passa o",
+    "nome a `get_theme_stylebox(prop, TIPO)`, que o portão nem procura.",
+    "",
+    "⚠️ A QUARTA LEVA SAIU EM 22/09, e foi o VERDE DO `UpgradePanel`: o título da",
+    "linha e o «Construída» ao lado do ícone — 2 das 3 chamadas, 2 das 3",
+    "entradas. Hoje são a variação `TextoEstruturaFeita`, e ela mede 5,39:1.",
+    "",
+    "⚠️ E A ORDEM QUE ESTE ARQUIVO MANDA CUMPRIU-SE OUTRA VEZ: o percurso ganhou",
+    "o estado ANTES de a cor migrar. A entrada que saiu dizia que o verde não era",
+    "alcançado, e conferiu-se CONTANDO — 25 linhas no Construir e zero por",
+    "`override`. Prova do lado de lá: os 23 estados antigos saíram com 298 linhas",
+    "e NENHUMA mudou, nem a coluna ORIGEM, porque aquela cor nunca chegara a ser",
+    "publicada. `docs/decisoes/044`.",
+    "",
+    "⚠️ E O `acao_vista` NÃO SERVIA A ESTE PAINEL, ao contrário do que o briefing",
+    "previa. Ele exige que a cena TENHA fila de mensagem para drenar, e um painel",
+    "não tem — é o mutante X3 da `042` a disparar. O que este estado pedia era o",
+    "contrário: uma ação ANTES da cena, porque o painel lê o `GameState` enquanto",
+    "se monta. Daí a chave `estruturas`, que compra pela porta do jogador."
   ],
   "excecoes": [
-    {
-      "arquivo": "scripts/DocaCartao.gd",
-      "receptor": "_progresso",
-      "propriedade": "font_color",
-      "classe": "ESTADO",
-      "chamadas": 4,
-      "cores": [
-        "COR_CALMA = Color(0.639, 0.792, 0.855)",
-        "COR_ESPERANDO = Color(0.961, 0.725, 0.227)"
-      ],
-      "justificativa": "Azul-claro em repouso, âmbar quando a doca está sob oferta do rival. O PAINEL deste cartão já troca variação em runtime (`_estilo()`, quatro delas); o rótulo de dentro ainda não tem as suas. ⚠️ E o estado âmbar NÃO é medido pelo percurso dos 19 estados — nenhum deles monta uma doca sob oferta —, o que é mais uma razão para ele ficar declarado em vez de migrado às escuras."
-    },
-    {
-      "arquivo": "scripts/UpgradePanel.gd",
-      "receptor": "titulo",
-      "propriedade": "font_color",
-      "classe": "ESTADO",
-      "chamadas": 1,
-      "cores": [
-        "COR_FEITO = Color(0.102, 0.478, 0.251)"
-      ],
-      "justificativa": "Verde só quando a estrutura já está de pé; nos outros estados o título fica com a cor do tema. ⚠️ O percurso dos 19 estados abre o painel com o porto em RUÍNAS, logo nenhuma estrutura está construída e esta cor nunca entra nos 214 textos medidos. Migrar uma cor que o portão de contraste não alcança seria trocar uma dívida visível por uma invisível: primeiro o percurso ganha o estado, depois a cor vai para o tema."
-    },
-    {
-      "arquivo": "scripts/UpgradePanel.gd",
-      "receptor": "pronto.get_node(\"Texto\")",
-      "propriedade": "font_color",
-      "classe": "ESTADO",
-      "chamadas": 1,
-      "cores": [
-        "COR_FEITO = Color(0.102, 0.478, 0.251)"
-      ],
-      "justificativa": "O rótulo 'Construída' ao lado do ícone, no mesmo verde e pelo mesmo motivo do título acima. Sai na mesma leva que ele, e pelo mesmo percurso que ainda não monta o estado."
-    },
     {
       "arquivo": "scripts/Worker.gd",
       "receptor": "realce",
@@ -107,50 +113,6 @@
         "Color(0.878, 0.604, 0.063)"
       ],
       "justificativa": "A borda âmbar do trabalhador SELECIONADO, num `StyleBoxFlat` duplicado do tema — o comentário ao lado explica por que se duplica: mexer no stylebox do tema mudaria TODOS os trabalhadores de uma vez. É BORDA e não texto, portanto fora do portão de contraste, e é a única cor de interface deste projeto que não chega por `font_color`. O caminho do tema é uma variação `TrabSelecionado` ao lado das quatro que já existem."
-    },
-    {
-      "arquivo": "scenes/dock/DocaCartao.tscn",
-      "receptor": "Coluna/Cabecalho/Nome",
-      "propriedade": "font_color",
-      "classe": "BASE",
-      "chamadas": 1,
-      "cores": [
-        "Color(0.561, 0.702, 0.816, 1)"
-      ],
-      "justificativa": "O rótulo 'DOCA n' no cabeçalho do cartão, cor fixa sobre o cartão escuro. Migra com os outros três rótulos deste cartão: são um conjunto e partilham o fundo."
-    },
-    {
-      "arquivo": "scenes/dock/DocaCartao.tscn",
-      "receptor": "Coluna/Cabecalho/Valor",
-      "propriedade": "font_color",
-      "classe": "BASE",
-      "chamadas": 1,
-      "cores": [
-        "Color(0.941, 0.965, 1, 1)"
-      ],
-      "justificativa": "O valor do contrato, a 19px — a linha que o olho tem de achar primeiro neste cartão. Terceiro endereço do branco-gelo, com as duas pílulas do HUD."
-    },
-    {
-      "arquivo": "scenes/dock/DocaCartao.tscn",
-      "receptor": "Coluna/ProgressoLinha/Progresso",
-      "propriedade": "font_color",
-      "classe": "BASE",
-      "chamadas": 1,
-      "cores": [
-        "Color(0.639, 0.792, 0.855, 1)"
-      ],
-      "justificativa": "O valor INICIAL do rótulo que o script repinta por estado — é o par do `_progresso` do `DocaCartao.gd`, e o mesmo `COR_CALMA` escrito uma segunda vez. Os dois só saem juntos: apagar este deixaria o script a pintar sozinho, e apagar o do script deixaria a doca sem voltar do âmbar."
-    },
-    {
-      "arquivo": "scenes/dock/DocaCartao.tscn",
-      "receptor": "Coluna/TrabalhadorLinha/Trabalhador",
-      "propriedade": "font_color",
-      "classe": "BASE",
-      "chamadas": 1,
-      "cores": [
-        "Color(0.961, 0.725, 0.227, 1)"
-      ],
-      "justificativa": "O âmbar do rótulo do trabalhador. ⚠️ Até 21/09 o script repintava este nó com o MESMO valor nos dois ramos — dois overrides que não mudavam um pixel e que calavam a cena: mexer na cor aqui não teria efeito nenhum, sem erro nenhum. Os dois foram apagados e esta linha ficou a ser a única que pinta, que é o que já devia ser."
     }
   ]
 }

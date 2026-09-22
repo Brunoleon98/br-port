@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 22/09/2026 — a 2ª leva das cores de UI (`042`)
+> **Última atualização:** 22/09/2026 — as levas 3 e 4 das cores de UI (`044`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -118,8 +118,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL (22 reprovações, hoje zero); *"de onde veio a cor?"* é outra pergunta, e a superfície era **34** e não 18; a frase concorda INTEIRA e **zero leva plural**, 8 sítios e não 3. Em todos, a superfície real era o DOBRO do que a revisão nomeava |
 | **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). **24 tiros**, os cinco do HUD pela PORTA DO JOGADOR numa partida jogada. A cobertura MEDE-SE nos logs, porque declarar mentiria |
 | **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto >= 3,0x o p99,9 do próprio arquivo —, o resto DESCRITOR. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz) |
-| **1ª leva de cor** (21/09, `041`) | a BARRA ESCURA migrou para o tema: 27 chamadas em 19 locais → 17 em 11, em sete variações, com os VALORES intactos — 214 linhas do D33 idênticas e 24 fotos byte a byte. ⚠️ Dois achados: o registro diz onde a COR é declarada e não quem CONSOME a peça (o `Main.tscn` deixou de carregar), e **cena que não carrega era invisível** — a régua dizia `CONTRASTE MEDIDO` com 46 textos a menos |
-| **2ª leva de cor** (22/09, `042`) | a FAIXA DE MENSAGEM inteira: 17 em 11 → **11 em 8**, em cinco variações. ⚠️ **E não foi migração de valores.** O registro afirmava que os quatro estados do rótulo já eram medidos; eram TRÊS linhas do mesmo NEUTRO, porque a régua nunca DRENAVA a fila. Alcançados, o âmbar de marca deu **3,07:1** sobre o creme (corte 4,5) no `kind` mais emitido do jogo — foi para o escurecido do `RotuloAlerta`, a 4,87:1. Percurso a **22 estados / 283 textos** pelo `acao_vista`. ⚠️ As 24 fotos saíram idênticas **e isso pediu controle**: o neutro a vermelho mexeu 12, e as doze mostram a faixa sempre neutra |
+| **As quatro levas de cor** (21–22/09, `041`–`044`) | a barra escura, a faixa de mensagem, o cartão da doca e o verde do Construir foram para o tema: **27 chamadas em 19 locais → 1 em 1**, em 18 variações. Três foram migração de VALORES — nenhuma linha do D33 mudou de razão e as 24 fotos saíram byte a byte. ⚠️ **A 2ª não**: o registro dizia que os quatro estados da faixa já eram medidos e eram TRÊS linhas do mesmo NEUTRO, porque a régua não drenava a fila; alcançados, o âmbar deu 3,07:1 e escureceu. ⚠️ **A 3ª achou uma chave MORTA** (a oferta do rival montava-se num campo que ninguém lê) e a 4ª que **o piso de uma contagem passava** — as duas são a mesma lição: **estado que não monta publica linhas plausíveis**. Percurso a **24 estados / 330 textos** |
 
 **E o gate A4 correu (19/09)**, nas sete falas novas desde 13/09; as quatro
 notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
@@ -127,7 +126,7 @@ jargão, e a semana nova deixou de cobrar uma parcela já quitada.
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
-Bruno — as duas primeiras foram as levas de cor (`041`, `042`).
+Bruno — as quatro primeiras foram as levas de cor (`041`–`044`).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -173,8 +172,8 @@ history e triagem em `docs/arquivo/HISTORICO.md`.
 | `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa, ao toque nela. Overlay, em memória, sem migrar save |
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
-| `brport_vs/tools/medir_contraste_ui.gd` | A tabela dos 22 estados e 283 textos. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado, estrutura pronta nem doca sob oferta. O `acao_vista` alcança estado que RESULTA de uma regra, e drena a fila (`042`) |
-| `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn`, corta comentário, aceita multilinha e exige que a variação exista (`036`). **Restam 11 chamadas em 8 locais**, em três levas, cada uma com a razão escrita (`042`) |
+| `brport_vs/tools/medir_contraste_ui.gd` | A tabela dos **24 estados e 330 textos**. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado. O `acao_vista` age DEPOIS da cena e drena a fila (`042`) — e não serve a painel, que não tem fila; o `barco` e o `estruturas` agem ANTES, e **provam que o estado chegou ao nó** (`043`, `044`) |
+| `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn`, corta comentário, aceita multilinha e exige que a variação exista (`036`). **Resta 1 chamada em 1 local** — a borda do `Worker.gd`, que é BORDA e não texto (`044`) |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |

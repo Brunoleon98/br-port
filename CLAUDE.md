@@ -1938,6 +1938,51 @@ tranca isso.
   e um erro de digitação cairia no `Label` base **sem uma palavra** — a
   armadilha escrita no cabeçalho do próprio portão. São quatro literais
   `&"..."`, como a `041` já escrevia.
+  ⚠️ **E ONDE A VARREDURA DE TEXTO NÃO ALCANÇA, QUEM ALCANÇA É UMA PERGUNTA EM
+  RUNTIME.** A regra acima diz para escolher a forma do código pelo que a régua
+  vê; esta diz o que fazer quando a forma já está escrita e não se pode mudar.
+  O `DocaCartao` punha a variação do painel por
+  `theme_type_variation = StringName(variacao)` — o mutante X6 da `042` VIVO em
+  produção, e medido: com o nome trocado à mão, o portão do escopo sai
+  **verde**. Nenhuma regex o apanha, porque a expressão é dinâmica. Quem o
+  apanhou foi uma guarda que lê o NÓ MONTADO e pergunta que variação ele está a
+  vestir: a regex lê a intenção, a guarda lê o resultado, e o resultado não tem
+  como ser contornado por forma de código nenhuma (`docs/decisoes/043`).
+  ⚠️ **E ESTADO QUE NÃO MONTA PUBLICA LINHAS PLAUSÍVEIS — é a irmã de «fala
+  disparada não é fala vista», um andar acima.** Ali a régua media o texto
+  errado; aqui ela mede o ESTADO errado, e o caso que o pediu não se queixa: ele
+  monta, mede, e publica linhas verdadeiras sobre outra coisa. O percurso do D33
+  montava a oferta do rival escrevendo `docks[d]["rival_offer"]`, **uma chave
+  que ninguém no projeto lê** — a irmã do `.get(chave, omissão)`, do lado de
+  quem ESCREVE —, e o cartão da doca nunca chegou ao quarto fundo dele. Medido:
+  com a guarda retirada, o mesmo arquivo fica VERDE e a tabela publica o estado
+  «sob oferta do rival» a mostrar a cor CALMA. **Caso que declara um estado
+  prova que o obteve**, e a prova é DERIVADA — vai ver a consequência no nó —,
+  nunca declarada ao lado dele.
+  ⚠️ **E O PISO DESSA PROVA PODE PASSAR: a contagem tem de ser EXATA.** A
+  guarda irmã, no painel Construir, contava os rótulos verdes e pedia `>= o
+  número de estruturas compradas`, para não se prender ao desenho do cartão.
+  Medido: tirar a variação de UM dos DOIS rótulos de uma estrutura deixa a
+  contagem a cumprir o piso, e o rótulo órfão cai no `Label` base, que sobre o
+  cartão branco mede 12,58:1 e **passa o contraste**. Nada o via. É a condição
+  que a regra do «segundo defeito» nomeia, cumprida em vez de invocada — o
+  teto aperta-se quando o defeito seguinte cai fora dele E nada de legítimo cai
+  dentro, e uma contagem determinística não tem ruído para a proteger. Escreva
+  ao lado o preço: quem acrescentar um rótulo sobe o número de propósito
+  (`docs/decisoes/044`).
+  ⚠️ **E AGIR PARA ALCANÇAR UM ESTADO CAI DOS DOIS LADOS DO FRAME.** Parece um
+  mecanismo só e são dois opostos: a faixa de mensagem precisa da ação DEPOIS
+  da cena, porque o texto vive numa fila com tempo mínimo; o painel Construir
+  precisa dela ANTES, porque lê o `GameState` enquanto se monta. O `acao_vista`
+  nem sequer serve a um painel — exige que a cena TENHA fila para drenar, e um
+  painel não tem. Antes de reaproveitar o mecanismo que destravou o estado
+  anterior, pergunte de que lado do frame o novo é lido.
+  ⚠️ **E VERIFICAÇÃO QUE SE IA PROMOVER A REGRA GERAL PROCURA-SE PRIMEIRO A
+  EXCEÇÃO.** `comprar_estrutura()` devolve `false` calado, e a tentação era
+  reprovar toda ação do percurso que devolvesse `false`. Medido antes de
+  escrever: o caso do aviso da faixa chama `assign_worker` **para ser
+  recusado** — é a recusa que emite a mensagem que ele mede —, e a regra cega
+  teria reprovado o que está certo.
   ⚠️ **E O REGISTRO DIZ ONDE A COR É DECLARADA, NUNCA QUEM CONSOME A PEÇA QUE A
   CARREGA.** O stylebox `pilula` tinha duas cores declaradas e CINCO
   consumidores — as quatro pílulas por `styles/panel` e o botão Pausar por

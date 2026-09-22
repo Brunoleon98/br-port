@@ -127,6 +127,29 @@ func percurso() -> Array:
 		{"nome": "HUD (faixa ruim)", "cena": "res://scenes/Main.tscn",
 			"estado": {"phase": "debt_payment", "cash": 1000},
 			"acao_vista": [["pay_debt"]], "so_hud": true},
+		# ⚠️ O CARTÃO DA DOCA SOB OFERTA DO RIVAL — o quarto e último fundo do
+		# cartão, e o que faltava à 3ª leva de cor (`docs/decisoes/043`). O
+		# registro de exceções dizia que ele NÃO era alcançado, e dizia bem:
+		# era a afirmação NEGATIVA, que a régua confirma ao não publicar a
+		# linha. O que o impedia era uma chave morta no `montar_caso` — ver o
+		# comentário lá.
+		#
+		# Ele muda os TRÊS rótulos de uma vez, porque o stylebox passa a
+		# `CartaoDocaRival`: o nome vai de 6,76 para 6,96, o valor de 13,71
+		# para 14,13 e o progresso troca de cor, para o âmbar a 8,68:1.
+		{"nome": "HUD (doca sob oferta do rival)", "cena": "res://scenes/Main.tscn",
+			"barco": 0, "so_hud": true},
+		# ⚠️ O PAINEL CONSTRUIR COM ESTRUTURA DE PÉ — o verde que o registro de
+		# exceções dizia não ser alcançado, e dizia bem: o caso acima abre o
+		# painel com o porto em RUÍNAS, logo `tem_estrutura()` é falso em todas
+		# as sete linhas e a cor nunca entrava na tabela (`docs/decisoes/044`).
+		#
+		# As duas não têm `requer` e somam R$330.000; o caixa vai a 900.000
+		# para nenhuma OUTRA linha ficar bloqueada por dinheiro, que mudaria o
+		# texto dos botões e não é o que este caso mede.
+		{"nome": "Construir (com estrutura de pé)",
+			"cena": "res://scenes/panels/UpgradePanel.tscn",
+			"estado": {"cash": 900000}, "estruturas": ["pier_2", "armazem"]},
 	]
 
 
@@ -164,11 +187,40 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		GS.resolve_rival_offer(true)
 	for chave in caso.get("estado", {}):
 		GS.set(chave, caso["estado"][chave])
+	# ⚠️ E A OFERTA DO RIVAL MONTA-SE COMO O JOGO A MONTA, campo a campo. Até
+	# 22/09 esta linha escrevia `GS.docks[d]["rival_offer"] = true` — uma chave
+	# que NINGUÉM no projeto lê, criada em silêncio pelo `Dictionary` (a regra
+	# do `destino[chave] += x` do `CLAUDE.md`). O painel da contra-oferta não
+	# dava por isso porque o `setup()` dele lê o barco; o CARTÃO da doca sim,
+	# e foi por isso que o estado vermelho dele nunca entrou na tabela. O jogo
+	# escreve estes três em `_spawn_boats()`, e é de lá que eles são copiados.
 	if caso.has("barco"):
 		var d: int = caso["barco"]
 		if GS.docks[d].get("boat") == null:
 			GS._spawn_boats()
-		GS.docks[d]["rival_offer"] = true
+		GS.docks[d]["boat"]["rival"] = true
+		GS.pending_rival_dock = d
+		# ⚠️ A FASE FICA EM "playing" DE PROPÓSITO. Pô-la em "rival_offer" faria
+		# o `montar_caso` de um caso SEGUINTE resolver a oferta na abertura, e
+		# o que se quer fotografar aqui é o cartão sob oferta — não o depois.
+	# ⚠️ E A ESTRUTURA CONSTRUÍDA ENTRA PELA PORTA DO JOGADOR, que é comprar.
+	# Vem ANTES da cena porque o painel Construir lê o `GameState` enquanto se
+	# monta — ao contrário da faixa de mensagem, que precisa do `acao_vista`
+	# por o texto dela viver numa FILA. E o `acao_vista` não serviria aqui de
+	# todo: ele exige que a cena TENHA fila, e um painel não tem (é o mutante
+	# X3 da `042`).
+	#
+	# ⚠️ E COMPRA RECUSADA É CALADA — `comprar_estrutura()` devolve `false` sem
+	# se queixar (sem caixa, sem o `requer`, ou em `rival_offer`). Num caso
+	# cujo PROPÓSITO é ter a estrutura de pé, isso é falha; e note-se que a
+	# regra NÃO é geral: o `assign_worker` do caso do aviso devolve `false` de
+	# propósito, porque o que ele mede é justamente a recusa.
+	for eid in caso.get("estruturas", []):
+		if not GS.comprar_estrutura(String(eid)):
+			falhas.append("%s não conseguiu comprar a estrutura %s"
+				% [caso["nome"], eid])
+			return null
+
 	# ⚠️ AÇÃO E NÃO CAMPO. Há estado que nenhum `set()` alcança porque ele é o
 	# RESULTADO de uma regra: `trabalho_parado()` só devolve ZERO depois de
 	# alguém alocar, e alocar é um método. Vem DEPOIS do estado e do barco, que
@@ -222,7 +274,104 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		no.callv("setup", args)
 	if not _acao_vista(no, GS, caso):
 		return null
+	if not _barco_chegou(no, caso):
+		return null
+	if not _estrutura_chegou(no, caso):
+		return null
 	return no
+
+
+# ── A OFERTA DO RIVAL CHEGOU MESMO AO CARTÃO? ───────────────────────────────
+#
+# ⚠️ ESTADO QUE NÃO MONTA PUBLICA LINHAS PLAUSÍVEIS, e é assim que ele engana.
+# Até 22/09 o `barco` deste percurso escrevia uma chave que ninguém lia: o
+# caso montava, media, e as quatro linhas do cartão saíam com a cor CALMA —
+# verdadeiras sobre um estado, e o estado errado. Nada se queixou, porque
+# nenhuma guarda perguntava se o que o caso PEDIU tinha acontecido.
+#
+# É a regra do defeito injetado com o sujeito trocado: ali confere-se que o
+# defeito pegou, aqui que o ESTADO pegou. E a pergunta é DERIVADA — o caso diz
+# `barco`, e a guarda vai ver a consequência disso no nó —, nunca declarada,
+# que é a cobertura que mente (`docs/decisoes/039`).
+func _barco_chegou(no: Node, caso: Dictionary) -> bool:
+	if not caso.has("barco"):
+		return true
+	var d: int = caso["barco"]
+	var cartoes: Array = _cartoes_de_doca(no)
+	if cartoes.is_empty():
+		# Painel solto não tem cartão nenhum, e o caso da contra-oferta é um
+		# desses: aí quem responde pelo barco é o `setup()` do próprio painel.
+		return true
+	for c in cartoes:
+		if int(c.get("dock_index")) != d:
+			continue
+		var v := String((c as Control).theme_type_variation)
+		if v == "CartaoDocaRival":
+			return true
+		falhas.append(
+			"%s pediu o barco %d sob oferta e o cartão vestiu «%s»"
+			% [caso["nome"], d, v])
+		return false
+	falhas.append("%s pediu o barco %d e não há cartão para essa doca"
+		% [caso["nome"], d])
+	return false
+
+
+# ── A ESTRUTURA COMPRADA CHEGOU MESMO AO PAINEL? ────────────────────────────
+#
+# A irmã do `_barco_chegou`, e escrita ao mesmo tempo de propósito: a `043`
+# aprendeu que um caso que pede um estado e não o obtém publica linhas
+# PLAUSÍVEIS, e a lição não anda sozinha até ao caso seguinte.
+#
+# A pergunta é DERIVADA — o caso diz quantas estruturas comprou, e a guarda vai
+# contar quantos rótulos do painel vestem a variação de «feito».
+#
+# ⚠️ E A CONTAGEM É EXATA, não um piso, e isso foi MEDIDO e não escolhido. A
+# primeira versão pedia `>= pedidas.size()`, para não se prender ao desenho do
+# cartão. Só que o mutante Y3 — UM dos dois rótulos a perder a variação —
+# passava por ela (2 >= 2) E passava o contraste, porque o `Label` base sobre
+# o cartão branco mede 12,58:1. Nada no projeto o via. É a condição que a
+# regra do «segundo defeito» nomeia: aperta-se um teto quando o defeito
+# seguinte cai fora dele e nada de legítimo cai dentro, e aqui a contagem é
+# determinística — duas estruturas de pé dão sempre quatro rótulos.
+#
+# O preço está escrito: quem acrescentar um terceiro rótulo verde por linha
+# reprova aqui, e tem de subir o número DE PROPÓSITO. É o que se quer — a
+# alternativa é a guarda contar o que o painel produz, que é o espelho.
+const MARCAS_POR_ESTRUTURA := 2   # o título da linha e o "Construída" ao lado
+
+
+func _estrutura_chegou(no: Node, caso: Dictionary) -> bool:
+	var pedidas: Array = caso.get("estruturas", [])
+	if pedidas.is_empty():
+		return true
+	var esperado: int = pedidas.size() * MARCAS_POR_ESTRUTURA
+	var marcados := _conta_variacao(no, "TextoEstruturaFeita")
+	if marcados == esperado:
+		return true
+	# Sem "(s)": o bloco F9 do `teste_fumaca` proíbe essa forma no projeto
+	# inteiro, e apanhou esta linha no dia em que ela foi escrita (`037`).
+	falhas.append("%s comprou %d estruturas: esperava %d rótulos verdes e achou %d"
+		% [caso["nome"], pedidas.size(), esperado, marcados])
+	return false
+
+
+func _conta_variacao(no: Node, nome: String) -> int:
+	var n := 0
+	if no is Control and String((no as Control).theme_type_variation) == nome:
+		n += 1
+	for f in no.get_children():
+		n += _conta_variacao(f, nome)
+	return n
+
+
+func _cartoes_de_doca(no: Node) -> Array:
+	var out: Array = []
+	if no.get_script() != null and "dock_index" in no and no is PanelContainer:
+		out.append(no)
+	for f in no.get_children():
+		out.append_array(_cartoes_de_doca(f))
+	return out
 
 
 # ── A AÇÃO CUJO EFEITO SE QUER VER ─────────────────────────────────────────

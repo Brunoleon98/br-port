@@ -8,7 +8,11 @@ extends Control
 # POR QUE não dá, quando não dá. Um botão apagado sem explicação faz o jogador
 # achar que o jogo travou.
 
-const COR_FEITO := Color(0.102, 0.478, 0.251)
+# ⚠️ O VERDE DA ESTRUTURA DE PÉ SAIU DAQUI em 22/09, para o tema
+# (`docs/decisoes/044`): é a variação `TextoEstruturaFeita`, escrita LITERAL
+# nos dois sítios. Nunca num dicionário nem por `StringName(var)` — o
+# `conferir_escopo_ui.py` procura o nome depois do `=`, e o que ele não vê é
+# um erro de digitação a cair no `Label` base sem uma palavra.
 
 # ⚠️ ESTE PAINEL É BRANCO, E A COR NEUTRA DO JOGO É PARA FUNDO ESCURO. O
 # cinzento-azulado (0,51/0,6/0,706) que marca texto neutro sobre a barra escura
@@ -136,7 +140,7 @@ func _linha_estrutura(id: String) -> Control:
 	titulo.text = "%s  ·  %s" % [def["nome"], GameState.moeda(int(def["custo"]))]
 	titulo.add_theme_font_size_override("font_size", 15)
 	if feito:
-		titulo.add_theme_color_override("font_color", COR_FEITO)
+		titulo.theme_type_variation = &"TextoEstruturaFeita"
 	col.add_child(titulo)
 
 	var efeito := Label.new()
@@ -149,7 +153,7 @@ func _linha_estrutura(id: String) -> Control:
 	if feito:
 		var pronto := Icones.rotulo(Icones.FEITO, "Construída", Icones.TAM_TEXTO)
 		pronto.get_node("Texto").add_theme_font_size_override("font_size", 12)
-		pronto.get_node("Texto").add_theme_color_override("font_color", COR_FEITO)
+		pronto.get_node("Texto").theme_type_variation = &"TextoEstruturaFeita"
 		col.add_child(pronto)
 		return cartao
 
