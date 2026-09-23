@@ -533,6 +533,12 @@ Teste e import rodam sem tela.
    porque nomeia a CAUSA onde as outras nomeiam o sintoma; o comentário é que
    passou a dizer a verdade. **Comentário que atribui poder a uma asserção
    mede-se como se mede a asserção.**
+   ⚠️ **E A PREVISÃO DE QUEM REPROVA «NO DIA EM QUE» MEDE-SE NESSE DIA.** O
+   conferidor das capturas dizia que, com a lista de lacunas vazia, uma
+   expressão partida só seria apanhada pela linha do catálogo vazio. Em 23/09
+   a lista esvaziou e eu escrevi ao lado «medido, não suposto» antes de
+   medir: quem reprovou foi outra guarda, sete vezes, e a linha calou-se
+   (`053`). Comentário escrito no futuro é a forma mais barata de o ser falso.
    ⚠️ **E A GUARDA QUE ESCREVE ELA PRÓPRIA O ESTADO PROVA A LEITURA, NÃO A
    ESCRITA.** Para pôr um camião a meio da ré, a varredura do D35 marca-o como
    a sair à mão — e prova que a previsão lê a marca. O mutante que tirava a
@@ -1765,6 +1771,10 @@ tranca isso.
 - **Todo texto de fala vive em `scripts/Narrativa.gd`**, como o ícone vive no
   `Icones.gd`. Fala espalhada por painel é o que aconteceu com os emojis, e
   trocar um custava caçar string por string em sete scripts.
+  ⚠️ **E O `get_script_constant_map()` NÃO A LÊ TODA.** A narração do fim de
+  fase é um texto LOCAL do `fim_de_fase()`, e o mapa das constantes, que o F4
+  usa, não o vê. Catálogo de fala que tem de ser completo lê o ARQUIVO — é o
+  que faz a guarda do nome longo no F10 (`053`).
 - **O nome do porto e o do jogador saem por `GameState.texto()`**, um lugar só,
   como o dinheiro sai pelo `moeda()`. Os textos trazem `{portName}` e
   `{playerName}`; quem não passar pela substituição mostra a chaveta crua ao

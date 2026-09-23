@@ -582,11 +582,13 @@ const ESPACO_NA_FAIXA := 2.2
 ## dele passou, mas meia carroçaria e meia largura ainda estão lá.
 const BOCA_DEPOIS := 1.2
 
-## A LARGURA DA RUA e o CHANFRO das quinas salientes de cada cotovelo,
-## repetidos do gerador (`RUA_LARG`, `CHANFRO_COTOVELO`) pela mesma razão que a
-## rota: o jogo não lê o JSON. O D13 confere os dois contra as âncoras.
+## A LARGURA DA RUA, repetida do gerador (`RUA_LARG`) pela mesma razão que a
+## rota: o jogo não lê o JSON. O D13 confere-a contra as âncoras.
+##
+## O CHANFRO das quinas salientes já não se repete aqui: desde 23/09 é o
+## gerador que o deriva da curva deste arquivo, e não a curva dele
+## (`corte_da_curva()`, `docs/decisoes/053`).
 const RUA_LARG := 1.8
-const CHANFRO_COTOVELO := RUA_LARG / 2.0
 
 ## A JANELA DE UMA CURVA, em unidades de eixo (tempo, à velocidade de todos).
 ##
@@ -746,25 +748,26 @@ func silhueta_do_trecho(de: Vector2, para: Vector2, motivo: String,
 ##
 ## Com as faixas concêntricas (a mão direita, 23/09), cada rota faz em cada
 ## cotovelo uma curva FECHADA, rente à quina reentrante, e uma ABERTA, à volta
-## da quina saliente — e a saliente é a que o gerador chanfra, em meia rua. O
-## vértice da curva aberta cai EXATAMENTE em cima da linha do chanfro (0,45 de
-## cada borda, 0,45 + 0,45 = 0,9): virar ali em ângulo reto punha meio camião
-## em cima do passeio e do relvado, e a foto mostrou-o. O D20 também, que é a
-## guarda que o apanhou.
+## da quina saliente. Virar a aberta em ângulo reto, no vértice, punha meio
+## camião em cima do passeio e do relvado — a foto mostrou-o, e o D20 também.
 ##
-## A curva aberta corta então a quina por uma diagonal PARALELA ao chanfro e a
-## meia faixa dele — o meio da faixa, que é onde o camião anda em todo o resto.
-## Esta é a distância do vértice até onde a diagonal começa e acaba: sobre a
-## linha `x + y = chanfro + meia_faixa * raiz(2)` contada das bordas, com
-## `meia_faixa = RUA_LARG / 4`.
+## A curva aberta corta então a quina por uma diagonal a MEIA FAIXA do vértice
+## (`RUA_LARG / 4`, na perpendicular), e esta é a distância do vértice até
+## onde ela começa e acaba, ao longo de cada trecho: `meia_faixa * raiz(2)`.
+## É o mesmo número de 0,636 que saía, até 23/09, do chanfro de meia rua.
 ##
-## ⚠️ NÃO SE ALISA A CURVA FECHADA NEM O CHANFRO. Um camião de 1,41 que vira
-## 90° no meio de uma faixa de 0,9 sai sempre um palmo fora dela (0,25 do
-## porta-contêiner, em QUALQUER quina, desde 07/09); a diagonal só traz a curva
-## aberta de volta a esse palmo (0,21), em vez dos 0,66 do vértice. Mexer no
-## chanfro seria mexer no mapa, que o CI compara byte a byte.
+## ⚠️ E A ORDEM INVERTEU-SE (`docs/decisoes/053`). A diagonal saía do chanfro
+## do mapa, e o maior camião, um retângulo alinhado ao eixo a andar a 45°,
+## tirava 0,207 da carroçaria para fora do asfalto. Hoje a diagonal é desta
+## função, e o gerador deriva o chanfro dela e do porta-contêiner: a mesma
+## expressão está lá (`CORTE_DA_CURVA`), publicada nas âncoras, e o D13 §7i
+## confere que são o mesmo número. Quem mexer aqui regera os mapas.
+##
+## ⚠️ NÃO SE ALISA A CURVA FECHADA. Um camião de 1,41 que vira 90° no meio de
+## uma faixa de 0,9 sai sempre um palmo fora dela (0,25 do porta-contêiner),
+## e ali o palmo cai na OUTRA faixa, que é asfalto; separa-os o tempo.
 static func corte_da_curva() -> float:
-	return CHANFRO_COTOVELO - (2.0 - sqrt(2.0)) * RUA_LARG / 4.0
+	return RUA_LARG * sqrt(2.0) / 4.0
 
 
 ## O CAMINHO DESENHADO de uma lista de pontos, trecho a trecho: igual à lista,

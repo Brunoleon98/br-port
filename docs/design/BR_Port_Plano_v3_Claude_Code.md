@@ -1663,6 +1663,28 @@ gaivotão, maria-farinha e tartaruga-verde juvenil, cada um com movimento,
 reação e som ao toque; mar e gaivota também soam em intervalos irregulares.
 O gate visual continua sendo o A5 e o auditivo, o A6.
 
+### ✅ O BALANÇO, O NOME LONGO E O CHANFRO — as três opções de uma vez (23/09)
+
+**`docs/decisoes/053`**, e duas coberturas que não pediam decisão. O Bruno
+escolheu as três opções que uma sessão podia fazer sozinha.
+
+- **(g) O balanço do fim de fase tem foto**, de uma partida JOGADA: o tiro
+  `balanco` avança pelo laço de sempre até ao vencimento, paga no botão do Sr.
+  Ribeiro, ligado porque a partida juntou R$841.372, e toca «Ver o balanço».
+  A lacuna declarada da `051` saiu, e a bateria tem **31 tiros**. ⚠️ A foto
+  mostra o boletim da semana 4 e o fim de fase POR CIMA da resposta do Sr.
+  Ribeiro: o «Pagar» fecha a semana e acaba a partida na mesma chamada. A
+  ordem dos três painéis é pergunta para o Bruno.
+- **(h) O nome longo fora dos três painéis**: só o diário o leva, e o F10
+  mede-o (597 de 620 px, o pior de 397 nomes). Um catálogo lido da
+  `Narrativa.gd` exige que toda frase com o nome tenha sido medida com ele.
+  Hoje o HUD e a Dona Cida não o levam; no dia em que levarem, reprova.
+- **(i) O chanfro sai da curva**: de 0,9 a **0,60**, derivado da diagonal da
+  curva aberta e do porta-contêiner, cuja carroçaria saía 0,207 do asfalto. O
+  caminho dos camiões não mudou um bit; mudaram as dez quinas nos dois mapas
+  de rua. O **D13 §7j** mede as quatro quinas de cada chassi em cada meia
+  diagonal.
+
 ### ✅ A MÃO É A DIREITA, E O RETORNO ENCOSTA — o cruzamento (23/09)
 
 **`docs/decisoes/052`.** Medido antes de mexer, as duas rotas cruzavam-se em

@@ -472,17 +472,25 @@ tirar nomes   - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # balanço, de propósito (ler um cais que continua de pé por cima de uma derrota
 # seria escárnio — está escrito no cabeçalho do `EndGame.gd`).
 #
-# ⚠️ FICA DE FORA O SEGUNDO TEMPO, o balanço, e a razão é a regra do zero: ele
+# O SEGUNDO TEMPO, o balanço, NÃO sai daqui, e a razão é a regra do zero: ele
 # lê `GameState.metrics`, que numa cena solta é uma partida recém-criada — a
-# foto diria "Barcos atendidos: 0" e isso LÊ-SE COMO MEDIDA. Fotografá-lo pede
-# uma partida jogada até ao turno 32, que é tiro de outra sessão. Desde 23/09
-# a lacuna está DECLARADA no `conferir_cobertura_paineis.py`, que a reprova no
-# dia em que o balanço ganhar foto ou deixar de existir (`docs/decisoes/051`).
+# foto diria "Barcos atendidos: 0" e isso LÊ-SE COMO MEDIDA. Ele é o tiro
+# `balanco`, logo abaixo, que JOGA a partida (`docs/decisoes/051`).
 #
 # A frase da vitória é a que o `_check_end()` escreve, copiada — e este tempo
 # NÃO A MOSTRA (só o balanço usa o `_motivo`), de modo que ela envelhecer aqui
 # não muda um pixel desta foto.
 tirar fimfase - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase.png" true "Você quitou a parcela e manteve o porto no azul!" --tempo=narracao
+# O BALANÇO, numa partida JOGADA: o laço de sempre até ao vencimento (turno
+# 33), o «Pagar» do Sr. Ribeiro — ligado porque a partida juntou o dinheiro,
+# nunca porque a ferramenta o deu — e o «Ver o balanço» da narração. Foi a
+# última lacuna declarada da cobertura, e saiu dela no mesmo commit.
+#
+# ⚠️ SÃO TRÊS PAINÉIS, e é o estado verdadeiro: o «Pagar» fecha a semana 4 e
+# acaba a partida na mesma chamada, de modo que o boletim dela e o fim de fase
+# abrem POR CIMA da resposta do Sr. Ribeiro. A jogar, só o de cima recebe o
+# toque; a ferramenta não fecha nenhum, e a contagem tranca a pilha.
+tirar balanco 3 33 --script res://tools/capturar_tela.gd -- 32 "$SAIDA/balanco.png" limpo balanco
 tirar icones  - -  --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões
