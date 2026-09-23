@@ -33,11 +33,23 @@ PRIMEIRO=21e428d
 WT=/tmp/trilha_wt
 
 cd "$RAIZ" || exit 1
+
+# ⚠️ O CLONE DE UMA SESSÃO REMOTA CHEGA RASO — medido em 23/09: 184 commits,
+# até 03/09 —, e sem o PRIMEIRO o `git log` abaixo morre com "unknown
+# revision" e deixa um `pontos.txt` VAZIO, que o `-s` a seguir não refaz.
+if ! git rev-parse --verify -q "${PRIMEIRO}^{commit}" >/dev/null; then
+  echo "o commit $PRIMEIRO não está neste clone (raso?):" \
+       "git fetch --unshallow origin main" >&2
+  exit 1
+fi
 mkdir -p "$SAIDA"
 
 # Os pontos: todo commit da linha principal, do PRIMEIRO para cá, que tenha
 # tocado em algo que o render vê. Sai do git, não de uma lista à mão — uma
 # lista à mão envelhece calada a cada merge.
+# ⚠️ E ELA SÓ SE CALCULA NUMA PASTA NOVA: é o que deixa retomar uma corrida a
+# meio. Uma pasta de ontem guarda os pontos de ontem — para a trilha de hoje,
+# pasta nova (ou apague o `pontos.txt`).
 if [ ! -s "$SAIDA/pontos.txt" ]; then
   git log --first-parent --format="%h|%ad|%s" --date=short "$PRIMEIRO..HEAD" \
     | tac | while IFS='|' read -r h d s; do

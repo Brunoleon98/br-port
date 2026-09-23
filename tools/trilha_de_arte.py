@@ -2,8 +2,8 @@
 """BR Port — a página do gate A5, montada das capturas da trilha de arte.
 
 Roda DEPOIS de `tools/trilha_de_arte.sh`, sobre a mesma pasta. Deriva o que
-mudou em cada ponto, recomprime os PNG que vão ser publicados e emite a página
-que o Bruno percorre.
+mudou em cada ponto, converte para WebP sem perdas as imagens que vão ser
+publicadas e emite a página que o Bruno percorre.
 
 ⚠️ O QUE MUDOU EM CADA PONTO SAI DO HASH DE CADA PNG, nunca de uma lista à mão.
 É a mesma pergunta que o workflow da captura faz a cada PR — `cmp` contra a
@@ -12,22 +12,27 @@ conteúdo dela difere do ponto bom anterior. Uma curadoria à mão diria o que
 quem a escreveu ACHA que mudou, que é exactamente o que este gate não pode
 aceitar.
 
-⚠️ E A RECOMPRESSÃO NÃO TOCA NUM PIXEL. Os scanlines FILTRADOS saem do inflate
-e voltam ao deflate tal e qual, e mesmo assim confere-se antes de trocar o
-arquivo: numa página que existe para se julgar arte, um otimizador com perdas
-julgaria por quem olha.
+⚠️ E A CONVERSÃO NÃO TOCA NUM PIXEL: numa página que existe para se julgar
+arte, um otimizador com perdas julgaria por quem olha. O WebP sai `lossless`, e
+cada arquivo é DESCODIFICADO de volta e comparado com o PNG antes de entrar em
+`pub/` — igual byte a byte nos pixels, ou a ferramenta pára.
+⚠️ E FOI PRECISO SAIR DO PNG. A primeira página (14/09) publicava PNG
+recomprimido, e com 30 pontos já pesava perto de 50 MB; o teto de uma versão
+de artifact é 64 MB e 255 arquivos. Medido em 23/09 nas capturas da trilha, o
+WebP sem perdas fica em 57% do PNG. O teto continua a ser conferido no fim.
 
 Uso:  python3 tools/trilha_de_arte.py <pasta-de-saida>
-Saída: <pasta>/trilha_arte.html + <pasta>/pub/*.png, prontos para publicar.
+Saída: <pasta>/trilha_arte.html + <pasta>/pub/*.webp, prontos para publicar.
+Precisa do `pillow` com WebP (`pip install pillow`).
 """
 import hashlib
 import html
 import json
 import os
-import struct
 import subprocess
 import sys
-import zlib
+
+from PIL import Image
 
 if len(sys.argv) < 2:
     raise SystemExit("uso: python3 tools/trilha_de_arte.py <pasta-de-saida>")
@@ -36,25 +41,52 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # A ordem em que as imagens interessam a olhar: o jogo primeiro, depois os
 # painéis, depois as folhas de contato.
+# ⚠️ ESTA TABELA DÁ A LEGENDA, NUNCA A LISTA. Até 23/09 a manchete percorria
+# estas chaves, e a bateria tinha crescido de 14 fotos para 31: dezassete
+# ficavam fora do "02/09 contra hoje" sem uma palavra. Hoje quem diz que fotos
+# existem é a pasta do último ponto, e uma foto sem legenda REPROVA.
 LEGENDA = {
     "inicio": "turno zero, porto em ruínas",
     "pesca": "frota de pesca no cais",
+    "escolhido": "trabalhador escolhido, com barco à espera",
     "meio": "porto a meio da construção",
     "porto": "porto completo, sete estruturas",
     "docas": "camião encostado ao berço",
-    "boletim": "Boletim da Dona Cida",
+    "mensagens": "o histórico da faixa de mensagem",
     "pausa": "menu de pausa sobre o mapa",
+    "boletim": "Boletim da Dona Cida",
+    "construir": "painel Construir, porto a meio",
+    "calendario": "painel do calendário",
+    "painel_docas": "painel das docas",
+    "reputacao": "painel da reputação",
+    "caixa": "painel do caixa",
     "diario": "diário do avô",
     "parcela": "a parcela do Sr. Ribeiro",
     "ribeiro": "o Sr. Ribeiro a receber",
+    "ribeiro_pagou": "o Sr. Ribeiro, depois de pago",
+    "ribeiro_nao_pagou": "o Sr. Ribeiro, sem o dinheiro",
+    "fimfase": "fim da Fase 1, a narração",
+    "balanco": "o balanço de uma partida jogada até ao fim",
     "contraoferta": "a negociação do Arlindo",
+    "contraoferta_fim": "a despedida do Arlindo",
+    "nomes": "a tela dos nomes",
     "menu": "o menu-celular",
     "icones": "folha de contato dos ícones",
-    "frota": "folha de contato da frota",
+    "frota": "folha de contato dos cascos",
+    "camioes": "folha de contato dos camiões",
+    "props1": "folha de contato dos props, 1 de 3",
+    "props2": "folha de contato dos props, 2 de 3",
+    "props3": "folha de contato dos props, 3 de 3",
 }
 # A ordem de leitura é a da própria tabela acima — duas listas seriam duas
 # chances de uma envelhecer sem a outra.
 ORDEM = list(LEGENDA)
+
+# O teto de UMA versão de artifact: 255 arquivos (a página é um deles) e 64 MB.
+# Passar dele não dá erro aqui — dá uma publicação recusada, depois de tudo
+# convertido; a conta faz-se antes.
+TETO_ARQUIVOS = 255
+TETO_BYTES = 64 * 1000 * 1000
 
 
 def sha(caminho):
@@ -78,47 +110,22 @@ def titulo(h):
     return h
 
 
-def encolher(pub):
-    """Recomprime o IDAT no nível 9. Lossless por construção, e conferido."""
-    antes = depois = 0
-    for f in sorted(os.listdir(pub)):
-        if not f.endswith(".png"):
-            continue
-        caminho = os.path.join(pub, f)
-        bruto = open(caminho, "rb").read()
-        antes += len(bruto)
-        if bruto[:8] != b"\x89PNG\r\n\x1a\n":
-            depois += len(bruto)
-            continue
-        i, pedacos, idat = 8, [], bytearray()
-        while i < len(bruto):
-            tam = struct.unpack(">I", bruto[i:i + 4])[0]
-            tipo = bruto[i + 4:i + 8]
-            dados = bruto[i + 8:i + 8 + tam]
-            if tipo == b"IDAT":
-                idat += dados
-                if not pedacos or pedacos[-1][0] != b"IDAT":
-                    pedacos.append([b"IDAT", None])
-            else:
-                pedacos.append([tipo, dados])
-            i += 12 + tam
-        cru = zlib.decompress(bytes(idat))
-        novo = zlib.compress(cru, 9)
-        if zlib.decompress(novo) != cru:
-            raise SystemExit("recompressão não bate em %s" % f)
-        saida = bytearray(b"\x89PNG\r\n\x1a\n")
-        for tipo, dados in pedacos:
-            dd = novo if tipo == b"IDAT" else dados
-            saida += struct.pack(">I", len(dd)) + tipo + dd
-            saida += struct.pack(">I", zlib.crc32(tipo + dd))
-        if len(saida) < len(bruto):
-            tmp = caminho + ".tmp"
-            open(tmp, "wb").write(bytes(saida))
-            os.replace(tmp, caminho)
-            depois += len(saida)
-        else:
-            depois += len(bruto)
-    return antes, depois
+def para_webp(origem, destino):
+    """Grava `destino` como WebP sem perdas e confere-o: descodifica de volta e
+    exige os mesmos pixels do PNG. Devolve o tamanho gravado."""
+    with Image.open(origem) as im:
+        im.load()
+        tmp = destino + ".tmp"
+        im.save(tmp, "WEBP", lossless=True, quality=100, method=6)
+        with Image.open(tmp) as volta:
+            volta.load()
+            igual = (volta.size == im.size and
+                     volta.convert(im.mode).tobytes() == im.tobytes())
+    if not igual:
+        os.remove(tmp)
+        raise SystemExit("o WebP de %s não devolve os mesmos pixels" % origem)
+    os.replace(tmp, destino)
+    return os.path.getsize(destino)
 
 
 pontos = []
@@ -145,6 +152,12 @@ for p in pontos:
 bons = [p for p in pontos if not p["falhou"]]
 if not bons:
     raise SystemExit("nenhum ponto capturado em %s — rode o .sh primeiro" % T)
+# ⚠️ SÓ A MANCHETE PUBLICA IMAGENS, e por medição. A primeira página (14/09)
+# publicava cada passo — 142 imagens para 30 pontos, perto de 50 MB. Em 23/09 a
+# trilha tinha 48 pontos e uma bateria de 31 fotos, e em quase todo ponto mudam
+# quase todas: o passo a passo passava das 255 imagens de uma versão e, mesmo
+# empacotado, dos 64 MB. Os passos ficam como LISTA do que cada merge mexeu,
+# derivada dos hashes; as imagens de um passo tiram-se desta pasta.
 usados = set()
 for i, p in enumerate(bons):
     ant = bons[i - 1]["imagens"] if i > 0 else {}
@@ -153,44 +166,84 @@ for i, p in enumerate(bons):
         a = ant.get(nome)
         if a != hh:
             mudou.append({"nome": nome, "antes": a, "depois": hh})
-            usados.update(x for x in (a, hh) if x)
     mudou.sort(key=lambda m: ORDEM.index(m["nome"])
                if m["nome"] in ORDEM else 99)
     p["mudou"] = mudou
 
 primeiro, ultimo = bons[0]["imagens"], bons[-1]["imagens"]
+sem_legenda = sorted(n for n in ultimo if n not in LEGENDA)
+if sem_legenda:
+    raise SystemExit("fotos da bateria de hoje sem legenda em LEGENDA: %s"
+                     % ", ".join(sem_legenda))
+# ⚠️ O "ANTES" DE CADA FOTO É A PRIMEIRA VEZ QUE A BATERIA A TIROU, e não o
+# primeiro ponto da trilha. Contra o primeiro ponto, em 23/09, 26 das 31 fotos
+# saíam SOZINHAS — não existiam em 02/09 —, e diante de uma foto sem antes a
+# pergunta do gate ("melhorou?") não tem resposta. A folha da frota compara-se
+# com a folha da frota no dia em que nasceu.
+nascimento = {}
+for p in bons:
+    for nome, hh in p["imagens"].items():
+        nascimento.setdefault(nome, (hh, p["data"]))
 trilha = []
-for nome in ORDEM:
-    if nome not in ultimo or primeiro.get(nome) == ultimo[nome]:
-        continue
-    trilha.append({"nome": nome, "antes": primeiro.get(nome),
+iguais = []
+for nome in sorted(ultimo, key=ORDEM.index):
+    antes, desde = nascimento[nome]
+    # A foto que não mudou desde que nasceu ENTRA, sozinha: o gate é olhar a
+    # arte, e a folha dos camiões nascida hoje está tão por julgar como o
+    # porto que mudou trinta vezes. Escondê-la tirava-a do gate calada.
+    if antes == ultimo[nome]:
+        iguais.append(nome)
+        antes = None
+    trilha.append({"nome": nome, "antes": antes, "desde": desde,
                    "depois": ultimo[nome]})
-    usados.update(x for x in (primeiro.get(nome), ultimo[nome]) if x)
+    usados.update(x for x in (antes, ultimo[nome]) if x)
+
+# O teto confere-se ANTES de converter: são minutos de WebP para uma
+# publicação que seria recusada.
+if len(usados) + 1 > TETO_ARQUIVOS:
+    raise SystemExit("%d imagens + a página passam do teto de %d arquivos"
+                     % (len(usados), TETO_ARQUIVOS))
 
 pub = os.path.join(T, "pub")
 os.makedirs(pub, exist_ok=True)
-for h in usados:
+bytes_png = bytes_pub = 0
+for h in sorted(usados):
     caminho, nome = arquivos[h]
-    destino = os.path.join(pub, "%s-%s.png" % (nome, h[:8]))
-    if not os.path.exists(destino):
-        with open(caminho, "rb") as a, open(destino + ".tmp", "wb") as b:
-            b.write(a.read())
-        os.replace(destino + ".tmp", destino)
-a_, d_ = encolher(pub)
+    destino = os.path.join(pub, "%s-%s.webp" % (nome, h[:8]))
+    bytes_png += os.path.getsize(caminho)
+    if os.path.exists(destino):
+        bytes_pub += os.path.getsize(destino)
+    else:
+        bytes_pub += para_webp(caminho, destino)
+if bytes_pub > TETO_BYTES:
+    raise SystemExit("as imagens pesam %.1f MB, e o teto de uma versão é %.0f"
+                     % (bytes_pub / 1e6, TETO_BYTES / 1e6))
 
 d = {"pontos": bons, "trilha": trilha,
      "arquivos": {h: arquivos[h][1] for h in usados}}
 arq = d["arquivos"]
 
+def dia(data):
+    return data[8:] + "/" + data[5:7]
+
+
 def src(h):
-    return "%s-%s.png" % (arq[h], h[:8])
+    return "%s-%s.webp" % (arq[h], h[:8])
 
 
 def quadro(par, ident):
     nome = par["nome"]
     leg = LEGENDA.get(nome, nome)
+    vezes = par.get("vezes", 0)
+    leg_cab = leg
+    if par["antes"]:
+        leg_cab += " · antes: " + dia(par["desde"])
+    if vezes:
+        leg_cab += " · mudou em %d %s" % (vezes, "ponto" if vezes == 1 else
+                                          "pontos")
     novo = par["antes"] is None
-    chip = '<span class="chip chip-novo">nova foto</span>' if novo else ""
+    chip = ('<span class="chip">igual desde %s</span>' % dia(par["desde"])
+            if novo else "")
     if novo:
         imgs = ('<img class="so" loading="lazy" width="720" height="1280" '
                 'src="%s" alt="%s">' % (src(par["depois"]), html.escape(leg)))
@@ -220,45 +273,45 @@ def quadro(par, ident):
         '</div><textarea class="nota" rows="2" placeholder="o que está errado"'
         ' hidden></textarea></figure>'
         % (html.escape(ident), "1" if novo else "0", imgs, botao,
-           html.escape(nome), chip, html.escape(leg), html.escape(nome)))
+           html.escape(nome), chip, html.escape(leg_cab), html.escape(nome)))
 
 
 # --- manchete -------------------------------------------------------------
+# Quantos pontos mexeram em cada foto depois de ela NASCER: o ponto em que
+# aparece pela primeira vez tem `antes` vazio e não conta como mudança.
+for m in d["trilha"]:
+    m["vezes"] = sum(1 for p in bons[1:]
+                     for x in p["mudou"] if x["nome"] == m["nome"] and x["antes"])
 manchete = "".join(quadro(m, "trilha-" + m["nome"]) for m in d["trilha"])
 n_manchete_par = sum(1 for m in d["trilha"] if m["antes"])
-n_manchete_novo = len(d["trilha"]) - n_manchete_par
+n_nasceram_depois = sum(1 for nome in ultimo
+                        if nascimento[nome][1] != bons[0]["data"])
 
 # --- passo a passo --------------------------------------------------------
 secoes = []
-total_pares = total_novos = 0
+imagens_dos_passos = set()
 for i, p in enumerate(d["pontos"]):
     for m in p["mudou"]:
-        if m["antes"]:
-            total_pares += 1
-        else:
-            total_novos += 1
+        imagens_dos_passos.update(x for x in (m["antes"], m["depois"]) if x)
     if p["mudou"]:
-        corpo = '<div class="tira">%s</div>' % "".join(
-            quadro(m, "%s-%s" % (p["sha"], m["nome"])) for m in p["mudou"])
+        corpo = '<p class="fotos">%s</p>' % "".join(
+            '<span class="chip%s" title="%s">%s</span>'
+            % ("" if m["antes"] else " chip-novo",
+               html.escape(LEGENDA.get(m["nome"], m["nome"])),
+               html.escape(m["nome"] + ("" if m["antes"] else " · nova")))
+            for m in p["mudou"])
     else:
         corpo = '<p class="nada">Nenhuma das fotos mudou.</p>'
     secoes.append(
-        '<section class="ponto" id="p%d"><header class="cab">'
+        '<li class="ponto"><div class="cab">'
         '<span class="data">%s</span>'
-        '<h3>%s</h3><code>%s</code></header>%s</section>'
-        % (i, html.escape(p["data"][8:] + "/" + p["data"][5:7]),
+        '<h3>%s</h3><code>%s</code></div>%s</li>'
+        % (html.escape(dia(p["data"])),
            html.escape(p.get("titulo", "")), html.escape(p["sha"]), corpo))
 
-nav = "".join(
-    '<a href="#p%d"><span>%s</span>%s</a>'
-    % (i, html.escape(p["data"][8:] + "/" + p["data"][5:7]),
-       html.escape(p.get("titulo", ""))[:46])
-    for i, p in enumerate(d["pontos"]))
+dados_js = json.dumps({"total": len(d["trilha"])}, ensure_ascii=False)
 
-dados_js = json.dumps({"total": total_pares + total_novos +
-                       len(d["trilha"])}, ensure_ascii=False)
-
-PAGINA = """<title>Trilha de Arte do BR Port</title>
+PAGINA = """<title>Gate A5 do BR Port</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -304,7 +357,7 @@ h1{font-size:clamp(30px,6vw,46px); line-height:1.02;}
 .medidas .q{font-family:"Barlow Condensed",sans-serif; text-transform:uppercase;
   letter-spacing:.11em; font-size:11px; color:var(--fraca);}
 
-.barra{position:sticky; top:0; z-index:9; background:var(--fundo);
+.barra{position:sticky; top:env(safe-area-inset-top, 0px); z-index:9; background:var(--fundo);
   border-bottom:1px solid var(--linha);}
 .barra .env{display:flex; align-items:center; gap:14px; flex-wrap:wrap;
   padding-block:10px;}
@@ -399,30 +452,28 @@ body.lado .piscar{display:none;}
   padding:4px 6px; border-radius:2px;}
 .selo.esq{left:8px;} .selo.dir{right:8px;}
 
-.ponto{border-top:1px solid var(--linha); padding-top:22px; margin-top:34px;}
+.indice{list-style:none; margin:16px 0 0; padding:4px 14px;
+  border:1px solid var(--linha); border-radius:var(--r);
+  background:var(--painel);}
+.ponto{border-top:1px solid var(--linha); padding-block:12px;}
+.ponto:first-child{border-top:0;}
+.fotos{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 0;}
 .cab{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
-.cab h3{font-size:19px; flex:1 1 300px;}
+.cab h3{font-size:17px; flex:1 1 300px;}
 .data{font-size:12px; color:var(--ambar); letter-spacing:.04em;}
 .cab code{font-size:11.5px; color:var(--fraca);}
 .nada{color:var(--fraca); font-size:14px; margin:10px 0 0;}
 
-.indice{margin-top:44px; border:1px solid var(--linha); border-radius:var(--r);
-  background:var(--painel); padding:6px;}
-.indice a{display:flex; gap:12px; align-items:baseline; padding:7px 10px;
-  color:var(--tinta); text-decoration:none; font-size:13.5px; border-radius:2px;}
-.indice a:hover{background:var(--painel2);}
-.indice a span{font-family:"JetBrains Mono",monospace; font-size:11.5px;
-  color:var(--ambar); flex:0 0 auto;}
 .aviso{margin-top:14px; font-size:13px; color:var(--fraca);
   border-left:2px solid var(--ambar); padding-left:12px;}
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;} }
 </style>
 
 <div class="topo"><div class="env">
-  <p class="olho">Gate A5 · plano v3</p>
-  <h1>Trilha de Arte do BR Port</h1>
-  <p class="sub">Toda captura que o jogo produziu desde 02/09, ponto a ponto,
-  com o antes e o depois no mesmo sítio. Toque numa imagem para ela piscar
+  <p class="olho">Trilha de arte · plano v3</p>
+  <h1>Gate A5 do BR Port</h1>
+  <p class="sub">Cada foto da bateria de __ATE__ contra a primeira vez que foi
+  tirada, com o antes e o depois no mesmo sítio. Toque numa imagem para ela piscar
   entre os dois — é assim que a diferença aparece. Em cada quadro, diga
   <b>Bom</b> ou <b>Não</b>; o veredito fica guardado e volta para a próxima
   sessão como fila de trabalho.</p>
@@ -445,21 +496,24 @@ body.lado .piscar{display:none;}
 
 <div class="env">
   <section class="manchete">
-    <h2>A trilha inteira — 02/09 contra hoje</h2>
-    <p class="intro">Os catorze quadros da bateria de hoje contra o mesmo
-    quadro no primeiro dia em que a captura passou a ser reprodutível.
-    __MANCHETE_NOTA__</p>
+    <h2>Cada foto, do primeiro dia a __ATE__</h2>
+    <p class="intro">Os __N_HOJE__ quadros da bateria de __ATE__, cada um
+    contra a primeira vez que a bateria o tirou — __DE__ para os que já
+    existiam no primeiro dia em que a captura passou a ser reprodutível, e o
+    dia em que nasceu para os outros. __MANCHETE_NOTA__</p>
     <div class="tira">__MANCHETE__</div>
   </section>
 
   <section>
     <h2>Passo a passo</h2>
     <p class="intro">Cada ponto é um merge que tocou em arte, na ordem em que
-    aconteceram. O que aparece aqui é só o que MUDOU naquele ponto — derivado do
-    conteúdo de cada PNG, não escolhido a olho —, e o título é o do próprio
-    pull request.</p>
-    <nav class="indice">__NAV__</nav>
-    __SECOES__
+    aconteceram, com as fotos que MUDARAM naquele ponto — derivado do conteúdo
+    de cada PNG, não escolhido a olho —, e o título é o do próprio pull
+    request. Um <b>Não</b> lá em cima procura-se aqui: os merges que mexeram
+    naquela foto são os suspeitos. As imagens de cada passo não vêm nesta
+    página: são __N_PASSOS__ distintas, e uma página leva no máximo
+    __TETO__ arquivos.</p>
+    <ol class="indice">__SECOES__</ol>
   </section>
 
   <p class="aviso">As imagens são função só do código: a bateria roda com
@@ -545,9 +599,25 @@ body.lado .piscar{display:none;}
     var atual = (vereditos[id] || {}).veredito;
     guardar(id, {veredito: atual === b.dataset.v ? "" : b.dataset.v});
   });
+  // A nota guarda-se ENQUANTO se escreve, e não só no `change`: esse só
+  // dispara ao sair do campo, e quem escrevesse e fechasse a página logo a
+  // seguir perdia a frase sem aviso.
+  var esperas = {};
+  function guardar_nota(campo){
+    var id = campo.closest(".quadro").dataset.id;
+    clearTimeout(esperas[id]);
+    delete esperas[id];
+    guardar(id, {nota: campo.value});
+  }
+  document.addEventListener("input", function(e){
+    if(!e.target.classList || !e.target.classList.contains("nota")) return;
+    var campo = e.target, id = campo.closest(".quadro").dataset.id;
+    clearTimeout(esperas[id]);
+    esperas[id] = setTimeout(function(){ guardar_nota(campo); }, 700);
+  });
   document.addEventListener("change", function(e){
     if(!e.target.classList || !e.target.classList.contains("nota")) return;
-    guardar(e.target.closest(".quadro").dataset.id, {nota: e.target.value});
+    guardar_nota(e.target);
   });
 
   pintar();
@@ -571,16 +641,27 @@ body.lado .piscar{display:none;}
 </script>
 """
 
+# Os números desta frase saem da trilha: a primeira versão escrevia "Cinco" e
+# "de 5 fotos para 14" à mão, e envelheceu no primeiro ponto que acrescentou
+# uma foto à bateria.
+nota_manchete = ("A bateria cresceu de %d fotos para %d pela trilha fora; a "
+                 "data de cada \"antes\" está na legenda."
+                 % (len(primeiro), len(ultimo)))
+if iguais:
+    nota_manchete += (" %d não mudaram desde que nasceram, e aparecem sozinhas:"
+                      " estão por julgar como as outras." % len(iguais))
+
 PAGINA = (PAGINA
           .replace("__PONTOS__", str(len(d["pontos"])))
-          .replace("__PARES__", str(total_pares + n_manchete_par))
-          .replace("__NOVOS__", str(total_novos + n_manchete_novo))
+          .replace("__PARES__", str(n_manchete_par))
+          .replace("__NOVOS__", str(n_nasceram_depois))
+          .replace("__N_PASSOS__", str(len(imagens_dos_passos)))
+          .replace("__TETO__", str(TETO_ARQUIVOS))
           .replace("__MANCHETE__", manchete)
-          .replace("__MANCHETE_NOTA__",
-                   "Cinco têm antes e depois; as outras %d não existiam em "
-                   "02/09 — a bateria cresceu de 5 fotos para 14 pela trilha "
-                   "fora." % n_manchete_novo)
-          .replace("__NAV__", nav)
+          .replace("__MANCHETE_NOTA__", nota_manchete)
+          .replace("__N_HOJE__", str(len(ultimo)))
+          .replace("__DE__", dia(bons[0]["data"]))
+          .replace("__ATE__", dia(bons[-1]["data"]))
           .replace("__SECOES__", "".join(secoes))
           .replace("__DADOS__", dados_js))
 
@@ -590,7 +671,11 @@ tmp = destino + ".tmp"
 with open(tmp, "w", encoding="utf-8", newline="\n") as f:
     f.write(PAGINA)
 os.replace(tmp, destino)
-print("%d pontos, %d pares antes/depois, %d fotos novas"
-      % (len(bons), total_pares + n_manchete_par, total_novos))
-print("%d arquivos em %s: %.1f MB" % (len(usados), pub, d_ / 1e6))
+print("%d pontos; na manchete %d pares antes/depois (%d fotos nasceram depois "
+      "do primeiro ponto, %d iguais desde que nasceram); %d imagens distintas "
+      "nos passos, fora da página"
+      % (len(bons), n_manchete_par, n_nasceram_depois, len(iguais),
+         len(imagens_dos_passos)))
+print("%d arquivos em %s: %.1f MB em WebP (%.1f MB em PNG)"
+      % (len(usados), pub, bytes_pub / 1e6, bytes_png / 1e6))
 print("página em %s" % destino)

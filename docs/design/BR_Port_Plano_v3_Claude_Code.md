@@ -732,7 +732,85 @@ prop sem âncora que não está declarado; e um declarado que afinal já tem ân
 QUARTO chão (170 px) — nenhum prop de hoje pisa quatro, e isso escreve-se em vez
 de se apertar o teto.
 
-Falta a metade dele, que é olhar.
+#### ✅ E EM 23/09 A PÁGINA FOI REFEITA ATÉ AO #75 — a que o Bruno abre é esta
+
+<https://claude.ai/artifact/EHhfjjWq5NTKEw3cUXFcsH>, com o veredito de cada
+quadro na coleção `veredito` (lê-se com `read_db`, e estava vazia no dia em que
+nasceu). A de 14/09 fica como ARQUIVO: é a única com as imagens passo a passo de
+02/09 a 16/09, e o único documento que o `veredito` dela tinha estava em branco.
+
+A trilha correu outra vez nos **48 pontos** até ao merge do #75, cada um com o
+`.godot` apagado. As 31 fotos do último ponto têm o tamanho, byte a byte, da
+tabela que o CI publicou para o #75, e várias saíram com o MESMO hash da página
+de 14/09: a captura continua reprodutível nove dias depois. O construtor da
+página tinha três defeitos para a trilha de hoje, e um teto:
+
+- ⚠️ **A manchete percorria a LEGENDA**, uma tabela à mão com 14 fotos: 17 das
+  31 ficariam fora do "02/09 contra hoje" sem uma palavra. Hoje a lista sai da
+  pasta do último ponto, e uma foto sem legenda reprova.
+- ⚠️ **Contra o primeiro ponto, 26 das 31 fotos saíam SOZINHAS** — não existiam
+  em 02/09 —, e diante de uma foto sem antes a pergunta do gate não tem
+  resposta. O "antes" de cada foto passou a ser a primeira vez que a bateria a
+  tirou: 23 pares, e as 8 que não mudaram desde que nasceram entram sozinhas,
+  porque continuam por julgar.
+- **Os números da prosa eram escritos à mão** ("catorze", "de 5 para 14"), e
+  passaram a sair da trilha.
+- ⚠️ **O passo a passo em imagens já não cabe numa página**: são **274**
+  imagens distintas, contra o teto de 255 arquivos e 64 MB de uma versão, porque
+  em quase todo ponto mudam quase todas as fotos. Os passos ficaram como LISTA
+  do que cada merge mexeu, derivada dos hashes — um "Não" na manchete procura-se
+  lá, e as imagens de um passo tiram-se da pasta da trilha. As imagens vão em
+  WebP sem perdas (57% do PNG), descodificadas de volta e conferidas pixel a
+  pixel: 54 arquivos, 7,8 MB.
+
+#### Os vereditos de 23/09 — 31 de 31 julgados, e os 31 «Não»
+
+Lidos da coleção `veredito`. **Nenhum «Não» aponta uma regressão**: onde a nota
+compara, diz que melhorou — docas «ficou bom», meio «ficou melhor», pesca «o
+detalhamento melhorou» — e pede mais. O «Não» quer dizer «ainda não chega»: a
+trilha foi na direção certa, e o que falta é trabalho NOVO. Triados em seis
+frentes, e **a ordem é do Bruno**:
+
+1. **Três defeitos concretos, conferidos na foto e no código.** (a) A legenda
+   do calendário mostra dois ÍCONES que a grelha não usa — os dias levam `•` e
+   `!`. (b) O título «Fim da Fase 1» está por cima de «A primeira de três
+   parcelas», que o contradiz. (c) «Sobrinho» no Arlindo continua a tropeçar
+   depois do «querido» plantado em 13/09; a palavra é do GDD, e trocá-la é
+   escolha dele. A nota do `contraoferta_fim` diz «Ribeiro», e a tela é do
+   Arlindo. Pequeno.
+2. **Os três retratos de fala** — boletim, `ribeiro` ×3, `contraoferta` ×2:
+   Dona Cida, Sr. Ribeiro e Arlindo «bem ruins», e pedem-se mais bonitos e
+   expressivos. Retrato de painel é o único sítio em que gerador de imagem é
+   permitido, logo esta frente cruza com a auditoria do plano de assets que o
+   Bruno faz com o ChatGPT. Médio.
+3. **A interface inteira** — quinze painéis com «melhore o design», «está bem
+   simples»: é a Etapa 6 do plano de arte. Pedidos concretos: diário com cara
+   de diário e imagens do porto antigo; menu mais parecido com um celular;
+   mensagens e pausa inspiradas em jogos de referência, a pausa com salvar e
+   sair para uma tela inicial que ainda não existe; painel das docas com renda
+   esperada e tipo de trabalho; caixa com recordes; reputação organizada para
+   os componentes que virão; nomes como a tela depois de «Nova partida». Pede
+   as referências dele. Grande.
+4. **Mapa, frota e animação** — pesca mais realista mesmo simples; cascos e
+   camiões melhores e com VARIAÇÕES (cargueiro de carros e de combustível,
+   transportadoras diferentes), na proporção de carros e pessoas que virão; a
+   ruína com mais desgaste; ícones integrados; o trabalhador animado (andar,
+   pallets, empilhadeira) e uma transição suave entre turnos. Blender. Grande.
+5. **O rumo além do VS** — o jogo não acaba na 1.ª parcela: as três da Fase 1,
+   com desbloqueios e um tutorial que se liga e desliga; segunda chance com
+   empréstimo caro; cancelar trabalho a custo de reputação; guindaste por fase
+   — nenhum ou de madeira na Fase 1, intermediário na 2, o de hoje da 3 em
+   diante —, obras que levam turnos, e o porto completo só na Fase 3. **O GDD
+   já diz metade disto**: a Fase 1 é «píer de madeira… consertos e pequenas
+   melhorias», os «guindastes novos» são da Fase 2, e o Sr. Ribeiro tem linhas
+   de empréstimo. O VS adiantou o guindaste de treliça (`nivel_guindaste()` 2,
+   com duas estruturas quaisquer). Mexe no `GameState`, no balanceamento e no
+   `SAVE_VERSION`: decisão de rumo, várias sessões.
+6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
+   com referências profissionais. Só ferramenta; pequeno a médio, e barateia
+   a 4.
+
+Falta a metade dele, que é olhar — e está feita; falta escolher a ordem.
 
 ---
 

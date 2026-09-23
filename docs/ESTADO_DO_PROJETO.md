@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — as telas do fim em fila (`054`)
+> **Última atualização:** 23/09/2026 — o A5 julgado (31 «Não») e triado
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -132,7 +132,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
+| **A5** | **Julgado em 23/09** — 31 de 31, os 31 «Não», nenhum a regressão | Seis frentes triadas no §A5 do plano, da legenda do calendário ao rumo além do VS: **a ordem é dele** |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
@@ -171,7 +171,7 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
 | `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
-| `tools/trilha_de_arte.{sh,py}` | **A trilha de arte, para o gate A5** — corre a bateria em cada ponto que tocou em arte e monta o antes/depois. O que mudou sai do hash de cada PNG |
+| `tools/trilha_de_arte.{sh,py}` | **A trilha de arte, para o gate A5** — corre a bateria em cada ponto que tocou em arte e monta o antes/depois de cada foto contra a primeira vez que foi tirada. O que mudou sai do hash de cada PNG; os passos são lista, porque em imagem passam do teto de uma página |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta, cantos, botões e cartões. A cor de MAPA não vive aqui: quem a define é o gerador do SVG |

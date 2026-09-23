@@ -292,6 +292,9 @@ não é este arquivo.
 - Nada de identificador de modelo em commit, PR ou comentário.
 - Só empurre para a branch designada da sessão, com `git push -u origin <branch>`.
 - PR só se pedirem.
+- **O prompt da próxima conversa vai também na RESPOSTA, num bloco de código
+  copiável** com o texto inteiro do briefing — pedido do Bruno em 23/09. O
+  arquivo continua no commit; o bloco é para ele colar sem abrir nada.
 
 ## Falha segura
 
