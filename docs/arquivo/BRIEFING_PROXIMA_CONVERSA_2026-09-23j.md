@@ -27,16 +27,18 @@ O `ESTADO_DO_PROJETO.md` tem **~800 bytes de folga** (teto no `TETO_ESTADO` de
 ## 1. Comece pelo estado real
 
 - ⚠️ **A sessão fechou na branch `claude/peaceful-goodall-xohqiz`, à frente da
-  `main` (`8fda31e`, o PR #73 fundido).** Antes de qualquer checkout, confira
-  no GitHub se um PR dela foi aberto e fundido; se não foi, este trabalho só
-  existe na branch, e reiniciá-la da `main` apaga-o.
+  `main` (`8fda31e`, o PR #73 fundido), com o PR #74 aberto.** Antes de
+  qualquer checkout, confira no GitHub se o #74 foi fundido; se não foi, este
+  trabalho só existe na branch, e reiniciá-la da `main` apaga-o.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**,
   HEAD confirmado com o GitHub, e `git log --oneline origin/main..HEAD` antes de
   reapontar seja o que for.
-- **O CI não rodou nesta branch** (só corre em `pull_request` e na `main`).
-  Medido aqui contra uma bateria da `main` num worktree, o `brport-captura` deve
-  dizer **14 fotos mudadas** (as de jogo com o mapa à vista: as dez quinas,
-  1,3 a 2,4 mil pixels cada), **16 iguais** e **uma nova**, `balanco.png`.
+- **O CI do #74 arrancou no fecho e não tinha resultado** — confira-o primeiro,
+  e em especial o passo que regera os mapas e os compara byte a byte: o chanfro
+  mudou os dois mapas de rua, e o runner corre outro Python. Medido aqui contra
+  uma bateria da `main` num worktree, o `brport-captura` deve dizer **14 fotos
+  mudadas** (as de jogo com o mapa à vista: as dez quinas, 1,3 a 2,4 mil pixels
+  cada), **16 iguais** e **uma nova**, `balanco.png`.
 - **São DEZ verdes neste contêiner**: as seis suítes e quatro conferidores
   (`DOCS OK`, `GUARDAS OK`, `ESCOPO UI OK`, `SINAL OK`). A bateria fecha com
   `COBERTURA OK`, e já não tem lacuna declarada.
