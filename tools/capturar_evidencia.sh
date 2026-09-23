@@ -304,8 +304,30 @@ tirar parcela - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # O VALOR DA PARCELA VEM DA CONSTANTE (`@PARCELA_AMOUNT`) e não escrito aqui:
 # a fala dele diz o número, e um número cravado numa ferramenta de evidência
 # envelhece calado — ver o cabeçalho do `_chamar_setup`.
-tirar ribeiro - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @PARCELA_AMOUNT
-tirar contraoferta - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0
+#
+# ⚠️ E CADA UMA É MAIS DE UMA TELA. Até 23/09 fotografava-se só o primeiro
+# tempo: a resposta do Sr. Ribeiro e a despedida do Arlindo só tinham sido
+# vistas à mão, e a despedida trazia "Cliente ouvindo a proposta. (2
+# tentativas)" por baixo de um negócio já fechado (`docs/decisoes/051`). O
+# segundo tempo alcança-se pelo BOTÃO (`--tocar=`), e cada tiro diz em que
+# tempo pára (`--tempo=`) — o painel diz onde está, e as duas fontes têm de
+# bater, como o turno dos tiros de jogo.
+#
+# ⚠️ E O SR. RIBEIRO SÓ VEM NO VENCIMENTO. `parcela=vencida` joga a partida
+# até lá pelo `advance_turn()`: fora da fase "debt_payment" o `pay_debt()` sai
+# calado, e a foto do "Pagar" mostraria a resposta de quem pagou sem o dinheiro
+# ter mudado de mãos. A entrada passou a dizer o dinheiro de quem chega ao
+# vencimento sem jogar (R$336.000), e não o do turno 1. "Pagar" só está ligado
+# com dinheiro para a parcela (`cash=@PARCELA_AMOUNT`); "Não consigo pagar" só
+# existe sem ele.
+tirar ribeiro - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @PARCELA_AMOUNT parcela=vencida --tempo=entrada
+tirar ribeiro_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_pagou.png" @PARCELA_AMOUNT parcela=vencida cash=@PARCELA_AMOUNT --tocar=Pagar --tempo=pagou
+tirar ribeiro_nao_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_nao_pagou.png" @PARCELA_AMOUNT parcela=vencida --tocar=Não --tempo=nao_pagou
+tirar contraoferta - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0 --tempo=rodada
+# A despedida pelo "Igualar", que fecha SEMPRE: é a fala de quem perdeu. A de
+# quem ganhou pede duas apostas falhadas, e isso é sorteio — o mesmo tempo, com
+# outra frase, e quem a mede a caber no cartão é o F10.
+tirar contraoferta_fim - - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta_fim.png" barco=0 0 --tocar=Igualar --tempo=despedida
 # O MENU-CELULAR (item 17). Ele é a primeira tela deste jogo com fundo ESCURO,
 # e a captura é a única coisa que responde se um rótulo herdou a cor de texto
 # de cartão branco e sumiu — o D23 mede o contraste das VARIAÇÕES do tema, que
@@ -453,12 +475,14 @@ tirar nomes   - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # ⚠️ FICA DE FORA O SEGUNDO TEMPO, o balanço, e a razão é a regra do zero: ele
 # lê `GameState.metrics`, que numa cena solta é uma partida recém-criada — a
 # foto diria "Barcos atendidos: 0" e isso LÊ-SE COMO MEDIDA. Fotografá-lo pede
-# uma partida jogada até ao turno 32, que é tiro de outra sessão.
+# uma partida jogada até ao turno 32, que é tiro de outra sessão. Desde 23/09
+# a lacuna está DECLARADA no `conferir_cobertura_paineis.py`, que a reprova no
+# dia em que o balanço ganhar foto ou deixar de existir (`docs/decisoes/051`).
 #
 # A frase da vitória é a que o `_check_end()` escreve, copiada — e este tempo
 # NÃO A MOSTRA (só o balanço usa o `_motivo`), de modo que ela envelhecer aqui
 # não muda um pixel desta foto.
-tirar fimfase - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase.png" true "Você quitou a parcela e manteve o porto no azul!"
+tirar fimfase - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase.png" true "Você quitou a parcela e manteve o porto no azul!" --tempo=narracao
 tirar icones  - -  --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

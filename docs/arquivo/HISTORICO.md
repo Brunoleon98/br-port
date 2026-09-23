@@ -702,3 +702,11 @@ desceram inteiras; no estado ficou uma frase de cada:
 | **R1–R5** (17–20/09, `030`–`034`) | identidade na Leitura, evidência do CI por erro e por turno, texto pela fonte que a máquina corre, a voz da Dona Cida a chegar à tela, e a FILA da faixa: o que o jogador não via caiu de **30,7% para 5,7%** |
 | **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL (22 reprovações, hoje zero); *"de onde veio a cor?"* é outra pergunta, e a superfície era **34** e não 18; a frase concorda INTEIRA e **zero leva plural**, 8 sítios e não 3. Em todos, a superfície real era o DOBRO do que a revisão nomeava |
 | **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto >= 3,0x o p99,9 do próprio arquivo —, o resto DESCRITOR. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz) |
+
+**E, para caber a cobertura por tempo (`051`),** as quatro primeiras linhas
+da tabela de fechados desceram. As três da §7.1 estão acima por extenso; a
+que faltava:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). Os do HUD entram pela PORTA DO JOGADOR, numa partida jogada. A cobertura MEDE-SE nos logs, porque declarar mentiria |

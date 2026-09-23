@@ -14,6 +14,10 @@ extends SceneTree
 #     --rendering-driver opengl3 --script res://tools/capturar_cena.gd -- \
 #     res://scenes/tests/AssetPlacementTest.tscn foto.png
 #
+# E para o SEGUNDO TEMPO de um painel, o toque e onde ele tem de parar:
+#   ... DebtPaymentPanel.tscn foto.png @PARCELA_AMOUNT parcela=vencida \
+#     cash=@PARCELA_AMOUNT --tocar=Pagar --tempo=pagou
+#
 # Teste verde não prova que ficou bonito. É para isto que ela existe.
 # ============================================================
 
@@ -33,6 +37,13 @@ var _frames := 0
 var _extra: Array = []
 # Pares `campo=valor` a escrever no GameState antes de a cena nascer.
 var _estado: Array = []
+# Botões a tocar, por ordem, antes da foto — `--tocar=<início do rótulo>`.
+var _toques: Array = []
+# O tempo em que o painel tem de estar na foto — `--tempo=<id>`, vazio = sem
+# exigência.
+var _tempo_esperado := ""
+# A cena montada, para o toque a percorrer e a foto lhe ler o tempo.
+var _no: Node = null
 
 
 func _process(_delta: float) -> bool:
@@ -55,6 +66,7 @@ func _process(_delta: float) -> bool:
 		_estado_conhecido()
 		_montar_estado()
 		root.add_child(no)
+		_no = no
 		_chamar_setup(no)
 		return false
 
@@ -64,6 +76,23 @@ func _process(_delta: float) -> bool:
 	_frames += 1
 	if _frames < FRAMES_ATE_ASSENTAR:
 		return false
+	if not _toques.is_empty():
+		if not _tocar(String(_toques.pop_front())):
+			quit(1)
+			return true
+		_frames = 0
+		return false
+
+	# ⚠️ O TEMPO PROMETIDO CONFERE-SE ANTES DA FOTO. O tiro diz onde devia
+	# parar e o painel diz onde está — duas fontes, como o turno dos tiros de
+	# jogo. Sem isto um `--tocar` que calhasse no botão errado entregava o
+	# outro tempo com o nome deste, e a cobertura contava-o na mesma.
+	var tempo := _tempo_do_painel()
+	if _tempo_esperado != "" and tempo != _tempo_esperado:
+		push_error("esperava o tempo «%s» e o painel está em «%s»" % [
+			_tempo_esperado, tempo])
+		quit(1)
+		return true
 
 	var img := root.get_texture().get_image()
 	var erro := img.save_png(_saida)
@@ -77,6 +106,12 @@ func _process(_delta: float) -> bool:
 	# Ribeiro, a contra-oferta, o menu-celular, a tela de nomes e o fim de Fase 1
 	# têm fotografia — medido no log, e não declarado ao lado do tiro.
 	print("Paineis: %s" % _cena)
+	# E O TEMPO DELE, quando o painel tem mais de um. Um painel é uma cena, mas
+	# a cena do Sr. Ribeiro são três telas — a entrada, a de quem pagou e a de
+	# quem não pôde —, e até 23/09 a bateria fotografava só a primeira das três
+	# (`docs/decisoes/051`).
+	if tempo != "":
+		print("Tempo: %s %s" % [_cena, tempo])
 	# "Tela salva em" é CONTRATO com o `capturar_evidencia.sh`, que procura essa
 	# linha em vez de olhar o código de saída — um erro de compilação do GDScript
 	# sai com 0 sem a ferramenta ter feito nada. Antes daqui dizia "captura:", e
@@ -149,7 +184,11 @@ func _ler_argumentos() -> void:
 	# Os extra dividem-se por FORMA: `chave=valor` monta o estado do jogo antes
 	# de a cena nascer; o resto vai para o `setup()` em ordem.
 	for bruto in args.slice(2):
-		if bruto.contains("=") and not bruto.begins_with("res://"):
+		if bruto.begins_with("--tocar="):
+			_toques.append(bruto.substr("--tocar=".length()))
+		elif bruto.begins_with("--tempo="):
+			_tempo_esperado = bruto.substr("--tempo=".length())
+		elif bruto.contains("=") and not bruto.begins_with("res://"):
 			_estado.append(bruto)
 		else:
 			_extra.append(bruto)
@@ -217,9 +256,86 @@ func _montar_estado() -> void:
 			GS._set_phase("rival_offer")
 			print("  estado: barco na doca %d" % doca)
 			continue
+		# ⚠️ `parcela=vencida` TAMBÉM É MONTAGEM, e pelo caminho do jogo: o
+		# `advance_turn()` até à fase "debt_payment", resolvendo as ofertas do
+		# rival pelo caminho. Fora dessa fase o `pay_debt()` sai CALADO, e o
+		# tiro do "Pagar" mostrava a resposta de quem pagou sem o dinheiro ter
+		# mudado de mãos — medido pelo F10 em 23/09 (`docs/decisoes/051`).
+		if chave == "parcela":
+			if valor != "vencida":
+				push_error("parcela=%s: a única montagem é «vencida»" % valor)
+				quit(1)
+				return
+			var voltas := 0
+			while GS.phase != "debt_payment" and GS.phase != "game_over" and voltas < 200:
+				if GS.phase == "rival_offer":
+					GS.resolve_rival_offer(true)
+				GS.advance_turn()
+				voltas += 1
+			if GS.phase != "debt_payment":
+				push_error("a partida não chegou ao vencimento (fase %s)" % GS.phase)
+				quit(1)
+				return
+			print("  estado: parcela vencida, turno %d" % GS.turn)
+			continue
 		if not chave in GS:
 			push_error("GameState não tem o campo %s" % chave)
 			quit(1)
 			return
+		# E O VALOR PODE SER UMA CONSTANTE, com `@`, pela razão do `setup()`:
+		# `cash=@PARCELA_AMOUNT` é "o bastante para pagar" sem cravar o número.
+		if valor.begins_with("@"):
+			var consts: Dictionary = GS.get_script().get_script_constant_map()
+			if not consts.has(valor.substr(1)):
+				push_error("GameState não tem a constante %s" % valor.substr(1))
+				quit(1)
+				return
+			GS.set(chave, consts[valor.substr(1)])
+			print("  estado: %s = %s" % [chave, consts[valor.substr(1)]])
+			continue
 		GS.set(chave, int(valor) if valor.is_valid_int() else valor)
 		print("  estado: %s = %s" % [chave, valor])
+
+
+func _tempo_do_painel() -> String:
+	if _no == null or not "tempo" in _no:
+		return ""
+	return String(_no.get("tempo"))
+
+
+# O SEGUNDO TEMPO DE UM PAINEL SÓ SE ALCANÇA PELA PORTA DO JOGADOR: o botão.
+# Chamar a função por baixo dele (`_mostrar_resposta("pagou")`) daria o texto
+# certo sem o `pay_debt()` ter corrido — um estado que ninguém alcança a jogar,
+# que é a regra do `--painel=` do `capturar_tela.gd` (`docs/decisoes/038`). E o
+# botão só vale na fase certa, que é o `parcela=vencida` acima.
+#
+# ⚠️ E O BOTÃO DESLIGADO REPROVA. "Pagar" existe no painel sem dinheiro para a
+# parcela, só que desligado; `pressed.emit()` dispara-o na mesma, e a foto
+# sairia a mostrar o pagamento de uma parcela que o jogador não tinha como
+# pagar. Medido: sem esta guarda o tiro passa. O estado que o permite
+# monta-se antes (`cash=@PARCELA_AMOUNT`).
+#
+# E o início do rótulo tem de casar UM botão só: dois seria escolher por
+# posição, e zero seria fotografar o primeiro tempo com o nome do segundo.
+func _tocar(prefixo: String) -> bool:
+	var achados: Array = []
+	_botoes_de(_no, prefixo, achados)
+	if achados.size() != 1:
+		push_error("--tocar=%s casou %d botões visíveis" % [prefixo, achados.size()])
+		return false
+	var botao: Button = achados[0]
+	if botao.disabled:
+		push_error("--tocar=%s: o botão «%s» está desligado" % [prefixo, botao.text])
+		return false
+	print("  toque: %s" % botao.text)
+	botao.pressed.emit()
+	return true
+
+
+func _botoes_de(no: Node, prefixo: String, achados: Array) -> void:
+	if no is Button and (no as Button).is_visible_in_tree() \
+			and not no.is_queued_for_deletion() \
+			and (no as Button).text.begins_with(prefixo):
+		achados.append(no)
+	for filho in no.get_children():
+		_botoes_de(filho, prefixo, achados)

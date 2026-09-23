@@ -24,6 +24,17 @@ projeto desde o D20:
   · o que o jogo ABRE  ← `_abrir_painel(...)` no `scripts/Main.gd`
   · o que foi À TELA   ← os logs que a bateria deixou
 
+⚠️ E UM PAINEL NÃO É UMA TELA. A cena do Sr. Ribeiro são TRÊS — a entrada,
+a de quem pagou e a de quem não pôde —, a do Arlindo são duas e o fim de fase
+também. Até 23/09 a pergunta era por CENA, e a bateria fotografava só o
+primeiro tempo de cada uma: a despedida do Arlindo viveu com "Cliente ouvindo
+a proposta. (2 tentativas)" por baixo de um negócio já fechado, e nenhuma foto
+o mostrava (`docs/decisoes/051`). Hoje o catálogo desce ao TEMPO, pelas mesmas
+duas fontes:
+
+  · os tempos que o painel TEM  ← cada `tempo = &"..."` no script da cena
+  · os tempos que foram À TELA   ← as linhas `Tempo:` dos mesmos logs
+
 Uso:
   python3 tools/conferir_cobertura_paineis.py <pasta-de-fotos>
 
@@ -37,6 +48,18 @@ import sys
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAIN = os.path.join(RAIZ, "brport_vs/scripts/Main.gd")
 MENU = os.path.join(RAIZ, "brport_vs/scripts/PainelMenu.gd")
+
+# OS TEMPOS QUE FICAM SEM FOTO, e por quê — a lacuna DECLARADA, nunca a
+# cobertura. A afirmação perigosa é a positiva (`docs/decisoes/042`): "este
+# tiro cobre X" mente sem ninguém ver, "X não tem foto, por isto" só pode
+# envelhecer para o lado seguro, e esta ferramenta reprova a entrada que
+# envelhecer — o tempo deixou de existir, ou passou a ter foto.
+TEMPOS_SEM_FOTO = {
+    ("res://scenes/EndGame.tscn", "balanco"):
+        "lê `GameState.metrics`, e numa cena solta a partida é nova: a foto "
+        "diria «Barcos atendidos: 0», que se LÊ como medida. Pede uma partida "
+        "jogada até ao turno 32, com a parcela paga pelo botão.",
+}
 
 
 def sem_comentarios(texto):
@@ -127,6 +150,61 @@ def cenas_do_menu():
     return {c for c in re.findall(r'"cena"\s*:\s*"(res://[^"]*\.tscn)"', texto)}
 
 
+def script_da_cena(cena, falhas):
+    """O script do nó RAIZ de uma `.tscn`, ou None se ela não tiver nenhum."""
+    arquivo = os.path.join(RAIZ, "brport_vs", cena[len("res://"):])
+    if not os.path.isfile(arquivo):
+        falhas.append("o jogo abre %s e o arquivo não existe." % cena)
+        return None
+    texto = open(arquivo, encoding="utf-8").read()
+    scripts = dict((i, c) for c, i in re.findall(
+        r'\[ext_resource[^\]]*type="Script"[^\]]*path="([^"]+)"[^\]]*id="([^"]+)"',
+        texto))
+    # O nó raiz é o primeiro `[node ...]`, e o bloco dele vai até ao seguinte.
+    blocos = re.split(r'^\[', texto, flags=re.M)
+    raiz = next((b for b in blocos if b.startswith("node ")), "")
+    m = re.search(r'^script\s*=\s*ExtResource\(\s*"([^"]+)"\s*\)', raiz, re.M)
+    if not m:
+        return None
+    if m.group(1) not in scripts:
+        falhas.append(
+            "%s aponta o script da raiz para ExtResource(\"%s\"), que não é "
+            "um Script declarado no arquivo." % (cena, m.group(1)))
+        return None
+    return scripts[m.group(1)]
+
+
+def tempos_do_painel(cena, falhas):
+    """Os tempos que o script da cena declara, por `tempo = &"<id>"`.
+
+    ⚠️ TODA ATRIBUIÇÃO É LIDA, E A QUE NÃO FOR LITERAL REPROVA. É a regra do
+    `_abrir_painel` acima com outra roupa: `tempo = id` é um tempo cujo nome
+    esta ferramenta não sabe, e saltá-lo em silêncio devolvia o buraco inteiro
+    — o painel ficava com um tempo que nenhuma foto é obrigada a mostrar. A
+    comparação (`==`) e a declaração (`var tempo: StringName`) não casam, e
+    por isso não contam.
+
+    ⚠️ E SÓ O SCRIPT DA CENA. Um `tempo = ...` escrito numa classe-mãe (o
+    `PainelNarrativo`) não seria visto; hoje nenhuma o escreve.
+    """
+    script = script_da_cena(cena, falhas)
+    if script is None:
+        return set()
+    arquivo = os.path.join(RAIZ, "brport_vs", script[len("res://"):])
+    texto = sem_comentarios(open(arquivo, encoding="utf-8").read())
+    tempos = set()
+    for m in re.finditer(r'(?<!\w)tempo\s*=(?!=)\s*([^\n]*)', texto):
+        lido = re.fullmatch(r'&"(\w+)"\s*', m.group(1))
+        if lido:
+            tempos.add(lido.group(1))
+            continue
+        falhas.append(
+            "%s atribui o tempo por uma forma que esta ferramenta não sabe "
+            "ler: `tempo = %s`. Escreva o literal (`&\"<id>\"`) — nunca se "
+            "salta." % (script, m.group(1).strip()))
+    return tempos
+
+
 def cenas_fotografadas(pasta, falhas):
     """O que as ferramentas de captura disseram ter na tela, log a log."""
     logs = sorted(f for f in os.listdir(pasta) if f.endswith(".log"))
@@ -137,10 +215,19 @@ def cenas_fotografadas(pasta, falhas):
         return set(), 0
 
     vistas = set()
+    tempos = set()
     com_linha = 0
     for nome in logs:
         with open(os.path.join(pasta, nome), encoding="utf-8") as fh:
             for linha in fh:
+                if linha.startswith("Tempo:"):
+                    partes = linha.split()
+                    if len(partes) != 3:
+                        falhas.append("%s: linha `Tempo:` que não se lê: %s"
+                                      % (nome, linha.strip()))
+                        continue
+                    tempos.add((partes[1], partes[2]))
+                    continue
                 if not linha.startswith("Paineis:"):
                     continue
                 com_linha += 1
@@ -155,7 +242,7 @@ def cenas_fotografadas(pasta, falhas):
         falhas.append(
             "nenhum dos %d logs traz a linha `Paineis:` — o rótulo mudou nas "
             "ferramentas de captura, ou elas não correram." % len(logs))
-    return vistas, com_linha
+    return vistas, tempos
 
 
 def main():
@@ -173,10 +260,47 @@ def main():
         falhas.append(
             "o Main.gd não declarou painel nenhum — a expressão deixou de "
             "casar, e um catálogo vazio faria tudo passar.")
-    vistas, _ = cenas_fotografadas(pasta, falhas)
+    vistas, tempos_vistos = cenas_fotografadas(pasta, falhas)
 
     for cena in sorted(abertas - vistas):
         falhas.append("o jogo abre %s e fotografia nenhuma o mostra." % cena)
+
+    catalogo = {}
+    for cena in sorted(abertas):
+        tempos = tempos_do_painel(cena, falhas)
+        if tempos:
+            catalogo[cena] = tempos
+    for (cena, tempo), porque in sorted(TEMPOS_SEM_FOTO.items()):
+        if tempo not in catalogo.get(cena, set()):
+            falhas.append("a lacuna declarada «%s» de %s é de um tempo que o "
+                          "script já não tem — saia da lista." % (tempo, cena))
+        elif (cena, tempo) in tempos_vistos:
+            falhas.append("a lacuna declarada «%s» de %s já tem foto — saia "
+                          "da lista." % (tempo, cena))
+    for cena, tempos in catalogo.items():
+        for tempo in sorted(tempos):
+            if (cena, tempo) in TEMPOS_SEM_FOTO:
+                continue
+            if (cena, tempo) not in tempos_vistos:
+                falhas.append("%s tem o tempo «%s» e fotografia nenhuma o "
+                              "mostra." % (cena, tempo))
+    # ⚠️ E O QUE A FOTO MOSTRA E O CÓDIGO NÃO DECLARA TAMBÉM REPROVA — é a
+    # outra metade das duas fontes. Um tempo que só a captura conhece é uma
+    # atribuição que esta ferramenta não viu, e a pergunta de cima ficaria
+    # verde sobre um catálogo incompleto.
+    for cena, tempo in sorted(tempos_vistos):
+        if tempo not in catalogo.get(cena, set()):
+            falhas.append("uma foto mostra o tempo «%s» de %s, que o script "
+                          "da cena não declara." % (tempo, cena))
+    # ⚠️ ENQUANTO HOUVER LACUNA DECLARADA, QUEM REPROVA ISTO É A CONFERÊNCIA
+    # DELA, acima — um catálogo vazio não tem o tempo da lacuna, e ela
+    # queixa-se primeiro. Medido: com a expressão partida, só esta linha
+    # reprova no dia em que `TEMPOS_SEM_FOTO` estiver vazia. Fica pela causa
+    # que nomeia, e por esse dia.
+    if not catalogo and not falhas:
+        falhas.append(
+            "nenhum painel declara tempos — a expressão deixou de casar, e um "
+            "catálogo vazio faria os segundos tempos passarem sem foto.")
 
     if falhas:
         print("COBERTURA FALHOU — %d problema(s):" % len(falhas))
@@ -185,6 +309,13 @@ def main():
         return 1
 
     print("%d painel(eis) que o jogo abre, todos fotografados." % len(abertas))
+    print("%d tempo(s) em %d painel(eis) de mais de uma tela; %d "
+          "fotografado(s) e %d sem foto, declarado(s):" % (
+              sum(len(t) for t in catalogo.values()), len(catalogo),
+              sum(len(t) for t in catalogo.values()) - len(TEMPOS_SEM_FOTO),
+              len(TEMPOS_SEM_FOTO)))
+    for (cena, tempo), porque in sorted(TEMPOS_SEM_FOTO.items()):
+        print("  · %s «%s» — %s" % (cena, tempo, porque))
     print("COBERTURA OK")
     return 0
 

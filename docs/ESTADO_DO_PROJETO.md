@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — a troca pela cor mora num selo (`050`)
+> **Última atualização:** 23/09/2026 — um painel não é uma tela (`051`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -113,14 +113,11 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **R1–R5** (17–20/09, `030`–`034`) | a FILA da faixa: o que o jogador não via caiu de **30,7% para 5,7%** |
-| **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL, a origem da cor e a concordância — em todos, a superfície real era o DOBRO da nomeada |
-| **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). Os do HUD entram pela PORTA DO JOGADOR, numa partida jogada. A cobertura MEDE-SE nos logs, porque declarar mentiria |
-| **R9** (21/09, `040`) | a ONDA: `tools/medir_audio.py`, `SINAL OK`. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% |
 | **As CINCO levas de cor** (21–22/09, `041`–`045`) | **27 chamadas em 19 locais → ZERO**, lista de exceções vazia. Quatro migraram VALORES (fotos byte a byte); a 2ª não — a régua não drenava a fila, e alcançado o âmbar deu 3,07:1. ⚠️ **Estado que não monta publica linhas plausíveis** (a chave MORTA da 3ª, o piso da 4ª). A 5ª trouxe o **D34** (proveniência lida no nó) |
 | **A rua e a mão dupla** (23/09, `047`) — escolha do Bruno | a rua FICA em 1,8: a janela que aperta é em `my` e o `RUA_RECUO` não a toca; a 2,0 ganharia 3,6 px. Faltava quem SUBISSE: dois camiões na faixa de dentro, de costas, 8 silhuetas `_retorno` (+0,75% do `.pck`). ⚠️ **A assinatura do D13 não fazia a média que dizia** (`resize` amostra); hoje faz, corte 0,01. Bateria a **27 tiros**. Depois, a **saída de ré** ganhou guarda (`_d13_saida_de_re`, 5 mutantes) |
 | **O quadro dos props** (23/09, `049`) — escolha do Bruno | 60 props em atlas, sem `bpy` nem nó mexido; os retratos ficam (atlas de 1024 sairia 26% pior). Pixel de prop lê-se por `PropIso.imagem()`. ⚠️ As folhas gravaram quadros VAZIOS com "Folha salva em"; hoje provam que esconder a peça muda a foto. 7 mutantes |
 | **O âmbar da seleção** (23/09, `050`) — escolha do Bruno | nenhuma cor de borda dava 3:1 dos dois lados (vizinhos a 5,05:1; o âmbar já no ótimo, 2,25), e a troca que o jogador vê é PARADO → escolhido (1,33). A cor passou a um SELO âmbar escuro no "Escolhido": 3,86 e 4,74, texto a 5,06, retrato intacto. 8 mutantes |
+| **Os segundos tempos** (23/09, `051`) — escolha do Bruno | a cobertura era por CENA e a bateria só via o 1º tempo: a despedida do Arlindo dizia «Cliente ouvindo a proposta» com o negócio fechado. Hoje 7 tempos em 3 painéis, 6 com foto e o balanço DECLARADO; o F10 mede cada um a caber — um nome de 24 letras sem espaço saía do cartão (`_SMART`) |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -227,7 +224,7 @@ podre (A4) — em `HISTORICO.md`.
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências e o teto do estado com EOL normalizado |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
-| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). A bateria são **27 tiros** desde `047` |
+| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desde `051` desce ao TEMPO de cada painel, e a bateria são **30 tiros** |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
 | `docs/REVISAO_GERAL_2026-09-17.md` | Revisão geral de 17/09: defeitos e melhorias, com evidência |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |

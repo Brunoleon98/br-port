@@ -111,6 +111,10 @@ func _rodar() -> void:
 	print("=== F9: nenhuma contagem escreve o plural à mão ===")
 	_f9_concordancia_a_mao()
 
+	print("=== F10: cada tempo dos painéis de mais de uma tela cabe no cartão ===")
+	await _f10_cada_tempo_cabe()
+	_confere("o bloco F10 correu até ao fim", _f10_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -1520,3 +1524,296 @@ func _f9_juntar(dir_path: String, achados: PackedStringArray) -> void:
 		nome = d.get_next()
 	d.list_dir_end()
 
+
+
+# ── F10 ─────────────────────────────────────────────────────────────────
+# CADA TEMPO DOS PAINÉIS DE MAIS DE UMA TELA CABE NO CARTÃO — o texto dentro
+# do cartão, e o cartão dentro da tela.
+#
+# O T13 guarda o TEXTO da resposta do Sr. Ribeiro; nada perguntava se ele
+# cabia, e o segundo tempo de três painéis só tinha sido visto à mão
+# (`docs/decisoes/051`). Mede-se com o NOME MAIS LARGO que a tela de nomes
+# aceita — `NOME_MAX_CARACTERES` letras "W", sem espaço —, que é o pior caso
+# que o jogo escreve. Medido em 23/09: com ele o texto saía do balão e passava
+# POR FORA do cartão nos dois painéis com fala, porque `AUTOWRAP_WORD` só
+# quebra em fronteira de palavra.
+#
+# ⚠️ A MEDIDA É O QUE O RÓTULO DESENHA, e não o tamanho dele. Uma palavra que
+# transborda deixa o `size` do rótulo intacto — o retângulo cabia, o texto
+# não. `get_character_bounds()` diz onde cada caractere cai.
+#
+# ⚠️ E CADA TEMPO ALCANÇA-SE PELA PORTA DO JOGADOR — o botão —, com o estado
+# montado como o jogo o monta: o vencimento pelo `advance_turn()`, a oferta do
+# rival pelo sorteio dele, e as frases do fim pelo `game_over` que o próprio
+# jogo emite ao pagar e ao não pagar. Cada caso prova que chegou onde diz.
+const F10_TEMA := "res://ui/tema_brport.tres"
+const F10_RIBEIRO := "res://scenes/panels/DebtPaymentPanel.tscn"
+const F10_ARLINDO := "res://scenes/panels/CounterOfferPanel.tscn"
+const F10_FIM := "res://scenes/EndGame.tscn"
+const F10_SEMENTE := 20260923
+# O antisserrilhado pinta meio pixel além da caixa de um caractere.
+const F10_FOLGA := 1.0
+var _f10_terminou := false
+var _f10_motivos := {}
+
+
+func _f10_cada_tempo_cabe() -> void:
+	GS.game_over.connect(_f10_recolher_fim)
+	var nome: String = "W".repeat(int(GS.NOME_MAX_CARACTERES))
+
+	# ── O Sr. Ribeiro. Sem dinheiro para a parcela a entrada tem os DOIS
+	# botões, que é o cartão mais alto dela.
+	if not _f10_ate_ao_vencimento(nome):
+		return
+	var p: Node = await _f10_abrir(F10_RIBEIRO, [GS.PARCELA_AMOUNT])
+	_f10_medir(p, "Ribeiro, entrada", &"entrada")
+	if not await _f10_tocar(p, "Não consigo"):
+		return
+	_confere("F10: «Não consigo pagar» encerrou a partida",
+		GS.phase == "game_over" and _f10_motivos.has(false))
+	_f10_medir(p, "Ribeiro, não pagou", &"nao_pagou")
+	_f10_fechar(p)
+
+	if not _f10_ate_ao_vencimento(nome):
+		return
+	GS.cash = GS.PARCELA_AMOUNT
+	p = await _f10_abrir(F10_RIBEIRO, [GS.PARCELA_AMOUNT])
+	if not await _f10_tocar(p, "Pagar"):
+		return
+	_confere("F10: «Pagar» quitou mesmo a parcela",
+		bool(GS.parcela_paid) and _f10_motivos.has(true))
+	_f10_medir(p, "Ribeiro, pagou", &"pagou")
+	_f10_fechar(p)
+
+	# ── O Arlindo. A rodada abre; cada aposta que o cliente recusa acrescenta
+	# a reação e, na última tentativa, a pressão — é a rodada mais comprida.
+	for acao in ["Cortar metade", "Manter"]:
+		if not _f10_ate_a_oferta(nome):
+			return
+		p = await _f10_abrir(F10_ARLINDO, [GS.pending_rival_dock])
+		if acao == "Manter":
+			_f10_medir(p, "Arlindo, rodada", &"rodada")
+		GS._rng.seed = _f10_semente_que_recusa(acao)
+		if not await _f10_tocar(p, acao):
+			return
+		_confere("F10: «%s» recusado deixa o cliente na mesa" % acao,
+			GS.phase == "rival_offer"
+				and int(GS.rival_attempts_left) == int(GS.RIVAL_PATIENCE) - 1)
+		_f10_medir(p, "Arlindo, última tentativa depois de «%s»" % acao, &"rodada")
+		if acao == "Manter":
+			GS._rng.seed = _f10_semente_que_recusa(acao)
+			if not await _f10_tocar(p, acao):
+				return
+			_confere("F10: a segunda recusa leva o cliente para o Arlindo",
+				p._fala_arlindo.text == GS.texto(Narrativa.ARLINDO_VENCEU))
+			_f10_medir(p, "Arlindo, despedida de quem venceu", &"despedida")
+			_f10_sem_negociacao(p, "venceu")
+		_f10_fechar(p)
+
+	if not _f10_ate_a_oferta(nome):
+		return
+	p = await _f10_abrir(F10_ARLINDO, [GS.pending_rival_dock])
+	if not await _f10_tocar(p, "Igualar"):
+		return
+	_confere("F10: «Igualar» fecha e o Arlindo perde",
+		p._fala_arlindo.text == GS.texto(Narrativa.ARLINDO_PERDEU))
+	_f10_medir(p, "Arlindo, despedida de quem perdeu", &"despedida")
+	_f10_sem_negociacao(p, "perdeu")
+	_f10_fechar(p)
+
+	# ── O fim da Fase 1, com as duas frases que o jogo acabou de escrever.
+	for venceu in [true, false]:
+		if not _f10_motivos.has(venceu):
+			_confere("F10: o jogo emitiu o fim de quem %s" % ("pagou" if venceu else "não pagou"), false)
+			return
+		p = await _f10_abrir(F10_FIM, [venceu, String(_f10_motivos[venceu])])
+		if venceu:
+			_f10_medir(p, "Fim, narração", &"narracao")
+			if not await _f10_tocar(p, "Ver o balanço"):
+				return
+		_f10_medir(p, "Fim, balanço de quem %s" % ("venceu" if venceu else "perdeu"), &"balanco")
+		_f10_fechar(p)
+
+	GS.game_over.disconnect(_f10_recolher_fim)
+	GS.clear_save()
+	_f10_terminou = true
+
+
+func _f10_recolher_fim(venceu: bool, motivo: String) -> void:
+	_f10_motivos[venceu] = motivo
+
+
+func _f10_partida_nova(nome: String) -> void:
+	GS.clear_save()
+	GS._rng.seed = F10_SEMENTE
+	GS.new_game()
+	GS.definir_nomes(nome, nome)
+
+
+# O VENCIMENTO ALCANÇA-SE PELO `advance_turn()`, como a jogar: é ele que põe a
+# fase em "debt_payment", e fora dela o `pay_debt()` sai calado — o botão
+# "Pagar" mostraria a resposta de quem pagou sem o dinheiro ter mudado de mãos.
+func _f10_ate_ao_vencimento(nome: String) -> bool:
+	_f10_partida_nova(nome)
+	var voltas := 0
+	while GS.phase != "debt_payment" and GS.phase != "game_over" and voltas < 200:
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		GS.advance_turn()
+		voltas += 1
+	_confere("F10: a partida chega ao vencimento da parcela (turno %d)" % int(GS.turn),
+		GS.phase == "debt_payment", "parou na fase «%s»" % GS.phase)
+	return GS.phase == "debt_payment"
+
+
+func _f10_ate_a_oferta(nome: String) -> bool:
+	_f10_partida_nova(nome)
+	var voltas := 0
+	while GS.phase == "playing" and voltas < 200:
+		GS.advance_turn()
+		voltas += 1
+	_confere("F10: o sorteio abre uma oferta do rival (turno %d)" % int(GS.turn),
+		GS.phase == "rival_offer", "parou na fase «%s»" % GS.phase)
+	return GS.phase == "rival_offer"
+
+
+# A SEMENTE QUE FAZ O CLIENTE RECUSAR, derivada da chance que o jogo aplica
+# naquele instante — e não um número achado à mão, que deixaria de recusar no
+# dia em que a chance ou a reputação mudassem. O `_negociar()` gasta um só
+# sorteio, e é o primeiro depois da semente.
+func _f10_semente_que_recusa(acao: String) -> int:
+	var base: float = GS.RIVAL_HALF_CHANCE if acao.begins_with("Cortar") else GS.RIVAL_KEEP_CHANCE
+	var chance: float = GS._chance_com_reputacao(base)
+	for semente in range(1, 1000):
+		var r := RandomNumberGenerator.new()
+		r.seed = semente
+		if r.randf() >= chance:
+			return semente
+	return 0
+
+
+func _f10_abrir(caminho: String, argumentos: Array) -> Node:
+	var cena := load(caminho) as PackedScene
+	var painel: Node = cena.instantiate()
+	# O TEMA À MÃO, como no `capturar_cena.gd`: no jogo quem o põe é o
+	# `_abrir_painel()`, e sem ele as fontes e as margens são outras.
+	(painel as Control).theme = load(F10_TEMA)
+	root.add_child(painel)
+	painel.callv("setup", argumentos)
+	await _f8_esperar()
+	return painel
+
+
+func _f10_fechar(painel: Node) -> void:
+	root.remove_child(painel)
+	painel.free()
+
+
+# O BOTÃO VERDADEIRO, e um só: dois seria escolher por posição, e um desligado
+# seria um toque que o jogador não consegue dar.
+func _f10_tocar(painel: Node, prefixo: String) -> bool:
+	var achados: Array = []
+	_f10_botoes(painel, prefixo, achados)
+	var ok: bool = achados.size() == 1 and not (achados[0] as Button).disabled
+	_confere("F10: há um botão «%s…» ligado para tocar" % prefixo, ok,
+		"achou %d%s" % [achados.size(), " (desligado)" if achados.size() == 1 else ""])
+	if not ok:
+		return false
+	(achados[0] as Button).pressed.emit()
+	await _f8_esperar()
+	return true
+
+
+func _f10_botoes(no: Node, prefixo: String, achados: Array) -> void:
+	if no is Button and (no as Button).is_visible_in_tree() \
+			and not no.is_queued_for_deletion() and (no as Button).text.begins_with(prefixo):
+		achados.append(no)
+	for filho in no.get_children():
+		_f10_botoes(filho, prefixo, achados)
+
+
+func _f10_medir(painel: Node, caso: String, tempo: StringName) -> void:
+	_confere("F10 %s: o painel está no tempo «%s»" % [caso, tempo],
+		painel.tempo == tempo, "está em «%s»" % painel.tempo)
+	var cartao := _f10_cartao(painel)
+	if cartao == null:
+		_confere("F10 %s: o painel tem cartão" % caso, false)
+		return
+	var tela: Rect2 = root.get_visible_rect()
+	var rc := cartao.get_global_rect()
+	_confere("F10 %s: o cartão cabe na tela" % caso,
+		tela.grow(F10_FOLGA).encloses(rc), "cartão em %s" % rc)
+	var fora: Array[String] = []
+	var medidos: Array[int] = [0]
+	_f10_percorrer(cartao, rc, fora, medidos)
+	# ⚠️ ZERO RÓTULOS NÃO É "NADA FORA": é uma medida que não mediu.
+	_confere("F10 %s: todo o texto cai dentro do cartão (%d peças)" % [caso, medidos[0]],
+		fora.is_empty() and medidos[0] > 0, "; ".join(fora))
+
+
+func _f10_cartao(painel: Node) -> Control:
+	var fila: Array = [painel]
+	while not fila.is_empty():
+		var no: Node = fila.pop_front()
+		if no is PanelContainer and (no as Control).is_visible_in_tree():
+			return no
+		fila.append_array(no.get_children())
+	return null
+
+
+# Desce pelo cartão com o recorte de quem recorta: uma área rolável ESCONDE o
+# que não cabe nela, e o que está escondido não está no cartão.
+func _f10_percorrer(no: Node, recorte: Rect2, fora: Array[String], medidos: Array[int]) -> void:
+	if not (no is Control) or not (no as Control).is_visible_in_tree() \
+			or no.is_queued_for_deletion():
+		return
+	var ctrl := no as Control
+	if no is ScrollContainer:
+		recorte = recorte.intersection(ctrl.get_global_rect())
+	var limite := recorte.grow(F10_FOLGA)
+	if no is Label and (no as Label).text != "":
+		var rotulo := no as Label
+		medidos[0] += 1
+		if rotulo.get_visible_line_count() < rotulo.get_line_count():
+			fora.append("«%s…» mostra %d de %d linhas" % [rotulo.text.left(24),
+				rotulo.get_visible_line_count(), rotulo.get_line_count()])
+		for i in rotulo.text.length():
+			var caixa: Rect2 = rotulo.get_character_bounds(i)
+			if caixa.size == Vector2.ZERO:
+				continue
+			caixa.position += rotulo.global_position
+			if not limite.encloses(caixa):
+				fora.append("«%s…» desenha o caractere %d em %s" % [
+					rotulo.text.left(24), i, caixa])
+				break
+	elif no is Button:
+		medidos[0] += 1
+		if not limite.encloses(ctrl.get_global_rect()):
+			fora.append("o botão «%s» sai para %s" % [(no as Button).text, ctrl.get_global_rect()])
+	for filho in no.get_children():
+		_f10_percorrer(filho, recorte, fora, medidos)
+
+
+# A NEGOCIAÇÃO ACABOU, e o painel não pode continuar a dizer que o cliente
+# está a ouvir. A linha do humor dizia "Cliente ouvindo a proposta. (2
+# tentativas)" por baixo das duas despedidas, e só a foto do segundo tempo o
+# mostrou.
+func _f10_sem_negociacao(painel: Node, caso: String) -> void:
+	var textos: Array[String] = []
+	_f10_textos_visiveis(_f10_cartao(painel), textos)
+	var achou := ""
+	for t in textos:
+		if t.contains("tentativa") or t.begins_with("Cliente"):
+			achou = t
+	_confere("F10 Arlindo, despedida de quem %s: nada diz que a negociação continua" % caso,
+		achou == "" and textos.size() > 0, "ainda diz: " + achou)
+
+
+func _f10_textos_visiveis(no: Node, textos: Array[String]) -> void:
+	if no == null or (no is Control and not (no as Control).is_visible_in_tree()) \
+			or no.is_queued_for_deletion():
+		return
+	if no is Label:
+		textos.append((no as Label).text)
+	for filho in no.get_children():
+		_f10_textos_visiveis(filho, textos)

@@ -1663,6 +1663,19 @@ gaivotão, maria-farinha e tartaruga-verde juvenil, cada um com movimento,
 reação e som ao toque; mar e gaivota também soam em intervalos irregulares.
 O gate visual continua sendo o A5 e o auditivo, o A6.
 
+### ✅ UM PAINEL NÃO É UMA TELA — os segundos tempos têm foto (23/09)
+
+**`docs/decisoes/051`.** A cobertura das capturas perguntava por CENA, e três
+painéis têm mais de um tempo: a bateria só fotografava o primeiro. Hoje cada
+painel declara o tempo por literal (`tempo = &"pagou"`), as capturas imprimem-no
+e o conferidor exige foto de cada um — sete tempos, seis com foto e o balanço
+do fim de fase DECLARADO, pela regra do zero. A bateria passou a **30 tiros**,
+com o toque pelo botão (`--tocar=`) e o tempo conferido (`--tempo=`). As fotos
+novas mostraram a despedida do Arlindo a dizer «Cliente ouvindo a proposta»
+com o negócio fechado, e o F10 do fumaça, que mede cada tempo a caber, achou o
+nome de 24 letras sem espaço a sair do cartão: os balões quebram por
+`AUTOWRAP_WORD_SMART`.
+
 ### ✅ A TROCA DA SELEÇÃO LÊ-SE PELA COR — num selo, e não na borda (23/09)
 
 **`docs/decisoes/050`.** Nenhuma cor de borda dava 3:1 dos dois lados: ela fica

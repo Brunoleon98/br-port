@@ -26,6 +26,13 @@ const LARGURA := 420
 const ALTURA := 0
 
 var amount: int = 0
+# O TEMPO DA CENA NA TELA, para quem a fotografa. A cobertura das capturas
+# (`tools/conferir_cobertura_paineis.py`) lê daqui o catálogo — cada
+# `tempo = &"..."` escrito neste arquivo é um tempo que tem de ter foto — e as
+# ferramentas de captura imprimem o valor dele. ⚠️ SEMPRE LITERAL: uma
+# atribuição por variável a ferramenta não sabe ler, e reprova em vez de a
+# saltar (`docs/decisoes/051`).
+var tempo: StringName = &""
 var _corpo: Label
 var _botoes: VBoxContainer
 
@@ -36,6 +43,7 @@ func setup(due_amount: int) -> void:
 
 
 func _montar() -> void:
+	tempo = &"entrada"
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
 	# PARCELA é navy cheio e só sobrevive em fundo CLARO — que é o deste
 	# cartão. É o caso em que o Icones.gd manda usá-lo.
@@ -85,11 +93,13 @@ func _montar_decisao() -> void:
 
 func _on_pagar() -> void:
 	GameState.pay_debt()
+	tempo = &"pagou"
 	_mostrar_resposta("pagou")
 
 
 func _on_falhar() -> void:
 	GameState.fail_debt()
+	tempo = &"nao_pagou"
 	_mostrar_resposta("nao_pagou")
 
 
