@@ -1082,6 +1082,13 @@ tranca isso.
   textura da parede na MESMA banda. Quem separou foram três pixels de `metal`
   no topo da doca. A esta escala quem separa não é o tom, é a LINHA escura, e
   isso confere-se no render e não na tabela de cores.
+  ⚠️ **E ENTRE O HEX E O PNG HÁ UMA CAMADA QUE NINGUÉM ESCOLHEU: o AgX.** O
+  `preparar_cena()` não declara a transformada de vista e o Blender 4.x dá AgX
+  a toda cena nova. Medido em 23/09: o `#eef2f5` sai a 191 num plano de
+  emissão, e **nenhum prop passa de ~190 no p99** (231–236 em Standard, sem
+  estourar um pixel). O mapa é SVG e não passa por ele. Todo contraste de prop
+  medido em jogo foi medido através do AgX; trocar é decisão do Bruno
+  (plano de arte, §7).
 - **Peça que avança o CHÃO de um prop avança a PEGADA, e as faces não têm a
   mesma folga.** Antes de escolher em que face sai um deck, uma escada ou um
   toldo que pousa, meça a folga de cada uma em `porto_mapa_ancoras.json` — o
