@@ -306,3 +306,10 @@ O valor não mudou: `Vector2(293, 187)`, porque o quadro em coordenada é o mesm
 - **a moldura vazia é 89,6%**, e é o número que decide se a alavanca vale;
 - e o `bpy==4.5.0` renderizou os quatro estúdios, **fauna incluída** — o que a
   sessão de 13/09 registou como falha de alocação não se repetiu.
+
+---
+
+⚠️ **Adenda, 23/09 — o corte fechou na `049`, e sem mexer no contrato.** O
+importador `texture_atlas` apara a moldura e a margem do `AtlasTexture` repõe
+os 768: a VRAM de textura em jogo foi de 235,68 para 64,04 MB e o `.pck`
+perdeu 17,4%, com nenhum nó, âncora ou manifest mexido.
