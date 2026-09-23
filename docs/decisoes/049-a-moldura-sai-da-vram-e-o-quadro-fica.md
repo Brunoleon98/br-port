@@ -42,6 +42,10 @@ Os 69 props a 768 passam a ocupar **24,4 MB** de RGBA8 (4,17 dos 60 em atlas e
 ocupavam a 512 sem corte (`029`). O preço da alavanca B ficou abaixo do que
 era antes dela.
 
+A régua é `tools/medir_vram.gd` (`VRAM MEDIDA`, com `xvfb-run`): reproduz os
+235,68 na `main` de antes e os 64,04 depois, igual em duas corridas, e em
+`--headless` recusa-se em vez de dar zero.
+
 ⚠️ **O MONITOR CONTA 4/3 DE `w×h×4`**, e isto custou uma volta: a primeira
 leitura dava 180 MB para 155 de conta e 5,6 para 28, e os dois lados não
 fechavam. Uma sonda de UMA textura, onde a resposta se sabe de cor (768²×4 =

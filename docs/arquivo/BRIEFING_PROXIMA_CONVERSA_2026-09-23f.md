@@ -52,6 +52,9 @@ confira rodando o conferidor antes de escrever o commit.
   quatro conferidores (`DOCS OK`, `GUARDAS OK`, `ESCOPO UI OK`, `SINAL OK`). A
   bateria tem **27 tiros** e fecha com `COBERTURA OK`. O `ASSET OK` diz agora
   também quantos props estão em atlas (60).
+- **E a VRAM mede-se com `tools/medir_vram.gd`** (`xvfb-run`, `VRAM MEDIDA`):
+  reproduz os 235,68 MB da `main` de antes e os 64,04 de depois, e em
+  `--headless` recusa-se em vez de dar zero. Fora do CI, de propósito.
 
 ---
 
@@ -115,8 +118,10 @@ distinga TEMPOS do mesmo painel, que hoje não distingue.
 - ⚠️ **O importador reescreve a cor da borda de alfa < 20 em QUALQUER
   textura** (`fix_alpha_border`). Comparar textura com arquivo compara alfa em
   tudo e cor acima disso.
-- ⚠️ **Prop novo** entra pelo importador por omissão, e o validador reprova-o:
-  converter o `.import` para `texture_atlas` faz parte de o acrescentar.
+- ⚠️ **Prop novo** entra pelo importador por omissão, e o validador reprova-o.
+  A receita está no `CLAUDE.md`: o `.import` passa a `texture_atlas`, o
+  `--import` corre DUAS vezes (a primeira escreve o atlas, a segunda importa-o)
+  e o atlas vai no commit.
 
 ---
 

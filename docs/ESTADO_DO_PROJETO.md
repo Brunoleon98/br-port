@@ -52,10 +52,8 @@ eram as construções — era o casco, com o contêiner a TAPÁ-LO. Os nove barc
 saem de `contorno_casco()`. Armazém, escritório, píer, treliça, pallet e
 contêiner **ficam quadrados, e é decisão**: são caixas de verdade. **D29**.
 
-**A fauna tem seis espécies em nove pontos** — gaivota, maria-farinha e
-tartaruga na costa; cachorro, quero-quero e capivara em terra. Medem **15 / 12 /
-14 / 15 / 13 / 17 px** contra uma pessoa de 14, com toque de **44 px** e ciclos
-sem toque invisível (D25–D27).
+**A fauna tem seis espécies em nove pontos**, três na costa e três em terra, à
+escala de uma pessoa, com toque de **44 px** (D25–D27).
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
 perfil: ótimo 100% · mediano 80,2% · descuidado 37,3%, com a mediana do mediano
@@ -191,6 +189,7 @@ podre (A4) — em `HISTORICO.md`.
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
 | `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução do MAPA** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo (`025`, `026`) |
 | `tools/medir_nitidez_captura.py` | **A régua da resolução dos PROPS** — a mesma métrica em duas capturas a 1080×1920, com a máscara tirada da diferença (`029`) |
+| `brport_vs/tools/medir_vram.gd` | **A régua da VRAM**, com o jogo aberto e calibrada; `xvfb-run`, `VRAM MEDIDA` (`049`) |
 | `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`); `imagem()` repõe o quadro de um prop em atlas (`049`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
 | `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão. ⚠️ **«Órfão» e «apagável» são duas perguntas**: dos 11, nove tinham propósito escrito (a bancada `AssetPlacementTest`) e ficaram; saíram os 2 SVG de píer, superados por props PNG. Hoje **9 de 115**; o atlas não conta (`046`, `049`) |

@@ -110,6 +110,13 @@ quanto um asset custa ao pacote.
 1,87 MB são +42,29% do `.pck` e **+5,91% do APK**, porque o APK é sobretudo o
 binário do Godot. Ao citar custo, diga contra que denominador.
 
+**E a VRAM também se mede aqui**, com o jogo aberto: `xvfb-run -a $G --path
+brport_vs --resolution 720x1280 --rendering-driver opengl3 --script
+res://tools/medir_vram.gd`, espera `VRAM MEDIDA`. ⚠️ O monitor do motor conta
+**4/3 de `w×h×4`**, e a base já traz os retratos (um autoload faz-lhes
+`preload`): a régua calibra-se sozinha com uma textura de tamanho conhecido, e
+em `--headless` recusa-se em vez de publicar um zero (`049`).
+
 ⚠️ **O CI regera e compara BYTE A BYTE, e o `sum()` de floats mudou na Python
 3.12.** Ela passou a somar por compensação de Neumaier; o runner é
 `ubuntu-latest` e subiu de versão sozinho. Medido em 05/09, o mesmo arquivo:
@@ -832,6 +839,12 @@ derivada delas.
   510 px sai num atlas de 1024, 26% pior do que o quadro. Os retratos ficam
   fora, e quem o decide é o validador (atlas mais caro do que o quadro
   reprova), não uma lista.
+  ⚠️ **E PROP NOVO ENTRA PELO IMPORTADOR POR OMISSÃO**, que o validador
+  reprova. A receita: o `.import` dele passa a `texture_atlas` (a forma está em
+  qualquer vizinho — conserve o `uid` do próprio arquivo), o `--import` corre
+  **DUAS vezes** (a primeira escreve o atlas em `art/props/_atlas/`, a segunda
+  importa-o) e o atlas e o `.import` dele vão no commit. Sem eles, o import
+  único do CI deixa o `preload` a apontar para um atlas por importar.
 - **Constante em PIXEL é constante que envelhece quando o `ZOOM` muda, e ela
   não dá erro.** Foram cinco em 05/09: a silhueta do caminhão e o corte que
   exige pegada no teste de design, a largura de telhado da vila, os sprites do
