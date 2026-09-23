@@ -24,6 +24,7 @@ entra no pacote exportado. Uma candidata passa daqui para lá pelo caminho da
 | `f01/13a/v4`, `v5` | O arbusto baixo como função do gerador do mapa: remendos, fonte, pranchas, QA | ChatGPT |
 | `f01/vegetacao_grupo/v1`–`v3` | O grupo inteiro do conceito (duas árvores e arbustos) como SVG/PNG solto | ChatGPT |
 | `pacotes/2026-09-23/` | O manifesto SHA-256 do pacote, o estado do checkout dele e o trabalho por commitar que lá havia | ChatGPT |
+| `retratos/cida_seria/v1/` | A Dona Cida séria de cabeça REDONDA (frente 2): o script do Blender, o PNG, a prancha e a foto do jogo | Claude Code, 23/09 |
 
 O pacote de 23/09 trazia 111 arquivos; **103 estão aqui, byte a byte** (confira
 com `manifest_sha256.json`). Ficaram de fora oito, de propósito:
@@ -160,7 +161,7 @@ vereditos de 23/09»); a ordem é do Bruno.
 
 | Frente | O que este material já traz, ou o que a frente pode produzir | O que fica do lado do repositório |
 |---|---|---|
-| **2 — retratos de fala** (Dona Cida, Sr. Ribeiro, Arlindo) | ⚠️ **Em 23/09 o Bruno pôs a frente no BLENDER**: um protótipo vetorial (SVG por script) foi rejeitado — «não deveriam ter sido criados» —, e a conversa seguinte pesquisa boas práticas de Blender antes de modelar. A regra permitiria gerador de imagem aqui; a escolha dele é outra. Hoje são nove PNG 768×768 do Blender (três expressões por personagem, `Retratos.gd`), mostrados numa caixa de **112×152** em `COVERED`, com o busto a ocupar 62% × 90% do quadro — é a esse tamanho que a expressão tem de ler | Alfa verdadeiro, busto que enche o quadro, as mesmas três expressões por personagem, e a decisão de ABANDONAR o estúdio partilhado: o comentário de `Retratos.gd` diz que o gerador não foi usado para os três combinarem com o trabalhador do rodapé — trocar só três retratos faria o trabalhador destoar |
+| **2 — retratos de fala** (Dona Cida, Sr. Ribeiro, Arlindo) | ⚠️ **Em 23/09 o Bruno pôs a frente no BLENDER**: um protótipo vetorial (SVG por script) foi rejeitado — «não deveriam ter sido criados». A pesquisa de boas práticas está no §7 do plano de arte, e ele escolheu ver UM retrato novo: a candidata é `retratos/cida_seria/v1/`. A regra permitiria gerador de imagem aqui; a escolha dele é outra. Hoje são nove PNG 768×768 do Blender (três expressões por personagem, `Retratos.gd`), mostrados numa caixa de **112×152** em `COVERED`, com o busto a ocupar 62% × 90% do quadro — é a esse tamanho que a expressão tem de ler | Alfa verdadeiro, busto que enche o quadro, as mesmas três expressões por personagem, e a decisão de ABANDONAR o estúdio partilhado: o comentário de `Retratos.gd` diz que o gerador não foi usado para os três combinarem com o trabalhador do rodapé — trocar só três retratos faria o trabalhador destoar |
 | **3 — interface** | Conceitos de painel (diário, celular, mensagens, pausa) como referência | O plano V3 (§2.13) já diz que redesenho de HUD é tarefa própria; a implementação é no tema, com as guardas de contraste (D33) |
 | **4 — mapa, frota, animação** | O catálogo F1 (§9.1), a máquina de estados visual (§10.2), o rig do trabalhador (§10.5), os estados por tipo (§11), os lotes 2–5 (§16); a linha da vegetação (13A, grupo) e a costa V8 | Props do mapa modelados no kit a partir do conceito; vegetação no gerador |
 | **5 — rumo além do VS** | A `034` dele já responde a parte: guindaste e píer evoluem no mesmo sítio, oficina N1 na F2, três berços, pescadores como sistema à parte. E a regra «obra só com consumidor» casa com o pedido do Bruno de obras que levam turnos: a arte de obra nasce DEPOIS dessa decisão | Mexe no `GameState`, no balanceamento e no `SAVE_VERSION`: decisão escrita antes de código |
@@ -180,6 +181,7 @@ vereditos de 23/09»); a ordem é do Bruno.
 | Grupo F1 V1 | sprite solto | a preferida do Bruno entre V1 e V2 (antes disse que destoava do mapa) | Virar uma função do gerador que componha as peças do mapa, guardando o que a V1 tem: duas copas altas sobre massa baixa e escura, tronco à vista |
 | Grupo F1 V2 | sprite solto | o Bruno preferiu a V1 | — |
 | Grupo F1 V3 | sprite solto | **sem opinião do Bruno** | Mesma silhueta da V1 com os verdes mexidos; as copas saem maiores do que as árvores vizinhas |
+| Dona Cida séria v1 (cabeça redonda) | estúdio Blender (`retratos/cida_seria/v1/`) | **à espera do Bruno**; foto do jogo tirada — muda só a caixa do retrato do boletim | O aceite dele; depois as outras duas expressões dela, e a pergunta da oficina: o Sr. Ribeiro, o Arlindo e o trabalhador do rodapé continuam de caixas |
 | Galpão F1 V3, casa focal, manifesto de produção | fora deste repositório | aprovados/decididos no checkout do ChatGPT | Só existem lá. Sem a branch `art/f01-galpao` publicada, o que resta deles é o texto das decisões em `plano/decisoes_da_frente/`, e o galpão V3 teria de ser refeito |
 
 ⚠️ **A vegetação não aparece em nenhum dos 31 vereditos do Bruno** — ela vem do

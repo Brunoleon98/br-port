@@ -1707,6 +1707,18 @@ duas mudanças pequenas no estúdio, e mudam só a caixa do retrato (medido em
 da 7.4 continua a ser o passo seguinte, agora com a lista inteira: P1 + P2 +
 P3 + P4 + brilho + pálpebra + mechas, e o ombro por medir.
 
+#### ✅ O Bruno escolheu o retrato redondo (B), e a candidata existe
+
+**`art_lab/retratos/cida_seria/v1/`** — a Dona Cida séria, pelo MESMO
+estúdio (câmera, rig, paleta e AgX de hoje), com tudo da lista acima menos o
+ombro. Seis tentativas até ela, e cada uma deixou uma lição no script: a cabeça
+saiu em PERA, as mechas penduraram-se na testa, a gola saiu uma boia, a cabeça
+flutuou sem pescoço, a boca leu-se como bigode e a sombra dos óculos desenhou
+um segundo aro. Na foto do jogo, numa cópia, muda **1 foto em 31** — o
+`boletim` — e só na caixa do retrato. O aceite é dele, e a pergunta que ele
+arrasta também: o Sr. Ribeiro, o Arlindo e o trabalhador do rodapé continuam
+de caixas.
+
 ### 7.6 Fontes
 
 1. Blender Studio, *Stylized Character Workflow — Base Meshes*: <https://studio.blender.org/training/stylized-character-workflow/base-meshes/>
