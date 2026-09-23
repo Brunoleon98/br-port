@@ -22,10 +22,10 @@ melhorados, com parte só em conceito, e quer que esta conversa o AUDITE.
 ## 1. Comece pelo estado real
 
 - **A sessão fechou na branch `claude/trusting-fermi-fsa8ql`, à frente da
-  `main` (`d541806`, o #75 fundido), sem PR.** Mexeu só em
-  `tools/trilha_de_arte.{py,sh}` e em documentos; nenhum arquivo do jogo. Antes de qualquer checkout,
-  confira no GitHub se alguém abriu e fundiu um PR dela; se não, o trabalho só
-  existe na branch, e reiniciá-la da `main` apaga-o.
+  `main` (`d541806`, o #75 fundido), com o PR #76 aberto.** Mexeu só em
+  `tools/trilha_de_arte.{py,sh}` e em documentos; nenhum arquivo do jogo.
+  Antes de qualquer checkout, confira no GitHub se o #76 foi fundido; se não
+  foi, este trabalho só existe na branch, e reiniciá-la da `main` apaga-o.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**, e
   `git log --oneline origin/main..HEAD` antes de reapontar seja o que for.
 - ⚠️ **O clone chega RASO** (184 commits, até 03/09). A trilha começa em
