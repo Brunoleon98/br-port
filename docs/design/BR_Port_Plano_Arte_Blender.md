@@ -1632,7 +1632,82 @@ PNGs:**
 | 5 | C3 na ruína, C2 num prop | médio | baixo a médio | cada PNG tocado |
 | 6 | P7, P8, C4 | depende do estilo | médio | — |
 
-### 7.5 Fontes
+### 7.5 O retrato: refinamento, com outros jogos por referência (23/09, segunda leva)
+
+> Pedido do Bruno depois da primeira leva: *«o retrato pode ter um refinamento
+> melhor — busque possíveis melhorias e depois pesquise como podem ser
+> aplicadas; pode usar modelos de outros jogos como inspiração»*. Continua a ser
+> pesquisa: as provas são o MESMO manequim neutro da 7.2, uma prática de cada
+> vez, medidas **na escala do jogo** — o PNG de 768 inteiro reduzido a 228/768 e
+> recortado a 168×228, que é o que o `TextureRect` em `COVERED` faz num telefone
+> de 1080. Nenhum retrato do jogo mudou.
+
+**A régua da escala, medida primeiro.** Hoje o olho do Sr. Ribeiro ocupa
+**~19 × 12 px** nessa caixa, e o busto 149 dos 168 de largura. É esse o
+orçamento: uma peça de 2 px vê-se, uma de 1 px perde-se no antisserrilhado.
+
+#### O que os outros jogos fazem, e o que cada um ensina aqui
+
+| Jogo | O retrato | O que se tira dele |
+|---|---|---|
+| **Stardew Valley** | várias expressões por personagem, trocadas pela fala; os mods de retrato mais expressivos mexem OMBROS e CABEÇA, não só a cara [16] | é a lição da pose do `CLAUDE.md`, com uma alavanca que o kit ainda não tem: **o ombro** (encolher, avançar o peito) |
+| **Animal Crossing** | cabeça grande, olhos grandes, tudo redondo e simples — a simplicidade deixa o jogador completar o resto [17] | a P1 (forma redonda) e o **contrário da densidade**: poucas feições, todas legíveis |
+| **Two Point Hospital / Campus** | 3D com ar de plasticina; o boneco do jogo é simples por ser pequeno, e o de arte-chave é o mesmo polido [18][19] | é exactamente a divisão daqui — o `trabalhador` de 22 px e o retrato de 168. A plasticina lê-se por forma MACIA; o acabamento dela (brilho curto sobre mate) é leitura minha, não medida |
+| **Anno 1800** | retratos 3D feitos por estúdio (modelados e animados) para as personagens de diálogo [20][21] | retrato de diálogo é peça de ESTÚDIO, com luz própria; uma **placa de cor por personagem** atrás do busto é a ideia que daqui se tira — e é interface (frente 3), não Blender |
+| **Hades** | silhueta forte, contraste de cor forte, traço de tinta [22] | a P5 (contorno) e a **cor de identidade** por personagem |
+| **Pixar / cinema** | o olho tem córnea, íris e BRILHO; olho sem brilho lê-se sem vida — ou como vilão, que é por isso que o cinema o apaga nos antagonistas [23][24] | o **brilho no olho**, e a decisão de quem o tem (o Arlindo pode não o ter) |
+
+#### As práticas, medidas no manequim (ganho em pixels da caixa do telefone)
+
+| Prática | Como, por script | Medido | Leitura |
+|---|---|---|---|
+| **Brilho no olho** | esfera de EMISSÃO de 0,24 do raio do olho, em cima e do lado da chave — fixa, não depende de a luz calhar num reflexo | ponto branco de **2–3 px** por olho; lum. **211** com força 1 pelo AgX, **250** com força 4, **255** em Standard com força 1 | o de maior ganho por custo; **funciona também no kit de hoje** (uma placa de emissão na pupila) |
+| **Forma por personagem** (P2) | `Lattice` de 2×2×4 aplicada ANTES das feições: alarga o maxilar ou afina o queixo | maxilar **94 → 108 px** (quadrado) e **94 → 78** (triângulo); **12–14%** da caixa muda | a maior mudança de silhueta depois do cabelo |
+| **Mechas de cabelo** | curvas Bézier com `bevel_depth` e raio por ponto (afilam), pousadas por raio de CIMA | **21%** da caixa muda | o cabelo é metade da silhueta; poucas mechas gordas (grande-médio-pequeno [25]) |
+| **Pálpebra como casca** | meia esfera 12% maior que o olho, girada para a frente, na cor da pele | esclera visível **143 → 60 px (−58%)** | substitui o `cerrado` de dois estados por uma alavanca contínua |
+| **Rubor** | cor por coordenada de OBJETO: distância a dois pontos da bochecha, sem pintar textura | 1,2% da caixa, Δ médio 18/255 | subtil e visível; calor sem desenho |
+| **Sorriso por shape key** | bochechas sobem com decaimento (numpy sobre os vértices) + a curva da boca | 0,6% da caixa | quem faz o sorriso é a CURVA; a bochecha soma pouco a este tamanho — a pose continua mais forte |
+
+⚠️ **E DUAS PRÁTICAS DA PESQUISA NÃO SE APLICAM, MEDIDO.**
+
+- **Subsurface para a «sombra quente»**: a sombra da pele JÁ É quente neste
+  rig — no manequim o matiz da sombra é igual ao da luz (26,4° contra 26,6°) e
+  mais saturado (0,58 contra 0,48); na Dona Cida e no Sr. Ribeiro de hoje ela é
+  até mais vermelha (23° contra 26–28°). O subsurface não a aquece (26,5° →
+  26,7°): **achata** — a amplitude de luminância cai de 74 para 60 — e custa
+  **+86%** de render (10,3 → 18,6–19,3 s, corridas emparelhadas).
+- **Enchimento quente**: trocar a cor da luz de enchimento mexe **no máximo
+  13/255** e em nenhuma sombra da cara — ela quase não chega ao rosto. A
+  primeira medição deu números IGUAIS à base até à décima, e só a diferença
+  pixel a pixel (24.104 pixels, Δ máx 13) provou que a régua não estava muda.
+
+**⚠️ E O AgX LAVA A PELE CLARA NA LUZ.** No Sr. Ribeiro (`pele_clara`) a
+saturação da pele iluminada é **0,34** pelo AgX e **0,44** em Standard; na Dona
+Cida (`pele_escura`) quase não muda (0,62 contra 0,59). É o «cinzento» da cara
+dele, e soma-se à razão da P6.
+
+**⚠️ NESTA CÂMERA, O QUE AVANÇA DA CARA DESCE NA IMAGEM — o nariz tapa a
+boca.** A câmera olha de cima, e profundidade vale meia altura na tela (a regra
+da gola, no `CLAUDE.md`). No manequim, um nariz de raio 0,22 escondeu a boca
+inteira, e a primeira folha saiu com a boca no queixo; com 0,15 ela aparece. É
+provável que seja por isso que o kit de hoje desenha o nariz como PLACA de
+sombra: nariz saliente pede boca mais afastada, ou nariz pequeno.
+
+**⚠️ E A SUPERFÍCIE DO METABALL ENGANA OUTRA VEZ.** As mechas falharam duas
+vezes antes de pousar: o raio vindo de cima passava ao lado da testa, que é
+mais estreita do que a caixa. O remédio é o da P1 — frações da caixa MEDIDA —,
+e recuar para o meio quando o raio falha.
+
+#### O que isto muda na proposta da 7.4
+
+Passa a haver um **degrau zero**, que não precisa de cabeça nova: **brilho no
+olho + Standard nos retratos**, aplicados aos nove retratos DE HOJE. São
+duas mudanças pequenas no estúdio, e mudam só a caixa do retrato (medido em
+23/09: as seis fotos com cara mudam apenas nos 112×152 dela). O retrato redondo
+da 7.4 continua a ser o passo seguinte, agora com a lista inteira: P1 + P2 +
+P3 + P4 + brilho + pálpebra + mechas, e o ombro por medir.
+
+### 7.6 Fontes
 
 1. Blender Studio, *Stylized Character Workflow — Base Meshes*: <https://studio.blender.org/training/stylized-character-workflow/base-meshes/>
 2. CG Cookie, *BASEMESH: Create Stylized Characters Quickly with Blender*: <https://www.cgcookie.com/courses/basemesh-create-stylized-characters-quickly-with-blender>
@@ -1649,3 +1724,13 @@ PNGs:**
 13. StraySpark, *Vertex Colors in Blender for game engine workflows*: <https://www.strayspark.studio/blog/blender-vertex-colors-game-engine-workflows>
 14. Manual do Blender, *Weighted Normal Modifier*: <https://docs.blender.org/manual/en/latest/modeling/modifiers/normals/weighted_normal.html>
 15. Propgon, *Trim Sheets in Blender*: <https://propgon.com/en/trim-sheets-3d-optimization-game-art-guide/>
+16. Nexus Mods, *Portraits with more Personality* (Stardew Valley, expressão com ombros e cabeça): <https://www.nexusmods.com/stardewvalley/mods/5716?tab=posts>
+17. GC Art Column, *How the Art Style of Animal Crossing Helped Make it a Successful Franchise*: <https://gcartcolumn.com/2021/10/09/how-the-art-style-of-nintendos-animal-crossing-series-helped-make-it-a-successful-franchise/>
+18. Wikipedia, *Two Point Hospital*: <https://en.wikipedia.org/wiki/Two_Point_Hospital>
+19. Alex Franks, *Two Point Hospital — Back of Box Characters* (ArtStation): <https://www.artstation.com/artwork/rR5dZ6>
+20. GFactory, *Anno 1800 — Portraits* (ArtStation): <https://gfactory.artstation.com/projects/aGOrg8>
+21. ArtStation, *Anno 1800 — Advisors*: <https://www.artstation.com/artwork/3dKOLo>
+22. Point'n Think, *The Art of Hades*: <https://www.pointnthink.fr/en/the-art-of-hades-en/>
+23. Wikibooks, *Creating Pixar-looking eyes in Blender*: <https://en.wikibooks.org/wiki/Blender_3D:_Noob_to_Pro/Creating_Pixar-looking_eyes_in_Blender>
+24. Wikipedia, *Catch light*: <https://en.wikipedia.org/wiki/Catch_light>
+25. CG Cookie, *How to Model Hair in Blender* (grande-médio-pequeno): <https://blog.cgcookie.com/posts/how-to-model-hair-in-blender/>
