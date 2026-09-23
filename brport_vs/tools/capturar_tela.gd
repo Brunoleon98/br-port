@@ -85,6 +85,20 @@ var _escolher := false
 var _mensagens := false
 var _mensagens_aberto := false
 
+## O BALANÇO DO FIM DA FASE, que foi a última lacuna declarada da cobertura
+## (`docs/decisoes/051`). Ele lê `GameState.metrics`, e numa cena solta a
+## partida é nova: a foto diria «Barcos atendidos: 0», que se LÊ como medida.
+## Aqui a partida é JOGADA até ao vencimento pelo laço de sempre, a parcela
+## paga-se no botão do Sr. Ribeiro — que só está ligado se o dinheiro chegar —
+## e o balanço abre no «Ver o balanço» da narração. Nada disto se escreve à mão.
+##
+## ⚠️ O DINHEIRO NÃO SE DÁ: sai da partida. Medido em 23/09 com a política
+## desta ferramenta (todos alocados a cada dia, a oferta do rival pela metade),
+## a semente padrão chega ao turno 33 com R$841.372 contra a parcela de
+## R$530.000, e três outras sementes com R$775.573 a R$827.159. Se deixar de
+## chegar, o botão fica desligado e o tiro REPROVA em vez de pagar à força.
+var _balanco := false
+
 ## OS CINCO PAINÉIS QUE NENHUMA FOTO MOSTRAVA, e cada um abre PELA PORTA DO
 ## JOGADOR — a mesma pílula do HUD que ele toca, não uma chamada ao painel.
 ##
@@ -128,7 +142,13 @@ func _process(_delta: float) -> bool:
 		# A contra-oferta fecha sempre — ela nunca é o assunto de foto nenhuma.
 		# O BOLETIM só fecha se quem chamou pediu `limpo`, porque há um tiro
 		# que existe para o fotografar.
-		_fechar_paineis_de_rotina(_limpo)
+		#
+		# ⚠️ MENOS NO BALANÇO. O «Pagar» fecha a semana 4 e acaba a partida na
+		# mesma chamada, e o boletim dela abre DEBAIXO do fim de fase: o toque
+		# do jogador só alcança o painel de cima, logo ninguém o fecha a jogar.
+		# Tirá-lo daqui fotografaria uma pilha que não existe.
+		if not _balanco:
+			_fechar_paineis_de_rotina(_limpo)
 		return false
 
 	# ⚠️ O HISTÓRICO DA FAIXA ABRE DEPOIS DE ASSENTAR, e não no fim do laço de
@@ -169,6 +189,19 @@ func _process(_delta: float) -> bool:
 	# A FASE VAI JUNTO, e não é enfeite: quando esta contagem diverge entre
 	# máquinas, o que se quer saber primeiro é em que estado o jogo ficou — e
 	# sem isto o log do CI diz "viu 1" e mais nada, o que obriga a adivinhar.
+	# O balanço PROVA que chegou, e prova-o no nó: o laço, o pagamento e o
+	# toque já reprovaram cada um pelo seu passo; aqui confere-se o que a
+	# câmara vai apanhar — o painel de CIMA é o fim de fase, no segundo tempo,
+	# de uma partida ganha.
+	if _balanco:
+		var topo: Node = _painel_de_cima()
+		if topo == null or topo.scene_file_path != "res://scenes/EndGame.tscn" \
+				or String(topo.get("tempo")) != "balanco" or not bool(GS.won):
+			push_error("capturar_tela: pediu-se `balanco` e o painel de cima é %s no tempo «%s» (won=%s)"
+				% ["(nenhum)" if topo == null else topo.scene_file_path,
+				   "" if topo == null else String(topo.get("tempo")), str(GS.won)])
+			quit(1)
+			return true
 	print("Overlay: %d painel(eis)  [fase %s, turno %d, %d estrutura(s)]"
 		% [_paineis_abertos(), GS.phase, GS.turn, GS.estruturas.size()])
 	# ⚠️ E QUAL PAINEL, que é outra pergunta. A contagem diz QUANTOS e não QUAIS:
@@ -246,6 +279,7 @@ func _montar() -> void:
 	_alocar = args.has("alocar")
 	_escolher = args.has("escolher")
 	_mensagens = args.has("mensagens")
+	_balanco = args.has("balanco")
 
 	var turnos := TURNOS_PADRAO
 	if args.size() >= 1 and str(args[0]).is_valid_int():
@@ -400,6 +434,9 @@ func _montar() -> void:
 	if _pausa:
 		_main._on_pause_pressed()
 
+	if _balanco and not _pagar_e_ver_o_balanco():
+		return
+
 
 	# ⚠️ E UMA ALOCAÇÃO NO FIM, sob pedido. O laço aloca ANTES de cada avanço,
 	# de modo que a foto sai sempre com os trabalhadores livres e as docas à
@@ -463,6 +500,66 @@ func _abrir_painel_do_jogador() -> void:
 		_main.call(metodo, toque)
 	else:
 		_main.call(metodo)
+
+
+# O VENCIMENTO, O PAGAMENTO E O BALANÇO, cada um pela porta do jogador e cada
+# um a reprovar se não chegar onde diz. O `pay_debt()` sai CALADO fora de
+# `debt_payment` (`docs/decisoes/051`), por isso a fase confere-se ANTES do
+# toque, e o dinheiro DEPOIS — é ele que prova que o toque pagou.
+func _pagar_e_ver_o_balanco() -> bool:
+	var ribeiro: Node = _painel_de_cima()
+	if GS.phase != "debt_payment" or ribeiro == null \
+			or ribeiro.scene_file_path != "res://scenes/panels/DebtPaymentPanel.tscn":
+		push_error("capturar_tela: `balanco` precisa do Sr. Ribeiro por cima no vencimento — fase %s, turno %d, painel de cima %s"
+			% [GS.phase, int(GS.turn), "(nenhum)" if ribeiro == null else ribeiro.scene_file_path])
+		quit(1)
+		return false
+	if not _tocar(ribeiro, "Pagar"):
+		return false
+	if not bool(GS.parcela_paid) or GS.phase != "game_over" or not bool(GS.won):
+		push_error("capturar_tela: o «Pagar» não acabou a partida paga (parcela_paid=%s, fase %s, won=%s)"
+			% [str(GS.parcela_paid), GS.phase, str(GS.won)])
+		quit(1)
+		return false
+	var fim: Node = _painel_de_cima()
+	if fim == null or fim.scene_file_path != "res://scenes/EndGame.tscn" \
+			or String(fim.get("tempo")) != "narracao":
+		push_error("capturar_tela: depois de pagar, o painel de cima devia ser a narração do fim — é %s"
+			% ["(nenhum)" if fim == null else "%s «%s»" % [fim.scene_file_path, String(fim.get("tempo"))]])
+		quit(1)
+		return false
+	return _tocar(fim, "Ver o balanço")
+
+
+# O BOTÃO VERDADEIRO, e um só, ligado — a regra do `--tocar=` do
+# `capturar_cena.gd`: dois seria escolher por posição, e um desligado seria um
+# toque que o jogador não consegue dar.
+func _tocar(painel: Node, prefixo: String) -> bool:
+	var achados: Array = []
+	_botoes_com(painel, prefixo, achados)
+	if achados.size() != 1 or (achados[0] as Button).disabled:
+		push_error("capturar_tela: esperava um botão «%s…» ligado em %s e achei %d%s"
+			% [prefixo, painel.scene_file_path, achados.size(),
+			   " (desligado)" if achados.size() == 1 else ""])
+		quit(1)
+		return false
+	(achados[0] as Button).pressed.emit()
+	return true
+
+
+func _botoes_com(no: Node, prefixo: String, achados: Array) -> void:
+	if no is Button and (no as Button).is_visible_in_tree() \
+			and not no.is_queued_for_deletion() and (no as Button).text.begins_with(prefixo):
+		achados.append(no)
+	for filho in no.get_children():
+		_botoes_com(filho, prefixo, achados)
+
+
+func _painel_de_cima() -> Node:
+	var overlay: Node = null if _main == null else _main.get_node_or_null("Overlay")
+	if overlay == null or overlay.get_child_count() == 0:
+		return null
+	return overlay.get_child(overlay.get_child_count() - 1)
 
 
 # Resolver a oferta direto no GameState NÃO fecha o painel: quem o fecha é o

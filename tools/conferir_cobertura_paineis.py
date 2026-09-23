@@ -54,12 +54,12 @@ MENU = os.path.join(RAIZ, "brport_vs/scripts/PainelMenu.gd")
 # tiro cobre X" mente sem ninguém ver, "X não tem foto, por isto" só pode
 # envelhecer para o lado seguro, e esta ferramenta reprova a entrada que
 # envelhecer — o tempo deixou de existir, ou passou a ter foto.
-TEMPOS_SEM_FOTO = {
-    ("res://scenes/EndGame.tscn", "balanco"):
-        "lê `GameState.metrics`, e numa cena solta a partida é nova: a foto "
-        "diria «Barcos atendidos: 0», que se LÊ como medida. Pede uma partida "
-        "jogada até ao turno 32, com a parcela paga pelo botão.",
-}
+#
+# Está VAZIA desde 23/09: o balanço do fim de fase, que foi a primeira entrada,
+# ganhou o tiro `balanco`, que joga a partida até ao vencimento e paga pelo
+# botão. Com ela vazia, uma expressão partida continua a reprovar — ver a nota
+# do catálogo vazio, no `main()`, que diz por onde.
+TEMPOS_SEM_FOTO = {}
 
 
 def sem_comentarios(texto):
@@ -292,11 +292,15 @@ def main():
         if tempo not in catalogo.get(cena, set()):
             falhas.append("uma foto mostra o tempo «%s» de %s, que o script "
                           "da cena não declara." % (tempo, cena))
-    # ⚠️ ENQUANTO HOUVER LACUNA DECLARADA, QUEM REPROVA ISTO É A CONFERÊNCIA
-    # DELA, acima — um catálogo vazio não tem o tempo da lacuna, e ela
-    # queixa-se primeiro. Medido: com a expressão partida, só esta linha
-    # reprova no dia em que `TEMPOS_SEM_FOTO` estiver vazia. Fica pela causa
-    # que nomeia, e por esse dia.
+    # ⚠️ QUEM REPROVA UMA EXPRESSÃO PARTIDA É, QUASE SEMPRE, OUTRA LINHA. Com
+    # lacuna declarada era a conferência dela, acima (o catálogo vazio não tem
+    # o tempo da lacuna). Sem lacuna — desde 23/09 — é a outra metade das duas
+    # fontes: medido nesse dia, a expressão partida com a lista vazia reprovou
+    # SETE vezes por «uma foto mostra o tempo … que o script da cena não
+    # declara», e esta linha calou-se, porque só fala sem falha nenhuma — o
+    # comentário que aqui estava dizia o contrário. Ela reprova sozinha quando,
+    # além disso, nenhuma foto traz `Tempo:` (medido, tirando as linhas dos
+    # logs): fica pela causa que nomeia.
     if not catalogo and not falhas:
         falhas.append(
             "nenhum painel declara tempos — a expressão deixou de casar, e um "
@@ -310,10 +314,10 @@ def main():
 
     print("%d painel(eis) que o jogo abre, todos fotografados." % len(abertas))
     print("%d tempo(s) em %d painel(eis) de mais de uma tela; %d "
-          "fotografado(s) e %d sem foto, declarado(s):" % (
+          "fotografado(s) e %d sem foto, declarado(s)%s" % (
               sum(len(t) for t in catalogo.values()), len(catalogo),
               sum(len(t) for t in catalogo.values()) - len(TEMPOS_SEM_FOTO),
-              len(TEMPOS_SEM_FOTO)))
+              len(TEMPOS_SEM_FOTO), ":" if TEMPOS_SEM_FOTO else "."))
     for (cena, tempo), porque in sorted(TEMPOS_SEM_FOTO.items()):
         print("  · %s «%s» — %s" % (cena, tempo, porque))
     print("COBERTURA OK")
