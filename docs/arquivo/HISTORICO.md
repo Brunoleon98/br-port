@@ -693,3 +693,12 @@ jargão, e a semana nova deixou de cobrar uma parcela já quitada.
 
 **Depois de a §7.1 fechar**, as cinco primeiras escolhas do Bruno foram as
 levas de cor (`041`–`045`); a sexta, a rua e a mão dupla (`047`).
+
+**E, para caber o selo (`050`),** três linhas da tabela de fechados
+desceram inteiras; no estado ficou uma frase de cada:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **R1–R5** (17–20/09, `030`–`034`) | identidade na Leitura, evidência do CI por erro e por turno, texto pela fonte que a máquina corre, a voz da Dona Cida a chegar à tela, e a FILA da faixa: o que o jogador não via caiu de **30,7% para 5,7%** |
+| **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL (22 reprovações, hoje zero); *"de onde veio a cor?"* é outra pergunta, e a superfície era **34** e não 18; a frase concorda INTEIRA e **zero leva plural**, 8 sítios e não 3. Em todos, a superfície real era o DOBRO do que a revisão nomeava |
+| **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto >= 3,0x o p99,9 do próprio arquivo —, o resto DESCRITOR. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz) |

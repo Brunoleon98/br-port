@@ -139,6 +139,13 @@ func percurso() -> Array:
 		# para 14,13 e o progresso troca de cor, para o âmbar a 8,68:1.
 		{"nome": "HUD (doca sob oferta do rival)", "cena": "res://scenes/Main.tscn",
 			"barco": 0, "so_hud": true},
+		# ⚠️ O TRABALHADOR ESCOLHIDO — o único rótulo do jogo com fundo PRÓPRIO,
+		# o selo (`050`). A seleção é um TOQUE, e nenhum dos 24 estados tocava:
+		# o selo nasceria fora da régua que existe para medir texto sobre fundo.
+		# Entra pela porta do jogador, `_on_worker_selecionado()`, DEPOIS de a
+		# cena existir — o cartão é o que muda, e ele só existe com o HUD de pé.
+		{"nome": "HUD (trabalhador escolhido)", "cena": "res://scenes/Main.tscn",
+			"escolher": true, "so_hud": true},
 		# ⚠️ O PAINEL CONSTRUIR COM ESTRUTURA DE PÉ — o verde que o registro de
 		# exceções dizia não ser alcançado, e dizia bem: o caso acima abre o
 		# painel com o porto em RUÍNAS, logo `tem_estrutura()` é falso em todas
@@ -278,6 +285,8 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		return null
 	if not _estrutura_chegou(no, caso):
 		return null
+	if not _escolheu(no, caso, tema):
+		return null
 	return no
 
 
@@ -353,6 +362,36 @@ func _estrutura_chegou(no: Node, caso: Dictionary) -> bool:
 	# inteiro, e apanhou esta linha no dia em que ela foi escrita (`037`).
 	falhas.append("%s comprou %d estruturas: esperava %d rótulos verdes e achou %d"
 		% [caso["nome"], pedidas.size(), esperado, marcados])
+	return false
+
+
+# ── O TOQUE SELECIONOU MESMO? ───────────────────────────────────────────────
+#
+# A terceira irmã do `_barco_chegou`, pela mesma lição da `043`: caso que pede
+# um estado prova que o obteve, e a prova é a CONSEQUÊNCIA no nó — o cartão
+# tocado veste o recurso do `TrabSelecionado` do tema. Sem ela, um toque que
+# não pegasse publicaria o cartão PARADO com o nome «trabalhador escolhido», e
+# as linhas sairiam verdadeiras sobre outro estado.
+func _escolheu(no: Node, caso: Dictionary, tema: Theme) -> bool:
+	if not caso.get("escolher", false):
+		return true
+	var cont: Node = no.get_node_or_null("Trabalhadores")
+	if cont == null or not no.has_method("_on_worker_selecionado"):
+		falhas.append("%s pediu a seleção e a cena não tem trabalhadores"
+			% caso["nome"])
+		return false
+	var selecionado: StyleBox = tema.get_stylebox("panel", "TrabSelecionado")
+	for w in cont.get_children():
+		if not (w.has_method("esta_livre") and w.esta_livre()):
+			continue
+		no._on_worker_selecionado(w.worker_id)
+		if w.get_theme_stylebox("panel") == selecionado:
+			return true
+		falhas.append("%s tocou no trabalhador %d e o cartão não vestiu `TrabSelecionado`"
+			% [caso["nome"], w.worker_id])
+		return false
+	falhas.append("%s pediu a seleção e nenhum trabalhador estava livre"
+		% caso["nome"])
 	return false
 
 
@@ -592,6 +631,21 @@ func fundo_de(no: Control, raiz: Node) -> Dictionary:
 				sb = c.get_theme_stylebox("normal")
 			elif c is PanelContainer or c is Panel:
 				sb = c.get_theme_stylebox("panel")
+			elif c is Label:
+				# ⚠️ O `Label` TAMBÉM DESENHA UM FUNDO, e a régua não o lia. O
+				# `normal` dele é `StyleBoxEmpty` por omissão, e nenhum rótulo do
+				# jogo tinha outro até ao selo do trabalhador escolhido (`050`):
+				# sem este ramo, o branco do selo media-se contra o cartão menta
+				# por TRÁS dele — 1,07:1, uma reprovação de algo que se lê a 5,06.
+				# Só o `Flat` entra; o `Empty` não desenha nada e fica de fora,
+				# senão todo rótulo do jogo virava pendente.
+				var proprio: StyleBox = c.get_theme_stylebox("normal")
+				if proprio is StyleBoxFlat:
+					sb = proprio
+				elif proprio != null and not (proprio is StyleBoxEmpty):
+					return {"pendente": true, "cores": [], "alfa": 0.0,
+						"nota": "o rótulo desenha um %s, que não publica bg_color"
+							% proprio.get_class()}
 			if sb != null:
 				if not (sb is StyleBoxFlat):
 					return {"pendente": true, "cores": [], "alfa": 0.0,

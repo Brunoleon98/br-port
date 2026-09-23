@@ -4225,7 +4225,10 @@ var _d33_completo := false
 # 24 desde a 4ª leva: o painel Construir COM ESTRUTURA DE PÉ, que é o verde
 # do `UpgradePanel` — a mesma ordem outra vez, o percurso primeiro
 # (`docs/decisoes/044`).
-const D33_ESTADOS_MIN := 24
+#
+# 25 desde a `050`: o TRABALHADOR ESCOLHIDO, onde vive o único rótulo do jogo
+# com fundo próprio — o selo. A seleção é um toque, e nenhum dos 24 tocava.
+const D33_ESTADOS_MIN := 25
 
 
 func _d33_contraste_efetivo() -> void:
@@ -4389,6 +4392,11 @@ func _d33_forma(texto: String) -> String:
 # ⚠️ E A SELEÇÃO FALA POR DOIS CANAIS — cor E largura (2px → 4px). Uma guarda
 # que olhasse só a cor deixaria passar um defeito na largura, e ao contrário;
 # por isso a comparação com o repouso exige que AMBOS difiram.
+#
+# ⚠️ E DESDE A `050` HÁ UM TERCEIRO, O SELO — o fundo âmbar escuro do rótulo
+# "Escolhido". A borda âmbar mudava 2,26:1 contra o livre e 1,33:1 contra o
+# PARADO, que é a troca que o jogador vê; o selo muda 3,86 e 4,74. Ele entra
+# aqui pela proveniência, pelo corte de 3:1 contra os dois fundos e pela amarra.
 # ============================================================
 var _d34_completo := false
 
@@ -4412,7 +4420,10 @@ func _d34_borda_do_trabalhador() -> void:
 	for nome in D34_VARIACOES:
 		if not tema.has_stylebox("panel", nome):
 			sem_tema.append(nome)
-	_confere("D34: as cinco variações de trabalhador existem no tema",
+	# E o selo é um `Label` — a variação dele publica `normal`, não `panel`.
+	if not tema.has_stylebox("normal", "SeloEscolhido"):
+		sem_tema.append("SeloEscolhido")
+	_confere("D34: as cinco variações de trabalhador e o selo existem no tema",
 		sem_tema.is_empty(), "faltam no tema: %s" % ", ".join(sem_tema))
 	if not sem_tema.is_empty():
 		return
@@ -4446,6 +4457,11 @@ func _d34_borda_do_trabalhador() -> void:
 	var alvo = trabs[0]
 	var wid: int = alvo.worker_id
 	var repouso: StyleBox = alvo.get_theme_stylebox("panel")
+	var estado_rot: Label = alvo.get_node("Conteudo/Estado")
+	# `get_minimum_size()` e não `size`: o contentor só reordena no fim do
+	# frame, e este bloco não espera frame nenhum. A altura mínima do rótulo
+	# responde na hora, e é ela que decide se o `VBoxContainer` recentra.
+	var altura_repouso: float = estado_rot.get_minimum_size().y
 
 	# ── A SELEÇÃO ENTRA PELA PORTA DO JOGADOR. `_on_worker_selecionado()` é o
 	# que o `_gui_input` do cartão emite; escrever `_selecionado` à mão poria a
@@ -4496,9 +4512,11 @@ func _d34_borda_do_trabalhador() -> void:
 			escolhido.border_width_left != livre.border_width_left,
 			"as duas medem %d px — o segundo canal da seleção desapareceu"
 				% escolhido.border_width_left)
-		# E o fundo é o MESMO: a seleção fala por borda, não por fundo. Se
-		# alguém lhe mexer no `bg_color`, a variação deixou de ser «o livre
-		# com outra borda» e vira outro cartão.
+		# E o fundo do CARTÃO é o mesmo, e continua a ser de propósito, agora
+		# por outra razão (`050`): é sobre ele que o retrato vive. O retrato
+		# tem luminância mediana 0,149, e qualquer fundo escuro o bastante para
+		# a troca se ler pela cor engolia-o — o âmbar escuro dava-lhe 1,33:1.
+		# A massa da seleção mora no SELO, abaixo.
 		_confere("D34: a seleção mantém o FUNDO do cartão livre",
 			escolhido.bg_color == livre.bg_color,
 			"o fundo mudou de %s para %s — a seleção passou a falar por fundo"
@@ -4506,6 +4524,75 @@ func _d34_borda_do_trabalhador() -> void:
 	else:
 		_confere("D34: os dois styleboxes são StyleBoxFlat", false,
 			"não dá para ler borda de um stylebox que não é Flat")
+
+	# ── 2b. O SELO: o canal da COR, que a borda não consegue ser (`050`).
+	#
+	# ⚠️ NENHUMA COR DE BORDA PASSAVA 3:1 DOS DOIS LADOS, e isso é conta: a
+	# borda fica entre o verde que substitui por fora e o fundo claro por
+	# dentro, que estão a 5,05:1 um do outro; um tom só vence os dois a 3:1 se
+	# eles estiverem a 9. O âmbar já estava no melhor possível, a raiz — 2,25.
+	#
+	# Proveniência primeiro, pela mesma razão do painel: um `duplicate()` com a
+	# cor certa passaria por toda régua de texto.
+	var selo: StyleBox = tema.get_stylebox("normal", "SeloEscolhido")
+	_confere("D34: o rótulo do escolhido veste O PRÓPRIO selo do tema",
+		estado_rot.get_theme_stylebox("normal") == selo,
+		"o rótulo \"%s\" não carrega o `normal` do `SeloEscolhido`" % estado_rot.text)
+	# ⚠️ E O CORTE É O DA 1.4.11 — 3:1 para o que identifica ESTADO —, contra
+	# o fundo que o selo SUBSTITUI naquela linha, dos DOIS estados em que se
+	# seleciona. O que o jogador vê é o PARADO: só se aloca com barco à
+	# espera, e livre com doca à espera é, por definição, `TrabParado`. A
+	# `045` comparou só com o livre, por ser o fundo que a variação veste; é a
+	# pergunta certa para o CARTÃO e a errada para a TROCA.
+	#
+	# Não é espelho, e não é o D33 com outro nome: o D33 mede o TEXTO contra o
+	# selo, e com texto preto um selo claro passa lá e reprova aqui — é o
+	# mutante N3 da `050`.
+	if selo is StyleBoxFlat:
+		for de in ["TrabParado", "TrabLivre"]:
+			var antes: StyleBox = tema.get_stylebox("panel", de)
+			if not (antes is StyleBoxFlat):
+				_confere("D34: o `%s` é StyleBoxFlat" % de, false,
+					"não dá para ler o fundo de um stylebox que não é Flat")
+				continue
+			var r: float = motor.contraste((selo as StyleBoxFlat).bg_color,
+				(antes as StyleBoxFlat).bg_color)
+			_confere("D34: a troca %s → escolhido lê-se pela cor (≥ 3:1)"
+					% de.trim_prefix("Trab").to_lower(),
+				r >= 3.0,
+				"o selo mede %.2f:1 contra o fundo do %s — a troca volta a depender só da largura"
+					% [r, de])
+	else:
+		_confere("D34: o selo é StyleBoxFlat", false,
+			"não dá para ler o fundo de um selo que não é Flat")
+	# E o rótulo NÃO CRESCE ao ser escolhido: o `VBoxContainer` do cartão
+	# centra o conteúdo, e um selo com margem vertical faria o retrato saltar
+	# no toque. Por isso o `selo_escolhido` não tem margem em cima nem em baixo.
+	_confere("D34: o selo não muda a altura do rótulo",
+		is_equal_approx(estado_rot.get_minimum_size().y, altura_repouso),
+		"o rótulo passou de %.1f para %.1f px — o retrato salta no toque"
+			% [altura_repouso, estado_rot.get_minimum_size().y])
+
+	# ── 2c. DESISTIR DA ESCOLHA TIRA O SELO DO MESMO RÓTULO.
+	#
+	# ⚠️ O SELO VIVE NO RÓTULO, que guarda a variação entre chamadas, e o único
+	# caminho em que o MESMO cartão sai da seleção é este segundo toque. A
+	# primeira versão desta guarda estava na amarra da alocação, abaixo, e o
+	# mutante N2 — o `refresh()` sem o reset — PASSOU: alocar passa pelo
+	# `_refresh_workers()`, que RECRIA os cartões, e o nó novo nunca teve selo.
+	# Era confiança de graça, e saiu (`050`).
+	main._on_worker_selecionado(wid)
+	_confere("D34: tocar de novo desfaz a escolha", main._selecionado == -1,
+		"o Main continua com o trabalhador %d escolhido" % main._selecionado)
+	_confere("D34: desfeita a escolha, o MESMO rótulo larga o selo",
+		estado_rot.get_theme_stylebox("normal") != selo,
+		"\"%s\" continua a vestir o `SeloEscolhido`" % estado_rot.text)
+	# E volta a escolher: a amarra abaixo prova que ALOCAR limpa a seleção, e
+	# isso só se prova partindo de uma seleção de pé.
+	main._on_worker_selecionado(wid)
+	_confere("D34: o terceiro toque volta a escolher",
+		alvo.get_theme_stylebox("panel") == do_tema,
+		"o cartão não voltou a vestir `TrabSelecionado`")
 
 	# ── 3. A AMARRA QUE TORNA UMA VARIAÇÃO SUFICIENTE.
 	# `_aplicar_estilo()` deixou de compor a borda por cima de qualquer cartão:

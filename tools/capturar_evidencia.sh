@@ -253,7 +253,13 @@ tirar pesca   0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/pesca.png
 # SEM `alocar`: as duas bandeiras brigam. Alocar tira o trabalhador de livre, e
 # o `_pode_ser_selecionado()` limpa a seleção de quem deixou de o ser — a foto
 # sairia com o cartão em repouso e passaria por boa.
-tirar escolhido 0 1 --script res://tools/capturar_tela.gd -- 0  "$SAIDA/escolhido.png" limpo escolher
+#
+# ⚠️ E NO TURNO 2, NÃO NO 1 (`050`). No turno 1 a doca dizia "aguardando
+# barco": a foto mostrava a seleção partindo do LIVRE, que é a única em que
+# escolher não serve para nada — tocar numa doca dá "Doca vazia". Só se aloca
+# com barco à espera, e aí o cartão vem do PARADO. No turno 2 a doca 1 tem
+# barco e está "sem trabalhador", e é essa a troca que o jogador vê.
+tirar escolhido 0 2 --script res://tools/capturar_tela.gd -- 1  "$SAIDA/escolhido.png" limpo escolher
 # O BOLETIM, E OS 12 SÃO UM TETO E NÃO UMA PROMESSA. Sem `limpo` a ferramenta
 # recusa-se a avançar por baixo dele, de modo que o laço acaba no turno em que
 # ele abre — o 9, primeiro dia da semana 2. Pedir MAIS do que isso é de

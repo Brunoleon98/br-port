@@ -95,6 +95,15 @@ func refresh() -> void:
 	# como "Livre" e dá para arrastar o mesmo trabalhador para outra doca.
 	var dock_index := GameState.worker_dock_index(worker_id)
 
+	# ⚠️ O SELO SAI EM TODO REFRESH, e só o ramo da seleção o põe de volta. O
+	# rótulo guarda a variação entre chamadas: sem esta linha, tocar de novo
+	# para desistir da escolha deixaria o "Parado" branco sobre o âmbar escuro.
+	# Alocar não passa por aqui com o mesmo nó — o `_refresh_workers()` do
+	# `Main` recria os cartões —, e é por isso que quem tranca é o D34 no
+	# SEGUNDO TOQUE, e não na alocação: lá, o mutante sem esta linha passava
+	# (`050`).
+	_estado.theme_type_variation = &""
+
 	if busy > 0:
 		_aplicar_estilo(&"TrabOcupado")
 		_estado.text = "Ocupado (%dt)" % busy
@@ -104,6 +113,9 @@ func refresh() -> void:
 	elif _selecionado:
 		_aplicar_estilo(&"TrabSelecionado")
 		_estado.text = "Escolhido"
+		# A troca pela COR mora no selo e não na borda — ver `selo_escolhido`
+		# no tema: nenhuma cor de borda passava 3:1 dos dois lados.
+		_estado.theme_type_variation = &"SeloEscolhido"
 	elif GameState.has_pending_assignment():
 		# LIVRE E CUSTANDO DINHEIRO não é o mesmo estado que livre. O primeiro
 		# playtest num telefone avançou o dia com dois operários livres e duas

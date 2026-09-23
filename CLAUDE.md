@@ -498,6 +498,18 @@ Teste e import rodam sem tela.
    defeito reprova. **Antes de comparar dois estados, pergunte qual deles o
    estado sob teste REALMENTE substitui**, que quase nunca é o que a tela
    calha mostrar (`docs/decisoes/045`).
+   ⚠️ **E «SUBSTITUI» TEM DUAS RESPOSTAS: a do RECURSO e a da MECÂNICA.** A de
+   cima é a do recurso — a seleção veste o fundo do livre —, e está certa para
+   o cartão. Para a TROCA que o jogador vê, a resposta é da mecânica: só se
+   aloca com barco à espera, e aí o cartão é PARADO. Contra ele a borda mudava
+   **1,33:1**, não os 2,26 publicados, e a foto da bateria mostrava a única
+   seleção que não serve para nada (`050`). Pergunte de que lado está a
+   pergunta antes de escolher o estado.
+   ⚠️ **E QUEM PROVA QUE UM NÓ LARGA UM ESTADO PROVA-O NO MESMO NÓ.** A
+   primeira guarda do reset do selo olhava o cartão depois de alocado, e o
+   mutante sem o reset PASSOU: o `_refresh_workers()` RECRIA os cartões, e o
+   nó novo nunca teve selo. O caminho em que o mesmo nó sai da seleção é o
+   segundo toque, e é lá que a guarda vive (`050`).
    ⚠️ **E NEM TODA GUARDA NOVA PRECISA DE SER SUSTENTADORA — o que precisa é
    que a AFIRMAÇÃO ao lado dela seja verdadeira.** É o X1b/Y2b visto do outro
    lado: ali o par prova que a peça nova faz falta; aqui ele provou que NÃO
@@ -2001,6 +2013,15 @@ tranca isso.
   a ~180° um do outro, e a captura confirma. Quem quiser a separação de volta
   não muda a cor, muda a MASSA: âmbar de FUNDO com texto navy mede 5,27:1 e já
   existe no `BotaoPrimario`.
+  ⚠️ **E ISSO TEM CONTA: um tom ENTRE dois vizinhos só passa 3:1 contra os dois
+  se eles estiverem a 9:1 um do outro**, e abaixo disso o melhor possível é a
+  raiz da razão entre eles. A borda do trabalhador escolhido fica entre o verde
+  que substitui e o fundo claro, a 5,05:1 — e o âmbar já estava nos 2,25 da
+  raiz: "subir a cor" não tinha para onde ir. Faça a conta ANTES de varrer
+  cores. Quem deu a troca pela cor foi a MASSA — um selo no rótulo, e não o
+  cartão inteiro, porque o retrato tem a luminância do âmbar escuro (0,149
+  contra 0,158) e sumia nele: **fundo escolhe-se também contra a ARTE que mora
+  nele**, que o D33 não mede (`050`).
 - **⚠️ «ESTA COR É LEGÍVEL?» E «DE ONDE VEIO ESTA COR?» SÃO DUAS PERGUNTAS, e
   quem só tem a primeira acrescenta cor à mão sem ver.** Medido em 21/09: no
   MESMO commit em que migrou três overrides para o tema, o R6 **acrescentou um
