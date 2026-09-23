@@ -24,9 +24,9 @@ retrato. **Nada disto está em `brport_vs/`**: o retrato do jogo continua o de
 ## 1. Comece pelo estado real
 
 - A sessão fechou na branch `claude/peaceful-dijkstra-aosw6d`, à frente da
-  `main` (`dfa8319`, o #78 fundido). Nenhum PR foi aberto. Antes de qualquer
-  checkout, confira no GitHub se ela foi fundida; se não foi, a candidata e a
-  pesquisa só existem nela.
+  `main` (`dfa8319`, o #78 fundido), e o PR dela é o **#79**. Antes de qualquer
+  checkout, confira no GitHub se ele foi fundido; se não foi, a candidata e a
+  pesquisa só existem na branch.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**, e
   `git log --oneline origin/main..HEAD` antes de reapontar seja o que for.
 - Veja os PRs abertos do Codex (`codex/*`) antes de mexer num arquivo que eles
