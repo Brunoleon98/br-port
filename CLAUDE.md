@@ -1035,6 +1035,13 @@ tranca isso.
 - **Prop no cenário nunca sai de gerador de imagem.** Duas levas perdidas: o
   gerador não erra o desenho, erra o ÂNGULO, e ângulo errado não se conserta
   rodando no Godot. Retrato em painel, sim; prop no mapa, não.
+- **⚠️ A TÉCNICA DE UM ASSET É ESCOLHA DO BRUNO — o que a regra PERMITE não
+  é o que ele escolheu.** Em 23/09, na frente dos retratos, a sessão julgou que
+  o kit de caixas do Blender não chegava e desenhou nove retratos em VETOR,
+  fotografados no jogo: *«não deveriam ter sido criados»*. Ele queria o
+  Blender melhor. Protótipo não é neutro: gasta a sessão e empurra a escolha.
+  Achou que a técnica em uso não alcança o pedido? **Pergunte qual, antes de
+  produzir** — é a regra de paragem, com arte no lugar do `# TUNING:`.
 - **O que troca de estado numa partida não pode estar assado no fundo.** Píer,
   armazém, escritório e pátio são props ou mapas alternativos. A vila é a
   exceção, e de propósito: ela troca entre FASES, não entre turnos.
