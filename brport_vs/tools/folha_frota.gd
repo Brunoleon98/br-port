@@ -65,12 +65,23 @@ const TINTA_FRACA := Color(0.62, 0.70, 0.78)
 # olha a `folha_props`, que é a que promete "o tamanho do jogo".
 const ZOOM := 2
 const MARGEM := 12
+# ⚠️ E CADA PEÇA TEM DE CHEGAR À FOTO, que a folha não perguntava. Em 23/09,
+# com os props em atlas (`docs/decisoes/049`), um recorte mal montado desenhou
+# TODOS os quadros vazios e a folha imprimiu "Folha salva em" na mesma. Hoje ela
+# fotografa duas vezes — com a arte e sem ela — e conta, por peça, os pixels
+# que mudam (`PropIso.desenho_na_foto`). O defeito dá ZERO exato; o corte fica
+# a meio da banda medida, e quem acrescentar uma peça menor do que metade da
+# menor de hoje desce-o de propósito.
+# Medido: a menor é o `caminhao_pescado_mx`, com 2.946 px a ZOOM 2 (folga 2x).
+const DESENHO_MIN := 1473
 const RODAPE := 36                                 # as duas linhas de nome, por baixo
 
 var _montado := false
 var _frames := 0
 var _saida := SAIDA_PADRAO
 var _pecas := 0
+var _foto: Image = null
+var _artes: Array = []
 
 
 func _process(_delta: float) -> bool:
@@ -82,16 +93,48 @@ func _process(_delta: float) -> bool:
 	if _frames < FRAMES_ATE_ASSENTAR:
 		return false
 
-	var img: Image = root.get_texture().get_image()
+	# A foto que se grava é a primeira; a segunda, sem a arte, só serve para
+	# provar que cada peça chegou à primeira (`PropIso.desenho_na_foto`).
+	if _foto == null:
+		_foto = root.get_texture().get_image()
+		for par in _artes:
+			(par[0] as CanvasItem).hide()
+		_frames = 0
+		return false
+	var ausentes := _pecas_ausentes(_foto, root.get_texture().get_image())
+	var img := _foto
 	var erro := img.save_png(_saida)
 	if erro != OK:
 		print("FALHOU ao salvar em %s (erro %d)" % [_saida, erro])
+		quit(1)
+		return true
+	if ausentes > 0:
+		print("FALHOU: %d peça(s) sem desenho na foto — ver acima" % ausentes)
 		quit(1)
 		return true
 	print("Folha salva em %s (%dx%d) — %d peças" % [
 		_saida, img.get_width(), img.get_height(), _pecas])
 	quit(0)
 	return true
+
+
+## Conta as peças que NÃO chegaram à foto, e diz a menor que chegou.
+func _pecas_ausentes(com: Image, sem: Image) -> int:
+	var ausentes := 0
+	var menor := -1
+	var menor_nome := ""
+	for par in _artes:
+		var arte := par[0] as TextureRect
+		var n := PropIso.desenho_na_foto(com, sem, Rect2(arte.position, arte.size))
+		if n < DESENHO_MIN:
+			print("FALHOU  %s não chegou à foto: %d px mudam ao escondê-la"
+				% [par[1], n])
+			ausentes += 1
+		if menor < 0 or n < menor:
+			menor = n
+			menor_nome = par[1]
+	print("Menor peça na foto: %d px (%s)" % [menor, menor_nome])
+	return ausentes
 
 
 func _montar() -> void:
@@ -217,7 +260,7 @@ func _secao(titulo: String, itens: Array, chao: Color, y0: float) -> float:
 	var recortes: Array = []
 	var tamanhos: Array = []
 	for item in itens:
-		var img := (item[0] as Texture2D).get_image()
+		var img := PropIso.imagem(item[0] as Texture2D)
 		var r := img.get_used_rect()
 		recortes.append(r)
 		var tam := Vector2(r.size) * PropIso.escala(item[0] as Texture2D) * float(ZOOM)
@@ -246,11 +289,8 @@ func _secao(titulo: String, itens: Array, chao: Color, y0: float) -> float:
 		# O recorte pelo `get_used_rect()`, ampliado sem suavizar: a 100px um
 		# convés não se julga a olho, e foi ampliando que se viu que o ícone
 		# `doca` era um fantasma no painel branco.
-		var atlas := AtlasTexture.new()
-		atlas.atlas = item[0]
-		atlas.region = Rect2(r)
 		var arte := TextureRect.new()
-		arte.texture = atlas
+		arte.texture = PropIso.recorte(item[0] as Texture2D)
 		arte.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		arte.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		arte.stretch_mode = TextureRect.STRETCH_SCALE
@@ -259,6 +299,7 @@ func _secao(titulo: String, itens: Array, chao: Color, y0: float) -> float:
 			(celula.x - 8 - arte.size.x) / 2.0,
 			(celula.y - RODAPE - arte.size.y) / 2.0)
 		root.add_child(arte)
+		_artes.append([arte, (item[0] as Texture2D).resource_path.get_file()])
 
 		var nome := Label.new()
 		nome.text = "%s\n%s" % [item[1], item[2]]

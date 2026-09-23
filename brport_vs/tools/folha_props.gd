@@ -138,6 +138,15 @@ const TINTA_RECURSO := Color(0.95, 0.75, 0.30)
 # textura, pelo `PropIso`, e é por isso que já não há um ZOOM constante aqui.
 const ZOOM := 1                                    # 1:1 — o tamanho do jogo
 const MARGEM := 10
+# ⚠️ E CADA PEÇA TEM DE CHEGAR À FOTO, que a folha não perguntava. Em 23/09,
+# com os props em atlas (`docs/decisoes/049`), um recorte mal montado desenhou
+# TODOS os quadros vazios e a folha imprimiu "Folha salva em" na mesma. Hoje ela
+# fotografa duas vezes — com a arte e sem ela — e conta, por peça, os pixels
+# que mudam (`PropIso.desenho_na_foto`). O defeito dá ZERO exato; o corte fica
+# a meio da banda medida, e quem acrescentar uma peça menor do que metade da
+# menor de hoje desce-o de propósito.
+# Medido: a menor é o `poste_luz`, com 38 px a 1:1 (folga 2x).
+const DESENHO_MIN := 19
 const RODAPE := 32                                 # as duas linhas de nome
 const CABECALHO := 46                              # o título e a legenda
 const FONTE_NOME := 11
@@ -174,6 +183,8 @@ var _pagina := 1
 var _total := 1
 var _pecas := 0
 var _mapas := {}
+var _foto: Image = null
+var _artes: Array = []
 
 
 func _process(_delta: float) -> bool:
@@ -186,16 +197,49 @@ func _process(_delta: float) -> bool:
 	if _frames < FRAMES_ATE_ASSENTAR:
 		return false
 
-	var img: Image = root.get_texture().get_image()
+	# A foto que se grava é a primeira; a segunda, sem a arte, só serve para
+	# provar que cada peça chegou à primeira (`PropIso.desenho_na_foto`).
+	if _foto == null:
+		_foto = root.get_texture().get_image()
+		for par in _artes:
+			(par[0] as CanvasItem).hide()
+		_frames = 0
+		return false
+	var ausentes := _pecas_ausentes(_foto, root.get_texture().get_image())
+	var img := _foto
 	var erro := img.save_png(_saida)
 	if erro != OK:
 		print("FALHOU ao salvar em %s (erro %d)" % [_saida, erro])
+		quit(1)
+		return true
+	if ausentes > 0:
+		print("FALHOU: %d peça(s) sem desenho na foto — ver acima" % ausentes)
 		quit(1)
 		return true
 	print("Folha salva em %s (%dx%d) — %d peças (página %d de %d)" % [
 		_saida, img.get_width(), img.get_height(), _pecas, _pagina, _total])
 	quit(0)
 	return true
+
+
+## Conta as peças que NÃO chegaram à foto, e diz a menor que chegou. É a mesma
+## função da `folha_frota`: cada folha responde pelas SUAS peças.
+func _pecas_ausentes(com: Image, sem: Image) -> int:
+	var ausentes := 0
+	var menor := -1
+	var menor_nome := ""
+	for par in _artes:
+		var arte := par[0] as TextureRect
+		var n := PropIso.desenho_na_foto(com, sem, Rect2(arte.position, arte.size))
+		if n < DESENHO_MIN:
+			print("FALHOU  %s não chegou à foto: %d px mudam ao escondê-la"
+				% [par[1], n])
+			ausentes += 1
+		if menor < 0 or n < menor:
+			menor = n
+			menor_nome = par[1]
+	print("Menor peça na foto: %d px (%s)" % [menor, menor_nome])
+	return ausentes
 
 
 ## O catálogo, tirado do DISCO e não de uma lista: um prop novo entra aqui
@@ -544,7 +588,7 @@ func _montar() -> bool:
 	for n in nomes:
 		var tex: Texture2D = load("%s/%s" % [PASTA, n])
 		texturas[n] = tex
-		var rc := tex.get_image().get_used_rect()
+		var rc := PropIso.imagem(tex).get_used_rect()
 		recortes[n] = rc
 		# O recorte é em pixel da textura (é ele que o `AtlasTexture` corta); o
 		# TAMANHO em que ele se desenha é em coordenada, que é o do jogo.
@@ -675,11 +719,8 @@ func _montar() -> bool:
 				faixa.size = Vector2(piso_tam.x / float(tons.size()), piso_tam.y)
 				root.add_child(faixa)
 
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texturas[n]
-		atlas.region = Rect2(rc)
 		var arte := TextureRect.new()
-		arte.texture = atlas
+		arte.texture = PropIso.recorte(texturas[n])
 		# ⚠️ O FILTRO ERA `NEAREST`, E ISSO SÓ ERA VERDADE A 1:1 DE PIXEL. Com a
 		# textura a 768 dentro de uma célula de coordenada, `NEAREST` deitaria
 		# fora um pixel em cada três e a folha mostraria uma aliasagem que o
@@ -693,6 +734,7 @@ func _montar() -> bool:
 			(piso_tam.x - arte.size.x) / 2.0,
 			(piso_tam.y - arte.size.y) / 2.0)
 		root.add_child(arte)
+		_artes.append([arte, n])
 
 		var rotulo := Label.new()
 		rotulo.text = n.get_basename()
