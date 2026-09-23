@@ -718,3 +718,9 @@ linhas da tabela de fechados desceram:
 |---|---|
 | **As CINCO levas de cor** (21–22/09, `041`–`045`) | **27 chamadas em 19 locais → ZERO**, lista de exceções vazia. Quatro migraram VALORES (fotos byte a byte); a 2ª não — a régua não drenava a fila, e alcançado o âmbar deu 3,07:1. ⚠️ **Estado que não monta publica linhas plausíveis** (a chave MORTA da 3ª, o piso da 4ª). A 5ª trouxe o **D34** (proveniência lida no nó) |
 | **A rua e a mão dupla** (23/09, `047`) | a rua FICA em 1,8 (a 2,0 ganharia 3,6 px); dois camiões sobem, 8 silhuetas `_retorno`. A assinatura do D13 passou a fazer a média; a saída de ré ganhou guarda |
+
+**E, para caber as telas do fim em fila (`054`),** desceu a mais antiga:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **O quadro dos props** (23/09, `049`) | 60 props em atlas, sem `bpy` nem nó mexido; os retratos ficam. Pixel de prop lê-se por `PropIso.imagem()`; as folhas provam que esconder a peça muda a foto |

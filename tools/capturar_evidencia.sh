@@ -486,11 +486,14 @@ tirar fimfase - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame
 # nunca porque a ferramenta o deu — e o «Ver o balanço» da narração. Foi a
 # última lacuna declarada da cobertura, e saiu dela no mesmo commit.
 #
-# ⚠️ SÃO TRÊS PAINÉIS, e é o estado verdadeiro: o «Pagar» fecha a semana 4 e
-# acaba a partida na mesma chamada, de modo que o boletim dela e o fim de fase
-# abrem POR CIMA da resposta do Sr. Ribeiro. A jogar, só o de cima recebe o
-# toque; a ferramenta não fecha nenhum, e a contagem tranca a pilha.
-tirar balanco 3 33 --script res://tools/capturar_tela.gd -- 32 "$SAIDA/balanco.png" limpo balanco
+# ⚠️ É UM PAINEL, e até 23/09 eram três. O «Pagar» fecha a semana 4 e acaba a
+# partida na mesma chamada, e o boletim e o fim de fase abriam POR CIMA da
+# resposta do Sr. Ribeiro — quem tocava «Jogar de novo» nunca a lia. Hoje o
+# `Main` põe-nos em fila (`_na_vez()`, `docs/decisoes/054`): resposta →
+# boletim → fim de fase, e a ferramenta percorre-a pelos botões do jogador,
+# reprovando em cada passo se o painel de cima não for o da vez ou não estiver
+# sozinho. A contagem daqui tranca o fim; os passos trancam a ordem.
+tirar balanco 1 33 --script res://tools/capturar_tela.gd -- 32 "$SAIDA/balanco.png" limpo balanco
 tirar icones  - -  --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

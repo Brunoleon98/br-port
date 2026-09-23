@@ -1663,6 +1663,17 @@ gaivotão, maria-farinha e tartaruga-verde juvenil, cada um com movimento,
 reação e som ao toque; mar e gaivota também soam em intervalos irregulares.
 O gate visual continua sendo o A5 e o auditivo, o A6.
 
+### ✅ AS TELAS DO FIM EM FILA — a ordem depois do «Pagar» (23/09)
+
+**`docs/decisoes/054`.** O Bruno escolheu «em fila»: resposta do Sr. Ribeiro →
+boletim da semana 4 → fim de fase, uma de cada vez, e o mesmo no «Não
+consigo pagar» e em quem quitou antes. Quem decide é o `Main`
+(`_na_vez()`), e o `GameState` não mudou uma linha. O **F11** do
+`teste_fumaca` percorre os três caminhos pelos botões e exige cada tela
+SOZINHA; o tiro `balanco` percorre a mesma fila e fica com um painel em vez
+de três. Sete mutantes: a fila ligada ao `fechou` passa na suíte e só a
+captura a apanha, com o turno preso em `debt_payment` sem painel.
+
 ### ✅ O BALANÇO, O NOME LONGO E O CHANFRO — as três opções de uma vez (23/09)
 
 **`docs/decisoes/053`**, e duas coberturas que não pediam decisão. O Bruno
@@ -1674,7 +1685,7 @@ escolheu as três opções que uma sessão podia fazer sozinha.
   A lacuna declarada da `051` saiu, e a bateria tem **31 tiros**. ⚠️ A foto
   mostra o boletim da semana 4 e o fim de fase POR CIMA da resposta do Sr.
   Ribeiro: o «Pagar» fecha a semana e acaba a partida na mesma chamada. A
-  ordem dos três painéis é pergunta para o Bruno.
+  ordem dos três painéis era pergunta para o Bruno — respondida na `054`.
 - **(h) O nome longo fora dos três painéis**: só o diário o leva, e o F10
   mede-o (597 de 620 px, o pior de 397 nomes). Um catálogo lido da
   `Narrativa.gd` exige que toda frase com o nome tenha sido medida com ele.

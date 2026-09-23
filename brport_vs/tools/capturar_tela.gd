@@ -92,12 +92,28 @@ var _mensagens_aberto := false
 ## paga-se no botão do Sr. Ribeiro — que só está ligado se o dinheiro chegar —
 ## e o balanço abre no «Ver o balanço» da narração. Nada disto se escreve à mão.
 ##
+## ⚠️ E O CAMINHO ATÉ ELE PASSA POR TRÊS TELAS, UMA DE CADA VEZ. Desde que o
+## `Main` pôs em fila as telas que abrem sozinhas (`_na_vez()`), o «Pagar»
+## deixa na tela só a resposta do Sr. Ribeiro; o boletim da semana 4 abre
+## quando ela fecha, e o fim de fase quando o boletim fecha. Cada passo espera
+## `FRAMES_POR_PASSO` — o painel fechado sai no fim do frame, e é aí que o
+## seguinte abre — e REPROVA se o painel de cima não for o que a ordem diz,
+## ou se houver outro por baixo dele. A contagem final (um painel) prova que o
+## fim chegou só; os passos provam que chegou por esta ordem.
+##
 ## ⚠️ O DINHEIRO NÃO SE DÁ: sai da partida. Medido em 23/09 com a política
 ## desta ferramenta (todos alocados a cada dia, a oferta do rival pela metade),
 ## a semente padrão chega ao turno 33 com R$841.372 contra a parcela de
 ## R$530.000, e três outras sementes com R$775.573 a R$827.159. Se deixar de
 ## chegar, o botão fica desligado e o tiro REPROVA em vez de pagar à força.
 var _balanco := false
+# 0 antes de pagar, 1 à espera do boletim, 2 à espera do fim de fase, 3 feito.
+var _passo_balanco := 0
+var _frames_do_passo := 0
+# O `_fechar()` faz `queue_free()`, que só tira o painel no fim do frame — é
+# nesse instante que o `tree_exited` passa a vez ao seguinte. Dois frames, como
+# o `_f8_esperar()` da suíte de fumaça.
+const FRAMES_POR_PASSO := 2
 
 ## OS CINCO PAINÉIS QUE NENHUMA FOTO MOSTRAVA, e cada um abre PELA PORTA DO
 ## JOGADOR — a mesma pílula do HUD que ele toca, não uma chamada ao painel.
@@ -132,6 +148,16 @@ func _process(_delta: float) -> bool:
 		_montar()
 		return false
 
+	# O BALANÇO ANDA ANTES DE ASSENTAR: cada passo toca um botão e espera que a
+	# fila do `Main` ponha o painel seguinte na tela. Os frames de assentar só
+	# começam a contar depois do último, com o balanço já montado.
+	if _balanco and _passo_balanco in [1, 2]:
+		_frames_do_passo += 1
+		if _frames_do_passo < FRAMES_POR_PASSO:
+			return false
+		_frames_do_passo = 0
+		return not _andar_o_balanco()
+
 	# Alguns frames antes de fotografar: containers só calculam o layout
 	# depois de um ciclo, e a foto sai com tudo empilhado no canto se for tirada
 	# no primeiro frame.
@@ -143,10 +169,9 @@ func _process(_delta: float) -> bool:
 		# O BOLETIM só fecha se quem chamou pediu `limpo`, porque há um tiro
 		# que existe para o fotografar.
 		#
-		# ⚠️ MENOS NO BALANÇO. O «Pagar» fecha a semana 4 e acaba a partida na
-		# mesma chamada, e o boletim dela abre DEBAIXO do fim de fase: o toque
-		# do jogador só alcança o painel de cima, logo ninguém o fecha a jogar.
-		# Tirá-lo daqui fotografaria uma pilha que não existe.
+		# ⚠️ MENOS NO BALANÇO. O boletim da semana 4 é um dos passos dele, e
+		# fecha-se pelo botão do boletim, como a jogar; dispensá-lo por aqui
+		# saltaria o passo que prova que ele abriu na vez certa.
 		if not _balanco:
 			_fechar_paineis_de_rotina(_limpo)
 		return false
@@ -434,7 +459,7 @@ func _montar() -> void:
 	if _pausa:
 		_main._on_pause_pressed()
 
-	if _balanco and not _pagar_e_ver_o_balanco():
+	if _balanco and not _pagar_a_parcela():
 		return
 
 
@@ -502,11 +527,12 @@ func _abrir_painel_do_jogador() -> void:
 		_main.call(metodo)
 
 
-# O VENCIMENTO, O PAGAMENTO E O BALANÇO, cada um pela porta do jogador e cada
-# um a reprovar se não chegar onde diz. O `pay_debt()` sai CALADO fora de
+# O VENCIMENTO E O PAGAMENTO, cada um pela porta do jogador e cada um a
+# reprovar se não chegar onde diz. O `pay_debt()` sai CALADO fora de
 # `debt_payment` (`docs/decisoes/051`), por isso a fase confere-se ANTES do
-# toque, e o dinheiro DEPOIS — é ele que prova que o toque pagou.
-func _pagar_e_ver_o_balanco() -> bool:
+# toque, e o dinheiro DEPOIS — é ele que prova que o toque pagou. O resto do
+# caminho até ao balanço anda no `_process`, um passo por vez.
+func _pagar_a_parcela() -> bool:
 	var ribeiro: Node = _painel_de_cima()
 	if GS.phase != "debt_payment" or ribeiro == null \
 			or ribeiro.scene_file_path != "res://scenes/panels/DebtPaymentPanel.tscn":
@@ -521,14 +547,57 @@ func _pagar_e_ver_o_balanco() -> bool:
 			% [str(GS.parcela_paid), GS.phase, str(GS.won)])
 		quit(1)
 		return false
-	var fim: Node = _painel_de_cima()
-	if fim == null or fim.scene_file_path != "res://scenes/EndGame.tscn" \
-			or String(fim.get("tempo")) != "narracao":
-		push_error("capturar_tela: depois de pagar, o painel de cima devia ser a narração do fim — é %s"
-			% ["(nenhum)" if fim == null else "%s «%s»" % [fim.scene_file_path, String(fim.get("tempo"))]])
-		quit(1)
+	# A partida acabou e a semana 4 fechou, mas o boletim e o fim de fase estão
+	# na fila: na tela fica só a resposta de quem recebeu.
+	if not _sozinho_por_cima("res://scenes/panels/DebtPaymentPanel.tscn", "pagou",
+			"depois de pagar"):
 		return false
-	return _tocar(fim, "Ver o balanço")
+	if not _tocar(ribeiro, "Até a próxima"):
+		return false
+	_passo_balanco = 1
+	return true
+
+
+# UM PASSO DA FILA DO FIM: o painel que a ordem diz está SOZINHO na tela, e o
+# botão dele passa a vez ao seguinte. Devolve `false` depois de reprovar.
+func _andar_o_balanco() -> bool:
+	if _passo_balanco == 1:
+		if not _sozinho_por_cima("res://scenes/panels/PainelBoletim.tscn", "",
+				"fechada a resposta do Sr. Ribeiro"):
+			return false
+		# A semana vem do resumo que o boletim recebeu, e não do calendário: um
+		# boletim de outra semana que calhasse aqui também seria «o boletim».
+		var semana: int = int((_painel_de_cima().get("_resumo") as Dictionary)["semana"])
+		if semana != int(GS.WEEKS_TOTAL):
+			push_error("capturar_tela: o boletim do fim é o da semana %d, e a última é a %d"
+				% [semana, int(GS.WEEKS_TOTAL)])
+			quit(1)
+			return false
+		if not _tocar(_painel_de_cima(), "Fechar o boletim"):
+			return false
+		_passo_balanco = 2
+		return true
+	if not _sozinho_por_cima("res://scenes/EndGame.tscn", "narracao",
+			"fechado o boletim"):
+		return false
+	if not _tocar(_painel_de_cima(), "Ver o balanço"):
+		return false
+	_passo_balanco = 3
+	return true
+
+
+func _sozinho_por_cima(cena: String, tempo: String, quando: String) -> bool:
+	var topo: Node = _painel_de_cima()
+	var tempo_visto: String = "" if topo == null or not "tempo" in topo \
+		else String(topo.get("tempo"))
+	if topo != null and topo.scene_file_path == cena and tempo_visto == tempo \
+			and _paineis_abertos() == 1:
+		return true
+	push_error("capturar_tela: %s devia estar só %s%s na tela, e estão %d: %s  [%s]"
+		% [quando, cena, "" if tempo == "" else " «%s»" % tempo, _paineis_abertos(),
+		   _paineis_na_tela(), " ".join(_tempos_na_tela())])
+	quit(1)
+	return false
 
 
 # O BOTÃO VERDADEIRO, e um só, ligado — a regra do `--tocar=` do

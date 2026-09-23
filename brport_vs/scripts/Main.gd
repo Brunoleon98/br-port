@@ -57,6 +57,12 @@ const PainelParcelaScene := preload("res://scenes/panels/PainelParcela.tscn")
 # simulador, que é o que o `Registro.gd` já ensinou a não fazer.
 var _fila := FilaDeMensagens.new()
 
+# A VEZ DAS TELAS QUE ABREM SOZINHAS — o Sr. Ribeiro, o boletim e o fim de
+# fase. Quem tem a vez está na tela; os outros esperam na fila, pela ordem em
+# que chegaram. Ver `_na_vez()`.
+var _painel_da_vez: Control = null
+var _fila_da_vez: Array[Callable] = []
+
 @onready var _message_cartao: PanelContainer = $MensagemCartao
 @onready var _message_label: Label = $MensagemCartao/Linha/Mensagem
 @onready var _pendentes_label: Label = $MensagemCartao/Linha/Pendentes
@@ -2210,7 +2216,14 @@ func _on_semana_fechada(resumo: Dictionary) -> void:
 	# O boletim é a única tela que abre sozinha durante o jogo. Abre no fecho
 	# da semana, que já é um momento de pausa — o turno acabou de virar e não
 	# há decisão pendente. Abrir a meio de um turno seria interromper.
-	_abrir_painel(PainelBoletimScene).setup(resumo)
+	#
+	# ⚠️ E NA SEMANA 4 ELE ESPERA A VEZ. O fecho dela vem de dentro do «Pagar»
+	# (ou do «Não consigo pagar»), com o Sr. Ribeiro ainda na tela — ver
+	# `_na_vez()`.
+	_na_vez(func() -> Control:
+		var painel := _abrir_painel(PainelBoletimScene)
+		painel.setup(resumo)
+		return painel)
 
 
 func _on_advance_pressed() -> void:
@@ -2359,8 +2372,79 @@ func _on_rival_offer_triggered(dock_index: int) -> void:
 
 
 func _on_debt_due(amount: int) -> void:
-	_abrir_painel(DebtPaymentScene).setup(amount)
+	_na_vez(func() -> Control:
+		var painel := _abrir_painel(DebtPaymentScene)
+		painel.setup(amount)
+		return painel)
 
 
 func _on_game_over(did_win: bool, reason: String) -> void:
-	_abrir_painel(EndGameScene).setup(did_win, reason)
+	_na_vez(func() -> Control:
+		var painel := _abrir_painel(EndGameScene)
+		painel.setup(did_win, reason)
+		return painel)
+
+
+# A VEZ DAS TELAS QUE ABREM SOZINHAS — o Sr. Ribeiro, o boletim e o fim de
+# fase.
+#
+# O «Pagar» fecha a semana 4 e acaba a partida NA MESMA CHAMADA —
+# `pay_debt()` → `_fechar_resumo_da_semana()` → `_check_end()` —, e cada sinal
+# abria o seu painel por cima do anterior: o fim de fase no topo, o boletim da
+# semana 4 debaixo dele e a resposta do Sr. Ribeiro no fundo. O toque só
+# alcança o painel de cima, e o fim de fase oferece «Jogar de novo»: quem o
+# tocava nunca via a resposta do banqueiro nem o último boletim. A foto
+# `balanco` de 23/09 mostrou a pilha (três painéis), e a ordem passou a ser
+# decisão do Bruno: resposta → boletim → fim de fase.
+#
+# O mesmo empilhamento acontecia no «Não consigo pagar», e em quem quitou antes
+# do prazo — aí é o `advance_turn()` que fecha a semana e acaba a partida
+# seguidos, sem Sr. Ribeiro. A fila cobre os três sem saber qual deles é: quem
+# tem a vez fica na tela, e quem chega depois espera por ordem de chegada.
+#
+# ⚠️ SÓ ESTAS TRÊS. A contra-oferta do Arlindo continua a abrir por cima de
+# tudo, como antes: é uma decisão que trava o turno, e pô-la na fila atrás de
+# um boletim mudaria uma ordem a meio da partida que ninguém pediu para mudar.
+#
+# ⚠️ QUEM PASSA A VEZ É O `tree_exited`, e não o `fechou`. É o único sinal por
+# onde passa toda saída de um painel: o `_fechar()` do andaime, o
+# `queue_free()` seco do «Fechar» do fim de fase e o `remove_child()` com que
+# as ferramentas de captura dispensam o boletim. Uma fila à espera de um sinal
+# que uma dessas portas não emite fica com o resto por abrir, sem erro nenhum —
+# medido com a fila ligada ao `fechou`: as seis suítes passam (a jogar, todo
+# painel que tem a vez sai pelo `_fechar()`), e o tiro `balanco` da captura
+# chega ao vencimento em "debt_payment" SEM painel nenhum na tela — o Sr.
+# Ribeiro preso na fila, porque o primeiro boletim saiu pelo `remove_child()`
+# da ferramenta e nunca passou a vez. Fase que trava o turno sem painel para a
+# resolver é o travamento calado que o `_recuperar_fase()` existe para evitar.
+#
+# Tudo isto vive no Main e nada no GameState: os sinais saem na ordem de
+# sempre, e o simulador, que não abre painel, não tem o que medir — é a regra
+# "tela nova é overlay" do `CLAUDE.md` aplicada à ORDEM das telas.
+func _na_vez(abrir: Callable) -> void:
+	_fila_da_vez.append(abrir)
+	# Um painel mandado embora ainda segura a vez até sair, no fim do frame: é
+	# o `tree_exited` dele que a passa, e quem chegou entretanto espera por ele.
+	if not is_instance_valid(_painel_da_vez):
+		_dar_a_vez_ao_proximo()
+
+
+func _dar_a_vez_ao_proximo() -> void:
+	_painel_da_vez = null
+	if _fila_da_vez.is_empty():
+		return
+	var abrir: Callable = _fila_da_vez.pop_front()
+	_painel_da_vez = abrir.call()
+	_painel_da_vez.tree_exited.connect(_passar_a_vez, CONNECT_ONE_SHOT)
+
+
+func _passar_a_vez() -> void:
+	# O Main também sai da árvore — «Jogar de novo» recarrega a cena, e as
+	# suítes libertam-no com painéis abertos. Os filhos saem com ele, e abrir
+	# o próximo da fila nessa altura falha: medido sem esta guarda, libertar o
+	# Main com dois painéis na fila dá "Parent node is busy setting up children,
+	# `add_child()` failed" e deixa 36 nós órfãos.
+	if not is_inside_tree():
+		_painel_da_vez = null
+		return
+	_dar_a_vez_ao_proximo()
