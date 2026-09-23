@@ -49,6 +49,10 @@ sumindo na parte de cima"*) estava feito pela metade desde 07/09.
   faixa de dentro (`borda - RUA_RECUO + RUA_LARG / 4`) e, nos cotovelos, pela
   meia faixa de `my` baixo. Quem sobe tem a vila à direita; as duas rotas nunca
   se sobrepõem, nem na reta nem na curva.
+  ⚠️ **As duas afirmações desta linha eram falsas** (`052`): a projeção espelha
+  o chão, e na tela quem subia tinha a ÁGUA à direita; e as rotas cruzavam-se
+  em dez pontos, dois por cotovelo. Desde 23/09 a mão é a direita e as rotas
+  são concêntricas.
 - **Dois camiões, `CaminhaoRetorno0/1`, SÓ DE PASSAGEM.** Entrar num berço
   obrigaria a virar à esquerda por cima da faixa da ida, e o pedido avisava
   contra trânsito e contra bugs. A carga roda pelos motivos que o porto recebe,

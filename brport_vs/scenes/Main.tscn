@@ -263,19 +263,19 @@ mouse_filter = 2
 
 [node name="Caminhao0" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 62
-offset_top = -156.333
-offset_right = 574
-offset_bottom = 355.667
+offset_left = 44
+offset_top = -165.333
+offset_right = 556
+offset_bottom = 346.667
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_caminhao")
 [node name="CaminhaoRetorno0" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -24
-offset_top = -131.333
-offset_right = 488
-offset_bottom = 380.667
+offset_left = -6
+offset_top = -122.333
+offset_right = 506
+offset_bottom = 389.667
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_caminhao_retorno")
@@ -290,10 +290,10 @@ expand_mode = 1
 texture = ExtResource("prop_escritorio_ruina")
 [node name="Caminhao1" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -16
-offset_top = -37.3333
-offset_right = 496
-offset_bottom = 474.667
+offset_left = -34
+offset_top = -46.3333
+offset_right = 478
+offset_bottom = 465.667
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_caminhao")
@@ -316,6 +316,15 @@ mouse_filter = 2
 pivot_offset = Vector2(256, 178)
 expand_mode = 1
 texture = ExtResource("prop_coqueiro_copa")
+[node name="CaminhaoRetorno1" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = -86
+offset_top = -2.333
+offset_right = 426
+offset_bottom = 509.667
+mouse_filter = 2
+expand_mode = 1
+texture = ExtResource("prop_caminhao_retorno")
 [node name="Bote" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = 93
@@ -343,15 +352,6 @@ offset_bottom = 568.17
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_pneus")
-[node name="CaminhaoRetorno1" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = -104
-offset_top = 68.667
-offset_right = 408
-offset_bottom = 580.667
-mouse_filter = 2
-expand_mode = 1
-texture = ExtResource("prop_caminhao_retorno")
 [node name="Barreira" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -69
@@ -409,10 +409,10 @@ expand_mode = 1
 texture = ExtResource("prop_coqueiro_copa")
 [node name="Caminhao2" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = -166
-offset_top = 117.667
-offset_right = 346
-offset_bottom = 629.667
+offset_left = -184
+offset_top = 108.667
+offset_right = 328
+offset_bottom = 620.667
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_caminhao")

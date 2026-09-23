@@ -307,14 +307,21 @@ RUA_LARG = 1.8
 PASSADEIRA_COMP = 0.75   # o quanto a zebra ocupa ao longo da rua
 CALCADA = 0.22
 
-# A FAIXA POR ONDE O CAMIÃO ANDA, e ela deixou de ser o meio da rua.
+# A FAIXA DO LADO DA ÁGUA, que é onde a rua encontra cada acesso ao berço.
 #
 # Com uma faixa só, andar no meio do asfalto era a única leitura possível. Com
 # duas, andar no meio é andar EM CIMA DA LINHA — e a linha é justamente o que
-# faz a rua ler como de mão dupla. O camião segue sempre em `+my`, que na tela
-# é para baixo e para a esquerda; quem segue nesse sentido tem a água à direita,
-# e é essa a faixa de fora. Sai daqui a entrada de cada acesso ao berço, de
-# modo que virar para a doca seja virar à DIREITA.
+# faz a rua ler como de mão dupla. Sai daqui a `entrada` publicada de cada
+# acesso: o meio da faixa de fora, na altura do berço.
+#
+# ⚠️ ESTE COMENTÁRIO DIZIA que "quem segue em `+my` tem a água à direita", e
+# que por isso era a faixa da descida. Na conta, com `mx` e `my` lidos como
+# `x` e `y` de um caderno, tem; na tela não, porque a projeção espelha o chão:
+# `+my` é para baixo e para a esquerda, e quem desce assim tem a VILA à
+# direita. Desde 23/09 os camiões andam pela direita na tela (`docs/decisoes/052`)
+# e esta é a faixa de quem SOBE — o retorno vira aqui para o berço, e a ida,
+# que desce pela faixa da vila, atravessa-a. O nome ficou, e o número também:
+# a boca do acesso é a mesma, e o mapa sai byte a byte igual.
 def faixa_do_caminhao(borda) -> float:
     return borda - RUA_RECUO + RUA_LARG * 0.75
 # A vila acompanha a rua: 0,13 de folga entre o fundo da calçada e a frente do
@@ -3647,9 +3654,9 @@ def tabela_ancoras() -> dict:
             "doca": j + 1,
             "mx": [round(borda - RUA_RECUO + RUA_LARG, 3), round(borda - APRON, 3)],
             "my": [round(meio - 0.6, 3), round(meio + 0.6, 3)],
-            # O ponto da ROTA onde o camião vira: o meio do asfalto daquele
-            # degrau, na altura do berço. Sai da mesma conta que dá o `mx` de
-            # cada trecho reto da `ROTA_ESTRADA` do `Main.gd`.
+            # A boca do acesso na faixa do lado da água: o meio dela, na altura
+            # do berço. É onde o RETORNO vira (a `entrada` do `ACESSOS_DOCA`
+            # do `Main.gd`); a ida vira à mesma altura na faixa da vila.
             "entrada": [round(faixa_do_caminhao(borda), 3), round(meio, 3)],
         })
 

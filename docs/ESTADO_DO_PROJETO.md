@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — um painel não é uma tela (`051`)
+> **Última atualização:** 23/09/2026 — a mão direita e o cruzamento (`052`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -91,7 +91,7 @@ propósito.**
 verdade** — parede desabada, meio telhado, portão fora do trilho.
 
 **O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
-central e passadeiras) — **três camiões descem e dois sobem** (`047`) —, calçada, acesso a cada berço, **duas fileiras de casas**
+central e passadeiras) — **três camiões descem e dois sobem, pela DIREITA, e os dois sentidos encostam nos berços** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
 e uma **viela de terra entre elas** — a de trás mais rala, para a vila DESFIAR
 contra a mata. Tem nível (`--nivel-vila=N`): térrea, sobrado, prédio.
 
@@ -114,10 +114,11 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | Fechado | O que ficou, medido |
 |---|---|
 | **As CINCO levas de cor** (21–22/09, `041`–`045`) | **27 chamadas em 19 locais → ZERO**, lista de exceções vazia. Quatro migraram VALORES (fotos byte a byte); a 2ª não — a régua não drenava a fila, e alcançado o âmbar deu 3,07:1. ⚠️ **Estado que não monta publica linhas plausíveis** (a chave MORTA da 3ª, o piso da 4ª). A 5ª trouxe o **D34** (proveniência lida no nó) |
-| **A rua e a mão dupla** (23/09, `047`) — escolha do Bruno | a rua FICA em 1,8: a janela que aperta é em `my` e o `RUA_RECUO` não a toca; a 2,0 ganharia 3,6 px. Faltava quem SUBISSE: dois camiões na faixa de dentro, de costas, 8 silhuetas `_retorno` (+0,75% do `.pck`). ⚠️ **A assinatura do D13 não fazia a média que dizia** (`resize` amostra); hoje faz, corte 0,01. Bateria a **27 tiros**. Depois, a **saída de ré** ganhou guarda (`_d13_saida_de_re`, 5 mutantes) |
-| **O quadro dos props** (23/09, `049`) — escolha do Bruno | 60 props em atlas, sem `bpy` nem nó mexido; os retratos ficam (atlas de 1024 sairia 26% pior). Pixel de prop lê-se por `PropIso.imagem()`. ⚠️ As folhas gravaram quadros VAZIOS com "Folha salva em"; hoje provam que esconder a peça muda a foto. 7 mutantes |
-| **O âmbar da seleção** (23/09, `050`) — escolha do Bruno | nenhuma cor de borda dava 3:1 dos dois lados (vizinhos a 5,05:1; o âmbar já no ótimo, 2,25), e a troca que o jogador vê é PARADO → escolhido (1,33). A cor passou a um SELO âmbar escuro no "Escolhido": 3,86 e 4,74, texto a 5,06, retrato intacto. 8 mutantes |
-| **Os segundos tempos** (23/09, `051`) — escolha do Bruno | a cobertura era por CENA e a bateria só via o 1º tempo: a despedida do Arlindo dizia «Cliente ouvindo a proposta» com o negócio fechado. Hoje 7 tempos em 3 painéis, 6 com foto e o balanço DECLARADO; o F10 mede cada um a caber — um nome de 24 letras sem espaço saía do cartão (`_SMART`) |
+| **A rua e a mão dupla** (23/09, `047`) | a rua FICA em 1,8 (a 2,0 ganharia 3,6 px); dois camiões sobem, 8 silhuetas `_retorno`. A assinatura do D13 passou a fazer a média; a saída de ré ganhou guarda |
+| **O quadro dos props** (23/09, `049`) | 60 props em atlas, sem `bpy` nem nó mexido; os retratos ficam. Pixel de prop lê-se por `PropIso.imagem()`; as folhas provam que esconder a peça muda a foto |
+| **O âmbar da seleção** (23/09, `050`) | nenhuma cor de borda dava 3:1 dos dois lados; a troca passou a um SELO âmbar escuro no "Escolhido" (3,86 e 4,74) |
+| **Os segundos tempos** (23/09, `051`) | a cobertura era por CENA e a bateria só via o 1º tempo: a despedida do Arlindo dizia «Cliente ouvindo a proposta» com o negócio fechado. Hoje 7 tempos em 3 painéis, 6 com foto e o balanço DECLARADO; o F10 mede cada um a caber — um nome de 24 letras sem espaço saía do cartão (`_SMART`) |
+| **A mão direita e o cruzamento** (23/09, `052`) — escolha do Bruno | as rotas cruzavam-se em 10 pontos (27–72 sobreposições por meia hora) e andavam pela ESQUERDA na tela: a projeção espelha o chão. Hoje mão direita, o retorno encosta, e quatro regras sem ninguém parar na rua — trava do berço, cedência na boca, previsão nas curvas, arranque espaçado. A curva aberta corta o chanfro em diagonal. Zero sobreposições; o **D35** anda 1 h de jogo e varre 3.080 entradas contra uma simulação à parte. 17 mutantes, 16 reprovam |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -137,7 +138,6 @@ histórico em `HISTORICO.md`.
 
 ### Ainda por fazer, medido
 
-O retorno a entrar nos berços é desenho de cruzamento, por decidir (`047`).
 Das jogadas de 02–06/09 sobram o rodapé (A5), economia de Fase 2 e a madeira
 podre (A4) — em `HISTORICO.md`.
 

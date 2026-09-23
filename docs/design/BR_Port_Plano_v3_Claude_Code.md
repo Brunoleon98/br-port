@@ -1663,6 +1663,20 @@ gaivotão, maria-farinha e tartaruga-verde juvenil, cada um com movimento,
 reação e som ao toque; mar e gaivota também soam em intervalos irregulares.
 O gate visual continua sendo o A5 e o auditivo, o A6.
 
+### ✅ A MÃO É A DIREITA, E O RETORNO ENCOSTA — o cruzamento (23/09)
+
+**`docs/decisoes/052`.** Medido antes de mexer, as duas rotas cruzavam-se em
+DEZ pontos — dois por cotovelo —, com 27 a 72 sobreposições à vista por meia
+hora de jogo, e a ré largava o berço por cima de quem passava. A causa era um
+espelho: `tela_da_rota()` espelha o chão, e as retas andavam pela ESQUERDA na
+tela com um comentário a jurar o contrário. A pedido do Bruno, a mão é a
+direita: o retorno ficou encostado aos acessos e encosta nos berços, com a
+carga do navio; a ida atravessa, e cede. Quatro regras, e ninguém pára na rua —
+trava do berço, cedência na boca, previsão nas curvas, arranque espaçado. A
+curva aberta corta o chanfro por uma diagonal (o D20 apanhou o vértice em cima
+da calçada), e o **D35** anda uma hora de jogo e varre 3.080 entradas na rua
+contra uma simulação à parte. Zero sobreposições; dezassete mutantes, e o único que passa está escrito.
+
 ### ✅ UM PAINEL NÃO É UMA TELA — os segundos tempos têm foto (23/09)
 
 **`docs/decisoes/051`.** A cobertura das capturas perguntava por CENA, e três
@@ -1695,7 +1709,7 @@ barreira, pela janela em `my` que o `RUA_RECUO` não toca — e o ganho seria de
 faixa de dentro, de costas, com oito silhuetas `_retorno`. O item 2 da segunda
 jogada estava feito pela metade desde 07/09. Na sessão seguinte a **saída de ré
 do berço** ganhou guarda (`_d13_saida_de_re`, cinco mutantes, adenda da `047`);
-o retorno a entrar nos berços continua por decidir — é desenho de cruzamento.
+o retorno a entrar nos berços fechou na `052`, com a mão direita.
 
 ### ✅ O ITEM 12 FECHOU — três lotes da vila que não são casa (13/09)
 
