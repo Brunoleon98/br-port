@@ -1,10 +1,12 @@
 # `art_lab/` — o laboratório de arte partilhado
 
-**Aqui trabalham duas frentes sobre a mesma arte**: o ChatGPT, que interpreta
-referências, desenha conceitos e produz candidatas, e o Claude Code, que as
-integra no jogo, corre o Godot e escreve as guardas. O Bruno escolhe e aprova.
-Esta pasta é o sítio onde as duas se encontram — o plano, os conceitos e as
-candidatas vivem aqui, versionados, em vez de viverem em conversas.
+**O material daqui veio do ChatGPT** (o plano de produção, os conceitos e as
+candidatas, até 23/09), **e quem trabalha a partir dele são o Claude Code e o
+Codex**: o Claude Code é por onde o Bruno conduz o projeto, e o Codex contribui
+com tarefas que o Bruno lhe entrega (`AGENTS.md`, na raiz). O Bruno escolhe e
+aprova. Esta pasta é o sítio onde as frentes se encontram — o plano, os
+conceitos e as candidatas vivem aqui, versionados, em vez de viverem em
+conversas. O ChatGPT deixou de ser uma frente ativa; o que ele produziu fica.
 
 **Nada desta pasta é o jogo.** O jogo é `brport_vs/`, e o que está fora dele não
 entra no pacote exportado. Uma candidata passa daqui para lá pelo caminho da
@@ -38,14 +40,16 @@ com `manifest_sha256.json`). Ficaram de fora oito, de propósito:
 ## 2. Quem faz o quê
 
 É a divisão que o próprio plano V3 propõe (§4), com o que o repositório
-acrescenta:
+acrescenta. A primeira coluna é um PAPEL e não um agente: foi do ChatGPT até
+23/09, e hoje é de quem o Bruno puser na tarefa — o Codex ou o próprio Claude
+Code, numa sessão de arte.
 
-| ChatGPT — a frente de arte | Claude Code — a frente de integração | Bruno |
+| Quem produz a peça | Quem a integra no jogo | Bruno |
 |---|---|---|
 | Lê a referência, escolhe o componente, escreve o brief e a ficha | Confere a base, aplica numa cópia, regera mapas e props | Escolhe a frente e a ordem |
 | Produz conceitos (gerador de imagem) e candidatas (SVG, script, prancha) | Corre as seis suítes e a bateria de fotos do **Godot**, com semente e passo fixos | Aprova olhando a foto **do jogo**, e não a prancha |
 | Entrega cada revisão numa pasta própria (§3) com README, fonte, hashes e prancha | Escreve a guarda que prova que a peça chega à tela, com defeito injetado | Decide o que se reabre |
-| Mantém o plano de produção (V3 → V4) | Mantém `CLAUDE.md`, o estado, o plano do projeto e as decisões | — |
+| Revê o plano de produção quando a peça o pedir (V3 → V4) | Mantém `CLAUDE.md`, o estado, o plano do projeto e as decisões | — |
 
 ---
 
@@ -118,7 +122,7 @@ pergunta pelos arbustos), 801 px mudados na foto.
 
 ## 5. Onde o plano V3 e o repositório divergem — o que vale hoje
 
-Para a V4 do plano absorver. O resto do V3 foi conferido e bate: o contrato
+Para quem rever o plano absorver na V4. O resto do V3 foi conferido e bate: o contrato
 espacial da §3 (2:1, `MEIA_LARG` 30/15, `ZOOM` 2/3, quadro 512 de coordenada e
 768 de pixel, janela 720×660), a recusa de contorno, a máquina de estados
 visual, o RNG por identidade e canal e os gates com o Bruno a fechar.
@@ -154,7 +158,7 @@ visual, o RNG por identidade e canal e os gates com o Bruno a fechar.
 As seis frentes estão no §A5 do plano do projeto (`docs/design/BR_Port_Plano_v3_Claude_Code.md`, «Os
 vereditos de 23/09»); a ordem é do Bruno.
 
-| Frente | O que o ChatGPT já tem ou pode dar | O que fica do lado do repositório |
+| Frente | O que este material já traz, ou o que a frente pode produzir | O que fica do lado do repositório |
 |---|---|---|
 | **2 — retratos de fala** (Dona Cida, Sr. Ribeiro, Arlindo) | É a única frente em que **gerador de imagem pode dar o arquivo final**. Hoje são nove PNG 768×768 do Blender (três expressões por personagem, `Retratos.gd`), mostrados numa caixa de **112×152** em `COVERED`, com o busto a ocupar 62% × 90% do quadro — é a esse tamanho que a expressão tem de ler | Alfa verdadeiro, busto que enche o quadro, as mesmas três expressões por personagem, e a decisão de ABANDONAR o estúdio partilhado: o comentário de `Retratos.gd` diz que o gerador não foi usado para os três combinarem com o trabalhador do rodapé — trocar só três retratos faria o trabalhador destoar |
 | **3 — interface** | Conceitos de painel (diário, celular, mensagens, pausa) como referência | O plano V3 (§2.13) já diz que redesenho de HUD é tarefa própria; a implementação é no tema, com as guardas de contraste (D33) |
@@ -176,7 +180,7 @@ vereditos de 23/09»); a ordem é do Bruno.
 | Grupo F1 V1 | sprite solto | a preferida do Bruno entre V1 e V2 (antes disse que destoava do mapa) | Virar uma função do gerador que componha as peças do mapa, guardando o que a V1 tem: duas copas altas sobre massa baixa e escura, tronco à vista |
 | Grupo F1 V2 | sprite solto | o Bruno preferiu a V1 | — |
 | Grupo F1 V3 | sprite solto | **sem opinião do Bruno** | Mesma silhueta da V1 com os verdes mexidos; as copas saem maiores do que as árvores vizinhas |
-| Galpão F1 V3, casa focal, manifesto de produção | fora deste repositório | aprovados/decididos no checkout do ChatGPT | Publicar a branch `art/f01-galpao` |
+| Galpão F1 V3, casa focal, manifesto de produção | fora deste repositório | aprovados/decididos no checkout do ChatGPT | Só existem lá. Sem a branch `art/f01-galpao` publicada, o que resta deles é o texto das decisões em `plano/decisoes_da_frente/`, e o galpão V3 teria de ser refeito |
 
 ⚠️ **A vegetação não aparece em nenhum dos 31 vereditos do Bruno** — ela vem do
 Lote 1 do plano V3. Em que lugar entra contra as seis frentes é escolha dele.

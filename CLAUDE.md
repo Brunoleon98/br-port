@@ -26,6 +26,12 @@ são em português — commits e PRs em inglês.
 > `art_lab/README.md` (o laboratório de arte partilhado com o ChatGPT: o plano
 > de produção dele, os conceitos e as candidatas, e o caminho de uma peça até
 > ao jogo).
+>
+> **O Codex também contribui neste repositório**, por branches `codex/*` e PR,
+> com tarefas que o Bruno lhe entrega. Ele lê `AGENTS.md`, que só aponta para
+> este arquivo e diz como os dois agentes não se atropelam — as regras daqui
+> valem para ele. Antes de mexer num arquivo de alto conflito, veja os PRs
+> abertos dele.
 > `tools/conferir_docs.py` tranca isto no CI, e espera `DOCS OK`.
 >
 > **O GDD 7 lê-se em `docs/gdd/`**, uma seção por arquivo, GERADAS do

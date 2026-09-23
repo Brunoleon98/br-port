@@ -43,19 +43,21 @@ originais vivem na coleção `veredito` da página
 
 ## 3. O que ficou pendente do Bruno
 
-- **Publicar no GitHub a branch `art/f01-galpao`** do ambiente do ChatGPT (HEAD
-  `cc36166`, que o GitHub não conhece): o galpão F1 V3 que ele aprovou, a casa
-  focal e o manifesto de produção só existem lá. Se entrar, as decisões `034`–
-  `036` de lá renumeram-se a partir da **`055`** — os números colidem com os
-  daqui.
+- **O ChatGPT deixou de ser frente ativa** (o Bruno não volta lá), e o galpão
+  F1 V3 que ele aprovou, a casa focal e o manifesto de produção só existem na
+  branch `art/f01-galpao` do ambiente de lá (HEAD `cc36166`, que o GitHub não
+  conhece). Recuperar ou refazer é escolha dele; o que resta aqui é o texto das
+  decisões, em `art_lab/plano/decisoes_da_frente/` — e elas colidem em número
+  com as daqui (se entrarem, a partir da **`055`**).
 - **Dizer se a vegetação entra na fila.** Nenhum dos 31 vereditos a pede. Se
   entrar, nasce no gerador com a gramática do mapa, não como sprite solto
   (`art_lab/README.md` §7).
-- Levar ao ChatGPT o `art_lab/README.md` §5 — onde o plano V3 e o repositório
-  divergem —, para a V4 do plano o absorver.
-- **Material novo do ChatGPT entra em `art_lab/`** pelo caminho do README §3:
+- **O Codex passa a contribuir**, com tarefas que o Bruno lhe entrega, por
+  branches `codex/*` e PR; ele lê `AGENTS.md`. **Antes de começar, veja os PRs
+  abertos dele** e não edite em paralelo um arquivo que um deles já mexe.
+- Arte nova, venha de onde vier, entra em `art_lab/` pelo caminho do README §3:
   base conferida no GitHub, pasta por revisão, remendo pequeno, prova na foto
-  do JOGO.
+  do JOGO. O §5 de lá é o que o plano V3 tem de absorver quando for revisto.
 
 ## 4. Armadilhas que esta sessão mediu
 
