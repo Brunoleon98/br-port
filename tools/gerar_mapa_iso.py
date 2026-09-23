@@ -1575,12 +1575,37 @@ MEIOFIO = 0.05
 # retângulo que a tabela de âncoras publica, que é exatamente o defeito que os
 # lotes reservados pagaram em 07/09: desenho do mapa que nenhuma faixa declara.
 #
-# O CORTE SAI DA LARGURA DA RUA e não de um número escrito aqui. Meia rua é o
-# raio de giro que se lê a esta escala, e a rua já mudou de largura uma vez
-# (1,10 -> 1,80, em 07/09): um chanfro cravado teria ficado com o tamanho da
-# rua velha, sem erro nenhum a apontá-lo. Ele tem de caber na PROFUNDIDADE do
-# cotovelo, que é a própria largura da rua — daí a metade, e não dois terços.
-CHANFRO_COTOVELO = RUA_LARG / 2.0
+# O CORTE SAI DA FAIXA DO CAMIÃO, e não de um número escrito aqui. Até 23/09
+# era meia rua (0,9), escolhida por ler como raio de giro — e com a mão
+# direita (`docs/decisoes/052`) cada rota passou a fazer à volta desta ponta
+# uma curva ABERTA, cortada por uma diagonal paralela ao chanfro. O camião anda
+# nela com a silhueta do eixo, um retângulo a 45°, e a quina de trás da
+# carroçaria saía 0,207 para lá do asfalto, por cima do meio-fio e do passeio.
+# A ordem inverteu-se (`docs/decisoes/053`): a diagonal é da RUA, e o chanfro
+# é o que sobra dela depois de lá caber o maior camião.
+#
+# A diagonal passa a meia faixa do vértice do caminho — `CORTE_DA_CURVA`, a
+# contar dele ao longo de cada trecho, que é o `corte_da_curva()` do `Main.gd`,
+# e o D13 §7i confere que são o mesmo. Somadas as distâncias às duas bordas de
+# fora, ela fica a `RUA_LARG / 2 + CORTE_DA_CURVA`; a quina da carroçaria
+# fica `(chassi + largura) / 2` para dentro dela; e o chanfro é essa soma,
+# arredondada PARA BAIXO ao centésimo — número que alimenta toda coordenada da
+# rua tem de ser exato (ver o `sum()` da Python 3.12 no `CLAUDE.md`), e
+# arredondar para baixo é arredondar para o lado do asfalto.
+#
+# O MAIOR CAMIÃO é o porta-contêiner do `blender/brp_porto.py`: chassi 1,96 e
+# largura 0,62, vezes o `ESCALA_CAMINHAO` (0,72). É uma cópia, como a do D35;
+# se o camião crescer e ela não, é o D13 §7j que reprova.
+#
+# ⚠️ E ISTO MUDOU O MAPA, de 0,9 para 0,6: a ponta recua menos, e a esquina
+# continua chanfrada — o que o 4b pediu (`docs/decisoes/013`) é que ela não
+# acabe em ponta de 90°, e não um tamanho. A viela, que o chanfro de 0,9 comia
+# 0,08, deixa de ser tocada: ela abre a 0,82 da quina.
+CORTE_DA_CURVA = RUA_LARG * math.sqrt(2.0) / 4.0
+CAMIAO_MAIOR = (1.96 * 0.72, 0.62 * 0.72)     # chassi, largura
+CHANFRO_COTOVELO = math.floor(
+    (RUA_LARG / 2.0 + CORTE_DA_CURVA - (CAMIAO_MAIOR[0] + CAMIAO_MAIOR[1]) / 2.0)
+    * 100.0) / 100.0
 
 
 def cotovelo_pontos(borda, prox, my1, folga: float = 0.0) -> list:
@@ -3636,6 +3661,9 @@ def tabela_ancoras() -> dict:
                            round(prox - RUA_RECUO + RUA_LARG, 3)],
             "asfalto_my": [round(my1 - RUA_LARG, 3), round(my1, 3)],
             "chanfro": round(CHANFRO_COTOVELO, 3),
+            # A diagonal de que o chanfro foi derivado, para o `Main.gd` a
+            # poder conferir contra a dele (D13 §7i).
+            "corte_da_curva": round(CORTE_DA_CURVA, 4),
         })
 
     # ⚠️ E OS ACESSOS AOS BERÇOS, publicados pela mesma razão que os cotovelos:

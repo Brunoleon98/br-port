@@ -1963,6 +1963,77 @@ func _d13_travessia_do_caminhao() -> void:
 	_d13_completo = true
 
 
+# ── D13 §7j ── a carroçaria cabe no asfalto da curva aberta
+#
+# A curva aberta corta a quina saliente por uma diagonal, e o camião percorre-a
+# com a silhueta do eixo a que cada metade pertence — um RETÂNGULO alinhado ao
+# eixo, a andar a 45°. A quina dele que aponta para a ponta chanfrada fica
+# `(comprimento + largura) / 2` para dentro da linha da diagonal, somadas as
+# duas distâncias às bordas, e é isso que o chanfro tem de deixar de asfalto.
+# Até 23/09 o chanfro era meia rua (0,9) e o porta-contêiner saía 0,207 dele,
+# por cima do meio-fio e do passeio: a `052` registou-o e deixou-o por decidir.
+#
+# ⚠️ TRÊS FONTES, e nenhuma é espelho de outra. O caminho sai do `Main.gd`
+# (`trechos_de()`), o chanfro da tabela de âncoras (o gerador), e o tamanho de
+# cada camião do `D35_CHASSI`, que o copia do kit do Blender. O gerador tem a
+# sua própria cópia do maior camião para DERIVAR o chanfro; se ela ficar menor
+# do que o camião de verdade, é aqui que reprova.
+#
+# Mede-se a pegada do chassi, como o D35: o que o olho lê numa curva é outra
+# pergunta, e é do A5.
+const D13_AMOSTRAS_DIAGONAL := 8
+
+func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array) -> void:
+	# As DUAS quinas salientes de cada cotovelo, com o sentido em que o asfalto
+	# fica: a de `(mx máx, my mín)` tem o asfalto a `-mx` e a `+my`, e a de
+	# `(mx mín, my máx)` ao contrário. É o polígono do `cotovelo_pontos()`.
+	var quinas: Array = []
+	for c in cotovelos:
+		var amx: Array = c["asfalto_mx"]
+		var amy: Array = c["asfalto_my"]
+		var ch := float(c["chanfro"])
+		quinas.append([Vector2(float(amx[1]), float(amy[0])), -1.0, 1.0, ch])
+		quinas.append([Vector2(float(amx[0]), float(amy[1])), 1.0, -1.0, ch])
+	var diagonais := 0
+	var pior := -INF
+	var onde := ""
+	for rota in rotas:
+		for tr in tela.call("trechos_de", rota):
+			var a: Vector2 = tr[0]
+			var b: Vector2 = tr[1]
+			if absf(b.x - a.x) < 0.01 or absf(b.y - a.y) < 0.01:
+				continue
+			diagonais += 1
+			var k: int = tr[2]
+			var em_mx: bool = absf((rota[k + 1] as Vector2).x - (rota[k] as Vector2).x) > 0.01
+			var meio := (a + b) / 2.0
+			var q: Array = quinas[0]
+			for cand in quinas:
+				if meio.distance_to(cand[0]) < meio.distance_to(q[0]):
+					q = cand
+			var quina: Vector2 = q[0]
+			for motivo in D35_CHASSI:
+				var ext := Vector2(float(D35_CHASSI[motivo]), D35_LARG) / 2.0
+				if not em_mx:
+					ext = Vector2(ext.y, ext.x)
+				for i in range(D13_AMOSTRAS_DIAGONAL + 1):
+					var p := a.lerp(b, float(i) / float(D13_AMOSTRAS_DIAGONAL))
+					for canto in [p + ext, p - ext, p + Vector2(ext.x, -ext.y), p + Vector2(-ext.x, ext.y)]:
+						var dx: float = float(q[1]) * ((canto as Vector2).x - quina.x)
+						var dy: float = float(q[2]) * ((canto as Vector2).y - quina.y)
+						# Quanto sai: além de cada borda reta, ou além do chanfro,
+						# medido na perpendicular dele.
+						var sai := maxf(maxf(-dx, -dy), (float(q[3]) - dx - dy) / sqrt(2.0))
+						if sai > pior:
+							pior = sai
+							onde = "%s na diagonal %s -> %s, quina %s" % [motivo, a, b, quina]
+	# ⚠️ ZERO DIAGONAIS NÃO É "NADA SAI": é uma medida que não mediu. São duas
+	# metades por curva aberta, uma curva aberta por cotovelo e por rota.
+	_confere("há curvas abertas a medir (%d meias diagonais)" % diagonais, diagonais >= 4)
+	_confere("nenhuma carroçaria sai do asfalto nas curvas abertas (a que mais se aproxima: %.3f)"
+		% pior, diagonais > 0 and pior <= 0.0, onde)
+
+
 # ── D13 §7 ── O RETORNO: a mão dupla de verdade (23/09)
 #
 # Os camiões que SOBEM a rua pela faixa de dentro. Os modos de falhar são os da
@@ -2071,14 +2142,26 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 				cruza = "a ida em %s -> %s cruza o retorno em %s -> %s" % [a[0], a[1], b[0], b[1]]
 	_confere("a ida e o retorno não se cruzam em ponto nenhum", cruza == "", cruza)
 
-	# ── i ── a rua e o chanfro que o `Main.gd` repete são os do mapa. São eles
-	# que dão a diagonal das curvas abertas, e o jogo não lê o JSON.
+	# ── i ── a rua que o `Main.gd` repete é a do mapa, e a diagonal da curva
+	# aberta é a de que o gerador derivou o chanfro. Até 23/09 era o chanfro
+	# que o `Main.gd` repetia, para derivar dele a diagonal; a ordem inverteu-se
+	# (`docs/decisoes/053`), e o que se confere é o que atravessa a fronteira.
 	var asf0: Array = _faixa_de(0.0)["asfalto"]
 	_confere("a largura da rua no Main.gd é a do mapa (%.2f)" % float(consts["RUA_LARG"]),
 		absf(float(consts["RUA_LARG"]) - (float(asf0[1]) - float(asf0[0]))) < 0.01)
-	_confere("e o chanfro dos cotovelos também (%.2f)" % float(consts["CHANFRO_COTOVELO"]),
-		not cotovelos.is_empty()
-			and absf(float(consts["CHANFRO_COTOVELO"]) - float(cotovelos[0]["chanfro"])) < 0.01)
+	var corte: float = tela.call("corte_da_curva")
+	var cortes_do_mapa: Array = []
+	for c in cotovelos:
+		cortes_do_mapa.append(c.get("corte_da_curva", "(nada)"))
+	var corte_bate := not cotovelos.is_empty()
+	for c_mapa in cortes_do_mapa:
+		if typeof(c_mapa) != TYPE_FLOAT or absf(corte - float(c_mapa)) >= 0.0001:
+			corte_bate = false
+	_confere("e a diagonal das curvas abertas também (%.4f)" % corte, corte_bate,
+		"o mapa diz %s" % str(cortes_do_mapa))
+
+	# ── j ── E NENHUMA CARROÇARIA SAI DO ASFALTO NA CURVA ABERTA.
+	_d13_curva_aberta_no_asfalto(tela, [rota, retorno], cotovelos)
 
 	# ── b ── o retorno SOBE: `my` a descer nos retos, `mx` a descer nos
 	# cotovelos, do primeiro ponto ao último.
