@@ -28,15 +28,14 @@ O `ESTADO_DO_PROJETO.md` tem **~800 bytes de folga** (teto no `TETO_ESTADO` de
 ## 1. Comece pelo estado real
 
 - ⚠️ **A sessão fechou na branch `claude/elegant-lovelace-vwwpy7`, à frente da
-  `main` (`d13f6fb`, o PR #72 fundido), SEM PR aberto** — o PR só se abre a
-  pedido. Antes de qualquer checkout, confira no GitHub se um PR desta branch
-  foi aberto e fundido; se não foi, este trabalho só existe na branch, e
-  reiniciá-la da `main` apaga-o.
+  `main` (`d13f6fb`, o PR #72 fundido), com o PR #73 aberto.** Antes de
+  qualquer checkout, confira no GitHub se o #73 foi fundido; se não foi, este
+  trabalho só existe na branch, e reiniciá-la da `main` apaga-o.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**,
   HEAD confirmado com o GitHub, e `git log --oneline origin/main..HEAD` antes de
   reapontar seja o que for.
-- **O CI deste trabalho ainda não correu** — só corre em `pull_request` e na
-  `main`. Quando correr, o `brport-captura` deve dizer que **14 fotos mudaram**
+- **O CI do #73 arrancou no fecho e não tinha resultado** — confira-o primeiro.
+  O `brport-captura` deve dizer que **14 fotos mudaram**
   (todas as de jogo com o mapa à vista: os camiões trocaram de faixa) e **16
   não** (as folhas de contato e os painéis sem mapa), medido aqui contra uma
   bateria da `main` num worktree.
