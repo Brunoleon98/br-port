@@ -23,14 +23,14 @@ melhorados, com parte só em conceito, e quer que esta conversa o AUDITE.
 
 - **A sessão fechou na branch `claude/trusting-fermi-fsa8ql`, à frente da
   `main` (`d541806`, o #75 fundido), sem PR.** Mexeu só em
-  `tools/trilha_de_arte.py` e em documentos. Antes de qualquer checkout,
+  `tools/trilha_de_arte.{py,sh}` e em documentos; nenhum arquivo do jogo. Antes de qualquer checkout,
   confira no GitHub se alguém abriu e fundiu um PR dela; se não, o trabalho só
   existe na branch, e reiniciá-la da `main` apaga-o.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**, e
   `git log --oneline origin/main..HEAD` antes de reapontar seja o que for.
 - ⚠️ **O clone chega RASO** (184 commits, até 03/09). A trilha começa em
-  `21e428d` (02/09) e morre com `unknown revision` sem isto:
-  `git fetch --unshallow origin main`.
+  `21e428d` (02/09), e o `trilha_de_arte.sh` recusa-se a correr sem ele,
+  dizendo o que fazer: `git fetch --unshallow origin main`.
 
 ---
 
