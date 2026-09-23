@@ -812,6 +812,25 @@ frentes, e **a ordem é do Bruno**:
 
 Falta a metade dele, que é olhar — e está feita; falta escolher a ordem.
 
+#### ✅ A FRENTE 1 FECHOU (23/09) — a primeira que o Bruno escolheu
+
+- **(a) O calendário** mostra na grelha os ícones da legenda, que passaram a
+  sair de uma tabela só (`MARCAS`). O ícone vai POR BAIXO do número: a semana
+  tem OITO colunas, e lado a lado o último dia pedia 60 px por célula — medido,
+  o cartão alargava de 480 para 534 e saía descentrado. O dia 32 mostra as duas
+  marcas (o `!` escondia o fecho da semana 4), e o ícone da legenda deixou de
+  esticar com a linha. O **D36** tranca as três perguntas; seis mutantes, seis
+  reprovações, cada um na sua.
+- **(b) O título** da narração é «Primeira parcela paga» — vencer é
+  `parcela_paid`, logo é verdade sempre que a tela aparece.
+- **(c) O Arlindo** diz «meu caro», escolha do Bruno. A dose de 13/09 não
+  tinha salvo o «sobrinho»; a lição foi para o `CLAUDE.md`. A nota do
+  `contraoferta_fim` dizia «Ribeiro» e a tela é mesmo do Arlindo — a foto
+  confirma; não há o que corrigir.
+
+O pedido de «melhore o design» destas telas é da frente 3, e o resto da nota
+do `fimfase` (desbloqueios, tutorial) é da 5.
+
 ---
 
 ### A6 — O áudio de verdade

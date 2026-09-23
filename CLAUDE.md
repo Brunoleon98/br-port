@@ -1933,14 +1933,19 @@ tranca isso.
   uma palavra técnica por uma palavra do mundo, pergunte o que a nova palavra
   PROMETE — e se o resto do jogo cumpre a promessa.
 - **⚠️ MANEIRISMO QUE APARECE UMA VEZ NÃO É MANEIRISMO — É TROPEÇO.** O Arlindo
-  fecha a negociação perdida com *"sobrinho"*, e a primeira pergunta da leitura
-  foi *"como assim sobrinho?"*. A palavra está CERTA e documentada — o GDD
-  assina *"chama todo mundo de sobrinho ou querido, independente da idade"* —,
-  e mesmo assim a intenção não chegou: no GDD ele fala assim em toda cena, no
-  VS diz sete linhas e usa o maneirismo numa. **A dose é parte da escrita.**
-  A correção não foi tirar a palavra: foi plantar o "querido" na abertura, para
-  a segunda ocorrência ler como assinatura. Antes de cortar o que soou
-  estranho, conte quantas vezes ele aparece — pode faltar, e não sobrar.
+  fechava a negociação perdida com *"sobrinho"*, e a primeira pergunta da
+  leitura foi *"como assim sobrinho?"*. A palavra está CERTA e documentada — o
+  GDD assina *"chama todo mundo de sobrinho ou querido, independente da
+  idade"* —, e mesmo assim a intenção não chegou: no GDD ele fala assim em toda
+  cena, no VS diz sete linhas e usa o maneirismo numa. **A dose é parte da
+  escrita.** Antes de cortar o que soou estranho, conte quantas vezes ele
+  aparece — pode faltar, e não sobrar.
+  ⚠️ **E A CORREÇÃO DE ESCRITA É HIPÓTESE ATÉ A LEITURA SEGUINTE.** A de 13/09
+  foi de dose — plantar o "querido" na abertura —, e a leitura de 23/09
+  tropeçou no MESMO sítio: *"achei estranho ele chamar de sobrinho"*. A
+  palavra saiu (é "meu caro", escolha do Bruno). Quem corrige uma queixa de
+  leitura pede outra leitura; o raciocínio que justificou a correção não a
+  prova.
 - **⚠️ CONTAGEM QUE O JOGADOR LÊ CONCORDA A FRASE INTEIRA, e zero leva
   PLURAL.** `Narrativa.concordar(n, um, varios)` recebe as duas frases
   completas — "dia restante" / "dias restantes" —, e não substantivo e adjetivo

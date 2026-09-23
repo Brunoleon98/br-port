@@ -2191,7 +2191,7 @@ func _semana_nova() -> void:
 # terceira ela já foi desmentida duas, e repeti-la lê como a Dona Cida não
 # estar a ver o porto crescer. É a regra da DOSE que o maneirismo do Arlindo
 # ensinou, com o sinal trocado: ali faltava repetição para o "sobrinho" fazer
-# padrão, aqui sobra.
+# padrão (e nem a repetição o salvou — saiu em 23/09), aqui sobra.
 #
 # ⚠️ E A CONTAGEM SAI DE `estruturas`, que é onde o jogo a guarda. Um contador
 # próprio aqui seria uma segunda verdade a divergir da primeira — e esta não

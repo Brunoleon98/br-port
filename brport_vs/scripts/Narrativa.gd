@@ -28,8 +28,8 @@ extends RefCounted
 # 2. O NOME DO JOGADOR PODE ESTAR VAZIO. O GDD dá padrão ao nome do porto
 #    ("Cais Mirim") e não dá ao do jogador, e inventar um seria pôr palavra na
 #    boca de quem não a escolheu. Toda fala com vocativo tem variante sem ele —
-#    ver `_vocativo`. O Toninho já trata por "chefia" e o Arlindo por "sobrinho",
-#    então ninguém fica sem forma de tratamento.
+#    ver `_vocativo`. O Toninho já trata por "chefia" e o Arlindo por "meu
+#    caro", então ninguém fica sem forma de tratamento.
 #
 # 3. PORTO MIRIM É A CIDADE, CAIS MIRIM É O PORTO. São coisas diferentes e o
 #    rascunho usa as duas: o banco do Sr. Ribeiro é de Porto Mirim (fixo) e o
@@ -218,12 +218,17 @@ const CIDA_LINHAS := {
 # ── ARLINDO — a contra-oferta ──
 # Ele NÃO fala com o jogador: fala com o cliente, e o jogador ouve. É o que
 # torna a tela uma negociação assistida em vez de uma discussão.
-# ⚠️ O "QUERIDO" AQUI EXISTE PARA O "SOBRINHO" DO FIM FAZER SENTIDO. O GDD
+# ⚠️ O "SOBRINHO" DO FIM SAIU EM 23/09, e a DOSE não o tinha salvo. O GDD
 # assina o maneirismo — *"chama todo mundo de sobrinho ou querido,
-# independente da idade"* (`gdd/sistemas/voz_personagens.md`) —, mas no VS ele
-# só diz sete linhas, e um maneirismo que aparece UMA vez não lê como
-# maneirismo: lê como erro. Foi a primeira coisa que o playtest perguntou
-# ("como assim sobrinho?"). Duas ocorrências fazem padrão; uma faz tropeço.
+# independente da idade"* (`gdd/sistemas/voz_personagens.md`) —, e a primeira
+# leitura perguntou "como assim sobrinho?". A correção de 13/09 foi plantar o
+# "querido" nesta abertura, para a segunda ocorrência ler como assinatura; a
+# leitura seguinte tropeçou no MESMO sítio («achei estranho ele chamar de
+# sobrinho»). A leitura provável — ninguém a mediu: parentesco dito a quem não
+# é parente lê-se literal antes de ler como tique, e em sete linhas não há
+# tempo para virar tique. Escolha do Bruno: "meu caro" — a mesma
+# condescendência sorridente, sem parentesco. O "querido" fica: é a outra
+# metade do maneirismo, e nunca foi queixa.
 const ARLINDO_ABERTURA := "{portName} fez uma proposta. Entendo, querido. Mas eu consigo cobrir isso — e um pouco mais."
 
 # A reação sai do preset escolhido. As chaves batem com as três opções do
@@ -238,7 +243,7 @@ const ARLINDO_ULTIMA_TENTATIVA := "Minha oferta não expira. A paciência do sen
 # "A casa" é o maneirismo do guia de voz para o próprio porto, e "sempre bom
 # fazer negócio" podia sair da boca de qualquer um.
 const ARLINDO_VENCEU := "A casa agradece a preferência. Boa sorte pro {portName}."
-const ARLINDO_PERDEU := "Dessa vez não. Mas tem mais semanas pela frente, sobrinho."
+const ARLINDO_PERDEU := "Dessa vez não. Mas tem mais semanas pela frente, meu caro."
 
 # ⚠️ AS DUAS ÚLTIMAS ESTAVAM MUDAS DESDE 01/09, e é a QUARTA vez que este
 # projeto apanha a mesma coisa. Elas estavam escritas, passavam no bloco que
