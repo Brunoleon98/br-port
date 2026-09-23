@@ -831,6 +831,11 @@ Falta a metade dele, que é olhar — e está feita; falta escolher a ordem.
 O pedido de «melhore o design» destas telas é da frente 3, e o resto da nota
 do `fimfase` (desbloqueios, tutorial) é da 5.
 
+**E o pacote de vegetação do ChatGPT foi auditado no mesmo dia**
+(`docs/arquivo/AUDITORIA_ARTE_CHATGPT_2026-09-23.md`): nada entra, a vegetação
+não está em nenhum dos 31 vereditos, e o galpão V3 que o Bruno aprovou lá só
+existe no ambiente do ChatGPT até alguém publicar a branch `art/f01-galpao`.
+
 ---
 
 ### A6 — O áudio de verdade

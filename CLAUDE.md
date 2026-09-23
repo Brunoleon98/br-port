@@ -1014,6 +1014,12 @@ tranca isso.
   entrar.** Ele mede alfa e o ângulo da base contra os 26,57°. Dois lotes já
   vieram com o xadrez de transparência pintado nos pixels, e o de 31/08 vinha
   ainda com metade das peças noutra projeção.
+  ⚠️ **E trabalho de fora chega com uma BASE: confira-a no GitHub antes de ler
+  um número dele.** O pacote do ChatGPT de 23/09 foi feito sobre o PR #58 num
+  checkout cujo HEAD o GitHub não conhece, com decisões `034`–`036` que colidem
+  em número com as daqui e um galpão «aprovado» que só existe lá. O remendo
+  aplicou limpo na `main` e o teste de design passou — sem nenhuma guarda a
+  perguntar pela peça nova (`docs/arquivo/AUDITORIA_ARTE_CHATGPT_2026-09-23.md`).
 - **Asset novo sai de `blender/gerar_brp.py`**, que partilha a câmera e o kit
   com `gerar_props_iso.py`. Nada de um segundo estúdio ao lado.
 - **Prop no cenário nunca sai de gerador de imagem.** Duas levas perdidas: o

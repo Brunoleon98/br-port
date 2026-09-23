@@ -724,3 +724,9 @@ linhas da tabela de fechados desceram:
 | Fechado | O que ficou, medido |
 |---|---|
 | **O quadro dos props** (23/09, `049`) | 60 props em atlas, sem `bpy` nem nó mexido; os retratos ficam. Pixel de prop lê-se por `PropIso.imagem()`; as folhas provam que esconder a peça muda a foto |
+
+**E, para caber a frente 1 do A5,** desceu a mais antiga:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **O âmbar da seleção** (23/09, `050`) | nenhuma cor de borda dava 3:1 dos dois lados; a troca passou a um SELO âmbar escuro no "Escolhido" (3,86 e 4,74) |
