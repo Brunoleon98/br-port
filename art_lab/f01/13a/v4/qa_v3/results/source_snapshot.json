@@ -1,0 +1,10 @@
+{
+  "repo_head": "cc36166a262a751494ca3ccd25f1359f77b18fc1",
+  "git_status": " M brport_vs/art/porto_mapa_iso.svg\n M brport_vs/art/porto_mapa_iso_patio.svg\n M tools/gerar_mapa_iso.py\n",
+  "tracked_wip_hashes": {
+    "tools/gerar_mapa_iso.py": "e4c3d35e86f9f37e444a7f08ae51e7e64ebe09385a19bd9f9d126949df66e499",
+    "brport_vs/art/porto_mapa_iso.svg": "cfe2b487e9b25fb325d4a91a302869c75ffd6217158489d190625941314f7c79",
+    "brport_vs/art/porto_mapa_iso_patio.svg": "aa5a141835d3099fa3d2045d667749a01f84d28a37fff8b389905fc2391f29b5"
+  },
+  "github_current_not_checked": true
+}

@@ -1,0 +1,54 @@
+{
+  "candidate": "vegetacao_grupo_f1_v2",
+  "compare": "V1 e V2 no mesmo tamanho lógico 62x39",
+  "checks": [
+    {
+      "name": "PNG RGBA 600x380",
+      "status": "PASS"
+    },
+    {
+      "name": "cantos transparentes",
+      "status": "PASS"
+    },
+    {
+      "name": "desenho visível",
+      "status": "PASS"
+    },
+    {
+      "name": "prévia 720x720",
+      "status": "PASS"
+    },
+    {
+      "name": "geometria protegida intacta",
+      "status": "PASS"
+    },
+    {
+      "name": "três posições fora da máscara",
+      "status": "PASS"
+    },
+    {
+      "name": "cores da copa e luz do mapa presentes",
+      "status": "PASS"
+    }
+  ],
+  "changed_pixels": 598,
+  "protected_changed_pixels": 0,
+  "alpha_bbox": [
+    52,
+    108,
+    572,
+    321
+  ],
+  "sha256": {
+    "vegetacao_grupo_f1_v2.svg": "b6fe0319173bcc12cd4ad6d39f3723d6ef5cf638dcc0b1b157617d6509aab935",
+    "vegetacao_grupo_f1_v2.png": "07bbeba4d027ccc5f889f5b4baba94dc1f5a2bffb62551ff375cc7e6028929a3",
+    "mapa_estatico_v2.png": "e4aed7b792c82fb3ed63c71a4d85001c1f06b0b608d94586a4786ff46da7a4eb"
+  },
+  "pending": [
+    "avaliação estética de Bruno",
+    "captura Godot",
+    "teste em aparelho alvo",
+    "integração no gerador e verificação de sobreposição com objetos não incluídos na máscara"
+  ],
+  "ready_for_release": false
+}

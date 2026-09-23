@@ -1,0 +1,220 @@
+{
+  "asset_id": "f01_arbusto_13a",
+  "candidate_sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd",
+  "tests": [
+    {
+      "test": "hash_candidate",
+      "status": "PASS",
+      "detail": "evidence/13a_v3.png"
+    },
+    {
+      "test": "hash_before_map",
+      "status": "PASS",
+      "detail": "evidence/mapa_v2.png"
+    },
+    {
+      "test": "hash_after_map",
+      "status": "PASS",
+      "detail": "evidence/mapa_v3.png"
+    },
+    {
+      "test": "hash_reference",
+      "status": "PASS",
+      "detail": "evidence/reference_group.png"
+    },
+    {
+      "test": "hash_historical_comparison",
+      "status": "PASS",
+      "detail": "evidence/comparacao_anterior.jpg"
+    },
+    {
+      "test": "png_alpha_canvas",
+      "status": "PASS",
+      "detail": []
+    },
+    {
+      "test": "map_dimensions_before",
+      "status": "PASS",
+      "detail": [
+        720,
+        720
+      ]
+    },
+    {
+      "test": "map_dimensions_after",
+      "status": "PASS",
+      "detail": [
+        720,
+        720
+      ]
+    },
+    {
+      "test": "map_delta",
+      "status": "INFO",
+      "detail": {
+        "pixels": 927,
+        "bbox": [
+          50,
+          30,
+          176,
+          182
+        ]
+      }
+    },
+    {
+      "test": "protected_regions",
+      "status": "PENDING",
+      "detail": "Sem máscara independente de portas, docas e rotas; bbox de diferença não substitui essa prova."
+    },
+    {
+      "test": "scale_metadata",
+      "status": "INFO",
+      "detail": {
+        "coordinate_space": "720x1280 logical viewport; map 720x720; visible map 720x660",
+        "candidate_png": "256x256: representação ampliada, não consumida pelo jogo",
+        "source_draw_to_logical": 0.6666666666666666,
+        "isolated_draw_to_png": 4,
+        "import_scale_svg": 1.5,
+        "device_capture": null,
+        "note": "1:1 lógico não significa 1:1 físico no chat ou em todo aparelho"
+      }
+    },
+    {
+      "test": "quality_release",
+      "status": "PENDING",
+      "detail": [
+        "reference: não aprovado",
+        "reference: sem evidência",
+        "visual: não aprovado",
+        "visual: sem evidência",
+        "integration: não aprovado",
+        "integration: sem evidência",
+        "mobile: não aprovado",
+        "mobile: sem evidência",
+        "human: não aprovado",
+        "human: sem evidência"
+      ]
+    },
+    {
+      "test": "pinned_source",
+      "status": "PASS",
+      "detail": "e4c3d35e86f9f37e444a7f08ae51e7e64ebe09385a19bd9f9d126949df66e499"
+    },
+    {
+      "test": "placement_unchanged",
+      "status": "FAIL",
+      "detail": false
+    },
+    {
+      "test": "exact_specimen_matches_first_instance",
+      "status": "PASS",
+      "detail": true
+    },
+    {
+      "test": "shape_repeatable",
+      "status": "PASS",
+      "detail": true
+    },
+    {
+      "test": "stable_rng_prototype",
+      "status": "PASS",
+      "detail": "Teste da proposta isolada, sem aplicação ao código do jogo."
+    },
+    {
+      "test": "legacy_status_semantics",
+      "status": "REVIEW",
+      "detail": [
+        "f01_galpao",
+        "f01_grua_n1",
+        "f01_pier",
+        "f01_trabalhador",
+        "f01_costa",
+        "f01_espuma"
+      ]
+    }
+  ],
+  "repo_details": {
+    "source_sha256": "e4c3d35e86f9f37e444a7f08ae51e7e64ebe09385a19bd9f9d126949df66e499",
+    "anchors_current": [
+      [
+        -6.132301949,
+        2.5
+      ],
+      [
+        -6.022731226,
+        5.0
+      ],
+      [
+        -5.958863927,
+        6.6
+      ],
+      [
+        -1.988494038,
+        10.2
+      ],
+      [
+        -1.98174147,
+        12.0
+      ]
+    ],
+    "anchors_mutation": [
+      [
+        -6.132301949,
+        2.5
+      ],
+      [
+        -5.94526286,
+        5.0
+      ],
+      [
+        -6.04108195,
+        6.6
+      ],
+      [
+        -1.988494038,
+        10.2
+      ],
+      [
+        -2.089311371,
+        12.0
+      ]
+    ],
+    "placement_unchanged": false,
+    "v2_six_lobe_replay": [
+      [
+        -6.132301949,
+        2.5
+      ],
+      [
+        -6.106267066,
+        5.0
+      ],
+      [
+        -6.091241803,
+        6.6
+      ],
+      [
+        -1.988494038,
+        10.2
+      ],
+      [
+        -1.951602357,
+        12.0
+      ]
+    ],
+    "seven_lobe_replay_matches_current": true,
+    "historical_replay_note": "V2 reconstruída do código mostrado na conversa; não é um arquivo V2 autenticado.",
+    "exact_specimen_matches_first_instance": true,
+    "shape_repeatable": true,
+    "legacy_production_with_open_gates": [
+      "f01_galpao",
+      "f01_grua_n1",
+      "f01_pier",
+      "f01_trabalhador",
+      "f01_costa",
+      "f01_espuma"
+    ],
+    "isolated_layout_proposal_pass": true
+  },
+  "ready_for_release": false
+}

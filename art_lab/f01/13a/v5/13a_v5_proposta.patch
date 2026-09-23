@@ -1,0 +1,169 @@
+--- a/tools/gerar_mapa_iso.py
++++ b/tools/gerar_mapa_iso.py
+@@ -32,6 +32,7 @@
+ """
+ 
+ import base64
++import hashlib
+ import json
+ import math
+ import pathlib
+@@ -1036,70 +1037,78 @@
+     return s
+ 
+ 
+-def arbusto_baixo_f1(mx: float, my: float, r: random.Random) -> str:
+-    """Arbusto 13A: folhagem da frente da prancha V4, sem as árvores altas.
++def _semente_13a(identidade: str, canal: str) -> int:
++    chave = "BRP-13A-V4|%s|%s" % (identidade, canal)
++    return int.from_bytes(hashlib.sha256(chave.encode("utf-8")).digest()[:16], "big")
+ 
+-    A prancha de vegetação V4 é referência de silhueta. O mapa desenha esta
+-    peça no mesmo espaço das árvores: o SVG mantém a escala e a ordenação da
+-    vila, sem um PNG grande para uma moita de poucos pixels na tela.
+-    """
++
++def arbusto_baixo_f1(mx: float, my: float, r: random.Random) -> str:
++    """13A V5: três rosetas foliares largas sobre ramos baixos separados."""
+     px, py = p(mx, my, ALT_CAIS)
+-    s = ('  <ellipse cx="%.1f" cy="%.1f" rx="9.2" ry="2.7" '
+-         'fill="%s" opacity="0.28"/>\n'
+-         % (px + 2.3, py + 1.2, C["mangue"]))
+-    # Dois ramos aparecem só junto ao chão. Traços mais finos sumiriam quando
+-    # os 1080 px de desenho são vistos na largura de 720 do mapa.
+-    s += traco([(px - 2.0, py - 1.0), (px - 6.0, py - 6.0)],
+-               C["tronco"], 1.8)
+-    s += traco([(px + 1.0, py - 0.8), (px + 6.8, py - 6.2)],
+-               C["tronco"], 1.8)
+-
+-    # A referência tem um interior muito mais escuro que a V2. A pequena
+-    # mancha de folhas secas fica atrás das verdes, visível mas localizada.
+-    sombra = _misturar_cor(C["copa"], C["mangue"], 0.48)
+-    fundo = _misturar_cor(C["copa"], C["mangue"], 0.70)
+-    meio = _misturar_cor(C["copa"], C["copa_luz"], 0.32)
+-    claro = _misturar_cor(C["copa"], C["copa_luz"], 0.74)
+-    seco = _misturar_cor(C["solo_claro"], "#c2a343", 0.68)
+-    s += poli([(px - 11.3, py - 5.0), (px - 7.5, py - 9.3),
+-               (px + 5.5, py - 8.4), (px + 11.3, py - 3.8),
+-               (px + 7.8, py + 0.4), (px - 7.7, py + 0.3)], fundo)
+-
+-    # Primeiro os volumes de trás, depois os mais claros e largos da frente.
+-    # A altura assimétrica evita uma barra de copas idênticas em miniatura.
+-    for dx, dy, rx, ry, altura, cor in (
+-            (-8.0, -8.0, 5.5, 3.8, 4.1, sombra),
+-            (-0.7, -13.0, 6.2, 4.8, 5.2, meio),
+-            (6.7, -10.4, 6.9, 4.6, 5.2, C["copa"]),
+-            (-5.2, -6.3, 6.8, 4.2, 4.5, claro),
+-            (4.6, -5.7, 7.5, 4.7, 4.7, meio),
+-            (-10.2, -3.2, 4.2, 2.9, 3.0, fundo),
+-            (10.2, -2.8, 4.3, 3.0, 3.1, sombra)):
+-        s += com_saia(_lobo(px + dx, py + dy, rx, ry, r), altura, cor)
+-
+-    # Um tufo seco espreita pelo lado esquerdo, como no conceito. Desenhá-lo
+-    # atrás de todas as copas fazia o detalhe desaparecer inteiro a 1:1.
+-    s += poli([(px - 11.6, py - 8.2), (px - 10.3, py - 10.8),
+-               (px - 8.5, py - 8.5), (px - 6.6, py - 10.6),
+-               (px - 5.7, py - 5.7), (px - 9.1, py - 4.6)], seco)
+-    s += poli([(px - 9.1, py - 4.6), (px - 5.7, py - 5.7),
+-               (px - 6.2, py - 2.4), (px - 9.3, py - 2.3)],
+-              _sombrear(seco, 0.68))
+-
+-    # Três manchas de folhas grandes. Cada uma mede mais de dois pixels na
+-    # tela; nervuras, folhas soltas e textura miúda desapareceriam a 1:1.
+-    s += poli([(px - 3.9, py - 14.6), (px - 0.9, py - 16.1),
+-               (px + 2.0, py - 14.6), (px - 0.7, py - 12.1)], claro)
+-    s += poli([(px + 5.0, py - 10.9), (px + 8.7, py - 12.0),
+-               (px + 10.4, py - 9.4), (px + 6.8, py - 8.4)],
+-              _misturar_cor(meio, C["copa_luz"], 0.30))
+-    s += poli([(px + 0.8, py - 6.1), (px + 3.6, py - 8.4),
+-               (px + 7.1, py - 7.1), (px + 5.3, py - 4.9)],
+-              _misturar_cor(meio, claro, 0.44))
+-    s += poli([(px - 8.5, py - 8.1), (px - 5.6, py - 8.8),
+-               (px - 3.2, py - 6.6), (px - 6.4, py - 5.4)],
+-              _misturar_cor(claro, C["solo_claro"], 0.22))
+-    return s
++    var = r.uniform(-0.25, 0.25)
++    escuro = _misturar_cor(C["copa"], C["mangue"], 0.63)
++    meio = _misturar_cor(C["copa"], C["mangue"], 0.18)
++    claro = _misturar_cor(C["copa"], C["copa_luz"], 0.59)
++    folha_clara = _misturar_cor(C["copa"], C["copa_luz"], 0.34)
++    ocre = _misturar_cor(C["solo_claro"], "#b4a13f", 0.74)
++
++    def petala(cx, cy, tx, ty, w, cor, reflexo):
++        """Folha ovada de ponta macia e uma face plana discreta."""
++        w *= 1.18
++        vx,vy=tx-cx,ty-cy
++        norma=math.hypot(vx,vy)
++        nx,ny=-vy/norma,vx/norma
++        a=(cx+vx*.48+nx*w,cy+vy*.48+ny*w)
++        b=(tx+nx*w*.42,ty+ny*w*.42)
++        c=(tx-nx*w*.42,ty-ny*w*.42)
++        e=(cx+vx*.48-nx*w,cy+vy*.48-ny*w)
++        cap=(tx+vx*.22,ty+vy*.22)
++        path=('M%.2f,%.2f Q%.2f,%.2f %.2f,%.2f '
++              'Q%.2f,%.2f %.2f,%.2f Q%.2f,%.2f %.2f,%.2f Z' %
++              (cx,cy,*a,*b,*cap,*c,*e,cx,cy))
++        face=('M%.2f,%.2f L%.2f,%.2f L%.2f,%.2f L%.2f,%.2f Z' %
++              (cx,cy,*a,*b,tx+vx*.04,ty+vy*.04))
++        return ('    <path d="%s" fill="%s"/>\n'
++                '    <path d="%s" fill="%s"/>\n' % (path,cor,face,reflexo))
++
++    out='  <g transform="translate(%.2f %.2f) scale(.90 1)">\n' % (px,py)
++    # Três bases separadas para conservar espaço negativo junto ao chão.
++    for cx,rx in ((-10.0,4.7),(0.0,5.2),(9.0,4.3)):
++        out+='    <ellipse cx="%.1f" cy=".6" rx="%.1f" ry="1.05" fill="%s" opacity=".18"/>\n' % (cx,rx,C["mangue"])
++    for d in ('M-10,-1 Q-10,-3 -10,-7',
++              'M0,-1 Q-2,-5 -1,-10',
++              'M8,-1 Q9,-4 9,-7'):
++        out+='    <path d="%s" fill="none" stroke="%s" stroke-width="1.1" stroke-linecap="round"/>\n' % (d,C["tronco"])
++    out+='    <g transform="translate(0 4)">\n'
++
++    # Roseta esquerda: baixa, espraiada e mais escura.
++    out+='    <path d="M-13,-9 Q-14,-13 -10,-14 Q-6,-14 -6,-10 L-7,-7 -11,-7 Z" fill="%s"/>\n' % escuro
++    for tx,ty,w,cor,faceta in (
++        (-16,-11,3.3,meio,folha_clara),(-12,-16,3.2,escuro,meio),
++        (-7,-14,3.2,meio,claro),(-5,-10,3.0,escuro,folha_clara),
++        (-9,-6,3.0,meio,claro),(-14,-7,2.8,escuro,meio)):
++        out+=petala(-10,-10,tx,ty,w,cor,faceta)
++
++    # Miolo um pouco mais alto; cada roseta possui seu próprio sombreamento.
++    out+='    <path d="M-4,-13 Q-5,-18 0,-18 Q5,-18 5,-13 L3,-10 -2,-10 Z" fill="%s"/>\n' % escuro
++    for tx,ty,w,cor,faceta in (
++        (-6,-16,3.2,meio,claro),(-2,-20,3.4,escuro,folha_clara),
++        (3+var,-19,3.5,meio,claro),(6,-15,3.1,escuro,folha_clara),
++        (3,-10,3.3,meio,claro),(-2,-9,3.3,escuro,folha_clara)):
++        out+=petala(0,-14,tx,ty,w,cor,faceta)
++
++    # Roseta direita menor e oblíqua: não repetir a silhueta da esquerda.
++    out+='    <path d="M6,-8 Q5,-13 10,-13 Q14,-13 14,-9 L12,-6 8,-6 Z" fill="%s"/>\n' % escuro
++    for tx,ty,w,cor,faceta in (
++        (4,-12,2.8,meio,folha_clara),(8,-16,3.0,escuro,meio),
++        (13,-14,3.0,meio,claro),(16,-10,2.9,escuro,folha_clara),
++        (12,-5,3.0,meio,claro),(7,-5,2.6,escuro,folha_clara)):
++        out+=petala(9,-9,tx,ty,w,cor,faceta)
++
++    # Folhas secas pertencem ao ramo esquerdo e aparecem entre verdes.
++    out+=petala(-8,-10,-9,-15,2.0,ocre,_sombrear(ocre,0.83))
++    out+=petala(-8,-10,-5,-13,1.8,_sombrear(ocre,0.77),ocre)
++    return out+'    </g>\n  </g>\n'
+ 
+ 
+ def vegetacao_do_solo(indice: int, mx0: float, my0: float, mx1: float,
+@@ -1199,11 +1208,13 @@
+     # semente própria preserva os sorteios anteriores (árvores, moitas e capim).
+     # Não há arbusto sobre a rua, acessos, píeres nem nos degraus fora da tela.
+     posicoes = {1: (2.5, 5.0, 6.6), 2: (10.2, 12.0)}
+-    ar = random.Random(SEMENTE_CHAO + 1300 + indice)
+-    for my in posicoes.get(indice, ()):
+-        mx = mx1 - 0.48 - ar.uniform(0.0, 0.26)
++    for numero, my in enumerate(posicoes.get(indice, ())):
++        identidade = "f01_13a_%d_%d" % (indice, numero)
++        rp = random.Random(_semente_13a(identidade, "posicao"))
++        rf = random.Random(_semente_13a(identidade, "forma"))
++        mx = mx1 - 0.48 - rp.uniform(0.0, 0.26)
+         if no_quadro(mx, my):
+-            s += arbusto_baixo_f1(mx, my, ar)
++            s += arbusto_baixo_f1(mx, my, rf)
+     return s
+ 
+ 

@@ -1,0 +1,561 @@
+{
+  "created": "2026-09-23",
+  "purpose": "audit read-only handoff",
+  "files": [
+    {
+      "arquivo_zip": "README_INICIO.md",
+      "bytes": 803,
+      "sha256": "a27bc922fb48948142c6f972633a668cbf1ea6b0b8c79cd96481340f73feaeaa"
+    },
+    {
+      "arquivo_zip": "RELATORIO_AUDITORIA_E_LICOES_APRENDIDAS.md",
+      "bytes": 12293,
+      "sha256": "6e0ee7d0a334d0f37e513d813d693eba1dad3735cd369d385bc2701ea24b4299"
+    },
+    {
+      "arquivo_zip": "PROMPT_AUDITORIA_CLAUDE_BR_PORT.md",
+      "bytes": 2495,
+      "sha256": "fa5cfd1db37a8dab73b1f14a10acd4421782938241ef0550e8f156adda54ad6a"
+    },
+    {
+      "arquivo_zip": "RESULTADOS_TESTES_REEXECUTADOS.txt",
+      "bytes": 684,
+      "sha256": "427221edc4f97e793262baa63c3d16a6e160a87b98601b08d2b5ad8b4ed804a7"
+    },
+    {
+      "arquivo_zip": "verificar_manifesto.py",
+      "bytes": 757,
+      "sha256": "7340e835d5adf4bd93d659cd8c0e19736e1e88fad705970028d621716d2c15cb"
+    },
+    {
+      "arquivo_zip": "evidencias_git/ESTADO_CHECKOUT_LOCAL.txt",
+      "bytes": 491,
+      "sha256": "2140745ad637b1b6e1c61fe03197e53963cd5053be68c4028904a4c275d20c96"
+    },
+    {
+      "arquivo_zip": "evidencias_git/repo_wip_preexistente.patch",
+      "bytes": 46078,
+      "sha256": "c39b324c471d328fda120f2deca3ad15499558ab885b6ffea3110212b2d11b44"
+    },
+    {
+      "arquivo_zip": "referencias/13_arbustos_vegetacao_baixa_mangue_v4.png",
+      "bytes": 1743151,
+      "sha256": "c5a085ee64c13aadfcb25b5f4bc772d2e682272cbc92557ad3a4c1b09488c040"
+    },
+    {
+      "arquivo_zip": "referencias/13a_arbusto_baixo_v2.png",
+      "bytes": 5481,
+      "sha256": "2308614c2fd795c8b69e6c73adb03d891981af78df7927a8de44afbefb834ff2"
+    },
+    {
+      "arquivo_zip": "referencias/13a_arbusto_baixo_v3.png",
+      "bytes": 7249,
+      "sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd"
+    },
+    {
+      "arquivo_zip": "referencias/BR_PORT_QA_ASSETS_V3.zip",
+      "bytes": 882352,
+      "sha256": "dc6496fdd2b520220a80c67eaba648c0c424ebc3e86c81ea79402b02723be3cd"
+    },
+    {
+      "arquivo_zip": "referencias/FICHA_F1_VEGETACAO_13_E_COSTA_V8_V1.md",
+      "bytes": 10323,
+      "sha256": "78950e2db4616e9a4c6ecd1037db57227bd7fb9126859baa379d44dfb443cbf2"
+    },
+    {
+      "arquivo_zip": "referencias/MANGUE_AGUA_PEDRAS_F1_V8_CONCEITO.png",
+      "bytes": 2017720,
+      "sha256": "a2dac19bf2b56f8c6d4dbd3d911afe1ab14289016cb0c51be9ff23e81936c6b8"
+    },
+    {
+      "arquivo_zip": "referencias/PLANO_PRODUCAO_ASSETS_BR_PORT_V3.md",
+      "bytes": 43181,
+      "sha256": "4c3b12ce92913120c7db90213ebbc23a92363b3e388571db49b4755145a714e2"
+    },
+    {
+      "arquivo_zip": "referencias/PROMPT_BR_PORT_PROXIMA_CONVERSA_V16.md",
+      "bytes": 5337,
+      "sha256": "da606f573fceb7b2fcd3a022a787df25c1f7aa4cc0f3f44ccb661fa1f407dd41"
+    },
+    {
+      "arquivo_zip": "referencias/RELATORIO_AUDITORIA_ASSETS_V3.md",
+      "bytes": 5195,
+      "sha256": "bae90652bb5e0e3072d09fa29606197efadc07b8c42bbcad0c4c6bd29c9d00ee"
+    },
+    {
+      "arquivo_zip": "evidencias_git/decisoes/034-o-lote-zero-separa-exportacao-de-producao.md",
+      "bytes": 7402,
+      "sha256": "1b18530fc3607bbd516fb5857bd9030396932f57b7831ab68cc7f89b8c8ae2dc"
+    },
+    {
+      "arquivo_zip": "evidencias_git/decisoes/035-a-casa-costeira-f1-fica-no-gerador-do-mapa.md",
+      "bytes": 3549,
+      "sha256": "abae9767e62c89af8df129dfe8cea4e55d277d96a0a1e6632c08bc4b1c2da3bc"
+    },
+    {
+      "arquivo_zip": "evidencias_git/decisoes/036-o-galpao-f1-preserva-dois-estados-e-o-gerador-atual.md",
+      "bytes": 1852,
+      "sha256": "b7e4f40fb2999d695b7b8cc1309f4d132969a875e21dde0f12fc39faefece55e"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/13a_v4_comparacao.jpg",
+      "bytes": 226832,
+      "sha256": "90198eb11bf381c6dfbc47cc81be21694f23baa30903d406bf0791f5a50fe4c8"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/13a_v4_instancia_1.png",
+      "bytes": 7020,
+      "sha256": "2629a3ef03b585873a2b29f5018065b7d4d4505a55a1b267096a350f94f7c4e4"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/13a_v4_instancia_1.svg",
+      "bytes": 2010,
+      "sha256": "fbe89366c30b1a8d98eed9e7cd0c0a3a765804434a260f5cfc4245e0ca27a73d"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/13a_v4_mapas_antes_depois.jpg",
+      "bytes": 200646,
+      "sha256": "76503ee15491b7f262848071498738d082df9ded91242fc813262a5dc469b10f"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/13a_v4_proposta.patch",
+      "bytes": 8355,
+      "sha256": "727162afd78f2336cbf6dce187fe2c9e02205db90fc6456251303edd01d7c586"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/13a_v4_tres_posicoes.jpg",
+      "bytes": 337930,
+      "sha256": "2947e50d89822856e98af9077c20088111565273e6f3de75b075b72d107f2e53"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/README.md",
+      "bytes": 1333,
+      "sha256": "fd914b7c2c472aca741be36465693902e93b0565eecc5d7277d9b82c4498628a"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/RELATORIO_13A_V4.md",
+      "bytes": 6681,
+      "sha256": "e38b08c822a3b121be5330719c9e0593f1bb911d668b76573e74ba0673b89093"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/arbusto_v4.py.txt",
+      "bytes": 3604,
+      "sha256": "6c5c0086b73e6c735854c637ff48d87dc91fd1f4f5da3138a80e56aece463c12"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/build.py",
+      "bytes": 2878,
+      "sha256": "0e43551df80c85e3abcbcb518aff46999d542022049e6242f89fcc6900d3d7b6"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/gerar_mapa_iso_13a_v4.py",
+      "bytes": 219443,
+      "sha256": "6aa6d3e8a03ab2bd367f3ac3f9450ecf6ba65917fb4ed4bd5b7985165f6ba610"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/mapa_patio_v3.png",
+      "bytes": 310956,
+      "sha256": "de2fcddae4f4cbe605891b68039ec820811dec448dde1f2a5c1b3aedd0d726a6"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/mapa_patio_v4.png",
+      "bytes": 310607,
+      "sha256": "01827460d7aad6b8df07cd1bc0bdf508e592ffd0506eb97ede57d4b1f5053935"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/mapa_v3.png",
+      "bytes": 308468,
+      "sha256": "4a61832f29b29a4bd9f4f1c1789da73c0154dc0c7e1a55ccf44a294532a6216b"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/mapa_v4.png",
+      "bytes": 308386,
+      "sha256": "a218a08d009f3cae7bf99bceed86a120d91414e2a68c0ea05f1b04e23bfcf1d7"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/mascara_geometria_protegida.png",
+      "bytes": 7677,
+      "sha256": "3355538df222ecb54069204bde56c723565eb4f966f6cbb55e793b9c189db28a"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/porto_mapa_ancoras.json",
+      "bytes": 16810,
+      "sha256": "e3bc81b8762263c163786f2c756d1906b54bc1bc9f5f4b8d982a2998388aa683"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/porto_mapa_iso_patio_v4.svg",
+      "bytes": 2000094,
+      "sha256": "c29f64a656f2344cfb64d40e63231ac64aa16dd8f889403d3222ce2b94f8c6f8"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/porto_mapa_iso_v4.svg",
+      "bytes": 2027325,
+      "sha256": "c15200692639ba5e559221d1c777dc568ae8ca56744d9f5187469a110a2eb1d8"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/previews.py",
+      "bytes": 4753,
+      "sha256": "fc8fb6ea0e25a6978e77e894efbf036a156a77afa086cc077062a94df43cf0c8"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/PLANO_PRODUCAO_ASSETS_BR_PORT_V3.md",
+      "bytes": 43181,
+      "sha256": "4c3b12ce92913120c7db90213ebbc23a92363b3e388571db49b4755145a714e2"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/README.md",
+      "bytes": 2061,
+      "sha256": "93c1f1106d8dcf98d95381a437e446886caf1b95ce57cc79621ad3f0f7633798"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/RELATORIO_AUDITORIA_ASSETS_V3.md",
+      "bytes": 5195,
+      "sha256": "bae90652bb5e0e3072d09fa29606197efadc07b8c42bbcad0c4c6bd29c9d00ee"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/contracts/13a.qa.json",
+      "bytes": 2727,
+      "sha256": "16895d96c230dca852406811afd087a6af7b087a28be47bfc1c58049c95ca2a6"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/evidence/13a_v3.png",
+      "bytes": 7249,
+      "sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/evidence/comparacao_anterior.jpg",
+      "bytes": 164530,
+      "sha256": "63952f61e1d4f38c3d0665ce3a6bd116b0daf8794767d954879d3c77ae0f398f"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/evidence/mapa_v2.png",
+      "bytes": 308162,
+      "sha256": "e14b8ea9ce7c017f1dd6f32f413396f70de6cc3e548aa31e4a098ed940c20d11"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/evidence/mapa_v3.png",
+      "bytes": 308468,
+      "sha256": "4a61832f29b29a4bd9f4f1c1789da73c0154dc0c7e1a55ccf44a294532a6216b"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/evidence/reference_group.png",
+      "bytes": 73627,
+      "sha256": "2637c44cac3589e7b5074789da4dfe2454c9c2fbcc19508f3ac9e8b0ac9e2864"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/qa_assets.py",
+      "bytes": 10413,
+      "sha256": "ab33d24880e08d7ae69bb12a673d35ebd51d368a4428b6b4e3f851c50ce24d2f"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/results/13a_auditoria.json",
+      "bytes": 4758,
+      "sha256": "cf8ad130ffdab638e6b15e02fce437a715966e0a3ca720b3699bc9f8da2adf0c"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/results/selftests.txt",
+      "bytes": 1187,
+      "sha256": "4d3ee0d8ad131e7537a46afe5db94cc6519cf5799892d833ae27020c1de96949"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/results/source_snapshot.json",
+      "bytes": 579,
+      "sha256": "769d3a6bffb1adfebef41d875b468d52ffb3e2fd9bbd3499d6d761bacd5e32c2"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3/tests/test_qa.py",
+      "bytes": 3673,
+      "sha256": "3a1021895b29c5b5e0106d5655929c7299e76083edfacd31a00f2a6d35955d14"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v3_replay.json",
+      "bytes": 4758,
+      "sha256": "cf8ad130ffdab638e6b15e02fce437a715966e0a3ca720b3699bc9f8da2adf0c"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v4.json",
+      "bytes": 3581,
+      "sha256": "8f513a61460a7101b5d0a397804f6ba76d48e5b9c924856cc9bfbbaaa217b2ff"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v4/qa_v4.py",
+      "bytes": 5145,
+      "sha256": "50b46b0faf3eecb2b2ffbec06af887ce1423b794f1e082d511c0be4afbb42916"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/13a_v5_comparacao_conceito_v4_v5.jpg",
+      "bytes": 239015,
+      "sha256": "02716b177f37857fe4fd37c1932158e6d8cee6c83874c2ed4d7ee378461ab882"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/13a_v5_instancia_1.png",
+      "bytes": 8855,
+      "sha256": "fc272734528bbfa6d1b9ae34b0df3cd55ce3b24b6a994f3de8ca30bee77b4b9e"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/13a_v5_instancia_1.svg",
+      "bytes": 5242,
+      "sha256": "6d61adcdd4c8f06d0355e978a3772404ea9863dae3071d47a9d296f2db80a9db"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/13a_v5_mapas_v4_v5.jpg",
+      "bytes": 196992,
+      "sha256": "2c3569d80891cceb090d0f301a428810984da5f3bb3de25b33b2c6fd5d6ed16a"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/13a_v5_proposta.patch",
+      "bytes": 8322,
+      "sha256": "f1e8c5b98b52d2a4e684e443e2e982059f6f138b09c418d0ac6b7a11e3727712"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/13a_v5_tres_posicoes.jpg",
+      "bytes": 364879,
+      "sha256": "f401cb813f73e2b29048887de3ee6e4068bef034d6e80b248cc1645bd766b469"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/README.md",
+      "bytes": 1184,
+      "sha256": "da06e6fe48c34e4ca9b09d98307a240a40a2649970de39447d723f609a5e069a"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/RELATORIO_13A_V5.md",
+      "bytes": 3814,
+      "sha256": "e26c0a017e898e8b5fa48b8444828bed99b010d293da0330a0b5f764e6beb4e4"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/arbusto_v5.py.txt",
+      "bytes": 3468,
+      "sha256": "f9579d2a935c624efc82aaf39df5c2f3aa19db15458ef265f43e5bfa019bf9b0"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/build.py",
+      "bytes": 1387,
+      "sha256": "e7721e88561bbed9952c272a1b1891ae0a732f2241e3f6094e7f361c65f026bc"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/gerar_mapa_iso_13a_v5.py",
+      "bytes": 219307,
+      "sha256": "44692c485bc65f8d5a19670a328278a834f2b085d8142682312a01459bd61922"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/mapa_patio_v5.png",
+      "bytes": 310357,
+      "sha256": "9169a2af6f1bdf2755044e432fe8b86e7dd740f335a442df1f245cc6733c6e74"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/mapa_v5.png",
+      "bytes": 308346,
+      "sha256": "a4e01b06d9206fbb17ddf4f81bbb21da673971a9602b4000b75b1313facda057"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/mascara_geometria_protegida_v5.png",
+      "bytes": 7677,
+      "sha256": "3355538df222ecb54069204bde56c723565eb4f966f6cbb55e793b9c189db28a"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/porto_mapa_ancoras.json",
+      "bytes": 16810,
+      "sha256": "e3bc81b8762263c163786f2c756d1906b54bc1bc9f5f4b8d982a2998388aa683"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/porto_mapa_iso_patio_v5.svg",
+      "bytes": 2016252,
+      "sha256": "ae256dc3e1d9b156e3e37295113f3999c53348b33f811055006bd2a3a194b034"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/porto_mapa_iso_v5.svg",
+      "bytes": 2043483,
+      "sha256": "6f00557e5dd270f9c19e525b695e47956c6896a62e09c08488c23f6d4a923c2b"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/previews.py",
+      "bytes": 3873,
+      "sha256": "3bacde10ed3f2369827b488e6be6953734b5f42409c8f530da696cc74e869a5c"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/qa_v5.json",
+      "bytes": 4286,
+      "sha256": "2c20cdb70da508da4828acc7cf7c19bfa8429e11a3f833580f24a6484b248772"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/13a/v5/qa_v5.py",
+      "bytes": 4301,
+      "sha256": "2353091cfe4f4a120fa25c0089cb2c1e75f4fc525ca2043401faf23920216588"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/RELATORIO_E_PASSAGEM.md",
+      "bytes": 3363,
+      "sha256": "3af115287c569563abd52d9d793660fdd0e1fc80d68df53b52e8247eac65ab13"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/build.py",
+      "bytes": 6473,
+      "sha256": "f902e78bc00998cb7414f7754635fdf097ffaab50f1856fd7ac932177ee85c12"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/comparacao_grupo_v1.png",
+      "bytes": 572989,
+      "sha256": "fe0a987faefaa9360b55eb5f2b33d9ced30417219ea6de33bc43b8397891ba06"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/mapa_estatico_v1.png",
+      "bytes": 313014,
+      "sha256": "8809c41800a461e9d0961c72b4084f2a4ed515dd64cd1d475a74282da52b5579"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/previews.py",
+      "bytes": 3645,
+      "sha256": "8e55037cbba8ef27f4f3f91a6bca209305b6a18e07490e712c4e972148756025"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/qa_grupo.json",
+      "bytes": 1393,
+      "sha256": "71c31483cb45b7e3bad381ef76e42d2ba904da7d0ec6d01db742b546fd8cd1dd"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/qa_grupo.py",
+      "bytes": 1997,
+      "sha256": "66bac726d04838cb34dcd3d94bc9ce86a587b6dc5d710d0a775b08330a6c0db7"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/tres_posicoes_estaticas_v1.png",
+      "bytes": 146637,
+      "sha256": "a797e325c8d05ca3397e229492074f4fc7149592e1fd40e0051a89c78979cc5c"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/vegetacao_grupo_f1_v1.png",
+      "bytes": 78363,
+      "sha256": "81dfc36e03369a80cf51a49aa88822ac2dc605247ff9724e735f61e8b59f49b7"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v1/vegetacao_grupo_f1_v1.svg",
+      "bytes": 42218,
+      "sha256": "7c0a05307f09edd3733771bac6395ae9fc36451f2308ee235949ed57290a7a44"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/RELATORIO_E_PASSAGEM_V2.md",
+      "bytes": 2520,
+      "sha256": "c4ce0db1125ca3f16d6b1b86c90e101f9617db249d7d5f28bf1d13123f97a8f7"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/build.py",
+      "bytes": 3451,
+      "sha256": "1c60a792b63a20ecf60b285ee2ce6090935b4abc3e734f076df81c969198386a"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/comparacao_v1_v2_no_mapa.png",
+      "bytes": 448464,
+      "sha256": "9b05ba1abc2d533a3eaddda8867a629e9efaf4e4c3650a42ae556211ad8ba174"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/mapa_estatico_v2.png",
+      "bytes": 309906,
+      "sha256": "e4aed7b792c82fb3ed63c71a4d85001c1f06b0b608d94586a4786ff46da7a4eb"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/mapa_v1_mesma_escala.png",
+      "bytes": 310768,
+      "sha256": "b10bb1a7f32a7505194236907dc9319decd6cf19182bab1a5dc6661bdb36cca9"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/mapa_v2_mesma_escala.png",
+      "bytes": 309906,
+      "sha256": "e4aed7b792c82fb3ed63c71a4d85001c1f06b0b608d94586a4786ff46da7a4eb"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/previews.py",
+      "bytes": 3752,
+      "sha256": "b30b21405e66e915c84ccdfa41a5e2f04e28ead7f8e688c0cfe80f14555dd183"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/qa_v2.json",
+      "bytes": 1332,
+      "sha256": "d507d6834190d46c365543b930c176d230a6f7cbc55ff01b55cb6195256765df"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/qa_v2.py",
+      "bytes": 2095,
+      "sha256": "0709dd5323c6fd5deb6add4c570f890d5d7ddc8ded220f1515166857ca1f43e1"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/tres_posicoes_v2.png",
+      "bytes": 126211,
+      "sha256": "8d7ca53520c55270c265470b57048a8f45bdee1e77cdb38ee13975d8329c570a"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/vegetacao_grupo_f1_v2.png",
+      "bytes": 34142,
+      "sha256": "07bbeba4d027ccc5f889f5b4baba94dc1f5a2bffb62551ff375cc7e6028929a3"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v2/vegetacao_grupo_f1_v2.svg",
+      "bytes": 11550,
+      "sha256": "b6fe0319173bcc12cd4ad6d39f3723d6ef5cf638dcc0b1b157617d6509aab935"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/RELATORIO_E_PASSAGEM_V3.md",
+      "bytes": 2542,
+      "sha256": "778d96d84faebcf22e93f9b6c76ed3a9038c4a034a9d1862b65d7872749b4ce2"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/build.py",
+      "bytes": 995,
+      "sha256": "68b70f067dfd9766eda1442fbb9fd24f62bb5a6004793bf0f9fd593ed2ae5f61"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/build_source.py",
+      "bytes": 5817,
+      "sha256": "95b891e560f7759cc9a8e49a55a44517df956f5a40b002ae832c8cf58ebed78a"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/comparacao_v1_v3_no_mapa.png",
+      "bytes": 472763,
+      "sha256": "b89d8411afe0bb77d61c8cc55dfdd909c74632a8145b98b7e6008f8b96507ec7"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/mapa_v1_82px.png",
+      "bytes": 312029,
+      "sha256": "88c8c52a7790052e5e61872a2ead0101f082cc1075217ae6f5ba7f96c6b10105"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/mapa_v3_82px.png",
+      "bytes": 311691,
+      "sha256": "34dddc56b1d160cea0120055654462aaba3e20aaab60355248a45fca50b5225c"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/previews.py",
+      "bytes": 3245,
+      "sha256": "774f7d575786a3e5abfbd17935e877c9001467b982d307bac0f63ee28054997f"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/qa_v3.json",
+      "bytes": 1318,
+      "sha256": "98a99ce4bcf8d29b004650b34bcc3d2ef9b30ee0cd795d4277108a362be22be4"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/qa_v3.py",
+      "bytes": 2047,
+      "sha256": "75483cea8bbe422d95ac54720ad2c1d8c1891242565f864405bb7caebbe1f868"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/tres_posicoes_v3.png",
+      "bytes": 143854,
+      "sha256": "c8bbe61435fbbc34e27d9caabc7add37e9a28bb020bf6054796729d00f141b7a"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/vegetacao_grupo_f1_v3.png",
+      "bytes": 70420,
+      "sha256": "cb2ffab6309e9593438384e4977a537415581e42fac9c6138a64fc2a76d2709c"
+    },
+    {
+      "arquivo_zip": "art_lab/f01/vegetacao_grupo/v3/vegetacao_grupo_f1_v3.svg",
+      "bytes": 40411,
+      "sha256": "8313d3b6e6be418d147ce0565fd866ca8170a20447b182e606cfe534065ee60c"
+    },
+    {
+      "arquivo_zip": "experimentos_descartados/imagegen_halo_nao_usar.png",
+      "bytes": 1406999,
+      "sha256": "a30eb4c7e8abdfd684419441f51f93436c263a640afd0090bd3e90f72f3f65c8"
+    }
+  ]
+}

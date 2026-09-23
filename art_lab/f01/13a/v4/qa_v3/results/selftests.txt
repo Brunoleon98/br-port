@@ -1,0 +1,19 @@
+test_alpha_valid (test_qa.Guardas.test_alpha_valid) ... ok
+test_border_rejected (test_qa.Guardas.test_border_rejected) ... ok
+test_edit_inside_mask (test_qa.Guardas.test_edit_inside_mask) ... ok
+test_edit_outside_mask (test_qa.Guardas.test_edit_outside_mask) ... ok
+test_empty_rejected (test_qa.Guardas.test_empty_rejected) ... ok
+test_human_pending_cannot_release (test_qa.Guardas.test_human_pending_cannot_release) ... ok
+test_metadata_ready (test_qa.Guardas.test_metadata_ready) ... ok
+test_missing_evidence_rejected (test_qa.Guardas.test_missing_evidence_rejected) ... ok
+test_modified_evidence_rejected (test_qa.Guardas.test_modified_evidence_rejected) ... ok
+test_old_candidate_approval_rejected (test_qa.Guardas.test_old_candidate_approval_rejected) ... ok
+test_opaque_rejected (test_qa.Guardas.test_opaque_rejected) ... ok
+test_path_escape_rejected (test_qa.Guardas.test_path_escape_rejected) ... ok
+test_shape_rng_cannot_move_proposed_layout (test_qa.Guardas.test_shape_rng_cannot_move_proposed_layout) ... ok
+test_wrong_image_size (test_qa.Guardas.test_wrong_image_size) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.013s
+
+OK

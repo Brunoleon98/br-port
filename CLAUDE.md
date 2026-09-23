@@ -19,10 +19,13 @@ são em português — commits e PRs em inglês.
 > O que aconteceu em cada sessão que fechou vive em `docs/arquivo/`, com
 > índice — **nada se apaga**, e nada de lá descreve o jogo de hoje.
 >
-> Três documentos de trabalho não são camada e continuam onde a mão os
+> Os documentos de trabalho não são camada e continuam onde a mão os
 > alcança: `docs/BRP_SPATIAL_CONTRACT.md` (o contrato da projeção),
-> `docs/design/BR_Port_Plano_Arte_Blender.md` (o caminho medido da arte) e
-> `docs/PROTOCOLO_DE_ESCUTA.md` (o gate do A6, que só o Bruno passa).
+> `docs/design/BR_Port_Plano_Arte_Blender.md` (o caminho medido da arte),
+> `docs/PROTOCOLO_DE_ESCUTA.md` (o gate do A6, que só o Bruno passa) e
+> `art_lab/README.md` (o laboratório de arte partilhado com o ChatGPT: o plano
+> de produção dele, os conceitos e as candidatas, e o caminho de uma peça até
+> ao jogo).
 > `tools/conferir_docs.py` tranca isto no CI, e espera `DOCS OK`.
 >
 > **O GDD 7 lê-se em `docs/gdd/`**, uma seção por arquivo, GERADAS do
@@ -1019,7 +1022,8 @@ tranca isso.
   checkout cujo HEAD o GitHub não conhece, com decisões `034`–`036` que colidem
   em número com as daqui e um galpão «aprovado» que só existe lá. O remendo
   aplicou limpo na `main` e o teste de design passou — sem nenhuma guarda a
-  perguntar pela peça nova (`docs/arquivo/AUDITORIA_ARTE_CHATGPT_2026-09-23.md`).
+  perguntar pela peça nova. Hoje o material dele vive em `art_lab/`, e a
+  porta de entrada diz a base, a pasta e a prova de cada entrega.
 - **Asset novo sai de `blender/gerar_brp.py`**, que partilha a câmera e o kit
   com `gerar_props_iso.py`. Nada de um segundo estúdio ao lado.
 - **Prop no cenário nunca sai de gerador de imagem.** Duas levas perdidas: o

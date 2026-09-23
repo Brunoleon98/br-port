@@ -1,0 +1,15 @@
+$ git status --short --branch
+## art/f01-galpao
+ M brport_vs/art/porto_mapa_iso.svg
+ M brport_vs/art/porto_mapa_iso_patio.svg
+ M tools/gerar_mapa_iso.py
+
+$ git rev-parse HEAD
+cc36166a262a751494ca3ccd25f1359f77b18fc1
+
+$ git diff --stat
+ brport_vs/art/porto_mapa_iso.svg       | 205 +++++++++++++++++++++++++++++++++
+ brport_vs/art/porto_mapa_iso_patio.svg | 205 +++++++++++++++++++++++++++++++++
+ tools/gerar_mapa_iso.py                |  76 ++++++++++++
+ 3 files changed, 486 insertions(+)
+

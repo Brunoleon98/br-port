@@ -831,10 +831,16 @@ Falta a metade dele, que é olhar — e está feita; falta escolher a ordem.
 O pedido de «melhore o design» destas telas é da frente 3, e o resto da nota
 do `fimfase` (desbloqueios, tutorial) é da 5.
 
-**E o pacote de vegetação do ChatGPT foi auditado no mesmo dia**
-(`docs/arquivo/AUDITORIA_ARTE_CHATGPT_2026-09-23.md`): nada entra, a vegetação
-não está em nenhum dos 31 vereditos, e o galpão V3 que o Bruno aprovou lá só
-existe no ambiente do ChatGPT até alguém publicar a branch `art/f01-galpao`.
+**E o material do ChatGPT passou a viver no repositório, em `art_lab/`**, a
+pedido do Bruno, para as duas frentes trabalharem juntas: o plano de produção
+F1–F5 dele (V3), os conceitos, as candidatas de vegetação e as decisões do
+checkout de lá. A porta é `art_lab/README.md` — quem faz o quê, o caminho de
+uma peça até ao jogo, onde o plano V3 e este repositório divergem, e o que
+cada frente deste §A5 pode tirar dele (a 2, dos retratos, é a única em que o
+gerador de imagem pode dar o arquivo final). A leitura de 23/09, com as
+medições, ficou em `docs/arquivo/AUDITORIA_ARTE_CHATGPT_2026-09-23.md`. O
+galpão V3 que o Bruno aprovou lá continua só no ambiente do ChatGPT até alguém
+publicar a branch `art/f01-galpao`.
 
 ---
 

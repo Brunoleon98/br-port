@@ -1,0 +1,26 @@
+$ python -m unittest discover -s art_lab/f01/13a/v4/qa_v3/tests -p test_qa.py -q
+----------------------------------------------------------------------
+Ran 14 tests in 0.011s
+
+OK
+exit_code=0
+
+$ python art_lab/f01/13a/v4/qa_v4.py
+{'PASS': 12, 'FAIL': 0, 'PENDING': 4}
+exit_code=0
+
+$ python art_lab/f01/13a/v5/qa_v5.py
+{'PASS': 14, 'FAIL': 0, 'PENDING': 4}
+exit_code=0
+
+$ python art_lab/f01/vegetacao_grupo/v1/qa_grupo.py
+PASS 6 FAIL 0 changed 2462 protected 0
+exit_code=0
+
+$ python art_lab/f01/vegetacao_grupo/v2/qa_v2.py
+7 PASS; 0 FAIL; 598 alterados; 0 protegidos
+exit_code=0
+
+$ python art_lab/f01/vegetacao_grupo/v3/qa_v3.py
+7 PASS; 0 FAIL; 1621 alterados; 0 protegidos
+exit_code=0

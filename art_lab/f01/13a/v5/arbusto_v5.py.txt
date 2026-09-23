@@ -1,0 +1,67 @@
+def arbusto_baixo_f1(mx: float, my: float, r: random.Random) -> str:
+    """13A V5: três rosetas foliares largas sobre ramos baixos separados."""
+    px, py = p(mx, my, ALT_CAIS)
+    var = r.uniform(-0.25, 0.25)
+    escuro = _misturar_cor(C["copa"], C["mangue"], 0.63)
+    meio = _misturar_cor(C["copa"], C["mangue"], 0.18)
+    claro = _misturar_cor(C["copa"], C["copa_luz"], 0.59)
+    folha_clara = _misturar_cor(C["copa"], C["copa_luz"], 0.34)
+    ocre = _misturar_cor(C["solo_claro"], "#b4a13f", 0.74)
+
+    def petala(cx, cy, tx, ty, w, cor, reflexo):
+        """Folha ovada de ponta macia e uma face plana discreta."""
+        w *= 1.18
+        vx,vy=tx-cx,ty-cy
+        norma=math.hypot(vx,vy)
+        nx,ny=-vy/norma,vx/norma
+        a=(cx+vx*.48+nx*w,cy+vy*.48+ny*w)
+        b=(tx+nx*w*.42,ty+ny*w*.42)
+        c=(tx-nx*w*.42,ty-ny*w*.42)
+        e=(cx+vx*.48-nx*w,cy+vy*.48-ny*w)
+        cap=(tx+vx*.22,ty+vy*.22)
+        path=('M%.2f,%.2f Q%.2f,%.2f %.2f,%.2f '
+              'Q%.2f,%.2f %.2f,%.2f Q%.2f,%.2f %.2f,%.2f Z' %
+              (cx,cy,*a,*b,*cap,*c,*e,cx,cy))
+        face=('M%.2f,%.2f L%.2f,%.2f L%.2f,%.2f L%.2f,%.2f Z' %
+              (cx,cy,*a,*b,tx+vx*.04,ty+vy*.04))
+        return ('    <path d="%s" fill="%s"/>\n'
+                '    <path d="%s" fill="%s"/>\n' % (path,cor,face,reflexo))
+
+    out='  <g transform="translate(%.2f %.2f) scale(.90 1)">\n' % (px,py)
+    # Três bases separadas para conservar espaço negativo junto ao chão.
+    for cx,rx in ((-10.0,4.7),(0.0,5.2),(9.0,4.3)):
+        out+='    <ellipse cx="%.1f" cy=".6" rx="%.1f" ry="1.05" fill="%s" opacity=".18"/>\n' % (cx,rx,C["mangue"])
+    for d in ('M-10,-1 Q-10,-3 -10,-7',
+              'M0,-1 Q-2,-5 -1,-10',
+              'M8,-1 Q9,-4 9,-7'):
+        out+='    <path d="%s" fill="none" stroke="%s" stroke-width="1.1" stroke-linecap="round"/>\n' % (d,C["tronco"])
+    out+='    <g transform="translate(0 4)">\n'
+
+    # Roseta esquerda: baixa, espraiada e mais escura.
+    out+='    <path d="M-13,-9 Q-14,-13 -10,-14 Q-6,-14 -6,-10 L-7,-7 -11,-7 Z" fill="%s"/>\n' % escuro
+    for tx,ty,w,cor,faceta in (
+        (-16,-11,3.3,meio,folha_clara),(-12,-16,3.2,escuro,meio),
+        (-7,-14,3.2,meio,claro),(-5,-10,3.0,escuro,folha_clara),
+        (-9,-6,3.0,meio,claro),(-14,-7,2.8,escuro,meio)):
+        out+=petala(-10,-10,tx,ty,w,cor,faceta)
+
+    # Miolo um pouco mais alto; cada roseta possui seu próprio sombreamento.
+    out+='    <path d="M-4,-13 Q-5,-18 0,-18 Q5,-18 5,-13 L3,-10 -2,-10 Z" fill="%s"/>\n' % escuro
+    for tx,ty,w,cor,faceta in (
+        (-6,-16,3.2,meio,claro),(-2,-20,3.4,escuro,folha_clara),
+        (3+var,-19,3.5,meio,claro),(6,-15,3.1,escuro,folha_clara),
+        (3,-10,3.3,meio,claro),(-2,-9,3.3,escuro,folha_clara)):
+        out+=petala(0,-14,tx,ty,w,cor,faceta)
+
+    # Roseta direita menor e oblíqua: não repetir a silhueta da esquerda.
+    out+='    <path d="M6,-8 Q5,-13 10,-13 Q14,-13 14,-9 L12,-6 8,-6 Z" fill="%s"/>\n' % escuro
+    for tx,ty,w,cor,faceta in (
+        (4,-12,2.8,meio,folha_clara),(8,-16,3.0,escuro,meio),
+        (13,-14,3.0,meio,claro),(16,-10,2.9,escuro,folha_clara),
+        (12,-5,3.0,meio,claro),(7,-5,2.6,escuro,folha_clara)):
+        out+=petala(9,-9,tx,ty,w,cor,faceta)
+
+    # Folhas secas pertencem ao ramo esquerdo e aparecem entre verdes.
+    out+=petala(-8,-10,-9,-15,2.0,ocre,_sombrear(ocre,0.83))
+    out+=petala(-8,-10,-5,-13,1.8,_sombrear(ocre,0.77),ocre)
+    return out+'    </g>\n  </g>\n'
