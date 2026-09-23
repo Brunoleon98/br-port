@@ -504,7 +504,7 @@ func _d17_niveis_do_porto() -> void:
 	var lancas: Array = consts["ArteLanca"]
 	var vistos: Array = []
 	for i in range(lancas.size()):
-		var img := (lancas[i] as Texture2D).get_image()
+		var img := PropIso.imagem(lancas[i] as Texture2D)
 		var usado := img.get_used_rect()
 		var pivo_tex := _pivo_na_textura(lancas[i] as Texture2D, pivo)
 		var raio_tex := _raio_na_textura(lancas[i] as Texture2D)
@@ -552,7 +552,7 @@ func _d17_niveis_do_porto() -> void:
 	var pieres: Array = consts["ArtePier"]
 	var caixas_pier: Array = []
 	for i in range(pieres.size()):
-		var img_p := (pieres[i] as Texture2D).get_image()
+		var img_p := PropIso.imagem(pieres[i] as Texture2D)
 		var usado_p := img_p.get_used_rect()
 		var pivo_p := _pivo_na_textura(pieres[i] as Texture2D, pivo)
 		_confere("a torre do píer nível %d alcança o pivô %s" % [i + 1, pivo],
@@ -736,7 +736,7 @@ const ASSINATURA_MIN := 0.01
 
 
 func _assinatura(tex: Texture2D) -> PackedFloat32Array:
-	var img := (tex.get_image() as Image).duplicate() as Image
+	var img := PropIso.imagem(tex).duplicate() as Image
 	var v := PackedFloat32Array()
 	# Quadro que não se divide em 16 células iguais não tem média por célula:
 	# recusar é melhor do que devolver uma assinatura que parece medida.
@@ -2763,7 +2763,7 @@ func _d25_escala_da_fauna() -> void:
 		root.add_child(bicho)
 		bicho.set_process(false)
 		var sprite: Sprite2D = bicho.get_node("Sprite")
-		var usado := sprite.texture.get_image().get_used_rect()
+		var usado := PropIso.imagem(sprite.texture).get_used_rect()
 		var largura := int(round(float(usado.size.x) * absf(sprite.scale.x)))
 		larguras[especie] = largura
 		_confere("%s mede os %d px escolhidos" % [especie, FAUNA_LARGURAS[especie]],
@@ -3842,7 +3842,7 @@ func _d29_linha_de_fundo_do_casco() -> void:
 	var medidos := 0
 	for caminho in cascos:
 		var tex := cascos[caminho] as Texture2D
-		var img := (tex.get_image() as Image).duplicate() as Image
+		var img := PropIso.imagem(tex).duplicate() as Image
 		var pts := _linha_de_fundo(img)
 		var k := PropIso.escala(tex)
 		for i in range(pts.size()):
@@ -3937,7 +3937,7 @@ func _d30_pecas_co_ancoradas() -> void:
 		var ordenadas: Array = []
 		for tr in pecas:
 			var t := (tr as TextureRect).texture
-			var img := (t.get_image() as Image)
+			var img := PropIso.imagem(t)
 			ordenadas.append([img.get_used_rect().position.y, img,
 				String(t.resource_path.get_file())])
 		ordenadas.sort_custom(func(a, b): return a[0] < b[0])

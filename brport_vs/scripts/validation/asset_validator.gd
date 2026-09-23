@@ -18,9 +18,24 @@ extends SceneTree
 
 const MANIFEST := "res://data/assets/BRP_EXPORT_MANIFEST.json"
 const ANCORAS := "res://art/porto_mapa_ancoras.json"
+const PASTA_PROPS := "res://art/props"
+
+## A fração do quadro que o desenho ocupa, abaixo da qual o prop TEM de estar
+## em atlas (`docs/decisoes/049`). Medido nos 69 em 23/09: os 60 de mapa vão de
+## 0,04% (o poste) a 16,3% (o `trabalhador_retrato`); os nove retratos de fala,
+## de 55,5% a 62,3%. O corte é o meio geométrico da banda — folga de 1,8x para
+## cada lado. Não decide o que fica FORA: isso é a outra pergunta, derivada.
+const CORTE_ATLAS := 0.30
+
+## O limiar do `fix_alpha_border` do importador, medido: abaixo dele o Godot
+## reescreve o RGB da borda quase transparente em QUALQUER textura, com atlas ou
+## sem. Em 23/09 os 69 props diferiam do arquivo SÓ aí (alfa máximo 16), e zero
+## pixels acima. Comparar o RGB desses pixels reprovaria todos os props certos.
+const ALFA_REESCRITO := 20
 
 var _falhas := 0
 var _conferidos := 0
+var _em_atlas := 0
 
 
 func _process(_delta: float) -> bool:
@@ -32,6 +47,7 @@ func _process(_delta: float) -> bool:
 
 	_contrato_bate_com_o_mapa(manifesto)
 	_assets(manifesto)
+	_props_no_atlas()
 	_fim()
 	return true
 
@@ -125,7 +141,7 @@ func _assets(manifesto: Dictionary) -> void:
 		# Alfa de verdade. Os dois lotes de arte que chegaram de fora vieram
 		# com o xadrez PINTADO nos pixels; um PNG assim carrega, desenha e só
 		# denuncia quando aparece um retângulo cinzento por cima do mapa.
-		var img := tex.get_image()
+		var img := PropIso.imagem(tex)
 		_confere("%s tem canal alfa" % arquivo,
 			img.detect_alpha() != Image.ALPHA_NONE,
 			"o PNG é opaco de ponta a ponta")
@@ -142,6 +158,75 @@ func _assets(manifesto: Dictionary) -> void:
 			_confere("%s selecionável declara cena" % arquivo,
 				String(ficha["godot_scene"]) != "",
 				"`godot_scene` vazio: nada sabe o que abrir ao tocar")
+
+
+## ⚠️ O QUADRO DE UM PROP DE MAPA NÃO VIVE NA VRAM (`docs/decisoes/049`).
+##
+## 89,6% do quadro de 768 é moldura vazia (`029`). O importador `texture_atlas`
+## apara-a e devolve um `AtlasTexture` com a MARGEM a repor o quadro: o jogo vê
+## os mesmos 768 e desenha no mesmo sítio, e a VRAM de textura em jogo caiu de
+## 235,68 para 64,04 MB. Isto percorre a PASTA e não o manifest — o manifest
+## tem 44 entradas e os props são 69 —, e faz três perguntas a cada um:
+##
+## 1. atlas que custa MAIS do que o quadro reprova. O empacotador arredonda a
+##    largura a potência de dois, e um retrato de 510 px sai num atlas de 1024:
+##    26% pior do que não o cortar. É por isto, e não por uma lista, que os
+##    retratos de fala ficam de fora;
+## 2. prop de moldura quase vazia FORA do atlas reprova — é o prop novo que
+##    entrou pelo importador por omissão e trouxe o quadro inteiro;
+## 3. o quadro reconstruído pelo `PropIso` é o desenho do ARQUIVO: alfa em
+##    todo pixel e cor onde o alfa passa do `ALFA_REESCRITO`. É o que prova que
+##    a margem repõe o desenho no sítio — uma margem errada move o prop inteiro
+##    sem erro nenhum, e o `crop_to_region` encolhe o quadro.
+func _props_no_atlas() -> void:
+	for nome in DirAccess.get_files_at(PASTA_PROPS):
+		if not nome.ends_with(".png"):
+			continue
+		var caminho := "%s/%s" % [PASTA_PROPS, nome]
+		var tex: Texture2D = load(caminho)
+		var quadro := PropIso.imagem(tex)
+		var area := float(quadro.get_width() * quadro.get_height())
+		var fracao := float(quadro.get_used_rect().get_area()) / area
+		if not (tex is AtlasTexture):
+			_confere("%s fica fora do atlas com o quadro cheio" % nome,
+				fracao >= CORTE_ATLAS,
+				"o desenho ocupa %.1f%% do quadro e o resto é moldura na VRAM — "
+					% (100.0 * fracao)
+					+ "importe-o como `texture_atlas` (`docs/decisoes/049`)")
+			continue
+		_em_atlas += 1
+		var atlas := (tex as AtlasTexture).atlas
+		_confere("%s: o atlas custa menos do que o quadro" % nome,
+			float(atlas.get_width() * atlas.get_height()) < area,
+			"atlas %dx%d contra quadro %dx%d — cortar sai mais caro"
+				% [atlas.get_width(), atlas.get_height(), quadro.get_width(),
+					quadro.get_height()])
+		var arquivo := Image.load_from_file(ProjectSettings.globalize_path(caminho))
+		_confere("%s: o quadro reconstruído é o desenho do arquivo" % nome,
+			_mesmo_desenho(quadro, arquivo) == "", _mesmo_desenho(quadro, arquivo))
+
+
+## "" se os dois desenham o mesmo; senão, a primeira diferença.
+func _mesmo_desenho(a: Image, b: Image) -> String:
+	if b == null:
+		return "o arquivo não abre"
+	if a.get_size() != b.get_size():
+		return "quadro %s contra o arquivo %s" % [a.get_size(), b.get_size()]
+	a = a.duplicate() as Image
+	b = b.duplicate() as Image
+	a.convert(Image.FORMAT_RGBA8)
+	b.convert(Image.FORMAT_RGBA8)
+	var r := b.get_used_rect()
+	if a.get_used_rect() != r:
+		return "desenho em %s, e o arquivo em %s" % [a.get_used_rect(), r]
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			var p := a.get_pixel(x, y)
+			var q := b.get_pixel(x, y)
+			if p.a8 != q.a8 or (q.a8 >= ALFA_REESCRITO and
+					(p.r8 != q.r8 or p.g8 != q.g8 or p.b8 != q.b8)):
+				return "pixel (%d, %d): %s contra %s no arquivo" % [x, y, p, q]
+	return ""
 
 
 func _quadro_cheio(img: Image) -> bool:
@@ -168,7 +253,8 @@ func _erro(msg: String) -> void:
 func _fim() -> void:
 	print("")
 	if _falhas == 0:
-		print("=== ASSET OK — %d assets conferidos ===" % _conferidos)
+		print("=== ASSET OK — %d assets conferidos, %d props em atlas ==="
+			% [_conferidos, _em_atlas])
 		quit(0)
 	else:
 		print("=== %d PROBLEMA(S) DE ASSET ===" % _falhas)

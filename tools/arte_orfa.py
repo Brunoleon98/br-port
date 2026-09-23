@@ -67,6 +67,14 @@ FORA = ("brport_vs/scenes/tests", "brport_vs/tools", "brport_vs/tests")
 # O que não é arte: a papelada do importador e a tabela que sai do gerador.
 NAO_E_ARTE = (".import", ".uid", ".json", ".md")
 
+# ⚠️ E O ATLAS DE UM PROP TAMBÉM NÃO É ARTE: é o que o importador `texture_atlas`
+# escreve a partir do PNG, e quem o refere é o `.import` (`docs/decisoes/049`).
+# Contá-lo mentia pelos dois lados: 59 dos 60 casavam pelo NOME DO PROP, que é
+# o mesmo, e passavam por referidos pela razão errada; o 60.º — o do
+# `doca_concreto`, órfão legítimo — aparecia como órfão PELA SEGUNDA VEZ.
+# Medido em 23/09: a conta foi de "9 de 107" para "10 de 175" sem arte nova.
+PRODUTO_DO_IMPORTADOR = ("props/_atlas",)
+
 
 def sem_comentarios(texto: str) -> str:
     """Corta `#` até ao fim da linha quando ele está fora de aspas."""
@@ -120,6 +128,8 @@ def main() -> int:
     orfaos = {}
     for dp, dn, fn in os.walk(ARTE):
         pasta = os.path.relpath(dp, ARTE).replace(os.sep, "/")
+        if pasta in PRODUTO_DO_IMPORTADOR:
+            continue
         for f in sorted(fn):
             if f.endswith(NAO_E_ARTE):
                 continue

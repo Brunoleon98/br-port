@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — o A4: "dinheiro", lucro/prejuízo, e o boletim medido (`048`)
+> **Última atualização:** 23/09/2026 — a moldura dos props sai da VRAM (`049`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -42,19 +42,18 @@ campo da água saem de `ponto_costeiro()`, família concêntrica que não se cru
 
 **A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM** — mapa a 1080 (`025`) e
 props a 768 px num quadro de 512 COORDENADAS (`029`), com `expand_mode` em 31
-nós e o `PropIso` a traduzir; o **D31** tranca. ⚠️ A B custa **+80 MB de VRAM**
-porque **89,6% do quadro é moldura vazia** — cortá-lo é item próprio e é do
-Bruno. O campo da água fica a 720 (`026`); o viewport (C) não dá um pixel.
+nós e o `PropIso` a traduzir; o **D31** tranca. ⚠️ **E A MOLDURA (89,6% do
+quadro) SAIU DA VRAM** sem mexer no quadro: o importador `texture_atlas` apara-a
+e a margem repõe os 768 — **235,68 → 64,04 MB** em jogo, `.pck` −17,4%
+(`049`). O campo da água fica a 720 (`026`); o viewport (C) não dá um pixel.
 
 **E OS CASCOS TÊM CURVA** (`024`): medida a silhueta, quem estava quadrado não
 eram as construções — era o casco, com o contêiner a TAPÁ-LO. Os nove barcos
 saem de `contorno_casco()`. Armazém, escritório, píer, treliça, pallet e
 contêiner **ficam quadrados, e é decisão**: são caixas de verdade. **D29**.
 
-**A fauna tem seis espécies em nove pontos** — gaivota, maria-farinha e
-tartaruga na costa; cachorro, quero-quero e capivara em terra. Medem **15 / 12 /
-14 / 15 / 13 / 17 px** contra uma pessoa de 14, com toque de **44 px** e ciclos
-sem toque invisível (D25–D27).
+**A fauna tem seis espécies em nove pontos**, três na costa e três em terra, à
+escala de uma pessoa, com toque de **44 px** (D25–D27).
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
 perfil: ótimo 100% · mediano 80,2% · descuidado 37,3%, com a mediana do mediano
@@ -120,6 +119,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto >= 3,0x o p99,9 do próprio arquivo —, o resto DESCRITOR. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz) |
 | **As CINCO levas de cor** (21–22/09, `041`–`045`) | **27 chamadas em 19 locais → ZERO**, lista de exceções vazia. Quatro migraram VALORES (fotos byte a byte); a 2ª não — a régua não drenava a fila, e alcançado o âmbar deu 3,07:1. ⚠️ **Estado que não monta publica linhas plausíveis** (a chave MORTA da 3ª, o piso da 4ª). A 5ª trouxe o **D34** (proveniência lida no nó) |
 | **A rua e a mão dupla** (23/09, `047`) — escolha do Bruno | a rua FICA em 1,8: a janela que aperta é em `my` e o `RUA_RECUO` não a toca; a 2,0 ganharia 3,6 px. Faltava quem SUBISSE: dois camiões na faixa de dentro, de costas, 8 silhuetas `_retorno` (+0,75% do `.pck`). ⚠️ **A assinatura do D13 não fazia a média que dizia** (`resize` amostra); hoje faz, corte 0,01. Bateria a **27 tiros**. Depois, a **saída de ré** ganhou guarda (`_d13_saida_de_re`, 5 mutantes) |
+| **O quadro dos props** (23/09, `049`) — escolha do Bruno | 60 props em atlas, sem `bpy` nem nó mexido; os retratos ficam (atlas de 1024 sairia 26% pior). Pixel de prop lê-se por `PropIso.imagem()`. ⚠️ As folhas gravaram quadros VAZIOS com "Folha salva em"; hoje provam que esconder a peça muda a foto. 7 mutantes |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -133,16 +133,15 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Três leituras (13/09, 19/09, 23/09)**, notas aplicadas: **"dinheiro"** em vez de "caixa", **lucro/prejuízo**, vencimento **hoje/amanhã/daqui a N** (T10, T11), falas que não narram a tela, e o boletim **medido** — 2.005 afirmações falsas em 4.000 boletins, hoje zero (`048`) |
+| **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
 
-⚠️ **Uma coisa, sessão própria:** o quadro dos props é 89,6% moldura vazia
-(cortá-lo mexe na origem do mundo, `029`). O retorno a entrar nos berços é
-desenho de cruzamento, por decidir (`047`). Das jogadas de 02–06/09 sobram o
-rodapé (A5), economia de Fase 2 e a madeira podre (A4) — em `HISTORICO.md`.
+O retorno a entrar nos berços é desenho de cruzamento, por decidir (`047`).
+Das jogadas de 02–06/09 sobram o rodapé (A5), economia de Fase 2 e a madeira
+podre (A4) — em `HISTORICO.md`.
 
 ---
 
@@ -190,9 +189,10 @@ rodapé (A5), economia de Fase 2 e a madeira podre (A4) — em `HISTORICO.md`.
 | `tools/medir_enquadramento.py` + `brport_vs/tools/medir_enquadramento.gd` | Régua do mapa e da fronteira visível; rasteriza com o mesmo ThorVG do jogo |
 | `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução do MAPA** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo (`025`, `026`) |
 | `tools/medir_nitidez_captura.py` | **A régua da resolução dos PROPS** — a mesma métrica em duas capturas a 1080×1920, com a máscara tirada da diferença (`029`) |
-| `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`) |
+| `brport_vs/tools/medir_vram.gd` | **A régua da VRAM**, com o jogo aberto e calibrada; `xvfb-run`, `VRAM MEDIDA` (`049`) |
+| `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`); `imagem()` repõe o quadro de um prop em atlas (`049`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
-| `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão. ⚠️ **«Órfão» e «apagável» são duas perguntas**: dos 11, nove tinham propósito escrito (a bancada `AssetPlacementTest`) e ficaram; saíram os 2 SVG de píer, superados por props PNG. Hoje **9 de 107** (`046`) |
+| `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão. ⚠️ **«Órfão» e «apagável» são duas perguntas**: dos 11, nove tinham propósito escrito (a bancada `AssetPlacementTest`) e ficaram; saíram os 2 SVG de píer, superados por props PNG. Hoje **9 de 115**; o atlas não conta (`046`, `049`) |
 | `brport_vs/tools/medir_boletim.gd` | **A régua do boletim** — herda o simulador e confere cada afirmação da Dona Cida contra o estado, no instante em que ela fala. CI, `BOLETIM OK` (`048`) |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
@@ -208,7 +208,7 @@ rodapé (A5), economia de Fase 2 e a madeira podre (A4) — em `HISTORICO.md`.
 | `blender/gerar_brp.py` | Roda os quatro estúdios, exporta PNGs, salva `.blend` e junta o manifest |
 | `brport_vs/scripts/Fauna.gd` + `AmbienteCosteiro.gd` | Ciclos de seis espécies em nove pontos; habitats, toque, mar e gaivota |
 | `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
-| `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**. Roda no CI, espera `ASSET OK` |
+| `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**; e o atlas dos 69 props (`049`). Espera `ASSET OK` |
 | `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
 | `.claude/skills/arte/SKILL.md` | **O ritual da arte** — qual etapa precisa de Blender, a armadilha de trocar matiz sem olhar o valor, o recorte ampliado, e o rasto que a mudança envelhece |
 | `.claude/skills/balancear/SKILL.md` | **O ritual da economia** — medir antes e depois com a mesma semente, e o rasto que isso envelhece |
@@ -346,8 +346,5 @@ Aponte este arquivo e diga o que quer fazer:
 > "Continuando o BR Port — leia `docs/ESTADO_DO_PROJETO.md` e a fila na §7 do
 > plano. Quero trabalhar em X."
 
-O `CLAUDE.md` traz as regras e a receita manual se o hook não preparar o Godot.
-
-Para fechar, a skill **`/fechar-sessao`**. Para mexer em preço ou constante
-`# TUNING:`, **`/balancear`**. Medição: 600 partidas por perfil; confira o
-comando efetivo no workflow, sem herdar a antiga referência a 30 no CI.
+Regras e receita manual no `CLAUDE.md`. Para fechar, **`/fechar-sessao`**;
+para preço ou `# TUNING:`, **`/balancear`** (600 partidas por perfil).

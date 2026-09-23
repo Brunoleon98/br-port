@@ -110,6 +110,13 @@ quanto um asset custa ao pacote.
 1,87 MB são +42,29% do `.pck` e **+5,91% do APK**, porque o APK é sobretudo o
 binário do Godot. Ao citar custo, diga contra que denominador.
 
+**E a VRAM também se mede aqui**, com o jogo aberto: `xvfb-run -a $G --path
+brport_vs --resolution 720x1280 --rendering-driver opengl3 --script
+res://tools/medir_vram.gd`, espera `VRAM MEDIDA`. ⚠️ O monitor do motor conta
+**4/3 de `w×h×4`**, e a base já traz os retratos (um autoload faz-lhes
+`preload`): a régua calibra-se sozinha com uma textura de tamanho conhecido, e
+em `--headless` recusa-se em vez de publicar um zero (`049`).
+
 ⚠️ **O CI regera e compara BYTE A BYTE, e o `sum()` de floats mudou na Python
 3.12.** Ela passou a somar por compensação de Neumaier; o runner é
 `ubuntu-latest` e subiu de versão sozinho. Medido em 05/09, o mesmo arquivo:
@@ -821,8 +828,23 @@ derivada delas.
   `.pck`** para mudar 1,56% da janela, contra os +9,89 MB e 5,12% da A — **15 a
   27 vezes o preço por pixel visível**, e nenhuma das duas medidas mente.
   Antes de subir a resolução de um asset, meça que fração dele é desenho: o que
-  torna esta alavanca barata é CORTAR o quadro, e isso mexe em "o centro do
-  quadro é a origem do mundo" (`029`, e é item próprio).
+  torna esta alavanca barata é CORTAR o quadro.
+  ⚠️ **E CORTOU-SE SEM MEXER NO QUADRO** (`049`): o importador `texture_atlas`
+  apara a moldura e a MARGEM do `AtlasTexture` repõe os 768, logo nenhum nó,
+  âncora ou manifest mudou — a VRAM de textura em jogo foi de 235,68 a 64,04
+  MB e o `.pck` perdeu 17,4%. O briefing previa `bpy` e os 69 regerados porque
+  lia o quadro como ARQUIVO; a pergunta era o quadro na VRAM. **Antes de pagar
+  um contrato novo, pergunte se o motor já separa o que o arquivo junta.**
+  ⚠️ **E O EMPACOTADOR ARREDONDA A LARGURA A POTÊNCIA DE DOIS:** um retrato de
+  510 px sai num atlas de 1024, 26% pior do que o quadro. Os retratos ficam
+  fora, e quem o decide é o validador (atlas mais caro do que o quadro
+  reprova), não uma lista.
+  ⚠️ **E PROP NOVO ENTRA PELO IMPORTADOR POR OMISSÃO**, que o validador
+  reprova. A receita: o `.import` dele passa a `texture_atlas` (a forma está em
+  qualquer vizinho — conserve o `uid` do próprio arquivo), o `--import` corre
+  **DUAS vezes** (a primeira escreve o atlas em `art/props/_atlas/`, a segunda
+  importa-o) e o atlas e o `.import` dele vão no commit. Sem eles, o import
+  único do CI deixa o `preload` a apontar para um atlas por importar.
 - **Constante em PIXEL é constante que envelhece quando o `ZOOM` muda, e ela
   não dá erro.** Foram cinco em 05/09: a silhueta do caminhão e o corte que
   exige pegada no teste de design, a largura de telhado da vila, os sprites do
@@ -843,6 +865,12 @@ derivada delas.
   olho — e desde 16/09 meio quadro são **256 na cena e 384 no PNG**, que até
   aquele dia eram o mesmo número (`029`). Toda régua que leia a textura e
   responda em coordenada passa pelo `PropIso`.
+  ⚠️ **E O `get_image()` DE UM PROP DE MAPA JÁ NÃO É O QUADRO** (`049`): num
+  `AtlasTexture` ele devolve a REGIÃO, com o canto em (0, 0), e uma régua que
+  lesse o `get_used_rect()` dela apontaria 300 px ao lado. Pixel de prop lê-se
+  por `PropIso.imagem()`. E **um `AtlasTexture` por cima de outro não
+  compõe**: o `get_image()` do conjunto dá o desenho e o `draw` desenha a
+  margem vazia — recorte-se do atlas de BAIXO (`PropIso.recorte()`).
 - **E desprojetar um prop de volta ao mundo pede a ALTURA em que ele pousa.**
   Quem está em terra pousa a `ALT_CAIS`; quem está na água, a 0 — é o que o
   `_origem`/`_mundo` do teste de design faz. Desprojetar tudo a 0 desloca cada
@@ -1456,6 +1484,12 @@ tranca isso.
   o `capturar_evidencia.sh` nomeia cada arquivo. Ela recebe `<página> <total>`,
   conta o que o catálogo pede e REPROVA se não bater: acrescentar a chamada faz
   parte de acrescentar o prop.
+  ⚠️ **E QUADRO VAZIO NÃO É ERRO PARA QUEM NÃO O PERGUNTA.** Em 23/09 as folhas
+  de contato gravaram os doze cascos EM BRANCO e imprimiram "Folha salva em"
+  (`049`). A pergunta que apanha é **"esconder a peça muda a foto?"** — duas
+  fotos, com e sem a arte, e a diferença por peça: dá zero exato no defeito,
+  não depende da cor do chão e não pode ser enganada pelo `get_image()`, que era
+  quem mentia. Ferramenta de evidência prova que o que declara ESTÁ na foto.
 - **Antes de gerar MAIS, veja onde o que já se gera está a cair.** A queixa
   "a vegetação é bem pobre" tinha 136 copas de mata geradas e **7** dentro do
   quadro: o viés da densidade (`random ** 2.2`) empurrava-as contra

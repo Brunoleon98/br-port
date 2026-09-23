@@ -1870,6 +1870,14 @@ props, o desenho ocupa 10,4%. O que torna a B barata é **cortar o quadro**, que
 mexe no contrato "o centro do quadro é a origem do mundo" e é item próprio.
 **Pagar ou não os 80 MB é decisão do Bruno**, com os dois lados na `029`.
 
+✅ **E O CORTE FECHOU EM 23/09 SEM MEXER NO CONTRATO** (`docs/decisoes/049`).
+O importador `texture_atlas` apara a moldura e a margem do `AtlasTexture` repõe
+os 768: nenhum nó, âncora ou manifest mudou, e não foi preciso `bpy`. A VRAM de
+textura em jogo foi de **235,68 para 64,04 MB** e o `.pck` perdeu **17,4%**
+(≈3,3% do APK). Os retratos de fala ficam inteiros — o atlas de 1024 sair-lhes-ia
+26% mais caro. Com isto os 69 props a 768 ocupam **24,4 MB** de RGBA8, menos do
+que os 63,96 MB que os 61 de então ocupavam a 512 sem corte.
+
 **Três coisas saíram diferentes do que este item previa, e ficam escritas:**
 
 1. ⚠️ **A B TAMBÉM NÃO REDESENHA.** O item dizia que "os props são desenhados
