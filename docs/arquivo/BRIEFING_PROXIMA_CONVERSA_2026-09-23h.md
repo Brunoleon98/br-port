@@ -32,15 +32,15 @@ O `ESTADO_DO_PROJETO.md` tem **~740 bytes de folga** (teto no `TETO_ESTADO` de
 ## 1. Comece pelo estado real
 
 - ⚠️ **A sessão fechou na branch `claude/amazing-carson-4ob084`, à frente da
-  `main` (`762c8f0`, o PR #71 fundido), SEM PR aberto** — o PR só se abre a
-  pedido. Antes de qualquer checkout, confira no GitHub se um PR desta branch
-  foi aberto e fundido; se não foi, este trabalho só existe na branch, e
-  reiniciá-la da `main` apaga-o.
+  `main` (`762c8f0`, o PR #71 fundido), com o PR #72 ABERTO** e o CI a correr
+  quando a conversa acabou. Antes de qualquer checkout, confira no GitHub se o
+  #72 foi fundido e se o CI dele ficou verde; se não foi, este trabalho só
+  existe na branch, e reiniciá-la da `main` apaga-o.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**,
   HEAD confirmado com o GitHub, e `git log --oneline origin/main..HEAD` antes de
   reapontar seja o que for.
-- **O CI deste trabalho ainda não correu** — só corre em `pull_request` e na
-  `main`. Quando correr, o `brport-captura` deve dizer que **1 foto mudou** (a
+- **O CI do #72 é a primeira verificação fora deste contêiner.** O
+  `brport-captura` deve dizer que **1 foto mudou** (a
   `ribeiro.png`, 165 px: a linha do dinheiro, R$400.000 → R$336.000, porque o
   Sr. Ribeiro agora é fotografado no vencimento) e que há **3 novas**
   (`ribeiro_pagou`, `ribeiro_nao_pagou`, `contraoferta_fim`). As outras 26
