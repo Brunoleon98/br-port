@@ -842,6 +842,19 @@ medições, ficou em `docs/arquivo/AUDITORIA_ARTE_CHATGPT_2026-09-23.md`. O
 galpão V3 que o Bruno aprovou lá continua só no ambiente do ChatGPT até alguém
 publicar a branch `art/f01-galpao`.
 
+#### ↩️ A FRENTE 2 ABRIU E VOLTOU AO BLENDER (23/09)
+
+O Bruno escolheu os **retratos de fala**. A sessão julgou que o kit de caixas
+não chegava e desenhou, sem perguntar, **nove retratos vetoriais** (SVG gerado
+por script), fotografados numa CÓPIA do jogo nas seis telas com cara — só a
+caixa de 112×152 mudava. A resposta: **«não deveriam ter sido criados»**. Nada
+entrou no repositório; a lição foi para o `CLAUDE.md` (Arte).
+
+**A frente continua no Blender**, e a próxima conversa **pesquisa** as boas
+práticas para lá gerar estes personagens e os outros assets com visual melhor —
+antes de modelar o que for. O que o script alcança está no §3 do
+`BR_Port_Plano_Arte_Blender.md`; a pesquisa acrescenta-se ali.
+
 ---
 
 ### A6 — O áudio de verdade
