@@ -208,7 +208,13 @@ func fala(texto: String, retrato: Texture2D = null) -> PanelContainer:
 	var balao := PanelContainer.new()
 	balao.theme_type_variation = "Fala"
 	var rotulo := Label.new()
-	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD
+	# ⚠️ `_SMART`, PORQUE A FALA LEVA O NOME DE QUEM JOGA. O `AUTOWRAP_WORD` só
+	# quebra em fronteira de palavra, e a tela de nomes aceita 24 letras sem
+	# espaço: medido em 23/09, "Boa tarde, WWWW…" desenhava a palavra inteira
+	# numa linha e passava POR FORA do cartão. O `_SMART` só parte a palavra que
+	# não cabe — num texto sem ela as linhas saem as mesmas, ao pixel. O F10 do
+	# fumaça tranca (`docs/decisoes/051`).
+	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rotulo.text = texto
 	balao.add_child(rotulo)
 	if retrato == null:

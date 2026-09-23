@@ -8,6 +8,13 @@ extends Control
 # restante também mora lá, para o autosave não devolver tentativas gastas.
 
 var dock_index: int = -1
+# O TEMPO DA CENA NA TELA, para quem a fotografa. A cobertura das capturas
+# (`tools/conferir_cobertura_paineis.py`) lê daqui o catálogo — cada
+# `tempo = &"..."` escrito neste arquivo é um tempo que tem de ter foto — e as
+# ferramentas de captura imprimem o valor dele. ⚠️ SEMPRE LITERAL: uma
+# atribuição por variável a ferramenta não sabe ler, e reprova em vez de a
+# saltar (`docs/decisoes/051`).
+var tempo: StringName = &""
 
 var _mood_label: Label
 # A fala do Arlindo troca a cada rodada da negociação: abertura, reação ao que
@@ -15,6 +22,9 @@ var _mood_label: Label
 # não se reconstrói entre rodadas — só se refresca.
 var _fala_arlindo: Label
 var _mood_icone: TextureRect
+# A linha inteira do humor do cliente, que sai no segundo tempo — ver
+# `_despedida()`.
+var _mood_linha: Control
 # A cara dele, ao lado da fala. Guardada porque troca três vezes na mesma
 # tela: abre a sorrir, aperta na última tentativa, e no fim ganha ou perde.
 var _retrato: TextureRect
@@ -26,6 +36,7 @@ var _btn_manter: Button
 
 func setup(index: int) -> void:
 	dock_index = index
+	tempo = &"rodada"
 	_build_ui()
 	_refresh()
 
@@ -68,7 +79,10 @@ func _build_ui() -> void:
 	balao.theme_type_variation = "Fala"
 	balao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_fala_arlindo = Label.new()
-	_fala_arlindo.autowrap_mode = TextServer.AUTOWRAP_WORD
+	# `_SMART` pela mesma razão do `fala()` do `PainelNarrativo`: a abertura e
+	# a despedida levam o nome do porto, que pode ser uma palavra só de 24
+	# letras (`docs/decisoes/051`).
+	_fala_arlindo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_fala_arlindo.text = GameState.texto(Narrativa.ARLINDO_ABERTURA)
 	balao.add_child(_fala_arlindo)
 	# A CARA DELE AO LADO DO BALÃO. A linha é montada à mão pela mesma razão
@@ -91,10 +105,10 @@ func _build_ui() -> void:
 
 	# A cara do cliente é um ícone que troca no meio da negociação, então a
 	# linha é guardada em pedaços: o texto e o ícone mudam juntos em _refresh().
-	var mood_linha := Icones.rotulo(Icones.CLIENTE_CALMO, "", Icones.TAM_TEXTO)
-	_mood_icone = mood_linha.get_node("Icone")
-	_mood_label = mood_linha.get_node("Texto")
-	vbox.add_child(mood_linha)
+	_mood_linha = Icones.rotulo(Icones.CLIENTE_CALMO, "", Icones.TAM_TEXTO)
+	_mood_icone = _mood_linha.get_node("Icone")
+	_mood_label = _mood_linha.get_node("Texto")
+	vbox.add_child(_mood_linha)
 
 	var btn_row := VBoxContainer.new()
 	btn_row.add_theme_constant_override("separation", 6)
@@ -150,10 +164,17 @@ func _negociar(acao: String) -> void:
 # se chegar aqui; isto é uma tela a mais para LER, não uma decisão a mais — e
 # por isso não toca no que o simulador mede, que nunca abre cena.
 func _despedida(resultado: String) -> void:
+	tempo = &"despedida"
 	# "fechado" é o cliente que FICA: quem perdeu foi ele.
 	var id := "perdeu" if resultado == "fechado" else "venceu"
 	_fala_arlindo.text = GameState.texto(String(Narrativa.ARLINDO_FALAS[id]))
 	_retrato.texture = Narrativa.retrato("arlindo", id)
+	# ⚠️ O HUMOR DO CLIENTE SAI COM A NEGOCIAÇÃO. A linha dizia "Cliente
+	# ouvindo a proposta. (2 tentativas)" por baixo da despedida — com o
+	# negócio fechado ou o cliente já no Porto Farol, e nenhuma das duas coisas
+	# era verdade. Viveu assim desde que o segundo tempo existe, porque a
+	# bateria só fotografava o primeiro (`docs/decisoes/051`).
+	_mood_linha.visible = false
 	for filho in _botoes.get_children():
 		filho.queue_free()
 	var sair := Button.new()

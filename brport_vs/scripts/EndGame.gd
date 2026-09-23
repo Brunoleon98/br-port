@@ -31,6 +31,13 @@ const ALTURA_NARRACAO_MAX := 900
 const MARGEM_CARTAO := 36
 
 var _venceu := false
+# O TEMPO DA CENA NA TELA, para quem a fotografa. A cobertura das capturas
+# (`tools/conferir_cobertura_paineis.py`) lê daqui o catálogo — cada
+# `tempo = &"..."` escrito neste arquivo é um tempo que tem de ter foto — e as
+# ferramentas de captura imprimem o valor dele. ⚠️ SEMPRE LITERAL: uma
+# atribuição por variável a ferramenta não sabe ler, e reprova em vez de a
+# saltar (`docs/decisoes/051`).
+var tempo: StringName = &""
 var _motivo := ""
 
 
@@ -50,6 +57,7 @@ func setup(won: bool, reason: String) -> void:
 
 
 func _mostrar_narracao() -> void:
+	tempo = &"narracao"
 	titulo(Icones.VITORIA, "Fim da Fase 1")
 	var texto := Narrativa.fim_de_fase()
 	var pedido := altura_do_texto(texto, LARGURA - MARGEM_CARTAO)
@@ -69,6 +77,7 @@ func _mostrar_narracao() -> void:
 
 
 func _mostrar_balanco() -> void:
+	tempo = &"balanco"
 	titulo(Icones.VITORIA if _venceu else Icones.DERROTA,
 		"O balanço" if _venceu else "Fim de jogo")
 

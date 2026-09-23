@@ -355,6 +355,12 @@ Teste e import rodam sem tela.
    JOGADA deriva tudo de uma vez — é o `--painel=<nome>` do `capturar_tela.gd`,
    que abre cada um pela PORTA DO JOGADOR e traz de graça as guardas do turno e
    da contagem de painéis, que a cena solta não tem (`docs/decisoes/038`).
+   ⚠️ **E A PORTA DO JOGADOR TAMBÉM TEM FASE.** Tocar no botão verdadeiro não
+   basta: o `pay_debt()` sai CALADO fora de `debt_payment`, e numa cena solta
+   o «Pagar» mostrava a resposta de quem pagou sem o dinheiro ter mudado de
+   mãos — texto certo, estado que não existe a jogar. A montagem
+   `parcela=vencida` chega lá pelo `advance_turn()`, e o F10 prova-o pelo
+   `parcela_paid` (`051`).
    ⚠️ **E COBERTURA DECLARADA MENTE; COBERTURA MEDIDA NÃO.** Cada guarda de
    captura responde pelo SEU tiro — a imagem saiu, o erro não apareceu, a
    contagem e o turno batem — e **nenhuma responde pelo CATÁLOGO**, que é como
@@ -373,6 +379,14 @@ Teste e import rodam sem tela.
    para ela não tapar o que se ia fotografar. **A convenção de pasta é uma
    suposição sobre o conteúdo**, e quem conta pergunta ao que o jogo ABRE, não
    ao que a pasta guarda.
+   ⚠️ **E UM PAINEL NÃO É UMA TELA.** A cobertura perguntava por CENA, e a do
+   Sr. Ribeiro são três — entrada, pagou, não pagou. A bateria fotografava só
+   o primeiro tempo de cada painel, e a despedida do Arlindo viveu dez dias a
+   dizer «Cliente ouvindo a proposta. (2 tentativas)» por baixo de um negócio
+   fechado. Hoje o catálogo desce ao TEMPO (`tempo = &"<id>"`, sempre
+   literal), e o que não se pode fotografar fica DECLARADO como lacuna — a
+   afirmação perigosa é a positiva, e a lacuna só envelhece para o lado que
+   reprova (`docs/decisoes/051`).
    Para olhar um detalhe pequeno, `tools/recortar_captura.gd` amplia sem
    suavizar: a 19px um ícone não se julga a olho na captura inteira, e foi
    ampliando que se viu que o ícone `doca` era um fantasma no painel branco.
@@ -2156,6 +2170,13 @@ tranca isso.
   texto de tabela na interface mede o PIOR CASO montado à mão, e não o que os
   três cartões calham mostrar: um deles diz "aguardando barco" e passaria
   sempre. O bloco D18 do teste de design faz essa conta.
+- **⚠️ E O `size` DO RÓTULO NÃO É O QUE ELE DESENHA.** `AUTOWRAP_WORD` só
+  quebra em fronteira de palavra, e a tela de nomes aceita 24 letras sem
+  espaço: com elas «Boa tarde, WWWW…» passava por FORA do cartão com o
+  retângulo do rótulo intacto. Quem mede o desenho é `get_character_bounds()`,
+  e o controle que o prova é medir pela caixa com o defeito posto — ficou
+  VERDE. Fala que leva nome quebra por `AUTOWRAP_WORD_SMART`, que num texto sem
+  palavra longa dá as mesmas linhas ao pixel (`051`).
 - **⚠️ E ÁREA ROLÁVEL NÃO CORTA — ESCONDE, que não deixa marca.** A regra acima
   é sobre `Label` que corta; num `paragrafo_rolavel` o que não cabe desce para
   baixo da dobra sem sinal nenhum. Acrescentar quatro linhas ao diário (~100px)

@@ -188,6 +188,11 @@ func _process(_delta: float) -> bool:
 	# é um til; o que se ganha é a guarda não mudar de comportamento entre o
 	# contêiner e o runner.
 	print("Paineis: %s" % _paineis_na_tela())
+	# O TEMPO de cada painel que tenha mais de um — a mesma linha do
+	# `capturar_cena.gd`, lida pelo `conferir_cobertura_paineis.py`
+	# (`docs/decisoes/051`).
+	for linha in _tempos_na_tela():
+		print(linha)
 
 	var img: Image = root.get_texture().get_image()
 	var erro := img.save_png(_saida)
@@ -517,6 +522,17 @@ func _paineis_na_tela() -> String:
 	if cenas.is_empty():
 		return "(nenhum)"
 	return " ".join(cenas)
+
+
+func _tempos_na_tela() -> PackedStringArray:
+	var linhas := PackedStringArray()
+	var overlay: Node = null if _main == null else _main.get_node_or_null("Overlay")
+	if overlay == null:
+		return linhas
+	for painel in overlay.get_children():
+		if "tempo" in painel and String(painel.get("tempo")) != "":
+			linhas.append("Tempo: %s %s" % [painel.scene_file_path, String(painel.get("tempo"))])
+	return linhas
 
 
 func _paineis_abertos() -> int:
