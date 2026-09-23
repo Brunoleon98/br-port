@@ -1,0 +1,54 @@
+{
+  "candidate": "vegetacao_grupo_f1_v3",
+  "compare": "V1 e V3 no mesmo tamanho lógico 82x52",
+  "checks": [
+    {
+      "name": "PNG original RGBA 600x380",
+      "status": "PASS"
+    },
+    {
+      "name": "cantos transparentes",
+      "status": "PASS"
+    },
+    {
+      "name": "desenho visível",
+      "status": "PASS"
+    },
+    {
+      "name": "prévia 720x720",
+      "status": "PASS"
+    },
+    {
+      "name": "geometria protegida intacta",
+      "status": "PASS"
+    },
+    {
+      "name": "três posições fora da máscara",
+      "status": "PASS"
+    },
+    {
+      "name": "SVG fonte presente",
+      "status": "PASS"
+    }
+  ],
+  "changed_pixels": 1621,
+  "protected_changed_pixels": 0,
+  "alpha_bbox": [
+    23,
+    43,
+    569,
+    326
+  ],
+  "sha256": {
+    "vegetacao_grupo_f1_v3.svg": "8313d3b6e6be418d147ce0565fd866ca8170a20447b182e606cfe534065ee60c",
+    "vegetacao_grupo_f1_v3.png": "cb2ffab6309e9593438384e4977a537415581e42fac9c6138a64fc2a76d2709c",
+    "mapa_v3_82px.png": "34dddc56b1d160cea0120055654462aaba3e20aaab60355248a45fca50b5225c"
+  },
+  "pending": [
+    "avaliação estética de Bruno",
+    "captura Godot",
+    "teste em aparelho alvo",
+    "integração no gerador e verificação de sobreposição com objetos não incluídos na máscara"
+  ],
+  "ready_for_release": false
+}

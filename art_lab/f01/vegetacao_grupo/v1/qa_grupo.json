@@ -1,0 +1,64 @@
+{
+  "candidate": "vegetacao_grupo_f1_v1",
+  "reference": "13_arbustos_vegetacao_baixa_mangue_v4.png; grupo superior esquerdo completo",
+  "scale": {
+    "source_canvas": [
+      600,
+      380
+    ],
+    "use_size": [
+      100,
+      63
+    ],
+    "static_map_position": [
+      12,
+      10
+    ]
+  },
+  "checks": [
+    {
+      "name": "asset_rgba",
+      "status": "PASS"
+    },
+    {
+      "name": "canvas_600x380",
+      "status": "PASS"
+    },
+    {
+      "name": "corner_alpha_zero",
+      "status": "PASS"
+    },
+    {
+      "name": "has_visible_pixels",
+      "status": "PASS"
+    },
+    {
+      "name": "preview_720x720",
+      "status": "PASS"
+    },
+    {
+      "name": "preview_changes_only_unprotected_geometry",
+      "status": "PASS"
+    }
+  ],
+  "changed_pixels": 2462,
+  "changed_protected_pixels": 0,
+  "alpha_bbox": [
+    19,
+    43,
+    577,
+    326
+  ],
+  "sha256": {
+    "vegetacao_grupo_f1_v1.svg": "7c0a05307f09edd3733771bac6395ae9fc36451f2308ee235949ed57290a7a44",
+    "vegetacao_grupo_f1_v1.png": "81dfc36e03369a80cf51a49aa88822ac2dc605247ff9724e735f61e8b59f49b7",
+    "mapa_estatico_v1.png": "8809c41800a461e9d0961c72b4084f2a4ed515dd64cd1d475a74282da52b5579"
+  },
+  "pending": [
+    "avaliação estética de Bruno",
+    "captura runtime Godot",
+    "teste aparelho alvo",
+    "integração no gerador e revisão das posições"
+  ],
+  "ready_for_release": false
+}

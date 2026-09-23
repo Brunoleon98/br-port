@@ -1,0 +1,77 @@
+{
+  "asset_id": "f01_arbusto_13a",
+  "candidate_revision": "V3_em_revisao",
+  "base_commit": "cc36166a262a751494ca3ccd25f1359f77b18fc1",
+  "audited_generator_sha256": "e4c3d35e86f9f37e444a7f08ae51e7e64ebe09385a19bd9f9d126949df66e499",
+  "candidate_sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd",
+  "files": {
+    "candidate": {
+      "path": "evidence/13a_v3.png",
+      "sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd"
+    },
+    "before_map": {
+      "path": "evidence/mapa_v2.png",
+      "sha256": "e14b8ea9ce7c017f1dd6f32f413396f70de6cc3e548aa31e4a098ed940c20d11"
+    },
+    "after_map": {
+      "path": "evidence/mapa_v3.png",
+      "sha256": "4a61832f29b29a4bd9f4f1c1789da73c0154dc0c7e1a55ccf44a294532a6216b"
+    },
+    "reference": {
+      "path": "evidence/reference_group.png",
+      "sha256": "2637c44cac3589e7b5074789da4dfe2454c9c2fbcc19508f3ac9e8b0ac9e2864"
+    },
+    "historical_comparison": {
+      "path": "evidence/comparacao_anterior.jpg",
+      "sha256": "63952f61e1d4f38c3d0665ce3a6bd116b0daf8794767d954879d3c77ae0f398f"
+    }
+  },
+  "allowed_change_mask": null,
+  "reference_original": {
+    "filename": "13_arbustos_vegetacao_baixa_mangue_v4.png",
+    "sha256": "c5a085ee64c13aadfcb25b5f4bc772d2e682272cbc92557ad3a4c1b09488c040",
+    "crop_xyxy": [
+      30,
+      80,
+      340,
+      300
+    ],
+    "component_selection": "pending: referência mistura arbustos e árvores"
+  },
+  "scale": {
+    "coordinate_space": "720x1280 logical viewport; map 720x720; visible map 720x660",
+    "candidate_png": "256x256: representação ampliada, não consumida pelo jogo",
+    "source_draw_to_logical": 0.6666666666666666,
+    "isolated_draw_to_png": 4,
+    "import_scale_svg": 1.5,
+    "device_capture": null,
+    "note": "1:1 lógico não significa 1:1 físico no chat ou em todo aparelho"
+  },
+  "gates": {
+    "reference": {
+      "status": "needs_rework",
+      "candidate_sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd",
+      "evidence": []
+    },
+    "visual": {
+      "status": "needs_rework",
+      "candidate_sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd",
+      "evidence": []
+    },
+    "integration": {
+      "status": "pending",
+      "candidate_sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd",
+      "evidence": []
+    },
+    "mobile": {
+      "status": "pending",
+      "candidate_sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd",
+      "evidence": []
+    },
+    "human": {
+      "status": "pending",
+      "candidate_sha256": "0dfb0a3520f0dd97cfab32275ab952ebb16661fe51615e18ba16021db9c987bd",
+      "evidence": []
+    }
+  }
+}

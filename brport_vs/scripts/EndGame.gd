@@ -1,7 +1,7 @@
 extends PainelNarrativo
 
 # ============================================================
-# BR Port VS — o fim da Fase 1
+# BR Port VS — o fim do VS: a primeira parcela da Fase 1, paga ou não
 #
 # Era uma tela de números: "VITÓRIA!" e uma lista de métricas. Item A4 do
 # plano — a sexta das telas narrativas é a cena de fim de fase, e o arquivo de
@@ -58,7 +58,13 @@ func setup(won: bool, reason: String) -> void:
 
 func _mostrar_narracao() -> void:
 	tempo = &"narracao"
-	titulo(Icones.VITORIA, "Fim da Fase 1")
+	# ⚠️ O TÍTULO DIZIA "Fim da Fase 1", por cima de uma narração que abre com
+	# "A primeira de três parcelas" e "Faltam duas" — o título a fechar a fase
+	# e o texto a dizer que ela continua. Veredito do Bruno no gate do A5
+	# (23/09): «não é o fim da fase 1, apenas o pagamento de uma das três
+	# parcelas». Vencer é `parcela_paid` (ver `_check_end`), logo o título é
+	# verdade sempre que esta tela aparece.
+	titulo(Icones.VITORIA, "Primeira parcela paga")
 	var texto := Narrativa.fim_de_fase()
 	var pedido := altura_do_texto(texto, LARGURA - MARGEM_CARTAO)
 	paragrafo_rolavel(texto, mini(pedido, ALTURA_NARRACAO_MAX))

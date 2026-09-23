@@ -812,6 +812,36 @@ frentes, e **a ordem é do Bruno**:
 
 Falta a metade dele, que é olhar — e está feita; falta escolher a ordem.
 
+#### ✅ A FRENTE 1 FECHOU (23/09) — a primeira que o Bruno escolheu
+
+- **(a) O calendário** mostra na grelha os ícones da legenda, que passaram a
+  sair de uma tabela só (`MARCAS`). O ícone vai POR BAIXO do número: a semana
+  tem OITO colunas, e lado a lado o último dia pedia 60 px por célula — medido,
+  o cartão alargava de 480 para 534 e saía descentrado. O dia 32 mostra as duas
+  marcas (o `!` escondia o fecho da semana 4), e o ícone da legenda deixou de
+  esticar com a linha. O **D36** tranca as três perguntas; seis mutantes, seis
+  reprovações, cada um na sua.
+- **(b) O título** da narração é «Primeira parcela paga» — vencer é
+  `parcela_paid`, logo é verdade sempre que a tela aparece.
+- **(c) O Arlindo** diz «meu caro», escolha do Bruno. A dose de 13/09 não
+  tinha salvo o «sobrinho»; a lição foi para o `CLAUDE.md`. A nota do
+  `contraoferta_fim` dizia «Ribeiro» e a tela é mesmo do Arlindo — a foto
+  confirma; não há o que corrigir.
+
+O pedido de «melhore o design» destas telas é da frente 3, e o resto da nota
+do `fimfase` (desbloqueios, tutorial) é da 5.
+
+**E o material do ChatGPT passou a viver no repositório, em `art_lab/`**, a
+pedido do Bruno, para as duas frentes trabalharem juntas: o plano de produção
+F1–F5 dele (V3), os conceitos, as candidatas de vegetação e as decisões do
+checkout de lá. A porta é `art_lab/README.md` — quem faz o quê, o caminho de
+uma peça até ao jogo, onde o plano V3 e este repositório divergem, e o que
+cada frente deste §A5 pode tirar dele (a 2, dos retratos, é a única em que o
+gerador de imagem pode dar o arquivo final). A leitura de 23/09, com as
+medições, ficou em `docs/arquivo/AUDITORIA_ARTE_CHATGPT_2026-09-23.md`. O
+galpão V3 que o Bruno aprovou lá continua só no ambiente do ChatGPT até alguém
+publicar a branch `art/f01-galpao`.
+
 ---
 
 ### A6 — O áudio de verdade

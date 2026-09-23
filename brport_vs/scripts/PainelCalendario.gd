@@ -32,8 +32,38 @@ const ALTURA := 0
 # aqui o cartão é branco, e o mesmo tom mede 2,93:1, abaixo até do corte de
 # texto grande (3,0). Este tom mede 5,42:1 no mesmo cartão.
 
-const LARG_CELULA := 44.0
-const ALT_CELULA := 30.0
+# ⚠️ O ÍCONE VAI POR BAIXO DO NÚMERO, e a largura é medida. A semana tem
+# `TURNS_PER_WEEK` colunas — OITO, não sete —, e o cartão tem 456 px por
+# dentro (480 menos as margens de 12 do tema). Lado a lado, o último dia pede
+# número + dois ícones = 60 px, e oito colunas de 60 com a separação dão 508:
+# medido, o cartão alargava para 534 e saía descentrado. Por baixo, a célula
+# só precisa dos dois ícones (40 px), e 52 deixa 12 px de folga. O D36 do
+# teste de design reprova se a grelha voltar a alargar o cartão.
+const LARG_CELULA := 52.0
+const ALT_CELULA := 44.0
+
+# ⚠️ A LEGENDA E A GRELHA LEEM ESTA TABELA, e até 23/09 eram duas. A grelha
+# marcava o dia com "•" e "!" no texto e a legenda traduzia os dois em ÍCONE,
+# de modo que quem lia a legenda procurava na grelha um desenho que ela não
+# tinha — foi o veredito do Bruno no gate do A5: «os itens da legenda não
+# aparecem no calendário». Uma tabela só faz as duas pontas mostrarem o mesmo
+# desenho por construção, e a ordem dela é a da legenda.
+#
+# ⚠️ E O DIA PODE TER AS DUAS MARCAS. O último dia fecha a semana E vence a
+# parcela, e o "!" escondia o "•" — a semana 4 era a única sem fecho marcado.
+# A célula mostra todas as que valem, na ordem da tabela.
+const MARCAS := [
+	{
+		"campo": "fecha_semana",
+		"icone": Icones.CAIXA,
+		"legenda": "fecho de semana — entra o aluguel do píer, saem salários e manutenção",
+	},
+	{
+		"campo": "parcela_vence",
+		"icone": Icones.PARCELA,
+		"legenda": "vencimento da parcela do Sr. Ribeiro",
+	},
+]
 
 
 func setup(_sem_argumentos: Variant = null) -> void:
@@ -60,29 +90,40 @@ func setup(_sem_argumentos: Variant = null) -> void:
 
 	fio()
 	secao("LEGENDA")
-	_linha_legenda(Icones.CAIXA, "fecho de semana — entra o aluguel do píer, saem salários e manutenção")
-	_linha_legenda(Icones.PARCELA, "vencimento da parcela do Sr. Ribeiro")
+	for marca in MARCAS:
+		_linha_legenda(marca["icone"], marca["legenda"])
 
 	botao_fechar("Fechar")
 
 
 func _celula(dia: Dictionary) -> Control:
-	var rotulo := Label.new()
-	rotulo.custom_minimum_size = Vector2(LARG_CELULA, ALT_CELULA)
-	rotulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	rotulo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	# ⚠️ O MARCADOR ERA TEXTO porque "a 44px um ícone de 19px não deixa espaço
+	# para o número", e a legenda traduzia-o num ícone que a grelha não tinha.
+	# A saída não foi encolher o ícone — ele fica nos 19 px que a folha de
+	# contato mede —, foi pô-lo por BAIXO, como o autocolante num calendário de
+	# parede. O número vai ao TOPO em toda célula, com ou sem ícone, senão a
+	# linha do dia 8 sairia desalinhada da dos sete dias antes dele.
+	var celula := VBoxContainer.new()
+	celula.name = "Dia%d" % int(dia["turno"])
+	celula.custom_minimum_size = Vector2(LARG_CELULA, ALT_CELULA)
+	celula.add_theme_constant_override("separation", 0)
+	celula.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	# O MARCADOR VAI NO TEXTO, e não num ícone dentro da célula — a 44px de
-	# largura um ícone de 19px não sobra espaço para o número ao lado, e
-	# jogo nenhum deste projeto encolhe ícone abaixo do que a folha de
-	# contato mede. "!" pela parcela (o dia que decide a partida) e "•" pelo
-	# fecho de semana — a legenda logo abaixo é que traduz os dois em ícone.
-	var marca := ""
-	if bool(dia["parcela_vence"]):
-		marca = "!"
-	elif bool(dia["fecha_semana"]):
-		marca = "•"
-	rotulo.text = "%d%s" % [int(dia["turno"]), marca]
+	var rotulo := Label.new()
+	rotulo.name = "Numero"
+	rotulo.text = str(int(dia["turno"]))
+	rotulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	celula.add_child(rotulo)
+
+	var marcas := HBoxContainer.new()
+	marcas.name = "Marcas"
+	marcas.alignment = BoxContainer.ALIGNMENT_CENTER
+	marcas.add_theme_constant_override("separation", 2)
+	marcas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	celula.add_child(marcas)
+	for marca in MARCAS:
+		if bool(dia[marca["campo"]]):
+			marcas.add_child(Icones.imagem(marca["icone"]))
 
 	if bool(dia["hoje"]):
 		rotulo.theme_type_variation = "RotuloAlerta"
@@ -96,7 +137,7 @@ func _celula(dia: Dictionary) -> Control:
 		# que ninguém a via. O percurso dos 19 estados também não a media: ele
 		# abre o calendário no dia 1, onde não há dia passado nenhum.
 		rotulo.theme_type_variation = "RotuloApoio"
-	return rotulo
+	return celula
 
 
 func _linha_legenda(icone: Texture2D, texto: String) -> void:
@@ -104,12 +145,11 @@ func _linha_legenda(icone: Texture2D, texto: String) -> void:
 	linha.add_theme_constant_override("separation", 8)
 	_vbox.add_child(linha)
 
-	var img := TextureRect.new()
-	img.custom_minimum_size = Vector2(Icones.TAM_TEXTO, Icones.TAM_TEXTO)
-	img.texture = icone
-	img.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	linha.add_child(img)
+	# ⚠️ O ÍCONE ESTICAVA COM A LINHA. Com `EXPAND_FIT_WIDTH_PROPORTIONAL` a
+	# largura segue a ALTURA, e a legenda do fecho de semana quebra em duas
+	# linhas: o saco de dinheiro saía com o dobro do tamanho do banco logo
+	# abaixo. `Icones.imagem()` fixa os 19 px e centra na vertical.
+	linha.add_child(Icones.imagem(icone))
 
 	var rotulo := Label.new()
 	rotulo.text = texto

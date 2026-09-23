@@ -19,10 +19,19 @@ são em português — commits e PRs em inglês.
 > O que aconteceu em cada sessão que fechou vive em `docs/arquivo/`, com
 > índice — **nada se apaga**, e nada de lá descreve o jogo de hoje.
 >
-> Três documentos de trabalho não são camada e continuam onde a mão os
+> Os documentos de trabalho não são camada e continuam onde a mão os
 > alcança: `docs/BRP_SPATIAL_CONTRACT.md` (o contrato da projeção),
-> `docs/design/BR_Port_Plano_Arte_Blender.md` (o caminho medido da arte) e
-> `docs/PROTOCOLO_DE_ESCUTA.md` (o gate do A6, que só o Bruno passa).
+> `docs/design/BR_Port_Plano_Arte_Blender.md` (o caminho medido da arte),
+> `docs/PROTOCOLO_DE_ESCUTA.md` (o gate do A6, que só o Bruno passa) e
+> `art_lab/README.md` (o laboratório de arte partilhado com o ChatGPT: o plano
+> de produção dele, os conceitos e as candidatas, e o caminho de uma peça até
+> ao jogo).
+>
+> **O Codex também contribui neste repositório**, por branches `codex/*` e PR,
+> com tarefas que o Bruno lhe entrega. Ele lê `AGENTS.md`, que só aponta para
+> este arquivo e diz como os dois agentes não se atropelam — as regras daqui
+> valem para ele. Antes de mexer num arquivo de alto conflito, veja os PRs
+> abertos dele.
 > `tools/conferir_docs.py` tranca isto no CI, e espera `DOCS OK`.
 >
 > **O GDD 7 lê-se em `docs/gdd/`**, uma seção por arquivo, GERADAS do
@@ -1014,6 +1023,13 @@ tranca isso.
   entrar.** Ele mede alfa e o ângulo da base contra os 26,57°. Dois lotes já
   vieram com o xadrez de transparência pintado nos pixels, e o de 31/08 vinha
   ainda com metade das peças noutra projeção.
+  ⚠️ **E trabalho de fora chega com uma BASE: confira-a no GitHub antes de ler
+  um número dele.** O pacote do ChatGPT de 23/09 foi feito sobre o PR #58 num
+  checkout cujo HEAD o GitHub não conhece, com decisões `034`–`036` que colidem
+  em número com as daqui e um galpão «aprovado» que só existe lá. O remendo
+  aplicou limpo na `main` e o teste de design passou — sem nenhuma guarda a
+  perguntar pela peça nova. Hoje o material dele vive em `art_lab/`, e a
+  porta de entrada diz a base, a pasta e a prova de cada entrega.
 - **Asset novo sai de `blender/gerar_brp.py`**, que partilha a câmera e o kit
   com `gerar_props_iso.py`. Nada de um segundo estúdio ao lado.
 - **Prop no cenário nunca sai de gerador de imagem.** Duas levas perdidas: o
@@ -1933,14 +1949,19 @@ tranca isso.
   uma palavra técnica por uma palavra do mundo, pergunte o que a nova palavra
   PROMETE — e se o resto do jogo cumpre a promessa.
 - **⚠️ MANEIRISMO QUE APARECE UMA VEZ NÃO É MANEIRISMO — É TROPEÇO.** O Arlindo
-  fecha a negociação perdida com *"sobrinho"*, e a primeira pergunta da leitura
-  foi *"como assim sobrinho?"*. A palavra está CERTA e documentada — o GDD
-  assina *"chama todo mundo de sobrinho ou querido, independente da idade"* —,
-  e mesmo assim a intenção não chegou: no GDD ele fala assim em toda cena, no
-  VS diz sete linhas e usa o maneirismo numa. **A dose é parte da escrita.**
-  A correção não foi tirar a palavra: foi plantar o "querido" na abertura, para
-  a segunda ocorrência ler como assinatura. Antes de cortar o que soou
-  estranho, conte quantas vezes ele aparece — pode faltar, e não sobrar.
+  fechava a negociação perdida com *"sobrinho"*, e a primeira pergunta da
+  leitura foi *"como assim sobrinho?"*. A palavra está CERTA e documentada — o
+  GDD assina *"chama todo mundo de sobrinho ou querido, independente da
+  idade"* —, e mesmo assim a intenção não chegou: no GDD ele fala assim em toda
+  cena, no VS diz sete linhas e usa o maneirismo numa. **A dose é parte da
+  escrita.** Antes de cortar o que soou estranho, conte quantas vezes ele
+  aparece — pode faltar, e não sobrar.
+  ⚠️ **E A CORREÇÃO DE ESCRITA É HIPÓTESE ATÉ A LEITURA SEGUINTE.** A de 13/09
+  foi de dose — plantar o "querido" na abertura —, e a leitura de 23/09
+  tropeçou no MESMO sítio: *"achei estranho ele chamar de sobrinho"*. A
+  palavra saiu (é "meu caro", escolha do Bruno). Quem corrige uma queixa de
+  leitura pede outra leitura; o raciocínio que justificou a correção não a
+  prova.
 - **⚠️ CONTAGEM QUE O JOGADOR LÊ CONCORDA A FRASE INTEIRA, e zero leva
   PLURAL.** `Narrativa.concordar(n, um, varios)` recebe as duas frases
   completas — "dia restante" / "dias restantes" —, e não substantivo e adjetivo

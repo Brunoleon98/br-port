@@ -1,0 +1,211 @@
+{
+  "revision": "13A_V5_candidata",
+  "base": "13A_V4_laboratorio",
+  "tests": [
+    {
+      "test": "sha_arbusto_v5.py.txt",
+      "status": "PASS",
+      "detail": "f9579d2a935c624efc82aaf39df5c2f3aa19db15458ef265f43e5bfa019bf9b0"
+    },
+    {
+      "test": "sha_gerar_mapa_iso_13a_v5.py",
+      "status": "PASS",
+      "detail": "44692c485bc65f8d5a19670a328278a834f2b085d8142682312a01459bd61922"
+    },
+    {
+      "test": "sha_porto_mapa_iso_v5.svg",
+      "status": "PASS",
+      "detail": "6f00557e5dd270f9c19e525b695e47956c6896a62e09c08488c23f6d4a923c2b"
+    },
+    {
+      "test": "sha_porto_mapa_iso_patio_v5.svg",
+      "status": "PASS",
+      "detail": "ae256dc3e1d9b156e3e37295113f3999c53348b33f811055006bd2a3a194b034"
+    },
+    {
+      "test": "sha_13a_v5_instancia_1.png",
+      "status": "PASS",
+      "detail": "fc272734528bbfa6d1b9ae34b0df3cd55ce3b24b6a994f3de8ca30bee77b4b9e"
+    },
+    {
+      "test": "png_alpha_canvas",
+      "status": "PASS",
+      "detail": []
+    },
+    {
+      "test": "same_five_anchors_V4_V5",
+      "status": "PASS",
+      "detail": {
+        "v4": [
+          [
+            -5.968654534,
+            2.5
+          ],
+          [
+            -5.989612052,
+            5.0
+          ],
+          [
+            -5.985220226,
+            6.6
+          ],
+          [
+            -1.940185464,
+            10.2
+          ],
+          [
+            -2.063625054,
+            12.0
+          ]
+        ],
+        "v5": [
+          [
+            -5.968654534,
+            2.5
+          ],
+          [
+            -5.989612052,
+            5.0
+          ],
+          [
+            -5.985220226,
+            6.6
+          ],
+          [
+            -1.940185464,
+            10.2
+          ],
+          [
+            -2.063625054,
+            12.0
+          ]
+        ]
+      }
+    },
+    {
+      "test": "form_cost_does_not_move_anchors",
+      "status": "PASS",
+      "detail": {
+        "v5": [
+          [
+            -5.968654534,
+            2.5
+          ],
+          [
+            -5.989612052,
+            5.0
+          ],
+          [
+            -5.985220226,
+            6.6
+          ],
+          [
+            -1.940185464,
+            10.2
+          ],
+          [
+            -2.063625054,
+            12.0
+          ]
+        ],
+        "mutated": [
+          [
+            -5.968654534,
+            2.5
+          ],
+          [
+            -5.989612052,
+            5.0
+          ],
+          [
+            -5.985220226,
+            6.6
+          ],
+          [
+            -1.940185464,
+            10.2
+          ],
+          [
+            -2.063625054,
+            12.0
+          ]
+        ]
+      }
+    },
+    {
+      "test": "same_specimen_in_both_maps",
+      "status": "PASS",
+      "detail": true
+    },
+    {
+      "test": "unchanged_gameplay_anchor_table",
+      "status": "PASS",
+      "detail": "e3bc81b8762263c163786f2c756d1906b54bc1bc9f5f4b8d982a2998388aa683"
+    },
+    {
+      "test": "mapa_dimensions",
+      "status": "PASS",
+      "detail": [
+        720,
+        720
+      ]
+    },
+    {
+      "test": "mapa_protected_geometry",
+      "status": "PASS",
+      "detail": {
+        "protected_changed_pixels": 0,
+        "changed_pixels": 979,
+        "bbox": [
+          47,
+          29,
+          178,
+          180
+        ]
+      }
+    },
+    {
+      "test": "mapa_patio_dimensions",
+      "status": "PASS",
+      "detail": [
+        720,
+        720
+      ]
+    },
+    {
+      "test": "mapa_patio_protected_geometry",
+      "status": "PASS",
+      "detail": {
+        "protected_changed_pixels": 0,
+        "changed_pixels": 979,
+        "bbox": [
+          47,
+          29,
+          178,
+          180
+        ]
+      }
+    },
+    {
+      "test": "godot_scene_capture",
+      "status": "PENDING",
+      "detail": "Sem execução ou aceite para esta candidata."
+    },
+    {
+      "test": "android_a23",
+      "status": "PENDING",
+      "detail": "Sem execução ou aceite para esta candidata."
+    },
+    {
+      "test": "bruno_visual_review",
+      "status": "PENDING",
+      "detail": "Sem execução ou aceite para esta candidata."
+    },
+    {
+      "test": "coast_V8",
+      "status": "PENDING",
+      "detail": "Sem execução ou aceite para esta candidata."
+    }
+  ],
+  "ready_for_release": false
+}

@@ -87,9 +87,19 @@ ARQUIVO = "docs/arquivo"
 TETO_ESTADO = 30000
 
 # `00_INDICE.md` é citado na decisão 001 como um arquivo que NÃO veio no pacote
-# de arte — é prosa sobre uma ausência, não uma referência a resolver. É a
-# única exceção, e fica escrita aqui em vez de o conferidor ficar esperto.
-AUSENTES_DE_PROPOSITO = {"00_INDICE.md"}
+# de arte — é prosa sobre uma ausência, não uma referência a resolver. As
+# exceções ficam escritas aqui em vez de o conferidor ficar esperto.
+#
+# ⚠️ E AS DUAS DE 23/09 SÃO DA MESMA FORMA: o plano V3 e o prompt V16 do
+# ChatGPT, em `art_lab/plano/`, citam as versões que os precederam — o plano V2
+# e o prompt V13 —, que vivem na biblioteca de lá e não vieram no pacote. Os
+# arquivos dele não se editam, porque o hash de cada um é a proveniência
+# (`art_lab/README.md`).
+AUSENTES_DE_PROPOSITO = {
+    "00_INDICE.md",
+    "PLANO_PRODUCAO_ASSETS_BR_PORT_V2.md",
+    "PROMPT_BR_PORT_PROXIMA_CONVERSA_V13.md",
+}
 
 REF = re.compile(r'(?:\[[^\]]*\]\(([^)\s]+\.md)\)|`([^`\n]+?\.md)`)')
 

@@ -1,0 +1,170 @@
+{
+  "asset_id": "f01_arbusto_13a",
+  "revision": "V4_candidata",
+  "base_commit": "cc36166a262a751494ca3ccd25f1359f77b18fc1",
+  "source_v3_sha256": "e4c3d35e86f9f37e444a7f08ae51e7e64ebe09385a19bd9f9d126949df66e499",
+  "tests": [
+    {
+      "test": "hash_gerar_mapa_iso_13a_v4.py",
+      "status": "PASS",
+      "detail": "6aa6d3e8a03ab2bd367f3ac3f9450ecf6ba65917fb4ed4bd5b7985165f6ba610"
+    },
+    {
+      "test": "hash_porto_mapa_iso_v4.svg",
+      "status": "PASS",
+      "detail": "c15200692639ba5e559221d1c777dc568ae8ca56744d9f5187469a110a2eb1d8"
+    },
+    {
+      "test": "hash_porto_mapa_iso_patio_v4.svg",
+      "status": "PASS",
+      "detail": "c29f64a656f2344cfb64d40e63231ac64aa16dd8f889403d3222ce2b94f8c6f8"
+    },
+    {
+      "test": "hash_13a_v4_instancia_1.png",
+      "status": "PASS",
+      "detail": "2629a3ef03b585873a2b29f5018065b7d4d4505a55a1b267096a350f94f7c4e4"
+    },
+    {
+      "test": "png_alpha_canvas",
+      "status": "PASS",
+      "detail": []
+    },
+    {
+      "test": "anchors_stable_on_shape_cost",
+      "status": "PASS",
+      "detail": {
+        "normal": [
+          [
+            -5.968654534,
+            2.5
+          ],
+          [
+            -5.989612052,
+            5.0
+          ],
+          [
+            -5.985220226,
+            6.6
+          ],
+          [
+            -1.940185464,
+            10.2
+          ],
+          [
+            -2.063625054,
+            12.0
+          ]
+        ],
+        "mutated": [
+          [
+            -5.968654534,
+            2.5
+          ],
+          [
+            -5.989612052,
+            5.0
+          ],
+          [
+            -5.985220226,
+            6.6
+          ],
+          [
+            -1.940185464,
+            10.2
+          ],
+          [
+            -2.063625054,
+            12.0
+          ]
+        ]
+      }
+    },
+    {
+      "test": "specimen_exact_svg_in_both_maps",
+      "status": "PASS",
+      "detail": true
+    },
+    {
+      "test": "deterministic_specimen",
+      "status": "PASS",
+      "detail": true
+    },
+    {
+      "test": "terra_map_dimensions",
+      "status": "PASS",
+      "detail": [
+        [
+          720,
+          720
+        ],
+        [
+          720,
+          720
+        ]
+      ]
+    },
+    {
+      "test": "terra_protected_geometry",
+      "status": "PASS",
+      "detail": {
+        "protected_changed_pixels": 0,
+        "changed_pixels": 1048,
+        "bbox": [
+          48,
+          29,
+          178,
+          181
+        ]
+      }
+    },
+    {
+      "test": "patio_map_dimensions",
+      "status": "PASS",
+      "detail": [
+        [
+          720,
+          720
+        ],
+        [
+          720,
+          720
+        ]
+      ]
+    },
+    {
+      "test": "patio_protected_geometry",
+      "status": "PASS",
+      "detail": {
+        "protected_changed_pixels": 0,
+        "changed_pixels": 1048,
+        "bbox": [
+          48,
+          29,
+          178,
+          181
+        ]
+      }
+    },
+    {
+      "test": "godot_capture",
+      "status": "PENDING",
+      "detail": "Sem execução/aprovação da candidata V4 para este gate."
+    },
+    {
+      "test": "android_a23",
+      "status": "PENDING",
+      "detail": "Sem execução/aprovação da candidata V4 para este gate."
+    },
+    {
+      "test": "bruno_visual_review",
+      "status": "PENDING",
+      "detail": "Sem execução/aprovação da candidata V4 para este gate."
+    },
+    {
+      "test": "coast_v8",
+      "status": "PENDING",
+      "detail": "Sem execução/aprovação da candidata V4 para este gate."
+    }
+  ],
+  "ready_for_release": false
+}

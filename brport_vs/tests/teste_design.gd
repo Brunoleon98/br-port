@@ -263,6 +263,10 @@ func _rodar() -> void:
 	_d35_transito()
 	_confere("o bloco D35 correu até ao fim", _d35_completo)
 
+	print("=== D36: o calendário mostra na grelha o que a legenda promete ===")
+	_d36_legenda_do_calendario()
+	_confere("o bloco D36 correu até ao fim", _d36_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -5352,3 +5356,126 @@ func _d35_no_tempo(tela: Control, rota: Array, pr: Dictionary) -> Array:
 			u += 0.1
 		resto = u - dur
 	return out
+
+
+# ── D36 ── o calendário mostra na grelha o que a legenda promete
+#
+# Veredito do Bruno no gate do A5 (23/09): «os itens da legenda não aparecem
+# no calendário». Não apareciam: a grelha marcava o dia com "•" e "!" no TEXTO
+# e a legenda traduzia os dois num ÍCONE, e nenhuma suíte perguntava se as
+# duas pontas mostravam o mesmo desenho. São três perguntas, e cada uma
+# apanha um defeito que as outras deixam passar:
+#
+# (1) CADA DIA TEM OS ÍCONES DO SEU EVENTO. O esperado sai de
+#     `GameState.calendario()` e do par campo → ícone ESCRITO AQUI, nunca da
+#     `MARCAS` do painel: lida de lá, trocar os dois ícones na tabela mudava
+#     a grelha e a legenda juntas e a asserção passava contente — o espelho.
+#     O último dia tem DUAS marcas, e é o único estado em que "a primeira que
+#     vale" e "todas as que valem" divergem.
+# (2) A LEGENDA E A GRELHA MOSTRAM O MESMO CONJUNTO, dos dois lados: ícone na
+#     legenda que a grelha não usa é o defeito de 23/09; ícone na grelha sem
+#     linha na legenda é o mesmo com o sinal trocado.
+# (3) A GRELHA NÃO ALARGA O CARTÃO. A semana tem OITO colunas, e com o ícone
+#     ao lado do número a primeira versão desta mudança pedia 508 px num
+#     interior de 456: o `PanelContainer` crescia para a direita e saía
+#     descentrado, sem erro nenhum. Mede-se o mínimo do CARTÃO contra a
+#     largura que o painel declara, que é a promessa que ele faz.
+#
+# Abre-se pela PORTA DO JOGADOR — o toque no chip do dia —, porque é o
+# `_abrir_painel()` do `Main` que aplica o tema, e sem tema as margens e a
+# fonte não são as do jogo.
+var _d36_completo := false
+
+
+func _d36_legenda_do_calendario() -> void:
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var overlay: Node = tela.get_node("Overlay")
+	var antes := overlay.get_child_count()
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	ev.pressed = false
+	tela.get_node("HudBar/DiaPilula").gui_input.emit(ev)
+	_confere("D36: o toque no dia abriu um painel", overlay.get_child_count() == antes + 1)
+	var painel: Node = overlay.get_child(overlay.get_child_count() - 1)
+	var vbox: VBoxContainer = painel._vbox
+
+	# O par campo → ícone, escrito AQUI de propósito (ver o cabeçalho).
+	var esperado_por_campo := {
+		"fecha_semana": Icones.CAIXA.resource_path,
+		"parcela_vence": Icones.PARCELA.resource_path,
+	}
+
+	# (1) dia a dia
+	var na_grelha := {}
+	var dias_errados: Array = []
+	var com_duas := 0
+	for dia in GS.calendario():
+		var celula: Node = vbox.find_child("Dia%d" % int(dia["turno"]), true, false)
+		if celula == null:
+			dias_errados.append("%d sem célula" % int(dia["turno"]))
+			continue
+		var visto: Array = []
+		for img in celula.find_children("*", "TextureRect", true, false):
+			visto.append((img as TextureRect).texture.resource_path)
+			na_grelha[(img as TextureRect).texture.resource_path] = true
+		var quer: Array = []
+		for campo in esperado_por_campo:
+			if bool(dia[campo]):
+				quer.append(esperado_por_campo[campo])
+		visto.sort()
+		quer.sort()
+		if visto != quer:
+			dias_errados.append("%d mostra %s, devia %s" % [int(dia["turno"]), visto, quer])
+		if quer.size() > 1:
+			com_duas += 1
+	_confere("D36: cada dia do calendário mostra o ícone do seu evento",
+		dias_errados.is_empty(), "; ".join(dias_errados))
+	# Sem um dia de duas marcas, "a primeira" e "todas" dão o mesmo (ver acima).
+	_confere("D36: há um dia com as duas marcas, e foi conferido", com_duas >= 1,
+		"nenhum dia do calendário tem as duas — a pergunta ficou sem o caso que a aperta")
+
+	# (2) a legenda: as linhas de ícone que vêm DEPOIS do rótulo "LEGENDA" —
+	# o título também é uma linha de ícone e fica de fora.
+	var na_legenda := {}
+	var depois := false
+	for filho in vbox.get_children():
+		if filho is Label and (filho as Label).text == "LEGENDA":
+			depois = true
+		elif depois and filho is HBoxContainer:
+			for img in filho.find_children("*", "TextureRect", true, false):
+				na_legenda[(img as TextureRect).texture.resource_path] = true
+	var so_na_legenda: Array = []
+	for k in na_legenda:
+		if not na_grelha.has(k):
+			so_na_legenda.append(k)
+	var so_na_grelha: Array = []
+	for k in na_grelha:
+		if not na_legenda.has(k):
+			so_na_grelha.append(k)
+	_confere("D36: a legenda tem ícones", not na_legenda.is_empty(),
+		"nenhuma linha de ícone depois de LEGENDA")
+	_confere("D36: todo ícone da legenda aparece na grelha", so_na_legenda.is_empty(),
+		"só na legenda: %s" % [so_na_legenda])
+	_confere("D36: todo ícone da grelha tem linha na legenda", so_na_grelha.is_empty(),
+		"só na grelha: %s" % [so_na_grelha])
+
+	# (3) o cartão
+	var largura: int = painel.get_script().get_script_constant_map()["LARGURA"]
+	var cartao: Control = vbox.get_parent()
+	var pede: float = cartao.get_combined_minimum_size().x
+	_confere("D36: a grelha cabe no cartão sem o alargar (pede %d de %d)" % [pede, largura],
+		pede <= largura)
+
+	overlay.remove_child(painel)
+	painel.free()
+	root.remove_child(tela)
+	tela.free()
+	_d36_completo = true

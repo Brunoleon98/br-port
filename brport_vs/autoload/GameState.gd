@@ -449,7 +449,7 @@ const NOME_PORTO_PADRAO := "Cais Mirim"
 # Para o nome do jogador NÃO há padrão, e é de propósito: inventar um nome
 # seria pôr palavra na boca de quem não a escolheu. Quem deixa em branco fica
 # sem vocativo, e as falas que o usariam têm variante para isso — o Toninho já
-# trata por "chefia" e o Arlindo por "sobrinho", então ninguém fica sem
+# trata por "chefia" e o Arlindo por "meu caro", então ninguém fica sem
 # forma de tratamento.
 const NOME_JOGADOR_PADRAO := ""
 
