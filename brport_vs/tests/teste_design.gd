@@ -259,6 +259,10 @@ func _rodar() -> void:
 	_d34_borda_do_trabalhador()
 	_confere("o bloco D34 correu até ao fim", _d34_completo)
 
+	print("=== D35: o trânsito — ninguém passa por cima de ninguém ===")
+	_d35_transito()
+	_confere("o bloco D35 correu até ao fim", _d35_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -1824,20 +1828,33 @@ func _d13_travessia_do_caminhao() -> void:
 		#    acesso a partir da rota, e se a entrada não cair num trecho reto
 		#    dela o `_pontos_entre()` devolve um percurso com um salto. Mover um
 		#    píer em `my` faz exatamente isso.
-		var na_rota := false
-		for k in range(rota.size() - 1):
-			var a2: Vector2 = rota[k]
-			var b2: Vector2 = rota[k + 1]
-			if abs(b2.x - a2.x) > 0.01:
-				continue                     # cotovelo: anda em mx
-			if not is_equal_approx(a2.x, entrada.x):
-				continue
-			if entrada.y >= min(a2.y, b2.y) - 0.01 \
-					and entrada.y <= max(a2.y, b2.y) + 0.01:
-				na_rota = true
-		if not na_rota and erro_acesso == "":
-			erro_acesso = "a entrada da doca %d, em (%.2f, %.2f), não cai em trecho reto nenhum da rota" \
-				% [i + 1, entrada.x, entrada.y]
+		#
+		#    ⚠️ E DESDE A MÃO DIREITA (23/09) SÃO DUAS ROTAS E DOIS PONTOS. A
+		#    `entrada` publicada é a boca na faixa do lado da água, que agora é
+		#    a do RETORNO; a IDA vira na `virada`, à mesma altura, na faixa do
+		#    lado da vila. Cada um tem de cair num trecho reto da SUA rota.
+		var virada: Vector2 = do_jogo["virada"]
+		var ret_rota: Array = consts["ROTA_RETORNO"]
+		for par in [[entrada, ret_rota, "a entrada", "retorno"], [virada, rota, "a virada", "ida"]]:
+			var ponto: Vector2 = par[0]
+			var pontos: Array = par[1]
+			var na_rota := false
+			for k in range(pontos.size() - 1):
+				var a2: Vector2 = pontos[k]
+				var b2: Vector2 = pontos[k + 1]
+				if abs(b2.x - a2.x) > 0.01:
+					continue                     # cotovelo: anda em mx
+				if not is_equal_approx(a2.x, ponto.x):
+					continue
+				if ponto.y >= min(a2.y, b2.y) - 0.01 \
+						and ponto.y <= max(a2.y, b2.y) + 0.01:
+					na_rota = true
+			if not na_rota and erro_acesso == "":
+				erro_acesso = "%s da doca %d, em (%.2f, %.2f), não cai em trecho reto nenhum do %s" \
+					% [par[2], i + 1, ponto.x, ponto.y, par[3]]
+		if not is_equal_approx(virada.y, entrada.y) and erro_acesso == "":
+			erro_acesso = "a doca %d vira em my %.2f na ida e %.2f no retorno — o acesso é um só" \
+				% [i + 1, virada.y, entrada.y]
 		# E o acesso tem de começar DEPOIS da beira de fora da rua, senão o
 		# desvio não é desvio nenhum — ele já estaria lá.
 		if float(mx[0]) <= entrada.x + 0.01 and erro_acesso == "":
@@ -1976,13 +1993,14 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 	# ── a ── cada rota na SUA metade da pista, em todo trecho.
 	#
 	# O meio de cada faixa fica a um quarto da pista, a contar da borda de
-	# `mx` (ou `my`) mais BAIXO: o retorno a 0,25, a ida a 0,75. Nos retos a
-	# largura mede-se em `mx`; nos cotovelos, em `my`.
+	# `mx` (ou `my`) mais BAIXO. Nos retos a largura mede-se em `mx`; nos
+	# cotovelos, em `my`. Desde a mão direita (23/09) a ida anda a 0,25 nos
+	# retos e a 0,75 nos cotovelos, e o retorno ao contrário — e quem diz que
+	# isso é a DIREITA não é esta tabela: é o §g, que o pergunta à projeção.
 	var cotovelos: Array = _ancoras.get("cotovelos", [])
 	var fora_da_faixa := ""
-	for par in [[rota, 0.75, "a ida"], [retorno, 0.25, "o retorno"]]:
+	for par in [[rota, 0.25, 0.75, "a ida"], [retorno, 0.75, 0.25, "o retorno"]]:
 		var pontos: Array = par[0]
-		var fracao: float = par[1]
 		for i in range(pontos.size() - 1):
 			var de: Vector2 = pontos[i]
 			var para: Vector2 = pontos[i + 1]
@@ -1991,23 +2009,76 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 			if abs(para.x - de.x) < 0.01:           # reto: anda em my
 				var faixa := _faixa_de((de.y + para.y) / 2.0)
 				var asf: Array = faixa["asfalto"]
-				esperado = float(asf[0]) + (float(asf[1]) - float(asf[0])) * fracao
+				esperado = float(asf[0]) + (float(asf[1]) - float(asf[0])) * float(par[1])
 				medido = de.x
 			else:                                    # cotovelo: anda em mx
 				for c in cotovelos:
 					var amy: Array = c["asfalto_my"]
 					if de.y >= float(amy[0]) - 0.01 and de.y <= float(amy[1]) + 0.01:
-						# Quem desce vira à direita, que no cotovelo é `+my`:
-						# a ida vai pela metade de `my` ALTO e o retorno pela
-						# de `my` baixo — a mesma fração, contada do `my` baixo.
 						esperado = float(amy[0]) + (float(amy[1]) - float(amy[0])) \
-							* fracao
+							* float(par[2])
 				medido = de.y
 			if absf(medido - esperado) > 0.01 and fora_da_faixa == "":
 				fora_da_faixa = "%s, no trecho %d (%s -> %s), anda a %.2f e o meio da faixa dela é %.2f" \
 					% [par[2], i, de, para, medido, esperado]
-	_confere("a ida desce pela faixa de fora e o retorno sobe pela de dentro",
+	_confere("cada rota anda no meio da sua faixa, em cada trecho",
 		fora_da_faixa == "", fora_da_faixa)
+
+	# ── g ── A MÃO É A DIREITA, e pergunta-se à PROJEÇÃO.
+	#
+	# ⚠️ De 07/09 a 23/09 a ida andou pela ESQUERDA nas retas e pela direita
+	# nos cotovelos, com comentários a dizer que "quem segue em `+my` tem a
+	# água à direita". Com `mx` e `my` lidos como `x` e `y` de um caderno, tem;
+	# mas a projeção ESPELHA o chão, e na tela a água fica à esquerda. O §a
+	# não o podia ver — confere frações, e as frações erradas estavam escritas
+	# dos dois lados. A pergunta faz-se então com a conta e não com a regra: o
+	# desvio do meio da pista até ao meio da faixa, projetado, contra a direita
+	# do sentido projetado. Na tela o `y` cresce para baixo, logo a direita de
+	# (hx, hy) é (-hy, hx).
+	var mao := ""
+	for par in [[rota, "a ida"], [retorno, "o retorno"]]:
+		var pontos: Array = par[0]
+		for i in range(pontos.size() - 1):
+			var de: Vector2 = pontos[i]
+			var para: Vector2 = pontos[i + 1]
+			var meio_pista := de
+			if abs(para.x - de.x) < 0.01:
+				var asf: Array = _faixa_de((de.y + para.y) / 2.0)["asfalto"]
+				meio_pista.x = (float(asf[0]) + float(asf[1])) / 2.0
+			else:
+				for c in cotovelos:
+					var amy: Array = c["asfalto_my"]
+					if de.y >= float(amy[0]) - 0.01 and de.y <= float(amy[1]) + 0.01:
+						meio_pista.y = (float(amy[0]) + float(amy[1])) / 2.0
+			var h := _tela_da_rota((para - de).normalized(), Vector2.ZERO, pr)
+			var o := _tela_da_rota(de - meio_pista, Vector2.ZERO, pr)
+			if o.dot(Vector2(-h.y, h.x)) <= 0.0 and mao == "":
+				mao = "%s, no trecho %d (%s -> %s), anda à ESQUERDA na tela" \
+					% [par[1], i, de, para]
+	_confere("as duas rotas andam pela DIREITA na tela, como no Brasil", mao == "", mao)
+
+	# ── h ── E AS DUAS NÃO SE CRUZAM, em ponto nenhum do caminho desenhado.
+	#
+	# Era a afirmação da `047` ("nunca se cruzam, nem na reta nem na curva"), e
+	# era falsa: com a mão trocada nos cotovelos, cruzavam-se em DEZ pontos, e
+	# os camiões passavam uns por cima dos outros a cada volta. Nada o
+	# perguntava. Pergunta-se ao caminho que o camião percorre, com as
+	# diagonais das curvas abertas.
+	var cruza := ""
+	for a in tela.call("trechos_de", rota):
+		for b in tela.call("trechos_de", retorno):
+			if _segmentos_cruzam(a[0], a[1], b[0], b[1]) and cruza == "":
+				cruza = "a ida em %s -> %s cruza o retorno em %s -> %s" % [a[0], a[1], b[0], b[1]]
+	_confere("a ida e o retorno não se cruzam em ponto nenhum", cruza == "", cruza)
+
+	# ── i ── a rua e o chanfro que o `Main.gd` repete são os do mapa. São eles
+	# que dão a diagonal das curvas abertas, e o jogo não lê o JSON.
+	var asf0: Array = _faixa_de(0.0)["asfalto"]
+	_confere("a largura da rua no Main.gd é a do mapa (%.2f)" % float(consts["RUA_LARG"]),
+		absf(float(consts["RUA_LARG"]) - (float(asf0[1]) - float(asf0[0]))) < 0.01)
+	_confere("e o chanfro dos cotovelos também (%.2f)" % float(consts["CHANFRO_COTOVELO"]),
+		not cotovelos.is_empty()
+			and absf(float(consts["CHANFRO_COTOVELO"]) - float(cotovelos[0]["chanfro"])) < 0.01)
 
 	# ── b ── o retorno SOBE: `my` a descer nos retos, `mx` a descer nos
 	# cotovelos, do primeiro ponto ao último.
@@ -2138,12 +2209,20 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 	var trab_antes = GS.docks[0]["worker_id"]
 	while GS.docks.size() < n:
 		GS.docks.append({"boat": null, "worker_id": null})
+	# ⚠️ OS OUTROS CAMIÕES SAEM DA RUA durante o bloco. Desde a cedência
+	# (23/09) ninguém entra num berço nem sai dele com um camião ao pé da boca,
+	# e a cena abre com três nas origens, dois deles a menos de duas unidades de
+	# uma boca: o camião sob teste ficaria à espera para sempre, porque aqui
+	# nenhum tween anda sozinho. Vão para o FIM da rota de cada um, fora do
+	# quadro, e voltam no fim.
+	var fora := _tirar_da_rua(tela, cenario, consts)
 
 	var sem_estado := ""
 	var nao_encosta := ""
 	var vira := ""
 	var nao_retoma := ""
 	var de_costas := ""
+	var marca := ""
 	for i in range(n):
 		var no := cenario.get_node_or_null("Caminhao%d" % i) as TextureRect
 		if no == null:
@@ -2160,7 +2239,7 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 
 		var chegada := _andar_o_tween(no, func() -> void:
 			tela.call("_no_acesso", i, 5.0))
-		var visita := int((tela.get("_visita_na_doca") as Array)[i])
+		var visita := int((tela.get("_visita_do_berco") as Array)[i])
 		# O ESTADO TEM DE TER SIDO ALCANÇADO, e prova-se pela consequência: é o
 		# fim do tween da chegada que marca a visita (`043`, `044`).
 		if (int(chegada["tweens"]) != 1 or not chegada["acabou"] or visita != id) \
@@ -2175,7 +2254,21 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 				% [i + 1, _arquivo(encostado), carga, _arquivo(par["mx"])]
 
 		doca["boat"] = null
-		var saida := _andar_o_tween(no, func() -> void: tela.call("_docas_mudaram"))
+		# A ré e a estrada retomada são DOIS tweens desde a trava (23/09): a trava
+		# do berço abre-se no fim da ré, quando o camião volta à faixa.
+		# ⚠️ E A RÉ MARCA-SE COMO SAÍDA, que é o que a previsão das curvas lê
+		# para contar com quem ainda está fora da rua mas volta daqui a nada. A
+		# varredura do D35 escreve a marca ELA PRÓPRIA para pôr o retorno a meio
+		# da ré — prova que a previsão a lê, e não que o jogo a escreve. Esta é
+		# a outra ponta: medido, tirar a linha que a escreve passava tudo.
+		var marcada := [false]
+		var saida := _andar_o_tween(no, func() -> void:
+			tela.call("_docas_mudaram")
+			marcada[0] = bool((tela.get("_saindo_do_berco") as Array)[i]), 2)
+		var ainda: bool = bool((tela.get("_saindo_do_berco") as Array)[i])
+		if (not marcada[0] or ainda) and marca == "":
+			marca = "doca %d: marcada ao sair=%s, ainda marcada depois de voltar à faixa=%s" \
+				% [i + 1, str(marcada[0]), str(ainda)]
 		var vistas: Array = saida["vistas"]
 		if int(saida["tweens"]) != 1 or not saida["acabou"] or vistas.size() < 2:
 			if nao_retoma == "":
@@ -2200,9 +2293,63 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 		doca["boat"] = null
 		doca["worker_id"] = null
 
+	# ── E O RETORNO, que desde a mão direita (23/09) também encosta — e sai de
+	# ré por OUTRO ramo do `_largar_berco()`, que volta à SUA faixa e retoma a
+	# subida. Medido: sem isto, apagar a linha que lhe desmarca a saída passava
+	# a suíte inteira. Encosta com a silhueta de `mx`, como a ida (a frente para
+	# a água); a ré guarda-a; e depois sobe DE COSTAS, que é a silhueta dele.
+	var r_sem := ""
+	var r_ne := ""
+	var no_r := cenario.get_node_or_null("CaminhaoRetorno0") as TextureRect
+	for d in range(n):
+		if no_r == null:
+			break
+		var pos_r := no_r.position
+		var tex_r := no_r.texture
+		var indice_r := no_r.get_index()
+		var carga_r := String((tela.get("_carga_do_retorno") as Array)[0])
+		var par_r: Dictionary = caminhoes[carga_r]
+		var doca_r: Dictionary = GS.docks[d]
+		var id_r := 4400 + d
+		doca_r["boat"] = {"id": id_r, "motivo": carga_r, "classe": "pesqueiro"}
+		doca_r["worker_id"] = 1
+		var chegou := _andar_o_tween(no_r, func() -> void:
+			tela.call("_retorno_na_boca", 0, d, 5.0))
+		if (int(chegou["tweens"]) != 1 or not chegou["acabou"]
+				or int((tela.get("_visita_do_berco") as Array)[d]) != id_r) and r_sem == "":
+			r_sem = "berço %d: %d tween(s), acabou=%s" \
+				% [d + 1, int(chegou["tweens"]), str(chegou["acabou"])]
+		var encostado_r := no_r.texture
+		doca_r["boat"] = null
+		var marcada_r := [false]
+		var saiu := _andar_o_tween(no_r, func() -> void:
+			tela.call("_docas_mudaram")
+			marcada_r[0] = bool((tela.get("_saindo_do_berco") as Array)[d]), 2)
+		var vistas_r: Array = saiu["vistas"]
+		var ainda_r: bool = bool((tela.get("_saindo_do_berco") as Array)[d])
+		if r_ne == "":
+			if encostado_r != par_r["mx"]:
+				r_ne = "berço %d: encosta com %s" % [d + 1, _arquivo(encostado_r)]
+			elif vistas_r.size() < 2 or vistas_r[0] != encostado_r \
+					or vistas_r[1] != par_r["my_retorno"]:
+				r_ne = "berço %d: a saída mostrou %s" % [d + 1, _arquivos(vistas_r)]
+			elif not marcada_r[0] or ainda_r:
+				r_ne = "berço %d: marcada ao sair=%s, ainda marcada na faixa=%s" \
+					% [d + 1, str(marcada_r[0]), str(ainda_r)]
+		no_r.position = pos_r
+		no_r.texture = tex_r
+		cenario.move_child(no_r, indice_r)
+		doca_r["worker_id"] = null
+	_confere("o retorno também encosta pelo caminho do jogo", r_sem == "", r_sem)
+	_confere("e sai de ré com a silhueta de encostado, marcado, e sobe de costas",
+		r_ne == "", r_ne)
+
 	for tw in get_processed_tweens():
 		if not tweens_antes.has(tw):
 			tw.kill()
+	for par in fora:
+		(par[0] as Control).position = par[1]
+		(par[0] as TextureRect).texture = par[2]
 	GS.docks.resize(docas_antes)
 	GS.docks[0]["boat"] = barco_antes
 	GS.docks[0]["worker_id"] = trab_antes
@@ -2216,6 +2363,7 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 	_confere("depois da ré, retoma a estrada de frente", nao_retoma == "", nao_retoma)
 	_confere("e a saída inteira não passa por silhueta de retorno",
 		de_costas == "", de_costas)
+	_confere("a ré marca o camião como a sair, e desmarca-o na faixa", marca == "", marca)
 
 
 ## Corre `acao` e anda até ao fim o tween que ela criou, a passos de 0,25 s,
@@ -2225,7 +2373,13 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 ##
 ## O passo é menor do que o trecho mais curto da rota (a ré, ~2,6 s), senão um
 ## trecho inteiro caberia num passo e a textura dele nunca seria lida.
-func _andar_o_tween(no: TextureRect, acao: Callable) -> Dictionary:
+##
+## ⚠️ `encadeados` SEGUE OS TWEENS QUE O PRIMEIRO ARMA NO FIM, até esse número.
+## A saída do berço passou a ser dois (a ré, e a estrada depois de a trava
+## abrir), e parar no primeiro deixava a estrada por ler. Não segue MAIS do que
+## isso de propósito: o fim de uma volta arma a pausa, e a pausa arma a volta
+## seguinte — uma cadeia sem fim, que andaria o camião para sempre.
+func _andar_o_tween(no: TextureRect, acao: Callable, encadeados := 1) -> Dictionary:
 	var antes := get_processed_tweens()
 	acao.call()
 	var novos: Array = []
@@ -2235,14 +2389,65 @@ func _andar_o_tween(no: TextureRect, acao: Callable) -> Dictionary:
 	var vistas: Array = []
 	if novos.size() != 1:
 		return {"tweens": novos.size(), "acabou": false, "vistas": vistas}
+	var seguidos: Array = []
 	var tw: Tween = novos[0]
 	var passos := 0
-	while tw.is_running() and passos < 2000:
-		tw.custom_step(0.25)
-		passos += 1
-		if vistas.is_empty() or vistas[-1] != no.texture:
-			vistas.append(no.texture)
-	return {"tweens": 1, "acabou": not tw.is_running(), "vistas": vistas}
+	while true:
+		seguidos.append(tw)
+		while tw.is_running() and passos < 2000:
+			tw.custom_step(0.25)
+			passos += 1
+			if vistas.is_empty() or vistas[-1] != no.texture:
+				vistas.append(no.texture)
+		if tw.is_running() or seguidos.size() >= encadeados:
+			break
+		var seguinte: Array = []
+		for t2 in get_processed_tweens():
+			if not antes.has(t2) and not seguidos.has(t2):
+				seguinte.append(t2)
+		if seguinte.size() != 1:
+			break
+		tw = seguinte[0]
+	return {"tweens": 1, "vistas": vistas,
+		"acabou": not tw.is_running() and seguidos.size() == encadeados}
+
+
+## Põe os cinco camiões no FIM das suas rotas, fora do quadro, e devolve o que
+## é preciso para os repor: `[nó, posição, textura]`.
+func _tirar_da_rua(tela: Control, cenario: Node, consts: Dictionary) -> Array:
+	var guardado: Array = []
+	var pr: Dictionary = _ancoras["projecao"]
+	for par in [["Caminhao%d", consts["CAMINHAO_ORIGENS"], consts["ROTA_ESTRADA"]],
+			["CaminhaoRetorno%d", consts["CAMINHAO_RETORNO_ORIGENS"], consts["ROTA_RETORNO"]]]:
+		var origens: Array = par[1]
+		var rota: Array = par[2]
+		for k in range(origens.size()):
+			var no := cenario.get_node_or_null(String(par[0]) % k) as TextureRect
+			if no == null:
+				continue
+			guardado.append([no, no.position, no.texture])
+			no.position += _tela_da_rota(rota[rota.size() - 1], origens[k], pr)
+	return guardado
+
+
+## Dois segmentos têm algum ponto em comum? Orientação dos quatro trios, com
+## o caso colinear incluído: dois trechos sobrepostos na mesma reta também é
+## cruzar, e é o pior dos casos.
+func _segmentos_cruzam(p1: Vector2, p2: Vector2, p3: Vector2, p4: Vector2) -> bool:
+	var o := func(a: Vector2, b: Vector2, c: Vector2) -> float:
+		var v := (b - a).cross(c - a)
+		return 0.0 if absf(v) < 1e-6 else signf(v)
+	var em := func(a: Vector2, b: Vector2, c: Vector2) -> bool:
+		return c.x >= minf(a.x, b.x) - 1e-6 and c.x <= maxf(a.x, b.x) + 1e-6 \
+			and c.y >= minf(a.y, b.y) - 1e-6 and c.y <= maxf(a.y, b.y) + 1e-6
+	var d1: float = o.call(p3, p4, p1)
+	var d2: float = o.call(p3, p4, p2)
+	var d3: float = o.call(p1, p2, p3)
+	var d4: float = o.call(p1, p2, p4)
+	if d1 * d2 < 0.0 and d3 * d4 < 0.0:
+		return true
+	return (d1 == 0.0 and em.call(p3, p4, p1)) or (d2 == 0.0 and em.call(p3, p4, p2)) \
+		or (d3 == 0.0 and em.call(p1, p2, p3)) or (d4 == 0.0 and em.call(p1, p2, p4))
 
 
 func _arquivo(tex: Texture2D) -> String:
@@ -2611,10 +2816,17 @@ func _d20_a_rua_no_desenho() -> void:
 	# As DUAS rotas, desde a mão dupla (23/09): a faixa de dentro passa mais
 	# perto da calçada da vila, e é ela que mais tem a perder com uma cor
 	# errada no mapa.
+	#
+	# ⚠️ E PERGUNTA-SE PELO CAMINHO DESENHADO, não pela escada das constantes.
+	# Com a mão direita (23/09) cada rota faz uma curva ABERTA por cotovelo, e
+	# o vértice dela cai em cima da linha do chanfro: foi este bloco que o
+	# apanhou, com 33 px de calçada na janela. O camião corta essa quina por
+	# uma diagonal (`trechos_de()` no `Main.gd`), e é ela que se amostra —
+	# amostrar a escada conferia um caminho que ninguém percorre.
 	var trechos: Array = []
 	for rota in [consts["ROTA_ESTRADA"], consts["ROTA_RETORNO"]]:
-		for i in range(rota.size() - 1):
-			trechos.append([rota[i], rota[i + 1]])
+		for tr in _main.call("trechos_de", rota):
+			trechos.append([tr[0], tr[1]])
 
 	for caminho in MAPAS_DA_RUA:
 		# O `_mapa_lido` carrega a textura e confere a escala dela contra a
@@ -4627,3 +4839,433 @@ func _d34_borda_do_trabalhador() -> void:
 	root.remove_child(main)
 	main.queue_free()
 	_d34_completo = true
+
+
+# ── D35 ── O TRÂNSITO: ninguém passa por cima de ninguém (23/09)
+#
+# Os §1–§8 do D13 conferem cada rota contra o mapa, e nenhum pergunta o que só
+# existe com CINCO camiões ao mesmo tempo. Medido em 23/09, antes da mão
+# direita: 27 a 72 sobreposições à vista por meia hora de jogo, nos dez pontos
+# em que as duas rotas se cruzavam, mais a ré a largar o berço por cima de quem
+# passava. As regras que as acabaram (`_boca_livre()`, `_curvas_livres()`,
+# `_arranque_livre()`, a trava do berço) são quatro, e cada uma defende um
+# sítio; a pergunta que as junta é esta: anda-se a cena, e em nenhum instante
+# duas PEGADAS se tocam à vista.
+#
+# ⚠️ A PEGADA MEDE-SE DO NÓ, pela projeção das âncoras (`_mundo()`), e não pelo
+# `mundo_do_no()` do jogo: é o mesmo princípio da `_tela_da_rota()` deste
+# arquivo — perguntar ao jogo onde está o camião seria o teste a medir com a
+# conta que quer conferir. E o eixo sai da TEXTURA que o nó mostra.
+#
+# ⚠️ E ZERO SOBREPOSIÇÕES DE GRAÇA É O PRIMEIRO DEFEITO A TEMER: camiões presos
+# não se tocam. Por isso o bloco exige também que cada um CHEGUE ao fim da sua
+# rota várias vezes, e que os dois sentidos ENCOSTEM — com a carga do navio.
+#
+# Anda-se uma cena NOVA, e só os tweens dela: os da cena do resto da suíte não
+# se mexem, e os blocos que vêm depois leem-na como estava.
+var _d35_completo := false
+
+## O chassi de cada camião, em unidades de mundo: `CAMINHOES` de
+## `blender/brp_porto.py` vezes o `ESCALA_CAMINHAO` (0,72). E a largura, que é
+## a mesma para todos (`LARG`, 0,62, vezes 0,72). A pegada é o retângulo do
+## chassi, centrado no ponto da rota: é onde o construtor o põe.
+const D35_CHASSI := {"pescado": 1.10 * 0.72, "granel": 1.48 * 0.72,
+	"armazenagem": 1.56 * 0.72, "conteiner": 1.96 * 0.72}
+const D35_LARG := 0.62 * 0.72
+const D35_SEGUNDOS := 3600.0
+const D35_PASSO := 0.2
+const D35_SEMENTE := 20260923
+const D35_TURNO := Vector2(3.0, 12.0)
+
+func _d35_transito() -> void:
+	var GS: Node = root.get_node("GameState")
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var docas_antes: int = GS.docks.size()
+	var guardadas: Array = []
+	for d in GS.docks:
+		guardadas.append([d["boat"], d["worker_id"]])
+	# ⚠️ UM DICIONÁRIO, E NÃO A LISTA. A suíte nunca deixa passar um frame, e
+	# por isso nenhum tween acabado ou morto sai da lista do motor: aqui ela já
+	# traz perto de MIL, e perguntar `Array.has()` a cada um, a cada passo,
+	# fazia este bloco custar 62 s (medido: 983 tweens, 99% do tempo no laço).
+	var tweens_antes := {}
+	for tw in get_processed_tweens():
+		tweens_antes[tw] = true
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var acessos: Array = consts["ACESSOS_DOCA"]
+	while GS.docks.size() < acessos.size():
+		GS.docks.append({"boat": null, "worker_id": null})
+	for d in GS.docks:
+		d["boat"] = null
+		d["worker_id"] = null
+	# ⚠️ SÓ OS CAMIÕES ANDAM. A cena nova arma também a espuma, os coqueiros,
+	# as boias e as luzes, e andá-los 12.000 vezes fazia este bloco custar 60 s
+	# a uma suíte de 3 (medido em 23/09). Mata-se tudo o que ela armou e
+	# rearmam-se os camiões pelas MESMAS duas funções do `_ready()` — os nós
+	# ainda estão nas origens, porque nada andou.
+	for tw in get_processed_tweens():
+		if not tweens_antes.has(tw):
+			tw.kill()
+	tela.call("_animar_caminhoes")
+	tela.call("_animar_retorno")
+
+	var cenario := tela.get_node("MapaWrap/Cenario")
+	var visivel := Rect2(Vector2.ZERO, (tela.get_node("MapaWrap") as Control).size)
+	var desenho := _desenho_dos_caminhoes(tela)
+	var alt := float(_ancoras["projecao"]["alt_cais"])
+	var qual: Dictionary = {}                 # textura -> [motivo, eixo]
+	for motivo in (consts["CAMINHOES"] as Dictionary):
+		var par: Dictionary = consts["CAMINHOES"][motivo]
+		for chave in par:
+			qual[par[chave]] = [motivo, String(chave).substr(0, 2)]
+	var nos: Array = []
+	for k in range((consts["CAMINHAO_ORIGENS"] as Array).size()):
+		nos.append([cenario.get_node("Caminhao%d" % k), "ida"])
+	for k in range((consts["CAMINHAO_RETORNO_ORIGENS"] as Array).size()):
+		nos.append([cenario.get_node("CaminhaoRetorno%d" % k), "retorno"])
+	var fim := {"ida": (consts["ROTA_ESTRADA"] as Array)[-1],
+		"retorno": (consts["ROTA_RETORNO"] as Array)[-1]}
+
+	# A agenda das docas: um sorteio PRÓPRIO, semeado — o do jogo é o que o
+	# simulador de balanceamento mede, e não se lhe toca.
+	var rng := RandomNumberGenerator.new()
+	rng.seed = D35_SEMENTE
+	var motivos: Array = tela.call("_motivos_do_porto")
+	var id_barco := 91000
+	var prox_turno := 0.0
+
+	var sobre := ""
+	var eventos := 0
+	var ultimo_evento := -99.0
+	var cargas := ""
+	var encostos := {"ida": 0, "retorno": 0}
+	var chegadas: Array = []
+	chegadas.resize(nos.size())
+	chegadas.fill(0)
+	var no_fim: Array = []
+	no_fim.resize(nos.size())
+	no_fim.fill(true)
+	var no_berco: Array = []
+	no_berco.resize(nos.size())
+	no_berco.fill(-1)
+	var t := 0.0
+	while t < D35_SEGUNDOS:
+		if t >= prox_turno:
+			for d in GS.docks:
+				if d["boat"] != null and rng.randf() < 0.35:
+					d["boat"] = null
+					d["worker_id"] = null
+				elif d["boat"] == null and rng.randf() < 0.5:
+					id_barco += 1
+					d["boat"] = {"id": id_barco, "classe": "pesqueiro",
+						"motivo": motivos[rng.randi() % motivos.size()]}
+					d["worker_id"] = 1
+			tela.call("_docas_mudaram")
+			prox_turno = t + rng.randf_range(D35_TURNO.x, D35_TURNO.y)
+		for tw in get_processed_tweens():
+			if tw.is_running() and not tweens_antes.has(tw):
+				tw.custom_step(D35_PASSO)
+		t += D35_PASSO
+
+		var pegadas: Array = []
+		for k in range(nos.size()):
+			var no := nos[k][0] as TextureRect
+			var p := _mundo(_origem(no), alt)
+			var q: Array = qual.get(no.texture, ["conteiner", "my"])
+			var comp: float = D35_CHASSI[q[0]]
+			var meia := Vector2(D35_LARG, comp) / 2.0 if q[1] == "my" \
+				else Vector2(comp, D35_LARG) / 2.0
+			var caixa := Rect2(no.position + Vector2(MEIO_QUADRO, MEIO_QUADRO)
+				+ desenho.position, desenho.size)
+			pegadas.append([p, meia, visivel.intersects(caixa)])
+			# Chegou ao fim da rota: conta uma volta.
+			var no_ponta: bool = p.distance_to(fim[nos[k][1]]) < 0.05
+			if no_ponta and not no_fim[k]:
+				chegadas[k] += 1
+			no_fim[k] = no_ponta
+			# Encostou num berço: conta, e confere a carga contra o navio.
+			var berco := -1
+			for d in range(acessos.size()):
+				if p.distance_to(acessos[d]["paragem"]) < 0.05:
+					berco = d
+			if berco >= 0 and no_berco[k] < 0 \
+					and int((tela.get("_visita_do_berco") as Array)[berco]) >= 0:
+				encostos[nos[k][1]] += 1
+				var navio: String = GS.docks[berco]["boat"]["motivo"]
+				if q[0] != navio and cargas == "":
+					cargas = "t=%.1f: %s encostou no berço %d com %s, e o navio é de %s" \
+						% [t, no.name, berco + 1, q[0], navio]
+			no_berco[k] = berco
+		for a in range(pegadas.size()):
+			for b in range(a + 1, pegadas.size()):
+				if not (pegadas[a][2] or pegadas[b][2]):
+					continue             # os dois fora do quadro: a pausa, empilhados
+				var dist: Vector2 = ((pegadas[a][0] as Vector2) - pegadas[b][0]).abs() \
+					- pegadas[a][1] - pegadas[b][1]
+				if maxf(dist.x, dist.y) < 0.0 and t - ultimo_evento > 3.0:
+					eventos += 1
+					ultimo_evento = t
+				if maxf(dist.x, dist.y) < 0.0 and sobre == "":
+					sobre = "t=%.1f: %s em %s e %s em %s sobrepõem-se %.2f" \
+						% [t, nos[a][0].name, pegadas[a][0], nos[b][0].name,
+							pegadas[b][0], -maxf(dist.x, dist.y)]
+
+	for tw in get_processed_tweens():
+		if not tweens_antes.has(tw):
+			tw.kill()
+	root.remove_child(tela)
+	tela.free()
+	GS.docks.resize(docas_antes)
+	for k in range(docas_antes):
+		GS.docks[k]["boat"] = guardadas[k][0]
+		GS.docks[k]["worker_id"] = guardadas[k][1]
+
+	_confere("em %.0f s de jogo, nenhum camião passa por cima de outro à vista" % D35_SEGUNDOS,
+		sobre == "", "%d vez(es); a primeira: %s" % [eventos, sobre])
+	var parado := ""
+	for k in range(nos.size()):
+		if chegadas[k] < 5 and parado == "":
+			parado = "%s só chegou %d vez(es) ao fim da rota" % [nos[k][0].name, chegadas[k]]
+	_confere("e todos andam: cada um chega ao fim da rota pelo menos 5 vezes",
+		parado == "", parado)
+	_confere("a ida encosta nos berços (%d vezes)" % encostos["ida"], encostos["ida"] > 0)
+	_confere("e o retorno também (%d vezes)" % encostos["retorno"], encostos["retorno"] > 0)
+	_confere("e quem encosta leva a carga do navio", cargas == "", cargas)
+	# ⚠️ A BANDEIRA DO SUB-BLOCO CONFERE-SE AQUI. Um erro de execução lá dentro
+	# aborta SÓ aquela função, e este bloco seguia até ao `_d35_completo` como
+	# se ela tivesse corrido — mordeu na primeira versão, com `SCRIPT ERROR` e
+	# o bloco a PASSAR.
+	_d35_previsao_das_curvas()
+	_confere("a previsão das curvas correu até ao fim", _d35_previsao_completa)
+	_d35_completo = true
+
+
+# ── D35 · A PREVISÃO DAS CURVAS, posta à prova em todas as posições
+#
+# O andar da cena acima só apanha a falta da previsão se a agenda calhar pôr
+# uma ida e um retorno na mesma curva ao mesmo tempo — e isso é sorteio: medido
+# em 23/09, sem a previsão, a hora de jogo dava de ZERO a quatro colisões
+# conforme a semente e o ritmo dos turnos. Escolher a semente que apanha o
+# mutante seria afinar o teste ao defeito.
+#
+# Esta pergunta não depende de sorteio: põe um retorno em CADA ponto da rota
+# dele, de 0,1 em 0,1 unidade, e pergunta à regra se uma ida pode arrancar
+# agora. A VERDADE sai de outra conta, feita aqui: andar os dois caminhos à
+# mesma velocidade e ver se as pegadas se tocam. A regra pode ser mais
+# cautelosa do que a verdade (esperar sem precisar custa segundos fora do
+# quadro); o que não pode é deixar entrar quem vai bater.
+var _d35_previsao_completa := false
+
+func _d35_previsao_das_curvas() -> void:
+	# Uma cena NOVA, parada: o `_main` do resto da suíte já foi trocado por
+	# blocos anteriores, e nenhum tween desta anda.
+	var tweens_antes := {}
+	for tw in get_processed_tweens():
+		tweens_antes[tw] = true
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	for tw in get_processed_tweens():
+		if not tweens_antes.has(tw):
+			tw.kill()
+	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var cenario := tela.get_node("MapaWrap/Cenario")
+	var pr: Dictionary = _ancoras["projecao"]
+	var b_base: Vector2 = (cenario.get_node("CaminhaoRetorno0") as Control).position
+	var fora := _tirar_da_rua(tela, cenario, consts)
+	var ida: Array = _d35_no_tempo(tela, consts["ROTA_ESTRADA"], pr)
+	var ret: Array = _d35_no_tempo(tela, consts["ROTA_RETORNO"], pr)
+	var a_ida := cenario.get_node("Caminhao0") as TextureRect
+	var b_ret := cenario.get_node("CaminhaoRetorno0") as TextureRect
+	var b_origem: Vector2 = (consts["CAMINHAO_RETORNO_ORIGENS"] as Array)[0]
+	var comp: float = D35_CHASSI["conteiner"]
+	var deixou := ""
+	var livres := 0
+	var presos := 0
+	# As posições do retorno: cada ponto da rua, e — o caso que a posição sozinha
+	# não diz — cada ponto da ré de cada berço, a SAIR (`_saindo_do_berco`). Ali
+	# ele está fora da rua, mas volta a ela daqui a nada; esquecê-lo deixava a
+	# ida arrancar para uma curva onde ele ia estar. Cada caso traz o FUTURO dele
+	# no tempo, que é contra o que a verdade se mede.
+	var casos: Array = []
+	for k in range(ret.size()):
+		casos.append([ret[k][0], ret.slice(k), -1])
+	var acessos: Array = consts["ACESSOS_DOCA"]
+	for d in range(acessos.size()):
+		var entrada: Vector2 = acessos[d]["entrada"]
+		var paragem: Vector2 = acessos[d]["paragem"]
+		var k_boca := 0
+		for k in range(ret.size()):
+			if (ret[k][0] as Vector2).distance_to(entrada) \
+					< (ret[k_boca][0] as Vector2).distance_to(entrada):
+				k_boca = k
+		var x := paragem.x
+		while x > entrada.x:
+			var futuro: Array = []
+			var u := x
+			while u > entrada.x:
+				futuro.append([Vector2(u, entrada.y), "mx"])
+				u -= 0.1
+			casos.append([Vector2(x, entrada.y), futuro + ret.slice(k_boca), d])
+			x -= 0.2
+	var ocupante: Array = tela.get("_ocupante_do_berco")
+	var saindo: Array = tela.get("_saindo_do_berco")
+	# E QUEM PERGUNTA também tem dois momentos: o arranque, no topo, e a saída
+	# de um berço, que é a pergunta que o jogo faz com o `s` da virada menos a
+	# ré. Só com os dois lados a sair é que um retorno a meio da ré encontra a
+	# ida numa curva — a ida que arranca do topo nunca o alcança a tempo.
+	var perguntas: Array = [[0.0, ida, -1]]
+	for d in range(acessos.size()):
+		var virada: Vector2 = acessos[d]["virada"]
+		var paragem: Vector2 = acessos[d]["paragem"]
+		var k_virada := _d35_indice(ida, virada)
+		var re: Array = []
+		var u := paragem.x
+		while u > virada.x:
+			re.append([Vector2(u, virada.y), "mx"])
+			u -= 0.1
+		var s_virada: float = tela.call("s_na_rota", virada, consts["ROTA_ESTRADA"])
+		perguntas.append([s_virada - (paragem.x - virada.x), re + ida.slice(k_virada), d])
+	for pergunta in perguntas:
+		for caso in casos:
+			var d: int = caso[2]
+			if d >= 0 and d == int(pergunta[2]):
+				continue            # os dois no mesmo berço: a trava não o deixa
+			b_ret.position = b_base + _tela_da_rota(caso[0], b_origem, pr)
+			if d >= 0:
+				ocupante[d] = b_ret
+				saindo[d] = true
+			# A MESMA pergunta que o jogo faz: `_pode_arrancar()` no topo e
+			# `_pode_sair()` no berço — boca e curvas juntas, como lá.
+			var livre: bool = tela.call("_pode_arrancar", a_ida, true) if int(pergunta[2]) < 0 \
+				else tela.call("_pode_sair", int(pergunta[2]), a_ida, true)
+			if d >= 0:
+				ocupante[d] = null
+				saindo[d] = false
+			if livre:
+				livres += 1
+			else:
+				presos += 1
+			if not livre or deixou != "":
+				continue
+			var futuro: Array = caso[1]
+			var meu: Array = pergunta[1]
+			for n in range(mini(meu.size(), futuro.size())):
+				var pa: Vector2 = meu[n][0]
+				var pb: Vector2 = futuro[n][0]
+				if pa.distance_to(pb) > 3.0:
+					continue
+				var ma := Vector2(D35_LARG, comp) / 2.0 if meu[n][1] == "my" \
+					else Vector2(comp, D35_LARG) / 2.0
+				var mb := Vector2(D35_LARG, comp) / 2.0 if futuro[n][1] == "my" \
+					else Vector2(comp, D35_LARG) / 2.0
+				var dd := (pa - pb).abs() - ma - mb
+				if maxf(dd.x, dd.y) < 0.0:
+					deixou = "com a ida em s=%.1f e o retorno em %s%s, a regra deixa entrar e aos %.1f os dois tocam-se em %s / %s" \
+						% [float(pergunta[0]), caso[0],
+							" (a sair do berço %d)" % (d + 1) if d >= 0 else "",
+							float(n) * 0.1, pa, pb]
+					break
+
+	# ── E AS PRIMEIRAS PASSAGENS NÃO SE TOCAM. Elas começam nas origens da cena
+	# e não passam pelo arranque, logo nenhuma regra as separa: a escolha das
+	# origens é que tem de o fazer, e medido em 23/09 a segunda origem do
+	# retorno virava junto com o `Caminhao1` aos cinco segundos. O andar acima
+	# não o garante — com a agenda dele o `Caminhao1` entrava no berço antes da
+	# curva. Aqui anda-se cada par sem berço nenhum, que é o caso que aperta.
+	var primeira := ""
+	for i in range((consts["CAMINHAO_ORIGENS"] as Array).size()):
+		var oi: Vector2 = (consts["CAMINHAO_ORIGENS"] as Array)[i]
+		for j in range((consts["CAMINHAO_RETORNO_ORIGENS"] as Array).size()):
+			var oj: Vector2 = (consts["CAMINHAO_RETORNO_ORIGENS"] as Array)[j]
+			var ki := _d35_indice(ida, oi)
+			var kj := _d35_indice(ret, oj)
+			for n in range(mini(ida.size() - ki, ret.size() - kj)):
+				var pa: Vector2 = ida[ki + n][0]
+				var pb: Vector2 = ret[kj + n][0]
+				if pa.distance_to(pb) > 3.0:
+					continue
+				var ma := Vector2(D35_LARG, comp) / 2.0 if ida[ki + n][1] == "my" \
+					else Vector2(comp, D35_LARG) / 2.0
+				var mb := Vector2(D35_LARG, comp) / 2.0 if ret[kj + n][1] == "my" \
+					else Vector2(comp, D35_LARG) / 2.0
+				var dd := (pa - pb).abs() - ma - mb
+				if maxf(dd.x, dd.y) < 0.0 and primeira == "":
+					primeira = "o Caminhao%d e o CaminhaoRetorno%d tocam-se aos %.1f, em %s / %s" \
+						% [i, j, float(n) * 0.1, pa, pb]
+					break
+
+	# ── E DOIS ARRANQUES NO MESMO INSTANTE NÃO SAEM JUNTOS. O arranque é uma
+	# pergunta ("a ponta está livre?") e uma ação (ir para lá), e a ação era do
+	# tween, no passo SEGUINTE: dois camiões que perguntassem no mesmo passo
+	# viam os dois a ponta livre e faziam a volta inteira um em cima do outro.
+	# Nenhuma agenda do andar acima o provocava; um mutante de OUTRA regra, que
+	# só mexia no tempo, é que o expôs. Aqui monta-se o instante de propósito:
+	# todos no fim da rota, e dois a arrancar, um logo a seguir ao outro.
+	var juntos := ""
+	for par in [["Caminhao%d", "_entrar_no_mapa", consts["ROTA_ESTRADA"],
+				consts["CAMINHAO_ORIGENS"]],
+			["CaminhaoRetorno%d", "_subir", consts["ROTA_RETORNO"],
+				consts["CAMINHAO_RETORNO_ORIGENS"]]]:
+		var rota: Array = par[2]
+		var ponta: Vector2 = rota[0]
+		# Todos de volta ao fim da rota: o par anterior deixou um camião na
+		# ponta dele, e a previsão das curvas faria, com razão, esperar este.
+		for guardado in fora:
+			(guardado[0] as Control).position = guardado[1]
+		fora = _tirar_da_rua(tela, cenario, consts)
+		tela.call(par[1], 0, ponta, 5.0)
+		tela.call(par[1], 1, ponta, 5.0)
+		var alt := float(_ancoras["projecao"]["alt_cais"])
+		var n_na_ponta := 0
+		for k in range(2):
+			var no := cenario.get_node(String(par[0]) % k) as Control
+			if _mundo(_origem(no), alt).distance_to(ponta) < 0.05:
+				n_na_ponta += 1
+		if n_na_ponta != 1 and juntos == "":
+			juntos = "%d camiões %s na ponta %s depois de dois arranques seguidos" \
+				% [n_na_ponta, par[1], ponta]
+	root.remove_child(tela)
+	tela.free()
+	_confere("dois arranques seguidos: um sai, o outro espera", juntos == "", juntos)
+	_confere("as primeiras passagens, que nenhuma regra separa, não se tocam",
+		primeira == "", primeira)
+	_confere("quem entra na rua — no arranque ou a sair do berço — nunca vai bater (%d x %d posições)" % [perguntas.size(), casos.size()],
+		deixou == "", deixou)
+	# E ela tem de responder das duas maneiras, senão é de graça: sempre "não"
+	# também nunca deixaria bater ninguém.
+	_confere("e responde das duas maneiras (%d livres, %d à espera)" % [livres, presos],
+		livres > presos and presos > 0)
+	_d35_previsao_completa = true
+
+
+## A amostra de `amostras` mais perto de `p`.
+func _d35_indice(amostras: Array, p: Vector2) -> int:
+	var melhor := 0
+	for k in range(amostras.size()):
+		if (amostras[k][0] as Vector2).distance_to(p) < (amostras[melhor][0] as Vector2).distance_to(p):
+			melhor = k
+	return melhor
+
+
+## O caminho desenhado de `rota`, amostrado no TEMPO, de 0,1 em 0,1 unidade de
+## eixo: `[ponto, eixo da silhueta]`. O caminho pergunta-se ao jogo (é o que o
+## camião anda); o tempo mede-se aqui, pela projeção das âncoras.
+func _d35_no_tempo(tela: Control, rota: Array, pr: Dictionary) -> Array:
+	var unidade := Vector2(float(pr["meia_larg"]), float(pr["meia_alt"])).length()
+	var out: Array = []
+	var resto := 0.0
+	for tr in tela.call("trechos_de", rota):
+		var a: Vector2 = tr[0]
+		var b: Vector2 = tr[1]
+		var k: int = tr[2]
+		var eixo := "mx" if absf((rota[k + 1] as Vector2).x - (rota[k] as Vector2).x) > 0.01 else "my"
+		var dur := _tela_da_rota(b, a, pr).length() / unidade
+		var u := resto
+		while u < dur:
+			out.append([a.lerp(b, u / dur), eixo])
+			u += 0.1
+		resto = u - dur
+	return out

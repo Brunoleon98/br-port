@@ -533,6 +533,14 @@ Teste e import rodam sem tela.
    porque nomeia a CAUSA onde as outras nomeiam o sintoma; o comentário é que
    passou a dizer a verdade. **Comentário que atribui poder a uma asserção
    mede-se como se mede a asserção.**
+   ⚠️ **E A GUARDA QUE ESCREVE ELA PRÓPRIA O ESTADO PROVA A LEITURA, NÃO A
+   ESCRITA.** Para pôr um camião a meio da ré, a varredura do D35 marca-o como
+   a sair à mão — e prova que a previsão lê a marca. O mutante que tirava a
+   linha do JOGO que a escreve passou verde, porque a fixture fazia o trabalho
+   dela. Quando o teste monta um estado que o jogo devia montar, a outra ponta
+   — o jogo a escrevê-lo — pede a sua guarda (`052`). E um sub-bloco leva a
+   sua BANDEIRA: um erro de execução lá dentro só aborta ele, e a bandeira do
+   chamador ficava verde.
    **E confira que a base está LIMPA antes de injetar o defeito seguinte.** No
    mesmo dia, o `git checkout` que devolvia o arquivo entre um defeito e outro
    restaurou a versão anterior ao trabalho inteiro — e os três testes seguintes
@@ -886,6 +894,14 @@ derivada delas.
 - **`pos()` inverte o sinal de Y.** No Blender a direita da tela é (+X, +Y);
   no mapa o `+my` puxa para a ESQUERDA. Um prop simétrico não denuncia a
   diferença — o primeiro assimétrico saiu 40px fora.
+- **⚠️ E A PROJEÇÃO ESPELHA O CHÃO: DIREITA E ESQUERDA PERGUNTAM-SE À TELA.**
+  Com `mx` e `my` lidos como o `x` e o `y` de um caderno, quem desce em `+my`
+  tem a água à direita; na tela tem a VILA. Dezasseis dias de camiões na mão
+  inglesa com o comentário a jurar a brasileira, e as retas e os cotovelos
+  escritos com a regra de sinais opostos — daí as duas rotas se cruzarem em
+  dez pontos (`052`). Mão, sentido de volta e "à direita de" escrevem-se como
+  CONTA — o vetor projetado contra a direita do sentido projetado, `(-hy, hx)`
+  com o `y` para baixo —, e é assim que o D13 §7g a pergunta.
 - **O quadro de todo prop tem 512 de COORDENADA e o centro dele é a origem do
   mundo.** Posicionar um prop na cena é subtrair meio quadro, não acertar no
   olho — e desde 16/09 meio quadro são **256 na cena e 384 no PNG**, que até
@@ -1499,6 +1515,12 @@ tranca isso.
   mesmo arquivo dos dois lados com um PNG no lugar do arquivo: zero só quer
   dizer zero depois de um par que se sabe diferente ter dado muito
   (`docs/decisoes/042`).
+  ⚠️ **E O `getbbox()` DO PILLOW NUM RGBA SÓ OLHA PARA O ALFA.** Em 23/09 a
+  comparação das 30 fotos contra as da `main` deu **zero** mudadas, com os
+  camiões todos noutra faixa: a diferença de duas fotos opacas tem o alfa a
+  zero em todo o lado, e o `getbbox()` devolvia `None`. Os `md5` diferiam — foi
+  isso que o denunciou. Em RGB, e com o mesmo arquivo dos dois lados a dar zero
+  exato, mudaram 14 (`052`).
   ⚠️ **E FOLHA DE CONTATO QUE CRESCE SOZINHA TEM DE REPROVAR AO TRANSBORDAR.**
   Ela é uma captura de 720×1280 e ganha linhas a cada porte, motivo ou classe
   nova: o que passar da última linha é recortado sem uma palavra, e o prop fica
@@ -2475,6 +2497,17 @@ armadilha de uma função, no comentário dela.
   jogador vê. O passo tem de ser menor do que o trecho mais curto, senão um
   trecho inteiro cabe num passo e nunca é lido; e a ação que não criou tween
   tem de REPROVAR, senão a lista vazia passa por "nada de errado" (`047`).
+- **⚠️ E NUMA SUÍTE QUE NUNCA DEIXA PASSAR UM FRAME, OS TWEENS NUNCA SAEM DA
+  LISTA.** O motor só tira os acabados e os mortos no `process` seguinte, e o
+  `teste_design` corre inteiro num `_process`: ao D35 chegavam 983. Perguntar
+  `Array.has()` a cada um, a cada passo, fez um bloco custar 62 s a uma suíte
+  de 3; um `Dictionary` devolveu-a a 9 (`052`).
+- **⚠️ DECISÃO QUE PERGUNTA NUM PASSO E AGE NO SEGUINTE TEM UMA CORRIDA.** O
+  arranque dos camiões perguntava se a ponta estava livre e deixava o tween
+  teleportar no passo seguinte: dois que perguntassem no mesmo passo saíam
+  juntos, em cima um do outro para a volta inteira. Nenhuma agenda o provocava
+  — foi um mutante de OUTRA regra, que só mexia no tempo, que o expôs. Quem
+  pergunta ocupa o sítio no mesmo instante (`052`).
 - **⚠️ E `preload` DE UM SCRIPT QUE FALA DO AUTOLOAD, A PARTIR DE UM
   `--script`, DÁ UM GDScript VAZIO.** A terceira cara da regra abaixo, e a que
   menos se parece com ela: `const D := preload("res://scripts/Dock.gd")` numa

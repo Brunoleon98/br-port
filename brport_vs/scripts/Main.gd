@@ -442,9 +442,9 @@ const MEIA_ALT := 10.0
 ## acima de 22,5 estão as praias, onde o porto acabou e equipamento nenhum
 ## pousa (D15) —, e os três repartem o que sobra da estrada visível.
 const CAMINHAO_ORIGENS: Array[Vector2] = [
-	Vector2(0.55, 1.60),
-	Vector2(4.55, 9.50),
-	Vector2(8.55, 21.00),
+	Vector2(-0.35, 1.60),
+	Vector2(3.65, 9.50),
+	Vector2(7.65, 21.00),
 ]
 
 ## A escada da rua, em (mx, my). Primeiro e último ponto estão FORA do quadro —
@@ -452,76 +452,86 @@ const CAMINHAO_ORIGENS: Array[Vector2] = [
 ## números escolhidos: o primeiro e o último degrau da costa acabam onde o
 ## caminhão já está 58px acima do topo e 63px à esquerda da margem.
 ##
-## ⚠️ O `mx` DE CADA TRECHO RETO DEIXOU DE SER O MEIO DA RUA em 07/09, quando
-## ela ganhou duas faixas. Andar no meio de uma rua de mão dupla é andar EM CIMA
-## DA LINHA, e a linha é justamente o que a faz ler como de mão dupla. Ele é
-## agora o meio da faixa DE FORA (`borda - RUA_RECUO + RUA_LARG * 0.75`) — o
-## camião segue sempre em `+my`, e quem segue nesse sentido tem a água à
-## direita. Sai daí que virar para a doca é virar à DIREITA, e que a entrada de
-## cada acesso, que o mapa publica, cai nesta faixa.
+## ⚠️ A MÃO É A DIREITA, COMO NO BRASIL — e é a da TELA, não a da conta.
+## De 07/09 a 23/09 a ida andou na faixa do lado da ÁGUA com um comentário a
+## dizer que "quem segue em `+my` tem a água à direita". Na conta, com `mx` e
+## `my` desenhados como `x` e `y` de um caderno, tem; na tela não tem, porque a
+## projeção (`tela_da_rota()`) ESPELHA o chão: `+my` é para baixo e para a
+## esquerda, e quem desce nesse sentido tem a VILA à direita. Os camiões
+## andavam pela esquerda nas retas — e pela direita nos cotovelos, onde a regra
+## tinha sido escrita com o sinal trocado. Daí as duas rotas se CRUZAREM em dez
+## pontos, dois por cotovelo, com os camiões a passar uns por cima dos outros a
+## cada volta (medido: 27 a 72 sobreposições à vista por meia hora de jogo).
+## O D13 §7 pergunta agora a mão à PROJEÇÃO, e não a esta explicação.
 ##
-## O `my` de cada cotovelo é, pela mesma razão, a meia faixa do lado de dentro
-## da curva (`my1 - RUA_LARG/4`): a virar em `+mx` a direita é `+my`. Nenhum
-## destes números é de gosto, e o D13 confere-os todos contra as âncoras.
+## Logo: o `mx` de cada trecho reto é o meio da faixa do lado da VILA
+## (`borda - RUA_RECUO + RUA_LARG / 4`), e o `my` de cada cotovelo é a meia
+## faixa de `my` alto (`my1 - RUA_LARG / 4`): virar em `+mx` na tela é ir para
+## baixo e para a direita, e a direita de quem vai assim é `+my`. Os cotovelos
+## já eram assim; as retas é que mudaram. Nenhum destes números é de gosto, e o
+## D13 confere-os todos contra as âncoras.
 ##
 ## ⚠️ ELA CRESCEU EM 05/09, e por duas razões que se somam: a costa ganhou um
 ## degrau em cada ponta (a rua acompanha-a inteira) e a câmera afastou-se, de
-## modo que o pedaço de estrada que cabe no quadro é maior. Os dois pontos das
-## pontas eram `-2,0` e `29,5`, escolhidos para caírem fora do quadro ANTIGO —
-## e o D13 reprovou-os assim que o quadro cresceu, que é exatamente o que ele
-## existe para fazer. Os de agora saem da mesma pergunta, resolvida contra o
-## desenho do caminhão e não contra o quadro de 512 dele.
+## modo que o pedaço de estrada que cabe no quadro é maior. O D13 reprovou as
+## pontas antigas assim que o quadro cresceu, que é exatamente o que ele existe
+## para fazer: as de agora saem da mesma pergunta, resolvida contra o desenho
+## do caminhão e não contra o quadro de 512 dele.
 const ROTA_ESTRADA: Array[Vector2] = [
-	Vector2(-3.45, -14.00),   # entra por cima do topo do quadro
-	Vector2(-3.45, -6.45),
-	Vector2(0.55, -6.45),     # cotovelo do degrau 0 para o 1
-	Vector2(0.55, 7.55),
-	Vector2(4.55, 7.55),      # cotovelo do 1 para o 2
-	Vector2(4.55, 15.55),
-	Vector2(8.55, 15.55),     # cotovelo do 2 para o 3
-	Vector2(8.55, 23.55),
-	Vector2(12.55, 23.55),    # cotovelo do 3 para o 4
-	Vector2(12.55, 33.55),
-	Vector2(16.55, 33.55),    # cotovelo do 4 para o 5
-	Vector2(16.55, 42.00),    # sai pela esquerda do quadro
+	Vector2(-4.35, -14.00),   # entra por cima do topo do quadro
+	Vector2(-4.35, -6.45),
+	Vector2(-0.35, -6.45),    # cotovelo do degrau 0 para o 1
+	Vector2(-0.35, 7.55),
+	Vector2(3.65, 7.55),      # cotovelo do 1 para o 2
+	Vector2(3.65, 15.55),
+	Vector2(7.65, 15.55),     # cotovelo do 2 para o 3
+	Vector2(7.65, 23.55),
+	Vector2(11.65, 23.55),    # cotovelo do 3 para o 4
+	Vector2(11.65, 33.55),
+	Vector2(15.65, 33.55),    # cotovelo do 4 para o 5
+	Vector2(15.65, 42.00),    # sai pela esquerda do quadro
 ]
 
-## A MÃO DUPLA DE VERDADE: a rua no outro sentido, pela faixa de DENTRO.
+## A MÃO DUPLA: a rua no outro sentido, pela faixa do lado da ÁGUA.
 ##
-## A rua tem duas faixas desde 07/09, e até aqui só uma era usada — todo camião
-## descia em `+my`, e a faixa do lado da vila ficava vazia. O pedido da segunda
-## jogada era este: *"caminhões aparecendo não só de cima e sumindo embaixo, mas
-## também ao contrário"*. Quem sobe em `-my` tem a vila à direita, e daí sai a
-## faixa: o meio da faixa de dentro (`borda - RUA_RECUO + RUA_LARG / 4`).
+## A rua tem duas faixas desde 07/09, e até 23/09 só uma era usada — todo camião
+## descia em `+my`. O pedido da segunda jogada era este: *"caminhões aparecendo
+## não só de cima e sumindo embaixo, mas também ao contrário"*. Quem sobe vai
+## para cima e para a direita na tela, e a direita dele é a água: a faixa é o
+## meio da de fora (`borda - RUA_RECUO + RUA_LARG * 3/4`), e nos cotovelos a
+## meia faixa de `my` baixo (`my1 - RUA_LARG * 3/4`).
 ##
-## ⚠️ E O COTOVELO TAMBÉM TEM DUAS FAIXAS. Quem sobe atravessa-o em `-mx`, e a
-## direita dele é `-my`: vai pela meia faixa de FORA da curva, `my1 -
-## RUA_LARG * 3/4`, que é a outra metade do asfalto que a ida já usa. Sai daí
-## que os dois nunca se cruzam em cima um do outro, nem na reta nem na curva.
-##
-## Os números são os do gerador pela mesma razão que a `ROTA_ESTRADA`, e o
-## D13 confere-os contra o asfalto publicado.
+## ⚠️ AS DUAS ROTAS SÃO CONCÊNTRICAS e por isso não se cruzam — o que a versão
+## anterior deste comentário afirmava sem o ser (ver a `ROTA_ESTRADA`). O D13 §7
+## pergunta-o segmento a segmento, e não a esta frase.
 const ROTA_RETORNO: Array[Vector2] = [
-	Vector2(15.65, 42.00),    # entra pela esquerda, por baixo
-	Vector2(15.65, 32.65),
-	Vector2(11.65, 32.65),    # cotovelo do degrau 5 para o 4
-	Vector2(11.65, 22.65),
-	Vector2(7.65, 22.65),     # cotovelo do 4 para o 3
-	Vector2(7.65, 14.65),
-	Vector2(3.65, 14.65),     # cotovelo do 3 para o 2
-	Vector2(3.65, 6.65),
-	Vector2(-0.35, 6.65),     # cotovelo do 2 para o 1
-	Vector2(-0.35, -7.35),
-	Vector2(-4.35, -7.35),    # cotovelo do 1 para o 0
-	Vector2(-4.35, -14.00),   # sai por cima do topo do quadro
+	Vector2(16.55, 42.00),    # entra pela esquerda, por baixo
+	Vector2(16.55, 32.65),
+	Vector2(12.55, 32.65),    # cotovelo do degrau 5 para o 4
+	Vector2(12.55, 22.65),
+	Vector2(8.55, 22.65),     # cotovelo do 4 para o 3
+	Vector2(8.55, 14.65),
+	Vector2(4.55, 14.65),     # cotovelo do 3 para o 2
+	Vector2(4.55, 6.65),
+	Vector2(0.55, 6.65),      # cotovelo do 2 para o 1
+	Vector2(0.55, -7.35),
+	Vector2(-3.45, -7.35),    # cotovelo do 1 para o 0
+	Vector2(-3.45, -14.00),   # sai por cima do topo do quadro
 ]
 
 ## Onde a cena põe os dois camiões do retorno — em trechos retos e à vista,
 ## pela mesma razão dos três da ida (a primeira captura tem de os apanhar), e
 ## longe deles na mesma altura da rua, para não saírem colados na foto.
+##
+## ⚠️ E A PRIMEIRA PASSAGEM NÃO PASSA PELO ARRANQUE, logo não pergunta pelas
+## curvas (`_curvas_livres()`): as origens têm de ser escolhidas sem conflito.
+## O segundo esteve em (8,55; 17,00) — com a mão direita, a curva do cotovelo 2
+## calhava-lhe 5,65 unidades depois e ao `Caminhao1` 5,71: os dois viravam
+## juntos aos cinco segundos de jogo, em todas as partidas. O D35 anda a cena
+## desde o primeiro frame e é ele que o apanha.
 const CAMINHAO_RETORNO_ORIGENS: Array[Vector2] = [
-	Vector2(-0.35, 5.00),
-	Vector2(7.65, 17.00),
+	Vector2(0.55, 5.00),
+	Vector2(4.55, 13.00),
 ]
 
 ## Velocidade constante em pixels por segundo. É ela que dá a duração de cada
@@ -535,11 +545,14 @@ const CAMINHAO_RETORNO_ORIGENS: Array[Vector2] = [
 ##
 ## ⚠️ ELE ENCOLHEU COM A CÂMERA em 05/09, e tinha de encolher: velocidade em
 ## PIXEL, com o mundo a ser desenhado 1,5x menor, é o caminhão a andar 1,5x
-## mais depressa NO MUNDO por uma mudança que foi só de enquadramento. Os 38
-## davam 26s de travessia onde antes davam 38. A travessia passou de 38s para
-## 69s na mesma mudança, e isso é o mundo a ser maior: o que se manteve — que é
-## o que a linha acima escolhe — é o caminhão a andar o próprio comprimento em
-## 2,5s, que é a régua com que o olho lê velocidade.
+## mais depressa NO MUNDO por uma mudança que foi só de enquadramento. O que se
+## manteve é o caminhão a andar o próprio comprimento em 2,5s, que é a régua
+## com que o olho lê velocidade.
+##
+## ⚠️ E É UMA SÓ PARA TODOS, e é disso que o trânsito depende: dois camiões na
+## mesma faixa, à mesma velocidade, nunca encurtam a distância entre eles. É por
+## isso que basta guardar as ENTRADAS numa faixa (o arranque e a saída do
+## berço) para eles nunca se tocarem na faixa.
 const CAMINHAO_VELOCIDADE := 38.0 * 2.0 / 3.0
 
 ## A pausa entre uma travessia e a seguinte, DENTRO do ciclo de cada caminhão.
@@ -550,6 +563,49 @@ const CAMINHAO_VELOCIDADE := 38.0 * 2.0 / 3.0
 ## para cima dos outros ao fim de algumas voltas. Quem os separa é a ESPERA de
 ## arranque, que se calcula uma vez e nunca mais.
 const CAMINHAO_INTERVALO := 5.0
+
+## A DISTÂNCIA MÍNIMA entre dois camiões na mesma faixa, em unidades de rota.
+##
+## Sai de uma conta e não do gosto: num cotovelo, o da frente já virou e o de
+## trás ainda não, e as duas pegadas só não se tocam se a distância entre eles
+## passar de meio comprimento de cada um mais uma largura. Com o camião mais
+## comprido (o porta-contêiner, 1,41 de chassi) e 0,45 de largura, isso dá
+## 1,86; 2,2 deixa folga. Quem prova que chega é o D35, que mede as pegadas.
+##
+## ⚠️ O PERÍODO IGUAL NÃO CHEGAVA. Um camião que saía de um berço voltava à
+## roda com a fase que a espera lhe deu, e dois deles podiam ficar em COMBOIO
+## para sempre — medido em 23/09: a ré largava o berço por cima de quem
+## passava, e os dois seguiam colados a roçar em cada cotovelo.
+const ESPACO_NA_FAIXA := 2.2
+
+## Quanto um camião que JÁ PASSOU uma boca de acesso ainda a tapa: o centro
+## dele passou, mas meia carroçaria e meia largura ainda estão lá.
+const BOCA_DEPOIS := 1.2
+
+## A LARGURA DA RUA e o CHANFRO das quinas salientes de cada cotovelo,
+## repetidos do gerador (`RUA_LARG`, `CHANFRO_COTOVELO`) pela mesma razão que a
+## rota: o jogo não lê o JSON. O D13 confere os dois contra as âncoras.
+const RUA_LARG := 1.8
+const CHANFRO_COTOVELO := RUA_LARG / 2.0
+
+## A JANELA DE UMA CURVA, em unidades de eixo (tempo, à velocidade de todos).
+##
+## Em cada curva de cada cotovelo passam as duas rotas — uma a fazer a curva
+## aberta, rente ao chanfro, e a outra a fechada, rente à quina reentrante — e
+## um camião de 1,41 a virar 90° no meio de uma faixa de 0,9 não cabe ao lado
+## de outro que vire no mesmo sítio. Não há geometria que o resolva: medido em
+## 23/09 por busca, cortar a curva fechada para dentro afasta os dois, mas o
+## D20 só deixa cortar até 0,48 e a sobreposição pede pelo menos 0,12 a mais
+## do que o corte da aberta (0,64). Separa-os então o TEMPO.
+##
+## Os dois porta-contêineres, o par pior, chegam a menos de 0,05 um do outro
+## quando passam a curva com menos de 1,53 unidades de desfasamento (1,35 s),
+## medido amostrando os dois caminhos desenhados. 2,0 deixa folga.
+const JANELA_DA_CURVA := 2.0
+
+## De quanto em quanto tempo quem cede volta a olhar. Curto de propósito:
+## esperar é invisível, e só acontece fora da rua (no acesso, ou fora do quadro).
+const CEDENCIA_ESPERA := 0.5
 
 ## OS QUATRO CAMIÕES, UM POR MOTIVO DE ESCALA.
 ##
@@ -566,9 +622,9 @@ const CAMINHAO_INTERVALO := 5.0
 ## dessa pergunta que deixou o `barco_medio` gerado e sem uso durante semanas.
 ##
 ## ⚠️ E CADA UM TEM QUATRO SILHUETAS, não duas: os dois eixos, nos dois
-## SENTIDOS. O `_retorno` é o caminhão com a frente virada — sobe a rua pela
-## faixa de dentro e mostra a traseira à câmera. Não é espelho do que desce:
-## espelhar mandaria o lado para a face que esta câmera não vê.
+## SENTIDOS. O `_retorno` é o caminhão com a frente virada — sobe a rua e
+## mostra a traseira à câmera. Não é espelho do que desce: espelhar mandaria o
+## lado para a face que esta câmera não vê.
 const CAMINHOES := {
 	"pescado": {
 		"my": preload("res://art/props/caminhao_pescado.png"),
@@ -599,25 +655,28 @@ const CAMINHOES := {
 ## ONDE CADA CAMIÃO SAI DA RUA PARA ENTRAR NO BERÇO.
 ##
 ## O `vias()` já desenhava, para cada píer, uma ligação da rua até o avental —
-## é ela que explica para que serve a estrada. Até 07/09 nada a percorria: o
-## camião levava a carga da doca do mesmo índice e passava reto. O pedido da
-## segunda jogada foi dar-lhe o destino: *"ao alocar um navio de um determinado
-## serviço, um caminhão relacionado pode aparecer na estrada e ir para a doca
-## desse navio. Caso o navio vá embora, esse caminhão vai embora também."*
+## é ela que explica para que serve a estrada. O pedido da segunda jogada foi
+## dar-lhe o destino: *"ao alocar um navio de um determinado serviço, um
+## caminhão relacionado pode aparecer na estrada e ir para a doca desse navio.
+## Caso o navio vá embora, esse caminhão vai embora também."*
 ##
 ## ⚠️ OS NÚMEROS SÃO REPETIDOS DO GERADOR, E É O D13 QUE OS TRANCA. O mapa
-## publica `acessos` na tabela de âncoras — entrada, `mx` e `my` de cada
-## acesso —, saídos das mesmas expressões que os desenham; isto aqui é a cópia
-## que roda dentro do jogo, que não lê o JSON. Repetição sem asserção é o
-## contrato a divergir calado, e é a mesma razão de o `ROTA_ESTRADA` ser
-## conferido ponto a ponto.
+## publica `acessos` na tabela de âncoras, saídos das mesmas expressões que os
+## desenham; isto aqui é a cópia que roda dentro do jogo, que não lê o JSON.
 ##
-## `entrada` é o ponto DA ROTA onde ele vira (o meio do asfalto do degrau, na
-## altura do berço); `paragem` é onde ele encosta, no fundo do acesso.
+## São TRÊS pontos por acesso, e a mão direita é a razão do terceiro:
+## - `entrada` é a boca do acesso na faixa do lado da ÁGUA — a que o mapa
+##   publica, e onde vira o RETORNO, que sobe por essa faixa e entra à direita;
+## - `virada` é o mesmo `my` na faixa do lado da VILA, onde vira a IDA — que
+##   entra à esquerda e ATRAVESSA a faixa do retorno para lá chegar;
+## - `paragem` é onde qualquer um deles encosta, no fundo do acesso.
 const ACESSOS_DOCA: Array[Dictionary] = [
-	{"entrada": Vector2(0.55, 3.2), "paragem": Vector2(3.45, 3.2)},
-	{"entrada": Vector2(4.55, 11.2), "paragem": Vector2(7.45, 11.2)},
-	{"entrada": Vector2(8.55, 19.2), "paragem": Vector2(11.45, 19.2)},
+	{"entrada": Vector2(0.55, 3.2), "virada": Vector2(-0.35, 3.2),
+		"paragem": Vector2(3.45, 3.2)},
+	{"entrada": Vector2(4.55, 11.2), "virada": Vector2(3.65, 11.2),
+		"paragem": Vector2(7.45, 11.2)},
+	{"entrada": Vector2(8.55, 19.2), "virada": Vector2(7.65, 19.2),
+		"paragem": Vector2(11.45, 19.2)},
 ]
 
 ## O quanto a paragem recua do fim do acesso, para o DESENHO caber lá dentro.
@@ -635,12 +694,26 @@ const BERCO_RECUO := 1.25
 # vista. Índice = índice do nó `Caminhao<N>`.
 var _carga_na_estrada: Array[String] = []
 
-# O `id` do barco por causa do qual o camião está PARADO no berço, ou -1 se ele
-# não está parado. É o `id` e não o índice da doca porque um barco que sai e
-# outro que chega na mesma passagem deixam a doca ocupada as duas vezes: sem o
-# `id`, o camião ficaria eternamente parado a servir barcos que já foram
-# embora. Índice = índice do nó `Caminhao<N>`.
-var _visita_na_doca: Array[int] = []
+# QUEM ESTÁ NO BERÇO de cada doca — o nó do camião, ou `null`. É a TRAVA: um
+# berço tem lugar para um camião, e com dois sentidos a poderem entrar, dois
+# podiam chegar ao mesmo fundo de acesso. Ela fecha-se no instante em que um
+# camião se COMPROMETE a entrar (ainda na rua) e só se abre quando ele volta à
+# faixa dele — e não quando encosta ou começa a sair, que é quando o acesso
+# ainda está ocupado. Índice = índice da doca.
+var _ocupante_do_berco: Array = []
+
+# O `id` do barco por causa do qual o camião do berço está ENCOSTADO, ou -1 se
+# ele ainda está a entrar, já está a sair, ou não há ninguém. É o `id` e não
+# "há barco" porque um barco que sai e outro que chega na mesma passagem deixam
+# a doca ocupada as duas vezes: sem o `id`, o camião ficaria eternamente parado
+# a servir barcos que já foram embora. Índice = índice da doca.
+var _visita_do_berco: Array[int] = []
+
+# O camião do berço está a SAIR dele (a meio da ré, ainda fora da rua). É o
+# único estado do trânsito que a posição desenhada não diz: um camião no
+# acesso tanto pode estar a entrar como a sair, e só quem sai volta à faixa —
+# e daqui a pouco, que é o que a previsão das curvas precisa de saber.
+var _saindo_do_berco: Array[bool] = []
 
 # O canto do quadro de 512 que corresponde ao ponto de partida da cena. Era uma
 # variável local do `_animar_caminhoes()` enquanto a volta era um tween em laço;
@@ -669,12 +742,86 @@ func silhueta_do_trecho(de: Vector2, para: Vector2, motivo: String,
 	return par[eixo + "_retorno"] if recua else par[eixo]
 
 
+## QUANTO A CURVA ABERTA CORTA À QUINA, em unidades a contar do vértice.
+##
+## Com as faixas concêntricas (a mão direita, 23/09), cada rota faz em cada
+## cotovelo uma curva FECHADA, rente à quina reentrante, e uma ABERTA, à volta
+## da quina saliente — e a saliente é a que o gerador chanfra, em meia rua. O
+## vértice da curva aberta cai EXATAMENTE em cima da linha do chanfro (0,45 de
+## cada borda, 0,45 + 0,45 = 0,9): virar ali em ângulo reto punha meio camião
+## em cima do passeio e do relvado, e a foto mostrou-o. O D20 também, que é a
+## guarda que o apanhou.
+##
+## A curva aberta corta então a quina por uma diagonal PARALELA ao chanfro e a
+## meia faixa dele — o meio da faixa, que é onde o camião anda em todo o resto.
+## Esta é a distância do vértice até onde a diagonal começa e acaba: sobre a
+## linha `x + y = chanfro + meia_faixa * raiz(2)` contada das bordas, com
+## `meia_faixa = RUA_LARG / 4`.
+##
+## ⚠️ NÃO SE ALISA A CURVA FECHADA NEM O CHANFRO. Um camião de 1,41 que vira
+## 90° no meio de uma faixa de 0,9 sai sempre um palmo fora dela (0,25 do
+## porta-contêiner, em QUALQUER quina, desde 07/09); a diagonal só traz a curva
+## aberta de volta a esse palmo (0,21), em vez dos 0,66 do vértice. Mexer no
+## chanfro seria mexer no mapa, que o CI compara byte a byte.
+static func corte_da_curva() -> float:
+	return CHANFRO_COTOVELO - (2.0 - sqrt(2.0)) * RUA_LARG / 4.0
+
+
+## O CAMINHO DESENHADO de uma lista de pontos, trecho a trecho: igual à lista,
+## menos nas curvas ABERTAS, onde a quina é cortada pela diagonal (ver
+## `corte_da_curva()`). Cada trecho vem como `[de, para, k]`, com `k` o índice
+## do trecho ORIGINAL a que pertence — a primeira metade da diagonal é do
+## trecho que chega, a segunda do que parte, e é daí que sai a silhueta: com
+## duas silhuetas por eixo, é a troca a meio da diagonal que faz a curva ler.
+##
+## ⚠️ ABERTA É À ESQUERDA NA TELA, e decide-se pelo sinal do produto vetorial
+## no MUNDO: a projeção espelha o chão, e o `-1` do mundo é a esquerda na tela.
+## Foi este espelho que pôs a mão trocada durante dezasseis dias; o D13 §7
+## pergunta a mão à projeção, e não a esta frase.
+##
+## É PÚBLICA porque o D20 lhe pergunta o que o camião percorre de facto: ler as
+## constantes da rota seria conferir a escada, que já não é o caminho.
+func trechos_de(pontos: Array) -> Array:
+	var e := corte_da_curva()
+	var n := pontos.size()
+	var chega: Array = pontos.duplicate()    # onde o trecho que chega acaba
+	var parte: Array = pontos.duplicate()    # onde o trecho que parte começa
+	var meio: Array = []
+	meio.resize(n)
+	for k in range(1, n - 1):
+		var a: Vector2 = (pontos[k] - pontos[k - 1]).normalized()
+		var b: Vector2 = (pontos[k + 1] - pontos[k]).normalized()
+		if a.x * b.y - a.y * b.x < -0.5:
+			chega[k] = pontos[k] - a * e
+			parte[k] = pontos[k] + b * e
+			meio[k] = (chega[k] + parte[k]) / 2.0
+	var trechos: Array = []
+	for i in range(n - 1):
+		if meio[i] != null:
+			trechos.append([meio[i], parte[i], i])
+		trechos.append([parte[i], chega[i + 1], i])
+		if meio[i + 1] != null:
+			trechos.append([chega[i + 1], meio[i + 1], i])
+	return trechos
+
+
 ## O deslocamento de tela entre dois pontos da rota. Só precisa das duas
 ## constantes da projeção — `CX`, `CY` e a altura do cais cancelam-se na
 ## diferença.
 func tela_da_rota(ponto: Vector2, origem: Vector2) -> Vector2:
 	var d := ponto - origem
 	return Vector2((d.x - d.y) * MEIA_LARG, (d.x + d.y) * MEIA_ALT)
+
+
+## O inverso de `tela_da_rota()`: onde, no mundo, está um nó de camião. O
+## trânsito pergunta pela posição DESENHADA e não por uma tabela ao lado: uma
+## segunda cópia do estado é uma segunda coisa a poder divergir, e o que não
+## pode acontecer é precisamente o que se vê.
+func mundo_do_no(no: Control, base: Vector2, origem: Vector2) -> Vector2:
+	var s := no.position - base
+	var a := s.x / MEIA_LARG
+	var b := s.y / MEIA_ALT
+	return origem + Vector2((a + b) / 2.0, (b - a) / 2.0)
 
 
 ## `a` vem depois de `b` na rota? Comparar por `my` chega quase sempre — a rota
@@ -695,7 +842,7 @@ func _pontos_da_rota(desde: Vector2) -> Array[Vector2]:
 
 
 ## Os pontos da rota de `desde` até `ate`, ambos inclusive. `ate` é sempre um
-## ponto de entrada de acesso, que fica num trecho RETO — por isso basta cortar
+## ponto de virada de acesso, que fica num trecho RETO — por isso basta cortar
 ## a lista pelos dois lados, sem inventar vértice nenhum.
 func _pontos_entre(desde: Vector2, ate: Vector2) -> Array[Vector2]:
 	var pontos: Array[Vector2] = [desde]
@@ -704,6 +851,199 @@ func _pontos_entre(desde: Vector2, ate: Vector2) -> Array[Vector2]:
 			pontos.append(ponto)
 	pontos.append(ate)
 	return pontos
+
+
+## Quanto de `rota` já se andou até `p` — pelo caminho DESENHADO, com as
+## diagonais das curvas abertas —, ou -1 se `p` não está em cima dele (um camião
+## num acesso, por exemplo). A conta é em TEMPO, à velocidade de todos, e sai em
+## "unidades de eixo" (o que um trecho reto de uma unidade leva): numa diagonal
+## a tela anda menos por unidade de mundo, e é a tela que a velocidade mede.
+func s_na_rota(p: Vector2, rota: Array) -> float:
+	var r := _projetar(p, rota)
+	return r.x if r.y < 0.05 else -1.0
+
+
+## O ponto do caminho desenhado de `rota` mais perto de `p`: `x` é o `s` dele,
+## `y` a distância, em unidades de mundo.
+func _projetar(p: Vector2, rota: Array) -> Vector2:
+	var unidade := Vector2(MEIA_LARG, MEIA_ALT).length()
+	var s := 0.0
+	var melhor := Vector2(-1.0, INF)
+	for tr in trechos_de(rota):
+		var a: Vector2 = tr[0]
+		var b: Vector2 = tr[1]
+		var seg := a.distance_to(b)
+		var tela := tela_da_rota(b, a).length() / unidade
+		if seg > 0.0:
+			var t := clampf((p - a).dot(b - a) / (seg * seg), 0.0, 1.0)
+			var d := p.distance_to(a.lerp(b, t))
+			if d < melhor.y:
+				melhor = Vector2(s + t * tela, d)
+		s += tela
+	return melhor
+
+
+## OS CRUZAMENTOS: cada curva de um cotovelo, com o `s` de cada rota nela —
+## `[s da ida, s do retorno]`. Uma curva é o vértice de uma rota e o da outra a
+## menos de 1,5 (estão a 0,9 · raiz(2)); o `s` é o do ponto do caminho
+## desenhado mais perto do vértice, que numa curva aberta é o meio da diagonal.
+var _cruzamentos_cache: Array = []
+
+func _cruzamentos() -> Array:
+	if _cruzamentos_cache.is_empty():
+		for v in ROTA_ESTRADA.slice(1, ROTA_ESTRADA.size() - 1):
+			for w in ROTA_RETORNO.slice(1, ROTA_RETORNO.size() - 1):
+				if (v as Vector2).distance_to(w) < 1.5:
+					_cruzamentos_cache.append([_projetar(v, ROTA_ESTRADA).x,
+						_projetar(w, ROTA_RETORNO).x])
+	return _cruzamentos_cache
+
+
+## Os cinco camiões, com o que é preciso para saber onde cada um está.
+func _camioes() -> Array[Dictionary]:
+	var lista: Array[Dictionary] = []
+	for i in range(_base_do_caminhao.size()):
+		var no := _no_do_caminhao(i)
+		if no != null:
+			lista.append({"no": no, "base": _base_do_caminhao[i],
+				"origem": CAMINHAO_ORIGENS[i], "ida": i, "retorno": -1})
+	for j in range(_base_do_retorno.size()):
+		var no := _no_do_retorno(j)
+		if no != null:
+			lista.append({"no": no, "base": _base_do_retorno[j],
+				"origem": CAMINHAO_RETORNO_ORIGENS[j], "ida": -1, "retorno": j})
+	return lista
+
+
+## A BOCA DO ACESSO `d` ESTÁ LIVRE para uma manobra de `manobra` unidades?
+##
+## É a REGRA DE CEDÊNCIA, e ela vale para os dois sentidos e para as duas
+## manobras — entrar e sair. Livre quer dizer: nenhum outro camião, em nenhuma
+## das duas faixas, está a chegar àquela boca antes de a manobra acabar e de
+## sobrar o `ESPACO_NA_FAIXA`, nem acabou de passar por ela (`BOCA_DEPOIS`).
+##
+## ⚠️ AS DUAS FAIXAS, E NÃO SÓ A QUE SE ATRAVESSA. A ida que entra atravessa a
+## do retorno; a que sai de ré atravessa-a outra vez e volta à sua; o retorno
+## que sai volta à sua; e o porta-contêiner, ao virar, põe a traseira meio
+## palmo dentro da faixa ao lado (0,705 de meio chassi contra 0,9 entre faixas,
+## menos meia largura). Perguntar sempre pelas duas é mais largo do que cada
+## caso precisa, e é UMA regra em vez de quatro.
+##
+## ⚠️ E QUEM NÃO PODE ENTRAR NÃO PÁRA NA RUA: segue, e tenta na volta seguinte.
+## Um camião parado na faixa pediria que o de trás também travasse, e a
+## animação é de velocidade constante — parar um exigiria remendar o tween do
+## outro a meio, que é onde a segunda jogada pediu para não haver bugs. Quem
+## ESPERA é só quem já está fora da rua: no fundo do acesso, para sair.
+func _boca_livre(d: int, quem: Control, manobra: float) -> bool:
+	var acesso: Dictionary = ACESSOS_DOCA[d]
+	var bocas := [
+		[ROTA_ESTRADA, s_na_rota(acesso["virada"], ROTA_ESTRADA)],
+		[ROTA_RETORNO, s_na_rota(acesso["entrada"], ROTA_RETORNO)],
+	]
+	for c in _camioes():
+		if c["no"] == quem:
+			continue
+		var p := mundo_do_no(c["no"], c["base"], c["origem"])
+		for boca in bocas:
+			var s := s_na_rota(p, boca[0])
+			if s < 0.0:
+				continue
+			var falta: float = float(boca[1]) - s
+			if falta > -BOCA_DEPOIS and falta < manobra + ESPACO_NA_FAIXA:
+				return false
+	return true
+
+
+## Onde está o camião `c` na SUA rota, em `s` — ou, se está a sair de um berço
+## de ré, onde ESTARIA: o `s` da boca menos o que lhe falta de ré, que é quando
+## ele lá chega. -1 para quem está fora da rua e não vai voltar já (a entrar num
+## berço, encostado, ou à espera fora do quadro não conta: o arranque dele
+## pergunta quando for a vez dele).
+func _s_do_camiao(c: Dictionary) -> float:
+	var da_ida: bool = int(c["ida"]) >= 0
+	var rota: Array = ROTA_ESTRADA if da_ida else ROTA_RETORNO
+	var p := mundo_do_no(c["no"], c["base"], c["origem"])
+	var s := s_na_rota(p, rota)
+	if s >= 0.0:
+		return s
+	for d in range(_ocupante_do_berco.size()):
+		if _ocupante_do_berco[d] != c["no"] or not _saindo_do_berco[d]:
+			continue
+		var boca: Vector2 = ACESSOS_DOCA[d]["virada" if da_ida else "entrada"]
+		return s_na_rota(boca, rota) - absf(p.x - boca.x)
+	return -1.0
+
+
+## AS CURVAS ESTÃO LIVRES para quem entra na rua agora, a `s_agora` da sua rota?
+##
+## É a outra metade do CRUZAMENTO, a dos cotovelos (a das bocas é
+## `_boca_livre()`). À mesma velocidade, quem entra sabe a que horas vai passar
+## cada curva, e sabe a que horas cada camião do sentido contrário que já está
+## na rua lá passa: entra só se nenhuma das duas passagens cair a menos de
+## `JANELA_DA_CURVA` da outra. Como ninguém muda de velocidade na rua, o que se
+## confere à entrada vale até ao fim — e quem sai da rua (para um berço) só
+## desfaz conflitos, nunca os cria. Quem volta a entrar pergunta outra vez.
+##
+## ⚠️ ELA SÓ SE PERGUNTA A QUEM ESTÁ FORA DA RUA — no arranque, fora do quadro,
+## e na saída do berço, no fundo do acesso. É o mesmo princípio da cedência:
+## esperar é invisível ali, e na rua ninguém pára.
+func _curvas_livres(quem: Control, e_ida: bool, s_agora: float) -> bool:
+	for c in _camioes():
+		if c["no"] == quem or (int(c["ida"]) >= 0) == e_ida:
+			continue
+		var s_outro := _s_do_camiao(c)
+		if s_outro < 0.0:
+			continue
+		for par in _cruzamentos():
+			var t_meu: float = float(par[0] if e_ida else par[1]) - s_agora
+			var t_dele: float = float(par[1] if e_ida else par[0]) - s_outro
+			if t_meu < -JANELA_DA_CURVA or t_dele < -JANELA_DA_CURVA:
+				continue
+			if absf(t_meu - t_dele) < JANELA_DA_CURVA:
+				return false
+	return true
+
+
+## O PRINCÍPIO DE `rota` ESTÁ LIVRE para mais um camião? É a outra entrada
+## numa faixa, e a que desfaz o comboio: quem acabou a pausa ao mesmo tempo
+## que outro espera fora do quadro, onde esperar não se vê.
+func _arranque_livre(quem: Control, rota: Array) -> bool:
+	for c in _camioes():
+		if c["no"] == quem:
+			continue
+		var s := s_na_rota(mundo_do_no(c["no"], c["base"], c["origem"]), rota)
+		if s >= 0.0 and s < ESPACO_NA_FAIXA:
+			return false
+	return true
+
+
+## AS DUAS PERGUNTAS DE QUEM ENTRA NA RUA, cada uma num sítio só — o jogo e o
+## D35 perguntam a mesma coisa, e duas cópias da conjunção seriam a regra
+## duplicada que um defeito injetado não consegue apanhar.
+##
+## Arrancar do princípio da rota: a ponta livre e as curvas livres.
+func _pode_arrancar(quem: Control, e_ida: bool) -> bool:
+	return _arranque_livre(quem, ROTA_ESTRADA if e_ida else ROTA_RETORNO) \
+		and _curvas_livres(quem, e_ida, 0.0)
+
+
+## Sair do berço `d` de ré: a boca livre e as curvas livres, estas a contar de
+## quando a ré acabar.
+func _pode_sair(d: int, quem: Control, e_ida: bool) -> bool:
+	var acesso: Dictionary = ACESSOS_DOCA[d]
+	var boca: Vector2 = acesso["virada"] if e_ida else acesso["entrada"]
+	var manobra: float = (acesso["paragem"] as Vector2).x - boca.x
+	var rota: Array = ROTA_ESTRADA if e_ida else ROTA_RETORNO
+	return _boca_livre(d, quem, manobra) \
+		and _curvas_livres(quem, e_ida, s_na_rota(boca, rota) - manobra)
+
+
+## Espera `segundos` e chama `depois`. Tween e não `Timer`, pela mesma razão
+## de todo o resto do trânsito: é o `custom_step()` do D35 que o anda.
+func _esperar(no: Control, segundos: float, depois: Callable) -> void:
+	var tw := no.create_tween()
+	tw.tween_interval(segundos)
+	tw.tween_callback(depois)
 
 
 ## O `id` do barco que está a ser servido na doca `i`, ou -1 se não há visita a
@@ -724,15 +1064,27 @@ func _visita_da_doca(i: int) -> int:
 	return int(barco["id"])
 
 
+## Um camião com `carga` pode encostar no berço `d`? Só com o berço LIVRE e com
+## a carga do navio que lá está.
+##
+## ⚠️ A CARGA TEM DE CASAR, e isto também é novo para a ida. O camião escolhe a
+## carroçaria quando entra no mapa, e um minuto depois o barco pode ser outro:
+## até 23/09 o frigorífico encostava ao porta-contêiner que chegara entretanto.
+## Com o retorno a poder entrar em qualquer berço, a pergunta passou a ser a
+## mesma para todos: quem encosta leva o que o navio recebe.
+func _pode_encostar(d: int, carga: String) -> bool:
+	if d >= _ocupante_do_berco.size() or _ocupante_do_berco[d] != null:
+		return false
+	if _visita_da_doca(d) < 0:
+		return false
+	return String(GameState.docks[d]["boat"]["motivo"]) == carga
+
+
 ## Quantos segundos leva a percorrer o que resta da rota a partir de `desde`.
 ## Sai da MESMA conta que a animação usa — comprimento a dividir pela
 ## velocidade —, e é ela que dá a espera de arranque de cada caminhão.
 func _tempo_da_rota(desde: Vector2) -> float:
-	var pontos := _pontos_da_rota(desde)
-	var px := 0.0
-	for i in range(pontos.size() - 1):
-		px += tela_da_rota(pontos[i + 1], pontos[i]).length()
-	return px / CAMINHAO_VELOCIDADE
+	return _tempo_dos_pontos(_pontos_da_rota(desde))
 
 
 ## O que passa na estrada é O QUE ESTÁ A SER SERVIDO NA DOCA DO MESMO ÍNDICE.
@@ -768,17 +1120,18 @@ func _motivos_do_porto() -> Array:
 	return motivos
 
 
-# ── O RETORNO: os dois camiões que sobem a rua pela faixa de dentro ──────
+# ── O RETORNO: os dois camiões que sobem a rua pela faixa da água ────────
 #
-# São SÓ PASSAGEM, e de propósito. O camião da ida é o da doca do mesmo índice
-# e entra no berço; um camião que subisse e também entrasse teria de virar à
-# ESQUERDA e atravessar a faixa da ida, e a segunda jogada pediu duas coisas
-# que isso arrisca: *"cuidado para não gerar um trânsito muito grande"* e
-# *"para os caminhões não terem bugs"*. O que ele traz é o que o porto recebe —
-# a mesma roda de motivos das docas vazias, sem sorteio: o `RandomNumberGenerator`
+# Até 23/09 eram SÓ PASSAGEM: pela faixa em que andavam, entrar num berço era
+# atravessar a da ida. Com a mão direita é o contrário — a faixa deles é a que
+# encosta aos acessos, e entram à direita sem atravessar nada. Quem atravessa
+# agora é a ida, e é por isso que a cedência existe (`_boca_livre()`).
+#
+# O que ele traz é o que o porto recebe, sem sorteio: o `RandomNumberGenerator`
 # do jogo é o que o simulador de balanceamento mede.
 var _base_do_retorno: Array[Vector2] = []
 var _voltas_do_retorno: Array[int] = []
+var _carga_do_retorno: Array[String] = []
 
 
 ## `a` vem depois de `b` no RETORNO — o espelho de `_adiante()`: ele sobe, logo
@@ -796,12 +1149,51 @@ func _pontos_do_retorno(desde: Vector2) -> Array[Vector2]:
 	return pontos
 
 
+## Os pontos do retorno de `desde` até `ate`, ambos inclusive — `ate` é uma
+## entrada de acesso, num trecho reto.
+func _pontos_do_retorno_ate(desde: Vector2, ate: Vector2) -> Array[Vector2]:
+	var pontos: Array[Vector2] = [desde]
+	for ponto in ROTA_RETORNO:
+		if _adiante_no_retorno(ponto, desde) and _adiante_no_retorno(ate, ponto):
+			pontos.append(ponto)
+	pontos.append(ate)
+	return pontos
+
+
+## A doca cuja boca o retorno encontra a seguir a `desde`, ou -1.
+func _proxima_boca_do_retorno(desde: Vector2) -> int:
+	var melhor := -1
+	for d in range(ACESSOS_DOCA.size()):
+		var e: Vector2 = ACESSOS_DOCA[d]["entrada"]
+		if not _adiante_no_retorno(e, desde):
+			continue
+		if melhor < 0 or _adiante_no_retorno(ACESSOS_DOCA[melhor]["entrada"], e):
+			melhor = d
+	return melhor
+
+
 ## Quantos segundos leva a percorrer `pontos`, pela velocidade de todos.
 func _tempo_dos_pontos(pontos: Array[Vector2]) -> float:
 	var px := 0.0
 	for i in range(pontos.size() - 1):
 		px += tela_da_rota(pontos[i + 1], pontos[i]).length()
 	return px / CAMINHAO_VELOCIDADE
+
+
+## A carga de uma subida nova. Se algum berço tem navio a ser servido e está
+## livre, leva a desse navio — o primeiro que vai encontrar, pela ordem em que
+## sobe; senão, a roda dos motivos do porto, como até aqui.
+##
+## É o que faz o retorno CHEGAR a encostar: pela roda, a carga só casaria com o
+## navio por acaso. E continua sem sorteio.
+func _motivo_do_retorno(j: int) -> String:
+	var d := _proxima_boca_do_retorno(ROTA_RETORNO[0])
+	while d >= 0:
+		if _visita_da_doca(d) >= 0 and _ocupante_do_berco[d] == null:
+			return String(GameState.docks[d]["boat"]["motivo"])
+		d = _proxima_boca_do_retorno(ACESSOS_DOCA[d]["entrada"])
+	var motivos := _motivos_do_porto()
+	return String(motivos[(j + _voltas_do_retorno[j]) % motivos.size()])
 
 
 func _animar_retorno() -> void:
@@ -813,6 +1205,7 @@ func _animar_retorno() -> void:
 	_base_do_retorno.resize(n)
 	_voltas_do_retorno.resize(n)
 	_voltas_do_retorno.fill(0)
+	_carga_do_retorno.resize(n)
 	# A mesma repartição da ida: ciclo igual para os dois, e a espera de
 	# arranque acerta cada um na sua metade, uma vez só.
 	var ciclo := CAMINHAO_INTERVALO + _tempo_dos_pontos(_pontos_do_retorno(ROTA_RETORNO[0]))
@@ -830,21 +1223,58 @@ func _animar_retorno() -> void:
 		_subir(j, origens[j], espera)
 
 
-## Uma subida inteira a partir de `desde`, e a pausa até à seguinte.
+## Uma subida NOVA a partir de `desde`: escolhe a carga, e segue.
 func _subir(j: int, desde: Vector2, pausa_apos: float) -> void:
-	var caminhao := $MapaWrap.get_node_or_null("Cenario/CaminhaoRetorno%d" % j) as TextureRect
+	var caminhao := _no_do_retorno(j)
 	if caminhao == null:
 		return
-	var motivos := _motivos_do_porto()
-	var carga := String(motivos[(j + _voltas_do_retorno[j]) % motivos.size()])
+	if desde == ROTA_RETORNO[0] and not _pode_arrancar(caminhao, false):
+		_esperar(caminhao, CEDENCIA_ESPERA, func() -> void:
+			_subir(j, desde, pausa_apos))
+		return
+	# ⚠️ E OCUPA A PONTA JÁ, antes de o tween o teleportar no passo seguinte.
+	# Sem isto, dois camiões que tentem o arranque no mesmo passo veem os dois a
+	# ponta livre e saem JUNTOS, em cima um do outro para a volta inteira —
+	# apanhado pelo D35 num mutante que só mexia no tempo de outra regra.
+	caminhao.position = _base_do_retorno[j] + tela_da_rota(desde, CAMINHAO_RETORNO_ORIGENS[j])
+	_carga_do_retorno[j] = _motivo_do_retorno(j)
 	_voltas_do_retorno[j] += 1
-	_percorrer_de(caminhao, _base_do_retorno[j], CAMINHAO_RETORNO_ORIGENS[j],
-		carga, _pontos_do_retorno(desde), func() -> void:
-			var tw := caminhao.create_tween()
-			tw.tween_interval(maxf(pausa_apos, CAMINHAO_INTERVALO))
-			tw.tween_callback(func() -> void:
-				_subir(j, ROTA_RETORNO[0], CAMINHAO_INTERVALO))
-	)
+	_seguir_subida(j, desde, pausa_apos)
+
+
+## Continua a subir a partir de `desde`, com a carga que já leva: até à boca
+## seguinte, onde decide, ou até ao fim da rua. Decide EM CADA BOCA pela mesma
+## razão da ida — é no vértice, com o estado que o jogador vê.
+func _seguir_subida(j: int, desde: Vector2, pausa_apos: float) -> void:
+	var caminhao := _no_do_retorno(j)
+	if caminhao == null:
+		return
+	var d := _proxima_boca_do_retorno(desde)
+	if d >= 0:
+		var entrada: Vector2 = ACESSOS_DOCA[d]["entrada"]
+		_percorrer_retorno(j, _pontos_do_retorno_ate(desde, entrada),
+			func() -> void: _retorno_na_boca(j, d, pausa_apos))
+		return
+	_percorrer_retorno(j, _pontos_do_retorno(desde), func() -> void:
+		_esperar(caminhao, maxf(pausa_apos, CAMINHAO_INTERVALO), func() -> void:
+			_subir(j, ROTA_RETORNO[0], CAMINHAO_INTERVALO)))
+
+
+## O retorno chegou à boca do acesso `d`: encosta, ou segue a subir.
+func _retorno_na_boca(j: int, d: int, pausa_apos: float) -> void:
+	var caminhao := _no_do_retorno(j)
+	if caminhao == null:
+		return
+	var acesso: Dictionary = ACESSOS_DOCA[d]
+	var entrada: Vector2 = acesso["entrada"]
+	var paragem: Vector2 = acesso["paragem"]
+	var visita := _visita_da_doca(d)
+	if not _pode_encostar(d, _carga_do_retorno[j]) \
+			or not _boca_livre(d, caminhao, paragem.x - entrada.x):
+		_seguir_subida(j, entrada, pausa_apos)
+		return
+	_ocupante_do_berco[d] = caminhao
+	_percorrer_retorno(j, [entrada, paragem], func() -> void: _encostou(d, visita))
 
 
 func _animar_caminhoes() -> void:
@@ -853,9 +1283,13 @@ func _animar_caminhoes() -> void:
 		return
 	var n := CAMINHAO_ORIGENS.size()
 	_carga_na_estrada.resize(n)
-	_visita_na_doca.resize(n)
 	_base_do_caminhao.resize(n)
-	_visita_na_doca.fill(-1)
+	_ocupante_do_berco.resize(ACESSOS_DOCA.size())
+	_ocupante_do_berco.fill(null)
+	_visita_do_berco.resize(ACESSOS_DOCA.size())
+	_visita_do_berco.fill(-1)
+	_saindo_do_berco.resize(ACESSOS_DOCA.size())
+	_saindo_do_berco.fill(false)
 
 	# O CICLO É IGUAL PARA OS TRÊS: pausa + travessia inteira. É esse número
 	# que a espera de arranque reparte, e é por ele ser igual que a repartição
@@ -866,7 +1300,8 @@ func _animar_caminhoes() -> void:
 	# não tem duração fixa nenhuma — depende dos turnos de operação e de quando
 	# o jogador avança o dia. A repartição continua a valer para as voltas SEM
 	# visita, que são as que mantêm a estrada viva; quem visita sai da roda e
-	# volta a ela quando parte do berço.
+	# volta a ela quando parte do berço — e é o `_arranque_livre()` que impede
+	# que volte em cima de outro.
 	var ciclo := CAMINHAO_INTERVALO + _tempo_da_rota(ROTA_ESTRADA[0])
 	# ⚠️ A ESPERA DE ARRANQUE É DERIVADA, e o número não se escreve à mão.
 	# A estrada visível é um terço da rota, então três camiões todos à vista ao
@@ -915,16 +1350,14 @@ func _lancar_volta(i: int, pausa: float) -> void:
 	var caminhao := _no_do_caminhao(i)
 	if caminhao == null:
 		return
-	var tw := caminhao.create_tween()
-	tw.tween_interval(maxf(pausa, CAMINHAO_INTERVALO))
 	# A DECISÃO É TOMADA NO FIM DA PAUSA, e não ao armar: entre armar e chegar a
 	# hora passam segundos em que o jogador pode ter avançado o dia. Decidir no
 	# momento em que ele entra no mapa é decidir com o estado que o jogador vê.
-	tw.tween_callback(func() -> void:
+	_esperar(caminhao, maxf(pausa, CAMINHAO_INTERVALO), func() -> void:
 		_entrar_no_mapa(i, ROTA_ESTRADA[0], CAMINHAO_INTERVALO))
 
 
-## O camião entra no mapa: escolhe a carga, e vai até o acesso da doca dele.
+## O camião entra no mapa: escolhe a carga, e vai até à virada da doca dele.
 ## `pausa_apos` é o que ele espera antes da volta seguinte — só a primeira
 ## passagem passa aqui um valor diferente do intervalo comum, e é ela que
 ## reparte os três pelo ciclo.
@@ -932,23 +1365,30 @@ func _entrar_no_mapa(i: int, desde: Vector2, pausa_apos: float) -> void:
 	var caminhao := _no_do_caminhao(i)
 	if caminhao == null:
 		return
+	if desde == ROTA_ESTRADA[0] and not _pode_arrancar(caminhao, true):
+		_esperar(caminhao, CEDENCIA_ESPERA, func() -> void:
+			_entrar_no_mapa(i, desde, pausa_apos))
+		return
+	# Ocupa a ponta já, pela razão escrita no `_subir()`: o arranque é uma
+	# pergunta e uma ação, e entre as duas não pode caber outro camião.
+	caminhao.position = _base_do_caminhao[i] + tela_da_rota(desde, CAMINHAO_ORIGENS[i])
 	# ⚠️ A CARGA ESCOLHE-SE AQUI E NÃO MUDA ATÉ A VOLTA SEGUINTE. Ele está fora
 	# do mapa neste instante; um camião que trocasse de carroçaria a meio da rua
 	# é um camião a transformar-se à vista.
 	_carga_na_estrada[i] = _motivo_da_estrada(i)
 
-	# ⚠️ ELE PASSA SEMPRE PELO PONTO DE ENTRADA DO ACESSO, visite ou não.
+	# ⚠️ ELE PASSA SEMPRE PELA VIRADA DO ACESSO, visite ou não.
 	#
 	# A primeira versão decidia a visita aqui, à entrada do mapa — e isso punha
 	# a decisão a um minuto de distância do jogador: alocar um trabalhador não
 	# fazia nada até o camião dar a volta inteira. Decidir NO ACESSO é decidir
 	# no instante em que a escolha importa, e é a decisão mais segura de todas:
-	# ali ele está parado num vértice conhecido, e o que se faz é começar o
-	# percurso seguinte — nunca remendar um a meio, que é onde moram os defeitos
-	# que a segunda jogada pediu para evitar.
+	# ali ele está num vértice conhecido, e o que se faz é começar o percurso
+	# seguinte — nunca remendar um a meio, que é onde moram os defeitos que a
+	# segunda jogada pediu para evitar.
 	var acesso: Dictionary = ACESSOS_DOCA[i] if i < ACESSOS_DOCA.size() else {}
-	if not acesso.is_empty() and _adiante(acesso["entrada"], desde):
-		_percorrer(caminhao, i, _pontos_entre(desde, acesso["entrada"]),
+	if not acesso.is_empty() and _adiante(acesso["virada"], desde):
+		_percorrer(caminhao, i, _pontos_entre(desde, acesso["virada"]),
 			func() -> void: _no_acesso(i, pausa_apos))
 		return
 
@@ -958,42 +1398,88 @@ func _entrar_no_mapa(i: int, desde: Vector2, pausa_apos: float) -> void:
 
 
 ## Chegou à altura do berço: entra, ou segue viagem.
+##
+## Entrar é virar à ESQUERDA e atravessar a faixa de quem sobe — e por isso é
+## aqui que a ida cede (`_boca_livre()`). Se vem alguém, ou o berço já tem
+## camião, ou a carga não casa, ela segue e tenta na volta seguinte.
 func _no_acesso(i: int, pausa_apos: float) -> void:
 	var caminhao := _no_do_caminhao(i)
 	if caminhao == null:
 		return
 	var acesso: Dictionary = ACESSOS_DOCA[i]
+	var virada: Vector2 = acesso["virada"]
+	var paragem: Vector2 = acesso["paragem"]
 	var visita := _visita_da_doca(i)
-	if visita < 0:
-		_percorrer(caminhao, i, _pontos_da_rota(acesso["entrada"]),
+	if not _pode_encostar(i, _carga_na_estrada[i]) \
+			or not _boca_livre(i, caminhao, paragem.x - virada.x):
+		_percorrer(caminhao, i, _pontos_da_rota(virada),
 			func() -> void: _lancar_volta(i, pausa_apos))
 		return
-	_percorrer(caminhao, i, [acesso["entrada"], acesso["paragem"]],
-		func() -> void:
-			# ENCOSTOU. A partir daqui não há tween nenhum a correr: quem o
-			# manda embora é `_docas_mudaram()`, e enquanto o navio estiver no
-			# berço ele fica. Era isto o pedido.
-			_visita_na_doca[i] = visita
-	)
+	_ocupante_do_berco[i] = caminhao
+	_percorrer(caminhao, i, [virada, paragem], func() -> void: _encostou(i, visita))
 
 
-## O camião larga o berço: sai de marcha-atrás pelo acesso e retoma a estrada.
+## ENCOSTOU no berço `d`, por causa do barco `visita`. A partir daqui não há
+## tween nenhum a correr: quem o manda embora é `_docas_mudaram()`, e enquanto o
+## navio estiver no berço ele fica. Era isto o pedido.
+##
+## ⚠️ E SE O NAVIO JÁ SE FOI DURANTE A MANOBRA, sai logo. O `_docas_mudaram()`
+## só olha para quem está encostado, e quem ainda vinha a caminho escapava-lhe:
+## ficaria parado a servir um barco que não está lá até à mudança seguinte.
+func _encostou(d: int, visita: int) -> void:
+	if _visita_da_doca(d) != visita:
+		_largar_berco(d)
+		return
+	_visita_do_berco[d] = visita
+
+
+## O camião do berço `d` larga-o: sai de marcha-atrás pelo acesso até à SUA
+## faixa — a ida até à virada, atravessando outra vez a do retorno; o retorno
+## até à entrada — e retoma a estrada. A trava abre-se quando ele lá chega.
 ##
 ## ⚠️ ELE SAI DE RÉ, e continua a sair depois de a silhueta `_retorno_mx`
-## existir. Ela foi desenhada para o camião que SOBE a rua; com ela aqui, o
-## camião encostado viraria 180° de um frame para o outro, no fundo da baía,
-## sem manobra nenhuma. Encostar de frente e sair de ré é o que um camião de
-## carga faz numa baía — daí o `re_no_primeiro`, que pede a silhueta da frente
-## para a perna que anda em `-mx`.
-func _sair_do_berco(i: int) -> void:
-	var caminhao := _no_do_caminhao(i)
+## existir. Com ela aqui, o camião encostado viraria 180° de um frame para o
+## outro, no fundo da baía, sem manobra nenhuma. Encostar de frente e sair de ré
+## é o que um camião de carga faz numa baía — daí o `re_no_primeiro`, que pede a
+## silhueta da frente para a perna que anda em `-mx`.
+##
+## ⚠️ E SAI SÓ COM A BOCA LIVRE, e é o único sítio do trânsito onde se espera:
+## até 23/09 a ré largava o berço por cima de quem passava, e os dois seguiam
+## colados. Esperar aqui não se vê — o camião está parado no fundo do acesso,
+## que é exatamente onde ele já estava.
+func _largar_berco(d: int) -> void:
+	var caminhao: Control = _ocupante_do_berco[d]
 	if caminhao == null:
 		return
-	var acesso: Dictionary = ACESSOS_DOCA[i]
-	var entrada: Vector2 = acesso["entrada"]
-	var ao_fim := func() -> void: _lancar_volta(i, CAMINHAO_INTERVALO)
-	_percorrer(caminhao, i, ([acesso["paragem"], entrada]
-		+ _pontos_da_rota(entrada).slice(1)), ao_fim, true)
+	var c: Dictionary = {}
+	for camiao in _camioes():
+		if camiao["no"] == caminhao:
+			c = camiao
+	if c.is_empty():
+		return
+	var acesso: Dictionary = ACESSOS_DOCA[d]
+	var paragem: Vector2 = acesso["paragem"]
+	var da_ida: bool = int(c["ida"]) >= 0
+	var boca: Vector2 = acesso["virada"] if da_ida else acesso["entrada"]
+	if not _pode_sair(d, caminhao, da_ida):
+		_esperar(caminhao, CEDENCIA_ESPERA, func() -> void: _largar_berco(d))
+		return
+	_saindo_do_berco[d] = true
+	if da_ida:
+		var i := int(c["ida"])
+		_percorrer(caminhao, i, [paragem, boca], func() -> void:
+			_ocupante_do_berco[d] = null
+			_saindo_do_berco[d] = false
+			_percorrer(caminhao, i, _pontos_da_rota(boca),
+				func() -> void: _lancar_volta(i, CAMINHAO_INTERVALO))
+		, true)
+		return
+	var j := int(c["retorno"])
+	_percorrer_retorno(j, [paragem, boca], func() -> void:
+		_ocupante_do_berco[d] = null
+		_saindo_do_berco[d] = false
+		_seguir_subida(j, boca, CAMINHAO_INTERVALO)
+	, true)
 
 
 ## Um barco saiu de um berço onde havia um camião encostado? Então ele vai
@@ -1005,13 +1491,13 @@ func _sair_do_berco(i: int) -> void:
 ## e um camião que só perguntasse "ainda há barco?" ficaria parado para sempre a
 ## servir cargas que já foram embora — e com a carroçaria da primeira.
 func _docas_mudaram() -> void:
-	for i in range(_visita_na_doca.size()):
-		if _visita_na_doca[i] < 0:
+	for d in range(_visita_do_berco.size()):
+		if _visita_do_berco[d] < 0:
 			continue
-		if _visita_da_doca(i) == _visita_na_doca[i]:
+		if _visita_da_doca(d) == _visita_do_berco[d]:
 			continue
-		_visita_na_doca[i] = -1
-		_sair_do_berco(i)
+		_visita_do_berco[d] = -1
+		_largar_berco(d)
 
 
 ## O nó do camião `i`, ou `null` se a cena ainda não está de pé. Um lugar só
@@ -1024,6 +1510,14 @@ func _no_do_caminhao(i: int) -> TextureRect:
 	return cenario.get_node_or_null("Caminhao%d" % i) as TextureRect
 
 
+## O mesmo, para os do retorno.
+func _no_do_retorno(j: int) -> TextureRect:
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return null
+	return cenario.get_node_or_null("CaminhaoRetorno%d" % j) as TextureRect
+
+
 ## Enfia num tween novo um trecho por par de pontos consecutivos, e chama
 ## `ao_fim` quando o último acabar. O primeiro ponto é um TELEPORTE: é ele que
 ## põe o camião no princípio do percurso antes de o percorrer.
@@ -1031,6 +1525,13 @@ func _percorrer(caminhao: TextureRect, indice: int, pontos: Array,
 		ao_fim: Callable, re_no_primeiro := false) -> void:
 	_percorrer_de(caminhao, _base_do_caminhao[indice], CAMINHAO_ORIGENS[indice],
 		_carga_na_estrada[indice], pontos, ao_fim, re_no_primeiro)
+
+
+## O mesmo, para o camião `j` do retorno.
+func _percorrer_retorno(j: int, pontos: Array, ao_fim: Callable,
+		re_no_primeiro := false) -> void:
+	_percorrer_de(_no_do_retorno(j), _base_do_retorno[j], CAMINHAO_RETORNO_ORIGENS[j],
+		_carga_do_retorno[j], pontos, ao_fim, re_no_primeiro)
 
 
 ## O mesmo percurso, para qualquer camião: os da ida e os do retorno guardam a
@@ -1052,14 +1553,16 @@ func _percorrer_de(caminhao: TextureRect, base: Vector2, origem_do_no: Vector2,
 			pontos[min(1, pontos.size() - 1)], carga, re_no_primeiro)
 		_ordenar_por_profundidade(caminhao)
 	)
-	for i in range(pontos.size() - 1):
-		var de: Vector2 = pontos[i]
-		var para: Vector2 = pontos[i + 1]
-		var origem := base + tela_da_rota(de, origem_do_no)
-		var destino := base + tela_da_rota(para, origem_do_no)
-		var de_re := re_no_primeiro and i == 0
+	for tr in trechos_de(pontos):
+		var k: int = tr[2]
+		var de: Vector2 = pontos[k]
+		var para: Vector2 = pontos[k + 1]
+		var origem := base + tela_da_rota(tr[0], origem_do_no)
+		var destino := base + tela_da_rota(tr[1], origem_do_no)
+		var de_re := re_no_primeiro and k == 0
 		# A silhueta certa para o eixo do trecho — é isto que faz a curva ler
-		# como curva em vez de o caminhão deslizar de lado.
+		# como curva em vez de o caminhão deslizar de lado. Pergunta-se pelo
+		# trecho ORIGINAL: a meia diagonal leva a silhueta do eixo a que pertence.
 		tw.tween_callback(func() -> void:
 			caminhao.texture = silhueta_do_trecho(de, para, carga, de_re)
 		)
