@@ -863,11 +863,15 @@ metaball, olho em esfera, boca em curva, contorno por casco invertido — a
 5–6 s por render. Também mediu que arredondar o kit de hoje NÃO é um
 modificador. **O que experimentar primeiro é escolha do Bruno** (§7.4).
 
-**E ele escolheu: um retrato novo completo.** A candidata é
-`art_lab/retratos/cida_seria/v1/` (a Dona Cida séria de cabeça redonda),
-fotografada no jogo numa cópia: muda só a caixa do retrato do boletim. Está à
-espera do olhar dele; o que a aprovação arrasta — as outras expressões, e os
-outros dois e o trabalhador, que continuam de caixas — está no README dela.
+**E ele escolheu: um retrato novo completo.** A v1
+(`art_lab/retratos/cida_seria/v1/`, a Dona Cida séria de cabeça redonda) foi
+**rejeitada** com quatro defeitos — nariz e boca, tronco, gola, cabelo e
+lápis — e o pedido de «melhorar o modelo como um todo». A candidata é a
+**v2** (`art_lab/retratos/cida_seria/v2/`), fotografada no jogo numa cópia:
+muda só a caixa do retrato do boletim. Está à espera do olhar dele; o que a
+aprovação arrasta — as outras expressões, e a oficina (os outros dois e o
+trabalhador continuam de caixas), que ele deixou para depois da v2 — está no
+README dela.
 
 ---
 

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — a Dona Cida redonda, candidata do A5
+> **Última atualização:** 23/09/2026 — a Dona Cida redonda v2, candidata do A5
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -132,7 +132,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; a **2** (retratos), no Blender: pesquisa no §7 do plano de arte, e a Dona Cida redonda é candidata em `art_lab/retratos/` — muda só a caixa do boletim. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem das frentes 3–6 é dele, e o galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; a **2** (retratos), no Blender: pesquisa no §7 do plano de arte, e a Dona Cida redonda: v1 rejeitada, v2 candidata em `art_lab/retratos/` — muda só a caixa do boletim. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem das frentes 3–6 é dele, e o galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido

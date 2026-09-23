@@ -1719,6 +1719,42 @@ um segundo aro. Na foto do jogo, numa cópia, muda **1 foto em 31** — o
 arrasta também: o Sr. Ribeiro, o Arlindo e o trabalhador do rodapé continuam
 de caixas.
 
+#### ✗ A v1 foi rejeitada, e a v2 refá-la (23/09)
+
+O Bruno marcou os quatro defeitos que a leitura da v1 apontava — **nariz e
+boca** (ainda um bigode a 168 px), **tronco** (um balão com calombos),
+**gola** (dois discos) e **cabelo e lápis** (um capacete com espetos; o lápis
+a flutuar) — e pediu para **melhorar o modelo como um todo**. A pergunta da
+oficina ficou para depois da v2. A candidata é
+**`art_lab/retratos/cida_seria/v2/`**, pelo mesmo estúdio e o mesmo AgX; na
+foto do jogo muda outra vez só a caixa do retrato do `boletim` (1 em 31).
+O que ela ensinou e vale para os próximos retratos:
+
+- **Peça que avança e sombreia outra sai da malha e deixa de projetar
+  sombra.** O nariz como elipsoide da cabeça deitava a sombra da chave (1,6°)
+  em cima da boca; à parte, com `visible_shadow = False`, continua sombreado
+  e não suja nada. É o mesmo remédio dos aros dos óculos.
+- **Uma casca que se corta apagando vértices sai SERRILHADA.** A linha do
+  cabelo mostrava a escada dos triângulos na testa. A casca tirada da própria
+  cabeça passa a ENTRAR na pele numa faixa estreita (afastamento de negativo
+  a positivo), e a borda é a interseção de duas superfícies lisas.
+- **Cabelo preso é casca colada ao crânio, não bola**: a bola cortada por um
+  plano lia como capacete. E sulco que se pousa por poucos pontos levanta-se
+  entre eles — os espetos da v1; os sulcos da v2 são deslocamento da própria
+  casca, meridianos à volta do eixo do coque.
+- **Tronco com ombro sai de ANÉIS de superelipse**, não de elipsoides
+  fundidos: cada elipsoide deixava a sua bossa, e o expoente do anel decide
+  a quina do ombro (2 é elipse, ~3 já tem ombro).
+- **Retalho pousado por raio estica-se onde a superfície fica a pique** — a
+  gola que subia pelo pescoço saiu em listras; o pé da gola é uma fita à
+  parte.
+- **Pousar pela tangente só serve num casco convexo**: o lápis atravessou a
+  orelha, que é uma bossa. E **posição de feição mede-se na IMAGEM**: a
+  sobrancelha «reta» na tabela saiu zangada, e a boca a 0,42 do caminho
+  nariz→queixo saiu a dois terços dele — o que avança desce, o queixo recua.
+- **O enquadramento mede a cabeça COM o coque**: coque no alto encolhe a cara
+  na caixa. E o ruído de desgaste do kit, num tecido, lê como mancha.
+
 ### 7.6 Fontes
 
 1. Blender Studio, *Stylized Character Workflow — Base Meshes*: <https://studio.blender.org/training/stylized-character-workflow/base-meshes/>
