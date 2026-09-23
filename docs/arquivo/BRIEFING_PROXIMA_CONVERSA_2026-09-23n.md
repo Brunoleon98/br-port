@@ -23,9 +23,9 @@ está no `CLAUDE.md`, secção Arte.)
 ## 1. Comece pelo estado real
 
 - A sessão de 23/09 fechou na branch `claude/zen-fermat-ha7oyb`, só com
-  documentos, à frente da `main` (`2b4a100`, o #77 fundido). Nenhum PR foi
-  aberto. Antes de qualquer checkout, confira no GitHub se ela foi fundida; se
-  não foi, o registo desta rejeição só existe nela.
+  documentos, à frente da `main` (`2b4a100`, o #77 fundido), e o PR dela é o
+  **#78**. Antes de qualquer checkout, confira no GitHub se ele foi fundido; se
+  não foi, o registo desta rejeição só existe na branch.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**, e
   `git log --oneline origin/main..HEAD` antes de reapontar seja o que for.
 - Veja os PRs abertos do Codex (`codex/*`) antes de mexer num arquivo que eles
