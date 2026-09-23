@@ -26,16 +26,15 @@ O `ESTADO_DO_PROJETO.md` tem **~650 bytes de folga** (teto no `TETO_ESTADO` de
 
 ## 1. Comece pelo estado real
 
-- ⚠️ **A sessão fechou na branch `claude/gracious-brown-2gnyni`, um commit à
-  frente da `main` (`993bb1a`, o PR #74 fundido), SEM PR aberto** — o PR só se
-  abre a pedido. Antes de qualquer checkout, confira no GitHub se alguém o abriu
-  e fundiu; se não, este trabalho só existe na branch, e reiniciá-la da `main`
-  apaga-o.
+- ⚠️ **A sessão fechou na branch `claude/gracious-brown-2gnyni`, à frente da
+  `main` (`993bb1a`, o PR #74 fundido), com o PR #75 aberto.** Antes de
+  qualquer checkout, confira no GitHub se o #75 foi fundido; se não foi, este
+  trabalho só existe na branch, e reiniciá-la da `main` apaga-o.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**,
   HEAD confirmado com o GitHub, e `git log --oneline origin/main..HEAD` antes de
   reapontar seja o que for.
-- **O CI não correu nesta branch** (só corre na `main` e em `pull_request`).
-  Quando correr, o `brport-captura` deve dizer **uma foto mudada** — o
+- **O CI do #75 arrancou no fecho e não tinha resultado** — confira-o
+  primeiro. O `brport-captura` deve dizer **uma foto mudada** — o
   `balanco.png`, que passou de 94.579 a ~207 mil bytes porque o mapa por trás
   fica sob um escurecer em vez de três — e **30 iguais**. Medido aqui: as 30
   com o mesmo tamanho da tabela que o CI publicou para a `main`.
