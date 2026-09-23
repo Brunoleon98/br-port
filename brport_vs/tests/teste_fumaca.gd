@@ -1546,15 +1546,29 @@ func _f9_juntar(dir_path: String, achados: PackedStringArray) -> void:
 # montado como o jogo o monta: o vencimento pelo `advance_turn()`, a oferta do
 # rival pelo sorteio dele, e as frases do fim pelo `game_over` que o próprio
 # jogo emite ao pagar e ao não pagar. Cada caso prova que chegou onde diz.
+#
+# ⚠️ E O NOME NÃO VIVE SÓ NOS PAINÉIS DE MAIS DE UMA TELA. O diário leva o do
+# porto DUAS vezes, numa área rolável de altura escrita à mão — e área rolável
+# não corta, esconde: um nome que acrescentasse linhas punha o «Talvez.» que
+# fecha a página debaixo da dobra. Medido em 23/09 com 397 nomes (letras
+# largas e estreitas, de 1 a 24, partidos por um e dois espaços): nenhum pede
+# mais do que os 24 "W", 597 px dos 620 da área — 23 px de folga, menos de uma
+# linha. Quem diz QUE textos levam o nome não é esta lista de casos: é o
+# `_f10_todo_nome_e_medido()`, que o lê da `Narrativa.gd`.
 const F10_TEMA := "res://ui/tema_brport.tres"
 const F10_RIBEIRO := "res://scenes/panels/DebtPaymentPanel.tscn"
 const F10_ARLINDO := "res://scenes/panels/CounterOfferPanel.tscn"
 const F10_FIM := "res://scenes/EndGame.tscn"
+const F10_DIARIO := "res://scenes/panels/PainelDiario.tscn"
+const F10_NARRATIVA := "res://scripts/Narrativa.gd"
 const F10_SEMENTE := 20260923
 # O antisserrilhado pinta meio pixel além da caixa de um caractere.
 const F10_FOLGA := 1.0
 var _f10_terminou := false
 var _f10_motivos := {}
+# O texto de todo rótulo que o `_f10_medir()` percorreu — é contra ele que o
+# catálogo dos textos com nome se confere.
+var _f10_vistos: Array[String] = []
 
 
 func _f10_cada_tempo_cabe() -> void:
@@ -1634,13 +1648,84 @@ func _f10_cada_tempo_cabe() -> void:
 		_f10_medir(p, "Fim, balanço de quem %s" % ("venceu" if venceu else "perdeu"), &"balanco")
 		_f10_fechar(p)
 
+	# ── O diário, que o jogo abre logo a seguir à tela de nomes e sem `setup()`:
+	# o texto sai dos nomes que já estão gravados.
+	_f10_partida_nova(nome)
+	p = await _f10_abrir(F10_DIARIO, [])
+	_f10_medir(p, "Diário", &"")
+	_f10_fechar(p)
+
 	GS.game_over.disconnect(_f10_recolher_fim)
+	_f10_todo_nome_e_medido(nome)
 	GS.clear_save()
 	_f10_terminou = true
 
 
 func _f10_recolher_fim(venceu: bool, motivo: String) -> void:
 	_f10_motivos[venceu] = motivo
+
+
+# TODA FRASE QUE LEVA O NOME FOI MEDIDA COM ELE — o catálogo sai da
+# `Narrativa.gd` e a prova sai do que o `_f10_medir()` percorreu. São duas
+# fontes, e não um espelho: a primeira é o texto escrito, a segunda o que um
+# painel montado pôs num rótulo visível.
+#
+# Existe porque a lista de casos acima é escrita à mão. Em 23/09 ela cobria
+# três painéis e o diário, e o nome não chegava a mais nenhum — o HUD, o
+# boletim e as falas da Dona Cida não levam token de nome. No dia em que uma
+# linha da Cida passar a dizer o nome do porto, é aqui que reprova, e a saída
+# é medir a tela onde ela aparece.
+#
+# ⚠️ LÊ-SE O ARQUIVO, e não o `get_script_constant_map()` do F4: a narração do
+# fim de fase é um texto LOCAL do `fim_de_fase()`, e o mapa das constantes não
+# o vê. A leitura por linha é segura aqui por uma razão que não vale para
+# chamadas partidas: um token não se parte, e o pedaço de uma linha é sempre um
+# pedaço do texto que o rótulo mostra. Linha de comentário não conta — a do
+# cabeçalho da `Narrativa.gd` nomeia os tokens para os explicar.
+#
+# O QUE FICA DE FORA: um pedaço que é SÓ o token satisfaz-se com qualquer
+# rótulo medido que traga o nome. É o caso do código que o manipula (o
+# `replace("{vocativo}", …)` do `ribeiro_entrada()`), e seria o de um título
+# que mostrasse só o nome do porto — esse passaria sem a tela dele ter sido
+# medida. E quem lê o nome direto do `GameState`, sem token, não é visto.
+func _f10_todo_nome_e_medido(nome: String) -> void:
+	var re_token := RegEx.create_from_string("\\{(portName|playerName|vocativo)\\}")
+	# Onde o pedaço acaba: aspas, outro token, formato `%` e `\n` escrito.
+	var re_corte := RegEx.create_from_string(
+		"\"|\\{(?!(?:portName|playerName|vocativo)\\})[A-Za-z_]+\\}|%[-+0-9.]*[a-z]|\\\\n")
+	var tokens := 0
+	var por_medir: Array[String] = []
+	var linhas := FileAccess.get_file_as_string(F10_NARRATIVA).split("\n")
+	for i in linhas.size():
+		var linha: String = linhas[i]
+		if linha.strip_edges().begins_with("#") or re_token.search(linha) == null:
+			continue
+		var inicio := 0
+		var cortes: Array = re_corte.search_all(linha)
+		cortes.append(null)
+		for corte in cortes:
+			var fim: int = linha.length() if corte == null else (corte as RegExMatch).get_start()
+			var pedaco := linha.substr(inicio, fim - inicio)
+			if corte != null:
+				inicio = (corte as RegExMatch).get_end()
+			var aqui := re_token.search_all(pedaco).size()
+			if aqui == 0:
+				continue
+			tokens += aqui
+			var resolvido := pedaco.replace("{vocativo}", ", " + nome) \
+				.replace("{portName}", nome).replace("{playerName}", nome).strip_edges()
+			var visto := false
+			for texto in _f10_vistos:
+				if texto.contains(resolvido):
+					visto = true
+					break
+			if not visto:
+				por_medir.append("linha %d «%s»" % [i + 1, pedaco.strip_edges().left(40)])
+	# ⚠️ ZERO TOKENS NÃO É "TUDO MEDIDO": é um catálogo que não leu nada.
+	_confere("F10: toda frase com o nome foi medida com ele (%d tokens, %d rótulos vistos)"
+		% [tokens, _f10_vistos.size()],
+		tokens > 0 and por_medir.is_empty(),
+		"sem medida: " + "; ".join(por_medir))
 
 
 func _f10_partida_nova(nome: String) -> void:
@@ -1699,7 +1784,14 @@ func _f10_abrir(caminho: String, argumentos: Array) -> Node:
 	# `_abrir_painel()`, e sem ele as fontes e as margens são outras.
 	(painel as Control).theme = load(F10_TEMA)
 	root.add_child(painel)
-	painel.callv("setup", argumentos)
+	# O `setup()` corre sempre que o painel o tem — pular o dele por falta de
+	# argumentos é o buraco que o `capturar_cena.gd` já cavou uma vez. Painel
+	# sem `setup()` com argumentos seria um caso a medir outra coisa.
+	if painel.has_method("setup"):
+		painel.callv("setup", argumentos)
+	else:
+		_confere("F10: %s não tem setup(), e o caso não lhe passa argumentos" % caminho,
+			argumentos.is_empty())
 	await _f8_esperar()
 	return painel
 
@@ -1732,9 +1824,15 @@ func _f10_botoes(no: Node, prefixo: String, achados: Array) -> void:
 		_f10_botoes(filho, prefixo, achados)
 
 
+# `tempo` vazio é o painel de uma tela só — e aí ele não pode declarar tempos,
+# senão os outros estariam por medir.
 func _f10_medir(painel: Node, caso: String, tempo: StringName) -> void:
-	_confere("F10 %s: o painel está no tempo «%s»" % [caso, tempo],
-		painel.tempo == tempo, "está em «%s»" % painel.tempo)
+	if tempo == &"":
+		_confere("F10 %s: o painel é de uma tela só" % caso,
+			painel.get("tempo") == null, "declara o tempo «%s»" % str(painel.get("tempo")))
+	else:
+		_confere("F10 %s: o painel está no tempo «%s»" % [caso, tempo],
+			painel.tempo == tempo, "está em «%s»" % painel.tempo)
 	var cartao := _f10_cartao(painel)
 	if cartao == null:
 		_confere("F10 %s: o painel tem cartão" % caso, false)
@@ -1774,6 +1872,7 @@ func _f10_percorrer(no: Node, recorte: Rect2, fora: Array[String], medidos: Arra
 	if no is Label and (no as Label).text != "":
 		var rotulo := no as Label
 		medidos[0] += 1
+		_f10_vistos.append(rotulo.text)
 		if rotulo.get_visible_line_count() < rotulo.get_line_count():
 			fora.append("«%s…» mostra %d de %d linhas" % [rotulo.text.left(24),
 				rotulo.get_visible_line_count(), rotulo.get_line_count()])
