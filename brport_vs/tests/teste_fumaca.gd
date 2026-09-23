@@ -115,6 +115,10 @@ func _rodar() -> void:
 	await _f10_cada_tempo_cabe()
 	_confere("o bloco F10 correu até ao fim", _f10_terminou)
 
+	print("=== F11: no fim da partida as telas abrem uma de cada vez, e pela ordem ===")
+	await _f11_a_vez_do_fim()
+	_confere("o bloco F11 correu até ao fim", _f11_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -1803,11 +1807,11 @@ func _f10_fechar(painel: Node) -> void:
 
 # O BOTÃO VERDADEIRO, e um só: dois seria escolher por posição, e um desligado
 # seria um toque que o jogador não consegue dar.
-func _f10_tocar(painel: Node, prefixo: String) -> bool:
+func _f10_tocar(painel: Node, prefixo: String, bloco: String = "F10") -> bool:
 	var achados: Array = []
 	_f10_botoes(painel, prefixo, achados)
 	var ok: bool = achados.size() == 1 and not (achados[0] as Button).disabled
-	_confere("F10: há um botão «%s…» ligado para tocar" % prefixo, ok,
+	_confere("%s: há um botão «%s…» ligado para tocar" % [bloco, prefixo], ok,
 		"achou %d%s" % [achados.size(), " (desligado)" if achados.size() == 1 else ""])
 	if not ok:
 		return false
@@ -1916,3 +1920,167 @@ func _f10_textos_visiveis(no: Node, textos: Array[String]) -> void:
 		textos.append((no as Label).text)
 	for filho in no.get_children():
 		_f10_textos_visiveis(filho, textos)
+
+
+# ══ F11 — A VEZ DAS TELAS DO FIM ════════════════════════════════════════════
+#
+# O «Pagar» fecha a semana 4 e acaba a partida na mesma chamada, e até 23/09 o
+# boletim e o fim de fase abriam POR CIMA da resposta do Sr. Ribeiro: quem
+# tocava «Jogar de novo» nunca a lia, nem o último boletim. O `Main` põe as
+# três telas em fila (`_na_vez()`, `docs/decisoes/054`), e este bloco percorre
+# a fila pelos botões do jogador nos três caminhos que acabam a partida com a
+# semana a fechar — pagou, não pagou, e quitou antes do prazo.
+#
+# ⚠️ CADA PASSO PERGUNTA «SOZINHO», e não só «por cima». Sem a fila, a resposta
+# do Sr. Ribeiro continua a existir depois do «Pagar» — está lá, por baixo de
+# duas telas —, e uma guarda que perguntasse se ela existe passaria.
+#
+# ⚠️ E A ORDEM PERGUNTA-SE PASSO A PASSO. «Todas aparecem» não implica «pela
+# ordem certa»: uma fila que servisse primeiro o último a chegar mostraria as
+# três telas, uma de cada vez, com o fim de fase antes do boletim.
+#
+# O terceiro caminho é o único em que o boletim tem a vez SEM o Sr. Ribeiro à
+# frente, e o único que passa pela ordem dos sinais do `advance_turn()` — os
+# outros dois passam pela do `pay_debt()` e do `fail_debt()`. Medido: com a
+# última semana a fechar DEPOIS do fim da partida só no `advance_turn()`, só ele
+# reprova; e com a fila a servir o último a chegar, só ele passa, porque nele a
+# fila nunca tem dois à espera.
+#
+# ⚠️ O QUE ESTE BLOCO NÃO VÊ: a fila ligada ao `fechou` em vez do
+# `tree_exited`. A jogar, toda tela que tem a vez sai pelo `_fechar()`, e o
+# bloco passa. Quem o apanha é o tiro `balanco` da captura, cujo laço dispensa
+# boletins por `remove_child()` — ver o comentário do `_na_vez()`.
+const F11_RIBEIRO := "res://scenes/panels/DebtPaymentPanel.tscn"
+const F11_BOLETIM := "res://scenes/panels/PainelBoletim.tscn"
+var _f11_terminou := false
+
+
+# ⚠️ OS TRÊS CAMINHOS CORREM SEMPRE, e cada um leva a sua bandeira. Um caminho
+# que reprova sai cedo e deixa os outros correr — senão o primeiro vermelho
+# esconderia o que os outros dois veem. E a bandeira é o `true` com que cada um
+# sai, em TODA saída: só um erro de execução, que aborta a função, devolve outra
+# coisa — e sem ela esse erro passaria calado, porque a função do bloco segue.
+func _f11_a_vez_do_fim() -> void:
+	var pagou = await _f11_pagou()
+	var nao_pagou = await _f11_nao_pagou()
+	var quitou = await _f11_quitou_antes()
+	_f11_terminou = pagou == true and nao_pagou == true and quitou == true
+	GS.clear_save()
+
+
+# O dinheiro é dado, com folga para os custos da semana 4: o que se testa é a
+# ordem das telas, e o «Pagar» só está ligado com dinheiro.
+func _f11_pagou() -> bool:
+	if not _f11_ate_ao_ultimo_dia():
+		return true
+	GS.cash = GS.PARCELA_AMOUNT * 2
+	var main: Node = await _f11_main_e_virar_o_dia()
+	var p: Node = _f11_sozinho(main, F11_RIBEIRO, "entrada", "pagou, no vencimento")
+	if p == null or not await _f10_tocar(p, "Pagar", "F11"):
+		main.free()
+		return true
+	_confere("F11: pagou — o «Pagar» acabou a partida ganha",
+		GS.phase == "game_over" and bool(GS.won),
+		"fase «%s», won=%s" % [GS.phase, str(GS.won)])
+	await _f11_ate_ao_fim(main, _f11_sozinho(main, F11_RIBEIRO, "pagou",
+		"pagou, depois do «Pagar»"), "Até a próxima", "narracao", "pagou")
+	return true
+
+
+# Sem dinheiro dado: a partida desta semente chega ao vencimento sem ele, e é
+# isso que põe o «Não consigo pagar» na tela. Quem perde vai direto ao
+# balanço — o `EndGame` não lhe lê a narração.
+func _f11_nao_pagou() -> bool:
+	if not _f11_ate_ao_ultimo_dia():
+		return true
+	var main: Node = await _f11_main_e_virar_o_dia()
+	var p: Node = _f11_sozinho(main, F11_RIBEIRO, "entrada", "não pagou, no vencimento")
+	if p == null or not await _f10_tocar(p, "Não consigo", "F11"):
+		main.free()
+		return true
+	await _f11_ate_ao_fim(main, _f11_sozinho(main, F11_RIBEIRO, "nao_pagou",
+		"não pagou, depois do «Não consigo»"), "Adeus", "balanco", "não pagou")
+	return true
+
+
+# Sem Sr. Ribeiro: é o «Avançar dia» do último dia que fecha a semana e acaba a
+# partida, e o boletim abre primeiro.
+func _f11_quitou_antes() -> bool:
+	if not _f11_ate_ao_ultimo_dia():
+		return true
+	GS.cash = GS.PARCELA_AMOUNT * 2
+	_confere("F11: quitou antes — a parcela pagou-se no último dia a jogar",
+		GS.pagar_parcela_adiantado())
+	var main: Node = await _f11_main_e_virar_o_dia()
+	_confere("F11: quitou antes — virar o último dia acabou a partida ganha",
+		GS.phase == "game_over" and bool(GS.won),
+		"fase «%s», won=%s" % [GS.phase, str(GS.won)])
+	await _f11_ate_ao_fim(main, null, "", "narracao", "quitou antes")
+	return true
+
+
+# Joga pelo `advance_turn()`, SEM Main, e pára no último dia ainda por jogar:
+# é a virada dele que abre o Sr. Ribeiro ou fecha a semana, e ela tem de
+# acontecer com o Main a ouvir — pelo botão dele.
+func _f11_ate_ao_ultimo_dia() -> bool:
+	GS.clear_save()
+	GS._rng.seed = F10_SEMENTE
+	GS.new_game()
+	GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
+	var voltas := 0
+	while int(GS.turn) < int(GS.PARCELA_DUE_TURN) and voltas < 200:
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		GS.advance_turn()
+		voltas += 1
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var ok: bool = GS.phase == "playing" and int(GS.turn) == int(GS.PARCELA_DUE_TURN)
+	_confere("F11: a partida chega ao último dia a jogar (turno %d)" % int(GS.turn),
+		ok, "fase «%s»" % GS.phase)
+	return ok
+
+
+func _f11_main_e_virar_o_dia() -> Node:
+	var main: Node = (load("res://scenes/Main.tscn") as PackedScene).instantiate()
+	root.add_child(main)
+	await _f8_esperar()
+	_confere("F11: o Main abre sem painel nenhum no último dia",
+		main.get_node("Overlay").get_child_count() == 0)
+	main.call("_on_advance_pressed")
+	await _f8_esperar()
+	return main
+
+
+# O RESTO DA FILA, a partir da tela que tem a vez: ela fecha pelo botão dela,
+# depois o boletim da última semana, sozinho, e depois o fim de fase, sozinho,
+# no tempo que a partida pede. `primeiro` nulo quer dizer que a fila já abre
+# no boletim.
+func _f11_ate_ao_fim(main: Node, primeiro: Node, botao: String, tempo_fim: String,
+		caso: String) -> void:
+	if botao == "" or (primeiro != null and await _f10_tocar(primeiro, botao, "F11")):
+		var boletim := _f11_sozinho(main, F11_BOLETIM, "", "%s, o boletim" % caso)
+		if boletim != null:
+			var semana: int = int((boletim.get("_resumo") as Dictionary)["semana"])
+			_confere("F11: %s — o boletim é o da última semana" % caso,
+				semana == int(GS.WEEKS_TOTAL), "é o da semana %d" % semana)
+			if await _f10_tocar(boletim, "Fechar o boletim", "F11"):
+				_f11_sozinho(main, F10_FIM, tempo_fim, "%s, fechado o boletim" % caso)
+	main.free()
+
+
+func _f11_sozinho(main: Node, cena: String, tempo: String, caso: String) -> Node:
+	var overlay: Node = main.get_node("Overlay")
+	var vistos := PackedStringArray()
+	for painel in overlay.get_children():
+		vistos.append("%s«%s»" % [painel.scene_file_path.get_file(),
+			String(painel.get("tempo")) if "tempo" in painel else ""])
+	var n: int = overlay.get_child_count()
+	var topo: Node = null if n == 0 else overlay.get_child(n - 1)
+	var tempo_visto: String = "" if topo == null or not "tempo" in topo \
+		else String(topo.get("tempo"))
+	var ok: bool = n == 1 and topo.scene_file_path == cena and tempo_visto == tempo
+	_confere("F11: %s — só %s%s na tela" % [caso, cena.get_file(),
+		"" if tempo == "" else " «%s»" % tempo], ok,
+		"na tela, de baixo para cima: %s" % (", ".join(vistos) if n > 0 else "nada"))
+	return topo if ok else null

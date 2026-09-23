@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — o balanço, o nome longo e o chanfro (`053`)
+> **Última atualização:** 23/09/2026 — as telas do fim em fila (`054`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -113,11 +113,11 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **O quadro dos props** (23/09, `049`) | 60 props em atlas, sem `bpy` nem nó mexido; os retratos ficam. Pixel de prop lê-se por `PropIso.imagem()`; as folhas provam que esconder a peça muda a foto |
 | **O âmbar da seleção** (23/09, `050`) | nenhuma cor de borda dava 3:1 dos dois lados; a troca passou a um SELO âmbar escuro no "Escolhido" (3,86 e 4,74) |
 | **Os segundos tempos** (23/09, `051`) | a cobertura era por CENA e a bateria só via o 1º tempo: a despedida do Arlindo dizia «Cliente ouvindo a proposta» com o negócio fechado. Hoje 7 tempos em 3 painéis, 6 com foto e o balanço DECLARADO; o F10 mede cada um a caber — um nome de 24 letras sem espaço saía do cartão (`_SMART`) |
 | **A mão direita e o cruzamento** (23/09, `052`) — escolha do Bruno | as rotas cruzavam-se em 10 pontos (27–72 sobreposições por meia hora) e andavam pela ESQUERDA na tela: a projeção espelha o chão. Hoje mão direita, o retorno encosta, e quatro regras sem ninguém parar na rua — trava do berço, cedência na boca, previsão nas curvas, arranque espaçado. A curva aberta corta o chanfro em diagonal. Zero sobreposições; o **D35** anda 1 h de jogo e varre 3.080 entradas contra uma simulação à parte. 17 mutantes, 16 reprovam |
-| **O balanço, o nome longo e o chanfro** (23/09, `053`) — escolha do Bruno, os três | (g) o balanço tem foto de uma partida JOGADA e paga pelo botão, e a lacuna declarada saiu; (h) o F10 mede o diário com o nome de 24 letras (597 de 620 px) e reprova frase com nome que ninguém mediu; (i) o chanfro passou de 0,9 a **0,60**, derivado da curva e do porta-contêiner — a carroçaria saía 0,207 do asfalto, hoje fica 0,005 dentro (**D13 §7j**). ⚠️ A foto nova mostra o boletim e o fim de fase POR CIMA da resposta do Sr. Ribeiro |
+| **O balanço, o nome longo e o chanfro** (23/09, `053`) — escolha do Bruno, os três | (g) o balanço tem foto de uma partida JOGADA e paga pelo botão, e a lacuna declarada saiu; (h) o F10 mede o diário com o nome de 24 letras (597 de 620 px) e reprova frase com nome que ninguém mediu; (i) o chanfro passou de 0,9 a **0,60**, derivado da curva e do porta-contêiner — a carroçaria saía 0,207 do asfalto, hoje fica 0,005 dentro (**D13 §7j**). |
+| **As telas do fim em fila** (23/09, `054`) — escolha do Bruno | o «Pagar» abria o boletim e o fim de fase POR CIMA da resposta do Sr. Ribeiro, e «Jogar de novo» saltava as duas. Hoje o `Main` põe-nos em fila (`_na_vez()`): resposta → boletim → fim, nos três caminhos do fim; o GameState não mudou. **F11** percorre-os pelos botões; o tiro `balanco` passou de 3 painéis a 1. 7 mutantes: o do `fechou` só a captura apanha |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do

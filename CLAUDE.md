@@ -547,6 +547,13 @@ Teste e import rodam sem tela.
    — o jogo a escrevê-lo — pede a sua guarda (`052`). E um sub-bloco leva a
    sua BANDEIRA: um erro de execução lá dentro só aborta ele, e a bandeira do
    chamador ficava verde.
+   ⚠️ **E CAMINHO QUE REPROVA CEDO ESCONDE O QUE OS OUTROS VERIAM.** O F11
+   nasceu com três caminhos em fila num bloco só, e o primeiro vermelho saía
+   do bloco: a primeira leva de mutantes deu UMA reprovação a cada um, e os
+   outros dois caminhos nem tinham corrido. Separados, cada um com a sua
+   bandeira, o M1 e o M4 reprovaram nos três — e só assim se pôde perguntar
+   o que o terceiro vê de único (`054`). Antes de dizer que uma guarda NÃO
+   reprova, confira que ela chegou a correr.
    **E confira que a base está LIMPA antes de injetar o defeito seguinte.** No
    mesmo dia, o `git checkout` que devolvia o arquivo entre um defeito e outro
    restaurou a versão anterior ao trabalho inteiro — e os três testes seguintes
@@ -1983,6 +1990,13 @@ tranca isso.
   **ajustar-se ao conteúdo**; altura fixa só quando há área de rolagem. Três
   painéis saíram com uma faixa branca debaixo do botão por causa disto, e o
   mesmo painel muda de tamanho conforme o caso.
+- **Tela que abre SOZINHA passa pela vez** (`_na_vez()` no `Main`). Três
+  sinais do mesmo instante abriam três painéis empilhados, e o toque só
+  alcança o de cima: a resposta do Sr. Ribeiro ficava por baixo do fim de
+  fase, que oferece «Jogar de novo». Quem tem a vez fica na tela, os outros
+  esperam por ordem de chegada, e a vez passa pelo `tree_exited`, que é por
+  onde passa TODA saída de painel — o `fechou` não passa pelo `remove_child`
+  das ferramentas, e aí o turno ficou preso sem painel (`054`).
 - **Mecânica nova precisa de um sítio onde se LEIA, ou não existe.** A trava do
   nível do navio (06/09) seria invisível — o jogador veria o navio grande
   deixar de aparecer sem saber que é o porto dele que não o aguenta. Hoje o
