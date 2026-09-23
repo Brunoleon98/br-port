@@ -266,8 +266,13 @@ content_margin_bottom = 8.0
 ; contra o verde de repouso mede 2,26:1. Quem separa «escolhido» de «livre»
 ; é a LARGURA, de 2px para 4px — daí o D34 exigir os dois canais.
 ;
-; Trocar o âmbar é decisão do Bruno, e não desta migração, que preservou o
-; valor que já estava no `Worker.gd`.
+; ⚠️ E NENHUMA COR DESTA BORDA RESOLVIA ISSO — é conta, e não gosto (`050`).
+; A borda fica ENTRE dois vizinhos: o verde que ela substitui por fora (lum
+; 0,145) e o fundo claro por dentro (0,933). Um tom só passa 3:1 contra os
+; dois se eles estiverem a 9:1 um do outro; estão a 5,05, e o melhor possível
+; é a raiz disso, 2,25 — que é onde este âmbar JÁ está. Subi-lo ou baixá-lo
+; ganha de um lado o que perde do outro. Quem dá a troca pela cor é o selo
+; `SeloEscolhido`, na linha do estado, que muda de MASSA.
 bg_color = Color(0.929, 0.984, 0.949, 1)
 border_width_left = 4
 border_width_top = 4
@@ -282,6 +287,37 @@ content_margin_left = 8.0
 content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
+
+; O SELO do trabalhador escolhido — o fundo do rótulo "Escolhido" (`050`). É o
+; canal da COR da seleção, que a borda acima não consegue ser.
+;
+; ⚠️ A TROCA QUE O JOGADOR VÊ É «PARADO → ESCOLHIDO», não «livre → escolhido».
+; Só se aloca com barco à espera (`doca_aceita_trabalhador()`), e trabalhador
+; livre com doca à espera é, por definição, `TrabParado` — o cartão livre só é
+; escolhido quando não há nada a fazer com ele. Nessa troca a borda muda
+; 1,33:1 (laranja → âmbar, 7° de matiz), e o fundo 1,23.
+;
+; ⚠️ E A MASSA NÃO PODIA IR PARA O CARTÃO INTEIRO. Pintá-lo de âmbar escuro dá
+; 3,86:1 a partir do creme do parado, mas o retrato tem luminância mediana
+; 0,149 — a MESMA deste âmbar (0,158) —, e ele caía de 4,02:1 para 1,33:1 no
+; cartão que o jogador acabou de tocar. Navy dava 2,80 e fazia o cartão
+; igual ao da doca. Na linha do estado a mudança não passa pelo retrato.
+;
+; A cor é a do `RotuloAlerta` — o âmbar do tema escurecido, `035` — e com
+; texto branco mede os mesmos 5,06:1 que ele mede sobre o cartão branco: é o
+; mesmo par, invertido. Contra o fundo que substitui: 3,86:1 a partir do
+; parado, 4,74:1 a partir do livre.
+;
+; Sem margem vertical, e de propósito: o rótulo não pode crescer ao ser
+; escolhido, senão o `VBoxContainer` recentra e o retrato salta.
+[sub_resource type="StyleBoxFlat" id="selo_escolhido"]
+bg_color = Color(0.58, 0.399, 0.042, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 4.0
+content_margin_right = 4.0
 
 [sub_resource type="StyleBoxFlat" id="trab_alocado"]
 bg_color = Color(0.906, 0.941, 0.976, 1)
@@ -678,6 +714,12 @@ TrabAlocado/base_type = "PanelContainer"
 TrabAlocado/styles/panel = SubResource("trab_alocado")
 TrabOcupado/base_type = "PanelContainer"
 TrabOcupado/styles/panel = SubResource("trab_ocupado")
+; O rótulo "Escolhido" — branco sobre o selo. Branco PURO, e não o
+; (0,941/0,965/1) do HUD: sobre este âmbar aquele mede 4,66:1, colado ao corte
+; de 4,5. O porquê do selo está no sub-recurso `selo_escolhido`.
+SeloEscolhido/base_type = "Label"
+SeloEscolhido/colors/font_color = Color(1, 1, 1, 1)
+SeloEscolhido/styles/normal = SubResource("selo_escolhido")
 CartaoDoca/base_type = "PanelContainer"
 CartaoDoca/styles/panel = SubResource("cartao_doca")
 CartaoDocaEspera/base_type = "PanelContainer"

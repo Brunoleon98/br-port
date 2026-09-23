@@ -157,3 +157,13 @@ sustentadora; o que precisa é que a afirmação ao lado dela seja verdadeira.**
 - **Nada aqui mudou um pixel do jogo.** O cartão do trabalhador está
   exactamente como estava — o que mudou foi de onde a borda dele vem, e que
   passou a haver quem a veja.
+
+## Adenda (23/09) — o âmbar, e a troca que se comparou
+
+O Bruno pediu a troca pela cor, e a `050` achou duas coisas que esta decisão
+não viu. **Nenhuma cor de borda a dava:** a borda fica entre o verde (0,145) e
+o fundo claro (0,933), a 5,05:1, e só um par a 9:1 deixa um tom passar 3:1
+contra os dois — o âmbar já estava no ótimo, 2,25. **E a troca que o jogador
+vê é PARADO → ESCOLHIDO**, porque só se aloca com barco à espera: ali a borda
+mudava 1,33:1, não os 2,26 daqui. A cor da troca passou a um SELO no rótulo
+"Escolhido"; a borda, a proveniência e a amarra desta decisão ficam de pé.

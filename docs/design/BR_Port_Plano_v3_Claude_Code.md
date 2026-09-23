@@ -1663,6 +1663,16 @@ gaivotão, maria-farinha e tartaruga-verde juvenil, cada um com movimento,
 reação e som ao toque; mar e gaivota também soam em intervalos irregulares.
 O gate visual continua sendo o A5 e o auditivo, o A6.
 
+### ✅ A TROCA DA SELEÇÃO LÊ-SE PELA COR — num selo, e não na borda (23/09)
+
+**`docs/decisoes/050`.** Nenhuma cor de borda dava 3:1 dos dois lados: ela fica
+entre o verde e o fundo claro, a 5,05:1, e o âmbar já estava no ótimo (2,25).
+E a troca que o jogador vê é PARADO → escolhido, onde a borda mudava 1,33:1. O
+rótulo "Escolhido" ganhou um selo em âmbar escuro com texto branco — 3,86 a
+partir do parado, 4,74 do livre, 5,06 no texto — e o retrato fica no menta,
+onde mede 4,94. A régua do contraste passou a ler o fundo de um `Label`, e o
+D33 ganhou o 25º estado.
+
 ### ✅ A RUA FICA EM 1,8, E O ITEM 2 FECHOU INTEIRO — a mão dupla (23/09)
 
 **`docs/decisoes/047`.** A "rua parada em 1,8" fecha sem mexer na largura:

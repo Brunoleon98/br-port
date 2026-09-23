@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — a moldura dos props sai da VRAM (`049`)
+> **Última atualização:** 23/09/2026 — a troca pela cor mora num selo (`050`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -113,13 +113,14 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **R1–R5** (17–20/09, `030`–`034`) | identidade na Leitura, evidência do CI por erro e por turno, texto pela fonte que a máquina corre, a voz da Dona Cida a chegar à tela, e a FILA da faixa: o que o jogador não via caiu de **30,7% para 5,7%** |
-| **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL (22 reprovações, hoje zero); *"de onde veio a cor?"* é outra pergunta, e a superfície era **34** e não 18; a frase concorda INTEIRA e **zero leva plural**, 8 sítios e não 3. Em todos, a superfície real era o DOBRO do que a revisão nomeava |
+| **R1–R5** (17–20/09, `030`–`034`) | a FILA da faixa: o que o jogador não via caiu de **30,7% para 5,7%** |
+| **R6–R8** (20–21/09, `035`–`037`) | contraste na cor FINAL contra o fundo REAL, a origem da cor e a concordância — em todos, a superfície real era o DOBRO da nomeada |
 | **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). Os do HUD entram pela PORTA DO JOGADOR, numa partida jogada. A cobertura MEDE-SE nos logs, porque declarar mentiria |
-| **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto >= 3,0x o p99,9 do próprio arquivo —, o resto DESCRITOR. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz) |
+| **R9** (21/09, `040`) | a ONDA: `tools/medir_audio.py`, `SINAL OK`. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% |
 | **As CINCO levas de cor** (21–22/09, `041`–`045`) | **27 chamadas em 19 locais → ZERO**, lista de exceções vazia. Quatro migraram VALORES (fotos byte a byte); a 2ª não — a régua não drenava a fila, e alcançado o âmbar deu 3,07:1. ⚠️ **Estado que não monta publica linhas plausíveis** (a chave MORTA da 3ª, o piso da 4ª). A 5ª trouxe o **D34** (proveniência lida no nó) |
 | **A rua e a mão dupla** (23/09, `047`) — escolha do Bruno | a rua FICA em 1,8: a janela que aperta é em `my` e o `RUA_RECUO` não a toca; a 2,0 ganharia 3,6 px. Faltava quem SUBISSE: dois camiões na faixa de dentro, de costas, 8 silhuetas `_retorno` (+0,75% do `.pck`). ⚠️ **A assinatura do D13 não fazia a média que dizia** (`resize` amostra); hoje faz, corte 0,01. Bateria a **27 tiros**. Depois, a **saída de ré** ganhou guarda (`_d13_saida_de_re`, 5 mutantes) |
 | **O quadro dos props** (23/09, `049`) — escolha do Bruno | 60 props em atlas, sem `bpy` nem nó mexido; os retratos ficam (atlas de 1024 sairia 26% pior). Pixel de prop lê-se por `PropIso.imagem()`. ⚠️ As folhas gravaram quadros VAZIOS com "Folha salva em"; hoje provam que esconder a peça muda a foto. 7 mutantes |
+| **O âmbar da seleção** (23/09, `050`) — escolha do Bruno | nenhuma cor de borda dava 3:1 dos dois lados (vizinhos a 5,05:1; o âmbar já no ótimo, 2,25), e a troca que o jogador vê é PARADO → escolhido (1,33). A cor passou a um SELO âmbar escuro no "Escolhido": 3,86 e 4,74, texto a 5,06, retrato intacto. 8 mutantes |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -167,7 +168,7 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa, ao toque nela. Overlay, em memória, sem migrar save |
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
-| `brport_vs/tools/medir_contraste_ui.gd` | A tabela dos **24 estados e 330 textos**. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado. O `acao_vista` age DEPOIS da cena e drena a fila (`042`) — e não serve a painel, que não tem fila; o `barco` e o `estruturas` agem ANTES, e **provam que o estado chegou ao nó** (`043`, `044`) |
+| `brport_vs/tools/medir_contraste_ui.gd` | A tabela dos **25 estados e 353 textos**. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado. O `acao_vista` age DEPOIS da cena e drena a fila (`042`) — e não serve a painel, que não tem fila; o `barco` e o `estruturas` agem ANTES, e **provam que o estado chegou ao nó** (`043`, `044`) |
 | `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn`, corta comentário, aceita multilinha e exige que a variação exista (`036`). **Zero chamadas e zero exceções** desde a 5ª leva; ele também denuncia exceção MORTA (`045`) |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
