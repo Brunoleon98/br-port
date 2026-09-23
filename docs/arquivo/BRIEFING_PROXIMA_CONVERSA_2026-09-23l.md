@@ -147,7 +147,8 @@ projeto**, com a regra ao lado, para o Bruno levar de volta ao ChatGPT.
 
 A tabela da auditoria; a frente que o Bruno escolheu e o que se fez nela; o que
 ficou pendente dele. **O briefing seguinte entra no mesmo
-commit de fecho**, com a linha no índice de `docs/arquivo/README.md`.
+commit de fecho**, com a linha no índice de `docs/arquivo/README.md`, **e vai
+também na resposta ao Bruno, inteiro, num bloco de código copiável.**
 
 ⚠️ **O CI NÃO RODA AO EMPURRAR A BRANCH** — só na `main` e em `pull_request`.
 O PR só se abre a pedido.
