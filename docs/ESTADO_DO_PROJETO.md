@@ -132,7 +132,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | **Olhar** — a máquina refez a página em 23/09, até ao #75 | As 31 fotos da bateria, cada uma contra a primeira vez que foi tirada, as três folhas de props incluídas: <https://claude.ai/artifact/EHhfjjWq5NTKEw3cUXFcsH> (§A5 do plano). Só falta o olho dele |
+| **A5** | **Julgado em 23/09** — 31 de 31, os 31 «Não», nenhum a regressão | Seis frentes triadas no §A5 do plano, da legenda do calendário ao rumo além do VS: **a ordem é dele** |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido

@@ -763,7 +763,54 @@ página tinha três defeitos para a trilha de hoje, e um teto:
   WebP sem perdas (57% do PNG), descodificadas de volta e conferidas pixel a
   pixel: 54 arquivos, 7,8 MB.
 
-Falta a metade dele, que é olhar.
+#### Os vereditos de 23/09 — 31 de 31 julgados, e os 31 «Não»
+
+Lidos da coleção `veredito`. **Nenhum «Não» aponta uma regressão**: onde a nota
+compara, diz que melhorou — docas «ficou bom», meio «ficou melhor», pesca «o
+detalhamento melhorou» — e pede mais. O «Não» quer dizer «ainda não chega»: a
+trilha foi na direção certa, e o que falta é trabalho NOVO. Triados em seis
+frentes, e **a ordem é do Bruno**:
+
+1. **Três defeitos concretos, conferidos na foto e no código.** (a) A legenda
+   do calendário mostra dois ÍCONES que a grelha não usa — os dias levam `•` e
+   `!`. (b) O título «Fim da Fase 1» está por cima de «A primeira de três
+   parcelas», que o contradiz. (c) «Sobrinho» no Arlindo continua a tropeçar
+   depois do «querido» plantado em 13/09; a palavra é do GDD, e trocá-la é
+   escolha dele. A nota do `contraoferta_fim` diz «Ribeiro», e a tela é do
+   Arlindo. Pequeno.
+2. **Os três retratos de fala** — boletim, `ribeiro` ×3, `contraoferta` ×2:
+   Dona Cida, Sr. Ribeiro e Arlindo «bem ruins», e pedem-se mais bonitos e
+   expressivos. Retrato de painel é o único sítio em que gerador de imagem é
+   permitido, logo esta frente cruza com a auditoria do plano de assets que o
+   Bruno faz com o ChatGPT. Médio.
+3. **A interface inteira** — quinze painéis com «melhore o design», «está bem
+   simples»: é a Etapa 6 do plano de arte. Pedidos concretos: diário com cara
+   de diário e imagens do porto antigo; menu mais parecido com um celular;
+   mensagens e pausa inspiradas em jogos de referência, a pausa com salvar e
+   sair para uma tela inicial que ainda não existe; painel das docas com renda
+   esperada e tipo de trabalho; caixa com recordes; reputação organizada para
+   os componentes que virão; nomes como a tela depois de «Nova partida». Pede
+   as referências dele. Grande.
+4. **Mapa, frota e animação** — pesca mais realista mesmo simples; cascos e
+   camiões melhores e com VARIAÇÕES (cargueiro de carros e de combustível,
+   transportadoras diferentes), na proporção de carros e pessoas que virão; a
+   ruína com mais desgaste; ícones integrados; o trabalhador animado (andar,
+   pallets, empilhadeira) e uma transição suave entre turnos. Blender. Grande.
+5. **O rumo além do VS** — o jogo não acaba na 1.ª parcela: as três da Fase 1,
+   com desbloqueios e um tutorial que se liga e desliga; segunda chance com
+   empréstimo caro; cancelar trabalho a custo de reputação; guindaste por fase
+   — nenhum ou de madeira na Fase 1, intermediário na 2, o de hoje da 3 em
+   diante —, obras que levam turnos, e o porto completo só na Fase 3. **O GDD
+   já diz metade disto**: a Fase 1 é «píer de madeira… consertos e pequenas
+   melhorias», os «guindastes novos» são da Fase 2, e o Sr. Ribeiro tem linhas
+   de empréstimo. O VS adiantou o guindaste de treliça (`nivel_guindaste()` 2,
+   com duas estruturas quaisquer). Mexe no `GameState`, no balanceamento e no
+   `SAVE_VERSION`: decisão de rumo, várias sessões.
+6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
+   com referências profissionais. Só ferramenta; pequeno a médio, e barateia
+   a 4.
+
+Falta a metade dele, que é olhar — e está feita; falta escolher a ordem.
 
 ---
 
