@@ -36,9 +36,11 @@ confira rodando o conferidor antes de escrever o commit.
 ## 1. Comece pelo estado real
 
 - ⚠️ **A sessão de 23/09 fechou na branch `claude/eloquent-hopper-goxy6q`,
-  cinco commits à frente da `main` (`0bf6b42`), SEM PR aberto.** Antes de
-  qualquer checkout, confira no GitHub se o Bruno abriu e fundiu o PR dela; se
-  não, esse trabalho só existe na branch, e reiniciá-la da `main` apaga-o.
+  à frente da `main` (`0bf6b42`) desde o `8569b57`, com o PR
+  [#69](https://github.com/Brunoleon98/br-port/pull/69) aberto.** Antes de
+  qualquer checkout, confira no GitHub se ele já fundiu e se o CI dele ficou
+  verde; se não fundiu, esse trabalho só existe na branch, e reiniciá-la da
+  `main` apaga-o.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**,
   HEAD confirmado com o GitHub, e `git log --oneline origin/main..HEAD` antes de
   reapontar seja o que for.
