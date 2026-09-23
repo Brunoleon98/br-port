@@ -868,10 +868,11 @@ modificador. **O que experimentar primeiro é escolha do Bruno** (§7.4).
 **rejeitada** com quatro defeitos — nariz e boca, tronco, gola, cabelo e
 lápis — e o pedido de «melhorar o modelo como um todo». A candidata é a
 **v2** (`art_lab/retratos/cida_seria/v2/`), fotografada no jogo numa cópia:
-muda só a caixa do retrato do boletim. Está à espera do olhar dele; o que a
-aprovação arrasta — as outras expressões, e a oficina (os outros dois e o
-trabalhador continuam de caixas), que ele deixou para depois da v2 — está no
-README dela.
+muda só a caixa do retrato do boletim. A pedido dele há também a
+**quadrada melhorada** (`art_lab/retratos/cida_seria/quadrada_v1/`), no kit de
+caixas, para escolher QUAL modelo melhorar. As duas esperam o olhar dele; o
+que cada uma arrasta — as outras expressões, e a oficina (os outros dois e o
+trabalhador são de caixas) — está no README de cada uma.
 
 ---
 

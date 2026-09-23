@@ -1755,6 +1755,29 @@ O que ela ensinou e vale para os próximos retratos:
 - **O enquadramento mede a cabeça COM o coque**: coque no alto encolhe a cara
   na caixa. E o ruído de desgaste do kit, num tecido, lê como mancha.
 
+#### E a quadrada melhorada, para ele escolher o modelo (23/09)
+
+Com a v2 à frente, o Bruno pediu *«uma versão melhorada da Dona Cida quadrada,
+para ver qual modelo escolho para melhorar»*. É
+**`art_lab/retratos/cida_seria/quadrada_v1/`**: a oficina de CAIXAS (prismas
+oitavados, placas, sombreado chapado, o `chanfrar()` do kit), com tudo o que
+não é forma partilhado com a v2 — o estúdio, o enquadramento, os materiais sem
+ruído, o brilho no olho, a gola de pontas. Contra o retrato de hoje: a cabeça
+deixa de ser um moai (156 × 158 em vez de 174 × 148), o olho de robô ganha
+íris, brilho e pálpebra, o cabelo-vaso passa a calote com mechas até ao coque,
+e o pedestal passa a tronco com ombro. No jogo muda outra vez só a caixa do
+retrato do `boletim`. O que ela ensinou:
+
+- **O olho do kit ganha vida com placas**: íris colorida, pupila, brilho de
+  emissão e pálpebra — o §7.5 já dizia que o brilho «funciona também no kit de
+  hoje».
+- **Uma malha por anéis FACETADA (sem subdivisão) é o `prisma` com mais
+  andares**: dá o ombro sem sair da gramática de caixas.
+- **Quando uma correção não muda NADA na imagem, a peça está errada, não o
+  número.** Uma pala clara na linha do cabelo resistiu a três mudanças na
+  calote; escondidas peça a peça, as três prévias mostraram-na igual — era a
+  quina do crânio de tampo chato a furar o cabelo em rampa.
+
 ### 7.6 Fontes
 
 1. Blender Studio, *Stylized Character Workflow — Base Meshes*: <https://studio.blender.org/training/stylized-character-workflow/base-meshes/>

@@ -1,6 +1,8 @@
 # Dona Cida, séria — v2 da cabeça REDONDA
 
-**Estado: candidata, à espera do Bruno.** Nada daqui está no jogo: o PNG de
+**Estado: candidata, à espera do Bruno** — ao lado da QUADRADA melhorada
+(`../quadrada_v1/`), que ele pediu para escolher entre as duas qual modelo
+melhorar. Nada daqui está no jogo: o PNG de
 `brport_vs/art/props/retrato_cida_seria.png` continua a ser o de
 `blender/brp_porto.py`.
 
