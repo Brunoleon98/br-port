@@ -114,6 +114,13 @@ tela num pátio cheio. É lá que está o ganho barato.
 textura pintada por cima da geometria do Blender. É o mesmo caminho que os
 jogos com essa cara usam de verdade.
 
+**E em 23/09 esta lista foi posta à prova contra a prática de fora.** A §7 tem
+a pesquisa de boas práticas de Blender para arte estilizada, cruzada com o que
+este projeto mediu — e o que dependia de "roda aqui?" foi rodado. Ela achou
+duas coisas que esta secção não sabia: o pipeline renderiza pelo **AgX** sem o
+declarar, e o rosto redondo **alcança-se por script** (metaball, curva, casco
+invertido), com o custo medido.
+
 ---
 
 ## 4. Ordem de execução
@@ -1393,3 +1400,252 @@ esqueleto de obra não é cinzento (todo cinzento da paleta cai na banda de um d
 dois quintais — `pedra_clara` mede 0,05 de Weber sobre o pavimentado), e o piso
 da praça não é terra (`solo_claro` mede 0,07). Creme e calçada ganham os dois
 fundos.
+
+---
+
+## 7. Boas práticas de Blender, pesquisadas e MEDIDAS aqui (23/09)
+
+> Pedida pelo Bruno depois de rejeitar os retratos vetoriais (§A5 do plano v3,
+> «A FRENTE 2 ABRIU E VOLTOU AO BLENDER»). **Nada disto é asset.** São as
+> práticas de quem faz arte estilizada em Blender, cada uma cruzada com o que
+> este projeto já mediu — e as que dependiam de "roda aqui?" foram RODADAS, com
+> `bpy` 4.5 neste contêiner, na câmera e no rig de `preparar_cena()`, a 768 px e
+> 64 amostras. As provas são um manequim cinzento e duas comparações do retrato
+> de hoje, fora de `brport_vs/` e fora do repositório. **O que experimentar
+> primeiro é escolha dele** (a lição de 23/09 no `CLAUDE.md`, secção Arte).
+>
+> ⚠️ O manual do Blender (`docs.blender.org`) e o Blender Studio estão
+> bloqueados pelo proxy deste contêiner. Onde a afirmação é técnica, a fonte é o
+> próprio `bpy` 4.5 — a descrição RNA de cada nó e propriedade —, e as práticas
+> vêm da pesquisa, com o link ao lado.
+
+### 7.1 O que a medição achou antes de qualquer prática
+
+**⚠️ O PIPELINE RENDERIZA PELO AgX, E NENHUM ARQUIVO O DIZ.** O
+`preparar_cena()` não toca na transformada de vista, e o Blender 4.x dá AgX a
+toda cena nova (conferido: `bpy.data.scenes.new(...).view_settings` sai
+`AgX`). O AgX foi feito para comprimir altas luzes de fotografia, e a prática
+de arte estilizada de cor chapada é renderizar em **Standard** [3][4]. Medido
+aqui:
+
+| | AgX (hoje) | Standard |
+|---|---|---|
+| `#eef2f5` (parede, cabine, esclera, dentes) num plano de EMISSÃO | **191–194** | 238–245 |
+| luminância das 48 cores da paleta, emissão, média | **−9,4** | referência |
+| amarelos e cremes: `amarelo` · `capacete` · `luz_poste` | −12 · −16 · **−43** | referência |
+| p99 de luminância: Cida séria · Ribeiro cordial · caminhão de pescado | **188,8 · 189,8 · 190,3** | 231,5 · 234,5 · 236,4 |
+| pixels estourados (≥ 254) nesses três | 0% | **0%** |
+
+**Nenhum prop do jogo passa de ~190 no 1% mais claro**, e o rig não precisa
+do AgX para não estourar. A reprodução confere: o AgX desta sonda dá o PNG do
+repositório com diferença média de 0,002 a 0,005/255, que é o ruído do
+denoiser. Três consequências:
+
+1. **Todo contraste medido em jogo até hoje foi medido ATRAVÉS do AgX** — os
+   0,26 de Weber do zinco contra o asfalto, o pau-de-carga na areia, a lança.
+   Não estão errados; estão condicionados a uma escolha que ninguém fez.
+2. **O comentário do `concreto` promete o tom do `cais_topo` do mapa, e o mapa
+   é SVG — não passa pelo AgX.** Em emissão o concreto do prop sai 20 pontos
+   abaixo do hex. É «a paleta mente» com uma camada que ninguém tinha contado.
+3. **A troca é UMA linha e muda TODOS os PNGs** — os 61 props de mapa e os dez
+   retratos, o atlas (dois `--import`), as réguas que leem pixel de prop e os
+   números de contraste acima. É decisão do Bruno.
+
+Mesmo mantendo o AgX, vale ESCREVÊ-LO: `view_settings.view_transform = "AgX"`
+não muda um pixel e impede que um Blender futuro troque o visual calado — foi o
+que a 4.0 fez ao Filmic.
+
+**⚠️ ARREDONDAR O KIT NÃO É UM MODIFICADOR.** A tentação óbvia —
+`Subdivision` + `shade smooth` nos doze prismas do retrato — medida na Dona
+Cida séria:
+
+- **DEPOIS do chanfro** (a ordem natural: o `chanfrar()` corre no fim de
+  `montar()`), muda **1,4%** dos pixels opacos e a cara continua quadrada. O
+  chanfro de 0,020 com dois segmentos põe um laço estreito em cada aresta — e
+  laço estreito junto da aresta é exactamente o que, em modelação por
+  subdivisão, SEGURA a quina [1];
+- **ANTES do chanfro**, o busto perde **28,6%** dos pixels opacos, o coque
+  descola da cabeça e as placas da cara ficam a flutuar à frente de uma
+  superfície que recuou.
+
+A forma redonda tem de NASCER redonda, e as feições têm de ser postas SOBRE a
+superfície nova — nunca em coordenadas de uma caixa que deixou de existir.
+
+**O EEVEE não arranca sem tela, e arranca com uma.** Sem `libEGL` o `bpy`
+aborta ao renderizar (código 134); sob `xvfb-run` renderiza por Mesa em
+software, 40 s no primeiro quadro, quase tudo compilação de shader. Decide as
+práticas que só existem nele (o Shader to RGB, P7).
+
+### 7.2 Personagens — os retratos da frente 2
+
+**P1. Cabeça e busto de malha-base REDONDA — metaball convertido em malha,
+`Subdivision` e `shade smooth`.** A prática padrão do personagem estilizado é
+uma malha-base de formas simples suavizada por subdivisão [1][2]; por script, o
+caminho mais curto até ela é o **metaball**, que funde elipsoides numa forma
+orgânica e se converte em malha [5]. Medido: converte sem interface, 1.196
+vértices na cabeça de prova, **5–6 s de render** a 768 (o retrato de hoje leva
+~13 s).
+⚠️ **E a superfície sai MENOR do que os raios que se escrevem**: elementos de
+raio 0,95 deram uma caixa de ±0,54. A primeira tentativa pôs a boca em
+coordenadas supostas e o raio **não acertou na cabeça**; o que funcionou foi
+posicionar cada feição por FRAÇÃO da caixa MEDIDA e colá-la por `ray_cast`.
+Cruza com a queixa registada, *«faltam detalhes e está muito quadrado»* (o
+`_contorno_oitavado` era a única curva do kit), e com o chanfro invisível de
+0,4 px: aqui a curva é da escala da peça, 0,3 de mundo. Arrasta o `_K` e o
+`_MEIO` (medidos no PNG, remedem-se) e os nove PNGs.
+
+**P2. Forma POR PERSONAGEM, e não chapéu por personagem.** Os três partilham
+hoje o `_corpo()` — o mesmo octógono de cabeça e de ombro — e distinguem-se por
+cabelo, chapéu e cor; o próprio `brp_porto.py` avisa que *«três chapéus seriam
+três etiquetas»*. A linguagem de forma dá o eixo que falta: redondo lê
+acolhedor, quadrado lê sólido e fiável, triângulo lê ameaça [6]. Uma leitura
+possível do GDD — e a escolha é dele: a Dona Cida redonda, o Sr. Ribeiro
+retangular e alto, o Arlindo de ângulos. Com metaballs isto é parâmetro dos
+elipsoides, não peça nova: custo zero sobre a P1.
+
+**P3. Olhos em ESFERA — o olhar vira rotação, a pálpebra vira casca.** Hoje o
+olho é esclera e pupila em placas, e o olhar desloca a pupila três pixels. Em
+esfera, olhar é girar o olho, e o `cerrado` é uma casca de meia esfera a descer
+— contínua, em vez de dois estados. O tamanho do olho é alavanca de carácter:
+grande lê aberto, estreito lê desconfiado [7]. Medido: esferas coladas por
+`ray_cast`, sem incidente.
+
+**P4. Sobrancelha e boca em CURVA Bézier com espessura.** O `_boca()` diz
+*«curva não existe neste kit»* — e existe: uma curva com `bevel_depth` é um
+tubo, renderiza no Cycles como qualquer malha, e a expressão passa a ser mover
+três pontos de controlo numa tabela como a `_CARAS`.
+⚠️ **O `Shrinkwrap` numa curva Bézier desloca só os pontos de controlo**: a
+boca de prova saiu como dois riscos verticais pela cara abaixo. Colar cada
+ponto por `ray_cast` na superfície AVALIADA (`obj.ray_cast(..., depsgraph=dg)`,
+não no objeto avaliado) funcionou.
+
+**P5. Contorno por CASCO INVERTIDO — só nos retratos.** ⚠️ **Reabre uma porta
+que o `CLAUDE.md` fecha, e diz-se por quê.** O contorno está fechado por duas
+técnicas medidas e por duas razões: (1) na peça fina o traço apaga a cor; (2)
+um filtro de borda acha as fronteiras de VALOR com que este estilo desenha o
+detalhe e desenha-as outra vez. O casco invertido é um terceiro mecanismo — uma
+cópia inflada da malha, de faces viradas, que só aparece onde a silhueta a
+deixa ver [8] —, e **não lê valor nenhum**: a razão (2) não se aplica por
+construção, e a (1) é de peças de 2 px, não de um busto de 168. Medido na
+cabeça de prova: **5–6 px de contorno a 768 (≈1,5 px na caixa de 228), e o
+centro da cara intacto** (165 com e sem casco).
+⚠️ **E a receita dos tutoriais falhou nos dois sentidos**: `Solidify` com
+«Flip Normals» pintou a cara INTEIRA de escuro (19, 22, 29); sem o flip, não
+desenhou contorno nenhum — nos dois casos o `Solidify` gera a superfície
+original junto com a casca. O que funcionou:
+
+```python
+h = cab.copy(); h.data = cab.data.copy(); cena.collection.objects.link(h)
+bm = bmesh.new(); bm.from_mesh(h.data)
+bmesh.ops.reverse_faces(bm, faces=bm.faces); bm.to_mesh(h.data); bm.free()
+d = h.modifiers.new("infla", "DISPLACE")
+d.direction, d.mid_level, d.strength = "NORMAL", 0.0, -0.035  # normal p/ DENTRO
+# material: Geometry.Backfacing → Mix(emissão escura, Transparent)
+h.visible_shadow = h.visible_diffuse = h.visible_glossy = False
+```
+
+Contra o cartão claro do painel, quem separa a cara do fundo é o contorno — o
+contraluz é branco sobre branco. Decisão dele, por ser porta fechada.
+
+**P6. Standard SÓ nos retratos.** Eles não pousam no mapa, pousam num cartão:
+a coerência com os props não os prende. O branco dos olhos e da gola é o que
+mais ganha, e a prova lado a lado mostra-o. Uma linha no estúdio dos retratos,
+se ele não quiser a troca global.
+
+**P7. Toon BSDF, ou EEVEE com Shader to RGB — só se ele quiser cel-shading.**
+O Shader to RGB é só do EEVEE (*«only supported in EEVEE»*, diz o nó no
+`bpy`); no Cycles o equivalente é o Toon BSDF [9][10]. Medido: o Toon BSDF
+funciona, mas com o rig de três pontos a cara ganha TRÊS terminadores e sai
+manchada. O cel-shading de ofício ilumina com UMA chave e governa a sombra da
+cara transferindo as normais de uma forma simples, uma esfera, pelo
+`Data Transfer` [11]. É um ESTILO, não um conserto: fica atrás das outras.
+
+**P8. Shape keys para bochecha e maxilar.** Depois da P1: o sorriso que sobe a
+bochecha, a boca que abre. Faz-se por script, mas numa malha de metaball sem
+topologia pensada a seleção é por distância, com decaimento. Médio; fica para
+quando as P1–P4 tiverem sido vistas.
+
+**Não recomendadas agora:**
+
+- **Troca de TEXTURA das feições** — a técnica de Animal Crossing e Wind Waker
+  [12]. Existe para trocar a expressão em TEMPO REAL numa malha só; aqui cada
+  expressão já é um PNG, e o que sobraria é desenhar as feições em 2D e
+  projetá-las — a vizinhança do que foi rejeitado a 23/09. A P4 dá a curva em
+  3D.
+- **Escultura e textura pintada**: mão, não script — a §3 já o diz.
+- **Grease Pencil**: desenho 2D sobre o 3D, com contexto gráfico que não se
+  mediu aqui, e outra vez desenho vetorial.
+
+### 7.3 Props e cenário
+
+**C1. Declarar a transformada, e decidir AgX × Standard** — a 7.1. Global.
+
+**C2. Gradiente VERTICAL por coordenada — o pé do prop mais escuro.** Escurecer
+a base e clarear o topo agarra a peça ao chão e é marca da arte estilizada de
+jogo [13]. Aqui não pede pintura de vértice: `Texture Coordinate > Object` → Z
+→ `ColorRamp` a multiplicar a cor. Só cinco props têm sombra de contato
+(`SOMBRA`); esta é a que os outros não têm. **Não medido**: mede-se como a água
+mediu — amplitude de luminância antes e depois, e Weber contra o chão de cada
+um na folha C.
+
+**C3. Desgaste de QUINA pelo nó Ambient Occlusion com `inside`.** A cal
+descascada morreu no `Pointiness`, que é atributo de VÉRTICE (Etapa 4). O nó AO
+do Cycles com `inside` traça raios para DENTRO da peça (*«Trace rays towards the
+inside of the object»*), por AMOSTRA de render. Medido numa parede do tamanho
+da do galpão, chanfrada como o kit: **a face fica a 255 e a faixa da quina
+desce a 174, com 5,7% dos pixels abaixo de mediana − 40** — a distribuição
+bimodal que o `Pointiness` não dava (na mesma caixa, 198–201, plano). A Etapa 4
+deixou escrito *«se voltar, vem de uma coordenada»*; esta é uma terceira via.
+Serve a ruína, que a frente 4 pede com *«mais desgaste»*. Por medir: o tempo
+que as amostras do nó somam num prop inteiro.
+
+**C4. Metaball para o que é orgânico** — copa, pedra, fauna. As razões da P1,
+nas peças que hoje são cone e caixa; a régua de silhueta (`024`, `028`) diz se
+passaram a ler redondo. Médio.
+
+**C5. Nó Bevel** (*«only supported in Cycles»*) arredonda a quina no
+SOMBREADO, sem geometria. ⚠️ Não muda a silhueta — não mexe no que a `024`
+mede — e o fio de luz na quina já é trabalho do contraluz. Ganho pequeno; não
+medido.
+
+**Não se aplicam aqui, e pela mesma razão — o jogo não mostra MALHAS, mostra
+PNGs:**
+
+- **Weighted Normals / Harden Normals** [14] sombreiam o bisel de uma malha de
+  jogo em tempo real; aqui o bisel tem 0,4 px e o Cycles sombreia a geometria
+  que há.
+- **Trim sheets** [15] poupam memória e chamadas de desenho num kit modular em
+  tempo real, e o detalhe delas é PINTADO. A VRAM daqui é o atlas dos PNGs
+  (`049`), e o equivalente procedural já existe — `material_ripado`,
+  `chapa_vinco`.
+- **AO cozido em cor de vértice** [13] é o AO barato de quem não pode traçar
+  raios em jogo; o Cycles traça-os em cada render.
+
+### 7.4 Por onde começar — a proposta, por ganho ÷ custo
+
+| # | O quê | Ganho | Custo | Arrasta |
+|---|---|---|---|---|
+| 1 | Escrever a transformada; o Bruno escolhe AgX ou Standard | global | uma linha | com Standard: todos os PNGs, o atlas, os contrastes medidos |
+| 2 | **Um retrato só** — P1 + P2 + P3 + P4, na pose e na tabela de hoje, julgado na caixa de 168×228 ao lado do atual | o maior da frente 2 | uma sessão | `_K`, `_MEIO`, um PNG |
+| 3 | P5 (contorno) e P6 (Standard nos retratos) sobre esse mesmo retrato, um de cada vez | médio | baixo | nada fora dele |
+| 4 | Os outros oito retratos | — | médio | os nove PNGs |
+| 5 | C3 na ruína, C2 num prop | médio | baixo a médio | cada PNG tocado |
+| 6 | P7, P8, C4 | depende do estilo | médio | — |
+
+### 7.5 Fontes
+
+1. Blender Studio, *Stylized Character Workflow — Base Meshes*: <https://studio.blender.org/training/stylized-character-workflow/base-meshes/>
+2. CG Cookie, *BASEMESH: Create Stylized Characters Quickly with Blender*: <https://www.cgcookie.com/courses/basemesh-create-stylized-characters-quickly-with-blender>
+3. CG Cookie, *The Secret to Rendering Vibrant Colors with AgX*: <https://blog.cgcookie.com/posts/the-secret-to-rendering-vibrant-colors-with-agx-in-blender-is-the-raw-workflow/>
+4. StraySpark, *How to Get an Anime / Toon Look in Blender* (Standard para cor chapada): <https://www.strayspark.studio/blog/how-to-get-anime-toon-look-blender>
+5. MakeUseOf, *What Are Metaballs in Blender?*: <https://www.makeuseof.com/metaballs-in-blender-what-how/>
+6. RocketBrush, *Shape Language in Game Character Design*: <https://rocketbrush.com/blog/shape-language-in-game-character-design-how-to-make-characters-readable-and-consistent>
+7. Wikipedia, *Manga iconography* (tamanho do olho e carácter): <https://en.wikipedia.org/wiki/Manga_iconography>
+8. Blender Secrets, *Inverted Hull outline in Cycles*: <https://www.3dsecrets.com/secrets/inverted-hull-cycles>
+9. Manual do Blender, *Toon BSDF*: <https://docs.blender.org/manual/en/latest/render/shader_nodes/shader/toon.html>
+10. Manual do Blender, *EEVEE — Supported Nodes*: <https://docs.blender.org/manual/en/latest/render/eevee/limitations/nodes_support.html>
+11. aVersion of Reality, *A Custom Normals Workflow for Clean, Stylized Toon Shading*: <http://www.aversionofreality.com/blog/2022/4/21/custom-normals-workflow>
+12. Blender Artists, *How to emulate Animal Crossing's facial expressions?*: <https://blenderartists.org/t/how-to-emulate-animal-crossings-facial-expressions-texture-swapping-the-mouth-eyes/1192051>
+13. StraySpark, *Vertex Colors in Blender for game engine workflows*: <https://www.strayspark.studio/blog/blender-vertex-colors-game-engine-workflows>
+14. Manual do Blender, *Weighted Normal Modifier*: <https://docs.blender.org/manual/en/latest/modeling/modifiers/normals/weighted_normal.html>
+15. Propgon, *Trim Sheets in Blender*: <https://propgon.com/en/trim-sheets-3d-optimization-game-art-guide/>

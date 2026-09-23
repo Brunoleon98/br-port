@@ -855,6 +855,14 @@ práticas para lá gerar estes personagens e os outros assets com visual melhor 
 antes de modelar o que for. O que o script alcança está no §3 do
 `BR_Port_Plano_Arte_Blender.md`; a pesquisa acrescenta-se ali.
 
+**✅ A pesquisa fez-se no mesmo dia — é o §7 do plano de arte**, com fontes e
+com o que dependia de "roda aqui?" rodado. Achou duas coisas: o pipeline
+renderiza pelo **AgX** sem o declarar (nenhum prop passa de ~190 no p99; em
+Standard, 231–236 sem estourar), e o rosto redondo alcança-se por script —
+metaball, olho em esfera, boca em curva, contorno por casco invertido — a
+5–6 s por render. Também mediu que arredondar o kit de hoje NÃO é um
+modificador. **O que experimentar primeiro é escolha do Bruno** (§7.4).
+
 ---
 
 ### A6 — O áudio de verdade
