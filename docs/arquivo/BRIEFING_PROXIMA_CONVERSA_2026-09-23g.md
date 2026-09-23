@@ -34,17 +34,16 @@ O `ESTADO_DO_PROJETO.md` tem **~430 bytes de folga** (teto no `TETO_ESTADO` de
 ## 1. Comece pelo estado real
 
 - ⚠️ **A sessão fechou na branch `claude/clever-hamilton-uq739u`, à frente da
-  `main` (`ceb5006`, o PR #70 fundido), SEM PR aberto** — o PR só se abre a
-  pedido. Antes de qualquer checkout, confira no GitHub se ela já foi fundida;
-  se não foi, este trabalho só existe na branch, e reiniciá-la da `main`
-  apaga-o.
+  `main` (`ceb5006`, o PR #70 fundido), com o PR #71 ABERTO** e o CI a correr
+  quando a conversa acabou. Antes de qualquer checkout, confira no GitHub se o
+  #71 foi fundido e se o CI dele ficou verde; se não foi, este trabalho só
+  existe na branch, e reiniciá-la da `main` apaga-o.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**,
   HEAD confirmado com o GitHub, e `git log --oneline origin/main..HEAD` antes de
   reapontar seja o que for.
-- **O CI não correu sobre este trabalho** — só corre na `main` e em
-  `pull_request`. Quando o PR abrir, o `brport-captura` vai dizer que **1 foto
-  mudou**: a `escolhido.png`, que passou ao turno 2 (doca com barco à espera)
-  e mostra o selo. As outras 26 saíram idênticas pixel a pixel, e o controle
+- **O CI do #71 é a primeira verificação fora deste contêiner.** O
+  `brport-captura` deve dizer que **1 foto mudou**: a `escolhido.png`, que
+  passou ao turno 2 (doca com barco à espera) e mostra o selo. As outras 26 saíram idênticas pixel a pixel, e o controle
   positivo mexe 12 — o zero vale.
 - **São DEZ verdes neste contêiner**: as seis suítes e quatro conferidores
   (`DOCS OK`, `GUARDAS OK`, `ESCOPO UI OK`, `SINAL OK`). A bateria continua com
