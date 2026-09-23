@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — a mão direita e o cruzamento (`052`)
+> **Última atualização:** 23/09/2026 — o balanço, o nome longo e o chanfro (`053`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -95,8 +95,8 @@ central e passadeiras) — **três camiões descem e dois sobem, pela DIREITA, e
 e uma **viela de terra entre elas** — a de trás mais rala, para a vila DESFIAR
 contra a mata. Tem nível (`--nivel-vila=N`): térrea, sobrado, prédio.
 
-**E a rua VIRA em vez de acabar:** cada cotovelo leva chanfro de meia largura
-de rua nas duas quinas salientes (`docs/decisoes/013`).
+**E a rua VIRA em vez de acabar:** cada cotovelo leva chanfro nas duas quinas
+salientes (`013`), do tamanho que deixa o maior camião virar no asfalto (`053`).
 
 **E TRÊS LOTES DA VILA NÃO SÃO CASA** (`022`): uma **igreja** com torre, uma
 **praça** com coreto e **duas obras**, dos lotes VISÍVEIS — a 51 px quem
@@ -113,12 +113,11 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **As CINCO levas de cor** (21–22/09, `041`–`045`) | **27 chamadas em 19 locais → ZERO**, lista de exceções vazia. Quatro migraram VALORES (fotos byte a byte); a 2ª não — a régua não drenava a fila, e alcançado o âmbar deu 3,07:1. ⚠️ **Estado que não monta publica linhas plausíveis** (a chave MORTA da 3ª, o piso da 4ª). A 5ª trouxe o **D34** (proveniência lida no nó) |
-| **A rua e a mão dupla** (23/09, `047`) | a rua FICA em 1,8 (a 2,0 ganharia 3,6 px); dois camiões sobem, 8 silhuetas `_retorno`. A assinatura do D13 passou a fazer a média; a saída de ré ganhou guarda |
 | **O quadro dos props** (23/09, `049`) | 60 props em atlas, sem `bpy` nem nó mexido; os retratos ficam. Pixel de prop lê-se por `PropIso.imagem()`; as folhas provam que esconder a peça muda a foto |
 | **O âmbar da seleção** (23/09, `050`) | nenhuma cor de borda dava 3:1 dos dois lados; a troca passou a um SELO âmbar escuro no "Escolhido" (3,86 e 4,74) |
 | **Os segundos tempos** (23/09, `051`) | a cobertura era por CENA e a bateria só via o 1º tempo: a despedida do Arlindo dizia «Cliente ouvindo a proposta» com o negócio fechado. Hoje 7 tempos em 3 painéis, 6 com foto e o balanço DECLARADO; o F10 mede cada um a caber — um nome de 24 letras sem espaço saía do cartão (`_SMART`) |
 | **A mão direita e o cruzamento** (23/09, `052`) — escolha do Bruno | as rotas cruzavam-se em 10 pontos (27–72 sobreposições por meia hora) e andavam pela ESQUERDA na tela: a projeção espelha o chão. Hoje mão direita, o retorno encosta, e quatro regras sem ninguém parar na rua — trava do berço, cedência na boca, previsão nas curvas, arranque espaçado. A curva aberta corta o chanfro em diagonal. Zero sobreposições; o **D35** anda 1 h de jogo e varre 3.080 entradas contra uma simulação à parte. 17 mutantes, 16 reprovam |
+| **O balanço, o nome longo e o chanfro** (23/09, `053`) — escolha do Bruno, os três | (g) o balanço tem foto de uma partida JOGADA e paga pelo botão, e a lacuna declarada saiu; (h) o F10 mede o diário com o nome de 24 letras (597 de 620 px) e reprova frase com nome que ninguém mediu; (i) o chanfro passou de 0,9 a **0,60**, derivado da curva e do porta-contêiner — a carroçaria saía 0,207 do asfalto, hoje fica 0,005 dentro (**D13 §7j**). ⚠️ A foto nova mostra o boletim e o fim de fase POR CIMA da resposta do Sr. Ribeiro |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -224,7 +223,7 @@ podre (A4) — em `HISTORICO.md`.
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências e o teto do estado com EOL normalizado |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
-| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desde `051` desce ao TEMPO de cada painel, e a bateria são **30 tiros** |
+| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desde `051` desce ao TEMPO de cada painel, e a bateria são **31 tiros**, sem lacuna declarada (`053`) |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
 | `docs/REVISAO_GERAL_2026-09-17.md` | Revisão geral de 17/09: defeitos e melhorias, com evidência |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
