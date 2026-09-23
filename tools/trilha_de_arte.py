@@ -175,15 +175,28 @@ sem_legenda = sorted(n for n in ultimo if n not in LEGENDA)
 if sem_legenda:
     raise SystemExit("fotos da bateria de hoje sem legenda em LEGENDA: %s"
                      % ", ".join(sem_legenda))
+# ⚠️ O "ANTES" DE CADA FOTO É A PRIMEIRA VEZ QUE A BATERIA A TIROU, e não o
+# primeiro ponto da trilha. Contra o primeiro ponto, em 23/09, 26 das 31 fotos
+# saíam SOZINHAS — não existiam em 02/09 —, e diante de uma foto sem antes a
+# pergunta do gate ("melhorou?") não tem resposta. A folha da frota compara-se
+# com a folha da frota no dia em que nasceu.
+nascimento = {}
+for p in bons:
+    for nome, hh in p["imagens"].items():
+        nascimento.setdefault(nome, (hh, p["data"]))
 trilha = []
 iguais = []
 for nome in sorted(ultimo, key=ORDEM.index):
-    if primeiro.get(nome) == ultimo[nome]:
+    antes, desde = nascimento[nome]
+    # A foto que não mudou desde que nasceu ENTRA, sozinha: o gate é olhar a
+    # arte, e a folha dos camiões nascida hoje está tão por julgar como o
+    # porto que mudou trinta vezes. Escondê-la tirava-a do gate calada.
+    if antes == ultimo[nome]:
         iguais.append(nome)
-        continue
-    trilha.append({"nome": nome, "antes": primeiro.get(nome),
+        antes = None
+    trilha.append({"nome": nome, "antes": antes, "desde": desde,
                    "depois": ultimo[nome]})
-    usados.update(x for x in (primeiro.get(nome), ultimo[nome]) if x)
+    usados.update(x for x in (antes, ultimo[nome]) if x)
 
 # O teto confere-se ANTES de converter: são minutos de WebP para uma
 # publicação que seria recusada.
@@ -223,11 +236,14 @@ def quadro(par, ident):
     leg = LEGENDA.get(nome, nome)
     vezes = par.get("vezes", 0)
     leg_cab = leg
+    if par["antes"]:
+        leg_cab += " · antes: " + dia(par["desde"])
     if vezes:
         leg_cab += " · mudou em %d %s" % (vezes, "ponto" if vezes == 1 else
                                           "pontos")
     novo = par["antes"] is None
-    chip = '<span class="chip chip-novo">nova foto</span>' if novo else ""
+    chip = ('<span class="chip">igual desde %s</span>' % dia(par["desde"])
+            if novo else "")
     if novo:
         imgs = ('<img class="so" loading="lazy" width="720" height="1280" '
                 'src="%s" alt="%s">' % (src(par["depois"]), html.escape(leg)))
@@ -261,14 +277,15 @@ def quadro(par, ident):
 
 
 # --- manchete -------------------------------------------------------------
-# Quantos pontos mexeram em cada foto DEPOIS do primeiro, que é onde cada uma
-# "nasce" e não conta como mudança.
+# Quantos pontos mexeram em cada foto depois de ela NASCER: o ponto em que
+# aparece pela primeira vez tem `antes` vazio e não conta como mudança.
 for m in d["trilha"]:
     m["vezes"] = sum(1 for p in bons[1:]
                      for x in p["mudou"] if x["nome"] == m["nome"] and x["antes"])
 manchete = "".join(quadro(m, "trilha-" + m["nome"]) for m in d["trilha"])
 n_manchete_par = sum(1 for m in d["trilha"] if m["antes"])
-n_manchete_novo = len(d["trilha"]) - n_manchete_par
+n_nasceram_depois = sum(1 for nome in ultimo
+                        if nascimento[nome][1] != bons[0]["data"])
 
 # --- passo a passo --------------------------------------------------------
 secoes = []
@@ -294,7 +311,7 @@ for i, p in enumerate(d["pontos"]):
 
 dados_js = json.dumps({"total": len(d["trilha"])}, ensure_ascii=False)
 
-PAGINA = """<title>Trilha de Arte do BR Port</title>
+PAGINA = """<title>Gate A5 do BR Port</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -453,17 +470,17 @@ body.lado .piscar{display:none;}
 </style>
 
 <div class="topo"><div class="env">
-  <p class="olho">Gate A5 · plano v3</p>
-  <h1>Trilha de Arte do BR Port</h1>
-  <p class="sub">Cada foto da bateria de __ATE__ contra a mesma foto em __DE__,
-  com o antes e o depois no mesmo sítio. Toque numa imagem para ela piscar
+  <p class="olho">Trilha de arte · plano v3</p>
+  <h1>Gate A5 do BR Port</h1>
+  <p class="sub">Cada foto da bateria de __ATE__ contra a primeira vez que foi
+  tirada, com o antes e o depois no mesmo sítio. Toque numa imagem para ela piscar
   entre os dois — é assim que a diferença aparece. Em cada quadro, diga
   <b>Bom</b> ou <b>Não</b>; o veredito fica guardado e volta para a próxima
   sessão como fila de trabalho.</p>
   <div class="medidas">
     <div><span class="n medida">__PONTOS__</span><span class="q">pontos da trilha</span></div>
     <div><span class="n medida">__PARES__</span><span class="q">antes/depois</span></div>
-    <div><span class="n medida">__NOVOS__</span><span class="q">fotos novas</span></div>
+    <div><span class="n medida">__NOVOS__</span><span class="q">nasceram na trilha</span></div>
     <div><span class="n medida">720×1280</span><span class="q">semente e passo fixos</span></div>
   </div>
 </div></div>
@@ -479,10 +496,11 @@ body.lado .piscar{display:none;}
 
 <div class="env">
   <section class="manchete">
-    <h2>A trilha inteira — __DE__ contra __ATE__</h2>
-    <p class="intro">Os __N_HOJE__ quadros da bateria de __ATE__ contra o mesmo
-    quadro no primeiro dia em que a captura passou a ser reprodutível.
-    __MANCHETE_NOTA__</p>
+    <h2>Cada foto, do primeiro dia a __ATE__</h2>
+    <p class="intro">Os __N_HOJE__ quadros da bateria de __ATE__, cada um
+    contra a primeira vez que a bateria o tirou — __DE__ para os que já
+    existiam no primeiro dia em que a captura passou a ser reprodutível, e o
+    dia em que nasceu para os outros. __MANCHETE_NOTA__</p>
     <div class="tira">__MANCHETE__</div>
   </section>
 
@@ -610,20 +628,17 @@ body.lado .piscar{display:none;}
 # Os números desta frase saem da trilha: a primeira versão escrevia "Cinco" e
 # "de 5 fotos para 14" à mão, e envelheceu no primeiro ponto que acrescentou
 # uma foto à bateria.
-nota_manchete = ("%d têm antes e depois; as outras %d não existiam em %s — a "
-                 "bateria cresceu de %d fotos para %d pela trilha fora."
-                 % (n_manchete_par, n_manchete_novo, dia(bons[0]["data"]),
-                    len(primeiro), len(ultimo)))
+nota_manchete = ("A bateria cresceu de %d fotos para %d pela trilha fora; a "
+                 "data de cada \"antes\" está na legenda."
+                 % (len(primeiro), len(ultimo)))
 if iguais:
-    nota_manchete += (" %s não mudou desde o primeiro dia, e não aparece."
-                      % ", ".join(iguais) if len(iguais) == 1 else
-                      " %s não mudaram desde o primeiro dia, e não aparecem."
-                      % ", ".join(iguais))
+    nota_manchete += (" %d não mudaram desde que nasceram, e aparecem sozinhas:"
+                      " estão por julgar como as outras." % len(iguais))
 
 PAGINA = (PAGINA
           .replace("__PONTOS__", str(len(d["pontos"])))
           .replace("__PARES__", str(n_manchete_par))
-          .replace("__NOVOS__", str(n_manchete_novo))
+          .replace("__NOVOS__", str(n_nasceram_depois))
           .replace("__N_PASSOS__", str(len(imagens_dos_passos)))
           .replace("__TETO__", str(TETO_ARQUIVOS))
           .replace("__MANCHETE__", manchete)
@@ -640,9 +655,11 @@ tmp = destino + ".tmp"
 with open(tmp, "w", encoding="utf-8", newline="\n") as f:
     f.write(PAGINA)
 os.replace(tmp, destino)
-print("%d pontos; na manchete %d pares antes/depois e %d fotos novas; "
-      "%d imagens distintas nos passos, fora da página"
-      % (len(bons), n_manchete_par, n_manchete_novo, len(imagens_dos_passos)))
+print("%d pontos; na manchete %d pares antes/depois (%d fotos nasceram depois "
+      "do primeiro ponto, %d iguais desde que nasceram); %d imagens distintas "
+      "nos passos, fora da página"
+      % (len(bons), n_manchete_par, n_nasceram_depois, len(iguais),
+         len(imagens_dos_passos)))
 print("%d arquivos em %s: %.1f MB em WebP (%.1f MB em PNG)"
       % (len(usados), pub, bytes_pub / 1e6, bytes_png / 1e6))
 print("página em %s" % destino)
