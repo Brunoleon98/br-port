@@ -599,9 +599,25 @@ body.lado .piscar{display:none;}
     var atual = (vereditos[id] || {}).veredito;
     guardar(id, {veredito: atual === b.dataset.v ? "" : b.dataset.v});
   });
+  // A nota guarda-se ENQUANTO se escreve, e não só no `change`: esse só
+  // dispara ao sair do campo, e quem escrevesse e fechasse a página logo a
+  // seguir perdia a frase sem aviso.
+  var esperas = {};
+  function guardar_nota(campo){
+    var id = campo.closest(".quadro").dataset.id;
+    clearTimeout(esperas[id]);
+    delete esperas[id];
+    guardar(id, {nota: campo.value});
+  }
+  document.addEventListener("input", function(e){
+    if(!e.target.classList || !e.target.classList.contains("nota")) return;
+    var campo = e.target, id = campo.closest(".quadro").dataset.id;
+    clearTimeout(esperas[id]);
+    esperas[id] = setTimeout(function(){ guardar_nota(campo); }, 700);
+  });
   document.addEventListener("change", function(e){
     if(!e.target.classList || !e.target.classList.contains("nota")) return;
-    guardar(e.target.closest(".quadro").dataset.id, {nota: e.target.value});
+    guardar_nota(e.target);
   });
 
   pintar();
