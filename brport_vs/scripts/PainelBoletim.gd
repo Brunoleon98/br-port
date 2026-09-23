@@ -37,14 +37,14 @@ func setup(resumo: Dictionary) -> void:
 	# LINHA COM ZERO NÃO ENTRA. O armazém só rende depois de consertado e a
 	# parcela só vence numa semana das quatro; mostrá-las a R$0 nas outras é
 	# ruído que o olho tem de descartar toda semana para chegar ao que mudou.
-	_bloco("RECEITAS", [
+	_bloco("ENTROU", [
 		["Docagens", int(_resumo["docagens"])],
 		["Armazém", int(_resumo["armazem"])],
 		["Pátio de contêineres", int(_resumo["patio"])],
 		["Aluguel de píer", int(_resumo["pier"])],
 	], int(_resumo["receita"]))
 
-	_bloco("DESPESAS", [
+	_bloco("SAIU", [
 		["Salários", int(_resumo["salarios"])],
 		["Manutenção", int(_resumo["manutencao"])],
 		["Parcela", int(_resumo["parcela"])],
@@ -56,10 +56,7 @@ func setup(resumo: Dictionary) -> void:
 	# duas vezes — uma para o texto, outra para a expressão — seria a mesma
 	# decisão tomada em dois sítios, que é como dois números do mesmo jogo
 	# divergem.
-	var tom: String = Narrativa.tom_do_boletim(
-		int(_resumo["resultado"]),
-		float(_resumo["media_anterior"]),
-		bool(_resumo["tem_historico"]))
+	var tom: String = Narrativa.tom_do_boletim(_resumo)
 	fala(Narrativa.boletim(tom), Narrativa.retrato("cida", tom))
 
 	botao_fechar("Fechar o boletim")
@@ -101,7 +98,7 @@ func _linha(grade: GridContainer, rotulo: String, valor: int) -> void:
 func _resultado() -> void:
 	var resultado := int(_resumo["resultado"])
 	fio()
-	total("Resultado líquido: %s" % GameState.moeda(resultado))
+	total(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true))
 	if not bool(_resumo["tem_historico"]):
 		return
 	var anterior := int(_resumo["anterior"])
@@ -115,4 +112,5 @@ func _resultado() -> void:
 			int(round(abs(float(resultado - anterior) / float(anterior)) * 100.0))]
 	else:
 		variacao = "  (%s)" % seta
-	paragrafo("Semana anterior: %s%s" % [GameState.moeda(anterior), variacao])
+	paragrafo("Semana anterior: %s%s" % [
+		Narrativa.lucro_ou_prejuizo(anterior, GameState.moeda), variacao])

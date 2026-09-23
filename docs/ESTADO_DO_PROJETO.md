@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 23/09/2026 — a rua fica em 1,8 e a mão dupla (`047`)
+> **Última atualização:** 23/09/2026 — o A4: "dinheiro", lucro/prejuízo, e o boletim medido (`048`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -119,15 +119,11 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | **Capturas e cobertura** (21/09, `038`, `039`) — fora da fila | os painéis eram **15 e não 13** (o `EndGame` não vive em `scenes/panels/`). Os do HUD entram pela PORTA DO JOGADOR, numa partida jogada. A cobertura MEDE-SE nos logs, porque declarar mentiria |
 | **R9** (21/09, `040`) | o `teste_audio` responde pelo ENCANAMENTO; ninguém perguntava pela ONDA. `tools/medir_audio.py` (padrão só, 1,5 s, CI, `SINAL OK`): **dois alertas** por aritmética — true peak >= 0 dBTP e salto >= 3,0x o p99,9 do próprio arquivo —, o resto DESCRITOR. ⚠️ **Seis dos 14 sons vivem abaixo de 500 Hz**, o aviso com 99% (392+330 Hz) |
 | **As CINCO levas de cor** (21–22/09, `041`–`045`) | **27 chamadas em 19 locais → ZERO**, lista de exceções vazia. Quatro migraram VALORES (fotos byte a byte); a 2ª não — a régua não drenava a fila, e alcançado o âmbar deu 3,07:1. ⚠️ **Estado que não monta publica linhas plausíveis** (a chave MORTA da 3ª, o piso da 4ª). A 5ª trouxe o **D34** (proveniência lida no nó) |
-| **A rua e a mão dupla** (23/09, `047`) — escolha do Bruno | a rua FICA em 1,8: a janela que aperta é em `my` e o `RUA_RECUO` não a toca; a 2,0 ganharia 3,6 px. Faltava quem SUBISSE: dois camiões na faixa de dentro, de costas, 8 silhuetas `_retorno` (+0,75% do `.pck`). ⚠️ **A assinatura do D13 não fazia a média que dizia** (`resize` amostra); hoje faz, corte 0,01. Bateria a **27 tiros** |
-
-**E o gate A4 correu (19/09)**, nas sete falas novas desde 13/09; as quatro
-notas do Bruno estão aplicadas — entre elas, "caixa" saiu das falas por ser
-jargão, e a semana nova deixou de cobrar uma parcela já quitada.
+| **A rua e a mão dupla** (23/09, `047`) — escolha do Bruno | a rua FICA em 1,8: a janela que aperta é em `my` e o `RUA_RECUO` não a toca; a 2,0 ganharia 3,6 px. Faltava quem SUBISSE: dois camiões na faixa de dentro, de costas, 8 silhuetas `_retorno` (+0,75% do `.pck`). ⚠️ **A assinatura do D13 não fazia a média que dizia** (`resize` amostra); hoje faz, corte 0,01. Bateria a **27 tiros**. Depois, a **saída de ré** ganhou guarda (`_d13_saida_de_re`, 5 mutantes) |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
-Bruno — as cinco primeiras foram as levas de cor (`041`–`045`).
+Bruno.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -137,16 +133,16 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Duas leituras feitas (13/09 e 19/09)**; as quatro notas dele estão aplicadas e trancadas. Faltam **três decisões de palavra**, o mesmo jargão nos sítios que ficaram: `"Caixa:"` (`DebtPaymentPanel.gd:68`), o `"dinheiro no caixa"` da fala da semana nova, e o `"0 dias daqui"` da parcela (`037`) |
+| **A4** | ⚠️ **Três leituras (13/09, 19/09, 23/09)**, notas aplicadas: **"dinheiro"** em vez de "caixa", **lucro/prejuízo**, vencimento **hoje/amanhã/daqui a N** (T10, T11), falas que não narram a tela, e o boletim **medido** — 2.005 afirmações falsas em 4.000 boletins, hoje zero (`048`) |
 | **A5** | **Olhar** — as duas metades de máquina estão feitas | A trilha dos 30 pontos e a folha de contato dos props (§A5 do plano). Só falta o olho dele |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
 
 ⚠️ **Uma coisa, sessão própria:** o quadro dos props é 89,6% moldura vazia
-(cortá-lo mexe na origem do mundo, `029`). A rua fechou em 1,8 (`047`). Das duas jogadas de
-02–06/09 sobram o rodapé (A5), economia de Fase 2 e a madeira podre (A4) —
-history e triagem em `docs/arquivo/HISTORICO.md`.
+(cortá-lo mexe na origem do mundo, `029`). O retorno a entrar nos berços é
+desenho de cruzamento, por decidir (`047`). Das jogadas de 02–06/09 sobram o
+rodapé (A5), economia de Fase 2 e a madeira podre (A4) — em `HISTORICO.md`.
 
 ---
 
@@ -197,6 +193,7 @@ history e triagem em `docs/arquivo/HISTORICO.md`.
 | `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
 | `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão. ⚠️ **«Órfão» e «apagável» são duas perguntas**: dos 11, nove tinham propósito escrito (a bancada `AssetPlacementTest`) e ficaram; saíram os 2 SVG de píer, superados por props PNG. Hoje **9 de 107** (`046`) |
+| `brport_vs/tools/medir_boletim.gd` | **A régua do boletim** — herda o simulador e confere cada afirmação da Dona Cida contra o estado, no instante em que ela fala. CI, `BOLETIM OK` (`048`) |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Imprime classes, motivos e o NÍVEL |
@@ -263,7 +260,7 @@ history e triagem em `docs/arquivo/HISTORICO.md`.
   hoje 5,7% (`034`)
 - Autosave local a cada turno
 - **Sete telas narrativas**: nomes do cais e do jogador (abertura), primeira
-  página do diário, Boletim Financeiro semanal com os 3 tons da Dona Cida, as 8
+  página do diário, Boletim Financeiro semanal com os tons da Dona Cida, as 8
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
 - **E OS TRÊS NPCs TÊM ROSTO** (`020`): nove bustos com pose própria, ao lado

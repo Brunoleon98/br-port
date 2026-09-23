@@ -523,6 +523,12 @@ Teste e import rodam sem tela.
    APERTA é um só: pórtico comprado e cais ainda não. Antes de dar um defeito
    por não pegado, pergunte em que estado as duas versões DIVERGEM — e monte
    esse estado, que costuma ser um só entre muitos.
+   ⚠️ **E FUNÇÃO COM GUARDA NÃO É RAMO COM GUARDA.** Em 23/09 a
+   `silhueta_do_trecho()` tinha duas asserções a perguntar-lhe trecho a trecho,
+   e nenhuma passava o `de_re` — o argumento opcional que decide a ré do camião:
+   apagar o ramo dele não reprovava nada. Antes de dar uma função por coberta,
+   pergunte que ARGUMENTOS as asserções lhe passam; o que tem valor por omissão
+   é, quase sempre, o que ninguém passa (`047`).
    ⚠️ **E ESSE ESTADO PODE SER O QUE O JOGO NÃO FAZ — aí a fixture REALISTA é a
    que não prova nada.** A regra acima manda montar o estado em que as duas
    versões divergem; esta diz o que fazer quando ele é justamente o estado raro.
@@ -1771,6 +1777,24 @@ tranca isso.
   achou *"Dois contratos recusados essa semana"* num gatilho que é a queda de
   FAIXA da reputação — nunca dois contratos. Não havia o que corrigir no
   número: ele não saía de lado nenhum.
+  ⚠️ **E O TOM ESCOLHIDO POR UM NÚMERO AFIRMA MAIS DO QUE O NÚMERO.** O
+  boletim escolhia o tom pelo resultado e pela média, e as falas afirmavam a
+  semana ANTERIOR e a PARCELA. Medido em 23/09 com `tools/medir_boletim.gd`:
+  **2.005 afirmações falsas em 4.000 boletins**, e *"a semana passada foi
+  menos pior"* falsa em 856 de 856 — nunca verdade. Cada afirmação de uma fala
+  tem de estar numa condição de quem a escolhe; e na régua, ⚠️ **afirmação
+  que É a condição do tom é espelho** — ela só reprova quando lê um campo que a
+  escolha não leu (`048`).
+- **⚠️ FALA QUE NARRA O QUE A TELA JÁ MOSTROU É FALA QUE NINGUÉM PRECISAVA.**
+  Queixa do Bruno em 23/09 sobre *"Mas vim pessoalmente porque sei que é o
+  primeiro mês"*: o Sr. Ribeiro explicava o próprio gesto, pela segunda vez na
+  mesma cena. Vale para toda fala já escrita e para as que vierem. Os sinais:
+  abrir narrando o evento (*"Perdeu pro Arlindo"*, *"Os números fecharam"*);
+  explicar o motivo do personagem; repetir na resposta o que a entrada ou a
+  despedida já dizem; frase que qualquer personagem diria (*"o banco existe
+  pra isso"*). **Cada linha traz o que a tela não diz** — um detalhe do mundo,
+  uma opinião, um subtexto: *"ele pagava sempre na véspera; dizia que no dia
+  já é tarde"* diz mais sobre o prazo do que *"vim pessoalmente"* (`048`).
 - **⚠️ PALAVRA DE OFÍCIO NUMA FALA É JARGÃO, e nenhuma asserção a vê.** A
   leitura em voz alta de 19/09 apanhou "caixa": ele é o termo certo, está no
   HUD e no painel da parcela — e só quer dizer *dinheiro* para quem já
@@ -1784,6 +1808,14 @@ tranca isso.
   `caixa_curto()` — continuava a dizer "a parcela correndo" a quem já a tinha
   pago. "Ao corrigir um, VARRA OS IRMÃOS" com um PREDICADO no lugar do prop, e
   quem o apanhou foi o Bruno a ler, não uma suíte.
+- **⚠️ FRASE QUE VAI AO GATE FOTOGRAFA-SE NO ESTADO EM QUE APARECE.** O A4
+  carregou *"0 dias daqui"* por quatro dias como palavra a decidir, e ela nunca
+  chegava à tela — a conta só dava zero depois do vencimento. Fotografado o
+  painel no dia 32, o defeito era outro: *"1 dia daqui"* no próprio dia em que
+  vence, porque a conta contava os dias que ainda se JOGAM (certo para o "N dias
+  restantes" do HUD) e "daqui" pede a DISTÂNCIA. **O mesmo número serve a uma
+  palavra e mente noutra**; antes de pedir uma decisão de redação, monte o
+  estado e leia o que o jogador lê (`037`, T11).
 - **⚠️ A FRASE PODE SER VERDADEIRA EM PORTUGUÊS E FALSA NESTE MUNDO.** A Dona
   Cida dizia *"porto que fecha no azul é porto que abre segunda-feira"* — bonita,
   idiomática, e **errada: um porto opera 24/7 e não abre na segunda.** Nenhuma
@@ -2360,6 +2392,13 @@ armadilha de uma função, no comentário dela.
   usar `await`, o `await` nunca voltou: a suíte imprimiu o marcador com o bloco
   inteiro por correr, verde e sem ter testado nada. Num `--script` que precise
   de esperar frames, `_process` devolve `false` e quem encerra é só o `quit()`.
+- **⚠️ E ANIMAÇÃO PROVA-SE SEM ESPERAR FRAME NENHUM.** Num teste síncrono — o
+  `teste_design` devolve `true`, e um `await` lá nunca volta — o tween que o
+  jogo cria apanha-se pela diferença de `get_processed_tweens()` antes e depois
+  da ação, e anda-se com `custom_step()`, lendo o NÓ a cada passo, que é o que o
+  jogador vê. O passo tem de ser menor do que o trecho mais curto, senão um
+  trecho inteiro cabe num passo e nunca é lido; e a ação que não criou tween
+  tem de REPROVAR, senão a lista vazia passa por "nada de errado" (`047`).
 - **⚠️ E `preload` DE UM SCRIPT QUE FALA DO AUTOLOAD, A PARTIR DE UM
   `--script`, DÁ UM GDScript VAZIO.** A terceira cara da regra abaixo, e a que
   menos se parece com ela: `const D := preload("res://scripts/Dock.gd")` numa

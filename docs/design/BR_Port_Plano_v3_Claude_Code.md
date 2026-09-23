@@ -1520,6 +1520,8 @@ dicionário — e o `_plural` privado do `Main` foi apagado, que era a cópia.
 Guardas **T9** (aritmética, esperado literal) e **F9** (superfície, pares
 derivados do código); seis mutantes, e o M1/M2 provam que cada guarda é cega ao
 defeito da outra. A REDAÇÃO não se tocou — "0 dias daqui" e a §2.5 ficam.
+*(23/09: o "0 dias" nunca chegava à tela; o que se lia no vencimento era "1 dia
+daqui". Hoje diz hoje / amanhã / daqui a N — `037`, bloco T11.)*
 
 **R9 — medir sem ouvir.** Duração, sample peak, RMS, bordas, DC e saturação já
 foram medidos: o ganho novo é true peak, descontinuidade interna, espectro e
@@ -1668,7 +1670,9 @@ medido, a 1,9 o armazém entra no cotovelo e a 2,0 reprovam o armazém e a
 barreira, pela janela em `my` que o `RUA_RECUO` não toca — e o ganho seria de
 3,6 px. O que faltava era **alguém subir a rua**: dois camiões novos sobem pela
 faixa de dentro, de costas, com oito silhuetas `_retorno`. O item 2 da segunda
-jogada estava feito pela metade desde 07/09.
+jogada estava feito pela metade desde 07/09. Na sessão seguinte a **saída de ré
+do berço** ganhou guarda (`_d13_saida_de_re`, cinco mutantes, adenda da `047`);
+o retorno a entrar nos berços continua por decidir — é desenho de cruzamento.
 
 ### ✅ O ITEM 12 FECHOU — três lotes da vila que não são casa (13/09)
 

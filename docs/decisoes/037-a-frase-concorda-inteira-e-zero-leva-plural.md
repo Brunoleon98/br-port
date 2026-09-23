@@ -175,7 +175,13 @@ foto mostra.
 
 ## O que fica de fora, dito
 
-- **A REDAÇÃO não se tocou.** "0 dias daqui" no painel da parcela é
+- **A REDAÇÃO não se tocou.** ⚠️ *Nota de 23/09:* o "0 dias daqui" não chega
+  à tela — a conta só dá zero depois do dia 32, quando a cena do Sr. Ribeiro já
+  tapa tudo ou a parcela está paga. O que o jogador lia no vencimento era **"1 dia
+  daqui"**, fotografado (`capturar_cena.gd` com `turn=32`): a conta contava os
+  dias que ainda se JOGAM, e "daqui" pede a DISTÂNCIA. Hoje diz "Vence hoje" /
+  "amanhã" / "daqui a N dias", a pedido do Bruno, e o **T11** abre o painel nos
+  três dias. O que se segue é o registo de 21/09. "0 dias daqui" no painel da parcela é
   gramaticalmente correto e soa a máquina; trocá-lo por "hoje" é escolha de
   palavra, e palavra neste projeto é gate de quem lê em voz alta. Pela mesma
   razão a §2.5 — se o dia atual conta na parcela — ficou intocada, como a ficha

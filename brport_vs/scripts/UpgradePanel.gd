@@ -81,7 +81,7 @@ func _build_ui() -> void:
 	vbox.add_child(Icones.rotulo(Icones.AMPLIAR_PIER, "Construir no porto"))
 
 	var caixa := Label.new()
-	caixa.text = "Caixa: %s" % GameState.moeda(int(GameState.cash))
+	caixa.text = "Dinheiro: %s" % GameState.moeda(int(GameState.cash))
 	caixa.add_theme_font_size_override("font_size", 14)
 	vbox.add_child(caixa)
 

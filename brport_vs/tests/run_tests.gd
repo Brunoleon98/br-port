@@ -8,6 +8,10 @@ var _fails := 0
 var GS
 var _t7_completo := false
 var _t9_completo := false
+var _t10_completo := false
+var _t11_completo := false
+var _t12_completo := false
+var _t13_completo := false
 
 
 func _check(label: String, ok: bool) -> void:
@@ -506,6 +510,22 @@ func _run() -> void:
 	print("=== T9: a concordancia de plural, com o adjetivo junto ===")
 	_t9_concordancia()
 	_check("o bloco T9 correu até ao fim", _t9_completo)
+
+	print("=== T10: lucro ou prejuizo, e o zero que nao e nenhum ===")
+	_t10_lucro_ou_prejuizo()
+	_check("o bloco T10 correu até ao fim", _t10_completo)
+
+	print("=== T11: quando vence a parcela, no painel dela (cena real) ===")
+	_t11_quando_vence()
+	_check("o bloco T11 correu até ao fim", _t11_completo)
+
+	print("=== T12: o tom do boletim so afirma o que a semana confirma ===")
+	_t12_tom_do_boletim()
+	_check("o bloco T12 correu até ao fim", _t12_completo)
+
+	print("=== T13: a despedida do Sr. Ribeiro so vem depois de pagar (cena real) ===")
+	_t13_despedida_do_ribeiro()
+	_check("o bloco T13 correu até ao fim", _t13_completo)
 
 	print("")
 	if _fails == 0:
@@ -1572,4 +1592,135 @@ func _t9_concordancia() -> void:
 		Narrativa.concordar(2, "tentativa", "tentativas") == "2 tentativas")
 
 	_t9_completo = true
+
+
+# ── T10 ─────────────────────────────────────────────────────────────────
+# `Narrativa.lucro_ou_prejuizo()` — o "Resultado" do resumo do dia e do boletim
+# da semana, trocado a pedido do Bruno no gate A4 (23/09).
+#
+# ⚠️ O ESPERADO É LITERAL, pela mesma razão do T9: montá-lo chamando o helper
+# seria o espelho. E cada caso aperta um defeito diferente, que é o que as três
+# asserções existem para separar: o ZERO apanha um `>= 0` (que diria "lucro de
+# R$0" de um dia que não ganhou nada), o NEGATIVO apanha o valor passado com
+# sinal ("prejuízo de -R$16.000", a dupla negação), e a MAIÚSCULA apanha o
+# `inicio` ignorado, que é o que o `total()` dos dois painéis pede.
+func _t10_lucro_ou_prejuizo() -> void:
+	var moeda := Callable(GS, "moeda")
+	_check("T10: lucro, com separador de milhar",
+		Narrativa.lucro_ou_prejuizo(12000, moeda) == "lucro de R$12.000")
+	_check("T10: prejuízo SEM sinal — a palavra já diz que saiu",
+		Narrativa.lucro_ou_prejuizo(-16000, moeda) == "prejuízo de R$16.000")
+	_check("T10: zero não é lucro nem prejuízo",
+		Narrativa.lucro_ou_prejuizo(0, moeda) == "nem lucro nem prejuízo")
+	_check("T10: a abrir a linha, a primeira letra sobe",
+		Narrativa.lucro_ou_prejuizo(-16000, moeda, true) == "Prejuízo de R$16.000")
+	_t10_completo = true
+
+
+# ── T11 ─────────────────────────────────────────────────────────────────
+# O painel da parcela diz QUANDO ela vence, em palavra de calendário (23/09).
+#
+# ⚠️ A CONTA ANTIGA ESTAVA UM DIA ADIANTADA EM TODOS OS DIAS, e nenhuma
+# asserção a lia: no próprio dia do vencimento o painel dizia "1 dia daqui". Por
+# isso este bloco abre o PAINEL de verdade, pela cena, em três dias — o erro
+# morava no CHAMADOR (`PARCELA_DUE_TURN - turn + 1`), e uma asserção sobre a
+# função sozinha passaria com ele de volta.
+#
+# ⚠️ OS TRÊS DIAS SÃO OS TRÊS RAMOS: hoje, amanhã e "daqui a N". O esperado é
+# literal na forma e só o número do dia sai da constante — o defeito que se
+# caça não mora nela.
+func _t11_quando_vence() -> void:
+	_fresh_playing()
+	var vence: int = GS.PARCELA_DUE_TURN
+	var casos := [
+		[vence, "Vence hoje, dia %d." % vence],
+		[vence - 1, "Vence amanhã, dia %d." % vence],
+		[vence - 2, "Vence no dia %d — daqui a 2 dias." % vence],
+	]
+	for caso in casos:
+		GS.turn = int(caso[0])
+		GS.parcela_paid = false
+		var painel = load("res://scenes/panels/PainelParcela.tscn").instantiate()
+		root.add_child(painel)
+		painel.setup()
+		var textos := _textos_de(painel)
+		_check("T11: no dia %d o painel diz «%s»" % [int(caso[0]), String(caso[1])],
+			textos.has(String(caso[1])))
+		root.remove_child(painel)
+		painel.free()
+	_fresh_playing()
+	_t11_completo = true
+
+
+# ── T12 ─────────────────────────────────────────────────────────────────
+# `Narrativa.tom_do_boletim(resumo)` — que tom a Dona Cida usa, e cada ramo é
+# uma AFIRMAÇÃO da fala que ele escolhe (`docs/decisoes/048`). A régua de
+# escala é `tools/medir_boletim.gd`, que joga 1.000 partidas; este bloco é a
+# de fixture, e existe porque ela apanha o que a outra não tem como montar.
+#
+# ⚠️ CADA FIXTURE É O ESTADO QUE APERTA UM RAMO, e três deles são os raros:
+#   - a parcela paga JÁ NA SEMANA 1 — o único estado que distingue perguntar a
+#     parcela antes ou depois da primeira semana; nas 1.000 partidas medidas
+#     ele nunca acontece, e é por isso que tem de estar aqui;
+#   - a semana anterior EXATAMENTE a zero — a fronteira entre `< 0` e `<= 0`,
+#     que é onde "de novo" e "semana passada não foi assim" se separam;
+#   - a parcela paga numa semana com histórico, que é a semana 4 de quem paga.
+# O esperado é o ID literal, e o resumo leva só as chaves que o `GameState`
+# publica — uma chave a menos rebenta, que é o que o acesso direto quer.
+func _t12_tom_do_boletim() -> void:
+	var casos := [
+		["parcela paga na semana com histórico", -100, true, 50.0, 200, 530000, "ruim_ribeiro"],
+		["parcela paga JÁ na semana 1", -100, false, 0.0, 0, 530000, "ruim_ribeiro"],
+		["primeira semana no vermelho", -100, false, 0.0, 0, 0, "primeira_ruim"],
+		["vermelho depois de vermelho", -100, true, -50.0, -50, 0, "ruim"],
+		["vermelho depois de uma semana a ZERO", -100, true, 50.0, 0, 0, "ruim_virou"],
+		["vermelho depois de azul", -100, true, 50.0, 80, 0, "ruim_virou"],
+		["azul sem histórico", 100, false, 0.0, 0, 0, "neutro"],
+		["azul acima de 30% da média", 1000, true, 100.0, 100, 0, "otimo"],
+		["azul perto da média", 110, true, 100.0, 100, 0, "neutro"],
+	]
+	for c in casos:
+		var resumo := {"resultado": c[1], "tem_historico": c[2], "media_anterior": c[3],
+			"anterior": c[4], "parcela": c[5]}
+		var tom := Narrativa.tom_do_boletim(resumo)
+		_check("T12: %s → %s (deu %s)" % [c[0], c[6], tom], tom == String(c[6]))
+	_t12_completo = true
+
+
+# ── T13 ─────────────────────────────────────────────────────────────────
+# A resposta do Sr. Ribeiro no segundo tempo da cena da parcela. A despedida
+# promete crédito para o porto crescer, e até 23/09 saía também a quem não
+# pagava — e `fail_debt()` encerra a partida. O bloco abre a CENA e lê o texto
+# que ela mostra nos dois caminhos, e o botão que a fecha.
+func _t13_despedida_do_ribeiro() -> void:
+	_fresh_playing()
+	var despedida: String = GS.texto(Narrativa.RIBEIRO_FALAS["despedida"])
+	for caso in [["pagou", true], ["nao_pagou", false]]:
+		var painel = load("res://scenes/panels/DebtPaymentPanel.tscn").instantiate()
+		root.add_child(painel)
+		painel.setup(GS.PARCELA_AMOUNT)
+		painel._mostrar_resposta(String(caso[0]))
+		var texto: String = painel._corpo.text
+		var botao := ""
+		for filho in painel._botoes.get_children():
+			if filho is Button and not filho.is_queued_for_deletion():
+				botao = (filho as Button).text
+		var com_despedida: bool = bool(caso[1])
+		_check("T13: «%s» %s a despedida" % [caso[0], "traz" if com_despedida else "não traz"],
+			texto.contains(despedida) == com_despedida)
+		_check("T13: «%s» fecha com «%s»" % [caso[0], botao],
+			botao.begins_with("Até a próxima") == com_despedida)
+		root.remove_child(painel)
+		painel.free()
+	_fresh_playing()
+	_t13_completo = true
+
+
+func _textos_de(no: Node) -> Array:
+	var textos: Array = []
+	if no is Label:
+		textos.append((no as Label).text)
+	for filho in no.get_children():
+		textos.append_array(_textos_de(filho))
+	return textos
 
