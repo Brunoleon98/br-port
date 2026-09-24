@@ -1551,6 +1551,9 @@ contraluz é branco sobre branco. Decisão dele, por ser porta fechada.
 a coerência com os props não os prende. O branco dos olhos e da gola é o que
 mais ganha, e a prova lado a lado mostra-o. Uma linha no estúdio dos retratos,
 se ele não quiser a troca global.
+✅ **Escolhido pelo Bruno em 24/09**, na `quadrada_v3` — e ⚠️ **com a
+exposição a −0,35 EV**: a 0 EV a gola e o branco do olho estouravam (54% dos
+pixels claros a 255). A troca GLOBAL, nos props, continua por decidir.
 
 **P7. Toon BSDF, ou EEVEE com Shader to RGB — só se ele quiser cel-shading.**
 O Shader to RGB é só do EEVEE (*«only supported in EEVEE»*, diz o nó no
@@ -1794,6 +1797,22 @@ a caixa do retrato do `boletim`. O que ela ensinou:
   sino (o balão da redonda, com facetas). Trapézio, prateleira e deltoide.
 - **Uma faixa que acaba numa aresta viva acende-se**, e cinco em fila leem
   como uma borda. Afinada até zero, ela nasce da superfície.
+
+#### E a quadrada v3, com as cores escolhidas (24/09)
+
+Sobre a v2 ele pediu mais ajustes nos mesmos quatro pontos e escolheu
+**Standard nos retratos** (P6). A candidata é
+**`art_lab/retratos/cida_seria/quadrada_v3/`**: cabelo repartido ao meio com
+a calote no tom de sombra por baixo das mechas, sobrancelhas em arco
+castanhas, nariz em cunha, lábio de cor, tronco 12% mais estreito. No jogo
+muda outra vez só a caixa do `boletim`. O que ela ensinou:
+
+- **O Standard pede a exposição**: a 0 EV, 54% dos pixels claros estouravam;
+  a −0,35 EV, zero, com o p99 a 239 e a saturação da pele igual.
+- **O cabelo precisa do degrau abaixo, como a pele**: com a calote no tom das
+  mechas as frestas acendiam-se como elas, e a rampa lia como uma placa.
+- **No kit, `inclina` positivo à esquerda baixa a ponta de DENTRO** (é o
+  «franzida»): um arco de sobrancelha pede o sinal contrário.
 
 ### 7.6 Fontes
 

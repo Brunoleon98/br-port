@@ -1,6 +1,6 @@
 # Dona Cida, séria — QUADRADA v2: o kit de caixas, ajustado
 
-**Estado: candidata, à espera do Bruno.** Nada daqui está no jogo: o PNG de
+**Estado: AJUSTADA na `../quadrada_v3/`** — o Bruno pediu mais ajustes (cabelo, cores, rosto, corpo) e escolheu Standard nos retratos (24/09). Fica aqui como registo. Nada daqui está no jogo: o PNG de
 `brport_vs/art/props/retrato_cida_seria.png` continua a ser o de
 `blender/brp_porto.py`.
 
