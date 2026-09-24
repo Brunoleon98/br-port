@@ -247,6 +247,23 @@ uma sessão.
 Escreva no PR **o que medir na imagem**, não só o que foi feito: "a rampa de
 profundidade voltou" é uma afirmação que ele pode conferir; "ficou melhor" não.
 
+### O veredito na conversa, quando ele está presente
+
+Medido na frente dos retratos (24/09): o Sr. Ribeiro levou quatro voltas e o
+Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
+
+- **Mostre a foto do JOGO**, não a prancha solta: o cartão em tamanho real,
+  hoje × candidata, e a peça ampliada 3× sem suavizar.
+- **Pergunte com opções**: «aceito» / «ajustar», e na mesma chamada o QUÊ por
+  categoria. ⚠️ **Ele marca muitas vezes TODAS as categorias sem dizer o
+  quê** — aí a segunda pergunta traz a lista do que VOCÊ vê na foto, um
+  defeito por opção («a pala tapa as sobrancelhas», «o emblema lê como
+  fivela»). Pergunta genérica devolve «ajustar tudo» outra vez.
+- **Leia o campo «Outro»**: o essencial vem lá («ainda aparece linha azul no
+  pescoço», «parece meio careca»), e mais de uma vez contradisse a opção.
+- **Opção com duas saídas** («tirar ou mudar») é uma pergunta por fazer:
+  pergunte de novo, ou diga qual leu e porquê antes de agir.
+
 ---
 
 ## Falha segura

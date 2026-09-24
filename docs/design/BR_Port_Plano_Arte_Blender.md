@@ -1502,6 +1502,9 @@ acolhedor, quadrado lê sólido e fiável, triângulo lê ameaça [6]. Uma leitu
 possível do GDD — e a escolha é dele: a Dona Cida redonda, o Sr. Ribeiro
 retangular e alto, o Arlindo de ângulos. Com metaballs isto é parâmetro dos
 elipsoides, não peça nova: custo zero sobre a P1.
+✅ **Feita em 24/09 no kit de CAIXAS, e não em metaballs** (`056`): cada um
+tem a sua `Rosto` em `brp_retratos.py` — o Ribeiro retangular e alto, o
+Arlindo de ângulos — e o `_corpo()` partilhado saiu.
 
 **P3. Olhos em ESFERA — o olhar vira rotação, a pálpebra vira casca.** Hoje o
 olho é esclera e pupila em placas, e o olhar desloca a pupila três pixels. Em
@@ -1825,6 +1828,32 @@ decisão é a **`055`**. Na passagem apareceu mais uma armadilha: **com o
 enquadramento MEDIDO, a pose entra depois dele** — com a cabeça já inclinada
 na medida, o busto inteiro mudava de sítio de uma expressão para a outra. O
 passo seguinte é o Sr. Ribeiro e o Arlindo no mesmo kit, e o trabalhador.
+
+#### ✅ Os três no kit afinado (24/09) — a `056`
+
+A contente da Dona Cida lia como ESPANTO (boca aberta, sobrancelha erguida) e
+passou a sorrir de boca fechada e com os olhos. O Sr. Ribeiro (quatro voltas)
+e o Arlindo (seis) estão no mesmo kit, cada um com a sua `Rosto` e o
+enquadramento medido pela SUA cabeça — à escala da Dona Cida a cara dele saía
+pequena. O caminho, volta a volta, está em `art_lab/retratos/ribeiro/` e
+`arlindo/`. O que as voltas ensinaram e vale para o próximo retrato:
+
+- **Numa câmera de cima, o cabelo de um careca só se vê se passar acima do
+  crânio NA IMAGEM**: o que está atrás sobe. A ferradura do Ribeiro sobe da
+  têmpora à nuca e espreita só atrás.
+- **Dois sulcos do nariz à boca desenham parênteses**: a boca lia como a de
+  um boneco de ventríloquo. E o lábio largo e escuro é uma prateleira.
+- **Um tom contrário a alternar lê como pente ou lâminas**: o fio do cabelo e
+  do bigode desenha-se pela sombra entre placas do mesmo tom.
+- **A pala maior desce sobre as sobrancelhas** (avançar é descer), e o boné
+  puxado para trás resolve isso e o tampo grande de uma vez.
+- **Haste e cepo sozinhos são uma cruz**: a âncora é o U dos braços.
+- **Quando tirar a peça suspeita não tira a queixa, a peça é outra**: o
+  «colar azul» do Arlindo era o tampo do tronco, não o pé de gola.
+- **As caras saem da FALA que acompanham**: a pressão do Arlindo é um meio
+  sorriso frio, a grave do Ribeiro é triste.
+
+Falta o **trabalhador do rodapé**, no kit de antes e em AgX.
 
 ### 7.6 Fontes
 

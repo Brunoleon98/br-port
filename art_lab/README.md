@@ -25,6 +25,9 @@ entra no pacote exportado. Uma candidata passa daqui para lá pelo caminho da
 | `f01/vegetacao_grupo/v1`–`v3` | O grupo inteiro do conceito (duas árvores e arbustos) como SVG/PNG solto | ChatGPT |
 | `pacotes/2026-09-23/` | O manifesto SHA-256 do pacote, o estado do checkout dele e o trabalho por commitar que lá havia | ChatGPT |
 | `retratos/cida_seria/v1/`, `v2/`, `quadrada_v1/`–`v3/` | A Dona Cida séria (frente 2): a REDONDA v1, rejeitada, e a v2 que a refaz; a QUADRADA v1, no kit de caixas, que o Bruno escolheu contra a v2; e as quadradas v2 e v3, com os ajustes que ele pediu (a v3 em Standard) — o script do Blender, o PNG, a prancha e a foto do jogo de cada uma | Claude Code, 23–24/09 |
+| `retratos/cida_contente/v1/` | A Dona Cida CONTENTE com um sorriso mais claro: três candidatas no estúdio (fechado, fechado com os olhos a sorrir, de lado), fotografadas no boletim ótimo; o Bruno escolheu a B | Claude Code, 24/09 |
+| `retratos/ribeiro/v1/`–`v4/` | O Sr. Ribeiro no kit afinado, retangular e alto: quatro voltas até à v4, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas | Claude Code, 24/09 |
+| `retratos/arlindo/v1/`–`v6/` | O Capitão Arlindo no kit afinado, de ângulos: seis voltas até à v6, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas | Claude Code, 24/09 |
 
 O pacote de 23/09 trazia 111 arquivos; **103 estão aqui, byte a byte** (confira
 com `manifest_sha256.json`). Ficaram de fora oito, de propósito:
