@@ -3,10 +3,11 @@
 **Como usar:** abra uma conversa nova no repositório `Brunoleon98/br-port` e
 cole este texto. Não é preciso anexar o histórico da conversa anterior.
 
-**Modelo: Opus** para desenhar a forma do trabalhador e ler cada veredito
-(`CLAUDE.md`, «Qual MODELO faz o quê»: gramática de uma peça é decisão). Os
-tiros da bateria, as provas no jogo e o rasto de prosa descem para **Sonnet**
-depois de cada veredito.
+**Modelo: Opus** para desenhar a forma do trabalhador, ler cada veredito e
+desenhar a guarda do `/fechar-sessao`, se houver (`CLAUDE.md`, «Qual MODELO
+faz o quê»: gramática de uma peça e asserção nova são decisão). O texto da
+skill, os tiros da bateria, as provas no jogo e o rasto de prosa descem para
+**Sonnet**.
 
 **Situação:** os três que falam estão no jogo no kit afinado, cada um com a
 sua cabeça, em Standard a −0,35 EV — decisão **`056`**, sobre a `055`. A
@@ -31,6 +32,33 @@ o caminho de cada um, volta a volta, está em `art_lab/retratos/`.
 
 ## 2. O que esta conversa faz — a ordem é do Bruno
 
+- **A melhoria do `/fechar-sessao`, para não desperdiçar lições** — pedido do
+  Bruno ao fechar a conversa anterior. É pequena e pode abrir a sessão.
+  **O que falhou:** a varredura da §5 correu e deixou escapar DUAS lições que
+  só estavam no briefing — como conduzir o veredito de arte com ele (foi para
+  a skill `/arte` só depois de ele perguntar «fechou aprendendo com ela?») e o
+  corte do download do `bpy` (foi para o `CLAUDE.md` na mesma altura). **A
+  causa:** a §5 pergunta «onde isto está escrito?», e o briefing respondia
+  «aqui» — mas o briefing é lido uma vez e morre. O que mudar em
+  `.claude/skills/fechar-sessao/SKILL.md`:
+  - o briefing é SAÍDA da varredura, nunca destino: toda armadilha ou regra
+    que ele cita aponta para onde vive (`CLAUDE.md`, skill, decisão,
+    comentário, README), e a que não aponta é lição por registar;
+  - a tabela «O que se aprendeu / Onde vive» ganha as duas linhas que
+    faltaram: **como trabalhar com o Bruno numa frente** (a skill da área —
+    `/arte`, `/balancear`) e **ambiente e ferramentas** (a receita «Como
+    rodar» do `CLAUDE.md`);
+  - a varredura percorre também as PERGUNTAS feitas ao Bruno e as respostas
+    dele (os vereditos, o campo «Outro», as voltas que uma peça levou), e não
+    só as medições e os erros — foi daí que saíram as duas que escaparam;
+  - a ordem: a varredura antes do briefing, e o briefing escrito a partir
+    dela;
+  - e, se valer o custo, uma guarda: o `conferir_docs.py` (ou uma ferramenta
+    à parte) lê os ⚠️ do briefing mais recente e exige uma referência a um
+    destino em cada um. ⚠️ **Guarda nova é F6, sobe para Opus**, e só se
+    confia nela depois de um ⚠️ sem destino, injetado, a fazer reprovar —
+    e de ver que os ⚠️ que apontam para a conversa (e não para um arquivo)
+    não a enganam.
 - **O trabalhador do rodapé no kit afinado.** É o último retrato no kit de
   antes (`trabalhador_retrato` em `brp_porto.py`) e em AgX, e no boletim fica
   ao lado da Dona Cida. ⚠️ **É de CORPO INTEIRO de propósito** (identifica uma
