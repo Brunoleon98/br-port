@@ -22,8 +22,9 @@ balanceamento mede o mesmo 100,0% / 80,2% / 37,3%. O construtor é o
 ## 1. Comece pelo estado real
 
 - A sessão fechou na branch `claude/optimistic-babbage-08c35t`, à frente da
-  `main` (`194ebd9`, o #82 fundido). Nenhum PR foi aberto. Antes de qualquer
-  checkout, confira no GitHub se ela foi fundida; se não foi, a `059` e os 29
+  `main` (`194ebd9`, o #82 fundido), com o PR
+  https://github.com/Brunoleon98/br-port/pull/83 aberto. Antes de qualquer
+  checkout, confira no GitHub se ele foi fundido; se não foi, a `059` e os 29
   retratos novos só existem nela.
 - Um ref de cada vez no `git fetch`, o código de saída lido sem cano, e
   `git log --oneline origin/main..HEAD` antes de reapontar seja o que for
