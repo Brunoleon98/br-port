@@ -12,9 +12,9 @@ escolhida) e quatro quadradas, até à `quadrada_v3`, que o Bruno aceitou na fot
 do jogo em 24/09. O código saiu do script dela, e as armadilhas de cada peça
 estão escritas lá, tentativa a tentativa; aqui fica o que a peça É.
 
-Estão neste modelo a Dona Cida (`055`) e o Sr. Ribeiro (`056`), cada um com a
-sua `Rosto` — a forma POR PERSONAGEM do plano de arte (P2). O Arlindo continua
-no `_corpo()` do `brp_porto.py` até ser refeito.
+Estão neste modelo os três que falam — a Dona Cida (`055`), o Sr. Ribeiro e o
+Arlindo (`056`) —, cada um com a sua `Rosto`: a forma POR PERSONAGEM do plano
+de arte (P2). O kit de caixas que os fazia saiu do `brp_porto.py` com o último.
 """
 
 from __future__ import annotations
@@ -288,8 +288,9 @@ def _retalho(nome, alvos, cantos, mat, afasta=1.2, espessura=2.0, espelhado=Fals
 
 
 def _ferradura(r, nome, mat, mat_fios, folga=(10.0, 5.0), esp=9.0, frente=-0.10,
-               base=(214.0, 186.0), topo=(250.0, 275.0), camadas=5):
-    """O cabelo de quem é careca: uma faixa em U, das têmporas à nuca.
+               base=(214.0, 186.0), topo=(250.0, 275.0), camadas=5, recuo=2.5):
+    """O cabelo de quem é careca: uma faixa em U, das têmporas à nuca. E, com
+    o topo por baixo do boné, as camadas dos fios do Arlindo.
 
     Segue o contorno de 12 lados da cabeça e guarda só os pontos de trás de
     `frente` (fração do meio-fundo; negativo avança para a cara). Cada par é
@@ -330,7 +331,7 @@ def _ferradura(r, nome, mat, mat_fios, folga=(10.0, 5.0), esp=9.0, frente=-0.10,
             zt0 = topo[0] + (topo[1] - topo[0]) * t ** 0.7
             zb = zb0 + (zt0 - zb0) * c / camadas
             zt = zb0 + (zt0 - zb0) * (c + 1) / camadas
-            f = folga[0] + (folga[1] - folga[0]) * t - (2.5 if recua else 0.0)
+            f = folga[0] + (folga[1] - folga[0]) * t - (recuo if recua else 0.0)
             k_fora = (meia + _lg(f)) / meia
             k_dentro = (meia - _lg(esp)) / meia
             lados.append([bm.verts.new((x * k_fora, y * k_fora, _niv(zb))),
@@ -495,7 +496,9 @@ def _sobrancelhas(r, cara, mat):
     """
     estilo = cara["cenho"]
     if estilo == "torta":
-        lados = {-1.0: _CENHOS["erguida"], 1.0: _CENHOS["franzida"]}
+        # A metade franzida é a CARREGADA: com a `franzida` o Arlindo
+        # contrariado lia pouco (o Bruno, na v1).
+        lados = {-1.0: _CENHOS["erguida"], 1.0: _CENHOS["carregada"]}
     elif estilo in _CENHOS:
         lados = {-1.0: _CENHOS[estilo], 1.0: _CENHOS[estilo]}
     else:
@@ -582,6 +585,18 @@ def _boca(r, M, cara, escuro, labio):
             # boca é o sorriso.
             pecas.append(linha("boca_canto_%+d" % sx, u_c * sx, zb + 0.5, l_c,
                                fora=0.002, inclina=-ang * sx))
+        return pecas
+    if estilo == "sorriso_dentes":
+        # O sorriso do Arlindo, que é o estado NORMAL dele («sempre sorrindo
+        # quando ataca»): o U do fechado, mais fundo, com os DENTES entre a
+        # linha e o bigode. O «sorriso» de cima tem dentes e lia como ESPANTO,
+        # porque os cantos quase não subiam; aqui sobem a 28°.
+        pecas = ([linha("boca", 0.0, zb - 2.5, 22.0)]
+                 + lab("labio", 0.0, zb - 7.0, 22.0, 5.0)
+                 + [_placa(r, "dentes", 0.0, zb + 0.5, 20.0 * k, 3.0, M["cabine"])])
+        for sx in (-1.0, 1.0):
+            pecas.append(linha("boca_canto_%+d" % sx, 16.0 * sx, zb + 0.5, 14.0,
+                               fora=0.002, inclina=-28.0 * sx))
         return pecas
     raise ValueError("boca %r ainda não existe no modelo novo" % estilo)
 
@@ -951,9 +966,434 @@ def ribeiro(M, cara):
     return tronco_l, cab
 
 
+# ────────────────────────────────────────────────────────────── o Arlindo
+# DE ÂNGULOS (plano de arte P2: o triângulo lê ameaça, e ele é o rival que
+# sorri quando ataca). O maxilar é um V — largo nas maçãs, a fechar no
+# queixo —, o bigode é uma divisa, as patilhas acabam em bico e a gola abre
+# em pontas. O boné é a exceção, e redondo de propósito: é a peça redonda por
+# excelência, e oitavado lia como caixa (o Bruno, na v1).
+ARLINDO = Rosto(larg=156.0, fundo=78.0, z=(132.0, 276.0), maxilar=196.0, corte=22.0,
+                z_olho=216.0, z_boca=162.0, pivo=112.0, u_olho=33.0,
+                olho=(42.0, 26.0), iris=(21.0, 23.0), pupila=(11.0, 13.0),
+                u_sobr=(24.0, 44.0), sobr=(24.0, 7.0, 6.0),
+                brilho=7.0, boca_k=1.15, boca_alt=3.5, labio_k=0.55)
+
+
+def _anel_eliptico(larg, fundo, lados=16):
+    """Um anel ELÍPTICO de `lados`, em pixels de desenho: o redondo do boné."""
+    return [(_lg(larg / 2.0) * math.cos(2 * math.pi * i / lados),
+             _pf(fundo / 2.0) * math.sin(2 * math.pi * i / lados)) for i in range(lados)]
+
+
+def _pala(nome, mat, faixa, z_px, avanca=26.0, desce=4.0, esp=5.0, abre=0.92):
+    """A pala do boné: uma cunha em arco que NASCE da curva da faixa.
+
+    `faixa` é (largura, fundo, y do centro) da elipse da faixa, em pixels de
+    desenho; a pala cobre `abre` da largura dela, e cada ponto da base assenta
+    na elipse — com a base a direito (a v3) as pontas da pala saíam soltas dos
+    lados do boné, e o Bruno pediu-a «melhor encaixada».
+
+    ⚠️ ELA NÃO PODE TAPAR AS SOBRANCELHAS, que são metade das caras dele — é
+    a armadilha que o boné de caixas já tinha registado: nesta câmera avançar
+    é descer na imagem (meia unidade por unidade de fundo).
+    """
+    lf, ff, yf = faixa
+    meia = lf / 2.0 * abre
+    pts = []
+    for i in range(13):
+        a = math.pi * i / 12.0
+        x = -math.cos(a) * meia
+        s_ = math.sin(a)
+        y_base = yf - (ff / 2.0) * math.sqrt(max(0.0, 1.0 - (x / (lf / 2.0)) ** 2))
+        pts.append((x, y_base, s_))
+    bm = bmesh.new()
+    camadas = []
+    for dz in (0.0, esp):
+        frente = [bm.verts.new((_lg(x), _pf(yb - avanca * s_), _niv(z_px - desce * s_ + dz)))
+                  for x, yb, s_ in pts]
+        base = [bm.verts.new((_lg(x), _pf(yb + 2.0), _niv(z_px + dz))) for x, yb, _ in pts]
+        camadas.append((frente, base))
+    (fb, bb), (ft, bt) = camadas
+    for i in range(len(pts) - 1):
+        j = i + 1
+        bm.faces.new((bb[i], bb[j], fb[j], fb[i]))
+        bm.faces.new((bt[i], ft[i], ft[j], bt[j]))
+        bm.faces.new((fb[i], fb[j], ft[j], ft[i]))
+        bm.faces.new((bb[j], bb[i], bt[i], bt[j]))
+    bm.faces.new((bb[0], fb[0], ft[0], bt[0]))
+    bm.faces.new((fb[-1], bb[-1], bt[-1], ft[-1]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return _objeto(nome, bm, mat)
+
+
+def _patilha(r, nome, sx, mat, z_topo=252.0, z_bico=198.0, fundo_px=26.0, esp=5.0):
+    """Uma patilha que acaba em BICO para a frente — o corte em ângulo dele."""
+    lx = r.larg / 2.0
+    perfil = ((-_pf(r.fundo / 2.0 - 8.0), z_bico), (-_pf(r.fundo / 2.0 - 10.0), z_topo),
+              (-_pf(r.fundo / 2.0 - 10.0 - fundo_px), z_topo),
+              (-_pf(r.fundo / 2.0 - 10.0 - fundo_px), z_bico + 16.0))
+    bm = bmesh.new()
+    camadas = []
+    for x_px in (lx - 2.0, lx + esp):
+        camadas.append([bm.verts.new((sx * _lg(x_px), y, _niv(zz))) for y, zz in perfil])
+    dentro, fora_ = camadas
+    bm.faces.new(fora_)
+    bm.faces.new(list(reversed(dentro)))
+    for i in range(4):
+        j = (i + 1) % 4
+        bm.faces.new((dentro[i], dentro[j], fora_[j], fora_[i]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return _objeto(nome, bm, mat)
+
+
+def _retalho_cima(nome, alvos, cantos, mat, afasta=1.2, espessura=2.0, n=4):
+    """O `_retalho` para um TETO: os pontos descem por raios de cima até ao
+    tronco. `cantos` são quatro (u, fundo) em pixels de desenho, em planta —
+    é o que pousa uma dragona ao comprido do ombro, que é teto e não peito.
+    """
+    A, B, C, D = cantos
+    bm = bmesh.new()
+    grade = []
+    for j in range(n + 1):
+        fv = j / n
+        lin = []
+        for i in range(n + 1):
+            fu = i / n
+            x = (A[0] * (1 - fu) * (1 - fv) + B[0] * fu * (1 - fv)
+                 + C[0] * fu * fv + D[0] * (1 - fu) * fv)
+            y = (A[1] * (1 - fu) * (1 - fv) + B[1] * fu * (1 - fv)
+                 + C[1] * fu * fv + D[1] * (1 - fu) * fv)
+            ok = _raio(alvos, Vector((_lg(x), _pf(y), 10.0)), Vector((0, 0, -1)))
+            assert ok, "o retalho %s não achou o teto em %s" % (nome, (x, y))
+            lin.append(bm.verts.new(ok[0] + ok[1] * _pf(afasta)))
+        grade.append(lin)
+    for j in range(n):
+        for i in range(n):
+            f = (grade[j][i], grade[j][i + 1], grade[j + 1][i + 1], grade[j + 1][i])
+            bm.faces.new(f)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    o = _objeto(nome, bm, mat)
+    o.modifiers.new("espessura", "SOLIDIFY").thickness = _pf(espessura)
+    return o
+
+
+def arlindo(M, cara):
+    """O busto do Capitão Arlindo, de FRENTE: (tronco, cabeça).
+
+    O QUE A IDENTIDADE DELE JÁ TINHA DECIDIDO, no `_arlindo` de caixas que este
+    substitui: o BONÉ É NAVY e não branco (um boné de capitão branco mede
+    0,016 de Weber contra o balão de fala — sobre o papel claro é um buraco com
+    contorno), o EMBLEMA vai na frente do boné e não pousado na aba, e a GOLA
+    é aberta — familiaridade como ferramenta; fechada com gravata seria o Sr.
+    Ribeiro.
+    """
+    r = ARLINDO
+    pele = M["pele"]
+    sombra = M["pele_escura"]
+    escuro = M["vao"]
+    cabelo = _principled("cabelo_arlindo", base.PALETA["madeira_esc"], rough=0.6, spec=0.2)
+    # ⚠️ O BIGODE EM `madeira` TEM QUASE O VALOR DA PELE (~112 contra ~133) e
+    # sumia na cara; no escuro do cabelo ele lê, e a boca fica separada dele
+    # por uma fresta de pele. A sobrancelha vai ao escuro da boca: debaixo do
+    # boné a testa está na meia-sombra, e o castanho não se separava dela.
+    bigode = _principled("bigode_arlindo", base.PALETA["madeira_esc"], rough=0.7)
+    sobrancelha = _principled("sobrancelha_arlindo", base.PALETA["vao"], rough=0.9)
+    bigode_fundo = _principled("bigode_fundo_arlindo", base.PALETA["cabelo_fundo"],
+                               rough=0.8)
+    # O FIO DO CABELO: o `porta`, quase o castanho — as camadas e as mechas
+    # desenham-se pela sombra entre elas, não por um tom contrário.
+    cabelo_fio = _principled("cabelo_fio_arlindo", base.PALETA["porta"], rough=0.7)
+    bone = _principled("bone_arlindo", base.PALETA["casco"], rough=0.8)
+    faixa = _principled("bone_faixa_arlindo", base.PALETA["capacete"], rough=0.45, spec=0.5)
+    pala = _principled("bone_pala_arlindo", base.PALETA["vao"], rough=0.25, spec=0.7)
+    # A CAMISA é o `azul` da paleta: o `vidro` da v1 era claro e lavado, e o
+    # Bruno pediu «outro azul», mais escuro e saturado. As dragonas ficam
+    # navy; a gola e os bolsos são da cor da camisa — a gola navy lia como um
+    # babeiro (o Bruno, na v2) — e desenham-se pela sombra da borda.
+    camisa = _principled("camisa_arlindo", base.PALETA["azul"], rough=0.9)
+    navy = _principled("navy_arlindo", base.PALETA["casco"], rough=0.85)
+    labio = _principled("labio_arlindo", base.PALETA["pele_escura"], rough=0.8)
+    cab, tronco_l = [], []
+
+    # A CABEÇA: o crânio (quase todo debaixo do boné) e o maxilar em V.
+    # ⚠️ O V DA v1 FECHAVA NUM QUEIXO DE 40, e o Bruno leu-o pontudo demais;
+    # o de 70 da v2 e da v3 ainda saía «mais fino do que os outros
+    # personagens». O de agora fecha em 104 — o da Dona Cida acaba em 126 —,
+    # e o ângulo fica nas maçãs, onde o V começa.
+    # O crânio sobe até dentro da faixa: com o boné para trás (ver abaixo), um
+    # crânio que acabasse aos 276 deixava uma fresta de fundo por baixo dela.
+    cab.append(_loft("cabeca_cranio", [
+        (r.z[1] + 6.0, 140.0, 70.0, 18.0, 2.0),
+        (266.0, r.larg - 4.0, r.fundo, r.corte),
+        (r.maxilar, r.larg, r.fundo, r.corte),
+    ], pele))
+    maxilar = _loft("cabeca_maxilar", [
+        (r.maxilar, r.larg, r.fundo, r.corte),
+        (178.0, 154.0, 76.0, 22.0),
+        (160.0, 140.0, 72.0, 20.0),
+        (145.0, 122.0, 64.0, 18.0),
+        (r.z[0], 104.0, 56.0, 14.0),
+    ], pele, fechar=(False, True))
+    cab.append(maxilar)
+    for sx in (-1.0, 1.0):
+        o = prisma("orelha_%+d" % sx, _contorno_oitavado(16.0, 28.0, 5.0),
+                   _niv(196.0), _niv(230.0), (1.0, 1.0), pele)
+        o.location.x += sx * _lg(r.larg / 2.0 + 2.0)
+        o.location.y += _pf(4.0)
+        cab.append(o)
+
+    cab += _olhos(r, M, cara, pele, escuro)
+    cab += _sobrancelhas(r, cara, sobrancelha)
+    # O nariz da v2 (22 de ponta, 10 de saliência) era grande (o Bruno).
+    nariz = _cunha(r, "nariz", 210.0, 185.0, 9.0, 17.0, 2.0, 8.0, pele)
+    nariz.visible_shadow = False
+    cab.append(nariz)
+    cab.append(_placa(r, "nariz_base", 0.0, 182.5, 18.0, 3.0, sombra))
+    cab += _boca(r, M, cara, escuro, labio)
+    # O BIGODE, CHEIO E REDONDO. As voltas: «maior» (v1), «mais detalhado»
+    # (v3), «mais refinado» (v4) — e na v5 os cinco tufos a alternar um tom
+    # claro liam como os DENTES DE UM PENTE. Agora: uma base escura por asa,
+    # quatro tufos todos no castanho do cabelo por cima dela (o fio é a
+    # sombra fina entre eles, e não um tom contrário) e as PONTAS a descer
+    # pelos cantos da boca, que é o que o torna farto. A sorrir, as asas
+    # abrem: o bigode sobe com as bochechas. O meio parte-se numa fresta de
+    # pele (o sulco do lábio).
+    asa = 5.0 if cara["boca"].startswith("sorriso") else 16.0
+    zb = r.z_boca + 12.0
+    tg = math.tan(math.radians(asa))
+    for sx in (-1.0, 1.0):
+        cab.append(_placa(r, "bigode_%+d" % sx, 18.0 * sx, zb, 40.0, 13.0, bigode_fundo,
+                          fora=0.004, inclina=asa * sx))
+        for k in range(4):
+            du = 5.0 + 8.5 * k
+            cab.append(_placa(r, "bigode_tufo_%+d_%d" % (sx, k), du * sx,
+                              zb + 0.5 - (18.0 - du) * tg - 0.5 * k, 7.6, 11.0 - 0.8 * k,
+                              bigode, fora=0.007, inclina=(asa + 5.0 * k - 6.0) * sx))
+        cab.append(_placa(r, "bigode_ponta_%+d" % sx, 33.0 * sx, zb - 9.0 - 15.0 * tg, 7.0,
+                          13.0, bigode, fora=0.007, inclina=12.0 * sx))
+    cab.append(_placa(r, "bigode_sulco", 0.0, zb + 3.5, 3.0, 7.0, pele, fora=0.009))
+
+    # A BARBA POR FAZER SAIU (o Bruno, na v3): em `pele_escura` lia como barba
+    # cheia, e em cinzento eram manchas nos cantos do maxilar.
+
+    # OS DETALHES DA EXPRESSÃO (o Bruno, na v3: «melhorar e refinar»). A pose,
+    # a boca e a sobrancelha dizem a emoção; estas placas de sombra dizem-na
+    # na pele, onde ela deixa marca:
+    # - o sorriso vinca os cantos dos olhos (as maçãs num tom acima liam como
+    #   RUBOR quadrado, e saíram);
+    # - o franzido carregado vinca a pele ENTRE as sobrancelhas;
+    # - a sobrancelha torta enruga a testa por cima da que sobe.
+    rugas = []
+    if cara["olho"] == "sorrindo":
+        for sx in (-1.0, 1.0):
+            rugas.append(_placa(r, "ruga_olho_%+d" % sx, (r.u_olho + 25.0) * sx, r.z_olho - 3.0,
+                                9.0, 2.0, sombra, esp=_pf(0.8), inclina=-14.0 * sx))
+            rugas.append(_placa(r, "ruga_olho_b_%+d" % sx, (r.u_olho + 24.0) * sx, r.z_olho + 3.0,
+                                8.0, 2.0, sombra, esp=_pf(0.8), inclina=10.0 * sx))
+    if cara["cenho"] == "carregada":
+        for sx in (-1.0, 1.0):
+            rugas.append(_placa(r, "ruga_cenho_%+d" % sx, 5.0 * sx, r.z_olho + 20.0, 2.0, 10.0,
+                                sombra, esp=_pf(0.8), inclina=8.0 * sx))
+    if cara["cenho"] == "torta":
+        rugas.append(_placa(r, "ruga_testa", -40.0, r.z_olho + 37.0, 22.0, 2.0, sombra,
+                            esp=_pf(0.8), inclina=6.0))
+        # E a boca descontente puxa de UM lado: o canto direito desce mais.
+        rugas.append(_placa(r, "boca_canto_torto", 21.0, r.z_boca - 5.0, 8.0, r.boca_alt,
+                            escuro, fora=0.003, inclina=-30.0))
+    for o in rugas:
+        o.visible_shadow = False
+    cab += rugas
+
+    # O CABELO, em três camadas (o Bruno: «meio careca» na v3, e na v4 um
+    # «capacete» liso):
+    # - a CALOTE, cheia, no tom de sombra do cabelo — a mesma receita da Dona
+    #   Cida: o que fica entre os fios é o degrau abaixo, não pele;
+    # - por cima, dos lados e atrás, CAMADAS alternadas (a ferradura do Sr.
+    #   Ribeiro, sem a parte de cima, que é do boné): os fios penteados;
+    # - na testa, uma FRANJA de mechas curtas penteadas de lado, por baixo da
+    #   pala.
+    linha = 262.0
+    calote = _loft("cabelo_calote", [
+        (r.z[1] + 10.0, 134.0, 70.0, 18.0, 4.0),
+        (272.0, r.larg + 4.0, r.fundo + 4.0, r.corte + 2.0, 1.0),
+        (linha, r.larg + 6.0, r.fundo + 6.0, r.corte + 2.0),
+        (228.0, r.larg + 6.0, r.fundo + 6.0, r.corte + 2.0),
+        (204.0, r.larg + 2.0, r.fundo + 4.0, r.corte + 2.0),
+    ], bigode_fundo)
+    bm = bmesh.new()
+    bm.from_mesh(calote.data)
+    bmesh.ops.delete(bm, geom=[vv for vv in bm.verts
+                               if vv.co.z < _niv(linha) - 1e-4 and vv.co.y < _pf(8.0)],
+                     context="VERTS")
+    bm.to_mesh(calote.data)
+    bm.free()
+    cab.append(calote)
+    # ⚠️ SEIS CAMADAS RECUADAS 2,5 NUM TOM CLARO LIAM COMO LÂMINAS
+    # empilhadas (o Bruno, na v5). Três, recuadas 1 e no `porta` — quase o
+    # castanho do cabelo —, dão o fio sem o degrau.
+    cab += _ferradura(r, "cabelo_camada", cabelo, cabelo_fio, folga=(4.0, 4.0), esp=4.0,
+                      frente=-0.55, base=(236.0, 206.0), topo=(272.0, 276.0), camadas=3,
+                      recuo=1.0)
+    for k in range(9):
+        u = -52.0 + 13.0 * k
+        cab.append(_placa(r, "cabelo_mecha_%d" % k, u, linha + 5.0 + (1.5 if k % 2 else 0.0),
+                          15.0, 9.0, cabelo if k % 2 == 0 else cabelo_fio,
+                          fora=0.010, inclina=-22.0))
+    for sx in (-1.0, 1.0):
+        cab.append(_patilha(r, "cabelo_patilha_%+d" % sx, sx, cabelo, z_topo=linha + 2.0))
+
+    # O BONÉ DE CAPITÃO, REDONDO, MOLE E PUXADO PARA TRÁS. As voltas:
+    # - v1: copa alta, oitavada e aberta — o tampo navy, visto de cima, era do
+    #   tamanho da cara, e a pala tapava as sobrancelhas;
+    # - v2: redondo e mais pequeno, com a pala maior, que voltou a tapá-las;
+    # - v3: 12° para trás, que virou o tampo para longe da câmera e subiu a
+    #   pala — mas a copa baixa «parecia uma lata», a pala saía solta dos lados
+    #   e o emblema em caixa «parecia fivela»;
+    # - v4: 5° para trás, a copa mais alta e MOLE (abre em cima e arredonda a
+    #   borda do tampo), a pala nascida da curva da faixa e uma âncora chata.
+    y_bone = 2.0
+    faixa_el = (150.0, 82.0, y_bone)
+    bone_pecas = []
+    bone_pecas.append(_loft("bone_copa", [
+        (304.0, _anel_eliptico(146.0, 78.0), y_bone + 2.0),
+        (301.0, _anel_eliptico(162.0, 90.0), y_bone + 1.0),
+        (294.0, _anel_eliptico(160.0, 88.0), y_bone),
+        (287.0, _anel_eliptico(150.0, 82.0), y_bone),
+    ], bone, fechar=(True, True)))
+    bone_pecas.append(_loft("bone_faixa", [
+        (288.0, _anel_eliptico(152.0, 84.0), y_bone),
+        (274.0, _anel_eliptico(150.0, 82.0), y_bone),
+    ], faixa, fechar=(False, False)))
+    p_ = _pala("bone_pala", pala, faixa_el, z_px=274.0)
+    # A pala não projeta sombra: com ela, a chave apagava as sobrancelhas e
+    # metade dos olhos, que são as caras dele.
+    p_.visible_shadow = False
+    bone_pecas.append(p_)
+    # O FRISO fica POR BAIXO da pala e só a borda da frente sai dela: por
+    # cima, cobria-a toda e a pala lia como vidro (a primeira prévia da v4).
+    friso = _pala("bone_pala_friso", M["metal_claro"], faixa_el, z_px=272.5,
+                  avanca=28.0, esp=1.5, abre=0.93)
+    friso.visible_shadow = False
+    bone_pecas.append(friso)
+    # A ÂNCORA, chata na frente da copa. ⚠️ HASTE E CEPO SOZINHOS SÃO UMA
+    # CRUZ: é o U largo dos braços, virado para cima, que a faz âncora (a
+    # primeira prévia lia-se como crucifixo). O cepo é curto e a argola fica.
+    y_anc = -_pf(45.5)
+    for nome, u, zz, lg, alt, ang in (("ancora_haste", 0.0, 293.5, 3.0, 15.0, 0.0),
+                                      ("ancora_cepo", 0.0, 298.5, 8.0, 2.5, 0.0),
+                                      ("ancora_argola", 0.0, 302.0, 4.5, 4.0, 0.0),
+                                      ("ancora_braco_-1", -6.0, 289.0, 12.0, 3.0, 40.0),
+                                      ("ancora_braco_+1", 6.0, 289.0, 12.0, 3.0, -40.0),
+                                      ("ancora_pata_-1", -11.5, 293.5, 4.0, 4.0, 0.0),
+                                      ("ancora_pata_+1", 11.5, 293.5, 4.0, 4.0, 0.0)):
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(_lg(u), y_anc, _niv(zz)))
+        a_ = bpy.context.active_object
+        a_.name = "bone_%s" % nome
+        a_.scale = (_lg(lg), _pf(2.0), _alt(alt))
+        a_.rotation_euler.y = math.radians(ang)
+        a_.data.materials.append(faixa)
+        bone_pecas.append(a_)
+    pivo = Vector((0.0, _pf(r.fundo / 2.0), _niv(276.0)))
+    tras = Matrix.Translation(pivo) @ Matrix.Rotation(math.radians(-5.0), 4, "X") \
+        @ Matrix.Translation(-pivo)
+    bpy.context.view_layer.update()
+    for o in bone_pecas:
+        o.matrix_world = tras @ o.matrix_world
+    cab += bone_pecas
+
+    # O PESCOÇO E O TRONCO: ombro largo e a descer em V para a cintura.
+    tronco_l.append(prisma("pescoco", _contorno_oitavado(56.0, 50.0, 12.0),
+                           _niv(80.0), _niv(146.0), (1.0, 1.0), pele))
+    # SEM A SOMBRA DO PESCOÇO: com o queixo largo ela já não fazia falta, e lia
+    # como uma LINHA a meio do pescoço (o Bruno, na v3). ⚠️ E a linha AZUL que
+    # sobrou (v5) era o TAMPO do tronco: o anel de cima, 5 px mais largo do
+    # que o pescoço, fechava à volta dele num aro da cor da camisa. Agora esse
+    # anel cabe dentro do pescoço.
+    tronco = _loft("tronco", [
+        (98.0, 50.0, 44.0, 12.0),
+        (92.0, 132.0, 64.0, 22.0),
+        (84.0, 218.0, 76.0, 30.0),
+        (72.0, 262.0, 82.0, 36.0),
+        (54.0, 274.0, 84.0, 38.0),
+        (20.0, 266.0, 82.0, 36.0),
+        (-40.0, 244.0, 78.0, 34.0),
+        (-90.0, 236.0, 76.0, 32.0),
+    ], camisa, contorno=_contorno_12)
+    tronco_l.append(tronco)
+    bpy.context.view_layer.update()
+    # ⚠️ A GOLA ABERTA É LARGA E CURTA: o V de pele comprido, entre duas
+    # pontas, lia como GRAVATA (o Bruno, na v1). Agora a pele é um trapézio
+    # baixo, as pontas abrem para os ombros, e por baixo corre a CARCELA com
+    # os botões — é ela que diz «camisa desabotoada».
+    tronco_l.append(_retalho("peito", [tronco],
+                             ((-26.0, 98.0), (26.0, 98.0), (8.0, 76.0), (-8.0, 76.0)),
+                             pele, afasta=1.0))
+    tronco_l.append(_retalho("carcela", [tronco],
+                             ((-6.0, 78.0), (6.0, 78.0), (6.0, -70.0), (-6.0, -70.0)),
+                             camisa, afasta=1.4))
+    # OS BOTÕES SÃO DE LATÃO, redondos e com o miolo afundado — «mais
+    # estilosos» (o Bruno, na v3): os quadrados brancos liam como pontos de
+    # camisa de hospital; os de latão rimam com o boné e as dragonas.
+    for k, zz in enumerate((62.0, 36.0, 10.0)):
+        ok = _raio([tronco], Vector((0.0, -10.0, _niv(zz))), Vector((0, 1, 0)))
+        assert ok, "o botão não achou a camisa"
+        for nome, rr, sai, mat in (("botao_%d" % k, 4.5, 3.0, faixa),
+                                   ("botao_miolo_%d" % k, 2.0, 3.8, bigode_fundo)):
+            bpy.ops.mesh.primitive_cylinder_add(vertices=10, radius=_lg(rr),
+                                                depth=_pf(1.6),
+                                                location=ok[0] + ok[1] * _pf(sai))
+            b = bpy.context.active_object
+            b.name = nome
+            b.rotation_euler.x = math.radians(90.0)
+            b.data.materials.append(mat)
+            tronco_l.append(b)
+    for sx in (-1.0, 1.0):
+        # A GOLA MAIS MARCADA (o Bruno, na v3): mais saliente e mais grossa, a
+        # borda dela faz a sombra que a desenha. O PÉ DE GOLA à volta do
+        # pescoço (a v4) lia como um «colar azul», e saiu.
+        tronco_l.append(_retalho("gola_%+d" % sx, [tronco],
+                                 ((18.0 * sx, 106.0), (50.0 * sx, 98.0),
+                                  (44.0 * sx, 70.0), (24.0 * sx, 80.0)),
+                                 camisa, afasta=4.0, espessura=3.5, espelhado=sx < 0))
+        # O BOLSO É SÓ A PALA, da cor da camisa, saliente — a sombra dela é o
+        # desenho (o Bruno, na v1: os bolsos navy eram dois retângulos soltos).
+        # A pala do bolso da v4 não se lia (o Bruno): mais saliente, e com o
+        # botão de latão ao meio, que rima com os da carcela.
+        tronco_l.append(_retalho("bolso_pala_%+d" % sx, [tronco],
+                                 ((40.0 * sx, 50.0), (78.0 * sx, 50.0),
+                                  (76.0 * sx, 36.0), (42.0 * sx, 33.0)),
+                                 camisa, afasta=3.6, espessura=3.6, espelhado=sx < 0))
+        ok = _raio([tronco], Vector((sx * _lg(59.0), -10.0, _niv(39.0))), Vector((0, 1, 0)))
+        assert ok, "o botão do bolso não achou a camisa"
+        bpy.ops.mesh.primitive_cylinder_add(vertices=10, radius=_lg(3.5), depth=_pf(1.6),
+                                            location=ok[0] + ok[1] * _pf(4.4))
+        bb = bpy.context.active_object
+        bb.name = "bolso_botao_%+d" % sx
+        bb.rotation_euler.x = math.radians(90.0)
+        bb.data.materials.append(faixa)
+        tronco_l.append(bb)
+    # AS DRAGONAS, FINAS E AO COMPRIDO DO OMBRO (o Bruno, na v1: os blocos na
+    # ponta liam soltos): pousadas por raios de CIMA, do colarinho à ponta do
+    # ombro, com duas riscas douradas na ponta.
+    for sx in (-1.0, 1.0):
+        tronco_l.append(_retalho_cima("dragona_%+d" % sx, [tronco],
+                                      ((40.0 * sx, -12.0), (112.0 * sx, -12.0),
+                                       (112.0 * sx, 12.0), (40.0 * sx, 12.0)),
+                                      navy, afasta=1.5, espessura=3.0))
+        # As riscas: três de 4 liam como PONTOS (o Bruno, na v2), e duas de 8
+        # ainda só se viam nos cantos (na v4) — a dragona tapava-as. Duas de
+        # 11, bem acima dela e a passar-lhe as bordas, de lado a lado.
+        for k, u in enumerate((80.0, 97.0)):
+            tronco_l.append(_retalho_cima("dragona_risca_%+d_%d" % (sx, k), [tronco],
+                                          ((u * sx, -15.0), ((u + 11.0) * sx, -15.0),
+                                           ((u + 11.0) * sx, 15.0), (u * sx, 15.0)),
+                                          faixa, afasta=4.0, espessura=1.5, n=2))
+    return tronco_l, cab
+
+
 # QUEM ESTÁ NESTE KIT, e a cabeça de cada um: o `retratos_de_fala` de
 # `brp_porto.py` tira daqui o construtor e o pivô da pose.
-KIT = {"cida": (CIDA, cida), "ribeiro": (RIBEIRO, ribeiro)}
+KIT = {"cida": (CIDA, cida), "ribeiro": (RIBEIRO, ribeiro), "arlindo": (ARLINDO, arlindo)}
 
 
 def pousar_cabeca(pecas, pose, pivo_px):

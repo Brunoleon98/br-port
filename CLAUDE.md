@@ -1748,6 +1748,13 @@ tranca isso.
   deu 0,0039 a dois camiões com 1.106 pixels diferentes (0,062 pela média).
   **Duas réguas com a mesma promessa conferem-se uma contra a outra no mesmo
   par** — e redução que tem de ser média escreve-se como média (`047`).
+  ⚠️ **E «0 PIXELS ENTRE DUAS CORRIDAS» ACONTECE, MAS NÃO SE GARANTE — nem na
+  mesma máquina.** Medido em 24/09: o mesmo código deu duas Donas Cidas
+  estáveis a 787 pixels uma da outra (Δ máx 45, num pixel), e uma delas bate a
+  0 com a PNG de OUTRA sessão. O palpite «ruído entre máquinas» foi para um
+  commit e estava errado. Quem prova «não mudou» é o `comparar_props.py`
+  (0,0000 nos dois casos), e uma diferença de render não se explica antes de a
+  medir contra uma segunda corrida do mesmo código (`056`).
 - A sombra de contato tem **azimute próprio (250°)**, diferente do azimute do
   mapa: no azimute do mapa ela cai atrás do prop e não se vê.
 - **O importador de SVG do Godot é o ThorVG e não desenha `<text>`.** Texto no
@@ -2636,6 +2643,12 @@ armadilha de uma função, no comentário dela.
   644, e a bateria morreu com código **126 em 0 s**, que não se parece nada com
   um erro de captura. Ao trocar um arquivo por um temporário, copie o modo
   (`os.chmod(tmp, os.stat(p).st_mode)`) antes do `replace`.
+  ⚠️ **E O HEREDOC SEM ASPAS EXECUTA AS CRASES DO TEXTO.** Em 24/09 um
+  `python3 - <<EOF` que escrevia um comentário com `` `franzida` `` apagou a
+  palavra do arquivo — o shell correu-a como comando, e o único rasto foi um
+  `franzida: command not found` no meio da saída. Neste repositório, onde todo
+  comentário cita código entre crases, edição por heredoc é `<<'EOF'`; o que
+  vier do shell entra por argumento ou por arquivo.
 - **⚠️ RÉGUA QUE VARRE CÓDIGO LÊ O ARQUIVO INTEIRO, NUNCA LINHA A LINHA — e a
   que não o faz não REPROVA, escapa CALADA.** O `CLAUDE.md` já registava isto
   para o `grep` de facto em prosa; em 21/09 mordeu dentro da guarda escrita
