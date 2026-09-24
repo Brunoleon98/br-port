@@ -20,9 +20,10 @@ foto: o briefing anterior contou-a mal.
 ## 1. Comece pelo estado real
 
 - A sessão fechou na branch `claude/intelligent-cori-ts6fib`, à frente da
-  `main` (`d7a9fa8`, o #83 fundido). Nenhum PR foi aberto. Antes de qualquer
-  checkout, confira no GitHub se ela foi fundida; se não foi, a `060` e os
-  três tiros só existem nela.
+  `main` (`d7a9fa8`, o #83 fundido), no **PR #84**. Antes de qualquer
+  checkout, confira no GitHub se ele foi fundido; se não foi, a `060` e os
+  três tiros só existem nele — e uma decisão nova numerada a partir da `main`
+  colidiria com a `060`.
 - Um ref de cada vez no `git fetch`, o código de saída lido sem cano, e
   `git log --oneline origin/main..HEAD` antes de reapontar seja o que for
   (`CLAUDE.md`, «O que cabe numa sessão»).
