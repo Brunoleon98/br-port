@@ -1010,18 +1010,24 @@ _CARAS = {
     ("arlindo", "contrariado"): dict(
         boca="descontente", cenho="torta", olho="aberto", olhar="lado",
         pose=(-2.0, 1.0, -9.0)),
-    # Sr. Ribeiro — "quando bravo fica MAIS educado, não menos". A cara grave
-    # dele não é uma cara zangada: é a cordial com a boca em baixo e os olhos
-    # cerrados, que é o que a educação faz com a contrariedade.
+    # Sr. Ribeiro — "quando bravo fica MAIS educado, não menos". Aceito pelo
+    # Bruno na foto do jogo em 24/09 (`art_lab/retratos/ribeiro/v4/`), com a
+    # pose a separar as três — a alavanca mais forte, e na v1 as três liam
+    # como a mesma cara:
+    # - cordial: o sorriso fechado, os olhos a sorrir, a sobrancelha suave e
+    #   a cabeça de lado — a simpatia que torna a dívida difícil de ignorar;
+    # - formal: a boca reta e o queixo um pouco levantado — a postura do banco;
+    # - grave: TRISTE, e não zangado (o Bruno, na v2) — as pontas de dentro das
+    #   sobrancelhas erguidas, o olhar baixo e a cabeça inclinada.
     ("ribeiro", "cordial"): dict(
-        boca="sorriso_curto", cenho="neutra", olho="aberto", olhar="frente",
-        pose=(3.0, -2.0, 3.0)),
+        boca="sorriso_fechado", cenho="suave", olho="sorrindo", olhar="frente",
+        pose=(6.0, -3.0, 5.0)),
     ("ribeiro", "formal"): dict(
         boca="reta", cenho="neutra", olho="aberto", olhar="frente",
-        pose=(0.0, 0.0, 0.0)),
+        pose=(0.0, -3.0, 0.0)),
     ("ribeiro", "grave"): dict(
-        boca="descontente", cenho="franzida", olho="cerrado", olhar="frente",
-        pose=(0.0, 5.0, 0.0)),
+        boca="descontente", cenho="triste", olho="aberto", olhar="baixo",
+        pose=(-4.0, 7.0, -3.0)),
 }
 
 # Quais expressões cada personagem tem. É esta tabela que o gerador percorre —
@@ -1354,74 +1360,12 @@ def _arlindo(M, cara):
     return tronco, pecas
 
 
-def _ribeiro(M, cara):
-    """Terno, gravata e a cabeça grisalha — o banco com um rosto simpático."""
-    escuro = M["vao"]
-    tronco, pecas = _corpo(M, M["pele_clara"], M["casco"], M["pele"])
-
-    # A COROA DE CABELO, e não uma cabeleira. Ele é o mais velho dos três e a
-    # careca é metade da silhueta que o distingue: cabelo só dos lados e uma
-    # faixa a fechar por cima da nuca, ambas oitavadas para acompanharem o
-    # crânio em vez de o encaixotarem.
-    for lado, u in (("e", -1.0), ("d", 1.0)):
-        pecas.append(prisma("cabelo_%s" % lado,
-                            _contorno_oitavado(18.0, 78.0, 6.0),
-                            _niv(214.0), _niv(294.0), (0.85, 1.0),
-                            M["cabelo_grisalho"]))
-        pecas[-1].location.x += u * _lg(58.0)
-    # ⚠️ E O TOPO DELE NÃO PODE COINCIDIR COM O TOPO DA CABEÇA. Acabava nos
-    # mesmos 300, e duas faces de cima coplanares deram um RETÂNGULO PRETO em
-    # cada têmpora — o losango preto deste arquivo, pela terceira vez neste
-    # prop. Acaba seis pixels abaixo, e a coroa passa a ler-se como cabelo a
-    # rarear em vez de um risco de tinta.
-    pecas.append(prisma("cabelo_nuca", _contorno_oitavado(132.0, 20.0, 6.0),
-                        _niv(268.0), _niv(304.0), (1.0, 1.0),
-                        M["cabelo_grisalho"]))
-    pecas[-1].location.y += _pf(32.0)
-
-    pecas += _olhos(M, cara, escuro) + _sobrancelhas(M, cara, escuro)
-    pecas += _nariz(M, M["pele"])
-    pecas += _boca(M, cara, escuro)
-    # A IDADE DELE, em três placas de sombra: os pés-de-galinha e uma ruga na
-    # testa. É o mais velho dos três e o único careca; sem isto a careca fazia
-    # todo o trabalho sozinha, e careca não é idade — é penteado.
-    for lado, u in (("e", -46.0), ("d", 46.0)):
-        pecas.append(_placa("pe_de_galinha_%s" % lado, u, 20.0, 14.0, 5.0,
-                            M["pele"], 0.0, -0.006))
-    pecas.append(_placa("ruga_testa", 0.0, 66.0, 54.0, 5.0, M["pele"],
-                        0.0, -0.006))
-
-    # Camisa, gravata e LAPELAS. As lapelas são o que separa um terno de uma
-    # camisola de gola alta a esta escala: duas placas inclinadas a abrir um V
-    # a partir do colarinho, num navy um passo mais escuro — porque duas peças
-    # do mesmo tom encostadas fundem-se, e o peito voltaria a ser uma chapa.
-    # ⚠️ AS TRÊS CRUZAM-SE, LOGO SÃO TRÊS CAMADAS. A gravata corre por cima da
-    # camisa de v=-21 a v=25 e o nó por cima da gravata de v=17 a v=31: no
-    # mesmo `fora` isso são três caixas a disputar a mesma lasca de espaço.
-    # Ver o bloco do `_no_peito`.
-    tronco.append(_no_peito("camisa", 0.0, 8.0, 56.0, 40.0, M["cabine"]))
-    tronco.append(_no_peito("gravata", 0.0, 2.0, 20.0, 46.0, M["faixa"], 1))
-    tronco.append(_no_peito("gravata_no", 0.0, 24.0, 24.0, 14.0, M["faixa"], 2))
-    for lado, u, ang in (("e", -46.0, -22.0), ("d", 46.0, 22.0)):
-        lapela = _no_peito("lapela_%s" % lado, u, 6.0, 34.0, 62.0,
-                           M["terno_lapela"])
-        lapela.rotation_euler.y = math.radians(ang)
-        tronco.append(lapela)
-    # O LENÇO DE BOLSO. Três pixels de branco no navy, e é o que faz o terno
-    # ler como terno de banco em vez de casaco: peça da FUNÇÃO, como a
-    # plataforma de carga do armazém.
-    # O lenço cai DENTRO da lapela esquerda (u -72..-52 contra -63..-29), então
-    # leva camada própria pela mesma conta da gravata.
-    tronco.append(_no_peito("lenco", -62.0, -12.0, 20.0, 10.0, M["cabine"], 1))
-    tronco.append(_gola("colarinho", M["cabine"]))
-    return tronco, pecas
-
-
-_PERSONAGENS = {"arlindo": _arlindo, "ribeiro": _ribeiro}
-# Quem já passou para o kit afinado de `brp_retratos.py` (`055`). O `_cida`
-# de antes saiu daqui com a passagem; o Sr. Ribeiro e o Arlindo continuam no
-# `_corpo()` deste arquivo até passarem também.
-_NO_KIT_AFINADO = ("cida",)
+_PERSONAGENS = {"arlindo": _arlindo}
+# Quem já passou para o kit afinado de `brp_retratos.py` (`055`, `056`). O
+# `_cida` e o `_ribeiro` de antes saíram daqui com a passagem (as notas de
+# identidade deles foram com eles); o Arlindo continua no `_corpo()` deste
+# arquivo até passar também.
+_NO_KIT_AFINADO = ("cida", "ribeiro")
 
 
 def retratos_de_fala(M, est):
@@ -1443,14 +1387,15 @@ def retratos_de_fala(M, est):
             nome = "retrato_%s_%s" % (personagem, expressao)
             cara = _CARAS[(personagem, expressao)]
             if personagem in _NO_KIT_AFINADO:
-                tronco, cabeca = brp_retratos.cida(M, cara)
+                rosto, construtor = brp_retratos.KIT[personagem]
+                tronco, cabeca = construtor(M, cara)
                 pecas = tronco + cabeca
                 medir = [o for o in cabeca
                          if o.name.startswith(("cabeca", "cabelo", "coque"))]
                 for peca in pecas:
                     peca.name = "%s_%s" % (nome, peca.name)
                 brp_retratos.enquadrar(est.cena, nome, pecas, medir)
-                brp_retratos.pousar_cabeca(cabeca, cara["pose"], brp_retratos.CIDA.pivo)
+                brp_retratos.pousar_cabeca(cabeca, cara["pose"], rosto.pivo)
                 origem(nome, tipo="retrato")
                 est.registrar(nome, pecas, ancora="retrato",
                               cor=brp_retratos.COR_RETRATO)
