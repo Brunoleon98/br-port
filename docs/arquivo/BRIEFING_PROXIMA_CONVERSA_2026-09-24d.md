@@ -22,8 +22,8 @@ o caminho de cada um, volta a volta, está em `art_lab/retratos/`.
 ## 1. Comece pelo estado real
 
 - A sessão fechou na branch `claude/elegant-carson-ttlss4`, à frente da `main`
-  (`5276efa`, o #80 fundido). Nenhum PR foi aberto. Antes de qualquer
-  checkout, confira no GitHub se ela foi fundida; se não foi, a `056` e os
+  (`5276efa`, o #80 fundido), com o **PR #81** aberto. Antes de qualquer
+  checkout, confira no GitHub se ele foi fundido; se não foi, a `056` e os
   retratos novos só existem nela.
 - **Um ref de cada vez no `git fetch`**, código de saída lido **sem cano**, e
   `git log --oneline origin/main..HEAD` antes de reapontar seja o que for.
