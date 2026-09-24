@@ -81,6 +81,8 @@ tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # todas de uma vez
 
 # Blender como biblioteca Python (~1 GB, minutos)
 pip install "bpy==4.5.0"                                      # precisa de Python 3.11
+# ⚠️ o wheel tem 373 MB e o download já se cortou a meio (o pip diz que o
+# HASH não bate, não que a rede caiu): `pip download` primeiro, instala do arquivo
 python3 tools/gerar_props_iso.py brport_vs/art/props [prop ...]
 python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
   --sem-pavimento brport_vs/art/porto_mapa_iso.svg
