@@ -1582,6 +1582,8 @@ quando as P1–P4 tiverem sido vistas.
 ### 7.3 Props e cenário
 
 **C1. Declarar a transformada, e decidir AgX × Standard** — a 7.1. Global.
+✅ **Declarada em 24/09** (`COR_PADRAO` no estúdio, AgX); a escolha nos props
+continua do Bruno. Nos retratos é Standard a −0,35 EV (`055`).
 
 **C2. Gradiente VERTICAL por coordenada — o pé do prop mais escuro.** Escurecer
 a base e clarear o topo agarra a peça ao chão e é marca da arte estilizada de
@@ -1813,6 +1815,16 @@ muda outra vez só a caixa do `boletim`. O que ela ensinou:
   mechas as frestas acendiam-se como elas, e a rampa lia como uma placa.
 - **No kit, `inclina` positivo à esquerda baixa a ponta de DENTRO** (é o
   «franzida»): um arco de sobrancelha pede o sinal contrário.
+
+#### ✅ Aceita e no jogo (24/09) — a `055`
+
+O Bruno aceitou a `quadrada_v3` na foto do jogo. O código foi para o estúdio
+(`blender/brp_retratos.py`, que o `retratos_de_fala` chama para a Dona Cida)
+e as três expressões dela estão em `brport_vs/`, em Standard a −0,35 EV. A
+decisão é a **`055`**. Na passagem apareceu mais uma armadilha: **com o
+enquadramento MEDIDO, a pose entra depois dele** — com a cabeça já inclinada
+na medida, o busto inteiro mudava de sítio de uma expressão para a outra. O
+passo seguinte é o Sr. Ribeiro e o Arlindo no mesmo kit, e o trabalhador.
 
 ### 7.6 Fontes
 

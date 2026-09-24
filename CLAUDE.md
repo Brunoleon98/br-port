@@ -1083,12 +1083,14 @@ tranca isso.
   no topo da doca. A esta escala quem separa não é o tom, é a LINHA escura, e
   isso confere-se no render e não na tabela de cores.
   ⚠️ **E ENTRE O HEX E O PNG HÁ UMA CAMADA QUE NINGUÉM ESCOLHEU: o AgX.** O
-  `preparar_cena()` não declara a transformada de vista e o Blender 4.x dá AgX
-  a toda cena nova. Medido em 23/09: o `#eef2f5` sai a 191 num plano de
-  emissão, e **nenhum prop passa de ~190 no p99** (231–236 em Standard, sem
-  estourar um pixel). O mapa é SVG e não passa por ele. Todo contraste de prop
-  medido em jogo foi medido através do AgX; trocar é decisão do Bruno
-  (plano de arte, §7).
+  Blender 4.x dá AgX a toda cena nova, e até 24/09 nenhum arquivo o dizia;
+  hoje o estúdio escreve-o (`COR_PADRAO`). Medido em 23/09: o `#eef2f5` sai a
+  191 num plano de emissão, e **nenhum prop passa de ~190 no p99**. O mapa é
+  SVG e não passa por ele. Todo contraste de prop medido em jogo foi medido
+  através do AgX; a troca nos props é decisão do Bruno (plano de arte, §7).
+  **Nos retratos de fala ele escolheu Standard a −0,35 EV** (`055`) — ⚠️ a
+  0 EV a gola estourava: 54% dos pixels claros a 255. Troca de transformada
+  mede-se pelo ESTOURO, não só pelo p99.
 - **Peça que avança o CHÃO de um prop avança a PEGADA, e as faces não têm a
   mesma folga.** Antes de escolher em que face sai um deck, uma escada ou um
   toldo que pousa, meça a folga de cada uma em `porto_mapa_ancoras.json` — o
@@ -1449,6 +1451,10 @@ tranca isso.
   caixa do grupo, ela juntava o `x` de um braço com o `y` de uma bota e o `z`
   do capacete e errava por 17px. Caixa de grupo serve para saber se algo cabe
   num sítio; não serve para dizer o que a câmera vê.
+  ⚠️ **E A CAIXA DE UMA PEÇA SÓ também tem, se ela for redonda.** O validador
+  do Blender passou a medir peça a peça e ficou nos oito cantos da caixa de
+  cada uma: em 24/09 o coque da Dona Cida «saía do quadro» a −1 px com o cabelo
+  a começar a 15 no PNG. Hoje projeta os vértices da malha avaliada (`055`).
 - **⚠️ NUM ROSTO PEQUENO, A POSE VALE MAIS DO QUE A CARA.** Os nove retratos
   de 13/09 tinham três bocas, três sobrancelhas e três olhos diferentes — e a
   queixa foi que eram pouco expressivos, com razão: numa cara de 56px o que

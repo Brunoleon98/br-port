@@ -872,8 +872,10 @@ muda só a caixa do retrato do boletim. A pedido dele há também a
 **quadrada melhorada** (`art_lab/retratos/cida_seria/quadrada_v1/`), no kit de
 caixas, para escolher QUAL modelo melhorar. **Ele escolheu a quadrada** e
 pediu ajustes duas vezes (cabelo, óculos, tronco, rosto; depois cores e
-corpo, com **Standard nos retratos**): a candidata é a `quadrada_v3/`, à
-espera do olhar dele na foto do jogo. Com ela a oficina não
+corpo, com **Standard nos retratos**), e **aceitou a `quadrada_v3/` na foto
+do jogo** (`055`): a Dona Cida está no jogo nas três expressões, pelo kit
+afinado de `blender/brp_retratos.py`. Falta o Sr. Ribeiro, o Arlindo e o
+trabalhador no mesmo kit. Com ela a oficina não
 muda — o Sr. Ribeiro, o Arlindo e o trabalhador recebem as mesmas melhorias.
 
 ---

@@ -1,8 +1,9 @@
 # Dona Cida, séria — QUADRADA v3: o kit de caixas, afinado
 
-**Estado: candidata, à espera do Bruno.** Nada daqui está no jogo: o PNG de
-`brport_vs/art/props/retrato_cida_seria.png` continua a ser o de
-`blender/brp_porto.py`.
+**Estado: ✅ ACEITA pelo Bruno na foto do jogo (24/09) e no jogo** — a
+decisão é a `055`. O código passou para o estúdio (`blender/brp_retratos.py`),
+e as três expressões da Dona Cida saem de lá; este script fica como registo
+do caminho.
 
 **Base:** `main` em `d9ab39e` (o merge do #79), mais a v2 redonda (`../v2/`),
 de onde o script importa o raio, o enquadramento e os materiais.
@@ -90,6 +91,7 @@ Tudo em comentário no script, junto da linha que corrige:
 | `prancha_hoje_q2_q3.png` | hoje, a quadrada v2 e a v3, na caixa do telefone (168×228) e a 50% |
 | `jogo_boletim_quadrada_v3.png` | a foto do JOGO com esta (tiro `boletim`, 720×1280) |
 | `jogo_boletim_hoje_vs_q3.png` | o cartão do boletim, hoje e com esta, lado a lado |
+| `jogo_tres_caras.png` | **já do estúdio, no jogo**: o boletim com a séria (da bateria), com a preocupada (semana de prejuízo) e com a contente (semana acima da média) |
 
 ## A prova no jogo
 
@@ -106,3 +108,16 @@ SÓ este PNG trocado, `--import` e a bateria inteira
 ⚠️ **E NO JOGO ELA É A ÚNICA EM STANDARD.** No cartão do boletim o trabalhador
 do rodapé, ao lado, continua no AgX; e os outros oito retratos também. A
 integração regera os nove no estúdio dos retratos (o briefing diz como).
+
+## Depois do aceite: as três caras no jogo
+
+O código passou para `blender/brp_retratos.py` (`055`), e o estúdio gera as
+três expressões com as alavancas do kit (boca, sobrancelha, olhar, pose). A
+séria do estúdio é esta: `tools/comparar_props.py` dá 0,0081 (um pixel de
+deslocamento dá 0,022). ⚠️ **A preocupada e a contente não têm tiro na
+bateria** — o boletim da bateria calha num lucro na média, e a cara sai séria.
+As fotos delas em `jogo_tres_caras.png` saíram de uma cópia da árvore, com a
+ferramenta de cena a aceitar o resumo da semana em JSON; pô-las na bateria é
+trabalho à parte (o catálogo de capturas desce ao TEMPO de cada painel, e o
+boletim tem dois que nenhum tiro monta).
+
