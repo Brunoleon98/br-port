@@ -891,6 +891,11 @@ Falta o **sistema de RH** (futuro), que põe cada rosto no currículo e na
 negociação de salário, e o **adesivo** do capacete, que será o emblema que o
 jogador escolhe para a empresa.
 
+**E as nove caras de fala têm foto na bateria** (`060`): a preocupada e a
+contente da Dona Cida e a pressão do Arlindo ganharam tiro, e a cobertura das
+capturas passou a perguntar por CARA — o que o A5 olha de cada personagem já
+não depende de alguém lembrar-se de montar o estado à mão.
+
 ---
 
 ### A6 — O áudio de verdade

@@ -268,6 +268,25 @@ tirar escolhido 0 2 --script res://tools/capturar_tela.gd -- 1  "$SAIDA/escolhid
 # o alvo e a abertura do Boletim calhariam no mesmo turno, e o defeito passaria
 # despercebido — é a armadilha da fixture copiada da execução real.
 tirar boletim 1 9  --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.png" completo
+# ⚠️ AS OUTRAS DUAS CARAS DA DONA CIDA, e o boletim acima só mostra a SÉRIA.
+# O painel é um e o tempo é um, mas a cara sai do TOM da semana, e a cobertura
+# por painel e por tempo dava o boletim por fotografado com duas das três caras
+# sem foto nenhuma (`docs/decisoes/060`). Os tiros não declaram a cara: quem a
+# diz é a linha `Retratos:` do log, lida pelo conferidor da cobertura.
+#
+# A PREOCUPADA é a do principiante: `ocioso` nunca aloca ninguém, e o porto em
+# ruínas fecha a semana 1 no vermelho (o aluguel do píer não paga salários e
+# manutenção). É o `primeira_ruim` — medido em 12/09, 60 de 60 partidas de quem
+# não aloca, e nenhuma de quem aloca. Com `completo` o píer rende mais e a
+# semana fecha no azul: a séria outra vez.
+tirar boletim_ruim 1 9 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim_ruim.png" ocioso
+# A CONTENTE pede histórico — o `otimo` compara com a média das semanas de
+# antes —, logo nunca é a semana 1. `--boletim=2` fecha o da semana 1 como o
+# jogador o fecharia e pára no da 2. Com o porto completo e esta semente a
+# semana 2 lucra 60% mais do que a 1 (R$581.779 → R$933.262); o porto em
+# ruínas só chega ao ótimo na semana 3. O teto de 20 turnos é teto: o tiro
+# pára no 17.
+tirar boletim_otimo 1 17 --script res://tools/capturar_tela.gd -- 20 "$SAIDA/boletim_otimo.png" completo --boletim=2
 # ⚠️ O MENU DE PAUSA ABRE DEPOIS DE JOGAR, e leva `limpo` por causa disso.
 # Ele era aberto ANTES dos oito turnos, que corriam por baixo dele — o mesmo
 # defeito do Boletim, na tela que existe para PARAR o jogo. Aberto no fim, o
@@ -327,6 +346,12 @@ tirar contraoferta - -  --script res://tools/capturar_cena.gd -- res://scenes/pa
 # A despedida pelo "Igualar", que fecha SEMPRE: é a fala de quem perdeu. A de
 # quem ganhou pede duas apostas falhadas, e isso é sorteio — o mesmo tempo, com
 # outra frase, e quem a mede a caber no cartão é o F10.
+# A PRESSÃO DO ARLINDO, que só existe depois de uma aposta RECUSADA — é a
+# última tentativa, e a cara troca a meio da rodada (o tempo continua
+# `rodada`). `aposta=recusada` escolhe o DADO e não o resultado: o sorteio é
+# semeado para a aposta falhar, e quem decide é o `negotiate_rival()` pelo botão
+# (`docs/decisoes/060`).
+tirar contraoferta_pressao - - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta_pressao.png" barco=0 0 aposta=recusada --tocar=Manter --tempo=rodada
 tirar contraoferta_fim - - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta_fim.png" barco=0 0 --tocar=Igualar --tempo=despedida
 # O MENU-CELULAR (item 17). Ele é a primeira tela deste jogo com fundo ESCURO,
 # e a captura é a única coisa que responde se um rótulo herdou a cor de texto

@@ -35,6 +35,17 @@ duas fontes:
   · os tempos que o painel TEM  ← cada `tempo = &"..."` no script da cena
   · os tempos que foram À TELA   ← as linhas `Tempo:` dos mesmos logs
 
+⚠️ E UMA TELA NÃO É UMA CARA. O boletim é um painel de um tempo só, e a Dona
+Cida tem nele três caras — a do tom da semana. Até 24/09 a bateria mostrava a
+séria e nunca a preocupada nem a contente, e a pergunta por tempo ficava verde
+(`docs/decisoes/060`). O catálogo desce mais um andar, pelas mesmas duas
+fontes:
+
+  · as caras que o jogo TEM     ← o `POR_EXPRESSAO` do `scripts/Retratos.gd`
+  · as caras que foram À TELA   ← as linhas `Retratos:` dos mesmos logs, que
+                                   as ferramentas só escrevem depois de provar
+                                   que a cara mudou a foto (`caras_na_foto.gd`)
+
 Uso:
   python3 tools/conferir_cobertura_paineis.py <pasta-de-fotos>
 
@@ -48,6 +59,7 @@ import sys
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAIN = os.path.join(RAIZ, "brport_vs/scripts/Main.gd")
 MENU = os.path.join(RAIZ, "brport_vs/scripts/PainelMenu.gd")
+RETRATOS = os.path.join(RAIZ, "brport_vs/scripts/Retratos.gd")
 
 # OS TEMPOS QUE FICAM SEM FOTO, e por quê — a lacuna DECLARADA, nunca a
 # cobertura. A afirmação perigosa é a positiva (`docs/decisoes/042`): "este
@@ -205,6 +217,66 @@ def tempos_do_painel(cena, falhas):
     return tempos
 
 
+def bloco_equilibrado(texto, inicio):
+    """O texto entre a chaveta aberta em `inicio` e a que a fecha."""
+    nivel = 0
+    for i in range(inicio, len(texto)):
+        if texto[i] == "{":
+            nivel += 1
+        elif texto[i] == "}":
+            nivel -= 1
+            if nivel == 0:
+                return texto[inicio + 1:i]
+    return None
+
+
+def caras_que_o_jogo_tem(falhas):
+    """As caras do `Retratos.POR_EXPRESSAO`: arquivo -> «personagem/expressão».
+
+    ⚠️ LÊ-SE O ARQUIVO INTEIRO e a tabela por chavetas equilibradas, e TODO
+    valor tem de ser uma constante `preload` do mesmo arquivo — um valor que
+    esta ferramenta não sabe ler REPROVA, pela regra do `_abrir_painel`: saltá-
+    lo tirava a cara do catálogo, e o catálogo encolhido passa sempre.
+
+    ⚠️ E UMA CARA SEM ARQUIVO RESOLVIDO É FALHA, não omissão: dois nomes para o
+    mesmo arquivo também reprovam, porque a pergunta passaria a ser por
+    arquivo e uma das caras ficaria coberta pela foto da outra.
+    """
+    texto = sem_comentarios(open(RETRATOS, encoding="utf-8").read())
+    consts = dict(re.findall(
+        r'const\s+(\w+)\s*:=\s*preload\(\s*"(res://[^"]+)"\s*\)', texto))
+    m = re.search(r'const\s+POR_EXPRESSAO\s*:=\s*\{', texto)
+    tabela = bloco_equilibrado(texto, m.end() - 1) if m else None
+    if tabela is None:
+        falhas.append("não achei a tabela `POR_EXPRESSAO` no Retratos.gd — "
+                      "sem ela não há catálogo de caras.")
+        return {}
+    caras = {}
+    for pm in re.finditer(r'"(\w+)"\s*:\s*\{', tabela):
+        personagem = pm.group(1)
+        corpo = bloco_equilibrado(tabela, pm.end() - 1) or ""
+        for linha in [l.strip().rstrip(",") for l in corpo.split("\n")]:
+            if not linha:
+                continue
+            em = re.fullmatch(r'"(\w+)"\s*:\s*(\w+)', linha)
+            if not em or em.group(2) not in consts:
+                falhas.append(
+                    "o POR_EXPRESSAO de «%s» tem uma entrada que esta "
+                    "ferramenta não sabe ler: `%s`. Cada cara é "
+                    "`\"<expressão>\": <CONSTANTE>`, com a constante num "
+                    "`preload` do mesmo arquivo — nunca se salta."
+                    % (personagem, linha))
+                continue
+            arquivo = consts[em.group(2)]
+            nome = "%s/%s" % (personagem, em.group(1))
+            if arquivo in caras:
+                falhas.append("«%s» e «%s» apontam para o mesmo %s."
+                              % (caras[arquivo], nome, arquivo))
+                continue
+            caras[arquivo] = nome
+    return caras
+
+
 def cenas_fotografadas(pasta, falhas):
     """O que as ferramentas de captura disseram ter na tela, log a log."""
     logs = sorted(f for f in os.listdir(pasta) if f.endswith(".log"))
@@ -212,10 +284,11 @@ def cenas_fotografadas(pasta, falhas):
         falhas.append(
             "não há log nenhum em %s — sem os logs da bateria não há o que "
             "medir, e 'nada em falta' seria um verde de graça." % pasta)
-        return set(), 0
+        return set(), set(), set()
 
     vistas = set()
     tempos = set()
+    caras = set()
     com_linha = 0
     for nome in logs:
         with open(os.path.join(pasta, nome), encoding="utf-8") as fh:
@@ -227,6 +300,14 @@ def cenas_fotografadas(pasta, falhas):
                                       % (nome, linha.strip()))
                         continue
                     tempos.add((partes[1], partes[2]))
+                    continue
+                if linha.startswith("Retratos:"):
+                    partes = linha.split()
+                    if len(partes) < 2 or not partes[1].startswith("res://"):
+                        falhas.append("%s: linha `Retratos:` que não se lê: %s"
+                                      % (nome, linha.strip()))
+                        continue
+                    caras.add(partes[1])
                     continue
                 if not linha.startswith("Paineis:"):
                     continue
@@ -242,7 +323,7 @@ def cenas_fotografadas(pasta, falhas):
         falhas.append(
             "nenhum dos %d logs traz a linha `Paineis:` — o rótulo mudou nas "
             "ferramentas de captura, ou elas não correram." % len(logs))
-    return vistas, tempos
+    return vistas, tempos, caras
 
 
 def main():
@@ -260,7 +341,7 @@ def main():
         falhas.append(
             "o Main.gd não declarou painel nenhum — a expressão deixou de "
             "casar, e um catálogo vazio faria tudo passar.")
-    vistas, tempos_vistos = cenas_fotografadas(pasta, falhas)
+    vistas, tempos_vistos, caras_vistas = cenas_fotografadas(pasta, falhas)
 
     for cena in sorted(abertas - vistas):
         falhas.append("o jogo abre %s e fotografia nenhuma o mostra." % cena)
@@ -306,6 +387,34 @@ def main():
             "nenhum painel declara tempos — a expressão deixou de casar, e um "
             "catálogo vazio faria os segundos tempos passarem sem foto.")
 
+    # AS CARAS, um andar abaixo do tempo (`docs/decisoes/060`). O catálogo é o
+    # registo dos retratos; a foto é o que as ferramentas PROVARAM que mudou
+    # os pixels — uma cara que o painel pede e a tela não mostra não chega
+    # aqui.
+    caras = caras_que_o_jogo_tem(falhas)
+    if not caras and not falhas:
+        falhas.append(
+            "o POR_EXPRESSAO não tem cara nenhuma — a expressão deixou de "
+            "casar, e um catálogo vazio faria toda cara passar sem foto.")
+    # ⚠️ NENHUMA CARA EM LOG NENHUM É OUTRO DEFEITO, pela razão da linha
+    # `Paineis:`: se o rótulo mudar, somem todas de uma vez, e quem lesse nove
+    # caras sem foto procuraria nove tiros em vez de um `print`.
+    if caras and not caras_vistas:
+        falhas.append(
+            "nenhum log traz a linha `Retratos:` — o rótulo mudou no "
+            "`caras_na_foto.gd`, ou a prova das caras não correu.")
+    for arquivo, nome in sorted(caras.items(), key=lambda par: par[1]):
+        if arquivo not in caras_vistas:
+            falhas.append("a cara «%s» (%s) não aparece em fotografia "
+                          "nenhuma." % (nome, arquivo))
+    # ⚠️ E A CARA QUE A FOTO MOSTRA E O REGISTO NÃO TEM TAMBÉM REPROVA: é um
+    # painel a carregar retrato por fora do `Retratos.gd`, que é o ponto único
+    # das caras — e a pergunta de cima ficaria verde sobre um catálogo que não
+    # sabe dele.
+    for arquivo in sorted(caras_vistas - set(caras)):
+        falhas.append("uma foto mostra %s, que o POR_EXPRESSAO do "
+                      "Retratos.gd não registra." % arquivo)
+
     if falhas:
         print("COBERTURA FALHOU — %d problema(s):" % len(falhas))
         for f in falhas:
@@ -320,6 +429,8 @@ def main():
               len(TEMPOS_SEM_FOTO), ":" if TEMPOS_SEM_FOTO else "."))
     for (cena, tempo), porque in sorted(TEMPOS_SEM_FOTO.items()):
         print("  · %s «%s» — %s" % (cena, tempo, porque))
+    print("%d cara(s) de %d personagem(ns), todas fotografadas." % (
+        len(caras), len({n.split("/")[0] for n in caras.values()})))
     print("COBERTURA OK")
     return 0
 

@@ -407,6 +407,13 @@ Teste e import rodam sem tela.
    literal), e o que não se pode fotografar fica DECLARADO como lacuna — a
    afirmação perigosa é a positiva, e a lacuna só envelhece para o lado que
    reprova (`docs/decisoes/051`).
+   ⚠️ **E UMA TELA NÃO É UMA CARA.** O boletim é um painel de um tempo só, e
+   a Dona Cida tem nele três caras — a do tom da semana: a bateria mostrava a
+   séria, e a cobertura por tempo dava-o por fotografado. Hoje as ferramentas
+   imprimem `Retratos:` só depois de ESCONDER a cara e ver a foto mudar (com
+   o ruído da janela a zero), e o conferidor lê o `POR_EXPRESSAO`. E a cara de
+   um tempo lê-se no nó, não no nome: a «entrada» do Sr. Ribeiro mostra a
+   FORMAL, e o briefing contou-a como sem foto (`060`).
    Para olhar um detalhe pequeno, `tools/recortar_captura.gd` amplia sem
    suavizar: a 19px um ícone não se julga a olho na captura inteira, e foi
    ampliando que se viu que o ícone `doca` era um fantasma no painel branco.
@@ -553,6 +560,10 @@ Teste e import rodam sem tela.
    porque nomeia a CAUSA onde as outras nomeiam o sintoma; o comentário é que
    passou a dizer a verdade. **Comentário que atribui poder a uma asserção
    mede-se como se mede a asserção.**
+   ⚠️ **E A GUARDA CONTRA A SORTE NÃO REPROVA COM A SEMENTE QUE CALHOU BEM.**
+   O tiro da pressão do Arlindo semeia o dado para a aposta falhar, e o
+   mutante sem a semeadura PASSOU: a semente da ferramenta já recusava. O que
+   a prova é variar a semente — sem ela, duas de seis aceitavam (`060`).
    ⚠️ **E A PREVISÃO DE QUEM REPROVA «NO DIA EM QUE» MEDE-SE NESSE DIA.** O
    conferidor das capturas dizia que, com a lista de lacunas vazia, uma
    expressão partida só seria apanhada pela linha do catálogo vazio. Em 23/09

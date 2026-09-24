@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 24/09/2026 — os trinta rostos do trabalhador (`059`)
+> **Última atualização:** 24/09/2026 — as caras sem foto (`060`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -113,10 +113,10 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **O balanço, o nome longo e o chanfro** (23/09, `053`) — escolha do Bruno, os três | (g) o balanço tem foto de uma partida JOGADA e paga pelo botão, e a lacuna declarada saiu; (h) o F10 mede o diário com o nome de 24 letras (597 de 620 px) e reprova frase com nome que ninguém mediu; (i) o chanfro passou de 0,9 a **0,60**, derivado da curva e do porta-contêiner — a carroçaria saía 0,207 do asfalto, hoje fica 0,005 dentro (**D13 §7j**). |
 | **As telas do fim em fila** (23/09, `054`) — escolha do Bruno | o «Pagar» abria o boletim e o fim de fase POR CIMA da resposta do Sr. Ribeiro, e «Jogar de novo» saltava as duas. Hoje o `Main` põe-nos em fila (`_na_vez()`): resposta → boletim → fim, nos três caminhos do fim; o GameState não mudou. **F11** percorre-os pelos botões; o tiro `balanco` passou de 3 painéis a 1. 7 mutantes: o do `fechou` só a captura apanha |
 | **A frente 1 do A5** (23/09) — escolha do Bruno | o calendário mostra na grelha os ícones da legenda, por baixo do número (lado a lado alargava o cartão a 534 px), e o **D36** tranca-o; «Primeira parcela paga» no lugar de «Fim da Fase 1»; o Arlindo diz «meu caro» |
 | **Os trinta rostos do trabalhador** (24/09, `059`) — escolha do Bruno | 2 sexos × 3 idades × 5 cores do IBGE, três voltas até à v3. Cada trabalhador nasce com o seu ROSTO (campo no save, `SAVE_VERSION` 8) por um sorteio próprio: o `_rng` medido não se mexe (100 / 80,2 / 37,3). +7,33 MB no pacote (+22% do APK), sem perda por escolha dele. **F12** e a folha `trabalhadores` na bateria |
+| **As caras sem foto** (24/09, `060`) | a cobertura desce à CARA: as ferramentas imprimem `Retratos:` só depois de esconder a cara e ver a foto mudar, e o conferidor lê o `POR_EXPRESSAO`. Tiros `boletim_ruim`, `boletim_otimo` e `contraoferta_pressao`: **9 de 9** caras (eram 6; a formal já tinha foto). 35 tiros |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -223,7 +223,7 @@ podre (A4) — em `HISTORICO.md`.
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
-| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desde `051` desce ao TEMPO de cada painel, e a bateria são **32 tiros**, sem lacuna declarada (`053`) |
+| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desce ao TEMPO (`051`) e à CARA (`060`), sem lacuna declarada |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
 | `docs/REVISAO_GERAL_2026-09-17.md` | Revisão geral de 17/09: defeitos e melhorias, com evidência |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |

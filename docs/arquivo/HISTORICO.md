@@ -738,3 +738,9 @@ mais antigas:
 |---|---|
 | **Os segundos tempos** (23/09, `051`) | a cobertura era por CENA e a bateria só via o 1º tempo: a despedida do Arlindo dizia «Cliente ouvindo a proposta» com o negócio fechado. Hoje 7 tempos em 3 painéis, 6 com foto e o balanço DECLARADO; o F10 mede cada um a caber — um nome de 24 letras sem espaço saía do cartão (`_SMART`) |
 | **A mão direita e o cruzamento** (23/09, `052`) — escolha do Bruno | as rotas cruzavam-se em 10 pontos (27–72 sobreposições por meia hora) e andavam pela ESQUERDA na tela: a projeção espelha o chão. Hoje mão direita, o retorno encosta, e quatro regras sem ninguém parar na rua — trava do berço, cedência na boca, previsão nas curvas, arranque espaçado. A curva aberta corta o chanfro em diagonal. Zero sobreposições; o **D35** anda 1 h de jogo e varre 3.080 entradas contra uma simulação à parte. 17 mutantes, 16 reprovam |
+
+**E, para caber as caras sem foto (`060`),** desceu a mais antiga:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **O balanço, o nome longo e o chanfro** (23/09, `053`) — escolha do Bruno, os três | (g) o balanço tem foto de uma partida JOGADA e paga pelo botão, e a lacuna declarada saiu; (h) o F10 mede o diário com o nome de 24 letras (597 de 620 px) e reprova frase com nome que ninguém mediu; (i) o chanfro passou de 0,9 a **0,60**, derivado da curva e do porta-contêiner — a carroçaria saía 0,207 do asfalto, hoje fica 0,005 dentro (**D13 §7j**). |
