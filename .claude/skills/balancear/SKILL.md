@@ -80,8 +80,9 @@ $G --headless --path brport_vs --script res://tools/simular_balanceamento.gd \
    -- 600 20260825 /tmp/antes.json | tee /tmp/antes.txt
 ```
 
-**600, e a mesma semente.** É o que o `testes.yml` roda a cada push
-são teste de fumaça: têm ±18 pontos de margem, e comparar 36,7% com 47,3% é
+**600, e a mesma semente.** É o que o `testes.yml` roda a cada push na
+`main` e a cada PR (não ao empurrar a branch — `CLAUDE.md`). Uma rodada curta
+é teste de fumaça: tem ±18 pontos de margem, e comparar 36,7% com 47,3% é
 comparar sorteio. O próprio simulador avisa quando a amostra é curta demais.
 
 **Medido em 02/09: as 600 partidas levam 26 segundos.** Esta skill dizia

@@ -877,8 +877,20 @@ do jogo** (`055`): a Dona Cida está no jogo nas três expressões, pelo kit
 afinado de `blender/brp_retratos.py`. **E os outros dois seguiram-na** (`056`):
 a contente dela passou a sorrir de boca fechada, e o Sr. Ribeiro (retangular
 e alto, quatro voltas) e o Arlindo (de ângulos, seis voltas) estão no jogo no
-mesmo kit, cada um com a sua cabeça e aceites na foto do jogo. Falta o
-**trabalhador do rodapé**, o único retrato ainda no kit de antes e em AgX.
+mesmo kit, cada um com a sua cabeça e aceites na foto do jogo. **E o
+trabalhador do rodapé também** (`058`): em BUSTO, no mesmo kit e em Standard,
+com o capacete e o colete que o identificam — aceite na v6, depois de seis
+voltas (`art_lab/retratos/trabalhador/`).
+
+**A seguir, pedido do Bruno: as VARIAÇÕES do trabalhador** — 2 sexos × 3
+idades × as 5 cores do IBGE, **30 retratos**, com rabo de cavalo nas mulheres,
+grisalho e rugas nos veteranos, cara lisa nos jovens e bigode ou cavanhaque em
+alguns homens; sem caricatura (muda o tom de pele e o cabelo, não o desenho do
+rosto). Hoje todo trabalhador usa o mesmo retrato e nasce com o píer; a
+variação entra escolhida pelo `id`, sem campo no save nem sorteio, e o
+**sistema de RH** (futuro) põe cada uma no currículo e na negociação de
+salário. E o **adesivo** do capacete será o emblema que o jogador escolhe para
+a empresa.
 
 ---
 

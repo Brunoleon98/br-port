@@ -1,6 +1,6 @@
 ---
 name: fechar-sessao
-description: Fecha uma sessão de trabalho no BR Port com o que a mudança exige — as suítes certas, a captura quando o visual mudou, a varredura do que se aprendeu, o ESTADO_DO_PROJETO.md em dia e o commit. Acione com "fechar a sessão", "fecha isso", "terminei", "pode commitar", "encerrar", "hora de fechar", ou antes de qualquer commit no fim de um bloco de trabalho. NÃO é para rodar teste no meio do caminho — para isso rode a suíte direto.
+description: Fecha uma sessão de trabalho no BR Port com o que a mudança exige — as suítes certas, a captura quando o visual mudou, a varredura do que se aprendeu, o ESTADO_DO_PROJETO.md em dia, o briefing da próxima conversa e o commit. Acione com "fechar a sessão", "fecha isso", "terminei", "pode commitar", "encerrar", "hora de fechar", ou antes de qualquer commit no fim de um bloco de trabalho. NÃO é para rodar teste no meio do caminho — para isso rode a suíte direto.
 ---
 
 # Fechar sessão — BR Port
@@ -213,6 +213,23 @@ Percorra a conversa e, para cada coisa que se descobriu — uma armadilha, um
 número medido, uma tentativa que falhou —, pergunte **onde isso está escrito**.
 Se a resposta for "só aqui", ela se perde quando a conversa fechar.
 
+**Percorra também as PERGUNTAS feitas ao Bruno e as respostas dele** — os
+vereditos, o que ele escreveu no campo «Outro», as voltas que uma peça levou
+até ao aceite. É daí que sai o que se aprende sobre COMO trabalhar com ele numa
+frente, e é o que as medições e os erros não mostram. Mordeu em 24/09: a
+varredura correu sobre medições e erros e deixou escapar duas lições — como
+conduzir o veredito de arte e o corte do download do `bpy` —, que só chegaram
+ao destino porque ele perguntou «fechou aprendendo com ela?».
+
+⚠️ **E "NO BRIEFING" NÃO É RESPOSTA.** O briefing lê-se uma vez e morre; a
+pergunta «onde isto está escrito?» não pode ser respondida por ele, e foi assim
+que as duas de 24/09 escaparam. Pior: medido nos 36 briefings do arquivo,
+**249 dos 306 avisos** não nomeavam destino nenhum, e «o CI não roda ao
+empurrar a branch» viveu em trinta briefings seguidos sem nunca chegar ao
+`CLAUDE.md` — que afirmava o contrário — até cair do seguinte (`057`). O
+briefing é SAÍDA desta varredura (§7): primeiro a lição vai para o destino da
+tabela abaixo, depois o briefing APONTA para lá.
+
 Inclua nesta varredura **os documentos que a própria mudança envelheceu**. Esta
 skill já apontou para um binário do Godot em `/tmp` numa versão que deixou de
 ser a do CI, e ninguém a teria olhado se a varredura só procurasse lições
@@ -232,7 +249,10 @@ número velho E pelo novo.
 | Regra que vale sempre e para todos | `CLAUDE.md` — o único que carrega sozinho |
 | Por que se decidiu assim | `docs/decisoes/NNN-titulo.md`, curto, uma por arquivo |
 | Armadilha de uma função | Comentário nela, contando o que se tentou antes |
+| Como trabalhar com o Bruno numa frente — como perguntar, como ler o veredito | A skill da área: `/arte`, `/balancear` |
+| Ambiente e ferramentas — instalar, baixar, o que o contêiner faz ou não | «Como rodar, aqui dentro», no `CLAUDE.md` |
 | Onde o projeto está hoje | `docs/ESTADO_DO_PROJETO.md` |
+| O que a próxima conversa faz | O briefing (§7) — que APONTA para as linhas de cima, nunca as substitui |
 
 O que **não** merece registro: o que já está escrito, o que só vale para esta
 mudança, e o que ninguém vai reler. Camada de documento é custo.
@@ -285,16 +305,39 @@ em cadeia — partir seria refazer aquilo com outro nome. Quem PODE partir um di
 é o `HISTORICO.md` (32 KB, sem teto, só cresce), e por período; não é urgente, e
 não é este arquivo.
 
-## 7. Commit
+## 7. O briefing da próxima conversa — DEPOIS da varredura
+
+A ordem importa: a §5 corre primeiro e põe cada lição no destino dela; só
+então se escreve o briefing, a partir do que a varredura deixou. Escrito antes,
+ele vira o sítio onde a lição fica "por enquanto" — que é o sítio onde ela
+morre.
+
+- Vive em `docs/arquivo/BRIEFING_PROXIMA_CONVERSA_*.md`, com a data
+  (`AAAA-MM-DD`) no lugar do `*` — a segunda do dia leva `b`, e assim por
+  diante —, com a linha no índice de
+  `docs/arquivo/README.md`, e entra **no mesmo commit do fecho**.
+- **No briefing, ⚠️ marca LIÇÃO, e todo aviso nomeia onde ela vive** — o
+  arquivo (`CLAUDE.md`, um README, o script da função), a decisão (`NNN`) ou a
+  skill (`/arte`). O `tools/conferir_docs.py` reprova o aviso do briefing mais
+  recente que não nomear um destino que exista; o arquivo das sessões não
+  conta, porque apontar para o briefing anterior é apontar para a conversa.
+  Estado e pendência (a branch, o PR por fundir, o que o Bruno ainda decide)
+  escrevem-se sem ⚠️.
+- ⚠️ **A guarda prova que o destino está NOMEADO, não que a lição esteja lá**
+  (`057`). Antes de citar o destino, abra-o e confira que a frase existe.
+- **O prompt vai também na RESPOSTA, num bloco de código copiável** com o
+  texto inteiro — pedido do Bruno em 23/09. O arquivo continua no commit; o
+  bloco é para ele colar sem abrir nada.
+
+## 8. Commit
 
 - Mensagem **em inglês**; código, comentário e documento em português.
 - Diga o que mudou **e por quê**; se algo foi medido, ponha o número.
 - Nada de identificador de modelo em commit, PR ou comentário.
 - Só empurre para a branch designada da sessão, com `git push -u origin <branch>`.
+- ⚠️ **O CI não corre ao empurrar a branch** — só na `main` e em PR
+  (`CLAUDE.md`, «Como rodar»). Até o PR abrir, o verde é o deste contêiner.
 - PR só se pedirem.
-- **O prompt da próxima conversa vai também na RESPOSTA, num bloco de código
-  copiável** com o texto inteiro do briefing — pedido do Bruno em 23/09. O
-  arquivo continua no commit; o bloco é para ele colar sem abrir nada.
 
 ## Falha segura
 

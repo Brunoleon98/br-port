@@ -1853,7 +1853,24 @@ pequena. O caminho, volta a volta, está em `art_lab/retratos/ribeiro/` e
 - **As caras saem da FALA que acompanham**: a pressão do Arlindo é um meio
   sorriso frio, a grave do Ribeiro é triste.
 
-Falta o **trabalhador do rodapé**, no kit de antes e em AgX.
+E o **trabalhador do rodapé** (`058`), em busto, seis voltas — as lições que
+valem além dele:
+
+- **Roupa que passa o ombro é UMA superfície**: painel, alça e faixa como
+  placas empilhadas leem como «vários pedaços colados», e encostadas deixam
+  camisa no meio. O `_envolver` lança os raios em leque de um eixo, das
+  costas por cima do ombro até à frente.
+- **Um quadrado claro com miolo escuro num capacete é uma LANTERNA**: o
+  adesivo é um decalque oval e chato, com uma faixa em vez de um miolo.
+- **Elipse justa não cobre as quinas de uma cabeça quase quadrada**: com o
+  casco à medida, as quinas do crânio furavam a aba. O crânio arredonda onde
+  o capacete o tapa.
+- **Cabelo no valor da pele em meia-sombra lê como sombra**: debaixo de uma
+  aba, o cabelo curto vai ao degrau mais escuro e sai da cabeça.
+- **Busto de quem se identifica pela roupa é mais aberto**: a cabeça a 56% do
+  quadro, não 60%, e o tronco sobe — senão a faixa de baixo sai cortada.
+
+A seguir, as variações dele (plano v3, A5).
 
 ### 7.6 Fontes
 

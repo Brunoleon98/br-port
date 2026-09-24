@@ -274,6 +274,151 @@ def conferir_fonte_operacional(docs):
     return falhas
 
 
+# ── O BRIEFING É SAÍDA DA VARREDURA, NUNCA DESTINO (`/fechar-sessao` §5) ──
+#
+# Em 24/09 o Bruno perguntou «fechou aprendendo com ela?» e a resposta era
+# não: duas lições — como conduzir o veredito de arte com ele, e o corte do
+# download do `bpy` — só viviam no briefing, que se lê uma vez e morre. A
+# varredura perguntava «onde isto está escrito?», e o briefing respondia
+# «aqui». Medido na conversa seguinte, nos 36 briefings do arquivo: dos 306
+# avisos, **249 não nomeiam lugar nenhum**, e um deles — «o CI não roda ao
+# empurrar a branch» — passou por TRINTA briefings (18/09 → 24/09) sem nunca
+# chegar ao `CLAUDE.md`, que no mesmo período afirmava o contrário, e caiu do
+# trigésimo primeiro sem uma palavra (`057`, com os sete mutantes).
+#
+# A pergunta: todo aviso do briefing MAIS RECENTE nomeia onde a lição vive —
+# um arquivo que exista (`CLAUDE.md`, um README, `blender/brp_retratos.py`),
+# uma decisão (`056`) ou uma skill (`/arte`). Os antigos são registo: estão
+# vermelhos quase todos, e reescrevê-los seria apagar o que aconteceu.
+#
+# ⚠️ O QUE ELA NÃO COBRE, escrito ao lado dela. (1) Ela prova que o destino
+# está NOMEADO e EXISTE, não que a lição esteja escrita lá, nem que a menção
+# seja o ponteiro e não um vizinho — «o `ESTADO_DO_PROJETO.md` tem 650 bytes de
+# folga» passa, e é um aviso de estado. O modo de falhar medido foi ESQUECER o
+# destino, não fingi-lo. (2) Só vê o que leva ⚠️: uma lição escrita sem o
+# símbolo escapa — como escapou o «CI não roda» no último briefing em que
+# apareceu. É por isso que a skill diz que no briefing ⚠️ marca LIÇÃO.
+BRIEFING = re.compile(r"BRIEFING_PROXIMA_CONVERSA_[\d-]+[a-z]?\.md$")
+
+# O aviso é o símbolo seguido de negrito ou de maiúscula; «os ⚠️ do briefing»
+# é o símbolo citado, e reprová-lo pediria que ninguém falasse dele.
+AVISO = re.compile(r"⚠️\s*(?=\*\*|[A-ZÀ-Ý«])")
+CRASE = re.compile(r"`([^`\n]+)`")
+SKILL_NUA = re.compile(r"(?<![\w/.~-])/([a-z][a-z-]+)\b")
+
+
+def _paragrafos(texto):
+    """Parágrafo, item de lista, título e bloco de código, cada um à parte.
+
+    O aviso responde pelo SEU parágrafo: um destino no parágrafo de baixo é
+    a guarda que se satisfaz com o vizinho (`CLAUDE.md`, Arte)."""
+    paras, atual, cerca = [], [], False
+    for ln in texto.split("\n"):
+        if ln.strip().startswith("```"):
+            cerca = not cerca
+            atual.append(ln)
+            continue
+        if cerca:
+            atual.append(ln)
+            continue
+        if not ln.strip() or re.match(r"\s*(?:[-*]|\d+\.)\s", ln) or ln.startswith("#"):
+            if atual:
+                paras.append("\n".join(atual))
+            atual = [ln] if ln.strip() else []
+            if ln.startswith("#"):
+                paras.append(ln)
+                atual = []
+            continue
+        atual.append(ln)
+    if atual:
+        paras.append("\n".join(atual))
+    return paras
+
+
+def avisos(texto):
+    """Cada aviso vai do seu ⚠️ até ao próximo, ou ao fim do parágrafo. O
+    título com ⚠️ avisa pela secção inteira, até ao título seguinte do mesmo
+    nível ou acima."""
+    paras = _paragrafos(texto)
+    out = []
+    for i, p in enumerate(paras):
+        if not AVISO.search(p):
+            continue
+        if p.startswith("#"):
+            nivel = len(p) - len(p.lstrip("#"))
+            secao = [p]
+            for q in paras[i + 1:]:
+                if q.startswith("#") and len(q) - len(q.lstrip("#")) <= nivel:
+                    break
+                secao.append(q)
+            out.append("\n".join(secao))
+            continue
+        # Dois avisos no mesmo parágrafo são duas lições: o destino do segundo
+        # não responde pelo primeiro.
+        inicios = [m.start() for m in AVISO.finditer(p)]
+        out += [p[a:b] for a, b in zip(inicios, inicios[1:] + [len(p)])]
+    return out
+
+
+def _destinos(aviso, por_nome, decisoes, skills):
+    achados = []
+    for tok in CRASE.findall(aviso):
+        tok = tok.strip().rstrip("/")
+        if tok.startswith("/") and tok[1:] in skills:
+            achados.append(tok)
+            continue
+        m = re.fullmatch(r"(?:docs/decisoes/)?(\d{3})(?:-[\w-]+(?:\.md)?)?", tok)
+        if m:
+            if m.group(1) in decisoes:
+                achados.append(tok)
+            continue
+        # O arquivo das sessões é o sítio de onde a lição tem de SAIR: um aviso
+        # que aponta para o briefing anterior, ou para o `HISTORICO.md`,
+        # aponta para a conversa, não para uma regra. São DUAS exclusões, esta
+        # pelo caminho e a de baixo pelo nome nu, e medido: tirar uma deixa a
+        # outra de pé — cada forma tem o seu caso no `057`.
+        if tok.startswith(ARQUIVO) or tok.startswith("docs/arquivo"):
+            continue
+        if "/" in tok:
+            if os.path.exists(os.path.join(RAIZ, tok)):
+                achados.append(tok)
+            continue
+        if tok.endswith(".md") and any(
+                not os.path.relpath(c, RAIZ).replace(os.sep, "/").startswith(ARQUIVO + "/")
+                for c in por_nome.get(tok, [])):
+            achados.append(tok)
+    for s in SKILL_NUA.findall(re.sub(r"`[^`]*`", "", aviso)):
+        if s in skills:
+            achados.append("/" + s)
+    return achados
+
+
+def conferir_avisos_do_briefing(por_nome):
+    dir_arquivo = os.path.join(RAIZ, ARQUIVO)
+    briefings = sorted(f for f in os.listdir(dir_arquivo) if BRIEFING.match(f))
+    if not briefings:
+        return ["não achei briefing nenhum em %s/ — ou o nome mudou, ou este "
+                "conferidor deixou de o entender." % ARQUIVO]
+    # O mais recente é o último pela ordem do nome: `2026-09-24.md` vem antes
+    # de `2026-09-24a.md`, porque o ponto ordena antes da letra.
+    ultimo = briefings[-1]
+    texto = open(os.path.join(dir_arquivo, ultimo), encoding="utf-8").read()
+    decisoes = {f[:3] for f in os.listdir(os.path.join(RAIZ, "docs/decisoes"))
+                if f[:3].isdigit()}
+    skills_dir = os.path.join(RAIZ, ".claude/skills")
+    skills = set(os.listdir(skills_dir)) if os.path.isdir(skills_dir) else set()
+    falhas = []
+    for aviso in avisos(texto):
+        if not _destinos(aviso, por_nome, decisoes, skills):
+            falhas.append(
+                "%s/%s: o aviso «%s» não diz onde a lição vive. O briefing lê-se "
+                "uma vez e morre: nomeie o arquivo, a decisão (`NNN`) ou a skill "
+                "(`/nome`) onde ela ficou escrita — e se ainda não ficou, escreva-a "
+                "lá primeiro (`/fechar-sessao` §5)."
+                % (ARQUIVO, ultimo, " ".join(aviso.split())[:90]))
+    return falhas
+
+
 def main():
     falhas = []
     docs = sorted(documentos())
@@ -334,6 +479,10 @@ def main():
 
     # ── 5. O texto responde pela fonte que a máquina corre ─────────────────
     falhas += conferir_fonte_operacional(docs)
+
+    # ── 5b. Todo aviso do briefing mais recente diz onde a lição vive ──────
+    if os.path.isdir(dir_arquivo):
+        falhas += conferir_avisos_do_briefing(por_nome)
 
     # ── 5. O estado não voltou a inchar sem ninguém decidir ────────────────
     estado = os.path.join(RAIZ, "docs/ESTADO_DO_PROJETO.md")

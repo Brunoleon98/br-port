@@ -11,7 +11,7 @@ Não precisa saber programar nem instalar Git.
 2. Baixar o **"Godot Engine"** — a versão **padrão**.
    ⚠️ **NÃO** baixar a versão **".NET"** — aquela é para C#, e este projeto é GDScript.
 3. Precisa ser **Godot 4.6 ou mais novo**. (O projeto é validado no **4.6.3**,
-   que é a versão que roda no CI a cada push.)
+   que é a versão que roda no CI — a cada push na `main` e a cada PR.)
 
 O download é um `.zip` com **um único `.exe` dentro**. Não tem instalador:
 descompacta e dá duplo clique no `.exe`. Pode deixar onde quiser (Desktop, Documentos…).

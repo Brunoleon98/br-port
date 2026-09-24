@@ -83,6 +83,8 @@ tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # todas de uma vez
 pip install "bpy==4.5.0"                                      # precisa de Python 3.11
 # ⚠️ o wheel tem 373 MB e o download já se cortou a meio (o pip diz que o
 # HASH não bate, não que a rede caiu): `pip download` primeiro, instala do arquivo
+# As pranchas, os recortes e os conferidores de arte correm no Python do
+# SISTEMA, que não traz o pillow: `pip install numpy pillow` (~8 s)
 python3 tools/gerar_props_iso.py brport_vs/art/props [prop ...]
 python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
   --sem-pavimento brport_vs/art/porto_mapa_iso.svg
@@ -102,10 +104,17 @@ rodava a 4.6.3 — a sessão testava numa versão e o PR era barrado noutra.
 
 **O APK NÃO se constrói aqui, e o Web sim.** O `dl.google.com` responde 403 por
 política da organização, então o SDK do Android é inalcançável e o CI é o único
-lugar onde o export do APK se verifica — ele corre a cada push e deixa o
-`brport-apk` e o `brport-web` em Artifacts. O Web só precisa dos templates
-(~1,2 GB), que o CI cacheia; a receita completa, pelos dois caminhos, está em
-`brport_vs/COMO_RODAR.md`.
+lugar onde o export do APK se verifica — ele corre a cada push na `main` e a
+cada PR, e deixa o `brport-apk` e o `brport-web` em Artifacts. O Web só
+precisa dos templates (~1,2 GB), que o CI cacheia; a receita completa, pelos
+dois caminhos, está em `brport_vs/COMO_RODAR.md`.
+
+⚠️ **E O CI NÃO CORRE AO EMPURRAR A BRANCH.** O `testes.yml` e o `captura.yml`
+disparam em `push` só na `main` e em `pull_request`; o `balanceamento.yml` é
+semanal ou à mão. Até o PR abrir, «verde» quer dizer «verde neste contêiner»,
+e o APK — o que este contêiner não mede — ainda não foi exportado por ninguém.
+A lição viveu em trinta briefings (18/09 → 24/09) com esta linha a dizer «a
+cada push», e caiu do seguinte sem uma palavra (`057`).
 
 **Mas o `.pck` mede-se aqui, e sem template nenhum** — é o que responde "quanto
 custa isto ao pacote?" sem esperar uma corrida do CI:
@@ -1475,13 +1484,15 @@ tranca isso.
   boia com a corrente dentro do cone, à escala de uma cara.
 - **⚠️ E O QUE A PEÇA TEM DE MOSTRAR DECIDE O ENQUADRAMENTO DELA.** Irmã da
   regra abaixo, um passo antes: ali o tamanho do widget decide a escala, aqui a
-  FUNÇÃO decide o corte. O `trabalhador_retrato` é de corpo inteiro porque
-  identifica uma unidade, e o que identifica é o capacete e o colete —
-  silhueta, que sobrevive a qualquer tamanho. Os três retratos de fala de 13/09
-  são BUSTOS porque carregam EXPRESSÃO, e expressão vive em meia dúzia de
-  pixels de cara: medido, de corpo inteiro a cara tem 16px e o olho 2 no cartão
-  de 96px, e as nove imagens seriam a mesma imagem. Cortado no peito, com a
-  cabeça a valer 61% da altura, a cara fica com 44px e o olho com 5. **Antes de
+  FUNÇÃO decide o corte. O `trabalhador_retrato` identifica uma unidade, e o
+  que identifica é o capacete e o colete — silhueta, que sobrevive a qualquer
+  tamanho: foi de corpo inteiro até 24/09, e em busto (escolha do Bruno) o
+  quadro abriu para a cabeça valer 56% e o colete caber (`058`). Os três
+  retratos de fala de 13/09 são BUSTOS porque carregam EXPRESSÃO, e expressão
+  vive em meia dúzia de pixels de cara: medido, de corpo inteiro a cara tem
+  16px e o olho 2 no cartão de 96px, e as nove imagens seriam a mesma imagem.
+  Cortado no peito, com a cabeça a valer 61% da altura, a cara fica com 44px e
+  o olho com 5. **Antes de
   desenhar arte de interface, pergunte que informação ela tem de entregar e a
   que tamanho** — a resposta muda o desenho, não só a escala.
 - **Peça de INTERFACE mede-se no tamanho do widget, não no do quadro.** Um prop
@@ -2517,6 +2528,11 @@ varredura do `/fechar-sessao` mediu dez de doze lições já registradas à medi
 que o trabalho andava — a skill existe para as outras duas. Regra que vale
 sempre entra neste arquivo; por que se decidiu assim, em `docs/decisoes/`;
 armadilha de uma função, no comentário dela.
+⚠️ **E O BRIEFING NÃO É DESTINO — é a saída da varredura.** Ele lê-se uma vez
+e morre: todo aviso que ele cita nomeia onde a lição vive, e o
+`tools/conferir_docs.py` reprova o do briefing mais recente que não nomear.
+Medido em 24/09: 249 dos 306 avisos do arquivo não apontavam para lugar
+nenhum (`057`).
 
 ---
 
