@@ -33,9 +33,10 @@ from gerar_brp import ESTUDIOS                               # noqa: E402
 # mensagem da primeira.
 #
 # A PRIMEIRA é geométrica: o render corta o que não cabe no quadro, e o corte
-# só aparece quando alguém olha. Agora ela é medida como deve ser — os oito
-# cantos da caixa projetados com a MESMA `para_pixel()` que o resto do kit usa,
-# conferidos contra o `RESOLUCAO`. É a única forma de a resposta ser verdadeira,
+# só aparece quando alguém olha. Agora ela é medida como deve ser — os
+# vértices de cada peça (eram os oito cantos da caixa dela até 24/09; ver
+# `_pontos_projetados`) projetados com a MESMA `para_pixel()` que o resto do
+# kit usa, conferidos contra o `RESOLUCAO`. É a única forma de a resposta ser verdadeira,
 # porque o que toca a borda num plano isométrico não é a altura: é a QUINA, que
 # desce meia profundidade abaixo da base.
 # px de folga, para o chanfro e o antisserrilhado. Fica em pixel do PNG de
@@ -73,15 +74,28 @@ def _caixa(objetos):
     return (min(xs), max(xs), min(ys), max(ys), min(zs), max(zs))
 
 
-def _cantos_projetados(objetos) -> list:
-    """Os oito cantos da caixa DE CADA PEÇA, em pixels do quadro."""
-    from mathutils import Vector
+def _pontos_projetados(objetos) -> list:
+    """Os vértices AVALIADOS de cada peça, em pixels do quadro.
+
+    ⚠️ ERAM OS OITO CANTOS DA CAIXA DE CADA PEÇA, e a caixa de uma peça
+    redonda ou girada tem quinas que não existem: em 24/09 o coque da Dona
+    Cida (`docs/decisoes/055`) projetava a −1 px pela quina da caixa dele, com
+    o cabelo a começar a 15 px no PNG. É a mesma lição da caixa do grupo (ver
+    abaixo), um andar abaixo. O vértice está sempre dentro da caixa, logo nada
+    que passava passa a reprovar; só cai o falso alarme. E é a malha AVALIADA
+    (com os modificadores), que é a que se renderiza.
+    """
+    import bpy
+    dg = bpy.context.evaluated_depsgraph_get()
     saida = []
     for o in objetos:
         if o.type != "MESH":
             continue
-        for canto in o.bound_box:
-            saida.append(para_pixel(o.matrix_world @ Vector(canto)))
+        oe = o.evaluated_get(dg)
+        m = oe.to_mesh()
+        mw = oe.matrix_world
+        saida.extend(para_pixel(mw @ v.co) for v in m.vertices)
+        oe.to_mesh_clear()
     return saida
 
 
@@ -152,12 +166,17 @@ def validar(categoria: str) -> list:
         # projetá-la dizia que o trabalhador saía 17px do quadro quando o
         # render mostrava 18px de folga. Um validador que reprova o que está
         # certo gasta-se depressa.
-        cantos = _cantos_projetados(objetos)
+        cantos = _pontos_projetados(objetos)
         fx0 = min(c[0] for c in cantos); fx1 = max(c[0] for c in cantos)
         fy0 = min(c[1] for c in cantos); fy1 = max(c[1] for c in cantos)
+        # ⚠️ O RETRATO PODE SAIR PELA BORDA DE BAIXO, e só por ela. O busto da
+        # `055` continua abaixo do quadro, como numa fotografia; o de caixas
+        # de antes acabava dentro dele num tampo chato, e lia como PEDESTAL —
+        # um dos defeitos que a troca veio corrigir. Pela cabeça ou pelos
+        # lados continua a ser corte, e reprova.
+        sai_por_baixo = fy1 > RESOLUCAO - MARGEM_QUADRO and tipo != "retrato"
         if (fx0 < MARGEM_QUADRO or fy0 < MARGEM_QUADRO
-                or fx1 > RESOLUCAO - MARGEM_QUADRO
-                or fy1 > RESOLUCAO - MARGEM_QUADRO):
+                or fx1 > RESOLUCAO - MARGEM_QUADRO or sai_por_baixo):
             falhas.append(
                 "%s: sai do quadro — projeta em %.0f..%.0f x %.0f..%.0f e o "
                 "quadro é 0..%d" % (nome, fx0, fx1, fy0, fy1, RESOLUCAO))

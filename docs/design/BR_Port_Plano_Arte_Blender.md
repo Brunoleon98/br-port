@@ -1551,6 +1551,9 @@ contraluz é branco sobre branco. Decisão dele, por ser porta fechada.
 a coerência com os props não os prende. O branco dos olhos e da gola é o que
 mais ganha, e a prova lado a lado mostra-o. Uma linha no estúdio dos retratos,
 se ele não quiser a troca global.
+✅ **Escolhido pelo Bruno em 24/09**, na `quadrada_v3` — e ⚠️ **com a
+exposição a −0,35 EV**: a 0 EV a gola e o branco do olho estouravam (54% dos
+pixels claros a 255). A troca GLOBAL, nos props, continua por decidir.
 
 **P7. Toon BSDF, ou EEVEE com Shader to RGB — só se ele quiser cel-shading.**
 O Shader to RGB é só do EEVEE (*«only supported in EEVEE»*, diz o nó no
@@ -1579,6 +1582,8 @@ quando as P1–P4 tiverem sido vistas.
 ### 7.3 Props e cenário
 
 **C1. Declarar a transformada, e decidir AgX × Standard** — a 7.1. Global.
+✅ **Declarada em 24/09** (`COR_PADRAO` no estúdio, AgX); a escolha nos props
+continua do Bruno. Nos retratos é Standard a −0,35 EV (`055`).
 
 **C2. Gradiente VERTICAL por coordenada — o pé do prop mais escuro.** Escurecer
 a base e clarear o topo agarra a peça ao chão e é marca da arte estilizada de
@@ -1718,6 +1723,108 @@ um segundo aro. Na foto do jogo, numa cópia, muda **1 foto em 31** — o
 `boletim` — e só na caixa do retrato. O aceite é dele, e a pergunta que ele
 arrasta também: o Sr. Ribeiro, o Arlindo e o trabalhador do rodapé continuam
 de caixas.
+
+#### ✗ A v1 foi rejeitada, e a v2 refá-la (23/09)
+
+O Bruno marcou os quatro defeitos que a leitura da v1 apontava — **nariz e
+boca** (ainda um bigode a 168 px), **tronco** (um balão com calombos),
+**gola** (dois discos) e **cabelo e lápis** (um capacete com espetos; o lápis
+a flutuar) — e pediu para **melhorar o modelo como um todo**. A pergunta da
+oficina ficou para depois da v2. A candidata é
+**`art_lab/retratos/cida_seria/v2/`**, pelo mesmo estúdio e o mesmo AgX; na
+foto do jogo muda outra vez só a caixa do retrato do `boletim` (1 em 31).
+O que ela ensinou e vale para os próximos retratos:
+
+- **Peça que avança e sombreia outra sai da malha e deixa de projetar
+  sombra.** O nariz como elipsoide da cabeça deitava a sombra da chave (1,6°)
+  em cima da boca; à parte, com `visible_shadow = False`, continua sombreado
+  e não suja nada. É o mesmo remédio dos aros dos óculos.
+- **Uma casca que se corta apagando vértices sai SERRILHADA.** A linha do
+  cabelo mostrava a escada dos triângulos na testa. A casca tirada da própria
+  cabeça passa a ENTRAR na pele numa faixa estreita (afastamento de negativo
+  a positivo), e a borda é a interseção de duas superfícies lisas.
+- **Cabelo preso é casca colada ao crânio, não bola**: a bola cortada por um
+  plano lia como capacete. E sulco que se pousa por poucos pontos levanta-se
+  entre eles — os espetos da v1; os sulcos da v2 são deslocamento da própria
+  casca, meridianos à volta do eixo do coque.
+- **Tronco com ombro sai de ANÉIS de superelipse**, não de elipsoides
+  fundidos: cada elipsoide deixava a sua bossa, e o expoente do anel decide
+  a quina do ombro (2 é elipse, ~3 já tem ombro).
+- **Retalho pousado por raio estica-se onde a superfície fica a pique** — a
+  gola que subia pelo pescoço saiu em listras; o pé da gola é uma fita à
+  parte.
+- **Pousar pela tangente só serve num casco convexo**: o lápis atravessou a
+  orelha, que é uma bossa. E **posição de feição mede-se na IMAGEM**: a
+  sobrancelha «reta» na tabela saiu zangada, e a boca a 0,42 do caminho
+  nariz→queixo saiu a dois terços dele — o que avança desce, o queixo recua.
+- **O enquadramento mede a cabeça COM o coque**: coque no alto encolhe a cara
+  na caixa. E o ruído de desgaste do kit, num tecido, lê como mancha.
+
+#### E a quadrada melhorada, para ele escolher o modelo (23/09)
+
+Com a v2 à frente, o Bruno pediu *«uma versão melhorada da Dona Cida quadrada,
+para ver qual modelo escolho para melhorar»*. É
+**`art_lab/retratos/cida_seria/quadrada_v1/`**: a oficina de CAIXAS (prismas
+oitavados, placas, sombreado chapado, o `chanfrar()` do kit), com tudo o que
+não é forma partilhado com a v2 — o estúdio, o enquadramento, os materiais sem
+ruído, o brilho no olho, a gola de pontas. Contra o retrato de hoje: a cabeça
+deixa de ser um moai (156 × 158 em vez de 174 × 148), o olho de robô ganha
+íris, brilho e pálpebra, o cabelo-vaso passa a calote com mechas até ao coque,
+e o pedestal passa a tronco com ombro. No jogo muda outra vez só a caixa do
+retrato do `boletim`. O que ela ensinou:
+
+- **O olho do kit ganha vida com placas**: íris colorida, pupila, brilho de
+  emissão e pálpebra — o §7.5 já dizia que o brilho «funciona também no kit de
+  hoje».
+- **Uma malha por anéis FACETADA (sem subdivisão) é o `prisma` com mais
+  andares**: dá o ombro sem sair da gramática de caixas.
+- **Quando uma correção não muda NADA na imagem, a peça está errada, não o
+  número.** Uma pala clara na linha do cabelo resistiu a três mudanças na
+  calote; escondidas peça a peça, as três prévias mostraram-na igual — era a
+  quina do crânio de tampo chato a furar o cabelo em rampa.
+
+#### ✅ O Bruno escolheu a QUADRADA, e a v2 dela tem os ajustes (24/09)
+
+Entre as duas, ele escolheu a quadrada para melhorar e pediu mudanças nos
+quatro pontos da leitura — cabelo, óculos, tronco e rosto. A candidata é
+**`art_lab/retratos/cida_seria/quadrada_v2/`**: mechas que convergem para o
+coque e nascem da calote, têmporas com cabelo, coque numa bola só, óculos
+oitavados finos, tronco de 12 lados com ombro, carcela e bolso, cabeça mais
+baixa com olho maior e aberto e queixo com volume. No jogo muda outra vez só
+a caixa do retrato do `boletim`. O que ela ensinou:
+
+- **Com o enquadramento medido pela cabeça, mexer na altura dela mexe no
+  tamanho de TUDO o resto**: encurtá-la 12 ampliou o busto 11%.
+- **Um ombro não é uma curva contínua**: anéis a alargar por igual deram um
+  sino (o balão da redonda, com facetas). Trapézio, prateleira e deltoide.
+- **Uma faixa que acaba numa aresta viva acende-se**, e cinco em fila leem
+  como uma borda. Afinada até zero, ela nasce da superfície.
+
+#### E a quadrada v3, com as cores escolhidas (24/09)
+
+Sobre a v2 ele pediu mais ajustes nos mesmos quatro pontos e escolheu
+**Standard nos retratos** (P6). A candidata é
+**`art_lab/retratos/cida_seria/quadrada_v3/`**: cabelo repartido ao meio com
+a calote no tom de sombra por baixo das mechas, sobrancelhas em arco
+castanhas, nariz em cunha, lábio de cor, tronco 12% mais estreito. No jogo
+muda outra vez só a caixa do `boletim`. O que ela ensinou:
+
+- **O Standard pede a exposição**: a 0 EV, 54% dos pixels claros estouravam;
+  a −0,35 EV, zero, com o p99 a 239 e a saturação da pele igual.
+- **O cabelo precisa do degrau abaixo, como a pele**: com a calote no tom das
+  mechas as frestas acendiam-se como elas, e a rampa lia como uma placa.
+- **No kit, `inclina` positivo à esquerda baixa a ponta de DENTRO** (é o
+  «franzida»): um arco de sobrancelha pede o sinal contrário.
+
+#### ✅ Aceita e no jogo (24/09) — a `055`
+
+O Bruno aceitou a `quadrada_v3` na foto do jogo. O código foi para o estúdio
+(`blender/brp_retratos.py`, que o `retratos_de_fala` chama para a Dona Cida)
+e as três expressões dela estão em `brport_vs/`, em Standard a −0,35 EV. A
+decisão é a **`055`**. Na passagem apareceu mais uma armadilha: **com o
+enquadramento MEDIDO, a pose entra depois dele** — com a cabeça já inclinada
+na medida, o busto inteiro mudava de sítio de uma expressão para a outra. O
+passo seguinte é o Sr. Ribeiro e o Arlindo no mesmo kit, e o trabalhador.
 
 ### 7.6 Fontes
 

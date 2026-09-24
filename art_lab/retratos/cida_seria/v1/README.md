@@ -1,7 +1,12 @@
 # Dona Cida, séria — v1 da cabeça REDONDA
 
-**Estado: candidata, à espera do Bruno.** Escolhida por ele em 23/09 (opção B
-do §7.5 do plano de arte: *«um retrato novo completo, a Dona Cida séria»*).
+**Estado: REJEITADA pelo Bruno (23/09), refeita na `v2/`.** Ele marcou os
+quatro defeitos que a leitura apontava — nariz e boca, tronco, gola, cabelo e
+lápis, os mesmos da secção «Limitações» abaixo e mais — e pediu para
+«melhorar o modelo como um todo». Fica aqui como registo.
+
+Escolhida por ele em 23/09 (opção B do §7.5 do plano de arte: *«um retrato
+novo completo, a Dona Cida séria»*).
 Nada daqui está no jogo: o PNG de `brport_vs/art/props/retrato_cida_seria.png`
 continua a ser o de `blender/brp_porto.py`.
 

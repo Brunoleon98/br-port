@@ -19,7 +19,7 @@ import math
 from mathutils import Euler, Matrix, Vector
 
 from brp_studio import (caixa, cone, prisma, barra, corrimao, na_face,
-                        janela, moldura, poste_de_luz, origem, selecao, z)
+                        janela, poste_de_luz, origem, selecao, z)
 
 
 # Um losango 1x1 do mundo tem 60px de largura na tela. As medidas abaixo estão
@@ -1275,90 +1275,6 @@ def _no_peito(nome, u, v, larg, alt_px, mat, camada=0):
                    _PLACA_ESP * camada)
 
 
-def _cida(M, cara):
-    """Cabelo preso, coque e óculos — e é o coque que a distingue de longe.
-
-    O coque fica ATRÁS E ACIMA de propósito. Atrás sozinho não existiria: a
-    câmera vê as faces `+x` e `-y`, e o que está em `+y` puro fica escondido
-    pela própria cabeça. Acima da linha do cabelo ele passa a ser SILHUETA, que
-    é o que sobrevive a 96px.
-    """
-    escuro = M["vao"]
-    tronco, pecas = _corpo(M, M["pele_escura"], M["casco_pesca"],
-                           M["pele_sombra"])
-
-    # O CABELO SÃO TRÊS CAMADAS e não um capacete. A versão de uma peça só era
-    # uma laje castanha pousada na cabeça: aqui a franja desce sobre a testa,
-    # a copa fecha o alto e as bandas descem pelos lados até ao maxilar. É a
-    # mesma ideia do `com_saia()` do mapa — massa em cima, aba a descer — e é
-    # o que faz cabelo ler como cabelo em vez de chapéu.
-    # A COPA É UMA CÚPULA e não uma laje: doze lados a fechar para cima. Uma
-    # caixa em cima de uma cabeça oitavada devolvia o tijolo pelo telhado.
-    pecas.append(cone("cabelo_copa", (0.0, 0.0, _niv(306.0)),
-                      _lg(152.0) / 2.0, _lg(120.0) / 2.0, _alt(26.0), 12,
-                      M["madeira_esc"]))
-    pecas.append(prisma("cabelo_franja", _contorno_oitavado(150.0, 78.0, 21.0),
-                        _niv(286.0), _niv(306.0), (1.0, 1.0), M["madeira"]))
-    for lado, u in (("e", -1.0), ("d", 1.0)):
-        pecas.append(prisma("cabelo_%s" % lado,
-                            _contorno_oitavado(18.0, 76.0, 6.0),
-                            _niv(210.0), _niv(296.0), (0.8, 1.0),
-                            M["madeira_esc"]))
-        pecas[-1].location.x += u * _lg(58.0)
-    # ⚠️ O COQUE É UM CILINDRO, e a primeira versão era uma caixa alta: saía
-    # uma CHAMINÉ em cima da cabeça. Redondo e baixo lê como cabelo preso;
-    # quadrado e alto lê como qualquer outra coisa.
-    pecas.append(cone("coque", (0.0, _pf(42.0), _niv(318.0)),
-                      _lg(72.0) / 2.0, _lg(62.0) / 2.0, _alt(26.0), 12,
-                      M["madeira_esc"]))
-    pecas.append(cone("coque_liga", (0.0, _pf(40.0), _niv(304.0)),
-                      _lg(50.0) / 2.0, _lg(50.0) / 2.0, _alt(9.0), 12,
-                      M["colete"]))
-
-    pecas += _olhos(M, cara, escuro)
-    # OS ÓCULOS SÃO MOLDURA E NÃO PLACA, e a diferença é a mesma que o kit já
-    # aprendeu na janela: placa cheia fica NA FRENTE do olho e tapa exatamente
-    # o que devia emoldurar — a personagem sairia de venda.
-    centro, tam = _cabeca_plano()
-    for lado, u in (("e", -32.0), ("d", 32.0)):
-        pecas += moldura("oculos_%s" % lado, "-y", centro, tam,
-                         _lg(u), _alt(24.0), _lg(34.0), _alt(28.0), 0.02,
-                         M["metal"], 0.02, _lg(6.0))
-    pecas.append(_placa("oculos_ponte", 0.0, 24.0, 14.0, 6.0, M["metal"]))
-    pecas += _sobrancelhas(M, cara, escuro)
-    pecas += _nariz(M, M["pele_sombra"])
-    pecas += _boca(M, cara, escuro)
-
-    # A gola da blusa é clara, e é a única peça clara do busto dela: sem ela o
-    # peito é uma chapa verde de um terço da imagem — a mesma queixa do
-    # armazém antes da plataforma de carga, à escala de um cartão.
-    tronco.append(_gola("gola", M["cabine"]))
-    # ⚠️ O BRINCO SAIU QUANDO O LÁPIS ENTROU, e é a regra do acento único: os
-    # dois eram dourados, e com dois pontos da mesma cor de acento nenhum deles
-    # aponta para coisa nenhuma. Entre um brinco e a ferramenta da profissão
-    # dela, fica a ferramenta — é a mesma escolha que pôs o boné no Arlindo e
-    # a gravata no Sr. Ribeiro.
-    # O LÁPIS ATRÁS DA ORELHA. É contabilista, e é a peça que diz a profissão
-    # dela sem uma palavra — o equivalente ao boné do Arlindo e à gravata do
-    # Sr. Ribeiro, que ambos tinham e ela não.
-    # ⚠️ ELE FICA ACIMA DA ORELHA E NÃO AO LADO DELA. A primeira versão estava
-    # exatamente no `x` da orelha (±76) e desapareceu dentro dela — duas peças
-    # à mesma distância do eixo, uma dentro da outra, e nada a dizê-lo.
-    # ⚠️ ELE FICA FORA DO CABELO, e isso custou duas tentativas: a ±76 estava
-    # dentro da orelha e a ±68 dentro da cúpula do cabelo (que tem raio 76).
-    # Peça pequena encostada a peça grande do mesmo prop desaparece sem erro
-    # nenhum — a régua aqui é o RAIO da peça vizinha, não o tamanho da cabeça.
-    lapis = caixa("lapis", (_lg(84.0), _pf(4.0), _niv(272.0)),
-                  (_lg(9.0), _pf(9.0), _alt(50.0)), M["capacete"])
-    lapis.rotation_euler.y = math.radians(-14.0)
-    pecas.append(lapis)
-    ponta = caixa("lapis_ponta", (_lg(90.0), _pf(4.0), _niv(246.0)),
-                  (_lg(9.0), _pf(9.0), _alt(11.0)), M["madeira_esc"])
-    ponta.rotation_euler.y = math.radians(-14.0)
-    pecas.append(ponta)
-    return tronco, pecas
-
-
 def _arlindo(M, cara):
     """Boné de capitão, aba sobre os olhos e bigode.
 
@@ -1496,7 +1412,11 @@ def _ribeiro(M, cara):
     return tronco, pecas
 
 
-_PERSONAGENS = {"cida": _cida, "arlindo": _arlindo, "ribeiro": _ribeiro}
+_PERSONAGENS = {"arlindo": _arlindo, "ribeiro": _ribeiro}
+# Quem já passou para o kit afinado de `brp_retratos.py` (`055`). O `_cida`
+# de antes saiu daqui com a passagem; o Sr. Ribeiro e o Arlindo continuam no
+# `_corpo()` deste arquivo até passarem também.
+_NO_KIT_AFINADO = ("cida",)
 
 
 def retratos_de_fala(M, est):
@@ -1508,10 +1428,28 @@ def retratos_de_fala(M, est):
     o corpo entre as três expressões e trocar só a cara seria mais barato de
     render e impossível de exportar — a unidade de exportação é o GRUPO.
     """
+    # A DONA CIDA SAIU DESTE KIT para o afinado de `brp_retratos.py`
+    # (`docs/decisoes/055`): outro corpo, outra cara, o enquadramento MEDIDO e
+    # a cor Standard. O import é aqui dentro porque aquele módulo importa as
+    # medidas deste (`_lg`, `_niv`...), e no topo seria um ciclo.
+    import brp_retratos
     for personagem, expressoes in RETRATOS.items():
         for expressao in expressoes:
             nome = "retrato_%s_%s" % (personagem, expressao)
             cara = _CARAS[(personagem, expressao)]
+            if personagem in _NO_KIT_AFINADO:
+                tronco, cabeca = brp_retratos.cida(M, cara)
+                pecas = tronco + cabeca
+                medir = [o for o in cabeca
+                         if o.name.startswith(("cabeca", "cabelo", "coque"))]
+                for peca in pecas:
+                    peca.name = "%s_%s" % (nome, peca.name)
+                brp_retratos.enquadrar(est.cena, nome, pecas, medir)
+                brp_retratos.pousar_cabeca(cabeca, cara["pose"])
+                origem(nome, tipo="retrato")
+                est.registrar(nome, pecas, ancora="retrato",
+                              cor=brp_retratos.COR_RETRATO)
+                continue
             tronco, cabeca = _PERSONAGENS[personagem](M, cara)
             _pousar_cabeca(cabeca, cara["pose"])
             pecas = tronco + cabeca

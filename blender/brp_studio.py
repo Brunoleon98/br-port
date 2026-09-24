@@ -117,6 +117,13 @@ def brp_nome(categoria: str, nome: str, variante: str = "base") -> str:
     return "BRP_%s_%s_%s" % (categoria, nome, variante)
 
 
+# A TRANSFORMADA DE COR, agora ESCRITA (plano de arte §7.1, C1). O Blender 4.x
+# dá AgX a toda cena nova e nenhum arquivo o dizia: um Blender futuro podia
+# trocar o visual calado, como a 4.0 fez ao Filmic. Escrevê-la não muda um
+# pixel. Os retratos de fala da `055` são a exceção, por grupo (`cor=`).
+COR_PADRAO = ("AgX", 0.0)
+
+
 # ────────────────────────────────────────────────────────────── o estúdio
 class Estudio:
     """Uma cena de estúdio, com o catálogo montado dentro dela.
@@ -134,6 +141,9 @@ class Estudio:
         self.M = paleta_completa()
         self.grupos: dict[str, list] = {}
         self.fichas: dict[str, dict] = {}
+        # A transformada de cor de cada grupo que NÃO usa a do resto. Hoje só
+        # os retratos de fala da `055` (Standard a −0,35 EV).
+        self.cores: dict[str, tuple] = {}
         self.exportacao = bpy.data.collections.new("EXPORT")
         self.cena.collection.children.link(self.exportacao)
 
@@ -141,9 +151,17 @@ class Estudio:
     def registrar(self, nome: str, objetos: list, *, estagio: str = "base",
                   ancora: str = "base", selecionavel: bool = False,
                   celulas: tuple = (1, 1), animacoes: dict | None = None,
-                  habitat: str = "terra", cena_godot: str = "") -> None:
-        """Põe um asset no catálogo, com a ficha que vai para o manifest."""
+                  habitat: str = "terra", cena_godot: str = "",
+                  cor: tuple | None = None) -> None:
+        """Põe um asset no catálogo, com a ficha que vai para o manifest.
+
+        `cor` é (transformada, exposição) quando o asset não usa a do resto
+        (`COR_PADRAO`) — e fica FORA da ficha: o manifest descreve o quadro que
+        o jogo lê, não como ele foi pintado.
+        """
         self.grupos[nome] = objetos
+        if cor is not None:
+            self.cores[nome] = cor
         self.fichas[nome] = {
             "id": brp_nome(self.categoria, nome, estagio),
             "category": self.categoria,
@@ -201,6 +219,10 @@ class Estudio:
             for o in self.grupos[nome]:
                 o.hide_render = False
             alvo = os.path.join(saida, "%s.png" % nome)
+            transformada, exposicao = self.cores.get(nome, COR_PADRAO)
+            self.cena.view_settings.view_transform = transformada
+            self.cena.view_settings.look = "None"
+            self.cena.view_settings.exposure = exposicao
             self.cena.render.filepath = alvo
             bpy.ops.render.render(write_still=True)
 

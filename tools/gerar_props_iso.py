@@ -203,6 +203,11 @@ PALETA = {
     # passos mais claro (161 de luminância contra 118), que é a distância que
     # o põe acima da pele em vez de abaixo dela.
     "cabelo_grisalho": "#9aa3a8",
+    # O DEGRAU ABAIXO do cabelo castanho, como o `pele_sombra` é o da pele: o
+    # `madeira_esc` a 60%. É a calote da Dona Cida por baixo das mechas
+    # (`docs/decisoes/055`) — no mesmo tom delas, as frestas acendiam-se e a
+    # rampa da testa lia como UMA placa, uma franja curta.
+    "cabelo_fundo": "#3b2513",
     "calca": "#24466e", "rede": "#8d9aa6", "casco_pesca": "#2f6f4a", "parede_suja": "#9a9c93", "vidro": "#7fb6cc",
     # O VÃO: o dentro de uma janela sem vidro ou de uma porta que já não há.
     # É a peça que faz uma ruína ler como ruína, e ela é uma COR e não um
