@@ -44,6 +44,13 @@ var _toques: Array = []
 var _tempo_esperado := ""
 # A cena montada, para o toque a percorrer e a foto lhe ler o tempo.
 var _no: Node = null
+# A prova das caras, que anda depois da foto (`caras_na_foto.gd`), e o tamanho
+# da foto já gravada, para a linha de sucesso.
+var _prova = null
+var _tamanho := Vector2i.ZERO
+# `aposta=recusada`: antes de cada toque o sorteio do jogo é semeado para a
+# aposta do cliente falhar — ver `_semear_recusa()`.
+var _aposta_recusada := false
 
 
 func _process(_delta: float) -> bool:
@@ -69,6 +76,13 @@ func _process(_delta: float) -> bool:
 		_no = no
 		_chamar_setup(no)
 		return false
+
+	# AS CARAS VÊM DEPOIS DA FOTO, e a foto já está gravada: a prova esconde-as
+	# e fotografa outra vez, e o PNG que fica é o de antes (`caras_na_foto.gd`).
+	if _prova != null:
+		if not _prova.andar(root):
+			return false
+		return _fechar_com_caras()
 
 	# Alguns frames antes de fotografar: um Sprite2D só tem textura resolvida
 	# depois de o recurso terminar de carregar, e um Label só mede o texto
@@ -100,6 +114,7 @@ func _process(_delta: float) -> bool:
 		push_error("falhou ao gravar %s (erro %d)" % [_saida, erro])
 		quit(1)
 		return true
+	_tamanho = img.get_size()
 	# A CENA QUE ESTA FERRAMENTA MONTOU, no mesmo rótulo que o `capturar_tela.gd`
 	# usa para os painéis que estão por cima do jogo. É daqui que o
 	# `conferir_cobertura_paineis.py` sabe que o Diário, a parcela, o Sr.
@@ -112,11 +127,26 @@ func _process(_delta: float) -> bool:
 	# (`docs/decisoes/051`).
 	if tempo != "":
 		print("Tempo: %s %s" % [_cena, tempo])
+	# E AS CARAS DELE, uma andar abaixo do tempo (`docs/decisoes/060`): a cena
+	# da contra-oferta é uma tela na rodada e mostra duas caras diferentes
+	# conforme a aposta. `load()` e não `preload`, pela regra dos `--script`.
+	_prova = load("res://tools/caras_na_foto.gd").new(_no, img)
+	return false
+
+
+func _fechar_com_caras() -> bool:
+	for falha in _prova.falhas:
+		print("FALHOU  %s" % falha)
+	if not _prova.falhas.is_empty():
+		quit(1)
+		return true
+	for linha in _prova.linhas:
+		print(linha)
 	# "Tela salva em" é CONTRATO com o `capturar_evidencia.sh`, que procura essa
 	# linha em vez de olhar o código de saída — um erro de compilação do GDScript
 	# sai com 0 sem a ferramenta ter feito nada. Antes daqui dizia "captura:", e
 	# por isso esta ferramenta não podia entrar na bateria do CI.
-	print("Tela salva em %s  (%dx%d)" % [_saida, img.get_width(), img.get_height()])
+	print("Tela salva em %s  (%dx%d)" % [_saida, _tamanho.x, _tamanho.y])
 	quit(0)
 	return true
 
@@ -278,6 +308,27 @@ func _montar_estado() -> void:
 				return
 			print("  estado: parcela vencida, turno %d" % GS.turn)
 			continue
+		# ⚠️ `aposta=recusada` TAMBÉM É MONTAGEM, e do DADO, não do resultado.
+		# A cara da pressão do Arlindo só existe depois de uma aposta RECUSADA
+		# (`ultima_tentativa`), e recusar é sorteio: com a semente fixa a
+		# resposta sai sempre a mesma, só que "sempre a mesma" é um número de
+		# sorte que qualquer sorteio a mais antes do toque vira do avesso. Aqui
+		# o resultado continua a sair do `negotiate_rival()`, pelo botão; o que
+		# se escolhe é o dado, como o F10 do fumaça já faz (`060`).
+		#
+		# ⚠️ E COM A SEMENTE DA BATERIA A DERIVAÇÃO NÃO É QUEM SEGURA — calha
+		# recusar sem ela, e o mutante que a tira passa. Medido em 24/09 com
+		# seis sementes: sem a derivação duas aceitavam (o tiro fica vermelho
+		# pelo `--tempo=rodada`, que é quem prova a recusa); com ela, as seis
+		# mostram a pressão. Ela existe para o tiro não depender da sorte.
+		if chave == "aposta":
+			if valor != "recusada":
+				push_error("aposta=%s: a única montagem é «recusada»" % valor)
+				quit(1)
+				return
+			_aposta_recusada = true
+			print("  estado: aposta recusada")
+			continue
 		if not chave in GS:
 			push_error("GameState não tem o campo %s" % chave)
 			quit(1)
@@ -327,9 +378,31 @@ func _tocar(prefixo: String) -> bool:
 	if botao.disabled:
 		push_error("--tocar=%s: o botão «%s» está desligado" % [prefixo, botao.text])
 		return false
+	if _aposta_recusada and not _semear_recusa():
+		return false
 	print("  toque: %s" % botao.text)
 	botao.pressed.emit()
 	return true
+
+
+# A PRIMEIRA SEMENTE CUJO PRIMEIRO SORTEIO RECUSA AS DUAS APOSTAS, derivada da
+# chance que o jogo aplica — a da reputação de agora, pelo mesmo
+# `_chance_com_reputacao()` que o `_negociar()` chama. Contra a MAIOR das duas,
+# para servir ao «Cortar metade» e ao «Manter» sem saber qual se toca.
+# Semear o `_rng` JUSTO antes do toque é o que faz o primeiro sorteio dele ser
+# o da aposta: nada corre entre as duas linhas.
+func _semear_recusa() -> bool:
+	var GS: Node = root.get_node("GameState")
+	var chance: float = maxf(GS._chance_com_reputacao(GS.RIVAL_HALF_CHANCE),
+		GS._chance_com_reputacao(GS.RIVAL_KEEP_CHANCE))
+	for semente in range(1, 1000):
+		var r := RandomNumberGenerator.new()
+		r.seed = semente
+		if r.randf() >= chance:
+			GS._rng.seed = semente
+			return true
+	push_error("aposta=recusada: nenhuma semente até 999 recusa a chance %.2f" % chance)
+	return false
 
 
 func _botoes_de(no: Node, prefixo: String, achados: Array) -> void:

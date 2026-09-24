@@ -25,7 +25,12 @@ extends SceneTree
 #
 # `limpo`, `pausa` e `alocar` são bandeiras e leem-se em QUALQUER posição
 # depois da saída — fecham os painéis de rotina, abrem o menu de pausa no fim
-# e alocam os trabalhadores antes do disparo.
+# e alocam os trabalhadores antes do disparo. `ocioso` é o contrário: nenhum
+# trabalhador é alocado, nunca. `--boletim=N` fecha os boletins das semanas
+# anteriores e pára no da semana N.
+#
+# Toda foto sai com uma linha `Retratos:` por cara de personagem que o painel
+# de cima mostra, provada nos pixels (`caras_na_foto.gd`, `docs/decisoes/060`).
 #
 # `--painel=<nome>` abre um dos cinco painéis do HUD no fim, pela mesma porta
 # que o jogador toca. Ver a tabela `PAINEIS`: é por aqui que o `PainelCaixa`
@@ -81,6 +86,17 @@ var _frames_extra := 0
 var _limpo := false
 var _pausa := false
 var _alocar := false
+## `ocioso` é o jogador que NUNCA aloca ninguém — o principiante que ainda não
+## percebeu a alocação, e o único que ouve a Dona Cida preocupada na primeira
+## semana (medido em 12/09: 60 de 60 partidas, e nenhuma de quem aloca). Só no
+## porto em RUÍNAS: com `completo` o aluguel dos píeres paga a semana e ela
+## fica séria (medido em 24/09). O laço deixa de chamar o `_alocar_todos()`.
+var _ocioso := false
+## `--boletim=N` fotografa o boletim da semana N: os das semanas anteriores
+## fecham como o jogador os fecharia, e o laço pára no dela. O tom — e com ele
+## a cara da Dona Cida — sai da partida, e quem diz qual foi é a linha
+## `Retratos:` da foto (`docs/decisoes/060`), nunca este número.
+var _boletim_semana := 0
 var _escolher := false
 var _mensagens := false
 var _mensagens_aberto := false
@@ -140,6 +156,9 @@ const PAINEIS := {
 	"docas": ["_on_docas_pilula_input", true],
 }
 var _painel := ""
+# A prova das caras e o tamanho da foto já gravada, para a linha de sucesso.
+var _prova = null
+var _tamanho := Vector2i.ZERO
 
 
 func _process(_delta: float) -> bool:
@@ -147,6 +166,13 @@ func _process(_delta: float) -> bool:
 		_montado = true
 		_montar()
 		return false
+
+	# A PROVA DAS CARAS ANDA DEPOIS DA FOTO, que já está gravada
+	# (`caras_na_foto.gd`).
+	if _prova != null:
+		if not _prova.andar(root):
+			return false
+		return _fechar_com_caras()
 
 	# O BALANÇO ANDA ANTES DE ASSENTAR: cada passo toca um botão e espera que a
 	# fila do `Main` ponha o painel seguinte na tela. Os frames de assentar só
@@ -227,6 +253,27 @@ func _process(_delta: float) -> bool:
 				   "" if topo == null else String(topo.get("tempo")), str(GS.won)])
 			quit(1)
 			return true
+	# O BOLETIM PEDIDO, e só ele: caso que declara um estado prova que o obteve
+	# (`docs/decisoes/043`). A semana vem do resumo que o painel recebeu, como
+	# no balanço — um boletim de outra semana também seria «o boletim».
+	if _boletim_semana > 0:
+		var topo_b: Node = _painel_de_cima()
+		var semana_vista := -1
+		if topo_b != null and topo_b.scene_file_path == "res://scenes/panels/PainelBoletim.tscn":
+			semana_vista = int((topo_b.get("_resumo") as Dictionary)["semana"])
+		if semana_vista != _boletim_semana or _paineis_abertos() != 1:
+			push_error("capturar_tela: pediu-se o boletim da semana %d e a tela tem %d painel(eis), o de cima %s (semana %d)"
+				% [_boletim_semana, _paineis_abertos(),
+				   "(nenhum)" if topo_b == null else topo_b.scene_file_path, semana_vista])
+			quit(1)
+			return true
+	# E O OCIOSO PROVA QUE NINGUÉM TRABALHOU, pela consequência: sem
+	# trabalhador nenhum barco é servido. Um laço que voltasse a alocar
+	# daria o boletim de quem joga com o nome de quem não joga.
+	if _ocioso and int(GS.metrics["boats_served"]) != 0:
+		push_error("capturar_tela: `ocioso` e a partida serviu %d barco(s)" % int(GS.metrics["boats_served"]))
+		quit(1)
+		return true
 	print("Overlay: %d painel(eis)  [fase %s, turno %d, %d estrutura(s)]"
 		% [_paineis_abertos(), GS.phase, GS.turn, GS.estruturas.size()])
 	# ⚠️ E QUAL PAINEL, que é outra pergunta. A contagem diz QUANTOS e não QUAIS:
@@ -258,7 +305,24 @@ func _process(_delta: float) -> bool:
 		print("FALHOU ao salvar em %s (erro %d)" % [_saida, erro])
 		quit(1)
 		return true
-	print("Tela salva em %s (%dx%d)" % [_saida, img.get_width(), img.get_height()])
+	_tamanho = img.get_size()
+	# E AS CARAS DO PAINEL DE CIMA, que é o único que a foto mostra inteiro: o
+	# de baixo fica atrás do escurecer e, quase sempre, do cartão do de cima
+	# (`docs/decisoes/060`). A prova anda nas voltas seguintes — esconde as
+	# caras e fotografa outra vez —, e o PNG que fica é este.
+	_prova = load("res://tools/caras_na_foto.gd").new(_painel_de_cima(), img)
+	return false
+
+
+func _fechar_com_caras() -> bool:
+	for falha in _prova.falhas:
+		print("FALHOU  %s" % falha)
+	if not _prova.falhas.is_empty():
+		quit(1)
+		return true
+	for linha in _prova.linhas:
+		print(linha)
+	print("Tela salva em %s (%dx%d)" % [_saida, _tamanho.x, _tamanho.y])
 	quit(0)
 	return true
 
@@ -289,6 +353,14 @@ func _montar() -> void:
 				return
 			_painel = nome
 			continue
+		if bruto.begins_with("--boletim="):
+			var semana := bruto.substr(10)
+			if not semana.is_valid_int() or int(semana) < 1:
+				push_error("captura: --boletim= precisa de uma semana (1 ou mais), veio '%s'" % semana)
+				quit(1)
+				return
+			_boletim_semana = int(semana)
+			continue
 		if bruto.begins_with("--semente="):
 			var valor := bruto.substr(10)
 			if not valor.is_valid_int():
@@ -302,6 +374,18 @@ func _montar() -> void:
 	_limpo = args.has("limpo")
 	_pausa = args.has("pausa")
 	_alocar = args.has("alocar")
+	_ocioso = args.has("ocioso")
+	# ⚠️ BANDEIRAS QUE SE DESMENTEM REPROVAM, em vez de uma ganhar em silêncio:
+	# `ocioso alocar` fotografaria o porto a operar com o nome de quem nunca
+	# alocou, e `limpo` fecha todo boletim — o do `--boletim=` também.
+	if _ocioso and _alocar:
+		push_error("captura: `ocioso` e `alocar` desmentem-se — escolha um")
+		quit(1)
+		return
+	if _boletim_semana > 0 and args.has("limpo"):
+		push_error("captura: `limpo` fecha o boletim que o `--boletim=` quer fotografar")
+		quit(1)
+		return
 	_escolher = args.has("escolher")
 	_mensagens = args.has("mensagens")
 	_balanco = args.has("balanco")
@@ -443,7 +527,8 @@ func _montar() -> void:
 			# o dia acaba aqui — e quem chamou confere o turno em que acabou.
 			if _paineis_abertos() > 0:
 				break
-		_alocar_todos()
+		if not _ocioso:
+			_alocar_todos()
 		_main._on_advance_pressed()
 
 	# `pausa` fotografa o menu de pausa, que é onde vivem os sliders de volume.
@@ -664,6 +749,12 @@ func _fechar_paineis_de_rotina(fechar_boletim: bool) -> void:
 		var script: Script = painel.get_script()
 		if fechar_boletim and script != null \
 				and script.resource_path.ends_with("PainelBoletim.gd"):
+			rotina = true
+		# O `--boletim=N` fecha os das semanas de ANTES, que são o caminho até
+		# ele, e deixa o dele na tela — é aí que o laço pára.
+		if _boletim_semana > 0 and script != null \
+				and script.resource_path.ends_with("PainelBoletim.gd") \
+				and int((painel.get("_resumo") as Dictionary)["semana"]) < _boletim_semana:
 			rotina = true
 		if rotina:
 			overlay.remove_child(painel)
