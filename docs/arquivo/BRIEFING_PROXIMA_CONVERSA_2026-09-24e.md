@@ -23,8 +23,8 @@ lição vive.
 ## 1. Comece pelo estado real
 
 - A sessão fechou na branch `claude/gifted-hamilton-t5v7kz`, à frente da `main`
-  (`1cfd339`, o #81 fundido). Nenhum PR foi aberto. Antes de qualquer
-  checkout, confira no GitHub se ela foi fundida; se não foi, a `057`, a `058`
+  (`1cfd339`, o #81 fundido), com o **PR #82** aberto. Antes de qualquer
+  checkout, confira no GitHub se ele foi fundido; se não foi, a `057`, a `058`
   e o retrato novo só existem nela.
 - Um ref de cada vez no `git fetch`, o código de saída lido sem cano, e
   `git log --oneline origin/main..HEAD` antes de reapontar seja o que for

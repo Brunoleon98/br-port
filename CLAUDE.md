@@ -1490,8 +1490,9 @@ tranca isso.
   quadro abriu para a cabeça valer 56% e o colete caber (`058`). Os três
   retratos de fala de 13/09 são BUSTOS porque carregam EXPRESSÃO, e expressão
   vive em meia dúzia de pixels de cara: medido, de corpo inteiro a cara tem
-  16px e o olho 2 no cartão de 96px, e as nove imagens seriam a mesma imagem. Cortado no peito, com a
-  cabeça a valer 61% da altura, a cara fica com 44px e o olho com 5. **Antes de
+  16px e o olho 2 no cartão de 96px, e as nove imagens seriam a mesma imagem.
+  Cortado no peito, com a cabeça a valer 61% da altura, a cara fica com 44px e
+  o olho com 5. **Antes de
   desenhar arte de interface, pergunte que informação ela tem de entregar e a
   que tamanho** — a resposta muda o desenho, não só a escala.
 - **Peça de INTERFACE mede-se no tamanho do widget, não no do quadro.** Um prop
