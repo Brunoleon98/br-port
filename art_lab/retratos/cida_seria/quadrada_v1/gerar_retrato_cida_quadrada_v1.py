@@ -293,10 +293,10 @@ def montar_cida(M):
     # cabelo mede ~149. Duas prévias com a calote a 164 e a 160 sobravam 5 a
     # 7 px de cada lado, e as quinas desse anel acendiam-se em duas ASAS nas
     # têmporas — a aba de um capacete. Aqui cada anel leva +3 sobre o crânio.
-    # ⚠️ E AS ASAS NÃO ERAM SÓ A SOBRA: com a calote justa elas ficaram. Eram
-    # as QUINAS de 45° dos anéis, viradas para a luz-chave, que se acendiam num
-    # triângulo claro em cada têmpora. O corte das quinas desce para 12 e as
-    # mechas estendem-se até elas.
+    # ⚠️ E AS ASAS NÃO ERAM A SOBRA: com a calote justa elas ficaram, e com as
+    # quinas cortadas a 12 também. Eram PELE — a quina de cima do crânio de
+    # tampo chato a furar a calote (ver o crânio, acima). O corte de 12 e as
+    # mechas até às quinas ficaram por serem melhores, não por serem a causa.
     def cranio(z_px):
         f = (z_px - _MAXILAR) / (_CAB_Z[1] - _MAXILAR)
         return _CAB_LARG - 12.0 * max(0.0, min(1.0, f))

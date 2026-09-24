@@ -870,9 +870,10 @@ lápis — e o pedido de «melhorar o modelo como um todo». A candidata é a
 **v2** (`art_lab/retratos/cida_seria/v2/`), fotografada no jogo numa cópia:
 muda só a caixa do retrato do boletim. A pedido dele há também a
 **quadrada melhorada** (`art_lab/retratos/cida_seria/quadrada_v1/`), no kit de
-caixas, para escolher QUAL modelo melhorar. As duas esperam o olhar dele; o
-que cada uma arrasta — as outras expressões, e a oficina (os outros dois e o
-trabalhador são de caixas) — está no README de cada uma.
+caixas, para escolher QUAL modelo melhorar. **Ele escolheu a quadrada** e
+pediu ajustes (cabelo, óculos, tronco, rosto): a candidata é a
+`quadrada_v2/`, à espera do olhar dele na foto do jogo. Com ela a oficina não
+muda — o Sr. Ribeiro, o Arlindo e o trabalhador recebem as mesmas melhorias.
 
 ---
 

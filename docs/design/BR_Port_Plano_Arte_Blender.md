@@ -1778,6 +1778,23 @@ retrato do `boletim`. O que ela ensinou:
   calote; escondidas peça a peça, as três prévias mostraram-na igual — era a
   quina do crânio de tampo chato a furar o cabelo em rampa.
 
+#### ✅ O Bruno escolheu a QUADRADA, e a v2 dela tem os ajustes (24/09)
+
+Entre as duas, ele escolheu a quadrada para melhorar e pediu mudanças nos
+quatro pontos da leitura — cabelo, óculos, tronco e rosto. A candidata é
+**`art_lab/retratos/cida_seria/quadrada_v2/`**: mechas que convergem para o
+coque e nascem da calote, têmporas com cabelo, coque numa bola só, óculos
+oitavados finos, tronco de 12 lados com ombro, carcela e bolso, cabeça mais
+baixa com olho maior e aberto e queixo com volume. No jogo muda outra vez só
+a caixa do retrato do `boletim`. O que ela ensinou:
+
+- **Com o enquadramento medido pela cabeça, mexer na altura dela mexe no
+  tamanho de TUDO o resto**: encurtá-la 12 ampliou o busto 11%.
+- **Um ombro não é uma curva contínua**: anéis a alargar por igual deram um
+  sino (o balão da redonda, com facetas). Trapézio, prateleira e deltoide.
+- **Uma faixa que acaba numa aresta viva acende-se**, e cinco em fila leem
+  como uma borda. Afinada até zero, ela nasce da superfície.
+
 ### 7.6 Fontes
 
 1. Blender Studio, *Stylized Character Workflow — Base Meshes*: <https://studio.blender.org/training/stylized-character-workflow/base-meshes/>

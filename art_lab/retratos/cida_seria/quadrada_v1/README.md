@@ -1,6 +1,6 @@
 # Dona Cida, séria — QUADRADA v1: o kit de caixas, melhorado
 
-**Estado: candidata, à espera do Bruno.** Nada daqui está no jogo: o PNG de
+**Estado: ESCOLHIDA como modelo pelo Bruno (24/09), e ajustada na `../quadrada_v2/`** — ele pediu mudanças no cabelo, nos óculos, no tronco e no rosto antes de ir para o jogo. Fica aqui como registo. Nada daqui está no jogo: o PNG de
 `brport_vs/art/props/retrato_cida_seria.png` continua a ser o de
 `blender/brp_porto.py`.
 
