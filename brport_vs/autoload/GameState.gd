@@ -435,7 +435,11 @@ const SAVE_PATH := "user://savegame.json"
 # 7 (06/09): o barco trocou o booleano `large` por uma CLASSE, e a classe é a
 # chave de `CLASSES_DE_NAVIO`. Um save da 6 traz `large` e nenhuma classe: o
 # cartão, o casco e a conta dos turnos indexariam com chave vazia.
-const SAVE_VERSION := 7
+#
+# 8 (24/09): o trabalhador passou a nascer com um ROSTO, o índice do retrato
+# dele (`059`). Um save da 7 traz trabalhadores sem rosto, e o cartão indexaria
+# a tabela dos retratos com uma chave que não existe.
+const SAVE_VERSION := 8
 
 # ── OS DOIS NOMES ──
 # O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7).
@@ -539,6 +543,43 @@ var _uid := 1
 var _rng := RandomNumberGenerator.new()
 
 
+## Um trabalhador acabado de chegar ao porto, com o ROSTO dele (`059`): um dos
+## retratos de `Retratos.TRABALHADORES`, sem repetir nenhum da fileira. É a
+## porta ÚNICA por onde um trabalhador nasce — a partida nova, o píer comprado
+## e o roster reconciliado —, e os testes que montam porto à mão passam por ela.
+##
+## ⚠️ O ROSTO NÃO GASTA O SORTEIO DA PARTIDA. O `_rng` é o que o simulador mede
+## (os barcos, os motivos, o rival), e um sorteio a mais aqui mudaria todas as
+## partidas medidas sem mexer em regra nenhuma. O rosto sai de um gerador
+## PRÓPRIO, semeado pelo ESTADO do `_rng` — ler o estado não o avança —, e daí
+## saem as três coisas que se queria: cada partida com caras diferentes (o
+## estado anda), a mesma cara com a mesma semente (as fotos da bateria
+## comparam-se) e o balanceamento medido intocado por construção.
+func novo_trabalhador() -> Dictionary:
+	return {"id": workers.size() + 1, "busy_turns": 0, "rosto": _rosto_livre()}
+
+
+## Quantos rostos há. Sai do registo dos retratos, e não de uma constante que
+## o espelhasse: são trinta enquanto a tabela do estúdio tiver trinta.
+func rostos() -> int:
+	return Retratos.TRABALHADORES.size()
+
+
+func _rosto_livre() -> int:
+	var usados := {}
+	for w in workers:
+		usados[int(w["rosto"])] = true
+	var livres: Array[int] = []
+	for k in range(rostos()):
+		if not usados.has(k):
+			livres.append(k)
+	if livres.is_empty():
+		return workers.size() % rostos()
+	var gerador := RandomNumberGenerator.new()
+	gerador.seed = hash([_rng.state, workers.size()])
+	return livres[gerador.randi_range(0, livres.size() - 1)]
+
+
 func _ready() -> void:
 	_rng.randomize()
 	if not load_game():
@@ -577,7 +618,7 @@ func new_game() -> void:
 
 	workers.clear()
 	for i in range(WORKERS_BASE):
-		workers.append({"id": i + 1, "busy_turns": 0})
+		workers.append(novo_trabalhador())
 
 	_spawn_boats()
 	save_game()
@@ -1448,7 +1489,7 @@ func comprar_estrutura(id: String) -> bool:
 			docks.append({"boat": null, "worker_id": null})
 			abertas += 1
 		for i in range(abertas * UPGRADE_EXTRA_WORKERS):
-			workers.append({"id": workers.size() + 1, "busy_turns": 0})
+			workers.append(novo_trabalhador())
 
 	cash_changed.emit(cash)
 	roster_changed.emit()
@@ -1709,6 +1750,21 @@ func load_game() -> bool:
 			or docas_lidas.is_empty() or trabalhadores_lidos.is_empty():
 		clear_save()
 		return false
+	# E O ROSTO DE CADA UM (`059`), pela mesma razão: um fora da tabela é um
+	# cartão sem cara, dois iguais são o mesmo retrato duas vezes na fileira.
+	# ⚠️ O TIPO confere-se, e não só o valor: `int("x")` é 0, que é um rosto
+	# válido — a armadilha da chave de Godot 3 no `CLAUDE.md`, do lado do save.
+	var rostos_lidos := {}
+	for w in trabalhadores_lidos:
+		if typeof(w) != TYPE_DICTIONARY or not w.has("rosto") \
+				or typeof(w["rosto"]) not in [TYPE_INT, TYPE_FLOAT]:
+			clear_save()
+			return false
+		var k := int(w["rosto"])
+		if k != float(w["rosto"]) or k < 0 or k >= rostos() or rostos_lidos.has(k):
+			clear_save()
+			return false
+		rostos_lidos[k] = true
 
 	turn = int(parsed.get("turn", 1))
 	cash = int(parsed.get("cash", START_CASH))
@@ -1794,7 +1850,7 @@ func _reconciliar_roster() -> void:
 	while workers.size() > alvo_trab:
 		workers.pop_back()
 	while workers.size() < alvo_trab:
-		workers.append({"id": workers.size() + 1, "busy_turns": 0})
+		workers.append(novo_trabalhador())
 
 	# Trabalhador cortado não pode continuar alocado numa doca que ficou: seria
 	# um "#4" na tela sem cartão correspondente na fileira.

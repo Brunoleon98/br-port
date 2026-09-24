@@ -1,0 +1,5 @@
+# Os 30 PNG de cada volta (16 MB) refazem-se com o gerar_variacoes.py da
+# pasta; o que entra no Git são as folhas de contato (ver o README).
+png/
+previa/
+_tmp/

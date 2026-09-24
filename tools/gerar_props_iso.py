@@ -208,6 +208,27 @@ PALETA = {
     # (`docs/decisoes/055`) — no mesmo tom delas, as frestas acendiam-se e a
     # rampa da testa lia como UMA placa, uma franja curta.
     "cabelo_fundo": "#3b2513",
+    # ── AS PELES DAS VARIAÇÕES DO TRABALHADOR (as cinco cores do IBGE) ────
+    #
+    # A branca é a `pele_clara` e a parda é a `pele`, que já existiam; estas
+    # são as três que faltavam, cada uma com o DEGRAU abaixo dela (a regra de
+    # cima: é a sombra que desenha o nariz). A amarela e a indígena
+    # distinguem-se pelo TOM e pelo cabelo, nunca pelo desenho do rosto (o
+    # escopo do Bruno, `058`): a amarela é a mais clara e a mais amarela das
+    # cinco, a indígena a acobreada, mais vermelha do que a parda. A preta
+    # fica entre o `pele_escura` e o `pele_sombra`: a `#5a3826` da v1 foi
+    # «escura demais» (o Bruno) — 0,039 de luminância na bochecha, contra
+    # 0,180 da parda.
+    "pele_amarela": "#d4ab7e", "pele_amarela_sombra": "#b38a5e",
+    "pele_cobre": "#a2663f", "pele_cobre_sombra": "#7d4a2c",
+    "pele_funda": "#74492f", "pele_funda_sombra": "#56341f",
+    # O cabelo preto, liso ou curto. O `vao` é o escuro do kit puxado a navy,
+    # que é o da sombra do mapa; cabelo quer um preto quase neutro.
+    "cabelo_preto": "#17181b",
+    # O lábio de cor das trabalhadoras. Na v1 era o `telha_cume` da Dona Cida
+    # e um rosado pálido, e «quase some» no cartão (o Bruno): mais saturados,
+    # e na pele preta um amora, mais escuro do que ela e puxado ao roxo.
+    "labio_rosado": "#c4545a", "labio_vermelho": "#a23d33", "labio_amora": "#7e2f3a",
     "calca": "#24466e", "rede": "#8d9aa6", "casco_pesca": "#2f6f4a", "parede_suja": "#9a9c93", "vidro": "#7fb6cc",
     # O VÃO: o dentro de uma janela sem vidro ou de uma porta que já não há.
     # É a peça que faz uma ruína ler como ruína, e ela é uma COR e não um

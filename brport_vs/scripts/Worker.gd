@@ -88,6 +88,11 @@ func refresh() -> void:
 	if w == null:
 		return
 	_nome.text = "#%d" % worker_id
+	# O RETRATO DELE, pelo rosto com que nasceu (`059`). A cena traz o padrão
+	# como textura; quem decide qual dos trinta é o save, e não a cena.
+	var rosto := Retratos.do_trabalhador(int(w["rosto"]))
+	if rosto != null and _retrato.texture != rosto:
+		_retrato.texture = rosto
 
 	var busy: int = int(w["busy_turns"])
 	# `busy_turns` só conta operações que já começaram; quem foi alocado neste

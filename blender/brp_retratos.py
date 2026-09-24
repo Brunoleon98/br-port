@@ -1469,14 +1469,119 @@ def arlindo(M, cara):
 # quadrado lê sólido, e ele é quem carrega o porto). A cabeça é mais baixa do
 # que as dos três que falam — 128 contra 144 a 150 — porque o topo dela é do
 # CAPACETE, e é o capacete que o identifica.
-TRABALHADOR = Rosto(larg=162.0, fundo=80.0, z=(134.0, 262.0), maxilar=188.0, corte=18.0,
-                    z_olho=204.0, z_boca=160.0, pivo=114.0, u_olho=32.0,
-                    olho=(40.0, 25.0), iris=(21.0, 22.0), pupila=(11.0, 12.0),
-                    u_sobr=(23.0, 42.0), sobr=(22.0, 7.0, 6.0),
-                    brilho=6.5, boca_k=1.35, boca_alt=3.5, labio_k=0.45)
+_TRABALHADOR_KW = dict(larg=162.0, fundo=80.0, z=(134.0, 262.0), maxilar=188.0, corte=18.0,
+                       z_olho=204.0, z_boca=160.0, pivo=114.0, u_olho=32.0,
+                       olho=(40.0, 25.0), iris=(21.0, 22.0), pupila=(11.0, 12.0),
+                       u_sobr=(23.0, 42.0), sobr=(22.0, 7.0, 6.0),
+                       brilho=6.5, boca_k=1.35, boca_alt=3.5, labio_k=0.45)
+TRABALHADOR = Rosto(**_TRABALHADOR_KW)
 
 
-def trabalhador(M, cara):
+# ── AS VARIAÇÕES (pedido do Bruno, escopo dele: `058`) ─────────────────────
+# 2 sexos × 3 idades × as 5 cores do IBGE, SEM CARICATURA: a cor muda o tom
+# de pele e o cabelo que aparece por baixo do capacete, nunca o desenho do
+# rosto — a amarela e a indígena distinguem-se pelo cabelo liso preto de
+# franja reta e pelo tom, não pelo olho. O que muda o desenho é o SEXO (o
+# maxilar mais suave, a sobrancelha mais fina, o lábio de cor e o rabo de
+# cavalo) e a IDADE (o jovem de cara lisa, o veterano grisalho e com rugas).
+#
+# O padrão é o trabalhador de hoje, e tem de sair IGUAL: é o que o jogo mostra
+# desde a `058`, e o `trabalhador_retrato` do estúdio não passa perfil.
+#
+# O veredito da v1 (o Bruno, 24/09, `art_lab/retratos/trabalhador_variacoes/`):
+# a pele preta escura demais; a mulher ainda lia como homem, o rabo de cavalo
+# como uma ALÇA do colete e o lábio de cor sumia — e ele pediu mais penteados
+# de mulher, «mesmo de capacete»; as rugas não se viam, o bigode e o
+# cavanhaque liam como MANCHA, e ele pediu mais barbas. Daí `cabelo` (o
+# penteado dela) e a `barba` em `pelos`.
+PERFIL_PADRAO = dict(sexo="homem", idade="adulto", cor="parda", pelos=None, cabelo=None)
+SEXOS = ("homem", "mulher")
+IDADES = ("jovem", "adulto", "veterano")
+CORES = ("branca", "parda", "preta", "amarela", "indigena")
+PELOS = ("bigode", "cavanhaque", "barba")
+# Os penteados dela que o capacete deixa ver: o rabo de cavalo e a trança por
+# cima do ombro, o cabelo solto até ao ombro, o curto até ao queixo e o crespo
+# em volume. Os três últimos EMOLDURAM a cara, que é o sinal que se lê primeiro
+# a 70 px.
+CABELOS = ("rabo", "tranca", "solto", "curto", "crespo")
+
+# A COR: (pele, degrau abaixo, cabelo, sobrancelha, lábio da mulher), tudo
+# chaves da paleta. O degrau desenha o nariz e é o lábio do homem, como no
+# padrão (`pele_escura` sobre `pele`). O lábio dela é de COR, e mais saturado
+# do que o da v1, que no cartão sumia: rosado nas peles claras, vermelho nas
+# médias, amora na preta (mais escuro do que a pele, e roxo).
+#
+# ⚠️ NA PELE PRETA O `vao` QUASE NÃO SE SEPARA: medido no PNG (Weber na
+# luminância, a pele pela mediana da bochecha), a boca em `vao` deu 0,42–0,59
+# contra 0,75–0,91 nas outras quatro, com o piso da própria pele a 0,07–0,12.
+# Ali a sobrancelha, a boca, a pupila e a pestana vão ao `cabelo_preto`
+# (`_ESCURO`), e a sobrancelha, que já ia, mediu 0,80.
+_CORES = {
+    "branca":   ("pele_clara", "pele", "porta", "vao", "labio_rosado"),
+    "parda":    ("pele", "pele_escura", "cabelo_fundo", "vao", "labio_vermelho"),
+    "preta":    ("pele_funda", "pele_funda_sombra", "cabelo_preto", "cabelo_preto",
+                 "labio_amora"),
+    "amarela":  ("pele_amarela", "pele_amarela_sombra", "cabelo_preto", "vao",
+                 "labio_rosado"),
+    "indigena": ("pele_cobre", "pele_cobre_sombra", "cabelo_preto", "vao",
+                 "labio_vermelho"),
+}
+_ESCURO = {"preta": "cabelo_preto"}
+# O cabelo LISO de franja reta (a amarela e a indígena): a franja desce da aba
+# até perto da sobrancelha, cortada a direito.
+_LISO = ("amarela", "indigena")
+
+# O MAXILAR abaixo da linha das maçãs: os três anéis (z, largura, fundo, corte)
+# que fecham no queixo. O do padrão é largo e quadrado; o da mulher fecha mais
+# estreito e com as quinas mais cortadas — «mais suave», e com a MESMA altura,
+# senão o enquadramento (que mede a cabeça) mudava o tamanho do busto; o do
+# jovem fica a meio caminho.
+_QUEIXOS = {
+    "homem":  ((170.0, 160.0, 78.0, 20.0), (150.0, 150.0, 74.0, 18.0),
+               (134.0, 132.0, 64.0, 16.0)),
+    "jovem":  ((170.0, 158.0, 78.0, 21.0), (150.0, 144.0, 72.0, 20.0),
+               (134.0, 122.0, 62.0, 17.0)),
+    "mulher": ((170.0, 154.0, 76.0, 22.0), (150.0, 136.0, 70.0, 22.0),
+               (134.0, 110.0, 58.0, 18.0)),
+}
+
+
+def perfil_completo(perfil=None):
+    """O perfil com o que faltar tirado do padrão, e conferido: uma chave mal
+    escrita tem de rebentar aqui, e não sair como o trabalhador de hoje."""
+    p = dict(PERFIL_PADRAO)
+    for k, v in (perfil or {}).items():
+        if k not in p:
+            raise ValueError("perfil: chave desconhecida %r" % k)
+        p[k] = v
+    if p["sexo"] == "mulher" and p["cabelo"] is None:
+        p["cabelo"] = "rabo"
+    if (p["sexo"] not in SEXOS or p["idade"] not in IDADES or p["cor"] not in CORES
+            or p["pelos"] not in (None,) + PELOS or p["cabelo"] not in (None,) + CABELOS):
+        raise ValueError("perfil inválido: %r" % p)
+    if p["pelos"] and p["sexo"] != "homem":
+        raise ValueError("pelos no rosto só nos homens: %r" % p)
+    if p["cabelo"] and p["sexo"] != "mulher":
+        raise ValueError("o penteado é o dela; o dele é o curto de hoje: %r" % p)
+    return p
+
+
+def rosto_do_perfil(perfil):
+    """A `Rosto` do trabalhador para um perfil: o padrão é a `TRABALHADOR`."""
+    p = perfil_completo(perfil)
+    kw = dict(_TRABALHADOR_KW)
+    if p["idade"] == "jovem":
+        # O olho um nada maior: a cara lisa sozinha não separava o jovem do
+        # adulto de hoje, que também não tem marca nenhuma.
+        kw.update(olho=(42.0, 27.0), iris=(22.0, 24.0), pupila=(11.0, 13.0))
+    if p["sexo"] == "mulher":
+        # A sobrancelha mais FINA e o lábio mais CHEIO: na v1 (`labio_k` 1,0 e
+        # a boca a 1,2) o lábio de cor sumia no cartão.
+        kw.update(sobr=(22.0, 4.5, 4.0), labio_k=1.5, boca_k=1.3)
+    return TRABALHADOR if p == PERFIL_PADRAO else Rosto(**kw)
+
+
+def trabalhador(M, cara, perfil=None):
     """O busto do trabalhador do rodapé, de FRENTE: (tronco, cabeça).
 
     ⚠️ ELE ERA DE CORPO INTEIRO, E PASSOU A BUSTO POR ESCOLHA DO BRUNO (24/09).
@@ -1489,15 +1594,20 @@ def trabalhador(M, cara):
     sobrancelhas; e o COLETE laranja VESTIDO — a camisa aparece por cima e dos
     lados, senão é uma caixa laranja pousada à frente dele —, com UMA faixa
     refletiva (duas taparam o laranja inteiro no primeiro boneco).
+
+    `perfil` escolhe a variação (sexo, idade, cor, pelos no rosto; ver
+    `PERFIL_PADRAO`). Sem ele sai o trabalhador de hoje.
     """
-    r = TRABALHADOR
-    pele = M["pele"]
-    sombra = M["pele_escura"]
-    escuro = M["vao"]
-    cabelo = _principled("cabelo_trabalhador", base.PALETA["madeira_esc"], rough=0.6, spec=0.2)
+    p = perfil_completo(perfil)
+    r = rosto_do_perfil(p)
+    k_pele, k_sombra, k_cabelo, k_sobr, k_labio = _CORES[p["cor"]]
+    mulher = p["sexo"] == "mulher"
+    pele = M[k_pele]
+    sombra = M[k_sombra]
+    escuro = M[_ESCURO.get(p["cor"], "vao")]
     # A sobrancelha no escuro da boca, como a do Arlindo: debaixo de uma aba a
     # testa fica na meia-sombra, e o castanho não se separava dela.
-    sobrancelha = _principled("sobrancelha_trabalhador", base.PALETA["vao"], rough=0.9)
+    sobrancelha = _principled("sobrancelha_trabalhador", base.PALETA[k_sobr], rough=0.9)
     # A CAMISA É `calca`, a ganga: o `azul` do boneco antigo é a camisa do
     # Arlindo, e o azul-escuro separa-se mais do laranja do colete.
     camisa = _principled("camisa_trabalhador", base.PALETA["calca"], rough=0.9)
@@ -1511,7 +1621,8 @@ def trabalhador(M, cara):
     # 2.119 pixels com o vermelho a 255 no topo do casco (0,77% do desenho),
     # que no cartão é uma mancha branca.
     casco = _principled("capacete_trabalhador", base.PALETA["capacete"], rough=0.5, spec=0.35)
-    labio = _principled("labio_trabalhador", base.PALETA["pele_escura"], rough=0.8)
+    labio = _principled("labio_trabalhador",
+                        base.PALETA[k_labio if mulher else k_sombra], rough=0.8)
     cab, tronco_l = [], []
 
     # A CABEÇA: o crânio (todo debaixo do capacete) e o maxilar LARGO, que
@@ -1525,12 +1636,11 @@ def trabalhador(M, cara):
         (240.0, r.larg - 2.0, r.fundo, r.corte),
         (r.maxilar, r.larg, r.fundo, r.corte),
     ], pele))
-    cab.append(_loft("cabeca_maxilar", [
-        (r.maxilar, r.larg, r.fundo, r.corte),
-        (170.0, 160.0, 78.0, 20.0),
-        (150.0, 150.0, 74.0, 18.0),
-        (r.z[0], 132.0, 64.0, 16.0),
-    ], pele, fechar=(False, True)))
+    queixo = _QUEIXOS["mulher" if mulher else
+                      "jovem" if p["idade"] == "jovem" else "homem"]
+    maxilar = _loft("cabeca_maxilar", [(r.maxilar, r.larg, r.fundo, r.corte)] + list(queixo),
+                    pele, fechar=(False, True))
+    cab.append(maxilar)
     for sx in (-1.0, 1.0):
         o = prisma("orelha_%+d" % sx, _contorno_oitavado(16.0, 28.0, 5.0),
                    _niv(186.0), _niv(220.0), (1.0, 1.0), pele)
@@ -1546,6 +1656,25 @@ def trabalhador(M, cara):
     cab.append(_placa(r, "nariz_base", 0.0, 173.5, 20.0, 3.0, sombra))
     cab += _boca(r, M, cara, escuro, labio)
 
+    # O cabelo de cada perfil: o veterano é grisalho, o resto sai da cor.
+    k_cabelo = "cabelo_grisalho" if p["idade"] == "veterano" else k_cabelo
+    liso = p["cor"] in _LISO
+    if p["idade"] == "veterano":
+        ruga = _principled("ruga_trabalhador", _tom(base.PALETA[k_sombra], 0.78), rough=0.9)
+        cab += _rugas(r, ruga, testa=not liso)
+    if p["pelos"]:
+        pelo = _principled("pelo_trabalhador", base.PALETA[k_cabelo], rough=0.8)
+        pelo_fundo = _principled("pelo_fundo_trabalhador", _tom(base.PALETA[k_cabelo], 0.62),
+                                 rough=0.9)
+        asa = 5.0 if cara["boca"].startswith("sorriso") else 12.0
+        cab += _bigode(r, pelo, pelo_fundo, pele, asa, fino=p["pelos"] == "cavanhaque")
+        if p["pelos"] == "cavanhaque":
+            cab += _cavanhaque(maxilar, pelo)
+        elif p["pelos"] == "barba":
+            cab += _barba(r, queixo, maxilar, pelo)
+    if mulher:
+        cab += _cilios(r, escuro)
+
     # O CABELO é só o que o capacete deixa ver: uma faixa CURTA por baixo da
     # aba, das têmporas à nuca, e as patilhas à frente da orelha. ⚠️ Só com as
     # patilhas (a v1) ele «parecia careca» (o Bruno): duas placas escuras
@@ -1559,20 +1688,26 @@ def trabalhador(M, cara):
     # depuração, sem o capacete). Vai no degrau de baixo, `cabelo_fundo`, 4 px
     # fora, e com uma FRANJA de 10 px à frente, logo abaixo da aba — é aí que
     # o olho procura cabelo debaixo de um capacete.
-    cabelo_curto = _principled("cabelo_curto_trabalhador", base.PALETA["cabelo_fundo"],
+    cabelo_curto = _principled("cabelo_curto_trabalhador", base.PALETA[k_cabelo],
                                rough=0.8, spec=0.1)
     # A faixa segue o crânio que estreita (ver acima), 4 px fora dele.
-    faixa_cab = _loft("cabelo_faixa", [
-        (259.0, 142.0, 74.0, 28.0),
-        (249.0, 156.0, 84.0, 26.0),
-        (236.0, r.larg + 8.0, r.fundo + 8.0, r.corte + 3.0),
-    ], cabelo_curto, contorno=_contorno_12, fechar=(False, False))
+    aneis = [(259.0, 142.0, 74.0, 28.0), (249.0, 156.0, 84.0, 26.0)]
+    z_franja = 249.0
+    if liso:
+        # A FRANJA RETA do cabelo liso: a frente desce até aos 240, cortada
+        # por um anel HORIZONTAL (o da faixa entre 249 e 236, interpolado) —
+        # a borda de baixo é a direito, e fica 7 px acima da sobrancelha.
+        aneis.append((240.0, 165.7, 86.8, 22.5))
+        z_franja = 240.0
+    aneis.append((236.0, r.larg + 8.0, r.fundo + 8.0, r.corte + 3.0))
+    faixa_cab = _loft("cabelo_faixa", aneis, cabelo_curto, contorno=_contorno_12,
+                      fechar=(False, False))
     bm = bmesh.new()
     bm.from_mesh(faixa_cab.data)
     # A frente de cada anel está a um fundo diferente: a face da testa é a
     # que tem os QUATRO vértices na frente do anel dela.
     frente = min(vv.co.y for vv in bm.verts) + _pf(5.0)
-    franja = _niv(249.0) - 1e-4
+    franja = _niv(z_franja) - 1e-4
     bmesh.ops.delete(bm, geom=[f for f in bm.faces
                                if all(vv.co.y < frente for vv in f.verts)
                                and min(vv.co.z for vv in f.verts) < franja],
@@ -1581,9 +1716,19 @@ def trabalhador(M, cara):
     bm.free()
     faixa_cab.modifiers.new("espessura", "SOLIDIFY").thickness = _pf(3.0)
     cab.append(faixa_cab)
-    for sx in (-1.0, 1.0):
+    # As patilhas em bico são corte de barbeiro: a mulher não as tem. O
+    # penteado dela é uma CASCA à volta da cabeça (solto, curto, crespo) ou um
+    # rabo por cima do ombro (rabo, trança), que se pousa no fim, com o tronco
+    # — e aí as orelhas ficam à vista, e levam brinco.
+    for sx in () if mulher else (-1.0, 1.0):
         cab.append(_patilha(r, "cabelo_patilha_%+d" % sx, sx, cabelo_curto, z_topo=258.0,
                             z_bico=222.0, fundo_px=22.0, esp=4.0))
+    if p["cabelo"] in _CASCAS:
+        cab.append(_casca("penteado_" + p["cabelo"], _CASCAS[p["cabelo"]], cabelo_curto))
+    elif p["cabelo"] == "crespo":
+        cab.append(_crespo("penteado_crespo", cabelo_curto))
+    elif mulher:
+        cab += _brincos(r, _principled("brinco", base.PALETA["amarelo"], rough=0.4, spec=0.4))
 
     # O CAPACETE: casco em cúpula e a aba de UMA peça. As voltas:
     # - v1: cúpula até aos 320, 16 lados, crista ao meio e uma pala à parte —
@@ -1735,7 +1880,354 @@ def trabalhador(M, cara):
     # que cada peça continue pousada onde os raios a puseram.
     for o in tronco_l:
         o.location.z += _alt(10.0)
+    if p["cabelo"] in ("rabo", "tranca"):
+        bpy.context.view_layer.update()
+        prendedor = _principled("prendedor", base.PALETA["faixa"], rough=0.7)
+        tronco_l += _rabo_de_cavalo("penteado_" + p["cabelo"], tronco_l, 1.0, cabelo_curto,
+                                    prendedor, tranca=p["cabelo"] == "tranca")
     return tronco_l, cab
+
+
+def _tom(hexa, fator):
+    """O mesmo tom mais escuro, em sRGB: o degrau abaixo de uma cor da paleta
+    sem lhe inventar uma chave (a ruga, o fundo do bigode)."""
+    h = hexa.lstrip("#")
+    return "#" + "".join("%02x" % int(round(int(h[i:i + 2], 16) * fator)) for i in (0, 2, 4))
+
+
+def _rugas(r, mat, testa=True):
+    """A IDADE, em vincos rasos (a receita do Sr. Ribeiro e do Arlindo).
+
+    ⚠️ NA v1 ERAM DOIS VINCOS DE 9 × 2 POR OLHO, no degrau da pele, e «não se
+    viam» (o Bruno): a 105 px do telefone um traço de 2 px de desenho dá
+    ~1,5 px, e o degrau mal se separa da pele. Agora são TRÊS em leque, de
+    12 × 3,5, num tom 22% abaixo do degrau, mais uma olheira debaixo de cada
+    olho e dois vincos na testa — que a franja reta tapa, e por isso não
+    entram no liso. ⚠️ O SULCO DO NARIZ À BOCA NÃO ENTRA: desenhava
+    PARÊNTESES, e a boca do Sr. Ribeiro lia de ventríloquo.
+
+    Os vincos acabam na FRENTE da cabeça (u 63, onde começa a quina): além
+    dela a placa ficava a flutuar sobre a face que recua.
+    """
+    lo, ao = r.olho
+    pecas = []
+    for sx in (-1.0, 1.0):
+        u = (r.u_olho + lo / 2.0 + 5.0) * sx
+        # O de cima sobe para fora, o de baixo desce: o leque.
+        for k, (dz, ang) in enumerate(((5.0, -22.0), (0.0, 0.0), (-5.0, 22.0))):
+            pecas.append(_placa(r, "ruga_olho_%+d_%d" % (sx, k), u, r.z_olho + dz, 12.0, 3.5,
+                                mat, esp=_pf(0.8), inclina=ang * sx))
+        pecas.append(_placa(r, "olheira_%+d" % sx, r.u_olho * sx, r.z_olho - ao / 2.0 - 4.5,
+                            lo - 8.0, 3.0, mat, esp=_pf(0.8)))
+    if testa:
+        for k, (zz, lg) in enumerate(((240.0, 54.0), (246.5, 40.0))):
+            pecas.append(_placa(r, "ruga_testa_%d" % k, 0.0, zz, lg, 3.0, mat, esp=_pf(0.8)))
+    for o in pecas:
+        o.visible_shadow = False
+    return pecas
+
+
+def _bigode(r, pelo, fundo, pele, asa, fino=False):
+    """O BIGODE em tufos, a receita do Arlindo em pequeno.
+
+    ⚠️ NA v1 ERAM DUAS PLACAS CHAPADAS, e «viravam mancha» (o Bruno): uma barra
+    escura por cima da boca lê como sombra. O que o faz pelo é a FORMA — cheio
+    ao meio de cada asa, a afinar para fora e com as PONTAS a descer pelos
+    cantos da boca — e a TEXTURA: a base no tom de baixo do cabelo e os tufos
+    no tom dele por cima, com a sombra fina entre eles a fazer o fio (um tom
+    contrário a alternar lia como PENTE, no Arlindo). A fresta de pele ao meio
+    é o sulco do lábio, e outra, por baixo, separa-o da boca.
+
+    `fino`: o do cavanhaque, sem pontas — quem desce pelos cantos da boca ali
+    são as ligações ao queixo.
+    """
+    zb = r.z_boca + (7.5 if fino else 8.5)
+    alt = 4.5 if fino else 8.0
+    tg = math.tan(math.radians(asa))
+    pecas = []
+    for sx in (-1.0, 1.0):
+        pecas.append(_placa(r, "bigode_%+d" % sx, 13.0 * sx, zb - 0.5, 24.0, alt * 0.85, fundo,
+                            fora=0.004, inclina=asa * sx))
+        for k in range(3 if fino else 4):
+            du = 4.0 + 6.0 * k
+            pecas.append(_placa(r, "bigode_tufo_%+d_%d" % (sx, k), du * sx,
+                                zb - (du - 13.0) * tg + 0.3 * k, 6.4, alt * (1.0 - 0.12 * k),
+                                pelo, fora=0.007, inclina=(asa + 4.0 * k) * sx))
+        if not fino:
+            pecas.append(_placa(r, "bigode_ponta_%+d" % sx, 26.0 * sx, zb - alt / 2.0 - 3.0,
+                                6.0, 9.0, pelo, fora=0.007, inclina=12.0 * sx))
+    pecas.append(_placa(r, "bigode_sulco", 0.0, zb + 1.0, 2.5, alt - 2.0, pele, fora=0.009))
+    return pecas
+
+
+def _cavanhaque(maxilar, pelo):
+    """O CAVANHAQUE, ligado ao bigode fino pelos cantos da boca.
+
+    ⚠️ SOZINHO, O TUFO DO QUEIXO ERA UM RETÂNGULO ESCURO — a «mancha» da v1 (o
+    Bruno). Com as duas ligações ele fecha um aro à volta da boca, e é o aro
+    que se lê como barba. As ligações passam FORA do canto da boca (u 24), que
+    sobe até ao u 23 no sorriso curto; e o tufo do queixo afina para baixo.
+    Tudo pousado por raios no maxilar: o queixo recua, e uma placa no plano da
+    cara flutuaria à frente dele (a regra da gola, no `CLAUDE.md`).
+    """
+    pecas = [_retalho("cavanhaque", [maxilar],
+                      ((-25.0, 151.0), (25.0, 151.0), (8.0, 135.0), (-8.0, 135.0)),
+                      pelo, afasta=1.0, espessura=2.5)]
+    for sx in (-1.0, 1.0):
+        pecas.append(_retalho("cavanhaque_lado_%+d" % sx, [maxilar],
+                              ((23.0 * sx, 168.0), (28.0 * sx, 168.0), (27.0 * sx, 150.0),
+                               (21.0 * sx, 150.0)),
+                              pelo, afasta=1.0, espessura=2.0, espelhado=sx < 0))
+    return pecas
+
+
+def _barba(r, queixo, maxilar, mat):
+    """A BARBA curta e cheia: uma casca à volta do maxilar, 4 px fora dele, da
+    altura da orelha ao queixo, SEM a face da frente acima do queixo — e a
+    frente das bochechas em dois retalhos pousados por raios.
+
+    A casca é a receita da faixa do cabelo (um anel sem a face da testa): a
+    face da frente é UMA só de lado a lado, e sem ela a boca fica limpa. ⚠️
+    Mas sozinha ela deixava só as quinas e o queixo, uma FAIXA à volta da cara
+    — e em grisalho sobre a pele preta lia como a JUGULAR do capacete (prévia
+    da v2). Os retalhos enchem a bochecha de baixo, do canto da boca (u 27,
+    fora do canto do sorriso, que chega ao 23) até à quina.
+    """
+    aneis = [(186.0, r.larg + 8.0, r.fundo + 8.0, r.corte + 2.0)] + [
+        (zz, lg + 8.0, fd + 8.0, ct + 2.0) for zz, lg, fd, ct in queixo]
+    o = _loft("barba", aneis, mat, fechar=(False, True))
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    frente = min(vv.co.y for vv in bm.verts) + _pf(5.0)
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces
+                               if all(vv.co.y < frente for vv in f.verts)
+                               and min(vv.co.z for vv in f.verts) > _niv(147.0)],
+                     context="FACES_ONLY")
+    bm.to_mesh(o.data)
+    bm.free()
+    o.modifiers.new("espessura", "SOLIDIFY").thickness = _pf(3.0)
+    pecas = [o]
+    for sx in (-1.0, 1.0):
+        pecas.append(_retalho("barba_face_%+d" % sx, [maxilar],
+                              ((27.0 * sx, 180.0), (66.0 * sx, 182.0), (64.0 * sx, 148.0),
+                               (25.0 * sx, 148.0)),
+                              mat, afasta=1.5, espessura=2.5, espelhado=sx < 0))
+    return pecas
+
+
+def _cilios(r, mat):
+    """Os CÍLIOS dela: a pestana mais grossa e uma ponta a subir no canto de
+    fora. Na v1 só a boca, o maxilar e a sobrancelha a separavam dele, e no
+    cartão «a mulher ainda lê como homem» (o Bruno)."""
+    lo, ao = r.olho
+    zp = r.z_olho + ao / 2.0 - 4.0
+    pecas = []
+    for sx in (-1.0, 1.0):
+        pecas.append(_placa(r, "cilios_%+d" % sx, r.u_olho * sx, zp + 0.5, lo + 3.0, 3.5, mat,
+                            fora=0.040))
+        pecas.append(_placa(r, "cilios_ponta_%+d" % sx, (r.u_olho + lo / 2.0 + 2.5) * sx,
+                            zp + 2.5, 8.0, 3.0, mat, fora=0.040, inclina=-30.0 * sx))
+    return pecas
+
+
+def _brincos(r, mat):
+    """Um brinco em cada orelha, debaixo do lóbulo: só com o cabelo preso."""
+    pecas = []
+    for sx in (-1.0, 1.0):
+        o = prisma("brinco_%+d" % sx, _contorno_oitavado(8.0, 8.0, 2.5),
+                   _niv(175.0), _niv(184.0), (1.0, 1.0), mat)
+        o.location.x += sx * _lg(r.larg / 2.0 + 3.0)
+        o.location.y += _pf(1.0)
+        pecas.append(o)
+    return pecas
+
+
+# OS PENTEADOS EM CASCA: anéis (z, largura, fundo, recuo) em pixels de
+# desenho, de baixo da aba para baixo. O de cima cabe dentro da aba (184 × 106)
+# e o resto cai à volta da cabeça (162 × 80) e da orelha (até aos 91).
+_CASCAS = {
+    # SOLTO até ao ombro. Acaba nos 106, 6 px acima do ombro nos 100 de largura.
+    "solto": ((254.0, 176.0, 96.0, 2.0), (236.0, 192.0, 104.0, 3.0),
+              (210.0, 198.0, 106.0, 4.0), (170.0, 198.0, 104.0, 6.0),
+              (130.0, 200.0, 100.0, 8.0), (106.0, 204.0, 96.0, 10.0)),
+    # CURTO até ao queixo, com a ponta a vir para a frente (o recuo cai a 0).
+    "curto": ((254.0, 176.0, 96.0, 2.0), (236.0, 192.0, 104.0, 3.0),
+              (210.0, 198.0, 106.0, 3.0), (176.0, 200.0, 104.0, 2.0),
+              (158.0, 198.0, 100.0, 0.0)),
+}
+
+
+def _casca(nome, aneis, mat, x_rosto=84.0, esp=4.0):
+    """O cabelo comprido por baixo do capacete: anéis elípticos à volta da
+    cabeça, SEM a frente — a cara fica aberta e o cabelo EMOLDURA-A, que é o
+    sinal que se lê primeiro a 70 px. É a receita da faixa (um anel sem a face
+    da testa), descida até ao ombro ou ao queixo.
+
+    Saem as faces com TODOS os vértices à frente (y < 0) e dentro da
+    meia-largura `x_rosto` — a abertura da cara, 3 px além da dela (81).
+
+    ⚠️ O NOME NÃO COMEÇA POR `cabelo`: o enquadramento mede a cabeça pelas peças
+    `cabeca`, `cabelo` e `capacete`, e uma casca até ao ombro entrava na
+    medida — o busto encolhia de um penteado para o outro.
+    """
+    bm = bmesh.new()
+    rings = []
+    for k, (z_px, larg, fundo, recuo) in enumerate(aneis):
+        pts = _anel_eliptico(larg, fundo, 24)
+        rings.append([bm.verts.new((x, y + _pf(recuo), _niv(z_px))) for x, y in pts])
+    for a, b in zip(rings, rings[1:]):
+        for i in range(24):
+            j = (i + 1) % 24
+            bm.faces.new((a[i], a[j], b[j], b[i]))
+    xr = _lg(x_rosto)
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces
+                               if all(vv.co.y < 0.0 and abs(vv.co.x) < xr for vv in f.verts)],
+                     context="FACES_ONLY")
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    o = _objeto(nome, bm, mat)
+    o.modifiers.new("espessura", "SOLIDIFY").thickness = _pf(esp)
+    return o
+
+
+# O CRESPO: fiadas de cachos à volta da cabeça, por baixo da aba — (z, meia
+# largura, meio fundo, raio, ângulos). O ângulo conta-se da FRENTE (0°) para
+# trás (180°), e os dois lados são o mesmo ângulo com o sinal trocado.
+_CACHOS = (
+    (244.0, 100.0, 58.0, 17.0, (70.0, 95.0, 120.0, 145.0, 180.0)),
+    (222.0, 108.0, 62.0, 19.0, (78.0, 103.0, 128.0, 153.0, 172.0)),
+    (200.0, 106.0, 60.0, 18.0, (84.0, 108.0, 132.0, 156.0, 180.0)),
+    (182.0, 96.0, 56.0, 15.0, (92.0, 116.0, 140.0, 164.0)),
+)
+
+
+def _crespo(nome, mat):
+    """O cabelo CRESPO em volume, por baixo do capacete: cachos, não casca.
+
+    ⚠️ NA v2 ERA UMA CASCA COM OS VÉRTICES A ENTRAR E A SAIR, e «lia como
+    capuz» e «cobria o olho» (o Bruno): uma superfície contínua desde a aba é
+    um capuz, por mais que ondule, e os vértices da frente vinham para diante
+    do plano da cara. O que lê como crespo é a SILHUETA recortada — cachos
+    redondos a sair da aba e a emoldurar a cara pelos lados — e a sombra entre
+    eles faz a textura (um tom contrário a alternar lia como pente, no
+    Arlindo).
+
+    Cada cacho é uma esfera facetada, redonda NO MUNDO (o raio em unidades de
+    largura nos três eixos). O primeiro ângulo de cada fiada deixa o cacho
+    ATRÁS do plano da cara (fundo 40): a 70° a frente dele fica nos 28, e o
+    olho, que acaba nos 52 de largura, fica livre.
+    """
+    bm = bmesh.new()
+    for z_px, a, b, raio, angulos in _CACHOS:
+        for ang in angulos:
+            t = math.radians(ang)
+            for sx in ((1.0,) if ang >= 180.0 else (-1.0, 1.0)):
+                c = Vector((sx * _lg(a * math.sin(t)), -_pf(b * math.cos(t)), _niv(z_px)))
+                bmesh.ops.create_icosphere(bm, subdivisions=2, radius=_lg(raio),
+                                           matrix=Matrix.Translation(c))
+    return _objeto(nome, bm, mat)
+
+
+def _rabo_de_cavalo(nome, alvos, sx, mat, prendedor, tranca=False):
+    """O rabo de cavalo (ou a trança) da trabalhadora: sai de trás da cabeça,
+    passa preso ao lado do pescoço e cai POR CIMA DO OMBRO até ao peito.
+
+    ⚠️ NUMA CÂMERA DE CIMA, O QUE ESTÁ ATRÁS SOBE E SOME: pendurado na nuca,
+    ele ficava inteiro atrás da cabeça. Para se ler a 70 px tem de vir por
+    cima do ombro, e é essa metade que pousa por raios no tronco — em leque de
+    um eixo em `x`, como o `_envolver`.
+
+    ⚠️ NA v1 ELE LIA COMO UMA ALÇA DO COLETE (o Bruno): uma fita estreita, de
+    largura constante, paralela à faixa refletiva. Agora é GROSSO onde nasce e
+    afina até à ponta, curva do ombro para dentro, e é PRESO ao lado do
+    pescoço por um prendedor vermelho — a peça que diz «rabo de cavalo» antes
+    de tudo o resto. A trança leva o prendedor na ponta, e os gomos
+    alternados são o que a separa de uma corda.
+
+    Fica com o TRONCO, e não com a cabeça: a pose roda a cabeça 4° sobre o
+    pescoço, e o que pousa no ombro descolava dele. A raiz, na nuca, fica
+    atrás da cabeça em qualquer pose.
+    """
+    # A metade de cima, no ar, em pixels de desenho: (u, fundo, z). Atrás da
+    # cabeça (fundo 40) e da aba (53), a descer até ao lado do pescoço, por
+    # baixo do queixo (134), onde a câmera o vê.
+    pts = [Vector((sx * _lg(uu), _pf(f), _niv(zz)))
+           for uu, f, zz in ((24.0, 50.0, 236.0), (52.0, 54.0, 200.0),
+                             (76.0, 44.0, 164.0), (88.0, 26.0, 132.0))]
+    raio_px = [9.0, 14.0, 15.0, 15.0]
+    # A metade que pousa: raios de um eixo à altura 60, do ombro para a frente
+    # e para baixo, a curvar para dentro (o `u` desce do ombro para o peito).
+    cz = _niv(60.0)
+    for ang, uu, rp in ((-20.0, 84.0, 15.0), (10.0, 80.0, 14.0), (40.0, 74.0, 13.0),
+                        (65.0, 70.0, 11.0), (85.0, 68.0, 8.0), (98.0, 70.0, 3.0)):
+        a = math.radians(ang)
+        d = Vector((0.0, -math.sin(a), math.cos(a)))
+        ok = _raio(alvos, Vector((sx * _lg(uu), 0.0, cz)) + d * 20.0, -d)
+        assert ok, "o rabo de cavalo não achou o ombro a %.0f°" % ang
+        pts.append(ok[0] + ok[1] * _lg(rp + 1.5))
+        raio_px.append(rp)
+    # Catmull-Rom: a linha passa pelos pontos e não faz cotovelos.
+    passos = 6 if tranca else 4
+    linha, raios = [], []
+    for i in range(len(pts) - 1):
+        p0, p1 = pts[max(i - 1, 0)], pts[i]
+        p2, p3 = pts[i + 1], pts[min(i + 2, len(pts) - 1)]
+        for k in range(passos):
+            t = k / float(passos)
+            linha.append(0.5 * ((2 * p1) + (-p0 + p2) * t
+                                + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t
+                                + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t))
+            raios.append(raio_px[i] + (raio_px[i + 1] - raio_px[i]) * t)
+    linha.append(pts[-1])
+    raios.append(raio_px[-1])
+    # Os anéis, por transporte paralelo: sem torção entre um e o seguinte.
+    lados = 10
+    bm = bmesh.new()
+    aneis, quadros = [], []
+    ref = Vector((1.0, 0.0, 0.0))
+    n = len(linha)
+    for i, c in enumerate(linha):
+        t = (linha[min(i + 1, n - 1)] - linha[max(i - 1, 0)]).normalized()
+        n1 = (ref - t * ref.dot(t)).normalized()
+        n2 = t.cross(n1)
+        ref = n1
+        rr = _lg(raios[i])
+        if tranca and 3 <= i < n - 3:
+            # OS GOMOS: o raio pulsa e o centro vai de um lado ao outro, um
+            # gomo por passo e meio da linha — as três madeixas cruzadas.
+            fase = math.pi * i / 1.5
+            rr *= 0.74 + 0.26 * abs(math.cos(fase))
+            c = c + n1 * _lg(2.5) * math.cos(fase)
+        quadros.append((c, t, n1, n2, rr))
+        aneis.append([bm.verts.new(c + (n1 * math.cos(2 * math.pi * j / lados)
+                                        + n2 * math.sin(2 * math.pi * j / lados)) * rr)
+                      for j in range(lados)])
+    for a, b in zip(aneis, aneis[1:]):
+        for j in range(lados):
+            jj = (j + 1) % lados
+            bm.faces.new((a[j], a[jj], b[jj], b[j]))
+    bm.faces.new(aneis[0])
+    bm.faces.new(list(reversed(aneis[-1])))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    pecas = [_objeto(nome, bm, mat)]
+    # O PRENDEDOR: um anel curto e mais largo do que o cabelo, no rabo ao lado
+    # do pescoço (o 4.º ponto da linha, o primeiro que a câmera vê) e na
+    # trança perto da ponta.
+    c, t, n1, n2, rr = quadros[3 * passos if not tranca else n - 4]
+    bm = bmesh.new()
+    anel = []
+    for dz in (-1.0, 1.0):
+        anel.append([bm.verts.new(c + t * _lg(3.0) * dz
+                                  + (n1 * math.cos(2 * math.pi * j / lados)
+                                     + n2 * math.sin(2 * math.pi * j / lados)) * (rr + _lg(2.0)))
+                     for j in range(lados)])
+    for j in range(lados):
+        jj = (j + 1) % lados
+        bm.faces.new((anel[0][j], anel[0][jj], anel[1][jj], anel[1][j]))
+    bm.faces.new(anel[0])
+    bm.faces.new(list(reversed(anel[1])))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    pecas.append(_objeto(nome + "_prendedor", bm, prendedor))
+    return pecas
 
 
 # QUEM ESTÁ NESTE KIT, e a cabeça de cada um: o `retratos_de_fala` de
