@@ -988,8 +988,13 @@ _CARAS = {
     ("cida", "preocupada"): dict(
         boca="descontente", cenho="franzida", olho="aberto", olhar="baixo",
         pose=(-3.0, 5.0, -4.0)),
+    # ⚠️ A CONTENTE DE BOCA ABERTA E SOBRANCELHA ERGUIDA LIA COMO ESPANTO: o
+    # Bruno pediu «sorriso mais claro» (24/09) e escolheu, entre três
+    # candidatas fotografadas no boletim ótimo, a boca fechada em U com a
+    # pálpebra de baixo a subir — o sorriso que chega aos olhos
+    # (`art_lab/retratos/cida_contente/v1/`).
     ("cida", "contente"): dict(
-        boca="sorriso", cenho="erguida", olho="aberto", olhar="frente",
+        boca="sorriso_fechado", cenho="suave", olho="sorrindo", olhar="frente",
         pose=(6.0, -3.0, 0.0)),
     # Arlindo — "sempre sorrindo quando ataca", diz o guia de voz. Por isso o
     # sorriso é o estado NORMAL dele e não a recompensa: o que muda quando a
@@ -1445,7 +1450,7 @@ def retratos_de_fala(M, est):
                 for peca in pecas:
                     peca.name = "%s_%s" % (nome, peca.name)
                 brp_retratos.enquadrar(est.cena, nome, pecas, medir)
-                brp_retratos.pousar_cabeca(cabeca, cara["pose"])
+                brp_retratos.pousar_cabeca(cabeca, cara["pose"], brp_retratos.CIDA.pivo)
                 origem(nome, tipo="retrato")
                 est.registrar(nome, pecas, ancora="retrato",
                               cor=brp_retratos.COR_RETRATO)

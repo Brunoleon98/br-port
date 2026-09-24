@@ -44,15 +44,38 @@ TOPO_PX = 16.0
 CENTRO_X_PX = 384.0
 CABECA_NO_QUADRO = 0.60
 
-# ── AS MEDIDAS DA CABEÇA, em pixels de desenho como no kit ─────────────────
+class Rosto:
+    """A cabeça de UM personagem, em pixels de desenho como no kit.
+
+    As peças da cara (olho, sobrancelha, nariz, boca) pousam na face da frente
+    da caixa `larg × fundo × z`, e as alturas delas são ABSOLUTAS. A Dona Cida
+    foi a primeira e as medidas dela eram constantes do módulo; o Sr. Ribeiro e
+    o Arlindo têm outra cabeça (plano de arte P2: forma POR PERSONAGEM), e
+    com constantes cada um teria de copiar as funções da cara.
+    """
+
+    def __init__(self, *, larg, fundo, z, maxilar, corte, z_olho, z_boca, pivo,
+                 u_olho=31.0, olho=(38.0, 24.0), iris=(20.0, 22.0),
+                 pupila=(10.0, 12.0), u_sobr=(23.0, 40.0), sobr=(18.0, 5.0, 4.5)):
+        self.larg, self.fundo, self.z = larg, fundo, z
+        self.maxilar, self.corte = maxilar, corte
+        self.centro = (z[0] + z[1]) / 2.0
+        self.z_olho, self.u_olho = z_olho, u_olho
+        self.olho, self.iris, self.pupila = olho, iris, pupila
+        self.u_sobr, self.sobr = u_sobr, sobr
+        self.z_boca = z_boca
+        self.pivo = pivo          # o meio do pescoço: a cabeça roda sobre ele
+
+
+# ── AS MEDIDAS DA DONA CIDA ────────────────────────────────────────────────
 _CAB_LARG, _CAB_FUNDO = 158.0, 76.0
 _CAB_Z = (140.0, 284.0)
 _MAXILAR = 196.0
-_CAB_CENTRO = (_CAB_Z[0] + _CAB_Z[1]) / 2.0
 _CORTE_CARA = 20.0
 _DZ = 8.0                       # o tronco sobe com o queixo, menos do que ele
-_PIVO = 122.0                   # o meio do pescoço: a cabeça roda sobre ele
 _Z_OLHO = 216.0
+CIDA = Rosto(larg=_CAB_LARG, fundo=_CAB_FUNDO, z=_CAB_Z, maxilar=_MAXILAR,
+             corte=_CORTE_CARA, z_olho=_Z_OLHO, z_boca=170.0, pivo=122.0)
 
 
 # ────────────────────────────────────────────────────────────── utilitários
@@ -107,20 +130,20 @@ def _raio(objs, origem, direcao):
     return None if melhor is None else (melhor[1], melhor[2])
 
 
-def _plano_cabeca():
-    centro = (0.0, 0.0, _niv(_CAB_CENTRO))
-    tam = (_lg(_CAB_LARG), _pf(_CAB_FUNDO), _alt(_CAB_Z[1] - _CAB_Z[0]))
+def _plano_cabeca(r):
+    centro = (0.0, 0.0, _niv(r.centro))
+    tam = (_lg(r.larg), _pf(r.fundo), _alt(r.z[1] - r.z[0]))
     return centro, tam
 
 
-def _placa(nome, u, z_px, larg, alt_px, mat, fora=0.0, esp=0.02, inclina=0.0):
-    """Uma placa na cara, em `u` a partir do meio e à altura ABSOLUTA `z_px`.
+def _placa(r, nome, u, z_px, larg, alt_px, mat, fora=0.0, esp=0.02, inclina=0.0):
+    """Uma placa na cara de `r`, em `u` a partir do meio e à altura ABSOLUTA `z_px`.
 
     ⚠️ `inclina` positivo do lado ESQUERDO baixa a ponta de DENTRO — é o
     «franzida» do kit. Um arco quer o sinal contrário.
     """
-    centro, tam = _plano_cabeca()
-    o = na_face(nome, "-y", centro, tam, _lg(u), _alt(z_px - _CAB_CENTRO),
+    centro, tam = _plano_cabeca(r)
+    o = na_face(nome, "-y", centro, tam, _lg(u), _alt(z_px - r.centro),
                 _lg(larg), _alt(alt_px), esp, mat, fora)
     if inclina:
         o.rotation_euler.y = math.radians(inclina)
@@ -218,9 +241,9 @@ def _mecha(nome, perfil, escalas, x0, x1, esps, mat):
     return _objeto(nome, bm, mat)
 
 
-def _cunha(nome, z_topo, z_ponta, larg_topo, larg_ponta, sai_topo, sai_ponta, mat):
+def _cunha(r, nome, z_topo, z_ponta, larg_topo, larg_ponta, sai_topo, sai_ponta, mat):
     """Um nariz em CUNHA: estreito e rente na cana, largo e saliente na ponta."""
-    y0 = -_pf(_CAB_FUNDO / 2.0) + _pf(1.0)
+    y0 = -_pf(r.fundo / 2.0) + _pf(1.0)
     bm = bmesh.new()
     vs = []
     for z_px, lg_px, sai in ((z_topo, larg_topo, sai_topo), (z_ponta, larg_ponta, sai_ponta)):
@@ -236,14 +259,14 @@ def _cunha(nome, z_topo, z_ponta, larg_topo, larg_ponta, sai_topo, sai_ponta, ma
     return _objeto(nome, bm, mat)
 
 
-def _aro_oitavado(nome, u, z_px, larg, alt, corte, barra, fora, mat):
+def _aro_oitavado(r, nome, u, z_px, larg, alt, corte, barra, fora, mat):
     """Um aro de óculos OITAVADO na face da frente: o redondo das caixas."""
     def octo(hl, ha, c):
         return [(-hl + c, -ha), (hl - c, -ha), (hl, -ha + c), (hl, ha - c),
                 (hl - c, ha), (-hl + c, ha), (-hl, ha - c), (-hl, -ha + c)]
     dentro = octo(larg / 2.0, alt / 2.0, corte)
     fora_c = octo(larg / 2.0 + barra, alt / 2.0 + barra, corte + barra * 0.41)
-    y_face = -_pf(_CAB_FUNDO / 2.0)
+    y_face = -_pf(r.fundo / 2.0)
     esp = 0.02
     bm = bmesh.new()
     camadas = []
@@ -266,90 +289,171 @@ def _aro_oitavado(nome, u, z_px, larg, alt, corte, barra, fora, mat):
 # no desenho novo. Um valor que o desenho novo ainda não sabe fazer REBENTA em
 # vez de sair com a cara séria — o `.get()` com omissão é a armadilha do
 # `CLAUDE.md` para dicionários de configuração.
+#
+# As alturas das tabelas abaixo são relativas ao OLHO e à BOCA de cada `Rosto`
+# (eram absolutas na Dona Cida, que era a única): um personagem de testa alta
+# desce a cara inteira mexendo em dois números.
 _OLHAR = {"frente": (0.0, 0.0), "baixo": (0.0, -4.0), "lado": (5.0, 0.0),
           "cima": (0.0, 3.0)}
 
 
-def _olhos(M, cara, pele, escuro):
-    if cara["olho"] != "aberto":
+def _olhos(r, M, cara, pele, escuro, oculos=False):
+    """Esclera, íris, pupila, brilho, prega e pestana — e a pálpebra da emoção.
+
+    `cerrado` desce a pálpebra de CIMA sobre a íris (o olhar por baixo da aba
+    do Arlindo, a educação contrariada do Sr. Ribeiro); `sorrindo` sobe a de
+    BAIXO, que é a bochecha a empurrá-la.
+    """
+    if cara["olho"] not in ("aberto", "sorrindo", "cerrado"):
         raise ValueError("olho %r ainda não existe no modelo novo" % cara["olho"])
     du, dz = _OLHAR[cara["olhar"]]
     brilho = _emissao("brilho_olho", 1.0)       # Standard: força 1 já dá 255
+    lo, ao = r.olho
+    zo = r.z_olho
     pecas = []
     for sx in (-1.0, 1.0):
-        u = 31.0 * sx
-        pecas.append(_placa("olho_branco_%+d" % sx, u, _Z_OLHO, 38.0, 24.0, M["cabine"]))
-        pecas.append(_placa("olho_iris_%+d" % sx, u + du, _Z_OLHO - 1.0 + dz, 20.0, 22.0,
-                            M["porta"], fora=0.010))
-        pecas.append(_placa("olho_pupila_%+d" % sx, u + du, _Z_OLHO - 1.0 + dz, 10.0, 12.0,
-                            escuro, fora=0.020))
-        pecas.append(_placa("olho_brilho_%+d" % sx, u - 5.0 + du, _Z_OLHO + 3.0 + dz, 5.0, 5.0,
+        u = r.u_olho * sx
+        pecas.append(_placa(r, "olho_branco_%+d" % sx, u, zo, lo, ao, M["cabine"]))
+        pecas.append(_placa(r, "olho_iris_%+d" % sx, u + du, zo - 1.0 + dz, r.iris[0],
+                            r.iris[1], M["porta"], fora=0.010))
+        pecas.append(_placa(r, "olho_pupila_%+d" % sx, u + du, zo - 1.0 + dz, r.pupila[0],
+                            r.pupila[1], escuro, fora=0.020))
+        pecas.append(_placa(r, "olho_brilho_%+d" % sx, u - 5.0 + du, zo + 3.0 + dz, 5.0, 5.0,
                             brilho, fora=0.030))
-        pecas.append(_placa("palpebra_%+d" % sx, u, _Z_OLHO + 10.5, 40.0, 3.5, pele, fora=0.034))
-        pecas.append(_placa("pestana_%+d" % sx, u, _Z_OLHO + 8.0, 40.0, 2.5, escuro, fora=0.038))
-        pecas.append(_aro_oitavado("oculos_%+d" % sx, u, _Z_OLHO, 46.0, 32.0, 9.0, 2.5,
-                                   0.046, M["metal"]))
-    pecas.append(_placa("oculos_ponte", 0.0, _Z_OLHO + 5.0, 14.0, 3.0, M["metal"], fora=0.052))
-    for sx in (-1.0, 1.0):
-        pecas.append(_bastao("oculos_haste_%+d" % sx,
-                             (sx * _lg(56.0), -_pf(_CAB_FUNDO / 2.0 + 1.5), _niv(_Z_OLHO + 6.0)),
-                             (sx * _lg(_CAB_LARG / 2.0 + 1.0), _pf(4.0), _niv(_Z_OLHO + 4.0)),
-                             _lg(1.4), 4, M["metal"]))
-    for o in pecas:
-        if o.name.startswith("oculos"):
-            o.visible_shadow = False
+        z_pestana = zo + ao / 2.0 - 4.0
+        if cara["olho"] == "cerrado":
+            # A PÁLPEBRA DE CIMA DESCE até ao meio do olho, e a pestana desce
+            # com ela: é a BORDA escura que o olho lê, não a pele por cima.
+            # Mais saliente do que o brilho (0,030), que ela também tapa.
+            z_pestana = zo + 1.0
+            pecas.append(_placa(r, "palpebra_cima_%+d" % sx, u, (zo + 1.0 + zo + ao / 2.0) / 2.0,
+                                lo + 2.0, ao / 2.0 - 1.0, pele, fora=0.032))
+        pecas.append(_placa(r, "palpebra_%+d" % sx, u, zo + ao / 2.0 - 1.5, lo + 2.0, 3.5,
+                            pele, fora=0.034))
+        pecas.append(_placa(r, "pestana_%+d" % sx, u, z_pestana, lo + 2.0, 2.5, escuro,
+                            fora=0.038))
+        if cara["olho"] == "sorrindo":
+            # A PÁLPEBRA DE BAIXO SOBE: é a bochecha a empurrá-la, e é o que
+            # separa um sorriso de verdade de uma boca virada para cima. Uma
+            # placa de pele à frente da íris e da pupila (mais saliente do que
+            # o brilho, 0,030) e atrás da pálpebra de cima e dos óculos.
+            pecas.append(_placa(r, "palpebra_baixo_%+d" % sx, u, zo - ao / 2.0 + 3.5,
+                                lo + 2.0, 7.0, pele, fora=0.032))
+        if oculos:
+            pecas.append(_aro_oitavado(r, "oculos_%+d" % sx, u, zo, 46.0, 32.0, 9.0, 2.5,
+                                       0.046, M["metal"]))
+    if oculos:
+        pecas.append(_placa(r, "oculos_ponte", 0.0, zo + 5.0, 14.0, 3.0, M["metal"],
+                            fora=0.052))
+        for sx in (-1.0, 1.0):
+            pecas.append(_bastao("oculos_haste_%+d" % sx,
+                                 (sx * _lg(56.0), -_pf(r.fundo / 2.0 + 1.5), _niv(zo + 6.0)),
+                                 (sx * _lg(r.larg / 2.0 + 1.0), _pf(4.0), _niv(zo + 4.0)),
+                                 _lg(1.4), 4, M["metal"]))
+        for o in pecas:
+            if o.name.startswith("oculos"):
+                o.visible_shadow = False
     return pecas
 
 
-def _sobrancelhas(cara, mat):
-    """Duas placas por lado: a de dentro e a de fora. A emoção é para onde
-    vai a de DENTRO: franzida desce e inclina para o meio, erguida sobe."""
+# O CENHO, lado DIREITO: (z dentro, inclina dentro, z fora, inclina fora), com
+# as alturas a partir do olho. A emoção é para onde vai a placa de DENTRO:
+# franzida desce e inclina para o meio, erguida sobe.
+_CENHOS = {
+    "neutra":   (25.0, 0.0, 23.0, 14.0),
+    "franzida": (22.5, -12.0, 22.5, 6.0),
+    "erguida":  (28.0, 8.0, 25.5, 16.0),
+    # A meio caminho da neutra: a erguida com a boca a sorrir lia como
+    # ESPANTO na contente (veredito do Bruno, 24/09).
+    "suave":    (26.5, 4.0, 24.5, 15.0),
+}
+
+
+def _sobrancelhas(r, cara, mat):
+    """Duas placas por lado: a de dentro e a de fora.
+
+    `torta` é uma erguida e uma franzida — o cético, e o que sobra a quem
+    perdeu e ainda não admitiu (o Arlindo contrariado): a da ESQUERDA da
+    imagem sobe, a da direita franze.
+    """
     estilo = cara["cenho"]
-    tabela = {
-        #            (z dentro, inclina dentro, z fora, inclina fora) — lado DIREITO
-        "neutra":   (241.0, 0.0, 239.0, 14.0),
-        "franzida": (238.5, -12.0, 238.5, 6.0),
-        "erguida":  (244.0, 8.0, 241.5, 16.0),
-    }
-    if estilo not in tabela:
+    if estilo == "torta":
+        lados = {-1.0: _CENHOS["erguida"], 1.0: _CENHOS["franzida"]}
+    elif estilo in _CENHOS:
+        lados = {-1.0: _CENHOS[estilo], 1.0: _CENHOS[estilo]}
+    else:
         raise ValueError("cenho %r ainda não existe no modelo novo" % estilo)
-    z_d, i_d, z_f, i_f = tabela[estilo]
+    larg, alt_d, alt_f = r.sobr
     pecas = []
     for sx in (-1.0, 1.0):
-        pecas.append(_placa("sobrancelha_dentro_%+d" % sx, 23.0 * sx, z_d, 18.0, 5.0, mat,
-                            inclina=i_d * sx))
-        pecas.append(_placa("sobrancelha_fora_%+d" % sx, 40.0 * sx, z_f, 18.0, 4.5, mat,
-                            fora=0.002, inclina=i_f * sx))
+        z_d, i_d, z_f, i_f = lados[sx]
+        pecas.append(_placa(r, "sobrancelha_dentro_%+d" % sx, r.u_sobr[0] * sx,
+                            r.z_olho + z_d, larg, alt_d, mat, inclina=i_d * sx))
+        pecas.append(_placa(r, "sobrancelha_fora_%+d" % sx, r.u_sobr[1] * sx,
+                            r.z_olho + z_f, larg, alt_f, mat, fora=0.002, inclina=i_f * sx))
     return pecas
 
 
-def _boca(M, cara, escuro, labio):
+def _boca(r, M, cara, escuro, labio):
     """A linha entre os lábios, o lábio de baixo em cor e o de cima fino.
 
     Como no kit, o que se lê a este tamanho é para onde apontam as PONTAS: um
-    canto fora da linha, acima ou abaixo dela.
+    canto fora da linha, acima ou abaixo dela. `labio=None` tira os lábios de
+    cor (a boca de quem tem bigode por cima, ou lábio da cor da pele).
     """
+    zb = r.z_boca
     estilo = cara["boca"]
+
+    def lab(nome, u, z_px, larg, alt_px):
+        return [] if labio is None else [_placa(r, nome, u, z_px, larg, alt_px, labio)]
     if estilo == "reta":
-        return [_placa("boca", 0.0, 170.0, 36.0, 3.5, escuro),
-                _placa("labio", 0.0, 165.0, 26.0, 6.0, labio),
-                _placa("labio_cima", 0.0, 173.5, 22.0, 3.0, labio)]
+        return ([_placa(r, "boca", 0.0, zb, 36.0, 3.5, escuro)]
+                + lab("labio", 0.0, zb - 5.0, 26.0, 6.0)
+                + lab("labio_cima", 0.0, zb + 3.5, 22.0, 3.0))
     if estilo == "descontente":
-        pecas = [_placa("boca", 0.0, 171.0, 28.0, 3.5, escuro),
-                 _placa("labio", 0.0, 166.0, 22.0, 6.0, labio),
-                 _placa("labio_cima", 0.0, 174.5, 20.0, 3.0, labio)]
-        pecas += [_placa("boca_canto_%+d" % sx, 16.0 * sx, 168.0, 8.0, 3.5, escuro)
+        pecas = ([_placa(r, "boca", 0.0, zb + 1.0, 28.0, 3.5, escuro)]
+                 + lab("labio", 0.0, zb - 4.0, 22.0, 6.0)
+                 + lab("labio_cima", 0.0, zb + 4.5, 20.0, 3.0))
+        pecas += [_placa(r, "boca_canto_%+d" % sx, 16.0 * sx, zb - 2.0, 8.0, 3.5, escuro)
                   for sx in (-1.0, 1.0)]
         return pecas
     if estilo == "sorriso":
-        pecas = [_placa("boca", 0.0, 167.5, 30.0, 3.5, escuro),
-                 _placa("labio", 0.0, 162.5, 24.0, 5.0, labio),
-                 _placa("labio_cima", 0.0, 173.5, 24.0, 3.0, labio),
+        pecas = ([_placa(r, "boca", 0.0, zb - 2.5, 30.0, 3.5, escuro)]
+                 + lab("labio", 0.0, zb - 7.5, 24.0, 5.0)
+                 + lab("labio_cima", 0.0, zb + 3.5, 24.0, 3.0)
                  # Os DENTES: uma placa clara entre o lábio de cima e a linha —
                  # é o que separa um sorriso de uma boca virada para cima.
-                 _placa("dentes", 0.0, 170.5, 22.0, 3.0, M["cabine"])]
-        pecas += [_placa("boca_canto_%+d" % sx, 18.0 * sx, 170.5, 8.0, 3.5, escuro)
+                 + [_placa(r, "dentes", 0.0, zb + 0.5, 22.0, 3.0, M["cabine"])])
+        pecas += [_placa(r, "boca_canto_%+d" % sx, 18.0 * sx, zb + 0.5, 8.0, 3.5, escuro)
                   for sx in (-1.0, 1.0)]
+        return pecas
+    if estilo in ("sorriso_fechado", "sorriso_lado", "sorriso_curto"):
+        # ⚠️ O «SORRISO» DE CIMA LÊ COMO ESPANTO: os dentes são uma fita clara
+        # entre duas linhas escuras, e com os cantos só 3 px acima da linha a
+        # boca parece ABERTA, não virada para cima (veredito do Bruno, 24/09).
+        # Aqui a linha é um U de três troços: o do meio a direito e os dois de
+        # fora INCLINADOS para cima, como as sobrancelhas em arco. O canto que
+        # sobe ~6 px de desenho é ~1 px no telefone, e é ele que se lê.
+        # `_lado`: só o canto direito (da imagem) sobe — meio sorriso.
+        # `_curto`: o U mais estreito e menos fundo — a cortesia, não a alegria.
+        #
+        # Os cantos vão um passo à frente da linha do meio (`fora`), porque se
+        # cruzam com ela: no mesmo plano o z-buffer escolheria ao acaso.
+        curto = estilo == "sorriso_curto"
+        meio, u_c, l_c, ang = (14.0, 11.5, 11.0, 18.0) if curto else (20.0, 15.0, 14.0, 25.0)
+        pecas = ([_placa(r, "boca", 0.0, zb - 2.0, meio, 3.5, escuro)]
+                 + lab("labio", 0.0, zb - 6.5, meio + 2.0, 5.0)
+                 + lab("labio_cima", 0.0, zb + 1.5, meio - 4.0, 2.5))
+        for sx in (-1.0, 1.0):
+            if estilo == "sorriso_lado" and sx < 0:
+                pecas.append(_placa(r, "boca_canto_%+d" % sx, 14.0 * sx, zb - 2.0, 10.0,
+                                    3.5, escuro, fora=0.002))
+                continue
+            # `inclina` negativo do lado direito baixa a ponta de DENTRO e sobe
+            # a de fora (ver `_placa`): o sinal do franzido, que num arco de
+            # boca é o sorriso.
+            pecas.append(_placa(r, "boca_canto_%+d" % sx, u_c * sx, zb + 0.5, l_c, 3.5,
+                                escuro, fora=0.002, inclina=-ang * sx))
         return pecas
     raise ValueError("boca %r ainda não existe no modelo novo" % estilo)
 
@@ -369,6 +473,7 @@ def cida(M, cara):
     palavra; e a GOLA é a única peça clara do busto, sem a qual o peito é uma
     chapa verde.
     """
+    r = CIDA
     pele = M["pele_escura"]
     sombra = M["pele_sombra"]
     escuro = M["vao"]
@@ -391,7 +496,7 @@ def cida(M, cara):
         (262.0, 149.0, _CAB_FUNDO, _CORTE_CARA),
         (_MAXILAR, _CAB_LARG, _CAB_FUNDO, _CORTE_CARA),
     ], pele))
-    queixo = _placa("queixo", 0.0, 150.0, 34.0, 12.0, pele, esp=_pf(4.0))
+    queixo = _placa(r, "queixo", 0.0, 150.0, 34.0, 12.0, pele, esp=_pf(4.0))
     queixo.visible_shadow = False
     cab.append(queixo)
     for sx in (-1.0, 1.0):
@@ -401,15 +506,15 @@ def cida(M, cara):
         o.location.y += _pf(6.0)
         cab.append(o)
 
-    cab += _olhos(M, cara, pele, escuro)
-    cab += _sobrancelhas(cara, sobrancelha)
-    nariz = _cunha("nariz", 207.0, 188.0, 9.0, 22.0, 2.0, 9.0, pele)
+    cab += _olhos(r, M, cara, pele, escuro, oculos=True)
+    cab += _sobrancelhas(r, cara, sobrancelha)
+    nariz = _cunha(r, "nariz", 207.0, 188.0, 9.0, 22.0, 2.0, 9.0, pele)
     nariz.visible_shadow = False
     cab.append(nariz)
-    cab.append(_placa("nariz_base", 0.0, 185.5, 24.0, 3.5, sombra))
-    cab += _boca(M, cara, escuro, labio)
+    cab.append(_placa(r, "nariz_base", 0.0, 185.5, 24.0, 3.5, sombra))
+    cab += _boca(r, M, cara, escuro, labio)
     for sx in (-1.0, 1.0):
-        m = _placa("maca_%+d" % sx, 37.0 * sx, 188.0, 26.0, 14.0, pele, esp=_pf(1.2))
+        m = _placa(r, "maca_%+d" % sx, 37.0 * sx, 188.0, 26.0, 14.0, pele, esp=_pf(1.2))
         m.visible_shadow = False
         cab.append(m)
 
@@ -580,7 +685,7 @@ def cida(M, cara):
     return tronco_l, cab
 
 
-def pousar_cabeca(pecas, pose):
+def pousar_cabeca(pecas, pose, pivo_px):
     """Roll, pitch e yaw da cabeça, sobre o MEIO do pescoço (como no kit).
 
     ⚠️ CORRE DEPOIS DO `enquadrar`, e é na `matrix_basis` (o espaço do busto,
@@ -592,7 +697,7 @@ def pousar_cabeca(pecas, pose):
     roll, pitch, yaw = pose
     if roll == 0.0 and pitch == 0.0 and yaw == 0.0:
         return
-    pivo = Vector((0.0, 0.0, _niv(_PIVO)))
+    pivo = Vector((0.0, 0.0, _niv(pivo_px)))
     giro = Euler((math.radians(pitch), math.radians(roll),
                   math.radians(yaw)), "XYZ").to_matrix().to_4x4()
     mover = Matrix.Translation(pivo) @ giro @ Matrix.Translation(-pivo)
