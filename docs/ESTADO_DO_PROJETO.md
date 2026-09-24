@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 24/09/2026 — os três que falam no kit afinado (`056`)
+> **Última atualização:** 24/09/2026 — o trabalhador em busto (`058`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -132,7 +132,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`); falta o trabalhador do rodapé. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem das frentes 3–6 é dele, e o galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto (`058`); a seguir as variações dele (30). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem das frentes 3–6 é dele, e o galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
@@ -221,7 +221,7 @@ podre (A4) — em `HISTORICO.md`.
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
-| `tools/conferir_docs.py` | Confere as quatro camadas, referências e o teto do estado com EOL normalizado |
+| `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
 | `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desde `051` desce ao TEMPO de cada painel, e a bateria são **31 tiros**, sem lacuna declarada (`053`) |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
@@ -292,8 +292,8 @@ então o prédio não salta ao ser consertado; as peças, essas, não se partilh
 (`CLAUDE.md`).
 
 **A cauda dos props tem corpo** (Etapa 2): contêiner, carga, boia, marcador e as
-catorze peças do pátio, em `blender/brp_porto.py`; os nove retratos de fala
-saem de `blender/brp_retratos.py` (`056`).
+catorze peças do pátio, em `blender/brp_porto.py`; os nove retratos de fala e
+o do trabalhador saem de `blender/brp_retratos.py` (`056`, `058`).
 
 O cenário usa os props: **coqueiros de tronco ARQUEADO** (`028`) que oscilam em
 rajada, **guindaste** nas docas construídas, **carga no convés** e **boias +

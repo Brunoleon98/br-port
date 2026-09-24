@@ -28,6 +28,7 @@ entra no pacote exportado. Uma candidata passa daqui para lá pelo caminho da
 | `retratos/cida_contente/v1/` | A Dona Cida CONTENTE com um sorriso mais claro: três candidatas no estúdio (fechado, fechado com os olhos a sorrir, de lado), fotografadas no boletim ótimo; o Bruno escolheu a B | Claude Code, 24/09 |
 | `retratos/ribeiro/v1/`–`v4/` | O Sr. Ribeiro no kit afinado, retangular e alto: quatro voltas até à v4, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas | Claude Code, 24/09 |
 | `retratos/arlindo/v1/`–`v6/` | O Capitão Arlindo no kit afinado, de ângulos: seis voltas até à v6, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas | Claude Code, 24/09 |
+| `retratos/trabalhador/v1/`–`v6/` | O trabalhador do rodapé em BUSTO no kit afinado: seis voltas até à v6, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas (hoje × candidatas) | Claude Code, 24/09 |
 
 O pacote de 23/09 trazia 111 arquivos; **103 estão aqui, byte a byte** (confira
 com `manifest_sha256.json`). Ficaram de fora oito, de propósito:

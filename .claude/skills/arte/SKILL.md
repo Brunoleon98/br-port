@@ -263,6 +263,20 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   pescoço», «parece meio careca»), e mais de uma vez contradisse a opção.
 - **Opção com duas saídas** («tirar ou mudar») é uma pergunta por fazer:
   pergunte de novo, ou diga qual leu e porquê antes de agir.
+- ⚠️ **A segunda pergunta também pode voltar vaga** — no trabalhador (24/09)
+  veio «melhorar alguns detalhes» no «Outro». A terceira amplia a peça (2× a
+  3× sem suavizar) e lista o que se VÊ, um defeito por opção («parece
+  careca», «pontas soltas na aba», «o lábio é um bloco solto»); foi essa que
+  ele respondeu. E quando nomeia o defeito, o «Outro» traz a instrução
+  («conecte as partes soltas, parece que se ele andar o colete cai»).
+- ⚠️ **A prancha e a pergunta vão NO MESMO TURNO.** Duas vezes na frente do
+  trabalhador ele teve de pedir «me mande as perguntas novamente»: o turno
+  acabou com a imagem enviada e sem o formulário, e ele ficou sem onde
+  responder.
+- **Família nova de arte pergunta o ESCOPO antes de desenhar** — quantas
+  peças, que categorias, que marcas as distinguem — com opções e a
+  recomendação primeiro. Nas variações do trabalhador ele respondeu tudo numa
+  volta (2 sexos × 3 idades × 5 cores do IBGE; as marcas de cada eixo).
 
 ---
 

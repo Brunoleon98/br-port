@@ -1046,6 +1046,79 @@ def _patilha(r, nome, sx, mat, z_topo=252.0, z_bico=198.0, fundo_px=26.0, esp=5.
     return _objeto(nome, bm, mat)
 
 
+def _envolver(nome, alvos, limites, mat, centro=(0.0, 0.0), angulos=(-35.0, 140.0),
+              linhas=28, colunas=8, afasta=2.0, espessura=2.5, lado=1.0, ate_z=None):
+    """Um retalho que ENVOLVE o tronco: das costas, por cima do ombro, pela frente.
+
+    O `_retalho` pousa por raios de frente e o `_retalho_cima` por raios de
+    cima; uma peça de roupa que passa o ombro precisava dos dois, e duas peças
+    encostadas leem como «vários pedaços colados» (o Bruno, no colete da v4).
+    Aqui os raios saem de um EIXO em `x`, no ponto `centro` (fundo, altura em
+    pixels de desenho), em leque: o ângulo 0 é para cima, 90 é para a frente
+    (−y), e cada linha da grade é um ângulo. Uma superfície só, contínua.
+
+    `limites(z_px)` devolve (u de dentro, u de fora) da peça à altura em que a
+    linha acerta o tronco — é o contorno dela, e é medido no desenho.
+    """
+    cy, cz = _pf(centro[0]), _niv(centro[1])
+    bm = bmesh.new()
+    grade = []
+    for k in range(linhas + 1):
+        a = math.radians(angulos[0] + (angulos[1] - angulos[0]) * k / linhas)
+        d = Vector((0.0, -math.sin(a), math.cos(a)))
+        # A altura desta linha: o raio do meio da peça.
+        meio = _raio(alvos, Vector((lado * _lg(50.0), cy, cz)) + d * 20.0, -d)
+        assert meio, "o retalho %s não achou o tronco na linha %d" % (nome, k)
+        # `_niv` é afim: desfaz-se pela diferença de dois pontos.
+        z_px = 1.0 + (meio[0].z - _niv(1.0)) / (_niv(2.0) - _niv(1.0))
+        # `ate_z`: a peça acaba nesta altura da frente (a faixa vertical, que
+        # desce do ombro só até à horizontal).
+        if ate_z is not None and k > 0 and z_px < ate_z and d.y < 0:
+            break
+        u0, u1 = limites(z_px)
+        lin = []
+        for i in range(colunas + 1):
+            u = u0 + (u1 - u0) * i / colunas
+            ok = None
+            for tent in range(6):
+                ok = _raio(alvos, Vector((lado * _lg(u), cy, cz)) + d * 20.0, -d)
+                if ok:
+                    break
+                u -= 2.0 * (1 if u > 0 else -1)
+            assert ok, "o retalho %s não achou o tronco em u=%.0f" % (nome, u)
+            lin.append(bm.verts.new(ok[0] + ok[1] * _pf(afasta)))
+        grade.append(lin)
+    for k in range(len(grade) - 1):
+        for i in range(colunas):
+            f = (grade[k][i], grade[k][i + 1], grade[k + 1][i + 1], grade[k + 1][i])
+            bm.faces.new(tuple(reversed(f)) if lado < 0 else f)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    o = _objeto(nome, bm, mat)
+    o.modifiers.new("espessura", "SOLIDIFY").thickness = _pf(espessura)
+    return o
+
+
+def _decalque(nome, alvos, u_c, z_c, ru, rz, mat, afasta=0.8, espessura=0.6, lados=14):
+    """Uma placa OVAL pousada por raios de frente: o adesivo do capacete.
+
+    Oval e chata de propósito: o quadrado claro com o miolo escuro da v4 lia
+    como a LANTERNA de um capacete de mineiro (o Bruno).
+    """
+    bm = bmesh.new()
+    pts = []
+    for i in range(lados):
+        a = 2.0 * math.pi * i / lados
+        ok = _raio(alvos, Vector((_lg(u_c + ru * math.cos(a)), -10.0,
+                                  _niv(z_c + rz * math.sin(a)))), Vector((0, 1, 0)))
+        assert ok, "o decalque %s não achou o casco" % nome
+        pts.append(bm.verts.new(ok[0] + ok[1] * _pf(afasta)))
+    bm.faces.new(pts)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    o = _objeto(nome, bm, mat)
+    o.modifiers.new("espessura", "SOLIDIFY").thickness = _pf(espessura)
+    return o
+
+
 def _retalho_cima(nome, alvos, cantos, mat, afasta=1.2, espessura=2.0, n=4):
     """O `_retalho` para um TETO: os pontos descem por raios de cima até ao
     tronco. `cantos` são quatro (u, fundo) em pixels de desenho, em planta —
@@ -1391,6 +1464,280 @@ def arlindo(M, cara):
     return tronco_l, cab
 
 
+# ────────────────────────────────────────────────────────────── o trabalhador
+# LARGO E BAIXO, com o maxilar quase da largura das maçãs (plano de arte P2: o
+# quadrado lê sólido, e ele é quem carrega o porto). A cabeça é mais baixa do
+# que as dos três que falam — 128 contra 144 a 150 — porque o topo dela é do
+# CAPACETE, e é o capacete que o identifica.
+TRABALHADOR = Rosto(larg=162.0, fundo=80.0, z=(134.0, 262.0), maxilar=188.0, corte=18.0,
+                    z_olho=204.0, z_boca=160.0, pivo=114.0, u_olho=32.0,
+                    olho=(40.0, 25.0), iris=(21.0, 22.0), pupila=(11.0, 12.0),
+                    u_sobr=(23.0, 42.0), sobr=(22.0, 7.0, 6.0),
+                    brilho=6.5, boca_k=1.35, boca_alt=3.5, labio_k=0.45)
+
+
+def trabalhador(M, cara):
+    """O busto do trabalhador do rodapé, de FRENTE: (tronco, cabeça).
+
+    ⚠️ ELE ERA DE CORPO INTEIRO, E PASSOU A BUSTO POR ESCOLHA DO BRUNO (24/09).
+    O corpo inteiro identificava a unidade pelo capacete e pelo colete, que são
+    silhueta; o busto guarda os dois — o capacete é o topo da cabeça e o colete
+    é o peito — e dá à cara o tamanho dos três que falam.
+
+    O QUE O IDENTIFICA, e é o que o boneco de caixas já tinha decidido: o
+    CAPACETE amarelo e REDONDO (em caixa lia como laje), com a aba ACIMA das
+    sobrancelhas; e o COLETE laranja VESTIDO — a camisa aparece por cima e dos
+    lados, senão é uma caixa laranja pousada à frente dele —, com UMA faixa
+    refletiva (duas taparam o laranja inteiro no primeiro boneco).
+    """
+    r = TRABALHADOR
+    pele = M["pele"]
+    sombra = M["pele_escura"]
+    escuro = M["vao"]
+    cabelo = _principled("cabelo_trabalhador", base.PALETA["madeira_esc"], rough=0.6, spec=0.2)
+    # A sobrancelha no escuro da boca, como a do Arlindo: debaixo de uma aba a
+    # testa fica na meia-sombra, e o castanho não se separava dela.
+    sobrancelha = _principled("sobrancelha_trabalhador", base.PALETA["vao"], rough=0.9)
+    # A CAMISA É `calca`, a ganga: o `azul` do boneco antigo é a camisa do
+    # Arlindo, e o azul-escuro separa-se mais do laranja do colete.
+    camisa = _principled("camisa_trabalhador", base.PALETA["calca"], rough=0.9)
+    colete = _principled("colete_trabalhador", base.PALETA["colete"], rough=0.85)
+    # ⚠️ A 0,5 / 0,3 o topo das faixas verticais, onde dobram sobre o ombro
+    # de frente para a luz principal, estourava (33 px a 255 na v4).
+    refletivo = _principled("refletivo_trabalhador", base.PALETA["refletivo"], rough=0.7,
+                            spec=0.15)
+    # O capacete é PLÁSTICO: menos rugoso do que o pano, e o brilho curto é
+    # o que o separa de um gorro amarelo. ⚠️ A 0,35 / 0,6 o brilho ESTOURAVA:
+    # 2.119 pixels com o vermelho a 255 no topo do casco (0,77% do desenho),
+    # que no cartão é uma mancha branca.
+    casco = _principled("capacete_trabalhador", base.PALETA["capacete"], rough=0.5, spec=0.35)
+    labio = _principled("labio_trabalhador", base.PALETA["pele_escura"], rough=0.8)
+    cab, tronco_l = [], []
+
+    # A CABEÇA: o crânio (todo debaixo do capacete) e o maxilar LARGO, que
+    # fecha num queixo de 132 — o da Dona Cida é 126 e o do Arlindo 104.
+    # ⚠️ O CRÂNIO ESTREITA E ARREDONDA ACIMA DOS 240, onde o capacete o tapa:
+    # uma elipse justa não cobre as quinas de uma cabeça quase quadrada, e com
+    # o casco da v3 elas furavam a ABA — quatro estrelas cor de pele na borda.
+    cab.append(_loft("cabeca_cranio", [
+        (266.0, 120.0, 60.0, 24.0, 2.0),
+        (252.0, 146.0, 74.0, 26.0),
+        (240.0, r.larg - 2.0, r.fundo, r.corte),
+        (r.maxilar, r.larg, r.fundo, r.corte),
+    ], pele))
+    cab.append(_loft("cabeca_maxilar", [
+        (r.maxilar, r.larg, r.fundo, r.corte),
+        (170.0, 160.0, 78.0, 20.0),
+        (150.0, 150.0, 74.0, 18.0),
+        (r.z[0], 132.0, 64.0, 16.0),
+    ], pele, fechar=(False, True)))
+    for sx in (-1.0, 1.0):
+        o = prisma("orelha_%+d" % sx, _contorno_oitavado(16.0, 28.0, 5.0),
+                   _niv(186.0), _niv(220.0), (1.0, 1.0), pele)
+        o.location.x += sx * _lg(r.larg / 2.0 + 2.0)
+        o.location.y += _pf(4.0)
+        cab.append(o)
+
+    cab += _olhos(r, M, cara, pele, escuro)
+    cab += _sobrancelhas(r, cara, sobrancelha)
+    nariz = _cunha(r, "nariz", 196.0, 176.0, 9.0, 19.0, 2.0, 8.0, pele)
+    nariz.visible_shadow = False
+    cab.append(nariz)
+    cab.append(_placa(r, "nariz_base", 0.0, 173.5, 20.0, 3.0, sombra))
+    cab += _boca(r, M, cara, escuro, labio)
+
+    # O CABELO é só o que o capacete deixa ver: uma faixa CURTA por baixo da
+    # aba, das têmporas à nuca, e as patilhas à frente da orelha. ⚠️ Só com as
+    # patilhas (a v1) ele «parecia careca» (o Bruno): duas placas escuras
+    # soltas ao lado das orelhas não fazem cabelo. A faixa é um anel à volta da
+    # cabeça sem a FACE da frente, que é a testa. ⚠️ Sem os VÉRTICES da frente
+    # (a primeira prévia da v2) iam também as facetas das quinas, e são elas
+    # as têmporas que esta câmera vê de frente: o cabelo sumia outra vez.
+    # ⚠️ E NA COR DO CABELO DA DONA CIDA ELE LIA COMO SOMBRA DA PELE: o
+    # `madeira_esc` tem quase o valor da `pele` na meia-sombra das têmporas, e
+    # 2,5 px fora da cabeça a faixa não tinha borda que a separasse (prévia de
+    # depuração, sem o capacete). Vai no degrau de baixo, `cabelo_fundo`, 4 px
+    # fora, e com uma FRANJA de 10 px à frente, logo abaixo da aba — é aí que
+    # o olho procura cabelo debaixo de um capacete.
+    cabelo_curto = _principled("cabelo_curto_trabalhador", base.PALETA["cabelo_fundo"],
+                               rough=0.8, spec=0.1)
+    # A faixa segue o crânio que estreita (ver acima), 4 px fora dele.
+    faixa_cab = _loft("cabelo_faixa", [
+        (259.0, 142.0, 74.0, 28.0),
+        (249.0, 156.0, 84.0, 26.0),
+        (236.0, r.larg + 8.0, r.fundo + 8.0, r.corte + 3.0),
+    ], cabelo_curto, contorno=_contorno_12, fechar=(False, False))
+    bm = bmesh.new()
+    bm.from_mesh(faixa_cab.data)
+    # A frente de cada anel está a um fundo diferente: a face da testa é a
+    # que tem os QUATRO vértices na frente do anel dela.
+    frente = min(vv.co.y for vv in bm.verts) + _pf(5.0)
+    franja = _niv(249.0) - 1e-4
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces
+                               if all(vv.co.y < frente for vv in f.verts)
+                               and min(vv.co.z for vv in f.verts) < franja],
+                     context="FACES_ONLY")
+    bm.to_mesh(faixa_cab.data)
+    bm.free()
+    faixa_cab.modifiers.new("espessura", "SOLIDIFY").thickness = _pf(3.0)
+    cab.append(faixa_cab)
+    for sx in (-1.0, 1.0):
+        cab.append(_patilha(r, "cabelo_patilha_%+d" % sx, sx, cabelo_curto, z_topo=258.0,
+                            z_bico=222.0, fundo_px=22.0, esp=4.0))
+
+    # O CAPACETE: casco em cúpula e a aba de UMA peça. As voltas:
+    # - v1: cúpula até aos 320, 16 lados, crista ao meio e uma pala à parte —
+    #   «grande/alto» e «amassado» (o Bruno): a 42 px as facetas faziam
+    #   manchas de luz, e as pontas da pala saíam como DENTES dos lados da aba
+    #   (a queixa da pala do Arlindo na v3);
+    # - v2: cúpula baixa (306) e lisa — 24 lados, seis anéis, sem crista — e a
+    #   aba é uma elipse DESCENTRADA para a frente: a pala é a própria aba, e
+    #   não há costura que faça ponta. «Ainda grande», e pediu-o «com mais
+    #   detalhes e mais realista» (o Bruno);
+    # - v3: o casco JUSTO à cabeça (168 × 90 na borda, 300 de topo) e os
+    #   detalhes de um capacete de obra — três NERVURAS em cima (a do meio e
+    #   duas laterais) e o FRISO de borda à volta, tudo no mesmo amarelo: a
+    #   crista da v1 lia como amassado porque a cúpula tinha 16 lados, e não
+    #   por ser crista.
+    # ⚠️ A ABA NÃO PROJETA SOMBRA: com ela, a chave apagava as sobrancelhas,
+    # como a pala do boné.
+    # - v4: o capacete de obra de verdade (o Bruno: «mais realista sem perder
+    #   a coerência»): a PALA curta à frente, nascida da aba; a aba ESTREITA
+    #   à volta (a de 182 × 116 lia como aba de chapéu); as nervuras mais
+    #   altas e largas; e o ADESIVO na frente, peça e material à parte — no
+    #   futuro, o emblema que o jogador escolhe para a empresa.
+    y_cap = 4.0
+    capacete = []
+    casco_o = _loft("capacete_casco", [
+        (300.0, _anel_eliptico(56.0, 32.0, 24), y_cap + 3.0),
+        (297.5, _anel_eliptico(98.0, 54.0, 24), y_cap + 2.5),
+        (292.0, _anel_eliptico(132.0, 72.0, 24), y_cap + 2.0),
+        (284.0, _anel_eliptico(154.0, 84.0, 24), y_cap + 1.5),
+        (273.0, _anel_eliptico(165.0, 89.0, 24), y_cap + 1.0),
+        (262.0, _anel_eliptico(168.0, 90.0, 24), y_cap),
+    ], casco, fechar=(True, True))
+    capacete.append(casco_o)
+    capacete.append(_loft("capacete_friso", [(266.0, _anel_eliptico(175.0, 97.0, 24), y_cap),
+                                             (261.0, _anel_eliptico(175.0, 97.0, 24), y_cap)],
+                          casco, fechar=(False, False)))
+    # A ABA SALIENTE DOS LADOS (v5): a de 178 × 100 com 3,5 de espessura
+    # «sumia dos lados» (o Bruno) — 8 px fora do casco e 4,5 de espessura.
+    borda = (184.0, 106.0, y_cap)
+    aba = _loft("capacete_aba", [(261.0, _anel_eliptico(borda[0], borda[1], 24), y_cap),
+                                 (256.5, _anel_eliptico(borda[0], borda[1], 24), y_cap)],
+                casco, fechar=(True, True))
+    aba.visible_shadow = False
+    capacete.append(aba)
+    # A PALA nasce da elipse da aba, com a MESMA espessura: nas pontas ela
+    # afina a zero dentro da aba, e não sobra dente (a v1 ancorava a pala no
+    # casco, mais pequeno do que a aba, e as pontas saíam dos lados).
+    # ⚠️ CURTA E GROSSA: a de 20 de avanço a descer 4 «lembrava boné» (v4).
+    pala = _pala("capacete_pala", casco, borda, z_px=256.5, avanca=12.0, desce=1.5,
+                 esp=4.5, abre=0.58)
+    pala.visible_shadow = False
+    capacete.append(pala)
+    bpy.context.view_layer.update()
+    # As nervuras acabam ONDE A CÚPULA AINDA NÃO É PAREDE: levadas até aos
+    # 40 de fundo, a ponta de cada uma dobrava num gancho sobre o friso.
+    for nome, u0, u1, f, alt_n in (("capacete_nervura", -7.0, 7.0, 32.0, 5.0),
+                                   ("capacete_nervura_-1", -35.0, -25.0, 26.0, 4.0),
+                                   ("capacete_nervura_+1", 25.0, 35.0, 26.0, 4.0)):
+        capacete.append(_retalho_cima(nome, [casco_o],
+                                      ((u0, -f), (u1, -f), (u1, f), (u0, f)),
+                                      casco, afasta=1.0, espessura=alt_n, n=6))
+    # O ADESIVO: um decalque OVAL e chato na frente do casco, abaixo da
+    # nervura, claro com uma faixa navy de lado a lado — o logotipo. Material
+    # próprio de propósito: é o sítio do emblema da empresa do jogador, quando
+    # ele existir. ⚠️ O quadrado claro com o miolo escuro da v4 lia como a
+    # LANTERNA de um capacete de mineiro: a luz no meio é o que a faz lâmpada.
+    adesivo = _principled("adesivo", base.PALETA["cabine"], rough=0.7)
+    marca = _principled("adesivo_marca", base.PALETA["casco"], rough=0.8)
+    capacete.append(_decalque("capacete_adesivo", [casco_o], 0.0, 280.0, 15.0, 7.5,
+                              adesivo, afasta=0.6, espessura=0.6))
+    capacete.append(_retalho("capacete_adesivo_marca", [casco_o],
+                             ((-11.0, 281.5), (11.0, 281.5), (11.0, 278.5), (-11.0, 278.5)),
+                             marca, afasta=1.0, espessura=0.4))
+    cab += capacete
+
+    # O PESCOÇO E O TRONCO: ombros largos e direitos, de quem carrega.
+    # ⚠️ O ANEL DE CIMA CABE DENTRO DO PESCOÇO — 52 × 46 num pescoço de
+    # 58 × 50 —, senão fecha à volta dele num aro da cor da camisa (o «colar
+    # azul» do Arlindo, v5).
+    tronco_l.append(prisma("pescoco", _contorno_oitavado(58.0, 50.0, 12.0),
+                           _niv(80.0), _niv(142.0), (1.0, 1.0), pele))
+    tronco = _loft("tronco", [
+        (98.0, 52.0, 46.0, 12.0),
+        (92.0, 136.0, 64.0, 22.0),
+        (84.0, 214.0, 76.0, 30.0),
+        (72.0, 256.0, 82.0, 36.0),
+        (54.0, 268.0, 84.0, 38.0),
+        (20.0, 262.0, 82.0, 36.0),
+        (-40.0, 250.0, 80.0, 34.0),
+        (-90.0, 246.0, 78.0, 32.0),
+    ], camisa, contorno=_contorno_12)
+    tronco_l.append(tronco)
+    bpy.context.view_layer.update()
+
+    # O COLETE, NUMA PEÇA SÓ, e as faixas COSTURADAS nele. As voltas:
+    # - v1: dois painéis em V largo, com a gola da camisa por cima;
+    # - v2: o V fechado e a faixa maior, sem a gola;
+    # - v3: zíper, faixa horizontal inteira e faixas verticais — e o ombro
+    #   partido: a alça e o painel não se tocavam;
+    # - v4: a alça a descer até por cima do painel, bolsos e caneta — e «parece
+    #   que vários pedaços foram colados um no outro» (o Bruno): painel, alça,
+    #   faixas e bolsos eram placas empilhadas, cada uma com a sua borda.
+    # - v5: o colete é UM retalho que ENVOLVE o tronco, das costas por cima do
+    #   ombro até à frente (`_envolver`), e as faixas pousam a 0,8 dele, quase
+    #   rentes, como fita costurada. O contorno é o de antes: o V no pescoço,
+    #   o zíper abaixo dele, e a cava larga que deixa a camisa nos braços.
+    # ⚠️ Quem cobre o ombro é o próprio colete: a v3 mostrou que duas peças
+    # encostadas deixam camisa no meio, e a v4 que sobrepostas leem coladas.
+    zona_v = 72.0
+
+    def contorno_colete(z):
+        if z >= 94.0:
+            dentro = 30.0
+        elif z >= zona_v:
+            dentro = 2.0 + (z - zona_v) / (94.0 - zona_v) * 28.0
+        else:
+            dentro = 2.0
+        fora = 68.0 if z >= 88.0 else 68.0 + (88.0 - z) * 30.0 / 178.0
+        return dentro, fora
+
+    faixa_v = lambda z: (34.0, 48.0)                    # noqa: E731
+    for sx in (-1.0, 1.0):
+        tronco_l.append(_envolver("colete_%+d" % sx, [tronco], contorno_colete, colete,
+                                  afasta=2.0, espessura=2.5, lado=sx))
+        # A faixa VERTICAL, costurada no colete: das costas, por cima do
+        # ombro, até à horizontal — uma fita só, sem emenda no ombro.
+        tronco_l.append(_envolver("colete_faixa_v_%+d" % sx, [tronco], faixa_v, refletivo,
+                                  afasta=2.8, espessura=0.8, lado=sx, colunas=3, ate_z=33.0))
+        # A faixa HORIZONTAL, inteira de lado a lado, baixa no peito.
+        tronco_l.append(_retalho("colete_faixa_%+d" % sx, [tronco],
+                                 ((0.0, 34.0), (74.0 * sx, 34.0),
+                                  (76.0 * sx, 14.0), (0.0, 14.0)),
+                                 refletivo, afasta=2.8, espessura=0.8, espelhado=sx < 0))
+        # OS BOLSOS SAÍRAM (v6, o Bruno): na v4 estavam no colarinho e não se
+        # viam, e na v5, já no peito e com a pestana num laranja mais fundo,
+        # foram tirados. O colete lê pelas faixas, e é isso que o identifica.
+    # O ZÍPER, do fundo do V para baixo, quase da cor do colete e rente a ele:
+    # a faixa horizontal passa-lhe por cima. ⚠️ No `laranja_esc` (v3) era uma
+    # linha escura que partia o colete ao meio.
+    tronco_l.append(_retalho("colete_ziper", [tronco],
+                             ((-2.0, zona_v), (2.0, zona_v), (2.0, -90.0), (-2.0, -90.0)),
+                             _principled("ziper_trabalhador", base.PALETA["laranja"],
+                                         rough=0.8), afasta=2.3, espessura=0.6))
+    # A CANETA SAIU (v5): a 70 px ela era uma mancha azul junto ao V, que o
+    # Bruno leu como mancha.
+
+    # ⚠️ O TRONCO SOBE 10 (v5), com tudo o que pousa nele: o pescoço encurta
+    # e o peito entra no quadro. É uma translação do grupo, feita no fim, para
+    # que cada peça continue pousada onde os raios a puseram.
+    for o in tronco_l:
+        o.location.z += _alt(10.0)
+    return tronco_l, cab
+
+
 # QUEM ESTÁ NESTE KIT, e a cabeça de cada um: o `retratos_de_fala` de
 # `brp_porto.py` tira daqui o construtor e o pivô da pose.
 KIT = {"cida": (CIDA, cida), "ribeiro": (RIBEIRO, ribeiro), "arlindo": (ARLINDO, arlindo)}
@@ -1437,12 +1784,16 @@ def _pixels(cena, objs):
     return min(xs), min(ys), max(xs), max(ys)
 
 
-def enquadrar(cena, nome, pecas, medir):
+def enquadrar(cena, nome, pecas, medir, cabeca=CABECA_NO_QUADRO):
     """Gira o grupo para a câmera e põe-no no quadro, MEDINDO a projeção.
 
     `medir` são as peças da cabeça com o cabelo e o coque: é a altura delas que
     vale 60% do quadro. ⚠️ Mexer na altura da cabeça mexe no tamanho de TUDO o
     resto — encurtá-la 12 ampliou o busto 11% (a `quadrada_v2`).
+
+    `cabeca` é essa fração: 60% para os três que falam, e menos para o
+    trabalhador, que se identifica pelo COLETE e precisa de mais peito à vista
+    (a faixa de baixo saía cortada pelo quadro, v4).
 
     ⚠️ E CADA PERSONAGEM É MEDIDO PELA SUA cabeça, não à escala da Dona Cida.
     A primeira prova do Sr. Ribeiro usou a escala dela (os 60% dela incluem o
@@ -1456,7 +1807,7 @@ def enquadrar(cena, nome, pecas, medir):
     piv.rotation_euler.z = math.radians(45.0)
     bpy.context.view_layer.update()
     x0, y0, x1, y1 = _pixels(cena, medir)
-    k = (CABECA_NO_QUADRO * cena.render.resolution_y) / (y1 - y0)
+    k = (cabeca * cena.render.resolution_y) / (y1 - y0)
     piv.scale = (k, k, k)
     bpy.context.view_layer.update()
     ref = _pixels(cena, medir)
