@@ -508,6 +508,13 @@ tirar icones  - -  --script res://tools/folha_icones.gd  --    "$SAIDA/icones.pn
 tirar frota   - -  --script res://tools/folha_frota.gd   --    "$SAIDA/frota.png" cascos
 tirar camioes - -  --script res://tools/folha_frota.gd   --    "$SAIDA/camioes.png" camioes
 
+# OS TRINTA ROSTOS DO TRABALHADOR (`docs/decisoes/059`), pela mesma razão: o
+# porto tem no máximo três trabalhadores e a semente da bateria é fixa, logo as
+# fotos de jogo mostram três rostos, e sempre os mesmos. A folha percorre o
+# `Retratos.TRABALHADORES` em cartões de verdade e reprova o cartão que mostre
+# outro arquivo ou nenhum desenho.
+tirar trabalhadores - - --script res://tools/folha_trabalhadores.gd -- "$SAIDA/trabalhadores.png"
+
 # OS PROPS DE MAPA, todos, a 1:1. A segunda metade da medição do gate A5 — o
 # plano diz "captura antes/depois lado a lado, E a folha de contato dos props"
 # —, e a que faltava desde sempre. A `folha_icones` cobre os ícones e a

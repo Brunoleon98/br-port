@@ -1307,6 +1307,702 @@
       "sombra_de_contato": false
     },
     {
+      "id": "BRP_porto_trabalhador_homem_adulto_amarela_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_adulto_amarela.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_adulto_branca_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_adulto_branca.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_adulto_indigena_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_adulto_indigena.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_adulto_preta_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_adulto_preta.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_jovem_amarela_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_jovem_amarela.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_jovem_branca_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_jovem_branca.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_jovem_indigena_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_jovem_indigena.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_jovem_parda_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_jovem_parda.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_jovem_preta_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_jovem_preta.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_veterano_amarela_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_veterano_amarela.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_veterano_branca_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_veterano_branca.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_veterano_indigena_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_veterano_indigena.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_veterano_parda_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_veterano_parda.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_homem_veterano_preta_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_homem_veterano_preta.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_adulto_amarela_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_adulto_amarela.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_adulto_branca_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_adulto_branca.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_adulto_indigena_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_adulto_indigena.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_adulto_parda_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_adulto_parda.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_adulto_preta_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_adulto_preta.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_jovem_amarela_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_jovem_amarela.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_jovem_branca_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_jovem_branca.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_jovem_indigena_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_jovem_indigena.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_jovem_parda_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_jovem_parda.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_jovem_preta_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_jovem_preta.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_veterano_amarela_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_veterano_amarela.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_veterano_branca_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_veterano_branca.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_veterano_indigena_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_veterano_indigena.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_veterano_parda_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_veterano_parda.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_trabalhador_mulher_veterano_preta_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "trabalhador_mulher_veterano_preta.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "res://scenes/worker/Worker.tscn",
+      "sombra_de_contato": false
+    },
+    {
       "id": "BRP_porto_trabalhador_retrato_base",
       "category": "porto",
       "stage": "base",

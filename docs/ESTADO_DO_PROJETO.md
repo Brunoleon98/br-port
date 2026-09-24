@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 24/09/2026 — o trabalhador em busto (`058`)
+> **Última atualização:** 24/09/2026 — os trinta rostos do trabalhador (`059`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -113,11 +113,10 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Os segundos tempos** (23/09, `051`) | a cobertura era por CENA e a bateria só via o 1º tempo: a despedida do Arlindo dizia «Cliente ouvindo a proposta» com o negócio fechado. Hoje 7 tempos em 3 painéis, 6 com foto e o balanço DECLARADO; o F10 mede cada um a caber — um nome de 24 letras sem espaço saía do cartão (`_SMART`) |
-| **A mão direita e o cruzamento** (23/09, `052`) — escolha do Bruno | as rotas cruzavam-se em 10 pontos (27–72 sobreposições por meia hora) e andavam pela ESQUERDA na tela: a projeção espelha o chão. Hoje mão direita, o retorno encosta, e quatro regras sem ninguém parar na rua — trava do berço, cedência na boca, previsão nas curvas, arranque espaçado. A curva aberta corta o chanfro em diagonal. Zero sobreposições; o **D35** anda 1 h de jogo e varre 3.080 entradas contra uma simulação à parte. 17 mutantes, 16 reprovam |
 | **O balanço, o nome longo e o chanfro** (23/09, `053`) — escolha do Bruno, os três | (g) o balanço tem foto de uma partida JOGADA e paga pelo botão, e a lacuna declarada saiu; (h) o F10 mede o diário com o nome de 24 letras (597 de 620 px) e reprova frase com nome que ninguém mediu; (i) o chanfro passou de 0,9 a **0,60**, derivado da curva e do porta-contêiner — a carroçaria saía 0,207 do asfalto, hoje fica 0,005 dentro (**D13 §7j**). |
 | **As telas do fim em fila** (23/09, `054`) — escolha do Bruno | o «Pagar» abria o boletim e o fim de fase POR CIMA da resposta do Sr. Ribeiro, e «Jogar de novo» saltava as duas. Hoje o `Main` põe-nos em fila (`_na_vez()`): resposta → boletim → fim, nos três caminhos do fim; o GameState não mudou. **F11** percorre-os pelos botões; o tiro `balanco` passou de 3 painéis a 1. 7 mutantes: o do `fechou` só a captura apanha |
 | **A frente 1 do A5** (23/09) — escolha do Bruno | o calendário mostra na grelha os ícones da legenda, por baixo do número (lado a lado alargava o cartão a 534 px), e o **D36** tranca-o; «Primeira parcela paga» no lugar de «Fim da Fase 1»; o Arlindo diz «meu caro» |
+| **Os trinta rostos do trabalhador** (24/09, `059`) — escolha do Bruno | 2 sexos × 3 idades × 5 cores do IBGE, três voltas até à v3. Cada trabalhador nasce com o seu ROSTO (campo no save, `SAVE_VERSION` 8) por um sorteio próprio: o `_rng` medido não se mexe (100 / 80,2 / 37,3). +7,33 MB no pacote (+22% do APK), sem perda por escolha dele. **F12** e a folha `trabalhadores` na bateria |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -132,7 +131,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto (`058`); a seguir as variações dele (30). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem das frentes 3–6 é dele, e o galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem das frentes 3–6 é dele, e o galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
@@ -218,12 +217,13 @@ podre (A4) — em `HISTORICO.md`.
 | `docs/design/` | GDD 7, guias, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `tools/capturar_evidencia.sh` | Fotografias determinísticas de jogo, painéis e folhas de contato; é a evidência visual do CI |
 | `brport_vs/tools/folha_frota.gd` | **A folha da frota** — cascos e camiões percorrendo as tabelas: foto de jogo só mostra o que o sorteio escolheu. Duas folhas desde `047` |
+| `brport_vs/tools/folha_trabalhadores.gd` | **Os 30 rostos em cartões de verdade**, pelo `Retratos.TRABALHADORES`: reprova o cartão com outro arquivo ou sem desenho (`059`) |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
-| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desde `051` desce ao TEMPO de cada painel, e a bateria são **31 tiros**, sem lacuna declarada (`053`) |
+| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desde `051` desce ao TEMPO de cada painel, e a bateria são **32 tiros**, sem lacuna declarada (`053`) |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
 | `docs/REVISAO_GERAL_2026-09-17.md` | Revisão geral de 17/09: defeitos e melhorias, com evidência |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
@@ -293,7 +293,7 @@ então o prédio não salta ao ser consertado; as peças, essas, não se partilh
 
 **A cauda dos props tem corpo** (Etapa 2): contêiner, carga, boia, marcador e as
 catorze peças do pátio, em `blender/brp_porto.py`; os nove retratos de fala e
-o do trabalhador saem de `blender/brp_retratos.py` (`056`, `058`).
+os trinta do trabalhador saem de `blender/brp_retratos.py` (`056`, `059`).
 
 O cenário usa os props: **coqueiros de tronco ARQUEADO** (`028`) que oscilam em
 rajada, **guindaste** nas docas construídas, **carga no convés** e **boias +

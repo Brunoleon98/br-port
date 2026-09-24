@@ -153,11 +153,11 @@ const FONTE_NOME := 11
 const FONTE_CHAO := 10
 
 # A arte de interface sai do REGISTO dela, não de um prefixo de nome: os nove
-# retratos de fala vêm do `Retratos.gd`, que é o único lugar que sabe qual PNG
-# é qual cara. Sobra um que aquele registo não conhece — o retrato do cartão do
-# trabalhador, que vive no `Worker.tscn` —, e ele fica escrito aqui com a razão
-# ao lado em vez de esta ferramenta ficar esperta a adivinhar quem é interface.
-const INTERFACE_AVULSA := ["trabalhador_retrato.png"]
+# retratos de fala e os trinta do cartão do trabalhador vêm do `Retratos.gd`,
+# que é o único lugar que sabe qual PNG é qual cara. Até 24/09 o do cartão era
+# um só e vivia no `Worker.tscn`, e ficava escrito aqui à mão; com os trinta
+# (`059`) ele passou a estar no registo, e a lista à mão saiu — os 29 novos
+# entrariam nesta folha como props se ela continuasse a ser a fonte.
 
 # ⚠️ OS PROPS QUE NÃO CAEM EM SÍTIO NENHUM DO MAPA, com a razão ao lado. A
 # lista é conferida nos DOIS sentidos lá em baixo, que é o que a impede de
@@ -254,8 +254,8 @@ func _catalogo() -> Array:
 		var v = retratos.get_script_constant_map()[chave]
 		if v is Texture2D:
 			fora[(v as Texture2D).resource_path.get_file()] = true
-	for f in INTERFACE_AVULSA:
-		fora[f] = true
+	for caminho in retratos.get_script_constant_map()["TRABALHADORES"]:
+		fora[String(caminho).get_file()] = true
 
 	var nomes: Array[String] = []
 	var d := DirAccess.open(PASTA)

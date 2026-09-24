@@ -638,15 +638,73 @@ TRABALHADOR_CARA = dict(boca="sorriso_curto", cenho="neutra", olho="aberto",
 TRABALHADOR_CABECA = 0.56
 
 
+# ── AS VARIAÇÕES DO TRABALHADOR (`059`) ─────────────────────────────────────
+#
+# 2 sexos × 3 idades × as 5 cores do IBGE: o escopo é do Bruno (`058`), e as 30
+# foram aceites na v3 (`art_lab/retratos/trabalhador_variacoes/`). O construtor
+# é o mesmo `trabalhador()`, com um `perfil`; as marcas de cada eixo estão lá.
+#
+# OS PELOS NO ROSTO, em alguns homens: nunca no jovem, que é o de cara lisa, e
+# nunca no padrão. Três tipos em sete homens (a v1 tinha dois em cinco, e o
+# Bruno pediu «mais variações de barba»).
+PELOS_DO_TRABALHADOR = {
+    ("adulto", "branca"): "barba", ("adulto", "preta"): "cavanhaque",
+    ("adulto", "indigena"): "bigode",
+    ("veterano", "branca"): "cavanhaque", ("veterano", "parda"): "bigode",
+    ("veterano", "preta"): "barba", ("veterano", "amarela"): "cavanhaque",
+}
+# O PENTEADO DELA: cinco, cada um três vezes, nenhum repetido na mesma idade.
+CABELOS_DA_TRABALHADORA = {
+    ("jovem", "branca"): "rabo", ("jovem", "parda"): "crespo", ("jovem", "preta"): "tranca",
+    ("jovem", "amarela"): "solto", ("jovem", "indigena"): "curto",
+    ("adulto", "branca"): "solto", ("adulto", "parda"): "rabo", ("adulto", "preta"): "crespo",
+    ("adulto", "amarela"): "curto", ("adulto", "indigena"): "tranca",
+    ("veterano", "branca"): "curto", ("veterano", "parda"): "tranca",
+    ("veterano", "preta"): "crespo", ("veterano", "amarela"): "rabo",
+    ("veterano", "indigena"): "solto",
+}
+
+
+def _perfis_do_trabalhador():
+    """Os 30, pela ordem que o jogo guarda: `(nome do asset, perfil)`.
+
+    ⚠️ O ÍNDICE É O `rosto` DE CADA TRABALHADOR NO SAVE, e o
+    `Retratos.TRABALHADORES` do jogo é o espelho desta lista (o fumaça confere
+    os nomes contra o disco). O 0 é o padrão — o homem adulto pardo, que é o
+    `trabalhador_retrato` de sempre, e sai sem perfil. Acrescentar vai no FIM:
+    trocar a ordem troca a cara de quem já está num save.
+    """
+    lista = [("trabalhador_retrato", None)]
+    for sexo in ("homem", "mulher"):
+        for idade in ("jovem", "adulto", "veterano"):
+            for cor in ("branca", "parda", "preta", "amarela", "indigena"):
+                if (sexo, idade, cor) == ("homem", "adulto", "parda"):
+                    continue
+                homem = sexo == "homem"
+                lista.append(("trabalhador_%s_%s_%s" % (sexo, idade, cor), dict(
+                    sexo=sexo, idade=idade, cor=cor,
+                    pelos=PELOS_DO_TRABALHADOR.get((idade, cor)) if homem else None,
+                    cabelo=None if homem else CABELOS_DA_TRABALHADORA[(idade, cor)])))
+    return lista
+
+
+TRABALHADOR_PERFIS = _perfis_do_trabalhador()
+
+
 def trabalhador_retrato(M, est):
-    """O busto do trabalhador do rodapé, pelo kit afinado de `brp_retratos.py`.
+    """O busto do trabalhador do rodapé — os 30 perfis, o padrão primeiro."""
+    for nome, perfil in TRABALHADOR_PERFIS:
+        _um_trabalhador(M, est, nome, perfil)
+
+
+def _um_trabalhador(M, est, nome, perfil):
+    """Um busto do trabalhador, pelo kit afinado de `brp_retratos.py`.
 
     O import é aqui dentro pela mesma razão do `retratos_de_fala`: aquele
     módulo importa as medidas deste, e no topo seria um ciclo.
     """
     import brp_retratos
-    nome = "trabalhador_retrato"
-    tronco, cabeca = brp_retratos.trabalhador(M, TRABALHADOR_CARA)
+    tronco, cabeca = brp_retratos.trabalhador(M, TRABALHADOR_CARA, perfil)
     pecas = tronco + cabeca
     medir = [o for o in cabeca if o.name.startswith(("cabeca", "cabelo", "capacete"))]
     for peca in pecas:

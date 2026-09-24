@@ -273,6 +273,15 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   trabalhador ele teve de pedir «me mande as perguntas novamente»: o turno
   acabou com a imagem enviada e sem o formulário, e ele ficou sem onde
   responder.
+  ⚠️ **E «no mesmo turno» quer dizer NA MESMA CHAMADA de ferramentas**: o envio
+  do arquivo e a pergunta saem juntos, no mesmo bloco. Nas variações (24/09)
+  a regra já estava aqui e mordeu outras TRÊS vezes — o envio saía sozinho, o
+  turno acabava nele, e a pergunta nunca chegava.
+- **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
+  A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
+  14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
+  CONJUNTO (`montar_folhas.py` das variações), e na dúvida diga que o corte é
+  da folha e mostre o cartão inteiro.
 - **Família nova de arte pergunta o ESCOPO antes de desenhar** — quantas
   peças, que categorias, que marcas as distinguem — com opções e a
   recomendação primeiro. Nas variações do trabalhador ele respondeu tudo numa

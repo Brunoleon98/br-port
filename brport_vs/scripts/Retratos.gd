@@ -109,3 +109,58 @@ static func imagem(retrato: Texture2D, altura: int = TAMANHO) -> TextureRect:
 	# o nada; encostado em cima, ele olha para a primeira linha.
 	img.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	return img
+
+
+# ── OS ROSTOS DO TRABALHADOR (`059`) ─────────────────────────────────────────
+#
+# O cartão do rodapé mostra o retrato do `rosto` de cada trabalhador, que é o
+# índice desta lista e vive no save (`GameState.novo_trabalhador()`). A ORDEM É
+# A DO ESTÚDIO: é o espelho do `TRABALHADOR_PERFIS` de `blender/brp_porto.py`,
+# de onde saem os PNG, e o 0 é o padrão (o homem adulto pardo, o
+# `trabalhador_retrato` de sempre). Acrescentar vai no FIM — trocar a ordem
+# troca a cara de quem já está num save. O fumaça confere estes nomes contra o
+# disco nos dois sentidos.
+#
+# ⚠️ CAMINHOS E NÃO `preload`: trinta retratos carregados de uma vez pesariam
+# na VRAM de toda cena que tocasse neste registo, e o porto nunca mostra mais
+# do que três. `do_trabalhador()` carrega sob pedido, e o Godot guarda o que
+# já carregou (`049`).
+const TRABALHADORES := [
+	"res://art/props/trabalhador_retrato.png",
+	"res://art/props/trabalhador_homem_jovem_branca.png",
+	"res://art/props/trabalhador_homem_jovem_parda.png",
+	"res://art/props/trabalhador_homem_jovem_preta.png",
+	"res://art/props/trabalhador_homem_jovem_amarela.png",
+	"res://art/props/trabalhador_homem_jovem_indigena.png",
+	"res://art/props/trabalhador_homem_adulto_branca.png",
+	"res://art/props/trabalhador_homem_adulto_preta.png",
+	"res://art/props/trabalhador_homem_adulto_amarela.png",
+	"res://art/props/trabalhador_homem_adulto_indigena.png",
+	"res://art/props/trabalhador_homem_veterano_branca.png",
+	"res://art/props/trabalhador_homem_veterano_parda.png",
+	"res://art/props/trabalhador_homem_veterano_preta.png",
+	"res://art/props/trabalhador_homem_veterano_amarela.png",
+	"res://art/props/trabalhador_homem_veterano_indigena.png",
+	"res://art/props/trabalhador_mulher_jovem_branca.png",
+	"res://art/props/trabalhador_mulher_jovem_parda.png",
+	"res://art/props/trabalhador_mulher_jovem_preta.png",
+	"res://art/props/trabalhador_mulher_jovem_amarela.png",
+	"res://art/props/trabalhador_mulher_jovem_indigena.png",
+	"res://art/props/trabalhador_mulher_adulto_branca.png",
+	"res://art/props/trabalhador_mulher_adulto_parda.png",
+	"res://art/props/trabalhador_mulher_adulto_preta.png",
+	"res://art/props/trabalhador_mulher_adulto_amarela.png",
+	"res://art/props/trabalhador_mulher_adulto_indigena.png",
+	"res://art/props/trabalhador_mulher_veterano_branca.png",
+	"res://art/props/trabalhador_mulher_veterano_parda.png",
+	"res://art/props/trabalhador_mulher_veterano_preta.png",
+	"res://art/props/trabalhador_mulher_veterano_amarela.png",
+	"res://art/props/trabalhador_mulher_veterano_indigena.png",
+]
+
+
+## O retrato de um rosto, ou `null` fora da tabela.
+static func do_trabalhador(rosto: int) -> Texture2D:
+	if rosto < 0 or rosto >= TRABALHADORES.size():
+		return null
+	return load(TRABALHADORES[rosto]) as Texture2D

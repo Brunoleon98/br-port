@@ -882,15 +882,14 @@ trabalhador do rodapé também** (`058`): em BUSTO, no mesmo kit e em Standard,
 com o capacete e o colete que o identificam — aceite na v6, depois de seis
 voltas (`art_lab/retratos/trabalhador/`).
 
-**A seguir, pedido do Bruno: as VARIAÇÕES do trabalhador** — 2 sexos × 3
-idades × as 5 cores do IBGE, **30 retratos**, com rabo de cavalo nas mulheres,
-grisalho e rugas nos veteranos, cara lisa nos jovens e bigode ou cavanhaque em
-alguns homens; sem caricatura (muda o tom de pele e o cabelo, não o desenho do
-rosto). Hoje todo trabalhador usa o mesmo retrato e nasce com o píer; a
-variação entra escolhida pelo `id`, sem campo no save nem sorteio, e o
-**sistema de RH** (futuro) põe cada uma no currículo e na negociação de
-salário. E o **adesivo** do capacete será o emblema que o jogador escolhe para
-a empresa.
+**E as VARIAÇÕES dele estão no jogo** (`059`): 2 sexos × 3 idades × as 5
+cores do IBGE, **30 retratos**, sem caricatura, aceites na v3
+(`art_lab/retratos/trabalhador_variacoes/`). Cada trabalhador nasce com o seu
+ROSTO — um campo no save, por um sorteio próprio que não mexe no da partida;
+pelo `id` só se veriam três, porque o porto tem no máximo três trabalhadores.
+Falta o **sistema de RH** (futuro), que põe cada rosto no currículo e na
+negociação de salário, e o **adesivo** do capacete, que será o emblema que o
+jogador escolhe para a empresa.
 
 ---
 

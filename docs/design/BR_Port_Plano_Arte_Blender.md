@@ -1870,7 +1870,22 @@ valem além dele:
 - **Busto de quem se identifica pela roupa é mais aberto**: a cabeça a 56% do
   quadro, não 60%, e o tronco sobe — senão a faixa de baixo sai cortada.
 
-A seguir, as variações dele (plano v3, A5).
+E as **30 variações dele** (`059`), três voltas em
+`art_lab/retratos/trabalhador_variacoes/` — as lições que valem além delas:
+
+- **O que diz «mulher» a 70 px é o cabelo que EMOLDURA a cara**, não as
+  feições: com maxilar, sobrancelha e lábio ela lia como ele. Debaixo de um
+  capacete, o cabelo que se vê é o que cai dos lados.
+- **Uma peça estreita e paralela às faixas lê como mais uma faixa**: o rabo
+  de cavalo era uma alça do colete até engrossar onde nasce, curvar e ganhar
+  um prendedor.
+- **Pelo facial é forma, não mancha**: uma placa escura sobre a boca é sombra;
+  uma barba só nas quinas e no queixo é uma faixa (grisalha na pele preta lia
+  como a jugular do capacete) — a frente da bochecha vai junto.
+- **Uma casca contínua desde a aba é um capuz**, por mais que ondule; o crespo
+  lê pela silhueta recortada dos cachos, e atrás do plano da cara.
+- **Na pele funda o `vao` quase não separa**: medido, a boca deu 0,42–0,59 de
+  Weber contra 0,75–0,91 nas outras; as feições vão ao preto do cabelo.
 
 ### 7.6 Fontes
 

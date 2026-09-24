@@ -38,7 +38,7 @@ func _garantir(docas: int, trabalhadores: int) -> void:
 	while GS.docks.size() < docas:
 		GS.docks.append({"boat": null, "worker_id": null})
 	while GS.workers.size() < trabalhadores:
-		GS.workers.append({"id": GS.workers.size() + 1, "busy_turns": 0})
+		GS.workers.append(GS.novo_trabalhador())
 	for w in GS.workers:
 		w["busy_turns"] = 0
 
@@ -373,7 +373,9 @@ func _run() -> void:
 		GS.workers.size() == GS.docks.size())
 	# Forca o estado impossivel e confere que carregar o conserta.
 	GS.docks.append({"boat": null, "worker_id": null})
-	GS.workers.append({"id": 99, "busy_turns": 0})
+	var fantasma: Dictionary = GS.novo_trabalhador()
+	fantasma["id"] = 99
+	GS.workers.append(fantasma)
 	GS.docks[GS.docks.size() - 1]["worker_id"] = 99
 	GS.save_game()
 	_check("save com doca a mais carrega", GS.load_game() == true)
@@ -629,7 +631,7 @@ func _t5h_trabalho_parado() -> void:
 	# todos — foi assim que a primeira versão deste bloco passou com o defeito
 	# injetado dentro. Contagem só se testa acima de um.
 	while GS.workers.size() < 3:
-		GS.workers.append({"id": GS.workers.size() + 1, "busy_turns": 0})
+		GS.workers.append(GS.novo_trabalhador())
 	while GS.docks.size() < 2:
 		GS.docks.append({"boat": null, "worker_id": null, "turns_done": 0})
 	for i in range(GS.docks.size()):

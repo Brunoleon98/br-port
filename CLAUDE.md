@@ -1158,6 +1158,12 @@ tranca isso.
   `doca_concreto`. É relatório e não portão, porque o destino de cada um é
   decisão do Bruno. Ao acrescentar um prop, acrescente também quem o mostra — e
   a asserção de que ele chega à tela.
+  ⚠️ **E A CHAVE QUE ESCOLHE A ARTE SÓ ALCANÇA TANTAS PEÇAS QUANTOS VALORES
+  ELA TOMA.** A `058` mandava escolher o retrato do trabalhador pelo `id`, e o
+  porto tem no máximo três: 27 dos 30 retratos ficariam gerados, validados e
+  sem ninguém os ver, com tudo verde. Antes de ligar arte a uma chave, conte
+  os valores que ela toma numa partida; a guarda pergunta a alcançabilidade
+  (o F12 percorre 400 sementes) (`059`).
   ⚠️ **E «ÓRFÃO» E «APAGÁVEL» SÃO DUAS PERGUNTAS — o relatório só faz a
   primeira.** Triados em 22/09, os onze eram TRÊS grupos e não uma pilha:
   **nove tinham propósito ESCRITO** (os oito de `art/brp` e o `doca_concreto`

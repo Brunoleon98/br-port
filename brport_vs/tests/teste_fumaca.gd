@@ -119,6 +119,10 @@ func _rodar() -> void:
 	await _f11_a_vez_do_fim()
 	_confere("o bloco F11 correu até ao fim", _f11_terminou)
 
+	print("=== F12: cada trabalhador nasce com o seu rosto, e o sorteio da partida não se mexe ===")
+	_f12_o_rosto_do_trabalhador()
+	_confere("o bloco F12 correu até ao fim", _f12_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -425,7 +429,7 @@ func _save_valido(versao: int) -> Dictionary:
 	return {
 		"versao": versao, "turn": 5, "cash": 1234, "reputation": 70.0,
 		"docks": [{"boat": null, "worker_id": null}],
-		"workers": [{"id": 1, "busy_turns": 0}],
+		"workers": [{"id": 1, "busy_turns": 0, "rosto": 0}],
 		"upgrade_purchased": false, "estruturas": [], "parcela_paid": false,
 		"phase": "playing", "pending_rival_dock": -1, "rival_attempts_left": 2,
 		"end_reason": "", "won": false, "metrics": {}, "uid": 9,
@@ -2084,3 +2088,139 @@ func _f11_sozinho(main: Node, cena: String, tempo: String, caso: String) -> Node
 		"" if tempo == "" else " «%s»" % tempo], ok,
 		"na tela, de baixo para cima: %s" % (", ".join(vistos) if n > 0 else "nada"))
 	return topo if ok else null
+
+
+# ── F12 ─────────────────────────────────────────────────────────────────
+# Os trinta retratos do cartão (`docs/decisoes/059`). O rosto é um campo do
+# trabalhador, escolhido ao nascer por um gerador PRÓPRIO, e cada pergunta
+# abaixo tem o seu defeito — injetado e visto a reprovar ao escrever o bloco:
+#
+# - o registo contra o DISCO, nos dois sentidos: um PNG gerado e não
+#   registado é o `barco_medio` (o mutante: tirar uma linha do registo);
+# - TRINTA trabalhadores, e não três: com três, um sorteio que não excluísse
+#   os usados repetiria só uma vez em dez (o mutante: `livres` sem o filtro);
+# - o `_rng.state` antes e depois: o rosto não gasta o sorteio que o
+#   simulador mede (o mutante: `_rng.randi_range` no lugar do gerador);
+# - toda cara ALCANÇÁVEL de uma partida nova, e a mesma semente a dar a mesma
+#   cara (os mutantes: a semente constante, e o `randomize()`);
+# - o save recusa sem ter tocado em nada: sem rosto, fora da tabela,
+#   repetido e escrito como texto (os mutantes: cada conferência retirada);
+# - o cartão mostra o ARQUIVO do rosto (o mutante: o `Worker.gd` sem a linha).
+var _f12_terminou := false
+
+
+func _f12_o_rosto_do_trabalhador() -> void:
+	var Ret: GDScript = load("res://scripts/Retratos.gd")
+	var caminhos: Array = Ret.get_script_constant_map()["TRABALHADORES"]
+	_confere("F12: o registo tem os trinta rostos (%d)" % caminhos.size(),
+		caminhos.size() == 30)
+	_confere("F12: o jogo conta os rostos pelo registo", GS.rostos() == caminhos.size())
+
+	# 1 — o registo contra o disco, nos dois sentidos.
+	var registados := {}
+	for c in caminhos:
+		registados[String(c).get_file()] = true
+		_confere("F12: %s existe" % String(c).get_file(), ResourceLoader.exists(String(c)))
+	var no_disco := 0
+	for f in DirAccess.get_files_at("res://art/props"):
+		if f.begins_with("trabalhador_") and f.ends_with(".png"):
+			no_disco += 1
+			_confere("F12: %s está no registo" % f, registados.has(f),
+				"gerado e sem quem o mostre")
+	_confere("F12: a varredura do disco achou os trinta (%d)" % no_disco, no_disco == 30)
+	var cena := load("res://scenes/worker/Worker.tscn") as PackedScene
+	var tex_cena: Texture2D = (cena.instantiate().get_node("Conteudo/Retrato") as TextureRect).texture
+	_confere("F12: o rosto 0 é o retrato que a cena traz",
+		tex_cena != null and tex_cena.resource_path == String(caminhos[0]))
+
+	# 2 e 3 — trinta trabalhadores, trinta rostos, e o `_rng` parado.
+	GS._rng.seed = 12012
+	GS.new_game()
+	var estado_antes: int = GS._rng.state
+	while GS.workers.size() < caminhos.size():
+		GS.workers.append(GS.novo_trabalhador())
+	var vistos := {}
+	var fora := 0
+	for w in GS.workers:
+		var k := int(w["rosto"])
+		if k < 0 or k >= caminhos.size():
+			fora += 1
+		vistos[k] = true
+	_confere("F12: trinta trabalhadores, trinta rostos diferentes (%d)" % vistos.size(),
+		vistos.size() == caminhos.size() and fora == 0)
+	_confere("F12: escolher o rosto não mexe no sorteio da partida",
+		GS._rng.state == estado_antes)
+
+	# 4 — toda cara sai de ALGUMA partida nova, e a mesma semente dá a mesma.
+	var primeiros := {}
+	for semente in range(1, 401):
+		GS._rng.seed = semente
+		GS.new_game()
+		primeiros[int(GS.workers[0]["rosto"])] = true
+	_confere("F12: as trinta caras saem de partidas novas (%d de 30, 400 sementes)"
+		% primeiros.size(), primeiros.size() == caminhos.size())
+	GS._rng.seed = 777
+	GS.new_game()
+	var a := int(GS.workers[0]["rosto"])
+	GS._rng.seed = 777
+	GS.new_game()
+	_confere("F12: a mesma semente dá a mesma cara (as fotos comparam-se)",
+		int(GS.workers[0]["rosto"]) == a)
+
+	# 5 — o save guarda o rosto, e recusa o que não é rosto sem tocar em nada.
+	# ⚠️ COM OS TRÊS PÍERES, e não os três trabalhadores soltos: o
+	# `_reconciliar_roster()` do carregamento corta o elenco ao que o porto
+	# construído aguenta, e a primeira versão deste bloco salvou três num porto
+	# de uma doca — voltava um, e reprovava o jogo certo.
+	GS.estruturas = ["pier_2", "pier_3"]
+	while GS.docks.size() < GS.BERCOS_NO_MAPA:
+		GS.docks.append({"boat": null, "worker_id": null})
+	while GS.workers.size() < GS.BERCOS_NO_MAPA:
+		GS.workers.append(GS.novo_trabalhador())
+	var rostos_vivos: Array = GS.workers.map(func(w): return int(w["rosto"]))
+	GS.save_game()
+	GS.workers = []
+	_confere("F12: o save carrega", GS.load_game())
+	_confere("F12: e os rostos voltam iguais",
+		GS.workers.map(func(w): return int(w["rosto"])) == rostos_vivos,
+		"eram %s, voltaram %s" % [rostos_vivos, GS.workers.map(func(w): return w.get("rosto"))])
+	var maus := {
+		"sem rosto": [{"id": 1, "busy_turns": 0}],
+		"rosto fora da tabela": [{"id": 1, "busy_turns": 0, "rosto": caminhos.size()}],
+		"rosto negativo": [{"id": 1, "busy_turns": 0, "rosto": -1}],
+		"rosto repetido": [{"id": 1, "busy_turns": 0, "rosto": 4},
+			{"id": 2, "busy_turns": 0, "rosto": 4}],
+		"rosto em texto": [{"id": 1, "busy_turns": 0, "rosto": "3"}],
+		"rosto partido": [{"id": 1, "busy_turns": 0, "rosto": 2.5}],
+	}
+	for caso in maus:
+		var dados := _save_valido(GS.SAVE_VERSION)
+		dados["workers"] = maus[caso]
+		dados["docks"] = [{"boat": null, "worker_id": null}, {"boat": null, "worker_id": null}]
+		_escrever(dados)
+		GS.turn = 4321
+		var carregou: bool = GS.load_game()
+		_confere("F12: save com %s é recusado, e sem ter tocado em nada" % caso,
+			not carregou and GS.turn == 4321, "carregou=%s turn=%d" % [carregou, GS.turn])
+	# E o válido, com o rosto certo, entra — senão os seis acima passariam por
+	# um `load_game()` que recusa tudo.
+	var bom := _save_valido(GS.SAVE_VERSION)
+	bom["workers"] = [{"id": 1, "busy_turns": 0, "rosto": caminhos.size() - 1}]
+	_escrever(bom)
+	_confere("F12: o save com um rosto válido entra", GS.load_game())
+
+	# 6 — o cartão mostra o arquivo do rosto, pela porta do jogo.
+	GS._rng.seed = 12012
+	GS.new_game()
+	GS.workers[0]["rosto"] = caminhos.size() - 1
+	var cartao: Node = cena.instantiate()
+	root.add_child(cartao)
+	cartao.setup(int(GS.workers[0]["id"]))
+	var tex: Texture2D = (cartao.get_node("Conteudo/Retrato") as TextureRect).texture
+	_confere("F12: o cartão mostra o retrato do rosto dele",
+		tex != null and tex.resource_path == String(caminhos[caminhos.size() - 1]),
+		"mostra %s" % (tex.resource_path if tex != null else "nada"))
+	cartao.free()
+	GS.clear_save()
+	GS.new_game()
+	_f12_terminou = true
