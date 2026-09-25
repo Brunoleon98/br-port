@@ -90,6 +90,15 @@ jobs:
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
             --headless --path brport_vs --import
 
+      - name: Plantar a sentinela do jogador
+        # O save, o volume e as gravações do JOGADOR vivem no `user://` do
+        # projeto, e em 25/09 uma captura apagou a partida real do Bruno no
+        # desktop. Hoje todo processo com `--script` grava em
+        # `user://ferramentas/` (`ArmazemLocal.gd`, `docs/decisoes/061`); a
+        # sentinela é a prova do lado do ARQUIVO, e só se planta onde não há
+        # jogador — o script recusa-se se houver.
+        run: python3 tools/sentinela_do_jogador.py plantar brport_vs
+
       - name: Rodar os testes
         run: |
           set -euo pipefail
@@ -575,6 +584,13 @@ jobs:
           set -euo pipefail
           python3 tools/projetar_parcelas.py \
             --medicao /tmp/medicao.json --constantes /tmp/constantes.json
+
+      - name: Nenhuma suíte nem ferramenta tocou no que é do jogador
+        # Depois das seis suítes, das partidas gravadas, do simulador e da
+        # régua do boletim: os três arquivos byte a byte, e nenhuma gravação
+        # nova na pasta do jogador. O `teste_registro` e o `gravar_partidas`
+        # APAGAM a pasta de registros que usam — era a do jogador até 25/09.
+        run: python3 tools/sentinela_do_jogador.py conferir brport_vs
 
   # ── A BUILD QUE SAI DAQUI E VAI PARA UM TELEFONE ──
   #

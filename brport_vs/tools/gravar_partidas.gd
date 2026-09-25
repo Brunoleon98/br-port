@@ -59,10 +59,10 @@ func _rodar() -> void:
 
 	# Limpa a pasta antes: um registro de uma corrida anterior misturado com
 	# esta daria um relatório que não corresponde a nada que se tenha jogado.
-	var d := DirAccess.open(R.PASTA)
+	var d := DirAccess.open(R.pasta)
 	if d != null:
 		for n in d.get_files():
-			DirAccess.remove_absolute("%s/%s" % [R.PASTA, n])
+			DirAccess.remove_absolute("%s/%s" % [R.pasta, n])
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
@@ -120,13 +120,13 @@ func _rodar() -> void:
 						break
 			GS.advance_turn()
 
-	var nomes := _listar(R.PASTA)
-	print("Gravadas %d partida(s) em %s" % [nomes.size(), ProjectSettings.globalize_path(R.PASTA)])
+	var nomes := _listar(R.pasta)
+	print("Gravadas %d partida(s) em %s" % [nomes.size(), ProjectSettings.globalize_path(R.pasta)])
 
 	if destino != "":
 		DirAccess.make_dir_recursive_absolute(destino)
 		for n in nomes:
-			var texto := FileAccess.get_file_as_string("%s/%s" % [R.PASTA, n])
+			var texto := FileAccess.get_file_as_string("%s/%s" % [R.pasta, n])
 			var f := FileAccess.open("%s/%s" % [destino, n], FileAccess.WRITE)
 			if f == null:
 				print("FALHA: não consegui escrever em %s" % destino)

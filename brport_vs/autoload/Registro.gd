@@ -68,7 +68,10 @@ extends Node
 # de fora.
 const VERSAO := 1
 
-const PASTA := "user://registros"
+# A pasta sai do `ArmazemLocal` (`061`): o `teste_registro` e o
+# `gravar_partidas` APAGAM tudo o que lá está, e o `_podar()` de cada tiro
+# da bateria de captura empurrava para fora as partidas do playtest.
+var pasta: String = ArmazemLocal.caminho("registros")
 
 # Teto de linhas por arquivo. Uma partida honesta faz ~40; isto é para o caso
 # de algo entrar em laço com o gravador armado. Passado o teto grava-se uma
@@ -141,7 +144,7 @@ func _ready() -> void:
 # dá erro nenhum e só aparece no relatório, como número plausível.
 func armar() -> void:
 	_armado = true
-	DirAccess.make_dir_recursive_absolute(PASTA)
+	DirAccess.make_dir_recursive_absolute(pasta)
 	_podar()
 	# O nome sai da hora local, e não de um contador, porque dois aparelhos
 	# diferentes têm de gerar arquivos que não colidem quando os registros dos
@@ -155,7 +158,7 @@ func armar() -> void:
 	# copiar exportaria as duas como se fossem uma sessão. Quem carrega duas
 	# vezes seguidas em "Novo jogo" chega lá em dois toques. O sufixo resolve,
 	# e o laço é a garantia de que resolve mesmo quando o relógio não anda.
-	var base := "%s/partida_%s" % [PASTA, Time.get_datetime_string_from_system(false, false)
+	var base := "%s/partida_%s" % [pasta, Time.get_datetime_string_from_system(false, false)
 		.replace(":", "").replace("-", "").replace("T", "_")]
 	_caminho = base + ".jsonl"
 	var n := 2
@@ -224,11 +227,11 @@ func _podar() -> void:
 		return
 	nomes.sort()
 	for i in range(nomes.size() - TETO_ARQUIVOS + 1):
-		DirAccess.remove_absolute("%s/%s" % [PASTA, nomes[i]])
+		DirAccess.remove_absolute("%s/%s" % [pasta, nomes[i]])
 
 
 func _arquivos() -> Array:
-	var d := DirAccess.open(PASTA)
+	var d := DirAccess.open(pasta)
 	if d == null:
 		return []
 	var fora: Array = []
@@ -385,7 +388,7 @@ func texto_para_exportar(todas: bool = false) -> String:
 	nomes.sort()
 	var partes: PackedStringArray = []
 	for n in nomes:
-		partes.append(FileAccess.get_file_as_string("%s/%s" % [PASTA, n]))
+		partes.append(FileAccess.get_file_as_string("%s/%s" % [pasta, n]))
 	return "\n".join(partes)
 
 

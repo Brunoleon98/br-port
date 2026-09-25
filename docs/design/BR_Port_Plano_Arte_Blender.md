@@ -1230,7 +1230,7 @@ o contraste depende do fundo, não da tinta. Cartão escuro sobre fundo escuro
 ganha corpo por BORDA, e os cartões de doca já a têm. Deixados como estão, de
 propósito.
 
-#### Frente 3 do A5 — primeira família aplicada em 25/09, à espera do olhar do Bruno
+#### Frente 3 do A5 — primeira família aceite em 25/09 («ficou bom»)
 
 Boletim, contra-oferta, cobrança e balanço partilham um cabeçalho navy com
 ícone sobre selo claro. O boletim destaca o resultado real da semana; a
@@ -1254,6 +1254,21 @@ cobrança mostra a falta ou o saldo após pagar; a contra-oferta separa ação e
 preço/chance em duas linhas e imprime a chance real após a reputação. Fontes,
 tradução, rejeições e a descoberta de que a ferramenta de captura mexe no save
 persistente estão em `docs/design/BR_Port_Referencias_Interface_Gestao.md`.
+
+Na terceira passagem (25/09) a tarja ganhou uma linha de apoio — as parcelas
+da conta na cobrança, a semana anterior no boletim, o preço fechado na
+contra-oferta —, a contra-oferta passou a dizer o que acontece se o cliente
+recusar a aposta, e o balanço deixou de chamar «igualadas» às disputas
+ganhas. O F14 do `teste_fumaca` confere cada número prometido contra o que o
+jogo faz (`docs/decisoes/062`).
+
+A quarta (25/09) deu a cada número a sua forma: o total de cada bloco no topo
+do boletim, a barra da parcela do HUD na cobrança, a chance como barra dentro
+de cada botão do Arlindo e os números do balanço em quadros — com referências
+de *Two Point Hospital*, *Papers, Please*, *Reigns* e *Moonlighter*
+(`docs/decisoes/063`). A quinta pôs a tarja no tom do que diz — verde e
+vermelho da faixa de mensagem, sempre com a palavra (`docs/decisoes/064`).
+Sobre ela o Bruno disse «ficou bom», e a família fechou.
 
 ---
 

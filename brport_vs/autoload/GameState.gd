@@ -406,7 +406,13 @@ const PARCELAS_NA_FASE := 3
 const JUROS_POR_TURNO := 0.0025           # TUNING: fração do principal abatida por turno de antecipação
 
 # ── SAVE ──
-const SAVE_PATH := "user://savegame.json"
+# O NOME é constante; o CAMINHO decide-o o `ArmazemLocal`, por processo: o
+# jogo grava em `user://` e toda ferramenta com `--script` em
+# `user://ferramentas/` (`docs/decisoes/061`). Não há `SAVE_PATH` de propósito:
+# uma constante com o caminho do jogador era o que as suítes usavam para
+# escrever saves inválidos — no arquivo do Bruno, se o isolamento falhasse.
+const SAVE_ARQUIVO := "savegame.json"
+var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 
 # VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar.
 #
@@ -1701,16 +1707,16 @@ func save_game() -> void:
 		"dia_atual": dia_atual,
 		"dia_anterior": dia_anterior,
 	}
-	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(data))
 		file.close()
 
 
 func load_game() -> bool:
-	if not FileAccess.file_exists(SAVE_PATH):
+	if not FileAccess.file_exists(save_path):
 		return false
-	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var file := FileAccess.open(save_path, FileAccess.READ)
 	if not file:
 		return false
 	var text := file.get_as_text()
@@ -1861,5 +1867,5 @@ func _reconciliar_roster() -> void:
 
 
 func clear_save() -> void:
-	if FileAccess.file_exists(SAVE_PATH):
-		DirAccess.remove_absolute(SAVE_PATH)
+	if FileAccess.file_exists(save_path):
+		DirAccess.remove_absolute(save_path)

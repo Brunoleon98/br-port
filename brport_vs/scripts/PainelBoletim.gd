@@ -37,14 +37,14 @@ func setup(resumo: Dictionary) -> void:
 	# LINHA COM ZERO NÃO ENTRA. O armazém só rende depois de consertado e a
 	# parcela só vence numa semana das quatro; mostrá-las a R$0 nas outras é
 	# ruído que o olho tem de descartar toda semana para chegar ao que mudou.
-	_bloco("ENTROU", [
+	_bloco("Entrou", [
 		["Docagens", int(_resumo["docagens"])],
 		["Armazém", int(_resumo["armazem"])],
 		["Pátio de contêineres", int(_resumo["patio"])],
 		["Aluguel de píer", int(_resumo["pier"])],
 	], int(_resumo["receita"]))
 
-	_bloco("SAIU", [
+	_bloco("Saiu", [
 		["Salários", int(_resumo["salarios"])],
 		["Manutenção", int(_resumo["manutencao"])],
 		["Parcela", int(_resumo["parcela"])],
@@ -62,22 +62,46 @@ func setup(resumo: Dictionary) -> void:
 	botao_fechar("Fechar o boletim")
 
 
+# O TOTAL SOBE PARA A LINHA DO BLOCO, e as parcelas descem de tom (25/09,
+# quarta passagem). Era «ENTROU» em cinza pequeno, quatro linhas, um fio e uma
+# linha «Total» com o mesmo peso de cada parcela — e outro tanto para o SAIU:
+# duas linhas «Total» num cartão só, e o olho a descer a lista inteira para
+# achar os dois números que a Dona Cida comenta. É o desenho das finanças do
+# *Two Point Hospital* e do fim de dia do *Papers, Please*: de onde entrou e
+# para onde saiu, cada bloco encabeçado pelo seu total, com o detalhe por
+# baixo (`docs/design/BR_Port_Referencias_Interface_Gestao.md`).
+#
+# ⚠️ SEM SINAL E SEM COR. A palavra do bloco já diz de que lado está o
+# dinheiro — «Saiu −R$49.000» dizia-o duas vezes, que é a dupla negação que o
+# `lucro_ou_prejuizo()` já recusa —, e verde contra vermelho não se lê sem
+# distinguir as duas cores, nem o tema tem esse par medido sobre o branco.
 func _bloco(nome: String, linhas: Array, soma: int) -> void:
-	secao(nome)
+	var cabeca := GridContainer.new()
+	cabeca.columns = 2
+	cabeca.add_theme_constant_override("h_separation", 16)
+	_vbox.add_child(cabeca)
+	var titulo_bloco := Label.new()
+	titulo_bloco.text = nome
+	titulo_bloco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cabeca.add_child(titulo_bloco)
+	var total_bloco := Label.new()
+	total_bloco.text = GameState.moeda(soma)
+	total_bloco.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	cabeca.add_child(total_bloco)
+
+	# As parcelas recuadas e no tom de apoio: detalhe do total de cima.
+	var recuo := MarginContainer.new()
+	recuo.add_theme_constant_override("margin_left", 14)
+	_vbox.add_child(recuo)
 	var grade := GridContainer.new()
 	grade.columns = 2
 	grade.add_theme_constant_override("h_separation", 16)
-	_vbox.add_child(grade)
+	grade.add_theme_constant_override("v_separation", 2)
+	recuo.add_child(grade)
 	for linha in linhas:
 		if int(linha[1]) == 0:
 			continue
 		_linha(grade, String(linha[0]), int(linha[1]))
-	fio()
-	var grade_total := GridContainer.new()
-	grade_total.columns = 2
-	grade_total.add_theme_constant_override("h_separation", 16)
-	_vbox.add_child(grade_total)
-	_linha(grade_total, "Total", soma)
 
 
 # Rótulo à esquerda, valor à direita. O valor alinha à direita porque é assim
@@ -85,22 +109,33 @@ func _bloco(nome: String, linhas: Array, soma: int) -> void:
 # parecem do mesmo tamanho.
 func _linha(grade: GridContainer, rotulo: String, valor: int) -> void:
 	var esquerda := Label.new()
+	esquerda.theme_type_variation = "RotuloApoio"
 	esquerda.text = rotulo
 	esquerda.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grade.add_child(esquerda)
 
 	var direita := Label.new()
+	direita.theme_type_variation = "RotuloApoio"
 	direita.text = GameState.moeda(valor)
 	direita.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	grade.add_child(direita)
 
 
+# A COMPARAÇÃO VIVE DENTRO DA TARJA DO RESULTADO, como linha de apoio (25/09,
+# terceira passagem). Era um parágrafo solto por baixo dela, com o mesmo peso
+# do «Semana 1 de 4» do topo, e lia-se como mais uma linha da contabilidade;
+# é o contexto do número destacado, e fica encostada a ele.
 func _resultado() -> void:
 	var resultado := int(_resumo["resultado"])
 	fio()
-	tarja(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true))
+	tarja(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true),
+		_comparacao(resultado),
+		&"bom" if resultado > 0 else (&"ruim" if resultado < 0 else &"neutro"))
+
+
+func _comparacao(resultado: int) -> String:
 	if not bool(_resumo["tem_historico"]):
-		return
+		return ""
 	var anterior := int(_resumo["anterior"])
 	var seta := "↑" if resultado > anterior else ("↓" if resultado < anterior else "=")
 	# Variação percentual precisa de uma base que não seja zero, e uma semana
@@ -112,5 +147,5 @@ func _resultado() -> void:
 			int(round(abs(float(resultado - anterior) / float(anterior)) * 100.0))]
 	else:
 		variacao = "  (%s)" % seta
-	paragrafo("Semana anterior: %s%s" % [
-		Narrativa.lucro_ou_prejuizo(anterior, GameState.moeda), variacao])
+	return "Semana anterior: %s%s" % [
+		Narrativa.lucro_ou_prejuizo(anterior, GameState.moeda), variacao]

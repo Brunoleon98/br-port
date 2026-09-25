@@ -22,6 +22,8 @@ var _mood_label: Label
 # não se reconstrói entre rodadas — só se refresca.
 var _fala_arlindo: Label
 var _valor_label: Label
+# A linha de apoio da tarja: vazia na negociação, o preço fechado no fim.
+var _valor_apoio: Label
 var _mood_icone: TextureRect
 # A linha inteira do humor do cliente, que sai no segundo tempo — ver
 # `_despedida()`.
@@ -33,6 +35,10 @@ var _botoes: VBoxContainer
 var _btn_igualar: Button
 var _btn_metade: Button
 var _btn_manter: Button
+# A chance de cada opção, desenhada no botão — ver `_barra_de_chance()`.
+var _barra_igualar: ProgressBar
+var _barra_metade: ProgressBar
+var _barra_manter: ProgressBar
 
 
 func setup(index: int) -> void:
@@ -99,13 +105,13 @@ func _build_ui() -> void:
 	linha.add_child(balao)
 	vbox.add_child(linha)
 
-	var valor := PanelContainer.new()
-	valor.theme_type_variation = "TarjaNarrativa"
-	_valor_label = Label.new()
-	_valor_label.theme_type_variation = "RotuloTotal"
-	_valor_label.text = "Valor original: %s" % GameState.moeda(_valor_barco())
-	_valor_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	valor.add_child(_valor_label)
+	# A MESMA tarja dos outros três painéis, pela porta estática — esta tela
+	# não herda do `PainelNarrativo`, e montá-la à mão já tinha dado uma
+	# segunda cópia do estilo.
+	var valor := PainelNarrativo.tarja_solta(
+		"Valor original: %s" % GameState.moeda(_valor_barco()))
+	_valor_label = valor.get_node("Linhas/Principal")
+	_valor_apoio = valor.get_node("Linhas/Detalhe")
 	vbox.add_child(valor)
 
 	# A cara do cliente é um ícone que troca no meio da negociação, então a
@@ -120,23 +126,70 @@ func _build_ui() -> void:
 	vbox.add_child(btn_row)
 	_botoes = btn_row
 
+	# TEXTO À ESQUERDA, e as três segundas linhas com a mesma forma — valor ·
+	# certeza ou chance. Centrado, cada linha começava num sítio diferente e o
+	# olho tinha de procurar o preço em três margens; alinhado ao ícone, os
+	# três valores ficam em coluna e comparam-se de cima para baixo.
 	_btn_igualar = Button.new()
 	Icones.no_botao(_btn_igualar, Icones.ACORDO)
-	_btn_igualar.custom_minimum_size = Vector2(0, 58)
+	_btn_igualar.custom_minimum_size = Vector2(0, ALTURA_OPCAO)
+	_btn_igualar.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_barra_igualar = _barra_de_chance(_btn_igualar)
 	_btn_igualar.pressed.connect(func(): _negociar("igualar"))
 	btn_row.add_child(_btn_igualar)
 
 	_btn_metade = Button.new()
 	Icones.no_botao(_btn_metade, Icones.CORTAR)
-	_btn_metade.custom_minimum_size = Vector2(0, 58)
+	_btn_metade.custom_minimum_size = Vector2(0, ALTURA_OPCAO)
+	_btn_metade.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_barra_metade = _barra_de_chance(_btn_metade)
 	_btn_metade.pressed.connect(func(): _negociar("metade"))
 	btn_row.add_child(_btn_metade)
 
 	_btn_manter = Button.new()
 	Icones.no_botao(_btn_manter, Icones.FIRMEZA)
-	_btn_manter.custom_minimum_size = Vector2(0, 58)
+	_btn_manter.custom_minimum_size = Vector2(0, ALTURA_OPCAO)
+	_btn_manter.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_barra_manter = _barra_de_chance(_btn_manter)
 	_btn_manter.pressed.connect(func(): _negociar("manter"))
 	btn_row.add_child(_btn_manter)
+
+
+# A ALTURA DE UMA OPÇÃO: as duas linhas de texto (~45 px), as margens do botão
+# e a barra de chance por baixo delas. Com os 58 da passagem anterior a barra
+# encostava na segunda linha.
+const ALTURA_OPCAO := 72
+# Onde o texto começa dentro do botão: margem do estilo (14) + ícone (22) +
+# separação do Button (4). A barra alinha com o TEXTO, não com o ícone.
+const BARRA_ESQUERDA := 40.0
+
+
+# A CHANCE COMO BARRA, dentro de cada botão (25/09, quarta passagem). O texto
+# já dizia «70% de chance», e três percentagens em três botões comparam-se
+# lendo as três. O *Reigns* mostra, antes de a carta cair, o TAMANHO do que
+# vai mudar; as lojas do *Moonlighter* respondem ao preço com a cara do
+# cliente — aqui a troca é preço contra certeza, e a barra põe a certeza na
+# mesma coluna em que o texto põe o preço: o igualar cheio, as apostas a meio
+# (`docs/design/BR_Port_Referencias_Interface_Gestao.md`).
+#
+# ⚠️ É REDUNDANTE DE PROPÓSITO: a percentagem continua escrita, e nada se
+# decide só pela barra. E ela não recebe toque — o botão por baixo é o alvo.
+func _barra_de_chance(botao: Button) -> ProgressBar:
+	var barra := ProgressBar.new()
+	barra.theme_type_variation = "BarraChance"
+	barra.show_percentage = false
+	barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	barra.max_value = 100.0
+	barra.anchor_left = 0.0
+	barra.anchor_right = 1.0
+	barra.anchor_top = 1.0
+	barra.anchor_bottom = 1.0
+	barra.offset_left = BARRA_ESQUERDA
+	barra.offset_right = -14.0
+	barra.offset_top = -13.0
+	barra.offset_bottom = -7.0
+	botao.add_child(barra)
+	return barra
 
 
 func _valor_barco() -> int:
@@ -175,6 +228,14 @@ func _despedida(resultado: String) -> void:
 	tempo = &"despedida"
 	_valor_label.text = "Negócio fechado no seu porto" if resultado == "fechado" \
 		else "Negócio perdido para Porto Farol"
+	PainelNarrativo.tingir_tarja(_valor_label, &"bom" if resultado == "fechado" else &"ruim")
+	# O PREÇO QUE FICOU, lido do barco e não recalculado: o `_fechar_negocio()`
+	# escreve-o em `matched_value`, e é esse que o jogo paga.
+	var boat = GameState.docks[dock_index]["boat"] if dock_index >= 0 \
+		and dock_index < GameState.docks.size() else null
+	PainelNarrativo.escrever_detalhe(_valor_apoio,
+		"Fechado por %s" % GameState.moeda(int(boat["matched_value"]))
+		if resultado == "fechado" and boat != null and boat.has("matched_value") else "")
 	# "fechado" é o cliente que FICA: quem perdeu foi ele.
 	var id := "perdeu" if resultado == "fechado" else "venceu"
 	_fala_arlindo.text = GameState.texto(String(Narrativa.ARLINDO_FALAS[id]))
@@ -200,7 +261,7 @@ func _refresh(reacao: String = "", acao: String = "") -> void:
 	var ja_insistiu := restantes < GameState.RIVAL_PATIENCE
 
 	var desconto_igualar: float = GameState.RIVAL_DISCOUNT_AFTER_FAIL if ja_insistiu else GameState.RIVAL_DISCOUNT
-	_btn_igualar.text = "Igualar rival (−%d%%) — fecha agora\n%s" % [
+	_btn_igualar.text = "Igualar rival (−%d%%)\n%s · fecha na hora" % [
 		int(round(desconto_igualar * 100.0)),
 		GameState.moeda(int(round(valor * (1.0 - desconto_igualar))))]
 
@@ -209,22 +270,39 @@ func _refresh(reacao: String = "", acao: String = "") -> void:
 	# que o sorteio aplicava. A mesma função serve a simulação e este rótulo.
 	var chance_metade := GameState._chance_com_reputacao(GameState.RIVAL_HALF_CHANCE)
 	var chance_manter := GameState._chance_com_reputacao(GameState.RIVAL_KEEP_CHANCE)
-	_btn_metade.text = "Cortar metade (−%d%%) — aposta\n%s · %d%% de chance" % [
+	_btn_metade.text = "Cortar metade (−%d%%)\n%s · %d%% de chance" % [
 		int(round(GameState.RIVAL_HALF_DISCOUNT * 100.0)),
 		GameState.moeda(int(round(valor * (1.0 - GameState.RIVAL_HALF_DISCOUNT)))),
 		int(round(chance_metade * 100.0))]
 
-	_btn_manter.text = "Manter preço — aposta\n%s · %d%% de chance" % [
+	_btn_manter.text = "Manter preço\n%s · %d%% de chance" % [
 		GameState.moeda(valor),
 		int(round(chance_manter * 100.0))]
 
-	var desc := "Cliente ouvindo a proposta."
-	_mood_icone.texture = Icones.CLIENTE_CALMO
+	# As barras leem o MESMO número que o texto escreve: o igualar fecha
+	# sempre, as apostas valem a chance que o `_negociar()` sorteia.
+	_barra_igualar.value = 100.0
+	_barra_metade.value = chance_metade * 100.0
+	_barra_manter.value = chance_manter * 100.0
+
+	# O QUE ACONTECE SE ELE RECUSAR, ANTES DE SE APOSTAR (25/09, terceira
+	# passagem). A linha dizia «Cliente ouvindo a proposta. (2 tentativas)», e
+	# o preço de falhar só aparecia depois de se ter falhado: o igualar a −28%
+	# surgia na segunda rodada sem aviso, e na última só se sabia que «ele vai
+	# embora». As duas saídas do `_negociar()` com a aposta recusada — insistiu
+	# e perdido — ficam escritas aqui, com os números das mesmas constantes.
+	var desc: String
 	if restantes <= 1:
 		_mood_icone.texture = Icones.CLIENTE_IMPACIENTE
-		desc = "Cliente impaciente — se esta não colar, ele vai embora."
-	_mood_label.text = "%s (%s)" % [
-		desc, Narrativa.concordar(restantes, "tentativa", "tentativas")]
+		desc = "Cliente impaciente: se recusar esta aposta, o barco vai para o Porto Farol."
+	else:
+		_mood_icone.texture = Icones.CLIENTE_CALMO
+		desc = "Cliente ouvindo. Se recusar uma aposta, você fica com %s" % \
+			Narrativa.concordar(restantes - 1, "tentativa", "tentativas")
+		if not ja_insistiu:
+			desc += " e igualar passa a −%d%%" % int(round(GameState.RIVAL_DISCOUNT_AFTER_FAIL * 100.0))
+		desc += "."
+	_mood_label.text = desc
 
 	# Duas falas dele numa rodada só: o que achou da oferta, e a pressão da
 	# última tentativa. Juntas porque são o mesmo momento — separá-las em dois

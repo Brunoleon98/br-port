@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=30 format=3]
+[gd_resource type="Theme" load_steps=35 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -62,6 +62,68 @@ content_margin_left = 5.0
 content_margin_top = 5.0
 content_margin_right = 5.0
 content_margin_bottom = 5.0
+
+; A CHANCE DE CADA APOSTA DO ARLINDO, desenhada DENTRO do botão navy (25/09,
+; quarta passagem da frente 3). A barra base do tema tem trilho azul-claro, que
+; sobre o navy do botão acende mais do que o âmbar dentro dele (1,9:1 entre os
+; dois). Aqui o trilho é um navy mais claro, e o âmbar mede 4,6:1 contra ele —
+; acima dos 3:1 que a WCAG 1.4.11 pede a um objeto gráfico. É REDUNDANTE com o
+; texto, que continua a dizer a percentagem: nada depende só da barra.
+[sub_resource type="StyleBoxFlat" id="barra_chance_fundo"]
+bg_color = Color(0.227, 0.318, 0.435, 1)
+corner_radius_top_left = 99
+corner_radius_top_right = 99
+corner_radius_bottom_right = 99
+corner_radius_bottom_left = 99
+
+[sub_resource type="StyleBoxFlat" id="barra_chance_cheia"]
+bg_color = Color(0.961, 0.725, 0.227, 1)
+corner_radius_top_left = 99
+corner_radius_top_right = 99
+corner_radius_bottom_right = 99
+corner_radius_bottom_left = 99
+
+; O quadro de um número do balanço: o fundo do balão da fala, sem a barra
+; âmbar — é informação do jogo, não voz de ninguém.
+[sub_resource type="StyleBoxFlat" id="bloco_numero"]
+bg_color = Color(0.941, 0.965, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+
+; A TARJA COM O TOM DO QUE DIZ (25/09, quinta passagem da frente 3): o
+; lucro, a parcela quitada e o negócio fechado vestem o VERDE da faixa de
+; mensagem; o prejuízo, a falta e o negócio perdido, o VERMELHO dela. São as
+; cores do `TextoFaixaBom` e do `TextoFaixaRuim`, medidas sobre este mesmo
+; creme (`faixa_msg` e `tarja_narrativa` têm o mesmo `bg_color`) — nenhuma cor
+; nova. O tom é REDUNDANTE com a palavra («Lucro», «Faltam», «perdido»), que é
+; quem carrega o sentido: vermelho contra verde não se lê sem distinguir as duas.
+[sub_resource type="StyleBoxFlat" id="tarja_narrativa_boa"]
+bg_color = Color(1, 0.984, 0.922, 1)
+border_width_left = 4
+border_color = Color(0.102, 0.478, 0.251, 1)
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+content_margin_left = 12.0
+content_margin_top = 9.0
+content_margin_right = 12.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBoxFlat" id="tarja_narrativa_ruim"]
+bg_color = Color(1, 0.984, 0.922, 1)
+border_width_left = 4
+border_color = Color(0.761, 0.188, 0.188, 1)
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+content_margin_left = 12.0
+content_margin_top = 9.0
+content_margin_right = 12.0
+content_margin_bottom = 9.0
 
 [sub_resource type="StyleBoxFlat" id="tarja_narrativa"]
 bg_color = Color(1, 0.984, 0.922, 1)
@@ -684,6 +746,19 @@ SeloNarrativo/base_type = "PanelContainer"
 SeloNarrativo/styles/panel = SubResource("selo_narrativo")
 TarjaNarrativa/base_type = "PanelContainer"
 TarjaNarrativa/styles/panel = SubResource("tarja_narrativa")
+TarjaNarrativaBoa/base_type = "PanelContainer"
+TarjaNarrativaBoa/styles/panel = SubResource("tarja_narrativa_boa")
+TarjaNarrativaRuim/base_type = "PanelContainer"
+TarjaNarrativaRuim/styles/panel = SubResource("tarja_narrativa_ruim")
+; O número da tarja no tom dela: o tamanho do `RotuloTotal` com a cor do
+; `TextoFaixaBom`/`TextoFaixaRuim`. Duas variações e não uma cor pintada no
+; script, que é o que o portão do escopo existe para impedir.
+RotuloTotalBom/base_type = "Label"
+RotuloTotalBom/colors/font_color = Color(0.102, 0.478, 0.251, 1)
+RotuloTotalBom/font_sizes/font_size = 18
+RotuloTotalRuim/base_type = "Label"
+RotuloTotalRuim/colors/font_color = Color(0.761, 0.188, 0.188, 1)
+RotuloTotalRuim/font_sizes/font_size = 18
 ; RotuloAlerta — o texto que aponta para UM item: o dia de hoje no calendário,
 ; a faixa de reputação em que se está, o convite a quitar a parcela no HUD.
 ;
@@ -729,6 +804,16 @@ Fala/styles/panel = SubResource("fala")
 PanelContainer/styles/panel = SubResource("cartao")
 ProgressBar/styles/background = SubResource("barra_fundo")
 ProgressBar/styles/fill = SubResource("barra_cheia")
+; BarraChance — a barra de chance dentro do botão navy da contra-oferta.
+BarraChance/base_type = "ProgressBar"
+BarraChance/styles/background = SubResource("barra_chance_fundo")
+BarraChance/styles/fill = SubResource("barra_chance_cheia")
+; BlocoNumero + NumeroGrande — os números da partida no balanço, um por quadro.
+BlocoNumero/base_type = "PanelContainer"
+BlocoNumero/styles/panel = SubResource("bloco_numero")
+NumeroGrande/base_type = "Label"
+NumeroGrande/colors/font_color = Color(0.11, 0.204, 0.329, 1)
+NumeroGrande/font_sizes/font_size = 24
 Cartao/base_type = "PanelContainer"
 BotaoDestaque/base_type = &"Button"
 BotaoDestaque/colors/font_color = Color(0.961, 0.725, 0.227, 1)

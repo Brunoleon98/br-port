@@ -54,6 +54,9 @@ var _vbox: VBoxContainer
 # outro filho.
 var _retrato_da_fala: TextureRect
 
+# A linha de apoio da última tarja — ver `tarja()`.
+var _detalhe_da_tarja: Label
+
 
 func _ready() -> void:
 	anchor_right = 1.0
@@ -284,16 +287,84 @@ static func cabecalho_encorpado(icone: Texture2D, texto: String) -> PanelContain
 
 # A tarja dá um ponto de leitura aos valores que comandam a decisão sem
 # transformar o restante da fala ou da contabilidade num segundo destaque.
-func tarja(texto: String) -> Label:
+#
+# ⚠️ E O NÚMERO QUE ELA DESTACA LEVA AO LADO AS PARCELAS DE QUE SAI (25/09,
+# terceira passagem da frente 3). A cobrança dizia «Faltam R$194.000» na
+# tarja, o dinheiro numa linha cinzenta por baixo e a parcela dentro da fala —
+# três sítios para uma subtração que o jogador quer poder conferir. O
+# `detalhe` é essa linha de apoio: menor, na cor de apoio, DENTRO da tarja,
+# e nunca um segundo destaque. Vazio, não ocupa lugar.
+func tarja(texto: String, detalhe: String = "", tom: StringName = &"neutro") -> Label:
+	var painel := tarja_solta(texto, detalhe, tom)
+	_vbox.add_child(painel)
+	_detalhe_da_tarja = painel.get_node("Linhas/Detalhe")
+	return painel.get_node("Linhas/Principal")
+
+
+# A linha de apoio da última tarja, para o painel a trocar quando a cena
+# avança — o mesmo padrão do `retrato_da_fala()`.
+func detalhe_da_tarja() -> Label:
+	return _detalhe_da_tarja
+
+
+# O `detalhe` vazio ESCONDE a linha em vez de a deixar em branco: um rótulo
+# vazio visível ainda ocupa a altura de uma linha, e a tarja do boletim sem
+# semana anterior sairia com um vão creme por baixo do lucro.
+static func escrever_detalhe(rotulo: Label, texto: String) -> void:
+	rotulo.text = texto
+	rotulo.visible = texto != ""
+
+
+# Estática porque a contra-oferta não herda deste andaime (é anterior a ele) e
+# tem de vestir a MESMA tarja — o estilo continua a sair de um lugar só, como o
+# `cabecalho_encorpado()`. Os nós têm nome para quem os troca depois.
+static func tarja_solta(texto: String, detalhe: String = "",
+		tom: StringName = &"neutro") -> PanelContainer:
 	var painel := PanelContainer.new()
 	painel.theme_type_variation = "TarjaNarrativa"
+	var linhas := VBoxContainer.new()
+	linhas.name = "Linhas"
+	linhas.add_theme_constant_override("separation", 2)
+	painel.add_child(linhas)
 	var rotulo := Label.new()
+	rotulo.name = "Principal"
 	rotulo.theme_type_variation = "RotuloTotal"
 	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rotulo.text = texto
-	painel.add_child(rotulo)
-	_vbox.add_child(painel)
-	return rotulo
+	linhas.add_child(rotulo)
+	var apoio := Label.new()
+	apoio.name = "Detalhe"
+	apoio.theme_type_variation = "RotuloApoio"
+	apoio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	escrever_detalhe(apoio, detalhe)
+	linhas.add_child(apoio)
+	tingir_tarja(rotulo, tom)
+	return painel
+
+
+# O TOM DA TARJA, a partir do rótulo principal dela — `&"bom"`, `&"ruim"` ou
+# `&"neutro"` (25/09, quinta passagem). A resposta da cobrança e a despedida do
+# Arlindo trocam o texto E o tom da mesma tarja, e é por isso que isto recebe
+# o rótulo que os painéis já guardam.
+#
+# ⚠️ QUEM ESCOLHE O TOM É QUEM ESCREVE A PALAVRA, e ela vem primeiro: o verde
+# e o vermelho só repetem o que «Lucro», «Faltam» ou «perdido» já dizem. O F14
+# confere que os dois concordam.
+#
+# ⚠️ E AS VARIAÇÕES SÃO LITERAIS, uma por ramo: o `conferir_escopo_ui.py` só
+# confere o nome que vê escrito depois do `=` (`041`).
+static func tingir_tarja(principal: Label, tom: StringName) -> void:
+	var painel := principal.get_parent().get_parent() as PanelContainer
+	match tom:
+		&"bom":
+			painel.theme_type_variation = &"TarjaNarrativaBoa"
+			principal.theme_type_variation = &"RotuloTotalBom"
+		&"ruim":
+			painel.theme_type_variation = &"TarjaNarrativaRuim"
+			principal.theme_type_variation = &"RotuloTotalRuim"
+		_:
+			painel.theme_type_variation = &"TarjaNarrativa"
+			principal.theme_type_variation = &"RotuloTotal"
 
 
 # O botão que fecha. Devolvê-lo permite ao painel concreto ligar mais alguma

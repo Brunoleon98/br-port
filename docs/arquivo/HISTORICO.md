@@ -744,3 +744,10 @@ mais antigas:
 | Fechado | O que ficou, medido |
 |---|---|
 | **O balanço, o nome longo e o chanfro** (23/09, `053`) — escolha do Bruno, os três | (g) o balanço tem foto de uma partida JOGADA e paga pelo botão, e a lacuna declarada saiu; (h) o F10 mede o diário com o nome de 24 letras (597 de 620 px) e reprova frase com nome que ninguém mediu; (i) o chanfro passou de 0,9 a **0,60**, derivado da curva e do porta-contêiner — a carroçaria saía 0,207 do asfalto, hoje fica 0,005 dentro (**D13 §7j**). |
+
+**E, para caber o save isolado (`061`) e a terceira passagem da frente 3 (`062`),** desceram as duas de 23/09:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **As telas do fim em fila** (23/09, `054`) — escolha do Bruno | o «Pagar» abria o boletim e o fim de fase POR CIMA da resposta do Sr. Ribeiro, e «Jogar de novo» saltava as duas. Hoje o `Main` põe-nos em fila (`_na_vez()`): resposta → boletim → fim, nos três caminhos do fim; o GameState não mudou. **F11** percorre-os pelos botões; o tiro `balanco` passou de 3 painéis a 1. 7 mutantes: o do `fechou` só a captura apanha |
+| **A frente 1 do A5** (23/09) — escolha do Bruno | o calendário mostra na grelha os ícones da legenda, por baixo do número (lado a lado alargava o cartão a 534 px), e o **D36** tranca-o; «Primeira parcela paga» no lugar de «Fim da Fase 1»; o Arlindo diz «meu caro» |

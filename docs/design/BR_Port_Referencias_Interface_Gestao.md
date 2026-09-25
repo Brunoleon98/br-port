@@ -37,7 +37,71 @@ de jogador é evidência daquele uso, não prova de consenso.
   de cor; pintar uma opção como a `correta` enviesaria a escolha.
 - Estatísticas ou sistemas de outros jogos sem equivalente no BR Port.
 
+## Terceira passagem (25/09) — a consequência antes da escolha
+
+A referência que decidiu esta passagem é a mesma da crítica de *Port Royale 4*
+acima — **não esconder o efeito de um botão** —, agora aplicada ao efeito de
+FALHAR: a contra-oferta não dizia que uma aposta recusada encarece o igualar
+de −15% para −28%, nem que a recusa na última rodada entrega o barco ao Porto
+Farol. O que entrou, com o porquê e as medições, está em
+`docs/decisoes/062-a-promessa-do-painel.md`:
+
+1. **Contra-oferta:** a linha do cliente diz o que acontece se ele recusar; os
+   botões alinham à esquerda com a segunda linha paralela (valor · certeza ou
+   chance); no fim, «Fechado por R$…».
+2. **Cobrança:** a tarja leva por baixo as duas parcelas da conta («Você tem
+   R$… · a parcela é R$…»), e depois da escolha o dinheiro que ficou ou o que
+   faltou. A linha cinzenta solta saiu.
+3. **Boletim:** a comparação com a semana anterior entra na tarja do
+   resultado, como linha de apoio.
+4. **Balanço:** «Disputas com o rival: N ganhas · M perdidas» no lugar de
+   «Ofertas do rival igualadas», que contava também as apostas ganhas.
+
+Procurou-se uma segunda fonte para «mostrar a consequência antes da ação» — o
+postmortem de design de *Into the Breach* na GDC 2019 — e o proxy desta sessão
+bloqueou as três páginas; **não entra como evidência**. Continua de fora o que
+a segunda passagem rejeitou: cor para «seguro»/«aposta», valor esperado ao
+lado das opções (seria dizer ao jogador qual escolher) e indicadores novos.
+
+## Quarta passagem (25/09) — cada número com a sua forma
+
+Pedido do Bruno: «deixar a interface mais bonita e útil, vendo o que outros
+jogos fazem». O proxy da sessão bloqueou as páginas de todos os jogos
+(Wikipédia, wikis, Steam, Game UI Database); as referências abaixo vêm dos
+RESUMOS da busca, com a página citada, e valem como pista de padrão, não como
+leitura da página. O que entrou, o porquê e as guardas estão em
+`docs/decisoes/063-cada-numero-com-a-sua-forma.md`.
+
+| Fonte | O que se observou | Tradução para o BR Port |
+|---|---|---|
+| [Two Point Hospital — guia de interface](https://www.magicgameworld.com/two-point-hospital-ui-and-reading-your-menus/) · [guia de finanças](https://guides.gamepressure.com/two-point-hospital/guide.asp?ID=46228) | O painel de finanças mostra de onde o dinheiro vem e para onde vai, e uma caixa diz o lucro ou prejuízo do período. | No boletim, cada bloco encabeçado pelo seu total («Entrou», «Saiu»), as fontes por baixo em tom de apoio, e a tarja como a caixa do resultado. No balanço, os números da partida em quadros. |
+| [Papers, Please — tela de fim de dia (wiki)](https://papersplease.fandom.com/wiki/End_of_day_screen) | O fim do dia é um resumo visual das finanças; a coluna das contas é a mais importante da tela. | O boletim continua carta da Dona Cida, mas as contas leem-se primeiro e de uma vez: dois totais e o resultado. |
+| [Reigns — resenha](https://www.thesixthaxis.com/2016/08/25/reigns-review/) · [dicas](https://www.gamezebo.com/walkthroughs/reigns-tips-cheats-and-strategies/) | Antes de a carta cair, um ponto sob cada recurso afetado diz o TAMANHO da mudança, não a direção. | Na contra-oferta, a certeza de cada opção como barra, na mesma coluna do preço. Aqui a direção é conhecida (fechar ou não) e a percentagem continua escrita. |
+| [Moonlighter — venda e reações (wiki)](https://moonlighter.fandom.com/wiki/Selling_and_Reactions) | O jogador lê o preço pela reação do cliente. | A cara do cliente já existia na linha do humor; a barra junta-lhe a chance que o preço tem de passar. |
+
+**Reutilizado do próprio jogo:** a barra da parcela do HUD, com a mesma
+legenda, vai à cobrança do Sr. Ribeiro — uma barra de outro estilo seria outra
+coisa para aprender.
+
+**Fora desta passagem:** ícone por linha no boletim (o jogo tem ícone para três
+das sete fontes, e desenhar os outros é arte, cuja técnica é escolha do Bruno);
+sinal «+/−» nos totais (a palavra do bloco já o diz, e a dupla negação é o que
+o `lucro_ou_prejuizo()` recusa); cor verde/vermelha; gráfico.
+
+## Quinta passagem (25/09) — a tarja no tom do que diz
+
+Das mesmas referências da quarta: o resultado lê-se antes dos números. A tarja
+passou a vestir o verde e o vermelho que o jogo já usa na faixa de mensagem —
+lucro, parcela quitada, negócio fechado; prejuízo, falta, negócio perdido —,
+sempre junto da palavra, e nunca numa opção por escolher. Decisão, guarda e
+medições em `docs/decisoes/064-a-tarja-no-tom-do-que-diz.md`. **Aceite do
+Bruno sobre esta passagem: «ficou bom».**
+
 ## Lição operacional desta rodada
+
+**Resolvida pela `docs/decisoes/061`:** toda ferramenta e suíte grava hoje em
+`user://ferramentas/`, e o CI prova-o com uma sentinela no lugar do jogador. O
+relato abaixo fica como registo do incidente.
 
 `brport_vs/tools/capturar_cena.gd` chama `GameState.clear_save()` e depois
 `new_game()`. No desktop, `user://savegame.json` usa a pasta persistente do
