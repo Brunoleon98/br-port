@@ -42,6 +42,10 @@ var _toques: Array = []
 # O tempo em que o painel tem de estar na foto — `--tempo=<id>`, vazio = sem
 # exigência.
 var _tempo_esperado := ""
+# Uma consequência exclusiva do caminho fotografado — `--provar=<id>`. O
+# tempo e a cara não distinguem as duas despedidas do Arlindo; a métrica que
+# `_perder_para_rival()` incrementa, sim.
+var _prova_esperada := ""
 # A cena montada, para o toque a percorrer e a foto lhe ler o tempo.
 var _no: Node = null
 # A prova das caras, que anda depois da foto (`caras_na_foto.gd`), e o tamanho
@@ -105,6 +109,9 @@ func _process(_delta: float) -> bool:
 	if _tempo_esperado != "" and tempo != _tempo_esperado:
 		push_error("esperava o tempo «%s» e o painel está em «%s»" % [
 			_tempo_esperado, tempo])
+		quit(1)
+		return true
+	if not _provar_estado():
 		quit(1)
 		return true
 
@@ -218,6 +225,8 @@ func _ler_argumentos() -> void:
 			_toques.append(bruto.substr("--tocar=".length()))
 		elif bruto.begins_with("--tempo="):
 			_tempo_esperado = bruto.substr("--tempo=".length())
+		elif bruto.begins_with("--provar="):
+			_prova_esperada = bruto.substr("--provar=".length())
 		elif bruto.contains("=") and not bruto.begins_with("res://"):
 			_estado.append(bruto)
 		else:
@@ -352,6 +361,26 @@ func _tempo_do_painel() -> String:
 	if _no == null or not "tempo" in _no:
 		return ""
 	return String(_no.get("tempo"))
+
+
+# A DESPEDIDA NÃO PROVA QUEM VENCEU: «Igualar» e duas apostas recusadas chegam
+# ambas ao tempo `despedida`, e o sorriso já aparece na abertura. O que só o
+# segundo caminho produz é `rival_refused`, incrementado por
+# `_perder_para_rival()`. Exigir o valor EXATO também recusa uma prova herdada
+# de outra negociação; esta ferramenta sempre parte de uma partida nova.
+func _provar_estado() -> bool:
+	if _prova_esperada == "":
+		return true
+	if _prova_esperada != "arlindo_venceu":
+		push_error("--provar=%s: a única prova é «arlindo_venceu»" % _prova_esperada)
+		return false
+	var GS: Node = root.get_node("GameState")
+	var recusas: int = int(GS.metrics["rival_refused"])
+	if recusas != 1:
+		push_error("prova «arlindo_venceu»: esperava metrics.rival_refused = 1 e viu %d" % recusas)
+		return false
+	print("Prova: arlindo_venceu (metrics.rival_refused = 1)")
+	return true
 
 
 # O SEGUNDO TEMPO DE UM PAINEL SÓ SE ALCANÇA PELA PORTA DO JOGADOR: o botão.

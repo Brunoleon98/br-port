@@ -343,16 +343,24 @@ tirar ribeiro - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 tirar ribeiro_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_pagou.png" @PARCELA_AMOUNT parcela=vencida cash=@PARCELA_AMOUNT --tocar=Pagar --tempo=pagou
 tirar ribeiro_nao_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_nao_pagou.png" @PARCELA_AMOUNT parcela=vencida --tocar=Não --tempo=nao_pagou
 tirar contraoferta - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0 --tempo=rodada
-# A despedida pelo "Igualar", que fecha SEMPRE: é a fala de quem perdeu. A de
-# quem ganhou pede duas apostas falhadas, e isso é sorteio — o mesmo tempo, com
-# outra frase, e quem a mede a caber no cartão é o F10.
 # A PRESSÃO DO ARLINDO, que só existe depois de uma aposta RECUSADA — é a
 # última tentativa, e a cara troca a meio da rodada (o tempo continua
 # `rodada`). `aposta=recusada` escolhe o DADO e não o resultado: o sorteio é
 # semeado para a aposta falhar, e quem decide é o `negotiate_rival()` pelo botão
 # (`docs/decisoes/060`).
 tirar contraoferta_pressao - - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta_pressao.png" barco=0 0 aposta=recusada --tocar=Manter --tempo=rodada
+# AS DUAS DESPEDIDAS. «Igualar» fecha sempre e fotografa quem PERDEU; duas
+# apostas recusadas gastam a paciência e fotografam quem VENCEU. O tempo
+# `despedida` é o mesmo, e o sorriso de quem venceu já aparece na abertura —
+# nenhum dos dois distingue a tela nova.
+#
+# `--provar=arlindo_venceu` lê a consequência exclusiva do caminho:
+# `_perder_para_rival()` incrementa `metrics["rival_refused"]`, enquanto
+# «Igualar» deixa a métrica em zero. É a guarda que apanha um segundo toque
+# trocado por «Igualar». Ficam de fora a medida de encaixe e a correção da
+# fala: o F10 guarda as duas, e esta foto existe para alguém OLHAR o remate.
 tirar contraoferta_fim - - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta_fim.png" barco=0 0 --tocar=Igualar --tempo=despedida
+tirar contraoferta_venceu - - --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta_venceu.png" barco=0 0 aposta=recusada --tocar=Manter --tocar=Manter --tempo=despedida --provar=arlindo_venceu
 # O MENU-CELULAR (item 17). Ele é a primeira tela deste jogo com fundo ESCURO,
 # e a captura é a única coisa que responde se um rótulo herdou a cor de texto
 # de cartão branco e sumiu — o D23 mede o contraste das VARIAÇÕES do tema, que
