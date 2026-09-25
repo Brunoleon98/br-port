@@ -338,13 +338,13 @@ func _run() -> void:
 		"upgrade_purchased": false, "parcela_paid": false, "phase": "playing",
 		"pending_rival_dock": -1, "uid": 9,
 	}
-	var f := FileAccess.open(GS.SAVE_PATH, FileAccess.WRITE)
+	var f := FileAccess.open(GS.save_path, FileAccess.WRITE)
 	f.store_string(JSON.stringify(antigo))
 	f.close()
 	_check("save sem versao e recusado  <-- o bug do pier duplicado",
 		GS.load_game() == false)
 	_check("e apagado, para nao ser tentado de novo",
-		not FileAccess.file_exists(GS.SAVE_PATH))
+		not FileAccess.file_exists(GS.save_path))
 
 	# O save da versao corrente volta inteiro.
 	_fresh_playing()

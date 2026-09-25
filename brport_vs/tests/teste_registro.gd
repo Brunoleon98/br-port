@@ -117,15 +117,15 @@ func _rodar() -> void:
 
 
 func _limpar() -> void:
-	var d := DirAccess.open(R.PASTA)
+	var d := DirAccess.open(R.pasta)
 	if d == null:
 		return
 	for n in d.get_files():
-		DirAccess.remove_absolute("%s/%s" % [R.PASTA, n])
+		DirAccess.remove_absolute("%s/%s" % [R.pasta, n])
 
 
 func _arquivos() -> Array:
-	var d := DirAccess.open(R.PASTA)
+	var d := DirAccess.open(R.pasta)
 	if d == null:
 		return []
 	var fora: Array = []
@@ -362,7 +362,7 @@ func _r4_tetos() -> void:
 	# O teto de arquivos: um telefone emprestado para testar não pode encher.
 	_limpar()
 	for i in range(R.TETO_ARQUIVOS + 4):
-		var f := FileAccess.open("%s/partida_velha_%03d.jsonl" % [R.PASTA, i], FileAccess.WRITE)
+		var f := FileAccess.open("%s/partida_velha_%03d.jsonl" % [R.pasta, i], FileAccess.WRITE)
 		f.store_line("{\"e\":\"abriu\"}")
 		f.close()
 	R._armado = false

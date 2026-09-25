@@ -47,14 +47,19 @@ são em português — commits e PRs em inglês.
 **O Godot e o Blender rodam neste contêiner.** Duas rodadas de trabalho visual
 já foram feitas às cegas por não se saber disto. Não trabalhe no escuro.
 
-**Capturas e testes podem destruir o save de uma partida real.**
-`brport_vs/tools/capturar_cena.gd` e `capturar_tela.gd` chamam
-`GameState.clear_save()`; algumas suítes também o chamam. No desktop, o
-`user://savegame.json` é persistente e partilhado com o jogo. Não rode essas
-ferramentas no perfil normal antes de isolar o `user://` de modo verificável
-ou de corrigir as ferramentas para preservar o save mesmo se falharem.
-Em 25/09/2026 uma captura substituiu o save desktop por uma partida nova;
-veja a ocorrência em `docs/design/BR_Port_Referencias_Interface_Gestao.md`.
+**Ferramenta e suíte gravam em `user://ferramentas/`, e só por isso não
+apagam o que é do jogador** (`docs/decisoes/061`). Em 25/09/2026 uma captura
+(`clear_save()` + `new_game()`) substituiu o save real do Bruno no desktop, e
+o save era um de três: o `teste_registro` e o `gravar_partidas` apagavam as
+gravações de playtest, e o `teste_audio` gravava o volume a zero. Hoje todo
+processo com `--script`/`-s` pede o caminho ao `scripts/ArmazemLocal.gd`; o F13
+do `teste_fumaca` prova a origem, e o CI planta uma sentinela no lugar do
+jogador (`tools/sentinela_do_jogador.py`) e exige-a intacta.
+⚠️ **Só vale nos commits que o trazem.** Uma branch anterior à `061`, ou uma
+cópia velha do projeto, ainda apaga o save — e jogar pelo editor usa o save
+do jogador, que é o jogo a funcionar. Arquivo novo que o JOGO guarde em
+`user://` passa pelo `ArmazemLocal`, ou volta a ser partilhado com as
+ferramentas; o F13 reprova o caminho literal.
 
 **Numa sessão remota o Godot já está pronto quando a conversa abre**, e o `$G`
 já aponta para ele: quem faz isso é `.claude/hooks/session-start.sh`, que baixa
@@ -2370,6 +2375,14 @@ tranca isso.
   pergunta o que é. É a única altura fixa deste projeto que não é defeito, e a
   diferença está escrita na constante: a faixa branca que mordeu três painéis
   era cartão SEM CONTEÚDO; ali é a tela de um telefone com lugar para o que vem.
+- **⚠️ NÚMERO QUE O PAINEL PROMETE CONFERE-SE CONTRA O QUE O JOGO FAZ, e
+  «usa a mesma função» não é essa prova.** Ela diz que a chamada é a mesma,
+  não que o sorteio a aplique, nem que o preço mostrado seja o que o
+  `_fechar_negocio()` escreve. O F14 do `teste_fumaca` lê a previsão na TELA e
+  o resultado no JOGO — o saldo depois de pagar, o preço de cada botão, o que
+  sobra depois de uma recusa, e a chance pela frequência do sorteio. Mostrar a
+  consequência antes da escolha é assumir uma promessa: quem a escreve, escreve
+  a guarda (`docs/decisoes/062`).
 - Alvo de toque mínimo 44px. O teste de design cobre.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta

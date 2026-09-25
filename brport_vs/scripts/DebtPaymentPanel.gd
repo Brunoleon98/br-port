@@ -35,6 +35,11 @@ var amount: int = 0
 var tempo: StringName = &""
 var _corpo: Label
 var _tarja_parcela: Label
+var _tarja_apoio: Label
+# O que faltava no instante da cobrança, para a resposta de quem não pagou o
+# dizer. Guardado aqui porque depois do `fail_debt()` a partida acaba e o
+# painel não deve voltar a fazer a conta sobre um estado que já fechou.
+var _falta := 0
 var _botoes: VBoxContainer
 
 
@@ -63,11 +68,18 @@ func _montar() -> void:
 	_corpo.text = "%s\n\n%s" % [
 		Narrativa.ribeiro_entrada(), Narrativa.ribeiro_a_divida(amount)]
 	# A fala e o botão já dizem quanto vence. Aqui fica o número que o jogador
-	# precisa para decidir: a falta ou o caixa que sobreviverá ao pagamento.
+	# precisa para decidir: a falta ou o caixa que sobreviverá ao pagamento —
+	# e, na linha de apoio, as DUAS parcelas de que ele sai. Até à terceira
+	# passagem o dinheiro vivia numa linha cinzenta por baixo da tarja e a
+	# parcela dentro da fala: três sítios para uma subtração que o jogador
+	# quer poder conferir de uma olhada.
 	var caixa := int(GameState.cash)
 	var saldo := caixa - amount
+	_falta = maxi(-saldo, 0)
 	_tarja_parcela = tarja("Depois de pagar: %s" % GameState.moeda(saldo)
-		if saldo >= 0 else "Faltam %s para pagar" % GameState.moeda(-saldo))
+		if saldo >= 0 else "Faltam %s para pagar" % GameState.moeda(-saldo),
+		"Você tem %s · a parcela é %s" % [GameState.moeda(caixa), GameState.moeda(amount)])
+	_tarja_apoio = detalhe_da_tarja()
 
 	_botoes = VBoxContainer.new()
 	_botoes.add_theme_constant_override("separation", 8)
@@ -77,11 +89,6 @@ func _montar() -> void:
 
 func _montar_decisao() -> void:
 	var pode_pagar: bool = GameState.cash >= amount
-
-	var caixa := Label.new()
-	caixa.theme_type_variation = "RotuloSecao"
-	caixa.text = "Dinheiro: %s" % GameState.moeda(int(GameState.cash))
-	_botoes.add_child(caixa)
 
 	var pagar := Button.new()
 	pagar.text = "Pagar %s" % GameState.moeda(amount)
@@ -124,6 +131,11 @@ func _mostrar_resposta(id: String) -> void:
 	_corpo.text = GameState.texto(String(Narrativa.RIBEIRO_FALAS[id]))
 	_tarja_parcela.text = "%s: %s" % [
 		"Parcela quitada" if pagou else "Parcela não paga", GameState.moeda(amount)]
+	# O ESTADO DEPOIS DA ESCOLHA, lido do jogo e não deduzido: quem pagou vê o
+	# dinheiro que o `pay_debt()` lhe deixou; quem não pôde, quanto faltou.
+	PainelNarrativo.escrever_detalhe(_tarja_apoio,
+		"Você fica com %s" % GameState.moeda(int(GameState.cash)) if pagou
+		else "Faltaram %s" % GameState.moeda(_falta))
 	if pagou:
 		_corpo.text += "\n\n" + GameState.texto(Narrativa.RIBEIRO_FALAS["despedida"])
 	# E A CARA TROCA COM ELA. Quem pagou vê a cordial de volta; quem não pagou

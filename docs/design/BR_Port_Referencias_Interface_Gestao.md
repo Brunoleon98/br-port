@@ -37,7 +37,37 @@ de jogador é evidência daquele uso, não prova de consenso.
   de cor; pintar uma opção como a `correta` enviesaria a escolha.
 - Estatísticas ou sistemas de outros jogos sem equivalente no BR Port.
 
+## Terceira passagem (25/09) — a consequência antes da escolha
+
+A referência que decidiu esta passagem é a mesma da crítica de *Port Royale 4*
+acima — **não esconder o efeito de um botão** —, agora aplicada ao efeito de
+FALHAR: a contra-oferta não dizia que uma aposta recusada encarece o igualar
+de −15% para −28%, nem que a recusa na última rodada entrega o barco ao Porto
+Farol. O que entrou, com o porquê e as medições, está em
+`docs/decisoes/062-a-promessa-do-painel.md`:
+
+1. **Contra-oferta:** a linha do cliente diz o que acontece se ele recusar; os
+   botões alinham à esquerda com a segunda linha paralela (valor · certeza ou
+   chance); no fim, «Fechado por R$…».
+2. **Cobrança:** a tarja leva por baixo as duas parcelas da conta («Você tem
+   R$… · a parcela é R$…»), e depois da escolha o dinheiro que ficou ou o que
+   faltou. A linha cinzenta solta saiu.
+3. **Boletim:** a comparação com a semana anterior entra na tarja do
+   resultado, como linha de apoio.
+4. **Balanço:** «Disputas com o rival: N ganhas · M perdidas» no lugar de
+   «Ofertas do rival igualadas», que contava também as apostas ganhas.
+
+Procurou-se uma segunda fonte para «mostrar a consequência antes da ação» — o
+postmortem de design de *Into the Breach* na GDC 2019 — e o proxy desta sessão
+bloqueou as três páginas; **não entra como evidência**. Continua de fora o que
+a segunda passagem rejeitou: cor para «seguro»/«aposta», valor esperado ao
+lado das opções (seria dizer ao jogador qual escolher) e indicadores novos.
+
 ## Lição operacional desta rodada
+
+**Resolvida pela `docs/decisoes/061`:** toda ferramenta e suíte grava hoje em
+`user://ferramentas/`, e o CI prova-o com uma sentinela no lugar do jogador. O
+relato abaixo fica como registo do incidente.
 
 `brport_vs/tools/capturar_cena.gd` chama `GameState.clear_save()` e depois
 `new_game()`. No desktop, `user://savegame.json` usa a pasta persistente do

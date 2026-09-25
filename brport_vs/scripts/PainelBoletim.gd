@@ -95,12 +95,20 @@ func _linha(grade: GridContainer, rotulo: String, valor: int) -> void:
 	grade.add_child(direita)
 
 
+# A COMPARAÇÃO VIVE DENTRO DA TARJA DO RESULTADO, como linha de apoio (25/09,
+# terceira passagem). Era um parágrafo solto por baixo dela, com o mesmo peso
+# do «Semana 1 de 4» do topo, e lia-se como mais uma linha da contabilidade;
+# é o contexto do número destacado, e fica encostada a ele.
 func _resultado() -> void:
 	var resultado := int(_resumo["resultado"])
 	fio()
-	tarja(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true))
+	tarja(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true),
+		_comparacao(resultado))
+
+
+func _comparacao(resultado: int) -> String:
 	if not bool(_resumo["tem_historico"]):
-		return
+		return ""
 	var anterior := int(_resumo["anterior"])
 	var seta := "↑" if resultado > anterior else ("↓" if resultado < anterior else "=")
 	# Variação percentual precisa de uma base que não seja zero, e uma semana
@@ -112,5 +120,5 @@ func _resultado() -> void:
 			int(round(abs(float(resultado - anterior) / float(anterior)) * 100.0))]
 	else:
 		variacao = "  (%s)" % seta
-	paragrafo("Semana anterior: %s%s" % [
-		Narrativa.lucro_ou_prejuizo(anterior, GameState.moeda), variacao])
+	return "Semana anterior: %s%s" % [
+		Narrativa.lucro_ou_prejuizo(anterior, GameState.moeda), variacao]

@@ -82,11 +82,27 @@ jobs:
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
             --headless --path brport_vs --import
 
+      - name: Plantar a sentinela do jogador
+        # O save, o volume e as gravações do JOGADOR vivem no `user://` do
+        # projeto, e em 25/09 uma captura apagou a partida real do Bruno no
+        # desktop. Hoje todo processo com `--script` grava em
+        # `user://ferramentas/` (`ArmazemLocal.gd`, `docs/decisoes/061`); a
+        # sentinela é a prova do lado do ARQUIVO, e só se planta onde não há
+        # jogador — o script recusa-se se houver.
+        run: python3 tools/sentinela_do_jogador.py plantar brport_vs
+
       - name: Fotografar este commit
         run: |
           set -euo pipefail
           tools/capturar_evidencia.sh brport_vs "$PWD/fotos/depois" \
             ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: A bateria não tocou no que é do jogador
+        # Foi a bateria que apagou o save real em 25/09 (`capturar_cena.gd`
+        # faz `clear_save()` + `new_game()`). Confere-se ANTES de fotografar a
+        # base do PR: uma base anterior ao `ArmazemLocal` ainda grava no
+        # lugar do jogador, e reprovaria este commit pelo defeito dela.
+        run: python3 tools/sentinela_do_jogador.py conferir brport_vs
 
       - name: Fotografar a base do PR
         # SÓ EM PULL REQUEST, e só se a base já souber tirar a mesma foto. Uma

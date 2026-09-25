@@ -1255,6 +1255,13 @@ preço/chance em duas linhas e imprime a chance real após a reputação. Fontes
 tradução, rejeições e a descoberta de que a ferramenta de captura mexe no save
 persistente estão em `docs/design/BR_Port_Referencias_Interface_Gestao.md`.
 
+Na terceira passagem (25/09) a tarja ganhou uma linha de apoio — as parcelas
+da conta na cobrança, a semana anterior no boletim, o preço fechado na
+contra-oferta —, a contra-oferta passou a dizer o que acontece se o cliente
+recusar a aposta, e o balanço deixou de chamar «igualadas» às disputas
+ganhas. O F14 do `teste_fumaca` confere cada número prometido contra o que o
+jogo faz (`docs/decisoes/062`). Continua à espera do olhar do Bruno.
+
 ---
 
 ### 🆕 Etapa 7 — A resolução dos assets, e o desenho que ela paga (proposta 14/09)

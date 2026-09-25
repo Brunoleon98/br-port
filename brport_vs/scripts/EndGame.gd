@@ -90,7 +90,14 @@ func _mostrar_balanco() -> void:
 	secao("OPERAÇÃO")
 	_metrica("Barcos atendidos", str(int(m["boats_served"])))
 	_metrica("Barcos perdidos", str(int(m["boats_lost"])))
-	_metrica("Ofertas do rival igualadas", str(int(m["rival_matched"])))
+	# ⚠️ «IGUALADAS» NÃO ERA O QUE O NÚMERO CONTA. `rival_matched` sobe no
+	# `_fechar_negocio()`, por onde passam o igualar E as duas apostas que o
+	# cliente aceitou — quem segurou o preço seis vezes lia «6 igualadas». O que
+	# ele mede é a disputa GANHA; e a perdida já estava no jogo
+	# (`rival_refused`), escondida dentro dos «barcos perdidos».
+	_metrica("Disputas com o rival", "%s · %s" % [
+		Narrativa.concordar(int(m["rival_matched"]), "ganha", "ganhas"),
+		Narrativa.concordar(int(m["rival_refused"]), "perdida", "perdidas")])
 	secao("RECEITAS")
 	_metrica("Ganho com barcos", GameState.moeda(int(m["revenue"])))
 	_metrica("Renda do píer", GameState.moeda(int(m.get("pier_income", 0))))

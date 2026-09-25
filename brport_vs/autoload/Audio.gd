@@ -71,7 +71,9 @@ const VOZES := 3
 # começava com um alerta tocando sozinho.
 const SILENCIO_INICIAL := 0.5
 
-const CONFIG := "user://audio.cfg"
+# Pelo `ArmazemLocal` (`061`): o `teste_audio` grava o volume a 0 antes de o
+# repor, e um erro a meio deixava o jogo do jogador mudo.
+var config: String = ArmazemLocal.caminho("audio.cfg")
 
 var _streams := {}
 var _vozes: Array[AudioStreamPlayer] = []
@@ -184,7 +186,7 @@ func definir_volume(bus: String, valor: float) -> void:
 
 func _carregar_config() -> void:
 	var cfg := ConfigFile.new()
-	if cfg.load(CONFIG) != OK:
+	if cfg.load(config) != OK:
 		return
 	for bus in ["Musica", "SFX"]:
 		definir_volume(bus, float(cfg.get_value("volume", bus, 1.0)))
@@ -194,7 +196,7 @@ func _gravar_config() -> void:
 	var cfg := ConfigFile.new()
 	for bus in ["Musica", "SFX"]:
 		cfg.set_value("volume", bus, volume(bus))
-	cfg.save(CONFIG)
+	cfg.save(config)
 
 
 # ── as ligações ──

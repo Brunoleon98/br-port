@@ -123,6 +123,14 @@ func _rodar() -> void:
 	_f12_o_rosto_do_trabalhador()
 	_confere("o bloco F12 correu até ao fim", _f12_terminou)
 
+	print("=== F13: ferramenta e suíte nunca escrevem onde o jogador guarda ===")
+	_f13_o_armazem_do_jogador()
+	_confere("o bloco F13 correu até ao fim", _f13_terminou)
+
+	print("=== F14: o que a cobrança e a contra-oferta prometem antes da escolha é o que o jogo faz depois ===")
+	await _f14_promessa_e_resultado()
+	_confere("o bloco F14 correu até ao fim", _f14_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -401,7 +409,7 @@ func _f3_migracao_de_save() -> void:
 	_confere("nem as docas (%d)" % docas_antes, GS.docks.size() == docas_antes,
 		"ficaram %d — o estado foi adaptado a meio" % GS.docks.size())
 	_confere("e o arquivo impossível foi apagado",
-		not FileAccess.file_exists(GS.SAVE_PATH),
+		not FileAccess.file_exists(GS.save_path),
 		"sobrou no disco para ser tentado outra vez no próximo arranque")
 
 	# E o contrário, que é o que impede este bloco de virar "recusa tudo": o
@@ -446,7 +454,7 @@ func _escrever(dados: Dictionary) -> void:
 
 
 func _recusa_texto_escrever(texto: String) -> void:
-	var f := FileAccess.open(GS.SAVE_PATH, FileAccess.WRITE)
+	var f := FileAccess.open(GS.save_path, FileAccess.WRITE)
 	f.store_string(texto)
 	f.close()
 
@@ -458,14 +466,14 @@ func _recusa_e_apaga(dados: Dictionary) -> bool:
 	_novo_jogo()
 	_escrever(dados)
 	var carregou: bool = GS.load_game()
-	return carregou == false and not FileAccess.file_exists(GS.SAVE_PATH)
+	return carregou == false and not FileAccess.file_exists(GS.save_path)
 
 
 func _recusa_texto(texto: String) -> bool:
 	_novo_jogo()
 	_recusa_texto_escrever(texto)
 	var carregou: bool = GS.load_game()
-	return carregou == false and not FileAccess.file_exists(GS.SAVE_PATH)
+	return carregou == false and not FileAccess.file_exists(GS.save_path)
 
 
 # ── F4 ──────────────────────────────────────────────────────────────────
@@ -2224,3 +2232,352 @@ func _f12_o_rosto_do_trabalhador() -> void:
 	GS.clear_save()
 	GS.new_game()
 	_f12_terminou = true
+
+
+# ── F13 ─────────────────────────────────────────────────────────────────
+# ONDE ESTA CORRIDA ESCREVE? (`docs/decisoes/061`)
+#
+# Em 25/09 uma captura apagou a partida real do Bruno no desktop, e a varredura
+# achou mais dois caminhos com a mesma raiz: as suítes que limpam a pasta de
+# registros e o `teste_audio` que grava o volume a zero. Hoje os três saem do
+# `ArmazemLocal`, que manda todo processo com `--script` para
+# `user://ferramentas/`.
+#
+# ⚠️ O QUE ESTE BLOCO NÃO PROVA: que o arquivo do jogador ficou intacto. Ler
+# esse arquivo numa suíte que corre no desktop seria tocá-lo, e escrever-lhe
+# uma sentinela seria APAGAR a partida que se quer proteger. Quem prova o
+# arquivo é o CI, que planta a sentinela num contêiner onde não há jogador
+# nenhum e a exige intacta no fim (`tools/sentinela_do_jogador.py`). Aqui
+# prova-se a CAUSA: de onde vem cada caminho, e que ninguém escreve por fora.
+var _f13_terminou := false
+
+
+func _f13_o_armazem_do_jogador() -> void:
+	var raiz: String = ArmazemLocal.RAIZ_DAS_FERRAMENTAS
+	_confere("F13: esta suíte corre como ferramenta", ArmazemLocal.sob_ferramenta(),
+		"args %s" % [OS.get_cmdline_args()])
+	# Os dois lados da pergunta, com a linha de comando escrita à mão: sem o
+	# lado do JOGO, um `sob_ferramenta()` que respondesse sempre `true` passava
+	# — e o jogo passaria a gravar numa pasta que nenhuma partida relê.
+	var jogo := PackedStringArray(["--path", "brport_vs"])
+	_confere("F13: o jogo aberto normalmente grava no lugar do jogador",
+		ArmazemLocal.caminho("savegame.json", jogo) == "user://savegame.json",
+		ArmazemLocal.caminho("savegame.json", jogo))
+	for forma in ["--script", "-s"]:
+		var args := PackedStringArray([forma, "res://tests/teste_fumaca.gd"])
+		_confere("F13: `%s` conta como ferramenta" % forma,
+			ArmazemLocal.caminho("savegame.json", args) == raiz + "savegame.json")
+
+	# Os três que já apagaram ou podiam apagar o que era do jogador.
+	var registro: Node = root.get_node("Registro")
+	var audio: Node = root.get_node("Audio")
+	var caminhos := {
+		"o save": String(GS.save_path),
+		"a pasta de registros": String(registro.pasta),
+		"o volume": String(audio.config),
+	}
+	for qual in caminhos:
+		_confere("F13: %s desta corrida vive em %s" % [qual, raiz],
+			String(caminhos[qual]).begins_with(raiz), String(caminhos[qual]))
+
+	# E O ARQUIVO CHEGA MESMO AO DISCO. O `FileAccess.open(..., WRITE)` não
+	# cria pasta: sem ela o save sairia calado e sem arquivo, e toda suíte que
+	# lê o save de volta passaria a testar o `load_game()` de um disco vazio.
+	# ⚠️ A SONDA VAI NUMA SUBPASTA QUE NINGUÉM MAIS CRIA. Com o save, a prova
+	# passava com a criação da pasta retirada: o F1 já tinha instanciado o
+	# `Main`, e o `Registro` armado cria `ferramentas/registros` — com a mãe.
+	var sonda_pasta := raiz + "f13_sonda"
+	if FileAccess.file_exists(sonda_pasta + "/sonda.txt"):
+		DirAccess.remove_absolute(sonda_pasta + "/sonda.txt")
+	DirAccess.remove_absolute(sonda_pasta)
+	var sonda := ArmazemLocal.caminho("f13_sonda/sonda.txt")
+	var escrita := FileAccess.open(sonda, FileAccess.WRITE)
+	if escrita != null:
+		escrita.store_string("F13")
+		escrita.close()
+	_confere("F13: o caminho que o ArmazemLocal dá já tem pasta para gravar",
+		FileAccess.file_exists(sonda), sonda)
+	DirAccess.remove_absolute(sonda)
+	DirAccess.remove_absolute(sonda_pasta)
+	# E o autosave do jogo passa por ele, e não só a sonda.
+	GS.clear_save()
+	GS.save_game()
+	_confere("F13: o autosave desta corrida chega ao arquivo isolado",
+		FileAccess.file_exists(GS.save_path), GS.save_path)
+	GS.clear_save()
+
+	# NINGUÉM ESCREVE `user://` POR FORA. Um quarto arquivo de estado que
+	# nascesse com o caminho literal voltaria a ser partilhado com o jogador, e
+	# os três testes acima passariam contentes. A varredura é do código do JOGO
+	# — as ferramentas escrevem lá as fotos que produzem, que não são de
+	# ninguém — e corta as linhas de comentário, que citam `user://` a explicar
+	# isto mesmo.
+	var por_fora: Array[String] = []
+	for arquivo in _f9_scripts_do_jogo():
+		if arquivo.get_file() == "ArmazemLocal.gd":
+			continue
+		var fonte := _sem_comentarios(FileAccess.get_file_as_string(arquivo))
+		if fonte.contains("user://"):
+			por_fora.append(arquivo)
+	_confere("F13: só o ArmazemLocal escreve `user://` no código do jogo",
+		por_fora.is_empty(), ", ".join(por_fora))
+	_f13_terminou = true
+
+
+# ── F14 ─────────────────────────────────────────────────────────────────
+# A PROMESSA DO PAINEL CONTRA O QUE O JOGO FAZ (`docs/decisoes/062`).
+#
+# A frente 3 do A5 pôs número de decisão ao lado de cada escolha — a falta ou
+# o que sobra na cobrança, o preço e a chance em cada botão do Arlindo, e
+# desde 25/09 o que acontece se ele recusar. Cada um desses números é uma
+# PREVISÃO que o painel calcula, e o jogo faz a conta noutro sítio: o
+# `pay_debt()`, o `_fechar_negocio()`, o sorteio do `_negociar()`. Nada
+# perguntava se as duas concordam — a passagem anterior deu a chance por
+# certa «pelo uso da mesma função», e isso prova que a chamada é a mesma, não
+# que o sorteio a aplica.
+#
+# ⚠️ POR ISSO CADA PERGUNTA LÊ O TEXTO NA TELA E O RESULTADO NO JOGO, e nunca
+# a mesma conta dos dois lados: o esperado vem de onde o defeito NÃO mora. A
+# chance mede-se pela frequência do próprio sorteio, 4.000 apostas por opção
+# em duas reputações — ±4 pontos de folga, ~5 desvios-padrão no pior caso
+# (p = 0,5), contra 20 a 45 pontos de diferença se o painel voltar a mostrar
+# a constante de base.
+# ⚠️ A PRIMEIRA VERSÃO USAVA 800 E ±7, e passou com 4,4 pontos de desvio: a
+# sequência da semente calhava alta. Com 20.000 apostas as quatro chances
+# bateram a ±0,2 ponto — o painel estava certo e o corte colado à ponta da
+# banda. E cada caso leva a SUA semente: com uma só, as duas reputações
+# sorteavam a mesma sequência e o acaso de uma era o da outra.
+#
+# ⚠️ E CADA CAMINHO LEVA A SUA BANDEIRA: o primeiro vermelho de um caminho
+# encadeado esconderia os outros (`054`).
+const F14_AMOSTRA := 4000
+const F14_FOLGA := 4.0
+const F14_SEMENTE := 20260925
+
+var _f14_terminou := false
+var _f14_cobranca_ok := false
+var _f14_precos_ok := false
+var _f14_recusa_ok := false
+var _f14_chance_ok := false
+
+
+func _f14_promessa_e_resultado() -> void:
+	await _f14_cobranca()
+	_confere("F14: o caminho da cobrança correu até ao fim", _f14_cobranca_ok)
+	await _f14_precos()
+	_confere("F14: o caminho dos preços correu até ao fim", _f14_precos_ok)
+	await _f14_recusa()
+	_confere("F14: o caminho da recusa correu até ao fim", _f14_recusa_ok)
+	await _f14_chance()
+	_confere("F14: o caminho da chance correu até ao fim", _f14_chance_ok)
+	GS.clear_save()
+	GS._rng.seed = F10_SEMENTE
+	GS.new_game()
+	_f14_terminou = true
+
+
+# Os valores em reais de um texto, pela ordem — `R$1.234.567` vira 1234567.
+func _f14_reais(texto: String) -> Array:
+	var re := RegEx.new()
+	re.compile("R\\$(\\d{1,3}(?:\\.\\d{3})*)")
+	var fora: Array = []
+	for m in re.search_all(texto):
+		fora.append(int(m.get_string(1).replace(".", "")))
+	return fora
+
+
+# O texto VISÍVEL que começa por `prefixo`, e um só: dois seriam escolher por
+# posição, e nenhum é a pergunta a reprovar por quem chama.
+func _f14_texto(painel: Node, prefixo: String) -> String:
+	var textos: Array[String] = []
+	_f10_textos_visiveis(painel, textos)
+	var achados: Array[String] = []
+	for t in textos:
+		if t.begins_with(prefixo):
+			achados.append(t)
+	return achados[0] if achados.size() == 1 else ""
+
+
+func _f14_botao(painel: Node, prefixo: String) -> String:
+	var achados: Array = []
+	_f10_botoes(painel, prefixo, achados)
+	return (achados[0] as Button).text if achados.size() == 1 else ""
+
+
+# A irmã do `_f10_semente_que_recusa()`: o primeiro sorteio depois dela cai
+# DENTRO da chance que o jogo aplica agora.
+func _f14_semente_que_aceita(prefixo: String) -> int:
+	var base: float = GS.RIVAL_HALF_CHANCE if prefixo == "Cortar" else GS.RIVAL_KEEP_CHANCE
+	var chance: float = GS._chance_com_reputacao(base)
+	for semente in range(1, 1000):
+		var r := RandomNumberGenerator.new()
+		r.seed = semente
+		if r.randf() < chance:
+			return semente
+	return 0
+
+
+# A COBRANÇA. O «Depois de pagar» é calculado pelo painel ANTES do toque; o
+# dinheiro que fica sai do `pay_debt()` DEPOIS dele. A sobra não é redonda nem
+# zero de propósito: a bateria paga com o dinheiro exacto da parcela, e R$0 é
+# também o que uma subtracção esquecida dá.
+func _f14_cobranca() -> void:
+	var parcela: int = int(GS.PARCELA_AMOUNT)
+	if not _f10_ate_ao_vencimento("F14"):
+		return
+	GS.cash = parcela + 123457
+	var painel: Node = await _f10_abrir(F10_RIBEIRO, [parcela])
+	var previsto := _f14_reais(_f14_texto(painel, "Depois de pagar"))
+	var partes := _f14_reais(_f14_texto(painel, "Você tem"))
+	_confere("F14: a cobrança mostra, ao lado do saldo, o dinheiro e a parcela",
+		partes.size() == 2 and int(partes[0]) == int(GS.cash) and int(partes[1]) == parcela,
+		str(partes))
+	if not await _f10_tocar(painel, "Pagar", "F14"):
+		_f10_fechar(painel)
+		return
+	_confere("F14: «Depois de pagar» é o dinheiro que o pagamento deixa",
+		previsto.size() == 1 and int(previsto[0]) == int(GS.cash),
+		"previa %s, o jogo deixou %d" % [str(previsto), int(GS.cash)])
+	var ficou := _f14_reais(_f14_texto(painel, "Você fica com"))
+	_confere("F14: a resposta de quem pagou diz o dinheiro que ficou",
+		ficou.size() == 1 and int(ficou[0]) == int(GS.cash), str(ficou))
+	_f10_fechar(painel)
+
+	if not _f10_ate_ao_vencimento("F14"):
+		return
+	GS.cash = parcela - 76543
+	painel = await _f10_abrir(F10_RIBEIRO, [parcela])
+	var falta := _f14_reais(_f14_texto(painel, "Faltam"))
+	_confere("F14: «Faltam» é a parcela menos o dinheiro",
+		falta.size() == 1 and int(falta[0]) == parcela - int(GS.cash), str(falta))
+	if not await _f10_tocar(painel, "Não consigo", "F14"):
+		_f10_fechar(painel)
+		return
+	var faltaram := _f14_reais(_f14_texto(painel, "Faltaram"))
+	_confere("F14: a resposta de quem não pagou repete a falta",
+		faltaram.size() == 1 and falta.size() == 1 and int(faltaram[0]) == int(falta[0]),
+		str(faltaram))
+	_f10_fechar(painel)
+	_f14_cobranca_ok = true
+
+
+# OS PREÇOS DOS TRÊS BOTÕES, contra o `matched_value` que o
+# `_fechar_negocio()` escreve — que é o que o jogo paga. As apostas ganham pela
+# semente, e a despedida tem de repetir o mesmo número.
+func _f14_precos() -> void:
+	for prefixo in ["Igualar", "Cortar", "Manter"]:
+		if not _f10_ate_a_oferta("F14"):
+			return
+		var doca := int(GS.pending_rival_dock)
+		var barco: Dictionary = GS.docks[doca]["boat"]
+		var painel: Node = await _f10_abrir(F10_ARLINDO, [doca])
+		var mostrado := _f14_reais(_f14_botao(painel, prefixo))
+		if prefixo != "Igualar":
+			GS._rng.seed = _f14_semente_que_aceita(prefixo)
+		if not await _f10_tocar(painel, prefixo, "F14"):
+			_f10_fechar(painel)
+			return
+		var cobrado: int = int(barco.get("matched_value", -1))
+		_confere("F14: «%s» mostra o preço por que o jogo fecha" % prefixo,
+			mostrado.size() == 1 and int(mostrado[0]) == cobrado,
+			"mostrava %s, fechou por %d" % [str(mostrado), cobrado])
+		var fechado := _f14_reais(_f14_texto(painel, "Fechado por"))
+		_confere("F14: depois de «%s», a despedida diz o preço fechado" % prefixo,
+			fechado.size() == 1 and int(fechado[0]) == cobrado, str(fechado))
+		_f10_fechar(painel)
+	_f14_precos_ok = true
+
+
+# A RECUSA. A linha do cliente promete, antes da aposta, o que sobra e quanto
+# passa a custar igualar; na última rodada, que o barco vai para o rival. Duas
+# partidas: recusa-recusa (o barco sai) e recusa-igualar (o preço novo é o
+# que o jogo cobra).
+func _f14_recusa() -> void:
+	var tentativas := RegEx.new()
+	tentativas.compile("fica com (\\d+) tentativa")
+	var desconto := RegEx.new()
+	desconto.compile("igualar passa a −(\\d+)%")
+	for depois_igualar in [false, true]:
+		if not _f10_ate_a_oferta("F14"):
+			return
+		var doca := int(GS.pending_rival_dock)
+		var barco: Dictionary = GS.docks[doca]["boat"]
+		var painel: Node = await _f10_abrir(F10_ARLINDO, [doca])
+		var promessa := _f14_texto(painel, "Cliente")
+		var sobra := tentativas.search(promessa)
+		var novo := desconto.search(promessa)
+		_confere("F14: antes da aposta, o cliente diz o que sobra e o novo desconto",
+			sobra != null and novo != null, promessa)
+		if sobra == null or novo == null:
+			_f10_fechar(painel)
+			return
+		GS._rng.seed = _f10_semente_que_recusa("Manter")
+		if not await _f10_tocar(painel, "Manter", "F14"):
+			_f10_fechar(painel)
+			return
+		_confere("F14: recusada a aposta, sobram as tentativas prometidas (%s)" % sobra.get_string(1),
+			GS.phase == "rival_offer" and int(GS.rival_attempts_left) == int(sobra.get_string(1)),
+			"fase %s, sobram %d" % [GS.phase, int(GS.rival_attempts_left)])
+		var igualar := _f14_botao(painel, "Igualar")
+		_confere("F14: e igualar passou ao desconto prometido (−%s%%)" % novo.get_string(1),
+			igualar.contains("(−%s%%)" % novo.get_string(1)), igualar)
+		if depois_igualar:
+			var mostrado := _f14_reais(igualar)
+			if not await _f10_tocar(painel, "Igualar", "F14"):
+				_f10_fechar(painel)
+				return
+			_confere("F14: o igualar mais caro fecha pelo preço mostrado",
+				mostrado.size() == 1 and int(mostrado[0]) == int(barco.get("matched_value", -1)),
+				"mostrava %s, fechou por %s" % [str(mostrado), str(barco.get("matched_value"))])
+		else:
+			var ultima := _f14_texto(painel, "Cliente")
+			_confere("F14: na última rodada, o cliente promete ir para o Porto Farol",
+				ultima.contains("Porto Farol"), ultima)
+			var perdidas := int(GS.metrics["rival_refused"])
+			GS._rng.seed = _f10_semente_que_recusa("Manter")
+			if not await _f10_tocar(painel, "Manter", "F14"):
+				_f10_fechar(painel)
+				return
+			_confere("F14: recusada a última, o barco foi mesmo para o rival",
+				GS.docks[doca]["boat"] == null and int(GS.metrics["rival_refused"]) == perdidas + 1,
+				"barco %s, perdidas %d" % [str(GS.docks[doca]["boat"] != null), int(GS.metrics["rival_refused"])])
+		_f10_fechar(painel)
+	_f14_recusa_ok = true
+
+
+# A CHANCE, medida pelo sorteio do jogo. O painel imprime a percentagem; o
+# `_negociar()` sorteia com o `_rng` da partida. Cada volta repõe a oferta
+# inteira — o barco, a paciência, a fase e a reputação, que o fecho sobe —
+# para que as apostas sejam todas a MESMA aposta.
+func _f14_chance() -> void:
+	var chance := RegEx.new()
+	chance.compile("(\\d+)% de chance")
+	for reputacao in [100.0, 20.0]:
+		if not _f10_ate_a_oferta("F14"):
+			return
+		GS.reputation = reputacao
+		var doca := int(GS.pending_rival_dock)
+		var molde: Dictionary = (GS.docks[doca]["boat"] as Dictionary).duplicate(true)
+		var painel: Node = await _f10_abrir(F10_ARLINDO, [doca])
+		var promessas := {}
+		for prefixo in ["Cortar", "Manter"]:
+			var m := chance.search(_f14_botao(painel, prefixo))
+			promessas[prefixo] = int(m.get_string(1)) if m != null else -1
+		_f10_fechar(painel)
+		for prefixo in ["Cortar", "Manter"]:
+			var acao := "metade" if prefixo == "Cortar" else "manter"
+			GS._rng.seed = hash([F14_SEMENTE, reputacao, prefixo])
+			var aceitou := 0
+			for i in F14_AMOSTRA:
+				GS.docks[doca]["boat"] = molde.duplicate(true)
+				GS.pending_rival_dock = doca
+				GS.rival_attempts_left = GS.RIVAL_PATIENCE
+				GS.phase = "rival_offer"
+				GS.reputation = reputacao
+				if GS._negociar(acao) == "fechado":
+					aceitou += 1
+			var medida := 100.0 * aceitou / F14_AMOSTRA
+			_confere("F14: reputação %d, «%s» promete %d%% e o cliente aceitou %.1f%% de %d" % [
+				int(reputacao), prefixo, int(promessas[prefixo]), medida, F14_AMOSTRA],
+				int(promessas[prefixo]) >= 0 and absf(medida - float(promessas[prefixo])) <= F14_FOLGA)
+	_f14_chance_ok = true
