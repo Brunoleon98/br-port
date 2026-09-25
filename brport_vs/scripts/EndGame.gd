@@ -88,16 +88,31 @@ func _mostrar_balanco() -> void:
 	var m: Dictionary = GameState.metrics
 	tarja(GameState.texto(_motivo))
 	secao("OPERAÇÃO")
-	_metrica("Barcos atendidos", str(int(m["boats_served"])))
-	_metrica("Barcos perdidos", str(int(m["boats_lost"])))
+	# OS NÚMEROS DA PARTIDA EM QUADROS (25/09, quarta passagem). Eram quatro
+	# linhas de «rótulo … número» iguais às da receita, e o balanço lia-se como
+	# o meio de um extrato. Tela de fim de nível mostra os seus números em
+	# destaque, cada um no seu quadro — é a caixa do lucro das finanças do
+	# *Two Point Hospital* —, e os contados vão para cima; o dinheiro continua
+	# em linhas, porque é soma e compara-se em coluna.
+	#
+	# ⚠️ O RÓTULO VAI EM CIMA E NÃO CONCORDA COM O NÚMERO, de propósito: é o
+	# nome da categoria («Barcos atendidos», com 1 ou com 24), e por isso não
+	# precisa do `concordar()` que o F9 exige a toda contagem escrita em frase.
+	#
 	# ⚠️ «IGUALADAS» NÃO ERA O QUE O NÚMERO CONTA. `rival_matched` sobe no
 	# `_fechar_negocio()`, por onde passam o igualar E as duas apostas que o
 	# cliente aceitou — quem segurou o preço seis vezes lia «6 igualadas». O que
 	# ele mede é a disputa GANHA; e a perdida já estava no jogo
 	# (`rival_refused`), escondida dentro dos «barcos perdidos».
-	_metrica("Disputas com o rival", "%s · %s" % [
-		Narrativa.concordar(int(m["rival_matched"]), "ganha", "ganhas"),
-		Narrativa.concordar(int(m["rival_refused"]), "perdida", "perdidas")])
+	var quadros := GridContainer.new()
+	quadros.columns = 2
+	quadros.add_theme_constant_override("h_separation", 8)
+	quadros.add_theme_constant_override("v_separation", 8)
+	_vbox.add_child(quadros)
+	_quadro(quadros, "Barcos atendidos", int(m["boats_served"]))
+	_quadro(quadros, "Barcos perdidos", int(m["boats_lost"]))
+	_quadro(quadros, "Disputas ganhas", int(m["rival_matched"]))
+	_quadro(quadros, "Disputas perdidas", int(m["rival_refused"]))
 	secao("RECEITAS")
 	_metrica("Ganho com barcos", GameState.moeda(int(m["revenue"])))
 	_metrica("Renda do píer", GameState.moeda(int(m.get("pier_income", 0))))
@@ -133,6 +148,24 @@ func _mostrar_balanco() -> void:
 	fechar.custom_minimum_size = Vector2(0, TOQUE_MIN)
 	fechar.pressed.connect(queue_free)
 	_vbox.add_child(fechar)
+
+
+func _quadro(grade: GridContainer, nome: String, valor: int) -> void:
+	var bloco := PanelContainer.new()
+	bloco.theme_type_variation = "BlocoNumero"
+	bloco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var coluna := VBoxContainer.new()
+	coluna.add_theme_constant_override("separation", 0)
+	bloco.add_child(coluna)
+	var rotulo := Label.new()
+	rotulo.theme_type_variation = "RotuloApoio"
+	rotulo.text = nome
+	coluna.add_child(rotulo)
+	var numero := Label.new()
+	numero.theme_type_variation = "NumeroGrande"
+	numero.text = str(valor)
+	coluna.add_child(numero)
+	grade.add_child(bloco)
 
 
 func _metrica(nome: String, valor: String) -> void:

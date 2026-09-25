@@ -35,6 +35,10 @@ var _botoes: VBoxContainer
 var _btn_igualar: Button
 var _btn_metade: Button
 var _btn_manter: Button
+# A chance de cada opção, desenhada no botão — ver `_barra_de_chance()`.
+var _barra_igualar: ProgressBar
+var _barra_metade: ProgressBar
+var _barra_manter: ProgressBar
 
 
 func setup(index: int) -> void:
@@ -128,24 +132,64 @@ func _build_ui() -> void:
 	# três valores ficam em coluna e comparam-se de cima para baixo.
 	_btn_igualar = Button.new()
 	Icones.no_botao(_btn_igualar, Icones.ACORDO)
-	_btn_igualar.custom_minimum_size = Vector2(0, 58)
+	_btn_igualar.custom_minimum_size = Vector2(0, ALTURA_OPCAO)
 	_btn_igualar.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_barra_igualar = _barra_de_chance(_btn_igualar)
 	_btn_igualar.pressed.connect(func(): _negociar("igualar"))
 	btn_row.add_child(_btn_igualar)
 
 	_btn_metade = Button.new()
 	Icones.no_botao(_btn_metade, Icones.CORTAR)
-	_btn_metade.custom_minimum_size = Vector2(0, 58)
+	_btn_metade.custom_minimum_size = Vector2(0, ALTURA_OPCAO)
 	_btn_metade.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_barra_metade = _barra_de_chance(_btn_metade)
 	_btn_metade.pressed.connect(func(): _negociar("metade"))
 	btn_row.add_child(_btn_metade)
 
 	_btn_manter = Button.new()
 	Icones.no_botao(_btn_manter, Icones.FIRMEZA)
-	_btn_manter.custom_minimum_size = Vector2(0, 58)
+	_btn_manter.custom_minimum_size = Vector2(0, ALTURA_OPCAO)
 	_btn_manter.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_barra_manter = _barra_de_chance(_btn_manter)
 	_btn_manter.pressed.connect(func(): _negociar("manter"))
 	btn_row.add_child(_btn_manter)
+
+
+# A ALTURA DE UMA OPÇÃO: as duas linhas de texto (~45 px), as margens do botão
+# e a barra de chance por baixo delas. Com os 58 da passagem anterior a barra
+# encostava na segunda linha.
+const ALTURA_OPCAO := 72
+# Onde o texto começa dentro do botão: margem do estilo (14) + ícone (22) +
+# separação do Button (4). A barra alinha com o TEXTO, não com o ícone.
+const BARRA_ESQUERDA := 40.0
+
+
+# A CHANCE COMO BARRA, dentro de cada botão (25/09, quarta passagem). O texto
+# já dizia «70% de chance», e três percentagens em três botões comparam-se
+# lendo as três. O *Reigns* mostra, antes de a carta cair, o TAMANHO do que
+# vai mudar; as lojas do *Moonlighter* respondem ao preço com a cara do
+# cliente — aqui a troca é preço contra certeza, e a barra põe a certeza na
+# mesma coluna em que o texto põe o preço: o igualar cheio, as apostas a meio
+# (`docs/design/BR_Port_Referencias_Interface_Gestao.md`).
+#
+# ⚠️ É REDUNDANTE DE PROPÓSITO: a percentagem continua escrita, e nada se
+# decide só pela barra. E ela não recebe toque — o botão por baixo é o alvo.
+func _barra_de_chance(botao: Button) -> ProgressBar:
+	var barra := ProgressBar.new()
+	barra.theme_type_variation = "BarraChance"
+	barra.show_percentage = false
+	barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	barra.max_value = 100.0
+	barra.anchor_left = 0.0
+	barra.anchor_right = 1.0
+	barra.anchor_top = 1.0
+	barra.anchor_bottom = 1.0
+	barra.offset_left = BARRA_ESQUERDA
+	barra.offset_right = -14.0
+	barra.offset_top = -13.0
+	barra.offset_bottom = -7.0
+	botao.add_child(barra)
+	return barra
 
 
 func _valor_barco() -> int:
@@ -233,6 +277,12 @@ func _refresh(reacao: String = "", acao: String = "") -> void:
 	_btn_manter.text = "Manter preço\n%s · %d%% de chance" % [
 		GameState.moeda(valor),
 		int(round(chance_manter * 100.0))]
+
+	# As barras leem o MESMO número que o texto escreve: o igualar fecha
+	# sempre, as apostas valem a chance que o `_negociar()` sorteia.
+	_barra_igualar.value = 100.0
+	_barra_metade.value = chance_metade * 100.0
+	_barra_manter.value = chance_manter * 100.0
 
 	# O QUE ACONTECE SE ELE RECUSAR, ANTES DE SE APOSTAR (25/09, terceira
 	# passagem). A linha dizia «Cliente ouvindo a proposta. (2 tentativas)», e

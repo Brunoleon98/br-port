@@ -1262,6 +1262,12 @@ recusar a aposta, e o balanço deixou de chamar «igualadas» às disputas
 ganhas. O F14 do `teste_fumaca` confere cada número prometido contra o que o
 jogo faz (`docs/decisoes/062`). Continua à espera do olhar do Bruno.
 
+A quarta (25/09) deu a cada número a sua forma: o total de cada bloco no topo
+do boletim, a barra da parcela do HUD na cobrança, a chance como barra dentro
+de cada botão do Arlindo e os números do balanço em quadros — com referências
+de *Two Point Hospital*, *Papers, Please*, *Reigns* e *Moonlighter*
+(`docs/decisoes/063`).
+
 ---
 
 ### 🆕 Etapa 7 — A resolução dos assets, e o desenho que ela paga (proposta 14/09)

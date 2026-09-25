@@ -78,8 +78,23 @@ func _montar() -> void:
 	_falta = maxi(-saldo, 0)
 	_tarja_parcela = tarja("Depois de pagar: %s" % GameState.moeda(saldo)
 		if saldo >= 0 else "Faltam %s para pagar" % GameState.moeda(-saldo),
-		"Você tem %s · a parcela é %s" % [GameState.moeda(caixa), GameState.moeda(amount)])
+		"Você tem %s de %s" % [GameState.moeda(caixa), GameState.moeda(amount)])
 	_tarja_apoio = detalhe_da_tarja()
+	# A BARRA DO HUD, E NÃO UMA NOVA (25/09, quarta passagem). O jogador passa a
+	# partida a olhar para a barra da parcela no rodapé — «R$981.779 de
+	# R$530.000» —, e a cobrança é o dia em que ela chega ao fim. O mesmo
+	# desenho e a mesma legenda aqui dizem «isto é aquilo» sem uma palavra; uma
+	# barra de outro estilo seria outra coisa para aprender. Fica parada depois
+	# da escolha: mostra como se chegou ao vencimento, e o texto diz o resto.
+	var barra := ProgressBar.new()
+	barra.name = "Barra"
+	barra.show_percentage = false
+	barra.custom_minimum_size = Vector2(0, 10)
+	barra.max_value = amount
+	barra.value = mini(caixa, amount)
+	var linhas := _tarja_parcela.get_parent()
+	linhas.add_child(barra)
+	linhas.move_child(barra, _tarja_apoio.get_index())
 
 	_botoes = VBoxContainer.new()
 	_botoes.add_theme_constant_override("separation", 8)

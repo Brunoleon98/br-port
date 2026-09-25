@@ -63,6 +63,31 @@ bloqueou as três páginas; **não entra como evidência**. Continua de fora o q
 a segunda passagem rejeitou: cor para «seguro»/«aposta», valor esperado ao
 lado das opções (seria dizer ao jogador qual escolher) e indicadores novos.
 
+## Quarta passagem (25/09) — cada número com a sua forma
+
+Pedido do Bruno: «deixar a interface mais bonita e útil, vendo o que outros
+jogos fazem». O proxy da sessão bloqueou as páginas de todos os jogos
+(Wikipédia, wikis, Steam, Game UI Database); as referências abaixo vêm dos
+RESUMOS da busca, com a página citada, e valem como pista de padrão, não como
+leitura da página. O que entrou, o porquê e as guardas estão em
+`docs/decisoes/063-cada-numero-com-a-sua-forma.md`.
+
+| Fonte | O que se observou | Tradução para o BR Port |
+|---|---|---|
+| [Two Point Hospital — guia de interface](https://www.magicgameworld.com/two-point-hospital-ui-and-reading-your-menus/) · [guia de finanças](https://guides.gamepressure.com/two-point-hospital/guide.asp?ID=46228) | O painel de finanças mostra de onde o dinheiro vem e para onde vai, e uma caixa diz o lucro ou prejuízo do período. | No boletim, cada bloco encabeçado pelo seu total («Entrou», «Saiu»), as fontes por baixo em tom de apoio, e a tarja como a caixa do resultado. No balanço, os números da partida em quadros. |
+| [Papers, Please — tela de fim de dia (wiki)](https://papersplease.fandom.com/wiki/End_of_day_screen) | O fim do dia é um resumo visual das finanças; a coluna das contas é a mais importante da tela. | O boletim continua carta da Dona Cida, mas as contas leem-se primeiro e de uma vez: dois totais e o resultado. |
+| [Reigns — resenha](https://www.thesixthaxis.com/2016/08/25/reigns-review/) · [dicas](https://www.gamezebo.com/walkthroughs/reigns-tips-cheats-and-strategies/) | Antes de a carta cair, um ponto sob cada recurso afetado diz o TAMANHO da mudança, não a direção. | Na contra-oferta, a certeza de cada opção como barra, na mesma coluna do preço. Aqui a direção é conhecida (fechar ou não) e a percentagem continua escrita. |
+| [Moonlighter — venda e reações (wiki)](https://moonlighter.fandom.com/wiki/Selling_and_Reactions) | O jogador lê o preço pela reação do cliente. | A cara do cliente já existia na linha do humor; a barra junta-lhe a chance que o preço tem de passar. |
+
+**Reutilizado do próprio jogo:** a barra da parcela do HUD, com a mesma
+legenda, vai à cobrança do Sr. Ribeiro — uma barra de outro estilo seria outra
+coisa para aprender.
+
+**Fora desta passagem:** ícone por linha no boletim (o jogo tem ícone para três
+das sete fontes, e desenhar os outros é arte, cuja técnica é escolha do Bruno);
+sinal «+/−» nos totais (a palavra do bloco já o diz, e a dupla negação é o que
+o `lucro_ou_prejuizo()` recusa); cor verde/vermelha; gráfico.
+
 ## Lição operacional desta rodada
 
 **Resolvida pela `docs/decisoes/061`:** toda ferramenta e suíte grava hoje em

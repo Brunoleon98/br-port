@@ -2359,6 +2359,7 @@ var _f14_cobranca_ok := false
 var _f14_precos_ok := false
 var _f14_recusa_ok := false
 var _f14_chance_ok := false
+var _f14_boletim_ok := false
 
 
 func _f14_promessa_e_resultado() -> void:
@@ -2370,6 +2371,8 @@ func _f14_promessa_e_resultado() -> void:
 	_confere("F14: o caminho da recusa correu até ao fim", _f14_recusa_ok)
 	await _f14_chance()
 	_confere("F14: o caminho da chance correu até ao fim", _f14_chance_ok)
+	await _f14_boletim()
+	_confere("F14: o caminho do boletim correu até ao fim", _f14_boletim_ok)
 	GS.clear_save()
 	GS._rng.seed = F10_SEMENTE
 	GS.new_game()
@@ -2432,6 +2435,7 @@ func _f14_cobranca() -> void:
 	_confere("F14: a cobrança mostra, ao lado do saldo, o dinheiro e a parcela",
 		partes.size() == 2 and int(partes[0]) == int(GS.cash) and int(partes[1]) == parcela,
 		str(partes))
+	_f14_barra_da_parcela(painel, int(GS.cash), parcela)
 	if not await _f10_tocar(painel, "Pagar", "F14"):
 		_f10_fechar(painel)
 		return
@@ -2450,6 +2454,7 @@ func _f14_cobranca() -> void:
 	var falta := _f14_reais(_f14_texto(painel, "Faltam"))
 	_confere("F14: «Faltam» é a parcela menos o dinheiro",
 		falta.size() == 1 and int(falta[0]) == parcela - int(GS.cash), str(falta))
+	_f14_barra_da_parcela(painel, int(GS.cash), parcela)
 	if not await _f10_tocar(painel, "Não consigo", "F14"):
 		_f10_fechar(painel)
 		return
@@ -2560,9 +2565,14 @@ func _f14_chance() -> void:
 		var molde: Dictionary = (GS.docks[doca]["boat"] as Dictionary).duplicate(true)
 		var painel: Node = await _f10_abrir(F10_ARLINDO, [doca])
 		var promessas := {}
+		var barras := {}
 		for prefixo in ["Cortar", "Manter"]:
 			var m := chance.search(_f14_botao(painel, prefixo))
 			promessas[prefixo] = int(m.get_string(1)) if m != null else -1
+			barras[prefixo] = _f14_barra_do_botao(painel, prefixo)
+		_confere("F14: reputação %d, a barra do igualar está cheia — ele fecha sempre" % int(reputacao),
+			_f14_barra_do_botao(painel, "Igualar") == 100.0,
+			str(_f14_barra_do_botao(painel, "Igualar")))
 		_f10_fechar(painel)
 		for prefixo in ["Cortar", "Manter"]:
 			var acao := "metade" if prefixo == "Cortar" else "manter"
@@ -2580,4 +2590,120 @@ func _f14_chance() -> void:
 			_confere("F14: reputação %d, «%s» promete %d%% e o cliente aceitou %.1f%% de %d" % [
 				int(reputacao), prefixo, int(promessas[prefixo]), medida, F14_AMOSTRA],
 				int(promessas[prefixo]) >= 0 and absf(medida - float(promessas[prefixo])) <= F14_FOLGA)
+			# A BARRA É OUTRA PROMESSA, e confere-se contra o mesmo sorteio: o
+			# texto certo com a barra na constante de base passaria calado.
+			_confere("F14: reputação %d, a barra de «%s» mostra %.1f%% contra %.1f%% medidos" % [
+				int(reputacao), prefixo, float(barras[prefixo]), medida],
+				float(barras[prefixo]) >= 0.0 and absf(medida - float(barras[prefixo])) <= F14_FOLGA)
 	_f14_chance_ok = true
+
+
+# A barra de chance DENTRO do botão cujo texto começa por `prefixo`, em
+# percentagem; −1 se não houver uma, e uma só.
+func _f14_barra_do_botao(painel: Node, prefixo: String) -> float:
+	var achados: Array = []
+	_f10_botoes(painel, prefixo, achados)
+	if achados.size() != 1:
+		return -1.0
+	var barras: Array = []
+	for filho in (achados[0] as Button).get_children():
+		if filho is ProgressBar and (filho as ProgressBar).is_visible_in_tree():
+			barras.append(filho)
+	if barras.size() != 1:
+		return -1.0
+	var barra := barras[0] as ProgressBar
+	return 100.0 * barra.value / barra.max_value
+
+
+# A BARRA DA COBRANÇA é a do HUD: o dinheiro contra a parcela, cheia quando dá
+# para pagar. Uma barra que mostrasse a FALTA encheria ao contrário, e o texto
+# ao lado continuaria certo.
+func _f14_barra_da_parcela(painel: Node, dinheiro: int, parcela: int) -> void:
+	var barras: Array = []
+	_f14_juntar_barras(painel, barras)
+	var ok := barras.size() == 1
+	var fracao := -1.0
+	if ok:
+		var barra := barras[0] as ProgressBar
+		fracao = barra.value / barra.max_value
+	var esperada := minf(float(dinheiro) / float(parcela), 1.0)
+	_confere("F14: a barra da cobrança mostra o dinheiro contra a parcela (%.3f)" % esperada,
+		ok and absf(fracao - esperada) < 0.001, "%d barra(s), mostra %.3f" % [barras.size(), fracao])
+
+
+func _f14_juntar_barras(no: Node, barras: Array) -> void:
+	if no is ProgressBar and (no as ProgressBar).is_visible_in_tree():
+		barras.append(no)
+	for filho in no.get_children():
+		_f14_juntar_barras(filho, barras)
+
+
+# O BOLETIM FECHA AS CONTAS QUE MOSTRA. O total de cada bloco vem do
+# `resumo_da_semana()`, que soma as fontes do `GameState`; as linhas por baixo
+# vêm da lista que o PAINEL escreve à mão. Uma fonte nova que o jogo somasse e
+# o painel não listasse daria um «Entrou» maior do que as suas linhas, sem erro
+# nenhum — e o lucro da tarja a não bater com os dois totais.
+#
+# ⚠️ A SEMANA É MONTADA COM TODAS AS CHAVES DO `SEMANA_ZERADA` DIFERENTES DE
+# ZERO, e as chaves saem da tabela do jogo, não de uma lista aqui: numa semana
+# jogada a parcela e o pátio costumam ser zero, e linha com zero não entra —
+# o painel que esquecesse uma delas passaria nesse estado.
+func _f14_boletim() -> void:
+	GS.clear_save()
+	GS._rng.seed = F10_SEMENTE
+	GS.new_game()
+	var i := 0
+	for chave in GS.SEMANA_ZERADA:
+		GS.semana_atual[chave] = 1000 * (i + 3) + 7 * i
+		i += 1
+	var resumo: Dictionary = GS.resumo_da_semana(1)
+	var painel: Node = await _f10_abrir(F11_BOLETIM, [resumo])
+	var textos: Array[String] = []
+	_f10_textos_visiveis(painel, textos)
+	var entrou := textos.find("Entrou")
+	var saiu := textos.find("Saiu")
+	_confere("F14: o boletim tem os blocos «Entrou» e «Saiu»", entrou >= 0 and saiu > entrou,
+		str(textos))
+	if entrou < 0 or saiu <= entrou:
+		_f10_fechar(painel)
+		return
+	var total_entrou := _f14_um_valor(textos[entrou + 1])
+	var total_saiu := _f14_um_valor(textos[saiu + 1])
+	var linhas_entrou := _f14_somar_linhas(textos, entrou + 2, saiu)
+	var linhas_saiu := _f14_somar_linhas(textos, saiu + 2, textos.size())
+	_confere("F14: «Entrou» (%d) é a soma das %d linhas por baixo" % [total_entrou, linhas_entrou[1]],
+		total_entrou == int(linhas_entrou[0]) and total_entrou == int(resumo["receita"]),
+		"linhas somam %d, o jogo %d" % [int(linhas_entrou[0]), int(resumo["receita"])])
+	_confere("F14: «Saiu» (%d) é a soma das %d linhas por baixo" % [total_saiu, linhas_saiu[1]],
+		total_saiu == int(linhas_saiu[0]) and total_saiu == int(resumo["despesa"]),
+		"linhas somam %d, o jogo %d" % [int(linhas_saiu[0]), int(resumo["despesa"])])
+	var tarja := _f14_reais(textos[linhas_saiu[2]] if linhas_saiu[2] < textos.size() else "")
+	_confere("F14: a tarja do boletim é «Entrou» menos «Saiu»",
+		tarja.size() == 1 and absi(int(tarja[0])) == absi(total_entrou - total_saiu),
+		str(tarja))
+	_f10_fechar(painel)
+	GS.clear_save()
+	GS._rng.seed = F10_SEMENTE
+	GS.new_game()
+	_f14_boletim_ok = true
+
+
+func _f14_um_valor(texto: String) -> int:
+	var v := _f14_reais(texto)
+	return int(v[0]) if v.size() == 1 else -1
+
+
+# Soma os pares «rótulo, R$…» a partir de `de`, até `ate` ou até ao primeiro
+# texto que não é um par — o próximo bloco, ou a tarja, que traz o seu R$ no
+# meio da frase. Devolve [soma, linhas, onde parou].
+func _f14_somar_linhas(textos: Array[String], de: int, ate: int) -> Array:
+	var so_valor := RegEx.new()
+	so_valor.compile("^R\\$[0-9.]+$")
+	var soma := 0
+	var linhas := 0
+	var k := de
+	while k + 1 < ate and not textos[k].contains("R$") and so_valor.search(textos[k + 1]) != null:
+		soma += _f14_um_valor(textos[k + 1])
+		linhas += 1
+		k += 2
+	return [soma, linhas, k]

@@ -211,6 +211,12 @@ em segundos em vez de depois de um export inteiro.
 O `xvfb-run` só faz falta para a captura, que precisa de contexto gráfico.
 Teste e import rodam sem tela.
 
+**A pesquisa de referências passa pela BUSCA, não pelas páginas.** O proxy
+destas sessões bloqueia Wikipédia, wikis de jogos, Steam, Game Developer,
+80.lv, GDC Vault e Game UI Database (medido em 25/09); a busca web funciona e
+devolve um resumo com a página. Referência lida por resumo cita-se como pista
+de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
+
 ---
 
 ## Antes de fechar qualquer mudança
