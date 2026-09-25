@@ -15,9 +15,15 @@ extends PainelNarrativo
 # faria sem mexer em nada — nem no caixa, nem numa doca. Se a simulação e o
 # turno real alguma vez divergirem, é ali que se conserta, não aqui.
 #
-# MESMO ANDAIME DO BOLETIM: duas grades (receita/despesa), zero não entra na
-# lista, resultado em destaque. É a mesma pergunta ("quanto entrou, quanto
-# saiu"), numa janela mais curta.
+# MESMO ANDAIME DO BOLETIM (26/09, `065`): o total de cada bloco na linha
+# dele e as parcelas por baixo, no tom de apoio (`bloco_de_contas()`). O dia
+# que JÁ ACONTECEU fecha numa tarja com o tom do resultado, como a semana do
+# boletim; o dia projetado fecha numa linha de total sem tarja — é previsão, e
+# duas tarjas num cartão seriam dois destaques, que é nenhum.
+#
+# E OS RECORDES DA PARTIDA, pedido do Bruno no gate do A5: melhor dia, mais
+# barcos num dia, maior negócio e melhor semana, em quadros como os números do
+# balanço. Saem de `GameState.recordes()`, e zeram com a partida.
 # ============================================================
 
 const LARGURA := 440
@@ -29,76 +35,113 @@ var _resumo: Dictionary = {}
 func setup(resumo: Dictionary) -> void:
 	_resumo = resumo
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
-	titulo(Icones.CAIXA, "Dinheiro do dia")
+	titulo_encorpado(Icones.CAIXA, "Dinheiro do dia")
 
-	_bloco_do_dia("ONTEM", _resumo["ontem"] as Dictionary)
-	fio()
-	_bloco_do_dia("PROJETADO PARA HOJE, SE AVANÇAR AGORA", _resumo["hoje"] as Dictionary)
+	var ontem: Dictionary = _resumo["ontem"]
+	if int(ontem["turno"]) <= 0:
+		secao("ONTEM")
+		paragrafo("O primeiro dia ainda não fechou.")
+	else:
+		secao("ONTEM — DIA %d" % int(ontem["turno"]))
+		_contas(ontem)
+		var resultado: int = GameState.resultado_do_dia(ontem)
+		tarja(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true),
+			_barcos(ontem),
+			&"bom" if resultado > 0 else (&"ruim" if resultado < 0 else &"neutro"))
+
+	var hoje: Dictionary = _resumo["hoje"]
+	secao("SE AVANÇAR AGORA — DIA %d" % int(hoje["turno"]))
+	_contas(hoje)
+	total(Narrativa.lucro_ou_prejuizo(GameState.resultado_do_dia(hoje), GameState.moeda, true))
+	var barcos_hoje := _barcos(hoje)
+	if barcos_hoje != "":
+		var apoio := paragrafo(barcos_hoje)
+		apoio.theme_type_variation = "RotuloApoio"
+
+	_recordes()
 
 	botao_fechar("Fechar")
 
 
-func _bloco_do_dia(rotulo_secao: String, dia: Dictionary) -> void:
-	var turno := int(dia["turno"])
-	if turno <= 0:
-		secao(rotulo_secao)
-		paragrafo("O primeiro dia ainda não fechou.")
-		return
-	secao("%s — DIA %d" % [rotulo_secao, turno])
-
+# O que entrou e o que saiu, cada bloco encabeçado pelo seu total. Bloco a
+# zero não entra — é a regra da linha a zero, um andar acima: um dia comum não
+# tem saída nenhuma, e «Saiu R$0» seria ruído em quase toda abertura.
+func _contas(dia: Dictionary) -> void:
 	var receita: int = int(dia["docagens"]) + int(dia["armazem"]) \
 		+ int(dia["patio"]) + int(dia["pier"])
 	var despesa: int = int(dia["salarios"]) + int(dia["manutencao"]) + int(dia["parcela"])
-
-	# LINHA COM ZERO NÃO ENTRA — a mesma regra do Boletim. Um dia comum não tem
-	# nem aluguel de píer nem parcela; escrevê-los a R$0 seria ruído repetido a
-	# cada abertura deste painel.
-	var grade := GridContainer.new()
-	grade.columns = 2
-	grade.add_theme_constant_override("h_separation", 16)
-	_vbox.add_child(grade)
-	for linha in [["Docagens", int(dia["docagens"])],
+	if receita != 0:
+		bloco_de_contas("Entrou", [
+			["Docagens", int(dia["docagens"])],
 			["Armazém", int(dia["armazem"])],
 			["Pátio de contêineres", int(dia["patio"])],
 			["Aluguel de píer", int(dia["pier"])],
-			["Salários", -int(dia["salarios"])],
-			["Manutenção", -int(dia["manutencao"])],
-			["Parcela", -int(dia["parcela"])]]:
-		if int(linha[1]) == 0:
-			continue
-		_linha(grade, String(linha[0]), int(linha[1]))
+		], receita)
+	if despesa != 0:
+		bloco_de_contas("Saiu", [
+			["Salários", int(dia["salarios"])],
+			["Manutenção", int(dia["manutencao"])],
+			["Parcela", int(dia["parcela"])],
+		], despesa)
+	if receita == 0 and despesa == 0:
+		var nada := paragrafo("Nada entra nem sai.")
+		nada.theme_type_variation = "RotuloApoio"
 
-	var resultado := receita - despesa
-	fio()
-	total(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true))
 
+# ⚠️ ERAM TRÊS TERNÁRIOS `"" if n == 1 else "s"` À MÃO, e o de cima escrevia
+# a MESMA condição duas vezes na mesma expressão — uma para o substantivo e
+# outra para o particípio. A saída estava certa; o que estava errado é a
+# regra do plural viver em cinco sítios.
+func _barcos(dia: Dictionary) -> String:
 	var partes := PackedStringArray()
-	# ⚠️ ERAM TRÊS TERNÁRIOS `"" if n == 1 else "s"` À MÃO, e o de cima escrevia
-	# a MESMA condição duas vezes na mesma expressão — uma para o substantivo e
-	# outra para o particípio. A saída estava certa; o que estava errado é a
-	# regra do plural viver em cinco sítios, e num deles ("%d esperando
-	# trabalhador", no PainelDocas) não viver em nenhum.
 	if int(dia["servidos"]) > 0:
 		partes.append(Narrativa.concordar(
 			int(dia["servidos"]), "barco atendido", "barcos atendidos"))
 	if int(dia["perdidos"]) > 0:
 		partes.append(Narrativa.concordar(
 			int(dia["perdidos"]), "perdido", "perdidos"))
-	if not partes.is_empty():
-		paragrafo(" e ".join(partes))
+	return " e ".join(partes)
 
 
-# Valor pode ser negativo (despesa) — `moeda()` já escreve o sinal sozinha
-# (é a mesma função que o resto do jogo usa para dinheiro). Alinhado à direita
-# pela mesma razão do Boletim: números empilhados só se comparam alinhados por
-# um lado.
-func _linha(grade: GridContainer, rotulo: String, valor: int) -> void:
-	var esquerda := Label.new()
-	esquerda.text = rotulo
-	esquerda.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grade.add_child(esquerda)
+# OS QUATRO RECORDES, sempre os quatro e na mesma ordem: um quadro que
+# aparecesse só depois do primeiro dia mudaria o cartão de tamanho entre duas
+# aberturas, e o jogador perderia o sítio de cada um. O que ainda não houve
+# mostra «—» e diz porquê.
+#
+# ⚠️ O DIA DO RECORDE PODE SER O DE ONTEM, e é o caso mais comum no começo:
+# `GameState.recordes()` soma o `dia_anterior` vivo, então o recorde e a tarja
+# de cima leem o MESMO dia — e dizem o mesmo número.
+func _recordes() -> void:
+	var r: Dictionary = GameState.recordes()
+	secao("RECORDES DA PARTIDA")
+	var quadros := grade_de_quadros()
 
-	var direita := Label.new()
-	direita.text = GameState.moeda(valor)
-	direita.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	grade.add_child(direita)
+	var dia: Dictionary = r["melhor_dia"]
+	if int(dia["turno"]) > 0:
+		quadro(quadros, "Melhor dia", GameState.moeda(int(dia["valor"])),
+			"dia %d" % int(dia["turno"]))
+	else:
+		quadro(quadros, "Melhor dia", "—", "nenhum dia fechou")
+
+	var barcos: Dictionary = r["mais_barcos"]
+	if int(barcos["turno"]) > 0:
+		quadro(quadros, "Mais barcos num dia", str(int(barcos["n"])),
+			"dia %d" % int(barcos["turno"]))
+	else:
+		quadro(quadros, "Mais barcos num dia", "—", "nenhum atendido")
+
+	var negocio: Dictionary = r["maior_negocio"]
+	if int(negocio["turno"]) > 0:
+		quadro(quadros, "Maior negócio", GameState.moeda(int(negocio["valor"])),
+			"%s · dia %d" % [String(GameState.MOTIVOS[String(negocio["motivo"])]["nome"]),
+				int(negocio["turno"])])
+	else:
+		quadro(quadros, "Maior negócio", "—", "nenhum barco pago")
+
+	var semana: Dictionary = r["melhor_semana"]
+	if int(semana["semana"]) > 0:
+		quadro(quadros, "Melhor semana", GameState.moeda(int(semana["valor"])),
+			"semana %d" % int(semana["semana"]))
+	else:
+		quadro(quadros, "Melhor semana", "—",
+			"a primeira fecha no dia %d" % GameState.TURNS_PER_WEEK)

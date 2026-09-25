@@ -19,7 +19,7 @@ extends PainelNarrativo
 # abatimento de hoje e o que sai do caixa) e diz que o abatimento míngua.
 # ============================================================
 
-const LARGURA := 420
+const LARGURA := 440
 const ALTURA := 0
 
 
@@ -44,37 +44,54 @@ func _quando_vence(faltam: int) -> String:
 
 func setup(_sem_argumentos: Variant = null) -> void:
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
-	titulo(Icones.PARCELA, "Parcela do Sr. Ribeiro")
+	titulo_encorpado(Icones.PARCELA, "Parcela do Sr. Ribeiro")
 
 	var cheio: int = GameState.PARCELA_AMOUNT
 	var valor: int = GameState.valor_da_parcela_hoje()
 	var abatimento: int = cheio - valor
 	if GameState.parcela_paid:
-		total("Paga — porto salvo")
-		paragrafo("A dívida com o Banco Porto Mirim está quitada.")
+		tarja("Parcela quitada", "A dívida com o Banco Porto Mirim está quitada.", &"bom")
 		botao_fechar("Fechar")
 		return
 
-	# O TOTAL é o que sai do caixa hoje — a linha única que o olho procura
-	# primeiro (`RotuloTotal`). O cheio e o abatimento ficam na prosa abaixo:
-	# dois números em destaque seriam nenhum em destaque.
-	total(GameState.moeda(valor))
+	# A TARJA É O QUE SAI DO DINHEIRO HOJE — a linha única que o olho procura
+	# primeiro —, e a linha de apoio é a conta de onde ela sai: o cheio menos o
+	# abatimento (26/09, `065`). Até aqui o cheio e o abatimento viviam numa
+	# frase de três linhas por baixo, que é a subtração espalhada que a `062`
+	# tirou da cobrança. Tom neutro: é um preço, não um resultado.
+	var apoio := ""
+	if abatimento > 0:
+		apoio = "Cheia são %s — antecipar abate %s" % [
+			GameState.moeda(cheio), GameState.moeda(abatimento)]
+	tarja("Quitar hoje: %s" % GameState.moeda(valor), apoio)
 	paragrafo(_quando_vence(GameState.PARCELA_DUE_TURN - GameState.turn))
 	if abatimento > 0:
-		paragrafo(("Cheia são %s. Antecipar abate %s pelos juros que o banco " +
-			"deixa de correr — e esse abatimento encolhe a cada dia.")
-			% [GameState.moeda(cheio), GameState.moeda(abatimento)])
+		var juro := paragrafo("O abatimento são os juros que o banco deixa de correr, " +
+			"e encolhe a cada dia.")
+		juro.theme_type_variation = "RotuloApoio"
 
 	fio()
-	var falta: int = valor - int(GameState.cash)
+	# A BARRA DO HUD, a mesma da cobrança (`063`): o jogador passa a partida a
+	# olhar para ela no rodapé, e aqui ela mede o dinheiro contra o que sai
+	# HOJE — é esse o número que o botão cobra.
+	var dinheiro := int(GameState.cash)
+	var barra := ProgressBar.new()
+	barra.name = "Barra"
+	barra.show_percentage = false
+	barra.custom_minimum_size = Vector2(0, 10)
+	barra.max_value = valor
+	barra.value = mini(dinheiro, valor)
+	_vbox.add_child(barra)
+	var legenda := paragrafo("Você tem %s de %s" % [
+		GameState.moeda(dinheiro), GameState.moeda(valor)])
+	legenda.theme_type_variation = "RotuloApoio"
+
+	var falta: int = valor - dinheiro
 	if falta > 0:
-		paragrafo("Seu dinheiro: %s. Faltam %s."
-			% [GameState.moeda(int(GameState.cash)), GameState.moeda(falta)])
+		paragrafo("Faltam %s para quitar hoje." % GameState.moeda(falta))
 		botao_fechar("Fechar")
 		return
 
-	paragrafo("Seu dinheiro: %s — já dá para quitar agora."
-		% GameState.moeda(int(GameState.cash)))
 	# A TROCA FICA ESCRITA, porque ela é a decisão. O abatimento não paga o
 	# custo de oportunidade: o que sai daqui é dinheiro que compraria estrutura,
 	# e é isso que faz disto uma escolha em vez de um botão óbvio.

@@ -131,6 +131,10 @@ func _rodar() -> void:
 	await _f14_promessa_e_resultado()
 	_confere("o bloco F14 correu até ao fim", _f14_terminou)
 
+	print("=== F15: o que os painéis do HUD prometem é o que o jogo faz ===")
+	await _f15_promessa_do_hud()
+	_confere("o bloco F15 correu até ao fim", _f15_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -2750,6 +2754,12 @@ const F14_TOM_DA_PALAVRA := {
 	"Parcela não paga": &"TarjaNarrativaRuim",
 	"Negócio perdido": &"TarjaNarrativaRuim",
 	"Valor original": &"TarjaNarrativa",
+	# Os painéis do HUD (`065`): previsões e estados, nunca resultados.
+	"A receber": &"TarjaNarrativa",
+	"Nenhuma doca": &"TarjaNarrativa",
+	"Nenhum barco": &"TarjaNarrativa",
+	"Quitar hoje": &"TarjaNarrativa",
+	"Dia ": &"TarjaNarrativa",
 	# Os motivos do fim, escritos pelo `GameState._check_end()` e pelo
 	# `fail_debt()` — o balanço abre com o que o jogo escreveu, não com isto.
 	"Você quitou": &"TarjaNarrativaBoa",
@@ -2816,3 +2826,397 @@ func _f14_balanco() -> void:
 	GS._rng.seed = F10_SEMENTE
 	GS.new_game()
 	_f14_balanco_ok = true
+
+
+# ══ F15 — O QUE OS PAINÉIS DO HUD PROMETEM É O QUE O JOGO FAZ (`065`) ══════
+#
+# A irmã do F14 para a segunda família da frente 3 — dinheiro do dia, docas,
+# reputação, parcela e calendário. Cada número que um destes painéis mostra lê-se
+# na TELA e confere-se contra uma segunda fonte que o painel não usa:
+#
+#   - DOCAS: o que cada doca «vai pagar» contra o dinheiro que entra quando o
+#     barco acaba, com o armazém e o pátio construídos — sem eles o bónus é
+#     zero e a conta certa e a que o esquece dão o mesmo número (a regra do
+#     modificador ativo, `CLAUDE.md`). E a perda prometida da doca sem
+#     trabalhador contra o que o MESMO barco paga quando tem gente.
+#   - RECORDES: contra um OBSERVADOR que joga a partida e mede cada dia pela
+#     variação do dinheiro, cada dia de barcos pela das `metrics`, e cada semana
+#     pela soma dos seus dias — nenhuma das três passa pelo `_recordes`.
+#   - O DIA 32: o único dia que muda DEPOIS de virar (o `pay_debt()` escreve a
+#     parcela no `dia_anterior`), e por isso o que separa gravar o recorde na
+#     virada de gravá-lo uma virada depois. Um barco grande nesse dia põe-no
+#     como o melhor da partida com a parcela e sem ela, e só o valor distingue.
+#   - REPUTAÇÃO: o «faltam X para Y» contra o `reputation_label()` a X de
+#     distância.
+#   - PARCELA: o «Quitar hoje» contra o que o botão tira do dinheiro, e a
+#     linha de apoio contra a constante da parcela cheia.
+#
+# ⚠️ E CADA CAMINHO LEVA A SUA BANDEIRA (`054`).
+const F15_DOCAS := "res://scenes/panels/PainelDocas.tscn"
+const F15_CAIXA := "res://scenes/panels/PainelCaixa.tscn"
+const F15_REPUTACAO := "res://scenes/panels/PainelReputacao.tscn"
+const F15_CALENDARIO := "res://scenes/panels/PainelCalendario.tscn"
+const F15_PARCELA := "res://scenes/panels/PainelParcela.tscn"
+# Quantos dias o observador joga: três semanas fechadas, para a melhor semana
+# ter por onde escolher.
+const F15_DIAS := 25
+
+var _f15_terminou := false
+var _f15_docas_ok := false
+var _f15_recordes_ok := false
+var _f15_dia32_ok := false
+var _f15_reputacao_ok := false
+var _f15_parcela_ok := false
+var _f15_calendario_ok := false
+
+
+func _f15_promessa_do_hud() -> void:
+	await _f15_docas()
+	_confere("F15: o caminho das docas correu até ao fim", _f15_docas_ok)
+	await _f15_recordes()
+	_confere("F15: o caminho dos recordes correu até ao fim", _f15_recordes_ok)
+	await _f15_dia32()
+	_confere("F15: o caminho do dia 32 correu até ao fim", _f15_dia32_ok)
+	await _f15_reputacao()
+	_confere("F15: o caminho da reputação correu até ao fim", _f15_reputacao_ok)
+	await _f15_parcela()
+	_confere("F15: o caminho da parcela correu até ao fim", _f15_parcela_ok)
+	await _f15_calendario()
+	_confere("F15: o caminho do calendário correu até ao fim", _f15_calendario_ok)
+	GS.clear_save()
+	GS._rng.seed = F10_SEMENTE
+	GS.new_game()
+	_f15_terminou = true
+
+
+# O porto inteiro, comprado pela porta do jogo: várias voltas, porque há
+# estruturas que pedem outras antes. Devolve se o armazém e o pátio — os dois
+# que pagam bónus — ficaram de pé.
+func _f15_porto_completo() -> bool:
+	_f10_partida_nova("F15")
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	GS.cash = 50000000
+	for _volta in range(GS.ESTRUTURAS.size()):
+		for id in GS.ESTRUTURAS:
+			if not GS.tem_estrutura(String(id)):
+				GS.comprar_estrutura(String(id))
+	var ok: bool = GS.tem_estrutura("armazem") and GS.tem_estrutura("patio") \
+		and GS.docks.size() == int(GS.BERCOS_NO_MAPA)
+	_confere("F15: o porto completo tem armazém, pátio e as %d docas" % int(GS.BERCOS_NO_MAPA),
+		ok, "estruturas %s, %d docas" % [str(GS.estruturas), GS.docks.size()])
+	return ok
+
+
+func _f15_barco(motivo: String, valor: int, fechado: int = 0) -> Dictionary:
+	return {"id": 9000 + valor % 997, "value": valor, "classe": "medio",
+		"motivo": motivo, "op_turns": 1, "progress": 0, "rival": false,
+		"matched": fechado > 0, "matched_value": fechado}
+
+
+# O quadro de uma doca pelo NOME do nó (`Doca<n>`), e o valor dele.
+func _f15_valor_da_doca(painel: Node, n: int) -> int:
+	var bloco := painel.find_child("Doca%d" % n, true, false)
+	if bloco == null:
+		return -1
+	var valor := bloco.find_child("Valor", true, false) as Label
+	return _f14_um_valor(valor.text) if valor != null else -1
+
+
+# UM BARCO DE CADA VEZ, com as outras docas vazias: assim o dinheiro que entra
+# na virada é o dele e de mais ninguém. O dia 2 não fecha semana nem vence
+# parcela, e é por isso que se escreve.
+func _f15_docas() -> void:
+	if not _f15_porto_completo():
+		return
+	var casos := [
+		["armazenagem com o armazém", _f15_barco("armazenagem", 77777), true],
+		["contêiner com o pátio", _f15_barco("conteiner", 66667), true],
+		["pescado, sem bónus", _f15_barco("pescado", 12345), true],
+		["preço fechado com o rival", _f15_barco("armazenagem", 90000, 55555), true],
+		["sem trabalhador", _f15_barco("armazenagem", 77777), false],
+	]
+	var pago_com_gente := -1
+	for caso in casos:
+		var nome: String = caso[0]
+		GS.turn = 2
+		GS._set_phase("playing")
+		for doca in GS.docks:
+			doca["boat"] = null
+			doca["worker_id"] = null
+		for w in GS.workers:
+			w["busy_turns"] = 0
+		GS.docks[1]["boat"] = (caso[1] as Dictionary).duplicate()
+		var com_gente: bool = caso[2]
+		if com_gente and not GS.assign_worker(int(GS.workers[0]["id"]), 1, false):
+			_confere("F15 docas, %s: o trabalhador entra na doca" % nome, false)
+			return
+		var painel: Node = await _f10_abrir(F15_DOCAS, [])
+		var prometido := _f15_valor_da_doca(painel, 2)
+		var principal := _f14_texto(painel, "A receber" if com_gente else "Nenhuma doca")
+		var perda := _f14_texto(painel, "Perde")
+		_f14_tom_confere(painel, "docas, %s" % nome)
+		_f10_fechar(painel)
+		var antes: int = GS.cash
+		var perdidos: int = int(GS.metrics["boats_lost"])
+		var id_barco: int = int(GS.docks[1]["boat"]["id"])
+		GS.advance_turn()
+		var pago: int = GS.cash - antes
+		# A doca pode já ter barco NOVO: o `_spawn_boats()` corre na virada.
+		var saiu: bool = GS.docks[1]["boat"] == null or int(GS.docks[1]["boat"]["id"]) != id_barco
+		if com_gente:
+			_confere("F15 docas, %s: o quadro promete %s e o jogo paga %s" % [nome,
+				GS.moeda(prometido), GS.moeda(pago)], prometido == pago and pago > 0)
+			_confere("F15 docas, %s: a tarja soma o mesmo" % nome,
+				_f14_um_valor(principal) == pago, principal)
+			if nome.begins_with("armazenagem"):
+				pago_com_gente = pago
+		else:
+			_confere("F15 docas, %s: o barco sai perdido sem pagar nada" % nome,
+				pago == 0 and saiu and int(GS.metrics["boats_lost"]) == perdidos + 1,
+				"pagou %d, saiu %s" % [pago, str(saiu)])
+			_confere("F15 docas, %s: a perda prometida (%s) é o que o MESMO barco paga com gente (%s)"
+				% [nome, perda, GS.moeda(pago_com_gente)],
+				_f14_reais(perda).size() == 1 and int(_f14_reais(perda)[0]) == pago_com_gente)
+
+	# ⚠️ UMA COM GENTE E OUTRA SEM, ao mesmo tempo. É o único estado em que
+	# somar a doca parada ao «a receber» diverge de não a somar: com um barco
+	# só, ou ele tem gente e não há perda, ou não tem e a tarja é outra.
+	GS.turn = 2
+	GS._set_phase("playing")
+	for doca in GS.docks:
+		doca["boat"] = null
+		doca["worker_id"] = null
+	for w in GS.workers:
+		w["busy_turns"] = 0
+	GS.docks[0]["boat"] = _f15_barco("armazenagem", 77777)
+	GS.docks[2]["boat"] = _f15_barco("pescado", 23456)
+	GS.assign_worker(int(GS.workers[0]["id"]), 0, false)
+	var misto: Node = await _f10_abrir(F15_DOCAS, [])
+	var recebe := _f14_um_valor(_f14_texto(misto, "A receber"))
+	var perde := _f14_reais(_f14_texto(misto, "Perde"))
+	_f10_fechar(misto)
+	var antes_misto: int = GS.cash
+	GS.advance_turn()
+	_confere("F15 docas, uma com gente e outra sem: a tarja (%s) é só o que entra (%s)"
+		% [GS.moeda(recebe), GS.moeda(GS.cash - antes_misto)], recebe == GS.cash - antes_misto)
+	_confere("F15 docas, uma com gente e outra sem: a perda é a da parada (%s)" % str(perde),
+		perde.size() == 1 and int(perde[0]) == 23456)
+	_f15_docas_ok = true
+
+
+# O quadro de um recorde pelo rótulo dele: devolve [número, detalhe].
+func _f15_quadro(painel: Node, rotulo: String) -> Array:
+	var achados: Array = []
+	_f15_juntar_quadros(painel, rotulo, achados)
+	if achados.size() != 1:
+		return ["", ""]
+	var coluna: Node = (achados[0] as Node).get_child(0)
+	var numero: String = (coluna.get_child(1) as Label).text
+	var detalhe: String = (coluna.get_child(2) as Label).text if coluna.get_child_count() > 2 else ""
+	return [numero, detalhe]
+
+
+func _f15_juntar_quadros(no: Node, rotulo: String, achados: Array) -> void:
+	if no is PanelContainer and (no as PanelContainer).theme_type_variation == &"BlocoNumero" \
+			and no.get_child_count() > 0 and no.get_child(0).get_child_count() > 1 \
+			and no.get_child(0).get_child(0) is Label \
+			and (no.get_child(0).get_child(0) as Label).text == rotulo:
+		achados.append(no)
+	for filho in no.get_children():
+		_f15_juntar_quadros(filho, rotulo, achados)
+
+
+# O OBSERVADOR joga como os perfis do simulador — resolve a oferta, aloca quem
+# está livre, avança — e mede cada dia pela variação do DINHEIRO. Nada é
+# comprado durante o laço, então a variação é o resultado do dia inteiro.
+func _f15_recordes() -> void:
+	if not _f15_porto_completo():
+		return
+	var vazio: Node = await _f10_abrir(F15_CAIXA, [GS.resumo_do_dia()])
+	for r in ["Melhor dia", "Mais barcos num dia", "Maior negócio", "Melhor semana"]:
+		_confere("F15 recordes: na partida nova «%s» mostra «—»" % r,
+			String(_f15_quadro(vazio, r)[0]) == "—", str(_f15_quadro(vazio, r)))
+	_f10_fechar(vazio)
+
+	var melhor_dia := [0, 0]
+	var mais_barcos := [0, 0]
+	var maior := [0, 0, ""]
+	var semanas: Array = []
+	for _i in range(F15_DIAS):
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		if GS.phase != "playing":
+			break
+		GS.assign_all_free_workers()
+		var dia: int = GS.turn
+		for i in range(GS.docks.size()):
+			var doca: Dictionary = GS.docks[i]
+			if doca["boat"] == null or doca["worker_id"] == null:
+				continue
+			if int(doca["boat"]["progress"]) + 1 < int(doca["boat"]["op_turns"]):
+				continue
+			var paga: int = GS.receita_da_doca(i)
+			if int(maior[1]) == 0 or paga > int(maior[0]):
+				maior = [paga, dia, String(doca["boat"]["motivo"])]
+		var antes: int = GS.cash
+		var servidos: int = int(GS.metrics["boats_served"])
+		GS.advance_turn()
+		var resultado: int = GS.cash - antes
+		var n: int = int(GS.metrics["boats_served"]) - servidos
+		if int(melhor_dia[1]) == 0 or resultado > int(melhor_dia[0]):
+			melhor_dia = [resultado, dia]
+		if n > int(mais_barcos[0]):
+			mais_barcos = [n, dia]
+		var semana: int = (dia - 1) / int(GS.TURNS_PER_WEEK)
+		while semanas.size() <= semana:
+			semanas.append(0)
+		semanas[semana] += resultado
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var fechadas := (int(GS.turn) - 1) / int(GS.TURNS_PER_WEEK)
+	var melhor_semana := [0, 0]
+	for s in range(fechadas):
+		if int(melhor_semana[1]) == 0 or int(semanas[s]) > int(melhor_semana[0]):
+			melhor_semana = [int(semanas[s]), s + 1]
+	_confere("F15 recordes: o observador jogou %d dias e fechou %d semanas" % [
+		int(GS.turn) - 1, fechadas], fechadas >= 2 and int(maior[1]) > 0,
+		"turno %d, fase %s" % [int(GS.turn), GS.phase])
+
+	var painel: Node = await _f10_abrir(F15_CAIXA, [GS.resumo_do_dia()])
+	var esperado := {
+		"Melhor dia": [GS.moeda(int(melhor_dia[0])), "dia %d" % int(melhor_dia[1])],
+		"Mais barcos num dia": [str(int(mais_barcos[0])), "dia %d" % int(mais_barcos[1])],
+		"Maior negócio": [GS.moeda(int(maior[0])), "%s · dia %d" % [
+			String(GS.MOTIVOS[String(maior[2])]["nome"]), int(maior[1])]],
+		"Melhor semana": [GS.moeda(int(melhor_semana[0])), "semana %d" % int(melhor_semana[1])],
+	}
+	for r in esperado:
+		var visto := _f15_quadro(painel, r)
+		_confere("F15 recordes: «%s» mostra %s, e o observador mediu %s" % [r, str(visto), str(esperado[r])],
+			String(visto[0]) == String(esperado[r][0]) and String(visto[1]) == String(esperado[r][1]))
+	_f10_fechar(painel)
+
+	# E OS RECORDES ATRAVESSAM O SAVE: são estado da partida, e o painel
+	# depois de reabrir o jogo tem de dizer o mesmo.
+	var antes_do_save := str(GS.recordes())
+	GS.save_game()
+	var carregou: bool = GS.load_game()
+	_confere("F15 recordes: o save guarda-os e devolve-os iguais", carregou
+		and str(GS.recordes()) == antes_do_save, "%s → %s" % [antes_do_save, str(GS.recordes())])
+	_f15_recordes_ok = true
+
+
+# O DIA 32 COM UM BARCO GRANDE: o melhor dia da partida com a parcela ou sem
+# ela, e só o VALOR separa as duas leituras.
+func _f15_dia32() -> void:
+	_f10_partida_nova("F15")
+	var voltas := 0
+	while int(GS.turn) < int(GS.PARCELA_DUE_TURN) and voltas < 200:
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		GS.assign_all_free_workers()
+		GS.advance_turn()
+		voltas += 1
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	_confere("F15 dia 32: a partida chega ao dia do vencimento a jogar",
+		int(GS.turn) == int(GS.PARCELA_DUE_TURN) and GS.phase == "playing",
+		"turno %d, fase %s" % [int(GS.turn), GS.phase])
+	if GS.phase != "playing":
+		return
+	GS.docks[0]["boat"] = _f15_barco("pescado", 4000000)
+	GS.docks[0]["worker_id"] = null
+	for w in GS.workers:
+		w["busy_turns"] = 0
+	GS.assign_worker(int(GS.workers[0]["id"]), 0, false)
+	var antes: int = GS.cash
+	GS.advance_turn()
+	_confere("F15 dia 32: o dia vira para a cobrança", GS.phase == "debt_payment", GS.phase)
+	GS.pay_debt()
+	var resultado: int = GS.cash - antes
+	var r: Dictionary = GS.recordes()
+	_confere("F15 dia 32: o melhor dia é o 32, com a parcela dentro (%s), e o recorde diz %s do dia %d"
+		% [GS.moeda(resultado), GS.moeda(int(r["melhor_dia"]["valor"])), int(r["melhor_dia"]["turno"])],
+		int(r["melhor_dia"]["turno"]) == int(GS.PARCELA_DUE_TURN)
+			and int(r["melhor_dia"]["valor"]) == resultado)
+	_f15_dia32_ok = true
+
+
+func _f15_reputacao() -> void:
+	_f10_partida_nova("F15")
+	for rep in [76.6, 20.95, 64.3, 81.0, 100.0]:
+		GS.reputation = rep
+		var painel: Node = await _f10_abrir(F15_REPUTACAO, [])
+		var bloco := painel.find_child("Comercial", true, false)
+		var valor := (bloco.find_child("Valor", true, false) as Label).text if bloco else ""
+		var barra := bloco.find_child("Barra", true, false) as ProgressBar if bloco else null
+		var proximo := (bloco.find_child("Proximo", true, false) as Label).text if bloco else ""
+		_confere("F15 reputação %.2f: o quadro diz o patamar do jogo («%s»)" % [rep, valor],
+			valor.ends_with("— " + String(GS.reputation_label())))
+		_confere("F15 reputação %.2f: a barra está no número do jogo" % rep,
+			barra != null and is_equal_approx(barra.value, rep) and is_equal_approx(barra.max_value, 100.0))
+		var re := RegEx.new()
+		re.compile("^Faltam (\\d+,\\d) para (.+)\\.$")
+		var m := re.search(proximo)
+		if String(GS.reputation_label()) == "Referência":
+			_confere("F15 reputação %.2f: no topo não promete degrau («%s»)" % [rep, proximo],
+				m == null and proximo == "O topo da escada.")
+		else:
+			var falta := float(m.get_string(1).replace(",", ".")) if m else -1.0
+			var nome := m.get_string(2) if m else ""
+			var aqui: String = GS.reputation_label()
+			GS.reputation = rep + falta + 0.05
+			var la: String = GS.reputation_label()
+			GS.reputation = rep + falta - 0.051
+			var quase: String = GS.reputation_label()
+			GS.reputation = rep
+			_confere("F15 reputação %.2f: «%s» — a %s chega-se a %s, e um pouco antes ainda não"
+				% [rep, proximo, str(falta), la], m != null and la == nome and quase == aqui)
+		_f10_fechar(painel)
+	_f15_reputacao_ok = true
+
+
+func _f15_parcela() -> void:
+	_f10_partida_nova("F15")
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	GS.turn = 8
+	GS.cash = 900001
+	var painel: Node = await _f10_abrir(F15_PARCELA, [])
+	var tarja := _f14_texto(painel, "Quitar hoje")
+	var apoio := _f14_reais(_f14_texto(painel, "Cheia são"))
+	var hoje := _f14_um_valor(tarja)
+	_f14_tom_confere(painel, "parcela por quitar")
+	_confere("F15 parcela: a linha de apoio é a cheia menos o abatimento (%s)" % str(apoio),
+		apoio.size() == 2 and int(apoio[0]) == int(GS.PARCELA_AMOUNT)
+			and int(apoio[0]) - int(apoio[1]) == hoje)
+	var barra := painel.find_child("Barra", true, false) as ProgressBar
+	_confere("F15 parcela: a barra mede o dinheiro contra o valor de hoje",
+		barra != null and int(barra.max_value) == hoje and int(barra.value) == mini(int(GS.cash), hoje))
+	var antes: int = GS.cash
+	if not await _f10_tocar(painel, "Quitar agora", "F15"):
+		_f10_fechar(painel)
+		return
+	_confere("F15 parcela: a tarja promete %s e o botão tira %s" % [GS.moeda(hoje), GS.moeda(antes - GS.cash)],
+		hoje > 0 and antes - int(GS.cash) == hoje and GS.parcela_paid)
+	if is_instance_valid(painel) and painel.is_inside_tree():
+		_f10_fechar(painel)
+	var paga: Node = await _f10_abrir(F15_PARCELA, [])
+	_f14_tom_confere(paga, "parcela quitada")
+	_f10_fechar(paga)
+	_f15_parcela_ok = true
+
+
+func _f15_calendario() -> void:
+	_f10_partida_nova("F15")
+	GS.turn = 10
+	var painel: Node = await _f10_abrir(F15_CALENDARIO, [])
+	var tarja := _f14_texto(painel, "Dia ")
+	var apoio := _f14_texto(painel, "Semana ")
+	_f14_tom_confere(painel, "calendário")
+	_confere("F15 calendário: «%s» / «%s» são o dia e a semana do jogo" % [tarja, apoio],
+		tarja == "Dia %d de %d" % [int(GS.turn), int(GS.TURNS_TOTAL)]
+			and apoio.begins_with("Semana %d de %d" % [GS.current_week(), int(GS.WEEKS_TOTAL)]))
+	_f10_fechar(painel)
+	_f15_calendario_ok = true

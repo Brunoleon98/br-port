@@ -1392,7 +1392,7 @@ func _d10_toque_no_caixa() -> void:
 	_confere("mostra que o primeiro dia ainda nao fechou",
 		texto_inteiro.contains("ainda não fechou"), "painel diz: %s" % texto_inteiro)
 	_confere("e mostra a secao do que hoje projeta",
-		texto_inteiro.contains("PROJETADO PARA HOJE"), "painel diz: %s" % texto_inteiro)
+		texto_inteiro.contains("SE AVANÇAR AGORA"), "painel diz: %s" % texto_inteiro)
 
 	root.remove_child(tela)
 	tela.free()
@@ -1439,7 +1439,7 @@ func _d11_toque_nos_outros_chips() -> void:
 	_confere_chip_abre(tela, overlay, "HudBar/RepPilula", "PainelReputacao.gd",
 		["Reputação", GS.reputation_label()])
 	_confere_chip_abre(tela, overlay, "HudBar/DocasPilula", "PainelDocas.gd",
-		["Docas", "de %d berços" % int(GS.BERCOS_NO_MAPA)])
+		["Docas", "DE %d BERÇOS" % int(GS.BERCOS_NO_MAPA)])
 
 	root.remove_child(tela)
 	tela.free()
@@ -1518,7 +1518,7 @@ func _d12_toque_na_parcela() -> void:
 		"mede %.2f:1" % _contraste(cor_convite, Color(1, 1, 1)))
 
 	_confere_chip_abre(tela, overlay, "MetaCartao", "PainelParcela.gd",
-		["Parcela do Sr. Ribeiro", "quitar"])
+		["Parcela do Sr. Ribeiro", "Quitar hoje"])
 
 	# Sem caixa, o convite SOME — senão ele prometeria uma ação que a porta
 	# do outro lado recusa.

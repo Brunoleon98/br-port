@@ -106,15 +106,11 @@ func _mostrar_balanco() -> void:
 	# cliente aceitou — quem segurou o preço seis vezes lia «6 igualadas». O que
 	# ele mede é a disputa GANHA; e a perdida já estava no jogo
 	# (`rival_refused`), escondida dentro dos «barcos perdidos».
-	var quadros := GridContainer.new()
-	quadros.columns = 2
-	quadros.add_theme_constant_override("h_separation", 8)
-	quadros.add_theme_constant_override("v_separation", 8)
-	_vbox.add_child(quadros)
-	_quadro(quadros, "Barcos atendidos", int(m["boats_served"]))
-	_quadro(quadros, "Barcos perdidos", int(m["boats_lost"]))
-	_quadro(quadros, "Disputas ganhas", int(m["rival_matched"]))
-	_quadro(quadros, "Disputas perdidas", int(m["rival_refused"]))
+	var quadros := grade_de_quadros()
+	quadro(quadros, "Barcos atendidos", str(int(m["boats_served"])))
+	quadro(quadros, "Barcos perdidos", str(int(m["boats_lost"])))
+	quadro(quadros, "Disputas ganhas", str(int(m["rival_matched"])))
+	quadro(quadros, "Disputas perdidas", str(int(m["rival_refused"])))
 	secao("RECEITAS")
 	_metrica("Ganho com barcos", GameState.moeda(int(m["revenue"])))
 	_metrica("Renda do píer", GameState.moeda(int(m.get("pier_income", 0))))
@@ -150,24 +146,6 @@ func _mostrar_balanco() -> void:
 	fechar.custom_minimum_size = Vector2(0, TOQUE_MIN)
 	fechar.pressed.connect(queue_free)
 	_vbox.add_child(fechar)
-
-
-func _quadro(grade: GridContainer, nome: String, valor: int) -> void:
-	var bloco := PanelContainer.new()
-	bloco.theme_type_variation = "BlocoNumero"
-	bloco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var coluna := VBoxContainer.new()
-	coluna.add_theme_constant_override("separation", 0)
-	bloco.add_child(coluna)
-	var rotulo := Label.new()
-	rotulo.theme_type_variation = "RotuloApoio"
-	rotulo.text = nome
-	coluna.add_child(rotulo)
-	var numero := Label.new()
-	numero.theme_type_variation = "NumeroGrande"
-	numero.text = str(valor)
-	coluna.add_child(numero)
-	grade.add_child(bloco)
 
 
 func _metrica(nome: String, valor: String) -> void:

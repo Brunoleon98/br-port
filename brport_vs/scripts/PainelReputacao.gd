@@ -9,9 +9,17 @@ extends PainelNarrativo
 # baixo. Este painel é essa segunda metade — sem inventar histórico nenhum
 # que o `GameState` não guarda: é leitura pura das constantes que já regem a
 # reputação, para o número aqui nunca poder discordar do número que o jogo usa.
+#
+# ⚠️ OS TRÊS EIXOS (26/09, `065`). O GDD tem três reputações que não somam —
+# Comercial, Comunitária e Imprensa — e o jogo de hoje tem UMA, que faz o
+# trabalho da Comercial: mexe com os clientes e com a negociação do Arlindo.
+# Pedido do Bruno no gate do A5, «reputação organizada para os componentes que
+# virão», e escolha dele: a de hoje chama-se Comercial aqui, e as outras duas
+# aparecem trancadas, «abre na Fase 2», como os quadrados do menu-celular. O
+# chip do HUD não muda — ele só tem lugar para uma, e é esta.
 # ============================================================
 
-const LARGURA := 400
+const LARGURA := 440
 const ALTURA := 0
 
 # Espelha `reputation_label()`, na mesma ordem — é a régua que o painel desenha.
@@ -23,15 +31,30 @@ const PATAMARES := [
 	[21.0, "Questionável"], [0.0, "Desconhecido"],
 ]
 
+# Os eixos que o GDD promete e o jogo ainda não tem, com o que cada um vai
+# decidir — a frase do GDD, encurtada. Trancados não mostram número: um número
+# que nada mexe seria decoração.
+#
+# ⚠️ A FRASE VAI INTEIRA, e não o complemento: a primeira versão montava
+# «Vai pesar em %s» e saiu «pesar em a cidade» — a contração «na» não se
+# monta com `%s`.
+const EIXOS_TRANCADOS := [
+	["Comunitária", "Vai pesar na cidade, na câmara e nos finais."],
+	["Imprensa", "Vai pesar no que a Bela publica sobre o porto."],
+]
+
 
 func setup(_sem_argumentos: Variant = null) -> void:
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
-	titulo(Icones.REPUTACAO, "Reputação")
+	titulo_encorpado(Icones.REPUTACAO, "Reputação")
 
 	var rep: float = GameState.reputation
-	paragrafo("%s — %s" % [_pontos_sem_sinal(rep), GameState.reputation_label()])
+	secao("OS TRÊS EIXOS")
+	_eixo_comercial(rep)
+	for eixo in EIXOS_TRANCADOS:
+		_eixo_trancado(String(eixo[0]), String(eixo[1]))
 
-	secao("A ESCADA")
+	secao("A ESCADA DA COMERCIAL")
 	for par in PATAMARES:
 		var piso: float = par[0]
 		var nome: String = par[1]
@@ -45,12 +68,19 @@ func setup(_sem_argumentos: Variant = null) -> void:
 			# separação contra o navy das outras faixas passou a ser de MATIZ.
 			rotulo.theme_type_variation = "RotuloAlerta"
 
-	fio()
-	secao("O QUE MUDA")
-	paragrafo("%s ao atender um barco" % _pontos(GameState.REPUTATION_GAIN_SERVED))
-	paragrafo("%s ao perder um barco sem trabalhador" % _pontos(-GameState.REPUTATION_LOSS_LOST))
-	paragrafo("%s ao fechar um acordo com o rival" % _pontos(GameState.REPUTATION_GAIN_RIVAL_MATCHED))
-	paragrafo("%s ao recusar ou perder para o rival" % _pontos(-GameState.REPUTATION_LOSS_RIVAL_REFUSED))
+	# O QUE MEXE NELA, em coluna: o evento à esquerda e o tamanho à direita,
+	# alinhado como o dinheiro, para o +0,8 e o −8,0 se compararem de cima a
+	# baixo — é o ponto do *Reigns* (`063`), o TAMANHO da mudança à vista.
+	secao("O QUE MEXE NA COMERCIAL")
+	var grade := GridContainer.new()
+	grade.columns = 2
+	grade.add_theme_constant_override("h_separation", 16)
+	grade.add_theme_constant_override("v_separation", 2)
+	_vbox.add_child(grade)
+	linha_de_apoio(grade, "Atender um barco", _pontos(GameState.REPUTATION_GAIN_SERVED))
+	linha_de_apoio(grade, "Perder um barco sem trabalhador", _pontos(-GameState.REPUTATION_LOSS_LOST))
+	linha_de_apoio(grade, "Fechar um acordo com o rival", _pontos(GameState.REPUTATION_GAIN_RIVAL_MATCHED))
+	linha_de_apoio(grade, "Recusar ou perder para o rival", _pontos(-GameState.REPUTATION_LOSS_RIVAL_REFUSED))
 
 	fio()
 	# O EFEITO É MECÂNICO, não só estético — e é por isso que vale a pena
@@ -60,6 +90,82 @@ func setup(_sem_argumentos: Variant = null) -> void:
 		% int(GameState.REPUTATION_START))
 
 	botao_fechar("Fechar")
+
+
+# A COMERCIAL NUM QUADRO: o nome, o número e o patamar na linha de cima, a
+# barra de 0 a 100 por baixo, e quanto falta para o degrau seguinte. A barra é
+# a do HUD e da cobrança, no estilo base do tema — uma barra nova seria outra
+# coisa para aprender (`063`).
+func _eixo_comercial(rep: float) -> void:
+	var bloco := PanelContainer.new()
+	bloco.name = "Comercial"
+	bloco.theme_type_variation = "BlocoNumero"
+	_vbox.add_child(bloco)
+	var coluna := VBoxContainer.new()
+	coluna.add_theme_constant_override("separation", 4)
+	bloco.add_child(coluna)
+	var topo := HBoxContainer.new()
+	coluna.add_child(topo)
+	var nome := Label.new()
+	nome.text = "Comercial"
+	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	topo.add_child(nome)
+	var valor := Label.new()
+	valor.name = "Valor"
+	valor.text = "%s — %s" % [_pontos_sem_sinal(rep), GameState.reputation_label()]
+	valor.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	topo.add_child(valor)
+
+	var barra := ProgressBar.new()
+	barra.name = "Barra"
+	barra.show_percentage = false
+	barra.custom_minimum_size = Vector2(0, 10)
+	barra.max_value = 100.0
+	barra.value = clampf(rep, 0.0, 100.0)
+	coluna.add_child(barra)
+
+	var apoio := Label.new()
+	apoio.name = "Proximo"
+	apoio.theme_type_variation = "RotuloApoio"
+	apoio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	apoio.text = _proximo_degrau(rep)
+	coluna.add_child(apoio)
+
+
+# Quanto falta para subir, e para que nome. No topo não há degrau acima, e a
+# frase diz isso em vez de prometer um que não existe.
+func _proximo_degrau(rep: float) -> String:
+	var acima: Array = []
+	for par in PATAMARES:
+		if float(par[0]) > rep:
+			acima = par
+	if acima.is_empty():
+		return "O topo da escada."
+	return "Faltam %s para %s." % [_pontos_sem_sinal(float(acima[0]) - rep), String(acima[1])]
+
+
+func _eixo_trancado(nome: String, decide: String) -> void:
+	var bloco := PanelContainer.new()
+	bloco.name = nome
+	bloco.theme_type_variation = "BlocoNumero"
+	_vbox.add_child(bloco)
+	var linha := HBoxContainer.new()
+	linha.add_theme_constant_override("separation", 8)
+	bloco.add_child(linha)
+	linha.add_child(Icones.imagem(Icones.BLOQUEADO))
+	var coluna := VBoxContainer.new()
+	coluna.add_theme_constant_override("separation", 0)
+	coluna.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	linha.add_child(coluna)
+	var rotulo := Label.new()
+	rotulo.theme_type_variation = "RotuloApoio"
+	rotulo.text = "%s — abre na Fase 2" % nome
+	coluna.add_child(rotulo)
+	var apoio := Label.new()
+	apoio.theme_type_variation = "RotuloApoio"
+	apoio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	apoio.text = decide
+	coluna.add_child(apoio)
 
 
 # "+0,8" / "-2,5" — vírgula em vez de ponto (é assim que o jogo já escreve os
