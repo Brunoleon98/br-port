@@ -21,6 +21,9 @@ extends PainelNarrativo
 
 const LARGURA := 440
 const ALTURA := 0
+# A coluna dos nomes na escada, para as cinco barras começarem na mesma
+# vertical: «▸ 21 · Questionável», o mais comprido, pede ~150 px a 15.
+const LARG_DEGRAU := 170
 
 # Espelha `reputation_label()`, na mesma ordem — é a régua que o painel desenha.
 # Repetido aqui pela mesma razão do `COR_AVISO` em `teste_design.gd`: o jogo
@@ -54,19 +57,39 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	for eixo in EIXOS_TRANCADOS:
 		_eixo_trancado(String(eixo[0]), String(eixo[1]))
 
+	# A ESCADA DE BARRAS (segunda passagem, `065`): cada degrau com a barra
+	# do HUD cheia até onde a reputação chegou dentro dele — os de baixo
+	# cheios, o de agora a meio, os de cima vazios. Substitui a barra única de
+	# 0 a 100 que o quadro da Comercial tinha: a escada já é o medidor, e com
+	# os degraus à vista.
 	secao("A ESCADA DA COMERCIAL")
+	var escada := VBoxContainer.new()
+	escada.add_theme_constant_override("separation", 2)
+	_vbox.add_child(escada)
+	var teto := 100.0
 	for par in PATAMARES:
 		var piso: float = par[0]
 		var nome: String = par[1]
 		var aqui := rep >= piso and nome == GameState.reputation_label()
-		var linha := "%s%d ou mais — %s" % ["▸ " if aqui else "    ", int(piso), nome]
-		var rotulo := paragrafo(linha)
+		var degrau := HBoxContainer.new()
+		degrau.name = "Degrau%d" % int(piso)
+		degrau.add_theme_constant_override("separation", 10)
+		escada.add_child(degrau)
+		var rotulo := Label.new()
+		rotulo.text = "%s%d · %s" % ["▸ " if aqui else "    ", int(piso), nome]
+		rotulo.custom_minimum_size = Vector2(LARG_DEGRAU, 0)
+		degrau.add_child(rotulo)
 		if aqui:
 			# A faixa em que se está, pelo tema. O âmbar de marca escrito à mão
 			# media 2,39:1 neste cartão branco; a variação mede 5,06:1
 			# (`docs/decisoes/035`). O "▸" continua a marcar a linha, e a
 			# separação contra o navy das outras faixas passou a ser de MATIZ.
 			rotulo.theme_type_variation = "RotuloAlerta"
+		var barra := barra_do_hud(rep, teto, piso)
+		barra.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		barra.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		degrau.add_child(barra)
+		teto = piso
 
 	# O QUE MEXE NELA, em coluna: o evento à esquerda e o tamanho à direita,
 	# alinhado como o dinheiro, para o +0,8 e o −8,0 se compararem de cima a
@@ -92,10 +115,9 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	botao_fechar("Fechar")
 
 
-# A COMERCIAL NUM QUADRO: o nome, o número e o patamar na linha de cima, a
-# barra de 0 a 100 por baixo, e quanto falta para o degrau seguinte. A barra é
-# a do HUD e da cobrança, no estilo base do tema — uma barra nova seria outra
-# coisa para aprender (`063`).
+# A COMERCIAL NUM QUADRO: o nome, o número e o patamar na linha de cima, e
+# quanto falta para o degrau seguinte por baixo. A barra dela é a escada, logo
+# abaixo.
 func _eixo_comercial(rep: float) -> void:
 	var bloco := PanelContainer.new()
 	bloco.name = "Comercial"
@@ -115,14 +137,6 @@ func _eixo_comercial(rep: float) -> void:
 	valor.text = "%s — %s" % [_pontos_sem_sinal(rep), GameState.reputation_label()]
 	valor.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	topo.add_child(valor)
-
-	var barra := ProgressBar.new()
-	barra.name = "Barra"
-	barra.show_percentage = false
-	barra.custom_minimum_size = Vector2(0, 10)
-	barra.max_value = 100.0
-	barra.value = clampf(rep, 0.0, 100.0)
-	coluna.add_child(barra)
 
 	var apoio := Label.new()
 	apoio.name = "Proximo"

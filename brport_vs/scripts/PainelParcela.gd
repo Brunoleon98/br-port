@@ -75,13 +75,7 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	# olhar para ela no rodapé, e aqui ela mede o dinheiro contra o que sai
 	# HOJE — é esse o número que o botão cobra.
 	var dinheiro := int(GameState.cash)
-	var barra := ProgressBar.new()
-	barra.name = "Barra"
-	barra.show_percentage = false
-	barra.custom_minimum_size = Vector2(0, 10)
-	barra.max_value = valor
-	barra.value = mini(dinheiro, valor)
-	_vbox.add_child(barra)
+	_vbox.add_child(barra_do_hud(dinheiro, valor))
 	var legenda := paragrafo("Você tem %s de %s" % [
 		GameState.moeda(dinheiro), GameState.moeda(valor)])
 	legenda.theme_type_variation = "RotuloApoio"

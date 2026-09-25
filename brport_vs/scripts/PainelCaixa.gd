@@ -45,9 +45,24 @@ func setup(resumo: Dictionary) -> void:
 		secao("ONTEM — DIA %d" % int(ontem["turno"]))
 		_contas(ontem)
 		var resultado: int = GameState.resultado_do_dia(ontem)
+		var melhor: Dictionary = GameState.recordes()["melhor_dia"]
+		var partes := PackedStringArray()
+		if _barcos(ontem) != "":
+			partes.append(_barcos(ontem))
+		# ONTEM CONTRA O MELHOR DIA (segunda passagem, `065`): a barra do HUD
+		# mede o lucro de ontem contra o recorde da partida, e a linha de apoio
+		# diz a fração — ou que ontem FOI o recorde. Só com os dois acima de
+		# zero: um prejuízo não é «uma fração do melhor dia», e uma barra que o
+		# mostrasse vazia diria menos do que a palavra «Prejuízo» já diz.
+		var com_barra: bool = resultado > 0 and int(melhor["valor"]) > 0
+		if com_barra:
+			partes.append("o melhor dia da partida" if int(melhor["turno"]) == int(ontem["turno"])
+				else "%d%% do melhor dia" % int(round(100.0 * resultado / float(melhor["valor"]))))
 		tarja(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true),
-			_barcos(ontem),
+			" · ".join(partes),
 			&"bom" if resultado > 0 else (&"ruim" if resultado < 0 else &"neutro"))
+		if com_barra:
+			barra_na_tarja(resultado, int(melhor["valor"]))
 
 	var hoje: Dictionary = _resumo["hoje"]
 	secao("SE AVANÇAR AGORA — DIA %d" % int(hoje["turno"]))

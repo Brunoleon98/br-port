@@ -148,6 +148,14 @@ func _linha_da_doca(i: int) -> void:
 		var faltam: int = int(barco["op_turns"]) - int(barco["progress"])
 		var quando := "paga ao avançar o dia" if faltam <= 1 \
 			else "paga em %s" % Narrativa.concordar(faltam, "dia", "dias")
+		# O TRABALHO À VISTA (segunda passagem): a barra do HUD com o que
+		# estará feito AO FIM DE HOJE — o progresso mais o dia que o
+		# trabalhador vai dar. Com o progresso de agora, o barco de um dia (o
+		# pesqueiro, que é metade do porto pobre) teria a barra sempre vazia
+		# até ao instante em que sai; assim, cheia quer dizer «paga ao avançar».
+		var trabalho := barra_do_hud(int(barco["progress"]) + 1, int(barco["op_turns"]))
+		trabalho.name = "Trabalho"
+		coluna.add_child(trabalho)
 		_apoio(coluna, "%s · %s · #%d" % [classe, quando, int(doca["worker_id"])])
 
 	# O BÓNUS DITO, porque o cartão do rodapé mostra o valor do BARCO e este

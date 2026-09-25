@@ -74,8 +74,12 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	# Tom neutro: um dia não é resultado nenhum.
 	var vence := ("a parcela vence no dia %d" % GameState.PARCELA_DUE_TURN) \
 		if not GameState.parcela_paid else "a parcela já está paga"
-	tarja("Dia %d de %d" % [mini(GameState.turn, GameState.TURNS_TOTAL), GameState.TURNS_TOTAL],
+	var hoje: int = mini(GameState.turn, GameState.TURNS_TOTAL)
+	tarja("Dia %d de %d" % [hoje, GameState.TURNS_TOTAL],
 		"Semana %d de %d · %s" % [GameState.current_week(), GameState.WEEKS_TOTAL, vence])
+	# O PRAZO À VISTA (segunda passagem, `065`): quanto da partida já andou,
+	# na barra do HUD — a mesma que o rodapé usa para o dinheiro da parcela.
+	barra_na_tarja(hoje, GameState.TURNS_TOTAL)
 
 	var dias: Array = GameState.calendario()
 	var semana_atual := -1

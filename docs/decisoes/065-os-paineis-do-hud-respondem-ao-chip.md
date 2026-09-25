@@ -106,3 +106,42 @@ log, que o CI varre nas suítes (`031`).
 - A régua de contraste monta as docas no estado «nenhuma doca trabalhando»;
   os outros estados das docas medem-se por semelhança (as mesmas variações
   sobre o mesmo fundo), não por percurso.
+
+## A segunda passagem: cada coisa que anda mostra quanto andou
+
+**Veredito do Bruno sobre a primeira: «Continue»**, com os quatro grupos
+marcados e nada escrito — a leitura da skill `/arte`: mais uma passagem na
+MESMA direção, com um tema só, e o antes e depois de novo contra a `main`.
+
+O tema é a barra do HUD onde um número caminha para uma meta, e sai de um
+sítio só, `PainelNarrativo.barra_do_hud()` (e `barra_na_tarja()`, que a põe
+entre o número e a linha de apoio, como a cobrança). A cobrança e a parcela
+passaram a usá-la, e as quatro fotos saíram idênticas em byte.
+
+| Painel | A barra |
+|---|---|
+| Reputação | a escada vira uma ESCADA DE BARRAS: cada degrau cheio até onde a reputação chegou dentro dele; a barra única de 0 a 100 do quadro da Comercial saiu, porque a escada já é o medidor |
+| Docas | em cada doca com trabalhador, o trabalho feito AO FIM DE HOJE — o progresso mais o dia que ele vai dar; com o progresso de agora, o pesqueiro de um dia teria a barra sempre vazia |
+| Calendário | o dia contra o fim da partida, dentro da tarja |
+| Dinheiro do dia | o lucro de ontem contra o melhor dia da partida, com a fração na linha de apoio — ou «o melhor dia da partida»; sem barra quando ontem não deu lucro |
+
+A parcela já tinha a barra dela e ficou como estava.
+
+**As guardas (F15)**: a escada contra o `reputation_label()` — cada degrau
+começa onde o jogo o começa (um pouco acima já é ele, um pouco abaixo ainda
+não), acaba no piso do de cima, e só o do nome atual leva o «▸»; a barra do
+trabalho contra o progresso que o barco tem DEPOIS da virada, num barco de três
+dias; a do calendário contra o turno; a de ontem contra o último dia e o
+melhor dia do observador. **Cinco defeitos injetados, cinco reprovações**: a
+barra do trabalho com o progresso de agora (3), o piso de cada degrau um ponto
+acima (45), o teto parado nos 100 (20), o prazo de ontem (1) e ontem medido
+contra o maior negócio em vez do melhor dia (1).
+
+**E a fixture tropeçou na oferta do rival**: no terceiro dia do barco longo o
+`advance_turn()` saiu calado, porque a virada anterior tinha aberto uma oferta
+noutra doca — a regra do `CLAUDE.md` para todo bloco que joga.
+
+Mudaram **4 fotos** contra a primeira passagem (a parcela e as três do Sr.
+Ribeiro saíram iguais) e as mesmas **5** contra a `main`. Seis suítes verdes,
+`ESCOPO UI OK`, `COBERTURA OK`; contraste 406 textos em 25 estados, nenhum
+abaixo do AA.

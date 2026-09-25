@@ -491,6 +491,32 @@ static func quadro(grade: GridContainer, nome: String, numero: String,
 	return bloco
 
 
+# A BARRA DO HUD, no estilo base do tema (`063`): o jogador passa a partida a
+# olhar para a barra da parcela no rodapé, e cada painel que mostra uma coisa
+# a andar para uma meta usa o MESMO desenho — uma barra de outro estilo seria
+# outra coisa para aprender. Não recebe toque e não escreve número: o texto ao
+# lado é quem diz quanto; ela diz quanto FALTA à vista (26/09, `065`).
+static func barra_do_hud(valor: float, maximo: float, minimo: float = 0.0) -> ProgressBar:
+	var barra := ProgressBar.new()
+	barra.name = "Barra"
+	barra.show_percentage = false
+	barra.custom_minimum_size = Vector2(0, 10)
+	barra.min_value = minimo
+	barra.max_value = maximo
+	barra.value = clampf(valor, minimo, maximo)
+	return barra
+
+
+# A barra DENTRO da última tarja, entre o número e a linha de apoio — o sítio
+# que a cobrança do Sr. Ribeiro lhe deu primeiro.
+func barra_na_tarja(valor: float, maximo: float) -> ProgressBar:
+	var barra := barra_do_hud(valor, maximo)
+	var linhas := _detalhe_da_tarja.get_parent()
+	linhas.add_child(barra)
+	linhas.move_child(barra, _detalhe_da_tarja.get_index())
+	return barra
+
+
 # O botão que fecha. Devolvê-lo permite ao painel concreto ligar mais alguma
 # coisa ao mesmo clique, sem precisar de um segundo botão.
 func botao_fechar(texto: String) -> Button:

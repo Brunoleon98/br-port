@@ -3002,6 +3002,38 @@ func _f15_docas() -> void:
 		% [GS.moeda(recebe), GS.moeda(GS.cash - antes_misto)], recebe == GS.cash - antes_misto)
 	_confere("F15 docas, uma com gente e outra sem: a perda é a da parada (%s)" % str(perde),
 		perde.size() == 1 and int(perde[0]) == 23456)
+
+	# ⚠️ A BARRA DO TRABALHO promete o progresso AO FIM DE HOJE, e confere-se
+	# contra o progresso que o barco tem depois da virada — num barco de três
+	# dias, onde a barra não pode estar cheia nem vazia.
+	GS.turn = 2
+	GS._set_phase("playing")
+	for doca in GS.docks:
+		doca["boat"] = null
+		doca["worker_id"] = null
+	for w in GS.workers:
+		w["busy_turns"] = 0
+	var longo := _f15_barco("pescado", 34567)
+	longo["op_turns"] = 3
+	GS.docks[0]["boat"] = longo
+	GS.assign_worker(int(GS.workers[0]["id"]), 0, false)
+	for passo in range(3):
+		# A virada anterior pode ter aberto uma oferta do rival noutra doca, e
+		# nessa fase o `advance_turn()` sai calado (`CLAUDE.md`).
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		var aberto: Node = await _f10_abrir(F15_DOCAS, [])
+		var trabalho := aberto.find_child("Trabalho", true, false) as ProgressBar
+		var promete := int(trabalho.value) if trabalho else -1
+		var de := int(trabalho.max_value) if trabalho else -1
+		_f10_fechar(aberto)
+		var id_longo: int = int(GS.docks[0]["boat"]["id"])
+		GS.advance_turn()
+		var barco_depois = GS.docks[0]["boat"]
+		var feito: int = int(barco_depois["progress"]) \
+			if barco_depois != null and int(barco_depois["id"]) == id_longo else 3
+		_confere("F15 docas, barco de três dias, dia %d: a barra promete %d de %d, e o jogo fica em %d"
+			% [passo + 1, promete, de, feito], promete == feito and de == 3)
 	_f15_docas_ok = true
 
 
@@ -3040,6 +3072,8 @@ func _f15_recordes() -> void:
 	_f10_fechar(vazio)
 
 	var melhor_dia := [0, 0]
+	var ultimo_resultado := 0
+	var ultimo_dia := 0
 	var mais_barcos := [0, 0]
 	var maior := [0, 0, ""]
 	var semanas: Array = []
@@ -3063,6 +3097,8 @@ func _f15_recordes() -> void:
 		var servidos: int = int(GS.metrics["boats_served"])
 		GS.advance_turn()
 		var resultado: int = GS.cash - antes
+		ultimo_resultado = resultado
+		ultimo_dia = dia
 		var n: int = int(GS.metrics["boats_served"]) - servidos
 		if int(melhor_dia[1]) == 0 or resultado > int(melhor_dia[0]):
 			melhor_dia = [resultado, dia]
@@ -3084,6 +3120,24 @@ func _f15_recordes() -> void:
 		"turno %d, fase %s" % [int(GS.turn), GS.phase])
 
 	var painel: Node = await _f10_abrir(F15_CAIXA, [GS.resumo_do_dia()])
+	# ONTEM CONTRA O MELHOR DIA: a barra da tarja mede o último dia jogado
+	# contra o recorde, os dois tirados do OBSERVADOR.
+	var barra_ontem := painel.find_child("Barra", true, false) as ProgressBar
+	var apoio_ontem := ""
+	var textos_caixa: Array[String] = []
+	_f10_textos_visiveis(painel, textos_caixa)
+	for t in textos_caixa:
+		if t.contains("melhor dia"):
+			apoio_ontem = t
+	if ultimo_resultado > 0:
+		var fracao := "o melhor dia da partida" if ultimo_dia == int(melhor_dia[1]) \
+			else "%d%% do melhor dia" % int(round(100.0 * ultimo_resultado / float(melhor_dia[0])))
+		_confere("F15 recordes: a barra de ontem é %s contra o melhor dia %s («%s»)" % [
+			GS.moeda(ultimo_resultado), GS.moeda(int(melhor_dia[0])), apoio_ontem],
+			barra_ontem != null and int(barra_ontem.value) == ultimo_resultado
+				and int(barra_ontem.max_value) == int(melhor_dia[0]) and apoio_ontem.ends_with(fracao))
+	else:
+		_confere("F15 recordes: ontem sem lucro, a tarja não tem barra", barra_ontem == null)
 	var esperado := {
 		"Melhor dia": [GS.moeda(int(melhor_dia[0])), "dia %d" % int(melhor_dia[1])],
 		"Mais barcos num dia": [str(int(mais_barcos[0])), "dia %d" % int(mais_barcos[1])],
@@ -3150,12 +3204,10 @@ func _f15_reputacao() -> void:
 		var painel: Node = await _f10_abrir(F15_REPUTACAO, [])
 		var bloco := painel.find_child("Comercial", true, false)
 		var valor := (bloco.find_child("Valor", true, false) as Label).text if bloco else ""
-		var barra := bloco.find_child("Barra", true, false) as ProgressBar if bloco else null
 		var proximo := (bloco.find_child("Proximo", true, false) as Label).text if bloco else ""
 		_confere("F15 reputação %.2f: o quadro diz o patamar do jogo («%s»)" % [rep, valor],
 			valor.ends_with("— " + String(GS.reputation_label())))
-		_confere("F15 reputação %.2f: a barra está no número do jogo" % rep,
-			barra != null and is_equal_approx(barra.value, rep) and is_equal_approx(barra.max_value, 100.0))
+		_f15_escada(painel, rep)
 		var re := RegEx.new()
 		re.compile("^Faltam (\\d+,\\d) para (.+)\\.$")
 		var m := re.search(proximo)
@@ -3175,6 +3227,42 @@ func _f15_reputacao() -> void:
 				% [rep, proximo, str(falta), la], m != null and la == nome and quase == aqui)
 		_f10_fechar(painel)
 	_f15_reputacao_ok = true
+
+
+# A ESCADA DE BARRAS contra o `reputation_label()`, que é quem aplica os
+# limiares no jogo: o piso de cada degrau é onde o nome dele COMEÇA (um pouco
+# acima já é ele, um pouco abaixo ainda não), o teto é o piso do de cima, a
+# barra está no número do jogo, e só o degrau do nome atual leva o «▸».
+func _f15_escada(painel: Node, rep: float) -> void:
+	var degraus: Array = []
+	for filho in painel.find_children("Degrau*", "HBoxContainer", true, false):
+		degraus.append(filho)
+	_confere("F15 reputação %.2f: a escada tem os cinco degraus" % rep, degraus.size() == 5,
+		"%d degraus" % degraus.size())
+	var teto_esperado := 100.0
+	var marcados := 0
+	for d in degraus:
+		var rotulo := (d as Node).get_child(0) as Label
+		var barra := (d as Node).get_child(1) as ProgressBar
+		var nome: String = rotulo.text.get_slice("· ", 1)
+		var piso: float = barra.min_value
+		GS.reputation = piso + 0.01
+		var no_piso: String = GS.reputation_label()
+		GS.reputation = piso - 0.01
+		var abaixo: String = GS.reputation_label() if piso > 0.0 else ""
+		GS.reputation = rep
+		_confere("F15 reputação %.2f: o degrau «%s» começa onde o jogo o começa (%s)" % [rep, nome, str(piso)],
+			no_piso == nome and abaixo != nome, "a %.2f o jogo diz %s, a %.2f diz %s" % [
+				piso + 0.01, no_piso, piso - 0.01, abaixo])
+		_confere("F15 reputação %.2f: «%s» vai até ao degrau de cima e está no número do jogo" % [rep, nome],
+			is_equal_approx(barra.max_value, teto_esperado)
+				and is_equal_approx(barra.value, clampf(rep, piso, teto_esperado)))
+		teto_esperado = piso
+		if rotulo.text.begins_with("▸"):
+			marcados += 1
+			_confere("F15 reputação %.2f: o «▸» está no patamar do jogo" % rep,
+				nome == String(GS.reputation_label()) and rotulo.theme_type_variation == &"RotuloAlerta")
+	_confere("F15 reputação %.2f: um degrau marcado, e um só" % rep, marcados == 1, str(marcados))
 
 
 func _f15_parcela() -> void:
@@ -3215,6 +3303,9 @@ func _f15_calendario() -> void:
 	var tarja := _f14_texto(painel, "Dia ")
 	var apoio := _f14_texto(painel, "Semana ")
 	_f14_tom_confere(painel, "calendário")
+	var prazo := painel.find_child("Barra", true, false) as ProgressBar
+	_confere("F15 calendário: a barra do prazo é o dia do jogo contra o fim da partida",
+		prazo != null and int(prazo.value) == int(GS.turn) and int(prazo.max_value) == int(GS.TURNS_TOTAL))
 	_confere("F15 calendário: «%s» / «%s» são o dia e a semana do jogo" % [tarja, apoio],
 		tarja == "Dia %d de %d" % [int(GS.turn), int(GS.TURNS_TOTAL)]
 			and apoio.begins_with("Semana %d de %d" % [GS.current_week(), int(GS.WEEKS_TOTAL)]))
