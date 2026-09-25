@@ -4,6 +4,7 @@
     python3 tools/sentinela_do_jogador.py plantar  brport_vs
     ... as suítes, a bateria de captura, o simulador ...
     python3 tools/sentinela_do_jogador.py conferir brport_vs      # SENTINELA INTACTA
+    python3 tools/sentinela_do_jogador.py remover  brport_vs
 
 Planta um arquivo conhecido em cada lugar onde o JOGO guarda o que é do
 jogador — `savegame.json`, `audio.cfg` e a pasta `registros/` do `user://` do
@@ -20,6 +21,13 @@ lado, a do arquivo: se o isolamento regredir, a sentinela some ou muda.
 jogador — exactamente o que se quer impedir. Por isso `plantar` recusa-se se
 lá houver qualquer coisa que não seja uma sentinela anterior, e o sítio certo
 para isto é um contêiner ou o CI, onde não há jogador nenhum.
+
+⚠️ E DEPOIS DE CONFERIDA ELA SAI DO DISCO, antes de correr código que não a
+conhece. O `captura.yml` fotografa a BASE do PR a seguir, e uma base anterior
+ao `ArmazemLocal` lê o `savegame.json` da sentinela — que não é JSON, de
+propósito —, imprime o erro de parse com backtrace e a varredura de erros da
+bateria reprova a base. Mordeu no PR #88. `remover` só apaga o que for
+sentinela byte a byte; um arquivo do jogador recusa-se, como no `plantar`.
 
 O caminho do `user://` segue o do Godot para um projeto sem pasta própria:
 `<dados>/godot/app_userdata/<config/name>`, com `<dados>` = `$XDG_DATA_HOME`
@@ -127,12 +135,30 @@ def conferir(raiz):
     return 0
 
 
+def remover(raiz):
+    for caminho in alvos(raiz):
+        if os.path.exists(caminho) and ler(caminho) != CONTEUDO:
+            sys.exit("RECUSADO — %s não é uma sentinela: não apago o que é do jogador" % caminho)
+    removidos = 0
+    for caminho in alvos(raiz):
+        if os.path.exists(caminho):
+            os.remove(caminho)
+            removidos += 1
+    registros = os.path.join(raiz, PASTA_REGISTROS)
+    if os.path.isdir(registros) and not os.listdir(registros):
+        os.rmdir(registros)
+    print("Sentinela removida de %s (%d arquivos)" % (raiz, removidos))
+
+
 def main():
-    if len(sys.argv) != 3 or sys.argv[1] not in ("plantar", "conferir"):
+    if len(sys.argv) != 3 or sys.argv[1] not in ("plantar", "conferir", "remover"):
         sys.exit(__doc__)
     raiz = pasta_do_usuario(sys.argv[2])
     if sys.argv[1] == "plantar":
         plantar(raiz)
+        return 0
+    if sys.argv[1] == "remover":
+        remover(raiz)
         return 0
     return conferir(raiz)
 

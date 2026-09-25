@@ -102,7 +102,13 @@ jobs:
         # faz `clear_save()` + `new_game()`). Confere-se ANTES de fotografar a
         # base do PR: uma base anterior ao `ArmazemLocal` ainda grava no
         # lugar do jogador, e reprovaria este commit pelo defeito dela.
-        run: python3 tools/sentinela_do_jogador.py conferir brport_vs
+        # ⚠️ E REMOVE-A DEPOIS: a mesma base lê o `savegame.json` da
+        # sentinela, que não é JSON, e a varredura de erros da bateria
+        # reprovava a base pelo erro de parse (PR #88).
+        run: |
+          set -euo pipefail
+          python3 tools/sentinela_do_jogador.py conferir brport_vs
+          python3 tools/sentinela_do_jogador.py remover brport_vs
 
       - name: Fotografar a base do PR
         # SÓ EM PULL REQUEST, e só se a base já souber tirar a mesma foto. Uma

@@ -63,6 +63,14 @@ persistente e partilhada entre o jogo e toda ferramenta que corra com
   - volume com o caminho literal: reprovou duas vezes (a origem do caminho e
     a varredura de `user://` por fora).
 
+- **O primeiro CI do PR #88 ficou vermelho na foto da BASE**, e a causa era
+  a própria sentinela: a `main`, ainda sem isolamento, lê o `savegame.json`
+  dela — que não é JSON, de propósito —, imprime o erro de parse com
+  backtrace, e a varredura de erros da bateria reprova. Depois de conferida,
+  a sentinela sai do disco (`remover`, que só apaga o que for sentinela byte a
+  byte), e só então a base é fotografada. Reproduzida aqui a sequência do CI
+  inteira: as duas baterias verdes.
+
 ## Limites
 
 - Protege só processos com `--script`/`-s`. Jogar pelo editor usa e reescreve
