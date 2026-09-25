@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=27 format=3]
+[gd_resource type="Theme" load_steps=30 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -37,6 +37,42 @@ content_margin_bottom = 10.0
 shadow_color = Color(0.11, 0.204, 0.329, 0.1)
 shadow_size = 6
 shadow_offset = Vector2(0, 3)
+
+; A família dos painéis narrativos usa um cabeçalho dentro do cartão existente.
+; O selo claro deixa o ícone da parcela, desenhado em navy, legível como os
+; demais sem duplicar o catálogo de SVGs em outra cor.
+[sub_resource type="StyleBoxFlat" id="cabecalho_narrativo"]
+bg_color = Color(0.11, 0.204, 0.329, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxFlat" id="selo_narrativo"]
+bg_color = Color(0.941, 0.965, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id="tarja_narrativa"]
+bg_color = Color(1, 0.984, 0.922, 1)
+border_width_left = 4
+border_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+content_margin_left = 12.0
+content_margin_top = 9.0
+content_margin_right = 12.0
+content_margin_bottom = 9.0
 
 [sub_resource type="StyleBoxFlat" id="botao_normal"]
 ; O botão não tinha sombra NENHUMA e por isso ficava colado ao fundo. A sombra
@@ -639,6 +675,15 @@ RotuloSecao/font_sizes/font_size = 13
 RotuloTotal/base_type = "Label"
 RotuloTotal/colors/font_color = Color(0.11, 0.204, 0.329, 1)
 RotuloTotal/font_sizes/font_size = 18
+TituloNarrativo/base_type = "Label"
+TituloNarrativo/colors/font_color = Color(1, 1, 1, 1)
+TituloNarrativo/font_sizes/font_size = 17
+CabecalhoNarrativo/base_type = "PanelContainer"
+CabecalhoNarrativo/styles/panel = SubResource("cabecalho_narrativo")
+SeloNarrativo/base_type = "PanelContainer"
+SeloNarrativo/styles/panel = SubResource("selo_narrativo")
+TarjaNarrativa/base_type = "PanelContainer"
+TarjaNarrativa/styles/panel = SubResource("tarja_narrativa")
 ; RotuloAlerta — o texto que aponta para UM item: o dia de hoje no calendário,
 ; a faixa de reputação em que se está, o convite a quitar a parcela no HUD.
 ;

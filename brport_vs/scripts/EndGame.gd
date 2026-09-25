@@ -18,8 +18,9 @@ extends PainelNarrativo
 # ============================================================
 
 const LARGURA := 440
-const ALTURA := 600
-const ALTURA_TEXTO := 430
+# Reserva medida para cabeçalho, margens e botão na tela de narração. O balanço
+# cresce com as linhas que realmente aparecem, em vez de guardar um vão vazio.
+const MOLDURA_NARRACAO := 170
 
 # O TETO da narração, e só o teto: a altura de verdade sai do TEXTO
 # (`altura_do_texto`). 900 é o que sobra dos 1280 da tela depois do título, do
@@ -44,15 +45,12 @@ var _motivo := ""
 func setup(won: bool, reason: String) -> void:
 	_venceu = won
 	_motivo = reason
-	# A NARRAÇÃO AJUSTA-SE AO TEXTO e o balanço mantém a altura fixa: são duas
-	# telas de tamanhos muito diferentes a partilhar um painel, e uma altura só
-	# servia mal as duas. Com o rolo à medida do texto já não há rolo nenhum,
-	# e é por isso que aqui se pode pedir o cartão ajustado ao conteúdo.
+	# A narração e o balanço pedem alturas diferentes. Ambos crescem a partir
+	# do conteúdo; o balanço de 600 px deixava quase metade do cartão vazia.
+	montar(LARGURA, 0)
 	if _venceu:
-		montar(LARGURA, 0)
 		_mostrar_narracao()
 	else:
-		montar(LARGURA, ALTURA)
 		_mostrar_balanco()
 
 
@@ -64,7 +62,7 @@ func _mostrar_narracao() -> void:
 	# (23/09): «não é o fim da fase 1, apenas o pagamento de uma das três
 	# parcelas». Vencer é `parcela_paid` (ver `_check_end`), logo o título é
 	# verdade sempre que esta tela aparece.
-	titulo(Icones.VITORIA, "Primeira parcela paga")
+	titulo_encorpado(Icones.VITORIA, "Primeira parcela paga")
 	var texto := Narrativa.fim_de_fase()
 	var pedido := altura_do_texto(texto, LARGURA - MARGEM_CARTAO)
 	paragrafo_rolavel(texto, mini(pedido, ALTURA_NARRACAO_MAX))
@@ -84,17 +82,21 @@ func _mostrar_narracao() -> void:
 
 func _mostrar_balanco() -> void:
 	tempo = &"balanco"
-	titulo(Icones.VITORIA if _venceu else Icones.DERROTA,
+	titulo_encorpado(Icones.VITORIA if _venceu else Icones.DERROTA,
 		"O balanço" if _venceu else "Fim de jogo")
 
 	var m: Dictionary = GameState.metrics
-	paragrafo_rolavel("%s\n\nBarcos atendidos: %d\nBarcos perdidos: %d\nOfertas do rival igualadas: %d\nGanho com barcos: %s\nRenda do píer: %s\nReputação final: %d (%s)" % [
-		GameState.texto(_motivo),
-		int(m["boats_served"]), int(m["boats_lost"]), int(m["rival_matched"]),
-		GameState.moeda(int(m["revenue"])),
-		GameState.moeda(int(m.get("pier_income", 0))),
-		int(GameState.reputation), GameState.reputation_label(),
-	], ALTURA_TEXTO)
+	tarja(GameState.texto(_motivo))
+	secao("OPERAÇÃO")
+	_metrica("Barcos atendidos", str(int(m["boats_served"])))
+	_metrica("Barcos perdidos", str(int(m["boats_lost"])))
+	_metrica("Ofertas do rival igualadas", str(int(m["rival_matched"])))
+	secao("RECEITAS")
+	_metrica("Ganho com barcos", GameState.moeda(int(m["revenue"])))
+	_metrica("Renda do píer", GameState.moeda(int(m.get("pier_income", 0))))
+	fio()
+	_metrica("Reputação final", "%d (%s)" % [
+		int(GameState.reputation), GameState.reputation_label()])
 
 	var recomecar := Button.new()
 	Icones.no_botao(recomecar, Icones.RECOMECAR)
@@ -124,3 +126,17 @@ func _mostrar_balanco() -> void:
 	fechar.custom_minimum_size = Vector2(0, TOQUE_MIN)
 	fechar.pressed.connect(queue_free)
 	_vbox.add_child(fechar)
+
+
+func _metrica(nome: String, valor: String) -> void:
+	var linha := HBoxContainer.new()
+	linha.add_theme_constant_override("separation", 8)
+	var rotulo := Label.new()
+	rotulo.text = nome
+	rotulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	linha.add_child(rotulo)
+	var numero := Label.new()
+	numero.text = valor
+	numero.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	linha.add_child(numero)
+	_vbox.add_child(linha)

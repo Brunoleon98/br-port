@@ -21,6 +21,7 @@ var _mood_label: Label
 # o jogador ofereceu, e a linha da última tentativa. É guardada porque o painel
 # não se reconstrói entre rodadas — só se refresca.
 var _fala_arlindo: Label
+var _valor_label: Label
 var _mood_icone: TextureRect
 # A linha inteira do humor do cliente, que sai no segundo tempo — ver
 # `_despedida()`.
@@ -66,7 +67,8 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 10)
 	box.add_child(vbox)
 
-	vbox.add_child(Icones.rotulo(Icones.RIVAL, "Arlindo (Porto Farol) fez uma oferta"))
+	vbox.add_child(PainelNarrativo.cabecalho_encorpado(
+		Icones.RIVAL, "Arlindo (Porto Farol) fez uma oferta"))
 
 	# O ARLINDO FALA COM O CLIENTE, NÃO COM O JOGADOR — é isso que faz a tela
 	# ser uma negociação assistida em vez de uma discussão, e o arquivo de
@@ -97,11 +99,14 @@ func _build_ui() -> void:
 	linha.add_child(balao)
 	vbox.add_child(linha)
 
-	var info_label := Label.new()
-	info_label.theme_type_variation = "RotuloSecao"
-	info_label.text = "Valor original: %s" % GameState.moeda(_valor_barco())
-	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	vbox.add_child(info_label)
+	var valor := PanelContainer.new()
+	valor.theme_type_variation = "TarjaNarrativa"
+	_valor_label = Label.new()
+	_valor_label.theme_type_variation = "RotuloTotal"
+	_valor_label.text = "Valor original: %s" % GameState.moeda(_valor_barco())
+	_valor_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	valor.add_child(_valor_label)
+	vbox.add_child(valor)
 
 	# A cara do cliente é um ícone que troca no meio da negociação, então a
 	# linha é guardada em pedaços: o texto e o ícone mudam juntos em _refresh().
@@ -165,6 +170,8 @@ func _negociar(acao: String) -> void:
 # por isso não toca no que o simulador mede, que nunca abre cena.
 func _despedida(resultado: String) -> void:
 	tempo = &"despedida"
+	_valor_label.text = "Negócio fechado no seu porto" if resultado == "fechado" \
+		else "Negócio perdido para Porto Farol"
 	# "fechado" é o cliente que FICA: quem perdeu foi ele.
 	var id := "perdeu" if resultado == "fechado" else "venceu"
 	_fala_arlindo.text = GameState.texto(String(Narrativa.ARLINDO_FALAS[id]))

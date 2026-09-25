@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 24/09/2026 — as caras sem foto (`060`)
+> **Última atualização:** 25/09/2026 — candidata da frente 3 do A5
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -117,6 +117,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | **A frente 1 do A5** (23/09) — escolha do Bruno | o calendário mostra na grelha os ícones da legenda, por baixo do número (lado a lado alargava o cartão a 534 px), e o **D36** tranca-o; «Primeira parcela paga» no lugar de «Fim da Fase 1»; o Arlindo diz «meu caro» |
 | **Os trinta rostos do trabalhador** (24/09, `059`) — escolha do Bruno | 2 sexos × 3 idades × 5 cores do IBGE, três voltas até à v3. Cada trabalhador nasce com o seu ROSTO (campo no save, `SAVE_VERSION` 8) por um sorteio próprio: o `_rng` medido não se mexe (100 / 80,2 / 37,3). +7,33 MB no pacote (+22% do APK), sem perda por escolha dele. **F12** e a folha `trabalhadores` na bateria |
 | **As caras sem foto** (24/09, `060`) | a cobertura desce à CARA: as ferramentas imprimem `Retratos:` só depois de esconder a cara e ver a foto mudar, e o conferidor lê o `POR_EXPRESSAO`. Tiros `boletim_ruim`, `boletim_otimo` e `contraoferta_pressao`: **9 de 9** caras (eram 6; a formal já tinha foto). 35 tiros |
+| **Candidata da frente 3 do A5** (25/09) | Boletim, contra-oferta, Sr. Ribeiro e balanço com cabeçalho comum, valores destacados por função e balanço ajustado ao conteúdo. A mecânica e os retratos não mudaram. Capturas do jogo para o gate visual do Bruno; ainda sem aceite. |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -131,7 +132,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem das frentes 3–6 é dele, e o galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A primeira família da **frente 3** está aplicada nesta branch, pendente de aceite visual. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | O gate da família 1 da frente 3 e a ordem das frentes 4–6 são dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido

@@ -34,6 +34,7 @@ var amount: int = 0
 # saltar (`docs/decisoes/051`).
 var tempo: StringName = &""
 var _corpo: Label
+var _tarja_parcela: Label
 var _botoes: VBoxContainer
 
 
@@ -47,7 +48,7 @@ func _montar() -> void:
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
 	# PARCELA é navy cheio e só sobrevive em fundo CLARO — que é o deste
 	# cartão. É o caso em que o Icones.gd manda usá-lo.
-	titulo(Icones.PARCELA, "Sr. Ribeiro — Banco Porto Mirim")
+	titulo_encorpado(Icones.PARCELA, "Sr. Ribeiro — Banco Porto Mirim")
 
 	# A fala dele vai no balão; o valor e o caixa ficam FORA. São dois
 	# registros — o que o Sr. Ribeiro diz e o que o jogo informa — e misturá-los
@@ -61,6 +62,7 @@ func _montar() -> void:
 	_corpo = balao.get_child(0)
 	_corpo.text = "%s\n\n%s" % [
 		Narrativa.ribeiro_entrada(), Narrativa.ribeiro_a_divida(amount)]
+	_tarja_parcela = tarja("Parcela vence hoje: %s" % GameState.moeda(amount))
 
 	_botoes = VBoxContainer.new()
 	_botoes.add_theme_constant_override("separation", 8)
@@ -78,6 +80,8 @@ func _montar_decisao() -> void:
 
 	var pagar := Button.new()
 	pagar.text = "Pagar %s" % GameState.moeda(amount)
+	if pode_pagar:
+		pagar.theme_type_variation = "BotaoPrimario"
 	pagar.custom_minimum_size = Vector2(0, TOQUE_MIN)
 	pagar.disabled = not pode_pagar
 	pagar.pressed.connect(_on_pagar)
@@ -113,6 +117,8 @@ func _on_falhar() -> void:
 func _mostrar_resposta(id: String) -> void:
 	var pagou := id == "pagou"
 	_corpo.text = GameState.texto(String(Narrativa.RIBEIRO_FALAS[id]))
+	_tarja_parcela.text = "%s: %s" % [
+		"Parcela quitada" if pagou else "Parcela não paga", GameState.moeda(amount)]
 	if pagou:
 		_corpo.text += "\n\n" + GameState.texto(Narrativa.RIBEIRO_FALAS["despedida"])
 	# E A CARA TROCA COM ELA. Quem pagou vê a cordial de volta; quem não pagou

@@ -31,7 +31,7 @@ var _resumo: Dictionary = {}
 func setup(resumo: Dictionary) -> void:
 	_resumo = resumo
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
-	titulo(Icones.CAIXA, "Boletim Financeiro")
+	titulo_encorpado(Icones.CAIXA, "Boletim Financeiro")
 	paragrafo("Semana %d de %d" % [int(_resumo["semana"]), GameState.WEEKS_TOTAL])
 
 	# LINHA COM ZERO NÃO ENTRA. O armazém só rende depois de consertado e a
@@ -98,7 +98,7 @@ func _linha(grade: GridContainer, rotulo: String, valor: int) -> void:
 func _resultado() -> void:
 	var resultado := int(_resumo["resultado"])
 	fio()
-	total(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true))
+	tarja(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true))
 	if not bool(_resumo["tem_historico"]):
 		return
 	var anterior := int(_resumo["anterior"])

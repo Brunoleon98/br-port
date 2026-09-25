@@ -1230,6 +1230,24 @@ o contraste depende do fundo, não da tinta. Cartão escuro sobre fundo escuro
 ganha corpo por BORDA, e os cartões de doca já a têm. Deixados como estão, de
 propósito.
 
+#### Frente 3 do A5 — primeira família aplicada em 25/09, à espera do olhar do Bruno
+
+Boletim, contra-oferta, cobrança e balanço partilham um cabeçalho navy com
+ícone sobre selo claro. O boletim destaca o resultado real da semana; a
+contra-oferta destaca o valor original enquanto há decisão e mostra o destino
+do cliente ao encerrar, mantendo os três preços e chances que o jogo calcula;
+a cobrança separa o valor devido da fala do Sr. Ribeiro, atualiza o estado da
+parcela depois da escolha e
+usa o botão âmbar só quando há caixa para pagar; o balanço deixou de reservar
+600 px e agrupa apenas as métricas que a partida realmente registra. A cara
+de cada personagem e a sequência de decisões continuam as mesmas.
+
+A prancha de conceito sugeria recursos no HUD, um desconto tratado como
+chance, um pagamento ativo sem caixa e um «resultado final» que não existe no
+VS. Nenhum dos quatro entrou. A interface aplicada usa as cores já medidas
+do tema e não acrescenta ícone, retrato nem sistema. O aceite continua a ser
+a comparação das capturas do Godot pelo Bruno.
+
 ---
 
 ### 🆕 Etapa 7 — A resolução dos assets, e o desenho que ela paga (proposta 14/09)

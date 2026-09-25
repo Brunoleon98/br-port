@@ -254,6 +254,48 @@ func titulo(icone: Texture2D, texto: String) -> void:
 	_vbox.add_child(Icones.rotulo(icone, texto, Icones.TAM_TITULO, true))
 
 
+# Cabeçalho da família com personagem. O selo claro é parte do tema: o ícone
+# da parcela é navy e desapareceria se fosse pousado direto sobre o navy.
+func titulo_encorpado(icone: Texture2D, texto: String) -> void:
+	_vbox.add_child(cabecalho_encorpado(icone, texto))
+
+
+static func cabecalho_encorpado(icone: Texture2D, texto: String) -> PanelContainer:
+	var faixa := PanelContainer.new()
+	faixa.theme_type_variation = "CabecalhoNarrativo"
+	faixa.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var linha := HBoxContainer.new()
+	linha.add_theme_constant_override("separation", 10)
+	faixa.add_child(linha)
+	var selo := PanelContainer.new()
+	selo.theme_type_variation = "SeloNarrativo"
+	selo.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	selo.add_child(Icones.imagem(icone, Icones.TAM_TITULO))
+	linha.add_child(selo)
+	var rotulo := Label.new()
+	rotulo.theme_type_variation = "TituloNarrativo"
+	rotulo.text = texto
+	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	rotulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rotulo.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	linha.add_child(rotulo)
+	return faixa
+
+
+# A tarja dá um ponto de leitura aos valores que comandam a decisão sem
+# transformar o restante da fala ou da contabilidade num segundo destaque.
+func tarja(texto: String) -> Label:
+	var painel := PanelContainer.new()
+	painel.theme_type_variation = "TarjaNarrativa"
+	var rotulo := Label.new()
+	rotulo.theme_type_variation = "RotuloTotal"
+	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	rotulo.text = texto
+	painel.add_child(rotulo)
+	_vbox.add_child(painel)
+	return rotulo
+
+
 # O botão que fecha. Devolvê-lo permite ao painel concreto ligar mais alguma
 # coisa ao mesmo clique, sem precisar de um segundo botão.
 func botao_fechar(texto: String) -> Button:
