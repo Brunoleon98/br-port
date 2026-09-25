@@ -78,7 +78,8 @@ func _montar() -> void:
 	_falta = maxi(-saldo, 0)
 	_tarja_parcela = tarja("Depois de pagar: %s" % GameState.moeda(saldo)
 		if saldo >= 0 else "Faltam %s para pagar" % GameState.moeda(-saldo),
-		"Você tem %s de %s" % [GameState.moeda(caixa), GameState.moeda(amount)])
+		"Você tem %s de %s" % [GameState.moeda(caixa), GameState.moeda(amount)],
+		&"bom" if saldo >= 0 else &"ruim")
 	_tarja_apoio = detalhe_da_tarja()
 	# A BARRA DO HUD, E NÃO UMA NOVA (25/09, quarta passagem). O jogador passa a
 	# partida a olhar para a barra da parcela no rodapé — «R$981.779 de
@@ -146,6 +147,7 @@ func _mostrar_resposta(id: String) -> void:
 	_corpo.text = GameState.texto(String(Narrativa.RIBEIRO_FALAS[id]))
 	_tarja_parcela.text = "%s: %s" % [
 		"Parcela quitada" if pagou else "Parcela não paga", GameState.moeda(amount)]
+	PainelNarrativo.tingir_tarja(_tarja_parcela, &"bom" if pagou else &"ruim")
 	# O ESTADO DEPOIS DA ESCOLHA, lido do jogo e não deduzido: quem pagou vê o
 	# dinheiro que o `pay_debt()` lhe deixou; quem não pôde, quanto faltou.
 	PainelNarrativo.escrever_detalhe(_tarja_apoio,

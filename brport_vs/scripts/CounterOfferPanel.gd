@@ -228,6 +228,7 @@ func _despedida(resultado: String) -> void:
 	tempo = &"despedida"
 	_valor_label.text = "Negócio fechado no seu porto" if resultado == "fechado" \
 		else "Negócio perdido para Porto Farol"
+	PainelNarrativo.tingir_tarja(_valor_label, &"bom" if resultado == "fechado" else &"ruim")
 	# O PREÇO QUE FICOU, lido do barco e não recalculado: o `_fechar_negocio()`
 	# escreve-o em `matched_value`, e é esse que o jogo paga.
 	var boat = GameState.docks[dock_index]["boat"] if dock_index >= 0 \

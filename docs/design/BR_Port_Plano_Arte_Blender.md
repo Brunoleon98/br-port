@@ -1266,7 +1266,8 @@ A quarta (25/09) deu a cada número a sua forma: o total de cada bloco no topo
 do boletim, a barra da parcela do HUD na cobrança, a chance como barra dentro
 de cada botão do Arlindo e os números do balanço em quadros — com referências
 de *Two Point Hospital*, *Papers, Please*, *Reigns* e *Moonlighter*
-(`docs/decisoes/063`).
+(`docs/decisoes/063`). A quinta pôs a tarja no tom do que diz — verde e
+vermelho da faixa de mensagem, sempre com a palavra (`docs/decisoes/064`).
 
 ---
 

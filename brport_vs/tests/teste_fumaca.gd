@@ -191,8 +191,22 @@ func _f1_fumaca_de_cena() -> void:
 		root.remove_child(no)
 		no.queue_free()
 
+	# ⚠️ E TODO RECURSO `.tres` CARREGA — a pergunta que a lista de dependências
+	# não faz. Ela confere que o ARQUIVO existe; em 25/09 um comentário de
+	# várias linhas no tema, com o `;` só na primeira, partiu o parse do
+	# `tema_brport.tres` inteiro. O arquivo existia, as cenas abriam sem tema
+	# (o Godot troca o recurso por null e segue), e esta suíte passou verde;
+	# quem reprovou foram o teste de design, pelos alvos de toque, e a bateria,
+	# pelo erro impresso. Aqui a pergunta é direta.
+	var recursos: Array[String] = []
+	_varrer_cenas("res://", recursos, ".tres")
+	_confere("a varredura achou recursos .tres (%d)" % recursos.size(), recursos.size() >= 2,
+		"achou %d — a varredura quebrou?" % recursos.size())
+	for caminho in recursos:
+		_confere("%s: carrega" % caminho.trim_prefix("res://"), load(caminho) != null)
 
-func _varrer_cenas(pasta: String, achadas: Array[String]) -> void:
+
+func _varrer_cenas(pasta: String, achadas: Array[String], extensao: String = ".tscn") -> void:
 	var dir := DirAccess.open(pasta)
 	if dir == null:
 		return
@@ -202,8 +216,8 @@ func _varrer_cenas(pasta: String, achadas: Array[String]) -> void:
 		var completo := pasta.path_join(nome)
 		if dir.current_is_dir():
 			if not nome.begins_with(".") and not PASTAS_IGNORADAS.has(nome):
-				_varrer_cenas(completo, achadas)
-		elif nome.ends_with(".tscn"):
+				_varrer_cenas(completo, achadas, extensao)
+		elif nome.ends_with(extensao):
 			achadas.append(completo)
 		nome = dir.get_next()
 	dir.list_dir_end()
@@ -2360,6 +2374,7 @@ var _f14_precos_ok := false
 var _f14_recusa_ok := false
 var _f14_chance_ok := false
 var _f14_boletim_ok := false
+var _f14_balanco_ok := false
 
 
 func _f14_promessa_e_resultado() -> void:
@@ -2373,6 +2388,8 @@ func _f14_promessa_e_resultado() -> void:
 	_confere("F14: o caminho da chance correu até ao fim", _f14_chance_ok)
 	await _f14_boletim()
 	_confere("F14: o caminho do boletim correu até ao fim", _f14_boletim_ok)
+	await _f14_balanco()
+	_confere("F14: o caminho do balanço correu até ao fim", _f14_balanco_ok)
 	GS.clear_save()
 	GS._rng.seed = F10_SEMENTE
 	GS.new_game()
@@ -2436,6 +2453,7 @@ func _f14_cobranca() -> void:
 		partes.size() == 2 and int(partes[0]) == int(GS.cash) and int(partes[1]) == parcela,
 		str(partes))
 	_f14_barra_da_parcela(painel, int(GS.cash), parcela)
+	_f14_tom_confere(painel, "cobrança com dinheiro")
 	if not await _f10_tocar(painel, "Pagar", "F14"):
 		_f10_fechar(painel)
 		return
@@ -2445,6 +2463,7 @@ func _f14_cobranca() -> void:
 	var ficou := _f14_reais(_f14_texto(painel, "Você fica com"))
 	_confere("F14: a resposta de quem pagou diz o dinheiro que ficou",
 		ficou.size() == 1 and int(ficou[0]) == int(GS.cash), str(ficou))
+	_f14_tom_confere(painel, "resposta de quem pagou")
 	_f10_fechar(painel)
 
 	if not _f10_ate_ao_vencimento("F14"):
@@ -2455,6 +2474,7 @@ func _f14_cobranca() -> void:
 	_confere("F14: «Faltam» é a parcela menos o dinheiro",
 		falta.size() == 1 and int(falta[0]) == parcela - int(GS.cash), str(falta))
 	_f14_barra_da_parcela(painel, int(GS.cash), parcela)
+	_f14_tom_confere(painel, "cobrança sem dinheiro")
 	if not await _f10_tocar(painel, "Não consigo", "F14"):
 		_f10_fechar(painel)
 		return
@@ -2462,6 +2482,7 @@ func _f14_cobranca() -> void:
 	_confere("F14: a resposta de quem não pagou repete a falta",
 		faltaram.size() == 1 and falta.size() == 1 and int(faltaram[0]) == int(falta[0]),
 		str(faltaram))
+	_f14_tom_confere(painel, "resposta de quem não pagou")
 	_f10_fechar(painel)
 	_f14_cobranca_ok = true
 
@@ -2477,6 +2498,7 @@ func _f14_precos() -> void:
 		var barco: Dictionary = GS.docks[doca]["boat"]
 		var painel: Node = await _f10_abrir(F10_ARLINDO, [doca])
 		var mostrado := _f14_reais(_f14_botao(painel, prefixo))
+		_f14_tom_confere(painel, "negociação aberta")
 		if prefixo != "Igualar":
 			GS._rng.seed = _f14_semente_que_aceita(prefixo)
 		if not await _f10_tocar(painel, prefixo, "F14"):
@@ -2489,6 +2511,7 @@ func _f14_precos() -> void:
 		var fechado := _f14_reais(_f14_texto(painel, "Fechado por"))
 		_confere("F14: depois de «%s», a despedida diz o preço fechado" % prefixo,
 			fechado.size() == 1 and int(fechado[0]) == cobrado, str(fechado))
+		_f14_tom_confere(painel, "negócio fechado por «%s»" % prefixo)
 		_f10_fechar(painel)
 	_f14_precos_ok = true
 
@@ -2543,6 +2566,7 @@ func _f14_recusa() -> void:
 			if not await _f10_tocar(painel, "Manter", "F14"):
 				_f10_fechar(painel)
 				return
+			_f14_tom_confere(painel, "negócio perdido")
 			_confere("F14: recusada a última, o barco foi mesmo para o rival",
 				GS.docks[doca]["boat"] == null and int(GS.metrics["rival_refused"]) == perdidas + 1,
 				"barco %s, perdidas %d" % [str(GS.docks[doca]["boat"] != null), int(GS.metrics["rival_refused"])])
@@ -2678,6 +2702,7 @@ func _f14_boletim() -> void:
 		total_saiu == int(linhas_saiu[0]) and total_saiu == int(resumo["despesa"]),
 		"linhas somam %d, o jogo %d" % [int(linhas_saiu[0]), int(resumo["despesa"])])
 	var tarja := _f14_reais(textos[linhas_saiu[2]] if linhas_saiu[2] < textos.size() else "")
+	_f14_tom_confere(painel, "boletim de prejuízo")
 	_confere("F14: a tarja do boletim é «Entrou» menos «Saiu»",
 		tarja.size() == 1 and absi(int(tarja[0])) == absi(total_entrou - total_saiu),
 		str(tarja))
@@ -2707,3 +2732,87 @@ func _f14_somar_linhas(textos: Array[String], de: int, ate: int) -> Array:
 		linhas += 1
 		k += 2
 	return [soma, linhas, k]
+
+
+# O TOM DA TARJA CONTRA A PALAVRA DELA (quinta passagem, `063`). O tom sai
+# do código do painel; a palavra, da `Narrativa` e dos textos que o painel
+# monta — duas escritas, e um tom invertido passaria calado por toda régua de
+# contraste, porque verde e vermelho medem os dois acima de 5:1 no creme.
+# A tabela é do que o JOGADOR lê, e uma tarja com uma frase que ela não
+# conhece reprova: tarja nova escolhe o seu tom aqui também.
+const F14_TOM_DA_PALAVRA := {
+	"Lucro": &"TarjaNarrativaBoa",
+	"Depois de pagar": &"TarjaNarrativaBoa",
+	"Parcela quitada": &"TarjaNarrativaBoa",
+	"Negócio fechado": &"TarjaNarrativaBoa",
+	"Prejuízo": &"TarjaNarrativaRuim",
+	"Faltam": &"TarjaNarrativaRuim",
+	"Parcela não paga": &"TarjaNarrativaRuim",
+	"Negócio perdido": &"TarjaNarrativaRuim",
+	"Valor original": &"TarjaNarrativa",
+	# Os motivos do fim, escritos pelo `GameState._check_end()` e pelo
+	# `fail_debt()` — o balanço abre com o que o jogo escreveu, não com isto.
+	"Você quitou": &"TarjaNarrativaBoa",
+	"O dinheiro acabou": &"TarjaNarrativaRuim",
+	"Prazo encerrado": &"TarjaNarrativaRuim",
+	"Não foi possível pagar": &"TarjaNarrativaRuim",
+}
+const F14_ROTULO_DO_TOM := {
+	&"TarjaNarrativaBoa": &"RotuloTotalBom",
+	&"TarjaNarrativaRuim": &"RotuloTotalRuim",
+	&"TarjaNarrativa": &"RotuloTotal",
+}
+
+
+func _f14_tom_confere(painel: Node, caso: String) -> void:
+	var tarjas: Array = []
+	_f14_juntar_tarjas(painel, tarjas)
+	_confere("F14: %s — há uma tarja" % caso, tarjas.size() == 1, "%d tarjas" % tarjas.size())
+	if tarjas.size() != 1:
+		return
+	var tarja := tarjas[0] as PanelContainer
+	var principal := tarja.get_node("Linhas/Principal") as Label
+	var esperado: StringName = &""
+	for palavra in F14_TOM_DA_PALAVRA:
+		if principal.text.begins_with(palavra):
+			esperado = F14_TOM_DA_PALAVRA[palavra]
+	_confere("F14: %s — a tarja veste o tom da palavra («%s»)" % [caso, principal.text],
+		esperado != &"" and tarja.theme_type_variation == esperado
+			and principal.theme_type_variation == F14_ROTULO_DO_TOM[esperado],
+		"veste %s / %s, esperado %s" % [tarja.theme_type_variation,
+			principal.theme_type_variation, esperado])
+
+
+func _f14_juntar_tarjas(no: Node, tarjas: Array) -> void:
+	if no is PanelContainer and String((no as PanelContainer).theme_type_variation).begins_with("TarjaNarrativa") \
+			and (no as Control).is_visible_in_tree() and not no.is_queued_for_deletion():
+		tarjas.append(no)
+	for filho in no.get_children():
+		_f14_juntar_tarjas(filho, tarjas)
+
+
+# O BALANÇO, pelos dois lados do fim. O motivo sai do `_check_end()` do jogo
+# — dinheiro abaixo de zero, e o prazo acabado com a parcela paga —, e o
+# painel abre com o `won` e o `end_reason` que ele deixou. Quem venceu passa
+# pela narração e chega ao balanço pelo botão dela, como a jogar.
+func _f14_balanco() -> void:
+	for venceu in [false, true]:
+		_f10_partida_nova("F14")
+		if venceu:
+			GS.parcela_paid = true
+			GS.turn = int(GS.TURNS_TOTAL) + 1
+		else:
+			GS.cash = -1
+		GS._check_end()
+		_confere("F14: o jogo acabou %s" % ("vencido" if venceu else "perdido"),
+			GS.phase == "game_over" and bool(GS.won) == venceu, "fase %s" % GS.phase)
+		var painel: Node = await _f10_abrir(F10_FIM, [bool(GS.won), String(GS.end_reason)])
+		if venceu and not await _f10_tocar(painel, "Ver o balanço", "F14"):
+			_f10_fechar(painel)
+			return
+		_f14_tom_confere(painel, "balanço de quem %s" % ("venceu" if venceu else "perdeu"))
+		_f10_fechar(painel)
+	GS.clear_save()
+	GS._rng.seed = F10_SEMENTE
+	GS.new_game()
+	_f14_balanco_ok = true

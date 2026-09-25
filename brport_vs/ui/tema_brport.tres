@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=33 format=3]
+[gd_resource type="Theme" load_steps=35 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -95,6 +95,35 @@ content_margin_left = 10.0
 content_margin_top = 8.0
 content_margin_right = 10.0
 content_margin_bottom = 8.0
+
+; A TARJA COM O TOM DO QUE DIZ (25/09, quinta passagem da frente 3): o
+; lucro, a parcela quitada e o negócio fechado vestem o VERDE da faixa de
+; mensagem; o prejuízo, a falta e o negócio perdido, o VERMELHO dela. São as
+; cores do `TextoFaixaBom` e do `TextoFaixaRuim`, medidas sobre este mesmo
+; creme (`faixa_msg` e `tarja_narrativa` têm o mesmo `bg_color`) — nenhuma cor
+; nova. O tom é REDUNDANTE com a palavra («Lucro», «Faltam», «perdido»), que é
+; quem carrega o sentido: vermelho contra verde não se lê sem distinguir as duas.
+[sub_resource type="StyleBoxFlat" id="tarja_narrativa_boa"]
+bg_color = Color(1, 0.984, 0.922, 1)
+border_width_left = 4
+border_color = Color(0.102, 0.478, 0.251, 1)
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+content_margin_left = 12.0
+content_margin_top = 9.0
+content_margin_right = 12.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBoxFlat" id="tarja_narrativa_ruim"]
+bg_color = Color(1, 0.984, 0.922, 1)
+border_width_left = 4
+border_color = Color(0.761, 0.188, 0.188, 1)
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+content_margin_left = 12.0
+content_margin_top = 9.0
+content_margin_right = 12.0
+content_margin_bottom = 9.0
 
 [sub_resource type="StyleBoxFlat" id="tarja_narrativa"]
 bg_color = Color(1, 0.984, 0.922, 1)
@@ -717,6 +746,19 @@ SeloNarrativo/base_type = "PanelContainer"
 SeloNarrativo/styles/panel = SubResource("selo_narrativo")
 TarjaNarrativa/base_type = "PanelContainer"
 TarjaNarrativa/styles/panel = SubResource("tarja_narrativa")
+TarjaNarrativaBoa/base_type = "PanelContainer"
+TarjaNarrativaBoa/styles/panel = SubResource("tarja_narrativa_boa")
+TarjaNarrativaRuim/base_type = "PanelContainer"
+TarjaNarrativaRuim/styles/panel = SubResource("tarja_narrativa_ruim")
+; O número da tarja no tom dela: o tamanho do `RotuloTotal` com a cor do
+; `TextoFaixaBom`/`TextoFaixaRuim`. Duas variações e não uma cor pintada no
+; script, que é o que o portão do escopo existe para impedir.
+RotuloTotalBom/base_type = "Label"
+RotuloTotalBom/colors/font_color = Color(0.102, 0.478, 0.251, 1)
+RotuloTotalBom/font_sizes/font_size = 18
+RotuloTotalRuim/base_type = "Label"
+RotuloTotalRuim/colors/font_color = Color(0.761, 0.188, 0.188, 1)
+RotuloTotalRuim/font_sizes/font_size = 18
 ; RotuloAlerta — o texto que aponta para UM item: o dia de hoje no calendário,
 ; a faixa de reputação em que se está, o convite a quitar a parcela no HUD.
 ;

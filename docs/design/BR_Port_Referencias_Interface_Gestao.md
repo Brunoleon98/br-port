@@ -88,6 +88,14 @@ das sete fontes, e desenhar os outros é arte, cuja técnica é escolha do Bruno
 sinal «+/−» nos totais (a palavra do bloco já o diz, e a dupla negação é o que
 o `lucro_ou_prejuizo()` recusa); cor verde/vermelha; gráfico.
 
+## Quinta passagem (25/09) — a tarja no tom do que diz
+
+Das mesmas referências da quarta: o resultado lê-se antes dos números. A tarja
+passou a vestir o verde e o vermelho que o jogo já usa na faixa de mensagem —
+lucro, parcela quitada, negócio fechado; prejuízo, falta, negócio perdido —,
+sempre junto da palavra, e nunca numa opção por escolher. Decisão, guarda e
+medições em `docs/decisoes/064-a-tarja-no-tom-do-que-diz.md`.
+
 ## Lição operacional desta rodada
 
 **Resolvida pela `docs/decisoes/061`:** toda ferramenta e suíte grava hoje em

@@ -2393,6 +2393,10 @@ tranca isso.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta
   cor na mão.
+  ⚠️ **E COMENTÁRIO NO `.tres` LEVA `;` EM CADA LINHA.** Em 25/09 um bloco de
+  sete linhas com o `;` só na primeira partiu o parse do tema inteiro: as cenas
+  abriram sem ele, e a fumaça passou verde porque conferia que o arquivo
+  EXISTE. Hoje o F1 carrega todo `.tres` (`docs/decisoes/064`).
 
 ---
 

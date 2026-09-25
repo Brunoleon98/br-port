@@ -86,7 +86,9 @@ func _mostrar_balanco() -> void:
 		"O balanço" if _venceu else "Fim de jogo")
 
 	var m: Dictionary = GameState.metrics
-	tarja(GameState.texto(_motivo))
+	# Verde quem quitou, vermelho quem perdeu o porto — o motivo, logo ao lado,
+	# é quem o diz; o tom só o repete (quinta passagem, `063`).
+	tarja(GameState.texto(_motivo), "", &"bom" if _venceu else &"ruim")
 	secao("OPERAÇÃO")
 	# OS NÚMEROS DA PARTIDA EM QUADROS (25/09, quarta passagem). Eram quatro
 	# linhas de «rótulo … número» iguais às da receita, e o balanço lia-se como

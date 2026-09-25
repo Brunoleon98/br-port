@@ -294,8 +294,8 @@ static func cabecalho_encorpado(icone: Texture2D, texto: String) -> PanelContain
 # três sítios para uma subtração que o jogador quer poder conferir. O
 # `detalhe` é essa linha de apoio: menor, na cor de apoio, DENTRO da tarja,
 # e nunca um segundo destaque. Vazio, não ocupa lugar.
-func tarja(texto: String, detalhe: String = "") -> Label:
-	var painel := tarja_solta(texto, detalhe)
+func tarja(texto: String, detalhe: String = "", tom: StringName = &"neutro") -> Label:
+	var painel := tarja_solta(texto, detalhe, tom)
 	_vbox.add_child(painel)
 	_detalhe_da_tarja = painel.get_node("Linhas/Detalhe")
 	return painel.get_node("Linhas/Principal")
@@ -318,7 +318,8 @@ static func escrever_detalhe(rotulo: Label, texto: String) -> void:
 # Estática porque a contra-oferta não herda deste andaime (é anterior a ele) e
 # tem de vestir a MESMA tarja — o estilo continua a sair de um lugar só, como o
 # `cabecalho_encorpado()`. Os nós têm nome para quem os troca depois.
-static func tarja_solta(texto: String, detalhe: String = "") -> PanelContainer:
+static func tarja_solta(texto: String, detalhe: String = "",
+		tom: StringName = &"neutro") -> PanelContainer:
 	var painel := PanelContainer.new()
 	painel.theme_type_variation = "TarjaNarrativa"
 	var linhas := VBoxContainer.new()
@@ -337,7 +338,33 @@ static func tarja_solta(texto: String, detalhe: String = "") -> PanelContainer:
 	apoio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	escrever_detalhe(apoio, detalhe)
 	linhas.add_child(apoio)
+	tingir_tarja(rotulo, tom)
 	return painel
+
+
+# O TOM DA TARJA, a partir do rótulo principal dela — `&"bom"`, `&"ruim"` ou
+# `&"neutro"` (25/09, quinta passagem). A resposta da cobrança e a despedida do
+# Arlindo trocam o texto E o tom da mesma tarja, e é por isso que isto recebe
+# o rótulo que os painéis já guardam.
+#
+# ⚠️ QUEM ESCOLHE O TOM É QUEM ESCREVE A PALAVRA, e ela vem primeiro: o verde
+# e o vermelho só repetem o que «Lucro», «Faltam» ou «perdido» já dizem. O F14
+# confere que os dois concordam.
+#
+# ⚠️ E AS VARIAÇÕES SÃO LITERAIS, uma por ramo: o `conferir_escopo_ui.py` só
+# confere o nome que vê escrito depois do `=` (`041`).
+static func tingir_tarja(principal: Label, tom: StringName) -> void:
+	var painel := principal.get_parent().get_parent() as PanelContainer
+	match tom:
+		&"bom":
+			painel.theme_type_variation = &"TarjaNarrativaBoa"
+			principal.theme_type_variation = &"RotuloTotalBom"
+		&"ruim":
+			painel.theme_type_variation = &"TarjaNarrativaRuim"
+			principal.theme_type_variation = &"RotuloTotalRuim"
+		_:
+			painel.theme_type_variation = &"TarjaNarrativa"
+			principal.theme_type_variation = &"RotuloTotal"
 
 
 # O botão que fecha. Devolvê-lo permite ao painel concreto ligar mais alguma

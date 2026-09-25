@@ -129,7 +129,8 @@ func _resultado() -> void:
 	var resultado := int(_resumo["resultado"])
 	fio()
 	tarja(Narrativa.lucro_ou_prejuizo(resultado, GameState.moeda, true),
-		_comparacao(resultado))
+		_comparacao(resultado),
+		&"bom" if resultado > 0 else (&"ruim" if resultado < 0 else &"neutro"))
 
 
 func _comparacao(resultado: int) -> String:
