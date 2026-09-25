@@ -47,6 +47,15 @@ são em português — commits e PRs em inglês.
 **O Godot e o Blender rodam neste contêiner.** Duas rodadas de trabalho visual
 já foram feitas às cegas por não se saber disto. Não trabalhe no escuro.
 
+**Capturas e testes podem destruir o save de uma partida real.**
+`brport_vs/tools/capturar_cena.gd` e `capturar_tela.gd` chamam
+`GameState.clear_save()`; algumas suítes também o chamam. No desktop, o
+`user://savegame.json` é persistente e partilhado com o jogo. Não rode essas
+ferramentas no perfil normal antes de isolar o `user://` de modo verificável
+ou de corrigir as ferramentas para preservar o save mesmo se falharem.
+Em 25/09/2026 uma captura substituiu o save desktop por uma partida nova;
+veja a ocorrência em `docs/design/BR_Port_Referencias_Interface_Gestao.md`.
+
 **Numa sessão remota o Godot já está pronto quando a conversa abre**, e o `$G`
 já aponta para ele: quem faz isso é `.claude/hooks/session-start.sh`, que baixa
 o binário, roda o `--import` e diz numa linha o que ficou disponível. Se a

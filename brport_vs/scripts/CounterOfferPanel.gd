@@ -21,6 +21,7 @@ var _mood_label: Label
 # o jogador ofereceu, e a linha da última tentativa. É guardada porque o painel
 # não se reconstrói entre rodadas — só se refresca.
 var _fala_arlindo: Label
+var _valor_label: Label
 var _mood_icone: TextureRect
 # A linha inteira do humor do cliente, que sai no segundo tempo — ver
 # `_despedida()`.
@@ -66,7 +67,8 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 10)
 	box.add_child(vbox)
 
-	vbox.add_child(Icones.rotulo(Icones.RIVAL, "Arlindo (Porto Farol) fez uma oferta"))
+	vbox.add_child(PainelNarrativo.cabecalho_encorpado(
+		Icones.RIVAL, "Arlindo (Porto Farol) fez uma oferta"))
 
 	# O ARLINDO FALA COM O CLIENTE, NÃO COM O JOGADOR — é isso que faz a tela
 	# ser uma negociação assistida em vez de uma discussão, e o arquivo de
@@ -97,11 +99,14 @@ func _build_ui() -> void:
 	linha.add_child(balao)
 	vbox.add_child(linha)
 
-	var info_label := Label.new()
-	info_label.theme_type_variation = "RotuloSecao"
-	info_label.text = "Valor original: %s" % GameState.moeda(_valor_barco())
-	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	vbox.add_child(info_label)
+	var valor := PanelContainer.new()
+	valor.theme_type_variation = "TarjaNarrativa"
+	_valor_label = Label.new()
+	_valor_label.theme_type_variation = "RotuloTotal"
+	_valor_label.text = "Valor original: %s" % GameState.moeda(_valor_barco())
+	_valor_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	valor.add_child(_valor_label)
+	vbox.add_child(valor)
 
 	# A cara do cliente é um ícone que troca no meio da negociação, então a
 	# linha é guardada em pedaços: o texto e o ícone mudam juntos em _refresh().
@@ -117,16 +122,19 @@ func _build_ui() -> void:
 
 	_btn_igualar = Button.new()
 	Icones.no_botao(_btn_igualar, Icones.ACORDO)
+	_btn_igualar.custom_minimum_size = Vector2(0, 58)
 	_btn_igualar.pressed.connect(func(): _negociar("igualar"))
 	btn_row.add_child(_btn_igualar)
 
 	_btn_metade = Button.new()
 	Icones.no_botao(_btn_metade, Icones.CORTAR)
+	_btn_metade.custom_minimum_size = Vector2(0, 58)
 	_btn_metade.pressed.connect(func(): _negociar("metade"))
 	btn_row.add_child(_btn_metade)
 
 	_btn_manter = Button.new()
 	Icones.no_botao(_btn_manter, Icones.FIRMEZA)
+	_btn_manter.custom_minimum_size = Vector2(0, 58)
 	_btn_manter.pressed.connect(func(): _negociar("manter"))
 	btn_row.add_child(_btn_manter)
 
@@ -165,6 +173,8 @@ func _negociar(acao: String) -> void:
 # por isso não toca no que o simulador mede, que nunca abre cena.
 func _despedida(resultado: String) -> void:
 	tempo = &"despedida"
+	_valor_label.text = "Negócio fechado no seu porto" if resultado == "fechado" \
+		else "Negócio perdido para Porto Farol"
 	# "fechado" é o cliente que FICA: quem perdeu foi ele.
 	var id := "perdeu" if resultado == "fechado" else "venceu"
 	_fala_arlindo.text = GameState.texto(String(Narrativa.ARLINDO_FALAS[id]))
@@ -190,18 +200,23 @@ func _refresh(reacao: String = "", acao: String = "") -> void:
 	var ja_insistiu := restantes < GameState.RIVAL_PATIENCE
 
 	var desconto_igualar: float = GameState.RIVAL_DISCOUNT_AFTER_FAIL if ja_insistiu else GameState.RIVAL_DISCOUNT
-	_btn_igualar.text = "Igualar (−%d%%) → %s  ·  fecha na hora" % [
+	_btn_igualar.text = "Igualar rival (−%d%%) — fecha agora\n%s" % [
 		int(round(desconto_igualar * 100.0)),
 		GameState.moeda(int(round(valor * (1.0 - desconto_igualar))))]
 
-	_btn_metade.text = "Cortar metade (−%d%%) → %s  ·  %d%% de chance" % [
+	# A reputação altera a chance REAL em GameState._negociar(). Mostrar a
+	# constante de base fazia o botão prometer uma probabilidade diferente da
+	# que o sorteio aplicava. A mesma função serve a simulação e este rótulo.
+	var chance_metade := GameState._chance_com_reputacao(GameState.RIVAL_HALF_CHANCE)
+	var chance_manter := GameState._chance_com_reputacao(GameState.RIVAL_KEEP_CHANCE)
+	_btn_metade.text = "Cortar metade (−%d%%) — aposta\n%s · %d%% de chance" % [
 		int(round(GameState.RIVAL_HALF_DISCOUNT * 100.0)),
 		GameState.moeda(int(round(valor * (1.0 - GameState.RIVAL_HALF_DISCOUNT)))),
-		int(round(GameState.RIVAL_HALF_CHANCE * 100.0))]
+		int(round(chance_metade * 100.0))]
 
-	_btn_manter.text = "Manter preço → %s  ·  %d%% de chance" % [
+	_btn_manter.text = "Manter preço — aposta\n%s · %d%% de chance" % [
 		GameState.moeda(valor),
-		int(round(GameState.RIVAL_KEEP_CHANCE * 100.0))]
+		int(round(chance_manter * 100.0))]
 
 	var desc := "Cliente ouvindo a proposta."
 	_mood_icone.texture = Icones.CLIENTE_CALMO

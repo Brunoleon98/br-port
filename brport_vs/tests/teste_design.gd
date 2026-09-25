@@ -3383,7 +3383,7 @@ func _d22_narracao_cabe() -> void:
 	# E O TETO NÃO EMPURRA O CARTÃO PARA FORA DOS 1280 DO RETRATO. O que o
 	# painel gasta à volta do texto sai das constantes que o balanço já usa
 	# (cartão menos área de texto), em vez de um número novo escrito aqui.
-	var moldura: int = int(tela.ALTURA) - int(tela.ALTURA_TEXTO)
+	var moldura: int = int(tela.MOLDURA_NARRACAO)
 	_confere("e o cartão cheio cabe na tela (%d + %d de moldura)" % [teto, moldura],
 		teto + moldura <= 1280)
 
