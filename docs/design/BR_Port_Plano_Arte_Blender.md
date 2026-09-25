@@ -1248,6 +1248,13 @@ VS. Nenhum dos quatro entrou. A interface aplicada usa as cores já medidas
 do tema e não acrescenta ícone, retrato nem sistema. O aceite continua a ser
 a comparação das capturas do Godot pelo Bruno.
 
+Na segunda passagem, referências de *Mini Metro*, *Against the Storm* e
+*Port Royale 4* levaram a informação mais útil para junto da escolha: a
+cobrança mostra a falta ou o saldo após pagar; a contra-oferta separa ação e
+preço/chance em duas linhas e imprime a chance real após a reputação. Fontes,
+tradução, rejeições e a descoberta de que a ferramenta de captura mexe no save
+persistente estão em `docs/design/BR_Port_Referencias_Interface_Gestao.md`.
+
 ---
 
 ### 🆕 Etapa 7 — A resolução dos assets, e o desenho que ela paga (proposta 14/09)

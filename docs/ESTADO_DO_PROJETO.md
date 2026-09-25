@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 25/09/2026 — candidata da frente 3 do A5
+> **Última atualização:** 25/09/2026 — segunda passagem da frente 3 do A5
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -117,7 +117,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | **A frente 1 do A5** (23/09) — escolha do Bruno | o calendário mostra na grelha os ícones da legenda, por baixo do número (lado a lado alargava o cartão a 534 px), e o **D36** tranca-o; «Primeira parcela paga» no lugar de «Fim da Fase 1»; o Arlindo diz «meu caro» |
 | **Os trinta rostos do trabalhador** (24/09, `059`) — escolha do Bruno | 2 sexos × 3 idades × 5 cores do IBGE, três voltas até à v3. Cada trabalhador nasce com o seu ROSTO (campo no save, `SAVE_VERSION` 8) por um sorteio próprio: o `_rng` medido não se mexe (100 / 80,2 / 37,3). +7,33 MB no pacote (+22% do APK), sem perda por escolha dele. **F12** e a folha `trabalhadores` na bateria |
 | **As caras sem foto** (24/09, `060`) | a cobertura desce à CARA: as ferramentas imprimem `Retratos:` só depois de esconder a cara e ver a foto mudar, e o conferidor lê o `POR_EXPRESSAO`. Tiros `boletim_ruim`, `boletim_otimo` e `contraoferta_pressao`: **9 de 9** caras (eram 6; a formal já tinha foto). 35 tiros |
-| **Candidata da frente 3 do A5** (25/09) | Boletim, contra-oferta, Sr. Ribeiro e balanço com cabeçalho comum, valores destacados por função e balanço ajustado ao conteúdo. A mecânica e os retratos não mudaram. Capturas do jogo para o gate visual do Bruno; ainda sem aceite. |
+| **Frente 3 do A5 — candidata** (25/09) | Boletim, contra-oferta, Sr. Ribeiro e balanço refinados. Cobrança mostra falta/saldo; escolhas mostram a chance real da reputação. Mecânica e retratos intactos. Referências e lições em `docs/design/BR_Port_Referencias_Interface_Gestao.md`. Aguarda aceite visual. |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do

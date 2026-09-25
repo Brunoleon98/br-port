@@ -122,16 +122,19 @@ func _build_ui() -> void:
 
 	_btn_igualar = Button.new()
 	Icones.no_botao(_btn_igualar, Icones.ACORDO)
+	_btn_igualar.custom_minimum_size = Vector2(0, 58)
 	_btn_igualar.pressed.connect(func(): _negociar("igualar"))
 	btn_row.add_child(_btn_igualar)
 
 	_btn_metade = Button.new()
 	Icones.no_botao(_btn_metade, Icones.CORTAR)
+	_btn_metade.custom_minimum_size = Vector2(0, 58)
 	_btn_metade.pressed.connect(func(): _negociar("metade"))
 	btn_row.add_child(_btn_metade)
 
 	_btn_manter = Button.new()
 	Icones.no_botao(_btn_manter, Icones.FIRMEZA)
+	_btn_manter.custom_minimum_size = Vector2(0, 58)
 	_btn_manter.pressed.connect(func(): _negociar("manter"))
 	btn_row.add_child(_btn_manter)
 
@@ -197,18 +200,23 @@ func _refresh(reacao: String = "", acao: String = "") -> void:
 	var ja_insistiu := restantes < GameState.RIVAL_PATIENCE
 
 	var desconto_igualar: float = GameState.RIVAL_DISCOUNT_AFTER_FAIL if ja_insistiu else GameState.RIVAL_DISCOUNT
-	_btn_igualar.text = "Igualar (−%d%%) → %s  ·  fecha na hora" % [
+	_btn_igualar.text = "Igualar rival (−%d%%) — fecha agora\n%s" % [
 		int(round(desconto_igualar * 100.0)),
 		GameState.moeda(int(round(valor * (1.0 - desconto_igualar))))]
 
-	_btn_metade.text = "Cortar metade (−%d%%) → %s  ·  %d%% de chance" % [
+	# A reputação altera a chance REAL em GameState._negociar(). Mostrar a
+	# constante de base fazia o botão prometer uma probabilidade diferente da
+	# que o sorteio aplicava. A mesma função serve a simulação e este rótulo.
+	var chance_metade := GameState._chance_com_reputacao(GameState.RIVAL_HALF_CHANCE)
+	var chance_manter := GameState._chance_com_reputacao(GameState.RIVAL_KEEP_CHANCE)
+	_btn_metade.text = "Cortar metade (−%d%%) — aposta\n%s · %d%% de chance" % [
 		int(round(GameState.RIVAL_HALF_DISCOUNT * 100.0)),
 		GameState.moeda(int(round(valor * (1.0 - GameState.RIVAL_HALF_DISCOUNT)))),
-		int(round(GameState.RIVAL_HALF_CHANCE * 100.0))]
+		int(round(chance_metade * 100.0))]
 
-	_btn_manter.text = "Manter preço → %s  ·  %d%% de chance" % [
+	_btn_manter.text = "Manter preço — aposta\n%s · %d%% de chance" % [
 		GameState.moeda(valor),
-		int(round(GameState.RIVAL_KEEP_CHANCE * 100.0))]
+		int(round(chance_manter * 100.0))]
 
 	var desc := "Cliente ouvindo a proposta."
 	_mood_icone.texture = Icones.CLIENTE_CALMO

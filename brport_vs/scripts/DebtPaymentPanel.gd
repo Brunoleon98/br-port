@@ -62,7 +62,12 @@ func _montar() -> void:
 	_corpo = balao.get_child(0)
 	_corpo.text = "%s\n\n%s" % [
 		Narrativa.ribeiro_entrada(), Narrativa.ribeiro_a_divida(amount)]
-	_tarja_parcela = tarja("Parcela vence hoje: %s" % GameState.moeda(amount))
+	# A fala e o botão já dizem quanto vence. Aqui fica o número que o jogador
+	# precisa para decidir: a falta ou o caixa que sobreviverá ao pagamento.
+	var caixa := int(GameState.cash)
+	var saldo := caixa - amount
+	_tarja_parcela = tarja("Depois de pagar: %s" % GameState.moeda(saldo)
+		if saldo >= 0 else "Faltam %s para pagar" % GameState.moeda(-saldo))
 
 	_botoes = VBoxContainer.new()
 	_botoes.add_theme_constant_override("separation", 8)
