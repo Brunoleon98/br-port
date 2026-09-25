@@ -94,7 +94,8 @@ Das mesmas referências da quarta: o resultado lê-se antes dos números. A tarj
 passou a vestir o verde e o vermelho que o jogo já usa na faixa de mensagem —
 lucro, parcela quitada, negócio fechado; prejuízo, falta, negócio perdido —,
 sempre junto da palavra, e nunca numa opção por escolher. Decisão, guarda e
-medições em `docs/decisoes/064-a-tarja-no-tom-do-que-diz.md`.
+medições em `docs/decisoes/064-a-tarja-no-tom-do-que-diz.md`. **Aceite do
+Bruno sobre esta passagem: «ficou bom».**
 
 ## Lição operacional desta rodada
 

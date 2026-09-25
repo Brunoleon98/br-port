@@ -282,6 +282,13 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
   CONJUNTO (`montar_folhas.py` das variações), e na dúvida diga que o corte é
   da folha e mostre o cartão inteiro.
+- **Na interface ele responde em texto livre, não às perguntas do fim**
+  (25/09, frente 3). Três perguntas escritas no fim de cada passagem voltaram
+  como «consegue melhorar?», «continue» e, à quinta, «ficou bom». Leia
+  «continue» como mais uma passagem na MESMA direção — nem aceite nem
+  mudança de rumo —, e dê a cada passagem UM tema com nome (`062`–`064`),
+  com o antes/depois contra a `main` e não contra a passagem anterior: é
+  assim que ele julga o conjunto.
 - **Família nova de arte pergunta o ESCOPO antes de desenhar** — quantas
   peças, que categorias, que marcas as distinguem — com opções e a
   recomendação primeiro. Nas variações do trabalhador ele respondeu tudo numa

@@ -4,8 +4,8 @@
 melhorar essas interfaces? Veja o que é feito em outros jogos para deixar a
 interface mais bonita e útil, e aplique». Mesmos quatro painéis — boletim,
 contra-oferta, cobrança do Sr. Ribeiro, balanço —, mesma regra: nada de
-economia, `# TUNING:`, retrato, sistema novo ou dashboard. **Candidata: o
-aceite visual é dele.**
+economia, `# TUNING:`, retrato, sistema novo ou dashboard. **Aceite do Bruno
+em 25/09, sobre a quinta passagem (`064`): «ficou bom».**
 
 ## Referências (por busca; o proxy bloqueou as páginas)
 

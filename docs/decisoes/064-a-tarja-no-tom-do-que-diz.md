@@ -1,7 +1,9 @@
 # 064 — A tarja no tom do que diz
 
 **25/09/2026 · quinta passagem da frente 3 do A5**, depois de o Bruno pedir
-«continue» sobre a quarta (`063`). **Candidata: o aceite visual é dele.**
+«continue» sobre a quarta (`063`). **Aceite do Bruno em 25/09: «ficou bom»** —
+e com ele fecha a primeira família da frente 3 (boletim, contra-oferta,
+cobrança, balanço).
 
 ## O que se decidiu
 

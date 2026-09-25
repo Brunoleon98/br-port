@@ -896,6 +896,21 @@ contente da Dona Cida e a pressão do Arlindo ganharam tiro, e a cobertura das
 capturas passou a perguntar por CARA — o que o A5 olha de cada personagem já
 não depende de alguém lembrar-se de montar o estado à mão.
 
+#### ✅ A PRIMEIRA FAMÍLIA DA FRENTE 3 FECHOU (25/09) — «ficou bom»
+
+Boletim, contra-oferta, cobrança do Sr. Ribeiro e balanço, em cinco passagens:
+as duas primeiras do Codex (PR #86) e três no PR #88 — o custo da recusa antes
+da aposta (`062`), cada número com a sua forma (`063`, com referências de
+*Two Point Hospital*, *Papers, Please*, *Reigns* e *Moonlighter*) e a tarja no
+tom do que diz (`064`). O F14 do `teste_fumaca` confere cada promessa da tela
+contra o que o jogo faz. **Antes de fotografar, o save do jogador saiu do
+alcance das ferramentas** (`061`).
+
+**O que resta da frente 3** são os outros painéis da lista acima — diário,
+menu, mensagens, pausa, docas, caixa, reputação, nomes —, e a ordem é do
+Bruno. O vocabulário desta família (cabeçalho com selo, tarja com linha de
+apoio e tom, barra do HUD, quadros de número) está no tema e serve-lhes.
+
 ---
 
 ### A6 — O áudio de verdade

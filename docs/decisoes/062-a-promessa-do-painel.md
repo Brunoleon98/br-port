@@ -4,7 +4,7 @@
 (boletim, contra-oferta, cobrança, balanço). O Bruno julgou a segunda passagem
 «melhor, mas pode melhorar ainda mais», e pediu uma iteração pequena e
 coerente, conferindo se preços e probabilidades exibidos correspondem à lógica
-real. **Candidata: o aceite visual é dele.**
+real. **Aceite do Bruno em 25/09, sobre a quinta passagem (`064`): «ficou bom».**
 
 ## O que se leu nas capturas e na lógica
 
