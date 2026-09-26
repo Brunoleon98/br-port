@@ -87,15 +87,7 @@ func _montar() -> void:
 	# desenho e a mesma legenda aqui dizem «isto é aquilo» sem uma palavra; uma
 	# barra de outro estilo seria outra coisa para aprender. Fica parada depois
 	# da escolha: mostra como se chegou ao vencimento, e o texto diz o resto.
-	var barra := ProgressBar.new()
-	barra.name = "Barra"
-	barra.show_percentage = false
-	barra.custom_minimum_size = Vector2(0, 10)
-	barra.max_value = amount
-	barra.value = mini(caixa, amount)
-	var linhas := _tarja_parcela.get_parent()
-	linhas.add_child(barra)
-	linhas.move_child(barra, _tarja_apoio.get_index())
+	barra_na_tarja(caixa, amount)
 
 	_botoes = VBoxContainer.new()
 	_botoes.add_theme_constant_override("separation", 8)

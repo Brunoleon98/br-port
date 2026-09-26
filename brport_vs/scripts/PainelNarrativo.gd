@@ -367,6 +367,156 @@ static func tingir_tarja(principal: Label, tom: StringName) -> void:
 			principal.theme_type_variation = &"RotuloTotal"
 
 
+# ── AS PEÇAS DE NÚMERO DA FAMÍLIA (`063`, `065`) ──
+# Viviam dentro do boletim (o bloco de contas) e do balanço (o quadro), e os
+# painéis do HUD passaram a precisar das duas (26/09): o dinheiro do dia é a
+# pergunta do boletim numa janela mais curta, e os recordes e as docas são
+# números da partida como os do balanço. Duas cópias da mesma peça divergem;
+# uma no andaime não.
+
+# O TOTAL SOBE PARA A LINHA DO BLOCO, e as parcelas descem de tom (25/09,
+# quarta passagem). Era «ENTROU» em cinza pequeno, quatro linhas, um fio e uma
+# linha «Total» com o mesmo peso de cada parcela — e outro tanto para o SAIU:
+# duas linhas «Total» num cartão só, e o olho a descer a lista inteira para
+# achar os dois números que a Dona Cida comenta. É o desenho das finanças do
+# *Two Point Hospital* e do fim de dia do *Papers, Please*: de onde entrou e
+# para onde saiu, cada bloco encabeçado pelo seu total, com o detalhe por
+# baixo (`docs/design/BR_Port_Referencias_Interface_Gestao.md`).
+#
+# ⚠️ SEM SINAL E SEM COR. A palavra do bloco já diz de que lado está o
+# dinheiro — «Saiu −R$49.000» dizia-o duas vezes, que é a dupla negação que o
+# `lucro_ou_prejuizo()` já recusa —, e verde contra vermelho não se lê sem
+# distinguir as duas cores, nem o tema tem esse par medido sobre o branco.
+#
+# LINHA COM ZERO NÃO ENTRA: é ruído que o olho descarta a cada abertura.
+func bloco_de_contas(nome: String, linhas: Array, soma: int) -> void:
+	var cabeca := GridContainer.new()
+	cabeca.columns = 2
+	cabeca.add_theme_constant_override("h_separation", 16)
+	_vbox.add_child(cabeca)
+	var titulo_bloco := Label.new()
+	titulo_bloco.text = nome
+	titulo_bloco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cabeca.add_child(titulo_bloco)
+	var total_bloco := Label.new()
+	total_bloco.text = moeda(soma)
+	total_bloco.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	cabeca.add_child(total_bloco)
+
+	# As parcelas recuadas e no tom de apoio: detalhe do total de cima.
+	var recuo := MarginContainer.new()
+	recuo.add_theme_constant_override("margin_left", 14)
+	_vbox.add_child(recuo)
+	var grade := GridContainer.new()
+	grade.columns = 2
+	grade.add_theme_constant_override("h_separation", 16)
+	grade.add_theme_constant_override("v_separation", 2)
+	recuo.add_child(grade)
+	for linha in linhas:
+		if int(linha[1]) == 0:
+			continue
+		linha_de_apoio(grade, String(linha[0]), moeda(int(linha[1])))
+
+
+# O dinheiro pelo `GameState.moeda()`, que é o único sítio que o escreve.
+#
+# ⚠️ PELA ÁRVORE E NÃO PELO NOME: este arquivo é um `class_name`, e uma
+# classe alcançada a partir de um `--script` compila antes de os autoloads
+# existirem — `GameState.x` aqui dentro derrubaria a suíte inteira com
+# «Identifier not found» (`CLAUDE.md`, Estilo de código).
+static func moeda(valor: int) -> String:
+	var gs: Node = (Engine.get_main_loop() as SceneTree).root.get_node("GameState")
+	return gs.moeda(valor)
+
+
+# Rótulo à esquerda, valor à direita, os dois no tom de apoio. O valor alinha
+# à direita porque é assim que se comparam números empilhados — alinhados à
+# esquerda, R$1.200 e R$980 parecem do mesmo tamanho.
+static func linha_de_apoio(grade: GridContainer, rotulo: String, valor: String) -> void:
+	var esquerda := Label.new()
+	esquerda.theme_type_variation = "RotuloApoio"
+	esquerda.text = rotulo
+	esquerda.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grade.add_child(esquerda)
+
+	var direita := Label.new()
+	direita.theme_type_variation = "RotuloApoio"
+	direita.text = valor
+	direita.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	grade.add_child(direita)
+
+
+# A grade dos quadros de número, e cada quadro dentro dela. É a caixa do lucro
+# das finanças do *Two Point Hospital* (`063`): o número em destaque, cada um
+# no seu quadro.
+#
+# ⚠️ O RÓTULO VAI EM CIMA E NÃO CONCORDA COM O NÚMERO, de propósito: é o nome
+# da categoria («Barcos atendidos», com 1 ou com 24), e por isso não precisa
+# do `concordar()` que o F9 exige a toda contagem escrita em frase.
+#
+# O `detalhe` é a linha de apoio POR BAIXO do número — o dia do recorde, o
+# tipo do negócio —, e vazio não ocupa lugar.
+func grade_de_quadros(colunas: int = 2) -> GridContainer:
+	var quadros := GridContainer.new()
+	quadros.columns = colunas
+	quadros.add_theme_constant_override("h_separation", 8)
+	quadros.add_theme_constant_override("v_separation", 8)
+	_vbox.add_child(quadros)
+	return quadros
+
+
+static func quadro(grade: GridContainer, nome: String, numero: String,
+		detalhe: String = "") -> PanelContainer:
+	var bloco := PanelContainer.new()
+	bloco.theme_type_variation = "BlocoNumero"
+	bloco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var coluna := VBoxContainer.new()
+	coluna.add_theme_constant_override("separation", 0)
+	bloco.add_child(coluna)
+	var rotulo := Label.new()
+	rotulo.theme_type_variation = "RotuloApoio"
+	rotulo.text = nome
+	coluna.add_child(rotulo)
+	var valor := Label.new()
+	valor.theme_type_variation = "NumeroGrande"
+	valor.text = numero
+	coluna.add_child(valor)
+	if detalhe != "":
+		var apoio := Label.new()
+		apoio.theme_type_variation = "RotuloApoio"
+		apoio.text = detalhe
+		apoio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		coluna.add_child(apoio)
+	grade.add_child(bloco)
+	return bloco
+
+
+# A BARRA DO HUD, no estilo base do tema (`063`): o jogador passa a partida a
+# olhar para a barra da parcela no rodapé, e cada painel que mostra uma coisa
+# a andar para uma meta usa o MESMO desenho — uma barra de outro estilo seria
+# outra coisa para aprender. Não recebe toque e não escreve número: o texto ao
+# lado é quem diz quanto; ela diz quanto FALTA à vista (26/09, `065`).
+static func barra_do_hud(valor: float, maximo: float, minimo: float = 0.0) -> ProgressBar:
+	var barra := ProgressBar.new()
+	barra.name = "Barra"
+	barra.show_percentage = false
+	barra.custom_minimum_size = Vector2(0, 10)
+	barra.min_value = minimo
+	barra.max_value = maximo
+	barra.value = clampf(valor, minimo, maximo)
+	return barra
+
+
+# A barra DENTRO da última tarja, entre o número e a linha de apoio — o sítio
+# que a cobrança do Sr. Ribeiro lhe deu primeiro.
+func barra_na_tarja(valor: float, maximo: float) -> ProgressBar:
+	var barra := barra_do_hud(valor, maximo)
+	var linhas := _detalhe_da_tarja.get_parent()
+	linhas.add_child(barra)
+	linhas.move_child(barra, _detalhe_da_tarja.get_index())
+	return barra
+
+
 # O botão que fecha. Devolvê-lo permite ao painel concreto ligar mais alguma
 # coisa ao mesmo clique, sem precisar de um segundo botão.
 func botao_fechar(texto: String) -> Button:

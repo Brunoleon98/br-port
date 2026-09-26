@@ -68,10 +68,18 @@ const MARCAS := [
 
 func setup(_sem_argumentos: Variant = null) -> void:
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
-	titulo(Icones.DIA, "Calendário")
-	paragrafo("Semana %d de %d — dia %d de %d"
-		% [GameState.current_week(), GameState.WEEKS_TOTAL,
-		   mini(GameState.turn, GameState.TURNS_TOTAL), GameState.TURNS_TOTAL])
+	titulo_encorpado(Icones.DIA, "Calendário")
+	# O DIA DE HOJE NA TARJA (26/09, `065`): é a resposta à pergunta do chip,
+	# e a semana e o vencimento vão na linha de apoio, que é o contexto dele.
+	# Tom neutro: um dia não é resultado nenhum.
+	var vence := ("a parcela vence no dia %d" % GameState.PARCELA_DUE_TURN) \
+		if not GameState.parcela_paid else "a parcela já está paga"
+	var hoje: int = mini(GameState.turn, GameState.TURNS_TOTAL)
+	tarja("Dia %d de %d" % [hoje, GameState.TURNS_TOTAL],
+		"Semana %d de %d · %s" % [GameState.current_week(), GameState.WEEKS_TOTAL, vence])
+	# O PRAZO À VISTA (segunda passagem, `065`): quanto da partida já andou,
+	# na barra do HUD — a mesma que o rodapé usa para o dinheiro da parcela.
+	barra_na_tarja(hoje, GameState.TURNS_TOTAL)
 
 	var dias: Array = GameState.calendario()
 	var semana_atual := -1

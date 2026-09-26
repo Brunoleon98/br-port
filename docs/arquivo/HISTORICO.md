@@ -751,3 +751,10 @@ mais antigas:
 |---|---|
 | **As telas do fim em fila** (23/09, `054`) — escolha do Bruno | o «Pagar» abria o boletim e o fim de fase POR CIMA da resposta do Sr. Ribeiro, e «Jogar de novo» saltava as duas. Hoje o `Main` põe-nos em fila (`_na_vez()`): resposta → boletim → fim, nos três caminhos do fim; o GameState não mudou. **F11** percorre-os pelos botões; o tiro `balanco` passou de 3 painéis a 1. 7 mutantes: o do `fechou` só a captura apanha |
 | **A frente 1 do A5** (23/09) — escolha do Bruno | o calendário mostra na grelha os ícones da legenda, por baixo do número (lado a lado alargava o cartão a 534 px), e o **D36** tranca-o; «Primeira parcela paga» no lugar de «Fim da Fase 1»; o Arlindo diz «meu caro» |
+
+**E, para caber os painéis do HUD (`065`),** desceram as duas de 24/09:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **Os trinta rostos do trabalhador** (24/09, `059`) — escolha do Bruno | 2 sexos × 3 idades × 5 cores do IBGE, três voltas até à v3. Cada trabalhador nasce com o seu ROSTO (campo no save, `SAVE_VERSION` 8) por um sorteio próprio: o `_rng` medido não se mexe (100 / 80,2 / 37,3). +7,33 MB no pacote (+22% do APK), sem perda por escolha dele. **F12** e a folha `trabalhadores` na bateria |
+| **As caras sem foto** (24/09, `060`) | a cobertura desce à CARA: as ferramentas imprimem `Retratos:` só depois de esconder a cara e ver a foto mudar, e o conferidor lê o `POR_EXPRESSAO`. Tiros `boletim_ruim`, `boletim_otimo` e `contraoferta_pressao`: **9 de 9** caras (eram 6; a formal já tinha foto). 35 tiros |

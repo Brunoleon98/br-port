@@ -906,10 +906,29 @@ tom do que diz (`064`). O F14 do `teste_fumaca` confere cada promessa da tela
 contra o que o jogo faz. **Antes de fotografar, o save do jogador saiu do
 alcance das ferramentas** (`061`).
 
-**O que resta da frente 3** são os outros painéis da lista acima — diário,
-menu, mensagens, pausa, docas, caixa, reputação, nomes —, e a ordem é do
-Bruno. O vocabulário desta família (cabeçalho com selo, tarja com linha de
-apoio e tom, barra do HUD, quadros de número) está no tema e serve-lhes.
+#### ✅ A SEGUNDA FAMÍLIA DA FRENTE 3 FECHOU (25/09) — os painéis do HUD
+
+Dinheiro do dia, docas, reputação, calendário e parcela, os que abrem por um
+toque no HUD, em duas passagens (`065`). A primeira vestiu-os do vocabulário
+da primeira família e trouxe os pedidos do gate: **recordes da partida** no
+dinheiro do dia (melhor dia, mais barcos num dia, maior negócio, melhor
+semana — escolha dele: da PARTIDA, e por isso no save, `SAVE_VERSION` 9),
+**renda esperada e tipo de trabalho** em cada doca, e a reputação em **três
+eixos**, com a de hoje como Comercial e a Comunitária e a Imprensa trancadas.
+O veredito foi «continue», e a segunda deu a cada número que anda para uma
+meta a barra do HUD — a escada de barras, o trabalho de cada doca até ao fim
+do dia, o prazo, ontem contra o melhor dia —: **«ficou bom»**. O F15 do
+`teste_fumaca` confere cada número contra o jogo.
+
+**O que resta da frente 3** são as telas de texto (diário, mensagens, nomes) e
+o sistema (pausa, menu), e a ordem é do Bruno. Os pedidos dele para elas estão
+na triagem acima: o diário com cara de diário e imagens do porto antigo, o
+menu mais parecido com um celular, mensagens e pausa inspiradas em jogos de
+referência (a pausa com «salvar e sair» para uma tela inicial que ainda não
+existe) e os nomes como a tela depois de «Nova partida». O vocabulário das
+duas famílias — cabeçalho com selo, tarja com linha de apoio e tom, quadros de
+número, a barra do HUD, o bloco de contas — vive no `PainelNarrativo` e no
+tema.
 
 ---
 

@@ -445,7 +445,11 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # 8 (24/09): o trabalhador passou a nascer com um ROSTO, o índice do retrato
 # dele (`059`). Um save da 7 traz trabalhadores sem rosto, e o cartão indexaria
 # a tabela dos retratos com uma chave que não existe.
-const SAVE_VERSION := 8
+#
+# 9 (25/09): os RECORDES da partida (`065`) — o melhor dia, o dia com mais
+# barcos e o maior negócio. Um save da 8 não os tem, e o painel do dinheiro
+# afirmaria recordes que a partida não guardou.
+const SAVE_VERSION := 9
 
 # ── OS DOIS NOMES ──
 # O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7).
@@ -536,6 +540,31 @@ var dia_anterior: Dictionary = DIA_ZERADO.duplicate()
 # não há com que comparar — na semana 1 ela usa só o sinal do resultado.
 var historico_semanas: Array = []
 
+# ── OS RECORDES DA PARTIDA (`065`) ──
+# O painel do dinheiro mostra o melhor dia, o dia com mais barcos, o maior
+# negócio e a melhor semana, e zeram com a partida — escolha do Bruno, que os
+# quer para comparar com «ontem», e não como recorde pessoal entre partidas.
+# A melhor semana não mora aqui: sai do `historico_semanas`, que já existe.
+#
+# ⚠️ O DIA ENTRA NO RECORDE UMA VIRADA DEPOIS, e é de propósito. O
+# `pay_debt()` escreve a parcela no `dia_anterior` DEPOIS de o dia ter virado
+# (ver `advance_turn()`), então um dia só está fechado de verdade quando o
+# seguinte vira. Gravar na virada punha o dia 32 como um dia bom com a parcela
+# de R$530.000 ainda por sair dele. Aqui ficam os dias ANTERIORES ao
+# `dia_anterior`, e quem lê é `recordes()`, que soma o `dia_anterior` vivo.
+#
+# O maior negócio grava-se no instante do pagamento, porque o valor de um
+# barco não muda depois de ele sair — e é o mesmo `_lancar_receita()` que põe
+# o dinheiro no caixa quem diz quanto ele pagou.
+#
+# `turno` 0 é «ainda não houve», e é o que a partida nova traz.
+const RECORDES_ZERADOS := {
+	"melhor_dia": {"valor": 0, "turno": 0},
+	"mais_barcos": {"n": 0, "turno": 0},
+	"maior_negocio": {"valor": 0, "turno": 0, "motivo": "", "classe": ""},
+}
+var _recordes: Dictionary = RECORDES_ZERADOS.duplicate(true)
+
 var metrics := {
 	"boats_served": 0,
 	"boats_lost": 0,
@@ -606,6 +635,7 @@ func new_game() -> void:
 	dia_atual = DIA_ZERADO.duplicate()
 	dia_anterior = DIA_ZERADO.duplicate()
 	historico_semanas = []
+	_recordes = RECORDES_ZERADOS.duplicate(true)
 	cash = START_CASH
 	reputation = REPUTATION_START
 	upgrade_purchased = false
@@ -1086,6 +1116,7 @@ func advance_turn() -> void:
 				# o arquivo de escrita pede.
 				var value := _lancar_receita(dia_atual, bruto, String(boat["motivo"]))
 				_lancar_receita(semana_atual, bruto, String(boat["motivo"]))
+				_registrar_negocio(value, boat)
 				cash += value
 				metrics["revenue"] += value
 				dia_atual["servidos"] += 1
@@ -1126,6 +1157,8 @@ func advance_turn() -> void:
 	# dia (`dia_anterior`), porque `advance_turn()` já devolveu por aqui e o
 	# turno seguinte só começa depois de o jogador decidir.
 	dia_atual["turno"] = prev_turn
+	# O dia que SAI do `dia_anterior` está fechado agora — ver `_recordes`.
+	_registrar_dia(dia_anterior, _recordes)
 	dia_anterior = dia_atual.duplicate()
 	dia_atual = DIA_ZERADO.duplicate()
 
@@ -1243,6 +1276,62 @@ func resumo_da_semana(semana: int) -> Dictionary:
 # nem em `cash`, nem em `dia_atual`, nem em doca nenhuma.
 func resumo_do_dia() -> Dictionary:
 	return {"ontem": dia_anterior.duplicate(), "hoje": projecao_do_dia()}
+
+
+# O resultado de um dia fechado — a MESMA conta do painel do dinheiro e do
+# boletim: o que entrou menos o que saiu, parcela incluída.
+static func resultado_do_dia(dia: Dictionary) -> int:
+	var receita: int = int(dia["docagens"]) + int(dia["armazem"]) \
+		+ int(dia["patio"]) + int(dia["pier"])
+	var despesa: int = int(dia["salarios"]) + int(dia["manutencao"]) + int(dia["parcela"])
+	return receita - despesa
+
+
+# Dobra um dia FECHADO nos recordes de `alvo`. Estrito (`>`): no empate fica o
+# dia mais antigo, que foi quem o fez primeiro.
+func _registrar_dia(dia: Dictionary, alvo: Dictionary) -> void:
+	var t := int(dia["turno"])
+	if t <= 0:
+		return
+	var resultado := resultado_do_dia(dia)
+	if int(alvo["melhor_dia"]["turno"]) == 0 or resultado > int(alvo["melhor_dia"]["valor"]):
+		alvo["melhor_dia"] = {"valor": resultado, "turno": t}
+	var n := int(dia["servidos"])
+	if n > int(alvo["mais_barcos"]["n"]):
+		alvo["mais_barcos"] = {"n": n, "turno": t}
+
+
+func _registrar_negocio(valor: int, barco: Dictionary) -> void:
+	if int(_recordes["maior_negocio"]["turno"]) == 0 \
+			or valor > int(_recordes["maior_negocio"]["valor"]):
+		_recordes["maior_negocio"] = {"valor": valor, "turno": turn,
+			"motivo": String(barco["motivo"]), "classe": String(barco["classe"])}
+
+
+## OS RECORDES COMO O JOGADOR OS LÊ: os guardados mais o `dia_anterior` VIVO
+## (ver `_recordes`), e a melhor semana tirada do `historico_semanas`. Devolve
+## cópia — quem lê não escreve.
+func recordes() -> Dictionary:
+	var r: Dictionary = _recordes.duplicate(true)
+	_registrar_dia(dia_anterior, r)
+	r["melhor_semana"] = {"valor": 0, "semana": 0}
+	for i in range(historico_semanas.size()):
+		var v := int(historico_semanas[i])
+		if int(r["melhor_semana"]["semana"]) == 0 or v > int(r["melhor_semana"]["valor"]):
+			r["melhor_semana"] = {"valor": v, "semana": i + 1}
+	return r
+
+
+## QUANTO A DOCA `i` VAI PAGAR quando o barco dela acabar — o bruto (ou o
+## preço fechado com o rival) mais o bónus da estrutura, pelo MESMO
+## `_lancar_receita()` que o `advance_turn()` usa, num dicionário de rascunho.
+## Zero se a doca estiver vazia. Não diz SE vai pagar: sem trabalhador, o
+## barco sai no fim do dia.
+func receita_da_doca(i: int) -> int:
+	var barco = docks[i]["boat"]
+	if barco == null:
+		return 0
+	return _lancar_receita(DIA_ZERADO.duplicate(), _valor_do_barco(i), String(barco["motivo"]))
 
 
 func projecao_do_dia() -> Dictionary:
@@ -1706,6 +1795,7 @@ func save_game() -> void:
 		"historico_semanas": historico_semanas,
 		"dia_atual": dia_atual,
 		"dia_anterior": dia_anterior,
+		"recordes": _recordes,
 	}
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file:
@@ -1811,6 +1901,21 @@ func load_game() -> bool:
 	if typeof(lido_anterior) == TYPE_DICTIONARY:
 		for chave in DIA_ZERADO:
 			dia_anterior[chave] = int(lido_anterior.get(chave, 0))
+	# Pela mesma razão dos dias: o JSON devolve float, e o painel escreve o
+	# dia do recorde com `%d`. A forma é a de `RECORDES_ZERADOS`, lida chave a
+	# chave, e um campo que falte fica em «ainda não houve».
+	_recordes = RECORDES_ZERADOS.duplicate(true)
+	var lidos = parsed.get("recordes", {})
+	if typeof(lidos) == TYPE_DICTIONARY:
+		for nome in RECORDES_ZERADOS:
+			var lido = lidos.get(nome, {})
+			if typeof(lido) != TYPE_DICTIONARY:
+				continue
+			for chave in RECORDES_ZERADOS[nome]:
+				if typeof(RECORDES_ZERADOS[nome][chave]) == TYPE_STRING:
+					_recordes[nome][chave] = String(lido.get(chave, ""))
+				else:
+					_recordes[nome][chave] = int(lido.get(chave, 0))
 
 	_reconciliar_roster()
 	state_loaded.emit()
