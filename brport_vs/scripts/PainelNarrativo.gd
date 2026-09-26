@@ -81,11 +81,7 @@ func _ready() -> void:
 # como estavam — o `theme_type_variation` só se toca quando alguém o pede.
 func montar(largura: int, altura: int, escuro: float = ESCURO_LEITURA,
 		variacao: String = "") -> VBoxContainer:
-	var fundo := ColorRect.new()
-	fundo.color = Color(0, 0, 0, escuro)
-	fundo.anchor_right = 1.0
-	fundo.anchor_bottom = 1.0
-	add_child(fundo)
+	_escurecer(escuro)
 
 	var caixa := PanelContainer.new()
 	if variacao != "":
@@ -110,6 +106,14 @@ func montar(largura: int, altura: int, escuro: float = ESCURO_LEITURA,
 	_vbox.add_theme_constant_override("separation", 10)
 	caixa.add_child(_vbox)
 	return _vbox
+
+
+func _escurecer(escuro: float) -> void:
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, escuro)
+	fundo.anchor_right = 1.0
+	fundo.anchor_bottom = 1.0
+	add_child(fundo)
 
 
 # Um bloco de texto que quebra sozinho. Praticamente todo o conteúdo narrativo
@@ -515,6 +519,340 @@ func barra_na_tarja(valor: float, maximo: float) -> ProgressBar:
 	linhas.add_child(barra)
 	linhas.move_child(barra, _detalhe_da_tarja.get_index())
 	return barra
+
+
+# ── O CADERNO (`docs/decisoes/067`) ──
+# O diário e a tela de nomes são o MESMO objeto: a folha de rosto de um
+# caderno de capa dura e a primeira página dele. Escolha do Bruno (26/09):
+# «caderno, letra à mão» e «folha de rosto do diário», com a página a virar
+# para a primeira entrada ao abrir o porto. Os dois painéis montam o caderno
+# no MESMO retângulo, e é isso que faz a virada ler como uma página e não como
+# duas telas — daí as medidas viverem aqui e não em cada painel.
+#
+# O papel e a capa são `StyleBoxFlat` do tema, e é contra o creme da página
+# que o D33 mede a tinta; a pauta, a margem, a lombada e a fita desenha-as a
+# `FolhaDoCaderno.gd`, com as cores do tema.
+const FolhaDoCaderno := preload("res://scripts/FolhaDoCaderno.gd")
+const PAPEL := preload("res://ui/shaders/papel.gdshader")
+const TINTA := preload("res://ui/shaders/tinta.gdshader")
+const CADERNO_LARGURA := 640
+const CADERNO_ALTURA := 880
+# O caderno fica no centro da tela: por cima dele sobra o lugar da legenda da
+# tela de nomes, por baixo o do botão. O desvio existe para o caso de a
+# legenda precisar de mais vão, e hoje é zero.
+const CADERNO_DESCE := 0
+const CADERNO_BOTAO_VAO := 22
+# As margens do texto dentro da página. Na página pautada o texto começa
+# depois da linha vermelha; na folha de rosto não há linha, e a margem é a do
+# papel.
+const PAGINA_MARGEM_PAUTADA := 58
+const PAGINA_MARGEM_LISA := 34
+const PAGINA_MARGEM_DIR := 26
+const PAGINA_MARGEM_TOPO := 24
+const PAGINA_MARGEM_PE := 20
+
+var _caderno_capa: PanelContainer
+var _pagina: PanelContainer
+var _folha: Control
+var _paginas := 0
+
+
+func montar_caderno(escuro: float = ESCURO_LEITURA) -> PanelContainer:
+	_escurecer(escuro)
+	var capa := PanelContainer.new()
+	capa.name = "Caderno"
+	capa.theme_type_variation = &"CadernoCapa"
+	capa.anchor_left = 0.5
+	capa.anchor_top = 0.5
+	capa.anchor_right = 0.5
+	capa.anchor_bottom = 0.5
+	capa.offset_left = -CADERNO_LARGURA / 2.0
+	capa.offset_right = CADERNO_LARGURA / 2.0
+	capa.offset_top = -CADERNO_ALTURA / 2.0 + CADERNO_DESCE
+	capa.offset_bottom = CADERNO_ALTURA / 2.0 + CADERNO_DESCE
+	add_child(capa)
+	# A costura, os cantos gastos e as folhas empilhadas: o primeiro filho da
+	# capa, por baixo das páginas, que o tapam no meio.
+	var desenho := FolhaDoCaderno.CapaDoCaderno.new()
+	desenho.name = "Capa"
+	capa.add_child(desenho)
+	_caderno_capa = capa
+	return capa
+
+
+# Uma página dentro da capa, e a caixa onde o conteúdo dela entra. Chamada
+# DUAS vezes empilha duas páginas — a de baixo primeiro —, que é o que a tela
+# de nomes faz para a virada ter o que revelar.
+#
+# ⚠️ A FITA É DO LIVRO, NÃO DA PÁGINA: quem a desenha é a página de BAIXO. Se
+# fosse a de cima, a fita virava com a folha.
+func pagina_do_caderno(pautada: bool, com_fita: bool,
+		orelha: int = FolhaDoCaderno.Orelha.NENHUMA) -> VBoxContainer:
+	var papel := PanelContainer.new()
+	papel.name = "Pagina"
+	papel.theme_type_variation = &"CadernoPagina"
+	_caderno_capa.add_child(papel)
+	_paginas += 1
+	papel.add_child(_fibra_do_papel(papel, _paginas))
+	var folha := FolhaDoCaderno.new()
+	folha.name = "Folha"
+	folha.pautada = pautada
+	folha.com_fita = com_fita
+	folha.orelha = orelha
+	# Cada página com o seu papel: a folha de rosto e a entrada que ela revela
+	# não podem ter as manchas no mesmo sítio.
+	folha.semente = _paginas
+	papel.add_child(folha)
+
+	var margem := MarginContainer.new()
+	margem.add_theme_constant_override("margin_left",
+		PAGINA_MARGEM_PAUTADA if pautada else PAGINA_MARGEM_LISA)
+	margem.add_theme_constant_override("margin_right", PAGINA_MARGEM_DIR)
+	margem.add_theme_constant_override("margin_top", PAGINA_MARGEM_TOPO)
+	margem.add_theme_constant_override("margin_bottom", PAGINA_MARGEM_PE)
+	papel.add_child(margem)
+	var caixa := VBoxContainer.new()
+	caixa.add_theme_constant_override("separation", 12)
+	margem.add_child(caixa)
+
+	_pagina = papel
+	_folha = folha
+	_vbox = caixa
+	return caixa
+
+
+func pagina_atual() -> PanelContainer:
+	return _pagina
+
+
+# A FIBRA DO PAPEL VELHO, num shader por cima do creme (`ui/shaders/papel.gdshader`).
+# ⚠️ É UM `ColorRect` TRANSPARENTE, e isso importa para a régua do contraste:
+# ela lê um `ColorRect` irmão por trás do texto como um fundo, e um alfa zero
+# deixa-a seguir até ao creme da página, que é contra o que a tinta se mede.
+# As cores são do tema (`CadernoPagina/colors/grao` e `mancha`).
+func _fibra_do_papel(papel: PanelContainer, semente: int) -> ColorRect:
+	var fibra := ColorRect.new()
+	fibra.name = "Fibra"
+	fibra.color = Color(1, 1, 1, 0)
+	fibra.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var m := ShaderMaterial.new()
+	m.shader = PAPEL
+	m.set_shader_parameter("semente", float(semente))
+	fibra.material = m
+	fibra.resized.connect(func() -> void:
+		m.set_shader_parameter("tamanho", fibra.size)
+		m.set_shader_parameter("fibra", papel.get_theme_color("grao", &"CadernoPagina"))
+		m.set_shader_parameter("mancha", papel.get_theme_color("mancha", &"CadernoPagina")))
+	return fibra
+
+
+# A TINTA DE CANETA nos textos à mão: o tom varia ao longo do traço
+# (`ui/shaders/tinta.gdshader`). O shader só multiplica a cor que o tema dá.
+static func tinta_de_caneta(no: CanvasItem) -> void:
+	var m := ShaderMaterial.new()
+	m.shader = TINTA
+	no.material = m
+
+
+# UMA ENTRADA DO DIÁRIO: a data à direita, uma linha em branco, o texto — tudo
+# na letra à mão e no ritmo da pauta.
+#
+# ⚠️ O RITMO É O DA PAUTA, e é o TEMA que o segura. A data e o texto são dois
+# rótulos, e só caem em linhas seguidas da pauta se o vão entre eles for o
+# `line_spacing` da letra: é a `CadernoLinhas`, cuja separação o tema escreve
+# igual ao `line_spacing` da `TextoCaderno`. A linha em branco é a quebra no
+# fim da data, e não um espaçador em pixel — um espaçador envelheceria no dia
+# em que a letra mudasse de tamanho.
+#
+# ⚠️ E NADA AQUI LÊ O TEMA NA MONTAGEM: a ferramenta de captura aplica-o
+# depois do `_ready()`, e um número lido cedo seria o do tema padrão. A pauta
+# lê-o ao desenhar (`FolhaDoCaderno`).
+func entrada_do_diario(cabecalho: String, texto: String) -> Label:
+	var linhas := VBoxContainer.new()
+	linhas.name = "Entrada"
+	linhas.theme_type_variation = &"CadernoLinhas"
+	_vbox.add_child(linhas)
+	var data := Label.new()
+	data.name = "Data"
+	data.theme_type_variation = &"TextoCaderno"
+	data.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	data.text = cabecalho + "\n"
+	linhas.add_child(data)
+	var corpo := Label.new()
+	corpo.name = "Texto"
+	corpo.theme_type_variation = &"TextoCaderno"
+	# `_SMART` pela razão da `fala()`: o texto leva o nome do cais, e a tela
+	# de nomes aceita 24 letras sem espaço.
+	corpo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	corpo.text = texto
+	linhas.add_child(corpo)
+	tinta_de_caneta(data)
+	tinta_de_caneta(corpo)
+	_folha.pautar_por(data)
+	return corpo
+
+
+# Texto IMPRESSO na folha — o rótulo de um campo, a nota de pé de página. É a
+# letra do jogo, pequena e na cor de tinta de gráfica, para não se confundir
+# com o que se escreve à mão por cima dela.
+func impresso(texto: String) -> Label:
+	var rotulo := Label.new()
+	rotulo.theme_type_variation = &"ImpressoCaderno"
+	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	rotulo.text = texto
+	_vbox.add_child(rotulo)
+	return rotulo
+
+
+# Um campo que se preenche À MÃO: a letra do caderno sobre uma linha, sem
+# caixa à volta — o que se escreve numa folha de rosto.
+#
+# ⚠️ A SUGESTÃO É IMPRESSA, e não o `placeholder_text` do campo: o placeholder
+# sai na fonte do campo, que é a letra à mão, e «Cais Mirim» e «(pode deixar
+# em branco)» liam-se como já escritos, só mais claros (o Bruno apontou-o na
+# primeira passagem). Um rótulo na letra impressa, dentro do campo e escondido
+# assim que se escreve, lê-se como o exemplo de um formulário.
+func campo_a_mao(sugestao: String) -> LineEdit:
+	var entrada := LineEdit.new()
+	entrada.theme_type_variation = &"CampoCaderno"
+	entrada.custom_minimum_size = Vector2(0, TOQUE_MIN + 8)
+	# SEM a tinta de caneta: o shader multiplica tudo o que o nó desenha, e no
+	# campo isso é também o fundo dele — o papel da etiqueta saía às nuvens.
+	_vbox.add_child(entrada)
+	var dica := Label.new()
+	dica.name = "Sugestao"
+	dica.theme_type_variation = &"SugestaoCaderno"
+	dica.text = sugestao
+	dica.anchor_right = 1.0
+	dica.anchor_bottom = 1.0
+	dica.offset_left = 6
+	dica.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	dica.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	entrada.add_child(dica)
+	entrada.text_changed.connect(func(t: String) -> void: dica.visible = t == "")
+	return entrada
+
+
+# A ETIQUETA ADESIVA da folha de rosto: o rótulo de caderno escolar, creme,
+# de filete azul e cantos redondos, colado um pouco torto. Era um quadro de
+# filete duplo até à terceira passagem, e o Bruno achou-o «muito formal» —
+# formulário de repartição, e não caderno.
+#
+# ⚠️ O GIRO PEDE UM SUPORTE SIMPLES, como a foto: todo `Container` zera a
+# rotação do filho ao arrumá-lo. E a largura é escrita aqui, porque fora do
+# contentor a etiqueta já não recebe a da coluna.
+const ETIQUETA_LARGURA := 500
+const ETIQUETA_GIRO := -1.2
+
+func etiqueta_da_folha() -> VBoxContainer:
+	var centro := CenterContainer.new()
+	_vbox.add_child(centro)
+	var suporte := Control.new()
+	suporte.name = "SuporteDaEtiqueta"
+	centro.add_child(suporte)
+	var etiqueta := PanelContainer.new()
+	etiqueta.name = "Etiqueta"
+	etiqueta.theme_type_variation = &"CadernoEtiqueta"
+	etiqueta.custom_minimum_size = Vector2(ETIQUETA_LARGURA, 0)
+	etiqueta.rotation_degrees = ETIQUETA_GIRO
+	suporte.add_child(etiqueta)
+	etiqueta.resized.connect(func() -> void:
+		etiqueta.pivot_offset = etiqueta.size / 2.0
+		suporte.custom_minimum_size = etiqueta.size)
+	var caixa := VBoxContainer.new()
+	caixa.add_theme_constant_override("separation", 8)
+	etiqueta.add_child(caixa)
+	_vbox = caixa
+	return caixa
+
+
+# A FOTO COLADA NA FOLHA, com a borda branca de fotografia de papel, as
+# cantoneiras e um giro pequeno — foto colada à mão nunca fica a direito.
+func foto_colada(textura: Texture2D, largura: int, altura: int,
+		giro_graus: float) -> PanelContainer:
+	var centro := CenterContainer.new()
+	_vbox.add_child(centro)
+	# ⚠️ A FOTO VIVE NUM `Control` SIMPLES, e não direto no contentor: todo
+	# `Container` zera a rotação e a escala do filho ao arrumá-lo
+	# (`fit_child_in_rect`), e a primeira foto saiu a direito com o giro
+	# escrito ao lado. O suporte ocupa o lugar dela na coluna; o giro fica.
+	var suporte := Control.new()
+	suporte.name = "SuporteDaFoto"
+	centro.add_child(suporte)
+	var moldura := PanelContainer.new()
+	moldura.name = "Foto"
+	moldura.theme_type_variation = &"CadernoFoto"
+	suporte.add_child(moldura)
+	var imagem := TextureRect.new()
+	imagem.name = "Imagem"
+	imagem.texture = textura
+	imagem.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	imagem.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	imagem.custom_minimum_size = Vector2(largura, altura)
+	moldura.add_child(imagem)
+	moldura.add_child(FolhaDoCaderno.Cantoneiras.new())
+	moldura.rotation_degrees = giro_graus
+	# O giro é em volta do MEIO da foto, e o suporte pede o tamanho dela — que
+	# só se sabe depois de o tema lhe dar as margens.
+	moldura.resized.connect(func() -> void:
+		moldura.pivot_offset = moldura.size / 2.0
+		suporte.custom_minimum_size = moldura.size)
+	return moldura
+
+
+# O botão FORA do caderno, por baixo dele — o gesto de fechar o livro ou de o
+# abrir, como o «Guardar o telefone» fica fora do celular (`066`). Dentro da
+# página seria um botão do jogo desenhado num diário.
+func botao_abaixo_do_caderno(texto: String) -> Button:
+	var botao := Button.new()
+	botao.name = "BotaoCaderno"
+	botao.text = texto
+	botao.anchor_left = 0.5
+	botao.anchor_right = 0.5
+	botao.anchor_top = 0.5
+	botao.anchor_bottom = 0.5
+	botao.offset_left = -170
+	botao.offset_right = 170
+	var pe := CADERNO_ALTURA / 2.0 + CADERNO_DESCE + CADERNO_BOTAO_VAO
+	botao.offset_top = pe
+	botao.offset_bottom = pe + TOQUE_MIN + 8
+	botao.pressed.connect(_fechar)
+	add_child(botao)
+	return botao
+
+
+# O que se diz ANTES de abrir o caderno: o título e uma frase, claros sobre o
+# escuro, no vão por cima dele. É a voz de quem conta a história, e não a de
+# quem escreve no diário — por isso fica fora da folha.
+func legenda_acima_do_caderno(titulo_: String, texto: String) -> VBoxContainer:
+	var coluna := VBoxContainer.new()
+	coluna.name = "Legenda"
+	coluna.add_theme_constant_override("separation", 8)
+	coluna.anchor_left = 0.5
+	coluna.anchor_right = 0.5
+	coluna.anchor_top = 0.5
+	coluna.anchor_bottom = 0.5
+	# Um pouco mais larga do que o caderno: a frase do Seu Maneco cabe numa
+	# linha a 680 e partia-se a 640, com «coisas.» sozinha na segunda.
+	coluna.offset_left = -CADERNO_LARGURA / 2.0 - 20
+	coluna.offset_right = CADERNO_LARGURA / 2.0 + 20
+	var topo_do_caderno := -CADERNO_ALTURA / 2.0 + CADERNO_DESCE
+	coluna.offset_bottom = topo_do_caderno - 18
+	coluna.offset_top = coluna.offset_bottom
+	coluna.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	add_child(coluna)
+	var cabeca := Label.new()
+	cabeca.theme_type_variation = &"TituloAbertura"
+	cabeca.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cabeca.text = titulo_
+	coluna.add_child(cabeca)
+	var frase := Label.new()
+	frase.theme_type_variation = &"TextoAbertura"
+	frase.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	frase.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	frase.text = texto
+	coluna.add_child(frase)
+	return coluna
 
 
 # O botão que fecha. Devolvê-lo permite ao painel concreto ligar mais alguma

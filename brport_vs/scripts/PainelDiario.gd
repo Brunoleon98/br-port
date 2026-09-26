@@ -17,34 +17,39 @@ extends PainelNarrativo
 # atravessa de uma partida para a seguinte.
 # ============================================================
 
-# Cartão de LEITURA, e por isso maior que os painéis de decisão: quanto mais
-# largo, menos linhas quebram, e quanto mais alto, menos se rola. A primeira
-# medida (360x480 com 330 de texto) rolava a meio da terceira frase e ainda
-# deixava 70px vazios debaixo do botão — a caixa era maior do que o conteúdo
-# num sítio e menor noutro ao mesmo tempo.
+# O CADERNO (`docs/decisoes/067`). Era um cartão branco de 440 px com o texto
+# na letra do jogo e uma área que rolava; desde a família das telas de texto é
+# a primeira página de um caderno de capa dura, pautada, na letra à mão — o
+# pedido do Bruno foi «cara de diário», e este mesmo painel é o que o app
+# Diário do celular abre.
 #
-# ⚠️ ESTA ALTURA É CALIBRADA CONTRA O TEXTO, e cresce com ele. Ao acrescentar
-# a frase do caixa inicial (4 linhas, ~100px) o texto passou os 520 de então:
-# apareceu barra de rolagem e a primeira tela acabava a MEIO de "Talvez o avô
-# soubesse o que tava fazendo quando" — a frase que fecha o diário —, com o
-# botão logo abaixo a convidar a sair sem rolar. As cinco suítes passaram
-# todas; quem apanhou foi a captura. Quem mexer no texto do diário
-# refotografa este painel e confere que a última linha é "Talvez.".
-const LARGURA := 440
-const ALTURA := 760
-const ALTURA_TEXTO := 620
+# ⚠️ A PÁGINA NÃO ROLA, e é o que o D36 tranca: a letra à mão é mais larga do
+# que a do jogo, e o texto com o nome mais comprido que a tela de nomes aceita
+# tem de caber na folha sem a fazer crescer. A primeira medida da rolagem
+# (11/09) já mostrava o preço de não caber: a frase que FECHA o diário
+# («Talvez.») ficava por baixo da dobra, com o botão a convidar a sair.
+#
+# ⚠️ E O RETÂNGULO É O MESMO DA TELA DE NOMES — as medidas vivem no
+# `PainelNarrativo` —, porque a folha de rosto vira para esta página.
 
 
 func _ready() -> void:
 	super()
-	montar(LARGURA, ALTURA)
-	# DIA: entrada de diário é datada, e o cabeçalho diz a semana. Dos vinte
-	# ícones é o único com essa leitura, e tem navy no traço — sobrevive ao
-	# fundo claro do cartão, ao contrário de `doca` (Icones.gd avisa).
-	titulo(Icones.DIA, Narrativa.DIARIO_CABECALHO)
-	paragrafo_rolavel(Narrativa.diario(), ALTURA_TEXTO)
+	montar_caderno(ESCURO_LEITURA)
+	# A orelha no canto de baixo, como a página que a folha de rosto revela.
+	pagina_do_caderno(true, true, FolhaDoCaderno.Orelha.BAIXO)
+	escrever(self)
 	# "primeira semana" e não "semana 1" — o rótulo do botão é a MESMA frase que
 	# a leitura em voz alta de 13/09 mandou trocar no diário, e escapou à
 	# primeira varredura por não viver no `Narrativa.gd`. Fala do jogo também é
 	# texto, mesmo quando está num botão.
-	botao_fechar("Começar a primeira semana")
+	botao_abaixo_do_caderno("Começar a primeira semana")
+
+
+# A entrada, num sítio só: a tela de nomes escreve-a na página de BAIXO antes
+# de virar a folha de rosto, e tem de sair igual à que este painel mostra a
+# seguir — senão a virada revelava uma página e o painel trocava-a por outra.
+static func escrever(painel: PainelNarrativo) -> Label:
+	# DIA: entrada de diário é datada. A data é a do cabeçalho de sempre, agora
+	# escrita à mão no canto da página, como se data uma entrada.
+	return painel.entrada_do_diario(Narrativa.DIARIO_CABECALHO, Narrativa.diario())

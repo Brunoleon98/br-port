@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=53 format=3]
+[gd_resource type="Theme" load_steps=60 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -14,6 +14,13 @@
 ;   cream  #f0f6ff   white  #ffffff   border #d0dff0
 ;   green  #1a7a40   red    #c23030   warn   #d97706   gray #8299b4
 
+
+; A LETRA À MÃO do caderno (`docs/decisoes/067`): Patrick Hand, SIL Open Font
+; License (a licença vive ao lado dela, em `ui/fontes/OFL.txt`). Escolhida
+; entre oito manuscritas livres por ser a que se lê a 22 px com os acentos do
+; português; a Caveat, mais bonita, pedia 28 px para o mesmo corpo de letra.
+; São 210 KB no pacote.
+[ext_resource type="FontFile" path="res://ui/fontes/PatrickHand-Regular.ttf" id="letra_mao"]
 
 [sub_resource type="StyleBoxFlat" id="cartao"]
 ; Etapa 6 do plano de arte, 02/09. A leitura da referência pede "borda clara de
@@ -819,6 +826,103 @@ content_margin_top = 6.0
 content_margin_right = 12.0
 content_margin_bottom = 6.0
 
+[sub_resource type="StyleBoxFlat" id="caderno_capa"]
+; ── O CADERNO (`docs/decisoes/067`) ── a capa dura do diário do avô, em
+; couro castanho. É o objeto; a página creme é o que se lê dentro dele, como
+; o corpo do celular e a tela dele (`066`).
+bg_color = Color(0.353, 0.231, 0.157, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.231, 0.145, 0.094, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 10
+; ⚠️ A LOMBADA É MAIS LARGA DO QUE AS OUTRAS BORDAS (22 contra 16): é onde o
+; couro dobra sobre a costura, e com 12 px à volta o grão do couro não tinha
+; onde aparecer («capa ainda chapada», terceira passagem da `067`).
+content_margin_left = 22.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 12
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="caderno_pagina"]
+; O PAPEL. Creme de caderno velho, e o FUNDO contra o qual o D33 mede a
+; tinta (9,98:1), a letra impressa (5,90:1) e a sugestão dos campos (5,17:1).
+bg_color = Color(0.965, 0.937, 0.863, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.851, 0.812, 0.714, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="caderno_foto"]
+; A borda branca de uma fotografia de papel, com a sombra de quem está
+; colado em cima da folha e não impresso nela.
+bg_color = Color(0.984, 0.973, 0.945, 1)
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 14.0
+shadow_color = Color(0.2, 0.14, 0.08, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(1, 3)
+
+[sub_resource type="StyleBoxFlat" id="caderno_etiqueta"]
+; A ETIQUETA ADESIVA da folha de rosto — o rótulo de caderno escolar, creme,
+; de filete azul e cantos redondos, com a sombra de quem está colado por cima
+; do papel. Era um filete duplo até à terceira passagem da `067`, e lia-se
+; «muito formal».
+bg_color = Color(0.984, 0.965, 0.925, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.55, 0.76, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+shadow_color = Color(0.2, 0.14, 0.08, 0.22)
+shadow_size = 3
+shadow_offset = Vector2(1, 2)
+
+[sub_resource type="StyleBoxFlat" id="caderno_campo"]
+; O CAMPO ESCRITO À MÃO: só a linha por baixo, sem caixa — o que se preenche
+; numa folha de rosto. O fundo é o da etiqueta onde ele vive, opaco, para a
+; régua do contraste o ler como o papel que ele é.
+bg_color = Color(0.984, 0.965, 0.925, 1)
+border_width_bottom = 2
+border_color = Color(0.557, 0.51, 0.435, 1)
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="caderno_campo_foco"]
+; Com o foco, a linha engrossa e ganha o âmbar da marca — o mesmo sinal do
+; campo de sempre, num traço só.
+bg_color = Color(0.984, 0.965, 0.925, 1)
+border_width_bottom = 3
+border_color = Color(0.878, 0.604, 0.063, 1)
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 3.0
+
 [resource]
 default_font_size = 15
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -1245,3 +1349,83 @@ TextoDocaTrabalhador/colors/font_color = Color(0.961, 0.725, 0.227, 1)
 ; branco, contra um corte de 4,5.
 TextoEstruturaFeita/base_type = "Label"
 TextoEstruturaFeita/colors/font_color = Color(0.102, 0.478, 0.251, 1)
+
+; ── O CADERNO (`docs/decisoes/067`) ──
+; A capa, a página, a foto colada e o campo escrito à mão. As cores das linhas
+; que a `FolhaDoCaderno.gd` desenha por cima do papel são itens da página: a
+; pauta azul, a margem vermelha, a sombra da lombada e a fita.
+CadernoCapa/base_type = "PanelContainer"
+; A costura pespontada, os cantos gastos e as folhas de baixo, que a
+; `CapaDoCaderno` desenha na borda da capa.
+CadernoCapa/colors/costura = Color(0.78, 0.64, 0.47, 0.9)
+CadernoCapa/colors/desgaste = Color(0.62, 0.47, 0.34, 1)
+CadernoCapa/colors/folhas = Color(0.925, 0.894, 0.816, 1)
+CadernoCapa/colors/fio_folhas = Color(0.75, 0.7, 0.6, 1)
+CadernoCapa/styles/panel = SubResource("caderno_capa")
+CadernoPagina/base_type = "PanelContainer"
+CadernoPagina/colors/pauta = Color(0.69, 0.78, 0.88, 1)
+CadernoPagina/colors/margem = Color(0.87, 0.55, 0.55, 1)
+CadernoPagina/colors/lombada = Color(0.353, 0.259, 0.169, 0.35)
+CadernoPagina/colors/fita = Color(0.72, 0.16, 0.14, 1)
+; O papel velho e a virada. ⚠️ O ALFA BAIXO É O QUE AS DEIXA FORA DA CONTA DO
+; CONTRASTE: a mancha (três círculos a 5%) baixa o creme a ~0,86 no miolo, e
+; a tinta passa de 9,98:1 a ~9,4:1 no pior pixel. Quem subir estes alfas
+; mede outra vez.
+CadernoPagina/colors/grao = Color(0.45, 0.35, 0.22, 0.1)
+CadernoPagina/colors/mancha = Color(0.62, 0.48, 0.28, 0.05)
+CadernoPagina/colors/sombra_virada = Color(0.18, 0.12, 0.06, 0.45)
+CadernoPagina/colors/luz_dobra = Color(1, 1, 1, 0.6)
+; O VERSO de uma folha — a aba da orelha e a folha a enrolar na virada — é o
+; papel sem a luz de frente; e a LINHA é a da costura das folhas na lombada.
+CadernoPagina/colors/verso = Color(0.906, 0.871, 0.788, 1)
+CadernoPagina/colors/linha = Color(0.62, 0.5, 0.36, 1)
+CadernoPagina/styles/panel = SubResource("caderno_pagina")
+CadernoFoto/base_type = "PanelContainer"
+CadernoFoto/colors/cantoneira = Color(0.24, 0.17, 0.12, 1)
+CadernoFoto/colors/cantoneira_luz = Color(0.52, 0.42, 0.32, 1)
+CadernoFoto/styles/panel = SubResource("caderno_foto")
+; A TINTA AZUL — «letra miúda, tinta azul», diz a primeira página do avô — na
+; letra à mão. 9,98:1 no creme, e 6,60:1 contra a própria pauta, que é o pior
+; pixel por onde um traço passa.
+; ⚠️ O `line_spacing` DAQUI E A SEPARAÇÃO DA `CadernoLinhas` SÃO O MESMO
+; NÚMERO, e têm de o ser: a pauta anda ao passo da letra (altura da fonte mais
+; este espaço), e a data e o texto só caem em linhas seguidas se o vão entre
+; os dois rótulos for exatamente este.
+TextoCaderno/base_type = "Label"
+TextoCaderno/colors/font_color = Color(0.114, 0.2, 0.498, 1)
+TextoCaderno/constants/line_spacing = 0
+TextoCaderno/fonts/font = ExtResource("letra_mao")
+TextoCaderno/font_sizes/font_size = 22
+CadernoLinhas/base_type = "VBoxContainer"
+CadernoLinhas/constants/separation = 0
+; A letra IMPRESSA da folha: a do jogo, pequena, na tinta castanha de gráfica.
+ImpressoCaderno/base_type = "Label"
+ImpressoCaderno/colors/font_color = Color(0.4, 0.35, 0.29, 1)
+ImpressoCaderno/font_sizes/font_size = 13
+CadernoEtiqueta/base_type = "PanelContainer"
+CadernoEtiqueta/styles/panel = SubResource("caderno_etiqueta")
+; A SUGESTÃO DO CAMPO, na letra IMPRESSA e não na do campo: o placeholder sai
+; na letra à mão, e «Cais Mirim» lia-se como já escrito (primeira passagem da
+; `067`). 4,81:1 sobre a etiqueta.
+SugestaoCaderno/base_type = "Label"
+SugestaoCaderno/colors/font_color = Color(0.47, 0.42, 0.36, 1)
+SugestaoCaderno/font_sizes/font_size = 17
+CampoCaderno/base_type = "LineEdit"
+CampoCaderno/colors/font_color = Color(0.114, 0.2, 0.498, 1)
+CampoCaderno/colors/font_uneditable_color = Color(0.114, 0.2, 0.498, 1)
+CampoCaderno/colors/caret_color = Color(0.114, 0.2, 0.498, 1)
+CampoCaderno/fonts/font = ExtResource("letra_mao")
+CampoCaderno/font_sizes/font_size = 28
+CampoCaderno/styles/normal = SubResource("caderno_campo")
+CampoCaderno/styles/focus = SubResource("caderno_campo_foco")
+; ⚠️ E O `read_only` TAMBÉM: durante a virada os campos deixam de editar-se,
+; e sem esta linha o Godot trocava o papel pela caixa cinzenta dele por meio
+; segundo.
+CampoCaderno/styles/read_only = SubResource("caderno_campo")
+; A voz de quem conta, por cima do caderno e sobre o escuro da leitura.
+TituloAbertura/base_type = "Label"
+TituloAbertura/colors/font_color = Color(0.941, 0.965, 1, 1)
+TituloAbertura/font_sizes/font_size = 26
+TextoAbertura/base_type = "Label"
+TextoAbertura/colors/font_color = Color(0.8, 0.85, 0.92, 1)
+TextoAbertura/font_sizes/font_size = 17
