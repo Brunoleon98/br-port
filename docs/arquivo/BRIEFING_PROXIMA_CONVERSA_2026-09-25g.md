@@ -8,7 +8,7 @@ frentes e o desenho da que ele escolher (F1); o que for receita desce para
 **Sonnet** (`CLAUDE.md`, «Qual MODELO faz o quê»).
 
 **Situação:** substitui o `25f`. A sessão de 25/09 à noite trabalhou na branch
-`claude/upbeat-fermi-ywyogh`, **sem PR aberto** (só se o Bruno pedir), e fechou
+`claude/upbeat-fermi-ywyogh`, que virou o **PR #89**, e fechou
 a **segunda família da frente 3 do A5**: os painéis que abrem por um toque no
 HUD — dinheiro do dia, docas, reputação, calendário e parcela —, em duas
 passagens, com o aceite «ficou bom» na segunda (`065`).
@@ -30,15 +30,15 @@ passagens, com o aceite «ficou bom» na segunda (`065`).
 
 ## 1. Comece pelo estado real
 
-- Confira no GitHub se a branch `claude/upbeat-fermi-ywyogh` virou PR e se foi
-  fundida. Se não foi, a `065` só existe nela, e uma decisão nova numerada a
-  partir da `main` colidiria.
+- Confira no GitHub se o **PR #89** foi fundido. Se não foi, a `065` só existe
+  nele, e uma decisão nova numerada a partir da `main` colidiria.
 - Um ref de cada vez no `git fetch`, o código de saída lido sem cano
   (`CLAUDE.md`, «O que cabe numa sessão»).
 - Veja os PRs abertos do Codex antes de mexer num arquivo de alto conflito
   (`AGENTS.md`).
-- O CI não correu nada desta branch: ele só corre em PR e na `main`
-  (`CLAUDE.md`, «Como rodar, aqui dentro»). O verde é o do contêiner.
+- O CI só corre em PR e na `main` (`CLAUDE.md`, «Como rodar, aqui dentro»):
+  o PR #89 é a primeira corrida dele sobre este trabalho — leia-a antes de
+  contar com o verde, e o antes/depois do `captura.yml` também.
 
 ## 2. O que o Bruno escolhe a seguir
 
