@@ -10,9 +10,8 @@ frentes e o desenho da que ele escolher (F1); o que for receita desce para
 **Situação:** substitui o `25g`. A sessão de 26/09 trabalhou na branch
 `claude/eager-wright-5kh2g8`, a partir da `main` com o PR #89 fundido, e
 fechou a **terceira família da frente 3 do A5 — o sistema** —, em quatro
-passagens, com o aceite «feche a família» na quarta (`066`). **O PR não foi
-aberto** (o Bruno não o pediu), logo o CI ainda não correu sobre este
-trabalho.
+passagens, com o aceite «feche a família» na quarta (`066`). A branch virou o
+**PR #90**, aberto no fecho.
 
 1. **Tela inicial** como cena principal, com fundo provisório em degradê e o
    nome em texto; **três espaços de save** — o 1 é o `savegame.json` de
@@ -31,16 +30,15 @@ trabalho.
 
 ## 1. Comece pelo estado real
 
-- Confira no GitHub se há PR aberto da `claude/eager-wright-5kh2g8`. Se não
-  houver, pergunte ao Bruno se o abre: a `066` só existe nesta branch, e uma
-  decisão nova numerada a partir da `main` colidiria.
+- Confira no GitHub se o **PR #90** foi fundido. Se não foi, a `066` só
+  existe nele, e uma decisão nova numerada a partir da `main` colidiria.
 - Um ref de cada vez no `git fetch`, o código de saída lido sem cano
   (`CLAUDE.md`, «O que cabe numa sessão»).
 - Veja os PRs abertos do Codex antes de mexer num arquivo de alto conflito
   (`AGENTS.md`).
 - O CI só corre em PR e na `main` (`CLAUDE.md`, «Como rodar, aqui dentro»):
-  a primeira corrida sobre este trabalho é a do PR — leia-a, e o antes/depois
-  do `captura.yml`, antes de contar com o verde.
+  a primeira corrida sobre este trabalho é a do PR #90 — leia-a, e o
+  antes/depois do `captura.yml`, antes de contar com o verde.
 
 ## 2. O que está com o Bruno
 
