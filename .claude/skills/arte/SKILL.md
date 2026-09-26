@@ -277,6 +277,13 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   do arquivo e a pergunta saem juntos, no mesmo bloco. Nas variações (24/09)
   a regra já estava aqui e mordeu outras TRÊS vezes — o envio saía sozinho, o
   turno acabava nele, e a pergunta nunca chegava.
+  ⚠️ **E MORDEU MAIS DUAS EM 25/09** (a família do HUD), com esta secção lida
+  no começo da sessão: a prancha do escopo e a da primeira passagem saíram
+  sozinhas num bloco, com a pergunta deixada «para a seguir». **«Recebeu
+  resposta?» é o sinal** de que a pergunta não chegou; o conserto é mandar só
+  a pergunta, que as imagens já lá estão. O que funcionou nas vezes seguintes
+  foi decidir o bloco inteiro ANTES de escrever a primeira chamada: um bloco
+  com o envio sozinho é o último do turno.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

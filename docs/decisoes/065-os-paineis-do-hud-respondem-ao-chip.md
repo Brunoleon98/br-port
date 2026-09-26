@@ -4,7 +4,8 @@
 dinheiro do dia, docas, reputação, calendário e parcela, os painéis que se
 abrem por um toque no HUD. O Bruno escolheu esta família entre as três que
 restavam (as outras eram as telas de texto e o sistema: pausa e menu) e
-respondeu três perguntas antes do desenho. Fica à espera do veredito dele.
+respondeu três perguntas antes do desenho. **Aceite do Bruno em 25/09, sobre
+a segunda passagem: «ficou bom»** — e com ele fecha a segunda família.
 
 ## O que o Bruno escolheu
 

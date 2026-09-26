@@ -2386,9 +2386,10 @@ tranca isso.
   não que o sorteio a aplique, nem que o preço mostrado seja o que o
   `_fechar_negocio()` escreve. O F14 do `teste_fumaca` lê a previsão na TELA e
   o resultado no JOGO — o saldo depois de pagar, o preço de cada botão, o que
-  sobra depois de uma recusa, e a chance pela frequência do sorteio. Mostrar a
-  consequência antes da escolha é assumir uma promessa: quem a escreve, escreve
-  a guarda (`docs/decisoes/062`).
+  sobra depois de uma recusa, e a chance pela frequência do sorteio; o F15 faz
+  o mesmo nos painéis do HUD (`065`). Mostrar a consequência antes da escolha
+  é assumir uma promessa: quem a escreve, escreve a guarda
+  (`docs/decisoes/062`).
 - Alvo de toque mínimo 44px. O teste de design cobre.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta

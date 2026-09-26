@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 25/09/2026 — save isolado (`061`) e frente 3 aceite (`064`)
+> **Última atualização:** 25/09/2026 — os painéis do HUD aceites (`065`), save 9
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -113,9 +113,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Os trinta rostos do trabalhador** (24/09, `059`) — escolha do Bruno | 2 sexos × 3 idades × 5 cores do IBGE, três voltas até à v3. Cada trabalhador nasce com o seu ROSTO (campo no save, `SAVE_VERSION` 8) por um sorteio próprio: o `_rng` medido não se mexe (100 / 80,2 / 37,3). +7,33 MB no pacote (+22% do APK), sem perda por escolha dele. **F12** e a folha `trabalhadores` na bateria |
-| **As caras sem foto** (24/09, `060`) | a cobertura desce à CARA: as ferramentas imprimem `Retratos:` só depois de esconder a cara e ver a foto mudar, e o conferidor lê o `POR_EXPRESSAO`. Tiros `boletim_ruim`, `boletim_otimo` e `contraoferta_pressao`: **9 de 9** caras (eram 6; a formal já tinha foto). 35 tiros |
 | **Frente 3 do A5, 1.ª família** (25/09, `062`–`064`) — aceite do Bruno | Cinco passagens em boletim, contra-oferta, Sr. Ribeiro e balanço: o total no topo de cada bloco, a barra da parcela do HUD na cobrança, a chance como barra em cada aposta, o custo da recusa antes dela, o balanço em quadros, a tarja no tom do que diz. O **F14** confere cada promessa contra o jogo (17 mutantes). Referências em `docs/design/BR_Port_Referencias_Interface_Gestao.md` |
+| **Frente 3 do A5, 2.ª família** (25/09, `065`) — aceite do Bruno | Os painéis do HUD em duas passagens: dinheiro do dia com os **recordes da partida** (no save, `SAVE_VERSION` 9), docas com renda e tipo de trabalho, reputação Comercial com os dois eixos do GDD trancados, calendário e parcela; na segunda, a barra do HUD onde um número anda para uma meta. O **F15** confere cada número contra o jogo (13 mutantes); balanceamento intocado |
 | **O save do jogador isolado** (25/09, `061`) | toda ferramenta com `--script` grava em `user://ferramentas/` (`ArmazemLocal.gd`); o save, as gravações e o volume do jogador ficam de fora. **F13** e a sentinela do CI; só vale em commits com a `061` |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
@@ -131,7 +130,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A primeira família da **frente 3** foi aceite em 25/09; restam os outros painéis dela. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem do resto da frente 3 e das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). Na **frente 3**, as famílias do cartão e do HUD foram aceites em 25/09; restam diário, menu, mensagens, pausa e nomes. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem do resto da frente 3 e das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
@@ -164,9 +163,9 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa, ao toque nela. Overlay, em memória, sem migrar save |
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
-| `brport_vs/tools/medir_contraste_ui.gd` | A tabela dos **25 estados e 369 textos**. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado. O `acao_vista` age DEPOIS da cena e drena a fila (`042`) — e não serve a painel, que não tem fila; o `barco` e o `estruturas` agem ANTES, e **provam que o estado chegou ao nó** (`043`, `044`) |
+| `brport_vs/tools/medir_contraste_ui.gd` | A tabela de cada texto em cada estado do percurso. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado. O `acao_vista` age DEPOIS da cena e drena a fila (`042`) — e não serve a painel, que não tem fila; o `barco` e o `estruturas` agem ANTES, e **provam que o estado chegou ao nó** (`043`, `044`) |
 | `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn`, corta comentário, aceita multilinha e exige que a variação exista (`036`). **Zero chamadas e zero exceções** desde a 5ª leva; ele também denuncia exceção MORTA (`045`) |
-| `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo |
+| `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo; e as peças de número das famílias (bloco de contas, quadro, barra do HUD) |
 | `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
 | `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
