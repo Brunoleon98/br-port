@@ -932,9 +932,13 @@ duas portas abrem, e o celular ganha as quatro coisas que ele marcou
 com cor própria). A primeira passagem (espaços, tela inicial com fundo
 provisório, pausa e Ajustes) recebeu **«Continue»**, e a segunda deu ao
 «Continuar» a letra do «AVANÇAR DIA» e ao «Apagar» o vermelho do tom ruim —
-**à espera do veredito**. O fundo (um navio chegando, a paisagem brasileira) e
-o logotipo são **dele, no ChatGPT**, pelo briefing com os pedidos prontos; o
-celular vem depois. O **F16** tranca os espaços e a pausa.
+aceite («siga para o celular»). A terceira fez o celular — moldura com
+câmera e botões laterais, a hora do aparelho, o papel de parede (a mesma
+constante do fundo da tela inicial) e um ícone com cor por app, com os
+fechados velados e o cadeado como selo — e está **à espera do veredito**. O
+fundo (um navio chegando, a paisagem brasileira) e o logotipo são **dele, no
+ChatGPT**, pelo briefing com os pedidos prontos. O **F16** tranca os espaços e
+a pausa.
 
 **O que resta da frente 3** depois desta família são as telas de texto
 (diário, mensagens, nomes). Os pedidos dele estão na triagem acima: o diário

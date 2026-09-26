@@ -3786,35 +3786,36 @@ func _d23_menu_celular() -> void:
 		script != null and String(script.resource_path).ends_with("PainelMenu.gd"),
 		"script aberto: %s" % (script.resource_path if script != null else "nenhum"))
 
-	# ── 3. O TEXTO DENTRO DO CELULAR, SOBRE A TELA ESCURA ──
+	# ── 3. O TEXTO DENTRO DO CELULAR, CONTRA O FUNDO QUE ELE TEM MESMO ──
 	#
 	# ⚠️ IRMÃ DO D19, DO OUTRO LADO DA MESMA ARMADILHA. Lá a cor neutra do
 	# jogo (feita para fundo escuro) caía sobre o cartão BRANCO e media
 	# 2,93:1; aqui a cor de texto PADRÃO do tema é navy, feita para o cartão
-	# branco, e cairia sobre a tela navy do aparelho. Um rótulo deste painel
-	# que esqueça a variação sai invisível sem erro nenhum.
+	# branco, e cairia sobre o aparelho escuro. Um rótulo deste painel que
+	# esqueça a variação sai invisível sem erro nenhum.
 	#
-	# E o fundo lido é o da TELA e não o do CORPO: são dois `PanelContainer`
-	# encaixados, e é dentro da tela que os rótulos caem.
-	var fundo := _fundo_da_tela_do_celular(menu)
-	_confere("achei a tela do celular (%s)" % fundo, fundo.a > 0.0)
-
-	var reprovados := 0
+	# ⚠️ E DESDE 26/09 O FUNDO NÃO É UM SÓ (`066`). Até lá todo rótulo caía na
+	# TELA, e este bloco media-os contra ela; com o papel de parede, cada texto
+	# vive numa peça opaca própria — a barra de status, o widget, a pílula do
+	# nome — e medir contra a tela passou a medir contra um fundo que o texto
+	# não tem, sempre a passar. Quem acha o fundo de cada texto é o MOTOR do
+	# D33, que sobe pelos antepassados até ao primeiro opaco; e um texto
+	# posto direto sobre o papel de parede sai PENDENTE, que aqui reprova —
+	# a régua não sabe ler uma imagem, e o texto não pode depender dela.
+	var motor: RefCounted = load("res://scripts/validation/contraste_ui.gd").new()
+	var linhas: Array = motor.medir(menu)
+	_confere("o celular tem texto para medir (%d)" % linhas.size(), linhas.size() >= 8)
+	var maus: Array = []
 	var pior_razao := 99.0
 	var pior_rotulo := ""
-	for no in _todos_os_labels(menu):
-		var cor: Color = no.get_theme_color("font_color")
-		var tamanho: int = no.get_theme_font_size("font_size")
-		var corte: float = 3.0 if tamanho >= 18 else 4.5
-		var razao := _contraste(cor, fundo)
-		if razao < pior_razao:
-			pior_razao = razao
-			pior_rotulo = "%s a %dpx" % [no.text.substr(0, 28), tamanho]
-		if razao < corte:
-			reprovados += 1
-	_confere("nenhum rótulo do celular reprova a WCAG (pior: %.2f:1 em %s)"
-			% [pior_razao, pior_rotulo], reprovados == 0,
-		"%d rótulo(s) abaixo do corte sobre a tela do aparelho" % reprovados)
+	for l in linhas:
+		if String(l["estado"]) != "passa":
+			maus.append("%s · %s %s" % [l["estado"], l["texto"], l["nota"]])
+		elif float(l["razao"]) < pior_razao:
+			pior_razao = float(l["razao"])
+			pior_rotulo = "%s a %dpx" % [String(l["texto"]).substr(0, 28), int(l["px"])]
+	_confere("nenhum texto do celular reprova nem fica sem fundo conhecido (pior: %.2f:1 em %s)"
+			% [pior_razao, pior_rotulo], maus.is_empty(), "\n      ".join(maus))
 
 	# ── 4. A GRELHA DE APPS CABE NA TELA ──
 	#
@@ -3835,9 +3836,15 @@ func _d23_menu_celular() -> void:
 		var corpo: StyleBox = menu.get_theme_stylebox("panel", "Celular")
 		var visor: StyleBox = menu.get_theme_stylebox("panel", "CelularTela")
 		var largura: float = float(menu.LARGURA)
+		# ⚠️ E A MARGEM DO MIOLO, que é onde a grelha vive desde a `066`: a
+		# tela passou a zero para a barra de status ir de borda a borda, e sem
+		# esta linha a conta dava 28 px de folga que não existem.
+		var miolo: Control = menu.find_child("Miolo", true, false)
 		var util: float = largura \
 			- corpo.get_margin(SIDE_LEFT) - corpo.get_margin(SIDE_RIGHT) \
-			- visor.get_margin(SIDE_LEFT) - visor.get_margin(SIDE_RIGHT)
+			- visor.get_margin(SIDE_LEFT) - visor.get_margin(SIDE_RIGHT) \
+			- float(miolo.get_theme_constant("margin_left")) \
+			- float(miolo.get_theme_constant("margin_right"))
 		var pedem: float = grade.get_combined_minimum_size().x
 		_confere("a grelha de apps cabe na tela (pede %.0f, tem %.0f)"
 				% [pedem, util], pedem <= util,
@@ -3885,22 +3892,6 @@ func _achar_tile_aceso(no: Node) -> Button:
 		if achado != null:
 			return achado
 	return null
-
-
-# O fundo em que os rótulos do menu caem: a TELA do aparelho, que é o
-# `PanelContainer` de variação "CelularTela". Procurado pela variação e não
-# pela posição na árvore — o corpo do celular é outro `PanelContainer`, e
-# apanhar o primeiro que aparecesse mediria o contraste contra a moldura.
-func _fundo_da_tela_do_celular(no: Node) -> Color:
-	if no is PanelContainer and String((no as PanelContainer).theme_type_variation) == "CelularTela":
-		var sb := (no as PanelContainer).get_theme_stylebox("panel")
-		if sb is StyleBoxFlat:
-			return (sb as StyleBoxFlat).bg_color
-	for filho in no.get_children():
-		var achado := _fundo_da_tela_do_celular(filho)
-		if achado.a > 0.0:
-			return achado
-	return Color(0, 0, 0, 0)
 
 
 func _achar_grelha(no: Node) -> GridContainer:

@@ -3,8 +3,9 @@
 **26/09/2026 · terceira família da frente 3 do A5**: o sistema. O Bruno
 escolheu esta família entre as que restavam (a outra são as telas de texto:
 diário, mensagens e nomes) e respondeu duas rodadas de perguntas antes do
-desenho. **Veredito da primeira passagem: «Continue»** — a segunda está no
-fim deste arquivo, e espera o dele.
+desenho. **Vereditos: «Continue» na primeira, aceite na segunda («siga para
+o celular»)**; a terceira, o celular, está no fim deste arquivo e espera o
+dele.
 
 ## O que o Bruno escolheu
 
@@ -200,4 +201,53 @@ Mudaram **as 5 fotos da tela inicial** contra a primeira passagem (o
 `main` continuam a ser a pausa e a folha de ícones, mais as cinco novas. Seis
 suítes verdes, `ESCOPO UI OK`, `COBERTURA OK`; contraste **435 textos em 29
 estados**, nenhum abaixo do AA.
+
+## A terceira passagem: o celular
+
+**Veredito do Bruno sobre a segunda: aceite, «siga para o celular».** As
+quatro coisas que ele marcou no escopo, e cada uma com o que a sustenta:
+
+- **A moldura.** O corpo passou de 26 a **44** de canto e a moldura a 12; a
+  câmera é um entalhe no meio da barra de status; há uma barra de gesto no pé
+  da tela e três botões laterais a sair do corpo (ligar à direita, volume à
+  esquerda), desenhados ANTES dele para o corpo tapar a metade de dentro. O
+  **«Guardar o telefone» saiu do aparelho** e ficou por baixo dele: um botão
+  do jogo dentro do telefone era o que desfazia a metáfora.
+- **A barra de status.** A hora é a **do aparelho**, e anda enquanto o
+  telefone está aberto; sob ferramenta é **09:41**, fixa — a bateria compara
+  fotos, e a hora de verdade mudaria cada uma. **O sinal e a bateria são
+  desenho, e isto está escrito**: sondado, o Godot 4 não lê a bateria nem o
+  sinal (`OS` e `DisplayServer` sem `get_power_*`). O dia do jogo, que vivia
+  na barra, passou para um **widget** com o número grande, como a data na tela
+  de início de um telefone.
+- **O papel de parede** é a MESMA constante do fundo da tela inicial
+  (`TelaInicial.FUNDO`): quando a ilustração chegar, muda uma linha e mudam os
+  dois. A tela recorta os filhos pelo próprio desenho (`clip_children`), e é o
+  canto de 32 dela que arredonda a imagem.
+- **Os ícones com cor própria** reabrem a `021`, que tinha UM cadeado para
+  todas as portas fechadas: cinco ícones novos (`app_*.svg`), cada um um
+  quadrado de cor cheia com o desenho branco, a 144 px porque ocupam o tile
+  inteiro. Os fechados mostram, sob um véu do corpo a 62%, o que vão ser, com o
+  cadeado como selo num canto; o aviso do pé passou a dizer «os apps com
+  cadeado abrem na Fase 2».
+
+**Todo texto do celular vive numa peça opaca** — a barra, o widget, a pílula
+de cada nome, o cartão do aviso —, e não sobre a imagem: texto sobre uma
+ilustração é composição que a régua não sabe fechar.
+
+**E a régua não sabia que não sabia.** O D23 media os rótulos contra a cor da
+TELA, que com o papel de parede passou a ser um fundo que o texto não tem — um
+espelho sempre verde. Passou a usar o motor do D33, que acha o fundo de cada
+texto; e a parte da grelha passou a descontar a margem do miolo, sem a qual
+dava 28 px de folga que não existem. **O mutante que tirava a pílula a um nome
+PASSOU nas duas**: o motor subia até ao fundo opaco da tela e não via a imagem
+desenhada por cima dele. Hoje um `TextureRect` irmão por trás do texto, num
+contentor que empilha ou ancorado ao pai inteiro, dá pendência — e o mesmo
+mutante reprova no D23 e no D33. A margem do miolo alargada reprova a grelha.
+
+Mudaram **2 fotos** contra a segunda passagem — o menu e a folha de ícones,
+que passou a 31 ícones e cabe, pela conta dela, com 64 px de sobra. Contra a
+`main` são o menu, a pausa e a folha, mais as cinco novas. Seis suítes
+verdes, `ESCOPO UI OK`, `COBERTURA OK`; contraste **436 textos em 29
+estados**, nenhum abaixo do AA e nenhum sobre a imagem.
 

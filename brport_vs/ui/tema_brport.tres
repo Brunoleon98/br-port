@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=38 format=3]
+[gd_resource type="Theme" load_steps=49 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -648,14 +648,17 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.141, 0.275, 0.431, 1)
-corner_radius_top_left = 26
-corner_radius_top_right = 26
-corner_radius_bottom_right = 26
-corner_radius_bottom_left = 26
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
+; ⚠️ E DESDE 26/09 O CANTO É DE TELEFONE, 44 e não 26 (`066`): a 26 o corpo
+; lia-se como um cartão escuro de cantos redondos, e o que o Bruno pediu foi
+; «mais parecido com um celular». A borda (a moldura) passou a 12.
+corner_radius_top_left = 44
+corner_radius_top_right = 44
+corner_radius_bottom_right = 44
+corner_radius_bottom_left = 44
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
 shadow_color = Color(0, 0, 0, 0.35)
 shadow_size = 10
 shadow_offset = Vector2(0, 5)
@@ -663,55 +666,97 @@ shadow_offset = Vector2(0, 5)
 [sub_resource type="StyleBoxFlat" id="celular_tela"]
 ; A TELA. É o azul da pílula do HUD de propósito: o celular não traz cor nova
 ; nenhuma ao jogo, só uma forma nova.
+; ⚠️ DESDE 26/09 ELA É TAMBÉM A MÁSCARA DO PAPEL DE PAREDE (`066`): a tela
+; recorta os filhos pelo que ela própria desenha (`clip_children`), e é este
+; canto de 32 que arredonda a imagem. As margens passaram a zero porque a
+; barra de status vai de borda a borda; quem afasta o resto das bordas é o
+; `MarginContainer` do `PainelMenu`.
 bg_color = Color(0.09, 0.16, 0.24, 1)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+
+[sub_resource type="StyleBoxEmpty" id="app_icone"]
+; O TILE DE UM APP NÃO DESENHA FUNDO desde 26/09 (`066`): o quadrado de cor
+; é o próprio ícone (`art/icones/app_*.svg`), como num telefone, e o botão
+; só o segura. Até então era um quadrado creme com o desenho navy dentro.
+
+[sub_resource type="StyleBoxFlat" id="app_veu"]
+; O VÉU DO APP QUE AINDA NÃO ABRIU: o corpo do aparelho a 62% por cima do
+; ícone, com o canto do ícone (5,5/24 de 72 ≈ 16). Deixa ver o que o app vai
+; ser e diz que ainda não é — o cadeado vai por cima, num canto.
+bg_color = Color(0.055, 0.098, 0.153, 0.62)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-content_margin_left = 12.0
-content_margin_top = 12.0
-content_margin_right = 12.0
-content_margin_bottom = 12.0
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
 
-[sub_resource type="StyleBoxFlat" id="app_aberto"]
-; O QUADRADO DE UM APP QUE ACENDE. Creme sobre a tela escura, que é o maior
-; contraste que a paleta tem — um app disponível tem de saltar da grelha.
+[sub_resource type="StyleBoxFlat" id="celular_barra"]
+; A BARRA DE STATUS, opaca e da cor do corpo: é ela que segura a câmera, e o
+; texto dela tem um fundo que a régua sabe ler — por baixo está o papel de
+; parede, que ela não sabe.
+bg_color = Color(0.055, 0.098, 0.153, 1)
+content_margin_left = 20.0
+content_margin_top = 7.0
+content_margin_right = 20.0
+content_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxFlat" id="celular_camera"]
+bg_color = Color(0.016, 0.027, 0.043, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="celular_widget"]
+; O CARTÃO DE UM WIDGET — o dia, o aviso dos apps fechados. Opaco pela razão
+; da barra: texto sobre o papel de parede é composição que não fecha.
+bg_color = Color(0.09, 0.16, 0.24, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.141, 0.275, 0.431, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="celular_rotulo"]
+; A PÍLULA DO NOME DE UM APP, opaca: num telefone o nome vai direto sobre o
+; papel de parede com sombra, e aqui a sombra não se mede.
+bg_color = Color(0.055, 0.098, 0.153, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 7.0
+content_margin_top = 1.0
+content_margin_right = 7.0
+content_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="celular_gesto"]
 bg_color = Color(0.941, 0.965, 1, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
-[sub_resource type="StyleBoxFlat" id="app_aberto_press"]
-bg_color = Color(0.816, 0.875, 0.941, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-
-[sub_resource type="StyleBoxFlat" id="app_fechado"]
-; O QUADRADO DE UM APP QUE AINDA NÃO EXISTE, e ele é um PAINEL e não um botão.
-; Um botão que não responde ensina o jogador a não tocar no menu; um quadrado
-; apagado nunca prometeu toque nenhum. Ele destaca-se da tela o suficiente
-; para se ver que ESTÁ LÁ, e de longe o suficiente do app aceso para não se
-; confundir com um.
-bg_color = Color(0.141, 0.235, 0.337, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
+[sub_resource type="StyleBoxFlat" id="celular_lateral"]
+bg_color = Color(0.141, 0.275, 0.431, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="faixa_msg"]
 ; A FAIXA DE MENSAGEM — o creme onde a fala do jogo e a da Dona Cida caem, e
@@ -1021,12 +1066,31 @@ Celular/styles/panel = SubResource("celular_corpo")
 CelularTela/base_type = "PanelContainer"
 CelularTela/styles/panel = SubResource("celular_tela")
 AppAberto/base_type = &"Button"
-AppAberto/styles/normal = SubResource("app_aberto")
-AppAberto/styles/hover = SubResource("app_aberto")
-AppAberto/styles/pressed = SubResource("app_aberto_press")
-AppAberto/styles/disabled = SubResource("app_fechado")
+AppAberto/colors/icon_normal_color = Color(1, 1, 1, 1)
+AppAberto/colors/icon_hover_color = Color(1, 1, 1, 1)
+AppAberto/colors/icon_pressed_color = Color(0.78, 0.8, 0.84, 1)
+AppAberto/colors/icon_focus_color = Color(1, 1, 1, 1)
+AppAberto/styles/normal = SubResource("app_icone")
+AppAberto/styles/hover = SubResource("app_icone")
+AppAberto/styles/pressed = SubResource("app_icone")
+AppAberto/styles/focus = SubResource("app_icone")
+AppAberto/styles/disabled = SubResource("app_icone")
 AppFechado/base_type = "PanelContainer"
-AppFechado/styles/panel = SubResource("app_fechado")
+AppFechado/styles/panel = SubResource("app_icone")
+AppVeu/base_type = "PanelContainer"
+AppVeu/styles/panel = SubResource("app_veu")
+CelularBarra/base_type = "PanelContainer"
+CelularBarra/styles/panel = SubResource("celular_barra")
+CelularCamera/base_type = "PanelContainer"
+CelularCamera/styles/panel = SubResource("celular_camera")
+CelularWidget/base_type = "PanelContainer"
+CelularWidget/styles/panel = SubResource("celular_widget")
+CelularRotulo/base_type = "PanelContainer"
+CelularRotulo/styles/panel = SubResource("celular_rotulo")
+CelularGesto/base_type = "PanelContainer"
+CelularGesto/styles/panel = SubResource("celular_gesto")
+CelularLateral/base_type = "PanelContainer"
+CelularLateral/styles/panel = SubResource("celular_lateral")
 ; O nome de um app que acende, e a linha que explica os apagados.
 TextoCelular/base_type = "Label"
 TextoCelular/colors/font_color = Color(0.941, 0.965, 1, 1)
@@ -1036,6 +1100,10 @@ TextoCelular/font_sizes/font_size = 13
 TextoCelularFraco/base_type = "Label"
 TextoCelularFraco/colors/font_color = Color(0.51, 0.6, 0.706, 1)
 TextoCelularFraco/font_sizes/font_size = 13
+; O NÚMERO DO WIDGET DO DIA — o que um telefone põe grande na tela de início.
+TextoCelularGrande/base_type = "Label"
+TextoCelularGrande/colors/font_color = Color(0.941, 0.965, 1, 1)
+TextoCelularGrande/font_sizes/font_size = 24
 ; ── A TELA INICIAL (`docs/decisoes/066`) ──
 ; O nome do jogo, por cima da ilustração. O fundo é uma IMAGEM que ainda não
 ; existe (a provisória é um degradê; a de verdade sai do ChatGPT), e texto

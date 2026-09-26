@@ -2138,6 +2138,13 @@ as três coisas.
   `bg_color` composto alfa sobre alfa até ao primeiro opaco, com o `modulate`
   aplicado ao texto e ao fundo por cadeias SEPARADAS — são duas, porque começam
   em nós diferentes.
+  ⚠️ **E UMA IMAGEM POR TRÁS DO TEXTO NÃO TEM COR QUE SE LEIA.** A régua
+  subia pelos antepassados até ao primeiro fundo opaco — e o papel de parede
+  do celular é um IRMÃO do conteúdo, desenhado por cima desse fundo. Um nome
+  de app posto direto na imagem media-se contra o navy da tela, e passava
+  (mutante medido em 26/09). Hoje um `TextureRect` por trás, num contentor que
+  empilha ou ancorado ao pai inteiro, dá PENDÊNCIA; texto sobre ilustração
+  vive numa peça opaca, ou fica `fora` com o motivo escrito (`066`).
   ⚠️ **E COMPOSIÇÃO QUE NÃO FECHA É PENDÊNCIA, NUNCA VERDE.** Onde o que está
   por trás é desconhecido — o cartão da doca tem alfa 0,96 e pousa sobre o
   MAPA —, a resposta honesta são DUAS: o pior sobre preto e o pior sobre

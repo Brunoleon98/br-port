@@ -741,6 +741,15 @@ func fundo_de(no: Control, raiz: Node) -> Dictionary:
 				camadas.append(posta)
 				if posta.a >= 0.999:
 					break
+			# ⚠️ E UMA IMAGEM POR TRÁS NÃO TEM COR QUE SE LEIA (`066`). O papel de
+			# parede do celular é um `TextureRect` IRMÃO do conteúdo, desenhado
+			# por cima do fundo opaco da tela — e a régua, que subia até esse
+			# fundo, media um nome de app posto direto na imagem contra o navy
+			# da tela, e aprovava. Medido: o mutante passou verde.
+			var imagem := _imagem_atras(c)
+			if imagem != "":
+				return {"pendente": true, "cores": [], "alfa": 0.0,
+					"nota": "por trás do texto está uma imagem (%s)" % imagem}
 			# O escurecer do `PainelNarrativo` é um IRMÃO desenhado antes, e
 			# não um ancestral: quem não está dentro de um cartão cai nele.
 			var atras := _colorrect_atras(c, raiz)
@@ -782,6 +791,28 @@ func compor(a: Color, b: Color) -> Color:
 # sentinela: um `ColorRect` transparente é um estado legítimo, e sentinela que
 # colide com valor real é a mesma armadilha da mensagem nova que casa com uma
 # busca na saída de uma ferramenta.
+# Um `TextureRect` com textura, desenhado ANTES de `no` e por baixo dele: num
+# contentor que EMPILHA os filhos (`PanelContainer`, `MarginContainer`) ou
+# ancorado ao pai inteiro. Irmão numa fila (`HBox`, `VBox`) fica AO LADO e não
+# por trás — é o retrato ao lado da fala, que não é fundo de nada. Devolve o
+# nome do nó, ou vazio.
+func _imagem_atras(no: Control) -> String:
+	var pai := no.get_parent()
+	if pai == null:
+		return ""
+	var empilha: bool = pai is PanelContainer or pai is MarginContainer
+	for i in range(no.get_index() - 1, -1, -1):
+		var irmao := pai.get_child(i)
+		if not (irmao is TextureRect) or (irmao as TextureRect).texture == null:
+			continue
+		var t := irmao as TextureRect
+		var inteiro: bool = t.anchor_left == 0.0 and t.anchor_top == 0.0 \
+			and t.anchor_right == 1.0 and t.anchor_bottom == 1.0
+		if (empilha or inteiro) and t.visible:
+			return String(t.name)
+	return ""
+
+
 func _colorrect_atras(no: Control, raiz: Node) -> Array:
 	var pai := no.get_parent()
 	if pai == null:
