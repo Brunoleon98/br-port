@@ -49,7 +49,14 @@ const PREFIXO := "retrato_"
 # escondida (a Dona Cida preocupada, na caixa de 112 x 152) e a maior 12.463
 # (o Sr. Ribeiro cordial). O defeito — a cara escondida também na foto — tem
 # de dar ZERO exato (ver a `060`); o corte fica a meio da banda.
-const DESENHO_MIN := 4695
+#
+# ⚠️ E O CORTE É UMA FRAÇÃO DA CAIXA DA CARA desde a `067`, e não 4.695 px
+# fixos: a conversa pôs a Dona Cida num avatar de 34 px, e nenhum desenho de
+# 34 x 34 chega a 4.695 px. A fração é o MESMO corte — 4.695 / (112 x 152) —,
+# logo os nove retratos de painel continuam a ser medidos exatamente como
+# eram; e o avatar vazio que a fez nascer (38 px a mudar, o quadro de 768
+# encolhido num disco) continua a reprovar, contra um mínimo de 319.
+const DESENHO_FRACAO := 4695.0 / (112.0 * 152.0)
 
 # Frames entre mexer e fotografar. A foto é o ÚLTIMO FRAME DESENHADO: o que se
 # muda nesta volta só chega ao seguinte — o primeiro mutante da folha dos
@@ -61,6 +68,9 @@ var linhas: PackedStringArray = []
 var falhas: PackedStringArray = []
 
 var _caras: Array = []
+# As caras que uma janela de rolagem corta, e que por isso não se julgam.
+var _cortadas := 0
+var _contou_cortadas := false
 var _com: Image
 var _ruido: Image
 var _etapa := 0
@@ -76,9 +86,11 @@ func _init(painel: Node, foto: Image) -> void:
 func _achar(no: Node) -> void:
 	if no is TextureRect and not no.is_queued_for_deletion() \
 			and (no as TextureRect).is_visible_in_tree() \
-			and (no as TextureRect).texture != null \
-			and (no as TextureRect).texture.resource_path.get_file().begins_with(PREFIXO):
-		_caras.append(no)
+			and _arquivo((no as TextureRect).texture).get_file().begins_with(PREFIXO):
+		if _inteira_na_janela(no as Control):
+			_caras.append(no)
+		else:
+			_cortadas += 1
 	for filho in no.get_children():
 		_achar(filho)
 
@@ -87,6 +99,9 @@ func _achar(no: Node) -> void:
 ## `linhas` traz uma `Retratos: <arquivo>` por cara provada, e `falhas` o que
 ## não se provou. Sem cara nenhuma no painel acaba logo, sem linha.
 func andar(janela: Viewport) -> bool:
+	if _cortadas > 0 and not _contou_cortadas:
+		_contou_cortadas = true
+		linhas.append("Caras cortadas pela rolagem, fora da prova: %d" % _cortadas)
 	if _caras.is_empty():
 		return true
 	_frames += 1
@@ -102,15 +117,48 @@ func andar(janela: Viewport) -> bool:
 	var sem := janela.get_texture().get_image()
 	for cara in _caras:
 		var rect: Rect2 = (cara as Control).get_global_rect()
-		var arquivo: String = (cara as TextureRect).texture.resource_path
+		var arquivo: String = _arquivo((cara as TextureRect).texture)
+		var minimo := int(ceil(DESENHO_FRACAO * rect.get_area()))
 		var ruido := PropIso.desenho_na_foto(_com, _ruido, rect)
 		var desenho := PropIso.desenho_na_foto(_com, sem, rect)
 		if ruido != 0:
 			falhas.append("a janela de %s mexe-se sozinha (%d px sem esconder nada) — a prova mediria o movimento, e não a cara"
 				% [arquivo, ruido])
-		elif desenho < DESENHO_MIN:
+		elif desenho < minimo:
 			falhas.append("%s não chegou à foto: %d px mudam ao escondê-la (mínimo %d)"
-				% [arquivo, desenho, DESENHO_MIN])
+				% [arquivo, desenho, minimo])
 		else:
 			linhas.append("Retratos: %s  (%d px)" % [arquivo, desenho])
+	return true
+
+
+# O arquivo de uma cara, também através de um recorte: o avatar da conversa
+# é a cabeça reduzida (`Retratos.cabeca()`), uma `ImageTexture` sem caminho
+# próprio que o traz na meta `retrato` — e sem isto a prova não a veria, e ela
+# sairia vazia sem ninguém reprovar, que foi exactamente como ela nasceu.
+static func _arquivo(tex: Texture2D) -> String:
+	if tex == null:
+		return ""
+	if tex.has_meta(&"retrato"):
+		return String(tex.get_meta(&"retrato"))
+	if tex is AtlasTexture:
+		tex = (tex as AtlasTexture).atlas
+	return tex.resource_path if tex != null else ""
+
+
+# ⚠️ UMA CARA NUMA JANELA DE ROLAGEM PODE ESTAR FORA DELA (`067`). A conversa
+# do celular tem caras nos balões, e a janela mostra só as últimas: a prova
+# media um balão rolado para cima como uma cara que «não chegou à foto» — 0 px
+# a mudar, com razão, porque não estava lá. Só se julga a cara que a janela
+# mostra INTEIRA; a cortada conta-se à parte, numa linha que não é `Retratos:`
+# (o conferidor lê esse prefixo), para o corte não passar calado.
+static func _inteira_na_janela(no: Control) -> bool:
+	var rect := no.get_global_rect()
+	var pai := no.get_parent()
+	while pai != null:
+		if pai is Control and (pai as Control).clip_contents:
+			var janela := (pai as Control).get_global_rect().grow(0.5)
+			if not janela.encloses(rect):
+				return false
+		pai = pai.get_parent()
 	return true

@@ -32,6 +32,13 @@ const TOQUE_MIN := 44
 # jogo — os nomes, e a seguir o diário — sem cada painel saber quem vem depois.
 signal fechou
 
+# Emitido quando um PERSONAGEM diz uma fala na tela — o Sr. Ribeiro na
+# cobrança, a Dona Cida no boletim. O `Main` grava-a no histórico da faixa, e
+# a conversa do celular mostra-a no balão de quem a disse (`docs/decisoes/067`,
+# terceira passagem: «eles também falam no chat»). É SINAL, e não uma chamada
+# ao `Main`, pela razão do `fechou`: o painel não sabe quem o abriu.
+signal falou(personagem: String, texto: String, retrato: Texture2D)
+
 # O botão VOLTAR do Android pode fechar este painel?
 #
 # Quase sempre sim: um boletim, uma página do diário, uma lista — dispensar é

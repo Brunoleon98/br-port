@@ -384,7 +384,7 @@ func _ao_fim(ganhou: bool, motivo: String) -> void:
 
 # Só o que correu mal. Contar TODA mensagem daria o ruído de sempre; o que
 # interessa a quem lê é se o jogador levou avisos vermelhos e em que turno.
-func _ao_mensagem(_texto: String, tipo: String) -> void:
+func _ao_mensagem(_texto: String, tipo: String, _assunto: String = "") -> void:
 	if tipo == "bad":
 		_mensagens_ruins += 1
 

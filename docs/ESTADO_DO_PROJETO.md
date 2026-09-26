@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 26/09/2026 — a família do sistema da frente 3 aceite em quatro passagens (`066`)
+> **Última atualização:** 26/09/2026 — as telas de texto da frente 3: o caderno aceite, a conversa na 4.ª passagem (`067`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -82,10 +82,9 @@ turno, sem o nome de quem jogou (`006`). Sai pelo menu de pausa.
 **O jogo tem som:** 14 efeitos de `tools/gerar_sons.py`, num autoload com
 prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
 
-**E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`): aparelho de 400×680,
-com o **diário** (que abre uma vez e não tinha como ser relido) e quatro portas
-FECHADAS — cidade, lojas, missões, análise (itens 18 a 21). **É casca, e de
-propósito.**
+**E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`, `066`): aparelho de
+400×680, com o **diário**, as **mensagens** (a conversa do porto, `067`) e
+quatro portas FECHADAS — cidade, lojas, missões, análise (itens 18 a 21).
 
 **O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
 verdade** — parede desabada, meio telhado, portão fora do trilho.
@@ -113,8 +112,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Frente 3 do A5, 1.ª e 2.ª famílias** (25/09, `062`–`065`) — aceites | Boletim, contra-oferta, Sr. Ribeiro e balanço (o total no topo, a chance como barra, o custo da recusa, a tarja no tom); os painéis do HUD com os **recordes da partida** (`SAVE_VERSION` 9), a renda de cada doca, a reputação Comercial e a barra do HUD onde um número anda para uma meta. O **F14** e o **F15** conferem cada promessa contra o jogo. Referências em `docs/design/BR_Port_Referencias_Interface_Gestao.md` |
-| **Frente 3 do A5, 3.ª família — o sistema** (26/09, `066`) — aceite na 4.ª passagem | A **tela inicial** é a cena principal, com **três espaços de save** — o 1 é o `savegame.json` de sempre, sem migração — e a **pausa curta** com a tela **Ajustes**; o «Continuar» a 19 px e o «Apagar» vermelho; o **celular** com moldura, hora sobre o papel de parede (contorno, que a régua mede), widget do dia com a fita dos dias e um ícone com cor por app, os fechados com um selo de cadeado. O **F16** tranca os espaços. O fundo e o logotipo são do Bruno no ChatGPT (`art_lab/tela_inicial/BRIEFING.md`) |
+| **Frente 3 do A5, famílias 1 a 3** (25–26/09, `062`–`066`) — aceites | O cartão (boletim, contra-oferta, Sr. Ribeiro, balanço) e o HUD, com a promessa de cada número conferida contra o jogo (**F14**, **F15**) e os recordes da partida (`SAVE_VERSION` 9); o sistema: **tela inicial**, **três espaços de save** (o 1 é o `savegame.json` de sempre), pausa curta, **Ajustes** e o **celular** com moldura e apps (**F16**). O fundo e o logotipo são do Bruno (`art_lab/tela_inicial/BRIEFING.md`) |
+| **Frente 3, 4.ª família — as telas de texto** (26/09, `067`) — caderno aceite; conversa na 4.ª passagem | A tela de nomes é a **folha de rosto de um caderno** e o diário a primeira página (letra à mão, couro e papel por shader, a folha que CURVA; **D37**); a foto do porto antigo é provisória (`art_lab/diario/BRIEFING.md`). As mensagens são uma **conversa no celular** — notas do porto com o ícone do assunto, e as três vozes em balões com a cara da fala (**F17**). Falta a 4.ª passagem: balões por pessoa e telefone maior |
 | **O save do jogador isolado** (25/09, `061`) | toda ferramenta com `--script` grava em `user://ferramentas/` (`ArmazemLocal.gd`); o save, as gravações e o volume do jogador ficam de fora. **F13** e a sentinela do CI; só vale em commits com a `061` |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
@@ -129,8 +128,8 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). Na **frente 3**, as famílias do cartão e do HUD foram aceites; a do sistema também (`066`, quatro passagens); restam diário, mensagens e nomes. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem do resto da frente 3 e das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`) |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). Na **frente 3**, as famílias do cartão, do HUD e do sistema foram aceites (`066`); a das telas de texto tem o caderno aceite e a conversa por fechar (`067`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem do resto da frente 3 e das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
@@ -160,14 +159,13 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/scripts/ArmazemLocal.gd` | **Onde o jogo guarda o que é do jogador** — com `--script`, em `user://ferramentas/`. `tools/sentinela_do_jogador.py` prova-o no CI (`061`) |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Nove bustos (`020`) |
 | `brport_vs/scripts/FilaDeMensagens.gd` | **A fila da faixa de mensagem** — FIFO, tempo mínimo por frase, fusão só por duplicata, histórico da sessão. Objeto do `Main` e nunca autoload (`034`) |
-| `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa, ao toque nela. Overlay, em memória, sem migrar save |
+| `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa como **conversa no celular** (`PainelCelular.gd`, o aparelho partilhado com o menu). Em memória, sem migrar save (`067`) |
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
 | `brport_vs/tools/medir_contraste_ui.gd` | A tabela de cada texto em cada estado do percurso. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado. O `acao_vista` age DEPOIS da cena e drena a fila (`042`) — e não serve a painel, que não tem fila; o `barco` e o `estruturas` agem ANTES, e **provam que o estado chegou ao nó** (`043`, `044`) |
 | `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn`, corta comentário, aceita multilinha e exige que a variação exista (`036`). **Zero chamadas e zero exceções** desde a 5ª leva; ele também denuncia exceção MORTA (`045`) |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo; e as peças de número das famílias (bloco de contas, quadro, barra do HUD) |
-| `brport_vs/scripts/TelaNomes.gd` | A tela de abertura: o jogador batiza o cais e diz o nome. Escolha irrevogável (GDD 7) |
-| `brport_vs/scripts/PainelDiario.gd` | A primeira página do diário do avô, encadeada à tela de nomes |
+| `brport_vs/scripts/TelaNomes.gd` + `PainelDiario.gd` | A folha de rosto do caderno — o nome do cais, irrevogável (GDD 7), e o do jogador — e a primeira página do diário, por baixo dela. O caderno desenha-se em `FolhaDoCaderno.gd` (`067`) |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
 | `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
 | `tools/trilha_de_arte.{sh,py}` | **A trilha de arte, para o gate A5** — corre a bateria em cada ponto que tocou em arte e monta o antes/depois de cada foto contra a primeira vez que foi tirada. O que mudou sai do hash de cada PNG; os passos são lista, porque em imagem passam do teto de uma página |
@@ -256,8 +254,8 @@ podre (A4) — em `HISTORICO.md`.
   da sessão. Nada se apaga: 30,7% do que o jogo dizia não chegava ao jogador,
   hoje 5,7% (`034`)
 - Autosave local a cada turno
-- **Sete telas narrativas**: nomes do cais e do jogador (abertura), primeira
-  página do diário, Boletim Financeiro semanal com os tons da Dona Cida, as 8
+- **Sete telas narrativas**: o caderno (os nomes na folha de rosto e a
+  primeira página do diário), Boletim Financeiro semanal com os tons da Dona Cida, as 8
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1
 - **E OS TRÊS NPCs TÊM ROSTO** (`020`): nove bustos com pose própria, ao lado
@@ -330,8 +328,8 @@ A **Zona de Espera é só visual**, e torná-la mecânica muda o balanceamento
 medido. Desde 11/09 ela fundeia **ao largo**, fora do gradiente costeiro
 (`docs/decisoes/017`).
 
-Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o Diário
-do Porto e a lista "VS — OUT" do GDD. A cena de fim de Fase 1 já não está aqui:
+Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o app
+Diário (o caderno já existe, `067`) e a lista "VS — OUT" do GDD. A cena de fim de Fase 1 já não está aqui:
 existe, em dois tempos, e o balanço FECHA — o menu de pausa reabre-o.
 
 ---

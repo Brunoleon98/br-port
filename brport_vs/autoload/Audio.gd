@@ -214,7 +214,7 @@ func _ligar_game_state() -> void:
 	GameState.game_over.connect(func(ganhou, _r): tocar("vitoria" if ganhou else "derrota"))
 
 
-func _ao_mensagem(_texto: String, tipo: String) -> void:
+func _ao_mensagem(_texto: String, tipo: String, _assunto: String = "") -> void:
 	match tipo:
 		"good": tocar("bom")
 		"warn": tocar("aviso")

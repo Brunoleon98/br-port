@@ -60,6 +60,8 @@ const APP_CIDADE := preload("res://art/icones/app_cidade.svg")
 const APP_LOJAS := preload("res://art/icones/app_lojas.svg")
 const APP_MISSOES := preload("res://art/icones/app_missoes.svg")
 const APP_ANALISE := preload("res://art/icones/app_analise.svg")
+# A conversa do porto (`067`): o mesmo painel que o toque na faixa abre.
+const APP_MENSAGENS := preload("res://art/icones/app_mensagens.svg")
 # A barra de status do celular. Desenho, e não medida: o Godot 4 não lê a
 # bateria nem o sinal do aparelho (sondado em 26/09 — nem o `OS` nem o
 # `DisplayServer` têm `get_power_*`). A hora, essa, é a do aparelho.

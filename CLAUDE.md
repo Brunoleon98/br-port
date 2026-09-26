@@ -2422,6 +2422,18 @@ as três coisas.
   sete linhas com o `;` só na primeira partiu o parse do tema inteiro: as cenas
   abriram sem ele, e a fumaça passou verde porque conferia que o arquivo
   EXISTE. Hoje o F1 carrega todo `.tres` (`docs/decisoes/064`).
+- ⚠️ **UM `Container` DESFAZ O GIRO DO FILHO, e não dá erro.** Ao arrumá-lo
+  (`fit_child_in_rect`) ele reescreve a `rotation` e a `scale`: a foto colada
+  e a etiqueta do caderno nasceram rodadas num `VBoxContainer` e saíram a
+  direito, com o giro escrito ao lado. Peça rodada vive num `Control` simples
+  que o contentor arruma, e é ela, lá dentro, que roda (`067`).
+- ⚠️ **SHADER SÓ COMPILA ONDE É DESENHADO — e as suítes headless não desenham
+  nada.** O primeiro shader da virada da folha redefinia `PI`, e as seis
+  suítes passaram verdes; quem o apanhou foi a captura, com `SHADER ERROR` e
+  backtrace. **Shader novo leva um tiro na bateria que o DESENHE**, que é a
+  única prova de que compila — o `nomes_virando` fotografa a folha a meio da
+  curva (`067`). E o `ColorRect` que o carrega tem cor de alfa zero: a régua
+  do contraste lê a `color` dele como o fundo do texto, e o shader não a muda.
 
 ---
 

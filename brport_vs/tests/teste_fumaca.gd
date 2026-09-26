@@ -143,6 +143,10 @@ func _rodar() -> void:
 	_f16_os_espacos_de_save()
 	_confere("o bloco F16 correu até ao fim", _f16_terminou)
 
+	print("=== F17: a conversa do celular — cada aviso com o seu ícone, cada fala com a sua cara ===")
+	_f17_a_conversa()
+	_confere("o bloco F17 correu até ao fim", _f17_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -1296,7 +1300,7 @@ func _f8_abrir() -> bool:
 	return true
 
 
-func _f8_recolher(texto: String, _kind: String) -> void:
+func _f8_recolher(texto: String, _kind: String, _assunto: String = "") -> void:
 	_f8_sistema.append(texto)
 
 
@@ -3722,3 +3726,149 @@ func _f16_registro() -> void:
 		"%d → %d" % [linhas_antes, registro.linhas_gravadas()])
 	_confere("F16 registro: e a Ajustes ainda copia a última partida",
 		registro.caminho_legivel() == caminho and registro.texto_para_exportar() != "")
+
+
+# ── F17 ─────────────────────────────────────────────────────────────────
+# A CONVERSA DO CELULAR (`docs/decisoes/067`). O histórico da faixa passou a
+# ser uma conversa com três vozes, e cada peça dela vem de um sítio que nada
+# obrigava a concordar com a conversa:
+#
+#  1. O ASSUNTO DE CADA AVISO sai de quem o emite (`GameState.message`, o
+#     terceiro argumento), e o ícone dele de uma tabela na `PainelMensagens`.
+#     São dois arquivos: um assunto novo sem ícone rebentaria na conversa, e
+#     um ícone sem quem o emita é arte que ninguém vê — o `barco_medio` outra
+#     vez. As duas direções perguntam-se aqui, e a leitura é do ARQUIVO
+#     INTEIRO: as chamadas partem-se em várias linhas, e a conta por dois
+#     caminhos (quantas vezes o nome aparece contra quantas se leram) é o que
+#     faz uma forma nova de chamada reprovar em vez de escapar (`037`).
+#  2. A FALA DE UM PAINEL chega ao histórico pelo sinal `falou`, que o `Main`
+#     liga no `_abrir_painel()` — e só lá. Uma fala que o painel mostra e o
+#     histórico não guarda é «fala vista não é fala gravada», e nenhuma foto o
+#     apanha: a conversa simplesmente não a tem. Pergunta-se ao HISTÓRICO,
+#     pelo texto que o PAINEL mostra — dois nós, e não um espelho.
+#  3. E A GRAVAÇÃO NÃO PASSA PELA FAIXA: a fala já está na tela do painel, e
+#     dizê-la outra vez por baixo seria duas vezes a mesma frase.
+var _f17_terminou := false
+const F17_FONTES := {
+	"res://autoload/GameState.gd": "message.emit(",
+	"res://scripts/Main.gd": "_on_message(",
+}
+
+
+func _f17_a_conversa() -> void:
+	var Msg: GDScript = load("res://scripts/PainelMensagens.gd")
+	var icones: Dictionary = Msg.get_script_constant_map()["ICONE_DO_ASSUNTO"]
+	var emitidos := {}
+	for arq in F17_FONTES:
+		var nome: String = F17_FONTES[arq]
+		var texto := FileAccess.get_file_as_string(arq)
+		var vistas := 0
+		var lidas := 0
+		var i := texto.find(nome)
+		while i >= 0:
+			var inicio_linha := texto.rfind("\n", i) + 1
+			var antes := texto.substr(inicio_linha, i - inicio_linha)
+			# A definição não é uma chamada, e o comentário também não.
+			if not antes.strip_edges().begins_with("#") and not antes.ends_with("func "):
+				vistas += 1
+				var assunto := _f17_ultimo_argumento(texto, i + nome.length())
+				if assunto != "":
+					lidas += 1
+					emitidos[assunto] = true
+			i = texto.find(nome, i + 1)
+		_confere("F17: todo aviso de %s diz o assunto (%d chamadas, %d lidas)"
+			% [arq.get_file(), vistas, lidas], vistas > 0 and vistas == lidas)
+	for assunto in emitidos:
+		_confere("F17: o assunto «%s» tem ícone na conversa" % assunto, icones.has(assunto))
+	for assunto in icones:
+		_confere("F17: o ícone de «%s» tem quem o emita" % assunto, emitidos.has(assunto))
+
+	# ── 2 e 3: as falas dos painéis chegam ao histórico, com a cara.
+	GS.clear_save()
+	GS.new_game()
+	GS.definir_nomes("Cais de Teste", "")
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var main: Node = (load("res://scenes/Main.tscn") as PackedScene).instantiate()
+	root.add_child(main)
+	var fila = main.get("_fila")
+	_confere("F17: o Main tem a fila das mensagens", fila != null)
+	if fila == null:
+		main.free()
+		return
+	# A faixa como está ANTES das falas — e é conferida antes de a oferta se
+	# resolver no fim, que emite um aviso de verdade para ela.
+	var na_tela: Dictionary = fila.atual()
+	var a_espera: int = fila.pendentes()
+
+	var ribeiro: Control = main.call("_abrir_painel",
+		load("res://scenes/panels/DebtPaymentPanel.tscn"))
+	ribeiro.call("setup", int(GS.PARCELA_AMOUNT))
+	_f17_gravou(fila, "ribeiro", String(ribeiro.get("_corpo").text),
+		Narrativa.retrato("ribeiro", "a_divida"))
+
+	var boletim: Control = main.call("_abrir_painel",
+		load("res://scenes/panels/PainelBoletim.tscn"))
+	boletim.call("setup", GS.resumo_da_semana(1))
+	var tom: String = Narrativa.tom_do_boletim(GS.resumo_da_semana(1))
+	_f17_gravou(fila, "cida", Narrativa.boletim(tom), Narrativa.retrato("cida", tom))
+
+	if GS.docks[0]["boat"] == null:
+		GS.docks[0]["boat"] = GS._make_boat()
+	GS.pending_rival_dock = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE
+	GS._set_phase("rival_offer")
+	var arlindo: Control = main.call("_abrir_painel",
+		load("res://scenes/panels/CounterOfferPanel.tscn"))
+	arlindo.call("setup", 0)
+	_f17_gravou(fila, "arlindo", String(arlindo.get("_fala_arlindo").text),
+		Narrativa.retrato("arlindo", "abertura"))
+
+	_confere("F17: gravar as falas não mexeu na faixa",
+		fila.atual() == na_tela and fila.pendentes() == a_espera,
+		"a faixa mostra «%s» e tem %d à espera (antes: %d)" % [
+			String(fila.atual().get("texto", "")), fila.pendentes(), a_espera])
+	GS.resolve_rival_offer(true)
+
+	main.free()
+	_f17_terminou = true
+
+
+# A entrada mais recente do histórico é a fala que o painel acabou de mostrar,
+# de quem a disse e com a cara que o painel lhe pôs.
+func _f17_gravou(fila: Variant, quem: String, texto: String, cara: Texture2D) -> void:
+	var h: Array = fila.historico
+	var ultima: Dictionary = h[0] if not h.is_empty() else {}
+	_confere("F17: a fala do painel de «%s» está no histórico" % quem,
+		not ultima.is_empty() and String(ultima["fonte"]) == quem
+			and String(ultima["texto"]) == texto and texto != "",
+		"a mais recente é de «%s»: %s" % [String(ultima.get("fonte", "")),
+			String(ultima.get("texto", "")).left(40)])
+	_confere("F17: e com a cara dessa fala (%s)" % quem,
+		not ultima.is_empty() and ultima["retrato"] == cara and cara != null)
+
+
+# O último argumento de uma chamada, se for uma string literal — com os
+# parênteses EQUILIBRADOS e as aspas respeitadas: `moeda(valor)` e `%` dentro
+# dos argumentos partiriam uma expressão que parasse no primeiro fecho.
+func _f17_ultimo_argumento(texto: String, desde: int) -> String:
+	var fundo := 1
+	var em_aspas := false
+	var j := desde
+	var ultima_virgula := desde - 1
+	while j < texto.length() and fundo > 0:
+		var c := texto[j]
+		if c == "\"" and texto[j - 1] != "\\":
+			em_aspas = not em_aspas
+		elif not em_aspas:
+			if c == "(" or c == "[":
+				fundo += 1
+			elif c == ")" or c == "]":
+				fundo -= 1
+			elif c == "," and fundo == 1:
+				ultima_virgula = j
+		j += 1
+	var ultimo := texto.substr(ultima_virgula + 1, j - 1 - (ultima_virgula + 1)).strip_edges()
+	if ultimo.length() >= 2 and ultimo.begins_with("\"") and ultimo.ends_with("\""):
+		return ultimo.substr(1, ultimo.length() - 2)
+	return ""

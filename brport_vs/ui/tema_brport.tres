@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=60 format=3]
+[gd_resource type="Theme" load_steps=69 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -923,6 +923,124 @@ content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 3.0
 
+[sub_resource type="StyleBoxFlat" id="conversa_cabecalho"]
+; ── A CONVERSA NO CELULAR (`docs/decisoes/067`) ── a barra de cima do app,
+; um degrau mais clara do que a tela, como a de todo app de mensagens.
+bg_color = Color(0.13, 0.21, 0.31, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_avatar"]
+; O aro da cara: um círculo claro (o canto maior do que meio lado fecha-o),
+; 2 px à volta da cara, que o shader `circulo` recorta redonda por dentro.
+bg_color = Color(0.85, 0.82, 0.76, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_balao"]
+; O BALÃO DA DONA CIDA: o creme do papel e a tinta navy, com o bico — o canto
+; de cima à esquerda quase reto — virado para a cara dela.
+bg_color = Color(0.965, 0.953, 0.918, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_balao_seguido"]
+; O mesmo balão sem bico, para as falas seguidas da mesma pessoa.
+bg_color = Color(0.965, 0.953, 0.918, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_nota"]
+; A NOTA DO PORTO, ao centro: a placa da tela e o TOM na borda da esquerda.
+; A borda é MASSA e não texto — o texto é o mesmo nos quatro tons, e é ele
+; que a régua mede.
+bg_color = Color(0.13, 0.21, 0.31, 1)
+border_width_left = 4
+border_color = Color(0.51, 0.6, 0.706, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_nota_boa"]
+bg_color = Color(0.13, 0.21, 0.31, 1)
+border_width_left = 4
+border_color = Color(0.35, 0.78, 0.5, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_nota_aviso"]
+bg_color = Color(0.13, 0.21, 0.31, 1)
+border_width_left = 4
+border_color = Color(0.961, 0.725, 0.227, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_nota_ruim"]
+bg_color = Color(0.13, 0.21, 0.31, 1)
+border_width_left = 4
+border_color = Color(0.93, 0.4, 0.36, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_dia"]
+; O SEPARADOR DO DIA: a pílula pequena ao centro, a de data de um chat.
+bg_color = Color(0.2, 0.28, 0.38, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 10.0
+content_margin_top = 3.0
+content_margin_right = 10.0
+content_margin_bottom = 3.0
+
 [resource]
 default_font_size = 15
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -1429,3 +1547,40 @@ TituloAbertura/font_sizes/font_size = 26
 TextoAbertura/base_type = "Label"
 TextoAbertura/colors/font_color = Color(0.8, 0.85, 0.92, 1)
 TextoAbertura/font_sizes/font_size = 17
+; ── A CONVERSA NO CELULAR (`docs/decisoes/067`) ──
+; Tudo sobre a tela navy do telefone, e os textos claros medidos contra a
+; placa de cada peça: o título a 11,4:1, a nota a 9,8:1, o dia a 6,6:1; e o
+; navy do balão a 11,4:1 sobre o creme dele, como na fala dos painéis.
+ConversaCabecalho/base_type = "PanelContainer"
+ConversaCabecalho/styles/panel = SubResource("conversa_cabecalho")
+AvatarConversa/base_type = "PanelContainer"
+AvatarConversa/styles/panel = SubResource("conversa_avatar")
+BalaoConversa/base_type = "PanelContainer"
+BalaoConversa/styles/panel = SubResource("conversa_balao")
+BalaoConversaSeguido/base_type = "PanelContainer"
+BalaoConversaSeguido/styles/panel = SubResource("conversa_balao_seguido")
+NotaConversa/base_type = "PanelContainer"
+NotaConversa/styles/panel = SubResource("conversa_nota")
+NotaConversaBoa/base_type = "PanelContainer"
+NotaConversaBoa/styles/panel = SubResource("conversa_nota_boa")
+NotaConversaAviso/base_type = "PanelContainer"
+NotaConversaAviso/styles/panel = SubResource("conversa_nota_aviso")
+NotaConversaRuim/base_type = "PanelContainer"
+NotaConversaRuim/styles/panel = SubResource("conversa_nota_ruim")
+DiaConversa/base_type = "PanelContainer"
+DiaConversa/styles/panel = SubResource("conversa_dia")
+TextoConversaTitulo/base_type = "Label"
+TextoConversaTitulo/colors/font_color = Color(0.941, 0.965, 1, 1)
+TextoConversaTitulo/font_sizes/font_size = 16
+TextoConversaVazia/base_type = "Label"
+TextoConversaVazia/colors/font_color = Color(0.8, 0.85, 0.92, 1)
+TextoConversaVazia/font_sizes/font_size = 14
+TextoBalao/base_type = "Label"
+TextoBalao/colors/font_color = Color(0.11, 0.204, 0.329, 1)
+TextoBalao/font_sizes/font_size = 14
+TextoNotaConversa/base_type = "Label"
+TextoNotaConversa/colors/font_color = Color(0.86, 0.9, 0.95, 1)
+TextoNotaConversa/font_sizes/font_size = 13
+TextoDiaConversa/base_type = "Label"
+TextoDiaConversa/colors/font_color = Color(0.8, 0.85, 0.92, 1)
+TextoDiaConversa/font_sizes/font_size = 12

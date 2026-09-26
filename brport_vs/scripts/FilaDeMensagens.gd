@@ -79,6 +79,8 @@ const TETO := 4.0
 # O histórico vive na SESSÃO e não no save: a §7.1 pede recuperação "em memória
 # da sessão, sem migrar save", e é isso que mantém o `SAVE_VERSION` intocado.
 const HISTORICO_MAX := 60
+# Uma mensagem sem dia conhecido. Não é zero: zero seria um dia que se lê.
+const SEM_DIA := -1
 
 var _fila: Array[Dictionary] = []
 var _atual: Dictionary = {}
@@ -103,20 +105,47 @@ static func tempo_minimo(texto: String) -> float:
 ## fala do Zezão — não se fundem, e é isso que a §7.1 exige por escrito. Onde
 ## isto morde de verdade é na obra a partir da terceira, em que duas compras no
 ## mesmo turno escrevem a MESMA linha da Dona Cida: essa é a duplicata.
-func enfileirar(texto: String, kind: String, fonte: String) -> bool:
+##
+## O `dia` é o turno em que foi dita, e serve só ao histórico: a conversa
+## separa as mensagens por dia (`docs/decisoes/067`). É da sessão, como o resto
+## do histórico — o save não o vê. Quem não o sabe passa `SEM_DIA`, e a
+## conversa não abre separador para ela.
+##
+## O `assunto` é o do aviso do porto (`GameState.message`), e a conversa põe
+## o ícone dele na nota. A fala da Dona Cida não tem assunto: tem a cara dela.
+##
+## O `retrato` é a cara de quem falou naquela fala (a expressão dela), e a
+## conversa põe-na no balão. Os avisos do porto não o têm.
+func enfileirar(texto: String, kind: String, fonte: String, dia: int = SEM_DIA,
+		assunto: String = "", retrato: Texture2D = null) -> bool:
 	if texto == "":
 		return false
-	var entrada := {"texto": texto, "kind": kind, "fonte": fonte}
+	var entrada := {"texto": texto, "kind": kind, "fonte": fonte, "dia": dia,
+		"assunto": assunto, "retrato": retrato}
 	if _duplicata(texto):
 		return false
-	historico.push_front(entrada)
-	if historico.size() > HISTORICO_MAX:
-		historico.resize(HISTORICO_MAX)
+	_guardar(entrada)
 	if _atual.is_empty():
 		_mostrar(entrada)
 		return true
 	_inserir_por_prioridade(entrada)
 	return true
+
+
+## GRAVA NO HISTÓRICO SEM MOSTRAR NA FAIXA: a fala de um personagem num
+## painel (o Sr. Ribeiro, o Arlindo, a Dona Cida no boletim) já está na tela
+## dele — pô-la também na faixa seria dizê-la duas vezes (`067`).
+func registrar(texto: String, fonte: String, dia: int, retrato: Texture2D) -> void:
+	if texto == "":
+		return
+	_guardar({"texto": texto, "kind": "", "fonte": fonte, "dia": dia,
+		"assunto": "", "retrato": retrato})
+
+
+func _guardar(entrada: Dictionary) -> void:
+	historico.push_front(entrada)
+	if historico.size() > HISTORICO_MAX:
+		historico.resize(HISTORICO_MAX)
 
 
 ## Corre o relógio. Devolve `true` se a faixa mudou neste passo.

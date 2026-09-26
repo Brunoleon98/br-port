@@ -67,6 +67,7 @@ func _montar() -> void:
 	_corpo = balao.get_child(0)
 	_corpo.text = "%s\n\n%s" % [
 		Narrativa.ribeiro_entrada(), Narrativa.ribeiro_a_divida(amount)]
+	falou.emit("ribeiro", _corpo.text, Narrativa.retrato("ribeiro", "a_divida"))
 	# A fala e o botão já dizem quanto vence. Aqui fica o número que o jogador
 	# precisa para decidir: a falta ou o caixa que sobreviverá ao pagamento —
 	# e, na linha de apoio, as DUAS parcelas de que ele sai. Até à terceira
@@ -153,6 +154,7 @@ func _mostrar_resposta(id: String) -> void:
 	var cara := retrato_da_fala()
 	if cara != null:
 		cara.texture = Narrativa.retrato("ribeiro", id)
+	falou.emit("ribeiro", _corpo.text, Narrativa.retrato("ribeiro", id))
 	for filho in _botoes.get_children():
 		filho.queue_free()
 	var sair := Button.new()

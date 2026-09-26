@@ -23,7 +23,7 @@ extends PainelNarrativo
 # pedido do Bruno foi «cara de diário», e este mesmo painel é o que o app
 # Diário do celular abre.
 #
-# ⚠️ A PÁGINA NÃO ROLA, e é o que o D36 tranca: a letra à mão é mais larga do
+# ⚠️ A PÁGINA NÃO ROLA, e é o que o D37 tranca: a letra à mão é mais larga do
 # que a do jogo, e o texto com o nome mais comprido que a tela de nomes aceita
 # tem de caber na folha sem a fazer crescer. A primeira medida da rolagem
 # (11/09) já mostrava o preço de não caber: a frase que FECHA o diário

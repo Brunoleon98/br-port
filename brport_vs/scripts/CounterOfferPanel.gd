@@ -32,6 +32,11 @@ var _mood_linha: Control
 # tela: abre a sorrir, aperta na última tentativa, e no fim ganha ou perde.
 var _retrato: TextureRect
 var _botoes: VBoxContainer
+
+# O MESMO sinal do `PainelNarrativo`, declarado aqui porque este painel não
+# herda do andaime: cada fala do Arlindo vai para a conversa do celular
+# (`docs/decisoes/067`).
+signal falou(personagem: String, texto: String, retrato: Texture2D)
 var _btn_igualar: Button
 var _btn_metade: Button
 var _btn_manter: Button
@@ -101,6 +106,7 @@ func _build_ui() -> void:
 	var linha := HBoxContainer.new()
 	linha.add_theme_constant_override("separation", 10)
 	_retrato = Retratos.imagem(Narrativa.retrato("arlindo", "abertura"))
+	falou.emit("arlindo", _fala_arlindo.text, _retrato.texture)
 	linha.add_child(_retrato)
 	linha.add_child(balao)
 	vbox.add_child(linha)
@@ -240,6 +246,7 @@ func _despedida(resultado: String) -> void:
 	var id := "perdeu" if resultado == "fechado" else "venceu"
 	_fala_arlindo.text = GameState.texto(String(Narrativa.ARLINDO_FALAS[id]))
 	_retrato.texture = Narrativa.retrato("arlindo", id)
+	falou.emit("arlindo", _fala_arlindo.text, _retrato.texture)
 	# ⚠️ O HUMOR DO CLIENTE SAI COM A NEGOCIAÇÃO. A linha dizia "Cliente
 	# ouvindo a proposta. (2 tentativas)" por baixo da despedida — com o
 	# negócio fechado ou o cliente já no Porto Farol, e nenhuma das duas coisas
@@ -320,3 +327,4 @@ func _refresh(reacao: String = "", acao: String = "") -> void:
 		_fala_arlindo.text = falas
 		if id != "":
 			_retrato.texture = Narrativa.retrato("arlindo", id)
+		falou.emit("arlindo", falas, _retrato.texture)
