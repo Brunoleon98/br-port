@@ -321,3 +321,8 @@ e as outras 39 são iguais pixel a pixel. Seis suítes verdes, `ESCOPO UI
 OK`, `GUARDAS OK`, `COBERTURA OK`; contraste **438 textos em 29 estados**
 (mais o «de 32» e o nome da tela inicial, que deixou de estar fora), nenhum
 abaixo do AA.
+
+**Veredito do Bruno sobre a quarta: «aceito, feche a família».** A família do
+sistema da frente 3 fechou com quatro passagens. O fundo da tela inicial e o
+logotipo continuam com ele, no ChatGPT, pelo `art_lab/tela_inicial/BRIEFING.md`
+— e a integração troca uma constante (`TelaInicial.FUNDO`) e muda os dois usos.

@@ -920,7 +920,7 @@ meta a barra do HUD — a escada de barras, o trabalho de cada doca até ao fim
 do dia, o prazo, ontem contra o melhor dia —: **«ficou bom»**. O F15 do
 `teste_fumaca` confere cada número contra o jogo.
 
-#### 🔨 A TERCEIRA FAMÍLIA DA FRENTE 3 ABRIU (26/09) — o sistema
+#### ✅ A TERCEIRA FAMÍLIA DA FRENTE 3 FECHOU (26/09) — o sistema
 
 Escolha do Bruno, e o escopo respondido em duas rodadas (`066`): a tela
 inicial é uma **cena própria, ilustrada** — a ilustração sai do **gerador de
@@ -939,7 +939,7 @@ fechados velados e o cadeado como selo — e recebeu «continue no celular»,
 com cinco reparos. A quarta fê-los: ícones com degradê e desenho próprio, a
 hora sobre o papel de parede com um contorno que a régua mede, o véu a 30%
 com um selo de cadeado de 32 px, e o widget do dia sem fio e com a fita dos
-dias — e está **à espera do veredito**. O
+dias — e foi **aceite: «feche a família»**. O
 fundo (um navio chegando, a paisagem brasileira) e o logotipo são **dele, no
 ChatGPT**, pelo briefing com os pedidos prontos. O **F16** tranca os espaços e
 a pausa.
