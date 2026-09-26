@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=35 format=3]
+[gd_resource type="Theme" load_steps=38 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -220,6 +220,50 @@ content_margin_bottom = 10.0
 shadow_color = Color(0.44, 0.3, 0.03, 0.32)
 shadow_size = 5
 shadow_offset = Vector2(0, 3)
+
+; O BOTÃO QUE APAGA (`docs/decisoes/066`). «Apagar e começar» saía com o
+; navy de todo botão, igual ao «Voltar aos espaços» por baixo — e é a única
+; decisão sem volta da família do sistema. O vermelho é o do tom RUIM das
+; tarjas (`RotuloTotalRuim`), que já quer dizer «perde-se aqui», com texto
+; branco: 5,58:1 no normal, 4,72:1 no hover, acima do AA nos dois.
+[sub_resource type="StyleBoxFlat" id="perigo_normal"]
+bg_color = Color(0.761, 0.188, 0.188, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+shadow_color = Color(0.4, 0.06, 0.06, 0.3)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="perigo_hover"]
+bg_color = Color(0.82, 0.24, 0.24, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+shadow_color = Color(0.4, 0.06, 0.06, 0.3)
+shadow_size = 7
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="perigo_press"]
+bg_color = Color(0.6, 0.14, 0.14, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
 
 [sub_resource type="StyleBoxFlat" id="destaque_normal"]
 ; O secundário COM ÊNFASE. Medido: o âmbar do tema sobre este navy dá 7,12:1,
@@ -833,6 +877,21 @@ BotaoPrimario/styles/normal = SubResource("primario_normal")
 BotaoPrimario/styles/hover = SubResource("primario_hover")
 BotaoPrimario/styles/pressed = SubResource("primario_press")
 BotaoPrimario/styles/disabled = SubResource("botao_off")
+; O PRIMÁRIO DA TELA INICIAL (`066`): o «Continuar» é o botão que o jogador
+; toca em quase toda abertura, e a 15 px, num botão de 64, lia-se pequeno. É o
+; `BotaoPrimario` com a letra do «AVANÇAR DIA» do porto (19 px) — uma variação
+; de variação, para as cores e as caixas continuarem num sítio só.
+BotaoPrimarioGrande/base_type = &"BotaoPrimario"
+BotaoPrimarioGrande/font_sizes/font_size = 19
+BotaoPerigo/base_type = &"Button"
+BotaoPerigo/colors/font_color = Color(1, 1, 1, 1)
+BotaoPerigo/colors/font_hover_color = Color(1, 1, 1, 1)
+BotaoPerigo/colors/font_pressed_color = Color(1, 1, 1, 1)
+BotaoPerigo/colors/font_disabled_color = Color(0.51, 0.6, 0.706, 1)
+BotaoPerigo/styles/normal = SubResource("perigo_normal")
+BotaoPerigo/styles/hover = SubResource("perigo_hover")
+BotaoPerigo/styles/pressed = SubResource("perigo_press")
+BotaoPerigo/styles/disabled = SubResource("botao_off")
 Cartao/styles/panel = SubResource("cartao")
 TrabLivre/base_type = "PanelContainer"
 TrabLivre/styles/panel = SubResource("trab_livre")

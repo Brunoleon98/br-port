@@ -113,7 +113,7 @@ func _montar_cartao() -> void:
 		apoio.text = "Última partida: %s · %s" % [String(r["porto"]), GameState.linha_do_espaco(r)]
 		coluna.add_child(apoio)
 		var continuar := _botao(coluna, "Continuar", ALTURA_CONTINUAR, _continuar)
-		continuar.theme_type_variation = &"BotaoPrimario"
+		continuar.theme_type_variation = &"BotaoPrimarioGrande"
 
 	_botao(coluna, "Nova partida", ALTURA_BOTAO, _nova_partida)
 	if _mais_recente > 0:

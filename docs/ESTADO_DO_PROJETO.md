@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 26/09/2026 — tela inicial, três espaços e pausa curta (`066`), à espera do veredito
+> **Última atualização:** 26/09/2026 — tela inicial, três espaços e pausa curta (`066`), 2.ª passagem à espera do veredito
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -114,7 +114,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | Fechado | O que ficou, medido |
 |---|---|
 | **Frente 3 do A5, 1.ª e 2.ª famílias** (25/09, `062`–`065`) — aceites | Boletim, contra-oferta, Sr. Ribeiro e balanço (o total no topo, a chance como barra, o custo da recusa, a tarja no tom); os painéis do HUD com os **recordes da partida** (`SAVE_VERSION` 9), a renda de cada doca, a reputação Comercial e a barra do HUD onde um número anda para uma meta. O **F14** e o **F15** conferem cada promessa contra o jogo. Referências em `docs/design/BR_Port_Referencias_Interface_Gestao.md` |
-| **Frente 3 do A5, 3.ª família — 1.ª passagem** (26/09, `066`) — à espera do veredito | A **tela inicial** é a cena principal (fundo provisório até a ilustração do `art_lab/tela_inicial/`), com **três espaços de save** — o 1 é o `savegame.json` de sempre, sem migração — e a **pausa curta** com Salvar e sair e a tela **Ajustes**. O **F16** tranca-os (14 mutantes). Falta a ilustração (do Bruno) e o celular |
+| **Frente 3 do A5, 3.ª família — 2 passagens** (26/09, `066`) — à espera do veredito | A **tela inicial** é a cena principal, com **três espaços de save** — o 1 é o `savegame.json` de sempre, sem migração — e a **pausa curta** com Salvar e sair e a tela **Ajustes**; na 2.ª, o «Continuar» a 19 px e o «Apagar» vermelho. O **F16** tranca-os. O fundo e o logotipo são do Bruno no ChatGPT (`art_lab/tela_inicial/BRIEFING.md`); falta o celular |
 | **O save do jogador isolado** (25/09, `061`) | toda ferramenta com `--script` grava em `user://ferramentas/` (`ArmazemLocal.gd`); o save, as gravações e o volume do jogador ficam de fora. **F13** e a sentinela do CI; só vale em commits com a `061` |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
@@ -130,7 +130,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). Na **frente 3**, as famílias do cartão e do HUD foram aceites; a do sistema tem a 1.ª passagem feita (`066`); restam diário, mensagens e nomes. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem do resto da frente 3 e das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). Na **frente 3**, as famílias do cartão e do HUD foram aceites; a do sistema tem duas passagens (`066`); restam diário, mensagens e nomes. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem do resto da frente 3 e das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido

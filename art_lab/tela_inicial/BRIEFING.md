@@ -1,7 +1,12 @@
 # Tela inicial — briefing da ilustração
 
-**Peça:** o fundo da tela inicial do BR Port, e o papel de parede do celular
-do jogo (a mesma imagem nos dois usos, escolha do Bruno em 26/09).
+**Peças:** duas, da mesma leva (escolha do Bruno em 26/09, na segunda
+passagem):
+
+1. **o fundo** da tela inicial, que é também o papel de parede do celular do
+   jogo (a mesma imagem nos dois usos);
+2. **o logotipo** «BR Port», que substitui o nome escrito em texto.
+
 **Técnica:** gerador de imagem, escolha do Bruno (`docs/decisoes/066`). É arte
 de PAINEL e não prop no mapa, que é a linha que o `CLAUDE.md` traça para o
 gerador.
@@ -11,11 +16,15 @@ gerador.
 
 ---
 
-## O que a imagem é
+## O fundo: o que a imagem é
 
-O porto do jogo visto **do mar, ao entardecer**: o cais de concreto com um
-guindaste de pórtico e um navio atracado, a vila de casas coloniais atrás,
-coqueiros, e a água em primeiro plano. É a abertura de um jogo de gestão
+**Um navio chegando a um porto, com uma paisagem brasileira de fundo** — o
+pedido do Bruno na segunda passagem. O navio (um cargueiro pequeno, casco
+escuro e superestrutura clara) entra pelo mar em direção ao cais; o porto é
+pequeno: cais de concreto, um guindaste de pórtico, alguns contêineres, a
+vila de casas coloniais atrás; e por trás de tudo a **paisagem**: morros
+verdes de mata atlântica, coqueiros na orla, a praia de areia clara. Luz de
+**entardecer**, com a água em primeiro plano. É a abertura de um jogo de gestão
 tranquilo (`docs/decisoes/005`): a sensação é de **um porto pequeno para
 levantar**, e não de um terminal gigante nem de uma ruína.
 
@@ -60,24 +69,64 @@ visor de ~350 × 560 (a proporção é outra, ~1:1,6). O corte vai ser o **miolo
 da imagem — o assunto entre y 420 e 860 tem de sobreviver a ser recortado a
 meio da largura.
 
-## O que NÃO pôr
+## O que NÃO pôr no fundo
 
 - **Texto nenhum** — nem o nome do jogo, nem placas, nem letreiros. O nome é
-  desenhado pelo jogo (é ele que o escreve com a fonte da interface), e texto
-  gerado por imagem sai com erros.
+  a segunda peça, à parte (abaixo), e é o jogo que o põe por cima.
 - Interface nenhuma (botões, molduras, logótipos).
 - Pessoas em destaque: o jogo tem retratos próprios, feitos no Blender, e uma
   cara pintada aqui seria uma quarta linguagem de personagem.
 
+## O logotipo
+
+- **«BR Port»**, e mais nada — confira as letras antes de entregar: gerador de
+  imagem erra letra, e um logotipo com uma letra trocada é refazer.
+- **PNG com transparência** (fundo transparente de verdade, sem o xadrez
+  pintado nos pixels — dois lotes de arte já chegaram assim, e o
+  `tools/conferir_lote_de_arte.py` mede o alfa).
+- Largura de **~900 px** e altura livre (proporção horizontal): no jogo ocupa
+  a faixa **280 – 420** da tela (× 1,5 na entrega), centrado, até ~600 de
+  largura.
+- Tem de ler sobre o CÉU do fundo: contorno ou sombra escura à volta das
+  letras, como o nome em texto de hoje (branco com contorno navy).
+- Cabe um desenho do mundo do porto junto das letras — âncora, guindaste,
+  onda —, na linguagem da ilustração.
+
+## Os pedidos, prontos para colar
+
+**Fundo:**
+
+> Ilustração vertical 9:16 (1080 × 1920 px), para a tela de abertura de um
+> jogo de celular de gestão de porto no litoral brasileiro. Um cargueiro
+> pequeno, de casco escuro, chega pelo mar a um porto pequeno: cais de
+> concreto, um guindaste de pórtico laranja, alguns contêineres, casas
+> coloniais de telhado de barro atrás. Ao fundo, morros verdes de mata
+> atlântica, coqueiros e uma praia de areia clara. Entardecer, céu do azul
+> escuro ao dourado no horizonte, água turquesa perto da costa. Estilo de
+> pintura limpa, cores quentes, clima tranquilo. O terço de cima é só céu
+> calmo (vai ter um logotipo por cima); o assunto fica no meio da imagem; o
+> terço de baixo pode ser só mar (fica tapado por botões). Sem texto, sem
+> letreiros, sem pessoas em destaque, sem interface.
+
+**Logotipo:**
+
+> Logotipo do jogo «BR Port», em PNG com fundo transparente, horizontal,
+> ~900 px de largura. Letras brancas grossas com contorno azul-marinho
+> escuro, legíveis sobre um céu de entardecer, com um detalhe do mundo do
+> porto (uma âncora, um guindaste ou uma onda) integrado às letras. Só o
+> texto «BR Port», escrito exatamente assim.
+
 ## Como entregar, e o que acontece depois
 
-1. Pôr o PNG (e a conversa ou o prompt que o produziu, se der) numa pasta
-   `art_lab/tela_inicial/v1/` — pelo GitHub web numa branch, ou num zip que o
-   Claude Code põe lá, com um `README.md` a dizer de onde veio.
-2. O Claude Code troca uma linha — `const FUNDO` em
-   `brport_vs/scripts/TelaInicial.gd` —, importa, e fotografa a tela inicial e
-   os seus painéis (`tools/capturar_evidencia.sh`), com a imagem de hoje ao
-   lado.
+1. Pôr os dois PNG (e a conversa ou o prompt que os produziu, se der) numa
+   pasta `art_lab/tela_inicial/v1/` — pelo GitHub web numa branch, ou num zip
+   que o Claude Code põe lá, com um `README.md` a dizer de onde vieram.
+2. O Claude Code troca o `const FUNDO` em `brport_vs/scripts/TelaInicial.gd`
+   e põe o logotipo no lugar do nome em texto (o D33 já declara o nome sobre
+   a ilustração como coisa que se confere no pixel da foto, e não pela régua
+   de contraste), importa, e fotografa a tela
+   inicial e os seus painéis (`tools/capturar_evidencia.sh`), com a de hoje
+   ao lado.
 3. O Bruno aceita **na foto do jogo**, não na imagem solta.
 4. Com o aceite, o papel de parede do celular passa a usá-la (terceira
    passagem da família do sistema).

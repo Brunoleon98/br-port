@@ -929,10 +929,12 @@ deu lugar a **três espaços de save**, a pausa ficou **curta** (Continuar,
 Ajustes, Salvar e sair) com o volume e o registro numa tela **Ajustes** que as
 duas portas abrem, e o celular ganha as quatro coisas que ele marcou
 (moldura, barra de status, papel de parede — a mesma ilustração — e ícones
-com cor própria). **Três passagens**: a primeira (espaços, tela inicial com
-fundo provisório, pausa e Ajustes) está feita e **à espera do veredito**; a
-segunda é a ilustração, que é dele; a terceira, o celular. O **F16** tranca os
-espaços e a pausa.
+com cor própria). A primeira passagem (espaços, tela inicial com fundo
+provisório, pausa e Ajustes) recebeu **«Continue»**, e a segunda deu ao
+«Continuar» a letra do «AVANÇAR DIA» e ao «Apagar» o vermelho do tom ruim —
+**à espera do veredito**. O fundo (um navio chegando, a paisagem brasileira) e
+o logotipo são **dele, no ChatGPT**, pelo briefing com os pedidos prontos; o
+celular vem depois. O **F16** tranca os espaços e a pausa.
 
 **O que resta da frente 3** depois desta família são as telas de texto
 (diário, mensagens, nomes). Os pedidos dele estão na triagem acima: o diário

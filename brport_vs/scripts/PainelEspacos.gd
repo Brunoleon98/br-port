@@ -133,6 +133,10 @@ func _confirmar(n: int, r: Dictionary) -> void:
 	var apagar := Button.new()
 	apagar.name = "Apagar"
 	apagar.text = "Apagar e começar"
+	# O VERMELHO DO TOM RUIM, e não o navy de todo botão: com a mesma cor do
+	# «Voltar aos espaços» logo abaixo, o toque que apaga um porto não se
+	# distinguia do que desiste (segunda passagem, a pedido do Bruno).
+	apagar.theme_type_variation = &"BotaoPerigo"
 	apagar.custom_minimum_size = Vector2(0, TOQUE_MIN)
 	apagar.pressed.connect(func() -> void: _escolher(n))
 	_vbox.add_child(apagar)

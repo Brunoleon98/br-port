@@ -1,9 +1,10 @@
 # 066 — A família do sistema: tela inicial, três espaços de save e a pausa curta
 
-**26/09/2026 · primeira passagem da terceira família da frente 3 do A5**: o
-sistema. O Bruno escolheu esta família entre as que restavam (a outra são as
-telas de texto: diário, mensagens e nomes) e respondeu duas rodadas de
-perguntas antes do desenho. **À espera do veredito do Bruno.**
+**26/09/2026 · terceira família da frente 3 do A5**: o sistema. O Bruno
+escolheu esta família entre as que restavam (a outra são as telas de texto:
+diário, mensagens e nomes) e respondeu duas rodadas de perguntas antes do
+desenho. **Veredito da primeira passagem: «Continue»** — a segunda está no
+fim deste arquivo, e espera o dele.
 
 ## O que o Bruno escolheu
 
@@ -161,3 +162,42 @@ também os espaços 2 e 3.
 - O «Jogar de novo» do fim de partida escreve no registro velho uma linha do
   `new_game()` antes de o `Main` voltar a armar — é anterior a esta família.
 - O Voltar do Android na tela inicial não foi experimentado num aparelho.
+
+## A segunda passagem: os botões dizem o que fazem, e a arte tem pedido
+
+**Veredito do Bruno sobre a primeira: «Continue»**, com três pontos marcados —
+o «Continuar» com letra pequena, o «Apagar» igual ao «Voltar», o nome do jogo
+só em texto — e um escrito: *«pode melhorar a tela de fundo, por exemplo, com
+um navio chegando num porto e uma paisagem brasileira de fundo»*.
+
+O fundo e o logotipo são ARTE, e a técnica é escolha dele (`CLAUDE.md`,
+Arte): perguntou-se antes de produzir, e as duas peças são **dele, no
+ChatGPT**. O `art_lab/tela_inicial/BRIEFING.md` passou a ter as duas — o fundo
+com o navio chegando, os morros de mata atlântica, os coqueiros e a praia, e
+o logotipo em PNG com transparência, com a faixa da tela que ocupa e o aviso
+de conferir as letras —, e um pedido pronto a colar para cada uma.
+
+O tema desta passagem é o que se faz aqui, **os dois botões**:
+
+- **«Continuar» a 19 px**, a letra do «AVANÇAR DIA» do porto, pela variação
+  `BotaoPrimarioGrande`, que é uma variação do `BotaoPrimario` e só muda o
+  tamanho — as cores e as caixas continuam num sítio só.
+- **«Apagar e começar» vermelho** (`BotaoPerigo`): o vermelho do tom ruim das
+  tarjas, que já quer dizer «perde-se aqui», com texto branco a 5,58:1 (4,72
+  no hover).
+
+**E o D33 passou a medir a confirmação**, que é o único botão vermelho do jogo
+e vivia fora do percurso: um painel de vários tempos só chega ao segundo pelo
+toque. O caso declara os espaços ocupados (`espacos`), o botão a tocar
+(`tocar`, um só) e o tempo onde tem de parar (`tempo`), e a régua PROVA que
+parou lá. O percurso parte do espaço 1 com os outros vazios, pela razão das
+ferramentas de captura. **Dois defeitos**: o toque que não dispara reprova
+pelo tempo («pediu confirmar e está em nova»), e o vermelho trocado por um
+rosa claro reprova o «Apagar» a 1,32:1 — prova de que é medido.
+
+Mudaram **as 5 fotos da tela inicial** contra a primeira passagem (o
+«Continuar» aparece por trás de cada painel dela) e nenhuma outra; contra a
+`main` continuam a ser a pausa e a folha de ícones, mais as cinco novas. Seis
+suítes verdes, `ESCOPO UI OK`, `COBERTURA OK`; contraste **435 textos em 29
+estados**, nenhum abaixo do AA.
+

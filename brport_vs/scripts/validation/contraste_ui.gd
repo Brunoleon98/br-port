@@ -78,6 +78,9 @@ func percurso() -> Array:
 			"setup": []},
 		{"nome": "Espaços (partida nova)", "cena": "res://scenes/panels/PainelEspacos.tscn",
 			"setup": ["nova"]},
+		{"nome": "Espaços (confirmar)", "cena": "res://scenes/panels/PainelEspacos.tscn",
+			"espacos": [1], "setup": ["nova"], "tocar": ["Substituir"],
+			"tempo": "confirmar"},
 		# ⚠️ O NOME DO JOGO FICA FORA, DECLARADO — e não medido de graça. Ele é
 		# branco sobre uma ILUSTRAÇÃO, e a régua só conhece fundos de stylebox:
 		# a composição não fecha e daria pendência, que está certa. Quem o
@@ -198,10 +201,13 @@ var falhas: PackedStringArray = PackedStringArray()
 
 
 func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
-	GS.clear_save()
+	# O ESPAÇO 1, COM OS OUTROS VAZIOS (`066`): o painel dos espaços lê os três
+	# do disco, e um caso que ocupasse o 3 deixava-o ocupado para o seguinte.
+	for n in range(2, GS.ESPACOS + 1):
+		GS.apagar_espaco(n)
 	seed(20260825)
 	GS._rng.seed = 20260825
-	GS.new_game()
+	GS.comecar_no_espaco(1)
 	# ⚠️ A OFERTA PENDENTE RESOLVE-SE ANTES: com `phase == "rival_offer"` o
 	# `comprar_estrutura()` recusa calado, e o estado montado a seguir não é o
 	# que se pediu. O `CLAUDE.md` regista isto como "o estado da semente anda
@@ -210,6 +216,12 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		GS.resolve_rival_offer(true)
 	for chave in caso.get("estado", {}):
 		GS.set(chave, caso["estado"][chave])
+	# Os espaços OCUPADOS que o painel dos espaços vai ler. O nome basta: a
+	# régua mede cor, e o cartão de um porto veste as mesmas variações seja
+	# qual for o dia dele.
+	for n in caso.get("espacos", []):
+		GS.comecar_no_espaco(int(n))
+		GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
 	# ⚠️ E A OFERTA DO RIVAL MONTA-SE COMO O JOGO A MONTA, campo a campo. Até
 	# 22/09 esta linha escrevia `GS.docks[d]["rival_offer"] = true` — uma chave
 	# que NINGUÉM no projeto lê, criada em silêncio pelo `Dictionary` (a regra
@@ -297,6 +309,8 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		no.callv("setup", args)
 	if not _fora_da_regua(no, caso):
 		return null
+	if not _tocou(no, caso):
+		return null
 	if not _acao_vista(no, GS, caso):
 		return null
 	if not _barco_chegou(no, caso):
@@ -306,6 +320,37 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 	if not _escolheu(no, caso, tema):
 		return null
 	return no
+
+
+# ── O SEGUNDO TEMPO, PELO BOTÃO ─────────────────────────────────────────────
+#
+# Um painel de vários tempos só chega ao segundo pela porta do jogador — o
+# toque —, e a régua não o media: a confirmação dos espaços (`066`) tem o
+# único botão vermelho do jogo, e ficava fora do percurso. O caso diz os
+# botões a tocar (início do rótulo, UM botão cada) e o TEMPO onde tem de
+# parar, e a régua prova que parou lá — estado declarado e não obtido
+# publicaria linhas sobre o tempo de antes (`043`).
+func _tocou(no: Node, caso: Dictionary) -> bool:
+	for prefixo in caso.get("tocar", []):
+		var achados: Array = []
+		_botoes_com(no, String(prefixo), achados)
+		if achados.size() != 1:
+			falhas.append("%s: tocar «%s» casou %d botões" % [caso["nome"], prefixo, achados.size()])
+			return false
+		(achados[0] as Button).pressed.emit()
+	if caso.has("tempo") and String(no.get("tempo")) != String(caso["tempo"]):
+		falhas.append("%s pediu o tempo «%s» e o painel está em «%s»"
+			% [caso["nome"], caso["tempo"], no.get("tempo")])
+		return false
+	return true
+
+
+func _botoes_com(no: Node, prefixo: String, achados: Array) -> void:
+	if no is Button and not no.is_queued_for_deletion() \
+			and (no as Button).text.begins_with(prefixo):
+		achados.append(no)
+	for filho in no.get_children():
+		_botoes_com(filho, prefixo, achados)
 
 
 # ── O QUE FICA FORA DA RÉGUA, POR NOME E COM MOTIVO ─────────────────────────
