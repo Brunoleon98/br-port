@@ -1,5 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 24 24">
-  <rect width="24" height="24" rx="5.5" fill="#6d4fa3"/>
-  <rect x="6.5" y="4.5" width="1.7" height="15" rx="0.8" fill="#ffffff"/>
-  <path d="M8.2 5.2h10l-2.6 3.4 2.6 3.4h-10z" fill="#ffffff"/>
+  <defs>
+    <linearGradient id="fundo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9272cb"/>
+      <stop offset="1" stop-color="#583b8f"/>
+    </linearGradient>
+  </defs>
+  <rect width="24" height="24" rx="5.5" fill="url(#fundo)"/>
+  <rect x="5.6" y="4.8" width="12.8" height="15.6" rx="1.6" fill="#ffffff"/>
+  <rect x="9.3" y="3.4" width="5.4" height="2.8" rx="1.1" fill="#ffd766"/>
+  <path d="M7.4 9.6l1 1 1.9-2" stroke="#583b8f" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="11.4" y="9.1" width="5.4" height="1.1" rx="0.55" fill="#c8b6e6"/>
+  <path d="M7.4 13.3l1 1 1.9-2" stroke="#583b8f" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="11.4" y="12.8" width="5.4" height="1.1" rx="0.55" fill="#c8b6e6"/>
+  <rect x="7.5" y="16.1" width="2.4" height="2.4" rx="0.5" fill="none" stroke="#583b8f" stroke-width="0.9"/>
+  <rect x="11.4" y="16.6" width="5.4" height="1.1" rx="0.55" fill="#c8b6e6"/>
 </svg>

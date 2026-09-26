@@ -251,3 +251,73 @@ que passou a 31 ícones e cabe, pela conta dela, com 64 px de sobra. Contra a
 verdes, `ESCOPO UI OK`, `COBERTURA OK`; contraste **436 textos em 29
 estados**, nenhum abaixo do AA e nenhum sobre a imagem.
 
+
+## A quarta passagem: o celular, com os cinco reparos
+
+**Veredito do Bruno sobre a terceira: «continue no celular»**, com cinco
+reparos marcados — e cada um com o que se fez:
+
+- **«Melhore os ícones dos aplicativos».** Os cinco `app_*.svg` ganharam um
+  degradê vertical da própria cor e um desenho com mais do que uma silhueta:
+  o diário é um livro aberto com linhas e a fita; a cidade, o casario de telha
+  com a igreja ao meio; as lojas, uma fachada escura com as montras acesas e o
+  toldo listrado de bicos (a primeira versão, de bicos para cima, lia-se como
+  um castelo, e foi refeita na foto); as missões, uma prancheta com a lista
+  marcada; a análise, as barras com a seta de alta. Um brilho de 1 px no topo
+  saía por fora do canto arredondado e ficou uma linha cinzenta por cima de
+  cada tile — tirado, visto na foto a 1080.
+- **«Barra de status escura».** A barra perdeu o fundo (`StyleBoxEmpty`) e a
+  hora pousa no papel de parede, como num telefone. **A leitura passou para o
+  CONTORNO**: a hora é branca com contorno navy (`TextoCelularStatus`), e os
+  ícones do sinal e da bateria levam o contorno desenhado.
+- **«Fechados apagados demais».** O véu desceu de 62% para **30%**, e o nome
+  dos fechados passou ao claro dos abertos — o cinzento somava-se ao véu e ao
+  cadeado a dizer a mesma coisa. Quem diz «fechado» passou a ser o selo.
+- **«Cadeado pequeno demais».** O cadeado saiu de dentro do véu, a 22 px,
+  para um **selo de 32** num anel creme (`AppSelo`), a sair 8 px para a
+  direita do canto — onde a grelha tem 30 de vão — e só 3 para baixo, onde o
+  nome está a 6. O aviso do pé usa o mesmo selo: o disco navy do cadeado
+  sozinho sumia na placa, navy também.
+- **«Widget do dia parece campo».** Um retângulo contornado com duas linhas
+  encostadas à esquerda é a forma de uma caixa de texto. O widget perdeu o fio
+  e ficou com o canto de 22, mais claro do que a tela, e passou a ter
+  hierarquia: «SEMANA 2 DE 4» pequeno em âmbar, «Dia 9» grande com «de 32» na
+  linha de base, e a **fita dos dias** — um traço por dia da partida,
+  agrupados por semana, derivada de `TURNS_PER_WEEK` e `WEEKS_TOTAL`: o vivido
+  em âmbar, o de hoje claro, o que falta apagado.
+
+**A régua aprendeu a ler um contorno** (`contraste_ui.gd`, `CONTORNO_MIN`).
+Texto sobre imagem dava pendência, e certa. Com um contorno OPACO de pelo
+menos 4 px a letra fica rodeada da cor dele sobre qualquer pixel, e o par que
+o olho lê é letra contra contorno — é assim que a hora se mede (16,21:1). O
+nome da tela inicial, que era `fora` declarado desde a primeira passagem,
+passou a medir-se pela mesma regra (17,60:1): **uma exclusão virou uma
+medição**, e tirar-lhe o contorno reprova, o que a exclusão não fazia. A
+subida pelos antepassados passou também através de um `StyleBoxEmpty`, que não
+desenha nada — sem isso a pendência da barra nomeava o stylebox, e a causa é a
+imagem.
+
+⚠️ **E OS DOIS LIMIARES DA REGRA SÓ SE PROVAM NUM ESTADO QUE O JOGO NÃO
+MONTA.** O jogo tem dois textos contornados, e os dois passam os limiares: a
+fixture realista é a que não prova nada. Os cinco controles novos do D33
+montam a mesma letra sobre a mesma imagem e mudam uma coisa no contorno — sem
+ele, um px abaixo do mínimo, translúcido, da cor da letra, e no mínimo. Sete
+defeitos injetados, todos reprovados, com a base verde entre eles: **apagar o
+limiar da largura e o da opacidade (C1, C2) reprovou SÓ nesses controles**;
+desligar a regra (C3) reprovou os controles, o D23 e o D33; tirar o contorno à
+hora (C4), ao nome (C5), torná-lo translúcido (C7) ou da cor da letra (C6)
+reprovou o D23 e o D33, ou o D33 sozinho no caso do nome.
+
+⚠️ **E A COR DE APOIO NÃO ATRAVESSOU PARA A PLACA.** O «de 32» nasceu na cor
+neutra do jogo, que media 5,05:1 na tela; na placa do widget, mais clara, deu
+**4,44:1** e o D23 reprovou-a. Subiu para 0.6/0.68/0.78, que mede 5,70:1 ali.
+
+O topo do papel de parede provisório é navy (15, 29, 44 no pixel) e o
+contorno também (13, 26, 38): **nesta foto o contorno não trabalha**, e a
+prova de que ele segura a hora sobre um céu claro é a foto com a ilustração.
+
+Mudaram **2 fotos** contra a terceira passagem — o menu e a folha de ícones —
+e as outras 39 são iguais pixel a pixel. Seis suítes verdes, `ESCOPO UI
+OK`, `GUARDAS OK`, `COBERTURA OK`; contraste **438 textos em 29 estados**
+(mais o «de 32» e o nome da tela inicial, que deixou de estar fora), nenhum
+abaixo do AA.

@@ -206,6 +206,7 @@ func setup(_sem_argumentos: Variant = null) -> void:
 # A BARRA DE STATUS: a hora à esquerda, a câmera no meio, o sinal e a bateria
 # à direita — o desenho de todo telefone com entalhe. O dia do jogo, que vivia
 # aqui, passou para o widget abaixo, que é onde um telefone põe a data grande.
+# Desde a quarta passagem ela não tem fundo: pousa no papel de parede.
 func _barra_de_status() -> Control:
 	var barra := PanelContainer.new()
 	barra.name = "BarraDeStatus"
@@ -213,9 +214,12 @@ func _barra_de_status() -> Control:
 	var linha := HBoxContainer.new()
 	barra.add_child(linha)
 
+	# ⚠️ A HORA POUSA NO PAPEL DE PAREDE desde a quarta passagem (`066`), e o
+	# fundo dela passou a ser o CONTORNO da letra (`TextoCelularStatus`) — é
+	# contra ele que a régua a mede, e sem ele ela volta a pendência.
 	_hora = Label.new()
 	_hora.name = "Hora"
-	_hora.theme_type_variation = &"TextoCelular"
+	_hora.theme_type_variation = &"TextoCelularStatus"
 	_hora.text = _hora_agora()
 	_hora.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	linha.add_child(_hora)
@@ -231,8 +235,8 @@ func _barra_de_status() -> Control:
 	direita.alignment = BoxContainer.ALIGNMENT_END
 	direita.add_theme_constant_override("separation", 6)
 	direita.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	direita.add_child(Icones.imagem(Icones.CELULAR_SINAL, 15))
-	direita.add_child(Icones.imagem(Icones.CELULAR_BATERIA, 17))
+	direita.add_child(Icones.imagem(Icones.CELULAR_SINAL, 16))
+	direita.add_child(Icones.imagem(Icones.CELULAR_BATERIA, 20))
 	linha.add_child(direita)
 
 	# O RELÓGIO ANDA enquanto o telefone está aberto — uma hora parada num
@@ -255,30 +259,82 @@ static func _hora_agora() -> String:
 
 
 # O WIDGET DO DIA: o número grande, como a data na tela de início de um
-# telefone, e a semana por baixo. O número sai do `GameState`, e não é escrito
-# aqui — é a mesma regra do `_refresh_hud`.
+# telefone. Os números saem do `GameState`, e não são escritos aqui — é a
+# mesma regra do `_refresh_hud`.
+#
+# ⚠️ E ELE «PARECIA CAMPO» (quarta passagem da `066`): um retângulo contornado
+# com duas linhas de texto encostadas à esquerda é a forma de uma caixa de
+# texto. O que o faz ler como widget é a HIERARQUIA — o cabeçalho pequeno em
+# cor, o número grande, e uma peça que não é texto: a FITA DOS DIAS, um traço
+# por dia da partida, agrupados por semana. É a forma do calendário, e diz
+# «semana 2 de 4» sem uma palavra.
 func _widget_do_dia() -> Control:
 	var cartao := PanelContainer.new()
 	cartao.name = "WidgetDoDia"
 	cartao.theme_type_variation = &"CelularWidget"
 	var coluna := VBoxContainer.new()
-	coluna.add_theme_constant_override("separation", 0)
+	coluna.add_theme_constant_override("separation", 2)
 	cartao.add_child(coluna)
 
 	var dia: int = mini(GameState.turn, GameState.TURNS_TOTAL)
+	var cabeca := Label.new()
+	cabeca.name = "Semana"
+	cabeca.theme_type_variation = &"TextoCelularDestaque"
+	cabeca.text = ("Semana %d de %d" % [GameState.week_of(maxi(dia, 1)),
+		GameState.WEEKS_TOTAL]).to_upper()
+	coluna.add_child(cabeca)
+
+	var linha := HBoxContainer.new()
+	linha.add_theme_constant_override("separation", 8)
+	coluna.add_child(linha)
 	var grande := Label.new()
 	grande.name = "Dia"
 	grande.theme_type_variation = &"TextoCelularGrande"
 	grande.text = "Dia %d" % dia
-	coluna.add_child(grande)
+	linha.add_child(grande)
+	var total := Label.new()
+	total.name = "DeTotal"
+	total.theme_type_variation = &"TextoCelularFraco"
+	total.text = "de %d" % GameState.TURNS_TOTAL
+	# Na linha de base do número, e não no meio dele: é como uma data se lê.
+	total.size_flags_vertical = Control.SIZE_SHRINK_END
+	total.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	linha.add_child(total)
 
-	var apoio := Label.new()
-	apoio.name = "Semana"
-	apoio.theme_type_variation = &"TextoCelularFraco"
-	apoio.text = "de %d · semana %d de %d" % [GameState.TURNS_TOTAL,
-		GameState.week_of(maxi(dia, 1)), GameState.WEEKS_TOTAL]
-	coluna.add_child(apoio)
+	var vao := Control.new()
+	vao.custom_minimum_size = Vector2(0, 6)
+	coluna.add_child(vao)
+	coluna.add_child(_fita_dos_dias(dia))
 	return cartao
+
+
+# A FITA: TURNS_TOTAL traços, em WEEKS_TOTAL grupos. Os grupos e os traços
+# esticam por igual (`EXPAND_FILL`), então a fita enche a placa sem uma
+# largura escrita aqui — e continua a caber se a semana mudar de tamanho.
+func _fita_dos_dias(dia: int) -> Control:
+	var fita := HBoxContainer.new()
+	fita.name = "FitaDosDias"
+	fita.add_theme_constant_override("separation", 7)
+	var por_semana: int = GameState.TURNS_PER_WEEK
+	for s in GameState.WEEKS_TOTAL:
+		var semana := HBoxContainer.new()
+		semana.add_theme_constant_override("separation", 2)
+		semana.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		fita.add_child(semana)
+		for d in por_semana:
+			var n: int = s * por_semana + d + 1
+			var traco := PanelContainer.new()
+			traco.custom_minimum_size = Vector2(2, 6)
+			traco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			traco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			if n < dia:
+				traco.theme_type_variation = &"CelularDiaPassado"
+			elif n == dia:
+				traco.theme_type_variation = &"CelularDiaHoje"
+			else:
+				traco.theme_type_variation = &"CelularDiaFuturo"
+			semana.add_child(traco)
+	return fita
 
 
 # Um app: o ícone por cima, o nome por baixo, numa pílula.
@@ -326,23 +382,53 @@ func _app(app: Dictionary) -> Control:
 		veu.name = "Veu"
 		veu.theme_type_variation = &"AppVeu"
 		quadro.add_child(veu)
-		var cadeado := Icones.imagem(Icones.BLOQUEADO, 22)
-		cadeado.size_flags_horizontal = Control.SIZE_SHRINK_END
-		cadeado.size_flags_vertical = Control.SIZE_SHRINK_END
-		veu.add_child(cadeado)
+		quadro.add_child(_selo_do_cadeado())
 		caixa.add_child(quadro)
 
+	# O NOME É CLARO NOS DOIS, desde a quarta passagem: o nome cinzento dos
+	# fechados somava-se ao véu e ao cadeado a dizer a mesma coisa, e era parte
+	# do «apagados demais». Quem diz «fechado» é o selo.
 	var pilula := PanelContainer.new()
 	pilula.theme_type_variation = &"CelularRotulo"
 	pilula.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var nome := Label.new()
 	nome.name = "Nome_%s" % String(app["id"])
-	nome.theme_type_variation = &"TextoCelular" if aberto else &"TextoCelularFraco"
+	nome.theme_type_variation = &"TextoCelular"
 	nome.text = String(app["nome"])
 	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	pilula.add_child(nome)
 	caixa.add_child(pilula)
 	return caixa
+
+
+# O SELO DO CADEADO: o ícone `bloqueado` num anel claro, no canto de baixo do
+# tile e a sair dele — como o selo de um app que ainda está a instalar.
+#
+# ⚠️ A 22 px, DENTRO do véu, era «pequeno demais» (quarta passagem da `066`):
+# ele morava dentro do quadrado e disputava lugar com o desenho do app. A 32,
+# a sair do canto, é uma peça por cima do ícone, e é ELE que carrega o estado
+# desde que o véu ficou mais leve. Sai 8 px para a direita, onde a grelha tem
+# 30 de vão, e só 3 para baixo, onde o nome está a 6.
+const SELO := 32
+
+func _selo_do_cadeado() -> Control:
+	var ancora := Control.new()
+	ancora.name = "Selo"
+	ancora.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var anel := PanelContainer.new()
+	anel.theme_type_variation = &"AppSelo"
+	anel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	anel.anchor_left = 1.0
+	anel.anchor_right = 1.0
+	anel.anchor_top = 1.0
+	anel.anchor_bottom = 1.0
+	anel.offset_left = 8 - SELO
+	anel.offset_right = 8
+	anel.offset_top = 3 - SELO
+	anel.offset_bottom = 3
+	anel.add_child(Icones.imagem(Icones.BLOQUEADO, SELO - 4))
+	ancora.add_child(anel)
+	return ancora
 
 
 func _aviso_dos_fechados() -> Control:
@@ -352,9 +438,13 @@ func _aviso_dos_fechados() -> Control:
 	var linha := HBoxContainer.new()
 	linha.add_theme_constant_override("separation", 10)
 	cartao.add_child(linha)
-	var cadeado := Icones.imagem(Icones.BLOQUEADO, 20)
-	cadeado.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	linha.add_child(cadeado)
+	# O MESMO SELO dos tiles, no mesmo anel: o disco navy do cadeado sozinho
+	# sumia na placa do widget, que é navy também.
+	var selo := PanelContainer.new()
+	selo.theme_type_variation = &"AppSelo"
+	selo.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	selo.add_child(Icones.imagem(Icones.BLOQUEADO, 24))
+	linha.add_child(selo)
 	var texto := Label.new()
 	texto.theme_type_variation = &"TextoCelular"
 	texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

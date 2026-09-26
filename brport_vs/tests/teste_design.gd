@@ -3802,6 +3802,9 @@ func _d23_menu_celular() -> void:
 	# D33, que sobe pelos antepassados até ao primeiro opaco; e um texto
 	# posto direto sobre o papel de parede sai PENDENTE, que aqui reprova —
 	# a régua não sabe ler uma imagem, e o texto não pode depender dela.
+	# A exceção é a HORA, que desde a quarta passagem pousa na imagem com um
+	# CONTORNO opaco: a régua mede-a contra ele (`CONTORNO_MIN`), e sem
+	# contorno ela volta aqui como pendente.
 	var motor: RefCounted = load("res://scripts/validation/contraste_ui.gd").new()
 	var linhas: Array = motor.medir(menu)
 	_confere("o celular tem texto para medir (%d)" % linhas.size(), linhas.size() >= 8)
@@ -4536,6 +4539,9 @@ func _d33_contraste_efetivo() -> void:
 		", ".join(ruim))
 	if not ruim.is_empty():
 		return
+	var contorno := _d33_contorno(motor)
+	_confere("D33: o contorno só é fundo quando é opaco e largo (5 controles)",
+		contorno.is_empty(), ", ".join(contorno))
 
 	# ── O PERCURSO COBRE O DISCO. Derivado, não escrito à mão.
 	var no_percurso := {}
@@ -4650,6 +4656,51 @@ func _d33_contraste_efetivo() -> void:
 # A FORMA de um rótulo: sem dígitos, sem moeda e sem pontuação, em minúsculas.
 # "Pagar R$530.000" e "Pagar R$150.000" são a mesma frase dita sobre caixas
 # diferentes, e é a frase que se está a comparar.
+# ── OS CONTROLES DA REGRA DO CONTORNO (`066`, quarta passagem) ──
+#
+# A hora do celular e o nome da tela inicial pousam numa IMAGEM, e passam só
+# porque a régua lê o contorno como o fundo da letra. Essa regra tem dois
+# limiares — a largura mínima e a opacidade — e o jogo só monta o lado que
+# PASSA deles: sem estes controles, apagar qualquer um dos dois limiares
+# deixava tudo verde. Cada caso monta a mesma letra sobre a mesma imagem e
+# muda UMA coisa no contorno.
+func _d33_contorno(motor: RefCounted) -> PackedStringArray:
+	var mau := PackedStringArray()
+	var minimo: int = motor.CONTORNO_MIN
+	var navy := Color(0.051, 0.102, 0.149, 1)
+	var casos := [
+		["sem contorno", 0, navy, "pendente"],
+		["contorno opaco no mínimo", minimo, navy, "passa"],
+		["contorno um px abaixo do mínimo", minimo - 1, navy, "pendente"],
+		["contorno translúcido", minimo, Color(navy, 0.5), "pendente"],
+		["contorno da cor da letra", minimo, Color(1, 1, 1, 1), "reprova"],
+	]
+	var imagem := Image.create(4, 4, false, Image.FORMAT_RGBA8)
+	imagem.fill(Color(0.5, 0.5, 0.5))
+	for c in casos:
+		var raiz := Control.new()
+		var fundo := TextureRect.new()
+		fundo.texture = ImageTexture.create_from_image(imagem)
+		fundo.anchor_right = 1.0
+		fundo.anchor_bottom = 1.0
+		raiz.add_child(fundo)
+		var letra := Label.new()
+		letra.text = "09:41"
+		letra.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+		letra.add_theme_font_size_override("font_size", 14)
+		letra.add_theme_constant_override("outline_size", int(c[1]))
+		letra.add_theme_color_override("font_outline_color", c[2])
+		raiz.add_child(letra)
+		root.add_child(raiz)
+		var linhas: Array = motor.medir(raiz)
+		var estado := "nenhuma linha" if linhas.size() != 1 else String(linhas[0]["estado"])
+		if estado != String(c[3]):
+			mau.append("%s deu %s, esperado %s" % [c[0], estado, c[3]])
+		root.remove_child(raiz)
+		raiz.free()
+	return mau
+
+
 func _d33_forma(texto: String) -> String:
 	var fora := ""
 	for c in texto.to_lower():

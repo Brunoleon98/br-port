@@ -2144,7 +2144,9 @@ as três coisas.
   de app posto direto na imagem media-se contra o navy da tela, e passava
   (mutante medido em 26/09). Hoje um `TextureRect` por trás, num contentor que
   empilha ou ancorado ao pai inteiro, dá PENDÊNCIA; texto sobre ilustração
-  vive numa peça opaca, ou fica `fora` com o motivo escrito (`066`).
+  vive numa peça opaca, leva um CONTORNO opaco de pelo menos `CONTORNO_MIN`
+  px — que a régua mede como o fundo da letra —, ou fica `fora` com o motivo
+  escrito (`066`).
   ⚠️ **E COMPOSIÇÃO QUE NÃO FECHA É PENDÊNCIA, NUNCA VERDE.** Onde o que está
   por trás é desconhecido — o cartão da doca tem alfa 0,96 e pousa sobre o
   MAPA —, a resposta honesta são DUAS: o pior sobre preto e o pior sobre

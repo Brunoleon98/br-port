@@ -935,7 +935,11 @@ provisório, pausa e Ajustes) recebeu **«Continue»**, e a segunda deu ao
 aceite («siga para o celular»). A terceira fez o celular — moldura com
 câmera e botões laterais, a hora do aparelho, o papel de parede (a mesma
 constante do fundo da tela inicial) e um ícone com cor por app, com os
-fechados velados e o cadeado como selo — e está **à espera do veredito**. O
+fechados velados e o cadeado como selo — e recebeu «continue no celular»,
+com cinco reparos. A quarta fê-los: ícones com degradê e desenho próprio, a
+hora sobre o papel de parede com um contorno que a régua mede, o véu a 30%
+com um selo de cadeado de 32 px, e o widget do dia sem fio e com a fita dos
+dias — e está **à espera do veredito**. O
 fundo (um navio chegando, a paisagem brasileira) e o logotipo são **dele, no
 ChatGPT**, pelo briefing com os pedidos prontos. O **F16** tranca os espaços e
 a pausa.

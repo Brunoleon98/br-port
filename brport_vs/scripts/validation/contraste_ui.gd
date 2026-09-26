@@ -32,6 +32,16 @@ const AA_PEQUENO := 4.5
 const AA_GRANDE := 3.0
 const CORTE_GRANDE_PX := 18
 
+# ⚠️ O CONTORNO É O FUNDO DE UMA LETRA CONTORNADA (`docs/decisoes/066`, quarta
+# passagem). Texto sobre uma IMAGEM não tem fundo que a régua leia, e dava
+# pendência — certa, porque nenhuma cor de letra ganha todos os pixels de uma
+# pintura. Um contorno OPACO muda a pergunta: a letra fica rodeada da cor do
+# contorno sobre qualquer pixel, e o par que o olho lê é letra contra
+# contorno. Só vale com o contorno opaco e largo o bastante para ser um fundo
+# e não um fio — abaixo disto, ou translúcido, o texto volta à régua comum e
+# à pendência. É o que mede a hora do celular e o nome da tela inicial.
+const CONTORNO_MIN := 4
+
 # Onde vivem os painéis. O percurso DERIVA daqui e não de uma lista escrita à
 # mão: painel novo que ninguém acrescente à lista é o buraco que este bloco
 # existe para tapar, e uma lista à mão fecha-o em silêncio.
@@ -81,15 +91,11 @@ func percurso() -> Array:
 		{"nome": "Espaços (confirmar)", "cena": "res://scenes/panels/PainelEspacos.tscn",
 			"espacos": [1], "setup": ["nova"], "tocar": ["Substituir"],
 			"tempo": "confirmar"},
-		# ⚠️ O NOME DO JOGO FICA FORA, DECLARADO — e não medido de graça. Ele é
-		# branco sobre uma ILUSTRAÇÃO, e a régua só conhece fundos de stylebox:
-		# a composição não fecha e daria pendência, que está certa. Quem o
-		# garante é o contorno navy, e a prova de verdade é no PIXEL da foto,
-		# quando a ilustração existir (`art_lab/tela_inicial/BRIEFING.md`). A
-		# exclusão envelhece para o lado que reprova: se o nó sumir, a régua
-		# queixa-se (`_fora_da_regua`).
-		{"nome": "Tela inicial", "cena": "res://scenes/TelaInicial.tscn",
-			"fora": {"Logo": "branco com contorno navy sobre a ilustração; mede-se no pixel"}},
+		# O NOME DO JOGO É BRANCO SOBRE UMA ILUSTRAÇÃO, e até à quarta passagem
+		# da `066` ficava FORA, declarado: a régua só conhecia fundos de
+		# stylebox. Desde que ela lê o CONTORNO como fundo (`CONTORNO_MIN`), ele
+		# mede-se — e tirar-lhe o contorno reprova, que a exclusão não fazia.
+		{"nome": "Tela inicial", "cena": "res://scenes/TelaInicial.tscn"},
 		{"nome": "Caixa", "cena": "res://scenes/panels/PainelCaixa.tscn",
 			"setup": ["@resumo_do_dia"]},
 		{"nome": "Boletim", "cena": "res://scenes/panels/PainelBoletim.tscn",
@@ -641,6 +647,9 @@ func _medir_um(no: Control, raiz: Node) -> Array:
 		pares.append([no.get_theme_color("font_color"), (no as Label).text, false])
 
 	var mod := mod_efetiva(no, raiz)
+	var contorno := _contorno_de(no, mod)
+	if not contorno.is_empty():
+		fundo = contorno
 	for par in pares:
 		var cor: Color = par[0]
 		cor = Color(cor.r * mod.r, cor.g * mod.g, cor.b * mod.b, cor.a * mod.a)
@@ -679,6 +688,21 @@ func _medir_um(no: Control, raiz: Node) -> Array:
 			linha["estado"] = "passa"
 		linhas.append(linha)
 	return linhas
+
+
+# O contorno como fundo, se ele o puder ser — ver `CONTORNO_MIN`. Devolve o
+# fundo no formato do `fundo_de`, ou vazio. A modulação é a do TEXTO, e não a
+# cadeia do fundo: letra e contorno saem do mesmo nó, no mesmo desenho.
+func _contorno_de(no: Control, mod: Color) -> Dictionary:
+	if not (no is Label or no is Button):
+		return {}
+	var largura: int = no.get_theme_constant("outline_size")
+	var cor: Color = no.get_theme_color("font_outline_color")
+	cor = Color(cor.r * mod.r, cor.g * mod.g, cor.b * mod.b, cor.a * mod.a)
+	if largura < CONTORNO_MIN or cor.a < 0.999:
+		return {}
+	return {"pendente": false, "alfa": 1.0, "cores": [cor],
+		"nota": "contra o contorno de %d px" % largura}
 
 
 # De onde veio a cor: o que separa um defeito de TEMA de um de SCRIPT. O R7
@@ -730,6 +754,13 @@ func fundo_de(no: Control, raiz: Node) -> Dictionary:
 					return {"pendente": true, "cores": [], "alfa": 0.0,
 						"nota": "o rótulo desenha um %s, que não publica bg_color"
 							% proprio.get_class()}
+			# O `StyleBoxEmpty` NÃO DESENHA NADA, e a subida continua por ele
+			# — é o motivo do ramo do `Label` acima, um andar acima. Sem isto a
+			# barra de status do celular, que perdeu o fundo (`066`), dava a
+			# pendência de um «StyleBoxEmpty» quando a causa é a IMAGEM por
+			# trás dela: pendente na mesma, e a apontar para o sítio errado.
+			if sb is StyleBoxEmpty:
+				sb = null
 			if sb != null:
 				if not (sb is StyleBoxFlat):
 					return {"pendente": true, "cores": [], "alfa": 0.0,
