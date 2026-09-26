@@ -37,6 +37,9 @@ const PAUSAR := preload("res://art/icones/pausar.svg")
 const AVANCAR := preload("res://art/icones/avancar.svg")
 const FEITO := preload("res://art/icones/feito.svg")
 const MENU := preload("res://art/icones/menu.svg")
+# A engrenagem da tela Ajustes (`066`), no desenho do `pausar`: disco navy e
+# figura clara, porque as duas moram no mesmo sítio — o selo do cabeçalho.
+const AJUSTES := preload("res://art/icones/ajustes.svg")
 
 # O DIÁRIO e o CADEADO são do menu, e o cadeado é UM para todas as portas
 # fechadas de propósito. Quando uma delas abrir, ela ganha o ícone dela — o

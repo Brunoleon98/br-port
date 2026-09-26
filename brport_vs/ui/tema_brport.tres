@@ -977,6 +977,18 @@ TextoCelular/font_sizes/font_size = 13
 TextoCelularFraco/base_type = "Label"
 TextoCelularFraco/colors/font_color = Color(0.51, 0.6, 0.706, 1)
 TextoCelularFraco/font_sizes/font_size = 13
+; ── A TELA INICIAL (`docs/decisoes/066`) ──
+; O nome do jogo, por cima da ilustração. O fundo é uma IMAGEM que ainda não
+; existe (a provisória é um degradê; a de verdade sai do ChatGPT), e texto
+; sobre imagem é a composição que não fecha: nenhuma cor de letra ganha todos
+; os pixels de uma pintura. Quem garante a leitura é o CONTORNO navy — a letra
+; branca separa-se do claro pelo contorno e do escuro pelo miolo, que são as
+; duas pontas que o D33 mede quando não sabe o fundo.
+LogoInicial/base_type = "Label"
+LogoInicial/colors/font_color = Color(1, 1, 1, 1)
+LogoInicial/colors/font_outline_color = Color(0.051, 0.102, 0.149, 1)
+LogoInicial/constants/outline_size = 14
+LogoInicial/font_sizes/font_size = 68
 ; ── O CARTÃO DA DOCA — a 3ª leva das cores declaradas (`docs/decisoes/043`) ──
 ;
 ; Os quatro rótulos do `DocaCartao`, que até 22/09 eram quatro

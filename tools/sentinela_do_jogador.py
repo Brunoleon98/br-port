@@ -49,7 +49,11 @@ CONTEUDO = (
 
 # O que o jogo guarda, relativo ao `user://`. Os nomes são os que o
 # `ArmazemLocal.caminho()` recebe no `GameState`, no `Audio` e no `Registro`.
-ARQUIVOS = ("savegame.json", "audio.cfg")
+# ⚠️ E O SAVE SÃO TRÊS desde a `066`: o espaço 1 é o `savegame.json` de sempre
+# e os outros dois são arquivos novos — que as ferramentas agora APAGAM ao
+# partir de um disco conhecido (`apagar_espaco`). Sem eles aqui, um isolamento
+# que falhasse só para os espaços 2 e 3 levava as partidas do jogador calado.
+ARQUIVOS = ("savegame.json", "savegame_2.json", "savegame_3.json", "audio.cfg")
 PASTA_REGISTROS = "registros"
 REGISTRO_SENTINELA = "partida_sentinela.jsonl"
 

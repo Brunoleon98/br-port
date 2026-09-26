@@ -1059,6 +1059,14 @@ concordar sobre a lista de campos, e que um campo novo teria quebrado calada.
 **Tudo o que recusa vem antes de tudo o que escreve**, e o `teste_fumaca.gd`
 tranca isso.
 
+**São três espaços, e o 1 é o arquivo de sempre** (`docs/decisoes/066`): o
+`savegame.json` que o jogador já tinha aparece no espaço 1 sem migração, e o
+`SAVE_VERSION` não subiu. **Ler um espaço não é carregá-lo**: o
+`resumo_do_espaco()` usa as MESMAS recusas do `load_game()` (`_save_aceite`)
+e não apaga nada; quem apaga é a partida nova que o ocupa. O «jogado por
+último» é a hora do ARQUIVO — um carimbo no JSON mudaria a forma. O F16 tranca
+as três coisas.
+
 ### Arte
 
 - **Arte que chega de fora passa por `tools/conferir_lote_de_arte.py` antes de
@@ -2390,6 +2398,13 @@ tranca isso.
   o mesmo nos painéis do HUD (`065`). Mostrar a consequência antes da escolha
   é assumir uma promessa: quem a escreve, escreve a guarda
   (`docs/decisoes/062`).
+- **⚠️ OS ÍCONES TÊM DOIS DESENHOS, e um deles some no selo claro.** Os do
+  HUD são traço CLARO para a barra escura; os de painel têm disco navy. O
+  `doca` (traço `#f0f6ff`) foi fantasma no painel branco e, em 26/09, no selo
+  do cabeçalho, que é `#f0f6ff` — contraste 1,00. Hoje o **F2b** do
+  `teste_fumaca` lê cada ícone que um cabeçalho recebe e exige a MEDIANA dos
+  pixels acima de 1,3:1 contra o selo; ele não diz que o âmbar (1,63) se lê
+  bem, só que o ícone não é da cor do fundo (`docs/decisoes/066`).
 - Alvo de toque mínimo 44px. O teste de design cobre.
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta

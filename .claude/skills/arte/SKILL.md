@@ -284,6 +284,11 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   a pergunta, que as imagens já lá estão. O que funcionou nas vezes seguintes
   foi decidir o bloco inteiro ANTES de escrever a primeira chamada: um bloco
   com o envio sozinho é o último do turno.
+  ⚠️ **E OUTRA VEZ EM 26/09**, na primeira pergunta de escopo da família do
+  sistema, com esta secção lida minutos antes: o envio das fotos do «hoje»
+  saiu num bloco, e o turno acabou nele. A forma que não depende de memória:
+  **um `SendUserFile` sem `AskUserQuestion` no MESMO bloco não se escreve** —
+  se ainda não há pergunta pronta, ainda não há prancha a enviar.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

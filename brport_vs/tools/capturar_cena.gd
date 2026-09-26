@@ -29,6 +29,15 @@ const TEMA := "res://ui/tema_brport.tres"
 # A mesma semente das outras capturas da bateria. Fixa, e num lugar só.
 const SEMENTE := 20260825
 
+# Os portos que a montagem `espacos=` põe em cada espaço: nome do cais, nome
+# do jogador (o 3 fica SEM, que é a variante que o cartão tem de saber
+# escrever) e o dia até onde a partida é jogada.
+const ESPACOS_MONTADOS := {
+	1: ["Cais Mirim", "Marina", 9],
+	2: ["Porto da Lua", "Tião", 14],
+	3: ["Cais do Norte", "", 20],
+}
+
 var _cena := "res://scenes/tests/AssetPlacementTest.tscn"
 var _saida := "user://cena.png"
 var _montado := false
@@ -127,13 +136,13 @@ func _process(_delta: float) -> bool:
 	# `conferir_cobertura_paineis.py` sabe que o Diário, a parcela, o Sr.
 	# Ribeiro, a contra-oferta, o menu-celular, a tela de nomes e o fim de Fase 1
 	# têm fotografia — medido no log, e não declarado ao lado do tiro.
-	print("Paineis: %s" % _cena)
+	print("Paineis: %s" % " ".join(_cenas_na_tela()))
 	# E O TEMPO DELE, quando o painel tem mais de um. Um painel é uma cena, mas
 	# a cena do Sr. Ribeiro são três telas — a entrada, a de quem pagou e a de
 	# quem não pôde —, e até 23/09 a bateria fotografava só a primeira das três
 	# (`docs/decisoes/051`).
 	if tempo != "":
-		print("Tempo: %s %s" % [_cena, tempo])
+		print("Tempo: %s %s" % [_topo().scene_file_path, tempo])
 	# E AS CARAS DELE, uma andar abaixo do tempo (`docs/decisoes/060`): a cena
 	# da contra-oferta é uma tela na rodada e mostra duas caras diferentes
 	# conforme a aposta. `load()` e não `preload`, pela regra dos `--script`.
@@ -255,12 +264,17 @@ func _ler_argumentos() -> void:
 # tinha só metade da receita.
 func _estado_conhecido() -> void:
 	var GS: Node = root.get_node("GameState")
-	GS.clear_save()
+	# O espaço 1, com os outros vazios — pela razão do `capturar_tela.gd`: o
+	# autoload arranca no espaço jogado por último, e a tela inicial lê os
+	# três do disco (`066`). Quem quiser espaços ocupados monta-os com
+	# `espacos=`, que é montagem e deriva a partida jogando.
+	for n in range(2, GS.ESPACOS + 1):
+		GS.apagar_espaco(n)
 	# A SEMENTE ANTES do `new_game()`, que já sorteia a mão inicial — a mesma
 	# armadilha que o `capturar_tela.gd` e o simulador documentam.
 	seed(SEMENTE)
 	GS._rng.seed = SEMENTE
-	GS.new_game()
+	GS.comecar_no_espaco(1)
 
 
 # ⚠️ PAINEL QUE SÓ DIZ ALGO NUM ESTADO DO JOGO PRECISA DE MONTAR ESSE ESTADO.
@@ -287,6 +301,36 @@ func _montar_estado() -> void:
 		# incluía não ter barco nenhum naquela doca. Montar o estado é a regra
 		# desta ferramenta desde 12/09; isto é a mesma regra, para uma coisa que
 		# não cabe numa atribuição.
+		# ⚠️ `espacos=<n>,<n>...` TAMBÉM É MONTAGEM: os espaços ocupados que a
+		# tela inicial vai ler do disco (`066`). Cada um é uma partida JOGADA
+		# até ao seu dia pelo `advance_turn()` — o cartão mostra o dia e o
+		# dinheiro, e escrevê-los à mão poria o rótulo certo sobre um porto que
+		# nenhuma partida produziu. Os ocupados escrevem-se do MAIOR para o
+		# menor: o de número mais baixo fica o mais recente (ou empata no
+		# segundo, e o empate também lhe dá a vez), e o «Continuar» não
+		# depende do relógio.
+		if chave == "espacos":
+			var lista: Array = []
+			for pedaco in valor.split(","):
+				lista.append(int(pedaco))
+			lista.sort()
+			lista.reverse()
+			for n in range(1, GS.ESPACOS + 1):
+				GS.apagar_espaco(n)
+			for n in lista:
+				var ficha: Array = ESPACOS_MONTADOS[int(n)]
+				GS._rng.seed = SEMENTE + int(n)
+				GS.comecar_no_espaco(int(n))
+				GS.definir_nomes(String(ficha[0]), String(ficha[1]))
+				var voltas := 0
+				while GS.turn < int(ficha[2]) and GS.phase != "game_over" and voltas < 200:
+					if GS.phase == "rival_offer":
+						GS.resolve_rival_offer(true)
+					GS.advance_turn()
+					voltas += 1
+				GS.save_game()
+				print("  estado: espaço %d — %s, dia %d" % [int(n), GS.nome_porto, GS.turn])
+			continue
 		if chave == "barco":
 			var doca: int = int(valor)
 			GS.docks[doca]["boat"] = GS._make_boat()
@@ -358,9 +402,40 @@ func _montar_estado() -> void:
 
 
 func _tempo_do_painel() -> String:
-	if _no == null or not "tempo" in _no:
+	var topo := _topo()
+	if topo == null or not "tempo" in topo:
 		return ""
-	return String(_no.get("tempo"))
+	return String(topo.get("tempo"))
+
+
+# ⚠️ UM TOQUE PODE ABRIR UM PAINEL POR CIMA DA CENA, e aí é ELE que está na
+# foto. A tela inicial (`066`) é uma cena que abre os seus painéis como filhos
+# — os três espaços e os Ajustes —, e esta ferramenta, que só conhecia a cena
+# que montou, imprimia `Paineis:` só com ela: a cobertura daria os espaços por
+# nunca fotografados, ou pior, leria o tempo da cena de baixo. O de cima é o
+# último filho que é uma cena e não está de saída — o mesmo critério do
+# `_paineis_na_tela()` do `capturar_tela.gd`.
+func _paineis_abertos() -> Array:
+	var abertos: Array = []
+	if _no == null:
+		return abertos
+	for filho in _no.get_children():
+		if filho is Control and filho.scene_file_path != "" \
+				and not filho.is_queued_for_deletion():
+			abertos.append(filho)
+	return abertos
+
+
+func _topo() -> Node:
+	var abertos := _paineis_abertos()
+	return _no if abertos.is_empty() else abertos[-1]
+
+
+func _cenas_na_tela() -> PackedStringArray:
+	var cenas: PackedStringArray = [_cena]
+	for painel in _paineis_abertos():
+		cenas.append(painel.scene_file_path)
+	return cenas
 
 
 # A DESPEDIDA NÃO PROVA QUEM VENCEU: «Igualar» e duas apostas recusadas chegam

@@ -29,6 +29,7 @@ entra no pacote exportado. Uma candidata passa daqui para lá pelo caminho da
 | `retratos/ribeiro/v1/`–`v4/` | O Sr. Ribeiro no kit afinado, retangular e alto: quatro voltas até à v4, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas | Claude Code, 24/09 |
 | `retratos/arlindo/v1/`–`v6/` | O Capitão Arlindo no kit afinado, de ângulos: seis voltas até à v6, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas | Claude Code, 24/09 |
 | `retratos/trabalhador/v1/`–`v6/` | O trabalhador do rodapé em BUSTO no kit afinado: seis voltas até à v6, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas (hoje × candidatas) | Claude Code, 24/09 |
+| `tela_inicial/BRIEFING.md` | O briefing da ilustração da tela inicial, que é também o papel de parede do celular (`066`): o que ela é, as faixas que a interface tapa, medidas na tela montada, e como entra no jogo. A peça é do Bruno, pelo gerador de imagem | Claude Code, 26/09 |
 | `retratos/trabalhador_variacoes/v1/`–`v3/` | As 30 variações do trabalhador (2 sexos × 3 idades × 5 cores do IBGE), pelo `trabalhador(M, cara, perfil)`: três voltas até à v3, que o Bruno aceitou (`059`) — o script, as duas folhas de contato e a régua do contraste das feições | Claude Code, 24/09 |
 
 O pacote de 23/09 trazia 111 arquivos; **103 estão aqui, byte a byte** (confira
@@ -75,8 +76,9 @@ Code, numa sessão de arte.
    uma guarda no teste de design que a procure pela cor ou forma que só ela tem.
 5. **O aceite.** O Bruno olha a foto de runtime. Só então a peça passa para
    `brport_vs/`, com a decisão escrita em `docs/decisoes/` — **a próxima livre
-   é a `060`** (a `055` é a da Dona Cida quadrada, a primeira peça a fazer
-   este caminho inteiro).
+   é a seguinte à maior que lá estiver** (este número vivia aqui escrito e
+   envelheceu seis decisões; a `055` é a da Dona Cida quadrada, a primeira
+   peça a fazer este caminho inteiro).
 
 ---
 

@@ -451,6 +451,136 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # afirmaria recordes que a partida não guardou.
 const SAVE_VERSION := 9
 
+# ── OS ESPAÇOS DE SAVE (`docs/decisoes/066`) ──
+#
+# Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do
+# Bruno no lugar do «Novo jogo (apaga progresso)» que vivia na pausa. Três
+# porque cabem numa tela de celular sem rolar, com o cais, o nome, o dia e o
+# dinheiro de cada um à vista.
+#
+# ⚠️ O ESPAÇO 1 É O ARQUIVO DE SEMPRE, e é isso que poupa uma migração. Mudar
+# o nome do save para `espaco_1.json` obrigaria a mover o `savegame.json` que o
+# jogador já tem — e mover é código que corre UMA vez no aparelho de cada um,
+# que é o tipo de código que nenhuma suíte exercita duas vezes. Com o espaço 1
+# no mesmo nome, a partida que existia aparece nele sem ninguém lhe tocar, e o
+# `SAVE_VERSION` fica onde estava: a forma do save não mudou, só o número de
+# arquivos.
+#
+# ⚠️ E QUEM DIZ QUAL FOI JOGADO POR ÚLTIMO É O DISCO, não um campo no save. Um
+# carimbo de hora dentro do JSON mudaria a forma e subiria a versão — o que
+# descartaria outra vez a partida do Bruno, um dia depois da `065`. A hora de
+# modificação do arquivo diz a mesma coisa, porque todo lance do jogo grava
+# (`save_game()` em cada compra, turno e decisão), e só tem um segundo de
+# resolução, o que para «qual jogou por último» chega.
+const ESPACOS := 3
+var espaco := 1
+
+
+# O nome do arquivo de cada espaço. O 1 é o de sempre — ver acima.
+static func arquivo_do_espaco(n: int) -> String:
+	return SAVE_ARQUIVO if n == 1 else "savegame_%d.json" % n
+
+
+func _apontar_espaco(n: int) -> void:
+	espaco = clampi(n, 1, ESPACOS)
+	save_path = ArmazemLocal.caminho(arquivo_do_espaco(espaco))
+
+
+# Passa a jogar no espaço `n`: carrega o que lá houver, ou abre partida nova.
+# É o «Carregar» e o «Continuar» da tela inicial.
+func usar_espaco(n: int) -> void:
+	_apontar_espaco(n)
+	if not load_game():
+		new_game()
+
+
+# Partida nova no espaço `n`, por cima do que lá estiver. Quem pergunta antes
+# de apagar é a tela — aqui já se decidiu.
+func comecar_no_espaco(n: int) -> void:
+	_apontar_espaco(n)
+	clear_save()
+	new_game()
+
+
+# Apaga o ARQUIVO do espaço `n` e mais nada — o estado vivo fica como estava,
+# mesmo quando `n` é o espaço em uso. Não há botão que o chame: quem apaga um
+# porto no jogo é a partida nova que ocupa o espaço (`comecar_no_espaco`). Isto
+# é para as ferramentas e as suítes, que partem de um disco conhecido.
+func apagar_espaco(n: int) -> void:
+	var caminho := ArmazemLocal.caminho(arquivo_do_espaco(n))
+	if FileAccess.file_exists(caminho):
+		DirAccess.remove_absolute(caminho)
+
+
+# O que a tela inicial mostra de um espaço, lido do ARQUIVO e sem tocar no
+# estado vivo nem no disco. Vazio quer dizer livre.
+#
+# ⚠️ LER NÃO É CARREGAR, e a diferença é a regra do save do outro lado: o
+# `load_game()` APAGA o que recusa, porque um save recusado que fica no disco é
+# tentado outra vez a cada arranque. Aqui recusar não apaga nada — um espaço de
+# outra versão lê-se como livre, e quem o apaga é a partida nova que o ocupar.
+# Pela mesma regra, as recusas são AS MESMAS do `load_game()` (`_save_aceite`):
+# um resumo que aceitasse o que a carga recusa mostraria um porto que, tocado,
+# abre partida nova.
+#
+# ⚠️ E O PORTO SEM NOME TAMBÉM É LIVRE. O `new_game()` grava logo, antes da
+# tela dos nomes — um arranque sem save, ou uma «Nova partida» abandonada a
+# meio, deixa no disco um dia 1 sem nome e sem lance nenhum. Mostrá-lo como
+# ocupado pediria ao jogador para confirmar que apaga uma partida que nunca
+# começou.
+func resumo_do_espaco(n: int) -> Dictionary:
+	var caminho := ArmazemLocal.caminho(arquivo_do_espaco(n))
+	if not FileAccess.file_exists(caminho):
+		return {}
+	var lido := _save_aceite(FileAccess.get_file_as_string(caminho))
+	if lido.is_empty() or String(lido.get("nome_porto", "")) == "":
+		return {}
+	return {
+		"espaco": n,
+		"porto": String(lido["nome_porto"]),
+		"jogador": String(lido.get("nome_jogador", "")),
+		"turno": int(lido.get("turn", 1)),
+		"dinheiro": int(lido.get("cash", 0)),
+		"fase": String(lido.get("phase", "playing")),
+		"venceu": bool(lido.get("won", false)),
+		"gravado": FileAccess.get_modified_time(caminho),
+	}
+
+
+# O espaço jogado por último, entre os ocupados; 0 se não houver nenhum. No
+# empate de segundo ganha o de número menor, para a resposta não depender da
+# ordem em que o sistema lista os arquivos.
+func espaco_mais_recente() -> int:
+	var melhor := 0
+	var quando := -1
+	for n in range(1, ESPACOS + 1):
+		var r := resumo_do_espaco(n)
+		if r.is_empty():
+			continue
+		if int(r["gravado"]) > quando:
+			melhor = n
+			quando = int(r["gravado"])
+	return melhor
+
+
+# A linha que diz em que ponto vai a partida de um espaço — igual no cartão do
+# espaço e na tela inicial: o dia contra o prazo e o dinheiro, que é o que se
+# lê de relance para reconhecer um porto. O nome do jogador vai À FRENTE
+# quando existe; ele pode estar vazio, e nenhum padrão o preenche.
+func linha_do_espaco(r: Dictionary) -> String:
+	var linha := "dia %d de %d · %s" % [mini(int(r["turno"]), TURNS_TOTAL),
+		TURNS_TOTAL, moeda(int(r["dinheiro"]))]
+	var jogador := String(r.get("jogador", ""))
+	return "%s · %s" % [jogador, linha] if jogador != "" else linha
+
+
+# O primeiro espaço livre; 0 se os três estiverem ocupados.
+func primeiro_espaco_livre() -> int:
+	for n in range(1, ESPACOS + 1):
+		if resumo_do_espaco(n).is_empty():
+			return n
+	return 0
+
 # ── OS DOIS NOMES ──
 # O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7).
 #
@@ -617,6 +747,10 @@ func _rosto_livre() -> int:
 
 func _ready() -> void:
 	_rng.randomize()
+	# O arranque abre o espaço jogado por último (`066`), que é o que a tela
+	# inicial oferece em «Continuar». Sem espaço ocupado, o 1 — o arquivo de
+	# sempre, e o único que as ferramentas usam.
+	_apontar_espaco(maxi(espaco_mais_recente(), 1))
 	if not load_game():
 		new_game()
 
@@ -1811,62 +1945,16 @@ func load_game() -> bool:
 		return false
 	var text := file.get_as_text()
 	file.close()
-	var parsed = JSON.parse_string(text)
-	if typeof(parsed) != TYPE_DICTIONARY:
+	var parsed := _save_aceite(text)
+	if parsed.is_empty():
 		clear_save()
 		return false
-
-	# TUDO O QUE RECUSA VEM ANTES DE TUDO O QUE ESCREVE, e é de propósito.
-	#
-	# Save de outra versão do jogo é descartado, não adaptado. Migrar exigiria
-	# adivinhar o que o jogador tinha comprado a partir de números que já não
-	# querem dizer a mesma coisa — foi assim que apareceu o porto de 4 docas
-	# num mapa de 3. Recomeçar é honesto; carregar um estado impossível não é.
-	#
-	# Só que "não adaptar" também vale para a recusa: enquanto os campos eram
-	# escritos um a um e a sanidade do roster era conferida DEPOIS, um save
-	# recusado deixava `turn` e `cash` do arquivo no estado vivo e o porto com
-	# zero docas. Isso passava despercebido porque o `_ready()` chama
-	# `new_game()` logo a seguir e ele por acaso reescreve todos os campos —
-	# uma segurança que dependia de duas funções distantes continuarem a
-	# concordar sobre a lista de campos. Bastava um campo novo no save que o
-	# `new_game()` não zerasse para o estado impossível atravessar para a
-	# partida seguinte: o bug das 4 docas outra vez, com outra roupa.
-	# `tests/teste_fumaca.gd`, bloco F3, tranca isto.
-	if int(parsed.get("versao", 1)) != SAVE_VERSION:
-		clear_save()
-		return false
-
-	# O roster é lido do dicionário, não dos campos do jogo, justamente para
-	# poder recusar sem ter tocado em nada. Porto sem doca ou sem trabalhador é
-	# um estado que nenhuma partida produz — é arquivo truncado ou editado.
-	var docas_lidas = parsed.get("docks", [])
-	var trabalhadores_lidos = parsed.get("workers", [])
-	if typeof(docas_lidas) != TYPE_ARRAY or typeof(trabalhadores_lidos) != TYPE_ARRAY \
-			or docas_lidas.is_empty() or trabalhadores_lidos.is_empty():
-		clear_save()
-		return false
-	# E O ROSTO DE CADA UM (`059`), pela mesma razão: um fora da tabela é um
-	# cartão sem cara, dois iguais são o mesmo retrato duas vezes na fileira.
-	# ⚠️ O TIPO confere-se, e não só o valor: `int("x")` é 0, que é um rosto
-	# válido — a armadilha da chave de Godot 3 no `CLAUDE.md`, do lado do save.
-	var rostos_lidos := {}
-	for w in trabalhadores_lidos:
-		if typeof(w) != TYPE_DICTIONARY or not w.has("rosto") \
-				or typeof(w["rosto"]) not in [TYPE_INT, TYPE_FLOAT]:
-			clear_save()
-			return false
-		var k := int(w["rosto"])
-		if k != float(w["rosto"]) or k < 0 or k >= rostos() or rostos_lidos.has(k):
-			clear_save()
-			return false
-		rostos_lidos[k] = true
 
 	turn = int(parsed.get("turn", 1))
 	cash = int(parsed.get("cash", START_CASH))
 	reputation = float(parsed.get("reputation", REPUTATION_START))
-	docks = docas_lidas
-	workers = trabalhadores_lidos
+	docks = parsed["docks"]
+	workers = parsed["workers"]
 	upgrade_purchased = bool(parsed.get("upgrade_purchased", false))
 	estruturas = parsed.get("estruturas", [])
 	parcela_paid = bool(parsed.get("parcela_paid", false))
@@ -1920,6 +2008,60 @@ func load_game() -> bool:
 	_reconciliar_roster()
 	state_loaded.emit()
 	return true
+
+
+# O save de `texto` se ele passar TODAS as recusas; `{}` se não. Quem decide o
+# que fazer com a recusa é quem chama: o `load_game()` apaga o arquivo, o
+# `resumo_do_espaco()` lê-o como livre e não toca em nada (`066`).
+#
+# É também o que mantém a regra de ouro do `load_game()` de pé: TUDO O QUE
+# RECUSA VEM ANTES DE TUDO O QUE ESCREVE. Com as recusas numa função que só
+# LÊ, não há como uma delas ficar depois da primeira escrita no estado vivo.
+func _save_aceite(texto: String) -> Dictionary:
+	var parsed = JSON.parse_string(texto)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return {}
+
+	# Save de outra versão do jogo é descartado, não adaptado. Migrar exigiria
+	# adivinhar o que o jogador tinha comprado a partir de números que já não
+	# querem dizer a mesma coisa — foi assim que apareceu o porto de 4 docas
+	# num mapa de 3. Recomeçar é honesto; carregar um estado impossível não é.
+	#
+	# Só que "não adaptar" também vale para a recusa: enquanto os campos eram
+	# escritos um a um e a sanidade do roster era conferida DEPOIS, um save
+	# recusado deixava `turn` e `cash` do arquivo no estado vivo e o porto com
+	# zero docas. Isso passava despercebido porque o `_ready()` chama
+	# `new_game()` logo a seguir e ele por acaso reescreve todos os campos —
+	# uma segurança que dependia de duas funções distantes continuarem a
+	# concordar sobre a lista de campos. Bastava um campo novo no save que o
+	# `new_game()` não zerasse para o estado impossível atravessar para a
+	# partida seguinte: o bug das 4 docas outra vez, com outra roupa.
+	# `tests/teste_fumaca.gd`, bloco F3, tranca isto.
+	if int(parsed.get("versao", 1)) != SAVE_VERSION:
+		return {}
+
+	# O roster é lido do dicionário, não dos campos do jogo, justamente para
+	# poder recusar sem ter tocado em nada. Porto sem doca ou sem trabalhador é
+	# um estado que nenhuma partida produz — é arquivo truncado ou editado.
+	var docas_lidas = parsed.get("docks", [])
+	var trabalhadores_lidos = parsed.get("workers", [])
+	if typeof(docas_lidas) != TYPE_ARRAY or typeof(trabalhadores_lidos) != TYPE_ARRAY \
+			or docas_lidas.is_empty() or trabalhadores_lidos.is_empty():
+		return {}
+	# E O ROSTO DE CADA UM (`059`), pela mesma razão: um fora da tabela é um
+	# cartão sem cara, dois iguais são o mesmo retrato duas vezes na fileira.
+	# ⚠️ O TIPO confere-se, e não só o valor: `int("x")` é 0, que é um rosto
+	# válido — a armadilha da chave de Godot 3 no `CLAUDE.md`, do lado do save.
+	var rostos_lidos := {}
+	for w in trabalhadores_lidos:
+		if typeof(w) != TYPE_DICTIONARY or not w.has("rosto") \
+				or typeof(w["rosto"]) not in [TYPE_INT, TYPE_FLOAT]:
+			return {}
+		var k := int(w["rosto"])
+		if k != float(w["rosto"]) or k < 0 or k >= rostos() or rostos_lidos.has(k):
+			return {}
+		rostos_lidos[k] = true
+	return parsed
 
 
 # Quantas docas e quantos trabalhadores o porto DEVE ter, dado o que está

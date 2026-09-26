@@ -71,6 +71,22 @@ func percurso() -> Array:
 		{"nome": "Menu-celular", "cena": "res://scenes/panels/PainelMenu.tscn",
 			"estado": {"turn": 9}, "setup": []},
 		{"nome": "Pausa", "cena": "res://scenes/panels/PauseMenu.tscn"},
+		# A FAMÍLIA DO SISTEMA (`066`): a tela Ajustes, os três espaços no modo
+		# da partida nova — o único em que os três cartões têm botão — e a
+		# tela inicial.
+		{"nome": "Ajustes", "cena": "res://scenes/panels/PainelAjustes.tscn",
+			"setup": []},
+		{"nome": "Espaços (partida nova)", "cena": "res://scenes/panels/PainelEspacos.tscn",
+			"setup": ["nova"]},
+		# ⚠️ O NOME DO JOGO FICA FORA, DECLARADO — e não medido de graça. Ele é
+		# branco sobre uma ILUSTRAÇÃO, e a régua só conhece fundos de stylebox:
+		# a composição não fecha e daria pendência, que está certa. Quem o
+		# garante é o contorno navy, e a prova de verdade é no PIXEL da foto,
+		# quando a ilustração existir (`art_lab/tela_inicial/BRIEFING.md`). A
+		# exclusão envelhece para o lado que reprova: se o nó sumir, a régua
+		# queixa-se (`_fora_da_regua`).
+		{"nome": "Tela inicial", "cena": "res://scenes/TelaInicial.tscn",
+			"fora": {"Logo": "branco com contorno navy sobre a ilustração; mede-se no pixel"}},
 		{"nome": "Caixa", "cena": "res://scenes/panels/PainelCaixa.tscn",
 			"setup": ["@resumo_do_dia"]},
 		{"nome": "Boletim", "cena": "res://scenes/panels/PainelBoletim.tscn",
@@ -279,6 +295,8 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 			else:
 				args.append(bruto)
 		no.callv("setup", args)
+	if not _fora_da_regua(no, caso):
+		return null
 	if not _acao_vista(no, GS, caso):
 		return null
 	if not _barco_chegou(no, caso):
@@ -288,6 +306,25 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 	if not _escolheu(no, caso, tema):
 		return null
 	return no
+
+
+# ── O QUE FICA FORA DA RÉGUA, POR NOME E COM MOTIVO ─────────────────────────
+#
+# Texto cujo fundo a régua não sabe ler — uma ilustração — não se mede aqui, e
+# medi-lo daria pendência sem fim. A saída NÃO é saltá-lo em silêncio: o caso
+# declara o nó e o porquê, e a declaração só pode envelhecer para o lado que
+# reprova — nó que sumiu é queixa, como a lacuna declarada das capturas
+# (`docs/decisoes/042`).
+func _fora_da_regua(no: Node, caso: Dictionary) -> bool:
+	var fora: Dictionary = caso.get("fora", {})
+	for nome in fora:
+		var alvo := no.find_child(String(nome), true, false)
+		if alvo == null:
+			falhas.append("%s declara «%s» fora da régua, e esse nó não existe "
+				% [caso["nome"], nome] + "— saia da lista")
+			return false
+		alvo.set_meta("contraste_fora", String(fora[nome]))
+	return true
 
 
 # ── A OFERTA DO RIVAL CHEGOU MESMO AO CARTÃO? ───────────────────────────────
@@ -520,6 +557,8 @@ func medir(raiz: Node) -> Array:
 
 func _controles_com_texto(no: Node) -> Array:
 	var out: Array = []
+	if no.has_meta("contraste_fora"):
+		return out
 	if no is Label and not (no as Label).text.strip_edges().is_empty():
 		out.append(no)
 	elif no is Button and not (no as Button).text.strip_edges().is_empty():
