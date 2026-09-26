@@ -6,7 +6,7 @@ config_version=5
 [application]
 
 config/name="BR Port VS"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://scenes/TelaInicial.tscn"
 ; Sem esta linha o APK vai para a gaveta do telefone com O ROBÔ DO GODOT — o
 ; exportador resolve o ícone por "escolha no preset -> ícone do projeto -> o
 ; padrão do motor", e o projeto não tinha nenhum dos dois. Gerado por

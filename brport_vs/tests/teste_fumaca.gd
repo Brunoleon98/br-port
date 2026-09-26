@@ -123,6 +123,10 @@ func _rodar() -> void:
 	_f12_o_rosto_do_trabalhador()
 	_confere("o bloco F12 correu até ao fim", _f12_terminou)
 
+	print("=== F2b: o ícone de cada cabeçalho lê-se no selo ===")
+	_f2b_icones_no_selo()
+	_confere("o bloco F2b correu até ao fim", _f2b_terminou)
+
 	print("=== F13: ferramenta e suíte nunca escrevem onde o jogador guarda ===")
 	_f13_o_armazem_do_jogador()
 	_confere("o bloco F13 correu até ao fim", _f13_terminou)
@@ -134,6 +138,10 @@ func _rodar() -> void:
 	print("=== F15: o que os painéis do HUD prometem é o que o jogo faz ===")
 	await _f15_promessa_do_hud()
 	_confere("o bloco F15 correu até ao fim", _f15_terminou)
+
+	print("=== F16: três espaços de save, e só se apaga um porto com dois toques ===")
+	_f16_os_espacos_de_save()
+	_confere("o bloco F16 correu até ao fim", _f16_terminou)
 
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
@@ -1095,6 +1103,135 @@ func _sem_comentarios(fonte: String) -> String:
 			continue
 		saida += linha + "\n"
 	return saida
+
+
+# ── F2b ─────────────────────────────────────────────────────────────────
+# O ÍCONE DE CADA CABEÇALHO LÊ-SE NO SELO (`docs/decisoes/066`).
+#
+# O cabeçalho das famílias da frente 3 pousa o ícone num SELO claro
+# (`SeloNarrativo`, #f0f6ff), e o desenho dos ícones não é um só: os do HUD são
+# traço CLARO para a barra escura, os de painel têm disco navy. Em 26/09 o
+# «Carregar partida» nasceu com o ícone `doca` — traço exatamente da cor do
+# selo, contraste 1,0 — e saiu um quadrado vazio que só a FOTO mostrou. Era a
+# segunda vez do mesmo ícone num fundo claro: o `CLAUDE.md` já contava que ele
+# tinha sido um fantasma no painel branco.
+#
+# A pergunta é do PIXEL contra o fundo real do selo, e a medida é a MEDIANA
+# do contraste dos pixels opacos — nunca a média, que se deixa puxar pelo miolo
+# claro de um ícone de disco navy (`027`). As duas fontes: os ícones que os
+# scripts PASSAM ao cabeçalho, lidos do código, e os pixels deles.
+var _f2b_terminou := false
+
+# Medido em 26/09 sobre os 24 ícones do `Icones.gd`: o `doca` dá 1,00 e os
+# mais fracos dos que um cabeçalho usa, o âmbar do `recomecar` e o do `vitoria`,
+# 1,63. O corte fica no MEIO da banda — 1,3× acima do `doca`, 1,25× abaixo do
+# âmbar. ⚠️ O que ele NÃO diz: que 1,63 se lê bem. O âmbar separa-se do selo
+# pelo MATIZ, e esta régua só vê valor; ela apanha o ícone da COR do selo, que
+# é o defeito que já aconteceu duas vezes, e mais nada.
+const F2B_CORTE_SELO := 1.3
+
+
+func _f2b_lum(c: Color) -> float:
+	var lin := func(v: float) -> float:
+		return v / 12.92 if v <= 0.04045 else pow((v + 0.055) / 1.055, 2.4)
+	return 0.2126 * lin.call(c.r) + 0.7152 * lin.call(c.g) + 0.0722 * lin.call(c.b)
+
+
+func _f2b_mediana_no_selo(textura: Texture2D, fundo: Color) -> float:
+	var img: Image = textura.get_image()
+	if img.is_compressed():
+		img.decompress()
+	var razoes: Array = []
+	var lf := _f2b_lum(fundo)
+	for y in img.get_height():
+		for x in img.get_width():
+			var p := img.get_pixel(x, y)
+			if p.a < 0.5:
+				continue
+			var lc := _f2b_lum(fundo.lerp(Color(p.r, p.g, p.b), p.a))
+			razoes.append((maxf(lc, lf) + 0.05) / (minf(lc, lf) + 0.05))
+	if razoes.is_empty():
+		return 0.0
+	razoes.sort()
+	return razoes[razoes.size() / 2]
+
+
+# As chamadas ao cabeçalho, com os parênteses EQUILIBRADOS: o primeiro
+# argumento pode trazer outra chamada ou um ternário (`Icones.VITORIA if … else
+# Icones.DERROTA`), e todo `Icones.X` dentro dele é um ícone que aparece no
+# selo. A definição (`func titulo_encorpado(`) não é chamada.
+func _f2b_icones_das_chamadas(fonte: String, nome: String, saida: Dictionary,
+		cegas: Array) -> int:
+	var lidas := 0
+	var re_icone := RegEx.new()
+	re_icone.compile("Icones\\.([A-Z_]+)")
+	var de := 0
+	while true:
+		var i := fonte.find(nome + "(", de)
+		if i < 0:
+			break
+		de = i + nome.length()
+		if fonte.substr(maxi(i - 5, 0), 5) == "func ":
+			continue
+		var fundo := 0
+		var j := i + nome.length()
+		while j < fonte.length():
+			var ch := fonte[j]
+			if ch == "(":
+				fundo += 1
+			elif ch == ")":
+				fundo -= 1
+				if fundo == 0:
+					break
+			j += 1
+		lidas += 1
+		var achados := re_icone.search_all(fonte.substr(i, j - i))
+		# ⚠️ CHAMADA SEM `Icones.X` É UM ÍCONE QUE A GUARDA NÃO VÊ — vindo de
+		# uma variável, de um parâmetro. Contava como lida e não conferia nada.
+		if achados.is_empty():
+			cegas.append(fonte.substr(i, mini(j - i + 1, 60)))
+		for achado in achados:
+			saida[achado.get_string(1)] = true
+	return lidas
+
+
+func _f2b_icones_no_selo() -> void:
+	var tema: Theme = load("res://ui/tema_brport.tres")
+	var fundo: Color = (tema.get_stylebox("panel", "SeloNarrativo") as StyleBoxFlat).bg_color
+	var consts: Dictionary = load(FONTE_ICONES).get_script_constant_map()
+
+	var usados := {}
+	var cegas: Array = []
+	var chamadas := 0
+	var ocorrencias := 0
+	for arquivo in _f9_scripts_do_jogo():
+		# O ANDAIME FICA DE FORA, e só ele: o `titulo_encorpado()` dele
+		# reencaminha o ícone que RECEBEU para o `cabecalho_encorpado()`, e
+		# quem o escolhe é quem chama o andaime — essas chamadas estão nos
+		# outros arquivos, e são elas que se leem.
+		if arquivo.get_file() == "PainelNarrativo.gd":
+			continue
+		var fonte := _sem_comentarios(FileAccess.get_file_as_string(arquivo))
+		for nome in ["titulo_encorpado", "cabecalho_encorpado"]:
+			chamadas += _f2b_icones_das_chamadas(fonte, nome, usados, cegas)
+			ocorrencias += fonte.count(nome + "(") - fonte.count("func " + nome + "(")
+	# ⚠️ A MESMA PERGUNTA POR DOIS CAMINHOS: quantas vezes o nome aparece, e
+	# quantas chamadas o leitor conseguiu ler. Uma forma nova de chamada que
+	# o leitor não saiba ler reprova aqui, em vez de sair da lista calada.
+	_confere("F2b: o leitor leu as %d chamadas ao cabeçalho que o código tem (%d)" % [ocorrencias, chamadas],
+		chamadas == ocorrencias and chamadas > 0)
+	_confere("F2b: toda chamada nomeia o ícone por `Icones.X`, que é o que a guarda lê",
+		cegas.is_empty(), " | ".join(cegas))
+	_confere("F2b: os cabeçalhos usam ícones (%d)" % usados.size(), usados.size() >= 5)
+
+	for nome in usados:
+		if not consts.has(nome) or not (consts[nome] is Texture2D):
+			_confere("F2b: Icones.%s existe" % nome, false)
+			continue
+		var mediana := _f2b_mediana_no_selo(consts[nome], fundo)
+		_confere("F2b: Icones.%s lê-se no selo (mediana %.2f:1, corte %.2f)" % [nome, mediana, F2B_CORTE_SELO],
+			mediana >= F2B_CORTE_SELO)
+	_f2b_terminou = true
 
 
 # ── F8 ──────────────────────────────────────────────────────────────────
@@ -3311,3 +3448,277 @@ func _f15_calendario() -> void:
 			and apoio.begins_with("Semana %d de %d" % [GS.current_week(), int(GS.WEEKS_TOTAL)]))
 	_f10_fechar(painel)
 	_f15_calendario_ok = true
+
+
+
+# ── F16 ─────────────────────────────────────────────────────────────────
+# OS TRÊS ESPAÇOS DE SAVE E A TELA INICIAL (`docs/decisoes/066`).
+#
+# A família do sistema da frente 3 tirou o «Novo jogo (apaga progresso)» da
+# pausa e pôs no lugar dele três espaços de save, uma tela inicial e um
+# «Salvar e sair». Cada pergunta abaixo é o sítio onde a mudança podia perder
+# uma partida SEM ERRO NENHUM — que é a única forma de falhar que um save tem:
+#
+#  - o espaço 1 é o ARQUIVO DE SEMPRE: se deixasse de o ser, a partida que o
+#    jogador já tem sumia da tela inicial no dia da atualização;
+#  - cada espaço grava no SEU arquivo, e começar num não apaga o outro;
+#  - LER um espaço para o mostrar não toca no estado vivo nem no disco, e
+#    recusa exatamente o que a carga recusa;
+#  - o «Continuar» é o jogado por ÚLTIMO, e não o espaço em que o autoload
+#    calhou de estar;
+#  - a pausa não tem botão destrutivo, e apagar um porto pede o segundo toque.
+#
+# ⚠️ O BLOCO ESPERA UM SEGUNDO DUAS VEZES. Quem diz qual espaço foi jogado por
+# último é a hora de modificação do arquivo, que tem um segundo de resolução
+# — duas gravações no mesmo segundo EMPATAM, e o empate não prova ordem
+# nenhuma. São ~2,2 s numa suíte que corre em dezenas.
+var _f16_terminou := false
+
+
+func _f16_os_espacos_de_save() -> void:
+	for n in range(1, GS.ESPACOS + 1):
+		GS.apagar_espaco(n)
+
+	# ── o espaço 1 é o arquivo de sempre ──
+	_confere("F16: o espaço 1 grava no arquivo que o save sempre teve (%s)" % GS.SAVE_ARQUIVO,
+		GS.arquivo_do_espaco(1) == "savegame.json" and GS.SAVE_ARQUIVO == "savegame.json",
+		GS.arquivo_do_espaco(1))
+	var nomes := {}
+	for n in range(1, GS.ESPACOS + 1):
+		nomes[GS.arquivo_do_espaco(n)] = true
+	_confere("F16: os %d espaços gravam em %d arquivos diferentes" % [GS.ESPACOS, nomes.size()],
+		nomes.size() == GS.ESPACOS, ", ".join(nomes.keys()))
+
+	# ── cada espaço no seu arquivo ──
+	_f16_porto(1, "Um", 111)
+	_f16_porto(2, "Dois", 222)
+	GS.usar_espaco(1)
+	_confere("F16: carregar o espaço 1 traz o porto dele (%s, %s)" % [GS.nome_porto, GS.moeda(GS.cash)],
+		GS.espaco == 1 and GS.nome_porto == "Um" and GS.cash == 111)
+	GS.usar_espaco(2)
+	_confere("F16: carregar o espaço 2 traz o porto dele (%s, %s)" % [GS.nome_porto, GS.moeda(GS.cash)],
+		GS.espaco == 2 and GS.nome_porto == "Dois" and GS.cash == 222)
+
+	# ── começar num espaço não apaga o outro ──
+	# Estado vivo no espaço 2; a partida nova vai para o 3. Um `clear_save()`
+	# que corresse ANTES de apontar para o 3 apagaria o 2.
+	GS.comecar_no_espaco(3)
+	_confere("F16: começar no espaço 3 deixa o 2 como estava",
+		String(GS.resumo_do_espaco(2).get("porto", "")) == "Dois",
+		str(GS.resumo_do_espaco(2)))
+	_confere("F16: e o 1 também", String(GS.resumo_do_espaco(1).get("porto", "")) == "Um")
+
+	# ── o porto sem nome lê-se como livre ──
+	_confere("F16: o espaço 3, começado e ainda sem nome, lê-se livre",
+		GS.resumo_do_espaco(3).is_empty(), str(GS.resumo_do_espaco(3)))
+
+	# ── ler não toca em nada, e recusa o que a carga recusa ──
+	GS.usar_espaco(1)
+	var vivo := [GS.espaco, GS.nome_porto, GS.cash, GS.turn]
+	var outra_versao := _save_valido(GS.SAVE_VERSION - 1)
+	outra_versao["nome_porto"] = "Velho"
+	_f16_escrever_espaco(3, JSON.stringify(outra_versao))
+	_confere("F16: um espaço de outra versão lê-se livre",
+		GS.resumo_do_espaco(3).is_empty(), str(GS.resumo_do_espaco(3)))
+	_confere("F16: e LER não o apaga — quem o apaga é a partida nova que o ocupar",
+		FileAccess.file_exists(ArmazemLocal.caminho(GS.arquivo_do_espaco(3))))
+	var sem_roster := _save_valido(GS.SAVE_VERSION)
+	sem_roster["nome_porto"] = "Truncado"
+	sem_roster["docks"] = []
+	_f16_escrever_espaco(3, JSON.stringify(sem_roster))
+	_confere("F16: um espaço que a carga recusa (sem docas) lê-se livre, e não como porto",
+		GS.resumo_do_espaco(3).is_empty(), str(GS.resumo_do_espaco(3)))
+	_confere("F16: ler os três não mexeu no estado vivo (espaço, porto, dinheiro, dia)",
+		[GS.espaco, GS.nome_porto, GS.cash, GS.turn] == vivo,
+		"%s → %s" % [vivo, [GS.espaco, GS.nome_porto, GS.cash, GS.turn]])
+	GS.apagar_espaco(3)
+	var r1: Dictionary = GS.resumo_do_espaco(1)
+	_confere("F16: o resumo do espaço 1 é o que o save diz (%s)" % GS.linha_do_espaco(r1) if not r1.is_empty() else "F16: o resumo do espaço 1 existe",
+		not r1.is_empty() and int(r1["espaco"]) == 1 and String(r1["porto"]) == "Um"
+			and int(r1["dinheiro"]) == 111 and int(r1["turno"]) == GS.turn)
+
+	# ── o mais recente é o último gravado ──
+	# Os saves do 1 e do 2 foram gravados no mesmo segundo; a espera é o que
+	# faz o SEGUNDO ser mais novo de verdade.
+	OS.delay_msec(1100)
+	_f16_porto(2, "Dois", 222)
+	_confere("F16: o jogado por último é o 2 (%d)" % GS.espaco_mais_recente(),
+		GS.espaco_mais_recente() == 2)
+	OS.delay_msec(1100)
+	_f16_porto(1, "Um", 111)
+	_confere("F16: e passa a ser o 1 quando o 1 volta a gravar (%d)" % GS.espaco_mais_recente(),
+		GS.espaco_mais_recente() == 1)
+	_confere("F16: com o 1 e o 2 ocupados, o primeiro livre é o 3",
+		GS.primeiro_espaco_livre() == 3)
+
+	_f16_tela_inicial()
+	_f16_pausa()
+	_f16_painel_dos_espacos()
+	_f16_registro()
+
+	for n in range(1, GS.ESPACOS + 1):
+		GS.apagar_espaco(n)
+	GS.comecar_no_espaco(1)
+	_f16_terminou = true
+
+
+# Um porto com nome e dinheiro no espaço `n`, gravado. O dinheiro escreve-se
+# à mão porque a pergunta aqui é de ARQUIVO — que número volta de cada espaço —,
+# e não do que o jogo faz com ele.
+func _f16_porto(n: int, porto: String, dinheiro: int) -> void:
+	GS.comecar_no_espaco(n)
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	GS.definir_nomes(porto, "")
+	GS.cash = dinheiro
+	GS.save_game()
+
+
+func _f16_escrever_espaco(n: int, texto: String) -> void:
+	var f := FileAccess.open(ArmazemLocal.caminho(GS.arquivo_do_espaco(n)), FileAccess.WRITE)
+	f.store_string(texto)
+	f.close()
+
+
+func _f16_textos_de_botao(no: Node, saida: Array) -> void:
+	if no is Button and not no.is_queued_for_deletion():
+		saida.append((no as Button).text)
+	for filho in no.get_children():
+		_f16_textos_de_botao(filho, saida)
+
+
+func _f16_botao(no: Node, texto: String) -> Button:
+	if no is Button and (no as Button).text == texto:
+		return no
+	for filho in no.get_children():
+		var achado := _f16_botao(filho, texto)
+		if achado != null:
+			return achado
+	return null
+
+
+# A TELA INICIAL lê os espaços do disco. O «Continuar» é o jogado por último
+# — e o estado vivo está AGORA num espaço que não é esse, de propósito: uma
+# tela que perguntasse pelo `GS.espaco` mostraria o porto errado.
+func _f16_tela_inicial() -> void:
+	GS.usar_espaco(2)   # carregar não grava: o 1 continua o mais recente
+	var cena: Node = (load("res://scenes/TelaInicial.tscn") as PackedScene).instantiate()
+	root.add_child(cena)
+	var textos: Array = []
+	_f16_textos_de_botao(cena, textos)
+	var ultima := cena.find_child("UltimaPartida", true, false) as Label
+	_confere("F16 tela inicial: com portos guardados há Continuar, Nova partida, Carregar e Ajustes",
+		textos == ["Continuar", "Nova partida", "Carregar", "Ajustes"], str(textos))
+	_confere("F16 tela inicial: «%s» é o porto jogado por último, não o espaço em uso" % (ultima.text if ultima else "?"),
+		ultima != null and ultima.text.contains("Um") and not ultima.text.contains("Dois"))
+	root.remove_child(cena)
+	cena.free()
+
+	# E sem porto nenhum não há o que continuar nem carregar.
+	var guardados := [GS.resumo_do_espaco(1), GS.resumo_do_espaco(2)]
+	for n in range(1, GS.ESPACOS + 1):
+		GS.apagar_espaco(n)
+	var vazia: Node = (load("res://scenes/TelaInicial.tscn") as PackedScene).instantiate()
+	root.add_child(vazia)
+	textos.clear()
+	_f16_textos_de_botao(vazia, textos)
+	_confere("F16 tela inicial: sem porto guardado há só Nova partida e Ajustes",
+		textos == ["Nova partida", "Ajustes"], str(textos))
+	root.remove_child(vazia)
+	vazia.free()
+	# Os dois portos voltam, pela mesma porta, para os blocos seguintes.
+	_f16_porto(1, String(guardados[0]["porto"]), int(guardados[0]["dinheiro"]))
+	_f16_porto(2, String(guardados[1]["porto"]), int(guardados[1]["dinheiro"]))
+
+
+# A PAUSA: três saídas e nenhuma destrutiva, e cada botão pede o que diz.
+func _f16_pausa() -> void:
+	var pausa: Node = (load("res://scenes/panels/PauseMenu.tscn") as PackedScene).instantiate()
+	root.add_child(pausa)
+	var textos: Array = []
+	_f16_textos_de_botao(pausa, textos)
+	_confere("F16 pausa: Continuar, Ajustes e Salvar e sair (%s)" % ", ".join(textos),
+		textos.has("Continuar") and textos.has("Ajustes") and textos.has("Salvar e sair"))
+	var destrutivo := textos.filter(func(t: String) -> bool:
+		return t.containsn("novo jogo") or t.containsn("apaga"))
+	_confere("F16 pausa: nenhum botão apaga a partida", destrutivo.is_empty(), str(destrutivo))
+	var pedidos: Array = []
+	pausa.connect("sair_para_inicio", func() -> void: pedidos.append("sair"))
+	pausa.connect("pedir_ajustes", func() -> void: pedidos.append("ajustes"))
+	pausa.connect("ver_balanco", func() -> void: pedidos.append("balanco"))
+	_f16_botao(pausa, "Salvar e sair").pressed.emit()
+	_f16_botao(pausa, "Ajustes").pressed.emit()
+	_confere("F16 pausa: «Salvar e sair» pede a tela inicial e «Ajustes» pede os ajustes (%s)" % [pedidos],
+		pedidos == ["sair", "ajustes"])
+	root.remove_child(pausa)
+	pausa.free()
+
+
+# O PAINEL DOS ESPAÇOS: o livre não é botão ao carregar, e «Substituir» NÃO
+# apaga — leva à confirmação, que é quem escolhe.
+func _f16_painel_dos_espacos() -> void:
+	var cena := load("res://scenes/panels/PainelEspacos.tscn") as PackedScene
+	var carregar: Node = cena.instantiate()
+	root.add_child(carregar)
+	carregar.call("setup", "carregar")
+	var acoes := carregar.find_children("Acao", "Button", true, false)
+	_confere("F16 espaços: ao carregar, só os %d ocupados são botão (%d)" % [2, acoes.size()],
+		acoes.size() == 2)
+	root.remove_child(carregar)
+	carregar.free()
+
+	var nova: Node = cena.instantiate()
+	root.add_child(nova)
+	nova.call("setup", "nova")
+	var escolhas: Array = []
+	nova.connect("escolhido", func(n: int, modo: String) -> void: escolhas.append([n, modo]))
+	var textos: Array = []
+	_f16_textos_de_botao(nova, textos)
+	_confere("F16 espaços: na partida nova os ocupados dizem «Substituir» e o livre «Começar aqui»",
+		textos.count("Substituir") == 2 and textos.count("Começar aqui") == 1, str(textos))
+	var substituir := nova.find_child("Espaco1", true, false).find_child("Acao", true, false) as Button
+	substituir.pressed.emit()
+	_confere("F16 espaços: «Substituir» não escolhe nada — pergunta antes (%s)" % String(nova.get("tempo")),
+		escolhas.is_empty() and nova.get("tempo") == &"confirmar", str(escolhas))
+	_confere("F16 espaços: e o porto que ia apagar continua no disco",
+		String(GS.resumo_do_espaco(1).get("porto", "")) == "Um")
+	_f16_botao(nova, "Apagar e começar").pressed.emit()
+	_confere("F16 espaços: o segundo toque escolhe o espaço 1 para a partida nova (%s)" % [escolhas],
+		escolhas == [[1, "nova"]])
+	if is_instance_valid(nova):
+		root.remove_child(nova)
+		nova.free()
+
+
+# O GRAVADOR DESARMA sem perder o caminho: a Ajustes da tela inicial copia a
+# última partida jogada, e o que a tela inicial faz ao estado não entra nela.
+func _f16_registro() -> void:
+	var registro: Node = root.get_node("Registro")
+	# ⚠️ PELO `Main`, E NÃO PELO `Registro`: a pergunta é se QUEM SAI desarma.
+	# Provar só o `desarmar()` deixava passar um `_sair_para_inicio()` que se
+	# esquecesse de o chamar — a guarda que escreve ela própria o estado prova
+	# a leitura, não a escrita (`052`). A troca de cena que ele pede fica para
+	# o fim do frame, depois de a suíte já ter acabado.
+	var main: Node = (load("res://scenes/Main.tscn") as PackedScene).instantiate()
+	root.add_child(main)
+	_confere("F16 registro: o porto arma o gravador ao abrir", registro.armado())
+	var caminho: String = registro.caminho_legivel()
+	main.call("_sair_para_inicio")
+	_confere("F16 registro: «Salvar e sair» desarma o gravador", not registro.armado())
+	root.remove_child(main)
+	main.free()
+	# ⚠️ UM DIA JOGADO, e não só a partida nova. A primeira versão perguntava
+	# pelo `comecar_no_espaco()` e mais nada — e com o gravador ARMADO passou na
+	# mesma, porque aquele `new_game()` não calhou de emitir nada que ele grave
+	# (medido com o `desarmar()` esvaziado: esta linha ficou verde). A virada
+	# do dia grava sempre uma linha, armado; desarmado, nenhuma.
+	var linhas_antes: int = registro.linhas_gravadas()
+	GS.comecar_no_espaco(3)
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	GS.advance_turn()
+	_confere("F16 registro: depois de sair, nem um dia jogado entra no registro da partida deixada",
+		registro.linhas_gravadas() == linhas_antes,
+		"%d → %d" % [linhas_antes, registro.linhas_gravadas()])
+	_confere("F16 registro: e a Ajustes ainda copia a última partida",
+		registro.caminho_legivel() == caminho and registro.texto_para_exportar() != "")

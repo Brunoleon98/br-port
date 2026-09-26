@@ -194,6 +194,22 @@ func armado() -> bool:
 	return _armado
 
 
+# ── DESARMAR — quem sai do porto para a tela inicial (`066`) ──
+#
+# Antes da tela inicial o jogo só saía do `Main` fechando a aplicação, e o
+# gravador não precisava de parar. Agora «Salvar e sair» deixa a partida e o
+# autoload fica de pé — e continua a escutar o `GameState`. Na tela inicial,
+# «Nova partida» e «Carregar» mexem no estado: o `new_game()` sorteia barcos e
+# pode abrir a oferta do Arlindo, e cada sinal desses ESCREVIA no arquivo da
+# partida que se acabou de deixar. O leitor veria a oferta de um porto novo
+# dentro do registro de outro, sem linha de abertura entre os dois.
+#
+# O caminho fica, de propósito: a Ajustes da tela inicial continua a poder
+# copiar o registro da última partida jogada.
+func desarmar() -> void:
+	_armado = false
+
+
 # ── ESCRITA ──
 #
 # Uma linha, aberta e fechada. Ver as notas 2 e 3 do cabeçalho: o `WRITE` só

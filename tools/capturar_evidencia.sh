@@ -367,10 +367,24 @@ tirar contraoferta_venceu - - --script res://tools/capturar_cena.gd -- res://sce
 # é outra pergunta: um `Label` que esqueça a variação não reprova nada e sai
 # navy sobre navy.
 #
-# `turn=9` põe-no na semana 2, e é escolha e não sorte: a barra de status diz
-# "Dia N/32 · Semana S" e num `GameState` recém-nascido as duas metades leriam
-# 1 e 1, que é o único estado em que um erro de conta entre elas não apareceria.
+# `turn=9` põe-no na semana 2, e é escolha e não sorte: o widget do dia diz
+# "Dia N" e "de 32 · semana S de 4" e num `GameState` recém-nascido as duas
+# leriam 1 e 1, que é o único estado em que um erro de conta entre elas não
+# apareceria. A hora da barra de status é fixa sob ferramenta (`066`): a do
+# aparelho faria a foto mudar a cada minuto.
 tirar menu    - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelMenu.tscn "$SAIDA/menu.png" turn=9
+# A TELA INICIAL E OS SEUS PAINÉIS (`docs/decisoes/066`). É a cena principal
+# do jogo e NENHUM tiro de jogo passa por ela: todo o `capturar_tela.gd` monta
+# o `Main` direto. Os espaços são MONTADOS pela ferramenta (`espacos=`), que
+# joga cada partida até ao dia dela — foto que dependesse do que a corrida
+# anterior deixou no disco não comparava nada. O 1 e o 3 ocupados e o 2 livre
+# põem os três estados do cartão na mesma foto; a confirmação monta só o 1,
+# para «Substituir» casar UM botão.
+tirar inicial - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/inicial.png" espacos=1,3
+tirar espacos_carregar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_carregar.png" espacos=1,3 --tocar=Carregar --tempo=carregar
+tirar espacos_nova - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_nova.png" espacos=1,3 --tocar=Nova --tempo=nova
+tirar espacos_confirmar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_confirmar.png" espacos=1 --tocar=Nova --tocar=Substituir --tempo=confirmar
+tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes.png" espacos=1,3 --tocar=Ajustes
 # O HISTÓRICO DA FAIXA (R5 da §7.1). Ele é a única resposta à pergunta "o que
 # passou enquanto eu olhava para o mapa?", e nenhum dos tiros acima o monta:
 # abre por um TOQUE na faixa de mensagem, depois de a sessão ter acumulado o

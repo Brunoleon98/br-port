@@ -396,7 +396,12 @@ func _montar() -> void:
 	if args.size() >= 2:
 		_saida = str(args[1])
 
-	GS.clear_save()
+	# ⚠️ E O ESPAÇO É O 1, COM OS OUTROS VAZIOS (`066`). O autoload arranca no
+	# espaço jogado por último, e a pasta das ferramentas guarda o que a foto
+	# anterior da bateria lá deixou — as da tela inicial ocupam o 3. A pausa
+	# escreve «espaço N de 3», e N sairia da ORDEM dos tiros.
+	for n in range(2, GS.ESPACOS + 1):
+		GS.apagar_espaco(n)
 
 	# A SEMENTE VEM ANTES DE `new_game()`, e é a mesma armadilha que o
 	# `simular_balanceamento.gd` documenta: `new_game()` já chama
@@ -405,7 +410,7 @@ func _montar() -> void:
 	# medianas diferentes entre duas rodadas iguais; aqui custa uma foto que
 	# não se pode comparar com a anterior.
 	GS._rng.seed = _semente
-	GS.new_game()
+	GS.comecar_no_espaco(1)
 
 	# OS NOMES SÃO DADOS AQUI, e sem isto a ferramenta deixou de servir. Desde
 	# que a abertura passou a perguntar o nome do cais e do jogador, o `Main`

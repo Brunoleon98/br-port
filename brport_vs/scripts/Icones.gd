@@ -37,6 +37,9 @@ const PAUSAR := preload("res://art/icones/pausar.svg")
 const AVANCAR := preload("res://art/icones/avancar.svg")
 const FEITO := preload("res://art/icones/feito.svg")
 const MENU := preload("res://art/icones/menu.svg")
+# A engrenagem da tela Ajustes (`066`), no desenho do `pausar`: disco navy e
+# figura clara, porque as duas moram no mesmo sítio — o selo do cabeçalho.
+const AJUSTES := preload("res://art/icones/ajustes.svg")
 
 # O DIÁRIO e o CADEADO são do menu, e o cadeado é UM para todas as portas
 # fechadas de propósito. Quando uma delas abrir, ela ganha o ícone dela — o
@@ -45,6 +48,23 @@ const MENU := preload("res://art/icones/menu.svg")
 # escolher a gramática delas antes de as construir.
 const DIARIO := preload("res://art/icones/diario.svg")
 const BLOQUEADO := preload("res://art/icones/bloqueado.svg")
+
+# ⚠️ E DESDE 26/09 CADA APP TEM A SUA COR E O SEU DESENHO, e o cadeado ficou
+# só como selo em cima dos fechados — escolha do Bruno na família do sistema,
+# que reabre a regra acima de propósito (`docs/decisoes/066`). São quadrados
+# de cor cheia com o desenho branco, como os ícones de um telefone, e são
+# desenhados a 144 px: no celular ocupam o tile inteiro (72 de coordenada,
+# 108 num telefone de 1080), e os ícones de 48 ficariam borrados.
+const APP_DIARIO := preload("res://art/icones/app_diario.svg")
+const APP_CIDADE := preload("res://art/icones/app_cidade.svg")
+const APP_LOJAS := preload("res://art/icones/app_lojas.svg")
+const APP_MISSOES := preload("res://art/icones/app_missoes.svg")
+const APP_ANALISE := preload("res://art/icones/app_analise.svg")
+# A barra de status do celular. Desenho, e não medida: o Godot 4 não lê a
+# bateria nem o sinal do aparelho (sondado em 26/09 — nem o `OS` nem o
+# `DisplayServer` têm `get_power_*`). A hora, essa, é a do aparelho.
+const CELULAR_SINAL := preload("res://art/icones/celular_sinal.svg")
+const CELULAR_BATERIA := preload("res://art/icones/celular_bateria.svg")
 
 const RIVAL := preload("res://art/icones/rival.svg")
 const ACORDO := preload("res://art/icones/acordo.svg")

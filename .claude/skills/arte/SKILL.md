@@ -284,6 +284,21 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   a pergunta, que as imagens já lá estão. O que funcionou nas vezes seguintes
   foi decidir o bloco inteiro ANTES de escrever a primeira chamada: um bloco
   com o envio sozinho é o último do turno.
+  A forma que não depende de memória: **um `SendUserFile` sem
+  `AskUserQuestion` no MESMO bloco não se escreve** — se ainda não há pergunta
+  pronta, ainda não há prancha a enviar.
+  ⚠️ **MAS O MESMO BLOCO NÃO GARANTE QUE A RESPOSTA VOLTE — medido no
+  transcript de 26/09 (`066`).** Cinco pranchas saíram com a pergunta no
+  MESMO bloco (o mesmo `message.id`), e em DUAS a pergunta ficou sem
+  resultado: o turno acabou em «No response requested.» e ele escreveu
+  «Recebeu resposta» — o que pode querer dizer que ELE respondeu e a resposta
+  se perdeu. A forma da pergunta não explica: a do escopo falhou e a mesma,
+  com 45 bytes de diferença, passou logo a seguir. Nas duas vezes a sessão
+  diagnosticou «mandei as fotos num bloco sozinho» sem olhar, e era falso — os
+  registos de 24 e 25/09 acima leram a mesma causa e não foram conferidos.
+  **O remédio medido é a pergunta SOZINHA outra vez (2 de 2)**, dizendo que a
+  resposta não chegou; antes de escrever a causa de uma falha destas, abra o
+  transcript e veja se o par estava no mesmo bloco.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
@@ -296,6 +311,13 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   mudança de rumo —, e dê a cada passagem UM tema com nome (`062`–`064`),
   com o antes/depois contra a `main` e não contra a passagem anterior: é
   assim que ele julga o conjunto.
+- **No veredito de uma passagem, os defeitos que VOCÊ vê na prancha vão como
+  opções de uma segunda pergunta, de seleção múltipla** (26/09, `066`). Na
+  primeira e na terceira passagem da família do sistema ele marcou três e
+  quatro das opções e escreveu no «Outro» o que faltava («melhore os ícones»,
+  «um navio chegando num porto») — a passagem seguinte saiu com uma lista de
+  trabalho exata, sem uma volta de «o que exatamente?». A pergunta do
+  veredito continua a ser a primeira, e a lista não a substitui.
 - **Família nova de arte pergunta o ESCOPO antes de desenhar** — quantas
   peças, que categorias, que marcas as distinguem — com opções e a
   recomendação primeiro. Nas variações do trabalhador ele respondeu tudo numa

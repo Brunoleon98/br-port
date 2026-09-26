@@ -920,15 +920,37 @@ meta a barra do HUD — a escada de barras, o trabalho de cada doca até ao fim
 do dia, o prazo, ontem contra o melhor dia —: **«ficou bom»**. O F15 do
 `teste_fumaca` confere cada número contra o jogo.
 
-**O que resta da frente 3** são as telas de texto (diário, mensagens, nomes) e
-o sistema (pausa, menu), e a ordem é do Bruno. Os pedidos dele para elas estão
-na triagem acima: o diário com cara de diário e imagens do porto antigo, o
-menu mais parecido com um celular, mensagens e pausa inspiradas em jogos de
-referência (a pausa com «salvar e sair» para uma tela inicial que ainda não
-existe) e os nomes como a tela depois de «Nova partida». O vocabulário das
-duas famílias — cabeçalho com selo, tarja com linha de apoio e tom, quadros de
-número, a barra do HUD, o bloco de contas — vive no `PainelNarrativo` e no
-tema.
+#### ✅ A TERCEIRA FAMÍLIA DA FRENTE 3 FECHOU (26/09) — o sistema
+
+Escolha do Bruno, e o escopo respondido em duas rodadas (`066`): a tela
+inicial é uma **cena própria, ilustrada** — a ilustração sai do **gerador de
+imagem**, pelo `art_lab/tela_inicial/BRIEFING.md` —, o «Novo jogo» da pausa
+deu lugar a **três espaços de save**, a pausa ficou **curta** (Continuar,
+Ajustes, Salvar e sair) com o volume e o registro numa tela **Ajustes** que as
+duas portas abrem, e o celular ganha as quatro coisas que ele marcou
+(moldura, barra de status, papel de parede — a mesma ilustração — e ícones
+com cor própria). A primeira passagem (espaços, tela inicial com fundo
+provisório, pausa e Ajustes) recebeu **«Continue»**, e a segunda deu ao
+«Continuar» a letra do «AVANÇAR DIA» e ao «Apagar» o vermelho do tom ruim —
+aceite («siga para o celular»). A terceira fez o celular — moldura com
+câmera e botões laterais, a hora do aparelho, o papel de parede (a mesma
+constante do fundo da tela inicial) e um ícone com cor por app, com os
+fechados velados e o cadeado como selo — e recebeu «continue no celular»,
+com cinco reparos. A quarta fê-los: ícones com degradê e desenho próprio, a
+hora sobre o papel de parede com um contorno que a régua mede, o véu a 30%
+com um selo de cadeado de 32 px, e o widget do dia sem fio e com a fita dos
+dias — e foi **aceite: «feche a família»**. O
+fundo (um navio chegando, a paisagem brasileira) e o logotipo são **dele, no
+ChatGPT**, pelo briefing com os pedidos prontos. O **F16** tranca os espaços e
+a pausa.
+
+**O que resta da frente 3** depois desta família são as telas de texto
+(diário, mensagens, nomes). Os pedidos dele estão na triagem acima: o diário
+com cara de diário e imagens do porto antigo, as mensagens inspiradas em jogos
+de referência e os nomes como a tela depois de «Nova partida» — que agora
+existe. O vocabulário das famílias — cabeçalho com selo, tarja com linha de
+apoio e tom, quadros de número, a barra do HUD, o bloco de contas — vive no
+`PainelNarrativo` e no tema.
 
 ---
 

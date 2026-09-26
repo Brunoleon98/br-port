@@ -32,6 +32,16 @@ const AA_PEQUENO := 4.5
 const AA_GRANDE := 3.0
 const CORTE_GRANDE_PX := 18
 
+# ⚠️ O CONTORNO É O FUNDO DE UMA LETRA CONTORNADA (`docs/decisoes/066`, quarta
+# passagem). Texto sobre uma IMAGEM não tem fundo que a régua leia, e dava
+# pendência — certa, porque nenhuma cor de letra ganha todos os pixels de uma
+# pintura. Um contorno OPACO muda a pergunta: a letra fica rodeada da cor do
+# contorno sobre qualquer pixel, e o par que o olho lê é letra contra
+# contorno. Só vale com o contorno opaco e largo o bastante para ser um fundo
+# e não um fio — abaixo disto, ou translúcido, o texto volta à régua comum e
+# à pendência. É o que mede a hora do celular e o nome da tela inicial.
+const CONTORNO_MIN := 4
+
 # Onde vivem os painéis. O percurso DERIVA daqui e não de uma lista escrita à
 # mão: painel novo que ninguém acrescente à lista é o buraco que este bloco
 # existe para tapar, e uma lista à mão fecha-o em silêncio.
@@ -71,6 +81,21 @@ func percurso() -> Array:
 		{"nome": "Menu-celular", "cena": "res://scenes/panels/PainelMenu.tscn",
 			"estado": {"turn": 9}, "setup": []},
 		{"nome": "Pausa", "cena": "res://scenes/panels/PauseMenu.tscn"},
+		# A FAMÍLIA DO SISTEMA (`066`): a tela Ajustes, os três espaços no modo
+		# da partida nova — o único em que os três cartões têm botão — e a
+		# tela inicial.
+		{"nome": "Ajustes", "cena": "res://scenes/panels/PainelAjustes.tscn",
+			"setup": []},
+		{"nome": "Espaços (partida nova)", "cena": "res://scenes/panels/PainelEspacos.tscn",
+			"setup": ["nova"]},
+		{"nome": "Espaços (confirmar)", "cena": "res://scenes/panels/PainelEspacos.tscn",
+			"espacos": [1], "setup": ["nova"], "tocar": ["Substituir"],
+			"tempo": "confirmar"},
+		# O NOME DO JOGO É BRANCO SOBRE UMA ILUSTRAÇÃO, e até à quarta passagem
+		# da `066` ficava FORA, declarado: a régua só conhecia fundos de
+		# stylebox. Desde que ela lê o CONTORNO como fundo (`CONTORNO_MIN`), ele
+		# mede-se — e tirar-lhe o contorno reprova, que a exclusão não fazia.
+		{"nome": "Tela inicial", "cena": "res://scenes/TelaInicial.tscn"},
 		{"nome": "Caixa", "cena": "res://scenes/panels/PainelCaixa.tscn",
 			"setup": ["@resumo_do_dia"]},
 		{"nome": "Boletim", "cena": "res://scenes/panels/PainelBoletim.tscn",
@@ -182,10 +207,13 @@ var falhas: PackedStringArray = PackedStringArray()
 
 
 func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
-	GS.clear_save()
+	# O ESPAÇO 1, COM OS OUTROS VAZIOS (`066`): o painel dos espaços lê os três
+	# do disco, e um caso que ocupasse o 3 deixava-o ocupado para o seguinte.
+	for n in range(2, GS.ESPACOS + 1):
+		GS.apagar_espaco(n)
 	seed(20260825)
 	GS._rng.seed = 20260825
-	GS.new_game()
+	GS.comecar_no_espaco(1)
 	# ⚠️ A OFERTA PENDENTE RESOLVE-SE ANTES: com `phase == "rival_offer"` o
 	# `comprar_estrutura()` recusa calado, e o estado montado a seguir não é o
 	# que se pediu. O `CLAUDE.md` regista isto como "o estado da semente anda
@@ -194,6 +222,12 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		GS.resolve_rival_offer(true)
 	for chave in caso.get("estado", {}):
 		GS.set(chave, caso["estado"][chave])
+	# Os espaços OCUPADOS que o painel dos espaços vai ler. O nome basta: a
+	# régua mede cor, e o cartão de um porto veste as mesmas variações seja
+	# qual for o dia dele.
+	for n in caso.get("espacos", []):
+		GS.comecar_no_espaco(int(n))
+		GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
 	# ⚠️ E A OFERTA DO RIVAL MONTA-SE COMO O JOGO A MONTA, campo a campo. Até
 	# 22/09 esta linha escrevia `GS.docks[d]["rival_offer"] = true` — uma chave
 	# que NINGUÉM no projeto lê, criada em silêncio pelo `Dictionary` (a regra
@@ -279,6 +313,10 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 			else:
 				args.append(bruto)
 		no.callv("setup", args)
+	if not _fora_da_regua(no, caso):
+		return null
+	if not _tocou(no, caso):
+		return null
 	if not _acao_vista(no, GS, caso):
 		return null
 	if not _barco_chegou(no, caso):
@@ -288,6 +326,56 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 	if not _escolheu(no, caso, tema):
 		return null
 	return no
+
+
+# ── O SEGUNDO TEMPO, PELO BOTÃO ─────────────────────────────────────────────
+#
+# Um painel de vários tempos só chega ao segundo pela porta do jogador — o
+# toque —, e a régua não o media: a confirmação dos espaços (`066`) tem o
+# único botão vermelho do jogo, e ficava fora do percurso. O caso diz os
+# botões a tocar (início do rótulo, UM botão cada) e o TEMPO onde tem de
+# parar, e a régua prova que parou lá — estado declarado e não obtido
+# publicaria linhas sobre o tempo de antes (`043`).
+func _tocou(no: Node, caso: Dictionary) -> bool:
+	for prefixo in caso.get("tocar", []):
+		var achados: Array = []
+		_botoes_com(no, String(prefixo), achados)
+		if achados.size() != 1:
+			falhas.append("%s: tocar «%s» casou %d botões" % [caso["nome"], prefixo, achados.size()])
+			return false
+		(achados[0] as Button).pressed.emit()
+	if caso.has("tempo") and String(no.get("tempo")) != String(caso["tempo"]):
+		falhas.append("%s pediu o tempo «%s» e o painel está em «%s»"
+			% [caso["nome"], caso["tempo"], no.get("tempo")])
+		return false
+	return true
+
+
+func _botoes_com(no: Node, prefixo: String, achados: Array) -> void:
+	if no is Button and not no.is_queued_for_deletion() \
+			and (no as Button).text.begins_with(prefixo):
+		achados.append(no)
+	for filho in no.get_children():
+		_botoes_com(filho, prefixo, achados)
+
+
+# ── O QUE FICA FORA DA RÉGUA, POR NOME E COM MOTIVO ─────────────────────────
+#
+# Texto cujo fundo a régua não sabe ler — uma ilustração — não se mede aqui, e
+# medi-lo daria pendência sem fim. A saída NÃO é saltá-lo em silêncio: o caso
+# declara o nó e o porquê, e a declaração só pode envelhecer para o lado que
+# reprova — nó que sumiu é queixa, como a lacuna declarada das capturas
+# (`docs/decisoes/042`).
+func _fora_da_regua(no: Node, caso: Dictionary) -> bool:
+	var fora: Dictionary = caso.get("fora", {})
+	for nome in fora:
+		var alvo := no.find_child(String(nome), true, false)
+		if alvo == null:
+			falhas.append("%s declara «%s» fora da régua, e esse nó não existe "
+				% [caso["nome"], nome] + "— saia da lista")
+			return false
+		alvo.set_meta("contraste_fora", String(fora[nome]))
+	return true
 
 
 # ── A OFERTA DO RIVAL CHEGOU MESMO AO CARTÃO? ───────────────────────────────
@@ -520,6 +608,8 @@ func medir(raiz: Node) -> Array:
 
 func _controles_com_texto(no: Node) -> Array:
 	var out: Array = []
+	if no.has_meta("contraste_fora"):
+		return out
 	if no is Label and not (no as Label).text.strip_edges().is_empty():
 		out.append(no)
 	elif no is Button and not (no as Button).text.strip_edges().is_empty():
@@ -557,6 +647,9 @@ func _medir_um(no: Control, raiz: Node) -> Array:
 		pares.append([no.get_theme_color("font_color"), (no as Label).text, false])
 
 	var mod := mod_efetiva(no, raiz)
+	var contorno := _contorno_de(no, mod)
+	if not contorno.is_empty():
+		fundo = contorno
 	for par in pares:
 		var cor: Color = par[0]
 		cor = Color(cor.r * mod.r, cor.g * mod.g, cor.b * mod.b, cor.a * mod.a)
@@ -595,6 +688,21 @@ func _medir_um(no: Control, raiz: Node) -> Array:
 			linha["estado"] = "passa"
 		linhas.append(linha)
 	return linhas
+
+
+# O contorno como fundo, se ele o puder ser — ver `CONTORNO_MIN`. Devolve o
+# fundo no formato do `fundo_de`, ou vazio. A modulação é a do TEXTO, e não a
+# cadeia do fundo: letra e contorno saem do mesmo nó, no mesmo desenho.
+func _contorno_de(no: Control, mod: Color) -> Dictionary:
+	if not (no is Label or no is Button):
+		return {}
+	var largura: int = no.get_theme_constant("outline_size")
+	var cor: Color = no.get_theme_color("font_outline_color")
+	cor = Color(cor.r * mod.r, cor.g * mod.g, cor.b * mod.b, cor.a * mod.a)
+	if largura < CONTORNO_MIN or cor.a < 0.999:
+		return {}
+	return {"pendente": false, "alfa": 1.0, "cores": [cor],
+		"nota": "contra o contorno de %d px" % largura}
 
 
 # De onde veio a cor: o que separa um defeito de TEMA de um de SCRIPT. O R7
@@ -646,6 +754,13 @@ func fundo_de(no: Control, raiz: Node) -> Dictionary:
 					return {"pendente": true, "cores": [], "alfa": 0.0,
 						"nota": "o rótulo desenha um %s, que não publica bg_color"
 							% proprio.get_class()}
+			# O `StyleBoxEmpty` NÃO DESENHA NADA, e a subida continua por ele
+			# — é o motivo do ramo do `Label` acima, um andar acima. Sem isto a
+			# barra de status do celular, que perdeu o fundo (`066`), dava a
+			# pendência de um «StyleBoxEmpty» quando a causa é a IMAGEM por
+			# trás dela: pendente na mesma, e a apontar para o sítio errado.
+			if sb is StyleBoxEmpty:
+				sb = null
 			if sb != null:
 				if not (sb is StyleBoxFlat):
 					return {"pendente": true, "cores": [], "alfa": 0.0,
@@ -657,6 +772,15 @@ func fundo_de(no: Control, raiz: Node) -> Dictionary:
 				camadas.append(posta)
 				if posta.a >= 0.999:
 					break
+			# ⚠️ E UMA IMAGEM POR TRÁS NÃO TEM COR QUE SE LEIA (`066`). O papel de
+			# parede do celular é um `TextureRect` IRMÃO do conteúdo, desenhado
+			# por cima do fundo opaco da tela — e a régua, que subia até esse
+			# fundo, media um nome de app posto direto na imagem contra o navy
+			# da tela, e aprovava. Medido: o mutante passou verde.
+			var imagem := _imagem_atras(c)
+			if imagem != "":
+				return {"pendente": true, "cores": [], "alfa": 0.0,
+					"nota": "por trás do texto está uma imagem (%s)" % imagem}
 			# O escurecer do `PainelNarrativo` é um IRMÃO desenhado antes, e
 			# não um ancestral: quem não está dentro de um cartão cai nele.
 			var atras := _colorrect_atras(c, raiz)
@@ -698,6 +822,28 @@ func compor(a: Color, b: Color) -> Color:
 # sentinela: um `ColorRect` transparente é um estado legítimo, e sentinela que
 # colide com valor real é a mesma armadilha da mensagem nova que casa com uma
 # busca na saída de uma ferramenta.
+# Um `TextureRect` com textura, desenhado ANTES de `no` e por baixo dele: num
+# contentor que EMPILHA os filhos (`PanelContainer`, `MarginContainer`) ou
+# ancorado ao pai inteiro. Irmão numa fila (`HBox`, `VBox`) fica AO LADO e não
+# por trás — é o retrato ao lado da fala, que não é fundo de nada. Devolve o
+# nome do nó, ou vazio.
+func _imagem_atras(no: Control) -> String:
+	var pai := no.get_parent()
+	if pai == null:
+		return ""
+	var empilha: bool = pai is PanelContainer or pai is MarginContainer
+	for i in range(no.get_index() - 1, -1, -1):
+		var irmao := pai.get_child(i)
+		if not (irmao is TextureRect) or (irmao as TextureRect).texture == null:
+			continue
+		var t := irmao as TextureRect
+		var inteiro: bool = t.anchor_left == 0.0 and t.anchor_top == 0.0 \
+			and t.anchor_right == 1.0 and t.anchor_bottom == 1.0
+		if (empilha or inteiro) and t.visible:
+			return String(t.name)
+	return ""
+
+
 func _colorrect_atras(no: Control, raiz: Node) -> Array:
 	var pai := no.get_parent()
 	if pai == null:

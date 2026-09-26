@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 24 24">
+  <defs>
+    <linearGradient id="fundo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ee7058"/>
+      <stop offset="1" stop-color="#bc3c29"/>
+    </linearGradient>
+  </defs>
+  <rect width="24" height="24" rx="5.5" fill="url(#fundo)"/>
+  <rect x="5" y="9.6" width="14" height="10" rx="0.5" fill="#7a2416"/>
+  <rect x="6.3" y="12.2" width="4.2" height="3.6" rx="0.5" fill="#ffe3a3"/>
+  <rect x="13.5" y="12.2" width="4.2" height="3.6" rx="0.5" fill="#ffe3a3"/>
+  <rect x="11" y="13.4" width="2" height="6.2" fill="#4e160d"/>
+  <rect x="4.2" y="19.3" width="15.6" height="0.9" rx="0.45" fill="#ffffff" opacity="0.55"/>
+  <path d="M5.50 4.6H7.67L6.67 9.6H4.00z" fill="#ffffff"/>
+  <path d="M7.67 4.6H9.83L9.33 9.6H6.67z" fill="#ffc2b4"/>
+  <path d="M9.83 4.6H12.00L12.00 9.6H9.33z" fill="#ffffff"/>
+  <path d="M12.00 4.6H14.17L14.67 9.6H12.00z" fill="#ffc2b4"/>
+  <path d="M14.17 4.6H16.33L17.33 9.6H14.67z" fill="#ffffff"/>
+  <path d="M16.33 4.6H18.50L20.00 9.6H17.33z" fill="#ffc2b4"/>
+  <circle cx="5.33" cy="9.6" r="1.33" fill="#ffffff"/>
+  <circle cx="8.00" cy="9.6" r="1.33" fill="#ffc2b4"/>
+  <circle cx="10.67" cy="9.6" r="1.33" fill="#ffffff"/>
+  <circle cx="13.33" cy="9.6" r="1.33" fill="#ffc2b4"/>
+  <circle cx="16.00" cy="9.6" r="1.33" fill="#ffffff"/>
+  <circle cx="18.67" cy="9.6" r="1.33" fill="#ffc2b4"/>
+  <rect x="5.2" y="3.9" width="13.6" height="1.1" rx="0.55" fill="#ffffff"/>
+</svg>

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 25/09/2026 — os painéis do HUD aceites (`065`), save 9
+> **Última atualização:** 26/09/2026 — a família do sistema da frente 3 aceite em quatro passagens (`066`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -113,8 +113,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Frente 3 do A5, 1.ª família** (25/09, `062`–`064`) — aceite do Bruno | Cinco passagens em boletim, contra-oferta, Sr. Ribeiro e balanço: o total no topo de cada bloco, a barra da parcela do HUD na cobrança, a chance como barra em cada aposta, o custo da recusa antes dela, o balanço em quadros, a tarja no tom do que diz. O **F14** confere cada promessa contra o jogo (17 mutantes). Referências em `docs/design/BR_Port_Referencias_Interface_Gestao.md` |
-| **Frente 3 do A5, 2.ª família** (25/09, `065`) — aceite do Bruno | Os painéis do HUD em duas passagens: dinheiro do dia com os **recordes da partida** (no save, `SAVE_VERSION` 9), docas com renda e tipo de trabalho, reputação Comercial com os dois eixos do GDD trancados, calendário e parcela; na segunda, a barra do HUD onde um número anda para uma meta. O **F15** confere cada número contra o jogo (13 mutantes); balanceamento intocado |
+| **Frente 3 do A5, 1.ª e 2.ª famílias** (25/09, `062`–`065`) — aceites | Boletim, contra-oferta, Sr. Ribeiro e balanço (o total no topo, a chance como barra, o custo da recusa, a tarja no tom); os painéis do HUD com os **recordes da partida** (`SAVE_VERSION` 9), a renda de cada doca, a reputação Comercial e a barra do HUD onde um número anda para uma meta. O **F14** e o **F15** conferem cada promessa contra o jogo. Referências em `docs/design/BR_Port_Referencias_Interface_Gestao.md` |
+| **Frente 3 do A5, 3.ª família — o sistema** (26/09, `066`) — aceite na 4.ª passagem | A **tela inicial** é a cena principal, com **três espaços de save** — o 1 é o `savegame.json` de sempre, sem migração — e a **pausa curta** com a tela **Ajustes**; o «Continuar» a 19 px e o «Apagar» vermelho; o **celular** com moldura, hora sobre o papel de parede (contorno, que a régua mede), widget do dia com a fita dos dias e um ícone com cor por app, os fechados com um selo de cadeado. O **F16** tranca os espaços. O fundo e o logotipo são do Bruno no ChatGPT (`art_lab/tela_inicial/BRIEFING.md`) |
 | **O save do jogador isolado** (25/09, `061`) | toda ferramenta com `--script` grava em `user://ferramentas/` (`ArmazemLocal.gd`); o save, as gravações e o volume do jogador ficam de fora. **F13** e a sentinela do CI; só vale em commits com a `061` |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
@@ -130,7 +130,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). Na **frente 3**, as famílias do cartão e do HUD foram aceites em 25/09; restam diário, menu, mensagens, pausa e nomes. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem do resto da frente 3 e das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). Na **frente 3**, as famílias do cartão e do HUD foram aceites; a do sistema também (`066`, quatro passagens); restam diário, mensagens e nomes. O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem do resto da frente 3 e das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido

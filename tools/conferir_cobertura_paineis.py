@@ -58,6 +58,12 @@ import sys
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAIN = os.path.join(RAIZ, "brport_vs/scripts/Main.gd")
+# ⚠️ E O `Main` JÁ NÃO É QUEM ABRE TUDO (`docs/decisoes/066`). A tela inicial é
+# uma cena à parte, anterior ao porto, e abre os SEUS painéis — os três espaços
+# e os Ajustes — pelo seu `_abrir_painel`. Lendo só o `Main`, os espaços seriam
+# um painel que o jogo abre e que o catálogo não conhece: o `EndGame` fora da
+# pasta outra vez, agora fora do script.
+QUEM_ABRE = (MAIN, os.path.join(RAIZ, "brport_vs/scripts/TelaInicial.gd"))
 MENU = os.path.join(RAIZ, "brport_vs/scripts/PainelMenu.gd")
 RETRATOS = os.path.join(RAIZ, "brport_vs/scripts/Retratos.gd")
 
@@ -125,18 +131,32 @@ def argumentos_de(texto, funcao):
 
 
 def cenas_que_o_jogo_abre(falhas):
-    """As `.tscn` que o `Main` entrega a `_abrir_painel()`.
+    """As `.tscn` que o `Main` e a tela inicial entregam a `_abrir_painel()`.
 
     A fonte é o que o jogo ABRE e não a pasta `scenes/panels/` — foi a pasta
     que perdeu o `EndGame` três vezes. Um painel que o jogo nunca abre não é
     buraco de foto: é arte órfã, e quem pergunta isso é o `arte_orfa.py`.
     """
-    texto = sem_comentarios(open(MAIN, encoding="utf-8").read())
+    cenas = set()
+    for script in QUEM_ABRE:
+        cenas |= cenas_que_um_script_abre(script, falhas)
+    return cenas
+
+
+def cenas_que_um_script_abre(script, falhas):
+    texto = sem_comentarios(open(script, encoding="utf-8").read())
+    nome = os.path.basename(script)
     consts = dict(re.findall(
         r'const\s+(\w+)\s*:=\s*preload\(\s*"(res://[^"]+\.tscn)"\s*\)', texto))
 
     cenas = set()
-    for arg in argumentos_de(texto, "_abrir_painel"):
+    abertas = argumentos_de(texto, "_abrir_painel")
+    # Um script da lista que não abre painel NENHUM é a expressão partida, e
+    # não um script sem painéis: se estivesse sem, não estaria na lista.
+    if not abertas:
+        falhas.append("%s não abre painel nenhum — a expressão deixou de casar, "
+                      "ou o script saiu da lista `QUEM_ABRE` sem sair daqui." % nome)
+    for arg in abertas:
         if arg in consts:
             cenas.add(consts[arg])
             continue
@@ -150,9 +170,9 @@ def cenas_que_o_jogo_abre(falhas):
             cenas |= cenas_do_menu()
             continue
         falhas.append(
-            "Main.gd abre um painel que esta ferramenta não sabe resolver: "
+            "%s abre um painel que esta ferramenta não sabe resolver: "
             "`_abrir_painel(%s)`. Ou ele vira um `const ... := preload(...)`, "
-            "ou esta ferramenta aprende a forma nova — nunca se salta." % arg)
+            "ou esta ferramenta aprende a forma nova — nunca se salta." % (nome, arg))
     return cenas
 
 

@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=35 format=3]
+[gd_resource type="Theme" load_steps=53 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -220,6 +220,50 @@ content_margin_bottom = 10.0
 shadow_color = Color(0.44, 0.3, 0.03, 0.32)
 shadow_size = 5
 shadow_offset = Vector2(0, 3)
+
+; O BOTÃO QUE APAGA (`docs/decisoes/066`). «Apagar e começar» saía com o
+; navy de todo botão, igual ao «Voltar aos espaços» por baixo — e é a única
+; decisão sem volta da família do sistema. O vermelho é o do tom RUIM das
+; tarjas (`RotuloTotalRuim`), que já quer dizer «perde-se aqui», com texto
+; branco: 5,58:1 no normal, 4,72:1 no hover, acima do AA nos dois.
+[sub_resource type="StyleBoxFlat" id="perigo_normal"]
+bg_color = Color(0.761, 0.188, 0.188, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+shadow_color = Color(0.4, 0.06, 0.06, 0.3)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="perigo_hover"]
+bg_color = Color(0.82, 0.24, 0.24, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+shadow_color = Color(0.4, 0.06, 0.06, 0.3)
+shadow_size = 7
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="perigo_press"]
+bg_color = Color(0.6, 0.14, 0.14, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
 
 [sub_resource type="StyleBoxFlat" id="destaque_normal"]
 ; O secundário COM ÊNFASE. Medido: o âmbar do tema sobre este navy dá 7,12:1,
@@ -604,14 +648,17 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.141, 0.275, 0.431, 1)
-corner_radius_top_left = 26
-corner_radius_top_right = 26
-corner_radius_bottom_right = 26
-corner_radius_bottom_left = 26
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
+; ⚠️ E DESDE 26/09 O CANTO É DE TELEFONE, 44 e não 26 (`066`): a 26 o corpo
+; lia-se como um cartão escuro de cantos redondos, e o que o Bruno pediu foi
+; «mais parecido com um celular». A borda (a moldura) passou a 12.
+corner_radius_top_left = 44
+corner_radius_top_right = 44
+corner_radius_bottom_right = 44
+corner_radius_bottom_left = 44
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
 shadow_color = Color(0, 0, 0, 0.35)
 shadow_size = 10
 shadow_offset = Vector2(0, 5)
@@ -619,55 +666,136 @@ shadow_offset = Vector2(0, 5)
 [sub_resource type="StyleBoxFlat" id="celular_tela"]
 ; A TELA. É o azul da pílula do HUD de propósito: o celular não traz cor nova
 ; nenhuma ao jogo, só uma forma nova.
+; ⚠️ DESDE 26/09 ELA É TAMBÉM A MÁSCARA DO PAPEL DE PAREDE (`066`): a tela
+; recorta os filhos pelo que ela própria desenha (`clip_children`), e é este
+; canto de 32 que arredonda a imagem. As margens passaram a zero porque a
+; barra de status vai de borda a borda; quem afasta o resto das bordas é o
+; `MarginContainer` do `PainelMenu`.
 bg_color = Color(0.09, 0.16, 0.24, 1)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+
+[sub_resource type="StyleBoxEmpty" id="app_icone"]
+; O TILE DE UM APP NÃO DESENHA FUNDO desde 26/09 (`066`): o quadrado de cor
+; é o próprio ícone (`art/icones/app_*.svg`), como num telefone, e o botão
+; só o segura. Até então era um quadrado creme com o desenho navy dentro.
+
+[sub_resource type="StyleBoxFlat" id="app_veu"]
+; O VÉU DO APP QUE AINDA NÃO ABRIU: o corpo do aparelho por cima do ícone,
+; com o canto do ícone (5,5/24 de 72 ≈ 16). Deixa ver o que o app vai ser e
+; diz que ainda não é.
+; ⚠️ A 62% ERA APAGADO DEMAIS (quarta passagem da `066`, na letra do Bruno):
+; a cor de cada app, que é o que ele escolheu, saía lavada até ao cinzento. A
+; 30% a cor fica, e quem diz «fechado» passou a ser o SELO do cadeado, maior
+; (`AppSelo`) — é a massa, e não o véu, que carrega o estado.
+bg_color = Color(0.055, 0.098, 0.153, 0.3)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-content_margin_left = 12.0
-content_margin_top = 12.0
-content_margin_right = 12.0
-content_margin_bottom = 12.0
 
-[sub_resource type="StyleBoxFlat" id="app_aberto"]
-; O QUADRADO DE UM APP QUE ACENDE. Creme sobre a tela escura, que é o maior
-; contraste que a paleta tem — um app disponível tem de saltar da grelha.
+[sub_resource type="StyleBoxFlat" id="app_selo"]
+; O ANEL DO SELO do cadeado: o creme dos textos claros à volta do disco navy
+; do ícone `bloqueado`. Sem ele o disco navy some em cima dos ícones escuros
+; (Missões, Análise) — o anel é o que o separa de QUALQUER cor de app.
 bg_color = Color(0.941, 0.965, 1, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
 
-[sub_resource type="StyleBoxFlat" id="app_aberto_press"]
-bg_color = Color(0.816, 0.875, 0.941, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
+[sub_resource type="StyleBoxEmpty" id="celular_barra"]
+; A BARRA DE STATUS NÃO DESENHA FUNDO desde a quarta passagem da `066`: opaca,
+; da cor do corpo, lia-se como uma faixa escura a cortar o papel de parede —
+; a queixa do Bruno —, e num telefone a hora e a bateria pousam na imagem. A
+; leitura passou para o CONTORNO do texto (`TextoCelularStatus`), que o D33
+; mede contra a letra, e para o contorno desenhado nos dois ícones.
+content_margin_left = 22.0
+content_margin_top = 9.0
+content_margin_right = 22.0
+content_margin_bottom = 5.0
 
-[sub_resource type="StyleBoxFlat" id="app_fechado"]
-; O QUADRADO DE UM APP QUE AINDA NÃO EXISTE, e ele é um PAINEL e não um botão.
-; Um botão que não responde ensina o jogador a não tocar no menu; um quadrado
-; apagado nunca prometeu toque nenhum. Ele destaca-se da tela o suficiente
-; para se ver que ESTÁ LÁ, e de longe o suficiente do app aceso para não se
-; confundir com um.
-bg_color = Color(0.141, 0.235, 0.337, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
+[sub_resource type="StyleBoxFlat" id="celular_camera"]
+bg_color = Color(0.016, 0.027, 0.043, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="celular_widget"]
+; O CARTÃO DE UM WIDGET — o dia, o aviso dos apps fechados. Opaco, porque texto
+; sobre o papel de parede é composição que não fecha.
+; ⚠️ SEM BORDA, e com o canto de widget (quarta passagem da `066`): com o fio
+; de 1 px e o canto de 16 ele «parecia campo» — um retângulo contornado com
+; texto encostado à esquerda é a forma de uma caixa de texto. Um widget é uma
+; PLACA: canto largo, mais claro do que a tela e sem contorno, e o que o
+; distingue de um campo é o conteúdo arrumado por hierarquia (`PainelMenu`).
+bg_color = Color(0.114, 0.196, 0.298, 1)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+
+[sub_resource type="StyleBoxFlat" id="celular_dia_passado"]
+; A FITA DOS DIAS do widget: um traço por dia da partida, agrupados por
+; semana. O dia vivido é âmbar, o de hoje é claro, o que falta é o tom da
+; placa um pouco acima dela. Massa e não texto — fora da régua do contraste.
+bg_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="celular_dia_hoje"]
+bg_color = Color(0.941, 0.965, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="celular_dia_futuro"]
+bg_color = Color(0.2, 0.302, 0.42, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="celular_rotulo"]
+; A PÍLULA DO NOME DE UM APP, opaca: num telefone o nome vai direto sobre o
+; papel de parede com sombra, e aqui a sombra não se mede.
+bg_color = Color(0.055, 0.098, 0.153, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 7.0
+content_margin_top = 1.0
+content_margin_right = 7.0
+content_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="celular_gesto"]
+bg_color = Color(0.941, 0.965, 1, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="celular_lateral"]
+bg_color = Color(0.141, 0.275, 0.431, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="faixa_msg"]
 ; A FAIXA DE MENSAGEM — o creme onde a fala do jogo e a da Dona Cida caem, e
@@ -833,6 +961,21 @@ BotaoPrimario/styles/normal = SubResource("primario_normal")
 BotaoPrimario/styles/hover = SubResource("primario_hover")
 BotaoPrimario/styles/pressed = SubResource("primario_press")
 BotaoPrimario/styles/disabled = SubResource("botao_off")
+; O PRIMÁRIO DA TELA INICIAL (`066`): o «Continuar» é o botão que o jogador
+; toca em quase toda abertura, e a 15 px, num botão de 64, lia-se pequeno. É o
+; `BotaoPrimario` com a letra do «AVANÇAR DIA» do porto (19 px) — uma variação
+; de variação, para as cores e as caixas continuarem num sítio só.
+BotaoPrimarioGrande/base_type = &"BotaoPrimario"
+BotaoPrimarioGrande/font_sizes/font_size = 19
+BotaoPerigo/base_type = &"Button"
+BotaoPerigo/colors/font_color = Color(1, 1, 1, 1)
+BotaoPerigo/colors/font_hover_color = Color(1, 1, 1, 1)
+BotaoPerigo/colors/font_pressed_color = Color(1, 1, 1, 1)
+BotaoPerigo/colors/font_disabled_color = Color(0.51, 0.6, 0.706, 1)
+BotaoPerigo/styles/normal = SubResource("perigo_normal")
+BotaoPerigo/styles/hover = SubResource("perigo_hover")
+BotaoPerigo/styles/pressed = SubResource("perigo_press")
+BotaoPerigo/styles/disabled = SubResource("botao_off")
 Cartao/styles/panel = SubResource("cartao")
 TrabLivre/base_type = "PanelContainer"
 TrabLivre/styles/panel = SubResource("trab_livre")
@@ -962,21 +1105,82 @@ Celular/styles/panel = SubResource("celular_corpo")
 CelularTela/base_type = "PanelContainer"
 CelularTela/styles/panel = SubResource("celular_tela")
 AppAberto/base_type = &"Button"
-AppAberto/styles/normal = SubResource("app_aberto")
-AppAberto/styles/hover = SubResource("app_aberto")
-AppAberto/styles/pressed = SubResource("app_aberto_press")
-AppAberto/styles/disabled = SubResource("app_fechado")
+AppAberto/colors/icon_normal_color = Color(1, 1, 1, 1)
+AppAberto/colors/icon_hover_color = Color(1, 1, 1, 1)
+AppAberto/colors/icon_pressed_color = Color(0.78, 0.8, 0.84, 1)
+AppAberto/colors/icon_focus_color = Color(1, 1, 1, 1)
+AppAberto/styles/normal = SubResource("app_icone")
+AppAberto/styles/hover = SubResource("app_icone")
+AppAberto/styles/pressed = SubResource("app_icone")
+AppAberto/styles/focus = SubResource("app_icone")
+AppAberto/styles/disabled = SubResource("app_icone")
 AppFechado/base_type = "PanelContainer"
-AppFechado/styles/panel = SubResource("app_fechado")
+AppFechado/styles/panel = SubResource("app_icone")
+AppVeu/base_type = "PanelContainer"
+AppVeu/styles/panel = SubResource("app_veu")
+AppSelo/base_type = "PanelContainer"
+AppSelo/styles/panel = SubResource("app_selo")
+CelularDiaPassado/base_type = "PanelContainer"
+CelularDiaPassado/styles/panel = SubResource("celular_dia_passado")
+CelularDiaHoje/base_type = "PanelContainer"
+CelularDiaHoje/styles/panel = SubResource("celular_dia_hoje")
+CelularDiaFuturo/base_type = "PanelContainer"
+CelularDiaFuturo/styles/panel = SubResource("celular_dia_futuro")
+CelularBarra/base_type = "PanelContainer"
+CelularBarra/styles/panel = SubResource("celular_barra")
+CelularCamera/base_type = "PanelContainer"
+CelularCamera/styles/panel = SubResource("celular_camera")
+CelularWidget/base_type = "PanelContainer"
+CelularWidget/styles/panel = SubResource("celular_widget")
+CelularRotulo/base_type = "PanelContainer"
+CelularRotulo/styles/panel = SubResource("celular_rotulo")
+CelularGesto/base_type = "PanelContainer"
+CelularGesto/styles/panel = SubResource("celular_gesto")
+CelularLateral/base_type = "PanelContainer"
+CelularLateral/styles/panel = SubResource("celular_lateral")
 ; O nome de um app que acende, e a linha que explica os apagados.
 TextoCelular/base_type = "Label"
 TextoCelular/colors/font_color = Color(0.941, 0.965, 1, 1)
 TextoCelular/font_sizes/font_size = 13
-; O nome de um app apagado e a barra de status. É a cor neutra do jogo NO
-; FUNDO PARA O QUAL ELA FOI FEITA — mede 5,05:1 sobre a tela, e o D23 tranca.
+; O «de 32» do widget do dia, o texto de apoio do celular. Foi a cor neutra do
+; jogo (0.51/0.6/0.706) enquanto morou na tela, onde media 5,05:1; na placa do
+; widget, mais clara desde a quarta passagem da `066`, ela deu 4,44:1 e o D23
+; reprovou-a — cor calibrada para um fundo não atravessa para outro. Subiu
+; até passar o AA ali, e continua a ler como segunda linha ao lado do branco.
 TextoCelularFraco/base_type = "Label"
-TextoCelularFraco/colors/font_color = Color(0.51, 0.6, 0.706, 1)
+TextoCelularFraco/colors/font_color = Color(0.6, 0.68, 0.78, 1)
 TextoCelularFraco/font_sizes/font_size = 13
+; O NÚMERO DO WIDGET DO DIA — o que um telefone põe grande na tela de início.
+TextoCelularGrande/base_type = "Label"
+TextoCelularGrande/colors/font_color = Color(0.941, 0.965, 1, 1)
+TextoCelularGrande/font_sizes/font_size = 28
+; O CABEÇALHO DO WIDGET, no âmbar de marca — sobre a placa escura ele passa
+; com folga, que é o fundo para o qual o âmbar foi feito.
+TextoCelularDestaque/base_type = "Label"
+TextoCelularDestaque/colors/font_color = Color(0.961, 0.725, 0.227, 1)
+TextoCelularDestaque/font_sizes/font_size = 12
+; A HORA DA BARRA DE STATUS, que pousa direto no papel de parede (quarta
+; passagem da `066`). O CONTORNO navy é o fundo dela: a letra clara fica
+; rodeada de navy sobre qualquer pixel da imagem, e é contra ele que o D33 a
+; mede (`contraste_ui.gd`, `CONTORNO_MIN`) — sem contorno, ou com um fino
+; demais, ela volta a pendência.
+TextoCelularStatus/base_type = "Label"
+TextoCelularStatus/colors/font_color = Color(0.941, 0.965, 1, 1)
+TextoCelularStatus/colors/font_outline_color = Color(0.051, 0.102, 0.149, 1)
+TextoCelularStatus/constants/outline_size = 4
+TextoCelularStatus/font_sizes/font_size = 14
+; ── A TELA INICIAL (`docs/decisoes/066`) ──
+; O nome do jogo, por cima da ilustração. O fundo é uma IMAGEM que ainda não
+; existe (a provisória é um degradê; a de verdade sai do ChatGPT), e texto
+; sobre imagem é a composição que não fecha: nenhuma cor de letra ganha todos
+; os pixels de uma pintura. Quem garante a leitura é o CONTORNO navy — a letra
+; branca separa-se do claro pelo contorno e do escuro pelo miolo, que são as
+; duas pontas que o D33 mede quando não sabe o fundo.
+LogoInicial/base_type = "Label"
+LogoInicial/colors/font_color = Color(1, 1, 1, 1)
+LogoInicial/colors/font_outline_color = Color(0.051, 0.102, 0.149, 1)
+LogoInicial/constants/outline_size = 14
+LogoInicial/font_sizes/font_size = 68
 ; ── O CARTÃO DA DOCA — a 3ª leva das cores declaradas (`docs/decisoes/043`) ──
 ;
 ; Os quatro rótulos do `DocaCartao`, que até 22/09 eram quatro

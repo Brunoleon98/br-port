@@ -36,6 +36,10 @@ const PainelDocasScene := preload("res://scenes/panels/PainelDocas.tscn")
 const PainelCalendarioScene := preload("res://scenes/panels/PainelCalendario.tscn")
 const PainelMenuScene := preload("res://scenes/panels/PainelMenu.tscn")
 const PainelParcelaScene := preload("res://scenes/panels/PainelParcela.tscn")
+const PainelAjustesScene := preload("res://scenes/panels/PainelAjustes.tscn")
+# A tela inicial é uma CENA e não um painel: sair para ela troca a árvore
+# inteira, e é por isso que ela não está com os painéis acima (`066`).
+const CENA_INICIAL := "res://scenes/TelaInicial.tscn"
 
 
 # As quatro cores da faixa de mensagem VIVEM NO TEMA desde 22/09, em
@@ -2343,6 +2347,22 @@ func _on_pause_pressed() -> void:
 	var menu := _abrir_painel(PauseMenuScene)
 	menu.connect("ver_balanco", func() -> void:
 		_on_game_over(GameState.won, GameState.end_reason))
+	menu.connect("pedir_ajustes", func() -> void:
+		_abrir_painel(PainelAjustesScene).call("setup"))
+	menu.connect("sair_para_inicio", _sair_para_inicio)
+
+
+# «SALVAR E SAIR» — da pausa para a tela inicial (`066`).
+#
+# Grava mais uma vez por garantia (o jogo já grava a cada lance), DESARMA o
+# gravador de partida — que é este script quem arma, e que continuaria a
+# escrever no arquivo desta partida o que a tela inicial fizesse ao estado — e
+# troca a cena. Os painéis abertos saem com ela: vivem no `_overlay_layer`,
+# que é filho desta cena.
+func _sair_para_inicio() -> void:
+	GameState.save_game()
+	Registro.desarmar()
+	get_tree().change_scene_to_file(CENA_INICIAL)
 
 
 # O MENU-CELULAR, e a porta de cada app dele.
