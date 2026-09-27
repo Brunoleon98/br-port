@@ -155,6 +155,44 @@ PIER_ALCANCE = 4.5
 PIER_LARG = 2.4
 ALT_PIER = z(15.0)          # ALT_PIER do mapa, em pixels
 
+# A RÉGUA DO MUNDO, e a da pessoa dentro dela (27/09, `docs/decisoes/069`).
+#
+# Medida no que o kit já desenha com tamanho real conhecido: o contêiner do
+# pátio (2,44 x 2,59 m) e a cabine do camião (2,5 m de largura, ~3,2 m de
+# altura). As duas peças concordam entre si e discordam de um EIXO para o
+# outro — o kit desenha as alturas mais achatadas do que o chão:
+#
+#   chão    contêiner 0,50 u -> 4,9 m/u · camião 0,45 u -> 5,6 m/u
+#   altura  contêiner 15 px  -> 5,8 px/m · cabine 17,3 px -> 5,4 px/m
+#
+# Pessoas e carros comparam-se pela ALTURA — é o que o olho alinha e o que a
+# página de escala põe lado a lado —, logo a régua deles é a de altura. O
+# trabalhador de 13/09 media 30,4 px: **5,4 m**, mais alto do que a cabine do
+# camião a que ia encostar. A escolha do Bruno é **1,5x o real**, porque no
+# real (9,8 px) o capacete e o colete perdem-se: 1,75 m x 1,5 x 5,6 = 14,7 px,
+# e 14,7 / 30,4 = 0,48.
+#
+# ⚠️ A PRIMEIRA CONTA DESTE BLOCO DEU 0,65, e o Bruno chegou a aprová-la. Ela
+# lia a cabine do camião ANTES do `ESCALA_CAMINHAO` (0,72) que o `brp_porto`
+# aplica no fim, e por isso as duas réguas pareciam concordar em 4,9 m/u. A
+# 0,65 a pessoa media 19,8 px — 2x o real, e ainda mais alta do que a cabine.
+# Medida de prop lê-se no PNG, ou depois de TODA escala que o gerador aplica.
+#
+# ⚠️ E A FAUNA NÃO ANDA COM ELA — escolha do Bruno, com as duas na prancha.
+# Encolhida pelo mesmo número, a fauna ficava com 6 a 8 px: o cachorro com 9
+# pixels opacos, e a gaivota, a tartaruga e o cachorro do mesmo tamanho. Ela
+# ficou como estava (10 a 11 px), e isso é o real que a regra antiga não era:
+# a envergadura de uma gaivota é ~3x os ombros de uma pessoa. O D25 passou de
+# «nenhum bicho passa da pessoa» a «nenhum fica abaixo dela».
+PX_POR_METRO = 5.6          # altura: pixels do mapa por metro
+METROS_POR_U = 5.2          # chão: metros por unidade de mundo
+REGUA_DA_PESSOA = 0.48
+
+# Os props que só servem de RÉGUA na página de escala, e nunca vão ao mapa.
+# Regeram-se pelo nome, para a pasta deles:
+#   python3 tools/gerar_props_iso.py brport_vs/tools/referencia carro pedestre
+REFERENCIAS = ("carro", "pedestre")
+
 PALETA = {
     "madeira": "#9a6438", "madeira_esc": "#633d20", "madeira_velha": "#7d7266",
     "metal": "#4a535a", "metal_claro": "#6d7880",
@@ -242,6 +280,15 @@ PALETA = {
     # continuação dele e não como uma peça de outro jogo.
     "concreto": "#b9c2c8", "concreto_borda": "#8e9aa2",
     "pneu": "#33383c",
+    # As cabines da segunda transportadora (`069`). Escolhidas contra o
+    # ASFALTO (#49535b, luminância 0,084) pelo VALOR e não só pelo matiz: o
+    # vermelho da primeira candidata separava-se dele só pela cor, e o Bruno
+    # apontou-o. O verde mede 0,25 e o coral 0,21 — duas a três vezes o chão.
+    "cab_verde": "#3e9a5c", "cab_coral": "#d9534f",
+    # O VIDRO DE CAMIÃO: escuro e inteiro. O `vidro` do kit é o de CASA —
+    # azul-claro, com moldura e travessa —, e no camião lia como janela de casa
+    # (o Bruno, na segunda candidata). Para-brisa de camião lê escuro.
+    "vidro_cab": "#34495a",
     # O PISO que sobra quando as paredes caem: o `parede_suja` levado ao
     # escuro. Sem ele a ruína inteira sai num cinzento só e as peças fundem-se
     # umas nas outras — a mesma regra do caixote que era `madeira` num tabuado
@@ -2414,7 +2461,13 @@ def montar(M: dict) -> dict:
     # ao barco, que atraca no +my. A conversão de eixo fica toda em pos().
     MX, MY = -1.35, -0.68
     ALT = 15.0                     # topo do tabuado, em pixels do mapa
+    # A régua escala o boneco INTEIRO em volta dos pés — alturas, tamanhos e o
+    # avanço da aba —, e os pés ficam onde estavam: o trabalhador continua no
+    # mesmo sítio do tabuado, só mais pequeno (ver `REGUA_DA_PESSOA`).
     def _t(nome, subir_px, tam_px, mat, dmx=0.0):
+        k = REGUA_DA_PESSOA
+        subir_px, dmx = subir_px * k, dmx * k
+        tam_px = (tam_px[0] * k, tam_px[1] * k, tam_px[2] * k)
         px, py, pz = pos(MX + dmx, MY, ALT + subir_px)
         return caixa(nome, (px, py, pz),
                      (tam_px[0], tam_px[1], z(tam_px[2])), mat)
@@ -2426,6 +2479,56 @@ def montar(M: dict) -> dict:
         _t("t_capacete", 28.2, (0.25, 0.23, 4.4), M["capacete"]),
         _t("t_aba", 26.6, (0.34, 0.25, 1.8), M["capacete"], dmx=0.06),
     ]
+
+    # -- AS REFERÊNCIAS DE ESCALA: um pedestre e um carro (27/09, `069`) ------
+    #
+    # Não entram no mapa. São as réguas das pessoas e dos carros que o Bruno
+    # quer pôr no mapa mais tarde («no futuro carros e pessoas devem ser
+    # adicionadas»), e por agora só aparecem na página de escala, ao lado do
+    # que já lá está — é o escopo que ele escolheu. Por isso NÃO saem com
+    # `gerar_props_iso.py <pasta>` sem nomes (ver `REFERENCIAS`), e vivem em
+    # `brport_vs/tools/referencia/`, que o export não leva e o `arte_orfa`
+    # não varre: arte que o jogo não mostra não pode morar em `art/props`.
+    #
+    # O PEDESTRE é o corpo do trabalhador — a mesma régua, 1,5x o real — com
+    # camisa e cabelo no lugar do colete e do capacete. Partilhar o corpo é o
+    # ponto: a régua de uma pessoa é uma só.
+    grupos["pedestre"] = [
+        _t("ped_pernas", 5.0, (0.20, 0.17, 10.0), M["calca"]),
+        _t("ped_corpo", 15.5, (0.30, 0.24, 11.5), M["azul"]),
+        _t("ped_cabeca", 24.0, (0.18, 0.16, 6.0), M["pele"]),
+        # O cabelo afunda 0,3 px na cabeça e é mais largo do que ela: faces
+        # coplanares dariam o losango preto.
+        _t("ped_cabelo", 27.6, (0.20, 0.18, 1.8), M["cabelo_preto"]),
+    ]
+
+    # O CARRO é EM TAMANHO REAL, como os camiões — a folga de 1,5x é só das
+    # pessoas, que precisam dela para se ler. Um hatch das ruas brasileiras,
+    # 3,9 x 1,7 x 1,5 m, pela régua do mundo (`PX_POR_METRO`, `METROS_POR_U`):
+    # as alturas em metros passam por `_m()`, o chão por `METROS_POR_U`. É a
+    # primeira peça do kit desenhada a partir de medidas reais.
+    def _m(metros):
+        return metros * PX_POR_METRO              # metros -> pixels do mapa
+    def _faixa_z(de_m, ate_m):
+        return z((_m(de_m) + _m(ate_m)) / 2.0), z(_m(ate_m) - _m(de_m))
+    CAR_L, CAR_W = 3.9 / METROS_POR_U, 1.7 / METROS_POR_U
+    zc, zt = _faixa_z(0.30, 0.95)
+    carro = [caixa("car_corpo", (0.0, 0.0, zc), (CAR_L, CAR_W, zt), M["faixa"])]
+    # A estufa afunda 2 cm no corpo e é mais estreita do que ele; o teto
+    # afunda 2 cm nela e é mais largo — nenhuma face encosta noutra.
+    zc, zt = _faixa_z(0.93, 1.42)
+    carro.append(caixa("car_vidro", (-0.04, 0.0, zc),
+                       (CAR_L * 0.55, CAR_W * 0.88, zt), M["vidro"]))
+    zc, zt = _faixa_z(1.40, 1.50)
+    carro.append(caixa("car_teto", (-0.04, 0.0, zc),
+                       (CAR_L * 0.57, CAR_W * 0.92, zt), M["faixa"]))
+    zc, zt = _faixa_z(0.0, 0.60)
+    for sx in (-1.0, 1.0):
+        for sy in (-1.0, 1.0):
+            carro.append(caixa("car_roda%+d%+d" % (sx, sy),
+                               (sx * CAR_L * 0.32, sy * CAR_W * 0.47, zc),
+                               (0.12, 0.05, zt), M["pneu"]))
+    grupos["carro"] = carro
 
     # -- COQUEIRO: copa e tronco separados, para o balanço ---------------
     #
@@ -3441,7 +3544,9 @@ def main() -> int:
             return 2
         alvos = pedidos
     else:
-        alvos = list(grupos)
+        # As referências de escala só saem quando pedidas pelo nome: numa
+        # regeração de tudo iriam parar a `art/props`, onde seriam arte órfã.
+        alvos = [n for n in grupos if n not in REFERENCIAS]
 
     todos = {o for g in grupos.values() for o in g}
     for nome in alvos:

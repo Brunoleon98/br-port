@@ -55,6 +55,10 @@ gravações de playtest, e o `teste_audio` gravava o volume a zero. Hoje todo
 processo com `--script`/`-s` pede o caminho ao `scripts/ArmazemLocal.gd`; o F13
 do `teste_fumaca` prova a origem, e o CI planta uma sentinela no lugar do
 jogador (`tools/sentinela_do_jogador.py`) e exige-a intacta.
+⚠️ **E AS FERRAMENTAS PARTILHAM ESSA PASTA ENTRE SI:** não corra a bateria em
+paralelo com as suítes. Em 27/09 o tiro `escala` leu, no `_ready` do
+`GameState`, o save inválido que o `teste_fumaca` planta de propósito, e
+saiu com backtrace; sozinho, saiu limpo (`069`).
 ⚠️ **Só vale nos commits que o trazem.** Uma branch anterior à `061`, ou uma
 cópia velha do projeto, ainda apaga o save — e jogar pelo editor usa o save
 do jogador, que é o jogo a funcionar. Arquivo novo que o JOGO guarde em
@@ -1097,6 +1101,14 @@ as três coisas.
   Blender melhor. Protótipo não é neutro: gasta a sessão e empurra a escolha.
   Achou que a técnica em uso não alcança o pedido? **Pergunte qual, antes de
   produzir** — é a regra de paragem, com arte no lugar do `# TUNING:`.
+- **⚠️ MEDIDA DE PROP LÊ-SE NO PNG, OU DEPOIS DE TODA ESCALA QUE O GERADOR
+  APLICA.** Em 27/09 a régua da pessoa saiu de duas peças que pareciam
+  concordar em 1 u = 4,9 m — e uma delas, a cabine do camião, foi lida nas
+  literais do construtor, antes do `ESCALA_CAMINHAO` (0,72) que o `brp_porto`
+  aplica no fim. O Bruno aprovou 0,65 como «1,5× o real», e era 2×: a pessoa
+  saía mais alta do que a cabine a que ia encostar. E o kit não é isótropo — o
+  chão dá ~5,2 m/u e a altura ~5,6 px/m —, logo cada coisa mede-se pela régua
+  do eixo em que o olho a compara (`069`).
 - **O que troca de estado numa partida não pode estar assado no fundo.** Píer,
   armazém, escritório e pátio são props ou mapas alternativos. A vila é a
   exceção, e de propósito: ela troca entre FASES, não entre turnos.

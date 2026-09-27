@@ -7,7 +7,7 @@ testes que precisa para que os props saiam melhores»* e *«pode buscar
 referências profissionais de como fazer essas folhas de contato»*. A nota
 dos camiões acrescentava a terceira: *«tome cuidado com a proporção em
 relação ao mapa e seus itens, pois no futuro carros e pessoas devem ser
-adicionadas»*. **Veredito: por dar.**
+adicionadas»*. **Veredito: aceite** (27/09, «Aceito como está», na conversa seguinte — `069`).
 
 ## O que o Bruno escolheu
 

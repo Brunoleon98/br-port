@@ -333,6 +333,18 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   nada melhor se medir: prancha, e a pergunta SOZINHA quando ele avisar — e
   diga na legenda da prancha qual é a pergunta, para ele poder responder em
   texto sem ela.
+  ⚠️ **E NA `069` (27/09) O MESMO ARRANJO VOLTOU 5 DE 7** — prancha num bloco,
+  pergunta no seguinte, no mesmo turno. Nas duas que falharam o turno acabou
+  no envio e ele escreveu «Mande pergunta»; a pergunta sozinha voltou **8 de
+  8**. Somado: o arranjo não é seguro, e a legenda com a pergunta continua a
+  ser o que o deixa responder sem ela.
+  ⚠️ **E ELE DESCARTOU UMA PERGUNTA DE VEREDITO PARA ESCREVER** — «Aceito /
+  Ajustar» não lhe deixava pedir sugestões, e a mensagem seguinte foi
+  «ficou melhor, consegue ver outros detalhes?». A resposta que funcionou foi
+  ampliar a 4× e levar a lista do que se VÊ, em duas perguntas (forma e
+  acabamento), com a recomendação primeiro: ele marcou as oito, e a
+  candidata seguinte foi aceite. Quando a peça já vai no rumo certo, ofereça
+  «Sugira você o que falta» ao lado de «Aceito».
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

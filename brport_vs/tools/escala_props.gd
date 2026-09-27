@@ -34,6 +34,15 @@ extends SceneTree
 
 const FRAMES_ATE_ASSENTAR := 8
 const REGUA := "trabalhador.png"
+# As duas réguas que o mapa ainda não tem: o pedestre (a mesma pessoa de 1,5x o
+# real, sem o colete) e o carro, em tamanho real (`docs/decisoes/069`). Vivem
+# fora de `art/props` porque o jogo não os mostra, e entram no começo de cada
+# fila ao lado do trabalhador — a nota dos camiões pedia a proporção contra
+# «carros e pessoas», e só a pessoa estava na página.
+const REFERENCIAS := [
+	"res://tools/referencia/pedestre.png",
+	"res://tools/referencia/carro.png",
+]
 const TEXTURA_POR_TELA := 1.5
 
 const FUNDO := Color(0.09, 0.16, 0.24)
@@ -62,6 +71,7 @@ var _montado := false
 var _frames := 0
 var _foto: Image = null
 var _artes: Array = []
+var _n_props := 0
 
 
 func _process(_delta: float) -> bool:
@@ -94,8 +104,9 @@ func _process(_delta: float) -> bool:
 		print("FALHOU ao salvar em %s" % _saida)
 		quit(1)
 		return true
-	print("Folha salva em %s (%dx%d) — escala de %d props" % [
-		_saida, _foto.get_width(), _foto.get_height(), _artes.size()])
+	print("Folha salva em %s (%dx%d) — escala de %d props e %d réguas fora do mapa" % [
+		_saida, _foto.get_width(), _foto.get_height(), _n_props,
+		_artes.size() - _n_props])
 	quit(0)
 	return true
 
@@ -128,10 +139,26 @@ func _montar() -> bool:
 		return String(x["nome"]) < String(y["nome"]))
 	for i in range(pecas.size()):
 		pecas[i]["numero"] = i + 1
+	_n_props = pecas.size()
 
-	var regua_tex: Texture2D = load("%s/%s" % [_cat.PASTA, REGUA])
-	var regua_ur := PropIso.imagem(regua_tex).get_used_rect()
-	var regua_tam := Vector2(regua_ur.size) * PropIso.escala(regua_tex)
+	# A RÉGUA é um bloco: o trabalhador, o pedestre e o carro, lado a lado.
+	var regua: Array = []
+	var caminhos: Array = ["%s/%s" % [_cat.PASTA, REGUA]]
+	caminhos.append_array(REFERENCIAS)
+	for c in caminhos:
+		var t: Texture2D = load(c)
+		if t == null:
+			print("FALHOU — a régua '%s' não carregou (regere com o " % c
+				+ "gerar_props_iso.py e faça o --import)." )
+			quit(1)
+			return false
+		var u := PropIso.imagem(t).get_used_rect()
+		regua.append({"tex": t, "nome": String(c).get_file().get_basename(),
+			"tam": Vector2(u.size) * PropIso.escala(t)})
+	var regua_tam := Vector2(-VAO, 0.0)
+	for r in regua:
+		regua_tam.x += float(r["tam"].x) + VAO
+		regua_tam.y = maxf(regua_tam.y, float(r["tam"].y))
 
 	# AS FILAS: enche-se da esquerda para a direita, e a fila nova começa com a
 	# régua. A altura de uma fila é a do mais alto dela — que é o primeiro,
@@ -184,8 +211,8 @@ func _montar() -> bool:
 	root.add_child(fundo)
 	_texto("ESCALA — os %d props de mapa a 1:1, com o pé na mesma linha" % pecas.size(),
 		Vector2(MARGEM, 4.0), 15, TINTA)
-	_texto("do mais alto ao mais baixo · a régua (a âmbar) é o trabalhador, no começo "
-		+ "de cada fila · o número leva à legenda", Vector2(MARGEM, 25.0), 11, TINTA_FRACA)
+	_texto("do mais alto ao mais baixo · a régua (a âmbar), no começo de cada fila: "
+		+ "trabalhador, pedestre e carro", Vector2(MARGEM, 25.0), 11, TINTA_FRACA)
 
 	var y := CABECALHO
 	for f in filas:
@@ -202,9 +229,17 @@ func _montar() -> bool:
 		linha.size = Vector2(LARG - 2.0 * MARGEM, 1.0)
 		root.add_child(linha)
 
-		# A régua não entra na prova: é a mesma textura do prop n.º tal, que já
-		# é provado no sítio dele.
-		_arte(regua_tex, Vector2(MARGEM + VAO, chao_y - regua_tam.y), regua_tam, "")
+		# O trabalhador não entra na prova: é a mesma textura do prop n.º tal,
+		# que já é provado no sítio dele. O pedestre e o carro não estão em
+		# sítio nenhum, e provam-se na PRIMEIRA fila — uma vez chega.
+		var rx := MARGEM + VAO
+		for r in regua:
+			var rt: Vector2 = r["tam"]
+			var prova := ""
+			if r["nome"] != REGUA.get_basename() and f == filas[0]:
+				prova = String(r["nome"])
+			_arte(r["tex"], Vector2(rx, chao_y - rt.y), rt, prova)
+			rx += rt.x + VAO
 		_texto("régua", Vector2(MARGEM + 2.0, chao_y + 1.0), 9, TINTA_REGUA)
 		var xx := MARGEM + regua_tam.x + VAO * 2.0
 		for p in f:
