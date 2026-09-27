@@ -24,15 +24,15 @@ jogo** (`070`).
 4. **As folhas**: uma página de camiões por transportadora (`camioes`,
    `camioes_b`) e a quarta página dos props (75). `.pck` +109 KB (+0,82%).
 
-O Bruno não pediu PR: o trabalho só existe na branch.
+O trabalho está no PR #95, aberto pelo Bruno no fim da sessão.
 
 ---
 
 ## 1. Comece pelo estado real
 
-- Confira no GitHub se a `claude/gallant-babbage-6jnqiy` virou PR e se foi
-  fundida. Se não foi, a branch da conversa seguinte parte dela (um ref de
-  cada vez no `git fetch`, `CLAUDE.md`).
+- Confira no GitHub se o PR #95 foi fundido. Se não foi, a branch da
+  conversa seguinte parte da `claude/gallant-babbage-6jnqiy` (um ref de cada
+  vez no `git fetch`, `CLAUDE.md`).
 - Veja os PRs abertos do Codex antes de mexer no `Main.gd` ou no
   `teste_design.gd` (`AGENTS.md`).
 
