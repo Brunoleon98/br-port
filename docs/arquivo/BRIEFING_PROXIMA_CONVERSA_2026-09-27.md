@@ -24,14 +24,13 @@ A5** inteira.
 4. A bateria tem **43 fotos, uma nova** (`mensagens_vozes`), e contra a `main`
    mudou só a `mensagens`.
 
-A branch tem **um commit por fundir** e **nenhum PR aberto** — o Bruno não o
-pediu.
+A branch virou o **PR #92**, por fundir quando este briefing foi escrito.
 
 ---
 
 ## 1. Comece pelo estado real
 
-- Confira no GitHub se a `claude/bold-gauss-p11nrc` virou PR e se foi fundida.
+- Confira no GitHub se o PR #92 (`claude/bold-gauss-p11nrc`) foi fundido.
   **Se não foi, o trabalho desta sessão só existe nela**: a branch da conversa
   seguinte parte dela (`git fetch origin claude/bold-gauss-p11nrc`, um ref de
   cada vez), e nunca de uma `main` sem ela.
