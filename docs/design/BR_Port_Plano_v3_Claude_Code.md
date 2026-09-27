@@ -1011,8 +1011,10 @@ camiões** (`069`):
 - **Duas transportadoras por serviço**, pela cor da cabine, a faixa e o
   modelo (bicudo nos três médios, cara-chata na carreta), com retrovisores,
   para-sol, para-choque, faróis, tanque, para-lamas, defletor, bisel, escape
-  e carreta articulada. **Aceites na quarta candidata**; os 32 no jogo são a
-  passagem seguinte (`069`).
+  e carreta articulada. **Aceites na quarta candidata** (`069`), e **os 32
+  entraram no jogo** (`070`): a vez de cada transportadora é um contador por
+  serviço, sem sorteio, e o D35 exige que as 32 cheguem à rua. A família
+  seguinte da 4 — frota, ruína e obras, animação — é escolha do Bruno.
 
 ---
 

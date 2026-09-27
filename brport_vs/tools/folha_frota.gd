@@ -4,9 +4,9 @@ extends SceneTree
 # BR Port VS — folha de contato da FROTA
 # Ferramenta de apoio. NÃO faz parte do jogo.
 #
-# Desenha os cascos de navio (um por par classe × motivo) e os camiões (um por
-# motivo × eixo da rua), cada um sobre o chão em que vive, com o nome que o
-# JOGO lhes dá.
+# Desenha os cascos de navio (um por par classe × motivo) e os camiões (motivo
+# × transportadora × silhueta, uma página por transportadora), cada um sobre o
+# chão em que vive, com o nome que o JOGO lhes dá.
 #
 # ⚠️ ELA EXISTE POR UMA REGRA DESTE REPOSITÓRIO: prop que a captura não vê é
 # prop que ninguém revê. As cinco fotos de JOGO do CI mostram uma partida
@@ -37,7 +37,10 @@ extends SceneTree
 #
 # Uso (Linux, sem monitor — precisa de xvfb):
 #   xvfb-run -a Godot --path brport_vs --rendering-driver opengl3 \
-#     --resolution 720x1280 --script res://tools/folha_frota.gd -- saida.png cascos|camioes
+#     --resolution 720x1280 --script res://tools/folha_frota.gd -- saida.png cascos
+#   ... --script res://tools/folha_frota.gd -- saida.png camioes <página> <total>
+# Os camiões têm uma página por TRANSPORTADORA (`070`), e quem chama diz
+# quantas espera: a folha conta as empresas da tabela e reprova se não bater.
 # ============================================================
 
 const SAIDA_PADRAO := "user://folha_frota.png"
@@ -153,6 +156,24 @@ func _montar() -> void:
 		quit(1)
 		return
 
+	# ⚠️ E OS CAMIÕES TÊM PÁGINAS desde 27/09: com a segunda transportadora de
+	# cada serviço (`070`) são 32, o dobro dos que já enchiam uma tela. Uma
+	# página por EMPRESA, e quem chama diz quantas espera — a regra da
+	# `folha_props`: uma folha que decidisse sozinha escreveria a página nova
+	# onde ninguém a vai buscar.
+	var empresa := 0
+	if secao == "camioes":
+		var pedidas := _empresas_da_tabela()
+		var pagina: int = int(args[2]) if args.size() >= 3 else 0
+		var total: int = int(args[3]) if args.size() >= 4 else 0
+		if total != pedidas or pagina < 1 or pagina > total:
+			print("FALHOU — os camiões pedem %d página(s), uma por empresa, e veio "
+				% pedidas + "'%s de %s'. Acrescente a chamada no capturar_evidencia.sh."
+				% [pagina, total])
+			quit(1)
+			return
+		empresa = pagina - 1
+
 	var fundo := ColorRect.new()
 	fundo.color = FUNDO_FOLHA
 	fundo.anchor_right = 1.0
@@ -163,8 +184,8 @@ func _montar() -> void:
 	if secao == "cascos":
 		y = _secao("CASCOS — o que o navio traz", _cascos(), CHAO_AGUA, y)
 	else:
-		y = _secao("CAMIÕES — o que sai pela estrada, nos dois sentidos",
-			_camioes(), CHAO_RUA, y)
+		y = _secao("CAMIÕES — transportadora %d de %d, nos dois sentidos"
+			% [empresa + 1, _empresas_da_tabela()], _camioes(empresa), CHAO_RUA, y)
 
 	# ⚠️ FOLHA QUE TRANSBORDA CORTA EM SILÊNCIO, e uma folha cortada é pior do
 	# que nenhuma: ela existe para provar que a arte que o sorteio esconde
@@ -214,8 +235,20 @@ func _cascos() -> Array:
 	return itens
 
 
-## Os camiões, percorrendo os motivos do jogo, os dois eixos e os dois sentidos.
-func _camioes() -> Array:
+## Quantas transportadoras a tabela tem — a maior lista de empresas de um
+## serviço, que é quantas páginas os camiões pedem.
+func _empresas_da_tabela() -> int:
+	var main: Script = load("res://scripts/Main.gd")
+	var tabela: Dictionary = main.get_script_constant_map()["CAMINHOES"]
+	var n := 0
+	for motivo in tabela:
+		n = maxi(n, (tabela[motivo] as Array).size())
+	return n
+
+
+## Os camiões de UMA empresa, percorrendo os motivos do jogo, os dois eixos e
+## os dois sentidos.
+func _camioes(empresa: int) -> Array:
 	var GS: Node = root.get_node("GameState")
 	# ⚠️ `load()` e não `preload()`: um `const X := preload("...gd")` é a CLASSE
 	# para o parser, e `get_script_constant_map()` é método do RECURSO — o
@@ -228,12 +261,17 @@ func _camioes() -> Array:
 	for motivo in GS.MOTIVOS:
 		if not tabela.has(motivo):
 			continue
+		# Um serviço com menos empresas do que a página pede não entra nela —
+		# e a conta das páginas já saiu da maior lista.
+		if empresa >= (tabela[motivo] as Array).size():
+			continue
+		var silhuetas: Dictionary = tabela[motivo][empresa]
 		# ⚠️ AS CHAVES SAEM DA TABELA, e não de `["my", "mx"]`. Era essa lista
 		# escrita à mão, e com a mão dupla (23/09) ela teria deixado os oito
 		# camiões do retorno — gerados, validados e no jogo — fora da única
 		# folha onde se olha para eles.
-		for eixo in (tabela[motivo] as Dictionary).keys():
-			itens.append([tabela[motivo][eixo] as Texture2D,
+		for eixo in silhuetas.keys():
+			itens.append([silhuetas[eixo] as Texture2D,
 				String(GS.MOTIVOS[motivo]["nome"]), String(eixo).replace("_", " · ")])
 	return itens
 

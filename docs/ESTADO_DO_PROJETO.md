@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 27/09/2026 — a frente 4 abriu: a régua da pessoa e as transportadoras (`069`)
+> **Última atualização:** 27/09/2026 — as duas transportadoras no jogo: os 32 camiões (`070`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -113,9 +113,9 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Frente 6 do A5 — a prancha e a escala** (27/09, `068`) | **Aceite.** A `prancha_prop.gd` põe a candidata ao lado do prop do jogo (no jogo, 1:1, ampliada, silhueta e valor, escala, números); a `escala_props.gd` alinha os 59 a 1:1 com trabalhador, pedestre e carro de régua |
+| **Frente 4 do A5 — escala e camiões** (27/09, `069`, `070`) | A pessoa a 1,5× o real; **duas transportadoras por serviço, os 32 camiões no jogo**, pela vez de cada uma e sem sorteio; o D35 exige que as 32 cheguem à rua. `.pck` +0,82% |
+| **Frente 6 do A5 — a prancha e a escala** (27/09, `068`) | **Aceite.** A `prancha_prop.gd` (candidata contra o prop do jogo) e a `escala_props.gd` (todos a 1:1, com trabalhador, pedestre e carro de régua) |
 | **Frente 3 do A5 — as quatro famílias aceites** (25–27/09, `062`–`067`) | O cartão e o HUD (**F14**, **F15**, `SAVE_VERSION` 9); tela inicial, três espaços de save, pausa curta, Ajustes e o celular (**F16**); o **caderno** (**D37**) e a **conversa no celular**, cada voz no seu balão (**F17**, **D38**). A foto do porto antigo, o fundo e o logotipo são do Bruno (`art_lab/diario/`, `art_lab/tela_inicial/`) |
-| **O save do jogador isolado** (25/09, `061`) | toda ferramenta com `--script` grava em `user://ferramentas/` (`ArmazemLocal.gd`); o save, as gravações e o volume do jogador ficam de fora. **F13** e a sentinela do CI; só vale em commits com a `061` |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -130,7 +130,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`) |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** abriu pela escala e camiões (`069`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | Os camiões foram aceites na 4.ª candidata: faltam os 32 no jogo; a família seguinte da 4 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala e os camiões (`069`, `070`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A família seguinte da 4 (frota, ruína e obras, animação) é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
@@ -194,9 +194,9 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Imprime classes, motivos e o NÍVEL |
 | `brport_vs/tools/leitura_do_simulador.gd` | A conclusão dele, fora do `SceneTree` para se provar com fixture (T7). Identidade ausente ou dupla: código 1 (`030`) |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor. Avança por TURNO efetivo, pelo botão do jogo, e pára diante de modal (`031`) |
-| `brport_vs/tools/folha_props.gd` | **A folha dos 59 props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Três páginas, e reprova ao transbordar; o catálogo e o chão vivem em `catalogo_props.gd` |
+| `brport_vs/tools/folha_props.gd` | **A folha dos 75 props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Quatro páginas, e reprova ao transbordar; o catálogo e o chão vivem em `catalogo_props.gd` |
 | `brport_vs/tools/prancha_prop.gd` | **Para iterar UM prop**: a versão do jogo contra a candidata, na foto do jogo, a 1:1, ampliada, em silhueta e valor e na escala, com os números. Sem candidata exige Δ zero (`068`) |
-| `brport_vs/tools/escala_props.gd` | **Os 59 props a 1:1 com o pé na mesma linha**, o trabalhador de régua (`068`) |
+| `brport_vs/tools/escala_props.gd` | **Os props a 1:1 com o pé na mesma linha**, o trabalhador de régua (`068`) |
 | `brport_vs/tools/folha_icones.gd` | Folha dos ícones nos 3 fundos, a 19px e ampliado — a cada ícone novo. **Reprova ao transbordar** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows). O protótipo HTML original é o `index.html` da raiz |
 | `tools/conferir_lote_de_arte.py` | Confere lote vindo de fora: alfa, tamanho e **ângulo da base contra os 26,57°**. Antes de qualquer PNG externo entrar |
@@ -217,7 +217,7 @@ podre (A4) — em `HISTORICO.md`.
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
 | `docs/design/` | GDD 7, guias, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
 | `tools/capturar_evidencia.sh` | Fotografias determinísticas de jogo, painéis e folhas de contato; é a evidência visual do CI |
-| `brport_vs/tools/folha_frota.gd` | **A folha da frota** — cascos e camiões percorrendo as tabelas: foto de jogo só mostra o que o sorteio escolheu. Duas folhas desde `047` |
+| `brport_vs/tools/folha_frota.gd` | **A folha da frota** — cascos e camiões percorrendo as tabelas: foto de jogo só mostra o que o sorteio escolheu. Os cascos e uma folha por transportadora (`070`) |
 | `brport_vs/tools/folha_trabalhadores.gd` | **Os 30 rostos em cartões de verdade**, pelo `Retratos.TRABALHADORES`: reprova o cartão com outro arquivo ou sem desenho (`059`) |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
@@ -318,7 +318,8 @@ navio atraca** (`009`), o que faz a trava ser visível em vez de estatística.
 **O CASCO DIZ O QUE O NAVIO TRAZ, e o camião o que sai pela estrada** (`010`).
 Seis cascos, um por par (classe, motivo): o costado é o mesmo e o CONVÉS é que
 muda. O pesqueiro tem um casco só, e isso é afirmação: pescado e armazenagem são
-o mesmo peixe indo para sítios diferentes. Os camiões são quatro, um por motivo.
+o mesmo peixe indo para sítios diferentes. Os camiões são um por motivo e por
+transportadora — duas, que se revezam (`070`).
 O **trabalhador aparece de pé no tabuado** quando alocado.
 
 **E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA:** bote, traineira e arrasteiro,

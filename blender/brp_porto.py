@@ -87,8 +87,9 @@ CAMINHOES = {
 # da cabine. O SERVIÇO continua a ler-se pela carroçaria (o bloco acima); a
 # EMPRESA lê-se pelo que está à frente dela.
 #
-# ⚠️ A EMPRESA 0 É O CAMIÃO DE SEMPRE, cor a cor. É o controle: renderizada, dá
-# Δ zero contra o PNG que o jogo já tem.
+# ⚠️ A EMPRESA 0 É O CAMIÃO DE SEMPRE, cor a cor. Foi o controle da
+# refatoração: antes dos detalhes, renderizada, deu Δ zero contra os PNGs de
+# então. Os detalhes valem para as duas, e ela mudou com eles (`070`).
 #
 # ⚠️ O BICUDO SÓ NOS TRÊS MÉDIOS, e é o real: o bicudo das estradas
 # brasileiras é o caminhão médio — o baú, o basculante e o frigorífico de
@@ -96,7 +97,7 @@ CAMINHOES = {
 # E há uma razão de medida: o porta-contêiner é o MAIOR camião, e é nele que
 # estão medidos o recuo da paragem e a janela da curva (`Main.gd`). O capô
 # acrescenta-se À FRENTE do camião de sempre, que não encolhe, e nenhum dos
-# três médios com capô passa do comprimento dele (1,40 / 1,78 / 1,86 < 1,96).
+# três médios com capô passa do comprimento dele (1,50 / 1,88 / 1,96).
 #
 # ⚠️ E A COR DA CABINE ESCOLHE-SE CONTRA O ASFALTO (#49535b), que é o chão onde
 # ela anda: o navy e o verde do kit fundem-se nele pelo valor. As da empresa 1
@@ -121,13 +122,11 @@ EMPRESAS = {
         dict(modelo="bicudo", cab="cab_coral", faixa="amarelo")),
 }
 
-# ⚠️ OS 16 PNGs DE CAMIÃO QUE O JOGO TEM SÃO DE ANTES DISTO (27/09). A empresa
-# 1 e os detalhes de baixo são o desenho que o Bruno ACEITOU na quarta
-# candidata, e ainda não foram gerados para `art/props`: regerar hoje um camião
-# pelo `gerar_brp.py` põe-no no jogo sozinho, sem a tabela que o escolhe. Os 32
-# entram juntos, numa passagem própria — a tabela do `Main.gd`, o sorteio, o
-# D35 com o chassi do bicudo e a folha (`docs/decisoes/069`, «O que fica para
-# a passagem seguinte»).
+# ⚠️ AS DUAS EMPRESAS ENTRAM JUNTAS NO JOGO, e foi assim que entraram (27/09,
+# `docs/decisoes/070`): os 32 PNGs, a tabela `CAMINHOES` do `Main.gd` por
+# empresa, a vez de cada transportadora, o D35 com o chassi do bicudo e a
+# folha. Uma empresa a mais aqui sem a linha dela no `Main.gd` fica gerada e
+# sem ninguém a ver — o D13 percorre a tabela, não este dicionário.
 
 # O capô do bicudo, antes do `ESCALA_CAMINHAO`: 0,29 de mundo no jogo, ~1,5 m.
 # A primeira candidata tinha 0,30 (~1,1 m), e o Bruno pediu-o «mais
@@ -626,26 +625,36 @@ def _encolher(objetos, k):
         o.scale = tuple(c * k for c in o.scale)
 
 
+# O que se escreve no nome de cada empresa, entre o serviço e a silhueta: a 0
+# é o camião de sempre e fica sem marca, para os dezasseis nomes que o jogo já
+# conhecia não mudarem; a 1 leva `_b`, como na candidata aceite.
+MARCA_DA_EMPRESA = ("", "_b")
+
+
 def _registrar_caminhoes(M, est):
-    """Os dezesseis props: quatro serviços × duas orientações × dois sentidos.
+    """Os trinta e dois props: quatro serviços × duas empresas × duas
+    orientações × dois sentidos.
 
     O jogo já sabe que um caminhão que anda em `mx` precisa de outra silhueta;
-    o que passou a saber é QUAL das quatro. A tabela do `Main.gd` indexa por
-    `<motivo>` e `<motivo>_mx`, e é por isso que os nomes se escrevem assim.
+    o que passou a saber é QUAL das quatro, e de que empresa. A tabela do
+    `Main.gd` indexa por `<motivo>`, depois pela empresa, depois pelo eixo, e é
+    por isso que os nomes se escrevem `caminhao_<motivo><marca><silhueta>`.
     """
-    # ⚠️ E OS OITO DO RETORNO (`_retorno`, `_retorno_mx`): o mesmo construtor, com a
+    # ⚠️ E OS DO RETORNO (`_retorno`, `_retorno_mx`): o mesmo construtor, com a
     # frente virada. Um camião que suba a rua não se obtém espelhando o que
     # desce — só as faces `+x` e `-y` se veem, e espelhar mandaria o lado para
     # a face escondida —, por isso é reconstruído, como o de `mx` já era.
     for servico in CAMINHOES:
-        for eixo, sufixo, celulas, retorno in (
-                ("my", "", (1, 2), False), ("mx", "_mx", (2, 1), False),
-                ("my", "_retorno", (1, 2), True), ("mx", "_retorno_mx", (2, 1), True)):
-            nome = "caminhao_%s%s" % (servico, sufixo)
-            pecas = _pecas_do_caminhao(M, eixo, servico, retorno)
-            _encolher(pecas, ESCALA_CAMINHAO)
-            origem(nome)
-            est.registrar(nome, pecas, celulas=celulas)
+        for empresa, marca in enumerate(MARCA_DA_EMPRESA):
+            for eixo, sufixo, celulas, retorno in (
+                    ("my", "", (1, 2), False), ("mx", "_mx", (2, 1), False),
+                    ("my", "_retorno", (1, 2), True),
+                    ("mx", "_retorno_mx", (2, 1), True)):
+                nome = "caminhao_%s%s%s" % (servico, marca, sufixo)
+                pecas = _pecas_do_caminhao(M, eixo, servico, retorno, empresa)
+                _encolher(pecas, ESCALA_CAMINHAO)
+                origem(nome)
+                est.registrar(nome, pecas, celulas=celulas)
 
 
 def empilhadeira(M, est):

@@ -164,7 +164,8 @@ done
 `icones.png` **tem de ficar igual** numa mudança de mapa — a folha de contato
 não desenha cenário. Se ela mudou, a mudança vazou para onde não devia. O
 mesmo vale para `frota.png` numa mudança que não seja de casco, e para
-`camioes.png` numa que não seja de camião (são duas folhas desde a `047`).
+`camioes.png` e `camioes_b.png` numa que não seja de camião (uma folha por
+transportadora desde a `070`; a frota e os camiões separaram-se na `047`).
 
 ⚠️ **FOTO NOVA NÃO TEM ANTES, e a primeira corrida diz "novo".** O
 `captura.yml` fotografa a base do PR com o script DA BASE — acrescentar um
