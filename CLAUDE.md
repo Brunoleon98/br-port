@@ -2765,6 +2765,13 @@ nenhum (`057`).
   `franzida: command not found` no meio da saída. Neste repositório, onde todo
   comentário cita código entre crases, edição por heredoc é `<<'EOF'`; o que
   vier do shell entra por argumento ou por arquivo.
+  ⚠️ **E TROCAR O QUE ESTÁ ENTRE DOIS MARCADORES APAGA TUDO O QUE MORA ENTRE
+  ELES.** Em 27/09 um `s[:s.index(A)] + novo + s[s.index(B):]` ia substituir
+  uma função e levava mais SETE, porque o marcador B vinha quatrocentas linhas
+  abaixo do que se supunha. O que salvou foi o script conferir cada troca
+  ANTES de escrever (`assert s.count(a) == 1`, e uma falhou): nada foi para o
+  disco. Edição por intervalo confere a ORDEM dos dois marcadores e conta,
+  depois, as `func` que o arquivo tem (`068`).
 - **⚠️ RÉGUA QUE VARRE CÓDIGO LÊ O ARQUIVO INTEIRO, NUNCA LINHA A LINHA — e a
   que não o faz não REPROVA, escapa CALADA.** O `CLAUDE.md` já registava isto
   para o `grep` de facto em prosa; em 21/09 mordeu dentro da guarda escrita

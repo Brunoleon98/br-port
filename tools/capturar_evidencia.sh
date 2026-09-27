@@ -599,6 +599,17 @@ tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.pn
 tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 3
 tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 3
 
+# A ESCALA E A PRANCHA (`docs/decisoes/068`), as duas respostas ao veredito
+# do Bruno sobre as três folhas de cima: «mais útil para a IA alterar e fazer
+# os testes». A escala põe os props a 1:1 com o pé na mesma linha e o
+# trabalhador de régua — é a nota dos camiões sobre a proporção. A prancha é a
+# ferramenta de ITERAR um prop, e aqui corre sem candidata, que é o controle
+# dela: B = A, e ela exige Δ zero exato e as duas fotos do jogo iguais ao byte.
+# O prop é a traineira porque é da frota de pesca do porto em ruínas, a que o
+# veredito pediu «mais realista», e aparece sozinha no primeiro dia.
+tirar escala  - -  --script res://tools/escala_props.gd  --    "$SAIDA/escala.png"
+tirar prancha - -  --script res://tools/prancha_prop.gd  --    "$SAIDA/prancha.png" barco_pesca_traineira
+
 # UMA IMAGEM CHAPADA TAMBÉM É UM PNG. Se o contexto gráfico falhar em silêncio
 # — driver de software em falta no runner, por exemplo — a ferramenta salva um
 # retângulo de uma cor só e diz "Tela salva", que é a foto mentirosa contra a
