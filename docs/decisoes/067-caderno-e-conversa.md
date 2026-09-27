@@ -152,6 +152,16 @@ tem hoje todas as chaves que a fila escreve, e mede as quatro vozes.
 - **O app Diário** do celular continua fechado: o caderno está pronto para
   ele, com uma entrada por página e uma foto por entrada.
 
+## O CI do PR #91 reprovou a tabela dos números
+
+A primeira corrida do PR reprovou num passo só: a tabela dos números
+(`BR_Port_Numeros_Fase_1.md`) estava velha **com as 48 constantes
+intactas**. A coluna «Onde» cita a LINHA de cada uma, e o comentário de sete
+linhas que explica o `assunto` do sinal `message`, acima delas, empurrou-as
+todas. O fecho saltou a tabela porque a regra dizia «mexeu numa `const`», e
+nenhuma mudou; o gatilho passou a ser QUALQUER linha do `GameState.gd`, no
+`CLAUDE.md` e na `/fechar-sessao`. Regerada, a diferença é só de linhas.
+
 ## A quarta passagem da conversa, na próxima conversa
 
 **Veredito do Bruno sobre a terceira: «Continue nas mensagens»**, com dois

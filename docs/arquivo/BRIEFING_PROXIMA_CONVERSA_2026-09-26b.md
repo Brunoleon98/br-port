@@ -84,6 +84,9 @@ pelo Bruno depois do fecho.
   `brport_vs/scripts/PainelNarrativo.gd`).
 - ⚠️ A prova das caras mede uma fração da caixa, e numa janela que rola só
   julga a cara que se vê inteira (`brport_vs/tools/caras_na_foto.gd`).
+- ⚠️ A tabela dos números cita a LINHA de cada constante: qualquer linha nova
+  no `GameState.gd` acima delas a envelhece, e o PR #91 reprovou assim com os
+  48 valores intactos (`CLAUDE.md`, «Antes de fechar», item 3; `067`).
 - ⚠️ Amostra à mão de um dicionário que a fila escreve leva TODAS as chaves:
   a do D33 sem `retrato` abortava o `setup()` a meio
   (`brport_vs/scripts/validation/contraste_ui.gd`; `067`).
