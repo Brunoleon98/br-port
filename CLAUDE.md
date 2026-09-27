@@ -2202,6 +2202,13 @@ as três coisas.
   cartão inteiro, porque o retrato tem a luminância do âmbar escuro (0,149
   contra 0,158) e sumia nele: **fundo escolhe-se também contra a ARTE que mora
   nele**, que o D33 não mede (`050`).
+  ⚠️ **E COR ESCURA CLAREADA COM BRANCO PERDE O MATIZ.** Os balões por pessoa
+  saíram da roupa de cada retrato, e a mistura com branco pôs os três a ΔE
+  2,4 a 8,5 uns dos outros — o fato do Sr. Ribeiro e a camisa do Arlindo a
+  2,4–3,8: três pessoas no mesmo balão. Tom claro derivado de cor escura escolhe-se
+  com o matiz dela e a croma à mão (OKLCH), e mede-se o ΔE entre os IRMÃOS,
+  não só o contraste do texto; dois matizes a 16° não se separam claros, e o
+  terceiro separou-se pela croma (`067`).
 - **⚠️ «ESTA COR É LEGÍVEL?» E «DE ONDE VEIO ESTA COR?» SÃO DUAS PERGUNTAS, e
   quem só tem a primeira acrescenta cor à mão sem ver.** Medido em 21/09: no
   MESMO commit em que migrou três overrides para o tema, o R6 **acrescentou um

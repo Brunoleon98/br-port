@@ -5,8 +5,8 @@ texto — o diário, as mensagens e a tela de nomes. O Bruno escolheu-a entre as
 frentes que restavam («Resto da frente 3») e respondeu o escopo antes do
 desenho. **Vereditos: o caderno aceite na terceira passagem («Aceito, siga
 para mensagens»); a conversa com três passagens e «Continue nas
-mensagens»** — a quarta fica para a conversa seguinte, com o fecho pedido por
-ele (fim deste arquivo).
+mensagens»** — e a quarta, em 27/09, **aceite**: fecha a família e, com
+ela, a frente 3 (fim deste arquivo).
 
 ## O que o Bruno escolheu
 
@@ -162,13 +162,67 @@ todas. O fecho saltou a tabela porque a regra dizia «mexeu numa `const`», e
 nenhuma mudou; o gatilho passou a ser QUALQUER linha do `GameState.gd`, no
 `CLAUDE.md` e na `/fechar-sessao`. Regerada, a diferença é só de linhas.
 
-## A quarta passagem da conversa, na próxima conversa
+## A quarta passagem da conversa (27/09) — aceite
 
 **Veredito do Bruno sobre a terceira: «Continue nas mensagens»**, com dois
-reparos marcados — e o fecho da sessão pedido no mesmo campo («Feche a
-sessão e continue na próxima»):
+reparos: **balões por pessoa** (o tom de cada personagem, além da cara) e um
+**telefone maior só nas mensagens** (~460 × 780; o menu como está).
 
-- **Balões por pessoa**: cada personagem com o tom do seu balão (o Arlindo,
-  o Sr. Ribeiro), além da cara.
-- **Telefone maior**: o celular (400 × 680) é apertado para ler a conversa;
-  ~460 × 780, **só nas mensagens** — o menu fica como está.
+**O tom de cada balão sai da ROUPA do retrato** — a mediana por luminância do
+tronco, fora da gola e da gravata: a blusa da Dona Cida `#29623f`, o fato do
+Sr. Ribeiro `#1f3e60`, a camisa do Arlindo `#28667b`. O primeiro candidato
+clareava-as misturando com branco (78%, 82% e 86%), e as três saíram a
+**ΔE 2,4 a 8,5** umas das outras (o azul do Ribeiro e o petróleo do Arlindo
+a **2,4–3,8**): a mistura apaga o matiz de uma cor escura. Em OKLCH, com o matiz de cada roupa e a
+croma escolhida, ficaram a Dona Cida `#c9f0d4`, o Arlindo `#abe9ff` e o Sr.
+Ribeiro **quase branco** `#ebf1f7` (C 0,01) — «o papel do banco» —, porque o
+fato dele fica a 16° do petróleo do Arlindo e, com croma igual, os dois liam-se
+como um (ΔE 6,6). Separados assim, **ΔE ≥ 19,9** entre os três, e o texto navy
+mede **10,13 / 9,48 / 11,05:1** pela régua do D33 (no creme de antes, 11,35).
+
+**O telefone é argumento do `montar_celular()`**, e não uma constante: o
+GDScript não deixa a subclasse redefinir a `const` do pai. A conversa pede
+**460 × 782** — a altura sai da largura pela proporção do menu, 1:1,7 — e o
+«Guardar» fica a 179 px da borda de baixo. **O `menu.png` saiu igual pixel a
+pixel**, e é isso que prova que o menu não mudou.
+
+**A foto nova, `mensagens_vozes`**: a partida da bateria chega ao dia 11 só
+com a Dona Cida à vista — o Sr. Ribeiro só fala no vencimento —, e os outros
+dois balões ficariam sem foto. Ela é a conversa da amostra do D33, que o
+`capturar_cena.gd` passou a ler por `#historico` do MESMO sítio; a amostra
+ganhou uma fala seguida de cada voz, senão três das seis variações nunca
+seriam medidas.
+
+**O veredito desta passagem foi «ajustar», num ponto só** — «diminua o zoom
+dos personagens nas fotos de perfil e centralize o rosto, a cabeça está
+cortada» — e nada sobre as cores ou o tamanho. O recorte do avatar media-se
+pelos OMBROS (93% da largura deles, a descer 17,5% dela do topo): na Dona Cida
+começava 75 px abaixo do coque, no Arlindo cortava o boné, no Sr. Ribeiro a
+careca. Hoje mede-se pela **cabeça** — do topo ao pescoço, a linha mais
+estreita entre 40% e 65% do busto (391 a 424 px nos nove retratos) —, num
+quadro de **1,6** vezes essa altura, centrado nela e a 62% da altura, onde fica
+o rosto. A 1,45 o coque e o boné ainda tocavam a borda. Veredito: **«Aceito»**.
+
+**O D38 do `teste_design`** pergunta, com a amostra montada: cada voz tem os
+dois balões (o primeiro com bico, o seguido sem) e um tom só; cada balão tem o
+**matiz da roupa de quem fala**, lido do PNG do retrato e não do tema; os três
+distinguem-se (ΔE ≥ 10, a meio entre o defeito, 0, e o mais perto de hoje,
+19,9); e o telefone da conversa e o «Guardar» cabem nos 720 × 1280.
+
+**Oito defeitos injetados, oito reprovações, e cada asserção com um que só ela
+apanha**: os ramos da Dona Cida e do Sr. Ribeiro trocados (só o matiz — os
+tons continuam distintos e legíveis, e o D33 passa); o Arlindo com o tom do
+Ribeiro (matiz e ΔE 0); o balão seguido do Ribeiro verde (o tom único, e
+com ele o matiz e o ΔE); o Arlindo
+com o matiz do fato do Ribeiro e croma própria (só o matiz); o Arlindo quase
+branco como ele (só o ΔE, 1,9); a amostra sem a fala seguida do Ribeiro e o
+primeiro balão dele sem bico (os dois balões); o telefone a 720 (a tela).
+
+**Medido**: seis suítes verdes, `ESCOPO UI OK`; a bateria tem **43 fotos, uma
+nova** (`mensagens_vozes`), e contra a `main` mudou **só a `mensagens`** — as
+outras 41 iguais em RGB, o `menu` incluído.
+
+**Uma coisa vista e não diagnosticada**: uma corrida da foto nova SEM
+`--fixed-fps` imprimiu quatro caras das cinco inteiras, sem reprovar nem
+contar a quinta como cortada; com `--fixed-fps 60`, que é como a bateria
+corre, as cinco. Não se reproduziu, e fica escrito aqui em vez de explicado.

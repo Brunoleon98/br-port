@@ -392,6 +392,13 @@ tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaIni
 # foto verdadeira de um estado que só existe no primeiro segundo do jogo, que
 # é a armadilha que o `capturar_cena` já levou uma vez com o `setup()` saltado.
 tirar mensagens 1 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/mensagens.png" completo limpo mensagens
+# AS TRÊS VOZES, cada uma com o SEU balão (quarta passagem, `067`). A partida
+# do tiro acima chega ao dia 11 só com a Dona Cida a falar — o Sr. Ribeiro só
+# fala no vencimento da parcela, e a fala do Arlindo sobe para fora da janela
+# —, e os balões dos outros dois ficariam gerados, medidos e por olhar. Esta é
+# a conversa da amostra do D33 (`contraste_ui.gd`, `#historico`): cópias das
+# falas do jogo, as três vozes com e sem bico e os quatro tons do porto.
+tirar mensagens_vozes - - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelMensagens.tscn "$SAIDA/mensagens_vozes.png" "#historico"
 
 # ══ OS CINCO PAINÉIS QUE NENHUMA FOTO MOSTRAVA ═══════════════════════════════
 #

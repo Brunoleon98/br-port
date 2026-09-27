@@ -944,7 +944,7 @@ fundo (um navio chegando, a paisagem brasileira) e o logotipo são **dele, no
 ChatGPT**, pelo briefing com os pedidos prontos. O **F16** tranca os espaços e
 a pausa.
 
-#### ⏳ A QUARTA FAMÍLIA, AS TELAS DE TEXTO (26/09) — o caderno fechou, a conversa não
+#### ✅ A QUARTA FAMÍLIA FECHOU (26–27/09) — as telas de texto, e com ela a frente 3
 
 Escolha do Bruno («resto da frente 3»), com o escopo respondido antes do
 desenho (`067`): o diário é um **caderno com letra à mão**, a tela de nomes é
@@ -958,12 +958,14 @@ mensagens»). A conversa levou três: balões e notas do porto com o tom; depois
 a cara maior, o ícone do assunto, os balões seguidos e o app Mensagens no
 menu; depois as três vozes no chat (o Sr. Ribeiro e o Arlindo também), a cara
 nítida com a expressão da fala e as notas ao centro. O veredito foi
-**«Continue nas mensagens»**, e a quarta passagem é a **próxima conversa**:
-**balões por pessoa** (o tom de cada personagem) e **telefone maior** (~460 ×
-780, só nas mensagens). O **D37** tranca a página do caderno e o **F17** a
-conversa.
+**«Continue nas mensagens»**, e a quarta passagem (27/09) deu a cada voz o
+**balão do tom da roupa dela** — o verde da Dona Cida, o petróleo do Arlindo
+e o quase branco do Sr. Ribeiro, «o papel do banco» —, um **telefone maior só
+na conversa** (460 × 782, o menu igual pixel a pixel) e, a pedido dele no
+veredito, o **avatar com a cabeça inteira**. Foi **aceite**. O **D37** tranca
+a página do caderno, o **F17** a conversa e o **D38** os balões e o telefone.
 
-**Fechada a conversa, a frente 3 acaba.** O vocabulário das famílias —
+**A frente 3 fechou.** O vocabulário das famílias —
 cabeçalho com selo, tarja com linha de apoio e tom, quadros de número, a barra
 do HUD, o bloco de contas, o caderno e o celular — vive no `PainelNarrativo`,
 no `PainelCelular` e no tema; e o app Diário do celular, fechado, já tem o

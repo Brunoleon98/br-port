@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 26/09/2026 — as telas de texto da frente 3: o caderno aceite, a conversa na 4.ª passagem (`067`)
+> **Última atualização:** 27/09/2026 — a frente 3 fechou: a conversa aceite na 4.ª passagem (`067`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -83,7 +83,7 @@ turno, sem o nome de quem jogou (`006`). Sai pelo menu de pausa.
 prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
 
 **E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`, `066`): aparelho de
-400×680, com o **diário**, as **mensagens** (a conversa do porto, `067`) e
+400×680 (460×782 na conversa), com o **diário**, as **mensagens** (a conversa do porto, `067`) e
 quatro portas FECHADAS — cidade, lojas, missões, análise (itens 18 a 21).
 
 **O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
@@ -112,8 +112,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Frente 3 do A5, famílias 1 a 3** (25–26/09, `062`–`066`) — aceites | O cartão (boletim, contra-oferta, Sr. Ribeiro, balanço) e o HUD, com a promessa de cada número conferida contra o jogo (**F14**, **F15**) e os recordes da partida (`SAVE_VERSION` 9); o sistema: **tela inicial**, **três espaços de save** (o 1 é o `savegame.json` de sempre), pausa curta, **Ajustes** e o **celular** com moldura e apps (**F16**). O fundo e o logotipo são do Bruno (`art_lab/tela_inicial/BRIEFING.md`) |
-| **Frente 3, 4.ª família — as telas de texto** (26/09, `067`) — caderno aceite; conversa na 4.ª passagem | A tela de nomes é a **folha de rosto de um caderno** e o diário a primeira página (letra à mão, couro e papel por shader, a folha que CURVA; **D37**); a foto do porto antigo é provisória (`art_lab/diario/BRIEFING.md`). As mensagens são uma **conversa no celular** — notas do porto com o ícone do assunto, e as três vozes em balões com a cara da fala (**F17**). Falta a 4.ª passagem: balões por pessoa e telefone maior |
+| **Frente 3 do A5 — as quatro famílias aceites** (25–27/09, `062`–`067`) | O cartão e o HUD, com a promessa de cada número conferida contra o jogo (**F14**, **F15**) e os recordes (`SAVE_VERSION` 9); o sistema: **tela inicial**, **três espaços de save**, pausa curta, **Ajustes** e o **celular** (**F16**); as telas de texto: o **caderno** (nomes e diário, **D37**) e a **conversa no celular** — notas do porto com o ícone do assunto, e cada voz no balão do tom da roupa dela, com a cabeça inteira no avatar (**F17**, **D38**). A foto do porto antigo, o fundo e o logotipo são do Bruno (`art_lab/diario/`, `art_lab/tela_inicial/`) |
 | **O save do jogador isolado** (25/09, `061`) | toda ferramenta com `--script` grava em `user://ferramentas/` (`ArmazemLocal.gd`); o save, as gravações e o volume do jogador ficam de fora. **F13** e a sentinela do CI; só vale em commits com a `061` |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
@@ -129,7 +128,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`) |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). Na **frente 3**, as famílias do cartão, do HUD e do sistema foram aceites (`066`); a das telas de texto tem o caderno aceite e a conversa por fechar (`067`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem do resto da frente 3 e das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **frente 3** fechou: as quatro famílias aceites (`066`, `067`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido

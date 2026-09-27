@@ -119,12 +119,24 @@ static func imagem(retrato: Texture2D, altura: int = TAMANHO) -> TextureRect:
 # lado e o busto só a meio dele, e a primeira versão do avatar saiu um disco
 # bege — a prova das caras (`caras_na_foto.gd`) apanhou-o, com 38 px a mudar
 # ao esconder a cara. O recorte é a CABEÇA, e sai do DESENHO e não de números
-# escritos à mão: a caixa opaca do busto dá a largura dos ombros, a cabeça é
-# um quadrado de 93% dela, ao meio, a descer 17,5% da largura a partir do topo
-# do cabelo. Medido na Dona Cida séria (caixa 430 x 753 a partir de (169, 15)):
-# o recorte (184, 90, 400, 400) mostra o cabelo, os óculos e a gola.
-const CARA_LADO := 0.93
-const CARA_DESCE := 0.175
+# escritos à mão.
+#
+# ⚠️ E A CABEÇA MEDE-SE PELA CABEÇA, NÃO PELOS OMBROS (quarta passagem,
+# `067`: «diminua o zoom e centralize o rosto, a cabeça está cortada»). O
+# recorte anterior era um quadrado de 93% da largura dos ombros a começar
+# 17,5% dela abaixo do topo — e ombros e cabeça não andam juntos: na Dona
+# Cida o quadrado começava 75 px abaixo do coque, no Arlindo cortava o boné,
+# e no Sr. Ribeiro, de ombros largos, a careca. Hoje a cabeça vai do topo do
+# desenho ao PESCOÇO — a linha mais estreita entre 40% e 65% da altura do
+# busto, onde a cabeça acaba e os ombros ainda não começaram (medido nos
+# nove: a cabeça tem 391 a 424 px de altura) —, e o quadro tem 1,6 vezes
+# essa altura, centrado na largura dela e a 62% da altura, que é onde fica
+# o rosto e não o chapéu. A 1,45 o coque e o boné ainda tocavam a borda do
+# círculo.
+const CARA_LADO := 1.6
+const CARA_CENTRO := 0.62
+const PESCOCO_DE := 0.40
+const PESCOCO_ATE := 0.65
 # ⚠️ E A CABEÇA É REDUZIDA AQUI, COM LANCZOS, e não pela GPU (terceira
 # passagem da conversa, «cara mais nítida»). O recorte de 400 px mostrado a
 # 44 é uma redução de 9x, e a textura do retrato não tem mipmaps: a GPU
@@ -150,15 +162,36 @@ static func cabeca(retrato: Texture2D) -> Texture2D:
 	if img.is_compressed():
 		img.decompress()
 	var usado := img.get_used_rect()
-	var lado := int(round(usado.size.x * CARA_LADO))
+	var cabeca_ := _cabeca_no_desenho(img, usado)
+	var lado := int(round(cabeca_.size.y * CARA_LADO))
+	# O quadro pode sair do PNG por cima: o `get_region` deixa transparente o
+	# que fica de fora, e é o aro claro do avatar que aparece ali.
 	var recorte := img.get_region(Rect2i(
-		int(round(usado.get_center().x - lado / 2.0)),
-		int(round(usado.position.y + usado.size.x * CARA_DESCE)), lado, lado))
+		int(round(cabeca_.get_center().x - lado / 2.0)),
+		int(round(cabeca_.position.y + cabeca_.size.y * CARA_CENTRO - lado / 2.0)),
+		lado, lado))
 	recorte.resize(CARA_PIXELS, CARA_PIXELS, Image.INTERPOLATE_LANCZOS)
 	var cara := ImageTexture.create_from_image(recorte)
 	cara.set_meta(META_RETRATO, retrato.resource_path)
 	_caras_recortadas[retrato] = cara
 	return cara
+
+
+# A caixa da cabeça: do topo do desenho ao pescoço, com a largura do que há
+# nessas linhas. O pescoço é a linha de MENOR largura na faixa do meio — lida
+# pelo `get_used_rect()` de cada linha, que é C++, e não pixel a pixel.
+static func _cabeca_no_desenho(img: Image, usado: Rect2i) -> Rect2i:
+	var pescoco := usado.end.y
+	var menor := usado.size.x + 1
+	for y in range(usado.position.y + int(usado.size.y * PESCOCO_DE),
+			usado.position.y + int(usado.size.y * PESCOCO_ATE), 2):
+		var larg := img.get_region(Rect2i(0, y, img.get_width(), 1)).get_used_rect().size.x
+		if larg > 0 and larg < menor:
+			menor = larg
+			pescoco = y
+	var cima := img.get_region(Rect2i(0, usado.position.y, img.get_width(),
+		pescoco - usado.position.y)).get_used_rect()
+	return Rect2i(cima.position.x, usado.position.y, cima.size.x, pescoco - usado.position.y)
 
 
 # ── OS ROSTOS DO TRABALHADOR (`059`) ─────────────────────────────────────────

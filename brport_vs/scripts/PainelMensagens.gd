@@ -77,9 +77,18 @@ const ICONE_DO_ASSUNTO := {
 # telefone, menos o avatar e o vão ao lado dele.
 const VAO_AVATAR := 8
 
+# O TELEFONE DA CONVERSA É MAIOR do que o do menu (quarta passagem, `067`: «o
+# celular é apertado para ler a conversa»). A largura é a pedida; a altura
+# SAI DELA, pela proporção do menu — 1:1,7 é o que faz o aparelho ler como um
+# telefone (`PainelCelular.ALTURA`), e um segundo número escrito à mão seria
+# uma segunda proporção. Cabe nos 1280 com o «Guardar» por baixo, e o D38
+# confere-o no nó.
+const LARGURA_CONVERSA := 460
+const ALTURA_CONVERSA := LARGURA_CONVERSA * ALTURA / LARGURA
+
 
 func setup(historico: Variant = null) -> void:
-	var dentro := montar_celular(false)
+	var dentro := montar_celular(false, LARGURA_CONVERSA, ALTURA_CONVERSA)
 	dentro.add_child(_cabecalho())
 
 	var lista: Array = historico if historico is Array else []
@@ -142,7 +151,7 @@ func setup(historico: Variant = null) -> void:
 			grupo.add_theme_constant_override("separation", 4)
 			fio.add_child(grupo)
 			quem_fala = fonte
-		grupo.add_child(_balao(String(entrada["texto"]),
+		grupo.add_child(_balao(fonte, String(entrada["texto"]),
 			_cara_de(fonte, entrada["retrato"]), primeiro))
 
 	# A ÚLTIMA À VISTA: a barra de rolagem só sabe o tamanho depois de a
@@ -219,7 +228,7 @@ func _cara_de(fonte: String, retrato: Variant) -> Texture2D:
 
 # UM BALÃO DE QUEM FALA. O primeiro de uma fala seguida leva a cara; os
 # seguintes guardam o lugar dela vazio, para os balões alinharem.
-func _balao(texto: String, retrato: Texture2D, com_cara: bool) -> Control:
+func _balao(fonte: String, texto: String, retrato: Texture2D, com_cara: bool) -> Control:
 	var linha := HBoxContainer.new()
 	linha.add_theme_constant_override("separation", VAO_AVATAR)
 	if com_cara:
@@ -229,11 +238,7 @@ func _balao(texto: String, retrato: Texture2D, com_cara: bool) -> Control:
 		lugar.custom_minimum_size = Vector2(AVATAR + 4, 0)
 		linha.add_child(lugar)
 	var balao := PanelContainer.new()
-	# O primeiro balão tem o bico ao lado da cara; os seguidos, não.
-	if com_cara:
-		balao.theme_type_variation = &"BalaoConversa"
-	else:
-		balao.theme_type_variation = &"BalaoConversaSeguido"
+	_vestir_balao(balao, fonte, com_cara)
 	balao.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	var rotulo := Label.new()
 	rotulo.theme_type_variation = &"TextoBalao"
@@ -243,9 +248,43 @@ func _balao(texto: String, retrato: Texture2D, com_cara: bool) -> Control:
 	linha.add_child(balao)
 	# A coluna do balão é a do telefone menos a cara — com o aro dela, que
 	# são 2 px de cada lado (`AvatarConversa`).
-	_largura_do_balao(balao, rotulo, texto, float(LARGURA - 2 * MARGEM_TELA
+	_largura_do_balao(balao, rotulo, texto, float(_largura - 2 * MARGEM_TELA
 		- AVATAR - 4 - VAO_AVATAR))
 	return linha
+
+
+# CADA PESSOA COM O SEU BALÃO (quarta passagem, `067`: «cada personagem com o
+# tom do seu balão, além da cara»). O tom sai da ROUPA do retrato de cada um —
+# o verde da blusa da Dona Cida, o petróleo da camisa do Arlindo —, clareado
+# até o texto navy passar folgado; e o do Sr. Ribeiro é quase branco, o papel
+# do banco, porque o azul do fato dele fica a 16° do petróleo do Arlindo e, em
+# balão claro, os dois liam-se como o mesmo (ΔE 6,6). O D38 confere que cada
+# balão tem o matiz da roupa de quem fala, lido do PNG do retrato.
+#
+# As variações são LITERAIS, uma por ramo, pela razão da `_nota()`: o
+# `conferir_escopo_ui.py` só confere o nome que vê depois do `=`. O primeiro
+# balão tem o bico ao lado da cara; os seguidos, não.
+func _vestir_balao(balao: PanelContainer, fonte: String, com_cara: bool) -> void:
+	match fonte:
+		"cida":
+			if com_cara:
+				balao.theme_type_variation = &"BalaoCida"
+			else:
+				balao.theme_type_variation = &"BalaoCidaSeguido"
+		"ribeiro":
+			if com_cara:
+				balao.theme_type_variation = &"BalaoRibeiro"
+			else:
+				balao.theme_type_variation = &"BalaoRibeiroSeguido"
+		"arlindo":
+			if com_cara:
+				balao.theme_type_variation = &"BalaoArlindo"
+			else:
+				balao.theme_type_variation = &"BalaoArlindoSeguido"
+		_:
+			# Uma voz nova sem balão sairia com o fundo do `PanelContainer`
+			# base, sem uma palavra — que é o que esta linha não deixa.
+			push_error("PainelMensagens: «%s» fala e não tem balão" % fonte)
 
 
 # UMA NOTA DO PORTO, ao centro, com a cor do tom na borda. As variações são
@@ -284,7 +323,7 @@ func _nota(texto: String, tom: String, assunto: String) -> Control:
 	rotulo.text = texto
 	linha.add_child(rotulo)
 	centro.add_child(nota)
-	_largura_do_balao(nota, rotulo, texto, float(LARGURA - 2 * MARGEM_TELA), reserva)
+	_largura_do_balao(nota, rotulo, texto, float(_largura - 2 * MARGEM_TELA), reserva)
 	return centro
 
 

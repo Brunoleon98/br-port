@@ -271,6 +271,10 @@ func _rodar() -> void:
 	_d37_diario_na_pagina()
 	_confere("o bloco D37 correu até ao fim", _d37_completo)
 
+	print("=== D38: a conversa — cada voz com o seu balão, num telefone que cabe ===")
+	_d38_vozes_da_conversa()
+	_confere("o bloco D38 correu até ao fim", _d38_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -5582,3 +5586,189 @@ func _d37_diario_na_pagina() -> void:
 	_confere("D37: a primeira página, com o nome mais comprido, cabe na folha (pede %d, cabe %d)"
 		% [int(ceil(pede)), int(altura)], linhas > 10 and pede <= altura)
 	_d37_completo = true
+
+
+# ── D38 ── a conversa: cada voz com o seu balão, num telefone que cabe
+#
+# A quarta passagem das mensagens (`067`) deu a cada pessoa o SEU balão e à
+# conversa um telefone maior do que o do menu. Nada perguntava nenhuma das
+# duas coisas:
+#
+#  1. O TOM DE CADA BALÃO SAI DA ROUPA DO RETRATO de quem fala, e o esperado
+#     vem do PNG do retrato — não do tema nem do código que escolhe a
+#     variação, que são onde o defeito moraria. Trocar dois ramos do
+#     `_vestir_balao()` deixa os três tons distintos e todos legíveis (o D33
+#     passa), e só esta pergunta reprova: o balão da Dona Cida teria o matiz
+#     do fato do Sr. Ribeiro. A roupa é a mediana POR LUMINÂNCIA do tronco,
+#     fora da gola e da gravata — um pixel de verdade, e não uma média que
+#     inventasse um tom (`CLAUDE.md`, «reduzir uma janela a uma cor»).
+#  2. OS TRÊS DISTINGUEM-SE, em ΔE (CIELAB). O corte está no meio da banda
+#     entre o defeito (dois balões iguais, 0) e o mais perto dos três de hoje
+#     (19,9, Ribeiro e Arlindo). O primeiro candidato — a roupa clareada com
+#     branco, a 78%, 82% e 86% — dava 2,4 a 8,5, e ficava do lado que
+#     reprova.
+#  3. CADA VOZ TEM O MESMO TOM NOS DOIS BALÕES, e só o primeiro tem o bico: a
+#     fala seguida é da mesma pessoa. E a amostra tem de trazer as duas
+#     formas de cada voz, senão o D33 não mede metade das variações.
+#  4. O TELEFONE MAIOR CABE NA TELA: o corpo, os botões de lado e o «Guardar o
+#     telefone», que fica POR BAIXO do aparelho e é o primeiro a sair dos
+#     1280 se a altura crescer. Lido dos `offset` dos nós contra o centro da
+#     tela, e a tela do `project.godot`.
+var _d38_completo := false
+const D38_DELTA_E_MIN := 10.0
+
+
+func _d38_vozes_da_conversa() -> void:
+	var tema: Theme = load("res://ui/tema_brport.tres")
+	var historico: Array = load("res://scripts/validation/contraste_ui.gd").new().amostra("historico")
+	var cena: PackedScene = load("res://scenes/panels/PainelMensagens.tscn")
+	if cena == null:
+		_confere("D38: a cena da conversa carrega", false)
+		return
+	var painel: Control = cena.instantiate()
+	painel.theme = tema
+	root.add_child(painel)
+	painel.call("setup", historico)
+	var Msg: Dictionary = painel.get_script().get_script_constant_map()
+	var omissao: Dictionary = Msg["CARA_DE_OMISSAO"]
+	# `load()`, e não o nome da classe: a `Narrativa` fala do `GameState`, e
+	# um `--script` compila antes de os autoloads existirem.
+	var Nar = load("res://scripts/Narrativa.gd")
+
+	# Os balões de cada voz, pelo TEXTO que a amostra lhe dá.
+	var por_voz := {}
+	for entrada in historico:
+		var fonte: String = String(entrada["fonte"])
+		if fonte == "sistema":
+			continue
+		var rotulo: Label = _d38_rotulo_com(painel, String(entrada["texto"]))
+		if not por_voz.has(fonte):
+			por_voz[fonte] = []
+		if rotulo != null:
+			por_voz[fonte].append(rotulo.get_parent())
+	_confere("D38: a amostra fala pelas três vozes (%s)" % [por_voz.keys()],
+		por_voz.size() == omissao.size())
+
+	var cor_da_voz := {}
+	var roupa := {}
+	for fonte in por_voz:
+		var baloes: Array = por_voz[fonte]
+		var com_bico := 0
+		var cores := {}
+		for balao in baloes:
+			var estilo := (balao as Control).get_theme_stylebox("panel") as StyleBoxFlat
+			if estilo == null:
+				continue
+			cores[estilo.bg_color.to_html(false)] = estilo.bg_color
+			if estilo.corner_radius_top_left < estilo.corner_radius_top_right:
+				com_bico += 1
+		_confere("D38: %s tem os dois balões — o primeiro, com bico, e o seguido (%d, %d com bico)"
+			% [fonte, baloes.size(), com_bico], baloes.size() >= 2 and com_bico == 1)
+		_confere("D38: os balões de %s têm um tom só" % fonte, cores.size() == 1,
+			"%s" % [cores.keys()])
+		if cores.size() >= 1:
+			cor_da_voz[fonte] = cores.values()[0]
+		roupa[fonte] = _d38_roupa(Nar.retrato(fonte, String(omissao[fonte])))
+
+	# 1. cada balão tem o matiz da roupa de QUEM FALA, e não o de outro.
+	for fonte in cor_da_voz:
+		var h: float = (cor_da_voz[fonte] as Color).h
+		var mais_perto := ""
+		var menor := 999.0
+		for outro in roupa:
+			var d: float = _d38_distancia_de_matiz(h, (roupa[outro] as Color).h)
+			if d < menor:
+				menor = d
+				mais_perto = outro
+		_confere("D38: o balão de %s tem o matiz da roupa de quem fala (%.0f°, roupa %.0f°)"
+			% [fonte, h * 360.0, (roupa[fonte] as Color).h * 360.0], mais_perto == fonte,
+			"o matiz mais perto é o da roupa de %s" % mais_perto)
+
+	# 2. os três distinguem-se.
+	var vozes: Array = cor_da_voz.keys()
+	for i in vozes.size():
+		for j in range(i + 1, vozes.size()):
+			var de: float = _d38_delta_e(cor_da_voz[vozes[i]], cor_da_voz[vozes[j]])
+			_confere("D38: o balão de %s e o de %s distinguem-se (ΔE %.1f, mínimo %.0f)"
+				% [vozes[i], vozes[j], de, D38_DELTA_E_MIN], de >= D38_DELTA_E_MIN)
+
+	# 4. o telefone da conversa cabe na tela, com o «Guardar» por baixo.
+	var tela := Vector2(float(ProjectSettings.get_setting("display/window/size/viewport_width")),
+		float(ProjectSettings.get_setting("display/window/size/viewport_height")))
+	var fora := []
+	var medidos := []
+	for filho in painel.get_children():
+		if not (filho is Control) or filho is ColorRect:
+			continue
+		var c := filho as Control
+		if c.anchor_left != 0.5 or c.anchor_top != 0.5:
+			continue
+		medidos.append(String(c.name))
+		if c.offset_left < -tela.x / 2.0 or c.offset_right > tela.x / 2.0 \
+				or c.offset_top < -tela.y / 2.0 or c.offset_bottom > tela.y / 2.0:
+			fora.append("%s (%d..%d × %d..%d)" % [c.name, c.offset_left, c.offset_right,
+				c.offset_top, c.offset_bottom])
+	# Uma conta que não mediu nada passaria calada: o corpo e o «Guardar» têm
+	# de estar entre os medidos.
+	_confere("D38: mediu o corpo e o «Guardar» do telefone (%d peças)" % medidos.size(),
+		medidos.has("Guardar") and medidos.size() >= 2, "%s" % [medidos])
+	_confere("D38: o telefone da conversa e o «Guardar» cabem na tela de %d × %d"
+		% [tela.x, tela.y], fora.is_empty(), "fora: %s" % [fora])
+
+	root.remove_child(painel)
+	painel.free()
+	_d38_completo = true
+
+
+func _d38_rotulo_com(no: Node, texto: String) -> Label:
+	if no is Label and (no as Label).text == texto:
+		return no
+	for filho in no.get_children():
+		var achado := _d38_rotulo_com(filho, texto)
+		if achado != null:
+			return achado
+	return null
+
+
+# A cor da roupa: a mediana por luminância do tronco — o quinto de baixo do
+# retrato, nas duas faixas de fora (10–35% e 65–90% da largura), longe da gola,
+# da camisa e da gravata ao centro. Um pixel em cada três, em cada eixo.
+func _d38_roupa(retrato: Texture2D) -> Color:
+	var img: Image = retrato.get_image()
+	if img.is_compressed():
+		img.decompress()
+	var w := img.get_width()
+	var h := img.get_height()
+	var px: Array = []
+	for y in range(int(h * 0.8), h, 3):
+		for faixa in [[0.10, 0.35], [0.65, 0.90]]:
+			for x in range(int(w * faixa[0]), int(w * faixa[1]), 3):
+				var c := img.get_pixel(x, y)
+				if c.a > 0.98:
+					px.append(c)
+	if px.is_empty():
+		return Color(0, 0, 0, 0)
+	px.sort_custom(func(a: Color, b: Color) -> bool: return a.get_luminance() < b.get_luminance())
+	return px[px.size() / 2]
+
+
+func _d38_distancia_de_matiz(a: float, b: float) -> float:
+	var d := absf(a - b)
+	return minf(d, 1.0 - d)
+
+
+func _d38_delta_e(a: Color, b: Color) -> float:
+	return _d38_lab(a).distance_to(_d38_lab(b))
+
+
+func _d38_lab(c: Color) -> Vector3:
+	var l := c.srgb_to_linear()
+	var x := (0.4124 * l.r + 0.3576 * l.g + 0.1805 * l.b) / 0.95047
+	var y := 0.2126 * l.r + 0.7152 * l.g + 0.0722 * l.b
+	var z := (0.0193 * l.r + 0.1192 * l.g + 0.9505 * l.b) / 1.08883
+	var f := func(t: float) -> float:
+		return pow(t, 1.0 / 3.0) if t > 0.008856 else 7.787 * t + 16.0 / 116.0
+	var fx: float = f.call(x)
+	var fy: float = f.call(y)
+	var fz: float = f.call(z)
+	return Vector3(116.0 * fy - 16.0, 500.0 * (fx - fy), 200.0 * (fy - fz))
