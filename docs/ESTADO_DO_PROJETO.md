@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 27/09/2026 — a frente 3 fechou: a conversa aceite na 4.ª passagem (`067`)
+> **Última atualização:** 27/09/2026 — a frente 6: a prancha A/B e a escala dos props (`068`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -112,7 +112,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Frente 3 do A5 — as quatro famílias aceites** (25–27/09, `062`–`067`) | O cartão e o HUD, com a promessa de cada número conferida contra o jogo (**F14**, **F15**) e os recordes (`SAVE_VERSION` 9); o sistema: **tela inicial**, **três espaços de save**, pausa curta, **Ajustes** e o **celular** (**F16**); as telas de texto: o **caderno** (nomes e diário, **D37**) e a **conversa no celular** — notas do porto com o ícone do assunto, e cada voz no balão do tom da roupa dela, com a cabeça inteira no avatar (**F17**, **D38**). A foto do porto antigo, o fundo e o logotipo são do Bruno (`art_lab/diario/`, `art_lab/tela_inicial/`) |
+| **Frente 6 do A5 — a prancha e a escala** (27/09, `068`) | **À espera do veredito.** A `prancha_prop.gd` põe a candidata ao lado do prop do jogo na foto do jogo congelado, a 1:1 sobre o chão, ampliada, em silhueta e valor e na escala, com os números e a diferença; a `escala_props.gd` alinha os 59 a 1:1 com o trabalhador de régua. Bateria com 45 fotos |
+| **Frente 3 do A5 — as quatro famílias aceites** (25–27/09, `062`–`067`) | O cartão e o HUD (**F14**, **F15**, `SAVE_VERSION` 9); tela inicial, três espaços de save, pausa curta, Ajustes e o celular (**F16**); o **caderno** (**D37**) e a **conversa no celular**, cada voz no seu balão (**F17**, **D38**). A foto do porto antigo, o fundo e o logotipo são do Bruno (`art_lab/diario/`, `art_lab/tela_inicial/`) |
 | **O save do jogador isolado** (25/09, `061`) | toda ferramenta com `--script` grava em `user://ferramentas/` (`ArmazemLocal.gd`); o save, as gravações e o volume do jogador ficam de fora. **F13** e a sentinela do CI; só vale em commits com a `061` |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
@@ -128,7 +129,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`) |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **frente 3** fechou: as quatro famílias aceites (`066`, `067`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | A ordem das frentes 4–6 é dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **frente 3** fechou (`066`, `067`); a **6** foi entregue (`068`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | O veredito da 6 e a ordem da 4 e da 5 são dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
@@ -161,7 +162,7 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa como **conversa no celular** (`PainelCelular.gd`, o aparelho partilhado com o menu). Em memória, sem migrar save (`067`) |
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
-| `brport_vs/tools/medir_contraste_ui.gd` | A tabela de cada texto em cada estado do percurso. Marcador `CONTRASTE MEDIDO`. ⚠️ Percurso: não monta dia passado. O `acao_vista` age DEPOIS da cena e drena a fila (`042`) — e não serve a painel, que não tem fila; o `barco` e o `estruturas` agem ANTES, e **provam que o estado chegou ao nó** (`043`, `044`) |
+| `brport_vs/tools/medir_contraste_ui.gd` | A tabela de cada texto em cada estado do percurso (`CONTRASTE MEDIDO`). ⚠️ O percurso não monta dia passado; como ele alcança cada estado, e prova que chegou ao nó, está na `042`–`044` |
 | `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn`, corta comentário, aceita multilinha e exige que a variação exista (`036`). **Zero chamadas e zero exceções** desde a 5ª leva; ele também denuncia exceção MORTA (`045`) |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo; e as peças de número das famílias (bloco de contas, quadro, barra do HUD) |
 | `brport_vs/scripts/TelaNomes.gd` + `PainelDiario.gd` | A folha de rosto do caderno — o nome do cais, irrevogável (GDD 7), e o do jogador — e a primeira página do diário, por baixo dela. O caderno desenha-se em `FolhaDoCaderno.gd` (`067`) |
@@ -185,14 +186,16 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/tools/medir_vram.gd` | **A régua da VRAM**, com o jogo aberto e calibrada; `xvfb-run`, `VRAM MEDIDA` (`049`) |
 | `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`); `imagem()` repõe o quadro de um prop em atlas (`049`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
-| `tools/arte_orfa.py` | **A pergunta que nada mais faz: que arte NÃO chega à tela.** Relatório, não portão. ⚠️ **«Órfão» e «apagável» são duas perguntas**: dos 11, nove tinham propósito escrito (a bancada `AssetPlacementTest`) e ficaram; saíram os 2 SVG de píer, superados por props PNG. Hoje **9 de 115**; o atlas não conta (`046`, `049`) |
+| `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. ⚠️ «Órfão» não é «apagável»: dos 11, nove servem à bancada `AssetPlacementTest`. Hoje **9 de 115**; o atlas não conta (`046`, `049`) |
 | `brport_vs/tools/medir_boletim.gd` | **A régua do boletim** — herda o simulador e confere cada afirmação da Dona Cida contra o estado, no instante em que ela fala. CI, `BOLETIM OK` (`048`) |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Imprime classes, motivos e o NÍVEL |
 | `brport_vs/tools/leitura_do_simulador.gd` | A conclusão dele, fora do `SceneTree` para se provar com fixture (T7). Identidade ausente ou dupla: código 1 (`030`) |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor. Avança por TURNO efetivo, pelo botão do jogo, e pára diante de modal (`031`) |
-| `brport_vs/tools/folha_props.gd` | **A folha dos 51 props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Duas páginas, e reprova ao transbordar |
+| `brport_vs/tools/folha_props.gd` | **A folha dos 59 props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Três páginas, e reprova ao transbordar; o catálogo e o chão vivem em `catalogo_props.gd` |
+| `brport_vs/tools/prancha_prop.gd` | **Para iterar UM prop**: a versão do jogo contra a candidata, na foto do jogo, a 1:1, ampliada, em silhueta e valor e na escala, com os números. Sem candidata exige Δ zero (`068`) |
+| `brport_vs/tools/escala_props.gd` | **Os 59 props a 1:1 com o pé na mesma linha**, o trabalhador de régua (`068`) |
 | `brport_vs/tools/folha_icones.gd` | Folha dos ícones nos 3 fundos, a 19px e ampliado — a cada ícone novo. **Reprova ao transbordar** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows). O protótipo HTML original é o `index.html` da raiz |
 | `tools/conferir_lote_de_arte.py` | Confere lote vindo de fora: alfa, tamanho e **ângulo da base contra os 26,57°**. Antes de qualquer PNG externo entrar |

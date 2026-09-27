@@ -174,7 +174,7 @@ vereditos de 23/09»); a ordem é do Bruno.
 | **3 — interface** | Conceitos de painel (diário, celular, mensagens, pausa) como referência | O plano V3 (§2.13) já diz que redesenho de HUD é tarefa própria; a implementação é no tema, com as guardas de contraste (D33) |
 | **4 — mapa, frota, animação** | O catálogo F1 (§9.1), a máquina de estados visual (§10.2), o rig do trabalhador (§10.5), os estados por tipo (§11), os lotes 2–5 (§16); a linha da vegetação (13A, grupo) e a costa V8 | Props do mapa modelados no kit a partir do conceito; vegetação no gerador |
 | **5 — rumo além do VS** | A `034` dele já responde a parte: guindaste e píer evoluem no mesmo sítio, oficina N1 na F2, três berços, pescadores como sistema à parte. E a regra «obra só com consumidor» casa com o pedido do Bruno de obras que levam turnos: a arte de obra nasce DEPOIS dessa decisão | Mexe no `GameState`, no balanceamento e no `SAVE_VERSION`: decisão escrita antes de código |
-| **6 — folha de contato** | O formato das pranchas dele (conceito com a região marcada, 1:1, 3×, três posições incluindo um caso de oclusão — §14 D) é o modelo que o Bruno pediu «para a IA iterar» | A folha é `brport_vs/tools/folha_props.gd`, e mede-se no Godot |
+| **6 — folha de contato** | O formato das pranchas dele (conceito com a região marcada, 1:1, 3×, três posições incluindo um caso de oclusão — §14 D) é o modelo que o Bruno pediu «para a IA iterar» | Feita em 27/09 (`068`): a `prancha_prop.gd` põe a candidata ao lado do prop do jogo — na foto do jogo, 1:1, ampliada, em silhueta e valor, e na escala —, e a `escala_props.gd` alinha os 59 a 1:1. Uma posição no jogo, não três: o prop fica onde o jogo o põe |
 
 ---
 

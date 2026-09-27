@@ -196,6 +196,23 @@ Para a Etapa 2 (props) a medida é a **contagem de peças** por prop, e a tabela
 de referência do plano de arte tem os números de hoje. Para a Etapa 6, o
 `teste_design` mais a captura.
 
+**Para iterar UM prop, a ferramenta é a prancha** (`068`): a versão do jogo
+contra a candidata na mesma janela, com a foto do jogo congelado com a textura
+trocada, 1:1 sobre o chão do mapa, a diferença a magenta, a ampliação sem
+filtro, a silhueta e o valor, a escala entre o trabalhador e o camião e os
+números. Renderize a candidata FORA de `art/props` e compare antes de a pôr
+lá. Sem a candidata, B = A, e a prancha exige Δ zero, que é o controle dela:
+
+```sh
+python3 tools/gerar_props_iso.py /tmp/cand <prop>
+xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3 \
+  --fixed-fps 60 --script res://tools/prancha_prop.gd -- /tmp/prancha.png <prop> /tmp/cand/<prop>.png
+```
+
+O log repete o contexto e os números, e é o que se lê sem abrir a imagem. A
+proporção de um prop contra o resto do catálogo está na `escala.png` da
+bateria: todos a 1:1, com o pé na mesma linha.
+
 ---
 
 ## 6. As suítes, e o que só esta mudança exige

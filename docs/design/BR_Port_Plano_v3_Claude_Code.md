@@ -971,6 +971,28 @@ do HUD, o bloco de contas, o caderno e o celular — vive no `PainelNarrativo`,
 no `PainelCelular` e no tema; e o app Diário do celular, fechado, já tem o
 caderno por onde abrir.
 
+#### A FRENTE 6 — a prancha e a escala (27/09), à espera do veredito
+
+Escolha do Bruno depois da frente 3, com o escopo respondido: **a prancha
+por prop (A/B)** e **a página de escala** (`068`). A nota das três folhas
+pedia a folha «mais útil para a IA alterar e fazer os testes», com
+referências profissionais. Lidas pela busca, as práticas que se repetem são
+estas: comparar contra uma referência de escala conhecida, conferir a
+silhueta chapada e o valor em cinzento sobre o fundo real, ampliar para o
+detalhe e pôr a candidata ao lado da base na mesma montagem.
+
+- **`prancha_prop.gd`** — um prop, a versão do jogo (A, lida do arquivo) ao
+  lado da candidata (B) na mesma janela: a foto do jogo congelado com a
+  textura trocada no nó que o mostra, 1:1 sobre o chão do mapa com a
+  diferença a magenta, a ampliação sem filtro, a silhueta e o valor, a escala
+  entre o trabalhador e o camião, e os números. Sem candidata, B = A e ela
+  exige Δ zero. O que o sorteio não trouxe entra no lugar de um irmão e diz
+  que foi forçado.
+- **`escala_props.gd`** — os 59 props a 1:1, com o pé na mesma linha e o
+  trabalhador de régua: a nota dos camiões sobre a proporção.
+- O catálogo, a cena e o chão saíram da folha para `catalogo_props.gd`, e as
+  três páginas da folha de contato ficaram iguais ao byte.
+
 ---
 
 ### A6 — O áudio de verdade

@@ -45,6 +45,10 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # estas chaves, e a bateria tinha crescido de 14 fotos para 31: dezassete
 # ficavam fora do "02/09 contra hoje" sem uma palavra. Hoje quem diz que fotos
 # existem é a pasta do último ponto, e uma foto sem legenda REPROVA.
+# ⚠️ E NADA NO CI CORRE ESTE ARQUIVO, então a reprovação só aparece no dia
+# em que alguém monta a página do veredito. Em 27/09 faltavam DOZE legendas —
+# as fotos da frente 3 entraram na bateria sem passar por aqui (`068`). Tiro
+# novo no `capturar_evidencia.sh` leva a legenda dele no mesmo commit.
 LEGENDA = {
     "inicio": "turno zero, porto em ruínas",
     "pesca": "frota de pesca no cais",
@@ -53,8 +57,11 @@ LEGENDA = {
     "porto": "porto completo, sete estruturas",
     "docas": "camião encostado ao berço",
     "mensagens": "o histórico da faixa de mensagem",
+    "mensagens_vozes": "a conversa com as três vozes, cada uma no seu balão",
     "pausa": "menu de pausa sobre o mapa",
     "boletim": "Boletim da Dona Cida",
+    "boletim_ruim": "Boletim da Dona Cida, semana no vermelho",
+    "boletim_otimo": "Boletim da Dona Cida, a melhor semana",
     "construir": "painel Construir, porto a meio",
     "calendario": "painel do calendário",
     "painel_docas": "painel das docas",
@@ -68,15 +75,26 @@ LEGENDA = {
     "fimfase": "a primeira parcela paga, a narração",
     "balanco": "o balanço de uma partida jogada até ao fim",
     "contraoferta": "a negociação do Arlindo",
+    "contraoferta_pressao": "o Arlindo a apertar, na última tentativa",
     "contraoferta_fim": "a despedida do Arlindo",
+    "contraoferta_venceu": "a despedida do Arlindo, quando ele vence",
+    "inicial": "a tela inicial, com dois espaços ocupados",
+    "espacos_carregar": "a tela inicial, a escolher o espaço a carregar",
+    "espacos_nova": "a tela inicial, a escolher o espaço da partida nova",
+    "espacos_confirmar": "a tela inicial, a confirmar que substitui",
+    "ajustes": "os ajustes, abertos da tela inicial",
     "nomes": "a tela dos nomes",
+    "nomes_virando": "a folha de rosto a virar para a primeira entrada",
     "menu": "o menu-celular",
     "icones": "folha de contato dos ícones",
     "frota": "folha de contato dos cascos",
     "camioes": "folha de contato dos camiões",
+    "trabalhadores": "folha de contato dos trinta rostos do trabalhador",
     "props1": "folha de contato dos props, 1 de 3",
     "props2": "folha de contato dos props, 2 de 3",
     "props3": "folha de contato dos props, 3 de 3",
+    "escala": "os props de mapa a 1:1, com o pé na mesma linha",
+    "prancha": "a prancha de um prop, a versão do jogo contra a candidata",
 }
 # A ordem de leitura é a da própria tabela acima — duas listas seriam duas
 # chances de uma envelhecer sem a outra.
