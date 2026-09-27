@@ -51,13 +51,26 @@ const HORA_DAS_FERRAMENTAS := "09:41"
 
 var _hora: Label
 var _dentro: VBoxContainer
+# O TAMANHO DESTE aparelho, que o app escolhe ao montar: o menu usa o de
+# omissão, e a conversa pede um maior (`PainelMensagens`). Os botões laterais
+# e o «Guardar o telefone» medem-se por ESTES, e não pelas constantes — com
+# elas, um telefone maior sairia com os botões no sítio do pequeno.
+var _largura := LARGURA
+var _altura := ALTURA
 
 
 # Monta o aparelho e devolve a caixa DENTRO da tela, depois da barra de
 # status, onde o app põe o que é dele. `com_parede` é a tela de início; um
 # app aberto tem o fundo dele e não o papel de parede.
-func montar_celular(com_parede: bool) -> VBoxContainer:
-	montar(LARGURA, ALTURA, ESCURO_DECISAO, "Celular")
+#
+# ⚠️ O TAMANHO É ARGUMENTO, e não uma constante que a subclasse redeclare: o
+# GDScript não deixa uma subclasse redefinir a `const` do pai, e a conversa
+# pediu um telefone maior sem mexer no do menu (quarta passagem, `067`).
+func montar_celular(com_parede: bool, largura: int = LARGURA,
+		altura: int = ALTURA) -> VBoxContainer:
+	_largura = largura
+	_altura = altura
+	montar(_largura, _altura, ESCURO_DECISAO, "Celular")
 
 	# SEM `titulo()`, e não por esquecimento: o título do andaime é um `Label`
 	# com a cor padrão do tema, que é navy porque todos os outros painéis são
@@ -180,8 +193,8 @@ func _barra_de_gesto() -> Control:
 # volume), a sair da borda do corpo. Vão ANTES do corpo na ordem de desenho,
 # e o corpo tapa a metade de dentro deles — que é como se veem num telefone.
 func _botoes_laterais() -> void:
-	var metade := LARGURA / 2.0
-	var altura := ALTURA / 2.0
+	var metade := _largura / 2.0
+	var altura := _altura / 2.0
 	var lados := [
 		[metade - 2.0, metade + 4.0, -altura + 150.0, -altura + 214.0],
 		[-metade - 4.0, -metade + 2.0, -altura + 130.0, -altura + 172.0],
@@ -218,7 +231,7 @@ func _botao_guardar() -> void:
 	botao.anchor_bottom = 0.5
 	botao.offset_left = -130
 	botao.offset_right = 130
-	botao.offset_top = ALTURA / 2.0 + 18
-	botao.offset_bottom = ALTURA / 2.0 + 18 + TOQUE_MIN + 8
+	botao.offset_top = _altura / 2.0 + 18
+	botao.offset_bottom = _altura / 2.0 + 18 + TOQUE_MIN + 8
 	botao.pressed.connect(_fechar)
 	add_child(botao)

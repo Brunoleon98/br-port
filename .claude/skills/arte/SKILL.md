@@ -307,9 +307,15 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   resumo da conversa, feito a meio, escreveu a causa velha («mandou a prancha
   sem a pergunta») — falsa nas seis. Somado ao da `066`: o par no mesmo bloco
   voltou **5 de 13** vezes, a pergunta sozinha **11 de 11**. O que se sabe
-  fazer é mandar a pergunta sozinha logo que ele avisa; **a experimentar** (não
-  medido): a prancha num bloco e, sem acabar o turno, a pergunta sozinha no
-  bloco seguinte.
+  fazer é mandar a pergunta sozinha logo que ele avisa.
+  ⚠️ **E A PRANCHA NUM BLOCO COM A PERGUNTA NO SEGUINTE FALHOU 2 DE 2** (27/09,
+  a quarta passagem da `067`): nas duas o turno acabou no resultado do envio,
+  e a pergunta nunca saiu — da primeira ele escreveu «Recebeu resposta», da
+  segunda respondeu «Aceito» em texto livre. A pergunta sozinha, mandada
+  depois do aviso, voltou (**12 de 12** somando as três sessões). Enquanto
+  nada melhor se medir: prancha, e a pergunta SOZINHA quando ele avisar — e
+  diga na legenda da prancha qual é a pergunta, para ele poder responder em
+  texto sem ela.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

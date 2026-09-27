@@ -307,7 +307,7 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		var args: Array = []
 		for bruto in caso["setup"]:
 			if bruto is String and String(bruto).begins_with("#"):
-				args.append(_amostra(String(bruto).substr(1)))
+				args.append(amostra(String(bruto).substr(1)))
 			elif bruto is String and String(bruto).begins_with("@"):
 				args.append(_do_estado(GS, String(bruto).substr(1)))
 			else:
@@ -557,40 +557,53 @@ func _dispensar_paineis(main: Node) -> void:
 
 # Conteúdo que não vive no `GameState`: o histórico da faixa de mensagem mora
 # na fila do `Main`.
-func _amostra(qual: String) -> Variant:
+func amostra(qual: String) -> Variant:
 	match qual:
-		# ⚠️ OS QUATRO TONS E AS QUATRO VOZES: desde a `067` o histórico é uma
-		# conversa, e cada tom da nota do porto veste a sua variação — uma
-		# amostra só com o neutro mediria um quarto das cores. Do mais recente
-		# para o mais antigo, como a fila o guarda, e com TODAS as chaves que a
-		# fila escreve: a primeira amostra não tinha `retrato`, o `setup()`
-		# abortava a meio com um SCRIPT ERROR, e a D33 publicava verde sobre a
-		# metade da conversa que chegou a montar.
+		# ⚠️ OS QUATRO TONS E AS TRÊS VOZES, CADA UMA COM DOIS BALÕES: desde a
+		# `067` o histórico é uma conversa, e cada tom da nota do porto veste a
+		# sua variação — uma amostra só com o neutro mediria um quarto das
+		# cores. E desde a quarta passagem cada pessoa tem o SEU balão, com e
+		# sem bico: sem uma fala seguida de cada uma, três das seis variações
+		# nunca seriam medidas, e o D33 publicaria verde sobre metade delas.
+		# Do mais recente para o mais antigo, como a fila o guarda, e com TODAS
+		# as chaves que a fila escreve: a primeira amostra não tinha `retrato`,
+		# o `setup()` abortava a meio com um SCRIPT ERROR, e a D33 publicava
+		# verde sobre a metade da conversa que chegou a montar.
+		#
+		# É também a conversa da foto `mensagens_vozes` (`capturar_cena.gd`
+		# lê-a pelo mesmo `#historico`): a partida da bateria chega ao dia 11
+		# só com a Dona Cida a falar, e os balões do Sr. Ribeiro e do Arlindo
+		# ficariam sem foto nenhuma. As falas são cópias das do jogo, com o
+		# cais no nome de omissão; os dias são os da última semana, e não um
+		# estado que a partida monte.
 		"historico":
 			return [
 				{"texto": "Um barco foi embora sem ser atendido.", "kind": "bad",
-					"fonte": "sistema", "dia": 3, "assunto": "rival", "retrato": null},
-				{"texto": "Nenhum trabalhador livre.", "kind": "warn",
-					"fonte": "sistema", "dia": 3, "assunto": "trabalhador", "retrato": null},
-				{"texto": "Dessa vez não. Mas tem mais semanas pela frente.", "kind": "",
-					"fonte": "arlindo", "dia": 3, "assunto": "", "retrato": null},
-				{"texto": "A parcela vence hoje.", "kind": "",
-					"fonte": "ribeiro", "dia": 2, "assunto": "", "retrato": null},
+					"fonte": "sistema", "dia": 28, "assunto": "rival", "retrato": null},
+				{"texto": "Conferido. O Seu Maneco pagava na véspera — mas o dia também serve.\nO banco não esquece quem paga em dia. Eu também não.",
+					"kind": "", "fonte": "ribeiro", "dia": 28, "assunto": "", "retrato": null},
+				{"texto": "A parcela vence hoje: R$530.000. Tenho o documento aqui se quiser conferir.\nO Seu Maneco assinou isso. Agora é seu.",
+					"kind": "", "fonte": "ribeiro", "dia": 28, "assunto": "", "retrato": null},
+				{"texto": "Dessa vez não. Mas tem mais semanas pela frente, meu caro.", "kind": "",
+					"fonte": "arlindo", "dia": 27, "assunto": "", "retrato": null},
+				{"texto": "Cais Mirim fez uma proposta. Entendo, querido. Mas eu consigo cobrir isso — e um pouco mais.",
+					"kind": "", "fonte": "arlindo", "dia": 27, "assunto": "", "retrato": null},
 				{"texto": "O píer 2 ficou pronto.", "kind": "good",
-					"fonte": "sistema", "dia": 2, "assunto": "obra", "retrato": null},
-				{"texto": "Semana nova. Barcos esperando e dinheiro no caixa.",
-					"kind": "", "fonte": "cida", "dia": 1, "assunto": "", "retrato": null},
-				{"texto": "O porto é seu. Um píer de pé e o resto por levantar.",
-					"kind": "", "fonte": "sistema", "dia": 1, "assunto": "porto", "retrato": null},
+					"fonte": "sistema", "dia": 27, "assunto": "obra", "retrato": null},
+				{"texto": "Nenhum trabalhador livre.", "kind": "warn",
+					"fonte": "sistema", "dia": 26, "assunto": "trabalhador", "retrato": null},
+				{"texto": "O Porto Farol tá de olho no que passa por aqui, chefia.", "kind": "",
+					"fonte": "cida", "dia": 25, "assunto": "", "retrato": null},
+				{"texto": "Semana nova. Barcos esperando e dinheiro no caixa. Aproveita.",
+					"kind": "", "fonte": "cida", "dia": 25, "assunto": "", "retrato": null},
+				{"texto": "Trabalhador #2 liberado.", "kind": "",
+					"fonte": "sistema", "dia": 25, "assunto": "trabalhador", "retrato": null},
 			]
 		_:
 			falhas.append("amostra desconhecida: %s" % qual)
 			return null
 
 
-# `@nome` lê do `GameState`: constante, método (com `:arg` quando precisa de
-# um) ou campo. Nome que não exista ENTRA NAS FALHAS em vez de virar `null`
-# calado — a armadilha do `.get(chave, omissão)`.
 func _do_estado(GS: Node, chave: String) -> Variant:
 	var consts: Dictionary = GS.get_script().get_script_constant_map()
 	if consts.has(chave):

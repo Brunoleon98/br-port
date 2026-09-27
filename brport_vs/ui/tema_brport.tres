@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=69 format=3]
+[gd_resource type="Theme" load_steps=73 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -949,10 +949,17 @@ content_margin_top = 2.0
 content_margin_right = 2.0
 content_margin_bottom = 2.0
 
-[sub_resource type="StyleBoxFlat" id="conversa_balao"]
-; O BALÃO DA DONA CIDA: o creme do papel e a tinta navy, com o bico — o canto
-; de cima à esquerda quase reto — virado para a cara dela.
-bg_color = Color(0.965, 0.953, 0.918, 1)
+[sub_resource type="StyleBoxFlat" id="conversa_balao_cida"]
+; OS BALÕES DE QUEM FALA, um tom por pessoa (quarta passagem, `067`). O tom
+; sai da ROUPA do retrato — a mediana por luminância do tronco, fora da gola e
+; da gravata —, com o matiz dela e clareado em OKLCH até L ~0,9, onde o texto
+; navy do `TextoBalao` passa de 9:1. O do Sr. Ribeiro é quase branco (C 0,01):
+; o azul do fato dele fica a 16° do petróleo do Arlindo, e em balão claro os
+; dois liam-se como um (ΔE 6,6). Separados assim, ΔE ≥ 19,9 entre os três.
+; O primeiro balão de uma fala tem o bico — o canto de cima à esquerda quase
+; reto — virado para a cara; os seguidos (`_seguido`), não.
+; A Dona Cida: o verde da blusa dela (#29623f no retrato).
+bg_color = Color(0.789, 0.941, 0.832, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 14
 corner_radius_bottom_right = 14
@@ -962,9 +969,54 @@ content_margin_top = 8.0
 content_margin_right = 12.0
 content_margin_bottom = 8.0
 
-[sub_resource type="StyleBoxFlat" id="conversa_balao_seguido"]
-; O mesmo balão sem bico, para as falas seguidas da mesma pessoa.
-bg_color = Color(0.965, 0.953, 0.918, 1)
+[sub_resource type="StyleBoxFlat" id="conversa_balao_cida_seguido"]
+bg_color = Color(0.789, 0.941, 0.832, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_balao_ribeiro"]
+; O Sr. Ribeiro: quase branco, o papel do banco.
+bg_color = Color(0.923, 0.944, 0.968, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_balao_ribeiro_seguido"]
+bg_color = Color(0.923, 0.944, 0.968, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_balao_arlindo"]
+; O Arlindo: o petróleo da camisa dele (#28667b no retrato).
+bg_color = Color(0.672, 0.913, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_balao_arlindo_seguido"]
+bg_color = Color(0.672, 0.913, 1, 1)
 corner_radius_top_left = 14
 corner_radius_top_right = 14
 corner_radius_bottom_right = 14
@@ -1555,10 +1607,18 @@ ConversaCabecalho/base_type = "PanelContainer"
 ConversaCabecalho/styles/panel = SubResource("conversa_cabecalho")
 AvatarConversa/base_type = "PanelContainer"
 AvatarConversa/styles/panel = SubResource("conversa_avatar")
-BalaoConversa/base_type = "PanelContainer"
-BalaoConversa/styles/panel = SubResource("conversa_balao")
-BalaoConversaSeguido/base_type = "PanelContainer"
-BalaoConversaSeguido/styles/panel = SubResource("conversa_balao_seguido")
+BalaoCida/base_type = "PanelContainer"
+BalaoCida/styles/panel = SubResource("conversa_balao_cida")
+BalaoCidaSeguido/base_type = "PanelContainer"
+BalaoCidaSeguido/styles/panel = SubResource("conversa_balao_cida_seguido")
+BalaoRibeiro/base_type = "PanelContainer"
+BalaoRibeiro/styles/panel = SubResource("conversa_balao_ribeiro")
+BalaoRibeiroSeguido/base_type = "PanelContainer"
+BalaoRibeiroSeguido/styles/panel = SubResource("conversa_balao_ribeiro_seguido")
+BalaoArlindo/base_type = "PanelContainer"
+BalaoArlindo/styles/panel = SubResource("conversa_balao_arlindo")
+BalaoArlindoSeguido/base_type = "PanelContainer"
+BalaoArlindoSeguido/styles/panel = SubResource("conversa_balao_arlindo_seguido")
 NotaConversa/base_type = "PanelContainer"
 NotaConversa/styles/panel = SubResource("conversa_nota")
 NotaConversaBoa/base_type = "PanelContainer"

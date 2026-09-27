@@ -198,7 +198,19 @@ func _chamar_setup(no: Node) -> void:
 	var GS: Node = root.get_node("GameState")
 	var convertidos := []
 	for bruto in _extra:
-		if bruto.begins_with("@"):
+		# ⚠️ E UM ARGUMENTO PODE SER UMA AMOSTRA, com `#`: o conteúdo que não
+		# vive no `GameState` (o histórico da faixa mora na fila do `Main`).
+		# Vem do MESMO sítio de onde o D33 o lê (`contraste_ui.gd`), e não de
+		# uma segunda cópia aqui: a foto mostra a conversa que a régua mede.
+		if bruto.begins_with("#"):
+			var motor: RefCounted = load("res://scripts/validation/contraste_ui.gd").new()
+			var valor: Variant = motor.call("amostra", bruto.substr(1))
+			if valor == null:
+				push_error("capturar_cena: não há amostra %s" % bruto)
+				quit(1)
+				return
+			convertidos.append(valor)
+		elif bruto.begins_with("@"):
 			# A CONSTANTE NÃO É UMA PROPRIEDADE, e o `get()` devolveria `null`
 			# sem se queixar — o painel abriria a cobrar R$0. As constantes do
 			# script vêm do mapa delas; os campos vivos, do próprio nó.
