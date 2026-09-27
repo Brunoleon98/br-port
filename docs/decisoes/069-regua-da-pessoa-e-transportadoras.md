@@ -24,6 +24,8 @@ devem ser adicionadas»*.
 | Os detalhes | **Os quatro grupos**: retrovisores e para-sol; para-choque e faróis; tanque e para-lamas; defletor no teto |
 | O capô | **Mais comprido** |
 | As cores da empresa B | **Uma por serviço** |
+| A segunda candidata | **Ajustar**: janelas de casa («tire a divisão»), lameiros invisíveis, defletor em degraus, as cores do granel e do pescado |
+| A terceira | *«Ficou melhor»* — e pediu mais detalhe: marcou **as oito** propostas (cabine e capô em bisel, escape, carreta articulada; cubos, borda e reforços da caçamba, porta e degrau, lanternas do teto) |
 
 ## A régua do mundo
 
@@ -111,10 +113,17 @@ pela carroçaria; a empresa lê-se pelo que está à frente dela.
 - **O controle**: antes dos detalhes, as 16 da empresa A renderizadas pelo
   construtor novo deram **Δ zero** contra as do jogo (`comparar_props.py`,
   16 iguais) — a refatoração não mexeu no camião de hoje.
-- **Os detalhes valem para as duas empresas**: retrovisores, para-sol,
-  para-choque claro, faróis, tanque, para-lamas (os do bicudo por cima da
-  roda da frente; na cara-chata os lameiros atrás dela) e o defletor em dois
-  degraus na carreta e no baú.
+- **Os detalhes valem para as duas empresas**, e chegaram em três voltas:
+  retrovisores, para-sol, para-choque claro, faróis e tanque; o **vidro de
+  camião** (`vidro_cab`, escuro e inteiro — a `janela()` do kit é a de casa);
+  os **para-lamas** pretos por cima da roda da frente (os lameiros da segunda
+  candidata eram chapas vistas de canto, que esta câmera nunca mostra); o
+  **defletor em rampa**, um prisma; a **cabine e o capô em bisel**, uma caixa
+  com um prisma por cima; o **escape**; a **carreta articulada**, com o vão e
+  a quinta roda; os **cubos** claros das rodas; a **borda e os reforços** da
+  caçamba; a **porta, o degrau** e as **lanternas do teto** da cara-chata.
+- **As cores da B, na terceira volta**: verde na carreta, cabine branca com
+  faixa coral no basculante, amarelo no baú, coral no frigorífico.
 
 ## O que fica para a passagem seguinte
 
