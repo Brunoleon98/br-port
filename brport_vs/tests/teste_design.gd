@@ -2988,9 +2988,17 @@ func _d20_a_rua_no_desenho() -> void:
 
 # ── D25 ── a fauna respeita a régua do mundo, e o toque continua tocável
 #
-# Uma pessoa mede 15 px na própria arte. A ave e os bichos pequenos não passam
-# dela; a capivara pode ser um pouco mais larga, mas continua bem abaixo do
-# barco de 44 px que serve de teto para os grandes elementos móveis.
+# Uma pessoa mede 7 px na própria arte, e nenhum bicho fica abaixo dela nem
+# chega ao barco de 44 px que serve de teto para os grandes elementos móveis.
+#
+# ⚠️ ATÉ 27/09 A REGRA ERA A CONTRÁRIA — «nenhum bicho passa da pessoa» —, com
+# a pessoa a medir 14. Ela encolheu para a régua de 1,5x o real (`069`,
+# `REGUA_DA_PESSOA`), e a fauna NÃO a acompanhou, por escolha do Bruno com as
+# duas na prancha: encolhida, ficava com 6 a 8 px, e a gaivota, a tartaruga e
+# o cachorro do mesmo tamanho (medido: 7 / 7 / 7, e as duas asserções de
+# ordem abaixo reprovavam). A fauna ficou legível, e a pessoa passou a ser o
+# que de mais pequeno vive no mapa — que é o real: a envergadura de uma
+# gaivota é ~3x os ombros de alguém.
 #
 # O alvo de toque é irmão do Sprite2D e não encolhe com ele. Fica no piso de
 # 44 px: menor faria o polegar errar; maior faria o animal reagir a um toque
@@ -3011,10 +3019,7 @@ const FAUNA_LARGURAS := {
 	"quero_quero": 13,
 	"capivara": 17,
 }
-const FAUNA_ATE_UMA_PESSOA := [
-	"gaivota", "tartaruga_verde", "maria_farinha", "cachorro_caramelo",
-	"quero_quero",
-]
+const LARGURA_DA_PESSOA := 7
 const LARGURA_BARCO := 44
 
 # ⚠️ E A PESSOA ENCOLHEU UM PIXEL SEM O DESENHO MUDAR — é a FRANJA, e vale a
@@ -3043,11 +3048,13 @@ const LARGURA_BARCO := 44
 # fina for a peça. Não é ruído das réguas: é DESENHO que não cabia num pixel e
 # passou a caber. Uma peça com detalhe subpixel não tem largura única.
 #
-# Então a folga é de UM pixel, e está escrito o que fica de fora: esta guarda
-# nasceu medida contra um defeito de DOBRAR a gaivota (30 px contra 14), e um
-# pixel não lhe tira nada disso. O que ela deixou de apanhar é um bicho 7%
-# maior do que a pessoa — que é onde a gaivota e o cachorro já estavam.
-const FAUNA_FOLGA_DA_PESSOA := 1
+# Por isso as larguras são pregadas uma a uma (`FAUNA_LARGURAS`), e a relação
+# com a pessoa é um PISO sem folga: a pessoa mede 7,33 e o bicho mais estreito,
+# a maria-farinha, 12,0. O piso nasceu da escolha de 27/09 e diz o que ela
+# defende — a fauna não encolhe com a pessoa. Medido com a fauna encolhida pelo
+# mesmo 0,48: 7 / 7 / 6 / 7 / 7 / 8 contra uma pessoa de 7, e o piso só
+# reprova a maria-farinha; quem apanha os outros cinco são as larguras
+# pregadas. Um bicho DOBRADO (a gaivota a 30) cai nas larguras e no teto.
 
 
 # ⚠️ OS 15 PX SÃO DE TELA, E A TEXTURA JÁ NÃO OS TEM. Desde a alavanca B o
@@ -3060,7 +3067,8 @@ const FAUNA_FOLGA_DA_PESSOA := 1
 func _d25_escala_da_fauna() -> void:
 	var trabalhador: Texture2D = load("res://art/props/trabalhador.png")
 	var largura_pessoa := int(round(PropIso.desenho(trabalhador).size.x))
-	_confere("a régua continua sendo uma pessoa de 14 px", largura_pessoa == 14,
+	_confere("a régua continua sendo uma pessoa de %d px" % LARGURA_DA_PESSOA,
+		largura_pessoa == LARGURA_DA_PESSOA,
 		"o trabalhador mede %d px" % largura_pessoa)
 
 	var larguras := {}
@@ -3075,15 +3083,9 @@ func _d25_escala_da_fauna() -> void:
 		larguras[especie] = largura
 		_confere("%s mede os %d px escolhidos" % [especie, FAUNA_LARGURAS[especie]],
 			largura == FAUNA_LARGURAS[especie], "mede %d px" % largura)
-		if especie in FAUNA_ATE_UMA_PESSOA:
-			_confere("%s não passa de uma pessoa por mais de %d px"
-					% [especie, FAUNA_FOLGA_DA_PESSOA],
-				largura <= largura_pessoa + FAUNA_FOLGA_DA_PESSOA,
-				"%d px contra %d" % [largura, largura_pessoa])
-		else:
-			_confere("a capivara fica entre a pessoa e o barco",
-				largura > largura_pessoa and largura < LARGURA_BARCO,
-				"%d px; pessoa %d; barco %d" % [largura, largura_pessoa, LARGURA_BARCO])
+		_confere("%s não fica abaixo da pessoa nem chega ao barco" % especie,
+			largura >= largura_pessoa and largura < LARGURA_BARCO,
+			"%d px; pessoa %d; barco %d" % [largura, largura_pessoa, LARGURA_BARCO])
 
 		var forma: CircleShape2D = bicho.get_node("Toque/Forma").shape
 		var diametro := forma.radius * 2.0

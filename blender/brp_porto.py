@@ -66,20 +66,77 @@ CAMINHOES = {
     # dele. O contêiner é o mesmo vocabulário — corpo laranja, vinco de valor,
     # cantoneira escura — de propósito: é a mesma caixa que o pátio empilha, e
     # vê-la a sair pela estrada é o que liga as duas pontas.
-    "conteiner":   dict(chassi=1.96, cabine=0.44, cor_cab="cabine",
+    "conteiner":   dict(chassi=1.96, cabine=0.44,
                         eixos=(0.78, -0.18, -0.54, -0.86)),
-    "granel":      dict(chassi=1.48, cabine=0.46, cor_cab="amarelo",
+    "granel":      dict(chassi=1.48, cabine=0.46,
                         eixos=(0.52, -0.30, -0.72)),
-    "armazenagem": dict(chassi=1.56, cabine=0.44, cor_cab="azul",
+    "armazenagem": dict(chassi=1.56, cabine=0.44,
                         eixos=(0.58, -0.28, -0.70)),
     # O mais curto: um frigorífico de peixe é um caminhão de bairro, não uma
     # carreta de porto.
-    "pescado":     dict(chassi=1.10, cabine=0.42, cor_cab="cabine",
+    "pescado":     dict(chassi=1.10, cabine=0.42,
                         eixos=(0.34, -0.36)),
 }
 
 
-def _pecas_do_caminhao(M, eixo, servico, retorno=False):
+# ── AS DUAS TRANSPORTADORAS DE CADA SERVIÇO (27/09, `docs/decisoes/069`) ──
+#
+# A nota do Bruno: «novas variações devem ser criadas como se tivessem mais de
+# uma empresa prestando o mesmo serviço». O escopo dele: DUAS por serviço, e
+# três marcas a separá-las — a cor da cabine, a faixa na carroçaria e o modelo
+# da cabine. O SERVIÇO continua a ler-se pela carroçaria (o bloco acima); a
+# EMPRESA lê-se pelo que está à frente dela.
+#
+# ⚠️ A EMPRESA 0 É O CAMIÃO DE SEMPRE, cor a cor. É o controle: renderizada, dá
+# Δ zero contra o PNG que o jogo já tem.
+#
+# ⚠️ O BICUDO SÓ NOS TRÊS MÉDIOS, e é o real: o bicudo das estradas
+# brasileiras é o caminhão médio — o baú, o basculante e o frigorífico de
+# motor à frente —, e a carreta de contêiner é puxada por cavalo cara-chata.
+# E há uma razão de medida: o porta-contêiner é o MAIOR camião, e é nele que
+# estão medidos o recuo da paragem e a janela da curva (`Main.gd`). O capô
+# acrescenta-se À FRENTE do camião de sempre, que não encolhe, e nenhum dos
+# três médios com capô passa do comprimento dele (1,40 / 1,78 / 1,86 < 1,96).
+#
+# ⚠️ E A COR DA CABINE ESCOLHE-SE CONTRA O ASFALTO (#49535b), que é o chão onde
+# ela anda: o navy e o verde do kit fundem-se nele pelo valor. As da empresa 1
+# são claras ou saturadas, como as da 0.
+#
+# ⚠️ E CADA EMPRESA 1 TEM A SUA COR. A primeira candidata pôs três cabines
+# vermelhas e lia como UMA transportadora a fazer tudo; e o vermelho, contra o
+# asfalto, separava-se só pelo matiz (0,06 de Weber no granel). Escolha do
+# Bruno: uma cor por serviço, que se veja também pelo valor.
+EMPRESAS = {
+    "conteiner": (
+        dict(modelo="chata", cab="cabine", faixa=None),
+        dict(modelo="chata", cab="cab_verde", faixa=None)),
+    "granel": (
+        dict(modelo="chata", cab="amarelo", faixa="metal_claro"),
+        dict(modelo="bicudo", cab="cab_azul_claro", faixa="cab_azul_claro")),
+    "armazenagem": (
+        dict(modelo="chata", cab="azul", faixa="laranja"),
+        dict(modelo="bicudo", cab="amarelo", faixa="casco")),
+    "pescado": (
+        dict(modelo="chata", cab="cabine", faixa="refletivo"),
+        dict(modelo="bicudo", cab="laranja", faixa="amarelo")),
+}
+
+# ⚠️ OS 16 PNGs DE CAMIÃO QUE O JOGO TEM SÃO DE ANTES DISTO (27/09). A empresa
+# 1 e os detalhes de baixo são a CANDIDATA que está com o Bruno, e ainda não
+# foram gerados para `art/props`: regerar hoje um camião pelo `gerar_brp.py`
+# troca-o pela candidata sem ninguém ter decidido. Os 32 entram juntos, numa
+# passagem própria — a tabela do `Main.gd`, o sorteio, o D35 com o chassi do
+# bicudo e a folha (`docs/decisoes/069`, «O que fica para a passagem
+# seguinte»).
+
+# O capô do bicudo, antes do `ESCALA_CAMINHAO`: 0,29 de mundo no jogo, ~1,5 m.
+# A primeira candidata tinha 0,30 (~1,1 m), e o Bruno pediu-o «mais
+# comprido»: o nariz é a parte que diz bicudo. O teto é o do porta-contêiner —
+# o baú bicudo fica com 1,56 + 0,40 = 1,96, exatamente o comprimento dele.
+CAPO = 0.40
+
+
+def _pecas_do_caminhao(M, eixo, servico, retorno=False, empresa=0):
     """As peças de um caminhão, no eixo pedido ("my" ou "mx") e do serviço dado.
 
     `retorno` vira a FRENTE para o outro lado: o caminhão que sobe a rua em
@@ -107,6 +164,7 @@ def _pecas_do_caminhao(M, eixo, servico, retorno=False):
     ninguém vê.
     """
     d = CAMINHOES[servico]
+    marca = EMPRESAS[servico][empresa]
     p = []
     RODA, LARG = 5.0, 0.62
     ao_longo_de_y = eixo == "my"
@@ -116,7 +174,14 @@ def _pecas_do_caminhao(M, eixo, servico, retorno=False):
     def dim(comprimento, largura):
         return (largura, comprimento) if ao_longo_de_y else (comprimento, largura)
 
-    def loc(ao_longo, atravessado, alt):
+    # ⚠️ O CAMIÃO DE SEMPRE RECUA MEIO CAPÔ (`recuo`, abaixo), e o capô ocupa o
+    # que ele deixou à frente: o chassi cresce centrado na âncora e a traseira
+    # fica rente a ele. Só o chassi e o capô se escrevem em `absoluto`; tudo o
+    # resto — cabine, carroçaria, rodas, traseira — é o camião de sempre, e
+    # anda junto sem saber que há capô.
+    def loc(ao_longo, atravessado, alt, absoluto=False):
+        if not absoluto:
+            ao_longo += recuo
         return ((atravessado, ao_longo, alt) if ao_longo_de_y
                 else (ao_longo, atravessado, alt))
 
@@ -132,9 +197,14 @@ def _pecas_do_caminhao(M, eixo, servico, retorno=False):
     face_ponta = "-y" if ao_longo_de_y else "+x"
     face_frente = None if retorno else face_ponta
 
+    bicudo = marca["modelo"] == "bicudo"
+    capo = CAPO if bicudo else 0.0
+    recuo = -sf * capo / 2.0
+    cor_cab = M[marca["cab"]]
+
     chassi, cab_comp = d["chassi"], d["cabine"]
-    chassi_c = loc(0.0, 0.0, z(RODA + 2.0))
-    chassi_t = dim(chassi, LARG) + (z(4.0),)
+    chassi_c = loc(0.0, 0.0, z(RODA + 2.0), absoluto=True)
+    chassi_t = dim(chassi + capo, LARG) + (z(4.0),)
     p.append(caixa("cam_chassi", chassi_c, chassi_t, M["metal"]))
 
     # A cabine encosta na frente do chassi — a posição SAI do comprimento, e
@@ -142,12 +212,104 @@ def _pecas_do_caminhao(M, eixo, servico, retorno=False):
     # escrita à mão dariam quatro chances de uma ficar a pairar no ar.
     cab_c = loc(sf * (chassi / 2.0 - cab_comp / 2.0), 0.0, z(RODA + 11.5))
     cab_t = dim(cab_comp, LARG) + (z(15.0),)
-    p.append(caixa("cam_cabine", cab_c, cab_t, M[d["cor_cab"]]))
+    p.append(caixa("cam_cabine", cab_c, cab_t, cor_cab))
+    # No bicudo o para-brisa sobe: a metade de baixo da face ficaria atrás do
+    # capô. E a grade vai para a ponta do capô, que é onde o motor está.
     if face_frente is not None:
-        p += janela("cam_vidro_f", face_frente, cab_c, cab_t, 0.0, 0.030, 0.30,
-                    0.16, M, peitoril=False)
-        p.append(na_face("cam_grade", face_frente, cab_c, cab_t, 0.0, -0.16,
-                         0.34, 0.08, 0.03, M["metal_claro"], 0.01))
+        p += janela("cam_vidro_f", face_frente, cab_c, cab_t, 0.0,
+                    0.07 if bicudo else 0.030, 0.30, 0.16, M, peitoril=False)
+        if not bicudo:
+            p.append(na_face("cam_grade", face_frente, cab_c, cab_t, 0.0, -0.16,
+                             0.34, 0.08, 0.03, M["metal_claro"], 0.01))
+    if bicudo:
+        # O CAPÔ vai da frente da cabine à ponta do chassi, afundado 0,02 nela e
+        # 0,3 px no chassi — encostado, seriam duas faces coplanares. Mais
+        # estreito do que a cabine e baixo: é o DEGRAU entre ele e o para-brisa
+        # que diz «bicudo» a 60 px, e ele pede a cor da cabine para ler como a
+        # mesma peça de chapa.
+        capo_c = loc(sf * (chassi / 2.0 - 0.01), 0.0, z(RODA + 7.35),
+                     absoluto=True)
+        capo_t = dim(capo + 0.02, LARG - 0.10) + (z(7.3),)
+        p.append(caixa("cam_capo", capo_c, capo_t, cor_cab))
+        if face_frente is not None:
+            p.append(na_face("cam_grade", face_frente, capo_c, capo_t, 0.0, 0.0,
+                             0.30, 0.12, 0.03, M["metal_claro"], 0.01))
+
+    # ── OS DETALHES DE CAMIÃO DE VERDADE (27/09, `069`) ─────────────────────
+    #
+    # O pedido do Bruno foi «mais realista», e ele marcou os quatro grupos:
+    # retrovisores e para-sol, para-choque e faróis, tanque e para-lamas, e o
+    # defletor no teto. A 60 px de textura cada um é um ou dois pixels — o que
+    # os paga é a SILHUETA (o retrovisor e o para-sol mudam o contorno da
+    # cabine) e o VALOR (o para-choque claro fecha a frente contra o asfalto).
+    #
+    # ⚠️ Cada peça afunda uma fração na vizinha e nenhuma lhe iguala uma face:
+    # é a regra das duas faces coplanares, que aqui teria dez sítios para
+    # morder. E nenhuma passa da ponta do chassi em mais de 0,01.
+    lado = 1.0 if ao_longo_de_y else -1.0         # o lado que a câmera vê
+    frente_cab = chassi / 2.0                      # coordenada do camião de sempre
+    ponta = (chassi + capo) / 2.0                  # absoluta
+    # Os retrovisores: dos dois lados, rente à frente da cabine e a meia altura
+    # da janela. O de trás também desenha — é contorno.
+    for i, su in enumerate((1.0, -1.0)):
+        p.append(caixa("cam_retrovisor%d" % i,
+                       loc(sf * (frente_cab - 0.05), su * (LARG / 2.0 + 0.02),
+                           z(RODA + 14.0)),
+                       dim(0.04, 0.05) + (z(5.0),), M["metal"]))
+    # O para-sol: a pala escura por cima do para-brisa, que avança da cabine.
+    p.append(caixa("cam_parasol", loc(sf * (frente_cab + 0.025), 0.0,
+                                      z(RODA + 18.0)),
+                   dim(0.07, LARG - 0.04) + (z(1.4),), M["metal"]))
+    # O para-choque: claro, porque escuro sumia no asfalto; na ponta de tudo.
+    p.append(caixa("cam_parachoque_f", loc(sf * (ponta - 0.015), 0.0,
+                                          z(RODA + 3.0), absoluto=True),
+                   dim(0.05, LARG + 0.02) + (z(2.6),), M["metal_claro"]))
+    if face_frente is not None:
+        # Os faróis, na face da frente de quem a tem: a cabine na cara-chata, o
+        # capô no bicudo — a flanquear a grade, que ocupa o meio.
+        if bicudo:
+            f_c, f_t, fu, fv = capo_c, capo_t, 0.21, 0.02
+        else:
+            f_c, f_t, fu, fv = cab_c, cab_t, 0.23, -0.16
+        for i, su in enumerate((-1.0, 1.0)):
+            p.append(na_face("cam_farol%d" % i, face_frente, f_c, f_t, su * fu,
+                             fv, 0.07, 0.05, 0.02, M["luz_poste"], 0.012))
+    # O tanque de combustível, no lado que se vê, logo atrás da cabine.
+    p.append(caixa("cam_tanque",
+                   loc(sf * (frente_cab - cab_comp - 0.14), lado * (LARG / 2.0 - 0.03),
+                       z(RODA + 2.0)),
+                   dim(0.22, 0.10) + (z(5.0),), M["metal_claro"]))
+    # Os para-lamas. No bicudo são os pretos por cima da roda da frente, mais
+    # largos do que o capô e mais estreitos do que a cabine. Na cara-chata a
+    # cabine já cobre essa roda, e o que se vê são os lameiros logo atrás dela.
+    # ⚠️ ATRÁS DA RODA DA FRENTE, E NÃO DA ÚLTIMA: em três dos quatro serviços
+    # o último eixo está rente à traseira (o do granel a 0,02 do fim do
+    # chassi), e o lameiro ficava a pairar atrás da caçamba, preso a nada.
+    if bicudo:
+        p.append(caixa("cam_paralama",
+                       loc(sf * (d["eixos"][0] + capo * 0.8), 0.0, z(RODA + 4.5)),
+                       dim(0.30, LARG - 0.02) + (z(2.6),), M["metal"]))
+    else:
+        for i, su in enumerate((1.0, -1.0)):
+            p.append(caixa("cam_lameiro%d" % i,
+                           loc(sf * (d["eixos"][0] - 0.16), su * (LARG / 2.0 - 0.07),
+                               z(2.4)),
+                           dim(0.02, 0.12) + (z(4.0),), M["metal"]))
+    # O defletor: na carreta e no baú, que são as cargas mais altas do que a
+    # cabine. Dois degraus em vez de uma rampa — a rampa por rotação é um
+    # ângulo que só se escolhe no PNG, e isto é a primeira candidata dele.
+    if servico in ("conteiner", "armazenagem"):
+        topo = 26.0 if servico == "conteiner" else 30.0
+        meio = (19.0 + topo) / 2.0
+        p.append(caixa("cam_defletor0",
+                       loc(sf * (frente_cab - cab_comp / 2.0 - 0.04), 0.0,
+                           z((18.8 + meio) / 2.0)),
+                       dim(cab_comp - 0.14, LARG - 0.06) + (z(meio - 18.8),), cor_cab))
+        p.append(caixa("cam_defletor1",
+                       loc(sf * (frente_cab - cab_comp / 2.0 - 0.10), 0.0,
+                           z((meio - 0.2 + topo) / 2.0)),
+                       dim(cab_comp - 0.26, LARG - 0.10) + (z(topo - meio + 0.2),),
+                       cor_cab))
     p += janela("cam_vidro_l", face_lado, cab_c, cab_t, 0.0, 0.030, 0.26,
                 0.15, M, peitoril=False)
 
@@ -167,8 +329,10 @@ def _pecas_do_caminhao(M, eixo, servico, retorno=False):
         cac_t = dim(corpo_comp, LARG + 0.04) + (z(16.0),)
         p.append(caixa("cam_cacamba", corpo_c(12.0), cac_t, M["metal"]))
         tras_c, tras_t = corpo_c(12.0), cac_t
+        # A FAIXA DA EMPRESA, e não um friso: com 0,03 de altura ela lia como
+        # um risco na chapa (o Bruno, na primeira candidata). Com 0,07 é tinta.
         p.append(na_face("cam_friso", face_lado, corpo_c(12.0), cac_t, 0.0, 0.0,
-                         corpo_comp * 0.92, 0.03, 0.02, M["metal_claro"], 0.005))
+                         corpo_comp * 0.92, 0.07, 0.02, M[marca["faixa"]], 0.005))
         # Duas camadas: a carga rente à borda e a crista mais estreita por
         # cima. Uma camada só saía como um tampo plano — a caçamba fechada.
         p.append(caixa("cam_carga", corpo_c(20.0),
@@ -193,7 +357,7 @@ def _pecas_do_caminhao(M, eixo, servico, retorno=False):
         p.append(caixa("cam_bau", bau_c, bau_t, M["cabine"]))
         tras_c, tras_t = bau_c, bau_t
         p.append(na_face("cam_friso", face_lado, bau_c, bau_t, 0.0, -0.06,
-                         corpo_comp * 0.94, 0.09, 0.02, M["laranja"], 0.005))
+                         corpo_comp * 0.94, 0.09, 0.02, M[marca["faixa"]], 0.005))
         # Duas nervuras verticais: um baú é chapa em painéis, e a esta escala
         # dois vincos chegam para o dizer. Mais seria a lixa do `DESGASTE`.
         for i, u in enumerate((-0.18, 0.18)):
@@ -209,7 +373,7 @@ def _pecas_do_caminhao(M, eixo, servico, retorno=False):
         p.append(caixa("cam_bau", bau_c, bau_t, M["azul"]))
         tras_c, tras_t = bau_c, bau_t
         p.append(na_face("cam_faixa", face_lado, bau_c, bau_t, 0.0, 0.04,
-                         corpo_comp * 0.92, 0.07, 0.02, M["refletivo"], 0.005))
+                         corpo_comp * 0.92, 0.07, 0.02, M[marca["faixa"]], 0.005))
         # A unidade de frio: pequena de propósito. A 0,16 x 0,50 ela saía como
         # um TAMPO escuro sobre metade do baú, e o que se lia era um caminhão
         # de teto preto. O que diz "frigorífico" é a saliência, não a área.
@@ -254,7 +418,11 @@ def _pecas_do_caminhao(M, eixo, servico, retorno=False):
     # Os eixos vêm da tabela: a carreta tem quatro, o frigorífico dois. O eixo
     # da roda aponta na LARGURA — num veículo deitado em `my` isso é `x`.
     eixo_roda = "x" if ao_longo_de_y else "y"
+    # No bicudo o eixo da frente vai para debaixo do capô, que é onde o motor
+    # o põe; os de trás não se mexem.
     for i, ao_longo in enumerate(d["eixos"]):
+        if bicudo and i == 0:
+            ao_longo += capo * 0.8
         for j, atravessado in enumerate((LARG / 2, -LARG / 2)):
             xy = loc(sf * ao_longo, atravessado, 0.0)
             p.append(_roda("cam_roda_%d%d" % (i, j), xy[0], xy[1], RODA, 0.12,

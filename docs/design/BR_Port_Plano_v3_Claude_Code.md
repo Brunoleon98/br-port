@@ -971,7 +971,7 @@ do HUD, o bloco de contas, o caderno e o celular — vive no `PainelNarrativo`,
 no `PainelCelular` e no tema; e o app Diário do celular, fechado, já tem o
 caderno por onde abrir.
 
-#### A FRENTE 6 — a prancha e a escala (27/09), à espera do veredito
+#### ✅ A FRENTE 6 FECHOU (27/09) — a prancha e a escala, «aceito como está»
 
 Escolha do Bruno depois da frente 3, com o escopo respondido: **a prancha
 por prop (A/B)** e **a página de escala** (`068`). A nota das três folhas
@@ -992,6 +992,26 @@ detalhe e pôr a candidata ao lado da base na mesma montagem.
   trabalhador de régua: a nota dos camiões sobre a proporção.
 - O catálogo, a cena e o chão saíram da folha para `catalogo_props.gd`, e as
   três páginas da folha de contato ficaram iguais ao byte.
+
+#### A FRENTE 4 ABRIU (27/09) — a régua da pessoa e as transportadoras
+
+Escolha do Bruno depois da 6, partida em famílias como a 3 — escala e
+camiões, frota, ruína e obras, animação —, e começada pela **escala e
+camiões** (`069`):
+
+- **A régua do mundo**, medida no contêiner e na cabine do camião: 5,2 m por
+  unidade no chão, 5,6 px por metro na altura. O trabalhador media **5,4 m**;
+  a régua das pessoas é **1,5× o real** (`REGUA_DA_PESSOA` 0,48). A primeira
+  conta deu 0,65 por ler a cabine antes do `ESCALA_CAMINHAO` — corrigida na
+  prancha, com as duas lado a lado.
+- **A fauna fica como estava**, escolha dele: encolhida, ia a 6–8 px. O D25
+  passou a «nenhum bicho abaixo da pessoa nem chega ao barco».
+- **O carro e o pedestre** entram só na página de escala, de
+  `brport_vs/tools/referencia/`.
+- **Duas transportadoras por serviço**, pela cor da cabine, a faixa e o
+  modelo (bicudo nos três médios, cara-chata na carreta), com retrovisores,
+  para-sol, para-choque, faróis, tanque, para-lamas e defletor. A segunda
+  candidata está com ele; os 32 no jogo são a passagem seguinte.
 
 ---
 
