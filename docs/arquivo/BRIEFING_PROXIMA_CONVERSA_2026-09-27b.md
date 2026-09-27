@@ -27,15 +27,14 @@ respondido: **a prancha por prop (A/B)** e **a página de escala** (`068`).
    `tools/trilha_de_arte.py` ganhou as doze legendas que a frente 3 deixou
    por pôr — sem elas a página do veredito não se montava.
 
-**O veredito está por dar**, e a branch tem o trabalho por fundir: o Bruno
-não pediu PR.
+**O veredito está por dar**, e o trabalho está no PR #93, por fundir.
 
 ---
 
 ## 1. Comece pelo estado real
 
-- Confira no GitHub se a `claude/fervent-rubin-fs6hnn` virou PR e se foi
-  fundida. **Se não foi, o trabalho só existe nela**: a branch da conversa
+- Confira no GitHub se o PR #93 (`claude/fervent-rubin-fs6hnn`) foi
+  fundido. **Se não foi, o trabalho só existe nele**: a branch da conversa
   seguinte parte dela (`git fetch origin claude/fervent-rubin-fs6hnn`, um ref
   de cada vez), e nunca de uma `main` sem ela.
 - Um ref de cada vez no `git fetch`, com o código de saída lido sem cano
