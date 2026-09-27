@@ -339,6 +339,9 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   no envio e ele escreveu «Mande pergunta»; a pergunta sozinha voltou **8 de
   8**. Somado: o arranjo não é seguro, e a legenda com a pergunta continua a
   ser o que o deixa responder sem ela.
+  ⚠️ **E NA `071` (27/09) VOLTOU 3 DE 5** — o mesmo arranjo, cinco quadros
+  da frota: nas duas que falharam ele escreveu «Mande pergunta», e a
+  pergunta sozinha voltou **3 de 3** (11 de 11 somando a `069`).
   ⚠️ **E ELE DESCARTOU UMA PERGUNTA DE VEREDITO PARA ESCREVER** — «Aceito /
   Ajustar» não lhe deixava pedir sugestões, e a mensagem seguinte foi
   «ficou melhor, consegue ver outros detalhes?». A resposta que funcionou foi

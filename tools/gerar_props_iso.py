@@ -209,6 +209,29 @@ PALETA = {
     # laranja; este é o `cabine` levado um passo para o creme.
     "refletivo": "#f2f5f7",
     "boia": "#d94f2a", "corda": "#c9b48a",
+    # ── AS MARCAS DA FROTA DE PESCA (frente 4, família frota) ────────────
+    #
+    # A bandeira do Brasil na popa: as três cores do pavilhão, que é o que
+    # sobra dela a 3-6 px. E o ESCORRIDO de cada amurada, que é a cor dela
+    # levada ao escuro: o sujo que a água do convés arrasta pelo embornal é
+    # da cor da tinta por onde passa, e não uma mancha de outro material.
+    "bandeira_verde": "#009c3b", "bandeira_amarela": "#ffdf00",
+    "bandeira_azul": "#002776",
+    "escorrido_vermelho": "#7a2220", "escorrido_azul": "#1d4a5c",
+    # ⚠️ O ESCORRIDO DO AMARELO É MAIS CLARO do que a regra da cor levada ao
+    # escuro daria (#8a5c10): o amarelo é a faixa mais clara das três, e o
+    # mesmo fator punha nela o sujo mais forte da frota — o Bruno apontou-o
+    # na primeira candidata («escorrido forte no amarelo»).
+    "escorrido_amarelo": "#b07c1c",
+    # A rede de NYLON verde, que é a do pescador: o `rede` cinzento do kit é
+    # de caixa, e encosta no `metal_claro` (ver o saco do arrasteiro).
+    # ⚠️ E ELE É ESCURO E POUCO SATURADO: a #4a9a5a da segunda candidata pôs
+    # o tambor a ser a peça mais chamativa do arrasteiro, a competir com o
+    # pórtico, que é a silhueta dele (o Bruno: «tambor verde forte»).
+    "rede_nylon": "#4f7d57", "rede_fio": "#22402a",
+    # O peixe dentro do saco cheio, prateado, e o fio da rede da traineira,
+    # que fica cinzenta (o Bruno, na segunda candidata).
+    "peixe": "#b9c6cc", "rede_fio_cinza": "#4f5a62",
     "colete": "#e0561f", "capacete": "#e0a81f", "pele": "#b07b52",
     # ── AS TRÊS PELES E O CABELO GRISALHO, para os retratos de fala ──────
     #
@@ -626,6 +649,83 @@ def material_escorrido(nome: str, hexa: str, cor_corrida: str,
     return m
 
 
+def material_malha(nome: str, fio: str, fundo: str, escala: float = 16.0,
+                   espessura: float = 0.10):
+    """Rede: um fundo com fios escuros em malha IRREGULAR.
+
+    O Voronoi com `DISTANCE_TO_EDGE` dá a distância à fronteira da célula; o
+    que fica abaixo de `espessura` é fio. As células saem desiguais, e é isso
+    que uma rede amontoada ou enrolada parece — o losango certo só se vê com
+    a rede esticada, e aqui ela nunca está.
+    """
+    m = bpy.data.materials.new(nome)
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    vor = nt.nodes.new("ShaderNodeTexVoronoi")
+    vor.feature = "DISTANCE_TO_EDGE"
+    vor.inputs["Scale"].default_value = escala
+    nt.links.new(coord.outputs["Object"], vor.inputs["Vector"])
+    rampa = nt.nodes.new("ShaderNodeValToRGB")
+    rampa.color_ramp.interpolation = "CONSTANT"
+    rampa.color_ramp.elements[0].position = 0.0
+    rampa.color_ramp.elements[0].color = _escurecer(fio, 1.0)
+    rampa.color_ramp.elements[1].position = espessura
+    rampa.color_ramp.elements[1].color = _escurecer(fundo, 1.0)
+    nt.links.new(vor.outputs["Distance"], rampa.inputs["Fac"])
+    nt.links.new(rampa.outputs["Color"], b.inputs["Base Color"])
+    b.inputs["Roughness"].default_value = 0.9
+    b.inputs["Specular IOR Level"].default_value = 0.0
+    return m
+
+
+def material_malha_losango(nome: str, fio: str, fundo: str,
+                           passo: float = 0.07, espessura: float = 0.30):
+    """Rede ESTICADA: losangos regulares, que é como um saco cheio a pende.
+
+    ⚠️ A MALHA DO VORONOI LÊ COMO PEDRA num volume redondo: células
+    desiguais sobre uma bola cinzenta são a textura de um calhau (o Bruno, na
+    quarta candidata: «saco lê como pedra»). O saco içado tem a rede esticada
+    pelo peso, e aí a malha é regular. Duas famílias de planos a 45°, `(x+y)±z`,
+    e o que fica a menos de `espessura` de um plano é fio.
+    """
+    m = bpy.data.materials.new(nome)
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+
+    def op(operacao, a, c):
+        n = nt.nodes.new("ShaderNodeMath")
+        n.operation = operacao
+        for i, v in enumerate((a, c)):
+            if isinstance(v, (int, float)):
+                n.inputs[i].default_value = v
+            else:
+                nt.links.new(v, n.inputs[i])
+        return n.outputs[0]
+
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    xyz = nt.nodes.new("ShaderNodeSeparateXYZ")
+    nt.links.new(coord.outputs["Object"], xyz.inputs["Vector"])
+    h = op("MULTIPLY", op("ADD", xyz.outputs["X"], xyz.outputs["Y"]),
+           1.0 / passo)
+    v = op("MULTIPLY", xyz.outputs["Z"], 1.0 / passo)
+    fio_a = op("LESS_THAN", op("FRACT", op("ADD", h, v), 0.0), espessura)
+    fio_b = op("LESS_THAN", op("FRACT", op("SUBTRACT", h, v), 0.0), espessura)
+    rampa = nt.nodes.new("ShaderNodeValToRGB")
+    rampa.color_ramp.interpolation = "CONSTANT"
+    rampa.color_ramp.elements[0].position = 0.0
+    rampa.color_ramp.elements[0].color = _escurecer(fundo, 1.0)
+    rampa.color_ramp.elements[1].position = 0.5
+    rampa.color_ramp.elements[1].color = _escurecer(fio, 1.0)
+    nt.links.new(op("MAXIMUM", fio_a, fio_b), rampa.inputs["Fac"])
+    nt.links.new(rampa.outputs["Color"], b.inputs["Base Color"])
+    b.inputs["Roughness"].default_value = 0.8
+    b.inputs["Specular IOR Level"].default_value = 0.0
+    return m
+
+
 # Preenchido por paleta_completa(). O kit de detalhe lê daqui em vez de
 # receber `M` em toda assinatura — são seis funções e o dicionário é um só.
 PALETA_MAT: dict = {}
@@ -694,6 +794,36 @@ def caixa(nome, centro, tam, mat, rot=(0, 0, 0)):
 def cone(nome, centro, r1, r2, alt, lados, mat, rot=(0, 0, 0)):
     bpy.ops.mesh.primitive_cone_add(vertices=lados, radius1=r1, radius2=r2,
                                     depth=alt, location=centro)
+    o = bpy.context.active_object
+    o.name = nome
+    o.rotation_euler = tuple(math.radians(a) for a in rot)
+    o.data.materials.append(mat)
+    return o
+
+
+def bola(nome, centro, raios, mat, rot=(0, 0, 0)):
+    """Uma esfera esticada: o lobo de um saco de rede cheio."""
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=8,
+                                         radius=1.0, location=centro)
+    o = bpy.context.active_object
+    o.name = nome
+    o.scale = raios
+    # ⚠️ A ESCALA APLICA-SE NA MALHA: a coordenada `Object` de um material lê
+    # a malha ANTES do `scale`, e numa esfera de raio 1 esticada a 0,16 a
+    # malha de losangos saía seis vezes mais fina do que o pedido — um
+    # granulado sem losango nenhum.
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    o.rotation_euler = tuple(math.radians(a) for a in rot)
+    o.data.materials.append(mat)
+    return o
+
+
+def anel(nome, centro, r_maior, r_menor, mat, rot=(0, 0, 0), lados=16):
+    """Um toro: a boia salva-vidas. Nenhuma caixa nem cone faz um anel."""
+    bpy.ops.mesh.primitive_torus_add(major_radius=r_maior,
+                                     minor_radius=r_menor,
+                                     major_segments=lados, minor_segments=6,
+                                     location=centro)
     o = bpy.context.active_object
     o.name = nome
     o.rotation_euler = tuple(math.radians(a) for a in rot)
@@ -1974,6 +2104,104 @@ def montar(M: dict) -> dict:
                                (0.08, 0.03, 0.08), PALETA_MAT["vidro"]))
         return pecas
 
+    def no_costado(contorno, x):
+        """Onde está o costado VISÍVEL (-y) em `x`, e para onde ele aponta.
+
+        Devolve o `y` da amurada e o giro em `z` que a acompanha. O que se
+        pinta ou pendura no costado segue a curva: uma letra direita na
+        entrada da proa ficaria meio dentro do casco e meio a flutuar.
+        """
+        lado = sorted([p for p in contorno if p[1] < 0], key=lambda p: p[0])
+
+        def meia(xx):
+            for (x0, y0), (x1, y1) in zip(lado, lado[1:]):
+                if x0 <= xx <= x1:
+                    t = (xx - x0) / (x1 - x0) if x1 > x0 else 0.0
+                    return -(y0 + (y1 - y0) * t)
+            return -(lado[0][1] if xx < lado[0][0] else lado[-1][1])
+
+        inclin = (meia(x + 0.02) - meia(x - 0.02)) / 0.04
+        return -meia(x), math.degrees(math.atan(-inclin))
+
+    def marcas_de_pesca(sufixo, contorno, altura, k, letra, pneus, letras,
+                        bandeira, rolo=None, cabecos=None, k_bandeira=None):
+        """O que um barco de pesca de verdade traz no costado e no convés.
+
+        A frente 4 (família frota) pediu os quatro grupos de uma vez —
+        defensas e amarração, nome e bandeira, equipamento, desgaste —, e os
+        três portes partilham a GRAMÁTICA destas marcas e não as posições: `k`
+        é o porte (o do `escalar_par`), e cada barco diz onde elas cabem entre
+        as peças que já tem.
+
+        - DEFENSAS: pneus velhos pendurados na amurada, pelo lado que se vê. É
+          o que o pescador brasileiro usa, e é escuro sobre a faixa de cor.
+        - NOME: uma fileira de letras na proa, que a 2 px não se leem e não é
+          preciso — lê-se que o barco TEM nome, que é o que dá escala.
+        - ESCORRIDO: NÃO mora aqui, mora no material da faixa de cor
+          (`material_escorrido` com a cor dela levada ao escuro), e não é
+          ferrugem — a ferrugem continua a ser marca da classe de CARGA. A
+          primeira candidata desenhava-o com caixas de 0,026 por baixo da
+          amurada, e a 1 px elas não apareciam em barco nenhum.
+        - BANDEIRA: o pavilhão na popa, num pau próprio, a voar para a ré.
+        - AMARRAÇÃO: rolo de cabo e cabeços na proa. O cabo ATÉ O PÍER não
+          entra no prop: o barco chega e balança, e um cabo preso ao casco
+          chegaria já esticado a apontar para o ar.
+        """
+        pecas = []
+        for i, x in enumerate(pneus):
+            y, _ = no_costado(contorno, x)
+            zc = altura - 0.055 * k
+            pecas += [
+                # Um ANEL e não um disco: o furo mostra a faixa por trás, e
+                # é o furo que faz a mancha escura ler como pneu (o Bruno, na
+                # primeira candidata: «pneus leem como mancha»).
+                anel("pneu%s%d" % (sufixo, i), (x, y - 0.045 * k, zc),
+                     0.072 * k, 0.030 * k, M["pneu"], rot=(90, 0, 0)),
+                caixa("pneuc%s%d" % (sufixo, i),
+                      (x, y - 0.030 * k, altura + 0.03 * k),
+                      (0.018 * k, 0.018 * k, 0.05 * k), M["corda"]),
+            ]
+        for i, x in enumerate(letras):
+            y, ang = no_costado(contorno, x)
+            pecas.append(caixa("letra%s%d" % (sufixo, i),
+                               (x, y - 0.008, altura - 0.05 * k),
+                               (0.05 * k, 0.012, 0.085 * k), letra,
+                               rot=(0, 0, ang)))
+        xs, ys, alt_pau = bandeira
+        base = altura
+        # O porte da bandeira pode não ser o do barco: no bote, a 0,62, ela
+        # saía com 3 px e não se lia (o Bruno: «bote pequeno demais»).
+        kb = k_bandeira if k_bandeira is not None else k
+        topo, xb = base + alt_pau, xs - 0.12 * kb
+        pecas += [
+            caixa("bpau" + sufixo, (xs, ys, base + alt_pau / 2.0),
+                  (0.022 * kb, 0.022 * kb, alt_pau), M["metal_claro"]),
+            caixa("bverde" + sufixo, (xb, ys, topo - 0.08 * kb),
+                  (0.22 * kb, 0.010, 0.15 * kb), M["bandeira_verde"]),
+            caixa("bamar" + sufixo, (xb, ys - 0.009, topo - 0.08 * kb),
+                  (0.095 * kb, 0.008, 0.095 * kb), M["bandeira_amarela"],
+                  rot=(0, 45, 0)),
+            cone("bazul" + sufixo, (xb, ys - 0.016, topo - 0.08 * kb),
+                 0.034 * kb, 0.034 * kb, 0.006, 10, M["bandeira_azul"],
+                 rot=(90, 0, 0)),
+        ]
+        if rolo is not None:
+            rx, ry = rolo
+            zr = altura - 0.02 + 0.018 * k + 0.003
+            pecas += [
+                cone("rolo" + sufixo, (rx, ry, zr), 0.07 * k, 0.07 * k,
+                     0.036 * k, 14, M["corda"]),
+                cone("roloc" + sufixo, (rx, ry, zr + 0.02 * k), 0.028 * k,
+                     0.028 * k, 0.006, 10, M["vao"]),
+            ]
+        if cabecos is not None:
+            for i, s in enumerate((-1, 1)):
+                pecas.append(cone("cabeco%s%d" % (sufixo, i),
+                                  (cabecos, s * 0.07 * k,
+                                   altura - 0.02 + 0.045 * k),
+                                  0.028 * k, 0.028 * k, 0.09 * k, 8, M["metal"]))
+        return pecas
+
     # ── A FROTA DE PESCA TEM TRÊS PORTES ────────────────────────────────
     #
     # Até 08/09 havia UM barco de pesca, e ele era o único que o porto em
@@ -2005,6 +2233,19 @@ def montar(M: dict) -> dict:
     # não, e agora por outra razão: um rasto de ferrugem em UM dos três faria a
     # ferrugem ler como marca de porte, e o que separa estes três é a
     # gramática do convés. Quem enferruja é a classe de carga, inteira.
+    rede_nylon = material_malha("rede_nylon", PALETA["rede_fio"],
+                                PALETA["rede_nylon"])
+    rede_cinza = material_malha("rede_cinza", PALETA["rede_fio_cinza"],
+                                PALETA["rede"])
+    # O saco CHEIO: o fio verde por cima do prateado do peixe. Com a malha
+    # fina sobre verde, o saco da segunda candidata lia-se como um arbusto
+    # («saco verde como mancha»); o que diz «rede cheia» é o peixe a
+    # aparecer entre os fios, e por isso a célula é maior e o fio mais grosso.
+    # A célula mede-se no PNG: a 0,07 os losangos tinham menos de 2 px e o
+    # saco saía granulado; a 0,11 cabem três de lado a lado.
+    saco_cheio = material_malha_losango("saco_cheio", PALETA["rede_fio"],
+                                        PALETA["peixe"], passo=0.11,
+                                        espessura=0.26)
     BOTE = escalar_par((PESCA, PESCA_FUNDO), 0.62)
     ARRASTO = escalar_par((PESCA, PESCA_FUNDO), 1.24)
     # ⚠️ E O BOTE É PEQUENO DEMAIS PARA ESTA CURVA — medido, e ele fica como
@@ -2022,7 +2263,9 @@ def montar(M: dict) -> dict:
     # vigia, sem pau-de-carga — o que se vê lá dentro são as caixas do peixe,
     # que num barco maior estariam no porão.
     grupos["barco_pesca_bote"] = casco(
-        "_pb", BOTE[0], BOTE[1], 0.30, M["casco_pesca"], M["faixa"],
+        "_pb", BOTE[0], BOTE[1], 0.30, M["casco_pesca"],
+        material_escorrido("faixa_esc_pb", PALETA["faixa"],
+                           PALETA["escorrido_vermelho"], escala=7.0 / 0.62),
         vigias=0, postes=4) + [
         # Console de pilotagem: um barco aberto não tem ponte, tem um posto de
         # pé com um para-brisa. A 8px ele é o que diz que ali vai alguém.
@@ -2053,6 +2296,15 @@ def montar(M: dict) -> dict:
         caixa("motor_pb", (-0.97, 0.0, 0.34), (0.16, 0.22, 0.28), M["metal"]),
         caixa("rabeta_pb", (-1.00, 0.0, 0.10), (0.09, 0.09, 0.30), M["metal"]),
     ]
+    grupos["barco_pesca_bote"] += marcas_de_pesca(
+        "_pb", BOTE[0], 0.30, 0.62, M["cabine"],
+        # Sem NOME nem PNEUS: a 44 px as letras eram um traço branco e os
+        # pneus pontos soltos no costado (o Bruno, na primeira e na terceira
+        # candidatas), e o bote diz-se pelo gelo, pelo rolo de cabo e pela
+        # bandeira.
+        pneus=(), letras=(),
+        bandeira=(-0.80, -0.14, 0.36), k_bandeira=0.74,
+        rolo=(0.84, 0.0))
 
     # A TRAINEIRA: o porte do meio, e o casco, a cabine, o mastro e a rede são
     # os de sempre. Duas coisas mudaram, e as DUAS por defeitos que este
@@ -2077,14 +2329,54 @@ def montar(M: dict) -> dict:
     dir_pau_p = (math.cos(prx) * math.cos(prz), -math.cos(prx) * math.sin(prz),
                  math.sin(prx))
     grupos["barco_pesca_traineira"] = casco(
-        "_p", PESCA, PESCA_FUNDO, 0.44, M["casco_pesca"], M["azul"]) + [
+        "_p", PESCA, PESCA_FUNDO, 0.44, M["casco_pesca"],
+        material_escorrido("faixa_esc_p", PALETA["azul"],
+                           PALETA["escorrido_azul"])) + [
         caixa("cabine_p", (-0.75, 0.0, 0.70), (0.85, 0.62, 0.50), M["cabine"]),
+        # A cabine era um bloco branco sem janela nenhuma — uma casa do leme
+        # de onde ninguém via o mar. Fita de vidro e teto, como a do
+        # arrasteiro, e a balsa salva-vidas no teto (frente 4, «mais
+        # realista»).
+        caixa("fita_p", (-0.75, 0.0, 0.84), (0.86, 0.63, 0.12), M["vidro"]),
+        caixa("teto_p", (-0.75, 0.0, 0.99), (0.93, 0.70, 0.07),
+              M["metal_claro"]),
+        # ⚠️ A BALSA LEVA BERÇO E CINTAS: o cilindro branco solto no teto
+        # lia-se como um balão (o Bruno). O bujão de verdade assenta num
+        # berço de ferro e é preso por duas cintas.
+        # ⚠️ E É PEQUENA, COM CINTAS ESCURAS: com 0,22 e cintas laranja ela
+        # chamava a atenção do barco inteiro para o teto (o Bruno, na quarta
+        # candidata). O laranja deste barco é a salva-vidas.
+        caixa("balsa_berco_p", (-1.00, 0.12, 1.04), (0.09, 0.18, 0.03),
+              M["metal"]),
+        cone("balsa_p", (-1.00, 0.12, 1.095), 0.048, 0.048, 0.17, 12,
+             M["cabine"], rot=(90, 0, 0)),
+        anel("balsa_cinta_p0", (-1.00, 0.07, 1.095), 0.051, 0.010,
+             M["metal"], rot=(90, 0, 0)),
+        anel("balsa_cinta_p1", (-1.00, 0.17, 1.095), 0.051, 0.010,
+             M["metal"], rot=(90, 0, 0)),
         caixa("mastro_p", (0.25, 0.0, 1.25), (0.09, 0.09, 1.7), M["madeira_esc"]),
         caixa("pau", tuple(PAU_PIVO[k] + dir_pau_p[k] * PAU_BRACO / 2.0
                            for k in range(3)),
               (PAU_BRACO, 0.07, 0.07), M["madeira_esc"], rot=(0, -26, -38)),
-        caixa("rede_p", (-0.15, 0.0, 0.60), (0.7, 0.5, 0.26), M["rede"]),
-        caixa("boia_p", (1.05, 0.30, 0.52), (0.2, 0.2, 0.18), M["boia"])]
+        # ⚠️ O BLOCO LARANJA DA PROA SAIU. Era a `boia_p`, um cubo de 0,2 no
+        # convés, e o Bruno leu-o como «um bloco laranja perdido no casco,
+        # talvez seja um erro»: uma boia que não tem forma de boia é uma
+        # caixa. A cor dela vive agora na salva-vidas, que tem forma.
+        caixa("rede_p", (-0.15, 0.0, 0.60), (0.7, 0.5, 0.26), rede_cinza)]
+    grupos["barco_pesca_traineira"] += marcas_de_pesca(
+        "_p", PESCA, 0.44, 1.0, M["cabine"],
+        pneus=(-0.43, 0.0, 0.43), letras=(0.56, 0.66, 0.82, 0.92, 1.02),
+        bandeira=(-1.34, -0.20, 0.70),
+        rolo=(0.78, -0.15), cabecos=1.18) + [
+        # A boia salva-vidas na parede da cabine que se vê.
+        anel("salva_p", (-0.52, -0.335, 0.63), 0.085, 0.026, M["boia"],
+             rot=(90, 0, 0)),
+    ] + [
+        # As cortiças da rede de cerco, pela borda de cima: é o que faz o
+        # monte cinzento ler como REDE e não como mais uma caixa.
+        caixa("cortica_p%d" % i, (x, -0.22, 0.75), (0.065, 0.065, 0.05),
+              M["amarelo"])
+        for i, x in enumerate((-0.28, -0.15, -0.02, 0.11))]
 
     # O ARRASTEIRO: a POPA é que trabalha, e é ela que tem de estar à frente.
     #
@@ -2114,7 +2406,9 @@ def montar(M: dict) -> dict:
     # tons de metal do tambor — a lição do `pilha_caixotes` aplicada entre
     # peças do mesmo prop, e a razão de as três cinzentas se terem fundido.
     grupos["barco_pesca_arrasteiro"] = casco(
-        "_pa", ARRASTO[0], ARRASTO[1], 0.56, M["casco_pesca"], M["amarelo"],
+        "_pa", ARRASTO[0], ARRASTO[1], 0.56, M["casco_pesca"],
+        material_escorrido("faixa_esc_pa", PALETA["amarelo"],
+                           PALETA["escorrido_amarelo"], escala=7.0 / 1.24),
         vigias=5, postes=8) + [
         # Casa do leme: mais alta e mais estreita que a cabine da traineira, e
         # com fita de vidro. NÃO sai da `superestrutura()` dos cargueiros de
@@ -2187,7 +2481,7 @@ def montar(M: dict) -> dict:
         # atravessado a meia-nau, a competir com o arco pela silhueta. Um
         # tambor de rede é um acessório e vive encostado à popa, junto do
         # pórtico por onde a rede sai.
-        cone("tambor_pa", (-1.02, 0.0, 0.74), 0.15, 0.15, 0.62, 12, M["rede"],
+        cone("tambor_pa", (-1.02, 0.0, 0.74), 0.15, 0.15, 0.62, 12, rede_nylon,
              rot=(90, 0, 0)),
         cone("tamb_pa_bb", (-1.02, -0.32, 0.74), 0.175, 0.175, 0.06, 12,
              M["metal_claro"], rot=(90, 0, 0)),
@@ -2199,17 +2493,66 @@ def montar(M: dict) -> dict:
         caixa("port_pa_bb", (-1.42, -0.40, 1.06), (0.12, 0.12, 1.00), M["laranja"]),
         caixa("port_pa_eb", (-1.42, 0.40, 1.06), (0.12, 0.12, 1.00), M["laranja"]),
         caixa("port_pa_trav", (-1.42, 0.0, 1.60), (0.15, 1.02, 0.14), M["laranja"]),
-        # A rede içada, pendurada por dentro do arco. Era uma CHAPA de `rede`,
-        # e falhou por duas razões ao mesmo tempo: um retângulo não lê como
-        # rede, e o `rede` (#8d9aa6) encosta no `metal_claro` (#6d7880) — duas
-        # peças do mesmo tom fundem-se, que é a lição do `pilha_caixotes`.
-        # Agora é um SACO afunilado em `corda`, que separa por matiz e por
-        # forma: um cone de boca larga e fundo estreito é a silhueta de um
-        # saco de arrasto e de mais nada.
-        cone("rede_pa", (-1.31, 0.0, 1.16), 0.13, 0.33, 0.64, 10, M["corda"]),
+        # A rede. Foi uma CHAPA de `rede` (um retângulo não lê como rede, e o
+        # cinzento fundia-se no `metal_claro`) e depois um CONE de `corda`
+        # pendurado no arco, que se lia como um funil; o Bruno pediu-a
+        # melhor, «e até mudando ela de lugar» (frente 4, família frota).
+        # Agora está onde a rede de um arrasteiro está depois de içada: o
+        # corpo ENROLADO no tambor, em nylon verde, e o SACO cheio no convés
+        # de popa, ao pé do pórtico, preso ao cadernal por um cabo. O arco
+        # continua a ser a silhueta; o cabo é o que o liga ao saco.
+        #
+        #
+        # ⚠️ E O SACO VOLTOU AO ARCO, MEDIDO NAS DUAS OUTRAS POSIÇÕES. No
+        # convés de popa ele ficava tapado pelo tambor e pelo pórtico (o `-x`
+        # é o fundo da imagem); à frente do tambor lia-se como uma mancha
+        # verde-clara, um arbusto (o Bruno, na segunda e na terceira
+        # candidatas). Pendurado do cadernal, a meio do arco, ele recorta-se
+        # contra a água — e é a imagem de um arrasteiro a içar a captura. O
+        # que o separa do funil de antes é a FORMA: redondo e cheio em baixo,
+        # com um gargalo curto onde o cabo o prende.
+        # ⚠️ E SEM CINTAS À VOLTA, E PRATEADO: três gomos verdes com duas
+        # cintas horizontais liam-se como um PINHEIRO enfeitado. O que diz
+        # «peixe» é o prateado a dominar, com o fio da rede fino por cima.
+        # E COMPRIDO: o saco içado estica com o peso, e uma bola redonda com
+        # a mesma malha lia-se como um calhau.
+        bola("saco_pa0", (-1.42, -0.05, 1.17), (0.07, 0.07, 0.08), saco_cheio),
+        bola("saco_pa1", (-1.42, -0.05, 0.90), (0.16, 0.16, 0.24), saco_cheio),
+        caixa("cadernal_pa", (-1.42, -0.05, 1.46), (0.10, 0.09, 0.14),
+              M["metal"]),
+        caixa("cabo_saco_pa", (-1.42, -0.05, 1.32), (0.02, 0.02, 0.16),
+              M["metal_claro"]),
         # Guincho da âncora, na proa. Um convés de proa completamente vazio
         # num barco com este porte lê como barco por acabar.
         caixa("ancora_pa", (1.34, 0.0, 0.66), (0.26, 0.30, 0.20), M["metal_claro"]),
+    ]
+    grupos["barco_pesca_arrasteiro"] += marcas_de_pesca(
+        "_pa", ARRASTO[0], 0.56, 1.24, M["vao"],
+        pneus=(-0.75, -0.25, 0.25),
+        letras=(0.62, 0.74, 0.94, 1.06, 1.18),
+        bandeira=(-1.66, -0.28, 0.80),
+        rolo=(1.10, -0.24), cabecos=1.62) + [
+        anel("salva_pa", (0.80, -0.37, 0.74), 0.10, 0.03, M["boia"],
+             rot=(90, 0, 0)),
+        # A balsa salva-vidas no teto da casa do leme: o bujão branco que
+        # todo barco de pesca registado leva.
+        caixa("balsa_berco_pa", (0.36, 0.18, 1.375), (0.15, 0.30, 0.04),
+              M["metal"]),
+        cone("balsa_pa", (0.36, 0.18, 1.465), 0.075, 0.075, 0.27, 12,
+             M["cabine"], rot=(90, 0, 0)),
+        anel("balsa_cinta_pa0", (0.36, 0.10, 1.465), 0.079, 0.014,
+             M["metal"], rot=(90, 0, 0)),
+        anel("balsa_cinta_pa1", (0.36, 0.26, 1.465), 0.079, 0.014,
+             M["metal"], rot=(90, 0, 0)),
+        # As PORTAS DE ARRASTO, penduradas do pórtico por fora do costado. São
+        # as duas chapas que abrem a boca da rede no fundo, e o que diz
+        # «arrasteiro» a quem já viu um — o arco sozinho diz só «popa alta».
+        caixa("porta_pa_bb", (-1.42, -0.53, 0.86), (0.28, 0.04, 0.17),
+              M["metal"]),
+        caixa("porta_pa_eb", (-1.42, 0.53, 0.86), (0.28, 0.04, 0.17),
+              M["metal"]),
+        caixa("cadeia_pa_bb", (-1.42, -0.52, 1.29), (0.02, 0.02, 0.62),
+              M["metal_claro"]),
     ]
 
     def superestrutura(sufixo, x, z, tam, com_ponte=True):

@@ -1729,6 +1729,11 @@ as três coisas.
 - **Escala de ruído é relativa ao tamanho da peça.** Numa longarina de 0,045
   o número 14 dá uma marca; numa parede de 3 unidades dá setenta, e a parede
   vira lixa.
+  ⚠️ **E A COORDENADA `Object` LÊ A MALHA ANTES DO `scale`.** A `caixa()` e a
+  `bola()` do kit nascem com tamanho 1 e esticam-se pelo `scale`: um padrão
+  numa esfera esticada a 0,16 sai seis vezes mais fino do que o pedido, e o
+  saco do arrasteiro saiu granulado sem um erro (`071`). Padrão medido em
+  unidades de mundo pede a escala aplicada na malha (`transform_apply`).
 - **Padrão dirigido não entra na PALETA, entra peça a peça.** É a regra acima
   aplicada a padrão em vez de a ruído: `madeira` veste o tabuado de 4,5×2,4 e
   também o caixote de 25px, então ripar a entrada da paleta poria oito tábuas
