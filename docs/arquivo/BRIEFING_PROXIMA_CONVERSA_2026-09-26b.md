@@ -22,22 +22,25 @@ guarda nova a desenhar (F4 e F6); o fecho desce para **Sonnet** (`CLAUDE.md`,
 3. O veredito da terceira foi **«Continue nas mensagens»**, com o fecho da
    sessão pedido no mesmo campo. **A quarta passagem é esta conversa.**
 
-A branch tem **dois commits por fundir** (o caderno e o fecho) e **nenhum PR
-aberto** — o Bruno não o pediu.
+A branch virou o **PR #91** (o caderno, o fecho e este apontador), aberto
+pelo Bruno depois do fecho.
 
 ---
 
 ## 1. Comece pelo estado real
 
-- Confira no GitHub se a `claude/jolly-archimedes-7y0a54` virou PR e se foi
-  fundida. **Se não foi, o trabalho da `067` só existe nela**: a branch desta
-  conversa parte dela (`git fetch origin claude/jolly-archimedes-7y0a54`, um
-  ref de cada vez), e nunca de uma `main` sem ela.
+- Confira no GitHub se o **PR #91** foi fundido. **Se não foi, o trabalho da
+  `067` só existe nele**: a branch desta conversa parte da
+  `claude/jolly-archimedes-7y0a54` (`git fetch origin
+  claude/jolly-archimedes-7y0a54`, um ref de cada vez), e nunca de uma `main`
+  sem ela — e uma decisão nova numerada a partir dessa `main` colidiria.
 - Um ref de cada vez no `git fetch`, com o código de saída lido sem cano
   (`CLAUDE.md`, «O que cabe numa sessão»).
 - Veja os PRs abertos do Codex antes de mexer num arquivo de alto conflito
   (`AGENTS.md`) — aqui, o tema e o `PainelNarrativo.gd`.
-- O CI só corre em PR e na `main` (`CLAUDE.md`, «Como rodar, aqui dentro»).
+- O CI só corre em PR e na `main` (`CLAUDE.md`, «Como rodar, aqui dentro»):
+  a primeira corrida sobre este trabalho é a do PR #91 — leia-a, e o
+  antes/depois do `captura.yml`, antes de contar com o verde.
 
 ## 2. A quarta passagem das mensagens — o que o Bruno marcou
 
