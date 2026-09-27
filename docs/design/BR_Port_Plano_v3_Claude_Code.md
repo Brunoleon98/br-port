@@ -1010,8 +1010,9 @@ camiões** (`069`):
   `brport_vs/tools/referencia/`.
 - **Duas transportadoras por serviço**, pela cor da cabine, a faixa e o
   modelo (bicudo nos três médios, cara-chata na carreta), com retrovisores,
-  para-sol, para-choque, faróis, tanque, para-lamas e defletor. A segunda
-  candidata está com ele; os 32 no jogo são a passagem seguinte.
+  para-sol, para-choque, faróis, tanque, para-lamas, defletor, bisel, escape
+  e carreta articulada. **Aceites na quarta candidata**; os 32 no jogo são a
+  passagem seguinte (`069`).
 
 ---
 

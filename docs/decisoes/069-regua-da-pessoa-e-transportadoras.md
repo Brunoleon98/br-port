@@ -26,6 +26,7 @@ devem ser adicionadas»*.
 | As cores da empresa B | **Uma por serviço** |
 | A segunda candidata | **Ajustar**: janelas de casa («tire a divisão»), lameiros invisíveis, defletor em degraus, as cores do granel e do pescado |
 | A terceira | *«Ficou melhor»* — e pediu mais detalhe: marcou **as oito** propostas (cabine e capô em bisel, escape, carreta articulada; cubos, borda e reforços da caçamba, porta e degrau, lanternas do teto) |
+| A quarta | **Aceito** — o desenho fecha; os 32 no jogo são a passagem seguinte |
 
 ## A régua do mundo
 
@@ -95,7 +96,7 @@ de tudo não os põe em `art/props`.
 A `escala_props.gd` põe os três — trabalhador, pedestre, carro — no começo de
 cada fila, e prova os dois novos na primeira («esconder muda a foto?»).
 
-## Os camiões das duas empresas — candidata, fora do jogo
+## Os camiões das duas empresas — aceites na quarta candidata, ainda fora do jogo
 
 `EMPRESAS` no `brp_porto.py`: duas por serviço. O serviço continua a ler-se
 pela carroçaria; a empresa lê-se pelo que está à frente dela.

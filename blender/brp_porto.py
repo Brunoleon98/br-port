@@ -122,12 +122,12 @@ EMPRESAS = {
 }
 
 # ⚠️ OS 16 PNGs DE CAMIÃO QUE O JOGO TEM SÃO DE ANTES DISTO (27/09). A empresa
-# 1 e os detalhes de baixo são a CANDIDATA que está com o Bruno, e ainda não
-# foram gerados para `art/props`: regerar hoje um camião pelo `gerar_brp.py`
-# troca-o pela candidata sem ninguém ter decidido. Os 32 entram juntos, numa
-# passagem própria — a tabela do `Main.gd`, o sorteio, o D35 com o chassi do
-# bicudo e a folha (`docs/decisoes/069`, «O que fica para a passagem
-# seguinte»).
+# 1 e os detalhes de baixo são o desenho que o Bruno ACEITOU na quarta
+# candidata, e ainda não foram gerados para `art/props`: regerar hoje um camião
+# pelo `gerar_brp.py` põe-no no jogo sozinho, sem a tabela que o escolhe. Os 32
+# entram juntos, numa passagem própria — a tabela do `Main.gd`, o sorteio, o
+# D35 com o chassi do bicudo e a folha (`docs/decisoes/069`, «O que fica para
+# a passagem seguinte»).
 
 # O capô do bicudo, antes do `ESCALA_CAMINHAO`: 0,29 de mundo no jogo, ~1,5 m.
 # A primeira candidata tinha 0,30 (~1,1 m), e o Bruno pediu-o «mais
