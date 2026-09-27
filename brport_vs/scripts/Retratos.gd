@@ -111,6 +111,56 @@ static func imagem(retrato: Texture2D, altura: int = TAMANHO) -> TextureRect:
 	return img
 
 
+# ── A CARA NUM CÍRCULO: o avatar da conversa (`docs/decisoes/067`) ──
+#
+# O busto num círculo de 34 px, que é como um telefone mostra um contacto.
+#
+# ⚠️ O QUADRO INTEIRO NUM CÍRCULO NÃO MOSTRA CARA NENHUMA: o PNG tem 768 de
+# lado e o busto só a meio dele, e a primeira versão do avatar saiu um disco
+# bege — a prova das caras (`caras_na_foto.gd`) apanhou-o, com 38 px a mudar
+# ao esconder a cara. O recorte é a CABEÇA, e sai do DESENHO e não de números
+# escritos à mão: a caixa opaca do busto dá a largura dos ombros, a cabeça é
+# um quadrado de 93% dela, ao meio, a descer 17,5% da largura a partir do topo
+# do cabelo. Medido na Dona Cida séria (caixa 430 x 753 a partir de (169, 15)):
+# o recorte (184, 90, 400, 400) mostra o cabelo, os óculos e a gola.
+const CARA_LADO := 0.93
+const CARA_DESCE := 0.175
+# ⚠️ E A CABEÇA É REDUZIDA AQUI, COM LANCZOS, e não pela GPU (terceira
+# passagem da conversa, «cara mais nítida»). O recorte de 400 px mostrado a
+# 44 é uma redução de 9x, e a textura do retrato não tem mipmaps: a GPU
+# amostra um pixel em cada nove e a cara saía serrilhada, os óculos em
+# degraus. Reduzida uma vez na CPU para o dobro do círculo, a GPU só faz o
+# resto — 2x, que o filtro linear aguenta.
+const CARA_PIXELS := 96
+# O arquivo de onde a cabeça saiu, para a prova das caras (`caras_na_foto.gd`)
+# a reconhecer: uma `ImageTexture` não tem caminho próprio.
+const META_RETRATO := &"retrato"
+static var _caras_recortadas := {}
+
+
+## A cabeça de um retrato, reduzida com qualidade a `CARA_PIXELS`. Leva o
+## caminho do PNG na meta `retrato`. Sem imagem na CPU (o renderizador das
+## suítes não a tem), devolve o retrato inteiro.
+static func cabeca(retrato: Texture2D) -> Texture2D:
+	if _caras_recortadas.has(retrato):
+		return _caras_recortadas[retrato]
+	var img := retrato.get_image()
+	if img == null or img.is_empty():
+		return retrato
+	if img.is_compressed():
+		img.decompress()
+	var usado := img.get_used_rect()
+	var lado := int(round(usado.size.x * CARA_LADO))
+	var recorte := img.get_region(Rect2i(
+		int(round(usado.get_center().x - lado / 2.0)),
+		int(round(usado.position.y + usado.size.x * CARA_DESCE)), lado, lado))
+	recorte.resize(CARA_PIXELS, CARA_PIXELS, Image.INTERPOLATE_LANCZOS)
+	var cara := ImageTexture.create_from_image(recorte)
+	cara.set_meta(META_RETRATO, retrato.resource_path)
+	_caras_recortadas[retrato] = cara
+	return cara
+
+
 # ── OS ROSTOS DO TRABALHADOR (`059`) ─────────────────────────────────────────
 #
 # O cartão do rodapé mostra o retrato do `rosto` de cada trabalhador, que é o

@@ -23,9 +23,9 @@ extends "res://scripts/Main.gd"
 var registo: Array[Dictionary] = []
 
 
-func _on_message(text: String, kind: String) -> void:
+func _on_message(text: String, kind: String, assunto: String = "") -> void:
 	registo.append({"texto": text, "kind": kind, "fonte": "sistema", "id": ""})
-	super(text, kind)
+	super(text, kind, assunto)
 
 
 func _cida_agora(id: String) -> void:

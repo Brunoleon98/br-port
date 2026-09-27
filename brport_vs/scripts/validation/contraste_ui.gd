@@ -559,11 +559,29 @@ func _dispensar_paineis(main: Node) -> void:
 # na fila do `Main`.
 func _amostra(qual: String) -> Variant:
 	match qual:
+		# ⚠️ OS QUATRO TONS E AS QUATRO VOZES: desde a `067` o histórico é uma
+		# conversa, e cada tom da nota do porto veste a sua variação — uma
+		# amostra só com o neutro mediria um quarto das cores. Do mais recente
+		# para o mais antigo, como a fila o guarda, e com TODAS as chaves que a
+		# fila escreve: a primeira amostra não tinha `retrato`, o `setup()`
+		# abortava a meio com um SCRIPT ERROR, e a D33 publicava verde sobre a
+		# metade da conversa que chegou a montar.
 		"historico":
 			return [
-				{"texto": "Semana nova. Barcos esperando e dinheiro no caixa."},
-				{"texto": "O píer 2 ficou pronto."},
-				{"texto": "Um barco foi embora sem ser atendido."},
+				{"texto": "Um barco foi embora sem ser atendido.", "kind": "bad",
+					"fonte": "sistema", "dia": 3, "assunto": "rival", "retrato": null},
+				{"texto": "Nenhum trabalhador livre.", "kind": "warn",
+					"fonte": "sistema", "dia": 3, "assunto": "trabalhador", "retrato": null},
+				{"texto": "Dessa vez não. Mas tem mais semanas pela frente.", "kind": "",
+					"fonte": "arlindo", "dia": 3, "assunto": "", "retrato": null},
+				{"texto": "A parcela vence hoje.", "kind": "",
+					"fonte": "ribeiro", "dia": 2, "assunto": "", "retrato": null},
+				{"texto": "O píer 2 ficou pronto.", "kind": "good",
+					"fonte": "sistema", "dia": 2, "assunto": "obra", "retrato": null},
+				{"texto": "Semana nova. Barcos esperando e dinheiro no caixa.",
+					"kind": "", "fonte": "cida", "dia": 1, "assunto": "", "retrato": null},
+				{"texto": "O porto é seu. Um píer de pé e o resto por levantar.",
+					"kind": "", "fonte": "sistema", "dia": 1, "assunto": "porto", "retrato": null},
 			]
 		_:
 			falhas.append("amostra desconhecida: %s" % qual)

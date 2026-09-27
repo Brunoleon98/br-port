@@ -944,13 +944,30 @@ fundo (um navio chegando, a paisagem brasileira) e o logotipo são **dele, no
 ChatGPT**, pelo briefing com os pedidos prontos. O **F16** tranca os espaços e
 a pausa.
 
-**O que resta da frente 3** depois desta família são as telas de texto
-(diário, mensagens, nomes). Os pedidos dele estão na triagem acima: o diário
-com cara de diário e imagens do porto antigo, as mensagens inspiradas em jogos
-de referência e os nomes como a tela depois de «Nova partida» — que agora
-existe. O vocabulário das famílias — cabeçalho com selo, tarja com linha de
-apoio e tom, quadros de número, a barra do HUD, o bloco de contas — vive no
-`PainelNarrativo` e no tema.
+#### ⏳ A QUARTA FAMÍLIA, AS TELAS DE TEXTO (26/09) — o caderno fechou, a conversa não
+
+Escolha do Bruno («resto da frente 3»), com o escopo respondido antes do
+desenho (`067`): o diário é um **caderno com letra à mão**, a tela de nomes é
+a **folha de rosto** dele — e ao «Abrir o porto» a folha vira para a primeira
+entrada —, as fotos do porto antigo saem do **gerador**, pelo
+`art_lab/diario/BRIEFING.md` (até lá, uma provisória), e as mensagens são uma
+**conversa no celular**. O caderno levou três passagens — a terceira com
+couro e papel por shader, a folha que curva, a etiqueta adesiva, a orelha, a
+tinta a variar e a costura da lombada — e foi **aceite** («siga para
+mensagens»). A conversa levou três: balões e notas do porto com o tom; depois
+a cara maior, o ícone do assunto, os balões seguidos e o app Mensagens no
+menu; depois as três vozes no chat (o Sr. Ribeiro e o Arlindo também), a cara
+nítida com a expressão da fala e as notas ao centro. O veredito foi
+**«Continue nas mensagens»**, e a quarta passagem é a **próxima conversa**:
+**balões por pessoa** (o tom de cada personagem) e **telefone maior** (~460 ×
+780, só nas mensagens). O **D37** tranca a página do caderno e o **F17** a
+conversa.
+
+**Fechada a conversa, a frente 3 acaba.** O vocabulário das famílias —
+cabeçalho com selo, tarja com linha de apoio e tom, quadros de número, a barra
+do HUD, o bloco de contas, o caderno e o celular — vive no `PainelNarrativo`,
+no `PainelCelular` e no tema; e o app Diário do celular, fechado, já tem o
+caderno por onde abrir.
 
 ---
 

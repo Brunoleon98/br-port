@@ -57,7 +57,10 @@ func setup(resumo: Dictionary) -> void:
 	# decisão tomada em dois sítios, que é como dois números do mesmo jogo
 	# divergem.
 	var tom: String = Narrativa.tom_do_boletim(_resumo)
-	fala(Narrativa.boletim(tom), Narrativa.retrato("cida", tom))
+	var texto_da_fala := Narrativa.boletim(tom)
+	var cara := Narrativa.retrato("cida", tom)
+	fala(texto_da_fala, cara)
+	falou.emit("cida", texto_da_fala, cara)
 
 	botao_fechar("Fechar o boletim")
 

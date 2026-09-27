@@ -88,7 +88,7 @@ também deve.
 | Se mexeu em… | Rode | Espera |
 |---|---|---|
 | preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | as taxas do `CLAUDE.md` ainda de pé |
-| **qualquer `const` do `GameState.gd`** | o despejo + a tabela (abaixo) | `TABELA OK` |
+| **o `GameState.gd`, em qualquer linha** — a tabela cita a LINHA de cada constante, e um comentário acima delas envelhece-a (`067`) | o despejo + a tabela (abaixo) | `TABELA OK` |
 | **a economia, de qualquer maneira** | `tools/projetar_parcelas.py` (abaixo) | o modelo ainda calibra nos 3 perfis |
 | `tools/gerar_mapa_iso.py` | regerar **os quatro** mapas (abaixo) | `git diff -- brport_vs/art` limpo |
 | `tools/gerar_sons.py` | `python3 tools/gerar_sons.py brport_vs/audio/sfx` | `git diff -- brport_vs/audio` limpo |

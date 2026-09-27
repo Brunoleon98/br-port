@@ -299,6 +299,17 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   **O remédio medido é a pergunta SOZINHA outra vez (2 de 2)**, dizendo que a
   resposta não chegou; antes de escrever a causa de uma falha destas, abra o
   transcript e veja se o par estava no mesmo bloco.
+  ⚠️ **E EM 26/09 (`067`) O PAR FALHOU SEIS VEZES EM OITO.** Oito pranchas
+  com a pergunta no MESMO bloco — conferido no transcript, o mesmo
+  `message.id` — e só a primeira e a última trouxeram resposta; nas outras
+  seis ele escreveu «Recebeu resposta», «Resposta enviada», «Mande as
+  perguntas». Todas as perguntas SOZINHAS da sessão voltaram: **9 de 9**. E o
+  resumo da conversa, feito a meio, escreveu a causa velha («mandou a prancha
+  sem a pergunta») — falsa nas seis. Somado ao da `066`: o par no mesmo bloco
+  voltou **5 de 13** vezes, a pergunta sozinha **11 de 11**. O que se sabe
+  fazer é mandar a pergunta sozinha logo que ele avisa; **a experimentar** (não
+  medido): a prancha num bloco e, sem acabar o turno, a pergunta sozinha no
+  bloco seguinte.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

@@ -267,6 +267,10 @@ func _rodar() -> void:
 	_d36_legenda_do_calendario()
 	_confere("o bloco D36 correu até ao fim", _d36_completo)
 
+	print("=== D37: o diário cabe na página do caderno, na pauta ===")
+	_d37_diario_na_pagina()
+	_confere("o bloco D37 correu até ao fim", _d37_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -5521,3 +5525,60 @@ func _d36_legenda_do_calendario() -> void:
 	root.remove_child(tela)
 	tela.free()
 	_d36_completo = true
+
+
+# ── D37 ── o diário cabe na página do caderno, e a letra cai na pauta
+#
+# O diário virou a primeira página de um caderno (`docs/decisoes/067`): uma
+# página de tamanho FIXO — é o mesmo retângulo da folha de rosto, que vira
+# para ela —, SEM rolagem, e com a letra à mão, que é mais larga do que a do
+# jogo. Duas coisas podiam partir-se sem erro nenhum:
+#
+#  1. O TEXTO NÃO CABER: o `VBoxContainer` da página cresce com o rótulo, a
+#     capa cresce com ela e desce por cima do botão — o F10 não o via, porque
+#     o texto continua DENTRO do cartão. Mede-se com o nome de cais mais
+#     comprido que a tela de nomes aceita, pelo tema e pelas medidas do
+#     caderno, que vivem no `PainelNarrativo` — o mesmo sítio que o monta.
+#     Na primeira medida (letra a 24 px, passo de 38) o texto pedia ~900 px de
+#     uma página de 812, e a captura mostrou-o antes desta guarda existir.
+#  2. A LETRA SAIR DA PAUTA: a data e o texto são dois rótulos, e só caem em
+#     linhas seguidas se o vão entre eles (`CadernoLinhas`) for o
+#     `line_spacing` da letra (`TextoCaderno`). São dois números no tema, e
+#     nada mais os prende um ao outro.
+var _d37_completo := false
+
+
+func _d37_diario_na_pagina() -> void:
+	var GS: Node = root.get_node("GameState")
+	var tema: Theme = load("res://ui/tema_brport.tres")
+	var PN: Dictionary = (load("res://scripts/PainelNarrativo.gd") as GDScript).get_script_constant_map()
+	var capa: StyleBox = tema.get_stylebox("panel", "CadernoCapa")
+	var fonte: Font = tema.get_font("font", "TextoCaderno")
+	var tam: int = tema.get_font_size("font_size", "TextoCaderno")
+	var espaco: int = tema.get_constant("line_spacing", "TextoCaderno")
+
+	_confere("D37: o vão entre a data e o texto é o espaço entre linhas da letra",
+		tema.get_constant("separation", "CadernoLinhas") == espaco,
+		"CadernoLinhas separa %d, TextoCaderno espaça %d" % [
+			tema.get_constant("separation", "CadernoLinhas"), espaco])
+
+	var largura: float = float(PN["CADERNO_LARGURA"]) - capa.get_margin(SIDE_LEFT) \
+		- capa.get_margin(SIDE_RIGHT) - float(PN["PAGINA_MARGEM_PAUTADA"]) \
+		- float(PN["PAGINA_MARGEM_DIR"])
+	var altura: float = float(PN["CADERNO_ALTURA"]) - capa.get_margin(SIDE_TOP) \
+		- capa.get_margin(SIDE_BOTTOM) - float(PN["PAGINA_MARGEM_TOPO"]) \
+		- float(PN["PAGINA_MARGEM_PE"])
+
+	var antes: String = GS.nome_porto
+	GS.nome_porto = "W".repeat(int(GS.NOME_MAX_CARACTERES))
+	var texto: String = load("res://scripts/Narrativa.gd").diario()
+	GS.nome_porto = antes
+	var linha: float = fonte.get_height(tam)
+	var corpo: float = fonte.get_multiline_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT,
+		largura, tam).y
+	var linhas: int = int(round(corpo / linha))
+	# A data ocupa duas linhas da pauta: ela e a linha em branco por baixo.
+	var pede: float = (linhas + 2) * linha + (linhas + 1) * espaco
+	_confere("D37: a primeira página, com o nome mais comprido, cabe na folha (pede %d, cabe %d)"
+		% [int(ceil(pede)), int(altura)], linhas > 10 and pede <= altura)
+	_d37_completo = true

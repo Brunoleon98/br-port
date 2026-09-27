@@ -238,10 +238,15 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    nem aqui, nem no hook, nem nas três skills, nem no `COMO_RODAR`. Quem
    manda hoje é o `testes.yml`, e `tools/conferir_docs.py` reprova quem
    divergir dele (`docs/decisoes/032`).
-3. Mexeu em QUALQUER `const` do `GameState.gd`? Regere a tabela dos números —
+3. Mexeu no `GameState.gd`, em QUALQUER linha? Regere a tabela dos números —
    `despejar_constantes.gd` + `tools/gerar_tabela_numeros.py --contra-godot`,
    espera `TABELA OK`. Ela é gerada do código, e o CI reprova se envelhecer:
    os números já viveram no GDD e nas constantes ao mesmo tempo, e divergiram.
+   ⚠️ **E ELA ENVELHECE SEM CONSTANTE NENHUMA MUDAR.** A coluna «Onde» cita a
+   LINHA de cada uma (`GameState.gd:107`), e em 26/09 um comentário de sete
+   linhas no sinal `message`, acima delas, reprovou o PR #91 com os 48
+   valores intactos. Esta linha dizia «mexeu numa `const`», e o fecho
+   seguiu-a à letra (`067`).
 4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
    O balanceamento medido é **100% / 80,2% / 37,3%** por perfil, com a mediana
    do jogador mediano em R$716.179 contra uma parcela de R$530.000. Mexer sem
@@ -2422,6 +2427,18 @@ as três coisas.
   sete linhas com o `;` só na primeira partiu o parse do tema inteiro: as cenas
   abriram sem ele, e a fumaça passou verde porque conferia que o arquivo
   EXISTE. Hoje o F1 carrega todo `.tres` (`docs/decisoes/064`).
+- ⚠️ **UM `Container` DESFAZ O GIRO DO FILHO, e não dá erro.** Ao arrumá-lo
+  (`fit_child_in_rect`) ele reescreve a `rotation` e a `scale`: a foto colada
+  e a etiqueta do caderno nasceram rodadas num `VBoxContainer` e saíram a
+  direito, com o giro escrito ao lado. Peça rodada vive num `Control` simples
+  que o contentor arruma, e é ela, lá dentro, que roda (`067`).
+- ⚠️ **SHADER SÓ COMPILA ONDE É DESENHADO — e as suítes headless não desenham
+  nada.** O primeiro shader da virada da folha redefinia `PI`, e as seis
+  suítes passaram verdes; quem o apanhou foi a captura, com `SHADER ERROR` e
+  backtrace. **Shader novo leva um tiro na bateria que o DESENHE**, que é a
+  única prova de que compila — o `nomes_virando` fotografa a folha a meio da
+  curva (`067`). E o `ColorRect` que o carrega tem cor de alfa zero: a régua
+  do contraste lê a `color` dele como o fundo do texto, e o shader não a muda.
 
 ---
 

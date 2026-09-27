@@ -508,6 +508,11 @@ tirar caixa      1 13 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/caixa.
 #
 # Ela monta no `_ready()` como o Diário, portanto não precisa de `setup()`.
 tirar nomes   - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/TelaNomes.tscn "$SAIDA/nomes.png"
+# A MESMA FOLHA A VIRAR (`067`): o «Abrir» escreve a entrada na página de
+# baixo e a folha de rosto curva por cima dela. A curva é um SHADER, e shader
+# só compila onde é usado — nenhuma suíte headless o compila, e esta foto é a
+# única prova de que ele compila e desenha. Sai a meio da curva.
+tirar nomes_virando - - --script res://tools/capturar_cena.gd -- res://scenes/panels/TelaNomes.tscn "$SAIDA/nomes_virando.png" --tocar=Abrir
 # O FIM DA FASE 1, primeiro tempo — a narração, que é o painel com mais
 # história por fotografar deste projeto. Ele deu 430px a um texto que pede 847:
 # o remate ("Em quem tá olhando.", a linha para onde a peça inteira anda) nunca

@@ -30,6 +30,7 @@ entra no pacote exportado. Uma candidata passa daqui para lá pelo caminho da
 | `retratos/arlindo/v1/`–`v6/` | O Capitão Arlindo no kit afinado, de ângulos: seis voltas até à v6, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas | Claude Code, 24/09 |
 | `retratos/trabalhador/v1/`–`v6/` | O trabalhador do rodapé em BUSTO no kit afinado: seis voltas até à v6, que o Bruno aceitou na foto do jogo — o script de cada volta e as pranchas (hoje × candidatas) | Claude Code, 24/09 |
 | `tela_inicial/BRIEFING.md` | O briefing da ilustração da tela inicial, que é também o papel de parede do celular (`066`): o que ela é, as faixas que a interface tapa, medidas na tela montada, e como entra no jogo. A peça é do Bruno, pelo gerador de imagem | Claude Code, 26/09 |
+| `diario/BRIEFING.md` | O briefing da foto do porto de antigamente, colada na folha de rosto do diário — a tela dos nomes (`067`): o que ela é (o «antes» do jogo, e não a ruína), as medidas medidas na folha montada, e como entra no jogo. A peça é do Bruno, pelo gerador de imagem | Claude Code, 26/09 |
 | `retratos/trabalhador_variacoes/v1/`–`v3/` | As 30 variações do trabalhador (2 sexos × 3 idades × 5 cores do IBGE), pelo `trabalhador(M, cara, perfil)`: três voltas até à v3, que o Bruno aceitou (`059`) — o script, as duas folhas de contato e a régua do contraste das feições | Claude Code, 24/09 |
 
 O pacote de 23/09 trazia 111 arquivos; **103 estão aqui, byte a byte** (confira

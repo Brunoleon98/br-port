@@ -31,7 +31,14 @@ signal estrutura_comprada(id: String)
 signal rival_offer_triggered(dock_index: int)
 signal debt_due(amount: int)
 signal game_over(won: bool, reason: String)
-signal message(text: String, kind: String)
+# ⚠️ O TERCEIRO ARGUMENTO É O ASSUNTO (`docs/decisoes/067`): de que fala o aviso
+# — trabalhador, doca, rival, cliente, negocio, semana, dinheiro, obra. Quem o sabe é
+# QUEM EMITE, e por isso ele nasce aqui e não se adivinha do texto depois: a
+# conversa do celular põe o ícone do assunto em cada nota do porto, e ler
+# «trabalhador» dentro de uma frase seria a mesma aposta frágil que o F9
+# recusa para as contagens. O F17 do fumaça confere que todo assunto emitido
+# tem ícone.
+signal message(text: String, kind: String, assunto: String)
 signal state_loaded()
 # Uma semana fechou, com o resumo por fonte. Existe separado de `message`
 # porque o Boletim Financeiro da Dona Cida é uma TELA, não uma faixa de texto —
@@ -922,16 +929,16 @@ func assign_worker(worker_id: int, dock_index: int, avisar: bool = true) -> bool
 	var dock: Dictionary = docks[dock_index]
 	if dock["boat"] == null:
 		if avisar:
-			message.emit("Doca vazia — não há barco aqui.", "warn")
+			message.emit("Doca vazia — não há barco aqui.", "warn", "doca")
 		return false
 	if dock["worker_id"] != null:
 		if avisar:
-			message.emit("Essa doca já tem trabalhador operando.", "warn")
+			message.emit("Essa doca já tem trabalhador operando.", "warn", "doca")
 		return false
 	var boat: Dictionary = dock["boat"]
 	if boat.get("rival", false) and not boat.get("matched", false):
 		if avisar:
-			message.emit("Resolva a oferta do rival antes de alocar.", "warn")
+			message.emit("Resolva a oferta do rival antes de alocar.", "warn", "rival")
 		return false
 	var worker = _find_worker(worker_id)
 	if worker == null or int(worker["busy_turns"]) > 0:
@@ -943,11 +950,11 @@ func assign_worker(worker_id: int, dock_index: int, avisar: bool = true) -> bool
 	var already := worker_dock_index(worker_id)
 	if already >= 0:
 		if avisar:
-			message.emit("Trabalhador #%d já está na Doca %d. Toque na doca para liberá-lo." % [worker_id, already + 1], "warn")
+			message.emit("Trabalhador #%d já está na Doca %d. Toque na doca para liberá-lo." % [worker_id, already + 1], "warn", "trabalhador")
 		return false
 	dock["worker_id"] = worker_id
 	if avisar:
-		message.emit("Trabalhador alocado. Avance o dia para operar.", "good")
+		message.emit("Trabalhador alocado. Avance o dia para operar.", "good", "trabalhador")
 	roster_changed.emit()
 	save_game()
 	return true
@@ -997,7 +1004,7 @@ func assign_all_free_workers() -> int:
 		if sobraram > 0:
 			texto += " Faltou gente para %s." % Narrativa.concordar(
 				sobraram, "doca", "docas")
-		message.emit(texto, "good")
+		message.emit(texto, "good", "trabalhador")
 	return postos
 
 
@@ -1086,11 +1093,11 @@ func release_worker(dock_index: int) -> bool:
 		return false
 	var boat = dock["boat"]
 	if boat != null and int(boat["progress"]) > 0:
-		message.emit("A operação já começou — não dá para tirar o trabalhador agora.", "warn")
+		message.emit("A operação já começou — não dá para tirar o trabalhador agora.", "warn", "trabalhador")
 		return false
 	var worker_id := int(dock["worker_id"])
 	dock["worker_id"] = null
-	message.emit("Trabalhador #%d liberado." % worker_id, "")
+	message.emit("Trabalhador #%d liberado." % worker_id, "", "trabalhador")
 	roster_changed.emit()
 	save_game()
 	return true
@@ -1151,7 +1158,7 @@ func _negociar(acao: String) -> String:
 		_perder_para_rival()
 		return "perdido"
 
-	message.emit("O cliente não gostou — última tentativa antes de ele ir embora.", "warn")
+	message.emit("O cliente não gostou — última tentativa antes de ele ir embora.", "warn", "cliente")
 	save_game()
 	return "insistiu"
 
@@ -1211,7 +1218,7 @@ func _fechar_negocio(boat: Dictionary, desconto: float, aviso: String) -> void:
 	metrics["rival_matched"] += 1
 	_close_rival_offer()
 	_change_reputation(REPUTATION_GAIN_RIVAL_MATCHED)
-	message.emit("%s — barco fechado por %s." % [aviso, moeda(valor)], "good")
+	message.emit("%s — barco fechado por %s." % [aviso, moeda(valor)], "good", "negocio")
 	roster_changed.emit()
 	save_game()
 
@@ -1225,7 +1232,7 @@ func _perder_para_rival() -> void:
 	dock["worker_id"] = null
 	_close_rival_offer()
 	_change_reputation(-REPUTATION_LOSS_RIVAL_REFUSED)
-	message.emit("O cliente perdeu a paciência e foi para o Porto Farol.", "bad")
+	message.emit("O cliente perdeu a paciência e foi para o Porto Farol.", "bad", "rival")
 	roster_changed.emit()
 	save_game()
 
@@ -1334,7 +1341,7 @@ func _process_week_end(ended_week: int, adiar_resumo: bool = false) -> void:
 	cash -= cost
 	metrics["pier_income"] = int(metrics.get("pier_income", 0)) + pier_income
 	cash_changed.emit(cash)
-	message.emit("Semana %d encerrada — +%s do aluguel do píer, -%s em custos (salários + manutenção)." % [ended_week, moeda(pier_income), moeda(cost)], "warn")
+	message.emit("Semana %d encerrada — +%s do aluguel do píer, -%s em custos (salários + manutenção)." % [ended_week, moeda(pier_income), moeda(cost)], "warn", "semana")
 
 	# O resumo sai DEPOIS de tudo estar contado e ANTES de a semana zerar. A
 	# média das anteriores vai no resumo em vez de ser recalculada por quem o
@@ -1530,7 +1537,7 @@ func pay_debt() -> void:
 	if phase != "debt_payment":
 		return
 	if cash < PARCELA_AMOUNT:
-		message.emit("Dinheiro insuficiente para pagar a parcela.", "bad")
+		message.emit("Dinheiro insuficiente para pagar a parcela.", "bad", "dinheiro")
 		return
 	# `advance_turn()` já fez a virada do dia antes de suspender em
 	# "debt_payment", então o dia em que a dívida venceu é `dia_anterior` —
@@ -1619,7 +1626,7 @@ func _baixar_parcela(no_dia: Dictionary, valor: int) -> void:
 	no_dia["parcela"] += valor
 	parcela_paid = true
 	cash_changed.emit(cash)
-	message.emit("Parcela de %s paga ao Sr. Ribeiro." % moeda(valor), "good")
+	message.emit("Parcela de %s paga ao Sr. Ribeiro." % moeda(valor), "good", "dinheiro")
 
 
 func fail_debt() -> void:
@@ -1723,7 +1730,7 @@ func comprar_estrutura(id: String) -> bool:
 	cash_changed.emit(cash)
 	roster_changed.emit()
 	estrutura_comprada.emit(id)
-	message.emit("%s — pronto. %s" % [def["nome"], def["desc"]], "good")
+	message.emit("%s — pronto. %s" % [def["nome"], def["desc"]], "good", "obra")
 	save_game()
 	return true
 

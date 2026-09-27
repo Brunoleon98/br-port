@@ -150,7 +150,7 @@ func _ready() -> void:
 	# obrigaria a mirar o que ela nem sabe que existe.
 	_message_cartao.gui_input.connect(_on_faixa_input)
 	if _message_label.text == "":
-		_on_message("O porto é seu. Um píer de pé e o resto por levantar.", "")
+		_on_message("O porto é seu. Um píer de pé e o resto por levantar.", "", "porto")
 
 	# A ABERTURA VEM ANTES DE TUDO. Partida nova pergunta os dois nomes, e a
 	# escolha é irrevogável (GDD 7). É overlay e não fase do jogo de propósito:
@@ -1955,8 +1955,8 @@ func _on_alocar_pressed() -> void:
 # última escrita deixou lá. Medido antes de mexer, 15 partidas: das 861
 # escritas o jogador via 597, e 264 eram apagadas no mesmo frame em que
 # nasciam (`tools/medir_fila_mensagens.gd`, `docs/decisoes/034`).
-func _on_message(text: String, kind: String) -> void:
-	_fila.enfileirar(text, kind, "sistema")
+func _on_message(text: String, kind: String, assunto: String = "") -> void:
+	_fila.enfileirar(text, kind, "sistema", GameState.turn, assunto)
 
 
 # Quem escreve na tela, e só ele. Chamado pela fila quando chega a vez.
@@ -2087,7 +2087,8 @@ func _cida(id: String) -> void:
 func _cida_agora(id: String) -> void:
 	var linha := Narrativa.cida(id)
 	if linha != "":
-		_fila.enfileirar(linha, "", "cida")
+		_fila.enfileirar(linha, "", "cida", GameState.turn, "",
+			Narrativa.retrato("cida", id))
 
 
 # A REPUTAÇÃO SÓ FALA QUANDO CRUZA UMA FAIXA, não a cada ponto. Ela mexe-se em
@@ -2282,7 +2283,18 @@ func _abrir_painel(cena: PackedScene) -> Control:
 	var painel: Control = cena.instantiate()
 	painel.theme = theme
 	_overlay_layer.add_child(painel)
+	# O QUE UM PERSONAGEM DIZ NUM PAINEL fica no histórico, e a conversa do
+	# celular mostra-o no balão dele (`docs/decisoes/067`). Liga-se ANTES de o
+	# chamador fazer `setup()`, que é onde a primeira fala sai.
+	if painel.has_signal("falou"):
+		painel.connect("falou", _ao_falar)
 	return painel
+
+
+# Grava sem mostrar: a fala já está na tela do painel, e passá-la também pela
+# faixa seria dizê-la duas vezes.
+func _ao_falar(personagem: String, texto: String, retrato: Texture2D) -> void:
+	_fila.registrar(texto, personagem, GameState.turn, retrato)
 
 
 func _on_upgrade_pressed() -> void:
@@ -2383,7 +2395,11 @@ func _on_menu_pressed() -> void:
 
 
 func _on_menu_app_pedido(cena: String) -> void:
-	_abrir_painel(load(cena) as PackedScene)
+	var painel := _abrir_painel(load(cena) as PackedScene)
+	# O APP DE MENSAGENS mostra o histórico da faixa, e o histórico mora aqui,
+	# na fila — é a mesma chamada do toque na faixa (`_on_faixa_input`).
+	if cena == PainelMensagensScene.resource_path:
+		painel.call("setup", _fila.historico)
 
 
 func _on_rival_offer_triggered(dock_index: int) -> void:
