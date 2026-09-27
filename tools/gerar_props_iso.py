@@ -283,8 +283,12 @@ PALETA = {
     # As cabines da segunda transportadora (`069`). Escolhidas contra o
     # ASFALTO (#49535b, luminância 0,084) pelo VALOR e não só pelo matiz: o
     # vermelho da primeira candidata separava-se dele só pela cor, e o Bruno
-    # apontou-o. Estas medem 0,25 e 0,32, três a quatro vezes o chão.
-    "cab_verde": "#3e9a5c", "cab_azul_claro": "#4da3c7",
+    # apontou-o. O verde mede 0,25 e o coral 0,21 — duas a três vezes o chão.
+    "cab_verde": "#3e9a5c", "cab_coral": "#d9534f",
+    # O VIDRO DE CAMIÃO: escuro e inteiro. O `vidro` do kit é o de CASA —
+    # azul-claro, com moldura e travessa —, e no camião lia como janela de casa
+    # (o Bruno, na segunda candidata). Para-brisa de camião lê escuro.
+    "vidro_cab": "#34495a",
     # O PISO que sobra quando as paredes caem: o `parede_suja` levado ao
     # escuro. Sem ele a ruína inteira sai num cinzento só e as peças fundem-se
     # umas nas outras — a mesma regra do caixote que era `madeira` num tabuado
