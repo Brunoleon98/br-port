@@ -637,31 +637,69 @@ const CEDENCIA_ESPERA := 0.5
 ## SENTIDOS. O `_retorno` é o caminhão com a frente virada — sobe a rua e
 ## mostra a traseira à câmera. Não é espelho do que desce: espelhar mandaria o
 ## lado para a face que esta câmera não vê.
+##
+## ⚠️ E CADA SERVIÇO TEM DUAS TRANSPORTADORAS (27/09, `docs/decisoes/069` e
+## `070`): o índice da lista é a EMPRESA, e o que as distingue é a cor da
+## cabine, a faixa e o modelo — o bicudo só nos três médios da empresa 1. O
+## serviço continua a ler-se pela carroçaria. Quem escolhe a empresa de cada
+## viagem é `_empresa_da_vez()`, e o D13 exige que as duas alcancem a rua.
 const CAMINHOES := {
-	"pescado": {
-		"my": preload("res://art/props/caminhao_pescado.png"),
-		"mx": preload("res://art/props/caminhao_pescado_mx.png"),
-		"my_retorno": preload("res://art/props/caminhao_pescado_retorno.png"),
-		"mx_retorno": preload("res://art/props/caminhao_pescado_retorno_mx.png"),
-	},
-	"armazenagem": {
-		"my": preload("res://art/props/caminhao_armazenagem.png"),
-		"mx": preload("res://art/props/caminhao_armazenagem_mx.png"),
-		"my_retorno": preload("res://art/props/caminhao_armazenagem_retorno.png"),
-		"mx_retorno": preload("res://art/props/caminhao_armazenagem_retorno_mx.png"),
-	},
-	"conteiner": {
-		"my": preload("res://art/props/caminhao_conteiner.png"),
-		"mx": preload("res://art/props/caminhao_conteiner_mx.png"),
-		"my_retorno": preload("res://art/props/caminhao_conteiner_retorno.png"),
-		"mx_retorno": preload("res://art/props/caminhao_conteiner_retorno_mx.png"),
-	},
-	"granel": {
-		"my": preload("res://art/props/caminhao_granel.png"),
-		"mx": preload("res://art/props/caminhao_granel_mx.png"),
-		"my_retorno": preload("res://art/props/caminhao_granel_retorno.png"),
-		"mx_retorno": preload("res://art/props/caminhao_granel_retorno_mx.png"),
-	},
+	"pescado": [
+		{
+			"my": preload("res://art/props/caminhao_pescado.png"),
+			"mx": preload("res://art/props/caminhao_pescado_mx.png"),
+			"my_retorno": preload("res://art/props/caminhao_pescado_retorno.png"),
+			"mx_retorno": preload("res://art/props/caminhao_pescado_retorno_mx.png"),
+		},
+		{
+			"my": preload("res://art/props/caminhao_pescado_b.png"),
+			"mx": preload("res://art/props/caminhao_pescado_b_mx.png"),
+			"my_retorno": preload("res://art/props/caminhao_pescado_b_retorno.png"),
+			"mx_retorno": preload("res://art/props/caminhao_pescado_b_retorno_mx.png"),
+		},
+	],
+	"armazenagem": [
+		{
+			"my": preload("res://art/props/caminhao_armazenagem.png"),
+			"mx": preload("res://art/props/caminhao_armazenagem_mx.png"),
+			"my_retorno": preload("res://art/props/caminhao_armazenagem_retorno.png"),
+			"mx_retorno": preload("res://art/props/caminhao_armazenagem_retorno_mx.png"),
+		},
+		{
+			"my": preload("res://art/props/caminhao_armazenagem_b.png"),
+			"mx": preload("res://art/props/caminhao_armazenagem_b_mx.png"),
+			"my_retorno": preload("res://art/props/caminhao_armazenagem_b_retorno.png"),
+			"mx_retorno": preload("res://art/props/caminhao_armazenagem_b_retorno_mx.png"),
+		},
+	],
+	"conteiner": [
+		{
+			"my": preload("res://art/props/caminhao_conteiner.png"),
+			"mx": preload("res://art/props/caminhao_conteiner_mx.png"),
+			"my_retorno": preload("res://art/props/caminhao_conteiner_retorno.png"),
+			"mx_retorno": preload("res://art/props/caminhao_conteiner_retorno_mx.png"),
+		},
+		{
+			"my": preload("res://art/props/caminhao_conteiner_b.png"),
+			"mx": preload("res://art/props/caminhao_conteiner_b_mx.png"),
+			"my_retorno": preload("res://art/props/caminhao_conteiner_b_retorno.png"),
+			"mx_retorno": preload("res://art/props/caminhao_conteiner_b_retorno_mx.png"),
+		},
+	],
+	"granel": [
+		{
+			"my": preload("res://art/props/caminhao_granel.png"),
+			"mx": preload("res://art/props/caminhao_granel_mx.png"),
+			"my_retorno": preload("res://art/props/caminhao_granel_retorno.png"),
+			"mx_retorno": preload("res://art/props/caminhao_granel_retorno_mx.png"),
+		},
+		{
+			"my": preload("res://art/props/caminhao_granel_b.png"),
+			"mx": preload("res://art/props/caminhao_granel_b_mx.png"),
+			"my_retorno": preload("res://art/props/caminhao_granel_b_retorno.png"),
+			"mx_retorno": preload("res://art/props/caminhao_granel_b_retorno_mx.png"),
+		},
+	],
 }
 
 ## ONDE CADA CAMIÃO SAI DA RUA PARA ENTRAR NO BERÇO.
@@ -705,6 +743,9 @@ const BERCO_RECUO := 1.25
 # que trocasse de carroçaria a meio da rua é um camião a transformar-se à
 # vista. Índice = índice do nó `Caminhao<N>`.
 var _carga_na_estrada: Array[String] = []
+# E a EMPRESA que a leva, escolhida no mesmo instante e pela mesma razão: uma
+# cabine que mudasse de cor a meio da rua é outro camião a transformar-se.
+var _empresa_na_estrada: Array[int] = []
 
 # QUEM ESTÁ NO BERÇO de cada doca — o nó do camião, ou `null`. É a TRAVA: um
 # berço tem lugar para um camião, e com dois sentidos a poderem entrar, dois
@@ -743,9 +784,13 @@ var _base_do_caminhao: Array[Vector2] = []
 ## dupla: andar em `-my` ou em `-mx` é ir com a frente virada, e pede a
 ## silhueta `_retorno`. `de_re` é a exceção de quem recua — o camião que larga
 ## o berço de marcha-atrás anda em `-mx` com a frente virada para `+mx`.
+##
+## ⚠️ A EMPRESA É OBRIGATÓRIA, e não tem valor por omissão: argumento com
+## omissão é o que ninguém passa (`047`), e aqui a omissão seria a empresa 0 a
+## ocupar a rua inteira com as dezasseis da 1 geradas e por ver.
 func silhueta_do_trecho(de: Vector2, para: Vector2, motivo: String,
-		de_re := false) -> Texture2D:
-	var par: Dictionary = CAMINHOES[motivo]
+		empresa: int, de_re := false) -> Texture2D:
+	var par: Dictionary = CAMINHOES[motivo][empresa]
 	var em_mx: bool = abs(para.x - de.x) > 0.01
 	var recua: bool = (para.x < de.x) if em_mx else (para.y < de.y)
 	if de_re:
@@ -1122,6 +1167,40 @@ func _motivo_da_estrada(i: int) -> String:
 	return String(motivos[i % motivos.size()])
 
 
+## A VEZ DE CADA TRANSPORTADORA: quantas viagens de cada serviço já começaram.
+##
+## As duas empresas de um serviço REVEZAM-SE — a primeira viagem de pescado é
+## da 0, a segunda da 1, e assim por diante, com um contador por serviço
+## (`docs/decisoes/070`). Sem sorteio, pela mesma razão da carga: o
+## `RandomNumberGenerator` do jogo é o que o simulador de balanceamento mede, e
+## um sorteio a mais aqui mudaria as 600 partidas por perfil e todas as fotos.
+##
+## ⚠️ O CONTADOR É POR SERVIÇO, e não por camião. Uma vez por camião que
+## seguisse a conta da roda — `(j + voltas) % 2` — casaria com ela, porque a
+## roda do retorno escolhe a carga por `(j + voltas) % motivos` e no porto em
+## ruínas há DOIS motivos: medido no D35, o pescado do retorno saiu sempre da
+## empresa 0. `voltas % 2` sozinho passou, com os dois camiões a repartirem
+## as empresas em contrafase — uma propriedade de haver dois, e não da chave.
+## Por serviço, as duas alcançam a rua em qualquer porto por construção (a
+## `059`: a chave só alcança tantas peças quantos valores ela toma).
+var _vez_da_empresa: Dictionary = _vez_zerada()
+
+
+static func _vez_zerada() -> Dictionary:
+	var vez := {}
+	for motivo in CAMINHOES:
+		vez[motivo] = 0
+	return vez
+
+
+## A empresa da viagem que começa agora, e passa a vez. Acesso DIRETO ao
+## contador: um motivo sem camião rebenta aqui, como rebentaria na tabela.
+func _empresa_da_vez(motivo: String) -> int:
+	var n: int = _vez_da_empresa[motivo]
+	_vez_da_empresa[motivo] = n + 1
+	return n % (CAMINHOES[motivo] as Array).size()
+
+
 ## Os motivos que o PORTO consegue receber hoje — os das classes já
 ## destravadas (`docs/decisoes/009`), sem repetir.
 func _motivos_do_porto() -> Array:
@@ -1145,6 +1224,7 @@ func _motivos_do_porto() -> Array:
 var _base_do_retorno: Array[Vector2] = []
 var _voltas_do_retorno: Array[int] = []
 var _carga_do_retorno: Array[String] = []
+var _empresa_do_retorno: Array[int] = []
 
 
 ## `a` vem depois de `b` no RETORNO — o espelho de `_adiante()`: ele sobe, logo
@@ -1219,6 +1299,7 @@ func _animar_retorno() -> void:
 	_voltas_do_retorno.resize(n)
 	_voltas_do_retorno.fill(0)
 	_carga_do_retorno.resize(n)
+	_empresa_do_retorno.resize(n)
 	# A mesma repartição da ida: ciclo igual para os dois, e a espera de
 	# arranque acerta cada um na sua metade, uma vez só.
 	var ciclo := CAMINHAO_INTERVALO + _tempo_dos_pontos(_pontos_do_retorno(ROTA_RETORNO[0]))
@@ -1251,6 +1332,7 @@ func _subir(j: int, desde: Vector2, pausa_apos: float) -> void:
 	# apanhado pelo D35 num mutante que só mexia no tempo de outra regra.
 	caminhao.position = _base_do_retorno[j] + tela_da_rota(desde, CAMINHAO_RETORNO_ORIGENS[j])
 	_carga_do_retorno[j] = _motivo_do_retorno(j)
+	_empresa_do_retorno[j] = _empresa_da_vez(_carga_do_retorno[j])
 	_voltas_do_retorno[j] += 1
 	_seguir_subida(j, desde, pausa_apos)
 
@@ -1296,6 +1378,7 @@ func _animar_caminhoes() -> void:
 		return
 	var n := CAMINHAO_ORIGENS.size()
 	_carga_na_estrada.resize(n)
+	_empresa_na_estrada.resize(n)
 	_base_do_caminhao.resize(n)
 	_ocupante_do_berco.resize(ACESSOS_DOCA.size())
 	_ocupante_do_berco.fill(null)
@@ -1389,6 +1472,7 @@ func _entrar_no_mapa(i: int, desde: Vector2, pausa_apos: float) -> void:
 	# do mapa neste instante; um camião que trocasse de carroçaria a meio da rua
 	# é um camião a transformar-se à vista.
 	_carga_na_estrada[i] = _motivo_da_estrada(i)
+	_empresa_na_estrada[i] = _empresa_da_vez(_carga_na_estrada[i])
 
 	# ⚠️ ELE PASSA SEMPRE PELA VIRADA DO ACESSO, visite ou não.
 	#
@@ -1537,23 +1621,25 @@ func _no_do_retorno(j: int) -> TextureRect:
 func _percorrer(caminhao: TextureRect, indice: int, pontos: Array,
 		ao_fim: Callable, re_no_primeiro := false) -> void:
 	_percorrer_de(caminhao, _base_do_caminhao[indice], CAMINHAO_ORIGENS[indice],
-		_carga_na_estrada[indice], pontos, ao_fim, re_no_primeiro)
+		_carga_na_estrada[indice], _empresa_na_estrada[indice], pontos, ao_fim,
+		re_no_primeiro)
 
 
 ## O mesmo, para o camião `j` do retorno.
 func _percorrer_retorno(j: int, pontos: Array, ao_fim: Callable,
 		re_no_primeiro := false) -> void:
 	_percorrer_de(_no_do_retorno(j), _base_do_retorno[j], CAMINHAO_RETORNO_ORIGENS[j],
-		_carga_do_retorno[j], pontos, ao_fim, re_no_primeiro)
+		_carga_do_retorno[j], _empresa_do_retorno[j], pontos, ao_fim,
+		re_no_primeiro)
 
 
 ## O mesmo percurso, para qualquer camião: os da ida e os do retorno guardam a
 ## base, a origem e a carga em listas diferentes, e o movimento é um só.
 ##
-## A carga entra como VALOR, e pode: ela é escolhida à entrada do mapa e não
-## muda até à volta seguinte (ver `_entrar_no_mapa`).
+## A carga e a empresa entram como VALOR, e podem: são escolhidas à entrada do
+## mapa e não mudam até à volta seguinte (ver `_entrar_no_mapa`).
 func _percorrer_de(caminhao: TextureRect, base: Vector2, origem_do_no: Vector2,
-		carga: String, pontos: Array, ao_fim: Callable,
+		carga: String, empresa: int, pontos: Array, ao_fim: Callable,
 		re_no_primeiro := false) -> void:
 	var tw := caminhao.create_tween()
 	tw.tween_callback(func() -> void:
@@ -1563,7 +1649,7 @@ func _percorrer_de(caminhao: TextureRect, base: Vector2, origem_do_no: Vector2,
 		# ser num trecho reto; com três origens um `my` fixo poria um caminhão
 		# atravessado no primeiro frame de quem começasse num cotovelo.
 		caminhao.texture = silhueta_do_trecho(pontos[0],
-			pontos[min(1, pontos.size() - 1)], carga, re_no_primeiro)
+			pontos[min(1, pontos.size() - 1)], carga, empresa, re_no_primeiro)
 		_ordenar_por_profundidade(caminhao)
 	)
 	for tr in trechos_de(pontos):
@@ -1577,7 +1663,7 @@ func _percorrer_de(caminhao: TextureRect, base: Vector2, origem_do_no: Vector2,
 		# como curva em vez de o caminhão deslizar de lado. Pergunta-se pelo
 		# trecho ORIGINAL: a meia diagonal leva a silhueta do eixo a que pertence.
 		tw.tween_callback(func() -> void:
-			caminhao.texture = silhueta_do_trecho(de, para, carga, de_re)
+			caminhao.texture = silhueta_do_trecho(de, para, carga, empresa, de_re)
 		)
 		tw.tween_method(func(t: float) -> void:
 			caminhao.position = origem.lerp(destino, t)

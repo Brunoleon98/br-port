@@ -284,9 +284,11 @@ func familias(ancoras: Dictionary) -> Dictionary:
 	var retorno: Array = []
 	for motivo in GS.MOTIVOS:
 		if mk["CAMINHOES"].has(motivo):
-			for eixo in ["my", "mx"]:
-				camioes.append(mk["CAMINHOES"][motivo][eixo])
-				retorno.append(mk["CAMINHOES"][motivo][eixo + "_retorno"])
+			# As duas transportadoras de cada serviço (`070`) ocupam o mesmo nó.
+			for empresa in mk["CAMINHOES"][motivo]:
+				for eixo in ["my", "mx"]:
+					camioes.append(empresa[eixo])
+					retorno.append(empresa[eixo + "_retorno"])
 
 	# A vaga é a PRIMEIRA — as três caem no mesmo tipo de chão (o berço, que é
 	# água costeira), e repetir os nove cascos por doca daria 27 células a
@@ -322,9 +324,10 @@ func papeis() -> Dictionary:
 				out[(t as Texture2D).resource_path.get_file()] = "classe " + String(classe)
 	var camioes: Dictionary = mk["CAMINHOES"]
 	for motivo in camioes:
-		for eixo in camioes[motivo]:
-			out[(camioes[motivo][eixo] as Texture2D).resource_path.get_file()] = \
-				"eixo " + String(eixo)
+		for empresa in camioes[motivo]:
+			for eixo in empresa:
+				out[(empresa[eixo] as Texture2D).resource_path.get_file()] = \
+					"eixo " + String(eixo)
 	return out
 
 

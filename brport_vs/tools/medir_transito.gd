@@ -26,8 +26,15 @@ extends SceneTree
 # um dos dois está à vista.
 # ============================================================
 
-const COMP := {"pescado": 1.10 * 0.72, "granel": 1.48 * 0.72,
-	"armazenagem": 1.56 * 0.72, "conteiner": 1.96 * 0.72}
+# Por EMPRESA desde 27/09 (`070`): o bicudo da empresa 1 leva o capô (0,40) a
+# mais nos três médios. É a tabela do `D35_CHASSI`, repetida porque isto roda
+# fora da suíte.
+const CAPO := 0.40
+const COMP := {
+	"pescado": [1.10 * 0.72, (1.10 + CAPO) * 0.72],
+	"granel": [1.48 * 0.72, (1.48 + CAPO) * 0.72],
+	"armazenagem": [1.56 * 0.72, (1.56 + CAPO) * 0.72],
+	"conteiner": [1.96 * 0.72, 1.96 * 0.72]}
 const LARG := 0.62 * 0.72
 
 var _main: Control
@@ -85,9 +92,11 @@ func _process(delta: float) -> bool:
 		root.add_child(_main)
 		_consts = _main.get_script().get_script_constant_map()
 		for motivo in (_consts["CAMINHOES"] as Dictionary):
-			var par: Dictionary = _consts["CAMINHOES"][motivo]
-			for chave in par:
-				_tex[par[chave]] = [motivo, String(chave).substr(0, 2)]
+			var empresas: Array = _consts["CAMINHOES"][motivo]
+			for e in range(empresas.size()):
+				var par: Dictionary = empresas[e]
+				for chave in par:
+					_tex[par[chave]] = [motivo, String(chave).substr(0, 2), e]
 		_pronto = true
 		return false
 	_t += delta
@@ -149,8 +158,8 @@ func _pegadas() -> Array:
 
 
 func _pegada(nome: String, no: TextureRect, c: Vector2) -> Dictionary:
-	var info: Array = _tex.get(no.texture, ["conteiner", "my"])
-	var comp: float = COMP[info[0]]
+	var info: Array = _tex.get(no.texture, ["conteiner", "my", 0])
+	var comp: float = COMP[info[0]][info[2]]
 	var meio := Vector2(LARG, comp) / 2.0 if info[1] == "my" else Vector2(comp, LARG) / 2.0
 	var tela := _main.get_node("MapaWrap") as Control
 	var visivel := Rect2(Vector2.ZERO, tela.size).has_point(no.position + Vector2(256, 256))

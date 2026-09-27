@@ -565,7 +565,12 @@ tirar icones  - -  --script res://tools/folha_icones.gd  --    "$SAIDA/icones.pn
 # única pedia 1.305 px numa tela de 1.280, e a conta dela reprovou. Cada uma
 # continua a reprovar se transbordar.
 tirar frota   - -  --script res://tools/folha_frota.gd   --    "$SAIDA/frota.png" cascos
-tirar camioes - -  --script res://tools/folha_frota.gd   --    "$SAIDA/camioes.png" camioes
+# ⚠️ E OS CAMIÕES SÃO DUAS desde 27/09, uma por TRANSPORTADORA (`070`): com a
+# segunda empresa de cada serviço são 32. A `camioes` continua a ser a empresa
+# 0, que é a que tem antes na base; a folha conta as empresas da tabela e
+# reprova se as páginas pedidas aqui não forem essas.
+tirar camioes - -  --script res://tools/folha_frota.gd   --    "$SAIDA/camioes.png" camioes 1 2
+tirar camioes_b - - --script res://tools/folha_frota.gd  --    "$SAIDA/camioes_b.png" camioes 2 2
 
 # OS TRINTA ROSTOS DO TRABALHADOR (`docs/decisoes/059`), pela mesma razão: o
 # porto tem no máximo três trabalhadores e a semente da bateria é fixa, logo as
@@ -595,9 +600,12 @@ tirar trabalhadores - - --script res://tools/folha_trabalhadores.gd -- "$SAIDA/t
 # acrescentar o prop.
 # E SÃO TRÊS desde 23/09: os oito camiões do retorno levaram o catálogo de 51
 # a 59 props, e a ferramenta reprovou as duas páginas até esta linha entrar.
-tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 3
-tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 3
-tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 3
+# E QUATRO desde 27/09: os dezasseis da segunda transportadora (`070`) levaram-no
+# a 75, com 21 por página, e a ferramenta reprovou as três até a quarta entrar.
+tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 4
+tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 4
+tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 4
+tirar props4  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props4.png" 4 4
 
 # A ESCALA E A PRANCHA (`docs/decisoes/068`), as duas respostas ao veredito
 # do Bruno sobre as três folhas de cima: «mais útil para a IA alterar e fazer

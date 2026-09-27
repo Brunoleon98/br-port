@@ -61,12 +61,24 @@ func _desenho_dos_caminhoes(tela: Control) -> Rect2:
 	var consts: Dictionary = tela.get_script().get_script_constant_map()
 	var uniao := Rect2()
 	var primeiro := true
-	for motivo in (consts["CAMINHOES"] as Dictionary).values():
-		for tex in (motivo as Dictionary).values():
-			var caixa := PropIso.desenho(tex as Texture2D)
-			uniao = caixa if primeiro else uniao.merge(caixa)
-			primeiro = false
+	for tex in _texturas_dos_caminhoes(consts):
+		var caixa := PropIso.desenho(tex as Texture2D)
+		uniao = caixa if primeiro else uniao.merge(caixa)
+		primeiro = false
 	return uniao
+
+
+## Todas as texturas de camião da tabela do `Main.gd`: motivo × empresa ×
+## silhueta. Um lugar só desde que a tabela ganhou a EMPRESA (27/09): quatro
+## sítios deste arquivo a percorrerem-na à mão eram quatro chances de um deles
+## ficar a olhar só para a empresa 0.
+func _texturas_dos_caminhoes(consts: Dictionary) -> Array:
+	var out: Array = []
+	for motivo in (consts["CAMINHOES"] as Dictionary).values():
+		for empresa in (motivo as Array):
+			for tex in (empresa as Dictionary).values():
+				out.append(tex)
+	return out
 
 # Alvo de toque mínimo. 44 é o piso das diretrizes de iOS e Android; abaixo
 # disso o polegar erra e o jogador acha que o jogo não respondeu.
@@ -1709,46 +1721,53 @@ func _d13_travessia_do_caminhao() -> void:
 	# mesma diferença do D17: perguntar à tabela da arte se ela está completa é
 	# ela a concordar consigo própria; quem manda é o que o JOGO consegue
 	# sortear. Um motivo novo sem camião reprova aqui.
+	#
+	# ⚠️ E POR EMPRESA (27/09, `070`): cada serviço tem duas transportadoras, e
+	# a silhueta tem de sair da linha da empresa pedida — nunca da outra, que
+	# desenharia o camião certo com a cabine da vizinha.
 	var GS: Node = root.get_node("GameState")
 	var errado := ""
 	var vistas := {}
+	var pedidas := 0
 	for motivo in GS.MOTIVOS:
 		var id := String(motivo)
 		_confere("o motivo %s tem camião" % id, caminhoes.has(id),
 			"`CAMINHOES` do Main.gd conhece %s" % [caminhoes.keys()])
 		if not caminhoes.has(id):
 			continue
-		for i in range(rota.size() - 1):
-			var de: Vector2 = rota[i]
-			var para: Vector2 = rota[i + 1]
-			var anda_em_mx: bool = abs(para.x - de.x) > 0.01
-			var usada: Texture2D = tela.call("silhueta_do_trecho", de, para, id)
-			var caminho: String = usada.resource_path
-			vistas[caminho] = true
-			if anda_em_mx != caminho.ends_with("_mx.png") and errado == "":
-				errado = "o trecho %d de %s anda em %s e usa %s" \
-					% [i, id, "mx" if anda_em_mx else "my", caminho.get_file()]
-			# A ida anda de FRENTE: a silhueta do retorno aqui seria o camião a
-			# descer de costas. O teste do eixo não o via, porque os dois
-			# `_mx` acabam igual.
-			if caminho.contains("_retorno") and errado == "":
-				errado = "o trecho %d de %s desce a rua e usa %s, que é do retorno" \
-					% [i, id, caminho.get_file()]
-			if not caminho.get_file().begins_with("caminhao_%s" % id) and errado == "":
-				errado = "o trecho %d de %s usa %s, que é de outra carga" \
-					% [i, id, caminho.get_file()]
-	_confere("cada trecho usa a silhueta do eixo e da carga", errado == "", errado)
-	_confere("e as %d silhuetas entram em campo" % (GS.MOTIVOS.size() * 2),
-		vistas.size() == GS.MOTIVOS.size() * 2,
-		"só se viu %s" % str(vistas.keys()))
+		var empresas: Array = caminhoes[id]
+		for e in range(empresas.size()):
+			pedidas += 2
+			for i in range(rota.size() - 1):
+				var de: Vector2 = rota[i]
+				var para: Vector2 = rota[i + 1]
+				var anda_em_mx: bool = abs(para.x - de.x) > 0.01
+				var usada: Texture2D = tela.call("silhueta_do_trecho", de, para, id, e)
+				var caminho: String = usada.resource_path
+				vistas[caminho] = true
+				if anda_em_mx != caminho.ends_with("_mx.png") and errado == "":
+					errado = "o trecho %d de %s anda em %s e usa %s" \
+						% [i, id, "mx" if anda_em_mx else "my", caminho.get_file()]
+				# A ida anda de FRENTE: a silhueta do retorno aqui seria o camião a
+				# descer de costas. O teste do eixo não o via, porque os dois
+				# `_mx` acabam igual.
+				if caminho.contains("_retorno") and errado == "":
+					errado = "o trecho %d de %s desce a rua e usa %s, que é do retorno" \
+						% [i, id, caminho.get_file()]
+				if not caminho.get_file().begins_with("caminhao_%s" % id) and errado == "":
+					errado = "o trecho %d de %s usa %s, que é de outra carga" \
+						% [i, id, caminho.get_file()]
+				if not (empresas[e] as Dictionary).values().has(usada) and errado == "":
+					errado = "o trecho %d de %s pede a empresa %d e usa %s, que é de outra" \
+						% [i, id, e, caminho.get_file()]
+	_confere("cada trecho usa a silhueta do eixo, da carga e da empresa", errado == "", errado)
+	_confere("e as %d silhuetas entram em campo" % pedidas,
+		vistas.size() == pedidas, "só se viu %s" % str(vistas.keys()))
 
 	# E os oito são oito DESENHOS, não oito nomes. É a mesma pergunta que o D17
 	# faz aos cascos, e pela mesma razão: quatro carroçarias iguais pintadas de
 	# quatro cores seriam quatro etiquetas, e a suíte não saberia a diferença.
-	var texturas: Array = []
-	for motivo in caminhoes.values():
-		for tex in (motivo as Dictionary).values():
-			texturas.append(tex)
+	var texturas: Array = _texturas_dos_caminhoes(consts)
 	var iguais := _repetido_entre(texturas)
 	_confere("os %d camiões têm desenhos distintos" % texturas.size(),
 		iguais == "", iguais)
@@ -2025,20 +2044,22 @@ func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array)
 					q = cand
 			var quina: Vector2 = q[0]
 			for motivo in D35_CHASSI:
-				var ext := Vector2(float(D35_CHASSI[motivo]), D35_LARG) / 2.0
-				if not em_mx:
-					ext = Vector2(ext.y, ext.x)
-				for i in range(D13_AMOSTRAS_DIAGONAL + 1):
-					var p := a.lerp(b, float(i) / float(D13_AMOSTRAS_DIAGONAL))
-					for canto in [p + ext, p - ext, p + Vector2(ext.x, -ext.y), p + Vector2(-ext.x, ext.y)]:
-						var dx: float = float(q[1]) * ((canto as Vector2).x - quina.x)
-						var dy: float = float(q[2]) * ((canto as Vector2).y - quina.y)
-						# Quanto sai: além de cada borda reta, ou além do chanfro,
-						# medido na perpendicular dele.
-						var sai := maxf(maxf(-dx, -dy), (float(q[3]) - dx - dy) / sqrt(2.0))
-						if sai > pior:
-							pior = sai
-							onde = "%s na diagonal %s -> %s, quina %s" % [motivo, a, b, quina]
+				for e in range((D35_CHASSI[motivo] as Array).size()):
+					var ext := Vector2(float(D35_CHASSI[motivo][e]), D35_LARG) / 2.0
+					if not em_mx:
+						ext = Vector2(ext.y, ext.x)
+					for i in range(D13_AMOSTRAS_DIAGONAL + 1):
+						var p := a.lerp(b, float(i) / float(D13_AMOSTRAS_DIAGONAL))
+						for canto in [p + ext, p - ext, p + Vector2(ext.x, -ext.y), p + Vector2(-ext.x, ext.y)]:
+							var dx: float = float(q[1]) * ((canto as Vector2).x - quina.x)
+							var dy: float = float(q[2]) * ((canto as Vector2).y - quina.y)
+							# Quanto sai: além de cada borda reta, ou além do chanfro,
+							# medido na perpendicular dele.
+							var sai := maxf(maxf(-dx, -dy), (float(q[3]) - dx - dy) / sqrt(2.0))
+							if sai > pior:
+								pior = sai
+								onde = "%s (empresa %d) na diagonal %s -> %s, quina %s" \
+									% [motivo, e, a, b, quina]
 	# ⚠️ ZERO DIAGONAIS NÃO É "NADA SAI": é uma medida que não mediu. São duas
 	# metades por curva aberta, uma curva aberta por cotovelo e por rota.
 	_confere("há curvas abertas a medir (%d meias diagonais)" % diagonais, diagonais >= 4)
@@ -2247,28 +2268,36 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 				"o desenho fica em %s e o mapa é %s" % [caixa, visivel])
 
 	# ── f ── a silhueta do retorno, perguntada a QUEM DECIDE.
+	# O NOME pedido sai do padrão do gerador (`caminhao_<motivo><marca><silhueta>`),
+	# e a empresa da linha da tabela: a `MARCA_DA_EMPRESA` do `brp_porto.py` é
+	# a outra fonte, e é o `_b` que separa as duas.
 	var GS: Node = root.get_node("GameState")
 	var errado := ""
 	var vistas := {}
+	var pedidas := 0
 	for motivo in GS.MOTIVOS:
 		var id := String(motivo)
 		if not caminhoes.has(id):
 			continue                # o §4 já reprova o motivo sem camião
-		for i in range(retorno.size() - 1):
-			var de: Vector2 = retorno[i]
-			var para: Vector2 = retorno[i + 1]
-			var em_mx: bool = abs(para.x - de.x) > 0.01
-			var usada: Texture2D = tela.call("silhueta_do_trecho", de, para, id)
-			var arquivo := usada.resource_path.get_file()
-			vistas[arquivo] = true
-			var pede := "caminhao_%s_retorno%s.png" % [id, "_mx" if em_mx else ""]
-			if arquivo != pede and errado == "":
-				errado = "o trecho %d de %s sobe em %s e usa %s, e pede %s" \
-					% [i, id, "mx" if em_mx else "my", arquivo, pede]
-	_confere("cada trecho do retorno usa a silhueta de costas, do eixo e da carga",
+		var empresas: Array = caminhoes[id]
+		for e in range(empresas.size()):
+			pedidas += 2
+			for i in range(retorno.size() - 1):
+				var de: Vector2 = retorno[i]
+				var para: Vector2 = retorno[i + 1]
+				var em_mx: bool = abs(para.x - de.x) > 0.01
+				var usada: Texture2D = tela.call("silhueta_do_trecho", de, para, id, e)
+				var arquivo := usada.resource_path.get_file()
+				vistas[arquivo] = true
+				var pede := "caminhao_%s%s_retorno%s.png" \
+					% [id, "_b" if e == 1 else "", "_mx" if em_mx else ""]
+				if arquivo != pede and errado == "":
+					errado = "o trecho %d de %s (empresa %d) sobe em %s e usa %s, e pede %s" \
+						% [i, id, e, "mx" if em_mx else "my", arquivo, pede]
+	_confere("cada trecho do retorno usa a silhueta de costas, do eixo, da carga e da empresa",
 		errado == "", errado)
-	_confere("e as %d silhuetas do retorno entram em campo" % (GS.MOTIVOS.size() * 2),
-		vistas.size() == GS.MOTIVOS.size() * 2, "só se viu %s" % str(vistas.keys()))
+	_confere("e as %d silhuetas do retorno entram em campo" % pedidas,
+		vistas.size() == pedidas, "só se viu %s" % str(vistas.keys()))
 
 
 # ── D13 · A SAÍDA DO BERÇO, DE RÉ (23/09)
@@ -2326,7 +2355,8 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 		var tex := no.texture
 		var indice := no.get_index()
 		var carga := String((tela.get("_carga_na_estrada") as Array)[i])
-		var par: Dictionary = caminhoes[carga]
+		var empresa := int((tela.get("_empresa_na_estrada") as Array)[i])
+		var par: Dictionary = caminhoes[carga][empresa]
 		var doca: Dictionary = GS.docks[i]
 		var id := 4300 + i
 		doca["boat"] = {"id": id, "motivo": carga, "classe": "pesqueiro"}
@@ -2403,7 +2433,8 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 		var tex_r := no_r.texture
 		var indice_r := no_r.get_index()
 		var carga_r := String((tela.get("_carga_do_retorno") as Array)[0])
-		var par_r: Dictionary = caminhoes[carga_r]
+		var empresa_r := int((tela.get("_empresa_do_retorno") as Array)[0])
+		var par_r: Dictionary = caminhoes[carga_r][empresa_r]
 		var doca_r: Dictionary = GS.docks[d]
 		var id_r := 4400 + d
 		doca_r["boat"] = {"id": id_r, "motivo": carga_r, "classe": "pesqueiro"}
@@ -5004,14 +5035,29 @@ func _d34_borda_do_trabalhador() -> void:
 # se mexem, e os blocos que vêm depois leem-na como estava.
 var _d35_completo := false
 
-## O chassi de cada camião, em unidades de mundo: `CAMINHOES` de
+## O chassi de cada camião, por EMPRESA, em unidades de mundo: `CAMINHOES` de
 ## `blender/brp_porto.py` vezes o `ESCALA_CAMINHAO` (0,72). E a largura, que é
 ## a mesma para todos (`LARG`, 0,62, vezes 0,72). A pegada é o retângulo do
 ## chassi, centrado no ponto da rota: é onde o construtor o põe.
-const D35_CHASSI := {"pescado": 1.10 * 0.72, "granel": 1.48 * 0.72,
-	"armazenagem": 1.56 * 0.72, "conteiner": 1.96 * 0.72}
+##
+## ⚠️ O BICUDO É MAIS COMPRIDO (27/09, `070`): o capô (`CAPO`, 0,40) cresce À
+## FRENTE do camião de sempre, e o chassi cresce com ele, centrado na âncora.
+## A empresa 1 é bicuda nos três médios (`EMPRESAS`); o baú bicudo fica com os
+## 1,96 da carreta, que continua a ser o mais comprido do jogo.
+const D35_CAPO := 0.40
+const D35_CHASSI := {
+	"pescado": [1.10 * 0.72, (1.10 + D35_CAPO) * 0.72],
+	"granel": [1.48 * 0.72, (1.48 + D35_CAPO) * 0.72],
+	"armazenagem": [1.56 * 0.72, (1.56 + D35_CAPO) * 0.72],
+	"conteiner": [1.96 * 0.72, 1.96 * 0.72]}
 const D35_LARG := 0.62 * 0.72
 const D35_SEGUNDOS := 3600.0
+# ⚠️ E ANTES DAS VISITAS, UMA MEIA HORA DE PASSAGEM (27/09, `070`): as docas
+# vazias, e cada camião a levar o que a RODA lhe dá. É onde a roda da carga
+# manda sozinha, e onde a vez das transportadoras pode casar com ela; a agenda
+# de visitas esconde-o, porque troca a carga de quem encosta. Medido: com a vez
+# do retorno a `(j + voltas) % 2`, só a pergunta da passagem reprovou.
+const D35_PASSAGEM := 1800.0
 const D35_PASSO := 0.2
 const D35_SEMENTE := 20260923
 const D35_TURNO := Vector2(3.0, 12.0)
@@ -5055,11 +5101,13 @@ func _d35_transito() -> void:
 	var visivel := Rect2(Vector2.ZERO, (tela.get_node("MapaWrap") as Control).size)
 	var desenho := _desenho_dos_caminhoes(tela)
 	var alt := float(_ancoras["projecao"]["alt_cais"])
-	var qual: Dictionary = {}                 # textura -> [motivo, eixo]
+	var qual: Dictionary = {}                 # textura -> [motivo, eixo, empresa]
 	for motivo in (consts["CAMINHOES"] as Dictionary):
-		var par: Dictionary = consts["CAMINHOES"][motivo]
-		for chave in par:
-			qual[par[chave]] = [motivo, String(chave).substr(0, 2)]
+		var empresas: Array = consts["CAMINHOES"][motivo]
+		for e in range(empresas.size()):
+			var par: Dictionary = empresas[e]
+			for chave in par:
+				qual[par[chave]] = [motivo, String(chave).substr(0, 2), e]
 	var nos: Array = []
 	for k in range((consts["CAMINHAO_ORIGENS"] as Array).size()):
 		nos.append([cenario.get_node("Caminhao%d" % k), "ida"])
@@ -5070,15 +5118,22 @@ func _d35_transito() -> void:
 
 	# A agenda das docas: um sorteio PRÓPRIO, semeado — o do jogo é o que o
 	# simulador de balanceamento mede, e não se lhe toca.
+	#
+	# ⚠️ E OS NAVIOS DELA TRAZEM TODOS OS MOTIVOS DO JOGO desde 27/09 (`070`),
+	# e não só os que o porto da suíte recebe. Com os do porto em ruínas a rua
+	# só levava pescado e armazenagem: a carreta e o basculante — o camião mais
+	# comprido e o bicudo de 1,88 — nunca tinham passado por esta pergunta, e
+	# as dezasseis silhuetas deles não podiam ser vistas a chegar à rua. Um
+	# porto de nível 3 recebe os quatro; a roda continua a ser a do porto.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = D35_SEMENTE
-	var motivos: Array = tela.call("_motivos_do_porto")
+	var motivos: Array = GS.MOTIVOS.keys()
 	var id_barco := 91000
 	var prox_turno := 0.0
 
 	var sobre := ""
 	var eventos := 0
-	var ultimo_evento := -99.0
+	var ultimo_evento := -1.0e9           # o relógio começa negativo, na passagem
 	var cargas := ""
 	var encostos := {"ida": 0, "retorno": 0}
 	var chegadas: Array = []
@@ -5090,7 +5145,13 @@ func _d35_transito() -> void:
 	var no_berco: Array = []
 	no_berco.resize(nos.size())
 	no_berco.fill(-1)
-	var t := 0.0
+	# O que a rua MOSTROU: a textura de cada nó a cada passo (as 32 têm de
+	# aparecer), e — só na passagem — que empresas cada serviço levou em cada
+	# sentido, que é onde a vez pode casar com a roda.
+	var mostradas := {}
+	var na_roda := {}                      # "ida|pescado" -> {empresa: true}
+	var t := -D35_PASSAGEM
+	prox_turno = 0.0
 	while t < D35_SEGUNDOS:
 		if t >= prox_turno:
 			for d in GS.docks:
@@ -5113,8 +5174,14 @@ func _d35_transito() -> void:
 		for k in range(nos.size()):
 			var no := nos[k][0] as TextureRect
 			var p := _mundo(_origem(no), alt)
-			var q: Array = qual.get(no.texture, ["conteiner", "my"])
-			var comp: float = D35_CHASSI[q[0]]
+			var q: Array = qual.get(no.texture, ["conteiner", "my", 0])
+			var comp: float = D35_CHASSI[q[0]][q[2]]
+			mostradas[no.texture] = true
+			if t < 0.0 and qual.has(no.texture):
+				var chave_roda := "%s|%s" % [nos[k][1], q[0]]
+				if not na_roda.has(chave_roda):
+					na_roda[chave_roda] = {}
+				na_roda[chave_roda][q[2]] = true
 			var meia := Vector2(D35_LARG, comp) / 2.0 if q[1] == "my" \
 				else Vector2(comp, D35_LARG) / 2.0
 			var caixa := Rect2(no.position + Vector2(MEIO_QUADRO, MEIO_QUADRO)
@@ -5162,8 +5229,47 @@ func _d35_transito() -> void:
 		GS.docks[k]["boat"] = guardadas[k][0]
 		GS.docks[k]["worker_id"] = guardadas[k][1]
 
-	_confere("em %.0f s de jogo, nenhum camião passa por cima de outro à vista" % D35_SEGUNDOS,
+	_confere("em %.0f s de jogo, nenhum camião passa por cima de outro à vista"
+		% (D35_PASSAGEM + D35_SEGUNDOS),
 		sobre == "", "%d vez(es); a primeira: %s" % [eventos, sobre])
+
+	# ── AS 32 CHEGAM À RUA (27/09, `070`) ──
+	#
+	# A lição da `059`: a chave que escolhe a arte só alcança tantas peças
+	# quantos valores ela toma, e 27 retratos quase ficaram gerados, validados e
+	# sem ninguém os ver. As dezasseis da segunda transportadora estariam no
+	# mesmo sítio com a vez partida — `_empresa_da_vez()` a devolver sempre 0, ou
+	# um caminho do percurso a esquecer a empresa —, e o §4 e o §f passariam,
+	# porque perguntam à função e não à rua. Esta pergunta lê o NÓ, a cada
+	# passo, como o jogador o vê.
+	var faltam: Array = []
+	var total := 0
+	for tex in _texturas_dos_caminhoes(consts):
+		total += 1
+		if not mostradas.has(tex):
+			faltam.append(_arquivo(tex))
+	_confere("as %d silhuetas de camião aparecem na rua (serviço × empresa × silhueta)" % total,
+		faltam.is_empty(), "nunca apareceram: %s" % str(faltam))
+	# E NA PASSAGEM, cada serviço que a roda pôs na rua levou as DUAS empresas,
+	# nos dois sentidos. É a pergunta que a agenda de visitas não faz: com a vez
+	# do retorno a `(j + voltas) % 2`, a mesma conta com que a roda lhe escolhe a
+	# carga, o pescado do retorno saiu sempre da empresa 0 — e a pergunta de
+	# cima passou, porque quem encosta leva a carga do navio e desfaz o par.
+	var so_uma := ""
+	var sentidos := {}
+	var empresas_por_servico := 0
+	for motivo in (consts["CAMINHOES"] as Dictionary):
+		empresas_por_servico = maxi(empresas_por_servico,
+			(consts["CAMINHOES"][motivo] as Array).size())
+	for chave_roda in na_roda:
+		sentidos[String(chave_roda).get_slice("|", 0)] = true
+		if (na_roda[chave_roda] as Dictionary).size() < empresas_por_servico and so_uma == "":
+			so_uma = "%s só levou a(s) empresa(s) %s" \
+				% [chave_roda, str((na_roda[chave_roda] as Dictionary).keys())]
+	_confere("na passagem, cada serviço da roda leva as %d empresas, nos dois sentidos (%d casos)"
+		% [empresas_por_servico, na_roda.size()],
+		so_uma == "" and sentidos.has("ida") and sentidos.has("retorno"),
+		so_uma if so_uma != "" else "os sentidos vistos: %s" % str(sentidos.keys()))
 	var parado := ""
 	for k in range(nos.size()):
 		if chegadas[k] < 5 and parado == "":
@@ -5219,7 +5325,7 @@ func _d35_previsao_das_curvas() -> void:
 	var a_ida := cenario.get_node("Caminhao0") as TextureRect
 	var b_ret := cenario.get_node("CaminhaoRetorno0") as TextureRect
 	var b_origem: Vector2 = (consts["CAMINHAO_RETORNO_ORIGENS"] as Array)[0]
-	var comp: float = D35_CHASSI["conteiner"]
+	var comp: float = D35_CHASSI["conteiner"][0]
 	var deixou := ""
 	var livres := 0
 	var presos := 0

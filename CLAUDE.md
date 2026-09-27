@@ -101,6 +101,9 @@ tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # todas de uma vez
 pip install "bpy==4.5.0"                                      # precisa de Python 3.11
 # ⚠️ o wheel tem 373 MB e o download já se cortou a meio (o pip diz que o
 # HASH não bate, não que a rede caiu): `pip download` primeiro, instala do arquivo
+# ⚠️ redirecionado para arquivo, o `gerar_brp.py` não escreve UMA linha até
+# acabar (o stdout do Python vai em bloco): `python3 -u`, ou conte os PNGs
+# novos. Os 32 camiões levaram 20 min com o log vazio (`070`)
 # As pranchas, os recortes e os conferidores de arte correm no Python do
 # SISTEMA, que não traz o pillow: `pip install numpy pillow` (~8 s)
 python3 tools/gerar_props_iso.py brport_vs/art/props [prop ...]
@@ -952,6 +955,10 @@ derivada delas.
   **DUAS vezes** (a primeira escreve o atlas em `art/props/_atlas/`, a segunda
   importa-o) e o atlas e o `.import` dele vão no commit. Sem eles, o import
   único do CI deixa o `preload` a apontar para um atlas por importar.
+  ⚠️ **E A FORMA É A INTEIRA**, com `path`, `group_file`, `valid` e
+  `dest_files` (o hash é o md5 do caminho `res://`): em 27/09 um `.import` só
+  com o importador e os `[params]` não escreveu atlas nenhum, e o `--import`
+  seguinte ficou em laço, sem erro e sem sair (`070`).
 - **Constante em PIXEL é constante que envelhece quando o `ZOOM` muda, e ela
   não dá erro.** Foram cinco em 05/09: a silhueta do caminhão e o corte que
   exige pegada no teste de design, a largura de telhado da vila, os sprites do
@@ -1220,6 +1227,11 @@ as três coisas.
   sem ninguém os ver, com tudo verde. Antes de ligar arte a uma chave, conte
   os valores que ela toma numa partida; a guarda pergunta a alcançabilidade
   (o F12 percorre 400 sementes) (`059`).
+  ⚠️ **E DUAS CHAVES QUE CONTAM PELO MESMO RELÓGIO CASAM.** A empresa do
+  camião a `(j + voltas) % 2` e a carga do retorno a `(j + voltas) % motivos`:
+  com dois motivos, o pescado saía sempre da mesma transportadora. Quem o
+  apanhou pergunta no estado em que a chave está SOZINHA — a agenda de visitas
+  trocava a carga de quem encostava e desfazia o par (`070`).
   ⚠️ **E «ÓRFÃO» E «APAGÁVEL» SÃO DUAS PERGUNTAS — o relatório só faz a
   primeira.** Triados em 22/09, os onze eram TRÊS grupos e não uma pilha:
   **nove tinham propósito ESCRITO** (os oito de `art/brp` e o `doca_concreto`
