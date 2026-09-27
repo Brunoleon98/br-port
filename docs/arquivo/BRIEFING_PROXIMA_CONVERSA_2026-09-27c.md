@@ -24,14 +24,14 @@ família **escala e camiões** (`069`):
    **aceites na quarta candidata**. Os PNGs de camião do jogo ainda são os de
    antes.
 
-O Bruno não pediu PR: o trabalho só existe na branch.
+O trabalho está no PR #94, aberto pelo Bruno no fim da sessão.
 
 ---
 
 ## 1. Comece pelo estado real
 
-- Confira no GitHub se a `claude/happy-maxwell-iajyvi` virou PR e se foi
-  fundida. Se não foi, a branch da conversa seguinte parte dela
+- Confira no GitHub se o PR #94 foi fundido. Se não foi, a branch da
+  conversa seguinte parte da `claude/happy-maxwell-iajyvi`
   (`git fetch origin claude/happy-maxwell-iajyvi`, um ref de cada vez).
 - Veja os PRs abertos do Codex antes de mexer no `Main.gd` ou no
   `teste_design.gd` (`AGENTS.md`).
