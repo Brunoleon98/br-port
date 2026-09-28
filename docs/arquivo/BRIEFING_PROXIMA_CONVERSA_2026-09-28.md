@@ -25,14 +25,14 @@ na **frente 4, família frota** (`071`, `072`):
 3. **`tools/conferir_casco.py`** (novo, com `bpy`): mede cada peça contra a
    meia-boca do casco. Na quinta candidata os seis dão «tudo dentro».
 
-O Bruno não pediu PR: o trabalho só existe na branch.
+O trabalho está no PR #96, aberto pelo Bruno no fim da sessão.
 
 ---
 
 ## 1. Comece pelo estado real
 
-- Confira no GitHub se a `claude/affectionate-gates-lyhx2m` virou PR e se foi
-  fundida; se não foi, a conversa seguinte parte dela (um ref de cada vez no
+- Confira no GitHub se o PR #96 (`claude/affectionate-gates-lyhx2m`) foi
+  fundido; se não foi, a conversa seguinte parte da branch (um ref de cada vez no
   `git fetch`, `CLAUDE.md`).
 - Veja os PRs abertos do Codex antes de mexer no `gerar_props_iso.py`
   (`AGENTS.md`).
