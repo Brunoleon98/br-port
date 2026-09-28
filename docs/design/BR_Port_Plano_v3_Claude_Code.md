@@ -1013,8 +1013,19 @@ camiões** (`069`):
   para-sol, para-choque, faróis, tanque, para-lamas, defletor, bisel, escape
   e carreta articulada. **Aceites na quarta candidata** (`069`), e **os 32
   entraram no jogo** (`070`): a vez de cada transportadora é um contador por
-  serviço, sem sorteio, e o D35 exige que as 32 cheguem à rua. A família
-  seguinte da 4 — frota, ruína e obras, animação — é escolha do Bruno.
+  serviço, sem sorteio, e o D35 exige que as 32 cheguem à rua.
+- **A frota, pelos 3 de pesca** (`071`): escopo respondido antes do desenho —
+  detalhe nos 9 cascos, a começar pela pesca, com as quatro marcas (defensas e
+  amarração, nome e bandeira, equipamento, desgaste). **Aceites na quinta
+  candidata**: pneus em anel, nome na proa, bandeira num pau na popa, o
+  escorrido no material da faixa; a traineira com janelas, rede cinzenta em
+  malha e cortiças; o arrasteiro com portas de arrasto, a rede no tambor e o
+  saco de losangos pendurado do pórtico.
+- **Os 6 cargueiros, em curso** (`072`): cinco candidatas, a quinta no gerador
+  e nenhuma no jogo. Falta o sítio da baleeira (na parede fica sobre janelas,
+  no teto «não é realista») e **tirar a bandeira de todos os navios**, os de
+  pesca aceites incluídos — as duas ordens do Bruno ao fechar. O resto da 4 —
+  ruína e obras, animação — é escolha dele.
 
 ---
 
