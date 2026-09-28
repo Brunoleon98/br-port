@@ -1354,6 +1354,11 @@ as três coisas.
   "apoiado". Toda asserção de encaixe mede-se contra `get_used_rect()`, nunca
   contra o quadro — o quadro é o mesmo em todos os props e não sabe nada sobre
   nenhum deles.
+  ⚠️ **E PEÇA DE BARCO MEDE-SE CONTRA O CASCO, e não a olho.** O Bruno viu
+  «partes do navio fora do casco» três vezes seguidas, e cada correção à vista
+  deixava outra — a carga da proa passava da borda desde 07/09 e a amarra por
+  0,075, que só a medição achou. `tools/conferir_casco.py` (com `bpy`) mede
+  cada vértice contra a meia-boca da amurada (`072`).
 - **⚠️ E A CAIXA DESENHADA NÃO É O DESENHO.** Irmã da regra acima, do outro
   lado: ali o quadro de 512 não sabia nada do prop, aqui o `get_used_rect()`
   sabe demasiado pouco. Ele funcionou enquanto os três cascos eram de portes

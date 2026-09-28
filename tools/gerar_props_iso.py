@@ -223,6 +223,10 @@ PALETA = {
     # mesmo fator punha nela o sujo mais forte da frota — o Bruno apontou-o
     # na primeira candidata («escorrido forte no amarelo»).
     "escorrido_amarelo": "#b07c1c",
+    # A tinta ANTIVEGETATIVA da linha de água dos cargueiros: o vermelho-tijolo
+    # que todo navio mercante mostra acima da água. Mais escuro do que a
+    # `faixa` de cima, para o vermelho de acento continuar a ser um só.
+    "antivegetativo": "#b4443a",
     # A rede de NYLON verde, que é a do pescador: o `rede` cinzento do kit é
     # de caixa, e encosta no `metal_claro` (ver o saco do arrasteiro).
     # ⚠️ E ELE É ESCURO E POUCO SATURADO: a #4a9a5a da segunda candidata pôs
@@ -2123,9 +2127,33 @@ def montar(M: dict) -> dict:
         inclin = (meia(x + 0.02) - meia(x - 0.02)) / 0.04
         return -meia(x), math.degrees(math.atan(-inclin))
 
-    def marcas_de_pesca(sufixo, contorno, altura, k, letra, pneus, letras,
-                        bandeira, rolo=None, cabecos=None, k_bandeira=None):
-        """O que um barco de pesca de verdade traz no costado e no convés.
+    def pavilhao(sufixo, xs, ys, base, alt_pau, kb):
+        """O pavilhão nacional num pau, a voar para a ré (`-x`).
+
+        As três cores do Brasil, que é o que sobra dele a 3-6 px. O pau nasce
+        em `base` — o convés na pesca, o teto da ponte nos cargueiros.
+        """
+        topo, xb = base + alt_pau, xs - 0.12 * kb
+        return [
+            caixa("bpau" + sufixo, (xs, ys, base + alt_pau / 2.0),
+                  (0.022 * kb, 0.022 * kb, alt_pau), M["metal_claro"]),
+            caixa("bverde" + sufixo, (xb, ys, topo - 0.08 * kb),
+                  (0.22 * kb, 0.010, 0.15 * kb), M["bandeira_verde"]),
+            caixa("bamar" + sufixo, (xb, ys - 0.009, topo - 0.08 * kb),
+                  (0.095 * kb, 0.008, 0.095 * kb), M["bandeira_amarela"],
+                  rot=(0, 45, 0)),
+            cone("bazul" + sufixo, (xb, ys - 0.016, topo - 0.08 * kb),
+                 0.034 * kb, 0.034 * kb, 0.006, 10, M["bandeira_azul"],
+                 rot=(90, 0, 0)),
+        ]
+
+    def marcas_de_casco(sufixo, contorno, altura, k, letra, pneus, letras,
+                        bandeira, rolo=None, cabecos=None, k_bandeira=None,
+                        letras_rentes=False):
+        """O que um barco de verdade traz no costado e no convés.
+
+        Nasceu com a pesca (`071`) e serve também aos cargueiros, que levam
+        as mesmas letras, bandeira, rolo e cabeços, e nenhum pneu.
 
         A frente 4 (família frota) pediu os quatro grupos de uma vez —
         defensas e amarração, nome e bandeira, equipamento, desgaste —, e os
@@ -2161,30 +2189,23 @@ def montar(M: dict) -> dict:
                       (x, y - 0.030 * k, altura + 0.03 * k),
                       (0.018 * k, 0.018 * k, 0.05 * k), M["corda"]),
             ]
+        # ⚠️ RENTES NO CARGUEIRO: a 0,012 de espessura e 0,008 para fora, as
+        # letras do casco de carga liam-se como blocos brancos EM PÉ na borda
+        # (o Bruno: «partes do navio para fora do casco»). Nos barcos de pesca
+        # aceites elas ficam como estavam.
+        fora, esp = (0.004, 0.006) if letras_rentes else (0.008, 0.012)
         for i, x in enumerate(letras):
             y, ang = no_costado(contorno, x)
             pecas.append(caixa("letra%s%d" % (sufixo, i),
-                               (x, y - 0.008, altura - 0.05 * k),
-                               (0.05 * k, 0.012, 0.085 * k), letra,
+                               (x, y - fora, altura - 0.05 * k),
+                               (0.05 * k, esp, 0.085 * k), letra,
                                rot=(0, 0, ang)))
-        xs, ys, alt_pau = bandeira
-        base = altura
-        # O porte da bandeira pode não ser o do barco: no bote, a 0,62, ela
-        # saía com 3 px e não se lia (o Bruno: «bote pequeno demais»).
-        kb = k_bandeira if k_bandeira is not None else k
-        topo, xb = base + alt_pau, xs - 0.12 * kb
-        pecas += [
-            caixa("bpau" + sufixo, (xs, ys, base + alt_pau / 2.0),
-                  (0.022 * kb, 0.022 * kb, alt_pau), M["metal_claro"]),
-            caixa("bverde" + sufixo, (xb, ys, topo - 0.08 * kb),
-                  (0.22 * kb, 0.010, 0.15 * kb), M["bandeira_verde"]),
-            caixa("bamar" + sufixo, (xb, ys - 0.009, topo - 0.08 * kb),
-                  (0.095 * kb, 0.008, 0.095 * kb), M["bandeira_amarela"],
-                  rot=(0, 45, 0)),
-            cone("bazul" + sufixo, (xb, ys - 0.016, topo - 0.08 * kb),
-                 0.034 * kb, 0.034 * kb, 0.006, 10, M["bandeira_azul"],
-                 rot=(90, 0, 0)),
-        ]
+        if bandeira is not None:
+            # O porte da bandeira pode não ser o do barco: no bote, a 0,62,
+            # ela saía com 3 px e não se lia (o Bruno: «bote pequeno demais»).
+            xs, ys, alt_pau = bandeira
+            pecas += pavilhao(sufixo, xs, ys, altura, alt_pau,
+                              k_bandeira if k_bandeira is not None else k)
         if rolo is not None:
             rx, ry = rolo
             zr = altura - 0.02 + 0.018 * k + 0.003
@@ -2296,7 +2317,7 @@ def montar(M: dict) -> dict:
         caixa("motor_pb", (-0.97, 0.0, 0.34), (0.16, 0.22, 0.28), M["metal"]),
         caixa("rabeta_pb", (-1.00, 0.0, 0.10), (0.09, 0.09, 0.30), M["metal"]),
     ]
-    grupos["barco_pesca_bote"] += marcas_de_pesca(
+    grupos["barco_pesca_bote"] += marcas_de_casco(
         "_pb", BOTE[0], 0.30, 0.62, M["cabine"],
         # Sem NOME nem PNEUS: a 44 px as letras eram um traço branco e os
         # pneus pontos soltos no costado (o Bruno, na primeira e na terceira
@@ -2363,7 +2384,7 @@ def montar(M: dict) -> dict:
         # talvez seja um erro»: uma boia que não tem forma de boia é uma
         # caixa. A cor dela vive agora na salva-vidas, que tem forma.
         caixa("rede_p", (-0.15, 0.0, 0.60), (0.7, 0.5, 0.26), rede_cinza)]
-    grupos["barco_pesca_traineira"] += marcas_de_pesca(
+    grupos["barco_pesca_traineira"] += marcas_de_casco(
         "_p", PESCA, 0.44, 1.0, M["cabine"],
         pneus=(-0.43, 0.0, 0.43), letras=(0.56, 0.66, 0.82, 0.92, 1.02),
         bandeira=(-1.34, -0.20, 0.70),
@@ -2526,7 +2547,7 @@ def montar(M: dict) -> dict:
         # num barco com este porte lê como barco por acabar.
         caixa("ancora_pa", (1.34, 0.0, 0.66), (0.26, 0.30, 0.20), M["metal_claro"]),
     ]
-    grupos["barco_pesca_arrasteiro"] += marcas_de_pesca(
+    grupos["barco_pesca_arrasteiro"] += marcas_de_casco(
         "_pa", ARRASTO[0], 0.56, 1.24, M["vao"],
         pneus=(-0.75, -0.25, 0.25),
         letras=(0.62, 0.74, 0.94, 1.06, 1.18),
@@ -2604,7 +2625,20 @@ def montar(M: dict) -> dict:
     ALT_CONVES = 0.62                     # o topo do casco de carga
     CONT_TAM = (0.64, 0.42, 0.36)         # contêiner de convés: 14 x 9 px na tela
 
-    def deck_conteiner(sufixo, x0, baias, andares):
+    def meia_carga(x):
+        """A meia-boca da amurada de carga em `x` — o limite do que cabe no
+        convés.
+
+        ⚠️ A CARGA DA PROA PASSAVA DA BORDA, e ninguém o perguntava desde 07/09:
+        a última baia do porta-contêineres de longo curso e as últimas tampas
+        dos dois graneleiros ficavam com a boca do corpo paralelo numa proa
+        que já estreitou, e saíam por cima da água (o Bruno, na frota:
+        «partes do navio saindo do casco»). Quem estreita agora é a peça, pela
+        meia-boca do casco no sítio dela.
+        """
+        return -no_costado(CARGA, x)[0]
+
+    def deck_conteiner(sufixo, x0, baias, andares, comp=None):
         """Porta-contêineres: a PILHA ALINHADA, em grade e com guias.
 
         ⚠️ A GRADE NÃO SE FAZ COM FRESTA. Uma folga de 0,05 entre caixas dá 1px
@@ -2619,15 +2653,28 @@ def montar(M: dict) -> dict:
         uma vertical escura lê onde uma linha desenhada não leria.
         """
         cores = (M["laranja"], M["azul"], M["amarelo"])
-        passo = CONT_TAM[0]
+        # ⚠️ O LONGO CURSO LEVA CONTÊINERES CURTOS (de 20 pés), e é para caber:
+        # quatro baias de 40 pés passavam da proa, e a de proa numa fila só
+        # lia-se como uma torre (o Bruno). O comprimento sai da conta de
+        # quantas baias cabem até onde o casco ainda leva duas filas.
+        passo = comp if comp is not None else CONT_TAM[0]
+        tam = (passo, CONT_TAM[1], CONT_TAM[2])
         pecas = []
+        duplas = 0
         for i in range(baias):
             x = x0 + i * passo
-            for j, y in enumerate((0.215, -0.215)):
+            # Duas filas onde o casco as leva; UMA, ao meio, onde a proa já
+            # estreitou — é o que a baia de proa de um navio de verdade faz.
+            if meia_carga(x + passo / 2.0) - 0.03 >= 0.425:
+                filas = (0.215, -0.215)
+                duplas += 1
+            else:
+                filas = (0.0,)
+            for j, y in enumerate(filas):
                 for k in range(andares):
                     zc = ALT_CONVES + CONT_TAM[2] * (k + 0.5)
                     pecas.append(caixa("cx%s_%d%d%d" % (sufixo, i, j, k),
-                                       (x, y, zc), CONT_TAM,
+                                       (x, y, zc), tam,
                                        cores[(i + j + k) % 3]))
         comprimento = passo * baias
         alto = CONT_TAM[2] * andares
@@ -2638,20 +2685,24 @@ def montar(M: dict) -> dict:
             # escura a fechar a pilha — lia-se como carga tapada, não como
             # guia. Duas colunas nos bordos deixam ver a pilha entre elas, que
             # é o que uma guia de célula faz.
-            for j, y in enumerate((0.40, -0.40)):
+            xg = meio_x + sx * comprimento / 2.0
+            yg = min(0.40, meia_carga(xg) - 0.08)
+            for j, y in enumerate((yg, -yg)):
                 pecas.append(caixa("guia%s_%s%d" % (sufixo, lado, j),
-                                   (meio_x + sx * comprimento / 2.0, y,
-                                    ALT_CONVES + alto / 2.0 + 0.03),
+                                   (xg, y, ALT_CONVES + alto / 2.0 + 0.03),
                                    (0.09, 0.11, alto + 0.06), M["metal"]))
         # Passadiço de peação, na face que a câmera vê. Ele corre por cima da
         # junta entre o primeiro e o segundo andar e é o que impede a pilha de
         # ler como um bloco só de cor — uma horizontal escura a meia altura.
+        # Só ao longo das baias de duas filas, que é onde há costado de pilha.
+        comp_p = passo * duplas
         pecas.append(caixa("peacao" + sufixo,
-                           (meio_x, -0.455, ALT_CONVES + CONT_TAM[2] + 0.02),
-                           (comprimento * 0.96, 0.05, 0.06), M["metal"]))
+                           (x0 - passo / 2.0 + comp_p / 2.0, -0.455,
+                            ALT_CONVES + CONT_TAM[2] + 0.02),
+                           (comp_p * 0.96, 0.05, 0.06), M["metal"]))
         return pecas
 
-    def deck_granel(sufixo, x0, poroes, guindastes):
+    def deck_granel(sufixo, x0, poroes, guindastes, passo=0.62):
         """Graneleiro: PORÕES E ESCOTILHAS, e o convés vazio de propósito.
 
         A carga de um graneleiro está DENTRO. O que se vê é a fileira de tampas
@@ -2664,22 +2715,25 @@ def montar(M: dict) -> dict:
         fica meio milímetro abaixo, e o que se vê é o fio escuro à volta da
         tampa — que é justamente o que faz a tampa parecer tampa.
         """
-        passo = 0.62
         pecas = []
+        comp = passo - 0.12
         for i in range(poroes):
             x = x0 + i * passo
+            # A boca da escotilha é a do corpo paralelo onde ele a leva, e a
+            # da proa onde ela já estreitou (ver `meia_carga`).
+            boca = min(0.88, 2.0 * (meia_carga(x + comp / 2.0) - 0.08))
             # Braçola: mais larga e mais baixa que a tampa, em metal escuro.
             pecas.append(caixa("brac%s%d" % (sufixo, i), (x, 0.0, ALT_CONVES + 0.03),
-                               (0.54, 0.94, 0.10), M["metal"]))
+                               (comp + 0.04, boca + 0.06, 0.10), M["metal"]))
             pecas.append(caixa("tampa%s%d" % (sufixo, i), (x, 0.0, ALT_CONVES + 0.11),
-                               (0.50, 0.88, 0.07), M["metal_claro"]))
+                               (comp, boca, 0.07), M["metal_claro"]))
             # Três vincos na tampa: uma tampa de porão é chapa dobrada, e a
             # esta escala três vincos chegam para o dizer. Mais seria a lixa
             # que o `DESGASTE` já registou.
             for k, dy in ((0, -0.26), (1, 0.0), (2, 0.26)):
                 pecas.append(caixa("vinc%s%d%d" % (sufixo, i, k),
-                                   (x, dy, ALT_CONVES + 0.145),
-                                   (0.50, 0.05, 0.03), M["metal"]))
+                                   (x, dy * boca / 0.88, ALT_CONVES + 0.145),
+                                   (comp, 0.05, 0.03), M["metal"]))
         for i in range(guindastes):
             # Guindaste de bordo entre porões: é a peça que dá altura a um
             # convés que, por definição, não tem carga em cima.
@@ -2738,19 +2792,32 @@ def montar(M: dict) -> dict:
         # justifica os paletes ao lado. O deslocamento do centro segue a mesma
         # rotação: uma caixa girada em torno do centro dela só fica no sítio se
         # o centro andar com ela.
+        #
+        # ⚠️ E NASCE NO PÉ DO MASTRO, a subir. Articulado a meio do mastro e
+        # quase deitado, o da frente saía por cima da água; virado para trás
+        # lia-se como uma barra horizontal solta (o Bruno, duas candidatas).
+        # O pau-de-carga de verdade tem o pé junto ao convés e sobe até perto
+        # do tope — a 55° e a 25° para o costado, a ponta fica dentro do casco
+        # nos dois mastros e ele lê como o que é.
+        # O da frente abre só 16°: a proa ali já estreitou, e a 25° a ponta
+        # passava 0,02 da borda no médio (medido contra o casco).
         BRACO = 1.00
-        rx, rz = math.radians(24.0), math.radians(38.0)
-        dir_pau = (math.cos(rx) * math.cos(rz), -math.cos(rx) * math.sin(rz),
-                   math.sin(rx))
-        for i, dx in enumerate((-0.30, 1.42)):
+        rx = math.radians(55.0)
+        for i, (dx, abre) in enumerate(((-0.30, 25.0), (1.42, 16.0))):
             x = x0 + dx
-            pivo = (x, 0.0, ALT_CONVES + 1.12)
+            rz = math.radians(abre)
+            dir_pau = (math.cos(rx) * math.cos(rz),
+                       -math.cos(rx) * math.sin(rz), math.sin(rx))
+            pivo = (x + 0.06, 0.0, ALT_CONVES + 0.30)
             pecas += [
                 caixa("mst%s%d" % (sufixo, i), (x, 0.0, ALT_CONVES + 0.80),
                       (0.11, 0.11, 1.60), M["metal_claro"]),
                 caixa("pau%s%d" % (sufixo, i),
                       tuple(pivo[k] + dir_pau[k] * BRACO / 2.0 for k in range(3)),
-                      (BRACO, 0.08, 0.08), M["metal_claro"], rot=(0, -24, -38)),
+                      # 0,11 de secção: a 0,07 liam-se como traços finos
+                      # (o Bruno, na quarta candidata).
+                      (BRACO, 0.11, 0.11), M["metal_claro"],
+                      rot=(0, -55, -abre)),
             ]
         return pecas
 
@@ -2772,7 +2839,198 @@ def montar(M: dict) -> dict:
         return casco(sufixo, CARGA, CARGA_FUNDO, ALT_CONVES, casco_ferrugem,
                      M["faixa"], vigias) \
             + superestrutura(sufixo, sup[0], sup[1], sup[2]) \
-            + chamine(sufixo, cham[0], cham[1], cham[2], cham[3]) + deck
+            + chamine(sufixo, cham[0], cham[1], cham[2], cham[3]) + deck \
+            + marcas_de_carga(sufixo, sup)
+
+    def no_casco(x, z):
+        """O ponto do costado VISÍVEL a uma altura `z` do casco de carga.
+
+        O casco de carga é um prisma entre dois contornos — o fundo, estreito,
+        a 0, e a amurada, larga, a `ALT_CONVES` —, e o costado é INCLINADO:
+        uma peça pintada nele tem de se deitar com ele (giro em `x`) e de
+        seguir a curva da proa (giro em `z`), senão fica meio dentro e meio a
+        flutuar. Devolve o `y` e os dois giros.
+        """
+        t = z / ALT_CONVES
+        y_topo, az = no_costado(CARGA, x)
+        y_fundo, _ = no_costado(CARGA_FUNDO, x)
+        y = y_fundo + (y_topo - y_fundo) * t
+        ax = math.degrees(math.atan((y_fundo - y_topo) / ALT_CONVES))
+        return y, ax, az
+
+    def marcas_de_carga(sufixo, sup):
+        """As marcas de navio mercante, iguais nos seis cascos de carga.
+
+        A gramática é a da pesca (`marcas_de_casco`) sem os pneus — navio
+        grande encosta nas defensas do CAIS, não leva as suas — e com o que
+        só um navio de carga tem: a âncora no escovém com o rasto de ferrugem
+        por baixo, as marcas de calado na proa, o molinete, a baleeira no
+        turco ao lado da superestrutura, o mastro do radar e a faixa
+        antivegetativa na linha de água.
+        """
+        sx, sz, st = sup
+        topo_sup = sz + st[2] / 2.0 + 0.07
+        # As letras vão ao porte 1,0 (cabem na faixa de 0,14) e a bandeira ao
+        # do casco; sem cabeços, que na proa liam-se como pontos soltos.
+        pecas = marcas_de_casco(
+            sufixo, CARGA, ALT_CONVES, 1.0, M["cabine"], pneus=(),
+            letras=(1.00, 1.11, 1.22, 1.40, 1.51),
+            bandeira=None, rolo=(1.60, -0.24), letras_rentes=True)
+        # ⚠️ A BANDEIRA VAI NO MASTRO DE SINAIS da ponte, e não num pau na
+        # popa: ali ela voava para trás do casco (o Bruno escolheu-o na
+        # terceira candidata). O mastro fica atrás do radar e à frente da
+        # chaminé, para a bandeira não lhe tocar.
+        # ⚠️ À FRENTE DO TETO, longe da chaminé: atrás do radar ela ficava
+        # quase encostada à chaminé e confundia-se com ela (o Bruno, na
+        # quarta candidata).
+        # ⚠️ E A BANDEIRA SAI DE TODOS OS NAVIOS, os de pesca incluídos —
+        # ordem do Bruno ao fechar a `072`; é a conversa seguinte que a tira.
+        pecas += pavilhao(sufixo, sx + st[0] / 2.0 - 0.06, 0.0, topo_sup,
+                          0.46, 1.2)
+        # A LINHA DE ÁGUA: um anel do casco entre 0 e 0,09, 1% para fora, com
+        # a mesma interpolação entre os dois contornos que o prisma do casco
+        # faz. Os dois contornos têm o mesmo número de pontos — é o que os
+        # deixa fechar face a face (ver `casco_e_fundo`).
+        # ⚠️ A 0,09 E A 0,15 ELA NÃO APARECIA (o Bruno: «linha de água não se
+        # vê»): o costado de baixo é inclinado, e visto desta câmera uma fita
+        # nele encolhe para metade. A 0,24 — perto de 40% do pontal, que é o
+        # que um cargueiro em lastro mostra — lê-se.
+        # ⚠️ E AFASTADA POR UMA FOLGA FIXA, não só em proporção: a 1,2% da
+        # meia-boca, junto à roda a folga ia a zero e o casco e a faixa
+        # disputavam o mesmo plano — saíam DENTES vermelhos e azuis ao longo
+        # da proa, sem erro nenhum.
+        t = 0.24 / ALT_CONVES
+
+        def fora(y):
+            return y * 1.02 + math.copysign(0.008, y) if y else 0.0
+
+        anel_topo = [(xf + (xt - xf) * t, fora(yf + (yt - yf) * t))
+                     for (xt, yt), (xf, yf) in zip(CARGA, CARGA_FUNDO)]
+        pecas.append(prisma("antiveg" + sufixo, anel_topo, 0.0, 0.24, None,
+                            M["antivegetativo"],
+                            contorno_baixo=[(x, fora(y))
+                                            for x, y in CARGA_FUNDO]))
+        # A ÂNCORA no escovém, logo abaixo da faixa, e a ferrugem que ela
+        # arrasta pelo costado: a marca mais reconhecível de um navio de
+        # carga visto de lado.
+        # ⚠️ RENTE E ESCURA: com 0,03 de espessura e em `metal` ela saía
+        # como um bloco cinzento espetado no costado. A âncora de verdade
+        # encosta ao casco, recolhida no escovém.
+        xa = 1.72
+
+        def rente(nome, z, tam, mat, fora=0.006, disco=False):
+            # Cada peça pede o costado À SUA altura: ele é inclinado, e um `y`
+            # só para a âncora inteira punha os braços a flutuar.
+            y, ax, az = no_casco(xa, z)
+            if disco:
+                return cone(nome, (xa, y - fora, z), tam, tam, 0.006, 10, mat,
+                            rot=(90 + ax, 0, az))
+            return caixa(nome, (xa, y - fora, z), tam, mat, rot=(ax, 0, az))
+
+        pecas += [
+            rente("escovem" + sufixo, ALT_CONVES - 0.15, 0.045, M["vao"],
+                  fora=0.003, disco=True),
+            rente("anc_haste" + sufixo, ALT_CONVES - 0.22,
+                  (0.035, 0.012, 0.13), M["vao"]),
+            rente("anc_braco" + sufixo, ALT_CONVES - 0.285,
+                  (0.13, 0.012, 0.035), M["vao"]),
+        ]
+        y, ax, az = no_casco(xa, ALT_CONVES - 0.40)
+        pecas.append(caixa("anc_ferr" + sufixo, (xa, y - 0.004, ALT_CONVES - 0.40),
+                           (0.035, 0.006, 0.18), M["ferrugem"],
+                           rot=(ax, 0, az)))
+        # As MARCAS DE CALADO: a escada de traços brancos junto à roda de proa.
+        # ⚠️ RECUADAS DA RODA: a 2,02 o casco já é quase uma aresta, e os
+        # traços pendiam para fora dela.
+        for i, zc in enumerate((0.30, 0.38, 0.46)):
+            y, ax, az = no_casco(1.92, zc)
+            pecas.append(caixa("calado%s%d" % (sufixo, i),
+                               (1.92, y - 0.004, zc), (0.07, 0.006, 0.035),
+                               M["cabine"], rot=(ax, 0, az)))
+        # O MOLINETE da âncora: UMA peça clara e a amarra que desce dela até ao
+        # escovém. Dois tambores e dois cabeços escuros soltos no convés liam-se
+        # como «pontos soltos» (o Bruno); a amarra é o que liga a máquina à
+        # âncora e diz para que ela serve.
+        pecas += [
+            caixa("molinete" + sufixo, (1.80, -0.02, ALT_CONVES + 0.05),
+                  (0.20, 0.30, 0.10), M["metal_claro"]),
+            # A amarra acaba NA BORDA, onde o escovém a leva para fora: com
+            # 0,24 de comprimento passava 0,075 da amurada.
+            caixa("amarra" + sufixo,
+                  (1.76, -(0.14 + meia_carga(1.76) - 0.02) / 2.0,
+                   ALT_CONVES + 0.012),
+                  (0.03, meia_carga(1.76) - 0.02 - 0.14, 0.02), M["vao"]),
+        ]
+        # A BALEEIRA no turco, pendurada ao lado da superestrutura pelo lado
+        # que se vê: o laranja de salvamento que todo navio SOLAS leva.
+        # ⚠️ AFASTADA DA PAREDE E EM CÁPSULA: uma caixa laranja encostada à
+        # superestrutura lia-se como uma faixa pintada nela. A baleeira de
+        # verdade é uma cápsula e pende do turco POR FORA.
+        # ⚠️ E SEM MONTANTES DE PÉ: dois traços escuros verticais sobre a
+        # cápsula liam-se como uma CARA («1 1» por cima de um sorriso). O
+        # turco fica só nos dois braços que saem da parede por cima dela.
+        # ⚠️ E POR DENTRO DO CASCO: a 0,13 da parede ela passava a borda do
+        # costado (o Bruno: «partes do navio para fora do casco»).
+        # ⚠️ E DO TAMANHO DE UMA BALEEIRA: encostada à parede a 0,27 ela
+        # perdeu presença (o Bruno: «baleeira pequena»). Cresce em comprimento
+        # e em altura, que é para onde há lugar; a boca fica presa à borda.
+        # ⚠️ E NO TETO, NUM BERÇO: pendurada na parede, a meio ou à ré, ela
+        # ficava sempre por cima de janelas (o Bruno, duas candidatas: «os
+        # botes de salvamento estão presos nas janelas»). No teto da
+        # superestrutura, a ré e pelo bordo que se vê, entre o radar e a
+        # chaminé, ela não toca em parede nem em vidro.
+        # ⚠️ E O TETO FOI RECUSADO — «não é realista» (`072`): o sítio dela
+        # está por decidir, e as saídas que se veem estão lá escritas.
+        xbal = sx - 0.20
+        yb = -0.28   # a 0,26 encostava à chaminé do longo curso (0,002 de folga)
+        zb = topo_sup + 0.10
+        pecas += [
+            caixa("berco_bal" + sufixo, (xbal, yb, topo_sup + 0.02),
+                  (0.34, 0.14, 0.04), M["metal"]),
+            bola("baleeira" + sufixo, (xbal, yb, zb), (0.25, 0.09, 0.08),
+                 M["laranja"]),
+        ]
+        # As ASAS DO PASSADIÇO: a plataforma que sai da ponte para os dois
+        # bordos, ao nível do chão dela, até quase à borda do casco — é por
+        # ali que o piloto olha o costado ao atracar. E uma fila de JANELAS
+        # soltas mais abaixo, que é a acomodação: a fita corrida é só da
+        # ponte (frente 4, «mais realista»).
+        x_asa = sx + st[0] / 2.0 - 0.08
+        larg_asa = meia_carga(x_asa) - 0.03 - st[1] / 2.0
+        z_asa = sz + st[2] * 0.06
+        for lado in (-1, 1):
+            pecas.append(caixa("asa%s%d" % (sufixo, lado + 1),
+                               (x_asa, lado * (st[1] / 2.0 + larg_asa / 2.0),
+                                z_asa), (0.16, larg_asa, 0.035),
+                               M["cabine"]))
+        z_jan = sz - st[2] * 0.14
+        x_jan = sx - st[0] / 2.0 + 0.12
+        n = int((sx + st[0] / 2.0 - 0.08 - x_jan) / 0.20) + 1
+        for i in range(n):
+            xj = x_jan + i * 0.20
+            pecas.append(caixa("jan%s%d" % (sufixo, i),
+                               (xj, -st[1] / 2.0 - 0.004, z_jan),
+                               (0.09, 0.012, 0.07), M["vidro"]))
+        for i, yj in enumerate((-0.22, 0.0, 0.22)):
+            pecas.append(caixa("janf%s%d" % (sufixo, i),
+                               (sx + st[0] / 2.0 + 0.004, yj * st[1] / 0.85,
+                                z_jan), (0.012, 0.09, 0.07), M["vidro"]))
+        # E as marcas de calado da POPA, como as da proa.
+        for i, zc in enumerate((0.30, 0.38, 0.46)):
+            y, ax, az = no_casco(-1.90, zc)
+            pecas.append(caixa("caladop%s%d" % (sufixo, i),
+                               (-1.90, y - 0.004, zc), (0.07, 0.006, 0.035),
+                               M["cabine"], rot=(ax, 0, az)))
+        # O RADAR no teto da ponte: uma CÚPULA branca num pedestal curto. O
+        # mastro com a caixa ao lado lia-se como um gancho (o Bruno), e a verga
+        # simétrica seria a cruz que este arquivo já pagou três vezes.
+        pecas += [
+            caixa("radar_m" + sufixo, (sx + 0.12, 0.10, topo_sup + 0.05),
+                  (0.06, 0.06, 0.10), M["metal_claro"]),
+            bola("radar_c" + sufixo, (sx + 0.12, 0.10, topo_sup + 0.14),
+                 (0.09, 0.09, 0.07), M["cabine"]),
+        ]
+        return pecas
 
     # O médio: superestrutura larga e baixa, três baias, quatro porões.
     SUP_M = (-1.15, 0.95, (1.1, 0.85, 0.62))
@@ -2790,9 +3048,9 @@ def montar(M: dict) -> dict:
     SUP_G = (-1.35, 1.00, (0.95, 0.8, 0.72))
     CHAM_G = (-1.7, 1.58, 0.15, 0.56)
     grupos["barco_grande_conteiner"] = cargueiro(
-        "_gc", 5, SUP_G, CHAM_G, deck_conteiner("_gc", -0.50, 4, 3))
+        "_gc", 5, SUP_G, CHAM_G, deck_conteiner("_gc", -0.56, 4, 3, comp=0.54))
     grupos["barco_grande_granel"] = cargueiro(
-        "_gn", 5, SUP_G, CHAM_G, deck_granel("_gn", -0.55, 5, 2))
+        "_gn", 5, SUP_G, CHAM_G, deck_granel("_gn", -0.55, 5, 2, passo=0.55))
     grupos["barco_grande_geral"] = cargueiro(
         "_gg", 5, SUP_G, CHAM_G, deck_geral("_gg", -0.30, 6))
 

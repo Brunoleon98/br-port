@@ -1020,8 +1020,12 @@ camiões** (`069`):
   candidata**: pneus em anel, nome na proa, bandeira num pau na popa, o
   escorrido no material da faixa; a traineira com janelas, rede cinzenta em
   malha e cortiças; o arrasteiro com portas de arrasto, a rede no tambor e o
-  saco de losangos pendurado do pórtico. Seguem-se os médios e os grandes; o
-  resto da 4 — ruína e obras, animação — é escolha do Bruno.
+  saco de losangos pendurado do pórtico.
+- **Os 6 cargueiros, em curso** (`072`): cinco candidatas, a quinta no gerador
+  e nenhuma no jogo. Falta o sítio da baleeira (na parede fica sobre janelas,
+  no teto «não é realista») e **tirar a bandeira de todos os navios**, os de
+  pesca aceites incluídos — as duas ordens do Bruno ao fechar. O resto da 4 —
+  ruína e obras, animação — é escolha dele.
 
 ---
 
