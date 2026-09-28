@@ -21,14 +21,14 @@ fundido, e **fechou a família frota da frente 4** (`073`):
    abaixo do teto nos oito medidos, `.pck` +2.608 bytes, bateria de capturas
    com `COBERTURA OK` e a folha da frota refotografada.
 
-O Bruno não pediu PR: o trabalho só existe na branch.
+O PR é o **#97**, aberto pela interface do Claude Code.
 
 ---
 
 ## 1. Comece pelo estado real
 
-- Confira no GitHub se a `claude/pensive-hypatia-1cdznc` virou PR e se foi
-  fundida; se não foi, a conversa seguinte parte dela (um ref de cada vez no
+- Confira no GitHub se o PR #97 (`claude/pensive-hypatia-1cdznc`) foi
+  fundido; se não foi, a conversa seguinte parte dele (um ref de cada vez no
   `git fetch`, `CLAUDE.md`).
 - Veja os PRs abertos do Codex antes de mexer num arquivo de alto conflito
   (`AGENTS.md`).
