@@ -350,6 +350,12 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   acabamento), com a recomendação primeiro: ele marcou as oito, e a
   candidata seguinte foi aceite. Quando a peça já vai no rumo certo, ofereça
   «Sugira você o que falta» ao lado de «Aceito».
+  ⚠️ **E A LEGENDA COM A PERGUNTA NÃO O FEZ RESPONDER EM TEXTO** (28/09,
+  `073`): a prancha saiu com «Aceito / Ajustar / Sugira você» escrito na
+  legenda e no fim do turno, e a mensagem seguinte foi «E agora?». A
+  pergunta sozinha, logo a seguir, voltou «Aceito» (**16 de 16** somando as
+  sessões). A legenda não substitui a pergunta; «E agora?» é o mesmo sinal
+  que «Mande pergunta».
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
@@ -373,6 +379,12 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   peças, que categorias, que marcas as distinguem — com opções e a
   recomendação primeiro. Nas variações do trabalhador ele respondeu tudo numa
   volta (2 sexos × 3 idades × 5 cores do IBGE; as marcas de cada eixo).
+- **E ONDE UMA PEÇA VAI também se pergunta antes do render** (`073`). Na
+  `072` a baleeira levou seis posições escolhidas a olho, e ele recusou as
+  seis. Na conversa seguinte a posição foi uma pergunta com duas saídas
+  realistas e uma PRÉVIA EM ASCII de cada uma (vista de lado, a peça e o
+  que a rodeia). Ele escolheu a recomendada, e a primeira candidata foi
+  aceite.
 
 ---
 

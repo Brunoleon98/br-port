@@ -1017,15 +1017,16 @@ camiões** (`069`):
 - **A frota, pelos 3 de pesca** (`071`): escopo respondido antes do desenho —
   detalhe nos 9 cascos, a começar pela pesca, com as quatro marcas (defensas e
   amarração, nome e bandeira, equipamento, desgaste). **Aceites na quinta
-  candidata**: pneus em anel, nome na proa, bandeira num pau na popa, o
-  escorrido no material da faixa; a traineira com janelas, rede cinzenta em
+  candidata**: pneus em anel, nome na proa, bandeira num pau na popa (saiu
+  na `073`), o escorrido no material da faixa; a traineira com janelas, rede cinzenta em
   malha e cortiças; o arrasteiro com portas de arrasto, a rede no tambor e o
   saco de losangos pendurado do pórtico.
-- **Os 6 cargueiros, em curso** (`072`): cinco candidatas, a quinta no gerador
-  e nenhuma no jogo. Falta o sítio da baleeira (na parede fica sobre janelas,
-  no teto «não é realista») e **tirar a bandeira de todos os navios**, os de
-  pesca aceites incluídos — as duas ordens do Bruno ao fechar. O resto da 4 —
-  ruína e obras, animação — é escolha dele.
+- **Os 6 cargueiros** (`072`, `073`): **aceites na sexta candidata** e no
+  jogo, com os três de pesca. A superestrutura tem dois níveis, e a baleeira
+  fica no convés de embarcações, ao lado de uma parede cega. Nenhum dos nove
+  navios leva bandeira. A posição da baleeira foi perguntada ANTES do render,
+  depois de seis recusadas a olho na `072`. **A família frota fechou**; o
+  resto da 4 — ruína e obras, animação — é escolha dele.
 
 ---
 

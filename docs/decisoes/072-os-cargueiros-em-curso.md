@@ -1,5 +1,8 @@
 # 072 — A frota, segunda passagem: os seis cargueiros (em curso)
 
+> **Fechada pela `073`** (28/09): a baleeira foi para o convés de
+> embarcações, a bandeira saiu dos nove navios, e os nove estão no jogo.
+
 **27–28/09/2026 · frente 4 do A5, família frota** — depois dos três de pesca
 (`071`), o Bruno escolheu **os 6 cargueiros juntos** (médio e longo curso, cada
 um em carga geral, contêiner e granel). A passagem ficou em curso: cinco

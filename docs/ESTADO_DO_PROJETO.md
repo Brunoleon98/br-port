@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 28/09/2026 — os cargueiros em curso (`072`)
+> **Última atualização:** 28/09/2026 — a frota no jogo (`073`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -113,7 +113,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Frente 4 do A5 — escala, camiões e pesca** (27/09, `069`–`071`) | A pessoa a 1,5× o real; **os 32 camiões** das duas transportadoras, pela vez de cada uma; **os 3 barcos de pesca detalhados** — defensas, nome, bandeira, rede e saco; **os 6 cargueiros em curso** (`072`), no gerador e fora do jogo. `.pck` +0,85% |
+| **Frente 4 do A5 — escala, camiões e frota** (27–28/09, `069`–`073`) | A pessoa a 1,5× o real; **os 32 camiões** das duas transportadoras, pela vez de cada uma; **os 9 cascos detalhados** — na pesca defensas, nome, rede e saco; nos cargueiros âncora, calado, radar e a baleeira no convés de embarcações; bandeira em nenhum. `.pck` +0,85% |
 | **Frente 6 do A5 — a prancha e a escala** (27/09, `068`) | **Aceite.** A `prancha_prop.gd` (candidata contra o prop do jogo) e a `escala_props.gd` (todos a 1:1, com trabalhador, pedestre e carro de régua) |
 | **Frente 3 do A5 — as quatro famílias aceites** (25–27/09, `062`–`067`) | O cartão e o HUD (**F14**, **F15**, `SAVE_VERSION` 9); tela inicial, três espaços de save, pausa curta, Ajustes e o celular (**F16**); o **caderno** (**D37**) e a **conversa no celular**, cada voz no seu balão (**F17**, **D38**). A foto do porto antigo, o fundo e o logotipo são do Bruno (`art_lab/diario/`, `art_lab/tela_inicial/`) |
 
@@ -130,7 +130,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`) |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões e a pesca (`069`–`071`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | Na 4 fecham os 6 cargueiros (a baleeira, sem bandeira em navio nenhum, `072`); ruína e obras e animação são dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões e a frota (`069`–`073`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | Na 4 a frota fechou (`073`); ruína e obras e animação são dele. O galpão V3 que ele aprovou só existe lá (`art/f01-galpao`): **recuperar ou refazer**. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
