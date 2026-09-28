@@ -211,12 +211,11 @@ PALETA = {
     "boia": "#d94f2a", "corda": "#c9b48a",
     # ── AS MARCAS DA FROTA DE PESCA (frente 4, família frota) ────────────
     #
-    # A bandeira do Brasil na popa: as três cores do pavilhão, que é o que
-    # sobra dela a 3-6 px. E o ESCORRIDO de cada amurada, que é a cor dela
-    # levada ao escuro: o sujo que a água do convés arrasta pelo embornal é
-    # da cor da tinta por onde passa, e não uma mancha de outro material.
-    "bandeira_verde": "#009c3b", "bandeira_amarela": "#ffdf00",
-    "bandeira_azul": "#002776",
+    # O ESCORRIDO de cada amurada, que é a cor dela levada ao escuro: o sujo
+    # que a água do convés arrasta pelo embornal é da cor da tinta por onde
+    # passa, e não uma mancha de outro material.
+    # ⚠️ A BANDEIRA DO BRASIL SAIU DE TODOS OS NAVIOS (`073`, ordem do Bruno
+    # ao fechar a `072`), e as três cores dela saíram com ela.
     "escorrido_vermelho": "#7a2220", "escorrido_azul": "#1d4a5c",
     # ⚠️ O ESCORRIDO DO AMARELO É MAIS CLARO do que a regra da cor levada ao
     # escuro daria (#8a5c10): o amarelo é a faixa mais clara das três, e o
@@ -2127,33 +2126,12 @@ def montar(M: dict) -> dict:
         inclin = (meia(x + 0.02) - meia(x - 0.02)) / 0.04
         return -meia(x), math.degrees(math.atan(-inclin))
 
-    def pavilhao(sufixo, xs, ys, base, alt_pau, kb):
-        """O pavilhão nacional num pau, a voar para a ré (`-x`).
-
-        As três cores do Brasil, que é o que sobra dele a 3-6 px. O pau nasce
-        em `base` — o convés na pesca, o teto da ponte nos cargueiros.
-        """
-        topo, xb = base + alt_pau, xs - 0.12 * kb
-        return [
-            caixa("bpau" + sufixo, (xs, ys, base + alt_pau / 2.0),
-                  (0.022 * kb, 0.022 * kb, alt_pau), M["metal_claro"]),
-            caixa("bverde" + sufixo, (xb, ys, topo - 0.08 * kb),
-                  (0.22 * kb, 0.010, 0.15 * kb), M["bandeira_verde"]),
-            caixa("bamar" + sufixo, (xb, ys - 0.009, topo - 0.08 * kb),
-                  (0.095 * kb, 0.008, 0.095 * kb), M["bandeira_amarela"],
-                  rot=(0, 45, 0)),
-            cone("bazul" + sufixo, (xb, ys - 0.016, topo - 0.08 * kb),
-                 0.034 * kb, 0.034 * kb, 0.006, 10, M["bandeira_azul"],
-                 rot=(90, 0, 0)),
-        ]
-
     def marcas_de_casco(sufixo, contorno, altura, k, letra, pneus, letras,
-                        bandeira, rolo=None, cabecos=None, k_bandeira=None,
-                        letras_rentes=False):
+                        rolo=None, cabecos=None, letras_rentes=False):
         """O que um barco de verdade traz no costado e no convés.
 
         Nasceu com a pesca (`071`) e serve também aos cargueiros, que levam
-        as mesmas letras, bandeira, rolo e cabeços, e nenhum pneu.
+        as mesmas letras, rolo e cabeços, e nenhum pneu.
 
         A frente 4 (família frota) pediu os quatro grupos de uma vez —
         defensas e amarração, nome e bandeira, equipamento, desgaste —, e os
@@ -2170,7 +2148,9 @@ def montar(M: dict) -> dict:
           ferrugem — a ferrugem continua a ser marca da classe de CARGA. A
           primeira candidata desenhava-o com caixas de 0,026 por baixo da
           amurada, e a 1 px elas não apareciam em barco nenhum.
-        - BANDEIRA: o pavilhão na popa, num pau próprio, a voar para a ré.
+        - BANDEIRA: SAIU (`073`). Viveu aqui o pavilhão do Brasil num pau na
+          popa, e nos cargueiros no mastro de sinais; o Bruno tirou-o de todos
+          os navios ao fechar a `072`.
         - AMARRAÇÃO: rolo de cabo e cabeços na proa. O cabo ATÉ O PÍER não
           entra no prop: o barco chega e balança, e um cabo preso ao casco
           chegaria já esticado a apontar para o ar.
@@ -2200,12 +2180,6 @@ def montar(M: dict) -> dict:
                                (x, y - fora, altura - 0.05 * k),
                                (0.05 * k, esp, 0.085 * k), letra,
                                rot=(0, 0, ang)))
-        if bandeira is not None:
-            # O porte da bandeira pode não ser o do barco: no bote, a 0,62,
-            # ela saía com 3 px e não se lia (o Bruno: «bote pequeno demais»).
-            xs, ys, alt_pau = bandeira
-            pecas += pavilhao(sufixo, xs, ys, altura, alt_pau,
-                              k_bandeira if k_bandeira is not None else k)
         if rolo is not None:
             rx, ry = rolo
             zr = altura - 0.02 + 0.018 * k + 0.003
@@ -2321,10 +2295,9 @@ def montar(M: dict) -> dict:
         "_pb", BOTE[0], 0.30, 0.62, M["cabine"],
         # Sem NOME nem PNEUS: a 44 px as letras eram um traço branco e os
         # pneus pontos soltos no costado (o Bruno, na primeira e na terceira
-        # candidatas), e o bote diz-se pelo gelo, pelo rolo de cabo e pela
-        # bandeira.
+        # candidatas), e o bote diz-se pelo gelo e pelo rolo de cabo — e pela
+        # bandeira, até ela sair de todos os navios (`073`).
         pneus=(), letras=(),
-        bandeira=(-0.80, -0.14, 0.36), k_bandeira=0.74,
         rolo=(0.84, 0.0))
 
     # A TRAINEIRA: o porte do meio, e o casco, a cabine, o mastro e a rede são
@@ -2387,7 +2360,6 @@ def montar(M: dict) -> dict:
     grupos["barco_pesca_traineira"] += marcas_de_casco(
         "_p", PESCA, 0.44, 1.0, M["cabine"],
         pneus=(-0.43, 0.0, 0.43), letras=(0.56, 0.66, 0.82, 0.92, 1.02),
-        bandeira=(-1.34, -0.20, 0.70),
         rolo=(0.78, -0.15), cabecos=1.18) + [
         # A boia salva-vidas na parede da cabine que se vê.
         anel("salva_p", (-0.52, -0.335, 0.63), 0.085, 0.026, M["boia"],
@@ -2551,7 +2523,6 @@ def montar(M: dict) -> dict:
         "_pa", ARRASTO[0], 0.56, 1.24, M["vao"],
         pneus=(-0.75, -0.25, 0.25),
         letras=(0.62, 0.74, 0.94, 1.06, 1.18),
-        bandeira=(-1.66, -0.28, 0.80),
         rolo=(1.10, -0.24), cabecos=1.62) + [
         anel("salva_pa", (0.80, -0.37, 0.74), 0.10, 0.03, M["boia"],
              rot=(90, 0, 0)),
@@ -2576,22 +2547,60 @@ def montar(M: dict) -> dict:
               M["metal_claro"]),
     ]
 
-    def superestrutura(sufixo, x, z, tam, com_ponte=True):
-        """Cabine com janelas em fita, teto e chaminé com faixa.
+    # ⚠️ A SUPERESTRUTURA TEM DOIS NÍVEIS desde a `073`, e foi a baleeira que
+    # os pediu. Num bloco só não havia sítio para ela: pendurada na parede
+    # caía sempre sobre janelas (o Bruno, duas candidatas: «presa nas
+    # janelas»), afastada passava da borda do casco, e no teto «não é
+    # realista». Num cargueiro ela vive no CONVÉS DE EMBARCAÇÕES — o teto de
+    # um nível de baixo mais largo, ao lado de um nível de cima mais estreito
+    # —, e foi isso que o Bruno escolheu. A caixa envolvente não mudou: o
+    # topo, o comprimento e a boca são os de antes, e a chaminé, o radar e o
+    # `topo_sup` ficam onde estavam.
+    NIVEL_BAIXO = 0.20    # a altura do nível de baixo: um convés
+    CONVES_BAL = 0.18     # a largura do convés de embarcações, de cada bordo
+    FITA_ALT = 0.12       # a fita de vidro da ponte, no alto do nível de cima
+
+    def conves_de_embarcacoes(z, tam):
+        """O `z` do convés de embarcações e a meia-boca do nível de cima.
+
+        A baleeira de 0,18 de boca cabe no convés com a borda 0,03 para fora
+        do nível de baixo — onde o turco a segura — e 0,03 de folga da parede
+        de cima. Menos do que 0,18 e ela encosta à parede; mais, e o nível de
+        cima do longo curso fica uma torre fina.
+        """
+        return z - tam[2] / 2.0 + NIVEL_BAIXO, tam[1] / 2.0 - CONVES_BAL
+
+    def superestrutura(sufixo, x, z, tam):
+        """Dois níveis de acomodação, a fita de vidro da ponte e o teto.
 
         A cabine era um bloco branco. Uma superestrutura de navio tem uma
         FITA DE JANELA correndo à volta da ponte — é ela que diz de que lado
         alguém está a olhar, e é a peça que mais barato transforma o bloco.
+
+        ⚠️ A FITA SUBIU PARA O ALTO DO NÍVEL DE CIMA: onde estava, a 18% da
+        altura acima do meio, a baleeira do convés de embarcações chegava-lhe
+        — e baleeira sobre vidro é o «presa nas janelas» outra vez. Entre a
+        baleeira e a fita a parede de cima é CEGA de propósito.
         """
-        pecas = [caixa("cab" + sufixo, (x, 0.0, z), tam, PALETA_MAT["cabine"])]
-        if com_ponte:
-            pecas.append(caixa("fita" + sufixo, (x, 0.0, z + tam[2] * 0.18),
-                               (tam[0] * 1.01, tam[1] * 1.01, tam[2] * 0.24),
-                               PALETA_MAT["vidro"]))
-        pecas.append(caixa("teto" + sufixo, (x, 0.0, z + tam[2] / 2.0 + 0.03),
-                           (tam[0] * 1.10, tam[1] * 1.10, 0.07),
-                           PALETA_MAT["metal_claro"]))
-        return pecas
+        L, W, H = tam
+        z1 = z + H / 2.0
+        zc, meia = conves_de_embarcacoes(z, tam)
+        return [
+            caixa("cab" + sufixo, (x, 0.0, zc - NIVEL_BAIXO / 2.0),
+                  (L, W, NIVEL_BAIXO), PALETA_MAT["cabine"]),
+            # A borda do convés de embarcações: a chapa sai um pouco do nível
+            # de baixo, e é a linha escura dela que desenha o degrau.
+            caixa("convesb" + sufixo, (x, 0.0, zc + 0.01),
+                  (L * 1.02, W + 0.035, 0.035), PALETA_MAT["metal_claro"]),
+            caixa("cabs" + sufixo, (x, 0.0, (zc + z1) / 2.0),
+                  (L, 2.0 * meia, z1 - zc), PALETA_MAT["cabine"]),
+            caixa("fita" + sufixo, (x, 0.0, z1 - 0.04 - FITA_ALT / 2.0),
+                  (L * 1.01, 2.0 * meia + 0.006, FITA_ALT),
+                  PALETA_MAT["vidro"]),
+            caixa("teto" + sufixo, (x, 0.0, z1 + 0.03),
+                  (L * 1.10, 2.0 * meia + 0.08, 0.07),
+                  PALETA_MAT["metal_claro"]),
+        ]
 
     def chamine(sufixo, x, z, raio, alt):
         return [
@@ -2864,29 +2873,26 @@ def montar(M: dict) -> dict:
         A gramática é a da pesca (`marcas_de_casco`) sem os pneus — navio
         grande encosta nas defensas do CAIS, não leva as suas — e com o que
         só um navio de carga tem: a âncora no escovém com o rasto de ferrugem
-        por baixo, as marcas de calado na proa, o molinete, a baleeira no
-        turco ao lado da superestrutura, o mastro do radar e a faixa
+        por baixo, as marcas de calado na proa, o molinete, a baleeira nos
+        turcos do convés de embarcações, a cúpula do radar e a faixa
         antivegetativa na linha de água.
         """
         sx, sz, st = sup
         topo_sup = sz + st[2] / 2.0 + 0.07
-        # As letras vão ao porte 1,0 (cabem na faixa de 0,14) e a bandeira ao
-        # do casco; sem cabeços, que na proa liam-se como pontos soltos.
+        # ⚠️ `z_emb` E NÃO `zc`: o laço das marcas de calado, mais abaixo,
+        # usa `zc` e deixava-o em 0,46 — a baleeira nasceu DENTRO do casco,
+        # sem erro nenhum, e a primeira foto não tinha um pixel laranja.
+        z_emb, meia = conves_de_embarcacoes(sz, st)
+        z_ponte = sz + st[2] / 2.0 - 0.04 - FITA_ALT   # o pé da fita da ponte
+        # As letras vão ao porte 1,0 (cabem na faixa de 0,14); sem cabeços,
+        # que na proa liam-se como pontos soltos.
+        # ⚠️ E SEM BANDEIRA: ela viveu num mastro de sinais à frente do teto
+        # da ponte, e saiu de todos os navios (`073`, ordem do Bruno); o
+        # mastro saiu com ela.
         pecas = marcas_de_casco(
             sufixo, CARGA, ALT_CONVES, 1.0, M["cabine"], pneus=(),
             letras=(1.00, 1.11, 1.22, 1.40, 1.51),
-            bandeira=None, rolo=(1.60, -0.24), letras_rentes=True)
-        # ⚠️ A BANDEIRA VAI NO MASTRO DE SINAIS da ponte, e não num pau na
-        # popa: ali ela voava para trás do casco (o Bruno escolheu-o na
-        # terceira candidata). O mastro fica atrás do radar e à frente da
-        # chaminé, para a bandeira não lhe tocar.
-        # ⚠️ À FRENTE DO TETO, longe da chaminé: atrás do radar ela ficava
-        # quase encostada à chaminé e confundia-se com ela (o Bruno, na
-        # quarta candidata).
-        # ⚠️ E A BANDEIRA SAI DE TODOS OS NAVIOS, os de pesca incluídos —
-        # ordem do Bruno ao fechar a `072`; é a conversa seguinte que a tira.
-        pecas += pavilhao(sufixo, sx + st[0] / 2.0 - 0.06, 0.0, topo_sup,
-                          0.46, 1.2)
+            rolo=(1.60, -0.24), letras_rentes=True)
         # A LINHA DE ÁGUA: um anel do casco entre 0 e 0,09, 1% para fora, com
         # a mesma interpolação entre os dois contornos que o prisma do casco
         # faz. Os dois contornos têm o mesmo número de pontos — é o que os
@@ -2979,31 +2985,46 @@ def montar(M: dict) -> dict:
         # botes de salvamento estão presos nas janelas»). No teto da
         # superestrutura, a ré e pelo bordo que se vê, entre o radar e a
         # chaminé, ela não toca em parede nem em vidro.
-        # ⚠️ E O TETO FOI RECUSADO — «não é realista» (`072`): o sítio dela
-        # está por decidir, e as saídas que se veem estão lá escritas.
-        xbal = sx - 0.20
-        yb = -0.28   # a 0,26 encostava à chaminé do longo curso (0,002 de folga)
-        zb = topo_sup + 0.10
+        # ⚠️ E O TETO FOI RECUSADO — «não é realista» (`072`).
+        # ⚠️ E FOI PARA O CONVÉS DE EMBARCAÇÕES (`073`, escolha do Bruno): o
+        # teto do nível de baixo, pelo bordo que se vê, a ré e ao lado da
+        # parede CEGA do nível de cima. A borda de fora passa 0,03 da borda
+        # do nível de baixo, que é onde uma baleeira de turco fica estivada.
+        xbal = sx - 0.15
+        yb = -st[1] / 2.0 + 0.06
+        z_bal = z_emb + 0.0275   # o topo da chapa do convés de embarcações
         pecas += [
-            caixa("berco_bal" + sufixo, (xbal, yb, topo_sup + 0.02),
-                  (0.34, 0.14, 0.04), M["metal"]),
-            bola("baleeira" + sufixo, (xbal, yb, zb), (0.25, 0.09, 0.08),
-                 M["laranja"]),
+            caixa("berco_bal" + sufixo, (xbal, yb, z_bal + 0.015),
+                  (0.34, 0.12, 0.03), M["metal"]),
+            bola("baleeira" + sufixo, (xbal, yb, z_bal + 0.09),
+                 (0.25, 0.09, 0.08), M["laranja"]),
         ]
+        # Os TURCOS: um braço por ponta, do pé da parede de cima à cabeça por
+        # cima da baleeira — INCLINADOS, que é como um turco de gravidade fica
+        # estivado. Os montantes de pé foram a «cara» da primeira passagem.
+        pe_y, cab_y = -meia - 0.015, yb - 0.01
+        dz = 0.24
+        ang = math.degrees(math.atan2(pe_y - cab_y, dz))
+        for i, xd in enumerate((xbal - 0.19, xbal + 0.19)):
+            pecas.append(caixa("turco%s%d" % (sufixo, i),
+                               (xd, (pe_y + cab_y) / 2.0, z_bal + dz / 2.0),
+                               (0.04, 0.04, math.hypot(pe_y - cab_y, dz)),
+                               M["metal"], rot=(ang, 0, 0)))
         # As ASAS DO PASSADIÇO: a plataforma que sai da ponte para os dois
-        # bordos, ao nível do chão dela, até quase à borda do casco — é por
-        # ali que o piloto olha o costado ao atracar. E uma fila de JANELAS
-        # soltas mais abaixo, que é a acomodação: a fita corrida é só da
-        # ponte (frente 4, «mais realista»).
+        # bordos, ao nível do chão dela — o pé da fita —, até quase à borda
+        # do casco — é por ali que o piloto olha o costado ao atracar. E as
+        # JANELAS soltas da acomodação: a fita corrida é só da ponte (frente
+        # 4, «mais realista»).
         x_asa = sx + st[0] / 2.0 - 0.08
-        larg_asa = meia_carga(x_asa) - 0.03 - st[1] / 2.0
-        z_asa = sz + st[2] * 0.06
+        larg_asa = meia_carga(x_asa) - 0.03 - meia
         for lado in (-1, 1):
             pecas.append(caixa("asa%s%d" % (sufixo, lado + 1),
-                               (x_asa, lado * (st[1] / 2.0 + larg_asa / 2.0),
-                                z_asa), (0.16, larg_asa, 0.035),
+                               (x_asa, lado * (meia + larg_asa / 2.0),
+                                z_ponte - 0.02), (0.16, larg_asa, 0.035),
                                M["cabine"]))
-        z_jan = sz - st[2] * 0.14
+        # Uma fila no nível de baixo, a correr o costado todo — a baleeira
+        # fica POR CIMA dela, do outro lado da borda do convés.
+        z_jan = z_emb - NIVEL_BAIXO / 2.0
         x_jan = sx - st[0] / 2.0 + 0.12
         n = int((sx + st[0] / 2.0 - 0.08 - x_jan) / 0.20) + 1
         for i in range(n):
@@ -3015,6 +3036,20 @@ def montar(M: dict) -> dict:
             pecas.append(caixa("janf%s%d" % (sufixo, i),
                                (sx + st[0] / 2.0 + 0.004, yj * st[1] / 0.85,
                                 z_jan), (0.012, 0.09, 0.07), M["vidro"]))
+        # E outra no nível de cima, só À FRENTE da baleeira: no vão dela a
+        # parede é cega, que é o que a deixa de estar «presa nas janelas».
+        z_jan2 = (z_bal + z_ponte) / 2.0
+        x_jan2 = xbal + 0.25 + 0.10
+        n2 = int((sx + st[0] / 2.0 - 0.08 - x_jan2) / 0.20) + 1
+        for i in range(max(n2, 0)):
+            xj = x_jan2 + i * 0.20
+            pecas.append(caixa("jans%s%d" % (sufixo, i),
+                               (xj, -meia - 0.004, z_jan2),
+                               (0.09, 0.012, 0.07), M["vidro"]))
+        for i, yj in enumerate((-0.5, 0.5)):
+            pecas.append(caixa("jansf%s%d" % (sufixo, i),
+                               (sx + st[0] / 2.0 + 0.004, yj * meia, z_jan2),
+                               (0.012, 0.09, 0.07), M["vidro"]))
         # E as marcas de calado da POPA, como as da proa.
         for i, zc in enumerate((0.30, 0.38, 0.46)):
             y, ax, az = no_casco(-1.90, zc)
