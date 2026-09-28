@@ -12,8 +12,12 @@ peça, mede o quanto cada vértice passa da meia-boca do casco no `x` dele.
 Imprime, por prop, as peças que passam mais de 0,02 unidades, da pior para a
 melhor. É RELATÓRIO, não portão: há peças que saem de propósito — os pneus
 de defensa pendurados no costado, o pau-de-carga da traineira a içar por cima
-da amurada, a bandeira a voar —, e quem decide se uma saída é defeito é quem
-olha para ela.
+da amurada —, e quem decide se uma saída é defeito é quem olha para ela.
+(A bandeira a voar também saía, até sair de todos os navios — `073`.)
+
+⚠️ E DENTRO DO CASCO NÃO É «FORA». Uma peça que nasce enterrada no casco
+passa aqui calada: a baleeira da `073` nasceu a 0,46 de altura, dentro dele,
+por um nome de variável reusado, e quem a apanhou foi a foto.
 
 ⚠️ NASCEU PORQUE O OLHO NÃO CHEGOU (`docs/decisoes/072`). O Bruno disse três
 vezes «partes do navio saindo do casco», e a cada volta a correção à vista
