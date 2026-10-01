@@ -153,7 +153,9 @@ visual, o RNG por identidade e canal e os gates com o Bruno a fechar.
    V3 (aprovado pelo Bruno), a casa focal no gerador, o
    `BRP_PRODUCTION_MANIFEST.json` e o `tools/conferir_manifesto_producao.py` só
    existem no checkout dele (`art/f01-galpao`, HEAD `cc36166`). Publicar essa
-   branch é o primeiro passo para não se perderem.
+   branch é o primeiro passo para não se perderem. **A RUÍNA do galpão V3 foi
+   refeita daqui** (`074`), pela leitura da `036` dele e com escolha do Bruno;
+   o galpão RECUPERADO V3, a casa focal e o manifesto continuam só lá.
 6. **As provas contam existência como PASS** — hashes registados, `bbox is not
    None`, o SVG existe. A que vale é a das âncoras sob forma mutada, e essa
    está certa. A máscara protege lotes, vias, acessos e píeres; não protege a
@@ -195,7 +197,8 @@ vereditos de 23/09»); a ordem é do Bruno.
 | Dona Cida séria quadrada v1 (kit de caixas) | estúdio Blender (`retratos/cida_seria/quadrada_v1/`) | **escolhida como modelo**, com ajustes pedidos: cabelo, óculos, tronco e rosto | Feitos na quadrada v2 |
 | Dona Cida séria quadrada v2 (kit de caixas) | estúdio Blender (`retratos/cida_seria/quadrada_v2/`) | **mais ajustes pedidos**: cabelo, cores, rosto e corpo; Standard nos retratos | Feitos na quadrada v3 |
 | Dona Cida séria quadrada v3 (kit de caixas, Standard) | estúdio Blender (`retratos/cida_seria/quadrada_v3/`) → `blender/brp_retratos.py` | ✅ **aceita na foto do jogo e no jogo** (`055`), nas três expressões | O Sr. Ribeiro, o Arlindo e o trabalhador no mesmo kit |
-| Galpão F1 V3, casa focal, manifesto de produção | fora deste repositório | aprovados/decididos no checkout do ChatGPT | Só existem lá. Sem a branch `art/f01-galpao` publicada, o que resta deles é o texto das decisões em `plano/decisoes_da_frente/`, e o galpão V3 teria de ser refeito |
+| Galpão F1 V3, casa focal, manifesto de produção | fora deste repositório | aprovados/decididos no checkout do ChatGPT | Só existem lá. Sem a branch `art/f01-galpao` publicada, o que resta deles é o texto das decisões em `plano/decisoes_da_frente/` |
+| Galpão F1 em RUÍNA, refeito pela leitura V3 (`036` dele) | `tools/gerar_props_iso.py` | ✅ **aceite e no jogo** (`074`), com o escritório em ruína | O galpão recuperado V3 continua só no checkout dele |
 
 ⚠️ **A vegetação não aparece em nenhum dos 31 vereditos do Bruno** — ela vem do
 Lote 1 do plano V3. Em que lugar entra contra as seis frentes é escolha dele.

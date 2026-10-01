@@ -1644,8 +1644,10 @@ da do galpão, chanfrada como o kit: **a face fica a 255 e a faixa da quina
 desce a 174, com 5,7% dos pixels abaixo de mediana − 40** — a distribuição
 bimodal que o `Pointiness` não dava (na mesma caixa, 198–201, plano). A Etapa 4
 deixou escrito *«se voltar, vem de uma coordenada»*; esta é uma terceira via.
-Serve a ruína, que a frente 4 pede com *«mais desgaste»*. Por medir: o tempo
-que as amostras do nó somam num prop inteiro.
+Serve a ruína, que a frente 4 pede com *«mais desgaste»*. ✅ **Usado na
+ruína** (`074`, `material_alvenaria_velha()`): com 8 amostras o render do
+prop não se mexeu além do ruído (5,5 → 5,1 s no galpão). ⚠️ Somar ruído à
+oclusão contorna TODAS as arestas; a lasca é o produto das duas máscaras.
 
 **C4. Metaball para o que é orgânico** — copa, pedra, fauna. As razões da P1,
 nas peças que hoje são cone e caixa; a régua de silhueta (`024`, `028`) diz se
