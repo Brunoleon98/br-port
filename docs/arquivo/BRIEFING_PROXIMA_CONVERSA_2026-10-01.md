@@ -20,7 +20,7 @@ da `main` com o PR #97 fundido, e **fechou a família ruína da frente 4**
    verdes, a bateria de capturas dá `COBERTURA OK` e o `.pck` cresceu 9.264
    bytes.
 
-O Bruno não pediu PR: o trabalho só existe na branch.
+O trabalho está no **PR #98**, por fundir.
 
 ---
 
@@ -34,8 +34,8 @@ abaixo deste texto.
   `CLAUDE.md`.
 - Para saber onde o jogo está: `docs/ESTADO_DO_PROJETO.md`. Para o rumo: a §7
   de `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
-- **Confira no GitHub se a `claude/determined-wright-ft66hv` virou PR e se
-  foi fundida.** Se não foi, a `main` ainda tem a ruína antiga, e o
+- **Confira no GitHub se o PR #98 (`claude/determined-wright-ft66hv`) foi
+  fundido.** Se não foi, a `main` ainda tem a ruína antiga, e o
   `tools/gerar_props_iso.py` (alto conflito) tem 500 linhas novas nessa
   branch. Se a sua tarefa tocar nele, nos props ou na `Main.tscn`, diga-o ao
   Bruno antes de editar.
