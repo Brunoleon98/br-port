@@ -1025,8 +1025,16 @@ camiões** (`069`):
   jogo, com os três de pesca. A superestrutura tem dois níveis, e a baleeira
   fica no convés de embarcações, ao lado de uma parede cega. Nenhum dos nove
   navios leva bandeira. A posição da baleeira foi perguntada ANTES do render,
-  depois de seis recusadas a olho na `072`. **A família frota fechou**; o
-  resto da 4 — ruína e obras, animação — é escolha dele.
+  depois de seis recusadas a olho na `072`. **A família frota fechou.**
+- **A ruína** (`074`): o galpão e o escritório refeitos como o MESMO prédio
+  com menos prédio. O galpão tem doca partida, chapa e zinco com ferrugem,
+  lona azul com pneus, portão caído e esqueleto de aço no lado do cais (a
+  leitura V3 do ChatGPT, refeita daqui). O escritório é o canto com toldo
+  rasgado, placa caída, telha laranja no chão e uma árvore lá dentro. O
+  desgaste é reboco caído, quina lascada (o C3 do plano de arte) e umidade.
+  Escopo e composição foram perguntados antes do render; **aceite na
+  segunda candidata** e no jogo. As **obras** ficaram fora (mecânica, item
+  5). Na 4 falta só a **animação**, que é escolha dele.
 
 ---
 

@@ -356,6 +356,13 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   pergunta sozinha, logo a seguir, voltou «Aceito» (**16 de 16** somando as
   sessões). A legenda não substitui a pergunta; «E agora?» é o mesmo sinal
   que «Mande pergunta».
+  ⚠️ **E NA RUÍNA (`074`) O TURNO ACABOU NO ENVIO 2 DE 2**, com a pergunta
+  já decidida e por escrever no bloco seguinte. Da primeira ele escreveu
+  «Mande pergunta»; da segunda, com «a pergunta vem a seguir» na legenda,
+  respondeu o veredito em texto («Ficou bom»). As perguntas SOZINHAS da
+  sessão voltaram 3 de 3 (**19 de 19** somando as sessões). O envio da
+  prancha tende a ser o fim do turno: escreva na legenda o que se pergunta
+  e com que opções, e leia a resposta em texto como veredito.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
@@ -385,6 +392,9 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   realistas e uma PRÉVIA EM ASCII de cada uma (vista de lado, a peça e o
   que a rodeia). Ele escolheu a recomendada, e a primeira candidata foi
   aceite.
+  **E a COMPOSIÇÃO de uma família inteira também** (`074`): duas opções por
+  prédio, cada uma com a prévia em ASCII das duas faces que a câmara vê. Ele
+  escolheu as duas recomendadas, e a primeira candidata mostrada foi aceite.
 
 ---
 

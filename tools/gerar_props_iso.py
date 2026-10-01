@@ -359,6 +359,33 @@ PALETA = {
     # 116,3 e 151, contra 116,5 e 151 antes. Um prédio não move a composição;
     # move a própria leitura.
     "zinco": "#4e5b66", "zinco_vinco": "#3e4a54",
+    # ── A RUÍNA COM DESGASTE (frente 4, família ruína, `074`) ────────────
+    #
+    # O TIJOLO que aparece onde o reboco caiu e nas quinas lascadas. Mais
+    # escuro e mais castanho do que a telha (`telhado`, #c85420): os dois
+    # vivem no mesmo prop, e a telha tem de continuar a ser a cor do telhado
+    # do escritório pronto, que é o que o entulho laranja conta.
+    "tijolo": "#84503c",
+    # A LONA AZUL, que é a de todo telhado remendado no Brasil. É a cor de
+    # acento do galpão em ruína, no lugar do laranja do portão do pronto, e
+    # tem de ser uma: o portão caído fica desbotado de propósito.
+    "lona": "#2c63b0",
+    # A chapa e o zinco VELHOS: o `parede` e o `zinco` do galpão pronto
+    # levados ao sujo. A chapa perde o branco — é ela que diz, de longe, que
+    # o prédio não é o mesmo — e o zinco fica mais claro e mais baço, que é
+    # o que a oxidação faz ao galvanizado.
+    "chapa_velha": "#a9aea8", "chapa_velha_vinco": "#8b918c",
+    "zinco_velho": "#6f7773", "zinco_velho_vinco": "#5b6360",
+    # O laranja do portão, desbotado: o mesmo matiz do `laranja` do pronto,
+    # para o jogador reconhecer a peça quando ela se levantar.
+    "laranja_velho": "#a3593a",
+    # O toldo azul e a placa amarela do escritório pronto, desbotados. São a
+    # IDENTIDADE da ruína: sem eles, o canto de alvenaria é uma ruína
+    # qualquer; com eles, é o escritório que o jogador vai reconstruir.
+    "toldo_velho": "#4d8294", "placa_velha": "#c29a4a",
+    # O capim que cresce nas frestas: mais amarelo do que a copa (`folha`),
+    # para mato e árvore não se fundirem num verde só.
+    "capim": "#7c9444",
 }
 
 
@@ -414,6 +441,8 @@ DESGASTE = {
     "concreto": 3.0, "concreto_borda": 4.0, "pneu": 10.0,
     # A água de zinco é superfície grande; o vinco é um painel de 4px.
     "zinco": 3.0, "zinco_vinco": 8.0, "chapa_vinco": 8.0,
+    # O tijolo solto da ruína é uma peça de 3px: número alto.
+    "tijolo": 9.0,
     # `ferrugem` NÃO entra aqui: quem lhe dá superfície é o padrão dirigido que
     # a usa, e um ruído por cima de outro ruído é lixa.
 }
@@ -606,7 +635,8 @@ def material_ripado(nome: str, hexa: str, passo: float,
 
 def material_escorrido(nome: str, hexa: str, cor_corrida: str,
                        escala: float = 7.0, alongamento: float = 0.16,
-                       inicio: float = 0.52, fim: float = 0.70):
+                       inicio: float = 0.52, fim: float = 0.70,
+                       mundo: bool = False):
     """Ferrugem que ESCORRE: manchas esticadas no eixo Z, de cima para baixo.
 
     A diferença entre isto e o `material_gasto` é uma só, e é a que dá o nome à
@@ -622,16 +652,25 @@ def material_escorrido(nome: str, hexa: str, cor_corrida: str,
     casco não é um navio enferrujado, é um navio castanho — a peça perde a cor
     que a identifica, que é exatamente o que o contorno da Etapa 3 fez à lança.
     Aqui só o topo do ruído vira rasto; o resto do casco fica casco.
+
+    `mundo` troca a coordenada de OBJETO pela de MUNDO, e é para quem veste
+    peças feitas por `caixa()`: essas nascem com tamanho 1 e esticam-se pelo
+    `scale`, que a coordenada de objeto não vê (`071`) — cada chapa do galpão
+    teria o mesmo número de rastos, fosse ela de palmo ou de parede inteira.
+    O casco não precisa: é um `prisma` com a malha no tamanho de verdade.
     """
     m = bpy.data.materials.new(nome)
     m.use_nodes = True
     nt = m.node_tree
     b = nt.nodes["Principled BSDF"]
 
-    coord = nt.nodes.new("ShaderNodeTexCoord")
+    if mundo:
+        fonte = nt.nodes.new("ShaderNodeNewGeometry").outputs["Position"]
+    else:
+        fonte = nt.nodes.new("ShaderNodeTexCoord").outputs["Object"]
     mapa = nt.nodes.new("ShaderNodeMapping")
     mapa.inputs["Scale"].default_value = (1.0, 1.0, alongamento)
-    nt.links.new(coord.outputs["Object"], mapa.inputs["Vector"])
+    nt.links.new(fonte, mapa.inputs["Vector"])
 
     ruido = nt.nodes.new("ShaderNodeTexNoise")
     ruido.inputs["Scale"].default_value = escala
@@ -648,6 +687,120 @@ def material_escorrido(nome: str, hexa: str, cor_corrida: str,
 
     nt.links.new(rampa.outputs["Color"], b.inputs["Base Color"])
     b.inputs["Roughness"].default_value = 0.78
+    b.inputs["Specular IOR Level"].default_value = 0.0
+    return m
+
+
+def material_alvenaria_velha(nome: str, hexa: str, cor_tijolo: str,
+                             z_umido: tuple, escala: float = 3.0,
+                             escala_reboco: float = 2.4,
+                             limiar_reboco: float = 0.63,
+                             quina: float = 0.035, limiar_quina: float = 0.10,
+                             escala_lasca: float = 9.0,
+                             limiar_lasca: float = 0.60):
+    """Parede de alvenaria ABANDONADA: reboco caído, quina lascada, umidade.
+
+    São as três marcas que a frente 4 pediu para a ruína (`074`), e as três
+    saem da MESMA superfície — daí um material só, e não três peças:
+
+    · o REBOCO CAÍDO é o topo de um ruído largo: onde ele passa do limiar, o
+      que aparece é o tijolo. Irregular por construção, que é o que um remendo
+      de `na_face` retangular não seria;
+    · a QUINA LASCADA é o nó Ambient Occlusion com `inside`, que traça raios
+      para DENTRO da peça e escurece onde há outra face perto — a terceira via
+      que o plano de arte (§7.3, C3) mediu depois de o `Pointiness` morrer
+      nesta geometria. A oclusão sozinha dá uma faixa lisa ao longo da aresta,
+      que lê como vinheta; um segundo ruído parte-a em lascas;
+    · a UMIDADE sobe do chão: a altura de MUNDO, sacudida por ruído, escurece
+      a base. `z_umido` é (onde ela é plena, onde acaba), em unidades de mundo
+      DEPOIS de toda escala do prédio — quem chama passa-as já escaladas.
+
+    ⚠️ A COORDENADA É A DE MUNDO (`Geometry > Position`), e não a de objeto
+    que o resto do kit usa. A parede é uma `caixa()` esticada pelo `scale`, e
+    a coordenada de objeto lê a malha ANTES dele (`071`): o mesmo material
+    daria um remendo por parede, fosse ela de meio metro ou de três. Em mundo
+    o tamanho da marca é o mesmo em todas as peças que o vestem.
+    """
+    m = bpy.data.materials.new(nome)
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+
+    def op(operacao, a, c):
+        n = nt.nodes.new("ShaderNodeMath")
+        n.operation = operacao
+        for i, v in enumerate((a, c)):
+            if isinstance(v, (int, float)):
+                n.inputs[i].default_value = v
+            else:
+                nt.links.new(v, n.inputs[i])
+        return n.outputs[0]
+
+    def ruido(esc, detalhe=5.0, aspereza=0.6):
+        n = nt.nodes.new("ShaderNodeTexNoise")
+        n.inputs["Scale"].default_value = esc
+        n.inputs["Detail"].default_value = detalhe
+        n.inputs["Roughness"].default_value = aspereza
+        nt.links.new(geo.outputs["Position"], n.inputs["Vector"])
+        return n.outputs["Fac"]
+
+    geo = nt.nodes.new("ShaderNodeNewGeometry")
+    xyz = nt.nodes.new("ShaderNodeSeparateXYZ")
+    nt.links.new(geo.outputs["Position"], xyz.inputs["Vector"])
+
+    mancha = ruido(escala)
+    reboco = op("GREATER_THAN", ruido(escala_reboco, 3.0, 0.55), limiar_reboco)
+
+    ao = nt.nodes.new("ShaderNodeAmbientOcclusion")
+    ao.inside = True
+    ao.only_local = True
+    ao.samples = 8
+    ao.inputs["Distance"].default_value = quina
+    # `1 − AO` é quanto a quina aperta, e um ruído mais largo escolhe EM QUE
+    # TROÇOS dela a tinta caiu.
+    # ⚠️ SOMAR O RUÍDO À OCLUSÃO NÃO PARTE A FAIXA — CONTORNA O PRÉDIO. Foi a
+    # primeira candidata: com a oclusão a 0,07 e o ruído somado, toda aresta
+    # passava do limiar em quase todo o comprimento, e o escritório saiu com
+    # uma MOLDURA laranja à volta de cada parede. Lasca é a interseção de
+    # duas coisas — perto da quina E num troço sorteado —, e isso é um E, que
+    # é um produto, e não uma soma.
+    aperto = op("SUBTRACT", 1.0, ao.outputs["AO"])
+    quina_viva = op("MULTIPLY", op("GREATER_THAN", aperto, limiar_quina),
+                    op("GREATER_THAN", ruido(escala_lasca, 3.0), limiar_lasca))
+
+    tijolo = op("MAXIMUM", reboco, quina_viva)
+    estado = op("MULTIPLY", mancha, op("SUBTRACT", 1.0, tijolo))
+
+    rampa = nt.nodes.new("ShaderNodeValToRGB")
+    rampa.color_ramp.elements[0].position = 0.0
+    rampa.color_ramp.elements[0].color = _escurecer(cor_tijolo, 1.0)
+    e = rampa.color_ramp.elements.new(0.05)
+    e.color = _escurecer(cor_tijolo, 1.0)
+    e = rampa.color_ramp.elements.new(0.06)
+    e.color = _escurecer(hexa, 1.0)
+    e = rampa.color_ramp.elements.new(0.42)
+    e.color = _escurecer(hexa, 1.0)
+    rampa.color_ramp.elements[-1].position = 0.62
+    rampa.color_ramp.elements[-1].color = _escurecer(hexa, 0.87)
+    nt.links.new(estado, rampa.inputs["Fac"])
+
+    # A umidade: a altura sacudida, levada a um fator que MULTIPLICA a cor.
+    altura = op("ADD", xyz.outputs["Z"],
+                op("MULTIPLY", op("SUBTRACT", ruido(7.0, 3.0), 0.5), 0.12))
+    faixa = nt.nodes.new("ShaderNodeMapRange")
+    faixa.clamp = True
+    faixa.inputs["From Min"].default_value = z_umido[0]
+    faixa.inputs["From Max"].default_value = z_umido[1]
+    faixa.inputs["To Min"].default_value = 0.66
+    faixa.inputs["To Max"].default_value = 1.0
+    nt.links.new(altura, faixa.inputs["Value"])
+
+    escala_cor = nt.nodes.new("ShaderNodeVectorMath")
+    escala_cor.operation = "SCALE"
+    nt.links.new(rampa.outputs["Color"], escala_cor.inputs[0])
+    nt.links.new(faixa.outputs["Result"], escala_cor.inputs["Scale"])
+    nt.links.new(escala_cor.outputs["Vector"], b.inputs["Base Color"])
+    b.inputs["Roughness"].default_value = 0.9
     b.inputs["Specular IOR Level"].default_value = 0.0
     return m
 
@@ -1169,6 +1322,41 @@ def parede_partida(nome, centro, tam, mat, resto=0.42):
                            (w + 0.02, sy * fundo, h), mat))
         esq += w
     return pecas
+
+
+def tufo(nome, pe, alt, mat, rot_z=0.0):
+    """Um tufo de capim: folhas finas que abrem para fora do pé.
+
+    Cone de quatro lados e ponta fina, e não bola: capim a esta escala lê pela
+    PONTA, e um volume redondo verde é arbusto. Os ângulos são literais — o
+    gerador é determinístico e o CI compara o PNG. A orientação sai do
+    `to_track_quat`, como na `barra()`: conta de Euler à mão tomba a folha
+    para o lado errado em metade dos azimutes.
+    """
+    p = Vector(pe)
+    pecas = []
+    for i, (az, inc, k) in enumerate(((0, 14, 1.0), (100, 30, 0.75),
+                                      (215, 24, 0.85), (300, 34, 0.65))):
+        a, t = math.radians(az + rot_z), math.radians(inc)
+        d = Vector((math.sin(t) * math.cos(a), math.sin(t) * math.sin(a),
+                    math.cos(t))) * (alt * k)
+        o = cone("%s%d" % (nome, i), tuple(p + d / 2.0), 0.07, 0.006,
+                 d.length, 4, mat)
+        o.rotation_euler = d.to_track_quat("Z", "Y").to_euler()
+        pecas.append(o)
+    return pecas
+
+
+def copa_bolas(nome, lobos, M):
+    """A copa de uma árvore que cresce onde ninguém a plantou: bolas achatadas.
+
+    Duas cores alternadas (`folha` e `folha_clara`), pela mesma razão da copa
+    do coqueiro: um verde só lê como mancha chapada, e é a troca de valor
+    entre lobos que dá o volume. `lobos` é ((x, y, z), (rx, ry, rz)) por bola.
+    """
+    return [bola("%s%d" % (nome, i), c, r,
+                 M["folha"] if i % 2 == 0 else M["folha_clara"])
+            for i, (c, r) in enumerate(lobos)]
 
 
 def porta(nome, face, centro, tam, u, larg, alt, M, base=None):
@@ -3453,110 +3641,261 @@ def montar(M: dict) -> dict:
     ] + telhado_duas_aguas("gal_tel", (0, 0, 1.70), (3.4, 2.4), 0.62,
                            M["zinco"], M["metal"], fiadas=0, nervuras=6,
                            mat_nerv=M["zinco_vinco"])
-    # ⚠️ O ARMAZÉM EM RUÍNA DEIXOU DE PARTILHAR AS PAREDES DO ACABADO (05/09),
-    # e essa partilha era o defeito inteiro. Ele reusava `paredes` — plinto,
-    # caixa de `parede` BRANCA LIMPA, portão fechado, calha e três janelas de
-    # vidro azul — e trocava só a cor do telhado. Na captura o porto abria com
-    # um galpão de paredes novas e janelas inteiras, e o Bruno leu exatamente
-    # isso: "as construções atuais parecem avançadas para um porto inicial".
+    # -- O ARMAZÉM EM RUÍNA: o casco do galpão, e não uma casa caída --------
     #
-    # O comentário do escritório, dez linhas abaixo, já dizia a regra certa —
-    # "a ruína não é o prédio pintado de velho: é MENOS prédio" — e o armazém
-    # nunca a tinha seguido. Agora segue: parede SUJA, um terço dela desabado,
-    # vidro nenhum, portão fora do trilho e metade do telhado no chão, com os
-    # barrotes à vista onde ele faltou.
+    # ⚠️ ELE FOI REFEITO EM 28/09 (`074`), E A CAUSA ERA A MESMA DO PRONTO EM
+    # 05/09, DO OUTRO LADO. A ruína de 05/09 deixou de partilhar as peças do
+    # acabado — e foi desenhada com o repertório da CASA: parede de alvenaria
+    # lisa, telhado de duas águas de madeira, janela com tábua. Ao lado do
+    # galpão pronto, que tem doca, chapa, zinco e portão de enrolar, ela lia
+    # como a ruína de OUTRO prédio: o jogador comprava o armazém e via nascer
+    # uma coisa que não estava lá antes. A ruína tem de ser o MESMO galpão com
+    # menos galpão: a doca, a chapa, o zinco e o portão continuam, velhos.
     #
-    # A escala do render diz o que cabe: o prop tem 124px de largura, então
-    # cada peça de ruína tem de valer por si a 3 ou 4px de espessura. É por
-    # isso que os barrotes são TRÊS e não oito, e que o vão é uma cor e não um
-    # furo (ver `vao_cego`).
-    GAL_V = ((0, 0, 0.85), (3.4, 2.4, 1.7))
-    corte = 1.05                      # daqui para +x a parede caiu
+    # A leitura é a V3 que o Bruno aprovou com o ChatGPT
+    # (`art_lab/plano/decisoes_da_frente/036`), refeita daqui porque a branch
+    # dela nunca foi publicada: baia aberta, pórtico e contravento à vista,
+    # lona, tijolo aparente, umidade, telhado incompleto e calha partida. A
+    # composição foi perguntada ANTES do render, com uma prévia em ASCII
+    # (`073`): o terço do lado do cais perdeu chapa e telhado, e mostra o
+    # esqueleto de aço; o resto fica de pé, remendado.
+    #
+    # ⚠️ TUDO CABE NA PEGADA DO GALPÃO PRONTO (±2,16 em x, ±1,38 em y, antes
+    # da escala do prédio — `PEGADAS` em `gerar_mapa_iso.py`). O D2 confere a
+    # pegada DECLARADA e não a geometria: um tufo de capim a mais para a frente
+    # iria parar no asfalto sem uma asserção a reprovar.
+    K = ESCALA_PREDIO
+    alv_gal = material_alvenaria_velha("alv_gal", PALETA["parede_suja"],
+                                       PALETA["tijolo"], (0.48 * K, 0.80 * K))
+    chapa = material_escorrido("chapa_ferr", PALETA["chapa_velha"],
+                               PALETA["ferrugem"], escala=6.0, mundo=True)
+    chapa_v = material_escorrido("chapa_ferr_v", PALETA["chapa_velha_vinco"],
+                                 PALETA["ferrugem"], escala=6.0, mundo=True)
+    zinco_v = material_escorrido("zinco_ferr", PALETA["zinco_velho"],
+                                 PALETA["ferrugem"], escala=5.0, mundo=True,
+                                 inicio=0.50, fim=0.72)
+    portao_v = material_ripado("portao_velho", PALETA["laranja_velho"],
+                               passo=0.19, eixo="Z", contraste=0.86,
+                               junta=0.22, escuro_junta=0.55)
+    lona = material_gasto("lona_gasta", PALETA["lona"], 4.0)
+    capim = material("capim", PALETA["capim"])
+
+    CORTE = 0.55                      # daqui para +x ficou só o esqueleto
+    NAVE = ((-1.70 + CORTE) / 2.0, 0.0, 1.07)
+    NAVE_T = (CORTE + 1.70, 2.40, 1.26)
     galv = [
-        caixa("galv_plinto", (0, 0, 0.09), (3.5, 2.5, 0.18), M["parede_suja"]),
-        caixa("galv_parede", (-corte / 2.0, 0, 0.85), (3.4 - corte, 2.4, 1.7),
-              M["parede_suja"]),
+        # A DOCA, a do galpão pronto — com a QUINA DE +x/−y PARTIDA. O pedaço
+        # que ficou fica 0,01 abaixo do resto para as duas faces de cima não
+        # ficarem coplanares onde se tocam.
+        caixa("galv_doca", (-0.20, 0, 0.22), (3.10, 2.50, 0.44),
+              M["concreto_borda"]),
+        caixa("galv_doca_q", (1.545, 0.20, 0.215), (0.42, 2.10, 0.43),
+              M["concreto_borda"]),
+        caixa("galv_lasca", (1.56, -1.04, 0.13), (0.38, 0.30, 0.20),
+              M["concreto_borda"], rot=(10, -16, 12)),
+        caixa("galv_lasca2", (1.20, -1.33, 0.06), (0.20, 0.10, 0.12),
+              M["concreto_borda"], rot=(0, 0, 25)),
+        # O DECK de +x, com a ponta de −y caída: a laje partiu e a metade solta
+        # desce para o chão.
+        caixa("galv_deck", (1.84, 0.375, 0.18), (0.48, 1.45, 0.36),
+              M["concreto_borda"]),
+        caixa("galv_deck_topo", (1.84, 0.375, 0.37), (0.52, 1.49, 0.06),
+              M["concreto"]),
+        caixa("galv_deck_caido", (1.86, -0.62, 0.20), (0.46, 0.62, 0.08),
+              M["concreto"], rot=(24, 4, 0)),
+        # A NAVE que ficou de pé: um bloco só, de chapa enferrujada, e as peças
+        # de fora vestem-no.
+        caixa("galv_nave", NAVE, NAVE_T, chapa),
+        # O interior, visto pelo esqueleto: a face +x da nave é o escuro de
+        # DENTRO do galpão, e não uma parede.
+        na_face("galv_dentro", "+x", NAVE, NAVE_T, 0.0, -0.05, 2.36, 1.14,
+                0.02, M["vao"], 0.0),
     ]
-    # O terço que caiu, em degraus, e o entulho dele no chão logo à frente.
-    galv += parede_partida("galv_ruina", (3.4 / 2.0 - corte / 2.0, 0, 0.85),
-                           (corte, 2.4, 1.7), M["parede_suja"], resto=0.30)
-    # O PORTÃO SAIU DO TRILHO: o vão fica, e a folha está atravessada NELE.
+    # A MURETA de alvenaria debaixo da chapa, que é onde o tijolo aparece. Ela
+    # é PLACA na face −y, e não bloco: o bloco teria de ser furado pela baia.
+    for i, (u, larg) in enumerate(((-0.845, 0.57), (0.845, 0.57))):
+        galv.append(na_face("galv_mureta%d" % i, "-y", NAVE, NAVE_T, u, -0.47,
+                            larg, 0.32, 0.06, alv_gal, 0.0))
+    # A BAIA ABERTA, com o portão de enrolar fora do trilho e encostado à
+    # frente dela. O tambor e a guia da esquerda ficaram; a da direita dobrou.
     #
-    # ⚠️ E O VÃO ENCOLHEU. A primeira versão herdou a largura do portão do
-    # galpão acabado (1,5 de 3,4) e o resultado, ampliado, era um RETÂNGULO
-    # PRETO CHAPADO do tamanho de meia parede — que não lê como abertura, lê
-    # como falha de recorte. É a mesma armadilha que o `pilha_caixotes` e a
-    # copa da árvore registaram: mancha escura grande e sem aresta não é
-    # volume, é buraco no PNG. O que faz o vão ler como vão é ele ser MENOR
-    # que a parede e ter alguma coisa a cortá-lo — aqui a folha caída, de
-    # través, e a verga por cima.
-    galv += vao_cego("galv_portao", "-y", *GAL_V, -0.62, -0.14, 1.02, 1.08, M)
+    # ⚠️ O VÃO É MENOR DO QUE A PAREDE E TEM ALGUMA COISA A CORTÁ-LO. A ruína
+    # de 05/09 aprendeu-o num portão: um vão escuro do tamanho de meia parede
+    # não lê como abertura, lê como FALHA DE RECORTE no PNG. Quem o faz ler
+    # como vão é o portão de través à frente dele.
+    galv += vao_cego("galv_baia", "-y", NAVE, NAVE_T, 0.0, -0.22, 1.08, 0.84,
+                     M, batente=False)
     galv += [
-        # A folha, encostada de través DENTRO do vão: parte dela sobre o
-        # escuro, parte sobre a parede.
-        caixa("galv_folha", (-0.80, -1.24, 0.60), (0.62, 0.07, 1.16),
-              M["madeira_velha"], rot=(0, 0, 0)),
-        caixa("galv_folha2", (-0.24, -1.22, 0.44), (0.10, 0.07, 0.92),
-              M["madeira_velha"], rot=(14, 0, 0)),
-        # O trilho de que ela saiu, torto, ainda na parede.
-        na_face("galv_trilho", "-y", *GAL_V, -0.62, 0.44, 1.3, 0.06, 0.05,
-                M["metal"], 0.02),
+        # ⚠️ O PORTÃO FICA NO CHÃO, encostado, e não pendurado. A primeira
+        # conta pendurava-o pela ponta do tambor, e a ponta de baixo caía
+        # 0,17 abaixo do tampo da doca, a pairar em frente à face dela.
+        caixa("galv_portao", (-0.52, -1.30, 0.55), (1.04, 0.05, 0.94),
+              portao_v, rot=(-6, 9, 0)),
+        na_face("galv_tambor", "-y", NAVE, NAVE_T, 0.0, 0.31, 1.26, 0.13,
+                0.10, M["metal_claro"], 0.02),
+        na_face("galv_guia0", "-y", NAVE, NAVE_T, -0.58, -0.20, 0.08, 0.84,
+                0.07, M["metal"], 0.015),
+        barra("galv_guia1", (-0.02, -1.24, 1.32), (0.06, -1.30, 0.70), 0.07,
+              M["metal"]),
     ]
-    # Duas janelas partidas na face +x — e não três, porque a terceira caía no
-    # trecho que desabou. A segunda vai TAPADA COM TÁBUA, que é o sinal de
-    # "alguém ainda fecha isto" e o que distingue abandono de destroço.
-    galv += vao_cego("galv_jan0", "+x", *GAL_V, -1.0, 0.38, 0.46, 0.36, M)
-    galv += vao_cego("galv_jan1", "+x", *GAL_V, 0.0, 0.38, 0.46, 0.36, M,
-                     batente=False)
-    for k, (dv, ang) in enumerate(((0.06, 9.0), (-0.08, -6.0))):
-        galv.append(na_face("galv_tabua%d" % k, "+x", *GAL_V, 0.0, 0.38 + dv,
-                            0.60, 0.09, 0.05, M["madeira_velha"], 0.02))
-        galv[-1].rotation_euler[0] = math.radians(ang)
-    # METADE DO TELHADO. A água cobre só o lado que ficou de pé; sobre o
-    # trecho caído ficam os barrotes, que é a silhueta que o olho conhece como
-    # ruína. Eles descem no mesmo ângulo do telhado, senão leem como grade.
-    galv += telhado_duas_aguas("galv_tel", (-0.92, 0, 1.70), (1.56, 2.4), 0.52,
-                               M["telhado_velho"], M["barrote"], fiadas=2)
-    ang_tel = math.degrees(math.atan2(0.52, 2.4 / 2.0 + 0.18))
-    comp_agua = math.hypot(0.52, 2.4 / 2.0 + 0.18)
-    # ⚠️ BARROTE PRECISA DE CUMEEIRA E DE TERÇA, senão ele flutua. A primeira
-    # versão pôs seis ripas inclinadas e nada a segurá-las: na sombra projetada
-    # via-se três barras paralelas a pairar sobre o chão, e no prop liam-se como
-    # gravetos espetados no telhado. O que faz uma armação ler como armação é a
-    # peça HORIZONTAL que a atravessa.
-    galv.append(caixa("galv_cume", (0.42, 0, 1.70 + 0.52), (1.5, 0.11, 0.09),
-                      M["barrote"]))
-    # ⚠️ E ELES PARAM ONDE A PAREDE PARA. A primeira armação corria até 1,58 e
-    # a parede caída acaba em 0,65: três ripas ficavam a pairar sobre o ar, e a
-    # sombra projetada mostrava-as como barras soltas no chão. Barrote é peça
-    # apoiada; sem apoio lê como graveto espetado.
-    for i, u in enumerate((0.02, 0.42, 0.82)):
-        for lado, sinal in (("a", -1), ("b", 1)):
-            galv.append(caixa("galv_barrote_%s%d" % (lado, i),
-                              (u, sinal * (2.4 / 2.0 + 0.18) / 2.0,
-                               1.70 + 0.52 / 2.0),
-                              (0.07, comp_agua, 0.06),
-                              M["barrote"], rot=(-sinal * ang_tel, 0, 0)))
-    # A terça: a ripa horizontal a meia-água, dos dois lados.
-    for lado, sinal in (("a", -1), ("b", 1)):
-        galv.append(caixa("galv_terca_%s" % lado,
-                          (0.42, sinal * (2.4 / 2.0 + 0.18) / 2.0,
-                           1.70 + 0.52 / 2.0 + 0.02),
-                          (1.34, 0.06, 0.05), M["barrote"]))
-    # Entulho: telha caída e um bloco de parede, os dois FORA da pegada do
-    # prédio para se verem contra o chão, e não contra o plinto.
+    # A CHAPA: os painéis de vinco que ficaram, e um que caiu (o escuro no
+    # lugar dele). A receita do galpão pronto: painéis de VALOR, não relevo.
+    for i, u in enumerate((-0.95, -0.70, 0.70)):
+        galv.append(na_face("galv_vinco%d" % i, "-y", NAVE, NAVE_T, u, 0.12,
+                            0.22, 0.86, 0.05, chapa_v, -0.032))
+    galv.append(na_face("galv_buraco", "-y", NAVE, NAVE_T, 0.96, 0.22, 0.22,
+                        0.62, 0.05, M["vao"], -0.040))
+    # A CALHA PARTIDA: o troço da esquerda no sítio, o da direita pendurado.
     galv += [
-        # ⚠️ TUDO ISTO CABE NA PEGADA de `gerar_mapa_iso.py` (±1,89 em x,
-        # ±1,39 em y, antes da escala do prédio). O D2 confere a pegada
-        # DECLARADA e não a geometria: entulho que passe dela vai parar no
-        # asfalto sem uma única asserção a reprovar.
-        caixa("galv_telha", (1.30, -1.32, 0.07), (0.62, 0.5, 0.09),
-              M["telhado_velho"], rot=(0, 0, 24)),
-        caixa("galv_bloco", (1.78, -0.9, 0.13), (0.42, 0.38, 0.26),
-              M["parede_suja"], rot=(0, 0, 15)),
-        caixa("galv_bloco2", (1.62, 0.92, 0.10), (0.34, 0.3, 0.2),
-              M["parede_suja"], rot=(0, 0, -18)),
+        caixa("galv_calha", (-1.05, -1.275, 1.71), (1.40, 0.09, 0.09),
+              M["metal_claro"]),
+        barra("galv_calha2", (-0.33, -1.29, 1.70), (0.30, -1.33, 1.16), 0.09,
+              M["metal_claro"]),
     ]
+    # O TELHADO que sobra: zinco velho, com a lona azul presa por dois pneus
+    # sobre o buraco da água da frente.
+    galv += telhado_duas_aguas("galv_tel", (NAVE[0], 0, 1.70),
+                               (NAVE_T[0], 2.40), 0.62, zinco_v, M["metal"],
+                               fiadas=0, nervuras=4,
+                               mat_nerv=material_escorrido(
+                                   "zinco_ferr_v", PALETA["zinco_velho_vinco"],
+                                   PALETA["ferrugem"], escala=5.0, mundo=True))
+    ang_tel = math.degrees(math.atan2(0.62, 2.40 / 2.0 + 0.18))
+
+    def na_agua(y):
+        """O z do tampo da água da frente, no `y` pedido (y < 0)."""
+        return 1.70 + 0.62 * (1.0 - abs(y) / 1.38) + 0.05
+
+    galv.append(caixa("galv_lona", (0.02, -0.66, na_agua(-0.66) + 0.05),
+                      (0.84, 0.92, 0.03), lona, rot=(ang_tel, 0, 0)))
+    for i, (x, y) in enumerate(((-0.20, -0.52), (0.30, -0.86))):
+        galv.append(cone("galv_pneu%d" % i, (x, y, na_agua(y) + 0.11), 0.14,
+                         0.14, 0.07, 10, M["pneu"], rot=(ang_tel, 0, 0)))
+
+    # O ESQUELETO, no terço do lado do cais: pilares, viga de beiral, tesoura
+    # na empena e contravento em X. ⚠️ ARMAÇÃO SEM PEÇA HORIZONTAL FLUTUA: os
+    # barrotes da ruína de 05/09 liam como gravetos espetados até ganharem
+    # cumeeira e terça, e aqui quem as faz é o banzo e as terças. Metal escuro sobre o escuro de dentro não
+    # se veria — quem o faz ler é o CHÃO claro da doca por baixo e o céu (o
+    # fundo do mapa) por cima, que é o vazado que o guindaste já usa.
+    PIL = 0.10
+    for i, (x, y) in enumerate(((0.63, -1.14), (1.62, -1.14), (1.62, 1.14),
+                                (0.63, 1.14))):
+        # O pilar da quina partida desce até ao entulho: o concreto que o
+        # segurava caiu, e é isso que o pé dele à vista conta.
+        base = 0.05 if (x, y) == (1.62, -1.14) else 0.42
+        galv.append(caixa("galv_pilar%d" % i, (x, y, (base + 1.70) / 2.0),
+                          (PIL, PIL, 1.70 - base), M["metal"]))
+    galv += [
+        barra("galv_viga_a", (0.60, -1.14, 1.70), (1.67, -1.14, 1.70), 0.08,
+              M["metal"]),
+        barra("galv_viga_b", (0.60, 1.14, 1.70), (1.67, 1.14, 1.70), 0.08,
+              M["metal"]),
+        # A tesoura da empena: banzo, pernas, pendural e duas escoras.
+        barra("galv_banzo", (1.62, -1.20, 1.70), (1.62, 1.20, 1.70), 0.07,
+              M["metal"]),
+        barra("galv_perna_a", (1.62, -1.26, 1.67), (1.62, 0.0, 2.30), 0.07,
+              M["metal"]),
+        barra("galv_perna_b", (1.62, 1.26, 1.67), (1.62, 0.0, 2.30), 0.07,
+              M["metal"]),
+        barra("galv_pendural", (1.62, 0.0, 1.70), (1.62, 0.0, 2.28), 0.05,
+              M["metal"]),
+        barra("galv_escora_a", (1.62, 0.0, 1.73), (1.62, -0.62, 1.98), 0.045,
+              M["metal"]),
+        barra("galv_escora_b", (1.62, 0.0, 1.73), (1.62, 0.62, 1.98), 0.045,
+              M["metal"]),
+        # As terças que ficaram: duas na água da frente, a da cumeeira e uma
+        # atrás. Correm do telhado que sobra até à empena.
+        barra("galv_terca0", (0.66, -0.46, 2.12), (1.70, -0.46, 2.12), 0.06,
+              M["metal"]),
+        barra("galv_terca1", (0.66, -0.92, 1.89), (1.70, -0.92, 1.89), 0.06,
+              M["metal"]),
+        barra("galv_terca2", (0.66, 0.0, 2.35), (1.70, 0.0, 2.35), 0.06,
+              M["metal"]),
+        barra("galv_terca3", (0.66, 0.70, 2.00), (1.70, 0.70, 2.00), 0.06,
+              M["metal"]),
+        # Contravento em X na empena, e o da frente PARTIDO: uma diagonal
+        # inteira, a outra quebrada a meio e com o troço solto pendurado.
+        barra("galv_cv_x0", (1.66, -1.08, 0.82), (1.66, 1.08, 1.64), 0.035,
+              M["metal"]),
+        barra("galv_cv_x1", (1.66, -1.08, 1.64), (1.66, 1.08, 0.82), 0.035,
+              M["metal"]),
+        barra("galv_cv_y0", (0.68, -1.19, 0.82), (1.56, -1.19, 1.64), 0.035,
+              M["metal"]),
+        barra("galv_cv_y1", (0.68, -1.19, 1.64), (1.10, -1.19, 1.25), 0.035,
+              M["metal"]),
+        barra("galv_cv_y2", (1.10, -1.21, 1.25), (1.20, -1.26, 0.86), 0.035,
+              M["metal"]),
+        # Uma chapa que ficou pendurada da viga, a balançar.
+        caixa("galv_chapa_solta", (1.32, -1.23, 1.30), (0.34, 0.03, 0.68),
+              chapa, rot=(0, 16, 0)),
+        # O chão de dentro, sujo: o tampo da doca ao ar livre.
+        caixa("galv_piso", (1.13, 0.125, 0.45), (1.10, 1.95, 0.02),
+              M["piso_ruina"]),
+    ]
+    # A mureta do esqueleto, partida: na frente e na empena, com troços baixos.
+    for i, (c, t) in enumerate((
+            ((0.93, -1.185, 0.595), (0.46, 0.09, 0.33)),
+            ((1.245, -1.185, 0.495), (0.17, 0.09, 0.13)),
+            ((1.685, -0.57, 0.59), (0.09, 0.54, 0.34)),
+            ((1.685, 0.02, 0.51), (0.09, 0.64, 0.18)),
+            ((1.685, 0.72, 0.57), (0.09, 0.76, 0.30)))):
+        galv.append(caixa("galv_mureta_e%d" % i, c, t, alv_gal))
+    # A chapa do fundo, que se vê pelo esqueleto: três painéis de alturas
+    # diferentes, e o terceiro já caiu.
+    for i, (x, topo) in enumerate(((0.84, 1.60), (1.14, 1.22))):
+        galv.append(caixa("galv_fundo%d" % i, (x, 1.165, (0.76 + topo) / 2.0),
+                          (0.30, 0.05, topo - 0.76), chapa))
+    # ENTULHO no chão de dentro: chapas de zinco caídas e tijolo.
+    galv += [
+        caixa("galv_ent_zinco0", (1.10, 0.30, 0.50), (0.62, 0.44, 0.03),
+              zinco_v, rot=(6, -8, 18)),
+        caixa("galv_ent_zinco1", (1.30, -0.28, 0.52), (0.52, 0.40, 0.03),
+              zinco_v, rot=(-10, 12, -25)),
+    ]
+    for i, (x, y, rz) in enumerate(((0.92, -0.62, 10), (1.02, -0.72, 70),
+                                    (1.44, -0.50, 35), (0.80, 0.70, -20))):
+        galv.append(caixa("galv_tijolo%d" % i, (x, y, 0.50),
+                          (0.16, 0.08, 0.07), M["tijolo"], rot=(0, 0, rz)))
+
+    # O MATO: um arbusto que cresceu dentro do esqueleto, capim na base da
+    # doca e nas frestas, e uma trepadeira a subir a ponta esquerda da chapa.
+    galv += [cone("galv_arb_tronco", (1.20, 0.52, 0.72), 0.05, 0.03, 0.52, 6,
+                  M["tronco"])]
+    galv += copa_bolas("galv_arb", (((1.14, 0.46, 1.05), (0.30, 0.28, 0.22)),
+                                    ((1.34, 0.62, 1.16), (0.24, 0.22, 0.20)),
+                                    ((1.02, 0.66, 1.20), (0.20, 0.20, 0.17))),
+                       M)
+    for i, (pe, alt) in enumerate((((-1.45, -1.29, 0.0), 0.34),
+                                   ((-0.10, -1.29, 0.0), 0.28),
+                                   ((0.92, -1.29, 0.0), 0.30),
+                                   ((2.04, -0.20, 0.0), 0.32),
+                                   ((2.04, 0.95, 0.0), 0.26),
+                                   ((1.50, -1.18, 0.0), 0.30),
+                                   ((0.80, -0.95, 0.44), 0.26),
+                                   ((1.60, 0.40, 0.46), 0.24))):
+        galv += tufo("galv_capim%d_" % i, pe, alt, capim, rot_z=37.0 * i)
+    # A TREPADEIRA é um manto CHATO colado à chapa, e não bolas: a primeira
+    # candidata tinha cinco esferas de 0,17 de raio, e a luz da cena
+    # sombreava cada uma como um volume — liam como balões verdes pregados
+    # na parede. Com 0,02 de fundo a luz não tem por onde as arredondar.
+    # ⚠️ `zt` e não `z`: um `z` num laço daqui torna-o LOCAL em todo o
+    # `montar`, e a `z()` do módulo deixa de existir para as estacas lá em
+    # cima — `UnboundLocalError` na primeira linha que a chama (`073`). É a
+    # mesma razão de a copa deste kit se chamar `copa_bolas`: o coqueiro tem
+    # uma lista `copa` neste `montar`, e uma `copa()` do módulo morria nela.
+    for i, (x, zt, rx, rz) in enumerate(((-1.62, 0.56, 0.12, 0.16),
+                                         (-1.46, 0.64, 0.10, 0.12),
+                                         (-1.56, 0.84, 0.11, 0.14),
+                                         (-1.40, 0.98, 0.09, 0.12),
+                                         (-1.58, 1.08, 0.10, 0.13),
+                                         (-1.47, 1.24, 0.09, 0.11),
+                                         (-1.60, 1.34, 0.07, 0.10),
+                                         (-1.38, 1.40, 0.06, 0.08),
+                                         (-1.52, 1.50, 0.06, 0.08))):
+        y = -1.275 if zt < 0.80 else -1.215
+        galv += [bola("galv_trep%d" % i, (x, y, zt), (rx, 0.02, rz),
+                      M["folha"] if i % 2 == 0 else M["folha_clara"])]
     grupos["galpao_velho"] = galv
 
     # -- ESCRITÓRIO nos dois estados. O armazém reaproveita galpao/galpao_velho.
@@ -3590,50 +3929,68 @@ def montar(M: dict) -> dict:
     # onde ela estava e uma janela sem vidro. O resto desaba em degraus, e a
     # viga do telhado cai da parede que ficou para o entulho — é ela que liga
     # as duas metades e conta o que aconteceu.
-    ESC_R = ((0, 0, 0.78), (2.4, 2.0, 1.56))
+    #
+    # ⚠️ E EM 28/09 (`074`) O CANTO GANHOU O QUE O LIGA AO ESCRITÓRIO PRONTO.
+    # De pé e limpo, ele era a ruína de um prédio QUALQUER: o jogador comprava
+    # o escritório e via nascer uma casa de toldo azul e placa amarela que não
+    # tinha nada a ver com o que lá estava. Agora o toldo está lá, rasgado e
+    # pendurado sobre a porta, a placa caiu e está encostada à parede, e a
+    # telha no chão é LARANJA, a do telhado que vai voltar. O desgaste é o
+    # que a frente 4 pediu — reboco caído com o tijolo à vista, quina lascada,
+    # umidade a subir da base, capim nas frestas — e uma árvore cresce lá
+    # dentro, com a copa por cima das paredes: é a marca de abandono que se lê
+    # de mais longe. A composição foi perguntada antes do render (`073`).
+    #
+    # ⚠️ A ÁRVORE NÃO PASSA DA CUMEEIRA DO PRONTO (2,09 antes da escala). O
+    # nó do jogo é o mesmo nos dois estados, e o que a vila sabe sobre onde o
+    # prédio a tapa sai do sprite: uma ruína mais alta do que o prédio pronto
+    # taparia casas que o pronto deixa ver.
+    alv_esc = material_alvenaria_velha("alv_esc", PALETA["parede_suja"],
+                                       PALETA["tijolo"],
+                                       (0.14 * ESCALA_PREDIO,
+                                        0.50 * ESCALA_PREDIO))
+    toldo = material_gasto("toldo_gasto", PALETA["toldo_velho"], 5.0)
+    placa = material_gasto("placa_gasta", PALETA["placa_velha"], 6.0)
+    capim_e = material("capim_esc", PALETA["capim"])
     ALT_R = 1.42
+    # ⚠️ A PAREDE DE −y SAI 0,005 PARA FORA DO PISO. Com a face dela no mesmo
+    # plano da borda do piso (y = −1,05), as duas ficavam coplanares na faixa
+    # de 0,09 a 0,18 de altura, com duas cores diferentes a disputar o pixel.
+    PAR_Y = ((0.42, -0.9425, 0.09 + ALT_R / 2.0), (1.56, 0.225, ALT_R))
+    PAR_X = ((1.09, -0.19, 0.09 + ALT_R / 2.0), (0.22, 1.28, ALT_R))
     esc_r = [
         # O PISO. É a peça que diz "aqui havia um prédio" mesmo onde já não há
         # parede nenhuma, e é a razão de ele ter tom próprio: a ruína inteira
         # em `parede_suja` saía como um bloco cinzento só.
         caixa("ruina_piso", (0, 0, 0.09), (2.5, 2.1, 0.18), M["piso_ruina"]),
-        # O CANTO QUE FICOU DE PÉ, e ele é o achado desta passagem. A versão
-        # anterior partia UMA parede ao meio e desabava metade; ampliada, saíam
-        # duas lâminas cinzentas de pé e nada dizia que aquilo tinha sido um
-        # edifício. O que o olho reconhece como ruína de PRÉDIO é o canto: duas
-        # paredes que se encontram, cada uma com o seu vão, e o resto a
-        # desfazer-se para longe delas. As duas escolhidas são as duas que a
-        # câmera vê — a de `-y` e a de `+x` (só essas duas faces existem para
-        # esta projeção).
-        # ⚠️ AS DUAS ENCAIXAM EM L, E NÃO SE SOBREPÕEM. A primeira versão
-        # cruzava-as no canto — a de `-y` ia até x=1,20 e a de `+x` também —, e
-        # as duas faces `+x` ficavam NO MESMO PLANO por toda a altura. É a
-        # armadilha que este arquivo já regista duas vezes ("duas faces no
-        # mesmo plano dão um buraco preto, e não dão erro"), e o resultado foi
-        # exatamente esse: uma BARRA PRETA de pé na quina, do chão ao topo, que
-        # se lia como uma coluna que não existe. Aqui a parede de `-y` leva a
-        # quina inteira e a de `+x` começa onde ela acaba.
-        caixa("ruina_parede_y", (0.42, -0.94, 0.09 + ALT_R / 2.0),
-              (1.56, 0.22, ALT_R), M["parede_suja"]),
-        caixa("ruina_parede_x", (1.09, -0.19, 0.09 + ALT_R / 2.0),
-              (0.22, 1.28, ALT_R), M["parede_suja"]),
+        # O CANTO QUE FICOU DE PÉ. As duas paredes são as duas que a câmera vê
+        # — a de `-y` e a de `+x` (só essas duas faces existem para esta
+        # projeção).
+        # ⚠️ AS DUAS ENCAIXAM EM L, E NÃO SE SOBREPÕEM. Cruzadas no canto, as
+        # duas faces `+x` ficavam NO MESMO PLANO por toda a altura, e o render
+        # tinha uma BARRA PRETA de pé na quina, que se lia como uma coluna que
+        # não existe. A de `-y` leva a quina inteira e a de `+x` começa onde
+        # ela acaba.
+        caixa("ruina_parede_y", *PAR_Y, alv_esc),
+        caixa("ruina_parede_x", *PAR_X, alv_esc),
     ]
     # O que sobrou das outras duas, desfazendo-se para longe do canto.
-    esc_r += parede_partida("ruina_qy", (-0.74, -0.94, 0.09 + ALT_R / 2.0),
-                            (0.76, 0.22, ALT_R), M["parede_suja"], resto=0.20)
+    esc_r += parede_partida("ruina_qy", (-0.74, -0.9425, 0.09 + ALT_R / 2.0),
+                            (0.76, 0.225, ALT_R), alv_esc, resto=0.20)
     esc_r += parede_partida("ruina_qx", (1.09, 0.72, 0.09 + ALT_R / 2.0),
-                            (0.22, 0.55, ALT_R), M["parede_suja"], resto=0.24)
+                            (0.22, 0.55, ALT_R), alv_esc, resto=0.24)
     # A porta na parede de `-y` e a janela na de `+x`, cada uma na sua.
-    esc_r += vao_cego("ruina_porta", "-y", (0.42, -0.94, 0.09 + ALT_R / 2.0),
-                      (1.56, 0.22, ALT_R), -0.18, -0.20, 0.60, 0.94, M)
-    # ⚠️ A JANELA AFASTA-SE DA QUINA, e isto custou um render. Ela nasceu a
-    # `u = -0.30`, que a punha a 0,05 do canto: o vão é uma placa RECUADA na
-    # parede, e recuada tão perto da quina ela atravessa a parede vizinha e
-    # aparece do outro lado como uma BARRA PRETA de pé, do chão ao topo. Na
-    # captura inteira aquilo lê-se como uma coluna escura que não existe.
+    esc_r += vao_cego("ruina_porta", "-y", *PAR_Y, -0.18, -0.20, 0.60, 0.94, M)
+    # ⚠️ A JANELA AFASTA-SE DA QUINA, e isto custou um render. A `u = -0.30`
+    # ficava a 0,05 do canto: o vão é uma placa RECUADA, e tão perto da quina
+    # atravessa a parede vizinha e aparece do outro lado como uma barra preta.
     # Vão perto de quina precisa de meia largura de folga, e mais um pouco.
-    esc_r += vao_cego("ruina_jan", "+x", (1.09, -0.19, 0.09 + ALT_R / 2.0),
-                      (0.22, 1.28, ALT_R), 0.06, 0.18, 0.52, 0.42, M)
+    esc_r += vao_cego("ruina_jan", "+x", *PAR_X, 0.06, 0.18, 0.52, 0.42, M)
+    # A tábua pregada de través na janela: alguém ainda fecha isto.
+    tabua = na_face("ruina_tabua", "+x", *PAR_X, 0.06, 0.20, 0.66, 0.09, 0.04,
+                    M["madeira_velha"], 0.02)
+    tabua.rotation_euler[0] = math.radians(-22)
+    esc_r.append(tabua)
     esc_r += [
         # A viga do telhado, caída do alto do canto para o entulho. É ela que
         # liga as duas metades e conta o que aconteceu.
@@ -3641,17 +3998,58 @@ def montar(M: dict) -> dict:
               M["barrote"], rot=(0, 27, -22)),
         caixa("ruina_ripa", (0.10, -1.10, 0.42), (1.5, 0.09, 0.09),
               M["barrote"], rot=(0, 30, 8)),
-        caixa("ruina_telha", (-0.55, -1.12, 0.24), (0.5, 0.4, 0.09),
-              M["telhado_velho"], rot=(0, 0, -18)),
+        # A TELHA no chão é a do telhado que vai voltar: laranja, e partida em
+        # cacos — uma telha inteira lia como tampa de caixa.
+        caixa("ruina_telha", (-0.55, -1.06, 0.03), (0.30, 0.18, 0.05),
+              M["telhado"], rot=(0, 0, -10)),
+        caixa("ruina_telha1", (-0.20, -0.62, 0.22), (0.26, 0.20, 0.05),
+              M["telhado"], rot=(6, 0, 34)),
+        caixa("ruina_telha2", (0.62, 0.30, 0.22), (0.24, 0.18, 0.05),
+              M["telhado"], rot=(-8, 4, -12)),
         # Entulho, todo do lado que caiu — amontoado num canto lê como pilha,
         # espalhado pelos quatro lê como sujeira.
         caixa("ruina_entulho_a", (-0.95, -0.62, 0.26), (0.55, 0.48, 0.34),
-              M["parede_suja"], rot=(0, 0, 14)),
+              alv_esc, rot=(0, 0, 14)),
         caixa("ruina_entulho_b", (-0.52, 0.10, 0.22), (0.44, 0.4, 0.26),
-              M["parede_suja"], rot=(0, 0, -20)),
+              alv_esc, rot=(0, 0, -20)),
         caixa("ruina_entulho_c", (0.20, 0.62, 0.19), (0.38, 0.34, 0.2),
-              M["parede_suja"], rot=(0, 0, 9)),
+              alv_esc, rot=(0, 0, 9)),
     ]
+    for i, (x, y, rz) in enumerate(((-0.70, -0.30, 15), (-0.58, -0.36, 80),
+                                    (0.40, -0.10, -30))):
+        esc_r.append(caixa("ruina_tijolo%d" % i, (x, y, 0.215),
+                           (0.16, 0.08, 0.07), M["tijolo"], rot=(0, 0, rz)))
+    # O TOLDO, rasgado: preso ainda por cima da porta, a cair a pique, e uma
+    # tira solta pendurada ao lado. É o azul do toldo pronto, desbotado.
+    esc_r += [
+        caixa("ruina_toldo", (0.24, -1.11, 1.08), (0.76, 0.40, 0.03), toldo,
+              rot=(64, 9, 0)),
+        caixa("ruina_toldo_tira", (0.58, -1.10, 0.86), (0.07, 0.02, 0.36),
+              toldo, rot=(0, 6, 0)),
+        barra("ruina_toldo_braco", (-0.10, -1.06, 1.26), (-0.12, -1.16, 1.22),
+              0.035, M["metal"]),
+        # A PLACA caiu e está encostada à parede, à direita da porta.
+        caixa("ruina_placa", (0.85, -1.105, 0.155), (0.58, 0.04, 0.28), placa,
+              rot=(-16, 0, 3)),
+    ]
+    # A ÁRVORE que cresce lá dentro: o tronco sai do piso atrás do canto, e a
+    # copa aparece por cima das duas paredes.
+    esc_r += [cone("ruina_arv_tronco", (-0.18, 0.28, 0.72), 0.08, 0.05, 1.08,
+                   6, M["tronco"], rot=(4, -5, 0))]
+    esc_r += copa_bolas("ruina_arv",
+                        (((-0.30, 0.26, 1.46), (0.44, 0.40, 0.30)),
+                         ((0.06, 0.06, 1.56), (0.34, 0.32, 0.26)),
+                         ((-0.12, 0.50, 1.70), (0.30, 0.28, 0.22)),
+                         ((-0.52, -0.08, 1.38), (0.28, 0.26, 0.21))), M)
+    # O CAPIM: no piso, na base das paredes, e um tufo em cima da parede
+    # partida, que é onde o mato mostra que ninguém mexe ali há anos.
+    for i, (pe, alt) in enumerate((((-1.00, -1.10, 0.0), 0.30),
+                                   ((1.26, -0.55, 0.0), 0.28),
+                                   ((1.26, 0.40, 0.0), 0.24),
+                                   ((-0.30, -0.95, 0.18), 0.26),
+                                   ((0.70, -0.40, 0.18), 0.24),
+                                   ((-0.65, -0.94, 0.40), 0.20))):
+        esc_r += tufo("ruina_capim%d_" % i, pe, alt, capim_e, rot_z=53.0 * i)
     grupos["escritorio_ruina"] = esc_r
 
     # ⚠️ OS DOIS PRÉDIOS DO PÁTIO ENCOLHEM AQUI, e não nas literais deles.
