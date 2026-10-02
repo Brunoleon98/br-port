@@ -19,17 +19,16 @@ offset_bottom = 397.33
 mouse_filter = 2
 expand_mode = 1
 
-; A PILHA DO TRABALHADOR QUE ANDA (`075`): o mesmo quadro e o mesmo offset do
-; trabalhador, porque o gerador a desenha no fim do caminho dele, no mesmo
-; mundo. Vem ANTES dele de propósito — está mais para `−my` do que todo o
-; caminho, logo é sempre tapada por ele e nunca o tapa. O `Dock.gd` mostra-a
-; só enquanto ele anda.
+; A PILHA DO PAU-DE-CARGA (`076`): o mesmo quadro e o mesmo offset do PÍER,
+; porque o gerador a desenha onde o gancho do n1 larga a carga, no mundo do
+; píer. Vem ANTES do trabalhador: está na ponta de terra do tabuado, mais para
+; trás do que o guincho. O `Dock.gd` mostra-a só enquanto o pau trabalha.
 [node name="Pilha" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = -90.67
-offset_top = -91.33
-offset_right = 421.33
-offset_bottom = 420.67
+offset_left = -66.67
+offset_top = -114.67
+offset_right = 445.33
+offset_bottom = 397.33
 mouse_filter = 2
 visible = false
 expand_mode = 1
@@ -56,17 +55,6 @@ mouse_filter = 2
 visible = false
 expand_mode = 1
 texture = ExtResource("prop_trabalhador")
-
-; A CARGA AO OMBRO, filha do trabalhador: desliza com ele sem conta nenhuma, e
-; desenha-se por cima dele e por baixo do barco e da lança, que é onde a
-; profundidade a põe. O quadro é o do pai, de 512 a partir do canto.
-[node name="Carga" type="TextureRect" parent="Trabalhador"]
-layout_mode = 0
-offset_right = 512.0
-offset_bottom = 512.0
-mouse_filter = 2
-visible = false
-expand_mode = 1
 
 [node name="Barco" type="TextureRect" parent="."]
 layout_mode = 0

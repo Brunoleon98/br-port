@@ -7,6 +7,12 @@ pallets, empilhadeira) e uma transição suave entre turnos»* (plano v3, §7,
 item 4). A primeira candidata foi vista em GIF, nos três píeres, e o Bruno
 mandou-a para o jogo no nível 1.
 
+> **No nível 1, substituída no mesmo dia pela `076`**: quem descarrega é o
+> pau-de-carga, e o trabalhador opera o guincho. Os quadros de andar e a carga
+> ao ombro saíram de `art/props`. Continua de pé o que esta decisão mediu e
+> escolheu: o boneco articulado, a figura pelo sexo, a animação a começar na
+> alocação, a assinatura contra o `refresh()` e os degraus por nível.
+
 ## O que o Bruno escolheu
 
 | Pergunta | Resposta |

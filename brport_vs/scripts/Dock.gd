@@ -108,115 +108,108 @@ const CASCOS := {
 }
 
 
-# ── O TRABALHADOR QUE ANDA (02/10, `docs/decisoes/075`) ──
+# ── O PAU-DE-CARGA QUE DESCARREGA (02/10, `docs/decisoes/075`, `076`) ──
 #
-# Escolhas do Bruno: a animação sobe por DEGRAU do porto. No nível 1, que é
-# o pau-de-carga, o trabalhador atravessa o tabuado — vai ao barco de frente
-# e volta de costas com a carga ao ombro até uma pilha no meio do píer. No 2 o
-# guindaste tira a carga do barco e ele desengata; no 3 vêm os pallets e a
-# empilhadeira. Os dois de cima ainda não existem, e até lá a figura fica de
-# pé, com o balanço de sempre.
+# Quem descarrega é o GUINDASTE, e o trabalhador opera-o — escolha do Bruno,
+# depois de ver o trabalhador a levar a carga ao ombro (`075`): «é ele que
+# sempre fará isso». No nível 1 o pau-de-carga gira do porão do pesqueiro à
+# pilha no tabuado, o gancho desce, sobe com a lingada de peixe, gira, desce e
+# larga; o trabalhador fica no guincho ao pé do mastro. Nos níveis 2 e 3 o
+# guindaste de cada um vem depois, e a ida ao camião nos serviços de mais de
+# um turno também; até lá ele fica de pé, à beira do costado.
 #
-# O quadro sai do SEXO de quem está alocado (lido do rosto dele, no
-# `Retratos`) e do sentido: `vai` é o caminho para o barco, `volta` o caminho
-# com a carga. Os três quadros de cada um são o passo — direita à frente, pés
-# juntos, esquerda à frente —, e o do meio de `vai` é também o PARADO: é a
-# mesma pose, e é isso que impede um salto quando ele pára.
+# O sexo de quem está alocado sai do rosto dele (`Retratos`). O PARADO do
+# homem é o `trabalhador` de sempre — a régua da fauna e da página de escala.
 const QUADROS_TRABALHADOR := {
 	"h": {
-		"vai": [
-			preload("res://art/props/trab_h_vai_0.png"),
-			preload("res://art/props/trabalhador.png"),
-			preload("res://art/props/trab_h_vai_2.png"),
-		],
-		"volta": [
-			preload("res://art/props/trab_h_volta_0.png"),
-			preload("res://art/props/trab_h_volta_1.png"),
-			preload("res://art/props/trab_h_volta_2.png"),
+		"parado": preload("res://art/props/trabalhador.png"),
+		"guincho": [
+			preload("res://art/props/trab_h_guincho_0.png"),
+			preload("res://art/props/trab_h_guincho_1.png"),
 		],
 	},
 	"m": {
-		"vai": [
-			preload("res://art/props/trab_m_vai_0.png"),
-			preload("res://art/props/trab_m_vai_1.png"),
-			preload("res://art/props/trab_m_vai_2.png"),
-		],
-		"volta": [
-			preload("res://art/props/trab_m_volta_0.png"),
-			preload("res://art/props/trab_m_volta_1.png"),
-			preload("res://art/props/trab_m_volta_2.png"),
+		"parado": preload("res://art/props/trab_m_parado.png"),
+		"guincho": [
+			preload("res://art/props/trab_m_guincho_0.png"),
+			preload("res://art/props/trab_m_guincho_1.png"),
 		],
 	},
 }
 
-# A CARGA E A PILHA, pelo par (classe, motivo) — a mesma chave do casco. O
-# pesqueiro leva peixe nos DOIS motivos, pela razão que o `CASCOS` já escreve:
-# a armazenagem dele é o mesmo peixe a ir para a câmara do armazém.
+# OS QUADROS DO PAU-DE-CARGA. Cada um é o pau renderizado no seu ângulo — a
+# 60° de giro a imagem girada no plano da tela já não é um pau visto em
+# isométrico. `g0`..`g6` vão do porão (18°) à pilha (80°), `c` é com a lingada
+# pendurada, e `barco`/`pilha` são o gancho em baixo nas duas pontas. O `g0`
+# vazio é o `lanca_n1` de repouso, o mesmo que o `ArteLanca` varre.
+const LANCA_N1 := {
+	"g0": preload("res://art/props/lanca_n1.png"),
+	"g1": preload("res://art/props/lanca_n1_g1.png"),
+	"g2": preload("res://art/props/lanca_n1_g2.png"),
+	"g3": preload("res://art/props/lanca_n1_g3.png"),
+	"g4": preload("res://art/props/lanca_n1_g4.png"),
+	"g5": preload("res://art/props/lanca_n1_g5.png"),
+	"g6": preload("res://art/props/lanca_n1_g6.png"),
+	"g0c": preload("res://art/props/lanca_n1_g0c.png"),
+	"g1c": preload("res://art/props/lanca_n1_g1c.png"),
+	"g2c": preload("res://art/props/lanca_n1_g2c.png"),
+	"g3c": preload("res://art/props/lanca_n1_g3c.png"),
+	"g4c": preload("res://art/props/lanca_n1_g4c.png"),
+	"g5c": preload("res://art/props/lanca_n1_g5c.png"),
+	"g6c": preload("res://art/props/lanca_n1_g6c.png"),
+	"barco": preload("res://art/props/lanca_n1_barco.png"),
+	"barco_c": preload("res://art/props/lanca_n1_barco_c.png"),
+	"pilha": preload("res://art/props/lanca_n1_pilha.png"),
+	"pilha_c": preload("res://art/props/lanca_n1_pilha_c.png"),
+}
+
+# O CICLO, em quadros e segundos, a começar no porão com o gancho em cima.
+# Uma tabela e não uma conta, porque as pausas são de pessoa e não de
+# geometria: o gancho demora mais em baixo (a engatar, a soltar) do que a
+# passar por um ângulo. ~10° de giro a cada 0,22 s.
+const CICLO_N1 := [
+	["g0", 0.25], ["barco", 0.45], ["barco_c", 0.45], ["g0c", 0.25],
+	["g1c", 0.22], ["g2c", 0.22], ["g3c", 0.22], ["g4c", 0.22], ["g5c", 0.22],
+	["g6c", 0.22], ["pilha_c", 0.45], ["pilha", 0.45], ["g6", 0.25],
+	["g5", 0.22], ["g4", 0.22], ["g3", 0.22], ["g2", 0.22], ["g1", 0.22],
+]
+# O operador troca de mão na alavanca a este ritmo enquanto o pau trabalha.
+const OPERADOR_SEG := 0.35
+
+# A PILHA, pelo par (classe, motivo) — a mesma chave do casco. O pesqueiro
+# leva peixe nos DOIS motivos, pela razão que o `CASCOS` já escreve: a
+# armazenagem dele é o mesmo peixe a ir para a câmara do armazém.
 #
 # ⚠️ SÓ O PESQUEIRO ESTÁ AQUI, e não é esquecimento: com o guindaste de nível
-# 1 o porto só recebe o pesqueiro (`docs/decisoes/009`), e é só nesse nível
-# que o trabalhador anda. O papelão e o saco foram desenhados e aprovados na
-# mesma prancha e esperam o nível 2 no gerador (`PROXIMO_NIVEL`); pô-los aqui
-# seria arte gerada que nenhum estado do jogo mostra. Quem tranca que toda
-# classe alcançável no nível 1 tem a sua linha é o D37.
-const CARGAS := {
+# 1 o porto só recebe o pesqueiro (`docs/decisoes/009`), e a lingada dos
+# quadros do `LANCA_N1` é de peixe por isso mesmo. Quem tranca que toda classe
+# alcançável no nível 1 tem a sua linha é o D39.
+const PILHAS_N1 := {
 	"pesqueiro": {
-		"pescado": {
-			"carga": preload("res://art/props/carga_peixe.png"),
-			"pilha": preload("res://art/props/pilha_peixe.png"),
-		},
-		"armazenagem": {
-			"carga": preload("res://art/props/carga_peixe.png"),
-			"pilha": preload("res://art/props/pilha_peixe.png"),
-		},
+		"pescado": preload("res://art/props/pilha_peixe.png"),
+		"armazenagem": preload("res://art/props/pilha_peixe.png"),
 	},
 }
 
-# O CAMINHO, na tela: o gerador anda `CAMINHO_TRAB` (2,2) × a régua da pessoa
-# (0,48) = 1,056 unidades no sentido `−my`, e uma unidade de `−my` vale
-# (+20, −10) px de tela (`MEIA_LARG`, `MEIA_ALT` do `Main`). A pilha está
-# desenhada no PNG um passo além disso. É o mesmo número em dois arquivos, e
-# quem os amarra é o D37 a ler a pilha no render — nunca uma cópia.
-const CAMINHO_TELA := Vector2(21.12, -10.56)
 
-# O PASSO: o ciclo de poses 0-1-2-1 a 8 por segundo (meio segundo por ciclo,
-# dois passos), e o trecho leva o tempo que o passo pede para os pés não
-# deslizarem — medido no render, cada ciclo avança ~5,3 px de tela, e os
-# 23,6 px do caminho dão 4,45 ciclos.
-const POSES_DO_PASSO := [0, 1, 2, 1]
-const PASSO_FPS := 8.0
-const ANDAR_SEG := 2.2
-const PAUSA_SEG := 0.35       # pegar no barco, largar na pilha
-
-
-## A pose do trabalhador no instante `t` do ciclo de trabalho. É aritmética
-## pura, e de propósito: o teste pergunta-lhe o ciclo inteiro sem esperar um
-## frame, e o tween só a aplica.
-##
-## O ciclo começa no BARCO, a pegar a carga: pausa, volta com ela até à pilha,
-## pausa a largá-la, e vai vazio ao barco outra vez.
-static func pose_no_ciclo(t: float) -> Dictionary:
+## O passo do ciclo no instante `t`: o quadro do pau e o do operador. É
+## aritmética pura, e de propósito: o teste pergunta-lhe o ciclo inteiro sem
+## esperar um frame, e o tween só a aplica.
+static func pose_do_guindaste(t: float) -> Dictionary:
 	t = fposmod(t, duracao_do_ciclo())
-	if t < PAUSA_SEG:
-		return {"fracao": 0.0, "sentido": "volta", "quadro": 1, "carga": true}
-	t -= PAUSA_SEG
-	if t < ANDAR_SEG:
-		return {"fracao": t / ANDAR_SEG, "sentido": "volta",
-			"quadro": _quadro_do_passo(t), "carga": true}
-	t -= ANDAR_SEG
-	if t < PAUSA_SEG:
-		return {"fracao": 1.0, "sentido": "vai", "quadro": 1, "carga": false}
-	t -= PAUSA_SEG
-	return {"fracao": 1.0 - t / ANDAR_SEG, "sentido": "vai",
-		"quadro": _quadro_do_passo(t), "carga": false}
+	var operador := int(t / OPERADOR_SEG) % 2
+	for passo in CICLO_N1:
+		if t < float(passo[1]):
+			return {"lanca": String(passo[0]), "operador": operador}
+		t -= float(passo[1])
+	return {"lanca": String(CICLO_N1[-1][0]), "operador": operador}
 
 
 static func duracao_do_ciclo() -> float:
-	return 2.0 * (ANDAR_SEG + PAUSA_SEG)
-
-
-static func _quadro_do_passo(t: float) -> int:
-	return POSES_DO_PASSO[int(t * PASSO_FPS) % POSES_DO_PASSO.size()]
+	var total := 0.0
+	for passo in CICLO_N1:
+		total += float(passo[1])
+	return total
 
 
 ## O sexo de quem está alocado, pelo rosto dele: "h" ou "m".
@@ -286,7 +279,6 @@ var _quadros: Dictionary = {}
 @onready var _pier: TextureRect = $Pier
 @onready var _barco: TextureRect = $Barco
 @onready var _trabalhador_prop: TextureRect = $Trabalhador
-@onready var _carga: TextureRect = $Trabalhador/Carga
 @onready var _pilha: TextureRect = $Pilha
 @onready var _lanca: TextureRect = $Lanca
 
@@ -331,13 +323,19 @@ func _refresh_cena() -> void:
 		and GameState.doca_aceita_trabalhador(dock_index))
 
 	# A lança só existe onde há píer: numa vaga por construir há só estacas.
-	_mostrar_lanca(esta_construida())
+	# ⚠️ E COM O PAU-DE-CARGA A TRABALHAR ELA NÃO VARRE NEM VOLTA AO REPOUSO:
+	# quem lhe escolhe o quadro é o ciclo (`_aplicar_guindaste`). Este
+	# `refresh()` corre a cada turno e alocação, e repor a textura aqui pô-la
+	# um frame em repouso a meio do giro.
+	var opera := _guindaste_opera()
+	_mostrar_lanca(esta_construida(), not opera)
 
 	# Dois níveis independentes: o guindaste é do `guindaste`, a laje é do
 	# `cais`. Uma leitura só faria o jogador ver mudar o que não comprou.
 	var nivel_lanca: int = int(GameState.nivel_guindaste())
 	var nivel_pier: int = int(GameState.nivel_pier())
-	_lanca.texture = ArteLanca[nivel_lanca - 1]
+	if not opera:
+		_lanca.texture = ArteLanca[nivel_lanca - 1]
 	if not esta_construida():
 		_pier.texture = ArtePierVazio
 		_parar_barco()
@@ -363,14 +361,27 @@ func _refresh_cena() -> void:
 	if dock["worker_id"] != null:
 		# A figura no tabuado é o que faz "doca ocupada" ler sem texto.
 		_trabalhador_prop.visible = true
-		var carga: Dictionary = {}
+		var pilha: Texture2D = null
 		# Acesso DIRETO à tabela no nível 1, como no casco: uma classe que o
-		# nível 1 receba sem carga desenhada tem de rebentar aqui, e não
-		# deixar o trabalhador parado calado.
-		if int(GameState.nivel_guindaste()) == 1:
-			carga = CARGAS[String(boat["classe"])][String(boat["motivo"])]
+		# nível 1 receba sem pilha desenhada tem de rebentar aqui, e não
+		# deixar o guindaste parado calado.
+		if opera:
+			pilha = PILHAS_N1[String(boat["classe"])][String(boat["motivo"])]
 		_animar_trabalho(int(boat["progress"]) > 0,
-			sexo_do_trabalhador(int(dock["worker_id"])), carga)
+			sexo_do_trabalhador(int(dock["worker_id"])), pilha)
+
+
+## O pau-de-carga do nível 1 a descarregar: há píer, barco que é nosso e
+## trabalhador nele. É a mesma condição que mostra o trabalhador, lida antes,
+## porque a lança é decidida antes dele.
+func _guindaste_opera() -> bool:
+	if not esta_construida() or int(GameState.nivel_guindaste()) != 1:
+		return false
+	var dock: Dictionary = GameState.docks[dock_index]
+	var boat = dock["boat"]
+	if boat == null or dock["worker_id"] == null:
+		return false
+	return not (boat.get("rival", false) and not boat.get("matched", false))
 
 
 func _can_drop_data(_at_position: Vector2, data) -> bool:
@@ -473,39 +484,36 @@ func _acender_realce(ligado: bool) -> void:
 
 # Enquanto a operação corre, o trabalhador se mexe. Parado, fica de pé.
 #
-# No nível 1 (`carga` preenchida) ele ANDA: o ciclo do `pose_no_ciclo()`, a
-# carga ao ombro na volta e a pilha no tabuado. Nos níveis de cima, até terem
-# a animação deles, fica o balanço de 3 px de sempre, já com a figura do sexo
-# dele.
+# No nível 1 (`pilha` dada) ele OPERA O GUINCHO: o pau-de-carga corre o
+# `CICLO_N1` — do porão à pilha e de volta — e a pilha fica no tabuado. Nos
+# níveis de cima, até terem o guindaste deles, fica o balanço de 3 px de
+# sempre, já com a figura do sexo dele.
 #
-# ⚠️ NO NÍVEL 1 ELE ANDA ASSIM QUE É ALOCADO, e não com `progress > 0`, que
-# é o «operando» do balanço. O pesqueiro serve num turno só: o `progress` chega
-# a 1 no mesmo avanço em que o barco parte, e com ele atracado nunca passa de
-# zero. Medido em 20 partidas, 449 instantes de trabalhador alocado a um barco
-# no nível 1 e ZERO com `progress > 0` — a animação estaria escrita, ligada,
-# validada e nunca tocaria, e o balanço antigo nunca tinha tocado ali. Para o
-# jogador, alocado com o barco no berço é a trabalhar.
-func _animar_trabalho(operando: bool, sexo: String, carga: Dictionary) -> void:
-	var anda := not carga.is_empty()
-	operando = operando or anda
-	var assinatura := "%s|%s|%s|%s" % [operando, sexo, anda,
-		carga["pilha"].resource_path if anda else ""]
+# ⚠️ NO NÍVEL 1 ELE TRABALHA ASSIM QUE É ALOCADO, e não com `progress > 0`,
+# que é o «operando» do balanço. O pesqueiro serve num turno só: o `progress`
+# chega a 1 no mesmo avanço em que o barco parte, e com ele atracado nunca
+# passa de zero. Medido em 20 partidas, 449 instantes de trabalhador alocado a
+# um barco no nível 1 e ZERO com `progress > 0` (`075`).
+func _animar_trabalho(operando: bool, sexo: String, pilha: Texture2D) -> void:
+	var guindaste := pilha != null
+	operando = operando or guindaste
+	var assinatura := "%s|%s|%s" % [operando, sexo,
+		pilha.resource_path if guindaste else ""]
 	if assinatura == _assinatura_trabalho and _tw_trabalho != null \
 			and _tw_trabalho.is_valid():
 		return
 	_parar_trabalho()
 	_assinatura_trabalho = assinatura
 	_quadros = QUADROS_TRABALHADOR[sexo]
-	_trabalhador_prop.texture = _quadros["vai"][1]
+	_trabalhador_prop.texture = _quadros["parado"]
 	if not operando:
 		return
 	_tw_trabalho = create_tween().set_loops()
-	if anda:
-		_carga.texture = carga["carga"]
-		_pilha.texture = carga["pilha"]
+	if guindaste:
+		_pilha.texture = pilha
 		_pilha.visible = true
-		_aplicar_pose(0.0)
-		_tw_trabalho.tween_method(_aplicar_pose, 0.0, duracao_do_ciclo(),
+		_aplicar_guindaste(0.0)
+		_tw_trabalho.tween_method(_aplicar_guindaste, 0.0, duracao_do_ciclo(),
 			duracao_do_ciclo())
 		return
 	_tw_trabalho.tween_property(_trabalhador_prop, "position:y",
@@ -514,11 +522,10 @@ func _animar_trabalho(operando: bool, sexo: String, carga: Dictionary) -> void:
 		_trabalhador_base.y, 0.42).set_trans(Tween.TRANS_SINE)
 
 
-func _aplicar_pose(t: float) -> void:
-	var p := pose_no_ciclo(t)
-	_trabalhador_prop.texture = _quadros[p["sentido"]][p["quadro"]]
-	_trabalhador_prop.position = _trabalhador_base + CAMINHO_TELA * float(p["fracao"])
-	_carga.visible = bool(p["carga"])
+func _aplicar_guindaste(t: float) -> void:
+	var p := pose_do_guindaste(t)
+	_lanca.texture = LANCA_N1[p["lanca"]]
+	_trabalhador_prop.texture = _quadros["guincho"][int(p["operador"])]
 
 
 func _parar_trabalho() -> void:
@@ -526,17 +533,20 @@ func _parar_trabalho() -> void:
 		_tw_trabalho.kill()
 	_assinatura_trabalho = ""
 	_trabalhador_prop.position = _trabalhador_base
-	_carga.visible = false
 	_pilha.visible = false
 
 
 # A lança do guindaste varre devagar. É o único movimento do porto que não
 # depende de haver barco — dá sinal de vida a uma doca vazia.
-func _mostrar_lanca(ligado: bool) -> void:
+func _mostrar_lanca(ligado: bool, varre: bool = true) -> void:
 	_lanca.visible = ligado
 	if _tw_lanca != null and _tw_lanca.is_valid():
 		_tw_lanca.kill()
-	if not ligado:
+	if not varre:
+		# Os quadros do pau-de-carga já trazem o ângulo dentro; a imagem não
+		# gira por cima deles.
+		_lanca.rotation = 0.0
+	if not ligado or not varre:
 		return
 	# Fase por doca, senão as três varrem como um só mecanismo.
 	var fase := 0.9 * float(max(dock_index, 0))

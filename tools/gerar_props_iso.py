@@ -190,9 +190,11 @@ REGUA_DA_PESSOA = 0.48
 
 # O CAMINHO DO TRABALHADOR NO TABUADO (`075`), em unidades de mundo ANTES da
 # régua da pessoa — as mesmas do `_no_boneco` —, do pé dele no costado até onde
-# pára, e daí até ao meio da pilha. O `Dock.gd` anda o mesmo caminho na tela
-# (`CAMINHO_TRAB`), e quem prova que os dois concordam é o D37 a ler a pilha no
-# render, não uma cópia deste número.
+# pára, e daí até ao meio da pilha. Desde a `076` ninguém anda por ele no nível
+# 1: quem descarrega é o pau-de-carga, e a pilha do peixe vive no quadro do
+# píer, onde o gancho larga. Ficou para as pilhas do NÍVEL 2 (`PROXIMO_NIVEL`),
+# que ainda pousam no fim deste caminho — o degrau 2 decide onde elas ficam, e
+# este par de números vai com ele.
 CAMINHO_TRAB = 2.2
 DIST_PILHA = 0.55
 
@@ -202,9 +204,9 @@ DIST_PILHA = 0.55
 REFERENCIAS = ("carro", "pedestre")
 
 # AS CARGAS DO NÍVEL 2, que ainda não têm quem as mostre (`075`). O Bruno
-# escolheu a animação por DEGRAU do porto: no nível 1 o trabalhador leva a
-# carga ao ombro, no 2 o guindaste tira-a do barco, no 3 vêm os pallets e a
-# empilhadeira. E com o guindaste de nível 1 o porto só recebe o pesqueiro
+# escolheu a animação por DEGRAU do porto: no nível 1 o pau-de-carga descarrega
+# e o trabalhador opera o guincho (`076`), no 2 o guindaste tira a carga do
+# barco e ele leva-a ao ombro, no 3 vêm os pallets e a empilhadeira. E com o guindaste de nível 1 o porto só recebe o pesqueiro
 # (`docs/decisoes/009`), logo só a caixa de peixe chega à tela: o papelão e o
 # saco, desenhados e aprovados na mesma prancha, seriam arte órfã em
 # `art/props`. Saem só pelo nome, para uma pasta de rascunho, até o nível 2
@@ -946,6 +948,34 @@ def chanfrar(objs, largura: float = 0.020, segmentos: int = 2) -> None:
 
 
 # ---------------------------------------------------------------- geometria
+def desloc_trabalhador() -> tuple:
+    """O deslocamento (Δmx, Δmy) do quadro do TRABALHADOR contra o do PÍER,
+    lido dos `offset` dos dois nós no `Dock.tscn` (`076`).
+
+    É o que deixa desenhar o operador do guincho, que fica ao pé do mastro do
+    píer, num PNG do trabalhador: os dois quadros têm 512 e a origem do mundo
+    no centro, mas o nó do trabalhador foi deslocado na cena para o pôr à
+    beira do costado. Um par de números copiado daqui envelheceria no dia em
+    que alguém mexesse naquele nó — e o D39 lê a figura no render para o
+    confirmar.
+    """
+    cena = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
+                        "brport_vs", "scenes", "dock", "Dock.tscn")
+    nos, atual = {}, None
+    for linha in open(cena, encoding="utf-8"):
+        if linha.startswith("[node "):
+            atual = linha.split('name="')[1].split('"')[0]
+            nos[atual] = {}
+        elif atual and linha.startswith(("offset_left", "offset_top")):
+            chave, valor = linha.split("=")
+            nos[atual][chave.strip()] = float(valor)
+    dx = nos["Trabalhador"]["offset_left"] - nos["Pier"]["offset_left"]
+    dy = nos["Trabalhador"]["offset_top"] - nos["Pier"]["offset_top"]
+    # tela: dx = (Δmx − Δmy)·MEIA_LARG_TELA e dy = (Δmx + Δmy)·MEIA_LARG_TELA/2
+    soma, dif = dy / (MEIA_LARG_TELA / 2.0), dx / MEIA_LARG_TELA
+    return ((soma + dif) / 2.0, (soma - dif) / 2.0)
+
+
 def pos(mx: float, my: float, altura_px: float = 0.0) -> tuple:
     """Coordenada DO MAPA -> coordenada do Blender.
 
@@ -1823,6 +1853,34 @@ def montar(M: dict) -> dict:
         mastro_n1.append(caixa("m1_olhal%.2f" % sy, (GX, GY + sy, ALT_PIER + 0.05),
                                (0.075, 0.075, 0.10), M["metal"]))
 
+    # O GUINCHO (`076`): o pau-de-carga passou a DESCARREGAR, e quem o manobra
+    # é o trabalhador, ao pé do mastro. Fica do lado do barco e um pouco para
+    # terra, para o operador ficar entre ele e o mastro, de frente para a
+    # lingada. Corpo AZUL, e por medição: o `metal` sobre o tabuado do n1 é
+    # castanho-escuro sobre castanho-escuro; o azul separa-se pelo MATIZ, que
+    # é o que a telha já ensinou. O tambor é claro, com o cabo enrolado.
+    GUINCHO_N1 = (GX - 0.30, GY - 0.30)
+    gx, gy = GUINCHO_N1
+    mastro_n1 += [
+        caixa("m1_guincho_base", (gx, gy, ALT_PIER + 0.05), (0.26, 0.17, 0.10),
+              M["azul"]),
+        caixa("m1_guincho_lado_a", (gx - 0.11, gy, ALT_PIER + 0.15),
+              (0.035, 0.15, 0.17), M["azul"]),
+        caixa("m1_guincho_lado_b", (gx + 0.11, gy, ALT_PIER + 0.15),
+              (0.035, 0.15, 0.17), M["azul"]),
+        cone("m1_guincho_tambor", (gx, gy, ALT_PIER + 0.17), 0.06, 0.06, 0.19,
+             12, M["metal_claro"], rot=(0, 90, 0)),
+        # A alavanca, do lado do operador, e o cabo do tambor ao pé do mastro.
+        barra("m1_guincho_alavanca", (gx + 0.13, gy + 0.06, ALT_PIER + 0.16),
+              (gx + 0.15, gy + 0.16, ALT_PIER + 0.36), 0.025, M["metal"]),
+        barra("m1_guincho_cabo", (gx + 0.02, gy + 0.05, ALT_PIER + 0.22),
+              (GX - 0.06, GY - 0.04, ALT_PIER + 0.45), 0.016, M["metal"]),
+    ]
+    # O operador, em coordenada do MAPA no quadro do píer (o `y` do Blender é
+    # `−my`), e daí no quadro do trabalhador.
+    _dmx, _dmy = desloc_trabalhador()
+    OPERADOR_N1 = (gx - _dmx, -(gy + 0.26) - _dmy)
+
     # -- n2: a treliça de sempre -----------------------------------------
     base_n2 = [
         _sapata("m2_sapata", 0.66, 0.20, M["metal"]),
@@ -2053,63 +2111,145 @@ def montar(M: dict) -> dict:
     # ar de coisa a ceder. Com `SOBE_N1` o pau cai 13,7°, que continua a
     # apontar para o barco — ele atraca em `-y`, abaixo e à esquerda — sem ler
     # como rampa. Medido no PNG, não estimado.
-    SOBE_N1 = 0.42
-    PONTA_N1 = (GX, BARCO_Y + 0.75, TOPO + SOBE_N1)
-    lanca_n1 = [
-        # O GOOSENECK, que é o que prende o pau ao mastro — e, de caminho, o
-        # que garante desenho OPACO no pixel do pivô. Ver o aviso das três
-        # lanças acima: a ponta de um pau fino podia lá cair de raspão.
-        caixa("l1_gooseneck", (GX, GY, TOPO), (0.13, 0.13, 0.16), M["metal"]),
-        # ⚠️ `madeira_esc`, E ISTO FOI MEDIDO NO JOGO E NÃO NA PALETA. A
-        # primeira versão usava `tronco` para separar o pau do mastro: 0,45 de
-        # Weber no dicionário, o que parecia de sobra. Só que a doca 1 é a que
-        # encosta na PRAIA, o pau passa por cima da areia, e a face que a
-        # câmera vê dele é a ILUMINADA — ela sai a ~103 contra areia a ~159, e
-        # o pau desaparecia. A conta que importa nunca é peça contra peça: é
-        # peça contra o FUNDO por onde ela passa, no render.
-        #
-        # E são DUAS SEÇÕES, pela mesma razão do mastro: a 40 px de
-        # comprimento o que se vê de um pau é a silhueta, e um pau afila. Numa
-        # peça só ele lia como tábua.
-        #
-        # Sem contralança e sem contrapeso, aqui e de propósito: um pau de
-        # carga é um braço só, e é essa silhueta desequilibrada que diz
-        # "improvisado" ao lado do pórtico do n3.
-        barra("l1_pau", (GX, GY - 0.05, TOPO - 0.02),
-              (GX, (GY - 0.05 + PONTA_N1[1]) / 2.0,
-               (TOPO - 0.02 + PONTA_N1[2]) / 2.0 + 0.01), 0.095,
-              M["madeira_esc"]),
-        barra("l1_pau_ponta",
-              (GX, (GY - 0.05 + PONTA_N1[1]) / 2.0 + 0.10,
-               (TOPO - 0.02 + PONTA_N1[2]) / 2.0 - 0.01), PONTA_N1, 0.065,
-              M["madeira_esc"]),
-        # O AMANTILHO. Ele é `metal` e não `corda` por medição, não por gosto:
-        # sobre a AREIA da doca 1 a corda mede 0,10 de Weber e desaparece,
-        # enquanto o metal mede 0,60. Cor calibrada para a água não atravessa
-        # para o areal — é a mesma armadilha do cinzento neutro nos painéis.
-        barra("l1_amantilho", (GX, GY + 0.02, ALTO_N1 - 0.02),
-              (PONTA_N1[0], PONTA_N1[1] + 0.06, PONTA_N1[2] + 0.02),
-              0.028, M["metal"]),
-    ]
-    # O aparelho de carga. ⚠️ ELE FOI CLARO E VOLTOU A ESCURO, pela mesma
-    # medição: `metal_claro` sobre a água FUNDA mede 0,75 de Weber, mas o que
-    # está debaixo do gancho na doca 1 é o BAIXIO, que é quase tão claro
-    # quanto a areia — medido a 106 —, e ali o claro deu **0,01**. Quem
-    # encontra o gancho não é o tom: é ele ser a única ferragem GRANDE do prop,
-    # depois de os olhais encolherem.
-    CARRO1 = BARCO_Y + 0.75
-    lanca_n1 += [
-        caixa("l1_cabo", (GX, CARRO1, TOPO + SOBE_N1 - 0.51),
-              (0.030, 0.030, 1.02), M["metal"]),
-        caixa("l1_moitao", (GX, CARRO1, TOPO - 0.58), (0.11, 0.10, 0.15),
-              M["metal"]),
-        # A haste e o bico. O bico ENTRA na haste em vez de encostar nela: duas
-        # faces no mesmo plano dão o losango preto de sempre.
-        caixa("l1_gancho", (GX, CARRO1, TOPO - 0.71), (0.06, 0.06, 0.22),
-              M["metal"]),
-        caixa("l1_gancho_bico", (GX, CARRO1 - 0.065, TOPO - 0.79),
-              (0.055, 0.13, 0.06), M["metal"]),
-    ]
+    # ⚠️ O PAU FICOU MAIS COMPRIDO EM 02/10, e por causa da carga (`076`). Até
+    # ali ele parava a 2,10 do mastro e o gancho pendia na ÁGUA, entre o
+    # tabuado e o costado — servia de silhueta. Desde que o pau-de-carga
+    # DESCARREGA (escolha do Bruno: «é ele que sempre fará isso»), o gancho
+    # tem de descer ao porão do pesqueiro. `SOBE_N1` cresce na mesma razão,
+    # para o pau cair os mesmos 13,7° na tela que foram medidos no PNG.
+    #
+    # ⚠️ O PORÃO NÃO ESTÁ EM FRENTE AO MASTRO. A primeira conta apontou o pau
+    # a 0° (direto ao costado) com 3,15 de alcance, e o gancho desceu na PROA:
+    # ao lado do bote, na ponta da traineira. Medido nos três cascos, o porão
+    # está ~1,0 para terra disso, em (0,3; 2,6) do píer — daí 3,30 de alcance
+    # e 18° de giro no barco.
+    R_N1 = 3.30
+    SOBE_N1 = 0.42 * R_N1 / 2.10
+    # O GIRO: 0° seria o pau a apontar para o costado (o `-y` do Blender), e
+    # cresce para TERRA (`-x`). Vai de 18° (o porão) a 80° (a pilha, por cima
+    # do tabuado e antes da ponta de terra — a 90° a pilha passava da beira).
+    # Sete ângulos, ~10° por passo: o pau lê-se a girar e não a saltar.
+    GIRO_N1 = (18.0, 28.0, 39.0, 49.0, 59.0, 70.0, 80.0)
+    # As alturas do fundo do gancho: a de viagem é a de sempre; a do barco põe
+    # a carga no convés do pesqueiro, e a da pilha pousa-a em cima dela.
+    GANCHO_CIMA = TOPO - 0.82
+    GANCHO_BARCO = ALT_PIER + 0.20
+    # A carga ao gancho é a mesma caixa de peixe da pilha (`075`): duas
+    # colunas de duas, numa lingada. À régua das cargas (1,5x o real, como a
+    # pessoa), cada caixa mede 0,17 x 0,115 x 0,07.
+    CAIXA_PEIXE = (0.17, 0.115, 0.07)
+    LINGADA = 0.12                 # do bico do gancho ao tampo das caixas
+    # O ponto de largada, no último ângulo do giro.
+    PILHA_N1 = (GX - R_N1 * math.sin(math.radians(GIRO_N1[-1])),
+                GY - R_N1 * math.cos(math.radians(GIRO_N1[-1])))
+    PILHA_ANDARES = 3
+    GANCHO_PILHA = ALT_PIER + PILHA_ANDARES * (CAIXA_PEIXE[2] - 0.004) \
+        + 2 * CAIXA_PEIXE[2] + LINGADA + 0.01
+
+    def _caixas_de_peixe(nome, cx, cy, z0, colunas, andares):
+        """Caixas de peixe azuis com gelo por cima, encostadas sem coplanar:
+        cada andar afunda 4 mm no de baixo, e o gelo é mais estreito do que a
+        caixa."""
+        cl, cf, ch = CAIXA_PEIXE
+        p = []
+        for i, (dx, dy) in enumerate(colunas):
+            for a in range(andares):
+                z = z0 + a * (ch - 0.004) + ch / 2.0
+                p.append(caixa("%s_%d_%d" % (nome, i, a), (cx + dx, cy + dy, z),
+                               (cl, cf, ch), M["caixa_peixe"]))
+            p.append(caixa("%s_%d_gelo" % (nome, i),
+                           (cx + dx, cy + dy, z0 + andares * (ch - 0.004) + 0.006),
+                           (cl * 0.80, cf * 0.78, 0.02), M["cabine"]))
+        return p
+
+    def pau_de_carga(sufixo, giro, gancho, carga):
+        """O pau-de-carga do n1 girado `giro` graus para terra, com o fundo do
+        gancho à altura `gancho` e, se `carga`, a lingada de peixe pendurada.
+
+        ⚠️ O GOOSENECK FICA SEMPRE EM `TOPO`, no eixo do mastro: é o pivô que o
+        `pivot_offset` do nó nomeia, e os níveis 2 e 3 ainda giram a imagem por
+        ele. Os quadros deste não giram imagem nenhuma — cada um é o pau
+        renderizado no seu ângulo, porque a 90° a imagem girada no plano da
+        tela já não é um pau visto em isométrico (encurta e entorta).
+        """
+        a = math.radians(giro)
+        dx, dy = -math.sin(a), -math.cos(a)        # para onde o pau aponta
+        ponta = (GX + dx * R_N1, GY + dy * R_N1, TOPO + SOBE_N1)
+        meio = (GX + dx * R_N1 / 2.0, GY + dy * R_N1 / 2.0,
+                TOPO + SOBE_N1 / 2.0)
+        p = [
+            caixa("l1_gooseneck" + sufixo, (GX, GY, TOPO), (0.13, 0.13, 0.16),
+                  M["metal"]),
+            # DUAS SECÇÕES, a de fora mais fina: um pau afila, e numa peça só
+            # ele lia como tábua. `madeira_esc` medido no jogo, contra a areia.
+            barra("l1_pau" + sufixo, (GX + dx * 0.05, GY + dy * 0.05, TOPO - 0.02),
+                  (meio[0], meio[1], meio[2] + 0.01), 0.095, M["madeira_esc"]),
+            barra("l1_pau_ponta" + sufixo,
+                  (meio[0] - dx * 0.10, meio[1] - dy * 0.10, meio[2] - 0.01),
+                  ponta, 0.065, M["madeira_esc"]),
+            # O AMANTILHO, do topo do mastro à ponta: `metal` e não `corda`,
+            # medido sobre a areia da doca 1.
+            barra("l1_amantilho" + sufixo, (GX, GY, ALTO_N1 - 0.02),
+                  (ponta[0], ponta[1], ponta[2] + 0.02), 0.028, M["metal"]),
+        ]
+        # O cabo desce da ponta ao moitão, e o moitão fica logo acima do
+        # gancho a qualquer altura: é o cabo que estica, não o aparelho.
+        topo_cabo = ponta[2]
+        fundo_cabo = gancho + 0.25
+        p.append(caixa("l1_cabo" + sufixo,
+                       (ponta[0], ponta[1], (topo_cabo + fundo_cabo) / 2.0),
+                       (0.030, 0.030, topo_cabo - fundo_cabo), M["metal"]))
+        p += [
+            caixa("l1_moitao" + sufixo, (ponta[0], ponta[1], gancho + 0.24),
+                  (0.11, 0.10, 0.15), M["metal"]),
+            caixa("l1_gancho" + sufixo, (ponta[0], ponta[1], gancho + 0.11),
+                  (0.06, 0.06, 0.22), M["metal"]),
+            caixa("l1_gancho_bico" + sufixo, (ponta[0], ponta[1] - 0.065,
+                                              gancho + 0.03),
+                  (0.055, 0.13, 0.06), M["metal"]),
+        ]
+        if carga:
+            # A LINGADA: duas cintas do bico às pontas do bloco de caixas, que
+            # pende por baixo dele. As cintas são escuras — a 13 px de pessoa
+            # é a linha escura que diz «pendurado», não o tom.
+            topo = gancho - LINGADA
+            meia = CAIXA_PEIXE[0] / 2.0
+            for lado in (-1.0, 1.0):
+                p.append(barra("l1_cinta%+d%s" % (lado, sufixo),
+                               (ponta[0], ponta[1], gancho + 0.01),
+                               (ponta[0] + lado * meia, ponta[1], topo + 0.01),
+                               0.018, M["madeira_esc"]))
+            p += _caixas_de_peixe("l1_carga" + sufixo, ponta[0], ponta[1],
+                                  topo - 2 * CAIXA_PEIXE[2],
+                                  ((-meia, 0.0), (meia, 0.0)), 2)
+        return p
+
+    # O DE REPOUSO é o de sempre: a apontar para o barco, gancho em cima,
+    # vazio. É ele que o `Dock.gd` varre sem trabalhador, como até aqui.
+    lanca_n1 = pau_de_carga("", GIRO_N1[0], GANCHO_CIMA, False)
+    for i, giro in enumerate(GIRO_N1):
+        if i > 0:
+            grupos["lanca_n1_g%d" % i] = pau_de_carga("_g%d" % i, giro,
+                                                      GANCHO_CIMA, False)
+        grupos["lanca_n1_g%dc" % i] = pau_de_carga("_g%dc" % i, giro,
+                                                   GANCHO_CIMA, True)
+    grupos["lanca_n1_barco"] = pau_de_carga("_bv", GIRO_N1[0], GANCHO_BARCO,
+                                            False)
+    grupos["lanca_n1_barco_c"] = pau_de_carga("_bc", GIRO_N1[0], GANCHO_BARCO,
+                                              True)
+    grupos["lanca_n1_pilha"] = pau_de_carga("_pv", GIRO_N1[-1], GANCHO_PILHA,
+                                            False)
+    grupos["lanca_n1_pilha_c"] = pau_de_carga("_pc", GIRO_N1[-1], GANCHO_PILHA,
+                                              True)
+
+    # A PILHA de peixe, no ponto de largada e no quadro do PÍER — o mesmo do
+    # pau. Três colunas desencontradas de três andares: é a altura que a faz
+    # ler como pilha (`075`), e o gancho pousa a carga em cima da do meio. As
+    # colunas correm na LARGURA do píer (`y`): no comprimento, a da ponta
+    # passava da beira de terra.
+    grupos["pilha_peixe"] = _caixas_de_peixe(
+        "pl_peixe", PILHA_N1[0], PILHA_N1[1], ALT_PIER - 0.004,
+        ((0.02, -0.135), (0.0, 0.0), (-0.03, 0.135)), PILHA_ANDARES)
 
     lanca_n3 = trelica("l3_lanca", (GX, GY - 0.20, TOPO), (GX, BARCO_Y - 0.45, TOPO),
                        0.16, M["laranja"], montantes=9, esp=0.048)
@@ -3350,9 +3490,14 @@ def montar(M: dict) -> dict:
     # barco (o `−y` do Blender, que a câmara vê), +1 de costas a ir para a
     # pilha. Girar 180° troca o lado E a frente, e é por isso que os dois
     # levam o mesmo `s` — a mão direita fica à direita da pessoa nos dois.
+    # O pé do boneco, no quadro do TRABALHADOR (o do `Dock.tscn`). Mutável
+    # porque o operador do guincho fica noutro ponto do mesmo quadro; quem o
+    # muda é o `boneco()`, e só durante ele.
+    _base = [MX, MY]
+
     def _no_boneco(l, f, h_px, s):
         k = REGUA_DA_PESSOA
-        bx, by, bz = pos(MX, MY, ALT)
+        bx, by, bz = pos(_base[0], _base[1], ALT)
         return (bx + s * l * k, by + s * f * k, bz + z(h_px * k))
 
     def _bloco(nome, l, f, h_px, tam, mat, s):
@@ -3404,7 +3549,11 @@ def montar(M: dict) -> dict:
     OMBRO_L, OMBRO_H = 0.17, 20.6
     CARGA_ALT = 21.0              # o fundo da carga, pousado no ombro
 
-    def boneco(sufixo, sexo, quadro, s, com_carga):
+    def boneco(sufixo, sexo, quadro, s, com_carga, base=None, bracos=None):
+        """`base` muda o pé (no quadro do trabalhador) e `bracos` fixa o
+        balanço dos dois braços — (direito, esquerdo), em graus para a frente —
+        em vez de o tirar do passo: é a pose de quem mexe numa alavanca."""
+        _base[:] = list(base) if base is not None else [MX, MY]
         mulher = sexo == "m"
         sinal = QUADROS_DO_PASSO[quadro]
         pp, pb = PASSO_PERNA * sinal, PASSO_BRACO * sinal
@@ -3442,6 +3591,8 @@ def montar(M: dict) -> dict:
                                  desde_px=7.3))
                 continue
             braco = -pb if lado == "d" else pb
+            if bracos is not None:
+                braco = bracos[0] if lado == "d" else bracos[1]
             p.append(_membro(f"tb_braco_{lado}{sufixo}", l, 0.0, OMBRO_H,
                              (0.07, 0.08), 8.0, M["colete"], s, frente=braco))
             p.append(_membro(f"tb_mao_{lado}{sufixo}", l, 0.0, OMBRO_H,
@@ -3470,14 +3621,30 @@ def montar(M: dict) -> dict:
                                 (0.035, 0.12, 6.0), M["cabelo_preto"], s))
         return p
 
+    # ⚠️ OS QUADROS DE ANDAR SAÍRAM NO MESMO DIA EM QUE ENTRARAM (`076`). Ele
+    # atravessava o tabuado com a caixa ao ombro, do barco à pilha; o Bruno
+    # viu-o no jogo e pediu o que o porto de verdade faz: quem DESCARREGA é o
+    # guindaste, «é ele que sempre fará isso», e o trabalhador opera-o. A ida
+    # ao camião, nos serviços de mais de um turno, anda ao longo do píer — no
+    # outro eixo —, e esses quadros fazem-se quando ela vier.
+    #
+    # O PARADO de cada sexo fica (os níveis 2 e 3 ainda o mostram, à beira do
+    # costado), e o do homem continua a ser o `trabalhador`: a régua da fauna
+    # e da página de escala.
+    grupos["trabalhador"] = boneco("_hp", "h", 1, -1.0, False)
+    grupos["trab_m_parado"] = boneco("_mp", "m", 1, -1.0, False)
+
+    # O OPERADOR DO GUINCHO, ao pé do mastro do n1 e atrás do guincho, de
+    # frente para o barco — é para onde olha quem manobra uma lingada. O ponto
+    # vem do píer (`GUINCHO_N1`) e passa ao quadro do trabalhador pelo
+    # deslocamento do nó dele no `Dock.tscn` (`DESLOC_TRABALHADOR`). Dois
+    # quadros: os braços na alavanca, a empurrar e a puxar.
     for sexo in ("h", "m"):
-        for q in range(3):
-            # O quadro 1 do homem a ir ao barco É o `trabalhador`: o parado, a
-            # régua da fauna e da página de escala, e a figura de sempre.
-            nome = "trabalhador" if (sexo, q) == ("h", 1) else f"trab_{sexo}_vai_{q}"
-            grupos[nome] = boneco(f"_{sexo}v{q}", sexo, q, -1.0, False)
-            grupos[f"trab_{sexo}_volta_{q}"] = boneco(f"_{sexo}c{q}", sexo, q,
-                                                     1.0, True)
+        for q, bracos in enumerate(((48.0, 62.0), (70.0, 40.0))):
+            grupos[f"trab_{sexo}_guincho_{q}"] = boneco(
+                f"_{sexo}g{q}", sexo, 1, -1.0, False, base=OPERADOR_N1,
+                bracos=bracos)
+    _base[:] = [MX, MY]
 
     # AS CARGAS: um PNG à parte de cada uma, no ombro do quadro da volta — o
     # Godot põe-na por cima do boneco e ela desliza com ele. Quadros com a
@@ -3490,11 +3657,6 @@ def montar(M: dict) -> dict:
                     (k_l, k_f, k_h), mat, 1.0)]
         return c + list(extra)
 
-    grupos["carga_peixe"] = _carga(
-        "cg_peixe", (0.34, 0.24, 4.6), M["caixa_peixe"],
-        # O gelo por cima, claro: é o que diz caixa de PEIXE e não caixa azul.
-        [_bloco("cg_peixe_gelo", OMBRO_L, 0.0, CARGA_ALT + 4.7,
-                (0.28, 0.19, 0.6), M["cabine"], 1.0)])
     grupos["carga_caixa"] = _carga(
         "cg_caixa", (0.30, 0.28, 5.6), M["papelao"],
         # A fita que fecha a tampa: a linha escura é o que separa a caixa do
@@ -3516,11 +3678,11 @@ def montar(M: dict) -> dict:
                                   [_faixa("cg_saco_f", OMBRO_L, 0.0,
                                           CARGA_ALT, SACO)])
 
-    # AS PILHAS, no fim do caminho e um passo além dele — o boneco pára à
-    # frente da pilha, não em cima dela. `CAMINHO_TRAB` é a distância que o nó
-    # anda no Godot (`Dock.gd`), e o D37 do teste de design confere os dois
-    # contra o render: é a mesma regra em dois arquivos, e quem a amarra é a
-    # imagem, não uma cópia do número.
+    # AS PILHAS DO NÍVEL 2, no fim do caminho de 02/10 e um passo além dele —
+    # o boneco pára à frente da pilha, não em cima dela (`075`). Nenhum nó as
+    # mostra ainda, e nenhuma guarda as mede: no dia em que o degrau 2 as puser
+    # em cena, a distância que o nó anda e esta têm de ser provadas no render,
+    # como o D39 prova hoje a do peixe contra o gancho.
     def _pilha(nome, mat, tam, arrumo, extra_mat=None, faixa=False):
         k_l, k_f, k_h = tam
         p = []
@@ -3545,8 +3707,6 @@ def montar(M: dict) -> dict:
     # poça azul no tabuado. É a ALTURA da pilha que a faz ler.
     ARRUMO = ((-0.19, 0.0, 0), (-0.19, 0.0, 1), (-0.19, 0.0, 2),
               (0.19, 0.03, 0), (0.19, 0.03, 1))
-    grupos["pilha_peixe"] = _pilha("pl_peixe", M["caixa_peixe"],
-                                   (0.34, 0.24, 4.6), ARRUMO, M["cabine"])
     grupos["pilha_caixa"] = _pilha("pl_caixa", M["papelao"],
                                    (0.30, 0.28, 5.6), ARRUMO, M["madeira_esc"])
     grupos["pilha_saco"] = _pilha("pl_saco", M["rafia"], SACO, ARRUMO,

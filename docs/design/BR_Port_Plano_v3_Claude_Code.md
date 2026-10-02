@@ -1037,15 +1037,18 @@ camiões** (`069`):
   Escopo e composição foram perguntados antes do render; **aceite na
   segunda candidata** e no jogo. As **obras** ficaram fora (mecânica, item
   5).
-- **A animação, degrau 1** (`075`): a família sobe por DEGRAU do porto,
-  escolha do Bruno depois de ver o GIF — no nível 1 o trabalhador leva a carga
-  ao ombro, no 2 o guindaste tira-a do barco e ele desengata, no 3 vêm os
-  pallets e a **empilhadeira**. O degrau 1 está no jogo: ele atravessa o
-  tabuado do costado a uma pilha, de frente a ir e de costas com a caixa de
-  peixe a voltar, uma figura por sexo. Anda assim que é alocado — o pesqueiro
-  parte no avanço em que o `progress` chegaria a 1. O papelão e o saco esperam
-  o nível 2 no gerador. Na 4 faltam os **degraus 2 e 3** e a **transição
-  entre turnos**.
+- **A animação, degrau 1** (`075`, `076`): a família sobe por DEGRAU do
+  porto, escolha do Bruno depois de ver o GIF — no 2 o guindaste tira a carga
+  do barco e ele desengata, no 3 vêm os pallets e a **empilhadeira**. O
+  degrau 1 teve duas passagens no mesmo dia: o trabalhador andava do costado
+  a uma pilha com a caixa de peixe ao ombro, e o Bruno pediu o que um porto
+  faz — *«é ele [o guindaste] que sempre fará isso»*. No jogo, **o
+  pau-de-carga descarrega**: gira do porão à pilha com caixas de peixe numa
+  cinta, e o trabalhador opera o guincho, uma figura por sexo. Trabalha assim
+  que é alocado — o pesqueiro parte no avanço em que o `progress` chegaria a
+  1. O papelão e o saco esperam o nível 2 no gerador. Na 4 faltam os
+  **degraus 2 e 3** — com eles, a **ida ao camião** nos serviços de mais de
+  um turno, que só os cargueiros têm — e a **transição entre turnos**.
 
 ---
 
