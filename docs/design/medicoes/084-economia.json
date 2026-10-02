@@ -1,0 +1,1910 @@
+{
+  "godot": "4.6.3",
+  "base_main": "bab640fdbe9d5565fb0f087a1a013763d9e174ae",
+  "metodo": "600 partidas por perfil, semente 20260825, jogo completo sobre a fila; escala uniforme medida separadamente da dívida menor.",
+  "cenarios": {
+    "main": {
+      "caixa_inicial": 400000,
+      "parcela": 530000,
+      "partidas": 600,
+      "perfis": {
+        "Antecipado": {
+          "antecipou_fracao": 0.575,
+          "atendidos_em_regime": 12.6033333333333,
+          "atendidos_por_semana": [
+            9.345,
+            11.2583333333333,
+            9.73,
+            12.6033333333333
+          ],
+          "caixa_vencimento_mediana": 528787,
+          "docas_medias": 2.98833333333333,
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 1.0,
+            "escritorio": 1.0,
+            "guindaste": 1.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.988333333333333
+          },
+          "margem_bruta_em_regime": -91271.3733333333,
+          "margem_em_regime": 148561.96,
+          "margem_por_semana": [
+            -162733.406666667,
+            42029.0883333333,
+            144700.255,
+            -91271.3733333333
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 1.0
+          },
+          "obra_por_semana": [
+            363000.0,
+            241800.0,
+            207333.333333333,
+            239833.333333333
+          ],
+          "premio_da_escolha": 1.08352973513442,
+          "taxa": 78.6666666666667,
+          "trabalhadores_medios": 2.98833333333333,
+          "turno_de_antecipacao_mediana": 31,
+          "vitorias": 472
+        },
+        "Descuidado": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 3.74666666666667,
+          "atendidos_por_semana": [
+            5.23666666666667,
+            5.14,
+            4.43,
+            3.74666666666667
+          ],
+          "caixa_vencimento_mediana": 519756,
+          "docas_medias": 1.03,
+          "estruturas": {
+            "armazem": 0.0,
+            "cais": 0.0,
+            "escritorio": 1.0,
+            "guindaste": 0.00666666666666667,
+            "patio": 0.998333333333333,
+            "pier_2": 0.03,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": 80454.6916666667,
+          "margem_em_regime": 94954.6916666667,
+          "margem_por_semana": [
+            -17732.9816666667,
+            31851.5466666667,
+            24028.85,
+            80454.6916666667
+          ],
+          "niveis": {
+            "1": 0.00166666666666667,
+            "2": 0.998333333333333,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            80000.0,
+            39291.6666666667,
+            66316.6666666667,
+            14500.0
+          ],
+          "premio_da_escolha": 0.970252070472438,
+          "taxa": 41.5,
+          "trabalhadores_medios": 1.03,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 249
+        },
+        "Mediano": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 12.6083333333333,
+          "atendidos_por_semana": [
+            9.345,
+            11.2583333333333,
+            9.73166666666667,
+            12.6083333333333
+          ],
+          "caixa_vencimento_mediana": 629683,
+          "docas_medias": 2.98833333333333,
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 1.0,
+            "escritorio": 1.0,
+            "guindaste": 1.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.988333333333333
+          },
+          "margem_bruta_em_regime": 211922.028333333,
+          "margem_em_regime": 451322.028333333,
+          "margem_por_semana": [
+            -162733.406666667,
+            42029.0883333333,
+            145148.348333333,
+            211922.028333333
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 1.0
+          },
+          "obra_por_semana": [
+            363000.0,
+            241800.0,
+            207766.666666667,
+            239400.0
+          ],
+          "premio_da_escolha": 1.08347797159317,
+          "taxa": 78.6666666666667,
+          "trabalhadores_medios": 2.98833333333333,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 472
+        },
+        "Ótimo": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 15.63,
+          "atendidos_por_semana": [
+            11.75,
+            12.655,
+            15.0433333333333,
+            15.63
+          ],
+          "caixa_vencimento_mediana": 1061316,
+          "docas_medias": 3.0,
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 1.0,
+            "escritorio": 1.0,
+            "guindaste": 1.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 1.0
+          },
+          "margem_bruta_em_regime": 538184.306666667,
+          "margem_em_regime": 538184.306666667,
+          "margem_por_semana": [
+            -273202.265,
+            93480.815,
+            306461.781666667,
+            538184.306666667
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 1.0
+          },
+          "obra_por_semana": [
+            539900.0,
+            300600.0,
+            214500.0,
+            0.0
+          ],
+          "premio_da_escolha": 1.02785666784671,
+          "taxa": 100.0,
+          "trabalhadores_medios": 3.0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        }
+      },
+      "semanas": 4,
+      "semente": 20260825,
+      "turnos_por_semana": 8
+    },
+    "final_30000": {
+      "caixa_inicial": 40000,
+      "parcela": 30000,
+      "partidas": 600,
+      "perfis": {
+        "Antecipado": {
+          "antecipou_fracao": 1.0,
+          "atendidos_em_regime": 10.005,
+          "atendidos_por_semana": [
+            9.36166666666667,
+            11.4316666666667,
+            10.385,
+            10.005
+          ],
+          "caixa_vencimento_mediana": 0,
+          "docas_medias": 2.18,
+          "estruturas": {
+            "armazem": 0.986666666666667,
+            "cais": 1.0,
+            "escritorio": 1.0,
+            "guindaste": 1.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.18
+          },
+          "margem_bruta_em_regime": 15401.9566666667,
+          "margem_em_regime": 36411.9566666667,
+          "margem_por_semana": [
+            -16514.1983333333,
+            -3165.44166666667,
+            7852.875,
+            15401.9566666667
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 1.0
+          },
+          "obra_por_semana": [
+            36620.0,
+            18590.0,
+            7720.0,
+            21010.0
+          ],
+          "premio_da_escolha": 1.08860948903205,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.18,
+          "turno_de_antecipacao_mediana": 17,
+          "vitorias": 600
+        },
+        "Descuidado": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 3.75833333333333,
+          "atendidos_por_semana": [
+            5.23666666666667,
+            5.155,
+            4.38,
+            3.75833333333333
+          ],
+          "caixa_vencimento_mediana": 52359,
+          "docas_medias": 1.025,
+          "estruturas": {
+            "armazem": 0.0,
+            "cais": 0.0,
+            "escritorio": 1.0,
+            "guindaste": 0.01,
+            "patio": 0.998333333333333,
+            "pier_2": 0.025,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": 8274.085,
+          "margem_em_regime": 9593.25166666667,
+          "margem_por_semana": [
+            -1757.65333333333,
+            3186.43833333333,
+            2287.94833333333,
+            8274.085
+          ],
+          "niveis": {
+            "1": 0.00166666666666667,
+            "2": 0.998333333333333,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            8000.0,
+            3910.0,
+            6746.66666666667,
+            1319.16666666667
+          ],
+          "premio_da_escolha": 0.971755989164788,
+          "taxa": 100.0,
+          "trabalhadores_medios": 1.025,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        },
+        "Mediano": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 12.67,
+          "atendidos_por_semana": [
+            9.36166666666667,
+            11.26,
+            9.79333333333333,
+            12.67
+          ],
+          "caixa_vencimento_mediana": 63873,
+          "docas_medias": 2.99,
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 1.0,
+            "escritorio": 1.0,
+            "guindaste": 1.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.99
+          },
+          "margem_bruta_em_regime": 21347.8916666667,
+          "margem_em_regime": 45404.5583333333,
+          "margem_por_semana": [
+            -16514.1983333333,
+            4749.3,
+            14582.93,
+            21347.8916666667
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 1.0
+          },
+          "obra_por_semana": [
+            36620.0,
+            23830.0,
+            20733.3333333333,
+            24056.6666666667
+          ],
+          "premio_da_escolha": 1.08340666868504,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.99,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        },
+        "Ótimo": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 15.7866666666667,
+          "atendidos_por_semana": [
+            11.79,
+            12.6633333333333,
+            15.1333333333333,
+            15.7866666666667
+          ],
+          "caixa_vencimento_mediana": 108077,
+          "docas_medias": 3.0,
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 1.0,
+            "escritorio": 1.0,
+            "guindaste": 1.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 1.0
+          },
+          "margem_bruta_em_regime": 54827.7933333333,
+          "margem_em_regime": 54827.7933333333,
+          "margem_por_semana": [
+            -27235.78,
+            8675.33666666667,
+            31469.375,
+            54827.7933333333
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 1.0
+          },
+          "obra_por_semana": [
+            53860.0,
+            30796.6666666667,
+            20843.3333333333,
+            0.0
+          ],
+          "premio_da_escolha": 1.02734724877491,
+          "taxa": 100.0,
+          "trabalhadores_medios": 3.0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        }
+      },
+      "semanas": 4,
+      "semente": 20260825,
+      "turnos_por_semana": 8
+    },
+    "escala_53000": {
+      "caixa_inicial": 40000,
+      "parcela": 53000,
+      "partidas": 600,
+      "perfis": {
+        "Antecipado": {
+          "antecipou_fracao": 0.606666666666667,
+          "atendidos_em_regime": 12.6666666666667,
+          "atendidos_por_semana": [
+            9.36166666666667,
+            11.26,
+            9.78833333333333,
+            12.6666666666667
+          ],
+          "caixa_vencimento_mediana": 53008,
+          "docas_medias": 2.98833333333333,
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 1.0,
+            "escritorio": 1.0,
+            "guindaste": 1.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.988333333333333
+          },
+          "margem_bruta_em_regime": -10616.42,
+          "margem_em_regime": 13440.2466666667,
+          "margem_por_semana": [
+            -16514.1983333333,
+            4749.3,
+            14532.84,
+            -10616.42
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 1.0
+          },
+          "obra_por_semana": [
+            36620.0,
+            23830.0,
+            20690.0,
+            24056.6666666667
+          ],
+          "premio_da_escolha": 1.08349258723031,
+          "taxa": 80.3333333333333,
+          "trabalhadores_medios": 2.98833333333333,
+          "turno_de_antecipacao_mediana": 31,
+          "vitorias": 482
+        },
+        "Descuidado": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 3.75833333333333,
+          "atendidos_por_semana": [
+            5.23666666666667,
+            5.155,
+            4.38,
+            3.75833333333333
+          ],
+          "caixa_vencimento_mediana": 52359,
+          "docas_medias": 1.025,
+          "estruturas": {
+            "armazem": 0.0,
+            "cais": 0.0,
+            "escritorio": 1.0,
+            "guindaste": 0.01,
+            "patio": 0.998333333333333,
+            "pier_2": 0.025,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": 8274.085,
+          "margem_em_regime": 9593.25166666667,
+          "margem_por_semana": [
+            -1757.65333333333,
+            3186.43833333333,
+            2287.94833333333,
+            8274.085
+          ],
+          "niveis": {
+            "1": 0.00166666666666667,
+            "2": 0.998333333333333,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            8000.0,
+            3910.0,
+            6746.66666666667,
+            1319.16666666667
+          ],
+          "premio_da_escolha": 0.971755989164788,
+          "taxa": 45.6666666666667,
+          "trabalhadores_medios": 1.025,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 274
+        },
+        "Mediano": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 12.67,
+          "atendidos_por_semana": [
+            9.36166666666667,
+            11.26,
+            9.79333333333333,
+            12.67
+          ],
+          "caixa_vencimento_mediana": 63873,
+          "docas_medias": 2.99,
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 1.0,
+            "escritorio": 1.0,
+            "guindaste": 1.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.99
+          },
+          "margem_bruta_em_regime": 21347.8916666667,
+          "margem_em_regime": 45404.5583333333,
+          "margem_por_semana": [
+            -16514.1983333333,
+            4749.3,
+            14582.93,
+            21347.8916666667
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 1.0
+          },
+          "obra_por_semana": [
+            36620.0,
+            23830.0,
+            20733.3333333333,
+            24056.6666666667
+          ],
+          "premio_da_escolha": 1.08340666868504,
+          "taxa": 80.3333333333333,
+          "trabalhadores_medios": 2.99,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 482
+        },
+        "Ótimo": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 15.7866666666667,
+          "atendidos_por_semana": [
+            11.79,
+            12.6633333333333,
+            15.1333333333333,
+            15.7866666666667
+          ],
+          "caixa_vencimento_mediana": 108077,
+          "docas_medias": 3.0,
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 1.0,
+            "escritorio": 1.0,
+            "guindaste": 1.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 1.0
+          },
+          "margem_bruta_em_regime": 54827.7933333333,
+          "margem_em_regime": 54827.7933333333,
+          "margem_por_semana": [
+            -27235.78,
+            8675.33666666667,
+            31469.375,
+            54827.7933333333
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 1.0
+          },
+          "obra_por_semana": [
+            53860.0,
+            30796.6666666667,
+            20843.3333333333,
+            0.0
+          ],
+          "premio_da_escolha": 1.02734724877491,
+          "taxa": 100.0,
+          "trabalhadores_medios": 3.0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        }
+      },
+      "semanas": 4,
+      "semente": 20260825,
+      "turnos_por_semana": 8
+    }
+  },
+  "historico_02_10_sem_fila": {
+    "godot": "4.6.3",
+    "base_main": "8b943b925beeb086b67f34eb475014a6cbdce068",
+    "metodo": "600 partidas por perfil, semente 20260825; intermediários e extensões exploratórias na bancada financeira isolada; escala_30000 remedido no jogo completo. Extensões não implementadas.",
+    "cenarios": {
+      "base": {
+        "caixa_inicial": 400000,
+        "parcela": 530000,
+        "partidas": 600,
+        "perfis": {
+          "Antecipado": {
+            "antecipou_fracao": 0.665,
+            "atendidos_em_regime": 10.6883333333333,
+            "atendidos_por_semana": [
+              7.22166666666667,
+              9.01666666666667,
+              8.575,
+              10.6883333333333
+            ],
+            "caixa_vencimento_mediana": 509403,
+            "docas_medias": 2.96,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.96
+            },
+            "margem_bruta_em_regime": -39643.7016666667,
+            "margem_em_regime": 160822.965,
+            "margem_por_semana": [
+              -176846.906666667,
+              68804.7416666667,
+              123321.8,
+              -39643.7016666667
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              376400.0,
+              225050.0,
+              242683.333333333,
+              200466.666666667
+            ],
+            "taxa": 80.1666666666667,
+            "trabalhadores_medios": 2.96,
+            "turno_de_antecipacao_mediana": 30,
+            "vitorias": 481
+          },
+          "Descuidado": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 3.12,
+            "atendidos_por_semana": [
+              3.67833333333333,
+              3.59166666666667,
+              3.19833333333333,
+              3.12
+            ],
+            "caixa_vencimento_mediana": 503039,
+            "docas_medias": 1.12,
+            "estruturas": {
+              "armazem": 0.0,
+              "cais": 0.0,
+              "escritorio": 1.0,
+              "guindaste": 0.06,
+              "patio": 0.961666666666667,
+              "pier_2": 0.12,
+              "pier_3": 0.0
+            },
+            "margem_bruta_em_regime": 58981.52,
+            "margem_em_regime": 103289.853333333,
+            "margem_por_semana": [
+              -20600.8283333333,
+              30978.3983333333,
+              34392.6266666667,
+              58981.52
+            ],
+            "niveis": {
+              "1": 0.0383333333333333,
+              "2": 0.961666666666667,
+              "3": 0.0
+            },
+            "obra_por_semana": [
+              80383.3333333333,
+              38141.6666666667,
+              52958.3333333333,
+              44308.3333333333
+            ],
+            "taxa": 37.3333333333333,
+            "trabalhadores_medios": 1.12,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 224
+          },
+          "Mediano": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 10.7033333333333,
+            "atendidos_por_semana": [
+              7.22166666666667,
+              9.01666666666667,
+              8.57666666666667,
+              10.7033333333333
+            ],
+            "caixa_vencimento_mediana": 716179,
+            "docas_medias": 2.96166666666667,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.961666666666667
+            },
+            "margem_bruta_em_regime": 302970.785,
+            "margem_em_regime": 502570.785,
+            "margem_por_semana": [
+              -176846.906666667,
+              68804.7416666667,
+              131598.045,
+              302970.785
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              376400.0,
+              225050.0,
+              243983.333333333,
+              199600.0
+            ],
+            "taxa": 80.1666666666667,
+            "trabalhadores_medios": 2.96166666666667,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 481
+          },
+          "Ótimo": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 14.2866666666667,
+            "atendidos_por_semana": [
+              8.71166666666667,
+              10.0866666666667,
+              13.05,
+              14.2866666666667
+            ],
+            "caixa_vencimento_mediana": 1309646,
+            "docas_medias": 3.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 1.0
+            },
+            "margem_bruta_em_regime": 674018.528333333,
+            "margem_em_regime": 674018.528333333,
+            "margem_por_semana": [
+              -277923.003333333,
+              78707.515,
+              428641.373333333,
+              674018.528333333
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              539116.666666667,
+              328033.333333333,
+              187850.0,
+              0.0
+            ],
+            "taxa": 100.0,
+            "trabalhadores_medios": 3.0,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 600
+          }
+        },
+        "semanas": 4,
+        "semente": 20260825,
+        "turnos_por_semana": 8
+      },
+      "escala_53000": {
+        "caixa_inicial": 40000,
+        "parcela": 53000,
+        "partidas": 600,
+        "perfis": {
+          "Antecipado": {
+            "antecipou_fracao": 0.675,
+            "atendidos_em_regime": 10.8183333333333,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.01666666666667,
+              8.54666666666667,
+              10.8183333333333
+            ],
+            "caixa_vencimento_mediana": 48319,
+            "docas_medias": 2.95333333333333,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.953333333333333
+            },
+            "margem_bruta_em_regime": -4621.57833333333,
+            "margem_em_regime": 15845.0883333333,
+            "margem_por_semana": [
+              -17900.5516666667,
+              7023.24833333333,
+              12718.2616666667,
+              -4621.57833333333
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              22100.0,
+              23740.0,
+              20466.6666666667
+            ],
+            "taxa": 78.8333333333333,
+            "trabalhadores_medios": 2.95333333333333,
+            "turno_de_antecipacao_mediana": 30,
+            "vitorias": 473
+          },
+          "Descuidado": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 3.09666666666667,
+            "atendidos_por_semana": [
+              3.67833333333333,
+              3.595,
+              3.175,
+              3.09666666666667
+            ],
+            "caixa_vencimento_mediana": 50306,
+            "docas_medias": 1.10333333333333,
+            "estruturas": {
+              "armazem": 0.0,
+              "cais": 0.0,
+              "escritorio": 1.0,
+              "guindaste": 0.0583333333333333,
+              "patio": 0.953333333333333,
+              "pier_2": 0.103333333333333,
+              "pier_3": 0.0
+            },
+            "margem_bruta_em_regime": 5841.83166666667,
+            "margem_em_regime": 10123.4983333333,
+            "margem_por_semana": [
+              -2102.65833333333,
+              3103.63,
+              3543.58333333333,
+              5841.83166666667
+            ],
+            "niveis": {
+              "1": 0.0466666666666667,
+              "2": 0.953333333333333,
+              "3": 0.0
+            },
+            "obra_por_semana": [
+              8057.5,
+              3833.33333333333,
+              5040.83333333333,
+              4281.66666666667
+            ],
+            "taxa": 37.3333333333333,
+            "trabalhadores_medios": 1.10333333333333,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 224
+          },
+          "Mediano": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 10.8533333333333,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.01666666666667,
+              8.55,
+              10.8533333333333
+            ],
+            "caixa_vencimento_mediana": 73026,
+            "docas_medias": 2.96166666666667,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.961666666666667
+            },
+            "margem_bruta_em_regime": 30014.595,
+            "margem_em_regime": 50481.2616666667,
+            "margem_por_semana": [
+              -17900.5516666667,
+              7023.24833333333,
+              13541.5516666667,
+              30014.595
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              22100.0,
+              23956.6666666667,
+              20466.6666666667
+            ],
+            "taxa": 78.8333333333333,
+            "trabalhadores_medios": 2.96166666666667,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 473
+          },
+          "Ótimo": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 14.16,
+            "atendidos_por_semana": [
+              8.73,
+              10.0933333333333,
+              13.1183333333333,
+              14.16
+            ],
+            "caixa_vencimento_mediana": 129868,
+            "docas_medias": 3.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 1.0
+            },
+            "margem_bruta_em_regime": 66899.1733333333,
+            "margem_em_regime": 66942.5066666667,
+            "margem_por_semana": [
+              -27576.6866666667,
+              7584.88666666667,
+              43004.75,
+              66899.1733333333
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              53876.6666666667,
+              33293.3333333333,
+              18286.6666666667,
+              43.3333333333333
+            ],
+            "taxa": 100.0,
+            "trabalhadores_medios": 3.0,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 600
+          }
+        },
+        "semanas": 4,
+        "semente": 20260825,
+        "turnos_por_semana": 8
+      },
+      "escala_40000": {
+        "caixa_inicial": 40000,
+        "parcela": 40000,
+        "partidas": 600,
+        "perfis": {
+          "Antecipado": {
+            "antecipou_fracao": 0.99,
+            "atendidos_em_regime": 8.54333333333333,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.01666666666667,
+              8.45166666666667,
+              8.54333333333333
+            ],
+            "caixa_vencimento_mediana": 40750,
+            "docas_medias": 2.255,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.255
+            },
+            "margem_bruta_em_regime": 14329.1333333333,
+            "margem_em_regime": 21665.8,
+            "margem_por_semana": [
+              -17900.5516666667,
+              7023.24833333333,
+              -2067.46833333333,
+              14329.1333333333
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              22100.0,
+              18713.3333333333,
+              7336.66666666667
+            ],
+            "taxa": 99.5,
+            "trabalhadores_medios": 2.255,
+            "turno_de_antecipacao_mediana": 24,
+            "vitorias": 597
+          },
+          "Descuidado": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 3.09666666666667,
+            "atendidos_por_semana": [
+              3.67833333333333,
+              3.595,
+              3.175,
+              3.09666666666667
+            ],
+            "caixa_vencimento_mediana": 50306,
+            "docas_medias": 1.10333333333333,
+            "estruturas": {
+              "armazem": 0.0,
+              "cais": 0.0,
+              "escritorio": 1.0,
+              "guindaste": 0.0583333333333333,
+              "patio": 0.953333333333333,
+              "pier_2": 0.103333333333333,
+              "pier_3": 0.0
+            },
+            "margem_bruta_em_regime": 5841.83166666667,
+            "margem_em_regime": 10123.4983333333,
+            "margem_por_semana": [
+              -2102.65833333333,
+              3103.63,
+              3543.58333333333,
+              5841.83166666667
+            ],
+            "niveis": {
+              "1": 0.0466666666666667,
+              "2": 0.953333333333333,
+              "3": 0.0
+            },
+            "obra_por_semana": [
+              8057.5,
+              3833.33333333333,
+              5040.83333333333,
+              4281.66666666667
+            ],
+            "taxa": 93.6666666666667,
+            "trabalhadores_medios": 1.10333333333333,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 562
+          },
+          "Mediano": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 10.8533333333333,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.01666666666667,
+              8.55,
+              10.8533333333333
+            ],
+            "caixa_vencimento_mediana": 73026,
+            "docas_medias": 2.96166666666667,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.961666666666667
+            },
+            "margem_bruta_em_regime": 30014.595,
+            "margem_em_regime": 50481.2616666667,
+            "margem_por_semana": [
+              -17900.5516666667,
+              7023.24833333333,
+              13541.5516666667,
+              30014.595
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              22100.0,
+              23956.6666666667,
+              20466.6666666667
+            ],
+            "taxa": 92.6666666666667,
+            "trabalhadores_medios": 2.96166666666667,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 556
+          },
+          "Ótimo": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 14.16,
+            "atendidos_por_semana": [
+              8.73,
+              10.0933333333333,
+              13.1183333333333,
+              14.16
+            ],
+            "caixa_vencimento_mediana": 129868,
+            "docas_medias": 3.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 1.0
+            },
+            "margem_bruta_em_regime": 66899.1733333333,
+            "margem_em_regime": 66942.5066666667,
+            "margem_por_semana": [
+              -27576.6866666667,
+              7584.88666666667,
+              43004.75,
+              66899.1733333333
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              53876.6666666667,
+              33293.3333333333,
+              18286.6666666667,
+              43.3333333333333
+            ],
+            "taxa": 100.0,
+            "trabalhadores_medios": 3.0,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 600
+          }
+        },
+        "semanas": 4,
+        "semente": 20260825,
+        "turnos_por_semana": 8
+      },
+      "escala_30000": {
+        "caixa_inicial": 40000,
+        "parcela": 30000,
+        "partidas": 600,
+        "perfis": {
+          "Antecipado": {
+            "antecipou_fracao": 1.0,
+            "atendidos_em_regime": 8.61666666666667,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.07833333333333,
+              8.74,
+              8.61666666666667
+            ],
+            "caixa_vencimento_mediana": 0,
+            "docas_medias": 2.355,
+            "estruturas": {
+              "armazem": 0.955,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.355
+            },
+            "margem_bruta_em_regime": 16363.6416666667,
+            "margem_em_regime": 38335.3083333333,
+            "margem_por_semana": [
+              -17900.5516666667,
+              -855.413333333333,
+              7325.71666666667,
+              16363.6416666667
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              17090.0,
+              10878.3333333333,
+              21971.6666666667
+            ],
+            "taxa": 100.0,
+            "trabalhadores_medios": 2.355,
+            "turno_de_antecipacao_mediana": 17,
+            "vitorias": 600
+          },
+          "Descuidado": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 3.09666666666667,
+            "atendidos_por_semana": [
+              3.67833333333333,
+              3.595,
+              3.175,
+              3.09666666666667
+            ],
+            "caixa_vencimento_mediana": 50306,
+            "docas_medias": 1.10333333333333,
+            "estruturas": {
+              "armazem": 0.0,
+              "cais": 0.0,
+              "escritorio": 1.0,
+              "guindaste": 0.0583333333333333,
+              "patio": 0.953333333333333,
+              "pier_2": 0.103333333333333,
+              "pier_3": 0.0
+            },
+            "margem_bruta_em_regime": 5841.83166666667,
+            "margem_em_regime": 10123.4983333333,
+            "margem_por_semana": [
+              -2102.65833333333,
+              3103.63,
+              3543.58333333333,
+              5841.83166666667
+            ],
+            "niveis": {
+              "1": 0.0466666666666667,
+              "2": 0.953333333333333,
+              "3": 0.0
+            },
+            "obra_por_semana": [
+              8057.5,
+              3833.33333333333,
+              5040.83333333333,
+              4281.66666666667
+            ],
+            "taxa": 100.0,
+            "trabalhadores_medios": 1.10333333333333,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 600
+          },
+          "Mediano": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 10.8533333333333,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.01666666666667,
+              8.55,
+              10.8533333333333
+            ],
+            "caixa_vencimento_mediana": 73026,
+            "docas_medias": 2.96166666666667,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.961666666666667
+            },
+            "margem_bruta_em_regime": 30014.595,
+            "margem_em_regime": 50481.2616666667,
+            "margem_por_semana": [
+              -17900.5516666667,
+              7023.24833333333,
+              13541.5516666667,
+              30014.595
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              22100.0,
+              23956.6666666667,
+              20466.6666666667
+            ],
+            "taxa": 99.6666666666667,
+            "trabalhadores_medios": 2.96166666666667,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 598
+          },
+          "Ótimo": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 14.16,
+            "atendidos_por_semana": [
+              8.73,
+              10.0933333333333,
+              13.1183333333333,
+              14.16
+            ],
+            "caixa_vencimento_mediana": 129868,
+            "docas_medias": 3.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 1.0
+            },
+            "margem_bruta_em_regime": 66899.1733333333,
+            "margem_em_regime": 66942.5066666667,
+            "margem_por_semana": [
+              -27576.6866666667,
+              7584.88666666667,
+              43004.75,
+              66899.1733333333
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              53876.6666666667,
+              33293.3333333333,
+              18286.6666666667,
+              43.3333333333333
+            ],
+            "taxa": 100.0,
+            "trabalhadores_medios": 3.0,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 600
+          }
+        },
+        "semanas": 4,
+        "semente": 20260825,
+        "turnos_por_semana": 8
+      },
+      "tres_53000_110000_165000": {
+        "caixa_inicial": 40000,
+        "parcela": 165000,
+        "partidas": 600,
+        "perfis": {
+          "Antecipado": {
+            "antecipou_fracao": 2.25166666666667,
+            "atendidos_em_regime": 12.492600422833,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.01666666666667,
+              8.54666666666667,
+              10.8183333333333,
+              12.5433403805497,
+              12.5010570824524,
+              12.4904862579281,
+              12.4947145877378,
+              12.5919661733615,
+              12.5264270613108,
+              12.7864693446089,
+              12.492600422833
+            ],
+            "caixa_vencimento_mediana": 48319,
+            "docas_medias": 2.98,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.98
+            },
+            "margem_bruta_em_regime": 58432.9450317125,
+            "margem_em_regime": 58432.9450317125,
+            "margem_por_semana": [
+              -17900.5516666667,
+              7023.24833333333,
+              12718.2616666667,
+              -4621.57833333333,
+              39342.6596194503,
+              -26714.3615221987,
+              51007.334038055,
+              58672.7420718816,
+              -87609.9090909091,
+              51715.0042283298,
+              59920.1902748414,
+              58432.9450317125
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              22100.0,
+              23740.0,
+              20466.6666666667,
+              329.809725158562,
+              549.682875264271,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "taxa": 78.8333333333333,
+            "trabalhadores_medios": 2.98,
+            "turno_de_antecipacao_mediana": 45,
+            "vitorias": 473
+          },
+          "Descuidado": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 2.83482142857143,
+            "atendidos_por_semana": [
+              3.67833333333333,
+              3.595,
+              3.175,
+              3.09666666666667,
+              2.98214285714286,
+              3.05357142857143,
+              2.87053571428571,
+              2.83482142857143
+            ],
+            "caixa_vencimento_mediana": 45950,
+            "docas_medias": 1.11166666666667,
+            "estruturas": {
+              "armazem": 0.005,
+              "cais": 0.00666666666666667,
+              "escritorio": 1.0,
+              "guindaste": 0.06,
+              "patio": 0.953333333333333,
+              "pier_2": 0.11,
+              "pier_3": 0.00166666666666667
+            },
+            "margem_bruta_em_regime": 9695.53571428571,
+            "margem_em_regime": 10240.1785714286,
+            "margem_por_semana": [
+              -2102.65833333333,
+              3103.63,
+              3543.58333333333,
+              5841.83166666667,
+              -42570.5491071429,
+              10787.6339285714,
+              9972.99553571429,
+              9695.53571428571
+            ],
+            "niveis": {
+              "1": 0.0466666666666667,
+              "2": 0.946666666666667,
+              "3": 0.00666666666666667
+            },
+            "obra_por_semana": [
+              8057.5,
+              3833.33333333333,
+              5040.83333333333,
+              4281.66666666667,
+              0.0,
+              66.9642857142857,
+              334.821428571429,
+              544.642857142857
+            ],
+            "taxa": 0.0,
+            "trabalhadores_medios": 1.11166666666667,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 0
+          },
+          "Mediano": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 12.5116279069767,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.01666666666667,
+              8.55,
+              10.8533333333333,
+              12.5708245243129,
+              12.4862579281184,
+              12.492600422833,
+              12.4989429175476,
+              12.5856236786469,
+              12.5412262156448,
+              12.7801268498943,
+              12.5116279069767
+            ],
+            "caixa_vencimento_mediana": 374711,
+            "docas_medias": 2.98,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.98
+            },
+            "margem_bruta_em_regime": 58533.0782241015,
+            "margem_em_regime": 58533.0782241015,
+            "margem_por_semana": [
+              -17900.5516666667,
+              7023.24833333333,
+              13541.5516666667,
+              30014.595,
+              5834.71881606765,
+              58059.4059196617,
+              59083.7441860465,
+              58963.88794926,
+              -51621.0739957717,
+              58669.467230444,
+              59928.3530655391,
+              58533.0782241015
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              22100.0,
+              23956.6666666667,
+              20466.6666666667,
+              54.9682875264271,
+              549.682875264271,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "taxa": 78.8333333333333,
+            "trabalhadores_medios": 2.98,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 473
+          },
+          "Ótimo": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 14.3433333333333,
+            "atendidos_por_semana": [
+              8.73,
+              10.0933333333333,
+              13.1183333333333,
+              14.16,
+              14.4566666666667,
+              14.2116666666667,
+              14.3066666666667,
+              14.3666666666667,
+              14.3766666666667,
+              14.5483333333333,
+              14.3616666666667,
+              14.3433333333333
+            ],
+            "caixa_vencimento_mediana": 507921,
+            "docas_medias": 3.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 1.0
+            },
+            "margem_bruta_em_regime": 68022.8483333333,
+            "margem_em_regime": 68022.8483333333,
+            "margem_por_semana": [
+              -27576.6866666667,
+              7584.88666666667,
+              43004.75,
+              66899.1733333333,
+              15111.505,
+              67332.985,
+              67380.1616666667,
+              67501.035,
+              -42459.255,
+              67943.6733333333,
+              67242.1116666667,
+              68022.8483333333
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              53876.6666666667,
+              33293.3333333333,
+              18286.6666666667,
+              43.3333333333333,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "taxa": 100.0,
+            "trabalhadores_medios": 3.0,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 600
+          }
+        },
+        "semanas": 12,
+        "semente": 20260825,
+        "turnos_por_semana": 8,
+        "cenario_prototipo": {
+          "parcelas": [
+            53000,
+            110000,
+            165000
+          ],
+          "semanas": [
+            4,
+            8,
+            12
+          ],
+          "renda_sem_aumento_por_fase": true,
+          "infraestrutura_atual_sem_novos_bloqueios": true,
+          "nao_e_validacao_do_save_ou_da_interface": true
+        }
+      },
+      "tres_30000_45000_60000": {
+        "caixa_inicial": 40000,
+        "parcela": 60000,
+        "partidas": 600,
+        "perfis": {
+          "Antecipado": {
+            "antecipou_fracao": 3.0,
+            "atendidos_em_regime": 12.7733333333333,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.07833333333333,
+              8.74,
+              8.61666666666667,
+              10.4416666666667,
+              11.4583333333333,
+              12.4366666666667,
+              12.4816666666667,
+              12.5916666666667,
+              12.5333333333333,
+              12.7033333333333,
+              12.7733333333333
+            ],
+            "caixa_vencimento_mediana": 0,
+            "docas_medias": 3.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 1.0
+            },
+            "margem_bruta_em_regime": 58802.6933333333,
+            "margem_em_regime": 58802.6933333333,
+            "margem_por_semana": [
+              -17900.5516666667,
+              -855.413333333333,
+              7325.71666666667,
+              16363.6416666667,
+              2450.73166666667,
+              42010.5866666667,
+              56955.4333333333,
+              58460.4333333333,
+              3225.42,
+              58925.8066666667,
+              59683.6916666667,
+              58802.6933333333
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              17090.0,
+              10878.3333333333,
+              21971.6666666667,
+              5576.66666666667,
+              10400.0,
+              1516.66666666667,
+              86.6666666666667,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "taxa": 100.0,
+            "trabalhadores_medios": 3.0,
+            "turno_de_antecipacao_mediana": 34,
+            "vitorias": 600
+          },
+          "Descuidado": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 4.9121756487026,
+            "atendidos_por_semana": [
+              3.67833333333333,
+              3.595,
+              3.175,
+              3.09666666666667,
+              3.18333333333333,
+              3.26333333333333,
+              3.31666666666667,
+              4.16,
+              4.64870259481038,
+              4.72255489021956,
+              4.62674650698603,
+              4.9121756487026
+            ],
+            "caixa_vencimento_mediana": 52925,
+            "docas_medias": 1.65833333333333,
+            "estruturas": {
+              "armazem": 0.286666666666667,
+              "cais": 0.395,
+              "escritorio": 1.0,
+              "guindaste": 0.505,
+              "patio": 0.953333333333333,
+              "pier_2": 0.523333333333333,
+              "pier_3": 0.135
+            },
+            "margem_bruta_em_regime": 13330.1497005988,
+            "margem_em_regime": 20286.2375249501,
+            "margem_por_semana": [
+              -2102.65833333333,
+              3103.63,
+              3543.58333333333,
+              5841.83166666667,
+              -19164.1833333333,
+              10372.45,
+              7927.30333333333,
+              4842.87,
+              -28165.7984031936,
+              15699.9780439122,
+              12195.3632734531,
+              13330.1497005988
+            ],
+            "niveis": {
+              "1": 0.0466666666666667,
+              "2": 0.558333333333333,
+              "3": 0.395
+            },
+            "obra_por_semana": [
+              8057.5,
+              3833.33333333333,
+              5040.83333333333,
+              4281.66666666667,
+              25.0,
+              740.0,
+              3530.0,
+              9791.66666666667,
+              51.8962075848303,
+              1606.78642714571,
+              5958.08383233533,
+              6956.0878243513
+            ],
+            "taxa": 38.5,
+            "trabalhadores_medios": 1.65833333333333,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 231
+          },
+          "Mediano": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 12.5418060200669,
+            "atendidos_por_semana": [
+              7.22333333333333,
+              9.01666666666667,
+              8.55,
+              10.8533333333333,
+              12.5066889632107,
+              12.5869565217391,
+              12.4665551839465,
+              12.5267558528428,
+              12.5367892976589,
+              12.6204013377926,
+              12.871237458194,
+              12.5418060200669
+            ],
+            "caixa_vencimento_mediana": 467848,
+            "docas_medias": 3.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 1.0
+            },
+            "margem_bruta_em_regime": 58627.6705685619,
+            "margem_em_regime": 58627.6705685619,
+            "margem_por_semana": [
+              -17900.5516666667,
+              7023.24833333333,
+              13541.5516666667,
+              30014.595,
+              28032.356187291,
+              58756.9163879599,
+              58614.2157190635,
+              59038.4581939799,
+              13112.7943143813,
+              59027.8010033445,
+              60261.8010033445,
+              58627.6705685619
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              37980.0,
+              22100.0,
+              23956.6666666667,
+              20466.6666666667,
+              608.695652173913,
+              391.304347826087,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "taxa": 99.6666666666667,
+            "trabalhadores_medios": 3.0,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 598
+          },
+          "Ótimo": {
+            "antecipou_fracao": 0.0,
+            "atendidos_em_regime": 14.3433333333333,
+            "atendidos_por_semana": [
+              8.73,
+              10.0933333333333,
+              13.1183333333333,
+              14.16,
+              14.4566666666667,
+              14.2116666666667,
+              14.3066666666667,
+              14.3666666666667,
+              14.3766666666667,
+              14.5483333333333,
+              14.3616666666667,
+              14.3433333333333
+            ],
+            "caixa_vencimento_mediana": 595921,
+            "docas_medias": 3.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 1.0,
+              "escritorio": 1.0,
+              "guindaste": 1.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 1.0
+            },
+            "margem_bruta_em_regime": 68022.8483333333,
+            "margem_em_regime": 68022.8483333333,
+            "margem_por_semana": [
+              -27576.6866666667,
+              7584.88666666667,
+              43004.75,
+              66899.1733333333,
+              38111.505,
+              67332.985,
+              67380.1616666667,
+              67501.035,
+              22540.745,
+              67943.6733333333,
+              67242.1116666667,
+              68022.8483333333
+            ],
+            "niveis": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            },
+            "obra_por_semana": [
+              53876.6666666667,
+              33293.3333333333,
+              18286.6666666667,
+              43.3333333333333,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "taxa": 100.0,
+            "trabalhadores_medios": 3.0,
+            "turno_de_antecipacao_mediana": 0,
+            "vitorias": 600
+          }
+        },
+        "semanas": 12,
+        "semente": 20260825,
+        "turnos_por_semana": 8,
+        "cenario_prototipo": {
+          "parcelas": [
+            30000,
+            45000,
+            60000
+          ],
+          "semanas": [
+            4,
+            8,
+            12
+          ],
+          "renda_sem_aumento_por_fase": true,
+          "infraestrutura_atual_sem_novos_bloqueios": true,
+          "nao_e_validacao_do_save_ou_da_interface": true
+        }
+      }
+    }
+  }
+}

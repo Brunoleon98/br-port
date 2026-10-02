@@ -7,6 +7,11 @@
 > sobra delas não é aritmética, é uma pergunta de design em aberto (ver o fim
 > deste documento).
 
+> **07/10/2026 (`084`):** a moeda do jogo desceu em ×0,1 e a primeira parcela
+> passou a R$30.000. Medições anteriores abaixo são históricas. O projetor
+> converte o GDD congelado; suas Fases 2/3 não validam as três cobranças dentro
+> da Fase 1 da frente 5. Valores atuais: `BR_Port_Numeros_Fase_1.md`.
+
 O GDD 7 está congelado como fonte da verdade. Esta errata existe porque um
 erro de aritmética dentro dele foi encontrado durante a produção — e corrigir
 em silêncio um documento congelado é pior do que registrar a correção.

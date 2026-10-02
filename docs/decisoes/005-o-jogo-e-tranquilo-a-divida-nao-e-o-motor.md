@@ -132,3 +132,13 @@ deixa de aparecer ali. Ela aparece no PORTO: 46,3 barcos atendidos contra 12,5,
 e 13,8 por semana em regime contra 3,3. É esse o eixo em que o jogo passa a ser
 medido, e quem olhar só a taxa de vitória vai concluir que o jogo não tem
 dificuldade nenhuma.
+
+
+## Adenda de 07/10/2026 — escala de porto pequeno
+
+A decisão `084` reescala toda a moeda em ×0,1, preservando os ratios de
+infraestrutura e caixa inicial, e reduz a primeira parcela para R$30.000 a
+pedido do Bruno. Os valores e sensibilidades acima são medições históricas.
+O alvo da primeira cobrança passa a ser acessível; expansão e margem seguem
+como diferença entre portos. A tabela atual é `BR_Port_Numeros_Fase_1.md`, em
+`docs/design/`, e as taxas vigentes estão só no `CLAUDE.md`.

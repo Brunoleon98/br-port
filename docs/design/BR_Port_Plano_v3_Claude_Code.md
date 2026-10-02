@@ -807,7 +807,9 @@ frentes, e **a ordem é do Bruno**:
    melhorias», os «guindastes novos» são da Fase 2, e o Sr. Ribeiro tem linhas
    de empréstimo. O VS adiantou o guindaste de treliça (`nivel_guindaste()` 2,
    com duas estruturas quaisquer). Mexe no `GameState`, no balanceamento e no
-   `SAVE_VERSION`: decisão de rumo, várias sessões.
+   `SAVE_VERSION`: decisão de rumo, várias sessões. **Entrega financeira retomada em 07/10**
+   (`084`): escala monetária ×0,1, primeira parcela R$30.000 e save versão 11,
+   a pedido do Bruno. As três parcelas e os sistemas acima seguem pendentes.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.

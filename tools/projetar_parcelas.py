@@ -19,8 +19,9 @@ planilha como o que já falhou uma vez, são duas amarras:
      falar das outras duas. Se ele erra a semana que dá para conferir, não há
      razão para acreditar nas que não dão — e o programa recusa-se a projetar.
 
-As faixas de contrato e os valores das parcelas saem do GDD 7 lido no disco,
-não de constantes copiadas para cá: era a cópia que envelhecia.
+As hipóteses das Fases 2/3 saem do GDD congelado e são convertidas por
+ESCALA_MONETARIA_GDD. A Fase 1 e sua parcela vêm do código. Esta projeção entre
+FASES não mede as três cobranças dentro da Fase 1 pedidas na frente 5 (`084`).
 
     python3 tools/projetar_parcelas.py --medicao m.json --constantes c.json
 """
@@ -390,7 +391,14 @@ def _main() -> int:
 
     medicao = json.loads(Path(args.medicao).read_text(encoding="utf-8"))
     k = json.loads(Path(args.constantes).read_text(encoding="utf-8"))
-    faixas = ler_faixas_do_gdd(GDD)
+    # O GDD está congelado antes da escala de um porto pequeno (`084`).
+    # Converter as hipóteses, antes de substituir a Fase 1 pelo código, evita
+    # projetar contratos na moeda antiga contra custos na moeda nova.
+    escala = float(k["ESCALA_MONETARIA_GDD"])
+    if not 0 < escala <= 1:
+        raise ModeloNaoCalibra("escala monetária do GDD fora do intervalo (0, 1]")
+    faixas = {fase: tuple(round(v * escala) for v in faixa)
+              for fase, faixa in ler_faixas_do_gdd(GDD).items()}
     # ⚠️ A FASE 1 SAI DO CÓDIGO, NÃO DO GDD, e é a regra do projeto: onde os
     # dois divergirem, quem manda é o código. Divergiram em 06/09 — o GDD tem
     # R$8.000–70.000 e as classes de navio passaram a ir de R$12.000 a
@@ -401,7 +409,8 @@ def _main() -> int:
     classes = k["CLASSES_DE_NAVIO"]
     faixas[1] = (min(int(c["valor_min"]) for c in classes.values()),
                  max(int(c["valor_max"]) for c in classes.values()))
-    parcelas = ler_parcelas_do_gdd(GDD)
+    parcelas = {n: (semana, round(valor * escala))
+                for n, (semana, valor) in ler_parcelas_do_gdd(GDD).items()}
     # E a Parcela 1 também: o GDD tem R$550.000 congelados e o jogo cobra o que
     # está em `PARCELA_AMOUNT`. Imprimir o número do GDD ao lado de uma Fase 1
     # medida com outro seria a mesma divergência calada, um campo ao lado.
@@ -410,7 +419,9 @@ def _main() -> int:
     print("=== Parcelas 2 e 3 — projeção a partir da Fase 1 medida ===")
     print("Medição: %d partidas por perfil, semente %d (simular_balanceamento.gd)"
           % (medicao["partidas"], medicao["semente"]))
-    print("GDD: faixas %s · parcelas %s"
+    print("Hipóteses das Fases 2/3; não valida três cobranças dentro da Fase 1.")
+    print("GDD convertido à escala monetária do jogo (×%g):" % escala)
+    print("Hipóteses: faixas %s · parcelas %s"
           % ({f: "R$%d–%d" % v for f, v in sorted(faixas.items()) if f <= 3},
              {n: "R$%d (sem. %d)" % (v[1], v[0]) for n, v in sorted(parcelas.items())}))
     print("")
@@ -438,7 +449,7 @@ def _main() -> int:
     # construção, mas não diz quantas por fase.
     cenarios = {
         "porto parado": {"docas_por_fase": 0, "passivo_por_fase": 0},
-        "porto cresce": {"docas_por_fase": 1, "passivo_por_fase": 300},
+        "porto cresce": {"docas_por_fase": 1, "passivo_por_fase": round(300 * escala)},
     }
 
     for nome_cenario, cfg in cenarios.items():
@@ -534,8 +545,15 @@ def _main() -> int:
             print("  isso é o desejado não é esta ferramenta — a decisão 005 já disse")
             print("  que sim.")
     else:
-        print("· A dívida cresce pelo menos tão depressa quanto a receita. A tensão")
-        print("  da Fase 1 sobrevive às fases seguintes.")
+        # Com a primeira parcela menor (`084`), uma passagem tem a dívida
+        # mais rápida e a outra tem a receita mais rápida. Um único ramo
+        # negativo não prova duas curvas iguais nem dificuldade persistente.
+        for anterior, seguinte, receita, divida in (
+                (1, 2, v2 / v1, p2 / p1), (2, 3, v3 / v2, p3 / p2)):
+            print("· Fase %d → %d: receita ×%.1f; dívida ×%.1f."
+                  % (anterior, seguinte, receita, divida))
+        print("  Multiplicadores não provam dificuldade: confira as sobras dos")
+        print("  cenários acima. Cobranças dentro da Fase 1 precisam de medição própria.")
     print("")
     print("NOTA — isto é PROJEÇÃO, não medição. A Fase 1 acima é medida no jogo")
     print("que existe; as Fases 2 e 3 são a mesma conta com os números que o GDD")

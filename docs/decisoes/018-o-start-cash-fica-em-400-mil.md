@@ -200,3 +200,13 @@ serem duas: um valor escrito à mão **coincide com a constante no dia em que é
 escrito**. `moeda(400000)` é exatamente o que a prosa diria, então a guarda do
 VALOR passa contente — e só divergiria na sessão seguinte, quando ninguém está a
 olhar. Quem pega o defeito é a guarda da FORMA, que não pergunta o número.
+
+
+## Adenda de 07/10/2026 — escala de porto pequeno
+
+A decisão `084` reescala toda a moeda em ×0,1, preservando os ratios de
+infraestrutura e caixa inicial, e reduz a primeira parcela para R$30.000 a
+pedido do Bruno. Os valores e sensibilidades acima são medições históricas.
+O alvo da primeira cobrança passa a ser acessível; expansão e margem seguem
+como diferença entre portos. A tabela atual é `BR_Port_Numeros_Fase_1.md`, em
+`docs/design/`, e as taxas vigentes estão só no `CLAUDE.md`.

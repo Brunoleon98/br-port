@@ -79,7 +79,7 @@ const MARGEM_UTIL := 10.0
 #
 # E ele é um QUARTO em vez de uma mudança nos três porque mexer nos três
 # re-baseia as taxas medidas (as do `CLAUDE.md`) mesmo com desconto ZERO: um perfil que
-# gasta R$530.000 antes do prazo deixa de ter esse dinheiro para construir, e
+# gasta a parcela antes do prazo deixa de ter esse dinheiro para construir, e
 # a medição em vigor deixaria de descrever o que descreve. Acrescentar é
 # seguro por construção — as sementes saem de `semente + run * K`, derivadas
 # do índice da PARTIDA e não do estado acumulado, e é por isso que o
@@ -120,12 +120,15 @@ const PERFIS := [
 	# torna a leitura atribuível: qualquer vão entre os dois é da dívida paga
 	# antes, e de mais nada.
 	#
-	# O Mediano e não outro porque é o único dos três com espaço para o
+	# Na escolha original (`019`), o Mediano era o único dos três com espaço para o
 	# desconto mover algo. O Ótimo satura em 100% e não discrimina (a mesma
 	# armadilha da barra de reputação que já estava no teto quando se foi
 	# afiná-la); o Descuidado fecha com mediana de R$503.039 contra uma parcela
 	# de R$530.000 — abaixo dela —, logo quase nunca teria como antecipar, e
 	# mediria a ausência de oportunidade em vez do efeito do desconto.
+	# Com a primeira parcela acessível (`084`), todos podem antecipar. O clone
+	# continua útil: mede quitar cedo e sacrificar caixa de reconstrução,
+	# comparado ao mesmo jogador que espera até ao vencimento.
 	{
 		"nome": "Antecipado",
 		"descricao": "o Mediano que quita a parcela assim que o caixa dá, em vez de esperar o vencimento",
