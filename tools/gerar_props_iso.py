@@ -188,6 +188,14 @@ PX_POR_METRO = 5.6          # altura: pixels do mapa por metro
 METROS_POR_U = 5.2          # chão: metros por unidade de mundo
 REGUA_DA_PESSOA = 0.48
 
+# O CAMINHO DO TRABALHADOR NO TABUADO (`075`), em unidades de mundo ANTES da
+# régua da pessoa — as mesmas do `_no_boneco` —, do pé dele no costado até onde
+# pára, e daí até ao meio da pilha. O `Dock.gd` anda o mesmo caminho na tela
+# (`CAMINHO_TRAB`), e quem prova que os dois concordam é o D37 a ler a pilha no
+# render, não uma cópia deste número.
+CAMINHO_TRAB = 2.2
+DIST_PILHA = 0.55
+
 # Os props que só servem de RÉGUA na página de escala, e nunca vão ao mapa.
 # Regeram-se pelo nome, para a pasta deles:
 #   python3 tools/gerar_props_iso.py brport_vs/tools/referencia carro pedestre
@@ -294,6 +302,13 @@ PALETA = {
     # e na pele preta um amora, mais escuro do que ela e puxado ao roxo.
     "labio_rosado": "#c4545a", "labio_vermelho": "#a23d33", "labio_amora": "#7e2f3a",
     "calca": "#24466e", "rede": "#8d9aa6", "casco_pesca": "#2f6f4a", "parede_suja": "#9a9c93", "vidro": "#7fb6cc",
+    # O TRABALHADOR QUE ANDA (`075`): a bota escura é o que faz o passo ler —
+    # a 13 px de pessoa, os dois pés escuros a trocarem de lugar são o ciclo
+    # inteiro. E as três cargas que ele leva ao ombro, uma por serviço: a
+    # caixa de peixe é PLÁSTICO AZUL (a do pescador brasileiro), o papelão é
+    # a carga geral e o saco de ráfia é o granel.
+    "bota": "#2b2420", "caixa_peixe": "#2c6fb5", "papelao": "#b88a52",
+    "rafia": "#f4f2ea",
     # O VÃO: o dentro de uma janela sem vidro ou de uma porta que já não há.
     # É a peça que faz uma ruína ler como ruína, e ela é uma COR e não um
     # buraco — furar a parede daria duas faces coplanares no batente, que é o
@@ -3296,13 +3311,236 @@ def montar(M: dict) -> dict:
         return caixa(nome, (px, py, pz),
                      (tam_px[0], tam_px[1], z(tam_px[2])), mat)
 
-    grupos["trabalhador"] = [
-        _t("t_pernas", 5.0, (0.20, 0.17, 10.0), M["calca"]),
-        _t("t_corpo", 15.5, (0.30, 0.24, 11.5), M["colete"]),
-        _t("t_cabeca", 24.0, (0.18, 0.16, 6.0), M["pele"]),
-        _t("t_capacete", 28.2, (0.25, 0.23, 4.4), M["capacete"]),
-        _t("t_aba", 26.6, (0.34, 0.25, 1.8), M["capacete"], dmx=0.06),
-    ]
+    # O `trabalhador` deixou de ser este grupo de cinco caixas sem braços: é o
+    # quadro parado do boneco articulado logo abaixo (`075`). O `_t` fica,
+    # porque o pedestre da página de escala ainda é o corpo de sempre.
+
+    # -- O TRABALHADOR QUE ANDA (02/10, `docs/decisoes/075`) ---------------
+    #
+    # Escolhas do Bruno, perguntadas antes do render: ele ATRAVESSA o tabuado,
+    # do costado do barco até uma pilha no meio do píer, e volta — vai vazio,
+    # de FRENTE para a câmara (`+my`), e volta com a carga ao OMBRO, de costas
+    # (`-my`); o ciclo das pernas é quadro do Blender, e a figura é uma por
+    # SEXO. No ombro a carga vê-se nos dois sentidos; nos braços sumiria atrás
+    # do corpo na volta, que é justamente a viagem que a leva.
+    #
+    # Todo quadro nasce no MESMO ponto do mundo, o pé do `trabalhador` de
+    # sempre (MX, MY): quem anda é o nó no Godot, que desliza o quadro inteiro
+    # pelo caminho. Numa câmara ortográfica um quadro deslocado na tela é o
+    # mesmo render, logo nenhum quadro precisa de saber onde está no caminho.
+    #
+    # ⚠️ O BONECO É ARTICULADO, e o de sempre não era: pernas numa caixa só e
+    # nenhum braço. O `trabalhador` passou a ser o quadro PARADO do homem (os
+    # pés juntos, virado para o barco), porque um parado sem braços ao lado de
+    # um andar com braços faria os braços aparecerem e sumirem a cada viagem.
+    #
+    # As unidades são as do `_t`: o lado e a frente em unidades de MUNDO antes
+    # da régua, a altura em pixels do MAPA antes da régua, e a régua escala o
+    # boneco inteiro em volta dos pés. `s` é o sentido: −1 de frente para o
+    # barco (o `−y` do Blender, que a câmara vê), +1 de costas a ir para a
+    # pilha. Girar 180° troca o lado E a frente, e é por isso que os dois
+    # levam o mesmo `s` — a mão direita fica à direita da pessoa nos dois.
+    def _no_boneco(l, f, h_px, s):
+        k = REGUA_DA_PESSOA
+        bx, by, bz = pos(MX, MY, ALT)
+        return (bx + s * l * k, by + s * f * k, bz + z(h_px * k))
+
+    def _bloco(nome, l, f, h_px, tam, mat, s):
+        """Uma caixa do boneco que não roda: `tam` = (lado, frente, alt_px)."""
+        k = REGUA_DA_PESSOA
+        return caixa(nome, _no_boneco(l, f, h_px, s),
+                     (tam[0] * k, tam[1] * k, z(tam[2] * k)), mat)
+
+    def _membro(nome, l, f, h_px, larg, comp_px, mat, s, frente=0.0,
+                fora=0.0, desde_px=0.0):
+        """Um membro pendurado do pivô (l, f, h_px), e o que ele faz.
+
+        `frente` é o balanço em graus para a frente da pessoa (o passo), e
+        `fora` o levantamento lateral, para o lado do `l` dele (o braço que
+        segura a carga). `desde_px` começa a peça mais abaixo no MESMO eixo —
+        é o que põe a bota no fim da perna sem a desalinhar dela.
+        """
+        k = REGUA_DA_PESSOA
+        px, py, pz = _no_boneco(l, f, h_px, s)
+        comp = z(comp_px * k)
+        desde = z(desde_px * k)
+        a, g = math.radians(frente), math.radians(fora)
+        lado = 1.0 if l >= 0 else -1.0
+        # A direção do pivô à ponta: para baixo, inclinada para a frente da
+        # pessoa (`s` no eixo Y) ou para fora (o lado dela, que é `s·lado` no
+        # X do Blender — ver o `s` acima).
+        dx = s * lado * math.sin(g)
+        dy = s * math.sin(a) * math.cos(g)
+        dz = -math.cos(a) * math.cos(g)
+        meio = desde + comp / 2.0
+        centro = (px + dx * meio, py + dy * meio, pz + dz * meio)
+        # O `(0, 0, −1)` da caixa roda até à direção: no X pelo passo, no Y
+        # pelo levantamento — um membro só faz um dos dois neste boneco.
+        if fora:
+            rot = (0.0, math.degrees(math.atan2(-dx, -dz)), 0.0)
+        else:
+            rot = (math.degrees(math.atan2(dy, -dz)), 0.0, 0.0)
+        return caixa(nome, centro, (larg[0] * k, larg[1] * k, comp), mat, rot=rot)
+
+    # O PASSO, medido a 13 px de pessoa: a perna a 26° põe os dois pés a ~2 px
+    # um do outro na tela, e menos do que isso funde-se num traço só. O braço
+    # balança contra a perna do mesmo lado. Quadro 0 é a direita à frente, 1
+    # os pés juntos e 2 a esquerda à frente; o ciclo é 0-1-2-1, e o 1 é também
+    # o PARADO — a mesma pose, que é o que impede um salto ao parar.
+    PASSO_PERNA, PASSO_BRACO = 26.0, 22.0
+    QUADROS_DO_PASSO = (1.0, 0.0, -1.0)
+    # A carga ao ombro direito, em cima dele: o pivô do braço que a segura é
+    # o ombro, e ele sobe quase a pino para a mão chegar ao lado dela.
+    OMBRO_L, OMBRO_H = 0.17, 20.6
+    CARGA_ALT = 21.0              # o fundo da carga, pousado no ombro
+
+    def boneco(sufixo, sexo, quadro, s, com_carga):
+        mulher = sexo == "m"
+        sinal = QUADROS_DO_PASSO[quadro]
+        pp, pb = PASSO_PERNA * sinal, PASSO_BRACO * sinal
+        # Tronco um pouco mais estreito nela — é a única diferença de corpo; a
+        # altura é a mesma, porque a régua da pessoa é uma só (`069`).
+        tronco = 0.26 if mulher else 0.30
+        p = []
+        for lado, l in (("d", 0.055), ("e", -0.055)):
+            perna = pp if lado == "d" else -pp
+            p.append(_membro(f"tb_perna_{lado}{sufixo}", l, 0.0, 10.0,
+                             (0.09, 0.15), 7.8, M["calca"], s, frente=perna))
+            # A bota é o fim da MESMA perna, um pouco mais funda para a
+            # frente: o pé. Começa 0,3 px dentro da calça — encostar daria a
+            # face coplanar que este arquivo já pagou duas vezes.
+            p.append(_membro(f"tb_bota_{lado}{sufixo}", l, 0.04, 10.0,
+                             (0.10, 0.22), 2.5, M["bota"], s, frente=perna,
+                             desde_px=7.5))
+        p.append(_bloco(f"tb_quadril{sufixo}", 0.0, 0.0, 10.4,
+                        (0.22, 0.15, 2.0), M["calca"], s))
+        p.append(_bloco(f"tb_corpo{sufixo}", 0.0, 0.0, 15.5,
+                        (tronco, 0.19, 11.5), M["colete"], s))
+        # OS BRAÇOS SÃO MANGA DO COLETE, e não de outra cor: a 13 px uma
+        # camisa azul ao lado da calça azul faria do boneco um borrão escuro
+        # com um colete a flutuar no meio. A mão é a ponta de pele.
+        meio = tronco / 2.0 + 0.035
+        for lado, l in (("d", meio), ("e", -meio)):
+            if com_carga and lado == "d":
+                    # O braço segura a carga PELO LADO DE FORA: a 118° ele chega
+                # ao meio da face dela. A pino ficava DENTRO da caixa e só a
+                # ponta saía por cima, a ler como uma antena.
+                p.append(_membro(f"tb_braco_{lado}{sufixo}", l, 0.0, OMBRO_H,
+                                 (0.07, 0.08), 7.5, M["colete"], s, fora=118.0))
+                p.append(_membro(f"tb_mao_{lado}{sufixo}", l, 0.0, OMBRO_H,
+                                 (0.075, 0.085), 1.8, M["pele"], s, fora=118.0,
+                                 desde_px=7.3))
+                continue
+            braco = -pb if lado == "d" else pb
+            p.append(_membro(f"tb_braco_{lado}{sufixo}", l, 0.0, OMBRO_H,
+                             (0.07, 0.08), 8.0, M["colete"], s, frente=braco))
+            p.append(_membro(f"tb_mao_{lado}{sufixo}", l, 0.0, OMBRO_H,
+                             (0.075, 0.085), 1.8, M["pele"], s, frente=braco,
+                             desde_px=7.8))
+        p.append(_bloco(f"tb_cabeca{sufixo}", 0.0, 0.0, 24.0,
+                        (0.17, 0.16, 6.0), M["pele"], s))
+        p.append(_bloco(f"tb_capacete{sufixo}", 0.0, 0.0, 28.2,
+                        (0.24, 0.23, 4.4), M["capacete"], s))
+        p.append(_bloco(f"tb_aba{sufixo}", 0.0, 0.07, 26.6,
+                        (0.25, 0.34, 1.8), M["capacete"], s))
+        if mulher:
+            # A MARCA DELA É O CABELO: o rabo de cavalo sai por baixo da nuca
+            # do capacete e desce até ao ombro — de costas é o que se vê
+            # primeiro —, e duas mechas emolduram a cara, que é o que se vê de
+            # frente, onde a cabeça tapa o rabo. Mais fundo do que a cabeça e
+            # mais largo do que ela: nenhuma face encosta noutra.
+            # ⚠️ A PRIMEIRA VERSÃO (0,08 de lado, 6 px) NÃO SE VIA: de costas
+            # era um risco escuro na beira do colete, a ler como sombra, e de
+            # frente nada. Mais grosso, mais comprido, e as mechas a descerem
+            # até ao ombro, que é por onde a cabeça já não as tapa.
+            p.append(_bloco(f"tb_rabo{sufixo}", 0.0, -0.12, 21.8,
+                            (0.11, 0.10, 8.0), M["cabelo_preto"], s))
+            for lado, l in (("d", 0.092), ("e", -0.092)):
+                p.append(_bloco(f"tb_mecha_{lado}{sufixo}", l, 0.0, 23.4,
+                                (0.035, 0.12, 6.0), M["cabelo_preto"], s))
+        return p
+
+    for sexo in ("h", "m"):
+        for q in range(3):
+            # O quadro 1 do homem a ir ao barco É o `trabalhador`: o parado, a
+            # régua da fauna e da página de escala, e a figura de sempre.
+            nome = "trabalhador" if (sexo, q) == ("h", 1) else f"trab_{sexo}_vai_{q}"
+            grupos[nome] = boneco(f"_{sexo}v{q}", sexo, q, -1.0, False)
+            grupos[f"trab_{sexo}_volta_{q}"] = boneco(f"_{sexo}c{q}", sexo, q,
+                                                     1.0, True)
+
+    # AS CARGAS: um PNG à parte de cada uma, no ombro do quadro da volta — o
+    # Godot põe-na por cima do boneco e ela desliza com ele. Quadros com a
+    # carga dentro seriam três vezes os seis da volta; assim o boneco não sabe
+    # o que leva. A carga não balança com o passo, porque o boneco também não:
+    # a anca fica à mesma altura nos três quadros.
+    def _carga(nome, tam, mat, extra=()):
+        k_l, k_f, k_h = tam
+        c = [_bloco(nome, OMBRO_L, 0.0, CARGA_ALT + k_h / 2.0,
+                    (k_l, k_f, k_h), mat, 1.0)]
+        return c + list(extra)
+
+    grupos["carga_peixe"] = _carga(
+        "cg_peixe", (0.34, 0.24, 4.6), M["caixa_peixe"],
+        # O gelo por cima, claro: é o que diz caixa de PEIXE e não caixa azul.
+        [_bloco("cg_peixe_gelo", OMBRO_L, 0.0, CARGA_ALT + 4.7,
+                (0.28, 0.19, 0.6), M["cabine"], 1.0)])
+    grupos["carga_caixa"] = _carga(
+        "cg_caixa", (0.30, 0.28, 5.6), M["papelao"],
+        # A fita que fecha a tampa: a linha escura é o que separa a caixa do
+        # tabuado de madeira do n1, que tem o mesmo matiz.
+        [_bloco("cg_caixa_fita", OMBRO_L, 0.0, CARGA_ALT + 5.7,
+                (0.31, 0.05, 0.4), M["madeira_esc"], 1.0)])
+    # ⚠️ O SACO LEVA UMA FAIXA IMPRESSA, e não é enfeite: a ráfia é creme e o
+    # granel só atraca nos píeres 2 e 3 — no concreto do 3 a pilha creme
+    # sumia, a 0,2 de Weber. Mudar a cor do saco tirava-lhe o que ele é; a
+    # faixa verde é o que o saco de ráfia de verdade traz, e é ela que separa.
+    # Mais estreita do que o saco e mais funda e alta do que ele: nenhuma face
+    # encosta noutra.
+    def _faixa(nome, l, f, h_fundo, tam):
+        return _bloco(nome, l, f, h_fundo + tam[2] / 2.0,
+                      (0.10, tam[1] + 0.02, tam[2] + 0.2), M["folha"], 1.0)
+
+    SACO = (0.40, 0.22, 4.2)
+    grupos["carga_saco"] = _carga("cg_saco", SACO, M["rafia"],
+                                  [_faixa("cg_saco_f", OMBRO_L, 0.0,
+                                          CARGA_ALT, SACO)])
+
+    # AS PILHAS, no fim do caminho e um passo além dele — o boneco pára à
+    # frente da pilha, não em cima dela. `CAMINHO_TRAB` é a distância que o nó
+    # anda no Godot (`Dock.gd`), e o D37 do teste de design confere os dois
+    # contra o render: é a mesma regra em dois arquivos, e quem a amarra é a
+    # imagem, não uma cópia do número.
+    def _pilha(nome, mat, tam, arrumo, extra_mat=None, faixa=False):
+        k_l, k_f, k_h = tam
+        p = []
+        for i, (dl, df, andar) in enumerate(arrumo):
+            h = andar * (k_h - 0.2)     # o de cima afunda no de baixo
+            p.append(_bloco(f"{nome}_{i}", dl, CAMINHO_TRAB + DIST_PILHA + df,
+                            h + k_h / 2.0, (k_l, k_f, k_h), mat, 1.0))
+            if faixa:
+                p.append(_faixa(f"{nome}_{i}_f", dl,
+                                CAMINHO_TRAB + DIST_PILHA + df, h, tam))
+            if extra_mat is not None:
+                p.append(_bloco(f"{nome}_{i}_t", dl,
+                                CAMINHO_TRAB + DIST_PILHA + df,
+                                h + k_h + 0.1, (k_l * 0.82, k_f * 0.8, 0.6),
+                                extra_mat, 1.0))
+        return p
+
+    # Duas colunas desencontradas, de três e de dois: uma pilha arrumada à mão
+    # lê como pilha, e um cubo perfeito leria como um caixote grande.
+    # ⚠️ A PRIMEIRA ERA UMA CAMADA E MEIA, e na tela dava 1,5 px de altura: a
+    # caixa à escala da pessoa é chata, e três dela deitadas liam como uma
+    # poça azul no tabuado. É a ALTURA da pilha que a faz ler.
+    ARRUMO = ((-0.19, 0.0, 0), (-0.19, 0.0, 1), (-0.19, 0.0, 2),
+              (0.19, 0.03, 0), (0.19, 0.03, 1))
+    grupos["pilha_peixe"] = _pilha("pl_peixe", M["caixa_peixe"],
+                                   (0.34, 0.24, 4.6), ARRUMO, M["cabine"])
+    grupos["pilha_caixa"] = _pilha("pl_caixa", M["papelao"],
+                                   (0.30, 0.28, 5.6), ARRUMO, M["madeira_esc"])
+    grupos["pilha_saco"] = _pilha("pl_saco", M["rafia"], SACO, ARRUMO,
+                                  faixa=True)
 
     # -- AS REFERÊNCIAS DE ESCALA: um pedestre e um carro (27/09, `069`) ------
     #
