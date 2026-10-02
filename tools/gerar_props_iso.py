@@ -201,6 +201,16 @@ DIST_PILHA = 0.55
 #   python3 tools/gerar_props_iso.py brport_vs/tools/referencia carro pedestre
 REFERENCIAS = ("carro", "pedestre")
 
+# AS CARGAS DO NÍVEL 2, que ainda não têm quem as mostre (`075`). O Bruno
+# escolheu a animação por DEGRAU do porto: no nível 1 o trabalhador leva a
+# carga ao ombro, no 2 o guindaste tira-a do barco, no 3 vêm os pallets e a
+# empilhadeira. E com o guindaste de nível 1 o porto só recebe o pesqueiro
+# (`docs/decisoes/009`), logo só a caixa de peixe chega à tela: o papelão e o
+# saco, desenhados e aprovados na mesma prancha, seriam arte órfã em
+# `art/props`. Saem só pelo nome, para uma pasta de rascunho, até o nível 2
+# os pôr em cena.
+PROXIMO_NIVEL = ("carga_caixa", "carga_saco", "pilha_caixa", "pilha_saco")
+
 PALETA = {
     "madeira": "#9a6438", "madeira_esc": "#633d20", "madeira_velha": "#7d7266",
     "metal": "#4a535a", "metal_claro": "#6d7880",
@@ -4816,9 +4826,11 @@ def main() -> int:
             return 2
         alvos = pedidos
     else:
-        # As referências de escala só saem quando pedidas pelo nome: numa
-        # regeração de tudo iriam parar a `art/props`, onde seriam arte órfã.
-        alvos = [n for n in grupos if n not in REFERENCIAS]
+        # As referências de escala e as cargas do nível 2 só saem quando
+        # pedidas pelo nome: numa regeração de tudo iriam parar a `art/props`,
+        # onde seriam arte órfã (`REFERENCIAS`, `PROXIMO_NIVEL`).
+        alvos = [n for n in grupos
+                 if n not in REFERENCIAS and n not in PROXIMO_NIVEL]
 
     todos = {o for g in grupos.values() for o in g}
     for nome in alvos:

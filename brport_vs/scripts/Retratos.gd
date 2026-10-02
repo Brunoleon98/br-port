@@ -247,3 +247,14 @@ static func do_trabalhador(rosto: int) -> Texture2D:
 	if rosto < 0 or rosto >= TRABALHADORES.size():
 		return null
 	return load(TRABALHADORES[rosto]) as Texture2D
+
+
+## O sexo de um rosto, "h" ou "m" (`075`): é o que escolhe a figura que anda
+## no píer. Sai do NOME do retrato, que é onde o estúdio já o escreve
+## (`trabalhador_mulher_*`); uma segunda tabela com o sexo ao lado de cada
+## caminho seria a mesma informação em dois sítios, e envelhecia no dia em que
+## um rosto entrasse no fim desta lista. O 0, o `trabalhador_retrato` de
+## sempre, é o homem adulto pardo. Fora da tabela rebenta, como o casco.
+static func sexo_do_rosto(rosto: int) -> String:
+	return "m" if String(TRABALHADORES[rosto]).get_file().begins_with("trabalhador_mulher_") \
+		else "h"

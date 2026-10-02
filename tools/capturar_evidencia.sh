@@ -602,10 +602,13 @@ tirar trabalhadores - - --script res://tools/folha_trabalhadores.gd -- "$SAIDA/t
 # a 59 props, e a ferramenta reprovou as duas páginas até esta linha entrar.
 # E QUATRO desde 27/09: os dezasseis da segunda transportadora (`070`) levaram-no
 # a 75, com 21 por página, e a ferramenta reprovou as três até a quarta entrar.
-tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 4
-tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 4
-tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 4
-tirar props4  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props4.png" 4 4
+# E CINCO desde 02/10: os treze do trabalhador que anda (`075`) — os quadros
+# dos dois sexos, a caixa de peixe e a pilha — levaram-no a 88.
+tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 5
+tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 5
+tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 5
+tirar props4  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props4.png" 4 5
+tirar props5  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props5.png" 5 5
 
 # A ESCALA E A PRANCHA (`docs/decisoes/068`), as duas respostas ao veredito
 # do Bruno sobre as três folhas de cima: «mais útil para a IA alterar e fazer

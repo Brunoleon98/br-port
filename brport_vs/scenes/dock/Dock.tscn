@@ -19,6 +19,21 @@ offset_bottom = 397.33
 mouse_filter = 2
 expand_mode = 1
 
+; A PILHA DO TRABALHADOR QUE ANDA (`075`): o mesmo quadro e o mesmo offset do
+; trabalhador, porque o gerador a desenha no fim do caminho dele, no mesmo
+; mundo. Vem ANTES dele de propósito — está mais para `−my` do que todo o
+; caminho, logo é sempre tapada por ele e nunca o tapa. O `Dock.gd` mostra-a
+; só enquanto ele anda.
+[node name="Pilha" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -90.67
+offset_top = -91.33
+offset_right = 421.33
+offset_bottom = 420.67
+mouse_filter = 2
+visible = false
+expand_mode = 1
+
 ; ORDEM DOS PROPS = PROFUNDIDADE. Num plano isométrico quem tem `mx+my`
 ; maior está mais perto da câmera e tapa quem tem menor. O trabalhador fica
 ; no convés, atrás do barco e da lança, então vem ANTES dos dois. Estava por
@@ -41,6 +56,17 @@ mouse_filter = 2
 visible = false
 expand_mode = 1
 texture = ExtResource("prop_trabalhador")
+
+; A CARGA AO OMBRO, filha do trabalhador: desliza com ele sem conta nenhuma, e
+; desenha-se por cima dele e por baixo do barco e da lança, que é onde a
+; profundidade a põe. O quadro é o do pai, de 512 a partir do canto.
+[node name="Carga" type="TextureRect" parent="Trabalhador"]
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 512.0
+mouse_filter = 2
+visible = false
+expand_mode = 1
 
 [node name="Barco" type="TextureRect" parent="."]
 layout_mode = 0

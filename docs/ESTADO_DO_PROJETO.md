@@ -114,7 +114,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | Fechado | O que ficou, medido |
 |---|---|
 | **Frente 4 do A5 — escala, camiões, frota e ruína** (27/09–01/10, `069`–`074`) | A pessoa a 1,5× o real; **os 32 camiões** das duas transportadoras, pela vez de cada uma; **os 9 cascos detalhados**, sem bandeira; **o galpão e o escritório em ruína** como o mesmo prédio velho — lona e esqueleto, toldo, placa e árvore. `.pck` +0,92% |
-| **Frente 6 do A5 — a prancha e a escala** (27/09, `068`) | **Aceite.** A `prancha_prop.gd` (candidata contra o prop do jogo) e a `escala_props.gd` (todos a 1:1, com trabalhador, pedestre e carro de régua) |
+| **Frente 4 do A5 — animação, degrau 1** (02/10, `075`) | O trabalhador **anda no píer de nível 1**: vai ao barco de frente e volta de costas com a caixa de peixe ao ombro até uma pilha; uma figura por sexo, pelo rosto. Níveis 2 e 3 de pé. **D39**, 10 mutantes. `.pck` +0,24% |
 | **Frente 3 do A5 — as quatro famílias aceites** (25–27/09, `062`–`067`) | O cartão e o HUD (**F14**, **F15**, `SAVE_VERSION` 9); tela inicial, três espaços de save, pausa curta, Ajustes e o celular (**F16**); o **caderno** (**D37**) e a **conversa no celular**, cada voz no seu balão (**F17**, **D38**). A foto do porto antigo, o fundo e o logotipo são do Bruno (`art_lab/diario/`, `art_lab/tela_inicial/`) |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
@@ -130,7 +130,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`) |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota e a ruína (`069`–`074`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | Na 4 falta a animação, que é dele; as obras são do item 5 (`074`). O galpão recuperado V3 só existe no checkout do ChatGPT. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína e o degrau 1 da animação (`069`–`075`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | Na 4 faltam os degraus 2 e 3 da animação e a transição entre turnos (`075`); obras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido

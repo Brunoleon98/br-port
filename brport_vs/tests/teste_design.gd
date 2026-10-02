@@ -287,6 +287,10 @@ func _rodar() -> void:
 	_d38_vozes_da_conversa()
 	_confere("o bloco D38 correu até ao fim", _d38_completo)
 
+	print("=== D39: o trabalhador que anda — a pilha, a carga e os dois sexos ===")
+	_d39_trabalhador_que_anda()
+	_confere("o bloco D39 correu até ao fim", _d39_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -5880,3 +5884,238 @@ func _d38_lab(c: Color) -> Vector3:
 	var fy: float = f.call(y)
 	var fz: float = f.call(z)
 	return Vector3(116.0 * fy - 16.0, 500.0 * (fx - fy), 200.0 * (fy - fz))
+
+
+# ── D39 ── o trabalhador que anda (02/10, `docs/decisoes/075`)
+#
+# No porto de nível 1 o trabalhador atravessa o tabuado: vai ao barco de
+# frente, volta de costas com a carga ao ombro até uma pilha no meio do píer.
+# Cinco perguntas, e cada uma nomeia o defeito que caça:
+#
+#   1. TODA classe que o nível 1 recebe tem carga e pilha. A tabela do `Dock`
+#      só tem o pesqueiro de propósito, e a lista do que é preciso sai das
+#      CLASSES do `GameState` — nunca da própria tabela, que seria o espelho.
+#   2. OS DOIS SEXOS CHEGAM: algum rosto é de mulher e algum de homem, e as
+#      figuras dela não são as dele. Um `sexo_do_rosto()` que devolvesse sempre
+#      "h" deixaria seis quadros gerados, validados e por ver.
+#   3. O CICLO não salta: a pose é contínua de amostra para amostra, a carga
+#      só existe na volta, e cada sentido mostra os três quadros do passo.
+#   4. A PILHA ESTÁ ONDE ELE PÁRA. O caminho vive no `Dock.gd` (em tela) e a
+#      pilha no PNG (desenhada pelo gerador): dois arquivos, e quem os amarra é
+#      o render, lido aqui.
+#   5. NA DOCA MONTADA: ele anda com `progress` ZERO — o pesqueiro parte no
+#      avanço em que o `progress` chega a 1, e medido em 20 partidas o nível 1
+#      teve 449 instantes de alocado com barco e nenhum com `progress > 0`; um
+#      `refresh()` a meio do caminho não o devolve ao barco; e nos níveis de
+#      cima, ou sem trabalhador, a pilha e a carga saem de cena.
+var _d39_completo := false
+# Onde ficam os pés dele no fim do caminho, em x de tela, contra o centro da
+# pilha. Medido no motor: −5,5 com o caminho certo; −16,1 com metade do
+# caminho (pára longe dela) e +5,1 com 1,5 vezes (atravessa-a). O corte vai ao
+# MEIO de cada lado da banda — 5,3 px de folga para baixo e para cima.
+const D39_DX_MIN := -10.8
+const D39_DX_MAX := -0.2
+
+
+func _d39_trabalhador_que_anda() -> void:
+	var GS: Node = root.get_node("GameState")
+	var DockS: Script = load("res://scripts/Dock.gd")
+	var Ret: Script = load("res://scripts/Retratos.gd")
+	var k: Dictionary = DockS.get_script_constant_map()
+	var cargas: Dictionary = k["CARGAS"]
+	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
+
+	# 1 ── a tabela contra as classes que o nível 1 recebe
+	var exigidas := 0
+	for classe in GS.CLASSES_DE_NAVIO:
+		var dados: Dictionary = GS.CLASSES_DE_NAVIO[classe]
+		if int(dados["nivel"]) > 1:
+			continue
+		for motivo in dados["motivos"]:
+			if int(dados["motivos"][motivo]) <= 0:
+				continue
+			exigidas += 1
+			var tem: bool = cargas.has(classe) and (cargas[classe] as Dictionary).has(motivo)
+			_confere("D39: %s · %s tem carga e pilha no nível 1" % [classe, motivo],
+				tem and cargas[classe][motivo].get("carga") is Texture2D
+					and cargas[classe][motivo].get("pilha") is Texture2D,
+				"o trabalhador rebentaria no `refresh()` ao receber este barco")
+	_confere("D39: o nível 1 recebe alguma classe (%d pares)" % exigidas, exigidas > 0)
+
+	# 2 ── os dois sexos chegam, e são figuras diferentes
+	var por_sexo := {"h": 0, "m": 0}
+	for i in range((Ret.get_script_constant_map()["TRABALHADORES"] as Array).size()):
+		var s: String = Ret.sexo_do_rosto(i)
+		_confere("D39: o rosto %d tem sexo conhecido" % i, por_sexo.has(s), s)
+		if por_sexo.has(s):
+			por_sexo[s] += 1
+	_confere("D39: há rostos de homem e de mulher (%s)" % [por_sexo],
+		por_sexo["h"] > 0 and por_sexo["m"] > 0)
+	for sentido in ["vai", "volta"]:
+		for q in range(3):
+			var th: Texture2D = quadros["h"][sentido][q]
+			var tm: Texture2D = quadros["m"][sentido][q]
+			_confere("D39: %s %d — a figura dela não é a dele" % [sentido, q],
+				th.resource_path != tm.resource_path
+					and PropIso.imagem(th).get_data() != PropIso.imagem(tm).get_data())
+		for sexo in ["h", "m"]:
+			var a: Texture2D = quadros[sexo][sentido][0]
+			var b: Texture2D = quadros[sexo][sentido][2]
+			_confere("D39: %s/%s — o passo troca de perna" % [sexo, sentido],
+				PropIso.imagem(a).get_data() != PropIso.imagem(b).get_data())
+
+	# 3 ── o ciclo, como aritmética
+	var dt := 1.0 / 60.0
+	var andar: float = k["ANDAR_SEG"]
+	var total: float = DockS.duracao_do_ciclo()
+	var anterior: Dictionary = DockS.pose_no_ciclo(0.0)
+	var saltos := 0
+	var carga_errada := 0
+	var fora := 0
+	var contramao := 0
+	var vistos := {"vai": {}, "volta": {}}
+	var t := 0.0
+	while t < 2.0 * total:
+		t += dt
+		var p: Dictionary = DockS.pose_no_ciclo(t)
+		var f: float = p["fracao"]
+		if f < 0.0 or f > 1.0:
+			fora += 1
+		if absf(f - float(anterior["fracao"])) > dt / andar + 0.001:
+			saltos += 1
+		if bool(p["carga"]) != (p["sentido"] == "volta"):
+			carga_errada += 1
+		if p["sentido"] == anterior["sentido"]:
+			var df := f - float(anterior["fracao"])
+			if (p["sentido"] == "volta" and df < -0.001) \
+					or (p["sentido"] == "vai" and df > 0.001):
+				contramao += 1
+		vistos[p["sentido"]][int(p["quadro"])] = true
+		anterior = p
+	_confere("D39: a pose nunca salta (%d saltos)" % saltos, saltos == 0)
+	_confere("D39: a pose fica no caminho", fora == 0)
+	_confere("D39: a carga só existe na volta (%d amostras erradas)" % carga_errada,
+		carga_errada == 0)
+	_confere("D39: a volta vai para a pilha e a ida para o barco", contramao == 0)
+	_confere("D39: cada sentido mostra os três quadros do passo (%s)" % [vistos],
+		vistos["vai"].size() == 3 and vistos["volta"].size() == 3)
+
+	# 4 ── a pilha está onde o caminho acaba
+	var caminho: Vector2 = k["CAMINHO_TELA"]
+	var parado: Rect2 = PropIso.desenho(quadros["h"]["vai"][1])
+	var pes_fim := Vector2(parado.get_center().x, parado.end.y) + caminho
+	for classe in cargas:
+		for motivo in cargas[classe]:
+			var pilha: Rect2 = PropIso.desenho(cargas[classe][motivo]["pilha"])
+			var dx := pes_fim.x - pilha.get_center().x
+			_confere("D39: %s · %s — ele pára encostado à pilha (dx %.1f, dy %.1f)"
+					% [classe, motivo, dx, pes_fim.y - pilha.end.y],
+				dx >= D39_DX_MIN and dx <= D39_DX_MAX,
+				"banda %.1f..%.1f: o caminho do `Dock.gd` e o do gerador divergem"
+					% [D39_DX_MIN, D39_DX_MAX])
+
+	# 5 ── a doca montada
+	_d39_na_doca(GS, DockS, Ret, k)
+	_d39_completo = true
+
+
+func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
+	GS.clear_save()
+	GS._rng.seed = 20261002
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	_confere("D39: a partida nova é de nível 1", int(GS.nivel_guindaste()) == 1)
+	# Uma MULHER, porque o rosto 0 de omissão é homem e a pergunta 2 diz que
+	# os dois chegam — aqui prova-se que o nó veste o sexo que o rosto diz.
+	var mulher := -1
+	for i in range((Ret.get_script_constant_map()["TRABALHADORES"] as Array).size()):
+		if Ret.sexo_do_rosto(i) == "m":
+			mulher = i
+			break
+	var w: Dictionary = GS.workers[0]
+	w["rosto"] = mulher
+	GS.docks[0]["worker_id"] = null
+	GS.docks[0]["boat"] = GS._make_boat()
+	GS.docks[0]["boat"]["rival"] = false
+
+	var doca: Control = load("res://scenes/dock/Dock.tscn").instantiate()
+	doca.setup(0)
+	root.add_child(doca)
+	var trab := doca.get_node("Trabalhador") as TextureRect
+	var carga := doca.get_node("Trabalhador/Carga") as TextureRect
+	var pilha := doca.get_node("Pilha") as TextureRect
+	var base := trab.position
+	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
+	var dela := {}
+	for sentido in quadros["m"]:
+		for tex in quadros["m"][sentido]:
+			dela[tex] = sentido
+
+	# A alocação pela porta do jogo. O tween lê-se no NÓ (`_tw_trabalho`), e
+	# não pela diferença de `get_processed_tweens()`: o `refresh()` rearma
+	# também o da lança, e a alocação faz o `Main` refrescar as docas dele.
+	GS.assign_worker(int(w["id"]), 0, false)
+	doca.refresh()
+	var novos: Array = []
+	var tw0 = doca.get("_tw_trabalho")
+	if tw0 is Tween and (tw0 as Tween).is_valid():
+		novos.append(tw0)
+	var barco: Dictionary = GS.docks[0]["boat"]
+	_confere("D39: alocada com o barco no berço, ela anda já com progress %d"
+			% int(barco["progress"]),
+		int(barco["progress"]) == 0 and novos.size() == 1 and pilha.visible,
+		"tween %s, pilha %s" % [novos.size(), pilha.visible])
+	var esperada: Dictionary = k["CARGAS"][String(barco["classe"])][String(barco["motivo"])]
+	_confere("D39: a pilha e a carga são as do barco",
+		pilha.texture == esperada["pilha"] and carga.texture == esperada["carga"])
+
+	# Anda o ciclo inteiro pelo tween, lendo o NÓ a cada passo.
+	var caminho: Vector2 = k["CAMINHO_TELA"]
+	var maior := 0.0
+	var fora_dela := 0
+	var carga_na_ida := 0
+	var texturas := {}
+	if novos.size() == 1:
+		var tw: Tween = novos[0]
+		var passos := int(ceil(float(DockS.duracao_do_ciclo()) * 30.0)) + 2
+		for i in range(passos):
+			tw.custom_step(1.0 / 30.0)
+			var d := trab.position - base
+			maior = maxf(maior, d.length())
+			if not dela.has(trab.texture):
+				fora_dela += 1
+			elif carga.visible != (dela[trab.texture] == "volta"):
+				carga_na_ida += 1
+			texturas[trab.texture] = true
+			# A meio da volta: o `refresh()` do turno seguinte não o devolve.
+			if i == 30:
+				var meio := trab.position
+				doca.refresh()
+				_confere("D39: um refresh a meio do caminho não o teletransporta",
+					trab.position == meio and meio != base,
+					"estava a %s da base e foi para %s" % [meio - base, trab.position - base])
+	_confere("D39: ela anda o caminho inteiro (%.1f de %.1f px)" % [maior, caminho.length()],
+		absf(maior - caminho.length()) < 0.5)
+	_confere("D39: todo quadro do caminho é dela (%d fora)" % fora_dela, fora_dela == 0)
+	_confere("D39: a carga ao ombro só na volta (%d passos errados)" % carga_na_ida,
+		carga_na_ida == 0)
+	_confere("D39: os seis quadros dela passam pelo nó (%d)" % texturas.size(),
+		texturas.size() == 6)
+
+	# Nível 2: ainda sem animação própria — de pé, sem pilha nem carga.
+	var estruturas_antes: Array = GS.estruturas.duplicate()
+	GS.estruturas = ["armazem", "patio"]
+	doca.refresh()
+	_confere("D39: no nível %d fica de pé, sem pilha nem carga" % int(GS.nivel_guindaste()),
+		int(GS.nivel_guindaste()) == 2 and trab.visible and not pilha.visible
+			and not carga.visible and trab.texture == quadros["m"]["vai"][1])
+	GS.estruturas = estruturas_antes
+
+	# Sem trabalhador: a pilha sai com ele.
+	doca.refresh()
+	GS.release_worker(0)
+	doca.refresh()
+	_confere("D39: liberada, a pilha sai do tabuado",
+		not trab.visible and not pilha.visible and not carga.visible)
+	doca.queue_free()

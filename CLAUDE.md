@@ -1645,6 +1645,13 @@ as três coisas.
   o perfil Descuidado passa a partida toda. Ao acrescentar arte que uma
   condição do jogo destrava, pergunte QUAL das capturas monta essa condição —
   e se nenhuma monta, o tiro novo faz parte da entrega.
+  ⚠️ **E O ESTADO PODE NÃO EXISTIR NUNCA, com tudo verde.** A animação do
+  trabalhador ia ligar-se com `progress > 0`, o «operando» de sempre — e o
+  pesqueiro, o único barco do nível 1, parte no MESMO avanço em que o
+  `progress` chega a 1. Medido em 20 partidas: 449 instantes de alocado com
+  barco, zero com `progress > 0`; o balanço antigo nunca tinha tocado ali.
+  Antes de prender arte a um predicado, meça-o no estado em que ela aparece
+  (`075`).
   ⚠️ **E «AS FOTOS NÃO MUDARAM» PEDE UM CONTROLE POSITIVO, senão é verde de
   graça.** A calibração — duas corridas da MESMA árvore com os mesmos hashes —
   prova que a bateria não tem ruído PRÓPRIO; **não** prova que ela veria a

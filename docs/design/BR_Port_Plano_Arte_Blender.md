@@ -947,6 +947,32 @@ O render final usou o executável Blender 5.2 LTS, porque o `bpy==4.5.0` local
 esgotou a própria alocação durante a imagem. O mesmo `bpy` executou a validação
 geométrica sem erro: **`BRP BLENDER OK`** para as oito entradas do estúdio.
 
+### Fora das etapas — o trabalhador que ANDA, e como se anima um prop (02/10)
+
+A primeira animação por QUADROS deste projeto (`075`); até ali tudo o que
+mexia era tween sobre um PNG parado (o balanço, a lança, a travessia dos
+camiões). A técnica, para quem fizer os degraus 2 e 3:
+
+- **Todo quadro nasce no MESMO ponto do mundo**, e quem anda é o NÓ no Godot.
+  Numa câmara ortográfica um quadro deslocado na tela é o mesmo render, logo
+  nenhum quadro sabe onde está no caminho, e o caminho mede-se em tela
+  (`CAMINHO_TELA` do `Dock.gd`).
+- **O boneco é articulado no gerador** (`boneco()` em `gerar_props_iso.py`):
+  cada membro roda sobre o seu pivô (`_membro()`), e o passo são três
+  quadros (0-1-2-1), com o do meio a ser também o PARADO, para não haver
+  salto ao parar. A 13 px de pessoa o que lê o passo são as duas botas
+  escuras a trocarem de lugar.
+- **O que ele leva vai num PNG à parte**, filho do nó: os quadros não se
+  multiplicam pela carga.
+- **A pose sai de uma função pura** (`pose_no_ciclo()`), que o D39 pergunta
+  sem esperar frames.
+- **O veredito de uma animação faz-se num GIF** sobre o píer real, na escala
+  do jogo (720, ampliado 3×), nos três níveis lado a lado. Uma folha de
+  quadros ampliados vai ao lado, para o detalhe.
+
+Ficou de fora, e é dele: os degraus 2 (o guindaste tira a carga) e 3 (pallets
+e empilhadeira), e a transição entre turnos.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

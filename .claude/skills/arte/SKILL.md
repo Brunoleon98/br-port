@@ -363,6 +363,14 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   sessão voltaram 3 de 3 (**19 de 19** somando as sessões). O envio da
   prancha tende a ser o fim do turno: escreva na legenda o que se pergunta
   e com que opções, e leia a resposta em texto como veredito.
+  ⚠️ **E NA ANIMAÇÃO (`075`) A PERGUNTA SOZINHA FOI DISPENSADA, duas vezes**
+  — a primeira logo a seguir ao envio, e a segunda depois de ele escrever
+  «Mande pergunta». A resposta veio em TEXTO, e não era veredito, era uma
+  ideia que mudava o escopo («os guindastes não poderiam auxiliar eles?», com
+  níveis e máquinas). Dispensar não é recusar: leia o texto que vem a seguir
+  como a resposta, e se ele abrir o escopo, a pergunta seguinte é de ESCOPO
+  (com opções e a recomendação primeiro) e não o veredito outra vez — essa
+  voltou respondida à primeira.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
