@@ -800,7 +800,9 @@ frentes, e **a ordem é do Bruno**:
    com desbloqueios e um tutorial que se liga e desliga; segunda chance com
    empréstimo caro; cancelar trabalho a custo de reputação; guindaste por fase
    — nenhum ou de madeira na Fase 1, intermediário na 2, o de hoje da 3 em
-   diante —, obras que levam turnos, e o porto completo só na Fase 3. **O GDD
+   diante —, obras que levam turnos, e o porto completo só na Fase 3. E **mais
+   de um trabalhador por píer**, pedido do Bruno a 02/10 (`075`), com as
+   animações de cada degrau a contarem com ele. **O GDD
    já diz metade disto**: a Fase 1 é «píer de madeira… consertos e pequenas
    melhorias», os «guindastes novos» são da Fase 2, e o Sr. Ribeiro tem linhas
    de empréstimo. O VS adiantou o guindaste de treliça (`nivel_guindaste()` 2,
@@ -1034,7 +1036,19 @@ camiões** (`069`):
   desgaste é reboco caído, quina lascada (o C3 do plano de arte) e umidade.
   Escopo e composição foram perguntados antes do render; **aceite na
   segunda candidata** e no jogo. As **obras** ficaram fora (mecânica, item
-  5). Na 4 falta só a **animação**, que é escolha dele.
+  5).
+- **A animação, degrau 1** (`075`, `076`): a família sobe por DEGRAU do
+  porto, escolha do Bruno depois de ver o GIF — no 2 o guindaste tira a carga
+  do barco e ele desengata, no 3 vêm os pallets e a **empilhadeira**. O
+  degrau 1 teve duas passagens no mesmo dia: o trabalhador andava do costado
+  a uma pilha com a caixa de peixe ao ombro, e o Bruno pediu o que um porto
+  faz — *«é ele [o guindaste] que sempre fará isso»*. No jogo, **o
+  pau-de-carga descarrega**: gira do porão à pilha com caixas de peixe numa
+  cinta, e o trabalhador opera o guincho, uma figura por sexo. Trabalha assim
+  que é alocado — o pesqueiro parte no avanço em que o `progress` chegaria a
+  1. O papelão e o saco esperam o nível 2 no gerador. Na 4 faltam os
+  **degraus 2 e 3** — com eles, a **ida ao camião** nos serviços de mais de
+  um turno, que só os cargueiros têm — e a **transição entre turnos**.
 
 ---
 

@@ -290,14 +290,38 @@ func familias(ancoras: Dictionary) -> Dictionary:
 					camioes.append(empresa[eixo])
 					retorno.append(empresa[eixo + "_retorno"])
 
+	# O trabalhador e o pau-de-carga (`075`, `076`): os parados e os quadros
+	# do guincho dos dois sexos ocupam o nó dele, os quadros do pau o nó da
+	# lança e a pilha o nó `Pilha` — percorridos nas tabelas do `Dock`, como
+	# os cascos.
+	var figura: Array = []
+	for sexo in dk["QUADROS_TRABALHADOR"]:
+		var q: Dictionary = dk["QUADROS_TRABALHADOR"][sexo]
+		figura.append(q["parado"])
+		for t in q["guincho"]:
+			figura.append(t)
+	var lanca: Array = []
+	for t in dk["ArteLanca"]:
+		lanca.append(t)
+	for chave in dk["LANCA_N1"]:
+		if not lanca.has(dk["LANCA_N1"][chave]):
+			lanca.append(dk["LANCA_N1"][chave])
+	var pilha: Array = []
+	for classe in dk["PILHAS_N1"]:
+		for motivo in dk["PILHAS_N1"][classe]:
+			if not pilha.has(dk["PILHAS_N1"][classe][motivo]):
+				pilha.append(dk["PILHAS_N1"][classe][motivo])
+
 	# A vaga é a PRIMEIRA — as três caem no mesmo tipo de chão (o berço, que é
 	# água costeira), e repetir os nove cascos por doca daria 27 células a
 	# dizerem o mesmo. O D21 é quem tranca que os três berços são costeira.
 	var vaga := "./MapaWrap/Docas/Doca0"
 	return {
 		vaga + "/Pier": pier,
-		vaga + "/Lanca": dk["ArteLanca"],
+		vaga + "/Lanca": lanca,
 		vaga + "/Barco": barcos,
+		vaga + "/Trabalhador": figura,
+		vaga + "/Pilha": pilha,
 		"./MapaWrap/Cenario/Armazem": [mk["ArmazemRuina"], mk["ArmazemPronto"]],
 		"./MapaWrap/Cenario/Escritorio": [mk["EscritorioRuina"], mk["EscritorioPronto"]],
 		"./MapaWrap/Cenario/Caminhao0": camioes,

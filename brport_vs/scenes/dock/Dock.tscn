@@ -19,6 +19,20 @@ offset_bottom = 397.33
 mouse_filter = 2
 expand_mode = 1
 
+; A PILHA DO PAU-DE-CARGA (`076`): o mesmo quadro e o mesmo offset do PÍER,
+; porque o gerador a desenha onde o gancho do n1 larga a carga, no mundo do
+; píer. Vem ANTES do trabalhador: está na ponta de terra do tabuado, mais para
+; trás do que o guincho. O `Dock.gd` mostra-a só enquanto o pau trabalha.
+[node name="Pilha" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -66.67
+offset_top = -114.67
+offset_right = 445.33
+offset_bottom = 397.33
+mouse_filter = 2
+visible = false
+expand_mode = 1
+
 ; ORDEM DOS PROPS = PROFUNDIDADE. Num plano isométrico quem tem `mx+my`
 ; maior está mais perto da câmera e tapa quem tem menor. O trabalhador fica
 ; no convés, atrás do barco e da lança, então vem ANTES dos dois. Estava por

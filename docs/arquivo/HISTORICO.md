@@ -764,3 +764,9 @@ mais antigas:
 | Fechado | O que ficou, medido |
 |---|---|
 | **O save do jogador isolado** (25/09, `061`) | toda ferramenta com `--script` grava em `user://ferramentas/` (`ArmazemLocal.gd`); o save, as gravações e o volume do jogador ficam de fora. **F13** e a sentinela do CI; só vale em commits com a `061` |
+
+**E, para caber o degrau 1 da animação (`075`),** desceu a frente 6:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **Frente 6 do A5 — a prancha e a escala** (27/09, `068`) | **Aceite.** A `prancha_prop.gd` (candidata contra o prop do jogo) e a `escala_props.gd` (todos a 1:1, com trabalhador, pedestre e carro de régua) |

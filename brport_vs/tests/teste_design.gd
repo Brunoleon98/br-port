@@ -287,6 +287,10 @@ func _rodar() -> void:
 	_d38_vozes_da_conversa()
 	_confere("o bloco D38 correu até ao fim", _d38_completo)
 
+	print("=== D39: o pau-de-carga que descarrega — o casco, a pilha e o guincho ===")
+	_d39_trabalhador_que_anda()
+	_confere("o bloco D39 correu até ao fim", _d39_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -5880,3 +5884,346 @@ func _d38_lab(c: Color) -> Vector3:
 	var fy: float = f.call(y)
 	var fz: float = f.call(z)
 	return Vector3(116.0 * fy - 16.0, 500.0 * (fx - fy), 200.0 * (fy - fz))
+
+
+# ── D39 ── o pau-de-carga que descarrega (02/10, `docs/decisoes/075`, `076`)
+#
+# No porto de nível 1 quem descarrega é o pau-de-carga — do porão do pesqueiro
+# a uma pilha no tabuado —, e o trabalhador opera o guincho ao pé do mastro.
+# Cinco perguntas, e cada uma nomeia o defeito que caça:
+#
+#   1. TODA classe que o nível 1 recebe tem a sua pilha. A lista do que é
+#      preciso sai das CLASSES do `GameState`, nunca da própria tabela.
+#   2. OS DOIS SEXOS CHEGAM ao guincho, com figuras distintas, e a alavanca
+#      mexe (os dois quadros diferem). Um `sexo_do_rosto()` que devolvesse
+#      sempre "h" deixaria os quadros dela gerados e por ver.
+#   3. O CICLO não salta: o pau só passa a um ângulo vizinho, o gancho só
+#      desce nas duas pontas, a carga só se engata em baixo no barco e só se
+#      larga em baixo na pilha, e todo quadro da tabela passa.
+#   4. A CARGA DESCE DENTRO DE CADA CASCO que o nível 1 recebe e POUSA EM
+#      CIMA DA PILHA, e o operador pisa o tabuado. É o render lido contra os
+#      nós da cena: o pau mora num PNG, o casco noutro, e o deslocamento entre
+#      os dois no `Dock.tscn` — três fontes, e nenhum número copiado.
+#   5. NA DOCA MONTADA: trabalha com `progress` zero (o pesqueiro parte no
+#      avanço em que o `progress` chega a 1; medido, 449 instantes de alocado
+#      com barco no nível 1 e nenhum com `progress > 0`), um `refresh()` a
+#      meio não recomeça o ciclo nem repõe o pau em repouso, a imagem do pau
+#      não gira por cima dos quadros, no nível 2 o pau volta a varrer e a pilha
+#      sai, e liberado a pilha sai.
+var _d39_completo := false
+
+
+func _d39_trabalhador_que_anda() -> void:
+	var GS: Node = root.get_node("GameState")
+	var DockS: Script = load("res://scripts/Dock.gd")
+	var Ret: Script = load("res://scripts/Retratos.gd")
+	var k: Dictionary = DockS.get_script_constant_map()
+	var pilhas: Dictionary = k["PILHAS_N1"]
+	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
+	var lanca: Dictionary = k["LANCA_N1"]
+
+	# 1 ── a tabela contra as classes que o nível 1 recebe
+	var exigidas := 0
+	for classe in GS.CLASSES_DE_NAVIO:
+		var dados: Dictionary = GS.CLASSES_DE_NAVIO[classe]
+		if int(dados["nivel"]) > 1:
+			continue
+		for motivo in dados["motivos"]:
+			if int(dados["motivos"][motivo]) <= 0:
+				continue
+			exigidas += 1
+			_confere("D39: %s · %s tem pilha no nível 1" % [classe, motivo],
+				pilhas.has(classe) and (pilhas[classe] as Dictionary).has(motivo)
+					and pilhas[classe][motivo] is Texture2D,
+				"o guindaste rebentaria no `refresh()` ao receber este barco")
+	_confere("D39: o nível 1 recebe alguma classe (%d pares)" % exigidas, exigidas > 0)
+
+	# 2 ── os dois sexos chegam ao guincho, e a alavanca mexe
+	var por_sexo := {"h": 0, "m": 0}
+	for i in range((Ret.get_script_constant_map()["TRABALHADORES"] as Array).size()):
+		var s: String = Ret.sexo_do_rosto(i)
+		if por_sexo.has(s):
+			por_sexo[s] += 1
+	_confere("D39: há rostos de homem e de mulher (%s)" % [por_sexo],
+		por_sexo["h"] > 0 and por_sexo["m"] > 0 \
+			and por_sexo["h"] + por_sexo["m"] \
+				== (Ret.get_script_constant_map()["TRABALHADORES"] as Array).size())
+	for q in range(2):
+		_confere("D39: guincho %d — a figura dela não é a dele" % q,
+			PropIso.imagem(quadros["h"]["guincho"][q]).get_data() \
+				!= PropIso.imagem(quadros["m"]["guincho"][q]).get_data())
+	for sexo in ["h", "m"]:
+		_confere("D39: %s — a alavanca mexe entre os dois quadros" % sexo,
+			PropIso.imagem(quadros[sexo]["guincho"][0]).get_data() \
+				!= PropIso.imagem(quadros[sexo]["guincho"][1]).get_data())
+	_confere("D39: o parado dela não é o dele",
+		PropIso.imagem(quadros["h"]["parado"]).get_data() \
+			!= PropIso.imagem(quadros["m"]["parado"]).get_data())
+
+	# 3 ── o ciclo, como aritmética
+	var dt := 1.0 / 60.0
+	var anterior: Dictionary = _d39_passo(String(DockS.pose_do_guindaste(0.0)["lanca"]))
+	var saltos := 0
+	var desce_fora := 0
+	var carga_fora := 0
+	var vistos := {}
+	var t := 0.0
+	while t < 2.0 * float(DockS.duracao_do_ciclo()):
+		t += dt
+		var chave: String = String(DockS.pose_do_guindaste(t)["lanca"])
+		vistos[chave] = true
+		var p := _d39_passo(chave)
+		if absi(int(p["giro"]) - int(anterior["giro"])) > 1:
+			saltos += 1
+		if bool(p["baixo"]) != bool(anterior["baixo"]) \
+				and (p["giro"] != anterior["giro"] or p["carga"] != anterior["carga"]
+					or not (int(p["giro"]) in [0, 6])):
+			desce_fora += 1
+		if bool(p["carga"]) != bool(anterior["carga"]):
+			var engata := bool(p["carga"]) and bool(p["baixo"]) and bool(anterior["baixo"]) \
+				and int(p["giro"]) == 0
+			var larga := not bool(p["carga"]) and bool(p["baixo"]) and bool(anterior["baixo"]) \
+				and int(p["giro"]) == 6
+			if not (engata or larga):
+				carga_fora += 1
+		anterior = p
+	_confere("D39: o pau só passa a um ângulo vizinho (%d saltos)" % saltos, saltos == 0)
+	_confere("D39: o gancho só desce nas pontas (%d fora)" % desce_fora, desce_fora == 0)
+	_confere("D39: a carga engata no barco e larga na pilha (%d fora)" % carga_fora,
+		carga_fora == 0)
+	var faltam: Array = []
+	for chave in lanca:
+		if not vistos.has(chave):
+			faltam.append(chave)
+	_confere("D39: todo quadro do pau passa no ciclo", faltam.is_empty(),
+		"nunca aparecem: %s" % [faltam])
+
+	# 4 ── no render: a carga desce no casco e pousa na pilha; ele pisa o tabuado
+	var doca: Control = load("res://scenes/dock/Dock.tscn").instantiate()
+	var no_pier := (doca.get_node("Pier") as Control).position
+	var no_lanca := (doca.get_node("Lanca") as Control).position
+	var no_barco := (doca.get_node("Barco") as Control).position
+	var no_trab := (doca.get_node("Trabalhador") as Control).position
+	var no_pilha := (doca.get_node("Pilha") as Control).position
+	doca.free()
+	var no_barco_v: Rect2 = _d39_carga(lanca["barco_c"], lanca["barco"])
+	_confere("D39: a lingada aparece no quadro do barco", no_barco_v.has_area())
+	var cascos: Dictionary = k["CASCOS"]
+	var cascos_vistos := 0
+	for classe in GS.CLASSES_DE_NAVIO:
+		if int(GS.CLASSES_DE_NAVIO[classe]["nivel"]) > 1:
+			continue
+		for motivo in GS.CLASSES_DE_NAVIO[classe]["motivos"]:
+			for casco in cascos[classe][motivo]:
+				cascos_vistos += 1
+				# O centro da carga, do quadro da lança para o do barco.
+				var ponto: Vector2 = no_barco_v.get_center() + no_lanca - no_barco
+				var cheio := _d39_desenho_a_volta(casco, ponto, 3)
+				_confere("D39: a carga desce dentro do %s (%s, %.0f%% de casco à volta)"
+						% [String(casco.resource_path).get_file().get_basename(), motivo,
+						   cheio * 100.0],
+					cheio >= D39_CASCO_MIN,
+					"a lingada desce na água ao lado dele")
+	_confere("D39: percorreu os cascos do nível 1 (%d)" % cascos_vistos, cascos_vistos > 0)
+
+	var na_pilha: Rect2 = _d39_carga(lanca["pilha_c"], lanca["pilha"])
+	for classe in pilhas:
+		for motivo in pilhas[classe]:
+			var pilha: Rect2 = PropIso.desenho(pilhas[classe][motivo])
+			pilha.position += no_pilha - no_lanca
+			var dy := na_pilha.end.y - pilha.position.y
+			var dx := na_pilha.get_center().x - pilha.get_center().x
+			_confere("D39: %s · %s — a carga pousa em cima da pilha (dx %.1f, dy %.1f)"
+					% [classe, motivo, dx, dy],
+				absf(dx) <= D39_PILHA_DX and dy >= D39_PILHA_DY_MIN and dy <= D39_PILHA_DY_MAX,
+				"o fundo da carga tem de cair no topo da pilha")
+
+	var pier_n1: Texture2D = (k["ArtePier"] as Array)[0]
+	for sexo in ["h", "m"]:
+		var r: Rect2 = PropIso.desenho(quadros[sexo]["guincho"][0])
+		var pes := Vector2(r.get_center().x, r.end.y - 1.0) + no_trab - no_pier
+		var chao := _d39_desenho_a_volta(pier_n1, pes, 2)
+		_confere("D39: %s no guincho pisa o tabuado (%.0f%% de píer sob os pés)"
+				% [sexo, chao * 100.0], chao >= D39_CASCO_MIN)
+
+	# 5 ── a doca montada
+	_d39_na_doca(GS, DockS, Ret, k)
+	_d39_completo = true
+
+
+# Fração mínima de desenho à volta de um ponto para dizer que ele CAI em cima
+# de um prop — a régua do D17, e não a caixa, que um cabo estica de graça.
+const D39_CASCO_MIN := 0.6
+# A carga pousa na pilha: o fundo dela contra o topo da pilha, em coordenada.
+# Medido no render a 02/10, com a pilha regerada como defeito: a certa dá
+# dy 6,0; com um andar a menos (a carga a pairar) 4,0; com um a mais (a carga
+# enterrada) 7,33. Cada pixel do PNG vale 0,67, e o corte fica no meio dos
+# dois lados — um pixel de folga para o ruído de uma nova leva, e o defeito
+# um pixel fora. O `dx` apanha a pilha fora do sítio do giro (com a pilha no
+# quadro do trabalhador, como na `075`, dá 24); um andar só ele não vê.
+const D39_PILHA_DX := 4.0
+const D39_PILHA_DY_MIN := 5.0
+const D39_PILHA_DY_MAX := 7.0
+
+
+## O que um quadro do pau diz de si: o ângulo (0..6), se a carga vai
+## pendurada e se o gancho está em baixo. Lido do NOME do quadro na tabela,
+## que é a mesma chave que o ciclo usa.
+func _d39_passo(chave: String) -> Dictionary:
+	var baixo := chave.begins_with("barco") or chave.begins_with("pilha")
+	var giro := 0
+	if chave.begins_with("pilha"):
+		giro = 6
+	elif chave.begins_with("g"):
+		giro = int(chave.substr(1, 1))
+	return {"giro": giro, "baixo": baixo, "carga": chave.ends_with("c")}
+
+
+## O desenho da LINGADA num quadro do pau: o que o quadro com carga tem de
+## opaco e o mesmo quadro sem carga não tem. Em coordenada de nó, relativo ao
+## centro do quadro, como o `PropIso.desenho()`.
+func _d39_carga(com: Texture2D, sem: Texture2D) -> Rect2:
+	var a := PropIso.imagem(com)
+	var b := PropIso.imagem(sem)
+	var minimo := Vector2i(a.get_width(), a.get_height())
+	var maximo := Vector2i(-1, -1)
+	for y in range(a.get_height()):
+		for x in range(a.get_width()):
+			if a.get_pixel(x, y).a > 0.5 and b.get_pixel(x, y).a < 0.1:
+				minimo = Vector2i(mini(minimo.x, x), mini(minimo.y, y))
+				maximo = Vector2i(maxi(maximo.x, x), maxi(maximo.y, y))
+	if maximo.x < 0:
+		return Rect2()
+	var e := PropIso.escala(com)
+	return Rect2(Vector2(minimo) * e - Vector2(PropIso.MEIO, PropIso.MEIO),
+		Vector2(maximo - minimo + Vector2i.ONE) * e)
+
+
+## A fração de pixels opacos num quadrado de `raio` px de PNG em volta de um
+## ponto dado em coordenada de nó.
+func _d39_desenho_a_volta(tex: Texture2D, ponto: Vector2, raio: int) -> float:
+	var img := PropIso.imagem(tex)
+	var e := PropIso.escala(tex)
+	var c := Vector2i(((ponto + Vector2(PropIso.MEIO, PropIso.MEIO)) / e).round())
+	var cheios := 0
+	var todos := 0
+	for dy in range(-raio, raio + 1):
+		for dx in range(-raio, raio + 1):
+			var q := c + Vector2i(dx, dy)
+			todos += 1
+			if q.x >= 0 and q.y >= 0 and q.x < img.get_width() and q.y < img.get_height() \
+					and img.get_pixelv(q).a > 0.5:
+				cheios += 1
+	return float(cheios) / float(todos)
+
+
+func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
+	GS.clear_save()
+	GS._rng.seed = 20261002
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	_confere("D39: a partida nova é de nível 1", int(GS.nivel_guindaste()) == 1)
+	# Uma MULHER, porque o rosto 0 de omissão é homem e a pergunta 2 diz que
+	# os dois chegam — aqui prova-se que o nó veste o sexo que o rosto diz.
+	var mulher := -1
+	for i in range((Ret.get_script_constant_map()["TRABALHADORES"] as Array).size()):
+		if Ret.sexo_do_rosto(i) == "m":
+			mulher = i
+			break
+	var w: Dictionary = GS.workers[0]
+	w["rosto"] = mulher
+	GS.docks[0]["worker_id"] = null
+	GS.docks[0]["boat"] = GS._make_boat()
+	GS.docks[0]["boat"]["rival"] = false
+
+	var doca: Control = load("res://scenes/dock/Dock.tscn").instantiate()
+	doca.setup(0)
+	root.add_child(doca)
+	var trab := doca.get_node("Trabalhador") as TextureRect
+	var pilha := doca.get_node("Pilha") as TextureRect
+	var no_lanca := doca.get_node("Lanca") as TextureRect
+	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
+	var lanca: Dictionary = k["LANCA_N1"]
+	var arte_lanca: Array = k["ArteLanca"]
+	var do_pau := {}
+	for chave in lanca:
+		do_pau[lanca[chave]] = chave
+	var dela := {}
+	for tex in quadros["m"]["guincho"]:
+		dela[tex] = true
+
+	# A alocação pela porta do jogo. O tween lê-se no NÓ (`_tw_trabalho`):
+	# o `refresh()` rearma também outros, e a alocação faz o `Main` refrescar
+	# as docas dele.
+	GS.assign_worker(int(w["id"]), 0, false)
+	doca.refresh()
+	var tw0 = doca.get("_tw_trabalho")
+	var tem_tween: bool = tw0 is Tween and (tw0 as Tween).is_valid()
+	var barco: Dictionary = GS.docks[0]["boat"]
+	_confere("D39: alocada com o barco no berço, o pau trabalha já com progress %d"
+			% int(barco["progress"]),
+		int(barco["progress"]) == 0 and tem_tween and pilha.visible,
+		"tween %s, pilha %s" % [tem_tween, pilha.visible])
+	_confere("D39: a pilha é a do barco",
+		pilha.texture == k["PILHAS_N1"][String(barco["classe"])][String(barco["motivo"])])
+	var varre = doca.get("_tw_lanca")
+	_confere("D39: a imagem do pau não gira por cima dos quadros",
+		no_lanca.rotation == 0.0 and not (varre is Tween and (varre as Tween).is_valid()))
+
+	# Anda o ciclo inteiro pelo tween, lendo o NÓ a cada passo.
+	var pau_visto := {}
+	var operador_visto := {}
+	var fora_dela := 0
+	var rodou := 0
+	if tem_tween:
+		var tw: Tween = tw0
+		var passos := int(ceil(float(DockS.duracao_do_ciclo()) * 30.0)) + 2
+		for i in range(passos):
+			tw.custom_step(1.0 / 30.0)
+			if do_pau.has(no_lanca.texture):
+				pau_visto[do_pau[no_lanca.texture]] = true
+			if not dela.has(trab.texture):
+				fora_dela += 1
+			operador_visto[trab.texture] = true
+			if no_lanca.rotation != 0.0:
+				rodou += 1
+			# A meio do giro: o `refresh()` do turno seguinte não o recomeça.
+			if i == 30:
+				var antes := no_lanca.texture
+				doca.refresh()
+				_confere("D39: um refresh a meio não recomeça o ciclo nem repõe o pau",
+					doca.get("_tw_trabalho") == tw0 and no_lanca.texture == antes
+						and antes != arte_lanca[0],
+					"o pau estava em %s e ficou em %s"
+						% [do_pau.get(antes, "?"), do_pau.get(no_lanca.texture, "?")])
+	_confere("D39: os %d quadros do pau passam pelo nó (%d)" % [lanca.size(), pau_visto.size()],
+		pau_visto.size() == lanca.size())
+	_confere("D39: todo quadro do operador é dela (%d fora)" % fora_dela, fora_dela == 0)
+	# A alavanca MEXE no nó: a parte 2 prova que os dois quadros diferem, e
+	# só esta prova que o ciclo passa pelos dois — com o operador preso a um
+	# quadro, todas as outras desta doca passavam (medido, 02/10).
+	_confere("D39: a alavanca dela mexe na doca (%d quadros)" % operador_visto.size(),
+		operador_visto.size() == 2)
+	_confere("D39: o pau não gira enquanto trabalha (%d passos girados)" % rodou, rodou == 0)
+
+	# Nível 2: ainda sem guindaste próprio — o pau varre, ela fica de pé.
+	var estruturas_antes: Array = GS.estruturas.duplicate()
+	GS.estruturas = ["armazem", "patio"]
+	doca.refresh()
+	varre = doca.get("_tw_lanca")
+	_confere("D39: no nível %d o pau varre e ela fica de pé, sem pilha" % int(GS.nivel_guindaste()),
+		int(GS.nivel_guindaste()) == 2 and no_lanca.texture == arte_lanca[1]
+			and varre is Tween and (varre as Tween).is_valid()
+			and trab.visible and not pilha.visible and trab.texture == quadros["m"]["parado"])
+	GS.estruturas = estruturas_antes
+
+	# Sem trabalhador: a pilha sai, e o pau volta ao repouso a varrer.
+	doca.refresh()
+	GS.release_worker(0)
+	doca.refresh()
+	varre = doca.get("_tw_lanca")
+	_confere("D39: liberada, a pilha sai e o pau volta a varrer em repouso",
+		not trab.visible and not pilha.visible and no_lanca.texture == arte_lanca[0]
+			and varre is Tween and (varre as Tween).is_valid())
+	doca.queue_free()

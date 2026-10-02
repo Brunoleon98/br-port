@@ -363,6 +363,21 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   sessão voltaram 3 de 3 (**19 de 19** somando as sessões). O envio da
   prancha tende a ser o fim do turno: escreva na legenda o que se pergunta
   e com que opções, e leia a resposta em texto como veredito.
+  ⚠️ **E NA ANIMAÇÃO (`075`) A PERGUNTA SOZINHA FOI DISPENSADA, duas vezes**
+  — a primeira logo a seguir ao envio, e a segunda depois de ele escrever
+  «Mande pergunta». A resposta veio em TEXTO, e não era veredito, era uma
+  ideia que mudava o escopo («os guindastes não poderiam auxiliar eles?», com
+  níveis e máquinas). Dispensar não é recusar: leia o texto que vem a seguir
+  como a resposta, e se ele abrir o escopo, a pergunta seguinte é de ESCOPO
+  (com opções e a recomendação primeiro) e não o veredito outra vez — essa
+  voltou respondida à primeira.
+  ⚠️ **E NA SEGUNDA PASSAGEM (`076`) O MESMO VOLTOU A VALER**: ele abriu o
+  escopo em texto («tem como colocar o guindaste…?»), a pergunta de escopo
+  levou três decisões com a recomendada primeiro e voltou à primeira, com as
+  três recomendadas. O veredito do GIF foi só em TEXTO — a pergunta e as três
+  saídas na legenda e no fim do turno, sem formulário —, e voltou «Aceito».
+  Na `073` o mesmo arranjo voltou «E agora?»: 1 de 2, e a pergunta sozinha
+  continua a ser o que se sabe fazer quando ele avisa.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
@@ -386,6 +401,12 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   peças, que categorias, que marcas as distinguem — com opções e a
   recomendação primeiro. Nas variações do trabalhador ele respondeu tudo numa
   volta (2 sexos × 3 idades × 5 cores do IBGE; as marcas de cada eixo).
+  ⚠️ **E NUMA ANIMAÇÃO O ESCOPO PERGUNTA QUEM FAZ O OFÍCIO NO PORTO.** O
+  trabalhador a levar a caixa ao ombro do barco à pilha (`075`) era
+  plausível, passou o escopo e o GIF, e foi trocado no mesmo dia: *«é ele [o
+  guindaste] que sempre fará isso»* (`076`). A pergunta que faltou não era de
+  arte, era do mundo — que máquina e que pessoa fazem aquilo, naquele nível
+  do porto. Nos degraus 2 e 3 ela vem antes da do movimento.
 - **E ONDE UMA PEÇA VAI também se pergunta antes do render** (`073`). Na
   `072` a baleeira levou seis posições escolhidas a olho, e ele recusou as
   seis. Na conversa seguinte a posição foi uma pergunta com duas saídas

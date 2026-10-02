@@ -947,6 +947,40 @@ O render final usou o executável Blender 5.2 LTS, porque o `bpy==4.5.0` local
 esgotou a própria alocação durante a imagem. O mesmo `bpy` executou a validação
 geométrica sem erro: **`BRP BLENDER OK`** para as oito entradas do estúdio.
 
+### Fora das etapas — o pau-de-carga que descarrega, e como se anima um prop (02/10)
+
+A primeira animação por QUADROS deste projeto (`075`, `076`); até ali tudo o
+que mexia era tween sobre um PNG parado (o balanço, a lança, a travessia dos
+camiões). Teve duas passagens no mesmo dia: o trabalhador andava do barco à
+pilha com a caixa ao ombro, e o Bruno, ao ver o GIF, pediu o que um porto faz
+— **o pau-de-carga descarrega sempre, e o trabalhador opera o guincho**. A
+técnica, para quem fizer os degraus 2 e 3:
+
+- **Todo quadro nasce num ponto FIXO do mundo**, e o que muda é a textura (ou
+  a posição do nó, quando a peça anda — era assim o andar da `075`). O pau
+  tem dezoito quadros no quadro do píer: sete ângulos com e sem carga, e o
+  gancho em baixo no porão e na pilha. O operador tem dois por sexo, no quadro
+  do trabalhador.
+- **A geometria sai das peças que já existem, nunca a olho.** O alcance do pau
+  (3,30) e o giro (18° a 80°) saem do mastro e do porão dos três pesqueiros;
+  com o alcance antigo o gancho descia na água. O deslocamento entre o quadro
+  do píer e o do trabalhador lê-se do `Dock.tscn` (`desloc_trabalhador()`).
+- **O boneco é articulado no gerador** (`boneco()` em `gerar_props_iso.py`):
+  cada membro roda sobre o seu pivô (`_membro()`), e os braços aceitam pose
+  (`bracos`) — é assim que ele puxa a alavanca.
+- **A pose sai de uma função pura** (`pose_do_guindaste()` no `Dock.gd`), que
+  o D39 pergunta sem esperar frames; na doca montada, anda-se o tween com
+  `custom_step()` e lê-se o NÓ.
+- **O veredito de uma animação faz-se num GIF** na escala do jogo (720,
+  ampliado 2–3×), nos barcos que o estado alcança, com uma tira de passos ao
+  lado. ⚠️ **A tira sai dos PNGs, não do GIF**: o GIF otimizado funde quadros
+  iguais seguidos (59 viraram 26), e amostrá-lo por índice mostrou os passos
+  errados.
+
+Ficou de fora, e é dele: os degraus 2 (o guindaste tira a carga, e ele leva-a;
+com ele, a ida ao camião nos serviços de mais de um turno) e 3 (pallets e
+empilhadeira), e a transição entre turnos.
+
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
 - Caixote: ripas, cinta, marca estampada. 2 → ~10.

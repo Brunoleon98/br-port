@@ -72,6 +72,7 @@ var _frames := 0
 var _foto: Image = null
 var _artes: Array = []
 var _n_props := 0
+var _n_quadros := 0
 
 
 func _process(_delta: float) -> bool:
@@ -104,11 +105,35 @@ func _process(_delta: float) -> bool:
 		print("FALHOU ao salvar em %s" % _saida)
 		quit(1)
 		return true
-	print("Folha salva em %s (%dx%d) — escala de %d props e %d réguas fora do mapa" % [
-		_saida, _foto.get_width(), _foto.get_height(), _n_props,
-		_artes.size() - _n_props])
+	print("Folha salva em %s (%dx%d) — escala de %d props e %d réguas fora do mapa"
+		% [_saida, _foto.get_width(), _foto.get_height(), _n_props,
+			_artes.size() - _n_props]
+		+ " (%d quadros de animação contados pelo de repouso)" % _n_quadros)
 	quit(0)
 	return true
+
+
+## Os QUADROS de uma animação contam pelo de REPOUSO (`076`). O pau-de-carga
+## do nível 1 tem dezoito e o operador dois por sexo, todos do tamanho do
+## quadro parado: na escala seriam a mesma pergunta vinte e duas vezes, e foram
+## eles que levaram a página a pedir 1564 px numa tela de 1280. Sai das tabelas
+## do `Dock.gd`, e não de uma lista daqui: um quadro novo entra nelas e sai
+## daqui sem ninguém o escrever duas vezes. A folha de contato continua a
+## mostrá-los TODOS, que é ela quem pergunta se cada um chegou à tela.
+func _quadros_de_animacao() -> Dictionary:
+	var k: Dictionary = load("res://scripts/Dock.gd").get_script_constant_map()
+	var repouso: Texture2D = (k["ArteLanca"] as Array)[0]
+	var fora := {}
+	var lanca: Dictionary = k["LANCA_N1"]
+	for chave in lanca:
+		if lanca[chave] != repouso:
+			fora[String((lanca[chave] as Texture2D).resource_path).get_file()] = true
+	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
+	for sexo in quadros:
+		for tex in quadros[sexo]["guincho"]:
+			fora[String((tex as Texture2D).resource_path).get_file()] = true
+	_n_quadros = fora.size()
+	return fora
 
 
 func _montar() -> bool:
@@ -117,6 +142,8 @@ func _montar() -> bool:
 		_saida = args[0]
 	_cat = load("res://tools/catalogo_props.gd").new(root.get_node("GameState"))
 	var nomes: Array = _cat.catalogo()
+	var quadros := _quadros_de_animacao()
+	nomes = nomes.filter(func(n): return not quadros.has(n))
 	if not nomes.has(REGUA):
 		print("FALHOU — a régua '%s' saiu do catálogo." % REGUA)
 		quit(1)
