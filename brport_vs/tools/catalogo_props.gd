@@ -294,23 +294,44 @@ func familias(ancoras: Dictionary) -> Dictionary:
 	# do guincho dos dois sexos ocupam o nó dele, os quadros do pau o nó da
 	# lança e a pilha o nó `Pilha` — percorridos nas tabelas do `Dock`, como
 	# os cascos.
+	# O guindaste do nível 2 (`077`) acrescenta as famílias dele: os quadros
+	# de quem desengata e da ida ao camião no nó do trabalhador, as lanças
+	# giradas e as das pontas no nó da lança, as pilhas no nó `Pilha`, as
+	# lingadas no nó `Carga` e a carga ao ombro no `Trabalhador/Ombro`.
 	var figura: Array = []
 	for sexo in dk["QUADROS_TRABALHADOR"]:
 		var q: Dictionary = dk["QUADROS_TRABALHADOR"][sexo]
 		figura.append(q["parado"])
-		for t in q["guincho"]:
-			figura.append(t)
+		for familia in ["guincho", "pilha", "leva", "volta"]:
+			for t in q[familia]:
+				figura.append(t)
 	var lanca: Array = []
 	for t in dk["ArteLanca"]:
 		lanca.append(t)
 	for chave in dk["LANCA_N1"]:
 		if not lanca.has(dk["LANCA_N1"][chave]):
 			lanca.append(dk["LANCA_N1"][chave])
+	for chave in dk["LANCA_N2"]:
+		if not lanca.has(dk["LANCA_N2"][chave]):
+			lanca.append(dk["LANCA_N2"][chave])
+	for tipo in dk["PONTAS_N2"]:
+		for ponta in dk["PONTAS_N2"][tipo]:
+			lanca.append(dk["PONTAS_N2"][tipo][ponta])
 	var pilha: Array = []
 	for classe in dk["PILHAS_N1"]:
 		for motivo in dk["PILHAS_N1"][classe]:
 			if not pilha.has(dk["PILHAS_N1"][classe][motivo]):
 				pilha.append(dk["PILHAS_N1"][classe][motivo])
+	for tipo in dk["PILHAS_N2"]:
+		if not pilha.has(dk["PILHAS_N2"][tipo]):
+			pilha.append(dk["PILHAS_N2"][tipo])
+	var carga: Array = []
+	for tipo in dk["LINGADAS_N2"]:
+		for lugar in dk["LINGADAS_N2"][tipo]:
+			carga.append(dk["LINGADAS_N2"][tipo][lugar])
+	var ombro: Array = []
+	for tipo in dk["CARGAS_AO_OMBRO"]:
+		ombro.append(dk["CARGAS_AO_OMBRO"][tipo])
 
 	# A vaga é a PRIMEIRA — as três caem no mesmo tipo de chão (o berço, que é
 	# água costeira), e repetir os nove cascos por doca daria 27 células a
@@ -322,6 +343,8 @@ func familias(ancoras: Dictionary) -> Dictionary:
 		vaga + "/Barco": barcos,
 		vaga + "/Trabalhador": figura,
 		vaga + "/Pilha": pilha,
+		vaga + "/Carga": carga,
+		vaga + "/Trabalhador/Ombro": ombro,
 		"./MapaWrap/Cenario/Armazem": [mk["ArmazemRuina"], mk["ArmazemPronto"]],
 		"./MapaWrap/Cenario/Escritorio": [mk["EscritorioRuina"], mk["EscritorioPronto"]],
 		"./MapaWrap/Cenario/Caminhao0": camioes,

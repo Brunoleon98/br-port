@@ -128,10 +128,24 @@ func _quadros_de_animacao() -> Dictionary:
 	for chave in lanca:
 		if lanca[chave] != repouso:
 			fora[String((lanca[chave] as Texture2D).resource_path).get_file()] = true
+	# O nível 2 (`077`): o repouso dele é o `lanca_n2` do `ArteLanca`, e tudo o
+	# resto — as lanças giradas, as pontas, as 36 lingadas, quem desengata e a
+	# ida ao camião — é quadro de uma animação que ele já representa.
+	var repouso_n2: Texture2D = (k["ArteLanca"] as Array)[1]
+	for chave in k["LANCA_N2"]:
+		if k["LANCA_N2"][chave] != repouso_n2:
+			fora[String((k["LANCA_N2"][chave] as Texture2D).resource_path).get_file()] = true
+	for tipo in k["PONTAS_N2"]:
+		for ponta in k["PONTAS_N2"][tipo]:
+			fora[String((k["PONTAS_N2"][tipo][ponta] as Texture2D).resource_path).get_file()] = true
+	for tipo in k["LINGADAS_N2"]:
+		for lugar in k["LINGADAS_N2"][tipo]:
+			fora[String((k["LINGADAS_N2"][tipo][lugar] as Texture2D).resource_path).get_file()] = true
 	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
 	for sexo in quadros:
-		for tex in quadros[sexo]["guincho"]:
-			fora[String((tex as Texture2D).resource_path).get_file()] = true
+		for familia in ["guincho", "pilha", "leva", "volta"]:
+			for tex in quadros[sexo][familia]:
+				fora[String((tex as Texture2D).resource_path).get_file()] = true
 	_n_quadros = fora.size()
 	return fora
 
