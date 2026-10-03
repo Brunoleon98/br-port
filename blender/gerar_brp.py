@@ -3,6 +3,7 @@
     python3 blender/gerar_brp.py porto brport_vs/art/props
     python3 blender/gerar_brp.py porto brport_vs/art/props caminhao
     python3 blender/gerar_brp.py todos brport_vs/art/props
+    python3 blender/gerar_brp.py porto --despejar=/tmp/porto.txt
 
 Um estúdio por processo, e isso é obrigatório: `preparar_cena()` chama
 `read_factory_settings`, que apaga a cena inteira. Rodar dois catálogos no mesmo
@@ -15,6 +16,7 @@ import os
 import pathlib
 import subprocess
 import sys
+import time
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
@@ -35,10 +37,29 @@ MANIFEST = str(RAIZ / "brport_vs/data/assets/BRP_EXPORT_MANIFEST.json")
 
 
 def main() -> int:
-    if len(sys.argv) < 3:
+    # `--despejar=<arquivo>` monta o estúdio, escreve a cena em texto e sai
+    # sem render nem manifest: é a régua do arnês da montagem (`080`).
+    despejo = next((a.split("=", 1)[1] for a in sys.argv[1:]
+                    if a.startswith("--despejar=")), None)
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if despejo is not None:
+        if len(args) != 1 or args[0] not in ESTUDIOS:
+            print(__doc__.strip())
+            return 2
+        from brp_studio import Estudio
+        import gerar_props_iso as base
+        print(base.caminho_da_montagem())
+        inicio = time.monotonic()
+        est = Estudio(args[0])
+        est.montar(importlib.import_module(ESTUDIOS[args[0]][0]).montar)
+        print("montagem: %d objetos em %.1f s"
+              % (len(base.bpy.data.objects), time.monotonic() - inicio))
+        print("despejo: %d objetos em %s" % (base.despejar_cena(despejo), despejo))
+        return 0
+    if len(args) < 2:
         print(__doc__.strip())
         return 2
-    categoria, saida, pedidos = sys.argv[1], sys.argv[2], sys.argv[3:]
+    categoria, saida, pedidos = args[0], args[1], args[2:]
     # `read_factory_settings`, chamado ao montar o estúdio, troca o diretório
     # corrente do Blender para a raiz do disco no Windows. Se a saída continuar
     # relativa, o render tenta escrever em C:\brport_vs e falha só no Blender
@@ -61,9 +82,14 @@ def main() -> int:
 
     modulo, blend = ESTUDIOS[categoria]
     from brp_studio import Estudio, escrever_manifest
+    import gerar_props_iso as base
 
+    print(base.caminho_da_montagem())
+    inicio = time.monotonic()
     est = Estudio(categoria)
     est.montar(importlib.import_module(modulo).montar)
+    print("montagem: %d objetos em %.1f s"
+          % (len(base.bpy.data.objects), time.monotonic() - inicio))
     fichas = est.exportar(saida, pedidos or None)
     escrever_manifest(MANIFEST, fichas)
 

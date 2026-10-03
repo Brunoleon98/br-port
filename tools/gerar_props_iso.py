@@ -45,14 +45,20 @@ USO
 ---
     ~/bpy-venv/bin/python tools/gerar_props_iso.py <pasta_de_saida> [prop ...]
     ~/bpy-venv/bin/python tools/gerar_props_iso.py /tmp/props pier_construido
+    ~/bpy-venv/bin/python tools/gerar_props_iso.py --despejar=/tmp/cena.txt
+
+`--despejar=<arquivo>` monta a cena, escreve-a em texto e sai SEM render: é a
+prova de que o arnês da montagem não muda nada (ver `primitiva`).
 
 Sem nomes, gera tudo. Ao fim confere a largura do tabuado contra a conta do
 mapa — se divergir, a projeção saiu errada e o resto não presta.
 """
 
+import hashlib
 import math
 import os
 import sys
+import time
 
 import bpy
 import numpy as np
@@ -992,9 +998,131 @@ def pos(mx: float, my: float, altura_px: float = 0.0) -> tuple:
     return (mx, -my, z(altura_px))
 
 
+# ── O ARNÊS DA MONTAGEM: as primitivas sem o `view_layer.update()` ─────────
+#
+# Todo `bpy.ops.*` passa pelo invólucro Python de `bpy/ops.py`, que chama
+# `view_layer.update()` ANTES e DEPOIS do operador. Depois de um objeto novo,
+# essa atualização refaz o grafo da cena inteira — custa o número de objetos
+# que já lá estão —, e o catálogo monta-se todo numa cena só, mesmo quando se
+# pede um prop: a montagem é QUADRÁTICA. A do porto passou dos 30 min sem um
+# PNG (`079`).
+#
+# Uma primitiva não precisa de nenhuma das duas. O operador cria a malha e o
+# objeto a partir dos argumentos, e o que o kit escreve a seguir — nome,
+# escala, rotação, material — é dado ORIGINAL, que nenhum grafo lê. Quem
+# precisa da cena avaliada pede-a: o raio dos retratos tira-a do
+# `evaluated_depsgraph_get()`, que atualiza antes de devolver, a câmera tem o
+# seu `update()` explícito, e o render avalia tudo. As outras chamadas de
+# `bpy.ops` ficam como estavam (`docs/decisoes/080`).
+#
+# ⚠️ O GANCHO É PRIVADO: `_BPyOpsSubModOp._view_layer_update`, no `bpy` 4.5.
+# Um Blender que não o tenha monta pelo caminho lento e di-lo numa linha — o
+# arnês só compra tempo, e na falta dele o resultado é o mesmo.
+# ⚠️ E O QUE O PROVA É O DESPEJO, NÃO O RENDER: com `BRP_CAMINHO_LENTO=1` a
+# montagem volta ao caminho de sempre, e as duas cenas despejadas por
+# `--despejar` saem iguais byte a byte. O PNG não serve de prova, porque o
+# denoiser do Cycles varia ±2/255 entre duas corridas do mesmo código.
+def _resolver_arnes():
+    """(classe, staticmethod original) do gancho, ou (None, motivo)."""
+    if os.environ.get("BRP_CAMINHO_LENTO") == "1":
+        return None, "pedido por BRP_CAMINHO_LENTO=1"
+    try:
+        from bpy import ops as _ops
+        classe = _ops._BPyOpsSubModOp
+        return (classe, classe.__dict__["_view_layer_update"]), ""
+    except (ImportError, AttributeError, KeyError):
+        return None, "este bpy não tem o gancho _view_layer_update"
+
+
+_ARNES, _SEM_ARNES = _resolver_arnes()
+
+
+def _nao_atualizar(_contexto):
+    pass
+
+
+def primitiva(operador: str, **argumentos):
+    """`bpy.ops.mesh.<operador>(**argumentos)` sem as duas atualizações do
+    grafo, e devolve o objeto criado (que o operador deixa ativo).
+
+    Toda primitiva do kit e dos retratos passa por aqui: uma chamada direta
+    a `bpy.ops.mesh.primitive_*` montaria certo e devolveria a lentidão.
+    """
+    operacao = getattr(bpy.ops.mesh, operador)
+    if _ARNES is None:
+        operacao(**argumentos)
+    else:
+        classe, original = _ARNES
+        classe._view_layer_update = staticmethod(_nao_atualizar)
+        try:
+            operacao(**argumentos)
+        finally:
+            classe._view_layer_update = original
+    return bpy.context.active_object
+
+
+def caminho_da_montagem() -> str:
+    """A linha que diz por que caminho a cena foi montada."""
+    if _ARNES is None:
+        return "montagem: caminho LENTO (%s)" % _SEM_ARNES
+    return "montagem: arnês ligado (primitivas sem view_layer.update)"
+
+
+def despejar_cena(caminho: str) -> int:
+    """Escreve a cena montada em texto, objeto a objeto, e devolve quantos.
+
+    É a régua do arnês: duas montagens que despejam os mesmos bytes renderizam
+    a mesma imagem, porque o render só lê o que está aqui — a geometria
+    AVALIADA (depois do chanfro), a matriz, a visibilidade e os materiais. Os
+    floats saem em `repr`, que é exato: o despejo não arredonda nada, e por
+    isso não tem ruído próprio (duas corridas do mesmo caminho dão os mesmos
+    bytes, medido em `080`).
+    """
+    bpy.context.view_layer.update()
+    grafo = bpy.context.evaluated_depsgraph_get()
+    linhas = []
+    objetos = sorted(bpy.data.objects, key=lambda o: o.name)
+    for o in objetos:
+        mw = [v for linha in o.matrix_world for v in linha]
+        linhas.append("%s %s pai=%s" % (o.name, o.type,
+                                        o.parent.name if o.parent else "-"))
+        linhas.append("  mw %s" % " ".join(repr(v) for v in mw))
+        linhas.append("  vis render=%d camera=%d sombra=%d" % (
+            o.hide_render, o.visible_camera, o.visible_shadow))
+        linhas.append("  mats %s" % ",".join(
+            s.material.name if s.material else "-" for s in o.material_slots))
+        if o.type != "MESH":
+            continue
+        avaliado = o.evaluated_get(grafo)
+        malha = avaliado.to_mesh()
+        resumo = hashlib.sha256()
+        for colecao, atributo, largura, tipo in (
+                (malha.vertices, "co", 3, np.float32),
+                (malha.loops, "vertex_index", 1, np.int32),
+                (malha.polygons, "loop_start", 1, np.int32),
+                (malha.polygons, "material_index", 1, np.int32),
+                (malha.corner_normals, "vector", 3, np.float32)):
+            dados = np.empty(len(colecao) * largura, dtype=tipo)
+            colecao.foreach_get(atributo, dados)
+            resumo.update(dados.tobytes())
+        for camada in malha.uv_layers:
+            dados = np.empty(len(camada.uv) * 2, dtype=np.float32)
+            camada.uv.foreach_get("vector", dados)
+            resumo.update(dados.tobytes())
+        linhas.append("  malha v=%d f=%d %s" % (
+            len(malha.vertices), len(malha.polygons), resumo.hexdigest()))
+        avaliado.to_mesh_clear()
+    # Monta o texto todo antes de abrir: `open(..., "w")` trunca de imediato,
+    # e um erro a meio deixaria o despejo vazio — que compara igual a outro
+    # despejo vazio.
+    texto = "\n".join(linhas) + "\n"
+    with open(caminho, "w", encoding="utf-8") as f:
+        f.write(texto)
+    return len(objetos)
+
+
 def caixa(nome, centro, tam, mat, rot=(0, 0, 0)):
-    bpy.ops.mesh.primitive_cube_add(size=1.0, location=centro)
-    o = bpy.context.active_object
+    o = primitiva("primitive_cube_add", size=1.0, location=centro)
     o.name = nome
     o.scale = tam
     o.rotation_euler = tuple(math.radians(a) for a in rot)
@@ -1003,9 +1131,8 @@ def caixa(nome, centro, tam, mat, rot=(0, 0, 0)):
 
 
 def cone(nome, centro, r1, r2, alt, lados, mat, rot=(0, 0, 0)):
-    bpy.ops.mesh.primitive_cone_add(vertices=lados, radius1=r1, radius2=r2,
-                                    depth=alt, location=centro)
-    o = bpy.context.active_object
+    o = primitiva("primitive_cone_add", vertices=lados, radius1=r1, radius2=r2,
+                  depth=alt, location=centro)
     o.name = nome
     o.rotation_euler = tuple(math.radians(a) for a in rot)
     o.data.materials.append(mat)
@@ -1014,9 +1141,8 @@ def cone(nome, centro, r1, r2, alt, lados, mat, rot=(0, 0, 0)):
 
 def bola(nome, centro, raios, mat, rot=(0, 0, 0)):
     """Uma esfera esticada: o lobo de um saco de rede cheio."""
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=8,
-                                         radius=1.0, location=centro)
-    o = bpy.context.active_object
+    o = primitiva("primitive_uv_sphere_add", segments=16, ring_count=8,
+                  radius=1.0, location=centro)
     o.name = nome
     o.scale = raios
     # ⚠️ A ESCALA APLICA-SE NA MALHA: a coordenada `Object` de um material lê
@@ -1031,11 +1157,9 @@ def bola(nome, centro, raios, mat, rot=(0, 0, 0)):
 
 def anel(nome, centro, r_maior, r_menor, mat, rot=(0, 0, 0), lados=16):
     """Um toro: a boia salva-vidas. Nenhuma caixa nem cone faz um anel."""
-    bpy.ops.mesh.primitive_torus_add(major_radius=r_maior,
-                                     minor_radius=r_menor,
-                                     major_segments=lados, minor_segments=6,
-                                     location=centro)
-    o = bpy.context.active_object
+    o = primitiva("primitive_torus_add", major_radius=r_maior,
+                  minor_radius=r_menor, major_segments=lados,
+                  minor_segments=6, location=centro)
     o.name = nome
     o.rotation_euler = tuple(math.radians(a) for a in rot)
     o.data.materials.append(mat)
@@ -5584,12 +5708,15 @@ def largura_opaca(caminho: str) -> int:
 # ---------------------------------------------------------------- principal
 def main() -> int:
     contorno = "--contorno" in sys.argv
+    despejo = next((a.split("=", 1)[1] for a in sys.argv[1:]
+                    if a.startswith("--despejar=")), None)
     args = [a for a in sys.argv[1:] if not a.startswith("-")]
-    if not args:
+    if not args and despejo is None:
         print(__doc__.strip().splitlines()[-1])
         return 2
-    saida, pedidos = args[0], args[1:]
 
+    print(caminho_da_montagem())
+    inicio = time.monotonic()
     cena = preparar_cena()
     if contorno:
         ligar_contorno_compositor(cena)
@@ -5599,6 +5726,12 @@ def main() -> int:
     # Chanfro só aqui, depois de tudo montado: as funções de prop continuam
     # falando de caixas, e quem quiser reaproveitá-las não herda o modificador.
     chanfrar({o for g in grupos.values() for o in g})
+    print("montagem: %d objetos em %.1f s"
+          % (len(bpy.data.objects), time.monotonic() - inicio))
+    if despejo is not None:
+        print("despejo: %d objetos em %s" % (despejar_cena(despejo), despejo))
+        return 0
+    saida, pedidos = args[0], args[1:]
 
     if pedidos:
         desconhecidos = [p for p in pedidos if p not in grupos]
