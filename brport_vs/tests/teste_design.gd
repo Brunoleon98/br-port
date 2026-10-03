@@ -299,6 +299,10 @@ func _rodar() -> void:
 	_d41_virada_do_dia()
 	_confere("o bloco D41 correu até ao fim", _d41_completo)
 
+	print("=== D42: o pórtico do nível 3 e a empilhadeira — o pallet, a pilha e o camião ===")
+	_d42_portico_n3()
+	_confere("o bloco D42 correu até ao fim", _d42_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -6221,16 +6225,19 @@ func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 		operador_visto.size() == 2)
 	_confere("D39: o pau não gira enquanto trabalha (%d passos girados)" % rodou, rodou == 0)
 
-	# Nível 3: ainda sem animação própria — a lança varre, ela fica de pé. O
-	# nível 2 tem o guindaste dele desde a `077`, e quem o pergunta é o D40.
+	# Nível 3: o pórtico descarrega e ela vai na EMPILHADEIRA (`079`) — quem
+	# o pergunta todo é o D42. Aqui só que o pau do n1 não fica a trabalhar
+	# por cima, que o nó dela sai do tabuado e que é ela quem conduz.
 	var estruturas_antes: Array = GS.estruturas.duplicate()
 	GS.estruturas = ["armazem", "patio", "guindaste"]
 	doca.refresh()
 	varre = doca.get("_tw_lanca")
-	_confere("D39: no nível %d a lança varre e ela fica de pé, sem pilha" % int(GS.nivel_guindaste()),
-		int(GS.nivel_guindaste()) == 3 and no_lanca.texture == arte_lanca[2]
-			and varre is Tween and (varre as Tween).is_valid()
-			and trab.visible and not pilha.visible and trab.texture == quadros["m"]["parado"])
+	var emp := doca.get_node("Empilhadeira") as TextureRect
+	var dela_ao_volante: Array = (k["QUADROS_EMPILHADEIRA"]["m"] as Dictionary).values()
+	_confere("D39: no nível %d ela vai na empilhadeira, e o pau do n1 sai" % int(GS.nivel_guindaste()),
+		int(GS.nivel_guindaste()) == 3 and not (k["LANCA_N1"] as Dictionary).values().has(no_lanca.texture)
+			and not (varre is Tween and (varre as Tween).is_valid())
+			and not trab.visible and emp.visible and dela_ao_volante.has(emp.texture))
 	GS.estruturas = estruturas_antes
 
 	# Sem trabalhador: a pilha sai, e o pau volta ao repouso a varrer.
@@ -7253,3 +7260,723 @@ func _d41_o_toque_seguinte(GS: Node, DockS: Script, tela: Control, docas: Array,
 		% encostados, encostados == 3)
 	return true
 
+
+# ── D42 ── o pórtico do nível 3 e a empilhadeira (03/10, `docs/decisoes/079`)
+#
+# No porto de nível 3 o pórtico tira a carga do barco e pousa-a num pallet a
+# meio do cais, e o trabalhador alocado leva o pallet de EMPILHADEIRA à pilha
+# da raiz — ou às portas do camião encostado. Os dois trabalham o serviço
+# inteiro. O contêiner pousa no cais, como no n2, e ela espera ao volante.
+# Seis perguntas:
+#
+#   1. TODO PAR (classe, motivo) que o nível 3 recebe tem tipo de carga, e o
+#      tipo tem as pontas, as nove lingadas e a pilha — e os de pallet, a
+#      carga no garfo em baixo e levantada. Nenhum tipo das tabelas sem par.
+#   2. O CICLO, como aritmética: a carga do pórtico só pende onde ele está;
+#      o pallet espera no chão só depois de largado; ELA ESTÁ À ESPERA sempre
+#      que o pallet seguinte desce (senão ele pousava-lhe no garfo); ela não
+#      salta no caminho; todo trecho e os dois garfos passam.
+#   3. NO RENDER: a carga desce dentro de cada casco que o nível 3 recebe; o
+#      pallet que o spreader larga e o que ela apanha caem no MESMO sítio; o
+#      que ela larga coincide com o da frente da pilha; o caminho anda em
+#      `−mx`; ela pisa o tabuado nas três posições, nos píeres 2 e 3; ela à
+#      espera não toca o pallet que desce; e a empilhadeira, do cais e do
+#      pátio, está na régua da pessoa — a do pátio media 3,2x a pessoa.
+#   4. NA DOCA MONTADA, com uma MULHER: o nó do trabalhador sai e ela vai
+#      ao volante; todo quadro passa pelos nós; o pallet no garfo anda com a
+#      empilhadeira; um `refresh()` não recomeça; no segundo turno continua; o
+#      contêiner deixa-a à espera; acabado o serviço, ela fica parada sem
+#      ninguém, e no nível 2 sai.
+#   5. O CAMIÃO, pela cena inteira: encostado pelo `Main`, o caminho vai às
+#      portas de trás dele, no eixo, e o pallet acaba junto ao desenho dele —
+#      e o caminho mais comprido ainda cabe no ciclo do pórtico.
+#   6. NENHUM PROP DO CENÁRIO QUE LHE FIQUE À FRENTE é tapado por ela, até à
+#      pilha e até ao camião, nas três docas, com os prédios em ruína e prontos.
+var _d42_completo := false
+
+# A régua: a altura OPACA desenhada da empilhadeira (sem a sombra de contacto,
+# que é semitransparente) contra a do camião da carga geral, e contra a pessoa.
+# Escolha do Bruno, 1,5x o real como a pessoa (`079`). Medido a 03/10: a do
+# pátio de antes media 30,7 px, a MESMA altura do camião (1,00); as de agora,
+# 20,7 no cais (0,67) e 24,0 no pátio (0,78, de garfo para a câmara). O corte
+# fica no meio entre a pior boa e a má. Por baixo, ela tem de ser mais alta do
+# que a pessoa de pé (11,3 px): quem vai sentado cabe debaixo da cobertura.
+# ⚠️ A CAIXA COM SOMBRA MENTIA: a primeira versão desta guarda lia o
+# `PropIso.desenho()`, que conta a sombra do pátio e o chão projetado, e deu
+# 2,6x a pessoa a uma empilhadeira que está na régua.
+const D42_CAMIAO_MAX := 0.89
+const D42_PESSOA_MIN := 1.2
+# O caminho até à pilha anda em `−mx`; o do camião, na folga do D40.
+const D42_EIXO_PILHA_GRAUS := 3.0
+# O pallet que o spreader larga e o que ela apanha: o fundo dos dois, em px de
+# tela. São o mesmo ponto do mundo; o meio pixel é do antisserrilhado.
+const D42_POUSO_PX := 1.5
+# O pallet que ela larga contra o da frente da pilha: a fração dos pixels dele
+# que caem em cima de desenho da pilha. Coincidem por construção (o caminho
+# sai dos dois desenhos); um pallet de distância dá ~0,5.
+const D42_PILHA_MIN := 0.9
+
+
+func _d42_portico_n3() -> void:
+	var GS: Node = root.get_node("GameState")
+	var DockS: Script = load("res://scripts/Dock.gd")
+	var Ret: Script = load("res://scripts/Retratos.gd")
+	var k: Dictionary = DockS.get_script_constant_map()
+	var servico: Dictionary = k["CARGA_DO_SERVICO"]
+	var pontas: Dictionary = k["PONTAS_N3"]
+	var lingadas: Dictionary = k["LINGADAS_N3"]
+	var pilhas: Dictionary = k["PILHAS_N3"]
+	var garfo: Dictionary = k["GARFO_N3"]
+	var emp: Dictionary = k["QUADROS_EMPILHADEIRA"]
+	var lugares := ["barco", "g0", "g1", "g2", "g3", "g4", "g5", "g6", "pilha"]
+
+	# 1 ── a tabela contra as classes que o nível 3 recebe
+	var exigidas := 0
+	var tipos_usados := {}
+	for classe in GS.CLASSES_DE_NAVIO:
+		var dados: Dictionary = GS.CLASSES_DE_NAVIO[classe]
+		if int(dados["nivel"]) > 3:
+			continue
+		for motivo in dados["motivos"]:
+			if int(dados["motivos"][motivo]) <= 0:
+				continue
+			exigidas += 1
+			var tem: bool = servico.has(classe) \
+				and (servico[classe] as Dictionary).has(motivo)
+			_confere("D42: %s · %s tem tipo de carga no nível 3" % [classe, motivo],
+				tem, "o pórtico rebentaria no `refresh()` ao receber este barco")
+			if not tem:
+				continue
+			var tipo: String = servico[classe][motivo]
+			tipos_usados[tipo] = true
+			var completo: bool = pontas.has(tipo) and pilhas.has(tipo) \
+				and pilhas[tipo] is Texture2D and lingadas.has(tipo)
+			if completo:
+				for ponta in ["barco", "pilha"]:
+					completo = completo and pontas[tipo].has(ponta) \
+						and pontas[tipo][ponta] is Texture2D
+				for lugar in lugares:
+					completo = completo and lingadas[tipo].has(lugar) \
+						and lingadas[tipo][lugar] is Texture2D
+			if tipo != "conteiner":
+				completo = completo and garfo.has(tipo) \
+					and garfo[tipo].get("baixo") is Texture2D \
+					and garfo[tipo].get("alto") is Texture2D
+			_confere("D42: o tipo «%s» tem as pontas, as nove lingadas e a pilha%s"
+					% [tipo, "" if tipo == "conteiner" else ", e o garfo"], completo)
+	_confere("D42: o nível 3 recebe pares (%d)" % exigidas, exigidas > 0)
+	var tabelas := {"PONTAS_N3": pontas, "LINGADAS_N3": lingadas,
+		"PILHAS_N3": pilhas, "GARFO_N3": garfo}
+	for nome in tabelas:
+		var sobra: Array = []
+		for tipo in tabelas[nome]:
+			if not tipos_usados.has(tipo):
+				sobra.append(tipo)
+		_confere("D42: nenhum tipo da %s fica sem serviço (%s)" % [nome, sobra],
+			sobra.is_empty())
+
+	# 2 ── o ciclo, como aritmética, com o caminho até à pilha do papelão
+	var destino: Vector2 = PropIso.desenho(pilhas["caixa"]).end \
+		- PropIso.desenho(garfo["caixa"]["baixo"]).end
+	var espera: Vector2 = k["ESPERA_N3"]
+	var v: float = k["EMPILHADEIRA_PX_POR_SEG"]
+	var leva := destino.length() / v
+	var volta := (destino - espera).length() / v
+	_confere("D42: ida e volta até à pilha cabem no ciclo (%.2f + %.2f s de %.2f)"
+			% [leva, volta, float(DockS.janela_n3())],
+		leva + volta <= float(DockS.janela_n3()))
+	var dt := 1.0 / 60.0
+	var trechos := {}
+	var garfos := {}
+	var lancas_vistas := {}
+	var carga_fora := 0
+	var chao_com_carga := 0
+	var desce_sem_espera := 0
+	var salto_max := 0.0
+	var antes = null
+	var t := 0.0
+	while t < 2.0 * float(DockS.duracao_do_ciclo()):
+		t += dt
+		var p: Dictionary = DockS.pose_n3(t, leva, volta)
+		lancas_vistas[p["lanca"]] = true
+		trechos[p["trecho"]] = true
+		garfos[p["garfo"]] = true
+		if String(p["carga"]) != "" and p["carga"] != p["lanca"]:
+			carga_fora += 1
+		if bool(p["chao"]) and String(p["carga"]) != "":
+			chao_com_carga += 1
+		# O pallet seguinte a descer no pouso: ela tem de estar à espera.
+		if String(p["carga"]) == "pilha" and String(p["trecho"]) != "espera":
+			desce_sem_espera += 1
+		var onde := _d42_onde(p, destino, espera)
+		if antes != null:
+			salto_max = maxf(salto_max, (onde - (antes as Vector2)).length())
+		antes = onde
+	_confere("D42: a carga do pórtico só pende onde ele está (%d fora)" % carga_fora,
+		carga_fora == 0)
+	_confere("D42: o pallet só espera no chão depois de largado (%d com carga no spreader)"
+			% chao_com_carga, chao_com_carga == 0)
+	_confere("D42: ela está à espera sempre que o pallet seguinte desce (%d fora)"
+			% desce_sem_espera, desce_sem_espera == 0,
+		"senão o spreader pousava-o em cima do garfo dela")
+	# O passo mais comprido: a ida inteira em `leva` segundos, a 60 por segundo.
+	var passo_max := maxf(destino.length() / leva, (destino - espera).length() / volta) \
+		* dt * 1.5
+	_confere("D42: ela não salta no caminho (%.2f px num passo, até %.2f)"
+			% [salto_max, passo_max], salto_max <= passo_max)
+	_confere("D42: os seis trechos dela passam (%s)" % [trechos.keys()],
+		trechos.size() == 6)
+	_confere("D42: o garfo sobe e desce (%s)" % [garfos.keys()], garfos.size() == 2)
+	var faltam: Array = []
+	for chave in k["LANCA_N3"]:
+		if not lancas_vistas.has(chave):
+			faltam.append(chave)
+	for lugar in ["barco", "pilha"]:
+		if not lancas_vistas.has(lugar):
+			faltam.append(lugar)
+	_confere("D42: todo passo do pórtico passa no ciclo", faltam.is_empty(),
+		"nunca aparecem: %s" % [faltam])
+
+	# 3 ── no render
+	var doca: Control = load("res://scenes/dock/Dock.tscn").instantiate()
+	var no_pier := (doca.get_node("Pier") as Control).position
+	var no_barco := (doca.get_node("Barco") as Control).position
+	var no_carga := (doca.get_node("Carga") as Control).position
+	var no_garfo := (doca.get_node("Garfo") as Control).position
+	var no_emp := (doca.get_node("Empilhadeira") as Control).position
+	var no_pilha := (doca.get_node("Pilha") as Control).position
+	doca.free()
+	var cascos: Dictionary = k["CASCOS"]
+	var cascos_vistos := 0
+	for classe in servico:
+		if int(GS.CLASSES_DE_NAVIO[classe]["nivel"]) > 3:
+			continue
+		for motivo in servico[classe]:
+			var tipo: String = servico[classe][motivo]
+			# Pelo FUNDO da carga, onde ela toca o convés (o D40 mediu porquê).
+			var c: Rect2 = PropIso.desenho(lingadas[tipo]["barco"])
+			var ponto: Vector2 = Vector2(c.get_center().x, c.end.y - 1.5) + no_carga - no_barco
+			for casco in cascos[classe][motivo]:
+				cascos_vistos += 1
+				var cheio := _d39_desenho_a_volta(casco, ponto, 3)
+				_confere("D42: a carga de %s desce dentro do %s (%s, %.0f%% de casco à volta)"
+						% [tipo, String(casco.resource_path).get_file().get_basename(),
+						   motivo, cheio * 100.0],
+					cheio >= D39_CASCO_MIN, "ela desce na água ao lado dele")
+	_confere("D42: percorreu os cascos do nível 3 (%d)" % cascos_vistos, cascos_vistos > 0)
+
+	for tipo in garfo:
+		# O pallet que o spreader larga e o que ela apanha: o mesmo sítio.
+		var largado: Rect2 = PropIso.desenho(lingadas[tipo]["pilha"])
+		var apanhado: Rect2 = PropIso.desenho(garfo[tipo]["baixo"])
+		largado.position += no_carga - no_garfo
+		var dx := largado.get_center().x - apanhado.get_center().x
+		var dy := largado.end.y - apanhado.end.y
+		_confere("D42: %s — o pallet que o spreader larga é o que ela apanha (dx %.1f, dy %.1f)"
+				% [tipo, dx, dy],
+			absf(dx) <= D42_POUSO_PX and absf(dy) <= D42_POUSO_PX)
+		# O que ela larga contra o da frente da pilha.
+		var d: Vector2 = PropIso.desenho(pilhas[tipo]).end - apanhado.end
+		var graus := rad_to_deg(absf(d.normalized().angle_to(Vector2(-2.0, -1.0).normalized())))
+		_confere("D42: %s — o caminho até à pilha anda em −mx (%.1f°, %.0f px)"
+				% [tipo, graus, d.length()],
+			graus <= D42_EIXO_PILHA_GRAUS and d.length() > 15.0)
+		var sobre := _d42_sobre(garfo[tipo]["baixo"], no_garfo + d, pilhas[tipo], no_pilha)
+		_confere("D42: %s — o pallet que ela larga é o da frente da pilha (%.0f%% em cima dela)"
+				% [tipo, sobre * 100.0], sobre >= D42_PILHA_MIN)
+
+	# Ela pisa o tabuado: o fundo do desenho dela, à espera, no pouso e na
+	# pilha, nos píeres 2 e 3 — o pórtico vem com o guindaste, e o cais de
+	# concreto com outra compra.
+	var arte_pier: Array = k["ArtePier"]
+	var parada: Texture2D = k["EMPILHADEIRA_N3"]
+	var r_emp: Rect2 = PropIso.desenho(parada)
+	var d_pilha: Vector2 = PropIso.desenho(pilhas["caixa"]).end \
+		- PropIso.desenho(garfo["caixa"]["baixo"]).end
+	for nivel in [1, 2]:
+		for lugar in [["à espera", espera], ["no pouso", Vector2.ZERO], ["na pilha", d_pilha]]:
+			for canto in [Vector2(r_emp.position.x + 2.0, r_emp.end.y - 3.0),
+					Vector2(r_emp.end.x - 2.0, r_emp.end.y - 2.0)]:
+				var ponto: Vector2 = canto + (lugar[1] as Vector2) + no_emp - no_pier
+				var chao := _d39_desenho_a_volta(arte_pier[nivel], ponto, 2)
+				_confere("D42: no píer %d ela pisa o tabuado %s (%.0f%% de píer)"
+						% [nivel + 1, lugar[0], chao * 100.0], chao >= D39_CASCO_MIN)
+
+	# À espera, não toca o pallet que desce no pouso.
+	for tipo in garfo:
+		var toca := _d40_tapa(parada, no_emp + espera, lingadas[tipo]["pilha"], no_carga)
+		_confere("D42: %s — à espera, ela não toca o pallet que desce (%.0f%%)"
+				% [tipo, toca * 100.0], toca == 0.0)
+
+	# Quem conduz: os dois sexos, distintos, e o garfo mexe.
+	_confere("D42: ele e ela ao volante são figuras distintas",
+		PropIso.imagem(emp["h"]["baixo"]).get_data() != PropIso.imagem(emp["m"]["baixo"]).get_data())
+	_confere("D42: parada, ninguém a conduz",
+		PropIso.imagem(parada).get_data() != PropIso.imagem(emp["h"]["baixo"]).get_data())
+	for sexo in ["h", "m"]:
+		_confere("D42: %s — o garfo sobe" % sexo,
+			PropIso.imagem(emp[sexo]["baixo"]).get_data() != PropIso.imagem(emp[sexo]["alto"]).get_data())
+
+	# A régua, na do cais e na do pátio.
+	var pessoa := _d42_altura_opaca(k["QUADROS_TRABALHADOR"]["h"]["parado"])
+	var camiao := _d42_altura_opaca(load("res://art/props/caminhao_armazenagem.png"))
+	var do_patio: Texture2D = load("res://art/props/empilhadeira.png")
+	for par in [["do cais", parada], ["do pátio", do_patio]]:
+		var h := _d42_altura_opaca(par[1])
+		_confere("D42: a empilhadeira %s está na régua (%.2fx o camião, %.2fx a pessoa)"
+				% [par[0], h / camiao, h / pessoa],
+			h / camiao <= D42_CAMIAO_MAX and h / pessoa >= D42_PESSOA_MIN)
+
+	# 4 ── a doca montada
+	_d42_na_doca(GS, DockS, Ret, k)
+	_d42_camiao(GS, DockS, k)
+	_d42_ninguem_a_frente(GS, DockS, k)
+	_d42_completo = true
+
+
+## A altura, em px de tela, das linhas do PNG com algum pixel opaco (alfa
+## acima de 0,5): a sombra de contacto do pátio é semitransparente e fica de
+## fora.
+func _d42_altura_opaca(tex: Texture2D) -> float:
+	var img := PropIso.imagem(tex)
+	var r := img.get_used_rect()
+	var topo := -1
+	var fundo := -1
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			if img.get_pixel(x, y).a > 0.5:
+				if topo < 0:
+					topo = y
+				fundo = y
+				break
+	return float(fundo - topo + 1) * PropIso.escala(tex)
+
+
+## Onde ela está, contra o pouso, no passo `p` — a mesma conta do `Dock.gd`.
+func _d42_onde(p: Dictionary, destino: Vector2, espera: Vector2) -> Vector2:
+	var f: float = p["fracao"]
+	match String(p["trecho"]):
+		"espera":
+			return espera
+		"encosta":
+			return espera.lerp(Vector2.ZERO, f)
+		"leva", "pousa":
+			return destino * f
+		"volta":
+			return destino.lerp(espera, f)
+	return Vector2.ZERO
+
+
+## A fração dos pixels opacos de `a` (no nó em `no_a`) que caem em cima de
+## desenho de `b` (no nó em `no_b`).
+func _d42_sobre(a: Texture2D, no_a: Vector2, b: Texture2D, no_b: Vector2) -> float:
+	var ia := PropIso.imagem(a)
+	var ib := PropIso.imagem(b)
+	var e := PropIso.escala(a)
+	var desloc := Vector2i(((no_a - no_b) / e).round())
+	var r := ia.get_used_rect()
+	var total := 0
+	var sobre := 0
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			if ia.get_pixel(x, y).a <= 0.5:
+				continue
+			total += 1
+			var q := Vector2i(x, y) + desloc
+			if q.x >= 0 and q.y >= 0 and q.x < ib.get_width() and q.y < ib.get_height() \
+					and ib.get_pixelv(q).a > 0.5:
+				sobre += 1
+	return float(sobre) / float(maxi(total, 1))
+
+
+func _d42_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
+	GS.clear_save()
+	GS._rng.seed = 20261004
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var estruturas_antes: Array = GS.estruturas.duplicate()
+	GS.estruturas = ["armazem", "patio", "guindaste", "cais"]
+	_confere("D42: com o guindaste e o cais o porto é de nível 3",
+		int(GS.nivel_guindaste()) == 3 and int(GS.nivel_do_porto()) == 3)
+	var mulher := -1
+	for i in range((Ret.get_script_constant_map()["TRABALHADORES"] as Array).size()):
+		if Ret.sexo_do_rosto(i) == "m":
+			mulher = i
+			break
+	var w: Dictionary = GS.workers[0]
+	w["rosto"] = mulher
+	GS.docks[0]["worker_id"] = null
+	var barco: Dictionary = GS._make_boat()
+	barco["classe"] = "grande"
+	barco["motivo"] = "armazenagem"
+	barco["rival"] = false
+	barco["progress"] = 0
+	GS.docks[0]["boat"] = barco
+
+	var doca: Control = load("res://scenes/dock/Dock.tscn").instantiate()
+	doca.setup(0)
+	root.add_child(doca)
+	var trab := doca.get_node("Trabalhador") as TextureRect
+	var pilha := doca.get_node("Pilha") as TextureRect
+	var carga := doca.get_node("Carga") as TextureRect
+	var garfo_no := doca.get_node("Garfo") as TextureRect
+	var emp_no := doca.get_node("Empilhadeira") as TextureRect
+	var barco_no := doca.get_node("Barco") as TextureRect
+	var no_lanca := doca.get_node("Lanca") as TextureRect
+	var tipo: String = k["CARGA_DO_SERVICO"]["grande"]["armazenagem"]
+	var dela := {}
+	for alt in k["QUADROS_EMPILHADEIRA"]["m"]:
+		dela[k["QUADROS_EMPILHADEIRA"]["m"][alt]] = alt
+	var da_lanca := {}
+	for chave in k["LANCA_N3"]:
+		da_lanca[k["LANCA_N3"][chave]] = chave
+	for ponta in k["PONTAS_N3"][tipo]:
+		da_lanca[k["PONTAS_N3"][tipo][ponta]] = ponta
+	var da_carga := {}
+	for lugar in k["LINGADAS_N3"][tipo]:
+		da_carga[k["LINGADAS_N3"][tipo][lugar]] = lugar
+	var do_garfo := {}
+	for alt in k["GARFO_N3"][tipo]:
+		do_garfo[k["GARFO_N3"][tipo][alt]] = alt
+
+	_confere("D42: parada, sem ninguém, a empilhadeira espera no cais",
+		emp_no.visible and emp_no.texture == k["EMPILHADEIRA_N3"] and not garfo_no.visible)
+	GS.assign_worker(int(w["id"]), 0, false)
+	doca.refresh()
+	var tw0 = doca.get("_tw_trabalho")
+	var tem_tween: bool = tw0 is Tween and (tw0 as Tween).is_valid()
+	_confere("D42: alocada, o nó do trabalhador sai e ela vai ao volante",
+		tem_tween and not trab.visible and emp_no.visible and dela.has(emp_no.texture))
+	_confere("D42: a pilha é a dos pallets do tipo do barco (%s)" % tipo,
+		pilha.visible and pilha.texture == k["PILHAS_N3"][tipo])
+	_confere("D42: na ordem dos nós a pilha, o pallet, ela e o barco",
+		pilha.get_index() < garfo_no.get_index() and garfo_no.get_index() < emp_no.get_index()
+			and emp_no.get_index() < barco_no.get_index()
+			and barco_no.get_index() < carga.get_index())
+	var varre = doca.get("_tw_lanca")
+	_confere("D42: o pórtico não gira a imagem por cima dos quadros",
+		no_lanca.rotation == 0.0 and not (varre is Tween and (varre as Tween).is_valid()))
+
+	var lanca_vista := {}
+	var carga_vista := {}
+	var garfo_visto := {}
+	var fora_dela := 0
+	var garfo_solto := 0
+	var com_ela := 0
+	var duas_cargas := 0
+	var sumiu := 0
+	var posicoes := {}
+	var salto_no := 0.0
+	var emp_antes = null
+	if tem_tween:
+		var tw: Tween = tw0
+		var passos := int(ceil(float(DockS.duracao_do_ciclo()) * 30.0)) + 2
+		for i in range(passos):
+			tw.custom_step(1.0 / 30.0)
+			if da_lanca.has(no_lanca.texture):
+				lanca_vista[da_lanca[no_lanca.texture]] = true
+			if carga.visible:
+				carga_vista[da_carga.get(carga.texture, "?")] = true
+			if not dela.has(emp_no.texture):
+				fora_dela += 1
+			posicoes[Vector2i(emp_no.position.round())] = true
+			if emp_antes != null:
+				salto_no = maxf(salto_no, emp_no.position.distance_to(emp_antes as Vector2))
+			emp_antes = emp_no.position
+			# Com o spreader em baixo no pouso o pallet está nele ou no chão:
+			# largado, e antes de ela o apanhar, é o nó `Garfo` que o mostra.
+			if da_lanca.get(no_lanca.texture, "") == "pilha" and not carga.visible \
+					and not garfo_no.visible:
+				sumiu += 1
+			if garfo_no.visible:
+				garfo_visto[do_garfo.get(garfo_no.texture, "?")] = true
+				# Com ela já a caminho do destino, o pallet que se vê é o do
+				# garfo, e anda com ela. ⚠️ A PRIMEIRA VERSÃO ISENTAVA O PALLET
+				# «NO POUSO» — e o defeito de o deixar lá enquanto ela anda cabia
+				# todo nessa isenção (medido: passou verde). O que separa o
+				# pallet no chão do pallet no garfo é ONDE ELA ESTÁ.
+				var na_ida: bool = (emp_no.position - Vector2(doca.get("_emp_base"))) \
+					.dot(Vector2(doca.get("_destino_n3"))) > 1.0
+				if na_ida:
+					com_ela += 1
+					if garfo_no.position != emp_no.position:
+						garfo_solto += 1
+				if carga.visible:
+					duas_cargas += 1
+			if i == 30:
+				var antes := no_lanca.texture
+				var pos_antes := emp_no.position
+				doca.refresh()
+				_confere("D42: um refresh a meio não recomeça o ciclo",
+					doca.get("_tw_trabalho") == tw0 and no_lanca.texture == antes
+						and emp_no.position == pos_antes)
+	var n_lanca: int = (k["LANCA_N3"] as Dictionary).size() + 2
+	_confere("D42: os %d passos do pórtico passam pelo nó (%d)" % [n_lanca, lanca_vista.size()],
+		lanca_vista.size() == n_lanca)
+	_confere("D42: as nove lingadas passam pelo nó Carga (%d)" % carga_vista.size(),
+		carga_vista.size() == 9 and not carga_vista.has("?"))
+	_confere("D42: o pallet no garfo, em baixo e levantado, passa pelo nó (%s)"
+			% [garfo_visto.keys()],
+		garfo_visto.size() == 2 and not garfo_visto.has("?"))
+	_confere("D42: todo quadro da empilhadeira é dela (%d fora)" % fora_dela, fora_dela == 0)
+	_confere("D42: o pallet no garfo anda com ela (%d fora em %d passos a caminho)"
+			% [garfo_solto, com_ela], garfo_solto == 0 and com_ela > 10)
+	_confere("D42: o pallet nunca está no spreader e no garfo ao mesmo tempo (%d)"
+			% duas_cargas, duas_cargas == 0)
+	_confere("D42: o pallet largado não some antes de ela o apanhar (%d passos)" % sumiu,
+		sumiu == 0)
+	_confere("D42: ela anda (%d posições)" % posicoes.size(), posicoes.size() > 20)
+	# A MESMA PERGUNTA DO CICLO, NO NÓ: a de cima refaz a conta do `Dock.gd`, e
+	# um erro no `_aplicar_n3()` passava-lhe ao lado. A 1/30 s ela anda menos
+	# de 1 px; o corte de 2 px apanha qualquer teletransporte.
+	_confere("D42: no nó ela não salta (%.2f px num passo de 1/30 s)" % salto_no,
+		salto_no <= 2.0)
+
+	# O segundo turno do serviço: no n3 os dois continuam.
+	barco["progress"] = 1
+	doca.refresh()
+	_confere("D42: no segundo turno o ciclo continua", doca.get("_tw_trabalho") == tw0
+		and (tw0 as Tween).is_valid())
+
+	# O contêiner: o pórtico pousa-o no cais, e ela espera ao volante.
+	barco["motivo"] = "conteiner"
+	doca.refresh()
+	var tw1 = doca.get("_tw_trabalho")
+	var espera: Vector2 = k["ESPERA_N3"]
+	_confere("D42: com contêiner o pórtico trabalha e ela espera ao volante, sem pallet",
+		tw1 is Tween and (tw1 as Tween).is_valid() and pilha.texture == k["PILHAS_N3"]["conteiner"]
+			and k["QUADROS_EMPILHADEIRA"]["m"]["baixo"] == emp_no.texture
+			and emp_no.position == Vector2(doca.get("_emp_base")) + espera
+			and not garfo_no.visible)
+
+	# Acabado o serviço: parada, sem ninguém, à espera; e no nível 2 sai.
+	GS.docks[0]["worker_id"] = null
+	GS.docks[0]["boat"] = null
+	doca.refresh()
+	_confere("D42: acabado o serviço, ela fica parada sem ninguém e o pallet sai",
+		emp_no.visible and emp_no.texture == k["EMPILHADEIRA_N3"] and not garfo_no.visible
+			and not pilha.visible and not carga.visible
+			and emp_no.position == Vector2(doca.get("_emp_base")) + espera)
+	GS.estruturas = ["armazem", "patio"]
+	doca.refresh()
+	_confere("D42: no nível 2 a empilhadeira sai do cais", not emp_no.visible)
+	doca.queue_free()
+	GS.estruturas = estruturas_antes
+
+
+# O pallet no fim do caminho, contra o desenho do camião encostado: a fração
+# de camião num quadrado à volta do CENTRO do pallet (a meio pallet das
+# portas, porque é o centro que pára lá). Medido a 03/10.
+const D42_ENTREGA_RAIO := 8
+const D42_ENTREGA_MIN := 0.03
+
+
+func _d42_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var tweens_antes := {}
+	for tw in get_processed_tweens():
+		tweens_antes[tw] = true
+	var estruturas_antes: Array = GS.estruturas.duplicate()
+	GS.estruturas = ["armazem", "patio", "guindaste", "cais"]
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var acessos: Array = consts["ACESSOS_DOCA"]
+	while GS.docks.size() < acessos.size():
+		GS.docks.append({"boat": null, "worker_id": null})
+	for d in GS.docks:
+		d["boat"] = null
+		d["worker_id"] = null
+	var barco: Dictionary = GS._make_boat()
+	barco["classe"] = "grande"
+	barco["motivo"] = "armazenagem"
+	barco["rival"] = false
+	barco["progress"] = 0
+	GS.docks[0]["boat"] = barco
+	GS.docks[0]["worker_id"] = int(GS.workers[0]["id"])
+	tela.call("_refresh_all")
+	for tw in get_processed_tweens():
+		if not tweens_antes.has(tw):
+			tw.kill()
+	var doca: Control = tela.get_node("MapaWrap/Docas/Doca0")
+	var pilha_tex: Texture2D = k["PILHAS_N3"]["caixa"]
+	var sem_camiao: Vector2 = doca.get("_destino_n3")
+	_confere("D42: sem camião ela leva à pilha",
+		doca.get("_camiao") == null and sem_camiao.is_equal_approx(
+			PropIso.desenho(pilha_tex).end - PropIso.desenho(k["GARFO_N3"]["caixa"]["baixo"]).end))
+
+	var cenario := tela.get_node("MapaWrap/Cenario")
+	var caminhao := cenario.get_node("Caminhao0") as TextureRect
+	var base: Vector2 = (tela.get("_base_do_caminhao") as Array)[0]
+	var origem: Vector2 = (consts["CAMINHAO_ORIGENS"] as Array)[0]
+	caminhao.position = base + tela.tela_da_rota(acessos[0]["paragem"], origem)
+	caminhao.texture = consts["CAMINHOES"]["armazenagem"][0]["mx_retorno"]
+	(tela.get("_ocupante_do_berco") as Array)[0] = caminhao
+	tela.call("_encostou", 0, int(barco["id"]))
+	var tw0 = doca.get("_tw_trabalho")
+	_confere("D42: com o camião encostado a doca sabe dele e o caminho muda",
+		doca.get("_camiao") != null and tw0 is Tween and (tw0 as Tween).is_valid()
+			and not (doca.get("_destino_n3") as Vector2).is_equal_approx(sem_camiao))
+	# No camião o garfo NÃO desce: a carga entra pelas portas à altura a que
+	# vinha. Anda o ciclo pelo tween e lê o nó no fim do caminho.
+	var emp_no := doca.get_node("Empilhadeira") as TextureRect
+	var sexo0: String = DockS.sexo_do_trabalhador(int(GS.workers[0]["id"]))
+	var no_fim := 0
+	var desceu := 0
+	if tw0 is Tween and (tw0 as Tween).is_valid():
+		var alvo: Vector2 = Vector2(doca.get("_emp_base")) + Vector2(doca.get("_destino_n3"))
+		var passos := int(ceil(float(DockS.duracao_do_ciclo()) * float(doca.get("_escala_n3")) * 30.0)) + 2
+		for i in range(passos):
+			(tw0 as Tween).custom_step(1.0 / 30.0)
+			if emp_no.position.distance_to(alvo) < 0.01:
+				no_fim += 1
+				if emp_no.texture == k["QUADROS_EMPILHADEIRA"][sexo0]["baixo"]:
+					desceu += 1
+	_confere("D42: nas portas do camião o garfo não desce (%d de %d passos lá em baixo)"
+			% [desceu, no_fim], no_fim > 0 and desceu == 0)
+
+	# O eixo e o fim, em cada camião que leva PALLET: o pescado, a carga geral
+	# e o granel, das duas empresas.
+	var eixo := Vector2(-2.0, -1.0).normalized()
+	var pior_graus := 0.0
+	var qual := ""
+	var mais_longe := 0.0
+	var pior_junto := 1.0
+	var dentro_max := 0.0
+	var garfo_tex: Texture2D = k["GARFO_N3"]["caixa"]["baixo"]
+	var r := PropIso.desenho(garfo_tex)
+	var emp_base: Vector2 = doca.get("_emp_base")
+	for motivo in ["pescado", "armazenagem", "granel"]:
+		for e in range((consts["CAMINHOES"][motivo] as Array).size()):
+			caminhao.texture = consts["CAMINHOES"][motivo][e]["mx_retorno"]
+			doca.camiao_no_berco(tela.portas_do_camiao(caminhao) - doca.global_position)
+			var c: Vector2 = doca.get("_destino_n3")
+			var g := rad_to_deg(absf(c.normalized().angle_to(eixo)))
+			if g > pior_graus:
+				pior_graus = g
+				qual = "%s, empresa %d, %.0f px" % [motivo, e, c.length()]
+			mais_longe = maxf(mais_longe, c.length())
+			var centro: Vector2 = emp_base + Vector2(PropIso.MEIO, PropIso.MEIO) \
+				+ r.get_center() + c + doca.position
+			var centro_cam := caminhao.position + caminhao.size / 2.0
+			pior_junto = minf(pior_junto, _d39_desenho_a_volta(caminhao.texture,
+				centro - centro_cam, D42_ENTREGA_RAIO))
+	_confere("D42: até ao camião o caminho anda em −mx (pior %.1f°: %s)" % [pior_graus, qual],
+		pior_graus <= D40_EIXO_MAX_GRAUS)
+	_confere("D42: o pallet acaba junto às portas de trás (pior %.0f%% de camião à volta)"
+			% [pior_junto * 100.0], pior_junto >= D42_ENTREGA_MIN)
+	# O ÚLTIMO camião posto é o do caminho mais comprido? Não necessariamente
+	# — então põe-se o mais comprido outra vez e lê-se a doca com ele.
+	var mais_longe_tex: Texture2D = null
+	for motivo in ["pescado", "armazenagem", "granel"]:
+		for e in range((consts["CAMINHOES"][motivo] as Array).size()):
+			caminhao.texture = consts["CAMINHOES"][motivo][e]["mx_retorno"]
+			doca.camiao_no_berco(tela.portas_do_camiao(caminhao) - doca.global_position)
+			if is_equal_approx((doca.get("_destino_n3") as Vector2).length(), mais_longe):
+				mais_longe_tex = caminhao.texture
+	var leva: float = doca.get("_leva_n3")
+	var volta: float = doca.get("_volta_n3")
+	var esc: float = doca.get("_escala_n3")
+	var ida_px: float = (doca.get("_destino_n3") as Vector2).length()
+	var vel := ida_px / (leva * esc)
+	_confere("D42: o caminho mais comprido (%.0f px) cabe no ciclo (%.2f + %.2f s de %.2f) sem ela passar do teto (%.0f px/s, ciclo x%.2f)"
+			% [mais_longe, leva, volta, float(DockS.janela_n3()), vel, esc],
+		mais_longe_tex != null and leva + volta <= float(DockS.janela_n3()) + 0.001
+			and vel <= float(k["EMPILHADEIRA_PX_POR_SEG_MAX"]) + 0.01)
+	# O tween dura o ciclo esticado: é ele que abranda o pórtico com ela. Um
+	# segundo de relógio anda 1/escala de ciclo — com o tween a durar o ciclo
+	# de sempre, andaria um segundo inteiro, e ela voltava a voar.
+	var tw_c = doca.get("_tw_trabalho")
+	var anda_ciclo := -1.0
+	if tw_c is Tween and (tw_c as Tween).is_valid():
+		var t_antes: float = doca.get("_t_n3")
+		(tw_c as Tween).custom_step(1.0)
+		anda_ciclo = fposmod(float(doca.get("_t_n3")) - t_antes, float(DockS.duracao_do_ciclo()))
+	_confere("D42: com o caminho comprido o ciclo inteiro abranda (x%.2f: 1 s anda %.2f s de ciclo)"
+			% [esc, anda_ciclo],
+		esc > 1.0 and absf(anda_ciclo - 1.0 / esc) < 0.02)
+
+	GS.docks[0]["boat"] = null
+	GS.docks[0]["worker_id"] = null
+	tela.call("_refresh_all")
+	_confere("D42: o camião largou, e a doca deixou de o ter", doca.get("_camiao") == null)
+	tela.queue_free()
+	GS.estruturas = estruturas_antes
+
+
+func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var tweens_antes := {}
+	for tw in get_processed_tweens():
+		tweens_antes[tw] = true
+	var estruturas_antes: Array = GS.estruturas.duplicate()
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var acessos: Array = consts["ACESSOS_DOCA"]
+	var cenario := tela.get_node("MapaWrap/Cenario")
+	var estados := [["patio", "guindaste", "cais"],
+		["armazem", "escritorio", "patio", "guindaste", "cais"]]
+	var figura: Array = [k["QUADROS_EMPILHADEIRA"]["h"]["alto"], k["GARFO_N3"]["caixa"]["alto"]]
+	var pior := 0
+	var onde := ""
+	var vistos := 0
+	for estado in estados:
+		GS.estruturas = estado
+		while GS.docks.size() < acessos.size():
+			GS.docks.append({"boat": null, "worker_id": null})
+		for d in range(acessos.size()):
+			for dd in GS.docks:
+				dd["boat"] = null
+				dd["worker_id"] = null
+			var barco: Dictionary = GS._make_boat()
+			barco["classe"] = "grande"
+			barco["motivo"] = "armazenagem"
+			barco["rival"] = false
+			barco["progress"] = 0
+			GS.docks[d]["boat"] = barco
+			GS.docks[d]["worker_id"] = int(GS.workers[0]["id"])
+			tela.call("_refresh_all")
+			for tw in get_processed_tweens():
+				if not tweens_antes.has(tw):
+					tw.kill()
+			var doca: Control = tela.get_node("MapaWrap/Docas/Doca%d" % d)
+			var emp_base: Vector2 = doca.get("_emp_base")
+			var espera: Vector2 = k["ESPERA_N3"]
+			var caminhos := [["pilha", doca.get("_destino_n3")]]
+			var caminhao := cenario.get_node("Caminhao0") as TextureRect
+			var base: Vector2 = (tela.get("_base_do_caminhao") as Array)[0]
+			var origem: Vector2 = (consts["CAMINHAO_ORIGENS"] as Array)[0]
+			caminhao.position = base + tela.tela_da_rota(acessos[d]["paragem"], origem)
+			caminhao.texture = consts["CAMINHOES"]["armazenagem"][0]["mx_retorno"]
+			(tela.get("_ocupante_do_berco") as Array)[d] = caminhao
+			tela.call("_encostou", d, int(barco["id"]))
+			if doca.get("_camiao") != null:
+				caminhos.append(["camião", doca.get("_destino_n3")])
+			for c in caminhos:
+				vistos += 1
+				for i in range(21):
+					var f := float(i) / 20.0
+					var desloc: Vector2 = espera.lerp(Vector2.ZERO, minf(f * 3.0, 1.0)) \
+						if f < 1.0 / 3.0 else (c[1] as Vector2) * ((f - 1.0 / 3.0) * 1.5)
+					var canto: Vector2 = doca.position + emp_base + desloc
+					var n := _d40_tapados(figura, canto, cenario, caminhao)
+					if int(n[0]) > pior:
+						pior = int(n[0])
+						onde = "doca %d, %s, até %s, %d/20: %s" % [d, estado[0], c[0], i, n[1]]
+			(tela.get("_ocupante_do_berco") as Array)[d] = null
+			(tela.get("_visita_do_berco") as Array)[d] = -1
+	_confere("D42: percorreu os caminhos das três docas nos dois estados (%d)" % vistos,
+		vistos == 2 * 2 * acessos.size())
+	_confere("D42: ela não se pinta por cima de prop do cenário que lhe está à frente (%d px; %s)"
+			% [pior, onde if onde != "" else "nenhum"],
+		pior <= D40_A_FRENTE_MAX,
+		"as docas desenham-se por cima do cenário: ali ela aparece à frente do que a tapa")
+	tela.queue_free()
+	GS.estruturas = estruturas_antes
+	for dd in GS.docks:
+		dd["boat"] = null
+		dd["worker_id"] = null

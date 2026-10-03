@@ -1576,6 +1576,155 @@ def poste_de_luz(nome, base, altura, mat, mat_luz):
     ]
 
 
+# ── A EMPILHADEIRA E O PALLET, NA RÉGUA DA PESSOA (03/10, `docs/decisoes/079`)
+#
+# A empilhadeira do pátio media 47 px de caixa, a de um camião inteiro: a
+# `069` acertou a régua das pessoas e dos camiões e não chegou a ela. O Bruno
+# escolheu-a À RÉGUA DA PESSOA, 1,5x o real, porque é a pessoa que a conduz:
+# a 1x o capacete de quem vai sentado sairia pela cobertura. O pallet vai na
+# mesma régua, porque é a ele que o garfo entra.
+#
+# As MEDIDAS SÃO REAIS (uma empilhadeira de 2,5 t, um pallet de 1,2 x 1,0 m),
+# passadas pela régua do mundo com o fator da pessoa: o chão por
+# `METROS_POR_U`, a altura por `PX_POR_METRO` — a régua de altura, que é a que
+# o olho alinha (`069`). É a segunda peça do kit desenhada a partir de metros,
+# depois do carro.
+#
+# UMA FUNÇÃO SÓ PARA AS TRÊS: a do pátio (`brp_porto`), a parada no cais do
+# nível 3 e a que trabalha nele. Duas cópias divergiriam no primeiro ajuste.
+ESCALA_EMPILHADEIRA = 1.5
+
+
+def _hm(metros: float) -> float:
+    """Metros de chão -> unidades de mundo, à régua da pessoa."""
+    return metros * ESCALA_EMPILHADEIRA / METROS_POR_U
+
+
+def _vm(metros: float) -> float:
+    """Metros de altura -> unidades do Blender, à régua da pessoa."""
+    return z(metros * ESCALA_EMPILHADEIRA * PX_POR_METRO)
+
+
+# O pallet (1,2 x 1,0 m) e a altura dele, que levanta a carga de cima. Mais
+# alto do que os 0,144 m do real: a 1,2 px de tela ele era um risco.
+PALLET_M = (1.2, 1.0, 0.18)
+# Onde o garfo entra, contra o centro do pallet: o mastro fica logo atrás da
+# ponta de cá dele, e o garfo de 1,07 m corre por baixo quase todo.
+FOLGA_MASTRO_M = 0.02
+
+
+def pallet_pecas(M, nome, cx, cy, z0) -> list:
+    """Um pallet de madeira com o centro em (cx, cy) e o fundo em `z0`:
+    três tábuas por cima, comprido em `x`, e três blocos por baixo.
+
+    ⚠️ AS TÁBUAS AFUNDAM 0,3 px NOS BLOCOS, e os blocos são mais estreitos
+    do que as tábuas: nenhuma face encosta noutra (o losango preto)."""
+    pl, pf, ph = PALLET_M
+    tabua_z = _vm(ph * 0.40)
+    bloco_z = _vm(ph * 0.60) + z(0.3)
+    p = []
+    for i, dy in enumerate((-0.38, 0.0, 0.38)):
+        p.append(caixa("%s_bloco%d" % (nome, i),
+                       (cx, cy + _hm(pf * dy), z0 + bloco_z / 2.0),
+                       (_hm(pl * 0.96), _hm(0.12), bloco_z), M["madeira_esc"]))
+    for i, dy in enumerate((-0.36, 0.0, 0.36)):
+        p.append(caixa("%s_tabua%d" % (nome, i),
+                       (cx, cy + _hm(pf * dy), z0 + bloco_z - z(0.3) + tabua_z / 2.0),
+                       (_hm(pl), _hm(0.26), tabua_z), M["madeira"]))
+    return p
+
+
+def altura_do_pallet() -> float:
+    """Do chão ao tampo do pallet, em unidades do Blender."""
+    return _vm(PALLET_M[2] * 0.60) + _vm(PALLET_M[2] * 0.40)
+
+
+def empilhadeira_pecas(M, nome, cx, cy, z0, garfo_m=0.0):
+    """A empilhadeira com o CENTRO DO PALLET que ela leva em (cx, cy), o chão
+    em `z0` e o garfo para `−x`, levantado `garfo_m` metros.
+
+    Devolve as peças e o assento — (x, y, altura em px de tela acima do chão)
+    —, onde quem a conduz se senta.
+
+    ⚠️ O GARFO APONTA PARA `−x`, E A CÂMARA VÊ `+x` E `−y`. Ela leva a carga a
+    andar para terra, que no cais é `−x`: vê-se o CONTRAPESO e o flanco, e a
+    carga por cima do capô, atrás do mastro. É a vista de uma empilhadeira que
+    se afasta, e é por isso que o mastro e a grade do encosto são VAZADOS —
+    duas barras e não uma chapa: uma chapa tapava a carga que ela leva.
+    """
+    xm = cx + _hm(PALLET_M[0] / 2.0 + FOLGA_MASTRO_M)   # a face do mastro
+    g = _vm(garfo_m)
+    p = []
+
+    def em(dx_m, dy_m, z_m):
+        return (xm + _hm(dx_m), cy + _hm(dy_m), z0 + _vm(z_m))
+
+    # O GARFO: duas lanças de 1,07 m, à frente do mastro. Ao chão ficam dentro
+    # do pallet, e é por isso que a espessura não precisa de ser real.
+    for i, dy in enumerate((-0.30, 0.30)):
+        p.append(caixa("%s_garfo%d" % (nome, i),
+                       (xm - _hm(0.535), cy + _hm(dy), z0 + g + _vm(0.06)),
+                       (_hm(1.07), _hm(0.12), _vm(0.08)), M["metal"]))
+        # O talão que sobe do garfo à placa: é ele que diz que o garfo
+        # pertence ao mastro, e não é uma tábua solta no chão.
+        p.append(caixa("%s_talao%d" % (nome, i),
+                       (xm + _hm(0.03), cy + _hm(dy), z0 + g + _vm(0.35)),
+                       (_hm(0.06), _hm(0.12), _vm(0.62)), M["metal"]))
+    # O ENCOSTO, vazado: duas travessas e as duas pernas do talão.
+    for i, zz in enumerate((0.32, 0.95)):
+        p.append(caixa("%s_encosto%d" % (nome, i),
+                       (xm + _hm(0.05), cy, z0 + g + _vm(zz)),
+                       (_hm(0.05), _hm(0.98), _vm(0.06)), M["metal"]))
+    # O MASTRO: dois montantes, uma travessa em cima.
+    for i, dy in enumerate((-0.40, 0.40)):
+        p.append(caixa("%s_mastro%d" % (nome, i), em(0.14, dy, 1.13),
+                       (_hm(0.12), _hm(0.10), _vm(2.06)), M["metal_claro"]))
+    p.append(caixa("%s_mastro_topo" % nome, em(0.14, 0.0, 2.14),
+                   (_hm(0.13), _hm(0.92), _vm(0.08)), M["metal_claro"]))
+
+    # O CORPO, amarelo: chassi baixo, para-lamas, e o contrapeso atrás. O
+    # contrapeso é ESCURO — a face `+x` é a que se vê, e um bloco amarelo do
+    # mesmo tom do chassi fundia-se nele (a regra das faces vizinhas).
+    p += [
+        caixa("%s_chassi" % nome, em(1.22, 0.0, 0.62),
+              (_hm(2.0), _hm(1.10), _vm(0.74)), M["amarelo"]),
+        caixa("%s_contrapeso" % nome, em(2.18, 0.0, 0.74),
+              (_hm(0.52), _hm(1.14), _vm(0.98)), M["metal"]),
+        caixa("%s_capo" % nome, em(1.40, 0.0, 1.03),
+              (_hm(0.62), _hm(1.02), _vm(0.10)), M["amarelo"]),
+        # O banco, e o encosto dele, escuros sobre o amarelo.
+        caixa("%s_banco" % nome, em(1.36, 0.0, 1.11),
+              (_hm(0.42), _hm(0.46), _vm(0.08)), M["pneu"]),
+        caixa("%s_banco_costas" % nome, em(1.60, 0.0, 1.34),
+              (_hm(0.08), _hm(0.44), _vm(0.42)), M["pneu"]),
+        # O painel e o volante à frente do banco.
+        caixa("%s_painel" % nome, em(0.62, 0.0, 1.16),
+              (_hm(0.24), _hm(0.80), _vm(0.30)), M["amarelo"]),
+        barra("%s_coluna" % nome, em(0.62, 0.0, 1.20), em(0.86, 0.0, 1.48),
+              _hm(0.06), M["pneu"]),
+    ]
+    # A COBERTURA: quatro montantes e a grade de cima. Os da frente inclinam
+    # para a frente, como nas de verdade; a grade é escura e não amarela, que
+    # é a linha que fecha a silhueta por cima.
+    for i, (dx0, dx1, dy) in enumerate(((0.42, 0.34, -0.50), (0.42, 0.34, 0.50),
+                                        (1.86, 1.86, -0.50), (1.86, 1.86, 0.50))):
+        p.append(barra("%s_coluna_cob%d" % (nome, i), em(dx0, dy, 0.98),
+                       em(dx1, dy, 2.24), _hm(0.07), M["metal"]))
+    p.append(caixa("%s_cobertura" % nome, em(1.10, 0.0, 2.27),
+                   (_hm(1.62), _hm(1.10), _vm(0.06)), M["metal"]))
+    # O PIRILAMPO laranja atrás, em cima: o sinal de toda máquina de pátio.
+    p.append(caixa("%s_pirilampo" % nome, em(1.80, 0.36, 2.37),
+                   (_hm(0.12), _hm(0.12), _vm(0.14)), M["laranja"]))
+    # AS RODAS, de borracha: a da frente maior, debaixo do mastro.
+    for i, (dx, raio, dy) in enumerate(((0.36, 0.33, -0.48), (0.36, 0.33, 0.48),
+                                        (1.94, 0.28, -0.48), (1.94, 0.28, 0.48))):
+        p.append(cone("%s_roda%d" % (nome, i), em(dx, dy, raio),
+                      _vm(raio), _vm(raio), _hm(0.22), 12, M["pneu"],
+                      rot=(90, 0, 0)))
+    assento = (xm + _hm(1.30), cy, 1.15 * ESCALA_EMPILHADEIRA * PX_POR_METRO)
+    return p, assento
+
+
 # ---------------------------------------------------------------- os props
 # Cada função devolve a lista de objetos daquele prop. Props que partilham
 # geometria (o píer nos três estados) montam a partir das MESMAS peças: é o que
@@ -2228,31 +2377,10 @@ def montar(M: dict) -> dict:
         "pl_peixe", PILHA_N1[0], PILHA_N1[1], ALT_PIER - 0.004,
         ((0.02, -0.135), (0.0, 0.0), (-0.03, 0.135)), PILHA_ANDARES)
 
-    lanca_n3 = trelica("l3_lanca", (GX, GY - 0.20, TOPO), (GX, BARCO_Y - 0.45, TOPO),
-                       0.16, M["laranja"], montantes=9, esp=0.048)
-    lanca_n3 += trelica("l3_contra", (GX, GY + 0.20, TOPO), (GX, GY + 1.25, TOPO),
-                        0.13, M["laranja"], montantes=4, esp=0.046)
-    CARRO3 = BARCO_Y + 0.30
-    lanca_n3 += [
-        caixa("l3_contrapeso", (GX, GY + 1.42, TOPO - 0.08),
-              (0.34, 0.34, 0.38), M["metal"]),
-        caixa("l3_torreta", (GX, GY, TOPO + 0.50), (0.10, 0.10, 0.82), M["metal"]),
-        barra("l3_tirante_frente", (GX, GY, TOPO + 0.86),
-              (GX, BARCO_Y - 0.10, TOPO + 0.06), 0.030, M["metal"]),
-        barra("l3_tirante_tras", (GX, GY, TOPO + 0.86),
-              (GX, GY + 1.25, TOPO + 0.06), 0.030, M["metal"]),
-        caixa("l3_carro", (GX, CARRO3, TOPO - 0.16), (0.19, 0.30, 0.14), M["metal"]),
-        caixa("l3_cabo_a", (GX - 0.10, CARRO3, TOPO - 0.78), (0.03, 0.03, 1.1), M["metal"]),
-        caixa("l3_cabo_b", (GX + 0.10, CARRO3, TOPO - 0.78), (0.03, 0.03, 1.1), M["metal"]),
-        # SPREADER em vez de moitão: a moldura que agarra um contêiner pelos
-        # quatro cantos. É a peça que diz, sem texto, que este guindaste move
-        # contêiner e o outro movia caixote.
-        caixa("l3_spreader", (GX, CARRO3, TOPO - 1.40), (0.24, 1.05, 0.10),
-              M["amarelo"]),
-    ]
-    for sy in (-0.44, 0.44):
-        lanca_n3.append(caixa("l3_trava%.2f" % sy, (GX, CARRO3 + sy, TOPO - 1.50),
-                              (0.16, 0.12, 0.12), M["metal"]))
+    # O PÓRTICO DO n3 — treliça, contralança, carro e spreader — é o
+    # `portico_n3()`, mais abaixo: desde o degrau 3 ele gira a descarregar
+    # com o carro a recolher, e cada quadro é ele renderizado no seu passo
+    # (`079`). O de repouso é o primeiro desses passos.
 
     # Base e mastro entram no PRÓPRIO píer: um guindaste é o que faz uma
     # estrutura de madeira ler como porto e não como pontão de pesca. A lança
@@ -2261,8 +2389,8 @@ def montar(M: dict) -> dict:
     grupos["pier_n2"] = estacas + tabuado + mastro_n2
     grupos["pier_n3"] = estacas_aco + deck_n3 + mastro_n3
     grupos["lanca_n1"] = lanca_n1
-    # O `lanca_n2` sai com os quadros dele, depois dos cascos (`077`).
-    grupos["lanca_n3"] = lanca_n3
+    # O `lanca_n2` e o `lanca_n3` saem com os quadros deles, depois dos
+    # cascos (`077`, `079`).
     # NÃO existe um "pier_ampliado" assado. Existiu, e foi retirado em 31/08:
     # era o píer com a lança já colada, e o jogo monta essa imagem em tempo de
     # execução com as duas peças acima, justamente para poder girar a lança.
@@ -3952,6 +4080,259 @@ def montar(M: dict) -> dict:
                 f"_{sexo}d{q}", sexo, 1, 1.0, False, base=base_n2,
                 bracos=bracos, giro=90.0)
     _base[:] = [MX, MY]
+
+    # -- O PÓRTICO DO NÍVEL 3 E A EMPILHADEIRA (03/10, `docs/decisoes/079`) --
+    #
+    # Escolhas do Bruno, perguntadas antes do render: o pórtico tira a carga
+    # do barco e pousa-a num PALLET a meio do cais; o trabalhador alocado leva
+    # o pallet de empilhadeira pelo comprimento do píer, até à pilha da raiz —
+    # ou ao camião, se ele estiver encostado. Os dois ao mesmo tempo: com o
+    # pórtico, ~72% dos serviços do nível 3 duram UM turno, e o «primeiro
+    # descarrega, depois leva» do n2 quase não aconteceria. O contêiner fica
+    # como no n2: pousa no cais, e a máquina dele é outra passagem.
+    #
+    # ⚠️ O PÓRTICO GIRA COMO A LANÇA DO n2 E O CARRO RECOLHE AO LONGO DELA.
+    # Um pórtico de verdade não gira, corre no trilho; este tem a torre fixa
+    # perto da ponta, e o porão dos cascos fica para terra dela — medido com a
+    # linha do carro a 0°, ela caía na PROA de todos os cascos e ao lado do
+    # bote. Gira o mesmo de 18° (o porão, que o n2 já mediu) até ao ponto de
+    # pouso, e o carro vem de 3,30 a ~1,8: é o que põe o pallet a meio do
+    # cais, e o que separa o movimento dele do do n2.
+    #
+    # ⚠️ O SPREADER NÃO GIRA COM A LANÇA. Fica ao comprido do cais (`x`), que
+    # é como vão os contêineres no convés dos cascos — e o rotador dele existe
+    # para isso. O gancho debaixo dele leva os pallets.
+    Y_RUN_N3 = -0.10                       # a linha da empilhadeira, em `y`
+    # ⚠️ O POUSO FICA A 0,55 DA TORRE, e não mais perto: à espera, a
+    # empilhadeira está 0,45 para trás dele, e a −0,39 a traseira dela
+    # encostava na casa de máquinas do pórtico (vista na primeira prancha).
+    POUSO_N3 = (-0.55, Y_RUN_N3)           # onde o pórtico pousa o pallet
+    DEPOSITO_N3 = (-1.65, Y_RUN_N3)        # a frente da pilha, na raiz
+    _px, _py = GX - POUSO_N3[0], GY - POUSO_N3[1]
+    R_POUSO_N3 = math.hypot(_px, _py)
+    GIRO_POUSO_N3 = math.degrees(math.atan2(_px, _py))
+    GIRO_N3 = tuple(GIRO_N1[0] + (GIRO_POUSO_N3 - GIRO_N1[0]) * i / 6.0
+                    for i in range(7))
+    RAIO_N3 = tuple(R_N1 + (R_POUSO_N3 - R_N1) * i / 6.0 for i in range(7))
+    R_PONTA_N3 = R_N1 + 0.25               # a ponta, à frente do carro no barco
+    SPREADER_CIMA_N3 = TOPO - 0.90         # o fundo do spreader em viagem
+    GANCHO_N3 = 0.16                       # do fundo do spreader ao bico
+    LIG_N3 = 0.20                          # do bico ao tampo da carga
+    TRAVA_N3 = 0.065                       # o contêiner prende-se aqui abaixo
+    TIPOS_N3 = ("peixe", "caixa", "saco")  # o que vai em pallet
+
+    def portico_n3(sufixo, giro, raio, fundo):
+        """O pórtico do n3 girado `giro` graus para terra, com o carro a
+        `raio` da torre e o fundo do spreader à altura `fundo`.
+
+        ⚠️ A TORRETA E O TOPO DOS TIRANTES FICAM NO EIXO, em `TOPO`: é o
+        pivô do nó `Lanca`, e o quadro de repouso ainda varre à volta dele.
+        A plataforma de giro está lá pela mesma razão que no n2 (o D17)."""
+        a = math.radians(giro)
+        d = Vector((-math.sin(a), -math.cos(a), 0.0))
+        rz = (0, 0, -giro)
+
+        def em(r, h=0.0):
+            return (GX + d.x * r, GY + d.y * r, TOPO + h)
+
+        p = trelica("p3_lanca" + sufixo, em(0.20), em(R_PONTA_N3), 0.16,
+                    M["laranja"], montantes=9, esp=0.048)
+        p += trelica("p3_contra" + sufixo, em(-0.20), em(-1.25), 0.13,
+                     M["laranja"], montantes=4, esp=0.046)
+        p += [
+            caixa("p3_giro" + sufixo, (GX, GY, TOPO - 0.02), (0.44, 0.44, 0.14),
+                  M["laranja"], rz),
+            caixa("p3_contrapeso" + sufixo, em(-1.42, -0.08), (0.34, 0.34, 0.38),
+                  M["metal"], rz),
+            caixa("p3_torreta" + sufixo, (GX, GY, TOPO + 0.50), (0.10, 0.10, 0.82),
+                  M["metal"]),
+            barra("p3_tirante_frente" + sufixo, (GX, GY, TOPO + 0.86),
+                  em(R_PONTA_N3 - 0.45, 0.06), 0.030, M["metal"]),
+            barra("p3_tirante_tras" + sufixo, (GX, GY, TOPO + 0.86),
+                  em(-1.25, 0.06), 0.030, M["metal"]),
+            caixa("p3_carro" + sufixo, em(raio, -0.16), (0.30, 0.19, 0.14),
+                  M["metal"], rz),
+        ]
+        cx, cy, _ = em(raio)
+        topo_cabo = TOPO - 0.22
+        for i, lado in enumerate((-0.09, 0.09)):
+            p.append(caixa("p3_cabo%d%s" % (i, sufixo),
+                           (cx + lado, cy, (topo_cabo + fundo + 0.10) / 2.0),
+                           (0.03, 0.03, topo_cabo - fundo - 0.10), M["metal"]))
+        p.append(caixa("p3_spreader" + sufixo, (cx, cy, fundo + 0.05),
+                       (0.70, 0.22, 0.10), M["amarelo"]))
+        for sx in (-0.28, 0.28):
+            p.append(caixa("p3_trava%+.2f%s" % (sx, sufixo),
+                           (cx + sx, cy, fundo - 0.005), (0.10, 0.16, 0.12),
+                           M["metal"]))
+        p.append(caixa("p3_gancho" + sufixo, (cx, cy, fundo - GANCHO_N3 / 2.0),
+                       (0.06, 0.06, GANCHO_N3), M["metal"]))
+        return p
+
+    # A CARGA EM PALLET: o pallet à régua da pessoa e, por cima, duas
+    # colunas por duas das MESMAS caixas e sacos do n2 — a de papelão e a de
+    # peixe em dois andares, os sacos em três, que são baixos.
+    ANDARES_N3 = {"peixe": 2, "caixa": 2, "saco": 3}
+    MEIO_N3 = {"peixe": (0.085, 0.058), "caixa": (0.072, 0.067),
+               "saco": (0.087, 0.055)}
+
+    def carga_pallet(nome, tipo, cx, cy, z0):
+        mx_, my_ = MEIO_N3[tipo]
+        colunas = [(sx * mx_, sy * my_) for sx in (-1, 1) for sy in (-1, 1)]
+        return pallet_pecas(M, nome + "_pal", cx, cy, z0) + _lote(
+            nome, tipo, cx, cy, z0 + altura_do_pallet() - 0.004, colunas,
+            ANDARES_N3[tipo])
+
+    def altura_carga(tipo):
+        ch = CAIXA_N2[tipo][2]
+        return altura_do_pallet() - 0.004 + ANDARES_N3[tipo] * (ch - 0.004) + 0.004
+
+    def fundo_para(tipo, fundo_carga):
+        """O fundo do spreader que pousa a carga do `tipo` com o fundo em
+        `fundo_carga` — a conta inversa da `lingada_n3()`."""
+        if tipo == "conteiner":
+            return fundo_carga + CAIXA_N2["conteiner"][2] + TRAVA_N3
+        return fundo_carga + altura_carga(tipo) + LIG_N3 + GANCHO_N3
+
+    def lingada_n3(nome, tipo, hx, hy, fundo):
+        """A carga pendurada do spreader cujo fundo está em `fundo`: o
+        contêiner preso nas travas, ou o pallet em quatro cintas do gancho."""
+        if tipo == "conteiner":
+            ch = CAIXA_N2["conteiner"][2]
+            return _lote(nome, tipo, hx, hy, fundo - TRAVA_N3 - ch,
+                         ((0.0, 0.0),), 1)
+        bico = fundo - GANCHO_N3
+        topo = bico - LIG_N3
+        base = topo - altura_carga(tipo)
+        mx_, my_ = MEIO_N3[tipo]
+        cl, cf = CAIXA_N2[tipo][0], CAIXA_N2[tipo][1]
+        cantos = [(sx * (mx_ + cl / 2.0 - 0.01), sy * (my_ + cf / 2.0 - 0.01))
+                  for sx in (-1, 1) for sy in (-1, 1)]
+        cintas = [barra("%s_cinta%d" % (nome, i), (hx, hy, bico + 0.01),
+                        (hx + ox, hy + oy, topo + 0.01), 0.016, M["madeira_esc"])
+                  for i, (ox, oy) in enumerate(cantos)]
+        return cintas + carga_pallet(nome, tipo, hx, hy, base)
+
+    def carro_em(i):
+        a = math.radians(GIRO_N3[i])
+        return (GX - RAIO_N3[i] * math.sin(a), GY - RAIO_N3[i] * math.cos(a))
+
+    CHAO_N3 = ALT_PIER - 0.004
+    # O contêiner pousa num contêiner que já lá está, como no n2: a pilha
+    # dele é um só, no ponto de pouso.
+    FUNDO_POUSO_N3 = {t: CHAO_N3 for t in TIPOS_N3}
+    FUNDO_POUSO_N3["conteiner"] = CHAO_N3 + CAIXA_N2["conteiner"][2] - 0.004
+
+    # OS QUADROS DO PÓRTICO: o repouso (`lanca_n3`, o g0 — é ele que varre
+    # sem trabalho), os seis passos do giro com o carro a recolher, e o
+    # spreader em baixo no barco e no pouso, um por tipo.
+    grupos["lanca_n3"] = portico_n3("", GIRO_N3[0], RAIO_N3[0], SPREADER_CIMA_N3)
+    for i in range(1, 7):
+        grupos["lanca_n3_g%d" % i] = portico_n3(
+            "_g%d" % i, GIRO_N3[i], RAIO_N3[i], SPREADER_CIMA_N3)
+    for tipo in TIPOS_N3 + ("conteiner",):
+        grupos["lanca_n3_barco_" + tipo] = portico_n3(
+            "_b" + tipo, GIRO_N3[0], RAIO_N3[0],
+            fundo_para(tipo, FUNDO_BARCO[tipo]))
+        grupos["lanca_n3_pouso_" + tipo] = portico_n3(
+            "_p" + tipo, GIRO_N3[-1], RAIO_N3[-1],
+            fundo_para(tipo, FUNDO_POUSO_N3[tipo]))
+        hx, hy = carro_em(0)
+        grupos["lingada_n3_%s_barco" % tipo] = lingada_n3(
+            "l3_%s_b" % tipo, tipo, hx, hy, fundo_para(tipo, FUNDO_BARCO[tipo]))
+        for i in range(7):
+            hx, hy = carro_em(i)
+            grupos["lingada_n3_%s_g%d" % (tipo, i)] = lingada_n3(
+                "l3_%s_%d" % (tipo, i), tipo, hx, hy, SPREADER_CIMA_N3)
+        hx, hy = carro_em(6)
+        grupos["lingada_n3_%s_pouso" % tipo] = lingada_n3(
+            "l3_%s_p" % tipo, tipo, hx, hy, fundo_para(tipo, FUNDO_POUSO_N3[tipo]))
+
+    # A PILHA DO CONTÊINER, no ponto de pouso — como a do n2, um só.
+    grupos["pilha_n3_conteiner"] = _lote(
+        "pl3_cont", "conteiner", POUSO_N3[0], POUSO_N3[1], CHAO_N3,
+        ((0.0, 0.0),), 1)
+
+    # A CARGA NO GARFO, no ponto de pouso: em baixo (a que o pórtico larga e
+    # a que entra na pilha) e levantada 0,30 m para andar. É o MESMO PNG que
+    # o nó `Carga` mostra no chão depois de o spreader a largar — quem a
+    # apanha é a empilhadeira, e a troca de nó não se vê.
+    GARFO_ALTO_M = 0.30
+    for tipo in TIPOS_N3:
+        grupos["carga_n3_%s_baixo" % tipo] = carga_pallet(
+            "cg3_%s_b" % tipo, tipo, POUSO_N3[0], POUSO_N3[1], CHAO_N3)
+        grupos["carga_n3_%s_alto" % tipo] = carga_pallet(
+            "cg3_%s_a" % tipo, tipo, POUSO_N3[0], POUSO_N3[1],
+            CHAO_N3 + _vm(GARFO_ALTO_M))
+
+    # A PILHA DE PALLETS na raiz: o primeiro na frente, no sítio exato onde a
+    # empilhadeira larga o dela — os dois quadros coincidem, e o que ela traz
+    # entra no lugar sem saltar —, um atrás dele e um por cima deste.
+    passo_pilha = _hm(PALLET_M[0]) + 0.02
+    for tipo in TIPOS_N3:
+        x0, y0 = DEPOSITO_N3
+        grupos["pilha_n3_" + tipo] = (
+            carga_pallet("pl3_%s_0" % tipo, tipo, x0, y0, CHAO_N3)
+            + carga_pallet("pl3_%s_1" % tipo, tipo, x0 - passo_pilha, y0, CHAO_N3)
+            + carga_pallet("pl3_%s_2" % tipo, tipo, x0 - passo_pilha, y0,
+                           CHAO_N3 + altura_carga(tipo)))
+
+    # QUEM CONDUZ, sentado: o boneco de sempre com a anca no banco, as
+    # coxas para a frente e os braços no volante. O tronco é o mesmo, porque a
+    # régua da pessoa é uma só (`069`). Virado para `−x`, como a empilhadeira.
+    def sentado(sufixo, sexo, base, assento_px):
+        _base[:] = list(base)
+        s = 1.0
+        q = assento_px / REGUA_DA_PESSOA + 1.0 - 10.4
+        tronco = 0.26 if sexo == "m" else 0.30
+        p = [_bloco(f"ts_quadril{sufixo}", 0.0, 0.0, 10.4 + q,
+                    (0.22, 0.15, 2.0), M["calca"], s)]
+        for lado, l in (("d", 0.055), ("e", -0.055)):
+            p.append(_bloco(f"ts_coxa_{lado}{sufixo}", l, 0.16, 10.0 + q,
+                            (0.09, 0.30, 2.0), M["calca"], s))
+        p.append(_bloco(f"ts_corpo{sufixo}", 0.0, 0.0, 15.5 + q,
+                        (tronco, 0.19, 11.5), M["colete"], s))
+        meio = tronco / 2.0 + 0.035
+        for lado, l in (("d", meio), ("e", -meio)):
+            p.append(_membro(f"ts_braco_{lado}{sufixo}", l, 0.0, OMBRO_H + q,
+                             (0.07, 0.08), 8.0, M["colete"], s, frente=55.0))
+            p.append(_membro(f"ts_mao_{lado}{sufixo}", l, 0.0, OMBRO_H + q,
+                             (0.075, 0.085), 1.8, M["pele"], s, frente=55.0,
+                             desde_px=7.8))
+        p.append(_bloco(f"ts_cabeca{sufixo}", 0.0, 0.0, 24.0 + q,
+                        (0.17, 0.16, 6.0), M["pele"], s))
+        p.append(_bloco(f"ts_capacete{sufixo}", 0.0, 0.0, 28.2 + q,
+                        (0.24, 0.23, 4.4), M["capacete"], s))
+        p.append(_bloco(f"ts_aba{sufixo}", 0.0, 0.07, 26.6 + q,
+                        (0.25, 0.34, 1.8), M["capacete"], s))
+        if sexo == "m":
+            p.append(_bloco(f"ts_rabo{sufixo}", 0.0, -0.12, 21.8 + q,
+                            (0.11, 0.10, 8.0), M["cabelo_preto"], s))
+            for lado, l in (("d", 0.092), ("e", -0.092)):
+                p.append(_bloco(f"ts_mecha_{lado}{sufixo}", l, 0.0, 23.4 + q,
+                                (0.035, 0.12, 6.0), M["cabelo_preto"], s))
+        return _girar(p, 90.0)
+
+    # A EMPILHADEIRA, no quadro do PÍER, com o pallet dela no ponto de pouso:
+    # parada (sem ninguém, a do cais quando a doca não trabalha) e, por sexo,
+    # com o garfo em baixo e levantado. Quem a anda é o nó, como o andar da
+    # `075`: em câmara ortográfica um quadro deslocado é o mesmo render.
+    pecas, _ = empilhadeira_pecas(M, "e3_parada", POUSO_N3[0], POUSO_N3[1],
+                                  ALT_PIER)
+    grupos["empilhadeira_n3"] = pecas
+    for sexo in ("h", "m"):
+        for alt, garfo in (("baixo", 0.0), ("alto", GARFO_ALTO_M)):
+            pecas, (ax, ay, apx) = empilhadeira_pecas(
+                M, "e3_%s_%s" % (sexo, alt), POUSO_N3[0], POUSO_N3[1],
+                ALT_PIER, garfo)
+            grupos["emp_%s_%s" % (sexo, alt)] = pecas + sentado(
+                "_e%s%s" % (sexo, alt[0]), sexo, (ax, -ay), apx)
+    _base[:] = [MX, MY]
+
+    # A geometria do degrau, impressa para quem a confere. O `Dock.gd` não
+    # copia nenhum destes números: o caminho até à pilha sai dos desenhos.
+    print("degrau 3: giro %.2f..%.2f, carro %.3f..%.3f; pouso (%.2f, %.2f)"
+          % (GIRO_N3[0], GIRO_N3[-1], RAIO_N3[0], RAIO_N3[-1], *POUSO_N3))
 
     # -- AS REFERÊNCIAS DE ESCALA: um pedestre e um carro (27/09, `069`) ------
     #

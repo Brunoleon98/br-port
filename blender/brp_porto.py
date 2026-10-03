@@ -20,6 +20,7 @@ from mathutils import Euler, Matrix, Vector
 
 from brp_studio import (caixa, cone, prisma, barra, corrimao, na_face,
                         janela, poste_de_luz, origem, selecao, z)
+import gerar_props_iso as base
 
 
 # Um losango 1x1 do mundo tem 60px de largura na tela. As medidas abaixo estão
@@ -658,41 +659,30 @@ def _registrar_caminhoes(M, est):
 
 
 def empilhadeira(M, est):
-    """Empilhadeira. Peça pequena e muito legível: o mastro vertical quebra a
-    horizontal do pátio, que é onde a composição estava monótona."""
-    p = []
-    RODA = 3.6
-    corpo_c, corpo_t = (-0.10, 0.0, z(RODA + 6.0)), (0.62, 0.46, z(10.0))
-    p.append(caixa("emp_corpo", corpo_c, corpo_t, M["amarelo"]))
-    p.append(caixa("emp_contrapeso", (-0.42, 0.0, z(RODA + 5.0)),
-                   (0.16, 0.44, z(9.0)), M["metal"]))
+    """Empilhadeira do pátio, parada e sem ninguém, de garfo virado para a
+    câmara (`+x`): é a vista que diz «empilhadeira» de longe.
 
-    # Cabine aberta: quatro montantes e um teto. Fechada, a esta escala, vira
-    # um bloco sem leitura.
-    for i, (dx, dy) in enumerate(((0.10, 0.20), (0.10, -0.20),
-                                  (-0.28, 0.20), (-0.28, -0.20))):
-        p.append(barra("emp_montante_%d" % i, (dx, dy, z(RODA + 11.0)),
-                       (dx, dy, z(RODA + 20.0)), 0.030, M["metal"]))
-    p.append(caixa("emp_teto", (-0.09, 0.0, z(RODA + 20.5)),
-                   (0.46, 0.46, z(1.6)), M["metal_claro"]))
-
-    # Mastro e garfos à frente.
-    for i, dy in enumerate((0.16, -0.16)):
-        p.append(barra("emp_mastro_%d" % i, (0.32, dy, z(RODA)),
-                       (0.32, dy, z(RODA + 24.0)), 0.045, M["metal_claro"]))
-        p.append(caixa("emp_garfo_%d" % i, (0.50, dy, z(1.2)),
-                       (0.34, 0.07, z(1.2)), M["metal_claro"]))
-    p.append(barra("emp_travessa", (0.32, 0.19, z(RODA + 3.0)),
-                   (0.32, -0.19, z(RODA + 3.0)), 0.035, M["metal_claro"]))
-
-    for i, x in enumerate((0.24, -0.30)):
-        for j, y in enumerate((0.23, -0.23)):
-            p.append(_roda("emp_roda_%d%d" % (i, j), x, y, RODA, 0.10,
-                           M["metal"]))
-
+    ⚠️ ELA É A MESMA DO CAIS DO NÍVEL 3 (`docs/decisoes/079`), à régua da
+    pessoa: `empilhadeira_pecas()` do `gerar_props_iso.py`, girada 180°. A de
+    antes media 47 px de caixa — a de um camião inteiro —, porque a régua da
+    `069` não chegou a ela. Desenhada à parte, as duas divergiriam no primeiro
+    ajuste."""
+    # O garfo da função aponta para −x; o centro do pallet a −0,37 põe o
+    # meio da máquina na origem, e o giro de 180° vira o garfo para a câmara.
+    p, _ = base.empilhadeira_pecas(M, "emp", -0.37, 0.0, 0.0)
+    _girar_180(p)
     origem("empilhadeira")
     est.registrar("empilhadeira", p, celulas=(1, 1),
                   cena_godot="res://scenes/props/Empilhadeira.tscn")
+
+
+def _girar_180(pecas) -> None:
+    """Gira as peças 180° à volta do eixo vertical da origem, pela
+    `matrix_basis` (a `matrix_world` só se atualiza no passo seguinte do
+    grafo, e girá-la giraria a de ontem)."""
+    m = Matrix.Rotation(math.pi, 4, "Z")
+    for o in pecas:
+        o.matrix_basis = m @ o.matrix_basis
 
 
 def cabeco(M, est):
@@ -729,15 +719,18 @@ def poste(M, est):
 
 
 def pallet(M, est):
-    """Pallet vazio, encostado. Peça de dois minutos que diz muito: um pátio
-    sem pallets é um pátio onde nunca se descarregou nada."""
+    """Pallets vazios empilhados. Peça de dois minutos que diz muito: um pátio
+    sem pallets é um pátio onde nunca se descarregou nada.
+
+    ⚠️ É O PALLET DO CAIS DO NÍVEL 3 (`docs/decisoes/079`), à régua da pessoa
+    — `pallet_pecas()` do `gerar_props_iso.py`. O de antes media 29 px de
+    largura, quase três vezes o de verdade ao lado da pessoa. Quatro empilhados
+    e desencontrados, porque um só, a 1,5 px de altura, é um risco no chão."""
     p = []
-    for i in range(5):
-        p.append(caixa("pal_ripa%d" % i, (-0.28 + i * 0.14, 0.0, z(2.6)),
-                       (0.10, 0.62, z(1.4)), M["madeira"]))
-    for i, y in enumerate((-0.26, 0.0, 0.26)):
-        p.append(caixa("pal_travessa%d" % i, (0.0, y, z(1.0)),
-                       (0.68, 0.12, z(2.0)), M["madeira_esc"]))
+    h = base.altura_do_pallet()
+    for i, (dx, dy) in enumerate(((0.0, 0.0), (0.02, -0.015), (-0.015, 0.01),
+                                  (0.01, 0.02))):
+        p += base.pallet_pecas(M, "pal%d" % i, dx, dy, i * (h - 0.003))
     origem("pallet")
     est.registrar("pallet", p, celulas=(1, 1))
 

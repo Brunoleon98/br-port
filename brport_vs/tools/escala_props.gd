@@ -141,6 +141,26 @@ func _quadros_de_animacao() -> Dictionary:
 	for tipo in k["LINGADAS_N2"]:
 		for lugar in k["LINGADAS_N2"][tipo]:
 			fora[String((k["LINGADAS_N2"][tipo][lugar] as Texture2D).resource_path).get_file()] = true
+	# O nível 3 (`079`): o repouso é o `lanca_n3` do `ArteLanca`, e a
+	# empilhadeira conta pela PARADA — os quadros com quem conduz, o pallet no
+	# garfo, as pontas e as lingadas são quadros dessa animação. As pilhas de
+	# pallets ficam: são o desenho que o cais mostra parado.
+	var repouso_n3: Texture2D = (k["ArteLanca"] as Array)[2]
+	for chave in k["LANCA_N3"]:
+		if k["LANCA_N3"][chave] != repouso_n3:
+			fora[String((k["LANCA_N3"][chave] as Texture2D).resource_path).get_file()] = true
+	for tipo in k["PONTAS_N3"]:
+		for ponta in k["PONTAS_N3"][tipo]:
+			fora[String((k["PONTAS_N3"][tipo][ponta] as Texture2D).resource_path).get_file()] = true
+	for tipo in k["LINGADAS_N3"]:
+		for lugar in k["LINGADAS_N3"][tipo]:
+			fora[String((k["LINGADAS_N3"][tipo][lugar] as Texture2D).resource_path).get_file()] = true
+	for tipo in k["GARFO_N3"]:
+		for alt in k["GARFO_N3"][tipo]:
+			fora[String((k["GARFO_N3"][tipo][alt] as Texture2D).resource_path).get_file()] = true
+	for sexo in k["QUADROS_EMPILHADEIRA"]:
+		for alt in k["QUADROS_EMPILHADEIRA"][sexo]:
+			fora[String((k["QUADROS_EMPILHADEIRA"][sexo][alt] as Texture2D).resource_path).get_file()] = true
 	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
 	for sexo in quadros:
 		for familia in ["guincho", "pilha", "leva", "volta"]:

@@ -116,7 +116,8 @@ const CASCOS := {
 # pilha no tabuado, o gancho desce, sobe com a lingada de peixe, gira, desce e
 # larga; o trabalhador fica no guincho ao pé do mastro. No nível 2 o guindaste
 # dele descarrega e ele desengata, e depois leva a carga ao camião (`077`, mais
-# abaixo); no 3 ainda fica de pé, à beira do costado.
+# abaixo); no 3 o pórtico descarrega e ele leva o pallet de empilhadeira
+# (`079`, mais abaixo).
 #
 # O sexo de quem está alocado sai do rosto dele (`Retratos`). O PARADO do
 # homem é o `trabalhador` de sempre — a régua da fauna e da página de escala.
@@ -241,6 +242,9 @@ const PILHAS_N1 := {
 const CARGA_DO_SERVICO := {
 	"pesqueiro": {"pescado": "peixe", "armazenagem": "peixe"},
 	"medio": {"armazenagem": "caixa", "granel": "saco", "conteiner": "conteiner"},
+	# O navio de longo curso só atraca no nível 3 (`079`), e leva o mesmo que
+	# o cargueiro: o motivo é que diz a carga, e a classe o porte.
+	"grande": {"armazenagem": "caixa", "granel": "saco", "conteiner": "conteiner"},
 }
 
 # A lança girada: `g0` é o repouso (o mesmo `lanca_n2` que o `ArteLanca`
@@ -411,6 +415,230 @@ static func duracao_da_ida(trecho: float) -> float:
 	return PAUSA_PEGA + trecho + PAUSA_ENTREGA + trecho
 
 
+# ── O PÓRTICO DO NÍVEL 3 E A EMPILHADEIRA (03/10, `docs/decisoes/079`) ──
+#
+# Escolhas do Bruno: no nível 3 o PÓRTICO tira a carga do barco e pousa-a num
+# pallet a meio do cais, e o trabalhador alocado leva o pallet de EMPILHADEIRA
+# pelo comprimento do píer até à pilha da raiz — ou ao camião, se ele estiver
+# encostado. Os dois trabalham ao mesmo tempo, o serviço inteiro: com o
+# pórtico, ~72% dos serviços do nível 3 duram um turno, e o «primeiro
+# descarrega, depois leva» do n2 quase não aconteceria. O contêiner fica como
+# no n2 — pousa no cais —, e a empilhadeira espera, com ele ao volante.
+#
+# O ciclo do pórtico é o do n1 e do n2, pelos MESMOS nomes do `CICLO_N1`: o
+# passo «pilha» é aqui o pouso, a meio do cais. O gerador gira a lança do
+# porão ao pouso e recolhe o carro ao longo dela.
+const LANCA_N3 := {
+	"g0": preload("res://art/props/lanca_n3.png"),
+	"g1": preload("res://art/props/lanca_n3_g1.png"),
+	"g2": preload("res://art/props/lanca_n3_g2.png"),
+	"g3": preload("res://art/props/lanca_n3_g3.png"),
+	"g4": preload("res://art/props/lanca_n3_g4.png"),
+	"g5": preload("res://art/props/lanca_n3_g5.png"),
+	"g6": preload("res://art/props/lanca_n3_g6.png"),
+}
+
+# O spreader em BAIXO, nas duas pontas, por tipo. O passo chama-se «pilha»
+# como no ciclo, e o quadro «pouso», que é o que ele é no n3.
+const PONTAS_N3 := {
+	"peixe": {
+		"barco": preload("res://art/props/lanca_n3_barco_peixe.png"),
+		"pilha": preload("res://art/props/lanca_n3_pouso_peixe.png"),
+	},
+	"caixa": {
+		"barco": preload("res://art/props/lanca_n3_barco_caixa.png"),
+		"pilha": preload("res://art/props/lanca_n3_pouso_caixa.png"),
+	},
+	"saco": {
+		"barco": preload("res://art/props/lanca_n3_barco_saco.png"),
+		"pilha": preload("res://art/props/lanca_n3_pouso_saco.png"),
+	},
+	"conteiner": {
+		"barco": preload("res://art/props/lanca_n3_barco_conteiner.png"),
+		"pilha": preload("res://art/props/lanca_n3_pouso_conteiner.png"),
+	},
+}
+
+# A carga pendurada do spreader, por tipo e por passo: o pallet em quatro
+# cintas, ou o contêiner preso nas travas. Nasce no quadro do PÍER.
+const LINGADAS_N3 := {
+	"peixe": {
+		"barco": preload("res://art/props/lingada_n3_peixe_barco.png"),
+		"g0": preload("res://art/props/lingada_n3_peixe_g0.png"),
+		"g1": preload("res://art/props/lingada_n3_peixe_g1.png"),
+		"g2": preload("res://art/props/lingada_n3_peixe_g2.png"),
+		"g3": preload("res://art/props/lingada_n3_peixe_g3.png"),
+		"g4": preload("res://art/props/lingada_n3_peixe_g4.png"),
+		"g5": preload("res://art/props/lingada_n3_peixe_g5.png"),
+		"g6": preload("res://art/props/lingada_n3_peixe_g6.png"),
+		"pilha": preload("res://art/props/lingada_n3_peixe_pouso.png"),
+	},
+	"caixa": {
+		"barco": preload("res://art/props/lingada_n3_caixa_barco.png"),
+		"g0": preload("res://art/props/lingada_n3_caixa_g0.png"),
+		"g1": preload("res://art/props/lingada_n3_caixa_g1.png"),
+		"g2": preload("res://art/props/lingada_n3_caixa_g2.png"),
+		"g3": preload("res://art/props/lingada_n3_caixa_g3.png"),
+		"g4": preload("res://art/props/lingada_n3_caixa_g4.png"),
+		"g5": preload("res://art/props/lingada_n3_caixa_g5.png"),
+		"g6": preload("res://art/props/lingada_n3_caixa_g6.png"),
+		"pilha": preload("res://art/props/lingada_n3_caixa_pouso.png"),
+	},
+	"saco": {
+		"barco": preload("res://art/props/lingada_n3_saco_barco.png"),
+		"g0": preload("res://art/props/lingada_n3_saco_g0.png"),
+		"g1": preload("res://art/props/lingada_n3_saco_g1.png"),
+		"g2": preload("res://art/props/lingada_n3_saco_g2.png"),
+		"g3": preload("res://art/props/lingada_n3_saco_g3.png"),
+		"g4": preload("res://art/props/lingada_n3_saco_g4.png"),
+		"g5": preload("res://art/props/lingada_n3_saco_g5.png"),
+		"g6": preload("res://art/props/lingada_n3_saco_g6.png"),
+		"pilha": preload("res://art/props/lingada_n3_saco_pouso.png"),
+	},
+	"conteiner": {
+		"barco": preload("res://art/props/lingada_n3_conteiner_barco.png"),
+		"g0": preload("res://art/props/lingada_n3_conteiner_g0.png"),
+		"g1": preload("res://art/props/lingada_n3_conteiner_g1.png"),
+		"g2": preload("res://art/props/lingada_n3_conteiner_g2.png"),
+		"g3": preload("res://art/props/lingada_n3_conteiner_g3.png"),
+		"g4": preload("res://art/props/lingada_n3_conteiner_g4.png"),
+		"g5": preload("res://art/props/lingada_n3_conteiner_g5.png"),
+		"g6": preload("res://art/props/lingada_n3_conteiner_g6.png"),
+		"pilha": preload("res://art/props/lingada_n3_conteiner_pouso.png"),
+	},
+}
+
+# A CARGA NO GARFO, no ponto de pouso: «baixo» é a que o spreader larga no
+# chão e a que entra na pilha; «alto» é a que anda. O nó `Carga` mostra a de
+# baixo enquanto ela espera no chão, e a empilhadeira apanha a MESMA imagem —
+# a troca de nó não se vê.
+const GARFO_N3 := {
+	"peixe": {
+		"baixo": preload("res://art/props/carga_n3_peixe_baixo.png"),
+		"alto": preload("res://art/props/carga_n3_peixe_alto.png"),
+	},
+	"caixa": {
+		"baixo": preload("res://art/props/carga_n3_caixa_baixo.png"),
+		"alto": preload("res://art/props/carga_n3_caixa_alto.png"),
+	},
+	"saco": {
+		"baixo": preload("res://art/props/carga_n3_saco_baixo.png"),
+		"alto": preload("res://art/props/carga_n3_saco_alto.png"),
+	},
+}
+
+# A pilha: a dos pallets na raiz, com o da FRENTE no sítio exato onde a
+# empilhadeira larga o dela; a do contêiner no ponto de pouso, como no n2.
+const PILHAS_N3 := {
+	"peixe": preload("res://art/props/pilha_n3_peixe.png"),
+	"caixa": preload("res://art/props/pilha_n3_caixa.png"),
+	"saco": preload("res://art/props/pilha_n3_saco.png"),
+	"conteiner": preload("res://art/props/pilha_n3_conteiner.png"),
+}
+
+# A EMPILHADEIRA, no quadro do píer, com o pallet dela no ponto de pouso:
+# parada e sem ninguém, e por sexo com o garfo em baixo e levantado. Quem a
+# anda é o nó, como o andar da `075`.
+const EMPILHADEIRA_N3 := preload("res://art/props/empilhadeira_n3.png")
+const QUADROS_EMPILHADEIRA := {
+	"h": {
+		"baixo": preload("res://art/props/emp_h_baixo.png"),
+		"alto": preload("res://art/props/emp_h_alto.png"),
+	},
+	"m": {
+		"baixo": preload("res://art/props/emp_m_baixo.png"),
+		"alto": preload("res://art/props/emp_m_alto.png"),
+	},
+}
+
+# OS TEMPOS DA EMPILHADEIRA, a contar do instante em que o spreader larga o
+# pallet no pouso (o começo do passo «pilha»). Ela espera atrás do pouso,
+# encosta, levanta o garfo, leva, pousa na pilha e volta de ré — e tem de estar
+# outra vez à espera antes de o pallet seguinte começar a descer.
+const N3_ENCOSTA := 0.40
+const N3_LEVANTA := 0.25
+const N3_POUSA := 0.25
+## A velocidade dela, em px de tela por segundo. Até à pilha são ~25 px, e a
+## ida e a volta cabem no ciclo do pórtico com folga. Até ao camião são 80 a
+## 88 px (medido pelo D42 com as oito transportadoras), e ela acelera até ao
+## TETO; o que ainda não couber abranda o ciclo inteiro, pórtico incluído.
+## ⚠️ SEM O TETO ELA ANDAVA A 52 px/s, ~43 km/h na régua — o D42 mediu-o na
+## primeira versão, que só acelerava. O camião encosta pouco, e o pórtico mais
+## lento nessas voltas lê-se menos do que uma empilhadeira a voar.
+const EMPILHADEIRA_PX_POR_SEG := 20.0
+const EMPILHADEIRA_PX_POR_SEG_MAX := 36.0
+## Onde ela espera, contra o ponto em que apanha o pallet: 0,45 de mundo
+## para trás, em `+mx` — (Δmx − Δmy)·20 e (Δmx + Δmy)·10 na tela. O pallet
+## desce à frente dela sem lhe tocar no garfo, e a traseira dela fica longe
+## da casa de máquinas do pórtico.
+const ESPERA_N3 := Vector2(9.0, 4.5)
+
+
+## O instante do ciclo em que o spreader larga a carga: o começo do passo
+## «pilha». Sai da tabela, e não de um número.
+static func instante_da_solta() -> float:
+	var t := 0.0
+	for passo in CICLO_N1:
+		if String(passo[0]) == "pilha":
+			return t
+		t += float(passo[1])
+	return t
+
+
+## A janela que a empilhadeira tem para ir e voltar: o ciclo, menos o que ela
+## gasta parada nas pontas, menos o passo em que o pallet seguinte desce
+## («pilha_c») — nele ela já tem de estar à espera.
+static func janela_n3() -> float:
+	var desce := 0.0
+	for passo in CICLO_N1:
+		if String(passo[0]) == "pilha_c":
+			desce = float(passo[1])
+	return duracao_do_ciclo() - desce - N3_ENCOSTA - N3_LEVANTA - N3_POUSA
+
+
+## O passo do degrau 3 no instante `t`: o do pórtico — o mesmo ciclo do n2,
+## pelos mesmos nomes — e o da empilhadeira, para um trecho de ida de `leva`
+## segundos e um de volta de `volta`. `trecho` diz onde ela está (espera,
+## encosta, levanta, leva, pousa, volta) e `fracao` quanto dele andou; `chao`
+## diz que o pallet largado espera no pouso, e `leva` que vai no garfo.
+## Aritmética pura, como a do n1: o teste pergunta-lhe o ciclo inteiro sem
+## esperar frames.
+static func pose_n3(t: float, leva: float, volta: float) -> Dictionary:
+	t = fposmod(t, duracao_do_ciclo())
+	var g := pose_n2(t)
+	var r := {"lanca": g["lanca"], "carga": g["carga"], "chao": false,
+		"trecho": "espera", "fracao": 0.0, "garfo": "baixo", "leva": false}
+	var e := fposmod(t - instante_da_solta(), duracao_do_ciclo())
+	if e < N3_ENCOSTA:
+		r["trecho"] = "encosta"
+		r["fracao"] = e / N3_ENCOSTA
+		r["chao"] = true
+		return r
+	e -= N3_ENCOSTA
+	if e < N3_LEVANTA:
+		r["trecho"] = "levanta"
+		r["leva"] = true
+		return r
+	e -= N3_LEVANTA
+	if e < leva:
+		r["trecho"] = "leva"
+		r["fracao"] = e / leva
+		r["garfo"] = "alto"
+		r["leva"] = true
+		return r
+	e -= leva
+	if e < N3_POUSA:
+		r["trecho"] = "pousa"
+		r["fracao"] = 1.0
+		r["leva"] = true
+		return r
+	e -= N3_POUSA
+	if e < volta:
+		r["trecho"] = "volta"
+		r["fracao"] = e / volta
+	return r
+
+
 ## O passo do ciclo no instante `t`: o quadro do pau e o do operador. É
 ## aritmética pura, e de propósito: o teste pergunta-lhe o ciclo inteiro sem
 ## esperar um frame, e o tween só a aplica.
@@ -528,6 +756,19 @@ var _camiao: Variant = null
 # O caminho da ida ao camião, dos pés dele à entrada, em coordenada de tela.
 var _caminho_ida := Vector2.ZERO
 var _trecho_ida := 1.0
+# O degrau 3 (`079`): o tipo e o sexo do serviço, o caminho do pouso à
+# entrega (a pilha ou o camião), os dois trechos dele, e onde a empilhadeira
+# repousa no nó. `_ocupada` diz que alguém trabalha nesta doca — no n3 ele vai
+# na empilhadeira, e o nó do trabalhador fica escondido.
+var _tipo_n3 := ""
+var _destino_n3 := Vector2.ZERO
+var _leva_n3 := 1.0
+var _volta_n3 := 1.0
+var _t_n3 := 0.0
+# Quanto o ciclo do n3 se estica quando o caminho não cabe ao teto (1 = não).
+var _escala_n3 := 1.0
+var _emp_base := Vector2.ZERO
+var _ocupada := false
 
 @onready var _pier: TextureRect = $Pier
 @onready var _barco: TextureRect = $Barco
@@ -536,6 +777,8 @@ var _trecho_ida := 1.0
 @onready var _lanca: TextureRect = $Lanca
 @onready var _carga: TextureRect = $Carga
 @onready var _ombro: TextureRect = $Trabalhador/Ombro
+@onready var _empilhadeira: TextureRect = $Empilhadeira
+@onready var _garfo: TextureRect = $Garfo
 
 
 func setup(index: int) -> void:
@@ -552,6 +795,7 @@ func _ready() -> void:
 	# pai e apaga a ancoragem da cena.
 	_barco_base = _barco.position
 	_trabalhador_base = _trabalhador_prop.position
+	_emp_base = _empilhadeira.position
 	if dock_index >= 0:
 		refresh()
 
@@ -568,6 +812,8 @@ func camiao_no_berco(ancora: Variant) -> void:
 	_camiao = ancora
 	if _assinatura_trabalho.begins_with("n2|false|"):
 		_animar_n2(false, _sexo_n2, _tipo_n2)
+	elif _assinatura_trabalho.begins_with("n3|"):
+		_animar_n3(_sexo_n2, _tipo_n3)
 
 
 func esta_construida() -> bool:
@@ -577,12 +823,13 @@ func esta_construida() -> bool:
 func refresh() -> void:
 	if dock_index < 0:
 		return
+	_ocupada = false
 	_refresh_cena()
 	_vista_feita = true
-	# Toda saída do `_refresh_cena()` que não mostra o trabalhador para-o
-	# aqui, num sítio só: são quatro `return` antes dele, e a pilha esquecida
+	# Toda saída do `_refresh_cena()` que não põe ninguém a trabalhar para-o
+	# aqui, num sítio só: são quatro `return` antes disso, e a pilha esquecida
 	# num deles ficaria no tabuado de uma doca vazia.
-	if not _trabalhador_prop.visible:
+	if not _ocupada:
 		_parar_trabalho()
 
 
@@ -606,6 +853,9 @@ func _refresh_cena() -> void:
 	var nivel_pier: int = int(GameState.nivel_pier())
 	if not opera:
 		_lanca.texture = ArteLanca[nivel_lanca - 1]
+	# A empilhadeira é do cais do nível 3 (`079`): parada à espera, sem
+	# ninguém, enquanto a doca não trabalha.
+	_empilhadeira.visible = esta_construida() and nivel_lanca == 3
 	if not esta_construida():
 		_pier.texture = ArtePierVazio
 		_mostrar_barco(-1, null)
@@ -630,9 +880,16 @@ func _refresh_cena() -> void:
 		# descarrega do porão no berço, e com o casco ainda a deslizar a
 		# carga sairia da água ao lado dele.
 		concluir_troca()
+		_ocupada = true
+		var sexo := sexo_do_trabalhador(int(dock["worker_id"]))
+		# No nível 3 ele vai na EMPILHADEIRA, e o pórtico descarrega o
+		# serviço inteiro (`079`). Acesso DIRETO à tabela, como no n2.
+		if nivel_lanca == 3:
+			_animar_n3(sexo, tipo_de_carga(String(boat["classe"]),
+				String(boat["motivo"])))
+			return
 		# A figura no tabuado é o que faz "doca ocupada" ler sem texto.
 		_trabalhador_prop.visible = true
-		var sexo := sexo_do_trabalhador(int(dock["worker_id"]))
 		# No nível 2 o guindaste descarrega no PRIMEIRO turno do serviço, e
 		# a pilha fica no tabuado o serviço inteiro (`077`). Acesso DIRETO à
 		# tabela, como no casco: um par sem tipo de carga rebenta aqui.
@@ -653,10 +910,11 @@ func _refresh_cena() -> void:
 ## É a mesma condição que mostra o trabalhador, lida antes, porque a lança é
 ## decidida antes dele. No nível 1 trabalha o serviço inteiro (o pesqueiro
 ## serve num turno); no 2 só no PRIMEIRO turno do serviço — depois o
-## guindaste pára e a vez é do trabalhador (`077`). No 3 ainda não trabalha.
+## guindaste pára e a vez é do trabalhador (`077`). No 3 o pórtico trabalha o
+## serviço inteiro, ao mesmo tempo que a empilhadeira (`079`).
 func _guindaste_opera() -> bool:
 	var nivel := int(GameState.nivel_guindaste()) if esta_construida() else 0
-	if nivel != 1 and nivel != 2:
+	if nivel < 1 or nivel > 3:
 		return false
 	var dock: Dictionary = GameState.docks[dock_index]
 	var boat = dock["boat"]
@@ -664,7 +922,7 @@ func _guindaste_opera() -> bool:
 		return false
 	if boat.get("rival", false) and not boat.get("matched", false):
 		return false
-	return nivel == 1 or int(boat["progress"]) == 0
+	return nivel != 2 or int(boat["progress"]) == 0
 
 
 func _can_drop_data(_at_position: Vector2, data) -> bool:
@@ -812,8 +1070,8 @@ func _acender_realce(ligado: bool) -> void:
 #
 # No nível 1 (`pilha` dada) ele OPERA O GUINCHO: o pau-de-carga corre o
 # `CICLO_N1` — do porão à pilha e de volta — e a pilha fica no tabuado. O
-# nível 2 tem animação própria (`_animar_n2`). No 3, até ter a dele, fica o
-# balanço de 3 px de sempre, já com a figura do sexo dele.
+# nível 2 e o 3 têm animação própria (`_animar_n2`, `_animar_n3`). O balanço
+# de 3 px de sempre fica para quem não tiver pilha.
 #
 # ⚠️ NO NÍVEL 1 ELE TRABALHA ASSIM QUE É ALOCADO, e não com `progress > 0`,
 # que é o «operando» do balanço. O pesqueiro serve num turno só: o `progress`
@@ -929,6 +1187,108 @@ func _aplicar_n2(t: float) -> void:
 	_trabalhador_prop.texture = _quadros["pilha"][int(p["trabalhador"])]
 
 
+# O DEGRAU 3 (`079`): o pórtico corre o ciclo de sempre, e a empilhadeira,
+# com ele ao volante, apanha cada pallet no pouso e leva-o à pilha da raiz —
+# ou às portas de trás do camião, se ele estiver encostado. O contêiner pousa
+# no cais como no n2, e ela espera com ele ao volante.
+#
+# ⚠️ O PALLET NO CHÃO E O PALLET NO GARFO SÃO O MESMO NÓ, `Garfo`, e vem
+# ANTES da empilhadeira na ordem da cena: está à frente dela, do lado de
+# longe da câmara. Enquanto ela encosta o pallet fica no pouso; depois anda
+# com ela. O spreader larga-o no passo «pilha», e é aí que ele aparece.
+func _animar_n3(sexo: String, tipo: String) -> void:
+	var assinatura := "n3|%s|%s|%s" % [sexo, tipo, _camiao]
+	if assinatura == _assinatura_trabalho and _tw_trabalho != null \
+			and _tw_trabalho.is_valid():
+		return
+	# Quem rearma a meio (o camião que encosta ou larga) continua do mesmo
+	# instante do ciclo: o pórtico não salta, só o destino dela muda.
+	var continua := _assinatura_trabalho.begins_with("n3|%s|%s|" % [sexo, tipo])
+	var t0 := _t_n3
+	_parar_trabalho()
+	_assinatura_trabalho = assinatura
+	_tipo_n3 = tipo
+	_sexo_n2 = sexo
+	_empilhadeira.visible = true
+	_pilha.texture = PILHAS_N3[tipo]
+	_pilha.visible = true
+	if not GARFO_N3.has(tipo):
+		# O contêiner: o pórtico pousa-o, ela espera com ele ao volante.
+		_empilhadeira.texture = QUADROS_EMPILHADEIRA[sexo]["baixo"]
+		_empilhadeira.position = _emp_base + ESPERA_N3
+	else:
+		_destino_n3 = _destino_da_empilhadeira(tipo)
+		var ida := _destino_n3.length()
+		var volta := (_destino_n3 - ESPERA_N3).length()
+		# Os tempos dela contam-se em tempo do CICLO; esticado, o ciclo corre
+		# mais devagar, e ela com ele.
+		var v := clampf((ida + volta) / janela_n3(), EMPILHADEIRA_PX_POR_SEG,
+			EMPILHADEIRA_PX_POR_SEG_MAX)
+		_escala_n3 = maxf(1.0, (ida + volta) / v / janela_n3())
+		_leva_n3 = maxf(ida / v / _escala_n3, 0.1)
+		_volta_n3 = maxf(volta / v / _escala_n3, 0.1)
+	var fase := duracao_do_ciclo() * float(maxi(dock_index, 0)) / 3.0
+	if continua:
+		fase = t0
+	_aplicar_n3(fase)
+	_tw_trabalho = create_tween().set_loops()
+	_tw_trabalho.tween_method(_aplicar_n3, fase, fase + duracao_do_ciclo(),
+		duracao_do_ciclo() * _escala_n3)
+
+
+## Do ponto onde ela apanha o pallet ao ponto onde o larga, em tela. Sem
+## camião é a FRENTE DA PILHA, e não se escreve: o pallet da frente da pilha e
+## o do garfo são o mesmo desenho, e o canto de baixo-direita da pilha é o
+## dele. Com camião é o chão à frente das portas de trás, que o `Main` lê no
+## camião que parou: o CENTRO do pallet pára lá. As portas ficam 0,14 além da
+## traseira e o pallet tem 0,17 de meio comprimento, logo a frente dele entra
+## pelas portas — a primeira versão parava meio pallet antes, e o D42 mediu-o
+## a 0% de camião à volta.
+func _destino_da_empilhadeira(tipo: String) -> Vector2:
+	var carga := PropIso.desenho(GARFO_N3[tipo]["baixo"])
+	if _camiao == null:
+		var pilha := PropIso.desenho(PILHAS_N3[tipo])
+		return pilha.end - carga.end
+	var centro := _emp_base + Vector2(PropIso.MEIO, PropIso.MEIO) + carga.get_center()
+	return (_camiao as Vector2) - centro
+
+
+func _aplicar_n3(t: float) -> void:
+	_t_n3 = fposmod(t, duracao_do_ciclo())
+	var p := pose_n3(t, _leva_n3, _volta_n3)
+	var lugar: String = p["lanca"]
+	_lanca.texture = LANCA_N3[lugar] if lugar.begins_with("g") \
+		else PONTAS_N3[_tipo_n3][lugar]
+	_carga.visible = p["carga"] != ""
+	if _carga.visible:
+		_carga.texture = LINGADAS_N3[_tipo_n3][p["carga"]]
+	if not GARFO_N3.has(_tipo_n3):
+		return
+	var onde := Vector2.ZERO
+	var f: float = p["fracao"]
+	match String(p["trecho"]):
+		"espera":
+			onde = ESPERA_N3
+		"encosta":
+			onde = ESPERA_N3.lerp(Vector2.ZERO, f)
+		"leva", "pousa":
+			onde = _destino_n3 * f
+		"volta":
+			onde = _destino_n3.lerp(ESPERA_N3, f)
+	# NO CAMIÃO O GARFO NÃO DESCE: a carga entra pelas portas de trás à
+	# altura a que vinha, e some lá dentro. Na pilha ela pousa no chão, no
+	# lugar do pallet da frente.
+	var garfo: String = p["garfo"]
+	if _camiao != null and String(p["trecho"]) == "pousa":
+		garfo = "alto"
+	_empilhadeira.position = _emp_base + onde
+	_empilhadeira.texture = QUADROS_EMPILHADEIRA[_sexo_n2][garfo]
+	_garfo.visible = bool(p["chao"]) or bool(p["leva"])
+	if _garfo.visible:
+		_garfo.texture = GARFO_N3[_tipo_n3][garfo]
+		_garfo.position = _emp_base + (onde if p["leva"] else Vector2.ZERO)
+
+
 func _parar_trabalho() -> void:
 	if _tw_trabalho != null and _tw_trabalho.is_valid():
 		_tw_trabalho.kill()
@@ -937,6 +1297,11 @@ func _parar_trabalho() -> void:
 	_pilha.visible = false
 	_carga.visible = false
 	_ombro.visible = false
+	# A empilhadeira volta a esperar, parada e sem ninguém (`079`).
+	_escala_n3 = 1.0
+	_garfo.visible = false
+	_empilhadeira.texture = EMPILHADEIRA_N3
+	_empilhadeira.position = _emp_base + ESPERA_N3
 	# A ordem da cena de volta: logo depois da pilha, antes do barco.
 	if _trabalhador_prop.get_index() != _pilha.get_index() + 1:
 		move_child(_trabalhador_prop, _pilha.get_index() + 1)

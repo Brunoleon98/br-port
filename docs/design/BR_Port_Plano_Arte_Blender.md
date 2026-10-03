@@ -979,8 +979,8 @@ técnica, para quem fizer os degraus 2 e 3:
 
 Ficou de fora, e é dele: os degraus 2 (o guindaste tira a carga, e ele leva-a;
 com ele, a ida ao camião nos serviços de mais de um turno) e 3 (pallets e
-empilhadeira), e a transição entre turnos. **O 2 fez-se na `077`, e a
-transição na `078`**, abaixo.
+empilhadeira), e a transição entre turnos. **O 2 fez-se na `077`, a
+transição na `078` e o 3 na `079`**, abaixo.
 
 ### Fora das etapas — o guindaste do nível 2 e a ida ao camião (03/10)
 
@@ -1034,6 +1034,37 @@ animar a seguir:
   toque, e o tiro `virada` é o único que a fotografa a meio. Concluída, a foto
   sai byte a byte igual à de antes da virada existir: é esse o controle de que
   nada mais mudou.
+
+### Fora das etapas — o pórtico do nível 3 e a empilhadeira (03/10)
+
+O degrau 3 (`079`): o pórtico gira do porão para terra com o carro a
+recolher, e pousa o pallet a meio do cais; o trabalhador leva-o de
+empilhadeira à pilha da raiz, ou às portas do camião encostado. A empilhadeira
+e o pallet do pátio passaram a ser os mesmos, na régua da pessoa. O que fica
+para quem animar a seguir:
+
+- **Movimento de máquina pergunta-se ao desenho dos cascos ANTES de se
+  escolher.** O movimento de um pórtico de verdade (o carro a correr, sem
+  girar) caía na proa de todos os cascos: a torre fica perto da ponta do píer
+  e o porão para terra dela. Medido no PNG de cada casco, com a conta da
+  projeção, antes de desenhar uma linha.
+- **Peça de medida real sai de METROS**, pela régua do mundo
+  (`METROS_POR_U`, `PX_POR_METRO`) e com o fator da pessoa quando é uma
+  pessoa que a usa. A empilhadeira é a segunda peça assim, depois do carro.
+  Uma só função para o cais e o pátio: duas divergiriam.
+- **Duas camadas que mostram a mesma peça partilham o PNG.** O pallet que o
+  spreader larga no chão e o que a empilhadeira apanha são o mesmo quadro no
+  mesmo nó (`Garfo`); o da frente da pilha é o mesmo desenho, e o caminho
+  até lá sai do canto dos dois. A troca não se vê porque não há troca.
+- **⚠️ Uma régua de tamanho lê-se sem a sombra.** A caixa desenhada do pátio
+  conta a sombra de contacto e o chão projetado, e dava 2,6x a pessoa a uma
+  empilhadeira certa. Sem ela: a de antes tinha a altura do camião.
+- **⚠️ O gerador gasta o tempo no `view_layer.update()`** que o `bpy.ops`
+  faz antes e depois de cada operador — quadrático no número de objetos: o
+  catálogo inteiro passou dos 30 min sem um PNG. Com a atualização desligada
+  só nos `mesh.primitive_*_add`, montou e renderizou 13 quadros em 3 min, e os
+  PNGs de controlo saíram com 0 pixels diferentes. O arnês foi de sessão e não
+  entrou no repositório; adotá-lo é uma decisão por tomar.
 
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.
