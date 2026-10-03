@@ -166,7 +166,9 @@ seis pallets no garfo e cinco empilhadeiras —, e o `lanca_n3`, a
 - Os 65 quadros foram renderizados com um arnês de sessão que desliga o
   `view_layer.update()` do `bpy.ops` nos `primitive_*_add` (3 min contra mais
   de 30). Os quadros de controlo que a sessão não mudou saíram com 0 pixels
-  diferentes dos do repositório.
+  diferentes dos do repositório, e três dos novos (`emp_m_alto`,
+  `lingada_n3_saco_g4`, `lanca_n3_pouso_peixe`), renderizados de novo pelo
+  caminho normal em ~50 min, também.
 
 ## O que fica de fora
 
