@@ -30,7 +30,7 @@ PR #99 fundido. Fechou o **degrau 2** da família animação (`077`):
      nenhum camião estava encostado (já na `main`);
    - o `.pck` cresceu 404.260 bytes contra a `main` (+2,95% do `.pck`).
 
-O Bruno não pediu PR: o trabalho só existe na branch.
+O PR é o #100 (`Brunoleon98/br-port`), aberto pelo Bruno no fim da sessão.
 
 ---
 
@@ -43,8 +43,8 @@ texto.
   tem o `CLAUDE.md` carregado. As regras são as mesmas para os dois.
 - Para saber onde o jogo está: `docs/ESTADO_DO_PROJETO.md`. Para o rumo: a §7
   de `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
-- **Confira no GitHub se a `claude/elegant-edison-783iy6` virou PR e se foi
-  fundida.** Se não foi, a `main` ainda não tem o guindaste do nível 2.
+- **Confira no GitHub se o PR #100 (`claude/elegant-edison-783iy6`) foi
+  fundido.** Se não foi, a `main` ainda não tem o guindaste do nível 2.
   Arquivos tocados:
   - `tools/gerar_props_iso.py` (alto conflito);
   - `brport_vs/scripts/Dock.gd`, `brport_vs/scenes/dock/Dock.tscn` e
