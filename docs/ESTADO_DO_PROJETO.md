@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 03/10/2026 — o guindaste do nível 2 (`077`)
+> **Última atualização:** 03/10/2026 — a virada do dia na tela (`078`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -115,7 +115,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 |---|---|
 | **Frente 4 do A5 — escala, camiões, frota e ruína** (27/09–01/10, `069`–`074`) | A pessoa a 1,5× o real; **os 32 camiões** das duas transportadoras, pela vez de cada uma; **os 9 cascos detalhados**, sem bandeira; **o galpão e o escritório em ruína** como o mesmo prédio velho. `.pck` +0,92% |
 | **Frente 4 do A5 — animação, degraus 1 e 2** (02–03/10, `075`–`077`) | No píer de nível 1 **o pau-de-carga descarrega** e o trabalhador opera o guincho (**D39**). No de nível 2 **o guindaste descarrega** e ele desengata; depois leva a carga às portas do camião, que encosta de ré (**D40**, 17 mutantes). `.pck` +2,95% |
-| **Frente 3 do A5 — as quatro famílias aceites** (25–27/09, `062`–`067`) | O cartão e o HUD (**F14**, **F15**, `SAVE_VERSION` 9); tela inicial, três espaços de save, pausa curta, Ajustes e o celular (**F16**); o **caderno** (**D37**) e a **conversa no celular**, cada voz no seu balão (**F17**, **D38**). A foto do porto antigo, o fundo e o logotipo são do Bruno (`art_lab/diario/`, `art_lab/tela_inicial/`) |
+| **Frente 4 do A5 — a virada do dia** (03/10, `078`) | Ao tocar em «Avançar dia» o barco servido sai pela faixa do berço e o seguinte entra; o dinheiro conta; o «+R$» de cada doca sobe do barco. Um toque a meio acaba-a. O `GameState` não mudou (**D41**, 8 mutantes) |
 
 **A §7.1 fechou: R1–R9 todos feitos**, e o A6 tem protocolo escrito
 (`docs/PROTOCOLO_DE_ESCUTA.md`). Sem fila ordenada, o que se faz é escolha do
@@ -130,7 +130,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`) |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína e os degraus 1 e 2 da animação (`069`–`077`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | Na 4 faltam o degrau 3 da animação e a transição entre turnos (`077`); obras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT. O Codex entra por `AGENTS.md` |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína, os degraus 1 e 2 da animação e a virada do dia (`069`–`078`). O material do ChatGPT vive em `art_lab/` (porta: o `README.md` de lá) | Na 4 falta o degrau 3 da animação (`078`); obras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT. O Codex entra por `AGENTS.md` |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
@@ -232,7 +232,8 @@ podre (A4) — em `HISTORICO.md`.
 | `tools/gerar_gdd_md.py` | Gera as acima. Recusa-se a adivinhar: forma de dado que não conheça **reprova**, em vez de sumir do markdown |
 
 ### Sistemas que funcionam
-- Turno diário com botão "Avançar dia" (sem relógio real)
+- Turno diário com botão "Avançar dia" (sem relógio real); a tela anima a
+  virada, e um toque a meio acaba-a (`078`)
 - Alocação de trabalhador por toque, por "Alocar todos" ou por arrasto
 - Economia: caixa, receita por barco, renda do píer, custos semanais
 - Reputação Comercial (0–100, 5 faixas) — e ela **decide a contra-oferta**:

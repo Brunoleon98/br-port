@@ -1056,8 +1056,14 @@ camiões** (`069`):
   camião passou a encostar de ré**, a pedido do Bruno: *«como se estivesse
   colocando a carga lá»*. Na segunda vista ele viu o trabalhador por cima do
   armazém na doca 2: as docas desenham-se depois do cenário, e o **D40 §6**
-  passou a perguntá-lo. Na 4 faltam o **degrau 3** (pallets e empilhadeira)
-  e a **transição entre turnos**.
+  passou a perguntá-lo. Na 4 falta o **degrau 3** (pallets e empilhadeira).
+- **A virada do dia** (`078`): a transição entre turnos, que o pedido nunca
+  detalhou. O Bruno escolheu duas de quatro: **o barco servido parte** (sai
+  pela faixa do berço, de proa, e o seguinte entra de ré) e **o dinheiro
+  conta**, com o que cada doca rendeu a subir do barco como «+R$». Um toque a
+  meio acaba-a. O `GameState` não mudou: é a tela a alcançar o estado. A
+  medição achou a chegada deslizante, escrita desde o início, a nunca correr
+  (0 de 21), e o rumo dela a atravessar o píer. **D41**.
 
 ---
 

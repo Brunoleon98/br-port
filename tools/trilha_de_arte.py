@@ -53,6 +53,7 @@ LEGENDA = {
     "inicio": "turno zero, porto em ruínas",
     "pesca": "frota de pesca no cais",
     "guindaste2": "o guindaste do nível 2 a descarregar, com a pilha e quem desengata",
+    "virada": "a virada do dia a meio: o barco servido sai e o «+R$» sobe",
     "escolhido": "trabalhador escolhido, com barco à espera",
     "meio": "porto a meio da construção",
     "porto": "porto completo, sete estruturas",

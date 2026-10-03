@@ -979,7 +979,8 @@ técnica, para quem fizer os degraus 2 e 3:
 
 Ficou de fora, e é dele: os degraus 2 (o guindaste tira a carga, e ele leva-a;
 com ele, a ida ao camião nos serviços de mais de um turno) e 3 (pallets e
-empilhadeira), e a transição entre turnos. **O 2 fez-se na `077`**, abaixo.
+empilhadeira), e a transição entre turnos. **O 2 fez-se na `077`, e a
+transição na `078`**, abaixo.
 
 ### Fora das etapas — o guindaste do nível 2 e a ida ao camião (03/10)
 
@@ -1010,6 +1011,29 @@ ao ombro. O que acrescenta à técnica da `076`, para quem fizer o degrau 3:
   prova-se contra o cenário nas três docas (D40 §6).
 - **O GIF de veredito mostra as três docas**, e foi por isso que o defeito
   apareceu: nas docas 1 e 3 o caminho estava limpo.
+
+### Fora das etapas — a virada do dia (03/10)
+
+A transição entre turnos (`078`), sem Blender: só tweens sobre os sprites que
+já existiam. O barco servido sai pela faixa do berço e o seguinte entra; o
+dinheiro conta; o «+R$» de cada doca sobe do barco. O que fica para quem
+animar a seguir:
+
+- **Animação escrita não é animação que corre.** A chegada deslizante estava
+  no `Dock.gd` desde o início e nunca correu (0 de 21 barcos novos): a doca
+  esvazia-se e enche-se em dois sinais, e o primeiro zerava o id de que a
+  chegada dependia. Antes de herdar um tween, meça se ele dispara.
+- **E o parâmetro de um código que nunca correu não foi visto por ninguém.**
+  O rumo da chegada antiga, `(90, -45)`, atravessava o tabuado; a primeira
+  foto da partida mostrou-o. O rumo certo é o do píer para o mar, e o D41
+  confere-o contra a projeção publicada, não contra a constante.
+- **Transparência a cruzar estruturas lê como fantasma.** O primeiro GIF
+  esmaecia o barco o caminho todo; opaco, a esmaecer só nos últimos 30%, ele
+  lê como casco que sai (`ESMAECER`).
+- **A ferramenta de captura conclui a virada antes da foto**, como um segundo
+  toque, e o tiro `virada` é o único que a fotografa a meio. Concluída, a foto
+  sai byte a byte igual à de antes da virada existir: é esse o controle de que
+  nada mais mudou.
 
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.

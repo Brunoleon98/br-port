@@ -98,6 +98,12 @@ var _ocioso := false
 ## `Retratos:` da foto (`docs/decisoes/060`), nunca este número.
 var _boletim_semana := 0
 var _escolher := false
+## `virada` fotografa a VIRADA DO DIA a meio (`078`): o barco servido a partir,
+## o «+R$» no ar e o dinheiro a contar. Sem ela, a ferramenta leva a última
+## virada ao fim antes de fotografar — é o que um segundo toque faz —, porque
+## a foto promete o estado do turno N, e uma virada a meio é a passagem até
+## ele: o caixa sairia num número que o jogo nunca teve.
+var _virada := false
 var _mensagens := false
 var _mensagens_aberto := false
 
@@ -274,6 +280,16 @@ func _process(_delta: float) -> bool:
 		push_error("capturar_tela: `ocioso` e a partida serviu %d barco(s)" % int(GS.metrics["boats_served"]))
 		quit(1)
 		return true
+	# E A VIRADA ESTÁ NA FOTO SE, E SÓ SE, O TIRO A PEDIU — pelas duas pontas:
+	# o tiro `virada` com a transição já acabada seria uma foto de estado com
+	# o nome dela, e um tiro de estado com a virada a meio mostraria o caixa a
+	# contar (`078`).
+	if _virada != bool(_main.virada_em_curso()):
+		push_error("capturar_tela: `virada` %s e a virada %s na foto"
+			% ["pedida" if _virada else "não pedida",
+			   "está" if _main.virada_em_curso() else "não está"])
+		quit(1)
+		return true
 	print("Overlay: %d painel(eis)  [fase %s, turno %d, %d estrutura(s)]"
 		% [_paineis_abertos(), GS.phase, GS.turn, GS.estruturas.size()])
 	# ⚠️ E QUAL PAINEL, que é outra pergunta. A contagem diz QUANTOS e não QUAIS:
@@ -375,6 +391,7 @@ func _montar() -> void:
 	_pausa = args.has("pausa")
 	_alocar = args.has("alocar")
 	_ocioso = args.has("ocioso")
+	_virada = args.has("virada")
 	# ⚠️ BANDEIRAS QUE SE DESMENTEM REPROVAM, em vez de uma ganhar em silêncio:
 	# `ocioso alocar` fotografaria o porto a operar com o nome de quem nunca
 	# alocou, e `limpo` fecha todo boletim — o do `--boletim=` também.
@@ -535,6 +552,8 @@ func _montar() -> void:
 		if not _ocioso:
 			_alocar_todos()
 		_main._on_advance_pressed()
+	if not _virada:
+		_main._concluir_virada()
 
 	# `pausa` fotografa o menu de pausa, que é onde vivem os sliders de volume.
 	# Sem isto a única forma de conferir aquele painel era abrir o editor — e é

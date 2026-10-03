@@ -258,6 +258,14 @@ tirar pesca   0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/pesca.png
 # encosta com a carga do navio, e com esta semente nenhum encostou em 3.000
 # frames. Quem a prova é o D40 §5, que estaciona o camião pela porta do jogo.
 tirar guindaste2 0 2 --script res://tools/capturar_tela.gd -- 1 "$SAIDA/guindaste2.png" meio limpo alocar --frames=150
+# ⚠️ A VIRADA DO DIA A MEIO (`078`). Todo outro tiro de jogo leva a última
+# virada ao fim antes da foto — é o que um segundo toque faz —, porque a foto
+# promete o estado do turno N e o caixa a contar sairia num número que o jogo
+# nunca teve. Este é o único que a mostra: o pesqueiro servido a sair pela
+# faixa do berço, o «+R$» sobre o casco e o dinheiro a meio da contagem, 36
+# frames (0,6 s) depois do toque. O `capturar_tela.gd` reprova se a virada
+# não estiver na foto, e reprova nos outros tiros se estiver.
+tirar virada  0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/virada.png" limpo virada --frames=21
 # ⚠️ O TRABALHADOR ESCOLHIDO, que até 22/09 não estava em foto NENHUMA. O
 # cartão dele tem borda própria — âmbar, e do dobro da largura do repouso —, e
 # ela chega por um TOQUE: nada nos 24 tiros anteriores tocava num trabalhador,

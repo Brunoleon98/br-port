@@ -477,7 +477,24 @@ var trabalhador_selecionado: int = -1
 # do nível 1 é o único que anda por QUADROS (`QUADROS_TRABALHADOR`, `075`).
 const BALANCO_PX := 5.0
 const BALANCO_SEG := 1.7
-const CHEGADA_SEG := 0.5
+## A chegada e a partida do barco, na virada do dia (`078`). A partida
+## acelera para fora (`EASE_IN`) onde a chegada trava (`EASE_OUT`): quem sai
+## ganha velocidade, quem chega encosta devagar. Eram 0,5 s cada, e o Bruno
+## achou-as rápidas no GIF; 0,8 s foi o que a opção dele propunha.
+const CHEGADA_SEG := 0.8
+const PARTIDA_SEG := 0.8
+## A fração do trajeto em que o barco fica transparente: só a PONTA de fora —
+## os últimos 30% da partida e os primeiros 30% da chegada. No primeiro GIF ele
+## esmaecia o trajeto inteiro e passava pela frente do píer e das gruas meio
+## transparente: «barco parece fantasma». Opaco, ele lê como casco que sai.
+const ESMAECER := 0.3
+## De onde o barco vem e para onde vai: a FAIXA DO BERÇO, ao longo do píer,
+## para o largo — abaixo e à direita na tela. O casco atraca do lado de baixo
+## do píer com a proa para o mar, e assim sai de proa e entra de ré pelo mesmo
+## lado. ⚠️ A chegada antiga usava `(90, -45)`, para cima e à direita, e esse
+## rumo ATRAVESSA O TABUADO (o `Barco` desenha-se depois do `Pier`): ninguém o
+## viu porque aquela chegada nunca correu. Viu-se na primeira foto da partida.
+const RUMO_DO_MAR := Vector2(90, 45)
 const PULSO_SEG := 0.9
 const REALCE := Color(1.45, 1.22, 0.72)
 
@@ -485,7 +502,13 @@ var _barco_base := Vector2.ZERO
 var _trabalhador_base := Vector2.ZERO
 var _barco_id_anterior: int = -1
 var _tw_balanco: Tween
-var _tw_chegada: Tween
+# A TROCA DE BARCO: a partida do que estava e a chegada do seguinte, em fila,
+# num tween só (`078`). `_barco_alvo` é a arte em que ela vai acabar.
+var _tw_troca: Tween
+var _barco_alvo: Texture2D = null
+# A primeira vista não anima: o porto que se abre (partida nova, save
+# carregado) mostra os barcos onde estão. Daí em diante toda troca anima.
+var _vista_feita := false
 var _tw_realce: Tween
 var _tw_trabalho: Tween
 var _tw_lanca: Tween
@@ -555,6 +578,7 @@ func refresh() -> void:
 	if dock_index < 0:
 		return
 	_refresh_cena()
+	_vista_feita = true
 	# Toda saída do `_refresh_cena()` que não mostra o trabalhador para-o
 	# aqui, num sítio só: são quatro `return` antes dele, e a pilha esquecida
 	# num deles ficaria no tabuado de uma doca vazia.
@@ -584,8 +608,7 @@ func _refresh_cena() -> void:
 		_lanca.texture = ArteLanca[nivel_lanca - 1]
 	if not esta_construida():
 		_pier.texture = ArtePierVazio
-		_parar_barco()
-		_barco.texture = null
+		_mostrar_barco(-1, null)
 		return
 
 	_pier.texture = ArtePier[nivel_pier - 1]
@@ -593,18 +616,20 @@ func _refresh_cena() -> void:
 	var boat = dock["boat"]
 
 	if boat == null:
-		_parar_barco()
-		_barco.texture = null
+		_mostrar_barco(-1, null)
 		return
 
-	_barco.texture = arte_do_barco(String(boat["classe"]), String(boat["motivo"]),
-		int(boat["value"]))
-	_animar_barco(int(boat["id"]))
+	_mostrar_barco(int(boat["id"]), arte_do_barco(String(boat["classe"]),
+		String(boat["motivo"]), int(boat["value"])))
 
 	if boat.get("rival", false) and not boat.get("matched", false):
 		return
 
 	if dock["worker_id"] != null:
+		# QUEM ALOCA A MEIO DA CHEGADA ENCOSTA O BARCO JÁ. O guindaste
+		# descarrega do porão no berço, e com o casco ainda a deslizar a
+		# carga sairia da água ao lado dele.
+		concluir_troca()
 		# A figura no tabuado é o que faz "doca ocupada" ler sem texto.
 		_trabalhador_prop.visible = true
 		var sexo := sexo_do_trabalhador(int(dock["worker_id"]))
@@ -673,39 +698,82 @@ func _gui_input(event: InputEvent) -> void:
 
 
 # ── as animações ──
-func _parar_barco() -> void:
-	_barco_id_anterior = -1
-	for tw in [_tw_balanco, _tw_chegada]:
-		if tw != null and tw.is_valid():
-			tw.kill()
-	_barco.position = _barco_base
-
-
-func _animar_barco(barco_id: int) -> void:
+## O BARCO QUE A DOCA MOSTRA, e a troca até ele (`078`). Até 03/10 o barco
+## servido sumia de um quadro para o outro e o seguinte aparecia no lugar: a
+## chegada deslizante estava escrita e NUNCA corria, porque a virada esvazia a
+## doca (`turn_advanced`) antes de a encher (`boats_spawned`), o esvaziar
+## zerava o id, e a chegada só deslizava quando havia um barco ANTERIOR.
+## Medido em 24 viradas: 21 barcos novos, zero chegadas.
+##
+## Agora a troca é uma fila: o barco que está na água parte pelo
+## `RUMO_DO_MAR`, e só então entra o seguinte, pelo mesmo lado. Pedir outra
+## troca a meio refaz a fila a partir de onde o casco ESTÁ — é o que acontece
+## em toda virada, com o esvaziar e o encher no mesmo quadro: o segundo
+## pedido encontra o barco velho ainda no berço e parte com ele.
+func _mostrar_barco(barco_id: int, textura: Texture2D) -> void:
 	if barco_id == _barco_id_anterior:
 		return                      # mesmo barco: já está balançando
-	var era_outro := _barco_id_anterior != -1
 	_barco_id_anterior = barco_id
+	_barco_alvo = textura
+	for tw in [_tw_troca, _tw_balanco]:
+		if tw != null and tw.is_valid():
+			tw.kill()
 
-	if _tw_chegada != null and _tw_chegada.is_valid():
-		_tw_chegada.kill()
-	if _tw_balanco != null and _tw_balanco.is_valid():
-		_tw_balanco.kill()
-
-	# Barco novo entra deslizando do lado da zona de espera; o que já estava
-	# aqui (ao recarregar um save) simplesmente aparece.
-	if not era_outro:
-		_barco.position = _barco_base
-		_iniciar_balanco()
+	var na_agua := _barco.texture != null and _barco.modulate.a > 0.0
+	if not _vista_feita or (not na_agua and textura == null):
+		_pousar_barco(textura)
 		return
 
-	_barco.position = _barco_base + Vector2(90, -45)
-	_barco.modulate.a = 0.0
-	_tw_chegada = create_tween().set_parallel(true)
-	_tw_chegada.tween_property(_barco, "position", _barco_base, CHEGADA_SEG) \
+	_tw_troca = create_tween()
+	if na_agua:
+		_tw_troca.tween_property(_barco, "position", _barco_base + RUMO_DO_MAR,
+			PARTIDA_SEG).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		_tw_troca.parallel().tween_property(_barco, "modulate:a", 0.0,
+			PARTIDA_SEG * ESMAECER).set_delay(PARTIDA_SEG * (1.0 - ESMAECER))
+	if textura == null:
+		_tw_troca.tween_callback(_pousar_barco.bind(null))
+		return
+	_tw_troca.tween_callback(_entrar_barco.bind(textura))
+	_tw_troca.tween_property(_barco, "position", _barco_base, CHEGADA_SEG) \
 		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	_tw_chegada.tween_property(_barco, "modulate:a", 1.0, CHEGADA_SEG * 0.6)
-	_tw_chegada.chain().tween_callback(_iniciar_balanco)
+	_tw_troca.parallel().tween_property(_barco, "modulate:a", 1.0, CHEGADA_SEG * ESMAECER)
+	_tw_troca.tween_callback(_pousar_barco.bind(textura))
+
+
+## Leva a troca ao fim já: o barco seguinte no berço, a balançar, ou a doca
+## vazia. É o que um toque em «Avançar dia» a meio da virada faz (`078`).
+func concluir_troca() -> void:
+	if _tw_troca == null or not _tw_troca.is_valid():
+		return
+	_tw_troca.kill()
+	_pousar_barco(_barco_alvo)
+
+
+## O centro do quadro do barco no berço, em coordenada GLOBAL. O quadro de
+## 512 tem a origem do mundo no meio, e é aí que o casco está desenhado.
+func centro_do_barco() -> Vector2:
+	return get_global_transform() * (_barco_base + _barco.size * 0.5)
+
+
+## A troca de barco ainda está a correr.
+func em_troca() -> bool:
+	return _tw_troca != null and _tw_troca.is_valid() and _tw_troca.is_running()
+
+
+func _entrar_barco(textura: Texture2D) -> void:
+	_barco.texture = textura
+	_barco.position = _barco_base + RUMO_DO_MAR
+	_barco.modulate.a = 0.0
+
+
+func _pousar_barco(textura: Texture2D) -> void:
+	_barco.texture = textura
+	_barco.position = _barco_base
+	_barco.modulate.a = 1.0
+	if _tw_balanco != null and _tw_balanco.is_valid():
+		_tw_balanco.kill()
+	if textura != null:
+		_iniciar_balanco()
 
 
 func _iniciar_balanco() -> void:
