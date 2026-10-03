@@ -104,6 +104,10 @@ pip install "bpy==4.5.0"                                      # precisa de Pytho
 # ⚠️ redirecionado para arquivo, o `gerar_brp.py` não escreve UMA linha até
 # acabar (o stdout do Python vai em bloco): `python3 -u`, ou conte os PNGs
 # novos. Os 32 camiões levaram 20 min com o log vazio (`070`)
+# ⚠️ e o tempo vai quase todo no `view_layer.update()` que o `bpy.ops` faz a
+# cada `primitive_*_add`, quadrático no número de objetos: o catálogo passou
+# dos 30 min, e sem essa atualização levou 3, com 0 px de diferença nos
+# controlos. O arnês ficou fora do repositório (plano de arte, `079`)
 # As pranchas, os recortes e os conferidores de arte correm no Python do
 # SISTEMA, que não traz o pillow: `pip install numpy pillow` (~8 s)
 python3 tools/gerar_props_iso.py brport_vs/art/props [prop ...]
@@ -491,6 +495,12 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    fila com passos de 99 s — ele pergunta o que chega à tela, não quando —, e
    é cego ao tempo por construção. Antes de dar um teste por redundante,
    pergunte que defeito ele vê que o outro não vê.
+   ⚠️ **E O DEFEITO PODE CABER TODO NA ISENÇÃO DA GUARDA.** O D42 perguntava
+   se o pallet anda com a empilhadeira e isentava o pallet «no pouso», onde
+   ele espera no chão; o mutante que o deixava lá enquanto ela andava passou
+   verde, porque cabia inteiro na isenção. O que separa os dois casos é ONDE
+   ELA ESTÁ, não onde ele está (`079`). Guarda com exceção mede-se com o
+   defeito que mora na exceção.
    ⚠️ **E A RÉGUA PRECISA DO MESMO DEFEITO INJETADO QUE O VALIDADOR — e precisa
    mais.** Um validador que nunca reprovou dá um verde de graça; uma régua muda
    dá um NÚMERO, e o número vira a conclusão da sessão. Em 14/09 a medição do
@@ -1374,6 +1384,10 @@ as três coisas.
   bytes também não servem, pela regra do denoiser mais abaixo. O que responde é
   reduzir os dois a 16×16 e comparar: cada célula é a média de ~1.000 pixels, o
   que apaga o ruído de ±2/255 por construção.
+  ⚠️ **E ELA CONTA A SOMBRA E O CHÃO PROJETADO.** Régua de TAMANHO lê as
+  linhas com alfa acima de 0,5: com a sombra de contacto, a empilhadeira certa
+  do pátio media 2,6x a pessoa; sem ela, a antiga tinha a altura do camião
+  (`079`).
 - **⚠️ E NUMA PEÇA COM CABOS A CAIXA MENTE QUASE DE GRAÇA.** A terceira cara
   das duas regras acima, e a mais barata de cair: um cabo, um estai ou um
   amantilho tem dois pixels de largura e ESTICA o `get_used_rect()` para o

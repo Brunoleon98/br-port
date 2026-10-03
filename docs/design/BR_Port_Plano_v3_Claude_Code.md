@@ -1056,7 +1056,14 @@ camiões** (`069`):
   camião passou a encostar de ré**, a pedido do Bruno: *«como se estivesse
   colocando a carga lá»*. Na segunda vista ele viu o trabalhador por cima do
   armazém na doca 2: as docas desenham-se depois do cenário, e o **D40 §6**
-  passou a perguntá-lo. Na 4 falta o **degrau 3** (pallets e empilhadeira).
+  passou a perguntá-lo.
+- **A animação, degrau 3** (`079`): no nível 3 **o pórtico** gira do porão
+  para terra com o carro a recolher, e pousa a carga num pallet a meio do
+  cais; o trabalhador leva-o de **empilhadeira** à pilha da raiz, ou às
+  portas do camião encostado — os dois ao mesmo tempo, o serviço inteiro. A
+  empilhadeira e o pallet, do cais e do pátio, ficaram na régua da pessoa (a
+  do pátio tinha a altura de um camião). O contêiner pousa no cais, como no
+  n2: a máquina dele ficou para outra passagem, escolha do Bruno.
 - **A virada do dia** (`078`): a transição entre turnos, que o pedido nunca
   detalhou. O Bruno escolheu duas de quatro: **o barco servido parte** (sai
   pela faixa do berço, de proa, e o seguinte entra de ré) e **o dinheiro

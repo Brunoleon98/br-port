@@ -67,6 +67,31 @@ mouse_filter = 2
 visible = false
 expand_mode = 1
 
+; O DEGRAU 3 (`079`): o pallet e a empilhadeira, os dois com o quadro e o
+; offset do PÍER — o gerador desenha-os no ponto de pouso do pórtico, no mundo
+; do píer, e o `Dock.gd` desliza os nós pelo comprimento do cais. O pallet vem
+; ANTES dela: está à frente do mastro, do lado de longe da câmara. Os dois vêm
+; antes do barco, que no costado lhes fica à frente.
+[node name="Garfo" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -66.67
+offset_top = -114.67
+offset_right = 445.33
+offset_bottom = 397.33
+mouse_filter = 2
+visible = false
+expand_mode = 1
+
+[node name="Empilhadeira" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -66.67
+offset_top = -114.67
+offset_right = 445.33
+offset_bottom = 397.33
+mouse_filter = 2
+visible = false
+expand_mode = 1
+
 [node name="Barco" type="TextureRect" parent="."]
 layout_mode = 0
 offset_left = -122.67

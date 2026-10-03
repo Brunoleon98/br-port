@@ -394,6 +394,13 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   quarta tinha várias («+R$ no lugar errado») e foi uma pergunta SOZINHA, com
   a prévia em ASCII de cada lugar, que voltou à primeira. A passagem seguinte
   foi «Aceito».
+  ⚠️ **E NA `079` AS TRÊS VOLTARAM À PRIMEIRA.** O escopo foi UM formulário
+  com quatro perguntas (quem faz o quê, para onde, o contêiner, a escala),
+  cada uma com a recomendada primeiro e o estado de hoje MEDIDO numa prancha
+  enviada no mesmo turno; voltou com as quatro recomendadas. O sítio do pouso
+  foi uma pergunta sozinha com prévia em ASCII, vista de cima; voltou à
+  primeira. O GIF saiu com o veredito e a lista de ajustes (cada um com a
+  correção escrita) no mesmo turno, e voltou «Aceito».
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

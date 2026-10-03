@@ -332,6 +332,29 @@ func familias(ancoras: Dictionary) -> Dictionary:
 	var ombro: Array = []
 	for tipo in dk["CARGAS_AO_OMBRO"]:
 		ombro.append(dk["CARGAS_AO_OMBRO"][tipo])
+	# O pórtico do nível 3 e a empilhadeira (`079`): os passos do pórtico e
+	# as pontas no nó da lança, as lingadas no `Carga`, as pilhas no `Pilha`,
+	# o pallet no garfo no `Garfo` e a empilhadeira, parada e com cada sexo
+	# ao volante, no nó dela.
+	for chave in dk["LANCA_N3"]:
+		if not lanca.has(dk["LANCA_N3"][chave]):
+			lanca.append(dk["LANCA_N3"][chave])
+	for tipo in dk["PONTAS_N3"]:
+		for ponta in dk["PONTAS_N3"][tipo]:
+			lanca.append(dk["PONTAS_N3"][tipo][ponta])
+	for tipo in dk["PILHAS_N3"]:
+		pilha.append(dk["PILHAS_N3"][tipo])
+	for tipo in dk["LINGADAS_N3"]:
+		for lugar in dk["LINGADAS_N3"][tipo]:
+			carga.append(dk["LINGADAS_N3"][tipo][lugar])
+	var garfo: Array = []
+	for tipo in dk["GARFO_N3"]:
+		for alt in dk["GARFO_N3"][tipo]:
+			garfo.append(dk["GARFO_N3"][tipo][alt])
+	var empilhadeira: Array = [dk["EMPILHADEIRA_N3"]]
+	for sexo in dk["QUADROS_EMPILHADEIRA"]:
+		for alt in dk["QUADROS_EMPILHADEIRA"][sexo]:
+			empilhadeira.append(dk["QUADROS_EMPILHADEIRA"][sexo][alt])
 
 	# A vaga é a PRIMEIRA — as três caem no mesmo tipo de chão (o berço, que é
 	# água costeira), e repetir os nove cascos por doca daria 27 células a
@@ -345,6 +368,8 @@ func familias(ancoras: Dictionary) -> Dictionary:
 		vaga + "/Pilha": pilha,
 		vaga + "/Carga": carga,
 		vaga + "/Trabalhador/Ombro": ombro,
+		vaga + "/Garfo": garfo,
+		vaga + "/Empilhadeira": empilhadeira,
 		"./MapaWrap/Cenario/Armazem": [mk["ArmazemRuina"], mk["ArmazemPronto"]],
 		"./MapaWrap/Cenario/Escritorio": [mk["EscritorioRuina"], mk["EscritorioPronto"]],
 		"./MapaWrap/Cenario/Caminhao0": camioes,
