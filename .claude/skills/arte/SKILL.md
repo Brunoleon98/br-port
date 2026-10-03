@@ -378,6 +378,14 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   saídas na legenda e no fim do turno, sem formulário —, e voltou «Aceito».
   Na `073` o mesmo arranjo voltou «E agora?»: 1 de 2, e a pergunta sozinha
   continua a ser o que se sabe fazer quando ele avisa.
+  ⚠️ **E NA `077` O ENVIO E A PERGUNTA NO MESMO TURNO VOLTARAM 4 DE 4.** O
+  GIF saía por `SendUserFile` e, logo a seguir, a pergunta do veredito
+  («Aceito / Ajustar / Sugira você») e uma segunda, de seleção múltipla, com
+  os defeitos vistos. O envio sem pergunta voltou «Tentar novamente». E o
+  «Outro» do «Ajustar» trouxe uma PERGUNTA dele: *«Na doca 2 o trabalhador
+  está aparecendo na frente do armazém?»* Era um defeito que nenhuma guarda
+  via. Pergunta dele no «Outro» lê-se como defeito a medir, não como dúvida
+  a explicar.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

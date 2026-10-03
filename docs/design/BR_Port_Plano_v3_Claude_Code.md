@@ -1046,9 +1046,18 @@ camiões** (`069`):
   pau-de-carga descarrega**: gira do porão à pilha com caixas de peixe numa
   cinta, e o trabalhador opera o guincho, uma figura por sexo. Trabalha assim
   que é alocado — o pesqueiro parte no avanço em que o `progress` chegaria a
-  1. O papelão e o saco esperam o nível 2 no gerador. Na 4 faltam os
-  **degraus 2 e 3** — com eles, a **ida ao camião** nos serviços de mais de
-  um turno, que só os cargueiros têm — e a **transição entre turnos**.
+  1. O papelão e o saco ficaram no gerador, e entraram com o degrau 2.
+- **A animação, degrau 2** (`077`): no píer de nível 2, no primeiro turno do
+  serviço, **o guindaste de treliça descarrega** — gira do porão a uma pilha
+  no tabuado com a carga do serviço (peixe, caixas de papelão, sacos de
+  ráfia ou um contêiner), e o trabalhador desengata-a ao lado dela. Nos
+  turnos seguintes o guindaste pára, e com o camião do serviço no berço ele
+  leva a carga **às portas de trás**, ao ombro; o contêiner fica na pilha. **O
+  camião passou a encostar de ré**, a pedido do Bruno: *«como se estivesse
+  colocando a carga lá»*. Na segunda vista ele viu o trabalhador por cima do
+  armazém na doca 2: as docas desenham-se depois do cenário, e o **D40 §6**
+  passou a perguntá-lo. Na 4 faltam o **degrau 3** (pallets e empilhadeira)
+  e a **transição entre turnos**.
 
 ---
 

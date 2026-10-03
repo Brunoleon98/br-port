@@ -88,8 +88,9 @@ comum=(--path "$PROJETO" --resolution 720x1280 --rendering-driver opengl3
 #
 # 180 s é sessenta vezes o tiro típico (a bateria inteira, 24 tiros, corre em
 # ~72 s) e ainda assim folgado para o mais lento, que é o `docas` com os
-# `--frames=400` de tempo simulado. O `timeout` devolve 124, que cai no mesmo
-# ramo de falha abaixo e diz o nome do tiro.
+# `--frames=1000` de tempo simulado: 36,8 s medidos a 03/10, com 400 eram
+# 16,5. O `timeout` devolve 124, que cai no mesmo ramo de falha abaixo e diz o
+# nome do tiro.
 TETO_SEGUNDOS=180
 
 tirar() {
@@ -222,11 +223,16 @@ tirar meio    0 1  --script res://tools/capturar_tela.gd -- 0  "$SAIDA/meio.png"
 # depois do último. A mecânica passava em oito asserções e não aparecia em
 # imagem nenhuma.
 #
-# `--frames=400` são 6,7 segundos de tempo SIMULADO (o `--fixed-fps 60` fixa o
-# passo, então a foto continua reprodutível): o camião leva ~1,4s a chegar ao
-# acesso e ~3,3s a descê-lo. Dois dos três encostam; o terceiro parte depois do
-# acesso dele e segue pela estrada, que é o outro estado que se quer ver.
-tirar docas   0 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png" completo limpo alocar --frames=400
+# `--frames=1000` são 16,7 segundos de tempo SIMULADO (o `--fixed-fps 60` fixa
+# o passo, então a foto continua reprodutível).
+# ⚠️ ERAM 400, e esta linha dizia que dois dos três encostavam. Medido a 03/10
+# com uma sonda no `_ocupante_do_berco`: a 400 frames NENHUM estava encostado,
+# e a `main` dava a mesma foto byte a byte. O camião só encosta com a CARGA do
+# navio (`_pode_encostar()`); desde quando a foto deixou de o mostrar não se
+# mediu.
+# A 1000, o retorno encosta no berço 1, de ré, com as portas para o píer
+# (`077`); os outros seguem pela estrada, que é o outro estado que se quer ver.
+tirar docas   0 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png" completo limpo alocar --frames=1000
 # O PORTO EM RUÍNAS A OPERAR, que é onde a frota de PESCA vive.
 #
 # ⚠️ ELA ENTROU POR UM BURACO MEDIDO, e o buraco é do mesmo feitio do que fez
@@ -241,6 +247,17 @@ tirar docas   0 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png
 # Seis turnos com os trabalhadores alocados: barco na doca, e os dois
 # ancorados da Zona de Espera atrás dele.
 tirar pesca   0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/pesca.png" limpo alocar
+# ⚠️ O GUINDASTE DO NÍVEL 2 A DESCARREGAR (`077`). O `meio` é o porto de nível
+# 2 sem ninguém alocado, e aí a lança só varre: o ciclo — a lança a girar, a
+# lingada, a pilha e quem desengata — só existe com trabalhador e barco no
+# PRIMEIRO turno do serviço. No dia 1 as docas ainda dizem "aguardando barco"
+# (medido: a foto saía com as três lanças paradas); no dia 2 as três têm barco
+# acabado de chegar, e os 150 frames põem cada uma numa fase do ciclo.
+#
+# ⚠️ A IDA AO CAMIÃO NÃO ESTÁ AQUI, e não por falta de frames: o camião só
+# encosta com a carga do navio, e com esta semente nenhum encostou em 3.000
+# frames. Quem a prova é o D40 §5, que estaciona o camião pela porta do jogo.
+tirar guindaste2 0 2 --script res://tools/capturar_tela.gd -- 1 "$SAIDA/guindaste2.png" meio limpo alocar --frames=150
 # ⚠️ O TRABALHADOR ESCOLHIDO, que até 22/09 não estava em foto NENHUMA. O
 # cartão dele tem borda própria — âmbar, e do dobro da largura do repouso —, e
 # ela chega por um TOQUE: nada nos 24 tiros anteriores tocava num trabalhador,
@@ -604,11 +621,18 @@ tirar trabalhadores - - --script res://tools/folha_trabalhadores.gd -- "$SAIDA/t
 # a 75, com 21 por página, e a ferramenta reprovou as três até a quarta entrar.
 # E CINCO desde 02/10: os treze do trabalhador que anda (`075`) — os quadros
 # dos dois sexos, a caixa de peixe e a pilha — levaram-no a 88.
-tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 5
-tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 5
-tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 5
-tirar props4  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props4.png" 4 5
-tirar props5  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props5.png" 5 5
+# E NOVE desde 03/10: o guindaste do nível 2 (`077`) — quinze lanças, trinta e
+# seis lingadas, três pilhas, os quadros de quem desengata e da ida ao camião e
+# as duas cargas ao ombro — levaram-no a 169.
+tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 9
+tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 9
+tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 9
+tirar props4  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props4.png" 4 9
+tirar props5  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props5.png" 5 9
+tirar props6  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props6.png" 6 9
+tirar props7  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props7.png" 7 9
+tirar props8  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props8.png" 8 9
+tirar props9  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props9.png" 9 9
 
 # A ESCALA E A PRANCHA (`docs/decisoes/068`), as duas respostas ao veredito
 # do Bruno sobre as três folhas de cima: «mais útil para a IA alterar e fazer

@@ -56,6 +56,17 @@ visible = false
 expand_mode = 1
 texture = ExtResource("prop_trabalhador")
 
+; A CARGA AO OMBRO, na ida ao camião do n2 (`077`): FILHA do trabalhador, com
+; o quadro dele, porque anda com ele — o `Dock.gd` desliza o nó do trabalhador
+; e ela vai junto. Nasce no mesmo ponto dos quadros da ida.
+[node name="Ombro" type="TextureRect" parent="Trabalhador"]
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 512.0
+mouse_filter = 2
+visible = false
+expand_mode = 1
+
 [node name="Barco" type="TextureRect" parent="."]
 layout_mode = 0
 offset_left = -122.67
@@ -63,6 +74,21 @@ offset_top = -86.67
 offset_right = 389.33
 offset_bottom = 425.33
 mouse_filter = 2
+expand_mode = 1
+
+; A CARGA PENDURADA NO GUINDASTE DO n2 (`077`): o quadro e o offset do PÍER,
+; porque cada lingada nasce já no sítio do gancho daquele passo. Depois do
+; barco, porque no porão ela pousa em cima do convés, e antes da lança, cujo
+; gancho fica por cima das cintas. Com o gancho na pilha o `Dock.gd` passa o
+; trabalhador para depois dela: ele está à frente da pilha, do lado da câmara.
+[node name="Carga" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -66.67
+offset_top = -114.67
+offset_right = 445.33
+offset_bottom = 397.33
+mouse_filter = 2
+visible = false
 expand_mode = 1
 
 [node name="Lanca" type="TextureRect" parent="."]

@@ -979,7 +979,37 @@ técnica, para quem fizer os degraus 2 e 3:
 
 Ficou de fora, e é dele: os degraus 2 (o guindaste tira a carga, e ele leva-a;
 com ele, a ida ao camião nos serviços de mais de um turno) e 3 (pallets e
-empilhadeira), e a transição entre turnos.
+empilhadeira), e a transição entre turnos. **O 2 fez-se na `077`**, abaixo.
+
+### Fora das etapas — o guindaste do nível 2 e a ida ao camião (03/10)
+
+O degrau 2 (`077`): no primeiro turno do serviço o guindaste de treliça gira
+do porão à pilha com a carga do serviço, e o trabalhador desengata-a; nos
+seguintes, se o camião está no berço, ele leva a carga às portas de trás,
+ao ombro. O que acrescenta à técnica da `076`, para quem fizer o degrau 3:
+
+- **A carga vive numa camada SUA quando a peça que a leva é grande.** A
+  lança do n2 tem 15 quadros, e com a carga dentro deles seriam 36 quadros
+  GRANDES, quatro tipos × nove posições. Num nó `Carga` à parte são 36
+  lingadas PEQUENAS, cada uma já no sítio do gancho daquele passo. A tabela
+  `LINGADAS_N2` é que as casa com a lança.
+- **Uma figura que olha para o lado roda-se no gerador** (`giro` do
+  `boneco()`, pela `matrix_basis` em volta dos pés). O `s` só olhava para
+  ±y, e quem desengata ao lado da pilha olha para −x. À frente dela tapava
+  metade da pilha.
+- **O ponto onde a figura chega não se escreve: lê-se do desenho de quem
+  está lá.** As portas de trás do camião saem do pixel opaco mais à direita
+  da textura que encostou (`portas_do_camiao()` no `Main`). A traseira vai
+  de 0,60 a 0,76 da âncora conforme o serviço e a empresa, e um número por
+  doca erraria num camião ou noutro.
+- **⚠️ As docas desenham-se DEPOIS do `Cenario`, inteiras.** A ordem de nó
+  só é profundidade entre irmãos. Uma figura que sai do píer pinta-se por
+  cima de todo prop do cenário, mesmo do que lhe está à frente. A primeira
+  entrega, no flanco do camião, punha-o 117 px por cima do armazém na doca
+  2. O Bruno viu-o no GIF; nenhuma guarda o via. Quem anda para fora do píer
+  prova-se contra o cenário nas três docas (D40 §6).
+- **O GIF de veredito mostra as três docas**, e foi por isso que o defeito
+  apareceu: nas docas 1 e 3 o caminho estava limpo.
 
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.

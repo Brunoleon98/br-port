@@ -1040,6 +1040,12 @@ derivada delas.
 - **Ordem de nó É profundidade.** Quem tem `mx+my` maior está mais perto da
   câmera e tapa quem tem menor. Vale em `Dock.tscn` e em `MapaWrap/Cenario`.
   O teste de design confere isto.
+  ⚠️ **E SÓ ENTRE IRMÃOS: `MapaWrap/Docas` desenha-se DEPOIS do `Cenario`,
+  inteiro.** O que anda numa doca e sai do píer pinta-se por cima de todo
+  prop do cenário, mesmo do que lhe está à frente. Na ida ao camião do n2 a
+  entrega no flanco punha o trabalhador 117 px por cima do armazém na doca 2.
+  Toda guarda de profundidade estava verde, porque compara irmãos; quem o
+  viu foi o Bruno, no GIF. O D40 §6 prova-o contra o cenário (`077`).
 - **⚠️ CHANFRO A 45° INFLADO PELA FOLGA AFASTA-SE `√2` VEZES MAIS.** Vale para
   toda peça que exista em versões concêntricas — asfalto, meio-fio, calçada. A
   esquina inflada de `folga` em `mx` E em `my` põe a reta a 45° a `folga · √2`

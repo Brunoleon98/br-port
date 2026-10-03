@@ -762,7 +762,7 @@ var _ocupante_do_berco: Array = []
 # a servir barcos que já foram embora. Índice = índice da doca.
 var _visita_do_berco: Array[int] = []
 
-# O camião do berço está a SAIR dele (a meio da ré, ainda fora da rua). É o
+# O camião do berço está a SAIR dele (a meio do acesso, ainda fora da rua). É o
 # único estado do trânsito que a posição desenhada não diz: um camião no
 # acesso tanto pode estar a entrar como a sair, e só quem sai volta à faixa —
 # e daqui a pouco, que é o que a previsão das curvas precisa de saber.
@@ -782,8 +782,9 @@ var _base_do_caminhao: Array[Vector2] = []
 ##
 ## ⚠️ E O SENTIDO TAMBÉM SAI DO TRECHO, desde que a rua passou a ter mão
 ## dupla: andar em `-my` ou em `-mx` é ir com a frente virada, e pede a
-## silhueta `_retorno`. `de_re` é a exceção de quem recua — o camião que larga
-## o berço de marcha-atrás anda em `-mx` com a frente virada para `+mx`.
+## silhueta `_retorno`. `de_re` é a exceção de quem recua — o camião que entra
+## no berço de marcha-atrás anda em `+mx` com a frente virada para `-mx`
+## (`077`: as portas de trás para o píer).
 ##
 ## ⚠️ A EMPRESA É OBRIGATÓRIA, e não tem valor por omissão: argumento com
 ## omissão é o que ninguém passa (`047`), e aqui a omissão seria a empresa 0 a
@@ -981,7 +982,7 @@ func _camioes() -> Array[Dictionary]:
 ## sobrar o `ESPACO_NA_FAIXA`, nem acabou de passar por ela (`BOCA_DEPOIS`).
 ##
 ## ⚠️ AS DUAS FAIXAS, E NÃO SÓ A QUE SE ATRAVESSA. A ida que entra atravessa a
-## do retorno; a que sai de ré atravessa-a outra vez e volta à sua; o retorno
+## do retorno; a que sai do berço atravessa-a outra vez e volta à sua; o retorno
 ## que sai volta à sua; e o porta-contêiner, ao virar, põe a traseira meio
 ## palmo dentro da faixa ao lado (0,705 de meio chassi contra 0,9 entre faixas,
 ## menos meia largura). Perguntar sempre pelas duas é mais largo do que cada
@@ -1012,8 +1013,8 @@ func _boca_livre(d: int, quem: Control, manobra: float) -> bool:
 	return true
 
 
-## Onde está o camião `c` na SUA rota, em `s` — ou, se está a sair de um berço
-## de ré, onde ESTARIA: o `s` da boca menos o que lhe falta de ré, que é quando
+## Onde está o camião `c` na SUA rota, em `s` — ou, se está a sair de um berço,
+## onde ESTARIA: o `s` da boca menos o que lhe falta do acesso, que é quando
 ## ele lá chega. -1 para quem está fora da rua e não vai voltar já (a entrar num
 ## berço, encostado, ou à espera fora do quadro não conta: o arranque dele
 ## pergunta quando for a vez dele).
@@ -1085,8 +1086,8 @@ func _pode_arrancar(quem: Control, e_ida: bool) -> bool:
 		and _curvas_livres(quem, e_ida, 0.0)
 
 
-## Sair do berço `d` de ré: a boca livre e as curvas livres, estas a contar de
-## quando a ré acabar.
+## Sair do berço `d`: a boca livre e as curvas livres, estas a contar de
+## quando ele chegar à boca.
 func _pode_sair(d: int, quem: Control, e_ida: bool) -> bool:
 	var acesso: Dictionary = ACESSOS_DOCA[d]
 	var boca: Vector2 = acesso["virada"] if e_ida else acesso["entrada"]
@@ -1369,7 +1370,8 @@ func _retorno_na_boca(j: int, d: int, pausa_apos: float) -> void:
 		_seguir_subida(j, entrada, pausa_apos)
 		return
 	_ocupante_do_berco[d] = caminhao
-	_percorrer_retorno(j, [entrada, paragem], func() -> void: _encostou(d, visita))
+	_percorrer_retorno(j, [entrada, paragem], func() -> void: _encostou(d, visita),
+		true)
 
 
 func _animar_caminhoes() -> void:
@@ -1513,7 +1515,8 @@ func _no_acesso(i: int, pausa_apos: float) -> void:
 			func() -> void: _lancar_volta(i, pausa_apos))
 		return
 	_ocupante_do_berco[i] = caminhao
-	_percorrer(caminhao, i, [virada, paragem], func() -> void: _encostou(i, visita))
+	_percorrer(caminhao, i, [virada, paragem], func() -> void: _encostou(i, visita),
+		true)
 
 
 ## ENCOSTOU no berço `d`, por causa do barco `visita`. A partir daqui não há
@@ -1528,17 +1531,81 @@ func _encostou(d: int, visita: int) -> void:
 		_largar_berco(d)
 		return
 	_visita_do_berco[d] = visita
+	_avisar_doca(d, _ocupante_do_berco[d])
 
 
-## O camião do berço `d` larga-o: sai de marcha-atrás pelo acesso até à SUA
-## faixa — a ida até à virada, atravessando outra vez a do retorno; o retorno
-## até à entrada — e retoma a estrada. A trava abre-se quando ele lá chega.
+## A doca `d` fica a saber que o camião do serviço encostou no berço dela, e
+## onde ficam as PORTAS DE TRÁS dele — em coordenada da doca —, ou que largou
+## (`null`). É a ida ao camião do nível 2 que pergunta (`077`): o trabalhador
+## só leva a carga com o camião lá, e leva-a às portas do camião que PAROU,
+## não a uma cópia do berço. Avisa-se nas duas transições de
+## `_visita_do_berco`, que é o estado «encostado» do trânsito.
+func _avisar_doca(d: int, caminhao: TextureRect) -> void:
+	var vagas := _docks_container.get_children()
+	if d >= vagas.size():
+		return
+	var doca: Control = vagas[d]
+	if caminhao == null:
+		doca.camiao_no_berco(null)
+		return
+	doca.camiao_no_berco(portas_do_camiao(caminhao) - doca.global_position)
+
+
+## A meia largura dos camiões, em unidades de mundo: 0,38 do construtor
+## vezes o `ESCALA_CAMINHAO` (0,72), medido no modelo (`blender/brp_porto.py`).
+## É a mesma em todos, e é por ela que a traseira desenhada se lê.
+const MEIA_LARGURA_DO_CAMIAO := 0.274
+## O chão à frente das portas de trás onde ele pára: além da traseira, e um
+## pouco para o lado da câmara (`+my`), ainda dentro da largura das portas
+## (a meia largura é 0,274). Ele apanha a carga 0,34 para esse lado da pilha, e
+## com as portas no eixo do camião o caminho saía 17,6° fora do eixo em que os
+## quadros dele olham. Medido pelo D40 no pior dos quatro camiões que levam
+## carga ao ombro: 14,1° a 0,15 para o lado, 12,5° a 0,22.
+const FOLGA_DAS_PORTAS := 0.14
+const LADO_DAS_PORTAS := 0.22
+var _traseiras: Dictionary = {}
+
+
+## O chão à frente das PORTAS DE TRÁS do camião `no`, encostado de ré, em
+## coordenada global — onde o trabalhador do nível 2 entrega (`077`).
 ##
-## ⚠️ ELE SAI DE RÉ, e continua a sair depois de a silhueta `_retorno_mx`
-## existir. Com ela aqui, o camião encostado viraria 180° de um frame para o
-## outro, no fundo da baía, sem manobra nenhuma. Encostar de frente e sair de ré
-## é o que um camião de carga faz numa baía — daí o `re_no_primeiro`, que pede a
-## silhueta da frente para a perna que anda em `-mx`.
+## ⚠️ A TRASEIRA LÊ-SE NO DESENHO, e não numa tabela: vai de 0,60 a 0,76 da
+## âncora conforme o serviço e a empresa (medido no modelo), e um número só
+## punha-o a 4 px das portas de um e por cima das do outro. De ré, as portas
+## estão em `+mx`, e o pixel opaco mais à direita é a quina de trás do lado
+## de longe: `(traseira + meia largura) · MEIA_LARG`. ⚠️ O ALFA FILTRA A
+## SOMBRA, que é semitransparente (~106) e se estende para o lado da traseira;
+## com ela a conta dava 0,3 a mais.
+func portas_do_camiao(no: TextureRect) -> Vector2:
+	var tex := no.texture
+	if not _traseiras.has(tex):
+		var img := PropIso.imagem(tex)
+		var usado := img.get_used_rect()
+		var x_max := usado.position.x
+		for y in range(usado.position.y, usado.end.y):
+			for x in range(usado.end.x - 1, x_max, -1):
+				if img.get_pixel(x, y).a > 0.8:
+					x_max = x
+					break
+		_traseiras[tex] = float(x_max + 1) * PropIso.escala(tex) - PropIso.MEIO
+	var a: float = float(_traseiras[tex]) / MEIA_LARG - MEIA_LARGURA_DO_CAMIAO \
+		+ FOLGA_DAS_PORTAS
+	return no.global_position + no.size / 2.0 \
+		+ tela_da_rota(Vector2(a, LADO_DAS_PORTAS), Vector2.ZERO)
+
+
+## O camião do berço `d` larga-o: sai DE FRENTE pelo acesso até à SUA faixa —
+## a ida até à virada, atravessando outra vez a do retorno; o retorno até à
+## entrada — e retoma a estrada. A trava abre-se quando ele lá chega.
+##
+## ⚠️ ELE ENTRA DE RÉ E SAI DE FRENTE desde a `077`, e era o contrário. Encostava
+## de frente com as portas para a rua, e o trabalhador do nível 2 tinha de as
+## contornar — na doca 2 por trás do armazém. O Bruno pediu a carga pelas
+## portas de trás, e é assim numa doca de carga: o camião recua até ela. Quem
+## o pede é o `re_no_primeiro` da ENTRADA (`_no_acesso`, `_retorno_na_boca`):
+## a perna que anda em `+mx` mostra a frente virada para terra. A saída já não
+## o passa, e por isso o camião encostado não vira de um frame para o outro: a
+## silhueta com que encostou é a da frente para `-mx`, que é para onde sai.
 ##
 ## ⚠️ E SAI SÓ COM A BOCA LIVRE, e é o único sítio do trânsito onde se espera:
 ## até 23/09 a ré largava o berço por cima de quem passava, e os dois seguiam
@@ -1569,14 +1636,14 @@ func _largar_berco(d: int) -> void:
 			_saindo_do_berco[d] = false
 			_percorrer(caminhao, i, _pontos_da_rota(boca),
 				func() -> void: _lancar_volta(i, CAMINHAO_INTERVALO))
-		, true)
+		)
 		return
 	var j := int(c["retorno"])
 	_percorrer_retorno(j, [paragem, boca], func() -> void:
 		_ocupante_do_berco[d] = null
 		_saindo_do_berco[d] = false
 		_seguir_subida(j, boca, CAMINHAO_INTERVALO)
-	, true)
+	)
 
 
 ## Um barco saiu de um berço onde havia um camião encostado? Então ele vai
@@ -1594,6 +1661,7 @@ func _docas_mudaram() -> void:
 		if _visita_da_doca(d) == _visita_do_berco[d]:
 			continue
 		_visita_do_berco[d] = -1
+		_avisar_doca(d, null)
 		_largar_berco(d)
 
 
