@@ -80,6 +80,9 @@ var _fila_da_vez: Array[Callable] = []
 # conhece a outra.
 @onready var _docks_container: Control = $MapaWrap/Docas
 @onready var _dock_cards: HBoxContainer = $BarraDocas
+# A camada do «+R$» que sobe do barco servido, por cima das três docas
+# (`078`, e o comentário do nó no `Main.tscn`).
+@onready var _ganhos: Control = $MapaWrap/Ganhos
 
 # Trabalhador escolhido por toque, à espera de uma doca. -1 = nenhum.
 # Vive aqui e não no GameState porque é estado de interface: quem joga com
@@ -1912,7 +1915,7 @@ func _refresh_estruturas() -> void:
 
 
 func _refresh_hud() -> void:
-	_cash_label.text = GameState.moeda(int(GameState.cash))
+	_mostrar_caixa(int(GameState.cash))
 	var shown_day: int = min(GameState.turn, GameState.TURNS_TOTAL)
 	_day_label.text = "Dia %d/%d" % [shown_day, GameState.TURNS_TOTAL]
 	_rep_label.text = "%d %s" % [int(GameState.reputation), GameState.reputation_label()]
@@ -1952,9 +1955,12 @@ func _refresh_meta() -> void:
 	var dias_restantes: int = max(GameState.PARCELA_DUE_TURN - GameState.turn + 1, 0)
 	_meta_titulo.text = "Parcela do Sr. Ribeiro — %s" % Narrativa.concordar(
 		dias_restantes, "dia restante", "dias restantes")
-	_meta_bar.value = clamp(100.0 * float(GameState.cash) / float(alvo), 0.0, 100.0)
-	var falta: int = alvo - int(GameState.cash)
-	var progresso := "%s de %s" % [GameState.moeda(int(GameState.cash)), GameState.moeda(alvo)]
+	# O dinheiro do cartão é o MOSTRADO, e não o do `GameState`: na virada ele
+	# conta junto com a pílula, e os dois números nunca discordam na tela
+	# (`078`). Fora da virada os dois são o mesmo.
+	_meta_bar.value = clamp(100.0 * float(_caixa_mostrado) / float(alvo), 0.0, 100.0)
+	var falta: int = alvo - _caixa_mostrado
+	var progresso := "%s de %s" % [GameState.moeda(_caixa_mostrado), GameState.moeda(alvo)]
 	if falta > 0:
 		_meta_label.text = "%s — faltam %s" % [progresso, GameState.moeda(falta)]
 		_meta_label.theme_type_variation = StringName("")
@@ -2385,8 +2391,130 @@ func _on_semana_fechada(resumo: Dictionary) -> void:
 		return painel)
 
 
+# ── A VIRADA DO DIA NA TELA (`078`) ──
+# O `GameState` vira o dia de uma vez, e continua a virar: a transição é a
+# TELA a alcançar o estado novo, e nada do que ela faz volta ao jogo — o
+# balanceamento e o simulador ficam intocados por construção. Escolha do
+# Bruno, entre quatro: o barco servido parte (`Dock.gd`, `_mostrar_barco`),
+# o dinheiro conta, e o que cada doca rendeu sobe do barco como «+R$».
+#
+# ⚠️ SÓ O BOTÃO ARMA A CONTAGEM. Toda outra mudança de dinheiro — comprar,
+# pagar a parcela, uma suíte que escreve `GS.cash` e chama `_refresh_hud()` —
+# continua a saltar para o valor certo, e é por isso que nenhuma asserção que
+# lê o HUD logo a seguir a uma ação mudou. A troca de barco não depende do
+# botão: ela é do MUNDO, e anima venha a virada de onde vier.
+## A contagem dura o mesmo que o «+R$» no ar: o número chega ao valor novo
+## quando o último ganho se desfaz. Eram 0,6 s, e o Bruno achou-a rápida.
+const CONTAGEM_SEG := 1.2
+const GANHO_SEG := 1.2
+## O «+R$» nasce no MEIO do casco e sobe pouco, escolha do Bruno: o barco sai
+## por baixo dele e o valor fica onde o barco estava, sobre a água do berço. Na
+## primeira versão ele nascia 34 px acima e subia 40, e passava por cima da
+## superestrutura do navio, do cais e da base da grua. O centro do quadro do
+## barco cai no FUNDO do casco, e por isso o meio dele está acima do centro.
+const GANHO_SUBIDA_PX := 20.0
+const GANHO_ACIMA_PX := 12.0
+var _virada_armada := false
+var _caixa_mostrado := 0
+var _tw_caixa: Tween
+
+
 func _on_advance_pressed() -> void:
+	# UM TOQUE A MEIO DA VIRADA ACABA-A JÁ, e vira o dia seguinte — quem joga
+	# depressa não fica mais lento (escolha do Bruno, `078`).
+	_concluir_virada()
+	# QUEM VAI PAGAR, lido ANTES: depois da virada o barco servido já saiu, e
+	# com ele a receita. O valor é o do `receita_da_doca()`, o mesmo
+	# `_lancar_receita()` que põe o dinheiro no caixa, bónus incluído. E quem
+	# pagou lê-se no RESULTADO — o barco que tinha trabalhador e já não está
+	# lá —, em vez de repetir aqui a regra do `progress` contra o `op_turns`.
+	var a_pagar: Dictionary = {}
+	for i in range(GameState.docks.size()):
+		var doca: Dictionary = GameState.docks[i]
+		if doca["boat"] != null and doca["worker_id"] != null:
+			a_pagar[i] = {"id": int(doca["boat"]["id"]),
+				"valor": GameState.receita_da_doca(i)}
+	_virada_armada = true
 	GameState.advance_turn()
+	_virada_armada = false
+	for i in a_pagar:
+		var barco = GameState.docks[i]["boat"]
+		if barco == null or int(barco["id"]) != int(a_pagar[i]["id"]):
+			_subir_ganho(int(i), int(a_pagar[i]["valor"]))
+
+
+## Leva a virada em curso ao fim: o dinheiro no valor certo, cada barco no
+## berço (ou a doca vazia) e nenhum «+R$» no ar. É o que o toque seguinte faz
+## antes de virar outro dia, e o que a bateria de capturas faz antes de
+## fotografar (`capturar_tela.gd`).
+func _concluir_virada() -> void:
+	if _tw_caixa != null and _tw_caixa.is_valid():
+		_tw_caixa.kill()
+		_pintar_caixa(int(GameState.cash))
+	for vaga in _docks_container.get_children():
+		vaga.concluir_troca()
+	for rotulo in _ganhos.get_children():
+		rotulo.visible = false
+		rotulo.queue_free()
+
+
+## A virada ainda está a acontecer na tela.
+func virada_em_curso() -> bool:
+	if _tw_caixa != null and _tw_caixa.is_valid() and _tw_caixa.is_running():
+		return true
+	for vaga in _docks_container.get_children():
+		if vaga.em_troca():
+			return true
+	for rotulo in _ganhos.get_children():
+		if not rotulo.is_queued_for_deletion():
+			return true
+	return false
+
+
+func _mostrar_caixa(alvo: int) -> void:
+	if _tw_caixa != null and _tw_caixa.is_valid():
+		_tw_caixa.kill()
+	if not _virada_armada or alvo == _caixa_mostrado:
+		_pintar_caixa(alvo)
+		return
+	_tw_caixa = create_tween()
+	_tw_caixa.tween_method(_pintar_caixa_f, float(_caixa_mostrado), float(alvo),
+		CONTAGEM_SEG).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+
+func _pintar_caixa_f(valor: float) -> void:
+	_pintar_caixa(int(round(valor)))
+
+
+func _pintar_caixa(valor: int) -> void:
+	_caixa_mostrado = valor
+	_cash_label.text = GameState.moeda(valor)
+	_refresh_meta()
+
+
+## O «+R$» que sobe do barco servido da doca `doca` e se desfaz.
+func _subir_ganho(doca: int, valor: int) -> void:
+	var vagas := _docks_container.get_children()
+	if doca >= vagas.size() or valor <= 0:
+		return
+	var rotulo := Label.new()
+	rotulo.theme_type_variation = &"GanhoNoMapa"
+	rotulo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rotulo.text = "+" + GameState.moeda(valor)
+	_ganhos.add_child(rotulo)
+	rotulo.reset_size()
+	# Pela transformada GLOBAL dos dois lados, e não somando `offset` de pai em
+	# pai: é o `MapaWrap` (62 px) que esse caminho esquece (`CLAUDE.md`).
+	var centro: Vector2 = _ganhos.get_global_transform().affine_inverse() \
+		* vagas[doca].centro_do_barco()
+	rotulo.position = centro - Vector2(rotulo.size.x * 0.5,
+		rotulo.size.y * 0.5 + GANHO_ACIMA_PX)
+	var tw := rotulo.create_tween().set_parallel(true)
+	tw.tween_property(rotulo, "position:y", rotulo.position.y - GANHO_SUBIDA_PX,
+		GANHO_SEG).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(rotulo, "modulate:a", 0.0, GANHO_SEG * 0.4) \
+		.set_delay(GANHO_SEG * 0.6)
+	tw.chain().tween_callback(rotulo.queue_free)
 
 
 # O BOTÃO VOLTAR DO ANDROID. Só existe no telefone, e é por isso que ninguém

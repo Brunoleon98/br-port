@@ -594,6 +594,17 @@ offset_top = 308.67
 offset_right = 352.67
 offset_bottom = 476.67
 
+; O «+R$» QUE SOBE DO BARCO SERVIDO, na virada do dia (`078`). Vem DEPOIS
+; das docas porque ordem de nó é profundidade só entre irmãos: filho de uma
+; doca, ele ficaria por baixo da doca seguinte. É a exceção registada à regra
+; «nada de interface pousa sobre o mapa» — dura pouco mais de um segundo e
+; não recebe toque (`mouse_filter = 2`).
+[node name="Ganhos" type="Control" parent="MapaWrap"]
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 720.0
+mouse_filter = 2
+
 [node name="BarraDocas" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0

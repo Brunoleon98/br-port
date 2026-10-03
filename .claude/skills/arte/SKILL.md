@@ -386,6 +386,14 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   está aparecendo na frente do armazém?»* Era um defeito que nenhuma guarda
   via. Pergunta dele no «Outro» lê-se como defeito a medir, não como dúvida
   a explicar.
+  ⚠️ **E NA `078` O PAR NO MESMO TURNO VOLTOU 2 DE 2.** O primeiro foi
+  «Ajustar» com as quatro opções da segunda pergunta marcadas e nada no
+  «Outro» — e chegou, porque cada opção trazia na descrição a CORREÇÃO
+  proposta («sair sem transparência e sumir só no fim», «alongar para
+  ~0,8 s»). As três com uma saída só fizeram-se como estavam escritas; a
+  quarta tinha várias («+R$ no lugar errado») e foi uma pergunta SOZINHA, com
+  a prévia em ASCII de cada lugar, que voltou à primeira. A passagem seguinte
+  foi «Aceito».
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
@@ -415,6 +423,11 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   guindaste] que sempre fará isso»* (`076`). A pergunta que faltou não era de
   arte, era do mundo — que máquina e que pessoa fazem aquilo, naquele nível
   do porto. Nos degraus 2 e 3 ela vem antes da do movimento.
+  ⚠️ **E A PERGUNTA QUE DESCREVE O ESTADO DE HOJE MEDE-O ANTES.** Na
+  transição entre turnos (`078`) o escopo foi «o que a tela mostra quando o
+  dia vira», e a pergunta dizia que o barco novo já entrava a deslizar — lido
+  no comentário do `Dock.gd`. Medido logo depois: 0 de 21. Ele escolheu sobre
+  uma descrição falsa do ponto de partida; a legenda do GIF corrigiu-a.
 - **E ONDE UMA PEÇA VAI também se pergunta antes do render** (`073`). Na
   `072` a baleeira levou seis posições escolhidas a olho, e ele recusou as
   seis. Na conversa seguinte a posição foi uma pergunta com duas saídas

@@ -1310,6 +1310,15 @@ TextoPilula/colors/font_color = Color(0.941, 0.965, 1, 1)
 ; O número BOM: o dinheiro, e é o único verde do HUD. Mede 8,37:1.
 TextoPilulaBom/base_type = "Label"
 TextoPilulaBom/colors/font_color = Color(0.42, 0.85, 0.53, 1)
+; O «+R$» QUE SOBE DO BARCO SERVIDO (`078`): o MESMO verde do dinheiro no HUD,
+; que é para onde aquele valor vai. Pousa direto no mapa, e texto sobre
+; ilustração não tem cor que ganhe todos os pixels — o CONTORNO navy é o fundo
+; dele, e é contra ele que o D33 o mede (`CONTORNO_MIN`, `066`).
+GanhoNoMapa/base_type = "Label"
+GanhoNoMapa/colors/font_color = Color(0.42, 0.85, 0.53, 1)
+GanhoNoMapa/colors/font_outline_color = Color(0.051, 0.102, 0.149, 1)
+GanhoNoMapa/constants/outline_size = 6
+GanhoNoMapa/font_sizes/font_size = 18
 ; O número em DESTAQUE: a reputação. Mede 8,37:1.
 ; ⚠️ É O ÂMBAR CLARO — o mesmo do `BotaoDestaque` — e NÃO o `RotuloAlerta`,
 ; que é este âmbar escurecido para o cartão BRANCO e que aqui seria escuro a

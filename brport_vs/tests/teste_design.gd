@@ -295,6 +295,10 @@ func _rodar() -> void:
 	_d40_guindaste_n2()
 	_confere("o bloco D40 correu até ao fim", _d40_completo)
 
+	print("=== D41: a virada do dia na tela — o barco parte, o dinheiro conta, o ganho sobe ===")
+	_d41_virada_do_dia()
+	_confere("o bloco D41 correu até ao fim", _d41_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -6877,3 +6881,375 @@ func _d40_tapados(figura: Array, canto: Vector2, cenario: Node, fora: Control) -
 			pior = n
 			qual = String(tr.name)
 	return [pior, qual]
+
+
+# ── D41 ── a virada do dia na tela (03/10, `docs/decisoes/078`)
+#
+# O `GameState` vira o dia de uma vez; a TELA alcança o estado novo devagar:
+# o barco servido parte, o seguinte chega, o dinheiro conta e o que cada doca
+# rendeu sobe do barco como «+R$». Escolha do Bruno, vista em dois GIFs. Seis
+# perguntas, cada uma à procura de um defeito que as outras não veem:
+#
+#   1. O RUMO do barco é o do píer para o mar — conferido contra a PROJEÇÃO
+#      publicada, e não contra a constante: o rumo da primeira versão
+#      atravessava o tabuado, e uma pergunta à própria constante passaria.
+#   2. A FILA: o barco velho sai do berço antes de o novo aparecer, e o novo
+#      entra pelo mar e encosta; nenhum quadro volta atrás.
+#   3. OPACO A MAIOR PARTE DO CAMINHO — «barco parece fantasma» foi o
+#      primeiro veredito: só a ponta de fora esmaece.
+#   4. A SOMA DOS «+R$» é a receita que o `GameState` lançou no dia — duas
+#      fontes: o `Main` lê `receita_da_doca()` ANTES da virada, o jogo
+#      escreve `dia_anterior` DURANTE ela. Com bónus de estrutura no meio,
+#      para o valor bruto não passar por ela.
+#   5. A PRIMEIRA VISTA NÃO ANIMA: o porto que se abre mostra os barcos onde
+#      estão.
+#   6. O TOQUE SEGUINTE ACABA A VIRADA antes de virar outro dia, e só o botão
+#      arma a contagem: o dinheiro que muda por outra porta salta.
+var _d41_completo := false
+
+const D41_SEMENTE := 20261003
+const D41_PASSO := 1.0 / 60.0
+# A fração da partida em que o barco tem de estar OPACO. Medido no código
+# aceite: 0,70 (só os últimos 30% esmaecem). O primeiro GIF esmaecia o caminho
+# inteiro numa curva cúbica, e dava ~0,1. O corte fica no meio.
+const D41_OPACO_MIN := 0.4
+
+
+func _d41_virada_do_dia() -> void:
+	var GS: Node = root.get_node("GameState")
+	var DockS: Script = load("res://scripts/Dock.gd")
+	var k: Dictionary = DockS.get_script_constant_map()
+	GS.clear_save()
+	GS._rng.seed = D41_SEMENTE
+	GS.new_game()
+	GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	# O porto completo, com o caixa da tabela de preços — como a captura.
+	var custo: int = 0
+	for e in GS.ESTRUTURAS:
+		custo += int(GS.ESTRUTURAS[e]["custo"])
+	GS.cash += custo
+	var ids: Array = GS.ESTRUTURAS.keys()
+	var tabela: Dictionary = GS.ESTRUTURAS
+	ids.sort_custom(func(a, b): return int(tabela[a]["ordem"]) < int(tabela[b]["ordem"]))
+	for e in ids:
+		GS.comprar_estrutura(e)
+	_confere("D41: o porto completo tem três docas e três trabalhadores",
+		GS.docks.size() == 3 and GS.workers.size() >= 3,
+		"%d docas, %d trabalhadores" % [GS.docks.size(), GS.workers.size()])
+	if GS.docks.size() != 3 or GS.workers.size() < 3:
+		return
+	# Um barco em cada doca, no ÚLTIMO turno do serviço, com trabalhador:
+	# a virada paga os três. Armazenagem, que tem o bónus do armazém.
+	for i in range(3):
+		GS.docks[i]["boat"] = _d41_barco(GS)
+		GS.docks[i]["worker_id"] = null
+
+	var tela: Control = load(CENA).instantiate()
+	root.add_child(tela)
+	var docas: Array = tela.get_node("MapaWrap/Docas").get_children()
+	var ganhos: Control = tela.get_node("MapaWrap/Ganhos")
+
+	# 5 ── a primeira vista não anima. ⚠️ COM OS BARCOS SEM TRABALHADOR: quem
+	# aloca a meio da chegada encosta o barco já (`concluir_troca()`), e com
+	# os trabalhadores alocados antes de abrir era ESSA guarda que segurava a
+	# asserção — o mutante que animava a primeira vista passou verde.
+	var em_troca_ao_abrir := 0
+	for d in docas:
+		if d.em_troca() or (d.get_node("Barco") as TextureRect).texture == null:
+			em_troca_ao_abrir += 1
+	_confere("D41: ao abrir, os barcos estão no berço e nenhuma doca troca (%d)"
+		% em_troca_ao_abrir, em_troca_ao_abrir == 0)
+	for i in range(3):
+		GS.assign_worker(int(GS.workers[i]["id"]), i)
+
+	# 1 ── o rumo é o do píer para o mar, pela projeção publicada
+	var rumo: Vector2 = k["RUMO_DO_MAR"]
+	var mar: Vector2 = _tela(1.0, 0.0, 0.0) - _tela(0.0, 0.0, 0.0)
+	_confere("D41: o barco sai e entra na direção do píer para o mar (+mx)",
+		absf(rumo.normalized().dot(mar.normalized()) - 1.0) < 0.001,
+		"rumo %s, +mx na tela %s" % [rumo, mar])
+
+	# Cada sub-bloco leva a SUA bandeira: um erro de execução lá dentro aborta
+	# só ele, e a deste bloco ficava verde. Mordeu na primeira corrida do D41,
+	# com uma chave inexistente no registo do dia (`CLAUDE.md`, «Estilo»).
+	_confere("D41: a virada correu até ao fim",
+		_d41_a_virada(GS, DockS, tela, docas, ganhos) == true)
+	_confere("D41: o toque seguinte correu até ao fim",
+		_d41_o_toque_seguinte(GS, DockS, tela, docas, ganhos) == true)
+
+	root.remove_child(tela)
+	tela.free()
+	GS.clear_save()
+	_d41_completo = true
+
+
+func _d41_barco(GS: Node) -> Dictionary:
+	var barco: Dictionary = GS._make_boat()
+	barco["classe"] = "medio"
+	barco["motivo"] = "armazenagem"
+	barco["rival"] = false
+	barco["matched"] = false
+	barco["progress"] = int(barco["op_turns"]) - 1
+	return barco
+
+
+## Um barco que o nível 3 recebe, com arte diferente de `velha`, à espera
+## de trabalhador. A classe e o motivo saem da tabela do jogo.
+func _d41_barco_outro(GS: Node, DockS: Script, velha: Texture2D) -> Dictionary:
+	for classe in GS.CLASSES_DE_NAVIO:
+		var dados: Dictionary = GS.CLASSES_DE_NAVIO[classe]
+		for motivo in dados["motivos"]:
+			var valor: int = int(dados["valor_min"])
+			if DockS.arte_do_barco(String(classe), String(motivo), valor) == velha:
+				continue
+			var barco: Dictionary = GS._make_boat()
+			barco["classe"] = classe
+			barco["motivo"] = motivo
+			barco["value"] = valor
+			barco["rival"] = false
+			barco["matched"] = false
+			barco["progress"] = 0
+			return barco
+	return {}
+
+
+func _d41_novos_tweens(antes: Dictionary) -> Array:
+	var novos: Array = []
+	for tw in get_processed_tweens():
+		if not antes.has(tw):
+			novos.append(tw)
+	return novos
+
+
+func _d41_dinheiro(texto: String) -> int:
+	var so: String = ""
+	for c in texto:
+		if c >= "0" and c <= "9":
+			so += c
+	return int(so) if so != "" else -1
+
+
+func _d41_vivos(ganhos: Control) -> Array:
+	var vivos: Array = []
+	for r in ganhos.get_children():
+		if (r as Control).visible and not r.is_queued_for_deletion():
+			vivos.append(r)
+	return vivos
+
+
+# 2, 3, 4 e a contagem
+func _d41_a_virada(GS: Node, DockS: Script, tela: Control, docas: Array,
+		ganhos: Control) -> bool:
+	var pilula := tela.get_node("HudBar/CaixaPilula/Linha/Caixa") as Label
+	var meta := tela.get_node("MetaCartao/MetaColuna/MetaTexto") as Label
+	var antes_tw := {}
+	for tw in get_processed_tweens():
+		antes_tw[tw] = true
+	var velhos: Array = []
+	var bases: Array = []
+	for d in docas:
+		velhos.append((d.get_node("Barco") as TextureRect).texture)
+		bases.append(d.get("_barco_base"))
+	var caixa_antes: int = int(GS.cash)
+	var turno_antes: int = int(GS.turn)
+	tela.call("_on_advance_pressed")
+	_confere("D41: a virada não fecha semana (o caixa só muda pela receita)",
+		turno_antes % int(GS.TURNS_PER_WEEK) != 0 and GS.phase in ["playing", "rival_offer"],
+		"turno %d, fase %s" % [turno_antes, GS.phase])
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	# Cada doca recebe um barco novo de ARTE DIFERENTE da do que sai, como o
+	# `boats_spawned` lho daria no mesmo quadro: a fila só se prova com as
+	# duas pontas, e com a mesma textura dos dois lados não se distingue quem
+	# sai de quem entra (a primeira corrida deu três cargueiros iguais).
+	for i in range(3):
+		GS.docks[i]["boat"] = _d41_barco_outro(GS, DockS, velhos[i])
+	tela.call("_refresh_docks")
+
+	# 4 ── a soma dos «+R$» é a receita lançada no dia
+	# As linhas de receita: as docagens e o bónus de cada estrutura que PAGA
+	# bónus — o «granel» aponta para o guindaste com bónus zero, e essa linha
+	# não existe no registo do dia.
+	var chaves: Array = ["docagens"]
+	for m in GS.MOTIVOS:
+		var est: String = String(GS.MOTIVOS[m]["estrutura"])
+		if est != "" and float(GS.MOTIVOS[m]["bonus"]) > 0.0 and not chaves.has(est):
+			chaves.append(est)
+	var receita: int = 0
+	for c in chaves:
+		receita += int(GS.dia_anterior[c])
+	var bruto: int = int(GS.dia_anterior["docagens"])
+	var soma := 0
+	var vivos: Array = _d41_vivos(ganhos)
+	for r in vivos:
+		soma += _d41_dinheiro((r as Label).text)
+	_confere("D41: sobe um «+R$» por doca que pagou (%d de 3)" % vivos.size(),
+		vivos.size() == 3)
+	_confere("D41: a soma dos «+R$» é a receita que o jogo lançou no dia",
+		soma == receita and receita == int(GS.cash) - caixa_antes,
+		"soma %d, receita do dia %d, caixa +%d" % [soma, receita, int(GS.cash) - caixa_antes])
+	_confere("D41: e a receita traz bónus, para o valor bruto não passar por ela",
+		receita > bruto, "receita %d, bruto %d" % [receita, bruto])
+	_confere("D41: no toque o dinheiro ainda mostra o valor de antes",
+		_d41_dinheiro(pilula.text) == caixa_antes, "mostra %s" % pilula.text)
+
+	# 2, 3 ── anda os tweens e lê o NÓ a cada passo
+	var novos: Array = _d41_novos_tweens(antes_tw)
+	var partida := [0, 0, 0]
+	var opaco := [0, 0, 0]
+	var trocou := [false, false, false]
+	var volta := 0
+	var entra_fora := 0
+	var recua := 0
+	var ultimo := [-1.0, -1.0, -1.0]
+	var saiu_ate := [-1.0, -1.0, -1.0]
+	var contou_no_meio := false
+	var desce := 0
+	var discorda := 0
+	var mostrado_antes := caixa_antes
+	var rumo: Vector2 = (DockS.get_script_constant_map()["RUMO_DO_MAR"] as Vector2).normalized()
+	for passo in range(int(3.0 / D41_PASSO)):
+		for tw in novos:
+			if (tw as Tween).is_valid():
+				(tw as Tween).custom_step(D41_PASSO)
+		var mostrado := _d41_dinheiro(pilula.text)
+		if mostrado > caixa_antes and mostrado < int(GS.cash):
+			contou_no_meio = true
+		if mostrado < mostrado_antes:
+			desce += 1
+		mostrado_antes = mostrado
+		if not meta.text.contains(pilula.text):
+			discorda += 1
+		for i in range(3):
+			var b := docas[i].get_node("Barco") as TextureRect
+			var base: Vector2 = bases[i]
+			var andou: float = (b.position - base).dot(rumo)
+			if b.texture == velhos[i] and not trocou[i]:
+				partida[i] += 1
+				if b.modulate.a >= 0.999:
+					opaco[i] += 1
+				if andou < ultimo[i] - 0.01:
+					recua += 1
+				ultimo[i] = andou
+				saiu_ate[i] = andou
+			elif b.texture == velhos[i]:
+				volta += 1
+			elif not trocou[i]:
+				trocou[i] = true
+				ultimo[i] = andou
+				# O novo nasce no MAR, já fora do berço, e não no berço.
+				if andou < (DockS.get_script_constant_map()["RUMO_DO_MAR"] as Vector2).length() * 0.9:
+					entra_fora += 1
+			else:
+				if andou > ultimo[i] + 0.01:
+					recua += 1
+				ultimo[i] = andou
+	_confere("D41: em cada doca o barco velho sai e o novo entra (%s)" % [trocou],
+		trocou == [true, true, true])
+	_confere("D41: o barco velho não volta depois de o novo aparecer (%d)" % volta, volta == 0)
+	_confere("D41: o novo aparece no mar, e não no berço (%d fora)" % entra_fora, entra_fora == 0)
+	_confere("D41: o velho só se afasta e o novo só se aproxima (%d recuos)" % recua, recua == 0)
+	# O VELHO CHEGA AO MAR ANTES DE O NOVO APARECER. Sem esta, uma chegada
+	# que saltasse a partida teria zero passos de partida, e a fração opaca
+	# ficaria no valor por omissão — lido no código, e por isso a fração vazia
+	# passou a valer zero. O mutante reprova nas duas.
+	var comprimento: float = (DockS.get_script_constant_map()["RUMO_DO_MAR"] as Vector2).length()
+	var ficaram := 0
+	for i in range(3):
+		if saiu_ate[i] < comprimento * 0.9:
+			ficaram += 1
+	_confere("D41: o barco velho chega ao mar antes de o novo aparecer (%d no berço)"
+		% ficaram, ficaram == 0, "foram até %s de %.0f px" % [saiu_ate, comprimento])
+	var pior := 1.0
+	for i in range(3):
+		pior = minf(pior, float(opaco[i]) / float(partida[i]) if partida[i] > 0 else 0.0)
+	_confere("D41: o barco que sai fica opaco a maior parte do caminho (%.2f)" % pior,
+		pior >= D41_OPACO_MIN, "o corte é %.2f" % D41_OPACO_MIN)
+	_confere("D41: o dinheiro passa por valores do meio — conta, não salta",
+		contou_no_meio)
+	_confere("D41: e nunca desce a contar (%d)" % desce, desce == 0)
+	_confere("D41: o cartão da parcela mostra o mesmo dinheiro que a pílula (%d)" % discorda,
+		discorda == 0)
+	var parados := 0
+	for i in range(3):
+		var b := docas[i].get_node("Barco") as TextureRect
+		var barco: Dictionary = GS.docks[i]["boat"]
+		var arte: Texture2D = DockS.arte_do_barco(String(barco["classe"]),
+			String(barco["motivo"]), int(barco["value"]))
+		if b.texture == arte and b.position.is_equal_approx(bases[i]) \
+				and b.modulate.a >= 0.999 and not docas[i].em_troca():
+			parados += 1
+	_confere("D41: no fim, o barco novo de cada doca está no berço (%d de 3)" % parados,
+		parados == 3)
+	_confere("D41: no fim, o dinheiro é o do jogo e nenhum «+R$» está no ar",
+		pilula.text == GS.moeda(int(GS.cash)) and _d41_vivos(ganhos).is_empty()
+			and not tela.virada_em_curso(),
+		"mostra %s, %d no ar" % [pilula.text, _d41_vivos(ganhos).size()])
+
+	# 6b ── fora do botão, o dinheiro salta
+	GS.cash += 777
+	tela.call("_refresh_hud")
+	_confere("D41: dinheiro mudado fora da virada aparece já, sem contar",
+		pilula.text == GS.moeda(int(GS.cash)) and not tela.virada_em_curso(),
+		"mostra %s, o jogo tem %s" % [pilula.text, GS.moeda(int(GS.cash))])
+	return true
+
+
+# 6 ── o toque seguinte acaba a virada em curso
+func _d41_o_toque_seguinte(GS: Node, DockS: Script, tela: Control, docas: Array,
+		ganhos: Control) -> bool:
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	var pilula := tela.get_node("HudBar/CaixaPilula/Linha/Caixa") as Label
+	for i in range(3):
+		GS.docks[i]["boat"] = _d41_barco(GS)
+		GS.docks[i]["worker_id"] = null
+	tela.call("_refresh_docks")
+	tela.call("_concluir_virada")
+	for i in range(3):
+		GS.assign_worker(int(GS.workers[i]["id"]), i)
+	var antes_tw := {}
+	for tw in get_processed_tweens():
+		antes_tw[tw] = true
+	tela.call("_on_advance_pressed")
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	for i in range(3):
+		if GS.docks[i]["boat"] == null:
+			GS.docks[i]["boat"] = _d41_barco(GS)
+			GS.docks[i]["boat"]["progress"] = 0
+	tela.call("_refresh_docks")
+	var do_primeiro: Array = _d41_vivos(ganhos)
+	var caixa_primeiro: int = int(GS.cash)
+	# A meio da virada: a partida acabou, a chegada está a meio.
+	var novos: Array = _d41_novos_tweens(antes_tw)
+	for passo in range(int(1.0 / D41_PASSO)):
+		for tw in novos:
+			if (tw as Tween).is_valid():
+				(tw as Tween).custom_step(D41_PASSO)
+	_confere("D41: a meio, a virada está em curso", tela.virada_em_curso())
+	# O segundo toque, sem ninguém a pagar: os barcos novos não têm
+	# trabalhador e saem perdidos.
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	tela.call("_on_advance_pressed")
+	var sobram := 0
+	for r in do_primeiro:
+		if (r as Control).visible and not r.is_queued_for_deletion():
+			sobram += 1
+	_confere("D41: o toque seguinte tira do ar os «+R$» da virada anterior (%d sobram)"
+		% sobram, sobram == 0)
+	_confere("D41: e põe o dinheiro no valor que a virada anterior prometia",
+		_d41_dinheiro(pilula.text) == caixa_primeiro,
+		"mostra %s, a virada anterior acabava em %s" % [pilula.text, GS.moeda(caixa_primeiro)])
+	var encostados := 0
+	for d in docas:
+		var b := d.get_node("Barco") as TextureRect
+		if b.position.is_equal_approx(d.get("_barco_base")) and b.modulate.a >= 0.999:
+			encostados += 1
+	_confere("D41: e cada barco a meio da chegada encosta no berço antes de sair (%d de 3)"
+		% encostados, encostados == 3)
+	return true
+

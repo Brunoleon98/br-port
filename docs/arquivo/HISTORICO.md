@@ -770,3 +770,9 @@ mais antigas:
 | Fechado | O que ficou, medido |
 |---|---|
 | **Frente 6 do A5 — a prancha e a escala** (27/09, `068`) | **Aceite.** A `prancha_prop.gd` (candidata contra o prop do jogo) e a `escala_props.gd` (todos a 1:1, com trabalhador, pedestre e carro de régua) |
+
+**E, para caber a virada do dia (`078`),** desceu a frente 3:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **Frente 3 do A5 — as quatro famílias aceites** (25–27/09, `062`–`067`) | O cartão e o HUD (**F14**, **F15**, `SAVE_VERSION` 9); tela inicial, três espaços de save, pausa curta, Ajustes e o celular (**F16**); o **caderno** (**D37**) e a **conversa no celular**, cada voz no seu balão (**F17**, **D38**). A foto do porto antigo, o fundo e o logotipo são do Bruno (`art_lab/diario/`, `art_lab/tela_inicial/`) |

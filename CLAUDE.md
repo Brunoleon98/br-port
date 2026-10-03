@@ -1658,6 +1658,13 @@ as três coisas.
   barco, zero com `progress > 0`; o balanço antigo nunca tinha tocado ali.
   Antes de prender arte a um predicado, meça-o no estado em que ela aparece
   (`075`).
+  ⚠️ **E CÓDIGO QUE NUNCA CORREU ESCONDE O DEFEITO DELE.** A chegada
+  deslizante do barco estava escrita desde o início e não corria: a virada
+  esvazia a doca e enche-a em dois sinais, e o primeiro zerava o id de que
+  ela dependia — 0 de 21 barcos. O rumo dela atravessava o píer, sem ninguém
+  o ver, e a primeira pergunta ao Bruno descreveu-a como se corresse, lida no
+  comentário. Antes de herdar um comportamento escrito, ou de o descrever,
+  meça se ele dispara (`078`).
   ⚠️ **E «AS FOTOS NÃO MUDARAM» PEDE UM CONTROLE POSITIVO, senão é verde de
   graça.** A calibração — duas corridas da MESMA árvore com os mesmos hashes —
   prova que a bateria não tem ruído PRÓPRIO; **não** prova que ela veria a
@@ -2164,6 +2171,8 @@ as três coisas.
   doca, e a mesma do `barco_medio`: o que o jogo tem e não mostra não conta.
 - Nada de interface pousa sobre o mapa. Uma doca tem duas metades:
   `Dock.tscn` (cenário) e `DocaCartao.tscn` (texto e alvo de toque).
+  A exceção é o «+R$» que sobe do barco na virada do dia (`078`): dura
+  1,2 s e não recebe toque. A regra nasceu de nomes e chips PERMANENTES.
 - **⚠️ O PAINEL É BRANCO E A COR NEUTRA DO JOGO É PARA FUNDO ESCURO** — e isto
   já mordeu TRÊS vezes com a mesma cor. O cinzento-azulado 0,51/0,6/0,706 mede
   **2,93:1** sobre branco, abaixo do corte de texto GRANDE da WCAG (3,0), e
