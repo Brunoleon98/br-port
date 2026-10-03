@@ -27,7 +27,7 @@ metade do item 4 (`078`):
    - o `.pck` cresceu 3.424 bytes contra a `main` (+0,024% do `.pck`).
 
 Teve dois GIFs: o primeiro voltou «Ajustar» com quatro defeitos, o segundo
-«Aceito». O Bruno não pediu PR: o trabalho só existe na branch.
+«Aceito». A branch virou o PR #101.
 
 ---
 
@@ -40,8 +40,8 @@ texto.
   tem o `CLAUDE.md` carregado. As regras são as mesmas para os dois.
 - Para saber onde o jogo está: `docs/ESTADO_DO_PROJETO.md`. Para o rumo: a §7
   de `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
-- **Confira no GitHub se a `claude/dazzling-ritchie-gpdfka` virou PR e se foi
-  fundida.** Se não foi, a `main` ainda não tem a virada. Arquivos tocados:
+- **Confira no GitHub se o PR #101 (`claude/dazzling-ritchie-gpdfka`) foi
+  fundido.** Se não foi, a `main` ainda não tem a virada. Arquivos tocados:
   - `brport_vs/scripts/Dock.gd` e `brport_vs/scripts/Main.gd` (a troca de
     barco, a contagem e o «+R$»);
   - `brport_vs/scenes/Main.tscn` (a camada `MapaWrap/Ganhos`) e
