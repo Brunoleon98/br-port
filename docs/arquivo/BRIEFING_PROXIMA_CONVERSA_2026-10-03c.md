@@ -23,8 +23,7 @@ com o PR #101 fundido. Fechou **o degrau 3 da animação** (`079`):
      escala e da folha de props (agora 12 páginas), e as outras saíram iguais;
    - o `.pck` cresceu 454.012 bytes contra a `main` (+3,22% do `.pck`).
 
-Teve um GIF, com veredito «Aceito». O Bruno não pediu PR: o trabalho só
-existe na branch.
+Teve um GIF, com veredito «Aceito». O PR é o #102, aberto pelo Bruno.
 
 ---
 
@@ -37,8 +36,8 @@ texto.
   tem o `CLAUDE.md` carregado. As regras são as mesmas para os dois.
 - Para saber onde o jogo está: `docs/ESTADO_DO_PROJETO.md`. Para o rumo: a §7
   de `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
-- **Confira no GitHub se a `claude/gallant-darwin-qnp6n6` virou PR e se foi
-  fundida.** Se não foi, a `main` ainda não tem o degrau 3. Arquivos tocados:
+- **Confira no GitHub se o PR #102 (`claude/gallant-darwin-qnp6n6`) foi
+  fundido.** Se não foi, a `main` ainda não tem o degrau 3. Arquivos tocados:
   - `tools/gerar_props_iso.py` e `blender/brp_porto.py` (o pórtico, a
     empilhadeira e o pallet) e os 65 PNGs novos em `brport_vs/art/props`,
     com os atlas;
