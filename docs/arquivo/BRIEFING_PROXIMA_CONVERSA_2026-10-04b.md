@@ -7,7 +7,7 @@ conversa anterior.
 
 **Situação:** substitui o de 04/10. A sessão de 04/10, no Claude Code,
 trabalhou na branch `claude/happy-meitner-fggj5d`, a partir da `main` com o PR
-#103 fundido, e não abriu PR. Fez a **primeira parte da melhoria de design**,
+#103 fundido, e abriu o **PR #104**. Fez a **primeira parte da melhoria de design**,
 o HUD e os painéis (`081`):
 
 1. **O rodapé é escuro, e só o «AVANÇAR DIA» é âmbar cheio.** O botão
@@ -39,8 +39,7 @@ texto.
   tem o `CLAUDE.md` carregado. As regras são as mesmas para os dois.
 - Para saber onde o jogo está: `docs/ESTADO_DO_PROJETO.md`. Para o rumo: a §7
   de `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
-- **Confira no GitHub se a branch `claude/happy-meitner-fggj5d` virou PR e se
-  foi fundida.** Se não foi, a `main` não tem o rodapé escuro. Arquivos
+- **Confira no GitHub se o PR #104 foi fundido.** Se não foi, a `main` não tem o rodapé escuro. Arquivos
   tocados: o tema, o `Main.tscn`/`Main.gd`, o cartão do trabalhador e a vaga,
   o `UpgradePanel.gd`, o `DocaCartao.gd`, o `teste_design.gd`, o
   `teste_fumaca.gd`, a folha dos trabalhadores, o `CLAUDE.md`, a `/arte`, o
