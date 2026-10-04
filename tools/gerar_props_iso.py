@@ -1077,7 +1077,26 @@ def despejar_cena(caminho: str) -> int:
     floats saem em `repr`, que é exato: o despejo não arredonda nada, e por
     isso não tem ruído próprio (duas corridas do mesmo caminho dão os mesmos
     bytes, medido em `080`).
+
+    ⚠️ AS UVs FICAM DE FORA, E ISSO TEM CONDIÇÃO. O chanfro interpola-as com
+    um erro de 1 ULP (5,96e-8) que muda de caixa para caixa: oito caixas
+    IGUAIS na mesma cena davam quatro UVs diferentes, e dois despejos do
+    MESMO caminho divergiam em 2.570 linhas — a régua tinha ruído próprio, e
+    ele tapava qualquer diferença de verdade. Ignorá-las só vale enquanto
+    nenhum material as ler (hoje todos leem a coordenada `Object`, a
+    `Position` ou a `Generated` das texturas procedurais), e é isso que a
+    guarda abaixo pergunta antes de despejar.
     """
+    for mat in bpy.data.materials:
+        for no in (mat.node_tree.nodes if mat.node_tree else ()):
+            le_uv = (no.bl_idname in ("ShaderNodeUVMap", "ShaderNodeTexImage",
+                                      "ShaderNodeNormalMap", "ShaderNodeTangent")
+                     or (no.bl_idname == "ShaderNodeTexCoord"
+                         and no.outputs["UV"].is_linked))
+            if le_uv:
+                raise SystemExit(
+                    "despejo: o material %s lê UV (%s), e o despejo ignora as "
+                    "UVs — ver despejar_cena()" % (mat.name, no.bl_idname))
     bpy.context.view_layer.update()
     grafo = bpy.context.evaluated_depsgraph_get()
     linhas = []
@@ -1104,10 +1123,6 @@ def despejar_cena(caminho: str) -> int:
                 (malha.corner_normals, "vector", 3, np.float32)):
             dados = np.empty(len(colecao) * largura, dtype=tipo)
             colecao.foreach_get(atributo, dados)
-            resumo.update(dados.tobytes())
-        for camada in malha.uv_layers:
-            dados = np.empty(len(camada.uv) * 2, dtype=np.float32)
-            camada.uv.foreach_get("vector", dados)
             resumo.update(dados.tobytes())
         linhas.append("  malha v=%d f=%d %s" % (
             len(malha.vertices), len(malha.polygons), resumo.hexdigest()))
