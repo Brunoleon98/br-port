@@ -1085,6 +1085,45 @@ def _ajustes(mod) -> str:
     return "%s(%s)" % (mod.type, ",".join(partes))
 
 
+def _resumo_da_malha(malha) -> str:
+    """O hash de uma malha original, cego à ORDEM das faces.
+
+    ⚠️ A PRÓPRIA PRIMITIVA NÃO É DETERMINÍSTICA NA ORDEM. Seis
+    `primitive_uv_sphere_add` com os mesmos argumentos, na mesma cena,
+    deram quatro ordens de faces diferentes (`loop_start` e `vertex_index`),
+    com os mesmos vértices — e dois despejos do mesmo caminho divergiam nas
+    29 esferas do catálogo base. Por isso cada face entra pelo seu ciclo de
+    vértices, rodado para começar no menor índice (o sentido fica, que é ele
+    que dá a normal), com o material, a suavização e a UV de cada canto, e as
+    faces entram ordenadas. Os vértices entram tal como estão: a ordem deles
+    é estável.
+    """
+    def arr(colecao, atributo, largura, tipo):
+        dados = np.empty(len(colecao) * largura, dtype=tipo)
+        colecao.foreach_get(atributo, dados)
+        return dados
+
+    co = arr(malha.vertices, "co", 3, np.float32)
+    cantos = arr(malha.loops, "vertex_index", 1, np.int32)
+    inicio = arr(malha.polygons, "loop_start", 1, np.int32)
+    total = arr(malha.polygons, "loop_total", 1, np.int32)
+    material = arr(malha.polygons, "material_index", 1, np.int32)
+    suave = arr(malha.polygons, "use_smooth", 1, bool)
+    uvs = [arr(c.uv, "vector", 2, np.float32).reshape(-1, 2)
+           for c in malha.uv_layers]
+    faces = []
+    for i in range(len(inicio)):
+        idx = np.arange(inicio[i], inicio[i] + total[i])
+        idx = np.roll(idx, -int(np.argmin(cantos[idx])))
+        faces.append((cantos[idx].tobytes(), int(material[i]), bool(suave[i]),
+                      b"".join(u[idx].tobytes() for u in uvs)))
+    faces.sort()
+    resumo = hashlib.sha256(co.tobytes())
+    for face in faces:
+        resumo.update(repr(face).encode())
+    return resumo.hexdigest()
+
+
 def despejar_cena(caminho: str) -> int:
     """Escreve a cena montada em texto, objeto a objeto, e devolve quantos.
 
@@ -1120,23 +1159,9 @@ def despejar_cena(caminho: str) -> int:
         if o.type != "MESH":
             continue
         malha = o.data
-        resumo = hashlib.sha256()
-        for colecao, atributo, largura, tipo in (
-                (malha.vertices, "co", 3, np.float32),
-                (malha.loops, "vertex_index", 1, np.int32),
-                (malha.polygons, "loop_start", 1, np.int32),
-                (malha.polygons, "material_index", 1, np.int32),
-                (malha.polygons, "use_smooth", 1, bool)):
-            dados = np.empty(len(colecao) * largura, dtype=tipo)
-            colecao.foreach_get(atributo, dados)
-            resumo.update(dados.tobytes())
-        for camada in malha.uv_layers:
-            dados = np.empty(len(camada.uv) * 2, dtype=np.float32)
-            camada.uv.foreach_get("vector", dados)
-            resumo.update(dados.tobytes())
         linhas.append("  malha %s v=%d f=%d %s" % (
             malha.name, len(malha.vertices), len(malha.polygons),
-            resumo.hexdigest()))
+            _resumo_da_malha(malha)))
     # Monta o texto todo antes de abrir: `open(..., "w")` trunca de imediato,
     # e um erro a meio deixaria o despejo vazio — que compara igual a outro
     # despejo vazio.
