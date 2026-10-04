@@ -33,7 +33,9 @@ var amount: int = 0
 # atribuição por variável a ferramenta não sabe ler, e reprova em vez de a
 # saltar (`docs/decisoes/051`).
 var tempo: StringName = &""
-var _corpo: Label
+# A fala montada do Sr. Ribeiro, que o segundo tempo reescreve — ver
+# `PainelNarrativo.escrever_fala()`.
+var _fala: Dictionary
 var _tarja_parcela: Label
 var _tarja_apoio: Label
 # O que faltava no instante da cobrança, para a resposta de quem não pagou o
@@ -63,11 +65,10 @@ func _montar() -> void:
 	# só: o que fica na tela enquanto o jogador decide é a cara de quem acabou
 	# de dizer o valor, que é `a_divida` e não `entrada`. A cordial dele volta
 	# no segundo tempo, se pagar.
-	var balao := fala("", Narrativa.retrato("ribeiro", "a_divida"))
-	_corpo = balao.get_child(0)
-	_corpo.text = "%s\n\n%s" % [
+	var texto := "%s\n\n%s" % [
 		Narrativa.ribeiro_entrada(), Narrativa.ribeiro_a_divida(amount)]
-	falou.emit("ribeiro", _corpo.text, Narrativa.retrato("ribeiro", "a_divida"))
+	_fala = fala(texto, Narrativa.retrato("ribeiro", "a_divida"), "ribeiro")
+	falou.emit("ribeiro", texto, Narrativa.retrato("ribeiro", "a_divida"))
 	# A fala e o botão já dizem quanto vence. Aqui fica o número que o jogador
 	# precisa para decidir: a falta ou o caixa que sobreviverá ao pagamento —
 	# e, na linha de apoio, as DUAS parcelas de que ele sai. Até à terceira
@@ -137,7 +138,7 @@ func _on_falhar() -> void:
 # a quem não vai haver próxima (`docs/decisoes/048`).
 func _mostrar_resposta(id: String) -> void:
 	var pagou := id == "pagou"
-	_corpo.text = GameState.texto(String(Narrativa.RIBEIRO_FALAS[id]))
+	var texto := GameState.texto(String(Narrativa.RIBEIRO_FALAS[id]))
 	_tarja_parcela.text = "%s: %s" % [
 		"Parcela quitada" if pagou else "Parcela não paga", GameState.moeda(amount)]
 	PainelNarrativo.tingir_tarja(_tarja_parcela, &"bom" if pagou else &"ruim")
@@ -147,14 +148,15 @@ func _mostrar_resposta(id: String) -> void:
 		"Você fica com %s" % GameState.moeda(int(GameState.cash)) if pagou
 		else "Faltaram %s" % GameState.moeda(_falta))
 	if pagou:
-		_corpo.text += "\n\n" + GameState.texto(Narrativa.RIBEIRO_FALAS["despedida"])
+		texto += "\n\n" + GameState.texto(Narrativa.RIBEIRO_FALAS["despedida"])
+	escrever_fala(_fala, texto)
 	# E A CARA TROCA COM ELA. Quem pagou vê a cordial de volta; quem não pagou
 	# vê a grave, que neste personagem é a cordial com a boca em baixo — "quando
 	# bravo fica MAIS educado, não menos" (`gdd/sistemas/voz_personagens.md`).
 	var cara := retrato_da_fala()
 	if cara != null:
 		cara.texture = Narrativa.retrato("ribeiro", id)
-	falou.emit("ribeiro", _corpo.text, Narrativa.retrato("ribeiro", id))
+	falou.emit("ribeiro", texto, Narrativa.retrato("ribeiro", id))
 	for filho in _botoes.get_children():
 		filho.queue_free()
 	var sair := Button.new()

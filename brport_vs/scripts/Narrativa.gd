@@ -557,6 +557,32 @@ static func _maiuscula(t: String) -> String:
 	return t.substr(0, 1).to_upper() + t.substr(1) if t != "" else t
 
 
+## O fim de fase em PÁGINAS DO DIÁRIO (`docs/decisoes/082`): a narração passou
+## a ser uma entrada do caderno que o diário abriu na primeira semana, e o «—»
+## do meio da peça é a virada da folha — no papel, quem separa as duas metades
+## é a página, e o traço sai do texto. A peça continua a ser UMA (`fim_de_fase()`),
+## e é dela que as páginas se cortam: duas versões do mesmo texto divergiam.
+const FIM_DE_FASE_VIRADA := "\n\n—\n\n"
+
+
+static func fim_de_fase_paginas() -> PackedStringArray:
+	return fim_de_fase().split(FIM_DE_FASE_VIRADA)
+
+
+## A data da entrada, como a do diário («Porto Mirim, primeira semana»): a
+## semana em que a parcela vence, POR EXTENSO e saída da constante.
+static func fim_de_fase_cabecalho() -> String:
+	return "Porto Mirim, %s semana" % ordinal(_gs().WEEKS_TOTAL)
+
+
+## O ordinal no feminino, de 1 a 10 — «semana» pede-o. Fora disso devolve o
+## número, e o dígito na narração é o que a guarda do fim de fase reprova.
+static func ordinal(n: int) -> String:
+	const ORD := ["", "primeira", "segunda", "terceira", "quarta", "quinta",
+		"sexta", "sétima", "oitava", "nona", "décima"]
+	return ORD[n] if n >= 1 and n < ORD.size() else str(n)
+
+
 static func fim_de_fase() -> String:
 	# ⚠️ A LINHA DOS DIAS SAIU EM 13/09, e a razão é aritmética: ela dizia
 	# "Trinta e dois dias" logo abaixo de "Quatro semanas", e quatro semanas

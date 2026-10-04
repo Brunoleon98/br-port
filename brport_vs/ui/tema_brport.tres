@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=76 format=3]
+[gd_resource type="Theme" load_steps=82 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -21,6 +21,14 @@
 ; português; a Caveat, mais bonita, pedia 28 px para o mesmo corpo de letra.
 ; São 210 KB no pacote.
 [ext_resource type="FontFile" path="res://ui/fontes/PatrickHand-Regular.ttf" id="letra_mao"]
+
+; A LETRA DA FALA (`docs/decisoes/082`): Open Sans REGULAR, a mesma família da
+; letra padrão do Godot, que só traz o peso seminegrito. Tudo no jogo saía no
+; mesmo peso — fala, título, tarja e botão —, e a voz de uma pessoa lia-se
+; como mais uma linha de informação. A fala passa a regular e o resto fica
+; firme. SIL Open Font License, ao lado (`ui/fontes/OFL-OpenSans.txt`); em
+; woff2, os mesmos 1.010 caracteres da seminegrita, 63 KB.
+[ext_resource type="FontFile" path="res://ui/fontes/OpenSans-Regular.woff2" id="letra_fala"]
 
 [sub_resource type="StyleBoxFlat" id="cartao"]
 ; Etapa 6 do plano de arte, 02/09. A leitura da referência pede "borda clara de
@@ -940,6 +948,47 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 2
 
+[sub_resource type="StyleBoxFlat" id="caderno_recibo"]
+; O RECIBO DA PARCELA colado no diário (`082`): papel de talão, mais branco do
+; que a página, de filete fino e cantos quase vivos, com a sombra de quem está
+; colado por cima — como a foto.
+bg_color = Color(0.992, 0.988, 0.972, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.76, 0.68, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+shadow_color = Color(0.2, 0.14, 0.08, 0.25)
+shadow_size = 3
+shadow_offset = Vector2(1, 2)
+
+[sub_resource type="StyleBoxFlat" id="carimbo_recibo"]
+; O CARIMBO por cima do recibo: só a moldura, na tinta vermelha do tema, e
+; fundo nenhum — a tinta de carimbo não tapa o papel. O texto mede-se contra o
+; recibo, que é o que está por baixo.
+bg_color = Color(1, 1, 1, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.761, 0.188, 0.188, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 12.0
+content_margin_top = 2.0
+content_margin_right = 12.0
+content_margin_bottom = 2.0
+
 [sub_resource type="StyleBoxFlat" id="caderno_foto"]
 ; A borda branca de uma fotografia de papel, com a sombra de quem está
 ; colado em cima da folha e não impresso nela.
@@ -1100,6 +1149,42 @@ content_margin_left = 12.0
 content_margin_top = 8.0
 content_margin_right = 12.0
 content_margin_bottom = 8.0
+
+; A PLACA DO RETRATO NA CONVERSA DOS PAINÉIS (`082`): o busto sentado numa
+; placa da cor de quem fala, com o corte do peito na borda de baixo — até
+; aqui ele flutuava cortado a seco sobre o branco do cartão, e com fala longa
+; sobrava um vão branco por baixo dele. O tom é o do balão da pessoa (acima)
+; com o mesmo matiz e croma em OKLCH e a luminância a L 0,84: o balão a ~0,92
+; é claro demais para emoldurar no cartão branco (o do Sr. Ribeiro fica a ΔE
+; 4,6 dele), e a 0,84 as placas ficam a ΔE 16–17 do branco.
+; ⚠️ MENOS A DO SR. RIBEIRO, que é escolhida contra o CABELO dele e não só
+; contra o branco: a 0,84 o grisalho das têmporas media 1,34:1 contra ela e
+; sumia, e a cabeça lia-se mais estreita. Nenhum tom ganha os dois fundos
+; (`CLAUDE.md`); a 0,88 fica a ΔE 12,6 do cabelo e 12,0 do branco, o meio
+; da troca. Massa e não texto — o texto está no balão.
+[sub_resource type="StyleBoxFlat" id="placa_fala_cida"]
+bg_color = Color(0.689, 0.838, 0.731, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_top = 6.0
+
+[sub_resource type="StyleBoxFlat" id="placa_fala_ribeiro"]
+bg_color = Color(0.827, 0.847, 0.871, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_top = 6.0
+
+[sub_resource type="StyleBoxFlat" id="placa_fala_arlindo"]
+bg_color = Color(0.598, 0.836, 0.922, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_top = 6.0
 
 [sub_resource type="StyleBoxFlat" id="conversa_nota"]
 ; A NOTA DO PORTO, ao centro: a placa da tela e o TOM na borda da esquerda.
@@ -1678,6 +1763,18 @@ ImpressoCaderno/colors/font_color = Color(0.4, 0.35, 0.29, 1)
 ImpressoCaderno/font_sizes/font_size = 13
 CadernoEtiqueta/base_type = "PanelContainer"
 CadernoEtiqueta/styles/panel = SubResource("caderno_etiqueta")
+; O recibo da parcela no fim de fase (`082`): o papel, o valor impresso em
+; destaque (a letra do jogo, na tinta de gráfica escurecida) e o carimbo.
+CadernoRecibo/base_type = "PanelContainer"
+CadernoRecibo/styles/panel = SubResource("caderno_recibo")
+ValorRecibo/base_type = "Label"
+ValorRecibo/colors/font_color = Color(0.24, 0.2, 0.16, 1)
+ValorRecibo/font_sizes/font_size = 24
+CarimboRecibo/base_type = "PanelContainer"
+CarimboRecibo/styles/panel = SubResource("carimbo_recibo")
+TextoCarimbo/base_type = "Label"
+TextoCarimbo/colors/font_color = Color(0.761, 0.188, 0.188, 1)
+TextoCarimbo/font_sizes/font_size = 22
 ; A SUGESTÃO DO CAMPO, na letra IMPRESSA e não na do campo: o placeholder sai
 ; na letra à mão, e «Cais Mirim» lia-se como já escrito (primeira passagem da
 ; `067`). 4,81:1 sobre a etiqueta.
@@ -1723,6 +1820,13 @@ BalaoArlindo/base_type = "PanelContainer"
 BalaoArlindo/styles/panel = SubResource("conversa_balao_arlindo")
 BalaoArlindoSeguido/base_type = "PanelContainer"
 BalaoArlindoSeguido/styles/panel = SubResource("conversa_balao_arlindo_seguido")
+; As placas do retrato nos painéis de conversa (`082`).
+PlacaFalaCida/base_type = "PanelContainer"
+PlacaFalaCida/styles/panel = SubResource("placa_fala_cida")
+PlacaFalaRibeiro/base_type = "PanelContainer"
+PlacaFalaRibeiro/styles/panel = SubResource("placa_fala_ribeiro")
+PlacaFalaArlindo/base_type = "PanelContainer"
+PlacaFalaArlindo/styles/panel = SubResource("placa_fala_arlindo")
 NotaConversa/base_type = "PanelContainer"
 NotaConversa/styles/panel = SubResource("conversa_nota")
 NotaConversaBoa/base_type = "PanelContainer"
@@ -1739,6 +1843,17 @@ TextoConversaTitulo/font_sizes/font_size = 16
 TextoConversaVazia/base_type = "Label"
 TextoConversaVazia/colors/font_color = Color(0.8, 0.85, 0.92, 1)
 TextoConversaVazia/font_sizes/font_size = 14
+; TextoFala — a VOZ de uma pessoa nos cartões de conversa, em letra regular
+; (`082`). Só a letra e a cor: o tamanho é o 15 do `Label` (a regra do
+; `RotuloApoio`: variação que empacota tamanho com cor não serve a quem só
+; quer a cor).
+; ⚠️ O CELULAR FICA NO SEMINEGRITO, escolha do Bruno na segunda passagem: a
+; primeira pôs o `TextoBalao` a herdar desta, «a mesma voz nos dois sítios», e
+; ele pediu-o de volta. No telefone a fala é histórico lido em lista, e não
+; voz numa cena.
+TextoFala/base_type = "Label"
+TextoFala/colors/font_color = Color(0.11, 0.204, 0.329, 1)
+TextoFala/fonts/font = ExtResource("letra_fala")
 TextoBalao/base_type = "Label"
 TextoBalao/colors/font_color = Color(0.11, 0.204, 0.329, 1)
 TextoBalao/font_sizes/font_size = 14

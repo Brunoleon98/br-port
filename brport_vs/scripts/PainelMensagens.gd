@@ -238,7 +238,7 @@ func _balao(fonte: String, texto: String, retrato: Texture2D, com_cara: bool) ->
 		lugar.custom_minimum_size = Vector2(AVATAR + 4, 0)
 		linha.add_child(lugar)
 	var balao := PanelContainer.new()
-	_vestir_balao(balao, fonte, com_cara)
+	_vestir_balao_da_conversa(balao, fonte, com_cara)
 	balao.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	var rotulo := Label.new()
 	rotulo.theme_type_variation = &"TextoBalao"
@@ -261,30 +261,15 @@ func _balao(fonte: String, texto: String, retrato: Texture2D, com_cara: bool) ->
 # balão claro, os dois liam-se como o mesmo (ΔE 6,6). O D38 confere que cada
 # balão tem o matiz da roupa de quem fala, lido do PNG do retrato.
 #
-# As variações são LITERAIS, uma por ramo, pela razão da `_nota()`: o
-# `conferir_escopo_ui.py` só confere o nome que vê depois do `=`. O primeiro
-# balão tem o bico ao lado da cara; os seguidos, não.
-func _vestir_balao(balao: PanelContainer, fonte: String, com_cara: bool) -> void:
-	match fonte:
-		"cida":
-			if com_cara:
-				balao.theme_type_variation = &"BalaoCida"
-			else:
-				balao.theme_type_variation = &"BalaoCidaSeguido"
-		"ribeiro":
-			if com_cara:
-				balao.theme_type_variation = &"BalaoRibeiro"
-			else:
-				balao.theme_type_variation = &"BalaoRibeiroSeguido"
-		"arlindo":
-			if com_cara:
-				balao.theme_type_variation = &"BalaoArlindo"
-			else:
-				balao.theme_type_variation = &"BalaoArlindoSeguido"
-		_:
-			# Uma voz nova sem balão sairia com o fundo do `PanelContainer`
-			# base, sem uma palavra — que é o que esta linha não deixa.
-			push_error("PainelMensagens: «%s» fala e não tem balão" % fonte)
+# QUEM ESCOLHE O BALÃO É O ANDAIME desde a `082`, porque os cartões de
+# conversa passaram a vestir os mesmos: uma regra só, nos dois sítios onde a
+# pessoa fala (`PainelNarrativo._vestir_balao()`). Aqui fica a queixa: no
+# cartão uma fala sem pessoa usa o `Fala`; no celular toda fala tem dono.
+func _vestir_balao_da_conversa(balao: PanelContainer, fonte: String, com_cara: bool) -> void:
+	if not _vestir_balao(balao, fonte, com_cara):
+		# Uma voz nova sem balão sairia com o fundo do `PanelContainer`
+		# base, sem uma palavra — que é o que esta linha não deixa.
+		push_error("PainelMensagens: «%s» fala e não tem balão" % fonte)
 
 
 # UMA NOTA DO PORTO, ao centro, com a cor do tom na borda. As variações são

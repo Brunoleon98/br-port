@@ -112,7 +112,8 @@ var _mensagens_aberto := false
 ## partida é nova: a foto diria «Barcos atendidos: 0», que se LÊ como medida.
 ## Aqui a partida é JOGADA até ao vencimento pelo laço de sempre, a parcela
 ## paga-se no botão do Sr. Ribeiro — que só está ligado se o dinheiro chegar —
-## e o balanço abre no «Ver o balanço» da narração. Nada disto se escreve à mão.
+## e o balanço abre no «Ver o balanço» da segunda página da narração. Nada
+## disto se escreve à mão.
 ##
 ## ⚠️ E O CAMINHO ATÉ ELE PASSA POR TRÊS TELAS, UMA DE CADA VEZ. Desde que o
 ## `Main` pôs em fila as telas que abrem sozinhas (`_na_vez()`), o «Pagar»
@@ -131,6 +132,10 @@ var _mensagens_aberto := false
 var _balanco := false
 # 0 antes de pagar, 1 à espera do boletim, 2 à espera do fim de fase, 3 feito.
 var _passo_balanco := 0
+# A virada da folha do fim de fase, em passos do balanço: espera-se o tempo
+# `segunda_pagina` até este teto (cada passo são `FRAMES_POR_PASSO` frames).
+const TETO_DA_PAGINA := 60
+var _esperou_a_pagina := 0
 var _frames_do_passo := 0
 # O `_fechar()` faz `queue_free()`, que só tira o painel no fim do frame — é
 # nesse instante que o `tree_exited` passa a vez ao seguinte. Dois frames, como
@@ -183,7 +188,7 @@ func _process(_delta: float) -> bool:
 	# O BALANÇO ANDA ANTES DE ASSENTAR: cada passo toca um botão e espera que a
 	# fila do `Main` ponha o painel seguinte na tela. Os frames de assentar só
 	# começam a contar depois do último, com o balanço já montado.
-	if _balanco and _passo_balanco in [1, 2]:
+	if _balanco and _passo_balanco in [1, 2, 3]:
 		_frames_do_passo += 1
 		if _frames_do_passo < FRAMES_POR_PASSO:
 			return false
@@ -686,12 +691,30 @@ func _andar_o_balanco() -> bool:
 			return false
 		_passo_balanco = 2
 		return true
-	if not _sozinho_por_cima("res://scenes/EndGame.tscn", "narracao",
-			"fechado o boletim"):
+	# ⚠️ A NARRAÇÃO TEM DUAS PÁGINAS desde a `082`, e o «Ver o balanço» só
+	# existe na segunda: o «Virar a página» vira a folha, e o painel declara a
+	# segunda página no FIM da virada. O passo 3 espera esse tempo, com teto,
+	# em vez de contar os frames da virada.
+	if _passo_balanco == 2:
+		if not _sozinho_por_cima("res://scenes/EndGame.tscn", "narracao",
+				"fechado o boletim"):
+			return false
+		if not _tocar(_painel_de_cima(), "Virar a página"):
+			return false
+		_passo_balanco = 3
+		_esperou_a_pagina = 0
+		return true
+	var topo: Node = _painel_de_cima()
+	if topo != null and String(topo.get("tempo")) != "segunda_pagina" \
+			and _esperou_a_pagina < TETO_DA_PAGINA:
+		_esperou_a_pagina += 1
+		return true
+	if not _sozinho_por_cima("res://scenes/EndGame.tscn", "segunda_pagina",
+			"virada a página da narração"):
 		return false
 	if not _tocar(_painel_de_cima(), "Ver o balanço"):
 		return false
-	_passo_balanco = 3
+	_passo_balanco = 4
 	return true
 
 

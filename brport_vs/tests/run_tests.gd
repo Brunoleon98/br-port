@@ -1702,7 +1702,7 @@ func _t13_despedida_do_ribeiro() -> void:
 		root.add_child(painel)
 		painel.setup(GS.PARCELA_AMOUNT)
 		painel._mostrar_resposta(String(caso[0]))
-		var texto: String = painel._corpo.text
+		var texto: String = painel.texto_da_fala()
 		var botao := ""
 		for filho in painel._botoes.get_children():
 			if filho is Button and not filho.is_queued_for_deletion():

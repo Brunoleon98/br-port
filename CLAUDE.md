@@ -2168,10 +2168,14 @@ as três coisas.
   **por construção**, e não por cuidado de quem escreveu.
 - **Fala de personagem vai em BALÃO, informação do jogo não.** As telas
   narrativas misturam dois registros e, sem diferença visual, a fala da Dona
-  Cida lia como rodapé de planilha. A variação `Fala` do tema (creme com barra
-  âmbar à esquerda) é o balão; `RotuloSecao` é o rótulo que guia e sai da
+  Cida lia como rodapé de planilha. O balão é o DA PESSOA que fala — o mesmo
+  tom no celular e no cartão, com o retrato numa placa do mesmo matiz e a fala
+  em letra regular (`082`); `RotuloSecao` é o rótulo que guia e sai da
   frente; `RotuloTotal` é a linha única que o olho tem de encontrar primeiro —
   duas em destaque é nenhuma em destaque.
+  ⚠️ **E A LETRA DO GODOT TEM UM PESO SÓ**: a padrão é a Open Sans seminegrita,
+  e tudo o que não declara fonte sai nela. Peso diferente é ARQUIVO de fonte
+  (`ui/fontes/`, numa variação do tema), não uma propriedade a ligar.
 - **Linha com valor zero não entra em tabela.** O boletim mostrava
   `Armazém R$0` e `Parcela R$0` nas semanas em que não havia nem um nem outro:
   ruído que o olho descarta toda semana para chegar ao que mudou.
@@ -2736,6 +2740,12 @@ nenhum (`057`).
   três vezes num dia só, em três arquivos diferentes, e cada vez custou uma
   corrida: **o Godot encerra com código 0** nesse erro, então quem olha só o
   `$?` conclui que passou.
+- **⚠️ FUNÇÃO NOVA NUMA CLASSE BASE PODE TER O NOME DE UMA DAS FILHAS**, e a
+  filha deixa de compilar — «The function signature doesn't match the
+  parent». Em 04/10 o `_vestir_balao()` estático do `PainelNarrativo` colidiu
+  com o do `PainelMensagens`, e o `run_tests` imprimiu `TODOS OS TESTES
+  PASSARAM` com o `SCRIPT ERROR` na saída. Antes de acrescentar uma função ao
+  andaime, procure o nome nas classes que herdam dele (`082`).
 - **Erro de execução DENTRO de um teste aborta a função e a suíte passa na
   mesma.** Aconteceu em 02/09: uma chamada com o número errado de argumentos
   matou o bloco T5g inteiro e o `run_tests.gd` imprimiu `TODOS OS TESTES

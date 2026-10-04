@@ -18,9 +18,10 @@ var tempo: StringName = &""
 
 var _mood_label: Label
 # A fala do Arlindo troca a cada rodada da negociação: abertura, reação ao que
-# o jogador ofereceu, e a linha da última tentativa. É guardada porque o painel
-# não se reconstrói entre rodadas — só se refresca.
-var _fala_arlindo: Label
+# o jogador ofereceu, e a linha da última tentativa. É guardada — montada, com
+# os balões dela (`PainelNarrativo.linha_de_fala()`) — porque o painel não se
+# reconstrói entre rodadas: só se refresca.
+var _fala: Dictionary
 var _valor_label: Label
 # A linha de apoio da tarja: vazia na negociação, o preço fechado no fim.
 var _valor_apoio: Label
@@ -78,38 +79,26 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 10)
 	box.add_child(vbox)
 
+	# O TÍTULO É A PESSOA, como o do Sr. Ribeiro (`082`). Dizia «Arlindo
+	# (Porto Farol) fez uma oferta», e na despedida continuava a dizê-lo com o
+	# negócio já fechado: o que acontece muda a cada tempo e vive na tarja; quem
+	# fala não muda.
 	vbox.add_child(PainelNarrativo.cabecalho_encorpado(
-		Icones.RIVAL, "Arlindo (Porto Farol) fez uma oferta"))
+		Icones.RIVAL, "Arlindo — Porto Farol"))
 
 	# O ARLINDO FALA COM O CLIENTE, NÃO COM O JOGADOR — é isso que faz a tela
 	# ser uma negociação assistida em vez de uma discussão, e o arquivo de
 	# escrita é explícito nisso. Daí as aspas: o jogador está a ouvir.
-	# Mesmo balão das outras telas narrativas. Este painel não herda do
-	# `PainelNarrativo` (é anterior a ele e mexer nele sem necessidade é
-	# arriscar o que já foi jogado), então usa a variação do tema direto — o
-	# estilo continua a vir de um lugar só.
-	var balao := PanelContainer.new()
-	balao.theme_type_variation = "Fala"
-	balao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_fala_arlindo = Label.new()
-	# `_SMART` pela mesma razão do `fala()` do `PainelNarrativo`: a abertura e
-	# a despedida levam o nome do porto, que pode ser uma palavra só de 24
-	# letras (`docs/decisoes/051`).
-	_fala_arlindo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_fala_arlindo.text = GameState.texto(Narrativa.ARLINDO_ABERTURA)
-	balao.add_child(_fala_arlindo)
-	# A CARA DELE AO LADO DO BALÃO. A linha é montada à mão pela mesma razão
-	# que o balão é: este painel não herda do `PainelNarrativo` (é anterior a
-	# ele), e refazê-lo agora seria mexer no que já foi jogado. O que vem de um
-	# lugar só é o TAMANHO e o arquivo — `Retratos.imagem()` —, que é o que
-	# impede este retrato de divergir dos outros dois.
-	var linha := HBoxContainer.new()
-	linha.add_theme_constant_override("separation", 10)
-	_retrato = Retratos.imagem(Narrativa.retrato("arlindo", "abertura"))
-	falou.emit("arlindo", _fala_arlindo.text, _retrato.texture)
-	linha.add_child(_retrato)
-	linha.add_child(balao)
-	vbox.add_child(linha)
+	# A MESMA LINHA DE FALA dos outros dois, pela porta estática — este painel
+	# não herda do `PainelNarrativo` (é anterior a ele), e a linha montada à mão
+	# já tinha dado uma segunda cópia do balão: quando os balões passaram a ser
+	# da pessoa (`082`), esta cópia teria ficado no creme de antes.
+	_fala = PainelNarrativo.linha_de_fala(
+		GameState.texto(Narrativa.ARLINDO_ABERTURA),
+		Narrativa.retrato("arlindo", "abertura"), "arlindo")
+	_retrato = _fala["retrato"]
+	falou.emit("arlindo", texto_da_fala(), _retrato.texture)
+	vbox.add_child(_fala["linha"])
 
 	# A MESMA tarja dos outros três painéis, pela porta estática — esta tela
 	# não herda do `PainelNarrativo`, e montá-la à mão já tinha dado uma
@@ -180,6 +169,12 @@ const BARRA_ESQUERDA := 40.0
 #
 # ⚠️ É REDUNDANTE DE PROPÓSITO: a percentagem continua escrita, e nada se
 # decide só pela barra. E ela não recebe toque — o botão por baixo é o alvo.
+# O que a fala MOSTRA, balão a balão — o mesmo acesso dos painéis que herdam
+# do andaime (`PainelNarrativo.texto_da_fala()`).
+func texto_da_fala() -> String:
+	return PainelNarrativo.texto_montado(_fala)
+
+
 func _barra_de_chance(botao: Button) -> ProgressBar:
 	var barra := ProgressBar.new()
 	barra.theme_type_variation = "BarraChance"
@@ -244,9 +239,9 @@ func _despedida(resultado: String) -> void:
 		if resultado == "fechado" and boat != null and boat.has("matched_value") else "")
 	# "fechado" é o cliente que FICA: quem perdeu foi ele.
 	var id := "perdeu" if resultado == "fechado" else "venceu"
-	_fala_arlindo.text = GameState.texto(String(Narrativa.ARLINDO_FALAS[id]))
+	PainelNarrativo.escrever_fala(_fala, GameState.texto(String(Narrativa.ARLINDO_FALAS[id])))
 	_retrato.texture = Narrativa.retrato("arlindo", id)
-	falou.emit("arlindo", _fala_arlindo.text, _retrato.texture)
+	falou.emit("arlindo", texto_da_fala(), _retrato.texture)
 	# ⚠️ O HUMOR DO CLIENTE SAI COM A NEGOCIAÇÃO. A linha dizia "Cliente
 	# ouvindo a proposta. (2 tentativas)" por baixo da despedida — com o
 	# negócio fechado ou o cliente já no Porto Farol, e nenhuma das duas coisas
@@ -324,7 +319,7 @@ func _refresh(reacao: String = "", acao: String = "") -> void:
 		if restantes <= 1:
 			falas += "\n\n" + GameState.texto(Narrativa.ARLINDO_ULTIMA_TENTATIVA)
 			id = "ultima_tentativa"
-		_fala_arlindo.text = falas
+		PainelNarrativo.escrever_fala(_fala, falas)
 		if id != "":
 			_retrato.texture = Narrativa.retrato("arlindo", id)
 		falou.emit("arlindo", falas, _retrato.texture)
