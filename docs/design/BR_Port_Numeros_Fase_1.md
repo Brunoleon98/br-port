@@ -29,93 +29,95 @@ foi lida como regressão de balanceamento uma vez.
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `START_CASH` | 400.000 | TUNING | ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em que foram feitos importa para quem vier reler isto. … | `GameState.gd:107` |
-| `SALARY_PER_WORKER` | 6.000 | TUNING (GDD) | TUNING sobre a linha "Margem operacional base" do GDD, reescalada | `GameState.gd:108` |
-| `MAINTENANCE_WEEKLY` | 40.000 | TUNING (GDD) | TUNING sobre a mesma linha do GDD — o custo fixo que separa os perfis | `GameState.gd:109` |
-| `DOCKS_BASE` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:113` |
-| `WORKERS_BASE` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:114` |
-| `UPGRADE_EXTRA_DOCKS` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:115` |
-| `UPGRADE_EXTRA_WORKERS` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:116` |
-| `BERCOS_NO_MAPA` | 3 | regra | Quantos berços o mapa desenha. … | `GameState.gd:124` |
+| `START_CASH` | 400.000 | TUNING | ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em que foram feitos importa para quem vier reler isto. … | `GameState.gd:113` |
+| `SALARY_PER_WORKER` | 6.000 | TUNING (GDD) | TUNING sobre a linha "Margem operacional base" do GDD, reescalada | `GameState.gd:114` |
+| `MAINTENANCE_WEEKLY` | 40.000 | TUNING (GDD) | TUNING sobre a mesma linha do GDD — o custo fixo que separa os perfis | `GameState.gd:115` |
+| `DOCKS_BASE` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:119` |
+| `WORKERS_BASE` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:120` |
+| `UPGRADE_EXTRA_DOCKS` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:121` |
+| `UPGRADE_EXTRA_WORKERS` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:122` |
+| `BERCOS_NO_MAPA` | 3 | regra | Quantos berços o mapa desenha. … | `GameState.gd:130` |
 
 ## ESTRUTURAS
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `GUINDASTE_CORTA_TURNOS` | 1 | TUNING | TUNING | `GameState.gd:204` |
-| `ARMAZEM_BONUS` | 0.5 | TUNING | TUNING | `GameState.gd:212` |
-| `PATIO_BONUS_CARGA` | 0.3 | TUNING | TUNING | `GameState.gd:216` |
-| `PATIO_BONUS_PIER` | 1.0 | TUNING | TUNING | `GameState.gd:217` |
-| `ESCRITORIO_DESCONTO_SALARIO` | 0.5 | TUNING | TUNING | `GameState.gd:221` |
+| `GUINDASTE_CORTA_TURNOS` | 1 | TUNING | TUNING | `GameState.gd:210` |
+| `ARMAZEM_BONUS` | 0.5 | TUNING | TUNING | `GameState.gd:218` |
+| `PATIO_BONUS_CARGA` | 0.3 | TUNING | TUNING | `GameState.gd:222` |
+| `PATIO_BONUS_PIER` | 1.0 | TUNING | TUNING | `GameState.gd:223` |
+| `ESCRITORIO_DESCONTO_SALARIO` | 0.5 | TUNING | TUNING | `GameState.gd:227` |
 
 ## MOTIVO DA ESCALA
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `PIER_SLOTS` | 6 | GDD 7 | GDD "Margem operacional base": 6 vagas de píer | `GameState.gd:270` |
-| `PIER_RATE_PER_SLOT` | 5.000 | GDD 7 | GDD "Margem operacional base", reescalado: renda fixa semanal | `GameState.gd:271` |
+| `PIER_SLOTS` | 6 | GDD 7 | GDD "Margem operacional base": 6 vagas de píer | `GameState.gd:276` |
+| `PIER_RATE_PER_SLOT` | 5.000 | GDD 7 | GDD "Margem operacional base", reescalado: renda fixa semanal | `GameState.gd:277` |
 
-## AS TRÊS CLASSES DE NAVIO
+## A FILA NO FUNDEADOURO (`docs/decisoes/083`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `BOAT_ARRIVAL_CHANCE` | 0.75 | TUNING | TUNING: chance POR doca vazia de chegar barco no turno | `GameState.gd:321` |
+| `FILA_LUGARES` | 3 | GDD 7 | O barco já não nasce na doca: … | `GameState.gd:345` |
+| `PACIENCIA_FILA` | 2 | TUNING | TUNING | `GameState.gd:349` |
+| `BOAT_ARRIVAL_CHANCE` | 0.75 | TUNING | TUNING | `GameState.gd:353` |
 
 ## Contra-oferta do Arlindo (GDD: "Limiar de paciência do cliente")
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `RIVAL_TRIGGER_CHANCE` | 0.3 | TUNING (GDD) | Protótipo validado (Arlindo — dumping) | `GameState.gd:329` |
-| `RIVAL_DISCOUNT` | 0.15 | TUNING (GDD) | "Igualar rival −15%" (GDD) | `GameState.gd:330` |
-| `RIVAL_HALF_DISCOUNT` | 0.07 | TUNING (GDD) | "Cortar metade −7%" (GDD) | `GameState.gd:331` |
-| `RIVAL_HALF_CHANCE` | 0.7 | TUNING (GDD) | TUNING: chance de o cliente aceitar o meio-termo | `GameState.gd:332` |
-| `RIVAL_KEEP_CHANCE` | 0.45 | TUNING (GDD) | TUNING: chance de o cliente aceitar pagar cheio | `GameState.gd:333` |
-| `RIVAL_DISCOUNT_AFTER_FAIL` | 0.28 | TUNING | TUNING | `GameState.gd:336` |
-| `RIVAL_PATIENCE` | 2 | GDD 7 | GDD: máx. 2 tentativas antes de o cliente encerrar | `GameState.gd:337` |
-| `REPUTACAO_EFEITO_NEGOCIACAO` | 0.5 | TUNING | TUNING — o quanto a reputação pesa na aposta da contra-oferta (item A3). … | `GameState.gd:342` |
+| `RIVAL_TRIGGER_CHANCE` | 0.3 | TUNING (GDD) | Protótipo validado (Arlindo — dumping) | `GameState.gd:361` |
+| `RIVAL_DISCOUNT` | 0.15 | TUNING (GDD) | "Igualar rival −15%" (GDD) | `GameState.gd:362` |
+| `RIVAL_HALF_DISCOUNT` | 0.07 | TUNING (GDD) | "Cortar metade −7%" (GDD) | `GameState.gd:363` |
+| `RIVAL_HALF_CHANCE` | 0.7 | TUNING (GDD) | TUNING: chance de o cliente aceitar o meio-termo | `GameState.gd:364` |
+| `RIVAL_KEEP_CHANCE` | 0.45 | TUNING (GDD) | TUNING: chance de o cliente aceitar pagar cheio | `GameState.gd:365` |
+| `RIVAL_DISCOUNT_AFTER_FAIL` | 0.28 | TUNING | TUNING | `GameState.gd:368` |
+| `RIVAL_PATIENCE` | 2 | GDD 7 | GDD: máx. 2 tentativas antes de o cliente encerrar | `GameState.gd:369` |
+| `REPUTACAO_EFEITO_NEGOCIACAO` | 0.5 | TUNING | TUNING — o quanto a reputação pesa na aposta da contra-oferta (item A3). … | `GameState.gd:374` |
 
 ## REPUTAÇÃO COMERCIAL
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `REPUTATION_START` | 65.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:358` |
-| `REPUTATION_GAIN_SERVED` | 0.8 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:359` |
-| `REPUTATION_LOSS_LOST` | 2.5 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:360` |
-| `REPUTATION_GAIN_RIVAL_MATCHED` | 1.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:361` |
-| `REPUTATION_LOSS_RIVAL_REFUSED` | 8.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:362` |
+| `REPUTATION_START` | 65.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:390` |
+| `REPUTATION_GAIN_SERVED` | 0.8 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:391` |
+| `REPUTATION_LOSS_LOST` | 2.5 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:392` |
+| `REPUTATION_GAIN_RIVAL_MATCHED` | 1.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:393` |
+| `REPUTATION_LOSS_RIVAL_REFUSED` | 8.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:394` |
 
 ## CADÊNCIA E PARCELA
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `TURNS_PER_WEEK` | 8 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:371` |
-| `WEEKS_TOTAL` | 4 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:372` |
-| `TURNS_TOTAL` | 32 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:373` |
-| `PARCELA_AMOUNT` | 530.000 | GDD 7 | GDD "Parcelas validadas" / Protótipo VS — parcela única | `GameState.gd:382` |
-| `PARCELA_DUE_TURN` | 32 | regra | vence ao fim da semana 4 | `GameState.gd:383` |
-| `PARCELAS_NA_FASE` | 3 | TUNING (GDD) | QUANTAS PARCELAS TEM A FASE 1 INTEIRA, que não é o que o VS joga. … | `GameState.gd:398` |
-| `JUROS_POR_TURNO` | 0.0025 | TUNING | TUNING: fração do principal abatida por turno de antecipação | `GameState.gd:413` |
+| `TURNS_PER_WEEK` | 8 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:403` |
+| `WEEKS_TOTAL` | 4 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:404` |
+| `TURNS_TOTAL` | 32 | TUNING (GDD) | TUNING — esta é a constante que faz a economia da Fase 1 fechar. … | `GameState.gd:405` |
+| `PARCELA_AMOUNT` | 530.000 | GDD 7 | GDD "Parcelas validadas" / Protótipo VS — parcela única | `GameState.gd:414` |
+| `PARCELA_DUE_TURN` | 32 | regra | vence ao fim da semana 4 | `GameState.gd:415` |
+| `PARCELAS_NA_FASE` | 3 | TUNING (GDD) | QUANTAS PARCELAS TEM A FASE 1 INTEIRA, que não é o que o VS joga. … | `GameState.gd:430` |
+| `JUROS_POR_TURNO` | 0.0025 | TUNING | TUNING: fração do principal abatida por turno de antecipação | `GameState.gd:445` |
 
 ## SAVE
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `SAVE_ARQUIVO` | `savegame.json` | regra | O NOME é constante; o CAMINHO decide-o o `ArmazemLocal`, por processo: … | `GameState.gd:421` |
-| `SAVE_VERSION` | 9 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:459` |
+| `SAVE_ARQUIVO` | `savegame.json` | regra | O NOME é constante; o CAMINHO decide-o o `ArmazemLocal`, por processo: … | `GameState.gd:453` |
+| `SAVE_VERSION` | 10 | regra | VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar. … | `GameState.gd:497` |
 
 ## OS ESPAÇOS DE SAVE (`docs/decisoes/066`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `ESPACOS` | 3 | regra | Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do Bruno no lugar do «Novo jogo (apaga progresso)» que vivia na pausa. … | `GameState.gd:482` |
+| `ESPACOS` | 3 | regra | Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do Bruno no lugar do «Novo jogo (apaga progresso)» que vivia na pausa. … | `GameState.gd:520` |
 
 ## OS DOIS NOMES
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:598` |
-| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:605` |
-| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:610` |
+| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:636` |
+| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:643` |
+| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:648` |
 
 ## Estruturas — o que o jogador compra
 
@@ -147,9 +149,9 @@ nível 3 exige o pórtico.
 
 | Classe | Nível | Valor | Peso | Turnos | Motivos |
 |---|---:|---|---:|---:|---|
-| Navio de longo curso | 3 | R$ 56.000–88.000 | 20 | 3 | armazenagem 25, conteiner 45, granel 30 |
-| Cargueiro | 2 | R$ 22.000–50.000 | 40 | 2 | armazenagem 40, conteiner 40, granel 20 |
-| Pesqueiro | 1 | R$ 12.000–28.000 | 40 | 1 | armazenagem 45, pescado 55 |
+| Navio de longo curso | 3 | R$ 40.000–63.000 | 20 | 3 | armazenagem 25, conteiner 45, granel 30 |
+| Cargueiro | 2 | R$ 16.000–36.000 | 40 | 2 | armazenagem 40, conteiner 40, granel 20 |
+| Pesqueiro | 1 | R$ 9.000–20.000 | 40 | 1 | armazenagem 45, pescado 55 |
 
 ## Motivos de escala — por que o navio veio
 

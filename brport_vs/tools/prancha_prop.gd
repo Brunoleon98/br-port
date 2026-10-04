@@ -422,16 +422,11 @@ func _avancar() -> void:
 		_fechar_paineis()
 	if GS.phase != "playing":
 		return
-	for w in GS.workers:
-		var wid := int(w["id"])
-		if int(w["busy_turns"]) > 0 or GS.worker_dock_index(wid) >= 0:
-			continue
-		for i in range(GS.docks.size()):
-			var doca = GS.docks[i]
-			if doca["boat"] == null or doca["worker_id"] != null:
-				continue
-			if GS.assign_worker(wid, i):
-				break
+	# Atraca o que estiver ao largo antes de virar o dia (`083`): o trabalhador
+	# vai junto com o barco.
+	while GS.atracagem_pendente() != Vector2i.ZERO:
+		if not GS.atracar(0):
+			break
 	_main._on_advance_pressed()
 
 

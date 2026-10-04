@@ -120,57 +120,46 @@ func percurso() -> Array:
 			"estado": {"cash": 100000}, "so_hud": true},
 		{"nome": "HUD (já dá para quitar)", "cena": "res://scenes/Main.tscn",
 			"estado": {"cash": 900000}, "so_hud": true},
-		# ⚠️ E O TERCEIRO ESTADO DO TÍTULO DOS TRABALHADORES SÓ SE ALCANÇA
-		# AGINDO. `trabalho_parado()` devolve ZERO quando não há trabalhador
-		# livre, e o porto abre com UM livre e uma doca à espera — logo os dois
-		# casos acima mediam sempre o ÂMBAR, e o repouso NEUTRO nunca esteve
-		# nos 214 textos. Foi assim que uma cor escrita em dois sítios viveu
-		# fora do alcance da régua que existe para a medir.
+		# ⚠️ E O TERCEIRO ESTADO DO TÍTULO DA FILA SÓ SE ALCANÇA AGINDO. O
+		# porto abre com o berço livre e barcos ao largo — o título em ÂMBAR
+		# —, e o repouso NEUTRO («os berços estão ocupados») só existe depois
+		# de alguém atracar. Era assim com o título dos trabalhadores, que a
+		# fila substituiu (`083`), e foi assim que uma cor escrita em dois
+		# sítios viveu fora do alcance da régua.
 		#
-		# Ele entra pela PORTA DO JOGADOR: `assign_all_free_workers()` é o que
-		# o botão "Alocar todos" chama. Estado escrito à mão poria o rótulo
-		# certo com o resto parado.
-		#
-		# ⚠️ E ELE PASSOU A `acao_vista` EM 22/09, porque o `acao` corre antes
-		# de a cena existir: o "1 trabalhador alocado" que esta alocação emite
-		# saía para ninguém, e a faixa continuava a mostrar a abertura. O
-		# título dos trabalhadores é o mesmo; o que se ganhou foi a faixa BOA.
-		{"nome": "HUD (nada parado, faixa boa)", "cena": "res://scenes/Main.tscn",
-			"acao_vista": [["assign_all_free_workers"]], "so_hud": true},
+		# Ele entra pela PORTA DO JOGADOR, `atracar()`, que é o toque no
+		# cartão da fila, e corre sobre a cena JÁ MONTADA (`acao_vista`): a
+		# mensagem boa que ele emite é a faixa que este caso mede.
+		{"nome": "HUD (berços cheios, faixa boa)", "cena": "res://scenes/Main.tscn",
+			"acao_vista": [["atracar", 0]], "faixa": "TextoFaixaBom", "so_hud": true},
 		# ⚠️ OS DOIS ESTADOS QUE FALTAVAM À FAIXA, e é onde o defeito morava:
-		# o `warn` é o `kind` mais emitido do jogo (6 dos 14) e media 3,07:1
-		# sobre o creme, contra um corte de 4,5. Nenhum dos dezanove estados
-		# anteriores o montava, e o registro de exceções afirmava que os
-		# quatro já eram medidos — eram três linhas, todas do NEUTRO (`042`).
+		# o `warn` é o `kind` mais emitido do jogo e media 3,07:1 sobre o
+		# creme, contra um corte de 4,5 (`042`).
 		#
-		# As portas são do jogador: alocar numa doca que já opera é o toque
-		# que o cartão recebe, e `pay_debt()` sem caixa é o botão do painel do
-		# Sr. Ribeiro. Nenhuma delas escreve o rótulo à mão.
+		# As portas são do jogador: tocar num segundo barco com o berço já
+		# cheio é o aviso, e `pay_debt()` sem caixa é o botão do painel do Sr.
+		# Ribeiro. Nenhuma delas escreve o rótulo à mão — e a `faixa` diz a
+		# variação que a prova exige, porque um segundo toque sem segundo
+		# barco ao largo não avisaria nada e a faixa ficaria verde, calada.
 		{"nome": "HUD (faixa de aviso)", "cena": "res://scenes/Main.tscn",
-			"acao_vista": [["assign_all_free_workers"], ["assign_worker", 1, 0]],
+			"acao_vista": [["atracar", 0], ["atracar", 0]], "faixa": "TextoFaixaAviso",
 			"so_hud": true},
 		{"nome": "HUD (faixa ruim)", "cena": "res://scenes/Main.tscn",
 			"estado": {"phase": "debt_payment", "cash": 1000},
-			"acao_vista": [["pay_debt"]], "so_hud": true},
-		# ⚠️ O CARTÃO DA DOCA SOB OFERTA DO RIVAL — o quarto e último fundo do
-		# cartão, e o que faltava à 3ª leva de cor (`docs/decisoes/043`). O
-		# registro de exceções dizia que ele NÃO era alcançado, e dizia bem:
-		# era a afirmação NEGATIVA, que a régua confirma ao não publicar a
-		# linha. O que o impedia era uma chave morta no `montar_caso` — ver o
-		# comentário lá.
-		#
-		# Ele muda os TRÊS rótulos de uma vez, porque o stylebox passa a
-		# `CartaoDocaRival`: o nome vai de 6,76 para 6,96, o valor de 13,71
-		# para 14,13 e o progresso troca de cor, para o âmbar a 8,68:1.
-		{"nome": "HUD (doca sob oferta do rival)", "cena": "res://scenes/Main.tscn",
+			"acao_vista": [["pay_debt"]], "faixa": "TextoFaixaRuim", "so_hud": true},
+		# ⚠️ O BARCO AO LARGO SOB OFERTA DO RIVAL — o fundo vermelho do cartão
+		# (`043`). Até à `083` o Arlindo disputava o barco na DOCA, e o cartão
+		# dela vestia `CartaoDocaRival`; hoje disputa-o na fila, e é o cartão
+		# da fila que o veste. O `_barco_chegou` prova-o no nó.
+		{"nome": "HUD (barco ao largo sob oferta do rival)", "cena": "res://scenes/Main.tscn",
 			"barco": 0, "so_hud": true},
-		# ⚠️ O TRABALHADOR ESCOLHIDO — o único rótulo do jogo com fundo PRÓPRIO,
-		# o selo (`050`). A seleção é um TOQUE, e nenhum dos 24 estados tocava:
-		# o selo nasceria fora da régua que existe para medir texto sobre fundo.
-		# Entra pela porta do jogador, `_on_worker_selecionado()`, DEPOIS de a
-		# cena existir — o cartão é o que muda, e ele só existe com o HUD de pé.
-		{"nome": "HUD (trabalhador escolhido)", "cena": "res://scenes/Main.tscn",
-			"escolher": true, "so_hud": true},
+		# ⚠️ O BARCO QUE SAI AMANHÃ — a única linha âmbar do cartão da fila, e
+		# a que muda a escolha (`083`). Um barco recém-chegado diz «espera 2
+		# dias», e o percurso abre sempre no dia 1: este estado só existe
+		# depois de uma virada sem atracar, que é a porta do jogador
+		# (`advance_turn`, o «Avançar dia»). A prova é o TEXTO no nó.
+		{"nome": "HUD (barco que sai amanhã)", "cena": "res://scenes/Main.tscn",
+			"acao": ["advance_turn"], "texto_na_tela": "sai amanhã", "so_hud": true},
 		# ⚠️ O PAINEL CONSTRUIR COM ESTRUTURA DE PÉ — o verde que o registro de
 		# exceções dizia não ser alcançado, e dizia bem: o caso acima abre o
 		# painel com o porto em RUÍNAS, logo `tem_estrutura()` é falso em todas
@@ -236,11 +225,20 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 	# e foi por isso que o estado vermelho dele nunca entrou na tabela. O jogo
 	# escreve estes três em `_spawn_boats()`, e é de lá que eles são copiados.
 	if caso.has("barco"):
+		# Desde a `083` a oferta cai num barco AO LARGO, e `barco` é o lugar
+		# da fila. O jogo enche a fila no `_spawn_boats()`, e é de lá que vem
+		# o barco quando o sorteio da abertura não o deu.
 		var d: int = caso["barco"]
-		if GS.docks[d].get("boat") == null:
+		while GS.fila.size() <= d and GS.fila.size() < GS.FILA_LUGARES:
 			GS._spawn_boats()
-		GS.docks[d]["boat"]["rival"] = true
-		GS.pending_rival_dock = d
+			if GS.phase == "rival_offer":
+				GS.resolve_rival_offer(true)
+		if d >= GS.fila.size():
+			falhas.append("%s pediu o barco %d ao largo e a fila tem %d"
+				% [caso["nome"], d, GS.fila.size()])
+			return null
+		GS.fila[d]["rival"] = true
+		GS.pending_rival = d
 		# ⚠️ A FASE FICA EM "playing" DE PROPÓSITO. Pô-la em "rival_offer" faria
 		# o `montar_caso` de um caso SEGUINTE resolver a oferta na abertura, e
 		# o que se quer fotografar aqui é o cartão sob oferta — não o depois.
@@ -254,8 +252,8 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 	# ⚠️ E COMPRA RECUSADA É CALADA — `comprar_estrutura()` devolve `false` sem
 	# se queixar (sem caixa, sem o `requer`, ou em `rival_offer`). Num caso
 	# cujo PROPÓSITO é ter a estrutura de pé, isso é falha; e note-se que a
-	# regra NÃO é geral: o `assign_worker` do caso do aviso devolve `false` de
-	# propósito, porque o que ele mede é justamente a recusa.
+	# regra NÃO é geral: o segundo `atracar` do caso do aviso devolve `false`
+	# de propósito, porque o que ele mede é justamente a recusa.
 	for eid in caso.get("estruturas", []):
 		if not GS.comprar_estrutura(String(eid)):
 			falhas.append("%s não conseguiu comprar a estrutura %s"
@@ -263,8 +261,8 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 			return null
 
 	# ⚠️ AÇÃO E NÃO CAMPO. Há estado que nenhum `set()` alcança porque ele é o
-	# RESULTADO de uma regra: `trabalho_parado()` só devolve ZERO depois de
-	# alguém alocar, e alocar é um método. Vem DEPOIS do estado e do barco, que
+	# RESULTADO de uma regra: o barco que «sai amanhã» só existe depois de uma
+	# virada sem atracar, e virar o dia é um método. Vem DEPOIS do estado e do barco, que
 	# é a ordem em que o jogador age — sobre o mundo já montado.
 	#
 	# Método que o `GameState` não tenha ENTRA NAS FALHAS, como o `_do_estado`
@@ -276,6 +274,11 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 				% [metodo, caso["nome"]])
 			return null
 		GS.call(metodo)
+	# Uma virada (`advance_turn`) sorteia barcos e pode abrir a oferta do rival,
+	# e o painel dela taparia a HUD que o caso existe para medir: resolve-se
+	# como na abertura, antes de a cena existir.
+	if GS.phase == "rival_offer" and not caso.has("barco"):
+		GS.resolve_rival_offer(true)
 
 	if not ResourceLoader.exists(caso["cena"]):
 		falhas.append("cena não encontrada: %s" % caso["cena"])
@@ -323,7 +326,9 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		return null
 	if not _estrutura_chegou(no, caso):
 		return null
-	if not _escolheu(no, caso, tema):
+	if not _faixa_chegou(no, caso):
+		return null
+	if not _texto_chegou(no, caso):
 		return null
 	return no
 
@@ -394,13 +399,13 @@ func _barco_chegou(no: Node, caso: Dictionary) -> bool:
 	if not caso.has("barco"):
 		return true
 	var d: int = caso["barco"]
-	var cartoes: Array = _cartoes_de_doca(no)
+	var cartoes: Array = _cartoes_da_fila(no)
 	if cartoes.is_empty():
 		# Painel solto não tem cartão nenhum, e o caso da contra-oferta é um
 		# desses: aí quem responde pelo barco é o `setup()` do próprio painel.
 		return true
 	for c in cartoes:
-		if int(c.get("dock_index")) != d:
+		if int(c.get("indice")) != d:
 			continue
 		var v := String((c as Control).theme_type_variation)
 		if v == "CartaoDocaRival":
@@ -409,7 +414,7 @@ func _barco_chegou(no: Node, caso: Dictionary) -> bool:
 			"%s pediu o barco %d sob oferta e o cartão vestiu «%s»"
 			% [caso["nome"], d, v])
 		return false
-	falhas.append("%s pediu o barco %d e não há cartão para essa doca"
+	falhas.append("%s pediu o barco %d e não há cartão para esse lugar da fila"
 		% [caso["nome"], d])
 	return false
 
@@ -453,33 +458,51 @@ func _estrutura_chegou(no: Node, caso: Dictionary) -> bool:
 	return false
 
 
-# ── O TOQUE SELECIONOU MESMO? ───────────────────────────────────────────────
+# ── A FAIXA FICOU MESMO NO TOM PEDIDO? ──────────────────────────────────────
 #
-# A terceira irmã do `_barco_chegou`, pela mesma lição da `043`: caso que pede
-# um estado prova que o obteve, e a prova é a CONSEQUÊNCIA no nó — o cartão
-# tocado veste o recurso do `TrabSelecionado` do tema. Sem ela, um toque que
-# não pegasse publicaria o cartão PARADO com o nome «trabalhador escolhido», e
-# as linhas sairiam verdadeiras sobre outro estado.
-func _escolheu(no: Node, caso: Dictionary, tema: Theme) -> bool:
-	if not caso.get("escolher", false):
+# A irmã do `_barco_chegou` para a faixa de mensagem (`083`). O caso do aviso
+# pede um SEGUNDO toque com o berço cheio, e isso só avisa se houver um
+# segundo barco ao largo — sem ele o toque não faz nada, a faixa fica no verde
+# do primeiro, e a régua publicaria o verde com o nome do aviso. A prova é a
+# variação que o rótulo veste.
+func _faixa_chegou(no: Node, caso: Dictionary) -> bool:
+	if not caso.has("faixa"):
 		return true
-	var cont: Node = no.get_node_or_null("Trabalhadores")
-	if cont == null or not no.has_method("_on_worker_selecionado"):
-		falhas.append("%s pediu a seleção e a cena não tem trabalhadores"
-			% caso["nome"])
+	var rotulo := no.get("_message_label") as Label
+	if rotulo == null:
+		falhas.append("%s pediu a faixa «%s» e a cena não tem faixa" % [caso["nome"], caso["faixa"]])
 		return false
-	var selecionado: StyleBox = tema.get_stylebox("panel", "TrabSelecionado")
-	for w in cont.get_children():
-		if not (w.has_method("esta_livre") and w.esta_livre()):
-			continue
-		no._on_worker_selecionado(w.worker_id)
-		if w.get_theme_stylebox("panel") == selecionado:
+	var v := String(rotulo.theme_type_variation)
+	if v == String(caso["faixa"]):
+		return true
+	falhas.append("%s pediu a faixa «%s» e ela vestiu «%s» («%s»)"
+		% [caso["nome"], caso["faixa"], v, rotulo.text])
+	return false
+
+
+# ── O TEXTO PEDIDO ESTÁ MESMO NA TELA? ──────────────────────────────────────
+#
+# Para o estado que só um texto distingue — o «sai amanhã» do cartão da fila,
+# que veste a mesma variação do «sem trabalhador» de sempre. Derivado do nó:
+# procura-se o texto em todo `Label` visível, e caso que o peça sem o ter
+# entra nas falhas.
+func _texto_chegou(no: Node, caso: Dictionary) -> bool:
+	if not caso.has("texto_na_tela"):
+		return true
+	if _tem_texto(no, String(caso["texto_na_tela"])):
+		return true
+	falhas.append("%s pediu «%s» na tela e nenhum rótulo o mostra"
+		% [caso["nome"], caso["texto_na_tela"]])
+	return false
+
+
+func _tem_texto(no: Node, texto: String) -> bool:
+	if no is Label and (no as Label).is_visible_in_tree() \
+			and (no as Label).text.contains(texto):
+		return true
+	for f in no.get_children():
+		if _tem_texto(f, texto):
 			return true
-		falhas.append("%s tocou no trabalhador %d e o cartão não vestiu `TrabSelecionado`"
-			% [caso["nome"], w.worker_id])
-		return false
-	falhas.append("%s pediu a seleção e nenhum trabalhador estava livre"
-		% caso["nome"])
 	return false
 
 
@@ -492,12 +515,12 @@ func _conta_variacao(no: Node, nome: String) -> int:
 	return n
 
 
-func _cartoes_de_doca(no: Node) -> Array:
+func _cartoes_da_fila(no: Node) -> Array:
 	var out: Array = []
-	if no.get_script() != null and "dock_index" in no and no is PanelContainer:
+	if no.get_script() != null and "indice" in no and no is PanelContainer:
 		out.append(no)
 	for f in no.get_children():
-		out.append_array(_cartoes_de_doca(f))
+		out.append_array(_cartoes_da_fila(f))
 	return out
 
 

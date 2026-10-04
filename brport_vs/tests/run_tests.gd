@@ -67,10 +67,23 @@ func _fake_boat(value: int, op_turns: int, rival: bool,
 		"id": 999, "value": value, "motivo": motivo, "classe": classe,
 		"op_turns": op_turns,
 		"progress": 0, "rival": rival, "matched": false, "matched_value": 0,
+		"paciencia": GS.PACIENCIA_FILA,
 	}
 
 
+# Monta uma oferta do Arlindo como o jogo a monta desde a `083`: o barco AO
+# LARGO, a fila só com ele, e a oferta a apontar para o lugar 0. Até lá cada
+# bloco escrevia o barco numa doca e o índice da doca à mão, oito vezes.
+func _oferta(barco: Dictionary, tentativas: int = -1) -> Dictionary:
+	GS.fila = [barco]
+	GS.pending_rival = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE if tentativas < 0 else tentativas
+	GS._set_phase("rival_offer")
+	return barco
+
+
 var _done := false
+var _t4d_completo := false
 var _t5g_completo := false
 var _t5h_completo := false
 var _t5i_completo := false
@@ -100,11 +113,8 @@ func _run() -> void:
 		var main = load("res://scenes/Main.tscn").instantiate()
 		root.add_child(main)
 
-		# Monta uma oferta de rival na doca 0.
-		GS.docks[0]["boat"] = _fake_boat(300, 1, true)
-		GS.docks[0]["worker_id"] = null
-		GS.pending_rival_dock = 0
-		GS._set_phase("rival_offer")
+		# Monta uma oferta de rival sobre o barco ao largo.
+		_oferta(_fake_boat(300, 1, true))
 
 		var btn = main._advance_button
 		_check("[%s] botao desabilitado durante a oferta" % ("igualar" if accept else "recusar"), btn.disabled == true)
@@ -137,73 +147,66 @@ func _run() -> void:
 	_check("doca 1 continua sem trabalhador", GS.docks[1]["worker_id"] == null)
 	_check("worker_dock_index aponta a doca 0", GS.worker_dock_index(1) == 0)
 
-	print("=== T4: liberar trabalhador ===")
-	var released = GS.release_worker(0)
-	_check("release_worker devolveu o trabalhador", released == true and GS.docks[0]["worker_id"] == null)
-	_check("da para realocar depois de liberar", GS.assign_worker(1, 1) == true)
-	# Com a operacao em andamento nao pode liberar.
-	GS.docks[1]["boat"]["progress"] = 1
-	_check("recusa liberar com operacao em andamento", GS.release_worker(1) == false)
+	print("=== T4: devolver o barco ao largo ===")
+	# `desatracar()` é o «toque p/ liberar» de sempre desde a `083`: o barco
+	# volta à fila com a paciência que tinha, e o trabalhador fica livre.
+	_fresh_playing()
+	_garantir(1, 1)
+	GS.docks[0]["boat"] = null
+	GS.docks[0]["worker_id"] = null
+	GS.fila = [_fake_boat(200, 1, false)]
+	GS.fila[0]["paciencia"] = 1
+	_check("atracar enche o berco", GS.atracar(0) == true and GS.docks[0]["boat"] != null)
+	_check("desatracar devolve o barco ao largo",
+		GS.desatracar(0) == true and GS.docks[0]["boat"] == null and GS.fila.size() == 1)
+	_check("e o trabalhador fica livre", GS.docks[0]["worker_id"] == null)
+	_check("com a paciencia que tinha", int(GS.fila[0]["paciencia"]) == 1)
+	GS.atracar(0)
+	GS.docks[0]["boat"]["progress"] = 1
+	_check("recusa devolver com operacao em andamento", GS.desatracar(0) == false)
 
 	print("=== T4b: contra-oferta com os 3 presets do GDD ===")
 	# Igualar fecha na hora, sem gastar paciência.
 	_fresh_playing()
-	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
-	GS.pending_rival_dock = 0
-	GS.rival_attempts_left = GS.RIVAL_PATIENCE
-	GS._set_phase("rival_offer")
+	var b1 := _oferta(_fake_boat(1000, 1, true))
 	_check("igualar devolve 'fechado'", GS.negotiate_rival("igualar") == "fechado")
-	_check("igualar cobra os 15% do GDD", int(GS.docks[0]["boat"]["matched_value"]) == 850)
+	_check("igualar cobra os 15% do GDD", int(b1["matched_value"]) == 850)
 	_check("fase voltou para playing", GS.phase == "playing")
+	_check("o barco fica ao largo, pronto para atracar",
+		GS.fila.size() == 1 and GS.barco_pronto(0))
 
 	# Manter preço: com o sorteio forçado a favor, fecha pelo valor CHEIO.
 	# É exatamente o que não existia antes — o botão era perda garantida.
 	_fresh_playing()
-	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
-	GS.pending_rival_dock = 0
-	GS.rival_attempts_left = GS.RIVAL_PATIENCE
-	GS._set_phase("rival_offer")
 	GS._rng.seed = 1
 	var sucesso := false
+	var b2 := {}
 	for tentativa in range(400):
-		GS.rival_attempts_left = GS.RIVAL_PATIENCE
-		GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
-		GS.pending_rival_dock = 0
-		GS._set_phase("rival_offer")
+		b2 = _oferta(_fake_boat(1000, 1, true))
 		if GS.negotiate_rival("manter") == "fechado":
 			sucesso = true
 			break
 	_check("manter preco PODE dar certo  <-- era impossivel antes", sucesso)
-	_check("quando da certo, paga o valor cheio", not sucesso or int(GS.docks[0]["boat"]["matched_value"]) == 1000)
+	_check("quando da certo, paga o valor cheio", not sucesso or int(b2["matched_value"]) == 1000)
 
 	# Paciência: duas insistências seguidas perdem o cliente.
 	_fresh_playing()
-	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
-	GS.pending_rival_dock = 0
-	GS.rival_attempts_left = 1
-	GS._set_phase("rival_offer")
 	GS._rng.seed = 7
 	var perdeu := false
 	for tentativa2 in range(400):
-		GS.rival_attempts_left = 1
-		GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
-		GS.pending_rival_dock = 0
-		GS._set_phase("rival_offer")
+		_oferta(_fake_boat(1000, 1, true), 1)
 		if GS.negotiate_rival("manter") == "perdido":
 			perdeu = true
 			break
 	_check("sem paciencia o cliente vai embora", perdeu)
-	_check("doca fica vazia quando o cliente vai", GS.docks[0]["boat"] == null)
+	_check("o barco sai da fila quando o cliente vai", GS.fila.is_empty())
 	_check("fase volta para playing mesmo perdendo", GS.phase == "playing")
 
 	# Insistir e falhar encarece o igualar — é o que impede a aposta grátis.
 	_fresh_playing()
-	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
-	GS.pending_rival_dock = 0
-	GS.rival_attempts_left = GS.RIVAL_PATIENCE - 1   # já insistiu uma vez
-	GS._set_phase("rival_offer")
+	var b3 := _oferta(_fake_boat(1000, 1, true), GS.RIVAL_PATIENCE - 1)   # já insistiu uma vez
 	GS.negotiate_rival("igualar")
-	_check("igualar depois de insistir custa mais (28 por cento)", int(GS.docks[0]["boat"]["matched_value"]) == 720)
+	_check("igualar depois de insistir custa mais (28 por cento)", int(b3["matched_value"]) == 720)
 
 	print("=== T4c: painel da contra-oferta (cena real) ===")
 	# A lição do playtest anterior: testar só a lógica não pega bug de tela.
@@ -211,10 +214,7 @@ func _run() -> void:
 	_fresh_playing()
 	var main2 = load("res://scenes/Main.tscn").instantiate()
 	root.add_child(main2)
-	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
-	GS.pending_rival_dock = 0
-	GS.rival_attempts_left = GS.RIVAL_PATIENCE
-	GS._set_phase("rival_offer")
+	_oferta(_fake_boat(1000, 1, true))
 
 	var painel = load("res://scenes/panels/CounterOfferPanel.tscn").instantiate()
 	root.add_child(painel)
@@ -235,40 +235,9 @@ func _run() -> void:
 	root.remove_child(main2)
 	main2.free()
 
-	print("=== T4d: alocar em lote e por toque ===")
-	_fresh_playing()
-	# Cenário controlado: 3 docas com barco, e menos trabalhador que doca —
-	# é onde a ORDEM importa. Se o lote não servir o mais caro primeiro, o
-	# botão estaria jogando pior do que um humano atento.
-	_garantir(3, 2)
-	while GS.workers.size() > 2:
-		GS.workers.pop_back()
-	for i in range(3):
-		GS.docks[i]["boat"] = _fake_boat(100 + i * 100, 1, false)
-		GS.docks[i]["worker_id"] = null
-	for w in GS.workers:
-		w["busy_turns"] = 0
-
-	_check("ha alocacao pendente antes", GS.has_pending_assignment() == true)
-	var postos: int = GS.assign_all_free_workers()
-	_check("alocou os 2 trabalhadores livres", postos == 2)
-	_check("serviu primeiro a doca de R$300", GS.docks[2]["worker_id"] != null)
-	_check("serviu depois a doca de R$200", GS.docks[1]["worker_id"] != null)
-	_check("deixou de fora a doca mais barata", GS.docks[0]["worker_id"] == null)
-	_check("nao ha mais alocacao pendente", GS.has_pending_assignment() == false)
-	_check("rodar de novo nao aloca nada", GS.assign_all_free_workers() == 0)
-
-	# Uma doca sob oferta do rival nao pode ser preenchida pelo lote.
-	_fresh_playing()
-	for i in range(GS.docks.size()):
-		GS.docks[i]["boat"] = null
-		GS.docks[i]["worker_id"] = null
-	for w in GS.workers:
-		w["busy_turns"] = 0
-	GS.docks[0]["boat"] = _fake_boat(300, 1, true)
-	_check("doca sob oferta do rival nao conta como pendente",
-		GS.has_pending_assignment() == false)
-	_check("lote nao aloca em doca sob oferta", GS.assign_all_free_workers() == 0)
+	print("=== T4d: a fila no fundeadouro ===")
+	_t4d_fila()
+	_check("o bloco T4d correu até ao fim", _t4d_completo)
 
 	print("=== T5: upgrade avisa a UI ===")
 	_fresh_playing()
@@ -420,10 +389,7 @@ func _run() -> void:
 	# jogador, e a reputacao nao pode tirar-lho.
 	_fresh_playing()
 	_garantir(1, 1)
-	GS.docks[0]["boat"] = _fake_boat(200, 1, true)
-	GS.pending_rival_dock = 0
-	GS.rival_attempts_left = GS.RIVAL_PATIENCE
-	GS._set_phase("rival_offer")
+	_oferta(_fake_boat(200, 1, true))
 	GS.reputation = 0.0
 	_check("igualar fecha mesmo com reputacao zero",
 		GS.negotiate_rival("igualar") == "fechado")
@@ -437,8 +403,8 @@ func _run() -> void:
 	# então só fica verdadeira se ele chegou ao fim.
 	_check("o bloco T5g correu até ao fim", _t5g_completo)
 
-	print("=== T5h: trabalho parado — os dois numeros saem da mesma varredura ===")
-	_t5h_trabalho_parado()
+	print("=== T5h: atracagem pendente — os dois numeros saem da mesma varredura ===")
+	_t5h_atracagem_pendente()
 	_check("o bloco T5h correu até ao fim", _t5h_completo)
 
 	print("=== T5i: resumo do dia — o que ja aconteceu e o que a projecao promete ===")
@@ -460,6 +426,7 @@ func _run() -> void:
 	print("=== T6: regressao — partidas completas ===")
 	var wins := 0
 	var losses := 0
+	var servidos := 0
 	for run in range(40):
 		GS.clear_save()
 		GS.new_game()
@@ -480,25 +447,22 @@ func _run() -> void:
 				if not bought_up and GS.cash >= int(GS.ESTRUTURAS["pier_2"]["custo"]):
 					GS.buy_upgrade()
 					bought_up = true
-				for w in GS.workers:
-					if int(w["busy_turns"]) > 0 or GS.worker_dock_index(int(w["id"])) >= 0:
-						continue
-					for i in range(GS.docks.size()):
-						var d = GS.docks[i]
-						if d["boat"] != null and d["worker_id"] == null:
-							var b = d["boat"]
-							if b.get("rival", false) and not b.get("matched", false):
-								continue
-							if GS.assign_worker(int(w["id"]), i):
-								break
+				# Atraca o que estiver ao largo (`083`). Até lá este laço alocava
+				# trabalhadores em barcos na doca — e depois da fila ele passava
+				# a jogar quarenta partidas sem servir um barco, verde.
+				while GS.atracagem_pendente() != Vector2i.ZERO:
+					if not GS.atracar(0, false):
+						break
 				GS.advance_turn()
 		if safety >= 300:
 			_check("partida %d terminou (sem loop infinito)" % run, false)
+		servidos += int(GS.metrics["boats_served"])
 		if GS.won:
 			wins += 1
 		else:
 			losses += 1
 	_check("40 partidas completadas sem travar", wins + losses == 40)
+	_check("e elas jogaram — serviram barcos (%d)" % servidos, servidos > 40)
 	print("  -> vitorias=%d derrotas=%d" % [wins, losses])
 
 	print("=== T7: a Leitura do simulador escolhe por identidade, nao por posicao ===")
@@ -573,10 +537,7 @@ func _t5g_botao_voltar() -> void:
 
 	# 3. Decisão pendente: o painel fica. Fechá-lo deixaria a fase de pé sem
 	#    nada na tela para a resolver — travamento silencioso.
-	GS.docks[0]["boat"] = _fake_boat(1000, 1, true)
-	GS.pending_rival_dock = 0
-	GS.rival_attempts_left = GS.RIVAL_PATIENCE
-	GS._set_phase("rival_offer")
+	_oferta(_fake_boat(1000, 1, true))
 	var oferta = load("res://scenes/panels/CounterOfferPanel.tscn").instantiate()
 	camada.add_child(oferta)
 	oferta.setup(0)
@@ -607,76 +568,160 @@ func _t5g_botao_voltar() -> void:
 
 # ── T5h ──────────────────────────────────────────────────────────────────
 #
-# `trabalho_parado()` é o que a interface inteira lê para decidir se avisa: o
-# rótulo conta, o cartão do trabalhador muda de cor e o botão de alocar acende.
-# Três leituras do mesmo estado, uma varredura só — e é isto que testa que ela
-# conta certo, inclusive nos dois casos em que NÃO há nada a avisar.
+# `atracagem_pendente()` é o que a interface lê para decidir se avisa (`083`):
+# o rótulo «Ao largo» conta os berços livres, os cartões da fila acendem e o
+# píer livre pisca. É a sucessora do `trabalho_parado()`, e herda a regra dele:
+# os dois números saem da mesma varredura, e há dois casos em que NÃO há nada
+# a avisar.
 #
 # A semente é fixada porque este bloco JOGA: o `new_game()` chama
-# `_spawn_boats()`, que tem 30% de abrir contra-oferta, e nessa fase
-# `trabalho_parado()` devolve zero por construção.
-func _t5h_trabalho_parado() -> void:
+# `_spawn_boats()`, que tem 30% de abrir contra-oferta.
+func _t5h_atracagem_pendente() -> void:
 	GS._rng.seed = 20260903
 	GS.clear_save()
 	GS.new_game()
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 
-	# Um porto com barco na doca e ninguém alocado: é o estado exato que o
-	# playtest fotografou.
-	#
-	# ⚠️ TRÊS TRABALHADORES E DUAS DOCAS, e não os que o porto abre. O porto
-	# começa com UM trabalhador e uma doca, e com esses números um contador
-	# que parasse no primeiro livre daria a mesma resposta que um que contasse
-	# todos — foi assim que a primeira versão deste bloco passou com o defeito
-	# injetado dentro. Contagem só se testa acima de um.
-	while GS.workers.size() < 3:
-		GS.workers.append(GS.novo_trabalhador())
-	while GS.docks.size() < 2:
-		GS.docks.append({"boat": null, "worker_id": null, "turns_done": 0})
-	for i in range(GS.docks.size()):
-		GS.docks[i]["worker_id"] = null
-		GS.docks[i]["boat"] = GS._make_boat()
-		GS.docks[i]["boat"]["rival"] = false
-	for w in GS.workers:
-		w["busy_turns"] = 0
-
-	var esperando := 0
-	for i in range(GS.docks.size()):
-		if GS.doca_aceita_trabalhador(i):
-			esperando += 1
-	var parado: Vector2i = GS.trabalho_parado()
-	_check("conta todos os trabalhadores parados, e nao só o primeiro",
-		parado.x == GS.workers.size() and parado.x >= 3)
-	_check("conta todas as docas à espera", parado.y == esperando and parado.y >= 2)
-	_check("has_pending_assignment concorda com a contagem",
-		GS.has_pending_assignment() == (parado != Vector2i.ZERO))
-
-	# Doca à espera mas ninguém livre: não há nada que o jogador possa fazer,
-	# e avisar seria pedir uma ação que não existe.
-	for w in GS.workers:
-		w["busy_turns"] = 2
-	_check("trabalhador nenhum livre => nao ha trabalho parado",
-		GS.trabalho_parado() == Vector2i.ZERO)
-
-	# E o simétrico: gente livre, doca nenhuma à espera.
-	for w in GS.workers:
-		w["busy_turns"] = 0
+	# ⚠️ DOIS BERÇOS E TRÊS BARCOS, e não o que o porto abre. Com um berço e um
+	# barco, contar o primeiro e contar todos dá a mesma resposta — contagem
+	# só se testa acima de um.
+	_garantir(2, 2)
 	for i in range(GS.docks.size()):
 		GS.docks[i]["boat"] = null
-	_check("doca nenhuma à espera => nao ha trabalho parado",
-		GS.trabalho_parado() == Vector2i.ZERO)
+		GS.docks[i]["worker_id"] = null
+	GS.fila = [_fake_boat(100, 1, false), _fake_boat(200, 1, false), _fake_boat(300, 1, false)]
+	var pendente: Vector2i = GS.atracagem_pendente()
+	_check("conta todos os bercos livres, e nao só o primeiro",
+		pendente.x == GS.docks.size() and pendente.x >= 2)
+	_check("conta todos os barcos prontos ao largo", pendente.y == 3)
+	_check("barcos_ao_largo concorda com a contagem", GS.barcos_ao_largo() == pendente.y)
 
-	# Fora de "playing" o turno está bloqueado por um painel; o aviso ali seria
-	# ruído por cima de uma decisão que o jogador ainda não tomou.
-	GS.docks[0]["boat"] = GS._make_boat()
-	GS.docks[0]["boat"]["rival"] = false
+	# Barco sob oferta por resolver não é escolha: não pode atracar.
+	GS.fila[1]["rival"] = true
+	_check("barco sob oferta nao conta", GS.atracagem_pendente().y == 2)
+	_check("e nao atraca", GS.atracar(1) == false)
+	GS.fila[1]["rival"] = false
+
+	# Berço nenhum livre: há barcos, mas nada que o jogador possa fazer.
+	for i in range(GS.docks.size()):
+		GS.docks[i]["boat"] = _fake_boat(50, 2, false)
+	_check("berco nenhum livre => nao ha atracagem pendente",
+		GS.atracagem_pendente() == Vector2i.ZERO)
+
+	# E o simétrico: berços livres, ninguém ao largo.
+	for i in range(GS.docks.size()):
+		GS.docks[i]["boat"] = null
+	GS.fila = []
+	_check("fila vazia => nao ha atracagem pendente",
+		GS.atracagem_pendente() == Vector2i.ZERO)
+
+	# Fora de "playing" o turno está bloqueado por um painel.
+	GS.fila = [_fake_boat(100, 1, false)]
 	GS._set_phase("debt_payment")
-	_check("fora de playing nao ha trabalho parado",
-		GS.trabalho_parado() == Vector2i.ZERO)
+	_check("fora de playing nao ha atracagem pendente",
+		GS.atracagem_pendente() == Vector2i.ZERO)
 	GS._set_phase("playing")
 
 	_t5h_completo = true
+
+
+# ── T4d ──────────────────────────────────────────────────────────────────
+#
+# A FILA NO FUNDEADOURO (`083`): o barco chega ao largo, o jogador escolhe quem
+# atraca, e quem espera demais vai para o Porto Farol. Cada asserção pergunta
+# por uma regra que o simulador mede e a tela promete.
+func _t4d_fila() -> void:
+	_fresh_playing()
+	_garantir(1, 1)
+	GS.docks[0]["boat"] = null
+	GS.docks[0]["worker_id"] = null
+	GS.metrics["boats_lost"] = 0
+	GS.metrics["fila_desistiu"] = 0
+	GS.fila = [_fake_boat(100, 1, false), _fake_boat(200, 1, false), _fake_boat(300, 1, false)]
+	GS.fila[0]["paciencia"] = 1
+
+	# 1. Atracar ESCOLHE: é o barco tocado que entra, e não o primeiro.
+	_check("atracar o do meio", GS.atracar(1) == true)
+	_check("entrou o barco de 200", int(GS.docks[0]["boat"]["value"]) == 200)
+	_check("com o trabalhador junto", GS.docks[0]["worker_id"] != null)
+	_check("e a fila ficou com os outros dois", GS.fila.size() == 2
+		and int(GS.fila[0]["value"]) == 100 and int(GS.fila[1]["value"]) == 300)
+	_check("sem berco livre nao atraca mais nada", GS.atracar(0) == false)
+
+	# 2. A virada serve o atracado e gasta a paciência de quem espera; quem
+	#    chega a zero DESISTE — perdido, e conta como perdido no dia também.
+	var rep_antes: float = GS.reputation
+	var fila_antes: Array = GS.fila.duplicate()
+	GS.advance_turn()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	_check("o atracado foi servido", int(GS.metrics["boats_served"]) >= 1)
+	_check("o de paciencia 1 desistiu", not GS.fila.has(fila_antes[0]))
+	_check("o de paciencia 2 continua, com 1", GS.fila.has(fila_antes[1])
+		and int(fila_antes[1]["paciencia"]) == 1)
+	_check("a desistencia conta como barco perdido",
+		int(GS.metrics["boats_lost"]) == 1 and int(GS.metrics["fila_desistiu"]) == 1)
+	_check("e no dia que fechou", int(GS.dia_anterior["perdidos"]) >= 1)
+	_check("e custa reputacao", GS.reputation < rep_antes + GS.REPUTATION_GAIN_SERVED)
+
+	# 3. A chegada enche a FILA, nunca a doca, e nunca passa dos lugares.
+	_fresh_playing()
+	_garantir(1, 1)
+	GS.docks[0]["boat"] = null
+	GS.docks[0]["worker_id"] = null
+	GS.fila = []
+	for i in range(20):
+		GS._spawn_boats()
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+	_check("a fila nunca passa dos lugares", GS.fila.size() <= GS.FILA_LUGARES)
+	_check("e a chegada nunca poe barco na doca", GS.docks[0]["boat"] == null)
+
+	# 4. A EQUIPE DO PÍER: atracar no berço 3 chama o trabalhador nº 3, se ele
+	#    estiver livre — é o que deixa o cartão da doca com a mesma cara.
+	#    ⚠️ Com os berços 1 e 2 ocupados por OUTROS (o 2 e o 1), para o
+	#    defeito «o primeiro livre» dar resposta diferente.
+	_fresh_playing()
+	_garantir(3, 3)
+	for i in range(3):
+		GS.docks[i]["boat"] = null
+		GS.docks[i]["worker_id"] = null
+	GS.docks[0]["boat"] = _fake_boat(10, 2, false)
+	GS.docks[0]["worker_id"] = 2
+	GS.docks[1]["boat"] = _fake_boat(10, 2, false)
+	GS.docks[1]["worker_id"] = 1
+	GS.fila = [_fake_boat(100, 1, false)]
+	GS.atracar(0)
+	_check("o berco 3 chama o trabalhador 3", GS.docks[2]["worker_id"] != null
+		and int(GS.docks[2]["worker_id"]) == 3)
+
+	# 5. Os dias de berço contam-se no porto de HOJE: o barco que chegou antes
+	#    do pórtico descarrega com ele.
+	_fresh_playing()
+	_garantir(1, 1)
+	GS.docks[0]["boat"] = null
+	GS.docks[0]["worker_id"] = null
+	var cargueiro := _fake_boat(300, 2, false, "conteiner", "medio")
+	GS.fila = [cargueiro]
+	if not GS.estruturas.has("guindaste"):
+		GS.estruturas.append("guindaste")
+	GS.atracar(0)
+	_check("o portico corta o dia do barco que ja esperava",
+		int(GS.docks[0]["boat"]["op_turns"]) == maxi(1, 2 - GS.GUINDASTE_CORTA_TURNOS))
+	GS.estruturas.erase("guindaste")
+
+	# 6. A fila vai no save, com a paciência de cada um.
+	_fresh_playing()
+	GS.fila = [_fake_boat(100, 1, false)]
+	GS.fila[0]["paciencia"] = 1
+	GS.save_game()
+	GS.fila = []
+	_check("o save com fila carrega", GS.load_game() == true)
+	_check("e a fila volta com a paciencia",
+		GS.fila.size() == 1 and int(GS.fila[0]["paciencia"]) == 1)
+
+	_t4d_completo = true
 
 
 # ── T5i ──────────────────────────────────────────────────────────────────

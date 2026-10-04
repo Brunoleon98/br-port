@@ -223,7 +223,7 @@ func _r2_partida() -> void:
 			else:
 				GS.fail_debt()
 			continue
-		GS.assign_all_free_workers()
+		_atracar_tudo()
 		GS.advance_turn()
 
 	_confere("a partida chegou ao fim", GS.phase == "game_over",
@@ -431,7 +431,7 @@ func _r6_relogio() -> void:
 	# faz este bloco medir o relógio em vez de medir o sorteio.
 	if GS.phase == "rival_offer":
 		GS.negotiate_rival("igualar")
-	GS.assign_all_free_workers()
+	_atracar_tudo()
 	GS.advance_turn()
 
 	var negativos := 0
@@ -462,7 +462,7 @@ func _r6_relogio() -> void:
 			break
 		if GS.phase == "game_over":
 			break
-		GS.assign_all_free_workers()
+		_atracar_tudo()
 		GS.advance_turn()
 	if achou_negociacao:
 		var tem := false
@@ -477,3 +477,12 @@ func _r6_relogio() -> void:
 	else:
 		print("  (nenhuma contra-oferta neste sorteio — bloco de negociação não corrido)")
 	_b6 = true
+
+
+# Enche os berços livres com os barcos ao largo, pela ordem da fila (`083`).
+# É o «Alocar todos» com que esta ferramenta jogava: o jogo deixou de o ter, e
+# atracar leva o trabalhador junto.
+func _atracar_tudo() -> void:
+	while GS.atracagem_pendente() != Vector2i.ZERO:
+		if not GS.atracar(0, false):
+			return

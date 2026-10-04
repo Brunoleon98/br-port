@@ -23,10 +23,10 @@ extends SceneTree
 # Para fotografar o PAINEL da contra-oferta em vez da tela principal, use
 # --  0  e rode com uma semente que abra oferta no primeiro turno.
 #
-# `limpo`, `pausa` e `alocar` são bandeiras e leem-se em QUALQUER posição
+# `limpo`, `pausa` e `atracar` são bandeiras e leem-se em QUALQUER posição
 # depois da saída — fecham os painéis de rotina, abrem o menu de pausa no fim
-# e alocam os trabalhadores antes do disparo. `ocioso` é o contrário: nenhum
-# trabalhador é alocado, nunca. `--boletim=N` fecha os boletins das semanas
+# e atracam os barcos ao largo antes do disparo (`083`). `ocioso` é o
+# contrário: nenhum barco é atracado, nunca. `--boletim=N` fecha os boletins das semanas
 # anteriores e pára no da semana N.
 #
 # Toda foto sai com uma linha `Retratos:` por cara de personagem que o painel
@@ -85,19 +85,19 @@ var _frames_extra := 0
 ## sair por boa. Lidas todas aqui, a ordem em que se escrevem deixa de contar.
 var _limpo := false
 var _pausa := false
-var _alocar := false
-## `ocioso` é o jogador que NUNCA aloca ninguém — o principiante que ainda não
-## percebeu a alocação, e o único que ouve a Dona Cida preocupada na primeira
+var _atracar := false
+## `ocioso` é o jogador que NUNCA atraca barco nenhum — o principiante que ainda
+## não percebeu a fila (até à `083`, a alocação), e o único que ouve a Dona
+## Cida preocupada na primeira
 ## semana (medido em 12/09: 60 de 60 partidas, e nenhuma de quem aloca). Só no
 ## porto em RUÍNAS: com `completo` o aluguel dos píeres paga a semana e ela
-## fica séria (medido em 24/09). O laço deixa de chamar o `_alocar_todos()`.
+## fica séria (medido em 24/09). O laço deixa de chamar o `_atracar_todos()`.
 var _ocioso := false
 ## `--boletim=N` fotografa o boletim da semana N: os das semanas anteriores
 ## fecham como o jogador os fecharia, e o laço pára no dela. O tom — e com ele
 ## a cara da Dona Cida — sai da partida, e quem diz qual foi é a linha
 ## `Retratos:` da foto (`docs/decisoes/060`), nunca este número.
 var _boletim_semana := 0
-var _escolher := false
 ## `virada` fotografa a VIRADA DO DIA a meio (`078`): o barco servido a partir,
 ## o «+R$» no ar e o dinheiro a contar. Sem ela, a ferramenta leva a última
 ## virada ao fim antes de fotografar — é o que um segundo toque faz —, porque
@@ -279,7 +279,7 @@ func _process(_delta: float) -> bool:
 			quit(1)
 			return true
 	# E O OCIOSO PROVA QUE NINGUÉM TRABALHOU, pela consequência: sem
-	# trabalhador nenhum barco é servido. Um laço que voltasse a alocar
+	# barco atracado nenhum é servido. Um laço que voltasse a atracar
 	# daria o boletim de quem joga com o nome de quem não joga.
 	if _ocioso and int(GS.metrics["boats_served"]) != 0:
 		push_error("capturar_tela: `ocioso` e a partida serviu %d barco(s)" % int(GS.metrics["boats_served"]))
@@ -394,21 +394,28 @@ func _montar() -> void:
 
 	_limpo = args.has("limpo")
 	_pausa = args.has("pausa")
-	_alocar = args.has("alocar")
+	_atracar = args.has("atracar")
+	# ⚠️ `alocar` E `escolher` MORRERAM COM A FILEIRA DOS TRABALHADORES (`083`),
+	# e um tiro que ainda os peça reprova em vez de sair com a foto de outra
+	# coisa: a bandeira desconhecida seria ignorada e o PNG sairia por bom.
+	for morta in ["alocar", "escolher"]:
+		if args.has(morta):
+			push_error("captura: `%s` deixou de existir com a fila (`083`) — use `atracar`" % morta)
+			quit(1)
+			return
 	_ocioso = args.has("ocioso")
 	_virada = args.has("virada")
 	# ⚠️ BANDEIRAS QUE SE DESMENTEM REPROVAM, em vez de uma ganhar em silêncio:
-	# `ocioso alocar` fotografaria o porto a operar com o nome de quem nunca
-	# alocou, e `limpo` fecha todo boletim — o do `--boletim=` também.
-	if _ocioso and _alocar:
-		push_error("captura: `ocioso` e `alocar` desmentem-se — escolha um")
+	# `ocioso atracar` fotografaria o porto a operar com o nome de quem nunca
+	# atracou, e `limpo` fecha todo boletim — o do `--boletim=` também.
+	if _ocioso and _atracar:
+		push_error("captura: `ocioso` e `atracar` desmentem-se — escolha um")
 		quit(1)
 		return
 	if _boletim_semana > 0 and args.has("limpo"):
 		push_error("captura: `limpo` fecha o boletim que o `--boletim=` quer fotografar")
 		quit(1)
 		return
-	_escolher = args.has("escolher")
 	_mensagens = args.has("mensagens")
 	_balanco = args.has("balanco")
 
@@ -555,7 +562,7 @@ func _montar() -> void:
 			if _paineis_abertos() > 0:
 				break
 		if not _ocioso:
-			_alocar_todos()
+			_atracar_todos()
 		_main._on_advance_pressed()
 	if not _virada:
 		_main._concluir_virada()
@@ -577,37 +584,30 @@ func _montar() -> void:
 		return
 
 
-	# ⚠️ E UMA ALOCAÇÃO NO FIM, sob pedido. O laço aloca ANTES de cada avanço,
-	# de modo que a foto sai sempre com os trabalhadores livres e as docas à
-	# espera — que é um estado verdadeiro do jogo, e é por isso que os tiros do
-	# mapa ficam como estão. Mas há uma mecânica que só existe com o porto A
-	# OPERAR: o camião que sai da rua e encosta no berço do navio que está a ser
-	# servido. Sem esta linha ela não aparece em fotografia nenhuma, que é a
-	# forma exata do buraco do `barco_medio`.
-	if _alocar:
-		_alocar_todos()
+	# ⚠️ E UMA ATRACAÇÃO NO FIM, sob pedido. O laço atraca ANTES de cada
+	# avanço, de modo que a foto sai sempre com barcos novos AO LARGO e os
+	# berços livres — a escolha à espera, que é um estado verdadeiro do jogo e
+	# é por isso que os tiros do mapa ficam como estão. Mas há uma mecânica que
+	# só existe com o porto A OPERAR: o camião que sai da rua e encosta no
+	# berço do navio que está a ser servido. Sem esta linha ela não aparece em
+	# fotografia nenhuma, que é a forma exata do buraco do `barco_medio`.
+	if _atracar:
+		# A ÚLTIMA VIRADA PODE TER ABERTO UMA OFERTA, e com ela por resolver
+		# nenhum barco atraca (`atracagem_pendente()` é zero fora de
+		# "playing"): a foto do porto a operar saía com um berço vazio e o
+		# barco ao largo. Resolve-se como o laço resolve as de pelo caminho.
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+			_fechar_paineis_de_rotina(false)
+		_atracar_todos()
 		_main._refresh_all()
 
-	# ⚠️ E UMA SELEÇÃO, sob pedido. O cartão do trabalhador ESCOLHIDO tem
-	# borda própria — âmbar e do dobro da largura —, e até 22/09 ele não estava
-	# em foto NENHUMA das 24: a seleção é um TOQUE, e nada na bateria tocava.
-	# A cor dele viveu assim quatro levas de migração, fora do alcance da única
-	# prova que as outras quatro usaram (a identidade byte a byte com controle
-	# positivo), porque um controle positivo sobre um estado que nenhuma foto
-	# monta mexe em ZERO fotos e não prova coisa nenhuma — `docs/decisoes/042`.
-	#
-	# Entra pela PORTA DO JOGADOR: `_on_worker_selecionado()` é o que o
-	# `_gui_input` do cartão emite. Escrever `_selecionado` à mão poria a
-	# borda certa com o resto do HUD parado.
-	if _escolher:
-		_escolher_trabalhador()
 
-
-	# ⚠️ E O PAINEL ABRE POR ÚLTIMO, DEPOIS DA ALOCAÇÃO. Os cinco leem o estado
+	# ⚠️ E O PAINEL ABRE POR ÚLTIMO, DEPOIS DA ATRACAÇÃO. Os cinco leem o estado
 	# no `setup()`, uma vez, e nunca mais: o `PainelDocas` conta as docas
 	# ocupadas e o `PainelCaixa` projeta o dia a partir de quem tem trabalhador.
-	# Aberto antes do `_alocar_todos()`, cada um retrataria o estado de ANTES da
-	# última alocação enquanto o mapa por trás já mostrava o de depois — a foto
+	# Aberto antes do `_atracar_todos()`, cada um retrataria o estado de ANTES
+	# da última atracação enquanto o mapa por trás já mostrava o de depois — a foto
 	# adiantada de 19/09 com a tela e o painel trocados de lado.
 	#
 	# E é aqui, e não no `_process`, porque estes não dependem de nada adiado:
@@ -792,7 +792,9 @@ func _fechar_paineis_de_rotina(fechar_boletim: bool) -> void:
 	if overlay == null:
 		return
 	for painel in overlay.get_children():
-		var rotina := "dock_index" in painel
+		# A contra-oferta é a rotina: ela tem `indice_fila` (o lugar da fila
+		# disputado, `083`; até lá `dock_index`) e nenhum outro painel o tem.
+		var rotina := "indice_fila" in painel
 		var script: Script = painel.get_script()
 		if fechar_boletim and script != null \
 				and script.resource_path.ends_with("PainelBoletim.gd"):
@@ -848,36 +850,21 @@ func _paineis_abertos() -> int:
 	return overlay.get_child_count()
 
 
-# ⚠️ E ELA REPROVA SE NÃO CONSEGUIR O ESTADO. Um tiro que peça a seleção e não
-# a obtenha sairia com o cartão em repouso, com o tamanho certo e o turno
-# certo, e passaria por bom — é «estado que não monta publica linhas
-# plausíveis» (`docs/decisoes/043`) com um PNG no lugar da linha. A prova é
-# DERIVADA: vai ver no `Main` quem ficou escolhido.
-func _escolher_trabalhador() -> void:
-	for w in GS.workers:
-		var wid := int(w["id"])
-		if int(w["busy_turns"]) > 0 or GS.worker_dock_index(wid) >= 0:
-			continue
-		_main._on_worker_selecionado(wid)
-		break
-	if _main._selecionado < 0:
-		push_error("capturar_tela: pediu-se `escolher` e nenhum trabalhador ficou escolhido")
-		quit(1)
-		return
-	print("Escolhido: trabalhador #%d" % _main._selecionado)
-
-
-func _alocar_todos() -> void:
-	for w in GS.workers:
-		var wid := int(w["id"])
-		if int(w["busy_turns"]) > 0 or GS.worker_dock_index(wid) >= 0:
-			continue
-		for i in range(GS.docks.size()):
-			var doca = GS.docks[i]
-			if doca["boat"] == null or doca["worker_id"] != null:
-				continue
-			var barco = doca["boat"]
-			if barco.get("rival", false) and not barco.get("matched", false):
-				continue
-			if GS.assign_worker(wid, i):
-				break
+# ATRACA PELA PORTA DO JOGADOR: o toque no primeiro cartão da linha «Ao
+# largo», enquanto houver berço livre e barco pronto (`083`). É o mesmo
+# `_gui_input` que o dedo dispara, e não um `GS.atracar()` direto — que poria o
+# barco no berço sem passar pelo que o cartão faz. O teto é o número de
+# berços: cada toque enche um, e um que não enchesse nada pararia o laço.
+func _atracar_todos() -> void:
+	var lugar := _main.get_node("Fila").get_child(0) as Control
+	for _i in range(GS.docks.size()):
+		if GS.atracagem_pendente() == Vector2i.ZERO:
+			return
+		var antes: int = GS.bercos_livres()
+		var toque := InputEventMouseButton.new()
+		toque.button_index = MOUSE_BUTTON_LEFT
+		toque.pressed = false
+		lugar._gui_input(toque)
+		if GS.bercos_livres() == antes:
+			push_error("capturar_tela: o toque no barco ao largo não atracou nada")
+			return

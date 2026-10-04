@@ -109,15 +109,13 @@ func _rodar() -> void:
 					var preco: int = int(GS.ESTRUTURAS[id]["custo"])
 					if GS.cash > preco * 2:
 						GS.comprar_estrutura(id)
-			for i in range(GS.docks.size()):
-				if GS.docks[i]["boat"] == null or GS.docks[i]["worker_id"] != null:
-					continue
+			# Atraca o primeiro barco ao largo em cada berço livre (`083`), com o
+			# mesmo esquecimento por berço de antes — o trabalhador vai junto.
+			for _b in range(GS.bercos_livres()):
 				if rng.randf() < float(jeito["esquecer"]):
 					continue
-				for w in GS.workers:
-					if GS.worker_dock_index(int(w["id"])) < 0:
-						GS.assign_worker(int(w["id"]), i, false)
-						break
+				if GS.atracagem_pendente() == Vector2i.ZERO or not GS.atracar(0, false):
+					break
 			GS.advance_turn()
 
 	var nomes := _listar(R.pasta)

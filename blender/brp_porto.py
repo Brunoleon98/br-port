@@ -1003,7 +1003,7 @@ def _um_trabalhador(M, est, nome, perfil):
                                brp_retratos.TRABALHADOR.pivo)
     origem(nome, tipo="retrato")
     est.registrar(nome, pecas, ancora="retrato",
-                  cena_godot="res://scenes/worker/Worker.tscn",
+                  cena_godot="res://scenes/dock/DocaCartao.tscn",
                   cor=brp_retratos.COR_RETRATO)
 
 

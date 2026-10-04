@@ -4,9 +4,11 @@ extends SceneTree
 # BR Port VS — folha de contato dos TRABALHADORES
 # Ferramenta de apoio. NÃO faz parte do jogo.
 #
-# Os trinta rostos do cartão do rodapé (`docs/decisoes/059`), cada um num
-# cartão de VERDADE — o `Worker.tscn`, com o tema e o `refresh()` do jogo —,
-# sobre o fundo da barra onde eles vivem.
+# Os trinta rostos (`docs/decisoes/059`), cada um num cartão de VERDADE — o
+# `DocaCartao.tscn`, com o tema e o `refresh()` do jogo —, sobre o fundo da
+# barra onde eles vivem. Até à `083` era o cartão do trabalhador, na fileira
+# que a fila no fundeadouro substituiu; desde então a cara de cada um mora no
+# cabeçalho da doca do píer dele.
 #
 # ⚠️ ELA EXISTE PELA REGRA DA ARTE QUE VARIA COM O SORTEIO (`CLAUDE.md`, Arte):
 # o porto tem no máximo três trabalhadores e o rosto de cada um sai ao nascer,
@@ -32,6 +34,7 @@ extends SceneTree
 # ============================================================
 
 const SAIDA_PADRAO := "user://folha_trabalhadores.png"
+const RETRATO := "Coluna/Cabecalho/Placa/Retrato"
 const FRAMES_ATE_ASSENTAR := 8
 # O fundo da barra inferior, onde os cartões vivem (`CLAUDE.md`, Arte: cartão
 # escuro sobre fundo escuro ganha corpo por borda, e é isso que se tem de ver).
@@ -40,17 +43,24 @@ const TINTA := Color(0.878, 0.914, 0.965)
 const TINTA_FRACA := Color(0.62, 0.70, 0.78)
 # CINCO e não seis desde 04/10 (`081`): o cartão passou a duas colunas, com o
 # retrato ao lado do número, e o mínimo dele subiu de 108 para ~130 px.
-const COLUNAS := 5
-# 10 e 6, e não 12 e 8, desde 04/10: os cinco cartões de duas colunas pediam
-# 722 px com os vãos de antes, numa tela de 720 (`081`).
+# TRÊS desde a `083`: o cartão da doca tem 224 px de mínimo, e três cabem nos
+# 720 da tela com os vãos.
+const COLUNAS := 3
 const MARGEM := 10
 const VAO := 6
 const CABECALHO := 46
-const LEGENDA := 44                                 # sexo, idade e cor, uma por linha
-# Medido na primeira corrida: o menor retrato muda 2.407 px no cartão de 70 (o
+# Numa linha só, «h · jovem · parda», e não uma por linha: com três colunas são
+# dez linhas de cartões, e as legendas de três linhas não cabiam na tela.
+const LEGENDA := 16
+# Medido: o menor retrato muda 635 px na placa de 44 do cabeçalho da doca (o
 # padrão). O defeito (o retrato escondido também na primeira foto) dá ZERO
-# exato; o corte fica a meio da banda.
-const DESENHO_MIN := 1203
+# exato; o corte fica a meio da banda. Era 1.203, a meio dos 2.407 do cartão
+# de 70 do trabalhador, que saiu com a fila (`083`): a primeira corrida com o
+# cartão novo reprovou os trinta, que é o que um número em pixel escrito à mão
+# faz quando o que ele descreve muda de tamanho. E mudou outra vez na mesma
+# sessão — a placa passou de 30 a 44 px a pedido do Bruno, e o mínimo de 239
+# para 635: quem mexe na placa remede aqui.
+const DESENHO_MIN := 317
 
 var _montado := false
 var _frames := 0
@@ -79,7 +89,7 @@ func _process(_delta: float) -> bool:
 		# deram zero exato e os trinta reprovaram.
 		_foto = root.get_texture().get_image()
 		for par in _cartoes:
-			((par[0] as Node).get_node("Conteudo/Placa/Retrato") as CanvasItem).self_modulate.a = 0.0
+			((par[0] as Node).get_node(RETRATO) as CanvasItem).self_modulate.a = 0.0
 		_frames = 0
 		return false
 	var ausentes := _retratos_ausentes(_foto, root.get_texture().get_image())
@@ -104,7 +114,7 @@ func _retratos_ausentes(com: Image, sem: Image) -> int:
 	var menor := -1
 	var menor_nome := ""
 	for par in _cartoes:
-		var arte := (par[0] as Node).get_node("Conteudo/Placa/Retrato") as TextureRect
+		var arte := (par[0] as Node).get_node(RETRATO) as TextureRect
 		var n := PropIso.desenho_na_foto(com, sem, arte.get_global_rect())
 		if n < DESENHO_MIN:
 			print("FALHOU  %s não chegou à foto: %d px mudam ao escondê-lo"
@@ -122,7 +132,7 @@ func _retratos_ausentes(com: Image, sem: Image) -> int:
 ## padrão, mas um cartão pregado nele passaria por «tem desenho».
 func _conferir_texturas() -> void:
 	for k in range(_cartoes.size()):
-		var arte := (_cartoes[k][0] as Node).get_node("Conteudo/Placa/Retrato") as TextureRect
+		var arte := (_cartoes[k][0] as Node).get_node(RETRATO) as TextureRect
 		var tem: String = arte.texture.resource_path if arte.texture != null else "(nada)"
 		if tem != _cartoes[k][2]:
 			print("FALHOU  o cartão do rosto %d mostra %s, e o registo diz %s"
@@ -134,28 +144,30 @@ func _montar() -> bool:
 	var args := OS.get_cmdline_user_args()
 	if args.size() >= 1:
 		_saida = args[0]
-	# ⚠️ `load()` E NÃO `preload()`: o `Worker.gd` e o `Retratos.gd` falam do
+	# ⚠️ `load()` E NÃO `preload()`: o `DocaCartao.gd` e o `Retratos.gd` falam do
 	# autoload, e um script alcançado por `preload` a partir de um `--script` é
 	# compilado antes de ele existir (a regra do `CLAUDE.md`).
 	var retratos: Script = load("res://scripts/Retratos.gd")
 	var caminhos: Array = retratos.get_script_constant_map()["TRABALHADORES"]
-	var cena := load("res://scenes/worker/Worker.tscn") as PackedScene
+	var cena := load("res://scenes/dock/DocaCartao.tscn") as PackedScene
 	var GS: Node = root.get_node("GameState")
 	if cena == null or GS == null:
-		print("FALHOU — o Worker.tscn ou o GameState não carregou")
+		print("FALHOU — o DocaCartao.tscn ou o GameState não carregou")
 		return false
 
-	# O PORTO DA FOLHA: um trabalhador por rosto, livre, e docas sem barco — o
-	# estado «Livre» do cartão, que é o de repouso. O rosto entra à mão porque
-	# é isso que a folha percorre; o resto do dicionário sai do construtor do
-	# jogo, e é ele que diz que forma tem um trabalhador.
+	# O PORTO DA FOLHA: uma doca por rosto, cada uma a operar um barco com o
+	# trabalhador do píer dela — o retrato a cheio, que é como o jogador o vê
+	# a trabalhar (sem barco ele sai esbatido, à espera). O rosto entra à mão
+	# porque é isso que a folha percorre; o resto do dicionário sai dos
+	# construtores do jogo, que dizem a forma de um trabalhador e de um barco.
 	GS.phase = "playing"
-	GS.docks = [{"boat": null, "worker_id": null}]
+	GS.docks = []
 	GS.workers = []
 	for k in range(caminhos.size()):
 		var w: Dictionary = GS.novo_trabalhador()
 		w["rosto"] = k
 		GS.workers.append(w)
+		GS.docks.append({"boat": GS._make_boat(), "worker_id": int(w["id"])})
 
 	var raiz := Control.new()
 	raiz.anchor_right = 1.0
@@ -185,7 +197,7 @@ func _montar() -> bool:
 	for k in range(caminhos.size()):
 		var cartao: PanelContainer = cena.instantiate()
 		raiz.add_child(cartao)
-		cartao.setup(int(GS.workers[k]["id"]))
+		cartao.setup(k)
 		montados.append(cartao)
 		larg = maxf(larg, cartao.get_combined_minimum_size().x)
 		alt = maxf(alt, cartao.get_combined_minimum_size().y)
@@ -198,7 +210,7 @@ func _montar() -> bool:
 			CABECALHO + lin * (alt + LEGENDA + VAO))
 		var nome := String(caminhos[k]).get_file().get_basename().trim_prefix("trabalhador_")
 		var legenda := Label.new()
-		legenda.text = nome.replace("_", "\n") if nome != "retrato" else "padrão"
+		legenda.text = nome.replace("_", " · ") if nome != "retrato" else "padrão"
 		legenda.add_theme_font_size_override("font_size", 10)
 		legenda.add_theme_color_override("font_color", TINTA_FRACA)
 		legenda.position = cartao.position + Vector2(2, alt)

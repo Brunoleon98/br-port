@@ -47,9 +47,16 @@ const PARTIDAS_PARA_MEDIR := 100
 const MARGEM_UTIL := 10.0
 
 # Perfis de jogador. Os números são o modelo de "como alguém erra":
-#   chance_esquecer_doca — por doca, por turno: deixou o barco sem
-#     trabalhador (distração, não entendeu o drag-and-drop, achou que
-#     já tinha alocado).
+#   chance_esquecer_doca — por berço livre, por turno: deixou o berço vazio
+#     com barco ao largo (distração, achou que já tinha atracado). Até à
+#     `083` era "deixou o barco atracado sem trabalhador".
+#   escolha — QUE barco da fila ele chama primeiro (`083`), e é aqui que
+#     jogar bem passou a ser escolher e não só lembrar:
+#     "rende_por_dia" o maior valor por dia de berço — um navio de 88.000 que
+#              prende o berço três dias rende menos por dia do que um
+#              pesqueiro de 28.000 que sai no mesmo;
+#     "maior_valor"   o maior valor, sem olhar quanto tempo prende o berço;
+#     "ordem"         o primeiro que chegou.
 #   estilo_negociacao — como o jogador joga a contra-oferta do Arlindo:
 #     "otimo"  tenta o meio-termo (−7%) e, se falhar, iguala para não perder;
 #     "medio"  na maioria das vezes iguala de cara, às vezes arrisca segurar
@@ -81,8 +88,9 @@ const MARGEM_UTIL := 10.0
 const PERFIS := [
 	{
 		"nome": "Ótimo",
-		"descricao": "aloca tudo, negocia o meio-termo e recua a tempo, compra o upgrade assim que dá",
+		"descricao": "enche todo berço com o barco que mais rende por dia, negocia o meio-termo e recua a tempo, compra o upgrade assim que dá",
 		"chance_esquecer_doca": 0.0,
+		"escolha": "rende_por_dia",
 		"estilo_negociacao": "otimo",
 		"chance_igualar_rival": 1.0,
 		"folga_para_upgrade": 1.0,
@@ -90,8 +98,9 @@ const PERFIS := [
 	},
 	{
 		"nome": "Mediano",
-		"descricao": "deixa uma doca passar de vez em quando, arrisca na negociação às vezes",
+		"descricao": "deixa um berço vazio de vez em quando, chama o barco mais caro, arrisca na negociação às vezes",
 		"chance_esquecer_doca": 0.15,
+		"escolha": "maior_valor",
 		"estilo_negociacao": "medio",
 		"chance_igualar_rival": 0.70,
 		"folga_para_upgrade": 2.0,
@@ -99,8 +108,9 @@ const PERFIS := [
 	},
 	{
 		"nome": "Descuidado",
-		"descricao": "perde barco com frequência, teima em segurar o preço até perder o cliente",
+		"descricao": "deixa berço vazio com frequência, chama quem chegou primeiro, teima em segurar o preço até perder o cliente",
 		"chance_esquecer_doca": 0.35,
+		"escolha": "ordem",
 		"estilo_negociacao": "ruim",
 		"chance_igualar_rival": 0.40,
 		"folga_para_upgrade": 4.0,
@@ -120,6 +130,7 @@ const PERFIS := [
 		"nome": "Antecipado",
 		"descricao": "o Mediano que quita a parcela assim que o caixa dá, em vez de esperar o vencimento",
 		"chance_esquecer_doca": 0.15,
+		"escolha": "maior_valor",
 		"estilo_negociacao": "medio",
 		"chance_igualar_rival": 0.70,
 		"folga_para_upgrade": 2.0,
@@ -172,6 +183,7 @@ func _rodar() -> void:
 
 	_imprimir_tabela(resultados, partidas)
 	_imprimir_regime(resultados)
+	_imprimir_fila(resultados)
 	_imprimir_reputacao(resultados)
 	_imprimir_motivos(resultados)
 	var leitura_ok := _imprimir_diagnostico(resultados)
@@ -243,6 +255,24 @@ func _imprimir_motivos(resultados: Array) -> void:
 	print("")
 	print("  Os pesos de `MOTIVOS` são por TAMANHO de barco; a percentagem")
 	print("  acima é sobre o total, e move-se com a mistura de tamanhos.")
+	print("")
+
+
+# A FILA ESTÁ A PEDIR ESCOLHA? (`083`) Um dia "com escolha" tem mais barcos
+# prontos ao largo do que berços livres: alguém fica de fora, e o jogador
+# decide quem. "Berço à espera" é o contrário — havia berço e não havia barco.
+# Se a primeira coluna cair para perto de zero, a fila voltou a ser o jogo de
+# antes: atraca-se tudo o que chega, e o toque é tarefa outra vez.
+func _imprimir_fila(resultados: Array) -> void:
+	print("=== A fila no fundeadouro (dias com berço livre) ===")
+	print("%-12s │ %12s │ %15s │ %11s │ %9s" % ["Perfil", "Com escolha", "Berço à espera",
+		"Desistiram", "Prêmio"])
+	for r in resultados:
+		print("%-12s │ %11.1f%% │ %14.1f%% │ %11.1f │ %8.3fx" % [
+			r["perfil"]["nome"], 100.0 * float(r["dias_com_escolha"]),
+			100.0 * float(r["dias_sem_barco"]), float(r["desistencias_medio"]),
+			float(r["premio_da_escolha"])])
+	print("  Prêmio = valor médio do barco ATRACADO sobre o do barco que CHEGA.")
 	print("")
 
 
@@ -328,6 +358,7 @@ func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: 
 			"trabalhadores_medios": r["trabalhadores_medios"],
 			"antecipou_fracao": r["antecipou_fracao"],
 			"turno_de_antecipacao_mediana": r["turno_de_antecipacao_mediana"],
+			"premio_da_escolha": r["premio_da_escolha"],
 		}
 	var f := FileAccess.open(caminho, FileAccess.WRITE)
 	if f == null:
@@ -401,6 +432,17 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	# corrigir, um andar acima.
 	var antecipou := 0
 	var turnos_de_antecipacao := []
+	var dias_decisao := 0
+	var dias_escolha := 0
+	var dias_sem_barco := 0
+	var desistencias := 0
+	# O PRÊMIO DA ESCOLHA (`083`): o valor médio do barco que o perfil ATRACA
+	# sobre o do barco que CHEGA, em valor bruto (antes do Arlindo, que o
+	# projetor desconta à parte). Com a fila quem escolhe o mais caro recebe
+	# mais por barco do que a média da faixa, e o projetor, que contava a média,
+	# reprovou o Mediano por 5,5% — um efeito que deixou de ser global. [soma, n]
+	var atracados := [0.0, 0]
+	var chegados := [0.0, 0]
 
 	for run in range(partidas):
 		# Duas sementes independentes: uma para o mundo (chegada de barco,
@@ -442,10 +484,15 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		var obra_na_semana := 0
 		var reputacao_nas_ofertas := []
 		var apostas := [0, 0]        # [feitas, ganhas]
+		# [dias de decisão, dias com mais barcos prontos do que berços livres,
+		#  dias com berço livre e fila vazia]. É a pergunta da `083`: em quantos
+		# dias o jogador ESCOLHE. Sem ela, a fila podia passar no balanceamento
+		# a atracar tudo o que chega, que é o jogo de antes com outra roupa.
+		var dias_de_escolha := [0, 0, 0]
 
 		while GS.phase != "game_over" and seguranca < 300:
 			seguranca += 1
-			_contar_motivos(motivos_vistos, classes_vistas, ids_vistos)
+			_contar_motivos(motivos_vistos, classes_vistas, ids_vistos, chegados)
 
 			if GS.phase == "rival_offer":
 				# A reputação NO MOMENTO da oferta é o número que interessa ao
@@ -477,7 +524,8 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 					antecipou += 1
 					turnos_de_antecipacao.append(GS.turn)
 
-			_alocar(perfil, rng)
+			_medir_escolha(dias_de_escolha)
+			_atracar(perfil, rng, atracados)
 			var semana_antes: int = GS.current_week()
 			GS.advance_turn()
 			# O fecho de semana acontece DENTRO do advance_turn, então a leitura
@@ -509,6 +557,10 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		reputacoes_de_oferta.append_array(reputacao_nas_ofertas)
 		apostas_feitas += int(apostas[0])
 		apostas_ganhas += int(apostas[1])
+		dias_decisao += int(dias_de_escolha[0])
+		dias_escolha += int(dias_de_escolha[1])
+		dias_sem_barco += int(dias_de_escolha[2])
+		desistencias += int(GS.metrics["fila_desistiu"])
 		for id in GS.ESTRUTURAS:
 			if GS.tem_estrutura(id):
 				estruturas_de_pe[id] = int(estruturas_de_pe.get(id, 0)) + 1
@@ -558,6 +610,11 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"antecipou": antecipou,
 		"antecipou_fracao": float(antecipou) / float(partidas),
 		"turno_de_antecipacao_mediana": _mediana(turnos_de_antecipacao),
+		"dias_com_escolha": float(dias_escolha) / maxf(1.0, float(dias_decisao)),
+		"dias_sem_barco": float(dias_sem_barco) / maxf(1.0, float(dias_decisao)),
+		"desistencias_medio": float(desistencias) / float(partidas),
+		"premio_da_escolha": (float(atracados[0]) / maxf(1.0, float(atracados[1]))) \
+			/ maxf(1.0, float(chegados[0]) / maxf(1.0, float(chegados[1]))),
 	}
 
 
@@ -565,9 +622,14 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 # por partida: o `_uid` do GameState recomeça a cada `new_game()`, então guardar
 # os ids entre partidas juntaria barcos diferentes com o mesmo número.
 func _contar_motivos(acumulado: Dictionary, classes: Dictionary,
-		ids_vistos: Dictionary) -> void:
+		ids_vistos: Dictionary, valores: Array) -> void:
+	# Desde a `083` o barco NASCE ao largo, e quem desiste lá nunca chega a
+	# doca nenhuma: contar só as docas tiraria da mistura exatamente os que o
+	# jogador deixou ir, e a mistura publicada é a de quem CHEGA.
+	var barcos: Array = GS.fila.duplicate()
 	for i in range(GS.docks.size()):
-		var barco = GS.docks[i]["boat"]
+		barcos.append(GS.docks[i]["boat"])
+	for barco in barcos:
 		if barco == null:
 			continue
 		var id: int = int(barco["id"])
@@ -578,6 +640,8 @@ func _contar_motivos(acumulado: Dictionary, classes: Dictionary,
 		acumulado[motivo] = int(acumulado.get(motivo, 0)) + 1
 		var classe: String = String(barco["classe"])
 		classes[classe] = int(classes.get(classe, 0)) + 1
+		valores[0] += float(barco["value"])
+		valores[1] += 1
 
 
 # Em que fração das partidas o porto acabou em cada nível. A chave é texto
@@ -647,9 +711,6 @@ func _escolher_acao(perfil: Dictionary, rng: RandomNumberGenerator) -> String:
 			return "igualar" if rng.randf() < float(perfil["chance_igualar_rival"]) else "manter"
 
 
-# Aloca trabalhadores livres nas docas com barco, respeitando o modelo de
-# erro do perfil. Espelha o que um jogador faz na tela, não um atalho de
-# lógica — inclusive passando por assign_worker(), que é quem valida.
 # Ordem de compra do porto. Não é arbitrária: doca é vazão, e vazão multiplica
 # tudo o que vem depois — comprar o armazém antes do segundo píer é somar 15%
 # a uma receita que ainda é metade do que podia ser.
@@ -687,31 +748,64 @@ func _construir(perfil: Dictionary) -> int:
 	return 0
 
 
-func _alocar(perfil: Dictionary, rng: RandomNumberGenerator) -> void:
-	for i in range(GS.docks.size()):
-		var doca: Dictionary = GS.docks[i]
-		if doca["boat"] == null or doca["worker_id"] != null:
-			continue
-		var barco: Dictionary = doca["boat"]
-		if barco.get("rival", false) and not barco.get("matched", false):
-			continue
+# Enche os berços livres com barcos da fila, pela ordem de escolha do perfil.
+# Espelha o toque do jogador — passa por `atracar()`, que é quem valida.
+func _atracar(perfil: Dictionary, rng: RandomNumberGenerator, atracados: Array) -> void:
+	var livres: int = GS.bercos_livres()
+	for _b in range(livres):
 		if rng.randf() < float(perfil["chance_esquecer_doca"]):
 			continue
-		var livre := _trabalhador_livre()
-		if livre < 0:
+		var escolhido := _escolher_barco(String(perfil["escolha"]))
+		if escolhido < 0:
 			return
-		GS.assign_worker(livre, i)
+		var valor := float(GS.fila[escolhido]["value"])
+		if GS.atracar(escolhido, false):
+			atracados[0] += valor
+			atracados[1] += 1
 
 
-func _trabalhador_livre() -> int:
-	for w in GS.workers:
-		var id := int(w["id"])
-		if int(w["busy_turns"]) > 0:
+func _escolher_barco(estilo: String) -> int:
+	var melhor := -1
+	var melhor_nota := -INF
+	for i in range(GS.fila.size()):
+		if not GS.barco_pronto(i):
 			continue
-		if GS.worker_dock_index(id) >= 0:
-			continue
-		return id
-	return -1
+		var b: Dictionary = GS.fila[i]
+		var valor := float(b["matched_value"]) if b.get("matched", false) else float(b["value"])
+		var nota := 0.0
+		match estilo:
+			"rende_por_dia":
+				var dias: int = GS._turnos_de_operacao(String(b["classe"]), String(b["motivo"]))
+				# Empate desfaz-se pelo que sai amanhã: a paciência pesa menos
+				# do que um real por dia, e só decide entre iguais.
+				nota = valor / float(dias) - float(b["paciencia"]) * 0.001
+			"maior_valor":
+				nota = valor
+			_:
+				# "ordem": o primeiro que chegou é o primeiro da lista.
+				return i
+		if nota > melhor_nota:
+			melhor_nota = nota
+			melhor = i
+	return melhor
+
+
+# Antes de atracar: há mais barcos prontos do que berços livres? É o dia em que
+# o jogador escolhe. Berço livre e fila vazia é o outro lado — o porto à espera
+# de barco, onde a escolha não existe.
+func _medir_escolha(contador: Array) -> void:
+	var livres: int = GS.bercos_livres()
+	if livres <= 0:
+		return
+	var prontos := 0
+	for i in range(GS.fila.size()):
+		if GS.barco_pronto(i):
+			prontos += 1
+	contador[0] += 1
+	if prontos > livres:
+		contador[1] += 1
+	elif prontos == 0:
+		contador[2] += 1
 
 
 func _mediana(valores: Array) -> int:

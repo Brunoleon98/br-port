@@ -28,7 +28,19 @@ signal phase_changed(new_phase: String)
 # som PRÓPRIO: uma pancada de madeira, e não o mesmo tinido de "deu certo" que
 # tocaria ao alocar um trabalhador. O áudio é o único ouvinte hoje.
 signal estrutura_comprada(id: String)
-signal rival_offer_triggered(dock_index: int)
+# O índice é o da FILA, não o de uma doca (`083`): o Arlindo disputa o barco
+# que acabou de chegar ao fundeadouro, antes de o jogador o escolher.
+signal rival_offer_triggered(indice_fila: int)
+# A fila no fundeadouro mudou — chegou, atracou, voltou, desistiu ou foi para
+# o rival. Separado de `roster_changed` porque a fila muda também na virada do
+# dia, quando ninguém mexeu em doca nem em trabalhador.
+signal fila_mudou()
+# O jogador escolheu um barco da fila: em que doca entrou, qual, e os valores
+# do que estava ao largo nesse instante. Sinal de OBSERVAÇÃO — quem o escuta é
+# o `Registro.gd`: é a escolha que a `083` criou, e um playtest que não a
+# gravasse não saberia dizer se o jogador chama o mais caro, o que sai amanhã
+# ou o primeiro da fila.
+signal atracou(doca: int, barco: Dictionary, valores_ao_largo: Array)
 signal debt_due(amount: int)
 signal game_over(won: bool, reason: String)
 # ⚠️ O TERCEIRO ARGUMENTO É O ASSUNTO (`docs/decisoes/067`): de que fala o aviso
@@ -300,25 +312,51 @@ const PIER_RATE_PER_SLOT := 5000        # GDD "Margem operacional base", reescal
 # Vivem aqui e não em `MOTIVOS` porque a pergunta é "que carga traz este
 # navio?" e não "que navio traz esta carga" — um pesqueiro não traz contêiner,
 # e escrever isso do lado do motivo obrigava a uma coluna por classe.
+#
+# ⚠️ AS FAIXAS DE VALOR DESCERAM ×0,72 COM A FILA (`083`), escolha do Bruno
+# («contratos mais baratos»). Com o barco a esperar ao largo o berço deixou de
+# ficar vazio — 1% dos dias, contra 25% quando o barco nascia na doca — e a
+# receita subiu um terço: o Mediano chegou a 100%. Varrido com 600 partidas:
+# ×0,70 dá 100 / 65,3 / 32,7, ×0,72 dá 100 / 78,7 / 41,5, ×0,74 dá
+# 100 / 86,5 / 49,3. Era 12–28 / 22–50 / 56–88 mil. Arredondadas ao milhar.
 const CLASSES_DE_NAVIO := {
 	"pesqueiro": {
 		"nome": "Pesqueiro", "nivel": 1, "peso": 40, "turnos": 1,
-		"valor_min": 12000, "valor_max": 28000,
+		"valor_min": 9000, "valor_max": 20000,          # TUNING
 		"motivos": {"pescado": 55, "armazenagem": 45},
 	},
 	"medio": {
 		"nome": "Cargueiro", "nivel": 2, "peso": 40, "turnos": 2,
-		"valor_min": 22000, "valor_max": 50000,
+		"valor_min": 16000, "valor_max": 36000,         # TUNING
 		"motivos": {"armazenagem": 40, "conteiner": 40, "granel": 20},
 	},
 	"grande": {
 		"nome": "Navio de longo curso", "nivel": 3, "peso": 20, "turnos": 3,
-		"valor_min": 56000, "valor_max": 88000,
+		"valor_min": 40000, "valor_max": 63000,         # TUNING
 		"motivos": {"armazenagem": 25, "conteiner": 45, "granel": 30},
 	},
 }
 
-const BOAT_ARRIVAL_CHANCE := 0.75       # TUNING: chance POR doca vazia de chegar barco no turno
+# ── A FILA NO FUNDEADOURO (`docs/decisoes/083`) ──
+#
+# O barco já não nasce na doca: chega ao LARGO e espera lá, e é o jogador quem
+# escolhe qual entra no berço livre. Até 04/10 o número de trabalhadores era
+# sempre o de docas (cada píer traz o seu) e o «Alocar todos» acertava sempre —
+# o verbo central do jogo não pedia escolha nenhuma, e o simulador só sabia
+# modelar o mau jogador como DISTRAÍDO. É o «Prioridade de doca» do GDD: «qual
+# navio entra primeiro quando há fila? O jogador decide.»
+#
+# Três lugares porque é o que a linha «Ao largo» do HUD mostra sem rolar, e o
+# que a Zona de Espera do mapa desenha.
+const FILA_LUGARES := 3
+# Quantas viradas de dia um barco aguenta ao largo. Com 2, ele chega na virada,
+# fica «espera 2 dias» no dia seguinte e «sai amanhã» no outro — duas chances
+# de o escolher, e a segunda já é a última.
+const PACIENCIA_FILA := 2               # TUNING
+# Chance POR LUGAR VAZIO DA FILA de chegar barco na virada. Por lugar e não por
+# doca: a fila tem de ter mais barcos do que berços livres em boa parte dos
+# dias, senão volta a não haver escolha — atracava-se tudo o que chegasse.
+const BOAT_ARRIVAL_CHANCE := 0.75       # TUNING
 
 # ── Contra-oferta do Arlindo (GDD: "Limiar de paciência do cliente") ──
 # O GDD define 3 presets — "Igualar rival −15%" / "Cortar metade −7%" /
@@ -456,7 +494,13 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # 9 (25/09): os RECORDES da partida (`065`) — o melhor dia, o dia com mais
 # barcos e o maior negócio. Um save da 8 não os tem, e o painel do dinheiro
 # afirmaria recordes que a partida não guardou.
-const SAVE_VERSION := 9
+#
+# 10 (04/10): a FILA NO FUNDEADOURO (`083`). O barco deixou de nascer na doca
+# e passou a esperar ao largo, com paciência; a oferta do Arlindo aponta para
+# a fila e não para uma doca. Um save da 9 traz barcos em docas sem
+# trabalhador, que esta versão daria por perdidos na primeira virada, e um
+# índice de oferta que apontaria para a lista errada.
+const SAVE_VERSION := 10
 
 # ── OS ESPAÇOS DE SAVE (`docs/decisoes/066`) ──
 #
@@ -621,7 +665,13 @@ var upgrade_purchased: bool = false
 var estruturas: Array = []
 var parcela_paid: bool = false
 var phase: String = "playing"   # playing | rival_offer | debt_payment | game_over
-var pending_rival_dock: int = -1
+# Os barcos ao largo, por ordem de chegada (`083`). Cada um é o mesmo
+# dicionário de um barco atracado, mais a `paciencia` que lhe resta.
+var fila: Array = []
+# O barco da FILA sobre o qual o Arlindo fez oferta, ou -1. Chamava-se
+# `pending_rival_dock` e apontava para uma doca; um nome que dissesse doca e
+# apontasse para a fila seria a armadilha do comentário que mente.
+var pending_rival: int = -1
 # Paciência restante do cliente na negociação aberta. Vive aqui e não no
 # painel para sobreviver ao autosave — recarregar no meio de uma negociação
 # não pode devolver as tentativas já gastas.
@@ -783,11 +833,12 @@ func new_game() -> void:
 	estruturas = []
 	parcela_paid = false
 	_set_phase("playing")
-	pending_rival_dock = -1
+	fila = []
+	pending_rival = -1
 	rival_attempts_left = RIVAL_PATIENCE
 	end_reason = ""
 	won = false
-	metrics = {"boats_served": 0, "boats_lost": 0, "rival_matched": 0, "rival_refused": 0, "revenue": 0, "pier_income": 0}
+	metrics = {"boats_served": 0, "boats_lost": 0, "fila_desistiu": 0, "rival_matched": 0, "rival_refused": 0, "revenue": 0, "pier_income": 0}
 
 	docks.clear()
 	for i in range(DOCKS_BASE):
@@ -869,21 +920,6 @@ func definir_nomes(porto: String, jogador: String) -> void:
 	save_game()
 
 
-# Uma doca só aceita trabalhador se existe, tem barco esperando, ninguém está
-# nela e a negociação do rival já foi resolvida. Três telas precisavam saber
-# disso e cada uma tinha a sua cópia da regra.
-func doca_aceita_trabalhador(dock_index: int) -> bool:
-	if phase != "playing":
-		return false
-	if dock_index < 0 or dock_index >= docks.size():
-		return false
-	var doca: Dictionary = docks[dock_index]
-	var barco = doca["boat"]
-	if barco == null or doca["worker_id"] != null:
-		return false
-	return not (barco.get("rival", false) and not barco.get("matched", false))
-
-
 func week_of(t: int) -> int:
 	return int(ceil(float(t) / float(TURNS_PER_WEEK)))
 
@@ -918,9 +954,12 @@ func calendario() -> Array:
 
 
 # ── WORKER ASSIGNMENT ──
-# `avisar` só existe para a alocação em lote: chamar isto N vezes emitiria N
-# mensagens e só a última sobreviveria na barra. Quem aloca em lote silencia
-# aqui e emite um resumo no fim.
+# ⚠️ DESDE A `083` O JOGO NÃO PASSA POR AQUI: o `atracar()` põe barco e
+# trabalhador no berço de uma vez, e a fileira que arrastava trabalhadores
+# para as docas deu o lugar à fila. Fica porque as suítes MONTAM estados com
+# ela — um barco escrito à mão numa doca, e alguém para o operar — e porque
+# é ela que diz não a um trabalhador em duas docas, que é a regra que o
+# `atracar()` respeita ao escolher só quem não tem doca.
 func assign_worker(worker_id: int, dock_index: int, avisar: bool = true) -> bool:
 	if phase != "playing":
 		return false
@@ -960,52 +999,141 @@ func assign_worker(worker_id: int, dock_index: int, avisar: bool = true) -> bool
 	return true
 
 
-# Põe todo trabalhador livre numa doca que esteja esperando, do barco mais
-# valioso para o menos. Existe porque arrastar um por um, todo turno, é o que
-# mais cansa em quem joga — e quando há trabalhador para todas as docas não
-# havia decisão nenhuma sendo tomada no arrasto.
-#
-# A ordem por valor NÃO é enfeite: quando há menos trabalhador que barco,
-# atender o mais caro primeiro é a jogada certa, então o botão faz o que um
-# bom jogador faria. Quem quiser outra coisa toca na doca para liberar e
-# realoca — a escolha continua existindo, deixou é de ser obrigatória.
-func assign_all_free_workers() -> int:
-	if phase != "playing":
-		return 0
+# ── ATRACAR (`083`) ──
+# O primeiro berço sem barco, ou -1. Os berços são iguais entre si — o nível é
+# do porto, não do píer (`007`) —, então escolher QUAL não mudaria nada, e o
+# toque escolhe só o barco.
+func berco_livre() -> int:
+	for i in range(docks.size()):
+		if docks[i]["boat"] == null:
+			return i
+	return -1
 
-	var livres: Array[int] = []
+
+func bercos_livres() -> int:
+	var n := 0
+	for d in docks:
+		if d["boat"] == null:
+			n += 1
+	return n
+
+
+# Um barco da fila pode atracar se não estiver sob oferta por resolver.
+func barco_pronto(indice: int) -> bool:
+	if indice < 0 or indice >= fila.size():
+		return false
+	var barco: Dictionary = fila[indice]
+	return not (barco.get("rival", false) and not barco.get("matched", false))
+
+
+# Quantos barcos ao largo podem atracar (sem oferta por resolver). É o
+# «barcos esperando» da fala da semana nova (`083`): até lá ela perguntava por
+# docas à espera de trabalhador, que deixaram de existir.
+func barcos_ao_largo() -> int:
+	var n := 0
+	for i in range(fila.size()):
+		if barco_pronto(i):
+			n += 1
+	return n
+
+
+# Há escolha a fazer AGORA? Berço livre e barco pronto ao largo, nesta ordem,
+# num `Vector2i` — ou (0, 0). É o sucessor do `trabalho_parado()`: desde a
+# fila o trabalhador vai junto com o barco, e o que fica por fazer é escolher.
+func atracagem_pendente() -> Vector2i:
+	if phase != "playing":
+		return Vector2i.ZERO
+	var prontos := barcos_ao_largo()
+	var livres := bercos_livres()
+	if livres == 0 or prontos == 0:
+		return Vector2i.ZERO
+	return Vector2i(livres, prontos)
+
+
+# Tira o barco `indice` da fila e põe-no no primeiro berço livre, com o
+# trabalhador livre (há sempre um por berço: cada píer traz o seu). É o toque
+# do jogador no cartão do barco, e a escolha do jogo inteiro (`083`).
+#
+# Os turnos de operação RECALCULAM-SE aqui: o barco pode ter chegado antes de
+# o pórtico ser comprado, e o que conta é o porto em que ele descarrega.
+func atracar(indice: int, avisar: bool = true) -> bool:
+	if phase != "playing":
+		return false
+	if not barco_pronto(indice):
+		return false
+	var doca := berco_livre()
+	if doca < 0:
+		if avisar:
+			message.emit("Os berços estão todos ocupados.", "warn", "doca")
+		return false
+	var trabalhador := _trabalhador_sem_doca(doca)
+	if trabalhador < 0:
+		if avisar:
+			message.emit("Não há trabalhador livre para operar.", "warn", "trabalhador")
+		return false
+	var barco: Dictionary = fila[indice]
+	var valores_ao_largo: Array = []
+	for b in fila:
+		valores_ao_largo.append(int(b["value"]))
+	fila.remove_at(indice)
+	barco["op_turns"] = _turnos_de_operacao(String(barco["classe"]), String(barco["motivo"]))
+	docks[doca]["boat"] = barco
+	docks[doca]["worker_id"] = trabalhador
+	if avisar:
+		message.emit("%s na Doca %d. Avance o dia para operar." % [
+			String(CLASSES_DE_NAVIO[barco["classe"]]["nome"]), doca + 1], "good", "doca")
+	atracou.emit(doca, barco, valores_ao_largo)
+	fila_mudou.emit()
+	roster_changed.emit()
+	save_game()
+	return true
+
+
+# Desfaz o toque: o barco volta ao largo com a paciência que tinha, e o
+# trabalhador fica livre. Só antes de a operação começar — é o «toque na doca
+# para liberar» de sempre, com o barco a voltar em vez de ficar sem ninguém.
+func desatracar(dock_index: int) -> bool:
+	if phase != "playing":
+		return false
+	if dock_index < 0 or dock_index >= docks.size():
+		return false
+	var doca: Dictionary = docks[dock_index]
+	var barco = doca["boat"]
+	if barco == null:
+		return false
+	if int(barco["progress"]) > 0:
+		message.emit("A operação já começou — o barco não sai agora.", "warn", "doca")
+		return false
+	if fila.size() >= FILA_LUGARES:
+		message.emit("O fundeadouro está cheio.", "warn", "doca")
+		return false
+	doca["boat"] = null
+	doca["worker_id"] = null
+	fila.append(barco)
+	message.emit("O barco voltou ao largo.", "", "doca")
+	fila_mudou.emit()
+	roster_changed.emit()
+	save_game()
+	return true
+
+
+# A EQUIPE DO PÍER primeiro: o trabalhador nº N nasce com o píer N
+# (`novo_trabalhador()` numera por ordem de chegada, e cada píer traz um), e
+# atracar no berço N chama-o se ele estiver livre. É o que deixa o cartão da
+# doca mostrar sempre a mesma cara no mesmo píer. Só se ele estiver preso
+# noutro berço — o que só um `desatracar()` a meio pode produzir — vai o
+# primeiro livre.
+func _trabalhador_sem_doca(doca: int) -> int:
+	var primeiro := -1
 	for w in workers:
 		var wid := int(w["id"])
-		if int(w["busy_turns"]) == 0 and worker_dock_index(wid) < 0:
-			livres.append(wid)
-	if livres.is_empty():
-		return 0
-
-	var esperando: Array[int] = []
-	for i in range(docks.size()):
-		if doca_aceita_trabalhador(i):
-			esperando.append(i)
-	if esperando.is_empty():
-		return 0
-
-	esperando.sort_custom(func(a, b): return _valor_do_barco(a) > _valor_do_barco(b))
-
-	var postos := 0
-	for i in esperando:
-		if postos >= livres.size():
-			break
-		if assign_worker(livres[postos], i, false):
-			postos += 1
-
-	if postos > 0:
-		var sobraram := esperando.size() - postos
-		var texto := "%s. Avance o dia para operar." % Narrativa.concordar(
-			postos, "trabalhador alocado", "trabalhadores alocados")
-		if sobraram > 0:
-			texto += " Faltou gente para %s." % Narrativa.concordar(
-				sobraram, "doca", "docas")
-		message.emit(texto, "good", "trabalhador")
-	return postos
+		if int(w["busy_turns"]) != 0 or worker_dock_index(wid) >= 0:
+			continue
+		if wid == doca + 1:
+			return wid
+		if primeiro < 0:
+			primeiro = wid
+	return primeiro
 
 
 func _valor_do_barco(dock_index: int) -> int:
@@ -1013,45 +1141,6 @@ func _valor_do_barco(dock_index: int) -> int:
 	if barco == null:
 		return 0
 	return int(barco["matched_value"]) if barco.get("matched", false) else int(barco["value"])
-
-
-# Quantos trabalhadores estão parados e quantas docas esperam por um — nesta
-# ordem, num `Vector2i`.
-#
-# Os dois números saem da MESMA varredura de propósito. A interface mostra os
-# dois (o rótulo conta-os, o cartão do trabalhador muda de cor, o botão de
-# alocar acende), e três leituras separadas do mesmo estado é convite a
-# discordarem. Fora de "playing" é (0, 0): sem turno não há trabalho parado.
-func trabalho_parado() -> Vector2i:
-	# A fase NÃO se confere aqui, e é de propósito: `doca_aceita_trabalhador()`
-	# já devolve `false` fora de "playing", então nenhuma doca conta e a
-	# guarda dos zeros lá em baixo devolve (0, 0) sozinha. A primeira versão
-	# repetia o `if phase != "playing"` no topo, e o defeito injetado para o
-	# provar não reprovou nada — porque a outra cópia da regra o cobria. Duas
-	# cópias da mesma regra é uma que pode envelhecer calada.
-	var livres := 0
-	for w in workers:
-		if int(w["busy_turns"]) == 0 and worker_dock_index(int(w["id"])) < 0:
-			livres += 1
-	var esperando := docas_esperando()
-	# Nem trabalhador parado sem doca, nem doca sem trabalhador é "trabalho
-	# parado" — nos dois casos não há nada que o jogador possa fazer agora.
-	if livres == 0 or esperando == 0:
-		return Vector2i.ZERO
-	return Vector2i(livres, esperando)
-
-
-# Quantas docas têm barco à espera de trabalhador. Sai daqui, e não de dentro
-# do `trabalho_parado()`, porque são duas perguntas diferentes: aquele devolve
-# (0, 0) quando NÃO HÁ trabalhador livre — não há nada a fazer —, e "há barco
-# na fila?" continua a ser sim. A fala da semana nova precisa da segunda, e
-# pedir a primeira dir-lhe-ia que o cais está parado com três barcos atracados.
-func docas_esperando() -> int:
-	var esperando := 0
-	for i in range(docks.size()):
-		if doca_aceita_trabalhador(i):
-			esperando += 1
-	return esperando
 
 
 # O CAIXA ESTÁ CURTO? O critério vivia dentro do `_cida_caixa` do Main, e
@@ -1066,12 +1155,6 @@ func caixa_curto() -> bool:
 	return cash < PARCELA_AMOUNT / 2
 
 
-# Há trabalhador livre E doca esperando? É o que decide se o botão de alocar
-# em lote fica aceso.
-func has_pending_assignment() -> bool:
-	return trabalho_parado() != Vector2i.ZERO
-
-
 # Devolve o índice da doca onde o trabalhador está alocado, ou -1.
 func worker_dock_index(worker_id: int) -> int:
 	for i in range(docks.size()):
@@ -1079,28 +1162,6 @@ func worker_dock_index(worker_id: int) -> int:
 		if assigned != null and int(assigned) == worker_id:
 			return i
 	return -1
-
-
-# Tira o trabalhador da doca — só enquanto a operação não começou, para o
-# jogador poder desfazer um arrasto errado sem perder o turno.
-func release_worker(dock_index: int) -> bool:
-	if phase != "playing":
-		return false
-	if dock_index < 0 or dock_index >= docks.size():
-		return false
-	var dock: Dictionary = docks[dock_index]
-	if dock["worker_id"] == null:
-		return false
-	var boat = dock["boat"]
-	if boat != null and int(boat["progress"]) > 0:
-		message.emit("A operação já começou — não dá para tirar o trabalhador agora.", "warn", "trabalhador")
-		return false
-	var worker_id := int(dock["worker_id"])
-	dock["worker_id"] = null
-	message.emit("Trabalhador #%d liberado." % worker_id, "", "trabalhador")
-	roster_changed.emit()
-	save_game()
-	return true
 
 
 func _find_worker(worker_id: int) -> Variant:
@@ -1118,6 +1179,15 @@ func _find_worker(worker_id: int) -> Variant:
 # lugar em vez de em cinco. A função tem CINCO saídas ("invalido" duas vezes,
 # "fechado" duas, "perdido", "insistiu") e um `emit` antes de cada `return` é
 # a forma clássica de se esquecer um deles quando aparecer o sexto.
+# O barco sobre o qual o Arlindo fez oferta, ou null. Existe para o painel e
+# o jogo lerem o MESMO barco: até à `083` o painel ia buscá-lo a
+# `docks[indice]["boat"]`, e a oferta passou a viver na fila.
+func barco_da_oferta() -> Variant:
+	if pending_rival < 0 or pending_rival >= fila.size():
+		return null
+	return fila[pending_rival]
+
+
 func negotiate_rival(acao: String) -> String:
 	var restavam := rival_attempts_left
 	var resultado := _negociar(acao)
@@ -1126,10 +1196,9 @@ func negotiate_rival(acao: String) -> String:
 
 
 func _negociar(acao: String) -> String:
-	if phase != "rival_offer" or pending_rival_dock < 0:
+	if phase != "rival_offer" or pending_rival < 0:
 		return "invalido"
-	var dock: Dictionary = docks[pending_rival_dock]
-	var boat = dock["boat"]
+	var boat = barco_da_oferta()
 	if boat == null:
 		_close_rival_offer()
 		return "invalido"
@@ -1192,7 +1261,7 @@ func _chance_com_reputacao(base: float) -> float:
 func resolve_rival_offer(accept_match: bool) -> void:
 	if accept_match:
 		negotiate_rival("igualar")
-	elif phase == "rival_offer" and pending_rival_dock >= 0:
+	elif phase == "rival_offer" and pending_rival >= 0:
 		var restavam := rival_attempts_left
 		_perder_para_rival()
 		# Este caminho NÃO passa por `negotiate_rival()`, então emite o seu
@@ -1205,7 +1274,7 @@ func resolve_rival_offer(accept_match: bool) -> void:
 # redesenhar, e se ela ler `phase` ainda em "rival_offer" o botão de avançar o
 # dia fica desabilitado para sempre (era o bug de travamento).
 func _close_rival_offer() -> void:
-	pending_rival_dock = -1
+	pending_rival = -1
 	rival_attempts_left = RIVAL_PATIENCE
 	_set_phase("playing")
 
@@ -1224,13 +1293,13 @@ func _fechar_negocio(boat: Dictionary, desconto: float, aviso: String) -> void:
 
 
 func _perder_para_rival() -> void:
-	var dock: Dictionary = docks[pending_rival_dock]
 	metrics["rival_refused"] += 1
 	metrics["boats_lost"] += 1
 	dia_atual["perdidos"] += 1
-	dock["boat"] = null
-	dock["worker_id"] = null
+	if pending_rival >= 0 and pending_rival < fila.size():
+		fila.remove_at(pending_rival)
 	_close_rival_offer()
+	fila_mudou.emit()
 	_change_reputation(-REPUTATION_LOSS_RIVAL_REFUSED)
 	message.emit("O cliente perdeu a paciência e foi para o Porto Farol.", "bad", "rival")
 	roster_changed.emit()
@@ -1279,6 +1348,25 @@ func advance_turn() -> void:
 			dia_atual["perdidos"] += 1
 			_change_reputation(-REPUTATION_LOSS_LOST)
 			dock["boat"] = null
+
+	# A FILA ESPERA UM DIA A MENOS (`083`). Quem chega a zero desiste e vai
+	# para o Porto Farol — é o mesmo barco perdido de quando ele nascia na
+	# doca e ninguém o atendia, e custa o mesmo à reputação. De trás para a
+	# frente, porque remover desloca os índices de quem vem depois.
+	var desistiram := 0
+	for idx in range(fila.size() - 1, -1, -1):
+		var esperando: Dictionary = fila[idx]
+		esperando["paciencia"] = int(esperando["paciencia"]) - 1
+		if int(esperando["paciencia"]) > 0:
+			continue
+		fila.remove_at(idx)
+		desistiram += 1
+		metrics["boats_lost"] += 1
+		metrics["fila_desistiu"] += 1
+		dia_atual["perdidos"] += 1
+		_change_reputation(-REPUTATION_LOSS_LOST)
+	if desistiram > 0:
+		fila_mudou.emit()
 
 	var prev_turn := turn
 	turn += 1
@@ -1493,6 +1581,12 @@ func projecao_do_dia() -> Dictionary:
 		var bruto: int = int(barco["matched_value"]) if barco.get("matched", false) else int(barco["value"])
 		_lancar_receita(proj, bruto, String(barco["motivo"]))
 		proj["servidos"] += 1
+	# E O QUE SAI DO LARGO HOJE (`083`): o barco com um dia de paciência que
+	# não atracar vai para o Porto Farol na virada — é o mesmo «perdido» que o
+	# `advance_turn()` conta, lido antes de acontecer.
+	for barco in fila:
+		if int(barco["paciencia"]) <= 1:
+			proj["perdidos"] += 1
 	# O fecho de semana e a parcela caem no MESMO dia que fariam cair no jogo
 	# real — usar `_custos_da_semana()` em vez de repetir a conta é a mesma
 	# razão que fez ela existir: uma só fonte para o número que o caixa muda
@@ -1864,30 +1958,31 @@ func _make_boat() -> Dictionary:
 		"rival": false,
 		"matched": false,
 		"matched_value": 0,
+		"paciencia": PACIENCIA_FILA,
 	}
 
 
 func _spawn_boats() -> void:
-	# Cada doca vazia tem sua própria chance de receber barco (em vez de
-	# no máximo 1 barco por turno) — aumenta a frequência de chegada e
-	# mantém as docas ocupadas com mais consistência.
-	var newly_spawned: Array = []
-	for i in range(docks.size()):
-		if docks[i]["boat"] != null:
-			continue
+	# Os barcos chegam ao LARGO, e não à doca (`083`): cada lugar vazio da fila
+	# tem a sua chance. A doca só recebe barco quando o jogador o escolhe.
+	var chegados: Array = []
+	var vagas := FILA_LUGARES - fila.size()
+	for i in range(vagas):
 		if _rng.randf() > BOAT_ARRIVAL_CHANCE:
 			continue
-		docks[i]["boat"] = _make_boat()
-		newly_spawned.append(i)
-	if newly_spawned.is_empty():
+		fila.append(_make_boat())
+		chegados.append(fila.size() - 1)
+	if chegados.is_empty():
 		return
 	boats_spawned.emit()
+	fila_mudou.emit()
 
-	# No máximo 1 oferta do rival (Arlindo) por turno, sobre um dos barcos novos.
+	# No máximo 1 oferta do rival (Arlindo) por turno, sobre um dos barcos que
+	# acabaram de chegar: ele disputa o cliente ANTES de ele encostar.
 	if _rng.randf() < RIVAL_TRIGGER_CHANCE:
-		var idx: int = newly_spawned[_rng.randi_range(0, newly_spawned.size() - 1)]
-		docks[idx]["boat"]["rival"] = true
-		pending_rival_dock = idx
+		var idx: int = chegados[_rng.randi_range(0, chegados.size() - 1)]
+		fila[idx]["rival"] = true
+		pending_rival = idx
 		rival_attempts_left = RIVAL_PATIENCE
 		_set_phase("rival_offer")
 		rival_offer_triggered.emit(idx)
@@ -1924,7 +2019,8 @@ func save_game() -> void:
 		"estruturas": estruturas,
 		"parcela_paid": parcela_paid,
 		"phase": phase,
-		"pending_rival_dock": pending_rival_dock,
+		"fila": fila,
+		"pending_rival": pending_rival,
 		"rival_attempts_left": rival_attempts_left,
 		"end_reason": end_reason,
 		"won": won,
@@ -1966,7 +2062,8 @@ func load_game() -> bool:
 	estruturas = parsed.get("estruturas", [])
 	parcela_paid = bool(parsed.get("parcela_paid", false))
 	phase = String(parsed.get("phase", "playing"))
-	pending_rival_dock = int(parsed.get("pending_rival_dock", -1))
+	fila = parsed["fila"]
+	pending_rival = int(parsed.get("pending_rival", -1))
 	rival_attempts_left = int(parsed.get("rival_attempts_left", RIVAL_PATIENCE))
 	end_reason = String(parsed.get("end_reason", ""))
 	won = bool(parsed.get("won", false))
@@ -2068,6 +2165,21 @@ func _save_aceite(texto: String) -> Dictionary:
 		if k != float(w["rosto"]) or k < 0 or k >= rostos() or rostos_lidos.has(k):
 			return {}
 		rostos_lidos[k] = true
+	# A FILA (`083`): no máximo os lugares que o fundeadouro tem, cada barco
+	# com a paciência que lhe resta, e a oferta a apontar para dentro dela.
+	# Um índice de oferta fora da fila abriria o painel do Arlindo sobre um
+	# barco que não existe.
+	var fila_lida = parsed.get("fila", null)
+	if typeof(fila_lida) != TYPE_ARRAY or fila_lida.size() > FILA_LUGARES:
+		return {}
+	for b in fila_lida:
+		if typeof(b) != TYPE_DICTIONARY or not b.has("paciencia") \
+				or typeof(b["paciencia"]) not in [TYPE_INT, TYPE_FLOAT]:
+			return {}
+	var oferta_lida = parsed.get("pending_rival", -1)
+	if typeof(oferta_lida) not in [TYPE_INT, TYPE_FLOAT] \
+			or int(oferta_lida) < -1 or int(oferta_lida) >= fila_lida.size():
+		return {}
 	return parsed
 
 
