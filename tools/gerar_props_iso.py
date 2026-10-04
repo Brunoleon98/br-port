@@ -1019,9 +1019,17 @@ def pos(mx: float, my: float, altura_px: float = 0.0) -> tuple:
 # Um Blender que não o tenha monta pelo caminho lento e di-lo numa linha — o
 # arnês só compra tempo, e na falta dele o resultado é o mesmo.
 # ⚠️ E O QUE O PROVA É O DESPEJO, NÃO O RENDER: com `BRP_CAMINHO_LENTO=1` a
-# montagem volta ao caminho de sempre, e as duas cenas despejadas por
-# `--despejar` saem iguais byte a byte. O PNG não serve de prova, porque o
-# denoiser do Cycles varia ±2/255 entre duas corridas do mesmo código.
+# montagem volta ao caminho de sempre, e as duas cenas saem iguais byte a byte
+#     python3 tools/gerar_props_iso.py --despejar=/tmp/rapido.txt
+#     BRP_CAMINHO_LENTO=1 python3 tools/gerar_props_iso.py --despejar=/tmp/lento.txt
+#     cmp /tmp/rapido.txt /tmp/lento.txt
+# (e o mesmo com `blender/gerar_brp.py <estúdio> --despejar=`). O PNG não serve
+# de prova, porque o denoiser do Cycles varia ±2/255 entre duas corridas.
+# ⚠️ E A ARMADILHA É DE QUEM ESCREVE PROPS: com o arnês, a `dimensions` e a
+# `matrix_world` de uma peça ficam VELHAS depois de criada a seguinte — a
+# sonda deu (1, 1, 1) onde o caminho lento dá (2, 3, 4). Quem posiciona uma
+# peça pela medida de outra pede `bpy.context.view_layer.update()` antes, ou
+# roda pela `matrix_basis`, como o kit já faz.
 def _resolver_arnes():
     """(classe, staticmethod original) do gancho, ou (None, motivo)."""
     if os.environ.get("BRP_CAMINHO_LENTO") == "1":
