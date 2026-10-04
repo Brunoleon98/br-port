@@ -57,6 +57,10 @@ var semente := 1
 # O rótulo cujo ritmo a pauta segue. Sem ele não há pauta — só a margem. A
 # primeira linha dele é a DATA da entrada, e leva o traço à mão por baixo.
 var linha_ref: Label
+# ⚠️ SÓ QUANDO É DATA: a página que continua uma entrada (a segunda do fim de
+# fase, `082`) pauta pelo próprio texto, e a primeira linha dele não é data —
+# a primeira foto saiu com o traço da data por baixo de «O píer é o mesmo».
+var sublinhar := true
 
 # ── A VIRADA ── (`TelaNomes`, `docs/decisoes/067`, segunda passagem)
 # Na folha que vira: quanto ela já se levantou (0 a 1). A borda livre curva-se
@@ -72,8 +76,9 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
-func pautar_por(rotulo: Label) -> void:
+func pautar_por(rotulo: Label, e_data: bool = true) -> void:
 	linha_ref = rotulo
+	sublinhar = e_data
 	# O rótulo só tem posição depois de o contentor o arrumar, e volta a
 	# mexer-se se a página crescer: a pauta redesenha-se com ele.
 	rotulo.item_rect_changed.connect(queue_redraw)
@@ -176,7 +181,8 @@ func _pauta() -> void:
 			if y > 6.0:
 				draw_line(Vector2(LOMBADA, y), Vector2(size.x, y), pauta, 1.0)
 			y += passo
-		_sublinhar_data(topo, base, fonte, tamanho)
+		if sublinhar:
+			_sublinhar_data(topo, base, fonte, tamanho)
 	draw_line(Vector2(MARGEM_X, 0), Vector2(MARGEM_X, size.y), margem, 1.5)
 
 

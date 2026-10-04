@@ -59,7 +59,7 @@ func setup(resumo: Dictionary) -> void:
 	var tom: String = Narrativa.tom_do_boletim(_resumo)
 	var texto_da_fala := Narrativa.boletim(tom)
 	var cara := Narrativa.retrato("cida", tom)
-	fala(texto_da_fala, cara)
+	fala(texto_da_fala, cara, "cida")
 	falou.emit("cida", texto_da_fala, cara)
 
 	botao_fechar("Fechar o boletim")

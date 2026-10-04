@@ -1073,7 +1073,7 @@ func _f7_despedida_do_arlindo_acontece() -> void:
 	root.add_child(painel)
 	painel.setup(0)
 	_confere("a contra-oferta abre com a fala de abertura",
-		painel._fala_arlindo.text != "")
+		painel.texto_da_fala() != "")
 
 	# O botão, e não a função por baixo dele: é o caminho que o jogador faz.
 	painel._btn_igualar.pressed.emit()
@@ -1087,8 +1087,8 @@ func _f7_despedida_do_arlindo_acontece() -> void:
 		not painel.is_queued_for_deletion(),
 		"o painel foi mandado embora — a despedida dele voltou a ser muda")
 	_confere("e o Arlindo diz a fala de quem perdeu",
-		painel._fala_arlindo.text == GS.texto(Narrativa.ARLINDO_PERDEU),
-		"saiu: " + painel._fala_arlindo.text.left(60))
+		painel.texto_da_fala() == GS.texto(Narrativa.ARLINDO_PERDEU),
+		"saiu: " + painel.texto_da_fala().left(60))
 	root.remove_child(painel)
 	painel.free()
 
@@ -1794,7 +1794,7 @@ func _f10_cada_tempo_cabe() -> void:
 			if not await _f10_tocar(p, acao):
 				return
 			_confere("F10: a segunda recusa leva o cliente para o Arlindo",
-				p._fala_arlindo.text == GS.texto(Narrativa.ARLINDO_VENCEU))
+				p.texto_da_fala() == GS.texto(Narrativa.ARLINDO_VENCEU))
 			_f10_medir(p, "Arlindo, despedida de quem venceu", &"despedida")
 			_f10_sem_negociacao(p, "venceu")
 		_f10_fechar(p)
@@ -1805,7 +1805,7 @@ func _f10_cada_tempo_cabe() -> void:
 	if not await _f10_tocar(p, "Igualar"):
 		return
 	_confere("F10: «Igualar» fecha e o Arlindo perde",
-		p._fala_arlindo.text == GS.texto(Narrativa.ARLINDO_PERDEU))
+		p.texto_da_fala() == GS.texto(Narrativa.ARLINDO_PERDEU))
 	_f10_medir(p, "Arlindo, despedida de quem perdeu", &"despedida")
 	_f10_sem_negociacao(p, "perdeu")
 	_f10_fechar(p)
@@ -1818,6 +1818,17 @@ func _f10_cada_tempo_cabe() -> void:
 		p = await _f10_abrir(F10_FIM, [venceu, String(_f10_motivos[venceu])])
 		if venceu:
 			_f10_medir(p, "Fim, narração", &"narracao")
+			# A narração é uma entrada do diário em duas páginas (`082`): o
+			# «Virar a página» vira a folha, e o «Ver o balanço» só existe na
+			# segunda, que o painel declara no fim da virada.
+			var paginas: PackedStringArray = Narrativa.fim_de_fase_paginas()
+			_f10_pagina_mostra(p, "primeira", paginas[0])
+			if not await _f10_tocar(p, "Virar a página"):
+				return
+			if not await _f10_esperar_o_tempo(p, &"segunda_pagina"):
+				return
+			_f10_medir(p, "Fim, a segunda página", &"segunda_pagina")
+			_f10_pagina_mostra(p, "segunda", paginas[1])
 			if not await _f10_tocar(p, "Ver o balanço"):
 				return
 		_f10_medir(p, "Fim, balanço de quem %s" % ("venceu" if venceu else "perdeu"), &"balanco")
@@ -1989,6 +2000,39 @@ func _f10_tocar(painel: Node, prefixo: String, bloco: String = "F10") -> bool:
 	(achados[0] as Button).pressed.emit()
 	await _f8_esperar()
 	return true
+
+
+# O QUE A PÁGINA À VISTA MOSTRA: o texto à mão da página de CIMA — a primeira
+# enquanto não vira (a segunda está por baixo dela, montada e tapada), a única
+# visível depois. O D22 prova que as duas metades são a peça; isto prova que
+# o painel põe cada uma na sua folha, que é onde ele as podia trocar.
+func _f10_pagina_mostra(painel: Node, qual: String, esperado: String) -> void:
+	var caderno: Node = painel.get_node_or_null("Caderno")
+	var visto := ""
+	if caderno != null:
+		for pagina in caderno.get_children():
+			if pagina is PanelContainer and (pagina as Control).visible:
+				var texto: Node = pagina.find_child("Texto", true, false)
+				if texto is Label:
+					visto = (texto as Label).text
+	_confere("F10: a %s página do fim de fase mostra a %s metade da peça" % [qual, qual],
+		visto == esperado, "mostra: " + visto.left(40))
+
+
+# Um tempo que só chega no fim de uma animação — a virada da folha do fim de
+# fase. Espera por ele, com teto, e reprova se não chegar: contar os frames da
+# virada aqui seria um número a envelhecer no dia em que ela mudasse.
+const F10_TETO_DO_TEMPO := 600
+
+
+func _f10_esperar_o_tempo(painel: Node, tempo: StringName) -> bool:
+	var frames := 0
+	while painel.tempo != tempo and frames < F10_TETO_DO_TEMPO:
+		await process_frame
+		frames += 1
+	_confere("F10: o painel chegou ao tempo «%s» (%d frames)" % [tempo, frames],
+		painel.tempo == tempo, "ficou em «%s»" % painel.tempo)
+	return painel.tempo == tempo
 
 
 func _f10_botoes(no: Node, prefixo: String, achados: Array) -> void:
@@ -2958,7 +3002,11 @@ func _f14_balanco() -> void:
 		_confere("F14: o jogo acabou %s" % ("vencido" if venceu else "perdido"),
 			GS.phase == "game_over" and bool(GS.won) == venceu, "fase %s" % GS.phase)
 		var painel: Node = await _f10_abrir(F10_FIM, [bool(GS.won), String(GS.end_reason)])
-		if venceu and not await _f10_tocar(painel, "Ver o balanço", "F14"):
+		# Duas páginas de diário antes do balanço (`082`): vira-se a folha e
+		# espera-se a segunda, como a jogar.
+		if venceu and not (await _f10_tocar(painel, "Virar a página", "F14")
+				and await _f10_esperar_o_tempo(painel, &"segunda_pagina")
+				and await _f10_tocar(painel, "Ver o balanço", "F14")):
 			_f10_fechar(painel)
 			return
 		_f14_tom_confere(painel, "balanço de quem %s" % ("venceu" if venceu else "perdeu"))
@@ -3804,7 +3852,7 @@ func _f17_a_conversa() -> void:
 	var ribeiro: Control = main.call("_abrir_painel",
 		load("res://scenes/panels/DebtPaymentPanel.tscn"))
 	ribeiro.call("setup", int(GS.PARCELA_AMOUNT))
-	_f17_gravou(fila, "ribeiro", String(ribeiro.get("_corpo").text),
+	_f17_gravou(fila, "ribeiro", String(ribeiro.call("texto_da_fala")),
 		Narrativa.retrato("ribeiro", "a_divida"))
 
 	var boletim: Control = main.call("_abrir_painel",
@@ -3821,7 +3869,7 @@ func _f17_a_conversa() -> void:
 	var arlindo: Control = main.call("_abrir_painel",
 		load("res://scenes/panels/CounterOfferPanel.tscn"))
 	arlindo.call("setup", 0)
-	_f17_gravou(fila, "arlindo", String(arlindo.get("_fala_arlindo").text),
+	_f17_gravou(fila, "arlindo", String(arlindo.call("texto_da_fala")),
 		Narrativa.retrato("arlindo", "abertura"))
 
 	_confere("F17: gravar as falas não mexeu na faixa",

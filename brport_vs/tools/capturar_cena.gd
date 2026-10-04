@@ -22,6 +22,13 @@ extends SceneTree
 # ============================================================
 
 const FRAMES_ATE_ASSENTAR := 12
+# ⚠️ O TEMPO PODE CHEGAR DEPOIS DO TOQUE (`docs/decisoes/082`): a folha do fim
+# de fase leva 0,8 s a virar, e só no fim dela o painel passa à segunda
+# página. A ferramenta espera pelo ESTADO prometido, com teto, como a de jogo
+# espera pelo turno (`031`) — e não por um número de frames escrito à mão, que
+# envelheceria no dia em que a virada mudasse de duração. Cinco segundos a 60.
+const TETO_DO_TEMPO := 300
+var _esperou_tempo := 0
 
 # O ponto único de estilo do projeto. Ver ui/tema_brport.tres.
 const TEMA := "res://ui/tema_brport.tres"
@@ -115,6 +122,12 @@ func _process(_delta: float) -> bool:
 	# jogo. Sem isto um `--tocar` que calhasse no botão errado entregava o
 	# outro tempo com o nome deste, e a cobertura contava-o na mesma.
 	var tempo := _tempo_do_painel()
+	if _tempo_esperado != "" and tempo != _tempo_esperado \
+			and _esperou_tempo < TETO_DO_TEMPO:
+		_esperou_tempo += 1
+		# Chegado o tempo, assenta outra vez antes da foto.
+		_frames = 0
+		return false
 	if _tempo_esperado != "" and tempo != _tempo_esperado:
 		push_error("esperava o tempo «%s» e o painel está em «%s»" % [
 			_tempo_esperado, tempo])

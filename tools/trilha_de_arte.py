@@ -75,6 +75,7 @@ LEGENDA = {
     "ribeiro_pagou": "o Sr. Ribeiro, depois de pago",
     "ribeiro_nao_pagou": "o Sr. Ribeiro, sem o dinheiro",
     "fimfase": "a primeira parcela paga, a narração",
+    "fimfase_2": "a narração, a segunda página do diário",
     "balanco": "o balanço de uma partida jogada até ao fim",
     "contraoferta": "a negociação do Arlindo",
     "contraoferta_pressao": "o Arlindo a apertar, na última tentativa",

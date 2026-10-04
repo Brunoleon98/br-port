@@ -407,6 +407,15 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   pontos de melhoria e faça. Depois irei validar»*. Leia-o como licença para a
   passagem seguinte ir além das opções marcadas, sem pergunta a meio, e com a
   prancha e o veredito no fim.
+  ⚠️ **E NA `082` A PRIMEIRA PERGUNTA VOLTOU DISPENSADA**, com «Mande
+  pergunta» logo a seguir: a pergunta SOZINHA voltou. Os dois pares seguintes
+  (envio e pergunta no mesmo turno, em blocos seguidos) voltaram 2 de 2.
+  ⚠️ **E A CORREÇÃO ESCRITA NUMA OPÇÃO É HIPÓTESE ATÉ ELE VER A FOTO.**
+  «Descer o remate para o pé da página» foi marcada, feita, e lida na prancha
+  seguinte como «texto isolado»: o vão continuava lá, só que acima da linha.
+  A terceira passagem devolveu a linha ao lugar e encheu o vão com uma peça
+  que diz alguma coisa (o recibo da parcela), e foi aceite. Quando a queixa é
+  um VAZIO, a correção que só o muda de sítio raramente chega.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

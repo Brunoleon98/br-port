@@ -18,18 +18,19 @@ extends PainelNarrativo
 # ============================================================
 
 const LARGURA := 440
-# Reserva medida para cabeçalho, margens e botão na tela de narração. O balanço
-# cresce com as linhas que realmente aparecem, em vez de guardar um vão vazio.
-const MOLDURA_NARRACAO := 170
 
-# O TETO da narração, e só o teto: a altura de verdade sai do TEXTO
-# (`altura_do_texto`). 900 é o que sobra dos 1280 da tela depois do título, do
-# botão e das margens do cartão, com folga para o cartão não encostar na borda.
-# Enquanto a peça couber aqui, o jogador lê-a inteira sem rolar — que é a
-# diferença entre ver o remate e sair no botão antes dele.
-const ALTURA_NARRACAO_MAX := 900
-# O que o tema gasta de margem lateral dentro do cartão, medido no render.
-const MARGEM_CARTAO := 36
+# ⚠️ A NARRAÇÃO É UMA ENTRADA DO DIÁRIO desde a `082`, e não um cartão. Era o
+# cartão branco de sempre com a peça em seminegrito corrido — o momento de mais
+# peso da partida a ler-se como um extrato —, e o Bruno escolheu-a como página
+# do caderno que o diário abre na primeira semana: o fim fecha o que o começo
+# abriu. Duas páginas, porque a peça pede 34 linhas de pauta com a data e a
+# folha leva 26 (medido no D22); o «—» do meio, que já a partia em duas, é a
+# virada da folha (a mesma da tela de nomes). O D22 confere que cada página
+# cabe, com o nome mais comprido.
+#
+# O cartão de antes media a altura do texto (`altura_do_texto`) para não
+# esconder o remate debaixo de uma dobra; o caderno não rola, e a pergunta
+# passou a ser se cada página cabe na folha.
 
 var _venceu := false
 # O TEMPO DA CENA NA TELA, para quem a fotografa. A cobertura das capturas
@@ -40,44 +41,110 @@ var _venceu := false
 # saltar (`docs/decisoes/051`).
 var tempo: StringName = &""
 var _motivo := ""
+# As duas páginas da narração e o botão por baixo do caderno, que vira a
+# folha na primeira e abre o balanço na segunda.
+var _primeira: PanelContainer
+var _folha_da_primeira: Control
+var _folha_da_segunda: Control
+var _botao: Button
+var _virando := false
 
 
 func setup(won: bool, reason: String) -> void:
 	_venceu = won
 	_motivo = reason
-	# A narração e o balanço pedem alturas diferentes. Ambos crescem a partir
-	# do conteúdo; o balanço de 600 px deixava quase metade do cartão vazia.
-	montar(LARGURA, 0)
 	if _venceu:
 		_mostrar_narracao()
 	else:
+		# O balanço cresce a partir do conteúdo; o de 600 px deixava quase
+		# metade do cartão vazia.
+		montar(LARGURA, 0)
 		_mostrar_balanco()
 
 
 func _mostrar_narracao() -> void:
 	tempo = &"narracao"
+	var paginas := Narrativa.fim_de_fase_paginas()
+	montar_caderno(ESCURO_LEITURA)
+	# A SEGUNDA PÁGINA PRIMEIRO, por baixo, e já escrita: é ela que a virada
+	# revela. Traz a fita, que é do livro (`pagina_do_caderno`).
+	var segunda := pagina_do_caderno(true, true)
+	_folha_da_segunda = _folha
+	entrada_do_diario("", paginas[1])
+	# O RECIBO DA PARCELA no que sobra da folha (terceira passagem): a peça
+	# acaba a meio da segunda página, e a primeira tentativa de a encher — o
+	# remate descido ao pé — deixava-o «isolado», nas palavras do Bruno. Ele
+	# voltou ao lugar dele, e o vão é do papel que se guarda. Centrado entre o
+	# texto e o pé por dois vãos elásticos: o recibo não está na pauta, e por
+	# isso pode pousar em qualquer altura.
+	segunda.add_child(_vao())
+	recibo_colado(_linhas_do_recibo(), GameState.moeda(int(GameState.PARCELA_AMOUNT)),
+		"PAGO")
+	segunda.add_child(_vao())
+	# A primeira por cima, datada como o diário, com a orelha no canto de
+	# baixo — o canto que a mão levanta para virar.
+	pagina_do_caderno(true, false, FolhaDoCaderno.Orelha.BAIXO)
+	_primeira = pagina_atual()
+	_primeira.name = "PrimeiraPagina"
+	_folha_da_primeira = _folha
+	entrada_do_diario(Narrativa.fim_de_fase_cabecalho(), paginas[0])
 	# ⚠️ O TÍTULO DIZIA "Fim da Fase 1", por cima de uma narração que abre com
 	# "A primeira de três parcelas" e "Faltam duas" — o título a fechar a fase
 	# e o texto a dizer que ela continua. Veredito do Bruno no gate do A5
 	# (23/09): «não é o fim da fase 1, apenas o pagamento de uma das três
 	# parcelas». Vencer é `parcela_paid` (ver `_check_end`), logo o título é
-	# verdade sempre que esta tela aparece.
-	titulo_encorpado(Icones.VITORIA, "Primeira parcela paga")
-	var texto := Narrativa.fim_de_fase()
-	var pedido := altura_do_texto(texto, LARGURA - MARGEM_CARTAO)
-	paragrafo_rolavel(texto, mini(pedido, ALTURA_NARRACAO_MAX))
-	var botao := Button.new()
-	botao.text = "Ver o balanço"
-	botao.custom_minimum_size = Vector2(0, TOQUE_MIN)
-	botao.pressed.connect(func() -> void:
-		for filho in _vbox.get_children():
-			filho.queue_free()
-		# Os filhos só saem da árvore no fim do frame; sem isto o balanço
-		# desenha-se POR BAIXO da narração que ainda não morreu.
-		await get_tree().process_frame
-		_mostrar_balanco()
-	)
-	_vbox.add_child(botao)
+	# verdade sempre que esta tela aparece. Fica FORA da folha, como o «O cais
+	# é seu» da tela de nomes: é o jogo a dizê-lo, e não o diário.
+	legenda_acima_do_caderno("Primeira parcela paga", "", Icones.VITORIA)
+	_botao = botao_abaixo_do_caderno("Virar a página", _virar_pagina)
+
+
+# O que o recibo imprime. ⚠️ OS NÚMEROS SAEM DAS CONSTANTES: a parcela paga é a
+# primeira de `PARCELAS_NA_FASE`, e o valor é o `PARCELA_AMOUNT` pelo `moeda()`.
+# É papel impresso de banco e não prosa — os dígitos são do documento, e a
+# regra «nenhum dígito na narração» é da peça escrita à mão por cima dele.
+func _linhas_do_recibo() -> Array:
+	return ["BANCO PORTO MIRIM",
+		"Recibo — parcela 1 de %d" % int(GameState.PARCELAS_NA_FASE),
+		GameState.texto("{portName}")]
+
+
+func _vao() -> Control:
+	var vao := Control.new()
+	vao.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	return vao
+
+
+func _virar_pagina() -> void:
+	if _virando:
+		return
+	_virando = true
+	var t := virar_folha(_primeira, _folha_da_primeira, _folha_da_segunda)
+	t.tween_callback(_na_segunda_pagina)
+
+
+# A folha virada SAI: na tela de nomes o painel fechava no fim da virada e o
+# que sobrava dela não se via; aqui a segunda página fica na tela, e a folha
+# enrolada (ou encolhida, sem imagem) ficaria por cima dela.
+func _na_segunda_pagina() -> void:
+	tempo = &"segunda_pagina"
+	_primeira.visible = false
+	var curva := _caderno_capa.get_node_or_null("FolhaVirando")
+	if curva != null:
+		curva.queue_free()
+	_botao.text = "Ver o balanço"
+	_botao.pressed.disconnect(_virar_pagina)
+	_botao.pressed.connect(_ver_balanco)
+
+
+func _ver_balanco() -> void:
+	for filho in get_children():
+		filho.queue_free()
+	# Os filhos só saem da árvore no fim do frame; sem isto o balanço
+	# desenha-se POR BAIXO do caderno que ainda não morreu.
+	await get_tree().process_frame
+	montar(LARGURA, 0)
+	_mostrar_balanco()
 
 
 func _mostrar_balanco() -> void:

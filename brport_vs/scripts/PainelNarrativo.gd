@@ -61,6 +61,9 @@ var _vbox: VBoxContainer
 # outro filho.
 var _retrato_da_fala: TextureRect
 
+# A última fala montada — ver `fala()` e `texto_da_fala()`.
+var _fala_montada: Dictionary = {}
+
 # A linha de apoio da última tarja — ver `tarja()`.
 var _detalhe_da_tarja: Label
 
@@ -209,19 +212,163 @@ func total(texto: String) -> Label:
 
 # FALA DE PERSONAGEM, e não mais uma linha de relatório. As telas narrativas
 # misturam dois registros — o que o jogo informa e o que alguém diz — e sem
-# diferença visual a fala da Dona Cida lê como rodapé de planilha. O balão vem
-# do tema (variação "Fala"), como toda a aparência deste projeto.
+# diferença visual a fala da Dona Cida lia como rodapé de planilha. O balão vem
+# do tema, como toda a aparência deste projeto.
 #
-# COM RETRATO, o balão entra numa linha ao lado da cara; sem ele, fica como
-# sempre esteve. E o que se devolve continua a ser o BALÃO nos dois casos —
-# não a linha —, porque há painel que guarda o rótulo dele para o trocar
-# depois (`balao.get_child(0)`, na cena da parcela). Devolver a linha partiria
-# esse painel sem erro nenhum: `get_child(0)` passaria a ser o retrato, e a
-# fala do Sr. Ribeiro deixaria de mudar entre os dois tempos da cena.
-func fala(texto: String, retrato: Texture2D = null) -> PanelContainer:
+# `quem` ESCOLHE O BALÃO E A PLACA DA PESSOA (`docs/decisoes/082`): o mesmo
+# tom que o celular já dava a cada uma (`067`). Sem pessoa, o balão é o `Fala`
+# de sempre e não há placa.
+#
+# Devolve a fala MONTADA (ver `linha_de_fala()`): quem troca o texto quando a
+# cena avança — a cena da parcela, em dois tempos — passa-a a `escrever_fala()`
+# em vez de mexer num rótulo, porque o texto pode ocupar mais de um balão.
+func fala(texto: String, retrato: Texture2D = null, quem: String = "") -> Dictionary:
+	var montada := linha_de_fala(texto, retrato, quem)
+	_vbox.add_child(montada["linha"])
+	_retrato_da_fala = montada["retrato"]
+	_fala_montada = montada
+	return montada
+
+
+# O que a última fala do painel MOSTRA, balão a balão — para quem confere a
+# tela e não a fala pedida (`CLAUDE.md`: fala disparada não é fala vista).
+func texto_da_fala() -> String:
+	return texto_montado(_fala_montada)
+
+
+# A LINHA DA FALA, estática porque a contra-oferta não herda deste andaime e
+# tem de vestir a MESMA linha — como a `tarja_solta()`. Devolve um dicionário:
+# a `linha` (o que entra no cartão), o primeiro `balao` e o `rotulo` dele, o
+# `retrato` (`null` sem retrato), quem fala e a coluna dos balões `seguidos`.
+#
+# ⚠️ O RETRATO SENTA NUMA PLACA DA COR DE QUEM FALA (`082`). Solto, o busto de
+# 112 x 152 ficava cortado a seco sobre o branco; na placa, o corte do peito é
+# a borda de baixo dela, e a cara fica encostada a ele.
+#
+# ⚠️ E A FALA LONGA PARTE-SE EM BALÕES, UM POR PARÁGRAFO, como no celular. A
+# primeira versão esticava a placa até ao fim do balão — e o Sr. Ribeiro, que
+# fala dez linhas nos dois tempos, ficava numa coluna cinzenta de 310 px com o
+# busto lá em baixo e 150 px de placa vazia por cima da cabeça. Partida no
+# `\n\n` que a fala já trazia, o primeiro balão fica ao lado da cara, com o
+# bico, e os outros descem colados a ele na mesma coluna, sem bico
+# (`BalaoXSeguido`) — a gramática que o celular já usa para duas falas
+# seguidas da mesma pessoa. A placa fica com a altura dela, e o que sobra por
+# baixo é a margem de quem fala, como no telefone.
+#
+# ⚠️ OS SEGUIDOS VÃO NA COLUNA DO PRIMEIRO, E NÃO POR BAIXO DA LINHA. A
+# segunda versão punha-os por baixo da placa, e o vão entre dois balões saía
+# do comprimento do primeiro: 76 px no Arlindo da última tentativa, 6 no Sr.
+# Ribeiro da entrada — uma pausa que ninguém desenhou.
+static func linha_de_fala(texto: String, retrato: Texture2D = null,
+		quem: String = "") -> Dictionary:
+	var balao := _balao_de_fala(quem, true)
+	var coluna := VBoxContainer.new()
+	coluna.add_theme_constant_override("separation", SEPARACAO_BALOES)
+	coluna.add_child(balao)
+	var seguidos := VBoxContainer.new()
+	seguidos.add_theme_constant_override("separation", SEPARACAO_BALOES)
+	coluna.add_child(seguidos)
+	var montada := {"linha": coluna, "balao": balao, "rotulo": balao.get_child(0),
+		"retrato": null, "quem": quem, "seguidos": seguidos}
+	if retrato == null:
+		escrever_fala(montada, texto)
+		return montada
+
+	var linha := HBoxContainer.new()
+	linha.add_theme_constant_override("separation", SEPARACAO_RETRATO)
+	var placa := PanelContainer.new()
+	_vestir_placa(placa, quem)
+	var img := Retratos.imagem(retrato)
+	# Encostado ao fundo da placa — o corte do peito é a borda dela.
+	img.size_flags_vertical = Control.SIZE_SHRINK_END
+	placa.add_child(img)
+	# ⚠️ A PLACA RECORTA O RETRATO PELOS CANTOS REDONDOS DELA. Sem isto os
+	# ombros, que chegam à borda de baixo, saem em canto vivo por fora da curva.
+	placa.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
+	# A placa não estica: com a altura do busto, a borda de baixo é o corte.
+	placa.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	linha.add_child(placa)
+	# Sem isto a coluna encolhe ao tamanho do texto e a linha fica com um vão
+	# vazio à direita — o retrato empurra, e os balões ocupam o resto. Na
+	# vertical cada balão hugs o texto dele, dentro da coluna.
+	coluna.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	linha.add_child(coluna)
+	# O RABICHO do primeiro balão, no vão entre ele e a placa — ver abaixo.
+	balao.draw.connect(func() -> void: _desenhar_rabicho(balao))
+	montada["linha"] = linha
+	montada["retrato"] = img
+	escrever_fala(montada, texto)
+	return montada
+
+
+const SEPARACAO_RETRATO := 10
+const SEPARACAO_BALOES := 6
+
+# O RABICHO (segunda passagem, `082`, melhoria por conta própria que o Bruno
+# liberou): um triângulo da cor do balão no vão de 10 px até à placa, à altura
+# da primeira linha — o balão APONTA para quem fala. Até aqui o «bico» era só
+# o canto de cima com raio 4 em vez de 14, a gramática do celular, e num
+# cartão de cena isso mal se lia como fala. Desenhado pelo próprio balão, na
+# cor que o tema lhe dá: muda com a pessoa sem uma cor escrita aqui.
+const RABICHO_COMPRIMENTO := 8.0   # quanto avança para a placa (o vão é 10)
+const RABICHO_BASE := 14.0         # a altura da base, encostada ao balão
+const RABICHO_TOPO := 10.0         # onde a base começa, desde o topo do balão
+
+
+static func _desenhar_rabicho(balao: PanelContainer) -> void:
+	var estilo := balao.get_theme_stylebox("panel") as StyleBoxFlat
+	if estilo == null:
+		return
+	# A ponta fica no primeiro terço da base: o rabicho inclina para cima, para
+	# a cara, que no busto está na metade de cima da placa.
+	var pontos := PackedVector2Array([
+		Vector2(1.0, RABICHO_TOPO),
+		Vector2(-RABICHO_COMPRIMENTO, RABICHO_TOPO + RABICHO_BASE * 0.3),
+		Vector2(1.0, RABICHO_TOPO + RABICHO_BASE)])
+	balao.draw_colored_polygon(pontos, estilo.bg_color)
+	# O polígono não suaviza a diagonal; o contorno na mesma cor suaviza.
+	balao.draw_polyline(PackedVector2Array([pontos[0], pontos[1], pontos[2]]),
+		estilo.bg_color, 1.0, true)
+
+
+# Escreve a fala nos balões: o primeiro parágrafo no balão ao lado da cara, e
+# cada um dos outros num balão seguido. Os seguidos refazem-se a cada escrita,
+# porque a fala do segundo tempo tem outro número de parágrafos.
+static func escrever_fala(montada: Dictionary, texto: String) -> void:
+	var partes := texto.split("\n\n", false)
+	(montada["rotulo"] as Label).text = partes[0] if partes.size() > 0 else ""
+	var seguidos: VBoxContainer = montada["seguidos"]
+	for velho in seguidos.get_children():
+		seguidos.remove_child(velho)
+		velho.queue_free()
+	for i in range(1, partes.size()):
+		var outro := _balao_de_fala(String(montada["quem"]), false)
+		(outro.get_child(0) as Label).text = partes[i]
+		seguidos.add_child(outro)
+	# Sem seguidos a caixa deles esconde-se: visível e vazia, a separação da
+	# coluna deixaria 6 px de vão por baixo de toda fala de um parágrafo só.
+	seguidos.visible = partes.size() > 1
+
+
+# O texto que a fala montada mostra, os balões juntos pela mesma quebra que os
+# partiu — é o que se compara com a fala pedida.
+static func texto_montado(montada: Dictionary) -> String:
+	if montada.is_empty():
+		return ""
+	var partes: Array[String] = [(montada["rotulo"] as Label).text]
+	for outro in (montada["seguidos"] as VBoxContainer).get_children():
+		partes.append((outro.get_child(0) as Label).text)
+	return "\n\n".join(partes)
+
+
+static func _balao_de_fala(quem: String, com_bico: bool) -> PanelContainer:
 	var balao := PanelContainer.new()
-	balao.theme_type_variation = "Fala"
+	if not _vestir_balao(balao, quem, com_bico):
+		balao.theme_type_variation = &"Fala"
 	var rotulo := Label.new()
+	# A VOZ EM LETRA REGULAR (`082`): o resto do cartão — título, tarja,
+	# botões — fica no seminegrito, que é o que o faz ler como informação.
+	rotulo.theme_type_variation = &"TextoFala"
 	# ⚠️ `_SMART`, PORQUE A FALA LEVA O NOME DE QUEM JOGA. O `AUTOWRAP_WORD` só
 	# quebra em fronteira de palavra, e a tela de nomes aceita 24 letras sem
 	# espaço: medido em 23/09, "Boa tarde, WWWW…" desenhava a palavra inteira
@@ -229,26 +376,49 @@ func fala(texto: String, retrato: Texture2D = null) -> PanelContainer:
 	# não cabe — num texto sem ela as linhas saem as mesmas, ao pixel. O F10 do
 	# fumaça tranca (`docs/decisoes/051`).
 	rotulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	rotulo.text = texto
 	balao.add_child(rotulo)
-	if retrato == null:
-		_vbox.add_child(balao)
-		return balao
-
-	var linha := HBoxContainer.new()
-	linha.add_theme_constant_override("separation", 10)
-	_retrato_da_fala = Retratos.imagem(retrato)
-	linha.add_child(_retrato_da_fala)
-	# Sem isto o balão encolhe ao tamanho do texto e a linha fica com um vão
-	# vazio à direita — o retrato empurra, e o balão tem de ocupar o resto.
-	balao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	# Na vertical é o contrário: o balão hugs o texto dele. Esticado à altura
-	# do retrato, uma fala de duas linhas ficaria numa caixa de 124px com um
-	# terço de creme vazio por baixo.
-	balao.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	linha.add_child(balao)
-	_vbox.add_child(linha)
 	return balao
+
+
+# O balão e a placa de cada pessoa — os do celular (`067`), que aqui servem
+# também aos cartões; devolve `false` para quem não tem balão, e cada um dos
+# dois sítios decide o que isso quer dizer. ⚠️ LITERAIS, um por ramo, e não
+# um dicionário: o `conferir_escopo_ui.py` confere que toda variação usada
+# existe no tema, e só a acha escrita depois de um `=`. Num `.get()` o nome
+# escaparia à guarda, e um erro de digitação cairia no `PanelContainer` base —
+# o cartão branco — sem uma palavra (`docs/decisoes/042`).
+static func _vestir_balao(balao: PanelContainer, quem: String, com_bico: bool) -> bool:
+	match quem:
+		"cida":
+			if com_bico:
+				balao.theme_type_variation = &"BalaoCida"
+			else:
+				balao.theme_type_variation = &"BalaoCidaSeguido"
+		"ribeiro":
+			if com_bico:
+				balao.theme_type_variation = &"BalaoRibeiro"
+			else:
+				balao.theme_type_variation = &"BalaoRibeiroSeguido"
+		"arlindo":
+			if com_bico:
+				balao.theme_type_variation = &"BalaoArlindo"
+			else:
+				balao.theme_type_variation = &"BalaoArlindoSeguido"
+		_:
+			return false
+	return true
+
+
+static func _vestir_placa(placa: PanelContainer, quem: String) -> void:
+	match quem:
+		"cida":
+			placa.theme_type_variation = &"PlacaFalaCida"
+		"ribeiro":
+			placa.theme_type_variation = &"PlacaFalaRibeiro"
+		"arlindo":
+			placa.theme_type_variation = &"PlacaFalaArlindo"
+		_:
+			placa.theme_type_variation = &"PlacaRetrato"
 
 
 # A cara do último balão, para o painel a trocar quando a cena avança.
@@ -549,6 +719,9 @@ const CADERNO_ALTURA := 880
 # legenda precisar de mais vão, e hoje é zero.
 const CADERNO_DESCE := 0
 const CADERNO_BOTAO_VAO := 22
+# O ícone ao lado do título da legenda: da altura das maiúsculas do
+# `TituloAbertura` (26 px) e um pouco mais, como o selo dos cartões.
+const LEGENDA_ICONE := 30
 # As margens do texto dentro da página. Na página pautada o texto começa
 # depois da linha vermelha; na folha de rosto não há linha, e a margem é a do
 # papel.
@@ -674,17 +847,23 @@ static func tinta_de_caneta(no: CanvasItem) -> void:
 # ⚠️ E NADA AQUI LÊ O TEMA NA MONTAGEM: a ferramenta de captura aplica-o
 # depois do `_ready()`, e um número lido cedo seria o do tema padrão. A pauta
 # lê-o ao desenhar (`FolhaDoCaderno`).
+#
+# Sem `cabecalho` é a CONTINUAÇÃO de uma entrada (a segunda página do fim de
+# fase, `082`): página que continua não volta a datar-se, e a pauta acerta
+# pelo próprio texto.
 func entrada_do_diario(cabecalho: String, texto: String) -> Label:
 	var linhas := VBoxContainer.new()
 	linhas.name = "Entrada"
 	linhas.theme_type_variation = &"CadernoLinhas"
 	_vbox.add_child(linhas)
-	var data := Label.new()
-	data.name = "Data"
-	data.theme_type_variation = &"TextoCaderno"
-	data.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	data.text = cabecalho + "\n"
-	linhas.add_child(data)
+	var data: Label = null
+	if cabecalho != "":
+		data = Label.new()
+		data.name = "Data"
+		data.theme_type_variation = &"TextoCaderno"
+		data.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		data.text = cabecalho + "\n"
+		linhas.add_child(data)
 	var corpo := Label.new()
 	corpo.name = "Texto"
 	corpo.theme_type_variation = &"TextoCaderno"
@@ -693,9 +872,12 @@ func entrada_do_diario(cabecalho: String, texto: String) -> Label:
 	corpo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	corpo.text = texto
 	linhas.add_child(corpo)
-	tinta_de_caneta(data)
 	tinta_de_caneta(corpo)
-	_folha.pautar_por(data)
+	if data != null:
+		tinta_de_caneta(data)
+		_folha.pautar_por(data)
+	else:
+		_folha.pautar_por(corpo, false)
 	return corpo
 
 
@@ -773,6 +955,80 @@ func etiqueta_da_folha() -> VBoxContainer:
 	return caixa
 
 
+# O RECIBO COLADO NA FOLHA (`082`, terceira passagem): um comprovante de papel
+# impresso, colado um pouco torto, com o carimbo por cima. Guarda-se num
+# diário o que se quer lembrar, e o fim de fase guarda o da parcela — é o que
+# o título diz, agora com o papel na mão. `linhas` são as impressas, de cima
+# para baixo; `valor` é o número em destaque; `carimbo`, a palavra carimbada.
+#
+# ⚠️ O GIRO PEDE UM SUPORTE SIMPLES, como a foto e a etiqueta: todo `Container`
+# zera a rotação do filho ao arrumá-lo. E o carimbo é IRMÃO do recibo no
+# suporte, e não filho dele: dentro do recibo, que é um contentor, ele seria
+# arrumado como mais uma linha.
+const RECIBO_GIRO := 1.4
+# Mais largo do que as linhas pedem: o carimbo pousa à direita do valor, e
+# num recibo da largura do texto ele cairia em cima do número.
+const RECIBO_LARGURA := 300
+const CARIMBO_GIRO := -11.0
+
+func recibo_colado(linhas: Array, valor: String, carimbo: String) -> PanelContainer:
+	var centro := CenterContainer.new()
+	_vbox.add_child(centro)
+	var suporte := Control.new()
+	suporte.name = "SuporteDoRecibo"
+	centro.add_child(suporte)
+	var recibo := PanelContainer.new()
+	recibo.name = "Recibo"
+	recibo.theme_type_variation = &"CadernoRecibo"
+	recibo.rotation_degrees = RECIBO_GIRO
+	recibo.custom_minimum_size = Vector2(RECIBO_LARGURA, 0)
+	suporte.add_child(recibo)
+	var caixa := VBoxContainer.new()
+	caixa.add_theme_constant_override("separation", 4)
+	recibo.add_child(caixa)
+	for texto in linhas:
+		var linha := Label.new()
+		linha.theme_type_variation = &"ImpressoCaderno"
+		linha.text = String(texto)
+		caixa.add_child(linha)
+	# O PICOTE do talão, tracejado e SUAVIZADO: o `HSeparator` é uma linha de
+	# 1 px sem suavização, e no recibo girado saía em escada. A cor é a da
+	# letra impressa, lida do tema ao desenhar.
+	var picote := Control.new()
+	picote.custom_minimum_size = Vector2(0, 8)
+	picote.draw.connect(func() -> void:
+		var y := picote.size.y / 2.0
+		picote.draw_dashed_line(Vector2(0, y), Vector2(picote.size.x, y),
+			picote.get_theme_color("font_color", &"ImpressoCaderno"), 1.2, 5.0, true, true))
+	caixa.add_child(picote)
+	var numero := Label.new()
+	numero.name = "Valor"
+	numero.theme_type_variation = &"ValorRecibo"
+	numero.text = valor
+	caixa.add_child(numero)
+	var selo := PanelContainer.new()
+	selo.name = "Carimbo"
+	selo.theme_type_variation = &"CarimboRecibo"
+	selo.rotation_degrees = CARIMBO_GIRO
+	var palavra := Label.new()
+	palavra.theme_type_variation = &"TextoCarimbo"
+	palavra.text = carimbo
+	selo.add_child(palavra)
+	suporte.add_child(selo)
+	# O giro é em volta do MEIO de cada peça, e o carimbo pousa sobre o canto
+	# de baixo à direita do recibo, ao lado do valor e não em cima dele — só
+	# se sabe onde depois de o tema dar as medidas.
+	var arrumar := func() -> void:
+		recibo.pivot_offset = recibo.size / 2.0
+		selo.pivot_offset = selo.size / 2.0
+		suporte.custom_minimum_size = recibo.size
+		selo.position = Vector2(recibo.size.x - selo.size.x - 14.0,
+			recibo.size.y - selo.size.y - 10.0)
+	recibo.resized.connect(arrumar)
+	selo.resized.connect(arrumar)
+	return recibo
+
+
 # A FOTO COLADA NA FOLHA, com a borda branca de fotografia de papel, as
 # cantoneiras e um giro pequeno — foto colada à mão nunca fica a direito.
 func foto_colada(textura: Texture2D, largura: int, altura: int,
@@ -807,10 +1063,144 @@ func foto_colada(textura: Texture2D, largura: int, altura: int,
 	return moldura
 
 
+# ── A FOLHA QUE VIRA (`067`; no andaime desde a `082`) ──
+# A folha de rosto da tela de nomes curva sobre a primeira entrada do diário,
+# e o fim de fase vira a primeira página da entrada dele para a segunda: a
+# MESMA folha, num sítio só. Quem chama empilhou as duas páginas (a de baixo
+# primeiro, `pagina_do_caderno()`), e recebe o tween para lhe pôr o que vem
+# a seguir.
+#
+# A virada: curta, para não atrasar quem já quer jogar, e longa o bastante
+# para o olho a seguir. Com a largura a cair pelo cosseno, o primeiro terço
+# anda devagar — a folha a descolar — e por isso ela é um pouco mais longa
+# do que a da primeira passagem (0,45 s, a encolher a direito).
+const VIRAR_S := 0.55
+# Quanto a folha cresce na vertical a meio da virada: é o que ela se aproxima
+# do olho ao levantar-se, e a única pista de profundidade que um `Control`
+# plano pode dar.
+const VIRAR_ERGUE := 0.035
+# A FOLHA QUE CURVA (terceira passagem): quanto dura, o raio do cilindro que
+# a enrola e a inclinação da dobra — a mão levanta pelo canto de baixo, que o
+# eixo inclinado apanha primeiro.
+const CURVAR_S := 0.8
+const CURVA_RAIO := 44.0
+const CURVA_INCLINACAO := 0.18
+const FOLHA_VIRANDO := preload("res://ui/shaders/folha_virando.gdshader")
+
+var _virada_folha: PanelContainer
+var _virada_desenho: Control
+var _virada_baixo: Control
+var _virada_legenda: Control
+var _curva: ShaderMaterial
+
+
+# A FOLHA CURVA quando há imagem da tela para a dobrar; sem ela (o
+# renderizador das suítes não desenha nada), gira sobre a lombada como na
+# segunda passagem da tela de nomes. A legenda, se houver, vai-se com a folha.
+func virar_folha(folha: PanelContainer, desenho: Control, de_baixo: Control,
+		legenda: Control = null) -> Tween:
+	_virada_folha = folha
+	_virada_desenho = desenho
+	_virada_baixo = de_baixo
+	_virada_legenda = legenda
+	var t := create_tween()
+	var foto := _fotografar_folha()
+	if foto != null:
+		_montar_curva(foto)
+		t.tween_method(_curvar, 0.0, 1.0, CURVAR_S)
+	else:
+		folha.pivot_offset = Vector2(0, folha.size.y / 2.0)
+		t.tween_method(_virar, 0.0, 1.0, VIRAR_S)
+	return t
+
+
+# A folha que vira como está na tela neste instante — na tela de nomes, com
+# os nomes escritos.
+# ⚠️ A TELA DO APARELHO NÃO É A DE 720: com `canvas_items` o jogo desenha na
+# resolução nativa (`CLAUDE.md`, o viewport é um sistema de coordenadas), e o
+# recorte passa pela transformação final da janela — escala e faixas.
+func _fotografar_folha() -> Texture2D:
+	var tela := get_viewport().get_texture()
+	if tela == null:
+		return null
+	var img := tela.get_image()
+	if img == null or img.is_empty():
+		return null
+	var xf: Transform2D = get_viewport().get_final_transform() \
+		* _virada_folha.get_global_transform_with_canvas()
+	var canto: Vector2 = xf * Vector2.ZERO
+	var fim: Vector2 = xf * _virada_folha.size
+	var r := Rect2i(Rect2(canto, fim - canto).abs())
+	r = r.intersection(Rect2i(Vector2i.ZERO, img.get_size()))
+	if r.size.x < 8 or r.size.y < 8:
+		return null
+	return ImageTexture.create_from_image(img.get_region(r))
+
+
+# A foto da folha entra no lugar dela — a capa é um contentor, e arruma-a no
+# mesmo retângulo das páginas — e a folha de verdade esconde-se.
+func _montar_curva(foto: Texture2D) -> void:
+	var folha := TextureRect.new()
+	folha.name = "FolhaVirando"
+	folha.texture = foto
+	folha.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	folha.stretch_mode = TextureRect.STRETCH_SCALE
+	folha.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_curva = ShaderMaterial.new()
+	_curva.shader = FOLHA_VIRANDO
+	_curva.set_shader_parameter("tamanho", _virada_folha.size)
+	_curva.set_shader_parameter("raio", CURVA_RAIO)
+	_curva.set_shader_parameter("inclinacao", CURVA_INCLINACAO)
+	_curva.set_shader_parameter("verso", get_theme_color("verso", &"CadernoPagina"))
+	_curva.set_shader_parameter("sombra", get_theme_color("sombra_virada", &"CadernoPagina"))
+	folha.material = _curva
+	_caderno_capa.add_child(folha)
+	_virada_folha.visible = false
+	_curvar(0.0)
+
+
+# UM PASSO DA CURVA, de 0 (a folha deitada) a 1 (enrolada para lá da
+# lombada). O eixo do cilindro anda da borda direita até passar a esquerda, e
+# o shader faz o resto — ver o cabeçalho de `folha_virando.gdshader`.
+func _curvar(t: float) -> void:
+	var n := Vector2(1.0, CURVA_INCLINACAO).normalized()
+	var longe: float = _virada_folha.size.dot(n)
+	var suave := t * t * (3.0 - 2.0 * t)
+	_curva.set_shader_parameter("dobra", lerpf(longe + 4.0, -CURVA_RAIO - 140.0, suave))
+	if _virada_legenda != null:
+		_virada_legenda.modulate.a = 1.0 - t
+
+
+# UM PASSO DA VIRADA SEM IMAGEM, de 0 (a folha deitada) a 1 (a folha de pé,
+# de lado, a sumir na lombada) — a da segunda passagem, que fica para quando
+# a tela não se pode fotografar. A primeira passagem só encolhia a folha e escurecia-a por
+# igual, e lia-se como um cartão a deslizar («a virada é plana»). Agora:
+#   · a LARGURA cai pelo cosseno do ângulo, que é a projeção de uma folha a
+#     girar — devagar ao descolar, depressa no fim;
+#   · a folha ERGUE-SE um pouco na vertical a meio, a aproximar-se do olho;
+#   · a borda livre CURVA-SE: sombra por dentro e um fio de luz no gume;
+#   · a página de baixo apanha a SOMBRA da folha junto à borda dela.
+func _virar(t: float) -> void:
+	var angulo := t * PI / 2.0
+	_virada_folha.scale = Vector2(maxf(cos(angulo), 0.001), 1.0 + VIRAR_ERGUE * sin(2.0 * angulo))
+	_virada_folha.modulate = Color.WHITE.lerp(Color(0.8, 0.78, 0.74), sin(angulo))
+	_virada_desenho.dobra = sin(angulo)
+	_virada_desenho.queue_redraw()
+	_virada_baixo.sombra_x = _virada_folha.size.x * cos(angulo)
+	_virada_baixo.sombra = sin(PI * t)
+	_virada_baixo.queue_redraw()
+	# A legenda é da folha de rosto e vai-se com ela: o diário que abre a
+	# seguir não a tem, e ela sumia de um frame para o outro.
+	if _virada_legenda != null:
+		_virada_legenda.modulate.a = 1.0 - t
+
+
 # O botão FORA do caderno, por baixo dele — o gesto de fechar o livro ou de o
 # abrir, como o «Guardar o telefone» fica fora do celular (`066`). Dentro da
 # página seria um botão do jogo desenhado num diário.
-func botao_abaixo_do_caderno(texto: String) -> Button:
+#
+# `ao_tocar` vazio fecha o painel; o fim de fase passa-lhe a virada da página.
+func botao_abaixo_do_caderno(texto: String, ao_tocar: Callable = Callable()) -> Button:
 	var botao := Button.new()
 	botao.name = "BotaoCaderno"
 	botao.text = texto
@@ -823,7 +1213,7 @@ func botao_abaixo_do_caderno(texto: String) -> Button:
 	var pe := CADERNO_ALTURA / 2.0 + CADERNO_DESCE + CADERNO_BOTAO_VAO
 	botao.offset_top = pe
 	botao.offset_bottom = pe + TOQUE_MIN + 8
-	botao.pressed.connect(_fechar)
+	botao.pressed.connect(ao_tocar if ao_tocar.is_valid() else _fechar)
 	add_child(botao)
 	return botao
 
@@ -831,7 +1221,12 @@ func botao_abaixo_do_caderno(texto: String) -> Button:
 # O que se diz ANTES de abrir o caderno: o título e uma frase, claros sobre o
 # escuro, no vão por cima dele. É a voz de quem conta a história, e não a de
 # quem escreve no diário — por isso fica fora da folha.
-func legenda_acima_do_caderno(titulo_: String, texto: String) -> VBoxContainer:
+#
+# Com `icone`, ele vai ao lado do título, como no cabeçalho dos cartões — o
+# troféu do fim de fase, que o cartão tinha e o caderno perdeu na primeira
+# passagem (`082`).
+func legenda_acima_do_caderno(titulo_: String, texto: String,
+		icone: Texture2D = null) -> VBoxContainer:
 	var coluna := VBoxContainer.new()
 	coluna.name = "Legenda"
 	coluna.add_theme_constant_override("separation", 8)
@@ -852,13 +1247,26 @@ func legenda_acima_do_caderno(titulo_: String, texto: String) -> VBoxContainer:
 	cabeca.theme_type_variation = &"TituloAbertura"
 	cabeca.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cabeca.text = titulo_
-	coluna.add_child(cabeca)
-	var frase := Label.new()
-	frase.theme_type_variation = &"TextoAbertura"
-	frase.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	frase.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	frase.text = texto
-	coluna.add_child(frase)
+	if icone == null:
+		coluna.add_child(cabeca)
+	else:
+		var linha := HBoxContainer.new()
+		linha.alignment = BoxContainer.ALIGNMENT_CENTER
+		linha.add_theme_constant_override("separation", 10)
+		var img := Icones.imagem(icone, LEGENDA_ICONE)
+		img.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		linha.add_child(img)
+		linha.add_child(cabeca)
+		coluna.add_child(linha)
+	# Sem frase, só o título: um rótulo vazio ainda ocupava a altura de uma
+	# linha, e o título ficava mais longe do caderno do que devia.
+	if texto != "":
+		var frase := Label.new()
+		frase.theme_type_variation = &"TextoAbertura"
+		frase.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		frase.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		frase.text = texto
+		coluna.add_child(frase)
 	return coluna
 
 

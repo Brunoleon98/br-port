@@ -782,3 +782,10 @@ mais antigas:
 | Fechado | O que ficou, medido |
 |---|---|
 | **Frente 4 do A5 — escala, camiões, frota e ruína** (27/09–01/10, `069`–`074`) | A pessoa a 1,5× o real; os 32 camiões; os 9 cascos detalhados; o galpão e o escritório em ruína. `.pck` +0,92% |
+
+**E, para caber as telas narrativas (`082`),** desceram a virada do dia e o arnês:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **Frente 4 do A5 — a virada do dia** (03/10, `078`) | Ao «Avançar dia» o barco servido sai e o seguinte entra; o dinheiro conta; o «+R$» de cada doca sobe do barco; um toque a meio acaba-a. O `GameState` não mudou (**D41**) |
+| **Ferramenta — o arnês da montagem** (04/10, `080`) | O catálogo monta sem o `view_layer.update()` das primitivas; o `--despejar` prova a mesma cena |

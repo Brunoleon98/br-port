@@ -565,6 +565,11 @@ tirar nomes_virando - - --script res://tools/capturar_cena.gd -- res://scenes/pa
 # NÃO A MOSTRA (só o balanço usa o `_motivo`), de modo que ela envelhecer aqui
 # não muda um pixel desta foto.
 tirar fimfase - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase.png" true "Você quitou a parcela e manteve o porto no azul!" --tempo=narracao
+# A SEGUNDA PÁGINA da narração (`082`): desde que ela é uma entrada do diário,
+# o «—» do meio é a virada da folha, e a segunda metade da peça — o remate
+# incluído — só se lê depois dela. O «Virar» espera o tempo `segunda_pagina`,
+# que o painel só declara no fim da virada.
+tirar fimfase_2 - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase_2.png" true "Você quitou a parcela e manteve o porto no azul!" --tocar=Virar --tempo=segunda_pagina
 # O BALANÇO, numa partida JOGADA: o laço de sempre até ao vencimento (turno
 # 33), o «Pagar» do Sr. Ribeiro — ligado porque a partida juntou o dinheiro,
 # nunca porque a ferramenta o deu — e o «Ver o balanço» da narração. Foi a

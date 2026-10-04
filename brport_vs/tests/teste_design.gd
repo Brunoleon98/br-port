@@ -307,6 +307,10 @@ func _rodar() -> void:
 	_d43_rodape_escuro()
 	_confere("o bloco D43 correu até ao fim", _d43_completo)
 
+	print("=== D44: as conversas dos cartões — o balão, a placa e a letra de quem fala ===")
+	_d44_conversas_dos_cartoes()
+	_confere("o bloco D44 correu até ao fim", _d44_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -3504,49 +3508,112 @@ func _d21_a_zona_de_espera() -> void:
 # olhando."*, que é a linha para onde tudo aquilo anda. As cinco suítes
 # passavam; quem apanhou foi a fotografia, e só porque o texto foi crescido.
 #
-# O diário levou a MESMA mordida em 11/09 e foi remedido; este painel é o irmão
-# e ninguém o voltou a abrir. É a regra "ao corrigir um, varra os irmãos" a
-# cobrar a fatura.
+# ⚠️ E DESDE A `082` A NARRAÇÃO SÃO DUAS PÁGINAS DO CADERNO, que não rola: a
+# pergunta deixou de ser a altura do cartão e passou a ser a do D37 — cada
+# página cabe na folha, com o nome de cais mais comprido. E mais duas, que a
+# divisão abriu:
 #
-# ⚠️ O QUE ESTA GUARDA PROVA, E O QUE NÃO PROVA. Ela mede com o
-# `altura_do_texto()` — a MESMA função com que o painel se dimensiona —, logo
-# não apanha um erro DENTRO dessa função: apanha o que de facto se repete, que
-# é o TEXTO a crescer para além do que o painel mostra. Que a função bate com o
-# motor foi medido à parte e está escrito no comentário dela (847 = 748 + 33x3,
-# ao pixel). Não se instancia o painel montado de propósito: o `Label` só sabe
-# medir depois de um passe de layout, e nenhuma das suítes deste projeto passa
-# frames.
+#  1. AS DUAS PÁGINAS SÃO A PEÇA INTEIRA: juntas pela virada, dão o texto do
+#     `fim_de_fase()` letra a letra, e a segunda acaba no remate. Partir no
+#     sítio errado — ou num traço que deixasse de existir — perdia metade da
+#     peça sem erro nenhum, porque o caderno mostra o que recebe.
+#  2. A DATA DA ENTRADA ESCREVE-SE POR EXTENSO: o ordinal sai do
+#     `WEEKS_TOTAL`, e fora do intervalo que conhece devolve o número — que é
+#     a regra «nenhum dígito na narração» do F4, aqui no cabeçalho.
+#  3. A SEGUNDA PÁGINA, COM O RECIBO COLADO, CABE NA FOLHA (terceira
+#     passagem). O recibo não está na pauta e mede-se montado: a coluna da
+#     página pede a altura do texto, dos vãos e do recibo, e tem de caber no
+#     que a folha dá — senão a página cresce, a capa cresce com ela e desce
+#     por cima do botão, sem erro nenhum (a primeira armadilha do D37).
 func _d22_narracao_cabe() -> void:
 	var GS: Node = root.get_node("GameState")
 	GS.clear_save()
 	GS.new_game()
-	GS.nome_porto = "Cais Mirim"
-
-	var tela: Control = load("res://scenes/EndGame.tscn").instantiate()
-	tela.theme = load("res://ui/tema_brport.tres")
-	root.add_child(tela)
-
 	var Nar = load("res://scripts/Narrativa.gd")
+	var tema: Theme = load("res://ui/tema_brport.tres")
+	var PN: Dictionary = (load("res://scripts/PainelNarrativo.gd") as GDScript).get_script_constant_map()
+
+	# 1. as duas páginas são a peça inteira
+	GS.nome_porto = "Cais Mirim"
 	var texto: String = Nar.fim_de_fase()
-	var pede: int = tela.altura_do_texto(texto, int(tela.LARGURA) - int(tela.MARGEM_CARTAO))
-	var teto: int = int(tela.ALTURA_NARRACAO_MAX)
-	_confere("a narração inteira cabe sem rolar (pede %d, teto %d)" % [pede, teto],
-		pede > 0 and pede <= teto)
+	var paginas: PackedStringArray = Nar.fim_de_fase_paginas()
+	_confere("D22: a narração sai em duas páginas (%d)" % paginas.size(), paginas.size() == 2)
+	_confere("D22: e as duas, juntas pela virada, são a peça inteira",
+		Nar.FIM_DE_FASE_VIRADA.join(paginas) == texto)
+	_confere("D22: e a segunda acaba no remate",
+		paginas.size() == 2 and paginas[1].strip_edges().ends_with("Em quem tá olhando."),
+		"a segunda acaba em: " + (paginas[1].strip_edges().right(30) if paginas.size() > 1 else "(não há)"))
 
-	# E ACABA NO REMATE — sem isto, um texto truncado antes de chegar ao painel
-	# passaria na asserção acima justamente por ser curto.
-	_confere("e a peça acaba no remate dela",
-		texto.strip_edges().ends_with("Em quem tá olhando."),
-		"acaba em: " + texto.strip_edges().right(30))
+	# 2. a data por extenso
+	var data: String = Nar.fim_de_fase_cabecalho()
+	var digito := RegEx.new()
+	digito.compile("[0-9]")
+	_confere("D22: a data da entrada escreve a semana por extenso («%s»)" % data,
+		digito.search(data) == null and data.begins_with("Porto Mirim, "))
 
-	# E O TETO NÃO EMPURRA O CARTÃO PARA FORA DOS 1280 DO RETRATO. O que o
-	# painel gasta à volta do texto sai das constantes que o balanço já usa
-	# (cartão menos área de texto), em vez de um número novo escrito aqui.
-	var moldura: int = int(tela.MOLDURA_NARRACAO)
-	_confere("e o cartão cheio cabe na tela (%d + %d de moldura)" % [teto, moldura],
-		teto + moldura <= 1280)
+	# 3. cada página cabe na folha, com o nome mais comprido (a conta do D37)
+	var capa: StyleBox = tema.get_stylebox("panel", "CadernoCapa")
+	var fonte: Font = tema.get_font("font", "TextoCaderno")
+	var tam: int = tema.get_font_size("font_size", "TextoCaderno")
+	var espaco: int = tema.get_constant("line_spacing", "TextoCaderno")
+	var largura: float = float(PN["CADERNO_LARGURA"]) - capa.get_margin(SIDE_LEFT) \
+		- capa.get_margin(SIDE_RIGHT) - float(PN["PAGINA_MARGEM_PAUTADA"]) \
+		- float(PN["PAGINA_MARGEM_DIR"])
+	var altura: float = float(PN["CADERNO_ALTURA"]) - capa.get_margin(SIDE_TOP) \
+		- capa.get_margin(SIDE_BOTTOM) - float(PN["PAGINA_MARGEM_TOPO"]) \
+		- float(PN["PAGINA_MARGEM_PE"])
+	GS.nome_porto = "W".repeat(int(GS.NOME_MAX_CARACTERES))
+	var longas: PackedStringArray = Nar.fim_de_fase_paginas()
+	GS.nome_porto = "Cais Mirim"
+	var linha: float = fonte.get_height(tam)
+	for i in longas.size():
+		var corpo: float = fonte.get_multiline_string_size(longas[i],
+			HORIZONTAL_ALIGNMENT_LEFT, largura, tam).y
+		var linhas: int = int(round(corpo / linha))
+		# A primeira leva a data: ela e a linha em branco por baixo.
+		var data_linhas := 2 if i == 0 else 0
+		var n := linhas + data_linhas
+		var pede: float = n * linha + (n - 1) * espaco
+		_confere("D22: a página %d, com o nome mais comprido, cabe na folha (%d linhas, pede %d, cabe %d)"
+			% [i + 1, n, int(ceil(pede)), int(altura)], linhas > 5 and pede <= altura)
 
-	tela.queue_free()
+	# 4. a segunda página, com o recibo, montada com o tema e o nome mais comprido
+	var tela: Control = load("res://scenes/EndGame.tscn").instantiate()
+	tela.theme = tema
+	root.add_child(tela)
+	GS.nome_porto = "W".repeat(int(GS.NOME_MAX_CARACTERES))
+	tela.call("setup", true, "parcela_paga")
+	GS.nome_porto = "Cais Mirim"
+	var paginas_montadas: Array = []
+	var caderno: Node = tela.get_node_or_null("Caderno")
+	if caderno != null:
+		for filho in caderno.get_children():
+			if filho is PanelContainer and String(filho.name).begins_with("Pagina") \
+					or String(filho.name) == "PrimeiraPagina":
+				paginas_montadas.append(filho)
+	var recibo: Node = caderno.find_child("Recibo", true, false) if caderno != null else null
+	_confere("D22: o caderno montou as duas páginas e o recibo (%d páginas)" % paginas_montadas.size(),
+		paginas_montadas.size() == 2 and recibo != null)
+	if recibo != null:
+		# ⚠️ A COLUNA NÃO SE MEDE INTEIRA: o texto à mão quebra sozinho, e um
+		# rótulo com quebra só sabe a altura depois de um passe de layout — que
+		# esta suíte não dá (pedia 5.136 px). O texto mede-se pela conta da
+		# pauta, acima; o recibo, que não quebra, pelo tamanho mínimo dele; e o
+		# que os separa é a separação da coluna, uma vez por vão entre filhos.
+		var pagina: Node = recibo
+		while pagina != null and not (pagina is MarginContainer):
+			pagina = pagina.get_parent()
+		var coluna := (pagina as MarginContainer).get_child(0) as VBoxContainer
+		var segunda_txt: float = fonte.get_multiline_string_size(longas[1],
+			HORIZONTAL_ALIGNMENT_LEFT, largura, tam).y
+		var n2: int = int(round(segunda_txt / linha))
+		var pede_coluna: float = n2 * linha + (n2 - 1) * espaco \
+			+ (recibo as Control).get_combined_minimum_size().y \
+			+ (coluna.get_child_count() - 1) * coluna.get_theme_constant("separation")
+		_confere("D22: a segunda página, com o recibo e o nome mais comprido, cabe na folha (pede %d, cabe %d)"
+			% [int(ceil(pede_coluna)), int(altura)], pede_coluna > 300.0 and pede_coluna <= altura)
+	root.remove_child(tela)
+	tela.free()
 	_d22_completo = true
 
 
@@ -8208,3 +8275,129 @@ func _d43_o_que_recua(tela: Control) -> void:
 		var razao := _contraste(m[1] as Color, fundo)
 		_confere("D43: %s recua — %.2f:1 contra o fundo, abaixo dos %.2f do «AVANÇAR DIA»"
 			% [m[0], razao, teto], razao < teto)
+
+
+# ── D44 ── as conversas dos cartões (`docs/decisoes/082`)
+#
+# A segunda parte da melhoria de design, escolhida pelo Bruno em 04/10, pôs os
+# três cartões de conversa — o Sr. Ribeiro na parcela, o Arlindo na disputa, a
+# Dona Cida no boletim — a falar como no celular: o balão de quem fala, o
+# retrato numa placa do mesmo matiz, a fala em letra regular e a fala longa
+# partida em balões. Nada perguntava nenhuma destas coisas:
+#
+#  1. O BALÃO E A PLACA TÊM O MATIZ DA ROUPA DE QUEM FALA, com o esperado lido
+#     do PNG do retrato pela régua do D38 — não do código que escolhe a
+#     variação, que é onde o defeito moraria. O D38 pergunta-o ao celular, e
+#     o andaime partilha com ele o `_vestir_balao()`; o que só este bloco vê é
+#     o PAINEL a passar a pessoa errada e a PLACA trocada, que o celular não
+#     tem.
+#  2. A FALA É MAIS LEVE DO QUE O TÍTULO do mesmo cartão, pelo peso da letra
+#     que cada rótulo resolve. Sem a fonte na variação a fala cai no
+#     seminegrito padrão, e os dois pesam 600.
+#  3. A FALA LONGA SAI EM BALÕES: na cobrança do Sr. Ribeiro, que tem dois
+#     parágrafos, dois balões — o primeiro com o bico, o seguido sem ele — e
+#     nenhum vazio. Com a fala inteira num balão só os textos continuam certos
+#     (o F17 compara-os e passa), e é por isso que a pergunta é pela FORMA.
+var _d44_completo := false
+
+
+func _d44_conversas_dos_cartoes() -> void:
+	var GS: Node = root.get_node("GameState")
+	var motor = load("res://scripts/validation/contraste_ui.gd").new()
+	var tema: Theme = load("res://ui/tema_brport.tres")
+	var Nar = load("res://scripts/Narrativa.gd")
+	var omissao: Dictionary = load("res://scripts/PainelMensagens.gd") \
+		.get_script_constant_map()["CARA_DE_OMISSAO"]
+	var roupa := {}
+	for quem in omissao:
+		roupa[quem] = _d38_roupa(Nar.retrato(quem, String(omissao[quem])))
+	# Os casos do D33, pelo nome: o mesmo estado que a régua do contraste
+	# monta, e não um segundo jeito de montar a mesma cena.
+	var casos := {"Ribeiro (NÃO pode pagar)": ["ribeiro", 2],
+		"Contra-oferta": ["arlindo", 1], "Boletim": ["cida", 1]}
+	var vistos := 0
+	for caso in motor.percurso():
+		if not casos.has(String(caso["nome"])):
+			continue
+		var quem: String = casos[caso["nome"]][0]
+		var paragrafos: int = casos[caso["nome"]][1]
+		var no: Node = motor.montar_caso(root, GS, caso, tema)
+		_confere("D44: %s montou" % caso["nome"], no != null, "; ".join(motor.falhas))
+		if no == null:
+			continue
+		vistos += 1
+		_d44_um_cartao(no, quem, paragrafos, roupa)
+		no.get_parent().remove_child(no)
+		no.free()
+	_confere("D44: mediu os três cartões de conversa (%d)" % vistos, vistos == casos.size())
+	_d44_completo = true
+
+
+func _d44_um_cartao(no: Node, quem: String, paragrafos: int, roupa: Dictionary) -> void:
+	var retrato: TextureRect = null
+	for img in no.find_children("*", "TextureRect", true, false):
+		var t: Texture2D = (img as TextureRect).texture
+		if t != null and t.resource_path.get_file().begins_with("retrato_%s" % quem):
+			retrato = img
+	_confere("D44 %s: o cartão mostra o retrato de quem fala" % quem, retrato != null)
+	if retrato == null:
+		return
+	var placa := retrato.get_parent() as PanelContainer
+	var linha := placa.get_parent() if placa != null else null
+	_confere("D44 %s: o retrato senta numa placa" % quem, placa != null and linha != null)
+	if placa == null or linha == null:
+		return
+	var baloes: Array = []
+	for p in linha.find_children("*", "PanelContainer", true, false):
+		if p != placa and p.get_child_count() > 0 and p.get_child(0) is Label \
+				and (p as Control).is_visible_in_tree():
+			baloes.append(p)
+
+	# 1. o balão e a placa, contra a roupa do retrato
+	var pecas: Array = [["a placa", placa]]
+	for b in baloes:
+		pecas.append(["o balão «%s»" % ((b as Node).get_child(0) as Label).text.left(24), b])
+	for par in pecas:
+		var estilo := (par[1] as Control).get_theme_stylebox("panel") as StyleBoxFlat
+		if estilo == null:
+			_confere("D44 %s: %s tem fundo" % [quem, par[0]], false)
+			continue
+		var h: float = estilo.bg_color.h
+		var mais_perto := ""
+		var menor := 999.0
+		for outro in roupa:
+			var d: float = _d38_distancia_de_matiz(h, (roupa[outro] as Color).h)
+			if d < menor:
+				menor = d
+				mais_perto = outro
+		_confere("D44 %s: %s tem o matiz da roupa de quem fala (%.0f°, roupa %.0f°)"
+			% [quem, par[0], h * 360.0, (roupa[quem] as Color).h * 360.0],
+			mais_perto == quem, "o matiz mais perto é o da roupa de %s" % mais_perto)
+
+	# 2. a fala mais leve do que o título
+	var titulo: Label = null
+	for r in no.find_children("*", "Label", true, false):
+		if (r as Label).theme_type_variation == &"TituloNarrativo":
+			titulo = r
+	_confere("D44 %s: o cartão tem título" % quem, titulo != null)
+	if titulo != null and not baloes.is_empty():
+		var peso_titulo: int = titulo.get_theme_font("font").get_font_weight()
+		for b in baloes:
+			var fala := (b as Node).get_child(0) as Label
+			var peso: int = fala.get_theme_font("font").get_font_weight()
+			_confere("D44 %s: a fala pesa %d, menos do que os %d do título"
+				% [quem, peso, peso_titulo], peso < peso_titulo)
+
+	# 3. um balão por parágrafo, o primeiro com bico, nenhum vazio
+	var com_bico := 0
+	var vazios := 0
+	for b in baloes:
+		var estilo := (b as Control).get_theme_stylebox("panel") as StyleBoxFlat
+		if estilo != null and estilo.corner_radius_top_left < estilo.corner_radius_top_right:
+			com_bico += 1
+		if ((b as Node).get_child(0) as Label).text.strip_edges() == "":
+			vazios += 1
+	_confere("D44 %s: %d balão(ões) para %d parágrafo(s), só o primeiro com bico, nenhum vazio"
+		% [quem, baloes.size(), paragrafos],
+		baloes.size() == paragrafos and com_bico == 1 and vazios == 0,
+		"%d com bico, %d vazios" % [com_bico, vazios])
