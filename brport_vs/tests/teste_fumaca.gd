@@ -2296,7 +2296,7 @@ func _f12_o_rosto_do_trabalhador() -> void:
 				"gerado e sem quem o mostre")
 	_confere("F12: a varredura do disco achou os trinta (%d)" % no_disco, no_disco == 30)
 	var cena := load("res://scenes/worker/Worker.tscn") as PackedScene
-	var tex_cena: Texture2D = (cena.instantiate().get_node("Conteudo/Retrato") as TextureRect).texture
+	var tex_cena: Texture2D = (cena.instantiate().get_node("Conteudo/Placa/Retrato") as TextureRect).texture
 	_confere("F12: o rosto 0 é o retrato que a cena traz",
 		tex_cena != null and tex_cena.resource_path == String(caminhos[0]))
 
@@ -2383,7 +2383,7 @@ func _f12_o_rosto_do_trabalhador() -> void:
 	var cartao: Node = cena.instantiate()
 	root.add_child(cartao)
 	cartao.setup(int(GS.workers[0]["id"]))
-	var tex: Texture2D = (cartao.get_node("Conteudo/Retrato") as TextureRect).texture
+	var tex: Texture2D = (cartao.get_node("Conteudo/Placa/Retrato") as TextureRect).texture
 	_confere("F12: o cartão mostra o retrato do rosto dele",
 		tex != null and tex.resource_path == String(caminhos[caminhos.size() - 1]),
 		"mostra %s" % (tex.resource_path if tex != null else "nada"))

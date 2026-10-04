@@ -3,30 +3,63 @@
 [ext_resource type="Script" path="res://scripts/Worker.gd" id="1"]
 [ext_resource type="Texture2D" path="res://art/props/trabalhador_retrato.png" id="2"]
 
+; O CARTÃO EM DUAS COLUNAS (`docs/decisoes/081`): o retrato à esquerda, sobre
+; a placa clara, e o número e o estado à direita. Até 04/10 era uma coluna só,
+; com o retrato de 70 px em cima, num cartão de 108 de largura; com a largura
+; da coluna da doca (224), uma coluna só deixava o retrato perdido no meio. O
+; retrato cresceu para a altura do cartão, que é onde se distinguem os trinta
+; rostos (`059`).
+;
+; ⚠️ O RETRATO COBRE A ALTURA DA PLACA (`stretch_mode = 6`) e não cabe nela
+; inteiro: o PNG é QUADRADO e o desenho só ocupa o meio (500 de 768 px de
+; largura). Caber inteiro (o modo 5) dava um quadrado da largura da placa, com
+; o busto a 67 px de altura; a cobrir, o busto vai a ~110 e o corte cai na
+; margem vazia do PNG. A placa tem 76 de largura porque a folha dos trinta
+; rostos põe cinco cartões numa tela de 720 (`folha_trabalhadores.gd`).
+;
+; ⚠️ NADA AQUI DENTRO RECEBE O TOQUE (`mouse_filter = 2`): quem seleciona e
+; arrasta é o próprio cartão (`_gui_input`, `_get_drag_data`), e a placa é um
+; `PanelContainer`, que por omissão PARA o evento e o roubaria.
 [node name="Worker" type="PanelContainer"]
 custom_minimum_size = Vector2(108, 136)
 script = ExtResource("1")
 
-[node name="Conteudo" type="VBoxContainer" parent="."]
+[node name="Conteudo" type="HBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 2
-alignment = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
 
-[node name="Retrato" type="TextureRect" parent="Conteudo"]
-custom_minimum_size = Vector2(0, 70)
+[node name="Placa" type="PanelContainer" parent="Conteudo"]
+custom_minimum_size = Vector2(76, 0)
 layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"PlacaRetrato"
+
+[node name="Retrato" type="TextureRect" parent="Conteudo/Placa"]
+layout_mode = 2
+mouse_filter = 2
 texture = ExtResource("2")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
 
-[node name="Nome" type="Label" parent="Conteudo"]
+[node name="Texto" type="VBoxContainer" parent="Conteudo"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Nome" type="Label" parent="Conteudo/Texto"]
 layout_mode = 2
 text = "#1"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 15
+theme_type_variation = &"TextoPilula"
+theme_override_font_sizes/font_size = 20
 
-[node name="Estado" type="Label" parent="Conteudo"]
+; ⚠️ SEM QUEBRA AUTOMÁTICA: encolhido à esquerda (para o selo do escolhido
+; abraçar a palavra), um rótulo com quebra mede quase zero de largura e o selo
+; saía como uma lasca ao lado de «Escolhido». Os estados são palavras curtas,
+; e o pior caso, «Ocupado (2t)», cabe na coluna de texto do cartão do jogo.
+[node name="Estado" type="Label" parent="Conteudo/Texto"]
 layout_mode = 2
-horizontal_alignment = 1
-autowrap_mode = 2
-theme_override_font_sizes/font_size = 12
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 13

@@ -21,6 +21,7 @@ extends Control
 # projeto já pagou noutros sítios.
 const DockScript := preload("res://scripts/Dock.gd")
 const WorkerScene := preload("res://scenes/worker/Worker.tscn")
+const VagaScene := preload("res://scenes/worker/Vaga.tscn")
 const CounterOfferScene := preload("res://scenes/panels/CounterOfferPanel.tscn")
 const DebtPaymentScene := preload("res://scenes/panels/DebtPaymentPanel.tscn")
 const UpgradePanelScene := preload("res://scenes/panels/UpgradePanel.tscn")
@@ -89,6 +90,7 @@ var _fila_da_vez: Array[Callable] = []
 # arrasto nunca o usa, e o jogo salvo não deve carregar isto.
 var _selecionado: int = -1
 @onready var _workers_container: HBoxContainer = $Trabalhadores
+@onready var _vagas: HBoxContainer = $Vagas
 @onready var _workers_title: Label = $TrabalhadoresTitulo
 @onready var _mapa: TextureRect = $MapaWrap/Mapa
 
@@ -1949,9 +1951,12 @@ func _refresh_meta() -> void:
 		_meta_titulo.text = "Parcela do Sr. Ribeiro"
 		_meta_bar.value = 100.0
 		_meta_label.text = "Paga — porto salvo"
+		_meta_label.theme_type_variation = &"TextoPilulaBom"
 		return
 
-	_meta_icone.texture = Icones.PARCELA
+	# O banco em traço CLARO: o cartão passou a escuro em 04/10, e o `PARCELA`
+	# dos painéis é navy cheio (`081`).
+	_meta_icone.texture = Icones.PARCELA_BARRA
 	var dias_restantes: int = max(GameState.PARCELA_DUE_TURN - GameState.turn + 1, 0)
 	_meta_titulo.text = "Parcela do Sr. Ribeiro — %s" % Narrativa.concordar(
 		dias_restantes, "dia restante", "dias restantes")
@@ -1959,28 +1964,28 @@ func _refresh_meta() -> void:
 	# conta junto com a pílula, e os dois números nunca discordam na tela
 	# (`078`). Fora da virada os dois são o mesmo.
 	_meta_bar.value = clamp(100.0 * float(_caixa_mostrado) / float(alvo), 0.0, 100.0)
-	var falta: int = alvo - _caixa_mostrado
-	var progresso := "%s de %s" % [GameState.moeda(_caixa_mostrado), GameState.moeda(alvo)]
-	if falta > 0:
-		_meta_label.text = "%s — faltam %s" % [progresso, GameState.moeda(falta)]
-		_meta_label.theme_type_variation = StringName("")
-		_meta_label.remove_theme_color_override("font_color")
+	# ⚠️ O CONVITE ABRE ONDE A PORTA ABRE, e a porta cobra o valor de HOJE.
+	# Até 04/10 ele comparava com a parcela CHEIA e escrevia «R$1.045.000 de
+	# R$530.000» com a barra cheia, o que se lia como 197%; e entre o valor de
+	# hoje e o cheio a porta já estava aberta e o cartão dizia «faltam». Hoje
+	# a linha com sobra diz o MESMO número que a tarja do painel, que é o que
+	# o botão de lá tira (o F15 confere os três) (`081`).
+	var hoje: int = GameState.valor_da_parcela_hoje()
+	if _caixa_mostrado < hoje:
+		var falta: int = alvo - _caixa_mostrado
+		_meta_label.text = "%s de %s — faltam %s" % [
+			GameState.moeda(_caixa_mostrado), GameState.moeda(alvo), GameState.moeda(falta)]
+		_meta_label.theme_type_variation = &"TextoBarra"
 	else:
 		# CARTÃO TOCÁVEL QUE NÃO SE ANUNCIA É CARTÃO QUE NINGUÉM TOCA. O convite
 		# só aparece quando há o que fazer com ele — antes disso, tocar abriria
 		# um painel que só sabe dizer quanto falta, e a linha aqui já diz isso.
-		_meta_label.text = "%s — toque para quitar agora" % progresso
-		# ⚠️ PELO TEMA, e não pelo âmbar de marca. Este rótulo tem 13px e cai
-		# no cartão BRANCO do HUD: o âmbar de marca media 3,18:1 ali, contra
-		# um corte de 4,5 — e é o convite a quitar a parcela, a linha mais
-		# cara de não se ler do jogo. `RotuloAlerta` é o mesmo âmbar
-		# escurecido, a 5,06:1 (`docs/decisoes/035`).
-		#
-		# ⚠️ E O ÂMBAR DE MARCA JÁ NÃO É CONSTANTE DESTE ARQUIVO. Ele vive no
-		# tema: `TextoBarraAlerta` para a barra escura, a 5,53:1 (`041`), e a
-		# faixa de mensagem levou o MESMO escurecido daqui — porque sobre o
-		# creme dela o de marca media 3,07:1, e ninguém o media (`042`).
-		_meta_label.theme_type_variation = "RotuloAlerta"
+		_meta_label.text = "Dá para quitar hoje por %s — toque para ver" % GameState.moeda(hoje)
+		# ⚠️ O ÂMBAR CLARO, e não o `RotuloAlerta` que vestiu até 04/10. Aquele
+		# é o âmbar escurecido para o cartão BRANCO (5,06:1 lá); o cartão
+		# passou a escuro, onde ele mediria 2,93:1, e o claro da reputação na
+		# pílula mede 8,37:1 no mesmo azul (`035`, `081`).
+		_meta_label.theme_type_variation = &"TextoPilulaDestaque"
 
 
 # As vagas já existem na cena, uma por píer desenhado no mapa. Aqui só se diz
@@ -2034,8 +2039,32 @@ func _refresh_workers() -> void:
 		_selecionado = -1
 
 	_clear(_workers_container)
+	# TRÊS COLUNAS, AS DAS DOCAS (`081`). Os cartões tinham a largura mínima
+	# deles e ficavam encostados à esquerda: com um trabalhador sobravam 85%
+	# da linha, com três metade. Agora cada um ocupa a coluna da doca que está
+	# por cima — mesma largura, mesma separação —, e uma coluna vazia é a de um
+	# píer por construir, que o cartão da doca já diz.
+	#
+	# ⚠️ A CONTA SAI DA BARRA DAS DOCAS e não de um número: se a separação ou
+	# a largura de uma mudar, a outra segue. O máximo de colunas é o de
+	# berços; um roster maior (a frente 5) reparte a linha por todos.
+	var colunas: int = maxi(GameState.BERCOS_NO_MAPA, GameState.workers.size())
+	var sep: int = _dock_cards.get_theme_constant("separation")
+	var largura: float = (_dock_cards.size.x - sep * (colunas - 1)) / float(colunas)
+	_workers_container.add_theme_constant_override("separation", sep)
+	_vagas.add_theme_constant_override("separation", sep)
+	# A COLUNA SEM TRABALHADOR MOSTRA A VAGA, e a de quem existe fica com um
+	# espaçador da mesma largura, para a vaga cair na coluna certa (`081`).
+	_clear(_vagas)
+	for i in range(colunas):
+		var no: Control = VagaScene.instantiate() if i >= GameState.workers.size() \
+			else Control.new()
+		no.custom_minimum_size.x = largura
+		no.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_vagas.add_child(no)
 	for w in GameState.workers:
 		var worker_node = WorkerScene.instantiate()
+		worker_node.custom_minimum_size.x = largura
 		_workers_container.add_child(worker_node)
 		worker_node.setup(int(w["id"]))
 		worker_node.selecionado.connect(_on_worker_selecionado)

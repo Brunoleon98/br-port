@@ -68,7 +68,11 @@ func refresh() -> void:
 
 	if not esta_construida():
 		theme_type_variation = &"CartaoDocaObra"
-		_valor.text = "—"
+		# SEM VALOR, SEM TRAÇO (`081`). O «—» ocupava o canto do número em
+		# toda doca sem barco, e o olho parava nele a cada turno para ler
+		# «nada» — a regra da linha com valor zero, num cartão. A linha de
+		# baixo já diz porquê não há número.
+		_valor.text = ""
 		_progresso.text = "píer por construir"
 		_progresso.theme_type_variation = &"TextoDocaProgresso"
 		_trabalhador.text = ""
@@ -79,7 +83,7 @@ func refresh() -> void:
 
 	if boat == null:
 		theme_type_variation = &"CartaoDoca"
-		_valor.text = "—"
+		_valor.text = ""
 		_progresso.text = "aguardando barco"
 		_progresso.theme_type_variation = &"TextoDocaProgresso"
 		_trabalhador.text = ""

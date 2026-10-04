@@ -303,6 +303,10 @@ func _rodar() -> void:
 	_d42_portico_n3()
 	_confere("o bloco D42 correu até ao fim", _d42_completo)
 
+	print("=== D43: o rodapé escuro — as colunas dos trabalhadores e o que recua ===")
+	_d43_rodape_escuro()
+	_confere("o bloco D43 correu até ao fim", _d43_completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -1536,32 +1540,60 @@ func _d12_toque_na_parcela() -> void:
 	var rotulo: Label = tela.get_node("MetaCartao/MetaColuna/MetaTexto")
 	_confere("com caixa de sobra, o cartão convida ao toque",
 		rotulo.text.contains("toque"), "diz \"%s\"" % rotulo.text)
-	# ⚠️ ESTA ASSERÇÃO PERGUNTAVA PELO `COR_AVISO` ATÉ 20/09, e apanhou a
-	# mudança que o tirou — que é o que ela existe para fazer. O rótulo já não
-	# pinta cor à mão: pede `RotuloAlerta` ao tema, porque o âmbar de marca
-	# media 3,18:1 neste cartão branco contra um corte de 4,5 e este é o
-	# convite a quitar a parcela (`docs/decisoes/035`). A pergunta continua a
-	# ser a MESMA — "o convite destaca-se?" — e agora ela é feita à cor FINAL,
-	# que é o que o jogador vê, em vez de ao mecanismo que a põe lá.
+	# ⚠️ ESTA ASSERÇÃO PERGUNTOU PELO `COR_AVISO` ATÉ 20/09 E PELO
+	# `RotuloAlerta` ATÉ 04/10, e apanhou as duas mudanças — que é o que ela
+	# existe para fazer. O cartão passou de branco a escuro (`081`), e o âmbar
+	# escurecido que servia ao branco mediria 2,93:1 ali; o convite veste o
+	# âmbar CLARO da pílula. A pergunta continua a ser a MESMA — "o convite
+	# destaca-se?" —, feita à cor FINAL e contra o fundo que o cartão
+	# DESENHA, composto sobre o fundo da tela, e não contra um branco suposto.
 	var cor_convite: Color = rotulo.get_theme_color("font_color")
-	_confere("e o convite sai na cor de alerta do tema",
+	_confere("e o convite sai no âmbar claro do tema",
 		cor_convite.is_equal_approx(
 			(load("res://ui/tema_brport.tres") as Theme)
-				.get_color("font_color", "RotuloAlerta")),
+				.get_color("font_color", "TextoPilulaDestaque")),
 		"saiu %s" % cor_convite)
-	_confere("e essa cor passa o AA sobre o cartão branco do HUD",
-		_contraste(cor_convite, Color(1, 1, 1)) >= 4.5,
-		"mede %.2f:1" % _contraste(cor_convite, Color(1, 1, 1)))
+	var caixa_meta := (tela.get_node("MetaCartao") as PanelContainer).get_theme_stylebox(
+		"panel") as StyleBoxFlat
+	var fundo_tela: Color = (tela.get_node("Fundo") as ColorRect).color
+	var fundo_meta: Color = fundo_tela.lerp(caixa_meta.bg_color, caixa_meta.bg_color.a) \
+		if caixa_meta != null else Color(1, 1, 1)
+	fundo_meta.a = 1.0
+	_confere("e essa cor passa o AA sobre o cartão da parcela, como ele se desenha",
+		caixa_meta != null and _contraste(cor_convite, fundo_meta) >= 4.5,
+		"mede %.2f:1 sobre %s" % [_contraste(cor_convite, fundo_meta), fundo_meta])
+	# ⚠️ E O NÚMERO DO CONVITE É O DA PORTA (`081`). Até 04/10 a linha dizia
+	# «R$1.045.000 de R$530.000», que se lia como 197%; hoje diz o valor de
+	# HOJE, que é o que a tarja do painel mostra e o botão de lá tira — e o
+	# F15 do fumaça prova a tarja contra o botão. Aqui prova-se o elo que
+	# faltava: o cartão contra o jogo.
+	var hoje: int = GS.valor_da_parcela_hoje()
+	_confere("e o convite diz o valor de hoje, que é o que a porta cobra",
+		rotulo.text.contains(GS.moeda(hoje)),
+		"diz \"%s\", o valor de hoje é %s" % [rotulo.text, GS.moeda(hoje)])
 
 	_confere_chip_abre(tela, overlay, "MetaCartao", "PainelParcela.gd",
 		["Parcela do Sr. Ribeiro", "Quitar hoje"])
 
 	# Sem caixa, o convite SOME — senão ele prometeria uma ação que a porta
 	# do outro lado recusa.
-	GS.cash = int(GS.PARCELA_AMOUNT) - 1
+	#
+	# ⚠️ E O LIMIAR É O DA PORTA, NOS DOIS LADOS (`081`). Até 04/10 o
+	# cartão comparava com a parcela CHEIA e a porta com o valor de HOJE: entre
+	# os dois a porta já abria e o cartão dizia «faltam». Um real abaixo do
+	# valor de hoje fecha os dois; o valor exato abre os dois — e é a segunda
+	# metade que apanha o limiar de volta à parcela cheia, que a primeira
+	# deixava passar (o cheio também está acima de `hoje - 1`).
+	GS.cash = hoje - 1
 	tela.call("_refresh_hud")
 	_confere("sem caixa, o convite desaparece",
-		not rotulo.text.contains("toque"), "diz \"%s\"" % rotulo.text)
+		not rotulo.text.contains("toque") and not GS.pode_pagar_parcela_adiantado(),
+		"diz \"%s\"" % rotulo.text)
+	GS.cash = hoje
+	tela.call("_refresh_hud")
+	_confere("com o valor de hoje exato, o convite aparece e a porta abre",
+		rotulo.text.contains("toque") and GS.pode_pagar_parcela_adiantado(),
+		"diz \"%s\"" % rotulo.text)
 
 	root.remove_child(tela)
 	tela.free()
@@ -2699,25 +2731,89 @@ func _d19_contraste_do_painel() -> void:
 	painel.theme = load("res://ui/tema_brport.tres")
 	_main.add_child(painel)
 
-	var fundo := _fundo_do_cartao(painel)
-	_confere("achei o fundo do cartão (%s)" % fundo, fundo.a > 0.0)
-
+	# ⚠️ CADA RÓTULO CONTRA O FUNDO QUE ELE TEM, e não contra o do cartão. Até
+	# 04/10 isto media tudo contra o branco do cartão — que era verdade
+	# enquanto o painel era um cartão branco e mais nada. Com o cabeçalho navy
+	# e a tarja das famílias (`081`), o título branco sobre o navy reprovaria
+	# contra um branco que não está atrás dele. Quem sabe o fundo de cada
+	# rótulo é a régua do D33, e é ela que se usa.
+	var motor: RefCounted = load("res://scripts/validation/contraste_ui.gd").new()
 	var reprovados := 0
+	var pendentes := 0
 	var pior := 99.0
 	var pior_texto := ""
-	for no in _todos_os_labels(painel):
-		var cor: Color = no.get_theme_color("font_color")
-		var tamanho: int = no.get_theme_font_size("font_size")
-		var corte: float = 3.0 if tamanho >= 18 else 4.5
-		var razao := _contraste(cor, fundo)
-		if razao < pior:
-			pior = razao
-			pior_texto = "%s a %dpx" % [no.text.substr(0, 28), tamanho]
-		if razao < corte:
+	var medidos := 0
+	for linha in motor.medir(painel):
+		if linha["estado"] == "isento":
+			continue
+		medidos += 1
+		if linha["estado"] == "pendente":
+			pendentes += 1
+			continue
+		if float(linha["razao"]) < pior:
+			pior = float(linha["razao"])
+			pior_texto = "%s a %dpx" % [linha["texto"], int(linha["px"])]
+		if linha["estado"] == "reprova":
 			reprovados += 1
+	_confere("o painel tem texto para medir (%d)" % medidos, medidos >= 10)
 	_confere("nenhum rótulo reprova a WCAG (pior: %.2f:1 em %s)"
-			% [pior, pior_texto], reprovados == 0,
-		"%d rótulo(s) abaixo do corte" % reprovados)
+			% [pior, pior_texto], reprovados == 0 and pendentes == 0,
+		"%d rótulo(s) abaixo do corte, %d sem fundo resolvido" % [reprovados, pendentes])
+
+	# E A RÉGUA SABE REPROVAR AQUI: o neutro do jogo, pousado no cartão branco,
+	# é o defeito que este bloco nasceu para apanhar (2,93:1, `CLAUDE.md`).
+	var intruso := Label.new()
+	intruso.text = "neutro do jogo no cartão branco"
+	intruso.theme_type_variation = &"TextoBarra"
+	var caixa_painel: Node = null
+	for filho in painel.get_children():
+		if filho is PanelContainer:
+			caixa_painel = filho
+	if caixa_painel != null:
+		caixa_painel.get_child(0).add_child(intruso)
+		var achou := false
+		for linha in motor.medir(painel):
+			if String(linha["texto"]) == intruso.text:
+				achou = linha["estado"] == "reprova"
+		_confere("e a régua reprova o neutro do jogo pousado no cartão", achou)
+		intruso.get_parent().remove_child(intruso)
+	intruso.free()
+
+	# ── E NENHUM TEXTO DE UMA LINHA É MAIS LARGO DO QUE O SÍTIO DELE (`081`).
+	# Com o preço e o botão à direita de cada linha, um rótulo com quebra
+	# automática ao lado da coluna que expande fica com largura quase zero, e
+	# uma palavra só — «Construída» — desenha-se por cima da borda do cartão,
+	# sem erro nenhum. Passou na primeira captura da passagem. Mede-se com o
+	# porto de duas estruturas compradas, que é onde o «Construída» existe.
+	var GS: Node = root.get_node("GameState")
+	var caixa_antes: int = int(GS.cash)
+	var estruturas_antes: Array = GS.estruturas.duplicate()
+	GS.cash = 900000
+	GS.estruturas = ["pier_2", "armazem"]
+	var com_obra: Control = (load("res://scenes/panels/UpgradePanel.tscn") as PackedScene).instantiate()
+	com_obra.theme = load("res://ui/tema_brport.tres")
+	_main.add_child(com_obra)
+	_d19_arrumar(com_obra)
+	var largos: Array = []
+	var feitos := 0
+	for no in _todos_os_labels(com_obra):
+		var r := no as Label
+		if r.text == "Construída":
+			feitos += 1
+		if r.text.contains("\n") or r.get_line_count() > 1:
+			continue
+		var fonte: Font = r.get_theme_font("font")
+		var pede: float = fonte.get_string_size(r.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			r.get_theme_font_size("font_size")).x
+		if pede > r.size.x + 1.0:
+			largos.append("«%s» pede %.0f px e tem %.0f" % [r.text, pede, r.size.x])
+	_confere("D19: o painel com obra mostra os dois «Construída» (%d)" % feitos, feitos == 2)
+	_confere("D19: nenhum texto de uma linha desenha mais largo do que o sítio dele",
+		largos.is_empty(), "; ".join(largos))
+	_main.remove_child(com_obra)
+	com_obra.free()
+	GS.cash = caixa_antes
+	GS.estruturas = estruturas_antes
 
 	_main.remove_child(painel)
 	painel.queue_free()
@@ -2727,13 +2823,14 @@ func _d19_contraste_do_painel() -> void:
 # O fundo em que os rótulos deste painel caem: o `bg_color` do StyleBox do
 # PanelContainer do cartão. Ler o tema em vez de escrever a cor à mão é o que
 # faz este teste continuar a valer quando o tema mudar.
-func _fundo_do_cartao(painel: Control) -> Color:
-	for filho in painel.get_children():
-		if filho is PanelContainer:
-			var sb := (filho as PanelContainer).get_theme_stylebox("panel")
-			if sb is StyleBoxFlat:
-				return (sb as StyleBoxFlat).bg_color
-	return Color(0, 0, 0, 0)
+# Os contentores arrumam-se no frame seguinte, e esta suíte não deixa passar
+# nenhum: a ordem é dada à mão, de cima para baixo, porque é o pai que dá o
+# tamanho ao filho antes de o filho arrumar os dele.
+func _d19_arrumar(no: Node) -> void:
+	if no is Container:
+		no.notification(Container.NOTIFICATION_SORT_CHILDREN)
+	for filho in no.get_children():
+		_d19_arrumar(filho)
 
 
 func _todos_os_labels(no: Node) -> Array:
@@ -4484,10 +4581,15 @@ func _todos_os_nos(raiz: Node) -> Array:
 # as podia ver.
 #
 # ⚠️ E A COR DO CONTADOR É A QUARTA VEZ QUE ESTE PROJETO TROPEÇA NA MESMA.
-# O neutro do jogo (0,51/0,6/0,706) mede **2,82:1** sobre o creme da faixa —
+# O neutro do jogo (0,51/0,6/0,706) media **2,82:1** sobre o creme da faixa —
 # abaixo até do corte de texto GRANDE —, e é a cor que um rótulo novo herda
-# sem ninguém pensar. O que está lá mede 5,27:1. O `CLAUDE.md` regista as
-# outras três, no calendário, no painel Construir e no menu-celular.
+# sem ninguém pensar. O `CLAUDE.md` regista as outras três, no calendário, no
+# painel Construir e no menu-celular.
+#
+# ⚠️ E EM 04/10 A FAIXA PASSOU A ESCURA (`081`), e a conta virou ao
+# contrário: o neutro passou a ser a cor CERTA (5,05:1, o fundo para o qual
+# foi feito) e o `RotuloApoio`, que o contador vestia sobre o creme, mede
+# 2,71 no azul. É ele o defeito que a régua tem de reprovar agora.
 var _d32_completo := false
 
 const D32_AA_PEQUENO := 4.5
@@ -4505,8 +4607,8 @@ func _d32_faixa_de_mensagem() -> void:
 		cartao.size.y >= TOQUE_MIN,
 		"mede %.0f px de altura, o mínimo é %.0f" % [cartao.size.y, TOQUE_MIN])
 
-	# ── o contraste do contador contra o FUNDO REAL, que é o creme do
-	# StyleBox da faixa e não o branco do cartão de painel.
+	# ── o contraste do contador contra o FUNDO REAL, que é o do StyleBox da
+	# faixa e não o branco do cartão de painel.
 	var pendentes := _main.get_node_or_null("MensagemCartao/Linha/Pendentes") as Label
 	_confere("D32: o contador do que espera existe", pendentes != null)
 	if pendentes == null:
@@ -4517,17 +4619,19 @@ func _d32_faixa_de_mensagem() -> void:
 		return
 	var cor: Color = pendentes.get_theme_color("font_color")
 	var razao := _contraste(cor, caixa.bg_color)
-	_confere("D32: o contador passa o AA de texto pequeno sobre o creme da faixa",
+	_confere("D32: o contador passa o AA de texto pequeno sobre o fundo da faixa",
 		razao >= D32_AA_PEQUENO, "mede %.2f:1, o corte é %.1f" % [razao, D32_AA_PEQUENO])
 
 	# ── E A PROVA DE QUE A MEDIÇÃO SABE REPROVAR. Sem isto, um `_contraste`
 	# avariado daria verde com qualquer cor — é a régua com o defeito injetado
-	# embutido, como o `CLAUDE.md` exige de toda régua nova.
-	var neutro_do_jogo := Color(0.51, 0.6, 0.706)
-	_confere("D32: e a régua reprova o neutro do jogo, que aqui não serve",
-		_contraste(neutro_do_jogo, caixa.bg_color) < D32_AA_PEQUENO,
-		"o neutro mediu %.2f:1 — se passou, a conta está avariada"
-			% _contraste(neutro_do_jogo, caixa.bg_color))
+	# embutido, como o `CLAUDE.md` exige de toda régua nova. O defeito é a
+	# variação que o contador vestia até 04/10, lida do TEMA (`081`).
+	var de_antes: Color = (load("res://ui/tema_brport.tres") as Theme).get_color(
+		"font_color", "RotuloApoio")
+	_confere("D32: e a régua reprova a cor de antes, que aqui não serve",
+		_contraste(de_antes, caixa.bg_color) < D32_AA_PEQUENO,
+		"o `RotuloApoio` mediu %.2f:1 — se passou, a conta está avariada"
+			% _contraste(de_antes, caixa.bg_color))
 
 	_d32_completo = true
 
@@ -4860,7 +4964,7 @@ func _d34_borda_do_trabalhador() -> void:
 	var alvo = trabs[0]
 	var wid: int = alvo.worker_id
 	var repouso: StyleBox = alvo.get_theme_stylebox("panel")
-	var estado_rot: Label = alvo.get_node("Conteudo/Estado")
+	var estado_rot: Label = alvo.get_node("Conteudo/Texto/Estado")
 	# `get_minimum_size()` e não `size`: o contentor só reordena no fim do
 	# frame, e este bloco não espera frame nenhum. A altura mínima do rótulo
 	# responde na hora, e é ela que decide se o `VBoxContainer` recentra.
@@ -7127,7 +7231,15 @@ func _d41_a_virada(GS: Node, DockS: Script, tela: Control, docas: Array,
 		if mostrado < mostrado_antes:
 			desce += 1
 		mostrado_antes = mostrado
-		if not meta.text.contains(pilula.text):
+		# ⚠️ OU O MESMO DINHEIRO, OU O CONVITE — e o convite pelo dinheiro
+		# MOSTRADO (`081`). Desde 04/10 a linha com sobra diz o valor de hoje
+		# e não o caixa; esta partida atravessa o limiar a meio da contagem,
+		# e o cartão tem de virar no mesmo passo em que a pílula o passa.
+		var hoje_d41: int = GS.valor_da_parcela_hoje()
+		if mostrado < hoje_d41:
+			if not meta.text.contains(pilula.text):
+				discorda += 1
+		elif not meta.text.contains("quitar hoje por " + GS.moeda(hoje_d41)):
 			discorda += 1
 		for i in range(3):
 			var b := docas[i].get_node("Barco") as TextureRect
@@ -7980,3 +8092,119 @@ func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 	for dd in GS.docks:
 		dd["boat"] = null
 		dd["worker_id"] = null
+
+
+# ── D43 ── o rodapé escuro (`docs/decisoes/081`)
+#
+# A primeira passagem da melhoria de design do HUD, escolhida pelo Bruno em
+# 04/10, mexeu em duas coisas que nenhuma guarda perguntava:
+#
+#  1. OS TRABALHADORES NAS COLUNAS DAS DOCAS. Os cartões tinham a largura
+#     mínima e encostavam-se à esquerda. Agora cada um ocupa a coluna da doca
+#     de cima, e a largura sai da barra das docas. Pergunta-se com UM e com
+#     TRÊS: com um só, um defeito na separação não se vê (a regra «contagem
+#     só se testa acima de um»); com três, repartir a linha pelo número de
+#     TRABALHADORES em vez do de berços dá o mesmo resultado e passaria.
+#
+#  2. O QUE SÓ INFORMA RECUA. No pixel da captura, o botão desligado media
+#     12,99:1 contra o fundo do HUD, a faixa de mensagem 16,98 e o cartão da
+#     parcela 17,60 — e o «AVANÇAR DIA», o único destaque da tela, 7,38. A
+#     pergunta é de HIERARQUIA: cada uma destas superfícies, como se desenha
+#     sobre o fundo, fica abaixo do primário.
+#
+# Os cartões dos TRABALHADORES entraram na segunda passagem: com três colunas
+# eram a maior mancha clara do rodapé (16,50:1 o livre, 13,43 o parado), e o
+# Bruno pediu-os escuros. O claro ficou só na PLACA atrás do retrato, que fica
+# de fora de propósito — é do tamanho do retrato, e sem ela o casaco navy
+# sumia no azul. A vaga, que veste o cartão da doca em obra, também entra.
+#
+# ⚠️ A guarda não diz que o primário se lê bem — diz que nada do que não é a
+# ação principal lhe rouba o olho.
+var _d43_completo := false
+
+
+func _d43_rodape_escuro() -> void:
+	var GS: Node = root.get_node("GameState")
+	# 1 ── as colunas, com um trabalhador e com três
+	for porto_completo in [false, true]:
+		GS.clear_save()
+		GS._rng.seed = 20261004
+		GS.new_game()
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		if porto_completo:
+			var tabela: Dictionary = GS.ESTRUTURAS
+			for e in tabela:
+				GS.cash += int(tabela[e]["custo"])
+			var ids: Array = tabela.keys()
+			ids.sort_custom(func(a, b): return int(tabela[a]["ordem"]) < int(tabela[b]["ordem"]))
+			for e in ids:
+				GS.comprar_estrutura(e)
+		var tela: Control = load(CENA).instantiate()
+		root.add_child(tela)
+		var barra := tela.get_node("BarraDocas") as HBoxContainer
+		var linha := tela.get_node("Trabalhadores") as HBoxContainer
+		# Os contentores arrumam-se no frame seguinte, e esta suíte não deixa
+		# passar nenhum: a ordem de arrumar é dada aqui, à mão.
+		barra.notification(Container.NOTIFICATION_SORT_CHILDREN)
+		linha.notification(Container.NOTIFICATION_SORT_CHILDREN)
+		var docas: Array = barra.get_children()
+		var cartoes: Array = linha.get_children()
+		var n: int = GS.workers.size()
+		_confere("D43: o estado tem %d trabalhador(es), como pedido" % n,
+			cartoes.size() == n and n == (3 if porto_completo else 1),
+			"%d cartões, %d trabalhadores" % [cartoes.size(), n])
+		var fora: Array = []
+		for i in range(mini(cartoes.size(), docas.size())):
+			var c := cartoes[i] as Control
+			var d := docas[i] as Control
+			if absf(c.global_position.x - d.global_position.x) > 0.5 \
+					or absf(c.size.x - d.size.x) > 0.5:
+				fora.append("#%d em x=%.0f larg %.0f, doca em x=%.0f larg %.0f" % [
+					i + 1, c.global_position.x, c.size.x, d.global_position.x, d.size.x])
+		_confere("D43: com %d trabalhador(es), cada cartão ocupa a coluna da doca de cima" % n,
+			fora.is_empty() and not cartoes.is_empty(), "; ".join(fora))
+		if porto_completo:
+			_d43_o_que_recua(tela)
+		root.remove_child(tela)
+		tela.free()
+	_d43_completo = true
+
+
+# A cor que uma superfície DESENHA sobre o fundo da tela: o stylebox chapado
+# composto pelo alfa dele. Um stylebox vazio não desenha nada, e é o fundo.
+func _d43_desenhada(caixa: StyleBox, fundo: Color) -> Color:
+	var chapada := caixa as StyleBoxFlat
+	if chapada == null:
+		return fundo
+	var cor: Color = fundo.lerp(chapada.bg_color, chapada.bg_color.a)
+	cor.a = 1.0
+	return cor
+
+
+# 2 ── o que só informa fica abaixo do primário
+func _d43_o_que_recua(tela: Control) -> void:
+	var fundo: Color = (tela.get_node("Fundo") as ColorRect).color
+	var avancar := tela.get_node("AcoesTurno/Avancar") as Button
+	var teto := _contraste(_d43_desenhada(avancar.get_theme_stylebox("normal"), fundo), fundo)
+	_confere("D43: o primário destaca-se do fundo (%.2f:1)" % teto, teto >= 3.0)
+	var medidas: Array = []
+	for caminho in ["LinhaConstruir/Upgrade", "LinhaConstruir/Menu",
+			"AcoesTurno/Alocar", "AcoesTurno/Avancar"]:
+		var b := tela.get_node(caminho) as Button
+		medidas.append(["%s desligado" % caminho.get_file(),
+			_d43_desenhada(b.get_theme_stylebox("disabled"), fundo)])
+	for caminho in ["MensagemCartao", "MetaCartao"]:
+		var p := tela.get_node(caminho) as PanelContainer
+		medidas.append([caminho, _d43_desenhada(p.get_theme_stylebox("panel"), fundo)])
+	# Os cinco estados do trabalhador pelo TEMA, e não pelos cartões montados:
+	# o porto desta medição só mostra um estado de cada vez.
+	var tema: Theme = load("res://ui/tema_brport.tres")
+	for variacao in ["TrabLivre", "TrabParado", "TrabSelecionado", "TrabAlocado",
+			"TrabOcupado", "CartaoDocaObra"]:
+		medidas.append(["o cartão %s" % variacao,
+			_d43_desenhada(tema.get_stylebox("panel", variacao), fundo)])
+	for m in medidas:
+		var razao := _contraste(m[1] as Color, fundo)
+		_confere("D43: %s recua — %.2f:1 contra o fundo, abaixo dos %.2f do «AVANÇAR DIA»"
+			% [m[0], razao, teto], razao < teto)

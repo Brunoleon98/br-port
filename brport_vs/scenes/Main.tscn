@@ -13,7 +13,7 @@
 [ext_resource type="Texture2D" path="res://art/icones/reputacao.svg" id="ic_reputacao"]
 [ext_resource type="Texture2D" path="res://art/icones/doca.svg" id="ic_doca"]
 [ext_resource type="Texture2D" path="res://art/icones/pausar.svg" id="ic_pausar"]
-[ext_resource type="Texture2D" path="res://art/icones/parcela.svg" id="ic_parcela"]
+[ext_resource type="Texture2D" path="res://art/icones/parcela_barra.svg" id="ic_parcela"]
 [ext_resource type="Texture2D" path="res://art/icones/ampliar_pier.svg" id="ic_ampliar"]
 [ext_resource type="Texture2D" path="res://art/icones/avancar.svg" id="ic_avancar"]
 [ext_resource type="Texture2D" path="res://art/icones/menu.svg" id="ic_menu"]
@@ -637,6 +637,19 @@ text = "Trabalhadores — toque ou arraste para uma doca"
 theme_type_variation = &"TextoBarra"
 theme_override_font_sizes/font_size = 13
 
+; AS VAGAS ficam POR TRÁS dos trabalhadores, na mesma caixa e nas mesmas
+; colunas, e não no mesmo contentor: quem percorre os filhos do
+; `Trabalhadores` (o `Main`, o D9, o D34, a régua do contraste) conta com que
+; todo filho seja um trabalhador (`081`).
+[node name="Vagas" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 848.0
+offset_right = 706.0
+offset_bottom = 984.0
+mouse_filter = 2
+theme_override_constants/separation = 10
+
 [node name="Trabalhadores" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
@@ -670,7 +683,7 @@ theme_override_font_sizes/font_size = 13
 [node name="Pendentes" type="Label" parent="MensagemCartao/Linha"]
 layout_mode = 2
 size_flags_vertical = 4
-theme_type_variation = &"RotuloApoio"
+theme_type_variation = &"TextoBarra"
 theme_override_font_sizes/font_size = 12
 
 [node name="MetaCartao" type="PanelContainer" parent="."]
@@ -679,6 +692,7 @@ offset_left = 14.0
 offset_top = 1054.0
 offset_right = 706.0
 offset_bottom = 1131.0
+theme_type_variation = &"CartaoBarra"
 
 [node name="MetaColuna" type="VBoxContainer" parent="MetaCartao"]
 layout_mode = 2
@@ -702,16 +716,19 @@ stretch_mode = 5
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Parcela do Sr. Ribeiro"
+theme_type_variation = &"TextoPilula"
 theme_override_font_sizes/font_size = 13
 
 [node name="MetaBarra" type="ProgressBar" parent="MetaCartao/MetaColuna"]
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 show_percentage = false
+theme_type_variation = &"BarraEscura"
 
 [node name="MetaTexto" type="Label" parent="MetaCartao/MetaColuna"]
 layout_mode = 2
 horizontal_alignment = 1
+theme_type_variation = &"TextoBarra"
 theme_override_font_sizes/font_size = 13
 
 ; ⚠️ A LINHA DO CONSTRUIR PASSOU A SER PARTILHADA, E O ESPAÇO VEIO DAQUI.
@@ -744,6 +761,7 @@ theme_override_constants/separation = 8
 [node name="Upgrade" type="Button" parent="LinhaConstruir"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"BotaoBarra"
 theme_override_constants/icon_max_width = 26
 icon = ExtResource("ic_ampliar")
 
@@ -751,6 +769,7 @@ icon = ExtResource("ic_ampliar")
 custom_minimum_size = Vector2(46, 46)
 layout_mode = 2
 tooltip_text = "Menu"
+theme_type_variation = &"BotaoBarra"
 theme_override_constants/icon_max_width = 26
 icon = ExtResource("ic_menu")
 
@@ -777,7 +796,7 @@ icon = ExtResource("ic_trabalhador")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.7
-theme_type_variation = &"BotaoPrimario"
+theme_type_variation = &"BotaoPrimarioBarra"
 text = "AVANÇAR DIA"
 theme_override_constants/icon_max_width = 30
 theme_override_font_sizes/font_size = 19
