@@ -1068,37 +1068,42 @@ def caminho_da_montagem() -> str:
     return "montagem: arnês ligado (primitivas sem view_layer.update)"
 
 
+def _ajustes(mod) -> str:
+    """Os ajustes de um modificador, todos, pela RNA: escrever à mão os do
+    chanfro deixaria de fora o que um modificador novo trouxesse."""
+    partes = []
+    for p in mod.bl_rna.properties:
+        if p.is_readonly or p.type == "COLLECTION":
+            continue
+        valor = getattr(mod, p.identifier)
+        if p.type == "POINTER":
+            # Um ID diz-se pelo nome; o perfil do chanfro não é ID e não tem.
+            valor = getattr(valor, "name", type(valor).__name__) if valor else "-"
+        elif getattr(p, "is_array", False):
+            valor = tuple(valor)
+        partes.append("%s=%r" % (p.identifier, valor))
+    return "%s(%s)" % (mod.type, ",".join(partes))
+
+
 def despejar_cena(caminho: str) -> int:
     """Escreve a cena montada em texto, objeto a objeto, e devolve quantos.
 
     É a régua do arnês: duas montagens que despejam os mesmos bytes renderizam
-    a mesma imagem, porque o render só lê o que está aqui — a geometria
-    AVALIADA (depois do chanfro), a matriz, a visibilidade e os materiais. Os
-    floats saem em `repr`, que é exato: o despejo não arredonda nada, e por
-    isso não tem ruído próprio (duas corridas do mesmo caminho dão os mesmos
-    bytes, medido em `080`).
+    a mesma imagem, porque o render é função do que está aqui — a malha
+    ORIGINAL, os ajustes de cada modificador, a matriz, a visibilidade e os
+    materiais. Os floats saem em `repr` e as malhas num hash dos arrays
+    inteiros: o despejo não arredonda nada.
 
-    ⚠️ AS UVs FICAM DE FORA, E ISSO TEM CONDIÇÃO. O chanfro interpola-as com
-    um erro de 1 ULP (5,96e-8) que muda de caixa para caixa: oito caixas
-    IGUAIS na mesma cena davam quatro UVs diferentes, e dois despejos do
-    MESMO caminho divergiam em 2.570 linhas — a régua tinha ruído próprio, e
-    ele tapava qualquer diferença de verdade. Ignorá-las só vale enquanto
-    nenhum material as ler (hoje todos leem a coordenada `Object`, a
-    `Position` ou a `Generated` das texturas procedurais), e é isso que a
-    guarda abaixo pergunta antes de despejar.
+    ⚠️ E É A MALHA ORIGINAL, NÃO A AVALIADA, porque a avaliada tem ruído do
+    próprio Blender. A primeira régua lia a malha depois do chanfro, e dois
+    despejos do MESMO caminho divergiam: o chanfro interpola as UVs com 1 ULP
+    (5,96e-8) que muda de caixa para caixa — oito caixas iguais davam quatro —,
+    e nas esferas devolve as faces noutra ordem a cada corrida, com 1,9e-9 nas
+    coordenadas. Como conjunto, as faces são as mesmas. O arnês não chega lá:
+    o que ele pode estragar é um valor lido VELHO pelo catálogo, e esse acaba
+    escrito na malha original ou na matriz (`080`).
     """
-    for mat in bpy.data.materials:
-        for no in (mat.node_tree.nodes if mat.node_tree else ()):
-            le_uv = (no.bl_idname in ("ShaderNodeUVMap", "ShaderNodeTexImage",
-                                      "ShaderNodeNormalMap", "ShaderNodeTangent")
-                     or (no.bl_idname == "ShaderNodeTexCoord"
-                         and no.outputs["UV"].is_linked))
-            if le_uv:
-                raise SystemExit(
-                    "despejo: o material %s lê UV (%s), e o despejo ignora as "
-                    "UVs — ver despejar_cena()" % (mat.name, no.bl_idname))
     bpy.context.view_layer.update()
-    grafo = bpy.context.evaluated_depsgraph_get()
     linhas = []
     objetos = sorted(bpy.data.objects, key=lambda o: o.name)
     for o in objetos:
@@ -1110,23 +1115,28 @@ def despejar_cena(caminho: str) -> int:
             o.hide_render, o.visible_camera, o.visible_shadow))
         linhas.append("  mats %s" % ",".join(
             s.material.name if s.material else "-" for s in o.material_slots))
+        if o.modifiers:
+            linhas.append("  mods %s" % " ".join(_ajustes(m) for m in o.modifiers))
         if o.type != "MESH":
             continue
-        avaliado = o.evaluated_get(grafo)
-        malha = avaliado.to_mesh()
+        malha = o.data
         resumo = hashlib.sha256()
         for colecao, atributo, largura, tipo in (
                 (malha.vertices, "co", 3, np.float32),
                 (malha.loops, "vertex_index", 1, np.int32),
                 (malha.polygons, "loop_start", 1, np.int32),
                 (malha.polygons, "material_index", 1, np.int32),
-                (malha.corner_normals, "vector", 3, np.float32)):
+                (malha.polygons, "use_smooth", 1, bool)):
             dados = np.empty(len(colecao) * largura, dtype=tipo)
             colecao.foreach_get(atributo, dados)
             resumo.update(dados.tobytes())
-        linhas.append("  malha v=%d f=%d %s" % (
-            len(malha.vertices), len(malha.polygons), resumo.hexdigest()))
-        avaliado.to_mesh_clear()
+        for camada in malha.uv_layers:
+            dados = np.empty(len(camada.uv) * 2, dtype=np.float32)
+            camada.uv.foreach_get("vector", dados)
+            resumo.update(dados.tobytes())
+        linhas.append("  malha %s v=%d f=%d %s" % (
+            malha.name, len(malha.vertices), len(malha.polygons),
+            resumo.hexdigest()))
     # Monta o texto todo antes de abrir: `open(..., "w")` trunca de imediato,
     # e um erro a meio deixaria o despejo vazio — que compara igual a outro
     # despejo vazio.
