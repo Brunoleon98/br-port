@@ -7,8 +7,8 @@ conversa anterior.
 
 **Situação:** substitui o de 04/10 `b`. A sessão de 04/10, no Claude Code,
 trabalhou na branch `claude/compassionate-bardeen-ujk7my`, a partir da `main`
-com o PR #104 fundido, e não abriu PR. Fez a **segunda parte da melhoria de
-design**, as telas narrativas (`082`):
+com o PR #104 fundido, e o **PR #105** foi aberto no fecho. Fez a **segunda
+parte da melhoria de design**, as telas narrativas (`082`):
 
 1. **As conversas falam como no celular.** O Sr. Ribeiro, o Arlindo e a Dona
    Cida no boletim têm o balão da pessoa (os tons do celular), o retrato numa
@@ -39,10 +39,10 @@ texto.
   tem o `CLAUDE.md` carregado. As regras são as mesmas para os dois.
 - Para saber onde o jogo está: `docs/ESTADO_DO_PROJETO.md`. Para o rumo: a §7
   de `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
-- **Confira no GitHub se a branch `claude/compassionate-bardeen-ujk7my` virou
-  PR e se foi fundida.** Se não foi, a `main` não tem as conversas novas nem o
-  diário do fim. Arquivos tocados: o `PainelNarrativo.gd`, a `TelaNomes.gd`,
-  o `EndGame.gd`, o `CounterOfferPanel.gd`, o `DebtPaymentPanel.gd`, o
+- **Confira no GitHub se o PR #105 foi fundido.** Se não foi, a `main` não
+  tem as conversas novas nem o diário do fim. Arquivos tocados: o
+  `PainelNarrativo.gd`, a `TelaNomes.gd`, o `EndGame.gd`, o
+  `CounterOfferPanel.gd`, o `DebtPaymentPanel.gd`, o
   `PainelBoletim.gd`, o `PainelMensagens.gd`, a `FolhaDoCaderno.gd`, a
   `Narrativa.gd`, o tema, as duas ferramentas de captura, o
   `capturar_evidencia.sh`, o `run_tests.gd`, o `teste_design.gd`, o
