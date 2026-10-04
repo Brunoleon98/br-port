@@ -25,8 +25,8 @@ o HUD e os painéis (`081`):
    defeitos injetados, cada um reprovado na guarda certa. As seis suítes, a
    cobertura dos painéis, as guardas do CI e o escopo de cor passaram.
 
-**O veredito é do Bruno**: ele pediu a segunda passagem «e depois irei
-validar». A prancha do fecho tem a `main` e as duas passagens.
+**Aceite do Bruno no fecho**, sobre a prancha da `main` contra a segunda
+passagem, sem nenhum dos três ajustes oferecidos.
 
 ---
 
@@ -51,12 +51,10 @@ texto.
 
 ## 2. A tarefa
 
-É a que o Bruno escrever por baixo. **Se ele não escrever nenhuma, abra pelo
-veredito do rodapé e do Construir** — a prancha antes/depois contra a `main`,
-e a pergunta «Aceito / Ajustar / Sugira você», com a lista do que se vê como
-segunda pergunta (`/arte`, §8). Depois do veredito, a melhoria de design
-continua pela pergunta do ESCOPO das partes que faltam: o mapa e os props, as
-telas narrativas, ou o design de jogo, com a recomendada primeiro.
+É a que o Bruno escrever por baixo. **Se ele não escrever nenhuma, a melhoria
+de design continua pela pergunta do ESCOPO das partes que faltam**: o mapa e
+os props, as telas narrativas, ou o design de jogo, com a recomendada
+primeiro e dizendo porquê (`/arte`, §8). Não escolha por ele.
 
 Ficam em aberto, atrás dela:
 
@@ -70,7 +68,6 @@ Ficam em aberto, atrás dela:
 
 ## 3. O que está com o Bruno
 
-- o veredito do rodapé e do Construir (`081`);
 - a foto do porto antigo (`art_lab/diario/BRIEFING.md`);
 - o fundo e o logotipo da tela inicial (`art_lab/tela_inicial/BRIEFING.md`);
 - a leitura dos textos novos (A4);

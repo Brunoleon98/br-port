@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 04/10/2026 — a melhoria de design começou pelo HUD (`081`), e espera o veredito
+> **Última atualização:** 04/10/2026 — a melhoria de design começou pelo HUD (`081`), aceite
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -112,13 +112,14 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); trabalhadores nas colunas das docas, com a vaga; o Construir com o cabeçalho das famílias. **Espera o veredito do Bruno** |
+| **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); trabalhadores nas colunas das docas, com a vaga; o Construir com o cabeçalho das famílias. **Aceite** |
 | **Frente 4 do A5 — animação, os três degraus** (02–03/10, `075`–`077`, `079`) | No píer 1 **o pau-de-carga** descarrega e ele opera o guincho (**D39**); no 2 **o guindaste**, e ele leva a carga ao camião, que encosta de ré (**D40**); no 3 **o pórtico** pousa o pallet a meio do cais e ele leva-o de **empilhadeira** à pilha ou ao camião (**D42**). A empilhadeira e o pallet, na régua da pessoa |
 | **Ferramenta — o arnês da montagem** (04/10, `080`) | O catálogo monta sem o `view_layer.update()` das primitivas; o `--despejar` prova a mesma cena |
 | **Frente 4 do A5 — a virada do dia** (03/10, `078`) | Ao «Avançar dia» o barco servido sai e o seguinte entra; o dinheiro conta; o «+R$» de cada doca sobe do barco; um toque a meio acaba-a. O `GameState` não mudou (**D41**) |
 
 **A §7.1 fechou (R1–R9).** A prioridade, escolha do Bruno, é a **melhoria de
-design**: o HUD foi a primeira parte (`081`) e espera o veredito (§7 do plano).
+design**: o HUD foi a primeira parte (`081`, aceite); a seguinte abre pelo
+escopo do que falta (§7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.

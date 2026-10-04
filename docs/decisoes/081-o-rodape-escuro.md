@@ -3,9 +3,9 @@
 **04/10/2026 · primeira parte da melhoria de design** (plano v3, §7): o
 pedido não dizia o que corrigir, e a conversa abriu com a pergunta do escopo.
 Escolha do Bruno: **o HUD e os painéis**, entre o mapa, as telas narrativas e
-o design de jogo. **O veredito está por dar**: o Bruno pediu, no fim da
-primeira passagem, que a sessão procurasse e fizesse o resto, e disse que
-validava depois.
+o design de jogo. **Aceite do Bruno em 04/10, sobre a segunda passagem:
+«Aceito»**, sem nenhum dos três ajustes oferecidos (a vaga mais apagada, o
+creme da faixa, os botões do Construir em âmbar e contorno).
 
 ## O que o Bruno escolheu
 
@@ -16,6 +16,7 @@ validava depois.
 | O que corrigir no Construir | As três: **o cabeçalho das famílias**, **o preço em dobro**, **as construídas no topo** |
 | Por onde começar | **O rodapé** (a recomendada) |
 | O veredito da primeira passagem | **«Ajustar»**: os cartões dos trabalhadores e as colunas vazias, e no «Outro»: *«Consegue fazer melhorias de design no geral, caso sim, veja pontos de melhoria e faça. Depois irei validar»* |
+| O veredito da segunda | **«Aceito»**, e nenhum ajuste marcado |
 
 ## O que se mediu antes
 
@@ -119,4 +120,6 @@ O olho ia primeiro ao que não se podia fazer, e o desligado usava o mesmo
 - **A faixa continua sem o creme do balão da Dona Cida**: foi oferecido como
   defeito e o Bruno não o marcou.
 - Os painéis das famílias de 25/09 não se reabriram: foram aceites.
-- **O veredito**: a prancha do fecho mostra a `main` e as duas passagens.
+- Os três ajustes oferecidos no veredito final, que ele não marcou: a vaga
+  mais apagada, o creme da faixa quando fala a Dona Cida, e os botões do
+  Construir em âmbar para quem cabe no dinheiro.
