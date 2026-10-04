@@ -1063,8 +1063,8 @@ para quem animar a seguir:
   faz antes e depois de cada operador — quadrático no número de objetos: o
   catálogo inteiro passou dos 30 min sem um PNG. Com a atualização desligada
   só nos `mesh.primitive_*_add`, montou e renderizou 13 quadros em 3 min, e os
-  PNGs de controlo saíram com 0 pixels diferentes. O arnês foi de sessão e não
-  entrou no repositório; adotá-lo é uma decisão por tomar.
+  PNGs de controlo saíram com 0 pixels diferentes. **Adotado na `080`**: é a
+  `primitiva()` do kit, e o `--despejar` prova que a cena montada é a mesma.
 
 ### Etapa 2 — A cauda dos props (barato, muda muito)
 - Contêiner: corrugado, cantoneiras, portas, marcação. 2 → ~14 peças.

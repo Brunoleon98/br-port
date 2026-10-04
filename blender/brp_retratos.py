@@ -209,9 +209,8 @@ def _loft(nome, aneis, mat, contorno=_contorno_oitavado, fechar=(True, False)):
 def _bastao(nome, a, b, raio_w, lados, mat):
     a, b = Vector(a), Vector(b)
     d = b - a
-    bpy.ops.mesh.primitive_cylinder_add(vertices=lados, radius=raio_w, depth=d.length,
-                                        location=(a + b) / 2.0)
-    o = bpy.context.active_object
+    o = base.primitiva("primitive_cylinder_add", vertices=lados, radius=raio_w,
+                       depth=d.length, location=(a + b) / 2.0)
     o.name = nome
     o.rotation_mode = "QUATERNION"
     o.rotation_quaternion = Vector((0, 0, 1)).rotation_difference(d.normalized())
@@ -737,9 +736,8 @@ def cida(M, cara):
     d = (b - a).normalized()
     for nome, t0, t1, rr, mat in (("lapis_madeira", 0.0, _lg(8.0), r_l, M["madeira"]),
                                   ("lapis_grafite", _lg(8.0), _lg(11.0), r_l * 0.4, escuro)):
-        bpy.ops.mesh.primitive_cone_add(vertices=6, radius1=rr, radius2=rr * 0.35,
-                                        depth=t1 - t0, location=b + d * ((t0 + t1) / 2.0))
-        o = bpy.context.active_object
+        o = base.primitiva("primitive_cone_add", vertices=6, radius1=rr, radius2=rr * 0.35,
+                           depth=t1 - t0, location=b + d * ((t0 + t1) / 2.0))
         o.name = nome
         o.rotation_mode = "QUATERNION"
         o.rotation_quaternion = Vector((0, 0, 1)).rotation_difference(d)
@@ -766,18 +764,17 @@ def cida(M, cara):
     tronco_l.append(prisma("gola_pe", _contorno_oitavado(62.0, 54.0, 14.0),
                            _niv(94.0 + _DZ), _niv(106.0 + _DZ), (1.0, 1.0), gola))
     y_peito = -_pf(40.0)
-    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.0, y_peito - _pf(0.6),
-                                                        (_niv(62.0) + _niv(-60.0)) / 2.0))
-    carcela = bpy.context.active_object
+    carcela = base.primitiva("primitive_cube_add", size=1.0,
+                             location=(0.0, y_peito - _pf(0.6),
+                                       (_niv(62.0) + _niv(-60.0)) / 2.0))
     carcela.name = "carcela"
     carcela.scale = (_lg(14.0), _pf(2.4), _niv(62.0) - _niv(-60.0))
     carcela.data.materials.append(blusa)
     tronco_l.append(carcela)
     for nome, z_c, alt_b, larg_b, sai in (("bolso", 26.0, 28.0, 32.0, 0.8),
                                           ("bolso_pestana", 38.0, 7.0, 35.0, 1.8)):
-        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(_lg(52.0), y_peito - _pf(sai / 2.0),
-                                                            _niv(z_c)))
-        o = bpy.context.active_object
+        o = base.primitiva("primitive_cube_add", size=1.0,
+                           location=(_lg(52.0), y_peito - _pf(sai / 2.0), _niv(z_c)))
         o.name = nome
         o.scale = (_lg(larg_b), _pf(sai + 1.0), _alt(alt_b))
         o.data.materials.append(blusa)
@@ -791,8 +788,7 @@ def cida(M, cara):
     for k, zz in enumerate((48.0, 30.0, 12.0)):
         ok = _raio([carcela], Vector((0.0, -10.0, _niv(zz))), Vector((0, 1, 0)))
         assert ok, "o botão não achou a carcela"
-        bpy.ops.mesh.primitive_cube_add(size=1.0, location=ok[0] + ok[1] * _pf(1.0))
-        b = bpy.context.active_object
+        b = base.primitiva("primitive_cube_add", size=1.0, location=ok[0] + ok[1] * _pf(1.0))
         b.name = "botao_%d" % k
         b.scale = (_lg(8.0), _pf(2.0), _alt(8.0))
         b.data.materials.append(gola)
@@ -957,8 +953,7 @@ def ribeiro(M, cara):
                              lapela, afasta=1.0))
     ok = _raio([tronco], Vector((0.0, -10.0, _niv(6.0))), Vector((0, 1, 0)))
     assert ok, "o botão não achou o terno"
-    bpy.ops.mesh.primitive_cube_add(size=1.0, location=ok[0] + ok[1] * _pf(1.5))
-    b = bpy.context.active_object
+    b = base.primitiva("primitive_cube_add", size=1.0, location=ok[0] + ok[1] * _pf(1.5))
     b.name = "botao"
     b.scale = (_lg(9.0), _pf(2.0), _alt(9.0))
     b.data.materials.append(lapela)
@@ -1359,8 +1354,7 @@ def arlindo(M, cara):
                                       ("ancora_braco_+1", 6.0, 289.0, 12.0, 3.0, -40.0),
                                       ("ancora_pata_-1", -11.5, 293.5, 4.0, 4.0, 0.0),
                                       ("ancora_pata_+1", 11.5, 293.5, 4.0, 4.0, 0.0)):
-        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(_lg(u), y_anc, _niv(zz)))
-        a_ = bpy.context.active_object
+        a_ = base.primitiva("primitive_cube_add", size=1.0, location=(_lg(u), y_anc, _niv(zz)))
         a_.name = "bone_%s" % nome
         a_.scale = (_lg(lg), _pf(2.0), _alt(alt))
         a_.rotation_euler.y = math.radians(ang)
@@ -1412,10 +1406,8 @@ def arlindo(M, cara):
         assert ok, "o botão não achou a camisa"
         for nome, rr, sai, mat in (("botao_%d" % k, 4.5, 3.0, faixa),
                                    ("botao_miolo_%d" % k, 2.0, 3.8, bigode_fundo)):
-            bpy.ops.mesh.primitive_cylinder_add(vertices=10, radius=_lg(rr),
-                                                depth=_pf(1.6),
-                                                location=ok[0] + ok[1] * _pf(sai))
-            b = bpy.context.active_object
+            b = base.primitiva("primitive_cylinder_add", vertices=10, radius=_lg(rr),
+                               depth=_pf(1.6), location=ok[0] + ok[1] * _pf(sai))
             b.name = nome
             b.rotation_euler.x = math.radians(90.0)
             b.data.materials.append(mat)
@@ -1438,9 +1430,8 @@ def arlindo(M, cara):
                                  camisa, afasta=3.6, espessura=3.6, espelhado=sx < 0))
         ok = _raio([tronco], Vector((sx * _lg(59.0), -10.0, _niv(39.0))), Vector((0, 1, 0)))
         assert ok, "o botão do bolso não achou a camisa"
-        bpy.ops.mesh.primitive_cylinder_add(vertices=10, radius=_lg(3.5), depth=_pf(1.6),
-                                            location=ok[0] + ok[1] * _pf(4.4))
-        bb = bpy.context.active_object
+        bb = base.primitiva("primitive_cylinder_add", vertices=10, radius=_lg(3.5),
+                            depth=_pf(1.6), location=ok[0] + ok[1] * _pf(4.4))
         bb.name = "bolso_botao_%+d" % sx
         bb.rotation_euler.x = math.radians(90.0)
         bb.data.materials.append(faixa)

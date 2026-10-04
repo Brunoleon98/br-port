@@ -104,10 +104,12 @@ pip install "bpy==4.5.0"                                      # precisa de Pytho
 # ⚠️ redirecionado para arquivo, o `gerar_brp.py` não escreve UMA linha até
 # acabar (o stdout do Python vai em bloco): `python3 -u`, ou conte os PNGs
 # novos. Os 32 camiões levaram 20 min com o log vazio (`070`)
-# ⚠️ e o tempo vai quase todo no `view_layer.update()` que o `bpy.ops` faz a
+# ⚠️ e o tempo ia quase todo no `view_layer.update()` que o `bpy.ops` faz a
 # cada `primitive_*_add`, quadrático no número de objetos: o catálogo passou
-# dos 30 min, e sem essa atualização levou 3, com 0 px de diferença nos
-# controlos. O arnês ficou fora do repositório (plano de arte, `079`)
+# dos 30 min. Desde a `080` o kit monta sem ele (`primitiva()`), com a cena
+# igual byte a byte pelo `--despejar`; `BRP_CAMINHO_LENTO=1` volta ao lento.
+# ⚠️ E com ele a `dimensions` e a `matrix_world` de uma peça ficam VELHAS
+# depois de criada a seguinte: quem mede outra peça pede o `update()` antes
 # As pranchas, os recortes e os conferidores de arte correm no Python do
 # SISTEMA, que não traz o pillow: `pip install numpy pillow` (~8 s)
 python3 tools/gerar_props_iso.py brport_vs/art/props [prop ...]
@@ -1868,6 +1870,10 @@ as três coisas.
   carimbo de data do Blender no PNG (os de `SOMBRA` escapam porque o
   `compor_sombra` os reescreve com o gravador do projeto). `cmp` num prop não
   responde "a imagem mudou" — para isso, compare os PIXELS.
+  ⚠️ **E A MALHA TAMBÉM NÃO É ESTÁVEL NA ORDEM.** A `primitive_uv_sphere_add`
+  devolve as faces noutra ordem a cada chamada, e o chanfro avaliado mexe 1
+  ULP nas UVs e 1e-9 nas coordenadas. Quem compara duas cenas compara a malha
+  ORIGINAL e cego à ordem das faces — como o `--despejar` (`080`).
 - **E quem responde "este prop mudou?" é `tools/comparar_props.py`**, que reduz
   os dois a 16×16 — a mesma régua do bloco dos cascos distintos. Calibrado: duas
   corridas do mesmo código dão 0,000 e os PNGs diferem nos bytes (carimbo de

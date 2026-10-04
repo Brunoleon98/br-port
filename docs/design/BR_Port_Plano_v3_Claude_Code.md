@@ -1581,8 +1581,16 @@ segundos.
 
 ## 7. A fila
 
-**Ordem operacional vigente em 17/09: a §7.1 abaixo entra antes de novas
-melhorias e da publicação.** Os marcos A/B e o histórico de playtest continuam
+**Prioridade em vigor desde 03/10, escolha do Bruno: a MELHORIA DE DESIGN.**
+As conversas seguintes começam por ela, à frente da máquina do contêiner e da
+frente 5. O pedido não diz o que corrigir — é o caso «diagnosticar uma queixa»
+do `CLAUDE.md`, que é Opus —, e por isso cada conversa abre com a pergunta do
+ESCOPO: que parte (o mapa e os props, a interface do HUD e dos painéis, as
+telas narrativas, ou o design de jogo), com opções e a recomendada primeiro
+(`/arte`, §8). Não se escolhe por ele.
+
+**Ordem operacional de 17/09 (fechada: R1–R9 feitos): a §7.1 abaixo entrava
+antes de novas melhorias e da publicação.** Os marcos A/B e o histórico de playtest continuam
 valendo. Esta fila de correções não reabre o GDD, economia, projeção ou arte.
 Cada R é uma entrega própria; a próxima conversa assume apenas **R1**.
 
