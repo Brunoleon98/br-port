@@ -776,3 +776,9 @@ mais antigas:
 | Fechado | O que ficou, medido |
 |---|---|
 | **Frente 3 do A5 — as quatro famílias aceites** (25–27/09, `062`–`067`) | O cartão e o HUD (**F14**, **F15**, `SAVE_VERSION` 9); tela inicial, três espaços de save, pausa curta, Ajustes e o celular (**F16**); o **caderno** (**D37**) e a **conversa no celular**, cada voz no seu balão (**F17**, **D38**). A foto do porto antigo, o fundo e o logotipo são do Bruno (`art_lab/diario/`, `art_lab/tela_inicial/`) |
+
+**E, para caber o rodapé escuro (`081`),** desceu a escala da frente 4:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **Frente 4 do A5 — escala, camiões, frota e ruína** (27/09–01/10, `069`–`074`) | A pessoa a 1,5× o real; os 32 camiões; os 9 cascos detalhados; o galpão e o escritório em ruína. `.pck` +0,92% |

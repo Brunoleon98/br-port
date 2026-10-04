@@ -394,6 +394,11 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    `capturar_tela.gd` já fazia `clear_save()` + semente + `new_game()`, o
    `capturar_cena.gd` não fazia, e o que prova o conserto é rodar a bateria
    DUAS vezes e exigir os mesmos bytes.
+   ⚠️ **E A SUÍTE DE DESIGN TAMBÉM O HERDA, e não o deriva:** o `_main` dela
+   nasce do save que a ferramenta anterior deixou, e o D14 conferiu 179 casas
+   contra prédios com o porto completo no disco e 77 em ruínas — verde nas
+   duas. A cobertura de uma guarda que lê o `_main` muda com a corrida de
+   antes; está por corrigir (`081`).
    ⚠️ **E A GUARDA QUE PULA O `setup()` CAVA O BURACO QUE O COMENTÁRIO AO LADO
    DESCREVE.** No mesmo dia: o `capturar_cena.gd` só chamava `setup()` quando
    havia argumentos extra na linha de comando, e os quatro painéis cujo
@@ -2426,6 +2431,17 @@ as três coisas.
   e o controle que o prova é medir pela caixa com o defeito posto — ficou
   VERDE. Fala que leva nome quebra por `AUTOWRAP_WORD_SMART`, que num texto sem
   palavra longa dá as mesmas linhas ao pixel (`051`).
+- **⚠️ E UM RÓTULO COM QUEBRA AO LADO DE QUEM EXPANDE FICA COM LARGURA ZERO.**
+  O `Icones.rotulo` dá ao texto `AUTOWRAP_WORD` e `EXPAND_FILL`, que servem a
+  uma linha sozinha. Ao lado de uma coluna que expande, o «Construída» ficou
+  com 1 px e desenhou-se por cima da borda do cartão, e o selo «Escolhido»
+  saiu como uma lasca — duas vezes numa sessão, com as suítes verdes. O D19
+  mede-o: texto de uma linha não pede mais do que o sítio dele (`081`).
+- **⚠️ O DESLIGADO ESCOLHE-SE CONTRA O FUNDO ONDE O BOTÃO VIVE.** O `botao_off`
+  azul-claro é certo no cartão branco; no rodapé escuro punha o botão que não
+  se prime a 12,99:1 contra o fundo e o «AVANÇAR DIA» a 7,38, e o olho ia
+  primeiro ao que não se pode fazer. Hierarquia mede-se: o D43 exige que nada
+  do rodapé que não seja o primário passe o contraste dele (`081`).
 - **⚠️ E ÁREA ROLÁVEL NÃO CORTA — ESCONDE, que não deixa marca.** A regra acima
   é sobre `Label` que corta; num `paragrafo_rolavel` o que não cabe desce para
   baixo da dobra sem sinal nenhum. Acrescentar quatro linhas ao diário (~100px)

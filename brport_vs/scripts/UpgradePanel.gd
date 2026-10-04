@@ -63,27 +63,28 @@ func _build_ui() -> void:
 	dim.anchor_bottom = 1.0
 	add_child(dim)
 
+	# A ALTURA SAI DO CONTEÚDO, como no `montar(largura, 0)` do andaime: a
+	# caixa cresce para cima e para baixo a partir do centro. Até 04/10 ela
+	# declarava 560 e o conteúdo pedia ~870 — cada linha levava um botão de
+	# largura inteira —, e a declaração não dizia nada (`081`).
 	var box := PanelContainer.new()
 	box.anchor_left = 0.5
 	box.anchor_top = 0.5
 	box.anchor_right = 0.5
 	box.anchor_bottom = 0.5
 	box.offset_left = -320
-	box.offset_top = -280
 	box.offset_right = 320
-	box.offset_bottom = 280
+	box.grow_vertical = Control.GROW_DIRECTION_BOTH
 	add_child(box)
 
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 8)
 	box.add_child(vbox)
 
-	vbox.add_child(Icones.rotulo(Icones.AMPLIAR_PIER, "Construir no porto"))
-
-	var caixa := Label.new()
-	caixa.text = "Dinheiro: %s" % GameState.moeda(int(GameState.cash))
-	caixa.add_theme_font_size_override("font_size", 14)
-	vbox.add_child(caixa)
+	# O VOCABULÁRIO DAS FAMÍLIAS DE 25/09 (`062`–`065`): cabeçalho com selo e
+	# tarja. O Construir abre-se pelo HUD como o Dinheiro, as Docas e a
+	# Reputação, e era o único que tinha ficado de fora (`081`).
+	vbox.add_child(PainelNarrativo.cabecalho_encorpado(Icones.AMPLIAR_PIER, "Construir no porto"))
 
 	# O NÍVEL DO PORTO, e o que ele recebe. Sem esta linha a trava de 06/09
 	# seria estado invisível: o jogador veria o navio grande deixar de aparecer
@@ -94,6 +95,9 @@ func _build_ui() -> void:
 	# ⚠️ ELA PERCORRE `CLASSES_DE_NAVIO` e não uma lista escrita à mão: uma
 	# classe nova tem de aparecer aqui sozinha, senão volta o defeito do
 	# `barco_medio` — gerado, validado, e sem chegar à tela.
+	#
+	# Desde 04/10 ela é a linha de apoio da tarja, e o dinheiro é a tarja: é
+	# o número que decide o que se compra, e os botões abaixo cobram dele.
 	var nivel := int(GameState.nivel_do_porto())
 	var recebe := PackedStringArray()
 	var falta := PackedStringArray()
@@ -103,18 +107,24 @@ func _build_ui() -> void:
 			recebe.append(String(dados["nome"]))
 		else:
 			falta.append(String(dados["nome"]))
-	var porto := Label.new()
-	porto.text = "Porto nível %d — recebe %s" % [nivel, ", ".join(recebe).to_lower()]
+	var porto := "Porto nível %d — recebe %s" % [nivel, ", ".join(recebe).to_lower()]
 	if falta.size() > 0:
-		porto.text += "\nAinda não aguenta: %s" % ", ".join(falta).to_lower()
-	porto.add_theme_font_size_override("font_size", 13)
-	porto.theme_type_variation = "RotuloApoio"
-	vbox.add_child(porto)
+		porto += "\nAinda não aguenta: %s" % ", ".join(falta).to_lower()
+	vbox.add_child(PainelNarrativo.tarja_solta(
+		"Dinheiro: %s" % GameState.moeda(int(GameState.cash)), porto))
 
 	# Ordenar pela chave `ordem` e não pela do dicionário: a ordem de um
 	# Dictionary em GDScript é a de inserção, e depender disso é frágil.
+	#
+	# ⚠️ E O QUE JÁ ESTÁ DE PÉ VAI PARA O FIM (`081`). Até 04/10 os dois
+	# píeres, comprados primeiro, ficavam no topo e empurravam para baixo o que
+	# ainda se pode comprar — que é a razão de abrir o painel.
 	var ids := GameState.ESTRUTURAS.keys()
 	ids.sort_custom(func(a, b):
+		var feita_a := GameState.tem_estrutura(String(a))
+		var feita_b := GameState.tem_estrutura(String(b))
+		if feita_a != feita_b:
+			return feita_b
 		return int(GameState.ESTRUTURAS[a]["ordem"]) < int(GameState.ESTRUTURAS[b]["ordem"]))
 
 	for id in ids:
@@ -122,22 +132,33 @@ func _build_ui() -> void:
 
 	var btn_fechar := Button.new()
 	btn_fechar.text = "Fechar"
+	btn_fechar.custom_minimum_size = Vector2(0, 44)
 	btn_fechar.pressed.connect(func(): queue_free())
 	vbox.add_child(btn_fechar)
 
 
+# UMA LINHA POR ESTRUTURA: o nome e o efeito à esquerda, e à direita o que se
+# pode fazer com ela — o botão, o preço de quem ainda não pode, ou o
+# «Construída» (`081`). Até 04/10 o preço saía DUAS vezes (no título e no
+# botão «Construir por R$…»), e cada botão ocupava a largura inteira: quatro
+# barras navy iguais, uma por cima da outra, e o cartão a 870 px.
 func _linha_estrutura(id: String) -> Control:
 	var def: Dictionary = GameState.ESTRUTURAS[id]
 	var feito: bool = GameState.tem_estrutura(id)
 	var impedimento: String = GameState.impedimento_estrutura(id)
 
 	var cartao := PanelContainer.new()
+	var linha := HBoxContainer.new()
+	linha.add_theme_constant_override("separation", 12)
+	cartao.add_child(linha)
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 2)
-	cartao.add_child(col)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	linha.add_child(col)
 
 	var titulo := Label.new()
-	titulo.text = "%s  ·  %s" % [def["nome"], GameState.moeda(int(def["custo"]))]
+	titulo.text = String(def["nome"])
 	titulo.add_theme_font_size_override("font_size", 15)
 	if feito:
 		titulo.theme_type_variation = &"TextoEstruturaFeita"
@@ -152,9 +173,18 @@ func _linha_estrutura(id: String) -> Control:
 
 	if feito:
 		var pronto := Icones.rotulo(Icones.FEITO, "Construída", Icones.TAM_TEXTO)
-		pronto.get_node("Texto").add_theme_font_size_override("font_size", 12)
-		pronto.get_node("Texto").theme_type_variation = &"TextoEstruturaFeita"
-		col.add_child(pronto)
+		var texto_pronto := pronto.get_node("Texto") as Label
+		texto_pronto.add_theme_font_size_override("font_size", 12)
+		texto_pronto.theme_type_variation = &"TextoEstruturaFeita"
+		# ⚠️ SEM QUEBRA E SEM EXPANDIR: o `Icones.rotulo` dá ao texto as duas
+		# coisas, que servem a uma linha que ocupa a largura toda. Ao lado da
+		# coluna do nome, que expande, a quebra deixa-lhe largura quase zero, e
+		# «Construída», uma palavra só, saía por cima da borda do cartão. O D19
+		# mede isto.
+		texto_pronto.autowrap_mode = TextServer.AUTOWRAP_OFF
+		texto_pronto.size_flags_horizontal = Control.SIZE_SHRINK_END
+		pronto.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		linha.add_child(pronto)
 		return cartao
 
 	# ⚠️ O MOTIVO DO BLOQUEIO NÃO PODE VIVER DENTRO DO BOTÃO DESLIGADO, e viveu
@@ -166,11 +196,12 @@ func _linha_estrutura(id: String) -> Control:
 	# inicial, a frase estava na tela, lavada, e nada a media porque a régua a
 	# dava por isenta com razão.
 	#
-	# E não se conserta acrescentando uma linha: o cartão já cresce até 920px
-	# numa tela de 1280 e o "Fechar" fica rente à borda — três linhas novas
-	# empurravam-no para fora. Conserta-se TIRANDO: um botão que não se pode
-	# premir é um convite falso, e o que a estrutura bloqueada tem a dizer é
-	# uma frase, não uma ação. O cartão fica MAIS CURTO do que estava.
+	# Conserta-se TIRANDO: um botão que não se pode premir é um convite falso,
+	# e o que a estrutura bloqueada tem a dizer é uma frase, não uma ação.
+	#
+	# ⚠️ E O PREÇO FICA À DIREITA, onde estaria o botão (`081`). Saiu do
+	# título; sem ele aqui, quem ainda não pode comprar não saberia quanto custa
+	# — e «Faltam R$…» é a diferença, não o preço.
 	if impedimento != "":
 		var trava := Label.new()
 		trava.text = impedimento
@@ -178,11 +209,19 @@ func _linha_estrutura(id: String) -> Control:
 		trava.add_theme_font_size_override("font_size", 13)
 		trava.theme_type_variation = "RotuloApoio"
 		col.add_child(trava)
+		var preco := Label.new()
+		preco.text = GameState.moeda(int(def["custo"]))
+		preco.add_theme_font_size_override("font_size", 14)
+		preco.theme_type_variation = "RotuloApoio"
+		preco.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		linha.add_child(preco)
 		return cartao
 
 	var btn := Button.new()
-	btn.text = "Construir por %s" % GameState.moeda(int(def["custo"]))
+	btn.text = "Construir · %s" % GameState.moeda(int(def["custo"]))
 	btn.add_theme_font_size_override("font_size", 13)
+	btn.custom_minimum_size = Vector2(0, 44)
+	btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	btn.pressed.connect(func(): GameState.comprar_estrutura(id))
-	col.add_child(btn)
+	linha.add_child(btn)
 	return cartao

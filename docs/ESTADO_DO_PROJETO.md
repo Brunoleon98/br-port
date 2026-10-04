@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 04/10/2026 — o arnês da montagem (`080`); a prioridade é o design
+> **Última atualização:** 04/10/2026 — a melhoria de design começou pelo HUD (`081`), e espera o veredito
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -22,9 +22,8 @@
 estruturas** — píeres 2 e 3, armazém, pátio, escritório e os dois UPGRADES
 (guindaste e cais reforçado). Comprar cada uma muda o mapa.
 
-**A barra de ação tem DOIS botões e uma hierarquia** — "Avançar dia" é âmbar
-cheio com rótulo navy e "Alocar todos" é navy com borda e rótulo âmbar
-(`BotaoDestaque`): âmbar nos dois seria nenhum em destaque.
+**O rodapé é escuro, e só o "Avançar dia" é âmbar cheio** (`081`): o
+desligado, a faixa, a parcela e os trabalhadores recuam abaixo dele (**D43**).
 
 **A câmera mostra um DISTRITO e não três berços.** O `MEIA_LARG` efetivo é 20 e
 ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14 a
@@ -113,13 +112,13 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
-| **Frente 4 do A5 — escala, camiões, frota e ruína** (27/09–01/10, `069`–`074`) | A pessoa a 1,5× o real; os 32 camiões; os 9 cascos detalhados; o galpão e o escritório em ruína. `.pck` +0,92% |
+| **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); trabalhadores nas colunas das docas, com a vaga; o Construir com o cabeçalho das famílias. **Espera o veredito do Bruno** |
 | **Frente 4 do A5 — animação, os três degraus** (02–03/10, `075`–`077`, `079`) | No píer 1 **o pau-de-carga** descarrega e ele opera o guincho (**D39**); no 2 **o guindaste**, e ele leva a carga ao camião, que encosta de ré (**D40**); no 3 **o pórtico** pousa o pallet a meio do cais e ele leva-o de **empilhadeira** à pilha ou ao camião (**D42**). A empilhadeira e o pallet, na régua da pessoa |
 | **Ferramenta — o arnês da montagem** (04/10, `080`) | O catálogo monta sem o `view_layer.update()` das primitivas; o `--despejar` prova a mesma cena |
 | **Frente 4 do A5 — a virada do dia** (03/10, `078`) | Ao «Avançar dia» o barco servido sai e o seguinte entra; o dinheiro conta; o «+R$» de cada doca sobe do barco; um toque a meio acaba-a. O `GameState` não mudou (**D41**) |
 
 **A §7.1 fechou (R1–R9).** A prioridade, escolha do Bruno, é a **melhoria de
-design** — a conversa abre a perguntar que parte (§7 do plano).
+design**: o HUD foi a primeira parte (`081`) e espera o veredito (§7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -177,7 +176,7 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/scenes/dock/Dock.tscn` | A metade de CENÁRIO de uma doca: píer, barco, guindaste, trabalhador |
 | `brport_vs/scenes/dock/DocaCartao.tscn` | A metade de INTERFACE da mesma doca: valor, turnos, trabalhador, alvo de toque |
 | `docs/design/BR_Port_Style_Guide_Flat_Design.md` | Paleta, peso de linha, espaçamento e proporções canônicas para toda arte futura |
-| `brport_vs/art/icones/` | **Os 23 ícones da interface**, em SVG chapado |
+| `brport_vs/art/icones/` | **Os ícones da interface**, em SVG chapado |
 | `brport_vs/scripts/Icones.gd` | Registro dos ícones + helpers de rótulo e botão — o único lugar que sabe qual arquivo é qual ícone |
 | `tools/preparar_sprites.py` | Conserta o alpha dos PNGs de IA e redimensiona |
 | `tools/gerar_mapa_iso.py` | Gera mapa, vila, vias e o campo costeiro contínuo; raster determinístico, acumulado com `math.fsum`. **Desenha a `MEIA_LARG = 30` e entrega a 20 pelo `viewBox`** |
@@ -285,7 +284,7 @@ alvo de arrasto e ACENDE quando aceita o trabalhador. O número de cada doca é
 **tinta de piso**, em estêncil, porque o importador de SVG do Godot não desenha
 `<text>`.
 
-**Os ícones do HUD já são arte de verdade**: 23 SVGs conferidos a 19px sobre os
+**Os ícones do HUD já são arte de verdade**: SVGs conferidos a 19px sobre os
 três fundos da interface com `tools/folha_icones.gd`. Cada um foi colorido para
 o fundo onde cai — o cabeçalho de `Icones.gd` diz quais não se reaproveitam.
 

@@ -38,9 +38,13 @@ const FRAMES_ATE_ASSENTAR := 8
 const FUNDO_FOLHA := Color(0.051, 0.102, 0.149)     # #0d1a26
 const TINTA := Color(0.878, 0.914, 0.965)
 const TINTA_FRACA := Color(0.62, 0.70, 0.78)
-const COLUNAS := 6
-const MARGEM := 12
-const VAO := 8
+# CINCO e não seis desde 04/10 (`081`): o cartão passou a duas colunas, com o
+# retrato ao lado do número, e o mínimo dele subiu de 108 para ~130 px.
+const COLUNAS := 5
+# 10 e 6, e não 12 e 8, desde 04/10: os cinco cartões de duas colunas pediam
+# 722 px com os vãos de antes, numa tela de 720 (`081`).
+const MARGEM := 10
+const VAO := 6
 const CABECALHO := 46
 const LEGENDA := 44                                 # sexo, idade e cor, uma por linha
 # Medido na primeira corrida: o menor retrato muda 2.407 px no cartão de 70 (o
@@ -75,7 +79,7 @@ func _process(_delta: float) -> bool:
 		# deram zero exato e os trinta reprovaram.
 		_foto = root.get_texture().get_image()
 		for par in _cartoes:
-			((par[0] as Node).get_node("Conteudo/Retrato") as CanvasItem).self_modulate.a = 0.0
+			((par[0] as Node).get_node("Conteudo/Placa/Retrato") as CanvasItem).self_modulate.a = 0.0
 		_frames = 0
 		return false
 	var ausentes := _retratos_ausentes(_foto, root.get_texture().get_image())
@@ -100,7 +104,7 @@ func _retratos_ausentes(com: Image, sem: Image) -> int:
 	var menor := -1
 	var menor_nome := ""
 	for par in _cartoes:
-		var arte := (par[0] as Node).get_node("Conteudo/Retrato") as TextureRect
+		var arte := (par[0] as Node).get_node("Conteudo/Placa/Retrato") as TextureRect
 		var n := PropIso.desenho_na_foto(com, sem, arte.get_global_rect())
 		if n < DESENHO_MIN:
 			print("FALHOU  %s não chegou à foto: %d px mudam ao escondê-lo"
@@ -118,7 +122,7 @@ func _retratos_ausentes(com: Image, sem: Image) -> int:
 ## padrão, mas um cartão pregado nele passaria por «tem desenho».
 func _conferir_texturas() -> void:
 	for k in range(_cartoes.size()):
-		var arte := (_cartoes[k][0] as Node).get_node("Conteudo/Retrato") as TextureRect
+		var arte := (_cartoes[k][0] as Node).get_node("Conteudo/Placa/Retrato") as TextureRect
 		var tem: String = arte.texture.resource_path if arte.texture != null else "(nada)"
 		if tem != _cartoes[k][2]:
 			print("FALHOU  o cartão do rosto %d mostra %s, e o registo diz %s"
@@ -171,15 +175,23 @@ func _montar() -> bool:
 	titulo.add_theme_color_override("font_color", TINTA)
 	raiz.add_child(titulo)
 
+	# ⚠️ A CÉLULA É A DO MAIOR CARTÃO, e não a do primeiro. Até 04/10 a folha
+	# media o «#1» e punha os outros na mesma grelha; com o número ao lado do
+	# retrato (`081`), «#10» a «#30» são mais largos e sobrepunham-se ao
+	# vizinho, sem erro nenhum. Mede-se todos, e todos ficam com a mesma caixa.
 	var larg := 0.0
 	var alt := 0.0
+	var montados: Array = []
 	for k in range(caminhos.size()):
 		var cartao: PanelContainer = cena.instantiate()
 		raiz.add_child(cartao)
 		cartao.setup(int(GS.workers[k]["id"]))
-		if larg == 0.0:
-			larg = cartao.get_combined_minimum_size().x
-			alt = cartao.get_combined_minimum_size().y
+		montados.append(cartao)
+		larg = maxf(larg, cartao.get_combined_minimum_size().x)
+		alt = maxf(alt, cartao.get_combined_minimum_size().y)
+	for k in range(caminhos.size()):
+		var cartao: PanelContainer = montados[k]
+		cartao.size = Vector2(larg, alt)
 		var col := k % COLUNAS
 		var lin := k / COLUNAS
 		cartao.position = Vector2(MARGEM + col * (larg + VAO),

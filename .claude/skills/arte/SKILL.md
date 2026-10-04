@@ -401,6 +401,12 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   foi uma pergunta sozinha com prévia em ASCII, vista de cima; voltou à
   primeira. O GIF saiu com o veredito e a lista de ajustes (cada um com a
   correção escrita) no mesmo turno, e voltou «Aceito».
+  ⚠️ **E NA `081` O ENVIO NO FIM DO TURNO VOLTOU «Tentar novamente»** — o
+  mesmo sinal que «Mande pergunta». A pergunta SOZINHA, logo a seguir, voltou
+  à primeira. E o «Ajustar» trouxe no «Outro» um pedido de ESCOPO: *«veja
+  pontos de melhoria e faça. Depois irei validar»*. Leia-o como licença para a
+  passagem seguinte ir além das opções marcadas, sem pergunta a meio, e com a
+  prancha e o veredito no fim.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

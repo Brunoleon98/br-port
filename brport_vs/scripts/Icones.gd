@@ -22,6 +22,8 @@ extends RefCounted
 # creme (só sobrevive em fundo escuro) e `parcela` é navy cheio (só sobrevive
 # em fundo claro). O resto foi feito em âmbar, vermelho ou com disco de
 # fundo próprio, e aguenta os dois.
+# ⚠️ E DESDE 04/10 O `parcela` TEM UM IRMÃO CLARO, o `parcela_barra`, para o
+# cartão da parcela no rodapé, que deixou de ser branco (`081`).
 # ============================================================
 
 const CAIXA := preload("res://art/icones/caixa.svg")
@@ -31,6 +33,11 @@ const DOCA := preload("res://art/icones/doca.svg")
 const TRABALHADOR := preload("res://art/icones/trabalhador.svg")
 const BARCO := preload("res://art/icones/barco.svg")
 const PARCELA := preload("res://art/icones/parcela.svg")
+# A PARCELA DO RODAPÉ (`docs/decisoes/081`): o mesmo banco em traço CLARO,
+# porque o cartão da parcela no HUD passou de branco a escuro e o `parcela`
+# acima é navy cheio — sobre aquele azul mediria 1,18:1. Os painéis continuam
+# brancos e continuam com o de cima.
+const PARCELA_BARRA := preload("res://art/icones/parcela_barra.svg")
 const AMPLIAR_PIER := preload("res://art/icones/ampliar_pier.svg")
 
 const PAUSAR := preload("res://art/icones/pausar.svg")

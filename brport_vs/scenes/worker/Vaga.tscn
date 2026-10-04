@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+; A VAGA DE UM TRABALHADOR QUE AINDA NÃO EXISTE (`docs/decisoes/081`). Fica
+; na coluna de uma doca cujo píer está por construir: no VS, cada píer
+; reconstruído traz uma doca E um trabalhador (`comprar_estrutura()`), e o
+; cartão da doca de cima já diz «píer por construir». Veste o cartão da doca
+; em OBRA, o mesmo estado dito com a mesma roupa, e não recebe toque.
+[node name="Vaga" type="PanelContainer"]
+custom_minimum_size = Vector2(108, 136)
+mouse_filter = 2
+theme_type_variation = &"CartaoDocaObra"
+
+[node name="Coluna" type="VBoxContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="Titulo" type="Label" parent="Coluna"]
+layout_mode = 2
+text = "Vaga"
+horizontal_alignment = 1
+theme_type_variation = &"TextoBarra"
+theme_override_font_sizes/font_size = 14
+
+[node name="Quando" type="Label" parent="Coluna"]
+layout_mode = 2
+text = "chega com o píer"
+horizontal_alignment = 1
+theme_type_variation = &"TextoBarra"
+theme_override_font_sizes/font_size = 12
