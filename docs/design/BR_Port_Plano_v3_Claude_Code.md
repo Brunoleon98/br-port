@@ -1589,6 +1589,15 @@ ESCOPO: que parte (o mapa e os props, a interface do HUD e dos painéis, as
 telas narrativas, ou o design de jogo), com opções e a recomendada primeiro
 (`/arte`, §8). Não se escolhe por ele.
 
+**A primeira parte foi o HUD e os painéis (04/10, `081`)**: o rodapé escuro,
+com o «AVANÇAR DIA» como único destaque; os trabalhadores nas colunas das
+docas, em cartão escuro com a vaga; e o Construir com o cabeçalho das
+famílias. **Aceite do Bruno em 04/10.** Ficou um achado por corrigir: a
+cobertura do `teste_design` depende do save que a ferramenta anterior deixou
+no disco (o D14 conferiu 179 casas ou 77). A conversa seguinte abre pela
+pergunta do escopo das partes que faltam: o mapa e os props, as telas
+narrativas, o design de jogo.
+
 **Ordem operacional de 17/09 (fechada: R1–R9 feitos): a §7.1 abaixo entrava
 antes de novas melhorias e da publicação.** Os marcos A/B e o histórico de playtest continuam
 valendo. Esta fila de correções não reabre o GDD, economia, projeção ou arte.

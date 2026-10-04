@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=73 format=3]
+[gd_resource type="Theme" load_steps=76 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -197,6 +197,44 @@ content_margin_top = 10.0
 content_margin_right = 14.0
 content_margin_bottom = 10.0
 
+; O DESLIGADO DO RODAPÉ (`docs/decisoes/081`). O `botao_off` acima é
+; azul-claro, e ele é certo sobre o CARTÃO BRANCO dos painéis, onde nasceu.
+; No rodapé escuro ele invertia a hierarquia: medido no pixel da captura, o
+; «Alocar todos» sem ninguém para alocar e o «Porto completo» davam 12,99:1
+; contra o fundo do HUD, e o «AVANÇAR DIA» — o único destaque da tela — 7,38.
+; O olho ia primeiro ao que não se podia fazer.
+;
+; Aqui o desligado RECUA: a cor da pílula (o mesmo azul de quem só informa),
+; uma linha fina no lugar da borda e nenhuma sombra, porque sombra é o que
+; levanta um botão e este não se toca. O rótulo fica no neutro do jogo, que
+; mede 5,05:1 sobre este azul — é o fundo para o qual ele foi feito.
+[sub_resource type="StyleBoxFlat" id="botao_off_barra"]
+bg_color = Color(0.09, 0.16, 0.24, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.34, 0.47, 0.6)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+; O TRILHO DA BARRA NO CARTÃO ESCURO (`081`). O `barra_fundo` é quase branco,
+; e no cartão da parcela, que passou a escuro, seria outra vez a mancha mais
+; clara do rodapé. Este é o contorno do cartão da doca, um passo acima do
+; fundo dele: lê-se como trilho e deixa o âmbar ser o que se vê.
+[sub_resource type="StyleBoxFlat" id="barra_fundo_escura"]
+bg_color = Color(0.2, 0.34, 0.47, 1)
+corner_radius_top_left = 99
+corner_radius_top_right = 99
+corner_radius_bottom_right = 99
+corner_radius_bottom_left = 99
+
 [sub_resource type="StyleBoxFlat" id="primario_normal"]
 ; O BOTÃO QUE MOVE O JOGO. A leitura da referência pede "cada botão com cor
 ; própria" numa barra de SEIS; esta interface tem DOIS, e com dois a distinção
@@ -352,6 +390,16 @@ corner_radius_top_right = 99
 corner_radius_bottom_right = 99
 corner_radius_bottom_left = 99
 
+; ⚠️ OS CINCO CARTÕES DO TRABALHADOR PASSARAM A ESCUROS EM 04/10 (`081`).
+; Com três colunas, as das docas, cada cartão ficou 224 px e três claros lado a
+; lado eram a maior mancha do rodapé — 16,50:1 contra o fundo o livre, 13,43 o
+; parado. Hoje o fundo é o do cartão da doca para todos, e o ESTADO fala por
+; três canais: a borda, a cor do rótulo do estado (a variação vem do
+; `Worker.gd`) e, no escolhido, o selo. O claro ficou só onde é preciso, na
+; PLACA atrás do retrato (`placa_retrato`, abaixo): o retrato tem o casaco navy
+; e sumiria neste azul. O que se lê abaixo, sobre o FUNDO como sinal e a
+; luminância de cada cartão, é a história do cartão claro.
+;
 ; TRABALHADOR PARADO COM DOCA À ESPERA. Não é um quarto estado do trabalhador
 ; — é o estado LIVRE quando ficar livre custa dinheiro. O primeiro playtest num
 ; telefone parou o dia com dois operários livres e duas docas sem trabalhador:
@@ -367,7 +415,7 @@ corner_radius_bottom_left = 99
 ; leria como mais um irmão. Este está em 0,751 — 0,10 abaixo do mais escuro
 ; dos três, que é o que o faz saltar numa fila de quatro cartões.
 [sub_resource type="StyleBoxFlat" id="trab_parado"]
-bg_color = Color(0.988, 0.867, 0.643, 1)
+bg_color = Color(0.09, 0.161, 0.239, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -383,12 +431,12 @@ content_margin_right = 8.0
 content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="trab_livre"]
-bg_color = Color(0.929, 0.984, 0.949, 1)
+bg_color = Color(0.09, 0.161, 0.239, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.102, 0.478, 0.251, 1)
+border_color = Color(0.42, 0.85, 0.53, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -422,7 +470,7 @@ content_margin_bottom = 8.0
 ; é a raiz disso, 2,25 — que é onde este âmbar JÁ está. Subi-lo ou baixá-lo
 ; ganha de um lado o que perde do outro. Quem dá a troca pela cor é o selo
 ; `SeloEscolhido`, na linha do estado, que muda de MASSA.
-bg_color = Color(0.929, 0.984, 0.949, 1)
+bg_color = Color(0.09, 0.161, 0.239, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -459,8 +507,15 @@ content_margin_bottom = 8.0
 ;
 ; Sem margem vertical, e de propósito: o rótulo não pode crescer ao ser
 ; escolhido, senão o `VBoxContainer` recentra e o retrato salta.
+;
+; ⚠️ E DESDE 04/10 O SELO É O ÂMBAR DE MARCA COM LETRA NAVY (`081`). O cartão
+; passou a escuro, e o âmbar escurecido de cima media 2,92:1 contra ele —
+; abaixo do 3:1 que a troca precisa, e que o D34 exige. O de marca mede 6,19:1
+; contra o cartão (livre ou parado, o fundo é o mesmo) e a letra navy 5,27:1
+; sobre ele: é o par do «AVANÇAR DIA». O retrato já não está no caminho: o
+; selo vive na coluna do texto, ao lado da placa, e não por cima dela.
 [sub_resource type="StyleBoxFlat" id="selo_escolhido"]
-bg_color = Color(0.58, 0.399, 0.042, 1)
+bg_color = Color(0.878, 0.604, 0.063, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
@@ -469,7 +524,7 @@ content_margin_left = 4.0
 content_margin_right = 4.0
 
 [sub_resource type="StyleBoxFlat" id="trab_alocado"]
-bg_color = Color(0.906, 0.941, 0.976, 1)
+bg_color = Color(0.09, 0.161, 0.239, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -485,12 +540,12 @@ content_margin_right = 8.0
 content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="trab_ocupado"]
-bg_color = Color(0.925, 0.933, 0.945, 1)
+bg_color = Color(0.09, 0.161, 0.239, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.702, 0.729, 0.769, 1)
+border_color = Color(0.35, 0.4, 0.46, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -499,6 +554,21 @@ content_margin_left = 8.0
 content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
+
+; A PLACA DO RETRATO (`081`): o único claro que sobrou no cartão do
+; trabalhador. O retrato é um busto de casaco navy, que mediria quase nada
+; sobre o azul do cartão; sobre esta placa ele lê-se como no cartão claro de
+; antes, e o resto do cartão recua com o rodapé.
+[sub_resource type="StyleBoxFlat" id="placa_retrato"]
+bg_color = Color(0.906, 0.937, 0.969, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
 
 ; ── Sobre o mapa do porto ──
 ; O mapa é arte de verdade desde o Bloco 4, então os tokens de cor de água,
@@ -805,16 +875,21 @@ corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="faixa_msg"]
-; A FAIXA DE MENSAGEM — o creme onde a fala do jogo e a da Dona Cida caem, e
-; o FUNDO contra o qual o D33 mede os quatro estados do rótulo de dentro. Até
-; 21/09 ele vivia no `Main.tscn`, o que punha a cor medida e a cor declarada
-; em arquivos diferentes.
+; A FAIXA DE MENSAGEM — onde a fala do jogo e a da Dona Cida caem, e o FUNDO
+; contra o qual o D33 mede os quatro estados do rótulo de dentro. Até 21/09
+; ele vivia no `Main.tscn`, o que punha a cor medida e a cor declarada em
+; arquivos diferentes.
+;
+; ⚠️ ERA CREME ATÉ 04/10, E PASSOU AO AZUL DA PÍLULA (`081`). Medido na
+; captura, o creme dava 16,98:1 contra o fundo do HUD: era, com o cartão
+; branco da parcela, a mancha mais forte do rodapé, e puxava o olho antes das
+; docas. A barra âmbar continua a ser o que a distingue.
 ;
 ; ⚠️ A BARRA ÂMBAR DE 4px FICA COM O ÂMBAR DE MARCA, e o texto não. Ela é
 ; MASSA e não texto — fora do portão de contraste —, e é ela que continua a
 ; apontar a faixa com a cor da marca depois de o texto de aviso escurecer.
 ; É "quem resolve não é a cor, é a MASSA" com um rótulo no lugar do prop.
-bg_color = Color(1, 0.984, 0.922, 1)
+bg_color = Color(0.09, 0.16, 0.24, 1)
 border_width_left = 4
 border_color = Color(0.851, 0.467, 0.024, 1)
 corner_radius_top_left = 8
@@ -1225,7 +1300,8 @@ BotaoDestaque/colors/font_disabled_color = Color(0.51, 0.6, 0.706, 1)
 BotaoDestaque/styles/normal = SubResource("destaque_normal")
 BotaoDestaque/styles/hover = SubResource("destaque_hover")
 BotaoDestaque/styles/pressed = SubResource("botao_press")
-BotaoDestaque/styles/disabled = SubResource("botao_off")
+; Só vive no rodapé, e por isso o desligado é o escuro (`081`).
+BotaoDestaque/styles/disabled = SubResource("botao_off_barra")
 BotaoPrimario/base_type = &"Button"
 BotaoPrimario/colors/font_color = Color(0.11, 0.204, 0.329, 1)
 BotaoPrimario/colors/font_hover_color = Color(0.11, 0.204, 0.329, 1)
@@ -1241,6 +1317,13 @@ BotaoPrimario/styles/disabled = SubResource("botao_off")
 ; de variação, para as cores e as caixas continuarem num sítio só.
 BotaoPrimarioGrande/base_type = &"BotaoPrimario"
 BotaoPrimarioGrande/font_sizes/font_size = 19
+; OS BOTÕES DO RODAPÉ ESCURO (`081`): o mesmo botão de sempre, com o
+; desligado que recua em vez do azul-claro dos painéis. São variações e não
+; uma troca do `botao_off`, porque os painéis são brancos e lá ele está certo.
+BotaoBarra/base_type = &"Button"
+BotaoBarra/styles/disabled = SubResource("botao_off_barra")
+BotaoPrimarioBarra/base_type = &"BotaoPrimario"
+BotaoPrimarioBarra/styles/disabled = SubResource("botao_off_barra")
 BotaoPerigo/base_type = &"Button"
 BotaoPerigo/colors/font_color = Color(1, 1, 1, 1)
 BotaoPerigo/colors/font_hover_color = Color(1, 1, 1, 1)
@@ -1261,11 +1344,13 @@ TrabAlocado/base_type = "PanelContainer"
 TrabAlocado/styles/panel = SubResource("trab_alocado")
 TrabOcupado/base_type = "PanelContainer"
 TrabOcupado/styles/panel = SubResource("trab_ocupado")
+PlacaRetrato/base_type = "PanelContainer"
+PlacaRetrato/styles/panel = SubResource("placa_retrato")
 ; O rótulo "Escolhido" — branco sobre o selo. Branco PURO, e não o
 ; (0,941/0,965/1) do HUD: sobre este âmbar aquele mede 4,66:1, colado ao corte
 ; de 4,5. O porquê do selo está no sub-recurso `selo_escolhido`.
 SeloEscolhido/base_type = "Label"
-SeloEscolhido/colors/font_color = Color(1, 1, 1, 1)
+SeloEscolhido/colors/font_color = Color(0.11, 0.204, 0.329, 1)
 SeloEscolhido/styles/normal = SubResource("selo_escolhido")
 CartaoDoca/base_type = "PanelContainer"
 CartaoDoca/styles/panel = SubResource("cartao_doca")
@@ -1289,6 +1374,16 @@ CartaoDocaObra/styles/panel = SubResource("cartao_doca_obra")
 ; muda um número não é migração — é mudança de cor a fingir-se de arrumação.
 Pilula/base_type = "PanelContainer"
 Pilula/styles/panel = SubResource("pilula")
+; O CARTÃO DA PARCELA NO RODAPÉ (`081`) veste o cartão da DOCA, o stylebox e
+; não uma cópia: os dois moram na mesma faixa escura e são da mesma família.
+; Era o `cartao` branco por omissão do `PanelContainer`, a 17,60:1 contra o
+; fundo — a mancha mais clara da tela, mais do que o «AVANÇAR DIA».
+CartaoBarra/base_type = "PanelContainer"
+CartaoBarra/styles/panel = SubResource("cartao_doca")
+; E A BARRA DELE, com o trilho escuro e o mesmo âmbar de enchimento.
+BarraEscura/base_type = "ProgressBar"
+BarraEscura/styles/background = SubResource("barra_fundo_escura")
+BarraEscura/styles/fill = SubResource("barra_cheia")
 ; ⚠️ E O BOTÃO PAUSAR VESTE A MESMA PÍLULA, por `styles/normal` em vez de
 ; `styles/panel` — um `Button` não pode usar a variação acima, cujo
 ; `base_type` é `PanelContainer`. Ele foi o quinto consumidor daquele
@@ -1349,32 +1444,32 @@ TextoBarraAlerta/colors/font_color = Color(0.851, 0.467, 0.024, 1)
 ; ao lado 12, e um tamanho aqui mexeria no leiaute que o D18 e o D22 medem.
 ; É a lição do `RotuloApoio`, e esta migração só devia mexer na COR.
 ;
-; ⚠️ E O ÂMBAR NÃO É O MESMO DOS OUTROS TRÊS — foi por isto que esta leva
-; deixou de ser uma migração de valores. Sobre este creme o âmbar de marca
-; (0.851/0.467/0.024) mede 3,07:1 contra um corte de 4,5: REPROVA, e é o
-; `kind` mais emitido do jogo (6 dos 14). Ele vivia fora do alcance do D33
-; porque a régua nunca DRENAVA a fila — media sempre a mensagem de abertura,
-; que é neutra. Os outros três passavam e passam com os valores de sempre.
+; ⚠️ E O FUNDO MUDOU EM 04/10 (`081`): do creme para o azul da pílula. Os
+; quatro tons viraram do escuro para o claro, e três são os da PÍLULA, que já
+; viviam neste mesmo azul — o neutro, o verde do dinheiro e o âmbar da
+; reputação. Até aí o aviso era o âmbar ESCURECIDO, porque o de marca media
+; 3,07:1 no creme (`042`); no azul o escurecido daria 2,93:1, e quem passa é
+; o âmbar CLARO — o lado oposto da mesma conta. Os quatro valores de antes
+; mediam todos abaixo de 3 aqui: não havia um que sobrevivesse à troca.
 FaixaMensagem/base_type = "PanelContainer"
 FaixaMensagem/styles/panel = SubResource("faixa_msg")
-; NEUTRA — a mensagem de sistema sem cor. Mede 12,13:1.
+; NEUTRA — a mensagem de sistema sem cor. Mede 13,63:1.
 TextoFaixa/base_type = "Label"
-TextoFaixa/colors/font_color = Color(0.11, 0.204, 0.329, 1)
-; BOA — o que correu bem. Mede 5,19:1.
+TextoFaixa/colors/font_color = Color(0.941, 0.965, 1, 1)
+; BOA — o que correu bem, no verde do dinheiro. Mede 8,37:1.
 TextoFaixaBom/base_type = "Label"
-TextoFaixaBom/colors/font_color = Color(0.102, 0.478, 0.251, 1)
-; AVISO — o âmbar ESCURECIDO, o mesmo valor que o `RotuloAlerta` carrega para
-; o cartão branco. Mede 4,87:1 aqui (e 5,06:1 lá), contra os 3,07:1 do âmbar
-; de marca que estava neste lugar.
+TextoFaixaBom/colors/font_color = Color(0.42, 0.85, 0.53, 1)
+; AVISO — o âmbar de marca, o da reputação na pílula. Mede 8,37:1.
 ;
-; ⚠️ É VARIAÇÃO PRÓPRIA E NÃO O `RotuloAlerta`, apesar do valor igual: são
-; dois FUNDOS, que é a diferença estrutural que o R7 manda respeitar. Se um
-; dia o cartão branco precisar de escurecer mais, o creme não o segue calado.
+; ⚠️ É VARIAÇÃO PRÓPRIA E NÃO A `TextoPilulaDestaque`, apesar do valor igual:
+; são dois sítios, e a faixa já mudou de fundo uma vez sem a pílula mudar. Se
+; um mudar outra vez, o outro não o segue calado.
 TextoFaixaAviso/base_type = "Label"
-TextoFaixaAviso/colors/font_color = Color(0.58, 0.399, 0.042, 1)
-; RUIM — o que correu mal. Mede 5,38:1.
+TextoFaixaAviso/colors/font_color = Color(0.961, 0.725, 0.227, 1)
+; RUIM — o que correu mal: o vermelho do tema CLAREADO, porque o de sempre
+; (0.761/0.188/0.188) mede 2,65:1 neste azul. Mede 5,83:1.
 TextoFaixaRuim/base_type = "Label"
-TextoFaixaRuim/colors/font_color = Color(0.761, 0.188, 0.188, 1)
+TextoFaixaRuim/colors/font_color = Color(1, 0.478, 0.447, 1)
 
 ; ── O MENU-CELULAR ──
 ; ⚠️ TODO TEXTO AQUI DENTRO É CLARO, e isto é a IRMÃ da armadilha que o D19

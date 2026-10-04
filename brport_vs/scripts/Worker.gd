@@ -4,7 +4,7 @@ extends PanelContainer
 # do Godot — funciona com touch e mouse.
 #
 # Como a doca: árvore em Worker.tscn, estilo no tema (TrabLivre,
-# TrabAlocado, TrabOcupado). No Bloco 4 o retângulo vira sprite trocando a
+# TrabAlocado, TrabOcupado, e a placa do retrato). No Bloco 4 o retângulo vira sprite trocando a
 # cena, sem mexer aqui.
 
 # Tocar num trabalhador o SELECIONA; tocar depois numa doca o manda para lá.
@@ -15,9 +15,9 @@ signal selecionado(worker_id: int)
 var worker_id: int = -1
 var _selecionado := false
 
-@onready var _retrato: TextureRect = $Conteudo/Retrato
-@onready var _nome: Label = $Conteudo/Nome
-@onready var _estado: Label = $Conteudo/Estado
+@onready var _retrato: TextureRect = $Conteudo/Placa/Retrato
+@onready var _nome: Label = $Conteudo/Texto/Nome
+@onready var _estado: Label = $Conteudo/Texto/Estado
 
 
 func setup(id: int) -> void:
@@ -107,7 +107,12 @@ func refresh() -> void:
 	# `Main` recria os cartões —, e é por isso que quem tranca é o D34 no
 	# SEGUNDO TOQUE, e não na alocação: lá, o mutante sem esta linha passava
 	# (`050`).
-	_estado.theme_type_variation = &""
+	#
+	# ⚠️ E DESDE 04/10 CADA ESTADO VESTE A SUA COR DE RÓTULO, porque o cartão
+	# passou a escuro (`081`) e o `Label` base é navy: ficaria a 1,18:1. As
+	# cores são as do rodapé, já medidas neste azul — o neutro, o verde do
+	# dinheiro e o laranja do «trabalhadores parados» logo acima.
+	_estado.theme_type_variation = &"TextoBarra"
 
 	if busy > 0:
 		_aplicar_estilo(&"TrabOcupado")
@@ -134,9 +139,11 @@ func refresh() -> void:
 		# uma ação que não existe.
 		_aplicar_estilo(&"TrabParado")
 		_estado.text = "Parado"
+		_estado.theme_type_variation = &"TextoBarraAlerta"
 	else:
 		_aplicar_estilo(&"TrabLivre")
 		_estado.text = "Livre"
+		_estado.theme_type_variation = &"TextoPilulaBom"
 
 
 func _find_self() -> Variant:
