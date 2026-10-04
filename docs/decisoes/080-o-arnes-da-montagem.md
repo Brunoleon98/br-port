@@ -55,8 +55,8 @@ um valor lido velho pelo catálogo acaba escrito na geometria ou na matriz.
 | Ela vê o defeito que o arnês pode causar? | Sim: uma linha que pousa a soleira da casa pela `dimensions` do corpo, lida depois de outras primitivas, dá z = 0,0100 com o arnês (a medida velha, 1) e 0,00708 sem ele — e a diferença sai na matriz daquela peça. Sem a linha, os dois caminhos voltam a ser iguais |
 | Terreno, cidade e fauna | Rápido = lento, byte a byte |
 | Porto | **Rápido = lento, byte a byte**, nos 3.791 objetos |
-| Base | A correr pelo caminho lento no fecho (04/10); o resultado entra aqui quando ela acabar |
-| O tempo da montagem | Com o arnês, sozinho na máquina: porto 110,7 e 112,3 s, base 19,2 e 18,1 s. Sem ele, o porto levou **809,2 s** — 7,3× —, com outra montagem a correr ao lado: é um teto, não um par limpo |
+| Base | **Rápido = lento, byte a byte**, nos 5.492 objetos |
+| O tempo da montagem | Com o arnês, sozinho na máquina: porto 110,7 e 112,3 s, base 19,2 e 18,1 s. Sem ele, o porto levou **809,2 s** (7,3×) e o base **2.504,9 s** (41,7 min, ~135×), com a do porto ao lado nos primeiros ~8 min: são tetos, não pares limpos |
 
 ## O que fica de fora
 

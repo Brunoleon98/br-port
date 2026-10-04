@@ -18,10 +18,9 @@ trabalhou na branch `claude/sleepy-cray-dp9dlo`, a partir da `main` com o PR
    sempre. A prova é que os dois despejos saem iguais byte a byte.
 3. **A prova**: a régua não tem ruído próprio (o mesmo caminho duas vezes dá os
    mesmos bytes); vê o defeito que o arnês pode causar (um mutante que lê a
-   medida velha de uma peça); o porto, o terreno, a cidade e a fauna saem
-   iguais nos dois caminhos. O porto levou 809 s pelo lento, contra ~111 s. O
-   base corria pelo caminho lento no fecho: confira a tabela «A prova» da
-   `080`.
+   medida velha de uma peça); os cinco catálogos saem iguais nos dois
+   caminhos. Pelo lento, o porto levou 809 s (contra ~111) e o base 41,7 min
+   (contra ~19 s): a tabela «A prova» da `080`.
 4. **No jogo nada muda.** As seis suítes passaram, e o `.pck` não mexe.
 
 **Prioridade do Bruno: a melhoria de design** (plano v3, §7).
