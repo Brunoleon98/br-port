@@ -47,8 +47,10 @@ discrimina os jogadores é o porto que eles conseguem levantar.
 ⚠️ **E A TAXA DE VITÓRIA NÃO É A MÉTRICA DE DISCRIMINAÇÃO, NEM OS BARCOS
 ATENDIDOS.** Desde a trava de nível (06/09, `docs/decisoes/009`) o porto pobre
 só recebe pesqueiro, que descarrega num turno, e chega a atender MAIS barcos do
-que o porto rico — 13,6 contra 46,1, mas com margem de R$103.290 contra
-R$674.019. **Quem separa os perfis é a MARGEM EM REGIME.** Ler a contagem levaria
+que o porto rico — 13,6 contra 46,1, com margem de R$103.290 contra
+R$674.019. Desde a fila (`083`) os números são 18,6 contra 55,1 e R$94.955
+contra R$538.184: a contagem diz 3× onde a margem diz 5,7×. **Quem separa os
+perfis é a MARGEM EM REGIME.** Ler a contagem levaria
 a concluir que a trava aproximou os jogadores, quando ela os separou.
 
 ⚠️ **A `PARCELA_AMOUNT` É O BOTÃO DO DESCUIDADO, e quase não move o Mediano.**
@@ -138,7 +140,16 @@ grep -E 'Ótimo|Mediano|Descuidado' /tmp/depois.txt | head -3
 | mover a taxa de vitória, e só ela | `PARCELA_AMOUNT` |
 | separar melhor os perfis | `MAINTENANCE_WEEKLY` — custo fixo dói mais a quem tem pouca vazão |
 | mudar o ritmo de expansão | os `custo` das `ESTRUTURAS` |
-| mudar a receita | as quatro `BOAT_VALUE_*` |
+| mudar a receita | as faixas de contrato das `CLASSES_DE_NAVIO` — e desde a fila (`083`) é o botão que move o Mediano E o Descuidado |
+| quantos barcos chegam e quanto esperam | `BOAT_ARRIVAL_CHANCE` (por lugar da fila) e `PACIENCIA_FILA` — ⚠️ medido na `083`: a grelha 0,5–0,9 × 1–3 deixou o Descuidado entre 50 e 58%, porque ele perde barco por esquecer o berço, e não por falta de barco ao largo |
+
+⚠️ **A VARREDURA AUTOMÁTICA RESTAURA DE UMA CÓPIA PRISTINA, tirada UMA vez.**
+Em 04/10 o script da varredura foi editado com uma corrida a meio: a corrida
+seguinte guardou como «original» o `GameState.gd` ainda mutado (chegada a
+0,9), devolveu-o a si mesmo, e o `cmp` do fim deu verde — o arquivo do jogo
+ficou com o valor errado sem uma queixa. A cópia de partida tira-se antes da
+primeira corrida, e cada corrida confere que o arquivo bate com ela ANTES de
+mexer (`cmp`), e não só depois.
 
 **Cuidado ao ENCARECER as estruturas.** Os perfis do simulador só compram
 quando `caixa >= custo × folga` (Mediano 2×, Descuidado 4×). Se a primeira
@@ -235,7 +246,9 @@ O grep abaixo achou os oito na última vez; se achar menos, alguém renomeou
 alguma coisa e a lista é que envelheceu.
 
 ```sh
-grep -rn '80,2\|37,3\|R\$716\|674\.019\|530\.000' --include=*.md --include=*.gd --include=*.py .
+grep -rn '78,7\|41,5\|R\$629\|538\.184\|530\.000' --include=*.md --include=*.gd --include=*.py .
+# os da medição ANTERIOR também, para achar o que ficou por mudar:
+grep -rn '80,2\|37,3\|R\$716\|674\.019' --include=*.md --include=*.gd --include=*.py .
 ```
 
 **Melhor que atualizar é DERIVAR.** Onde a prosa puder ler o número da medição

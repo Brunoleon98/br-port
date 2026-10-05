@@ -240,7 +240,7 @@ PORTO_COMPLETO = {"armazem": 1.0, "patio": 1.0, "escritorio": 1.0}
 
 def margem_semanal(k: dict, barcos: float, faixa: tuple[int, int],
                    trabalhadores: float, passivo_extra: int,
-                   estruturas: dict, niveis: dict) -> dict:
+                   estruturas: dict, niveis: dict, premio: float) -> dict:
     """A conta de uma semana, na mesma ordem em que o jogo a faz.
 
     `estruturas` é a FRAÇÃO das partidas em que cada uma acabou de pé, e não um
@@ -250,6 +250,15 @@ def margem_semanal(k: dict, barcos: float, faixa: tuple[int, int],
     """
     bruto = valor_medio(faixa, k, niveis)
     liquido = valor_com_motivos(faixa, k, niveis, estruturas)
+    # ⚠️ O PRÊMIO DA ESCOLHA (`083`): desde a fila no fundeadouro o jogador
+    # ESCOLHE que barco atraca, e quem chama o mais caro recebe por barco mais
+    # do que a média da faixa. É um efeito que deixou de ser global — a regra
+    # da `007` e do armazém de 06/09 —, e sem ele o portão reprovou o Mediano
+    # por 5,5% com o modelo certo em tudo o resto. Ele sai da MEDIÇÃO, como os
+    # barcos atendidos: é uma propriedade de como o perfil joga, e não de uma
+    # constante. Obrigatório, sem valor por omissão: um prêmio esquecido seria
+    # um 1,0 plausível.
+    liquido *= premio
     liquido *= (1.0 - desconto_medio_do_rival(k, barcos))
     contratos = barcos * liquido
 
@@ -338,7 +347,8 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
             continue
         previsto = margem_semanal(
             k, barcos, faixas[1], float(dados["trabalhadores_medios"]), 0,
-            dados["estruturas"], dados["niveis"])["margem"]
+            dados["estruturas"], dados["niveis"],
+            float(dados["premio_da_escolha"]))["margem"]
         desvio = abs(previsto - medido)
         erro = desvio / max(abs(medido), 1.0)
         # Passa por percentagem OU por piso absoluto — ver PISO_EM_BARCOS.
@@ -384,9 +394,10 @@ def _main() -> int:
     # ⚠️ A FASE 1 SAI DO CÓDIGO, NÃO DO GDD, e é a regra do projeto: onde os
     # dois divergirem, quem manda é o código. Divergiram em 06/09 — o GDD tem
     # R$8.000–70.000 e as classes de navio passaram a ir de R$12.000 a
-    # R$88.000 —, e o portão reprovou os TRÊS perfis por ~23% de uma vez. Três
-    # fora ao mesmo tempo nunca é métrica: é o modelo a ler a faixa errada. As
-    # Fases 2 e 3 continuam a sair do GDD, porque delas o código não sabe nada.
+    # R$88.000 (e desde a fila da `083`, de R$9.000 a R$63.000) —, e o portão
+    # reprovou os TRÊS perfis por ~23% de uma vez. Três fora ao mesmo tempo
+    # nunca é métrica: é o modelo a ler a faixa errada. As Fases 2 e 3
+    # continuam a sair do GDD, porque delas o código não sabe nada.
     classes = k["CLASSES_DE_NAVIO"]
     faixas[1] = (min(int(c["valor_min"]) for c in classes.values()),
                  max(int(c["valor_max"]) for c in classes.values()))
@@ -457,7 +468,8 @@ def _main() -> int:
             # O porto das fases seguintes é o que acabou a Fase 1: o mesmo
             # nível, e por isso as mesmas classes de navio a atracar.
             m = margem_semanal(k, barcos, faixas[fase], trabalhadores, passivo,
-                               perfil["estruturas"], perfil["niveis"])
+                               perfil["estruturas"], perfil["niveis"],
+                               float(perfil["premio_da_escolha"]))
             acumulado = m["margem"] * semanas_por_fase
             caixa += acumulado
             semana, valor = parcelas[fase]

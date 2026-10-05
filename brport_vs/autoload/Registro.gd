@@ -124,6 +124,7 @@ func _ready() -> void:
 	_GS.semana_fechada.connect(_ao_fim_de_semana)
 	_GS.estrutura_comprada.connect(_ao_comprar)
 	_GS.rival_offer_triggered.connect(_ao_abrir_oferta)
+	_GS.atracou.connect(_ao_atracar)
 	_GS.negociacao_resolvida.connect(_ao_negociar)
 	_GS.debt_due.connect(_ao_vencer_parcela)
 	_GS.game_over.connect(_ao_fim)
@@ -339,9 +340,24 @@ func _ao_comprar(id: String) -> void:
 	})
 
 
-func _ao_abrir_oferta(dock_index: int) -> void:
+# Desde a `083` a oferta cai num barco AO LARGO, e o número é o lugar dele na
+# fila — «doca» seria um nome a mentir sobre o que conta.
+func _ao_abrir_oferta(indice_fila: int) -> void:
 	_ms_da_oferta = Time.get_ticks_msec()
-	_gravar({"e": "arlindo", "t": _GS.turn, "doca": dock_index})
+	_gravar({"e": "arlindo", "t": _GS.turn, "lugar": indice_fila})
+
+
+# A ESCOLHA DA FILA (`083`): que barco o jogador chamou, e o que estava ao
+# largo quando o chamou. É a pergunta que o simulador ADIVINHA com três
+# perfis («o mais caro», «o que rende mais por dia», «o primeiro») e que só
+# uma partida de verdade responde. Os valores vão todos, e não um «escolheu o
+# melhor?» calculado aqui: o critério de «melhor» é o que se quer descobrir.
+func _ao_atracar(doca: int, barco: Dictionary, valores_ao_largo: Array) -> void:
+	_gravar({
+		"e": "atracou", "t": _GS.turn, "doca": doca,
+		"classe": String(barco["classe"]), "valor": int(barco["value"]),
+		"paciencia": int(barco["paciencia"]), "ao_largo": valores_ao_largo,
+	})
 
 
 # O que o jogador ESCOLHEU na contra-oferta, e quanto tempo levou a escolher.

@@ -452,6 +452,44 @@ func _f3_migracao_de_save() -> void:
 	GS.turn = 1
 	_confere("o save da versão corrente carrega", GS.load_game() == true)
 	_confere("e traz caixa e turno de volta", GS.cash == 4321 and GS.turn == 7)
+
+	# A FILA (`083`) é forma nova do estado, e o `_save_aceite` recusa-a por
+	# cinco portas — nenhuma das quais o resto do bloco abria: todos os saves
+	# acima têm a fila VAZIA e a oferta a -1. Uma por caso, como os rostos do
+	# F12, e cada uma sem ter tocado no turno vivo.
+	var barco := {"classe": "pesqueiro", "motivo": "pescado", "value": 9000,
+		"paciencia": 2}
+	var filas_mas := {
+		"sem a fila": [null, -1],
+		"fila que não é lista": [{"0": barco}, -1],
+		"mais barcos do que lugares": [[barco, barco, barco, barco], -1],
+		"barco sem paciência": [[{"classe": "pesqueiro", "value": 9000}], -1],
+		"paciência em texto": [[{"classe": "pesqueiro", "paciencia": "2"}], -1],
+		"oferta fora da fila": [[barco], 1],
+		"oferta abaixo de -1": [[barco], -2],
+	}
+	for caso in filas_mas:
+		var dados := _save_valido(versao)
+		if filas_mas[caso][0] == null:
+			dados.erase("fila")
+		else:
+			dados["fila"] = filas_mas[caso][0]
+		dados["pending_rival"] = filas_mas[caso][1]
+		_escrever(dados)
+		GS.turn = 4321
+		var carregou_fila: bool = GS.load_game()
+		_confere("save com %s é recusado, e sem ter tocado em nada" % caso,
+			not carregou_fila and GS.turn == 4321,
+			"carregou=%s turn=%d" % [carregou_fila, GS.turn])
+	# E os dois que têm de entrar — sem eles os sete acima passariam por um
+	# `load_game()` que recusa toda fila com barco.
+	for oferta in [-1, 0]:
+		var boa := _save_valido(versao)
+		boa["fila"] = [barco.duplicate(), barco.duplicate()]
+		boa["pending_rival"] = oferta
+		_escrever(boa)
+		_confere("o save com dois barcos ao largo e oferta %d entra" % oferta,
+			GS.load_game() and GS.fila.size() == 2 and GS.pending_rival == oferta)
 	GS.clear_save()
 
 
@@ -469,7 +507,7 @@ func _save_valido(versao: int) -> Dictionary:
 		"docks": [{"boat": null, "worker_id": null}],
 		"workers": [{"id": 1, "busy_turns": 0, "rosto": 0}],
 		"upgrade_purchased": false, "estruturas": [], "parcela_paid": false,
-		"phase": "playing", "pending_rival_dock": -1, "rival_attempts_left": 2,
+		"phase": "playing", "fila": [], "pending_rival": -1, "rival_attempts_left": 2,
 		"end_reason": "", "won": false, "metrics": {}, "uid": 9,
 	}
 
@@ -886,13 +924,12 @@ func _f6_abertura_nao_prende_o_turno() -> void:
 	GS.new_game()
 	GS.nome_porto = ""
 	GS.nome_jogador = ""
-	if GS.docks[0]["boat"] == null:
-		GS.docks[0]["boat"] = GS._make_boat()
-	GS.pending_rival_dock = 0
+	GS.fila = [GS._make_boat()]
+	GS.pending_rival = 0
 	GS.rival_attempts_left = GS.RIVAL_PATIENCE
 	GS._set_phase("rival_offer")
-	_confere("a montagem deixou o jogo em rival_offer com barco no píer",
-		GS.phase == "rival_offer" and GS.docks[0]["boat"] != null)
+	_confere("a montagem deixou o jogo em rival_offer com barco ao largo",
+		GS.phase == "rival_offer" and GS.barco_da_oferta() != null)
 
 	var main: Node = cena.instantiate()
 	root.add_child(main)          # `_ready()` corre já aqui, sem esperar frame
@@ -1063,9 +1100,8 @@ func _f7_despedida_do_arlindo_acontece() -> void:
 		return
 
 	GS.new_game()
-	if GS.docks[0]["boat"] == null:
-		GS.docks[0]["boat"] = GS._make_boat()
-	GS.pending_rival_dock = 0
+	GS.fila = [GS._make_boat()]
+	GS.pending_rival = 0
 	GS.rival_attempts_left = GS.RIVAL_PATIENCE
 	GS._set_phase("rival_offer")
 
@@ -1359,14 +1395,17 @@ func _f8_avancar_ate(alvo: int) -> void:
 # Põe (ou tira) um barco à espera na doca 0, para montar à mão o estado que a
 # fala da semana nova lê. O esperado deste bloco é escrito à mão a partir daqui
 # — nunca recalculado dos mesmos predicados que a fala usa, que seria o espelho.
+# «Barco à espera» é, desde a `083`, um barco AO LARGO: a doca já não espera
+# por trabalhador nenhum.
 func _f8_por_barco_a_espera(sim: bool) -> void:
 	for d in GS.docks:
 		d["boat"] = null
 		d["worker_id"] = null
+	GS.fila = []
 	if sim:
 		var barco: Dictionary = GS._make_boat()
 		barco["rival"] = false
-		GS.docks[0]["boat"] = barco
+		GS.fila = [barco]
 
 
 func _f8_a_fala_e_vista() -> void:
@@ -1429,7 +1468,8 @@ func _f8_a_fala_e_vista() -> void:
 	# ── F8c2. E O PREDICADO É LIDO ONDE A LINHA É ESCRITA, não onde o sinal
 	# dispara. É o que separa uma fala verdadeira de uma que descreve um
 	# instante que o jogador nunca vê: `turn_advanced` sai ANTES do sorteio do
-	# dia, e medido em 18/09 `docas_esperando()` deu ZERO em 315 viradas ali,
+	# dia, e medido em 18/09 `docas_esperando()` deu ZERO em 315 viradas ali
+	# (desde a `083` a pergunta é `barcos_ao_largo()`, com o mesmo instante),
 	# contra barco à espera em 74 de 155 um instante depois.
 	#
 	# A prova monta o estado A, dispara, TROCA para o estado B e exige que a
@@ -1779,7 +1819,7 @@ func _f10_cada_tempo_cabe() -> void:
 	for acao in ["Cortar metade", "Manter"]:
 		if not _f10_ate_a_oferta(nome):
 			return
-		p = await _f10_abrir(F10_ARLINDO, [GS.pending_rival_dock])
+		p = await _f10_abrir(F10_ARLINDO, [GS.pending_rival])
 		if acao == "Manter":
 			_f10_medir(p, "Arlindo, rodada", &"rodada")
 		GS._rng.seed = _f10_semente_que_recusa(acao)
@@ -1801,7 +1841,7 @@ func _f10_cada_tempo_cabe() -> void:
 
 	if not _f10_ate_a_oferta(nome):
 		return
-	p = await _f10_abrir(F10_ARLINDO, [GS.pending_rival_dock])
+	p = await _f10_abrir(F10_ARLINDO, [GS.pending_rival])
 	if not await _f10_tocar(p, "Igualar"):
 		return
 	_confere("F10: «Igualar» fecha e o Arlindo perde",
@@ -1935,6 +1975,15 @@ func _f10_ate_ao_vencimento(nome: String) -> bool:
 	_confere("F10: a partida chega ao vencimento da parcela (turno %d)" % int(GS.turn),
 		GS.phase == "debt_payment", "parou na fase «%s»" % GS.phase)
 	return GS.phase == "debt_payment"
+
+
+# Enche os berços livres com os barcos ao largo, pela ordem da fila (`083`).
+# É o «Alocar todos» com que estas guardas jogavam: o jogo deixou de o ter, e
+# atracar leva o trabalhador junto.
+func _atracar_tudo() -> void:
+	while GS.atracagem_pendente() != Vector2i.ZERO:
+		if not GS.atracar(0, false):
+			return
 
 
 func _f10_ate_a_oferta(nome: String) -> bool:
@@ -2316,7 +2365,9 @@ func _f11_sozinho(main: Node, cena: String, tempo: String, caso: String) -> Node
 #   cara (os mutantes: a semente constante, e o `randomize()`);
 # - o save recusa sem ter tocado em nada: sem rosto, fora da tabela,
 #   repetido e escrito como texto (os mutantes: cada conferência retirada);
-# - o cartão mostra o ARQUIVO do rosto (o mutante: o `Worker.gd` sem a linha).
+# - o cartão mostra o ARQUIVO do rosto (o mutante: o `DocaCartao.gd` sem a
+#   linha). Até à `083` era o cartão do trabalhador; desde a fila o rosto mora
+#   no cabeçalho da doca do píer dele.
 var _f12_terminou := false
 
 
@@ -2339,10 +2390,7 @@ func _f12_o_rosto_do_trabalhador() -> void:
 			_confere("F12: %s está no registo" % f, registados.has(f),
 				"gerado e sem quem o mostre")
 	_confere("F12: a varredura do disco achou os trinta (%d)" % no_disco, no_disco == 30)
-	var cena := load("res://scenes/worker/Worker.tscn") as PackedScene
-	var tex_cena: Texture2D = (cena.instantiate().get_node("Conteudo/Placa/Retrato") as TextureRect).texture
-	_confere("F12: o rosto 0 é o retrato que a cena traz",
-		tex_cena != null and tex_cena.resource_path == String(caminhos[0]))
+	var cena := load("res://scenes/dock/DocaCartao.tscn") as PackedScene
 
 	# 2 e 3 — trinta trabalhadores, trinta rostos, e o `_rng` parado.
 	GS._rng.seed = 12012
@@ -2426,8 +2474,8 @@ func _f12_o_rosto_do_trabalhador() -> void:
 	GS.workers[0]["rosto"] = caminhos.size() - 1
 	var cartao: Node = cena.instantiate()
 	root.add_child(cartao)
-	cartao.setup(int(GS.workers[0]["id"]))
-	var tex: Texture2D = (cartao.get_node("Conteudo/Placa/Retrato") as TextureRect).texture
+	cartao.setup(0)
+	var tex: Texture2D = (cartao.get_node("Coluna/Cabecalho/Placa/Retrato") as TextureRect).texture
 	_confere("F12: o cartão mostra o retrato do rosto dele",
 		tex != null and tex.resource_path == String(caminhos[caminhos.size() - 1]),
 		"mostra %s" % (tex.resource_path if tex != null else "nada"))
@@ -2683,8 +2731,8 @@ func _f14_precos() -> void:
 	for prefixo in ["Igualar", "Cortar", "Manter"]:
 		if not _f10_ate_a_oferta("F14"):
 			return
-		var doca := int(GS.pending_rival_dock)
-		var barco: Dictionary = GS.docks[doca]["boat"]
+		var doca := int(GS.pending_rival)
+		var barco: Dictionary = GS.fila[doca]
 		var painel: Node = await _f10_abrir(F10_ARLINDO, [doca])
 		var mostrado := _f14_reais(_f14_botao(painel, prefixo))
 		_f14_tom_confere(painel, "negociação aberta")
@@ -2717,8 +2765,8 @@ func _f14_recusa() -> void:
 	for depois_igualar in [false, true]:
 		if not _f10_ate_a_oferta("F14"):
 			return
-		var doca := int(GS.pending_rival_dock)
-		var barco: Dictionary = GS.docks[doca]["boat"]
+		var doca := int(GS.pending_rival)
+		var barco: Dictionary = GS.fila[doca]
 		var painel: Node = await _f10_abrir(F10_ARLINDO, [doca])
 		var promessa := _f14_texto(painel, "Cliente")
 		var sobra := tentativas.search(promessa)
@@ -2756,9 +2804,10 @@ func _f14_recusa() -> void:
 				_f10_fechar(painel)
 				return
 			_f14_tom_confere(painel, "negócio perdido")
+			# Desde a `083` o barco disputado está AO LARGO: perdido, sai da fila.
 			_confere("F14: recusada a última, o barco foi mesmo para o rival",
-				GS.docks[doca]["boat"] == null and int(GS.metrics["rival_refused"]) == perdidas + 1,
-				"barco %s, perdidas %d" % [str(GS.docks[doca]["boat"] != null), int(GS.metrics["rival_refused"])])
+				not GS.fila.has(barco) and int(GS.metrics["rival_refused"]) == perdidas + 1,
+				"barco %s, perdidas %d" % [str(GS.fila.has(barco)), int(GS.metrics["rival_refused"])])
 		_f10_fechar(painel)
 	_f14_recusa_ok = true
 
@@ -2774,8 +2823,8 @@ func _f14_chance() -> void:
 		if not _f10_ate_a_oferta("F14"):
 			return
 		GS.reputation = reputacao
-		var doca := int(GS.pending_rival_dock)
-		var molde: Dictionary = (GS.docks[doca]["boat"] as Dictionary).duplicate(true)
+		var doca := int(GS.pending_rival)
+		var molde: Dictionary = (GS.fila[doca] as Dictionary).duplicate(true)
 		var painel: Node = await _f10_abrir(F10_ARLINDO, [doca])
 		var promessas := {}
 		var barras := {}
@@ -2792,8 +2841,8 @@ func _f14_chance() -> void:
 			GS._rng.seed = hash([F14_SEMENTE, reputacao, prefixo])
 			var aceitou := 0
 			for i in F14_AMOSTRA:
-				GS.docks[doca]["boat"] = molde.duplicate(true)
-				GS.pending_rival_dock = doca
+				GS.fila = [molde.duplicate(true)]
+				GS.pending_rival = 0
 				GS.rival_attempts_left = GS.RIVAL_PATIENCE
 				GS.phase = "rival_offer"
 				GS.reputation = reputacao
@@ -3135,6 +3184,10 @@ func _f15_docas() -> void:
 			doca["worker_id"] = null
 		for w in GS.workers:
 			w["busy_turns"] = 0
+		# ⚠️ E A FILA VAZIA (`083`): um barco ao largo com um dia de paciência
+		# desiste na MESMA virada, e o «perdido» que este caso conta passaria a
+		# ser dois — o da doca e o dele.
+		GS.fila = []
 		GS.docks[1]["boat"] = (caso[1] as Dictionary).duplicate()
 		var com_gente: bool = caso[2]
 		if com_gente and not GS.assign_worker(int(GS.workers[0]["id"]), 1, false):
@@ -3178,6 +3231,7 @@ func _f15_docas() -> void:
 		doca["worker_id"] = null
 	for w in GS.workers:
 		w["busy_turns"] = 0
+	GS.fila = []
 	GS.docks[0]["boat"] = _f15_barco("armazenagem", 77777)
 	GS.docks[2]["boat"] = _f15_barco("pescado", 23456)
 	GS.assign_worker(int(GS.workers[0]["id"]), 0, false)
@@ -3271,7 +3325,7 @@ func _f15_recordes() -> void:
 			GS.resolve_rival_offer(true)
 		if GS.phase != "playing":
 			break
-		GS.assign_all_free_workers()
+		_atracar_tudo()
 		var dia: int = GS.turn
 		for i in range(GS.docks.size()):
 			var doca: Dictionary = GS.docks[i]
@@ -3358,7 +3412,7 @@ func _f15_dia32() -> void:
 	while int(GS.turn) < int(GS.PARCELA_DUE_TURN) and voltas < 200:
 		if GS.phase == "rival_offer":
 			GS.resolve_rival_offer(true)
-		GS.assign_all_free_workers()
+		_atracar_tudo()
 		GS.advance_turn()
 		voltas += 1
 	if GS.phase == "rival_offer":
@@ -3861,9 +3915,8 @@ func _f17_a_conversa() -> void:
 	var tom: String = Narrativa.tom_do_boletim(GS.resumo_da_semana(1))
 	_f17_gravou(fila, "cida", Narrativa.boletim(tom), Narrativa.retrato("cida", tom))
 
-	if GS.docks[0]["boat"] == null:
-		GS.docks[0]["boat"] = GS._make_boat()
-	GS.pending_rival_dock = 0
+	GS.fila = [GS._make_boat()]
+	GS.pending_rival = 0
 	GS.rival_attempts_left = GS.RIVAL_PATIENCE
 	GS._set_phase("rival_offer")
 	var arlindo: Control = main.call("_abrir_painel",

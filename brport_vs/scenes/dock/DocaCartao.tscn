@@ -27,6 +27,24 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 6
 
+; O RETRATO DA EQUIPE DO PÍER (`083`): o trabalhador nº N nasce com o píer N
+; e é ele que atraca ali. Era a fileira dos trabalhadores que o mostrava, e
+; ela deu o lugar à fila no fundeadouro. 52 px: a 30 (a primeira passagem)
+; o rosto tinha ~10 px, e o Bruno pediu-o maior duas vezes — 44 na segunda,
+; 52 na terceira. O cabeçalho cresce com ela, e a barra das docas também.
+[node name="Placa" type="PanelContainer" parent="Coluna/Cabecalho"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"PlacaRetrato"
+
+[node name="Retrato" type="TextureRect" parent="Coluna/Cabecalho/Placa"]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
 [node name="Nome" type="Label" parent="Coluna/Cabecalho"]
 layout_mode = 2
 size_flags_horizontal = 3

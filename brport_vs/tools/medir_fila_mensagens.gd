@@ -191,8 +191,8 @@ func _uma_partida(modo: String, semente: int) -> void:
 		# parcela cedo, e é depois disso que o estado que a fala nova lê
 		# existe — cais parado, dinheiro curto e o Sr. Ribeiro já pago.
 		if modo != "passivo":
-			await _acao(modo, semente, "alocar_todos",
-				func(): GS.assign_all_free_workers())
+			await _acao(modo, semente, "atracar_todos",
+				func(): _atracar_tudo())
 		if modo == "quitador" and not GS.parcela_paid and GS.pode_pagar_parcela_adiantado():
 			await _acao(modo, semente, "quitar_adiantado",
 				func(): GS.pagar_parcela_adiantado())
@@ -404,3 +404,12 @@ func _medir_textos(lista: Array) -> void:
 		return
 	print("   média %d caracteres · o mais longo %d" % [soma / lista.size(), maior_txt.length()])
 	print("   o mais longo: \"%s\"" % maior_txt)
+
+
+# Enche os berços livres com os barcos ao largo, pela ordem da fila (`083`).
+# É o «Alocar todos» com que esta ferramenta jogava: o jogo deixou de o ter, e
+# atracar leva o trabalhador junto.
+func _atracar_tudo() -> void:
+	while GS.atracagem_pendente() != Vector2i.ZERO:
+		if not GS.atracar(0, false):
+			return

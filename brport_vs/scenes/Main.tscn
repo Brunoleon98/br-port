@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://art/porto_mapa_espuma1.svg" id="espuma1"]
 [ext_resource type="PackedScene" path="res://scenes/dock/Dock.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/dock/DocaCartao.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/fila/BarcoFila.tscn" id="barco_fila"]
 [ext_resource type="Texture2D" path="res://art/props/barco_medio_conteiner.png" id="5"]
 [ext_resource type="Texture2D" path="res://art/icones/caixa.svg" id="ic_caixa"]
 [ext_resource type="Texture2D" path="res://art/icones/dia.svg" id="ic_dia"]
@@ -17,7 +18,6 @@
 [ext_resource type="Texture2D" path="res://art/icones/ampliar_pier.svg" id="ic_ampliar"]
 [ext_resource type="Texture2D" path="res://art/icones/avancar.svg" id="ic_avancar"]
 [ext_resource type="Texture2D" path="res://art/icones/menu.svg" id="ic_menu"]
-[ext_resource type="Texture2D" path="res://art/icones/trabalhador.svg" id="ic_trabalhador"]
 [ext_resource type="Texture2D" path="res://art/props/coqueiro_tronco.png" id="prop_coqueiro_tronco"]
 [ext_resource type="Texture2D" path="res://art/props/coqueiro_copa.png" id="prop_coqueiro_copa"]
 [ext_resource type="Texture2D" path="res://art/props/boia.png" id="prop_boia"]
@@ -425,6 +425,15 @@ offset_bottom = 643.17
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_empilhadeira")
+[node name="BarcoEspera3" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 396.00
+offset_top = 132.00
+offset_right = 908.00
+offset_bottom = 644.00
+mouse_filter = 2
+expand_mode = 1
+texture = ExtResource("5")
 [node name="Cabeco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -10
@@ -608,9 +617,9 @@ mouse_filter = 2
 [node name="BarraDocas" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 732.0
+offset_top = 728.0
 offset_right = 706.0
-offset_bottom = 816.0
+offset_bottom = 832.0
 theme_override_constants/separation = 10
 
 [node name="Cartao0" parent="BarraDocas" instance=ExtResource("6")]
@@ -625,47 +634,53 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-; ================= TRABALHADORES =================
+; ================= AO LARGO (`083`) =================
+;
+; A FILA NO FUNDEADOURO ocupa a linha que era dos trabalhadores. Desde 04/10 o
+; trabalhador vai junto com o barco que se atraca — cada píer traz o seu, e
+; havia sempre um para cada doca, por isso o «Alocar todos» acertava sempre e
+; arrastar não era escolha nenhuma. O que fica por decidir é QUAL barco entra
+; no berço livre, e é isso que esta linha mostra: três lugares, os que o
+; fundeadouro tem (`GameState.FILA_LUGARES`).
 
-[node name="TrabalhadoresTitulo" type="Label" parent="."]
+[node name="FilaTitulo" type="Label" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 826.0
+offset_top = 838.0
 offset_right = 706.0
-offset_bottom = 844.0
-text = "Trabalhadores — toque ou arraste para uma doca"
+offset_bottom = 856.0
+text = "Ao largo — toque num barco para atracar"
 theme_type_variation = &"TextoBarra"
 theme_override_font_sizes/font_size = 13
 
-; AS VAGAS ficam POR TRÁS dos trabalhadores, na mesma caixa e nas mesmas
-; colunas, e não no mesmo contentor: quem percorre os filhos do
-; `Trabalhadores` (o `Main`, o D9, o D34, a régua do contraste) conta com que
-; todo filho seja um trabalhador (`081`).
-[node name="Vagas" type="HBoxContainer" parent="."]
+[node name="Fila" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 848.0
+offset_top = 860.0
 offset_right = 706.0
-offset_bottom = 984.0
-mouse_filter = 2
+offset_bottom = 1008.0
 theme_override_constants/separation = 10
 
-[node name="Trabalhadores" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 14.0
-offset_top = 848.0
-offset_right = 706.0
-offset_bottom = 984.0
-theme_override_constants/separation = 10
+[node name="Lugar0" parent="Fila" instance=ExtResource("barco_fila")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Lugar1" parent="Fila" instance=ExtResource("barco_fila")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Lugar2" parent="Fila" instance=ExtResource("barco_fila")]
+layout_mode = 2
+size_flags_horizontal = 3
 
 ; ================= RODAPÉ =================
 
 [node name="MensagemCartao" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 994.0
+offset_top = 1014.0
 offset_right = 706.0
-offset_bottom = 1046.0
+offset_bottom = 1066.0
 theme_type_variation = &"FaixaMensagem"
 
 [node name="Linha" type="HBoxContainer" parent="MensagemCartao"]
@@ -689,9 +704,9 @@ theme_override_font_sizes/font_size = 12
 [node name="MetaCartao" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1054.0
+offset_top = 1072.0
 offset_right = 706.0
-offset_bottom = 1131.0
+offset_bottom = 1149.0
 theme_type_variation = &"CartaoBarra"
 
 [node name="MetaColuna" type="VBoxContainer" parent="MetaCartao"]
@@ -753,9 +768,9 @@ theme_override_font_sizes/font_size = 13
 [node name="LinhaConstruir" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1139.0
+offset_top = 1155.0
 offset_right = 706.0
-offset_bottom = 1185.0
+offset_bottom = 1201.0
 theme_override_constants/separation = 8
 
 [node name="Upgrade" type="Button" parent="LinhaConstruir"]
@@ -776,21 +791,10 @@ icon = ExtResource("ic_menu")
 [node name="AcoesTurno" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1193.0
+offset_top = 1207.0
 offset_right = 706.0
-offset_bottom = 1251.0
+offset_bottom = 1265.0
 theme_override_constants/separation = 8
-
-[node name="Alocar" type="Button" parent="AcoesTurno"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 1.25
-theme_type_variation = &"BotaoDestaque"
-tooltip_text = "Põe cada trabalhador livre numa doca que esteja esperando, do barco mais valioso para o menos"
-text = "Alocar todos"
-theme_override_constants/icon_max_width = 24
-theme_override_font_sizes/font_size = 15
-icon = ExtResource("ic_trabalhador")
 
 [node name="Avancar" type="Button" parent="AcoesTurno"]
 layout_mode = 2

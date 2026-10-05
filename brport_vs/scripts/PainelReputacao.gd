@@ -101,7 +101,10 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	grade.add_theme_constant_override("v_separation", 2)
 	_vbox.add_child(grade)
 	linha_de_apoio(grade, "Atender um barco", _pontos(GameState.REPUTATION_GAIN_SERVED))
-	linha_de_apoio(grade, "Perder um barco sem trabalhador", _pontos(-GameState.REPUTATION_LOSS_LOST))
+	# Desde a `083` o barco perdido é o que DESISTE AO LARGO — espera os dias da
+	# paciência dele e vai para o Porto Farol. «Sem trabalhador» descrevia a
+	# doca à espera de alguém, que deixou de existir.
+	linha_de_apoio(grade, "Deixar um barco desistir ao largo", _pontos(-GameState.REPUTATION_LOSS_LOST))
 	linha_de_apoio(grade, "Fechar um acordo com o rival", _pontos(GameState.REPUTATION_GAIN_RIVAL_MATCHED))
 	linha_de_apoio(grade, "Recusar ou perder para o rival", _pontos(-GameState.REPUTATION_LOSS_RIVAL_REFUSED))
 

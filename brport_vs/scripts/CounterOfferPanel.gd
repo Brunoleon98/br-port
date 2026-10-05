@@ -7,7 +7,12 @@ extends Control
 # O painel é só a tela: quem sorteia e decide é o GameState. A paciência
 # restante também mora lá, para o autosave não devolver tentativas gastas.
 
-var dock_index: int = -1
+# O lugar da FILA do barco disputado (`083`), e o próprio barco, guardado na
+# abertura: o `_fechar_negocio()` escreve o preço no MESMO dicionário, e
+# depois de fechar a oferta `barco_da_oferta()` já devolve null — a despedida
+# lê o preço daqui.
+var indice_fila: int = -1
+var _barco: Variant = null
 # O TEMPO DA CENA NA TELA, para quem a fotografa. A cobertura das capturas
 # (`tools/conferir_cobertura_paineis.py`) lê daqui o catálogo — cada
 # `tempo = &"..."` escrito neste arquivo é um tempo que tem de ter foto — e as
@@ -48,7 +53,8 @@ var _barra_manter: ProgressBar
 
 
 func setup(index: int) -> void:
-	dock_index = index
+	indice_fila = index
+	_barco = GameState.barco_da_oferta()
 	tempo = &"rodada"
 	_build_ui()
 	_refresh()
@@ -194,10 +200,7 @@ func _barra_de_chance(botao: Button) -> ProgressBar:
 
 
 func _valor_barco() -> int:
-	if dock_index < 0 or dock_index >= GameState.docks.size():
-		return 0
-	var boat = GameState.docks[dock_index]["boat"]
-	return int(boat["value"]) if boat != null else 0
+	return int(_barco["value"]) if _barco != null else 0
 
 
 func _negociar(acao: String) -> void:
@@ -232,8 +235,7 @@ func _despedida(resultado: String) -> void:
 	PainelNarrativo.tingir_tarja(_valor_label, &"bom" if resultado == "fechado" else &"ruim")
 	# O PREÇO QUE FICOU, lido do barco e não recalculado: o `_fechar_negocio()`
 	# escreve-o em `matched_value`, e é esse que o jogo paga.
-	var boat = GameState.docks[dock_index]["boat"] if dock_index >= 0 \
-		and dock_index < GameState.docks.size() else null
+	var boat = _barco
 	PainelNarrativo.escrever_detalhe(_valor_apoio,
 		"Fechado por %s" % GameState.moeda(int(boat["matched_value"]))
 		if resultado == "fechado" and boat != null and boat.has("matched_value") else "")

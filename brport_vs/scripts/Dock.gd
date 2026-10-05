@@ -694,14 +694,10 @@ static func arte_do_barco(classe: String, motivo: String, valor: int) -> Texture
 
 var dock_index: int = -1
 
-# Quem está selecionado na fileira de trabalhadores, ou -1. O Main mantém isto
-# em dia; a doca só precisa saber para onde mandar o toque.
-var trabalhador_selecionado: int = -1
-
 # ── ANIMAÇÃO ──
 # O barco, a lança e o realce são Tween sobre os sprites que já existem: o
 # balanço dá vida ao barco parado, a chegada explica de onde ele veio, e o
-# realce aponta a doca que pode receber o trabalhador escolhido. O trabalhador
+# realce aponta o berço onde o próximo barco ao largo vai atracar. O trabalhador
 # do nível 1 é o único que anda por QUADROS (`QUADROS_TRABALHADOR`, `075`).
 const BALANCO_PX := 5.0
 const BALANCO_SEG := 1.7
@@ -835,9 +831,11 @@ func refresh() -> void:
 
 func _refresh_cena() -> void:
 	_trabalhador_prop.visible = false
-	# O realce só faz sentido se há alguém escolhido esperando um destino.
-	_acender_realce(trabalhador_selecionado >= 0
-		and GameState.doca_aceita_trabalhador(dock_index))
+	# O REALCE APONTA O BERÇO QUE O PRÓXIMO TOQUE ENCHE (`083`). Apontava a
+	# doca para o trabalhador escolhido, e a escolha passou para a fila: tocar
+	# num barco ao largo atraca-o no primeiro berço livre, e é esse que acende.
+	_acender_realce(GameState.atracagem_pendente() != Vector2i.ZERO
+		and GameState.berco_livre() == dock_index)
 
 	# A lança só existe onde há píer: numa vaga por construir há só estacas.
 	# ⚠️ E COM O PAU-DE-CARGA A TRABALHAR ELA NÃO VARRE NEM VOLTA AO REPOUSO:
@@ -925,33 +923,17 @@ func _guindaste_opera() -> bool:
 	return nivel != 2 or int(boat["progress"]) == 0
 
 
-func _can_drop_data(_at_position: Vector2, data) -> bool:
-	if typeof(data) != TYPE_DICTIONARY or not data.has("worker_id"):
-		return false
-	return GameState.doca_aceita_trabalhador(dock_index)
-
-
-func _drop_data(_at_position: Vector2, data) -> void:
-	GameState.assign_worker(int(data["worker_id"]), dock_index)
-
-
+# O píer também é alvo de toque, como o cartão: devolve o barco ao largo
+# enquanto a operação não começou (`083`). Até lá recebia o trabalhador
+# arrastado da fileira, que deu o lugar à fila.
 func _gui_input(event: InputEvent) -> void:
 	if not (event is InputEventMouseButton and event.pressed
 			and event.button_index == MOUSE_BUTTON_LEFT):
 		return
 	if not esta_construida():
 		return
-
-	# Com alguém selecionado na fileira, o toque ALOCA — é o outro lado do
-	# toque-para-alocar. Sem seleção, o toque devolve quem está aqui para a
-	# fileira, que é como se desfaz um arrasto errado.
-	if trabalhador_selecionado >= 0 and GameState.docks[dock_index]["worker_id"] == null:
-		GameState.assign_worker(trabalhador_selecionado, dock_index)
-		accept_event()
-		return
-
-	if GameState.docks[dock_index]["worker_id"] != null:
-		GameState.release_worker(dock_index)
+	if GameState.docks[dock_index]["boat"] != null:
+		GameState.desatracar(dock_index)
 		accept_event()
 
 

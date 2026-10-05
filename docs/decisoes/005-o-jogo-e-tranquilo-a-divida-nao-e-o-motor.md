@@ -97,6 +97,14 @@ fase com menos porto do que podia ter.
 > regime (R$674.019 contra R$103.290), e não pela contagem de barcos — o porto
 > pobre só recebe pesqueiro, descarrega num turno e chega a atender MAIS barcos
 > do que o rico.
+>
+> ⚠️ **E em 04/10 o atracar passou a ser escolha** (`docs/decisoes/083`, a fila
+> no fundeadouro). Com os contratos de antes, a fila deu 100 · 100 · 55,8 — o
+> jogo ficou fácil —, e o alvo desta página voltou pelos contratos, a 0,72 das
+> faixas: o que está em vigor é **100% · 78,7% · 41,5%**, com a margem em
+> regime em R$538.184 contra R$94.955. O Descuidado ficou seis pontos acima
+> dos ~35; o botão dele continua a ser a parcela, e a troca está medida na
+> `083`.
 
 Contra uma Parcela 1 de R$550.000 — que é o número desta medição de 02/09. É a forma que a decisão pede: o mediano
 ganha quatro em cada cinco — tranquilo —, e o descuidado perde duas em cada

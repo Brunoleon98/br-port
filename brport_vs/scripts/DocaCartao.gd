@@ -13,8 +13,12 @@ extends PanelContainer
 # chip acompanhava o píer, os três alvos de toque ficavam em diagonal pela
 # tela: pior de acertar com o polegar do que uma fileira alinhada.
 #
-# O cartão continua aceitando ARRASTO, então quem já jogava arrastando o
-# trabalhador para o píer não perde nada — o píer também continua sendo alvo.
+# ⚠️ E DESDE A `083` ELE NÃO RECEBE TRABALHADOR NENHUM. O arrasto e o toque
+# depois de escolher alguém na fileira morreram com a fileira: o trabalhador
+# vai junto com o barco que se atraca a partir da linha «Ao largo». O toque
+# aqui DEVOLVE o barco ao largo enquanto a operação não começou — é o
+# «toque p/ liberar» de sempre, com o barco a voltar em vez de ficar sem
+# ninguém.
 # ============================================================
 
 # ⚠️ AS DUAS CORES DESTE CARTÃO SAÍRAM DAQUI em 22/09, para o tema
@@ -27,13 +31,11 @@ extends PanelContainer
 
 var dock_index: int = -1
 
-# Quem está selecionado na fileira de trabalhadores, ou -1. O Main mantém em
-# dia; o cartão só precisa saber para onde mandar o toque.
-var trabalhador_selecionado: int = -1
-
 const PULSO_SEG := 0.9
 var _tw_pulso: Tween
 
+@onready var _placa: Control = $Coluna/Cabecalho/Placa
+@onready var _retrato: TextureRect = $Coluna/Cabecalho/Placa/Retrato
 @onready var _nome: Label = $Coluna/Cabecalho/Nome
 @onready var _valor: Label = $Coluna/Cabecalho/Valor
 @onready var _progresso: Label = $Coluna/ProgressoLinha/Progresso
@@ -65,6 +67,7 @@ func refresh() -> void:
 	_progresso_icone.visible = false
 	_trabalhador_icone.visible = false
 	_pulsar(false)
+	_pintar_retrato()
 
 	if not esta_construida():
 		theme_type_variation = &"CartaoDocaObra"
@@ -73,7 +76,10 @@ func refresh() -> void:
 		# «nada» — a regra da linha com valor zero, num cartão. A linha de
 		# baixo já diz porquê não há número.
 		_valor.text = ""
-		_progresso.text = "píer por construir"
+		# «em ruínas» e não «por construir» (quarta passagem, «melhore o
+		# texto»): é o que o mapa mostra por cima — as estacas do píer velho —,
+		# e diz porquê sem pedir que se leia o painel Construir.
+		_progresso.text = "píer em ruínas"
 		_progresso.theme_type_variation = &"TextoDocaProgresso"
 		_trabalhador.text = ""
 		return
@@ -84,12 +90,12 @@ func refresh() -> void:
 	if boat == null:
 		theme_type_variation = &"CartaoDoca"
 		_valor.text = ""
-		_progresso.text = "aguardando barco"
+		_progresso.text = texto_do_berco_livre(
+			GameState.atracagem_pendente() != Vector2i.ZERO, GameState.fila.is_empty())
 		_progresso.theme_type_variation = &"TextoDocaProgresso"
 		_trabalhador.text = ""
 		return
 
-	var sob_oferta: bool = boat.get("rival", false) and not boat.get("matched", false)
 	var valor: int = int(boat["matched_value"]) if boat.get("matched", false) else int(boat["value"])
 	_valor.text = GameState.moeda(valor)
 
@@ -99,29 +105,16 @@ func refresh() -> void:
 	# só com o texto cortado. Na linha do progresso, a 13px, o pior caso cabe.
 	var motivo: String = GameState.MOTIVOS[String(boat["motivo"])]["nome"]
 
-	if sob_oferta:
-		theme_type_variation = &"CartaoDocaRival"
-		_progresso_icone.visible = true
-		# Aqui o motivo sai da frente: quem está a decidir o preço não precisa
-		# de saber o que o navio traz, e as duas coisas juntas com o ícone do
-		# rival não cabem na linha.
-		_progresso.text = "oferta do rival"
-		_progresso.theme_type_variation = &"TextoDocaProgressoRival"
-		_trabalhador.text = ""
-		return
+	# ⚠️ A OFERTA DO RIVAL JÁ NÃO CHEGA AQUI (`083`): o Arlindo disputa o barco
+	# AO LARGO, e um barco só atraca com a oferta resolvida. O ramo
+	# `CartaoDocaRival` mudou-se para o `BarcoFila`.
 
-	# Com acordo fechado a palavra "turnos" sai: o pior caso dos três pedaços
-	# mede 189px dos 200 disponíveis, e escrevê-la passaria de 200.
-	if boat.get("matched", false):
-		_progresso.text = "%s  ·  %d/%d  ·  acordo" % [
-			motivo, int(boat["progress"]), int(boat["op_turns"])]
-	else:
-		_progresso.text = "%s  ·  %d/%d turnos" % [
-			motivo, int(boat["progress"]), int(boat["op_turns"])]
+	_progresso.text = texto_do_progresso(motivo, int(boat["progress"]),
+		int(boat["op_turns"]))
 	_progresso.theme_type_variation = &"TextoDocaProgresso"
 
-	# Barco parado esperando gente é o que o jogador precisa notar — e é a
-	# única coisa nesta barra que pisca.
+	# Barco atracado SEM ninguém só acontece num estado que o jogo não monta
+	# (atracar leva sempre o trabalhador); se acontecer, é o que tem de piscar.
 	var esperando: bool = dock["worker_id"] == null and int(boat["progress"]) == 0
 	if esperando:
 		theme_type_variation = &"CartaoDocaEspera"
@@ -138,11 +131,53 @@ func refresh() -> void:
 		_trabalhador.text = "sem trabalhador"
 	else:
 		_trabalhador_icone.visible = true
-		var texto := "#%d" % int(dock["worker_id"])
-		# Enquanto a operação não começou dá para desfazer um arrasto errado.
-		if int(boat["progress"]) == 0:
-			texto += "  ·  toque p/ liberar"
-		_trabalhador.text = texto
+		_trabalhador.text = texto_do_trabalhador(int(dock["worker_id"]),
+			boat.get("matched", false), int(boat["progress"]))
+
+
+# OS TEXTOS DO CARTÃO SÃO FUNÇÕES, e não literais no `refresh()`, porque o
+# D18 mede o pior caso de cada um: com literais dos dois lados, o teste media a
+# CÓPIA, e um formato mudado aqui passaria verde lá.
+#
+# A linha do barco diz QUANDO O BERÇO VOLTA A ABRIR (quarta passagem, «o texto
+# parece bem simples»): «parte amanhã», «parte em 2 dias». Era «1/2 dias», o
+# progresso — certo e mudo; o que o jogador decide com ele é quando pode
+# chamar o barco seguinte, e é isso que passou a estar escrito. «Parte» e não
+# «sai»: na fila, o barco que se vai sem atracar «vai embora». O pior caso,
+# «Armazenagem · parte em 3 dias», mede 198 de 200 px com um espaço de cada
+# lado do ponto (205 com dois) — o D18 mede-o.
+static func texto_do_progresso(motivo: String, feitos: int, total: int) -> String:
+	var faltam := total - feitos
+	if faltam <= 1:
+		return "%s · parte amanhã" % motivo
+	return "%s · parte em %d dias" % [motivo, faltam]
+
+
+# O berço livre diz o que fazer com ele: chamar um barco, se houver um pronto
+# ao largo; senão, que não há quem chamar. Fora disso (o Arlindo a negociar o
+# único barco, ou fora do jogo) fica só «livre», que é verdade sempre.
+static func texto_do_berco_livre(ha_barco_pronto: bool, fila_vazia: bool) -> String:
+	if ha_barco_pronto:
+		return "livre — chame um barco"
+	if fila_vazia:
+		return "livre — ninguém ao largo"
+	return "livre"
+
+
+# Enquanto a operação não começou dá para desfazer a escolha: o barco volta ao
+# largo com a paciência que tinha (`desatracar()`); depois, o trabalhador está
+# a descarregar. Com acordo, o número do trabalhador sai — o retrato no
+# cabeçalho já diz quem é —, e é o que deixa «acordo · toque p/ devolver»
+# caber: 187 de 200 px, contra 213 com o «#3» à frente (medido; o D18 mede-o a
+# cada corrida).
+static func texto_do_trabalhador(wid: int, acordo: bool, feitos: int) -> String:
+	if feitos == 0:
+		if acordo:
+			return "acordo · toque p/ devolver"
+		return "#%d · toque p/ devolver" % wid
+	if acordo:
+		return "descarregando · acordo"
+	return "#%d · descarregando" % wid
 
 
 
@@ -159,14 +194,25 @@ func _pulsar(ligado: bool) -> void:
 		.set_trans(Tween.TRANS_SINE)
 
 
-func _can_drop_data(_at_position: Vector2, data) -> bool:
-	if typeof(data) != TYPE_DICTIONARY or not data.has("worker_id"):
-		return false
-	return GameState.doca_aceita_trabalhador(dock_index)
-
-
-func _drop_data(_at_position: Vector2, data) -> void:
-	GameState.assign_worker(int(data["worker_id"]), dock_index)
+# A cara de quem trabalha neste píer: o alocado, se houver; senão a EQUIPE DO
+# PÍER, o trabalhador nº N, à espera de barco. A cheio nos dois casos: a
+# primeira passagem esbatia o da espera, e a 30 px ele lia-se como uma mancha
+# cinzenta (pedido do Bruno). Píer por construir não tem equipe, e a placa sai.
+func _pintar_retrato() -> void:
+	var quem := -1
+	if esta_construida():
+		var wid = GameState.docks[dock_index]["worker_id"]
+		if wid != null:
+			quem = int(wid)
+		elif dock_index < GameState.workers.size():
+			quem = int(GameState.workers[dock_index]["id"])
+	var w = GameState._find_worker(quem) if quem >= 0 else null
+	_placa.visible = w != null
+	if w == null:
+		return
+	var rosto := Retratos.do_trabalhador(int(w["rosto"]))
+	if _retrato.texture != rosto:
+		_retrato.texture = rosto
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -175,15 +221,6 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if not esta_construida():
 		return
-
-	# Com alguém selecionado na fileira, o toque ALOCA — é o outro lado do
-	# toque-para-alocar. Sem seleção, o toque devolve quem está aqui para a
-	# fileira, que é como se desfaz um arrasto errado.
-	if trabalhador_selecionado >= 0 and GameState.docks[dock_index]["worker_id"] == null:
-		GameState.assign_worker(trabalhador_selecionado, dock_index)
-		accept_event()
-		return
-
-	if GameState.docks[dock_index]["worker_id"] != null:
-		GameState.release_worker(dock_index)
+	if GameState.docks[dock_index]["boat"] != null:
+		GameState.desatracar(dock_index)
 		accept_event()

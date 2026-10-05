@@ -356,13 +356,17 @@ func _montar_estado() -> void:
 				GS.save_game()
 				print("  estado: espaço %d — %s, dia %d" % [int(n), GS.nome_porto, GS.turn])
 			continue
+		# `barco=N` é o lugar N da FILA sob oferta (`083`): o Arlindo disputa o
+		# barco ao largo, e é para lá que o painel olha.
 		if chave == "barco":
-			var doca: int = int(valor)
-			GS.docks[doca]["boat"] = GS._make_boat()
-			GS.pending_rival_dock = doca
+			var lugar: int = int(valor)
+			while GS.fila.size() <= lugar:
+				GS.fila.append(GS._make_boat())
+			GS.fila[lugar]["rival"] = true
+			GS.pending_rival = lugar
 			GS.rival_attempts_left = GS.RIVAL_PATIENCE
 			GS._set_phase("rival_offer")
-			print("  estado: barco na doca %d" % doca)
+			print("  estado: barco ao largo no lugar %d" % lugar)
 			continue
 		# ⚠️ `parcela=vencida` TAMBÉM É MONTAGEM, e pelo caminho do jogo: o
 		# `advance_turn()` até à fase "debt_payment", resolvendo as ofertas do

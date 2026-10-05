@@ -20,8 +20,6 @@ extends Control
 # de cascos. Um segundo dicionário de cascos seria a fonte dupla que este
 # projeto já pagou noutros sítios.
 const DockScript := preload("res://scripts/Dock.gd")
-const WorkerScene := preload("res://scenes/worker/Worker.tscn")
-const VagaScene := preload("res://scenes/worker/Vaga.tscn")
 const CounterOfferScene := preload("res://scenes/panels/CounterOfferPanel.tscn")
 const DebtPaymentScene := preload("res://scenes/panels/DebtPaymentPanel.tscn")
 const UpgradePanelScene := preload("res://scenes/panels/UpgradePanel.tscn")
@@ -72,7 +70,6 @@ var _fila_da_vez: Array[Callable] = []
 @onready var _message_label: Label = $MensagemCartao/Linha/Mensagem
 @onready var _pendentes_label: Label = $MensagemCartao/Linha/Pendentes
 @onready var _advance_button: Button = $AcoesTurno/Avancar
-@onready var _alocar_button: Button = $AcoesTurno/Alocar
 @onready var _upgrade_button: Button = $LinhaConstruir/Upgrade
 @onready var _menu_button: Button = $LinhaConstruir/Menu
 # Uma doca tem DUAS metades na tela: a vaga no mapa (píer, barco, guindaste,
@@ -85,13 +82,12 @@ var _fila_da_vez: Array[Callable] = []
 # (`078`, e o comentário do nó no `Main.tscn`).
 @onready var _ganhos: Control = $MapaWrap/Ganhos
 
-# Trabalhador escolhido por toque, à espera de uma doca. -1 = nenhum.
-# Vive aqui e não no GameState porque é estado de interface: quem joga com
-# arrasto nunca o usa, e o jogo salvo não deve carregar isto.
-var _selecionado: int = -1
-@onready var _workers_container: HBoxContainer = $Trabalhadores
-@onready var _vagas: HBoxContainer = $Vagas
-@onready var _workers_title: Label = $TrabalhadoresTitulo
+# A linha «Ao largo» (`083`): os três lugares da fila no fundeadouro e o
+# rótulo que diz se há escolha a fazer. Substituiu a fileira dos
+# trabalhadores, a seleção por toque e o «Alocar todos» — desde a fila o
+# trabalhador vai junto com o barco, e não havia escolha nenhuma em alocá-lo.
+@onready var _fila_lugares: HBoxContainer = $Fila
+@onready var _fila_titulo: Label = $FilaTitulo
 @onready var _mapa: TextureRect = $MapaWrap/Mapa
 
 # As estruturas trocam de TEXTURA, não de nó: assim o prop ocupa exatamente o
@@ -124,7 +120,6 @@ func _ready() -> void:
 	Registro.armar()
 
 	_advance_button.pressed.connect(_on_advance_pressed)
-	_alocar_button.pressed.connect(_on_alocar_pressed)
 	_upgrade_button.pressed.connect(_on_upgrade_pressed)
 	_menu_button.pressed.connect(_on_menu_pressed)
 	_pause_button.pressed.connect(_on_pause_pressed)
@@ -199,86 +194,59 @@ func _ready() -> void:
 # `new_game()`. Vive numa função própria porque é chamada de dois sítios: aqui,
 # quando não há abertura, e no fim da corrente da abertura.
 func _recuperar_fase() -> void:
-	if GameState.phase == "rival_offer" and GameState.pending_rival_dock >= 0:
-		_on_rival_offer_triggered(GameState.pending_rival_dock)
+	if GameState.phase == "rival_offer" and GameState.pending_rival >= 0:
+		_on_rival_offer_triggered(GameState.pending_rival)
 	elif GameState.phase == "debt_payment":
 		_on_debt_due(GameState.PARCELA_AMOUNT)
 	elif GameState.phase == "game_over":
 		_on_game_over(GameState.won, GameState.end_reason)
 
 
-# A classe mais alta que o porto de hoje consegue receber — é a que fica
-# ancorada à espera de vaga. Percorre a tabela em vez de a listar à mão, pela
-# mesma razão que o painel Construir o faz: classe nova tem de aparecer sozinha.
-func _classe_ancorada() -> String:
-	var melhor := "pesqueiro"
-	var nivel := -1
-	for id in GameState.classes_disponiveis():
-		var n: int = int(GameState.CLASSES_DE_NAVIO[id]["nivel"])
-		if n > nivel:
-			nivel = n
-			melhor = String(id)
-	return melhor
+# OS BARCOS DA ZONA DE ESPERA SÃO A FILA (`083`): os dois primeiros barcos ao
+# largo, com o casco de cada um — o mesmo `arte_do_barco()` que os desenha na
+# doca e no cartão «Ao largo». Até lá eram cenário: a classe mais alta que o
+# porto recebia, num motivo e num valor escolhidos por índice para os dois
+# não saírem com o mesmo casco. Desde que o barco espera ao largo, o que lá
+# está é o que o jogador pode chamar, e um lugar vazio na fila é água vazia.
+#
+# São TRÊS, um por lugar da fila: a primeira passagem tinha só os dois da
+# composição de `017`, e o terceiro barco ao largo existia no HUD e não no
+# mapa — pedido do Bruno. A posição foi a dele numa prancha de duas: acima e
+# à direita dos outros, no largo ainda livre, e não a da recomendação (abaixo,
+# junto ao segundo). A ORDEM da fila não se lê pela posição no mapa — quem a
+# diz é o cartão «Ao largo»; aqui só conta quantos estão à espera e de que
+# porte. E o nó vive no `Cenario` entre a Empilhadeira e o Cabeço porque é aí
+# que a profundidade dele cai (o D3).
+const ANCORADOS := ["BarcoEspera1", "BarcoEspera2", "BarcoEspera3"]
 
 
-## O n-ésimo motivo que esta classe pode trazer, em roda. Percorre a tabela em
-## vez de a listar à mão: motivo novo numa classe entra aqui sozinho, e uma
-## classe cujos motivos mudem não deixa este lugar a pedir um casco que não há.
-func _motivo_da_classe(classe: String, n: int) -> String:
-	var motivos: Array = GameState.CLASSES_DE_NAVIO[classe]["motivos"].keys()
-	return String(motivos[n % motivos.size()])
-
-
-## O valor "de cenário" do ancorado nº `n`, para o casco dele sair pelo mesmo
-## caminho que o de um barco a sério.
-##
-## ⚠️ ELE É UM VALOR E NÃO UM ÍNDICE DE PORTE, e isso é de propósito: o
-## `arte_do_barco()` é UM ponto de entrada, e um segundo que recebesse o porte
-## já escolhido seria a mesma tabela lida por duas regras — a forma de a Zona
-## de Espera passar a desenhar um barco que o jogo não sabe montar. Os dois
-## ancorados caem a 45% e a 95% da faixa da classe, que com três portes dá o
-## do meio e o maior: dois barcos parados lado a lado com o mesmo casco seriam
-## a mesma foto duas vezes. Não sorteia, pela mesma razão do motivo — o RNG do
-## jogo é o que o simulador mede.
-func _valor_ancorado(classe: String, n: int) -> int:
-	var dados: Dictionary = GameState.CLASSES_DE_NAVIO[classe]
-	var vmin: int = int(dados["valor_min"])
-	var vmax: int = int(dados["valor_max"])
-	return vmin + int(round((vmax - vmin) * (0.45 + 0.5 * float(n))))
-
-
-# Os barcos da Zona de Espera são cenário: não têm lógica, mas parados fazem o
-# porto parecer uma fotografia. Vivem dentro do Cenario, e não soltos no
-# MapaWrap, porque a ordem lá dentro é a profundidade isométrica — metade do
-# mapa ordenada e metade não é o mesmo que não estar ordenada. Fases diferentes para não balançarem em bloco,
-# que é o que denuncia a animação como truque.
-func _animar_ancorados() -> void:
-	var fases := [0.0, 0.85]
-	var classe_ancorada := _classe_ancorada()
+func _pintar_ancorados() -> void:
 	var i := 0
-	for nome in ["BarcoEspera1", "BarcoEspera2"]:
+	for nome in ANCORADOS:
 		var barco := $MapaWrap/Cenario.get_node_or_null(nome) as TextureRect
 		if barco == null:
 			continue
-		# ⚠️ O CASCO ANCORADO SEGUE A TRAVA DO PORTO. A cena traz um cargueiro
-		# assado, e desde a trava de 06/09 isso passou a contradizer a
-		# mecânica: o porto em ruínas não recebe cargueiro, e a Zona de Espera
-		# mostrava dois ancorados desde o primeiro dia. É a mesma regra que já
-		# vale para o píer e para o galpão — o que troca de estado numa partida
-		# não pode estar assado no fundo.
-		# ⚠️ E O CASCO PEDE UM MOTIVO desde 07/09, porque é o motivo que
-		# desenha o convés. O de cada ancorado sai da tabela da classe, pelo
-		# ÍNDICE: dois barcos parados lado a lado com o mesmo convés seriam a
-		# mesma foto duas vezes, e escolher ao acaso gastaria sorteios do jogo
-		# numa decisão que é só de cenário (a regra do `Registro` que nasce
-		# desarmado, aplicada à semente).
-		# ⚠️ E DESDE 08/09 ELE PEDE UM VALOR, porque o valor do contrato é quem
-		# escolhe o PORTE do barco de pesca (`docs/decisoes/014`). Sem isto os
-		# dois ancorados do porto em ruínas sairiam com o mesmo casco — que é
-		# exactamente a queixa que a variedade da frota de pesca resolveu.
-		barco.texture = DockScript.arte_do_barco(
-			classe_ancorada, _motivo_da_classe(classe_ancorada, i),
-			_valor_ancorado(classe_ancorada, i))
+		if i < GameState.fila.size():
+			var b: Dictionary = GameState.fila[i]
+			barco.texture = DockScript.arte_do_barco(
+				String(b["classe"]), String(b["motivo"]), int(b["value"]))
+			barco.visible = true
+		else:
+			barco.visible = false
+		i += 1
+
+
+# Parados, fazem o porto parecer uma fotografia. Vivem dentro do Cenario, e
+# não soltos no MapaWrap, porque a ordem lá dentro é a profundidade
+# isométrica. Fases diferentes para não balançarem em bloco, que é o que
+# denuncia a animação como truque.
+func _animar_ancorados() -> void:
+	var fases := [0.0, 0.85, 0.4]
+	var i := 0
+	for nome in ANCORADOS:
+		var barco := $MapaWrap/Cenario.get_node_or_null(nome) as TextureRect
+		if barco == null:
+			continue
 		var base := barco.position
 		var tw := barco.create_tween().set_loops()
 		if fases[i] > 0.0:
@@ -288,6 +256,7 @@ func _animar_ancorados() -> void:
 		tw.tween_property(barco, "position:y", base.y, 2.1) \
 			.set_trans(Tween.TRANS_SINE)
 		i += 1
+	_pintar_ancorados()
 
 
 # A copa gira no TOPO DO TRONCO, não no centro do quadro: o pivot_offset da
@@ -1848,9 +1817,15 @@ func _connect_game_state() -> void:
 	GameState.cash_changed.connect(func(_v): _refresh_hud())
 	GameState.reputation_changed.connect(func(_v): _refresh_hud())
 	GameState.phase_changed.connect(func(_p): _refresh_hud())
+	# «Há escolha?» depende da FASE: com a oferta do Arlindo aberta não se
+	# atraca, e o título, os cartões ao largo e o berço livre têm de o saber
+	# quando ela fecha — ganhe quem ganhar, e a fila pode nem ter mudado.
+	GameState.phase_changed.connect(func(_p): _repintar_fila())
 	GameState.turn_advanced.connect(func(_t, _w): _refresh_all())
 	GameState.boats_spawned.connect(func(): _refresh_docks())
 	GameState.roster_changed.connect(_refresh_all)
+	GameState.fila_mudou.connect(_refresh_fila)
+	GameState.fila_mudou.connect(_pintar_ancorados)
 	GameState.message.connect(_on_message)
 	GameState.rival_offer_triggered.connect(_on_rival_offer_triggered)
 	GameState.debt_due.connect(_on_debt_due)
@@ -1880,7 +1855,7 @@ func _refresh_all() -> void:
 	_refresh_estruturas()
 	_refresh_hud()
 	_refresh_docks()
-	_refresh_workers()
+	_refresh_fila()
 
 
 # O mapa e os prédios contam o que o jogador construiu. É o retorno visível do
@@ -1994,34 +1969,19 @@ func _refresh_meta() -> void:
 func _refresh_docks() -> void:
 	var vagas := _docks_container.get_children()
 	for i in range(vagas.size()):
-		vagas[i].trabalhador_selecionado = _selecionado
 		vagas[i].setup(i)
 	var cartoes := _dock_cards.get_children()
 	for i in range(cartoes.size()):
-		cartoes[i].trabalhador_selecionado = _selecionado
 		cartoes[i].setup(i)
-	# MEXER NAS DOCAS OBRIGA A REPINTAR OS TRABALHADORES, porque "parado" é uma
-	# pergunta sobre as docas e não sobre o operário (ver `TrabParado` no tema).
-	# Sem isto o cartão só mudava quando o roster mudava — e barco novo a chegar
-	# não mexe no roster, que é exatamente o momento em que o aviso faz falta.
-	_repintar_trabalhadores()
+	# MEXER NAS DOCAS OBRIGA A REPINTAR A FILA, porque «há escolha?» é uma
+	# pergunta sobre os berços livres e não sobre o barco: o cartão ao largo
+	# acende quando um berço se solta, sem a fila ter mudado (`083`).
+	_repintar_fila()
 	# E OBRIGA A OLHAR PARA A ESTRADA, pela mesma razão: um camião encostado num
 	# berço está lá por causa de um barco, e quando esse barco sai ele vai
 	# embora. Este é o ponto único por onde o estado das docas chega à tela, e
 	# por isso é aqui — não em cada um dos sinais que mexem numa doca.
 	_docas_mudaram()
-
-
-# Repinta o que depende de "há trabalho parado?", sem reconstruir cartão nenhum:
-# os cartões existentes, a linha de título e o botão de alocar em lote. É a
-# versão barata do `_refresh_workers()`, e o botão vive aqui — e não no
-# `_refresh_hud()`, onde vivia — para que os três sinais do mesmo estado sejam
-# atualizados pela mesma chamada e não possam discordar.
-func _repintar_trabalhadores() -> void:
-	for no in _workers_container.get_children():
-		no.refresh()
-	_alocar_button.disabled = not GameState.has_pending_assignment()
-	_refresh_titulo_trabalhadores()
 
 
 func _clear(container: Node) -> void:
@@ -2032,111 +1992,67 @@ func _clear(container: Node) -> void:
 		child.queue_free()
 
 
-func _refresh_workers() -> void:
-	# Um trabalhador que deixou de estar livre não pode continuar selecionado —
-	# senão o próximo toque numa doca tentaria alocar quem já está ocupado.
-	if _selecionado >= 0 and not _pode_ser_selecionado(_selecionado):
-		_selecionado = -1
-
-	_clear(_workers_container)
-	# TRÊS COLUNAS, AS DAS DOCAS (`081`). Os cartões tinham a largura mínima
-	# deles e ficavam encostados à esquerda: com um trabalhador sobravam 85%
-	# da linha, com três metade. Agora cada um ocupa a coluna da doca que está
-	# por cima — mesma largura, mesma separação —, e uma coluna vazia é a de um
-	# píer por construir, que o cartão da doca já diz.
-	#
-	# ⚠️ A CONTA SAI DA BARRA DAS DOCAS e não de um número: se a separação ou
-	# a largura de uma mudar, a outra segue. O máximo de colunas é o de
-	# berços; um roster maior (a frente 5) reparte a linha por todos.
-	var colunas: int = maxi(GameState.BERCOS_NO_MAPA, GameState.workers.size())
-	var sep: int = _dock_cards.get_theme_constant("separation")
-	var largura: float = (_dock_cards.size.x - sep * (colunas - 1)) / float(colunas)
-	_workers_container.add_theme_constant_override("separation", sep)
-	_vagas.add_theme_constant_override("separation", sep)
-	# A COLUNA SEM TRABALHADOR MOSTRA A VAGA, e a de quem existe fica com um
-	# espaçador da mesma largura, para a vaga cair na coluna certa (`081`).
-	_clear(_vagas)
-	for i in range(colunas):
-		var no: Control = VagaScene.instantiate() if i >= GameState.workers.size() \
-			else Control.new()
-		no.custom_minimum_size.x = largura
-		no.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_vagas.add_child(no)
-	for w in GameState.workers:
-		var worker_node = WorkerScene.instantiate()
-		worker_node.custom_minimum_size.x = largura
-		_workers_container.add_child(worker_node)
-		worker_node.setup(int(w["id"]))
-		worker_node.selecionado.connect(_on_worker_selecionado)
-		worker_node.marcar_selecionado(int(w["id"]) == _selecionado)
-	_repintar_trabalhadores()
+# Os três lugares são da CENA (um por lugar do fundeadouro), e aqui só se diz a
+# cada um qual índice mostra — como as docas. A fila anda: o lugar 0 mostra
+# sempre quem chegou primeiro.
+func _refresh_fila() -> void:
+	var lugares := _fila_lugares.get_children()
+	for i in range(lugares.size()):
+		lugares[i].setup(i)
+	_repintar_fila()
 
 
-func _pode_ser_selecionado(worker_id: int) -> bool:
-	if GameState.phase != "playing":
-		return false
-	if GameState.worker_dock_index(worker_id) >= 0:
-		return false
-	for w in GameState.workers:
-		if int(w["id"]) == worker_id:
-			return int(w["busy_turns"]) == 0
-	return false
+func _repintar_fila() -> void:
+	for no in _fila_lugares.get_children():
+		no.refresh()
+	# O berço livre também fala da fila («livre — chame um barco» ou
+	# «ninguém ao largo»), e um barco que chega não mexe em doca nenhuma.
+	for cartao in _dock_cards.get_children():
+		cartao.refresh()
+	_refresh_titulo_fila()
 
 
-# Tocar no mesmo trabalhador de novo desmarca — sem isso não haveria como
-# desistir da seleção a não ser alocando.
-func _on_worker_selecionado(worker_id: int) -> void:
-	_selecionado = -1 if _selecionado == worker_id else worker_id
-	for no in _workers_container.get_children():
-		no.marcar_selecionado(no.worker_id == _selecionado)
-	# As duas metades da doca precisam saber quem está escolhido: o cartão para
-	# aceitar o toque, a vaga no mapa para acender o realce sobre o píer.
-	_refresh_docks()
-
-
-# O cartão do trabalhador tem 158px e não comporta a instrução; ela vive aqui,
-# onde também pode mudar conforme o estado.
+# A linha acima da fila é a única de texto entre as docas e os barcos, e é a
+# sucessora do «trabalhadores parados — docas esperando» do primeiro playtest:
+# se algum lugar tem de dizer que há escolha por fazer, é este. Os estados:
+# doca livre com barco pronto (a escolha, em âmbar, a dizer QUAL doca), barcos
+# sem doca livre (a espera), o fundeadouro vazio, e a doca livre com o único
+# barco nas mãos do Arlindo.
 #
-# São TRÊS estados e não dois. O do meio nasceu do primeiro playtest: o dia
-# avançou com dois operários livres e duas docas sem trabalhador, e esta linha
-# dizia a instrução genérica de sempre, em cinzento-azulado. Ela é a única
-# linha de texto que fica logo acima dos cartões — se algum lugar tem de
-# contar quanto trabalho está parado, é este.
-#
-# O âmbar aqui MEDE (5,53:1 sobre a barra escura, passa o AA); no cartão do
-# trabalhador não mediria, e por isso lá o sinal é o fundo. Ver o comentário
-# do `trab_parado` no tema.
-#
-# ⚠️ E A COR JÁ NÃO SE PINTA AQUI: os três ramos trocam a VARIAÇÃO, que é o
-# que o `DocaCartao.refresh()` sempre fez com o painel. Enquanto o script
-# pintava, o valor do repouso estava escrito DUAS vezes — nesta função e no
-# `Main.tscn` —, e o D33 não via NENHUMA das duas: os dois estados de HUD que
-# o percurso montava têm sempre trabalho parado, logo mediam sempre o âmbar.
-# O percurso ganhou o estado "nada parado" ANTES de a cor ir para o tema, que
-# é a ordem que o registro de exceções manda e que a cor verde do
-# `UpgradePanel` ainda espera.
-func _refresh_titulo_trabalhadores() -> void:
-	var parado := GameState.trabalho_parado()
-	if _selecionado >= 0:
-		_workers_title.text = "Agora toque numa doca para enviar o #%d" % _selecionado
-		_workers_title.theme_type_variation = &"TextoBarraAlerta"
-	elif parado != Vector2i.ZERO:
-		# O adjetivo e o gerúndio viajam DENTRO da concordância. Antes eram
-		# três argumentos — o substantivo pelo `_plural`, o "s" do adjetivo por
-		# um ternário à parte, e o segundo substantivo —, e o ternário solto é
-		# exatamente a forma de errar que o helper existe para fechar.
-		_workers_title.text = "%s — %s" % [
-			Narrativa.concordar(parado.x, "trabalhador parado", "trabalhadores parados"),
-			Narrativa.concordar(parado.y, "doca esperando", "docas esperando")]
-		_workers_title.theme_type_variation = &"TextoBarraAlerta"
+# ⚠️ O «os berços estão ocupados» da primeira versão era o ramo de tudo o
+# resto, e mentia na oferta do rival: o berço estava livre e o barco ao largo
+# não se podia chamar. Cada ramo diz agora o que o pôs lá.
+func _refresh_titulo_fila() -> void:
+	var pendente := GameState.atracagem_pendente()
+	if pendente != Vector2i.ZERO:
+		_fila_titulo.text = "%s — escolha quem atraca" % _docas_livres()
+		_fila_titulo.theme_type_variation = &"TextoBarraAlerta"
+	elif GameState.fila.is_empty():
+		_fila_titulo.text = "Ao largo — ninguém fundeado hoje"
+		_fila_titulo.theme_type_variation = &"TextoBarra"
+	elif GameState.bercos_livres() == 0:
+		_fila_titulo.text = "Ao largo — à espera de doca livre"
+		_fila_titulo.theme_type_variation = &"TextoBarra"
+	elif GameState.phase == "rival_offer":
+		_fila_titulo.text = "Ao largo — o Arlindo disputa um cliente"
+		_fila_titulo.theme_type_variation = &"TextoBarra"
 	else:
-		_workers_title.text = "Trabalhadores — toque ou arraste para uma doca"
-		_workers_title.theme_type_variation = &"TextoBarra"
+		_fila_titulo.text = "Ao largo"
+		_fila_titulo.theme_type_variation = &"TextoBarra"
 
 
-func _on_alocar_pressed() -> void:
-	_selecionado = -1
-	GameState.assign_all_free_workers()
+# «Doca 2 livre», «Docas 1 e 3 livres», «Docas 1, 2 e 3 livres»: o número de
+# cada doca, que é o que está escrito no cartão por cima. Dizer QUAL poupa ao
+# olho a procura do cartão aceso.
+func _docas_livres() -> String:
+	var numeros: Array[String] = []
+	for i in range(GameState.docks.size()):
+		if GameState.docks[i]["boat"] == null:
+			numeros.append(str(i + 1))
+	if numeros.size() == 1:
+		return "Doca %s livre" % numeros[0]
+	var ultimo: String = numeros.pop_back()
+	return "Docas %s e %s livres" % [", ".join(numeros), ultimo]
 
 
 # ⚠️ ISTO JÁ NÃO ESCREVE NA TELA — ENFILEIRA. Era o funil único das duas
@@ -2194,7 +2110,7 @@ func _process(delta: float) -> void:
 
 
 func _on_faixa_input(evento: InputEvent) -> void:
-	# A MESMA PERGUNTA DO `Worker.gd`: toque que SOLTA, botão esquerdo. Reagir
+	# A MESMA PERGUNTA DO `BarcoFila.gd`: toque que SOLTA, botão esquerdo. Reagir
 	# ao premir dispara durante um arrasto que passe por cima da faixa.
 	if evento is InputEventMouseButton:
 		var b := evento as InputEventMouseButton
@@ -2354,11 +2270,16 @@ func _cida_semana(_turno: int, semana: int) -> void:
 # espera em 74 de 155 viradas. E é esse o estado que o jogador tem à frente
 # quando lê a faixa.
 #
+# ⚠️ E DESDE A `083` A PERGUNTA É OUTRA: «barcos esperando» passou a ser a
+# fila no fundeadouro (`barcos_ao_largo()`), e o barco já não espera NA doca
+# por um trabalhador — o `docas_esperando()` daria zero sempre, que é o
+# defeito acima com outra causa.
+#
 # ⚠️ OS IDs SÃO LITERAIS, e de propósito: o bloco F4 do `teste_fumaca` varre
 # este arquivo à procura das strings de `_cida`, e um id composto por
 # concatenação seria mudo para ela — a guarda daria um verde de graça.
 func _semana_nova() -> void:
-	var fila: bool = GameState.docas_esperando() > 0
+	var fila: bool = GameState.barcos_ao_largo() > 0
 	var curto: bool = GameState.caixa_curto()
 	if fila and curto:
 		_cida_agora("semana_nova_fila_curto")
@@ -2614,7 +2535,7 @@ func _on_upgrade_pressed() -> void:
 
 # AS QUATRO PÍLULAS DO HUD SÃO TOCÁVEIS — item do primeiro playtest (02/09):
 # "tocar num item do HUD abre detalhe". As quatro reagem à mesma pergunta —
-# toque que SOLTA, botão esquerdo, a mesma razão do `Worker.gd` (reagir no
+# toque que SOLTA, botão esquerdo, a mesma razão do `BarcoFila.gd` (reagir no
 # release deixa o clique livre para quem quisesse arrastar) — e só o painel
 # que abrem muda. Extrair a pergunta evita QUATRO cópias da mesma regra: é
 # exatamente o tipo de duplicação que já escondeu um defeito neste projeto
@@ -2713,9 +2634,9 @@ func _on_menu_app_pedido(cena: String) -> void:
 		painel.call("setup", _fila.historico)
 
 
-func _on_rival_offer_triggered(dock_index: int) -> void:
-	_refresh_docks()
-	_abrir_painel(CounterOfferScene).setup(dock_index)
+func _on_rival_offer_triggered(indice_fila: int) -> void:
+	_refresh_fila()
+	_abrir_painel(CounterOfferScene).setup(indice_fila)
 
 
 func _on_debt_due(amount: int) -> void:

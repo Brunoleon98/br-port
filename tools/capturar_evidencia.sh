@@ -232,7 +232,7 @@ tirar meio    0 1  --script res://tools/capturar_tela.gd -- 0  "$SAIDA/meio.png"
 # mediu.
 # A 1000, o retorno encosta no berço 1, de ré, com as portas para o píer
 # (`077`); os outros seguem pela estrada, que é o outro estado que se quer ver.
-tirar docas   0 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png" completo limpo alocar --frames=1000
+tirar docas   0 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png" completo limpo atracar --frames=1000
 # O PORTO EM RUÍNAS A OPERAR, que é onde a frota de PESCA vive.
 #
 # ⚠️ ELA ENTROU POR UM BURACO MEDIDO, e o buraco é do mesmo feitio do que fez
@@ -244,9 +244,9 @@ tirar docas   0 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/docas.png
 # logo no primeiro dia e a foto nenhuma — e o porto em ruínas é onde o perfil
 # Descuidado passa a partida inteira.
 #
-# Seis turnos com os trabalhadores alocados: barco na doca, e os dois
-# ancorados da Zona de Espera atrás dele.
-tirar pesca   0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/pesca.png" limpo alocar
+# Seis turnos com os barcos atracados: barco na doca, e os ancorados da Zona
+# de Espera atrás dele.
+tirar pesca   0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/pesca.png" limpo atracar
 # ⚠️ O GUINDASTE DO NÍVEL 2 A DESCARREGAR (`077`). O `meio` é o porto de nível
 # 2 sem ninguém alocado, e aí a lança só varre: o ciclo — a lança a girar, a
 # lingada, a pilha e quem desengata — só existe com trabalhador e barco no
@@ -257,7 +257,7 @@ tirar pesca   0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/pesca.png
 # ⚠️ A IDA AO CAMIÃO NÃO ESTÁ AQUI, e não por falta de frames: o camião só
 # encosta com a carga do navio, e com esta semente nenhum encostou em 3.000
 # frames. Quem a prova é o D40 §5, que estaciona o camião pela porta do jogo.
-tirar guindaste2 0 2 --script res://tools/capturar_tela.gd -- 1 "$SAIDA/guindaste2.png" meio limpo alocar --frames=150
+tirar guindaste2 0 2 --script res://tools/capturar_tela.gd -- 1 "$SAIDA/guindaste2.png" meio limpo atracar --frames=150
 # ⚠️ A VIRADA DO DIA A MEIO (`078`). Todo outro tiro de jogo leva a última
 # virada ao fim antes da foto — é o que um segundo toque faz —, porque a foto
 # promete o estado do turno N e o caixa a contar sairia num número que o jogo
@@ -266,25 +266,14 @@ tirar guindaste2 0 2 --script res://tools/capturar_tela.gd -- 1 "$SAIDA/guindast
 # frames (0,6 s) depois do toque. O `capturar_tela.gd` reprova se a virada
 # não estiver na foto, e reprova nos outros tiros se estiver.
 tirar virada  0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/virada.png" limpo virada --frames=21
-# ⚠️ O TRABALHADOR ESCOLHIDO, que até 22/09 não estava em foto NENHUMA. O
-# cartão dele tem borda própria — âmbar, e do dobro da largura do repouso —, e
-# ela chega por um TOQUE: nada nos 24 tiros anteriores tocava num trabalhador,
-# logo a última cor de interface fora do tema atravessou quatro levas de
-# migração sem que a bateria pudesse vê-la. Um controle positivo sobre um
-# estado que nenhuma foto monta mexe em ZERO fotos e não prova nada
-# (`docs/decisoes/042`), e é por isso que este tiro faz parte da entrega da
-# leva e não de um item de captura à parte.
-#
-# SEM `alocar`: as duas bandeiras brigam. Alocar tira o trabalhador de livre, e
-# o `_pode_ser_selecionado()` limpa a seleção de quem deixou de o ser — a foto
-# sairia com o cartão em repouso e passaria por boa.
-#
-# ⚠️ E NO TURNO 2, NÃO NO 1 (`050`). No turno 1 a doca dizia "aguardando
-# barco": a foto mostrava a seleção partindo do LIVRE, que é a única em que
-# escolher não serve para nada — tocar numa doca dá "Doca vazia". Só se aloca
-# com barco à espera, e aí o cartão vem do PARADO. No turno 2 a doca 1 tem
-# barco e está "sem trabalhador", e é essa a troca que o jogador vê.
-tirar escolhido 0 2 --script res://tools/capturar_tela.gd -- 1  "$SAIDA/escolhido.png" limpo escolher
+# ⚠️ A FILA COM PRESSA (`083`). Os tiros de jogo param no começo de um dia,
+# com barcos novos ao largo — a escolha à espera —, mas um barco recém-chegado
+# diz sempre «aguarda mais 1 dia». O «vai embora hoje», a única linha âmbar do cartão e
+# a que muda a escolha, só existe com um barco que já esperou um dia, e é por
+# isso que este tiro não atraca nada (`ocioso`): no dia 3 a fila tem quem
+# chegou no 1. Substituiu o tiro do trabalhador ESCOLHIDO, que morreu com a
+# fileira dos trabalhadores.
+tirar largo   0 3  --script res://tools/capturar_tela.gd -- 2  "$SAIDA/largo.png" limpo ocioso
 # O BOLETIM, E OS 12 SÃO UM TETO E NÃO UMA PROMESSA. Sem `limpo` a ferramenta
 # recusa-se a avançar por baixo dele, de modo que o laço acaba no turno em que
 # ele abre — o 9, primeiro dia da semana 2. Pedir MAIS do que isso é de
@@ -519,9 +508,9 @@ tirar reputacao  1 13 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/reputa
 # inteira a funcionar nos dois sentidos. E os dois blocos têm linha de receita,
 # de modo que a regra "linha com zero não entra" também se vê.
 #
-# ⚠️ E ESTE TIRO NÃO LEVA `alocar`, ao contrário do `docas` lá em cima: alocar
-# no fim daria trabalhador aos dois barcos à espera e a projeção perderia os
-# "2 perdidos", que é o aviso que este painel existe para dar.
+# ⚠️ E ESTE TIRO NÃO LEVA `atracar`, ao contrário do `docas` lá em cima:
+# atracar no fim encheria os berços com os barcos ao largo e a projeção
+# perderia os perdidos, que é o aviso que este painel existe para dar.
 tirar caixa      1 13 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/caixa.png" completo limpo --painel=caixa
 # ══ E ERAM SETE, NÃO CINCO ══════════════════════════════════════════════════
 #

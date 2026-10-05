@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 04/10/2026 — a melhoria de design seguiu pelas telas narrativas (`082`), aceite
+> **Última atualização:** 05/10/2026 — a melhoria de design seguiu pelo design de jogo: a fila no fundeadouro (`083`), aceite
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -23,9 +23,11 @@ estruturas** — píeres 2 e 3, armazém, pátio, escritório e os dois UPGRADES
 (guindaste e cais reforçado). Comprar cada uma muda o mapa.
 
 **O rodapé é escuro, e só o "Avançar dia" é âmbar cheio** (`081`): o
-desligado, a faixa, a parcela e os trabalhadores recuam abaixo dele (**D43**).
+desligado, a faixa, a parcela e os cartões recuam abaixo dele (**D43**).
 **As conversas falam como no celular, e o fim de fase é uma página do diário**
-(`082`, **D44**, **D22**).
+(`082`, **D44**, **D22**). **Atracar é a escolha do dia** (`083`): até três
+barcos esperam ao largo, dois dias cada; tocar num atraca-o com o trabalhador
+do píer, e quem não for chamado vai embora e custa reputação.
 
 **A câmera mostra um DISTRITO e não três berços.** O `MEIA_LARG` efetivo é 20 e
 ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14 a
@@ -48,21 +50,19 @@ quadro) SAIU DA VRAM** sem mexer no quadro: o importador `texture_atlas` apara-a
 e a margem repõe os 768 — **235,68 → 64,04 MB** em jogo, `.pck` −17,4%
 (`049`). O campo da água fica a 720 (`026`); o viewport (C) não dá um pixel.
 
-**E OS CASCOS TÊM CURVA** (`024`): medida a silhueta, quem estava quadrado não
-eram as construções — era o casco, com o contêiner a TAPÁ-LO. Os nove barcos
-saem de `contorno_casco()`. Armazém, escritório, píer, treliça, pallet e
-contêiner **ficam quadrados, e é decisão**: são caixas de verdade. **D29**.
+**E OS CASCOS TÊM CURVA** (`024`, **D29**): quem lia quadrado era o casco,
+tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 
 **A fauna tem seis espécies em nove pontos**, três na costa e três em terra,
 com toque de **44 px** (D25–D27); a pessoa, a 1,5× o real, é o menor ser vivo
 do mapa (`069`).
 
 **O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
-perfil: ótimo 100% · mediano 80,2% · descuidado 37,3%, com a mediana do mediano
-em R$716.179 contra uma parcela de R$530.000. Um contrato vale R$12.000–88.000 e
+perfil: ótimo 100% · mediano 78,7% · descuidado 41,5%, com a mediana do mediano
+em R$629.683 contra uma parcela de R$530.000. Um contrato vale R$9.000–63.000 e
 a manutenção custa R$40.000/semana. A dívida deixou de ser o motor (`005`):
 separa os jogadores **o porto que conseguem levantar**, medido pela MARGEM em
-regime (R$674.019 contra R$103.290) e não pela contagem de barcos. O
+regime (R$538.184 contra R$94.955) e não pela contagem de barcos. O
 `START_CASH` está TRANCADO em 400.000 (`018`) — e o diário diz de onde vem,
 herança do avô. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
 
@@ -114,13 +114,13 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 | Fechado | O que ficou, medido |
 |---|---|
+| **Design — a fila no fundeadouro** (04–05/10, `083`) | Escolher quem atraca (**T4d**, **T5h**, **D9**); sem «Alocar todos»; contratos a 0,72; os textos dos cartões são funções que o **D18** mede. **Aceite** |
 | **Design — as telas narrativas** (04/10, `082`) | As conversas com o balão e a placa de quem fala, balões seguidos e fala regular (**D44**); o fim de fase em duas páginas do diário, com o recibo (**D22**). **Aceite** |
-| **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); trabalhadores nas colunas das docas, com a vaga; o Construir com o cabeçalho das famílias. **Aceite** |
-| **Frente 4 do A5 — animação, os três degraus** (02–03/10, `075`–`077`, `079`) | No píer 1 **o pau-de-carga** descarrega e ele opera o guincho (**D39**); no 2 **o guindaste**, e ele leva a carga ao camião, que encosta de ré (**D40**); no 3 **o pórtico** pousa o pallet a meio do cais e ele leva-o de **empilhadeira** à pilha ou ao camião (**D42**). A empilhadeira e o pallet, na régua da pessoa |
+| **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); o Construir com o cabeçalho das famílias. **Aceite** |
 
 **A §7.1 fechou (R1–R9).** A prioridade, escolha do Bruno, é a **melhoria de
-design**: o HUD (`081`) e as telas narrativas (`082`), aceites; a seguinte
-abre pelo escopo do que falta (§7 do plano).
+design**: o HUD (`081`), as telas narrativas (`082`) e a fila no fundeadouro
+(`083`), aceites; a seguinte abre pelo escopo do que falta (§7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -235,7 +235,9 @@ podre (A4) — em `HISTORICO.md`.
 ### Sistemas que funcionam
 - Turno diário com botão "Avançar dia" (sem relógio real); a tela anima a
   virada, e um toque a meio acaba-a (`078`)
-- Alocação de trabalhador por toque, por "Alocar todos" ou por arrasto
+- **A fila no fundeadouro** (`083`): três barcos ao largo, cada um com valor,
+  carga e dois dias de paciência; tocar num atraca-o no berço livre com o
+  trabalhador do píer, e o que não for chamado desiste e custa reputação
 - Economia: caixa, receita por barco, renda do píer, custos semanais
 - Reputação Comercial (0–100, 5 faixas) — e ela **decide a contra-oferta**:
   reputação alta faz o cliente pagar cheio com mais frequência (`003`)
@@ -282,8 +284,8 @@ existem vem de `GameState.docks`, e a terceira mostra ruína até ser ampliada.
 A interface **não é montada por código**: cenas `.tscn` com um tema.
 
 **O mapa não carrega interface em cima.** O texto e o alvo de toque de cada
-doca vivem em `scenes/dock/DocaCartao.tscn`, abaixo do mapa; o píer continua
-alvo de arrasto e ACENDE quando aceita o trabalhador. O número de cada doca é
+doca vivem em `scenes/dock/DocaCartao.tscn`, abaixo do mapa; o píer ACENDE
+quando é o berço que o toque num barco ao largo enche. O número de cada doca é
 **tinta de piso**, em estêncil, porque o importador de SVG do Godot não desenha
 `<text>`.
 

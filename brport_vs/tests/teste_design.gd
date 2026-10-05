@@ -161,7 +161,7 @@ func _rodar() -> void:
 	_d6_alvos_de_toque()
 	print("=== D8: o pipeline BRP concorda com a projeção do mapa ===")
 	_d8_contrato_brp()
-	print("=== D9: trabalho parado avisa onde se resolve ===")
+	print("=== D9: a escolha à espera avisa onde se resolve ===")
 	_d9_aviso_de_trabalho_parado()
 	_confere("o bloco D9 correu até ao fim", _d9_completo)
 
@@ -266,10 +266,6 @@ func _rodar() -> void:
 	print("=== D33: o contraste EFETIVO de toda a interface, painel a painel ===")
 	_d33_contraste_efetivo()
 	_confere("o bloco D33 correu até ao fim", _d33_completo)
-
-	print("=== D34: a borda do trabalhador escolhido — de onde ela vem ===")
-	_d34_borda_do_trabalhador()
-	_confere("o bloco D34 correu até ao fim", _d34_completo)
 
 	print("=== D35: o trânsito — ninguém passa por cima de ninguém ===")
 	_d35_transito()
@@ -1286,7 +1282,7 @@ func _d5_sem_sobreposicao() -> void:
 	# A pilha percorre-se por NOME, então um nó que se mova de sítio some
 	# desta conta sem erro nenhum: quem o apanhou foi a asserção "%s existe",
 	# que está aqui por baixo exactamente para isso.
-	var pilha := ["MapaWrap", "BarraDocas", "TrabalhadoresTitulo", "Trabalhadores",
+	var pilha := ["MapaWrap", "BarraDocas", "FilaTitulo", "Fila",
 		"MensagemCartao", "MetaCartao", "LinhaConstruir", "AcoesTurno"]
 	var anterior: Control = null
 	for nome in pilha:
@@ -1317,12 +1313,15 @@ func _d5_sem_sobreposicao() -> void:
 # ── D6 ── nada clicável menor que o dedo
 func _d6_alvos_de_toque() -> void:
 	var alvos: Array[Control] = []
-	alvos.append(_main.get_node("AcoesTurno/Alocar"))
 	alvos.append(_main.get_node("AcoesTurno/Avancar"))
 	alvos.append(_main.get_node("LinhaConstruir/Upgrade"))
 	alvos.append(_main.get_node("LinhaConstruir/Menu"))
 	alvos.append(_main.get_node("HudBar/Pausar"))
 	for c in _main.get_node("BarraDocas").get_children():
+		alvos.append(c)
+	# Os cartões da fila são o toque que atraca (`083`): o gesto mais repetido
+	# do jogo, todos os dias.
+	for c in _main.get_node("Fila").get_children():
 		alvos.append(c)
 	for c in alvos:
 		_confere("%s cabe no dedo (%.0fx%.0f)" % [c.name, c.size.x, c.size.y],
@@ -1330,16 +1329,17 @@ func _d6_alvos_de_toque() -> void:
 			"mínimo é %.0f em cada lado" % TOQUE_MIN)
 
 
-# ── D9 ── o aviso de trabalho parado tem de aparecer ONDE ele se resolve
+# ── D9 ── o aviso de escolha à espera tem de aparecer ONDE ela se resolve
 #
 # O primeiro playtest num telefone avançou o dia com dois operários livres e
-# duas docas sem trabalhador. A doca já avisava — borda âmbar, "sem
-# trabalhador" —, mas o lado que RESOLVE o problema não avisava nada: o cartão
-# dizia "Livre" em cinzento e a linha acima dele repetia a instrução genérica.
+# duas docas sem trabalhador, e o lado que RESOLVIA o problema não avisava
+# nada. Desde a `083` o problema é outro — berço livre com barcos ao largo —,
+# e a regra é a mesma: o aviso aparece onde se toca para o resolver.
 #
-# Este bloco monta esse estado e exige os três sinais. Eles são três porque o
-# olho pode estar em qualquer um dos três sítios; são a MESMA contagem porque
-# saem todos do `trabalho_parado()`.
+# Este bloco monta esse estado e exige os três sinais: o rótulo «Ao largo» em
+# âmbar a contar os berços livres, os cartões da fila acesos, e o píer livre a
+# piscar no mapa. São a MESMA contagem porque saem todos da
+# `atracagem_pendente()`.
 func _d9_aviso_de_trabalho_parado() -> void:
 	var GS: Node = root.get_node("GameState")
 	GS.clear_save()
@@ -1349,39 +1349,56 @@ func _d9_aviso_de_trabalho_parado() -> void:
 		GS.resolve_rival_offer(true)
 	for i in range(GS.docks.size()):
 		GS.docks[i]["worker_id"] = null
-		GS.docks[i]["boat"] = GS._make_boat()
-		GS.docks[i]["boat"]["rival"] = false
-	for w in GS.workers:
-		w["busy_turns"] = 0
+		GS.docks[i]["boat"] = null
+	GS.fila = []
+	for i in range(GS.FILA_LUGARES):
+		var b: Dictionary = GS._make_boat()
+		b["rival"] = false
+		GS.fila.append(b)
 
 	var tela: Control = load(CENA).instantiate()
 	root.add_child(tela)
-	var parado: Vector2i = GS.trabalho_parado()
-	_confere("o estado de teste tem mesmo trabalho parado", parado != Vector2i.ZERO,
-		"trabalho_parado() devolveu %s e o bloco não testa nada" % parado)
+	var pendente: Vector2i = GS.atracagem_pendente()
+	_confere("o estado de teste tem mesmo escolha à espera", pendente != Vector2i.ZERO,
+		"atracagem_pendente() devolveu %s e o bloco não testa nada" % pendente)
 
-	var titulo: Label = tela.get_node("TrabalhadoresTitulo")
-	_confere("o rótulo conta os trabalhadores parados",
-		titulo.text.contains(str(parado.x)), "diz \"%s\"" % titulo.text)
-	_confere("o rótulo conta as docas à espera",
-		titulo.text.contains(str(parado.y)), "diz \"%s\"" % titulo.text)
+	var titulo: Label = tela.get_node("FilaTitulo")
+	_confere("o rótulo nomeia a doca livre",
+		titulo.text.begins_with("Doca %d livre" % (GS.berco_livre() + 1)),
+		"diz \"%s\"" % titulo.text)
+	# E com DUAS livres e a do meio ocupada, nomeia as duas e não a do meio: o
+	# porto abre com uma doca só, e com uma «nomeia» e «conta» dão o mesmo
+	# texto (a regra da contagem acima de um). O estado escreve-se nas docas
+	# do `GameState` e devolve-se logo a seguir; o título lê só o `boat`.
+	var docas_antes: Array = GS.docks.duplicate(true)
+	GS.docks = [{"boat": null, "worker_id": null},
+		{"boat": GS._make_boat(), "worker_id": 2},
+		{"boat": null, "worker_id": null}]
+	tela._refresh_titulo_fila()
+	_confere("com as docas 1 e 3 livres, o rótulo nomeia as duas",
+		titulo.text.begins_with("Docas 1 e 3 livres"), "diz \"%s\"" % titulo.text)
+	GS.docks = docas_antes
+	tela._refresh_titulo_fila()
 	_confere("e está na cor de aviso, não na neutra",
 		titulo.get_theme_color("font_color").is_equal_approx(COR_AVISO),
 		"está em %s" % titulo.get_theme_color("font_color"))
 
-	# O cartão: o sinal é o FUNDO, porque o âmbar sobre ele dá 2,98:1 e
-	# reprovaria a WCAG como texto (ver `trab_parado` no tema).
+	# O cartão: o sinal é o FUNDO (`CartaoDocaEspera`, a borda âmbar), como na
+	# doca que esperava trabalhador até à `083`.
 	var tema: Theme = load("res://ui/tema_brport.tres")
-	var esperado: StyleBox = tema.get_stylebox("panel", "TrabParado")
-	var parados := 0
-	for cartao in tela.get_node("Trabalhadores").get_children():
+	var esperado: StyleBox = tema.get_stylebox("panel", "CartaoDocaEspera")
+	var acesos := 0
+	for cartao in tela.get_node("Fila").get_children():
 		if (cartao as Control).get_theme_stylebox("panel") == esperado:
-			parados += 1
-	_confere("todo trabalhador parado tem o cartão de aviso",
-		parados == parado.x, "%d cartões marcados para %d parados" % [parados, parado.x])
+			acesos += 1
+	_confere("todo barco pronto ao largo tem o cartão aceso",
+		acesos == pendente.y, "%d cartões acesos para %d barcos" % [acesos, pendente.y])
 
-	var alocar: Button = tela.get_node("AcoesTurno/Alocar")
-	_confere("e o botão que resolve está aceso", not alocar.disabled)
+	# E o píer que o próximo toque enche pisca no mapa.
+	var livre: int = GS.berco_livre()
+	var doca: Node = tela.get_node("MapaWrap/Docas").get_child(livre)
+	_confere("e o berço que o toque enche está realçado no mapa",
+		doca._tw_realce != null and doca._tw_realce.is_valid())
 
 	root.remove_child(tela)
 	tela.free()
@@ -1411,7 +1428,7 @@ func _d10_toque_no_caixa() -> void:
 	var antes := overlay.get_child_count()
 
 	# O RELEASE é o que o handler escuta — press sozinho não deve abrir nada,
-	# a mesma regra do `Worker.gd` (reagir no toque que solta).
+	# a mesma regra do `BarcoFila.gd` (reagir no toque que solta).
 	var ev := InputEventMouseButton.new()
 	ev.button_index = MOUSE_BUTTON_LEFT
 	ev.pressed = true
@@ -2701,20 +2718,88 @@ func _d18_texto_do_cartao() -> void:
 		cabecalho.get_combined_minimum_size().x <= interior,
 		"[%s | %s]" % [rotulo_nome.text, rotulo_valor.text])
 
-	# Os dois formatos que o cartão escreve, com o nome mais longo nos dois.
-	for texto in [
-			"%s  ·  %d/%d turnos" % [maior, 0, 3],
-			"%s  ·  %d/%d  ·  acordo" % [maior, 0, 3]]:
-		rotulo_prog.text = texto
-		_confere("a linha do progresso cabe (%.0f de %.0f px)"
-				% [linha.get_combined_minimum_size().x, interior],
-			linha.get_combined_minimum_size().x <= interior, "[%s]" % texto)
+	# OS FORMATOS SAEM DO PRÓPRIO CARTÃO (`texto_do_progresso()` e
+	# `texto_do_trabalhador()`), e não de literais copiados para aqui: até à
+	# segunda passagem da `083` este bloco escrevia os formatos à mão, e o
+	# acordo a mudar de linha no cartão teria passado verde com a cópia velha.
+	# O pior caso é o nome mais longo com o maior número de dias de berço.
+	var doca_script: Script = cartao.get_script()
+	var maior_op := 0
+	for classe in GS.CLASSES_DE_NAVIO:
+		for motivo in GS.MOTIVOS:
+			maior_op = maxi(maior_op, int(GS._turnos_de_operacao(classe, motivo)))
+	rotulo_prog.text = doca_script.texto_do_progresso(maior, 0, maior_op)
+	_confere("a linha do progresso cabe (%.0f de %.0f px)"
+			% [linha.get_combined_minimum_size().x, interior],
+		linha.get_combined_minimum_size().x <= interior, "[%s]" % rotulo_prog.text)
 
-	rotulo_trab.text = "#%d  ·  toque p/ liberar" % GS.BERCOS_NO_MAPA
-	_confere("a linha do trabalhador cabe (%.0f de %.0f px)"
-			% [linha_trab.get_combined_minimum_size().x, interior],
-		linha_trab.get_combined_minimum_size().x <= interior,
-		"[%s]" % rotulo_trab.text)
+	# O berço livre, nas três formas.
+	for pronto in [true, false]:
+		for vazia in [true, false]:
+			rotulo_prog.text = doca_script.texto_do_berco_livre(pronto, vazia)
+			_confere("o berço livre cabe (%.0f de %.0f px)"
+					% [linha.get_combined_minimum_size().x, interior],
+				linha.get_combined_minimum_size().x <= interior, "[%s]" % rotulo_prog.text)
+
+	# Os quatro estados da linha do trabalhador, com o ícone ao lado como o
+	# `refresh()` o põe.
+	(cartao.get_node("Coluna/TrabalhadorLinha/Icone") as Control).visible = true
+	for acordo in [false, true]:
+		for feitos in [0, 1]:
+			rotulo_trab.text = doca_script.texto_do_trabalhador(
+				GS.BERCOS_NO_MAPA, acordo, feitos)
+			_confere("a linha do trabalhador cabe (%.0f de %.0f px)"
+					% [linha_trab.get_combined_minimum_size().x, interior],
+				linha_trab.get_combined_minimum_size().x <= interior,
+				"[%s]" % rotulo_trab.text)
+
+	# ⚠️ E O CARTÃO DA FILA (`083`), pela mesma regra: o nome do porte mais
+	# longo com o valor mais alto, a carga mais longa com os dias de berço no
+	# plural, e a espera com o acordo. Os nomes saem das tabelas do próprio
+	# cartão — o pior caso não se inventa (a regra do D23).
+	var lugar := _main.get_node("Fila").get_child(0) as Control
+	var sb_f := lugar.get_theme_stylebox("panel", "CartaoDoca")
+	var interior_f: float = lugar.size.x
+	if sb_f != null:
+		interior_f -= sb_f.content_margin_left + sb_f.content_margin_right
+	var script_f: Script = lugar.get_script()
+	var nomes: Array = (script_f.get_script_constant_map()["PORTES_DE_PESCA"] as Array).duplicate()
+	nomes.append_array((script_f.get_script_constant_map()["NOME_CURTO"] as Dictionary).values())
+	var nome_maior := ""
+	for n in nomes:
+		if String(n).length() > nome_maior.length():
+			nome_maior = String(n)
+	(lugar.get_node("Coluna/Cabecalho/Nome") as Label).text = nome_maior.to_upper()
+	(lugar.get_node("Coluna/Cabecalho/Valor") as Label).text = GS.moeda(teto)
+	var cab_f := lugar.get_node("Coluna/Cabecalho") as HBoxContainer
+	_confere("o cabeçalho do barco ao largo cabe (%.0f de %.0f px)"
+			% [cab_f.get_combined_minimum_size().x, interior_f],
+		cab_f.get_combined_minimum_size().x <= interior_f, "[%s]" % nome_maior)
+	# `load()` e não o nome da classe: a regra do `class_name` alcançado por um
+	# `--script` (`CLAUDE.md`, Estilo de código), como o D22 já faz.
+	# A carga e a espera saem das funções do cartão, como as da doca: o pior
+	# caso é o motivo mais longo com os dias de berço mais longos, e a espera
+	# mais longa que o jogo escreve — a paciência cheia, com acordo (a oferta
+	# do Arlindo cai no barco que acabou de chegar, logo é aí que o acordo
+	# aparece), e a última, também com acordo. O ícone fica aceso, como no
+	# ramo do rival.
+	var fila_script: Script = lugar.get_script()
+	var carga := lugar.get_node("Coluna/Carga") as Label
+	carga.text = fila_script.texto_da_carga(maior, maior_op)
+	_confere("a carga do barco ao largo cabe (%.0f de %.0f px)"
+			% [carga.get_combined_minimum_size().x, interior_f],
+		carga.get_combined_minimum_size().x <= interior_f, "[%s]" % carga.text)
+	var espera := lugar.get_node("Coluna/EsperaLinha") as HBoxContainer
+	(lugar.get_node("Coluna/EsperaLinha/Icone") as Control).visible = true
+	for paciencia in [GS.PACIENCIA_FILA, 1]:
+		(lugar.get_node("Coluna/EsperaLinha/Espera") as Label).text = \
+			fila_script.texto_da_espera(paciencia, true)
+		_confere("a espera do barco ao largo cabe (%.0f de %.0f px)"
+				% [espera.get_combined_minimum_size().x, interior_f],
+			espera.get_combined_minimum_size().x <= interior_f,
+			"[%s]" % (lugar.get_node("Coluna/EsperaLinha/Espera") as Label).text)
+	lugar.refresh()
+	cartao.refresh()
 
 	_d18_completo = true
 
@@ -4944,263 +5029,11 @@ func _d33_forma(texto: String) -> String:
 
 
 # ============================================================
-# D34 — A BORDA DO TRABALHADOR ESCOLHIDO VEM DO TEMA
-#
-# A quinta e última leva das cores declaradas (`docs/decisoes/045`). Ela é a
-# única que NENHUMA das duas provas anteriores alcança, e é por isso que este
-# bloco existe:
-#
-#   · o D33 mede TEXTO. Uma borda não tem `font_color`, logo ele é cego a ela;
-#   · as 24 fotos da bateria não selecionavam trabalhador nenhum — a seleção
-#     é um TOQUE —, logo o controle positivo mexeria ZERO e a identidade byte
-#     a byte não provaria nada (a armadilha da `042`). O tiro novo da bateria
-#     resolve metade disso; esta guarda é a outra metade.
-#
-# ⚠️ A PERGUNTA É DE PROVENIÊNCIA, E DE PROPÓSITO. Perguntar "a borda é
-# âmbar?" comparando com a cor do tema seria um ESPELHO — o esperado sairia da
-# mesma fonte onde o defeito moraria. O que não é espelho é perguntar de onde
-# veio o OBJETO: até 22/09 o nó carregava um `estilo.duplicate()` com a cor
-# pintada à mão, e hoje carrega o PRÓPRIO recurso que o tema publica. Um
-# duplicado reprova aqui e é invisível a toda régua de texto.
-#
-# ⚠️ E A SELEÇÃO FALA POR DOIS CANAIS — cor E largura (2px → 4px). Uma guarda
-# que olhasse só a cor deixaria passar um defeito na largura, e ao contrário;
-# por isso a comparação com o repouso exige que AMBOS difiram.
-#
-# ⚠️ E DESDE A `050` HÁ UM TERCEIRO, O SELO — o fundo âmbar escuro do rótulo
-# "Escolhido". A borda âmbar mudava 2,26:1 contra o livre e 1,33:1 contra o
-# PARADO, que é a troca que o jogador vê; o selo muda 3,86 e 4,74. Ele entra
-# aqui pela proveniência, pelo corte de 3:1 contra os dois fundos e pela amarra.
+# D34 — saiu com a fileira dos trabalhadores (`083`). Perguntava de onde vinha
+# a borda do cartão do trabalhador ESCOLHIDO (`045`, `050`); desde a fila não
+# há cartão de trabalhador nem seleção, e o retrato mora no cabeçalho da doca.
+# O número fica vago de propósito: os outros blocos citam-se pelo número.
 # ============================================================
-var _d34_completo := false
-
-# As quatro variações que o `refresh()` do `Worker` sabe vestir, mais a da
-# seleção. Escrita aqui porque o que se está a provar é justamente que o nó
-# veste UMA DELAS e não um duplicado — derivá-la do próprio `Worker.gd` seria
-# o espelho outra vez.
-const D34_VARIACOES := ["TrabLivre", "TrabParado", "TrabAlocado", "TrabOcupado",
-	"TrabSelecionado"]
-
-
-func _d34_borda_do_trabalhador() -> void:
-	var motor: RefCounted = load("res://scripts/validation/contraste_ui.gd").new()
-	var GS: Node = root.get_node("GameState")
-	var tema: Theme = load("res://ui/tema_brport.tres")
-
-	# ⚠️ AS CINCO TÊM DE EXISTIR NO TEMA. `get_theme_stylebox()` de uma
-	# variação que não existe NÃO dá erro — cai no tipo base e sai com outro
-	# desenho, que é a irmã do valor de Godot 3 numa chave de Godot 4.
-	var sem_tema := PackedStringArray()
-	for nome in D34_VARIACOES:
-		if not tema.has_stylebox("panel", nome):
-			sem_tema.append(nome)
-	# E o selo é um `Label` — a variação dele publica `normal`, não `panel`.
-	if not tema.has_stylebox("normal", "SeloEscolhido"):
-		sem_tema.append("SeloEscolhido")
-	_confere("D34: as cinco variações de trabalhador e o selo existem no tema",
-		sem_tema.is_empty(), "faltam no tema: %s" % ", ".join(sem_tema))
-	if not sem_tema.is_empty():
-		return
-
-	var caso := {"nome": "HUD (trabalhador)", "cena": "res://scenes/Main.tscn",
-		"so_hud": true}
-	var main: Node = motor.montar_caso(root, GS, caso, tema)
-	_confere("D34: o HUD montou", main != null, "montar_caso devolveu null")
-	if main == null:
-		return
-
-	var cont: Node = main.get_node_or_null("Trabalhadores")
-	_confere("D34: o contentor de trabalhadores existe", cont != null,
-		"não achei o nó Trabalhadores no Main")
-	if cont == null:
-		root.remove_child(main)
-		main.queue_free()
-		return
-
-	var trabs: Array = cont.get_children()
-	# ⚠️ AMOSTRA VAZIA NÃO É "PASSOU". Sem esta linha, um HUD que nascesse sem
-	# trabalhador nenhum deixaria as asserções abaixo sem nada para medir e o
-	# bloco ficaria verde de graça.
-	_confere("D34: o HUD montou trabalhador para medir", not trabs.is_empty(),
-		"o contentor saiu vazio")
-	if trabs.is_empty():
-		root.remove_child(main)
-		main.queue_free()
-		return
-
-	var alvo = trabs[0]
-	var wid: int = alvo.worker_id
-	var repouso: StyleBox = alvo.get_theme_stylebox("panel")
-	var estado_rot: Label = alvo.get_node("Conteudo/Texto/Estado")
-	# `get_minimum_size()` e não `size`: o contentor só reordena no fim do
-	# frame, e este bloco não espera frame nenhum. A altura mínima do rótulo
-	# responde na hora, e é ela que decide se o `VBoxContainer` recentra.
-	var altura_repouso: float = estado_rot.get_minimum_size().y
-
-	# ── A SELEÇÃO ENTRA PELA PORTA DO JOGADOR. `_on_worker_selecionado()` é o
-	# que o `_gui_input` do cartão emite; escrever `_selecionado` à mão poria a
-	# variação certa com o resto do HUD parado.
-	main._on_worker_selecionado(wid)
-	var escolhido: StyleBox = alvo.get_theme_stylebox("panel")
-
-	# O caso prova que OBTEVE o estado, por derivação — a lição da `043`.
-	#
-	# ⚠️ E ELA É DIAGNÓSTICA, NÃO SUSTENTADORA, o que se mediu em vez de se
-	# supor: o mutante Z6b — o toque que não seleciona, com esta linha
-	# RETIRADA — continua a reprovar por outras três. Quem apanha o defeito é
-	# a proveniência logo abaixo, porque um cartão que não foi selecionado
-	# nunca veste o recurso do `TrabSelecionado`. Fica porque nomeia a CAUSA
-	# («o toque não selecionou») onde as outras nomeiam o sintoma, e porque
-	# custa uma linha; não fica a fingir que segura o bloco.
-	_confere("D34: o toque SELECIONOU mesmo (o estilo mudou)",
-		escolhido != repouso,
-		"depois de `_on_worker_selecionado(%d)` o cartão continua com o mesmo stylebox"
-			% wid)
-
-	# ── 1. PROVENIÊNCIA: é o recurso do tema, e não um duplicado.
-	var do_tema: StyleBox = tema.get_stylebox("panel", "TrabSelecionado")
-	_confere("D34: o cartão escolhido veste O PRÓPRIO `TrabSelecionado` do tema",
-		escolhido == do_tema,
-		"o nó carrega um stylebox que não é o do tema — um `duplicate()` com a cor pintada à mão mede igual e passa por toda régua de texto")
-
-	# ── 2. OS DOIS CANAIS, contra O CARTÃO QUE A SELEÇÃO SUBSTITUI.
-	#
-	# ⚠️ E ESSE É O `TrabLivre`, NÃO O REPOUSO QUE O HUD CALHA MOSTRAR. A
-	# primeira versão desta guarda comparava com `repouso` — o stylebox que o
-	# cartão tinha antes do toque — e o mutante Z4 PASSOU: o HUD abre com
-	# trabalho parado, logo o repouso é o `TrabParado` de borda LARANJA, e
-	# pintar a seleção do verde do `TrabLivre` continua a diferir dele. A
-	# guarda estava a ser segurada pela variação errada. Quem a seleção
-	# substitui é o cartão LIVRE — é o fundo dele que ela veste, derivado em
-	# 22/09 —, e é contra ele que os dois canais têm de falar.
-	#
-	# Não é espelho: o esperado sai do `TrabLivre` e o defeito mora no
-	# `TrabSelecionado`, que são dois recursos diferentes.
-	var livre: StyleBox = tema.get_stylebox("panel", "TrabLivre")
-	if livre is StyleBoxFlat and escolhido is StyleBoxFlat:
-		_confere("D34: a seleção muda a COR da borda do cartão livre",
-			escolhido.border_color != livre.border_color,
-			"a borda do escolhido é a mesma do cartão livre (%s) — o canal da cor desapareceu"
-				% escolhido.border_color.to_html(false))
-		_confere("D34: a seleção muda a LARGURA da borda do cartão livre",
-			escolhido.border_width_left != livre.border_width_left,
-			"as duas medem %d px — o segundo canal da seleção desapareceu"
-				% escolhido.border_width_left)
-		# E o fundo do CARTÃO é o mesmo, e continua a ser de propósito, agora
-		# por outra razão (`050`): é sobre ele que o retrato vive. O retrato
-		# tem luminância mediana 0,149, e qualquer fundo escuro o bastante para
-		# a troca se ler pela cor engolia-o — o âmbar escuro dava-lhe 1,33:1.
-		# A massa da seleção mora no SELO, abaixo.
-		_confere("D34: a seleção mantém o FUNDO do cartão livre",
-			escolhido.bg_color == livre.bg_color,
-			"o fundo mudou de %s para %s — a seleção passou a falar por fundo"
-				% [livre.bg_color.to_html(false), escolhido.bg_color.to_html(false)])
-	else:
-		_confere("D34: os dois styleboxes são StyleBoxFlat", false,
-			"não dá para ler borda de um stylebox que não é Flat")
-
-	# ── 2b. O SELO: o canal da COR, que a borda não consegue ser (`050`).
-	#
-	# ⚠️ NENHUMA COR DE BORDA PASSAVA 3:1 DOS DOIS LADOS, e isso é conta: a
-	# borda fica entre o verde que substitui por fora e o fundo claro por
-	# dentro, que estão a 5,05:1 um do outro; um tom só vence os dois a 3:1 se
-	# eles estiverem a 9. O âmbar já estava no melhor possível, a raiz — 2,25.
-	#
-	# Proveniência primeiro, pela mesma razão do painel: um `duplicate()` com a
-	# cor certa passaria por toda régua de texto.
-	var selo: StyleBox = tema.get_stylebox("normal", "SeloEscolhido")
-	_confere("D34: o rótulo do escolhido veste O PRÓPRIO selo do tema",
-		estado_rot.get_theme_stylebox("normal") == selo,
-		"o rótulo \"%s\" não carrega o `normal` do `SeloEscolhido`" % estado_rot.text)
-	# ⚠️ E O CORTE É O DA 1.4.11 — 3:1 para o que identifica ESTADO —, contra
-	# o fundo que o selo SUBSTITUI naquela linha, dos DOIS estados em que se
-	# seleciona. O que o jogador vê é o PARADO: só se aloca com barco à
-	# espera, e livre com doca à espera é, por definição, `TrabParado`. A
-	# `045` comparou só com o livre, por ser o fundo que a variação veste; é a
-	# pergunta certa para o CARTÃO e a errada para a TROCA.
-	#
-	# Não é espelho, e não é o D33 com outro nome: o D33 mede o TEXTO contra o
-	# selo, e com texto preto um selo claro passa lá e reprova aqui — é o
-	# mutante N3 da `050`.
-	if selo is StyleBoxFlat:
-		for de in ["TrabParado", "TrabLivre"]:
-			var antes: StyleBox = tema.get_stylebox("panel", de)
-			if not (antes is StyleBoxFlat):
-				_confere("D34: o `%s` é StyleBoxFlat" % de, false,
-					"não dá para ler o fundo de um stylebox que não é Flat")
-				continue
-			var r: float = motor.contraste((selo as StyleBoxFlat).bg_color,
-				(antes as StyleBoxFlat).bg_color)
-			_confere("D34: a troca %s → escolhido lê-se pela cor (≥ 3:1)"
-					% de.trim_prefix("Trab").to_lower(),
-				r >= 3.0,
-				"o selo mede %.2f:1 contra o fundo do %s — a troca volta a depender só da largura"
-					% [r, de])
-	else:
-		_confere("D34: o selo é StyleBoxFlat", false,
-			"não dá para ler o fundo de um selo que não é Flat")
-	# E o rótulo NÃO CRESCE ao ser escolhido: o `VBoxContainer` do cartão
-	# centra o conteúdo, e um selo com margem vertical faria o retrato saltar
-	# no toque. Por isso o `selo_escolhido` não tem margem em cima nem em baixo.
-	_confere("D34: o selo não muda a altura do rótulo",
-		is_equal_approx(estado_rot.get_minimum_size().y, altura_repouso),
-		"o rótulo passou de %.1f para %.1f px — o retrato salta no toque"
-			% [altura_repouso, estado_rot.get_minimum_size().y])
-
-	# ── 2c. DESISTIR DA ESCOLHA TIRA O SELO DO MESMO RÓTULO.
-	#
-	# ⚠️ O SELO VIVE NO RÓTULO, que guarda a variação entre chamadas, e o único
-	# caminho em que o MESMO cartão sai da seleção é este segundo toque. A
-	# primeira versão desta guarda estava na amarra da alocação, abaixo, e o
-	# mutante N2 — o `refresh()` sem o reset — PASSOU: alocar passa pelo
-	# `_refresh_workers()`, que RECRIA os cartões, e o nó novo nunca teve selo.
-	# Era confiança de graça, e saiu (`050`).
-	main._on_worker_selecionado(wid)
-	_confere("D34: tocar de novo desfaz a escolha", main._selecionado == -1,
-		"o Main continua com o trabalhador %d escolhido" % main._selecionado)
-	_confere("D34: desfeita a escolha, o MESMO rótulo larga o selo",
-		estado_rot.get_theme_stylebox("normal") != selo,
-		"\"%s\" continua a vestir o `SeloEscolhido`" % estado_rot.text)
-	# E volta a escolher: a amarra abaixo prova que ALOCAR limpa a seleção, e
-	# isso só se prova partindo de uma seleção de pé.
-	main._on_worker_selecionado(wid)
-	_confere("D34: o terceiro toque volta a escolher",
-		alvo.get_theme_stylebox("panel") == do_tema,
-		"o cartão não voltou a vestir `TrabSelecionado`")
-
-	# ── 3. A AMARRA QUE TORNA UMA VARIAÇÃO SUFICIENTE.
-	# `_aplicar_estilo()` deixou de compor a borda por cima de qualquer cartão:
-	# hoje há UMA variação para a seleção, e ela só está certa enquanto o jogo
-	# não conseguir selecionar quem não está livre. Alocar pela porta do
-	# jogador tem de LIMPAR a seleção — se alguém tornar esse par alcançável,
-	# é aqui que se descobre, e não no dia em que o âmbar sumir de um cartão.
-	var alocou := false
-	for d in range(GS.docks.size()):
-		if GS.assign_worker(wid, d):
-			alocou = true
-			break
-	_confere("D34: o caso conseguiu alocar o trabalhador", alocou,
-		"nenhuma doca aceitou — a amarra abaixo não chegou a ser exercida")
-	if alocou:
-		main._refresh_workers()
-		var depois: Node = null
-		for n in cont.get_children():
-			if n.worker_id == wid:
-				depois = n
-		_confere("D34: o trabalhador continua no contentor depois de alocado",
-			depois != null, "o nó do trabalhador %d sumiu" % wid)
-		if depois != null:
-			_confere("D34: alocar LIMPA a seleção (o par «escolhido + alocado» não existe)",
-				main._selecionado == -1,
-				"o Main ainda tem o trabalhador %d escolhido depois de ele ir para a doca"
-					% main._selecionado)
-			_confere("D34: o cartão alocado NÃO veste a variação da seleção",
-				depois.get_theme_stylebox("panel") != do_tema,
-				"um cartão alocado está a vestir `TrabSelecionado`")
-
-	root.remove_child(main)
-	main.queue_free()
-	_d34_completo = true
 
 
 # ── D35 ── O TRÂNSITO: ninguém passa por cima de ninguém (23/09)
@@ -6411,12 +6244,15 @@ func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 			and not trab.visible and emp.visible and dela_ao_volante.has(emp.texture))
 	GS.estruturas = estruturas_antes
 
-	# Sem trabalhador: a pilha sai, e o pau volta ao repouso a varrer.
+	# Sem trabalhador: a pilha sai, e o pau volta ao repouso a varrer. Desde a
+	# `083` a porta do jogador é DEVOLVER o barco ao largo, e o trabalhador
+	# sai com ele.
 	doca.refresh()
-	GS.release_worker(0)
+	GS.fila = []
+	GS.desatracar(0)
 	doca.refresh()
 	varre = doca.get("_tw_lanca")
-	_confere("D39: liberada, a pilha sai e o pau volta a varrer em repouso",
+	_confere("D39: devolvido o barco, a pilha sai e o pau volta a varrer em repouso",
 		not trab.visible and not pilha.visible and no_lanca.texture == arte_lanca[0]
 			and varre is Tween and (varre as Tween).is_valid())
 	doca.queue_free()
@@ -6770,7 +6606,7 @@ func _d40_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 			and trab.texture == quadros["m"]["volta"][1])
 
 	# O serviço acaba: o barco parte e ela fica livre — a meio dele o jogo
-	# recusa libertá-la (`release_worker` com `progress` > 0), e a pilha tem de
+	# recusa libertá-la (`desatracar` com `progress` > 0), e a pilha tem de
 	# sair pelo caminho por onde ela sai de verdade.
 	GS.docks[0]["worker_id"] = null
 	GS.docks[0]["boat"] = null
@@ -8166,12 +8002,11 @@ func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 # A primeira passagem da melhoria de design do HUD, escolhida pelo Bruno em
 # 04/10, mexeu em duas coisas que nenhuma guarda perguntava:
 #
-#  1. OS TRABALHADORES NAS COLUNAS DAS DOCAS. Os cartões tinham a largura
-#     mínima e encostavam-se à esquerda. Agora cada um ocupa a coluna da doca
-#     de cima, e a largura sai da barra das docas. Pergunta-se com UM e com
-#     TRÊS: com um só, um defeito na separação não se vê (a regra «contagem
-#     só se testa acima de um»); com três, repartir a linha pelo número de
-#     TRABALHADORES em vez do de berços dá o mesmo resultado e passaria.
+#  1. A LINHA DE BAIXO NAS COLUNAS DAS DOCAS. Eram os trabalhadores, e desde
+#     a `083` são os três lugares da fila no fundeadouro: cada cartão ocupa a
+#     coluna da doca de cima. Pergunta-se em ruínas e com o porto completo,
+#     porque a barra das docas muda de cartões construídos para por construir
+#     e a fila não pode mudar com ela.
 #
 #  2. O QUE SÓ INFORMA RECUA. No pixel da captura, o botão desligado media
 #     12,99:1 contra o fundo do HUD, a faixa de mensagem 16,98 e o cartão da
@@ -8179,11 +8014,10 @@ func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 #     pergunta é de HIERARQUIA: cada uma destas superfícies, como se desenha
 #     sobre o fundo, fica abaixo do primário.
 #
-# Os cartões dos TRABALHADORES entraram na segunda passagem: com três colunas
-# eram a maior mancha clara do rodapé (16,50:1 o livre, 13,43 o parado), e o
-# Bruno pediu-os escuros. O claro ficou só na PLACA atrás do retrato, que fica
-# de fora de propósito — é do tamanho do retrato, e sem ela o casaco navy
-# sumia no azul. A vaga, que veste o cartão da doca em obra, também entra.
+# Os cartões dos TRABALHADORES entraram na segunda passagem (16,50:1 o livre,
+# 13,43 o parado), e o Bruno pediu-os escuros; desde a `083` a linha é a fila,
+# que veste os quatro cartões da doca, e são esses que se medem. A PLACA atrás
+# do retrato fica de fora de propósito — é do tamanho do retrato.
 #
 # ⚠️ A guarda não diz que o primário se lê bem — diz que nada do que não é a
 # ação principal lhe rouba o olho.
@@ -8210,17 +8044,18 @@ func _d43_rodape_escuro() -> void:
 		var tela: Control = load(CENA).instantiate()
 		root.add_child(tela)
 		var barra := tela.get_node("BarraDocas") as HBoxContainer
-		var linha := tela.get_node("Trabalhadores") as HBoxContainer
+		# ⚠️ DESDE A `083` A LINHA DE BAIXO É A FILA, e não os trabalhadores: os
+		# três lugares do fundeadouro, um por coluna, em ruínas ou completo.
+		var linha := tela.get_node("Fila") as HBoxContainer
 		# Os contentores arrumam-se no frame seguinte, e esta suíte não deixa
 		# passar nenhum: a ordem de arrumar é dada aqui, à mão.
 		barra.notification(Container.NOTIFICATION_SORT_CHILDREN)
 		linha.notification(Container.NOTIFICATION_SORT_CHILDREN)
 		var docas: Array = barra.get_children()
 		var cartoes: Array = linha.get_children()
-		var n: int = GS.workers.size()
-		_confere("D43: o estado tem %d trabalhador(es), como pedido" % n,
-			cartoes.size() == n and n == (3 if porto_completo else 1),
-			"%d cartões, %d trabalhadores" % [cartoes.size(), n])
+		var n: int = cartoes.size()
+		_confere("D43: a fila tem os %d lugares do fundeadouro" % int(GS.FILA_LUGARES),
+			n == int(GS.FILA_LUGARES), "%d cartões" % n)
 		var fora: Array = []
 		for i in range(mini(cartoes.size(), docas.size())):
 			var c := cartoes[i] as Control
@@ -8229,7 +8064,8 @@ func _d43_rodape_escuro() -> void:
 					or absf(c.size.x - d.size.x) > 0.5:
 				fora.append("#%d em x=%.0f larg %.0f, doca em x=%.0f larg %.0f" % [
 					i + 1, c.global_position.x, c.size.x, d.global_position.x, d.size.x])
-		_confere("D43: com %d trabalhador(es), cada cartão ocupa a coluna da doca de cima" % n,
+		_confere("D43: %s, cada lugar da fila ocupa a coluna da doca de cima"
+			% ("porto completo" if porto_completo else "em ruínas"),
 			fora.is_empty() and not cartoes.is_empty(), "; ".join(fora))
 		if porto_completo:
 			_d43_o_que_recua(tela)
@@ -8257,18 +8093,20 @@ func _d43_o_que_recua(tela: Control) -> void:
 	_confere("D43: o primário destaca-se do fundo (%.2f:1)" % teto, teto >= 3.0)
 	var medidas: Array = []
 	for caminho in ["LinhaConstruir/Upgrade", "LinhaConstruir/Menu",
-			"AcoesTurno/Alocar", "AcoesTurno/Avancar"]:
+			"AcoesTurno/Avancar"]:
 		var b := tela.get_node(caminho) as Button
 		medidas.append(["%s desligado" % caminho.get_file(),
 			_d43_desenhada(b.get_theme_stylebox("disabled"), fundo)])
 	for caminho in ["MensagemCartao", "MetaCartao"]:
 		var p := tela.get_node(caminho) as PanelContainer
 		medidas.append([caminho, _d43_desenhada(p.get_theme_stylebox("panel"), fundo)])
-	# Os cinco estados do trabalhador pelo TEMA, e não pelos cartões montados:
-	# o porto desta medição só mostra um estado de cada vez.
+	# Os quatro estados do cartão da fila pelo TEMA, e não pelos cartões
+	# montados: o porto desta medição só mostra um estado de cada vez. Três são
+	# os da doca, que o `BarcoFila` veste (`083`); o lugar livre é o vazio, sem
+	# fundo, que recua por construção.
 	var tema: Theme = load("res://ui/tema_brport.tres")
-	for variacao in ["TrabLivre", "TrabParado", "TrabSelecionado", "TrabAlocado",
-			"TrabOcupado", "CartaoDocaObra"]:
+	for variacao in ["CartaoDoca", "CartaoDocaEspera", "CartaoDocaRival",
+			"CartaoFilaVazia"]:
 		medidas.append(["o cartão %s" % variacao,
 			_d43_desenhada(tema.get_stylebox("panel", variacao), fundo)])
 	for m in medidas:

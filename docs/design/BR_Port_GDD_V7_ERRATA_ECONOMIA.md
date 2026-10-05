@@ -182,8 +182,9 @@ Descuidado media 31,0%, e 35,7% antes dos upgrades de guindaste e cais
 (`docs/decisoes/007`).
 
 ⚠️ **E a faixa de contrato da Fase 1 mudou em 06/09**: o navio passou a ter
-CLASSE, travada pelo nível do porto, e as três faixas somadas vão de R$12.000 a
-R$88.000 (`docs/decisoes/009`). O card do GDD continua a dizer R$8.000–70.000,
+CLASSE, travada pelo nível do porto, e as três faixas somadas iam de R$12.000
+a R$88.000 (`docs/decisoes/009`) — desde a fila no fundeadouro (04/10), de
+R$9.000 a R$63.000 (`docs/decisoes/083`). O card do GDD continua a dizer R$8.000–70.000,
 que é o número congelado; o `projetar_parcelas.py` passou a ler a Fase 1 do
 CÓDIGO por causa disso — quando as duas divergem, o portão de calibração reprova
 os três perfis de uma vez, e foi o que aconteceu.
