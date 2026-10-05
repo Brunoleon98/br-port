@@ -7,8 +7,7 @@ conversa anterior.
 
 **Situação:** substitui o de 04/10 `c`. A sessão de 04–05/10, no Claude Code,
 trabalhou na branch `claude/brave-bell-xwg7h5`, a partir da `main` com o PR
-#105 fundido. **Nenhum PR foi aberto** — a branch está empurrada e o CI só
-corre quando o PR abrir (`CLAUDE.md`, «Como rodar»). Fez a **terceira parte da
+#105 fundido, e o **PR #106** foi aberto no fecho. Fez a **terceira parte da
 melhoria de design**, o design de jogo: a fila no fundeadouro (`083`).
 
 1. **Atracar passa a ser a escolha.** Os barcos esperam ao largo — três
@@ -45,8 +44,8 @@ texto.
   tem o `CLAUDE.md` carregado. As regras são as mesmas para os dois.
 - Para saber onde o jogo está: `docs/ESTADO_DO_PROJETO.md`. Para o rumo: a §7
   de `docs/design/BR_Port_Plano_v3_Claude_Code.md`.
-- **Confira no GitHub se a branch `claude/brave-bell-xwg7h5` virou PR e se foi
-  fundida.** Se não foi, a `main` não tem a fila. Arquivos tocados: o
+- **Confira no GitHub se o PR #106 foi fundido.** Se não foi, a `main` não tem
+  a fila. Arquivos tocados: o
   `GameState.gd`, o `Main.gd` e o `Main.tscn`, o `DocaCartao`, o `Dock.gd`, o
   `BarcoFila` (novo, em `scenes/fila/`), o `CounterOfferPanel.gd`, o
   `Registro.gd`, o tema, o simulador e o projetor, as ferramentas de captura
