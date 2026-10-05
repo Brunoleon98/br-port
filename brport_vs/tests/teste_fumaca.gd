@@ -452,6 +452,44 @@ func _f3_migracao_de_save() -> void:
 	GS.turn = 1
 	_confere("o save da versão corrente carrega", GS.load_game() == true)
 	_confere("e traz caixa e turno de volta", GS.cash == 4321 and GS.turn == 7)
+
+	# A FILA (`083`) é forma nova do estado, e o `_save_aceite` recusa-a por
+	# cinco portas — nenhuma das quais o resto do bloco abria: todos os saves
+	# acima têm a fila VAZIA e a oferta a -1. Uma por caso, como os rostos do
+	# F12, e cada uma sem ter tocado no turno vivo.
+	var barco := {"classe": "pesqueiro", "motivo": "pescado", "value": 9000,
+		"paciencia": 2}
+	var filas_mas := {
+		"sem a fila": [null, -1],
+		"fila que não é lista": [{"0": barco}, -1],
+		"mais barcos do que lugares": [[barco, barco, barco, barco], -1],
+		"barco sem paciência": [[{"classe": "pesqueiro", "value": 9000}], -1],
+		"paciência em texto": [[{"classe": "pesqueiro", "paciencia": "2"}], -1],
+		"oferta fora da fila": [[barco], 1],
+		"oferta abaixo de -1": [[barco], -2],
+	}
+	for caso in filas_mas:
+		var dados := _save_valido(versao)
+		if filas_mas[caso][0] == null:
+			dados.erase("fila")
+		else:
+			dados["fila"] = filas_mas[caso][0]
+		dados["pending_rival"] = filas_mas[caso][1]
+		_escrever(dados)
+		GS.turn = 4321
+		var carregou_fila: bool = GS.load_game()
+		_confere("save com %s é recusado, e sem ter tocado em nada" % caso,
+			not carregou_fila and GS.turn == 4321,
+			"carregou=%s turn=%d" % [carregou_fila, GS.turn])
+	# E os dois que têm de entrar — sem eles os sete acima passariam por um
+	# `load_game()` que recusa toda fila com barco.
+	for oferta in [-1, 0]:
+		var boa := _save_valido(versao)
+		boa["fila"] = [barco.duplicate(), barco.duplicate()]
+		boa["pending_rival"] = oferta
+		_escrever(boa)
+		_confere("o save com dois barcos ao largo e oferta %d entra" % oferta,
+			GS.load_game() and GS.fila.size() == 2 and GS.pending_rival == oferta)
 	GS.clear_save()
 
 

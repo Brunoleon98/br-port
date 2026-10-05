@@ -617,9 +617,9 @@ mouse_filter = 2
 [node name="BarraDocas" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 732.0
+offset_top = 728.0
 offset_right = 706.0
-offset_bottom = 828.0
+offset_bottom = 832.0
 theme_override_constants/separation = 10
 
 [node name="Cartao0" parent="BarraDocas" instance=ExtResource("6")]
@@ -646,9 +646,9 @@ size_flags_horizontal = 3
 [node name="FilaTitulo" type="Label" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 834.0
+offset_top = 838.0
 offset_right = 706.0
-offset_bottom = 852.0
+offset_bottom = 856.0
 text = "Ao largo — toque num barco para atracar"
 theme_type_variation = &"TextoBarra"
 theme_override_font_sizes/font_size = 13
@@ -656,9 +656,9 @@ theme_override_font_sizes/font_size = 13
 [node name="Fila" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 856.0
+offset_top = 860.0
 offset_right = 706.0
-offset_bottom = 992.0
+offset_bottom = 1008.0
 theme_override_constants/separation = 10
 
 [node name="Lugar0" parent="Fila" instance=ExtResource("barco_fila")]
@@ -678,9 +678,9 @@ size_flags_horizontal = 3
 [node name="MensagemCartao" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 998.0
+offset_top = 1014.0
 offset_right = 706.0
-offset_bottom = 1050.0
+offset_bottom = 1066.0
 theme_type_variation = &"FaixaMensagem"
 
 [node name="Linha" type="HBoxContainer" parent="MensagemCartao"]
@@ -704,9 +704,9 @@ theme_override_font_sizes/font_size = 12
 [node name="MetaCartao" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1058.0
+offset_top = 1072.0
 offset_right = 706.0
-offset_bottom = 1135.0
+offset_bottom = 1149.0
 theme_type_variation = &"CartaoBarra"
 
 [node name="MetaColuna" type="VBoxContainer" parent="MetaCartao"]
@@ -768,9 +768,9 @@ theme_override_font_sizes/font_size = 13
 [node name="LinhaConstruir" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1143.0
+offset_top = 1155.0
 offset_right = 706.0
-offset_bottom = 1189.0
+offset_bottom = 1201.0
 theme_override_constants/separation = 8
 
 [node name="Upgrade" type="Button" parent="LinhaConstruir"]
@@ -791,9 +791,9 @@ icon = ExtResource("ic_menu")
 [node name="AcoesTurno" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 14.0
-offset_top = 1197.0
+offset_top = 1207.0
 offset_right = 706.0
-offset_bottom = 1255.0
+offset_bottom = 1265.0
 theme_override_constants/separation = 8
 
 [node name="Avancar" type="Button" parent="AcoesTurno"]

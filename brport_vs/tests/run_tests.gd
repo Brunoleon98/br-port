@@ -678,23 +678,28 @@ func _t4d_fila() -> void:
 	_check("a fila nunca passa dos lugares", GS.fila.size() <= GS.FILA_LUGARES)
 	_check("e a chegada nunca poe barco na doca", GS.docks[0]["boat"] == null)
 
-	# 4. A EQUIPE DO PÍER: atracar no berço 3 chama o trabalhador nº 3, se ele
+	# 4. A EQUIPE DO PÍER: atracar no berço N chama o trabalhador nº N, se ele
 	#    estiver livre — é o que deixa o cartão da doca com a mesma cara.
-	#    ⚠️ Com os berços 1 e 2 ocupados por OUTROS (o 2 e o 1), para o
-	#    defeito «o primeiro livre» dar resposta diferente.
+	#    ⚠️ O ESTADO É O BERÇO 1 OCUPADO PELO TRABALHADOR 3 (o que um
+	#    `desatracar()` a meio pode deixar): o berço 2 é o primeiro livre e tem
+	#    de chamar o 2, e «o primeiro livre» chamaria o 1. A primeira versão
+	#    desta guarda punha os berços 1 e 2 ocupados pelo 2 e pelo 1 e jurava
+	#    no comentário que o defeito daria outra resposta — mas o único livre
+	#    era o 3, as duas regras davam o mesmo, e o mutante «vai sempre o
+	#    primeiro livre» passou verde (04/10). Com os berços ocupados pelos
+	#    seus, as duas regras coincidem SEMPRE; só um trabalhador fora do sítio
+	#    as separa.
 	_fresh_playing()
 	_garantir(3, 3)
 	for i in range(3):
 		GS.docks[i]["boat"] = null
 		GS.docks[i]["worker_id"] = null
 	GS.docks[0]["boat"] = _fake_boat(10, 2, false)
-	GS.docks[0]["worker_id"] = 2
-	GS.docks[1]["boat"] = _fake_boat(10, 2, false)
-	GS.docks[1]["worker_id"] = 1
+	GS.docks[0]["worker_id"] = 3
 	GS.fila = [_fake_boat(100, 1, false)]
 	GS.atracar(0)
-	_check("o berco 3 chama o trabalhador 3", GS.docks[2]["worker_id"] != null
-		and int(GS.docks[2]["worker_id"]) == 3)
+	_check("o berco 2 chama o trabalhador 2, e nao o primeiro livre",
+		GS.docks[1]["worker_id"] != null and int(GS.docks[1]["worker_id"]) == 2)
 
 	# 5. Os dias de berço contam-se no porto de HOJE: o barco que chegou antes
 	#    do pórtico descarrega com ele.

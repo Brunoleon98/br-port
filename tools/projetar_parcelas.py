@@ -394,9 +394,10 @@ def _main() -> int:
     # ⚠️ A FASE 1 SAI DO CÓDIGO, NÃO DO GDD, e é a regra do projeto: onde os
     # dois divergirem, quem manda é o código. Divergiram em 06/09 — o GDD tem
     # R$8.000–70.000 e as classes de navio passaram a ir de R$12.000 a
-    # R$88.000 —, e o portão reprovou os TRÊS perfis por ~23% de uma vez. Três
-    # fora ao mesmo tempo nunca é métrica: é o modelo a ler a faixa errada. As
-    # Fases 2 e 3 continuam a sair do GDD, porque delas o código não sabe nada.
+    # R$88.000 (e desde a fila da `083`, de R$9.000 a R$63.000) —, e o portão
+    # reprovou os TRÊS perfis por ~23% de uma vez. Três fora ao mesmo tempo
+    # nunca é métrica: é o modelo a ler a faixa errada. As Fases 2 e 3
+    # continuam a sair do GDD, porque delas o código não sabe nada.
     classes = k["CLASSES_DE_NAVIO"]
     faixas[1] = (min(int(c["valor_min"]) for c in classes.values()),
                  max(int(c["valor_max"]) for c in classes.values()))

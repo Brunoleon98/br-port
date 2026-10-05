@@ -1363,8 +1363,22 @@ func _d9_aviso_de_trabalho_parado() -> void:
 		"atracagem_pendente() devolveu %s e o bloco não testa nada" % pendente)
 
 	var titulo: Label = tela.get_node("FilaTitulo")
-	_confere("o rótulo conta os berços livres",
-		titulo.text.contains(str(pendente.x)), "diz \"%s\"" % titulo.text)
+	_confere("o rótulo nomeia a doca livre",
+		titulo.text.begins_with("Doca %d livre" % (GS.berco_livre() + 1)),
+		"diz \"%s\"" % titulo.text)
+	# E com DUAS livres e a do meio ocupada, nomeia as duas e não a do meio: o
+	# porto abre com uma doca só, e com uma «nomeia» e «conta» dão o mesmo
+	# texto (a regra da contagem acima de um). O estado escreve-se nas docas
+	# do `GameState` e devolve-se logo a seguir; o título lê só o `boat`.
+	var docas_antes: Array = GS.docks.duplicate(true)
+	GS.docks = [{"boat": null, "worker_id": null},
+		{"boat": GS._make_boat(), "worker_id": 2},
+		{"boat": null, "worker_id": null}]
+	tela._refresh_titulo_fila()
+	_confere("com as docas 1 e 3 livres, o rótulo nomeia as duas",
+		titulo.text.begins_with("Docas 1 e 3 livres"), "diz \"%s\"" % titulo.text)
+	GS.docks = docas_antes
+	tela._refresh_titulo_fila()
 	_confere("e está na cor de aviso, não na neutra",
 		titulo.get_theme_color("font_color").is_equal_approx(COR_AVISO),
 		"está em %s" % titulo.get_theme_color("font_color"))
@@ -2704,20 +2718,40 @@ func _d18_texto_do_cartao() -> void:
 		cabecalho.get_combined_minimum_size().x <= interior,
 		"[%s | %s]" % [rotulo_nome.text, rotulo_valor.text])
 
-	# Os dois formatos que o cartão escreve, com o nome mais longo nos dois.
-	for texto in [
-			"%s  ·  %d/%d dias" % [maior, 0, 3],
-			"%s  ·  %d/%d  ·  acordo" % [maior, 0, 3]]:
-		rotulo_prog.text = texto
-		_confere("a linha do progresso cabe (%.0f de %.0f px)"
-				% [linha.get_combined_minimum_size().x, interior],
-			linha.get_combined_minimum_size().x <= interior, "[%s]" % texto)
+	# OS FORMATOS SAEM DO PRÓPRIO CARTÃO (`texto_do_progresso()` e
+	# `texto_do_trabalhador()`), e não de literais copiados para aqui: até à
+	# segunda passagem da `083` este bloco escrevia os formatos à mão, e o
+	# acordo a mudar de linha no cartão teria passado verde com a cópia velha.
+	# O pior caso é o nome mais longo com o maior número de dias de berço.
+	var doca_script: Script = cartao.get_script()
+	var maior_op := 0
+	for classe in GS.CLASSES_DE_NAVIO:
+		for motivo in GS.MOTIVOS:
+			maior_op = maxi(maior_op, int(GS._turnos_de_operacao(classe, motivo)))
+	rotulo_prog.text = doca_script.texto_do_progresso(maior, 0, maior_op)
+	_confere("a linha do progresso cabe (%.0f de %.0f px)"
+			% [linha.get_combined_minimum_size().x, interior],
+		linha.get_combined_minimum_size().x <= interior, "[%s]" % rotulo_prog.text)
 
-	rotulo_trab.text = "#%d  ·  toque p/ devolver" % GS.BERCOS_NO_MAPA
-	_confere("a linha do trabalhador cabe (%.0f de %.0f px)"
-			% [linha_trab.get_combined_minimum_size().x, interior],
-		linha_trab.get_combined_minimum_size().x <= interior,
-		"[%s]" % rotulo_trab.text)
+	# O berço livre, nas três formas.
+	for pronto in [true, false]:
+		for vazia in [true, false]:
+			rotulo_prog.text = doca_script.texto_do_berco_livre(pronto, vazia)
+			_confere("o berço livre cabe (%.0f de %.0f px)"
+					% [linha.get_combined_minimum_size().x, interior],
+				linha.get_combined_minimum_size().x <= interior, "[%s]" % rotulo_prog.text)
+
+	# Os quatro estados da linha do trabalhador, com o ícone ao lado como o
+	# `refresh()` o põe.
+	(cartao.get_node("Coluna/TrabalhadorLinha/Icone") as Control).visible = true
+	for acordo in [false, true]:
+		for feitos in [0, 1]:
+			rotulo_trab.text = doca_script.texto_do_trabalhador(
+				GS.BERCOS_NO_MAPA, acordo, feitos)
+			_confere("a linha do trabalhador cabe (%.0f de %.0f px)"
+					% [linha_trab.get_combined_minimum_size().x, interior],
+				linha_trab.get_combined_minimum_size().x <= interior,
+				"[%s]" % rotulo_trab.text)
 
 	# ⚠️ E O CARTÃO DA FILA (`083`), pela mesma regra: o nome do porte mais
 	# longo com o valor mais alto, a carga mais longa com os dias de berço no
@@ -2743,19 +2777,29 @@ func _d18_texto_do_cartao() -> void:
 		cab_f.get_combined_minimum_size().x <= interior_f, "[%s]" % nome_maior)
 	# `load()` e não o nome da classe: a regra do `class_name` alcançado por um
 	# `--script` (`CLAUDE.md`, Estilo de código), como o D22 já faz.
-	var Nar = load("res://scripts/Narrativa.gd")
+	# A carga e a espera saem das funções do cartão, como as da doca: o pior
+	# caso é o motivo mais longo com os dias de berço mais longos, e a espera
+	# mais longa que o jogo escreve — a paciência cheia, com acordo (a oferta
+	# do Arlindo cai no barco que acabou de chegar, logo é aí que o acordo
+	# aparece), e a última, também com acordo. O ícone fica aceso, como no
+	# ramo do rival.
+	var fila_script: Script = lugar.get_script()
 	var carga := lugar.get_node("Coluna/Carga") as Label
-	carga.text = "%s · %s no berço" % [maior, Nar.concordar(3, "dia", "dias")]
+	carga.text = fila_script.texto_da_carga(maior, maior_op)
 	_confere("a carga do barco ao largo cabe (%.0f de %.0f px)"
 			% [carga.get_combined_minimum_size().x, interior_f],
 		carga.get_combined_minimum_size().x <= interior_f, "[%s]" % carga.text)
 	var espera := lugar.get_node("Coluna/EsperaLinha") as HBoxContainer
-	(lugar.get_node("Coluna/EsperaLinha/Espera") as Label).text = "espera %s  ·  acordo" \
-		% Nar.concordar(GS.PACIENCIA_FILA, "dia", "dias")
-	_confere("a espera do barco ao largo cabe (%.0f de %.0f px)"
-			% [espera.get_combined_minimum_size().x, interior_f],
-		espera.get_combined_minimum_size().x <= interior_f)
+	(lugar.get_node("Coluna/EsperaLinha/Icone") as Control).visible = true
+	for paciencia in [GS.PACIENCIA_FILA, 1]:
+		(lugar.get_node("Coluna/EsperaLinha/Espera") as Label).text = \
+			fila_script.texto_da_espera(paciencia, true)
+		_confere("a espera do barco ao largo cabe (%.0f de %.0f px)"
+				% [espera.get_combined_minimum_size().x, interior_f],
+			espera.get_combined_minimum_size().x <= interior_f,
+			"[%s]" % (lugar.get_node("Coluna/EsperaLinha/Espera") as Label).text)
 	lugar.refresh()
+	cartao.refresh()
 
 	_d18_completo = true
 
@@ -8057,11 +8101,12 @@ func _d43_o_que_recua(tela: Control) -> void:
 		var p := tela.get_node(caminho) as PanelContainer
 		medidas.append([caminho, _d43_desenhada(p.get_theme_stylebox("panel"), fundo)])
 	# Os quatro estados do cartão da fila pelo TEMA, e não pelos cartões
-	# montados: o porto desta medição só mostra um estado de cada vez. São os
-	# da doca, que o `BarcoFila` veste (`083`).
+	# montados: o porto desta medição só mostra um estado de cada vez. Três são
+	# os da doca, que o `BarcoFila` veste (`083`); o lugar livre é o vazio, sem
+	# fundo, que recua por construção.
 	var tema: Theme = load("res://ui/tema_brport.tres")
 	for variacao in ["CartaoDoca", "CartaoDocaEspera", "CartaoDocaRival",
-			"CartaoDocaObra"]:
+			"CartaoFilaVazia"]:
 		medidas.append(["o cartão %s" % variacao,
 			_d43_desenhada(tema.get_stylebox("panel", variacao), fundo)])
 	for m in medidas:

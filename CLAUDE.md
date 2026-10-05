@@ -59,6 +59,10 @@ jogador (`tools/sentinela_do_jogador.py`) e exige-a intacta.
 paralelo com as suítes. Em 27/09 o tiro `escala` leu, no `_ready` do
 `GameState`, o save inválido que o `teste_fumaca` planta de propósito, e
 saiu com backtrace; sozinho, saiu limpo (`069`).
+⚠️ **E ESPERAR COM `pgrep -f <padrão>` NÃO ACABA** quando o padrão está na
+linha de comando de quem espera: `while pgrep -f simular_balanceamento` casa o
+próprio shell do laço (04/10). Espere pelo PID, ou corra em fundo e deixe o
+aviso de fim chegar.
 ⚠️ **Só vale nos commits que o trazem.** Uma branch anterior à `061`, ou uma
 cópia velha do projeto, ainda apaga o save — e jogar pelo editor usa o save
 do jogador, que é o jogo a funcionar. Arquivo novo que o JOGO guarde em
@@ -261,17 +265,23 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    valores intactos. Esta linha dizia «mexeu numa `const`», e o fecho
    seguiu-a à letra (`067`).
 4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
-   O balanceamento medido é **100% / 80,2% / 37,3%** por perfil, com a mediana
-   do jogador mediano em R$716.179 contra uma parcela de R$530.000. Mexer sem
-   medir quebra isso.
+   O balanceamento medido é **100% / 78,7% / 41,5%** por perfil, com a mediana
+   do jogador mediano em R$629.683 contra uma parcela de R$530.000, desde a
+   fila no fundeadouro (`083`). Mexer sem medir quebra isso.
    **O alvo é TRANQUILO, e é decisão registrada** (`docs/decisoes/005`): a
    dívida deixou de ser o motor. Os 100% / 47% / 0% que este arquivo afirmou
    até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
    história, não meta. Quem discrimina os jogadores agora é **o porto que
    conseguem levantar** — e desde a trava de 06/09 quem mede isso é a MARGEM
-   em regime (R$674.019 contra R$103.290), não a contagem de barcos: o porto
-   pobre só recebe pesqueiro, descarrega num turno e atende MAIS barcos do que
-   o rico (46,1 contra 13,6). `docs/decisoes/009`.
+   em regime (R$538.184 contra R$94.955), não a contagem de barcos: o porto
+   pobre só recebe pesqueiro, que descarrega num turno, e a contagem diz 3×
+   (55,1 contra 18,6 barcos) onde a margem diz 5,7×. `docs/decisoes/009`.
+   ⚠️ **E DESDE A `083` O ATRACAR É ESCOLHA, e o simulador tem de a fazer.**
+   Os perfis escolhem o barco ao largo (o Ótimo pelo que rende por dia, o
+   Mediano pelo mais caro, o Descuidado por quem chegou primeiro), e quem
+   escolhe bem atraca acima da média de quem chega: o `projetar_parcelas.py`
+   multiplica a margem pelo `premio_da_escolha` MEDIDO, e sem ele reprovou o
+   Mediano por 5,5%.
    ⚠️ **A PARCELA MOVE O DESCUIDADO E QUASE NÃO MOVE O MEDIANO**, e não é
    acaso: cada R$10.000 valem ~3 pontos a um e ~0,5 ao outro, porque a mediana
    do Mediano fecha muito acima da parcela e a do Descuidado logo abaixo dela.
@@ -2483,6 +2493,10 @@ as três coisas.
   `"Construir · 7 disponíveis"` — a palavra real é mais longa (240 px contra
   235), e a asserção media um caso mais fácil do que o que o jogador vê. Quem o
   apanhou foi a CAPTURA. Monte o estado, e leia o `text` de quem o escreve.
+  ⚠️ **E O FORMATO TAMBÉM NÃO SE COPIA.** O D18 escrevia à mão os formatos do
+  cartão da doca e da fila, e um texto mudado no cartão passaria verde contra
+  a cópia velha. Os textos dos dois cartões são funções estáticas, e o D18
+  chama-as com o pior caso (`083`).
 - **⚠️ MEDIR LARGURA DE `Control` TEM DUAS ARMADILHAS, e as duas dão folga que
   não existe.** (a) **`custom_minimum_size` menor do que o conteúdo é
   IGNORADO** — o botão de menu declara 46 e ocupa 54, porque o ícone de 26 mais
@@ -2966,6 +2980,13 @@ nenhum (`057`).
   a oferta pendente antes de contar com o estado (`if GS.phase ==
   "rival_offer": GS.resolve_rival_offer(true)`), em vez de confiar na semente
   de quem o precede.
+- **⚠️ TROCAR O VERBO DO JOGO DEIXA OS LAÇOS QUE JOGAM A JOGAR NADA, verdes.**
+  Na `083` o «Alocar todos» saiu, e o T6 do `run_tests` continuou a correr as
+  quarenta partidas dele sem servir um barco: a partida acaba na mesma, e nada
+  reprovava. Quem joga conta o que jogou (`servidos > 40`). E o
+  `capturar_tela.gd` reconhecia a contra-oferta pelo nome de uma propriedade
+  (`dock_index`), que mudou com a fila: deixou de a reconhecer, sem erro. Ao
+  mudar o verbo, procure quem o CHAMA e quem RECONHECE o que ele abre.
 - Comentário explica **por que**, e de preferência conta o que se tentou antes
   e não funcionou. O repositório inteiro é escrito assim; siga.
 - Nada de emoji na interface — os ícones vivem em `art/icones/` e são

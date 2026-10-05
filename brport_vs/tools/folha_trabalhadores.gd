@@ -48,19 +48,23 @@ const TINTA_FRACA := Color(0.62, 0.70, 0.78)
 const COLUNAS := 3
 const MARGEM := 10
 const VAO := 6
-const CABECALHO := 46
+# 32 e não 46, e a legenda a 14 e não 16, desde a placa do retrato a 52 px
+# (`083`, terceira passagem): o cartão da doca cresceu 8 px, e dez linhas
+# pediam 1.306 px na tela de 1.280 — a conta de baixo reprovou, como devia.
+# A folha encolheu as folgas dela, e não o cartão: o cartão é o do jogo.
+const CABECALHO := 32
 # Numa linha só, «h · jovem · parda», e não uma por linha: com três colunas são
 # dez linhas de cartões, e as legendas de três linhas não cabiam na tela.
-const LEGENDA := 16
-# Medido: o menor retrato muda 635 px na placa de 44 do cabeçalho da doca (o
-# padrão). O defeito (o retrato escondido também na primeira foto) dá ZERO
+const LEGENDA := 14
+# Medido: o menor retrato muda 950 px na placa de 52 do cabeçalho da doca (um
+# homem jovem de pele branca, o de menos contraste com a placa). O defeito (o retrato escondido também na primeira foto) dá ZERO
 # exato; o corte fica a meio da banda. Era 1.203, a meio dos 2.407 do cartão
 # de 70 do trabalhador, que saiu com a fila (`083`): a primeira corrida com o
 # cartão novo reprovou os trinta, que é o que um número em pixel escrito à mão
-# faz quando o que ele descreve muda de tamanho. E mudou outra vez na mesma
-# sessão — a placa passou de 30 a 44 px a pedido do Bruno, e o mínimo de 239
-# para 635: quem mexe na placa remede aqui.
-const DESENHO_MIN := 317
+# faz quando o que ele descreve muda de tamanho. E mudou mais duas vezes na
+# mesma conversa — a placa passou de 30 a 44 e a 52 px a pedido do Bruno, e o
+# mínimo de 239 a 635 e a 950: quem mexe na placa remede aqui.
+const DESENHO_MIN := 475
 
 var _montado := false
 var _frames := 0

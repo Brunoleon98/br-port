@@ -1817,6 +1817,10 @@ func _connect_game_state() -> void:
 	GameState.cash_changed.connect(func(_v): _refresh_hud())
 	GameState.reputation_changed.connect(func(_v): _refresh_hud())
 	GameState.phase_changed.connect(func(_p): _refresh_hud())
+	# «Há escolha?» depende da FASE: com a oferta do Arlindo aberta não se
+	# atraca, e o título, os cartões ao largo e o berço livre têm de o saber
+	# quando ela fecha — ganhe quem ganhar, e a fila pode nem ter mudado.
+	GameState.phase_changed.connect(func(_p): _repintar_fila())
 	GameState.turn_advanced.connect(func(_t, _w): _refresh_all())
 	GameState.boats_spawned.connect(func(): _refresh_docks())
 	GameState.roster_changed.connect(_refresh_all)
@@ -2001,26 +2005,54 @@ func _refresh_fila() -> void:
 func _repintar_fila() -> void:
 	for no in _fila_lugares.get_children():
 		no.refresh()
+	# O berço livre também fala da fila («livre — chame um barco» ou
+	# «ninguém ao largo»), e um barco que chega não mexe em doca nenhuma.
+	for cartao in _dock_cards.get_children():
+		cartao.refresh()
 	_refresh_titulo_fila()
 
 
 # A linha acima da fila é a única de texto entre as docas e os barcos, e é a
 # sucessora do «trabalhadores parados — docas esperando» do primeiro playtest:
-# se algum lugar tem de dizer que há escolha por fazer, é este. TRÊS estados:
-# berço livre com barco pronto (a escolha, em âmbar), barcos sem berço (a
-# espera), e o fundeadouro vazio.
+# se algum lugar tem de dizer que há escolha por fazer, é este. Os estados:
+# doca livre com barco pronto (a escolha, em âmbar, a dizer QUAL doca), barcos
+# sem doca livre (a espera), o fundeadouro vazio, e a doca livre com o único
+# barco nas mãos do Arlindo.
+#
+# ⚠️ O «os berços estão ocupados» da primeira versão era o ramo de tudo o
+# resto, e mentia na oferta do rival: o berço estava livre e o barco ao largo
+# não se podia chamar. Cada ramo diz agora o que o pôs lá.
 func _refresh_titulo_fila() -> void:
 	var pendente := GameState.atracagem_pendente()
 	if pendente != Vector2i.ZERO:
-		_fila_titulo.text = "%s — toque num barco para atracar" % Narrativa.concordar(
-			pendente.x, "berço livre", "berços livres")
+		_fila_titulo.text = "%s — escolha quem atraca" % _docas_livres()
 		_fila_titulo.theme_type_variation = &"TextoBarraAlerta"
 	elif GameState.fila.is_empty():
-		_fila_titulo.text = "Ao largo — nenhum barco à espera"
+		_fila_titulo.text = "Ao largo — ninguém fundeado hoje"
+		_fila_titulo.theme_type_variation = &"TextoBarra"
+	elif GameState.bercos_livres() == 0:
+		_fila_titulo.text = "Ao largo — à espera de doca livre"
+		_fila_titulo.theme_type_variation = &"TextoBarra"
+	elif GameState.phase == "rival_offer":
+		_fila_titulo.text = "Ao largo — o Arlindo disputa um cliente"
 		_fila_titulo.theme_type_variation = &"TextoBarra"
 	else:
-		_fila_titulo.text = "Ao largo — os berços estão ocupados"
+		_fila_titulo.text = "Ao largo"
 		_fila_titulo.theme_type_variation = &"TextoBarra"
+
+
+# «Doca 2 livre», «Docas 1 e 3 livres», «Docas 1, 2 e 3 livres»: o número de
+# cada doca, que é o que está escrito no cartão por cima. Dizer QUAL poupa ao
+# olho a procura do cartão aceso.
+func _docas_livres() -> String:
+	var numeros: Array[String] = []
+	for i in range(GameState.docks.size()):
+		if GameState.docks[i]["boat"] == null:
+			numeros.append(str(i + 1))
+	if numeros.size() == 1:
+		return "Doca %s livre" % numeros[0]
+	var ultimo: String = numeros.pop_back()
+	return "Docas %s e %s livres" % [", ".join(numeros), ultimo]
 
 
 # ⚠️ ISTO JÁ NÃO ESCREVE NA TELA — ENFILEIRA. Era o funil único das duas

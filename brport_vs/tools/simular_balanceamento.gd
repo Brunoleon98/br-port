@@ -78,7 +78,7 @@ const MARGEM_UTIL := 10.0
 # família do defeito injetado numa regra que o teste não exercita.
 #
 # E ele é um QUARTO em vez de uma mudança nos três porque mexer nos três
-# re-baseia os 100% / 80,2% / 37,3% mesmo com desconto ZERO: um perfil que
+# re-baseia as taxas medidas (as do `CLAUDE.md`) mesmo com desconto ZERO: um perfil que
 # gasta R$530.000 antes do prazo deixa de ter esse dinheiro para construir, e
 # a medição em vigor deixaria de descrever o que descreve. Acrescentar é
 # seguro por construção — as sementes saem de `semente + run * K`, derivadas

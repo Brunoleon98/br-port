@@ -1600,9 +1600,20 @@ no disco (o D14 conferiu 179 casas ou 77).
 Sr. Ribeiro, do Arlindo e da Dona Cida falam como no celular — o balão e a
 placa de quem fala, os balões seguidos, a fala em letra regular —, e o fim da
 Fase 1 é uma entrada do diário em duas páginas, com a virada da folha e o
-recibo da parcela colado. **Aceite do Bruno em 04/10.** A conversa seguinte
-abre pela pergunta do escopo das partes que faltam: o mapa e os props, ou o
-design de jogo.
+recibo da parcela colado. **Aceite do Bruno em 04/10.**
+
+**A terceira parte foi o design de jogo (04–05/10, `083`)**: medido, o
+«Alocar todos» acertava sempre, e o verbo do dia não pedia escolha. Hoje os
+barcos esperam numa **fila no fundeadouro** — três lugares, dois dias de
+paciência —, e o jogador escolhe quem atraca; o que não é chamado vai embora e
+custa reputação, e a oferta do Arlindo cai no barco que chega. A fila
+facilitava (o controle deu 100 / 100 / 55,8), e o alvo da `005` voltou pelos
+contratos a 0,72: **100 / 78,7 / 41,5**, com a parcela em R$530.000 por
+escolha dele. A tela levou quatro passagens. **Aceite do Bruno em 05/10.** Ficou
+para depois o barco a deslizar do largo ao berço. A conversa seguinte abre pela
+pergunta do escopo do que falta: o mapa e os props (o mar aberto à direita, a
+máquina do contêiner do nível 3 e os três guindastes sobrepostos), ou outra
+parte do design de jogo.
 
 **Ordem operacional de 17/09 (fechada: R1–R9 feitos): a §7.1 abaixo entrava
 antes de novas melhorias e da publicação.** Os marcos A/B e o histórico de playtest continuam

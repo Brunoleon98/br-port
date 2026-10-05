@@ -435,6 +435,13 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   «um navio chegando num porto») — a passagem seguinte saiu com uma lista de
   trabalho exata, sem uma volta de «o que exatamente?». A pergunta do
   veredito continua a ser a primeira, e a lista não a substitui.
+  ⚠️ **Sem a segunda pergunta o «Ajustar» chega VAZIO** (04–05/10, `083`): na
+  fila do HUD a pergunta do veredito foi sozinha duas vezes, ele marcou
+  «Ajustar» sem texto no «Outro», e cada uma custou uma volta a perguntar o
+  quê. Com a lista, ele marcou duas e escreveu a terceira («melhore o texto»).
+  E a mensagem dele que reaparece IGUAL a meio de um turno pode ser a mesma já
+  tratada (a posição do 3.º barco chegou três vezes): confira-a contra o
+  estado e pergunte, em vez de a refazer.
 - **Família nova de arte pergunta o ESCOPO antes de desenhar** — quantas
   peças, que categorias, que marcas as distinguem — com opções e a
   recomendação primeiro. Nas variações do trabalhador ele respondeu tudo numa

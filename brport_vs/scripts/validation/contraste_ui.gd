@@ -158,8 +158,8 @@ func percurso() -> Array:
 		# dias», e o percurso abre sempre no dia 1: este estado só existe
 		# depois de uma virada sem atracar, que é a porta do jogador
 		# (`advance_turn`, o «Avançar dia»). A prova é o TEXTO no nó.
-		{"nome": "HUD (barco que sai amanhã)", "cena": "res://scenes/Main.tscn",
-			"acao": ["advance_turn"], "texto_na_tela": "sai amanhã", "so_hud": true},
+		{"nome": "HUD (barco que vai embora hoje)", "cena": "res://scenes/Main.tscn",
+			"acao": ["advance_turn"], "texto_na_tela": "vai embora hoje", "so_hud": true},
 		# ⚠️ O PAINEL CONSTRUIR COM ESTRUTURA DE PÉ — o verde que o registro de
 		# exceções dizia não ser alcançado, e dizia bem: o caso acima abre o
 		# painel com o porto em RUÍNAS, logo `tem_estrutura()` é falso em todas
@@ -261,7 +261,7 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 			return null
 
 	# ⚠️ AÇÃO E NÃO CAMPO. Há estado que nenhum `set()` alcança porque ele é o
-	# RESULTADO de uma regra: o barco que «sai amanhã» só existe depois de uma
+	# RESULTADO de uma regra: o barco que «vai embora hoje» só existe depois de uma
 	# virada sem atracar, e virar o dia é um método. Vem DEPOIS do estado e do barco, que
 	# é a ordem em que o jogador age — sobre o mundo já montado.
 	#
@@ -482,7 +482,7 @@ func _faixa_chegou(no: Node, caso: Dictionary) -> bool:
 
 # ── O TEXTO PEDIDO ESTÁ MESMO NA TELA? ──────────────────────────────────────
 #
-# Para o estado que só um texto distingue — o «sai amanhã» do cartão da fila,
+# Para o estado que só um texto distingue — o «vai embora hoje» do cartão da fila,
 # que veste a mesma variação do «sem trabalhador» de sempre. Derivado do nó:
 # procura-se o texto em todo `Label` visível, e caso que o peça sem o ter
 # entra nas falhas.

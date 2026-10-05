@@ -76,7 +76,10 @@ func refresh() -> void:
 		# «nada» — a regra da linha com valor zero, num cartão. A linha de
 		# baixo já diz porquê não há número.
 		_valor.text = ""
-		_progresso.text = "píer por construir"
+		# «em ruínas» e não «por construir» (quarta passagem, «melhore o
+		# texto»): é o que o mapa mostra por cima — as estacas do píer velho —,
+		# e diz porquê sem pedir que se leia o painel Construir.
+		_progresso.text = "píer em ruínas"
 		_progresso.theme_type_variation = &"TextoDocaProgresso"
 		_trabalhador.text = ""
 		return
@@ -87,7 +90,8 @@ func refresh() -> void:
 	if boat == null:
 		theme_type_variation = &"CartaoDoca"
 		_valor.text = ""
-		_progresso.text = "berço livre"
+		_progresso.text = texto_do_berco_livre(
+			GameState.atracagem_pendente() != Vector2i.ZERO, GameState.fila.is_empty())
 		_progresso.theme_type_variation = &"TextoDocaProgresso"
 		_trabalhador.text = ""
 		return
@@ -105,17 +109,8 @@ func refresh() -> void:
 	# AO LARGO, e um barco só atraca com a oferta resolvida. O ramo
 	# `CartaoDocaRival` mudou-se para o `BarcoFila`.
 
-	# Com acordo fechado a palavra "dias" sai: o pior caso dos três pedaços
-	# mede 189px dos 200 disponíveis, e escrevê-la passaria de 200. ⚠️ «DIAS»
-	# E NÃO «TURNOS» desde a `083`: o resto do jogo chama dia ao turno («Dia
-	# 11/32», «Avançar dia») e o cartão da fila diz «2 dias no berço» logo
-	# abaixo — os dois números falam da mesma coisa.
-	if boat.get("matched", false):
-		_progresso.text = "%s  ·  %d/%d  ·  acordo" % [
-			motivo, int(boat["progress"]), int(boat["op_turns"])]
-	else:
-		_progresso.text = "%s  ·  %d/%d dias" % [
-			motivo, int(boat["progress"]), int(boat["op_turns"])]
+	_progresso.text = texto_do_progresso(motivo, int(boat["progress"]),
+		int(boat["op_turns"]))
 	_progresso.theme_type_variation = &"TextoDocaProgresso"
 
 	# Barco atracado SEM ninguém só acontece num estado que o jogo não monta
@@ -136,12 +131,53 @@ func refresh() -> void:
 		_trabalhador.text = "sem trabalhador"
 	else:
 		_trabalhador_icone.visible = true
-		var texto := "#%d" % int(dock["worker_id"])
-		# Enquanto a operação não começou dá para desfazer a escolha: o barco
-		# volta ao largo com a paciência que tinha (`desatracar()`).
-		if int(boat["progress"]) == 0:
-			texto += "  ·  toque p/ devolver"
-		_trabalhador.text = texto
+		_trabalhador.text = texto_do_trabalhador(int(dock["worker_id"]),
+			boat.get("matched", false), int(boat["progress"]))
+
+
+# OS TEXTOS DO CARTÃO SÃO FUNÇÕES, e não literais no `refresh()`, porque o
+# D18 mede o pior caso de cada um: com literais dos dois lados, o teste media a
+# CÓPIA, e um formato mudado aqui passaria verde lá.
+#
+# A linha do barco diz QUANDO O BERÇO VOLTA A ABRIR (quarta passagem, «o texto
+# parece bem simples»): «parte amanhã», «parte em 2 dias». Era «1/2 dias», o
+# progresso — certo e mudo; o que o jogador decide com ele é quando pode
+# chamar o barco seguinte, e é isso que passou a estar escrito. «Parte» e não
+# «sai»: na fila, o barco que se vai sem atracar «vai embora». O pior caso,
+# «Armazenagem · parte em 3 dias», mede 198 de 200 px com um espaço de cada
+# lado do ponto (205 com dois) — o D18 mede-o.
+static func texto_do_progresso(motivo: String, feitos: int, total: int) -> String:
+	var faltam := total - feitos
+	if faltam <= 1:
+		return "%s · parte amanhã" % motivo
+	return "%s · parte em %d dias" % [motivo, faltam]
+
+
+# O berço livre diz o que fazer com ele: chamar um barco, se houver um pronto
+# ao largo; senão, que não há quem chamar. Fora disso (o Arlindo a negociar o
+# único barco, ou fora do jogo) fica só «livre», que é verdade sempre.
+static func texto_do_berco_livre(ha_barco_pronto: bool, fila_vazia: bool) -> String:
+	if ha_barco_pronto:
+		return "livre — chame um barco"
+	if fila_vazia:
+		return "livre — ninguém ao largo"
+	return "livre"
+
+
+# Enquanto a operação não começou dá para desfazer a escolha: o barco volta ao
+# largo com a paciência que tinha (`desatracar()`); depois, o trabalhador está
+# a descarregar. Com acordo, o número do trabalhador sai — o retrato no
+# cabeçalho já diz quem é —, e é o que deixa «acordo · toque p/ devolver»
+# caber: 187 de 200 px, contra 213 com o «#3» à frente (medido; o D18 mede-o a
+# cada corrida).
+static func texto_do_trabalhador(wid: int, acordo: bool, feitos: int) -> String:
+	if feitos == 0:
+		if acordo:
+			return "acordo · toque p/ devolver"
+		return "#%d · toque p/ devolver" % wid
+	if acordo:
+		return "descarregando · acordo"
+	return "#%d · descarregando" % wid
 
 
 

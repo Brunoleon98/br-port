@@ -112,9 +112,9 @@ signal contrato_fechado(valor: int, classe: String)
 #
 # ⚠️ E DESDE A TRAVA DE 06/09 QUEM MEDE ISSO É A MARGEM, NÃO A CONTAGEM DE
 # BARCOS (`docs/decisoes/009`): o porto pobre só recebe pesqueiro, que
-# descarrega num turno, e chega a atender MAIS barcos do que o porto rico. A
-# margem em regime é R$674.019 contra R$103.290 — 6,5× —, e os barcos atendidos
-# são 46,1 contra 13,6, que já não conta a mesma história. A manutenção alta é o que faz essa diferença doer, porque
+# descarrega num turno. Desde a fila (`083`) a margem em regime é R$538.184
+# contra R$94.955 — 5,7× —, e os barcos atendidos 55,1 contra 18,6, só 3×: a
+# contagem conta outra história. A manutenção alta é o que faz essa diferença doer, porque
 # custo fixo pesa proporcionalmente muito mais em quem tem pouca vazão.
 const START_CASH := 400000
 const SALARY_PER_WORKER := 6000          # TUNING sobre a linha "Margem operacional base" do GDD, reescalada
@@ -350,8 +350,8 @@ const CLASSES_DE_NAVIO := {
 # que a Zona de Espera do mapa desenha.
 const FILA_LUGARES := 3
 # Quantas viradas de dia um barco aguenta ao largo. Com 2, ele chega na virada,
-# fica «espera 2 dias» no dia seguinte e «sai amanhã» no outro — duas chances
-# de o escolher, e a segunda já é a última.
+# fica «aguarda mais 1 dia» no dia seguinte e «vai embora hoje» no outro —
+# duas chances de o escolher, e a segunda já é a última.
 const PACIENCIA_FILA := 2               # TUNING
 # Chance POR LUGAR VAZIO DA FILA de chegar barco na virada. Por lugar e não por
 # doca: a fila tem de ter mais barcos do que berços livres em boa parte dos

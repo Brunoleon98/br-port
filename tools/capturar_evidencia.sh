@@ -268,7 +268,7 @@ tirar guindaste2 0 2 --script res://tools/capturar_tela.gd -- 1 "$SAIDA/guindast
 tirar virada  0 7  --script res://tools/capturar_tela.gd -- 6  "$SAIDA/virada.png" limpo virada --frames=21
 # ⚠️ A FILA COM PRESSA (`083`). Os tiros de jogo param no começo de um dia,
 # com barcos novos ao largo — a escolha à espera —, mas um barco recém-chegado
-# diz sempre «espera 2 dias». O «sai amanhã», a única linha âmbar do cartão e
+# diz sempre «aguarda mais 1 dia». O «vai embora hoje», a única linha âmbar do cartão e
 # a que muda a escolha, só existe com um barco que já esperou um dia, e é por
 # isso que este tiro não atraca nada (`ocioso`): no dia 3 a fila tem quem
 # chegou no 1. Substituiu o tiro do trabalhador ESCOLHIDO, que morreu com a
