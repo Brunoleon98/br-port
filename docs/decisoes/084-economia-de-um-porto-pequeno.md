@@ -1,6 +1,6 @@
 # 084 — Economia de um porto pequeno, sobre a fila no fundeadouro
 
-**07–08/10/2026 · retomada da primeira entrega financeira da frente 5**
+**07/10/2026 · retomada da primeira entrega financeira da frente 5**
 
 ## O pedido e a base
 
@@ -131,7 +131,14 @@ Foram olhadas as telas de início, boletim, diário, construção, parcela,
 cobrança paga/recusada e recibo de fim de fase: preços e textos cabem.
 **`SENTINELA INTACTA`** no fim: cinco arquivos do jogador, byte a byte.
 
-O fecho local é de **08/10**. CLI/API e conector GitHub recusaram criar a
-branch com **403 — Resource not accessible by integration**. Leitura funciona;
-escrita e PR continuam pendentes. O patch e as evidências desta base substituem
-os artefatos de 02/10; nenhuma mudança foi publicada na main.
+A primeira publicação foi recusada por CLI/API e conector com **403 —
+Resource not accessible by integration**. Autorizar o GitHub CLI não bastou:
+a conexão ainda retornava nenhuma instalação do app. Bruno conectou o app
+oficial **ChatGPT Codex Connector**, da OpenAI, e a consulta passou a mostrar
+a instalação em sua conta. O envio da mesma branch então funcionou.
+
+**Entrega publicada em 07/10 (America/Sao_Paulo), PR #107:**
+https://github.com/Brunoleon98/br-port/pull/107
+
+A branch é `codex/frente-5-economia`; a main ainda aguarda a revisão e o merge.
+O patch e as evidências desta base substituem os artefatos de 02/10.

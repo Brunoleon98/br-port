@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 08/10/2026 — retomada da economia de porto pequeno sobre a fila (`084`)
+> **Última atualização:** 07/10/2026 — economia de porto pequeno sobre a fila (`084`), entregue no PR #107
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
