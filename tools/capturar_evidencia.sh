@@ -326,7 +326,7 @@ tirar diario  - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # só chamava `setup()` quando havia argumentos extra, e os quatro painéis de
 # `setup()` sem argumento obrigatório saíam como um escurecer vazio que passava
 # por bom. O Diário escapou por montar no `_ready()`.
-tirar parcela - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelParcela.tscn "$SAIDA/parcela.png" turn=8 cash=900000
+tirar parcela - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelParcela.tscn "$SAIDA/parcela.png" turn=8 cash=@START_CASH
 # AS DUAS CENAS COM GENTE DENTRO, e nenhuma delas tinha foto. Desde 13/09 a
 # Dona Cida, o Arlindo e o Sr. Ribeiro têm RETRATO ao lado da fala, e das doze
 # imagens desta bateria só o boletim mostrava um dos três — as outras duas
@@ -350,12 +350,13 @@ tirar parcela - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # até lá pelo `advance_turn()`: fora da fase "debt_payment" o `pay_debt()` sai
 # calado, e a foto do "Pagar" mostraria a resposta de quem pagou sem o dinheiro
 # ter mudado de mãos. A entrada passou a dizer o dinheiro de quem chega ao
-# vencimento sem jogar (R$336.000), e não o do turno 1. "Pagar" só está ligado
+# vencimento, e não o do turno 1. "Pagar" só está ligado
 # com dinheiro para a parcela (`cash=@PARCELA_AMOUNT`); "Não consigo pagar" só
-# existe sem ele.
-tirar ribeiro - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @PARCELA_AMOUNT parcela=vencida --tempo=entrada
+# existe sem ele. Os tiros de recusa montam caixa zero explicitamente: a
+# parcela menor (`084`) fez a semente antiga conseguir pagar.
+tirar ribeiro - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @PARCELA_AMOUNT parcela=vencida cash=0 --tempo=entrada
 tirar ribeiro_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_pagou.png" @PARCELA_AMOUNT parcela=vencida cash=@PARCELA_AMOUNT --tocar=Pagar --tempo=pagou
-tirar ribeiro_nao_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_nao_pagou.png" @PARCELA_AMOUNT parcela=vencida --tocar=Não --tempo=nao_pagou
+tirar ribeiro_nao_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_nao_pagou.png" @PARCELA_AMOUNT parcela=vencida cash=0 --tocar=Não --tempo=nao_pagou
 tirar contraoferta - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0 --tempo=rodada
 # A PRESSÃO DO ARLINDO, que só existe depois de uma aposta RECUSADA — é a
 # última tentativa, e a cara troca a meio da rodada (o tempo continua

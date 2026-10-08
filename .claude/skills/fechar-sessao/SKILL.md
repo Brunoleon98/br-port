@@ -138,7 +138,7 @@ python3 tools/projetar_parcelas.py --medicao /tmp/medicao.json \
 
 **Sobre o simulador:** medir é com `-- 600`, que é o que o CI roda desde 05/09. Uma rodada curta é teste de
 fumaça — provam que a ferramenta não quebrou junto com o `GameState` — e têm
-margem de ±18 pontos. Comparar aquele número com os 78,7% é comparar sorteio; o
+margem de ±18 pontos. Comparar aquele número com a medição do `CLAUDE.md` é comparar sorteio; o
 próprio simulador avisa quando a rodada é curta demais.
 
 **Sobre o validador do Blender:** ele não roda no CI, e de propósito — precisa

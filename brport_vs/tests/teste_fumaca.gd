@@ -1794,6 +1794,9 @@ func _f10_cada_tempo_cabe() -> void:
 	# botões, que é o cartão mais alto dela.
 	if not _f10_ate_ao_vencimento(nome):
 		return
+	# O cenário mede o caminho sem dinheiro, não a dificuldade desta semente.
+	# A parcela menor (`084`) fez a mesma partida conseguir pagar.
+	GS.cash = int(GS.PARCELA_AMOUNT) / 2
 	var p: Node = await _f10_abrir(F10_RIBEIRO, [GS.PARCELA_AMOUNT])
 	_f10_medir(p, "Ribeiro, entrada", &"entrada")
 	if not await _f10_tocar(p, "Não consigo"):
@@ -2251,12 +2254,14 @@ func _f11_pagou() -> bool:
 	return true
 
 
-# Sem dinheiro dado: a partida desta semente chega ao vencimento sem ele, e é
-# isso que põe o «Não consigo pagar» na tela. Quem perde vai direto ao
-# balanço — o `EndGame` não lhe lê a narração.
+# Dinheiro suficiente para fechar a semana, mas insuficiente para a parcela.
+# O caminho da recusa não pode depender de uma semente continuar perdedora
+# depois de rebalancear (`084`). Quem perde vai direto ao balanço.
 func _f11_nao_pagou() -> bool:
 	if not _f11_ate_ao_ultimo_dia():
 		return true
+	GS.cash = int(GS.PARCELA_AMOUNT) / 2 + int(GS.MAINTENANCE_WEEKLY) \
+		+ int(GS.SALARY_PER_WORKER) * GS.workers.size()
 	var main: Node = await _f11_main_e_virar_o_dia()
 	var p: Node = _f11_sozinho(main, F11_RIBEIRO, "entrada", "não pagou, no vencimento")
 	if p == null or not await _f10_tocar(p, "Não consigo", "F11"):
@@ -2888,7 +2893,8 @@ func _f14_barra_da_parcela(painel: Node, dinheiro: int, parcela: int) -> void:
 	if ok:
 		var barra := barras[0] as ProgressBar
 		fracao = barra.value / barra.max_value
-	var esperada := minf(float(dinheiro) / float(parcela), 1.0)
+	# ProgressBar tem limites nos dois lados: prejuízo mostra barra vazia.
+	var esperada := clampf(float(dinheiro) / float(parcela), 0.0, 1.0)
 	_confere("F14: a barra da cobrança mostra o dinheiro contra a parcela (%.3f)" % esperada,
 		ok and absf(fracao - esperada) < 0.001, "%d barra(s), mostra %.3f" % [barras.size(), fracao])
 

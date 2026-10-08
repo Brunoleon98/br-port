@@ -112,13 +112,20 @@ signal contrato_fechado(valor: int, classe: String)
 #
 # ⚠️ E DESDE A TRAVA DE 06/09 QUEM MEDE ISSO É A MARGEM, NÃO A CONTAGEM DE
 # BARCOS (`docs/decisoes/009`): o porto pobre só recebe pesqueiro, que
-# descarrega num turno. Desde a fila (`083`) a margem em regime é R$538.184
+# descarrega num turno. Na base da fila (`083`) a margem era R$538.184
 # contra R$94.955 — 5,7× —, e os barcos atendidos 55,1 contra 18,6, só 3×: a
 # contagem conta outra história. A manutenção alta é o que faz essa diferença doer, porque
 # custo fixo pesa proporcionalmente muito mais em quem tem pouca vazão.
-const START_CASH := 400000
-const SALARY_PER_WORKER := 6000          # TUNING sobre a linha "Margem operacional base" do GDD, reescalada
-const MAINTENANCE_WEEKLY := 40000        # TUNING sobre a mesma linha do GDD — o custo fixo que separa os perfis
+# Frente 5 (`084`): a entrega financeira de 02/10 não chegou à main. Ela foi
+# adaptada à fila (`083`), preservando os contratos mais baratos escolhidos
+# pelo Bruno. Caixa, receitas, salários, manutenção e construções ×0,1; depois
+# a primeira parcela desce de R$53.000 para R$30.000. Preços adaptados ao jogo,
+# não tarifas portuárias auditadas. O GDD congelado usa outra moeda: o projetor
+# converte suas hipóteses por esta constante, antes de ler a Fase 1 do código.
+const ESCALA_MONETARIA_GDD := 0.1
+const START_CASH := 40000
+const SALARY_PER_WORKER := 600          # TUNING sobre a linha "Margem operacional base" do GDD, reescalada
+const MAINTENANCE_WEEKLY := 4000        # TUNING sobre a mesma linha do GDD — o custo fixo que separa os perfis
 # O porto ABRE PARADO. Um píer de pé, o resto em ruína — é o que a herança do
 # avô do GDD descreve, e é a diferença entre "administrar um porto" e "levantar
 # um porto", que é a fantasia do jogo.
@@ -150,27 +157,27 @@ const ESTRUTURAS := {
 	"pier_2": {
 		"nome": "Reconstruir o Píer 2",
 		"desc": "+1 doca e +1 trabalhador",
-		"custo": 150000, "ordem": 1, "requer": "",
+		"custo": 15000, "ordem": 1, "requer": "",
 	},
 	"pier_3": {
 		"nome": "Reconstruir o Píer 3",
 		"desc": "+1 doca e +1 trabalhador",
-		"custo": 260000, "ordem": 2, "requer": "pier_2",
+		"custo": 26000, "ordem": 2, "requer": "pier_2",
 	},
 	"armazem": {
 		"nome": "Consertar o armazém",
 		"desc": "+50% no barco que vem deixar carga",
-		"custo": 180000, "ordem": 3, "requer": "",
+		"custo": 18000, "ordem": 3, "requer": "",
 	},
 	"patio": {
 		"nome": "Pavimentar o pátio",
 		"desc": "dobra a renda do píer e +30% no contêiner",
-		"custo": 115000, "ordem": 4, "requer": "",
+		"custo": 11500, "ordem": 4, "requer": "",
 	},
 	"escritorio": {
 		"nome": "Reformar o escritório",
 		"desc": "-50% nos salários da semana",
-		"custo": 80000, "ordem": 5, "requer": "",
+		"custo": 8000, "ordem": 5, "requer": "",
 	},
 	# ── OS DOIS UPGRADES DE NÍVEL ──
 	#
@@ -189,7 +196,7 @@ const ESTRUTURAS := {
 	"guindaste": {
 		"nome": "Guindaste de pórtico",
 		"desc": "corta um turno de cada operação",
-		"custo": 120000, "ordem": 6, "requer": "pier_2",
+		"custo": 12000, "ordem": 6, "requer": "pier_2",
 	},
 	# ⚠️ O CAIS DEIXOU DE SER UM MULTIPLICADOR EM 06/09. Ele dava "+60% de
 	# chance de navio grande" — um efeito estatístico que ninguém vê acontecer,
@@ -199,7 +206,7 @@ const ESTRUTURAS := {
 	"cais": {
 		"nome": "Reforçar o cais",
 		"desc": "o navio de longo curso passa a atracar",
-		"custo": 150000, "ordem": 7, "requer": "guindaste",
+		"custo": 15000, "ordem": 7, "requer": "guindaste",
 	},
 }
 
@@ -280,7 +287,7 @@ const MOTIVOS := {
 }
 
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
-const PIER_RATE_PER_SLOT := 5000        # GDD "Margem operacional base", reescalado: renda fixa semanal
+const PIER_RATE_PER_SLOT := 500        # GDD "Margem operacional base", reescalado: renda fixa semanal
 
 # ── AS TRÊS CLASSES DE NAVIO ──
 #
@@ -322,17 +329,17 @@ const PIER_RATE_PER_SLOT := 5000        # GDD "Margem operacional base", reescal
 const CLASSES_DE_NAVIO := {
 	"pesqueiro": {
 		"nome": "Pesqueiro", "nivel": 1, "peso": 40, "turnos": 1,
-		"valor_min": 9000, "valor_max": 20000,          # TUNING
+		"valor_min": 900, "valor_max": 2000,          # TUNING
 		"motivos": {"pescado": 55, "armazenagem": 45},
 	},
 	"medio": {
 		"nome": "Cargueiro", "nivel": 2, "peso": 40, "turnos": 2,
-		"valor_min": 16000, "valor_max": 36000,         # TUNING
+		"valor_min": 1600, "valor_max": 3600,         # TUNING
 		"motivos": {"armazenagem": 40, "conteiner": 40, "granel": 20},
 	},
 	"grande": {
 		"nome": "Navio de longo curso", "nivel": 3, "peso": 20, "turnos": 3,
-		"valor_min": 40000, "valor_max": 63000,         # TUNING
+		"valor_min": 4000, "valor_max": 6300,         # TUNING
 		"motivos": {"armazenagem": 25, "conteiner": 45, "granel": 30},
 	},
 }
@@ -410,14 +417,12 @@ const TURNS_PER_WEEK := 8
 const WEEKS_TOTAL := 4
 const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
 
-# ⚠️ A PARCELA É O BOTÃO QUE MOVE O DESCUIDADO, E É SÓ ELE. Medido em
-# `docs/decisoes/008`: com os motivos ligados, cada R$10.000 de parcela valem
-# ~3 pontos de vitória para ele e ~0,5 para o mediano — os dois perfis não
-# estão na mesma parte da distribuição, e é por isso que este número afina um
-# sem estragar o outro. Desceu de R$550.000 em 06/09 para devolver ao
-# descuidado os ~35% que a decisão 005 registou e que os upgrades de 05/09
-# tinham levado a 31,0%.
-const PARCELA_AMOUNT := 530000            # GDD "Parcelas validadas" / Protótipo VS — parcela única
+# Na moeda antiga (`008`, `083`), a parcela movia sobretudo o Descuidado,
+# perto do limiar. Isso não é uma lei de pontos por R$10.000. O pedido de
+# porto pequeno (`084`) mantém a primeira cobrança em R$30.000: o jogo pode
+# ensinar a reconstruir sem apertar essa dívida. A expansão e a margem em
+# regime continuam a separar os portos; as outras cobranças não estão no VS.
+const PARCELA_AMOUNT := 30000             # TUNING (`084`): primeira parcela acessível
 const PARCELA_DUE_TURN := TURNS_PER_WEEK * 4   # vence ao fim da semana 4
 
 # QUANTAS PARCELAS TEM A FASE 1 INTEIRA, que não é o que o VS joga.
@@ -459,7 +464,7 @@ const JUROS_POR_TURNO := 0.0025           # TUNING: fração do principal abatid
 const SAVE_ARQUIVO := "savegame.json"
 var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 
-# VERSÃO DO SAVE — subir SEMPRE que a forma do estado mudar.
+# VERSÃO DO SAVE — subir quando a forma ou a interpretação do estado mudar.
 #
 # O save não tinha versão nenhuma, e isso já custou um bug de verdade: quando
 # o porto passou a abrir com 1 doca em vez de 2, um jogo salvo antes continuou
@@ -500,7 +505,11 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # a fila e não para uma doca. Um save da 9 traz barcos em docas sem
 # trabalhador, que esta versão daria por perdidos na primeira virada, e um
 # índice de oferta que apontaria para a lista errada.
-const SAVE_VERSION := 10
+# 11 (07/10): unidade monetária ×0,1 (`084`). A 10 já guarda a fila, mas seu
+# caixa, contratos ao largo/atracados e recordes usam a moeda antiga. Recusar
+# antes de escrever é o contrato existente; adaptar só o caixa corromperia a
+# contabilidade e deixaria contratos e recordes dez vezes maiores.
+const SAVE_VERSION := 11
 
 # ── OS ESPAÇOS DE SAVE (`docs/decisoes/066`) ──
 #
@@ -737,7 +746,7 @@ var historico_semanas: Array = []
 # `pay_debt()` escreve a parcela no `dia_anterior` DEPOIS de o dia ter virado
 # (ver `advance_turn()`), então um dia só está fechado de verdade quando o
 # seguinte vira. Gravar na virada punha o dia 32 como um dia bom com a parcela
-# de R$530.000 ainda por sair dele. Aqui ficam os dias ANTERIORES ao
+# ainda por sair dele. Aqui ficam os dias ANTERIORES ao
 # `dia_anterior`, e quem lê é `recordes()`, que soma o `dia_anterior` vivo.
 #
 # O maior negócio grava-se no instante do pagamento, porque o valor de um

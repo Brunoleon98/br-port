@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-07.md` | 07/10 | Retomada financeira sobre a fila (`084`): moeda ×0,1, primeira parcela R$30 mil, save 11; medições refeitas e entrega publicada no PR #107 |
 | `PLAYTEST_01_ANALISE.md` | 02/09 | **A primeira jogada no telefone** — a devolução do Bruno na íntegra e a triagem dela. Fechou o gate A1, e trouxe o bug que travava 30% das instalações novas no dia 1 |
 | `PLAYTEST_02_ANALISE.md` | 06/09 | **A segunda jogada**, depois dos três níveis, da trava e da frota por serviço. 25 itens; quatro defeitos MEDIDOS (o cone no meio do asfalto, os seis blocos de cor chapada do pátio, os acessos que acabam no nada, e o camião do tamanho do escritório) e três coisas que não são melhorias — um segundo jogo, quatro decisões reabertas e uma pergunta de escala |
 | `HISTORICO.md` | 25/08–13/09 | O caminho do projeto bloco a bloco, e os defeitos que cada playtest achou. Saiu do `ESTADO_DO_PROJETO.md`, que o carregava junto com o estado atual |

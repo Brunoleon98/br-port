@@ -265,28 +265,29 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    valores intactos. Esta linha dizia «mexeu numa `const`», e o fecho
    seguiu-a à letra (`067`).
 4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
-   O balanceamento medido é **100% / 78,7% / 41,5%** por perfil, com a mediana
-   do jogador mediano em R$629.683 contra uma parcela de R$530.000, desde a
-   fila no fundeadouro (`083`). Mexer sem medir quebra isso.
+   O balanceamento medido é **100% / 100,0% / 100,0%** por perfil, com a mediana
+   do jogador mediano em R$63.873 contra a primeira parcela de R$30.000 (`084`).
+   São 600 partidas por perfil, semente 20260825, na escala de porto pequeno,
+   preservando a fila (`083`). A cobrança inicial é acessível; as parcelas 2 e 3
+   ainda não estão no VS. Mexer sem medir quebra isso.
    **O alvo é TRANQUILO, e é decisão registrada** (`docs/decisoes/005`): a
    dívida deixou de ser o motor. Os 100% / 47% / 0% que este arquivo afirmou
    até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
    história, não meta. Quem discrimina os jogadores agora é **o porto que
    conseguem levantar** — e desde a trava de 06/09 quem mede isso é a MARGEM
-   em regime (R$538.184 contra R$94.955), não a contagem de barcos: o porto
-   pobre só recebe pesqueiro, que descarrega num turno, e a contagem diz 3×
-   (55,1 contra 18,6 barcos) onde a margem diz 5,7×. `docs/decisoes/009`.
+   em regime (cerca de R$54.828 contra R$9.593), não a contagem de barcos: o porto
+   pobre só recebe pesqueiro, que descarrega num turno. Contar barcos esconde
+   o valor e o custo de cada operação; a margem distingue os portos. `docs/decisoes/009`.
    ⚠️ **E DESDE A `083` O ATRACAR É ESCOLHA, e o simulador tem de a fazer.**
    Os perfis escolhem o barco ao largo (o Ótimo pelo que rende por dia, o
    Mediano pelo mais caro, o Descuidado por quem chegou primeiro), e quem
    escolhe bem atraca acima da média de quem chega: o `projetar_parcelas.py`
    multiplica a margem pelo `premio_da_escolha` MEDIDO, e sem ele reprovou o
    Mediano por 5,5%.
-   ⚠️ **A PARCELA MOVE O DESCUIDADO E QUASE NÃO MOVE O MEDIANO**, e não é
-   acaso: cada R$10.000 valem ~3 pontos a um e ~0,5 ao outro, porque a mediana
-   do Mediano fecha muito acima da parcela e a do Descuidado logo abaixo dela.
-   Botão só move quem está em cima da linha — e um varrimento que não acha o
-   ponto costuma estar a varrer o eixo errado (`docs/decisoes/008`).
+   ⚠️ **A parcela só move quem está perto do limiar.** A calibração de 06/09
+   (`008`) e da fila (`083`) usava outra escala e outra distribuição de caixa.
+   Reescala e primeira cobrança menor (`084`) são passos separados; meça entre
+   eles e não extrapole uma sensibilidade por R$10.000 da moeda antiga.
    ⚠️ **E o jogo perfeito voltou aos 100%** com a trava do nível: a exceção
    medida em 06/09 — o Ótimo a levantar as sete estruturas num sorteio mau e a
    chegar curto — desapareceu, porque o porto que constrói tudo também passou a
@@ -1095,7 +1096,9 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
 
 ### Save
 
-`SAVE_VERSION` sobe **sempre** que a forma do estado muda. Save de outra
+`SAVE_VERSION` sobe **sempre** que a forma ou a interpretação do estado muda.
+A fila ocupou a versão 10 (`083`); a reescala monetária subiu para 11 (`084`),
+pois caixa, barcos e recordes antigos valem dez vezes mais. Save de outra
 versão é descartado, não adaptado. Já custou um porto com 4 docas num mapa que
 desenha 3.
 

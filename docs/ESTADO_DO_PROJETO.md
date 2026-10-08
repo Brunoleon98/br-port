@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 05/10/2026 — a melhoria de design seguiu pelo design de jogo: a fila no fundeadouro (`083`), aceite
+> **Última atualização:** 07/10/2026 — economia de porto pequeno sobre a fila (`084`), entregue no PR #107
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -18,7 +18,7 @@
 
 ## O jogo hoje, em três linhas
 
-**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$400.000 e **sete
+**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$40.000 e **sete
 estruturas** — píeres 2 e 3, armazém, pátio, escritório e os dois UPGRADES
 (guindaste e cais reforçado). Comprar cada uma muda o mapa.
 
@@ -57,14 +57,14 @@ tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 com toque de **44 px** (D25–D27); a pessoa, a 1,5× o real, é o menor ser vivo
 do mapa (`069`).
 
-**O jogo é TRANQUILO, e os valores são realistas.** Medido em 600 partidas por
-perfil: ótimo 100% · mediano 78,7% · descuidado 41,5%, com a mediana do mediano
-em R$629.683 contra uma parcela de R$530.000. Um contrato vale R$9.000–63.000 e
-a manutenção custa R$40.000/semana. A dívida deixou de ser o motor (`005`):
-separa os jogadores **o porto que conseguem levantar**, medido pela MARGEM em
-regime (R$538.184 contra R$94.955) e não pela contagem de barcos. O
-`START_CASH` está TRANCADO em 400.000 (`018`) — e o diário diz de onde vem,
-herança do avô. Mexer em preço sem rodar `simular_balanceamento.gd` quebra isto.
+**A economia tem escala de porto pequeno** (`084`), sobre a fila (`083`).
+Caixa inicial R$40.000, primeira parcela R$30.000, contratos R$900–6.300,
+manutenção R$4.000/semana e salário R$600 por trabalhador/semana. Preços
+adaptados ao jogo; não são tarifas reais auditadas. Taxas atuais e medição de
+600 partidas por perfil vivem no `CLAUDE.md`. Expansão e margem separam os
+portos (`005`, `009`); os ratios da fila e do caixa (`018`) foram preservados.
+Save **11** recusa partidas com a moeda antiga. A frente 5 começou pela
+economia; três parcelas, desbloqueios e obras seguem pendentes (§7 do plano).
 
 **E o navio que atraca depende do porto que existe** (`009`): três classes
 travadas pelo NÍVEL DO PORTO, o menor entre píer e guindaste — pesqueiro no 1,
@@ -120,7 +120,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 **A §7.1 fechou (R1–R9).** A prioridade, escolha do Bruno, é a **melhoria de
 design**: o HUD (`081`), as telas narrativas (`082`) e a fila no fundeadouro
-(`083`), aceites; a seguinte abre pelo escopo do que falta (§7 do plano).
+(`083`), aceites; a retomada financeira da frente 5 está na `084` (§7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -247,7 +247,7 @@ podre (A4) — em `HISTORICO.md`.
 - **Três classes de navio, travadas pelo nível do porto** — pesqueiro,
   cargueiro e longo curso, cada uma com a sua faixa de valor, os seus turnos e a
   sua mistura de motivos. A classe decide o casco no píer (`009`)
-- Parcela única de **R$530.000** no fim da semana 4; paga ou recusada, a semana
+- Parcela única de **R$30.000** no fim da semana 4; paga ou recusada, a semana
   só fecha depois da decisão. **Quitar antes abate 0,25% por turno** (`019`),
   numa conta genérica que serve ao empréstimo da Fase 2. ⚠️ **A semana tem 8
   turnos e a partida 32 "dias"; passar a 7 está MEDIDO** — 16 corridas na §7 do
@@ -333,9 +333,8 @@ cada um com gramática própria; a faixa de valor da classe escolhe qual atraca.
 Os **retratos** saem do mesmo estúdio Blender e são os únicos props que olham
 para a frente; o boneco do PÍER é outro.
 
-A **Zona de Espera é só visual**, e torná-la mecânica muda o balanceamento
-medido. Desde 11/09 ela fundeia **ao largo**, fora do gradiente costeiro
-(`docs/decisoes/017`).
+A **Zona de Espera mostra a fila mecânica** (`083`): o jogador escolhe quem
+atraca. Ela fundeia **ao largo**, fora do gradiente costeiro (`017`).
 
 Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o app
 Diário (o caderno já existe, `067`) e a lista "VS — OUT" do GDD. A cena de fim de Fase 1 já não está aqui:

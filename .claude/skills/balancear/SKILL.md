@@ -34,33 +34,20 @@ não as repete — ela conduz a medição e garante que nada fica para trás.
 
 ## 0. Antes de mexer: qual é o alvo?
 
-**"Melhor" não é um alvo; um número é.** O alvo em vigor está em
-`docs/decisoes/005` e é **tranquilo**: a dívida deixou de ser o motor, e quem
-discrimina os jogadores é o porto que eles conseguem levantar.
+**"Melhor" não é um alvo; um número é.** A retomada financeira (`084`) segue
+o pedido do Bruno de parcelas menores para o porto em ruínas. A primeira
+cobrança deve permitir aprender e reconstruir; as taxas atuais vivem só no
+`CLAUDE.md`. Os alvos e sensibilidades anteriores (`005`, `008`, `083`) são
+histórico, não meta desta cobrança.
 
-| Perfil | Alvo |
-|---|---|
-| Ótimo | ~100% |
-| Mediano | ~80% — ganha com folga |
-| Descuidado | ~35% — perde a maioria, sem ser garantido |
+⚠️ **Quem separa os portos é expansão e margem em regime.** A fila (`083`)
+ainda permite escolher o barco, e o `premio_da_escolha` medido continua no
+projetor. Reescala preserva seus ratios; o novo valor da dívida é outro passo.
 
-⚠️ **E A TAXA DE VITÓRIA NÃO É A MÉTRICA DE DISCRIMINAÇÃO, NEM OS BARCOS
-ATENDIDOS.** Desde a trava de nível (06/09, `docs/decisoes/009`) o porto pobre
-só recebe pesqueiro, que descarrega num turno, e chega a atender MAIS barcos do
-que o porto rico — 13,6 contra 46,1, com margem de R$103.290 contra
-R$674.019. Desde a fila (`083`) os números são 18,6 contra 55,1 e R$94.955
-contra R$538.184: a contagem diz 3× onde a margem diz 5,7×. **Quem separa os
-perfis é a MARGEM EM REGIME.** Ler a contagem levaria
-a concluir que a trava aproximou os jogadores, quando ela os separou.
-
-⚠️ **A `PARCELA_AMOUNT` É O BOTÃO DO DESCUIDADO, e quase não move o Mediano.**
-Medido em 06/09 (`docs/decisoes/008`): cada R$10.000 valem ~3 pontos a um e
-~0,5 ao outro. A razão não é mágica e vale para qualquer botão novo — a mediana
-do Mediano fecha muito acima da parcela e a do Descuidado logo abaixo dela, e
-um botão só move quem está em cima da linha. **Quando um varrimento não achar o
-ponto, desconfie do EIXO antes de desistir**: a `007` varreu preços de upgrade,
-concluiu que nada recuperava o Descuidado sem custar o Mediano, e estava certa
-— a parcela é que não estava no varrimento.
+⚠️ **A parcela move quem está perto do limiar, não um perfil por definição.**
+Não extrapole pontos por R$10.000 medidos na moeda antiga. O GDD congelado
+converte-se no projetor por `ESCALA_MONETARIA_GDD`; a economia atual vem do
+código. As Fases 2/3 projetadas não medem três cobranças dentro da Fase 1.
 
 ⚠️ **O Ótimo está em 100% redondos**, e voltou lá com a trava de nível. Ele
 esteve em 99,8% entre as duas passagens de 06/09 por uma razão diagnosticada
@@ -231,24 +218,24 @@ em três sítios de uma vez. Procure e conserte:
 
 | Onde | O quê |
 |---|---|
-| `GameState.gd`, cabeçalho `# ── TUNING` | as taxas e a mediana, logo acima das constantes |
+| `GameState.gd`, cabeçalho `# ── TUNING` | o porquê dos preços; taxas atuais só no `CLAUDE.md` |
 | `CLAUDE.md`, item 4 do "antes de fechar" | as taxas, a mediana, o alvo |
 | `docs/ESTADO_DO_PROJETO.md` | o resumo da economia, nas primeiras linhas |
-| `docs/decisoes/005` | o alvo, e a tabela das tentativas |
-| `simular_balanceamento.gd` | o aviso de amostra curta cita as taxas |
+| `docs/decisoes/` | decisão nova com alvo e tentativas; tabelas antigas são histórico |
+| `simular_balanceamento.gd` | avisos e comentários descrevem o perfil atual ou datam a medição histórica |
 | `projetar_parcelas.py` | o bloco "Leitura" — imprime no CI a cada corrida — **e o MODELO, se o efeito de uma estrutura mudou de forma**. ⚠️ Ele lê a Fase 1 do CÓDIGO e as Fases 2/3 do GDD: se a faixa de contrato mudar, os três perfis reprovam de uma vez e isso NÃO é métrica |
 | `gerar_tabela_numeros.py` | se entrou um `const` de dicionário: literal composto não vai à tabela sozinho, e some sem erro (foi o caso de `MOTIVOS` em 06/09) |
-| `BR_Port_GDD_V7_ERRATA_ECONOMIA.md` | o fecho da pergunta cita as taxas |
-| `docs/design/BR_Port_GDD_V7.jsx` | faixas de contrato e parcelas, se a escala mudou |
-| **`.claude/skills/`** | **as duas skills afirmam as taxas** — esta, no alvo da §0, e a `/fechar-sessao`, na coluna "espera" da tabela dela. Foram esquecidas em 05/09 e apanhadas pela varredura da própria `/fechar-sessao`: quem muda uma receita tem de procurar quem a copiou, e a receita copiou-se a si mesma |
+| `BR_Port_GDD_V7_ERRATA_ECONOMIA.md` | separa o histórico da moeda atual e aponta para a tabela gerada |
+| `docs/design/BR_Port_GDD_V7.jsx` | congelado; o projetor converte pela `ESCALA_MONETARIA_GDD` |
+| **`.claude/skills/`** | alvo e receita apontam para a medição no `CLAUDE.md`; quem muda uma receita procura também suas cópias |
 
-O grep abaixo achou os oito na última vez; se achar menos, alguém renomeou
-alguma coisa e a lista é que envelheceu.
+Procure valores anteriores E atuais; um comentário histórico precisa dizer
+que é histórico. A taxa atual não se replica em receitas.
 
 ```sh
-grep -rn '78,7\|41,5\|R\$629\|538\.184\|530\.000' --include=*.md --include=*.gd --include=*.py .
+rg -n '78,7|41,5|R\$629|538\.184|530\.000' CLAUDE.md brport_vs tools .claude docs
 # os da medição ANTERIOR também, para achar o que ficou por mudar:
-grep -rn '80,2\|37,3\|R\$716\|674\.019' --include=*.md --include=*.gd --include=*.py .
+rg -n '80,2|37,3|R\$716|674\.019|30\.000|40\.000' CLAUDE.md brport_vs tools .claude docs
 ```
 
 **Melhor que atualizar é DERIVAR.** Onde a prosa puder ler o número da medição
