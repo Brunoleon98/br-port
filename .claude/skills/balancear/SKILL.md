@@ -34,11 +34,19 @@ não as repete — ela conduz a medição e garante que nada fica para trás.
 
 ## 0. Antes de mexer: qual é o alvo?
 
-**"Melhor" não é um alvo; um número é.** A retomada financeira (`084`) segue
-o pedido do Bruno de parcelas menores para o porto em ruínas. A primeira
-cobrança deve permitir aprender e reconstruir; as taxas atuais vivem só no
-`CLAUDE.md`. Os alvos e sensibilidades anteriores (`005`, `008`, `083`) são
-histórico, não meta desta cobrança.
+**"Melhor" não é um alvo; um número é.** Em `085`, Bruno recuperou a moeda
+anterior à `084` e caixa R$400 mil. Depois substituiu a dívida: esse crédito
+inicial deve ser devolvido em três parcelas menores e iguais, capital mais
+juros. R$530 mil na primeira deixou de ser requisito; não reabra a origem.
+Pediu coerência também com futuras expansões, carros e imóveis. Use
+`docs/design/BR_Port_Metodo_Balanceamento_Economia.md`: separar crédito de
+lucro, medir caixa livre e acessibilidade, e registrar o contrato financeiro.
+O alvo de aprender e reconstruir (`005`) continua; as taxas atuais vivem só
+no `CLAUDE.md`. Sensibilidades antigas não substituem medição neste calendário.
+Quando a mudança do contrato libera caixa demais, medir o retorno dos serviços
+separadamente dos custos dos reparos. A comparação com tarifas reais precisa
+de unidades e rubricas equivalentes: bote não é navio comercial, turno não é
+tonelada. Não chamar faixa ficcional de cotação auditada.
 
 ⚠️ **Quem separa os portos é expansão e margem em regime.** A fila (`083`)
 ainda permite escolher o barco, e o `premio_da_escolha` medido continua no
@@ -48,6 +56,24 @@ projetor. Reescala preserva seus ratios; o novo valor da dívida é outro passo.
 Não extrapole pontos por R$10.000 medidos na moeda antiga. O GDD congelado
 converte-se no projetor por `ESCALA_MONETARIA_GDD`; a economia atual vem do
 código. As Fases 2/3 projetadas não medem três cobranças dentro da Fase 1.
+
+Desde `085`, medir a Fase 1 inteira exige contar quem chegou e quem pagou em
+cada cobrança, o caixa antes da decisão e o saldo depois, incluindo o perfil
+Antecipado. O prazo e os desbloqueios mudam a população que alcança o próximo
+vencimento; não extrapole a primeira cobrança nem uma projeção de outra fase.
+Ao comparar calendários, meça novamente também a primeira parcela. Proponha
+valores novos ao Bruno depois da medição, com poucas opções e a recomendação
+primeiro; não trate a exploração antiga R$30/45/60 mil como aceite.
+
+A opção `--sem-save` usa o mesmo GameState, substituindo só persistência.
+Antes de confiar na rodada rápida, compare os JSONs de uma amostra com e sem
+autosave, com sementes iguais. A margem em regime soma de volta despesas de
+obra e todas as parcelas; o prêmio da escolha deve vir dessa mesma semana.
+Compare também P10/P50/P90 e o tamanho das amostras de caixa. Restaurar a
+moeda não prova realismo nem estabilidade depois da última dívida. Quando
+Bruno mudar o alvo ou a escala explicitamente, essa escolha substitui a
+anterior; não repetir a pergunta já respondida nem renomear juros para cobrir
+uma dívida cuja origem não foi definida.
 
 ⚠️ **O Ótimo está em 100% redondos**, e voltou lá com a trava de nível. Ele
 esteve em 99,8% entre as duas passagens de 06/09 por uma razão diagnosticada

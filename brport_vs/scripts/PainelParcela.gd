@@ -34,7 +34,7 @@ const ALTURA := 0
 ## A4 listava nunca chegou à tela — a conta só dá zero depois do dia 32. Troca
 ## pedida pelo Bruno em 23/09: hoje, amanhã, e daí para trás "daqui a N dias".
 func _quando_vence(faltam: int) -> String:
-	var dia: int = GameState.PARCELA_DUE_TURN
+	var dia: int = GameState.vencimento_da_parcela()
 	if faltam <= 0:
 		return "Vence hoje, dia %d." % dia
 	if faltam == 1:
@@ -45,12 +45,17 @@ func _quando_vence(faltam: int) -> String:
 func setup(_sem_argumentos: Variant = null) -> void:
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
 	titulo_encorpado(Icones.PARCELA, "Parcela do Sr. Ribeiro")
+	paragrafo("Parcela %d de %d · %s" % [GameState.parcela_indice + 1,
+		GameState.PARCELAS_NA_FASE, Narrativa.concordar(GameState.parcelas_quitadas,
+			"parcela quitada", "parcelas quitadas")])
+	paragrafo(GameState.texto("Empréstimo inicial: {caixaInicial}. Total contratado: {totalParcelas}, antes dos abatimentos."))
 
-	var cheio: int = GameState.PARCELA_AMOUNT
+	var cheio: int = GameState.principal_da_parcela()
 	var valor: int = GameState.valor_da_parcela_hoje()
 	var abatimento: int = cheio - valor
 	if GameState.parcela_paid:
-		tarja("Parcela quitada", "A dívida com o Banco Porto Mirim está quitada.", &"bom")
+		tarja("Parcela quitada", "Este período está pago. A próxima cobrança abre ao fim do período."
+			if GameState.parcelas_quitadas < GameState.PARCELAS_NA_FASE else "As três parcelas estão quitadas.", &"bom")
 		botao_fechar("Fechar")
 		return
 
@@ -64,7 +69,7 @@ func setup(_sem_argumentos: Variant = null) -> void:
 		apoio = "Cheia são %s — antecipar abate %s" % [
 			GameState.moeda(cheio), GameState.moeda(abatimento)]
 	tarja("Quitar hoje: %s" % GameState.moeda(valor), apoio)
-	paragrafo(_quando_vence(GameState.PARCELA_DUE_TURN - GameState.turn))
+	paragrafo(_quando_vence(GameState.vencimento_da_parcela() - GameState.turn))
 	if abatimento > 0:
 		var juro := paragrafo("O abatimento são os juros que o banco deixa de correr, " +
 			"e encolhe a cada dia.")
@@ -111,9 +116,11 @@ func setup(_sem_argumentos: Variant = null) -> void:
 func _o_que_isso_compra(valor: int) -> String:
 	var precos: Array = []
 	for id in GameState.ESTRUTURAS:
-		if not GameState.tem_estrutura(String(id)):
+		if not GameState.tem_estrutura(String(id)) and GameState.desbloqueio_da_estrutura(String(id)) == "":
 			precos.append(int(GameState.ESTRUTURAS[id]["custo"]))
 	precos.sort()
+	if precos.is_empty():
+		return "reservas para os salários e a próxima etapa do porto"
 	var quantas := 0
 	var soma := 0
 	for preco in precos:

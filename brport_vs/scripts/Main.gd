@@ -197,7 +197,7 @@ func _recuperar_fase() -> void:
 	if GameState.phase == "rival_offer" and GameState.pending_rival >= 0:
 		_on_rival_offer_triggered(GameState.pending_rival)
 	elif GameState.phase == "debt_payment":
-		_on_debt_due(GameState.PARCELA_AMOUNT)
+		_on_debt_due(GameState.principal_da_parcela())
 	elif GameState.phase == "game_over":
 		_on_game_over(GameState.won, GameState.end_reason)
 
@@ -1900,16 +1900,22 @@ func _refresh_hud() -> void:
 	# O botão não some quando tudo está construído: vira o registo de que o
 	# porto está completo, que é uma informação, não um beco sem saída.
 	var faltam := 0
+	var liberadas := 0
 	for id in GameState.ESTRUTURAS:
 		if not GameState.tem_estrutura(String(id)):
 			faltam += 1
+			if GameState.desbloqueio_da_estrutura(String(id)) == "":
+				liberadas += 1
 	_upgrade_button.disabled = GameState.phase != "playing" or faltam == 0
 	if faltam == 0:
 		_upgrade_button.text = "Porto completo"
 		Icones.no_botao(_upgrade_button, Icones.FEITO, 26)
 	else:
-		var plural := "disponível" if faltam == 1 else "disponíveis"
-		_upgrade_button.text = "Construir  ·  %d %s" % [faltam, plural]
+		# O catálogo tem arte futura; só os reparos liberados contam como
+		# disponíveis. Sem reparo aberto, o painel ainda explica as etapas.
+		var plural := "disponível" if liberadas == 1 else "disponíveis"
+		_upgrade_button.text = "Construir  ·  %d %s" % [liberadas, plural] \
+			if liberadas > 0 else "Construir  ·  ver estruturas"
 		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	_advance_button.disabled = GameState.phase != "playing"
 	_refresh_meta()
@@ -1919,22 +1925,22 @@ func _refresh_hud() -> void:
 # a informação que estava faltando na tela: quanto já tem, quanto falta e
 # quantos dias restam até o Sr. Ribeiro bater na porta.
 func _refresh_meta() -> void:
-	var alvo := GameState.PARCELA_AMOUNT
+	var alvo := GameState.principal_da_parcela()
 	if GameState.parcela_paid:
 		# Pago: o banco dá lugar ao visto verde, que é o estado, não o credor.
 		_meta_icone.texture = Icones.FEITO
-		_meta_titulo.text = "Parcela do Sr. Ribeiro"
+		_meta_titulo.text = "Parcela %d de %d — Sr. Ribeiro" % [GameState.parcela_indice + 1, GameState.PARCELAS_NA_FASE]
 		_meta_bar.value = 100.0
-		_meta_label.text = "Paga — porto salvo"
+		_meta_label.text = "Paga — %d de %d quitadas" % [GameState.parcelas_quitadas, GameState.PARCELAS_NA_FASE]
 		_meta_label.theme_type_variation = &"TextoPilulaBom"
 		return
 
 	# O banco em traço CLARO: o cartão passou a escuro em 04/10, e o `PARCELA`
 	# dos painéis é navy cheio (`081`).
 	_meta_icone.texture = Icones.PARCELA_BARRA
-	var dias_restantes: int = max(GameState.PARCELA_DUE_TURN - GameState.turn + 1, 0)
-	_meta_titulo.text = "Parcela do Sr. Ribeiro — %s" % Narrativa.concordar(
-		dias_restantes, "dia restante", "dias restantes")
+	var dias_restantes: int = max(GameState.vencimento_da_parcela() - GameState.turn + 1, 0)
+	_meta_titulo.text = "Parcela %d de %d — %s" % [GameState.parcela_indice + 1,
+		GameState.PARCELAS_NA_FASE, Narrativa.concordar(dias_restantes, "dia restante", "dias restantes")]
 	# O dinheiro do cartão é o MOSTRADO, e não o do `GameState`: na virada ele
 	# conta junto com a pílula, e os dois números nunca discordam na tela
 	# (`078`). Fora da virada os dois são o mesmo.

@@ -12,6 +12,14 @@
 > converte o GDD congelado; suas Fases 2/3 não validam as três cobranças dentro
 > da Fase 1 da frente 5. Valores atuais: `BR_Port_Numeros_Fase_1.md`.
 
+> **08/10/2026 (`085`):** Bruno recuperou a escala anterior à `084`, com
+> caixa R$400 mil. Depois substituiu a dívida por crédito novo inicial pago
+> em três parcelas iguais de R$140 mil, capital mais R$20 mil de juros.
+> Serviços reequilibrados; a Fase 1 percorre três cobranças e reparos básicos.
+> Método e comparação tarifária para próximos recortes:
+> `BR_Port_Metodo_Balanceamento_Economia.md`. O GDD permanece congelado;
+> hipóteses das fases futuras não substituem medição das cobranças jogáveis.
+
 O GDD 7 está congelado como fonte da verdade. Esta errata existe porque um
 erro de aritmética dentro dele foi encontrado durante a produção — e corrigir
 em silêncio um documento congelado é pior do que registrar a correção.

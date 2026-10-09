@@ -29,6 +29,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-08.md` | 08/10 | Próximo recorte da frente 5 após três cobranças, crédito inicial e reparos básicos (`085`) |
+| `MEDICOES_FASE_1_2026-10-07.json` | 07–08/10 | Base `084`, alternativas descartadas e crédito final da `085`: três cobranças, serviços, quantis e paridade de autosave |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-07.md` | 07/10 | Retomada financeira sobre a fila (`084`): moeda ×0,1, primeira parcela R$30 mil, save 11; medições refeitas e entrega publicada no PR #107 |
 | `PLAYTEST_01_ANALISE.md` | 02/09 | **A primeira jogada no telefone** — a devolução do Bruno na íntegra e a triagem dela. Fechou o gate A1, e trouxe o bug que travava 30% das instalações novas no dia 1 |
 | `PLAYTEST_02_ANALISE.md` | 06/09 | **A segunda jogada**, depois dos três níveis, da trava e da frota por serviço. 25 itens; quatro defeitos MEDIDOS (o cone no meio do asfalto, os seis blocos de cor chapada do pátio, os acessos que acabam no nada, e o camião do tamanho do escritório) e três coisas que não são melhorias — um segundo jogo, quatro decisões reabertas e uma pergunta de escala |

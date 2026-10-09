@@ -185,6 +185,31 @@ func _process(_delta: float) -> bool:
 			return false
 		return _fechar_com_caras()
 
+	# Entre cobranças o caminho até ao balanço volta a jogar, com dois frames
+	# para cada painel passar a vez. Nenhum dia corre por baixo de uma decisão.
+	if _balanco and _passo_balanco == -1:
+		_frames_do_passo += 1
+		if _frames_do_passo < FRAMES_POR_PASSO:
+			return false
+		_frames_do_passo = 0
+		if GS.phase == "debt_payment":
+			return not _pagar_a_parcela()
+		_fechar_paineis_de_rotina(true)
+		if _paineis_abertos() > 0:
+			return false
+		if GS.phase == "rival_offer":
+			GS.negotiate_rival("metade")
+			return false
+		if GS.phase != "playing":
+			push_error("captura: a Fase 1 parou antes da terceira cobrança")
+			quit(1)
+			return true
+		_construir_basico_do_balanco()
+		_atracar_todos()
+		_main._on_advance_pressed()
+		_main._concluir_virada()
+		return false
+
 	# O BALANÇO ANDA ANTES DE ASSENTAR: cada passo toca um botão e espera que a
 	# fila do `Main` ponha o painel seguinte na tela. Os frames de assentar só
 	# começam a contar depois do último, com o balanço já montado.
@@ -487,9 +512,7 @@ func _montar() -> void:
 		if args[2] == "meio":
 			ids = ids.slice(0, 2)
 		for eid in ids:
-			if not GS.comprar_estrutura(eid):
-				push_error("captura: nao consegui comprar %s (%s)"
-					% [eid, GS.impedimento_estrutura(eid)])
+			load("res://tools/estado_da_bancada.gd").instalar(GS, eid)
 		# A foto tem de PROVAR o nível que promete. Comprar e não conferir é
 		# como o `completo` que saía com o porto a meio depois da reescala —
 		# nome certo, imagem errada, e sem erro nenhum.
@@ -562,6 +585,8 @@ func _montar() -> void:
 			if _paineis_abertos() > 0:
 				break
 		if not _ocioso:
+			if _balanco:
+				_construir_basico_do_balanco()
 			_atracar_todos()
 		_main._on_advance_pressed()
 	if not _virada:
@@ -654,15 +679,19 @@ func _pagar_a_parcela() -> bool:
 			% [GS.phase, int(GS.turn), "(nenhum)" if ribeiro == null else ribeiro.scene_file_path])
 		quit(1)
 		return false
+	var numero: int = GS.parcela_indice + 1
 	if not _tocar(ribeiro, "Pagar"):
 		return false
-	if not bool(GS.parcela_paid) or GS.phase != "game_over" or not bool(GS.won):
+	if GS.parcelas_quitadas != numero or (numero == GS.PARCELAS_NA_FASE \
+			and (GS.phase != "game_over" or not bool(GS.won))):
 		push_error("capturar_tela: o «Pagar» não acabou a partida paga (parcela_paid=%s, fase %s, won=%s)"
 			% [str(GS.parcela_paid), GS.phase, str(GS.won)])
 		quit(1)
 		return false
-	# A partida acabou e a semana 4 fechou, mas o boletim e o fim de fase estão
-	# na fila: na tela fica só a resposta de quem recebeu.
+	print("Cobrança %d paga — %d quitadas, dia %d, fase %s" % [numero,
+		GS.parcelas_quitadas, GS.turn, GS.phase])
+	# O boletim espera a resposta do banco. Nas duas primeiras cobranças o
+	# jogo continua; só a terceira põe o fim de fase na fila.
 	if not _sozinho_por_cima("res://scenes/panels/DebtPaymentPanel.tscn", "pagou",
 			"depois de pagar"):
 		return false
@@ -674,6 +703,15 @@ func _pagar_a_parcela() -> bool:
 
 # UM PASSO DA FILA DO FIM: o painel que a ordem diz está SOZINHO na tela, e o
 # botão dele passa a vez ao seguinte. Devolve `false` depois de reprovar.
+# O balanço joga só os reparos liberados, com o caixa real da semente. Na
+# escala restaurada, esperar três cobranças sem reconstruir não demonstra
+# a partida deste recorte. Os portos completos continuam em bancada separada.
+func _construir_basico_do_balanco() -> void:
+	for id in ["pier_2", "armazem", "patio"]:
+		if GS.impedimento_estrutura(id) == "":
+			GS.comprar_estrutura(id)
+
+
 func _andar_o_balanco() -> bool:
 	if _passo_balanco == 1:
 		if not _sozinho_por_cima("res://scenes/panels/PainelBoletim.tscn", "",
@@ -682,13 +720,16 @@ func _andar_o_balanco() -> bool:
 		# A semana vem do resumo que o boletim recebeu, e não do calendário: um
 		# boletim de outra semana que calhasse aqui também seria «o boletim».
 		var semana: int = int((_painel_de_cima().get("_resumo") as Dictionary)["semana"])
-		if semana != int(GS.WEEKS_TOTAL):
+		if semana != int(GS.PARCELA_DUE_TURN / GS.TURNS_PER_WEEK) * GS.parcelas_quitadas:
 			push_error("capturar_tela: o boletim do fim é o da semana %d, e a última é a %d"
 				% [semana, int(GS.WEEKS_TOTAL)])
 			quit(1)
 			return false
 		if not _tocar(_painel_de_cima(), "Fechar o boletim"):
 			return false
+		if semana < int(GS.WEEKS_TOTAL):
+			_passo_balanco = -1
+			return true
 		_passo_balanco = 2
 		return true
 	# ⚠️ A NARRAÇÃO TEM DUAS PÁGINAS desde a `082`, e o «Ver o balanço» só

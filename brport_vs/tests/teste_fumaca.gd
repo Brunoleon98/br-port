@@ -507,6 +507,7 @@ func _save_valido(versao: int) -> Dictionary:
 		"docks": [{"boat": null, "worker_id": null}],
 		"workers": [{"id": 1, "busy_turns": 0, "rosto": 0}],
 		"upgrade_purchased": false, "estruturas": [], "parcela_paid": false,
+		"parcela_indice": 0, "parcelas_quitadas": 0, "total_pago_parcelas": 0,
 		"phase": "playing", "fila": [], "pending_rival": -1, "rival_attempts_left": 2,
 		"end_reason": "", "won": false, "metrics": {}, "uid": 9,
 	}
@@ -616,6 +617,8 @@ func _f4_narrativa() -> void:
 	_confere("o diário conta o caixa inicial, e com o valor do START_CASH (%s)"
 		% GS.moeda(GS.START_CASH),
 		GS.texto(Narrativa.DIARIO_PRIMEIRA_PAGINA).contains(GS.moeda(GS.START_CASH)))
+	_confere("o total contratado acompanha as três parcelas, sem usar o principal recebido",
+		GS.texto("{totalParcelas}") == GS.moeda(GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT))
 
 	# E agora o outro lado: o que sai dos resolvedores não pode ter token
 	# nenhum. Com nome de jogador e sem, porque o vocativo é o caso que muda.
@@ -772,12 +775,11 @@ func _f4_numeros_do_fim() -> void:
 	# esperado sai da CONSTANTE, então mexer nela move os dois lados — e mexer
 	# no TEXTO à mão reprova, que é o ponto.
 	var total: String = Narrativa.por_extenso(GS.PARCELAS_NA_FASE)
-	var restantes: String = Narrativa.por_extenso(GS.PARCELAS_NA_FASE - 1)
-	_confere("e que esta é a primeira de %s parcelas" % total,
-		texto.to_lower().contains("primeira de %s parcelas" % total),
+	_confere("e que as %s parcelas terminaram" % total,
+		texto.to_lower().contains("as %s parcelas ficaram para trás" % total),
 		"não achou em: " + texto.left(60))
-	_confere("e quantas faltam (%s)" % restantes,
-		texto.to_lower().contains("faltam %s" % restantes),
+	_confere("e que essa dívida não resta",
+		texto.contains("Essa, não."),
 		"não achou em: " + texto.left(80))
 	# E NENHUM DÍGITO na narração inteira, que é a metade que faltava: sem
 	# isto, alguém volta a escrever "32 dias" e as duas asserções acima
@@ -1571,6 +1573,7 @@ func _f8_a_fala_e_vista() -> void:
 	# mensagens do sistema são DIFERENTES e não se fundem. É o caso que a nota
 	# do Bruno levantou — "mais de uma compra pode ser feita por turno".
 	var antes_da_segunda := _f8_apresentadas.size()
+	GS.turn = GS.TURNS_PER_WEEK + 1
 	GS.comprar_estrutura("armazem")
 	await _f8_esperar()
 	_f8_drenar()
@@ -1590,6 +1593,9 @@ func _f8_a_fala_e_vista() -> void:
 	_confere("F8g: e à segunda a fala da rotina ainda não saiu",
 		not _f8_foi_apresentada(Narrativa.cida("upgrade_pronto_rotina")),
 		"apresentadas: " + ", ".join(_f8_apresentadas))
+	GS.turn = GS.PARCELA_DUE_TURN + 1
+	GS.parcela_indice = 1
+	GS.parcelas_quitadas = 1
 	GS.comprar_estrutura("patio")
 	await _f8_esperar()
 	_f8_drenar()
@@ -1806,10 +1812,10 @@ func _f10_cada_tempo_cabe() -> void:
 	_f10_medir(p, "Ribeiro, não pagou", &"nao_pagou")
 	_f10_fechar(p)
 
-	if not _f10_ate_ao_vencimento(nome):
+	if not _f10_ate_ao_vencimento(nome, GS.PARCELAS_NA_FASE):
 		return
-	GS.cash = GS.PARCELA_AMOUNT
-	p = await _f10_abrir(F10_RIBEIRO, [GS.PARCELA_AMOUNT])
+	GS.cash = GS.principal_da_parcela()
+	p = await _f10_abrir(F10_RIBEIRO, [GS.principal_da_parcela()])
 	if not await _f10_tocar(p, "Pagar"):
 		return
 	_confere("F10: «Pagar» quitou mesmo a parcela",
@@ -1967,10 +1973,16 @@ func _f10_partida_nova(nome: String) -> void:
 # O VENCIMENTO ALCANÇA-SE PELO `advance_turn()`, como a jogar: é ele que põe a
 # fase em "debt_payment", e fora dela o `pay_debt()` sai calado — o botão
 # "Pagar" mostraria a resposta de quem pagou sem o dinheiro ter mudado de mãos.
-func _f10_ate_ao_vencimento(nome: String) -> bool:
+func _f10_ate_ao_vencimento(nome: String, numero: int = 1) -> bool:
 	_f10_partida_nova(nome)
+	if numero > 1:
+		GS.cash = GS.START_CASH * 25
 	var voltas := 0
-	while GS.phase != "debt_payment" and GS.phase != "game_over" and voltas < 200:
+	while GS.phase != "game_over" and voltas < 200:
+		if GS.phase == "debt_payment":
+			if GS.parcela_indice + 1 == numero:
+				break
+			GS.pay_debt()
 		if GS.phase == "rival_offer":
 			GS.resolve_rival_offer(true)
 		GS.advance_turn()
@@ -2240,7 +2252,7 @@ func _f11_a_vez_do_fim() -> void:
 func _f11_pagou() -> bool:
 	if not _f11_ate_ao_ultimo_dia():
 		return true
-	GS.cash = GS.PARCELA_AMOUNT * 2
+	GS.cash = GS.principal_da_parcela() * 2
 	var main: Node = await _f11_main_e_virar_o_dia()
 	var p: Node = _f11_sozinho(main, F11_RIBEIRO, "entrada", "pagou, no vencimento")
 	if p == null or not await _f10_tocar(p, "Pagar", "F11"):
@@ -2260,7 +2272,7 @@ func _f11_pagou() -> bool:
 func _f11_nao_pagou() -> bool:
 	if not _f11_ate_ao_ultimo_dia():
 		return true
-	GS.cash = int(GS.PARCELA_AMOUNT) / 2 + int(GS.MAINTENANCE_WEEKLY) \
+	GS.cash = int(GS.principal_da_parcela()) / 2 + int(GS.MAINTENANCE_WEEKLY) \
 		+ int(GS.SALARY_PER_WORKER) * GS.workers.size()
 	var main: Node = await _f11_main_e_virar_o_dia()
 	var p: Node = _f11_sozinho(main, F11_RIBEIRO, "entrada", "não pagou, no vencimento")
@@ -2277,7 +2289,7 @@ func _f11_nao_pagou() -> bool:
 func _f11_quitou_antes() -> bool:
 	if not _f11_ate_ao_ultimo_dia():
 		return true
-	GS.cash = GS.PARCELA_AMOUNT * 2
+	GS.cash = GS.principal_da_parcela() * 2
 	_confere("F11: quitou antes — a parcela pagou-se no último dia a jogar",
 		GS.pagar_parcela_adiantado())
 	var main: Node = await _f11_main_e_virar_o_dia()
@@ -2296,15 +2308,18 @@ func _f11_ate_ao_ultimo_dia() -> bool:
 	GS._rng.seed = F10_SEMENTE
 	GS.new_game()
 	GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
+	GS.cash = GS.START_CASH * 25
 	var voltas := 0
-	while int(GS.turn) < int(GS.PARCELA_DUE_TURN) and voltas < 200:
+	while int(GS.turn) < int(GS.TURNS_TOTAL) and voltas < 200:
+		if GS.phase == "debt_payment":
+			GS.pay_debt()
 		if GS.phase == "rival_offer":
 			GS.resolve_rival_offer(true)
 		GS.advance_turn()
 		voltas += 1
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
-	var ok: bool = GS.phase == "playing" and int(GS.turn) == int(GS.PARCELA_DUE_TURN)
+	var ok: bool = GS.phase == "playing" and int(GS.turn) == int(GS.TURNS_TOTAL)
 	_confere("F11: a partida chega ao último dia a jogar (turno %d)" % int(GS.turn),
 		ok, "fase «%s»" % GS.phase)
 	return ok
@@ -3050,6 +3065,9 @@ func _f14_balanco() -> void:
 		_f10_partida_nova("F14")
 		if venceu:
 			GS.parcela_paid = true
+			GS.parcela_indice = GS.PARCELAS_NA_FASE - 1
+			GS.parcelas_quitadas = GS.PARCELAS_NA_FASE
+			GS.total_pago_parcelas = GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT
 			GS.turn = int(GS.TURNS_TOTAL) + 1
 		else:
 			GS.cash = -1
@@ -3144,7 +3162,7 @@ func _f15_porto_completo() -> bool:
 	for _volta in range(GS.ESTRUTURAS.size()):
 		for id in GS.ESTRUTURAS:
 			if not GS.tem_estrutura(String(id)):
-				GS.comprar_estrutura(String(id))
+				load("res://tools/estado_da_bancada.gd").instalar(GS, String(id))
 	var ok: bool = GS.tem_estrutura("armazem") and GS.tem_estrutura("patio") \
 		and GS.docks.size() == int(GS.BERCOS_NO_MAPA)
 	_confere("F15: o porto completo tem armazém, pátio e as %d docas" % int(GS.BERCOS_NO_MAPA),

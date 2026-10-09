@@ -1,7 +1,7 @@
 extends PainelNarrativo
 
 # ============================================================
-# BR Port VS — o fim do VS: a primeira parcela da Fase 1, paga ou não
+# BR Port VS — o fim da Fase 1: três parcelas quitadas, ou o porto perdido
 #
 # Era uma tela de números: "VITÓRIA!" e uma lista de métricas. Item A4 do
 # plano — a sexta das telas narrativas é a cena de fim de fase, e o arquivo de
@@ -78,7 +78,7 @@ func _mostrar_narracao() -> void:
 	# texto e o pé por dois vãos elásticos: o recibo não está na pauta, e por
 	# isso pode pousar em qualquer altura.
 	segunda.add_child(_vao())
-	recibo_colado(_linhas_do_recibo(), GameState.moeda(int(GameState.PARCELA_AMOUNT)),
+	recibo_colado(_linhas_do_recibo(), GameState.moeda(GameState.total_pago_parcelas),
 		"PAGO")
 	segunda.add_child(_vao())
 	# A primeira por cima, datada como o diário, com a orelha no canto de
@@ -88,24 +88,19 @@ func _mostrar_narracao() -> void:
 	_primeira.name = "PrimeiraPagina"
 	_folha_da_primeira = _folha
 	entrada_do_diario(Narrativa.fim_de_fase_cabecalho(), paginas[0])
-	# ⚠️ O TÍTULO DIZIA "Fim da Fase 1", por cima de uma narração que abre com
-	# "A primeira de três parcelas" e "Faltam duas" — o título a fechar a fase
-	# e o texto a dizer que ela continua. Veredito do Bruno no gate do A5
-	# (23/09): «não é o fim da fase 1, apenas o pagamento de uma das três
-	# parcelas». Vencer é `parcela_paid` (ver `_check_end`), logo o título é
-	# verdade sempre que esta tela aparece. Fica FORA da folha, como o «O cais
-	# é seu» da tela de nomes: é o jogo a dizê-lo, e não o diário.
-	legenda_acima_do_caderno("Primeira parcela paga", "", Icones.VITORIA)
+	# A 085 completa as três cobranças: esta tela só abre após a terceira.
+	# A peça e o título agora fecham o mesmo arco, mantendo o caderno aprovado.
+	legenda_acima_do_caderno("Fase 1 concluída", "", Icones.VITORIA)
 	_botao = botao_abaixo_do_caderno("Virar a página", _virar_pagina)
 
 
-# O que o recibo imprime. ⚠️ OS NÚMEROS SAEM DAS CONSTANTES: a parcela paga é a
-# primeira de `PARCELAS_NA_FASE`, e o valor é o `PARCELA_AMOUNT` pelo `moeda()`.
+# O recibo soma o que saiu do caixa, incluindo descontos por antecipação.
+# Imprimir a soma dos principais cobraria juros que o jogador não pagou.
 # É papel impresso de banco e não prosa — os dígitos são do documento, e a
 # regra «nenhum dígito na narração» é da peça escrita à mão por cima dele.
 func _linhas_do_recibo() -> Array:
 	return ["BANCO PORTO MIRIM",
-		"Recibo — parcela 1 de %d" % int(GameState.PARCELAS_NA_FASE),
+		"Recibo — %d parcelas quitadas" % int(GameState.parcelas_quitadas),
 		GameState.texto("{portName}")]
 
 

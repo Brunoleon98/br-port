@@ -4030,15 +4030,17 @@ func _d23_menu_celular() -> void:
 	# asserção media um caso mais fácil do que o que o jogador vê. Quem o
 	# apanhou foi a captura, não o teste.
 	#
-	# O botão tem três estados, e o pior é o de mais estruturas por construir:
-	# "Porto completo" é curto, e o plural muda entre 1 e vários. O porto que
-	# este bloco acabou de montar é novo, logo faltam TODAS — e a asserção
-	# abaixo prova que é mesmo esse o estado, senão o pior caso passaria a ser
-	# outro sem ninguém dar por isso.
+	# A 085 conta só reparos liberados: no início há um, não o catálogo inteiro.
+	# Depois de reparar o píer 2 ainda não abre o armazém; o rótulo mais longo
+	# oferece ver as etapas. Medimos esse texto vindo do jogo, sem o inventar.
 	var construir: Button = tela.get_node("LinhaConstruir/Upgrade")
-	var quantas: int = GS.ESTRUTURAS.size()
-	_confere("o porto do teste tem as %d estruturas por construir (pior caso do rótulo)"
-			% quantas, construir.text.contains(str(quantas)),
+	_confere("D23: o início só anuncia o píer 2 disponível",
+		construir.text == "Construir  ·  1 disponível",
+		"o botão diz '%s'" % construir.text)
+	GS.comprar_estrutura("pier_2")
+	tela._refresh_hud()
+	_confere("D23: sem reparo liberado, o catálogo ainda abre e mostra as etapas",
+		construir.text == "Construir  ·  ver estruturas" and not construir.disabled,
 		"o botão diz '%s'" % construir.text)
 	var pior := construir.text
 	var fonte: Font = construir.get_theme_font("font")
@@ -6948,7 +6950,7 @@ func _d41_virada_do_dia() -> void:
 	var tabela: Dictionary = GS.ESTRUTURAS
 	ids.sort_custom(func(a, b): return int(tabela[a]["ordem"]) < int(tabela[b]["ordem"]))
 	for e in ids:
-		GS.comprar_estrutura(e)
+		load("res://tools/estado_da_bancada.gd").instalar(GS, e)
 	_confere("D41: o porto completo tem três docas e três trabalhadores",
 		GS.docks.size() == 3 and GS.workers.size() >= 3,
 		"%d docas, %d trabalhadores" % [GS.docks.size(), GS.workers.size()])
@@ -8040,7 +8042,7 @@ func _d43_rodape_escuro() -> void:
 			var ids: Array = tabela.keys()
 			ids.sort_custom(func(a, b): return int(tabela[a]["ordem"]) < int(tabela[b]["ordem"]))
 			for e in ids:
-				GS.comprar_estrutura(e)
+				load("res://tools/estado_da_bancada.gd").instalar(GS, e)
 		var tela: Control = load(CENA).instantiate()
 		root.add_child(tela)
 		var barra := tela.get_node("BarraDocas") as HBoxContainer

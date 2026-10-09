@@ -72,14 +72,29 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	# O DIA DE HOJE NA TARJA (26/09, `065`): é a resposta à pergunta do chip,
 	# e a semana e o vencimento vão na linha de apoio, que é o contexto dele.
 	# Tom neutro: um dia não é resultado nenhum.
-	var vence := ("a parcela vence no dia %d" % GameState.PARCELA_DUE_TURN) \
+	var vence := ("parcela %d vence no dia %d" % [GameState.parcela_indice + 1, GameState.vencimento_da_parcela()]) \
 		if not GameState.parcela_paid else "a parcela já está paga"
 	var hoje: int = mini(GameState.turn, GameState.TURNS_TOTAL)
+	var semana_de_hoje: int = mini(GameState.current_week(), GameState.WEEKS_TOTAL)
 	tarja("Dia %d de %d" % [hoje, GameState.TURNS_TOTAL],
-		"Semana %d de %d · %s" % [GameState.current_week(), GameState.WEEKS_TOTAL, vence])
+		"Semana %d de %d · %s" % [semana_de_hoje, GameState.WEEKS_TOTAL, vence])
 	# O PRAZO À VISTA (segunda passagem, `065`): quanto da partida já andou,
 	# na barra do HUD — a mesma que o rodapé usa para o dinheiro da parcela.
 	barra_na_tarja(hoje, GameState.TURNS_TOTAL)
+	var vencimentos := PackedStringArray()
+	for numero in range(1, GameState.PARCELAS_NA_FASE + 1):
+		vencimentos.append(str(GameState.PARCELA_DUE_TURN * numero))
+	paragrafo("Cobranças: dias %s · %s" % [", ".join(vencimentos),
+		Narrativa.concordar(GameState.parcelas_quitadas, "parcela quitada", "parcelas quitadas")])
+
+	# Doze semanas precisam rolar; os botões e a legenda continuam à vista.
+	var rolagem := ScrollContainer.new()
+	rolagem.custom_minimum_size.y = 390
+	rolagem.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_vbox.add_child(rolagem)
+	var semanas := VBoxContainer.new()
+	semanas.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rolagem.add_child(semanas)
 
 	var dias: Array = GameState.calendario()
 	var semana_atual := -1
@@ -88,13 +103,17 @@ func setup(_sem_argumentos: Variant = null) -> void:
 		var semana: int = int(dia["semana"])
 		if semana != semana_atual:
 			semana_atual = semana
-			secao("SEMANA %d" % semana)
+			var cabecalho := Label.new()
+			cabecalho.text = "SEMANA %d" % semana
+			cabecalho.theme_type_variation = "RotuloSecao"
+			semanas.add_child(cabecalho)
 			grade = GridContainer.new()
 			grade.columns = GameState.TURNS_PER_WEEK
 			grade.add_theme_constant_override("h_separation", 4)
 			grade.add_theme_constant_override("v_separation", 2)
-			_vbox.add_child(grade)
+			semanas.add_child(grade)
 		grade.add_child(_celula(dia))
+	rolagem.set_deferred("scroll_vertical", maxi(0, semana_de_hoje - 1) * 74)
 
 	fio()
 	secao("LEGENDA")

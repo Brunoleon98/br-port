@@ -327,7 +327,9 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
         # Acesso direto e não `.get`: uma medição sem este campo é de uma versão
         # anterior do simulador, e isso tem de rebentar em vez de virar zero
         # plausível — o CI regera a medição a cada corrida.
-        if float(dados["antecipou_fracao"]) > 0.0:
+        # A medição da `085` separa TODOS os pagamentos da margem operacional,
+        # inclusive os antecipados. Só a forma antiga precisa desta exclusão.
+        if float(dados["antecipou_fracao"]) > 0.0 and "parcela_por_semana" not in dados:
             # ⚠️ "FORA" É PALAVRA SENTINELA e não cabe nesta mensagem. Quem chama
             # decide a reprovação com `any("FORA" in l for l in linhas)`, então a
             # primeira versão desta linha dizia "FORA DO PORTÃO" e reprovava o
@@ -344,16 +346,20 @@ def calibrar(k: dict, medicao: dict, faixas: dict) -> list[str]:
             continue
         barcos = float(dados["atendidos_em_regime"])
         medido = float(dados["margem_em_regime"])
+        # Mesma população da semana medida: não misturar os sobreviventes
+        # do regime com portos que faliram antes dos desbloqueios (`085`).
+        estado = dados.get("estado_em_regime", dados)
         if barcos <= 0:
             continue
         previsto = margem_semanal(
-            k, barcos, faixas[1], float(dados["trabalhadores_medios"]), 0,
-            dados["estruturas"], dados["niveis"],
-            float(dados["premio_da_escolha"]))["margem"]
+            k, barcos, faixas[1], float(estado["trabalhadores_medios"]), 0,
+            estado["estruturas"], estado["niveis"],
+            float(dados["premio_em_regime"] if "premio_em_regime" in dados
+                  else dados["premio_da_escolha"]))["margem"]
         desvio = abs(previsto - medido)
         erro = desvio / max(abs(medido), 1.0)
         # Passa por percentagem OU por piso absoluto — ver PISO_EM_BARCOS.
-        piso = PISO_EM_BARCOS * valor_medio(faixas[1], k, dados["niveis"])
+        piso = PISO_EM_BARCOS * valor_medio(faixas[1], k, estado["niveis"])
         passa = erro <= TOLERANCIA or desvio <= piso
         marca = "ok" if passa else "FORA"
         queixas.append("  %-11s medido R$%-7d  modelo R$%-7d  erro %5.1f%%  %s"
@@ -437,11 +443,16 @@ def _main() -> int:
         return 1
     print("  → calibrado. O modelo pode falar das Fases 2 e 3.\n")
 
-    perfil = medicao["perfis"][args.perfil]
+    perfil = dict(medicao["perfis"][args.perfil])
+    perfil.update(perfil.get("estado_em_regime", {}))
     barcos_f1 = float(perfil["atendidos_em_regime"])
     docas = max(1.0, float(perfil["docas_medias"]))
     trabalhadores_f1 = float(perfil["trabalhadores_medios"])
-    semanas_por_fase = k["WEEKS_TOTAL"]
+    # Esta é a hipótese antiga do GDD para as fases futuras, não a duração
+    # da Fase 1 jogável. Desde 085 ela tem doze semanas e três cobranças:
+    # usar WEEKS_TOTAL aqui triplicava silenciosamente esta projeção.
+    intervalos = {fase: parcelas[fase][0] - parcelas[fase - 1][0]
+                  for fase in (2, 3)}
 
     # DUAS leituras, porque a diferença entre elas é uma decisão de design que
     # ninguém tomou ainda: o porto para de crescer depois da Fase 1, ou
@@ -467,9 +478,8 @@ def _main() -> int:
               % ("Fase", "Contrato", "Barcos", "Margem/sem", "4 semanas",
                  "Parcela", "Sobra"))
 
-        # O jogador entra na semana 5 com caixa ZERO: acabou de pagar a
-        # Parcela 1. É o pior caso honesto — quem chegou lá com folga só tem
-        # mais.
+        # A hipótese começa com caixa zero após a Fase 1 completa. Os intervalos
+        # abaixo vêm do GDD; as fases futuras continuam sem implementação.
         caixa = 0.0
         for fase in (2, 3):
             d = docas + cfg["docas_por_fase"] * (fase - 1)
@@ -480,8 +490,9 @@ def _main() -> int:
             # nível, e por isso as mesmas classes de navio a atracar.
             m = margem_semanal(k, barcos, faixas[fase], trabalhadores, passivo,
                                perfil["estruturas"], perfil["niveis"],
-                               float(perfil["premio_da_escolha"]))
-            acumulado = m["margem"] * semanas_por_fase
+                               float(perfil.get("premio_em_regime",
+                                                perfil["premio_da_escolha"])))
+            acumulado = m["margem"] * intervalos[fase]
             caixa += acumulado
             semana, valor = parcelas[fase]
             sobra = caixa - valor

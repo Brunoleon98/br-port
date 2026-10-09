@@ -170,7 +170,7 @@ func percurso() -> Array:
 		# texto dos botões e não é o que este caso mede.
 		{"nome": "Construir (com estrutura de pé)",
 			"cena": "res://scenes/panels/UpgradePanel.tscn",
-			"estado": {"cash": 900000}, "estruturas": ["pier_2", "armazem"]},
+			"estado": {"cash": 900000, "turn": 8}, "estruturas": ["pier_2", "armazem"]},
 	]
 
 
