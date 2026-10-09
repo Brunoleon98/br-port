@@ -108,6 +108,8 @@ func _build_ui() -> void:
 		else:
 			falta.append(String(dados["nome"]))
 	var porto := "Porto nível %d — recebe %s" % [nivel, ", ".join(recebe).to_lower()]
+	if int(GameState.nivel_guindaste()) == 1:
+		porto += "\nGuindaste de madeira · novos guindastes na Fase 2"
 	if falta.size() > 0:
 		porto += "\nAinda não aguenta: %s" % ", ".join(falta).to_lower()
 	vbox.add_child(PainelNarrativo.tarja_solta(

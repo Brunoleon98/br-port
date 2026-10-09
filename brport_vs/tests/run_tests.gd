@@ -38,6 +38,9 @@ func _t14_fase_inteira() -> void:
 			_check("T14: armazém abre no dia 8", GS.comprar_estrutura("armazem"))
 		if GS.turn == 28:
 			_check("T14: pátio não abre antes da primeira cobrança", not GS.comprar_estrutura("patio"))
+		_check("T14: dia %d mantém a madeira e só recebe pesca" % GS.turn,
+			GS.nivel_guindaste() == 1 and GS.nivel_do_porto() == 1
+				and String(GS._make_boat()["classe"]) == "pesqueiro")
 		var dia: int = GS.turn
 		GS.advance_turn()
 		if GS.phase == "debt_payment":
@@ -1355,7 +1358,9 @@ func _t5l_motivo_da_escala() -> void:
 	GS.cash = 10000000
 	GS.comprar_estrutura("pier_2")
 	load("res://tools/estado_da_bancada.gd").instalar(GS, "patio")
-	_check("com duas estruturas o porto sobe a nível 2 (%d)" % int(GS.nivel_do_porto()),
+	_check("reparos básicos não compram guindaste intermediário", GS.nivel_guindaste() == 1 and GS.nivel_do_porto() == 1)
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	_check("bancada do guindaste intermediário sobe a nível 2 (%d)" % int(GS.nivel_do_porto()),
 		int(GS.nivel_do_porto()) == 2)
 	var ate_medio := {}
 	for i in range(300):
@@ -1364,6 +1369,18 @@ func _t5l_motivo_da_escala() -> void:
 			% [ate_medio.keys()],
 		ate_medio.size() == 2 and ate_medio.has("medio")
 			and not ate_medio.has("grande"))
+
+	GS.save_game()
+	var save_da_bancada := FileAccess.get_file_as_string(GS.save_path)
+	GS.new_game()  # também faz autosave; repor abaixo a partida que se quer ler.
+	_check("partida nova limpa o nível da bancada", GS.nivel_guindaste() == 1)
+	var arquivo_da_bancada := FileAccess.open(GS.save_path, FileAccess.WRITE)
+	arquivo_da_bancada.store_string(save_da_bancada)
+	arquivo_da_bancada.close()
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	_check("save conserva os reparos e limpa o guindaste da bancada",
+		GS.load_game() and GS.nivel_guindaste() == 1
+			and GS.tem_estrutura("pier_2") and GS.tem_estrutura("patio"))
 
 	# ⚠️ O NÍVEL É O MENOR DOS DOIS, E SÓ AQUI ISSO SE PROVA. Nos outros
 	# estados o píer e o guindaste andam ao mesmo nível, e trocar o `mini` por

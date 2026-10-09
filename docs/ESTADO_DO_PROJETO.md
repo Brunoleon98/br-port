@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 08/10/2026 — três cobranças e reparos básicos da Fase 1 (`085`)
+> **Última atualização:** 08/10/2026 — guindaste de madeira durante a Fase 1 (`086`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -18,7 +18,7 @@
 
 ## O jogo hoje, em três linhas
 
-**O porto abre em ruínas.** 1 doca, 1 trabalhador e R$400.000. A Fase 1 permite
+**O porto abre em ruínas.** 1 doca, 1 trabalhador e R$400.000. A Fase 1 libera
 reparar o píer 2 desde o início, o armazém na semana 2 e o pátio a partir da
 semana 5, depois da primeira cobrança quitada (`085`). São até dois píeres;
 píer 3, escritório e upgrades ficam bloqueados para fases futuras.
@@ -56,21 +56,19 @@ tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 com toque de **44 px** (D25–D27); a pessoa, a 1,5× o real, é o menor ser vivo
 do mapa (`069`).
 
-**A escala anterior à `084` foi recuperada** por escolha do Bruno (`085`).
-Contratos R$4.000–28.000, manutenção R$40.000/semana e salário R$6.000 por
-trabalhador/semana. Preços de jogo; taxas e medição de 600 partidas por perfil
-no `CLAUDE.md`. Expansão e margem separam os portos (`005`, `009`).
-Save **12** recusa versões anteriores antes de aplicar qualquer campo, sem
-migração: mudou o calendário e a interpretação dos recibos. A Fase 1 dura
+**A moeda foi restaurada (`085`); preços intactos na `086`.** Valores atuais
+na tabela gerada, taxas/medição no `CLAUDE.md`. Expansão e margem distinguem
+os perfis (`005`, `009`); não se certificaram preços de mercado.
+Save **12** ainda é a versão do código. A `086` aguarda aceite explícito
+para 13 (`AGENTS.md`); não fundir com essa compatibilidade pendente. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
 iguais de R$140 mil, R$20 mil de juros totais. Obras e demais sistemas da
 frente 5 continuam pendentes (§7 do plano).
 
-**E o navio que atraca depende do porto que existe** (`009`): três classes
-travadas pelo NÍVEL DO PORTO, o menor entre píer e guindaste — pesqueiro no 1,
-cargueiro no 2, longo curso no 3, que exige o cais reforçado. Na Fase 1 o
-nível máximo é 2; o Construir mostra o nível e os bloqueios (`085`).
+**O porto recebe pesca durante a Fase 1** (`086`): a classe depende do menor
+nível entre píer e guindaste. O Construir explica a madeira e os bloqueios.
+Níveis 2/3 permanecem nas bancadas; sua progressão futura não foi implementada.
 
 **E A FROTA DE PESCA TEM TRÊS PORTES** (`014`) — bote, traineira e arrasteiro,
 pelo VALOR do contrato. Importa porque o porto em ruínas **só recebe pesqueiro**.
@@ -122,7 +120,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 **A §7.1 fechou (R1–R9).** A prioridade, escolha do Bruno, é a **melhoria de
 design**: o HUD (`081`), as telas narrativas (`082`) e a fila no fundeadouro
 (`083`), aceites; a frente 5 entregou a reescala (`084`) e continua com as três
-cobranças e os reparos básicos (`085`, §7 do plano).
+cobranças/reparos (`085`) e a madeira durante a Fase 1 (`086`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -251,13 +249,14 @@ podre (A4) — em `HISTORICO.md`.
   sua mistura de motivos. A classe decide o casco no píer (`009`)
 - **Três cobranças na Fase 1**, ao fim das semanas 4, 8 e 12. A semana só
   fecha depois da decisão; as duas primeiras quitações retomam a partida.
-  **Quitar antes abate 0,25% por dia** (`019`) e mantém o recibo até o fecho
+  **Quitar antes abate só juros da janela** (`085`) e mantém o recibo até o fecho
   do período, sem abrir a próxima cobrança antes dele (`085`).
 - **Três reparos disponíveis por progressão**, no catálogo de sete estruturas:
   píer 2, armazém e pátio. A terceira doca e os upgrades continuam na bancada
-  de arte e testes, mas não podem ser comprados nesta Fase 1 (`085`). A regra
-  antiga que sobe píer e guindaste ao nível 2 com duas estruturas permanece;
-  guindastes por fase são o próximo recorte, ainda pendente no plano.
+  de arte e testes, mas não podem ser comprados nesta Fase 1 (`085`). O guindaste
+  fica em madeira; o conjunto visual n1 conserva a base correta (`086`). O
+  pátio dobra a renda do píer; só seu bônus de contêiner espera clientes
+  futuros. Preços intactos; próximo recorte a escolher com Bruno.
 - **A faixa de mensagem tem FILA** — as duas fontes (sistema e Dona Cida) uma
   de cada vez, por ordem, com tempo mínimo na tela; tocar nela abre o histórico
   da sessão. Nada se apaga: 30,7% do que o jogo dizia não chegava ao jogador,

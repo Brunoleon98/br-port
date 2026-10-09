@@ -6170,6 +6170,20 @@ func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
 	var lanca: Dictionary = k["LANCA_N1"]
 	var arte_lanca: Array = k["ArteLanca"]
+	# Os três reparos pela porta real não trocam o aparelho de madeira.
+	GS.cash = GS.START_CASH * 25
+	_confere("D39: repara o segundo píer", GS.comprar_estrutura("pier_2"))
+	GS.turn = 8
+	_confere("D39: repara o armazém na semana 2", GS.comprar_estrutura("armazem"))
+	GS.turn = 29
+	GS.parcela_indice = 1
+	GS.parcelas_quitadas = 1
+	_confere("D39: repara o pátio após a primeira cobrança", GS.comprar_estrutura("patio"))
+	doca.refresh()
+	_confere("D39: reparos mantêm a lança e sua base de madeira, com dois píeres",
+		GS.nivel_guindaste() == 1 and GS.docks.size() == 2
+			and doca.get_node("Pier").texture == (k["ArtePier"] as Array)[0]
+			and no_lanca.texture == arte_lanca[0])
 	var do_pau := {}
 	for chave in lanca:
 		do_pau[lanca[chave]] = chave
@@ -6502,7 +6516,8 @@ func _d40_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 		GS.resolve_rival_offer(true)
 	var estruturas_antes: Array = GS.estruturas.duplicate()
 	GS.estruturas = ["armazem", "patio"]
-	_confere("D40: com duas estruturas o porto é de nível 2",
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	_confere("D40: a bancada monta o guindaste intermediário da Fase 2",
 		int(GS.nivel_guindaste()) == 2)
 	var mulher := -1
 	for i in range((Ret.get_script_constant_map()["TRABALHADORES"] as Array).size()):
@@ -6643,6 +6658,7 @@ func _d40_ida_ao_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 		tweens_antes[tw] = true
 	var estruturas_antes: Array = GS.estruturas.duplicate()
 	GS.estruturas = ["armazem", "patio"]
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
 	var tela: Control = load(CENA).instantiate()
 	root.add_child(tela)
 	var consts: Dictionary = tela.get_script().get_script_constant_map()
@@ -7776,6 +7792,7 @@ func _d42_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 			and not pilha.visible and not carga.visible
 			and emp_no.position == Vector2(doca.get("_emp_base")) + espera)
 	GS.estruturas = ["armazem", "patio"]
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
 	doca.refresh()
 	_confere("D42: no nível 2 a empilhadeira sai do cais", not emp_no.visible)
 	doca.queue_free()

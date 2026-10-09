@@ -161,6 +161,12 @@ quanto um asset custa ao pacote.
 1,87 MB são +42,29% do `.pck` e **+5,91% do APK**, porque o APK é sobretudo o
 binário do Godot. Ao citar custo, diga contra que denominador.
 
+**Literais multilinha no Windows precisam do conteúdo LF do Git.** Medido em
+`086`: CRLF no checkout de `Narrativa.gd` impedia o separador `\n\n—\n\n`
+de dividir o caderno, causando cinco falhas de design. A mesma base com LF
+passou. Conferir o blob e normalizar as quebras locais antes de testar; não
+reescrever a peça nem relaxar a guarda para esconder uma diferença do checkout.
+
 **Captura no Windows precisa conferir o tamanho do PNG** (`085`). A criação
 da janela encolheu 720×1280 para 720×1175, e o `canvas_items` produziu um PNG
 660×1175: a régua de retratos usava coordenadas da viewport sobre pixels
@@ -278,9 +284,10 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    Crédito não é lucro, patrimônio não é caixa e receita do porto não é renda pessoal.
    O balanceamento medido é **100% / 100,0% / 100,0%** (Ótimo / Mediano /
    Descuidado), e **100% no Antecipado**
-   (`085`): 600 partidas por perfil, semente 20260825, três cobranças reais em
+   (`086`): 600 partidas por perfil, semente 20260825, três cobranças reais em
    12 semanas de 7 dias, com fila e desbloqueios básicos. Todos pagaram as
-   três; caixa mediano do Mediano antes da primeira: R$295.522, depois: R$155.522.
+   três; caixa mediano do Mediano antes da primeira: R$312.709, depois: R$172.709.
+   Quantis P10/P50/P90, n e desbloqueios: `docs/arquivo/MEDICOES_GUINDASTES_FASE_1_2026-10-08.json`.
    Crédito inicial R$400.000, três parcelas iguais de R$140.000, R$20.000 de
    juros totais. Antecipação abate só juros da janela, nunca o capital.
    Serviços foram reequilibrados após restaurar a moeda; preços e amortização
@@ -291,7 +298,7 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
    história, não meta. Quem discrimina os jogadores agora é **o porto que
    conseguem levantar** — e desde a trava de 06/09 quem mede isso é a MARGEM
-   em regime (cerca de R$115.996 contra R$12.339), não a contagem de barcos: o porto
+   em regime (cerca de R$111.849 contra R$12.339), não a contagem de barcos: o porto
    pobre só recebe pesqueiro, que descarrega num turno. Contar barcos esconde
    o valor e o custo de cada operação; a margem distingue os portos. `docs/decisoes/009`.
    ⚠️ **E DESDE A `083` O ATRACAR É ESCOLHA, e o simulador tem de a fazer.**
@@ -1114,6 +1121,16 @@ O cais avança 4 unidades por degrau. O que não avança com ele sai do
 enquadramento: a rua e as casas ficariam a 4 unidades da água no primeiro
 degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
 `mx` absoluto.
+
+### Guindastes na Fase 1
+
+Os reparos básicos não promovem o aparelho de madeira (`086`); a treliça é
+da futura Fase 2. A base da máquina está no PNG do píer: `Dock.gd` seleciona
+o conjunto n1 aprovado com madeira, preservando capacidade e assets. O nível
+intermediário das bancadas é efêmero e restrito a `--script`; não deve entrar
+no save nem atravessar partida nova ou carregamento. Madeira limita as classes
+a pesca: o pátio continua dobrando a renda do píer, enquanto o adicional de
+contêiner aguarda clientes futuros. Medir de novo antes de mudar preços.
 
 ### Save
 

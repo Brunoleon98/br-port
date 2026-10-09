@@ -20,6 +20,12 @@
 > `BR_Port_Metodo_Balanceamento_Economia.md`. O GDD permanece congelado;
 > hipóteses das fases futuras não substituem medição das cobranças jogáveis.
 
+> **08/10/2026 (`086`):** madeira durante toda a Fase 1; reparos não liberam
+> cargueiros. Preços da `085` intactos, três cobranças remedidas. O pátio
+> continua liberado, mas seu bônus de contêiner não rende com pesca; revisar
+> em novo recorte. Taxas/medição atual no `CLAUDE.md`; base e candidato em
+> `docs/arquivo/MEDICOES_GUINDASTES_FASE_1_2026-10-08.json`.
+
 O GDD 7 está congelado como fonte da verdade. Esta errata existe porque um
 erro de aritmética dentro dele foi encontrado durante a produção — e corrigir
 em silêncio um documento congelado é pior do que registrar a correção.

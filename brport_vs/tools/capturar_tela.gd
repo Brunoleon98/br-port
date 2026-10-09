@@ -129,6 +129,7 @@ var _mensagens_aberto := false
 ## a semente padrão chega ao turno 33 com R$841.372 contra a parcela de
 ## R$530.000, e três outras sementes com R$775.573 a R$827.159. Se deixar de
 ## chegar, o botão fica desligado e o tiro REPROVA em vez de pagar à força.
+var _reparos_basicos := false
 var _balanco := false
 # 0 antes de pagar, 1 à espera do boletim, 2 à espera do fim de fase, 3 feito.
 var _passo_balanco := 0
@@ -236,6 +237,8 @@ func _process(_delta: float) -> bool:
 		# saltaria o passo que prova que ele abriu na vez certa.
 		if not _balanco:
 			_fechar_paineis_de_rotina(_limpo)
+		if _reparos_basicos:
+			_construir_basico_do_balanco()
 		return false
 
 	# ⚠️ O HISTÓRICO DA FAIXA ABRE DEPOIS DE ASSENTAR, e não no fim do laço de
@@ -374,6 +377,7 @@ func _fechar_com_caras() -> bool:
 
 
 func _montar() -> void:
+	_reparos_basicos = OS.get_cmdline_user_args().has("reparos")
 	GS = root.get_node("GameState")
 
 	# As opções `--` saem da lista ANTES das posicionais. Sem isto, passar uma
@@ -481,10 +485,9 @@ func _montar() -> void:
 	# estados (terra batida e pavimentado) e props que trocam de textura; sem
 	# isto só dava para conferir na tela o estado inicial, e o segundo mapa
 	# ficava sem ninguém olhando.
-	# `meio` compra só as DUAS primeiras, e existe porque o píer, a lança e os
-	# prédios ganharam três níveis em 05/09: n1 sem porto, n2 com duas
-	# estruturas de pé, e n3 quando o UPGRADE respectivo é comprado. Sem este
-	# modo, as capturas do CI
+	# `meio` monta duas estruturas e, explicitamente, a máquina da futura
+	# Fase 2 (`086`). Reparos do jogador já não a promovem. O porto n3 também
+	# é bancada, com o UPGRADE respectivo. Sem essas montagens as capturas do CI
 	# mostravam só os dois EXTREMOS — o do meio não tinha como ser olhado, e o
 	# gate A5 é olhar.
 	if args.size() >= 3 and args[2] in ["completo", "meio"]:
@@ -513,6 +516,8 @@ func _montar() -> void:
 			ids = ids.slice(0, 2)
 		for eid in ids:
 			load("res://tools/estado_da_bancada.gd").instalar(GS, eid)
+		if args[2] == "meio":
+			load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
 		# A foto tem de PROVAR o nível que promete. Comprar e não conferir é
 		# como o `completo` que saía com o porto a meio depois da reescala —
 		# nome certo, imagem errada, e sem erro nenhum.
@@ -585,7 +590,7 @@ func _montar() -> void:
 			if _paineis_abertos() > 0:
 				break
 		if not _ocioso:
-			if _balanco:
+			if _balanco or _reparos_basicos:
 				_construir_basico_do_balanco()
 			_atracar_todos()
 		_main._on_advance_pressed()

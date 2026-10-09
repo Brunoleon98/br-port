@@ -859,7 +859,10 @@ func _refresh_cena() -> void:
 		_mostrar_barco(-1, null)
 		return
 
-	_pier.texture = ArtePier[nivel_pier - 1]
+	# A base do guindaste está embutida no PNG do píer. Com madeira, usar
+	# o n2 deixava a lança de pau sobre uma torre metálica (`086`). O conjunto
+	# n1 aprovado mantém a Fase 1 coerente sem repintar arte ou mudar vagas.
+	_pier.texture = ArtePier[0 if nivel_lanca == 1 else nivel_pier - 1]
 	var dock: Dictionary = GameState.docks[dock_index]
 	var boat = dock["boat"]
 

@@ -13,3 +13,12 @@ static func instalar(gs: Node, id: String) -> void:
 	gs.cash_changed.emit(gs.cash)
 	gs.roster_changed.emit()
 	gs.estrutura_comprada.emit(id)
+
+
+# A treliça é da Fase 2. Montá-la para fotografar/testar a arte aprovada não
+# desbloqueia compra, não muda estruturas e não grava nível numa partida.
+static func guindaste_intermediario(gs: Node) -> void:
+	if not ArmazemLocal.sob_ferramenta():
+		push_error("O guindaste intermediário só pode ser montado em bancada.")
+		return
+	gs.set_meta(&"guindaste_intermediario_da_bancada", true)

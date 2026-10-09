@@ -827,6 +827,7 @@ func _ready() -> void:
 
 
 func new_game() -> void:
+	_limpar_guindaste_da_bancada()
 	_uid = 1
 	turn = 1
 	# Partida nova pergunta os nomes outra vez. Zerar aqui, e não deixar para
@@ -1791,25 +1792,12 @@ func tem_estrutura(id: String) -> bool:
 
 ## O NÍVEL DO PORTO, de 1 a 3 — quanto dele já foi levantado.
 ##
-## É uma leitura DERIVADA e mais nada: não decide, não guarda estado próprio e
-## não tem constante de balanceamento nenhuma. Existe porque o GDD 7 decidiu
-## que "estruturas principais (grua, cais, armazém) têm upgrade in-place de até
-## 3 níveis", e a ARTE desses níveis já existe (`pier_n1..n3`, `lanca_n1..n3`).
-## A MECÂNICA do upgrade é da Fase 2 e não está feita — quando estiver, ela
-## substitui esta função e nada mais precisa de mudar.
-##
-## ⚠️ E É POR ISSO QUE ELA NÃO É UM CAMPO NEM UMA FASE. O `advance_turn()`
-## retorna calado fora de `"playing"` e o simulador de balanceamento só sabe
-## resolver duas fases; qualquer estado novo aqui apareceria como partida que
-## não termina. Ler estrutura comprada em vez de criar fase deixa o motor do
-## turno intocado — os upgrades mexeram no balanceamento pelo CUSTO deles, que
-## é o que se mede, e não por um estado novo que o simulador não saiba resolver.
-## intocados por construção.
-## ⚠️ SÃO DUAS LEITURAS DESDE QUE OS UPGRADES EXISTEM, e não uma.
-## Enquanto o nível era derivado da contagem, píer e guindaste subiam juntos
-## porque nada os separava. Agora cada um tem o seu upgrade, e comprar o
-## guindaste não pode engrossar a laje do píer — o jogador veria mudar o que
-## não comprou. `nivel_porto()` saiu; quem chamava era o `Dock.gd`.
+## O píer lê as estruturas; o guindaste lê seu equipamento, separadamente.
+## Os reparos da Fase 1 não compram um guindaste novo (`086`). O aparelho
+## de madeira permanece até o dia 84; a treliça pertence à Fase 2, ainda sem
+## compra ou progressão implementada. A arte e o pórtico futuro continuam
+## exercitados pelas bancadas. Seu nível intermediário é montagem efêmera,
+## restrita a --script; não é um campo do jogador nem entra no save.
 func nivel_pier() -> int:
 	if tem_estrutura("cais"):
 		return 3
@@ -1819,7 +1807,15 @@ func nivel_pier() -> int:
 func nivel_guindaste() -> int:
 	if tem_estrutura("guindaste"):
 		return 3
-	return 2 if estruturas.size() >= 2 else 1
+	if ArmazemLocal.sob_ferramenta() and has_meta(&"guindaste_intermediario_da_bancada"):
+		return 2
+	return 1
+
+
+# Uma bancada anterior não altera a próxima partida nem um save retomado.
+func _limpar_guindaste_da_bancada() -> void:
+	if has_meta(&"guindaste_intermediario_da_bancada"):
+		remove_meta(&"guindaste_intermediario_da_bancada")
 
 
 # Por que não dá para comprar: "" quando dá. O painel mostra este texto, então
@@ -2116,6 +2112,7 @@ func load_game() -> bool:
 		clear_save()
 		return false
 
+	_limpar_guindaste_da_bancada()
 	turn = int(parsed.get("turn", 1))
 	cash = int(parsed.get("cash", START_CASH))
 	reputation = float(parsed.get("reputation", REPUTATION_START))

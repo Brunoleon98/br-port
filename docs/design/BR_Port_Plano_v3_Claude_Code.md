@@ -818,9 +818,13 @@ frentes, e **a ordem é do Bruno**:
    dias, cobranças nos dias 28/56/84 e reparos básicos até dois píeres: píer 2
    no início, armazém na semana 2 e pátio na semana 5 após a primeira quitação.
    Save 12; economia medida nas três cobranças reais. Obras, crédito opcional,
-   cancelamento de trabalho, guindastes por fase, tutorial e mais trabalhadores
-   por píer seguem pendentes. A regra visual antiga do guindaste nível 2 com
-   duas estruturas só será substituída no recorte de guindastes por fase.
+   cancelamento de trabalho, tutorial e mais trabalhadores por píer seguem
+   pendentes. **Continuação em 08/10 (`086`):** guindaste de madeira durante
+   toda a Fase 1, sem promoção por reparos; intermediário reservado à Fase 2
+   e disponível só nas bancadas de arte. Conjunto n1 aprovado na tela, até
+   dois píeres; medição refeita nas três cobranças, preços intactos. Fases
+   futuras ainda não implementadas. Pátio liberado no dia 29 dobra a renda do
+   píer; apenas seu adicional de contêiner espera os clientes futuros.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.
