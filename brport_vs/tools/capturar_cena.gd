@@ -374,12 +374,21 @@ func _montar_estado() -> void:
 		# tiro do "Pagar" mostrava a resposta de quem pagou sem o dinheiro ter
 		# mudado de mãos — medido pelo F10 em 23/09 (`docs/decisoes/051`).
 		if chave == "parcela":
-			if valor != "vencida":
-				push_error("parcela=%s: a única montagem é «vencida»" % valor)
+			var numero: int = {"vencida": 1, "vencida_2": 2, "vencida_3": 3}.get(valor, 0)
+			if numero == 0:
+				push_error("parcela=%s: montagem desconhecida" % valor)
 				quit(1)
 				return
+			# Caixa de bancada para alcançar as janelas seguintes. As cobranças
+			# anteriores passam pelo pay_debt real; cash=... vem depois disto.
+			if numero > 1:
+				GS.cash = GS.START_CASH * 25
 			var voltas := 0
-			while GS.phase != "debt_payment" and GS.phase != "game_over" and voltas < 200:
+			while GS.phase != "game_over" and voltas < 200:
+				if GS.phase == "debt_payment":
+					if GS.parcela_indice == numero - 1:
+						break
+					GS.pay_debt()
 				if GS.phase == "rival_offer":
 					GS.resolve_rival_offer(true)
 				GS.advance_turn()
@@ -389,6 +398,13 @@ func _montar_estado() -> void:
 				quit(1)
 				return
 			print("  estado: parcela vencida, turno %d" % GS.turn)
+			continue
+		if chave == "recibo" and valor == "quitado":
+			GS.parcela_indice = GS.PARCELAS_NA_FASE - 1
+			GS.parcelas_quitadas = GS.PARCELAS_NA_FASE
+			GS.parcela_paid = true
+			GS.total_pago_parcelas = GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT
+			print("  estado: recibo das três parcelas (bancada)")
 			continue
 		# ⚠️ `aposta=recusada` TAMBÉM É MONTAGEM, e do DADO, não do resultado.
 		# A cara da pressão do Arlindo só existe depois de uma aposta RECUSADA

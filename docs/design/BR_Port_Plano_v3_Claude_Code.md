@@ -809,7 +809,18 @@ frentes, e **a ordem é do Bruno**:
    com duas estruturas quaisquer). Mexe no `GameState`, no balanceamento e no
    `SAVE_VERSION`: decisão de rumo, várias sessões. **Entrega financeira retomada em 07/10**
    (`084`): escala monetária ×0,1, primeira parcela R$30.000 e save versão 11,
-   a pedido do Bruno. As três parcelas e os sistemas acima seguem pendentes.
+   a pedido do Bruno. **Continuação em 07–08/10 (`085`):** escala anterior
+   recuperada por nova escolha do Bruno, caixa R$400 mil como crédito inicial.
+   Depois escolheu três parcelas menores e iguais, capital mais juros:
+   R$140 mil cada, R$420 mil no total. Serviços reequilibrados; custos dos
+   reparos restaurados. Método e referências no guia de economia.
+   Doze semanas de sete
+   dias, cobranças nos dias 28/56/84 e reparos básicos até dois píeres: píer 2
+   no início, armazém na semana 2 e pátio na semana 5 após a primeira quitação.
+   Save 12; economia medida nas três cobranças reais. Obras, crédito opcional,
+   cancelamento de trabalho, guindastes por fase, tutorial e mais trabalhadores
+   por píer seguem pendentes. A regra visual antiga do guindaste nível 2 com
+   duas estruturas só será substituída no recorte de guindastes por fase.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.

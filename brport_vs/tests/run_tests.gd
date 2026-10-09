@@ -12,6 +12,128 @@ var _t10_completo := false
 var _t11_completo := false
 var _t12_completo := false
 var _t13_completo := false
+var _t14_completo := false
+
+
+func _t14_fase_inteira() -> void:
+	_fresh_playing()
+	GS.cash = GS.START_CASH * 25
+	_check("T14: calendário aprovado tem 84 dias e 7 por semana", GS.TURNS_TOTAL == 84 and GS.TURNS_PER_WEEK == 7)
+	_check("T14: píer 2 abre no início", GS.comprar_estrutura("pier_2"))
+	_check("T14: armazém espera a segunda semana", not GS.comprar_estrutura("armazem"))
+	for id in ["pier_3", "escritorio", "guindaste", "cais"]:
+		_check("T14: %s não pode ser comprado na Fase 1" % id, not GS.comprar_estrutura(id))
+	var cobrancas := []
+	var boletins := []
+	var ouvir_cobranca := func(valor: int) -> void: cobrancas.append(valor)
+	var ouvir_boletim := func(resumo: Dictionary) -> void: boletins.append(resumo.duplicate(true))
+	GS.debt_due.connect(ouvir_cobranca)
+	GS.semana_fechada.connect(ouvir_boletim)
+	# Percorre todos os dias; o dinheiro abundante isola calendário e estado.
+	# A economia é outra pergunta, medida pelo simulador de 600 partidas.
+	while GS.turn <= GS.TURNS_TOTAL and GS.phase != "game_over":
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		if GS.turn == 8:
+			_check("T14: armazém abre no dia 8", GS.comprar_estrutura("armazem"))
+		if GS.turn == 28:
+			_check("T14: pátio não abre antes da primeira cobrança", not GS.comprar_estrutura("patio"))
+		var dia: int = GS.turn
+		GS.advance_turn()
+		if GS.phase == "debt_payment":
+			var indice: int = GS.parcela_indice
+			var valor: int = GS.principal_da_parcela()
+			var dinheiro: int = GS.cash
+			_check("T14: cobrança %d vence no dia correto" % (indice + 1), dia == 28 * (indice + 1))
+			GS.save_game()
+			GS.cash = 0
+			_check("T14: save retoma cobrança %d suspensa" % (indice + 1), GS.load_game() and GS.phase == "debt_payment" and GS.cash == dinheiro)
+			GS.pay_debt()
+			_check("T14: cobrança %d debitada uma vez" % (indice + 1), GS.cash == dinheiro - valor and GS.parcelas_quitadas == indice + 1)
+			var depois: int = GS.cash
+			GS.pay_debt()
+			_check("T14: repetir Pagar não debita outra vez", GS.cash == depois)
+			_check("T14: boletim inclui a cobrança correta", int(boletins[-1]["parcela"]) == valor)
+			if indice < 2:
+				_check("T14: pagar não encerra antes da terceira", GS.phase in ["playing", "rival_offer"] and not GS.won)
+				GS.save_game()
+				_check("T14: save preserva a janela seguinte", GS.load_game() and GS.parcela_indice == indice + 1 and not GS.parcela_paid)
+				if GS.phase == "rival_offer":
+					GS.resolve_rival_offer(true)
+				if indice == 0:
+					_check("T14: pátio abre após a cobrança paga", GS.comprar_estrutura("patio"))
+	_check("T14: três cobranças reais emitidas", cobrancas == [GS.PARCELA_AMOUNT, GS.PARCELA_2_AMOUNT, GS.PARCELA_3_AMOUNT])
+	_check("T14: doze boletins, vitória só após o dia 84", boletins.size() == 12 and GS.won and GS.phase == "game_over" and GS.turn == 85)
+	_check("T14: recibo soma o que efetivamente saiu", GS.total_pago_parcelas == GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT)
+	GS.debt_due.disconnect(ouvir_cobranca)
+	GS.semana_fechada.disconnect(ouvir_boletim)
+
+	# As três portas de antecipação, inclusive a última. Quitar cedo não
+	# permite quitar a seguinte até fechar o período, nem pula dias de jogo.
+	_fresh_playing()
+	GS.cash = GS.START_CASH * 25
+	for indice in range(3):
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		var vencimento: int = GS.vencimento_da_parcela()
+		_check("T14: parcela antecipada abre na janela %d" % indice, GS.parcela_indice == indice and GS.pagar_parcela_adiantado())
+		_check("T14: antecipar mantém o prazo e bloqueia pagamento repetido", GS.vencimento_da_parcela() == vencimento and not GS.pagar_parcela_adiantado())
+		GS.save_game()
+		_check("T14: save retoma o recibo antecipado", GS.load_game() and GS.parcela_paid and GS.parcelas_quitadas == indice + 1)
+		GS.turn = vencimento
+		GS.advance_turn()
+		_check("T14: antecipação não chama cobrança outra vez", GS.phase != "debt_payment")
+	_check("T14: três antecipações também vencem a fase", GS.phase == "game_over" and GS.won)
+	_check("T14: antecipar nunca perdoa o capital emprestado", GS.total_pago_parcelas >= GS.START_CASH)
+	_check("T14: antecipar abate juros do total contratado", GS.total_pago_parcelas < GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT)
+
+	# Falta de dinheiro é recusada em cada parcela, com o estado intacto.
+	for indice in range(3):
+		_fresh_playing()
+		GS.parcela_indice = indice
+		GS.parcelas_quitadas = indice
+		GS.turn = GS.vencimento_da_parcela() + 1
+		GS.phase = "debt_payment"
+		GS.cash = GS.principal_da_parcela() - 1
+		var antes: int = GS.cash
+		GS.pay_debt()
+		_check("T14: sem dinheiro não baixa parcela %d" % indice, GS.phase == "debt_payment" and GS.cash == antes and GS.parcelas_quitadas == indice)
+		GS.fail_debt()
+		_check("T14: recusar parcela %d perde o porto" % indice, GS.phase == "game_over" and not GS.won)
+
+	_fresh_playing()
+	GS.save_game()
+	var valido: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
+	for chave in ["versao", "parcela_indice", "parcelas_quitadas", "total_pago_parcelas", "parcela_paid"]:
+		var ruim: Dictionary = valido.duplicate(true)
+		if chave == "versao":
+			ruim[chave] = 11
+		else:
+			ruim[chave] = "inválido"
+		var arquivo := FileAccess.open(GS.save_path, FileAccess.WRITE)
+		arquivo.store_string(JSON.stringify(ruim))
+		arquivo.close()
+		GS.cash = 123456
+		_check("T14: recusa %s antes de aplicar qualquer campo" % chave, not GS.load_game() and GS.cash == 123456 and GS.parcela_indice == 0)
+	# Forma ausente e recibo incoerente também não atravessam a leitura.
+	var incoerentes := []
+	var sem_recibo: Dictionary = valido.duplicate(true)
+	sem_recibo.erase("parcelas_quitadas")
+	incoerentes.append(sem_recibo)
+	for mudanca in [{"parcela_indice": 3}, {"parcelas_quitadas": 1},
+			{"parcela_indice": 0.5}, {"total_pago_parcelas": -1},
+			{"versao": 12.5}, {"versao": "12"}]:
+		var ruim: Dictionary = valido.duplicate(true)
+		ruim.merge(mudanca, true)
+		incoerentes.append(ruim)
+	for ruim in incoerentes:
+		var arquivo := FileAccess.open(GS.save_path, FileAccess.WRITE)
+		arquivo.store_string(JSON.stringify(ruim))
+		arquivo.close()
+		GS.cash = 123456
+		_check("T14: forma ausente ou recibo incoerente recusado antes de aplicar",
+			not GS.load_game() and GS.cash == 123456 and GS.parcelas_quitadas == 0)
+	_t14_completo = true
 
 
 func _check(label: String, ok: bool) -> void:
@@ -250,10 +372,8 @@ func _run() -> void:
 	_check("roster_changed disparou", roster_fired[0] == true)
 	_check("docas subiram para 2", GS.docks.size() == 2)
 	_check("trabalhadores subiram para 2", GS.workers.size() == 2)
-	_check("pier 3 exige o pier 2 antes", GS.impedimento_estrutura("pier_3") == "")
-	_check("pier 3 comprado", GS.comprar_estrutura("pier_3") == true)
-	_check("docas subiram para 3", GS.docks.size() == 3)
-	_check("trabalhadores subiram para 3", GS.workers.size() == 3)
+	_check("pier 3 fica para as próximas fases", not GS.comprar_estrutura("pier_3"))
+	_check("Fase 1 fica com duas docas e dois trabalhadores", GS.docks.size() == 2 and GS.workers.size() == 2)
 
 	print("=== T5b: estruturas — pre-requisito, caixa e efeito ===")
 	_fresh_playing()
@@ -263,7 +383,8 @@ func _run() -> void:
 	_check("e recusa a compra", GS.comprar_estrutura("pier_2") == false)
 	GS.cash = _caixa_para_tudo()
 	_check("pier 3 bloqueado sem o pier 2",
-		GS.impedimento_estrutura("pier_3").begins_with("Precisa antes de"))
+		GS.impedimento_estrutura("pier_3") == "Disponível nas próximas fases.")
+	GS.turn = GS.TURNS_PER_WEEK + 1
 	_check("comprar duas vezes nao acontece",
 		GS.comprar_estrutura("armazem") == true and GS.comprar_estrutura("armazem") == false)
 	_check("estrutura ja construida diz isso",
@@ -333,7 +454,8 @@ func _run() -> void:
 	# asserção sobreviver a qualquer escala futura.
 	GS.cash = _caixa_para_tudo()
 	GS.comprar_estrutura("pier_2")
-	GS.comprar_estrutura("pier_3")
+	# O teto físico do mapa continua a proteger a montagem das fases futuras.
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "pier_3")
 	_check("os dois pieres dao exatamente %d docas" % GS.BERCOS_NO_MAPA,
 		GS.docks.size() == GS.BERCOS_NO_MAPA)
 	# Trabalhador sem doca é o "#4 fantasma" do playtest: um cartão na fileira
@@ -438,7 +560,7 @@ func _run() -> void:
 				GS.resolve_rival_offer(true)
 				continue
 			if GS.phase == "debt_payment":
-				if GS.cash >= GS.PARCELA_AMOUNT:
+				if GS.cash >= GS.principal_da_parcela():
 					GS.pay_debt()
 				else:
 					GS.fail_debt()
@@ -492,6 +614,10 @@ func _run() -> void:
 	print("=== T13: a despedida do Sr. Ribeiro so vem depois de pagar (cena real) ===")
 	_t13_despedida_do_ribeiro()
 	_check("o bloco T13 correu até ao fim", _t13_completo)
+
+	print("=== T14: três cobranças e desbloqueios da Fase 1 ===")
+	_t14_fase_inteira()
+	_check("o bloco T14 correu até ao fim", _t14_completo)
 
 	print("")
 	if _fails == 0:
@@ -872,13 +998,13 @@ func _t5j_calendario() -> void:
 			vencem_parcela += 1
 			_check("a parcela vence no dia certo (dia %d, esperado %d)"
 					% [int(dia["turno"]), GS.PARCELA_DUE_TURN],
-				int(dia["turno"]) == GS.PARCELA_DUE_TURN)
+				int(dia["turno"]) == GS.PARCELA_DUE_TURN * vencem_parcela)
 
 	_check("exatamente um dia é 'hoje'", vistos_hoje == 1)
 	_check("um fecho de semana por semana (%d, esperado %d)"
 			% [fecham_semana, GS.WEEKS_TOTAL],
 		fecham_semana == GS.TURNS_TOTAL / GS.TURNS_PER_WEEK)
-	_check("a parcela vence uma vez só", vencem_parcela == 1)
+	_check("três vencimentos dentro da Fase 1", vencem_parcela == GS.PARCELAS_NA_FASE)
 
 	_t5j_completo = true
 
@@ -958,8 +1084,8 @@ func _t5k_parcela_adiantada() -> void:
 	_check("quitar adiantado satisfaz a vitoria", GS.pagar_parcela_adiantado())
 	GS.turn = GS.TURNS_TOTAL + 1
 	GS._check_end()
-	_check("no fim do prazo, com a parcela paga, o porto e salvo",
-		GS.phase == "game_over" and bool(GS.won))
+	_check("uma parcela sozinha não quita as três",
+		GS.phase == "game_over" and not bool(GS.won))
 
 	# 7. O DESCONTO POR ANTECIPAÇÃO — item 24, `docs/decisoes/019`. A forma é
 	#    que foi decidida (proporcional ao tempo, não fixa), então é a FORMA
@@ -1017,6 +1143,8 @@ func _t5k_parcela_adiantada() -> void:
 	#     função para ler `PARCELA_AMOUNT` por dentro e nenhuma suíte saberia
 	#     — é a armadilha do `PREDIOS_DO_PATIO` que dizia "lido de X" e não lia.
 	var outro := 100000
+	_check("o cálculo genérico não cria juros após vencer",
+		GS.desconto_por_antecipacao(outro, -1) == 0)
 	_check("o desconto acompanha o PRINCIPAL que recebe, nao a parcela",
 		GS.desconto_por_antecipacao(outro, 10)
 			== int(round(outro * GS.JUROS_POR_TURNO * 10)))
@@ -1121,7 +1249,7 @@ func _t5k_parcela_adiantada() -> void:
 	# Quatro semanas jogadas, quatro entradas. O número vem da forma da partida
 	# (`TURNS_TOTAL / TURNS_PER_WEEK`), não do acumulador onde o defeito mora.
 	_check("e a quarta semana entra no historico na derrota",
-		GS.historico_semanas.size() == GS.TURNS_TOTAL / GS.TURNS_PER_WEEK)
+		GS.historico_semanas.size() == GS.PARCELA_DUE_TURN / GS.TURNS_PER_WEEK)
 	if resumos_na_derrota.size() == 1:
 		var resumo_perdido: Dictionary = resumos_na_derrota[0]
 		# Quem não pagou não vê a parcela no boletim — a receita da semana tem
@@ -1226,7 +1354,7 @@ func _t5l_motivo_da_escala() -> void:
 
 	GS.cash = 10000000
 	GS.comprar_estrutura("pier_2")
-	GS.comprar_estrutura("patio")
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "patio")
 	_check("com duas estruturas o porto sobe a nível 2 (%d)" % int(GS.nivel_do_porto()),
 		int(GS.nivel_do_porto()) == 2)
 	var ate_medio := {}
@@ -1244,7 +1372,7 @@ func _t5l_motivo_da_escala() -> void:
 	# ainda não, ou seja guindaste no nível 3 e píer no 2. Com o `maxi`, o
 	# navio de longo curso atracaria num cais que não o aguenta.
 	GS.cash = 10000000
-	GS.comprar_estrutura("guindaste")
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "guindaste")
 	_check("com pórtico e sem cais o porto FICA no nível 2 (píer %d, guindaste %d, porto %d)"
 			% [int(GS.nivel_pier()), int(GS.nivel_guindaste()), int(GS.nivel_do_porto())],
 		int(GS.nivel_guindaste()) == 3 and int(GS.nivel_pier()) == 2
@@ -1256,7 +1384,7 @@ func _t5l_motivo_da_escala() -> void:
 		not sem_cais.has("grande"))
 
 	GS.cash = 10000000
-	GS.comprar_estrutura("cais")
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "cais")
 	_check("com pórtico e cais o porto chega a nível 3 (%d)" % int(GS.nivel_do_porto()),
 		int(GS.nivel_do_porto()) == 3)
 	var todas := {}
@@ -1286,6 +1414,9 @@ func _t5l_motivo_da_escala() -> void:
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	GS.cash = 10000000
+	GS.turn = GS.PARCELA_DUE_TURN + 1
+	GS.parcela_indice = 1
+	GS.parcelas_quitadas = 1
 	_check("o pátio foi comprado para o teste", GS.comprar_estrutura("patio") == true)
 	var esperado_conteiner := int(round(1000 * (1.0 + GS.PATIO_BONUS_CARGA)))
 	var recibo: Dictionary = GS.DIA_ZERADO.duplicate()
@@ -1322,8 +1453,8 @@ func _t5l_motivo_da_escala() -> void:
 		GS._turnos_de_operacao("pesqueiro", "pescado") == 1)
 	GS.cash = 10000000
 	GS.comprar_estrutura("pier_2")
-	_check("o pórtico foi comprado para o teste",
-		GS.comprar_estrutura("guindaste") == true)
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "guindaste")
+	_check("a bancada instalou o pórtico", GS.tem_estrutura("guindaste"))
 	_check("com pórtico, o cargueiro volta a 1 turno (%d)"
 			% GS._turnos_de_operacao("medio", "conteiner"),
 		GS._turnos_de_operacao("medio", "conteiner") == 1)
@@ -1775,4 +1906,3 @@ func _textos_de(no: Node) -> Array:
 	for filho in no.get_children():
 		textos.append_array(_textos_de(filho))
 	return textos
-

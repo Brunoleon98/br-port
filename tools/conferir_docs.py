@@ -223,7 +223,9 @@ def conferir_fonte_operacional(docs):
         frase = re.compile(r"(?:as\s+)?(\d+)\s+partidas\s+(?:que\s+)?(?:o\s+)?(?:que o\s+)?CI"
                            r"|(\d+)\s+partidas\s+do\s+CI")
         for doc in docs:
-            rel = os.path.relpath(doc, RAIZ)
+            # HISTORIA usa caminhos com /; sem normalizar, no Windows uma
+            # decisão antiga era cobrada como medição atual (085).
+            rel = os.path.relpath(doc, RAIZ).replace(os.sep, "/")
             if rel.startswith(HISTORIA):
                 continue
             for achado in frase.finditer(open(doc, encoding="utf-8").read()):
@@ -241,7 +243,7 @@ def conferir_fonte_operacional(docs):
             "viver em algum sítio, e o endereço é esse." % ENDERECO_DO_TRIPLO)
     else:
         for doc in docs:
-            rel = os.path.relpath(doc, RAIZ)
+            rel = os.path.relpath(doc, RAIZ).replace(os.sep, "/")
             if rel.startswith(HISTORIA) or rel == ENDERECO_DO_TRIPLO:
                 continue
             if any(_normal(m.group(0)) == _normal(atual)

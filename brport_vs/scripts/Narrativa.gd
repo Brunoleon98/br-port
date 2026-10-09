@@ -45,20 +45,11 @@ extends RefCounted
 # ── DIÁRIO DO PORTO — primeira página ──
 # Abre uma vez, na semana 1. Primeira pessoa, incerteza com leveza.
 #
-# ⚠️ A FRASE DO CAIXA RESPONDE A UMA QUEIXA DE PLAYTEST, e a forma dela foi
-# escolhida contra outra. A queixa era "é estranho o porto ter dívida mas o
-# jogador começar com R$400.000", e a triagem propôs chamar EMPRÉSTIMO ao caixa
-# inicial. Isso contradiz o que o Sr. Ribeiro já diz duas telas depois — "O Seu
-# Maneco assinou isso. Agora é seu" —: a dívida é do avô, herdada com o porto, e
-# o empréstimo dele já foi gasto no porto, que é por isso que ele está em
-# ruínas. Chamar empréstimo ao caixa poria o Ribeiro a cobrar R$530.000 sobre
-# R$400.000 em quatro semanas, que é agiotagem e não é o personagem escrito
-# ("não é punição, é contrato").
-#
-# O que faltava não era rótulo nenhum: era uma frase a dizer de onde vem o
-# dinheiro, e ela nunca existiu. Herda-se o ativo e o passivo do mesmo homem, e
-# isso não é estranho — só não estava escrito. O valor sai do `{caixaInicial}`
-# e nunca da prosa; o bloco F4 do `teste_fumaca.gd` tranca as duas metades.
+# Em `085`, Bruno mudou a origem do caixa: o crédito inicial financia a
+# reconstrução e é pago nestas três cobranças. A leitura anterior (`018`)
+# era herança do avô; trocar só esta página deixaria Ribeiro cobrando outro
+# contrato. A fala do banco abaixo acompanha a mesma mudança. O valor continua
+# vindo de `{caixaInicial}`, para não envelhecer quando o balanceamento mudar.
 const DIARIO_PRIMEIRA_PAGINA := """Nunca pensei que ia escrever nesse diário.
 
 O avô escrevia aqui toda semana — vinte e três anos de {portName}, letra miúda, tinta azul. Eu achava bobagem.
@@ -67,8 +58,8 @@ Hoje abri a primeira página em branco.
 
 O {portName} tem dívida, tem madeira podre no píer e tem um rival que sabe o meu nome antes de eu saber o dele direito.
 
-O avô também deixou {caixaInicial} na conta. Contei três vezes.
-Não é dinheiro meu — é o prazo que ele me comprou.
+O banco liberou {caixaInicial}. Contei três vezes.
+Dinheiro emprestado. Três parcelas em doze semanas.
 
 Mas tem gente que acreditou o suficiente pra estar aqui na primeira semana.
 Dona Cida. Toninho. Zezão.
@@ -276,7 +267,7 @@ Ele pagava sempre na véspera. Dizia que no dia já é tarde."""
 # "a parcela", minúscula: "Parcela" é o rótulo do HUD, e um homem a falar não
 # diz maiúsculas. Era a marca mais clara de manual de instruções no roteiro.
 const RIBEIRO_A_DIVIDA := """A parcela vence hoje: {valor}. Tenho o documento aqui se quiser conferir.
-O Seu Maneco assinou isso. Agora é seu."""
+Você assinou para pôr o cais de pé. O cais é a garantia."""
 
 # "Me procura antes de ter problema" repetia a despedida que vem logo a seguir,
 # no mesmo balão.
@@ -579,7 +570,7 @@ static func fim_de_fase_cabecalho() -> String:
 ## número, e o dígito na narração é o que a guarda do fim de fase reprova.
 static func ordinal(n: int) -> String:
 	const ORD := ["", "primeira", "segunda", "terceira", "quarta", "quinta",
-		"sexta", "sétima", "oitava", "nona", "décima"]
+		"sexta", "sétima", "oitava", "nona", "décima", "décima primeira", "décima segunda"]
 	return ORD[n] if n >= 1 and n < ORD.size() else str(n)
 
 
@@ -595,24 +586,20 @@ static func fim_de_fase() -> String:
 	# O `por_extenso` fala no FEMININO, que é o que "semanas" e "parcelas"
 	# pedem — as duas únicas contagens que sobraram aqui.
 	var semanas: String = _maiuscula(por_extenso(_gs().WEEKS_TOTAL))
-	# O ARCO, e não o VS. A Fase 1 do GDD tem três parcelas e este jogo paga a
-	# primeira — dizer só "Uma parcela" fazia a vitória soar a dívida quitada,
-	# que ela não é. O feminino do `por_extenso` serve aqui sem correção:
-	# "três parcelas", "faltam duas".
+	# A 085 joga o arco inteiro: a vitória vem após as três quitações. Manter
+	# "faltam duas" aqui fecharia o caderno com uma dívida já paga em aberto.
 	var total: String = por_extenso(_gs().PARCELAS_NA_FASE)
-	var restantes: String = por_extenso(_gs().PARCELAS_NA_FASE - 1)
 	var modelo := """%s semanas.
 
-A primeira de %s parcelas.
-E ela venceu.
+As %s parcelas ficaram para trás.
 
-Faltam %s.
-Mas a primeira é a que prova que dá.
+Uma por vez.
+O porto deu conta.
 
 O {portName} respira.
 
 Ainda tem dívida?
-Tem.
+Essa, não.
 
 Ainda tem Arlindo no horizonte?
 Tem.
@@ -632,7 +619,7 @@ Mas tem alguma coisa diferente.
 
 Não no píer.
 
-Em quem tá olhando.""" % [semanas, total, restantes]
+Em quem tá olhando.""" % [semanas, total]
 	return _gs().texto(modelo)
 
 

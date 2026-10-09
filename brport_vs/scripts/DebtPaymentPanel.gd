@@ -26,6 +26,7 @@ const LARGURA := 420
 const ALTURA := 0
 
 var amount: int = 0
+var _numero_parcela := 1
 # O TEMPO DA CENA NA TELA, para quem a fotografa. A cobertura das capturas
 # (`tools/conferir_cobertura_paineis.py`) lê daqui o catálogo — cada
 # `tempo = &"..."` escrito neste arquivo é um tempo que tem de ter foto — e as
@@ -47,6 +48,7 @@ var _botoes: VBoxContainer
 
 func setup(due_amount: int) -> void:
 	amount = due_amount
+	_numero_parcela = GameState.parcela_indice + 1
 	_montar()
 
 
@@ -56,6 +58,8 @@ func _montar() -> void:
 	# PARCELA é navy cheio e só sobrevive em fundo CLARO — que é o deste
 	# cartão. É o caso em que o Icones.gd manda usá-lo.
 	titulo_encorpado(Icones.PARCELA, "Sr. Ribeiro — Banco Porto Mirim")
+	paragrafo("Parcela %d de %d · dia %d" % [_numero_parcela,
+		GameState.PARCELAS_NA_FASE, GameState.vencimento_da_parcela()])
 
 	# A fala dele vai no balão; o valor e o caixa ficam FORA. São dois
 	# registros — o que o Sr. Ribeiro diz e o que o jogo informa — e misturá-los

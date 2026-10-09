@@ -116,16 +116,15 @@ signal contrato_fechado(valor: int, classe: String)
 # contra R$94.955 — 5,7× —, e os barcos atendidos 55,1 contra 18,6, só 3×: a
 # contagem conta outra história. A manutenção alta é o que faz essa diferença doer, porque
 # custo fixo pesa proporcionalmente muito mais em quem tem pouca vazão.
-# Frente 5 (`084`): a entrega financeira de 02/10 não chegou à main. Ela foi
-# adaptada à fila (`083`), preservando os contratos mais baratos escolhidos
-# pelo Bruno. Caixa, receitas, salários, manutenção e construções ×0,1; depois
-# a primeira parcela desce de R$53.000 para R$30.000. Preços adaptados ao jogo,
-# não tarifas portuárias auditadas. O GDD congelado usa outra moeda: o projetor
-# converte suas hipóteses por esta constante, antes de ler a Fase 1 do código.
-const ESCALA_MONETARIA_GDD := 0.1
-const START_CASH := 40000
-const SALARY_PER_WORKER := 600          # TUNING sobre a linha "Margem operacional base" do GDD, reescalada
-const MAINTENANCE_WEEKLY := 4000        # TUNING sobre a mesma linha do GDD — o custo fixo que separa os perfis
+# Frente 5 (`085`): Bruno recuperou a escala anterior à `084`, para manter
+# coerência com expansões e futuros bens pessoais: caixa R$400 mil e preços
+# na moeda anterior. Depois substituiu a dívida por capital mais juros em
+# três parcelas menores e iguais. São valores de jogo, não uma tabela
+# auditada de tarifas ou salários. O método está no guia de economia.
+const ESCALA_MONETARIA_GDD := 1.0
+const START_CASH := 400000
+const SALARY_PER_WORKER := 6000          # TUNING sobre a linha "Margem operacional base" do GDD, reescalada
+const MAINTENANCE_WEEKLY := 40000        # TUNING sobre a mesma linha do GDD — o custo fixo que separa os perfis
 # O porto ABRE PARADO. Um píer de pé, o resto em ruína — é o que a herança do
 # avô do GDD descreve, e é a diferença entre "administrar um porto" e "levantar
 # um porto", que é a fantasia do jogo.
@@ -157,27 +156,27 @@ const ESTRUTURAS := {
 	"pier_2": {
 		"nome": "Reconstruir o Píer 2",
 		"desc": "+1 doca e +1 trabalhador",
-		"custo": 15000, "ordem": 1, "requer": "",
+		"custo": 150000, "ordem": 1, "requer": "",
 	},
 	"pier_3": {
 		"nome": "Reconstruir o Píer 3",
 		"desc": "+1 doca e +1 trabalhador",
-		"custo": 26000, "ordem": 2, "requer": "pier_2",
+		"custo": 260000, "ordem": 2, "requer": "pier_2",
 	},
 	"armazem": {
 		"nome": "Consertar o armazém",
 		"desc": "+50% no barco que vem deixar carga",
-		"custo": 18000, "ordem": 3, "requer": "",
+		"custo": 180000, "ordem": 3, "requer": "",
 	},
 	"patio": {
 		"nome": "Pavimentar o pátio",
 		"desc": "dobra a renda do píer e +30% no contêiner",
-		"custo": 11500, "ordem": 4, "requer": "",
+		"custo": 115000, "ordem": 4, "requer": "",
 	},
 	"escritorio": {
 		"nome": "Reformar o escritório",
 		"desc": "-50% nos salários da semana",
-		"custo": 8000, "ordem": 5, "requer": "",
+		"custo": 80000, "ordem": 5, "requer": "",
 	},
 	# ── OS DOIS UPGRADES DE NÍVEL ──
 	#
@@ -196,7 +195,7 @@ const ESTRUTURAS := {
 	"guindaste": {
 		"nome": "Guindaste de pórtico",
 		"desc": "corta um turno de cada operação",
-		"custo": 12000, "ordem": 6, "requer": "pier_2",
+		"custo": 120000, "ordem": 6, "requer": "pier_2",
 	},
 	# ⚠️ O CAIS DEIXOU DE SER UM MULTIPLICADOR EM 06/09. Ele dava "+60% de
 	# chance de navio grande" — um efeito estatístico que ninguém vê acontecer,
@@ -206,7 +205,7 @@ const ESTRUTURAS := {
 	"cais": {
 		"nome": "Reforçar o cais",
 		"desc": "o navio de longo curso passa a atracar",
-		"custo": 15000, "ordem": 7, "requer": "guindaste",
+		"custo": 150000, "ordem": 7, "requer": "guindaste",
 	},
 }
 
@@ -287,7 +286,7 @@ const MOTIVOS := {
 }
 
 const PIER_SLOTS := 6                   # GDD "Margem operacional base": 6 vagas de píer
-const PIER_RATE_PER_SLOT := 500        # GDD "Margem operacional base", reescalado: renda fixa semanal
+const PIER_RATE_PER_SLOT := 5000        # GDD "Margem operacional base", reescalado: renda fixa semanal
 
 # ── AS TRÊS CLASSES DE NAVIO ──
 #
@@ -326,20 +325,24 @@ const PIER_RATE_PER_SLOT := 500        # GDD "Margem operacional base", reescala
 # receita subiu um terço: o Mediano chegou a 100%. Varrido com 600 partidas:
 # ×0,70 dá 100 / 65,3 / 32,7, ×0,72 dá 100 / 78,7 / 41,5, ×0,74 dá
 # 100 / 86,5 / 49,3. Era 12–28 / 22–50 / 56–88 mil. Arredondadas ao milhar.
+# `085`: após restaurar a moeda e trocar a dívida pelo crédito de R$400 mil,
+# o arco de doze semanas acumulava caixa demais. Medidos retornos ×0,60 e
+# ×0,45, escolheu-se ×0,45 com faixas arredondadas; custos de reparo intactos.
+# Contratos agregados ficcionais, não tarifas por tonelada (guia de economia).
 const CLASSES_DE_NAVIO := {
 	"pesqueiro": {
 		"nome": "Pesqueiro", "nivel": 1, "peso": 40, "turnos": 1,
-		"valor_min": 900, "valor_max": 2000,          # TUNING
+		"valor_min": 4000, "valor_max": 9000,          # TUNING (`085`)
 		"motivos": {"pescado": 55, "armazenagem": 45},
 	},
 	"medio": {
 		"nome": "Cargueiro", "nivel": 2, "peso": 40, "turnos": 2,
-		"valor_min": 1600, "valor_max": 3600,         # TUNING
+		"valor_min": 7000, "valor_max": 16000,         # TUNING (`085`)
 		"motivos": {"armazenagem": 40, "conteiner": 40, "granel": 20},
 	},
 	"grande": {
 		"nome": "Navio de longo curso", "nivel": 3, "peso": 20, "turnos": 3,
-		"valor_min": 4000, "valor_max": 6300,         # TUNING
+		"valor_min": 18000, "valor_max": 28000,         # TUNING (`085`)
 		"motivos": {"armazenagem": 25, "conteiner": 45, "granel": 30},
 	},
 }
@@ -407,39 +410,36 @@ const REPUTATION_GAIN_RIVAL_MATCHED := 1.0
 const REPUTATION_LOSS_RIVAL_REFUSED := 8.0
 
 # ── CADÊNCIA E PARCELA ──
-# TUNING — esta é a constante que faz a economia da Fase 1 fechar.
-# Com 3 turnos/semana a parcela de R$8.000 só cabia inflando o barco para
-# R$240–760, fora da faixa do GDD. Com 8 turnos/semana o barco volta para
-# os R$80–300 do GDD e a parcela continua alcançável. As taxas medidas estão
-# no bloco de economia lá em cima — uma tabela só, para não haver duas
-# versões dos mesmos números envelhecendo em ritmos diferentes.
-const TURNS_PER_WEEK := 8
-const WEEKS_TOTAL := 4
+# TUNING (`085`) — calendário aprovado: doze semanas de sete dias,
+# com cobranças ao fim das semanas 4, 8 e 12. A economia foi medida novamente
+# com os desbloqueios reais; as taxas atuais vivem só no CLAUDE.md.
+const TURNS_PER_WEEK := 7
+const WEEKS_TOTAL := 12
 const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
 
-# Na moeda antiga (`008`, `083`), a parcela movia sobretudo o Descuidado,
-# perto do limiar. Isso não é uma lei de pontos por R$10.000. O pedido de
-# porto pequeno (`084`) mantém a primeira cobrança em R$30.000: o jogo pode
-# ensinar a reconstruir sem apertar essa dívida. A expansão e a margem em
-# regime continuam a separar os portos; as outras cobranças não estão no VS.
-const PARCELA_AMOUNT := 30000             # TUNING (`084`): primeira parcela acessível
+# Crédito inicial único (`085`): R$400 mil recebidos, R$420 mil contratados.
+# Bruno substituiu a primeira cobrança de R$530 mil por três menores e iguais.
+const PARCELA_AMOUNT := 140000             # TUNING (`085`): capital mais juros
 const PARCELA_DUE_TURN := TURNS_PER_WEEK * 4   # vence ao fim da semana 4
 
-# QUANTAS PARCELAS TEM A FASE 1 INTEIRA, que não é o que o VS joga.
-#
-# O GDD 7 fecha a Fase 1 com TRÊS parcelas em doze semanas (R$3.300.000 no
-# total — `docs/gdd/conceitos/dividas.md`), e o VS é o primeiro terço disso:
-# quatro semanas, uma parcela. Os dois números são verdade ao mesmo tempo, e é
-# por isso que a narração de fim de fase pode dizer "a primeira de três" sem
-# mentir sobre o jogo que existe.
-#
-# ⚠️ NÃO É `# TUNING:` — não entra em conta nenhuma e o simulador não a lê. Ela
-# existe para a PROSA poder falar do arco sem escrever o número à mão, que é o
-# defeito que a própria narração já teve ("Doze semanas / Três parcelas", a
-# Fase 1 do GDD colada num jogo de quatro semanas). O `projetar_parcelas.py`
-# conhece as outras duas pelo GDD; aqui basta saber quantas são.
+# A Fase 1 agora joga o arco inteiro das três cobranças (`085`). O GDD
+# conserva a referência histórica; valores atuais são os daqui, medidos
+# com a fila e os reparos básicos, sem projetar um porto completo.
 const PARCELAS_NA_FASE := 3
 
+# TUNING (`085`): três parcelas iguais, total R$20 mil de juros.
+# Cada janela tem quatro semanas; quitar cedo não abre a próxima janela.
+const PARCELA_2_AMOUNT := 140000
+const PARCELA_3_AMOUNT := 140000
+# Amortização aproximada de parcelas iguais (~2,48% por período de 28 dias).
+# O arredondamento fecha exatamente R$400 mil de capital e R$20 mil de juros.
+# Antecipar abate apenas juros da janela, nunca capital (`085`).
+const JUROS_PARCELA_1 := 9919
+const JUROS_PARCELA_2 := 6693
+const JUROS_PARCELA_3 := 3388
+
+# Modelo genérico anterior (`019`), preservado para contratos futuros.
+# A Fase 1 usa juros limitados da janela em `valor_da_parcela_hoje()` (`085`).
 # TUNING: o que o banco devolve por TURNO de antecipação, como fração do
 # principal. É o item 24 do segundo playtest — "quitar antes pode diminuir o
 # valor, já que teria menos juros" —, e a forma sai daí: o desconto é o juro
@@ -450,9 +450,8 @@ const PARCELAS_NA_FASE := 3
 # só cruza a parcela no fim da partida e quase nunca o veria. Botão que só move
 # quem não precisa dele (`docs/decisoes/008`).
 #
-# O TETO É O PRAZO INTEIRO: 31 turnos × 0,25% = 7,75% do principal. Quem quita
-# no dia do vencimento não desconta nada, e é por isso que o `pay_debt()` não
-# passa por aqui.
+# O teto é o prazo da janela atual. Quem quita no próprio dia do vencimento
+# não desconta nada, e por isso o `pay_debt()` não passa por aqui.
 const JUROS_POR_TURNO := 0.0025           # TUNING: fração do principal abatida por turno de antecipação
 
 # ── SAVE ──
@@ -509,7 +508,10 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # caixa, contratos ao largo/atracados e recordes usam a moeda antiga. Recusar
 # antes de escrever é o contrato existente; adaptar só o caixa corromperia a
 # contabilidade e deixaria contratos e recordes dez vezes maiores.
-const SAVE_VERSION := 11
+# 12 (`085`): calendário de sete dias, três cobranças, recibos e desbloqueios.
+# O booleano da 11 só representava a primeira quitação; adaptar esse recibo
+# inventaria duas cobranças e um calendário que a partida nunca jogou.
+const SAVE_VERSION := 12
 
 # ── OS ESPAÇOS DE SAVE (`docs/decisoes/066`) ──
 #
@@ -673,6 +675,9 @@ var upgrade_purchased: bool = false
 # simples — Dictionary de bool viraria ruído no ficheiro.
 var estruturas: Array = []
 var parcela_paid: bool = false
+var parcela_indice: int = 0
+var parcelas_quitadas: int = 0
+var total_pago_parcelas: int = 0
 var phase: String = "playing"   # playing | rival_offer | debt_payment | game_over
 # Os barcos ao largo, por ordem de chegada (`083`). Cada um é o mesmo
 # dicionário de um barco atracado, mais a `paciencia` que lhe resta.
@@ -841,6 +846,9 @@ func new_game() -> void:
 	upgrade_purchased = false
 	estruturas = []
 	parcela_paid = false
+	parcela_indice = 0
+	parcelas_quitadas = 0
+	total_pago_parcelas = 0
 	_set_phase("playing")
 	fila = []
 	pending_rival = -1
@@ -908,7 +916,8 @@ func texto(modelo: String) -> String:
 	var porto := nome_porto if nome_porto != "" else NOME_PORTO_PADRAO
 	return modelo.replace("{portName}", porto) \
 		.replace("{playerName}", nome_jogador) \
-		.replace("{caixaInicial}", moeda(START_CASH))
+		.replace("{caixaInicial}", moeda(START_CASH)) \
+		.replace("{totalParcelas}", moeda(PARCELA_AMOUNT + PARCELA_2_AMOUNT + PARCELA_3_AMOUNT))
 
 
 # Se ainda não perguntámos os nomes. É derivado do estado, e não um booleano à
@@ -956,7 +965,7 @@ func calendario() -> Array:
 			"hoje": t == turn,
 			"passado": t < turn,
 			"fecha_semana": t % TURNS_PER_WEEK == 0,
-			"parcela_vence": t == PARCELA_DUE_TURN,
+			"parcela_vence": t % PARCELA_DUE_TURN == 0,
 			"ultimo_dia": t == TURNS_TOTAL,
 		})
 	return dias
@@ -1161,7 +1170,7 @@ func _valor_do_barco(dock_index: int) -> int:
 # Meia parcela não é número novo: é o que o aviso de caixa curto já usava
 # desde que existe.
 func caixa_curto() -> bool:
-	return cash < PARCELA_AMOUNT / 2
+	return cash < principal_da_parcela() / 2
 
 
 # Devolve o índice da doca onde o trabalhador está alocado, ou -1.
@@ -1385,7 +1394,7 @@ func advance_turn() -> void:
 		# No vencimento, os custos da semana precisam sair ANTES de o caixa dizer
 		# se a parcela cabe, mas o boletim só pode fechar DEPOIS de a decisão: é
 		# nele que a parcela paga neste dia tem de aparecer.
-		var espera_parcela := prev_turn == PARCELA_DUE_TURN and not parcela_paid
+		var espera_parcela := prev_turn == vencimento_da_parcela() and not parcela_paid
 		_process_week_end(week_of(prev_turn), espera_parcela)
 
 	# A VIRADA DO DIA vem DEPOIS dos lançamentos do fecho e ANTES do corte por dívida
@@ -1400,11 +1409,13 @@ func advance_turn() -> void:
 	dia_anterior = dia_atual.duplicate()
 	dia_atual = DIA_ZERADO.duplicate()
 
-	if prev_turn == PARCELA_DUE_TURN and not parcela_paid:
+	if prev_turn == vencimento_da_parcela() and not parcela_paid:
 		_set_phase("debt_payment")
-		debt_due.emit(PARCELA_AMOUNT)
+		debt_due.emit(principal_da_parcela())
 		save_game()
 		return
+	if prev_turn == vencimento_da_parcela():
+		_seguir_cobranca()
 
 	turn_advanced.emit(turn, current_week())
 	_check_end()
@@ -1605,8 +1616,8 @@ func projecao_do_dia() -> Dictionary:
 		proj["pier"] = int(custos["pier"])
 		proj["salarios"] = int(custos["salarios"])
 		proj["manutencao"] = int(custos["manutencao"])
-	if turn == PARCELA_DUE_TURN and not parcela_paid:
-		proj["parcela"] = PARCELA_AMOUNT
+	if turn == vencimento_da_parcela() and not parcela_paid:
+		proj["parcela"] = principal_da_parcela()
 	return proj
 
 
@@ -1615,7 +1626,8 @@ func _check_end() -> void:
 		_end_game(false, "O dinheiro acabou. Operação inviável.")
 		return
 	if turn > TURNS_TOTAL:
-		_end_game(parcela_paid, "Você quitou a parcela e manteve o porto no azul!" if parcela_paid else "Prazo encerrado com a parcela em aberto.")
+		var quitou := parcelas_quitadas == PARCELAS_NA_FASE
+		_end_game(quitou, "Você quitou as três parcelas e manteve o porto no azul!" if quitou else "Prazo encerrado com parcela em aberto.")
 		return
 	_spawn_boats()
 
@@ -1639,18 +1651,19 @@ func _end_game(did_win: bool, reason: String) -> void:
 func pay_debt() -> void:
 	if phase != "debt_payment":
 		return
-	if cash < PARCELA_AMOUNT:
+	if cash < principal_da_parcela():
 		message.emit("Dinheiro insuficiente para pagar a parcela.", "bad", "dinheiro")
 		return
 	# `advance_turn()` já fez a virada do dia antes de suspender em
 	# "debt_payment", então o dia em que a dívida venceu é `dia_anterior` —
 	# não `dia_atual`, que já é o dia seguinte, ainda por jogar.
 	# O PRINCIPAL INTEIRO: aqui não há antecipação nenhuma para descontar.
-	_baixar_parcela(dia_anterior, PARCELA_AMOUNT)
-	# O fecho da semana 4 ficou de propósito à espera desta decisão: antes
+	_baixar_parcela(dia_anterior, principal_da_parcela())
+	# O fecho da semana da cobrança ficou de propósito à espera desta decisão: antes
 	# daqui o resumo esconderia a maior despesa da semana e inflaria o resultado
 	# exatamente pelo valor da parcela.
 	_fechar_resumo_da_semana(week_of(turn - 1))
+	_seguir_cobranca()
 	_set_phase("playing")
 	turn_advanced.emit(turn, current_week())
 	_check_end()
@@ -1678,11 +1691,32 @@ func desconto_por_antecipacao(principal: int, turnos: int) -> int:
 
 
 ## O que a parcela custa SE for quitada agora. O jogador vê este número no
-## painel, e ele SOBE a cada dia que passa — é essa subida que faz a
-## antecipação ser uma escolha em vez de um botão sem prazo.
+## painel. Neste crédito inicial o abatimento é proporcional aos juros da
+## janela. A fórmula antiga sobre todo o boleto podia devolver menos que os
+## R$400 mil emprestados; o cálculo genérico acima continua separado para
+## contratos futuros, que ainda precisam definir seus próprios encargos.
 func valor_da_parcela_hoje() -> int:
-	return PARCELA_AMOUNT - desconto_por_antecipacao(
-		PARCELA_AMOUNT, PARCELA_DUE_TURN - turn)
+	var juros: int = [JUROS_PARCELA_1, JUROS_PARCELA_2, JUROS_PARCELA_3][parcela_indice]
+	var dias := clampi(vencimento_da_parcela() - turn, 0, PARCELA_DUE_TURN)
+	var abatimento := int(round(float(juros) * dias / PARCELA_DUE_TURN))
+	return principal_da_parcela() - abatimento
+
+
+func principal_da_parcela() -> int:
+	# Nome legado: este é o valor nominal do boleto, incluindo juros.
+	return [PARCELA_AMOUNT, PARCELA_2_AMOUNT, PARCELA_3_AMOUNT][parcela_indice]
+
+
+func vencimento_da_parcela() -> int:
+	return PARCELA_DUE_TURN * (parcela_indice + 1)
+
+
+# Só o fecho do período muda a parcela. O recibo antecipado fica visível
+# até lá, sem permitir gastar a cobrança seguinte duas vezes no mesmo dia.
+func _seguir_cobranca() -> void:
+	if parcela_paid and parcela_indice < PARCELAS_NA_FASE - 1:
+		parcela_indice += 1
+		parcela_paid = false
 
 
 func pode_pagar_parcela_adiantado() -> bool:
@@ -1722,12 +1756,14 @@ func pagar_parcela_adiantado() -> bool:
 # saber por que porta entrou, que é precisamente o que o argumento evita.
 func _baixar_parcela(no_dia: Dictionary, valor: int) -> void:
 	cash -= valor
-	# Só para o Boletim. A parcela vence NO fecho da semana 4, então cai na
+	# Só para o Boletim. A parcela vence no fecho do período, então cai na
 	# semana em curso — que é onde o jogador espera vê-la, porque foi essa a
 	# semana em que o dinheiro saiu.
 	semana_atual["parcela"] += valor
 	no_dia["parcela"] += valor
 	parcela_paid = true
+	parcelas_quitadas += 1
+	total_pago_parcelas += valor
 	cash_changed.emit(cash)
 	message.emit("Parcela de %s paga ao Sr. Ribeiro." % moeda(valor), "good", "dinheiro")
 
@@ -1795,12 +1831,27 @@ func impedimento_estrutura(id: String) -> String:
 		return "Já construída."
 	if phase != "playing":
 		return "Resolva o que está na tela primeiro."
+	var bloqueio := desbloqueio_da_estrutura(id)
+	if bloqueio != "":
+		return bloqueio
 	var def: Dictionary = ESTRUTURAS[id]
 	var requer := String(def["requer"])
 	if requer != "" and not tem_estrutura(requer):
 		return "Precisa antes de: %s." % ESTRUTURAS[requer]["nome"]
 	if cash < int(def["custo"]):
 		return "Faltam %s." % moeda(int(def["custo"]) - int(cash))
+	return ""
+
+
+# A Fase 1 recupera o porto pequeno. O catálogo e a arte do porto completo
+# continuam disponíveis às bancadas; compra pelo jogador respeita este limite.
+func desbloqueio_da_estrutura(id: String) -> String:
+	if id not in ["pier_2", "armazem", "patio"]:
+		return "Disponível nas próximas fases."
+	if id == "armazem" and current_week() < 2:
+		return "Abre na semana 2."
+	if id == "patio" and (turn <= PARCELA_DUE_TURN or parcelas_quitadas < 1):
+		return "Abre após a primeira cobrança paga."
 	return ""
 
 
@@ -2027,6 +2078,9 @@ func save_game() -> void:
 		"upgrade_purchased": upgrade_purchased,
 		"estruturas": estruturas,
 		"parcela_paid": parcela_paid,
+		"parcela_indice": parcela_indice,
+		"parcelas_quitadas": parcelas_quitadas,
+		"total_pago_parcelas": total_pago_parcelas,
 		"phase": phase,
 		"fila": fila,
 		"pending_rival": pending_rival,
@@ -2070,6 +2124,9 @@ func load_game() -> bool:
 	upgrade_purchased = bool(parsed.get("upgrade_purchased", false))
 	estruturas = parsed.get("estruturas", [])
 	parcela_paid = bool(parsed.get("parcela_paid", false))
+	parcela_indice = int(parsed["parcela_indice"])
+	parcelas_quitadas = int(parsed["parcelas_quitadas"])
+	total_pago_parcelas = int(parsed["total_pago_parcelas"])
 	phase = String(parsed.get("phase", "playing"))
 	fila = parsed["fila"]
 	pending_rival = int(parsed.get("pending_rival", -1))
@@ -2150,7 +2207,22 @@ func _save_aceite(texto: String) -> Dictionary:
 	# `new_game()` não zerasse para o estado impossível atravessar para a
 	# partida seguinte: o bug das 4 docas outra vez, com outra roupa.
 	# `tests/teste_fumaca.gd`, bloco F3, tranca isto.
-	if int(parsed.get("versao", 1)) != SAVE_VERSION:
+	var versao = parsed.get("versao", 1)
+	if typeof(versao) not in [TYPE_INT, TYPE_FLOAT] or float(versao) != SAVE_VERSION:
+		return {}
+	# O recibo e a janela são parte da interpretação do save v12. Converter
+	# texto para inteiro aceitaria silenciosamente uma cobrança inexistente.
+	for chave in ["parcela_indice", "parcelas_quitadas", "total_pago_parcelas"]:
+		var numero = parsed.get(chave, null)
+		if typeof(numero) not in [TYPE_INT, TYPE_FLOAT] or float(numero) != int(numero):
+			return {}
+	if typeof(parsed.get("parcela_paid")) != TYPE_BOOL:
+		return {}
+	var indice := int(parsed["parcela_indice"])
+	var quitadas := int(parsed["parcelas_quitadas"])
+	if indice < 0 or indice >= PARCELAS_NA_FASE \
+			or quitadas != indice + (1 if parsed["parcela_paid"] else 0) \
+			or int(parsed["total_pago_parcelas"]) < 0:
 		return {}
 
 	# O roster é lido do dicionário, não dos campos do jogo, justamente para

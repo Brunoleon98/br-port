@@ -166,6 +166,11 @@ func _rodar() -> void:
 	GS.clear_save()
 
 	var args := OS.get_cmdline_user_args()
+	# Uma opção explícita mantém a medição tradicional. O par de JSONs,
+	# com as mesmas sementes, prova que retirar I/O não mudou a simulação.
+	var sem_save := args.has("--sem-save")
+	if sem_save:
+		GS = load("res://tools/estado_simulado.gd").new()
 	var partidas := PARTIDAS_PADRAO
 	var semente := SEMENTE_PADRAO
 	if args.size() >= 1 and args[0].is_valid_int():
@@ -175,16 +180,18 @@ func _rodar() -> void:
 
 	print("=== BR Port VS — simulação de balanceamento ===")
 	print("%d partidas por perfil · semente %d" % [partidas, semente])
-	print("Parcela a vencer: R$%d na semana %d (turno %d)" % [
-		GS.PARCELA_AMOUNT, GS.WEEKS_TOTAL, GS.PARCELA_DUE_TURN])
+	print("Fase 1: %d semanas, cobranças nos dias %d/%d/%d" % [
+		GS.WEEKS_TOTAL, GS.PARCELA_DUE_TURN, GS.PARCELA_DUE_TURN * 2, GS.PARCELA_DUE_TURN * 3])
 	print("")
 	_avisar_se_amostra_curta(partidas)
 
 	var resultados := []
 	for perfil in PERFIS:
 		resultados.append(_simular_perfil(perfil, partidas, semente))
+		print("Perfil %s medido." % perfil["nome"])
 
 	_imprimir_tabela(resultados, partidas)
+	_imprimir_cobrancas(resultados, partidas)
 	_imprimir_regime(resultados)
 	_imprimir_fila(resultados)
 	_imprimir_reputacao(resultados)
@@ -196,16 +203,19 @@ func _rodar() -> void:
 	# projetor seria um segundo modelo da economia, sem nada que o obrigasse a
 	# concordar com o jogo — que é exatamente como o modelo do GDD chegou a
 	# acumular R$1.480 contra uma parcela de R$8.000.
+	var despejo_ok := true
 	for a in args:
 		if a.ends_with(".json"):
-			_despejar_json(a, resultados, partidas, semente)
+			despejo_ok = _despejar_json(a, resultados, partidas, semente)
 			break
 	# De novo no fim: log de CI se lê de baixo para cima, e o aviso do
 	# cabeçalho fica a centenas de linhas de distância da conclusão.
 	_avisar_se_amostra_curta(partidas)
 	# O despejo e os avisos vêm ANTES de encerrar mal, de propósito: quem tem de
 	# diagnosticar uma recusa precisa da medição que a produziu.
-	quit(0 if leitura_ok else 1)
+	if sem_save:
+		GS.free()
+	quit(0 if leitura_ok and despejo_ok else 1)
 
 
 # A economia semana a semana. A média das 4 semanas esconde o que interessa:
@@ -325,7 +335,7 @@ func _imprimir_regime(resultados: Array) -> void:
 			r["perfil"]["nome"], m.size(),
 			int(round(_operacional(r, m.size() - 1))), float(b[b.size() - 1])])
 	print("")
-	print("  Margem operacional = delta de caixa MENOS o que foi gasto em obra na")
+	print("  Margem operacional = delta de caixa + gastos em obras e parcelas da")
 	print("  mesma semana. O perfil que compra tarde tem a compra dentro da semana")
 	print("  que se quer medir, e sem separar as duas coisas ele parece render")
 	print("  metade do que rende.")
@@ -337,10 +347,11 @@ func _operacional(r: Dictionary, semana: int) -> float:
 	var o: Array = r["obra_por_semana"]
 	if semana < 0 or semana >= m.size():
 		return 0.0
-	return float(m[semana]) + (float(o[semana]) if semana < o.size() else 0.0)
+	var p: Array = r["parcela_por_semana"]
+	return float(m[semana]) + float(o[semana]) + float(p[semana])
 
 
-func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: int) -> void:
+func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: int) -> bool:
 	var perfis := {}
 	for r in resultados:
 		var m: Array = r["margem_por_semana"]
@@ -354,23 +365,32 @@ func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: 
 			"margem_em_regime": _operacional(r, m.size() - 1),
 			"margem_bruta_em_regime": 0.0 if m.is_empty() else m[m.size() - 1],
 			"obra_por_semana": r["obra_por_semana"],
+			"parcela_por_semana": r["parcela_por_semana"],
+			"cobrancas": r["cobrancas"],
+			"caixa_final_mediana": r["caixa_final_mediana"],
+			"caixa_final_distribuicao": r["caixa_final_distribuicao"],
+			"travadas": r["travadas"],
 			"atendidos_em_regime": 0.0 if b.is_empty() else b[b.size() - 1],
 			"estruturas": r["estruturas"],
+			"estado_em_regime": r["estado_em_regime"],
 			"niveis": r["niveis"],
 			"docas_medias": r["docas_medias"],
 			"trabalhadores_medios": r["trabalhadores_medios"],
 			"antecipou_fracao": r["antecipou_fracao"],
 			"turno_de_antecipacao_mediana": r["turno_de_antecipacao_mediana"],
 			"premio_da_escolha": r["premio_da_escolha"],
+			"premio_em_regime": r["premio_em_regime"],
 		}
 	var f := FileAccess.open(caminho, FileAccess.WRITE)
 	if f == null:
 		push_error("Não consegui escrever a medição em %s" % caminho)
-		return
+		return false
 	f.store_string(JSON.stringify({
 		"partidas": partidas,
 		"semente": semente,
 		"parcela": GS.PARCELA_AMOUNT,
+		"parcelas": [GS.PARCELA_AMOUNT, GS.PARCELA_2_AMOUNT, GS.PARCELA_3_AMOUNT],
+		"vencimentos": [GS.PARCELA_DUE_TURN, GS.PARCELA_DUE_TURN * 2, GS.PARCELA_DUE_TURN * 3],
 		"semanas": GS.WEEKS_TOTAL,
 		"turnos_por_semana": GS.TURNS_PER_WEEK,
 		"caixa_inicial": GS.START_CASH,
@@ -378,6 +398,23 @@ func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: 
 	}, "  ", true) + "\n")
 	f.close()
 	print("Medição despejada em %s" % caminho)
+	print("")
+	return true
+
+
+# Cada vencimento tem sua própria amostra: quem perde na segunda não pode
+# aparecer como zero reais na terceira. Pagamento antecipado é contado na
+# decisão efetiva, e a chegada ao vencimento é uma observação separada.
+func _imprimir_cobrancas(resultados: Array, partidas: int) -> void:
+	print("=== As três cobranças dentro da Fase 1 ===")
+	print("Perfil | parcela | dia | chegaram / total | pagaram / total | anteciparam | caixa na decisão | saldo após pagar")
+	for r in resultados:
+		for c in r["cobrancas"]:
+			print("%s | %d | %d | %d/%d | %d/%d | %d | R$%d | R$%d" % [
+				r["perfil"]["nome"], c["numero"], c["dia"], c["chegaram"], partidas,
+				c["pagaram"], partidas, c["anteciparam"], c["caixa_na_decisao_mediana"],
+				c["saldo_apos_pagar_mediana"]])
+	print("  Caixa e saldo são medianas das decisões observadas; antecipação ocorre antes do vencimento.")
 	print("")
 
 
@@ -415,6 +452,11 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	var apostas_ganhas := 0          # ... e aceitas pelo cliente
 	var margem_por_semana := []      # soma do delta de caixa, semana a semana
 	var obra_por_semana := []        # e quanto desse delta foi obra, não operação
+	var parcela_por_semana := []
+	var cobrancas := []
+	for i in range(GS.PARCELAS_NA_FASE):
+		cobrancas.append({"chegaram": 0, "pagaram": 0, "anteciparam": 0,
+			"caixas_na_decisao": [], "saldos_apos_pagar": []})
 	var atendidos_por_semana := []
 	var amostras_por_semana := []
 	# Em quantas partidas cada estrutura acabou de pé, e com quantas
@@ -423,6 +465,11 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	# porto inteiro construído erra a margem dele em 98% — foi assim que este
 	# campo passou a existir.
 	var estruturas_de_pe := {}
+	var estruturas_regime := {}
+	var niveis_regime := {}
+	var amostras_regime := 0
+	var docas_regime := 0
+	var trabalhadores_regime := 0
 	var docas_totais := 0
 	var trabalhadores_totais := 0
 	var motivos_vistos := {}
@@ -446,6 +493,8 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	# reprovou o Mediano por 5,5% — um efeito que deixou de ser global. [soma, n]
 	var atracados := [0.0, 0]
 	var chegados := [0.0, 0]
+	var atracados_em_regime := [0.0, 0]
+	var chegados_em_regime := [0.0, 0]
 
 	for run in range(partidas):
 		# Duas sementes independentes: uma para o mundo (chegada de barco,
@@ -473,6 +522,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		# ainda está a levantar-se, e as outras duas não seriam.
 		var caixa_semana := []
 		var obra_semana := []
+		var parcela_semana := []
 		var atendidos_semana := []
 		# A MISTURA DE MOTIVOS, contada por barco NASCIDO e não por barco
 		# servido: é a mistura que a tabela dos números publica em `MOTIVOS`, e
@@ -483,6 +533,10 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		# mais) sairia inflado exatamente pela razão que o distingue.
 		var ids_vistos := {}
 		var caixa_anterior: int = GS.cash
+		var pago_anterior := 0
+		var antecipou_na_partida := false
+		var atracados_no_inicio: Array = atracados.duplicate()
+		var chegados_no_inicio: Array = chegados.duplicate()
 		var atendidos_anterior := 0
 		var obra_na_semana := 0
 		var reputacao_nas_ofertas := []
@@ -508,8 +562,19 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 
 			if GS.phase == "debt_payment":
 				caixa_no_vencimento = GS.cash
-				if GS.cash >= GS.PARCELA_AMOUNT:
+				var cobranca: Dictionary = cobrancas[GS.parcela_indice]
+				cobranca["caixas_na_decisao"].append(GS.cash)
+				var valor: int = GS.principal_da_parcela()
+				if GS.cash >= valor:
 					GS.pay_debt()
+					cobranca["pagaram"] += 1
+					cobranca["saldos_apos_pagar"].append(GS.cash)
+					# A semana só fecha depois da escolha. O pagamento pertence
+					# à semana vencida, nunca à seguinte nem ao regime operacional.
+					caixa_semana[-1] -= valor
+					parcela_semana[-1] += valor
+					caixa_anterior -= valor
+					pago_anterior += valor
 				else:
 					GS.fail_debt()
 				continue
@@ -523,19 +588,49 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 			# nomeia essa tensão: o mesmo caixa também compra estrutura. Aqui ele
 			# constrói como o Mediano e quita com o que sobra.
 			if perfil["quita_adiantado"] and GS.pode_pagar_parcela_adiantado():
+				var cobranca: Dictionary = cobrancas[GS.parcela_indice]
+				var dinheiro: int = GS.cash
 				if GS.pagar_parcela_adiantado():
-					antecipou += 1
+					if not antecipou_na_partida:
+						antecipou += 1
+					antecipou_na_partida = true
+					cobranca["pagaram"] += 1
+					cobranca["anteciparam"] += 1
+					cobranca["caixas_na_decisao"].append(dinheiro)
+					cobranca["saldos_apos_pagar"].append(GS.cash)
 					turnos_de_antecipacao.append(GS.turn)
 
 			_medir_escolha(dias_de_escolha)
 			_atracar(perfil, rng, atracados)
 			var semana_antes: int = GS.current_week()
+			var indice_antes: int = GS.parcela_indice
+			var vence_hoje: bool = GS.turn == GS.vencimento_da_parcela()
 			GS.advance_turn()
+			if vence_hoje:
+				cobrancas[indice_antes]["chegaram"] += 1
 			# O fecho de semana acontece DENTRO do advance_turn, então a leitura
 			# tem de ser depois dele — e só quando a semana virou de verdade.
 			if GS.current_week() != semana_antes:
+				if semana_antes == GS.WEEKS_TOTAL:
+					# A margem é de quem completou esta semana, não de quem perdeu
+					# meses antes. Misturar as duas populações distorce a calibração.
+					amostras_regime += 1
+					docas_regime += GS.docks.size()
+					trabalhadores_regime += GS.workers.size()
+					var nivel: int = GS.nivel_do_porto()
+					niveis_regime[nivel] = int(niveis_regime.get(nivel, 0)) + 1
+					for id in GS.ESTRUTURAS:
+						if GS.tem_estrutura(id):
+							estruturas_regime[id] = int(estruturas_regime.get(id, 0)) + 1
+					for j in range(2):
+						atracados_em_regime[j] += atracados[j] - atracados_no_inicio[j]
+						chegados_em_regime[j] += chegados[j] - chegados_no_inicio[j]
+				atracados_no_inicio = atracados.duplicate()
+				chegados_no_inicio = chegados.duplicate()
 				caixa_semana.append(GS.cash - caixa_anterior)
 				obra_semana.append(obra_na_semana)
+				parcela_semana.append(GS.total_pago_parcelas - pago_anterior)
+				pago_anterior = GS.total_pago_parcelas
 				atendidos_semana.append(int(GS.metrics["boats_served"]) - atendidos_anterior)
 				caixa_anterior = GS.cash
 				atendidos_anterior = int(GS.metrics["boats_served"])
@@ -580,13 +675,25 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 			while margem_por_semana.size() <= w:
 				margem_por_semana.append(0)
 				obra_por_semana.append(0)
+				parcela_por_semana.append(0)
 				atendidos_por_semana.append(0)
 				amostras_por_semana.append(0)
 			margem_por_semana[w] += int(caixa_semana[w])
 			obra_por_semana[w] += int(obra_semana[w])
+			parcela_por_semana[w] += int(parcela_semana[w])
 			atendidos_por_semana[w] += int(atendidos_semana[w])
 			amostras_por_semana[w] += 1
 
+	for i in range(cobrancas.size()):
+		var c: Dictionary = cobrancas[i]
+		c["numero"] = i + 1
+		c["dia"] = GS.PARCELA_DUE_TURN * (i + 1)
+		c["caixa_na_decisao_mediana"] = _mediana(c["caixas_na_decisao"])
+		c["saldo_apos_pagar_mediana"] = _mediana(c["saldos_apos_pagar"])
+		c["caixa_na_decisao_distribuicao"] = _distribuicao_caixa(c["caixas_na_decisao"])
+		c["saldo_apos_pagar_distribuicao"] = _distribuicao_caixa(c["saldos_apos_pagar"])
+		c.erase("caixas_na_decisao")
+		c.erase("saldos_apos_pagar")
 	return {
 		"perfil": perfil,
 		"vitorias": vitorias,
@@ -594,14 +701,22 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"chegou_sem_dinheiro": chegou_sem_dinheiro,
 		"caixa_vencimento_mediana": _mediana(caixas_no_vencimento),
 		"caixa_final_mediana": _mediana(caixas_finais),
+		"caixa_final_distribuicao": _distribuicao_caixa(caixas_finais),
 		"atendidos_medio": float(atendidos) / float(partidas),
 		"perdidos_medio": float(perdidos) / float(partidas),
 		"reputacao_media": reputacoes / float(partidas),
 		"travadas": travadas,
 		"margem_por_semana": _media_por_semana(margem_por_semana, amostras_por_semana),
 		"obra_por_semana": _media_por_semana(obra_por_semana, amostras_por_semana),
+		"parcela_por_semana": _media_por_semana(parcela_por_semana, amostras_por_semana),
+		"cobrancas": cobrancas,
 		"atendidos_por_semana": _media_por_semana(atendidos_por_semana, amostras_por_semana),
 		"estruturas": _fracao_de_pe(estruturas_de_pe, partidas),
+		"estado_em_regime": {"n": amostras_regime,
+			"estruturas": _fracao_de_pe(estruturas_regime, maxi(1, amostras_regime)),
+			"niveis": _fracao_dos_niveis(niveis_regime, maxi(1, amostras_regime)),
+			"docas_medias": float(docas_regime) / maxi(1, amostras_regime),
+			"trabalhadores_medios": float(trabalhadores_regime) / maxi(1, amostras_regime)},
 		"niveis": _fracao_dos_niveis(niveis_atingidos, partidas),
 		"reputacao_nas_ofertas": reputacoes_de_oferta,
 		"apostas_feitas": apostas_feitas,
@@ -618,6 +733,10 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"desistencias_medio": float(desistencias) / float(partidas),
 		"premio_da_escolha": (float(atracados[0]) / maxf(1.0, float(atracados[1]))) \
 			/ maxf(1.0, float(chegados[0]) / maxf(1.0, float(chegados[1]))),
+		# A margem é da última semana. Usar a seleção da partida inteira
+		# misturava o porto em ruínas com o reconstruído e errava o Antecipado.
+		"premio_em_regime": (float(atracados_em_regime[0]) / maxf(1.0, float(atracados_em_regime[1]))) \
+			/ maxf(1.0, float(chegados_em_regime[0]) / maxf(1.0, float(chegados_em_regime[1]))),
 	}
 
 
@@ -811,6 +930,19 @@ func _medir_escolha(contador: Array) -> void:
 		contador[2] += 1
 
 
+# Quantis empíricos por índice floor(n*p), a mesma mediana superior já usada.
+# A amostra acompanha o número: saldo de quem pagou não representa quem perdeu
+# antes, e vazio é ausência de observação, nunca caixa zero (`085`).
+func _distribuicao_caixa(valores: Array) -> Dictionary:
+	if valores.is_empty():
+		return {"n": 0, "p10": null, "p50": null, "p90": null}
+	var ordenado := valores.duplicate()
+	ordenado.sort()
+	var n := ordenado.size()
+	return {"n": n, "p10": int(ordenado[mini(n - 1, int(n * 0.1))]),
+		"p50": int(ordenado[int(n / 2)]), "p90": int(ordenado[mini(n - 1, int(n * 0.9))])}
+
+
 func _mediana(valores: Array) -> int:
 	if valores.is_empty():
 		return 0
@@ -831,21 +963,21 @@ func _imprimir_tabela(resultados: Array, partidas: int) -> void:
 			r["atendidos_medio"], r["perdidos_medio"]])
 	print("")
 	print("  Quebrou antes = caixa ficou negativo antes do vencimento.")
-	print("  Chegou curto  = chegou no Sr. Ribeiro sem os R$%d." % GS.PARCELA_AMOUNT)
+	print("  Chegou curto  = chegou ao Sr. Ribeiro sem dinheiro para a cobrança ativa.")
 	print("")
 
 	for r in resultados:
 		var margem := _margem_de_erro(float(r["vitorias"]) / float(partidas), partidas)
 		print("· %s — %s" % [r["perfil"]["nome"], r["perfil"]["descricao"]])
-		print("    taxa de vitória %.1f%% ± %.1f  ·  caixa no vencimento (mediana) R$%d  ·  reputação final média %.0f" % [
+		print("    taxa de vitória %.1f%% ± %.1f  ·  caixa no último vencimento alcançado (mediana) R$%d  ·  reputação final média %.0f" % [
 			100.0 * float(r["vitorias"]) / float(partidas), margem,
 			int(r["caixa_vencimento_mediana"]), float(r["reputacao_media"])])
 		# Só para quem tenta antecipar, e a linha é o que impede a leitura de
 		# confundir "o desconto não importa" com "ele nunca antecipou".
 		if bool(r["perfil"]["quita_adiantado"]):
-			print("    ANTECIPOU em %.1f%% das partidas (%d de %d), no turno %d (mediana de %d turnos)" % [
+			print("    ANTECIPOU em %.1f%% das partidas (%d de %d), no dia %d (mediana das antecipações em %d dias)" % [
 				100.0 * float(r["antecipou_fracao"]), int(r["antecipou"]), partidas,
-				int(r["turno_de_antecipacao_mediana"]), GS.PARCELA_DUE_TURN])
+				int(r["turno_de_antecipacao_mediana"]), GS.TURNS_TOTAL])
 			# ⚠️ E A MEDIANA DO VENCIMENTO ACIMA NÃO SE COMPARA COM A DOS OUTROS
 			# PERFIS. Quem antecipa não entra na fase "debt_payment" (o
 			# `_set_phase` dela exige `not parcela_paid`), então aquele número é

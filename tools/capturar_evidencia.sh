@@ -281,7 +281,7 @@ tirar largo   0 3  --script res://tools/capturar_tela.gd -- 2  "$SAIDA/largo.png
 # isso o único que denuncia um laço que volte a atravessar o modal. Com `-- 8`
 # o alvo e a abertura do Boletim calhariam no mesmo turno, e o defeito passaria
 # despercebido — é a armadilha da fixture copiada da execução real.
-tirar boletim 1 9  --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.png" completo
+tirar boletim 1 8  --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.png" completo
 # ⚠️ AS OUTRAS DUAS CARAS DA DONA CIDA, e o boletim acima só mostra a SÉRIA.
 # O painel é um e o tempo é um, mas a cara sai do TOM da semana, e a cobertura
 # por painel e por tempo dava o boletim por fotografado com duas das três caras
@@ -293,14 +293,14 @@ tirar boletim 1 9  --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim.p
 # manutenção). É o `primeira_ruim` — medido em 12/09, 60 de 60 partidas de quem
 # não aloca, e nenhuma de quem aloca. Com `completo` o píer rende mais e a
 # semana fecha no azul: a séria outra vez.
-tirar boletim_ruim 1 9 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim_ruim.png" ocioso
+tirar boletim_ruim 1 8 --script res://tools/capturar_tela.gd -- 12 "$SAIDA/boletim_ruim.png" ocioso
 # A CONTENTE pede histórico — o `otimo` compara com a média das semanas de
 # antes —, logo nunca é a semana 1. `--boletim=2` fecha o da semana 1 como o
 # jogador o fecharia e pára no da 2. Com o porto completo e esta semente a
 # semana 2 lucra 60% mais do que a 1 (R$581.779 → R$933.262); o porto em
 # ruínas só chega ao ótimo na semana 3. O teto de 20 turnos é teto: o tiro
 # pára no 17.
-tirar boletim_otimo 1 17 --script res://tools/capturar_tela.gd -- 20 "$SAIDA/boletim_otimo.png" completo --boletim=2
+tirar boletim_otimo 1 15 --script res://tools/capturar_tela.gd -- 20 "$SAIDA/boletim_otimo.png" completo --boletim=2
 # ⚠️ O MENU DE PAUSA ABRE DEPOIS DE JOGAR, e leva `limpo` por causa disso.
 # Ele era aberto ANTES dos oito turnos, que corriam por baixo dele — o mesmo
 # defeito do Boletim, na tela que existe para PARAR o jogo. Aberto no fim, o
@@ -357,6 +357,8 @@ tirar parcela - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 tirar ribeiro - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @PARCELA_AMOUNT parcela=vencida cash=0 --tempo=entrada
 tirar ribeiro_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_pagou.png" @PARCELA_AMOUNT parcela=vencida cash=@PARCELA_AMOUNT --tocar=Pagar --tempo=pagou
 tirar ribeiro_nao_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_nao_pagou.png" @PARCELA_AMOUNT parcela=vencida cash=0 --tocar=Não --tempo=nao_pagou
+tirar ribeiro_2 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_2.png" @PARCELA_2_AMOUNT parcela=vencida_2 cash=@PARCELA_2_AMOUNT --tempo=entrada
+tirar ribeiro_3 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_3.png" @PARCELA_3_AMOUNT parcela=vencida_3 cash=@PARCELA_3_AMOUNT --tempo=entrada
 tirar contraoferta - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0 --tempo=rodada
 # A PRESSÃO DO ARLINDO, que só existe depois de uma aposta RECUSADA — é a
 # última tentativa, e a cara troca a meio da rodada (o tempo continua
@@ -459,6 +461,11 @@ tirar mensagens_vozes - - --script res://tools/capturar_cena.gd -- res://scenes/
 # oportunidades de o jogo parar numa fase que abre painel, e esta foto é sobre
 # os cartões, não sobre a economia.
 tirar construir  1 1  --script res://tools/capturar_tela.gd -- 0  "$SAIDA/construir.png" meio limpo --painel=construir
+# As portas da Fase 1, sem instalar estruturas futuras na bancada.
+tirar construir_inicio 1 1 --script res://tools/capturar_tela.gd -- 0 "$SAIDA/construir_inicio.png" limpo --painel=construir
+tirar construir_semana2 1 8 --script res://tools/capturar_tela.gd -- 7 "$SAIDA/construir_semana2.png" limpo --painel=construir
+# Montagem: recibo da primeira cobrança e começo da segunda janela.
+tirar construir_semana5 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/UpgradePanel.tscn "$SAIDA/construir_semana5.png" turn=29 parcela_indice=1 parcelas_quitadas=1 total_pago_parcelas=@PARCELA_AMOUNT cash=@START_CASH phase=playing
 # O CALENDÁRIO COM DIA PASSADO, que é o estado que a régua do contraste NÃO
 # monta. O percurso dos 19 estados do `medir_contraste_ui.gd` abre o calendário
 # no dia 1 — e foi por isso que a cor dos dias já vividos viveu escrita à mão
@@ -470,6 +477,7 @@ tirar construir  1 1  --script res://tools/capturar_tela.gd -- 0  "$SAIDA/constr
 # traduz: o "•" do fecho de cada semana e o "!" do vencimento da parcela.
 # `limpo` porque o turno 9 abre o Boletim da semana 2, e sem ele o laço pára lá.
 tirar calendario 1 10 --script res://tools/capturar_tela.gd -- 9  "$SAIDA/calendario.png" limpo --painel=calendario
+tirar calendario_final - - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelCalendario.tscn "$SAIDA/calendario_final.png" parcela=vencida_3
 # AS DOCAS COM A CONTAGEM ACIMA DE UM, que é a única forma de a frase do R8
 # provar alguma coisa. Medido: com o porto de uma doca `ocupadas` nunca passa
 # de 1, e a 1 a versão certa e a errada escrevem o mesmo texto. No turno 10 do
@@ -554,12 +562,12 @@ tirar nomes_virando - - --script res://tools/capturar_cena.gd -- res://scenes/pa
 # A frase da vitória é a que o `_check_end()` escreve, copiada — e este tempo
 # NÃO A MOSTRA (só o balanço usa o `_motivo`), de modo que ela envelhecer aqui
 # não muda um pixel desta foto.
-tirar fimfase - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase.png" true "Você quitou a parcela e manteve o porto no azul!" --tempo=narracao
+tirar fimfase - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase.png" true "Você quitou as três parcelas e manteve o porto no azul!" recibo=quitado --tempo=narracao
 # A SEGUNDA PÁGINA da narração (`082`): desde que ela é uma entrada do diário,
 # o «—» do meio é a virada da folha, e a segunda metade da peça — o remate
 # incluído — só se lê depois dela. O «Virar» espera o tempo `segunda_pagina`,
 # que o painel só declara no fim da virada.
-tirar fimfase_2 - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase_2.png" true "Você quitou a parcela e manteve o porto no azul!" --tocar=Virar --tempo=segunda_pagina
+tirar fimfase_2 - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase_2.png" true "Você quitou as três parcelas e manteve o porto no azul!" recibo=quitado --tocar=Virar --tempo=segunda_pagina
 # O BALANÇO, numa partida JOGADA: o laço de sempre até ao vencimento (turno
 # 33), o «Pagar» do Sr. Ribeiro — ligado porque a partida juntou o dinheiro,
 # nunca porque a ferramenta o deu — e o «Ver o balanço» da narração. Foi a
@@ -572,7 +580,7 @@ tirar fimfase_2 - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGa
 # boletim → fim de fase, e a ferramenta percorre-a pelos botões do jogador,
 # reprovando em cada passo se o painel de cima não for o da vez ou não estiver
 # sozinho. A contagem daqui tranca o fim; os passos trancam a ordem.
-tirar balanco 1 33 --script res://tools/capturar_tela.gd -- 32 "$SAIDA/balanco.png" limpo balanco
+tirar balanco 1 85 --script res://tools/capturar_tela.gd -- 84 "$SAIDA/balanco.png" limpo balanco
 tirar icones  - -  --script res://tools/folha_icones.gd  --    "$SAIDA/icones.png"
 # A FROTA, e ela entrou por uma falha MEDIDA das fotos acima. Em 07/09 os
 # cascos passaram a ser seis — um por par de classe e motivo — e os camiões

@@ -161,6 +161,13 @@ quanto um asset custa ao pacote.
 1,87 MB são +42,29% do `.pck` e **+5,91% do APK**, porque o APK é sobretudo o
 binário do Godot. Ao citar custo, diga contra que denominador.
 
+**Captura no Windows precisa conferir o tamanho do PNG** (`085`). A criação
+da janela encolheu 720×1280 para 720×1175, e o `canvas_items` produziu um PNG
+660×1175: a régua de retratos usava coordenadas da viewport sobre pixels
+reduzidos. Reaplicar `root.size` com o tamanho configurado depois de a árvore
+estar ativa, esperando dois frames, resolveu em wrappers locais das ferramentas.
+Não reduza o corte da prova nem altere arte ou viewport para passar essa régua.
+
 **E a VRAM também se mede aqui**, com o jogo aberto: `xvfb-run -a $G --path
 brport_vs --resolution 720x1280 --rendering-driver opengl3 --script
 res://tools/medir_vram.gd`, espera `VRAM MEDIDA`. ⚠️ O monitor do motor conta
@@ -265,25 +272,39 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    valores intactos. Esta linha dizia «mexeu numa `const`», e o fecho
    seguiu-a à letra (`067`).
 4. Mexeu em preço ou constante `# TUNING:`? `tools/simular_balanceamento.gd`.
-   O balanceamento medido é **100% / 100,0% / 100,0%** por perfil, com a mediana
-   do jogador mediano em R$63.873 contra a primeira parcela de R$30.000 (`084`).
-   São 600 partidas por perfil, semente 20260825, na escala de porto pequeno,
-   preservando a fila (`083`). A cobrança inicial é acessível; as parcelas 2 e 3
-   ainda não estão no VS. Mexer sem medir quebra isso.
+   Para planejar crédito, expansões e futuros carros/imóveis, use
+   `docs/design/BR_Port_Metodo_Balanceamento_Economia.md`: uma moeda comum,
+   caixa livre, custos de posse, retorno incremental e distribuições por perfil.
+   Crédito não é lucro, patrimônio não é caixa e receita do porto não é renda pessoal.
+   O balanceamento medido é **100% / 100,0% / 100,0%** (Ótimo / Mediano /
+   Descuidado), e **100% no Antecipado**
+   (`085`): 600 partidas por perfil, semente 20260825, três cobranças reais em
+   12 semanas de 7 dias, com fila e desbloqueios básicos. Todos pagaram as
+   três; caixa mediano do Mediano antes da primeira: R$295.522, depois: R$155.522.
+   Crédito inicial R$400.000, três parcelas iguais de R$140.000, R$20.000 de
+   juros totais. Antecipação abate só juros da janela, nunca o capital.
+   Serviços foram reequilibrados após restaurar a moeda; preços e amortização
+   vivem no código/tabela, comparação externa e limites no guia de economia.
+   Mexer sem medir quebra isso. Bots não validam compreensão nem preços de mercado.
    **O alvo é TRANQUILO, e é decisão registrada** (`docs/decisoes/005`): a
    dívida deixou de ser o motor. Os 100% / 47% / 0% que este arquivo afirmou
    até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
    história, não meta. Quem discrimina os jogadores agora é **o porto que
    conseguem levantar** — e desde a trava de 06/09 quem mede isso é a MARGEM
-   em regime (cerca de R$54.828 contra R$9.593), não a contagem de barcos: o porto
+   em regime (cerca de R$115.996 contra R$12.339), não a contagem de barcos: o porto
    pobre só recebe pesqueiro, que descarrega num turno. Contar barcos esconde
    o valor e o custo de cada operação; a margem distingue os portos. `docs/decisoes/009`.
    ⚠️ **E DESDE A `083` O ATRACAR É ESCOLHA, e o simulador tem de a fazer.**
    Os perfis escolhem o barco ao largo (o Ótimo pelo que rende por dia, o
    Mediano pelo mais caro, o Descuidado por quem chegou primeiro), e quem
    escolhe bem atraca acima da média de quem chega: o `projetar_parcelas.py`
-   multiplica a margem pelo `premio_da_escolha` MEDIDO, e sem ele reprovou o
+   multiplica a margem pelo prêmio MEDIDO, e sem ele reprovou o
    Mediano por 5,5%.
+   Desde `085`, usa `premio_em_regime`: comparar a última semana com a mistura
+   da partida inteira reprovava o Antecipado por 5,8%. Pagamentos de todas as
+   cobranças, inclusive antecipados, saem da margem operacional. A tolerância
+   do projetor continua a mesma; suas hipóteses futuras não validam as três
+   cobranças jogáveis da Fase 1.
    ⚠️ **A parcela só move quem está perto do limiar.** A calibração de 06/09
    (`008`) e da fila (`083`) usava outra escala e outra distribuição de caixa.
    Reescala e primeira cobrança menor (`084`) são passos separados; meça entre
@@ -1097,8 +1118,9 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
 ### Save
 
 `SAVE_VERSION` sobe **sempre** que a forma ou a interpretação do estado muda.
-A fila ocupou a versão 10 (`083`); a reescala monetária subiu para 11 (`084`),
-pois caixa, barcos e recordes antigos valem dez vezes mais. Save de outra
+A fila ocupou a versão 10 (`083`); a reescala monetária subiu para 11 (`084`).
+As três cobranças, o calendário e os recibos subiram para **12** (`085`):
+o booleano antigo só representava a primeira quitação. Save de outra
 versão é descartado, não adaptado. Já custou um porto com 4 docas num mapa que
 desenha 3.
 
@@ -2163,11 +2185,13 @@ as três coisas.
 - **⚠️ QUEIXA DE ESTRANHEZA PODE SER LACUNA, e aí não há rótulo a corrigir.** A
   triagem leu *"é estranho o porto ter dívida mas o jogador começar com
   R$400.000"* como um nome errado e propôs chamar EMPRÉSTIMO ao caixa — que
-  contradiz o que o Sr. Ribeiro já diz (*"O Seu Maneco assinou isso. Agora é
-  seu"*: a dívida é do avô) e poria o banco a cobrar 32,5% em quatro semanas.
-  Não faltava rótulo: **faltava uma frase a dizer de onde vem o dinheiro**, e
-  ela nunca existiu. Antes de renomear o que o jogador achou estranho, leia o
-  que o jogo já diz sobre aquilo — a resposta costuma estar meia escrita.
+  contradizia o contrato herdado que o Sr. Ribeiro cobrava na `018`.
+  Não faltava rótulo: **faltava uma frase a dizer de onde vinha o dinheiro**.
+  Antes de renomear o que o jogador achou estranho, leia o que o jogo já diz.
+  Em `085`, Bruno mudou explicitamente o contrato: caixa de abertura é um
+  empréstimo para reconstruir, pago nas três parcelas da Fase 1. Diário,
+  banco e painel precisam contar o mesmo contrato, com valor recebido e total
+  contratado derivados das constantes; novos empréstimos continuam pendentes.
 
 ### Interface
 

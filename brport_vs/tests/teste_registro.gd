@@ -218,7 +218,7 @@ func _r2_partida() -> void:
 			GS.negotiate_rival("igualar")
 			continue
 		if GS.phase == "debt_payment":
-			if GS.cash >= GS.PARCELA_AMOUNT:
+			if GS.cash >= GS.principal_da_parcela():
 				GS.pay_debt()
 			else:
 				GS.fail_debt()
@@ -249,7 +249,7 @@ func _r2_partida() -> void:
 	_confere("gravou um evento de turno por turno jogado",
 		int(tipos.get("turno", 0)) >= GS.TURNS_TOTAL - 1,
 		"%d turnos para %d jogados" % [tipos.get("turno", 0), GS.TURNS_TOTAL])
-	_confere("gravou o fecho das quatro semanas", int(tipos.get("semana", 0)) == 4,
+	_confere("gravou o fecho das doze semanas", int(tipos.get("semana", 0)) == GS.WEEKS_TOTAL,
 		"%d semanas" % tipos.get("semana", 0))
 
 	# ZERO É O PIOR VALOR DE OMISSÃO QUE HÁ: lê-se como medida. A primeira
@@ -293,15 +293,19 @@ func _r2_partida() -> void:
 	R.armar()
 	GS.new_game()
 	GS.cash = 999999
-	GS.comprar_estrutura("patio")
+	# A partida anterior agora percorre doze semanas e consome mais sorteios.
+	# Resolver a oferta inicial pela porta real evita comprar durante o diálogo.
+	if GS.phase == "rival_offer":
+		GS.negotiate_rival("igualar")
+	_confere("a obra liberada foi comprada", GS.comprar_estrutura("pier_2"))
 	var obra: Dictionary = {}
 	for l in R.texto_para_exportar().split("\n", false):
 		var v = JSON.parse_string(l)
 		if typeof(v) == TYPE_DICTIONARY and v.get("e") == "obra":
 			obra = v
 	_confere("a obra grava o custo de verdade, não um zero de omissão",
-		int(obra.get("custo", -1)) == int(GS.ESTRUTURAS["patio"]["custo"]),
-		"gravou %s, a estrutura custa %d" % [obra.get("custo"), GS.ESTRUTURAS["patio"]["custo"]])
+		int(obra.get("custo", -1)) == int(GS.ESTRUTURAS["pier_2"]["custo"]),
+		"gravou %s, a estrutura custa %d" % [obra.get("custo"), GS.ESTRUTURAS["pier_2"]["custo"]])
 	_b2 = true
 
 

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 07/10/2026 — economia de porto pequeno sobre a fila (`084`), entregue no PR #107
+> **Última atualização:** 08/10/2026 — três cobranças e reparos básicos da Fase 1 (`085`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -18,9 +18,10 @@
 
 ## O jogo hoje, em três linhas
 
-**O porto abre em ruínas.** 1 doca, 1 trabalhador, R$40.000 e **sete
-estruturas** — píeres 2 e 3, armazém, pátio, escritório e os dois UPGRADES
-(guindaste e cais reforçado). Comprar cada uma muda o mapa.
+**O porto abre em ruínas.** 1 doca, 1 trabalhador e R$400.000. A Fase 1 permite
+reparar o píer 2 desde o início, o armazém na semana 2 e o pátio a partir da
+semana 5, depois da primeira cobrança quitada (`085`). São até dois píeres;
+píer 3, escritório e upgrades ficam bloqueados para fases futuras.
 
 **O rodapé é escuro, e só o "Avançar dia" é âmbar cheio** (`081`): o
 desligado, a faixa, a parcela e os cartões recuam abaixo dele (**D43**).
@@ -37,11 +38,9 @@ ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14
 contínuo pela distância à costa, com meandro longo de duas senóides, e a areia
 em rampas. A paleta medida não mudou (amplitude 99,408; espuma 0,558 de Weber).
 
-**E AS DUAS PONTAS SÃO COSTA DESENHADA** (`023`): a maior reta da linha de
-água caiu de 224 px para 16 e as quinas de 126,9° para 14°. **O cais continua
-reto**, que é o que ele é. Linha de água, baixio, espuma, pedras, rampa e o
-campo da água saem de `ponto_costeiro()`, família concêntrica que não se cruza
-— é isso que impede costura. **D28** tranca a forma; o raster, D20/D21/D24/D27.
+**As duas pontas são costa desenhada** (`023`), com o cais reto. Água, baixio,
+espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
+a forma; D20/D21/D24/D27 conferem o raster. Medidas e razões na `023`.
 
 **A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM** — mapa a 1080 (`025`) e
 props a 768 px num quadro de 512 COORDENADAS (`029`), com `expand_mode` em 31
@@ -57,19 +56,21 @@ tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 com toque de **44 px** (D25–D27); a pessoa, a 1,5× o real, é o menor ser vivo
 do mapa (`069`).
 
-**A economia tem escala de porto pequeno** (`084`), sobre a fila (`083`).
-Caixa inicial R$40.000, primeira parcela R$30.000, contratos R$900–6.300,
-manutenção R$4.000/semana e salário R$600 por trabalhador/semana. Preços
-adaptados ao jogo; não são tarifas reais auditadas. Taxas atuais e medição de
-600 partidas por perfil vivem no `CLAUDE.md`. Expansão e margem separam os
-portos (`005`, `009`); os ratios da fila e do caixa (`018`) foram preservados.
-Save **11** recusa partidas com a moeda antiga. A frente 5 começou pela
-economia; três parcelas, desbloqueios e obras seguem pendentes (§7 do plano).
+**A escala anterior à `084` foi recuperada** por escolha do Bruno (`085`).
+Contratos R$4.000–28.000, manutenção R$40.000/semana e salário R$6.000 por
+trabalhador/semana. Preços de jogo; taxas e medição de 600 partidas por perfil
+no `CLAUDE.md`. Expansão e margem separam os portos (`005`, `009`).
+Save **12** recusa versões anteriores antes de aplicar qualquer campo, sem
+migração: mudou o calendário e a interpretação dos recibos. A Fase 1 dura
+12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
+após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
+iguais de R$140 mil, R$20 mil de juros totais. Obras e demais sistemas da
+frente 5 continuam pendentes (§7 do plano).
 
 **E o navio que atraca depende do porto que existe** (`009`): três classes
 travadas pelo NÍVEL DO PORTO, o menor entre píer e guindaste — pesqueiro no 1,
-cargueiro no 2, longo curso no 3, que exige o cais reforçado. O Descuidado nunca
-vê um longo curso em 600 partidas; o painel Construir diz o nível e o que falta.
+cargueiro no 2, longo curso no 3, que exige o cais reforçado. Na Fase 1 o
+nível máximo é 2; o Construir mostra o nível e os bloqueios (`085`).
 
 **E A FROTA DE PESCA TEM TRÊS PORTES** (`014`) — bote, traineira e arrasteiro,
 pelo VALOR do contrato. Importa porque o porto em ruínas **só recebe pesqueiro**.
@@ -120,7 +121,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 **A §7.1 fechou (R1–R9).** A prioridade, escolha do Bruno, é a **melhoria de
 design**: o HUD (`081`), as telas narrativas (`082`) e a fila no fundeadouro
-(`083`), aceites; a retomada financeira da frente 5 está na `084` (§7 do plano).
+(`083`), aceites; a frente 5 entregou a reescala (`084`) e continua com as três
+cobranças e os reparos básicos (`085`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -247,15 +249,15 @@ podre (A4) — em `HISTORICO.md`.
 - **Três classes de navio, travadas pelo nível do porto** — pesqueiro,
   cargueiro e longo curso, cada uma com a sua faixa de valor, os seus turnos e a
   sua mistura de motivos. A classe decide o casco no píer (`009`)
-- Parcela única de **R$30.000** no fim da semana 4; paga ou recusada, a semana
-  só fecha depois da decisão. **Quitar antes abate 0,25% por turno** (`019`),
-  numa conta genérica que serve ao empréstimo da Fase 2. ⚠️ **A semana tem 8
-  turnos e a partida 32 "dias"; passar a 7 está MEDIDO** — 16 corridas na §7 do
-  plano, e o ponto que fecha pede um SEGUNDO botão, que espera o Bruno
-- **Sete estruturas** — píer 2, píer 3, armazém, pátio, escritório e os dois
-  upgrades —, cada uma mudando o mapa. O porto abre em ruínas com 1 doca. Os
-  upgrades trancam-se pela cadeia `requer`, não por fase (`007`): o guindaste
-  corta o turno do navio grande, e o cais DESTRAVA a classe dele (`009`)
+- **Três cobranças na Fase 1**, ao fim das semanas 4, 8 e 12. A semana só
+  fecha depois da decisão; as duas primeiras quitações retomam a partida.
+  **Quitar antes abate 0,25% por dia** (`019`) e mantém o recibo até o fecho
+  do período, sem abrir a próxima cobrança antes dele (`085`).
+- **Três reparos disponíveis por progressão**, no catálogo de sete estruturas:
+  píer 2, armazém e pátio. A terceira doca e os upgrades continuam na bancada
+  de arte e testes, mas não podem ser comprados nesta Fase 1 (`085`). A regra
+  antiga que sobe píer e guindaste ao nível 2 com duas estruturas permanece;
+  guindastes por fase são o próximo recorte, ainda pendente no plano.
 - **A faixa de mensagem tem FILA** — as duas fontes (sistema e Dona Cida) uma
   de cada vez, por ordem, com tempo mínimo na tela; tocar nela abre o histórico
   da sessão. Nada se apaga: 30,7% do que o jogo dizia não chegava ao jogador,
@@ -279,7 +281,7 @@ podre (A4) — em `HISTORICO.md`.
 ### O que já é arte de verdade, e o que ainda é placeholder
 **O mapa do porto é a tela do jogo** (`Main.tscn`): costa, cais, cidade, props
 e fauna vistos de cima. As docas são **3 vagas fixas sobre os píeres**; quantas
-existem vem de `GameState.docks`, e a terceira mostra ruína até ser ampliada.
+existem vem de `GameState.docks`; a terceira fica em ruínas nesta Fase 1.
 
 A interface **não é montada por código**: cenas `.tscn` com um tema.
 
