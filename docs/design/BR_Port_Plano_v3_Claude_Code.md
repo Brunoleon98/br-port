@@ -822,7 +822,8 @@ frentes, e **a ordem é do Bruno**:
    pendentes. **Continuação em 08/10 (`086`):** guindaste de madeira durante
    toda a Fase 1, sem promoção por reparos; intermediário reservado à Fase 2
    e disponível só nas bancadas de arte. Conjunto n1 aprovado na tela, até
-   dois píeres; medição refeita nas três cobranças, preços intactos. Fases
+   dois píeres; medição refeita nas três cobranças, preços intactos. Save 13,
+   autorizado pelo Bruno, recusa a 12 antes de aplicar campos, sem migração. Fases
    futuras ainda não implementadas. Pátio liberado no dia 29 dobra a renda do
    píer; apenas seu adicional de contêiner espera os clientes futuros.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,

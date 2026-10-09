@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-09.md` | 09/10 | Fecho da 086 no PR #109, Save 13 autorizado e próximo recorte da frente 5 com Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-08b.md` | 08/10 | Guindaste de madeira na Fase 1 (086), medições e continuação do PR enquanto aguarda autorização explícita para Save 13 |
 | `MEDICOES_GUINDASTES_FASE_1_2026-10-08.json` | 08/10 | Base final da 085 contra madeira em toda a Fase 1 (086), três cobranças, quantis, compras e paridade de autosave |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-08.md` | 08/10 | Próximo recorte da frente 5 após três cobranças, crédito inicial e reparos básicos (`085`) |

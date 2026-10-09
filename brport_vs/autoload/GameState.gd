@@ -511,7 +511,11 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # 12 (`085`): calendário de sete dias, três cobranças, recibos e desbloqueios.
 # O booleano da 11 só representava a primeira quitação; adaptar esse recibo
 # inventaria duas cobranças e um calendário que a partida nunca jogou.
-const SAVE_VERSION := 12
+# 13 (`086`): os reparos não promovem mais o guindaste na Fase 1. A 12 podia
+# guardar cargueiros com duas estruturas; reinterpretar esse porto com madeira
+# carregaria barcos incompatíveis. Recusar a versão inteira evita inventar
+# equipamento, remover contratos ou converter a partida do jogador.
+const SAVE_VERSION := 13
 
 # ── OS ESPAÇOS DE SAVE (`docs/decisoes/066`) ──
 #

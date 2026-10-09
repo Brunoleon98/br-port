@@ -104,13 +104,51 @@ func _t14_fase_inteira() -> void:
 		GS.fail_debt()
 		_check("T14: recusar parcela %d perde o porto" % indice, GS.phase == "game_over" and not GS.won)
 
+	# A 12 podia ter reparos e cargueiros. Montar esse estado pela bancada
+	# preserva o contrato real do barco; a única incompatibilidade é a versão.
+	_fresh_playing()
+	GS.cash = GS.START_CASH * 25
+	_check("T14: monta reparos do save 12", GS.comprar_estrutura("pier_2"))
+	GS.turn = 8
+	_check("T14: monta armazém do save 12", GS.comprar_estrutura("armazem"))
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	var cargueiro: Dictionary = {}
+	for tentativa in range(100):
+		var barco: Dictionary = GS._make_boat()
+		if barco["classe"] == "medio":
+			cargueiro = barco
+			break
+	_check("T14: save legado tem cargueiro real", not cargueiro.is_empty())
+	GS.docks[0]["boat"] = cargueiro
+	GS.save_game()
+	var legado: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
+	_check("T14: estado legado passa a sanidade antes de trocar a versão", not GS._save_aceite(JSON.stringify(legado)).is_empty())
+	legado["versao"] = 12
+	var texto_legado := JSON.stringify(legado)
+	_fresh_playing()
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	GS.save_game()
+	var estado_antes := FileAccess.get_file_as_string(GS.save_path)
+	var arquivo_legado := FileAccess.open(GS.save_path, FileAccess.WRITE)
+	arquivo_legado.store_string(texto_legado)
+	arquivo_legado.close()
+	_check("T14: consulta recusa save 12 sem apagar o arquivo",
+		GS._save_aceite(texto_legado).is_empty()
+			and FileAccess.get_file_as_string(GS.save_path) == texto_legado)
+	_check("T14: carregar descarta save 12 sem limpar a bancada",
+		not GS.load_game() and GS.nivel_guindaste() == 2
+			and not FileAccess.file_exists(GS.save_path))
+	GS.save_game()
+	_check("T14: recusa save 12 antes de aplicar todos os campos persistidos",
+		FileAccess.get_file_as_string(GS.save_path) == estado_antes)
+
 	_fresh_playing()
 	GS.save_game()
 	var valido: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
 	for chave in ["versao", "parcela_indice", "parcelas_quitadas", "total_pago_parcelas", "parcela_paid"]:
 		var ruim: Dictionary = valido.duplicate(true)
 		if chave == "versao":
-			ruim[chave] = 11
+			ruim[chave] = GS.SAVE_VERSION - 1
 		else:
 			ruim[chave] = "inválido"
 		var arquivo := FileAccess.open(GS.save_path, FileAccess.WRITE)
@@ -125,7 +163,7 @@ func _t14_fase_inteira() -> void:
 	incoerentes.append(sem_recibo)
 	for mudanca in [{"parcela_indice": 3}, {"parcelas_quitadas": 1},
 			{"parcela_indice": 0.5}, {"total_pago_parcelas": -1},
-			{"versao": 12.5}, {"versao": "12"}]:
+			{"versao": GS.SAVE_VERSION + 0.5}, {"versao": str(GS.SAVE_VERSION)}]:
 		var ruim: Dictionary = valido.duplicate(true)
 		ruim.merge(mudanca, true)
 		incoerentes.append(ruim)

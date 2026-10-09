@@ -82,13 +82,24 @@ contratos agregados sem toneladas, metros e horas. Bots não validam compreensã
 
 ## Save e verificação
 
-**PR em rascunho, bloqueado para merge.** `SAVE_VERSION` permanece em 12;
-a autorização explícita para 13 foi solicitada ao Bruno conforme `AGENTS.md`
-e continua pendente. O `CLAUDE.md` exige nova versão quando a interpretação
-muda: saves 12 antigos podem conter cargueiros incompatíveis com a montagem
-de madeira. Não migrar nem liberar o PR antes de recusar esses saves pela
-versão, antes de aplicar campos, e provar essa recusa. A `085` permanece
-entregue na main; este recorte ainda não está concluído para o jogador.
+**Save 13 autorizado pelo Bruno em 09/10:** “Pode fazer essa mudança já que as condições
+mudaram”. O `CLAUDE.md` exige nova versão quando a interpretação muda: saves
+12 antigos podem conter cargueiros incompatíveis com a montagem de madeira.
+Recusar a versão inteira antes de aplicar campos, sem migrar nem inventar
+equipamento ou remover contratos. A consulta preserva o arquivo; carregar
+descarta o incompatível, conforme o contrato existente. Partidas antigas
+precisam recomeçar. A `085` permanece entregue na main; este recorte segue
+no mesmo PR #109, sem outro escopo.
+
+T14 monta dois reparos e um cargueiro pela bancada, prova que o estado passa
+a sanidade com a versão corrente e troca apenas a versão para 12. A consulta
+recusa sem apagar; o carregamento recusa antes de limpar o metadado da bancada
+ou aplicar qualquer campo persistido, comparado pelo save completo. Recusas
+de versão textual/fracionária usam a versão corrente, não um número antigo
+que daria verde apenas por ser diferente. Saves 13 retomam as três cobranças.
+No fecho de 09/10, repetidas 600 partidas por perfil e as duas rodadas de dez
+com/sem autosave, todas idênticas aos JSONs arquivados; calibração e sentinela
+passaram novamente. A mudança de versão não altera a economia medida.
 
 As seis suítes passaram com seus marcadores, sem erro de script: lógica,
 design, áudio, fumaça, registro e assets. T14 percorre os 84 dias, inclusive
@@ -106,6 +117,6 @@ documentos, escopo de UI e guardas do CI conferidos; não se afrouxou portão.
 No Windows a base falhou com CRLF no literal da narração; seu conteúdo LF,
 igual ao blob Git, passou sem mudar a peça. Receita registrada no `CLAUDE.md`.
 
-Estado, plano, decisão, medição e briefing entram no mesmo commit do rascunho.
-A próxima conversa conclui a compatibilidade no mesmo PR, sem abrir outro
-recorte enquanto essa pendência estiver ativa.
+Estado, plano, decisão, medição e briefing foram atualizados junto da mudança
+de versão no mesmo commit de conclusão. A próxima conversa confere o PR #109
+e escolhe com Bruno outro recorte da frente 5, depois de ler o GDD.

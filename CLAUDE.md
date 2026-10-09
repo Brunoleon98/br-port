@@ -1136,8 +1136,11 @@ contêiner aguarda clientes futuros. Medir de novo antes de mudar preços.
 
 `SAVE_VERSION` sobe **sempre** que a forma ou a interpretação do estado muda.
 A fila ocupou a versão 10 (`083`); a reescala monetária subiu para 11 (`084`).
-As três cobranças, o calendário e os recibos subiram para **12** (`085`):
-o booleano antigo só representava a primeira quitação. Save de outra
+As três cobranças, o calendário e os recibos subiram para 12 (`085`):
+o booleano antigo só representava a primeira quitação. A madeira durante toda
+a Fase 1 subiu para **13** (`086`), com autorização explícita do Bruno:
+a 12 podia guardar cargueiros após dois reparos, incompatíveis com essa máquina.
+Save de outra
 versão é descartado, não adaptado. Já custou um porto com 4 docas num mapa que
 desenha 3.
 

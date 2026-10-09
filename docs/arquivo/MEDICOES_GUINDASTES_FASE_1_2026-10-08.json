@@ -2915,8 +2915,9 @@
     "Crédito não é lucro, patrimônio não é caixa e receita do porto não é dinheiro pessoal."
   ],
   "verificacao": {
-    "save_version_do_codigo": 12,
-    "save_13": "aguarda autorização explícita; não fundir o rascunho com interpretação pendente",
+    "save_version_do_codigo": 13,
+    "save_13": "autorizado pelo Bruno; T14 prova recusa de save 12 com reparos e cargueiro antes de aplicar campos, sem migração",
+    "repeticao_com_save_13": "09/10: 600 partidas por perfil e 10 por perfil com/sem autosave idênticas aos JSONs arquivados; calibração e sentinela passaram novamente",
     "capturas": {
       "tiros": 65,
       "tamanho_png": [

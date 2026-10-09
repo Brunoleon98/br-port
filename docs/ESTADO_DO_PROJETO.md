@@ -59,8 +59,8 @@ do mapa (`069`).
 **A moeda foi restaurada (`085`); preços intactos na `086`.** Valores atuais
 na tabela gerada, taxas/medição no `CLAUDE.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **12** ainda é a versão do código. A `086` aguarda aceite explícito
-para 13 (`AGENTS.md`); não fundir com essa compatibilidade pendente. A Fase 1 dura
+Save **13** (`086`), autorizado pelo Bruno: versão 12 recusada antes de aplicar
+campos, sem migração. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
 iguais de R$140 mil, R$20 mil de juros totais. Obras e demais sistemas da
