@@ -1,0 +1,19 @@
+# Todo arquivo de texto deste repositório vive com LF, também no checkout de
+# Windows. Sem isto quem decidia era o `core.autocrlf` de cada máquina, e o
+# CRLF já mordeu duas vezes com o blob certo: em 12/09 o teto do estado media
+# 349 bytes a mais num checkout Windows limpo (o `conferir_docs.py` passou a
+# medir com LF, `tamanho_com_lf()`), e na `086` o literal `\n\n—\n\n` do
+# `Narrativa.gd` deixou de dividir o caderno, com cinco falhas de design.
+# O índice já era todo LF quando isto entrou (1270 arquivos, nenhum CRLF):
+# a regra não reescreve histórico, só impede o checkout de divergir dele.
+* text=auto eol=lf
+
+# Binários declarados, para nunca serem tratados como texto.
+*.png binary
+*.jpg binary
+*.wav binary
+*.ttf binary
+*.woff2 binary
+*.xlsx binary
+*.blend binary
+*.ctex binary

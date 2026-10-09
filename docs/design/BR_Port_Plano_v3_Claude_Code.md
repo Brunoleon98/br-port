@@ -1605,9 +1605,9 @@ telas narrativas, ou o design de jogo), com opções e a recomendada primeiro
 **A primeira parte foi o HUD e os painéis (04/10, `081`)**: o rodapé escuro,
 com o «AVANÇAR DIA» como único destaque; os trabalhadores nas colunas das
 docas, em cartão escuro com a vaga; e o Construir com o cabeçalho das
-famílias. **Aceite do Bruno em 04/10.** Ficou um achado por corrigir: a
-cobertura do `teste_design` depende do save que a ferramenta anterior deixou
-no disco (o D14 conferiu 179 casas ou 77).
+famílias. **Aceite do Bruno em 04/10.** O achado que ficou — a cobertura do
+`teste_design` dependia do save no disco — fechou em 09/10; o plano de
+execução da revisão desse dia está em `docs/REVISAO_GERAL_2026-10-09.md`.
 
 **A segunda parte foram as telas narrativas (04/10, `082`)**: as conversas do
 Sr. Ribeiro, do Arlindo e da Dona Cida falam como no celular — o balão e a

@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-09.md` | 09/10 | Depois da revisão geral de 09/10 (`REVISAO_GERAL_2026-10-09.md`): as decisões D1–D7 que destravam o plano de execução, e as três correções de higiene já feitas |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-08.md` | 08/10 | Próximo recorte da frente 5 após três cobranças, crédito inicial e reparos básicos (`085`) |
 | `MEDICOES_FASE_1_2026-10-07.json` | 07–08/10 | Base `084`, alternativas descartadas e crédito final da `085`: três cobranças, serviços, quantis e paridade de autosave |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-07.md` | 07/10 | Retomada financeira sobre a fila (`084`): moeda ×0,1, primeira parcela R$30 mil, save 11; medições refeitas e entrega publicada no PR #107 |

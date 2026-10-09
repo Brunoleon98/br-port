@@ -1,0 +1,332 @@
+# Revisão geral — 09/10/2026: o que se manteve, o que mudou e como pôr em prática
+
+> **O que é.** A segunda revisão geral do repositório, depois da de 17/09
+> (`REVISAO_GERAL_2026-09-17.md`). Começou como uma análise em conversa,
+> pedida pelo Bruno — «o que pode ser melhorado e corrigido, mais eficiente,
+> bonito e preparado para as próximas expansões, e com a coleta do que se
+> aprende e se pesquisa». Depois foi revista item a item, contra o código e
+> contra medição, e virou plano de execução.
+>
+> **Base:** `main` em `0d6705e` (PR #108). Aberto: o PR #109 do Codex
+> (guindastes de madeira na Fase 1, em rascunho à espera do save 13).
+>
+> **O que não é.** Não reabre decisão registada, não mexe em `# TUNING:`,
+> `SAVE_VERSION`, projeção ou arte aprovada. O que precisa do Bruno está
+> marcado **[decisão]** e listado na §6.0 com a opção recomendada; o resto é
+> **[execução]**.
+
+---
+
+## 1. Como se verificou
+
+- As seis suítes do Godot 4.6.3 no contêiner, uma a uma, com a linha final e
+  a varredura de `SCRIPT ERROR`: verdes, ~67 s ao todo (`teste_design` 30 s,
+  `teste_fumaca` 17 s, `asset_validator` 11 s, `run_tests` 8 s).
+- O CI dos últimos commits (verde; ~7,7 min o `Testes` na `main`) e os
+  artefatos da corrida do #108: `brport-apk` 41,7 MB e `brport-web` 23,6 MB
+  (zip).
+- Os arquivos que o #109 mexe, para não o atropelar.
+- A documentação oficial do Claude Code sobre memória
+  (<https://code.claude.com/docs/en/memory>), lida na página.
+- O GDD 7 nas seções de fases, mapa, save e acessibilidade (`docs/gdd/`).
+- Três medições novas: o `teste_design` em três discos diferentes, uma sonda
+  de custo por quadro com o `Main` aberto e um clone com `core.autocrlf=true`,
+  que é o checkout do Windows.
+
+**Limites:** o clone desta sessão é raso (história desde 20/09), então o
+tamanho do `.git` local não mede o repositório inteiro, e o número certo é o
+da API do GitHub (107 MB). Não há telefone nem placa de som aqui.
+
+---
+
+## 2. A primeira análise, revista item a item
+
+| # | Sugestão de antes | Veredito | Por quê |
+|---|---|---|---|
+| 1 | O `teste_design` herda o save do disco | **Confirmado e corrigido** (§4) | Medido: 1114 asserções e 68 casas no D14 com o disco limpo ou em ruínas; 1148 e 102 com um porto completo no disco. Verde nos três |
+| 2 | Tirar `upgrade_purchased` e `buy_upgrade()` | **Mantém, junto do save 13** | O campo só existe «para a suíte antiga» e vai no save; `buy_upgrade()` só é chamada por testes e tenta o `pier_3`, bloqueado na Fase 1. Tirar o campo muda a forma do save |
+| 3 | PR #109 parado | **Mantém** | Rascunho, CI verde, à espera da autorização do save 13. O diff ainda não sobe o `SAVE_VERSION` |
+| 4 | Arte órfã | **Mantém [decisão]** | 9 de 331 arquivos; a `046` já separou órfão de apagável |
+| 5 | `CLAUDE.md` grande demais | **Reforçado** | A doc oficial pede **menos de 200 linhas** por `CLAUDE.md` e manda o que só vale para parte do código para regras com `paths:`. O nosso tem **3021 linhas** (219.790 bytes), 279 avisos ⚠️, e mudou em 61 dos 196 commits desde 01/09. E o #109 mostra o custo: reescreve no `CLAUDE.md` números que mudam a cada PR de economia (R$295.522 → R$312.709). Import com `@` **não** poupa nada: carrega no arranque |
+| 6 | Planos com itens fechados | **Mantém, depois do #109** | Plano v3 com 172.541 bytes, plano de arte com 128.973. O #109 edita o plano; mexer agora é pedir um conflito |
+| 7 | Medir desempenho | **Revisto: prioridade cai** | Medido: o `_process` do `Main` mais os nove bichos e os 20 tweens custam **0,033 ms por quadro**. Script não é gargalo. O que falta é a GPU no telefone: ~411 chamadas de desenho por quadro, 263 nós e 64 MB de VRAM (`049`). Isso é medição do Bruno no aparelho, antes do A8 |
+| 8 | Partir `teste_design` e `teste_fumaca` | **Rebaixado** | 30 s e 17 s, e o `conferir_guardas_ci.py` deriva os passos do workflow: partir mexe no contrato do CI em troca de conforto. Fica para quando doer |
+| 9 | Tabela de dados por fase | **Mantém, e cresce** | Além das constantes de Fase 1 cravadas (`PARCELA_2_AMOUNT`, `JUROS_PARCELA_1..3`, `WEEKS_TOTAL`), o GDD gradua as fases por reputação de **0 a 3000+**, e o jogo usa **0–100** em cinco faixas. A tabela precisa decidir como a reputação atravessa a fase **[decisão]** |
+| 10 | Partir `Main.gd` e `GameState.gd` | **Mantém, com uma pré-condição nova** | Testes e ferramentas leem **38 membros privados por string**, 29 deles do `Main` e 7 do `Dock` (`get("_camiao")`, `call("_visita_da_doca")`…). E `get()` de propriedade que não existe devolve `null` **calado**: mover código sem antes guardar esses nomes faz guardas passarem sem ver nada |
+| 11 | `phase` como String livre | **Mantém, junto do save 13** | 89 literais; o nome confunde-se com «Fase 1..5» da campanha |
+| 12 | Três berços fixos contra a grade do GDD | **Mantém [decisão]** | GDD: grade 8×6 → 24×14 com encaixe; Fase 2 «oficina + 2 docas»; as imagens-alvo vão a 4–5 docas. Recomendação mantida: vagas curadas por fase, em dados |
+| 13 | Save sem migração | **Reforçado [decisão]** | O GDD promete «Você nunca precisa se preocupar em perder o porto» e exportação `.brport-save`; a regra de hoje descarta todo save de outra versão. Serve no protótipo, não serve depois do A8 |
+| 14 | Acessibilidade e tradução | **Mantém, futuro** | Zero `tr()` no projeto; as falas estão juntas no `Narrativa.gd`, o resto é literal nas cenas |
+| 15 | Git LFS | **Retirado** | O repositório é público e o LFS gratuito tem cota de banda que o CI gastaria a cada checkout. São 107 MB no GitHub, e o maior blob tem 1,9 MB (os mapas SVG). Basta monitorar |
+| 16–20 | Pendências visuais e de som | **Mantém** | Máquina do contêiner (`079`), guindastes sobrepostos e mar à direita (§7 do plano); barco a deslizar até ao berço (`083`); faixa dos retratos; música inexistente e escuta A6; leitura A4 (`067`, `082`) |
+| 21 | Imagens-alvo fora do repositório | **Mantém, e não é a única** (§3, N8) | `docs/design/referencias/` ainda só tem o README |
+| 22 | Índice das pesquisas | **Feito aqui** (§5) | — |
+| 23 | Lições incham o `CLAUDE.md` | **Ver item 5** | A saída é a mesma |
+| 24 | Pasta para playtests reais | **Mantém** | O gravador `.jsonl` existe (`006`); falta onde acumular as partidas do A7 |
+
+---
+
+## 3. O que a primeira análise não viu
+
+**N1 — O repositório é público, e o GitHub Pages publica o protótipo
+VELHO.** A cada push na `main` corre «pages build and deployment», que serve
+o `index.html` da raiz: o protótipo HTML «BR Port — v3.0», não o jogo. O
+export Web já é de fio único (`variant/thread_support=false` no
+`export_presets.cfg`), então o `brport-web` cabe no Pages sem cabeçalho
+especial nenhum, e um link jogável no navegador do telefone serve
+diretamente ao A7 («ver duas pessoas jogarem»). **[decisão]**: publicar o
+build atual torna-o jogável por qualquer pessoa. O repositório, aliás, já é
+público. Tornar o repositório privado tem preço: hoje o CI fatura 0 minutos
+(repositório público), e privado passaria a gastar a cota de Actions; o
+Pages privado pede plano pago.
+
+**N2 — Não havia `.gitattributes`, e o CRLF já mordeu duas vezes.** A
+primeira foi em 12/09 (o teto do estado medido com um byte a mais por linha,
+remediado no `conferir_docs.py`). A segunda está no #109: o literal
+`\n\n—\n\n` do `Narrativa.gd` deixou de dividir o caderno, com cinco falhas de
+design, e a lição que ele propõe é manual («conferir o blob e normalizar as
+quebras locais»). **Corrigido na raiz** (§4).
+
+**N3 — A numeração das decisões não tinha guarda.** O `AGENTS.md` regista que
+dois agentes «já deram números repetidos», e a regra era só escrita.
+**Corrigido** (§4).
+
+**N4 — Os números do balanceamento vivem no `CLAUDE.md`.** O
+arquivo que carrega em toda sessão é reescrito em todo PR de economia, e os
+dois agentes disputam as mesmas linhas. Eles têm casa gerada: a tabela dos
+números e os JSON de medição do arquivo. Vai com a etapa 3 (§6).
+
+**N5 — Os testes estão presos ao `Main` por string.** Ver o item 10 acima;
+é a primeira coisa a fazer antes de qualquer refatoração.
+
+**N6 — A escala da reputação diverge do GDD** (item 9).
+
+**N7 — O GDD promete o save** (item 13).
+
+**N8 — Há informação de que o jogo depende e que vive fora do
+repositório:** as cinco imagens-alvo (só num anexo de conversa), o galpão
+recuperado V3 (só no checkout do ChatGPT, `ESTADO_DO_PROJETO.md`) e a
+**resposta** da pesquisa externa de 17/09. Desta só o prompt está aqui
+(`REVISAO_GERAL_2026-09-17_PESQUISA_EXTERNA.md`); o que ela devolveu chegou ao
+projeto já destilado na fila R1–R9 do plano, e o texto original não o
+encontrei em lado nenhum.
+
+**N9 — Medir custo por quadro aqui tem duas armadilhas**, e foram as duas
+primeiras tentativas desta sessão:
+- sob `xvfb-run`, o `Performance.TIME_PROCESS` inclui o desenho, que neste
+  contêiner é por software, e deu 86 ms;
+- em `--headless`, o laço dorme até 6,9 ms por quadro (o sono do modo de
+  baixo consumo), com e sem o `Main` aberto, e devolve o mesmo número nos
+  dois casos.
+
+O que mede o script é cronometrar a chamada direta dos `_process`. Uma futura
+`medir_desempenho.gd` leva isto no cabeçalho.
+
+---
+
+## 4. Feito nesta sessão, com prova
+
+**4.1 O `teste_design` deriva o estado (fecha o achado da `081`).**
+- O `_rodar()` faz `clear_save()`, fixa a semente e chama `new_game()` antes
+  de montar o `_main`.
+- O D14 monta ele próprio os dois estados em que os prédios do pátio existem
+  (ruína e porto completo), confere a vila contra cada um e devolve o estado
+  da partida no fim.
+- Resultado: **os três discos dão as mesmas 1218 linhas**, com 68 casas
+  conferidas na ruína e 102 no porto completo.
+- Guarda nova, pela regra da `043`: «o porto completo põe mais prédio grande
+  sobre a vila do que a ruína».
+- Mutantes:
+  - **M2** (a montagem sem o refresh do cenário) reprova por ela, com «2
+    prédios em ruína e 2 com o porto completo».
+  - **M1** (sem a derivação, com um porto completo no disco) mantém a
+    contagem, mas o D6 passa a medir OUTRO HUD: o botão do Construir com 171
+    px em vez de 233, e os cartões com 104 px de altura em vez de 84. É isso
+    que a derivação segura hoje, e o comentário no código diz exatamente
+    isso.
+
+**4.2 `.gitattributes` com `* text=auto eol=lf`.**
+- O índice já era todo LF (1270 arquivos de texto, nenhum CRLF), e o
+  `git add --renormalize .` não muda nada.
+- Num clone com `autocrlf=true`: sem o arquivo, o `Narrativa.gd` sai com CRLF
+  (a condição da `086`); com ele, sai com LF e sem arquivo fantasma
+  modificado.
+- ⚠️ Uma cópia de trabalho Windows **já existente** só troca as quebras
+  quando os arquivos voltam a sair do índice. Com tudo commitado ou guardado
+  em `stash`: `git rm -r --cached -q . && git reset --hard`.
+
+**4.3 O `conferir_docs.py` reprova número de decisão repetido.**
+- O mutante (uma segunda `085-*.md`) dá código 1 com a mensagem certa, e a
+  base volta a `DOCS OK`.
+- O CI de PR corre sobre a junção com a `main`, logo a colisão aparece antes
+  do merge.
+
+---
+
+## 5. Inventário das pesquisas, e onde cada uma vive
+
+| Pesquisa | Data | Pergunta | Onde vive | Observação |
+|---|---|---|---|---|
+| Prototipar jogo de gestão mobile premium com IA | antes do VS | Como prototipar e com que motor | `docs/design/Prototyping_Premium_Mobile_Management_Games_with_AI.md` | 21 links |
+| A resolução dos assets | 14/09 | Que alavanca compra nitidez e qual compra detalhe | §7 do plano v3 («O que a pesquisa devolveu») | Fechada nas `025`, `026`, `029` |
+| Prompt de pesquisa profunda da revisão de 17/09 | 17/09 | Atacar os consertos propostos | `REVISAO_GERAL_2026-09-17_PESQUISA_EXTERNA.md` | **A resposta não está arquivada** (N8) |
+| Boas práticas de Blender estilizado | 23/09 | O que o Blender por script alcança nos retratos | §7 do `BR_Port_Plano_Arte_Blender.md` | «Pesquisadas e MEDIDAS» |
+| Interface de jogos de gestão | 25/09 | Como mostrar a consequência antes da escolha | `BR_Port_Referencias_Interface_Gestao.md`, `063` | Lida por resumo de busca, porque o proxy bloqueia as páginas (`063`) |
+| Método de balanceamento da economia | 08/10 | Escala que comporte expansões, carros e imóveis | `BR_Port_Metodo_Balanceamento_Economia.md`, `085` | Tarifas de Paranaguá e BNDES como referência, não como preço |
+| Leitura das cinco imagens-alvo | 03/09 | O arco de crescimento do porto | `docs/design/referencias/README.md` | **As imagens não estão no repositório** |
+| Áudio: geração e escuta | — | Suno/ElevenLabs; o que se prova sem ouvir | `BR_Port_Guia_Audio_Suno_ElevenLabs.md`, `BR_Port_Plano_Audio.md`, `PROTOCOLO_DE_ESCUTA.md`, `040` | A escuta é do Bruno |
+| Material do ChatGPT | 23/09 → | Produção de assets e auditorias | `art_lab/README.md` e `art_lab/plano/` | Entra com a base conferida |
+
+**A regra que falta, proposta [decisão]:** pesquisa ou anexo que embasa uma
+decisão entra no repositório na mesma sessão: a imagem, a resposta da
+ferramenta externa, ou pelo menos a lista de fontes. Se não puder entrar, a
+decisão diz que falta. Este índice fica aqui até o Bruno escolher a casa
+definitiva dele; candidata natural é um documento de trabalho ao lado do
+`BR_Port_Referencias_Interface_Gestao.md`, que o `conferir_docs.py` pode
+cobrar como cobra o índice do arquivo.
+
+---
+
+## 6. Como pôr em prática
+
+Cada etapa é uma sessão, ou um PR, com prova. O modelo segue a `016`: quem
+decide é Opus, quem executa é Sonnet.
+
+### 6.0 As decisões do Bruno que destravam o resto
+
+| # | Pergunta | Recomendação | Destrava |
+|---|---|---|---|
+| D1 | Autorizar o save 13 do #109? | Sim, e levar no mesmo save a limpeza do legado (itens 2 e 11) | Etapa 2 |
+| D2 | Reorganizar o `CLAUDE.md` num núcleo curto e regras por tema em `.claude/rules/`? | Sim | Etapa 3 |
+| D3 | Expansão do mapa: vagas curadas por fase ou grade livre do GDD? | Vagas curadas por fase, em dados | Etapa 4 |
+| D4 | Reputação entre fases: a escala 0–3000 do GDD ou 0–100 por fase? | Decidir antes de desenhar a tabela de fases | Etapa 4 |
+| D5 | Política de save a partir do primeiro build público | Migração encadeada v(n)→v(n+1), com um save de exemplo por versão | Etapa 6 |
+| D6 | Publicar o build Web atual no Pages, no lugar do protótipo? | Sim, se aceitar o jogo atual jogável em público; senão, desligar o Pages | Etapa 7 |
+| D7 | Destino da arte órfã e de `art/sprites/` | Seguir a triagem da `046` | — |
+
+**Só o Bruno pode fazer:**
+- subir as imagens-alvo, o galpão V3 e, se a tiver, a resposta da pesquisa
+  de 17/09;
+- medir FPS e aquecimento no telefone;
+- a escuta A6 e a leitura A4.
+
+### 6.1 Etapa 1 — higiene (feita nesta sessão)
+
+As três da §4. **Prova:** as seis suítes, o `conferir_docs.py`, os mutantes
+registados.
+
+### 6.2 Etapa 2 — o save 13 e a limpeza (depois de D1 e do #109)
+
+- **O que muda:** saem `upgrade_purchased` e `buy_upgrade()`; os estados de
+  turno (`"playing"`, `"rival_offer"`, `"debt_payment"`, `"game_over"`)
+  viram constantes, e o mesmo save renomeia o campo.
+- **Prova:**
+  - as seis suítes;
+  - o simulador com 600 partidas e a mesma semente dá o mesmo JSON (a
+    mudança não pode mexer em economia);
+  - o F-bloco do save no `teste_fumaca` recusa o 12.
+- **Tamanho e modelo:** curta; Sonnet, com a guarda nova em Opus.
+
+### 6.3 Etapa 3 — documentação enxuta (depois de D2)
+
+- **Núcleo do `CLAUDE.md`** (meta: poucas centenas de linhas):
+  - as quatro camadas;
+  - como rodar e a proteção do save do jogador;
+  - «o CI não corre ao empurrar»;
+  - o fecho;
+  - o que cabe numa sessão e as fases F1–F7;
+  - o estilo de código essencial.
+- **Regras por tema**, carregadas só quando a sessão toca os arquivos:
+
+| Regra | `paths:` (resumo) |
+|---|---|
+| `.claude/rules/projecao` | `tools/gerar_mapa_iso.py`, `tools/gerar_props_iso.py`, `blender/**`, `docs/BRP_SPATIAL_CONTRACT.md` |
+| `.claude/rules/arte` | `blender/**`, `art_lab/**`, `brport_vs/art/**`, `tools/gerar_props_iso.py` |
+| `.claude/rules/testes-e-guardas` | `brport_vs/tests/**`, `brport_vs/scripts/validation/**`, `tools/conferir_*.py` |
+| `.claude/rules/economia` | `brport_vs/autoload/GameState.gd`, `brport_vs/tools/simular_balanceamento.gd`, `tools/projetar_parcelas.py` |
+| `.claude/rules/save` | `brport_vs/autoload/GameState.gd`, `brport_vs/scripts/ArmazemLocal.gd` |
+| `.claude/rules/interface` | `brport_vs/scenes/**`, `brport_vs/ui/**`, `brport_vs/scripts/Painel*.gd` |
+| `.claude/rules/narrativa` | `brport_vs/scripts/Narrativa.gd`, `brport_vs/scripts/Retratos.gd` |
+| `.claude/rules/audio` | `brport_vs/autoload/Audio.gd`, `tools/gerar_sons.py`, `tools/medir_audio.py` |
+| `.claude/rules/captura` | `brport_vs/tools/capturar_*.gd`, `tools/capturar_evidencia.sh`, `brport_vs/tools/folha_*.gd` |
+
+  (Os nomes levam `.md` no disco.)
+- **Codex:** ele não carrega `.claude/rules`, então o `AGENTS.md` passa a
+  listar as regras por tema e diz quais ler conforme os arquivos da tarefa.
+- **Números voláteis:** saem do `CLAUDE.md` e ficam só na tabela gerada e nos
+  JSON de medição; o `conferir_docs.py` passa a procurar a «fonte
+  operacional» lá.
+- **Plano v3:** os itens ✅ descem para o `docs/arquivo/`, e o plano fica com
+  a fila aberta.
+- **Prova:**
+  - nada se apaga: a contagem de avisos ⚠️ e de títulos de regra é a mesma
+    antes e depois, somando todos os arquivos (279 hoje);
+  - `DOCS OK`;
+  - uma sessão de teste a abrir um arquivo de cada tema confirma que a regra
+    carrega.
+- **Atenção:** uma regra com `paths:` só entra quando a sessão LÊ um arquivo
+  que casa. Uma pergunta sem arquivo aberto não a vê, e é para isso que as
+  skills `/arte` e `/balancear` continuam a existir.
+- **Tamanho e modelo:** média; Opus no desenho, Sonnet no transporte.
+
+### 6.4 Etapa 4 — preparar a Fase 2 sem mudar a Fase 1 (depois de D3 e D4)
+
+- **O que muda:** uma tabela `FASES` em dados (duração, cobranças com capital
+  e juros, desbloqueios, classes de navio, nível máximo, vagas do mapa). O
+  `GameState` passa a lê-la no lugar das constantes da Fase 1.
+- **Prova de refatoração pura:**
+  - a tabela dos números regerada sem diferença nos valores;
+  - o JSON do simulador (600 por perfil, semente 20260825) idêntico ao de
+    antes;
+  - as seis suítes;
+  - o `teste_fumaca` exigindo que toda fase da tabela tenha os campos todos.
+- **Tamanho e modelo:** média; Opus.
+
+### 6.5 Etapa 5 — partir o `Main.gd`
+
+1. **Primeiro a guarda:** todo nome que os testes e as ferramentas leem do
+   `Main` e do `Dock` por string tem de existir no alvo (lido do texto das suítes, como
+   o F9 lê as chamadas). Mutante: renomear um membro privado tem de
+   reprovar.
+2. **Depois as extrações, uma por PR:** o tráfego dos camiões (o maior
+   bloco), a narradora da Dona Cida e a fila de painéis (`_na_vez`).
+- **Prova:** a bateria de capturas byte a byte contra a anterior (ela é
+  determinística, `031`), as seis suítes e o simulador idêntico.
+- **Tamanho e modelo:** longa, em três PRs; Sonnet, com a guarda em Opus.
+
+### 6.6 Etapa 6 — o save que não se perde (D5, antes do A8)
+
+- **O que muda:** migrações encadeadas, um save de exemplo por versão no
+  `teste_fumaca` e a recusa só para o que a migração não souber ler. A regra
+  «tudo o que recusa vem antes de tudo o que escreve» continua.
+- **Tamanho e modelo:** média; Opus.
+
+### 6.7 Etapa 7 — playtest e desempenho no aparelho (D6)
+
+- **O que muda:** se D6 for sim, o CI publica o `brport-web` da `main` no
+  Pages. O Bruno mede FPS no telefone com o build atual. Uma
+  `medir_desempenho.gd` conta chamadas de desenho, nós e o custo dos
+  `_process` (com o cabeçalho de N9). As partidas reais do A7 ganham uma
+  pasta, anónimas pela `006`.
+- **Tamanho e modelo:** curta; Sonnet.
+
+### 6.8 Depois — acessibilidade e tradução
+
+- O tamanho de fonte pelo tema (há um só, `ui/tema_brport.tres`) é barato.
+- O `tr()` entra gradual, começando pelo `Narrativa.gd`, que já junta as
+  falas.
+- Escopo do Bruno, depois do A8.
+
+---
+
+## 7. Números desta sessão, para não se medirem outra vez
+
+| O quê | Valor |
+|---|---|
+| `CLAUDE.md` | 3021 linhas, 219.790 bytes, 279 ⚠️, 61 de 196 commits desde 01/09 |
+| `teste_design` | 1114 asserções antes (68 no D14) ou 1148 (102), conforme o disco; agora 1218 em qualquer disco |
+| Custo de script por quadro com o `Main` aberto | 0,033 ms (`_process` do `Main` e dos nove bichos); 20 tweens |
+| Desenho | ~411 chamadas por quadro sob `xvfb`/opengl3; 263 nós |
+| Pacotes (zip dos artefatos do #108) | APK 41,7 MB; Web 23,6 MB |
+| Repositório no GitHub | 107 MB; maior blob 1,9 MB (mapas SVG) |
+| Membros privados lidos por string em testes e ferramentas | 38 (29 do `Main`, 7 do `Dock`, 2 de painéis) |

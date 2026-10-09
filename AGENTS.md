@@ -32,7 +32,8 @@ registada sem o Bruno pedir.
   número.
 - **Decisão nova** entra em `docs/decisoes/` com o próximo número livre —
   confira a pasta na `main` antes de escolher, que dois agentes a numerar em
-  paralelo já deram números repetidos.
+  paralelo já deram números repetidos. Desde 09/10 o `tools/conferir_docs.py`
+  reprova número repetido, e o CI do PR corre sobre a junção com a `main`.
 
 ## 3. Antes de abrir o PR
 
