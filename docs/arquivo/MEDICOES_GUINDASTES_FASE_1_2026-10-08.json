@@ -1,0 +1,2946 @@
+{
+  "data": "2026-10-08",
+  "decisao": "086",
+  "base": "0d6705e1040016c1cfae809caa1b36ac8e5300a8",
+  "branch": "codex/frente-5-guindastes-fase-1",
+  "godot": "4.6.3",
+  "escopo": "Madeira em toda a Fase 1; intermediário apenas em bancada para a futura Fase 2; preços e demais regras da 085 intactos.",
+  "paridade_autosave": {
+    "partidas_por_perfil": 10,
+    "semente": 20260825,
+    "identicos": true,
+    "com_save": {
+      "caixa_inicial": 400000,
+      "parcela": 140000,
+      "parcelas": [
+        140000,
+        140000,
+        140000
+      ],
+      "partidas": 10,
+      "perfis": {
+        "Antecipado": {
+          "antecipou_fracao": 1.0,
+          "atendidos_em_regime": 11.6,
+          "atendidos_por_semana": [
+            10.9,
+            11.1,
+            11.3,
+            11.7,
+            11.8,
+            10.9,
+            11.2,
+            12.0,
+            11.6,
+            11.8,
+            11.9,
+            11.6
+          ],
+          "caixa_final_distribuicao": {
+            "n": 10,
+            "p10": 472037,
+            "p50": 512876,
+            "p90": 577352
+          },
+          "caixa_final_mediana": 512876,
+          "caixa_vencimento_mediana": 0,
+          "cobrancas": [
+            {
+              "anteciparam": 10,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 250000,
+                "p50": 250000,
+                "p90": 250000
+              },
+              "caixa_na_decisao_mediana": 250000,
+              "chegaram": 10,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 119565,
+                "p50": 119565,
+                "p90": 119565
+              },
+              "saldo_apos_pagar_mediana": 119565
+            },
+            {
+              "anteciparam": 10,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 177336,
+                "p50": 211905,
+                "p90": 224337
+              },
+              "caixa_na_decisao_mediana": 211905,
+              "chegaram": 10,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 43790,
+                "p50": 78359,
+                "p90": 90791
+              },
+              "saldo_apos_pagar_mediana": 78359
+            },
+            {
+              "anteciparam": 10,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 196858,
+                "p50": 244109,
+                "p90": 313611
+              },
+              "caixa_na_decisao_mediana": 244109,
+              "chegaram": 10,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 60125,
+                "p50": 107376,
+                "p90": 176878
+              },
+              "saldo_apos_pagar_mediana": 107376
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 10,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": 105801.0,
+          "margem_em_regime": 105801.0,
+          "margem_por_semana": [
+            -230087.4,
+            52784.7,
+            51076.1,
+            33770.9,
+            -153151.5,
+            79086.7,
+            70408.1,
+            3842.4,
+            -107930.1,
+            98356.0,
+            106598.2,
+            105801.0
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            0.0,
+            0.0,
+            18000.0,
+            103500.0,
+            0.0,
+            11500.0,
+            90000.0,
+            72000.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            130435.0,
+            0.0,
+            0.0,
+            0.0,
+            133546.0,
+            0.0,
+            0.0,
+            0.0,
+            136733.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "premio_da_escolha": 1.03176778332395,
+          "premio_em_regime": 1.03796782989216,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 29,
+          "vitorias": 10
+        },
+        "Descuidado": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 4.4,
+          "atendidos_por_semana": [
+            5.0,
+            4.9,
+            4.4,
+            4.8,
+            4.0,
+            4.5,
+            4.4,
+            4.8,
+            4.1,
+            3.9,
+            4.1,
+            4.4
+          ],
+          "caixa_final_distribuicao": {
+            "n": 10,
+            "p10": 102894,
+            "p50": 122201,
+            "p90": 191089
+          },
+          "caixa_final_mediana": 122201,
+          "caixa_vencimento_mediana": 262201,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 453901,
+                "p50": 463987,
+                "p90": 487881
+              },
+              "caixa_na_decisao_mediana": 463987,
+              "chegaram": 10,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 313901,
+                "p50": 323987,
+                "p90": 347881
+              },
+              "saldo_apos_pagar_mediana": 323987
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 342611,
+                "p50": 363374,
+                "p90": 414248
+              },
+              "caixa_na_decisao_mediana": 363374,
+              "chegaram": 10,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 202611,
+                "p50": 223374,
+                "p90": 274248
+              },
+              "saldo_apos_pagar_mediana": 223374
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 242894,
+                "p50": 262201,
+                "p90": 331089
+              },
+              "caixa_na_decisao_mediana": 262201,
+              "chegaram": 10,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 102894,
+                "p50": 122201,
+                "p90": 191089
+              },
+              "saldo_apos_pagar_mediana": 122201
+            }
+          ],
+          "docas_medias": 1.0,
+          "estado_em_regime": {
+            "docas_medias": 1.0,
+            "estruturas": {
+              "armazem": 0.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 0.0,
+              "pier_2": 0.0,
+              "pier_3": 0.0
+            },
+            "n": 10,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 1.0
+          },
+          "estruturas": {
+            "armazem": 0.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 0.0,
+            "pier_2": 0.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -129805.9,
+          "margem_em_regime": 10194.1,
+          "margem_por_semana": [
+            17950.2,
+            17751.5,
+            12371.8,
+            -126227.3,
+            9497.4,
+            12331.0,
+            11956.1,
+            -125294.8,
+            9341.6,
+            10276.7,
+            9633.0,
+            -129805.9
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.00515357500067,
+          "premio_em_regime": 0.93090217933703,
+          "taxa": 100.0,
+          "trabalhadores_medios": 1.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 10
+        },
+        "Mediano": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 11.6,
+          "atendidos_por_semana": [
+            10.9,
+            11.1,
+            11.3,
+            11.7,
+            11.8,
+            10.9,
+            11.2,
+            12.0,
+            11.6,
+            11.8,
+            11.9,
+            11.6
+          ],
+          "caixa_final_distribuicao": {
+            "n": 10,
+            "p10": 504612,
+            "p50": 578476,
+            "p90": 661100
+          },
+          "caixa_final_mediana": 578476,
+          "caixa_vencimento_mediana": 718476,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 271468,
+                "p50": 318669,
+                "p90": 324937
+              },
+              "caixa_na_decisao_mediana": 318669,
+              "chegaram": 10,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 131468,
+                "p50": 178669,
+                "p90": 184937
+              },
+              "saldo_apos_pagar_mediana": 178669
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 370548,
+                "p50": 443993,
+                "p90": 540626
+              },
+              "caixa_na_decisao_mediana": 443993,
+              "chegaram": 10,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 230548,
+                "p50": 303993,
+                "p90": 400626
+              },
+              "saldo_apos_pagar_mediana": 303993
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 644612,
+                "p50": 718476,
+                "p90": 801100
+              },
+              "caixa_na_decisao_mediana": 718476,
+              "chegaram": 10,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 504612,
+                "p50": 578476,
+                "p90": 661100
+              },
+              "saldo_apos_pagar_mediana": 578476
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 10,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -34199.0,
+          "margem_em_regime": 105801.0,
+          "margem_por_semana": [
+            -99652.4,
+            -53131.0,
+            -8180.9,
+            -73223.1,
+            14007.5,
+            63543.2,
+            94681.3,
+            -36609.9,
+            100802.9,
+            98356.0,
+            106598.2,
+            -34199.0
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            108000.0,
+            72000.0,
+            0.0,
+            80500.0,
+            34500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.03176778332395,
+          "premio_em_regime": 1.03796782989216,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 10
+        },
+        "Ótimo": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 13.0,
+          "atendidos_por_semana": [
+            12.8,
+            13.3,
+            13.3,
+            12.5,
+            13.1,
+            12.2,
+            13.0,
+            13.2,
+            13.6,
+            13.2,
+            13.4,
+            13.0
+          ],
+          "caixa_final_distribuicao": {
+            "n": 10,
+            "p10": 665270,
+            "p50": 734840,
+            "p90": 774382
+          },
+          "caixa_final_mediana": 734840,
+          "caixa_vencimento_mediana": 874840,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 357502,
+                "p50": 370159,
+                "p90": 403709
+              },
+              "caixa_na_decisao_mediana": 370159,
+              "chegaram": 10,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 217502,
+                "p50": 230159,
+                "p90": 263709
+              },
+              "saldo_apos_pagar_mediana": 230159
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 504193,
+                "p50": 573132,
+                "p90": 615175
+              },
+              "caixa_na_decisao_mediana": 573132,
+              "chegaram": 10,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 364193,
+                "p50": 433132,
+                "p90": 475175
+              },
+              "saldo_apos_pagar_mediana": 433132
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 805270,
+                "p50": 874840,
+                "p90": 914382
+              },
+              "caixa_na_decisao_mediana": 874840,
+              "chegaram": 10,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 665270,
+                "p50": 734840,
+                "p90": 774382
+              },
+              "saldo_apos_pagar_mediana": 734840
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 10,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -34520.3,
+          "margem_em_regime": 105479.7,
+          "margem_por_semana": [
+            -87422.9,
+            -95298.9,
+            81296.4,
+            -65382.3,
+            -3850.6,
+            106805.3,
+            113797.7,
+            -29595.4,
+            109041.4,
+            113029.2,
+            118715.0,
+            -34520.3
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            180000.0,
+            0.0,
+            0.0,
+            115000.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.01803943523806,
+          "premio_em_regime": 1.00748029576781,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 10
+        }
+      },
+      "semanas": 12,
+      "semente": 20260825,
+      "turnos_por_semana": 7,
+      "vencimentos": [
+        28,
+        56,
+        84
+      ]
+    },
+    "sem_save": {
+      "caixa_inicial": 400000,
+      "parcela": 140000,
+      "parcelas": [
+        140000,
+        140000,
+        140000
+      ],
+      "partidas": 10,
+      "perfis": {
+        "Antecipado": {
+          "antecipou_fracao": 1.0,
+          "atendidos_em_regime": 11.6,
+          "atendidos_por_semana": [
+            10.9,
+            11.1,
+            11.3,
+            11.7,
+            11.8,
+            10.9,
+            11.2,
+            12.0,
+            11.6,
+            11.8,
+            11.9,
+            11.6
+          ],
+          "caixa_final_distribuicao": {
+            "n": 10,
+            "p10": 472037,
+            "p50": 512876,
+            "p90": 577352
+          },
+          "caixa_final_mediana": 512876,
+          "caixa_vencimento_mediana": 0,
+          "cobrancas": [
+            {
+              "anteciparam": 10,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 250000,
+                "p50": 250000,
+                "p90": 250000
+              },
+              "caixa_na_decisao_mediana": 250000,
+              "chegaram": 10,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 119565,
+                "p50": 119565,
+                "p90": 119565
+              },
+              "saldo_apos_pagar_mediana": 119565
+            },
+            {
+              "anteciparam": 10,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 177336,
+                "p50": 211905,
+                "p90": 224337
+              },
+              "caixa_na_decisao_mediana": 211905,
+              "chegaram": 10,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 43790,
+                "p50": 78359,
+                "p90": 90791
+              },
+              "saldo_apos_pagar_mediana": 78359
+            },
+            {
+              "anteciparam": 10,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 196858,
+                "p50": 244109,
+                "p90": 313611
+              },
+              "caixa_na_decisao_mediana": 244109,
+              "chegaram": 10,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 60125,
+                "p50": 107376,
+                "p90": 176878
+              },
+              "saldo_apos_pagar_mediana": 107376
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 10,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": 105801.0,
+          "margem_em_regime": 105801.0,
+          "margem_por_semana": [
+            -230087.4,
+            52784.7,
+            51076.1,
+            33770.9,
+            -153151.5,
+            79086.7,
+            70408.1,
+            3842.4,
+            -107930.1,
+            98356.0,
+            106598.2,
+            105801.0
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            0.0,
+            0.0,
+            18000.0,
+            103500.0,
+            0.0,
+            11500.0,
+            90000.0,
+            72000.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            130435.0,
+            0.0,
+            0.0,
+            0.0,
+            133546.0,
+            0.0,
+            0.0,
+            0.0,
+            136733.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "premio_da_escolha": 1.03176778332395,
+          "premio_em_regime": 1.03796782989216,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 29,
+          "vitorias": 10
+        },
+        "Descuidado": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 4.4,
+          "atendidos_por_semana": [
+            5.0,
+            4.9,
+            4.4,
+            4.8,
+            4.0,
+            4.5,
+            4.4,
+            4.8,
+            4.1,
+            3.9,
+            4.1,
+            4.4
+          ],
+          "caixa_final_distribuicao": {
+            "n": 10,
+            "p10": 102894,
+            "p50": 122201,
+            "p90": 191089
+          },
+          "caixa_final_mediana": 122201,
+          "caixa_vencimento_mediana": 262201,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 453901,
+                "p50": 463987,
+                "p90": 487881
+              },
+              "caixa_na_decisao_mediana": 463987,
+              "chegaram": 10,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 313901,
+                "p50": 323987,
+                "p90": 347881
+              },
+              "saldo_apos_pagar_mediana": 323987
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 342611,
+                "p50": 363374,
+                "p90": 414248
+              },
+              "caixa_na_decisao_mediana": 363374,
+              "chegaram": 10,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 202611,
+                "p50": 223374,
+                "p90": 274248
+              },
+              "saldo_apos_pagar_mediana": 223374
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 242894,
+                "p50": 262201,
+                "p90": 331089
+              },
+              "caixa_na_decisao_mediana": 262201,
+              "chegaram": 10,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 102894,
+                "p50": 122201,
+                "p90": 191089
+              },
+              "saldo_apos_pagar_mediana": 122201
+            }
+          ],
+          "docas_medias": 1.0,
+          "estado_em_regime": {
+            "docas_medias": 1.0,
+            "estruturas": {
+              "armazem": 0.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 0.0,
+              "pier_2": 0.0,
+              "pier_3": 0.0
+            },
+            "n": 10,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 1.0
+          },
+          "estruturas": {
+            "armazem": 0.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 0.0,
+            "pier_2": 0.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -129805.9,
+          "margem_em_regime": 10194.1,
+          "margem_por_semana": [
+            17950.2,
+            17751.5,
+            12371.8,
+            -126227.3,
+            9497.4,
+            12331.0,
+            11956.1,
+            -125294.8,
+            9341.6,
+            10276.7,
+            9633.0,
+            -129805.9
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.00515357500067,
+          "premio_em_regime": 0.93090217933703,
+          "taxa": 100.0,
+          "trabalhadores_medios": 1.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 10
+        },
+        "Mediano": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 11.6,
+          "atendidos_por_semana": [
+            10.9,
+            11.1,
+            11.3,
+            11.7,
+            11.8,
+            10.9,
+            11.2,
+            12.0,
+            11.6,
+            11.8,
+            11.9,
+            11.6
+          ],
+          "caixa_final_distribuicao": {
+            "n": 10,
+            "p10": 504612,
+            "p50": 578476,
+            "p90": 661100
+          },
+          "caixa_final_mediana": 578476,
+          "caixa_vencimento_mediana": 718476,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 271468,
+                "p50": 318669,
+                "p90": 324937
+              },
+              "caixa_na_decisao_mediana": 318669,
+              "chegaram": 10,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 131468,
+                "p50": 178669,
+                "p90": 184937
+              },
+              "saldo_apos_pagar_mediana": 178669
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 370548,
+                "p50": 443993,
+                "p90": 540626
+              },
+              "caixa_na_decisao_mediana": 443993,
+              "chegaram": 10,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 230548,
+                "p50": 303993,
+                "p90": 400626
+              },
+              "saldo_apos_pagar_mediana": 303993
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 644612,
+                "p50": 718476,
+                "p90": 801100
+              },
+              "caixa_na_decisao_mediana": 718476,
+              "chegaram": 10,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 504612,
+                "p50": 578476,
+                "p90": 661100
+              },
+              "saldo_apos_pagar_mediana": 578476
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 10,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -34199.0,
+          "margem_em_regime": 105801.0,
+          "margem_por_semana": [
+            -99652.4,
+            -53131.0,
+            -8180.9,
+            -73223.1,
+            14007.5,
+            63543.2,
+            94681.3,
+            -36609.9,
+            100802.9,
+            98356.0,
+            106598.2,
+            -34199.0
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            108000.0,
+            72000.0,
+            0.0,
+            80500.0,
+            34500.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.03176778332395,
+          "premio_em_regime": 1.03796782989216,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 10
+        },
+        "Ótimo": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 13.0,
+          "atendidos_por_semana": [
+            12.8,
+            13.3,
+            13.3,
+            12.5,
+            13.1,
+            12.2,
+            13.0,
+            13.2,
+            13.6,
+            13.2,
+            13.4,
+            13.0
+          ],
+          "caixa_final_distribuicao": {
+            "n": 10,
+            "p10": 665270,
+            "p50": 734840,
+            "p90": 774382
+          },
+          "caixa_final_mediana": 734840,
+          "caixa_vencimento_mediana": 874840,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 357502,
+                "p50": 370159,
+                "p90": 403709
+              },
+              "caixa_na_decisao_mediana": 370159,
+              "chegaram": 10,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 217502,
+                "p50": 230159,
+                "p90": 263709
+              },
+              "saldo_apos_pagar_mediana": 230159
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 504193,
+                "p50": 573132,
+                "p90": 615175
+              },
+              "caixa_na_decisao_mediana": 573132,
+              "chegaram": 10,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 364193,
+                "p50": 433132,
+                "p90": 475175
+              },
+              "saldo_apos_pagar_mediana": 433132
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 10,
+                "p10": 805270,
+                "p50": 874840,
+                "p90": 914382
+              },
+              "caixa_na_decisao_mediana": 874840,
+              "chegaram": 10,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 10,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 10,
+                "p10": 665270,
+                "p50": 734840,
+                "p90": 774382
+              },
+              "saldo_apos_pagar_mediana": 734840
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 10,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -34520.3,
+          "margem_em_regime": 105479.7,
+          "margem_por_semana": [
+            -87422.9,
+            -95298.9,
+            81296.4,
+            -65382.3,
+            -3850.6,
+            106805.3,
+            113797.7,
+            -29595.4,
+            109041.4,
+            113029.2,
+            118715.0,
+            -34520.3
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            180000.0,
+            0.0,
+            0.0,
+            115000.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.01803943523806,
+          "premio_em_regime": 1.00748029576781,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 10
+        }
+      },
+      "semanas": 12,
+      "semente": 20260825,
+      "turnos_por_semana": 7,
+      "vencimentos": [
+        28,
+        56,
+        84
+      ]
+    }
+  },
+  "medicoes": {
+    "antes": {
+      "caixa_inicial": 400000,
+      "parcela": 140000,
+      "parcelas": [
+        140000,
+        140000,
+        140000
+      ],
+      "partidas": 600,
+      "perfis": {
+        "Antecipado": {
+          "antecipou_fracao": 1.0,
+          "atendidos_em_regime": 7.16,
+          "atendidos_por_semana": [
+            11.2966666666667,
+            11.2816666666667,
+            11.24,
+            11.28,
+            7.445,
+            6.97333333333333,
+            7.17666666666667,
+            7.02333333333333,
+            7.13,
+            7.1,
+            7.06333333333333,
+            7.16
+          ],
+          "caixa_final_distribuicao": {
+            "n": 600,
+            "p10": 427494,
+            "p50": 490016,
+            "p90": 550672
+          },
+          "caixa_final_mediana": 490016,
+          "caixa_vencimento_mediana": 0,
+          "cobrancas": [
+            {
+              "anteciparam": 600,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 250000,
+                "p50": 250000,
+                "p90": 250000
+              },
+              "caixa_na_decisao_mediana": 250000,
+              "chegaram": 600,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 119565,
+                "p50": 119565,
+                "p90": 119565
+              },
+              "saldo_apos_pagar_mediana": 119565
+            },
+            {
+              "anteciparam": 600,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 176444,
+                "p50": 205492,
+                "p90": 226656
+              },
+              "caixa_na_decisao_mediana": 205492,
+              "chegaram": 600,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 42898,
+                "p50": 71946,
+                "p90": 93110
+              },
+              "saldo_apos_pagar_mediana": 71946
+            },
+            {
+              "anteciparam": 600,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 192500,
+                "p50": 237383,
+                "p90": 285456
+              },
+              "caixa_na_decisao_mediana": 237383,
+              "chegaram": 600,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 55767,
+                "p50": 100650,
+                "p90": 148723
+              },
+              "saldo_apos_pagar_mediana": 100650
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 600,
+            "niveis": {
+              "1": 0.0,
+              "2": 1.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": 99881.5366666667,
+          "margem_em_regime": 99881.5366666667,
+          "margem_por_semana": [
+            -228019.586666667,
+            52031.7883333333,
+            52073.6466666667,
+            24302.215,
+            -155423.375,
+            79252.535,
+            73274.9716666667,
+            -40416.89,
+            -55779.4166666667,
+            94073.8933333333,
+            93404.4083333333,
+            99881.5366666667
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 1.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            0.0,
+            0.0,
+            28200.0,
+            96983.3333333333,
+            0.0,
+            11358.3333333333,
+            132358.333333333,
+            17700.0,
+            3600.0,
+            4800.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            130435.0,
+            0.0,
+            0.0,
+            0.0,
+            133546.0,
+            0.0,
+            0.0,
+            0.0,
+            136733.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "premio_da_escolha": 1.06204804846389,
+          "premio_em_regime": 1.12562562576758,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 29,
+          "vitorias": 600
+        },
+        "Descuidado": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 4.39666666666667,
+          "atendidos_por_semana": [
+            4.58666666666667,
+            4.58166666666667,
+            4.595,
+            4.49333333333333,
+            4.49666666666667,
+            4.52,
+            4.56833333333333,
+            4.43666666666667,
+            4.58666666666667,
+            4.47,
+            4.59166666666667,
+            4.39666666666667
+          ],
+          "caixa_final_distribuicao": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final_mediana": 137814,
+          "caixa_vencimento_mediana": 277814,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 430796,
+                "p50": 453759,
+                "p90": 475885
+              },
+              "caixa_na_decisao_mediana": 453759,
+              "chegaram": 600,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 290796,
+                "p50": 313759,
+                "p90": 335885
+              },
+              "saldo_apos_pagar_mediana": 313759
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 333441,
+                "p50": 366603,
+                "p90": 395312
+              },
+              "caixa_na_decisao_mediana": 366603,
+              "chegaram": 600,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 193441,
+                "p50": 226603,
+                "p90": 255312
+              },
+              "saldo_apos_pagar_mediana": 226603
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 238436,
+                "p50": 277814,
+                "p90": 313952
+              },
+              "caixa_na_decisao_mediana": 277814,
+              "chegaram": 600,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 98436,
+                "p50": 137814,
+                "p90": 173952
+              },
+              "saldo_apos_pagar_mediana": 137814
+            }
+          ],
+          "docas_medias": 1.0,
+          "estado_em_regime": {
+            "docas_medias": 1.0,
+            "estruturas": {
+              "armazem": 0.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 0.0,
+              "pier_2": 0.0,
+              "pier_3": 0.0
+            },
+            "n": 600,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 1.0
+          },
+          "estruturas": {
+            "armazem": 0.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 0.0,
+            "pier_2": 0.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -127660.876666667,
+          "margem_em_regime": 12339.1233333333,
+          "margem_por_semana": [
+            13397.945,
+            13383.7,
+            13531.5166666667,
+            -127184.441666667,
+            13108.05,
+            13012.7566666667,
+            13282.7666666667,
+            -127727.856666667,
+            13529.705,
+            12977.4883333333,
+            13317.125,
+            -127660.876666667
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.00008668758792,
+          "premio_em_regime": 1.00187127645678,
+          "taxa": 100.0,
+          "trabalhadores_medios": 1.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        },
+        "Mediano": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 7.11,
+          "atendidos_por_semana": [
+            11.2966666666667,
+            10.9016666666667,
+            7.695,
+            7.045,
+            7.16,
+            7.08166666666667,
+            7.05833333333333,
+            7.18833333333333,
+            7.06833333333333,
+            7.08666666666667,
+            7.13333333333333,
+            7.11
+          ],
+          "caixa_final_distribuicao": {
+            "n": 600,
+            "p10": 448873,
+            "p50": 530529,
+            "p90": 612745
+          },
+          "caixa_final_mediana": 530529,
+          "caixa_vencimento_mediana": 670529,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 261244,
+                "p50": 295522,
+                "p90": 330122
+              },
+              "caixa_na_decisao_mediana": 295522,
+              "chegaram": 600,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 121244,
+                "p50": 155522,
+                "p90": 190122
+              },
+              "saldo_apos_pagar_mediana": 155522
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 348655,
+                "p50": 412835,
+                "p90": 485520
+              },
+              "caixa_na_decisao_mediana": 412835,
+              "chegaram": 600,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 208655,
+                "p50": 272835,
+                "p90": 345520
+              },
+              "saldo_apos_pagar_mediana": 272835
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 588873,
+                "p50": 670529,
+                "p90": 752745
+              },
+              "caixa_na_decisao_mediana": 670529,
+              "chegaram": 600,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 448873,
+                "p50": 530529,
+                "p90": 612745
+              },
+              "saldo_apos_pagar_mediana": 530529
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 600,
+            "niveis": {
+              "1": 0.0,
+              "2": 1.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -40485.345,
+          "margem_em_regime": 99514.655,
+          "margem_por_semana": [
+            -97584.5866666667,
+            -69252.305,
+            386.328333333333,
+            -78123.6083333333,
+            22483.3333333333,
+            41064.2483333333,
+            96190.7666666667,
+            -40739.3033333333,
+            98996.42,
+            98422.125,
+            99497.49,
+            -40485.345
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 1.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            121500.0,
+            58200.0,
+            300.0,
+            56350.0,
+            55583.3333333333,
+            2875.0,
+            191.666666666667,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.08680275749439,
+          "premio_em_regime": 1.12239446386294,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        },
+        "Ótimo": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 9.13,
+          "atendidos_por_semana": [
+            13.0533333333333,
+            9.395,
+            9.105,
+            9.02666666666667,
+            9.04833333333333,
+            8.99666666666667,
+            9.04166666666667,
+            9.03,
+            9.06666666666667,
+            9.04333333333333,
+            9.105,
+            9.13
+          ],
+          "caixa_final_distribuicao": {
+            "n": 600,
+            "p10": 693083,
+            "p50": 747474,
+            "p90": 805829
+          },
+          "caixa_final_mediana": 747474,
+          "caixa_vencimento_mediana": 887474,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 333965,
+                "p50": 362930,
+                "p90": 395801
+              },
+              "caixa_na_decisao_mediana": 362930,
+              "chegaram": 600,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 193965,
+                "p50": 222930,
+                "p90": 255801
+              },
+              "saldo_apos_pagar_mediana": 222930
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 523708,
+                "p50": 564335,
+                "p90": 614688
+              },
+              "caixa_na_decisao_mediana": 564335,
+              "chegaram": 600,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 383708,
+                "p50": 424335,
+                "p90": 474688
+              },
+              "saldo_apos_pagar_mediana": 424335
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 833083,
+                "p50": 887474,
+                "p90": 945829
+              },
+              "caixa_na_decisao_mediana": 887474,
+              "chegaram": 600,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 693083,
+                "p50": 747474,
+                "p90": 805829
+              },
+              "saldo_apos_pagar_mediana": 747474
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 600,
+            "niveis": {
+              "1": 0.0,
+              "2": 1.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -24004.415,
+          "margem_em_regime": 115995.585,
+          "margem_por_semana": [
+            -86912.2133333333,
+            -105816.68,
+            78188.9616666667,
+            -61627.5066666667,
+            -838.871666666667,
+            114380.708333333,
+            114309.635,
+            -25147.2183333333,
+            115211.308333333,
+            114612.505,
+            114879.646666667,
+            -24004.415
+          ],
+          "niveis": {
+            "1": 0.0,
+            "2": 1.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            180000.0,
+            0.0,
+            0.0,
+            115000.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.01600504504504,
+          "premio_em_regime": 1.02522798425109,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        }
+      },
+      "semanas": 12,
+      "semente": 20260825,
+      "turnos_por_semana": 7,
+      "vencimentos": [
+        28,
+        56,
+        84
+      ]
+    },
+    "madeira_fase_1": {
+      "caixa_inicial": 400000,
+      "parcela": 140000,
+      "parcelas": [
+        140000,
+        140000,
+        140000
+      ],
+      "partidas": 600,
+      "perfis": {
+        "Antecipado": {
+          "antecipou_fracao": 1.0,
+          "atendidos_em_regime": 11.325,
+          "atendidos_por_semana": [
+            11.2966666666667,
+            11.2816666666667,
+            11.24,
+            11.3366666666667,
+            11.3333333333333,
+            11.26,
+            11.2383333333333,
+            11.3333333333333,
+            11.2783333333333,
+            11.2716666666667,
+            11.39,
+            11.325
+          ],
+          "caixa_final_distribuicao": {
+            "n": 600,
+            "p10": 433424,
+            "p50": 496156,
+            "p90": 552280
+          },
+          "caixa_final_mediana": 496156,
+          "caixa_vencimento_mediana": 0,
+          "cobrancas": [
+            {
+              "anteciparam": 600,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 250000,
+                "p50": 250000,
+                "p90": 250000
+              },
+              "caixa_na_decisao_mediana": 250000,
+              "chegaram": 600,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 119565,
+                "p50": 119565,
+                "p90": 119565
+              },
+              "saldo_apos_pagar_mediana": 119565
+            },
+            {
+              "anteciparam": 600,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 176945,
+                "p50": 205720,
+                "p90": 226656
+              },
+              "caixa_na_decisao_mediana": 205720,
+              "chegaram": 600,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 43399,
+                "p50": 72174,
+                "p90": 93110
+              },
+              "saldo_apos_pagar_mediana": 72174
+            },
+            {
+              "anteciparam": 600,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 198380,
+                "p50": 240447,
+                "p90": 295155
+              },
+              "caixa_na_decisao_mediana": 240447,
+              "chegaram": 600,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 61647,
+                "p50": 103714,
+                "p90": 158422
+              },
+              "saldo_apos_pagar_mediana": 103714
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 600,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": 99227.8766666667,
+          "margem_em_regime": 99227.8766666667,
+          "margem_por_semana": [
+            -228019.586666667,
+            52031.7883333333,
+            52073.6466666667,
+            24737.4666666667,
+            -150369.131666667,
+            79238.8233333333,
+            69011.6916666667,
+            -33217.3483333333,
+            -58629.8233333333,
+            93361.6333333333,
+            94361.725,
+            99227.8766666667
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            0.0,
+            0.0,
+            28200.0,
+            97175.0,
+            1150.0,
+            15141.6666666667,
+            123633.333333333,
+            19800.0,
+            4500.0,
+            5400.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            130435.0,
+            0.0,
+            0.0,
+            0.0,
+            133546.398333333,
+            0.0,
+            0.0,
+            0.0,
+            136733.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "premio_da_escolha": 1.03105880773181,
+          "premio_em_regime": 1.02946485398673,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 29,
+          "vitorias": 600
+        },
+        "Descuidado": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 4.39666666666667,
+          "atendidos_por_semana": [
+            4.58666666666667,
+            4.58166666666667,
+            4.595,
+            4.49333333333333,
+            4.49666666666667,
+            4.52,
+            4.56833333333333,
+            4.43666666666667,
+            4.58666666666667,
+            4.47,
+            4.59166666666667,
+            4.39666666666667
+          ],
+          "caixa_final_distribuicao": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final_mediana": 137814,
+          "caixa_vencimento_mediana": 277814,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 430796,
+                "p50": 453759,
+                "p90": 475885
+              },
+              "caixa_na_decisao_mediana": 453759,
+              "chegaram": 600,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 290796,
+                "p50": 313759,
+                "p90": 335885
+              },
+              "saldo_apos_pagar_mediana": 313759
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 333441,
+                "p50": 366603,
+                "p90": 395312
+              },
+              "caixa_na_decisao_mediana": 366603,
+              "chegaram": 600,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 193441,
+                "p50": 226603,
+                "p90": 255312
+              },
+              "saldo_apos_pagar_mediana": 226603
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 238436,
+                "p50": 277814,
+                "p90": 313952
+              },
+              "caixa_na_decisao_mediana": 277814,
+              "chegaram": 600,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 98436,
+                "p50": 137814,
+                "p90": 173952
+              },
+              "saldo_apos_pagar_mediana": 137814
+            }
+          ],
+          "docas_medias": 1.0,
+          "estado_em_regime": {
+            "docas_medias": 1.0,
+            "estruturas": {
+              "armazem": 0.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 0.0,
+              "pier_2": 0.0,
+              "pier_3": 0.0
+            },
+            "n": 600,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 1.0
+          },
+          "estruturas": {
+            "armazem": 0.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 0.0,
+            "pier_2": 0.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -127660.876666667,
+          "margem_em_regime": 12339.1233333333,
+          "margem_por_semana": [
+            13397.945,
+            13383.7,
+            13531.5166666667,
+            -127184.441666667,
+            13108.05,
+            13012.7566666667,
+            13282.7666666667,
+            -127727.856666667,
+            13529.705,
+            12977.4883333333,
+            13317.125,
+            -127660.876666667
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.00008668758792,
+          "premio_em_regime": 1.00187127645678,
+          "taxa": 100.0,
+          "trabalhadores_medios": 1.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        },
+        "Mediano": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 11.325,
+          "atendidos_por_semana": [
+            11.2966666666667,
+            11.2816666666667,
+            11.24,
+            11.3366666666667,
+            11.3333333333333,
+            11.26,
+            11.2383333333333,
+            11.3333333333333,
+            11.2783333333333,
+            11.2716666666667,
+            11.39,
+            11.325
+          ],
+          "caixa_final_distribuicao": {
+            "n": 600,
+            "p10": 486551,
+            "p50": 568051,
+            "p90": 627493
+          },
+          "caixa_final_mediana": 568051,
+          "caixa_vencimento_mediana": 708051,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 276661,
+                "p50": 312709,
+                "p90": 349150
+              },
+              "caixa_na_decisao_mediana": 312709,
+              "chegaram": 600,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 136661,
+                "p50": 172709,
+                "p90": 209150
+              },
+              "saldo_apos_pagar_mediana": 172709
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 378730,
+                "p50": 450345,
+                "p90": 502482
+              },
+              "caixa_na_decisao_mediana": 450345,
+              "chegaram": 600,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 238730,
+                "p50": 310345,
+                "p90": 362482
+              },
+              "saldo_apos_pagar_mediana": 310345
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 626551,
+                "p50": 708051,
+                "p90": 767493
+              },
+              "caixa_na_decisao_mediana": 708051,
+              "chegaram": 600,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 486551,
+                "p50": 568051,
+                "p90": 627493
+              },
+              "saldo_apos_pagar_mediana": 568051
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 600,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -40772.1233333333,
+          "margem_em_regime": 99227.8766666667,
+          "margem_por_semana": [
+            -97584.5866666667,
+            -66830.8533333333,
+            8795.35333333333,
+            -71331.2383333333,
+            4351.66666666667,
+            71860.99,
+            97719.7533333333,
+            -41489.68,
+            98861.3716666667,
+            98655.5466666667,
+            99819.5666666667,
+            -40772.1233333333
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            121500.0,
+            58200.0,
+            300.0,
+            87400.0,
+            27216.6666666667,
+            383.333333333333,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.03105880773181,
+          "premio_em_regime": 1.02946485398673,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        },
+        "Ótimo": {
+          "antecipou_fracao": 0.0,
+          "atendidos_em_regime": 13.05,
+          "atendidos_por_semana": [
+            13.0533333333333,
+            13.0416666666667,
+            13.07,
+            13.055,
+            13.0233333333333,
+            13.0433333333333,
+            13.05,
+            13.0666666666667,
+            13.1066666666667,
+            13.0983333333333,
+            13.125,
+            13.05
+          ],
+          "caixa_final_distribuicao": {
+            "n": 600,
+            "p10": 697043,
+            "p50": 748560,
+            "p90": 793638
+          },
+          "caixa_final_mediana": 748560,
+          "caixa_vencimento_mediana": 888560,
+          "cobrancas": [
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 356121,
+                "p50": 381062,
+                "p90": 407503
+              },
+              "caixa_na_decisao_mediana": 381062,
+              "chegaram": 600,
+              "dia": 28,
+              "numero": 1,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 216121,
+                "p50": 241062,
+                "p90": 267503
+              },
+              "saldo_apos_pagar_mediana": 241062
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 533118,
+                "p50": 576735,
+                "p90": 615175
+              },
+              "caixa_na_decisao_mediana": 576735,
+              "chegaram": 600,
+              "dia": 56,
+              "numero": 2,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 393118,
+                "p50": 436735,
+                "p90": 475175
+              },
+              "saldo_apos_pagar_mediana": 436735
+            },
+            {
+              "anteciparam": 0,
+              "caixa_na_decisao_distribuicao": {
+                "n": 600,
+                "p10": 837043,
+                "p50": 888560,
+                "p90": 933638
+              },
+              "caixa_na_decisao_mediana": 888560,
+              "chegaram": 600,
+              "dia": 84,
+              "numero": 3,
+              "pagaram": 600,
+              "saldo_apos_pagar_distribuicao": {
+                "n": 600,
+                "p10": 697043,
+                "p50": 748560,
+                "p90": 793638
+              },
+              "saldo_apos_pagar_mediana": 748560
+            }
+          ],
+          "docas_medias": 2.0,
+          "estado_em_regime": {
+            "docas_medias": 2.0,
+            "estruturas": {
+              "armazem": 1.0,
+              "cais": 0.0,
+              "escritorio": 0.0,
+              "guindaste": 0.0,
+              "patio": 1.0,
+              "pier_2": 1.0,
+              "pier_3": 0.0
+            },
+            "n": 600,
+            "niveis": {
+              "1": 1.0,
+              "2": 0.0,
+              "3": 0.0
+            },
+            "trabalhadores_medios": 2.0
+          },
+          "estruturas": {
+            "armazem": 1.0,
+            "cais": 0.0,
+            "escritorio": 0.0,
+            "guindaste": 0.0,
+            "patio": 1.0,
+            "pier_2": 1.0,
+            "pier_3": 0.0
+          },
+          "margem_bruta_em_regime": -28150.6,
+          "margem_em_regime": 111849.4,
+          "margem_por_semana": [
+            -86912.2133333333,
+            -97688.7066666667,
+            83046.7116666667,
+            -57534.9616666667,
+            -2168.67,
+            112450.541666667,
+            111933.943333333,
+            -27372.875,
+            113221.376666667,
+            113224.788333333,
+            112966.538333333,
+            -28150.6
+          ],
+          "niveis": {
+            "1": 1.0,
+            "2": 0.0,
+            "3": 0.0
+          },
+          "obra_por_semana": [
+            150000.0,
+            180000.0,
+            0.0,
+            0.0,
+            115000.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "parcela_por_semana": [
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0,
+            0.0,
+            0.0,
+            0.0,
+            140000.0
+          ],
+          "premio_da_escolha": 1.01744130658682,
+          "premio_em_regime": 1.01570687911842,
+          "taxa": 100.0,
+          "trabalhadores_medios": 2.0,
+          "travadas": 0,
+          "turno_de_antecipacao_mediana": 0,
+          "vitorias": 600
+        }
+      },
+      "semanas": 12,
+      "semente": 20260825,
+      "turnos_por_semana": 7,
+      "vencimentos": [
+        28,
+        56,
+        84
+      ]
+    }
+  },
+  "limites": [
+    "Bots não validam experiência humana.",
+    "O pátio continua dobrando a renda semanal dos píeres; só seu adicional de contêiner não é acionado pela pesca.",
+    "Fases 2/3 não estão implementadas; calibração do projetor não mede essas fases.",
+    "Crédito não é lucro, patrimônio não é caixa e receita do porto não é dinheiro pessoal."
+  ],
+  "verificacao": {
+    "save_version_do_codigo": 13,
+    "save_13": "autorizado pelo Bruno; T14 prova recusa de save 12 com reparos e cargueiro antes de aplicar campos, sem migração",
+    "repeticao_com_save_13": "09/10: 600 partidas por perfil e 10 por perfil com/sem autosave idênticas aos JSONs arquivados; calibração e sentinela passaram novamente",
+    "capturas": {
+      "tiros": 65,
+      "tamanho_png": [
+        720,
+        1280
+      ],
+      "cobertura_paineis": 17,
+      "tempos": 11,
+      "expressoes": 9,
+      "sentinela": "5 arquivos intactos byte a byte",
+      "inspecao": "Conjunto n1 de madeira após reparar píer 2 e armazém, bancadas dos níveis futuros e Construir inspecionados."
+    },
+    "regressao": "T14 acompanha os 84 dias; reintroduzir promoção por duas estruturas reprovou nos dias 8–84. Original restaurado byte a byte.",
+    "suites": {
+      "marcadores": [
+        "TODOS OS TESTES PASSARAM",
+        "DESIGN OK",
+        "AUDIO OK",
+        "FUMACA OK",
+        "REGISTRO OK",
+        "ASSET OK"
+      ],
+      "erros_de_script": 0
+    }
+  }
+}
