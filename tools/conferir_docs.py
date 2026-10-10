@@ -173,7 +173,7 @@ def _triplo_atual(regras):
 
 
 def _sem_continuacoes(texto):
-    """Junta as linhas partidas por `\` — sem isto um comando de workflow é
+    """Junta as linhas partidas por `\\` — sem isto um comando de workflow é
     lido como três linhas soltas, e um `grep` por ele não casa nada. Custou um
     verde de graça no próprio dia em que esta função foi escrita."""
     return re.sub(r"\\\n\s*", " ", texto)
@@ -478,6 +478,28 @@ def main():
                 falhas.append("%s/%s não está no índice do arquivo (README.md)" % (ARQUIVO, f))
     else:
         falhas.append("falta a pasta %s/" % ARQUIVO)
+
+    # ── 4b. Uma decisão por número ─────────────────────────────────────────
+    # Dois agentes numeram decisões em paralelo — o Claude Code e o Codex,
+    # cada um na sua branch —, e o `AGENTS.md` já regista que isso deu
+    # números repetidos. A regra era só escrita («confira a pasta na
+    # `main`»); quem cita `086` num briefing ou num comentário não sabe qual
+    # das duas é. O CI de um PR corre sobre a junção com a `main`, logo uma
+    # colisão com o que já foi fundido reprova ANTES do merge.
+    dir_decisoes = os.path.join(RAIZ, "docs/decisoes")
+    if os.path.isdir(dir_decisoes):
+        por_numero = {}
+        for f in sorted(os.listdir(dir_decisoes)):
+            m = re.match(r"(\d{3})-", f)
+            if m:
+                por_numero.setdefault(m.group(1), []).append(f)
+        for numero, nomes in sorted(por_numero.items()):
+            if len(nomes) > 1:
+                falhas.append(
+                    "docs/decisoes/: o número %s tem %d decisões (%s). Cada "
+                    "número é uma decisão só — renumere a mais nova para o "
+                    "próximo livre na `main`, e as citações dela junto."
+                    % (numero, len(nomes), ", ".join(nomes)))
 
     # ── 5. O texto responde pela fonte que a máquina corre ─────────────────
     falhas += conferir_fonte_operacional(docs)

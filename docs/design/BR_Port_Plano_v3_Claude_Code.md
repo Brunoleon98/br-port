@@ -1605,8 +1605,16 @@ segundos.
 
 ## 7. A fila
 
-**Prioridade em vigor desde 03/10, escolha do Bruno: a MELHORIA DE DESIGN.**
-As conversas seguintes começam por ela, à frente da máquina do contêiner e da
+**Prioridade em vigor desde 10/10, escolha do Bruno: a FILA DE MELHORIAS da
+revisão de 09/10, da mais crítica à mais tranquila, antes de voltar aos
+gráficos e ao jogo.** A fila, o critério e a prova de cada item estão na §6 de
+`docs/REVISAO_GERAL_2026-10-09.md` (M1 a M12); cada conversa assume o primeiro
+item aberto, um por sessão, e as decisões D1–D8 dessa página são dele. A
+frente 5 (o próximo recorte, em `BRIEFING_PROXIMA_CONVERSA_2026-10-09b.md`) e
+a melhoria de design abaixo esperam por ela, salvo pedido dele.
+
+**Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
+As conversas seguintes começavam por ela, à frente da máquina do contêiner e da
 frente 5. O pedido não diz o que corrigir — é o caso «diagnosticar uma queixa»
 do `CLAUDE.md`, que é Opus —, e por isso cada conversa abre com a pergunta do
 ESCOPO: que parte (o mapa e os props, a interface do HUD e dos painéis, as
@@ -1616,9 +1624,9 @@ telas narrativas, ou o design de jogo), com opções e a recomendada primeiro
 **A primeira parte foi o HUD e os painéis (04/10, `081`)**: o rodapé escuro,
 com o «AVANÇAR DIA» como único destaque; os trabalhadores nas colunas das
 docas, em cartão escuro com a vaga; e o Construir com o cabeçalho das
-famílias. **Aceite do Bruno em 04/10.** Ficou um achado por corrigir: a
-cobertura do `teste_design` depende do save que a ferramenta anterior deixou
-no disco (o D14 conferiu 179 casas ou 77).
+famílias. **Aceite do Bruno em 04/10.** O achado que ficou — a cobertura do
+`teste_design` dependia do save no disco — fechou em 09/10; o plano de
+execução da revisão desse dia está em `docs/REVISAO_GERAL_2026-10-09.md`.
 
 **A segunda parte foram as telas narrativas (04/10, `082`)**: as conversas do
 Sr. Ribeiro, do Arlindo e da Dona Cida falam como no celular — o balão e a

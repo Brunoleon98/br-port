@@ -166,6 +166,9 @@ binário do Godot. Ao citar custo, diga contra que denominador.
 de dividir o caderno, causando cinco falhas de design. A mesma base com LF
 passou. Conferir o blob e normalizar as quebras locais antes de testar; não
 reescrever a peça nem relaxar a guarda para esconder uma diferença do checkout.
+Desde 10/10 o `.gitattributes` (`* text=auto eol=lf`) faz isso em todo checkout
+novo; uma cópia Windows anterior a ele refaz-se, com tudo commitado, por
+`git rm -r --cached -q . && git reset --hard`.
 
 **Captura no Windows precisa conferir o tamanho do PNG** (`085`). A criação
 da janela encolheu 720×1280 para 720×1175, e o `canvas_items` produziu um PNG
@@ -434,11 +437,11 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    `capturar_tela.gd` já fazia `clear_save()` + semente + `new_game()`, o
    `capturar_cena.gd` não fazia, e o que prova o conserto é rodar a bateria
    DUAS vezes e exigir os mesmos bytes.
-   ⚠️ **E A SUÍTE DE DESIGN TAMBÉM O HERDA, e não o deriva:** o `_main` dela
-   nasce do save que a ferramenta anterior deixou, e o D14 conferiu 179 casas
-   contra prédios com o porto completo no disco e 77 em ruínas — verde nas
-   duas. A cobertura de uma guarda que lê o `_main` muda com a corrida de
-   antes; está por corrigir (`081`).
+   ⚠️ **E A SUÍTE DE DESIGN TAMBÉM O HERDAVA:** o `_main` dela nascia do save
+   que a ferramenta anterior deixou — 1114 asserções com o disco em ruínas e
+   1148 com o porto completo, verde nas duas (`081`). Desde 09/10 o `_rodar`
+   deriva o estado e o D14 monta ele próprio a ruína e o porto completo: os
+   três discos dão as mesmas linhas, uma a uma (`REVISAO_GERAL_2026-10-09.md`).
    ⚠️ **E A GUARDA QUE PULA O `setup()` CAVA O BURACO QUE O COMENTÁRIO AO LADO
    DESCREVE.** No mesmo dia: o `capturar_cena.gd` só chamava `setup()` quando
    havia argumentos extra na linha de comando, e os quatro painéis cujo

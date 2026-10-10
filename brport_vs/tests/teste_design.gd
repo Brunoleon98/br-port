@@ -144,6 +144,25 @@ func _rodar() -> void:
 		return
 	_ancoras = lido
 
+	# O ESTADO DERIVA-SE AQUI, E NÃO SE HERDA DO DISCO (`081`). O autoload faz
+	# `load_game()` antes de `new_game()`, e o `user://ferramentas/` é o mesmo
+	# para toda ferramenta: sem estas linhas o `_main` nascia do save que a
+	# corrida ANTERIOR deixou. Medido em 09/10, com o código igual: 1114
+	# asserções e 68 casas no D14 com o disco limpo ou em ruínas, 1148 e 102
+	# com um porto de sete estruturas no disco — e verde nas três. O D14 passou
+	# a montar ele próprio os dois estados (ver lá), e estas linhas seguram o
+	# resto: tiradas, com o porto completo no disco, a contagem fica igual mas
+	# o D6 mede OUTRO HUD — o botão do Construir a 171 px em vez de 233, os
+	# cartões a 104 px de altura em vez de 84. Com elas, os três discos dão as
+	# mesmas linhas, uma a uma — conferido em 09/10 e de novo em 10/10, depois
+	# do #110 (1223 asserções; a versão sem a derivação dava 1119 ou 1153).
+	var GS: Node = root.get_node("GameState")
+	GS.clear_save()
+	GS._rng.seed = 20260903
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
 	_main = load(CENA).instantiate()
 	root.add_child(_main)
 
@@ -914,7 +933,56 @@ func _d14_vila() -> void:
 				"a de trás acaba em %.2f e a da frente começa em %.2f"
 				% [fim_a, ini_b])
 
-	# (2) nenhuma casa debaixo da silhueta de um prédio do pátio.
+	# (2) nenhuma casa debaixo da silhueta de um prédio do pátio — nos DOIS
+	# estados em que o prédio existe. O mesmo nó troca de textura (ruína e
+	# pronto), e o vão da vila tem de servir aos dois: a ruína é MENOS prédio,
+	# o pronto é o que mais tapa. Até 09/10 o bloco via só o estado que o disco
+	# trazia (`081`); hoje monta os dois, e devolve o estado da partida no fim.
+	var GS: Node = root.get_node("GameState")
+	var estruturas_antes: Array = GS.estruturas.duplicate()
+	GS.estruturas = []
+	_main.call("_refresh_estruturas")
+	var em_ruina := _d14_predios_sobre_a_vila(lotes, "em ruína")
+	GS.estruturas = GS.ESTRUTURAS.keys()
+	_main.call("_refresh_estruturas")
+	var completo := _d14_predios_sobre_a_vila(lotes, "porto completo")
+	GS.estruturas = estruturas_antes
+	_main.call("_refresh_estruturas")
+	# O caso que declara um estado prova que o obteve (`043`): com o porto
+	# completo, pelo menos um prédio a mais passa o corte de silhueta. Se a
+	# montagem não chegasse aos nós, as duas contagens sairiam iguais e o
+	# «porto completo» seria a ruína com outro nome.
+	_confere("D14: o porto completo põe mais prédio grande sobre a vila do que a ruína",
+		completo > em_ruina,
+		"%d prédios em ruína e %d com o porto completo — a troca de textura "
+		% [em_ruina, completo] + "não chegou ao cenário")
+
+	# (3) as duas fileiras separam-se por mais de um telhado.
+	var meia_larg := float(_ancoras["projecao"]["meia_larg"])
+	#
+	# ⚠️ E A COMPARAÇÃO É DENTRO DO MESMO DEGRAU. A primeira versão tirou o
+	# `mx` mínimo da fileira da frente e o máximo da de trás sobre TODOS os
+	# lotes — e o cais avança 4 unidades por degrau, então isso comparava a
+	# vila do degrau 0 com a do degrau 3 e dava -274px. As duas faixas saem do
+	# gerador, uma por degrau, exatamente para não ter de as reconstruir aqui.
+	for faixa in _ancoras.get("faixas", []):
+		var vila: Array = faixa["vila"]
+		var fundo_: Array = faixa["vila_fundo"]
+		var separacao: float = (float(vila[0]) - float(fundo_[0])) * meia_larg
+		var telhado: float = (float(vila[1]) - float(vila[0])
+			+ TELHADO_FOLGA) * meia_larg
+		_confere("no degrau my=%s a fileira de trás sai de trás da da frente"
+			% [faixa["my"]],
+			separacao > telhado,
+			"%.0fpx de separação para um telhado de %.0fpx — as duas fileiras "
+			% [separacao, telhado] + "leem como um borrão de telha")
+
+	_d14_completo = true
+
+
+# A pergunta (2) do D14 sobre o cenário COMO ESTÁ: devolve quantos prédios
+# passaram o corte de silhueta, para quem chama provar que montou o estado.
+func _d14_predios_sobre_a_vila(lotes: Array, estado: String) -> int:
 	var cenario := _main.get_node("MapaWrap/Cenario")
 	var alt := float(_ancoras["projecao"]["alt_cais"])
 	var meia_larg := float(_ancoras["projecao"]["meia_larg"])
@@ -945,34 +1013,16 @@ func _d14_vila() -> void:
 			# coluna da tela reprovaria casas que estão 273px abaixo.
 			var tapa := dx < float(usado.size.x) * 0.30 \
 				and dy >= 0.0 and dy <= float(usado.size.y)
-			_confere("%s não tapa a casa em my=%.2f" % [no.name, float(l["my"])],
+			_confere("%s (%s) não tapa a casa em my=%.2f"
+				% [no.name, estado, float(l["my"])],
 				not tapa,
 				"a casa cai a %.0fpx da coluna do prédio e %.0fpx acima da base "
 				% [dx, dy] + "dele, num sprite de %dx%d" % [usado.size.x, usado.size.y])
-	_confere("houve prédio grande para conferir contra a vila", conferidos > 0,
+	_confere("houve prédio grande para conferir contra a vila (%s)" % estado,
+		conferidos > 0,
 		"nenhum prop passou de %.0fpx — o filtro comeu tudo"
 		% (SILHUETA_QUE_EXIGE_PEGADA_MUNDO * meia_larg))
-
-	# (3) as duas fileiras separam-se por mais de um telhado.
-	#
-	# ⚠️ E A COMPARAÇÃO É DENTRO DO MESMO DEGRAU. A primeira versão tirou o
-	# `mx` mínimo da fileira da frente e o máximo da de trás sobre TODOS os
-	# lotes — e o cais avança 4 unidades por degrau, então isso comparava a
-	# vila do degrau 0 com a do degrau 3 e dava -274px. As duas faixas saem do
-	# gerador, uma por degrau, exatamente para não ter de as reconstruir aqui.
-	for faixa in _ancoras.get("faixas", []):
-		var vila: Array = faixa["vila"]
-		var fundo_: Array = faixa["vila_fundo"]
-		var separacao: float = (float(vila[0]) - float(fundo_[0])) * meia_larg
-		var telhado: float = (float(vila[1]) - float(vila[0])
-			+ TELHADO_FOLGA) * meia_larg
-		_confere("no degrau my=%s a fileira de trás sai de trás da da frente"
-			% [faixa["my"]],
-			separacao > telhado,
-			"%.0fpx de separação para um telhado de %.0fpx — as duas fileiras "
-			% [separacao, telhado] + "leem como um borrão de telha")
-
-	_d14_completo = true
+	return conferidos
 
 
 func _mundo(pos: Vector2, altura: float) -> Vector2:

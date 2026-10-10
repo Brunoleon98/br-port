@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 09/10/2026 — obras dos reparos básicos (`087`)
+> **Última atualização:** 10/10/2026 — revisão geral e fila de melhorias
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -119,10 +119,10 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | **Design — as telas narrativas** (04/10, `082`) | As conversas com o balão e a placa de quem fala, balões seguidos e fala regular (**D44**); o fim de fase em duas páginas do diário, com o recibo (**D22**). **Aceite** |
 | **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); o Construir com o cabeçalho das famílias. **Aceite** |
 
-**A §7.1 fechou (R1–R9).** A prioridade, escolha do Bruno, é a **melhoria de
-design**: o HUD (`081`), as telas narrativas (`082`) e a fila no fundeadouro
-(`083`), aceites; a frente 5 entregou a reescala (`084`) e continua com as três
-cobranças/reparos (`085`), a madeira (`086`) e as obras da Fase 1 (`087`, §7 do plano).
+**A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
+**fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
+mais tranquila; depois voltam o design e a frente 5, que já entregou a reescala,
+as cobranças, a madeira e as obras (`084`–`087`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -229,7 +229,7 @@ podre (A4) — em `HISTORICO.md`.
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
 | `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desce ao TEMPO (`051`) e à CARA (`060`), sem lacuna declarada |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
-| `docs/REVISAO_GERAL_2026-09-17.md` | Revisão geral de 17/09: defeitos e melhorias, com evidência |
+| `docs/REVISAO_GERAL_*.md` | Revisões gerais (17/09; 09/10 com plano de execução), com evidência |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
 | `docs/gdd/` | **O GDD 7 legível**, 80 páginas GERADAS do `.jsx`, uma seção por arquivo. Não editar. Congelado antes da reescala: onde divergir do jogo, manda o código |
 | `tools/gerar_gdd_md.py` | Gera as acima. Recusa-se a adivinhar: forma de dado que não conheça **reprova**, em vez de sumir do markdown |
