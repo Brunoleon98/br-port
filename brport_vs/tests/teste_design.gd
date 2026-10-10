@@ -154,7 +154,8 @@ func _rodar() -> void:
 	# resto: tiradas, com o porto completo no disco, a contagem fica igual mas
 	# o D6 mede OUTRO HUD — o botão do Construir a 171 px em vez de 233, os
 	# cartões a 104 px de altura em vez de 84. Com elas, os três discos dão as
-	# mesmas 1218 linhas.
+	# mesmas linhas, uma a uma — conferido em 09/10 e de novo em 10/10, depois
+	# do #110 (1223 asserções; a versão sem a derivação dava 1119 ou 1153).
 	var GS: Node = root.get_node("GameState")
 	GS.clear_save()
 	GS._rng.seed = 20260903

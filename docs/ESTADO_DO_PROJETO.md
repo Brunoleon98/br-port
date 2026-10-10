@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 09/10/2026 — obras dos reparos básicos (`087`)
+> **Última atualização:** 10/10/2026 — revisão geral e fila de melhorias
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -119,10 +119,10 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | **Design — as telas narrativas** (04/10, `082`) | As conversas com o balão e a placa de quem fala, balões seguidos e fala regular (**D44**); o fim de fase em duas páginas do diário, com o recibo (**D22**). **Aceite** |
 | **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); o Construir com o cabeçalho das famílias. **Aceite** |
 
-**A §7.1 fechou (R1–R9).** A prioridade, escolha do Bruno, é a **melhoria de
-design**: o HUD (`081`), as telas narrativas (`082`) e a fila no fundeadouro
-(`083`), aceites; a frente 5 entregou a reescala (`084`) e continua com as três
-cobranças/reparos (`085`), a madeira (`086`) e as obras da Fase 1 (`087`, §7 do plano).
+**A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
+**fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
+mais tranquila; depois voltam o design e a frente 5, que já entregou a reescala,
+as cobranças, a madeira e as obras (`084`–`087`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
