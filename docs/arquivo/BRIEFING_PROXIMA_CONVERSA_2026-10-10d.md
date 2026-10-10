@@ -21,8 +21,9 @@ o primeiro item sem decisão pendente é o M5, os planos enxutos.
 ```
 
 O D8 foi respondido em 10/10 — avisar, «por enquanto» — e está na `090` e na
-§6.0 da revisão. O achado novo O7 (o rodapé conta «3 disponíveis» nos dias 83
-e 84) espera uma pergunta ao Bruno, sem item na fila.
+§6.0 da revisão. O achado O7 (o rodapé contava «3 disponíveis» nos dias 83 e
+84) foi feito no mesmo PR, pela regra recomendada: conta o que o calendário
+deixa comprar, sem o dinheiro (`090`).
 
 Se o M4 avançar: a prova «nada se apaga» conta os avisos ⚠️ e os títulos de
 regra no início da própria sessão — os 279 da revisão são de 09/10, e a `090`

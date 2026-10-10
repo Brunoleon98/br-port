@@ -92,6 +92,33 @@ positivo: com o prazo do píer a 1 dia e o código novo, o cartão diz «1 dia d
 obra», a mensagem «1 dia; pronto no dia 2», e o F18 desloca sozinho a
 fronteira para o dia 84 e passa.
 
+## O O7, no mesmo PR
+
+O rodapé do Construir dizia «3 disponíveis» nos dias 83 e 84, com o painel a
+responder «Não termina nesta fase.» ao pátio (e no 84 aos três): contava o que
+o `desbloqueio_da_estrutura()` abre, não o que se compra hoje. Achado nesta
+sessão, levado ao Bruno como O7; ele pediu-o feito no PR sem dizer a regra, e
+a escolhida foi a recomendação, que ele pode vetar antes de fundir:
+
+- **«Disponível» é o que o CALENDÁRIO deixa comprar hoje** — aberto e ainda a
+  terminar nesta fase. O `obra_termina_na_fase()` é essa condição num lugar
+  só, lida pelo `impedimento_estrutura()` e pelo rodapé.
+- **O dinheiro não conta.** Quem não pode pagar lê «Faltam R$…» no cartão; um
+  rodapé que descesse a zero por falta de caixa esconderia que há reparo à
+  espera.
+
+**A prova** é um caminho do F18: dos dias da véspera do primeiro último dia ao
+fim da fase, o número do rodapé tem de ser o número de botões «Construir ·»
+que o PAINEL monta, com dinheiro de sobra — a segunda fonte é o painel, e não
+a função que o rodapé lê. A contagem tem de mudar lá dentro (3, 3, 2, 0); e
+com o caixa a zero o rodapé não desce. Três mutantes:
+
+| Mutante | Quem reprova |
+|---|---|
+| rodapé só pelo calendário (o defeito) | F18 rodapé, dias 83 e 84, e «a contagem muda» |
+| rodapé a contar o dinheiro | F18 rodapé, só a conferência sem caixa |
+| «termina na fase» um dia mais cedo | o F18 da obra sem uso (12 asserções) — é a regra «recusar» do D8 |
+
 **Como se mediu depressa:** um script de bancada que estende o
 `teste_fumaca.gd` e troca o `_rodar()` por só os blocos em causa corre em
 menos de um segundo, contra minutos da suíte inteira. Os mutantes corriam
@@ -100,11 +127,6 @@ entre um e outro, e a suíte inteira correu outra vez no fim.
 
 ## O que fica de fora
 
-- **O rodapé conta «3 disponíveis» no dia 83 e no 84**, com o pátio (e no 84
-  os três) a dizer «Não termina nesta fase.» no painel. Ele conta o que o
-  `desbloqueio_da_estrutura()` abre, e não o que se pode comprar hoje. Mudar
-  isso muda o que «disponível» quer dizer — e se a falta de dinheiro também
-  conta — e é pergunta para o Bruno (revisão, §7, O7).
 - O aviso não fala de dinheiro: a obra do dia 83 sai do caixa na véspera da
   terceira cobrança. É verdade de toda compra antes de um vencimento, e a
   barra da parcela já o mostra.

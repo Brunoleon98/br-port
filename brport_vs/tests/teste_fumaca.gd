@@ -4125,8 +4125,10 @@ func _f18_a_obra_prometida() -> void:
 	# Os três de hoje; a contagem só garante que a derivação achou alguém.
 	_confere("F18: há reparos com prazo de obra nesta fase", reparos.size() >= 3,
 		str(reparos))
+	var ultimos := {}
 	for id in reparos:
 		var ultimo := _f18_ultimo_dia_de_compra(id)
+		ultimos[id] = ultimo
 		if ultimo < 2:
 			_confere("F18 %s: há um último dia de compra e uma véspera dele" % id, false,
 				"último dia %d" % ultimo)
@@ -4135,6 +4137,7 @@ func _f18_a_obra_prometida() -> void:
 		if not cumpriu:
 			continue
 		await _f18_com_uso(id, ultimo - 1)
+	await _f18_rodape(ultimos)
 	GS.message.disconnect(ouvinte)
 	GS.clear_save()
 	GS._rng.seed = F10_SEMENTE
@@ -4292,3 +4295,69 @@ func _f18_com_uso(id: String, dia: int) -> void:
 	_confere("F18 %s: de pé no dia %d e não antes" % [id, prometido],
 		GS.turn == prometido and GS.tem_estrutura(id) and not na_vespera,
 		"dia %d, de pé %s, na véspera %s" % [GS.turn, str(GS.tem_estrutura(id)), str(na_vespera)])
+
+
+
+# O RODAPÉ CONTA O QUE O PAINEL DEIXA COMPRAR (O7, `090`). Até 10/10 ele
+# contava só o que o calendário abria, e no dia 84 dizia «3 disponíveis» com
+# os três cartões a responder «Não termina nesta fase.».
+#
+# ⚠️ A SEGUNDA FONTE É O PAINEL — os botões «Construir ·» que ele monta —, e
+# não a função que o rodapé lê, senão a guarda seria o espelho dela. Com
+# dinheiro de sobra e sem obra a andar, um botão só falta pelo calendário, que
+# é a pergunta. Os dias vão da véspera do primeiro último dia ao fim da fase:
+# a contagem tem de MUDAR lá dentro (3, 2, 0), senão a fronteira não foi
+# atravessada.
+#
+# E o dinheiro, à parte, que é a outra metade da regra: sem caixa o painel
+# tira os botões («Faltam R$…») e o rodapé NÃO desce — ele diz o que o
+# calendário deixa, e quem não pode pagar lê o porquê no cartão.
+func _f18_rodape(ultimos: Dictionary) -> void:
+	var primeiro: int = GS.TURNS_TOTAL
+	for id in ultimos:
+		primeiro = mini(primeiro, int(ultimos[id]) - 1)
+	_f18_fim_de_fase(primeiro)
+	GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
+	var main: Node = (load("res://scenes/Main.tscn") as PackedScene).instantiate()
+	root.add_child(main)
+	await _f8_esperar()
+	var contagens := {}
+	for dia in range(primeiro, GS.TURNS_TOTAL + 1):
+		GS.turn = dia
+		GS.obra_em_andamento = {}
+		GS.cash = 50000000
+		var rodape := _f18_contagem_do_rodape(main)
+		var painel: Node = await _f10_abrir(F18_CONSTRUIR, [])
+		var botoes := 0
+		for b in painel.find_children("*", "Button", true, false):
+			if (b as Button).text.begins_with("Construir ·"):
+				botoes += 1
+		_f10_fechar(painel)
+		contagens[rodape] = true
+		_confere("F18 rodapé, dia %d: conta %d disponíveis e o painel tem %d para construir"
+			% [dia, rodape, botoes], rodape == botoes)
+	_confere("F18 rodapé: a contagem muda dentro dos dias percorridos",
+		contagens.size() >= 2, str(contagens.keys()))
+	GS.turn = primeiro
+	GS.cash = 50000000
+	var com_dinheiro := _f18_contagem_do_rodape(main)
+	GS.cash = 0
+	var sem_dinheiro := _f18_contagem_do_rodape(main)
+	_confere("F18 rodapé, dia %d: sem dinheiro o rodapé não desce (%d com, %d sem)"
+		% [primeiro, com_dinheiro, sem_dinheiro],
+		com_dinheiro > 0 and sem_dinheiro == com_dinheiro)
+	main.free()
+
+
+# O número do rodapé do Construir, lido no botão do `Main`: «N disponíveis»,
+# ou zero quando ele manda «ver estruturas». −1 se não for nenhum dos dois,
+# para um texto novo reprovar em vez de passar por zero.
+func _f18_contagem_do_rodape(main: Node) -> int:
+	main._refresh_hud()
+	var texto := String(main._upgrade_button.text)
+	var re := RegEx.new()
+	re.compile("(\\d+) disponíve")
+	var achou := re.search(texto)
+	if achou != null:
+		return int(achou.get_string(1))
+	return 0 if texto.contains("ver estruturas") else -1

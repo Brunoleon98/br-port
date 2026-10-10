@@ -1851,7 +1851,7 @@ func impedimento_estrutura(id: String) -> String:
 		return bloqueio
 	if not obra_em_andamento.is_empty():
 		return "Conclua a obra em andamento primeiro."
-	if turn + dias_da_obra(id) > TURNS_TOTAL + 1:
+	if not obra_termina_na_fase(id):
 		return "Não termina nesta fase."
 	var def: Dictionary = ESTRUTURAS[id]
 	var requer := String(def["requer"])
@@ -1920,6 +1920,16 @@ func comprar_estrutura(id: String) -> bool:
 
 func dias_da_obra(id: String) -> int:
 	return int(DIAS_DAS_OBRAS.get(id, 0))
+
+
+# A OBRA QUE, COMEÇADA HOJE, AINDA ACABA NESTA FASE — contando com o fecho do
+# último dia, que a `087` aceita. Num lugar só porque são dois os leitores: o
+# `impedimento_estrutura()`, que decide o botão do Construir, e o rodapé do
+# `Main`, que conta os reparos «disponíveis». Até 10/10 o rodapé contava só o
+# que o calendário abria e dizia «3 disponíveis» no dia 84, com o painel a
+# responder «Não termina nesta fase.» aos três (O7, `090`).
+func obra_termina_na_fase(id: String) -> bool:
+	return turn + dias_da_obra(id) <= TURNS_TOTAL + 1
 
 
 # A OBRA QUE SÓ FICA PRONTA NO FECHO DO ÚLTIMO DIA. A `087` aceita-a — o limite

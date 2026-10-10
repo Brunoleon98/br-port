@@ -257,7 +257,8 @@ leem dele; a contagem passa pelo `concordar`, em oito sítios e não nos dois
 nomeados. **Prova:** o F18 do `teste_fumaca`, relacional, dos dois lados da
 fronteira; o F9 alargado à forma «`%d` + plural» e ao ternário de palavra
 inteira; dezassete mutantes. O primeiro item aberto passa a ser o **M4**, que
-espera o D2; o primeiro sem decisão pendente é o **M5**.
+espera o D2; o primeiro sem decisão pendente é o **M5**. No mesmo PR, o O7: o rodapé do
+Construir conta o que o calendário deixa comprar hoje, sem o dinheiro.
 
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
@@ -463,7 +464,7 @@ Os achados, do mais grave ao mais leve. Nenhum quebra o jogo hoje.
 | O4 | **[feito — `090`]** «`%d dias de obra`» e «`%d dias; pronto no dia %d`» não passam pelo `Narrativa.concordar` (`037`). Com 2 e 3 dias o texto sai certo, e com um prazo de 1 dia sairia «1 dias» sem guarda | baixa, latente | M3 |
 | O5 | **[feito — `090`, avisa]** A obra começada no dia 83 fica pronta no fecho do 84, e é aceita: está na `087` e no T15 («pode terminar no fechamento do dia 84»). A mensagem diz «pronto no dia 85» numa fase de 84 dias, e o jogador paga por algo que esta fase não deixa usar | pergunta ao Bruno | D8, M3 |
 | O6 | **[feito — `089`]** O `load_game()` guardava a obra com os números do JSON (`float`). Funciona porque toda leitura passa por `int()`; normalizar na leitura evita que um uso futuro tropece num `8.0` onde se esperava `8` (como chave de dicionário, por exemplo) | baixa | M2 |
-| O7 | Achado no M3 (`090`): o rodapé diz «Construir · 3 disponíveis» nos dias 83 e 84, quando o painel mostra o pátio (e no 84 os três) com «Não termina nesta fase.». Ele conta o que o `desbloqueio_da_estrutura()` abre, não o que se compra hoje; mudar isso decide o que «disponível» quer dizer, e se a falta de dinheiro conta | baixa, dado enganoso no fim da fase | pergunta ao Bruno |
+| O7 | **[feito — `090`: conta o que o calendário deixa comprar, sem o dinheiro]** Achado no M3: o rodapé diz «Construir · 3 disponíveis» nos dias 83 e 84, quando o painel mostra o pátio (e no 84 os três) com «Não termina nesta fase.». Ele conta o que o `desbloqueio_da_estrutura()` abre, não o que se compra hoje; mudar isso decide o que «disponível» quer dizer, e se a falta de dinheiro conta | baixa, dado enganoso no fim da fase | pergunta ao Bruno |
 
 ---
 
