@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 10/10/2026 — revisão geral e fila de melhorias
+> **Última atualização:** 10/10/2026 — M1 da fila: o gravador conta a obra pronta (`088`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -117,11 +117,10 @@ itens param à espera do Bruno. Aqui fica só a posição.
 |---|---|
 | **Design — a fila no fundeadouro** (04–05/10, `083`) | Escolher quem atraca (**T4d**, **T5h**, **D9**); sem «Alocar todos»; contratos a 0,72; os textos dos cartões são funções que o **D18** mede. **Aceite** |
 | **Design — as telas narrativas** (04/10, `082`) | As conversas com o balão e a placa de quem fala, balões seguidos e fala regular (**D44**); o fim de fase em duas páginas do diário, com o recibo (**D22**). **Aceite** |
-| **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); o Construir com o cabeçalho das famílias. **Aceite** |
 
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila; depois voltam o design e a frente 5, que já entregou a reescala,
+mais tranquila — o **M1** fechou (`088`), o próximo é o **M2**; depois voltam o design e a frente 5, que já entregou a reescala,
 as cobranças, a madeira e as obras (`084`–`087`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
@@ -154,9 +153,9 @@ podre (A4) — em `HISTORICO.md`.
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
 | `brport_vs/autoload/Registro.gd` | Gravador `.jsonl`; nasce desarmado, e quem o arma é o jogo |
-| `tools/ler_registros.py` | **O leitor** — resume N partidas e põe o jogador MEDIDO ao lado dos perfis supostos |
+| `tools/ler_registros.py` | **O leitor** — resume N partidas e põe o jogador MEDIDO ao lado dos perfis supostos; dia pago → pronto e semanas do cabeçalho (`088`) |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
-| `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, e que o gravador não grava desarmado. Espera `REGISTRO OK` |
+| `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`). O **D34** pergunta de ONDE vem um stylebox, que é o que nenhuma régua de texto sabe fazer (`045`); espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, e **toda fala escrita chega ao jogo** |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |

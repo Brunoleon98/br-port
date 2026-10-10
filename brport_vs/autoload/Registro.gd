@@ -66,7 +66,13 @@ extends Node
 # errado estraga a partida em curso, um registro velho continua a ser um dado
 # que alguém produziu jogando. O leitor lê o que reconhece e DIZ o que deixou
 # de fora.
-const VERSAO := 1
+#
+# A 2 (10/10, M1 da revisão de 09/10, `088`) acrescentou a linha `obra_pronta`
+# e o `turnos_por_semana` no cabeçalho. É a versão, e não a falta da linha,
+# que diz ao leitor se a obra acabou: numa partida da 1 o dia pronto não está
+# no arquivo — antes da `087` a compra ERA a obra pronta, depois dela não —, e
+# na 2 a linha que falta quer dizer «não acabou até ao fim do registro».
+const VERSAO := 2
 
 # A pasta sai do `ArmazemLocal` (`061`): o `teste_registro` e o
 # `gravar_partidas` APAGAM tudo o que lá está, e o `_podar()` de cada tiro
@@ -123,6 +129,7 @@ func _ready() -> void:
 	_GS.turn_advanced.connect(_ao_turno)
 	_GS.semana_fechada.connect(_ao_fim_de_semana)
 	_GS.estrutura_comprada.connect(_ao_comprar)
+	_GS.obra_concluida.connect(_ao_concluir)
 	_GS.rival_offer_triggered.connect(_ao_abrir_oferta)
 	_GS.atracou.connect(_ao_atracar)
 	_GS.negociacao_resolvida.connect(_ao_negociar)
@@ -186,6 +193,11 @@ func armar() -> void:
 		# lido daqui a três reescalas mede-se contra os números errados — o
 		# mesmo defeito que a tabela dos números existe para resolver.
 		"turnos_totais": _GS.TURNS_TOTAL,
+		# Sem ele o leitor tirava a primeira e a última semana de `t <= 8` e
+		# `t > 24`, as semanas de 8 dias numa fase de 4: com 12 de 7 (`085`),
+		# a «semana 4» que publicava ia da 4 à 12. Registro sem o campo, o
+		# leitor diz que não sabe em vez de supor.
+		"turnos_por_semana": _GS.TURNS_PER_WEEK,
 		"parcela": _GS.PARCELA_AMOUNT,
 		"caixa_inicial": _GS.START_CASH,
 	})
@@ -321,6 +333,9 @@ func _ao_fim_de_semana(resumo: Dictionary) -> void:
 	_gravar(linha)
 
 
+# Desde a `087` o `estrutura_comprada` é o PAGAMENTO: a obra começa aqui e só
+# fica pronta dias depois, no `obra_concluida` (`_ao_concluir`). O nome da
+# linha ficou `obra` para o leitor continuar a ler os registros da versão 1.
 func _ao_comprar(id: String) -> void:
 	_gravar({
 		"e": "obra",
@@ -338,6 +353,18 @@ func _ao_comprar(id: String) -> void:
 		# `id` que não exista rebenta em vez de mentir.
 		"custo": int(_GS.ESTRUTURAS[id]["custo"]) if _GS.ESTRUTURAS.has(id) else -1,
 	})
+
+
+# O dia em que a obra fica PRONTA, que é o que levanta o porto. Até 10/10 o
+# gravador só ouvia o pagamento, e o leitor publicava esse dia como «o porto
+# que se levanta», contando como feita a obra a meio. É a sonda presa a um
+# ponto de passagem que deixou de passar tudo (`CLAUDE.md`, regra 7).
+#
+# O `t` é o turno de agora, que já é o dia NOVO: o `advance_turn()` soma o dia
+# antes de concluir a obra, e é este o «pronto no dia N» que a mensagem da
+# compra prometeu.
+func _ao_concluir(id: String) -> void:
+	_gravar({"e": "obra_pronta", "id": id, "t": _GS.turn})
 
 
 # Desde a `083` a oferta cai num barco AO LARGO, e o número é o lugar dele na

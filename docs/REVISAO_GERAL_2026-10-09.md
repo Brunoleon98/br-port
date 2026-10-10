@@ -237,10 +237,16 @@ As três higienes da §4: o `teste_design` que deriva o estado, o
 suítes, o `conferir_docs.py` e os mutantes registados, conferidos de novo
 depois de fundidos o #109 e o #110.
 
+**M1, em 10/10 (`088`):** o gravador na versão 2 grava a obra pronta e o
+calendário; o leitor publica dia pago → dia pronto e as semanas do cabeçalho,
+com «não sei» onde o registro não diz. **Prova:** o R7 do `teste_registro` e o
+autoteste do leitor, que corre antes de toda leitura; treze mutantes, todos a
+reprovar. O primeiro item aberto passa a ser o **M2**.
+
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
-**[execução · curta · critério 1]** A ferramenta do A7 publica hoje dois
-dados errados (§7, O2 e O3).
+**[feito em 10/10 — `088`]** ~~[execução · curta · critério 1]~~ A ferramenta
+do A7 publicava dois dados errados (§7, O2 e O3).
 - **O que muda:**
   - o `Registro.gd` passa a ouvir também o `obra_concluida` e grava
     `{"e": "obra_pronta", "id", "t"}`;

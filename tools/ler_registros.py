@@ -26,13 +26,23 @@ Uso:
     python3 tools/ler_registros.py --pasta ~/Downloads/registros
     pbpaste | python3 tools/ler_registros.py -        # colado do telefone
 
+    python3 tools/ler_registros.py --autoteste      # só a prova do leitor
+
 O `-` existe porque no telefone o registro sai pela área de transferência (o
 `user://` do Android é privado da aplicação). Coladas várias partidas de
 seguida, elas separam-se sozinhas: cada `"e":"abriu"` começa uma nova.
 
+O AUTOTESTE CORRE ANTES DE TODA LEITURA, e sem ele não há leitura: um leitor
+que tira a semana errada publica um número plausível, e ninguém o confere à
+mão (é o `--autoteste` do `medir_audio.py`, `CLAUDE.md`). Ele lê uma partida
+fabricada de 84 dias e 7 por semana e exige a primeira e a última semana
+certas, o «não sei» de quem não traz o calendário e o dia pronto de cada obra.
+
 Espera `LEITURA OK` na última linha.
 """
 import argparse
+import contextlib
+import io
 import json
 import os
 import statistics
@@ -43,7 +53,18 @@ import sys
 # que ali é o oposto: um save errado estraga a partida em curso, um registro
 # velho continua a ser um dado que alguém produziu jogando. Lê-se o que se
 # reconhece e DIZ-SE o que ficou de fora.
-VERSAO_CONHECIDA = 1
+VERSAO_CONHECIDA = 2
+
+# A primeira versão do gravador que ouve o `obra_concluida` (`088`). É a
+# VERSÃO, e não a ausência da linha, que separa «não acabou» de «não sei»: na
+# versão 1 a conclusão nunca foi gravada — antes da `087` a compra ERA a obra
+# pronta, e depois dela não.
+VERSAO_COM_OBRA_PRONTA = 2
+
+# O dia pronto de uma obra que o registro não sabe dizer. Um objeto e não um
+# número: zero ou −1 liam-se como dia (`CLAUDE.md`, «zero é o pior valor de
+# omissão»), e `None` já quer dizer «não acabou até ao fim do registro».
+NAO_SEI = object()
 
 # O que o simulador de balanceamento ASSUME sobre o jogador, para a última
 # seção poder pôr medida ao lado de palpite. Copiado à mão de
@@ -93,6 +114,96 @@ def so(partida, nome):
     return [e for e in partida["eventos"] if e.get("e") == nome]
 
 
+def _inteiro_positivo(v):
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, int) and v > 0:
+        return v
+    if isinstance(v, float) and v.is_integer() and v > 0:
+        return int(v)
+    return None
+
+
+def calendario(cabecalho):
+    """`(turnos_por_semana, turnos_totais)` do cabeçalho, ou `None`.
+
+    ⚠️ SEM VALOR DE OMISSÃO, de propósito. O leitor tirava as semanas de
+    `t <= 8` e `t > 24`, que eram as de 8 dias numa fase de 4: com 12 de 7
+    (`085`), a «semana 4» publicada ia da 4 à 12, sem erro nenhum. Supor 7
+    num registro antigo repetia o defeito com outro número — o `.get(chave,
+    omissão)` do `CLAUDE.md`. Quem não traz o campo fica a «não sei».
+    """
+    tps = _inteiro_positivo(cabecalho.get("turnos_por_semana"))
+    total = _inteiro_positivo(cabecalho.get("turnos_totais"))
+    if tps is None or total is None:
+        return None
+    return tps, total
+
+
+def dia_do_tempo(ev):
+    """O dia em que o jogador gastou o `ms` de uma linha `turno`.
+
+    A linha sai quando o dia VIRA, com o `t` do dia NOVO; o tempo que ela leva
+    é o do dia que acabou de fechar. Lido pelo `t`, o primeiro dia jogado
+    saía como «t2» e a primeira semana de 7 ficava com seis dias.
+    """
+    return int(ev["t"]) - 1
+
+
+def tempos_das_pontas(partidas):
+    """Os tempos por dia da primeira e da última semana, cada partida pelo
+    calendário do SEU cabeçalho — um registro de antes de uma reescala não se
+    mede com as semanas de hoje."""
+    primeira, ultima, semanas, sem_calendario = [], [], set(), 0
+    for p in partidas:
+        cal = calendario(p["cabecalho"])
+        if cal is None:
+            sem_calendario += 1
+            continue
+        tps, total = cal
+        n = -(-total // tps)            # a última semana, mesmo que incompleta
+        semanas.add(n)
+        for e in so(p, "turno"):
+            if "ms" not in e:
+                continue
+            dia = dia_do_tempo(e)
+            if 1 <= dia <= tps:
+                primeira.append(int(e["ms"]))
+            if (n - 1) * tps < dia <= total:
+                ultima.append(int(e["ms"]))
+    return {"primeira": primeira, "ultima": ultima, "semanas": semanas,
+            "sem_calendario": sem_calendario}
+
+
+def obras_de(partida):
+    """Uma entrada por obra PAGA: `id`, dia `pago` e dia `pronto`.
+
+    Desde a `087` pagar não é levantar: a obra leva dias. O `pronto` é o dia da
+    linha `obra_pronta` que casa com ela, `None` se não acabou até ao fim do
+    registro, ou `NAO_SEI` numa versão que não a grava.
+
+    Também devolve as prontas SEM pagamento neste arquivo: quem fecha a
+    aplicação a meio da obra e volta paga num arquivo e conclui no outro.
+    """
+    sabe = int(partida["cabecalho"].get("versao", 0)) >= VERSAO_COM_OBRA_PRONTA
+    prontas = [(e["id"], int(e["t"])) for e in so(partida, "obra_pronta")]
+    usadas = set()
+    obras = []
+    for e in so(partida, "obra"):
+        pago = int(e["t"])
+        pronto = NAO_SEI
+        if sabe:
+            pronto = None
+            for i, (oid, t) in enumerate(prontas):
+                if i not in usadas and oid == e["id"] and t >= pago:
+                    pronto = t
+                    usadas.add(i)
+                    break
+        obras.append({"id": e["id"], "pago": pago, "pronto": pronto})
+    soltas = [prontas[i] for i in range(len(prontas)) if i not in usadas]
+    return obras, soltas
+
+
 def resumo_de_uma(p):
     turnos = so(p, "turno")
     fim = so(p, "fim")
@@ -117,7 +228,7 @@ def resumo_de_uma(p):
         "t_inicial": int(cab.get("t_inicial", 1)),
         "caixa_final": (fim or turnos[-1] if turnos else {}).get("caixa", 0),
         "rep_final": (fim or turnos[-1] if turnos else {}).get("rep", 0),
-        "obras": [o["id"] for o in so(p, "obra")],
+        "obras": [o["id"] for o in so(p, "obra")],  # pagas, prontas ou não
         "metrics": (fim or {}).get("metrics", {}),
         "anonimo": (fim or {}).get("jogador_anonimo"),
         "porto": (fim or {}).get("porto", ""),
@@ -200,46 +311,68 @@ def relatar(partidas, orfas, ilegiveis):
     #
     # A pergunta que o A7 faz por escrito. Um turno lento no início é
     # aprendizagem; um turno lento no fim é confusão, e são coisas opostas.
-    print("\n── Quanto tempo se fica num turno ──")
-    tempos = [(int(e["t"]), int(e["ms"])) for p in partidas for e in so(p, "turno") if "ms" in e]
+    print("\n── Quanto tempo se fica num dia ──")
+    tempos = [(dia_do_tempo(e), int(e["ms"])) for p in partidas for e in so(p, "turno") if "ms" in e]
     if tempos:
         todos = [ms for _, ms in tempos]
         print("  mediana %s · o mais demorado %s · total jogado %s" % (
             ms_legivel(statistics.median(todos)), ms_legivel(max(todos)),
             ms_legivel(sum(todos))))
         lentos = sorted(tempos, key=lambda x: -x[1])[:5]
-        print("  os cinco turnos mais demorados: %s" % ", ".join(
-            "t%d (%s)" % (t, ms_legivel(ms)) for t, ms in lentos))
+        print("  os cinco dias mais demorados: %s" % ", ".join(
+            "dia %d (%s)" % (d, ms_legivel(ms)) for d, ms in lentos))
         # Primeira semana contra a última: é onde se vê se o jogo foi
-        # aprendido ou só suportado.
-        primeiros = [ms for t, ms in tempos if t <= 8]
-        ultimos = [ms for t, ms in tempos if t > 24]
-        if primeiros and ultimos:
-            print("  semana 1: %s por turno · semana 4: %s por turno" % (
-                ms_legivel(statistics.median(primeiros)), ms_legivel(statistics.median(ultimos))))
+        # aprendido ou só suportado. As semanas saem do cabeçalho.
+        pontas = tempos_das_pontas(partidas)
+        if pontas["primeira"] and pontas["ultima"]:
+            ultima = ("semana %d" % next(iter(pontas["semanas"]))
+                      if len(pontas["semanas"]) == 1 else "a última semana")
+            print("  semana 1: %s por dia · %s (a última): %s por dia" % (
+                ms_legivel(statistics.median(pontas["primeira"])), ultima,
+                ms_legivel(statistics.median(pontas["ultima"]))))
+        if pontas["sem_calendario"]:
+            print("  semana 1 e última: não sei em %d partida(s) — o cabeçalho não traz"
+                  % pontas["sem_calendario"])
+            print("  `turnos_por_semana` (registro anterior à versão 2), e o leitor não")
+            print("  supõe 7 nem 8. Ficam fora da linha das semanas.")
     else:
-        print("  (nenhum turno trouxe tempo)")
+        print("  (nenhum dia trouxe tempo)")
 
     # ── 4. AS OBRAS, E QUANDO ──
-    print("\n── O porto que se levanta ──")
-    quando_obra = {}
+    #
+    # Desde a `087` pagar não é levantar: a obra leva dias, e só a pronta
+    # entra no porto. Até 10/10 esta seção publicava o dia PAGO com este
+    # título, e contava como feita a obra a meio (`088`).
+    print("\n── O porto que se levanta (dia pago → dia pronto) ──")
+    por_obra, soltas = {}, 0
     for p in partidas:
-        for e in so(p, "obra"):
-            quando_obra.setdefault(e["id"], []).append(int(e["t"]))
-    if quando_obra:
-        for oid in sorted(quando_obra, key=lambda k: statistics.median(quando_obra[k])):
-            ts = quando_obra[oid]
-            print("  %-12s em %d de %d partidas, turno mediano %d (de t%d a t%d)" % (
-                oid, len(ts), len(partidas), statistics.median(ts), min(ts), max(ts)))
-    nunca = []
-    todas_obras = set()
-    for r in resumos:
-        todas_obras |= set(r["obras"])
-    for r in resumos:
-        if not r["obras"]:
-            nunca.append(r["quando"][:10])
+        obras, sem_pagamento = obras_de(p)
+        soltas += len(sem_pagamento)
+        for o in obras:
+            por_obra.setdefault(o["id"], []).append(o)
+    for oid in sorted(por_obra, key=lambda k: statistics.median(o["pago"] for o in por_obra[k])):
+        os_ = por_obra[oid]
+        pagos = [o["pago"] for o in os_]
+        prontos = [o["pronto"] for o in os_ if isinstance(o["pronto"], int)]
+        print("  %-12s paga em %d de %d partidas, dia mediano %d (do %d ao %d)" % (
+            oid, len(pagos), len(partidas), statistics.median(pagos), min(pagos), max(pagos)))
+        if prontos:
+            print("  %-12s pronta em %d, dia mediano %d (do %d ao %d)" % (
+                "", len(prontos), statistics.median(prontos), min(prontos), max(prontos)))
+        por_acabar = sum(1 for o in os_ if o["pronto"] is None)
+        if por_acabar:
+            print("  %-12s %d %s por acabar até ao fim do registro" % (
+                "", por_acabar, "ficou" if por_acabar == 1 else "ficaram"))
+        nao_sei = sum(1 for o in os_ if o["pronto"] is NAO_SEI)
+        if nao_sei:
+            print("  %-12s pronta: não sei em %d — registro anterior à versão %d, que"
+                  % ("", nao_sei, VERSAO_COM_OBRA_PRONTA))
+            print("  %-12s não grava a conclusão" % "")
+    if soltas:
+        print("  %d obra(s) pronta(s) com o pagamento noutro arquivo (partida retomada)." % soltas)
+    nunca = [r for r in resumos if not r["obras"]]
     if nunca:
-        print("  %d partida(s) não construíram NADA." % len(nunca))
+        print("  %d partida(s) não começaram obra nenhuma." % len(nunca))
 
     # ── 5. A SEMANA COMO A DONA CIDA A CONTA ──
     print("\n── O resultado de cada semana (mediana) ──")
@@ -326,12 +459,113 @@ def _mais_proximo(medido, chave):
     return min(PERFIS_DO_SIMULADOR, key=lambda n: abs(PERFIS_DO_SIMULADOR[n][chave] - medido))
 
 
+# ── O AUTOTESTE ──
+#
+# Uma partida FABRICADA de 84 dias e 7 por semana, em que o tempo de cada dia
+# é o número da semana em segundos: a semana 1 inteira vale 1000 ms e a 12
+# vale 12000. Assim a resposta certa é uma LISTA exata, e não uma mediana —
+# com o 8 cravado a primeira semana leva o dia 8 (2000 ms) e a mediana dos
+# oito continuava a dar 1000, passando por certa. Medido em 10/10 (`088`).
+
+def _fixture(versao=VERSAO_CONHECIDA, com_calendario=True, com_prontas=True):
+    cab = {"e": "abriu", "versao": versao, "quando": "fixture", "plataforma": "autoteste",
+           "turnos_totais": 84, "t_inicial": 1, "retomada": False}
+    if com_calendario:
+        cab["turnos_por_semana"] = 7
+    linhas = [cab, {"e": "obra", "id": "pier_2", "t": 1, "caixa": 0, "custo": 1}]
+    for t in range(2, 86):
+        dia = t - 1
+        linhas.append({"e": "turno", "t": t, "s": (t - 1) // 7 + 1, "ms": 1000 * ((dia - 1) // 7 + 1),
+                       "caixa": 0, "rep": 50.0})
+        if t == 3 and com_prontas:
+            linhas.append({"e": "obra_pronta", "id": "pier_2", "t": 3})
+        if t == 10:
+            linhas.append({"e": "obra", "id": "armazem", "t": 10, "caixa": 0, "custo": 1})
+    linhas.append({"e": "fim", "ganhou": True, "motivo": "fixture", "t": 85, "caixa": 0, "rep": 50.0})
+    # Pelo `carregar()`, como um arquivo de verdade: a fixture prova também a
+    # partição das partidas, e não só as contas sobre elas.
+    partidas, _, _ = carregar([json.dumps(l) for l in linhas], "fixture")
+    return partidas
+
+
+def _relatado(partidas):
+    saida = io.StringIO()
+    with contextlib.redirect_stdout(saida):
+        relatar(partidas, 0, 0)
+    return saida.getvalue()
+
+
+def autoteste():
+    falhas = []
+
+    def confere(rotulo, ok, detalhe=""):
+        if not ok:
+            falhas.append("%s%s" % (rotulo, ("  — " + detalhe) if detalhe else ""))
+
+    # As semanas, do cabeçalho.
+    pontas = tempos_das_pontas(_fixture())
+    confere("a semana 1 são os SETE primeiros dias jogados, e só eles",
+            pontas["primeira"] == [1000] * 7, str(pontas["primeira"]))
+    confere("a última semana é a 12, com os sete últimos dias",
+            pontas["ultima"] == [12000] * 7, str(pontas["ultima"]))
+    confere("e o leitor sabe que são doze", pontas["semanas"] == {12}, str(pontas["semanas"]))
+    confere("e não conta a partida como sem calendário", pontas["sem_calendario"] == 0)
+    texto = _relatado(_fixture())
+    confere("o texto publica a semana 12 como a última", "semana 12 (a última)" in texto)
+
+    # Sem o campo, não sabe — e diz que não sabe.
+    pontas = tempos_das_pontas(_fixture(versao=1, com_calendario=False, com_prontas=False))
+    confere("registro sem turnos_por_semana não entra nas semanas",
+            pontas["primeira"] == [] and pontas["ultima"] == [],
+            "primeira=%d ultima=%d" % (len(pontas["primeira"]), len(pontas["ultima"])))
+    confere("e conta-se como sem calendário", pontas["sem_calendario"] == 1)
+    texto = _relatado(_fixture(versao=1, com_calendario=False, com_prontas=False))
+    confere("o texto diz «não sei» e não publica semana nenhuma",
+            "não sei em 1 partida" in texto and "por dia ·" not in texto)
+
+    # A obra: pago e pronto.
+    obras, soltas = obras_de(_fixture()[0])
+    por_id = {o["id"]: o for o in obras}
+    confere("o píer 2 foi pago no dia 1 e ficou pronto no 3",
+            por_id.get("pier_2", {}).get("pago") == 1 and por_id.get("pier_2", {}).get("pronto") == 3,
+            str(por_id.get("pier_2")))
+    confere("o armazém pago no dia 10 ficou por acabar (None, não 10)",
+            por_id.get("armazem", {}).get("pago") == 10 and por_id.get("armazem", {}).get("pronto") is None,
+            str(por_id.get("armazem")))
+    confere("e não sobra pronta sem pagamento", soltas == [], str(soltas))
+    texto = _relatado(_fixture())
+    confere("o texto publica o dia pronto e a obra por acabar",
+            "pronta em 1, dia mediano 3" in texto and "1 ficou por acabar" in texto)
+
+    obras, _ = obras_de(_fixture(versao=1, com_calendario=False, com_prontas=False)[0])
+    confere("na versão 1 o dia pronto é «não sei», e não «por acabar»",
+            all(o["pronto"] is NAO_SEI for o in obras) and len(obras) == 2,
+            str([o["pronto"] for o in obras]))
+
+    if falhas:
+        print("AUTOTESTE DO LEITOR FALHOU — %d verificação(ões):" % len(falhas))
+        for f in falhas:
+            print("  FALHA %s" % f)
+        return 1
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("arquivos", nargs="*", help="arquivos .jsonl, ou - para ler da entrada padrão")
     ap.add_argument("--pasta", help="lê todos os .jsonl de uma pasta")
+    ap.add_argument("--autoteste", action="store_true",
+                    help="só a prova do leitor, sem ler registro nenhum")
     args = ap.parse_args()
+
+    # Antes de tudo, e sem ele não há leitura (ver o cabeçalho).
+    if autoteste() != 0:
+        print("O leitor reprovou o próprio autoteste: não publico leitura nenhuma.")
+        return 1
+    if args.autoteste:
+        print("AUTOTESTE DO LEITOR OK")
+        return 0
 
     fontes = []
     if args.pasta:
