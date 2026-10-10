@@ -367,6 +367,7 @@ func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: 
 			"obra_por_semana": r["obra_por_semana"],
 			"parcela_por_semana": r["parcela_por_semana"],
 			"cobrancas": r["cobrancas"],
+			"obras": r["obras"],
 			"caixa_final_mediana": r["caixa_final_mediana"],
 			"caixa_final_distribuicao": r["caixa_final_distribuicao"],
 			"travadas": r["travadas"],
@@ -465,6 +466,9 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	# porto inteiro construído erra a margem dele em 98% — foi assim que este
 	# campo passou a existir.
 	var estruturas_de_pe := {}
+	var obras := {}
+	for id in GS.DIAS_DAS_OBRAS:
+		obras[id] = {"inicios": [], "conclusoes": [], "desbloqueios": []}
 	var estruturas_regime := {}
 	var niveis_regime := {}
 	var amostras_regime := 0
@@ -539,6 +543,8 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		var chegados_no_inicio: Array = chegados.duplicate()
 		var atendidos_anterior := 0
 		var obra_na_semana := 0
+		var liberadas := {}
+		var concluidas := {}
 		var reputacao_nas_ofertas := []
 		var apostas := [0, 0]        # [feitas, ganhas]
 		# [dias de decisão, dias com mais barcos prontos do que berços livres,
@@ -579,7 +585,14 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 					GS.fail_debt()
 				continue
 
-			obra_na_semana += _construir(perfil)
+			for id in GS.DIAS_DAS_OBRAS:
+				if not liberadas.has(id) and GS.desbloqueio_da_estrutura(id) == "":
+					liberadas[id] = true
+					obras[id]["desbloqueios"].append(GS.turn)
+			var gasto := _construir(perfil)
+			obra_na_semana += gasto
+			if gasto > 0:
+				obras[String(GS.obra_em_andamento["id"])]["inicios"].append(GS.turn)
 
 			# ⚠️ DEPOIS DA OBRA, e a ordem é desenho e não acaso. Quitar antes de
 			# construir faria o Antecipado diferir do Mediano em DUAS coisas — a
@@ -606,6 +619,10 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 			var indice_antes: int = GS.parcela_indice
 			var vence_hoje: bool = GS.turn == GS.vencimento_da_parcela()
 			GS.advance_turn()
+			for id in GS.DIAS_DAS_OBRAS:
+				if GS.tem_estrutura(id) and not concluidas.has(id):
+					concluidas[id] = true
+					obras[id]["conclusoes"].append(GS.turn)
 			if vence_hoje:
 				cobrancas[indice_antes]["chegaram"] += 1
 			# O fecho de semana acontece DENTRO do advance_turn, então a leitura
@@ -694,6 +711,9 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		c["saldo_apos_pagar_distribuicao"] = _distribuicao_caixa(c["saldos_apos_pagar"])
 		c.erase("caixas_na_decisao")
 		c.erase("saldos_apos_pagar")
+	for id in obras:
+		for etapa in ["inicios", "conclusoes", "desbloqueios"]:
+			obras[id][etapa] = _distribuicao_caixa(obras[id][etapa])
 	return {
 		"perfil": perfil,
 		"vitorias": vitorias,
@@ -710,6 +730,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 		"obra_por_semana": _media_por_semana(obra_por_semana, amostras_por_semana),
 		"parcela_por_semana": _media_por_semana(parcela_por_semana, amostras_por_semana),
 		"cobrancas": cobrancas,
+		"obras": obras,
 		"atendidos_por_semana": _media_por_semana(atendidos_por_semana, amostras_por_semana),
 		"estruturas": _fracao_de_pe(estruturas_de_pe, partidas),
 		"estado_em_regime": {"n": amostras_regime,
@@ -865,8 +886,9 @@ func _construir(perfil: Dictionary) -> int:
 		if GS.cash < int(int(GS.ESTRUTURAS[id]["custo"]) * folga):
 			continue
 		var custo := int(GS.ESTRUTURAS[id]["custo"])
-		GS.comprar_estrutura(id)
-		return custo if GS.tem_estrutura(id) else 0   # uma por turno
+		# Investimento sai ao iniciar; estrutura pronta só depois dos dias de
+		# obra. Olhar tem_estrutura aqui apagaria a despesa da medição (`087`).
+		return custo if GS.comprar_estrutura(id) else 0   # uma por turno
 	return 0
 
 

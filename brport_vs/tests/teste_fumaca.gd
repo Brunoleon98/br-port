@@ -506,7 +506,7 @@ func _save_valido(versao: int) -> Dictionary:
 		"versao": versao, "turn": 5, "cash": 1234, "reputation": 70.0,
 		"docks": [{"boat": null, "worker_id": null}],
 		"workers": [{"id": 1, "busy_turns": 0, "rosto": 0}],
-		"upgrade_purchased": false, "estruturas": [], "parcela_paid": false,
+		"upgrade_purchased": false, "estruturas": [], "obra_em_andamento": {}, "parcela_paid": false,
 		"parcela_indice": 0, "parcelas_quitadas": 0, "total_pago_parcelas": 0,
 		"phase": "playing", "fila": [], "pending_rival": -1, "rival_attempts_left": 2,
 		"end_reason": "", "won": false, "metrics": {}, "uid": 9,
@@ -1411,10 +1411,11 @@ func _f8_por_barco_a_espera(sim: bool) -> void:
 
 
 func _f8_a_fala_e_vista() -> void:
-	# ── F8a. A compra: `estrutura_comprada` e o "pronto" do sistema.
+	# ── F8a. A conclusão: `obra_concluida` e o "pronto" do sistema.
 	if not _f8_abrir():
 		return
 	GS.comprar_estrutura("pier_2")
+	_f8_avancar_ate(3)
 	await _f8_esperar()
 	_f8_drenar()
 	# A GUARDA SÓ VALE SE O PERIGO ESTIVER MONTADO. Sem a mensagem do sistema
@@ -1434,7 +1435,7 @@ func _f8_a_fala_e_vista() -> void:
 		"apresentadas: " + ", ".join(_f8_apresentadas))
 	_f8_fechar()
 
-	# ── F8b. A obra é INSTANTÂNEA, logo a fala dela não pode falar de tempo.
+	# ── F8b. O prazo é fixo: a fala não inventa atraso ou duração.
 	# Guarda estreita de propósito: defende o regresso da frase medida falsa
 	# ("Demorou o dobro do previsto"), não a verdade das falas em geral.
 	var upgrade: String = Narrativa.cida("upgrade_pronto").to_lower()
@@ -1443,7 +1444,7 @@ func _f8_a_fala_e_vista() -> void:
 	for palavra in tempo:
 		if upgrade.contains(palavra):
 			achadas.append(palavra)
-	_confere("F8b: a fala da obra instantânea não afirma duração",
+	_confere("F8b: a fala da obra não inventa duração",
 		achadas.is_empty(), "diz: " + ", ".join(achadas))
 
 	# ── F8c. A semana nova escolhe pela CONDIÇÃO.
@@ -1563,18 +1564,20 @@ func _f8_a_fala_e_vista() -> void:
 		return
 	GS.cash = 10000000
 	GS.comprar_estrutura("pier_2")
+	_f8_avancar_ate(3)
 	await _f8_esperar()
 	_f8_drenar()
 	_confere("F8g: a primeira obra tem a reação de primeira vez",
 		_f8_foi_apresentada(Narrativa.cida("upgrade_pronto")),
 		"apresentadas: " + ", ".join(_f8_apresentadas))
-	# ⚠️ A SEGUNDA COMPRA NO MESMO FÔLEGO É A DUPLICATA SEMÂNTICA, e é aqui
+	# A SEGUNDA CONCLUSÃO É A DUPLICATA SEMÂNTICA, e é aqui
 	# que ela se prova: a fala é a MESMA string, logo funde-se; as duas
 	# mensagens do sistema são DIFERENTES e não se fundem. É o caso que a nota
-	# do Bruno levantou — "mais de uma compra pode ser feita por turno".
+	# original da fila; desde `087` as obras levam dias e são sequenciais.
 	var antes_da_segunda := _f8_apresentadas.size()
 	GS.turn = GS.TURNS_PER_WEEK + 1
 	GS.comprar_estrutura("armazem")
+	_f8_avancar_ate(10)
 	await _f8_esperar()
 	_f8_drenar()
 	var novas: Array[String] = []
@@ -1597,6 +1600,7 @@ func _f8_a_fala_e_vista() -> void:
 	GS.parcela_indice = 1
 	GS.parcelas_quitadas = 1
 	GS.comprar_estrutura("patio")
+	_f8_avancar_ate(32)
 	await _f8_esperar()
 	_f8_drenar()
 	_confere("F8g: da terceira em diante ela concede",

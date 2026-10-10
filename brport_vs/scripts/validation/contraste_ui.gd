@@ -171,6 +171,8 @@ func percurso() -> Array:
 		{"nome": "Construir (com estrutura de pé)",
 			"cena": "res://scenes/panels/UpgradePanel.tscn",
 			"estado": {"cash": 900000, "turn": 8}, "estruturas": ["pier_2", "armazem"]},
+		{"nome": "Construir (obra em andamento)",
+			"cena": "res://scenes/panels/UpgradePanel.tscn", "obra": "pier_2"},
 	]
 
 
@@ -242,23 +244,16 @@ func montar_caso(raiz: Node, GS: Node, caso: Dictionary, tema: Theme) -> Node:
 		# ⚠️ A FASE FICA EM "playing" DE PROPÓSITO. Pô-la em "rival_offer" faria
 		# o `montar_caso` de um caso SEGUINTE resolver a oferta na abertura, e
 		# o que se quer fotografar aqui é o cartão sob oferta — não o depois.
-	# ⚠️ E A ESTRUTURA CONSTRUÍDA ENTRA PELA PORTA DO JOGADOR, que é comprar.
-	# Vem ANTES da cena porque o painel Construir lê o `GameState` enquanto se
-	# monta — ao contrário da faixa de mensagem, que precisa do `acao_vista`
-	# por o texto dela viver numa FILA. E o `acao_vista` não serviria aqui de
-	# todo: ele exige que a cena TENHA fila, e um painel não tem (é o mutante
-	# X3 da `042`).
-	#
-	# ⚠️ E COMPRA RECUSADA É CALADA — `comprar_estrutura()` devolve `false` sem
-	# se queixar (sem caixa, sem o `requer`, ou em `rival_offer`). Num caso
-	# cujo PROPÓSITO é ter a estrutura de pé, isso é falha; e note-se que a
-	# regra NÃO é geral: o segundo `atracar` do caso do aviso devolve `false`
-	# de propósito, porque o que ele mede é justamente a recusa.
+	# A bancada instala estruturas prontas ANTES de montar o painel que as
+	# lê. Compra real agora inicia uma obra (`087`); usá-la para pedir o rótulo
+	# de pronto mediria outro estado. O caso de andamento usa a porta real e
+	# exige que a compra tenha pegado; T15 percorre os dias até a conclusão.
 	for eid in caso.get("estruturas", []):
-		if not GS.comprar_estrutura(String(eid)):
-			falhas.append("%s não conseguiu comprar a estrutura %s"
-				% [caso["nome"], eid])
-			return null
+		# Esta régua mede a estrutura pronta; T15 mede o pagamento e os dias.
+		load("res://tools/estado_da_bancada.gd").instalar(GS, String(eid))
+	if caso.has("obra") and not GS.comprar_estrutura(String(caso["obra"])):
+		falhas.append("%s não conseguiu iniciar a obra" % caso["nome"])
+		return null
 
 	# ⚠️ AÇÃO E NÃO CAMPO. Há estado que nenhum `set()` alcança porque ele é o
 	# RESULTADO de uma regra: o barco que «vai embora hoje» só existe depois de uma

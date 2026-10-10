@@ -4088,8 +4088,8 @@ func _d23_menu_celular() -> void:
 		"o botão diz '%s'" % construir.text)
 	GS.comprar_estrutura("pier_2")
 	tela._refresh_hud()
-	_confere("D23: sem reparo liberado, o catálogo ainda abre e mostra as etapas",
-		construir.text == "Construir  ·  ver estruturas" and not construir.disabled,
+	_confere("D23: durante a obra, o catálogo abre e anuncia o andamento",
+		construir.text == "Construir  ·  obra em andamento" and not construir.disabled,
 		"o botão diz '%s'" % construir.text)
 	var pior := construir.text
 	var fonte: Font = construir.get_theme_font("font")
@@ -6219,6 +6219,24 @@ func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
 	var lanca: Dictionary = k["LANCA_N1"]
 	var arte_lanca: Array = k["ArteLanca"]
+	# Arte das três estruturas prontas; o avanço real e seus prazos estão
+	# em T14/T15. Montar aqui preserva o barco do ensaio de animação.
+	GS.cash = GS.START_CASH * 25
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "pier_2")
+	_confere("D39: segundo píer montado", GS.tem_estrutura("pier_2"))
+	GS.turn = 8
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "armazem")
+	_confere("D39: armazém montado", GS.tem_estrutura("armazem"))
+	GS.turn = 29
+	GS.parcela_indice = 1
+	GS.parcelas_quitadas = 1
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "patio")
+	_confere("D39: pátio montado", GS.tem_estrutura("patio"))
+	doca.refresh()
+	_confere("D39: reparos mantêm a lança e sua base de madeira, com dois píeres",
+		GS.nivel_guindaste() == 1 and GS.docks.size() == 2
+			and doca.get_node("Pier").texture == (k["ArtePier"] as Array)[0]
+			and no_lanca.texture == arte_lanca[0])
 	var do_pau := {}
 	for chave in lanca:
 		do_pau[lanca[chave]] = chave
@@ -6551,7 +6569,8 @@ func _d40_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 		GS.resolve_rival_offer(true)
 	var estruturas_antes: Array = GS.estruturas.duplicate()
 	GS.estruturas = ["armazem", "patio"]
-	_confere("D40: com duas estruturas o porto é de nível 2",
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	_confere("D40: a bancada monta o guindaste intermediário da Fase 2",
 		int(GS.nivel_guindaste()) == 2)
 	var mulher := -1
 	for i in range((Ret.get_script_constant_map()["TRABALHADORES"] as Array).size()):
@@ -6692,6 +6711,7 @@ func _d40_ida_ao_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 		tweens_antes[tw] = true
 	var estruturas_antes: Array = GS.estruturas.duplicate()
 	GS.estruturas = ["armazem", "patio"]
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
 	var tela: Control = load(CENA).instantiate()
 	root.add_child(tela)
 	var consts: Dictionary = tela.get_script().get_script_constant_map()
@@ -7825,6 +7845,7 @@ func _d42_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 			and not pilha.visible and not carga.visible
 			and emp_no.position == Vector2(doca.get("_emp_base")) + espera)
 	GS.estruturas = ["armazem", "patio"]
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
 	doca.refresh()
 	_confere("D42: no nível 2 a empilhadeira sai do cais", not emp_no.visible)
 	doca.queue_free()

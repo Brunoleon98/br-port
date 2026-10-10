@@ -161,6 +161,12 @@ quanto um asset custa ao pacote.
 1,87 MB são +42,29% do `.pck` e **+5,91% do APK**, porque o APK é sobretudo o
 binário do Godot. Ao citar custo, diga contra que denominador.
 
+**Literais multilinha no Windows precisam do conteúdo LF do Git.** Medido em
+`086`: CRLF no checkout de `Narrativa.gd` impedia o separador `\n\n—\n\n`
+de dividir o caderno, causando cinco falhas de design. A mesma base com LF
+passou. Conferir o blob e normalizar as quebras locais antes de testar; não
+reescrever a peça nem relaxar a guarda para esconder uma diferença do checkout.
+
 **Captura no Windows precisa conferir o tamanho do PNG** (`085`). A criação
 da janela encolheu 720×1280 para 720×1175, e o `canvas_items` produziu um PNG
 660×1175: a régua de retratos usava coordenadas da viewport sobre pixels
@@ -278,9 +284,11 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    Crédito não é lucro, patrimônio não é caixa e receita do porto não é renda pessoal.
    O balanceamento medido é **100% / 100,0% / 100,0%** (Ótimo / Mediano /
    Descuidado), e **100% no Antecipado**
-   (`085`): 600 partidas por perfil, semente 20260825, três cobranças reais em
+   (`087`): 600 partidas por perfil, semente 20260825, três cobranças reais em
    12 semanas de 7 dias, com fila e desbloqueios básicos. Todos pagaram as
-   três; caixa mediano do Mediano antes da primeira: R$295.522, depois: R$155.522.
+   três; caixa mediano do Mediano antes da primeira: R$298.032, depois: R$158.032.
+   Quantis P10/P50/P90, n, desbloqueios, início e conclusão das obras:
+   `docs/arquivo/MEDICOES_OBRAS_FASE_1_2026-10-09.json`.
    Crédito inicial R$400.000, três parcelas iguais de R$140.000, R$20.000 de
    juros totais. Antecipação abate só juros da janela, nunca o capital.
    Serviços foram reequilibrados após restaurar a moeda; preços e amortização
@@ -291,7 +299,7 @@ de padrão, dizendo que a página não foi lida (`docs/decisoes/063`).
    até 02/09 eram a fantasia de sobrevivência que essa decisão substituiu — são
    história, não meta. Quem discrimina os jogadores agora é **o porto que
    conseguem levantar** — e desde a trava de 06/09 quem mede isso é a MARGEM
-   em regime (cerca de R$115.996 contra R$12.339), não a contagem de barcos: o porto
+   em regime (cerca de R$111.975 contra R$12.339), não a contagem de barcos: o porto
    pobre só recebe pesqueiro, que descarrega num turno. Contar barcos esconde
    o valor e o custo de cada operação; a margem distingue os portos. `docs/decisoes/009`.
    ⚠️ **E DESDE A `083` O ATRACAR É ESCOLHA, e o simulador tem de a fazer.**
@@ -1115,12 +1123,42 @@ enquadramento: a rua e as casas ficariam a 4 unidades da água no primeiro
 degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
 `mx` absoluto.
 
+### Guindastes na Fase 1
+
+Os reparos básicos não promovem o aparelho de madeira (`086`); a treliça é
+da futura Fase 2. A base da máquina está no PNG do píer: `Dock.gd` seleciona
+o conjunto n1 aprovado com madeira, preservando capacidade e assets. O nível
+intermediário das bancadas é efêmero e restrito a `--script`; não deve entrar
+no save nem atravessar partida nova ou carregamento. Madeira limita as classes
+a pesca: o pátio continua dobrando a renda do píer, enquanto o adicional de
+contêiner aguarda clientes futuros. Medir de novo antes de mudar preços.
+
+### Obras da Fase 1
+
+Píer 2 e armazém levam dois dias jogados; pátio, três (`087`, aprovado pelo
+Bruno). Uma obra por vez, paga ao iniciar, sem retirar trabalhadores.
+`estruturas` guarda só as prontas; `obra_em_andamento` guarda id/início/conclusão.
+Dia 1 + dois dias fica pronto no dia 3. Serviços e fechamento semanal usam
+o porto antigo; depois a conclusão libera capacidade/renda para o novo dia,
+inclusive se a cobrança suspender a abertura. Pagamento de parcela e load
+não passam dias. A reação de pronto vem de `obra_concluida`, não da compra.
+O simulador soma investimento no início e mede desbloqueio, pagamento e
+conclusão separadamente; supor `tem_estrutura` na compra ocultava a despesa.
+Obra que ultrapassa o fim da fase é recusada sem cobrança. Arte preservada.
+
 ### Save
 
 `SAVE_VERSION` sobe **sempre** que a forma ou a interpretação do estado muda.
 A fila ocupou a versão 10 (`083`); a reescala monetária subiu para 11 (`084`).
-As três cobranças, o calendário e os recibos subiram para **12** (`085`):
-o booleano antigo só representava a primeira quitação. Save de outra
+As três cobranças, o calendário e os recibos subiram para 12 (`085`):
+o booleano antigo só representava a primeira quitação. A madeira durante toda
+a Fase 1 subiu para **13** (`086`), com autorização explícita do Bruno:
+a 12 podia guardar cargueiros após dois reparos, incompatíveis com essa máquina.
+A obra em andamento ocupa a **14** (`087`), autorizada explicitamente pelo
+Bruno junto dos prazos. Saves 13 e anteriores são recusados sem migração:
+partidas antigas recomeçam. Consulta preserva o arquivo; carregamento
+descarta o incompatível antes de aplicar campos, inclusive a obra viva.
+Save de outra
 versão é descartado, não adaptado. Já custou um porto com 4 docas num mapa que
 desenha 3.
 
@@ -2228,6 +2266,12 @@ as três coisas.
   esperam por ordem de chegada, e a vez passa pelo `tree_exited`, que é por
   onde passa TODA saída de painel — o `fechou` não passa pelo `remove_child`
   das ferramentas, e aí o turno ficou preso sem painel (`054`).
+  A chegada sorteada ao pagar pode trazer oferta do Arlindo: enquanto a
+  resposta do banco tem a vez, ela espera resposta → boletim → oferta
+  (`087`, T16). A oferta habitual mantém prioridade sobre um boletim comum.
+  Teste que espera `process_frame` precisa manter o SceneTree vivo:
+  `_process()` devolve false e só o `quit()` final encerra a suíte; true
+  encerrava T16 antes de conferir os painéis seguintes.
 - **Mecânica nova precisa de um sítio onde se LEIA, ou não existe.** A trava do
   nível do navio (06/09) seria invisível — o jogador veria o navio grande
   deixar de aparecer sem saber que é o porto dele que não o aguenta. Hoje o

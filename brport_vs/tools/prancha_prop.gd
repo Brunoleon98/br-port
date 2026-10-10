@@ -406,9 +406,8 @@ func _comprar(ate: int) -> void:
 			continue
 		# O caixa vem da tabela de preços, como no `capturar_tela.gd`.
 		GS.cash += int(tabela[eid]["custo"])
-		if not GS.comprar_estrutura(eid):
-			push_error("prancha: nao consegui comprar %s (%s)"
-				% [eid, GS.impedimento_estrutura(eid)])
+		# Prancha de arte futura: monta a peça, sem fingir uma obra jogada.
+		load("res://tools/estado_da_bancada.gd").instalar(GS, String(eid))
 
 
 ## Um dia, pelo botão do jogador. Os painéis que abram fecham-se todos: a

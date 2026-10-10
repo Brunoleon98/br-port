@@ -1,7 +1,7 @@
 extends SceneTree
 
-# Harness de QA temporário — NÃO faz parte do jogo. Apagado antes do commit.
-# Diferente das rodadas anteriores, este instancia a CENA REAL e inspeciona o
+# Harness de QA — executado por --script, fora da partida do jogador.
+# Instancia a CENA REAL e inspeciona o
 # botão "AVANÇAR DIA", que é onde o bug reportado se manifestava.
 
 var _fails := 0
@@ -13,6 +13,211 @@ var _t11_completo := false
 var _t12_completo := false
 var _t13_completo := false
 var _t14_completo := false
+var _t15_completo := false
+var _t16_completo := false
+
+
+# Reproduz a chegada sorteada DENTRO do pagamento, com o botão e as cenas
+# reais. Emitir apenas o sinal do rival não provaria a ordem do boletim.
+func _t16_oferta_apos_pagamento() -> void:
+	_fresh_playing()
+	GS.nome_porto = "Porto do teste"
+	GS.nome_jogador = "Teste"
+	GS.cash = 10000000
+	GS.turn = 56
+	GS.parcela_indice = 1
+	GS.parcelas_quitadas = 1
+	GS.total_pago_parcelas = GS.PARCELA_AMOUNT
+	GS.fila = []
+	var main = load("res://scenes/Main.tscn").instantiate()
+	root.add_child(main)
+	GS.advance_turn()
+	var overlay: CanvasLayer = main.get_node("Overlay")
+	_check("T16: segunda cobrança abre sozinha", overlay.get_child_count() == 1
+		and overlay.get_child(0).scene_file_path == "res://scenes/panels/DebtPaymentPanel.tscn")
+	# A semente 0 produz uma oferta na chegada real, sem trocar o RNG do jogo.
+	GS._rng.seed = 0
+	var banco = overlay.get_child(0)
+	banco._on_pagar()
+	_check("T16: pagamento sorteia oferta e preserva resposta sozinha",
+		GS.phase == "rival_offer" and GS.parcelas_quitadas == 2
+			and banco.tempo == &"pagou" and overlay.get_child_count() == 1)
+	banco._fechar()
+	await process_frame
+	await process_frame
+	_check("T16: boletim vem antes do Arlindo", overlay.get_child_count() == 1
+		and overlay.get_child(0).scene_file_path == "res://scenes/panels/PainelBoletim.tscn")
+	# Fecha quem tem a vez mesmo se a asserção encontrou sobreposição: o
+	# defeito injetado deve reprovar pela ordem, sem abortar o resto do bloco.
+	main._painel_da_vez._fechar()
+	await process_frame
+	await process_frame
+	_check("T16: oferta abre depois do boletim sem perder cliente",
+		overlay.get_child_count() == 1
+			and overlay.get_child(0).scene_file_path == "res://scenes/panels/CounterOfferPanel.tscn"
+			and overlay.get_child(0).indice_fila == GS.pending_rival)
+	GS.resolve_rival_offer(true)
+	root.remove_child(main)
+	main.free()
+
+	# Não enfileira a oferta habitual atrás de um boletim comum: preserva a
+	# prioridade anterior fora da resposta do banco.
+	_fresh_playing()
+	GS.nome_porto = "Porto do teste"
+	GS.nome_jogador = "Teste"
+	main = load("res://scenes/Main.tscn").instantiate()
+	root.add_child(main)
+	GS.turn = 7
+	GS.advance_turn()
+	overlay = main.get_node("Overlay")
+	for painel in overlay.get_children():
+		if painel.scene_file_path == "res://scenes/panels/CounterOfferPanel.tscn":
+			overlay.remove_child(painel)
+			painel.free()
+	GS.fila = []
+	GS.phase = "playing"
+	GS._rng.seed = 0
+	GS._spawn_boats()
+	_check("T16: oferta habitual mantém prioridade sobre boletim",
+		overlay.get_child_count() == 2
+			and overlay.get_child(1).scene_file_path == "res://scenes/panels/CounterOfferPanel.tscn")
+	GS.resolve_rival_offer(true)
+	root.remove_child(main)
+	main.free()
+	_t16_completo = true
+
+
+func _concluir_obra_do_teste() -> void:
+	for dia in range(3):
+		if GS.obra_em_andamento.is_empty():
+			break
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		GS.advance_turn()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+
+func _t15_obras() -> void:
+	_fresh_playing()
+	GS.cash = 10000000
+	var compras := []
+	var conclusoes := []
+	var comprar := func(id: String): compras.append(id)
+	var concluir := func(id: String): conclusoes.append(id)
+	GS.estrutura_comprada.connect(comprar)
+	GS.obra_concluida.connect(concluir)
+	_check("T15: paga o píer ao iniciar", GS.comprar_estrutura("pier_2") and GS.cash == 9850000)
+	_check("T15: pagamento não libera capacidade, trabalhador ou fala de pronto",
+		GS.docks.size() == 1 and GS.workers.size() == 1 and not GS.tem_estrutura("pier_2")
+			and compras == ["pier_2"] and conclusoes.is_empty())
+	_check("T15: só uma obra, sem cobrar outra vez", not GS.comprar_estrutura("pier_2") and GS.cash == 9850000)
+	_check("T15: obra não esconde bloqueio das próximas fases",
+		GS.impedimento_estrutura("pier_3") == "Disponível nas próximas fases.")
+	_check("T15: obra não esconde abertura na segunda semana",
+		GS.impedimento_estrutura("armazem") == "Abre na semana 2.")
+	GS.turn = 8
+	_check("T15: outra obra liberada espera a atual", not GS.comprar_estrutura("armazem"))
+	GS.turn = 1
+	GS.advance_turn()
+	_check("T15: primeiro dia não termina o píer", GS.turn == 2 and GS.dias_restantes_da_obra() == 1 and GS.docks.size() == 1)
+	GS.phase = "rival_offer"
+	GS.advance_turn()
+	_check("T15: decisão pendente não avança dia nem obra", GS.turn == 2 and GS.dias_restantes_da_obra() == 1)
+	GS.phase = "playing"
+	GS.save_game()
+	var saldo: int = GS.cash
+	GS.obra_em_andamento = {}
+	GS.cash = 0
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	_check("T15: Save 14 retoma prazo e saldo, limpando bancada",
+		GS.load_game() and GS.cash == saldo and GS.dias_restantes_da_obra() == 1 and GS.nivel_guindaste() == 1)
+	_concluir_obra_do_teste()
+	_check("T15: segundo dia termina uma vez, abre no dia 3",
+		GS.turn == 3 and GS.tem_estrutura("pier_2") and GS.docks.size() == 2
+			and GS.workers.size() == 2 and conclusoes == ["pier_2"] and GS.obra_em_andamento.is_empty()
+			and GS.cash == saldo)
+	GS._concluir_obra_se_pronta()
+	_check("T15: conclusão repetida não duplica o porto", GS.docks.size() == 2 and conclusoes.size() == 1)
+	GS.turn = 8
+	_check("T15: inicia armazém no dia 8", GS.comprar_estrutura("armazem"))
+	_check("T15: armazenagem ainda não recebe bônus", GS._lancar_receita(GS.DIA_ZERADO.duplicate(), 1000, "armazenagem") == 1000)
+	_concluir_obra_do_teste()
+	_check("T15: armazém pronto no dia 10 paga só armazenagem",
+		GS.turn == 10 and GS.tem_estrutura("armazem")
+			and GS._lancar_receita(GS.DIA_ZERADO.duplicate(), 1000, "armazenagem") == 1500
+			and GS._lancar_receita(GS.DIA_ZERADO.duplicate(), 1000, "pescado") == 1000)
+	GS.turn = 29
+	GS.parcela_indice = 1
+	GS.parcelas_quitadas = 1
+	_check("T15: inicia pátio no dia 29", GS.comprar_estrutura("patio"))
+	var renda_sem: int = GS._custos_da_semana()["pier"]
+	_concluir_obra_do_teste()
+	_check("T15: pátio pronto no dia 32 dobra renda sem mudar madeira",
+		GS.turn == 32 and GS.tem_estrutura("patio") and GS._custos_da_semana()["pier"] == renda_sem * 2
+			and GS.nivel_guindaste() == 1 and GS.docks.size() == 2)
+	GS.estrutura_comprada.disconnect(comprar)
+	GS.obra_concluida.disconnect(concluir)
+
+	# Fecha obra no dia de cobrança e no fecho semanal: nem cobrar/pagar nem
+	# carregar completam dias, e a renda da semana encerrada usa o porto antigo.
+	_fresh_playing()
+	GS.cash = 10000000
+	GS.turn = 27
+	_check("T15: inicia píer antes da primeira cobrança", GS.comprar_estrutura("pier_2"))
+	_concluir_obra_do_teste()
+	_check("T15: conclusão não pula a cobrança do dia 28",
+		GS.turn == 29 and GS.phase == "debt_payment" and GS.docks.size() == 2)
+	_check("T15: semana encerrada paga somente trabalhador que já existia",
+		GS.dia_anterior["salarios"] == GS.SALARY_PER_WORKER)
+	GS.save_game()
+	_check("T15: cobrança e porto concluído retomam juntos", GS.load_game() and GS.phase == "debt_payment" and GS.docks.size() == 2)
+	GS.pay_debt()
+	if GS.phase == "rival_offer": GS.resolve_rival_offer(true)
+	GS.comprar_estrutura("patio")
+	GS.save_game()
+	var valido: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
+	var recusas := []
+	for versao in [12, 13]:
+		var antigo: Dictionary = valido.duplicate(true)
+		antigo["versao"] = versao
+		antigo.erase("obra_em_andamento")
+		recusas.append(antigo)
+	for obra in [null, [], {"id": "pier_3", "inicio": 29, "conclusao": 32},
+			{"id": "patio", "inicio": "29", "conclusao": 32},
+			{"id": "patio", "inicio": 29.5, "conclusao": 32},
+			{"id": "patio", "inicio": 29, "conclusao": 31},
+			{"id": "patio", "inicio": 26, "conclusao": 29},
+			{"id": "pier_2", "inicio": 29, "conclusao": 31}]:
+		var ruim: Dictionary = valido.duplicate(true)
+		ruim["obra_em_andamento"] = obra
+		recusas.append(ruim)
+	var ausente: Dictionary = valido.duplicate(true)
+	ausente.erase("obra_em_andamento")
+	recusas.append(ausente)
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	for ruim in recusas:
+		GS.save_game()
+		var antes := FileAccess.get_file_as_string(GS.save_path)
+		var texto := JSON.stringify(ruim)
+		var file := FileAccess.open(GS.save_path, FileAccess.WRITE)
+		file.store_string(texto)
+		file.close()
+		_check("T15: consulta recusa e preserva arquivo", GS._save_aceite(texto).is_empty() and FileAccess.get_file_as_string(GS.save_path) == texto)
+		_check("T15: carregar descarta incompatível sem limpar bancada",
+			not GS.load_game() and not FileAccess.file_exists(GS.save_path) and GS.nivel_guindaste() == 2)
+		GS.save_game()
+		_check("T15: recusa preserva todo estado persistido, inclusive obra", FileAccess.get_file_as_string(GS.save_path) == antes)
+	GS.new_game()
+	_check("T15: nova partida zera a obra", GS.obra_em_andamento.is_empty())
+	if GS.phase == "rival_offer": GS.resolve_rival_offer(true)
+	GS.cash = 10000000
+	GS.turn = 84
+	_check("T15: obra que excederia a fase não cobra nem começa",
+		not GS.comprar_estrutura("pier_2") and GS.obra_em_andamento.is_empty() and GS.cash == 10000000)
+	GS.turn = 83
+	_check("T15: pode terminar no fechamento do dia 84", GS.comprar_estrutura("pier_2"))
+	_t15_completo = true
 
 
 func _t14_fase_inteira() -> void:
@@ -38,6 +243,9 @@ func _t14_fase_inteira() -> void:
 			_check("T14: armazém abre no dia 8", GS.comprar_estrutura("armazem"))
 		if GS.turn == 28:
 			_check("T14: pátio não abre antes da primeira cobrança", not GS.comprar_estrutura("patio"))
+		_check("T14: dia %d mantém a madeira e só recebe pesca" % GS.turn,
+			GS.nivel_guindaste() == 1 and GS.nivel_do_porto() == 1
+				and String(GS._make_boat()["classe"]) == "pesqueiro")
 		var dia: int = GS.turn
 		GS.advance_turn()
 		if GS.phase == "debt_payment":
@@ -101,13 +309,53 @@ func _t14_fase_inteira() -> void:
 		GS.fail_debt()
 		_check("T14: recusar parcela %d perde o porto" % indice, GS.phase == "game_over" and not GS.won)
 
+	# A 12 podia ter reparos e cargueiros. Montar esse estado pela bancada
+	# preserva o contrato real do barco; a única incompatibilidade é a versão.
+	_fresh_playing()
+	GS.cash = GS.START_CASH * 25
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "pier_2")
+	_check("T14: monta reparos do save 12", GS.tem_estrutura("pier_2"))
+	GS.turn = 8
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "armazem")
+	_check("T14: monta armazém do save 12", GS.tem_estrutura("armazem"))
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	var cargueiro: Dictionary = {}
+	for tentativa in range(100):
+		var barco: Dictionary = GS._make_boat()
+		if barco["classe"] == "medio":
+			cargueiro = barco
+			break
+	_check("T14: save legado tem cargueiro real", not cargueiro.is_empty())
+	GS.docks[0]["boat"] = cargueiro
+	GS.save_game()
+	var legado: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
+	_check("T14: estado legado passa a sanidade antes de trocar a versão", not GS._save_aceite(JSON.stringify(legado)).is_empty())
+	legado["versao"] = 12
+	var texto_legado := JSON.stringify(legado)
+	_fresh_playing()
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	GS.save_game()
+	var estado_antes := FileAccess.get_file_as_string(GS.save_path)
+	var arquivo_legado := FileAccess.open(GS.save_path, FileAccess.WRITE)
+	arquivo_legado.store_string(texto_legado)
+	arquivo_legado.close()
+	_check("T14: consulta recusa save 12 sem apagar o arquivo",
+		GS._save_aceite(texto_legado).is_empty()
+			and FileAccess.get_file_as_string(GS.save_path) == texto_legado)
+	_check("T14: carregar descarta save 12 sem limpar a bancada",
+		not GS.load_game() and GS.nivel_guindaste() == 2
+			and not FileAccess.file_exists(GS.save_path))
+	GS.save_game()
+	_check("T14: recusa save 12 antes de aplicar todos os campos persistidos",
+		FileAccess.get_file_as_string(GS.save_path) == estado_antes)
+
 	_fresh_playing()
 	GS.save_game()
 	var valido: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
 	for chave in ["versao", "parcela_indice", "parcelas_quitadas", "total_pago_parcelas", "parcela_paid"]:
 		var ruim: Dictionary = valido.duplicate(true)
 		if chave == "versao":
-			ruim[chave] = 11
+			ruim[chave] = GS.SAVE_VERSION - 1
 		else:
 			ruim[chave] = "inválido"
 		var arquivo := FileAccess.open(GS.save_path, FileAccess.WRITE)
@@ -122,7 +370,7 @@ func _t14_fase_inteira() -> void:
 	incoerentes.append(sem_recibo)
 	for mudanca in [{"parcela_indice": 3}, {"parcelas_quitadas": 1},
 			{"parcela_indice": 0.5}, {"total_pago_parcelas": -1},
-			{"versao": 12.5}, {"versao": "12"}]:
+			{"versao": GS.SAVE_VERSION + 0.5}, {"versao": str(GS.SAVE_VERSION)}]:
 		var ruim: Dictionary = valido.duplicate(true)
 		ruim.merge(mudanca, true)
 		incoerentes.append(ruim)
@@ -219,10 +467,12 @@ var _t5l_completo := false
 # instanciadas não dispara (o botão sai como null).
 func _process(_delta: float) -> bool:
 	if _done:
-		return true
+		return false
 	_done = true
 	_run()
-	return true
+	# T16 espera a saída real dos painéis. Retornar true encerra o SceneTree
+	# antes desses frames; só o quit() final de _run pode fechar a suíte.
+	return false
 
 
 func _run() -> void:
@@ -369,7 +619,9 @@ func _run() -> void:
 		+ int(GS.ESTRUTURAS["pier_3"]["custo"]) + 100
 	var bought = GS.comprar_estrutura("pier_2")
 	_check("pier 2 comprado", bought == true)
-	_check("roster_changed disparou", roster_fired[0] == true)
+	_check("iniciar não muda o roster", not roster_fired[0])
+	_concluir_obra_do_teste()
+	_check("roster_changed disparou ao concluir", roster_fired[0] == true)
 	_check("docas subiram para 2", GS.docks.size() == 2)
 	_check("trabalhadores subiram para 2", GS.workers.size() == 2)
 	_check("pier 3 fica para as próximas fases", not GS.comprar_estrutura("pier_3"))
@@ -387,6 +639,7 @@ func _run() -> void:
 	GS.turn = GS.TURNS_PER_WEEK + 1
 	_check("comprar duas vezes nao acontece",
 		GS.comprar_estrutura("armazem") == true and GS.comprar_estrutura("armazem") == false)
+	_concluir_obra_do_teste()
 	_check("estrutura ja construida diz isso",
 		GS.impedimento_estrutura("armazem") == "Já construída.")
 	# ⚠️ SÃO DOIS BARCOS, E TÊM DE SER. Desde 06/09 o armazém não paga em tudo:
@@ -454,6 +707,7 @@ func _run() -> void:
 	# asserção sobreviver a qualquer escala futura.
 	GS.cash = _caixa_para_tudo()
 	GS.comprar_estrutura("pier_2")
+	_concluir_obra_do_teste()
 	# O teto físico do mapa continua a proteger a montagem das fases futuras.
 	load("res://tools/estado_da_bancada.gd").instalar(GS, "pier_3")
 	_check("os dois pieres dao exatamente %d docas" % GS.BERCOS_NO_MAPA,
@@ -618,6 +872,10 @@ func _run() -> void:
 	print("=== T14: três cobranças e desbloqueios da Fase 1 ===")
 	_t14_fase_inteira()
 	_check("o bloco T14 correu até ao fim", _t14_completo)
+	_t15_obras()
+	_check("o bloco T15 correu até ao fim", _t15_completo)
+	await _t16_oferta_apos_pagamento()
+	_check("o bloco T16 correu até ao fim", _t16_completo)
 
 	print("")
 	if _fails == 0:
@@ -1353,9 +1611,11 @@ func _t5l_motivo_da_escala() -> void:
 		so_pesqueiro.size() == 1 and so_pesqueiro.has("pesqueiro"))
 
 	GS.cash = 10000000
-	GS.comprar_estrutura("pier_2")
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "pier_2")
 	load("res://tools/estado_da_bancada.gd").instalar(GS, "patio")
-	_check("com duas estruturas o porto sobe a nível 2 (%d)" % int(GS.nivel_do_porto()),
+	_check("reparos básicos não compram guindaste intermediário", GS.nivel_guindaste() == 1 and GS.nivel_do_porto() == 1)
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	_check("bancada do guindaste intermediário sobe a nível 2 (%d)" % int(GS.nivel_do_porto()),
 		int(GS.nivel_do_porto()) == 2)
 	var ate_medio := {}
 	for i in range(300):
@@ -1364,6 +1624,18 @@ func _t5l_motivo_da_escala() -> void:
 			% [ate_medio.keys()],
 		ate_medio.size() == 2 and ate_medio.has("medio")
 			and not ate_medio.has("grande"))
+
+	GS.save_game()
+	var save_da_bancada := FileAccess.get_file_as_string(GS.save_path)
+	GS.new_game()  # também faz autosave; repor abaixo a partida que se quer ler.
+	_check("partida nova limpa o nível da bancada", GS.nivel_guindaste() == 1)
+	var arquivo_da_bancada := FileAccess.open(GS.save_path, FileAccess.WRITE)
+	arquivo_da_bancada.store_string(save_da_bancada)
+	arquivo_da_bancada.close()
+	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
+	_check("save conserva os reparos e limpa o guindaste da bancada",
+		GS.load_game() and GS.nivel_guindaste() == 1
+			and GS.tem_estrutura("pier_2") and GS.tem_estrutura("patio"))
 
 	# ⚠️ O NÍVEL É O MENOR DOS DOIS, E SÓ AQUI ISSO SE PROVA. Nos outros
 	# estados o píer e o guindaste andam ao mesmo nível, e trocar o `mini` por
@@ -1418,6 +1690,7 @@ func _t5l_motivo_da_escala() -> void:
 	GS.parcela_indice = 1
 	GS.parcelas_quitadas = 1
 	_check("o pátio foi comprado para o teste", GS.comprar_estrutura("patio") == true)
+	_concluir_obra_do_teste()
 	var esperado_conteiner := int(round(1000 * (1.0 + GS.PATIO_BONUS_CARGA)))
 	var recibo: Dictionary = GS.DIA_ZERADO.duplicate()
 	var pago_conteiner: int = GS._lancar_receita(recibo, 1000, "conteiner")
@@ -1452,7 +1725,7 @@ func _t5l_motivo_da_escala() -> void:
 	_check("e o pesqueiro leva 1 (%d)" % GS._turnos_de_operacao("pesqueiro", "pescado"),
 		GS._turnos_de_operacao("pesqueiro", "pescado") == 1)
 	GS.cash = 10000000
-	GS.comprar_estrutura("pier_2")
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "pier_2")
 	load("res://tools/estado_da_bancada.gd").instalar(GS, "guindaste")
 	_check("a bancada instalou o pórtico", GS.tem_estrutura("guindaste"))
 	_check("com pórtico, o cargueiro volta a 1 turno (%d)"

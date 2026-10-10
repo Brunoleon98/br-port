@@ -28,6 +28,8 @@ signal phase_changed(new_phase: String)
 # som PRÓPRIO: uma pancada de madeira, e não o mesmo tinido de "deu certo" que
 # tocaria ao alocar um trabalhador. O áudio é o único ouvinte hoje.
 signal estrutura_comprada(id: String)
+# Compra paga a obra; conclusão libera a estrutura e a reação da Dona Cida.
+signal obra_concluida(id: String)
 # O índice é o da FILA, não o de uma doca (`083`): o Arlindo disputa o barco
 # que acabou de chegar ao fundeadouro, antes de o jogador o escolher.
 signal rival_offer_triggered(indice_fila: int)
@@ -511,7 +513,13 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # 12 (`085`): calendário de sete dias, três cobranças, recibos e desbloqueios.
 # O booleano da 11 só representava a primeira quitação; adaptar esse recibo
 # inventaria duas cobranças e um calendário que a partida nunca jogou.
-const SAVE_VERSION := 12
+# 13 (`086`): os reparos não promovem mais o guindaste na Fase 1. A 12 podia
+# guardar cargueiros com duas estruturas; reinterpretar esse porto com madeira
+# carregaria barcos incompatíveis. Recusar a versão inteira evita inventar
+# equipamento, remover contratos ou converter a partida do jogador.
+# 14 (`087`): uma obra paga, ainda sem capacidade/renda, pode atravessar dias
+# e carregamentos. Bruno autorizou a mudança e o recomeço sem migração.
+const SAVE_VERSION := 14
 
 # ── OS ESPAÇOS DE SAVE (`docs/decisoes/066`) ──
 #
@@ -671,9 +679,14 @@ var reputation: float = REPUTATION_START
 var docks: Array = []       # [{boat: Dictionary|null, worker_id: int|null}]
 var workers: Array = []     # [{id:int, busy_turns:int}]
 var upgrade_purchased: bool = false
-# Estruturas já compradas, por id. Guardado como Array para o save ser um JSON
+# Estruturas já concluídas, por id. Guardado como Array para o save ser um JSON
 # simples — Dictionary de bool viraria ruído no ficheiro.
 var estruturas: Array = []
+var obra_em_andamento: Dictionary = {}
+
+# Dias jogados, não tempo do celular. Armazém: os dois dias do tutorial do
+# GDD; os demais prazos foram aprovados com Bruno na `087`.
+const DIAS_DAS_OBRAS := {"pier_2": 2, "armazem": 2, "patio": 3}
 var parcela_paid: bool = false
 var parcela_indice: int = 0
 var parcelas_quitadas: int = 0
@@ -827,6 +840,7 @@ func _ready() -> void:
 
 
 func new_game() -> void:
+	_limpar_guindaste_da_bancada()
 	_uid = 1
 	turn = 1
 	# Partida nova pergunta os nomes outra vez. Zerar aqui, e não deixar para
@@ -845,6 +859,7 @@ func new_game() -> void:
 	reputation = REPUTATION_START
 	upgrade_purchased = false
 	estruturas = []
+	obra_em_andamento = {}
 	parcela_paid = false
 	parcela_indice = 0
 	parcelas_quitadas = 0
@@ -1409,6 +1424,11 @@ func advance_turn() -> void:
 	dia_anterior = dia_atual.duplicate()
 	dia_atual = DIA_ZERADO.duplicate()
 
+	# O dia fechado usa o porto que existia durante ele, inclusive salários
+	# e renda semanal. A obra só libera benefícios para o dia que vai abrir.
+	# Também conclui no vencimento: decidir a dívida não acrescenta um dia.
+	_concluir_obra_se_pronta()
+
 	if prev_turn == vencimento_da_parcela() and not parcela_paid:
 		_set_phase("debt_payment")
 		debt_due.emit(principal_da_parcela())
@@ -1791,25 +1811,12 @@ func tem_estrutura(id: String) -> bool:
 
 ## O NÍVEL DO PORTO, de 1 a 3 — quanto dele já foi levantado.
 ##
-## É uma leitura DERIVADA e mais nada: não decide, não guarda estado próprio e
-## não tem constante de balanceamento nenhuma. Existe porque o GDD 7 decidiu
-## que "estruturas principais (grua, cais, armazém) têm upgrade in-place de até
-## 3 níveis", e a ARTE desses níveis já existe (`pier_n1..n3`, `lanca_n1..n3`).
-## A MECÂNICA do upgrade é da Fase 2 e não está feita — quando estiver, ela
-## substitui esta função e nada mais precisa de mudar.
-##
-## ⚠️ E É POR ISSO QUE ELA NÃO É UM CAMPO NEM UMA FASE. O `advance_turn()`
-## retorna calado fora de `"playing"` e o simulador de balanceamento só sabe
-## resolver duas fases; qualquer estado novo aqui apareceria como partida que
-## não termina. Ler estrutura comprada em vez de criar fase deixa o motor do
-## turno intocado — os upgrades mexeram no balanceamento pelo CUSTO deles, que
-## é o que se mede, e não por um estado novo que o simulador não saiba resolver.
-## intocados por construção.
-## ⚠️ SÃO DUAS LEITURAS DESDE QUE OS UPGRADES EXISTEM, e não uma.
-## Enquanto o nível era derivado da contagem, píer e guindaste subiam juntos
-## porque nada os separava. Agora cada um tem o seu upgrade, e comprar o
-## guindaste não pode engrossar a laje do píer — o jogador veria mudar o que
-## não comprou. `nivel_porto()` saiu; quem chamava era o `Dock.gd`.
+## O píer lê as estruturas; o guindaste lê seu equipamento, separadamente.
+## Os reparos da Fase 1 não compram um guindaste novo (`086`). O aparelho
+## de madeira permanece até o dia 84; a treliça pertence à Fase 2, ainda sem
+## compra ou progressão implementada. A arte e o pórtico futuro continuam
+## exercitados pelas bancadas. Seu nível intermediário é montagem efêmera,
+## restrita a --script; não é um campo do jogador nem entra no save.
 func nivel_pier() -> int:
 	if tem_estrutura("cais"):
 		return 3
@@ -1819,7 +1826,15 @@ func nivel_pier() -> int:
 func nivel_guindaste() -> int:
 	if tem_estrutura("guindaste"):
 		return 3
-	return 2 if estruturas.size() >= 2 else 1
+	if ArmazemLocal.sob_ferramenta() and has_meta(&"guindaste_intermediario_da_bancada"):
+		return 2
+	return 1
+
+
+# Uma bancada anterior não altera a próxima partida nem um save retomado.
+func _limpar_guindaste_da_bancada() -> void:
+	if has_meta(&"guindaste_intermediario_da_bancada"):
+		remove_meta(&"guindaste_intermediario_da_bancada")
 
 
 # Por que não dá para comprar: "" quando dá. O painel mostra este texto, então
@@ -1834,6 +1849,10 @@ func impedimento_estrutura(id: String) -> String:
 	var bloqueio := desbloqueio_da_estrutura(id)
 	if bloqueio != "":
 		return bloqueio
+	if not obra_em_andamento.is_empty():
+		return "Conclua a obra em andamento primeiro."
+	if turn + dias_da_obra(id) > TURNS_TOTAL + 1:
+		return "Não termina nesta fase."
 	var def: Dictionary = ESTRUTURAS[id]
 	var requer := String(def["requer"])
 	if requer != "" and not tem_estrutura(requer):
@@ -1860,6 +1879,31 @@ func comprar_estrutura(id: String) -> bool:
 		return false
 	var def: Dictionary = ESTRUTURAS[id]
 	cash -= int(def["custo"])
+	obra_em_andamento = {"id": id, "inicio": turn, "conclusao": turn + dias_da_obra(id)}
+	cash_changed.emit(cash)
+	estrutura_comprada.emit(id)
+	message.emit("%s — obra iniciada. %d dias; pronto no dia %d." %
+		[def["nome"], dias_da_obra(id), turn + dias_da_obra(id)], "good", "obra")
+	save_game()
+	return true
+
+
+func dias_da_obra(id: String) -> int:
+	return int(DIAS_DAS_OBRAS.get(id, 0))
+
+
+func dias_restantes_da_obra() -> int:
+	if obra_em_andamento.is_empty():
+		return 0
+	return maxi(0, int(obra_em_andamento["conclusao"]) - turn)
+
+
+func _concluir_obra_se_pronta() -> void:
+	if obra_em_andamento.is_empty() or dias_restantes_da_obra() > 0:
+		return
+	var id := String(obra_em_andamento["id"])
+	var def: Dictionary = ESTRUTURAS[id]
+	obra_em_andamento = {}
 	estruturas.append(id)
 
 	# Os píeres são os únicos que mexem no roster. O resto é econômico e age
@@ -1883,10 +1927,8 @@ func comprar_estrutura(id: String) -> bool:
 
 	cash_changed.emit(cash)
 	roster_changed.emit()
-	estrutura_comprada.emit(id)
+	obra_concluida.emit(id)
 	message.emit("%s — pronto. %s" % [def["nome"], def["desc"]], "good", "obra")
-	save_game()
-	return true
 
 
 # Compat com a suíte de regressão e o simulador, que conheciam um upgrade só.
@@ -2077,6 +2119,7 @@ func save_game() -> void:
 		"workers": workers,
 		"upgrade_purchased": upgrade_purchased,
 		"estruturas": estruturas,
+		"obra_em_andamento": obra_em_andamento,
 		"parcela_paid": parcela_paid,
 		"parcela_indice": parcela_indice,
 		"parcelas_quitadas": parcelas_quitadas,
@@ -2116,6 +2159,7 @@ func load_game() -> bool:
 		clear_save()
 		return false
 
+	_limpar_guindaste_da_bancada()
 	turn = int(parsed.get("turn", 1))
 	cash = int(parsed.get("cash", START_CASH))
 	reputation = float(parsed.get("reputation", REPUTATION_START))
@@ -2123,6 +2167,7 @@ func load_game() -> bool:
 	workers = parsed["workers"]
 	upgrade_purchased = bool(parsed.get("upgrade_purchased", false))
 	estruturas = parsed.get("estruturas", [])
+	obra_em_andamento = parsed["obra_em_andamento"]
 	parcela_paid = bool(parsed.get("parcela_paid", false))
 	parcela_indice = int(parsed["parcela_indice"])
 	parcelas_quitadas = int(parsed["parcelas_quitadas"])
@@ -2210,6 +2255,31 @@ func _save_aceite(texto: String) -> Dictionary:
 	var versao = parsed.get("versao", 1)
 	if typeof(versao) not in [TYPE_INT, TYPE_FLOAT] or float(versao) != SAVE_VERSION:
 		return {}
+	# Validar a obra pela leitura, antes de aplicar QUALQUER campo. Ausência
+	# não significa obra vazia: a forma faz parte do Save 14 autorizado.
+	var obra = parsed.get("obra_em_andamento", null)
+	var feitas = parsed.get("estruturas", null)
+	if typeof(obra) != TYPE_DICTIONARY or typeof(feitas) != TYPE_ARRAY:
+		return {}
+	if not obra.is_empty():
+		if obra.size() != 3 or typeof(obra.get("id")) != TYPE_STRING \
+				or not DIAS_DAS_OBRAS.has(obra["id"]) or feitas.has(obra["id"]):
+			return {}
+		for chave in ["inicio", "conclusao"]:
+			var numero = obra.get(chave, null)
+			if typeof(numero) not in [TYPE_INT, TYPE_FLOAT] \
+					or not is_finite(float(numero)) or float(numero) != int(numero):
+				return {}
+		var dia = parsed.get("turn", null)
+		if typeof(dia) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(dia)) \
+				or float(dia) != int(dia):
+			return {}
+		var inicio := int(obra["inicio"])
+		var conclusao := int(obra["conclusao"])
+		var abre := 8 if obra["id"] == "armazem" else 29 if obra["id"] == "patio" else 1
+		if inicio < abre or inicio > int(dia) or conclusao <= int(dia) \
+				or conclusao > TURNS_TOTAL + 1 or conclusao != inicio + dias_da_obra(obra["id"]):
+			return {}
 	# O recibo e a janela são parte da interpretação do save v12. Converter
 	# texto para inteiro aceitaria silenciosamente uma cobrança inexistente.
 	for chave in ["parcela_indice", "parcelas_quitadas", "total_pago_parcelas"]:
@@ -2223,6 +2293,8 @@ func _save_aceite(texto: String) -> Dictionary:
 	if indice < 0 or indice >= PARCELAS_NA_FASE \
 			or quitadas != indice + (1 if parsed["parcela_paid"] else 0) \
 			or int(parsed["total_pago_parcelas"]) < 0:
+		return {}
+	if obra.get("id", "") == "patio" and quitadas < 1:
 		return {}
 
 	# O roster é lido do dicionário, não dos campos do jogo, justamente para

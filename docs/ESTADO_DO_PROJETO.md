@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 08/10/2026 — três cobranças e reparos básicos da Fase 1 (`085`)
+> **Última atualização:** 09/10/2026 — obras dos reparos básicos (`087`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -18,10 +18,12 @@
 
 ## O jogo hoje, em três linhas
 
-**O porto abre em ruínas.** 1 doca, 1 trabalhador e R$400.000. A Fase 1 permite
+**O porto abre em ruínas.** 1 doca, 1 trabalhador e R$400.000. A Fase 1 libera
 reparar o píer 2 desde o início, o armazém na semana 2 e o pátio a partir da
 semana 5, depois da primeira cobrança quitada (`085`). São até dois píeres;
-píer 3, escritório e upgrades ficam bloqueados para fases futuras.
+píer 3, escritório e upgrades aguardam fases futuras.
+Uma obra por vez, paga ao iniciar: píer/armazém em dois dias, pátio em três;
+benefícios só ao concluir (`087`).
 
 **O rodapé é escuro, e só o "Avançar dia" é âmbar cheio** (`081`): o
 desligado, a faixa, a parcela e os cartões recuam abaixo dele (**D43**).
@@ -56,21 +58,19 @@ tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 com toque de **44 px** (D25–D27); a pessoa, a 1,5× o real, é o menor ser vivo
 do mapa (`069`).
 
-**A escala anterior à `084` foi recuperada** por escolha do Bruno (`085`).
-Contratos R$4.000–28.000, manutenção R$40.000/semana e salário R$6.000 por
-trabalhador/semana. Preços de jogo; taxas e medição de 600 partidas por perfil
-no `CLAUDE.md`. Expansão e margem separam os portos (`005`, `009`).
-Save **12** recusa versões anteriores antes de aplicar qualquer campo, sem
-migração: mudou o calendário e a interpretação dos recibos. A Fase 1 dura
+**A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
+na tabela gerada, taxas/medição no `CLAUDE.md`. Expansão e margem distinguem
+os perfis (`005`, `009`); não se certificaram preços de mercado.
+Save **14** (`087`), autorizado pelo Bruno, retoma a obra em andamento;
+versões 13 e anteriores recusadas antes de aplicar campos, sem migração. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
-iguais de R$140 mil, R$20 mil de juros totais. Obras e demais sistemas da
-frente 5 continuam pendentes (§7 do plano).
+iguais de R$140 mil, R$20 mil de juros totais. Crédito opcional, cancelamento,
+tutorial, trabalhadores extras e progressão futura seguem pendentes (§7 do plano).
 
-**E o navio que atraca depende do porto que existe** (`009`): três classes
-travadas pelo NÍVEL DO PORTO, o menor entre píer e guindaste — pesqueiro no 1,
-cargueiro no 2, longo curso no 3, que exige o cais reforçado. Na Fase 1 o
-nível máximo é 2; o Construir mostra o nível e os bloqueios (`085`).
+**O porto recebe pesca durante a Fase 1** (`086`): a classe depende do menor
+nível entre píer e guindaste. O Construir explica a madeira e os bloqueios.
+Níveis 2/3 só nas bancadas; progressão futura pendente.
 
 **E A FROTA DE PESCA TEM TRÊS PORTES** (`014`) — bote, traineira e arrasteiro,
 pelo VALOR do contrato. Importa porque o porto em ruínas **só recebe pesqueiro**.
@@ -122,7 +122,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 **A §7.1 fechou (R1–R9).** A prioridade, escolha do Bruno, é a **melhoria de
 design**: o HUD (`081`), as telas narrativas (`082`) e a fila no fundeadouro
 (`083`), aceites; a frente 5 entregou a reescala (`084`) e continua com as três
-cobranças e os reparos básicos (`085`, §7 do plano).
+cobranças/reparos (`085`), a madeira (`086`) e as obras da Fase 1 (`087`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -133,7 +133,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`, `082`) |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína, os três degraus da animação e a virada do dia (`069`–`079`). O material do ChatGPT vive em `art_lab/` | Na 4 falta a máquina do contêiner (`079`); obras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
+| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína, os três degraus da animação e a virada do dia (`069`–`079`). O material do ChatGPT vive em `art_lab/` | Na 4 falta a máquina do contêiner (`079`); obras futuras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ### Ainda por fazer, medido
@@ -251,13 +251,14 @@ podre (A4) — em `HISTORICO.md`.
   sua mistura de motivos. A classe decide o casco no píer (`009`)
 - **Três cobranças na Fase 1**, ao fim das semanas 4, 8 e 12. A semana só
   fecha depois da decisão; as duas primeiras quitações retomam a partida.
-  **Quitar antes abate 0,25% por dia** (`019`) e mantém o recibo até o fecho
+  **Quitar antes abate só juros da janela** (`085`) e mantém o recibo até o fecho
   do período, sem abrir a próxima cobrança antes dele (`085`).
 - **Três reparos disponíveis por progressão**, no catálogo de sete estruturas:
   píer 2, armazém e pátio. A terceira doca e os upgrades continuam na bancada
-  de arte e testes, mas não podem ser comprados nesta Fase 1 (`085`). A regra
-  antiga que sobe píer e guindaste ao nível 2 com duas estruturas permanece;
-  guindastes por fase são o próximo recorte, ainda pendente no plano.
+  de arte e testes, mas não podem ser comprados nesta Fase 1 (`085`). O guindaste
+  fica em madeira; o conjunto visual n1 conserva a base correta (`086`). O
+  pátio dobra a renda do píer; só seu bônus de contêiner espera clientes
+  futuros. Preços intactos; próximo recorte a escolher com Bruno.
 - **A faixa de mensagem tem FILA** — as duas fontes (sistema e Dona Cida) uma
   de cada vez, por ordem, com tempo mínimo na tela; tocar nela abre o histórico
   da sessão. Nada se apaga: 30,7% do que o jogo dizia não chegava ao jogador,

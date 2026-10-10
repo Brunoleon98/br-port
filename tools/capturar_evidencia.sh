@@ -202,11 +202,14 @@ tirar() {
 # foto do `porto` saiu com a tabela por cima do mapa. `limpo` manda a
 # ferramenta fechar os painéis de ROTINA, e o tiro deixa de depender de onde a
 # semana calha.
+# 087: dia 2, píer ainda em obra; dia 10, píer e armazém concluídos.
+tirar obra_andamento 1 2 --script res://tools/capturar_tela.gd -- 1 "$SAIDA/obra_andamento.png" reparos limpo --painel=construir
+tirar reparos_fase1 0 10 --script res://tools/capturar_tela.gd -- 9 "$SAIDA/reparos_fase1.png" reparos limpo atracar
 tirar inicio  0 1  --script res://tools/capturar_tela.gd -- 0  "$SAIDA/inicio.png" limpo
 tirar porto   0 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/porto.png" completo limpo
 # O NÍVEL DO MEIO. O píer, a lança e os prédios têm três níveis desde 05/09, e
 # `inicio` e `porto` só mostram os dois extremos — o do meio não tinha como ser
-# olhado, e o gate A5 é olhar. `meio` compra as duas primeiras estruturas, que é
+# olhado, e o gate A5 é olhar. `meio` monta as duas primeiras estruturas e o guindaste da Fase 2, que é
 # o que `nivel_pier()` e `nivel_guindaste()` leem como n2.
 #
 # ⚠️ A ZERO TURNOS, e isto custou uma corrida vermelha. Ela nasceu a 10, por
