@@ -7135,9 +7135,9 @@ func _d41_a_virada(GS: Node, DockS: Script, tela: Control, docas: Array,
 		antes_tw[tw] = true
 	var velhos: Array = []
 	var bases: Array = []
-	for d in docas:
-		velhos.append((d.get_node("Barco") as TextureRect).texture)
-		bases.append(d.get("_barco_base"))
+	for doca in docas:
+		velhos.append((doca.get_node("Barco") as TextureRect).texture)
+		bases.append(doca.get("_barco_base"))
 	var caixa_antes: int = int(GS.cash)
 	var turno_antes: int = int(GS.turn)
 	tela.call("_on_advance_pressed")
@@ -7339,9 +7339,9 @@ func _d41_o_toque_seguinte(GS: Node, DockS: Script, tela: Control, docas: Array,
 		_d41_dinheiro(pilula.text) == caixa_primeiro,
 		"mostra %s, a virada anterior acabava em %s" % [pilula.text, GS.moeda(caixa_primeiro)])
 	var encostados := 0
-	for d in docas:
-		var b := d.get_node("Barco") as TextureRect
-		if b.position.is_equal_approx(d.get("_barco_base")) and b.modulate.a >= 0.999:
+	for doca in docas:
+		var b := doca.get_node("Barco") as TextureRect
+		if b.position.is_equal_approx(doca.get("_barco_base")) and b.modulate.a >= 0.999:
 			encostados += 1
 	_confere("D41: e cada barco a meio da chegada encosta no berço antes de sair (%d de 3)"
 		% encostados, encostados == 3)

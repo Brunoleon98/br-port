@@ -151,6 +151,10 @@ func _rodar() -> void:
 	await _f18_a_obra_prometida()
 	_confere("o bloco F18 correu até ao fim", _f18_terminou)
 
+	print("=== F19: todo nome que as suítes e as ferramentas leem por string existe no alvo ===")
+	_f19_nomes_lidos_por_string()
+	_confere("o bloco F19 correu até ao fim", _f19_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -4361,3 +4365,365 @@ func _f18_contagem_do_rodape(main: Node) -> int:
 	if achou != null:
 		return int(achou.get_string(1))
 	return 0 if texto.contains("ver estruturas") else -1
+
+
+# ── F19 ─────────────────────────────────────────────────────────────────
+# TODO NOME QUE AS SUÍTES E AS FERRAMENTAS LEEM POR STRING EXISTE NO ALVO
+# (`docs/decisoes/093`, M6 da revisão de 09/10).
+#
+# Testes e ferramentas leem membros PRIVADOS do `Main`, do `Dock` e de painéis
+# pelo nome escrito numa string — `doca.get("_tw_trabalho")` e afins. Medido
+# numa sonda em 10/10: o `get`, o `set`, o `in` e o `has_method` de um nome
+# que não existe devolvem `null`/`false` CALADOS; só o `call` grita, e aborta
+# a função. E medido nas suítes, renomeando doze desses membros um a um:
+# sete reprovaram por uma asserção qualquer, cinco deixaram o marcador verde
+# com `SCRIPT ERROR` que só a varredura do CI apanha — e NENHUM dos doze disse
+# que nome mudou. O erro aponta para a linha do teste que usou o `null`
+# («Nonexistent 'Vector2' constructor»), ou rebenta em cascata dentro do
+# `Dock.gd`, longe da causa. E das ferramentas que também leem assim, a da
+# captura só corre na bateria, e o `medir_transito` e o `medir_fila_mensagens`
+# não correm em CI nenhum.
+#
+# É a pré-condição do M8, que parte o `Main`: mover o tráfego dos camiões para
+# outro script deixa o NOME a existir no projeto e a faltar no `Main`, e é ao
+# `Main` que a suíte o pede. Por isso a pergunta é «existe NO ALVO», com o
+# tipo que a leitura pede — `get`, `set` e `in` querem uma variável; `call`,
+# `callv` e `has_method`, um método —, e quem responde é a REFLEXÃO do script
+# da raiz da cena, não uma leitura do texto dele.
+#
+# ⚠️ O TEXTO DIZ O NOME, NÃO A QUEM ELE É PEDIDO. A declaração
+# (`tests/nomes_lidos_por_string.json`) diz, por arquivo, que variável é que
+# alvo; nenhum nome se lista lá à mão. E a varredura conta por DOIS caminhos:
+# cada leitura que a expressão lê, e cada literal com cara de privado
+# (`"_x"`) no arquivo. O literal que nenhuma leitura explica reprova — é o
+# que impede uma forma nova (`(tela as Control).get(...)`, um `call_deferred`)
+# de escapar calada, como as cinco chamadas partidas por linha escapavam ao
+# F9 (`037`).
+#
+# ⚠️ O QUE ELE NÃO VÊ: o nome PÚBLICO lido por string (`tela.call("trechos_de")`
+# — API do script, e o `call` grita); o membro lido direto num nó destipado
+# (`main._refresh_hud()` — também grita); o caminho de nó do
+# `get_node`; e a variável com o nome de um alvo apontada a outra classe, que
+# pediria o nome ao alvo errado, porque o tipo não se infere. Ver a `093`.
+#
+# ⚠️ E ESTE BLOCO NÃO ESCREVE UM LITERAL PRIVADO NEM NOS SEUS PRÓPRIOS
+# FIXTURES: este arquivo também é varrido, e o fixture escrito por extenso
+# seria lido como uma leitura de verdade. Por isso as aspas entram por `%s`.
+const F19_DECLARACAO := "res://tests/nomes_lidos_por_string.json"
+const F19_PASTAS := ["res://tests", "res://tools", "res://scripts/validation", "res://scenes/tests"]
+# Quem lê a declaração precisa destas quatro chaves; uma a faltar rebentaria o
+# acesso direto lá em baixo, e a mensagem seria sobre um `Dictionary`.
+const F19_CHAVES := ["alvos", "receptores", "indiretos", "nao_sao_membros"]
+var _f19_terminou := false
+var _f19_re_literal: RegEx
+var _f19_re_direta: RegEx
+var _f19_re_in: RegEx
+var _f19_re_sem_nome: RegEx
+
+
+func _f19_nomes_lidos_por_string() -> void:
+	_f19_compilar()
+	_confere("F19: as expressões reconhecem as formas que caçam, e só elas",
+		_f19_prova_das_expressoes())
+
+	var decl = JSON.parse_string(FileAccess.get_file_as_string(F19_DECLARACAO))
+	var faltam := []
+	if decl is Dictionary:
+		for chave in F19_CHAVES:
+			if not (decl as Dictionary).has(chave):
+				faltam.append(chave)
+	_confere("F19: a declaração lê-se e traz as quatro chaves",
+		decl is Dictionary and faltam.is_empty(), "%s; faltam %s" % [F19_DECLARACAO, faltam])
+	if not (decl is Dictionary) or not faltam.is_empty():
+		return
+	var alvos: Dictionary = decl["alvos"]
+	var receptores: Dictionary = decl["receptores"]
+	var indiretos: Array = decl["indiretos"]
+	var nao_membros: Array = decl["nao_sao_membros"]
+
+	var membros := {}
+	var sem_membros := []
+	for alvo in alvos:
+		membros[alvo] = _f19_membros(String(alvos[alvo]))
+		if (membros[alvo]["metodo"] as Dictionary).is_empty():
+			sem_membros.append("%s (%s)" % [alvo, alvos[alvo]])
+	_confere("F19: todo alvo tem um script com membros para perguntar",
+		sem_membros.is_empty(), str(sem_membros))
+
+	var arquivos: Array[String] = []
+	for pasta in F19_PASTAS:
+		_varrer_cenas(pasta, arquivos, ".gd")
+	arquivos.sort()
+	_confere("F19: a varredura achou as suítes e as ferramentas", arquivos.size() > 20,
+		"achou %d" % arquivos.size())
+
+	# Todo arquivo que a declaração nomeia tem de estar na varredura: um
+	# caminho com erro de digitação deixaria o arquivo de verdade sem
+	# receptores, e as leituras dele reprovariam pelo motivo errado.
+	var fora := []
+	var nomeados := receptores.keys()
+	for entrada in indiretos + nao_membros:
+		nomeados.append(entrada["arquivo"])
+	for caminho in nomeados:
+		if not arquivos.has(String(caminho)):
+			fora.append(caminho)
+	_confere("F19: todo arquivo da declaração está na varredura", fora.is_empty(), str(fora))
+
+	var problemas := []
+	var sem_dono := []
+	var mortos := []
+	var conferidos := {}
+	var receptor_usado := {}
+	var isentos_membros := []
+	for caminho in arquivos:
+		var curto := caminho.trim_prefix("res://")
+		var lido := _f19_ler(_sem_comentarios(FileAccess.get_file_as_string(caminho)))
+		var meus: Dictionary = receptores[caminho] if receptores.has(caminho) else {}
+		var literais: Dictionary = lido["literais"]
+		var contados := {}
+		for d in lido["diretas"]:
+			var recv: String = d[0]
+			var op: String = d[1]
+			var nome: String = d[2]
+			contados[nome] = int(contados.get(nome, 0)) + 1
+			var leitura := ("\"%s\" in %s" % [nome, recv]) if op == "in" \
+				else ("%s.%s(\"%s\")" % [recv, op, nome])
+			if not meus.has(recv):
+				problemas.append("%s: %s — a declaração não diz que alvo é «%s»"
+					% [curto, leitura, recv])
+				continue
+			receptor_usado[caminho + " " + recv] = true
+			var alvo := String(meus[recv])
+			var tipo := "propriedade" if op in ["get", "set", "in"] else "metodo"
+			conferidos[alvo + "." + nome] = true
+			if not membros.has(alvo):
+				problemas.append("%s: «%s» aponta para o alvo «%s», que não existe" % [curto, recv, alvo])
+			elif not (membros[alvo][tipo] as Dictionary).has(nome):
+				problemas.append("%s: %s — o %s não tem %s com esse nome"
+					% [curto, leitura, alvo, "a variável" if tipo == "propriedade" else "o método"])
+
+		# O que este arquivo declara: as leituras sem o nome na chamada, e os
+		# literais que não são membro de ninguém.
+		var explicados := {}
+		var chamadas := {}
+		for ind in indiretos:
+			if String(ind["arquivo"]) != caminho:
+				continue
+			var alvo := String(ind["alvo"])
+			var tipo := String(ind["tipo"])
+			for chamada in ind["chamadas"]:
+				chamadas[String(chamada)] = false
+			for nome in ind["nomes"]:
+				explicados[String(nome)] = true
+				conferidos[alvo + "." + String(nome)] = true
+				if not membros.has(alvo) or not (membros[alvo] as Dictionary).has(tipo):
+					problemas.append("%s: o indireto aponta para «%s»/«%s», que não existem"
+						% [curto, alvo, tipo])
+				elif not (membros[alvo][tipo] as Dictionary).has(String(nome)):
+					var por := "procurado no código-fonte do alvo" if (ind["chamadas"] as Array).is_empty() \
+						else "lido por " + ", ".join(PackedStringArray(ind["chamadas"]))
+					problemas.append("%s: \"%s\" (%s) — o %s não tem %s com esse nome"
+						% [curto, nome, por, alvo, "a variável" if tipo == "propriedade" else "o método"])
+		for nm in nao_membros:
+			if String(nm["arquivo"]) != caminho:
+				continue
+			var nome := String(nm["nome"])
+			explicados[nome] = true
+			for alvo in membros:
+				for tipo in ["propriedade", "metodo"]:
+					if (membros[alvo][tipo] as Dictionary).has(nome):
+						isentos_membros.append("%s: \"%s\" está declarado como não-membro e o %s tem %s com esse nome"
+							% [curto, nome, alvo, "a variável" if tipo == "propriedade" else "o método"])
+
+		for site in lido["sem_nome"]:
+			var recv := String(site).get_slice(".", 0)
+			if not meus.has(recv):
+				continue
+			if chamadas.has(site):
+				chamadas[site] = true
+				receptor_usado[caminho + " " + recv] = true
+			else:
+				sem_dono.append("%s: %s — leitura sem o nome na chamada, e a declaração não a conhece"
+					% [curto, site])
+		for chamada in chamadas:
+			if not chamadas[chamada]:
+				mortos.append("%s: a chamada indireta «%s» já não existe" % [curto, chamada])
+
+		# O SEGUNDO CAMINHO: cada literal com cara de privado tem de ser uma
+		# leitura que a expressão leu, ou estar declarado. Menos literais do
+		# que leituras é um valor impossível — a expressão leu o que não há.
+		for nome in literais:
+			var resto: int = int(literais[nome]) - int(contados.get(nome, 0))
+			if resto < 0:
+				problemas.append("%s: \"%s\" lido %d vezes e escrito %d — a contagem não fecha"
+					% [curto, nome, int(contados[nome]), int(literais[nome])])
+			elif resto > 0 and not explicados.has(nome):
+				sem_dono.append("%s: \"%s\" fora de uma leitura que a guarda saiba ler (%d)"
+					% [curto, nome, resto])
+		for nome in explicados:
+			var resto: int = int(literais.get(nome, 0)) - int(contados.get(nome, 0))
+			if resto <= 0:
+				mortos.append("%s: \"%s\" está declarado e já não aparece fora de uma leitura direta"
+					% [curto, nome])
+
+	for caminho in receptores:
+		for recv in receptores[caminho]:
+			if not receptor_usado.has(String(caminho) + " " + String(recv)):
+				mortos.append("%s: o receptor «%s» já não lê nada por string"
+					% [String(caminho).trim_prefix("res://"), recv])
+
+	_confere("F19: todo nome lido por string existe no alvo, com o tipo que a leitura pede",
+		problemas.is_empty(), _f19_agrupar(problemas))
+	_confere("F19: todo literal com cara de privado é uma leitura lida ou está declarado",
+		sem_dono.is_empty(), "\n    " + "\n    ".join(sem_dono))
+	_confere("F19: nenhuma declaração está morta", mortos.is_empty(),
+		"\n    " + "\n    ".join(mortos))
+	# ⚠️ A ISENÇÃO É ONDE O DEFEITO CABE INTEIRO (`079`): um nome lido de
+	# verdade declarado como «não é membro» nunca seria perguntado ao alvo.
+	# Isto apanha a declaração errada enquanto o nome ainda existe, que é o
+	# momento de a escrever; depois de ele mudar de nome, já não se distingue
+	# de um sufixo, e quem segura é a revisão do JSON.
+	_confere("F19: nenhum literal declarado como não-membro é membro de um alvo",
+		isentos_membros.is_empty(), "\n    " + "\n    ".join(isentos_membros))
+	var por_alvo := {}
+	for chave in conferidos:
+		var alvo := String(chave).get_slice(".", 0)
+		por_alvo[alvo] = int(por_alvo.get(alvo, 0)) + 1
+	# Medido em 10/10: 52 nomes — 38 do Main (oito deles indiretos), 12 do
+	# Dock e um de cada painel. A revisão de 09/10 contava 38 (29, 7 e 2), sem
+	# os indiretos; a varredura acha mais um no Main e cinco no Dock, que um
+	# `grep` de linha também acha — a diferença não é a quebra de linha. O
+	# piso prova que a varredura leu, não que nada mudou: o M8 vai tirar
+	# leituras, e por isso fica abaixo da medida.
+	_confere("F19: e há nomes para conferir (%d: %s)" % [conferidos.size(), por_alvo],
+		conferidos.size() >= 30 and int(por_alvo.get("Main", 0)) > 0
+			and int(por_alvo.get("Dock", 0)) > 0)
+
+	_f19_terminou = true
+
+
+func _f19_compilar() -> void:
+	# O literal com cara de privado, com o `&` do StringName e o `^` do
+	# NodePath que o Godot aceita à frente das aspas.
+	_f19_re_literal = RegEx.new()
+	_f19_re_literal.compile("[&^]?\"(_[A-Za-z][A-Za-z0-9_]*)\"")
+	# A leitura direta. O receptor é um identificador inteiro — nunca a cauda
+	# de `self.x` ou de `a.b`, que ficariam sem dono e reprovariam — ou uma
+	# chamada sem argumentos, como o `_painel_de_cima()` da captura. O `\s*`
+	# atravessa a quebra de linha entre o parêntesis e o nome.
+	_f19_re_direta = RegEx.new()
+	_f19_re_direta.compile("(?<![\\w.])([A-Za-z_]\\w*(?:\\(\\))?)\\s*\\.\\s*(get|set|call|callv|has_method)\\(\\s*[&^]?\"(_[A-Za-z][A-Za-z0-9_]*)\"")
+	_f19_re_in = RegEx.new()
+	_f19_re_in.compile("[&^]?\"(_[A-Za-z][A-Za-z0-9_]*)\"\\s+(?:not\\s+)?in\\s+([A-Za-z_]\\w*)\\b")
+	# A leitura cujo primeiro argumento NÃO é uma string: devolve o texto até
+	# ao primeiro argumento, que é a forma como a declaração a nomeia.
+	_f19_re_sem_nome = RegEx.new()
+	_f19_re_sem_nome.compile("(?<![\\w.])([A-Za-z_]\\w*(?:\\(\\))?)\\s*\\.\\s*(get|set|call|callv|has_method)\\(\\s*([^\"&^\\s,)][^,)\\n]*)")
+
+
+# A mesma leitura em quinze sítios dá a mesma linha quinze vezes; conta-se.
+func _f19_agrupar(linhas: Array) -> String:
+	var vezes := {}
+	var ordem := []
+	for linha in linhas:
+		if not vezes.has(linha):
+			vezes[linha] = 0
+			ordem.append(linha)
+		vezes[linha] = int(vezes[linha]) + 1
+	var saida := ""
+	for linha in ordem:
+		saida += "\n    %s%s" % [linha, "" if int(vezes[linha]) == 1 else "  (×%d)" % int(vezes[linha])]
+	return saida
+
+
+# Lê um texto de GDScript e devolve o que a guarda precisa dele: quantas vezes
+# cada literal privado aparece, as leituras diretas `[receptor, op, nome]` e as
+# leituras sem nome na chamada, como texto.
+func _f19_ler(texto: String) -> Dictionary:
+	var literais := {}
+	for m in _f19_re_literal.search_all(texto):
+		var nome := m.get_string(1)
+		literais[nome] = int(literais.get(nome, 0)) + 1
+	var diretas := []
+	for m in _f19_re_direta.search_all(texto):
+		diretas.append([m.get_string(1), m.get_string(2), m.get_string(3)])
+	for m in _f19_re_in.search_all(texto):
+		diretas.append([m.get_string(2), "in", m.get_string(1)])
+	var sem_nome := []
+	for m in _f19_re_sem_nome.search_all(texto):
+		sem_nome.append("%s.%s(%s" % [m.get_string(1), m.get_string(2), m.get_string(3).strip_edges()])
+	return {"literais": literais, "diretas": diretas, "sem_nome": sem_nome}
+
+
+# A EXPRESSÃO PROVA-SE ANTES DE VARRER (a lição do F9): uma que não casasse
+# nada daria as listas vazias, e as listas vazias são o verde de graça. O
+# fixture traz cada forma que ela caça — a quebra de linha, o `in` e o `not
+# in`, o StringName, o receptor que é chamada — e as que ela tem de DEIXAR
+# SEM DONO: o receptor entre parêntesis, o `get_node`.
+func _f19_prova_das_expressoes() -> bool:
+	var q := "\""
+	var texto := "\n".join(PackedStringArray([
+		"var a = tela.get(%s_um%s)" % [q, q],
+		"tela.call(\n\t\t%s_dois%s, 1)" % [q, q],
+		"if not (%s_tres%s in no):" % [q, q],
+		"var c = (tela as Control).get(%s_quatro%s)" % [q, q],
+		"x = _painel_de_cima().get(%s_cinco%s)" % [q, q],
+		"doca.callv(&%s_seis%s, [])" % [q, q],
+		"var t = tela.get_node(%s_sete%s)" % [q, q],
+		"if %s_oito%s not in no:" % [q, q],
+		"tela.call(par[1], 0, ponta)",
+		"m.get(id, 0)",
+		"self.tela.get(%s_nove%s)" % [q, q],
+	]))
+	var lido := _f19_ler(texto)
+	var diretas := []
+	for d in lido["diretas"]:
+		diretas.append("%s %s %s" % d)
+	diretas.sort()
+	# Os literais comparam-se SEM o sublinhado: escritos com ele, entre aspas,
+	# eram nove literais privados sem dono — a primeira corrida deste bloco
+	# reprovou por isso, no próprio fixture.
+	var literais := []
+	for nome in (lido["literais"] as Dictionary).keys():
+		literais.append(String(nome).trim_prefix("_"))
+	literais.sort()
+	var esperadas := ["_painel_de_cima() get _cinco", "doca callv _seis", "no in _oito",
+		"no in _tres", "tela call _dois", "tela get _um"]
+	var esperados := ["cinco", "dois", "nove", "oito", "quatro", "seis", "sete", "tres", "um"]
+	var certo: bool = diretas == esperadas and literais == esperados \
+		and lido["sem_nome"] == ["tela.call(par[1]", "m.get(id"]
+	if not certo:
+		print("    F19 prova: diretas %s, literais %s, sem nome %s"
+			% [diretas, literais, lido["sem_nome"]])
+	return certo
+
+
+# Os membros do script da RAIZ da cena — a variável e o método, por reflexão,
+# herdados do script base incluídos (medido: o `PainelBoletim` não define o
+# `_fechar` e a lista traz o do `PainelNarrativo`). Uma PASTA junta os de todas
+# as cenas de lá, que é a pergunta de quem diz «um painel».
+func _f19_membros(caminho: String) -> Dictionary:
+	var cenas: Array[String] = []
+	if caminho.ends_with("/"):
+		_varrer_cenas(caminho.trim_suffix("/"), cenas)
+	else:
+		cenas.append(caminho)
+	var propriedades := {}
+	var metodos := {}
+	for cena in cenas:
+		var empacotada := load(cena) as PackedScene
+		if empacotada == null:
+			continue
+		var estado := empacotada.get_state()
+		for i in estado.get_node_property_count(0):
+			if estado.get_node_property_name(0, i) != "script":
+				continue
+			var script := estado.get_node_property_value(0, i) as Script
+			if script == null:
+				continue
+			for p in script.get_script_property_list():
+				if int(p["usage"]) & PROPERTY_USAGE_SCRIPT_VARIABLE:
+					propriedades[String(p["name"])] = true
+			for m in script.get_script_method_list():
+				metodos[String(m["name"])] = true
+	return {"propriedade": propriedades, "metodo": metodos}

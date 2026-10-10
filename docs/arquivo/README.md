@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-10g.md` | 10/10 | Substitui o de 10/10 (f): o M6 da fila fechou (`093`) — o F19 do `teste_fumaca` exige no alvo cada privado que as suítes e as ferramentas leem por string, com a declaração em `brport_vs/tests/nomes_lidos_por_string.json`. Branch `claude/awesome-archimedes-ou0rnf`. Próximo: o M7, se o Bruno responder o D3 e o D4; senão, o M8 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10f.md` | 10/10 | Substitui o de 10/10 (e): o M5 da fila fechou (`092`) — os itens fechados dos dois planos desceram para os dois arquivos abaixo, e as skills `/arte` e `/fechar-sessao` mandam descer o que fecha. Branch `claude/determined-ptolemy-c25zw3`. Próximo: o M6, a guarda dos nomes lidos por string |
 | `PLANO_V3_FECHADOS.md` | 30/08–10/10 | **Os itens do plano v3 que fecharam**, palavra por palavra: A1–A3, a semana de sete dias, a metade de máquina e as frentes 1, 3 e 6 do A5, B1–B8, a §7.1 (R1–R9), a segunda jogada e os itens ✅ de 06/09 a 23/09. Desceram no M5 (`092`); no plano ficou uma linha para cada |
 | `PLANO_ARTE_FECHADOS.md` | 30/08–03/10 | **As etapas 1 a 6 do plano de arte e as passagens fora delas**, palavra por palavra — com as lições «para quem animar a seguir» dos três degraus da animação. Desceram no M5 (`092`) |
