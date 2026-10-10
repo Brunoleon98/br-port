@@ -1862,15 +1862,40 @@ func impedimento_estrutura(id: String) -> String:
 	return ""
 
 
+# EM QUE DIA CADA REPARO DA FASE 1 ABRE, e com quantas cobranças quitadas — num
+# lugar só (`089`). Leem daqui as duas pontas da regra: o
+# `desbloqueio_da_estrutura()`, que decide o botão do Construir, e o
+# `_save_aceite()`, que recusa a obra começada antes de o reparo abrir. Até
+# 10/10 o save escrevia `8` e `29` à mão enquanto o botão os tirava da semana e
+# do vencimento: coincidiam, e mudar o `TURNS_PER_WEEK` ou o prazo da cobrança
+# faria o jogo recusar saves válidos sem erro nenhum. Medido: um save que
+# abrisse o armazém no dia 9 passava as seis suítes. O T17 tranca-o.
+#
+# `{}` para o que não se compra nesta fase.
+func abertura_do_reparo(id: String) -> Dictionary:
+	match id:
+		"pier_2":
+			return {"dia": 1, "quitadas": 0}
+		"armazem":
+			return {"dia": TURNS_PER_WEEK + 1, "quitadas": 0}      # o 1.º da semana 2
+		"patio":
+			return {"dia": PARCELA_DUE_TURN + 1, "quitadas": 1}    # pós 1.ª cobrança
+	return {}
+
+
 # A Fase 1 recupera o porto pequeno. O catálogo e a arte do porto completo
 # continuam disponíveis às bancadas; compra pelo jogador respeita este limite.
+# ⚠️ O texto do pátio diz «primeira» porque a abertura pede UMA quitada; quem
+# subir esse número escreve outra frase.
 func desbloqueio_da_estrutura(id: String) -> String:
-	if id not in ["pier_2", "armazem", "patio"]:
+	var abre := abertura_do_reparo(id)
+	if abre.is_empty():
 		return "Disponível nas próximas fases."
-	if id == "armazem" and current_week() < 2:
-		return "Abre na semana 2."
-	if id == "patio" and (turn <= PARCELA_DUE_TURN or parcelas_quitadas < 1):
+	var dia := int(abre["dia"])
+	if int(abre["quitadas"]) > 0 and (turn < dia or parcelas_quitadas < int(abre["quitadas"])):
 		return "Abre após a primeira cobrança paga."
+	if turn < dia:
+		return "Abre na semana %d." % week_of(dia)
 	return ""
 
 
@@ -2167,7 +2192,15 @@ func load_game() -> bool:
 	workers = parsed["workers"]
 	upgrade_purchased = bool(parsed.get("upgrade_purchased", false))
 	estruturas = parsed.get("estruturas", [])
-	obra_em_andamento = parsed["obra_em_andamento"]
+	# O JSON devolve float, e até 10/10 a obra ficava assim no estado vivo (O6
+	# da revisão de 09/10): funcionava porque toda leitura passa por `int()`, e
+	# um uso futuro como chave de dicionário tropeçaria num `8.0`. O
+	# `_save_aceite()` já provou que são inteiros; aqui só mudam de tipo.
+	var obra_lida: Dictionary = parsed["obra_em_andamento"]
+	obra_em_andamento = {}
+	if not obra_lida.is_empty():
+		obra_em_andamento = {"id": String(obra_lida["id"]),
+			"inicio": int(obra_lida["inicio"]), "conclusao": int(obra_lida["conclusao"])}
 	parcela_paid = bool(parsed.get("parcela_paid", false))
 	parcela_indice = int(parsed["parcela_indice"])
 	parcelas_quitadas = int(parsed["parcelas_quitadas"])
@@ -2276,9 +2309,13 @@ func _save_aceite(texto: String) -> Dictionary:
 			return {}
 		var inicio := int(obra["inicio"])
 		var conclusao := int(obra["conclusao"])
-		var abre := 8 if obra["id"] == "armazem" else 29 if obra["id"] == "patio" else 1
-		if inicio < abre or inicio > int(dia) or conclusao <= int(dia) \
-				or conclusao > TURNS_TOTAL + 1 or conclusao != inicio + dias_da_obra(obra["id"]):
+		# O dia em que o reparo abre sai da MESMA função que decide o botão
+		# (`089`); a cobrança que ele pede confere-se abaixo, depois de lido o
+		# recibo.
+		var abre := abertura_do_reparo(obra["id"])
+		if abre.is_empty() or inicio < int(abre["dia"]) or inicio > int(dia) \
+				or conclusao <= int(dia) or conclusao > TURNS_TOTAL + 1 \
+				or conclusao != inicio + dias_da_obra(obra["id"]):
 			return {}
 	# O recibo e a janela são parte da interpretação do save v12. Converter
 	# texto para inteiro aceitaria silenciosamente uma cobrança inexistente.
@@ -2294,7 +2331,10 @@ func _save_aceite(texto: String) -> Dictionary:
 			or quitadas != indice + (1 if parsed["parcela_paid"] else 0) \
 			or int(parsed["total_pago_parcelas"]) < 0:
 		return {}
-	if obra.get("id", "") == "patio" and quitadas < 1:
+	# Lê as quitadas de HOJE, não as do dia em que a obra começou: elas só
+	# sobem, então quem as tem hoje e não as tinha no início nunca passaria o
+	# botão — e o botão é quem escreve a obra.
+	if not obra.is_empty() and quitadas < int(abertura_do_reparo(obra["id"])["quitadas"]):
 		return {}
 
 	# O roster é lido do dicionário, não dos campos do jogo, justamente para

@@ -241,7 +241,15 @@ depois de fundidos o #109 e o #110.
 calendário; o leitor publica dia pago → dia pronto e as semanas do cabeçalho,
 com «não sei» onde o registro não diz. **Prova:** o R7 do `teste_registro` e o
 autoteste do leitor, que corre antes de toda leitura; treze mutantes, todos a
-reprovar. O primeiro item aberto passa a ser o **M2**.
+reprovar.
+
+**M2, em 10/10 (`089`):** a `abertura_do_reparo()` diz em que dia cada reparo
+abre, e o botão e o save leem dela; a obra lida sai com inteiros. **Prova:** o
+T17 do `run_tests`, relacional, andando o calendário; nove mutantes, cada um
+num sítio só. ⚠️ O mutante previsto abaixo («hoje passaria») reprovava seis
+asserções no código de antes: a ponta desguardada era o save, e um save com o
+armazém no dia 9 passava as seis suítes. O primeiro item aberto passa a ser o
+**M3**, que espera o D8.
 
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
@@ -266,7 +274,7 @@ do A7 publicava dois dados errados (§7, O2 e O3).
 
 ### M2 — A regra de abertura num lugar só
 
-**[execução · curta · critério 2]** O `_save_aceite()` repete à mão o que o
+**[feito em 10/10 — `089`]** ~~[execução · curta · critério 2]~~ O `_save_aceite()` repete à mão o que o
 `desbloqueio_da_estrutura()` calcula (§7, O1).
 - **O que muda:** uma função só diz em que dia cada reparo abre (armazém em
   `TURNS_PER_WEEK + 1`; pátio em `PARCELA_DUE_TURN + 1`, com uma cobrança
@@ -441,12 +449,12 @@ Os achados, do mais grave ao mais leve. Nenhum quebra o jogo hoje.
 
 | # | Achado | Gravidade | Vai para |
 |---|---|---|---|
-| O1 | O `_save_aceite()` escreve à mão os dias em que cada reparo abre — `8 if armazem else 29 if patio else 1` e, à parte, «pátio exige uma cobrança quitada» —, enquanto o `desbloqueio_da_estrutura()` os calcula pela semana (`current_week() < 2`) e pelo vencimento (`PARCELA_DUE_TURN`). Hoje coincidem. Mudar o `TURNS_PER_WEEK` ou o prazo da cobrança faria o jogo recusar saves válidos, ou aceitar uma obra começada num dia em que não podia, sem erro nenhum. É a «regra que existe em dois sítios» do `CLAUDE.md` | média, latente | M2 |
+| O1 | **[feito — `089`]** O `_save_aceite()` escrevia à mão os dias em que cada reparo abre — `8 if armazem else 29 if patio else 1` e, à parte, «pátio exige uma cobrança quitada» —, enquanto o `desbloqueio_da_estrutura()` os calcula pela semana (`current_week() < 2`) e pelo vencimento (`PARCELA_DUE_TURN`). Hoje coincidem. Mudar o `TURNS_PER_WEEK` ou o prazo da cobrança faria o jogo recusar saves válidos, ou aceitar uma obra começada num dia em que não podia, sem erro nenhum. É a «regra que existe em dois sítios» do `CLAUDE.md` | média, latente | M2 |
 | O2 | O `Registro.gd` só ouve o `estrutura_comprada`, que desde a `087` dispara no PAGAMENTO. O `tools/ler_registros.py` publica esse dia como «O porto que se levanta» e conta como construída a obra que ainda não acabou. O sinal da conclusão (`obra_concluida`) não tem ouvinte no gravador. É a «sonda presa a um ponto de passagem» do `CLAUDE.md` | média, dado errado hoje | M1 |
 | O3 | Anterior ao #110, da `085`: o leitor ainda tira a «semana 1» de `t <= 8` e a «semana 4» de `t > 24`, que eram semanas de 8 dias numa fase de 4. Com 12 semanas de 7 dias, a «semana 4» publicada cobre da 4 à 12 | baixa-média, dado errado hoje | M1 |
 | O4 | «`%d dias de obra`» e «`%d dias; pronto no dia %d`» não passam pelo `Narrativa.concordar` (`037`). Com 2 e 3 dias o texto sai certo, e com um prazo de 1 dia sairia «1 dias» sem guarda | baixa, latente | M3 |
 | O5 | A obra começada no dia 83 fica pronta no fecho do 84, e é aceita: está na `087` e no T15 («pode terminar no fechamento do dia 84»). A mensagem diz «pronto no dia 85» numa fase de 84 dias, e o jogador paga por algo que esta fase não deixa usar | pergunta ao Bruno | D8, M3 |
-| O6 | O `load_game()` guarda a obra com os números do JSON (`float`). Funciona porque toda leitura passa por `int()`; normalizar na leitura evita que um uso futuro tropece num `8.0` onde se esperava `8` (como chave de dicionário, por exemplo) | baixa | M2 |
+| O6 | **[feito — `089`]** O `load_game()` guardava a obra com os números do JSON (`float`). Funciona porque toda leitura passa por `int()`; normalizar na leitura evita que um uso futuro tropece num `8.0` onde se esperava `8` (como chave de dicionário, por exemplo) | baixa | M2 |
 
 ---
 
