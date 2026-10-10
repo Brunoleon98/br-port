@@ -197,7 +197,8 @@ Windows, o byte a byte dos mapas — está em `.claude/rules/plataforma.md`,
 Vivem em `.claude/rules/`, uma por tema (`docs/decisoes/091`). **Este núcleo e
 as regras gerais carregam em toda sessão**; cada regra de tema carrega quando a
 sessão LÊ ou EDITA um arquivo que casa com o `paths:` dela — pelo Read, Edit ou
-Write, ou por um `cat`/`head` de um arquivo só. Uma pergunta sem arquivo aberto
+Write, ou por um `cat`, `head`, `sed -n` ou `grep` de um arquivo só; um `grep`
+pela árvore não carrega nada (`092`). Uma pergunta sem arquivo aberto
 não as vê: abra a regra do tema antes de responder, ou use `/arte` e
 `/balancear`, que existem para isso. O Codex não as carrega sozinho; o
 `AGENTS.md` lista-as para ele. Lição nova vai para a regra do tema dela; regra
