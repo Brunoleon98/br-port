@@ -826,6 +826,12 @@ frentes, e **a ordem é do Bruno**:
    autorizado pelo Bruno, recusa a 12 antes de aplicar campos, sem migração. Fases
    futuras ainda não implementadas. Pátio liberado no dia 29 dobra a renda do
    píer; apenas seu adicional de contêiner espera os clientes futuros.
+   **Continuação em 09/10 (`087`):** obras dos reparos básicos: dois dias para
+   píer 2/armazém, três para pátio, uma de cada vez e pagamento ao iniciar;
+   benefícios após concluir. Save 14 autorizado, retoma a obra e recusa a 13
+   sem migração. Arte, preços, madeira e cobranças preservados; medição refeita.
+   Crédito opcional, cancelamento, tutorial, trabalhadores extras e fases
+   futuras continuam pendentes. Carros e imóveis aguardam novo escopo.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.

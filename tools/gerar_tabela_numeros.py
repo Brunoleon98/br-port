@@ -322,12 +322,12 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
             "píer a R$400 contra um barco de R$80–300 fazia UM barco comprar um píer,",
             "e decidir onde gastar não valia nada.",
             "",
-            "| Estrutura | Custo | Efeito | Exige |",
-            "|---|---:|---|---|",
+            "| Estrutura | Custo | Dias de obra | Efeito | Exige |",
+            "|---|---:|---:|---|---|",
         ]
         for _id, dados in sorted(ESTRUTURAS_LIDAS.items(), key=lambda kv: kv[1]["ordem"]):
-            linhas.append("| %s | R$ %s | %s | %s |" % (
-                dados["nome"], formatar(dados["custo"]), dados["desc"],
+            linhas.append("| %s | R$ %s | %s | %s | %s |" % (
+                dados["nome"], formatar(dados["custo"]), OBRAS_LIDAS.get(_id, "—"), dados["desc"],
                 dados["requer"] or "—"))
         linhas.append("")
 
@@ -391,6 +391,7 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
 
 
 ESTRUTURAS_LIDAS: dict = {}
+OBRAS_LIDAS: dict = {}
 MOTIVOS_LIDOS: dict = {}
 CLASSES_LIDAS: dict = {}
 
@@ -409,6 +410,8 @@ def ler_estruturas(dump: dict) -> None:
     """
     ESTRUTURAS_LIDAS.clear()
     ESTRUTURAS_LIDAS.update(dump.get("ESTRUTURAS", {}))
+    OBRAS_LIDAS.clear()
+    OBRAS_LIDAS.update(dump.get("DIAS_DAS_OBRAS", {}))
     MOTIVOS_LIDOS.clear()
     MOTIVOS_LIDOS.update(dump.get("MOTIVOS", {}))
     CLASSES_LIDAS.clear()

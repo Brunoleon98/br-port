@@ -1836,7 +1836,7 @@ func _connect_game_state() -> void:
 	# delas abre painel: são a faixa de mensagem que o jogo já tem, com voz.
 	# Uma tela por evento seria um clique a cada coisa que acontece — e o
 	# plano é explícito em que tela nova não pode mudar o ritmo do turno.
-	GameState.estrutura_comprada.connect(func(_id): _obra_pronta.call_deferred())
+	GameState.obra_concluida.connect(func(_id): _obra_pronta.call_deferred())
 	GameState.rival_offer_triggered.connect(_cida_rival)
 	# ⚠️ ESTAS DUAS ESTAVAM ESCRITAS E MUDAS desde 01/09 — um quarto da voz da
 	# Dona Cida em jogo. `perdeu_para_arlindo` e `bom_contrato` viviam na
@@ -1910,6 +1910,9 @@ func _refresh_hud() -> void:
 	if faltam == 0:
 		_upgrade_button.text = "Porto completo"
 		Icones.no_botao(_upgrade_button, Icones.FEITO, 26)
+	elif not GameState.obra_em_andamento.is_empty():
+		_upgrade_button.text = "Construir  ·  obra em andamento"
+		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	else:
 		# O catálogo tem arte futura; só os reparos liberados contam como
 		# disponíveis. Sem reparo aberto, o painel ainda explica as etapas.
@@ -2163,7 +2166,7 @@ func _cida_contrato(valor: int, classe: String) -> void:
 # ⚠️ A FALA ENTRA NO FIM DO FRAME, e não no instante do sinal. O comentário
 # acima afirmava que ela não tapa a mensagem do sistema "porque quem chama isto
 # chama-o depois do evento" — e isso era verdade só para os gatilhos que o Main
-# chama à mão. Nos que vêm do GameState era o CONTRÁRIO: `estrutura_comprada`
+# chama à mão. Nos que vêm do GameState era o CONTRÁRIO: `obra_concluida`
 # sai uma linha ANTES do `message.emit("… — pronto")`, e os dois escrevem no
 # mesmo Label na mesma chamada.
 #
@@ -2316,13 +2319,11 @@ func _semana_nova() -> void:
 #
 # ⚠️ E A CONTAGEM SAI DE `estruturas`, que é onde o jogo a guarda. Um contador
 # próprio aqui seria uma segunda verdade a divergir da primeira — e esta não
-# precisa sequer de memória: `comprar_estrutura()` faz `estruturas.append(id)`
+# precisa sequer de memória: a conclusão faz `estruturas.append(id)`
 # ANTES de emitir, logo no fim do frame a lista já conta esta obra.
 #
-# ⚠️ E MAIS DE UMA OBRA CABE NO MESMO TURNO. Duas compras são duas ações, cada
-# uma com a sua fala; a partir da terceira as duas dizem a MESMA linha, que é
-# a duplicata semântica que a fila do R5 tem de fundir — e as mensagens do
-# sistema das duas obras são DIFERENTES e não se fundem.
+# Desde `087`, só uma obra ocorre por vez. A fala reage à conclusão, nunca
+# ao pagamento; o porto ainda está em ruínas enquanto os dias não passam.
 const OBRA_ROTINA_A_PARTIR_DE := 3
 
 
@@ -2642,7 +2643,18 @@ func _on_menu_app_pedido(cena: String) -> void:
 
 func _on_rival_offer_triggered(indice_fila: int) -> void:
 	_refresh_fila()
-	_abrir_painel(CounterOfferScene).setup(indice_fila)
+	var abrir := func() -> Control:
+		var painel := _abrir_painel(CounterOfferScene)
+		painel.setup(indice_fila)
+		return painel
+	# Pagar também sorteia a chegada do próximo dia. A captura do balanço da
+	# `087` encontrou o Arlindo por cima da resposta do Ribeiro na parcela 2.
+	# Só nesse caminho ele espera resposta e boletim; a oferta habitual mantém
+	# a prioridade que já tinha sobre os outros painéis.
+	if is_instance_valid(_painel_da_vez) and _painel_da_vez.scene_file_path == DebtPaymentScene.resource_path:
+		_na_vez(abrir)
+	else:
+		abrir.call()
 
 
 func _on_debt_due(amount: int) -> void:
@@ -2662,7 +2674,7 @@ func _on_game_over(did_win: bool, reason: String) -> void:
 # A VEZ DAS TELAS QUE ABREM SOZINHAS — o Sr. Ribeiro, o boletim e o fim de
 # fase.
 #
-# O «Pagar» fecha a semana 4 e acaba a partida NA MESMA CHAMADA —
+# Na última parcela, o «Pagar» fecha a semana e acaba a partida NA MESMA CHAMADA —
 # `pay_debt()` → `_fechar_resumo_da_semana()` → `_check_end()` —, e cada sinal
 # abria o seu painel por cima do anterior: o fim de fase no topo, o boletim da
 # semana 4 debaixo dele e a resposta do Sr. Ribeiro no fundo. O toque só
@@ -2676,9 +2688,10 @@ func _on_game_over(did_win: bool, reason: String) -> void:
 # seguidos, sem Sr. Ribeiro. A fila cobre os três sem saber qual deles é: quem
 # tem a vez fica na tela, e quem chega depois espera por ordem de chegada.
 #
-# ⚠️ SÓ ESTAS TRÊS. A contra-oferta do Arlindo continua a abrir por cima de
-# tudo, como antes: é uma decisão que trava o turno, e pô-la na fila atrás de
-# um boletim mudaria uma ordem a meio da partida que ninguém pediu para mudar.
+# A contra-oferta habitual do Arlindo continua a abrir por cima do boletim:
+# é uma decisão que trava o turno. A exceção é a chegada sorteada ao pagar
+# a parcela, ainda na resposta do Ribeiro: espera resposta → boletim e então
+# abre a oferta (`087`, T16), sem esconder a confirmação do pagamento.
 #
 # ⚠️ QUEM PASSA A VEZ É O `tree_exited`, e não o `fechou`. É o único sinal por
 # onde passa toda saída de um painel: o `_fechar()` do andaime, o

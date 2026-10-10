@@ -202,8 +202,9 @@ tirar() {
 # foto do `porto` saiu com a tabela por cima do mapa. `limpo` manda a
 # ferramenta fechar os painéis de ROTINA, e o tiro deixa de depender de onde a
 # semana calha.
-# 086: compras pela porta real até o dia 8: dois píeres e armazém, madeira.
-tirar reparos_fase1 0 8 --script res://tools/capturar_tela.gd -- 7 "$SAIDA/reparos_fase1.png" reparos limpo atracar
+# 087: dia 2, píer ainda em obra; dia 10, píer e armazém concluídos.
+tirar obra_andamento 1 2 --script res://tools/capturar_tela.gd -- 1 "$SAIDA/obra_andamento.png" reparos limpo --painel=construir
+tirar reparos_fase1 0 10 --script res://tools/capturar_tela.gd -- 9 "$SAIDA/reparos_fase1.png" reparos limpo atracar
 tirar inicio  0 1  --script res://tools/capturar_tela.gd -- 0  "$SAIDA/inicio.png" limpo
 tirar porto   0 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/porto.png" completo limpo
 # O NÍVEL DO MEIO. O píer, a lança e os prédios têm três níveis desde 05/09, e
