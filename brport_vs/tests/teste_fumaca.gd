@@ -147,6 +147,10 @@ func _rodar() -> void:
 	_f17_a_conversa()
 	_confere("o bloco F17 correu até ao fim", _f17_terminou)
 
+	print("=== F18: o prazo que o Construir e a mensagem prometem é o que a obra cumpre ===")
+	await _f18_a_obra_prometida()
+	_confere("o bloco F18 correu até ao fim", _f18_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -1651,6 +1655,16 @@ func _f9_concordancia_a_mao() -> void:
 	# chamadas desse painel. Por isso o que se casa são as DUAS ÚLTIMAS strings
 	# antes do fecho, com um nível de parênteses permitido pelo meio.
 	re.compile("concordar\\s*\\((?:[^()]|\\([^()]*\\))*?\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*\\)")
+	var plural := _f9_expressao_do_plural_fixo()
+	# ⚠️ E O TERNÁRIO QUE ESCOLHE A PALAVRA INTEIRA, e não só o «s» (`090`).
+	# O rodapé do Construir escrevia `"disponível" if n == 1 else
+	# "disponíveis"`, e a busca abaixo, que procura `else "s"`, não o via —
+	# o nome desta asserção prometia mais do que ela perguntava. As duas
+	# palavras entre aspas, com o `== 1` no meio: o `SAVE_ARQUIVO if n == 1`
+	# do `GameState` escolhe um arquivo e não tem aspas do lado do «sim».
+	var palavra_inteira := RegEx.new()
+	palavra_inteira.compile("\"[^\"]*\"\\s+if\\s+[^\"\\n]+==\\s*1\\s+else\\s+\"")
+	var fixos := []
 	var crus := []
 	var ternarios := []
 	var pares := []
@@ -1665,7 +1679,8 @@ func _f9_concordancia_a_mao() -> void:
 			uteis.append(limpa)
 			if limpa.contains("(s)") or limpa.contains("(es)") or limpa.contains("(as)"):
 				crus.append("%s: %s" % [caminho.get_file(), limpa])
-			if limpa.contains("else \"s\"") or limpa.contains("else \"es\""):
+			if limpa.contains("else \"s\"") or limpa.contains("else \"es\"") \
+					or palavra_inteira.search(limpa) != null:
 				ternarios.append("%s: %s" % [caminho.get_file(), limpa])
 		var texto := "\n".join(uteis)
 		# A DECLARAÇÃO não é chamada: o `Narrativa.gd` traz o `func concordar(`
@@ -1673,11 +1688,38 @@ func _f9_concordancia_a_mao() -> void:
 		chamadas += texto.count("concordar(") - texto.count("func concordar(")
 		for m in re.search_all(texto):
 			pares.append([caminho.get_file(), m.get_string(1), m.get_string(2)])
+		if not _f9_fala_com_quem_desenvolve(caminho):
+			for palavra in _f9_plurais_fixos(plural, texto):
+				fixos.append("%s: «%%d %s»" % [caminho.get_file(), palavra])
 
 	_confere("F9: nenhum rótulo do jogo escreve \"(s)\" ao jogador",
 		crus.is_empty(), "\n    " + "\n    ".join(crus))
 	_confere("F9: nenhuma contagem concorda com um ternário à mão",
 		ternarios.is_empty(), "\n    " + "\n    ".join(ternarios))
+
+	# ⚠️ E A TERCEIRA FORMA NÃO DEIXA MARCA NENHUMA: o número seguido de um
+	# plural escrito à mão (`090`). «%d dias de obra» saía certo com os prazos
+	# de hoje, 2 e 3, e um prazo de um dia sairia «1 dias» sem `(s)` nem
+	# ternário que as duas buscas acima vissem. A revisão de 09/10 achou-a em
+	# dois sítios, a obra no Construir e na mensagem da compra; a busca pela
+	# FORMA achou mais quatro, todas certas hoje só porque o número nunca era 1
+	# ali — o recibo só se imprime com as três parcelas, o «parte em» só depois
+	# de o `faltam <= 1` sair por outro ramo, os berços e as cobranças são
+	# constantes. É a regra do `CLAUDE.md` outra vez: fecha-se pelo `grep` da
+	# forma, e quem a cumpre passa pelo `concordar()`.
+	# ⚠️ A EXPRESSÃO PROVA-SE ANTES DE VARRER: uma que não casasse nada daria
+	# a lista vazia, que é o verde de graça. E o caso maiúsculo entra na prova
+	# porque o painel das docas escrevia «%d BERÇOS», em caixa alta.
+	_confere("F9: a expressão do ternário de palavra inteira reconhece a forma que caça",
+		palavra_inteira.search("var p := \"disponível\" if n == 1 else \"disponíveis\"") != null
+			and palavra_inteira.search("return SAVE_ARQUIVO if n == 1 else \"x_%d.json\" % n") == null)
+	_confere("F9: a expressão do plural fixo reconhece a forma que caça",
+		_f9_plurais_fixos(plural, "x = \"· %d dias de obra\" % n") == ["dias"]
+			and _f9_plurais_fixos(plural, "x = \"%d DE %d BERÇOS\" % [a, b]") == ["BERÇOS"]
+			and _f9_plurais_fixos(plural, "x = \"pronto no dia %d.\" % n").is_empty()
+			and _f9_plurais_fixos(plural, "x = \"%d das estruturas\" % n").is_empty())
+	_confere("F9: nenhum número escreve o plural à mão («%d dias»)",
+		fixos.is_empty(), "\n    " + "\n    ".join(fixos))
 
 	# ⚠️ E OS PARES DERIVAM DO CÓDIGO, que é o que apanha o defeito na CHAMADA
 	# em vez de no helper. O T9 prova a aritmética com um par escrito no teste;
@@ -1709,7 +1751,8 @@ func _f9_concordancia_a_mao() -> void:
 			continue
 		for i in pv.size():
 			var palavra := String(pv[i])
-			if not palavra.ends_with("s") and not _F9_INVARIAVEIS.has(palavra):
+			# Em minúsculas, porque o painel das docas concorda em caixa alta.
+			if not palavra.to_lower().ends_with("s") and not _F9_INVARIAVEIS.has(palavra):
 				maus.append("%s: \"%s\" não está no plural em \"%s\"" % [par[0], palavra, varios])
 	_confere("F9: em toda chamada, a forma plural está mesmo no plural",
 		maus.is_empty(), "\n    " + "\n    ".join(maus))
@@ -1723,6 +1766,49 @@ func _f9_concordancia_a_mao() -> void:
 # asserção acima o ver, então cada entrada paga o seu lugar.
 #   esperando — gerúndio, invariável ("1 doca esperando" / "2 docas esperando")
 const _F9_INVARIAVEIS := ["esperando"]
+
+
+# O número seguido da palavra que ele conta: `%d`, com as bandeiras e a
+# largura que o formato aceita, um espaço, e a palavra até à primeira
+# pontuação. Quem conta é a palavra no plural — a singular («%d dia») é o
+# mesmo defeito, mas um número seguido de palavra no singular é quase sempre
+# um ordinal («semana %d encerrada», «dia %d vence»), e separar os dois pede
+# um dicionário de português.
+func _f9_expressao_do_plural_fixo() -> RegEx:
+	var re := RegEx.new()
+	re.compile("%[-+ 0#]*\\d*d\\s+([^\\s\"%,.;:!?·—()\\[\\]/]+)")
+	return re
+
+
+# As palavras no plural que seguem um `%d` no texto, menos as que não contam.
+func _f9_plurais_fixos(re: RegEx, texto: String) -> Array:
+	var achadas := []
+	for m in re.search_all(texto):
+		var palavra := m.get_string(1)
+		var minuscula := palavra.to_lower()
+		if minuscula.ends_with("s") and not _F9_NAO_CONTAM.has(minuscula):
+			achadas.append(palavra)
+	return achadas
+
+
+# As palavras em -s que seguem um número sem serem o que ele conta. Curta pela
+# mesma razão da lista acima: cada entrada é uma porta.
+#   das, dos — o partitivo: em «3 das estruturas» o número conta o que vem
+#              depois da preposição, e o partitivo é plural para qualquer n
+#              («uma das estruturas»). O Parcela escreve-o assim.
+const _F9_NAO_CONTAM := ["das", "dos"]
+
+
+# Quem fala com quem DESENVOLVE e não com quem joga, dentro do escopo do F9 —
+# o mesmo motivo que deixa `tools/` e `tests/` de fora, e que só vale para a
+# forma do plural fixo: as duas buscas acima continuam a varrer tudo.
+#   scripts/validation/ — o validador de assets e a régua do contraste
+#                         imprimem no terminal da suíte;
+#   autoload/Registro.gd — o «teto de %d linhas» vai para o `.jsonl` que o
+#                          `ler_registros.py` lê, e nunca chega à tela.
+func _f9_fala_com_quem_desenvolve(caminho: String) -> bool:
+	return caminho.begins_with("res://scripts/validation/") \
+		or caminho == "res://autoload/Registro.gd"
 
 
 func _f9_scripts_do_jogo() -> PackedStringArray:
@@ -4001,3 +4087,208 @@ func _f17_ultimo_argumento(texto: String, desde: int) -> String:
 	if ultimo.length() >= 2 and ultimo.begins_with("\"") and ultimo.ends_with("\""):
 		return ultimo.substr(1, ultimo.length() - 2)
 	return ""
+
+
+
+# ── F18 ─────────────────────────────────────────────────────────────────
+# O PRAZO DA OBRA, PROMETIDO E CUMPRIDO (`090`, a resposta do Bruno ao D8).
+#
+# A `087` aceita a obra que só fica pronta no fecho do último dia, e até 10/10
+# a mensagem dizia «pronto no dia 85» numa fase de 84 dias — o jogador pagava
+# o preço inteiro por um porto que não chegava a usar, sem aviso nenhum. O
+# Bruno respondeu AVISAR: no Construir, antes de comprar, e na mensagem.
+#
+# ⚠️ A FRONTEIRA DERIVA-SE DO JOGO, e não se escreve: o último dia em que cada
+# reparo se compra sai do `impedimento_estrutura()`, andando o calendário de
+# trás para a frente. E prova-se dos DOIS lados, como a `089` fez com a
+# abertura — no último dia o aviso aparece e é verdade (a estrutura não está
+# de pé em dia nenhum da fase); na véspera não aparece, e o «pronto no dia N»
+# da mensagem é o dia em que ela fica de pé, lido no jogo e não no texto.
+#
+# ⚠️ E PELA PORTA DO JOGADOR: o toque no botão do cartão, e o cartão lido
+# outra vez depois de o painel se remontar. O texto «com a obra a andar» é um
+# terceiro leitor do prazo, e foi lá que o «dia 85» também morava.
+const F18_CONSTRUIR := "res://scenes/panels/UpgradePanel.tscn"
+const F18_AVISO := "não será usado nesta fase"
+var _f18_terminou := false
+var _f18_mensagens: Array = []
+
+
+func _f18_a_obra_prometida() -> void:
+	var ouvinte := func(texto: String, kind: String, _assunto: String):
+		_f18_mensagens.append([texto, kind])
+	GS.message.connect(ouvinte)
+	var reparos := []
+	for id in GS.ESTRUTURAS:
+		if GS.dias_da_obra(String(id)) > 0 and not GS.abertura_do_reparo(String(id)).is_empty():
+			reparos.append(String(id))
+	# Os três de hoje; a contagem só garante que a derivação achou alguém.
+	_confere("F18: há reparos com prazo de obra nesta fase", reparos.size() >= 3,
+		str(reparos))
+	for id in reparos:
+		var ultimo := _f18_ultimo_dia_de_compra(id)
+		if ultimo < 2:
+			_confere("F18 %s: há um último dia de compra e uma véspera dele" % id, false,
+				"último dia %d" % ultimo)
+			continue
+		var cumpriu: bool = await _f18_sem_uso(id, ultimo)
+		if not cumpriu:
+			continue
+		await _f18_com_uso(id, ultimo - 1)
+	GS.message.disconnect(ouvinte)
+	GS.clear_save()
+	GS._rng.seed = F10_SEMENTE
+	GS.new_game()
+	_f18_terminou = true
+
+
+# O estado do fim da fase: duas cobranças quitadas e a terceira por vencer, que
+# é o porto que o jogador tem nos dias 57 a 84. Dinheiro de sobra, para o
+# impedimento que aperta ser o do CALENDÁRIO e não o do caixa.
+func _f18_fim_de_fase(dia: int) -> void:
+	_f10_partida_nova("F18")
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	GS.cash = 50000000
+	GS.parcela_indice = GS.PARCELAS_NA_FASE - 1
+	GS.parcelas_quitadas = GS.PARCELAS_NA_FASE - 1
+	GS.turn = dia
+
+
+func _f18_ultimo_dia_de_compra(id: String) -> int:
+	_f18_fim_de_fase(GS.TURNS_TOTAL + 1)
+	for dia in range(GS.TURNS_TOTAL + 1, 0, -1):
+		GS.turn = dia
+		if GS.impedimento_estrutura(id) == "":
+			return dia
+	return -1
+
+
+# O cartão de uma estrutura, achado pelo NOME que ele mostra.
+func _f18_cartao(painel: Node, id: String) -> Node:
+	var nome := String(GS.ESTRUTURAS[id]["nome"])
+	for rotulo in painel.find_children("*", "Label", true, false):
+		if (rotulo as Label).text == nome:
+			var no: Node = rotulo
+			while no != null and not (no is PanelContainer):
+				no = no.get_parent()
+			return no
+	return null
+
+
+func _f18_texto(cartao: Node) -> String:
+	var textos := PackedStringArray()
+	for rotulo in cartao.find_children("*", "Label", true, false):
+		textos.append((rotulo as Label).text)
+	return " | ".join(textos)
+
+
+# Compra pelo botão do cartão e devolve a mensagem da compra, `[texto, kind]`.
+func _f18_comprar(painel: Node, id: String) -> Array:
+	var cartao := _f18_cartao(painel, id)
+	var botao: Button = null
+	if cartao != null:
+		for b in cartao.find_children("*", "Button", true, false):
+			if (b as Button).text.begins_with("Construir"):
+				botao = b
+	if botao == null:
+		_confere("F18 %s: o cartão tem o botão de construir" % id, false)
+		return []
+	_f18_mensagens.clear()
+	botao.pressed.emit()
+	await _f8_esperar()
+	var prefixo := "%s — obra iniciada" % GS.ESTRUTURAS[id]["nome"]
+	for m in _f18_mensagens:
+		if String(m[0]).begins_with(prefixo):
+			return m
+	_confere("F18 %s: a compra deu a mensagem da obra" % id, false, str(_f18_mensagens))
+	return []
+
+
+# O ÚLTIMO DIA: o aviso antes de comprar, na mensagem e na obra a andar — e é
+# verdade, porque a estrutura não fica de pé em dia nenhum da fase.
+func _f18_sem_uso(id: String, dia: int) -> bool:
+	_f18_fim_de_fase(dia)
+	var inexistente := "dia %d" % (GS.TURNS_TOTAL + 1)
+	var painel: Node = await _f10_abrir(F18_CONSTRUIR, [])
+	var cartao := _f18_cartao(painel, id)
+	if cartao == null:
+		_confere("F18 %s: o Construir tem o cartão" % id, false)
+		_f10_fechar(painel)
+		return false
+	var antes := _f18_texto(cartao)
+	var aviso := cartao.find_child("AvisoObraSemUso", true, false) as Label
+	_confere("F18 %s, dia %d: o Construir avisa ANTES de comprar, em âmbar" % [id, dia],
+		aviso != null and aviso.text.contains(F18_AVISO)
+			and aviso.theme_type_variation == &"RotuloAlerta", antes)
+	_confere("F18 %s, dia %d: e não promete um dia que a fase não tem" % [id, dia],
+		not antes.contains(inexistente), antes)
+	var msg: Array = await _f18_comprar(painel, id)
+	if msg.is_empty():
+		_f10_fechar(painel)
+		return false
+	_confere("F18 %s, dia %d: a mensagem avisa, em tom de aviso" % [id, dia],
+		String(msg[0]).contains(F18_AVISO) and String(msg[1]) == "warn", str(msg))
+	_confere("F18 %s, dia %d: e a mensagem não diz «%s»" % [id, dia, inexistente],
+		not String(msg[0]).contains(inexistente), String(msg[0]))
+	await _f8_esperar()
+	cartao = _f18_cartao(painel, id)
+	var andando := _f18_texto(cartao) if cartao != null else ""
+	_confere("F18 %s, dia %d: com a obra a andar, o cartão continua a avisar" % [id, dia],
+		andando.contains("Em obra") and andando.contains(F18_AVISO)
+			and not andando.contains(inexistente), andando)
+	_f10_fechar(painel)
+	# O AVISO É VERDADE: nenhum dia jogável a vê de pé, e o fecho do último a
+	# conclui (`087`) — é o «fim do dia» que o texto promete.
+	_f8_avancar_ate(GS.TURNS_TOTAL)
+	_confere("F18 %s: no dia %d, o último da fase, a obra ainda não está de pé"
+		% [id, GS.TURNS_TOTAL], GS.turn == GS.TURNS_TOTAL and not GS.tem_estrutura(id),
+		"dia %d, de pé %s" % [GS.turn, str(GS.tem_estrutura(id))])
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	GS.advance_turn()
+	_confere("F18 %s: e fica pronta no fecho dele" % id,
+		GS.turn == GS.TURNS_TOTAL + 1 and GS.tem_estrutura(id),
+		"dia %d, de pé %s" % [GS.turn, str(GS.tem_estrutura(id))])
+	return true
+
+
+# A VÉSPERA: sem aviso, e o «pronto no dia N» é o dia em que ela fica de pé.
+func _f18_com_uso(id: String, dia: int) -> void:
+	_f18_fim_de_fase(dia)
+	var painel: Node = await _f10_abrir(F18_CONSTRUIR, [])
+	var cartao := _f18_cartao(painel, id)
+	var antes := _f18_texto(cartao) if cartao != null else ""
+	_confere("F18 %s, dia %d: na véspera o Construir não avisa" % [id, dia],
+		cartao != null and cartao.find_child("AvisoObraSemUso", true, false) == null
+			and not antes.contains(F18_AVISO), antes)
+	var msg: Array = await _f18_comprar(painel, id)
+	if msg.is_empty():
+		_f10_fechar(painel)
+		return
+	var re := RegEx.new()
+	re.compile("pronto no dia (\\d+)")
+	var achou := re.search(String(msg[0]))
+	_confere("F18 %s, dia %d: a mensagem é boa e diz o dia, sem aviso" % [id, dia],
+		achou != null and String(msg[1]) == "good" and not String(msg[0]).contains(F18_AVISO),
+		str(msg))
+	if achou == null:
+		_f10_fechar(painel)
+		return
+	var prometido := int(achou.get_string(1))
+	await _f8_esperar()
+	cartao = _f18_cartao(painel, id)
+	var andando := _f18_texto(cartao) if cartao != null else ""
+	_confere("F18 %s, dia %d: o cartão da obra a andar promete o mesmo dia %d"
+		% [id, dia, prometido],
+		andando.contains("pronto no dia %d" % prometido) and not andando.contains(F18_AVISO),
+		andando)
+	_f10_fechar(painel)
+	_confere("F18 %s: o dia prometido (%d) é um dia da fase" % [id, prometido],
+		prometido <= GS.TURNS_TOTAL)
+	_f8_avancar_ate(prometido - 1)
+	var na_vespera: bool = GS.tem_estrutura(id)
+	_f8_avancar_ate(prometido)
+	_confere("F18 %s: de pé no dia %d e não antes" % [id, prometido],
+		GS.turn == prometido and GS.tem_estrutura(id) and not na_vespera,
+		"dia %d, de pé %s, na véspera %s" % [GS.turn, str(GS.tem_estrutura(id)), str(na_vespera)])

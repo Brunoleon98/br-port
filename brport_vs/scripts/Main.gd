@@ -1916,9 +1916,8 @@ func _refresh_hud() -> void:
 	else:
 		# O catálogo tem arte futura; só os reparos liberados contam como
 		# disponíveis. Sem reparo aberto, o painel ainda explica as etapas.
-		var plural := "disponível" if liberadas == 1 else "disponíveis"
-		_upgrade_button.text = "Construir  ·  %d %s" % [liberadas, plural] \
-			if liberadas > 0 else "Construir  ·  ver estruturas"
+		_upgrade_button.text = "Construir  ·  %s" % Narrativa.concordar(liberadas,
+			"disponível", "disponíveis") if liberadas > 0 else "Construir  ·  ver estruturas"
 		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
 	_advance_button.disabled = GameState.phase != "playing"
 	_refresh_meta()
@@ -1934,7 +1933,8 @@ func _refresh_meta() -> void:
 		_meta_icone.texture = Icones.FEITO
 		_meta_titulo.text = "Parcela %d de %d — Sr. Ribeiro" % [GameState.parcela_indice + 1, GameState.PARCELAS_NA_FASE]
 		_meta_bar.value = 100.0
-		_meta_label.text = "Paga — %d de %d quitadas" % [GameState.parcelas_quitadas, GameState.PARCELAS_NA_FASE]
+		_meta_label.text = "Paga — %d de %s" % [GameState.parcelas_quitadas,
+			Narrativa.concordar(GameState.PARCELAS_NA_FASE, "quitada", "quitadas")]
 		_meta_label.theme_type_variation = &"TextoPilulaBom"
 		return
 

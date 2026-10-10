@@ -1903,18 +1903,47 @@ func comprar_estrutura(id: String) -> bool:
 	if impedimento_estrutura(id) != "":
 		return false
 	var def: Dictionary = ESTRUTURAS[id]
+	var conclusao := turn + dias_da_obra(id)
 	cash -= int(def["custo"])
-	obra_em_andamento = {"id": id, "inicio": turn, "conclusao": turn + dias_da_obra(id)}
+	obra_em_andamento = {"id": id, "inicio": turn, "conclusao": conclusao}
 	cash_changed.emit(cash)
 	estrutura_comprada.emit(id)
-	message.emit("%s — obra iniciada. %d dias; pronto no dia %d." %
-		[def["nome"], dias_da_obra(id), turn + dias_da_obra(id)], "good", "obra")
+	# A obra sem uso na fase AVISA, e o aviso tem o `kind` dele: é o que pinta
+	# a faixa de âmbar e toca o som de aviso, em vez do verde de quem comprou
+	# bem (`090`).
+	message.emit("%s — obra iniciada. %s; %s." % [def["nome"],
+		Narrativa.concordar(dias_da_obra(id), "dia", "dias"), prazo_da_obra(conclusao)],
+		"warn" if obra_sem_uso_na_fase(conclusao) else "good", "obra")
 	save_game()
 	return true
 
 
 func dias_da_obra(id: String) -> int:
 	return int(DIAS_DAS_OBRAS.get(id, 0))
+
+
+# A OBRA QUE SÓ FICA PRONTA NO FECHO DO ÚLTIMO DIA. A `087` aceita-a — o limite
+# do `impedimento_estrutura()` é `TURNS_TOTAL + 1` —, e o dia em que ela abre
+# não existe nesta fase: a mensagem dizia «pronto no dia 85» numa fase de 84, e
+# o jogador pagava por um porto que não chegava a usar. O Bruno respondeu ao D8
+# em 10/10: AVISAR, e não recusar (`090`). E disse porquê é só «por enquanto»:
+# no futuro o jogo terá anos de 365 dias, e uma obra assim passa simplesmente
+# para o dia seguinte. Quando o calendário deixar de acabar, esta função
+# deixa de ter razão de ser — não se lhe acrescenta um caso.
+func obra_sem_uso_na_fase(conclusao: int) -> bool:
+	return conclusao > TURNS_TOTAL
+
+
+# O PRAZO DA OBRA COMO O JOGADOR O LÊ, num lugar só: a mensagem da compra e os
+# dois estados do Construir (antes de comprar e com a obra a andar) leem
+# daqui (`090`). `conclusao` é o dia que ABRE com a obra pronta; o da obra sem
+# uso não existe, e o texto nomeia o último que existe. O número sai da
+# constante, e é masculino porque as três estruturas que se compram — píer,
+# armazém e pátio — o são.
+func prazo_da_obra(conclusao: int) -> String:
+	if obra_sem_uso_na_fase(conclusao):
+		return "pronto só no fim do dia %d, e não será usado nesta fase" % TURNS_TOTAL
+	return "pronto no dia %d" % conclusao
 
 
 func dias_restantes_da_obra() -> int:

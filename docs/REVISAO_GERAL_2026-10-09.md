@@ -222,7 +222,7 @@ a automação publique evidência falsa ou induza a próxima sessão a errar.
 | D5 | Política de save a partir do primeiro build público | Migração encadeada v(n)→v(n+1), com um save de exemplo por versão | M10 |
 | D6 | Publicar o build Web atual no Pages, no lugar do protótipo? | Sim, se aceitar o jogo atual jogável em público; senão, desligar o Pages | M11 |
 | D7 | Destino da arte órfã e de `art/sprites/` | Seguir a triagem da `046` | — |
-| D8 | A obra que só fica pronta no fecho do dia 84 (aceita pela `087`): avisar ou recusar? | Avisar no Construir e na mensagem que ela não será usada nesta fase | M3 |
+| D8 | A obra que só fica pronta no fecho do dia 84 (aceita pela `087`): avisar ou recusar? | **Resolvida em 10/10: avisar**, por enquanto — no futuro, anos de 365 dias, e a obra passa ao dia seguinte (`090`) | — |
 
 **Só o Bruno pode fazer:**
 - subir as imagens-alvo, o galpão V3 e, se a tiver, a resposta da pesquisa
@@ -250,6 +250,14 @@ num sítio só. ⚠️ O mutante previsto abaixo («hoje passaria») reprovava s
 asserções no código de antes: a ponta desguardada era o save, e um save com o
 armazém no dia 9 passava as seis suítes. O primeiro item aberto passa a ser o
 **M3**, que espera o D8.
+
+**M3, em 10/10 (`090`):** o D8 respondido — avisar. O `prazo_da_obra()` é o
+prazo como o jogador o lê, e a mensagem e o Construir (antes e durante a obra)
+leem dele; a contagem passa pelo `concordar`, em oito sítios e não nos dois
+nomeados. **Prova:** o F18 do `teste_fumaca`, relacional, dos dois lados da
+fronteira; o F9 alargado à forma «`%d` + plural» e ao ternário de palavra
+inteira; dezassete mutantes. O primeiro item aberto passa a ser o **M4**, que
+espera o D2; o primeiro sem decisão pendente é o **M5**.
 
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
@@ -291,7 +299,7 @@ do A7 publicava dois dados errados (§7, O2 e O3).
 
 ### M3 — A obra que o jogador lê
 
-**[D8 · curta · critério 1]**
+**[feito em 10/10 — `090`]** ~~[D8 · curta · critério 1]~~
 - «`%d dias de obra`» (`UpgradePanel.gd`) e «`%d dias; pronto no dia %d`»
   (`comprar_estrutura()`) passam pelo `Narrativa.concordar` (`037`). Os
   prazos hoje são 2 e 3, e o texto sai certo; um prazo de 1 dia sairia
@@ -452,9 +460,10 @@ Os achados, do mais grave ao mais leve. Nenhum quebra o jogo hoje.
 | O1 | **[feito — `089`]** O `_save_aceite()` escrevia à mão os dias em que cada reparo abre — `8 if armazem else 29 if patio else 1` e, à parte, «pátio exige uma cobrança quitada» —, enquanto o `desbloqueio_da_estrutura()` os calcula pela semana (`current_week() < 2`) e pelo vencimento (`PARCELA_DUE_TURN`). Hoje coincidem. Mudar o `TURNS_PER_WEEK` ou o prazo da cobrança faria o jogo recusar saves válidos, ou aceitar uma obra começada num dia em que não podia, sem erro nenhum. É a «regra que existe em dois sítios» do `CLAUDE.md` | média, latente | M2 |
 | O2 | O `Registro.gd` só ouve o `estrutura_comprada`, que desde a `087` dispara no PAGAMENTO. O `tools/ler_registros.py` publica esse dia como «O porto que se levanta» e conta como construída a obra que ainda não acabou. O sinal da conclusão (`obra_concluida`) não tem ouvinte no gravador. É a «sonda presa a um ponto de passagem» do `CLAUDE.md` | média, dado errado hoje | M1 |
 | O3 | Anterior ao #110, da `085`: o leitor ainda tira a «semana 1» de `t <= 8` e a «semana 4» de `t > 24`, que eram semanas de 8 dias numa fase de 4. Com 12 semanas de 7 dias, a «semana 4» publicada cobre da 4 à 12 | baixa-média, dado errado hoje | M1 |
-| O4 | «`%d dias de obra`» e «`%d dias; pronto no dia %d`» não passam pelo `Narrativa.concordar` (`037`). Com 2 e 3 dias o texto sai certo, e com um prazo de 1 dia sairia «1 dias» sem guarda | baixa, latente | M3 |
-| O5 | A obra começada no dia 83 fica pronta no fecho do 84, e é aceita: está na `087` e no T15 («pode terminar no fechamento do dia 84»). A mensagem diz «pronto no dia 85» numa fase de 84 dias, e o jogador paga por algo que esta fase não deixa usar | pergunta ao Bruno | D8, M3 |
+| O4 | **[feito — `090`]** «`%d dias de obra`» e «`%d dias; pronto no dia %d`» não passam pelo `Narrativa.concordar` (`037`). Com 2 e 3 dias o texto sai certo, e com um prazo de 1 dia sairia «1 dias» sem guarda | baixa, latente | M3 |
+| O5 | **[feito — `090`, avisa]** A obra começada no dia 83 fica pronta no fecho do 84, e é aceita: está na `087` e no T15 («pode terminar no fechamento do dia 84»). A mensagem diz «pronto no dia 85» numa fase de 84 dias, e o jogador paga por algo que esta fase não deixa usar | pergunta ao Bruno | D8, M3 |
 | O6 | **[feito — `089`]** O `load_game()` guardava a obra com os números do JSON (`float`). Funciona porque toda leitura passa por `int()`; normalizar na leitura evita que um uso futuro tropece num `8.0` onde se esperava `8` (como chave de dicionário, por exemplo) | baixa | M2 |
+| O7 | Achado no M3 (`090`): o rodapé diz «Construir · 3 disponíveis» nos dias 83 e 84, quando o painel mostra o pátio (e no 84 os três) com «Não termina nesta fase.». Ele conta o que o `desbloqueio_da_estrutura()` abre, não o que se compra hoje; mudar isso decide o que «disponível» quer dizer, e se a falta de dinheiro conta | baixa, dado enganoso no fim da fase | pergunta ao Bruno |
 
 ---
 
