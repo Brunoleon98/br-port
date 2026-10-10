@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-10b.md` | 10/10 | Substitui o de 10/10: o M1 da fila fechou (`088`) — o gravador grava a obra pronta e o calendário, o leitor publica dia pago → pronto e as semanas do cabeçalho, com autoteste. Branch `claude/bold-gates-abot5o`. Próximo: o M2, a regra de abertura num lugar só |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10.md` | 10/10 | Depois da revisão geral de 09/10 e da revisão do PR #110 (`REVISAO_GERAL_2026-10-09.md`): a fila de melhorias da mais crítica à mais tranquila, antes de voltar aos gráficos e ao jogo |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-09b.md` | 09/10 | Obras dos reparos da Fase 1 (`087`), Save 14 autorizado e próximo recorte com Bruno |
 | `MEDICOES_OBRAS_FASE_1_2026-10-09.json` | 09/10 | Base final da 086 contra obras em 2/2/3 dias: três cobranças, quantis, início/conclusão e paridade de autosave |

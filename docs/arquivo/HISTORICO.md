@@ -795,3 +795,9 @@ mais antigas:
 | Fechado | O que ficou, medido |
 |---|---|
 | **Frente 4 do A5 — animação, os três degraus** (02–03/10, `075`–`077`, `079`) | No píer 1 **o pau-de-carga** descarrega e ele opera o guincho (**D39**); no 2 **o guindaste**, e ele leva a carga ao camião, que encosta de ré (**D40**); no 3 **o pórtico** pousa o pallet a meio do cais e ele leva-o de **empilhadeira** à pilha ou ao camião (**D42**). A empilhadeira e o pallet, na régua da pessoa |
+
+**E, para caber o M1 da fila de melhorias (`088`),** desceu o rodapé:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); o Construir com o cabeçalho das famílias. **Aceite** |

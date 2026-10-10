@@ -50,6 +50,7 @@ var _b3 := false
 var _b4 := false
 var _b5 := false
 var _b6 := false
+var _b7 := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -98,12 +99,15 @@ func _rodar() -> void:
 	_r5_anonimo()
 	print("=== R6: o relógio de deliberação é monotónico e não negativo ===")
 	_r6_relogio()
+	print("=== R7: a obra grava-se PAGA e PRONTA, e o cabeçalho traz a semana ===")
+	_r7_obra_pronta()
 
 	# A bandeira de cada bloco. Ver o aviso do cabeçalho: sem isto, "passou"
 	# quer dizer "não reprovou", que não é a mesma coisa que "correu".
-	_confere("os sete blocos correram até ao fim",
-		_b1 and _b1b and _b2 and _b3 and _b4 and _b5 and _b6,
-		"R1=%s R1b=%s R2=%s R3=%s R4=%s R5=%s R6=%s" % [_b1, _b1b, _b2, _b3, _b4, _b5, _b6])
+	_confere("os oito blocos correram até ao fim",
+		_b1 and _b1b and _b2 and _b3 and _b4 and _b5 and _b6 and _b7,
+		"R1=%s R1b=%s R2=%s R3=%s R4=%s R5=%s R6=%s R7=%s"
+			% [_b1, _b1b, _b2, _b3, _b4, _b5, _b6, _b7])
 
 	_limpar()
 
@@ -481,6 +485,77 @@ func _r6_relogio() -> void:
 	else:
 		print("  (nenhuma contra-oferta neste sorteio — bloco de negociação não corrido)")
 	_b6 = true
+
+
+# ── R7 ──
+#
+# Desde a `087` pagar não é levantar: a obra leva dias, e o gravador só ouvia o
+# pagamento — o leitor publicava esse dia como «o porto que se levanta» (M1 da
+# revisão de 09/10, `088`). O dia pronto esperado sai do JOGO, e não da conta
+# do prazo: é o turno em que o `tem_estrutura()` passa a verdadeiro. Mutantes
+# medidos na `088`: sem o ouvinte novo, com ele preso ao pagamento e com o
+# `t` um dia atrás, este bloco reprova.
+func _r7_obra_pronta() -> void:
+	_limpar()
+	GS.new_game()
+	R._armado = false
+	R.armar()
+	if GS.phase == "rival_offer":
+		GS.negotiate_rival("igualar")
+
+	var cab: Dictionary = JSON.parse_string(R.texto_para_exportar().split("\n", false)[0])
+	_confere("o cabeçalho traz os dias por semana do jogo",
+		int(cab.get("turnos_por_semana", -1)) == GS.TURNS_PER_WEEK,
+		"gravou %s, o jogo tem %d" % [cab.get("turnos_por_semana"), GS.TURNS_PER_WEEK])
+	_confere("e os dias da fase", int(cab.get("turnos_totais", -1)) == GS.TURNS_TOTAL)
+
+	GS.cash = 999999
+	var pago: int = GS.turn
+	_confere("a obra liberada foi comprada", GS.comprar_estrutura("pier_2"))
+	_confere("paga, ainda não está pronta (senão este bloco não prova nada)",
+		not GS.tem_estrutura("pier_2"))
+	_confere("pagar não grava a obra pronta",
+		_eventos("obra_pronta").is_empty(),
+		"gravou %d no dia do pagamento" % _eventos("obra_pronta").size())
+
+	var pronta_no_jogo := -1
+	var voltas := 0
+	while pronta_no_jogo < 0 and voltas < 20:
+		voltas += 1
+		if GS.phase == "rival_offer":
+			GS.negotiate_rival("igualar")
+			continue
+		if GS.phase != "playing":
+			break
+		GS.advance_turn()
+		if GS.tem_estrutura("pier_2"):
+			pronta_no_jogo = GS.turn
+	_confere("a obra ficou pronta no jogo", pronta_no_jogo > pago,
+		"pronta=%d, paga no dia %d, fase %s" % [pronta_no_jogo, pago, GS.phase])
+
+	var prontas := _eventos("obra_pronta")
+	_confere("grava UMA linha de obra pronta", prontas.size() == 1,
+		"%d linhas" % prontas.size())
+	if prontas.size() == 1:
+		var e: Dictionary = prontas[0]
+		_confere("com o id da obra", String(e.get("id", "")) == "pier_2", str(e))
+		_confere("no dia em que o jogo a deu por pronta",
+			int(e.get("t", -1)) == pronta_no_jogo,
+			"gravou o dia %s, o jogo levantou-a no %d" % [e.get("t"), pronta_no_jogo])
+	var pagas := _eventos("obra")
+	_confere("e a paga continua a gravar o dia do pagamento",
+		pagas.size() == 1 and int(pagas[0].get("t", -1)) == pago,
+		str(pagas))
+	_b7 = true
+
+
+func _eventos(nome: String) -> Array:
+	var fora: Array = []
+	for l in R.texto_para_exportar().split("\n", false):
+		var v = JSON.parse_string(l)
+		if typeof(v) == TYPE_DICTIONARY and v.get("e") == nome:
+			fora.append(v)
+	return fora
 
 
 # Enche os berços livres com os barcos ao largo, pela ordem da fila (`083`).
