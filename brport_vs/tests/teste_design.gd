@@ -4039,8 +4039,8 @@ func _d23_menu_celular() -> void:
 		"o botão diz '%s'" % construir.text)
 	GS.comprar_estrutura("pier_2")
 	tela._refresh_hud()
-	_confere("D23: sem reparo liberado, o catálogo ainda abre e mostra as etapas",
-		construir.text == "Construir  ·  ver estruturas" and not construir.disabled,
+	_confere("D23: durante a obra, o catálogo abre e anuncia o andamento",
+		construir.text == "Construir  ·  obra em andamento" and not construir.disabled,
 		"o botão diz '%s'" % construir.text)
 	var pior := construir.text
 	var fonte: Font = construir.get_theme_font("font")
@@ -6170,15 +6170,19 @@ func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
 	var lanca: Dictionary = k["LANCA_N1"]
 	var arte_lanca: Array = k["ArteLanca"]
-	# Os três reparos pela porta real não trocam o aparelho de madeira.
+	# Arte das três estruturas prontas; o avanço real e seus prazos estão
+	# em T14/T15. Montar aqui preserva o barco do ensaio de animação.
 	GS.cash = GS.START_CASH * 25
-	_confere("D39: repara o segundo píer", GS.comprar_estrutura("pier_2"))
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "pier_2")
+	_confere("D39: segundo píer montado", GS.tem_estrutura("pier_2"))
 	GS.turn = 8
-	_confere("D39: repara o armazém na semana 2", GS.comprar_estrutura("armazem"))
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "armazem")
+	_confere("D39: armazém montado", GS.tem_estrutura("armazem"))
 	GS.turn = 29
 	GS.parcela_indice = 1
 	GS.parcelas_quitadas = 1
-	_confere("D39: repara o pátio após a primeira cobrança", GS.comprar_estrutura("patio"))
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "patio")
+	_confere("D39: pátio montado", GS.tem_estrutura("patio"))
 	doca.refresh()
 	_confere("D39: reparos mantêm a lança e sua base de madeira, com dois píeres",
 		GS.nivel_guindaste() == 1 and GS.docks.size() == 2

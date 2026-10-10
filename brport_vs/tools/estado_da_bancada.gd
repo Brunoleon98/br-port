@@ -13,6 +13,7 @@ static func instalar(gs: Node, id: String) -> void:
 	gs.cash_changed.emit(gs.cash)
 	gs.roster_changed.emit()
 	gs.estrutura_comprada.emit(id)
+	gs.obra_concluida.emit(id)
 
 
 # A treliça é da Fase 2. Montá-la para fotografar/testar a arte aprovada não

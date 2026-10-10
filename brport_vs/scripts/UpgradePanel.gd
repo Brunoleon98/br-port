@@ -36,6 +36,7 @@ func _ready() -> void:
 	_build_ui()
 	GameState.cash_changed.connect(func(_v): _pedir_rebuild())
 	GameState.roster_changed.connect(_pedir_rebuild)
+	GameState.turn_advanced.connect(func(_dia, _semana): _pedir_rebuild())
 
 
 func _pedir_rebuild() -> void:
@@ -168,6 +169,8 @@ func _linha_estrutura(id: String) -> Control:
 
 	var efeito := Label.new()
 	efeito.text = String(def["desc"])
+	if not feito and GameState.dias_da_obra(id) > 0:
+		efeito.text += " · %d dias de obra" % GameState.dias_da_obra(id)
 	efeito.autowrap_mode = TextServer.AUTOWRAP_WORD
 	efeito.add_theme_font_size_override("font_size", 12)
 	efeito.theme_type_variation = "RotuloApoio"
@@ -187,6 +190,22 @@ func _linha_estrutura(id: String) -> Control:
 		texto_pronto.size_flags_horizontal = Control.SIZE_SHRINK_END
 		pronto.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		linha.add_child(pronto)
+		return cartao
+
+	if GameState.obra_em_andamento.get("id", "") == id:
+		var andamento := Label.new()
+		andamento.text = "Em obra · %s · pronto no dia %d" % [
+			Narrativa.concordar(GameState.dias_restantes_da_obra(), "dia restante", "dias restantes"),
+			int(GameState.obra_em_andamento["conclusao"])]
+		andamento.autowrap_mode = TextServer.AUTOWRAP_WORD
+		andamento.add_theme_font_size_override("font_size", 13)
+		andamento.theme_type_variation = "RotuloApoio"
+		col.add_child(andamento)
+		var pago := Label.new()
+		pago.text = "Pago"
+		pago.theme_type_variation = "RotuloApoio"
+		pago.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		linha.add_child(pago)
 		return cartao
 
 	# ⚠️ O MOTIVO DO BLOQUEIO NÃO PODE VIVER DENTRO DO BOTÃO DESLIGADO, e viveu

@@ -29,6 +29,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-09b.md` | 09/10 | Obras dos reparos da Fase 1 (`087`), Save 14 autorizado e próximo recorte com Bruno |
+| `MEDICOES_OBRAS_FASE_1_2026-10-09.json` | 09/10 | Base final da 086 contra obras em 2/2/3 dias: três cobranças, quantis, início/conclusão e paridade de autosave |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-09.md` | 09/10 | Fecho da 086 no PR #109, Save 13 autorizado e próximo recorte da frente 5 com Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-08b.md` | 08/10 | Guindaste de madeira na Fase 1 (086), medições e continuação do PR enquanto aguarda autorização explícita para Save 13 |
 | `MEDICOES_GUINDASTES_FASE_1_2026-10-08.json` | 08/10 | Base final da 085 contra madeira em toda a Fase 1 (086), três cobranças, quantis, compras e paridade de autosave |
