@@ -1148,6 +1148,10 @@ não passam dias. A reação de pronto vem de `obra_concluida`, não da compra.
 O simulador soma investimento no início e mede desbloqueio, pagamento e
 conclusão separadamente; supor `tem_estrutura` na compra ocultava a despesa.
 Obra que ultrapassa o fim da fase é recusada sem cobrança. Arte preservada.
+A que só acaba no fecho do dia 84 é aceita e AVISA, no Construir e na
+mensagem, que não será usada nesta fase — resposta do Bruno ao D8, «por
+enquanto»: com anos de 365 dias ela passa ao dia seguinte (`090`). O prazo que
+o jogador lê sai do `prazo_da_obra()`, nunca do `conclusao` cru.
 
 ### Save
 
@@ -2223,6 +2227,11 @@ as três coisas.
   sítios. Num deles a MESMA condição estava escrita duas vezes na mesma
   expressão, uma para o substantivo e outra para o particípio. Hoje quem
   pergunta é o bloco **F9** do `teste_fumaca`.
+  ⚠️ **E A FORMA TINHA TRÊS CARAS, e o F9 conhecia duas.** O número seguido
+  de plural fixo («%d dias») não deixa `(s)` nem `else "s"`: a revisão nomeou
+  dois sítios e a forma achou seis, um em CAIXA ALTA («%d BERÇOS»), mais um
+  ternário de palavra inteira que a asserção «nenhum ternário à mão» não via —
+  o nome dela prometia mais do que perguntava (`090`).
 - **⚠️ QUEIXA DE ESTRANHEZA PODE SER LACUNA, e aí não há rótulo a corrigir.** A
   triagem leu *"é estranho o porto ter dívida mas o jogador começar com
   R$400.000"* como um nome errado e propôs chamar EMPRÉSTIMO ao caixa — que
@@ -2602,7 +2611,9 @@ as três coisas.
   sobra depois de uma recusa, e a chance pela frequência do sorteio; o F15 faz
   o mesmo nos painéis do HUD (`065`). Mostrar a consequência antes da escolha
   é assumir uma promessa: quem a escreve, escreve a guarda
-  (`docs/decisoes/062`).
+  (`docs/decisoes/062`). Medido na `090`: o dia da obra trocado nos DOIS
+  leitores (mensagem e cartão) concordava consigo mesmo, e só a conferência
+  contra o jogo o reprovou.
 - **⚠️ OS ÍCONES TÊM DOIS DESENHOS, e um deles some no selo claro.** Os do
   HUD são traço CLARO para a barra escura; os de painel têm disco navy. O
   `doca` (traço `#f0f6ff`) foi fantasma no painel branco e, em 26/09, no selo

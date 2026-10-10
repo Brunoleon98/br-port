@@ -59,8 +59,8 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	quadro(quadros, "Sem trabalhador", str(sem_gente))
 	quadro(quadros, "Vazias", str(vazias))
 
-	secao("DOCA A DOCA · %d DE %d BERÇOS CONSTRUÍDOS"
-		% [GameState.docks.size(), GameState.BERCOS_NO_MAPA])
+	secao("DOCA A DOCA · %d DE %s" % [GameState.docks.size(), Narrativa.concordar(
+		GameState.BERCOS_NO_MAPA, "BERÇO CONSTRUÍDO", "BERÇOS CONSTRUÍDOS")])
 	for i in range(GameState.docks.size()):
 		_linha_da_doca(i)
 

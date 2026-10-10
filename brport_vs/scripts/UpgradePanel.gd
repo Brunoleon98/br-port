@@ -170,7 +170,8 @@ func _linha_estrutura(id: String) -> Control:
 	var efeito := Label.new()
 	efeito.text = String(def["desc"])
 	if not feito and GameState.dias_da_obra(id) > 0:
-		efeito.text += " · %d dias de obra" % GameState.dias_da_obra(id)
+		efeito.text += " · %s de obra" % Narrativa.concordar(
+			GameState.dias_da_obra(id), "dia", "dias")
 	efeito.autowrap_mode = TextServer.AUTOWRAP_WORD
 	efeito.add_theme_font_size_override("font_size", 12)
 	efeito.theme_type_variation = "RotuloApoio"
@@ -192,11 +193,15 @@ func _linha_estrutura(id: String) -> Control:
 		linha.add_child(pronto)
 		return cartao
 
+	# ⚠️ COM A OBRA A ANDAR, O AVISO É INFORMAÇÃO E VAI NO TOM DE APOIO; o
+	# âmbar fica para ANTES de comprar, que é onde ele muda uma decisão (`090`).
+	# O dia sai do `prazo_da_obra()`, e não do `conclusao` cru: a obra que só
+	# acaba no fecho do último dia dizia aqui «pronto no dia 85».
 	if GameState.obra_em_andamento.get("id", "") == id:
 		var andamento := Label.new()
-		andamento.text = "Em obra · %s · pronto no dia %d" % [
+		andamento.text = "Em obra · %s · %s" % [
 			Narrativa.concordar(GameState.dias_restantes_da_obra(), "dia restante", "dias restantes"),
-			int(GameState.obra_em_andamento["conclusao"])]
+			GameState.prazo_da_obra(int(GameState.obra_em_andamento["conclusao"]))]
 		andamento.autowrap_mode = TextServer.AUTOWRAP_WORD
 		andamento.add_theme_font_size_override("font_size", 13)
 		andamento.theme_type_variation = "RotuloApoio"
@@ -237,6 +242,22 @@ func _linha_estrutura(id: String) -> Control:
 		preco.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		linha.add_child(preco)
 		return cartao
+
+	# A OBRA QUE SÓ FICA PRONTA NO FECHO DO ÚLTIMO DIA compra-se, e avisa
+	# (D8, `090`): o jogador paga o preço inteiro por uma estrutura que esta
+	# fase não deixa usar, e é aqui, com o botão ao lado, que ele o decide. Em
+	# `RotuloAlerta`, o âmbar escurecido do tema, que mede 5,06:1 no cartão
+	# branco — o caso «Construir (obra sem uso na fase)» da régua do contraste
+	# mede-o, porque o percurso abre no dia 1 e nunca chegaria aqui.
+	var conclusao: int = GameState.turn + GameState.dias_da_obra(id)
+	if GameState.obra_sem_uso_na_fase(conclusao):
+		var aviso := Label.new()
+		aviso.name = "AvisoObraSemUso"
+		aviso.text = "Fica %s." % GameState.prazo_da_obra(conclusao)
+		aviso.autowrap_mode = TextServer.AUTOWRAP_WORD
+		aviso.add_theme_font_size_override("font_size", 13)
+		aviso.theme_type_variation = "RotuloAlerta"
+		col.add_child(aviso)
 
 	var btn := Button.new()
 	btn.text = "Construir · %s" % GameState.moeda(int(def["custo"]))

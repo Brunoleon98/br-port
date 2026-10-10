@@ -150,7 +150,7 @@ static func texto_do_progresso(motivo: String, feitos: int, total: int) -> Strin
 	var faltam := total - feitos
 	if faltam <= 1:
 		return "%s · parte amanhã" % motivo
-	return "%s · parte em %d dias" % [motivo, faltam]
+	return "%s · parte em %s" % [motivo, Narrativa.concordar(faltam, "dia", "dias")]
 
 
 # O berço livre diz o que fazer com ele: chamar um barco, se houver um pronto

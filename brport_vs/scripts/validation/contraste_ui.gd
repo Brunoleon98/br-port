@@ -173,6 +173,15 @@ func percurso() -> Array:
 			"estado": {"cash": 900000, "turn": 8}, "estruturas": ["pier_2", "armazem"]},
 		{"nome": "Construir (obra em andamento)",
 			"cena": "res://scenes/panels/UpgradePanel.tscn", "obra": "pier_2"},
+		# ⚠️ O AVISO DA OBRA SEM USO NA FASE (`090`): o âmbar do Construir só
+		# existe no último dia em que uma obra de dois dias ainda se compra, e
+		# o percurso abre no dia 1. O 83 é esse dia numa fase de 84; a prova é
+		# o TEXTO no nó, e um calendário mudado reprova este caso em vez de o
+		# deixar medir o cartão sem aviso.
+		{"nome": "Construir (obra sem uso na fase)",
+			"cena": "res://scenes/panels/UpgradePanel.tscn",
+			"estado": {"cash": 900000, "turn": 83},
+			"texto_na_tela": "não será usado nesta fase"},
 	]
 
 

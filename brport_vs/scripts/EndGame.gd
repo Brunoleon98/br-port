@@ -100,7 +100,8 @@ func _mostrar_narracao() -> void:
 # regra «nenhum dígito na narração» é da peça escrita à mão por cima dele.
 func _linhas_do_recibo() -> Array:
 	return ["BANCO PORTO MIRIM",
-		"Recibo — %d parcelas quitadas" % int(GameState.parcelas_quitadas),
+		"Recibo — %s" % Narrativa.concordar(int(GameState.parcelas_quitadas),
+			"parcela quitada", "parcelas quitadas"),
 		GameState.texto("{portName}")]
 
 
