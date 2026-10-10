@@ -26,7 +26,13 @@ que não é a mesma pergunta que "passou".
 > ⚠️ **A F5 pode mandar de volta à F4.** Se o antes/depois mostrar que ficou
 > pior, sobe outra vez — foi o que aconteceu duas vezes com o gancho do n1.
 
-**As regras do projeto estão em `CLAUDE.md` e carregam sozinhas.** Esta skill
+**As regras do projeto estão no `CLAUDE.md` e em `.claude/rules/`**
+(`docs/decisoes/091`): o núcleo e as gerais carregam sozinhos, e a regra
+de cada tema carrega quando a sessão abre um arquivo dele. **Abra
+`.claude/rules/arte.md` antes de tudo** — e `mapa.md` e `projecao.md` se a
+etapa toca o mapa ou a câmera —: elas só carregam sozinhas quando a sessão
+abre um arquivo do tema, e uma conversa de arte começa muitas vezes por uma
+queixa sobre uma imagem. Esta skill
 não as repete: ela conduz a ordem, e trava nos pontos onde o olho engana.
 
 O alvo escrito é `docs/design/BR_Port_Plano_Arte_Blender.md` (as seis etapas,
@@ -43,7 +49,7 @@ das imagens, com a tabela de paleta AMOSTRADA delas).
 |---|---|---|
 | 1 — Paleta e enquadramento | dicionário `C` e `MEIA_LARG` de `gerar_mapa_iso.py` | **a paleta não**; o enquadramento sim |
 | 2 — A cauda dos props | contêiner, caixote, boia: 2 peças → dezenas | sim |
-| 3 — Contorno pelo compositor | ❌ **construída e REJEITADA** em 05/09 — o traço acha o desenho e desenha-o outra vez (`CLAUDE.md`; `BR_Port_Plano_Arte_Blender.md`) | não |
+| 3 — Contorno pelo compositor | ❌ **construída e REJEITADA** em 05/09 — o traço acha o desenho e desenha-o outra vez (`.claude/rules/arte.md`; `BR_Port_Plano_Arte_Blender.md`) | não |
 | 4 — Materiais dirigidos | ripa, corrugado, ferrugem que escorre | sim |
 | 5 — Personagem com rosto | folha de rostos num plano da cabeça | textura, não geometria |
 | 6 — Interface encorpada | `ui/tema_brport.tres` e as cenas | **não** |
@@ -246,7 +252,7 @@ A etapa fica **meio feita** se só o código mudar:
 | `docs/design/BR_Port_Plano_Arte_Blender.md` | a etapa, com o que ficou E o que NÃO ficou, e por quê |
 | `docs/design/referencias/README.md` | a tabela de paleta descreve "o projeto hoje" — se mudou, diga |
 | `docs/ESTADO_DO_PROJETO.md` | o que é arte de verdade e o que ainda é placeholder |
-| `CLAUDE.md` | só o que vale SEMPRE — armadilha nova de arte entra aqui |
+| `.claude/rules/arte.md` (ou `mapa.md`, `projecao.md`) | armadilha nova de arte entra aqui; no `CLAUDE.md` e em `gerais.md` só o que vale para toda sessão |
 
 **Diga o que não fez, e por quê.** Em 02/09 a faixa de areia da Etapa 1 ficou
 de fora porque a costa do mapa é cais de pedra de ponta a ponta e as imagens de

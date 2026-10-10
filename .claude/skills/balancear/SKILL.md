@@ -1,6 +1,6 @@
 ---
 name: balancear
-description: Mede e ajusta a economia do BR Port com o simulador, e arrasta atrás o que a medição envelhece — a tabela dos números, o projetor das Parcelas, o CLAUDE.md e a decisão registrada. Acione com "balancear", "medir o balanceamento", "mexer nos preços", "mudar o valor do contrato/da parcela/do salário", "a economia está fácil/difícil demais", "reescalar os valores", ou antes de tocar em QUALQUER constante `# TUNING:` do GameState.gd. NÃO é para rodar o simulador só para ver — para isso rode a ferramenta direto.
+description: Mede e ajusta a economia do BR Port com o simulador, e arrasta atrás o que a medição envelhece — a tabela dos números, o projetor das Parcelas, a regra de economia e a decisão registrada. Acione com "balancear", "medir o balanceamento", "mexer nos preços", "mudar o valor do contrato/da parcela/do salário", "a economia está fácil/difícil demais", "reescalar os valores", ou antes de tocar em QUALQUER constante `# TUNING:` do GameState.gd. NÃO é para rodar o simulador só para ver — para isso rode a ferramenta direto.
 ---
 
 # Balancear — BR Port
@@ -27,8 +27,13 @@ vitória é o número mais fácil de ler errado do projeto inteiro.
 > ⚠️ **Medir é com `-- 600`.** As 30 do CI são fumaça e têm ±18 pontos de
 > margem — comparar aquele número com estes é comparar sorteio.
 
-**As regras do projeto estão em `CLAUDE.md` e carregam sozinhas.** Esta skill
-não as repete — ela conduz a medição e garante que nada fica para trás.
+**As regras do projeto estão no `CLAUDE.md` e em `.claude/rules/`**
+(`docs/decisoes/091`): o núcleo e as gerais carregam sozinhos, e a regra
+de cada tema carrega quando a sessão abre um arquivo dele. **Abra
+`.claude/rules/economia.md` antes de tudo**: ela só carrega sozinha quando a
+sessão abre o `GameState.gd` ou o simulador, e uma conversa de economia começa
+muitas vezes sem arquivo nenhum. Esta skill não as repete — ela conduz a
+medição e garante que nada fica para trás.
 
 ---
 
@@ -42,7 +47,7 @@ Pediu coerência também com futuras expansões, carros e imóveis. Use
 `docs/design/BR_Port_Metodo_Balanceamento_Economia.md`: separar crédito de
 lucro, medir caixa livre e acessibilidade, e registrar o contrato financeiro.
 O alvo de aprender e reconstruir (`005`) continua; as taxas atuais vivem só
-no `CLAUDE.md`. Sensibilidades antigas não substituem medição neste calendário.
+em `.claude/rules/economia.md`. Sensibilidades antigas não substituem medição neste calendário.
 Quando a mudança do contrato libera caixa demais, medir o retorno dos serviços
 separadamente dos custos dos reparos. A comparação com tarifas reais precisa
 de unidades e rubricas equivalentes: bote não é navio comercial, turno não é
@@ -244,8 +249,8 @@ em três sítios de uma vez. Procure e conserte:
 
 | Onde | O quê |
 |---|---|
-| `GameState.gd`, cabeçalho `# ── TUNING` | o porquê dos preços; taxas atuais só no `CLAUDE.md` |
-| `CLAUDE.md`, item 4 do "antes de fechar" | as taxas, a mediana, o alvo |
+| `GameState.gd`, cabeçalho `# ── TUNING` | o porquê dos preços; taxas atuais só em `.claude/rules/economia.md` |
+| `.claude/rules/economia.md`, «O balanceamento» | as taxas, a mediana, o alvo — o `conferir_docs.py` lê o triplo daqui (`091`) |
 | `docs/ESTADO_DO_PROJETO.md` | o resumo da economia, nas primeiras linhas |
 | `docs/decisoes/` | decisão nova com alvo e tentativas; tabelas antigas são histórico |
 | `simular_balanceamento.gd` | avisos e comentários descrevem o perfil atual ou datam a medição histórica |
@@ -253,7 +258,7 @@ em três sítios de uma vez. Procure e conserte:
 | `gerar_tabela_numeros.py` | se entrou um `const` de dicionário: literal composto não vai à tabela sozinho, e some sem erro (foi o caso de `MOTIVOS` em 06/09) |
 | `BR_Port_GDD_V7_ERRATA_ECONOMIA.md` | separa o histórico da moeda atual e aponta para a tabela gerada |
 | `docs/design/BR_Port_GDD_V7.jsx` | congelado; o projetor converte pela `ESCALA_MONETARIA_GDD` |
-| **`.claude/skills/`** | alvo e receita apontam para a medição no `CLAUDE.md`; quem muda uma receita procura também suas cópias |
+| **`.claude/skills/`** | alvo e receita apontam para a medição em `.claude/rules/economia.md`; quem muda uma receita procura também suas cópias |
 
 Procure valores anteriores E atuais; um comentário histórico precisa dizer
 que é histórico. A taxa atual não se replica em receitas.

@@ -216,7 +216,7 @@ a automação publique evidência falsa ou induza a próxima sessão a errar.
 |---|---|---|---|
 | D1 | Autorizar o save 13 do #109 | **Resolvida.** Fundido em 09/10, e o #110 subiu a 14 (`087`) | — |
 | D1b | Uma subida de save para tirar o legado (M9)? | Só junto da próxima subida que outro recorte precise; nunca sozinha | M9 |
-| D2 | Reorganizar o `CLAUDE.md` num núcleo curto e regras por tema em `.claude/rules/`? | Sim | M4 |
+| D2 | Reorganizar o `CLAUDE.md` num núcleo curto e regras por tema em `.claude/rules/`? | **Resolvida em 10/10: sim**, «e não esqueça de colocar regras gerais» — `gerais.md`, sem `paths:` (`091`) | — |
 | D3 | Expansão do mapa: vagas curadas por fase ou grade livre do GDD? | Vagas curadas por fase, em dados | M7 |
 | D4 | Reputação entre fases: a escala 0–3000 do GDD ou 0–100 por fase? | Decidir antes de desenhar a tabela de fases | M7 |
 | D5 | Política de save a partir do primeiro build público | Migração encadeada v(n)→v(n+1), com um save de exemplo por versão | M10 |
@@ -259,6 +259,18 @@ fronteira; o F9 alargado à forma «`%d` + plural» e ao ternário de palavra
 inteira; dezassete mutantes. O primeiro item aberto passa a ser o **M4**, que
 espera o D2; o primeiro sem decisão pendente é o **M5**. No mesmo PR, o O7: o rodapé do
 Construir conta o que o calendário deixa comprar hoje, sem o dinheiro.
+
+**M4, em 10/10 (`091`):** o D2 respondido — sim, e com as regras gerais. O
+`CLAUDE.md` virou um núcleo de 407 linhas com o índice das regras; as lições
+foram, palavra por palavra, para `gerais.md` (sem `paths:`, carrega sempre) e
+doze regras por tema — as nove previstas mais `mapa`, `plataforma` e
+`gdscript`. O que carrega sempre caiu de 223.668 para 44.359 bytes. O triplo
+do balanceamento mora em `economia.md`; o `AGENTS.md` lista as regras para o
+Codex. **Prova:** 280 ⚠️ antes e depois, e toda linha do original nas regras
+(multiconjunto); a guarda nova do `conferir_docs.py` (globs que casam,
+frontmatter que se lê, regra listada no núcleo e no `AGENTS.md`, o
+`TETO_SEMPRE`) com onze mutantes; e cada regra vista a carregar ao abrir um
+arquivo do tema. O primeiro item aberto passa a ser o **M5**.
 
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
@@ -312,7 +324,9 @@ do A7 publicava dois dados errados (§7, O2 e O3).
 
 ### M4 — O `CLAUDE.md` enxuto
 
-**[D2 · média · critério 2]**
+**[feito em 10/10 — `091`]** ~~[D2 · média · critério 2]~~ Com as regras
+gerais que o Bruno pediu e três regras a mais (`mapa`, `plataforma`,
+`gdscript`); o desenho abaixo é o de 09/10.
 - **Núcleo do `CLAUDE.md`** (meta: poucas centenas de linhas):
   - as quatro camadas;
   - como rodar e a proteção do save do jogador;

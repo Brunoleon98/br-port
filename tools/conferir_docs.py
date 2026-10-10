@@ -139,7 +139,15 @@ WORKFLOW = ".github/workflows/testes.yml"
 # segunda-feira. As pastas abaixo guardam HISTÓRIA — uma decisão registada e o
 # arquivo das sessões descrevem o que se mediu NAQUELE dia, e reescrevê-las
 # seria apagar o registo.
-ENDERECO_DO_TRIPLO = "CLAUDE.md"
+#
+# ⚠️ E O ENDEREÇO MUDOU EM 10/10 (`091`): era o `CLAUDE.md`, que carrega em
+# toda sessão, e cada PR de economia reescrevia ali a medição (o #109 e o #110
+# trocaram a mediana do Mediano duas vezes). Hoje é a regra de economia, que só
+# carrega quando a sessão abre o `GameState.gd` ou o simulador — as mesmas
+# sessões que a reescrevem. A tabela gerada não serve de endereço: ela sai das
+# constantes, e o triplo é MEDIDO; o JSON das medições vive em `docs/arquivo/`,
+# que é história.
+ENDERECO_DO_TRIPLO = ".claude/rules/economia.md"
 HISTORIA = ("docs/arquivo", "docs/decisoes", "docs/REVISAO_GERAL")
 TRIPLO = re.compile(
     r"\b100(?:,0)?\s*%\s*[/·]\s*\d{1,3},\d\s*%\s*[/·]\s*\d{1,3},\d\s*%")
@@ -152,7 +160,7 @@ def _normal(s):
     return re.sub(r"\s+", "", s).replace("100,0%", "100%")
 
 # ⚠️ O QUE ESTA GUARDA NÃO COBRE, escrito ao lado dela. Ela compara contra o
-# triplo ATUAL, lido do `CLAUDE.md`, e não contra o padrão: uma medição ANTIGA
+# triplo ATUAL, lido do endereço, e não contra o padrão: uma medição ANTIGA
 # em prosa datada — os `100% / 47,8% / 0%` de 01/09 que o plano v3 narra duas
 # vezes, com a data e o aviso de que a economia foi reescalada — não é um
 # segundo endereço, é o registo de um dia. Foi medido: a versão que reprovava
@@ -236,7 +244,10 @@ def conferir_fonte_operacional(docs):
                         % (rel, dito, n))
 
     # ── 4. O triplo do balanceamento vive num sítio só ─────────────────────
-    atual = _triplo_atual(regras)
+    caminho_end = os.path.join(RAIZ, ENDERECO_DO_TRIPLO)
+    endereco = (open(caminho_end, encoding="utf-8").read()
+                if os.path.exists(caminho_end) else "")
+    atual = _triplo_atual(endereco)
     if atual is None:
         falhas.append(
             "o %s não publica as taxas medidas do balanceamento. Elas têm de "
@@ -274,6 +285,182 @@ def conferir_fonte_operacional(docs):
                             "aponte para o %s."
                             % (rel, achado.group(0), ENDERECO_DO_TRIPLO))
     return falhas
+
+
+# ── AS REGRAS POR TEMA (`.claude/rules/`, M4, `docs/decisoes/091`) ────────
+#
+# Em 10/10 o `CLAUDE.md` tinha 3.079 linhas e 224 KB, e carregava INTEIRO em
+# toda sessão; a documentação do Claude Code pede menos de 200 linhas e manda o
+# que só vale para parte do código para regras com `paths:`. Partiu-se num
+# núcleo, nas regras gerais (que carregam sempre) e em regras por tema, que
+# carregam quando a sessão lê ou edita um arquivo que casa com o `paths:`.
+#
+# O mecanismo falha de três maneiras CALADAS, e é isso que se confere:
+#   1. um `paths:` que não casa com arquivo nenhum é uma regra que nunca
+#      carrega — a irmã da «receita derivada que não casa nada» (`gerais.md`);
+#   2. um frontmatter que não se lê faz o Claude Code carregar a regra como se
+#      não tivesse `paths:`, isto é, SEMPRE — o contexto volta a inchar sem
+#      ninguém ver, que é a doença que a partição curou;
+#   3. uma regra que ninguém lista não existe para quem não a abre: o Codex
+#      não carrega `.claude/rules/` (lê o `AGENTS.md`), e o índice do núcleo é
+#      por onde uma pergunta sem arquivo aberto chega a ela.
+# E o que carrega SEMPRE tem teto, pela mesma razão do teto do estado: o modo
+# de falhar medido foi o crescimento calado, não o tamanho.
+DIR_REGRAS = ".claude/rules"
+
+# As regras SEM `paths:`, que carregam em toda sessão. Quem quiser outra muda
+# esta lista de propósito — é o que separa uma decisão de um frontmatter
+# esquecido.
+REGRAS_SEMPRE = {"gerais.md"}
+
+# TETO DO QUE CARREGA SEMPRE: o núcleo mais as regras de `REGRAS_SEMPRE`, em
+# bytes com LF. Medido em 10/10, no fecho da partição: 25.268 + 19.091 =
+# 44.359. A folga de ~4 KB compra uma dúzia de lições novas nas gerais; quando
+# o alarme tocar, a ordem é a do teto do estado — o que só vale para um tema
+# desce para a regra dele, e só então o teto sobe, com a razão no commit.
+TETO_SEMPRE = 48000
+
+# Onde cada regra tem de estar listada: o núcleo (o índice) e o `AGENTS.md`.
+LISTAS_DE_REGRAS = ("CLAUDE.md", "AGENTS.md")
+
+
+def _ler_frontmatter(texto):
+    """Devolve (tem_frontmatter, lista_de_globs, erro).
+
+    Aceita UMA forma, a que estas regras usam: `paths:` seguido de itens
+    `  - "glob"`. Qualquer outra coisa é erro, e não um caso a interpretar —
+    o Claude Code lê YAML, e um conferidor mais esperto do que a forma que
+    se escreve aqui é um conferidor que aprova o que o outro lado lê de outra
+    maneira."""
+    if not texto.startswith("---\n"):
+        return False, [], None
+    fim = texto.find("\n---\n", 4)
+    if fim < 0:
+        return True, [], "o frontmatter abre com `---` e não fecha"
+    linhas = texto[4:fim].split("\n")
+    if not linhas or linhas[0].rstrip() != "paths:":
+        return True, [], "o frontmatter não começa por `paths:`"
+    globs = []
+    for ln in linhas[1:]:
+        m = re.fullmatch(r'  - "([^"]+)"\s*', ln)
+        if not m:
+            return True, [], "linha que o conferidor não conhece: «%s»" % ln
+        globs.append(m.group(1))
+    if not globs:
+        return True, [], "`paths:` sem nenhum glob"
+    return True, globs, None
+
+
+def _glob_para_regex(glob):
+    """O glob dos `paths:`, com a semântica do Claude Code: `**/` casa zero ou
+    mais pastas, `*` e `?` não atravessam `/`, `{a,b}` é alternativa."""
+    out, i = [], 0
+    while i < len(glob):
+        c = glob[i]
+        if glob.startswith("**/", i):
+            out.append("(?:.*/)?")
+            i += 3
+        elif glob.startswith("**", i):
+            out.append(".*")
+            i += 2
+        elif c == "*":
+            out.append("[^/]*")
+            i += 1
+        elif c == "?":
+            out.append("[^/]")
+            i += 1
+        elif c == "{":
+            fim = glob.index("}", i)
+            out.append("(?:" + "|".join(re.escape(x) for x in glob[i + 1:fim].split(",")) + ")")
+            i = fim + 1
+        else:
+            out.append(re.escape(c))
+            i += 1
+    return re.compile("".join(out) + r"\Z")
+
+
+def _arquivos_do_repositorio():
+    """O que o git versiona — é o que existe no CI. Sem git, a árvore."""
+    import subprocess
+    try:
+        saida = subprocess.run(["git", "ls-files"], cwd=RAIZ, capture_output=True,
+                               text=True, check=True).stdout
+        arquivos = [ln for ln in saida.split("\n") if ln]
+        if arquivos:
+            return arquivos
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    arquivos = []
+    for dp, dn, fn in os.walk(RAIZ):
+        dn[:] = [d for d in dn if d not in IGNORAR_PASTAS]
+        arquivos += [os.path.relpath(os.path.join(dp, f), RAIZ).replace(os.sep, "/")
+                     for f in fn]
+    return arquivos
+
+
+def conferir_regras_por_tema():
+    dir_regras = os.path.join(RAIZ, DIR_REGRAS)
+    if not os.path.isdir(dir_regras):
+        return ["falta a pasta %s/ — as regras por tema vivem lá (`091`)." % DIR_REGRAS], 0, 0
+    falhas = []
+    regras = sorted(os.path.relpath(os.path.join(dp, f), dir_regras).replace(os.sep, "/")
+                    for dp, _, fn in os.walk(dir_regras) for f in fn if f.endswith(".md"))
+    arquivos = _arquivos_do_repositorio()
+    listas = {}
+    for nome in LISTAS_DE_REGRAS:
+        caminho = os.path.join(RAIZ, nome)
+        listas[nome] = open(caminho, encoding="utf-8").read() if os.path.exists(caminho) else ""
+    for falta in sorted(REGRAS_SEMPRE - set(regras)):
+        falhas.append("%s/%s está em REGRAS_SEMPRE e não existe." % (DIR_REGRAS, falta))
+    sempre_bytes = tamanho_com_lf(os.path.join(RAIZ, "CLAUDE.md"))
+    for regra in regras:
+        rel = "%s/%s" % (DIR_REGRAS, regra)
+        texto = open(os.path.join(dir_regras, regra), encoding="utf-8").read().replace("\r\n", "\n")
+        tem, globs, erro = _ler_frontmatter(texto)
+        if erro:
+            falhas.append(
+                "%s: %s. O Claude Code carrega uma regra cujo frontmatter não "
+                "lê como se ela não tivesse `paths:` — SEMPRE —, e o contexto "
+                "volta a inchar sem ninguém ver." % (rel, erro))
+        elif not tem and regra not in REGRAS_SEMPRE:
+            falhas.append(
+                "%s não tem `paths:`, logo carrega em TODA sessão, e não está "
+                "em REGRAS_SEMPRE. Ou ganha `paths:`, ou entra na lista de "
+                "propósito — e paga no teto do que carrega sempre." % rel)
+        elif tem and regra in REGRAS_SEMPRE:
+            falhas.append(
+                "%s está em REGRAS_SEMPRE e tem `paths:`: só carrega quando um "
+                "arquivo casa, e quem a lista como geral está enganado." % rel)
+        for g in globs:
+            padrao = _glob_para_regex(g)
+            if not any(padrao.match(a) for a in arquivos):
+                falhas.append(
+                    "%s: o glob «%s» não casa com arquivo nenhum do repositório. "
+                    "Regra cujo `paths:` não casa nada nunca carrega, e não se "
+                    "queixa." % (rel, g))
+        if regra in REGRAS_SEMPRE:
+            sempre_bytes += len(texto.encode("utf-8"))
+        # Linha de TABELA que começa pela regra, e não uma menção qualquer: no
+        # núcleo, os itens 3 e 4 do fecho já citam a de economia, e uma busca
+        # pelo nome dava a linha do índice por presente com ela apagada — a
+        # guarda que se satisfaz com o vizinho (`testes-e-guardas.md`).
+        linha_da_tabela = re.compile(r"^\|\s*`%s`\s*\|" % re.escape(rel), re.M)
+        for nome, lista in listas.items():
+            if not linha_da_tabela.search(lista):
+                falhas.append(
+                    "%s não tem `%s` na tabela das regras. %s" % (
+                        nome, rel,
+                        "O índice do núcleo é por onde uma pergunta sem arquivo "
+                        "aberto chega à regra." if nome == "CLAUDE.md" else
+                        "O Codex não carrega `.claude/rules/`; é pelo "
+                        "`AGENTS.md` que ele sabe que ela existe."))
+    if sempre_bytes > TETO_SEMPRE:
+        falhas.append(
+            "o que carrega em toda sessão (o `CLAUDE.md` e %s) tem %d bytes, "
+            "acima do teto de %d. O que só vale para um tema desce para a regra "
+            "dele; só então o teto sobe, de propósito e com a razão no commit."
+            % (", ".join(sorted(REGRAS_SEMPRE)), sempre_bytes, TETO_SEMPRE))
+    return falhas, sempre_bytes, len(regras)
 
 
 # ── O BRIEFING É SAÍDA DA VARREDURA, NUNCA DESTINO (`/fechar-sessao` §5) ──
@@ -504,6 +691,10 @@ def main():
     # ── 5. O texto responde pela fonte que a máquina corre ─────────────────
     falhas += conferir_fonte_operacional(docs)
 
+    # ── 5a. As regras por tema carregam quando devem, e só então ───────────
+    falhas_regras, sempre_bytes, n_regras = conferir_regras_por_tema()
+    falhas += falhas_regras
+
     # ── 5b. Todo aviso do briefing mais recente diz onde a lição vive ──────
     if os.path.isdir(dir_arquivo):
         falhas += conferir_avisos_do_briefing(por_nome)
@@ -533,6 +724,8 @@ def main():
 
     print("%d documentos, %d no arquivo, estado com %d bytes." % (
         len(docs), len(os.listdir(dir_arquivo)) - 1, tam))
+    print("%d regras em %s/; carregam sempre %d bytes (teto %d)." % (
+        n_regras, DIR_REGRAS, sempre_bytes, TETO_SEMPRE))
     print("=== DOCS OK — as camadas estão de pé, as referências resolvem e o texto bate com o que o CI corre ===")
     return 0
 

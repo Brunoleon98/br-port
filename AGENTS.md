@@ -5,12 +5,38 @@ Jogo mobile de gestão de porto em Godot 4 + GDScript, em português do Brasil.
 o Bruno conduz o projeto no dia a dia, e o Codex, que contribui com tarefas
 que o Bruno lhe entrega. As regras são as mesmas para os dois.
 
-## 1. As regras vivem no `CLAUDE.md` — leia-o inteiro antes de mudar qualquer coisa
+## 1. As regras vivem no `CLAUDE.md` e em `.claude/rules/` — leia antes de mudar qualquer coisa
 
-O nome é do outro agente, mas o conteúdo é do projeto: como correr o Godot, as
-seis suítes e a linha final que cada uma tem de imprimir, a projeção
-isométrica, o save, a arte, a narrativa, a interface e o estilo de código.
-**Onde este arquivo e o `CLAUDE.md` parecerem divergir, vale o `CLAUDE.md`.**
+O nome é do outro agente, mas o conteúdo é do projeto. Desde 10/10
+(`docs/decisoes/091`) são duas camadas:
+
+- **Sempre**, em toda tarefa: o `CLAUDE.md` (o núcleo — como correr o Godot,
+  as seis suítes e a linha final que cada uma tem de imprimir, o fecho, o que
+  cabe numa sessão) e `.claude/rules/gerais.md` (como uma régua mente, como
+  uma edição apaga um arquivo, como o git engana no arranque).
+- **Conforme os arquivos da tarefa**, a regra de cada tema. O Claude Code
+  carrega-as sozinho quando abre um arquivo que casa com o `paths:` no topo de
+  cada uma; tu não, logo abre tu a regra de cada tema que a tarefa toca — o
+  `paths:` dela diz quais arquivos a pedem:
+
+| Regra | Tema |
+|---|---|
+| `.claude/rules/gerais.md` | **sempre**, seja qual for a tarefa |
+| `.claude/rules/projecao.md` | a projeção isométrica, o contrato entre os geradores e o `Main.tscn` |
+| `.claude/rules/mapa.md` | o desenho do mapa: costa, água, vila, rua, o byte a byte |
+| `.claude/rules/arte.md` | props, Blender, retratos |
+| `.claude/rules/testes-e-guardas.md` | escrever teste, guarda ou régua, e o defeito injetado |
+| `.claude/rules/economia.md` | o `GameState.gd`, o balanceamento medido, guindastes e obras |
+| `.claude/rules/save.md` | o save |
+| `.claude/rules/interface.md` | cenas, tema, painéis, cor e contraste |
+| `.claude/rules/narrativa.md` | falas, nomes, concordância |
+| `.claude/rules/audio.md` | som |
+| `.claude/rules/captura.md` | capturas e folhas de contato |
+| `.claude/rules/plataforma.md` | `project.godot`, export, pacote, workflows |
+| `.claude/rules/gdscript.md` | qualquer `.gd` |
+
+**Onde este arquivo e as regras parecerem divergir, valem as regras.** O
+`tools/conferir_docs.py` reprova regra que não esteja nesta tabela.
 
 Para saber onde o jogo está e o que vem a seguir, são dois documentos:
 `docs/ESTADO_DO_PROJETO.md` (o agora) e a §7 de
@@ -38,8 +64,9 @@ registada sem o Bruno pedir.
 ## 3. Antes de abrir o PR
 
 - As seis suítes do Godot, com a versão de `.godot-version`, e a linha final
-  de cada uma — o código de saída sozinho não prova nada (o `CLAUDE.md` diz
-  porquê). A lista viva está em `.github/workflows/testes.yml`.
+  de cada uma — o código de saída sozinho não prova nada (o `CLAUDE.md` e
+  `.claude/rules/testes-e-guardas.md` dizem porquê). A lista viva está em
+  `.github/workflows/testes.yml`.
 - `python3 tools/conferir_docs.py`, que espera `DOCS OK`, se mexeu em
   documento.
 - Se mexeu no visual: uma captura do jogo, olhada (`tools/capturar_evidencia.sh`).
