@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 10/10/2026 — M1 da fila: o gravador conta a obra pronta (`088`)
+> **Última atualização:** 10/10/2026 — M2 da fila: a regra de abertura num lugar só (`089`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -116,11 +116,10 @@ itens param à espera do Bruno. Aqui fica só a posição.
 | Fechado | O que ficou, medido |
 |---|---|
 | **Design — a fila no fundeadouro** (04–05/10, `083`) | Escolher quem atraca (**T4d**, **T5h**, **D9**); sem «Alocar todos»; contratos a 0,72; os textos dos cartões são funções que o **D18** mede. **Aceite** |
-| **Design — as telas narrativas** (04/10, `082`) | As conversas com o balão e a placa de quem fala, balões seguidos e fala regular (**D44**); o fim de fase em duas páginas do diário, com o recibo (**D22**). **Aceite** |
 
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — o **M1** fechou (`088`), o próximo é o **M2**; depois voltam o design e a frente 5, que já entregou a reescala,
+mais tranquila — o **M1** e o **M2** fecharam (`088`, `089`); o **M3** espera o D8; depois voltam o design e a frente 5, que já entregou a reescala,
 as cobranças, a madeira e as obras (`084`–`087`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
@@ -148,7 +147,7 @@ podre (A4) — em `HISTORICO.md`.
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
-| `brport_vs/tests/run_tests.gd` | Regressões da lógica, inclusive parcela no vencimento e perdas para o rival |
+| `brport_vs/tests/run_tests.gd` | Regressões da lógica, inclusive parcela no vencimento, perdas para o rival e a abertura dos reparos com as duas pontas (T17, `089`) |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |

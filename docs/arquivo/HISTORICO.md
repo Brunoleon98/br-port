@@ -801,3 +801,9 @@ mais antigas:
 | Fechado | O que ficou, medido |
 |---|---|
 | **Design — o rodapé do HUD e o Construir** (04/10, `081`) | Rodapé escuro (**D43**); o Construir com o cabeçalho das famílias. **Aceite** |
+
+**E, para caber o M2 da fila de melhorias (`089`),** desceram as telas narrativas:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **Design — as telas narrativas** (04/10, `082`) | As conversas com o balão e a placa de quem fala, balões seguidos e fala regular (**D44**); o fim de fase em duas páginas do diário, com o recibo (**D22**). **Aceite** |

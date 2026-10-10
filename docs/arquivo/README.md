@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-10c.md` | 10/10 | Substitui o de 10/10 (b): o M2 da fila fechou (`089`) — a `abertura_do_reparo()` lida pelo botão e pelo save, a obra com inteiros, o T17. Branch `claude/optimistic-ritchie-knsbng`. Próximo: o M3, que espera o D8 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10b.md` | 10/10 | Substitui o de 10/10: o M1 da fila fechou (`088`) — o gravador grava a obra pronta e o calendário, o leitor publica dia pago → pronto e as semanas do cabeçalho, com autoteste. Branch `claude/bold-gates-abot5o`. Próximo: o M2, a regra de abertura num lugar só |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10.md` | 10/10 | Depois da revisão geral de 09/10 e da revisão do PR #110 (`REVISAO_GERAL_2026-10-09.md`): a fila de melhorias da mais crítica à mais tranquila, antes de voltar aos gráficos e ao jogo |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-09b.md` | 09/10 | Obras dos reparos da Fase 1 (`087`), Save 14 autorizado e próximo recorte com Bruno |

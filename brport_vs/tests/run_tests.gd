@@ -15,6 +15,7 @@ var _t13_completo := false
 var _t14_completo := false
 var _t15_completo := false
 var _t16_completo := false
+var _t17_completo := false
 
 
 # Reproduz a chegada sorteada DENTRO do pagamento, com o botão e as cenas
@@ -218,6 +219,121 @@ func _t15_obras() -> void:
 	GS.turn = 83
 	_check("T15: pode terminar no fechamento do dia 84", GS.comprar_estrutura("pier_2"))
 	_t15_completo = true
+
+
+# ── T17 ──────────────────────────────────────────────────────────────────
+# A REGRA DE ABERTURA TEM DUAS PONTAS, e este bloco pergunta se concordam
+# (`089`). O botão (`desbloqueio_da_estrutura()`) e a leitura do save
+# (`_save_aceite()`) leem hoje a mesma função; até 10/10 o save escrevia 8 e 29
+# à mão. Medido nesse dia: um save que abrisse o armazém no dia 9 passava as
+# seis suítes: o T5b, o T14 e o T15 compram o armazém pelo BOTÃO, e nenhum
+# bloco carregava uma obra começada no dia em que o reparo abre.
+#
+# ⚠️ RELACIONAL, NÃO ESPELHO: o dia esperado sai de ANDAR o calendário e
+# perguntar ao botão — nunca de ler `abertura_do_reparo()` nem de escrever 8 e
+# 29. Uma regra mudada nas duas pontas move as duas e passa aqui, que é o que
+# deve (quem a crava é o T14); mudada numa só, reprova.
+#
+# ⚠️ E QUEM TEM DE APERTAR NA VÉSPERA É O DIA. O pátio pede também uma cobrança
+# quitada, e a véspera dele é o dia da cobrança: um porto que ainda não pagou
+# seria recusado pela COBRANÇA, com o dia certo ou errado. Por isso a partida
+# quita antecipado no dia 1, e a véspera chega com o recibo — o que se confere.
+#
+# ⚠️ A METADE DA COBRANÇA SE PROVA NUM ESTADO QUE O JOGO NÃO FAZ: a partir do
+# dia 29 todo porto vivo já pagou a primeira, e com o recibo real as duas
+# versões da regra dão o mesmo. A fixture tira-lhe o recibo de propósito.
+func _t17_abertura_num_lugar_so() -> void:
+	_fresh_playing()
+	GS.cash = GS.START_CASH * 25
+	_check("T17: quita a primeira cobrança no dia 1", GS.pagar_parcela_adiantado())
+	var abre := {}      # id -> primeiro dia em que o botão o deixa comprar
+	var textos := {}    # dia -> o save daquele dia, com a fase em "playing"
+	for volta in range(GS.TURNS_TOTAL * 3):
+		if GS.turn > GS.TURNS_TOTAL or GS.phase == "game_over":
+			break
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		if GS.phase == "debt_payment":
+			GS.pay_debt()
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+		for id in GS.ESTRUTURAS:
+			if not abre.has(id) and GS.desbloqueio_da_estrutura(id) == "":
+				abre[id] = GS.turn
+		GS.save_game()
+		textos[GS.turn] = FileAccess.get_file_as_string(GS.save_path)
+		GS.advance_turn()
+	_check("T17: o calendário foi andado até ao fim", textos.size() == GS.TURNS_TOTAL)
+	# CONTE O QUE A DERIVAÇÃO ACHOU: sem isto, um botão que nunca abrisse nada
+	# deixaria o bloco sem uma pergunta e verde. A segunda fonte é o prazo das
+	# obras, que o save confere e o botão não lê.
+	var achados: Array = abre.keys()
+	var conhecidos: Array = GS.DIAS_DAS_OBRAS.keys()
+	achados.sort()
+	conhecidos.sort()
+	_check("T17: o botão abre na fase toda obra que tem prazo, e só essas", achados == conhecidos)
+
+	for id in abre:
+		var dia: int = abre[id]
+		var vespera := dia - 1
+		if vespera >= 1:
+			var lido: Dictionary = JSON.parse_string(textos[vespera])
+			_check("T17: na véspera de %s (dia %d) o recibo não aperta" % [id, vespera],
+				int(lido["parcelas_quitadas"]) >= _t17_quitadas_minimas(id, dia))
+			_check("T17: obra de %s começada na véspera (dia %d) é recusada" % [id, vespera],
+				GS._save_aceite(_t17_save_com_obra(textos[vespera], id, vespera)).is_empty())
+		var texto := _t17_save_com_obra(textos[dia], id, dia)
+		_check("T17: obra de %s começada no dia em que abre (%d) é aceita" % [id, dia],
+			not GS._save_aceite(texto).is_empty())
+		var minimas := _t17_quitadas_minimas(id, dia)
+		_check("T17: com o mínimo de quitadas (%d) o save de %s é aceito" % [minimas, id],
+			not GS._save_aceite(_t17_save_com_obra(textos[dia], id, dia, minimas)).is_empty())
+		if minimas > 0:
+			_check("T17: com uma quitada a menos o save de %s é recusado" % id,
+				GS._save_aceite(_t17_save_com_obra(textos[dia], id, dia, minimas - 1)).is_empty())
+		# O6: a obra lida volta com inteiros, e não com o `float` do JSON.
+		var arquivo := FileAccess.open(GS.save_path, FileAccess.WRITE)
+		arquivo.store_string(texto)
+		arquivo.close()
+		_check("T17: obra de %s carregada sai com inteiros" % id,
+			GS.load_game() and GS.obra_em_andamento["id"] == id
+				and typeof(GS.obra_em_andamento["inicio"]) == TYPE_INT
+				and typeof(GS.obra_em_andamento["conclusao"]) == TYPE_INT
+				and GS.obra_em_andamento["inicio"] == dia
+				and GS.obra_em_andamento["conclusao"] == dia + GS.dias_da_obra(id))
+	_t17_completo = true
+
+
+# A menor contagem de cobranças quitadas com que o BOTÃO abre `id` no `dia`.
+# Pergunta ao botão, e não à regra, pela razão do cabeçalho do T17.
+func _t17_quitadas_minimas(id: String, dia: int) -> int:
+	var turno: int = GS.turn
+	var quitadas: int = GS.parcelas_quitadas
+	GS.turn = dia
+	var minimas := -1
+	for q in range(GS.PARCELAS_NA_FASE + 1):
+		GS.parcelas_quitadas = q
+		if GS.desbloqueio_da_estrutura(id) == "":
+			minimas = q
+			break
+	GS.turn = turno
+	GS.parcelas_quitadas = quitadas
+	return minimas
+
+
+# O save de um dia jogado com a obra de `id` começada em `inicio`. Com
+# `quitadas`, reescreve o recibo de forma COERENTE (índice e pago), para que
+# quem recuse seja a regra da abertura e não a do recibo.
+func _t17_save_com_obra(texto: String, id: String, inicio: int, quitadas: int = -1) -> String:
+	var dados: Dictionary = JSON.parse_string(texto)
+	dados["obra_em_andamento"] = {"id": id, "inicio": inicio,
+		"conclusao": inicio + GS.dias_da_obra(id)}
+	if quitadas >= 0:
+		var indice := mini(quitadas, GS.PARCELAS_NA_FASE - 1)
+		dados["parcela_indice"] = indice
+		dados["parcela_paid"] = quitadas > indice
+		dados["parcelas_quitadas"] = quitadas
+	return JSON.stringify(dados)
 
 
 func _t14_fase_inteira() -> void:
@@ -876,6 +992,10 @@ func _run() -> void:
 	_check("o bloco T15 correu até ao fim", _t15_completo)
 	await _t16_oferta_apos_pagamento()
 	_check("o bloco T16 correu até ao fim", _t16_completo)
+
+	print("=== T17: a regra de abertura num lugar só ===")
+	_t17_abertura_num_lugar_so()
+	_check("o bloco T17 correu até ao fim", _t17_completo)
 
 	print("")
 	if _fails == 0:
