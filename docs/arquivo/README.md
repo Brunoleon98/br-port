@@ -29,6 +29,9 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-10f.md` | 10/10 | Substitui o de 10/10 (e): o M5 da fila fechou (`092`) — os itens fechados dos dois planos desceram para os dois arquivos abaixo, e as skills `/arte` e `/fechar-sessao` mandam descer o que fecha. Branch `claude/determined-ptolemy-c25zw3`. Próximo: o M6, a guarda dos nomes lidos por string |
+| `PLANO_V3_FECHADOS.md` | 30/08–10/10 | **Os itens do plano v3 que fecharam**, palavra por palavra: A1–A3, a semana de sete dias, a metade de máquina e as frentes 1, 3 e 6 do A5, B1–B8, a §7.1 (R1–R9), a segunda jogada e os itens ✅ de 06/09 a 23/09. Desceram no M5 (`092`); no plano ficou uma linha para cada |
+| `PLANO_ARTE_FECHADOS.md` | 30/08–03/10 | **As etapas 1 a 6 do plano de arte e as passagens fora delas**, palavra por palavra — com as lições «para quem animar a seguir» dos três degraus da animação. Desceram no M5 (`092`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10e.md` | 10/10 | Substitui o de 10/10 (d): o M4 da fila fechou (`091`) — o D2 respondido (sim, e com as regras gerais), o `CLAUDE.md` num núcleo de 407 linhas, `gerais.md` sempre carregada e doze regras por tema em `.claude/rules/`, a guarda nova do `conferir_docs.py`. Branch `claude/vigilant-pasteur-nhji4a`. Próximo: o M5, os planos enxutos. |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10d.md` | 10/10 | Substitui o de 10/10 (c): o M3 da fila fechou (`090`) — o D8 respondido (avisar), o `prazo_da_obra()` lido pela mensagem e pelo Construir, os «%d dias» pelo `concordar`, o F9 alargado e o F18. Branch `claude/wizardly-turing-trrjzi`. Próximo: o M4, que espera o D2; sem ele, o M5 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10c.md` | 10/10 | Substitui o de 10/10 (b): o M2 da fila fechou (`089`) — a `abertura_do_reparo()` lida pelo botão e pelo save, a obra com inteiros, o T17. Branch `claude/optimistic-ritchie-knsbng`. Próximo: o M3, que espera o D8 |

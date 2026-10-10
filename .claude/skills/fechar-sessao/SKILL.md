@@ -276,6 +276,13 @@ vive agora em `docs/arquivo/HISTORICO.md` — **o que envelheceu desce para lá 
 vez de ficar aqui com uma data ao lado.** O `conferir_docs.py` toca o alarme
 quando o arquivo volta a crescer, mas o alarme não escreve o documento.
 
+**E os dois planos guardam só o que está aberto** (`092`). O item que esta
+sessão fechou desce, palavra por palavra e com o título, para
+`docs/arquivo/PLANO_V3_FECHADOS.md` ou `PLANO_ARTE_FECHADOS.md`, e no plano
+fica uma linha que o nomeia e aponta para lá. Até 10/10 eles só cresciam — 174
+e 129 KB, dois terços de itens ✅ lidos por quem só queria saber o que vem a
+seguir —, e nenhuma guarda o impede de voltar a acontecer: só este passo.
+
 ### O teto, e o que fazer ao bater nele
 
 **O `ESTADO_DO_PROJETO.md` tem teto**, e **o número vive no

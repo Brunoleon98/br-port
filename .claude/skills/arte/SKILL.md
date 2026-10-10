@@ -35,9 +35,12 @@ abre um arquivo do tema, e uma conversa de arte começa muitas vezes por uma
 queixa sobre uma imagem. Esta skill
 não as repete: ela conduz a ordem, e trava nos pontos onde o olho engana.
 
-O alvo escrito é `docs/design/BR_Port_Plano_Arte_Blender.md` (as seis etapas,
-ordenadas por ganho ÷ custo) e `docs/design/referencias/README.md` (a leitura
-das imagens, com a tabela de paleta AMOSTRADA delas).
+O alvo escrito é `docs/design/BR_Port_Plano_Arte_Blender.md` (desde 10/10 só
+o que está aberto — a Etapa 7 e as práticas da §7; as seis etapas, ordenadas
+por ganho ÷ custo e todas fechadas, estão em
+`docs/arquivo/PLANO_ARTE_FECHADOS.md`, `092`) e
+`docs/design/referencias/README.md` (a leitura das imagens, com a tabela de
+paleta AMOSTRADA delas).
 
 ---
 
@@ -249,7 +252,7 @@ A etapa fica **meio feita** se só o código mudar:
 
 | Onde | O que atualizar |
 |---|---|
-| `docs/design/BR_Port_Plano_Arte_Blender.md` | a etapa, com o que ficou E o que NÃO ficou, e por quê |
+| `docs/design/BR_Port_Plano_Arte_Blender.md` | a etapa, com o que ficou E o que NÃO ficou, e por quê; a que FECHA desce, com o título, para `docs/arquivo/PLANO_ARTE_FECHADOS.md` (`092`) |
 | `docs/design/referencias/README.md` | a tabela de paleta descreve "o projeto hoje" — se mudou, diga |
 | `docs/ESTADO_DO_PROJETO.md` | o que é arte de verdade e o que ainda é placeholder |
 | `.claude/rules/arte.md` (ou `mapa.md`, `projecao.md`) | armadilha nova de arte entra aqui; no `CLAUDE.md` e em `gerais.md` só o que vale para toda sessão |

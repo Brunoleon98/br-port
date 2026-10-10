@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 10/10/2026 — M4 da fila: o `CLAUDE.md` enxuto (`091`)
+> **Última atualização:** 10/10/2026 — M5 da fila: os planos enxutos (`092`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -120,8 +120,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — **M1** a **M4** fecharam (`088`–`091`); o primeiro aberto é
-o **M5**. Depois voltam o design e a frente 5
+mais tranquila — **M1** a **M5** fecharam (`088`–`092`); o primeiro aberto é
+o **M6**. Depois voltam o design e a frente 5
 (`084`–`087`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
@@ -174,7 +174,7 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
 | `tools/trilha_de_arte.{sh,py}` | **A trilha de arte, para o gate A5** — corre a bateria em cada ponto que tocou em arte e monta o antes/depois de cada foto contra a primeira vez que foi tirada. O que mudou sai do hash de cada PNG; os passos são lista, porque em imagem passam do teto de uma página |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
-| `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e em que ordem atacar |
+| `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e o que está aberto (`092`) |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta, cantos, botões e cartões. A cor de MAPA não vive aqui: quem a define é o gerador do SVG |
 | `brport_vs/scenes/*.tscn` | As telas como árvore de nós (não são mais montadas por código) — `Main.tscn` tem o mapa e a barra de docas |
 | `brport_vs/scenes/dock/Dock.tscn` | A metade de CENÁRIO de uma doca: píer, barco, guindaste, trabalhador |
@@ -229,7 +229,7 @@ podre (A4) — em `HISTORICO.md`.
 | `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desce ao TEMPO (`051`) e à CARA (`060`), sem lacuna declarada |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
 | `docs/REVISAO_GERAL_*.md` | Revisões gerais (17/09; 09/10 com plano de execução), com evidência |
-| `docs/arquivo/` | O que aconteceu em cada sessão que já fechou. **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
+| `docs/arquivo/` | O que aconteceu em cada sessão que já fechou, e o que fechou nos dois planos (`092`). **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
 | `docs/gdd/` | **O GDD 7 legível**, 80 páginas GERADAS do `.jsx`, uma seção por arquivo. Não editar. Congelado antes da reescala: onde divergir do jogo, manda o código |
 | `tools/gerar_gdd_md.py` | Gera as acima. Recusa-se a adivinhar: forma de dado que não conheça **reprova**, em vez de sumir do markdown |
 

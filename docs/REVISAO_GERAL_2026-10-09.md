@@ -272,6 +272,16 @@ frontmatter que se lê, regra listada no núcleo e no `AGENTS.md`, o
 `TETO_SEMPRE`) com onze mutantes; e cada regra vista a carregar ao abrir um
 arquivo do tema. O primeiro item aberto passa a ser o **M5**.
 
+**M5, em 10/10 (`092`):** os itens fechados dos dois planos desceram, título
+a título, para `docs/arquivo/PLANO_V3_FECHADOS.md` e `PLANO_ARTE_FECHADOS.md`,
+e no plano ficou uma linha a apontar para cada um. O v3 caiu de 173.987 para
+56.712 bytes e o de arte de 128.973 para 52.317. Fica o ✅ que é metade de um
+item aberto e cujo texto ele usa (as metades de configuração da Etapa 7 e o
+fim da §7.5). **Prova:** o multiconjunto das linhas, os títulos na mesma ordem
+(78 = 33 + 45 no v3, 72 = 32 + 40 na arte) e o plano reconstruído ao byte;
+quatro mutantes, cada um a reprovar pela sua pergunta. O primeiro item aberto
+passa a ser o **M6**.
+
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
 **[feito em 10/10 — `088`]** ~~[execução · curta · critério 1]~~ A ferramenta
@@ -367,7 +377,7 @@ gerais que o Bruno pediu e três regras a mais (`mapa`, `plataforma`,
 
 ### M5 — Os planos enxutos
 
-**[execução · média · critério 2]**
+**[feito em 10/10 — `092`]** ~~[execução · média · critério 2]~~
 - **O que muda:** os itens ✅ do plano v3 (173.987 bytes) e do plano de arte
   (128.973) descem para o `docs/arquivo/`, e cada plano fica com o que está
   aberto.
