@@ -15,11 +15,14 @@ envelhecer em silêncio, e uma lição que ficou só na conversa.
 > `ESTADO_DO_PROJETO.md` em dia e o commit são receita escrita.
 >
 > ⚠️ **Menos a §5, a varredura do que se aprendeu, que é F6 disfarçada.**
-> Decidir se uma lição vale SEMPRE — e por isso vai para o `CLAUDE.md` — ou se
-> vale só ali é julgamento: essa sobe para **Opus**, e é a parte que este ritual
+> Decidir se uma lição vale SEMPRE — e por isso vai para o núcleo ou para as
+> regras gerais —, se vale para um TEMA — e vai para a regra dele —, ou se vale
+> só ali é julgamento: essa sobe para **Opus**, e é a parte que este ritual
 > existe para não perder.
 
-**As regras do projeto estão em `CLAUDE.md` e carregam sozinhas.** Esta skill
+**As regras do projeto estão no `CLAUDE.md` e em `.claude/rules/`**
+(`docs/decisoes/091`): o núcleo e as gerais carregam sozinhos, e a regra
+de cada tema carrega quando a sessão abre um arquivo dele. Esta skill
 não as repete — ela só garante que foram cumpridas antes de fechar.
 
 ---
@@ -87,7 +90,7 @@ também deve.
 
 | Se mexeu em… | Rode | Espera |
 |---|---|---|
-| preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | as taxas do `CLAUDE.md` ainda de pé |
+| preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | as taxas de `.claude/rules/economia.md` ainda de pé |
 | **o `GameState.gd`, em qualquer linha** — a tabela cita a LINHA de cada constante, e um comentário acima delas envelhece-a (`067`) | o despejo + a tabela (abaixo) | `TABELA OK` |
 | **a economia, de qualquer maneira** | `tools/projetar_parcelas.py` (abaixo) | o modelo ainda calibra nos 3 perfis |
 | `tools/gerar_mapa_iso.py` | regerar **os quatro** mapas (abaixo) | `git diff -- brport_vs/art` limpo |
@@ -138,7 +141,7 @@ python3 tools/projetar_parcelas.py --medicao /tmp/medicao.json \
 
 **Sobre o simulador:** medir é com `-- 600`, que é o que o CI roda desde 05/09. Uma rodada curta é teste de
 fumaça — provam que a ferramenta não quebrou junto com o `GameState` — e têm
-margem de ±18 pontos. Comparar aquele número com a medição do `CLAUDE.md` é comparar sorteio; o
+margem de ±18 pontos. Comparar aquele número com a medição de `.claude/rules/economia.md` é comparar sorteio; o
 próprio simulador avisa quando a rodada é curta demais.
 
 **Sobre o validador do Blender:** ele não roda no CI, e de propósito — precisa
@@ -246,11 +249,12 @@ número velho E pelo novo.
 
 | O que se aprendeu | Onde vive |
 |---|---|
-| Regra que vale sempre e para todos | `CLAUDE.md` — o único que carrega sozinho |
+| Regra que vale sempre e para todos | a lição em `.claude/rules/gerais.md`; o passo e a receita no núcleo do `CLAUDE.md`. Os dois carregam em toda sessão e têm teto (`091`) |
+| Regra de um tema — arte, mapa, interface, save, áudio… | a regra dele em `.claude/rules/`, que carrega quando a sessão abre um arquivo do tema; o índice está no `CLAUDE.md` |
 | Por que se decidiu assim | `docs/decisoes/NNN-titulo.md`, curto, uma por arquivo |
 | Armadilha de uma função | Comentário nela, contando o que se tentou antes |
 | Como trabalhar com o Bruno numa frente — como perguntar, como ler o veredito | A skill da área: `/arte`, `/balancear` |
-| Ambiente e ferramentas — instalar, baixar, o que o contêiner faz ou não | «Como rodar, aqui dentro», no `CLAUDE.md` |
+| Ambiente e ferramentas — instalar, baixar, o que o contêiner faz ou não | «Como rodar, aqui dentro», no `CLAUDE.md`; o pacote, a VRAM e as chaves do Godot em `.claude/rules/plataforma.md` |
 | Onde o projeto está hoje | `docs/ESTADO_DO_PROJETO.md` |
 | O que a próxima conversa faz | O briefing (§7) — que APONTA para as linhas de cima, nunca as substitui |
 
@@ -274,11 +278,14 @@ quando o arquivo volta a crescer, mas o alarme não escreve o documento.
 
 ### O teto, e o que fazer ao bater nele
 
-**Só o `ESTADO_DO_PROJETO.md` tem teto**, e **o número vive no
-`TETO_ESTADO` de `tools/conferir_docs.py`** — não aqui. Nenhum outro documento
-deste projeto tem teto, e não é esquecimento: o modo de falhar medido foi ESTE
-arquivo dobrar calado, porque é o único que se lê inteiro para saber onde o
-jogo está.
+**O `ESTADO_DO_PROJETO.md` tem teto**, e **o número vive no
+`TETO_ESTADO` de `tools/conferir_docs.py`** — não aqui. O modo de falhar
+medido foi ESTE arquivo dobrar calado, porque é o único que se lê inteiro para
+saber onde o jogo está. Desde 10/10 há um segundo, pela mesma razão: o que
+carrega em TODA sessão — o núcleo do `CLAUDE.md` mais as regras sem `paths:`
+— tem o `TETO_SEMPRE` (`091`), e ao bater nele a ordem é a mesma de baixo,
+com «descer» a querer dizer levar para a regra do tema o que só vale para um.
+Nenhum outro documento tem teto, e não é esquecimento.
 
 ⚠️ **E ESTA PÁGINA JÁ DIZIA 26.000 DEPOIS DE ELE SUBIR PARA 30.000.** É a
 armadilha que a §5 desta própria skill manda caçar — *contagem que INSTRUI

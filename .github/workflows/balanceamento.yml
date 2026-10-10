@@ -20,7 +20,7 @@ name: Balanceamento
 # O que este workflow REPROVA é o que não depende de julgamento: o simulador
 # chegar ao fim, nenhuma partida travar, e o modelo das Parcelas 2 e 3
 # reconstruir a semana em regime que acabou de ser medida. As taxas de vitória
-# ele publica e não julga — o alvo vive no `CLAUDE.md` e em
+# ele publica e não julga — o alvo vive em `.claude/rules/economia.md` e em
 # `docs/decisoes/005`, e cravá-lo aqui seria dar-lhe um terceiro endereço para
 # envelhecer.
 #
@@ -170,7 +170,7 @@ jobs:
               | grep -v '^\(WARNING\|ERROR\|   at:\)' || true
             echo '```'
             echo
-            echo "O alvo registrado vive no \`CLAUDE.md\` e na"
+            echo "O alvo registrado vive em \`.claude/rules/economia.md\` e na"
             echo "\`docs/decisoes/005\` — num sítio só, de propósito. A margem é de"
             echo "±4 pontos a 600 partidas. Este passo não julga a medição: publica-a."
           } >> "$GITHUB_STEP_SUMMARY"

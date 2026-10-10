@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 10/10/2026 — M3 da fila: a obra que o jogador lê (`090`)
+> **Última atualização:** 10/10/2026 — M4 da fila: o `CLAUDE.md` enxuto (`091`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -120,8 +120,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — **M1** a **M3** fecharam (`088`–`090`); o **M4** espera o
-D2, e o primeiro sem decisão é o **M5**. Depois voltam o design e a frente 5
+mais tranquila — **M1** a **M4** fecharam (`088`–`091`); o primeiro aberto é
+o **M5**. Depois voltam o design e a frente 5
 (`084`–`087`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
@@ -209,9 +209,8 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/scripts/Fauna.gd` + `AmbienteCosteiro.gd` | Ciclos de seis espécies em nove pontos; habitats, toque, mar e gaivota |
 | `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
 | `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**; e o atlas dos 69 props (`049`). Espera `ASSET OK` |
-| `.claude/skills/fechar-sessao/SKILL.md` | **O ritual de fecho** — o que rodar conforme o que mudou, a captura, a varredura do que se aprendeu e o commit |
-| `.claude/skills/arte/SKILL.md` | **O ritual da arte** — qual etapa precisa de Blender, a armadilha de trocar matiz sem olhar o valor, o recorte ampliado, e o rasto que a mudança envelhece |
-| `.claude/skills/balancear/SKILL.md` | **O ritual da economia** — medir antes e depois com a mesma semente, e o rasto que isso envelhece |
+| `.claude/rules/` | **As regras por tema** (`091`): o núcleo do `CLAUDE.md` e `gerais.md` carregam sempre; as de tema, ao abrir um arquivo delas. O índice está no núcleo |
+| `.claude/skills/` | **Os rituais**: `/fechar-sessao` (o fecho), `/arte` e `/balancear` (a medição e o rasto de cada frente) |
 | `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto |
 | `.godot-version` | A versão do Godot, num lugar só. Lida pelo hook e pelo CI |
 | `docs/design/BR_Port_Numeros_Fase_1.md` | **A tabela dos números, GERADA** do `GameState.gd`. Não editar à mão — o CI reprova se envelhecer |

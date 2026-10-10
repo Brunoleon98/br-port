@@ -1,0 +1,73 @@
+---
+paths:
+  - "brport_vs/project.godot"
+  - "brport_vs/export_presets.cfg"
+  - "brport_vs/COMO_RODAR.md"
+  - "brport_vs/tools/medir_vram.gd"
+  - ".github/workflows/**"
+  - ".godot-version"
+  - ".gitattributes"
+  - ".claude/hooks/**"
+---
+
+# Regras — plataforma: Godot, export e pacote
+
+> Carrega quando a sessão lê ou edita um arquivo do `paths:` acima. Veio do
+> `CLAUDE.md` em 10/10, palavra por palavra (`docs/decisoes/091`); o índice
+> de todas as regras está no núcleo. Lição nova deste tema entra aqui.
+
+## O pacote (de «Como rodar»)
+
+**Mas o `.pck` mede-se aqui, e sem template nenhum** — é o que responde "quanto
+custa isto ao pacote?" sem esperar uma corrida do CI:
+`$G --headless --path brport_vs --export-pack Android /tmp/brport.pck`. O APK e
+o `brport-web` continuam a ler-se dos artefatos, e o **antes** costuma já estar
+lá: a última corrida do `main` mediu-os no commit que a branch tem por base.
+
+⚠️ **E O DELTA DO `.pck` É O DELTA DO APK, medido** (`029`): a alavanca B fez os
+três crescerem os MESMOS ~1,87 MB, com o APK a 1,0009× e o web a 1,0025× do que
+o `.pck` local dizia — **0,09% de erro**. Logo não se espera pelo CI para saber
+quanto um asset custa ao pacote.
+⚠️ **Mas a PERCENTAGEM é outra em cada um, e só uma é a do jogador.** Os mesmos
+1,87 MB são +42,29% do `.pck` e **+5,91% do APK**, porque o APK é sobretudo o
+binário do Godot. Ao citar custo, diga contra que denominador.
+
+**E a VRAM também se mede aqui**, com o jogo aberto: `xvfb-run -a $G --path
+brport_vs --resolution 720x1280 --rendering-driver opengl3 --script
+res://tools/medir_vram.gd`, espera `VRAM MEDIDA`. ⚠️ O monitor do motor conta
+**4/3 de `w×h×4`**, e a base já traz os retratos (um autoload faz-lhes
+`preload`): a régua calibra-se sozinha com uma textura de tamanho conhecido, e
+em `--headless` recusa-se em vez de publicar um zero (`049`).
+
+## Chaves e export do Godot (de «Como rodar»)
+
+⚠️ **Valor de Godot 3 numa chave de Godot 4 não dá erro — dá outra coisa.**
+`window/handheld/orientation="portrait"` é sintaxe da 3; na 4 a chave é um enum
+INTEIRO, e o exportador faz `int()` dela. `int("portrait")` é **0**, que é
+PAISAGEM: o APK saiu deitado enquanto o projeto se dizia retrato havia cinco
+blocos, e nenhuma das cinco suítes lia aquela linha. Ao conferir uma chave de
+`project.godot`, confira o **TIPO** e não só o valor — e desconfie de toda
+string numa chave que a documentação da 4 descreve como enum.
+
+⚠️ **O `viewport_width=720` NÃO É A RESOLUÇÃO DE RENDER — é um sistema de
+coordenadas.** Com `window/stretch/mode="canvas_items"`, o Godot desenha na
+resolução NATIVA do aparelho e escala o conteúdo 2D: num telefone de 1080×2400
+o jogo já sai a 1080 de largura. Logo **subir o viewport para 1080×1920 não dá
+um pixel de informação** — daria um `offset` reescrito em toda `.tscn`, mais o
+`MEIA_LARG`, as âncoras e o teste de design, em troca de nada. Quem quiser mais
+detalhe sobe a resolução dos ASSETS, não a do viewport (a §7 do plano v3 tem as
+três alavancas medidas, e a Etapa 7 do plano de arte tem o desenho que elas
+pagam). O que o viewport decide de verdade é a PROPORÇÃO, e essa é outro
+problema: 9:16 num mundo 9:20 perde ~240 px de barra em cima e outros 240 em
+baixo, medido e escrito no `project.godot`.
+
+⚠️ **O export Android reprova com a lista de erros VAZIA.** De uns vinte testes
+de configuração do Godot, só o do ETC2/ASTC põe `valid = false` sem escrever
+mensagem — e ele depende do SISTEMA em que se exporta, passando num Mac e
+reprovando em Linux. É por isso que `project.godot` traz
+`textures/vram_compression/import_etc2_astc=true` com a explicação ao lado, e
+que o bloco F5 do `teste_fumaca.gd` o tranca na suíte rápida: a resposta chega
+em segundos em vez de depois de um export inteiro.
+
+O `xvfb-run` só faz falta para a captura, que precisa de contexto gráfico.
+Teste e import rodam sem tela.
