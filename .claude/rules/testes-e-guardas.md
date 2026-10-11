@@ -179,6 +179,11 @@ guarda.
    exit` — e no simulador isso sai DEPOIS do marcador —, e o `teste_fumaca`
    imprime um `ERROR: Parse JSON failed` **de propósito**, que é o save
    inválido que ele injeta para provar que o jogo o recusa.
+   ⚠️ **E ESSE RUÍDO NÃO É CONSTANTE.** Em 11/10 a régua do boletim, na
+   mesma árvore, imprimiu `ObjectDB instances leaked` numa corrida e não na
+   seguinte. Quem compara a saída de dois lados (a `main` e a branch) tira
+   as linhas de encerramento antes de atribuir a diferença à mudança, e
+   corre cada lado duas vezes se ela for a única (`094`).
    ⚠️ **E O PREFIXO NÃO SEPARA AS CLASSES:** medido numa sonda, `push_error()`
    sai como `ERROR:` e não como `USER ERROR:` — a queixa da FERRAMENTA tem o
    prefixo do barulho do MOTOR. Quem separa é a ORIGEM, escrita na linha `at:`:

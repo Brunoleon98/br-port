@@ -152,7 +152,7 @@ def avaliar(valor_txt: str, ja_lidas: dict) -> object:
     """Avalia o literal GDScript. Só o que a fonte realmente usa.
 
     Deliberadamente estreito: inteiro, real, texto, e produto de constantes já
-    lidas (TURNS_PER_WEEK * WEEKS_TOTAL). Qualquer outra coisa levanta
+    lidas (`A * B`). Qualquer outra coisa levanta
     ErroDeLeitura em vez de devolver um palpite — um valor errado na tabela é
     pior do que uma falha barulhenta, porque ninguém o confere depois.
     """
@@ -312,6 +312,10 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
                 nota(c), c["linha"]))
         linhas.append("")
 
+    fases = next((c for c in constantes if c["nome"] == "FASES"), None)
+    if fases is not None:
+        linhas += montar_fases()
+
     est = next((c for c in constantes if c["nome"] == "ESTRUTURAS"), None)
     if est is not None:
         linhas += [
@@ -392,6 +396,75 @@ def montar_markdown(constantes: list[dict], valores: dict) -> str:
 
 ESTRUTURAS_LIDAS: dict = {}
 OBRAS_LIDAS: dict = {}
+FASES_LIDAS: list = []
+SEMANA_LIDA: list = []          # o TURNS_PER_WEEK do despejo, para os dias
+
+
+def montar_fases() -> list[str]:
+    """A tabela `FASES` (`094`): o que muda de uma fase para a outra.
+
+    Até 11/10 eram constantes soltas e saíam nas linhas de cima; agora são um
+    literal, que `avaliar()` devolve como None, e por isso têm de ter tabela
+    própria — senão somem, como o `ler_estruturas()` avisa.
+
+    ⚠️ OS DIAS SÃO CONTA DAQUI, a mesma do `GameState`: `semanas × semana` para
+    a fase (`turnos_da_fase()`) e para o vencimento (`dia_da_parcela()`). São
+    as duas que já estavam na tabela quando eram constantes (`TURNS_TOTAL`,
+    `PARCELA_DUE_TURN`); quem mudar a conta lá muda-a aqui.
+    """
+    semana = int(SEMANA_LIDA[0])
+    linhas = [
+        "## As fases — o que muda de uma para a outra",
+        "",
+        "Desde a `094` o que é de uma fase vive na tabela `FASES` do `GameState`,",
+        "e não em constantes soltas: a duração, as parcelas, os reparos, o nível",
+        "que eles alcançam, os berços do mapa e a reputação de partida. O jogo",
+        "lê-a por funções (`turnos_da_fase()`, `valor_da_parcela()`…), e hoje só",
+        "existe a Fase 1. O nível máximo é uma afirmação, e o F20 do",
+        "`teste_fumaca` confere-a contra os reparos.",
+        "",
+        "| Fase | Semanas | Dias | Parcelas | Nível máximo | Berços | Reputação inicial |",
+        "|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for i, f in enumerate(FASES_LIDAS):
+        linhas.append("| %d | %d | %d | %d | %d | %d | %s |" % (
+            i + 1, int(f["semanas"]), int(f["semanas"]) * semana,
+            len(f["parcelas"]), int(f["nivel_maximo"]), int(f["bercos"]),
+            formatar(float(f["reputacao_inicial"]))))
+    linhas.append("")
+    for i, f in enumerate(FASES_LIDAS):
+        linhas += [
+            "### Fase %d — as parcelas do Sr. Ribeiro" % (i + 1),
+            "",
+            "O valor é o boleto, capital mais juros; quitar antes abate só os",
+            "juros da janela, que vai do vencimento anterior ao dela.",
+            "",
+            "| Parcela | Vence na semana | Dia | Valor | Juros | Capital |",
+            "|---:|---:|---:|---:|---:|---:|",
+        ]
+        for n, p in enumerate(f["parcelas"]):
+            linhas.append("| %d | %d | %d | R$ %s | R$ %s | R$ %s |" % (
+                n + 1, int(p["semana"]), int(p["semana"]) * semana,
+                formatar(int(p["valor"])), formatar(int(p["juros"])),
+                formatar(int(p["valor"]) - int(p["juros"]))))
+        linhas += [
+            "",
+            "### Fase %d — os reparos que ela abre" % (i + 1),
+            "",
+            "| Reparo | Abre na semana | Cobranças quitadas | Dias de obra |",
+            "|---|---:|---:|---:|",
+        ]
+        # Pela `ordem` do catálogo, como a tabela das estruturas: o despejo
+        # grava as chaves ordenadas (`sort_keys`), e a ordem da `FASES` não
+        # chega até aqui.
+        por_ordem = sorted(f["reparos"].items(),
+                           key=lambda kv: ESTRUTURAS_LIDAS[kv[0]]["ordem"])
+        for _id, r in por_ordem:
+            linhas.append("| %s | %d | %d | %d |" % (
+                ESTRUTURAS_LIDAS[_id]["nome"], int(r["semana"]),
+                int(r["quitadas"]), int(r["dias_de_obra"])))
+        linhas.append("")
+    return linhas
 MOTIVOS_LIDOS: dict = {}
 CLASSES_LIDAS: dict = {}
 
@@ -410,8 +483,16 @@ def ler_estruturas(dump: dict) -> None:
     """
     ESTRUTURAS_LIDAS.clear()
     ESTRUTURAS_LIDAS.update(dump.get("ESTRUTURAS", {}))
+    # As fases, e os dias de obra da coluna das estruturas, que são os da Fase
+    # 1. Acesso direto: um despejo sem `FASES` é um `GameState` de outra forma,
+    # e a tabela não deve sair como se nada fosse.
+    FASES_LIDAS.clear()
+    FASES_LIDAS.extend(dump["FASES"])
+    SEMANA_LIDA.clear()
+    SEMANA_LIDA.append(dump["TURNS_PER_WEEK"])
     OBRAS_LIDAS.clear()
-    OBRAS_LIDAS.update(dump.get("DIAS_DAS_OBRAS", {}))
+    OBRAS_LIDAS.update({_id: r["dias_de_obra"]
+                        for _id, r in FASES_LIDAS[0]["reparos"].items()})
     MOTIVOS_LIDOS.clear()
     MOTIVOS_LIDOS.update(dump.get("MOTIVOS", {}))
     CLASSES_LIDAS.clear()

@@ -1550,7 +1550,7 @@ func _d11_toque_nos_outros_chips() -> void:
 	_confere_chip_abre(tela, overlay, "HudBar/RepPilula", "PainelReputacao.gd",
 		["Reputação", GS.reputation_label()])
 	_confere_chip_abre(tela, overlay, "HudBar/DocasPilula", "PainelDocas.gd",
-		["Docas", "DE %d BERÇOS" % int(GS.BERCOS_NO_MAPA)])
+		["Docas", "DE %d BERÇOS" % int(GS.bercos_no_mapa())])
 
 	root.remove_child(tela)
 	tela.free()
@@ -1602,7 +1602,7 @@ func _d12_toque_na_parcela() -> void:
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	# Caixa que cobre a parcela: é o único estado em que o convite aparece.
-	GS.cash = int(GS.PARCELA_AMOUNT) + 1000
+	GS.cash = int(GS.valor_da_parcela(0)) + 1000
 
 	var tela: Control = load(CENA).instantiate()
 	root.add_child(tela)
@@ -2756,7 +2756,7 @@ func _d18_texto_do_cartao() -> void:
 	var rotulo_trab := cartao.get_node("Coluna/TrabalhadorLinha/Trabalhador") as Label
 	var linha_trab := cartao.get_node("Coluna/TrabalhadorLinha") as HBoxContainer
 
-	rotulo_nome.text = "DOCA %d" % GS.BERCOS_NO_MAPA
+	rotulo_nome.text = "DOCA %d" % GS.bercos_no_mapa()
 	# O valor mais alto que o jogo paga sai da tabela das classes, não de uma
 	# constante: com três classes, o teto é o da última.
 	var teto := 0
@@ -2797,7 +2797,7 @@ func _d18_texto_do_cartao() -> void:
 	for acordo in [false, true]:
 		for feitos in [0, 1]:
 			rotulo_trab.text = doca_script.texto_do_trabalhador(
-				GS.BERCOS_NO_MAPA, acordo, feitos)
+				GS.bercos_no_mapa(), acordo, feitos)
 			_confere("a linha do trabalhador cabe (%.0f de %.0f px)"
 					% [linha_trab.get_combined_minimum_size().x, interior],
 				linha_trab.get_combined_minimum_size().x <= interior,
@@ -3653,7 +3653,7 @@ func _d21_a_zona_de_espera() -> void:
 #     sítio errado — ou num traço que deixasse de existir — perdia metade da
 #     peça sem erro nenhum, porque o caderno mostra o que recebe.
 #  2. A DATA DA ENTRADA ESCREVE-SE POR EXTENSO: o ordinal sai do
-#     `WEEKS_TOTAL`, e fora do intervalo que conhece devolve o número — que é
+#     `semanas_da_fase()`, e fora do intervalo que conhece devolve o número — que é
 #     a regra «nenhum dígito na narração» do F4, aqui no cabeçalho.
 #  3. A SEGUNDA PÁGINA, COM O RECIBO COLADO, CABE NA FOLHA (terceira
 #     passagem). O recibo não está na pauta e mede-se montado: a coluna da

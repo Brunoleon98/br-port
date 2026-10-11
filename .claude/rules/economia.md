@@ -159,3 +159,13 @@ A que só acaba no fecho do dia 84 é aceita e AVISA, no Construir e na
 mensagem, que não será usada nesta fase — resposta do Bruno ao D8, «por
 enquanto»: com anos de 365 dias ela passa ao dia seguinte (`090`). O prazo que
 o jogador lê sai do `prazo_da_obra()`, nunca do `conclusao` cru.
+
+### Os números de cada fase
+
+Desde a `094` a duração, as parcelas (semana, valor, juros), os reparos
+(semana, quitadas, dias de obra), o nível máximo, os berços e a reputação
+inicial vivem na tabela `FASES`, e o jogo lê-os por funções — nunca por
+`FASES[0]`. Quem mexer no `valor` de uma parcela da Fase 1 mexe nos `juros`
+com ele: o F20 exige que o capital das três feche o `START_CASH`, que é o
+crédito da `085`. E o `nivel_maximo` não trava nada — é afirmação, e o F20
+reprova-a quando um reparo novo leva o porto acima dela.

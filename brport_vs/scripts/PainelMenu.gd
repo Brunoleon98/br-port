@@ -148,12 +148,12 @@ func _widget_do_dia() -> Control:
 	coluna.add_theme_constant_override("separation", 2)
 	cartao.add_child(coluna)
 
-	var dia: int = mini(GameState.turn, GameState.TURNS_TOTAL)
+	var dia: int = mini(GameState.turn, GameState.turnos_da_fase())
 	var cabeca := Label.new()
 	cabeca.name = "Semana"
 	cabeca.theme_type_variation = &"TextoCelularDestaque"
 	cabeca.text = ("Semana %d de %d" % [GameState.week_of(maxi(dia, 1)),
-		GameState.WEEKS_TOTAL]).to_upper()
+		GameState.semanas_da_fase()]).to_upper()
 	coluna.add_child(cabeca)
 
 	var linha := HBoxContainer.new()
@@ -167,7 +167,7 @@ func _widget_do_dia() -> Control:
 	var total := Label.new()
 	total.name = "DeTotal"
 	total.theme_type_variation = &"TextoCelularFraco"
-	total.text = "de %d" % GameState.TURNS_TOTAL
+	total.text = "de %d" % GameState.turnos_da_fase()
 	# Na linha de base do número, e não no meio dele: é como uma data se lê.
 	total.size_flags_vertical = Control.SIZE_SHRINK_END
 	total.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
@@ -180,15 +180,15 @@ func _widget_do_dia() -> Control:
 	return cartao
 
 
-# A FITA: TURNS_TOTAL traços, em WEEKS_TOTAL grupos. Os grupos e os traços
-# esticam por igual (`EXPAND_FILL`), então a fita enche a placa sem uma
-# largura escrita aqui — e continua a caber se a semana mudar de tamanho.
+# A FITA: `turnos_da_fase()` traços, em `semanas_da_fase()` grupos. Os grupos
+# e os traços esticam por igual (`EXPAND_FILL`), então a fita enche a placa sem
+# uma largura escrita aqui — e continua a caber se a semana mudar de tamanho.
 func _fita_dos_dias(dia: int) -> Control:
 	var fita := HBoxContainer.new()
 	fita.name = "FitaDosDias"
 	fita.add_theme_constant_override("separation", 7)
 	var por_semana: int = GameState.TURNS_PER_WEEK
-	for s in GameState.WEEKS_TOTAL:
+	for s in GameState.semanas_da_fase():
 		var semana := HBoxContainer.new()
 		semana.add_theme_constant_override("separation", 2)
 		semana.size_flags_horizontal = Control.SIZE_EXPAND_FILL

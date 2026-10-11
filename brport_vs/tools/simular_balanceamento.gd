@@ -180,8 +180,11 @@ func _rodar() -> void:
 
 	print("=== BR Port VS — simulação de balanceamento ===")
 	print("%d partidas por perfil · semente %d" % [partidas, semente])
-	print("Fase 1: %d semanas, cobranças nos dias %d/%d/%d" % [
-		GS.WEEKS_TOTAL, GS.PARCELA_DUE_TURN, GS.PARCELA_DUE_TURN * 2, GS.PARCELA_DUE_TURN * 3])
+	var dias_das_parcelas := PackedStringArray()
+	for i in range(int(GS.parcelas_na_fase())):
+		dias_das_parcelas.append(str(GS.dia_da_parcela(i)))
+	print("Fase 1: %d semanas, cobranças nos dias %s" % [
+		GS.semanas_da_fase(), "/".join(dias_das_parcelas)])
 	print("")
 	_avisar_se_amostra_curta(partidas)
 
@@ -316,12 +319,12 @@ func _imprimir_reputacao(resultados: Array) -> void:
 func _imprimir_regime(resultados: Array) -> void:
 	print("=== Economia semana a semana (delta de caixa médio) ===")
 	var cabecalho := "%-12s │" % "Perfil"
-	for w in range(GS.WEEKS_TOTAL):
+	for w in range(GS.semanas_da_fase()):
 		cabecalho += " %10s │" % ("Semana %d" % (w + 1))
 	print(cabecalho)
 	for r in resultados:
 		var linha := "%-12s │" % r["perfil"]["nome"]
-		for w in range(GS.WEEKS_TOTAL):
+		for w in range(GS.semanas_da_fase()):
 			var m: Array = r["margem_por_semana"]
 			linha += " %10s │" % ("—" if w >= m.size() else "R$%d" % int(round(float(m[w]))))
 		print(linha)
@@ -382,6 +385,12 @@ func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: 
 			"premio_da_escolha": r["premio_da_escolha"],
 			"premio_em_regime": r["premio_em_regime"],
 		}
+	# As parcelas da fase, da tabela (`094`) e não três nomes escritos aqui.
+	var valores: Array = []
+	var vencimentos: Array = []
+	for i in range(int(GS.parcelas_na_fase())):
+		valores.append(GS.valor_da_parcela(i))
+		vencimentos.append(GS.dia_da_parcela(i))
 	var f := FileAccess.open(caminho, FileAccess.WRITE)
 	if f == null:
 		push_error("Não consegui escrever a medição em %s" % caminho)
@@ -389,10 +398,10 @@ func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: 
 	f.store_string(JSON.stringify({
 		"partidas": partidas,
 		"semente": semente,
-		"parcela": GS.PARCELA_AMOUNT,
-		"parcelas": [GS.PARCELA_AMOUNT, GS.PARCELA_2_AMOUNT, GS.PARCELA_3_AMOUNT],
-		"vencimentos": [GS.PARCELA_DUE_TURN, GS.PARCELA_DUE_TURN * 2, GS.PARCELA_DUE_TURN * 3],
-		"semanas": GS.WEEKS_TOTAL,
+		"parcela": GS.valor_da_parcela(0),
+		"parcelas": valores,
+		"vencimentos": vencimentos,
+		"semanas": GS.semanas_da_fase(),
 		"turnos_por_semana": GS.TURNS_PER_WEEK,
 		"caixa_inicial": GS.START_CASH,
 		"perfis": perfis,
@@ -455,7 +464,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	var obra_por_semana := []        # e quanto desse delta foi obra, não operação
 	var parcela_por_semana := []
 	var cobrancas := []
-	for i in range(GS.PARCELAS_NA_FASE):
+	for i in range(GS.parcelas_na_fase()):
 		cobrancas.append({"chegaram": 0, "pagaram": 0, "anteciparam": 0,
 			"caixas_na_decisao": [], "saldos_apos_pagar": []})
 	var atendidos_por_semana := []
@@ -467,7 +476,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	# campo passou a existir.
 	var estruturas_de_pe := {}
 	var obras := {}
-	for id in GS.DIAS_DAS_OBRAS:
+	for id in GS.reparos_da_fase():
 		obras[id] = {"inicios": [], "conclusoes": [], "desbloqueios": []}
 	var estruturas_regime := {}
 	var niveis_regime := {}
@@ -585,7 +594,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 					GS.fail_debt()
 				continue
 
-			for id in GS.DIAS_DAS_OBRAS:
+			for id in GS.reparos_da_fase():
 				if not liberadas.has(id) and GS.desbloqueio_da_estrutura(id) == "":
 					liberadas[id] = true
 					obras[id]["desbloqueios"].append(GS.turn)
@@ -619,7 +628,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 			var indice_antes: int = GS.parcela_indice
 			var vence_hoje: bool = GS.turn == GS.vencimento_da_parcela()
 			GS.advance_turn()
-			for id in GS.DIAS_DAS_OBRAS:
+			for id in GS.reparos_da_fase():
 				if GS.tem_estrutura(id) and not concluidas.has(id):
 					concluidas[id] = true
 					obras[id]["conclusoes"].append(GS.turn)
@@ -628,7 +637,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 			# O fecho de semana acontece DENTRO do advance_turn, então a leitura
 			# tem de ser depois dele — e só quando a semana virou de verdade.
 			if GS.current_week() != semana_antes:
-				if semana_antes == GS.WEEKS_TOTAL:
+				if semana_antes == GS.semanas_da_fase():
 					# A margem é de quem completou esta semana, não de quem perdeu
 					# meses antes. Misturar as duas populações distorce a calibração.
 					amostras_regime += 1
@@ -704,7 +713,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	for i in range(cobrancas.size()):
 		var c: Dictionary = cobrancas[i]
 		c["numero"] = i + 1
-		c["dia"] = GS.PARCELA_DUE_TURN * (i + 1)
+		c["dia"] = GS.dia_da_parcela(i)
 		c["caixa_na_decisao_mediana"] = _mediana(c["caixas_na_decisao"])
 		c["saldo_apos_pagar_mediana"] = _mediana(c["saldos_apos_pagar"])
 		c["caixa_na_decisao_distribuicao"] = _distribuicao_caixa(c["caixas_na_decisao"])
@@ -999,7 +1008,7 @@ func _imprimir_tabela(resultados: Array, partidas: int) -> void:
 		if bool(r["perfil"]["quita_adiantado"]):
 			print("    ANTECIPOU em %.1f%% das partidas (%d de %d), no dia %d (mediana das antecipações em %d dias)" % [
 				100.0 * float(r["antecipou_fracao"]), int(r["antecipou"]), partidas,
-				int(r["turno_de_antecipacao_mediana"]), GS.TURNS_TOTAL])
+				int(r["turno_de_antecipacao_mediana"]), GS.turnos_da_fase()])
 			# ⚠️ E A MEDIANA DO VENCIMENTO ACIMA NÃO SE COMPARA COM A DOS OUTROS
 			# PERFIS. Quem antecipa não entra na fase "debt_payment" (o
 			# `_set_phase` dela exige `not parcela_paid`), então aquele número é

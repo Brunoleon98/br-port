@@ -337,7 +337,7 @@ tirar parcela - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # buraco da frota outra vez: arte que existe, é validada por duas suítes e não
 # aparece em imagem nenhuma que se possa olhar.
 #
-# O VALOR DA PARCELA VEM DA CONSTANTE (`@PARCELA_AMOUNT`) e não escrito aqui:
+# O VALOR DA PARCELA VEM DO JOGO (`@valor_da_parcela:0`) e não escrito aqui:
 # a fala dele diz o número, e um número cravado numa ferramenta de evidência
 # envelhece calado — ver o cabeçalho do `_chamar_setup`.
 #
@@ -354,14 +354,14 @@ tirar parcela - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # calado, e a foto do "Pagar" mostraria a resposta de quem pagou sem o dinheiro
 # ter mudado de mãos. A entrada passou a dizer o dinheiro de quem chega ao
 # vencimento, e não o do turno 1. "Pagar" só está ligado
-# com dinheiro para a parcela (`cash=@PARCELA_AMOUNT`); "Não consigo pagar" só
+# com dinheiro para a parcela (`cash=@valor_da_parcela:0`); "Não consigo pagar" só
 # existe sem ele. Os tiros de recusa montam caixa zero explicitamente: a
 # parcela menor (`084`) fez a semente antiga conseguir pagar.
-tirar ribeiro - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @PARCELA_AMOUNT parcela=vencida cash=0 --tempo=entrada
-tirar ribeiro_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_pagou.png" @PARCELA_AMOUNT parcela=vencida cash=@PARCELA_AMOUNT --tocar=Pagar --tempo=pagou
-tirar ribeiro_nao_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_nao_pagou.png" @PARCELA_AMOUNT parcela=vencida cash=0 --tocar=Não --tempo=nao_pagou
-tirar ribeiro_2 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_2.png" @PARCELA_2_AMOUNT parcela=vencida_2 cash=@PARCELA_2_AMOUNT --tempo=entrada
-tirar ribeiro_3 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_3.png" @PARCELA_3_AMOUNT parcela=vencida_3 cash=@PARCELA_3_AMOUNT --tempo=entrada
+tirar ribeiro - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @valor_da_parcela:0 parcela=vencida cash=0 --tempo=entrada
+tirar ribeiro_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_pagou.png" @valor_da_parcela:0 parcela=vencida cash=@valor_da_parcela:0 --tocar=Pagar --tempo=pagou
+tirar ribeiro_nao_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_nao_pagou.png" @valor_da_parcela:0 parcela=vencida cash=0 --tocar=Não --tempo=nao_pagou
+tirar ribeiro_2 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_2.png" @valor_da_parcela:1 parcela=vencida_2 cash=@valor_da_parcela:1 --tempo=entrada
+tirar ribeiro_3 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_3.png" @valor_da_parcela:2 parcela=vencida_3 cash=@valor_da_parcela:2 --tempo=entrada
 tirar contraoferta - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0 --tempo=rodada
 # A PRESSÃO DO ARLINDO, que só existe depois de uma aposta RECUSADA — é a
 # última tentativa, e a cara troca a meio da rodada (o tempo continua
@@ -468,7 +468,7 @@ tirar construir  1 1  --script res://tools/capturar_tela.gd -- 0  "$SAIDA/constr
 tirar construir_inicio 1 1 --script res://tools/capturar_tela.gd -- 0 "$SAIDA/construir_inicio.png" limpo --painel=construir
 tirar construir_semana2 1 8 --script res://tools/capturar_tela.gd -- 7 "$SAIDA/construir_semana2.png" limpo --painel=construir
 # Montagem: recibo da primeira cobrança e começo da segunda janela.
-tirar construir_semana5 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/UpgradePanel.tscn "$SAIDA/construir_semana5.png" turn=29 parcela_indice=1 parcelas_quitadas=1 total_pago_parcelas=@PARCELA_AMOUNT cash=@START_CASH phase=playing
+tirar construir_semana5 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/UpgradePanel.tscn "$SAIDA/construir_semana5.png" turn=29 parcela_indice=1 parcelas_quitadas=1 total_pago_parcelas=@valor_da_parcela:0 cash=@START_CASH phase=playing
 # O CALENDÁRIO COM DIA PASSADO, que é o estado que a régua do contraste NÃO
 # monta. O percurso dos 19 estados do `medir_contraste_ui.gd` abre o calendário
 # no dia 1 — e foi por isso que a cor dos dias já vividos viveu escrita à mão

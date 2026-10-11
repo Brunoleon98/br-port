@@ -20,9 +20,9 @@ extends RefCounted
 #
 # 1. O FIM DE FASE FALAVA DE DOZE SEMANAS. O texto original abria com "Doze
 #    semanas / Trinta e seis turnos de decisão / Três parcelas" — que é a Fase 1
-#    inteira do GDD. O VS tem `WEEKS_TOTAL` semanas e UMA parcela. Escrever doze
+#    inteira do GDD. O VS tinha as `semanas_da_fase()` e UMA parcela. Escrever doze
 #    seria mentir para o jogador sobre o jogo que ele acabou de jogar, então os
-#    números saem das constantes (ver `fim_de_fase`) e não do texto: assim eles
+#    números saem do `GameState` (ver `fim_de_fase`) e não do texto: assim eles
 #    não podem envelhecer quando o VS crescer.
 #
 # 2. O NOME DO JOGADOR PODE ESTAR VAZIO. O GDD dá padrão ao nome do porto
@@ -386,7 +386,7 @@ const BOLETIM_DIA_TITULO := "Semana {semana}, dia {dia}"
 # jogo existe. Buscar pela árvore funciona nos dois mundos.
 #
 # O tipo de retorno é `Node`, então quem receber algo dele escreve o tipo à
-# mão — `var n: int = _gs().WEEKS_TOTAL`, nunca `:=`.
+# mão — `var n: int = _gs().semanas_da_fase()`, nunca `:=`.
 static func _gs() -> Node:
 	return Engine.get_main_loop().root.get_node("GameState")
 
@@ -563,7 +563,7 @@ static func fim_de_fase_paginas() -> PackedStringArray:
 ## A data da entrada, como a do diário («Porto Mirim, primeira semana»): a
 ## semana em que a parcela vence, POR EXTENSO e saída da constante.
 static func fim_de_fase_cabecalho() -> String:
-	return "Porto Mirim, %s semana" % ordinal(_gs().WEEKS_TOTAL)
+	return "Porto Mirim, %s semana" % ordinal(_gs().semanas_da_fase())
 
 
 ## O ordinal no feminino, de 1 a 10 — «semana» pede-o. Fora disso devolve o
@@ -585,10 +585,10 @@ static func fim_de_fase() -> String:
 	#
 	# O `por_extenso` fala no FEMININO, que é o que "semanas" e "parcelas"
 	# pedem — as duas únicas contagens que sobraram aqui.
-	var semanas: String = _maiuscula(por_extenso(_gs().WEEKS_TOTAL))
+	var semanas: String = _maiuscula(por_extenso(_gs().semanas_da_fase()))
 	# A 085 joga o arco inteiro: a vitória vem após as três quitações. Manter
 	# "faltam duas" aqui fecharia o caderno com uma dívida já paga em aberto.
-	var total: String = por_extenso(_gs().PARCELAS_NA_FASE)
+	var total: String = por_extenso(_gs().parcelas_na_fase())
 	var modelo := """%s semanas.
 
 As %s parcelas ficaram para trás.

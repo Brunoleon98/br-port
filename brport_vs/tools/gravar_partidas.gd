@@ -98,7 +98,7 @@ func _rodar() -> void:
 					GS.negotiate_rival("metade" if rng.randf() < 0.5 else "manter")
 				continue
 			if GS.phase == "debt_payment":
-				if GS.cash >= GS.PARCELA_AMOUNT:
+				if GS.cash >= GS.valor_da_parcela(0):
 					GS.pay_debt()
 				else:
 					GS.fail_debt()

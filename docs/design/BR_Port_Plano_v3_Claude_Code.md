@@ -271,7 +271,7 @@ esperavam pelo ouvido dele:
 5. **"A Parcela vence hoje"** — rótulo de interface dentro de fala.
 6. **E o Bruno decidiu o que o desvio 1 deixara em aberto:** a narração diz
    agora que esta é **a primeira de três parcelas**, e que faltam duas — "é bom
-   um começo". O três sai de `PARCELAS_NA_FASE`, não da prosa: é o arco do GDD
+   um começo". O três sai de `parcelas_na_fase()`, não da prosa: é o arco do GDD
    (três parcelas em doze semanas) contra o VS, que joga o primeiro terço.
 7. **E ao crescer o texto viu-se que ele nunca coubera.** O painel dava 430 px
    a uma peça que pede 847 — **metade dela, o remate incluído, vivia debaixo da
@@ -364,7 +364,7 @@ onde ele cabe sem tapar o porto é a primeira pergunta a medir — não a últim
 
 ⏳ **Falta o gate:** ler o texto em voz alta. Três desvios do rascunho de
 escrita precisam do julgamento do Bruno — a narração de fim de fase teve de
-passar de doze semanas para as `WEEKS_TOTAL` que o VS tem, as falas com
+passar de doze semanas para as `semanas_da_fase()` que o VS tem, as falas com
 vocativo ganharam variante para quem não escreve o nome, e o "Boletim do dia"
 foi lido como os comentários da Dona Cida (o arquivo de escrita não tem texto
 para uma tela diária, e 32 modais por partida mudariam o ritmo que a economia

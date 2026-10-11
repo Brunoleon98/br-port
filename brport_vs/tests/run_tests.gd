@@ -28,7 +28,7 @@ func _t16_oferta_apos_pagamento() -> void:
 	GS.turn = 56
 	GS.parcela_indice = 1
 	GS.parcelas_quitadas = 1
-	GS.total_pago_parcelas = GS.PARCELA_AMOUNT
+	GS.total_pago_parcelas = GS.valor_da_parcela(0)
 	GS.fila = []
 	var main = load("res://scenes/Main.tscn").instantiate()
 	root.add_child(main)
@@ -248,8 +248,8 @@ func _t17_abertura_num_lugar_so() -> void:
 	_check("T17: quita a primeira cobrança no dia 1", GS.pagar_parcela_adiantado())
 	var abre := {}      # id -> primeiro dia em que o botão o deixa comprar
 	var textos := {}    # dia -> o save daquele dia, com a fase em "playing"
-	for volta in range(GS.TURNS_TOTAL * 3):
-		if GS.turn > GS.TURNS_TOTAL or GS.phase == "game_over":
+	for volta in range(GS.turnos_da_fase() * 3):
+		if GS.turn > GS.turnos_da_fase() or GS.phase == "game_over":
 			break
 		if GS.phase == "rival_offer":
 			GS.resolve_rival_offer(true)
@@ -263,12 +263,12 @@ func _t17_abertura_num_lugar_so() -> void:
 		GS.save_game()
 		textos[GS.turn] = FileAccess.get_file_as_string(GS.save_path)
 		GS.advance_turn()
-	_check("T17: o calendário foi andado até ao fim", textos.size() == GS.TURNS_TOTAL)
+	_check("T17: o calendário foi andado até ao fim", textos.size() == GS.turnos_da_fase())
 	# CONTE O QUE A DERIVAÇÃO ACHOU: sem isto, um botão que nunca abrisse nada
 	# deixaria o bloco sem uma pergunta e verde. A segunda fonte é o prazo das
 	# obras, que o save confere e o botão não lê.
 	var achados: Array = abre.keys()
-	var conhecidos: Array = GS.DIAS_DAS_OBRAS.keys()
+	var conhecidos: Array = GS.reparos_da_fase()
 	achados.sort()
 	conhecidos.sort()
 	_check("T17: o botão abre na fase toda obra que tem prazo, e só essas", achados == conhecidos)
@@ -311,7 +311,7 @@ func _t17_quitadas_minimas(id: String, dia: int) -> int:
 	var quitadas: int = GS.parcelas_quitadas
 	GS.turn = dia
 	var minimas := -1
-	for q in range(GS.PARCELAS_NA_FASE + 1):
+	for q in range(GS.parcelas_na_fase() + 1):
 		GS.parcelas_quitadas = q
 		if GS.desbloqueio_da_estrutura(id) == "":
 			minimas = q
@@ -329,7 +329,7 @@ func _t17_save_com_obra(texto: String, id: String, inicio: int, quitadas: int = 
 	dados["obra_em_andamento"] = {"id": id, "inicio": inicio,
 		"conclusao": inicio + GS.dias_da_obra(id)}
 	if quitadas >= 0:
-		var indice := mini(quitadas, GS.PARCELAS_NA_FASE - 1)
+		var indice := mini(quitadas, GS.parcelas_na_fase() - 1)
 		dados["parcela_indice"] = indice
 		dados["parcela_paid"] = quitadas > indice
 		dados["parcelas_quitadas"] = quitadas
@@ -339,7 +339,7 @@ func _t17_save_com_obra(texto: String, id: String, inicio: int, quitadas: int = 
 func _t14_fase_inteira() -> void:
 	_fresh_playing()
 	GS.cash = GS.START_CASH * 25
-	_check("T14: calendário aprovado tem 84 dias e 7 por semana", GS.TURNS_TOTAL == 84 and GS.TURNS_PER_WEEK == 7)
+	_check("T14: calendário aprovado tem 84 dias e 7 por semana", GS.turnos_da_fase() == 84 and GS.TURNS_PER_WEEK == 7)
 	_check("T14: píer 2 abre no início", GS.comprar_estrutura("pier_2"))
 	_check("T14: armazém espera a segunda semana", not GS.comprar_estrutura("armazem"))
 	for id in ["pier_3", "escritorio", "guindaste", "cais"]:
@@ -352,7 +352,7 @@ func _t14_fase_inteira() -> void:
 	GS.semana_fechada.connect(ouvir_boletim)
 	# Percorre todos os dias; o dinheiro abundante isola calendário e estado.
 	# A economia é outra pergunta, medida pelo simulador de 600 partidas.
-	while GS.turn <= GS.TURNS_TOTAL and GS.phase != "game_over":
+	while GS.turn <= GS.turnos_da_fase() and GS.phase != "game_over":
 		if GS.phase == "rival_offer":
 			GS.resolve_rival_offer(true)
 		if GS.turn == 8:
@@ -386,9 +386,9 @@ func _t14_fase_inteira() -> void:
 					GS.resolve_rival_offer(true)
 				if indice == 0:
 					_check("T14: pátio abre após a cobrança paga", GS.comprar_estrutura("patio"))
-	_check("T14: três cobranças reais emitidas", cobrancas == [GS.PARCELA_AMOUNT, GS.PARCELA_2_AMOUNT, GS.PARCELA_3_AMOUNT])
+	_check("T14: três cobranças reais emitidas", cobrancas == [GS.valor_da_parcela(0), GS.valor_da_parcela(1), GS.valor_da_parcela(2)])
 	_check("T14: doze boletins, vitória só após o dia 84", boletins.size() == 12 and GS.won and GS.phase == "game_over" and GS.turn == 85)
-	_check("T14: recibo soma o que efetivamente saiu", GS.total_pago_parcelas == GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT)
+	_check("T14: recibo soma o que efetivamente saiu", GS.total_pago_parcelas == GS.valor_da_parcela(0) + GS.valor_da_parcela(1) + GS.valor_da_parcela(2))
 	GS.debt_due.disconnect(ouvir_cobranca)
 	GS.semana_fechada.disconnect(ouvir_boletim)
 
@@ -409,7 +409,7 @@ func _t14_fase_inteira() -> void:
 		_check("T14: antecipação não chama cobrança outra vez", GS.phase != "debt_payment")
 	_check("T14: três antecipações também vencem a fase", GS.phase == "game_over" and GS.won)
 	_check("T14: antecipar nunca perdoa o capital emprestado", GS.total_pago_parcelas >= GS.START_CASH)
-	_check("T14: antecipar abate juros do total contratado", GS.total_pago_parcelas < GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT)
+	_check("T14: antecipar abate juros do total contratado", GS.total_pago_parcelas < GS.valor_da_parcela(0) + GS.valor_da_parcela(1) + GS.valor_da_parcela(2))
 
 	# Falta de dinheiro é recusada em cada parcela, com o estado intacto.
 	for indice in range(3):
@@ -826,8 +826,8 @@ func _run() -> void:
 	_concluir_obra_do_teste()
 	# O teto físico do mapa continua a proteger a montagem das fases futuras.
 	load("res://tools/estado_da_bancada.gd").instalar(GS, "pier_3")
-	_check("os dois pieres dao exatamente %d docas" % GS.BERCOS_NO_MAPA,
-		GS.docks.size() == GS.BERCOS_NO_MAPA)
+	_check("os dois pieres dao exatamente %d docas" % GS.bercos_no_mapa(),
+		GS.docks.size() == GS.bercos_no_mapa())
 	# Trabalhador sem doca é o "#4 fantasma" do playtest: um cartão na fileira
 	# que não tem onde trabalhar. O teto do mapa tem de segurar os dois juntos.
 	_check("e nunca mais trabalhador do que doca",
@@ -840,7 +840,7 @@ func _run() -> void:
 	GS.docks[GS.docks.size() - 1]["worker_id"] = 99
 	GS.save_game()
 	_check("save com doca a mais carrega", GS.load_game() == true)
-	_check("e a doca invisivel foi cortada", GS.docks.size() == GS.BERCOS_NO_MAPA)
+	_check("e a doca invisivel foi cortada", GS.docks.size() == GS.bercos_no_mapa())
 	_check("junto com o trabalhador que so ela tinha",
 		GS.workers.size() == GS.trabalhadores_esperados())
 
@@ -856,7 +856,7 @@ func _run() -> void:
 	# cosmetica em silencio, que e exatamente o estado de que se acabou de sair.
 	_fresh_playing()
 	var base_chance: float = GS.RIVAL_KEEP_CHANCE
-	GS.reputation = GS.REPUTATION_START
+	GS.reputation = GS.reputacao_inicial()
 	var neutra: float = GS._chance_com_reputacao(base_chance)
 	_check("na reputacao inicial o efeito e NEUTRO", is_equal_approx(neutra, base_chance))
 
@@ -1330,11 +1330,11 @@ func _t5i_resumo_do_dia() -> void:
 			and int(proj3["manutencao"]) == int(custos["manutencao"]))
 
 	# E no dia em que a parcela vence, e só nesse dia.
-	GS.turn = GS.PARCELA_DUE_TURN
+	GS.turn = GS.dia_da_parcela(0)
 	GS.parcela_paid = false
 	var proj4: Dictionary = GS.projecao_do_dia()
 	_check("dia da parcela projeta o valor dela",
-		int(proj4["parcela"]) == int(GS.PARCELA_AMOUNT))
+		int(proj4["parcela"]) == int(GS.valor_da_parcela(0)))
 	GS.parcela_paid = true
 	var proj5: Dictionary = GS.projecao_do_dia()
 	_check("parcela ja paga nao projeta de novo", int(proj5["parcela"]) == 0)
@@ -1346,7 +1346,7 @@ func _t5i_resumo_do_dia() -> void:
 #
 # `calendario()` é o que o painel do mesmo nome desenha (toque no chip "Dia").
 # Confere as três contas que ele tem de acertar: quantos dias (nem um a mais
-# nem a menos que TURNS_TOTAL), qual é hoje, e em que dias caem os dois
+# nem a menos que `turnos_da_fase()`), qual é hoje, e em que dias caem os dois
 # eventos que o jogo já sabe de antemão — fecho de semana e vencimento da
 # parcela. Oferta do rival não entra: é sorteada por barco, não por dia.
 func _t5j_calendario() -> void:
@@ -1355,7 +1355,7 @@ func _t5j_calendario() -> void:
 
 	var dias: Array = GS.calendario()
 	_check("um dia por turno da partida, nem mais nem menos",
-		dias.size() == GS.TURNS_TOTAL)
+		dias.size() == GS.turnos_da_fase())
 
 	var vistos_hoje := 0
 	var fecham_semana := 0
@@ -1374,15 +1374,19 @@ func _t5j_calendario() -> void:
 				int(dia["turno"]) % GS.TURNS_PER_WEEK == 0)
 		if bool(dia["parcela_vence"]):
 			vencem_parcela += 1
+			# O dia esperado é o da TABELA (`094`): o calendário marca o que a
+			# fase declara, e um vencimento a mais não tem dia esperado.
+			var esperado: int = GS.dia_da_parcela(vencem_parcela - 1) \
+				if vencem_parcela <= int(GS.parcelas_na_fase()) else -1
 			_check("a parcela vence no dia certo (dia %d, esperado %d)"
-					% [int(dia["turno"]), GS.PARCELA_DUE_TURN],
-				int(dia["turno"]) == GS.PARCELA_DUE_TURN * vencem_parcela)
+					% [int(dia["turno"]), esperado],
+				int(dia["turno"]) == esperado)
 
 	_check("exatamente um dia é 'hoje'", vistos_hoje == 1)
 	_check("um fecho de semana por semana (%d, esperado %d)"
-			% [fecham_semana, GS.WEEKS_TOTAL],
-		fecham_semana == GS.TURNS_TOTAL / GS.TURNS_PER_WEEK)
-	_check("três vencimentos dentro da Fase 1", vencem_parcela == GS.PARCELAS_NA_FASE)
+			% [fecham_semana, GS.semanas_da_fase()],
+		fecham_semana == GS.turnos_da_fase() / GS.TURNS_PER_WEEK)
+	_check("três vencimentos dentro da Fase 1", vencem_parcela == GS.parcelas_na_fase())
 
 	_t5j_completo = true
 
@@ -1400,7 +1404,7 @@ func _t5k_parcela_adiantada() -> void:
 	#
 	# ⚠️ CONTRA O VALOR DE HOJE, não contra o principal. Desde o desconto por
 	# antecipação (`docs/decisoes/019`) esses dois números são diferentes, e
-	# montar o estado com `PARCELA_AMOUNT - 1` deixaria caixa de SOBRA para o
+	# montar o estado com `valor_da_parcela(0) - 1` deixaria caixa de SOBRA para o
 	# valor abatido: a porta abriria e esta asserção reprovaria o que está
 	# certo. O estado que aperta é um só, e é um centavo abaixo do de hoje.
 	var hoje: int = GS.valor_da_parcela_hoje()
@@ -1418,7 +1422,7 @@ func _t5k_parcela_adiantada() -> void:
 	# que separa "a conta do desconto está certa" de "a conta do desconto é a
 	# que chega ao caixa", e um `_baixar_parcela(dia_atual)` que esquecesse o
 	# argumento passaria na primeira e reprovaria nesta.
-	GS.cash = GS.PARCELA_AMOUNT + 1000
+	GS.cash = GS.valor_da_parcela(0) + 1000
 	_check("com caixa, a porta abre", GS.pode_pagar_parcela_adiantado())
 	var antes: int = GS.cash
 	var cobrado: int = GS.valor_da_parcela_hoje()
@@ -1435,7 +1439,7 @@ func _t5k_parcela_adiantada() -> void:
 	# defeito injetado na guarda do "já paga" passava incólume, satisfeito
 	# pela guarda vizinha. Só com caixa suficiente a asserção mede o que diz
 	# medir. É a irmã de "contagem só se testa acima de um".
-	GS.cash = GS.PARCELA_AMOUNT * 2
+	GS.cash = GS.valor_da_parcela(0) * 2
 	var depois: int = GS.cash
 	_check("parcela ja paga fecha a porta", not GS.pode_pagar_parcela_adiantado())
 	_check("e a segunda tentativa nao cobra de novo",
@@ -1451,7 +1455,7 @@ func _t5k_parcela_adiantada() -> void:
 	# 5. Fora de "playing" a porta fecha: o turno está parado à espera de uma
 	#    decisão, e pagar por baixo dela seria decidir por cima do jogador.
 	_fresh_playing()
-	GS.cash = GS.PARCELA_AMOUNT + 1000
+	GS.cash = GS.valor_da_parcela(0) + 1000
 	GS._set_phase("debt_payment")
 	_check("fora de playing a porta fecha",
 		not GS.pode_pagar_parcela_adiantado())
@@ -1460,7 +1464,7 @@ func _t5k_parcela_adiantada() -> void:
 	# 6. E quem paga adiantado GANHA a partida no fim do prazo — a vitória
 	#    olha `parcela_paid`, não a fase em que ela foi paga.
 	_check("quitar adiantado satisfaz a vitoria", GS.pagar_parcela_adiantado())
-	GS.turn = GS.TURNS_TOTAL + 1
+	GS.turn = GS.turnos_da_fase() + 1
 	GS._check_end()
 	_check("uma parcela sozinha não quita as três",
 		GS.phase == "game_over" and not bool(GS.won))
@@ -1475,12 +1479,12 @@ func _t5k_parcela_adiantada() -> void:
 	# 7a. NO VENCIMENTO NÃO HÁ O QUE DESCONTAR, e é o piso em zero que o diz.
 	#     Este é o estado que APERTA para a guarda do `maxi(turnos, 0)`: em
 	#     qualquer turno anterior ela não faz nada.
-	GS.turn = GS.PARCELA_DUE_TURN
+	GS.turn = GS.dia_da_parcela(0)
 	_check("no vencimento a parcela custa o principal cheio",
-		GS.valor_da_parcela_hoje() == GS.PARCELA_AMOUNT)
-	GS.turn = GS.PARCELA_DUE_TURN + 1
+		GS.valor_da_parcela_hoje() == GS.valor_da_parcela(0))
+	GS.turn = GS.dia_da_parcela(0) + 1
 	_check("e passado o prazo ela nao ENCARECE",
-		GS.valor_da_parcela_hoje() == GS.PARCELA_AMOUNT)
+		GS.valor_da_parcela_hoje() == GS.valor_da_parcela(0))
 
 	# 7b. PROPORCIONAL AO TEMPO: quanto mais cedo, mais barato, sem empates.
 	#     Uma versão FIXA — a que a F4 rejeitou — passaria em 7a e reprovaria
@@ -1498,7 +1502,7 @@ func _t5k_parcela_adiantada() -> void:
 	#     nenhum, e de caminho é mais forte — cobre todos os turnos em vez de
 	#     cinco, e um empate no meio deixa de ter onde se esconder.
 	var custos := []
-	for t in range(1, GS.PARCELA_DUE_TURN + 1):
+	for t in range(1, GS.dia_da_parcela(0) + 1):
 		GS.turn = t
 		custos.append(GS.valor_da_parcela_hoje())
 	var sobe := true
@@ -1518,7 +1522,7 @@ func _t5k_parcela_adiantada() -> void:
 	#     estilo: o empréstimo bancário da Fase 2 vai chamá-la com outro
 	#     principal. Nada mais neste projeto lhe passa um principal diferente
 	#     do da parcela, então sem esta asserção alguém podia "simplificar" a
-	#     função para ler `PARCELA_AMOUNT` por dentro e nenhuma suíte saberia
+	#     função para ler a parcela da fase por dentro e nenhuma suíte saberia
 	#     — é a armadilha do `PREDIOS_DO_PATIO` que dizia "lido de X" e não lia.
 	var outro := 100000
 	_check("o cálculo genérico não cria juros após vencer",
@@ -1545,15 +1549,15 @@ func _t5k_parcela_adiantada() -> void:
 	for dock3 in GS.docks:
 		dock3["boat"] = null
 		dock3["worker_id"] = null
-	GS.turn = GS.PARCELA_DUE_TURN
-	GS.cash = GS.PARCELA_AMOUNT + 50000
+	GS.turn = GS.dia_da_parcela(0)
+	GS.cash = GS.valor_da_parcela(0) + 50000
 	GS.parcela_paid = false
 	GS.advance_turn()
 	var caixa_no_vencimento: int = GS.cash
 	GS.pay_debt()
 	_check("quem paga no vencimento paga o principal inteiro (%d)"
 			% [caixa_no_vencimento - int(GS.cash)],
-		caixa_no_vencimento - int(GS.cash) == GS.PARCELA_AMOUNT)
+		caixa_no_vencimento - int(GS.cash) == GS.valor_da_parcela(0))
 
 	# 7. A porta ORIGINAL, no vencimento. Fechar a semana antes desta decisão
 	#    emitia um boletim com parcela zero e depois lançava os R$530 mil num
@@ -1562,8 +1566,8 @@ func _t5k_parcela_adiantada() -> void:
 	for dock in GS.docks:
 		dock["boat"] = null
 		dock["worker_id"] = null
-	GS.turn = GS.PARCELA_DUE_TURN
-	GS.cash = GS.PARCELA_AMOUNT + 100000
+	GS.turn = GS.dia_da_parcela(0)
+	GS.cash = GS.valor_da_parcela(0) + 100000
 	GS.parcela_paid = false
 	GS.semana_atual = GS.SEMANA_ZERADA.duplicate()
 	GS.semana_atual["docagens"] = 12345
@@ -1588,13 +1592,13 @@ func _t5k_parcela_adiantada() -> void:
 	if resumos_no_vencimento.size() == 1:
 		var resumo_final: Dictionary = resumos_no_vencimento[0]
 		_check("o boletim final inclui a parcela",
-			int(resumo_final["parcela"]) == GS.PARCELA_AMOUNT)
+			int(resumo_final["parcela"]) == GS.valor_da_parcela(0))
 		_check("e desconta a parcela do resultado",
 			int(resumo_final["resultado"])
 				== int(resumo_final["receita"])
 					- int(resumo_final["salarios"])
 					- int(resumo_final["manutencao"])
-					- GS.PARCELA_AMOUNT)
+					- GS.valor_da_parcela(0))
 	_check("o acumulador so zera depois do boletim",
 		int(GS.semana_atual["parcela"]) == 0)
 	GS.semana_fechada.disconnect(capturar_resumo)
@@ -1608,8 +1612,8 @@ func _t5k_parcela_adiantada() -> void:
 	for dock2 in GS.docks:
 		dock2["boat"] = null
 		dock2["worker_id"] = null
-	GS.turn = GS.PARCELA_DUE_TURN
-	GS.cash = GS.PARCELA_AMOUNT - 1
+	GS.turn = GS.dia_da_parcela(0)
+	GS.cash = GS.valor_da_parcela(0) - 1
 	GS.parcela_paid = false
 	GS.historico_semanas = [0, 0, 0]
 	GS.semana_atual = GS.SEMANA_ZERADA.duplicate()
@@ -1625,9 +1629,9 @@ func _t5k_parcela_adiantada() -> void:
 	_check("recusar a parcela FECHA a semana 4  <-- o adiamento orfao",
 		resumos_na_derrota.size() == 1)
 	# Quatro semanas jogadas, quatro entradas. O número vem da forma da partida
-	# (`TURNS_TOTAL / TURNS_PER_WEEK`), não do acumulador onde o defeito mora.
+	# (`dia_da_parcela(0) / TURNS_PER_WEEK`), não do acumulador onde o defeito mora.
 	_check("e a quarta semana entra no historico na derrota",
-		GS.historico_semanas.size() == GS.PARCELA_DUE_TURN / GS.TURNS_PER_WEEK)
+		GS.historico_semanas.size() == GS.dia_da_parcela(0) / GS.TURNS_PER_WEEK)
 	if resumos_na_derrota.size() == 1:
 		var resumo_perdido: Dictionary = resumos_na_derrota[0]
 		# Quem não pagou não vê a parcela no boletim — a receita da semana tem
@@ -1806,7 +1810,7 @@ func _t5l_motivo_da_escala() -> void:
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	GS.cash = 10000000
-	GS.turn = GS.PARCELA_DUE_TURN + 1
+	GS.turn = GS.dia_da_parcela(0) + 1
 	GS.parcela_indice = 1
 	GS.parcelas_quitadas = 1
 	_check("o pátio foi comprado para o teste", GS.comprar_estrutura("patio") == true)
@@ -2207,7 +2211,7 @@ func _t10_lucro_ou_prejuizo() -> void:
 # caça não mora nela.
 func _t11_quando_vence() -> void:
 	_fresh_playing()
-	var vence: int = GS.PARCELA_DUE_TURN
+	var vence: int = GS.dia_da_parcela(0)
 	var casos := [
 		[vence, "Vence hoje, dia %d." % vence],
 		[vence - 1, "Vence amanhã, dia %d." % vence],
@@ -2274,7 +2278,7 @@ func _t13_despedida_do_ribeiro() -> void:
 	for caso in [["pagou", true], ["nao_pagou", false]]:
 		var painel = load("res://scenes/panels/DebtPaymentPanel.tscn").instantiate()
 		root.add_child(painel)
-		painel.setup(GS.PARCELA_AMOUNT)
+		painel.setup(GS.valor_da_parcela(0))
 		painel._mostrar_resposta(String(caso[0]))
 		var texto: String = painel.texto_da_fala()
 		var botao := ""

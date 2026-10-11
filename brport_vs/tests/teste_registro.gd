@@ -251,9 +251,9 @@ func _r2_partida() -> void:
 	_confere("a última é o fim", linhas.size() > 0
 		and JSON.parse_string(linhas[linhas.size() - 1]).get("e") == "fim")
 	_confere("gravou um evento de turno por turno jogado",
-		int(tipos.get("turno", 0)) >= GS.TURNS_TOTAL - 1,
-		"%d turnos para %d jogados" % [tipos.get("turno", 0), GS.TURNS_TOTAL])
-	_confere("gravou o fecho das doze semanas", int(tipos.get("semana", 0)) == GS.WEEKS_TOTAL,
+		int(tipos.get("turno", 0)) >= GS.turnos_da_fase() - 1,
+		"%d turnos para %d jogados" % [tipos.get("turno", 0), GS.turnos_da_fase()])
+	_confere("gravou o fecho das doze semanas", int(tipos.get("semana", 0)) == GS.semanas_da_fase(),
 		"%d semanas" % tipos.get("semana", 0))
 
 	# ZERO É O PIOR VALOR DE OMISSÃO QUE HÁ: lê-se como medida. A primeira
@@ -285,7 +285,7 @@ func _r2_partida() -> void:
 	var cab: Dictionary = JSON.parse_string(linhas[0])
 	_confere("o cabeçalho traz a versão do registro", int(cab.get("versao", 0)) == R.VERSAO)
 	_confere("e a parcela e o caixa inicial em vigor",
-		int(cab.get("parcela", 0)) == GS.PARCELA_AMOUNT
+		int(cab.get("parcela", 0)) == GS.valor_da_parcela(0)
 		and int(cab.get("caixa_inicial", 0)) == GS.START_CASH)
 
 	# O custo da obra tem de ser o custo DA OBRA. A primeira versão lia a
@@ -507,7 +507,7 @@ func _r7_obra_pronta() -> void:
 	_confere("o cabeçalho traz os dias por semana do jogo",
 		int(cab.get("turnos_por_semana", -1)) == GS.TURNS_PER_WEEK,
 		"gravou %s, o jogo tem %d" % [cab.get("turnos_por_semana"), GS.TURNS_PER_WEEK])
-	_confere("e os dias da fase", int(cab.get("turnos_totais", -1)) == GS.TURNS_TOTAL)
+	_confere("e os dias da fase", int(cab.get("turnos_totais", -1)) == GS.turnos_da_fase())
 
 	GS.cash = 999999
 	var pago: int = GS.turn

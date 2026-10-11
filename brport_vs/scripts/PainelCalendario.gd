@@ -74,16 +74,16 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	# Tom neutro: um dia não é resultado nenhum.
 	var vence := ("parcela %d vence no dia %d" % [GameState.parcela_indice + 1, GameState.vencimento_da_parcela()]) \
 		if not GameState.parcela_paid else "a parcela já está paga"
-	var hoje: int = mini(GameState.turn, GameState.TURNS_TOTAL)
-	var semana_de_hoje: int = mini(GameState.current_week(), GameState.WEEKS_TOTAL)
-	tarja("Dia %d de %d" % [hoje, GameState.TURNS_TOTAL],
-		"Semana %d de %d · %s" % [semana_de_hoje, GameState.WEEKS_TOTAL, vence])
+	var hoje: int = mini(GameState.turn, GameState.turnos_da_fase())
+	var semana_de_hoje: int = mini(GameState.current_week(), GameState.semanas_da_fase())
+	tarja("Dia %d de %d" % [hoje, GameState.turnos_da_fase()],
+		"Semana %d de %d · %s" % [semana_de_hoje, GameState.semanas_da_fase(), vence])
 	# O PRAZO À VISTA (segunda passagem, `065`): quanto da partida já andou,
 	# na barra do HUD — a mesma que o rodapé usa para o dinheiro da parcela.
-	barra_na_tarja(hoje, GameState.TURNS_TOTAL)
+	barra_na_tarja(hoje, GameState.turnos_da_fase())
 	var vencimentos := PackedStringArray()
-	for numero in range(1, GameState.PARCELAS_NA_FASE + 1):
-		vencimentos.append(str(GameState.PARCELA_DUE_TURN * numero))
+	for i in range(GameState.parcelas_na_fase()):
+		vencimentos.append(str(GameState.dia_da_parcela(i)))
 	paragrafo("Cobranças: dias %s · %s" % [", ".join(vencimentos),
 		Narrativa.concordar(GameState.parcelas_quitadas, "parcela quitada", "parcelas quitadas")])
 

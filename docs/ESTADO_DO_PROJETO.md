@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 10/10/2026 — M6 da fila: os nomes lidos por string (`093`)
+> **Última atualização:** 11/10/2026 — M7 da fila: as fases em dados (`094`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -120,9 +120,9 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — **M1** a **M6** fecharam (`088`–`093`); o primeiro aberto é
-o **M7**, à espera do D3 e do D4, e o primeiro sem decisão é o **M8**. Depois
-voltam o design e a frente 5 (`084`–`087`, §7 do plano).
+mais tranquila — **M1** a **M7** fecharam (`088`–`094`); o primeiro aberto é
+o **M8**, partir o `Main.gd`. Depois voltam o design e a frente 5 (`084`–`087`,
+§7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -148,7 +148,7 @@ podre (A4) — em `HISTORICO.md`.
 | Onde | O que é |
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
-| `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo |
+| `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo; o que é de cada fase na tabela `FASES`, lida por funções (`094`) |
 | `brport_vs/tests/run_tests.gd` | Regressões da lógica, inclusive parcela no vencimento, perdas para o rival e a abertura dos reparos com as duas pontas (T17, `089`) |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
@@ -158,7 +158,7 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`). O **D34** pergunta de ONDE vem um stylebox, que é o que nenhuma régua de texto sabe fazer (`045`); espera `DESIGN OK` |
-| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, **toda fala escrita chega ao jogo**, o prazo de obra prometido é cumprido (F18), e todo nome lido por string existe no alvo (F19, `093`) |
+| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, **toda fala escrita chega ao jogo**, o prazo de obra prometido é cumprido (F18), todo nome lido por string existe no alvo (F19, `093`), e a tabela das fases diz a verdade (F20, `094`) |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
 | `brport_vs/scripts/ArmazemLocal.gd` | **Onde o jogo guarda o que é do jogador** — com `--script`, em `user://ferramentas/`. `tools/sentinela_do_jogador.py` prova-o no CI (`061`) |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Nove bustos (`020`) |

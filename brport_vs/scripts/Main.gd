@@ -1893,10 +1893,10 @@ func _refresh_estruturas() -> void:
 
 func _refresh_hud() -> void:
 	_mostrar_caixa(int(GameState.cash))
-	var shown_day: int = min(GameState.turn, GameState.TURNS_TOTAL)
-	_day_label.text = "Dia %d/%d" % [shown_day, GameState.TURNS_TOTAL]
+	var shown_day: int = min(GameState.turn, GameState.turnos_da_fase())
+	_day_label.text = "Dia %d/%d" % [shown_day, GameState.turnos_da_fase()]
 	_rep_label.text = "%d %s" % [int(GameState.reputation), GameState.reputation_label()]
-	_docks_label.text = "%d/%d" % [GameState.docks.size(), GameState.BERCOS_NO_MAPA]
+	_docks_label.text = "%d/%d" % [GameState.docks.size(), GameState.bercos_no_mapa()]
 	# O botão não some quando tudo está construído: vira o registo de que o
 	# porto está completo, que é uma informação, não um beco sem saída.
 	var faltam := 0
@@ -1936,10 +1936,10 @@ func _refresh_meta() -> void:
 	if GameState.parcela_paid:
 		# Pago: o banco dá lugar ao visto verde, que é o estado, não o credor.
 		_meta_icone.texture = Icones.FEITO
-		_meta_titulo.text = "Parcela %d de %d — Sr. Ribeiro" % [GameState.parcela_indice + 1, GameState.PARCELAS_NA_FASE]
+		_meta_titulo.text = "Parcela %d de %d — Sr. Ribeiro" % [GameState.parcela_indice + 1, GameState.parcelas_na_fase()]
 		_meta_bar.value = 100.0
 		_meta_label.text = "Paga — %d de %s" % [GameState.parcelas_quitadas,
-			Narrativa.concordar(GameState.PARCELAS_NA_FASE, "quitada", "quitadas")]
+			Narrativa.concordar(GameState.parcelas_na_fase(), "quitada", "quitadas")]
 		_meta_label.theme_type_variation = &"TextoPilulaBom"
 		return
 
@@ -1948,7 +1948,7 @@ func _refresh_meta() -> void:
 	_meta_icone.texture = Icones.PARCELA_BARRA
 	var dias_restantes: int = max(GameState.vencimento_da_parcela() - GameState.turn + 1, 0)
 	_meta_titulo.text = "Parcela %d de %d — %s" % [GameState.parcela_indice + 1,
-		GameState.PARCELAS_NA_FASE, Narrativa.concordar(dias_restantes, "dia restante", "dias restantes")]
+		GameState.parcelas_na_fase(), Narrativa.concordar(dias_restantes, "dia restante", "dias restantes")]
 	# O dinheiro do cartão é o MOSTRADO, e não o do `GameState`: na virada ele
 	# conta junto com a pílula, e os dois números nunca discordam na tela
 	# (`078`). Fora da virada os dois são o mesmo.

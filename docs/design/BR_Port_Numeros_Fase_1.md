@@ -37,93 +37,118 @@ foi lida como regressão de balanceamento uma vez.
 | `WORKERS_BASE` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:134` |
 | `UPGRADE_EXTRA_DOCKS` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:135` |
 | `UPGRADE_EXTRA_WORKERS` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:136` |
-| `BERCOS_NO_MAPA` | 3 | regra | Quantos berços o mapa desenha. … | `GameState.gd:144` |
 
 ## ESTRUTURAS
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `GUINDASTE_CORTA_TURNOS` | 1 | TUNING | TUNING | `GameState.gd:224` |
-| `ARMAZEM_BONUS` | 0.5 | TUNING | TUNING | `GameState.gd:232` |
-| `PATIO_BONUS_CARGA` | 0.3 | TUNING | TUNING | `GameState.gd:236` |
-| `PATIO_BONUS_PIER` | 1.0 | TUNING | TUNING | `GameState.gd:237` |
-| `ESCRITORIO_DESCONTO_SALARIO` | 0.5 | TUNING | TUNING | `GameState.gd:241` |
+| `GUINDASTE_CORTA_TURNOS` | 1 | TUNING | TUNING | `GameState.gd:216` |
+| `ARMAZEM_BONUS` | 0.5 | TUNING | TUNING | `GameState.gd:224` |
+| `PATIO_BONUS_CARGA` | 0.3 | TUNING | TUNING | `GameState.gd:228` |
+| `PATIO_BONUS_PIER` | 1.0 | TUNING | TUNING | `GameState.gd:229` |
+| `ESCRITORIO_DESCONTO_SALARIO` | 0.5 | TUNING | TUNING | `GameState.gd:233` |
 
 ## MOTIVO DA ESCALA
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `PIER_SLOTS` | 6 | GDD 7 | GDD "Margem operacional base": 6 vagas de píer | `GameState.gd:290` |
-| `PIER_RATE_PER_SLOT` | 5.000 | GDD 7 | GDD "Margem operacional base", reescalado: renda fixa semanal | `GameState.gd:291` |
+| `PIER_SLOTS` | 6 | GDD 7 | GDD "Margem operacional base": 6 vagas de píer | `GameState.gd:282` |
+| `PIER_RATE_PER_SLOT` | 5.000 | GDD 7 | GDD "Margem operacional base", reescalado: renda fixa semanal | `GameState.gd:283` |
 
 ## A FILA NO FUNDEADOURO (`docs/decisoes/083`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `FILA_LUGARES` | 3 | GDD 7 | O barco já não nasce na doca: … | `GameState.gd:363` |
-| `PACIENCIA_FILA` | 2 | TUNING | TUNING | `GameState.gd:367` |
-| `BOAT_ARRIVAL_CHANCE` | 0.75 | TUNING | TUNING | `GameState.gd:371` |
+| `FILA_LUGARES` | 3 | GDD 7 | O barco já não nasce na doca: … | `GameState.gd:355` |
+| `PACIENCIA_FILA` | 2 | TUNING | TUNING | `GameState.gd:359` |
+| `BOAT_ARRIVAL_CHANCE` | 0.75 | TUNING | TUNING | `GameState.gd:363` |
 
 ## Contra-oferta do Arlindo (GDD: "Limiar de paciência do cliente")
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `RIVAL_TRIGGER_CHANCE` | 0.3 | TUNING (GDD) | Protótipo validado (Arlindo — dumping) | `GameState.gd:379` |
-| `RIVAL_DISCOUNT` | 0.15 | TUNING (GDD) | "Igualar rival −15%" (GDD) | `GameState.gd:380` |
-| `RIVAL_HALF_DISCOUNT` | 0.07 | TUNING (GDD) | "Cortar metade −7%" (GDD) | `GameState.gd:381` |
-| `RIVAL_HALF_CHANCE` | 0.7 | TUNING (GDD) | TUNING: chance de o cliente aceitar o meio-termo | `GameState.gd:382` |
-| `RIVAL_KEEP_CHANCE` | 0.45 | TUNING (GDD) | TUNING: chance de o cliente aceitar pagar cheio | `GameState.gd:383` |
-| `RIVAL_DISCOUNT_AFTER_FAIL` | 0.28 | TUNING | TUNING | `GameState.gd:386` |
-| `RIVAL_PATIENCE` | 2 | GDD 7 | GDD: máx. 2 tentativas antes de o cliente encerrar | `GameState.gd:387` |
-| `REPUTACAO_EFEITO_NEGOCIACAO` | 0.5 | TUNING | TUNING — o quanto a reputação pesa na aposta da contra-oferta (item A3). … | `GameState.gd:392` |
+| `RIVAL_TRIGGER_CHANCE` | 0.3 | TUNING (GDD) | Protótipo validado (Arlindo — dumping) | `GameState.gd:371` |
+| `RIVAL_DISCOUNT` | 0.15 | TUNING (GDD) | "Igualar rival −15%" (GDD) | `GameState.gd:372` |
+| `RIVAL_HALF_DISCOUNT` | 0.07 | TUNING (GDD) | "Cortar metade −7%" (GDD) | `GameState.gd:373` |
+| `RIVAL_HALF_CHANCE` | 0.7 | TUNING (GDD) | TUNING: chance de o cliente aceitar o meio-termo | `GameState.gd:374` |
+| `RIVAL_KEEP_CHANCE` | 0.45 | TUNING (GDD) | TUNING: chance de o cliente aceitar pagar cheio | `GameState.gd:375` |
+| `RIVAL_DISCOUNT_AFTER_FAIL` | 0.28 | TUNING | TUNING | `GameState.gd:378` |
+| `RIVAL_PATIENCE` | 2 | GDD 7 | GDD: máx. 2 tentativas antes de o cliente encerrar | `GameState.gd:379` |
+| `REPUTACAO_EFEITO_NEGOCIACAO` | 0.5 | TUNING | TUNING — o quanto a reputação pesa na aposta da contra-oferta (item A3). … | `GameState.gd:384` |
 
 ## REPUTAÇÃO COMERCIAL
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `REPUTATION_START` | 65.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:408` |
-| `REPUTATION_GAIN_SERVED` | 0.8 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:409` |
-| `REPUTATION_LOSS_LOST` | 2.5 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:410` |
-| `REPUTATION_GAIN_RIVAL_MATCHED` | 1.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:411` |
-| `REPUTATION_LOSS_RIVAL_REFUSED` | 8.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:412` |
+| `REPUTATION_GAIN_SERVED` | 0.8 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:401` |
+| `REPUTATION_LOSS_LOST` | 2.5 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:402` |
+| `REPUTATION_GAIN_RIVAL_MATCHED` | 1.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:403` |
+| `REPUTATION_LOSS_RIVAL_REFUSED` | 8.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:404` |
 
-## CADÊNCIA E PARCELA
+## CADÊNCIA
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `TURNS_PER_WEEK` | 7 | TUNING | TUNING (`085`) — calendário aprovado: … | `GameState.gd:418` |
-| `WEEKS_TOTAL` | 12 | TUNING | TUNING (`085`) — calendário aprovado: … | `GameState.gd:419` |
-| `TURNS_TOTAL` | 84 | TUNING | TUNING (`085`) — calendário aprovado: … | `GameState.gd:420` |
-| `PARCELA_AMOUNT` | 140.000 | TUNING | TUNING (`085`): capital mais juros | `GameState.gd:424` |
-| `PARCELA_DUE_TURN` | 28 | regra | vence ao fim da semana 4 | `GameState.gd:425` |
-| `PARCELAS_NA_FASE` | 3 | GDD 7 | A Fase 1 agora joga o arco inteiro das três cobranças (`085`). … | `GameState.gd:430` |
-| `PARCELA_2_AMOUNT` | 140.000 | TUNING | TUNING (`085`): … | `GameState.gd:434` |
-| `PARCELA_3_AMOUNT` | 140.000 | TUNING | TUNING (`085`): … | `GameState.gd:435` |
-| `JUROS_PARCELA_1` | 9.919 | regra | Amortização aproximada de parcelas iguais (~2,48% por período de 28 dias). … | `GameState.gd:439` |
-| `JUROS_PARCELA_2` | 6.693 | regra | Amortização aproximada de parcelas iguais (~2,48% por período de 28 dias). … | `GameState.gd:440` |
-| `JUROS_PARCELA_3` | 3.388 | regra | Amortização aproximada de parcelas iguais (~2,48% por período de 28 dias). … | `GameState.gd:441` |
-| `JUROS_POR_TURNO` | 0.0025 | TUNING | TUNING: fração do principal abatida por turno de antecipação | `GameState.gd:457` |
+| `TURNS_PER_WEEK` | 7 | TUNING | TUNING (`085`) — a semana tem sete dias, e é a do calendário inteiro, não a de uma fase: … | `GameState.gd:410` |
+
+## ANTECIPAÇÃO
+
+| Constante | Valor | Fonte | Por quê | Onde |
+|---|---:|---|---|---|
+| `JUROS_POR_TURNO` | 0.0025 | TUNING | TUNING: fração do principal abatida por turno de antecipação | `GameState.gd:496` |
 
 ## SAVE
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `SAVE_ARQUIVO` | `savegame.json` | regra | O NOME é constante; o CAMINHO decide-o o `ArmazemLocal`, por processo: … | `GameState.gd:465` |
-| `SAVE_VERSION` | 14 | regra | VERSÃO DO SAVE — subir quando a forma ou a interpretação do estado mudar. … | `GameState.gd:522` |
+| `SAVE_ARQUIVO` | `savegame.json` | regra | O NOME é constante; o CAMINHO decide-o o `ArmazemLocal`, por processo: … | `GameState.gd:504` |
+| `SAVE_VERSION` | 14 | regra | VERSÃO DO SAVE — subir quando a forma ou a interpretação do estado mudar. … | `GameState.gd:561` |
 
 ## OS ESPAÇOS DE SAVE (`docs/decisoes/066`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `ESPACOS` | 3 | regra | Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do Bruno no lugar do «Novo jogo (apaga progresso)» que vivia na pausa. … | `GameState.gd:545` |
+| `ESPACOS` | 3 | regra | Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do Bruno no lugar do «Novo jogo (apaga progresso)» que vivia na pausa. … | `GameState.gd:584` |
 
 ## OS DOIS NOMES
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:661` |
-| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:668` |
-| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:673` |
+| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:700` |
+| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:707` |
+| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:712` |
+
+## As fases — o que muda de uma para a outra
+
+Desde a `094` o que é de uma fase vive na tabela `FASES` do `GameState`,
+e não em constantes soltas: a duração, as parcelas, os reparos, o nível
+que eles alcançam, os berços do mapa e a reputação de partida. O jogo
+lê-a por funções (`turnos_da_fase()`, `valor_da_parcela()`…), e hoje só
+existe a Fase 1. O nível máximo é uma afirmação, e o F20 do
+`teste_fumaca` confere-a contra os reparos.
+
+| Fase | Semanas | Dias | Parcelas | Nível máximo | Berços | Reputação inicial |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 12 | 84 | 3 | 1 | 3 | 65.0 |
+
+### Fase 1 — as parcelas do Sr. Ribeiro
+
+O valor é o boleto, capital mais juros; quitar antes abate só os
+juros da janela, que vai do vencimento anterior ao dela.
+
+| Parcela | Vence na semana | Dia | Valor | Juros | Capital |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 4 | 28 | R$ 140.000 | R$ 9.919 | R$ 130.081 |
+| 2 | 8 | 56 | R$ 140.000 | R$ 6.693 | R$ 133.307 |
+| 3 | 12 | 84 | R$ 140.000 | R$ 3.388 | R$ 136.612 |
+
+### Fase 1 — os reparos que ela abre
+
+| Reparo | Abre na semana | Cobranças quitadas | Dias de obra |
+|---|---:|---:|---:|
+| Reconstruir o Píer 2 | 1 | 0 | 2 |
+| Consertar o armazém | 2 | 0 | 2 |
+| Pavimentar o pátio | 5 | 1 | 3 |
 
 ## Estruturas — o que o jogador compra
 

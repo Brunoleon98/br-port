@@ -155,6 +155,10 @@ func _rodar() -> void:
 	_f19_nomes_lidos_por_string()
 	_confere("o bloco F19 correu até ao fim", _f19_terminou)
 
+	print("=== F20: a tabela das fases tem os campos todos, e o que ela afirma é o que o jogo faz ===")
+	_f20_a_tabela_das_fases()
+	_confere("o bloco F20 correu até ao fim", _f20_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
 		quit(0)
@@ -613,7 +617,7 @@ func _f4_narrativa() -> void:
 
 	# E esta pela FONTE: o número que chega à tela é o da constante, e não outra
 	# qualquer. A guarda acima não a implica — o texto bruto passa com o token no
-	# lugar, mesmo que o resolvedor o troque por `PARCELA_AMOUNT` num
+	# lugar, mesmo que o resolvedor o troque por `valor_da_parcela(0)` num
 	# copiar-colar. E o `_sem_token_cru` abaixo também não: ele prova que o token
 	# foi resolvido, nunca por quê.
 	#
@@ -626,7 +630,7 @@ func _f4_narrativa() -> void:
 		% GS.moeda(GS.START_CASH),
 		GS.texto(Narrativa.DIARIO_PRIMEIRA_PAGINA).contains(GS.moeda(GS.START_CASH)))
 	_confere("o total contratado acompanha as três parcelas, sem usar o principal recebido",
-		GS.texto("{totalParcelas}") == GS.moeda(GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT))
+		GS.texto("{totalParcelas}") == GS.moeda(GS.valor_da_parcela(0) + GS.valor_da_parcela(1) + GS.valor_da_parcela(2)))
 
 	# E agora o outro lado: o que sai dos resolvedores não pode ter token
 	# nenhum. Com nome de jogador e sem, porque o vocativo é o caso que muda.
@@ -704,7 +708,7 @@ func _sem_token_cru(caso: String) -> void:
 	var saidas := {
 		"diário": Narrativa.diario(),
 		"Sr. Ribeiro (entrada)": Narrativa.ribeiro_entrada(),
-		"Sr. Ribeiro (a dívida)": Narrativa.ribeiro_a_divida(GS.PARCELA_AMOUNT),
+		"Sr. Ribeiro (a dívida)": Narrativa.ribeiro_a_divida(GS.valor_da_parcela(0)),
 		"fim de fase": Narrativa.fim_de_fase(),
 		"Arlindo (abertura)": GS.texto(Narrativa.ARLINDO_ABERTURA),
 		"Arlindo (venceu)": GS.texto(Narrativa.ARLINDO_VENCEU),
@@ -771,18 +775,18 @@ func _f4_toda_fala_chega_ao_jogo() -> void:
 # dizer "Quatro semanas." e esta guarda reprovou um texto que estava certo.
 # Dígito no meio de uma peça literária lê como leitura de instrumento, e a
 # guarda tinha virado a razão de ele continuar lá. A ligação à constante
-# continua provada, porque o esperado sai de `por_extenso(GS.WEEKS_TOTAL)` —
+# continua provada, porque o esperado sai de `por_extenso(GS.semanas_da_fase())` —
 # mexer na constante move os dois lados, mas mexer no TEXTO à mão reprova.
 func _f4_numeros_do_fim() -> void:
 	var texto: String = Narrativa.fim_de_fase()
-	var semanas: String = Narrativa.por_extenso(GS.WEEKS_TOTAL)
+	var semanas: String = Narrativa.por_extenso(GS.semanas_da_fase())
 	_confere("o fim de fase diz as %s semanas que o jogo tem" % semanas,
 		texto.to_lower().begins_with("%s semanas" % semanas),
 		"começa com: " + texto.left(30))
 	# E O ARCO: a Fase 1 do GDD tem três parcelas e o VS paga a primeira. O
 	# esperado sai da CONSTANTE, então mexer nela move os dois lados — e mexer
 	# no TEXTO à mão reprova, que é o ponto.
-	var total: String = Narrativa.por_extenso(GS.PARCELAS_NA_FASE)
+	var total: String = Narrativa.por_extenso(GS.parcelas_na_fase())
 	_confere("e que as %s parcelas terminaram" % total,
 		texto.to_lower().contains("as %s parcelas ficaram para trás" % total),
 		"não achou em: " + texto.left(60))
@@ -1463,13 +1467,13 @@ func _f8_a_fala_e_vista() -> void:
 	if not _f8_abrir():
 		return
 	_f8_por_barco_a_espera(true)
-	GS.cash = GS.PARCELA_AMOUNT / 2 - 1
+	GS.cash = GS.valor_da_parcela(0) / 2 - 1
 	_f8_main._semana_nova()
 	_confere("F8c: com barco à espera e caixa curto, sai a variante das duas",
 		_f8_drenar() == Narrativa.cida("semana_nova_fila_curto"),
 		"ficou: " + _f8_drenar())
 	_f8_por_barco_a_espera(false)
-	GS.cash = GS.PARCELA_AMOUNT
+	GS.cash = GS.valor_da_parcela(0)
 	_f8_main._semana_nova()
 	_confere("F8c: sem barco e com caixa folgado, sai a variante de nenhuma das duas",
 		_f8_drenar() == Narrativa.cida("semana_nova_parado_folgado"),
@@ -1489,10 +1493,10 @@ func _f8_a_fala_e_vista() -> void:
 		return
 	_f8_main._cida_semana(8, 1)          # regista a semana anterior, sem falar
 	_f8_por_barco_a_espera(false)        # estado A: cais parado
-	GS.cash = GS.PARCELA_AMOUNT
+	GS.cash = GS.valor_da_parcela(0)
 	_f8_main._cida_semana(9, 2)          # dispara — a escolha fica para depois
 	_f8_por_barco_a_espera(true)         # estado B: barco à espera
-	GS.cash = GS.PARCELA_AMOUNT / 2 - 1
+	GS.cash = GS.valor_da_parcela(0) / 2 - 1
 	await _f8_esperar()
 	_confere("F8c2: a variante é a do estado em que a linha é ESCRITA, não a do sinal",
 		_f8_drenar() == Narrativa.cida("semana_nova_fila_curto"),
@@ -1522,7 +1526,7 @@ func _f8_a_fala_e_vista() -> void:
 	# a frase ficava falsa desse turno até ao fim da partida.
 	if not _f8_abrir():
 		return
-	# ⚠️ O CAIXA SAI DO VALOR DO DIA, e não do `PARCELA_AMOUNT`. A parcela
+	# ⚠️ O CAIXA SAI DO VALOR DO DIA, e não do `valor_da_parcela()`. A parcela
 	# adiantada tem desconto (`valor_da_parcela_hoje()`), e montar pelo valor
 	# cheio deixava o caixa em R$306.074 depois de pagar — acima do limiar, sem
 	# travessia nenhuma, e a asserção reprovava por não haver o que ver.
@@ -1547,7 +1551,7 @@ func _f8_a_fala_e_vista() -> void:
 	if not _f8_abrir():
 		return
 	_f8_por_barco_a_espera(false)
-	GS.cash = GS.PARCELA_AMOUNT / 2 - 1
+	GS.cash = GS.valor_da_parcela(0) / 2 - 1
 	GS.parcela_paid = false
 	_f8_main._semana_nova()
 	_confere("F8f: com a parcela por pagar, é ela que a fala nomeia",
@@ -1604,7 +1608,7 @@ func _f8_a_fala_e_vista() -> void:
 	_confere("F8g: e à segunda a fala da rotina ainda não saiu",
 		not _f8_foi_apresentada(Narrativa.cida("upgrade_pronto_rotina")),
 		"apresentadas: " + ", ".join(_f8_apresentadas))
-	GS.turn = GS.PARCELA_DUE_TURN + 1
+	GS.turn = GS.dia_da_parcela(0) + 1
 	GS.parcela_indice = 1
 	GS.parcelas_quitadas = 1
 	GS.comprar_estrutura("patio")
@@ -1896,8 +1900,8 @@ func _f10_cada_tempo_cabe() -> void:
 		return
 	# O cenário mede o caminho sem dinheiro, não a dificuldade desta semente.
 	# A parcela menor (`084`) fez a mesma partida conseguir pagar.
-	GS.cash = int(GS.PARCELA_AMOUNT) / 2
-	var p: Node = await _f10_abrir(F10_RIBEIRO, [GS.PARCELA_AMOUNT])
+	GS.cash = int(GS.valor_da_parcela(0)) / 2
+	var p: Node = await _f10_abrir(F10_RIBEIRO, [GS.valor_da_parcela(0)])
 	_f10_medir(p, "Ribeiro, entrada", &"entrada")
 	if not await _f10_tocar(p, "Não consigo"):
 		return
@@ -1906,7 +1910,7 @@ func _f10_cada_tempo_cabe() -> void:
 	_f10_medir(p, "Ribeiro, não pagou", &"nao_pagou")
 	_f10_fechar(p)
 
-	if not _f10_ate_ao_vencimento(nome, GS.PARCELAS_NA_FASE):
+	if not _f10_ate_ao_vencimento(nome, GS.parcelas_na_fase()):
 		return
 	GS.cash = GS.principal_da_parcela()
 	p = await _f10_abrir(F10_RIBEIRO, [GS.principal_da_parcela()])
@@ -2404,7 +2408,7 @@ func _f11_ate_ao_ultimo_dia() -> bool:
 	GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
 	GS.cash = GS.START_CASH * 25
 	var voltas := 0
-	while int(GS.turn) < int(GS.TURNS_TOTAL) and voltas < 200:
+	while int(GS.turn) < int(GS.turnos_da_fase()) and voltas < 200:
 		if GS.phase == "debt_payment":
 			GS.pay_debt()
 		if GS.phase == "rival_offer":
@@ -2413,7 +2417,7 @@ func _f11_ate_ao_ultimo_dia() -> bool:
 		voltas += 1
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
-	var ok: bool = GS.phase == "playing" and int(GS.turn) == int(GS.TURNS_TOTAL)
+	var ok: bool = GS.phase == "playing" and int(GS.turn) == int(GS.turnos_da_fase())
 	_confere("F11: a partida chega ao último dia a jogar (turno %d)" % int(GS.turn),
 		ok, "fase «%s»" % GS.phase)
 	return ok
@@ -2441,7 +2445,7 @@ func _f11_ate_ao_fim(main: Node, primeiro: Node, botao: String, tempo_fim: Strin
 		if boletim != null:
 			var semana: int = int((boletim.get("_resumo") as Dictionary)["semana"])
 			_confere("F11: %s — o boletim é o da última semana" % caso,
-				semana == int(GS.WEEKS_TOTAL), "é o da semana %d" % semana)
+				semana == int(GS.semanas_da_fase()), "é o da semana %d" % semana)
 			if await _f10_tocar(boletim, "Fechar o boletim", "F11"):
 				_f11_sozinho(main, F10_FIM, tempo_fim, "%s, fechado o boletim" % caso)
 	main.free()
@@ -2546,9 +2550,9 @@ func _f12_o_rosto_do_trabalhador() -> void:
 	# construído aguenta, e a primeira versão deste bloco salvou três num porto
 	# de uma doca — voltava um, e reprovava o jogo certo.
 	GS.estruturas = ["pier_2", "pier_3"]
-	while GS.docks.size() < GS.BERCOS_NO_MAPA:
+	while GS.docks.size() < GS.bercos_no_mapa():
 		GS.docks.append({"boat": null, "worker_id": null})
-	while GS.workers.size() < GS.BERCOS_NO_MAPA:
+	while GS.workers.size() < GS.bercos_no_mapa():
 		GS.workers.append(GS.novo_trabalhador())
 	var rostos_vivos: Array = GS.workers.map(func(w): return int(w["rosto"]))
 	GS.save_game()
@@ -2793,7 +2797,7 @@ func _f14_semente_que_aceita(prefixo: String) -> int:
 # zero de propósito: a bateria paga com o dinheiro exacto da parcela, e R$0 é
 # também o que uma subtracção esquecida dá.
 func _f14_cobranca() -> void:
-	var parcela: int = int(GS.PARCELA_AMOUNT)
+	var parcela: int = int(GS.valor_da_parcela(0))
 	if not _f10_ate_ao_vencimento("F14"):
 		return
 	GS.cash = parcela + 123457
@@ -3159,10 +3163,10 @@ func _f14_balanco() -> void:
 		_f10_partida_nova("F14")
 		if venceu:
 			GS.parcela_paid = true
-			GS.parcela_indice = GS.PARCELAS_NA_FASE - 1
-			GS.parcelas_quitadas = GS.PARCELAS_NA_FASE
-			GS.total_pago_parcelas = GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT
-			GS.turn = int(GS.TURNS_TOTAL) + 1
+			GS.parcela_indice = GS.parcelas_na_fase() - 1
+			GS.parcelas_quitadas = GS.parcelas_na_fase()
+			GS.total_pago_parcelas = GS.valor_da_parcela(0) + GS.valor_da_parcela(1) + GS.valor_da_parcela(2)
+			GS.turn = int(GS.turnos_da_fase()) + 1
 		else:
 			GS.cash = -1
 		GS._check_end()
@@ -3258,8 +3262,8 @@ func _f15_porto_completo() -> bool:
 			if not GS.tem_estrutura(String(id)):
 				load("res://tools/estado_da_bancada.gd").instalar(GS, String(id))
 	var ok: bool = GS.tem_estrutura("armazem") and GS.tem_estrutura("patio") \
-		and GS.docks.size() == int(GS.BERCOS_NO_MAPA)
-	_confere("F15: o porto completo tem armazém, pátio e as %d docas" % int(GS.BERCOS_NO_MAPA),
+		and GS.docks.size() == int(GS.bercos_no_mapa())
+	_confere("F15: o porto completo tem armazém, pátio e as %d docas" % int(GS.bercos_no_mapa()),
 		ok, "estruturas %s, %d docas" % [str(GS.estruturas), GS.docks.size()])
 	return ok
 
@@ -3527,7 +3531,7 @@ func _f15_recordes() -> void:
 func _f15_dia32() -> void:
 	_f10_partida_nova("F15")
 	var voltas := 0
-	while int(GS.turn) < int(GS.PARCELA_DUE_TURN) and voltas < 200:
+	while int(GS.turn) < int(GS.dia_da_parcela(0)) and voltas < 200:
 		if GS.phase == "rival_offer":
 			GS.resolve_rival_offer(true)
 		_atracar_tudo()
@@ -3536,7 +3540,7 @@ func _f15_dia32() -> void:
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	_confere("F15 dia 32: a partida chega ao dia do vencimento a jogar",
-		int(GS.turn) == int(GS.PARCELA_DUE_TURN) and GS.phase == "playing",
+		int(GS.turn) == int(GS.dia_da_parcela(0)) and GS.phase == "playing",
 		"turno %d, fase %s" % [int(GS.turn), GS.phase])
 	if GS.phase != "playing":
 		return
@@ -3553,7 +3557,7 @@ func _f15_dia32() -> void:
 	var r: Dictionary = GS.recordes()
 	_confere("F15 dia 32: o melhor dia é o 32, com a parcela dentro (%s), e o recorde diz %s do dia %d"
 		% [GS.moeda(resultado), GS.moeda(int(r["melhor_dia"]["valor"])), int(r["melhor_dia"]["turno"])],
-		int(r["melhor_dia"]["turno"]) == int(GS.PARCELA_DUE_TURN)
+		int(r["melhor_dia"]["turno"]) == int(GS.dia_da_parcela(0))
 			and int(r["melhor_dia"]["valor"]) == resultado)
 	_f15_dia32_ok = true
 
@@ -3638,7 +3642,7 @@ func _f15_parcela() -> void:
 	var hoje := _f14_um_valor(tarja)
 	_f14_tom_confere(painel, "parcela por quitar")
 	_confere("F15 parcela: a linha de apoio é a cheia menos o abatimento (%s)" % str(apoio),
-		apoio.size() == 2 and int(apoio[0]) == int(GS.PARCELA_AMOUNT)
+		apoio.size() == 2 and int(apoio[0]) == int(GS.valor_da_parcela(0))
 			and int(apoio[0]) - int(apoio[1]) == hoje)
 	var barra := painel.find_child("Barra", true, false) as ProgressBar
 	_confere("F15 parcela: a barra mede o dinheiro contra o valor de hoje",
@@ -3666,10 +3670,10 @@ func _f15_calendario() -> void:
 	_f14_tom_confere(painel, "calendário")
 	var prazo := painel.find_child("Barra", true, false) as ProgressBar
 	_confere("F15 calendário: a barra do prazo é o dia do jogo contra o fim da partida",
-		prazo != null and int(prazo.value) == int(GS.turn) and int(prazo.max_value) == int(GS.TURNS_TOTAL))
+		prazo != null and int(prazo.value) == int(GS.turn) and int(prazo.max_value) == int(GS.turnos_da_fase()))
 	_confere("F15 calendário: «%s» / «%s» são o dia e a semana do jogo" % [tarja, apoio],
-		tarja == "Dia %d de %d" % [int(GS.turn), int(GS.TURNS_TOTAL)]
-			and apoio.begins_with("Semana %d de %d" % [GS.current_week(), int(GS.WEEKS_TOTAL)]))
+		tarja == "Dia %d de %d" % [int(GS.turn), int(GS.turnos_da_fase())]
+			and apoio.begins_with("Semana %d de %d" % [GS.current_week(), int(GS.semanas_da_fase())]))
 	_f10_fechar(painel)
 	_f15_calendario_ok = true
 
@@ -4023,7 +4027,7 @@ func _f17_a_conversa() -> void:
 
 	var ribeiro: Control = main.call("_abrir_painel",
 		load("res://scenes/panels/DebtPaymentPanel.tscn"))
-	ribeiro.call("setup", int(GS.PARCELA_AMOUNT))
+	ribeiro.call("setup", int(GS.valor_da_parcela(0)))
 	_f17_gravou(fila, "ribeiro", String(ribeiro.call("texto_da_fala")),
 		Narrativa.retrato("ribeiro", "a_divida"))
 
@@ -4157,14 +4161,14 @@ func _f18_fim_de_fase(dia: int) -> void:
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	GS.cash = 50000000
-	GS.parcela_indice = GS.PARCELAS_NA_FASE - 1
-	GS.parcelas_quitadas = GS.PARCELAS_NA_FASE - 1
+	GS.parcela_indice = GS.parcelas_na_fase() - 1
+	GS.parcelas_quitadas = GS.parcelas_na_fase() - 1
 	GS.turn = dia
 
 
 func _f18_ultimo_dia_de_compra(id: String) -> int:
-	_f18_fim_de_fase(GS.TURNS_TOTAL + 1)
-	for dia in range(GS.TURNS_TOTAL + 1, 0, -1):
+	_f18_fim_de_fase(GS.turnos_da_fase() + 1)
+	for dia in range(GS.turnos_da_fase() + 1, 0, -1):
 		GS.turn = dia
 		if GS.impedimento_estrutura(id) == "":
 			return dia
@@ -4216,7 +4220,7 @@ func _f18_comprar(painel: Node, id: String) -> Array:
 # verdade, porque a estrutura não fica de pé em dia nenhum da fase.
 func _f18_sem_uso(id: String, dia: int) -> bool:
 	_f18_fim_de_fase(dia)
-	var inexistente := "dia %d" % (GS.TURNS_TOTAL + 1)
+	var inexistente := "dia %d" % (GS.turnos_da_fase() + 1)
 	var painel: Node = await _f10_abrir(F18_CONSTRUIR, [])
 	var cartao := _f18_cartao(painel, id)
 	if cartao == null:
@@ -4247,15 +4251,15 @@ func _f18_sem_uso(id: String, dia: int) -> bool:
 	_f10_fechar(painel)
 	# O AVISO É VERDADE: nenhum dia jogável a vê de pé, e o fecho do último a
 	# conclui (`087`) — é o «fim do dia» que o texto promete.
-	_f8_avancar_ate(GS.TURNS_TOTAL)
+	_f8_avancar_ate(GS.turnos_da_fase())
 	_confere("F18 %s: no dia %d, o último da fase, a obra ainda não está de pé"
-		% [id, GS.TURNS_TOTAL], GS.turn == GS.TURNS_TOTAL and not GS.tem_estrutura(id),
+		% [id, GS.turnos_da_fase()], GS.turn == GS.turnos_da_fase() and not GS.tem_estrutura(id),
 		"dia %d, de pé %s" % [GS.turn, str(GS.tem_estrutura(id))])
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	GS.advance_turn()
 	_confere("F18 %s: e fica pronta no fecho dele" % id,
-		GS.turn == GS.TURNS_TOTAL + 1 and GS.tem_estrutura(id),
+		GS.turn == GS.turnos_da_fase() + 1 and GS.tem_estrutura(id),
 		"dia %d, de pé %s" % [GS.turn, str(GS.tem_estrutura(id))])
 	return true
 
@@ -4292,7 +4296,7 @@ func _f18_com_uso(id: String, dia: int) -> void:
 		andando)
 	_f10_fechar(painel)
 	_confere("F18 %s: o dia prometido (%d) é um dia da fase" % [id, prometido],
-		prometido <= GS.TURNS_TOTAL)
+		prometido <= GS.turnos_da_fase())
 	_f8_avancar_ate(prometido - 1)
 	var na_vespera: bool = GS.tem_estrutura(id)
 	_f8_avancar_ate(prometido)
@@ -4317,7 +4321,7 @@ func _f18_com_uso(id: String, dia: int) -> void:
 # tira os botões («Faltam R$…») e o rodapé NÃO desce — ele diz o que o
 # calendário deixa, e quem não pode pagar lê o porquê no cartão.
 func _f18_rodape(ultimos: Dictionary) -> void:
-	var primeiro: int = GS.TURNS_TOTAL
+	var primeiro: int = GS.turnos_da_fase()
 	for id in ultimos:
 		primeiro = mini(primeiro, int(ultimos[id]) - 1)
 	_f18_fim_de_fase(primeiro)
@@ -4326,7 +4330,7 @@ func _f18_rodape(ultimos: Dictionary) -> void:
 	root.add_child(main)
 	await _f8_esperar()
 	var contagens := {}
-	for dia in range(primeiro, GS.TURNS_TOTAL + 1):
+	for dia in range(primeiro, GS.turnos_da_fase() + 1):
 		GS.turn = dia
 		GS.obra_em_andamento = {}
 		GS.cash = 50000000
@@ -4727,3 +4731,208 @@ func _f19_membros(caminho: String) -> Dictionary:
 			for m in script.get_script_method_list():
 				metodos[String(m["name"])] = true
 	return {"propriedade": propriedades, "metodo": metodos}
+
+
+# ============================================================
+# F20 — A TABELA DAS FASES (`docs/decisoes/094`)
+#
+# Desde o M7 o que é de uma fase vive na tabela `FASES` do `GameState`, e o
+# jogo lê-a por funções. Três perguntas que nenhuma suíte fazia, porque eram
+# constantes soltas e o compilador respondia por elas:
+#
+# 1. OS CAMPOS, E SÓ ELES. O que FALTA rebenta no primeiro sítio que o lê —
+#    longe da tabela, e com um «Invalid access to key» que não diz que fase.
+#    O que SOBRA não rebenta em sítio nenhum: um `berco` ao lado de `bercos`,
+#    escrito a pensar que o jogo o lê, é dado morto com cara de regra. Daí o
+#    conjunto FECHADO, em cada fase, em cada parcela e em cada reparo.
+# 2. OS NÚMEROS NAS ESCALAS QUE O JOGO CONHECE: parcelas por ordem e dentro da
+#    fase, reparos que existem no catálogo e abrem dentro dela, a reputação em
+#    0–100 (o D4 do Bruno), e no máximo UMA quitada por reparo — o texto do
+#    `desbloqueio_da_estrutura()` diz «primeira», e quem pedir duas escreve
+#    outra frase antes.
+# 3. AS AFIRMAÇÕES QUE NENHUMA REGRA LÊ. O `nivel_maximo` não trava nada (as
+#    bancadas montam o porto de nível 3), e por isso só é verdade se alguém o
+#    conferir: aqui, contra o nível que as compras da fase alcançam. Os
+#    `bercos` contra as vagas que o `Main.tscn` desenha — as vagas curadas do
+#    D3. E o capital das parcelas da Fase 1 contra o `START_CASH`, que é o
+#    crédito que o jogador recebeu (`085`).
+#
+# ⚠️ AS DUAS ÚLTIMAS SÓ VALEM PARA A FASE EM JOGO. O número da fase não está no
+# save, e o `dados_da_fase()` devolve sempre a primeira: quem trouxer a Fase 2
+# estende-as quando houver como a pôr em jogo. As duas primeiras já correm em
+# todas as linhas da tabela.
+# ============================================================
+var _f20_terminou := false
+
+const F20_CAMPOS_DA_FASE := ["bercos", "nivel_maximo", "parcelas", "reparos",
+	"reputacao_inicial", "semanas"]
+const F20_CAMPOS_DA_PARCELA := ["juros", "semana", "valor"]
+const F20_CAMPOS_DO_REPARO := ["dias_de_obra", "quitadas", "semana"]
+
+
+func _f20_a_tabela_das_fases() -> void:
+	var fases: Array = GS.get_script().get_script_constant_map()["FASES"]
+	_confere("F20: a tabela tem pelo menos uma fase (%d)" % fases.size(), fases.size() >= 1)
+	for i in fases.size():
+		_f20_campos_da_fase(i + 1, fases[i])
+	_f20_capital_da_fase_em_jogo()
+	_f20_bercos_do_mapa()
+	_f20_nivel_alcancado()
+	_f20_terminou = true
+
+
+# Compara as chaves como CONJUNTO, ordenadas: faltar e sobrar reprovam pela
+# mesma linha, e o detalhe diz qual das duas.
+func _f20_chaves(onde: String, d: Dictionary, esperadas: Array) -> bool:
+	var tem: Array = d.keys()
+	tem.sort()
+	var quer: Array = esperadas.duplicate()
+	quer.sort()
+	_confere("F20: %s tem os campos todos, e só eles" % onde, tem == quer,
+		"tem %s, a tabela pede %s" % [tem, quer])
+	return tem == quer
+
+
+func _f20_inteiro(v: Variant) -> bool:
+	return typeof(v) == TYPE_INT
+
+
+func _f20_campos_da_fase(n: int, fase: Variant) -> void:
+	var onde := "Fase %d" % n
+	if typeof(fase) != TYPE_DICTIONARY:
+		_confere("F20: a %s é um dicionário" % onde, false)
+		return
+	if not _f20_chaves("a " + onde, fase, F20_CAMPOS_DA_FASE):
+		return
+	var semanas: Variant = fase["semanas"]
+	_confere("F20: a %s dura um número inteiro de semanas (%s)" % [onde, semanas],
+		_f20_inteiro(semanas) and int(semanas) >= 1)
+	var nivel: Variant = fase["nivel_maximo"]
+	_confere("F20: o nível máximo da %s é um dos três do porto (%s)" % [onde, nivel],
+		_f20_inteiro(nivel) and int(nivel) >= 1 and int(nivel) <= 3)
+	var bercos: Variant = fase["bercos"]
+	_confere("F20: a %s desenha pelo menos um berço (%s)" % [onde, bercos],
+		_f20_inteiro(bercos) and int(bercos) >= 1)
+	# O D4: 0–100 em cada fase. Uma reputação de 650 é a escala de 0–3000 do
+	# GDD a entrar por engano, e a barra satura no primeiro barco.
+	var reputacao: Variant = fase["reputacao_inicial"]
+	_confere("F20: a reputação da %s começa na escala 0–100 (%s)" % [onde, reputacao],
+		typeof(reputacao) in [TYPE_INT, TYPE_FLOAT] and float(reputacao) >= 0.0
+			and float(reputacao) <= 100.0)
+
+	var parcelas: Variant = fase["parcelas"]
+	if typeof(parcelas) != TYPE_ARRAY or (parcelas as Array).is_empty():
+		_confere("F20: a %s tem uma lista de parcelas" % onde, false)
+		return
+	var anterior := 0
+	for k in (parcelas as Array).size():
+		var p: Variant = parcelas[k]
+		var onde_p := "parcela %d da Fase %d" % [k + 1, n]
+		if typeof(p) != TYPE_DICTIONARY or not _f20_chaves("a " + onde_p, p, F20_CAMPOS_DA_PARCELA):
+			continue
+		var tipos: bool = _f20_inteiro(p["semana"]) and _f20_inteiro(p["valor"]) \
+			and _f20_inteiro(p["juros"])
+		_confere("F20: a %s é feita de inteiros" % onde_p, tipos)
+		if not tipos:
+			continue
+		_confere("F20: a %s vence depois da anterior e dentro da fase (semana %d)"
+				% [onde_p, int(p["semana"])],
+			int(p["semana"]) > anterior and int(p["semana"]) <= int(semanas))
+		_confere("F20: os juros da %s são parte do valor (%d de %d)"
+				% [onde_p, int(p["juros"]), int(p["valor"])],
+			int(p["juros"]) >= 0 and int(p["juros"]) < int(p["valor"]))
+		anterior = int(p["semana"])
+
+	var reparos: Variant = fase["reparos"]
+	if typeof(reparos) != TYPE_DICTIONARY:
+		_confere("F20: a %s tem um dicionário de reparos" % onde, false)
+		return
+	for id in reparos:
+		var r: Variant = reparos[id]
+		var onde_r := "reparo %s da Fase %d" % [id, n]
+		_confere("F20: o %s está no catálogo das estruturas" % onde_r,
+			GS.ESTRUTURAS.has(id))
+		if typeof(r) != TYPE_DICTIONARY or not _f20_chaves("o " + onde_r, r, F20_CAMPOS_DO_REPARO):
+			continue
+		var tipos: bool = _f20_inteiro(r["semana"]) and _f20_inteiro(r["quitadas"]) \
+			and _f20_inteiro(r["dias_de_obra"])
+		_confere("F20: o %s é feito de inteiros" % onde_r, tipos)
+		if not tipos:
+			continue
+		_confere("F20: o %s abre dentro da fase (semana %d)" % [onde_r, int(r["semana"])],
+			int(r["semana"]) >= 1 and int(r["semana"]) <= int(semanas))
+		_confere("F20: o %s leva pelo menos um dia de obra (%d)" % [onde_r, int(r["dias_de_obra"])],
+			int(r["dias_de_obra"]) >= 1)
+		# Duas perguntas e não uma: pedir mais quitadas do que a fase cobra é
+		# um reparo que nunca abre; pedir mais de UMA é um texto que mente.
+		_confere("F20: o %s não pede mais quitadas do que a fase cobra (%d de %d)"
+				% [onde_r, int(r["quitadas"]), (parcelas as Array).size()],
+			int(r["quitadas"]) >= 0 and int(r["quitadas"]) <= (parcelas as Array).size())
+		_confere("F20: o %s pede no máximo uma quitada — o desbloqueio diz «primeira» (%d)"
+				% [onde_r, int(r["quitadas"])],
+			int(r["quitadas"]) <= 1)
+
+
+# O crédito inicial da `085`: R$400 mil recebidos, R$420 mil contratados. O
+# comentário da tabela afirma que o arredondamento fecha o capital ao real, e
+# era só isso — uma afirmação; mexer num juro deixava-a falsa sem um aviso.
+func _f20_capital_da_fase_em_jogo() -> void:
+	var capital := 0
+	for i in int(GS.parcelas_na_fase()):
+		capital += int(GS.valor_da_parcela(i)) - int(GS.juros_da_parcela(i))
+	_confere("F20: o capital das parcelas da Fase 1 é o crédito que o jogador recebeu (%s de %s)"
+			% [GS.moeda(capital), GS.moeda(int(GS.START_CASH))],
+		capital == int(GS.START_CASH))
+
+
+# As vagas curadas do D3: a tabela diz quantos berços o mapa desenha, e é o
+# `Main.tscn` quem os desenha — a doca no mapa e o cartão por baixo dele. A
+# cena instancia-se FORA da árvore, logo sem `_ready()`: só os nós.
+func _f20_bercos_do_mapa() -> void:
+	var main: Node = (load("res://scenes/Main.tscn") as PackedScene).instantiate()
+	var docas := 0
+	for filho in main.get_node("MapaWrap/Docas").get_children():
+		if String(filho.name).begins_with("Doca"):
+			docas += 1
+	var cartoes := 0
+	for filho in main.get_node("BarraDocas").get_children():
+		if String(filho.name).begins_with("Cartao"):
+			cartoes += 1
+	main.free()
+	var bercos := int(GS.bercos_no_mapa())
+	_confere("F20: o mapa desenha os berços que a fase declara (%d docas e %d cartões, declara %d)"
+			% [docas, cartoes, bercos],
+		docas == bercos and cartoes == bercos)
+
+
+# O NÍVEL QUE AS COMPRAS DA FASE ALCANÇAM, contra o que ela declara. Percorre
+# todo subconjunto dos reparos dela que a cadeia de `requer` deixa construir,
+# num porto acabado de abrir — sem a montagem das bancadas, que o
+# `new_game()` limpa —, e pergunta ao `nivel_do_porto()` do jogo. IGUAL e não
+# «no máximo»: um nível declarado acima do que se alcança é a mesma mentira, do
+# outro lado.
+func _f20_nivel_alcancado() -> void:
+	GS.new_game()
+	var reparos: Array = GS.reparos_da_fase()
+	var maior := 0
+	var montados := 0
+	for mascara in range(1 << reparos.size()):
+		var feitas: Array = []
+		for b in reparos.size():
+			if mascara & (1 << b):
+				feitas.append(reparos[b])
+		var possivel := true
+		for id in feitas:
+			var requer := String(GS.ESTRUTURAS[id]["requer"])
+			if requer != "" and not feitas.has(requer):
+				possivel = false
+		if not possivel:
+			continue
+		GS.estruturas = feitas
+		maior = maxi(maior, int(GS.nivel_do_porto()))
+		montados += 1
+	GS.new_game()
+	var declarado := int(GS.dados_da_fase()["nivel_maximo"])
+	_confere("F20: o nível máximo da Fase 1 é o que os reparos dela alcançam (declara %d, alcançam %d em %d portos)"
+			% [declarado, maior, montados],
+		montados > 1 and maior == declarado)
