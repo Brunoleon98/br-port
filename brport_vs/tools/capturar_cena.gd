@@ -15,8 +15,8 @@ extends SceneTree
 #     res://scenes/tests/AssetPlacementTest.tscn foto.png
 #
 # E para o SEGUNDO TEMPO de um painel, o toque e onde ele tem de parar:
-#   ... DebtPaymentPanel.tscn foto.png @PARCELA_AMOUNT parcela=vencida \
-#     cash=@PARCELA_AMOUNT --tocar=Pagar --tempo=pagou
+#   ... DebtPaymentPanel.tscn foto.png @valor_da_parcela:0 parcela=vencida \
+#     cash=@valor_da_parcela:0 --tocar=Pagar --tempo=pagou
 #
 # Teste verde não prova que ficou bonito. É para isto que ela existe.
 # ============================================================
@@ -199,12 +199,13 @@ func _fechar_com_caras() -> bool:
 #
 # ⚠️ E UM ARGUMENTO PODE VIR DO ESTADO, com `@`. A cena da parcela recebe o
 # valor a pagar, e escrevê-lo à mão na bateria (`530000`) seria pôr a foto a
-# dizer um número que a constante já sabe — no dia em que o `PARCELA_AMOUNT`
-# mudar, a captura mostra o Sr. Ribeiro a cobrar o valor de ontem, verdadeira
-# na aparência e falsa no facto. É a mesma regra que já tirou os R$100.000
+# dizer um número que o jogo já sabe — no dia em que a parcela mudar, a
+# captura mostra o Sr. Ribeiro a cobrar o valor de ontem, verdadeira na
+# aparência e falsa no facto. É a mesma regra que já tirou os R$100.000
 # cravados do `capturar_tela.gd`: ferramenta que finge um estado tem de o
-# DERIVAR. `@PARCELA_AMOUNT` lê a constante do `GameState`, e um nome que não
-# exista lá rebenta em vez de virar zero.
+# DERIVAR. `@START_CASH` lê a constante do `GameState`, `@valor_da_parcela:1`
+# chama a função com o argumento (as parcelas vivem na tabela `FASES` desde a
+# `094`), e um nome que não exista lá rebenta em vez de virar zero.
 func _chamar_setup(no: Node) -> void:
 	if not no.has_method("setup"):
 		return
@@ -224,19 +225,11 @@ func _chamar_setup(no: Node) -> void:
 				return
 			convertidos.append(valor)
 		elif bruto.begins_with("@"):
-			# A CONSTANTE NÃO É UMA PROPRIEDADE, e o `get()` devolveria `null`
-			# sem se queixar — o painel abriria a cobrar R$0. As constantes do
-			# script vêm do mapa delas; os campos vivos, do próprio nó.
-			var chave: String = bruto.substr(1)
-			var consts: Dictionary = GS.get_script().get_script_constant_map()
-			if consts.has(chave):
-				convertidos.append(consts[chave])
-			elif chave in GS:
-				convertidos.append(GS.get(chave))
-			else:
-				push_error("GameState não tem %s" % chave)
+			var valor: Variant = _do_estado(GS, bruto.substr(1))
+			if valor == null:
 				quit(1)
 				return
+			convertidos.append(valor)
 		elif bruto == "true" or bruto == "false":
 			convertidos.append(bruto == "true")
 		elif bruto.is_valid_int():
@@ -244,6 +237,34 @@ func _chamar_setup(no: Node) -> void:
 		else:
 			convertidos.append(bruto)
 	no.callv("setup", convertidos)
+
+
+# O QUE UM `@` LÊ DO `GameState`, nos dois sítios que o aceitam — o `setup()` e
+# o estado. A constante do script (`@START_CASH`), a função com um argumento
+# (`@valor_da_parcela:1`), a função sem argumento ou o campo vivo, por esta
+# ordem; é a mesma ordem do `_do_estado()` da régua do contraste.
+#
+# ⚠️ A CONSTANTE NÃO É UMA PROPRIEDADE, e o `get()` devolveria `null` sem se
+# queixar — o painel abriria a cobrar R$0. Por isso as constantes vêm do mapa
+# delas, e o que não se encontra em lado nenhum queixa-se e devolve `null`, que
+# quem chama transforma em `quit(1)`.
+func _do_estado(GS: Node, chave: String) -> Variant:
+	var consts: Dictionary = GS.get_script().get_script_constant_map()
+	if consts.has(chave):
+		return consts[chave]
+	if chave.contains(":"):
+		var metodo: String = chave.get_slice(":", 0)
+		var arg: String = chave.get_slice(":", 1)
+		if not GS.has_method(metodo):
+			push_error("GameState não tem o método %s" % metodo)
+			return null
+		return GS.call(metodo, int(arg) if arg.is_valid_int() else arg)
+	if GS.has_method(chave):
+		return GS.call(chave)
+	if chave in GS:
+		return GS.get(chave)
+	push_error("GameState não tem %s" % chave)
+	return null
 
 
 func _ler_argumentos() -> void:
@@ -400,10 +421,10 @@ func _montar_estado() -> void:
 			print("  estado: parcela vencida, turno %d" % GS.turn)
 			continue
 		if chave == "recibo" and valor == "quitado":
-			GS.parcela_indice = GS.PARCELAS_NA_FASE - 1
-			GS.parcelas_quitadas = GS.PARCELAS_NA_FASE
+			GS.parcela_indice = GS.parcelas_na_fase() - 1
+			GS.parcelas_quitadas = GS.parcelas_na_fase()
 			GS.parcela_paid = true
-			GS.total_pago_parcelas = GS.PARCELA_AMOUNT + GS.PARCELA_2_AMOUNT + GS.PARCELA_3_AMOUNT
+			GS.total_pago_parcelas = GS.total_das_parcelas()
 			print("  estado: recibo das três parcelas (bancada)")
 			continue
 		# ⚠️ `aposta=recusada` TAMBÉM É MONTAGEM, e do DADO, não do resultado.
@@ -431,16 +452,16 @@ func _montar_estado() -> void:
 			push_error("GameState não tem o campo %s" % chave)
 			quit(1)
 			return
-		# E O VALOR PODE SER UMA CONSTANTE, com `@`, pela razão do `setup()`:
-		# `cash=@PARCELA_AMOUNT` é "o bastante para pagar" sem cravar o número.
+		# E O VALOR PODE VIR DO ESTADO, com `@`, pela razão do `setup()`:
+		# `cash=@valor_da_parcela:0` é "o bastante para pagar" sem cravar o
+		# número.
 		if valor.begins_with("@"):
-			var consts: Dictionary = GS.get_script().get_script_constant_map()
-			if not consts.has(valor.substr(1)):
-				push_error("GameState não tem a constante %s" % valor.substr(1))
+			var lido: Variant = _do_estado(GS, valor.substr(1))
+			if lido == null:
 				quit(1)
 				return
-			GS.set(chave, consts[valor.substr(1)])
-			print("  estado: %s = %s" % [chave, consts[valor.substr(1)]])
+			GS.set(chave, lido)
+			print("  estado: %s = %s" % [chave, lido])
 			continue
 		GS.set(chave, int(valor) if valor.is_valid_int() else valor)
 		print("  estado: %s = %s" % [chave, valor])
@@ -513,7 +534,7 @@ func _provar_estado() -> bool:
 # parcela, só que desligado; `pressed.emit()` dispara-o na mesma, e a foto
 # sairia a mostrar o pagamento de uma parcela que o jogador não tinha como
 # pagar. Medido: sem esta guarda o tiro passa. O estado que o permite
-# monta-se antes (`cash=@PARCELA_AMOUNT`).
+# monta-se antes (`cash=@valor_da_parcela:0`).
 #
 # E o início do rótulo tem de casar UM botão só: dois seria escolher por
 # posição, e zero seria fotografar o primeiro tempo com o nome do segundo.

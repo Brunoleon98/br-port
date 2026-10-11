@@ -155,7 +155,7 @@ grep -E 'Ótimo|Mediano|Descuidado' /tmp/depois.txt | head -3
 
 | Quero… | Mexo em |
 |---|---|
-| mover a taxa de vitória, e só ela | `PARCELA_AMOUNT` |
+| mover a taxa de vitória, e só ela | o `valor` das `parcelas` da tabela `FASES` (`094`) — e os `juros` com ele, que o F20 confere contra o `START_CASH` |
 | separar melhor os perfis | `MAINTENANCE_WEEKLY` — custo fixo dói mais a quem tem pouca vazão |
 | mudar o ritmo de expansão | os `custo` das `ESTRUTURAS` |
 | mudar a receita | as faixas de contrato das `CLASSES_DE_NAVIO` — e desde a fila (`083`) é o botão que move o Mediano E o Descuidado |

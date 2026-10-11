@@ -418,9 +418,10 @@ def _main() -> int:
     parcelas = {n: (semana, round(valor * escala))
                 for n, (semana, valor) in ler_parcelas_do_gdd(GDD).items()}
     # E a Parcela 1 também: o GDD tem R$550.000 congelados e o jogo cobra o que
-    # está em `PARCELA_AMOUNT`. Imprimir o número do GDD ao lado de uma Fase 1
-    # medida com outro seria a mesma divergência calada, um campo ao lado.
-    parcelas[1] = (parcelas[1][0], int(k["PARCELA_AMOUNT"]))
+    # está na primeira parcela da tabela `FASES` (`094`). Imprimir o número do
+    # GDD ao lado de uma Fase 1 medida com outro seria a mesma divergência
+    # calada, um campo ao lado.
+    parcelas[1] = (parcelas[1][0], int(k["FASES"][0]["parcelas"][0]["valor"]))
 
     print("=== Parcelas 2 e 3 — projeção a partir da Fase 1 medida ===")
     print("Medição: %d partidas por perfil, semente %d (simular_balanceamento.gd)"
@@ -450,7 +451,7 @@ def _main() -> int:
     trabalhadores_f1 = float(perfil["trabalhadores_medios"])
     # Esta é a hipótese antiga do GDD para as fases futuras, não a duração
     # da Fase 1 jogável. Desde 085 ela tem doze semanas e três cobranças:
-    # usar WEEKS_TOTAL aqui triplicava silenciosamente esta projeção.
+    # usar as `semanas` dela aqui triplicava silenciosamente esta projeção.
     intervalos = {fase: parcelas[fase][0] - parcelas[fase - 1][0]
                   for fase in (2, 3)}
 

@@ -51,7 +51,7 @@ func _ready() -> void:
 	# aparelho, «Salvar e sair» pede que se saiba QUAL se está a deixar.
 	var onde := paragrafo("%s · dia %d de %d · espaço %d de %d" % [
 		GameState.texto("{portName}"),
-		mini(GameState.turn, GameState.TURNS_TOTAL), GameState.TURNS_TOTAL,
+		mini(GameState.turn, GameState.turnos_da_fase()), GameState.turnos_da_fase(),
 		GameState.espaco, GameState.ESPACOS])
 	onde.theme_type_variation = &"RotuloApoio"
 

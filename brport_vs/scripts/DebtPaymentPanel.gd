@@ -59,7 +59,7 @@ func _montar() -> void:
 	# cartão. É o caso em que o Icones.gd manda usá-lo.
 	titulo_encorpado(Icones.PARCELA, "Sr. Ribeiro — Banco Porto Mirim")
 	paragrafo("Parcela %d de %d · dia %d" % [_numero_parcela,
-		GameState.PARCELAS_NA_FASE, GameState.vencimento_da_parcela()])
+		GameState.parcelas_na_fase(), GameState.vencimento_da_parcela()])
 
 	# A fala dele vai no balão; o valor e o caixa ficam FORA. São dois
 	# registros — o que o Sr. Ribeiro diz e o que o jogo informa — e misturá-los

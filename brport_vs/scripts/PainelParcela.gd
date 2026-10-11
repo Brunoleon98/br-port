@@ -46,7 +46,7 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
 	titulo_encorpado(Icones.PARCELA, "Parcela do Sr. Ribeiro")
 	paragrafo("Parcela %d de %d · %s" % [GameState.parcela_indice + 1,
-		GameState.PARCELAS_NA_FASE, Narrativa.concordar(GameState.parcelas_quitadas,
+		GameState.parcelas_na_fase(), Narrativa.concordar(GameState.parcelas_quitadas,
 			"parcela quitada", "parcelas quitadas")])
 	paragrafo(GameState.texto("Empréstimo inicial: {caixaInicial}. Total contratado: {totalParcelas}, antes dos abatimentos."))
 
@@ -55,7 +55,7 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	var abatimento: int = cheio - valor
 	if GameState.parcela_paid:
 		tarja("Parcela quitada", "Este período está pago. A próxima cobrança abre ao fim do período."
-			if GameState.parcelas_quitadas < GameState.PARCELAS_NA_FASE else "As três parcelas estão quitadas.", &"bom")
+			if GameState.parcelas_quitadas < GameState.parcelas_na_fase() else "As três parcelas estão quitadas.", &"bom")
 		botao_fechar("Fechar")
 		return
 

@@ -11,9 +11,10 @@ extends SceneTree
 # nasce: basta uma constante mudar de forma para ela sumir da tabela sem
 # ninguém notar, e a partir daí a tabela envelhece parecendo em dia.
 #
-# Aqui o Godot avalia as constantes de verdade, inclusive as derivadas
-# (TURNS_TOTAL = TURNS_PER_WEEK * WEEKS_TOTAL), e o gerador falha se o que ele
-# leu do texto não bater com isto — nome a nome, valor a valor.
+# Aqui o Godot avalia as constantes de verdade, inclusive as que leem outras
+# (o `bonus` dos `MOTIVOS` sai do `ARMAZEM_BONUS`) e a tabela `FASES`, e o
+# gerador falha se o que ele leu do texto não bater com isto — nome a nome,
+# valor a valor.
 #
 # Uso:
 #   Godot --headless --path brport_vs \

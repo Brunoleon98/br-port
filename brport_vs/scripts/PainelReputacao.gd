@@ -113,7 +113,7 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	# escrever: reputação que só mudasse o texto do chip seria decoração.
 	paragrafo(("Acima do início (%d), melhora a chance de \"manter o preço\" e " +
 		"\"cortar pela metade\" nas negociações com o rival. Abaixo, piora.")
-		% int(GameState.REPUTATION_START))
+		% int(GameState.reputacao_inicial()))
 
 	botao_fechar("Fechar")
 

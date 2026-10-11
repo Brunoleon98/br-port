@@ -217,6 +217,13 @@ O passo está no item 5 do núcleo. As armadilhas:
   mesmo arquivo dos dois lados com um PNG no lugar do arquivo: zero só quer
   dizer zero depois de um par que se sabe diferente ter dado muito
   (`docs/decisoes/042`).
+  ⚠️ **E A CALIBRAÇÃO CORRE-SE, NÃO SE SUPÕE: a bateria tem uma foto que
+  muda sozinha.** Medido em 11/10, duas corridas da mesma árvore: 65 de 66
+  iguais ao byte, e a `trabalhadores.png` a mudar 24.896 pixels — a
+  `folha_trabalhadores.gd` sorteia o valor e o motivo dos cartões sem
+  semente. Até ela ser semeada, essa foto não prova nada em nenhuma direção:
+  o antes/depois do PR #117, que só mexia em suítes, marcou-a «MUDOU» com as
+  outras 65 iguais, por baixo de «as imagens são função só do código» (`094`).
   ⚠️ **E O `getbbox()` DO PILLOW NUM RGBA SÓ OLHA PARA O ALFA.** Em 23/09 a
   comparação das 30 fotos contra as da `main` deu **zero** mudadas, com os
   camiões todos noutra faixa: a diferença de duas fotos opacas tem o alfa a

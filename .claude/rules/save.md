@@ -45,3 +45,9 @@ tranca isso.
 e não apaga nada; quem apaga é a partida nova que o ocupa. O «jogado por
 último» é a hora do ARQUIVO — um carimbo no JSON mudaria a forma. O F16 tranca
 as três coisas.
+
+**O número da fase NÃO está no save** (`094`). A tabela `FASES` tem uma linha
+só, e o `dados_da_fase()` devolve-a sempre; a primeira fase que se jogue
+depois de outra põe o número no save, sobe a `SAVE_VERSION` e faz o
+`dados_da_fase()` lê-lo — e o `_save_aceite()` passa a recusar a obra, a
+parcela e o dia contra a fase do ARQUIVO, que é a que eles descrevem.

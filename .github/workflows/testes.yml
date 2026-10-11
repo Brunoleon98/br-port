@@ -452,7 +452,7 @@ jobs:
         # código e este passo reprova quem mexe num `# TUNING:` sem regerar.
         #
         # São dois programas de propósito. O despejo do Godot dá os valores
-        # avaliados (inclusive os derivados, como TURNS_TOTAL); o gerador lê o
+        # avaliados (inclusive a tabela FASES, que é um literal); o gerador lê o
         # TEXTO, porque é dele que saem os comentários que dizem se o número
         # veio do GDD ou é TUNING. O --contra-godot cruza as duas leituras, de
         # modo que uma constante que o parser não entenda REPROVE em vez de

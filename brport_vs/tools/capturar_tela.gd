@@ -687,7 +687,7 @@ func _pagar_a_parcela() -> bool:
 	var numero: int = GS.parcela_indice + 1
 	if not _tocar(ribeiro, "Pagar"):
 		return false
-	if GS.parcelas_quitadas != numero or (numero == GS.PARCELAS_NA_FASE \
+	if GS.parcelas_quitadas != numero or (numero == GS.parcelas_na_fase() \
 			and (GS.phase != "game_over" or not bool(GS.won))):
 		push_error("capturar_tela: o «Pagar» não acabou a partida paga (parcela_paid=%s, fase %s, won=%s)"
 			% [str(GS.parcela_paid), GS.phase, str(GS.won)])
@@ -725,14 +725,14 @@ func _andar_o_balanco() -> bool:
 		# A semana vem do resumo que o boletim recebeu, e não do calendário: um
 		# boletim de outra semana que calhasse aqui também seria «o boletim».
 		var semana: int = int((_painel_de_cima().get("_resumo") as Dictionary)["semana"])
-		if semana != int(GS.PARCELA_DUE_TURN / GS.TURNS_PER_WEEK) * GS.parcelas_quitadas:
+		if semana != int(GS.week_of(GS.dia_da_parcela(int(GS.parcelas_quitadas) - 1))):
 			push_error("capturar_tela: o boletim do fim é o da semana %d, e a última é a %d"
-				% [semana, int(GS.WEEKS_TOTAL)])
+				% [semana, int(GS.semanas_da_fase())])
 			quit(1)
 			return false
 		if not _tocar(_painel_de_cima(), "Fechar o boletim"):
 			return false
-		if semana < int(GS.WEEKS_TOTAL):
+		if semana < int(GS.semanas_da_fase()):
 			_passo_balanco = -1
 			return true
 		_passo_balanco = 2

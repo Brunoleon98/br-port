@@ -135,14 +135,6 @@ const WORKERS_BASE := 1
 const UPGRADE_EXTRA_DOCKS := 1
 const UPGRADE_EXTRA_WORKERS := 1
 
-# Quantos berços o mapa desenha. Não é número de interface: é o TETO do porto,
-# e por isso mora aqui e não no Main. Enquanto vivia só lá em cima, nada
-# impedia o estado de passar do que a tela sabe mostrar — e passou: um save
-# antigo, gravado quando o porto abria com 2 docas, somava os dois píeres
-# comprados e chegava a 4 docas contra 3 vagas desenhadas. A quarta doca
-# existia, recebia barco e nunca aparecia.
-const BERCOS_NO_MAPA := 3
-
 # ── ESTRUTURAS ──
 # O que o jogador compra ou conserta. Cada uma tem um efeito ECONÔMICO real —
 # nenhuma é só enfeite, senão comprar seria só gastar.
@@ -404,42 +396,89 @@ const REPUTACAO_EFEITO_NEGOCIACAO := 0.5
 #
 # Uma barra saturada não é um sistema: é um bónus fixo com mais código. Daí a
 # escala nova, calibrada para a reputação SUBIR ao longo da partida inteira em
-# vez de estourar no início.
-const REPUTATION_START := 65.0
+# vez de estourar no início. Onde ela começa é da fase — `reputacao_inicial`,
+# na tabela `FASES` (`094`).
 const REPUTATION_GAIN_SERVED := 0.8
 const REPUTATION_LOSS_LOST := 2.5
 const REPUTATION_GAIN_RIVAL_MATCHED := 1.0
 const REPUTATION_LOSS_RIVAL_REFUSED := 8.0
 
-# ── CADÊNCIA E PARCELA ──
-# TUNING (`085`) — calendário aprovado: doze semanas de sete dias,
-# com cobranças ao fim das semanas 4, 8 e 12. A economia foi medida novamente
-# com os desbloqueios reais; as taxas atuais vivem só no CLAUDE.md.
+# ── CADÊNCIA ──
+# TUNING (`085`) — a semana tem sete dias, e é a do calendário inteiro, não a
+# de uma fase: o que muda de uma fase para a outra é QUANTAS semanas ela dura,
+# e isso vive na tabela `FASES`, logo abaixo (`094`).
 const TURNS_PER_WEEK := 7
-const WEEKS_TOTAL := 12
-const TURNS_TOTAL := TURNS_PER_WEEK * WEEKS_TOTAL
 
-# Crédito inicial único (`085`): R$400 mil recebidos, R$420 mil contratados.
-# Bruno substituiu a primeira cobrança de R$530 mil por três menores e iguais.
-const PARCELA_AMOUNT := 140000             # TUNING (`085`): capital mais juros
-const PARCELA_DUE_TURN := TURNS_PER_WEEK * 4   # vence ao fim da semana 4
+# ── AS FASES ──
+#
+# O QUE MUDA DE UMA FASE PARA A OUTRA, EM DADOS (`docs/decisoes/094`). Até
+# 11/10 a Fase 1 vivia em constantes soltas — `WEEKS_TOTAL`, `TURNS_TOTAL`, os
+# três `PARCELA_*_AMOUNT` e os três `JUROS_PARCELA_*`, `PARCELA_DUE_TURN`,
+# `PARCELAS_NA_FASE`, `DIAS_DAS_OBRAS`, `BERCOS_NO_MAPA`, `REPUTATION_START` —
+# e a abertura de cada reparo num `match`. A Fase 2 teria de as duplicar com
+# um sufixo, ou de as trocar à mão nos duzentos sítios que as liam; aqui ela é
+# uma segunda linha. Cada número é o que a constante dizia, e a mudança
+# provou-o: a tabela dos números, o JSON do simulador e a bateria de capturas
+# saíram iguais.
+#
+# ⚠️ QUEM LÊ UM NÚMERO DA FASE PASSA PELAS FUNÇÕES DE «A FASE EM JOGO», NUNCA
+# POR `FASES[0]`. O número da fase em jogo não está no save — só existe uma —,
+# e `dados_da_fase()` é o único sítio que o decide. É também por isso que as
+# constantes antigas SAÍRAM em vez de ficarem como apelido: uma constante com
+# o valor da Fase 1 continuaria a dizê-lo na Fase 2, sem erro nenhum.
+#
+# Os campos, todos obrigatórios — o F20 do `teste_fumaca` recusa o que falte e
+# o que sobre, e confere as afirmações que nenhuma regra do jogo lê:
+# - `semanas`: quanto a fase dura. Os dias são `semanas × TURNS_PER_WEEK`.
+# - `parcelas`: as cobranças do Sr. Ribeiro, por ordem. `semana` é a que ela
+#   fecha (vence no último dia dela, e a janela de cada uma começa no
+#   vencimento da anterior); `valor` é o boleto, capital mais juros; `juros` é
+#   a parte que quitar cedo abate (`085`). Na Fase 1 o capital das três soma
+#   o `START_CASH`, que é o crédito que o jogador recebeu.
+# - `reparos`: o que o jogador pode construir nesta fase, e QUANDO. `semana` é
+#   a primeira em que o reparo abre; `quitadas`, quantas cobranças ele pede
+#   pagas; `dias_de_obra`, em dias jogados (`087`). O que não está aqui não se
+#   compra nesta fase.
+# - `nivel_maximo`: o nível do porto que as compras desta fase alcançam. Não é
+#   trava — as bancadas montam o porto de nível 3 e o jogo tem de o desenhar —,
+#   é uma afirmação: quem puser aqui o guindaste da Fase 2 sem subir o nível
+#   vê o F20 reprovar.
+# - `bercos`: quantos berços o MAPA da fase desenha — as vagas curadas por
+#   fase que o Bruno escolheu no D3, no lugar da grade livre do GDD. É o teto
+#   das docas (`docas_esperadas()`).
+# - `reputacao_inicial`: onde a barra começa. A escala é 0–100 em CADA fase,
+#   resposta do Bruno ao D4; os 0–3000 do GDD ficam como narrativa. O patamar
+#   para avançar entra com a regra da Fase 2 que o leia: a Fase 1 fecha-se
+#   pelas três quitações (`085`), e um campo que nada lê seria declaração
+#   morta.
+const FASES := [
+	{
+		"semanas": 12,
+		# TUNING (`085`): três parcelas iguais, R$20 mil de juros no total —
+		# a amortização de parcelas iguais (~2,48% por período de 28 dias), e
+		# o arredondamento fecha exatamente R$400 mil de capital. Quitar cedo
+		# abate só os juros da janela, nunca o capital, e não abre a seguinte.
+		"parcelas": [
+			{"semana": 4, "valor": 140000, "juros": 9919},
+			{"semana": 8, "valor": 140000, "juros": 6693},
+			{"semana": 12, "valor": 140000, "juros": 3388},
+		],
+		# O píer 2 desde o início, o armazém na semana 2, o pátio depois da
+		# primeira cobrança quitada (`085`). Os prazos são os da `087`: o
+		# armazém leva os dois dias do tutorial do GDD.
+		"reparos": {
+			"pier_2": {"semana": 1, "quitadas": 0, "dias_de_obra": 2},
+			"armazem": {"semana": 2, "quitadas": 0, "dias_de_obra": 2},
+			"patio": {"semana": 5, "quitadas": 1, "dias_de_obra": 3},
+		},
+		# A madeira fica a Fase 1 inteira (`086`): o porto só recebe pesca.
+		"nivel_maximo": 1,
+		"bercos": 3,
+		"reputacao_inicial": 65.0,
+	},
+]
 
-# A Fase 1 agora joga o arco inteiro das três cobranças (`085`). O GDD
-# conserva a referência histórica; valores atuais são os daqui, medidos
-# com a fila e os reparos básicos, sem projetar um porto completo.
-const PARCELAS_NA_FASE := 3
-
-# TUNING (`085`): três parcelas iguais, total R$20 mil de juros.
-# Cada janela tem quatro semanas; quitar cedo não abre a próxima janela.
-const PARCELA_2_AMOUNT := 140000
-const PARCELA_3_AMOUNT := 140000
-# Amortização aproximada de parcelas iguais (~2,48% por período de 28 dias).
-# O arredondamento fecha exatamente R$400 mil de capital e R$20 mil de juros.
-# Antecipar abate apenas juros da janela, nunca capital (`085`).
-const JUROS_PARCELA_1 := 9919
-const JUROS_PARCELA_2 := 6693
-const JUROS_PARCELA_3 := 3388
-
+# ── ANTECIPAÇÃO ──
 # Modelo genérico anterior (`019`), preservado para contratos futuros.
 # A Fase 1 usa juros limitados da janela em `valor_da_parcela_hoje()` (`085`).
 # TUNING: o que o banco devolve por TURNO de antecipação, como fração do
@@ -638,8 +677,8 @@ func espaco_mais_recente() -> int:
 # lê de relance para reconhecer um porto. O nome do jogador vai À FRENTE
 # quando existe; ele pode estar vazio, e nenhum padrão o preenche.
 func linha_do_espaco(r: Dictionary) -> String:
-	var linha := "dia %d de %d · %s" % [mini(int(r["turno"]), TURNS_TOTAL),
-		TURNS_TOTAL, moeda(int(r["dinheiro"]))]
+	var linha := "dia %d de %d · %s" % [mini(int(r["turno"]), turnos_da_fase()),
+		turnos_da_fase(), moeda(int(r["dinheiro"]))]
 	var jogador := String(r.get("jogador", ""))
 	return "%s · %s" % [jogador, linha] if jogador != "" else linha
 
@@ -675,7 +714,7 @@ const NOME_MAX_CARACTERES := 24
 # ── STATE ──
 var turn: int = 1
 var cash: int = START_CASH
-var reputation: float = REPUTATION_START
+var reputation: float = reputacao_inicial()
 var docks: Array = []       # [{boat: Dictionary|null, worker_id: int|null}]
 var workers: Array = []     # [{id:int, busy_turns:int}]
 var upgrade_purchased: bool = false
@@ -683,10 +722,6 @@ var upgrade_purchased: bool = false
 # simples — Dictionary de bool viraria ruído no ficheiro.
 var estruturas: Array = []
 var obra_em_andamento: Dictionary = {}
-
-# Dias jogados, não tempo do celular. Armazém: os dois dias do tutorial do
-# GDD; os demais prazos foram aprovados com Bruno na `087`.
-const DIAS_DAS_OBRAS := {"pier_2": 2, "armazem": 2, "patio": 3}
 var parcela_paid: bool = false
 var parcela_indice: int = 0
 var parcelas_quitadas: int = 0
@@ -856,7 +891,7 @@ func new_game() -> void:
 	historico_semanas = []
 	_recordes = RECORDES_ZERADOS.duplicate(true)
 	cash = START_CASH
-	reputation = REPUTATION_START
+	reputation = reputacao_inicial()
 	upgrade_purchased = false
 	estruturas = []
 	obra_em_andamento = {}
@@ -932,7 +967,7 @@ func texto(modelo: String) -> String:
 	return modelo.replace("{portName}", porto) \
 		.replace("{playerName}", nome_jogador) \
 		.replace("{caixaInicial}", moeda(START_CASH)) \
-		.replace("{totalParcelas}", moeda(PARCELA_AMOUNT + PARCELA_2_AMOUNT + PARCELA_3_AMOUNT))
+		.replace("{totalParcelas}", moeda(total_das_parcelas()))
 
 
 # Se ainda não perguntámos os nomes. É derivado do estado, e não um booleano à
@@ -961,6 +996,70 @@ func current_week() -> int:
 	return week_of(turn)
 
 
+# ── A FASE EM JOGO (`094`) ──
+## A linha de `FASES` da fase que se está a jogar. Hoje é sempre a primeira: o
+## número da fase não está no save, e pô-lo lá é subir a versão — trabalho de
+## quem trouxer a Fase 2, quando houver uma segunda linha por onde escolher.
+## Todo número de fase passa por aqui, e é isso que faz dessa mudança uma
+## linha e o save, e não as duzentas leituras que as constantes tinham.
+func dados_da_fase() -> Dictionary:
+	return FASES[0]
+
+
+func semanas_da_fase() -> int:
+	return int(dados_da_fase()["semanas"])
+
+
+func turnos_da_fase() -> int:
+	return semanas_da_fase() * TURNS_PER_WEEK
+
+
+## As parcelas da fase, por ÍNDICE a partir de 0 — o mesmo do
+## `parcela_indice`. O valor é o boleto (capital mais juros); o dia é o último
+## da semana que ela fecha.
+func parcelas_na_fase() -> int:
+	return (dados_da_fase()["parcelas"] as Array).size()
+
+
+func valor_da_parcela(indice: int) -> int:
+	return int(dados_da_fase()["parcelas"][indice]["valor"])
+
+
+func juros_da_parcela(indice: int) -> int:
+	return int(dados_da_fase()["parcelas"][indice]["juros"])
+
+
+func dia_da_parcela(indice: int) -> int:
+	return int(dados_da_fase()["parcelas"][indice]["semana"]) * TURNS_PER_WEEK
+
+
+## O que as parcelas da fase somam — o `{totalParcelas}` das falas.
+func total_das_parcelas() -> int:
+	var total := 0
+	for i in range(parcelas_na_fase()):
+		total += valor_da_parcela(i)
+	return total
+
+
+## Os reparos que a fase deixa construir, na ordem da tabela.
+func reparos_da_fase() -> Array:
+	return (dados_da_fase()["reparos"] as Dictionary).keys()
+
+
+## Quantos berços o mapa da fase desenha. Não é número de interface: é o TETO
+## do porto, e por isso mora aqui e não no Main. Enquanto vivia só lá em cima,
+## nada impedia o estado de passar do que a tela sabe mostrar — e passou: um
+## save antigo, gravado quando o porto abria com 2 docas, somava os dois píeres
+## comprados e chegava a 4 docas contra 3 vagas desenhadas. A quarta doca
+## existia, recebia barco e nunca aparecia.
+func bercos_no_mapa() -> int:
+	return int(dados_da_fase()["bercos"])
+
+
+func reputacao_inicial() -> float:
+	return float(dados_da_fase()["reputacao_inicial"])
+
+
 # UM DICIONÁRIO POR DIA DA PARTIDA, com o que já se sabe de antemão sobre ele
 # — é o que o calendário (toque no chip "Dia" do HUD) lê, e o teste confere
 # sem abrir cena nenhuma, pela mesma razão de sempre: a conta vive uma vez só.
@@ -972,16 +1071,22 @@ func current_week() -> int:
 # calendário fixa antes de a partida começar: fecho de semana (píer e
 # custos), o vencimento da parcela, e o último dia.
 func calendario() -> Array:
+	# Os vencimentos saem da tabela, e não de um múltiplo: com as parcelas a
+	# cada quatro semanas os dois davam o mesmo, e uma fase com janelas
+	# desiguais marcaria o dia errado sem erro nenhum.
+	var vencimentos := {}
+	for i in range(parcelas_na_fase()):
+		vencimentos[dia_da_parcela(i)] = true
 	var dias: Array = []
-	for t in range(1, TURNS_TOTAL + 1):
+	for t in range(1, turnos_da_fase() + 1):
 		dias.append({
 			"turno": t,
 			"semana": week_of(t),
 			"hoje": t == turn,
 			"passado": t < turn,
 			"fecha_semana": t % TURNS_PER_WEEK == 0,
-			"parcela_vence": t % PARCELA_DUE_TURN == 0,
-			"ultimo_dia": t == TURNS_TOTAL,
+			"parcela_vence": vencimentos.has(t),
+			"ultimo_dia": t == turnos_da_fase(),
 		})
 	return dias
 
@@ -1277,8 +1382,8 @@ func _negociar(acao: String) -> String:
 #     dos turnos com barco e toca UM barco de cada vez, enquanto preço e vazão
 #     multiplicam a receita inteira.
 #
-# A conta é ancorada em REPUTATION_START: quem começa a partida não leva bónus
-# nem castigo, e a partir daí sobe ou desce com o que fizer. A âncora não é
+# A conta é ancorada em `reputacao_inicial()`: quem começa a fase não leva
+# bónus nem castigo, e a partir daí sobe ou desce com o que fizer. A âncora não é
 # enfeite — ancorar noutro sítio faria a mecânica INFLAR o jogo todo em vez de
 # redistribuir, e o balanceamento medido (100% / 47% / 0%) mede-se contra uma
 # partida que começa neutra.
@@ -1286,7 +1391,7 @@ func _negociar(acao: String) -> String:
 # O teto de 0.95 existe para "manter o preço" nunca virar jogada automática:
 # com reputação máxima a aposta fica boa, não fica garantida.
 func _chance_com_reputacao(base: float) -> float:
-	var acima := (reputation - REPUTATION_START) / (100.0 - REPUTATION_START)
+	var acima := (reputation - reputacao_inicial()) / (100.0 - reputacao_inicial())
 	return clampf(base * (1.0 + REPUTACAO_EFEITO_NEGOCIACAO * acima), 0.0, 0.95)
 
 
@@ -1645,8 +1750,8 @@ func _check_end() -> void:
 	if cash < 0:
 		_end_game(false, "O dinheiro acabou. Operação inviável.")
 		return
-	if turn > TURNS_TOTAL:
-		var quitou := parcelas_quitadas == PARCELAS_NA_FASE
+	if turn > turnos_da_fase():
+		var quitou := parcelas_quitadas == parcelas_na_fase()
 		_end_game(quitou, "Você quitou as três parcelas e manteve o porto no azul!" if quitou else "Prazo encerrado com parcela em aberto.")
 		return
 	_spawn_boats()
@@ -1695,8 +1800,8 @@ func pay_debt() -> void:
 ##
 ## ⚠️ RECEBE O PRINCIPAL E O PRAZO EM VEZ DE OS IR BUSCAR À PARCELA, e isso é
 ## pedido e não gosto: o empréstimo bancário da Fase 2 vai querer esta mesma
-## conta com outro principal e outro prazo, e uma versão que leia
-## `PARCELA_AMOUNT` por dentro teria de ser copiada para lá — que é como duas
+## conta com outro principal e outro prazo, e uma versão que leia a parcela
+## da fase por dentro teria de ser copiada para lá — que é como duas
 ## contas da mesma coisa começam a divergir neste arquivo (ver o
 ## `_custos_da_semana()`, que existe separado exatamente por isso).
 ##
@@ -1715,26 +1820,33 @@ func desconto_por_antecipacao(principal: int, turnos: int) -> int:
 ## janela. A fórmula antiga sobre todo o boleto podia devolver menos que os
 ## R$400 mil emprestados; o cálculo genérico acima continua separado para
 ## contratos futuros, que ainda precisam definir seus próprios encargos.
+##
+## A JANELA é o período desta parcela: do vencimento da anterior (ou do começo
+## da fase) ao dela. Até a `094` eram os `PARCELA_DUE_TURN` dias de todas, o
+## que dava o mesmo enquanto as três janelas tinham quatro semanas; uma fase
+## com janelas desiguais abateria pela janela errada sem erro nenhum.
 func valor_da_parcela_hoje() -> int:
-	var juros: int = [JUROS_PARCELA_1, JUROS_PARCELA_2, JUROS_PARCELA_3][parcela_indice]
-	var dias := clampi(vencimento_da_parcela() - turn, 0, PARCELA_DUE_TURN)
-	var abatimento := int(round(float(juros) * dias / PARCELA_DUE_TURN))
+	var juros := juros_da_parcela(parcela_indice)
+	var abre := dia_da_parcela(parcela_indice - 1) if parcela_indice > 0 else 0
+	var janela := vencimento_da_parcela() - abre
+	var dias := clampi(vencimento_da_parcela() - turn, 0, janela)
+	var abatimento := int(round(float(juros) * dias / janela))
 	return principal_da_parcela() - abatimento
 
 
 func principal_da_parcela() -> int:
 	# Nome legado: este é o valor nominal do boleto, incluindo juros.
-	return [PARCELA_AMOUNT, PARCELA_2_AMOUNT, PARCELA_3_AMOUNT][parcela_indice]
+	return valor_da_parcela(parcela_indice)
 
 
 func vencimento_da_parcela() -> int:
-	return PARCELA_DUE_TURN * (parcela_indice + 1)
+	return dia_da_parcela(parcela_indice)
 
 
 # Só o fecho do período muda a parcela. O recibo antecipado fica visível
 # até lá, sem permitir gastar a cobrança seguinte duas vezes no mesmo dia.
 func _seguir_cobranca() -> void:
-	if parcela_paid and parcela_indice < PARCELAS_NA_FASE - 1:
+	if parcela_paid and parcela_indice < parcelas_na_fase() - 1:
 		parcela_indice += 1
 		parcela_paid = false
 
@@ -1862,7 +1974,7 @@ func impedimento_estrutura(id: String) -> String:
 	return ""
 
 
-# EM QUE DIA CADA REPARO DA FASE 1 ABRE, e com quantas cobranças quitadas — num
+# EM QUE DIA CADA REPARO DA FASE ABRE, e com quantas cobranças quitadas — num
 # lugar só (`089`). Leem daqui as duas pontas da regra: o
 # `desbloqueio_da_estrutura()`, que decide o botão do Construir, e o
 # `_save_aceite()`, que recusa a obra começada antes de o reparo abrir. Até
@@ -1871,22 +1983,25 @@ func impedimento_estrutura(id: String) -> String:
 # faria o jogo recusar saves válidos sem erro nenhum. Medido: um save que
 # abrisse o armazém no dia 9 passava as seis suítes. O T17 tranca-o.
 #
+# Desde a `094` a SEMANA vem da tabela `FASES`, e o dia é o primeiro dela. O
+# pátio dizia «o dia seguinte ao vencimento da primeira cobrança», que é o
+# primeiro da semana 5 enquanto a cobrança vencer na 4: quem mudar uma escreve
+# a outra, porque a tabela diz as duas.
+#
 # `{}` para o que não se compra nesta fase.
 func abertura_do_reparo(id: String) -> Dictionary:
-	match id:
-		"pier_2":
-			return {"dia": 1, "quitadas": 0}
-		"armazem":
-			return {"dia": TURNS_PER_WEEK + 1, "quitadas": 0}      # o 1.º da semana 2
-		"patio":
-			return {"dia": PARCELA_DUE_TURN + 1, "quitadas": 1}    # pós 1.ª cobrança
-	return {}
+	var reparos: Dictionary = dados_da_fase()["reparos"]
+	if not reparos.has(id):
+		return {}
+	var r: Dictionary = reparos[id]
+	return {"dia": (int(r["semana"]) - 1) * TURNS_PER_WEEK + 1, "quitadas": int(r["quitadas"])}
 
 
 # A Fase 1 recupera o porto pequeno. O catálogo e a arte do porto completo
 # continuam disponíveis às bancadas; compra pelo jogador respeita este limite.
 # ⚠️ O texto do pátio diz «primeira» porque a abertura pede UMA quitada; quem
-# subir esse número escreve outra frase.
+# subir esse número escreve outra frase — e o F20 reprova a tabela que peça
+# mais de uma enquanto ela não for escrita.
 func desbloqueio_da_estrutura(id: String) -> String:
 	var abre := abertura_do_reparo(id)
 	if abre.is_empty():
@@ -1918,8 +2033,11 @@ func comprar_estrutura(id: String) -> bool:
 	return true
 
 
+# Zero para o que esta fase não constrói — o painel pergunta por todas as
+# estruturas, e as que não abrem não têm prazo a mostrar.
 func dias_da_obra(id: String) -> int:
-	return int(DIAS_DAS_OBRAS.get(id, 0))
+	var reparos: Dictionary = dados_da_fase()["reparos"]
+	return int(reparos[id]["dias_de_obra"]) if reparos.has(id) else 0
 
 
 # A OBRA QUE, COMEÇADA HOJE, AINDA ACABA NESTA FASE — contando com o fecho do
@@ -1929,11 +2047,11 @@ func dias_da_obra(id: String) -> int:
 # que o calendário abria e dizia «3 disponíveis» no dia 84, com o painel a
 # responder «Não termina nesta fase.» aos três (O7, `090`).
 func obra_termina_na_fase(id: String) -> bool:
-	return turn + dias_da_obra(id) <= TURNS_TOTAL + 1
+	return turn + dias_da_obra(id) <= turnos_da_fase() + 1
 
 
 # A OBRA QUE SÓ FICA PRONTA NO FECHO DO ÚLTIMO DIA. A `087` aceita-a — o limite
-# do `impedimento_estrutura()` é `TURNS_TOTAL + 1` —, e o dia em que ela abre
+# do `impedimento_estrutura()` é `turnos_da_fase() + 1` —, e o dia em que ela abre
 # não existe nesta fase: a mensagem dizia «pronto no dia 85» numa fase de 84, e
 # o jogador pagava por um porto que não chegava a usar. O Bruno respondeu ao D8
 # em 10/10: AVISAR, e não recusar (`090`). E disse porquê é só «por enquanto»:
@@ -1941,7 +2059,7 @@ func obra_termina_na_fase(id: String) -> bool:
 # para o dia seguinte. Quando o calendário deixar de acabar, esta função
 # deixa de ter razão de ser — não se lhe acrescenta um caso.
 func obra_sem_uso_na_fase(conclusao: int) -> bool:
-	return conclusao > TURNS_TOTAL
+	return conclusao > turnos_da_fase()
 
 
 # O PRAZO DA OBRA COMO O JOGADOR O LÊ, num lugar só: a mensagem da compra e os
@@ -1952,7 +2070,7 @@ func obra_sem_uso_na_fase(conclusao: int) -> bool:
 # armazém e pátio — o são.
 func prazo_da_obra(conclusao: int) -> String:
 	if obra_sem_uso_na_fase(conclusao):
-		return "pronto só no fim do dia %d, e não será usado nesta fase" % TURNS_TOTAL
+		return "pronto só no fim do dia %d, e não será usado nesta fase" % turnos_da_fase()
 	return "pronto no dia %d" % conclusao
 
 
@@ -1982,7 +2100,7 @@ func _concluir_obra_se_pronta() -> void:
 		# nenhum para trabalhar, que é como um "#4" fantasma nasceria de novo.
 		var abertas := 0
 		for i in range(UPGRADE_EXTRA_DOCKS):
-			if docks.size() >= BERCOS_NO_MAPA:
+			if docks.size() >= bercos_no_mapa():
 				break
 			docks.append({"boat": null, "worker_id": null})
 			abertas += 1
@@ -2226,7 +2344,7 @@ func load_game() -> bool:
 	_limpar_guindaste_da_bancada()
 	turn = int(parsed.get("turn", 1))
 	cash = int(parsed.get("cash", START_CASH))
-	reputation = float(parsed.get("reputation", REPUTATION_START))
+	reputation = float(parsed.get("reputation", reputacao_inicial()))
 	docks = parsed["docks"]
 	workers = parsed["workers"]
 	upgrade_purchased = bool(parsed.get("upgrade_purchased", false))
@@ -2335,7 +2453,7 @@ func _save_aceite(texto: String) -> Dictionary:
 		return {}
 	if not obra.is_empty():
 		if obra.size() != 3 or typeof(obra.get("id")) != TYPE_STRING \
-				or not DIAS_DAS_OBRAS.has(obra["id"]) or feitas.has(obra["id"]):
+				or not dados_da_fase()["reparos"].has(obra["id"]) or feitas.has(obra["id"]):
 			return {}
 		for chave in ["inicio", "conclusao"]:
 			var numero = obra.get(chave, null)
@@ -2353,7 +2471,7 @@ func _save_aceite(texto: String) -> Dictionary:
 		# recibo.
 		var abre := abertura_do_reparo(obra["id"])
 		if abre.is_empty() or inicio < int(abre["dia"]) or inicio > int(dia) \
-				or conclusao <= int(dia) or conclusao > TURNS_TOTAL + 1 \
+				or conclusao <= int(dia) or conclusao > turnos_da_fase() + 1 \
 				or conclusao != inicio + dias_da_obra(obra["id"]):
 			return {}
 	# O recibo e a janela são parte da interpretação do save v12. Converter
@@ -2366,7 +2484,7 @@ func _save_aceite(texto: String) -> Dictionary:
 		return {}
 	var indice := int(parsed["parcela_indice"])
 	var quitadas := int(parsed["parcelas_quitadas"])
-	if indice < 0 or indice >= PARCELAS_NA_FASE \
+	if indice < 0 or indice >= parcelas_na_fase() \
 			or quitadas != indice + (1 if parsed["parcela_paid"] else 0) \
 			or int(parsed["total_pago_parcelas"]) < 0:
 		return {}
@@ -2423,7 +2541,7 @@ func docas_esperadas() -> int:
 	for id in ["pier_2", "pier_3"]:
 		if tem_estrutura(id):
 			n += UPGRADE_EXTRA_DOCKS
-	return mini(n, BERCOS_NO_MAPA)
+	return mini(n, bercos_no_mapa())
 
 
 func trabalhadores_esperados() -> int:

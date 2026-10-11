@@ -192,13 +192,13 @@ func armar() -> void:
 		# O que o jogo assume sobre a partida. Sem isto, um registro de hoje
 		# lido daqui a três reescalas mede-se contra os números errados — o
 		# mesmo defeito que a tabela dos números existe para resolver.
-		"turnos_totais": _GS.TURNS_TOTAL,
+		"turnos_totais": _GS.turnos_da_fase(),
 		# Sem ele o leitor tirava a primeira e a última semana de `t <= 8` e
 		# `t > 24`, as semanas de 8 dias numa fase de 4: com 12 de 7 (`085`),
 		# a «semana 4» que publicava ia da 4 à 12. Registro sem o campo, o
 		# leitor diz que não sabe em vez de supor.
 		"turnos_por_semana": _GS.TURNS_PER_WEEK,
-		"parcela": _GS.PARCELA_AMOUNT,
+		"parcela": _GS.valor_da_parcela(0),
 		"caixa_inicial": _GS.START_CASH,
 	})
 
