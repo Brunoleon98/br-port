@@ -104,3 +104,12 @@ As do «Estilo de código» do `CLAUDE.md` que são do GDScript. O essencial
   defeito posto — quem reprovava era a asserção do texto ao lado, e sem ela o
   defeito passava inteiro. A pergunta que distingue é a da FILA:
   `is_queued_for_deletion()`.
+- **⚠️ `get`, `set`, `in` E `has_method` DE UM NOME QUE NÃO EXISTE SÃO
+  CALADOS; só o `call` grita.** Medido numa sonda em 10/10: os quatro devolvem
+  `null`/`false` e seguem, e o `call` imprime `SCRIPT ERROR` e aborta a função.
+  O teste que lê um privado por string recebe o `null` e rebenta longe da
+  causa: renomeando doze membros que as suítes leem assim, cinco deixaram o
+  marcador verde, e nenhum erro disse o nome. Quem lê por string um privado do
+  `Main`, do `Dock` ou de um painel declara o receptor em
+  `brport_vs/tests/nomes_lidos_por_string.json`, e o F19 do `teste_fumaca`
+  exige o nome no alvo (`093`).

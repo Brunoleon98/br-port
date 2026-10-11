@@ -282,6 +282,16 @@ fim da §7.5). **Prova:** o multiconjunto das linhas, os títulos na mesma ordem
 quatro mutantes, cada um a reprovar pela sua pergunta. O primeiro item aberto
 passa a ser o **M6**.
 
+**M6, em 10/10 (`093`):** o F19 do `teste_fumaca` lê do texto das suítes e
+das ferramentas cada privado pedido por string e exige-o no alvo — o script
+da raiz da cena, por reflexão, com o tipo que a leitura pede. A declaração
+(`tests/nomes_lidos_por_string.json`) diz que variável é que alvo; o literal
+que nenhuma leitura explica reprova. São 52 nomes, 38 do `Main`. ⚠️ Medido
+antes: o `get` calado rebenta LONGE da causa, e cinco de doze renomes
+deixavam o marcador verde. **Prova:** catorze mutantes, entre eles o nome que
+muda de dono (o M8). O primeiro item aberto passa a ser o **M7**, que espera
+o D3 e o D4; o primeiro sem decisão pendente é o **M8**.
+
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
 **[feito em 10/10 — `088`]** ~~[execução · curta · critério 1]~~ A ferramenta
@@ -388,7 +398,7 @@ gerais que o Bruno pediu e três regras a mais (`mapa`, `plataforma`,
 
 ### M6 — A guarda dos nomes lidos por string
 
-**[execução · curta · critério 2]**
+**[feito em 10/10 — `093`]** ~~[execução · curta · critério 2]~~
 - **O que muda:** todo nome que testes e ferramentas leem do `Main` e do
   `Dock` por string (38 hoje) tem de existir no alvo. A lista sai do texto
   das suítes, como o F9 lê as chamadas.
@@ -502,4 +512,4 @@ Os achados, do mais grave ao mais leve. Nenhum quebra o jogo hoje.
 | Desenho | ~411 chamadas por quadro sob `xvfb`/opengl3; 263 nós |
 | Pacotes (zip dos artefatos do #108) | APK 41,7 MB; Web 23,6 MB |
 | Repositório no GitHub | 107 MB; maior blob 1,9 MB (mapas SVG) |
-| Membros privados lidos por string em testes e ferramentas | 38 (29 do `Main`, 7 do `Dock`, 2 de painéis) |
+| Membros privados lidos por string em testes e ferramentas | 38 (29 do `Main`, 7 do `Dock`, 2 de painéis); o M6 mediu 52, com os oito indiretos (`093`) |

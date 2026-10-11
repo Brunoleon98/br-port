@@ -34,6 +34,12 @@ guarda.
    verde, porque cabia inteiro na isenção. O que separa os dois casos é ONDE
    ELA ESTÁ, não onde ele está (`079`). Guarda com exceção mede-se com o
    defeito que mora na exceção.
+   ⚠️ **E A LISTA DE ISENÇÕES PERGUNTA-SE A SI PRÓPRIA.** O F19 isenta o
+   literal declarado como «não é membro» (um sufixo de PNG), e a primeira
+   versão da declaração isentava o `"_cida"` — que é um método do `Main`, e
+   que o F4 procura no código dele. A asserção que reprova a isenção cujo nome
+   É membro de um alvo apanhou-o na estreia (`093`). O que se isenta confere-se
+   contra o que a guarda sabe, e não só contra o texto.
    **E CONTAGEM SÓ SE TESTA ACIMA DE UM.** Em 03/09 injetou-se um `break` que
    fazia o contador parar no primeiro trabalhador livre, e o teste passou: o
    porto abre com UM trabalhador e uma doca, e com esses números contar um e
@@ -365,6 +371,12 @@ guarda.
   parte as duas expressões óbvias: a que casa a primeira string a seguir ao
   parêntesis lê `"servidos"` como argumento, e a que proíbe parênteses salta a
   chamada inteira. O que se casa são os ÚLTIMOS argumentos antes do fecho.
+  ⚠️ **E A GUARDA QUE VARRE O PRÓPRIO ARQUIVO LÊ OS FIXTURES DELA COMO DADO.**
+  Irmã do corte dos comentários do F9, do lado do código: o F19 varre `tests/`,
+  e a primeira corrida reprovou nove literais sem dono — a lista dos nomes
+  ESPERADOS do fixture, escrita entre aspas. Uma guarda que varre a pasta onde
+  mora monta o fixture sem a forma que caça (as aspas por `%s`) e compara o
+  esperado sem ela (`093`).
 - **Teste que JOGA fixa a semente.** `new_game()` chama `_spawn_boats()`, que
   tem 30% de abrir contra-oferta — e nessa fase o `advance_turn()` retorna
   CALADO. Um bloco de teste que avance o turno logo a seguir reprova em cerca

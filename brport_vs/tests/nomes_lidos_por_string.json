@@ -1,0 +1,125 @@
+{
+  "leia_me": [
+    "Quem lê isto é o F19 do `tests/teste_fumaca.gd`; quem decidiu a forma é",
+    "`docs/decisoes/093`.",
+    "",
+    "Testes e ferramentas leem membros PRIVADOS do Main, do Dock e de painéis",
+    "pelo nome escrito numa string — `doca.get(\"_tw_trabalho\")`,",
+    "`tela.call(\"_refresh_all\")`. O `get`, o `set`, o `in` e o `has_method`",
+    "de um nome que não existe devolvem `null`/`false` CALADOS (medido em",
+    "10/10); só o `call` grita. O F19 lê esses nomes do TEXTO das suítes e",
+    "exige que cada um exista no alvo, pela reflexão do script da cena.",
+    "",
+    "O texto diz o nome; não diz a QUEM ele é pedido. Este arquivo diz o resto,",
+    "e só o resto — nenhum nome se lista aqui à mão para ser conferido:",
+    "",
+    "  alvos — o nome de cada alvo e a cena cuja raiz é ele. Uma PASTA quer",
+    "  dizer «um dos painéis de lá»: é a leitura que pergunta `has_method`",
+    "  a qualquer painel aberto.",
+    "",
+    "  receptores — por arquivo, a variável que É aquele alvo. O F19 não",
+    "  infere tipos: ele acredita que `tela` é o Main no `teste_design`, e um",
+    "  `tela` de outra classe a ler um privado por string pediria o nome ao",
+    "  alvo errado. Por isso o nome de uma variável aqui tem um sentido só",
+    "  em todo o arquivo, nas funções que leem por string.",
+    "",
+    "  indiretos — a leitura que não traz o nome na chamada (`tela.call(par[1]`),",
+    "  com os nomes que lhe chegam de uma tabela do mesmo arquivo. A chamada",
+    "  entra pelo TEXTO exato até ao primeiro argumento. Sem chamada nenhuma",
+    "  quando quem lê procura o nome no CÓDIGO-FONTE do alvo, e não no objeto.",
+    "",
+    "  nao_sao_membros — o literal com cara de privado que não nomeia membro",
+    "  nenhum (um sufixo de arquivo, uma chave de dicionário). Reprova se o",
+    "  nome for membro de um alvo: a isenção é onde o defeito cabe inteiro.",
+    "",
+    "Toda entrada tem de estar a ser usada: receptor sem leitura, indireto sem",
+    "chamada ou literal declarado que já não aparece no arquivo reprovam, como",
+    "a exceção MORTA do `conferir_escopo_ui.py`."
+  ],
+  "alvos": {
+    "Main": "res://scenes/Main.tscn",
+    "Dock": "res://scenes/dock/Dock.tscn",
+    "PainelBoletim": "res://scenes/panels/PainelBoletim.tscn",
+    "um painel": "res://scenes/panels/"
+  },
+  "receptores": {
+    "res://tests/teste_design.gd": {
+      "tela": "Main",
+      "_main": "Main",
+      "doca": "Dock"
+    },
+    "res://tests/teste_fumaca.gd": {
+      "main": "Main",
+      "boletim": "PainelBoletim"
+    },
+    "res://tools/capturar_tela.gd": {
+      "_main": "Main",
+      "painel": "PainelBoletim",
+      "topo_b": "PainelBoletim",
+      "_painel_de_cima()": "PainelBoletim"
+    },
+    "res://tools/medir_transito.gd": {
+      "_main": "Main"
+    },
+    "res://tools/medir_fila_mensagens.gd": {
+      "filho": "um painel"
+    },
+    "res://scripts/validation/contraste_ui.gd": {
+      "no": "Main"
+    }
+  },
+  "indiretos": [
+    {
+      "arquivo": "res://tests/teste_design.gd",
+      "chamadas": ["tela.call(par[1]"],
+      "alvo": "Main",
+      "tipo": "metodo",
+      "nomes": ["_entrar_no_mapa", "_subir"],
+      "porque": "o D35 arranca os camiões das duas rotas pelo mesmo laço, e o método de cada rota vem no par"
+    },
+    {
+      "arquivo": "res://tools/capturar_tela.gd",
+      "chamadas": ["_main.has_method(metodo", "_main.call(metodo"],
+      "alvo": "Main",
+      "tipo": "metodo",
+      "nomes": [
+        "_on_upgrade_pressed",
+        "_on_caixa_pilula_input",
+        "_on_dia_pilula_input",
+        "_on_rep_pilula_input",
+        "_on_docas_pilula_input"
+      ],
+      "porque": "a tabela PAINEIS diz por que porta do Main cada painel do jogador abre"
+    },
+    {
+      "arquivo": "res://tests/teste_fumaca.gd",
+      "chamadas": [],
+      "alvo": "Main",
+      "tipo": "metodo",
+      "nomes": ["_cida"],
+      "porque": "o F4 procura no TEXTO do Main.gd as linhas que chamam _cida e _cida_agora; foi declarado como não-membro na primeira versão, e a guarda da isenção apanhou-o"
+    }
+  ],
+  "nao_sao_membros": [
+    {
+      "arquivo": "res://tests/teste_design.gd",
+      "nome": "_retorno",
+      "porque": "pedaço do caminho de um PNG de camião, procurado com `contains`"
+    },
+    {
+      "arquivo": "res://tests/teste_design.gd",
+      "nome": "_b",
+      "porque": "sufixo do PNG da segunda transportadora"
+    },
+    {
+      "arquivo": "res://tests/teste_design.gd",
+      "nome": "_mx",
+      "porque": "sufixo do PNG do camião no eixo mx"
+    },
+    {
+      "arquivo": "res://tools/catalogo_props.gd",
+      "nome": "_retorno",
+      "porque": "sufixo de uma chave do dicionário da transportadora"
+    }
+  ]
+}
