@@ -2324,7 +2324,7 @@ func _f10_textos_visiveis(no: Node, textos: Array[String]) -> void:
 # O «Pagar» fecha a semana 4 e acaba a partida na mesma chamada, e até 23/09 o
 # boletim e o fim de fase abriam POR CIMA da resposta do Sr. Ribeiro: quem
 # tocava «Jogar de novo» nunca a lia, nem o último boletim. O `Main` põe as
-# três telas em fila (`_na_vez()`, `docs/decisoes/054`), e este bloco percorre
+# três telas em fila (`VezDasTelas.gd`, `054`, `097`), e este bloco percorre
 # a fila pelos botões do jogador nos três caminhos que acabam a partida com a
 # semana a fechar — pagou, não pagou, e quitou antes do prazo.
 #
@@ -2345,8 +2345,10 @@ func _f10_textos_visiveis(no: Node, textos: Array[String]) -> void:
 #
 # ⚠️ O QUE ESTE BLOCO NÃO VÊ: a fila ligada ao `fechou` em vez do
 # `tree_exited`. A jogar, toda tela que tem a vez sai pelo `_fechar()`, e o
-# bloco passa. Quem o apanha é o tiro `balanco` da captura, cujo laço dispensa
-# boletins por `remove_child()` — ver o comentário do `_na_vez()`.
+# bloco passa. Quem o apanha é a bateria de captura, cujos laços dispensam
+# boletins por `remove_child()` — ver o comentário do `na_vez()`. Medido em
+# 11/10 (`097`): o primeiro tiro a reprovar é o `boletim_otimo`, que pede o
+# boletim da semana 2 e acha a tela vazia, antes de o `balanco` correr.
 const F11_RIBEIRO := "res://scenes/panels/DebtPaymentPanel.tscn"
 const F11_BOLETIM := "res://scenes/panels/PainelBoletim.tscn"
 var _f11_terminou := false
@@ -2361,7 +2363,9 @@ func _f11_a_vez_do_fim() -> void:
 	var pagou = await _f11_pagou()
 	var nao_pagou = await _f11_nao_pagou()
 	var quitou = await _f11_quitou_antes()
-	_f11_terminou = pagou == true and nao_pagou == true and quitou == true
+	var soltou = await _f11_soltar_com_fila()
+	_f11_terminou = pagou == true and nao_pagou == true and quitou == true \
+		and soltou == true
 	GS.clear_save()
 
 
@@ -2399,6 +2403,38 @@ func _f11_nao_pagou() -> bool:
 		return true
 	await _f11_ate_ao_fim(main, _f11_sozinho(main, F11_RIBEIRO, "nao_pagou",
 		"não pagou, depois do «Não consigo»"), "Adeus", "balanco", "não pagou")
+	return true
+
+
+# SOLTAR O `Main` COM TELAS NA FILA NÃO ABRE A SEGUINTE (`097`). O «Pagar» da
+# última parcela deixa o Sr. Ribeiro com a vez e o boletim e o fim de fase à
+# espera; quem solta o `Main` nessa altura — «Jogar de novo», a saída para a
+# tela inicial, cada bloco destas suítes — tira o painel da vez da árvore, e
+# o `tree_exited` dele passaria a vez a uma tela que já não tem onde abrir.
+# Medido em 11/10 sem a guarda do `_passar_a_vez()`: as seis suítes e a
+# bateria passavam todas, na main e na branch — e ela é a única linha de
+# comportamento que a extração mudou de forma (o `is_inside_tree()` passou a
+# ser perguntado ao dono). Os órfãos contam-se pelo motor, antes e depois.
+func _f11_soltar_com_fila() -> bool:
+	if not _f11_ate_ao_ultimo_dia():
+		return true
+	GS.cash = GS.principal_da_parcela() * 2
+	var main: Node = await _f11_main_e_virar_o_dia()
+	var p: Node = _f11_sozinho(main, F11_RIBEIRO, "entrada", "soltar com fila, no vencimento")
+	if p == null or not await _f10_tocar(p, "Pagar", "F11"):
+		main.free()
+		return true
+	# A GUARDA SÓ VALE COM A FILA CHEIA: sem telas à espera, soltar o `Main`
+	# não tem vez nenhuma a passar, e a asserção seguinte passaria de graça.
+	var vez_das_telas = main.vez
+	var a_espera: int = (vez_das_telas.get("_fila_da_vez") as Array).size()
+	_confere("F11: soltar com fila — o «Pagar» deixou telas à espera da vez (%d)" % a_espera,
+		a_espera >= 1)
+	var antes: int = int(Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT))
+	main.free()
+	var orfaos: int = int(Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT)) - antes
+	_confere("F11: soltar o Main com telas na fila não abre a seguinte (%d nós órfãos)" % orfaos,
+		orfaos == 0)
 	return true
 
 
@@ -4629,10 +4665,12 @@ func _f19_nomes_lidos_por_string() -> void:
 	# 15 do Main e 1 da Narradora, que é o `_cida` que o F4 procura no texto
 	# dela. Com a declaração velha, este bloco reprovou «o Main não tem o
 	# método» `_cida`, uma vez: é o nome que muda de dono, outra vez.
+	# E a vez das telas (`097`): nenhuma suíte lia os privados dela por string
+	# até ao F11 perguntar pela fila à espera — 1 da `Vez`, os mesmos 15 do Main.
 	_confere("F19: e há nomes para conferir (%d: %s)" % [conferidos.size(), por_alvo],
 		conferidos.size() >= 30 and int(por_alvo.get("Main", 0)) > 0
 			and int(por_alvo.get("Dock", 0)) > 0 and int(por_alvo.get("Trafego", 0)) > 0
-			and int(por_alvo.get("Narradora", 0)) > 0)
+			and int(por_alvo.get("Narradora", 0)) > 0 and int(por_alvo.get("Vez", 0)) > 0)
 
 	_f19_terminou = true
 

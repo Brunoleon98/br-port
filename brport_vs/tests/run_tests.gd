@@ -50,7 +50,7 @@ func _t16_oferta_apos_pagamento() -> void:
 		and overlay.get_child(0).scene_file_path == "res://scenes/panels/PainelBoletim.tscn")
 	# Fecha quem tem a vez mesmo se a asserção encontrou sobreposição: o
 	# defeito injetado deve reprovar pela ordem, sem abortar o resto do bloco.
-	main._painel_da_vez._fechar()
+	main.vez.painel_da_vez._fechar()
 	await process_frame
 	await process_frame
 	_check("T16: oferta abre depois do boletim sem perder cliente",

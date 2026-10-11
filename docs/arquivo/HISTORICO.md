@@ -812,3 +812,9 @@ mais antigas:
 fechava a lista do que fica para depois: *«A cena de fim de Fase 1 já não está
 aqui: existe, em dois tempos, e o balanço FECHA — o menu de pausa reabre-o.»*
 A narração de fim de Fase 1 continua nos sistemas que funcionam (`082`).
+
+**E, para caber o fecho do M8 (`097`),** desceu a fila no fundeadouro:
+
+| Fechado | O que ficou, medido |
+|---|---|
+| **Design — a fila no fundeadouro** (04–05/10, `083`) | Escolher quem atraca (**T4d**, **T5h**, **D9**); sem «Alocar todos»; contratos a 0,72; os textos dos cartões são funções que o **D18** mede. **Aceite** |

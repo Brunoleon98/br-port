@@ -28,6 +28,9 @@ const TrafegoDeCamioes := preload("res://scripts/TrafegoDeCamioes.gd")
 # (`docs/decisoes/096`): o que a põe a falar, a variante de cada momento e as
 # memórias que a impedem de se repetir. `preload` pela mesma razão.
 const NarradoraDaCida := preload("res://scripts/NarradoraDaCida.gd")
+# A FILA DAS TELAS QUE ABREM SOZINHAS, num script seu desde o terceiro corte
+# do M8 (`docs/decisoes/097`). `preload` pela mesma razão.
+const VezDasTelas := preload("res://scripts/VezDasTelas.gd")
 const CounterOfferScene := preload("res://scenes/panels/CounterOfferPanel.tscn")
 const DebtPaymentScene := preload("res://scenes/panels/DebtPaymentPanel.tscn")
 const UpgradePanelScene := preload("res://scenes/panels/UpgradePanel.tscn")
@@ -74,10 +77,10 @@ var _fila := FilaDeMensagens.new()
 var narradora: NarradoraDaCida = NarradoraDaCida.new(_fila)
 
 # A VEZ DAS TELAS QUE ABREM SOZINHAS — o Sr. Ribeiro, o boletim e o fim de
-# fase. Quem tem a vez está na tela; os outros esperam na fila, pela ordem em
-# que chegaram. Ver `_na_vez()`.
-var _painel_da_vez: Control = null
-var _fila_da_vez: Array[Callable] = []
+# fase —, num script seu desde o terceiro corte do M8 (`VezDasTelas.gd`,
+# `docs/decisoes/097`). É PÚBLICA pela razão do `trafego`: o T16 do
+# `run_tests` fecha quem tem a vez, e lido direto um nome errado grita.
+@onready var vez: VezDasTelas = VezDasTelas.new(self)
 
 @onready var _message_cartao: PanelContainer = $MensagemCartao
 @onready var _message_label: Label = $MensagemCartao/Linha/Mensagem
@@ -767,8 +770,8 @@ func _on_semana_fechada(resumo: Dictionary) -> void:
 	#
 	# ⚠️ E NA SEMANA 4 ELE ESPERA A VEZ. O fecho dela vem de dentro do «Pagar»
 	# (ou do «Não consigo pagar»), com o Sr. Ribeiro ainda na tela — ver
-	# `_na_vez()`.
-	_na_vez(func() -> Control:
+	# `VezDasTelas.gd`.
+	vez.na_vez(func() -> Control:
 		var painel := _abrir_painel(PainelBoletimScene)
 		painel.setup(resumo)
 		return painel)
@@ -1077,87 +1080,21 @@ func _on_rival_offer_triggered(indice_fila: int) -> void:
 	# `087` encontrou o Arlindo por cima da resposta do Ribeiro na parcela 2.
 	# Só nesse caminho ele espera resposta e boletim; a oferta habitual mantém
 	# a prioridade que já tinha sobre os outros painéis.
-	if is_instance_valid(_painel_da_vez) and _painel_da_vez.scene_file_path == DebtPaymentScene.resource_path:
-		_na_vez(abrir)
+	if is_instance_valid(vez.painel_da_vez) and vez.painel_da_vez.scene_file_path == DebtPaymentScene.resource_path:
+		vez.na_vez(abrir)
 	else:
 		abrir.call()
 
 
 func _on_debt_due(amount: int) -> void:
-	_na_vez(func() -> Control:
+	vez.na_vez(func() -> Control:
 		var painel := _abrir_painel(DebtPaymentScene)
 		painel.setup(amount)
 		return painel)
 
 
 func _on_game_over(did_win: bool, reason: String) -> void:
-	_na_vez(func() -> Control:
+	vez.na_vez(func() -> Control:
 		var painel := _abrir_painel(EndGameScene)
 		painel.setup(did_win, reason)
 		return painel)
-
-
-# A VEZ DAS TELAS QUE ABREM SOZINHAS — o Sr. Ribeiro, o boletim e o fim de
-# fase.
-#
-# Na última parcela, o «Pagar» fecha a semana e acaba a partida NA MESMA CHAMADA —
-# `pay_debt()` → `_fechar_resumo_da_semana()` → `_check_end()` —, e cada sinal
-# abria o seu painel por cima do anterior: o fim de fase no topo, o boletim da
-# semana 4 debaixo dele e a resposta do Sr. Ribeiro no fundo. O toque só
-# alcança o painel de cima, e o fim de fase oferece «Jogar de novo»: quem o
-# tocava nunca via a resposta do banqueiro nem o último boletim. A foto
-# `balanco` de 23/09 mostrou a pilha (três painéis), e a ordem passou a ser
-# decisão do Bruno: resposta → boletim → fim de fase.
-#
-# O mesmo empilhamento acontecia no «Não consigo pagar», e em quem quitou antes
-# do prazo — aí é o `advance_turn()` que fecha a semana e acaba a partida
-# seguidos, sem Sr. Ribeiro. A fila cobre os três sem saber qual deles é: quem
-# tem a vez fica na tela, e quem chega depois espera por ordem de chegada.
-#
-# A contra-oferta habitual do Arlindo continua a abrir por cima do boletim:
-# é uma decisão que trava o turno. A exceção é a chegada sorteada ao pagar
-# a parcela, ainda na resposta do Ribeiro: espera resposta → boletim e então
-# abre a oferta (`087`, T16), sem esconder a confirmação do pagamento.
-#
-# ⚠️ QUEM PASSA A VEZ É O `tree_exited`, e não o `fechou`. É o único sinal por
-# onde passa toda saída de um painel: o `_fechar()` do andaime, o
-# `queue_free()` seco do «Fechar» do fim de fase e o `remove_child()` com que
-# as ferramentas de captura dispensam o boletim. Uma fila à espera de um sinal
-# que uma dessas portas não emite fica com o resto por abrir, sem erro nenhum —
-# medido com a fila ligada ao `fechou`: as seis suítes passam (a jogar, todo
-# painel que tem a vez sai pelo `_fechar()`), e o tiro `balanco` da captura
-# chega ao vencimento em "debt_payment" SEM painel nenhum na tela — o Sr.
-# Ribeiro preso na fila, porque o primeiro boletim saiu pelo `remove_child()`
-# da ferramenta e nunca passou a vez. Fase que trava o turno sem painel para a
-# resolver é o travamento calado que o `_recuperar_fase()` existe para evitar.
-#
-# Tudo isto vive no Main e nada no GameState: os sinais saem na ordem de
-# sempre, e o simulador, que não abre painel, não tem o que medir — é a regra
-# "tela nova é overlay" do `CLAUDE.md` aplicada à ORDEM das telas.
-func _na_vez(abrir: Callable) -> void:
-	_fila_da_vez.append(abrir)
-	# Um painel mandado embora ainda segura a vez até sair, no fim do frame: é
-	# o `tree_exited` dele que a passa, e quem chegou entretanto espera por ele.
-	if not is_instance_valid(_painel_da_vez):
-		_dar_a_vez_ao_proximo()
-
-
-func _dar_a_vez_ao_proximo() -> void:
-	_painel_da_vez = null
-	if _fila_da_vez.is_empty():
-		return
-	var abrir: Callable = _fila_da_vez.pop_front()
-	_painel_da_vez = abrir.call()
-	_painel_da_vez.tree_exited.connect(_passar_a_vez, CONNECT_ONE_SHOT)
-
-
-func _passar_a_vez() -> void:
-	# O Main também sai da árvore — «Jogar de novo» recarrega a cena, e as
-	# suítes libertam-no com painéis abertos. Os filhos saem com ele, e abrir
-	# o próximo da fila nessa altura falha: medido sem esta guarda, libertar o
-	# Main com dois painéis na fila dá "Parent node is busy setting up children,
-	# `add_child()` failed" e deixa 36 nós órfãos.
-	if not is_inside_tree():
-		_painel_da_vez = null
-		return
-	_dar_a_vez_ao_proximo()
