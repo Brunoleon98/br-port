@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 11/10/2026 — M8 da fila, 1.º PR: o trânsito fora do `Main` (`095`)
+> **Última atualização:** 11/10/2026 — M8 da fila, 2.º PR: a Dona Cida fora do `Main` (`096`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -121,7 +121,7 @@ itens param à espera do Bruno. Aqui fica só a posição.
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
 mais tranquila — **M1** a **M7** fecharam (`088`–`094`); o **M8** (partir o
-`Main.gd`, três PRs) fez os camiões (`095`). Depois voltam o design e a
+`Main.gd`, três PRs) fez os camiões e a Dona Cida (`095`, `096`). Depois voltam o design e a
 frente 5 (`084`–`087`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
@@ -189,6 +189,7 @@ podre (A4) — em `HISTORICO.md`.
 | `tools/medir_nitidez_captura.py` | **A régua da resolução dos PROPS** — a mesma métrica em duas capturas a 1080×1920, com a máscara tirada da diferença (`029`) |
 | `brport_vs/tools/medir_vram.gd` | **A régua da VRAM**, com o jogo aberto e calibrada; `xvfb-run`, `VRAM MEDIDA` (`049`) |
 | `brport_vs/scripts/TrafegoDeCamioes.gd` | **Os camiões da rua** — rotas, cedência, visita ao berço; objeto do `Main`, lido pelo `trafego` (`095`) |
+| `brport_vs/scripts/NarradoraDaCida.gd` | **A Dona Cida na faixa** — gatilhos, variantes e memórias; objeto do `Main` (`096`) |
 | `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`); `imagem()` repõe o quadro de um prop em atlas (`049`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
 | `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. ⚠️ «Órfão» não é «apagável»: dos 11, nove servem à bancada `AssetPlacementTest`. Hoje **9 de 265**; o atlas não conta (`046`, `049`) |
@@ -339,8 +340,7 @@ A **Zona de Espera mostra a fila mecânica** (`083`): o jogador escolhe quem
 atraca. Ela fundeia **ao largo**, fora do gradiente costeiro (`017`).
 
 Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o app
-Diário (o caderno já existe, `067`) e a lista "VS — OUT" do GDD. A cena de fim de Fase 1 já não está aqui:
-existe, em dois tempos, e o balanço FECHA — o menu de pausa reabre-o.
+Diário (o caderno já existe, `067`) e a lista "VS — OUT" do GDD.
 
 ---
 

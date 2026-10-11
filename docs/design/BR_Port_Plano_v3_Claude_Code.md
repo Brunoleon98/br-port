@@ -223,7 +223,7 @@ dois nomes merece tela própria, e ela é a primeira coisa que o jogador vê.
 | Nomes do cais e do jogador | `TelaNomes.gd` | Partida nova, antes de tudo |
 | Diário do Porto, 1ª página | `PainelDiario.gd` | Encadeado à anterior |
 | Boletim Financeiro (3 tons) | `PainelBoletim.gd` | Fecho de cada semana |
-| Falas da Dona Cida (8) | `Main.gd` + `Narrativa.gd` | Faixa de mensagem, por evento |
+| Falas da Dona Cida (8) | `NarradoraDaCida.gd` + `Narrativa.gd` | Faixa de mensagem, por evento |
 | Falas do Arlindo | `CounterOfferPanel.gd` | Durante a negociação |
 | Cena da parcela | `DebtPaymentPanel.gd` | Vencimento, semana 4 |
 | Fim de Fase 1 | `EndGame.gd` | Fim de jogo, só na vitória |
