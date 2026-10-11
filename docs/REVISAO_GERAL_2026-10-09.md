@@ -326,6 +326,17 @@ simulador e a régua da faixa iguais; as seis suítes com as mesmas asserções,
 mais o F8h; cinco mutantes, e a régua que fechava com zero falas passou a
 recusar. Segue a fila de painéis.
 
+**M8, terceiro PR, em 11/10 (`097`):** a vez das telas que abrem sozinhas —
+o `_na_vez()` e as funções que passam a vez — mudou-se para
+`scripts/VezDasTelas.gd`; o `Main.gd` ficou com 1.100 linhas e 49 funções
+(eram 2.742 e 113 antes do M8). **Prova:** as 66 fotos iguais ao byte, com o
+controle positivo a reprovar o tiro `balanco`; o simulador e a régua da
+faixa iguais; as seis suítes. Um mutante mostrou que a guarda de saída do
+`_passar_a_vez()` — a única linha que mudou de forma — não tinha quem a
+visse, nem antes da extração: o F11d solta o `Main` com telas na fila e
+conta os nós órfãos (41 sem ela, 0 com ela). **O M8 fecha**, e os itens
+seguintes esperam o Bruno: M9 (D1b), M10 (D5), M11 (D6), M12 (A8).
+
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
 **[feito em 10/10 — `088`]** ~~[execução · curta · critério 1]~~ A ferramenta
@@ -457,8 +468,8 @@ gerais que o Bruno pediu e três regras a mais (`mapa`, `plataforma`,
 
 ### M8 — Partir o `Main.gd`
 
-**[execução · longa, três PRs · critério 3]** — **2 de 3 feitos em 11/10
-(os camiões, `095`; a Dona Cida, `096`)**
+**[execução · longa, três PRs · critério 3]** — **✅ fechado em 11/10: os
+camiões (`095`), a Dona Cida (`096`) e a vez das telas (`097`)**
 - **O que muda:** extrações, uma por PR: o tráfego dos camiões (o maior
   bloco), a narradora da Dona Cida e a fila de painéis (`_na_vez`, que a `087`
   acabou de alargar).

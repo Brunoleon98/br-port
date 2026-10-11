@@ -15,6 +15,7 @@ paths:
   - "brport_vs/scripts/EndGame.gd"
   - "brport_vs/scripts/PauseMenu.gd"
   - "brport_vs/scripts/FilaDeMensagens.gd"
+  - "brport_vs/scripts/VezDasTelas.gd"
   - "brport_vs/scripts/BarcoFila.gd"
   - "brport_vs/scripts/validation/contraste_ui.gd"
   - "brport_vs/tools/medir_contraste_ui.gd"
@@ -57,7 +58,8 @@ paths:
   **ajustar-se ao conteúdo**; altura fixa só quando há área de rolagem. Três
   painéis saíram com uma faixa branca debaixo do botão por causa disto, e o
   mesmo painel muda de tamanho conforme o caso.
-- **Tela que abre SOZINHA passa pela vez** (`_na_vez()` no `Main`). Três
+- **Tela que abre SOZINHA passa pela vez** (`na_vez()`, em `VezDasTelas.gd`
+  desde a `097`; até lá, `_na_vez()` no `Main`). Três
   sinais do mesmo instante abriam três painéis empilhados, e o toque só
   alcança o de cima: a resposta do Sr. Ribeiro ficava por baixo do fim de
   fase, que oferece «Jogar de novo». Quem tem a vez fica na tela, os outros

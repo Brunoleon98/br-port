@@ -16,8 +16,8 @@
     "  alvos — o nome de cada alvo e a cena cuja raiz é ele. Uma PASTA quer",
     "  dizer «um dos painéis de lá»: é a leitura que pergunta `has_method`",
     "  a qualquer painel aberto. Um `.gd` é um objeto que não é raiz de cena",
-    "  nenhuma — o trânsito dos camiões e a narradora da Dona Cida, que o Main",
-    "  monta desde o M8 (`095`, `096`).",
+    "  nenhuma — o trânsito dos camiões, a narradora da Dona Cida e a vez das",
+    "  telas, que o Main monta desde o M8 (`095`, `096`, `097`).",
     "",
     "  receptores — por arquivo, a variável que É aquele alvo. O F19 não",
     "  infere tipos: ele acredita que `tela` é o Main no `teste_design`, e um",
@@ -42,6 +42,7 @@
     "Main": "res://scenes/Main.tscn",
     "Trafego": "res://scripts/TrafegoDeCamioes.gd",
     "Narradora": "res://scripts/NarradoraDaCida.gd",
+    "Vez": "res://scripts/VezDasTelas.gd",
     "Dock": "res://scenes/dock/Dock.tscn",
     "PainelBoletim": "res://scenes/panels/PainelBoletim.tscn",
     "um painel": "res://scenes/panels/"
@@ -55,7 +56,8 @@
     },
     "res://tests/teste_fumaca.gd": {
       "main": "Main",
-      "boletim": "PainelBoletim"
+      "boletim": "PainelBoletim",
+      "vez_das_telas": "Vez"
     },
     "res://tools/capturar_tela.gd": {
       "_main": "Main",

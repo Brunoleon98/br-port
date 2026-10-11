@@ -169,6 +169,13 @@ guarda.
    falas, código 0; sem o `super()` compilaria e nunca seria chamada. Ao
    mudar um método de dono, procure também `extends` do arquivo de onde ele
    sai.
+   ⚠️ **E A LINHA QUE A EXTRAÇÃO MUDA DE FORMA PEDE O SEU MUTANTE — a bateria
+   igual ao byte não responde por ela.** No terceiro corte do M8 (`097`) a
+   única linha de comportamento que mudou foi o `is_inside_tree()` passado
+   ao dono; tirá-la passou nas seis suítes e na bateria, na main e na
+   branch. O igual-ao-byte prova que o que se vê não mudou, não que a linha
+   mexida tenha quem a veja. A guarda nova conta os nós órfãos pelo motor
+   (`OBJECT_ORPHAN_NODE_COUNT`) antes e depois de soltar o `Main`.
    **E o defeito pode pegar e o teste passar na mesma.** Aconteceu em 02/09:
    tirar `tests/*` do filtro de export não reprovou nada, porque o teste
    perguntava `contains("tests/*")` e o `scenes/tests/*` que ficou no arquivo

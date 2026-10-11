@@ -215,7 +215,7 @@ nas tabelas deste núcleo e do `AGENTS.md` — e um teto para o que carrega semp
 | `.claude/rules/testes-e-guardas.md` | `brport_vs/tests/`, as validações, `tools/conferir_*`, as réguas, os workflows | escrever a guarda e escolher o defeito injetado |
 | `.claude/rules/economia.md` | `GameState.gd`, o simulador, o projetor, a tabela dos números | **o balanceamento medido em vigor**, guindastes e obras da Fase 1 |
 | `.claude/rules/save.md` | `GameState.gd`, `ArmazemLocal.gd`, `teste_fumaca.gd` | a versão, a recusa e os três espaços |
-| `.claude/rules/interface.md` | as cenas, o tema, os painéis, `Main.gd` | tela, cor, contraste, rótulo |
+| `.claude/rules/interface.md` | as cenas, o tema, os painéis, `Main.gd`, `VezDasTelas.gd` | tela, cor, contraste, rótulo |
 | `.claude/rules/narrativa.md` | `Narrativa.gd`, `Retratos.gd`, `NarradoraDaCida.gd`, os painéis de fala | fala, nome, número e concordância |
 | `.claude/rules/audio.md` | `Audio.gd`, `gerar_sons.py`, `medir_audio.py` | o som que ninguém aqui ouve |
 | `.claude/rules/captura.md` | as ferramentas de captura e as folhas de contato | a foto que prova, e a que mente |

@@ -116,7 +116,7 @@ var _mensagens_aberto := false
 ## disto se escreve à mão.
 ##
 ## ⚠️ E O CAMINHO ATÉ ELE PASSA POR TRÊS TELAS, UMA DE CADA VEZ. Desde que o
-## `Main` pôs em fila as telas que abrem sozinhas (`_na_vez()`), o «Pagar»
+## `Main` pôs em fila as telas que abrem sozinhas (`VezDasTelas.gd`), o «Pagar»
 ## deixa na tela só a resposta do Sr. Ribeiro; o boletim da semana 4 abre
 ## quando ela fecha, e o fim de fase quando o boletim fecha. Cada passo espera
 ## `FRAMES_POR_PASSO` — o painel fechado sai no fim do frame, e é aí que o

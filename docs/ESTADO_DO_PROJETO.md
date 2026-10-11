@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 11/10/2026 — M8 da fila, 2.º PR: a Dona Cida fora do `Main` (`096`)
+> **Última atualização:** 11/10/2026 — o M8 da fila fechou: a vez das telas fora do `Main` (`097`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -114,15 +114,11 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-| Fechado | O que ficou, medido |
-|---|---|
-| **Design — a fila no fundeadouro** (04–05/10, `083`) | Escolher quem atraca (**T4d**, **T5h**, **D9**); sem «Alocar todos»; contratos a 0,72; os textos dos cartões são funções que o **D18** mede. **Aceite** |
-
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — **M1** a **M7** fecharam (`088`–`094`); o **M8** (partir o
-`Main.gd`, três PRs) fez os camiões e a Dona Cida (`095`, `096`). Depois voltam o design e a
-frente 5 (`084`–`087`, §7 do plano).
+mais tranquila — **M1** a **M8** fecharam (`088`–`097`; o M8 partiu o `Main.gd`
+em três PRs). **M9 a M12 esperam o Bruno** (D1b, D5, D6, o A8). Depois voltam o
+design e a frente 5 (`084`–`087`, §7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -190,6 +186,7 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/tools/medir_vram.gd` | **A régua da VRAM**, com o jogo aberto e calibrada; `xvfb-run`, `VRAM MEDIDA` (`049`) |
 | `brport_vs/scripts/TrafegoDeCamioes.gd` | **Os camiões da rua** — rotas, cedência, visita ao berço; objeto do `Main`, lido pelo `trafego` (`095`) |
 | `brport_vs/scripts/NarradoraDaCida.gd` | **A Dona Cida na faixa** — gatilhos, variantes e memórias; objeto do `Main` (`096`) |
+| `brport_vs/scripts/VezDasTelas.gd` | **A vez das telas que abrem sozinhas**, uma de cada vez; objeto do `Main` (`054`, `097`) |
 | `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`); `imagem()` repõe o quadro de um prop em atlas (`049`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
 | `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. ⚠️ «Órfão» não é «apagável»: dos 11, nove servem à bancada `AssetPlacementTest`. Hoje **9 de 265**; o atlas não conta (`046`, `049`) |
