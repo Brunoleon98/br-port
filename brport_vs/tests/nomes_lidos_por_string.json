@@ -16,7 +16,8 @@
     "  alvos — o nome de cada alvo e a cena cuja raiz é ele. Uma PASTA quer",
     "  dizer «um dos painéis de lá»: é a leitura que pergunta `has_method`",
     "  a qualquer painel aberto. Um `.gd` é um objeto que não é raiz de cena",
-    "  nenhuma — o trânsito dos camiões, que o Main monta desde o M8 (`095`).",
+    "  nenhuma — o trânsito dos camiões e a narradora da Dona Cida, que o Main",
+    "  monta desde o M8 (`095`, `096`).",
     "",
     "  receptores — por arquivo, a variável que É aquele alvo. O F19 não",
     "  infere tipos: ele acredita que `tela` é o Main no `teste_design`, e um",
@@ -40,6 +41,7 @@
   "alvos": {
     "Main": "res://scenes/Main.tscn",
     "Trafego": "res://scripts/TrafegoDeCamioes.gd",
+    "Narradora": "res://scripts/NarradoraDaCida.gd",
     "Dock": "res://scenes/dock/Dock.tscn",
     "PainelBoletim": "res://scenes/panels/PainelBoletim.tscn",
     "um painel": "res://scenes/panels/"
@@ -97,10 +99,10 @@
     {
       "arquivo": "res://tests/teste_fumaca.gd",
       "chamadas": [],
-      "alvo": "Main",
+      "alvo": "Narradora",
       "tipo": "metodo",
       "nomes": ["_cida"],
-      "porque": "o F4 procura no TEXTO do Main.gd as linhas que chamam _cida e _cida_agora; foi declarado como não-membro na primeira versão, e a guarda da isenção apanhou-o"
+      "porque": "o F4 procura no TEXTO da NarradoraDaCida.gd as linhas que chamam _cida e _cida_agora (até à 096, no Main.gd); foi declarado como não-membro na primeira versão, e a guarda da isenção apanhou-o"
     }
   ],
   "nao_sao_membros": [

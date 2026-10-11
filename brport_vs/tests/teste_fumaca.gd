@@ -731,16 +731,19 @@ func _sem_token_cru(caso: String) -> void:
 # Cida em jogo. É o `barco_medio` outra vez (renderizado, validado, e nunca
 # posto em doca nenhuma), e a terceira vez que este projeto o apanha.
 #
-# A SEGUNDA FONTE é o `Main.gd`: a tabela vive na Narrativa e o gatilho no
-# Main, então comparar os dois não é um espelho. Lê-se o ARQUIVO e não o nó,
-# porque abrir a cena para isto custaria a árvore inteira.
+# A SEGUNDA FONTE é o `NarradoraDaCida.gd`: a tabela vive na Narrativa e o
+# gatilho na narradora, então comparar os dois não é um espelho. Lê-se o
+# ARQUIVO e não o objeto, porque montá-lo para isto custaria a cena inteira.
+# Até ao segundo corte do M8 (`096`) o gatilho vivia no `Main.gd`, e era esse
+# o arquivo lido: com ele, as falas todas dariam por mudas — vermelho alto, e
+# não um verde de graça.
 #
 # E as linhas de COMENTÁRIO saem antes da busca: este mesmo bloco nomeia as
 # duas falas na prosa acima, e sem o corte elas contar-se-iam a si próprias —
 # que é a regra do `contains()` do CLAUDE.md a morder de novo.
 func _f4_toda_fala_chega_ao_jogo() -> void:
-	var fonte := FileAccess.get_file_as_string("res://scripts/Main.gd")
-	_confere("o Main.gd foi lido", fonte != "")
+	var fonte := FileAccess.get_file_as_string("res://scripts/NarradoraDaCida.gd")
+	_confere("a NarradoraDaCida.gd foi lida", fonte != "")
 	var disparados := {}
 	for linha in fonte.split("\n"):
 		var limpa := linha.strip_edges()
@@ -1460,21 +1463,21 @@ func _f8_a_fala_e_vista() -> void:
 		achadas.is_empty(), "diz: " + ", ".join(achadas))
 
 	# ── F8c. A semana nova escolhe pela CONDIÇÃO.
-	# Chama `_semana_nova()` direto: o estado é montado à mão e o esperado é
-	# escrito à mão a partir dele, nunca recalculado dos mesmos predicados que
-	# a fala usa — isso seria o espelho, e um peso posto a zero desapareceria
-	# dos dois lados ao mesmo tempo.
+	# Chama `_semana_nova()` direto, na narradora do `Main`: o estado é montado
+	# à mão e o esperado é escrito à mão a partir dele, nunca recalculado dos
+	# mesmos predicados que a fala usa — isso seria o espelho, e um peso posto
+	# a zero desapareceria dos dois lados ao mesmo tempo.
 	if not _f8_abrir():
 		return
 	_f8_por_barco_a_espera(true)
 	GS.cash = GS.valor_da_parcela(0) / 2 - 1
-	_f8_main._semana_nova()
+	_f8_main.narradora._semana_nova()
 	_confere("F8c: com barco à espera e caixa curto, sai a variante das duas",
 		_f8_drenar() == Narrativa.cida("semana_nova_fila_curto"),
 		"ficou: " + _f8_drenar())
 	_f8_por_barco_a_espera(false)
 	GS.cash = GS.valor_da_parcela(0)
-	_f8_main._semana_nova()
+	_f8_main.narradora._semana_nova()
 	_confere("F8c: sem barco e com caixa folgado, sai a variante de nenhuma das duas",
 		_f8_drenar() == Narrativa.cida("semana_nova_parado_folgado"),
 		"ficou: " + _f8_drenar())
@@ -1491,10 +1494,10 @@ func _f8_a_fala_e_vista() -> void:
 	# variante seja a de B. Se o predicado fosse lido no sinal, sairia a de A.
 	if not _f8_abrir():
 		return
-	_f8_main._cida_semana(8, 1)          # regista a semana anterior, sem falar
+	_f8_main.narradora._cida_semana(8, 1)          # regista a semana anterior, sem falar
 	_f8_por_barco_a_espera(false)        # estado A: cais parado
 	GS.cash = GS.valor_da_parcela(0)
-	_f8_main._cida_semana(9, 2)          # dispara — a escolha fica para depois
+	_f8_main.narradora._cida_semana(9, 2)          # dispara — a escolha fica para depois
 	_f8_por_barco_a_espera(true)         # estado B: barco à espera
 	GS.cash = GS.valor_da_parcela(0) / 2 - 1
 	await _f8_esperar()
@@ -1553,12 +1556,12 @@ func _f8_a_fala_e_vista() -> void:
 	_f8_por_barco_a_espera(false)
 	GS.cash = GS.valor_da_parcela(0) / 2 - 1
 	GS.parcela_paid = false
-	_f8_main._semana_nova()
+	_f8_main.narradora._semana_nova()
 	_confere("F8f: com a parcela por pagar, é ela que a fala nomeia",
 		_f8_drenar() == Narrativa.cida("semana_nova_parado_curto"),
 		"ficou: " + _f8_drenar())
 	GS.parcela_paid = true
-	_f8_main._semana_nova()
+	_f8_main.narradora._semana_nova()
 	_confere("F8f: com a parcela paga, sai a outra variante",
 		_f8_drenar() == Narrativa.cida("semana_nova_parado_curto_quitado"),
 		"ficou: " + _f8_drenar())
@@ -1619,6 +1622,23 @@ func _f8_a_fala_e_vista() -> void:
 		_f8_foi_apresentada(Narrativa.cida("upgrade_pronto_rotina")),
 		"apresentadas: " + ", ".join(_f8_apresentadas))
 	_f8_fechar()
+
+	# ── F8h. A NARRADORA MORRE COM O `Main` QUE A MONTOU (`096`).
+	# Ela é um `RefCounted` ligado a sinais do `GameState`, que vive o jogo
+	# inteiro. Ligada por MÉTODO, a ligação morre com ela; ligada por LAMBDA,
+	# o lambda guarda-a viva — medido numa sonda em 11/10 —, e cada `Main`
+	# solto (cada volta à tela inicial, cada bloco destas suítes) deixaria uma
+	# narradora a ouvir o jogo e a falar para uma fila que ninguém pinta.
+	# Nada na tela o mostra, e por isso a pergunta é feita aqui.
+	if not _f8_abrir():
+		return
+	var narradora_viva: WeakRef = weakref(_f8_main.narradora)
+	_confere("F8h: a montagem tem uma narradora para seguir",
+		narradora_viva.get_ref() != null, "o Main não a montou")
+	_f8_fechar()
+	_confere("F8h: a narradora morre com o Main que a montou",
+		narradora_viva.get_ref() == null,
+		"continua viva — um sinal do GameState segura-a (um lambda no conectar()?)")
 
 	_f8_terminou = true
 
@@ -4605,9 +4625,14 @@ func _f19_nomes_lidos_por_string() -> void:
 	# `docas_mudaram()`), lidas direto num objeto destipado, que gritam. O Trafego
 	# entra no piso pela razão dos outros dois: um alvo que a varredura não
 	# alcança daria «nenhum problema» a todas as leituras dele.
+	# Medido em 11/10, com a Dona Cida fora do `Main` (`096`): os mesmos 49 —
+	# 15 do Main e 1 da Narradora, que é o `_cida` que o F4 procura no texto
+	# dela. Com a declaração velha, este bloco reprovou «o Main não tem o
+	# método» `_cida`, uma vez: é o nome que muda de dono, outra vez.
 	_confere("F19: e há nomes para conferir (%d: %s)" % [conferidos.size(), por_alvo],
 		conferidos.size() >= 30 and int(por_alvo.get("Main", 0)) > 0
-			and int(por_alvo.get("Dock", 0)) > 0 and int(por_alvo.get("Trafego", 0)) > 0)
+			and int(por_alvo.get("Dock", 0)) > 0 and int(por_alvo.get("Trafego", 0)) > 0
+			and int(por_alvo.get("Narradora", 0)) > 0)
 
 	_f19_terminou = true
 

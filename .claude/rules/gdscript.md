@@ -113,3 +113,11 @@ As do «Estilo de código» do `CLAUDE.md` que são do GDScript. O essencial
   `Main`, do `Dock` ou de um painel declara o receptor em
   `brport_vs/tests/nomes_lidos_por_string.json`, e o F19 do `teste_fumaca`
   exige o nome no alvo (`093`).
+- **⚠️ UM LAMBDA LIGADO A UM SINAL SEGURA VIVO O `RefCounted` ONDE NASCEU.**
+  Medido numa sonda em 11/10: largado o objeto, ele continuava vivo e a ouvir
+  o sinal; ligado por MÉTODO, morria com a última referência e a ligação com
+  ele. Num `Node` o lambda morre com o nó, e por isso o `Main` podia usá-lo.
+  Num objeto do `Main` ligado ao `GameState`, que vive o jogo inteiro, cada
+  `Main` solto deixaria o objeto a ouvir para sempre — sem erro e sem nada na
+  tela. Objeto `RefCounted` liga-se ao autoload por método; o F8h do
+  `teste_fumaca` prova-o na narradora (`096`).

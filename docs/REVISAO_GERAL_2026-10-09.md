@@ -315,6 +315,17 @@ as mesmas asserções; o `medir_transito` igual; seis mutantes, entre eles a
 leitura esquecida no `Main` e a cedência partida no script novo. Seguem a
 narradora da Dona Cida e a fila de painéis.
 
+**M8, segundo PR, em 11/10 (`096`):** a narradora da Dona Cida — as sete
+ligações, os gatilhos, as variantes e as memórias de faixa, de travessia e de
+semana — mudou-se para `scripts/NarradoraDaCida.gd`, um objeto do `Main` que
+se liga aos sinais no mesmo ponto e pela mesma ordem; o `Main.gd` ficou com
+1.163 linhas. A obra pronta liga-se por método, porque um lambda segura vivo
+o `RefCounted` (medido), e a régua da faixa ouve um sinal `falou`. **Prova:**
+as 66 fotos iguais ao byte, com o controle positivo a mudar 17; o JSON do
+simulador e a régua da faixa iguais; as seis suítes com as mesmas asserções,
+mais o F8h; cinco mutantes, e a régua que fechava com zero falas passou a
+recusar. Segue a fila de painéis.
+
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
 **[feito em 10/10 — `088`]** ~~[execução · curta · critério 1]~~ A ferramenta
@@ -446,8 +457,8 @@ gerais que o Bruno pediu e três regras a mais (`mapa`, `plataforma`,
 
 ### M8 — Partir o `Main.gd`
 
-**[execução · longa, três PRs · critério 3]** — **1 de 3 feito em 11/10
-(os camiões, `095`)**
+**[execução · longa, três PRs · critério 3]** — **2 de 3 feitos em 11/10
+(os camiões, `095`; a Dona Cida, `096`)**
 - **O que muda:** extrações, uma por PR: o tráfego dos camiões (o maior
   bloco), a narradora da Dona Cida e a fila de painéis (`_na_vez`, que a `087`
   acabou de alargar).

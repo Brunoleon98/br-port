@@ -3,6 +3,7 @@ paths:
   - "brport_vs/scripts/Narrativa.gd"
   - "brport_vs/scripts/Retratos.gd"
   - "brport_vs/scripts/Main.gd"
+  - "brport_vs/scripts/NarradoraDaCida.gd"
   - "brport_vs/scripts/PainelBoletim.gd"
   - "brport_vs/scripts/PainelDiario.gd"
   - "brport_vs/scripts/PainelMensagens.gd"
@@ -64,8 +65,9 @@ paths:
   **nenhuma linha do projeto as disparava** — um quarto da voz da Dona Cida em
   jogo, mudo. O bloco do fumaça não podia apanhar, porque perguntava *"todo id
   da tabela tem fala?"*, lendo a tabela dos DOIS lados. A pergunta que pega é a
-  inversa, e a sua segunda fonte é o `Main.gd`: a tabela vive na Narrativa e o
-  gatilho no Main, logo não é espelho. **Ao escrever fala nova, escreva o
+  inversa, e a sua segunda fonte é o `NarradoraDaCida.gd` (até à `096`, o
+  `Main.gd`): a tabela vive na Narrativa e o gatilho na narradora, logo não é
+  espelho. **Ao escrever fala nova, escreva o
   gatilho no mesmo commit** — e ao varrer código como texto, corte as linhas de
   COMENTÁRIO antes, senão o próprio comentário que explica a armadilha
   satisfaz a busca.

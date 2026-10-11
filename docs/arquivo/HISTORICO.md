@@ -807,3 +807,8 @@ mais antigas:
 | Fechado | O que ficou, medido |
 |---|---|
 | **Design — as telas narrativas** (04/10, `082`) | As conversas com o balão e a placa de quem fala, balões seguidos e fala regular (**D44**); o fim de fase em duas páginas do diário, com o recibo (**D22**). **Aceite** |
+
+**E, para caber o segundo corte do M8 (`096`),** desceu do estado, onde
+fechava a lista do que fica para depois: *«A cena de fim de Fase 1 já não está
+aqui: existe, em dois tempos, e o balanço FECHA — o menu de pausa reabre-o.»*
+A narração de fim de Fase 1 continua nos sistemas que funcionam (`082`).

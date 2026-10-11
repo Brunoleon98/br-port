@@ -67,8 +67,7 @@ func _rodar() -> void:
 	for modo in MODOS:
 		for semente in SEMENTES:
 			await _uma_partida(String(modo), int(semente))
-	_relatorio()
-	quit(0)
+	quit(0 if _relatorio() else 1)
 
 
 # ── a partida ───────────────────────────────────────────────────────────────
@@ -241,7 +240,7 @@ func _fonte(escrita: Dictionary) -> String:
 	return String(escrita["fonte"])
 
 
-func _relatorio() -> void:
+func _relatorio() -> bool:
 	var total := 0
 	var vistas := 0
 	var por_fonte := {"sistema": 0, "cida": 0}
@@ -324,8 +323,19 @@ func _relatorio() -> void:
 	_por_fala()
 	_tempo_de_faixa()
 	_medir_textos(textos.keys())
+	# ⚠️ E ELA NÃO FECHA COM UMA FONTE A ZERO. Medido em 11/10, no segundo
+	# corte do M8 (`096`): com a sonda de antes — a que sobrescrevia o
+	# `_cida_agora` de um `Main` que já não o tem —, esta régua imprimia o
+	# marcador com 0 ações e 0 falas, e código 0. Numa corrida saudável as
+	# duas fontes escrevem centenas de vezes, e zero não é medida: é a régua
+	# a não conseguir ver (`gerais.md`, o valor impossível).
+	if _acoes.is_empty() or int(por_fonte["sistema"]) == 0 or int(por_fonte["cida"]) == 0:
+		push_error("a régua não viu as duas fontes (%d ações, sistema %d, Dona Cida %d) — a sonda está a ouvir?"
+			% [_acoes.size(), int(por_fonte["sistema"]), int(por_fonte["cida"])])
+		return false
 	print("")
 	print("=== FILA MEDIDA ===")
+	return true
 
 
 # QUANTO TEMPO A FAIXA FICA OCUPADA POR AÇÃO. É a CONSEQUÊNCIA do tempo

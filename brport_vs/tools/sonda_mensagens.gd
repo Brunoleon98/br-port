@@ -12,9 +12,18 @@ extends "res://scripts/Main.gd"
 # para a causa. É a regra do `CLAUDE.md` outra vez: quando uma régua devolve
 # zero em tudo, a primeira pergunta é se ela consegue devolver outra coisa.
 #
-# ⚠️ E ELA NÃO REPLICA ESCOLHA NENHUMA. O `Narrativa.cida(id)` aqui é a MESMA
-# consulta que o código real faz uma linha abaixo, não uma segunda decisão:
-# quem escolheu o `id` foi o jogo, e é esse id que a sonda regista.
+# ⚠️ E A FALA OUVE-SE PELO `falou` DA NARRADORA, e não por herança. Até ao
+# segundo corte do M8 (`096`) esta sonda sobrescrevia o `_cida_agora` do
+# `Main`; a narradora saiu para um script seu, e herdar o `Main` deixou de
+# chegar a ela. A sonda de antes, posta a correr com a narradora fora, nem
+# compilou — o `super(id)` não tem a quem chamar — e a régua imprimiu o
+# marcador com zero ações; sem o `super`, compilaria e nunca seria chamada.
+# É a armadilha do parágrafo acima com outra causa, e a régua passou a
+# recusar uma fonte a zero.
+#
+# ⚠️ E ELA NÃO REPLICA ESCOLHA NENHUMA. O texto vem no próprio sinal, que a
+# narradora emite no instante em que enfileira: quem escolheu o `id` foi o
+# jogo, e é esse id que a sonda regista.
 #
 # ⚠️ E ELA NÃO PODE SER `preload`ADA de um `--script`: este arquivo herda o
 # `Main.gd`, que fala do autoload pelo nome, e compilá-lo antes de a árvore
@@ -28,8 +37,12 @@ func _on_message(text: String, kind: String, assunto: String = "") -> void:
 	super(text, kind, assunto)
 
 
-func _cida_agora(id: String) -> void:
-	var linha := Narrativa.cida(id)
-	if linha != "":
-		registo.append({"texto": linha, "kind": "", "fonte": "cida", "id": id})
-	super(id)
+# ANTES do `super()`: a narradora já existe (é um membro do `Main`, montado
+# com a cena), e as ligações dela aos sinais do jogo só se fazem lá dentro.
+func _ready() -> void:
+	narradora.falou.connect(_registar_fala)
+	super()
+
+
+func _registar_fala(id: String, linha: String) -> void:
+	registo.append({"texto": linha, "kind": "", "fonte": "cida", "id": id})

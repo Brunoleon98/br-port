@@ -160,6 +160,15 @@ guarda.
    em cascata e o F19 reprovou por «alvo sem membros» — verde de graça com
    cara de vermelho. Renomeado em TODO o arquivo, ele compila e o F19 nomeia a
    leitura órfã (`095`). Mutante de nome renomeia o nome, não a linha.
+   ⚠️ **E QUEM SOBRESCREVE O NOME É O TERCEIRO CLIENTE, e o F19 não o vê.**
+   Um nome que muda de dono tem quem o lê por string (o F19), quem o chama
+   direto (grita) e quem o SOBRESCREVE numa subclasse — a sonda da régua da
+   faixa herdava o `Main` e sobrescrevia o `_cida_agora`. Com a narradora
+   fora (`096`), a sonda velha não compilou (o `super()` pede ao pai um nome
+   que ele já não tem) e a régua imprimiu o marcador com zero ações e zero
+   falas, código 0; sem o `super()` compilaria e nunca seria chamada. Ao
+   mudar um método de dono, procure também `extends` do arquivo de onde ele
+   sai.
    **E o defeito pode pegar e o teste passar na mesma.** Aconteceu em 02/09:
    tirar `tests/*` do filtro de export não reprovou nada, porque o teste
    perguntava `contains("tests/*")` e o `scenes/tests/*` que ficou no arquivo
