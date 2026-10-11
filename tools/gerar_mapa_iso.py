@@ -1585,12 +1585,13 @@ MEIOFIO = 0.05
 # é o que sobra dela depois de lá caber o maior camião.
 #
 # A diagonal passa a meia faixa do vértice do caminho — `CORTE_DA_CURVA`, a
-# contar dele ao longo de cada trecho, que é o `corte_da_curva()` do `Main.gd`,
-# e o D13 §7i confere que são o mesmo. Somadas as distâncias às duas bordas de
-# fora, ela fica a `RUA_LARG / 2 + CORTE_DA_CURVA`; a quina da carroçaria
-# fica `(chassi + largura) / 2` para dentro dela; e o chanfro é essa soma,
-# arredondada PARA BAIXO ao centésimo — número que alimenta toda coordenada da
-# rua tem de ser exato (ver o `sum()` da Python 3.12 no `CLAUDE.md`), e
+# contar dele ao longo de cada trecho, que é o `corte_da_curva()` do
+# `TrafegoDeCamioes.gd`, e o D13 §7i confere que são o mesmo. Somadas as
+# distâncias às duas bordas de fora, ela fica a
+# `RUA_LARG / 2 + CORTE_DA_CURVA`; a quina da carroçaria fica
+# `(chassi + largura) / 2` para dentro dela; e o chanfro é essa soma,
+# arredondada PARA BAIXO ao centésimo — número que alimenta toda coordenada
+# da rua tem de ser exato (ver o `sum()` da Python 3.12 no `CLAUDE.md`), e
 # arredondar para baixo é arredondar para o lado do asfalto.
 #
 # O MAIOR CAMIÃO é o porta-contêiner do `blender/brp_porto.py`: chassi 1,96 e
@@ -3661,7 +3662,7 @@ def tabela_ancoras() -> dict:
                            round(prox - RUA_RECUO + RUA_LARG, 3)],
             "asfalto_my": [round(my1 - RUA_LARG, 3), round(my1, 3)],
             "chanfro": round(CHANFRO_COTOVELO, 3),
-            # A diagonal de que o chanfro foi derivado, para o `Main.gd` a
+            # A diagonal de que o chanfro foi derivado, para o jogo a
             # poder conferir contra a dele (D13 §7i).
             "corte_da_curva": round(CORTE_DA_CURVA, 4),
         })
@@ -3684,7 +3685,8 @@ def tabela_ancoras() -> dict:
             "my": [round(meio - 0.6, 3), round(meio + 0.6, 3)],
             # A boca do acesso na faixa do lado da água: o meio dela, na altura
             # do berço. É onde o RETORNO vira (a `entrada` do `ACESSOS_DOCA`
-            # do `Main.gd`); a ida vira à mesma altura na faixa da vila.
+            # do `TrafegoDeCamioes.gd`); a ida vira à mesma altura na faixa da
+            # vila.
             "entrada": [round(faixa_do_caminhao(borda), 3), round(meio, 3)],
         })
 

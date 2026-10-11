@@ -154,6 +154,12 @@ guarda.
    conjunto, que era a que se queria provar, nunca chegou a ser exercida. O
    defeito seguinte teve de mexer em dois pesos ao mesmo tempo, para a soma
    continuar em 100 e só a guarda certa poder reprovar.
+   ⚠️ **E RENOMEAR SÓ A DECLARAÇÃO PARTE O SCRIPT, não a leitura.** Para
+   provar que o F19 apanha um privado renomeado, o primeiro mutante mudou a
+   linha do `var` e deixou os usos: o script deixou de compilar, a suíte caiu
+   em cascata e o F19 reprovou por «alvo sem membros» — verde de graça com
+   cara de vermelho. Renomeado em TODO o arquivo, ele compila e o F19 nomeia a
+   leitura órfã (`095`). Mutante de nome renomeia o nome, não a linha.
    **E o defeito pode pegar e o teste passar na mesma.** Aconteceu em 02/09:
    tirar `tests/*` do filtro de export não reprovou nada, porque o teste
    perguntava `contains("tests/*")` e o `scenes/tests/*` que ficou no arquivo

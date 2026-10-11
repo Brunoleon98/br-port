@@ -7,6 +7,7 @@ paths:
   - "brport_vs/scenes/Main.tscn"
   - "brport_vs/scenes/dock/Dock.tscn"
   - "brport_vs/scripts/PropIso.gd"
+  - "brport_vs/scripts/TrafegoDeCamioes.gd"
   - "brport_vs/art/porto_mapa_ancoras.json"
   - "tools/medir_enquadramento.py"
   - "brport_vs/tools/medir_enquadramento.gd"
@@ -28,7 +29,8 @@ derivada delas.
 - **São DOIS espaços desde 05/09, e a fronteira é `tela()`.** O mapa DESENHA a
   30 num quadro de 1080 e o `viewBox` do SVG entrega 720 — a câmera é o `ZOOM`,
   e o `MEIA_LARG` efetivo é 20. Quem desenha fala DESENHO; a tabela de âncoras,
-  o `Main.tscn`, o `Main.gd`, o manifest BRP e o teste de design falam TELA.
+  o `Main.tscn`, o `Main.gd`, o trânsito dos camiões (`TrafegoDeCamioes.gd`,
+  `095`), o manifest BRP e o teste de design falam TELA.
   ⚠️ **E A TEXTURA JÁ NÃO TEM O TAMANHO DO ESPAÇO TELA.** Os quatro SVG de mapa
   declaram `width="720"` sobre `viewBox` de 1080, e o importador rasteriza pelo
   `width`: até 14/09, com `svg/scale=1.0`, o desenho existia a 1080 e chegava à

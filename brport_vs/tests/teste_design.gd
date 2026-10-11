@@ -58,7 +58,8 @@ const TOLERANCIA_PX := 2.0
 # contra `get_used_rect()`, nunca contra o quadro, que é igual em todos os
 # props e não sabe nada sobre nenhum.
 func _desenho_dos_caminhoes(tela: Control) -> Rect2:
-	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var trafego = tela.trafego
+	var consts: Dictionary = trafego.get_script().get_script_constant_map()
 	var uniao := Rect2()
 	var primeiro := true
 	for tex in _texturas_dos_caminhoes(consts):
@@ -68,10 +69,10 @@ func _desenho_dos_caminhoes(tela: Control) -> Rect2:
 	return uniao
 
 
-## Todas as texturas de camião da tabela do `Main.gd`: motivo × empresa ×
-## silhueta. Um lugar só desde que a tabela ganhou a EMPRESA (27/09): quatro
-## sítios deste arquivo a percorrerem-na à mão eram quatro chances de um deles
-## ficar a olhar só para a empresa 0.
+## Todas as texturas de camião da tabela do `TrafegoDeCamioes.gd`: motivo ×
+## empresa × silhueta. Um lugar só desde que a tabela ganhou a EMPRESA (27/09):
+## quatro sítios deste arquivo a percorrerem-na à mão eram quatro chances de um
+## deles ficar a olhar só para a empresa 0.
 func _texturas_dos_caminhoes(consts: Dictionary) -> Array:
 	var out: Array = []
 	for motivo in (consts["CAMINHOES"] as Dictionary).values():
@@ -1688,21 +1689,23 @@ func _d12_toque_na_parcela() -> void:
 #   4. não se reordenar, e passar por cima de quem devia tapá-lo.
 #
 # O asfalto NÃO é repetido aqui: sai das faixas que o gerador do mapa publica,
-# a mesma fonte que o D2 usa. Nem os pontos da rota — saem do `Main.gd`.
+# a mesma fonte que o D2 usa. Nem os pontos da rota — saem do
+# `TrafegoDeCamioes.gd`.
 func _d13_travessia_do_caminhao() -> void:
 	var tela: Control = _main
 	var cenario: Node = tela.get_node("MapaWrap/Cenario")
 	var pr: Dictionary = _ancoras["projecao"]
 	var alt := float(pr["alt_cais"])
-	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var trafego = tela.trafego
+	var consts: Dictionary = trafego.get_script().get_script_constant_map()
 	var rota: Array = consts["ROTA_ESTRADA"]
 	var origens: Array = consts["CAMINHAO_ORIGENS"]
 	var caminhoes: Dictionary = consts["CAMINHOES"]
 	var desenho := _desenho_dos_caminhoes(tela)
 
-	# Zero: a projeção que o `Main.gd` usa para andar é a MESMA do mapa. Ele
-	# repete `MEIA_LARG`/`MEIA_ALT` porque roda dentro do jogo e não lê o JSON;
-	# repetição sem esta asserção é o contrato a divergir calado.
+	# Zero: a projeção que o `TrafegoDeCamioes.gd` usa para andar é a MESMA do
+	# mapa. Ele repete `MEIA_LARG`/`MEIA_ALT` porque roda dentro do jogo e não
+	# lê o JSON; repetição sem esta asserção é o contrato a divergir calado.
 	_confere("o caminhão anda na projeção do mapa (%.0f x %.0f)"
 			% [float(consts["MEIA_LARG"]), float(consts["MEIA_ALT"])],
 		is_equal_approx(float(consts["MEIA_LARG"]), float(pr["meia_larg"]))
@@ -1767,7 +1770,7 @@ func _d13_travessia_do_caminhao() -> void:
 	_confere("há um nó Caminhao por origem declarada (%d)" % origens.size(),
 		cenario.get_node_or_null("Caminhao%d" % origens.size()) == null
 			and cenario.get_node_or_null("Caminhao0") != null,
-		"a cena e o `CAMINHAO_ORIGENS` do Main.gd não contam o mesmo")
+		"a cena e o `CAMINHAO_ORIGENS` do TrafegoDeCamioes.gd não contam o mesmo")
 
 	for i in range(origens.size()):
 		var caminhao := cenario.get_node_or_null("Caminhao%d" % i) as Control
@@ -1836,10 +1839,10 @@ func _d13_travessia_do_caminhao() -> void:
 	# não reprovou quando se pôs a mesma silhueta nos oito trechos: o teste
 	# estava a concordar consigo próprio.
 	#
-	# ⚠️ E ELA PERCORRE `GameState.MOTIVOS`, não a tabela do `Main.gd`. É a
-	# mesma diferença do D17: perguntar à tabela da arte se ela está completa é
-	# ela a concordar consigo própria; quem manda é o que o JOGO consegue
-	# sortear. Um motivo novo sem camião reprova aqui.
+	# ⚠️ E ELA PERCORRE `GameState.MOTIVOS`, não a tabela do
+	# `TrafegoDeCamioes.gd`. É a mesma diferença do D17: perguntar à tabela da
+	# arte se ela está completa é ela a concordar consigo própria; quem manda é
+	# o que o JOGO consegue sortear. Um motivo novo sem camião reprova aqui.
 	#
 	# ⚠️ E POR EMPRESA (27/09, `070`): cada serviço tem duas transportadoras, e
 	# a silhueta tem de sair da linha da empresa pedida — nunca da outra, que
@@ -1851,7 +1854,7 @@ func _d13_travessia_do_caminhao() -> void:
 	for motivo in GS.MOTIVOS:
 		var id := String(motivo)
 		_confere("o motivo %s tem camião" % id, caminhoes.has(id),
-			"`CAMINHOES` do Main.gd conhece %s" % [caminhoes.keys()])
+			"`CAMINHOES` do TrafegoDeCamioes.gd conhece %s" % [caminhoes.keys()])
 		if not caminhoes.has(id):
 			continue
 		var empresas: Array = caminhoes[id]
@@ -1861,7 +1864,7 @@ func _d13_travessia_do_caminhao() -> void:
 				var de: Vector2 = rota[i]
 				var para: Vector2 = rota[i + 1]
 				var anda_em_mx: bool = abs(para.x - de.x) > 0.01
-				var usada: Texture2D = tela.call("silhueta_do_trecho", de, para, id, e)
+				var usada: Texture2D = trafego.call("silhueta_do_trecho", de, para, id, e)
 				var caminho: String = usada.resource_path
 				vistas[caminho] = true
 				if anda_em_mx != caminho.ends_with("_mx.png") and errado == "":
@@ -1897,7 +1900,7 @@ func _d13_travessia_do_caminhao() -> void:
 	var pos_antes := no0.position
 	var indice_antes := no0.get_index()
 	no0.position = no0.position + _tela_da_rota(rota[rota.size() - 1], origem0, pr)
-	tela.call("_ordenar_por_profundidade", no0)
+	trafego.call("_ordenar_por_profundidade", no0)
 	var indice_depois := no0.get_index()
 	_confere("no fim da travessia ele já mudou de ordem entre os irmãos",
 		indice_depois > indice_antes,
@@ -1912,7 +1915,7 @@ func _d13_travessia_do_caminhao() -> void:
 	_confere("e no lugar certo da fila de profundidade", erro_ordem == "", erro_ordem)
 
 	no0.position = pos_antes
-	tela.call("_ordenar_por_profundidade", no0)
+	trafego.call("_ordenar_por_profundidade", no0)
 
 	# ── 6 ── O DESVIO PARA O BERÇO (07/09).
 	#
@@ -1933,9 +1936,9 @@ func _d13_travessia_do_caminhao() -> void:
 	_confere("há um acesso publicado por vaga de doca (%d)" % vagas,
 		acessos_mapa.size() == vagas,
 		"o mapa publica %d" % acessos_mapa.size())
-	_confere("e o Main.gd conhece os mesmos %d" % acessos_mapa.size(),
+	_confere("e o TrafegoDeCamioes.gd conhece os mesmos %d" % acessos_mapa.size(),
 		acessos_jogo.size() == acessos_mapa.size(),
-		"o Main.gd tem %d" % acessos_jogo.size())
+		"o TrafegoDeCamioes.gd tem %d" % acessos_jogo.size())
 
 	var erro_acesso := ""
 	for i in range(mini(acessos_jogo.size(), acessos_mapa.size())):
@@ -1948,7 +1951,7 @@ func _d13_travessia_do_caminhao() -> void:
 
 		# a) A entrada é a MESMA que o gerador publica. Ela é o meio do asfalto
 		#    do degrau na altura do berço — quem mexer no `RUA_RECUO` move-a, e
-		#    sem isto a cópia do `Main.gd` ficava no sítio antigo.
+		#    sem isto a cópia do jogo ficava no sítio antigo.
 		if entrada.distance_to(Vector2(float(pub[0]), float(pub[1]))) > 0.01 \
 				and erro_acesso == "":
 			erro_acesso = "a entrada da doca %d está em (%.2f, %.2f) e o mapa publica (%.2f, %.2f)" \
@@ -2047,24 +2050,24 @@ func _d13_travessia_do_caminhao() -> void:
 	doca0["boat"] = null
 	doca0["worker_id"] = null
 	_confere("doca vazia não chama camião nenhum",
-		int(tela.call("_visita_da_doca", 0)) == -1)
+		int(trafego.call("_visita_da_doca", 0)) == -1)
 
 	doca0["boat"] = {"id": 4242, "motivo": "pescado", "classe": "pesqueiro"}
 	_confere("barco sem trabalhador também não",
-		int(tela.call("_visita_da_doca", 0)) == -1,
+		int(trafego.call("_visita_da_doca", 0)) == -1,
 		"o pedido é «ao ALOCAR um navio», e sem operário o porto não está a operar")
 
 	doca0["worker_id"] = 1
 	_confere("barco COM trabalhador chama o camião, pelo id do barco",
-		int(tela.call("_visita_da_doca", 0)) == 4242,
-		"devolveu %d" % int(tela.call("_visita_da_doca", 0)))
+		int(trafego.call("_visita_da_doca", 0)) == 4242,
+		"devolveu %d" % int(trafego.call("_visita_da_doca", 0)))
 
 	# E o id tem de ser o do BARCO: é ele que distingue um navio que sai de
 	# outro que chega no mesmo avanço de dia.
 	doca0["boat"] = {"id": 4243, "motivo": "granel", "classe": "cargueiro"}
 	_confere("e troca de barco na mesma doca é uma visita nova",
-		int(tela.call("_visita_da_doca", 0)) == 4243,
-		"devolveu %d" % int(tela.call("_visita_da_doca", 0)))
+		int(trafego.call("_visita_da_doca", 0)) == 4243,
+		"devolveu %d" % int(trafego.call("_visita_da_doca", 0)))
 
 	doca0["boat"] = barco_antes
 	doca0["worker_id"] = trab_antes
@@ -2123,17 +2126,18 @@ func _d13_travessia_do_caminhao() -> void:
 # Até 23/09 o chanfro era meia rua (0,9) e o porta-contêiner saía 0,207 dele,
 # por cima do meio-fio e do passeio: a `052` registou-o e deixou-o por decidir.
 #
-# ⚠️ TRÊS FONTES, e nenhuma é espelho de outra. O caminho sai do `Main.gd`
-# (`trechos_de()`), o chanfro da tabela de âncoras (o gerador), e o tamanho de
-# cada camião do `D35_CHASSI`, que o copia do kit do Blender. O gerador tem a
-# sua própria cópia do maior camião para DERIVAR o chanfro; se ela ficar menor
-# do que o camião de verdade, é aqui que reprova.
+# ⚠️ TRÊS FONTES, e nenhuma é espelho de outra. O caminho sai do
+# `TrafegoDeCamioes.gd` (`trechos_de()`), o chanfro da tabela de âncoras (o
+# gerador), e o tamanho de cada camião do `D35_CHASSI`, que o copia do kit do
+# Blender. O gerador tem a sua própria cópia do maior camião para DERIVAR o
+# chanfro; se ela ficar menor do que o camião de verdade, é aqui que reprova.
 #
 # Mede-se a pegada do chassi, como o D35: o que o olho lê numa curva é outra
 # pergunta, e é do A5.
 const D13_AMOSTRAS_DIAGONAL := 8
 
 func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array) -> void:
+	var trafego = tela.trafego
 	# As DUAS quinas salientes de cada cotovelo, com o sentido em que o asfalto
 	# fica: a de `(mx máx, my mín)` tem o asfalto a `-mx` e a `+my`, e a de
 	# `(mx mín, my máx)` ao contrário. É o polígono do `cotovelo_pontos()`.
@@ -2148,7 +2152,7 @@ func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array)
 	var pior := -INF
 	var onde := ""
 	for rota in rotas:
-		for tr in tela.call("trechos_de", rota):
+		for tr in trafego.call("trechos_de", rota):
 			var a: Vector2 = tr[0]
 			var b: Vector2 = tr[1]
 			if absf(b.x - a.x) < 0.01 or absf(b.y - a.y) < 0.01:
@@ -2205,6 +2209,7 @@ func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array)
 # relação é entre as DUAS.
 func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 		regioes: Array, desenho: Rect2, visivel: Rect2, pr: Dictionary) -> void:
+	var trafego = tela.trafego
 	var retorno: Array = consts["ROTA_RETORNO"]
 	var origens: Array = consts["CAMINHAO_RETORNO_ORIGENS"]
 	var caminhoes: Dictionary = consts["CAMINHOES"]
@@ -2288,20 +2293,21 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 	# perguntava. Pergunta-se ao caminho que o camião percorre, com as
 	# diagonais das curvas abertas.
 	var cruza := ""
-	for a in tela.call("trechos_de", rota):
-		for b in tela.call("trechos_de", retorno):
+	for a in trafego.call("trechos_de", rota):
+		for b in trafego.call("trechos_de", retorno):
 			if _segmentos_cruzam(a[0], a[1], b[0], b[1]) and cruza == "":
 				cruza = "a ida em %s -> %s cruza o retorno em %s -> %s" % [a[0], a[1], b[0], b[1]]
 	_confere("a ida e o retorno não se cruzam em ponto nenhum", cruza == "", cruza)
 
-	# ── i ── a rua que o `Main.gd` repete é a do mapa, e a diagonal da curva
+	# ── i ── a rua que o trânsito repete é a do mapa, e a diagonal da curva
 	# aberta é a de que o gerador derivou o chanfro. Até 23/09 era o chanfro
 	# que o `Main.gd` repetia, para derivar dele a diagonal; a ordem inverteu-se
 	# (`docs/decisoes/053`), e o que se confere é o que atravessa a fronteira.
 	var asf0: Array = _faixa_de(0.0)["asfalto"]
-	_confere("a largura da rua no Main.gd é a do mapa (%.2f)" % float(consts["RUA_LARG"]),
+	_confere("a largura da rua no TrafegoDeCamioes.gd é a do mapa (%.2f)"
+			% float(consts["RUA_LARG"]),
 		absf(float(consts["RUA_LARG"]) - (float(asf0[1]) - float(asf0[0]))) < 0.01)
-	var corte: float = tela.call("corte_da_curva")
+	var corte: float = trafego.call("corte_da_curva")
 	var cortes_do_mapa: Array = []
 	for c in cotovelos:
 		cortes_do_mapa.append(c.get("corte_da_curva", "(nada)"))
@@ -2347,7 +2353,7 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 	_confere("há um nó CaminhaoRetorno por origem declarada (%d)" % origens.size(),
 		cenario.get_node_or_null("CaminhaoRetorno%d" % origens.size()) == null
 			and cenario.get_node_or_null("CaminhaoRetorno0") != null,
-		"a cena e o `CAMINHAO_RETORNO_ORIGENS` do Main.gd não contam o mesmo")
+		"a cena e o `CAMINHAO_RETORNO_ORIGENS` do TrafegoDeCamioes.gd não contam o mesmo")
 	for j in range(origens.size()):
 		var no := cenario.get_node_or_null("CaminhaoRetorno%d" % j) as Control
 		if no == null:
@@ -2405,7 +2411,7 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 				var de: Vector2 = retorno[i]
 				var para: Vector2 = retorno[i + 1]
 				var em_mx: bool = abs(para.x - de.x) > 0.01
-				var usada: Texture2D = tela.call("silhueta_do_trecho", de, para, id, e)
+				var usada: Texture2D = trafego.call("silhueta_do_trecho", de, para, id, e)
 				var arquivo := usada.resource_path.get_file()
 				vistas[arquivo] = true
 				var pede := "caminhao_%s%s_retorno%s.png" \
@@ -2442,6 +2448,7 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 # suposta. As três docas, e não só a que o porto em ruínas tem: as outras duas
 # entram como fixture e saem no fim.
 func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
+	var trafego = tela.trafego
 	var GS: Node = root.get_node("GameState")
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
@@ -2474,8 +2481,8 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 		var pos := no.position
 		var tex := no.texture
 		var indice := no.get_index()
-		var carga := String((tela.get("_carga_na_estrada") as Array)[i])
-		var empresa := int((tela.get("_empresa_na_estrada") as Array)[i])
+		var carga := String((trafego.get("_carga_na_estrada") as Array)[i])
+		var empresa := int((trafego.get("_empresa_na_estrada") as Array)[i])
 		var par: Dictionary = caminhoes[carga][empresa]
 		var doca: Dictionary = GS.docks[i]
 		var id := 4300 + i
@@ -2483,8 +2490,8 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 		doca["worker_id"] = 1
 
 		var chegada := _andar_o_tween(no, func() -> void:
-			tela.call("_no_acesso", i, 5.0))
-		var visita := int((tela.get("_visita_do_berco") as Array)[i])
+			trafego.call("_no_acesso", i, 5.0))
+		var visita := int((trafego.get("_visita_do_berco") as Array)[i])
 		# O ESTADO TEM DE TER SIDO ALCANÇADO, e prova-se pela consequência: é o
 		# fim do tween da chegada que marca a visita (`043`, `044`).
 		if (int(chegada["tweens"]) != 1 or not chegada["acabou"] or visita != id) \
@@ -2509,9 +2516,9 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 		# a outra ponta: medido, tirar a linha que a escreve passava tudo.
 		var marcada := [false]
 		var saida := _andar_o_tween(no, func() -> void:
-			tela.call("_docas_mudaram")
-			marcada[0] = bool((tela.get("_saindo_do_berco") as Array)[i]), 2)
-		var ainda: bool = bool((tela.get("_saindo_do_berco") as Array)[i])
+			trafego.docas_mudaram()
+			marcada[0] = bool((trafego.get("_saindo_do_berco") as Array)[i]), 2)
+		var ainda: bool = bool((trafego.get("_saindo_do_berco") as Array)[i])
 		if (not marcada[0] or ainda) and marca == "":
 			marca = "doca %d: marcada ao sair=%s, ainda marcada depois de voltar à faixa=%s" \
 				% [i + 1, str(marcada[0]), str(ainda)]
@@ -2555,27 +2562,27 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 		var pos_r := no_r.position
 		var tex_r := no_r.texture
 		var indice_r := no_r.get_index()
-		var carga_r := String((tela.get("_carga_do_retorno") as Array)[0])
-		var empresa_r := int((tela.get("_empresa_do_retorno") as Array)[0])
+		var carga_r := String((trafego.get("_carga_do_retorno") as Array)[0])
+		var empresa_r := int((trafego.get("_empresa_do_retorno") as Array)[0])
 		var par_r: Dictionary = caminhoes[carga_r][empresa_r]
 		var doca_r: Dictionary = GS.docks[d]
 		var id_r := 4400 + d
 		doca_r["boat"] = {"id": id_r, "motivo": carga_r, "classe": "pesqueiro"}
 		doca_r["worker_id"] = 1
 		var chegou := _andar_o_tween(no_r, func() -> void:
-			tela.call("_retorno_na_boca", 0, d, 5.0))
+			trafego.call("_retorno_na_boca", 0, d, 5.0))
 		if (int(chegou["tweens"]) != 1 or not chegou["acabou"]
-				or int((tela.get("_visita_do_berco") as Array)[d]) != id_r) and r_sem == "":
+				or int((trafego.get("_visita_do_berco") as Array)[d]) != id_r) and r_sem == "":
 			r_sem = "berço %d: %d tween(s), acabou=%s" \
 				% [d + 1, int(chegou["tweens"]), str(chegou["acabou"])]
 		var encostado_r := no_r.texture
 		doca_r["boat"] = null
 		var marcada_r := [false]
 		var saiu := _andar_o_tween(no_r, func() -> void:
-			tela.call("_docas_mudaram")
-			marcada_r[0] = bool((tela.get("_saindo_do_berco") as Array)[d]), 2)
+			trafego.docas_mudaram()
+			marcada_r[0] = bool((trafego.get("_saindo_do_berco") as Array)[d]), 2)
 		var vistas_r: Array = saiu["vistas"]
-		var ainda_r: bool = bool((tela.get("_saindo_do_berco") as Array)[d])
+		var ainda_r: bool = bool((trafego.get("_saindo_do_berco") as Array)[d])
 		if r_ne == "":
 			if encostado_r != par_r["mx_retorno"]:
 				r_ne = "berço %d: encosta com %s" % [d + 1, _arquivo(encostado_r)]
@@ -2711,7 +2718,7 @@ func _arquivos(texs: Array) -> String:
 	return ", ".join(nomes)
 
 
-# O mesmo `tela_da_rota()` do `Main.gd`, mas com a projeção vinda das ÂNCORAS.
+# O mesmo `tela_da_rota()` do trânsito, mas com a projeção vinda das ÂNCORAS.
 # Escrito à mão de propósito: chamar o do jogo faria o teste medir a rota com a
 # mesma conta que quer conferir, e uma projeção errada passaria dos dois lados.
 func _tela_da_rota(ponto: Vector2, origem: Vector2, pr: Dictionary) -> Vector2:
@@ -3024,10 +3031,10 @@ func _contraste(a: Color, b: Color) -> float:
 # importador é uma resposta de ontem.
 #
 # POR ONDE ELE ANDA é a `ROTA_ESTRADA`, e isso não é preguiça: ela é uma
-# constante ESCRITA À MÃO no `Main.gd` e o mapa sai do gerador, logo as duas
-# pontas da asserção têm fontes independentes. O D13 já percorre esta rota
-# contra os RETÂNGULOS publicados; aqui ela é percorrida contra o DESENHO, que
-# é a pergunta que os retângulos não sabem responder.
+# constante ESCRITA À MÃO no `TrafegoDeCamioes.gd` e o mapa sai do gerador,
+# logo as duas pontas da asserção têm fontes independentes. O D13 já percorre
+# esta rota contra os RETÂNGULOS publicados; aqui ela é percorrida contra o
+# DESENHO, que é a pergunta que os retângulos não sabem responder.
 #
 # ⚠️ E A PERGUNTA É «NÃO É CALÇADA», não «é asfalto». A rodagem leva pintura —
 # linha central, passadeira —, e exigir o cinzento do asfalto reprovaria uma
@@ -3195,7 +3202,8 @@ func _d20_a_rua_no_desenho() -> void:
 	for nome in nomes_areia:
 		areias.append(Color(str(cores_areia[nome])))
 
-	var consts: Dictionary = (_main.get_script() as GDScript).get_script_constant_map()
+	var trafego = _main.trafego
+	var consts: Dictionary = (trafego.get_script() as GDScript).get_script_constant_map()
 	# As DUAS rotas, desde a mão dupla (23/09): a faixa de dentro passa mais
 	# perto da calçada da vila, e é ela que mais tem a perder com uma cor
 	# errada no mapa.
@@ -3204,11 +3212,11 @@ func _d20_a_rua_no_desenho() -> void:
 	# Com a mão direita (23/09) cada rota faz uma curva ABERTA por cotovelo, e
 	# o vértice dela cai em cima da linha do chanfro: foi este bloco que o
 	# apanhou, com 33 px de calçada na janela. O camião corta essa quina por
-	# uma diagonal (`trechos_de()` no `Main.gd`), e é ela que se amostra —
+	# uma diagonal (`trechos_de()` do trânsito), e é ela que se amostra —
 	# amostrar a escada conferia um caminho que ninguém percorre.
 	var trechos: Array = []
 	for rota in [consts["ROTA_ESTRADA"], consts["ROTA_RETORNO"]]:
-		for tr in _main.call("trechos_de", rota):
+		for tr in trafego.call("trechos_de", rota):
 			trechos.append([tr[0], tr[1]])
 
 	for caminho in MAPAS_DA_RUA:
@@ -5156,7 +5164,8 @@ func _d35_transito() -> void:
 		tweens_antes[tw] = true
 	var tela: Control = load(CENA).instantiate()
 	root.add_child(tela)
-	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var trafego = tela.trafego
+	var consts: Dictionary = trafego.get_script().get_script_constant_map()
 	var acessos: Array = consts["ACESSOS_DOCA"]
 	while GS.docks.size() < acessos.size():
 		GS.docks.append({"boat": null, "worker_id": null})
@@ -5171,8 +5180,8 @@ func _d35_transito() -> void:
 	for tw in get_processed_tweens():
 		if not tweens_antes.has(tw):
 			tw.kill()
-	tela.call("_animar_caminhoes")
-	tela.call("_animar_retorno")
+	trafego.animar_caminhoes()
+	trafego.animar_retorno()
 
 	var cenario := tela.get_node("MapaWrap/Cenario")
 	var visivel := Rect2(Vector2.ZERO, (tela.get_node("MapaWrap") as Control).size)
@@ -5240,7 +5249,7 @@ func _d35_transito() -> void:
 					d["boat"] = {"id": id_barco, "classe": "pesqueiro",
 						"motivo": motivos[rng.randi() % motivos.size()]}
 					d["worker_id"] = 1
-			tela.call("_docas_mudaram")
+			trafego.docas_mudaram()
 			prox_turno = t + rng.randf_range(D35_TURNO.x, D35_TURNO.y)
 		for tw in get_processed_tweens():
 			if tw.is_running() and not tweens_antes.has(tw):
@@ -5275,7 +5284,7 @@ func _d35_transito() -> void:
 				if p.distance_to(acessos[d]["paragem"]) < 0.05:
 					berco = d
 			if berco >= 0 and no_berco[k] < 0 \
-					and int((tela.get("_visita_do_berco") as Array)[berco]) >= 0:
+					and int((trafego.get("_visita_do_berco") as Array)[berco]) >= 0:
 				encostos[nos[k][1]] += 1
 				var navio: String = GS.docks[berco]["boat"]["motivo"]
 				if q[0] != navio and cargas == "":
@@ -5392,7 +5401,8 @@ func _d35_previsao_das_curvas() -> void:
 	for tw in get_processed_tweens():
 		if not tweens_antes.has(tw):
 			tw.kill()
-	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var trafego = tela.trafego
+	var consts: Dictionary = trafego.get_script().get_script_constant_map()
 	var cenario := tela.get_node("MapaWrap/Cenario")
 	var pr: Dictionary = _ancoras["projecao"]
 	var b_base: Vector2 = (cenario.get_node("CaminhaoRetorno0") as Control).position
@@ -5432,8 +5442,8 @@ func _d35_previsao_das_curvas() -> void:
 				u -= 0.1
 			casos.append([Vector2(x, entrada.y), futuro + ret.slice(k_boca), d])
 			x -= 0.2
-	var ocupante: Array = tela.get("_ocupante_do_berco")
-	var saindo: Array = tela.get("_saindo_do_berco")
+	var ocupante: Array = trafego.get("_ocupante_do_berco")
+	var saindo: Array = trafego.get("_saindo_do_berco")
 	# E QUEM PERGUNTA também tem dois momentos: o arranque, no topo, e a saída
 	# de um berço, que é a pergunta que o jogo faz com o `s` da virada menos a
 	# ré. Só com os dois lados a sair é que um retorno a meio da ré encontra a
@@ -5448,7 +5458,7 @@ func _d35_previsao_das_curvas() -> void:
 		while u > virada.x:
 			re.append([Vector2(u, virada.y), "mx"])
 			u -= 0.1
-		var s_virada: float = tela.call("s_na_rota", virada, consts["ROTA_ESTRADA"])
+		var s_virada: float = trafego.call("s_na_rota", virada, consts["ROTA_ESTRADA"])
 		perguntas.append([s_virada - (paragem.x - virada.x), re + ida.slice(k_virada), d])
 	for pergunta in perguntas:
 		for caso in casos:
@@ -5461,8 +5471,8 @@ func _d35_previsao_das_curvas() -> void:
 				saindo[d] = true
 			# A MESMA pergunta que o jogo faz: `_pode_arrancar()` no topo e
 			# `_pode_sair()` no berço — boca e curvas juntas, como lá.
-			var livre: bool = tela.call("_pode_arrancar", a_ida, true) if int(pergunta[2]) < 0 \
-				else tela.call("_pode_sair", int(pergunta[2]), a_ida, true)
+			var livre: bool = trafego.call("_pode_arrancar", a_ida, true) if int(pergunta[2]) < 0 \
+				else trafego.call("_pode_sair", int(pergunta[2]), a_ida, true)
 			if d >= 0:
 				ocupante[d] = null
 				saindo[d] = false
@@ -5538,8 +5548,8 @@ func _d35_previsao_das_curvas() -> void:
 		for guardado in fora:
 			(guardado[0] as Control).position = guardado[1]
 		fora = _tirar_da_rua(tela, cenario, consts)
-		tela.call(par[1], 0, ponta, 5.0)
-		tela.call(par[1], 1, ponta, 5.0)
+		trafego.call(par[1], 0, ponta, 5.0)
+		trafego.call(par[1], 1, ponta, 5.0)
 		var alt := float(_ancoras["projecao"]["alt_cais"])
 		var n_na_ponta := 0
 		for k in range(2):
@@ -5576,10 +5586,11 @@ func _d35_indice(amostras: Array, p: Vector2) -> int:
 ## eixo: `[ponto, eixo da silhueta]`. O caminho pergunta-se ao jogo (é o que o
 ## camião anda); o tempo mede-se aqui, pela projeção das âncoras.
 func _d35_no_tempo(tela: Control, rota: Array, pr: Dictionary) -> Array:
+	var trafego = tela.trafego
 	var unidade := Vector2(float(pr["meia_larg"]), float(pr["meia_alt"])).length()
 	var out: Array = []
 	var resto := 0.0
-	for tr in tela.call("trechos_de", rota):
+	for tr in trafego.call("trechos_de", rota):
 		var a: Vector2 = tr[0]
 		var b: Vector2 = tr[1]
 		var k: int = tr[2]
@@ -6715,7 +6726,8 @@ func _d40_ida_ao_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 	load("res://tools/estado_da_bancada.gd").guindaste_intermediario(GS)
 	var tela: Control = load(CENA).instantiate()
 	root.add_child(tela)
-	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var trafego = tela.trafego
+	var consts: Dictionary = trafego.get_script().get_script_constant_map()
 	var acessos: Array = consts["ACESSOS_DOCA"]
 	while GS.docks.size() < acessos.size():
 		GS.docks.append({"boat": null, "worker_id": null})
@@ -6747,13 +6759,13 @@ func _d40_ida_ao_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 	# avisado pelo `_encostou()`, como no fim de uma manobra.
 	var cenario := tela.get_node("MapaWrap/Cenario")
 	var caminhao := cenario.get_node("Caminhao0") as TextureRect
-	var base: Vector2 = (tela.get("_base_do_caminhao") as Array)[0]
+	var base: Vector2 = (trafego.get("_base_do_caminhao") as Array)[0]
 	var origem: Vector2 = (consts["CAMINHAO_ORIGENS"] as Array)[0]
 	var paragem: Vector2 = acessos[0]["paragem"]
-	caminhao.position = base + tela.tela_da_rota(paragem, origem)
+	caminhao.position = base + trafego.tela_da_rota(paragem, origem)
 	caminhao.texture = consts["CAMINHOES"]["armazenagem"][0]["mx_retorno"]
-	(tela.get("_ocupante_do_berco") as Array)[0] = caminhao
-	tela.call("_encostou", 0, int(barco["id"]))
+	(trafego.get("_ocupante_do_berco") as Array)[0] = caminhao
+	trafego.call("_encostou", 0, int(barco["id"]))
 	var tw0 = doca.get("_tw_trabalho")
 	var anda: bool = tw0 is Tween and (tw0 as Tween).is_valid()
 	_confere("D40: com o camião encostado a doca sabe dele e ela anda",
@@ -6769,14 +6781,14 @@ func _d40_ida_ao_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 	for motivo in ["armazenagem", "granel"]:
 		for e in range((consts["CAMINHOES"][motivo] as Array).size()):
 			caminhao.texture = consts["CAMINHOES"][motivo][e]["mx_retorno"]
-			doca.camiao_no_berco(tela.portas_do_camiao(caminhao) - doca.global_position)
+			doca.camiao_no_berco(trafego.portas_do_camiao(caminhao) - doca.global_position)
 			var c: Vector2 = doca.get("_caminho_ida")
 			var g := rad_to_deg(absf(c.normalized().angle_to(eixo)))
 			if g > pior_graus:
 				pior_graus = g
 				qual_graus = "%s, empresa %d, %.0f px" % [motivo, e, c.length()]
 	caminhao.texture = consts["CAMINHOES"]["armazenagem"][0]["mx_retorno"]
-	doca.camiao_no_berco(tela.portas_do_camiao(caminhao) - doca.global_position)
+	doca.camiao_no_berco(trafego.portas_do_camiao(caminhao) - doca.global_position)
 	tw0 = doca.get("_tw_trabalho")
 	anda = tw0 is Tween and (tw0 as Tween).is_valid()
 	caminho = doca.get("_caminho_ida")
@@ -6860,7 +6872,8 @@ func _d40_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 	var estruturas_antes: Array = GS.estruturas.duplicate()
 	var tela: Control = load(CENA).instantiate()
 	root.add_child(tela)
-	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var trafego = tela.trafego
+	var consts: Dictionary = trafego.get_script().get_script_constant_map()
 	var acessos: Array = consts["ACESSOS_DOCA"]
 	var cenario := tela.get_node("MapaWrap/Cenario")
 	var quadros: Dictionary = k["QUADROS_TRABALHADOR"]
@@ -6888,12 +6901,12 @@ func _d40_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 				if not tweens_antes.has(tw):
 					tw.kill()
 			var caminhao := cenario.get_node("Caminhao0") as TextureRect
-			var base: Vector2 = (tela.get("_base_do_caminhao") as Array)[0]
+			var base: Vector2 = (trafego.get("_base_do_caminhao") as Array)[0]
 			var origem: Vector2 = (consts["CAMINHAO_ORIGENS"] as Array)[0]
-			caminhao.position = base + tela.tela_da_rota(acessos[d]["paragem"], origem)
+			caminhao.position = base + trafego.tela_da_rota(acessos[d]["paragem"], origem)
 			caminhao.texture = consts["CAMINHOES"]["armazenagem"][0]["mx_retorno"]
-			(tela.get("_ocupante_do_berco") as Array)[d] = caminhao
-			tela.call("_encostou", d, int(barco["id"]))
+			(trafego.get("_ocupante_do_berco") as Array)[d] = caminhao
+			trafego.call("_encostou", d, int(barco["id"]))
 			var doca: Control = tela.get_node("MapaWrap/Docas/Doca%d" % d)
 			if doca.get("_camiao") == null:
 				continue
@@ -6908,8 +6921,8 @@ func _d40_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 				if int(n[0]) > pior:
 					pior = int(n[0])
 					onde = "doca %d, %s, %d/20 do caminho: %s" % [d, estado[0], i, n[1]]
-			(tela.get("_ocupante_do_berco") as Array)[d] = null
-			(tela.get("_visita_do_berco") as Array)[d] = -1
+			(trafego.get("_ocupante_do_berco") as Array)[d] = null
+			(trafego.get("_visita_do_berco") as Array)[d] = -1
 	_confere("D40: percorreu as três docas nos dois estados (%d)" % docas_vistas,
 		docas_vistas == 2 * acessos.size())
 	_confere("D40: ele não se pinta por cima de prop do cenário que lhe está à frente (%d px; %s)"
@@ -7870,7 +7883,8 @@ func _d42_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 	GS.estruturas = ["armazem", "patio", "guindaste", "cais"]
 	var tela: Control = load(CENA).instantiate()
 	root.add_child(tela)
-	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var trafego = tela.trafego
+	var consts: Dictionary = trafego.get_script().get_script_constant_map()
 	var acessos: Array = consts["ACESSOS_DOCA"]
 	while GS.docks.size() < acessos.size():
 		GS.docks.append({"boat": null, "worker_id": null})
@@ -7897,12 +7911,12 @@ func _d42_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 
 	var cenario := tela.get_node("MapaWrap/Cenario")
 	var caminhao := cenario.get_node("Caminhao0") as TextureRect
-	var base: Vector2 = (tela.get("_base_do_caminhao") as Array)[0]
+	var base: Vector2 = (trafego.get("_base_do_caminhao") as Array)[0]
 	var origem: Vector2 = (consts["CAMINHAO_ORIGENS"] as Array)[0]
-	caminhao.position = base + tela.tela_da_rota(acessos[0]["paragem"], origem)
+	caminhao.position = base + trafego.tela_da_rota(acessos[0]["paragem"], origem)
 	caminhao.texture = consts["CAMINHOES"]["armazenagem"][0]["mx_retorno"]
-	(tela.get("_ocupante_do_berco") as Array)[0] = caminhao
-	tela.call("_encostou", 0, int(barco["id"]))
+	(trafego.get("_ocupante_do_berco") as Array)[0] = caminhao
+	trafego.call("_encostou", 0, int(barco["id"]))
 	var tw0 = doca.get("_tw_trabalho")
 	_confere("D42: com o camião encostado a doca sabe dele e o caminho muda",
 		doca.get("_camiao") != null and tw0 is Tween and (tw0 as Tween).is_valid()
@@ -7939,7 +7953,7 @@ func _d42_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 	for motivo in ["pescado", "armazenagem", "granel"]:
 		for e in range((consts["CAMINHOES"][motivo] as Array).size()):
 			caminhao.texture = consts["CAMINHOES"][motivo][e]["mx_retorno"]
-			doca.camiao_no_berco(tela.portas_do_camiao(caminhao) - doca.global_position)
+			doca.camiao_no_berco(trafego.portas_do_camiao(caminhao) - doca.global_position)
 			var c: Vector2 = doca.get("_destino_n3")
 			var g := rad_to_deg(absf(c.normalized().angle_to(eixo)))
 			if g > pior_graus:
@@ -7961,7 +7975,7 @@ func _d42_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 	for motivo in ["pescado", "armazenagem", "granel"]:
 		for e in range((consts["CAMINHOES"][motivo] as Array).size()):
 			caminhao.texture = consts["CAMINHOES"][motivo][e]["mx_retorno"]
-			doca.camiao_no_berco(tela.portas_do_camiao(caminhao) - doca.global_position)
+			doca.camiao_no_berco(trafego.portas_do_camiao(caminhao) - doca.global_position)
 			if is_equal_approx((doca.get("_destino_n3") as Vector2).length(), mais_longe):
 				mais_longe_tex = caminhao.texture
 	var leva: float = doca.get("_leva_n3")
@@ -8003,7 +8017,8 @@ func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 	var estruturas_antes: Array = GS.estruturas.duplicate()
 	var tela: Control = load(CENA).instantiate()
 	root.add_child(tela)
-	var consts: Dictionary = tela.get_script().get_script_constant_map()
+	var trafego = tela.trafego
+	var consts: Dictionary = trafego.get_script().get_script_constant_map()
 	var acessos: Array = consts["ACESSOS_DOCA"]
 	var cenario := tela.get_node("MapaWrap/Cenario")
 	var estados := [["patio", "guindaste", "cais"],
@@ -8036,12 +8051,12 @@ func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 			var espera: Vector2 = k["ESPERA_N3"]
 			var caminhos := [["pilha", doca.get("_destino_n3")]]
 			var caminhao := cenario.get_node("Caminhao0") as TextureRect
-			var base: Vector2 = (tela.get("_base_do_caminhao") as Array)[0]
+			var base: Vector2 = (trafego.get("_base_do_caminhao") as Array)[0]
 			var origem: Vector2 = (consts["CAMINHAO_ORIGENS"] as Array)[0]
-			caminhao.position = base + tela.tela_da_rota(acessos[d]["paragem"], origem)
+			caminhao.position = base + trafego.tela_da_rota(acessos[d]["paragem"], origem)
 			caminhao.texture = consts["CAMINHOES"]["armazenagem"][0]["mx_retorno"]
-			(tela.get("_ocupante_do_berco") as Array)[d] = caminhao
-			tela.call("_encostou", d, int(barco["id"]))
+			(trafego.get("_ocupante_do_berco") as Array)[d] = caminhao
+			trafego.call("_encostou", d, int(barco["id"]))
 			if doca.get("_camiao") != null:
 				caminhos.append(["camião", doca.get("_destino_n3")])
 			for c in caminhos:
@@ -8055,8 +8070,8 @@ func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 					if int(n[0]) > pior:
 						pior = int(n[0])
 						onde = "doca %d, %s, até %s, %d/20: %s" % [d, estado[0], c[0], i, n[1]]
-			(tela.get("_ocupante_do_berco") as Array)[d] = null
-			(tela.get("_visita_do_berco") as Array)[d] = -1
+			(trafego.get("_ocupante_do_berco") as Array)[d] = null
+			(trafego.get("_visita_do_berco") as Array)[d] = -1
 	_confere("D42: percorreu os caminhos das três docas nos dois estados (%d)" % vistos,
 		vistos == 2 * 2 * acessos.size())
 	_confere("D42: ela não se pinta por cima de prop do cenário que lhe está à frente (%d px; %s)"

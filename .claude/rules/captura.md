@@ -224,6 +224,11 @@ O passo está no item 5 do núcleo. As armadilhas:
   semente. Até ela ser semeada, essa foto não prova nada em nenhuma direção:
   o antes/depois do PR #117, que só mexia em suítes, marcou-a «MUDOU» com as
   outras 65 iguais, por baixo de «as imagens são função só do código» (`094`).
+  ⚠️ **E A SEMENTE SOZINHA NÃO A SEGURAVA:** a classe do barco de cada cartão
+  sai do nível do porto, e esse vinha do save da foto anterior. Semeada e com
+  `new_game()`, como o `capturar_tela.gd`, a bateria deu 66 de 66 iguais em
+  duas corridas — e é contra esses hashes que o M8 prova cada extração
+  (`095`).
   ⚠️ **E O `getbbox()` DO PILLOW NUM RGBA SÓ OLHA PARA O ALFA.** Em 23/09 a
   comparação das 30 fotos contra as da `main` deu **zero** mudadas, com os
   camiões todos noutra faixa: a diferença de duas fotos opacas tem o alfa a

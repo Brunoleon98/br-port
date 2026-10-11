@@ -4232,7 +4232,7 @@ def montar(M: dict) -> dict:
     # Apanha-a À FRENTE da pilha, do lado da câmara: do sítio onde desengata,
     # do lado do mar, o caminho para terra passava por dentro dela. Todo
     # quadro nasce no MESMO ponto, como no andar da `075`: quem anda é o nó,
-    # e o `Dock.gd` tira o fim do caminho do camião que o `Main` encostou.
+    # e o `Dock.gd` tira o fim do caminho do camião que o trânsito encostou.
     # Três quadros por sentido, o ciclo 0-1-2-1: vai de costas com a carga
     # (`giro` 90, para `−x`), volta de frente e vazio (`giro` −90, para `+x`).
     for sexo in ("h", "m"):

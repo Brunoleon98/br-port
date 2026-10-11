@@ -5,6 +5,7 @@ paths:
   - "tools/medir_enquadramento.py"
   - "brport_vs/tools/medir_enquadramento.gd"
   - "brport_vs/tools/medir_resolucao_mapa.gd"
+  - "brport_vs/scripts/TrafegoDeCamioes.gd"
 ---
 
 # Regras — o desenho do mapa
@@ -98,8 +99,9 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   deste projeto pergunta POSIÇÃO — pegada contra faixa, lote contra acesso,
   casa contra vão — e nenhum perguntava COR. Hoje o **D20** rasteriza os dois
   mapas com o ThorVG e percorre a `ROTA_ESTRADA` a exigir que nenhum ponto dela
-  caia em calçada; a rota serve porque é escrita à mão no `Main.gd` e o mapa sai
-  do gerador — duas fontes, e não um espelho. E a pergunta é **«não é calçada»,
+  caia em calçada; a rota serve porque é escrita à mão no
+  `TrafegoDeCamioes.gd` (no `Main.gd` até à `095`) e o mapa sai do gerador —
+  duas fontes, e não um espelho. E a pergunta é **«não é calçada»,
   não «é asfalto»**: a rodagem leva pintura, e exigir o cinzento reprovaria uma
   zebra bem desenhada (`docs/decisoes/013`).
 - **⚠️ E CASAR HEXADECIMAL EXATO SÓ SERVE EM TINTA CHAPADA.** A regra acima

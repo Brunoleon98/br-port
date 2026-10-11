@@ -15,7 +15,8 @@
     "",
     "  alvos — o nome de cada alvo e a cena cuja raiz é ele. Uma PASTA quer",
     "  dizer «um dos painéis de lá»: é a leitura que pergunta `has_method`",
-    "  a qualquer painel aberto.",
+    "  a qualquer painel aberto. Um `.gd` é um objeto que não é raiz de cena",
+    "  nenhuma — o trânsito dos camiões, que o Main monta desde o M8 (`095`).",
     "",
     "  receptores — por arquivo, a variável que É aquele alvo. O F19 não",
     "  infere tipos: ele acredita que `tela` é o Main no `teste_design`, e um",
@@ -38,6 +39,7 @@
   ],
   "alvos": {
     "Main": "res://scenes/Main.tscn",
+    "Trafego": "res://scripts/TrafegoDeCamioes.gd",
     "Dock": "res://scenes/dock/Dock.tscn",
     "PainelBoletim": "res://scenes/panels/PainelBoletim.tscn",
     "um painel": "res://scenes/panels/"
@@ -46,6 +48,7 @@
     "res://tests/teste_design.gd": {
       "tela": "Main",
       "_main": "Main",
+      "trafego": "Trafego",
       "doca": "Dock"
     },
     "res://tests/teste_fumaca.gd": {
@@ -59,7 +62,7 @@
       "_painel_de_cima()": "PainelBoletim"
     },
     "res://tools/medir_transito.gd": {
-      "_main": "Main"
+      "_trafego": "Trafego"
     },
     "res://tools/medir_fila_mensagens.gd": {
       "filho": "um painel"
@@ -71,8 +74,8 @@
   "indiretos": [
     {
       "arquivo": "res://tests/teste_design.gd",
-      "chamadas": ["tela.call(par[1]"],
-      "alvo": "Main",
+      "chamadas": ["trafego.call(par[1]"],
+      "alvo": "Trafego",
       "tipo": "metodo",
       "nomes": ["_entrar_no_mapa", "_subir"],
       "porque": "o D35 arranca os camiões das duas rotas pelo mesmo laço, e o método de cada rota vem no par"
