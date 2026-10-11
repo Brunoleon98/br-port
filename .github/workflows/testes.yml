@@ -4,6 +4,9 @@ name: Testes
 # pull request. Serve para pegar regressão sem ninguém precisar lembrar de
 # rodar os testes na mão.
 #
+# E PUBLICA: o push na main que passar nas suítes e no export põe o build Web
+# no GitHub Pages (`publicar-pages`, no fim deste arquivo).
+#
 # Para rodar o mesmo comando localmente, veja brport_vs/COMO_RODAR.md.
 
 on:
@@ -695,6 +698,37 @@ jobs:
           test -s build/web/index.pck || { echo "::error::o .pck do Web saiu vazio."; exit 1; }
           ls -la build/web
 
+      # O SITE DO PAGES É O `brport-web` DA MAIN, com o protótipo ao lado
+      # (`docs/decisoes/099`, a resposta do Bruno ao D6). Até 11/10 o Pages
+      # servia o `index.html` da raiz — o protótipo HTML «v3.0», não o jogo —,
+      # e o link que se mandava a quem fosse testar abria outra coisa. O
+      # protótipo não se apaga: passa a `/prototipo/`, e o jogo à raiz.
+      #
+      # O build Web é de fio único (`variant/thread_support=false`), e é isso
+      # que o deixa caber no Pages, que não manda os cabeçalhos COOP/COEP: medido
+      # num servidor sem cabeçalho nenhum, abre com `crossOriginIsolated` a
+      # falso e chega à partida.
+      #
+      # ANTES DO APK, de propósito: um export do APK partido não pode levar
+      # atrás o site, como já levou o artefato do Web (ver abaixo). Quem decide
+      # se ele se publica é o job `publicar-pages`.
+      - name: Montar o site do Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          rm -rf build/pages
+          mkdir -p build/pages/prototipo
+          cp -r build/web/. build/pages/
+          cp index.html build/pages/prototipo/index.html
+          test -s build/pages/index.pck || { echo "::error::o site do Pages ficou sem o .pck."; exit 1; }
+          ls -la build/pages build/pages/prototipo
+
+      - name: Guardar o site do Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/pages
+
       - name: Exportar o APK
         run: |
           set -euo pipefail
@@ -728,3 +762,36 @@ jobs:
           name: brport-web
           path: build/web/
           if-no-files-found: error
+
+  # O PAGES RECEBE A MAIN, E SÓ A MAIN INTEIRA VERDE (`docs/decisoes/099`).
+  # Depende das suítes E do export: um jogo que reprova num teste não vai para
+  # o link que se manda a quem nunca o viu, e o site que já está no ar fica
+  # até a main voltar a verde — velho, mas jogável. Pull request não publica.
+  #
+  # ⚠️ PRECISA DE UMA CONFIGURAÇÃO QUE SÓ O BRUNO MUDA: Settings → Pages →
+  # Build and deployment → Source = «GitHub Actions». Com a fonte antiga
+  # («Deploy from a branch») este job reprova, e o vermelho é o aviso.
+  publicar-pages:
+    name: Publicar no Pages
+    needs: [testes-godot, build-telefone]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # As duas que o `deploy-pages` pede, e nada mais: os outros jobs ficam
+    # com as permissões de sempre.
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.publicar.outputs.page_url }}
+    # Dois pushes seguidos na main publicam por ordem; cancelar o primeiro a
+    # meio deixaria o Pages num estado que nenhum commit descreve.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+
+    steps:
+      - name: Publicar o build Web
+        id: publicar
+        uses: actions/deploy-pages@v4

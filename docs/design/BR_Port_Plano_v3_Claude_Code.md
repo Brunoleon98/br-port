@@ -664,6 +664,12 @@ Isto é a metade humana do item **B7**; nasceram juntos de propósito.
 
 **Mede-se por:** os três critérios de conclusão do VS que o GDD já fixou.
 
+**Desde 11/10 (`099`):** o jogo a mandar é o link do Pages, que publica a
+`main` verde, e cada partida real vai para `playtest/` — o `README.md` de lá
+diz como se cola, como se nomeia sem o nome de quem jogou e como se lê. O FPS
+no telefone mede-se pelo mesmo link, e a régua do contêiner que lhe fica ao
+lado é o `medir_desempenho.gd`.
+
 ---
 
 ### A8 — Publicar
@@ -712,6 +718,10 @@ gráficos e ao jogo.** A fila, o critério e a prova de cada item estão na §6 
 item aberto, um por sessão, e as decisões D1–D8 dessa página são dele. A
 frente 5 (o próximo recorte, em `BRIEFING_PROXIMA_CONVERSA_2026-10-09b.md`) e
 a melhoria de design abaixo esperam por ela, salvo pedido dele.
+
+**A fila parou em 11/10, com o M11 (`099`):** o M9 espera o D1b e o M12 o
+A8. Volta a frente 5, pelo **tutorial curto** que o Bruno escolheu em 11/10,
+com a pergunta de quem guia (a revisão, «Depois da fila»).
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

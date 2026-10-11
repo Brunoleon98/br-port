@@ -63,8 +63,8 @@ paralelo com as suítes. Em 27/09 o tiro `escala` leu, no `_ready` do
 saiu com backtrace; sozinho, saiu limpo (`069`).
 ⚠️ **E ESPERAR COM `pgrep -f <padrão>` NÃO ACABA** quando o padrão está na
 linha de comando de quem espera: `while pgrep -f simular_balanceamento` casa o
-próprio shell do laço (04/10). Espere pelo PID, ou corra em fundo e deixe o
-aviso de fim chegar.
+próprio shell do laço (04/10), e o `pkill -f` mata-o — código 144, em 11/10.
+Espere e mate pelo PID, ou corra em fundo e deixe o aviso de fim chegar.
 ⚠️ **Só vale nos commits que o trazem.** Uma branch anterior à `061`, ou uma
 cópia velha do projeto, ainda apaga o save — e jogar pelo editor usa o save
 do jogador, que é o jogo a funcionar. Arquivo novo que o JOGO guarde em
@@ -126,9 +126,10 @@ rodava a 4.6.3 — a sessão testava numa versão e o PR era barrado noutra.
 **O APK NÃO se constrói aqui, e o Web sim.** O `dl.google.com` responde 403 por
 política da organização, então o SDK do Android é inalcançável e o CI é o único
 lugar onde o export do APK se verifica — ele corre a cada push na `main` e a
-cada PR, e deixa o `brport-apk` e o `brport-web` em Artifacts. O Web só
-precisa dos templates (~1,2 GB), que o CI cacheia; a receita completa, pelos
-dois caminhos, está em `brport_vs/COMO_RODAR.md`.
+cada PR, e deixa o `brport-apk` e o `brport-web` em Artifacts; a `main`
+verde publica o Web no Pages (`099`). O Web só precisa dos templates — e deles
+só dos `web_*`, que se provam aqui no Chromium (`plataforma.md`); a receita
+completa, pelos dois caminhos, está em `brport_vs/COMO_RODAR.md`.
 
 ⚠️ **E O CI NÃO CORRE AO EMPURRAR A BRANCH.** O `testes.yml` e o `captura.yml`
 disparam em `push` só na `main` e em `pull_request`; o `balanceamento.yml` é

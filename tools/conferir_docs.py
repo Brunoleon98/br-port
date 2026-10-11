@@ -437,7 +437,8 @@ def conferir_regras_por_tema():
                 falhas.append(
                     "%s: o glob «%s» não casa com arquivo nenhum do repositório. "
                     "Regra cujo `paths:` não casa nada nunca carrega, e não se "
-                    "queixa." % (rel, g))
+                    "queixa. Arquivo novo só conta depois do `git add`: o "
+                    "que vale é o que o git versiona, que é o do CI." % (rel, g))
         if regra in REGRAS_SEMPRE:
             sempre_bytes += len(texto.encode("utf-8"))
         # Linha de TABELA que começa pela regra, e não uma menção qualquer: no

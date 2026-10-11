@@ -349,6 +349,17 @@ eles o controle (subir a 15 com degrau e exemplo dá `FUMACA OK`) e o único
 cego, sabido: a chamada da cadeia, sem degrau, não tem quem a veja. O
 seguinte é o **M11**.
 
+**M11, em 11/10 (`099`):** o `testes.yml` monta o site do Pages — o
+`brport-web` à raiz e o protótipo em `/prototipo/` — e o job
+`publicar-pages` publica-o só no push da `main` com as suítes e o export
+verdes. O `tools/medir_desempenho.gd` conta o desenho e cronometra o
+`_process` pela chamada direta, com o cabeçalho de N9, em dois estados: 273
+chamadas de desenho no dia 1 e 469 no exemplo do dia 30, 0,014 ms de script.
+As partidas do A7 vão para `playtest/`. **Prova:** o export Web servido sem
+cabeçalho nenhum abre no Chromium do contêiner e chega à partida; a régua
+calibra o desenho e o tempo, e seis defeitos recusam. Falta o FPS do Bruno
+no telefone. **A fila parou:** o M9 espera o D1b e o M12 o A8.
+
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
 **[feito em 10/10 — `088`]** ~~[execução · curta · critério 1]~~ A ferramenta
@@ -511,7 +522,8 @@ em 11/10 (`098`)**
 
 ### M11 — Playtest e desempenho no aparelho
 
-**[D6 · curta · critério 3]** — **o seguinte da fila**
+**[D6 · curta · critério 3]** — **✅ a parte de máquina fechou em 11/10
+(`099`)**; falta o FPS do Bruno
 - O D6 é sim (11/10): o CI publica o `brport-web` da `main` no Pages, no
   lugar do protótipo da raiz. A fonte do Pages passa a «GitHub Actions», e
   isso é uma configuração do repositório que só o Bruno muda.
