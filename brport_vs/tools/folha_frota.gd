@@ -19,9 +19,9 @@ extends SceneTree
 #
 # ⚠️ E ELA PERCORRE AS TABELAS DO JOGO, nunca uma lista escrita aqui. Os
 # cascos saem de `CLASSES_DE_NAVIO[classe]["motivos"]` pelo `arte_do_barco()`
-# da doca, e os camiões do `CAMINHOES` do `Main.gd` — as MESMAS fontes que o
-# D17 e o D13 percorrem. Uma classe nova, ou um motivo novo numa classe,
-# aparece aqui sozinho; uma lista cravada apareceria sem ele, que é
+# da doca, e os camiões do `CAMINHOES` do `TrafegoDeCamioes.gd` — as MESMAS
+# fontes que o D17 e o D13 percorrem. Uma classe nova, ou um motivo novo numa
+# classe, aparece aqui sozinho; uma lista cravada apareceria sem ele, que é
 # exactamente o que esta folha existe para impedir.
 #
 # ⚠️ O PROP É RECORTADO, NÃO ENCOLHIDO. O quadro de um prop tem 512px e o
@@ -238,8 +238,8 @@ func _cascos() -> Array:
 ## Quantas transportadoras a tabela tem — a maior lista de empresas de um
 ## serviço, que é quantas páginas os camiões pedem.
 func _empresas_da_tabela() -> int:
-	var main: Script = load("res://scripts/Main.gd")
-	var tabela: Dictionary = main.get_script_constant_map()["CAMINHOES"]
+	var trafego: Script = load("res://scripts/TrafegoDeCamioes.gd")
+	var tabela: Dictionary = trafego.get_script_constant_map()["CAMINHOES"]
 	var n := 0
 	for motivo in tabela:
 		n = maxi(n, (tabela[motivo] as Array).size())
@@ -255,8 +255,8 @@ func _camioes(empresa: int) -> Array:
 	# Godot recusa-se a chamá-lo na classe ("Make an instance instead"). Ler a
 	# tabela de lá em vez de a repetir aqui é o que faz esta folha ser a mesma
 	# verdade que o jogo desenha.
-	var main: Script = load("res://scripts/Main.gd")
-	var tabela: Dictionary = main.get_script_constant_map()["CAMINHOES"]
+	var trafego: Script = load("res://scripts/TrafegoDeCamioes.gd")
+	var tabela: Dictionary = trafego.get_script_constant_map()["CAMINHOES"]
 	var itens: Array = []
 	for motivo in GS.MOTIVOS:
 		if not tabela.has(motivo):

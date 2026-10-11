@@ -51,10 +51,10 @@ def _roda(nome, x, y, raio_px, largura, mat, eixo="y"):
 #
 # Desde os motivos da escala (`docs/decisoes/008`) o jogo SABE o que cada barco
 # traz. O que sai do porto pela estrada passou a poder dizê-lo: quem escolhe é
-# o `Main.gd`, pela carga da doca do mesmo índice, e a chave é o id do motivo —
-# por isso estes nomes são `pescado`, `armazenagem`, `conteiner` e `granel` e
-# não "frigorífico", "baú", "carreta" e "basculante". Nome de prop que não é a
-# chave da tabela do jogo é uma tradução a mais para envelhecer.
+# o `TrafegoDeCamioes.gd`, pela carga da doca do mesmo índice, e a chave é o id
+# do motivo — por isso estes nomes são `pescado`, `armazenagem`, `conteiner` e
+# `granel` e não "frigorífico", "baú", "carreta" e "basculante". Nome de prop
+# que não é a chave da tabela do jogo é uma tradução a mais para envelhecer.
 #
 # ⚠️ O QUE SEPARA QUATRO CAMIÕES A 60px É A SILHUETA, NÃO A COR. Quatro
 # carroçarias do mesmo tamanho pintadas de quatro cores seriam quatro etiquetas
@@ -96,9 +96,9 @@ CAMINHOES = {
 # brasileiras é o caminhão médio — o baú, o basculante e o frigorífico de
 # motor à frente —, e a carreta de contêiner é puxada por cavalo cara-chata.
 # E há uma razão de medida: o porta-contêiner é o MAIOR camião, e é nele que
-# estão medidos o recuo da paragem e a janela da curva (`Main.gd`). O capô
-# acrescenta-se À FRENTE do camião de sempre, que não encolhe, e nenhum dos
-# três médios com capô passa do comprimento dele (1,50 / 1,88 / 1,96).
+# estão medidos o recuo da paragem e a janela da curva (`TrafegoDeCamioes.gd`).
+# O capô acrescenta-se À FRENTE do camião de sempre, que não encolhe, e nenhum
+# dos três médios com capô passa do comprimento dele (1,50 / 1,88 / 1,96).
 #
 # ⚠️ E A COR DA CABINE ESCOLHE-SE CONTRA O ASFALTO (#49535b), que é o chão onde
 # ela anda: o navy e o verde do kit fundem-se nele pelo valor. As da empresa 1
@@ -124,10 +124,11 @@ EMPRESAS = {
 }
 
 # ⚠️ AS DUAS EMPRESAS ENTRAM JUNTAS NO JOGO, e foi assim que entraram (27/09,
-# `docs/decisoes/070`): os 32 PNGs, a tabela `CAMINHOES` do `Main.gd` por
-# empresa, a vez de cada transportadora, o D35 com o chassi do bicudo e a
-# folha. Uma empresa a mais aqui sem a linha dela no `Main.gd` fica gerada e
-# sem ninguém a ver — o D13 percorre a tabela, não este dicionário.
+# `docs/decisoes/070`): os 32 PNGs, a tabela `CAMINHOES` do
+# `TrafegoDeCamioes.gd` por empresa, a vez de cada transportadora, o D35 com o
+# chassi do bicudo e a folha. Uma empresa a mais aqui sem a linha dela no
+# `TrafegoDeCamioes.gd` fica gerada e sem ninguém a ver — o D13 percorre a
+# tabela, não este dicionário.
 
 # O capô do bicudo, antes do `ESCALA_CAMINHAO`: 0,29 de mundo no jogo, ~1,5 m.
 # A primeira candidata tinha 0,30 (~1,1 m), e o Bruno pediu-o «mais
@@ -151,7 +152,7 @@ def _pecas_do_caminhao(M, eixo, servico, retorno=False, empresa=0):
 
     `retorno` vira a FRENTE para o outro lado: o caminhão que sobe a rua em
     `-my` e atravessa os cotovelos em `-mx`, na faixa de dentro (ver
-    `ROTA_RETORNO` no `Main.gd`). Ver o bloco da traseira, no fim.
+    `ROTA_RETORNO` no `TrafegoDeCamioes.gd`). Ver o bloco da traseira, no fim.
 
     ⚠️ UM CONSTRUTOR, DUAS ORIENTAÇÕES, e é por isso que ele existe. A rua do
     porto é uma ESCADA: corre em `my` dentro de cada degrau e salta 4 unidades
@@ -638,8 +639,9 @@ def _registrar_caminhoes(M, est):
 
     O jogo já sabe que um caminhão que anda em `mx` precisa de outra silhueta;
     o que passou a saber é QUAL das quatro, e de que empresa. A tabela do
-    `Main.gd` indexa por `<motivo>`, depois pela empresa, depois pelo eixo, e é
-    por isso que os nomes se escrevem `caminhao_<motivo><marca><silhueta>`.
+    `TrafegoDeCamioes.gd` indexa por `<motivo>`, depois pela empresa, depois
+    pelo eixo, e é por isso que os nomes se escrevem
+    `caminhao_<motivo><marca><silhueta>`.
     """
     # ⚠️ E OS DO RETORNO (`_retorno`, `_retorno_mx`): o mesmo construtor, com a
     # frente virada. Um camião que suba a rua não se obtém espelhando o que

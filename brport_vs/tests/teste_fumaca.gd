@@ -4599,9 +4599,15 @@ func _f19_nomes_lidos_por_string() -> void:
 	# `grep` de linha também acha — a diferença não é a quebra de linha. O
 	# piso prova que a varredura leu, não que nada mudou: o M8 vai tirar
 	# leituras, e por isso fica abaixo da medida.
+	# Medido em 11/10, com o trânsito fora do `Main` (`095`): 49 — 16 do Main,
+	# 19 do Trafego, 12 do Dock e um de cada painel. Os três que faltam aos 52
+	# passaram a chamadas públicas (`animar_caminhoes()`, `animar_retorno()`,
+	# `docas_mudaram()`), lidas direto num objeto destipado, que gritam. O Trafego
+	# entra no piso pela razão dos outros dois: um alvo que a varredura não
+	# alcança daria «nenhum problema» a todas as leituras dele.
 	_confere("F19: e há nomes para conferir (%d: %s)" % [conferidos.size(), por_alvo],
 		conferidos.size() >= 30 and int(por_alvo.get("Main", 0)) > 0
-			and int(por_alvo.get("Dock", 0)) > 0)
+			and int(por_alvo.get("Dock", 0)) > 0 and int(por_alvo.get("Trafego", 0)) > 0)
 
 	_f19_terminou = true
 
@@ -4707,29 +4713,41 @@ func _f19_prova_das_expressoes() -> bool:
 # `_fechar` e a lista traz o do `PainelNarrativo`). Uma PASTA junta os de todas
 # as cenas de lá, que é a pergunta de quem diz «um painel».
 func _f19_membros(caminho: String) -> Dictionary:
-	var cenas: Array[String] = []
-	if caminho.ends_with("/"):
-		_varrer_cenas(caminho.trim_suffix("/"), cenas)
+	var scripts: Array[Script] = []
+	# ⚠️ UM ALVO PODE SER UM SCRIPT, e não a raiz de uma cena, desde o M8
+	# (`095`): o trânsito dos camiões é um objeto que o `Main` monta, e as
+	# suítes leem-lhe os privados como liam os do `Main`. A reflexão é a mesma;
+	# só o sítio de onde o script sai muda. `load()` e não `preload`, pela
+	# regra do `gdscript.md`: ele fala do autoload.
+	if caminho.ends_with(".gd"):
+		var direto := load(caminho) as Script
+		if direto != null:
+			scripts.append(direto)
 	else:
-		cenas.append(caminho)
+		var cenas: Array[String] = []
+		if caminho.ends_with("/"):
+			_varrer_cenas(caminho.trim_suffix("/"), cenas)
+		else:
+			cenas.append(caminho)
+		for cena in cenas:
+			var empacotada := load(cena) as PackedScene
+			if empacotada == null:
+				continue
+			var estado := empacotada.get_state()
+			for i in estado.get_node_property_count(0):
+				if estado.get_node_property_name(0, i) != "script":
+					continue
+				var script := estado.get_node_property_value(0, i) as Script
+				if script != null:
+					scripts.append(script)
 	var propriedades := {}
 	var metodos := {}
-	for cena in cenas:
-		var empacotada := load(cena) as PackedScene
-		if empacotada == null:
-			continue
-		var estado := empacotada.get_state()
-		for i in estado.get_node_property_count(0):
-			if estado.get_node_property_name(0, i) != "script":
-				continue
-			var script := estado.get_node_property_value(0, i) as Script
-			if script == null:
-				continue
-			for p in script.get_script_property_list():
-				if int(p["usage"]) & PROPERTY_USAGE_SCRIPT_VARIABLE:
-					propriedades[String(p["name"])] = true
-			for m in script.get_script_method_list():
-				metodos[String(m["name"])] = true
+	for script in scripts:
+		for p in script.get_script_property_list():
+			if int(p["usage"]) & PROPERTY_USAGE_SCRIPT_VARIABLE:
+				propriedades[String(p["name"])] = true
+		for m in script.get_script_method_list():
+			metodos[String(m["name"])] = true
 	return {"propriedade": propriedades, "metodo": metodos}
 
 

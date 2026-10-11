@@ -38,6 +38,8 @@ const COMP := {
 const LARG := 0.62 * 0.72
 
 var _main: Control
+# O trânsito dos camiões, que vive fora do `Main` desde o M8 (`095`).
+var _trafego
 var _gs: Node
 var _consts: Dictionary
 var _tex: Dictionary = {}
@@ -90,7 +92,8 @@ func _process(delta: float) -> bool:
 			d["worker_id"] = null
 		_main = load("res://scenes/Main.tscn").instantiate()
 		root.add_child(_main)
-		_consts = _main.get_script().get_script_constant_map()
+		_trafego = _main.trafego
+		_consts = _trafego.get_script().get_script_constant_map()
 		for motivo in (_consts["CAMINHOES"] as Dictionary):
 			var empresas: Array = _consts["CAMINHOES"][motivo]
 			for e in range(empresas.size()):
@@ -111,7 +114,7 @@ func _process(delta: float) -> bool:
 
 
 func _turno() -> void:
-	var motivos: Array = _main.call("_motivos_do_porto")
+	var motivos: Array = _trafego.call("_motivos_do_porto")
 	var mudou := false
 	for d in _gs.docks:
 		if d["boat"] != null:
@@ -131,7 +134,7 @@ func _turno() -> void:
 			d["worker_id"] = 1
 			mudou = true
 	if mudou:
-		_main.call("_docas_mudaram")
+		_trafego.docas_mudaram()
 
 
 func _mundo(no: TextureRect, base: Vector2, origem: Vector2) -> Vector2:
@@ -144,12 +147,12 @@ func _mundo(no: TextureRect, base: Vector2, origem: Vector2) -> Vector2:
 func _pegadas() -> Array:
 	var out: Array = []
 	var cen := _main.get_node("MapaWrap/Cenario")
-	var bases: Array = _main.get("_base_do_caminhao")
+	var bases: Array = _trafego.get("_base_do_caminhao")
 	var origens: Array = _consts["CAMINHAO_ORIGENS"]
 	for i in range(origens.size()):
 		var no := cen.get_node("Caminhao%d" % i) as TextureRect
 		out.append(_pegada("ida%d" % i, no, _mundo(no, bases[i], origens[i])))
-	var bret: Array = _main.get("_base_do_retorno")
+	var bret: Array = _trafego.get("_base_do_retorno")
 	var oret: Array = _consts["CAMINHAO_RETORNO_ORIGENS"]
 	for j in range(oret.size()):
 		var no := cen.get_node("CaminhaoRetorno%d" % j) as TextureRect

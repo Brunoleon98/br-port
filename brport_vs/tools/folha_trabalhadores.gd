@@ -65,6 +65,14 @@ const LEGENDA := 14
 # mesma conversa — a placa passou de 30 a 44 e a 52 px a pedido do Bruno, e o
 # mínimo de 239 a 635 e a 950: quem mexe na placa remede aqui.
 const DESENHO_MIN := 475
+# ⚠️ A FOLHA SORTEIA, e sem semente não se compara (`captura.md`, `094`). O
+# rosto entra à mão, mas o barco de cada cartão sai do `_make_boat()` — valor,
+# classe e motivo pelo `GS._rng`, que o `_ready()` do autoload `randomize()`.
+# Medido em 11/10: duas corridas da mesma árvore deram 65 de 66 fotos iguais
+# ao byte, e esta a mudar 24.896 pixels; o antes/depois do PR #117, que só
+# mexia em suítes, marcou-a «MUDOU». A semente é a da bateria de jogo
+# (`capturar_tela.gd`).
+const SEMENTE := 20260902
 
 var _montado := false
 var _frames := 0
@@ -164,6 +172,15 @@ func _montar() -> bool:
 	# a trabalhar (sem barco ele sai esbatido, à espera). O rosto entra à mão
 	# porque é isso que a folha percorre; o resto do dicionário sai dos
 	# construtores do jogo, que dizem a forma de um trabalhador e de um barco.
+	#
+	# ⚠️ E A SEMENTE SOZINHA NÃO CHEGA: a classe do barco sai do nível do
+	# porto, e o autoload nasce do save que a foto anterior da bateria deixou
+	# em `user://ferramentas/` — foto que depende do disco não compara nada
+	# (`captura.md`, item 6). A semente vem ANTES do `new_game()`, que já
+	# sorteia a mão inicial, e a partida nova põe o porto em ruínas, como o
+	# `capturar_tela.gd`.
+	GS._rng.seed = SEMENTE
+	GS.new_game()
 	GS.phase = "playing"
 	GS.docks = []
 	GS.workers = []

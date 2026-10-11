@@ -47,7 +47,7 @@ alturas paradas — o porto esticado 1,5× para cima, sem erro nenhum a apontá-
 | Espaço | O que é | Quem fala |
 |---|---|---|
 | **desenho** | o que `p()` devolve; `MEIA_LARG = 30` | tudo o que desenha o mapa |
-| **tela** | o sistema de coordenadas de 720 que o jogo usa; `MEIA_LARG = 20` | `tela()`, a tabela de âncoras, o manifest BRP, `Main.tscn`, `Main.gd`, o teste de design |
+| **tela** | o sistema de coordenadas de 720 que o jogo usa; `MEIA_LARG = 20` | `tela()`, a tabela de âncoras, o manifest BRP, `Main.tscn`, `Main.gd`, `TrafegoDeCamioes.gd`, o teste de design |
 
 ⚠️ **E O ESPAÇO TELA NÃO É O TAMANHO DA TEXTURA, desde 14/09.** Os quatro SVG
 importam com `svg/scale=1.5` e a textura sai com **1080 px**, enquanto os três

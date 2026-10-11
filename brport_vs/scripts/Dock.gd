@@ -370,7 +370,7 @@ static func tipo_de_carga(classe: String, motivo: String) -> String:
 #
 # Todo quadro nasce no mesmo ponto — à frente da pilha —, e quem anda é o nó,
 # como no andar da `075`. O FIM do caminho não está escrito aqui: são as
-# portas de trás do camião que o `Main` encostou (`camiao_no_berco()`), e é
+# portas de trás do camião que o trânsito encostou (`camiao_no_berco()`), e é
 # por isso que três docas e oito camiões não precisam de um número cada.
 const CARGAS_AO_OMBRO := {
 	"caixa": preload("res://art/props/carga_caixa.png"),
@@ -378,7 +378,7 @@ const CARGAS_AO_OMBRO := {
 }
 # ⚠️ ONDE ELE ENTREGA NÃO ESTÁ AQUI: são as PORTAS DE TRÁS do camião, que
 # encosta de ré com elas viradas para o píer (escolha do Bruno, `077`), e é o
-# `Main` que as lê no desenho do camião que parou (`portas_do_camiao()`). A
+# trânsito que as lê no desenho do camião que parou (`portas_do_camiao()`). A
 # primeira versão entregava no flanco, com um ponto escrito aqui: na doca 2 o
 # flanco fica no corredor atrás do armazém, e ele saía pintado por cima do
 # prédio (o D40 mediu 117 px).
@@ -746,8 +746,8 @@ var _quadros: Dictionary = {}
 var _tipo_n2 := ""
 var _sexo_n2 := "h"
 # As portas de trás do camião encostado no berço desta doca, em coordenada da
-# doca, ou `null`. Quem as escreve é o `Main`, que é quem encosta o camião
-# (`077`).
+# doca, ou `null`. Quem as escreve é o trânsito dos camiões
+# (`TrafegoDeCamioes.gd`, `095`), que é quem encosta o camião (`077`).
 var _camiao: Variant = null
 # O caminho da ida ao camião, dos pés dele à entrada, em coordenada de tela.
 var _caminho_ida := Vector2.ZERO
@@ -798,7 +798,7 @@ func _ready() -> void:
 
 ## O camião do serviço encostou no berço desta doca — `ancora` é o chão à
 ## frente das portas de trás dele, em coordenada da doca — ou largou-o
-## (`null`). Chamada pelo `Main`, no instante em que um ou outro acontece.
+## (`null`). Chamada pelo trânsito, no instante em que um ou outro acontece.
 ##
 ## ⚠️ NÃO REFRESCA A DOCA INTEIRA: o camião só mexe na ida ao camião, e só
 ## quando ela está armada — o segundo turno de um serviço do n2. O `refresh()`
@@ -1224,7 +1224,7 @@ func _animar_n3(sexo: String, tipo: String) -> void:
 ## Do ponto onde ela apanha o pallet ao ponto onde o larga, em tela. Sem
 ## camião é a FRENTE DA PILHA, e não se escreve: o pallet da frente da pilha e
 ## o do garfo são o mesmo desenho, e o canto de baixo-direita da pilha é o
-## dele. Com camião é o chão à frente das portas de trás, que o `Main` lê no
+## dele. Com camião é o chão à frente das portas de trás, que o trânsito lê no
 ## camião que parou: o CENTRO do pallet pára lá. As portas ficam 0,14 além da
 ## traseira e o pallet tem 0,17 de meio comprimento, logo a frente dele entra
 ## pelas portas — a primeira versão parava meio pallet antes, e o D42 mediu-o

@@ -303,6 +303,18 @@ igual nas fotos que a calibração mostra estáveis, as seis suítes; o F20 do
 `teste_fumaca` com treze mutantes, cinco deles que só ele apanha. O primeiro
 item aberto passa a ser o **M8**.
 
+**M8, primeiro PR, em 11/10 (`095`):** antes de extrair, a folha dos
+trabalhadores foi semeada num commit à parte — a semente e o `new_game()`,
+porque a classe dos barcos vinha do disco —, e duas corridas da bateria
+deram 66 de 66 hashes iguais. O tráfego dos camiões (1.378 linhas, 51
+funções) mudou-se para `scripts/TrafegoDeCamioes.gd`, um objeto do `Main`
+que as suítes leem pelo `trafego`; o `Main.gd` ficou com 1.373 linhas. O F19
+ganhou o alvo que é um script. **Prova:** as 66 fotos iguais ao byte, com o
+controle positivo a mudar 23; o JSON do simulador igual; as seis suítes com
+as mesmas asserções; o `medir_transito` igual; seis mutantes, entre eles a
+leitura esquecida no `Main` e a cedência partida no script novo. Seguem a
+narradora da Dona Cida e a fila de painéis.
+
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
 **[feito em 10/10 — `088`]** ~~[execução · curta · critério 1]~~ A ferramenta
@@ -434,7 +446,8 @@ gerais que o Bruno pediu e três regras a mais (`mapa`, `plataforma`,
 
 ### M8 — Partir o `Main.gd`
 
-**[execução · longa, três PRs · critério 3]**
+**[execução · longa, três PRs · critério 3]** — **1 de 3 feito em 11/10
+(os camiões, `095`)**
 - **O que muda:** extrações, uma por PR: o tráfego dos camiões (o maior
   bloco), a narradora da Dona Cida e a fila de painéis (`_na_vez`, que a `087`
   acabou de alargar).

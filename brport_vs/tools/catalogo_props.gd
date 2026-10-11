@@ -263,6 +263,8 @@ func familias(ancoras: Dictionary) -> Dictionary:
 	var main: Script = load("res://scripts/Main.gd")
 	var dk: Dictionary = doca.get_script_constant_map()
 	var mk: Dictionary = main.get_script_constant_map()
+	var trafego: Script = load("res://scripts/TrafegoDeCamioes.gd")
+	var tk: Dictionary = trafego.get_script_constant_map()
 
 	var pier: Array = [dk["ArtePierVazio"]]
 	for t in dk["ArtePier"]:
@@ -283,9 +285,9 @@ func familias(ancoras: Dictionary) -> Dictionary:
 	var camioes: Array = []
 	var retorno: Array = []
 	for motivo in GS.MOTIVOS:
-		if mk["CAMINHOES"].has(motivo):
+		if tk["CAMINHOES"].has(motivo):
 			# As duas transportadoras de cada serviço (`070`) ocupam o mesmo nó.
-			for empresa in mk["CAMINHOES"][motivo]:
+			for empresa in tk["CAMINHOES"][motivo]:
 				for eixo in ["my", "mx"]:
 					camioes.append(empresa[eixo])
 					retorno.append(empresa[eixo + "_retorno"])
@@ -379,7 +381,8 @@ func familias(ancoras: Dictionary) -> Dictionary:
 
 ## O PAPEL de cada textura dentro da família dela: o EIXO do camião e a
 ## CLASSE do casco, lidos das tabelas que o jogo lê para os escolher
-## (`Main.CAMINHOES`, `Dock.CASCOS`). Quem não tem papel não está aqui.
+## (`TrafegoDeCamioes.CAMINHOES`, `Dock.CASCOS`). Quem não tem papel não está
+## aqui.
 ##
 ## ⚠️ A família diz quem PODE ocupar o nó; o papel diz quem o ocupa NESTE
 ## momento sem mentir. O nó do camião anda na rua de `my` e na de `mx`, e uma
@@ -387,14 +390,15 @@ func familias(ancoras: Dictionary) -> Dictionary:
 ## irmão pelo tamanho do desenho e fez exactamente isso (`068`).
 func papeis() -> Dictionary:
 	var dk: Dictionary = (load("res://scripts/Dock.gd") as Script).get_script_constant_map()
-	var mk: Dictionary = (load("res://scripts/Main.gd") as Script).get_script_constant_map()
+	var trafego: Script = load("res://scripts/TrafegoDeCamioes.gd")
+	var tk: Dictionary = trafego.get_script_constant_map()
 	var out := {}
 	var cascos: Dictionary = dk["CASCOS"]
 	for classe in cascos:
 		for motivo in cascos[classe]:
 			for t in cascos[classe][motivo]:
 				out[(t as Texture2D).resource_path.get_file()] = "classe " + String(classe)
-	var camioes: Dictionary = mk["CAMINHOES"]
+	var camioes: Dictionary = tk["CAMINHOES"]
 	for motivo in camioes:
 		for empresa in camioes[motivo]:
 			for eixo in empresa:
