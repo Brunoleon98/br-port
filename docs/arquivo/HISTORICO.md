@@ -822,3 +822,14 @@ A narração de fim de Fase 1 continua nos sistemas que funcionam (`082`).
 **E, para caber o M10 (`098`),** desceu do estado, da lista do que fica para
 depois: *«o app Diário (o caderno já existe, `067`)»*. O caderno continua na
 lista do que existe (`TelaNomes.gd` + `PainelDiario.gd`).
+
+**E, para caber o M11 (`099`),** desceram do estado cinco frases que já eram
+história. A secção «Ainda por fazer, medido»: *«Das jogadas de 02–06/09
+sobram o rodapé (A5), economia de Fase 2 e a madeira podre (A4) — em
+`HISTORICO.md`.»* Da faixa de mensagem: *«Nada se apaga: 30,7% do que o jogo
+dizia não chegava ao jogador, hoje 5,7%»* (`034`). Do cenário: *«Os coqueiros
+chapados saíram do SVG — `--sem-coqueiros` — pela mesma razão que os píeres:
+o que se mexe não pode estar assado no fundo.»* Dos rostos, que a
+contra-oferta *«ganhou segundo tempo porque a despedida do Arlindo nunca
+tinha sido dita»* (`020`). E da água, *«A paleta medida não mudou (amplitude
+99,408; espuma 0,558 de Weber)»*, que a entrada de 13/09 acima já registava.

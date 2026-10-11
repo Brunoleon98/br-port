@@ -4,6 +4,7 @@ paths:
   - "brport_vs/export_presets.cfg"
   - "brport_vs/COMO_RODAR.md"
   - "brport_vs/tools/medir_vram.gd"
+  - "brport_vs/tools/medir_desempenho.gd"
   - ".github/workflows/**"
   - ".godot-version"
   - ".gitattributes"
@@ -38,6 +39,31 @@ res://tools/medir_vram.gd`, espera `VRAM MEDIDA`. ⚠️ O monitor do motor cont
 **4/3 de `w×h×4`**, e a base já traz os retratos (um autoload faz-lhes
 `preload`): a régua calibra-se sozinha com uma textura de tamanho conhecido, e
 em `--headless` recusa-se em vez de publicar um zero (`049`).
+
+**E o custo por quadro também**, com a mesma receita e o
+`medir_desempenho.gd`, que espera `DESEMPENHO MEDIDO`: chamadas de desenho,
+nós, tweens e o `_process` de cada script pela chamada direta, na abertura e
+no save de exemplo. ⚠️ **O tempo de quadro do motor não se lê aqui** — sob
+`xvfb-run` ele inclui o desenho por software, em `--headless` o laço dorme —, e
+o FPS mede-se no telefone (`099`).
+
+## O Web, provado aqui (`099`)
+
+**O Pages publica o Web da `main` verde**, e o link é o que se manda a quem
+vai testar; o protótipo HTML da raiz passou a `/prototipo/`. ⚠️ Só corre com a
+fonte do Pages em «GitHub Actions», que é configuração do repositório.
+⚠️ **O build é de fio único, e é isso que o deixa caber no Pages**, que não
+manda COOP/COEP: um `variant/thread_support=true` no preset Web pede
+`SharedArrayBuffer`, que sem esses cabeçalhos não existe.
+
+**E prova-se aqui, sem telefone:** dos templates bastam os `web_*` (85 MB
+dos 815 do `.tpz`, extraídos para
+`~/.local/share/godot/export_templates/<versão>.stable/`); serve-se a pasta
+com `python3 -m http.server`, que não manda cabeçalho nenhum, e abre-se no
+Chromium do contêiner pelo Playwright global (`NODE_PATH=$(npm root -g)`, com
+`--use-angle=swiftshader` para o WebGL). O console diz `single-threaded`, e um
+`self.crossOriginIsolated` a falso com o jogo a chegar à partida é a prova de
+que o Pages o serve.
 
 ## Chaves e export do Godot (de «Como rodar»)
 

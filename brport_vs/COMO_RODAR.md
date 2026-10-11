@@ -203,9 +203,10 @@ quando encontra os campos em branco.
 
 ### Pelo CI, sem instalar nada (o caminho fácil)
 
-A cada push, o workflow `testes.yml` exporta os dois e **anexa o resultado à
-corrida**. Em `github.com/Brunoleon98/br-port` → aba **Actions** → a corrida
-mais recente → o quadro **Artifacts** no fim da página:
+A cada push na `main` e a cada PR — não ao empurrar uma branch (`057`) —, o
+workflow `testes.yml` exporta os dois e **anexa o resultado à corrida**. Em
+`github.com/Brunoleon98/br-port` → aba **Actions** → a corrida mais recente →
+o quadro **Artifacts** no fim da página:
 
 | Artefato | O que é |
 |---|---|
@@ -220,6 +221,18 @@ Drive, o que for) e tocar nele. O Android vai perguntar se confia na origem;
 > uma nova, então o Android trata cada `.apk` como um app DIFERENTE do
 > anterior: para instalar por cima é preciso desinstalar o antigo, e o save
 > vai junto. Isto está certo — chave de release é para quando houver loja.
+
+### No navegador, sem baixar nada
+
+O push na `main` que passa nas suítes e no export **publica o Web no GitHub
+Pages** (o job `publicar-pages`, `docs/decisoes/099`):
+**`https://brunoleon98.github.io/br-port/`**. Abre no navegador do telefone,
+e é o link a mandar a quem vai testar. O protótipo HTML antigo, que o Pages
+servia até 11/10, continua em `/prototipo/`.
+
+> ⚠️ **Só funciona com a fonte do Pages em «GitHub Actions»** — Settings →
+> Pages → Build and deployment → Source. É configuração do repositório; com
+> a fonte antiga o job reprova na `main`.
 
 ### Na sua máquina
 

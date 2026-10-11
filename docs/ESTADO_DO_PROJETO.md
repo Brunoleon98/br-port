@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 11/10/2026 — o M10 da fila fechou: o save migra por degraus (`098`)
+> **Última atualização:** 11/10/2026 — o M11 fechou: o Web no Pages e a régua do desempenho (`099`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -39,7 +39,7 @@ ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14
 
 **A água é tropical e lê como profundidade, não como fitas** — campo de cor
 contínuo pela distância à costa, com meandro longo de duas senóides, e a areia
-em rampas. A paleta medida não mudou (amplitude 99,408; espuma 0,558 de Weber).
+em rampas.
 
 **As duas pontas são costa desenhada** (`023`), com o cais reto. Água, baixio,
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
@@ -117,9 +117,9 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — **M1** a **M8** e o **M10** fecharam (`088`–`098`). O **M11** é
-o seguinte (D6: sim, 11/10); o M9 espera o D1b, e o M12 o A8. Depois voltam o
-design e a frente 5, pelo tutorial (§7 do plano).
+mais tranquila — **M1** a **M8**, o **M10** e o **M11** fecharam (`088`–`099`);
+o M9 espera o D1b e o M12 o A8, e a fila parou: volta a frente 5, pelo
+tutorial (§7 do plano). O Pages só publica com a fonte em «GitHub Actions».
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -131,12 +131,8 @@ histórico em `HISTORICO.md`.
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`, `082`) |
 | **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína, os três degraus da animação e a virada do dia (`069`–`079`). O material do ChatGPT vive em `art_lab/` | Na 4 falta a máquina do contêiner (`079`); obras futuras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
+| **A7** | **Jogar pelo link do Pages** e ver duas pessoas jogarem; o FPS no telefone; as partidas em `playtest/` (`099`) | Só ele joga |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
-
-### Ainda por fazer, medido
-
-Das jogadas de 02–06/09 sobram o rodapé (A5), economia de Fase 2 e a madeira
-podre (A4) — em `HISTORICO.md`.
 
 ---
 
@@ -186,6 +182,8 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/tools/medir_resolucao_mapa.gd` | **A régua da resolução do MAPA** — quanta fronteira sobrevive ao antisserrilhado, no ThorVG do jogo (`025`, `026`) |
 | `tools/medir_nitidez_captura.py` | **A régua da resolução dos PROPS** — a mesma métrica em duas capturas a 1080×1920, com a máscara tirada da diferença (`029`) |
 | `brport_vs/tools/medir_vram.gd` | **A régua da VRAM**, com o jogo aberto e calibrada; `xvfb-run`, `VRAM MEDIDA` (`049`) |
+| `brport_vs/tools/medir_desempenho.gd` | **A régua do custo por quadro** — desenho, nós e o `_process` pela chamada direta, calibrada; `xvfb-run`, `DESEMPENHO MEDIDO` (`099`) |
+| `playtest/` | As partidas reais do A7, uma por `.jsonl`, sem o nome de quem jogou (`006`, `099`) |
 | `brport_vs/scripts/TrafegoDeCamioes.gd` | **Os camiões da rua** — rotas, cedência, visita ao berço; objeto do `Main`, lido pelo `trafego` (`095`) |
 | `brport_vs/scripts/NarradoraDaCida.gd` | **A Dona Cida na faixa** — gatilhos, variantes e memórias; objeto do `Main` (`096`) |
 | `brport_vs/scripts/VezDasTelas.gd` | **A vez das telas que abrem sozinhas**, uma de cada vez; objeto do `Main` (`054`, `097`) |
@@ -202,7 +200,7 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/tools/prancha_prop.gd` | **Para iterar UM prop**: a versão do jogo contra a candidata, na foto do jogo, a 1:1, ampliada, em silhueta e valor e na escala, com os números. Sem candidata exige Δ zero (`068`) |
 | `brport_vs/tools/escala_props.gd` | **Os props a 1:1 com o pé na mesma linha**, o trabalhador de régua (`068`) |
 | `brport_vs/tools/folha_icones.gd` | Folha dos ícones nos 3 fundos, a 19px e ampliado — a cada ícone novo. **Reprova ao transbordar** |
-| `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows). O protótipo HTML original é o `index.html` da raiz |
+| `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows), e o link do Pages. O protótipo HTML original é o `index.html` da raiz, publicado em `/prototipo/` |
 | `tools/conferir_lote_de_arte.py` | Confere lote vindo de fora: alfa, tamanho e **ângulo da base contra os 26,57°**. Antes de qualquer PNG externo entrar |
 | `docs/BRP_SPATIAL_CONTRACT.md` | **O contrato da projeção por escrito** — as constantes, os quatro participantes e o `ROT_X = 60°` |
 | `blender/brp_studio.py` | O estúdio compartilhado — importa a câmera de `gerar_props_iso.py` em vez de a duplicar |
@@ -222,7 +220,7 @@ podre (A4) — em `HISTORICO.md`.
 | `tools/capturar_evidencia.sh` | Fotografias determinísticas de jogo, painéis e folhas de contato; é a evidência visual do CI |
 | `brport_vs/tools/folha_frota.gd` | **A folha da frota** — cascos e camiões percorrendo as tabelas: foto de jogo só mostra o que o sorteio escolheu. Os cascos e uma folha por transportadora (`070`) |
 | `brport_vs/tools/folha_trabalhadores.gd` | **Os 30 rostos em cartões de verdade**, pelo `Retratos.TRABALHADORES`: reprova o cartão com outro arquivo ou sem desenho (`059`) |
-| `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, e o export do APK e do Web |
+| `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, o export do APK e do Web, e o Web no Pages (`099`) |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
@@ -261,8 +259,7 @@ podre (A4) — em `HISTORICO.md`.
   futuros. Preços intactos; próximo recorte a escolher com Bruno.
 - **A faixa de mensagem tem FILA** — as duas fontes (sistema e Dona Cida) uma
   de cada vez, por ordem, com tempo mínimo na tela; tocar nela abre o histórico
-  da sessão. Nada se apaga: 30,7% do que o jogo dizia não chegava ao jogador,
-  hoje 5,7% (`034`)
+  da sessão (`034`)
 - Autosave local a cada turno
 - **Sete telas narrativas**: o caderno (os nomes na folha de rosto e a
   primeira página do diário), Boletim Financeiro semanal com os tons da Dona Cida, as 8
@@ -270,8 +267,7 @@ podre (A4) — em `HISTORICO.md`.
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1, entrada do
   diário em duas páginas (`082`)
 - **E OS TRÊS NPCs TÊM ROSTO** (`020`): nove bustos com pose própria, ao lado
-  da fala no boletim, na parcela e na contra-oferta — que ganhou segundo tempo
-  porque a despedida do Arlindo nunca tinha sido dita. A cara sai da FALA, por
+  da fala no boletim, na parcela e na contra-oferta. A cara sai da FALA, por
   tabela. Falta a faixa do rodapé: medida, à espera de layout
 - **Registro de partida em `.jsonl`**, um por partida, com o tempo de cada
   turno. Sai pelo menu de pausa
@@ -309,8 +305,7 @@ rajada, **guindaste** nas docas construídas, **carga no convés** e **boias +
 marcador** na Zona de Espera. **Os camiões levam a carga do porto** e
 **encostam de ré na doca** que tem barco e trabalhador (`011`, `077`); a
 **espuma lava a costa** no mesmo campo contínuo da água; o **enrocamento para
-nas duas pontas**. Os coqueiros chapados saíram do SVG — `--sem-coqueiros` —
-pela mesma razão que os píeres: o que se mexe não pode estar assado no fundo.
+nas duas pontas**.
 
 **E as chapas lisas acabaram**: tabuado com junta no n2, junta atravessada no
 n3, ferrugem nos cargueiros — padrões DIRIGIDOS, peça a peça, nunca pela paleta.
