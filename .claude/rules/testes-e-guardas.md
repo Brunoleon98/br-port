@@ -331,7 +331,9 @@ guarda.
   errada e a certa dão o mesmo número por acidente (nenhuma das duas aplica
   bónus nenhum). Só com os dois construídos um defeito injetado na cópia
   reprovou. É a mesma lição de "contagem só se testa acima de um", aplicada a
-  um bónus em vez de uma quantidade.
+  um bónus em vez de uma quantidade. E vale para a ida e volta do save: com o
+  exemplo do dia 1, o `load_game()` podia esquecer a obra e o F21 passava; o
+  exemplo é jogado até ter os campos cheios, e confere-se que os tem (`098`).
 - **⚠️ PROVA POR PIXEL ÚNICO É FRÁGIL, E A JANELA TEM DE SER DA ESCALA DA
   PEÇA.** A primeira metade já estava escrita no D17 — pergunte quanto DESENHO
   há à volta do ponto, e nunca se o ponto cai na caixa. A segunda custou dois

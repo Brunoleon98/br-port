@@ -219,8 +219,8 @@ a automação publique evidência falsa ou induza a próxima sessão a errar.
 | D2 | Reorganizar o `CLAUDE.md` num núcleo curto e regras por tema em `.claude/rules/`? | **Resolvida em 10/10: sim**, «e não esqueça de colocar regras gerais» — `gerais.md`, sem `paths:` (`091`) | — |
 | D3 | Expansão do mapa: vagas curadas por fase ou grade livre do GDD? | **Resolvida em 11/10: vagas curadas por fase, em dados** — os berços e os reparos na `FASES` (`094`) | — |
 | D4 | Reputação entre fases: a escala 0–3000 do GDD ou 0–100 por fase? | **Resolvida em 11/10: 0–100 por fase**; o início vive na `FASES`, o patamar entra com a regra da Fase 2 (`094`) | — |
-| D5 | Política de save a partir do primeiro build público | Migração encadeada v(n)→v(n+1), com um save de exemplo por versão | M10 |
-| D6 | Publicar o build Web atual no Pages, no lugar do protótipo? | Sim, se aceitar o jogo atual jogável em público; senão, desligar o Pages | M11 |
+| D5 | Política de save a partir do primeiro build público | **Resolvida em 11/10: a migração encadeada** v(n)→v(n+1), com a 14 de piso e um save de exemplo por versão (`098`) | — |
+| D6 | Publicar o build Web atual no Pages, no lugar do protótipo? | **Resolvida em 11/10: sim.** O Bruno põe a fonte do Pages em «GitHub Actions» nas configurações do repositório | M11 |
 | D7 | Destino da arte órfã e de `art/sprites/` | Seguir a triagem da `046` | — |
 | D8 | A obra que só fica pronta no fecho do dia 84 (aceita pela `087`): avisar ou recusar? | **Resolvida em 10/10: avisar**, por enquanto — no futuro, anos de 365 dias, e a obra passa ao dia seguinte (`090`) | — |
 
@@ -336,6 +336,18 @@ faixa iguais; as seis suítes. Um mutante mostrou que a guarda de saída do
 visse, nem antes da extração: o F11d solta o `Main` com telas na fila e
 conta os nós órfãos (41 sem ela, 0 com ela). **O M8 fecha**, e os itens
 seguintes esperam o Bruno: M9 (D1b), M10 (D5), M11 (D6), M12 (A8).
+
+**M10, em 11/10 (`098`):** o D5 e o D6 respondidos no arranque, com a
+recomendação — a migração encadeada, e publicar no Pages. A 14 é o piso; o
+save sobe por uma cadeia de degraus que corre numa cópia dentro do
+`_save_aceite()`, antes das recusas, e uma pergunta depois dela decide a
+versão. Não há degrau ainda. O `tests/saves/v14.json` é um save jogado até ter
+os campos cheios, por `tools/gravar_save_de_exemplo.gd`. **Prova:** o F21 do
+`teste_fumaca` — um exemplo por versão, todos a carregar, a ida e volta
+exata do corrente e a cadeia com degraus de mentira — e vinte mutantes, entre
+eles o controle (subir a 15 com degrau e exemplo dá `FUMACA OK`) e o único
+cego, sabido: a chamada da cadeia, sem degrau, não tem quem a veja. O
+seguinte é o **M11**.
 
 ### M1 — O gravador de partida conta a obra pronta e o calendário de hoje
 
@@ -490,7 +502,8 @@ camiões (`095`), a Dona Cida (`096`) e a vez das telas (`097`)**
 
 ### M10 — O save que não se perde
 
-**[D5 · média · critério 3 · antes de qualquer build pública]**
+**[D5 · média · critério 3 · antes de qualquer build pública]** — **✅ fechado
+em 11/10 (`098`)**
 - **O que muda:** migrações encadeadas, um save de exemplo por versão no
   `teste_fumaca` e a recusa só para o que a migração não souber ler.
 - **Continua:** «tudo o que recusa vem antes de tudo o que escreve».
@@ -498,8 +511,10 @@ camiões (`095`), a Dona Cida (`096`) e a vez das telas (`097`)**
 
 ### M11 — Playtest e desempenho no aparelho
 
-**[D6 · curta · critério 3]**
-- Se D6 for sim, o CI publica o `brport-web` da `main` no Pages.
+**[D6 · curta · critério 3]** — **o seguinte da fila**
+- O D6 é sim (11/10): o CI publica o `brport-web` da `main` no Pages, no
+  lugar do protótipo da raiz. A fonte do Pages passa a «GitHub Actions», e
+  isso é uma configuração do repositório que só o Bruno muda.
 - O Bruno mede FPS no telefone com o build atual.
 - Uma `medir_desempenho.gd` conta chamadas de desenho, nós e o custo dos
   `_process`, com o cabeçalho de N9.
@@ -518,7 +533,9 @@ Voltam, por escolha do Bruno:
 - o próximo recorte da frente 5
   (`BRIEFING_PROXIMA_CONVERSA_2026-10-09b.md`: crédito opcional,
   cancelamento, guindastes e obras das fases futuras, tutorial, mais
-  trabalhadores por píer);
+  trabalhadores por píer) — **o tutorial curto**, por escolha do Bruno em
+  11/10, com a pergunta de quem guia: o GDD pede o Toninho, que o jogo não
+  tem, e a Dona Cida já tem rosto;
 - as pendências visuais da §2 (16–20).
 
 ---

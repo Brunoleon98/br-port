@@ -818,3 +818,7 @@ A narração de fim de Fase 1 continua nos sistemas que funcionam (`082`).
 | Fechado | O que ficou, medido |
 |---|---|
 | **Design — a fila no fundeadouro** (04–05/10, `083`) | Escolher quem atraca (**T4d**, **T5h**, **D9**); sem «Alocar todos»; contratos a 0,72; os textos dos cartões são funções que o **D18** mede. **Aceite** |
+
+**E, para caber o M10 (`098`),** desceu do estado, da lista do que fica para
+depois: *«o app Diário (o caderno já existe, `067`)»*. O caderno continua na
+lista do que existe (`TelaNomes.gd` + `PainelDiario.gd`).

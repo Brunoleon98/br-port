@@ -30,6 +30,10 @@ item 3 do núcleo. A armadilha:
    linhas no sinal `message`, acima delas, reprovou o PR #91 com os 48
    valores intactos. Esta linha dizia «mexeu numa `const`», e o fecho
    seguiu-a à letra (`067`).
+   ⚠️ **E A COLUNA DA ORIGEM SAI DE UMA PALAVRA DO COMENTÁRIO.** Basta
+   «GDD» no comentário de uma constante para a tabela a dar como «GDD 7»:
+   o piso do save citava a promessa do GDD e saiu assim (`098`). Leia a
+   linha nova da tabela, não só o `TABELA OK`.
 
 ## O balanceamento (do «Antes de fechar», item 4)
 

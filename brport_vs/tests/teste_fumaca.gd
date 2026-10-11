@@ -21,9 +21,11 @@ extends SceneTree
 #    ícone.
 #
 # 3. SAVE ADAPTADO A MEIO. É o bug que já custou **um porto com 4 docas num
-#    mapa que desenha 3**. A regra escrita no `CLAUDE.md` é absoluta: save de
+#    mapa que desenha 3**. A regra escrita no `CLAUDE.md` era absoluta: save de
 #    outra versão é DESCARTADO, nunca adaptado. Um save recusado que já mexeu
-#    no estado vivo é adaptação a meio com outro nome.
+#    no estado vivo é adaptação a meio com outro nome. Desde a `098` o save de
+#    uma versão antiga sobe por uma cadeia de degraus escritos por quem mudou a
+#    forma (F21); o que nenhum degrau lê continua descartado (F3).
 #
 # POR QUE LER O `Icones.gd` COMO TEXTO, E NÃO CARREGAR A CLASSE. Se um ícone
 # sumir do disco, o `preload` derruba a compilação do próprio `Icones.gd` — e
@@ -82,7 +84,7 @@ func _rodar() -> void:
 	print("=== F2: todo ícone registrado tem arquivo ===")
 	_f2_icones()
 
-	print("=== F3: save de outra versão é descartado, nunca adaptado ===")
+	print("=== F3: save que a cadeia de migração não lê é descartado, sem ter tocado em nada ===")
 	_f3_migracao_de_save()
 
 	print("=== F4: o texto narrativo não chega ao jogador com token cru ===")
@@ -159,8 +161,12 @@ func _rodar() -> void:
 	_f20_a_tabela_das_fases()
 	_confere("o bloco F20 correu até ao fim", _f20_terminou)
 
+	print("=== F21: um save de exemplo por versão, e a cadeia de migração leva cada um à corrente ===")
+	_f21_a_migracao()
+	_confere("o bloco F21 correu até ao fim", _f21_terminou)
+
 	if _falhas == 0:
-		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save não migra, o texto resolve, o export vale ===")
+		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save migra só o que sabe ler, o texto resolve, o export vale ===")
 		quit(0)
 	else:
 		print("\n=== FUMACA FALHOU — %d problema(s) ===" % _falhas)
@@ -406,9 +412,12 @@ func _svgs_na_pasta() -> Array[String]:
 # lado incômodo: **recusar é recusar sem ter tocado em nada.**
 func _f3_migracao_de_save() -> void:
 	var versao: int = GS.SAVE_VERSION
+	# Abaixo do PISO, e não «a anterior»: desde a `098` a anterior à corrente
+	# sobe pela cadeia, e o que nenhum degrau lê começa no piso − 1.
+	var abaixo: int = GS.SAVE_VERSAO_MINIMA - 1
 
-	_confere("um save recusado não deixa arquivo para trás (versão %d)" % (versao - 1),
-		_recusa_e_apaga(_save_valido(versao - 1)))
+	_confere("um save recusado não deixa arquivo para trás (versão %d, abaixo do piso)" % abaixo,
+		_recusa_e_apaga(_save_valido(abaixo)))
 	_confere("save de versão FUTURA também é recusado (versão %d)" % (versao + 1),
 		_recusa_e_apaga(_save_valido(versao + 1)))
 	_confere("save sem campo de versão nenhum é recusado",
@@ -3799,10 +3808,10 @@ func _f16_os_espacos_de_save() -> void:
 	# ── ler não toca em nada, e recusa o que a carga recusa ──
 	GS.usar_espaco(1)
 	var vivo := [GS.espaco, GS.nome_porto, GS.cash, GS.turn]
-	var outra_versao := _save_valido(GS.SAVE_VERSION - 1)
+	var outra_versao := _save_valido(GS.SAVE_VERSAO_MINIMA - 1)
 	outra_versao["nome_porto"] = "Velho"
 	_f16_escrever_espaco(3, JSON.stringify(outra_versao))
-	_confere("F16: um espaço de outra versão lê-se livre",
+	_confere("F16: um espaço de versão que a cadeia não lê lê-se livre",
 		GS.resumo_do_espaco(3).is_empty(), str(GS.resumo_do_espaco(3)))
 	_confere("F16: e LER não o apaga — quem o apaga é a partida nova que o ocupar",
 		FileAccess.file_exists(ArmazemLocal.caminho(GS.arquivo_do_espaco(3))))
@@ -5017,3 +5026,187 @@ func _f20_nivel_alcancado() -> void:
 	_confere("F20: o nível máximo da Fase 1 é o que os reparos dela alcançam (declara %d, alcançam %d em %d portos)"
 			% [declarado, maior, montados],
 		montados > 1 and maior == declarado)
+
+
+# ── F21 ─────────────────────────────────────────────────────────────────
+# A MIGRAÇÃO ENCADEADA (`098`). Até a 14, save de outra versão era descartado;
+# daqui para a frente cada versão nova traz o degrau que lê a anterior, e quem
+# o prova é um save de EXEMPLO por versão, gravado pelo jogo dessa versão em
+# `tests/saves/vNN.json`. Quatro perguntas:
+#
+# 1. HÁ UM EXEMPLO POR VERSÃO, do piso à corrente, e nenhum fora disso. Subir
+#    a `SAVE_VERSION` sem gravar o exemplo novo reprova aqui — e o da
+#    anterior, que fica, só carrega se o degrau existir.
+# 2. TODO EXEMPLO CARREGA. O de uma versão antiga atravessa a cadeia e
+#    depois todas as recusas, como se a corrente o tivesse gravado.
+# 3. O EXEMPLO CORRENTE VOLTA IGUAL depois de carregado e regravado: tudo o
+#    que o `save_game()` escreve, o `load_game()` repõe. Nenhuma suíte o
+#    perguntava de uma vez: o F3 confere caixa e turno, o T15 a obra, o F15
+#    os recordes, um bloco do `run_tests` a semana — medido, cada um apanha
+#    o seu —, e o campo novo que ninguém lembre não tem bloco. Para morder, o
+#    exemplo tem de trazer os campos CHEIOS, e a lista do que ele traz é a da
+#    ferramenta que o grava (`faltas()`), chamada daqui sobre o estado
+#    carregado. Do exemplo antigo pede-se que o porto chegue com os nomes.
+# 4. A CADEIA, com degraus de mentira: com a 14 a ser piso e corrente, o jogo
+#    não tem degrau nenhum, e o laço que os sobe não tinha quem o visse.
+#
+# ⚠️ O QUE ISTO NÃO VÊ HOJE: a chamada da cadeia dentro do `_save_aceite()`.
+# Sem degrau nenhum, tirá-la não muda o que o jogo faz — medido, o fumaça
+# e o `run_tests` passam. Quem a vê é o exemplo v14 no dia em que a 15 existir: sem a
+# chamada, a pergunta da versão recusa-o, e isso também foi medido (`098`).
+const PASTA_DOS_EXEMPLOS := "res://tests/saves"
+var _f21_terminou := false
+
+
+func _f21_a_migracao() -> void:
+	var piso: int = GS.SAVE_VERSAO_MINIMA
+	var corrente: int = GS.SAVE_VERSION
+	_confere("F21: o piso da migração não passa da versão corrente (%d ≤ %d)" % [piso, corrente],
+		piso <= corrente)
+
+	var exemplos := _f21_exemplos()
+	for v in range(piso, corrente + 1):
+		_confere("F21: há um save de exemplo da versão %d" % v, exemplos.has(v),
+			"grave-o com res://tools/gravar_save_de_exemplo.gd no commit em que a %d é a corrente" % v)
+	for v in exemplos:
+		_confere("F21: o exemplo v%d está entre o piso e a corrente (%d a %d)" % [v, piso, corrente],
+			v >= piso and v <= corrente,
+			"exemplo que a cadeia não lê é exemplo morto: ou o piso subiu, ou o arquivo é do futuro")
+
+	var versoes: Array = exemplos.keys()
+	versoes.sort()
+	for v in versoes:
+		_f21_um_exemplo(int(v), String(exemplos[v]), corrente)
+
+	_f21_a_cadeia()
+	GS.clear_save()
+	_novo_jogo()
+	_f21_terminou = true
+
+
+# Os exemplos da pasta, por versão — `{14: "res://tests/saves/v14.json"}`. Um
+# arquivo de outro nome reprova: ninguém o leria, e quem o pôs lá contava que
+# sim.
+func _f21_exemplos() -> Dictionary:
+	var achados := {}
+	var re := RegEx.create_from_string("^v(\\d+)\\.json$")
+	for nome in DirAccess.get_files_at(PASTA_DOS_EXEMPLOS):
+		var m := re.search(nome)
+		if m == null:
+			_confere("F21: «%s» tem o nome de um exemplo (vNN.json)" % nome, false)
+			continue
+		achados[int(m.get_string(1))] = "%s/%s" % [PASTA_DOS_EXEMPLOS, nome]
+	return achados
+
+
+func _f21_um_exemplo(v: int, caminho: String, corrente: int) -> void:
+	var texto := FileAccess.get_file_as_string(caminho)
+	var lido = JSON.parse_string(texto)
+	if typeof(lido) != TYPE_DICTIONARY:
+		_confere("F21: o exemplo v%d é um JSON de objeto" % v, false, caminho)
+		return
+	var diz = lido.get("versao")
+	_confere("F21: o exemplo v%d diz que é da versão %d" % [v, v],
+		typeof(diz) in [TYPE_INT, TYPE_FLOAT] and float(diz) == v,
+		"diz %s — foi regravado por outra versão?" % str(diz))
+
+	_novo_jogo()
+	_recusa_texto_escrever(texto)
+	var carregou: bool = GS.load_game()
+	_confere("F21: o save de exemplo da versão %d carrega" % v, carregou,
+		"recusado — falta o degrau %d→%d em _migrar_um_passo(), ou ele entrega o que as recusas barram"
+			% [v, v + 1])
+	if not carregou:
+		return
+	if v != corrente:
+		# O que o degrau faz com cada campo prova-se num teste DELE, escrito por
+		# quem o escreveu. Aqui pergunta-se só se o porto não se perde: o nome
+		# do cais e o de quem joga são o que o jogador reconhece no espaço, e
+		# nenhum degrau tem razão para os mudar — o dia e o dinheiro, sim (a
+		# reescala da `084` mudou o dinheiro).
+		_confere("F21: o porto do exemplo v%d chega com os dois nomes dele" % v,
+			GS.nome_porto == String(lido.get("nome_porto", "")) and GS.nome_porto != ""
+				and GS.nome_jogador == String(lido.get("nome_jogador", "")),
+			"«%s» / «%s»" % [GS.nome_porto, GS.nome_jogador])
+		return
+	# Sobre o estado CARREGADO, e por isso a lista acende também quando quem
+	# perde o campo é o `load_game()` — medido: com ele a esquecer a obra, a
+	# semana ou os recordes, reprovam esta e a ida e volta. Só esta reprova o
+	# exemplo pobre, onde a ida e volta passa com a obra esquecida (`098`).
+	var faltas: Array = load("res://tools/gravar_save_de_exemplo.gd").faltas(GS)
+	_confere("F21: o exemplo corrente traz os campos cheios — obra, fila, atracado, parcela, reparo, semanas, recorde e nomes",
+		faltas.is_empty(), "faltam: %s — ou o exemplo não os tem (regrave-o com a ferramenta), ou o load_game() não os repôs (ver a ida e volta)"
+			% ", ".join(faltas))
+	GS.save_game()
+	var regravado = JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
+	var dif := _f21_diferenca(lido, regravado, "save")
+	_confere("F21: o exemplo corrente volta igual depois de carregado e regravado", dif == "", dif)
+
+
+# A primeira diferença entre dois valores lidos de JSON, com o caminho até
+# ela; "" se forem iguais. Os dois lados vêm do `JSON.parse_string`, então
+# todo número é float dos dois lados e o `==` compara o que o arquivo diz.
+func _f21_diferenca(a: Variant, b: Variant, onde: String) -> String:
+	if typeof(a) != typeof(b):
+		return "%s: %s ≠ %s" % [onde, JSON.stringify(a), JSON.stringify(b)]
+	if typeof(a) == TYPE_DICTIONARY:
+		var chaves: Array = a.keys()
+		for k in b.keys():
+			if not chaves.has(k):
+				chaves.append(k)
+		chaves.sort()
+		for k in chaves:
+			if not a.has(k) or not b.has(k):
+				return "%s.%s: só de um lado" % [onde, k]
+			var d := _f21_diferenca(a[k], b[k], "%s.%s" % [onde, k])
+			if d != "":
+				return d
+		return ""
+	if typeof(a) == TYPE_ARRAY:
+		if a.size() != b.size():
+			return "%s: %d itens ≠ %d" % [onde, a.size(), b.size()]
+		for i in a.size():
+			var d := _f21_diferenca(a[i], b[i], "%s[%d]" % [onde, i])
+			if d != "":
+				return d
+		return ""
+	return "" if a == b else "%s: %s ≠ %s" % [onde, JSON.stringify(a), JSON.stringify(b)]
+
+
+# A cadeia com degraus de mentira, que anotam por onde passaram. Cada pergunta
+# é um defeito do laço: o degrau que falta, o que sobra, a versão por escrever,
+# a origem mexida e o degrau que recusa sem parar a subida.
+func _f21_a_cadeia() -> void:
+	var degraus: Array = []
+	var anota := func(de: int, d: Dictionary) -> Dictionary:
+		degraus.append(de)
+		var feitos: Array = d.get("degraus", [])
+		feitos.append(de)
+		d["degraus"] = feitos
+		return d
+	var origem := {"versao": 11, "porto": "Cais"}
+	var r: Dictionary = GS.cadeia_de_migracao(origem, 14, anota)
+	_confere("F21: a cadeia de 11 a 14 sobe os degraus 11, 12 e 13, por ordem",
+		degraus == [11, 12, 13], str(degraus))
+	# A versão vem da CADEIA: o degrau de mentira não a escreve, como o de
+	# verdade pode esquecer-se de a escrever.
+	_confere("F21: e entrega a versão 14, escrita pela cadeia, com o que cada degrau escreveu",
+		r.get("versao") == 14 and r.get("degraus") == [11, 12, 13] and r.get("porto") == "Cais",
+		str(r))
+	_confere("F21: e a origem não foi tocada", origem == {"versao": 11, "porto": "Cais"}, str(origem))
+
+	degraus.clear()
+	var recusa_o_12 := func(de: int, d: Dictionary) -> Dictionary:
+		degraus.append(de)
+		return {} if de == 12 else d
+	r = GS.cadeia_de_migracao({"versao": 11}, 14, recusa_o_12)
+	_confere("F21: o degrau que não sabe ler recusa o save inteiro, e os de cima não correm",
+		r.is_empty() and degraus == [11, 12], "%s depois de %s" % [r, degraus])
+
+	degraus.clear()
+	r = GS.cadeia_de_migracao({"versao": 14, "porto": "Cais"}, 14, anota)
+	_confere("F21: o save já na versão corrente atravessa sem degrau nenhum",
+		degraus.is_empty() and r == {"versao": 14, "porto": "Cais"}, "%s depois de %s" % [r, degraus])
+	r = GS.cadeia_de_migracao({"versao": 15}, 14, anota)
+	_confere("F21: e o do futuro também — chega com a versão dele, e quem o recusa é o _save_aceite (F3)",
+		degraus.is_empty() and r.get("versao") == 15, "%s depois de %s" % [r, degraus])
