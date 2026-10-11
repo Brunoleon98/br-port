@@ -560,6 +560,24 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # e carregamentos. Bruno autorizou a mudança e o recomeço sem migração.
 const SAVE_VERSION := 14
 
+# O PISO DA MIGRAÇÃO (`098`). Até a 14, save de outra versão era descartado,
+# e servia ao protótipo, onde recomeçar custa uma partida de teste. Não serve
+# ao jogo publicado, que promete «você nunca precisa se preocupar em perder o
+# porto», e a resposta do Bruno ao D5 (11/10) foi a migração ENCADEADA:
+# cada versão nova traz o passo que lê a anterior, e um save da 14 chega à 17
+# por 14→15→16→17, sem ninguém escrever 14→17.
+#
+# As de baixo do piso foram recusadas pelas decisões que as subiram, com o
+# acordo do Bruno, e continuam: quem as recusa é a CADEIA, que não tem o passo
+# — o piso não se confere no `_save_aceite()`, que seria a regra em dois
+# sítios. Ele existe para o F21 do `teste_fumaca`, que exige um save de
+# exemplo em `tests/saves/vNN.json` por versão, do piso à corrente, e que
+# todos carreguem. Subir a versão pede, por isso, três coisas no mesmo
+# commit: o passo em `_migrar_um_passo()`, o exemplo da versão nova
+# (`tools/gravar_save_de_exemplo.gd`) e o da anterior INTACTO — é ele que
+# prova o passo.
+const SAVE_VERSAO_MINIMA := 14
+
 # ── OS ESPAÇOS DE SAVE (`docs/decisoes/066`) ──
 #
 # Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do
@@ -2427,10 +2445,14 @@ func _save_aceite(texto: String) -> Dictionary:
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return {}
 
-	# Save de outra versão do jogo é descartado, não adaptado. Migrar exigiria
-	# adivinhar o que o jogador tinha comprado a partir de números que já não
-	# querem dizer a mesma coisa — foi assim que apareceu o porto de 4 docas
-	# num mapa de 3. Recomeçar é honesto; carregar um estado impossível não é.
+	# Até a `098`, save de outra versão era descartado, não adaptado: migrar
+	# às cegas era adivinhar o que o jogador tinha comprado a partir de números
+	# que já não queriam dizer a mesma coisa — foi assim que apareceu o porto
+	# de 4 docas num mapa de 3. Recomeçar é honesto; carregar um estado
+	# impossível não é. A migração de hoje não adivinha: cada passo é escrito
+	# por quem mudou a forma, sabendo o que mudou, e o que ele entrega passa
+	# por TODAS as recusas abaixo como se a versão corrente o tivesse gravado.
+	# O que nenhum passo lê continua recusado.
 	#
 	# Só que "não adaptar" também vale para a recusa: enquanto os campos eram
 	# escritos um a um e a sanidade do roster era conferida DEPOIS, um save
@@ -2442,8 +2464,16 @@ func _save_aceite(texto: String) -> Dictionary:
 	# `new_game()` não zerasse para o estado impossível atravessar para a
 	# partida seguinte: o bug das 4 docas outra vez, com outra roupa.
 	# `tests/teste_fumaca.gd`, bloco F3, tranca isto.
-	var versao = parsed.get("versao", 1)
-	if typeof(versao) not in [TYPE_INT, TYPE_FLOAT] or float(versao) != SAVE_VERSION:
+	var versao = parsed.get("versao", null)
+	if typeof(versao) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(versao)) \
+			or float(versao) != int(versao):
+		return {}
+	# A cadeia trabalha numa CÓPIA e não escreve nada; a versão decide-se só
+	# aqui, depois dela, e a pergunta recusa as duas pontas: o que vem de baixo
+	# do piso volta vazio, e o que vem do FUTURO (um build mais novo, depois um
+	# mais velho) atravessa a cadeia sem passo nenhum e chega com a versão dele.
+	parsed = _migrar(parsed)
+	if parsed.is_empty() or int(parsed["versao"]) != SAVE_VERSION:
 		return {}
 	# Validar a obra pela leitura, antes de aplicar QUALQUER campo. Ausência
 	# não significa obra vazia: a forma faz parte do Save 14 autorizado.
@@ -2531,6 +2561,46 @@ func _save_aceite(texto: String) -> Dictionary:
 			or int(oferta_lida) < -1 or int(oferta_lida) >= fila_lida.size():
 		return {}
 	return parsed
+
+
+# O save `dados` (com a `versao` já inteira) levado à versão corrente, degrau a
+# degrau; `{}` se algum degrau não o souber ler. Não toca no estado vivo nem
+# no disco: corre dentro do `_save_aceite()`, antes das recusas — e por isso o
+# `resumo_do_espaco()` mostra o porto já migrado sem o gravar (`098`).
+func _migrar(dados: Dictionary) -> Dictionary:
+	return cadeia_de_migracao(dados, SAVE_VERSION, _migrar_um_passo)
+
+
+# A cadeia, separada dos degraus para se provar com degraus de mentira: com a
+# 14 a ser ao mesmo tempo o piso e a corrente, o jogo não tem degrau nenhum, e
+# um laço que nunca corre não tem quem o veja. O F21 do `teste_fumaca` corre-o
+# com degraus que anotam por onde passaram.
+#
+# ⚠️ QUEM ESCREVE A `versao` DE CADA DEGRAU É A CADEIA, não o degrau: um
+# degrau que se esquecesse dela devolveria um save da 15 a dizer 14, e o
+# degrau seguinte seria outra vez o 14→15. E a cadeia copia UMA vez, à
+# entrada: o que os degraus mexerem no dicionário não chega a quem chamou.
+static func cadeia_de_migracao(dados: Dictionary, alvo: int, passo: Callable) -> Dictionary:
+	var versao := int(dados["versao"])
+	var atual := dados.duplicate(true)
+	while versao < alvo:
+		var saida = passo.call(versao, atual)
+		if typeof(saida) != TYPE_DICTIONARY or saida.is_empty():
+			return {}
+		atual = saida
+		versao += 1
+		atual["versao"] = versao
+	return atual
+
+
+# Um degrau: o save da versão `de` na forma da `de + 1`, ou `{}` se não o
+# souber ler. Ainda não há nenhum — a 14 é o piso (`098`). O primeiro entra
+# como `14: return _de_14_para_15(dados)`, escrito por quem mudou a forma, e
+# quem o prova é o `tests/saves/v14.json`, que o F21 exige carregado.
+func _migrar_um_passo(de: int, _dados: Dictionary) -> Dictionary:
+	match de:
+		_:
+			return {}
 
 
 # Quantas docas e quantos trabalhadores o porto DEVE ter, dado o que está

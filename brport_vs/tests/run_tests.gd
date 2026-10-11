@@ -471,7 +471,7 @@ func _t14_fase_inteira() -> void:
 	for chave in ["versao", "parcela_indice", "parcelas_quitadas", "total_pago_parcelas", "parcela_paid"]:
 		var ruim: Dictionary = valido.duplicate(true)
 		if chave == "versao":
-			ruim[chave] = GS.SAVE_VERSION - 1
+			ruim[chave] = GS.SAVE_VERSAO_MINIMA - 1
 		else:
 			ruim[chave] = "inválido"
 		var arquivo := FileAccess.open(GS.save_path, FileAccess.WRITE)

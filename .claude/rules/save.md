@@ -4,6 +4,8 @@ paths:
   - "brport_vs/scripts/ArmazemLocal.gd"
   - "brport_vs/scripts/PainelEspacos.gd"
   - "brport_vs/tests/teste_fumaca.gd"
+  - "brport_vs/tests/saves/*.json"
+  - "brport_vs/tools/gravar_save_de_exemplo.gd"
   - "tools/sentinela_do_jogador.py"
 ---
 
@@ -25,9 +27,25 @@ A obra em andamento ocupa a **14** (`087`), autorizada explicitamente pelo
 Bruno junto dos prazos. Saves 13 e anteriores são recusados sem migração:
 partidas antigas recomeçam. Consulta preserva o arquivo; carregamento
 descarta o incompatível antes de aplicar campos, inclusive a obra viva.
-Save de outra
-versão é descartado, não adaptado. Já custou um porto com 4 docas num mapa que
+Até a 14, save de outra
+versão era descartado, não adaptado. Já custou um porto com 4 docas num mapa que
 desenha 3.
+
+**Desde a `098` a 14 é o PISO, e o save sobe por DEGRAUS** — a resposta do
+Bruno ao D5. Cada versão nova traz, em `_migrar_um_passo()`, o degrau de N
+para N+1; a cadeia corre numa cópia DENTRO do `_save_aceite()`, antes de
+todas as recusas, e o que ela entrega passa por elas como se a corrente o
+tivesse gravado. O que nenhum degrau lê continua recusado — o piso não se
+confere à parte, quem recusa é a cadeia. **Subir a versão pede, no mesmo
+commit:** o degrau; o exemplo da versão nova
+(`brport_vs/tools/gravar_save_de_exemplo.gd` grava `tests/saves/vNN.json`
+jogando uma partida semeada até ao save ter tudo); e o exemplo da anterior
+INTACTO, que é quem prova o degrau. O F21 do `teste_fumaca` exige um exemplo
+por versão, do piso à corrente, todos a carregar, e a ida e volta exata do
+corrente. Exemplo de versão que já chegou à main não se regrava: é o registo
+do que ela gravava. O que o degrau faz a cada campo prova-se num teste dele.
+⚠️ **E O PEDIDO EXPLÍCITO DO BRUNO CONTINUA** (`AGENTS.md`): a migração muda
+o preço de subir — a partida do jogador já não recomeça —, não quem decide.
 
 **E recusar é recusar sem ter tocado em nada.** O `load_game()` escrevia os
 campos um a um e só conferia a sanidade do roster no fim: um save recusado
@@ -48,6 +66,7 @@ as três coisas.
 
 **O número da fase NÃO está no save** (`094`). A tabela `FASES` tem uma linha
 só, e o `dados_da_fase()` devolve-a sempre; a primeira fase que se jogue
-depois de outra põe o número no save, sobe a `SAVE_VERSION` e faz o
+depois de outra põe o número no save, sobe a `SAVE_VERSION` (com o degrau
+que escreve `1` nos saves de antes, `098`) e faz o
 `dados_da_fase()` lê-lo — e o `_save_aceite()` passa a recusar a obra, a
 parcela e o dia contra a fase do ARQUIVO, que é a que eles descrevem.

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 11/10/2026 — o M8 da fila fechou: a vez das telas fora do `Main` (`097`)
+> **Última atualização:** 11/10/2026 — o M10 da fila fechou: o save migra por degraus (`098`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -62,8 +62,9 @@ do mapa (`069`).
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **14** (`087`), autorizado pelo Bruno, retoma a obra em andamento;
-versões 13 e anteriores recusadas antes de aplicar campos, sem migração. A Fase 1 dura
+Save **14** (`087`) retoma a obra e é o PISO da migração por degraus (`098`),
+com um save de exemplo por versão; 13 e anteriores recusadas antes de aplicar
+campos. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
 iguais de R$140 mil, R$20 mil de juros totais. Crédito opcional, cancelamento,
@@ -116,9 +117,9 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — **M1** a **M8** fecharam (`088`–`097`; o M8 partiu o `Main.gd`
-em três PRs). **M9 a M12 esperam o Bruno** (D1b, D5, D6, o A8). Depois voltam o
-design e a frente 5 (`084`–`087`, §7 do plano).
+mais tranquila — **M1** a **M8** e o **M10** fecharam (`088`–`098`). O **M11** é
+o seguinte (D6: sim, 11/10); o M9 espera o D1b, e o M12 o A8. Depois voltam o
+design e a frente 5, pelo tutorial (§7 do plano).
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -154,8 +155,9 @@ podre (A4) — em `HISTORICO.md`.
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`). O **D34** pergunta de ONDE vem um stylebox (`045`); espera `DESIGN OK` |
-| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, **toda fala escrita chega ao jogo**, o prazo de obra prometido é cumprido (F18), todo nome lido por string existe no alvo (F19, `093`), e a tabela das fases diz a verdade (F20, `094`) |
+| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, **toda fala escrita chega ao jogo**, o prazo de obra prometido é cumprido (F18), todo nome lido por string existe no alvo (F19, `093`), a tabela das fases diz a verdade (F20, `094`), e um save de exemplo por versão carrega (F21, `098`) |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
+| `brport_vs/tools/gravar_save_de_exemplo.gd` | Grava o save de exemplo da versão corrente em `tests/saves/` (`098`) |
 | `brport_vs/scripts/ArmazemLocal.gd` | **Onde o jogo guarda o que é do jogador** — com `--script`, em `user://ferramentas/`. `tools/sentinela_do_jogador.py` prova-o no CI (`061`) |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Nove bustos (`020`) |
 | `brport_vs/scripts/FilaDeMensagens.gd` | **A fila da faixa de mensagem** — FIFO, tempo mínimo por frase, fusão só por duplicata, histórico da sessão. Objeto do `Main` e nunca autoload (`034`) |
@@ -336,8 +338,7 @@ para a frente; o boneco do PÍER é outro.
 A **Zona de Espera mostra a fila mecânica** (`083`): o jogador escolhe quem
 atraca. Ela fundeia **ao largo**, fora do gradiente costeiro (`017`).
 
-Continuam para depois: a MÚSICA (os efeitos já existem, de rascunho), o app
-Diário (o caderno já existe, `067`) e a lista "VS — OUT" do GDD.
+Para depois: a MÚSICA (há os efeitos de rascunho) e a lista "VS — OUT" do GDD.
 
 ---
 
