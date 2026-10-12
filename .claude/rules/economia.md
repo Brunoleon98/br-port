@@ -181,7 +181,13 @@ valida é o playtest, e o leitor dos registros conta-a.
 Desde a `094` a duração, as parcelas (semana, valor, juros), os reparos
 (semana, quitadas, dias de obra), o nível máximo, os berços e a reputação
 inicial vivem na tabela `FASES`, e o jogo lê-os por funções — nunca por
-`FASES[0]`. Quem mexer no `valor` de uma parcela da Fase 1 mexe nos `juros`
-com ele: o F20 exige que o capital das três feche o `START_CASH`, que é o
+`FASES[0]`. Desde a `104` são duas linhas: a Fase 2 abre no dia 85, sem
+parcelas e SEM PRAZO (`semanas` em `null`, que rebenta a quem a pedir sem o
+`fase_tem_prazo()`), e quem lê a parcela corrente pergunta antes pelo
+`tem_cobranca()`. As semanas de parcelas e reparos contam-se do início da
+fase; o calendário e o boletim não recomeçam. O simulador mede a Fase 1 e
+pára na passagem (`FASE_MEDIDA`); os preços, os dias de obra e a reputação
+de partida da Fase 2 são provisórios até à etapa 4 da `103`. Quem mexer no
+`valor` de uma parcela da Fase 1 mexe nos `juros` com ele: o F20 exige que o capital das três feche o `START_CASH`, que é o
 crédito da `085`. E o `nivel_maximo` não trava nada — é afirmação, e o F20
 reprova-a quando um reparo novo leva o porto acima dela.

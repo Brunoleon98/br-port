@@ -174,7 +174,8 @@ func _uma_partida(modo: String, semente: int) -> void:
 	if not _abrir(semente):
 		return
 	var voltas := 0
-	while GS.phase != "game_over" and voltas < 400:
+	# A Fase 1, até ao desfecho: o fim ou a passagem (`104`).
+	while GS.phase != "game_over" and GS.numero_da_fase == 1 and voltas < 400:
 		voltas += 1
 		if GS.phase == "rival_offer":
 			await _acao(modo, semente, "responder_arlindo",

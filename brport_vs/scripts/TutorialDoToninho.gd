@@ -120,7 +120,7 @@ func _ver_se_ha_barco() -> void:
 # A CONTRA-OFERTA DO DIA 1 FECHA AQUI: ganhe quem ganhar, a fase volta a
 # «playing», e só então se sabe se ficou barco para chamar.
 func _ao_mudar_a_fase(fase: String) -> void:
-	if fase == "playing":
+	if fase == GameState.ESTADO_JOGANDO:
 		_ver_se_ha_barco.call_deferred()
 
 

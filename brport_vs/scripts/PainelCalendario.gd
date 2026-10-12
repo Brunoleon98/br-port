@@ -72,20 +72,29 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	# O DIA DE HOJE NA TARJA (26/09, `065`): é a resposta à pergunta do chip,
 	# e a semana e o vencimento vão na linha de apoio, que é o contexto dele.
 	# Tom neutro: um dia não é resultado nenhum.
-	var vence := ("parcela %d vence no dia %d" % [GameState.parcela_indice + 1, GameState.vencimento_da_parcela()]) \
-		if not GameState.parcela_paid else "a parcela já está paga"
-	var hoje: int = mini(GameState.turn, GameState.turnos_da_fase())
-	var semana_de_hoje: int = mini(GameState.current_week(), GameState.semanas_da_fase())
-	tarja("Dia %d de %d" % [hoje, GameState.turnos_da_fase()],
-		"Semana %d de %d · %s" % [semana_de_hoje, GameState.semanas_da_fase(), vence])
-	# O PRAZO À VISTA (segunda passagem, `065`): quanto da partida já andou,
-	# na barra do HUD — a mesma que o rodapé usa para o dinheiro da parcela.
-	barra_na_tarja(hoje, GameState.turnos_da_fase())
-	var vencimentos := PackedStringArray()
-	for i in range(GameState.parcelas_na_fase()):
-		vencimentos.append(str(GameState.dia_da_parcela(i)))
-	paragrafo("Cobranças: dias %s · %s" % [", ".join(vencimentos),
-		Narrativa.concordar(GameState.parcelas_quitadas, "parcela quitada", "parcelas quitadas")])
+	# A FASE SEM PRAZO (`104`) não tem «de quantos», nem barra do prazo, nem
+	# cobrança a anunciar: a tarja diz o dia e a fase, e a grelha mostra as
+	# quatro semanas que o `calendario()` devolve.
+	var semana_de_hoje: int = GameState.current_week()
+	if GameState.fase_tem_prazo():
+		var vence := ("parcela %d vence no dia %d" % [GameState.parcela_indice + 1, GameState.vencimento_da_parcela()]) \
+			if not GameState.parcela_paid else "a parcela já está paga"
+		var hoje: int = mini(GameState.turn, GameState.ultimo_dia_da_fase())
+		semana_de_hoje = mini(semana_de_hoje, GameState.ultima_semana_da_fase())
+		tarja("Dia %d de %d" % [hoje, GameState.ultimo_dia_da_fase()],
+			"Semana %d de %d · %s" % [semana_de_hoje, GameState.ultima_semana_da_fase(), vence])
+		# O PRAZO À VISTA (segunda passagem, `065`): quanto da partida já andou,
+		# na barra do HUD — a mesma que o rodapé usa para o dinheiro da parcela.
+		barra_na_tarja(hoje - GameState.inicio_da_fase() + 1, GameState.turnos_da_fase())
+		var vencimentos := PackedStringArray()
+		for i in range(GameState.parcelas_na_fase()):
+			vencimentos.append(str(GameState.dia_da_parcela(i)))
+		paragrafo("Cobranças: dias %s · %s" % [", ".join(vencimentos),
+			Narrativa.concordar(GameState.parcelas_quitadas, "parcela quitada", "parcelas quitadas")])
+	else:
+		tarja("Dia %d" % GameState.turn, "Semana %d · Fase %d, sem prazo" % [
+			semana_de_hoje, GameState.numero_da_fase])
+		paragrafo("Sem cobranças nesta fase.")
 
 	# Doze semanas precisam rolar; os botões e a legenda continuam à vista.
 	var rolagem := ScrollContainer.new()
@@ -113,11 +122,18 @@ func setup(_sem_argumentos: Variant = null) -> void:
 			grade.add_theme_constant_override("v_separation", 2)
 			semanas.add_child(grade)
 		grade.add_child(_celula(dia))
-	rolagem.set_deferred("scroll_vertical", maxi(0, semana_de_hoje - 1) * 74)
+	# A rolagem conta desde a PRIMEIRA semana da lista, que na fase sem prazo é
+	# a de hoje (`104`): contada desde a semana 1, desceria para além do fim.
+	var primeira_semana: int = int(dias[0]["semana"]) if not dias.is_empty() else 1
+	rolagem.set_deferred("scroll_vertical", maxi(0, semana_de_hoje - primeira_semana) * 74)
 
 	fio()
 	secao("LEGENDA")
 	for marca in MARCAS:
+		# A legenda explica o que a grelha mostra: na fase sem cobrança nenhum
+		# dia vence parcela, e a linha dela seria ruído (`104`).
+		if marca["campo"] == "parcela_vence" and GameState.parcelas_na_fase() == 0:
+			continue
 		_linha_legenda(marca["icone"], marca["legenda"])
 
 	botao_fechar("Fechar")

@@ -113,6 +113,20 @@ As do «Estilo de código» do `CLAUDE.md` que são do GDScript. O essencial
   `Main`, do `Dock` ou de um painel declara o receptor em
   `brport_vs/tests/nomes_lidos_por_string.json`, e o F19 do `teste_fumaca`
   exige o nome no alvo (`093`).
+- **⚠️ ERRO NUMA FUNÇÃO TIPADA DEVOLVE O ZERO DO TIPO A QUEM CHAMOU, e a
+  cadeia segue com um valor plausível.** Medido na `104`: com o mutante que
+  tirava o `tem_cobranca()` do `caixa_curto()`, o erro nascia no
+  `valor_da_parcela()` (`-> int`), que devolveu 0; o `principal_da_parcela()`
+  somou, o `caixa_curto()` respondeu `false` — a resposta CERTA para a Fase
+  2 —, e a asserção do T20 passou. Nenhuma pergunta pelo valor o distingue,
+  nem pelo tipo: o único rasto é o `SCRIPT ERROR` na saída, e é por isso que
+  o passo do CI que o reprova não é redundante com as asserções. «Rebentar»
+  aqui quer dizer *escrever na saída*, não *parar o bloco*.
+- **⚠️ E O LAMBDA CAPTURA A VARIÁVEL LOCAL POR VALOR.** `var n := 0` e um
+  `func(): n += 1` ligado a um sinal contam numa CÓPIA: o T20 nasceu a provar
+  «zero cobranças na Fase 2» com um contador assim, e o zero era de graça. Num
+  lambda, conta-se num `Array` (`append`), que é referência — como o T14 já
+  fazia.
 - **⚠️ UM LAMBDA LIGADO A UM SINAL SEGURA VIVO O `RefCounted` ONDE NASCEU.**
   Medido numa sonda em 11/10: largado o objeto, ele continuava vivo e a ouvir
   o sinal; ligado por MÉTODO, morria com a última referência e a ligação com

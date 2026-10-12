@@ -3,6 +3,11 @@ extends PainelNarrativo
 # ============================================================
 # BR Port VS — o fim da Fase 1: três parcelas quitadas, ou o porto perdido
 #
+# ⚠️ DESDE A `104` QUEM QUITA NÃO ACABA A PARTIDA: as três quitações passam à
+# Fase 2, e esta tela abre por cima do jogo que já segue nela. A narração e o
+# balanço são os mesmos; o que muda é a saída — «Seguir para a Fase 2» no
+# lugar de «Jogar de novo». Quem perde continua a ver o fim de jogo.
+#
 # Era uma tela de números: "VITÓRIA!" e uma lista de métricas. Item A4 do
 # plano — a sexta das telas narrativas é a cena de fim de fase, e o arquivo de
 # escrita pede tom CONTEMPLATIVO, sem exagero dramático.
@@ -33,6 +38,9 @@ const LARGURA := 440
 # passou a ser se cada página cabe na folha.
 
 var _venceu := false
+# A reputação com que a fase FECHOU, lida pelo `Main` no instante da passagem;
+# negativa quando não há (o fim de jogo, em que a viva é a final).
+var _reputacao_final := -1.0
 # O TEMPO DA CENA NA TELA, para quem a fotografa. A cobertura das capturas
 # (`tools/conferir_cobertura_paineis.py`) lê daqui o catálogo — cada
 # `tempo = &"..."` escrito neste arquivo é um tempo que tem de ter foto — e as
@@ -50,9 +58,10 @@ var _botao: Button
 var _virando := false
 
 
-func setup(won: bool, reason: String) -> void:
+func setup(won: bool, reason: String, reputacao_final: float = -1.0) -> void:
 	_venceu = won
 	_motivo = reason
+	_reputacao_final = reputacao_final
 	if _venceu:
 		_mostrar_narracao()
 	else:
@@ -98,10 +107,14 @@ func _mostrar_narracao() -> void:
 # Imprimir a soma dos principais cobraria juros que o jogador não pagou.
 # É papel impresso de banco e não prosa — os dígitos são do documento, e a
 # regra «nenhum dígito na narração» é da peça escrita à mão por cima dele.
+#
+# ⚠️ AS PARCELAS SÃO AS DA FASE 1, lidas da tabela: esta página abre já na
+# Fase 2, onde o `parcelas_quitadas` recomeçou a zero (`104`) — o recibo
+# diria «0 parcelas quitadas». Só se chega aqui pagando todas.
 func _linhas_do_recibo() -> Array:
+	var quitadas: int = GameState.parcelas_na_fase(1)
 	return ["BANCO PORTO MIRIM",
-		"Recibo — %s" % Narrativa.concordar(int(GameState.parcelas_quitadas),
-			"parcela quitada", "parcelas quitadas"),
+		"Recibo — %s" % Narrativa.concordar(quitadas, "parcela quitada", "parcelas quitadas"),
 		GameState.texto("{portName}")]
 
 
@@ -178,8 +191,22 @@ func _mostrar_balanco() -> void:
 	_metrica("Ganho com barcos", GameState.moeda(int(m["revenue"])))
 	_metrica("Renda do píer", GameState.moeda(int(m.get("pier_income", 0))))
 	fio()
+	var reputacao: float = _reputacao_final if _reputacao_final >= 0.0 else GameState.reputation
 	_metrica("Reputação final", "%d (%s)" % [
-		int(GameState.reputation), GameState.reputation_label()])
+		int(reputacao), GameState.rotulo_da_reputacao(reputacao)])
+
+	# A PASSAGEM SEGUE (`104`): a partida já está na Fase 2 por baixo, e a
+	# única saída é voltar a ela. «Jogar de novo» apagaria o porto que acabou
+	# de passar, e «volta pelo menu de pausa» prometeria um balanço que o menu
+	# só oferece no fim de jogo.
+	if _venceu:
+		var seguir := Button.new()
+		Icones.no_botao(seguir, Icones.AMPLIAR_PIER)
+		seguir.text = "Seguir para a Fase 2"
+		seguir.custom_minimum_size = Vector2(0, TOQUE_MIN)
+		seguir.pressed.connect(queue_free)
+		_vbox.add_child(seguir)
+		return
 
 	var recomecar := Button.new()
 	Icones.no_botao(recomecar, Icones.RECOMECAR)

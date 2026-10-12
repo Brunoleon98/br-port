@@ -490,7 +490,9 @@ frentes, e **a ordem é do Bruno**:
    **Escolha em 12/10 (`103`):** a progressão para a Fase 2, em quatro
    etapas — a passagem e o save 16 com o M9; a treliça e o cargueiro; a meta
    de três barras, a regressão e o fim no diário; a medição. Sem dívida e
-   sem prazo, por escolha do Bruno. Os outros três esperam-na.
+   sem prazo, por escolha do Bruno. Os outros três esperam-na. **A etapa 1
+   fechou em 12/10 (`104`):** a Fase 2 joga-se no mesmo save, sem meta; a
+   seguinte é a 2.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.
@@ -747,7 +749,11 @@ escolheu a **progressão para a Fase 2** (`103`): as três quitações abrem-na
 no dia 85, sem dívida e sem prazo, com o píer 3, o escritório e a treliça, e
 uma meta de três barras (reputação, infra, o primeiro cargueiro) que fecha
 a fase no diário e deixa o jogo seguir livre; save 16 com o M9. São quatro
-etapas, uma por sessão, e **a seguinte é a 1** — a passagem e o save.
+etapas, uma por sessão. **A etapa 1 fechou em 12/10 (`104`)**: as três
+quitações passam à Fase 2 no dia 85, o diário da Fase 1 segue para ela, o
+save 16 guarda a fase e levou o M9, e a Fase 2 joga-se sem meta; o
+simulador mede a Fase 1 com paridade à main. **A seguinte é a 2** — a
+treliça, o porto de nível 2 e o cargueiro de dois dias.
 Depois delas, o cancelamento, os trabalhadores extras e a linha voluntária
 voltam ao Bruno, já com onde agir.
 

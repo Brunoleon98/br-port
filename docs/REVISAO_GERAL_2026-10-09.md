@@ -502,7 +502,8 @@ camiões (`095`), a Dona Cida (`096`) e a vez das telas (`097`)**
 
 ### M9 — O legado do save
 
-**[D1b · curta · critério 4]**
+**[D1b · curta · critério 4]** — **✅ fechado em 12/10 (`104`)**, no save 16
+da passagem para a Fase 2
 - **O que muda:** saem `upgrade_purchased` e `buy_upgrade()` (que ainda tenta
   o `pier_3`, bloqueado na Fase 1); os estados de turno (`"playing"`,
   `"rival_offer"`, `"debt_payment"`, `"game_over"`) viram constantes.

@@ -29,6 +29,8 @@ Bruno junto dos prazos. A segunda chance do Sr. Ribeiro ocupa a **15**
 «sem dívida, chance por usar» e a linha `emprestimo` da semana, e o T19
 prova-o contra o `v14.json`. O exemplo `v15.json` joga mal o primeiro mês de
 propósito, para trazer a dívida — um exemplo que nunca a pediu grava-a a zero.
+O número da fase ocupa a **16** (`104`), com o M9; o T20 prova o 15→16 contra
+o `v15.json`.
 Saves 13 e anteriores são recusados sem migração: partidas antigas recomeçam.
 Consulta preserva o arquivo; carregamento descarta o incompatível antes de
 aplicar campos, inclusive a obra viva. Até a 14, save de outra versão era
@@ -67,9 +69,16 @@ e não apaga nada; quem apaga é a partida nova que o ocupa. O «jogado por
 último» é a hora do ARQUIVO — um carimbo no JSON mudaria a forma. O F16 tranca
 as três coisas.
 
-**O número da fase NÃO está no save** (`094`). A tabela `FASES` tem uma linha
-só, e o `dados_da_fase()` devolve-a sempre; a primeira fase que se jogue
-depois de outra põe o número no save, sobe a `SAVE_VERSION` (com o degrau
-que escreve `1` nos saves de antes, `098`) e faz o
-`dados_da_fase()` lê-lo — e o `_save_aceite()` passa a recusar a obra, a
-parcela e o dia contra a fase do ARQUIVO, que é a que eles descrevem.
+**O número da fase está no save desde a 16** (`104`), como a `094` previu:
+`numero_da_fase`, lido pelo `dados_da_fase()`. O degrau 15→16 escreve `1`, e
+a partida GANHA da 15 — as três pagas, fim de jogo vencido — sobe já na
+Fase 2 do dia 85, com os recomeços da passagem: é o que a 16 diz que ela é,
+e não adivinhar. O `_save_aceite()` lê a fase do ARQUIVO antes de tudo e
+recusa contra ela a obra, a cobrança e o dia — o resumo dos espaços lê os
+três com uma partida viva, e o mesmo arquivo não pode ser aceite ou recusado
+conforme a fase do vizinho (o T20 prova os dois sentidos). O exemplo
+`v16.json` é jogado BEM até à Fase 2: a dívida da segunda chance e a parcela
+quitada são zero lá por regra, e a lista do que ele traz troca-as pelo
+recibo da Fase 1 no `total_pago_parcelas`. A 16 levou também o M9: o
+`upgrade_purchased` saiu, e o estado do turno passou a ser recusado fora dos
+quatro `ESTADOS_DO_TURNO`.

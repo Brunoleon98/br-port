@@ -617,8 +617,13 @@ static func fim_de_fase_paginas() -> PackedStringArray:
 
 ## A data da entrada, como a do diário («Porto Mirim, primeira semana»): a
 ## semana em que a parcela vence, POR EXTENSO e saída da constante.
+##
+## ⚠️ A FASE 1, e não a em jogo: esta página abre no instante da passagem, já
+## com a Fase 2 a correr por baixo (`104`), e a Fase 2 não tem semanas para
+## contar — pedi-las rebenta.
 static func fim_de_fase_cabecalho() -> String:
-	return "Porto Mirim, %s semana" % ordinal(_gs().semanas_da_fase())
+	var semanas: int = _gs().semanas_da_fase(1)
+	return "Porto Mirim, %s semana" % ordinal(semanas)
 
 
 ## O ordinal no feminino, de 1 a 10 — «semana» pede-o. Fora disso devolve o
@@ -640,10 +645,13 @@ static func fim_de_fase() -> String:
 	#
 	# O `por_extenso` fala no FEMININO, que é o que "semanas" e "parcelas"
 	# pedem — as duas únicas contagens que sobraram aqui.
-	var semanas: String = _maiuscula(por_extenso(_gs().semanas_da_fase()))
+	# Da Fase 1, como o cabeçalho logo acima (`104`).
+	var n_semanas: int = _gs().semanas_da_fase(1)
+	var semanas: String = _maiuscula(por_extenso(n_semanas))
 	# A 085 joga o arco inteiro: a vitória vem após as três quitações. Manter
 	# "faltam duas" aqui fecharia o caderno com uma dívida já paga em aberto.
-	var total: String = por_extenso(_gs().parcelas_na_fase())
+	var n_parcelas: int = _gs().parcelas_na_fase(1)
+	var total: String = por_extenso(n_parcelas)
 	var modelo := """%s semanas.
 
 As %s parcelas ficaram para trás.

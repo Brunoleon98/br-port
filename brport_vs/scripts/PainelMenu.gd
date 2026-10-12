@@ -148,12 +148,16 @@ func _widget_do_dia() -> Control:
 	coluna.add_theme_constant_override("separation", 2)
 	cartao.add_child(coluna)
 
-	var dia: int = mini(GameState.turn, GameState.turnos_da_fase())
+	# Sem prazo (`104`), o dia e a semana não têm «de quantos», e a fita mostra
+	# as semanas que o calendário mostra.
+	var prazo: bool = GameState.fase_tem_prazo()
+	var dia: int = mini(GameState.turn, GameState.ultimo_dia_da_fase()) if prazo else GameState.turn
 	var cabeca := Label.new()
 	cabeca.name = "Semana"
 	cabeca.theme_type_variation = &"TextoCelularDestaque"
 	cabeca.text = ("Semana %d de %d" % [GameState.week_of(maxi(dia, 1)),
-		GameState.semanas_da_fase()]).to_upper()
+		GameState.ultima_semana_da_fase()] if prazo
+		else "Semana %d" % GameState.week_of(dia)).to_upper()
 	coluna.add_child(cabeca)
 
 	var linha := HBoxContainer.new()
@@ -167,7 +171,7 @@ func _widget_do_dia() -> Control:
 	var total := Label.new()
 	total.name = "DeTotal"
 	total.theme_type_variation = &"TextoCelularFraco"
-	total.text = "de %d" % GameState.turnos_da_fase()
+	total.text = "de %d" % GameState.ultimo_dia_da_fase() if prazo else "Fase %d" % GameState.numero_da_fase
 	# Na linha de base do número, e não no meio dele: é como uma data se lê.
 	total.size_flags_vertical = Control.SIZE_SHRINK_END
 	total.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
@@ -180,32 +184,39 @@ func _widget_do_dia() -> Control:
 	return cartao
 
 
-# A FITA: `turnos_da_fase()` traços, em `semanas_da_fase()` grupos. Os grupos
+# A FITA: um traço por dia do `calendario()`, agrupados por semana. Os grupos
 # e os traços esticam por igual (`EXPAND_FILL`), então a fita enche a placa sem
 # uma largura escrita aqui — e continua a caber se a semana mudar de tamanho.
+#
+# Os dias saem do calendário, e não de uma conta daqui (`104`): na Fase 1 são
+# os doze de sempre, e na fase sem prazo as quatro semanas que o painel do
+# calendário mostra. Duas contas dos mesmos dias divergiriam na primeira fase
+# que mudasse a janela.
 func _fita_dos_dias(dia: int) -> Control:
 	var fita := HBoxContainer.new()
 	fita.name = "FitaDosDias"
 	fita.add_theme_constant_override("separation", 7)
-	var por_semana: int = GameState.TURNS_PER_WEEK
-	for s in GameState.semanas_da_fase():
-		var semana := HBoxContainer.new()
-		semana.add_theme_constant_override("separation", 2)
-		semana.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		fita.add_child(semana)
-		for d in por_semana:
-			var n: int = s * por_semana + d + 1
-			var traco := PanelContainer.new()
-			traco.custom_minimum_size = Vector2(2, 6)
-			traco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			traco.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			if n < dia:
-				traco.theme_type_variation = &"CelularDiaPassado"
-			elif n == dia:
-				traco.theme_type_variation = &"CelularDiaHoje"
-			else:
-				traco.theme_type_variation = &"CelularDiaFuturo"
-			semana.add_child(traco)
+	var semana: HBoxContainer = null
+	var semana_atual := -1
+	for d in GameState.calendario():
+		if int(d["semana"]) != semana_atual:
+			semana_atual = int(d["semana"])
+			semana = HBoxContainer.new()
+			semana.add_theme_constant_override("separation", 2)
+			semana.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			fita.add_child(semana)
+		var n: int = int(d["turno"])
+		var traco := PanelContainer.new()
+		traco.custom_minimum_size = Vector2(2, 6)
+		traco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		traco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if n < dia:
+			traco.theme_type_variation = &"CelularDiaPassado"
+		elif n == dia:
+			traco.theme_type_variation = &"CelularDiaHoje"
+		else:
+			traco.theme_type_variation = &"CelularDiaFuturo"
+		semana.add_child(traco)
 	return fita
 
 

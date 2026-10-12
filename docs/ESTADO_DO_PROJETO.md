@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 12/10/2026 — a progressão para a Fase 2, escolhida (`103`)
+> **Última atualização:** 12/10/2026 — a passagem para a Fase 2 e o save 16 (`104`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -20,8 +20,8 @@
 
 **O porto abre em ruínas.** 1 doca, 1 trabalhador e R$400.000. A Fase 1 libera
 reparar o píer 2 desde o início, o armazém na semana 2 e o pátio a partir da
-semana 5, depois da primeira cobrança quitada (`085`). São até dois píeres;
-píer 3, escritório e upgrades aguardam fases futuras.
+semana 5, depois da primeira cobrança quitada (`085`). Na Fase 1 são até dois
+píeres; a Fase 2 abre o píer 3 e o escritório (`104`).
 Uma obra por vez, paga ao iniciar: píer/armazém em dois dias, pátio em três;
 benefícios só ao concluir (`087`); a que só acaba no fecho do dia 84 avisa
 que não será usada nesta fase (`090`).
@@ -62,14 +62,15 @@ do mapa (`069`).
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **15** (`102`) sobe da 14, o PISO da migração por degraus (`098`), com
-um save de exemplo por versão; 13 e anteriores recusadas antes de aplicar
-campos. A Fase 1 dura
+Save **16** (`104`, com a fase e o M9) sobe da 14, o PISO dos degraus
+(`098`), com um exemplo por versão; 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
 iguais de R$140 mil, R$20 mil de juros totais. **Quem não tem o boleto ganha
-uma segunda chance** do Sr. Ribeiro, uma vez por fase (`102`). A progressão
-para a Fase 2 está desenhada em quatro etapas (`103`).
+uma segunda chance** do Sr. Ribeiro, uma vez por fase (`102`). **As três
+quitações passam à Fase 2 no dia 85**, no mesmo save, sem dívida nem prazo,
+e ela joga-se livre: a treliça, a meta e a medição são as etapas 2–4 da
+`103` (`104`).
 
 **O porto recebe pesca durante a Fase 1** (`086`): a classe depende do menor
 nível entre píer e guindaste. O Construir explica a madeira e os bloqueios.
@@ -110,11 +111,11 @@ itens param à espera do Bruno. Aqui fica só a posição.
 
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — **M1** a **M8**, o **M10** e o **M11** fecharam (`088`–`099`);
-o M9 vai no save 16 (`103`) e o M12 espera o A8, e a fila parou: voltou a
-frente 5, o **tutorial curto** (`100`, `101`) e a **segunda chance** (`102`)
-estão no jogo, e a **progressão para a Fase 2** foi escolhida (`103`): a
-etapa 1, a passagem e o save 16, é a seguinte. O Pages publica a main verde.
+mais tranquila — **M1** a **M11** fecharam (`088`–`099`, o M9 na `104`); o
+M12 espera o A8, e a fila parou: voltou a frente 5, o **tutorial curto**
+(`100`, `101`) e a **segunda chance** (`102`) estão no jogo, e a
+**progressão para a Fase 2** (`103`) fez a etapa 1 (`104`); a **2**, a
+treliça e o cargueiro, é a seguinte. O Pages publica a main verde.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -137,7 +138,7 @@ histórico em `HISTORICO.md`.
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo; o que é de cada fase na tabela `FASES`, lida por funções (`094`) |
-| `brport_vs/tests/run_tests.gd` | Regressões da lógica, inclusive parcela no vencimento, perdas para o rival e a abertura dos reparos com as duas pontas (T17, `089`) |
+| `brport_vs/tests/run_tests.gd` | Regressões da lógica: a parcela, o rival, a abertura dos reparos (T17, `089`) e a passagem para a Fase 2 (T20, `104`) |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
@@ -146,7 +147,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`). O **D34** pergunta de ONDE vem um stylebox (`045`); espera `DESIGN OK` |
-| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, **toda fala escrita chega ao jogo**, o prazo de obra prometido é cumprido (F18), todo nome lido por string existe no alvo (F19, `093`), a tabela das fases diz a verdade (F20, `094`), um save de exemplo por versão carrega (F21, `098`), e o tutorial fala só quando deve (F22, `101`) |
+| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, **toda fala escrita chega ao jogo**, o prazo de obra prometido é cumprido (F18), todo nome lido por string existe no alvo (F19, `093`), a tabela das fases diz a verdade (F20, `094`), um save de exemplo por versão carrega (F21, `098`), o tutorial fala só quando deve (F22, `101`), e a Fase 2 abre na tela, com o M9 trancado (F23, `104`) |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
 | `brport_vs/tools/gravar_save_de_exemplo.gd` | Grava o save de exemplo da versão corrente em `tests/saves/` (`098`) |
 | `brport_vs/scripts/ArmazemLocal.gd` | **Onde o jogo guarda o que é do jogador** — com `--script`, em `user://ferramentas/`. `tools/sentinela_do_jogador.py` prova-o no CI (`061`) |
@@ -189,7 +190,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/medir_boletim.gd` | **A régua do boletim** — herda o simulador e confere cada afirmação da Dona Cida contra o estado, no instante em que ela fala. CI, `BOLETIM OK` (`048`) |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
-| `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Imprime classes, motivos e o NÍVEL |
+| `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Mede a Fase 1 e pára na passagem (`104`) |
 | `brport_vs/tools/leitura_do_simulador.gd` | A conclusão dele, fora do `SceneTree` para se provar com fixture (T7). Identidade ausente ou dupla: código 1 (`030`) |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor. Avança por TURNO efetivo, pelo botão do jogo, e pára diante de modal (`031`) |
 | `brport_vs/tools/folha_props.gd` | **A folha dos props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Reprova ao transbordar; o catálogo e o chão vivem em `catalogo_props.gd` |
@@ -244,7 +245,8 @@ histórico em `HISTORICO.md`.
   cargueiro e longo curso, cada uma com a sua faixa de valor, os seus turnos e a
   sua mistura de motivos. A classe decide o casco no píer (`009`)
 - **Três cobranças na Fase 1**, ao fim das semanas 4, 8 e 12. A semana só
-  fecha depois da decisão; as duas primeiras quitações retomam a partida.
+  fecha depois da decisão; as duas primeiras retomam a partida, a terceira
+passa à Fase 2 (`104`).
   **Quitar antes abate só juros da janela** (`085`) e mantém o recibo até o fecho
   do período, sem abrir a próxima cobrança antes dele (`085`). Sem o boleto
   nas duas primeiras, a segunda chance (`102`).
@@ -261,7 +263,7 @@ histórico em `HISTORICO.md`.
   primeira página do diário), Boletim Financeiro semanal com os tons da Dona Cida, as 8
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1, entrada do
-  diário em duas páginas (`082`)
+  diário em duas páginas (`082`) que segue para a Fase 2 (`104`)
 - **E OS TRÊS NPCs TÊM ROSTO** (`020`): nove bustos com pose própria, ao lado
   da fala no boletim, na parcela e na contra-oferta. A cara sai da FALA, por
   tabela. Falta a faixa do rodapé: medida, à espera de layout. O **Toninho**
@@ -334,10 +336,5 @@ Para depois: a MÚSICA (há os efeitos de rascunho) e a lista "VS — OUT" do GD
 
 ## Como retomar numa conversa nova
 
-Aponte este arquivo e diga o que quer fazer:
-
-> "Continuando o BR Port — leia `docs/ESTADO_DO_PROJETO.md` e a fila na §7 do
-> plano. Quero trabalhar em X."
-
-Regras e receita manual no `CLAUDE.md`. Para fechar, **`/fechar-sessao`**;
-para preço ou `# TUNING:`, **`/balancear`** (600 partidas por perfil).
+Por este arquivo e pela §7 do plano, com o que se quer fazer. Para fechar,
+**`/fechar-sessao`**; para preço ou `# TUNING:`, **`/balancear`**.

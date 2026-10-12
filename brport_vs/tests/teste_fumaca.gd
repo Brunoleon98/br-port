@@ -169,6 +169,10 @@ func _rodar() -> void:
 	await _f22_o_tutorial()
 	_confere("o bloco F22 correu até ao fim", _f22_terminou)
 
+	print("=== F23: a Fase 2 abre na tela, e os estados do turno são constantes (M9) ===")
+	await _f23_a_fase_2()
+	_confere("o bloco F23 correu até ao fim", _f23_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save migra só o que sabe ler, o texto resolve, o export vale ===")
 		quit(0)
@@ -573,13 +577,16 @@ func _novo_jogo() -> void:
 
 
 # Um save com a forma toda certa, parametrizado só pela versão. Serve de base
-# para cada defeito ser injetado um de cada vez.
+# para cada defeito ser injetado um de cada vez. A forma é a da CORRENTE (a 16,
+# com a fase e sem o legado, `104`); as versões de baixo usam-na só para serem
+# recusadas pela versão.
 func _save_valido(versao: int) -> Dictionary:
 	return {
 		"versao": versao, "turn": 5, "cash": 1234, "reputation": 70.0,
 		"docks": [{"boat": null, "worker_id": null}],
 		"workers": [{"id": 1, "busy_turns": 0, "rosto": 0}],
-		"upgrade_purchased": false, "estruturas": [], "obra_em_andamento": {}, "parcela_paid": false,
+		"numero_da_fase": 1,
+		"estruturas": [], "obra_em_andamento": {}, "parcela_paid": false,
 		"parcela_indice": 0, "parcelas_quitadas": 0, "total_pago_parcelas": 0,
 		"emprestimo_devido": 0, "segunda_chance_usada": false,
 		"phase": "playing", "fila": [], "pending_rival": -1, "rival_attempts_left": 2,
@@ -2022,6 +2029,7 @@ var _f10_vistos: Array[String] = []
 
 func _f10_cada_tempo_cabe() -> void:
 	GS.game_over.connect(_f10_recolher_fim)
+	GS.fase_concluida.connect(_f10_recolher_passagem)
 	var nome: String = "W".repeat(int(GS.NOME_MAX_CARACTERES))
 
 	# ── O Sr. Ribeiro. Sem dinheiro para a parcela a entrada tem os DOIS
@@ -2069,8 +2077,10 @@ func _f10_cada_tempo_cabe() -> void:
 	p = await _f10_abrir(F10_RIBEIRO, [GS.principal_da_parcela()])
 	if not await _f10_tocar(p, "Pagar"):
 		return
-	_confere("F10: «Pagar» quitou mesmo a parcela",
-		bool(GS.parcela_paid) and _f10_motivos.has(true))
+	# A última quitada passa à Fase 2, que recomeça o recibo (`104`): quem
+	# prova o pagamento é a fase nova e a frase da passagem.
+	_confere("F10: «Pagar» quitou mesmo a última parcela, e a partida passou à Fase 2",
+		int(GS.numero_da_fase) == 2 and _f10_motivos.has(true))
 	_f10_medir(p, "Ribeiro, pagou", &"pagou")
 	_f10_fechar(p)
 
@@ -2142,6 +2152,7 @@ func _f10_cada_tempo_cabe() -> void:
 	_f10_fechar(p)
 
 	GS.game_over.disconnect(_f10_recolher_fim)
+	GS.fase_concluida.disconnect(_f10_recolher_passagem)
 	_f10_todo_nome_e_medido(nome)
 	GS.clear_save()
 	_f10_terminou = true
@@ -2149,6 +2160,12 @@ func _f10_cada_tempo_cabe() -> void:
 
 func _f10_recolher_fim(venceu: bool, motivo: String) -> void:
 	_f10_motivos[venceu] = motivo
+
+
+# A frase de quem PAGOU vem da passagem desde a `104`: a terceira quitação
+# segue para a Fase 2, e o `game_over` só chega a quem perde.
+func _f10_recolher_passagem(_numero: int, motivo: String) -> void:
+	_f10_motivos[true] = motivo
 
 
 # TODA FRASE QUE LEVA O NOME FOI MEDIDA COM ELE — o catálogo sai da
@@ -2513,9 +2530,11 @@ func _f11_pagou() -> bool:
 	if p == null or not await _f10_tocar(p, "Pagar", "F11"):
 		main.free()
 		return true
-	_confere("F11: pagou — o «Pagar» acabou a partida ganha",
-		GS.phase == "game_over" and bool(GS.won),
-		"fase «%s», won=%s" % [GS.phase, str(GS.won)])
+	# A Fase 1 ganha não acaba a partida (`104`): segue na Fase 2, e o fim de
+	# fase abre por cima do jogo, na mesma vez.
+	_confere("F11: pagou — o «Pagar» passou a partida à Fase 2",
+		int(GS.numero_da_fase) == 2 and GS.phase != "game_over" and not bool(GS.won),
+		"fase %d, «%s», won=%s" % [int(GS.numero_da_fase), GS.phase, str(GS.won)])
 	await _f11_ate_ao_fim(main, _f11_sozinho(main, F11_RIBEIRO, "pagou",
 		"pagou, depois do «Pagar»"), "Até a próxima", "narracao", "pagou")
 	return true
@@ -2580,9 +2599,9 @@ func _f11_quitou_antes() -> bool:
 	_confere("F11: quitou antes — a parcela pagou-se no último dia a jogar",
 		GS.pagar_parcela_adiantado())
 	var main: Node = await _f11_main_e_virar_o_dia()
-	_confere("F11: quitou antes — virar o último dia acabou a partida ganha",
-		GS.phase == "game_over" and bool(GS.won),
-		"fase «%s», won=%s" % [GS.phase, str(GS.won)])
+	_confere("F11: quitou antes — virar o último dia passou a partida à Fase 2",
+		int(GS.numero_da_fase) == 2 and GS.phase != "game_over" and not bool(GS.won),
+		"fase %d, «%s», won=%s" % [int(GS.numero_da_fase), GS.phase, str(GS.won)])
 	await _f11_ate_ao_fim(main, null, "", "narracao", "quitou antes")
 	return true
 
@@ -2633,8 +2652,9 @@ func _f11_ate_ao_fim(main: Node, primeiro: Node, botao: String, tempo_fim: Strin
 		var boletim := _f11_sozinho(main, F11_BOLETIM, "", "%s, o boletim" % caso)
 		if boletim != null:
 			var semana: int = int((boletim.get("_resumo") as Dictionary)["semana"])
+			# Da Fase 1: quem pagou já está na 2, que não tem última semana.
 			_confere("F11: %s — o boletim é o da última semana" % caso,
-				semana == int(GS.semanas_da_fase()), "é o da semana %d" % semana)
+				semana == int(GS.ultima_semana_da_fase(1)), "é o da semana %d" % semana)
 			if await _f10_tocar(boletim, "Fechar o boletim", "F11"):
 				_f11_sozinho(main, F10_FIM, tempo_fim, "%s, fechado o boletim" % caso)
 	main.free()
@@ -3388,6 +3408,17 @@ func _f14_tom_confere(painel: Node, caso: String) -> void:
 			principal.theme_type_variation, esperado])
 
 
+# Um botão visível, ainda não condenado, cujo texto começa assim.
+func _f14_tem_botao(no: Node, inicio: String) -> bool:
+	if no is Button and (no as Button).text.begins_with(inicio) \
+			and (no as Control).is_visible_in_tree() and not no.is_queued_for_deletion():
+		return true
+	for filho in no.get_children():
+		if _f14_tem_botao(filho, inicio):
+			return true
+	return false
+
+
 func _f14_juntar_tarjas(no: Node, tarjas: Array) -> void:
 	if no is PanelContainer and String((no as PanelContainer).theme_type_variation).begins_with("TarjaNarrativa") \
 			and (no as Control).is_visible_in_tree() and not no.is_queued_for_deletion():
@@ -3398,8 +3429,12 @@ func _f14_juntar_tarjas(no: Node, tarjas: Array) -> void:
 
 # O BALANÇO, pelos dois lados do fim. O motivo sai do `_check_end()` do jogo
 # — dinheiro abaixo de zero, e o prazo acabado com a parcela paga —, e o
-# painel abre com o `won` e o `end_reason` que ele deixou. Quem venceu passa
-# pela narração e chega ao balanço pelo botão dela, como a jogar.
+# painel abre com a frase que ele deixou. Quem venceu passa pela narração e
+# chega ao balanço pelo botão dela, como a jogar.
+#
+# ⚠️ DESDE A `104` QUEM VENCE NÃO ACABA A PARTIDA: a frase vem da passagem
+# (`fase_concluida`), e o balanço dele sai pela Fase 2. A saída é a pergunta
+# nova — «Jogar de novo» por cima de um porto que acabou de passar apagá-lo-ia.
 func _f14_balanco() -> void:
 	for venceu in [false, true]:
 		_f10_partida_nova("F14")
@@ -3411,10 +3446,21 @@ func _f14_balanco() -> void:
 			GS.turn = int(GS.turnos_da_fase()) + 1
 		else:
 			GS.cash = -1
+		var passagem: Array = []
+		var ouvir := func(_n: int, motivo: String) -> void: passagem.append(motivo)
+		GS.fase_concluida.connect(ouvir)
 		GS._check_end()
-		_confere("F14: o jogo acabou %s" % ("vencido" if venceu else "perdido"),
-			GS.phase == "game_over" and bool(GS.won) == venceu, "fase %s" % GS.phase)
-		var painel: Node = await _f10_abrir(F10_FIM, [bool(GS.won), String(GS.end_reason)])
+		GS.fase_concluida.disconnect(ouvir)
+		if venceu:
+			_confere("F14: a Fase 1 vencida passou à Fase 2, com a frase do balanço",
+				int(GS.numero_da_fase) == 2 and GS.phase != "game_over" and passagem.size() == 1,
+				"fase %d, «%s», %d passagens" % [int(GS.numero_da_fase), GS.phase, passagem.size()])
+		else:
+			_confere("F14: o jogo acabou perdido", GS.phase == "game_over" and not bool(GS.won),
+				"fase %s" % GS.phase)
+		var motivo: String = String(passagem[0]) if venceu and passagem.size() == 1 \
+			else String(GS.end_reason)
+		var painel: Node = await _f10_abrir(F10_FIM, [venceu, motivo])
 		# Duas páginas de diário antes do balanço (`082`): vira-se a folha e
 		# espera-se a segunda, como a jogar.
 		if venceu and not (await _f10_tocar(painel, "Virar a página", "F14")
@@ -3423,6 +3469,12 @@ func _f14_balanco() -> void:
 			_f10_fechar(painel)
 			return
 		_f14_tom_confere(painel, "balanço de quem %s" % ("venceu" if venceu else "perdeu"))
+		var seguir := _f14_tem_botao(painel, "Seguir para a Fase 2")
+		var de_novo := _f14_tem_botao(painel, "Jogar de novo")
+		_confere("F14: o balanço de quem %s sai %s" % ["venceu" if venceu else "perdeu",
+				"pela Fase 2, sem «Jogar de novo»" if venceu else "por «Jogar de novo»"],
+			seguir == venceu and de_novo == (not venceu),
+			"seguir=%s, de novo=%s" % [str(seguir), str(de_novo)])
 		_f10_fechar(painel)
 	GS.clear_save()
 	GS._rng.seed = F10_SEMENTE
@@ -5024,10 +5076,14 @@ func _f19_membros(caminho: String) -> Dictionary:
 #    D3. E o capital das parcelas da Fase 1 contra o `START_CASH`, que é o
 #    crédito que o jogador recebeu (`085`).
 #
-# ⚠️ AS DUAS ÚLTIMAS SÓ VALEM PARA A FASE EM JOGO. O número da fase não está no
-# save, e o `dados_da_fase()` devolve sempre a primeira: quem trouxer a Fase 2
-# estende-as quando houver como a pôr em jogo. As duas primeiras já correm em
-# todas as linhas da tabela.
+# ⚠️ DESDE A `104` TUDO CORRE EM TODAS AS LINHAS. Até lá as afirmações valiam
+# só para a fase em jogo, que era sempre a primeira; com a Fase 2 no save, o
+# nível e os berços conferem-se fase a fase (o `n` das funções de fase), e o
+# capital continua a ser só da Fase 1, que é a do crédito.
+#
+# E A FASE SEM PRAZO (`103`): `semanas` em `null`, e só onde é verdade — na
+# ÚLTIMA linha, que não tem seguinte a abrir num dia que não existe, e sem
+# parcelas, que venceriam numa semana que não se conta.
 # ============================================================
 var _f20_terminou := false
 
@@ -5041,10 +5097,11 @@ func _f20_a_tabela_das_fases() -> void:
 	var fases: Array = GS.get_script().get_script_constant_map()["FASES"]
 	_confere("F20: a tabela tem pelo menos uma fase (%d)" % fases.size(), fases.size() >= 1)
 	for i in fases.size():
-		_f20_campos_da_fase(i + 1, fases[i])
-	_f20_capital_da_fase_em_jogo()
-	_f20_bercos_do_mapa()
-	_f20_nivel_alcancado()
+		_f20_campos_da_fase(i + 1, fases[i], i == fases.size() - 1)
+	_f20_capital_da_fase_1()
+	for i in fases.size():
+		_f20_bercos_do_mapa(i + 1)
+		_f20_nivel_alcancado(i + 1)
 	_f20_terminou = true
 
 
@@ -5064,7 +5121,7 @@ func _f20_inteiro(v: Variant) -> bool:
 	return typeof(v) == TYPE_INT
 
 
-func _f20_campos_da_fase(n: int, fase: Variant) -> void:
+func _f20_campos_da_fase(n: int, fase: Variant, ultima: bool) -> void:
 	var onde := "Fase %d" % n
 	if typeof(fase) != TYPE_DICTIONARY:
 		_confere("F20: a %s é um dicionário" % onde, false)
@@ -5072,8 +5129,16 @@ func _f20_campos_da_fase(n: int, fase: Variant) -> void:
 	if not _f20_chaves("a " + onde, fase, F20_CAMPOS_DA_FASE):
 		return
 	var semanas: Variant = fase["semanas"]
-	_confere("F20: a %s dura um número inteiro de semanas (%s)" % [onde, semanas],
-		_f20_inteiro(semanas) and int(semanas) >= 1)
+	var com_prazo: bool = semanas != null
+	if com_prazo:
+		_confere("F20: a %s dura um número inteiro de semanas (%s)" % [onde, semanas],
+			_f20_inteiro(semanas) and int(semanas) >= 1)
+	else:
+		var parcelas_sem_prazo: Variant = fase["parcelas"]
+		_confere("F20: a %s não tem prazo, e só a última fase e sem cobrança o pode não ter"
+				% onde,
+			ultima and typeof(parcelas_sem_prazo) == TYPE_ARRAY
+				and (parcelas_sem_prazo as Array).is_empty())
 	var nivel: Variant = fase["nivel_maximo"]
 	_confere("F20: o nível máximo da %s é um dos três do porto (%s)" % [onde, nivel],
 		_f20_inteiro(nivel) and int(nivel) >= 1 and int(nivel) <= 3)
@@ -5087,8 +5152,9 @@ func _f20_campos_da_fase(n: int, fase: Variant) -> void:
 		typeof(reputacao) in [TYPE_INT, TYPE_FLOAT] and float(reputacao) >= 0.0
 			and float(reputacao) <= 100.0)
 
+	# Vazia é fase sem cobrança (`104`); o que tem de ser é uma lista.
 	var parcelas: Variant = fase["parcelas"]
-	if typeof(parcelas) != TYPE_ARRAY or (parcelas as Array).is_empty():
+	if typeof(parcelas) != TYPE_ARRAY:
 		_confere("F20: a %s tem uma lista de parcelas" % onde, false)
 		return
 	var anterior := 0
@@ -5104,7 +5170,7 @@ func _f20_campos_da_fase(n: int, fase: Variant) -> void:
 			continue
 		_confere("F20: a %s vence depois da anterior e dentro da fase (semana %d)"
 				% [onde_p, int(p["semana"])],
-			int(p["semana"]) > anterior and int(p["semana"]) <= int(semanas))
+			int(p["semana"]) > anterior and com_prazo and int(p["semana"]) <= int(semanas))
 		_confere("F20: os juros da %s são parte do valor (%d de %d)"
 				% [onde_p, int(p["juros"]), int(p["valor"])],
 			int(p["juros"]) >= 0 and int(p["juros"]) < int(p["valor"]))
@@ -5127,7 +5193,7 @@ func _f20_campos_da_fase(n: int, fase: Variant) -> void:
 		if not tipos:
 			continue
 		_confere("F20: o %s abre dentro da fase (semana %d)" % [onde_r, int(r["semana"])],
-			int(r["semana"]) >= 1 and int(r["semana"]) <= int(semanas))
+			int(r["semana"]) >= 1 and (not com_prazo or int(r["semana"]) <= int(semanas)))
 		_confere("F20: o %s leva pelo menos um dia de obra (%d)" % [onde_r, int(r["dias_de_obra"])],
 			int(r["dias_de_obra"]) >= 1)
 		# Duas perguntas e não uma: pedir mais quitadas do que a fase cobra é
@@ -5143,10 +5209,10 @@ func _f20_campos_da_fase(n: int, fase: Variant) -> void:
 # O crédito inicial da `085`: R$400 mil recebidos, R$420 mil contratados. O
 # comentário da tabela afirma que o arredondamento fecha o capital ao real, e
 # era só isso — uma afirmação; mexer num juro deixava-a falsa sem um aviso.
-func _f20_capital_da_fase_em_jogo() -> void:
+func _f20_capital_da_fase_1() -> void:
 	var capital := 0
-	for i in int(GS.parcelas_na_fase()):
-		capital += int(GS.valor_da_parcela(i)) - int(GS.juros_da_parcela(i))
+	for i in int(GS.parcelas_na_fase(1)):
+		capital += int(GS.valor_da_parcela(i, 1)) - int(GS.juros_da_parcela(i, 1))
 	_confere("F20: o capital das parcelas da Fase 1 é o crédito que o jogador recebeu (%s de %s)"
 			% [GS.moeda(capital), GS.moeda(int(GS.START_CASH))],
 		capital == int(GS.START_CASH))
@@ -5155,7 +5221,7 @@ func _f20_capital_da_fase_em_jogo() -> void:
 # As vagas curadas do D3: a tabela diz quantos berços o mapa desenha, e é o
 # `Main.tscn` quem os desenha — a doca no mapa e o cartão por baixo dele. A
 # cena instancia-se FORA da árvore, logo sem `_ready()`: só os nós.
-func _f20_bercos_do_mapa() -> void:
+func _f20_bercos_do_mapa(n: int) -> void:
 	var main: Node = (load("res://scenes/Main.tscn") as PackedScene).instantiate()
 	var docas := 0
 	for filho in main.get_node("MapaWrap/Docas").get_children():
@@ -5166,9 +5232,9 @@ func _f20_bercos_do_mapa() -> void:
 		if String(filho.name).begins_with("Cartao"):
 			cartoes += 1
 	main.free()
-	var bercos := int(GS.bercos_no_mapa())
-	_confere("F20: o mapa desenha os berços que a fase declara (%d docas e %d cartões, declara %d)"
-			% [docas, cartoes, bercos],
+	var bercos := int(GS.bercos_no_mapa(n))
+	_confere("F20: o mapa desenha os berços que a Fase %d declara (%d docas e %d cartões, declara %d)"
+			% [n, docas, cartoes, bercos],
 		docas == bercos and cartoes == bercos)
 
 
@@ -5178,9 +5244,9 @@ func _f20_bercos_do_mapa() -> void:
 # `new_game()` limpa —, e pergunta ao `nivel_do_porto()` do jogo. IGUAL e não
 # «no máximo»: um nível declarado acima do que se alcança é a mesma mentira, do
 # outro lado.
-func _f20_nivel_alcancado() -> void:
+func _f20_nivel_alcancado(n: int) -> void:
 	GS.new_game()
-	var reparos: Array = GS.reparos_da_fase()
+	var reparos: Array = GS.reparos_da_fase(n)
 	var maior := 0
 	var montados := 0
 	for mascara in range(1 << reparos.size()):
@@ -5199,9 +5265,9 @@ func _f20_nivel_alcancado() -> void:
 		maior = maxi(maior, int(GS.nivel_do_porto()))
 		montados += 1
 	GS.new_game()
-	var declarado := int(GS.dados_da_fase()["nivel_maximo"])
-	_confere("F20: o nível máximo da Fase 1 é o que os reparos dela alcançam (declara %d, alcançam %d em %d portos)"
-			% [declarado, maior, montados],
+	var declarado := int(GS.dados_da_fase(n)["nivel_maximo"])
+	_confere("F20: o nível máximo da Fase %d é o que os reparos dela alcançam (declara %d, alcançam %d em %d portos)"
+			% [n, declarado, maior, montados],
 		montados > 1 and maior == declarado)
 
 
@@ -5711,3 +5777,237 @@ func _f22_nao_e_dia() -> bool:
 	main.free()
 	GS.clear_save()
 	return true
+
+
+# ══ F23 — A FASE 2 NA TELA, E O M9 (`104`) ══════════════════════════════════
+#
+# Duas perguntas que nenhum bloco fazia, porque a Fase 2 não existia:
+#
+# 1. O M9 TRANCADO: os estados do turno viraram constantes, e um literal
+#    `"playing"` que volte ao código do JOGO (o `autoload/` e o `scripts/`,
+#    fora das réguas de `validation/`) é a forma de onde um erro de digitação
+#    sai calado. Varre-se o ARQUIVO, cortando o comentário de cada linha — os
+#    comentários citam os estados a explicar o porquê, e a busca no texto
+#    inteiro reprovaria o código certo. E o legado: o `GameState` já não tem o
+#    `upgrade_purchased` nem o `buy_upgrade()`, e o save não o grava.
+# 2. A FASE 2 ABRE NA TELA: a passagem com o `Main` aberto, e cada sítio que
+#    lia a duração da fase — o dia do HUD, o cartão da parcela, o calendário,
+#    o celular, a pausa, o boletim e a linha do espaço — desenhado SEM prazo.
+#    Um sítio que ainda pedisse `turnos_da_fase()` rebenta (`int(null)`), e o
+#    erro aborta só a função onde nasce: quem a chamou segue com um valor
+#    vazio. Por isso cada asserção lê o TEXTO EXATO que a tela escreveu, e não
+#    se o painel abriu. E a Dona Cida na passagem: a barra recomeça na escala
+#    da Fase 2, e isso não é «andaram recusando contrato».
+var _f23_terminou := false
+var _f23_cida: Array[String] = []
+const F23_PASTAS_DO_JOGO := ["res://autoload", "res://scripts"]
+const F23_ESTADOS := ["playing", "rival_offer", "debt_payment", "game_over"]
+
+
+func _f23_a_fase_2() -> void:
+	var c1 := _f23_literais_de_estado()
+	_confere("F23: o caminho do M9 correu até ao fim", c1)
+	var c2: bool = await _f23_a_fase_2_na_tela()
+	_confere("F23: o caminho da tela correu até ao fim", c2)
+	_f23_terminou = true
+
+
+func _f23_arquivos(pasta: String, saida: Array[String]) -> void:
+	var d := DirAccess.open(pasta)
+	if d == null:
+		return
+	for f in d.get_files():
+		if f.ends_with(".gd"):
+			saida.append(pasta.path_join(f))
+	for sub in d.get_directories():
+		# As réguas de `validation/` montam estados com o valor do save por
+		# extenso, como as suítes; o que ali se mede é a tela, não o jogo.
+		if sub != "validation":
+			_f23_arquivos(pasta.path_join(sub), saida)
+
+
+# A parte de CÓDIGO de uma linha: até ao primeiro `#` fora de aspas.
+func _f23_codigo(linha: String) -> String:
+	var aspas := ""
+	for i in linha.length():
+		var c := linha[i]
+		if aspas != "":
+			if c == aspas:
+				aspas = ""
+		elif c == "\"" or c == "'":
+			aspas = c
+		elif c == "#":
+			return linha.substr(0, i)
+	return linha
+
+
+func _f23_literais_de_estado() -> bool:
+	var arquivos: Array[String] = []
+	for pasta in F23_PASTAS_DO_JOGO:
+		_f23_arquivos(pasta, arquivos)
+	var achados: Array[String] = []
+	var definicoes := 0
+	var tem_game_state := false
+	var tem_main := false
+	for caminho in arquivos:
+		tem_game_state = tem_game_state or caminho.ends_with("autoload/GameState.gd")
+		tem_main = tem_main or caminho.ends_with("scripts/Main.gd")
+		var n := 0
+		for linha in FileAccess.get_file_as_string(caminho).split("\n"):
+			n += 1
+			var codigo := _f23_codigo(linha)
+			for estado in F23_ESTADOS:
+				if not codigo.contains("\"%s\"" % estado):
+					continue
+				# A definição das constantes é o único sítio do texto solto.
+				if codigo.strip_edges().begins_with("const ESTADO_"):
+					definicoes += 1
+				else:
+					achados.append("%s:%d" % [caminho.get_file(), n])
+	# A régua prova que leu: os dois arquivos que mais liam os estados estão
+	# na lista, e as quatro definições foram achadas — sem elas, «zero
+	# literais» seria a amostra vazia a dar verde.
+	_confere("F23: a varredura leu o código do jogo (%d arquivos, GameState e Main entre eles)"
+			% arquivos.size(), arquivos.size() > 10 and tem_game_state and tem_main)
+	_confere("F23: e achou as quatro constantes que definem os estados (%d)" % definicoes,
+		definicoes == F23_ESTADOS.size())
+	_confere("F23: nenhum estado do turno por extenso no código do jogo (%d)" % achados.size(),
+		achados.is_empty(), ", ".join(achados))
+	var tem_legado := false
+	for prop in GS.get_property_list():
+		if String(prop["name"]) == "upgrade_purchased":
+			tem_legado = true
+	GS.save_game()
+	var gravado: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
+	_confere("F23: o legado saiu — sem `upgrade_purchased` nem `buy_upgrade()`, e o save sem ele",
+		not tem_legado and not GS.has_method("buy_upgrade") and not gravado.has("upgrade_purchased"))
+	return true
+
+
+func _f23_ouvir_cida(id: String, _linha: String) -> void:
+	_f23_cida.append(id)
+
+
+func _f23_a_fase_2_na_tela() -> bool:
+	GS.clear_save()
+	GS._rng.seed = F10_SEMENTE
+	GS.new_game()
+	GS.definir_nomes("Cais da Fase 2", "")
+	var voltas := 0
+	while voltas < 200 and not (GS.phase == "debt_payment" and int(GS.parcela_indice) == 2):
+		voltas += 1
+		GS.cash = maxi(int(GS.cash), int(GS.START_CASH) * 25)
+		if GS.phase == "debt_payment":
+			GS.pay_debt()
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+			continue
+		GS.advance_turn()
+	if not (GS.phase == "debt_payment" and int(GS.parcela_indice) == 2):
+		_confere("F23: a partida chega à terceira cobrança", false, "fase «%s»" % GS.phase)
+		return true
+	var main: Node = (load("res://scenes/Main.tscn") as PackedScene).instantiate()
+	root.add_child(main)
+	await _f8_esperar()
+	# «Referência» na Fase 1, PELO SINAL: a narradora só sabe a faixa que viu
+	# passar, e a primeira que vê ela só regista. Escrita à mão, a barra a 100
+	# nunca lhe chegava, o recomeço da passagem era a primeira — e o mutante
+	# sem o `_cida_passagem()` passou verde (medido).
+	GS.reputation = 99.0
+	GS._change_reputation(1.0)
+	await _f8_esperar()
+	_f23_cida.clear()
+	main.narradora.falou.connect(_f23_ouvir_cida)
+	GS.pay_debt()
+	await _f8_esperar()
+	_confere("F23: a passagem com o Main aberto põe a partida na Fase 2",
+		int(GS.numero_da_fase) == 2 and GS.phase != "game_over")
+	_confere("F23: e a barra recomeçou abaixo da faixa em que a Fase 1 fechou",
+		GS.reputation_label() != GS.rotulo_da_reputacao(100.0))
+	_confere("F23: e a Dona Cida não anuncia o recomeço como queda (%s)" % ", ".join(_f23_cida),
+		not _f23_cida.has("reputacao_caiu") and not _f23_cida.has("reputacao_subiu"))
+	# O CONTROLO: ela continua a ouvir, a partir da faixa da Fase 2 — uma queda
+	# de verdade, depois, é anunciada. Sem isto, uma narradora surda passava a
+	# asserção de cima de graça.
+	_f23_cida.clear()
+	GS._change_reputation(-30.0)
+	await _f8_esperar()
+	_confere("F23: e uma queda de verdade, depois da passagem, ela anuncia (%s)" % ", ".join(_f23_cida),
+		_f23_cida.has("reputacao_caiu"))
+	var dia := main.get_node("HudBar/DiaPilula/Linha/Dia") as Label
+	_confere("F23: o dia do HUD não tem «de quantos» na Fase 2 («%s»)" % dia.text,
+		dia.text == "Dia %d" % int(GS.turn))
+	var meta := main.get_node("MetaCartao/MetaColuna/MetaTituloLinha/MetaTitulo") as Label
+	_confere("F23: o cartão da parcela diz que não há dívida («%s»)" % meta.text,
+		meta.text == "Fase 2 — sem dívida com o banco")
+	main.free()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+
+	# O CALENDÁRIO: a tarja sem prazo e as quatro semanas a partir da de hoje.
+	var cal: Node = await _f10_abrir("res://scenes/panels/PainelCalendario.tscn", [])
+	var celulas: Array[String] = []
+	_f23_nomes_com_prefixo(cal, "Dia", celulas)
+	var primeiro_da_semana: int = (int(GS.current_week()) - 1) * int(GS.TURNS_PER_WEEK) + 1
+	_confere("F23: o calendário da Fase 2 diz o dia sem prazo («%s»)" % _f14_texto(cal, "Dia "),
+		_f14_texto(cal, "Dia ") == "Dia %d" % int(GS.turn))
+	_confere("F23: e mostra as quatro semanas a partir da de hoje (%d células, a primeira %s)"
+			% [celulas.size(), celulas[0] if not celulas.is_empty() else "—"],
+		celulas.size() == 4 * int(GS.TURNS_PER_WEEK)
+			and celulas.has("Dia%d" % primeiro_da_semana)
+			and not celulas.has("Dia%d" % (primeiro_da_semana - 1)))
+	# A legenda explica só o que a grelha pode mostrar: sem cobrança, nada de
+	# «vencimento da parcela», e o fecho de semana continua lá.
+	_confere("F23: e a legenda não explica um vencimento que a fase não tem",
+		_f14_texto(cal, "vencimento da parcela") == "" and _f14_texto(cal, "fecho de semana") != "")
+	_f10_fechar(cal)
+
+	# O CELULAR: a semana sem «de quantas», e a fita com os dias do calendário.
+	var menu: Node = await _f10_abrir("res://scenes/panels/PainelMenu.tscn", [])
+	var semana := menu.find_child("Semana", true, false) as Label
+	var de_total := menu.find_child("DeTotal", true, false) as Label
+	var fita := menu.find_child("FitaDosDias", true, false)
+	var tracos := 0
+	if fita != null:
+		for grupo in fita.get_children():
+			tracos += grupo.get_child_count()
+	_confere("F23: o celular diz a semana e a fase, sem prazo («%s», «%s»)"
+			% ["—" if semana == null else semana.text, "—" if de_total == null else de_total.text],
+		semana != null and semana.text == "SEMANA %d" % int(GS.current_week())
+			and de_total != null and de_total.text == "Fase 2")
+	_confere("F23: e a fita tem os dias que o calendário mostra (%d)" % tracos,
+		tracos == (GS.calendario() as Array).size())
+	_f10_fechar(menu)
+
+	# A PAUSA e a LINHA DO ESPAÇO: o dia pela fase.
+	var pausa: Node = await _f10_abrir("res://scenes/panels/PauseMenu.tscn", [])
+	var onde := _f14_texto(pausa, GS.texto("{portName}"))
+	_confere("F23: a pausa diz em que fase e dia está («%s»)" % onde,
+		onde.contains("Fase 2, dia %d" % int(GS.turn)))
+	_f10_fechar(pausa)
+	GS.save_game()
+	var linha: String = GS.linha_do_espaco(GS.resumo_do_espaco(int(GS.espaco)))
+	_confere("F23: a linha do espaço também («%s»)" % linha,
+		linha.begins_with("Fase 2, dia %d" % int(GS.turn)))
+
+	# O BOLETIM de uma semana da Fase 2: sem «de quantas».
+	var boletim: Node = await _f10_abrir("res://scenes/panels/PainelBoletim.tscn",
+		[GS.resumo_da_semana(int(GS.current_week()))])
+	# Pela linha EXATA: o boletim tem também a «Semana anterior», e o
+	# `_f14_texto()` dá vazio a dois achados.
+	var textos: Array[String] = []
+	_f10_textos_visiveis(boletim, textos)
+	var com_prazo := textos.filter(func(t): return t.begins_with("Semana %d de" % int(GS.current_week())))
+	_confere("F23: o boletim da Fase 2 diz a semana sem prazo (%s)" % str(com_prazo),
+		textos.has("Semana %d" % int(GS.current_week())) and com_prazo.is_empty())
+	_f10_fechar(boletim)
+	GS.clear_save()
+	return true
+
+
+func _f23_nomes_com_prefixo(no: Node, prefixo: String, saida: Array[String]) -> void:
+	var nome := String(no.name)
+	if nome.begins_with(prefixo) and nome.substr(prefixo.length()).is_valid_int():
+		saida.append(nome)
+	for filho in no.get_children():
+		_f23_nomes_com_prefixo(filho, prefixo, saida)

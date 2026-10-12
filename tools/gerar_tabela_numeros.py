@@ -408,9 +408,13 @@ def montar_fases() -> list[str]:
     própria — senão somem, como o `ler_estruturas()` avisa.
 
     ⚠️ OS DIAS SÃO CONTA DAQUI, a mesma do `GameState`: `semanas × semana` para
-    a fase (`turnos_da_fase()`) e para o vencimento (`dia_da_parcela()`). São
-    as duas que já estavam na tabela quando eram constantes (`TURNS_TOTAL`,
-    `PARCELA_DUE_TURN`); quem mudar a conta lá muda-a aqui.
+    a fase (`turnos_da_fase()`) e, para o vencimento (`dia_da_parcela()`), a
+    mesma conta somada aos dias das fases anteriores — desde a `104` a semana
+    de uma parcela conta-se do início da fase dela. Quem mudar a conta lá
+    muda-a aqui.
+
+    ⚠️ E A FASE SEM PRAZO tem `semanas` em `None` (o `null` do GDScript): sai
+    «sem prazo», e não um zero que se leria como duração (`104`).
     """
     semana = int(SEMANA_LIDA[0])
     linhas = [
@@ -419,39 +423,52 @@ def montar_fases() -> list[str]:
         "Desde a `094` o que é de uma fase vive na tabela `FASES` do `GameState`,",
         "e não em constantes soltas: a duração, as parcelas, os reparos, o nível",
         "que eles alcançam, os berços do mapa e a reputação de partida. O jogo",
-        "lê-a por funções (`turnos_da_fase()`, `valor_da_parcela()`…), e hoje só",
-        "existe a Fase 1. O nível máximo é uma afirmação, e o F20 do",
+        "lê-a por funções (`turnos_da_fase()`, `valor_da_parcela()`…). A Fase 2",
+        "abre no dia a seguir ao último da 1, no mesmo save, e não tem prazo nem",
+        "cobrança (`103`, `104`). O nível máximo é uma afirmação, e o F20 do",
         "`teste_fumaca` confere-a contra os reparos.",
         "",
-        "| Fase | Semanas | Dias | Parcelas | Nível máximo | Berços | Reputação inicial |",
-        "|---:|---:|---:|---:|---:|---:|---:|",
+        "| Fase | Abre no dia | Semanas | Dias | Parcelas | Nível máximo | Berços | Reputação inicial |",
+        "|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
+    inicio = 1
+    inicios = []
     for i, f in enumerate(FASES_LIDAS):
-        linhas.append("| %d | %d | %d | %d | %d | %d | %s |" % (
-            i + 1, int(f["semanas"]), int(f["semanas"]) * semana,
+        inicios.append(inicio)
+        sem_prazo = f["semanas"] is None
+        linhas.append("| %d | %d | %s | %s | %d | %d | %d | %s |" % (
+            i + 1, inicio, "sem prazo" if sem_prazo else "%d" % int(f["semanas"]),
+            "—" if sem_prazo else "%d" % (int(f["semanas"]) * semana),
             len(f["parcelas"]), int(f["nivel_maximo"]), int(f["bercos"]),
             formatar(float(f["reputacao_inicial"]))))
+        if not sem_prazo:
+            inicio += int(f["semanas"]) * semana
     linhas.append("")
     for i, f in enumerate(FASES_LIDAS):
         linhas += [
             "### Fase %d — as parcelas do Sr. Ribeiro" % (i + 1),
             "",
-            "O valor é o boleto, capital mais juros; quitar antes abate só os",
-            "juros da janela, que vai do vencimento anterior ao dela.",
-            "",
-            "| Parcela | Vence na semana | Dia | Valor | Juros | Capital |",
-            "|---:|---:|---:|---:|---:|---:|",
         ]
+        if not f["parcelas"]:
+            linhas += ["Sem cobranças nesta fase.", ""]
+        else:
+            linhas += [
+                "O valor é o boleto, capital mais juros; quitar antes abate só os",
+                "juros da janela, que vai do vencimento anterior ao dela.",
+                "",
+                "| Parcela | Vence na semana da fase | Dia | Valor | Juros | Capital |",
+                "|---:|---:|---:|---:|---:|---:|",
+            ]
         for n, p in enumerate(f["parcelas"]):
             linhas.append("| %d | %d | %d | R$ %s | R$ %s | R$ %s |" % (
-                n + 1, int(p["semana"]), int(p["semana"]) * semana,
+                n + 1, int(p["semana"]), inicios[i] - 1 + int(p["semana"]) * semana,
                 formatar(int(p["valor"])), formatar(int(p["juros"])),
                 formatar(int(p["valor"]) - int(p["juros"]))))
         linhas += [
             "",
             "### Fase %d — os reparos que ela abre" % (i + 1),
             "",
-            "| Reparo | Abre na semana | Cobranças quitadas | Dias de obra |",
+            "| Reparo | Abre na semana da fase | Cobranças quitadas | Dias de obra |",
             "|---|---:|---:|---:|",
         ]
         # Pela `ordem` do catálogo, como a tabela das estruturas: o despejo
