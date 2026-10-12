@@ -4,9 +4,9 @@
 Continuando o BR Port. Leia docs/ESTADO_DO_PROJETO.md, a §7 do plano v3 e as
 decisões 103 e 104.
 
-Confira na main pelo GitHub se o PR da decisão 104 foi fundido (branch
-claude/eager-gates-86k750: a passagem para a Fase 2, o save 16 com o M9, o
-T20 e o F23) e se há PR aberto do Codex antes de editar. A última decisão é
+Confira na main pelo GitHub se o PR #128, da decisão 104, foi fundido
+(branch claude/eager-gates-86k750: a passagem para a Fase 2, o save 16 com o
+M9, o T20 e o F23) e se há PR aberto do Codex antes de editar. A última decisão é
 a 104; confira o próximo número livre na main.
 
 A frente 5 segue pela progressão para a Fase 2 (103), etapa 2: a treliça e o
