@@ -38,6 +38,15 @@ semana, e o simulador desconta-o da margem (`.claude/rules/economia.md`).
 o `v15.json` joga mal o primeiro mês para trazer a dívida
 (`.claude/rules/save.md`).
 
+⚠️ Mutante que muda a linha e deixa a antiga de pé é equivalente, e laço de
+suíte que joga até um estado leva teto de voltas — os dois apareceram na F6
+desta sessão (`.claude/rules/testes-e-guardas.md`).
+
+O banco de aperto (caixa inicial baixado, com e sem a chance) mostrou que
+ela salva quem falha por pouco e não toca nas duas portas que ficaram de
+fora por escolha: a última cobrança e «o dinheiro acabou» entre vencimentos
+(`102`). Se o playtest mostrar gente a morrer nelas, a pergunta é do Bruno.
+
 Os tempos `pagou` e `nao_pagou` da cena do Sr. Ribeiro têm o nome das falas,
 e o F7 procura o id entre aspas no painel: um tempo homónimo satisfá-lo-ia
 sozinho. Lido, não medido; anotado na `102`.

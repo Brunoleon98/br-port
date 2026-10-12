@@ -158,9 +158,10 @@ fecho (M2), com o caixa negativo posto a zero (M3); a chance na última
 cobrança (M4) e duas vezes (M5); pagar sem zerar a dívida (M6); o boleto sem
 ela (M7); a antecipação a abatê-la (M8); a dívida escrita só antes do
 `_baixar_parcela()` (M9b); a semana sem a linha (M10) e o resultado a somá-la
-(M11, também no F14); o save sem a dívida (M12 — o T14 fica PRESO no
+(M11, também no F14); o save sem a dívida (M12 — o T14 ficava PRESO no
 vencimento, porque o `pay_debt()` recusa calado e o `advance_turn()` volta
-calado); o carregamento a esquecer a chance (M13); a partida nova a
+calado; ganhou teto de voltas e uma asserção sobre ele, e o mesmo defeito
+passou a reprovar com nome); o carregamento a esquecer a chance (M13); a partida nova a
 lembrá-la (M14); a recusa sem a coerência (M15, só no F3); o degrau sem a
 linha da semana (M16) e sem degrau (M17); o painel sem a oferta (M18), a
 prometer o emprestado no «Volta» (M19) ou o dia da cobrança corrente (M20);
@@ -206,3 +207,33 @@ acabou» entre vencimentos (as 145 do Ótimo a R$200 mil quebram antes do dia
 28, com o caixa negativo num fecho de semana).
 Nenhuma destas duas portas faz parte do recorte; se o playtest mostrar gente
 a morrer nelas, a pergunta volta ao Bruno.
+
+## A foto
+
+A bateria ganhou dois tiros, `ribeiro_segunda_chance` e `ribeiro_emprestou`,
+e o `ribeiro_nao_pagou` passou a tocar «Recusar» depois do «Não consigo».
+Contra a `main`, na mesma hora: das 69 fotos que já existiam, **69 iguais ao
+byte** — o «não pagou» incluído, alcançado agora pelo caminho novo — e as
+duas novas; a cobertura pede foto dos dois tempos novos, e tem-na. O boletim
+e o cartão da parcela depois do empréstimo não são tempo de painel nenhum
+e nenhum tiro os monta: foram fotografados à parte, para olhar, e leem bem
+(o empréstimo abaixo do resultado; a cobrança a dizer que inclui a segunda
+chance e que antecipar não a abate).
+
+Para a leitura do A4, além das duas falas dele: na semana do empréstimo a
+Dona Cida diz o tom de sempre da semana da parcela — *«Fechou no vermelho,
+chefia — mas quem levou foi o Sr. Ribeiro. Esse vermelho eu assino
+embaixo.»* É verdade (o vermelho é o boleto, e o empréstimo está fora do
+resultado), mas ela aprova uma semana em que o porto não teve o boleto.
+
+## O que fica de fora
+
+- **A linha voluntária** de crédito — com o calendário a travar a obra, quase
+  não teria uso na Fase 1.
+- **As duas portas que a segunda chance não cobre**, por escolha: a última
+  cobrança da fase e «o dinheiro acabou» entre vencimentos (ver o banco).
+- **O percurso do D33** não monta os tempos novos: o contraste deles não foi
+  medido neste estado. As variações são as da tarja neutra e do «Parcela
+  quitada», as mesmas da cena.
+- **Os tempos `pagou` e `nao_pagou`** têm o nome das falas, e o F7 seria
+  satisfeito pelo tempo sozinho (lido, não medido).

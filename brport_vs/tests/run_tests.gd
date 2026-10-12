@@ -569,7 +569,14 @@ func _t14_fase_inteira() -> void:
 	GS.semana_fechada.connect(ouvir_boletim)
 	# Percorre todos os dias; o dinheiro abundante isola calendário e estado.
 	# A economia é outra pergunta, medida pelo simulador de 600 partidas.
-	while GS.turn <= GS.turnos_da_fase() and GS.phase != "game_over":
+	#
+	# ⚠️ COM TETO DE VOLTAS (`102`): com o save a recusar-se, o `load_game()`
+	# do vencimento deixa o caixa a zero, o `pay_debt()` recusa calado e o
+	# `advance_turn()` volta calado — o dia não anda, e a suíte ficava PRESA
+	# em vez de reprovar. Medido com o mutante do save sem a dívida.
+	var voltas := 0
+	while GS.turn <= GS.turnos_da_fase() and GS.phase != "game_over" and voltas < 400:
+		voltas += 1
 		if GS.phase == "rival_offer":
 			GS.resolve_rival_offer(true)
 		if GS.turn == 8:
@@ -603,6 +610,7 @@ func _t14_fase_inteira() -> void:
 					GS.resolve_rival_offer(true)
 				if indice == 0:
 					_check("T14: pátio abre após a cobrança paga", GS.comprar_estrutura("patio"))
+	_check("T14: o laço dos dias acabou sem bater no teto", voltas < 400)
 	_check("T14: três cobranças reais emitidas", cobrancas == [GS.valor_da_parcela(0), GS.valor_da_parcela(1), GS.valor_da_parcela(2)])
 	_check("T14: doze boletins, vitória só após o dia 84", boletins.size() == 12 and GS.won and GS.phase == "game_over" and GS.turn == 85)
 	_check("T14: recibo soma o que efetivamente saiu", GS.total_pago_parcelas == GS.valor_da_parcela(0) + GS.valor_da_parcela(1) + GS.valor_da_parcela(2))

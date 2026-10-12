@@ -225,6 +225,19 @@ guarda.
    hoje `SCRIPT ERROR|GDScript backtrace`, e as suítes NÃO: o `teste_fumaca`
    imprime de propósito um erro de JSON que traz backtrace, e alargar lá poria
    uma suíte verde a vermelho (`docs/decisoes/038`).
+   ⚠️ **E MUTANTE QUE MUDA A LINHA E DEIXA A ANTIGA DE PÉ É EQUIVALENTE.**
+   Na `102` o mutante «a dívida escrita antes do `_baixar_parcela()`»
+   acrescentou a escrita antes e deixou a de depois no lugar: o
+   comportamento era o mesmo, e as duas suítes passaram. Não era a guarda
+   que falhava — era o defeito que não existia. Antes de concluir «não
+   pega», leia o mutante como diff e pergunte se o jogo mudou mesmo; refeito
+   sem a linha de depois, reprovou nas duas.
+   ⚠️ **E LAÇO DE SUÍTE QUE JOGA ATÉ UM ESTADO LEVA TETO DE VOLTAS.** No mesmo
+   dia, o mutante do save sem a dívida pôs o T14 preso no vencimento — o
+   `pay_debt()` recusa calado, o `advance_turn()` volta calado, e o dia não
+   anda —, e o `run_tests` nunca acabou: no CI isso é o job a morrer de
+   timeout sem dizer qual bloco. Com o teto e uma asserção sobre ele, o
+   mesmo defeito reprova com nome.
    ⚠️ **E A QUARTA FORMA DE FALHAR É NÃO ACABAR.** Chamada com o número errado
    de argumentos dentro do `_process` de um `SceneTree` ABORTA a função, e um
    `--script` que aborta antes do `quit()` repete o `_process` a cada frame e
