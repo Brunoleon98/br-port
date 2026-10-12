@@ -845,3 +845,10 @@ mecânicas.
 rua que vira: *«E a rua VIRA em vez de acabar: cada cotovelo leva chanfro nas
 duas quinas salientes (`013`), do tamanho que deixa o maior camião virar no
 asfalto (`053`).»* O desenho continua na `mapa.md` e nas duas decisões.
+
+**E, para caber a segunda chance do Sr. Ribeiro (`102`),** desceram do estado
+duas linhas: *«E a mata atrás dela é desenhada onde se vê (`com_saia()`).»*,
+que continua no gerador e na `mapa.md`; e o item *«Registro de partida em
+`.jsonl`, um por partida, com o tempo de cada turno. Sai pelo menu de
+pausa»* dos sistemas que funcionam, que repetia o «A partida grava-se» do
+topo do mesmo arquivo.

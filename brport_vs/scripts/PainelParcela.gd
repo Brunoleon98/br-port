@@ -49,6 +49,13 @@ func setup(_sem_argumentos: Variant = null) -> void:
 		GameState.parcelas_na_fase(), Narrativa.concordar(GameState.parcelas_quitadas,
 			"parcela quitada", "parcelas quitadas")])
 	paragrafo(GameState.texto("Empréstimo inicial: {caixaInicial}. Total contratado: {totalParcelas}, antes dos abatimentos."))
+	# A SEGUNDA CHANCE vence com esta cobrança (`102`), e é por isso que o
+	# cheio passa do boleto da tabela. Escrito aqui porque o abatimento lá
+	# em baixo não a toca: sem esta linha, o jogador veria um boleto maior e
+	# um desconto que não o acompanha, sem saber porquê.
+	if int(GameState.emprestimo_devido) > 0 and not GameState.parcela_paid:
+		paragrafo("Esta cobrança inclui %s da segunda chance, que antecipar não abate."
+			% GameState.moeda(int(GameState.emprestimo_devido)))
 
 	var cheio: int = GameState.principal_da_parcela()
 	var valor: int = GameState.valor_da_parcela_hoje()

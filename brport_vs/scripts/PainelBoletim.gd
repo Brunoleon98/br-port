@@ -51,6 +51,15 @@ func setup(resumo: Dictionary) -> void:
 	], int(_resumo["despesa"]))
 
 	_resultado()
+	# O EMPRÉSTIMO DA SEGUNDA CHANCE (`102`) fica FORA do resultado — crédito
+	# não é lucro, e somá-lo poria a Dona Cida a festejar a semana em que o
+	# porto não teve o boleto. À parte, abaixo do resultado, com o que volta.
+	var emprestimo := int(_resumo["emprestimo"])
+	if emprestimo > 0:
+		var linha := paragrafo("O Sr. Ribeiro emprestou %s, fora do resultado." % GameState.moeda(emprestimo)
+			+ (" Volta %s na próxima cobrança." % GameState.moeda(int(GameState.emprestimo_devido))
+				if int(GameState.emprestimo_devido) > 0 else ""))
+		linha.theme_type_variation = "RotuloApoio"
 
 	# O TOM SAI UMA VEZ e serve as duas coisas: a fala e a cara. Pedir o tom
 	# duas vezes — uma para o texto, outra para a expressão — seria a mesma

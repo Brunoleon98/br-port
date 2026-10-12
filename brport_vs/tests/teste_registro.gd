@@ -51,6 +51,7 @@ var _b4 := false
 var _b5 := false
 var _b6 := false
 var _b7 := false
+var _b8 := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -101,13 +102,15 @@ func _rodar() -> void:
 	_r6_relogio()
 	print("=== R7: a obra grava-se PAGA e PRONTA, e o cabeçalho traz a semana ===")
 	_r7_obra_pronta()
+	print("=== R8: a segunda chance do Sr. Ribeiro grava-se com o que entrou e o que volta ===")
+	_r8_segunda_chance()
 
 	# A bandeira de cada bloco. Ver o aviso do cabeçalho: sem isto, "passou"
 	# quer dizer "não reprovou", que não é a mesma coisa que "correu".
-	_confere("os oito blocos correram até ao fim",
-		_b1 and _b1b and _b2 and _b3 and _b4 and _b5 and _b6 and _b7,
-		"R1=%s R1b=%s R2=%s R3=%s R4=%s R5=%s R6=%s R7=%s"
-			% [_b1, _b1b, _b2, _b3, _b4, _b5, _b6, _b7])
+	_confere("os nove blocos correram até ao fim",
+		_b1 and _b1b and _b2 and _b3 and _b4 and _b5 and _b6 and _b7 and _b8,
+		"R1=%s R1b=%s R2=%s R3=%s R4=%s R5=%s R6=%s R7=%s R8=%s"
+			% [_b1, _b1b, _b2, _b3, _b4, _b5, _b6, _b7, _b8])
 
 	_limpar()
 
@@ -547,6 +550,50 @@ func _r7_obra_pronta() -> void:
 		pagas.size() == 1 and int(pagas[0].get("t", -1)) == pago,
 		str(pagas))
 	_b7 = true
+
+
+# A SEGUNDA CHANCE (`102`). Quem a pede é o jogador que errou, e nenhum
+# perfil do simulador a pede: sem a linha, o playtest não saberia dizer se
+# alguém a usou. O caixa curto monta-se no vencimento, que é um estado que
+# a partida alcança — o de quem chega lá sem o boleto.
+func _r8_segunda_chance() -> void:
+	_limpar()
+	GS.new_game()
+	R._armado = false
+	R.armar()
+	var voltas := 0
+	while GS.phase != "debt_payment" and voltas < 60:
+		voltas += 1
+		if GS.phase == "rival_offer":
+			GS.negotiate_rival("igualar")
+			continue
+		GS.cash = 999999
+		GS.advance_turn()
+	_confere("a partida chegou ao primeiro vencimento", GS.phase == "debt_payment",
+		"fase %s no dia %d" % [GS.phase, GS.turn])
+	if GS.phase != "debt_payment":
+		return
+	GS.cash = 50000
+	var emprestado: int = GS.emprestimo_da_segunda_chance()
+	var devolver: int = GS.devolucao_da_segunda_chance()
+	_confere("antes de aceitar, nenhuma linha de segunda chance",
+		_eventos("segunda_chance").is_empty())
+	_confere("a segunda chance foi aceite", GS.aceitar_segunda_chance())
+	var linhas := _eventos("segunda_chance")
+	_confere("grava UMA linha de segunda chance", linhas.size() == 1,
+		"%d linhas" % linhas.size())
+	if linhas.size() == 1:
+		var e: Dictionary = linhas[0]
+		_confere("com o que o banco pôs no caixa",
+			int(e.get("emprestado", -1)) == emprestado,
+			"gravou %s, o jogo emprestou %d" % [e.get("emprestado"), emprestado])
+		_confere("e o que volta com a cobrança seguinte, que é a dívida do jogo",
+			int(e.get("devolve", -1)) == devolver and devolver == int(GS.emprestimo_devido)
+				and devolver > emprestado,
+			"gravou %s, o jogo deve %d" % [e.get("devolve"), int(GS.emprestimo_devido)])
+		_confere("no dia em que a partida retoma", int(e.get("t", -1)) == GS.turn,
+			"gravou %s, o jogo está no %d" % [e.get("t"), GS.turn])
+	_b8 = true
 
 
 func _eventos(nome: String) -> Array:

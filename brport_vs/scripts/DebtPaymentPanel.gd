@@ -17,6 +17,13 @@ extends PainelNarrativo
 # despedida DEPOIS dela, no mesmo painel. Abrir um segundo painel para a
 # resposta seria dois cliques onde o momento pede um — e a despedida ("quando
 # precisar de crédito, me procure cedo") é o que planta a Parcela seguinte.
+#
+# E HÁ UM TEMPO DO MEIO, desde a `102`: a quem diz que não consegue pagar,
+# nas duas primeiras cobranças e uma vez por fase, ele oferece a segunda
+# chance — o que falta mais uma semana, devolvido com a cobrança seguinte. O
+# número continua a ser do `GameState` (`aceitar_segunda_chance()`); aqui só
+# se decide quando a oferta aparece. Vem DEPOIS do «não consigo», e não com
+# a entrada: é a segunda chance, e a primeira foi o boleto.
 # ============================================================
 
 const LARGURA := 420
@@ -128,6 +135,54 @@ func _on_pagar() -> void:
 
 
 func _on_falhar() -> void:
+	if GameState.pode_pedir_segunda_chance():
+		_mostrar_oferta()
+		return
+	GameState.fail_debt()
+	tempo = &"nao_pagou"
+	_mostrar_resposta("nao_pagou")
+
+
+# O TEMPO DO MEIO (`102`). A fala troca, e a tarja passa a dizer o negócio: o
+# que o banco põe e o que volta, e quando. Os dois números vêm das funções do
+# `GameState` que o `aceitar_segunda_chance()` usa — a promessa da tela e o
+# que o jogo faz saem da mesma conta, e o F14 confere-os um contra o outro.
+func _mostrar_oferta() -> void:
+	tempo = &"segunda_chance"
+	var texto := GameState.texto(String(Narrativa.RIBEIRO_FALAS["oferta"]))
+	escrever_fala(_fala, texto)
+	var cara := retrato_da_fala()
+	if cara != null:
+		cara.texture = Narrativa.retrato("ribeiro", "oferta")
+	falou.emit("ribeiro", texto, Narrativa.retrato("ribeiro", "oferta"))
+	var proxima: int = GameState.dia_da_parcela(GameState.parcela_indice + 1)
+	_tarja_parcela.text = "Empréstimo: %s" % GameState.moeda(
+		GameState.emprestimo_da_segunda_chance())
+	PainelNarrativo.tingir_tarja(_tarja_parcela, &"neutro")
+	PainelNarrativo.escrever_detalhe(_tarja_apoio, "Volta %s na cobrança do dia %d"
+		% [GameState.moeda(GameState.devolucao_da_segunda_chance()), proxima])
+	for filho in _botoes.get_children():
+		filho.queue_free()
+	var aceitar := Button.new()
+	aceitar.text = "Aceitar o empréstimo"
+	aceitar.theme_type_variation = "BotaoPrimario"
+	aceitar.custom_minimum_size = Vector2(0, TOQUE_MIN)
+	aceitar.pressed.connect(_on_aceitar)
+	_botoes.add_child(aceitar)
+	var recusar := Button.new()
+	recusar.text = "Recusar e entregar o cais"
+	recusar.custom_minimum_size = Vector2(0, TOQUE_MIN)
+	recusar.pressed.connect(_on_recusar)
+	_botoes.add_child(recusar)
+
+
+func _on_aceitar() -> void:
+	GameState.aceitar_segunda_chance()
+	tempo = &"emprestou"
+	_mostrar_resposta("aceitou")
+
+
+func _on_recusar() -> void:
 	GameState.fail_debt()
 	tempo = &"nao_pagou"
 	_mostrar_resposta("nao_pagou")
@@ -140,17 +195,27 @@ func _on_falhar() -> void:
 # promete crédito para o porto crescer — a quem acabava de o perder, porque
 # `fail_debt()` encerra a partida. O mesmo vale para o botão: "até a próxima"
 # a quem não vai haver próxima (`docs/decisoes/048`).
+#
+# ⚠️ QUEM ACEITOU O EMPRÉSTIMO TAMBÉM PAGOU (`102`): o boleto saiu, e o porto
+# continua. Leva a despedida e o «até a próxima», que a ele são verdade; a
+# tarja diz com que dinheiro, e o detalhe o que vem na próxima cobrança.
 func _mostrar_resposta(id: String) -> void:
-	var pagou := id == "pagou"
+	var emprestou := id == "aceitou"
+	var pagou := id == "pagou" or emprestou
 	var texto := GameState.texto(String(Narrativa.RIBEIRO_FALAS[id]))
 	_tarja_parcela.text = "%s: %s" % [
-		"Parcela quitada" if pagou else "Parcela não paga", GameState.moeda(amount)]
+		"Parcela paga com o empréstimo" if emprestou
+			else ("Parcela quitada" if pagou else "Parcela não paga"),
+		GameState.moeda(amount)]
 	PainelNarrativo.tingir_tarja(_tarja_parcela, &"bom" if pagou else &"ruim")
 	# O ESTADO DEPOIS DA ESCOLHA, lido do jogo e não deduzido: quem pagou vê o
 	# dinheiro que o `pay_debt()` lhe deixou; quem não pôde, quanto faltou.
+	var fica := "Você fica com %s" % GameState.moeda(int(GameState.cash))
+	if emprestou:
+		fica += " · na próxima cobrança, mais %s" % GameState.moeda(
+			int(GameState.emprestimo_devido))
 	PainelNarrativo.escrever_detalhe(_tarja_apoio,
-		"Você fica com %s" % GameState.moeda(int(GameState.cash)) if pagou
-		else "Faltaram %s" % GameState.moeda(_falta))
+		fica if pagou else "Faltaram %s" % GameState.moeda(_falta))
 	if pagou:
 		texto += "\n\n" + GameState.texto(Narrativa.RIBEIRO_FALAS["despedida"])
 	escrever_fala(_fala, texto)

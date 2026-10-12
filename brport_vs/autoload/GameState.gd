@@ -44,6 +44,10 @@ signal fila_mudou()
 # ou o primeiro da fila.
 signal atracou(doca: int, barco: Dictionary, valores_ao_largo: Array)
 signal debt_due(amount: int)
+# O jogador aceitou a segunda chance do Sr. Ribeiro (`102`): quanto entrou e
+# quanto volta com a cobrança seguinte. Sinal de OBSERVAÇÃO, para o
+# `Registro.gd` — é a escolha que só o playtest diz se alguém faz.
+signal segunda_chance_aceita(emprestado: int, devolver: int)
 signal game_over(won: bool, reason: String)
 # ⚠️ O TERCEIRO ARGUMENTO É O ASSUNTO (`docs/decisoes/067`): de que fala o aviso
 # — trabalhador, doca, rival, cliente, negocio, semana, dinheiro, obra. Quem o sabe é
@@ -495,6 +499,27 @@ const FASES := [
 # não desconta nada, e por isso o `pay_debt()` não passa por aqui.
 const JUROS_POR_TURNO := 0.0025           # TUNING: fração do principal abatida por turno de antecipação
 
+# ── A SEGUNDA CHANCE DO SR. RIBEIRO (`docs/decisoes/102`) ──
+# No vencimento, a quem não tem o boleto, o banco empresta o que falta MAIS
+# uma semana de custos, e o jogador devolve-o com a cobrança seguinte. Uma vez
+# por fase, e só onde HÁ cobrança seguinte: a última da fase fica como era.
+#
+# O ACRÉSCIMO É FIXO, e é escolha do Bruno: os 3% por semana da Linha Porto,
+# quatro semanas, num número só — «cubro R$50.000, você me devolve R$56.000».
+# Juro corrido seria mais fiel ao banco e mais difícil de ler para quem não
+# sabe finanças, e o crédito inicial (`085`) já ensina a janela; este é o
+# crédito caro, e o caro tem de se ler de uma vez. Por isso a antecipação não
+# o abate: quitar antes desconta só os juros da janela da PARCELA.
+#
+# ⚠️ E A SEMANA A MAIS NÃO É GENEROSIDADE. Sem ela o jogador saía do
+# vencimento com R$0, e o primeiro fecho a seguir acabava a partida por «O
+# dinheiro acabou»: a segunda chance seria uma semana de adiamento.
+#
+# Nenhum dos quatro perfis do simulador chega a pedi-la: o pior caixa medido
+# na decisão (P10 da `087`) é R$175.244 contra um boleto de R$140.000. O valor
+# não move o balanceamento medido; quem o valida é o playtest (A7).
+const SEGUNDA_CHANCE_ACRESCIMO := 0.12    # TUNING: o que o empréstimo da segunda chance custa, sobre o emprestado
+
 # ── SAVE ──
 # O NOME é constante; o CAMINHO decide-o o `ArmazemLocal`, por processo: o
 # jogo grava em `user://` e toda ferramenta com `--script` em
@@ -558,7 +583,10 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # equipamento, remover contratos ou converter a partida do jogador.
 # 14 (`087`): uma obra paga, ainda sem capacidade/renda, pode atravessar dias
 # e carregamentos. Bruno autorizou a mudança e o recomeço sem migração.
-const SAVE_VERSION := 14
+# 15 (`102`): a segunda chance do Sr. Ribeiro — a dívida dela e se já foi
+# usada, e a linha do empréstimo na semana. A primeira versão acima do piso:
+# o Bruno autorizou-a COM o degrau, e um save da 14 chega aqui sem recomeçar.
+const SAVE_VERSION := 15
 
 # O PISO DA MIGRAÇÃO (`098`). Até a 14, save de outra versão era descartado,
 # e servia ao protótipo, onde recomeçar custa uma partida de teste. Não serve
@@ -744,6 +772,11 @@ var parcela_paid: bool = false
 var parcela_indice: int = 0
 var parcelas_quitadas: int = 0
 var total_pago_parcelas: int = 0
+# A SEGUNDA CHANCE (`102`): o que o jogador deve ao banco por ela, já com o
+# acréscimo, e que se soma ao boleto da cobrança corrente; e se ela já foi
+# usada nesta fase. Zero e falso numa partida que nunca a pediu.
+var emprestimo_devido: int = 0
+var segunda_chance_usada: bool = false
 var phase: String = "playing"   # playing | rival_offer | debt_payment | game_over
 # Os barcos ao largo, por ordem de chegada (`083`). Cada um é o mesmo
 # dicionário de um barco atracado, mais a `paciencia` que lhe resta.
@@ -781,9 +814,13 @@ var nome_jogador: String = ""
 # aqui criaria a chave em silêncio — o Dictionary do GDScript aceita — e o
 # dinheiro sumia da soma da receita sem erro nenhum. O bloco T5h da suíte
 # tranca isso.
+#
+# ⚠️ O `emprestimo` NÃO É RECEITA NEM DESPESA (`102`): é o dinheiro que o
+# banco pôs no caixa pela segunda chance. Crédito não é lucro — o
+# `resumo_da_semana()` não o soma ao resultado, e o boletim mostra-o à parte.
 const SEMANA_ZERADA := {
 	"docagens": 0, "armazem": 0, "patio": 0, "pier": 0,
-	"salarios": 0, "manutencao": 0, "parcela": 0,
+	"salarios": 0, "manutencao": 0, "parcela": 0, "emprestimo": 0,
 }
 var semana_atual: Dictionary = SEMANA_ZERADA.duplicate()
 
@@ -917,6 +954,8 @@ func new_game() -> void:
 	parcela_indice = 0
 	parcelas_quitadas = 0
 	total_pago_parcelas = 0
+	emprestimo_devido = 0
+	segunda_chance_usada = false
 	_set_phase("playing")
 	fila = []
 	pending_rival = -1
@@ -1642,6 +1681,8 @@ func resumo_da_semana(semana: int) -> Dictionary:
 		"salarios": int(semana_atual["salarios"]),
 		"manutencao": int(semana_atual["manutencao"]),
 		"parcela": int(semana_atual["parcela"]),
+		# Fora do resultado, de propósito: ver `SEMANA_ZERADA`.
+		"emprestimo": int(semana_atual["emprestimo"]),
 		"receita": receita,
 		"despesa": despesa,
 		"resultado": receita - despesa,
@@ -1802,6 +1843,13 @@ func pay_debt() -> void:
 	# não `dia_atual`, que já é o dia seguinte, ainda por jogar.
 	# O PRINCIPAL INTEIRO: aqui não há antecipação nenhuma para descontar.
 	_baixar_parcela(dia_anterior, principal_da_parcela())
+	_retomar_depois_da_cobranca()
+
+
+# O que vem depois de o boleto do vencimento ser pago, pelas duas portas que
+# o pagam (`pay_debt()` e `aceitar_segunda_chance()`). Uma cópia em cada uma
+# divergiria no dia em que uma ganhasse uma linha — ver o `_baixar_parcela()`.
+func _retomar_depois_da_cobranca() -> void:
 	# O fecho da semana da cobrança ficou de propósito à espera desta decisão: antes
 	# daqui o resumo esconderia a maior despesa da semana e inflaria o resultado
 	# exatamente pelo valor da parcela.
@@ -1811,6 +1859,54 @@ func pay_debt() -> void:
 	turn_advanced.emit(turn, current_week())
 	_check_end()
 	save_game()
+
+
+# ── A SEGUNDA CHANCE (`docs/decisoes/102`) ──
+#
+# A TERCEIRA PORTA DO VENCIMENTO, ao lado de pagar e de não poder. Só abre a
+# quem não tem o boleto, uma vez por fase, e onde houver cobrança seguinte
+# para a devolver — na última da fase não há, até a Fase 2 existir.
+func pode_pedir_segunda_chance() -> bool:
+	return phase == "debt_payment" and cash < principal_da_parcela() \
+		and not segunda_chance_usada and parcela_indice < parcelas_na_fase() - 1
+
+
+## O que o banco põe no caixa: o que falta para o boleto e mais uma semana de
+## custos — salários e manutenção da semana que abre, pela MESMA conta do fecho
+## (`_custos_da_semana()`). Depois de pagar, o jogador fica exatamente com essa
+## semana na mão. Com o caixa negativo (o fecho da semana pode tê-lo posto
+## abaixo de zero antes da cobrança), o que falta é maior, e a conta é a mesma.
+func emprestimo_da_segunda_chance() -> int:
+	var custos := _custos_da_semana()
+	var semana := int(custos["salarios"]) + int(custos["manutencao"])
+	return principal_da_parcela() - cash + semana
+
+
+## O que se devolve com a cobrança seguinte: o emprestado e o acréscimo fixo.
+func devolucao_da_segunda_chance() -> int:
+	return int(round(emprestimo_da_segunda_chance() * (1.0 + SEGUNDA_CHANCE_ACRESCIMO)))
+
+
+func aceitar_segunda_chance() -> bool:
+	if not pode_pedir_segunda_chance():
+		return false
+	var emprestado := emprestimo_da_segunda_chance()
+	var devolver := devolucao_da_segunda_chance()
+	# O dinheiro do banco entra ANTES de o boleto sair, e o boleto sai pela
+	# porta de sempre, com o valor de sempre: o recibo, a contabilidade e a
+	# cobrança seguinte não sabem que houve empréstimo, e não precisam.
+	cash += emprestado
+	semana_atual["emprestimo"] += emprestado
+	segunda_chance_usada = true
+	_baixar_parcela(dia_anterior, principal_da_parcela())
+	# DEPOIS do `_baixar_parcela()`, que zera a dívida que paga: escrito antes,
+	# o empréstimo seria quitado no mesmo instante em que nasce.
+	emprestimo_devido = devolver
+	segunda_chance_aceita.emit(emprestado, devolver)
+	message.emit("O Sr. Ribeiro cobriu a parcela. Na próxima cobrança, mais %s."
+		% moeda(devolver), "warn", "dinheiro")
+	_retomar_depois_da_cobranca()
+	return true
 
 
 # ── QUITAR ANTES DO PRAZO — item 24, `docs/decisoes/019` ──
@@ -1853,8 +1949,12 @@ func valor_da_parcela_hoje() -> int:
 
 
 func principal_da_parcela() -> int:
-	# Nome legado: este é o valor nominal do boleto, incluindo juros.
-	return valor_da_parcela(parcela_indice)
+	# Nome legado: este é o valor nominal do boleto, incluindo juros — e o
+	# empréstimo da segunda chance, que vence com ele (`102`). Somado aqui, e
+	# não em quem lê, para o HUD, o painel, a projeção do dia, o vencimento e o
+	# simulador pedirem o mesmo número; o abatimento do `valor_da_parcela_hoje()`
+	# sai só dos juros da janela, e o acréscimo fixo do empréstimo não se abate.
+	return valor_da_parcela(parcela_indice) + emprestimo_devido
 
 
 func vencimento_da_parcela() -> int:
@@ -1914,6 +2014,9 @@ func _baixar_parcela(no_dia: Dictionary, valor: int) -> void:
 	parcela_paid = true
 	parcelas_quitadas += 1
 	total_pago_parcelas += valor
+	# O valor que entra aqui é o `principal_da_parcela()` ou o de hoje, e os dois
+	# já trazem o empréstimo: pago o boleto, pago o empréstimo.
+	emprestimo_devido = 0
 	cash_changed.emit(cash)
 	message.emit("Parcela de %s paga ao Sr. Ribeiro." % moeda(valor), "good", "dinheiro")
 
@@ -2324,6 +2427,8 @@ func save_game() -> void:
 		"parcela_indice": parcela_indice,
 		"parcelas_quitadas": parcelas_quitadas,
 		"total_pago_parcelas": total_pago_parcelas,
+		"emprestimo_devido": emprestimo_devido,
+		"segunda_chance_usada": segunda_chance_usada,
 		"phase": phase,
 		"fila": fila,
 		"pending_rival": pending_rival,
@@ -2380,6 +2485,8 @@ func load_game() -> bool:
 	parcela_indice = int(parsed["parcela_indice"])
 	parcelas_quitadas = int(parsed["parcelas_quitadas"])
 	total_pago_parcelas = int(parsed["total_pago_parcelas"])
+	emprestimo_devido = int(parsed["emprestimo_devido"])
+	segunda_chance_usada = bool(parsed["segunda_chance_usada"])
 	phase = String(parsed.get("phase", "playing"))
 	fila = parsed["fila"]
 	pending_rival = int(parsed.get("pending_rival", -1))
@@ -2518,6 +2625,18 @@ func _save_aceite(texto: String) -> Dictionary:
 			or quitadas != indice + (1 if parsed["parcela_paid"] else 0) \
 			or int(parsed["total_pago_parcelas"]) < 0:
 		return {}
+	# A SEGUNDA CHANCE (`102`), lida como o recibo: tipo antes de valor. A
+	# dívida dela só existe depois de usada, nunca na primeira cobrança (ela
+	# nasce ao pagar uma e vence com a SEGUINTE) e nunca com o boleto da
+	# corrente já pago, porque pagá-lo é pagá-la.
+	var devido = parsed.get("emprestimo_devido", null)
+	if typeof(devido) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(devido)) \
+			or float(devido) != int(devido) or int(devido) < 0 \
+			or typeof(parsed.get("segunda_chance_usada")) != TYPE_BOOL:
+		return {}
+	if int(devido) > 0 and (not parsed["segunda_chance_usada"] or indice < 1
+			or parsed["parcela_paid"]):
+		return {}
 	# Lê as quitadas de HOJE, não as do dia em que a obra começou: elas só
 	# sobem, então quem as tem hoje e não as tinha no início nunca passaria o
 	# botão — e o botão é quem escreve a obra.
@@ -2571,10 +2690,11 @@ func _migrar(dados: Dictionary) -> Dictionary:
 	return cadeia_de_migracao(dados, SAVE_VERSION, _migrar_um_passo)
 
 
-# A cadeia, separada dos degraus para se provar com degraus de mentira: com a
-# 14 a ser ao mesmo tempo o piso e a corrente, o jogo não tem degrau nenhum, e
-# um laço que nunca corre não tem quem o veja. O F21 do `teste_fumaca` corre-o
-# com degraus que anotam por onde passaram.
+# A cadeia, separada dos degraus para se provar com degraus de mentira: até a
+# `102` a 14 era ao mesmo tempo o piso e a corrente, o jogo não tinha degrau
+# nenhum, e um laço que nunca corre não tem quem o veja. O F21 do
+# `teste_fumaca` corre-o com degraus que anotam por onde passaram, e hoje
+# também pelo degrau de verdade, com o exemplo da 14.
 #
 # ⚠️ QUEM ESCREVE A `versao` DE CADA DEGRAU É A CADEIA, não o degrau: um
 # degrau que se esquecesse dela devolveria um save da 15 a dizer 14, e o
@@ -2594,13 +2714,30 @@ static func cadeia_de_migracao(dados: Dictionary, alvo: int, passo: Callable) ->
 
 
 # Um degrau: o save da versão `de` na forma da `de + 1`, ou `{}` se não o
-# souber ler. Ainda não há nenhum — a 14 é o piso (`098`). O primeiro entra
-# como `14: return _de_14_para_15(dados)`, escrito por quem mudou a forma, e
-# quem o prova é o `tests/saves/v14.json`, que o F21 exige carregado.
-func _migrar_um_passo(de: int, _dados: Dictionary) -> Dictionary:
+# souber ler. Escrito por quem mudou a forma, e provado pelo exemplo da
+# versão de onde ele parte (`tests/saves/vNN.json`), que o F21 exige
+# carregado (`098`).
+func _migrar_um_passo(de: int, dados: Dictionary) -> Dictionary:
 	match de:
+		14:
+			return _de_14_para_15(dados)
 		_:
 			return {}
+
+
+# 14 → 15 (`102`): a 14 não conhecia a segunda chance, logo nenhuma partida
+# dela a usou — sem dívida e com a chance por usar, que é o que uma partida
+# nova da 15 também diz. A semana em curso ganha a linha do empréstimo a zero;
+# sem ela o `load_game()` também a poria a zero, mas o degrau escreve a forma
+# INTEIRA da versão a que chega, para o que vier depois dele não depender
+# dessa tolerância.
+func _de_14_para_15(dados: Dictionary) -> Dictionary:
+	dados["emprestimo_devido"] = 0
+	dados["segunda_chance_usada"] = false
+	var semana = dados.get("semana_atual", null)
+	if typeof(semana) == TYPE_DICTIONARY:
+		semana["emprestimo"] = 0
+	return dados
 
 
 # Quantas docas e quantos trabalhadores o porto DEVE ter, dado o que está

@@ -164,6 +164,18 @@ mensagem, que não será usada nesta fase — resposta do Bruno ao D8, «por
 enquanto»: com anos de 365 dias ela passa ao dia seguinte (`090`). O prazo que
 o jogador lê sai do `prazo_da_obra()`, nunca do `conclusao` cru.
 
+### A segunda chance (`102`)
+
+No vencimento, a quem não tem o boleto, o Sr. Ribeiro empresta o que falta
+mais uma semana de custos (salários e manutenção, pelo `_custos_da_semana()`),
+devolvido com +12% fixo (`SEGUNDA_CHANCE_ACRESCIMO`) junto da cobrança
+seguinte — escolhas do Bruno. Uma vez por fase e nunca na última cobrança. O
+`principal_da_parcela()` soma a dívida, e a antecipação não a abate. Crédito
+não é lucro: o empréstimo entra no caixa e na linha `emprestimo` da semana,
+nunca na receita nem no resultado; o simulador desconta-o da margem.
+Nenhum perfil chega a pedi-la (P10 na decisão ≥ R$175.244 na `087`); quem a
+valida é o playtest, e o leitor dos registros conta-a.
+
 ### Os números de cada fase
 
 Desde a `094` a duração, as parcelas (semana, valor, juros), os reparos

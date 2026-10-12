@@ -22,6 +22,13 @@ extends SceneTree
 # campo vazio passa com o `load_game()` a ignorá-lo: o F21 confere a mesma
 # lista, para o exemplo de uma versão futura não sair pobre.
 #
+# ⚠️ E DESDE A 15 O PRIMEIRO MÊS É JOGADO MAL, de propósito (`102`). A 15
+# grava a segunda chance do Sr. Ribeiro — a dívida dela e se foi usada —, e um
+# exemplo que nunca a pediu grava-as a zero, que é o campo vazio de cima. A
+# partida conserta o que pode e não atraca ninguém até ao primeiro
+# vencimento, chega lá sem o boleto, aceita o empréstimo e joga bem dali em
+# diante; pára antes da cobrança seguinte, com a dívida ainda por pagar.
+#
 # Rodar (o exemplo existente só se substitui de propósito, antes de a versão
 # chegar à main — depois disso ele é o registo do que ela gravava):
 #   $G --headless --path brport_vs --script res://tools/gravar_save_de_exemplo.gd
@@ -73,7 +80,10 @@ func _rodar() -> void:
 			GS.negotiate_rival("igualar")
 			continue
 		if GS.phase == "debt_payment":
-			GS.pay_debt()
+			if GS.pode_pedir_segunda_chance():
+				GS.aceitar_segunda_chance()
+			else:
+				GS.pay_debt()
 			if GS.phase == "debt_payment":
 				print("FALHA: a partida não teve caixa para a parcela do dia %d." % GS.turn)
 				quit(1)
@@ -82,7 +92,7 @@ func _rodar() -> void:
 		for id in GS.ESTRUTURAS.keys():
 			if GS.impedimento_estrutura(id) == "":
 				GS.comprar_estrutura(id)
-		for _b in range(GS.bercos_livres()):
+		for _b in range(GS.bercos_livres() if GS.segunda_chance_usada else 0):
 			if GS.atracagem_pendente() == Vector2i.ZERO or not GS.atracar(0, false):
 				break
 		if faltas(GS).is_empty():
@@ -131,4 +141,6 @@ static func faltas(GS: Node) -> Array[String]:
 		falta.append("um recorde")
 	if String(GS.nome_porto) == "" or String(GS.nome_jogador) == "":
 		falta.append("os dois nomes")
+	if not GS.segunda_chance_usada or int(GS.emprestimo_devido) <= 0:
+		falta.append("a segunda chance, com a dívida dela")
 	return falta

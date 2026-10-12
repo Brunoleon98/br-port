@@ -72,7 +72,11 @@ extends Node
 # que diz ao leitor se a obra acabou: numa partida da 1 o dia pronto não está
 # no arquivo — antes da `087` a compra ERA a obra pronta, depois dela não —, e
 # na 2 a linha que falta quer dizer «não acabou até ao fim do registro».
-const VERSAO := 2
+#
+# A 3 (12/10, `102`) acrescentou a linha `segunda_chance`, pela mesma razão:
+# numa partida da 2 o jogo ainda não a oferecia, e a falta dela não quer dizer
+# «não a pediu».
+const VERSAO := 3
 
 # A pasta sai do `ArmazemLocal` (`061`): o `teste_registro` e o
 # `gravar_partidas` APAGAM tudo o que lá está, e o `_podar()` de cada tiro
@@ -134,6 +138,7 @@ func _ready() -> void:
 	_GS.atracou.connect(_ao_atracar)
 	_GS.negociacao_resolvida.connect(_ao_negociar)
 	_GS.debt_due.connect(_ao_vencer_parcela)
+	_GS.segunda_chance_aceita.connect(_ao_aceitar_segunda_chance)
 	_GS.game_over.connect(_ao_fim)
 	_GS.message.connect(_ao_mensagem)
 
@@ -405,6 +410,14 @@ func _ao_negociar(acao: String, resultado: String, tentativa: int) -> void:
 
 func _ao_vencer_parcela(valor: int) -> void:
 	_gravar({"e": "parcela", "t": _GS.turn, "valor": valor, "caixa": _GS.cash})
+
+
+# O empréstimo da segunda chance (`102`): o que entrou e o que volta com a
+# cobrança seguinte. O `t` é o mesmo da linha `parcela` desse vencimento, que
+# traz o caixa de antes do empréstimo.
+func _ao_aceitar_segunda_chance(emprestado: int, devolver: int) -> void:
+	_gravar({"e": "segunda_chance", "t": _GS.turn, "emprestado": emprestado,
+		"devolve": devolver})
 
 
 func _ao_fim(ganhou: bool, motivo: String) -> void:

@@ -24,12 +24,15 @@ o booleano antigo só representava a primeira quitação. A madeira durante toda
 a Fase 1 subiu para **13** (`086`), com autorização explícita do Bruno:
 a 12 podia guardar cargueiros após dois reparos, incompatíveis com essa máquina.
 A obra em andamento ocupa a **14** (`087`), autorizada explicitamente pelo
-Bruno junto dos prazos. Saves 13 e anteriores são recusados sem migração:
-partidas antigas recomeçam. Consulta preserva o arquivo; carregamento
-descarta o incompatível antes de aplicar campos, inclusive a obra viva.
-Até a 14, save de outra
-versão era descartado, não adaptado. Já custou um porto com 4 docas num mapa que
-desenha 3.
+Bruno junto dos prazos. A segunda chance do Sr. Ribeiro ocupa a **15**
+(`102`), a primeira acima do piso, autorizada COM o degrau: o 14→15 escreve
+«sem dívida, chance por usar» e a linha `emprestimo` da semana, e o T19
+prova-o contra o `v14.json`. O exemplo `v15.json` joga mal o primeiro mês de
+propósito, para trazer a dívida — um exemplo que nunca a pediu grava-a a zero.
+Saves 13 e anteriores são recusados sem migração: partidas antigas recomeçam.
+Consulta preserva o arquivo; carregamento descarta o incompatível antes de
+aplicar campos, inclusive a obra viva. Até a 14, save de outra versão era
+descartado, não adaptado. Já custou um porto com 4 docas num mapa que desenha 3.
 
 **Desde a `098` a 14 é o PISO, e o save sobe por DEGRAUS** — a resposta do
 Bruno ao D5. Cada versão nova traz, em `_migrar_um_passo()`, o degrau de N
