@@ -21,6 +21,10 @@ extends PanelContainer
 var indice: int = -1
 
 const PULSO_SEG := 0.9
+# O tom a que o pulso sobe. Constante e não literal porque o tutorial do
+# Toninho (`TutorialDoToninho.gd`, `101`) pulsa o «AVANÇAR DIA» com o MESMO
+# gesto — «toque aqui» —, e lê-o daqui.
+const PULSO_COR := Color(1.3, 1.18, 0.8)
 var _tw_pulso: Tween
 
 # O tracejado do lugar livre: um StyleBox não tem traço interrompido, então o
@@ -203,7 +207,7 @@ func _pulsar(ligado: bool) -> void:
 		modulate = Color.WHITE
 		return
 	_tw_pulso = create_tween().set_loops()
-	_tw_pulso.tween_property(self, "modulate", Color(1.3, 1.18, 0.8), PULSO_SEG) \
+	_tw_pulso.tween_property(self, "modulate", PULSO_COR, PULSO_SEG) \
 		.set_trans(Tween.TRANS_SINE)
 	_tw_pulso.tween_property(self, "modulate", Color.WHITE, PULSO_SEG) \
 		.set_trans(Tween.TRANS_SINE)

@@ -390,6 +390,13 @@ guarda.
   responde à mesma pergunta por dois caminhos denuncia-se sozinha"* aplicada a
   uma VARREDURA — e é ela que faz uma chamada de forma nova reprovar em vez de
   ser ignorada. Sem ela, a versão errada dizia verde (`docs/decisoes/037`).
+  ⚠️ **E O ID QUE É TAMBÉM NOME DE ESTADO SATISFAZ A BUSCA ENTRE ASPAS.** A
+  pergunta «toda fala chega ao jogo?» procura o id entre aspas nos painéis,
+  e isso serve-lhes. No `TutorialDoToninho.gd` (`101`), «atracar» e
+  «avancar» são também os nomes dos PASSOS (`passo = "atracar"`): apagar a
+  fala deixaria o passo a satisfazer a busca. Ali procura-se o argumento de
+  quem põe a fala na fila (`_dizer("…")`), por dois caminhos — chamadas
+  contra lidas —, e o id composto (`"ava" + "ncar"`) reprovou, injetado.
   ⚠️ **E A DEFINIÇÃO NÃO É UMA CHAMADA.** `func _abrir_painel(cena: PackedScene)`
   casa tão bem quanto uma chamada de verdade: a primeira versão do portão das
   capturas exigiu fotografia de um painel chamado `cena: PackedScene`. Quem

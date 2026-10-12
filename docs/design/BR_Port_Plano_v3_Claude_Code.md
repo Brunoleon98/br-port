@@ -475,6 +475,10 @@ frentes, e **a ordem é do Bruno**:
    sem migração. Arte, preços, madeira e cobranças preservados; medição refeita.
    Crédito opcional, cancelamento, tutorial, trabalhadores extras e fases
    futuras continuam pendentes. Carros e imóveis aguardam novo escopo.
+   **Continuação em 11–12/10 (`100`, `101`):** o tutorial curto, que o
+   Toninho guia com rosto novo — atracar e avançar só no dia 1, por cima do
+   jogo e sem save. Crédito opcional, cancelamento, trabalhadores extras e
+   fases futuras continuam pendentes.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.
@@ -721,11 +725,13 @@ a melhoria de design abaixo esperam por ela, salvo pedido dele.
 
 **A fila parou em 11/10, com o M11 (`099`):** o M9 espera o D1b e o M12 o
 A8. Volta a frente 5, pelo **tutorial curto** que o Bruno escolheu em 11/10.
-**Quem guia é o Toninho, com rosto novo** (`100`), e são dois itens: o rosto
-fechou em 12/10 (aceite na v6, os PNG no jogo sem fala ainda); o seguinte é o
-**tutorial**, no recorte que ele escolheu — atracar e avançar, só no dia 1,
-overlay e sem save —, com as falas, o registro do rosto e o tom do balão no
-mesmo commit. O desenho está na `100`.
+**Quem guia é o Toninho, com rosto novo** (`100`), e eram dois itens: o rosto
+fechou em 12/10 (aceite na v6), e o **tutorial** também, no recorte que ele
+escolheu — atracar e avançar, só no dia 1, overlay e sem save (`101`). As três
+falas são rascunho e esperam a leitura do A4. **O seguinte é escolher com o
+Bruno o próximo recorte da frente 5** — crédito opcional, cancelamento de
+trabalho, mais trabalhadores por píer ou a progressão —, com a pergunta e as
+opções, a recomendada primeiro.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

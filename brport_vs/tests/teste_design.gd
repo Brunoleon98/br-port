@@ -5798,11 +5798,12 @@ func _d37_diario_na_pagina() -> void:
 #     do fato do Sr. Ribeiro. A roupa é a mediana POR LUMINÂNCIA do tronco,
 #     fora da gola e da gravata — um pixel de verdade, e não uma média que
 #     inventasse um tom (`CLAUDE.md`, «reduzir uma janela a uma cor»).
-#  2. OS TRÊS DISTINGUEM-SE, em ΔE (CIELAB). O corte está no meio da banda
-#     entre o defeito (dois balões iguais, 0) e o mais perto dos três de hoje
-#     (19,9, Ribeiro e Arlindo). O primeiro candidato — a roupa clareada com
-#     branco, a 78%, 82% e 86% — dava 2,4 a 8,5, e ficava do lado que
-#     reprova.
+#  2. TODOS DISTINGUEM-SE, em ΔE (CIELAB) — eram três, e o Toninho é a quarta
+#     voz desde a `101` (a 27,3 do mais perto, a Dona Cida). O corte está no
+#     meio da banda entre o defeito (dois balões iguais, 0) e o par mais perto
+#     dos três de então (19,9, Ribeiro e Arlindo). O primeiro candidato — a
+#     roupa clareada com branco, a 78%, 82% e 86% — dava 2,4 a 8,5, e ficava
+#     do lado que reprova.
 #  3. CADA VOZ TEM O MESMO TOM NOS DOIS BALÕES, e só o primeiro tem o bico: a
 #     fala seguida é da mesma pessoa. E a amostra tem de trazer as duas
 #     formas de cada voz, senão o D33 não mede metade das variações.
@@ -5842,8 +5843,10 @@ func _d38_vozes_da_conversa() -> void:
 			por_voz[fonte] = []
 		if rotulo != null:
 			por_voz[fonte].append(rotulo.get_parent())
-	_confere("D38: a amostra fala pelas três vozes (%s)" % [por_voz.keys()],
-		por_voz.size() == omissao.size())
+	# O número sai da tabela das caras de omissão, que é a lista de quem fala
+	# no celular: eram três, e o Toninho é a quarta voz desde a `101`.
+	_confere("D38: a amostra fala pelas %d vozes da conversa (%s)" % [omissao.size(),
+		por_voz.keys()], por_voz.size() == omissao.size())
 
 	var cor_da_voz := {}
 	var roupa := {}
@@ -5880,7 +5883,7 @@ func _d38_vozes_da_conversa() -> void:
 			% [fonte, h * 360.0, (roupa[fonte] as Color).h * 360.0], mais_perto == fonte,
 			"o matiz mais perto é o da roupa de %s" % mais_perto)
 
-	# 2. os três distinguem-se.
+	# 2. todos se distinguem, dois a dois.
 	var vozes: Array = cor_da_voz.keys()
 	for i in vozes.size():
 		for j in range(i + 1, vozes.size()):

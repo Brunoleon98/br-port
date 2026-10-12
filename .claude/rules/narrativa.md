@@ -4,6 +4,7 @@ paths:
   - "brport_vs/scripts/Retratos.gd"
   - "brport_vs/scripts/Main.gd"
   - "brport_vs/scripts/NarradoraDaCida.gd"
+  - "brport_vs/scripts/TutorialDoToninho.gd"
   - "brport_vs/scripts/PainelBoletim.gd"
   - "brport_vs/scripts/PainelDiario.gd"
   - "brport_vs/scripts/PainelMensagens.gd"
@@ -71,6 +72,16 @@ paths:
   gatilho no mesmo commit** — e ao varrer código como texto, corte as linhas de
   COMENTÁRIO antes, senão o próprio comentário que explica a armadilha
   satisfaz a busca.
+- **⚠️ E UMA VOZ NOVA NA FAIXA ENTRA EM TODA RÉGUA QUE A LÊ.** O Toninho do
+  tutorial (`101`) fala para a mesma fila que o sistema e a Dona Cida, no fim
+  do frame, no dia 1 — e o dia 1 é o estado que os blocos de teste montam.
+  Na primeira corrida o F8c2 reprovou: o `_f8_drenar()` devolvia «a última
+  mostrada», e a última passou a ser ele. O D38 reprovou também, a pedir a
+  amostra da voz nova; a sonda da régua da faixa, essa, calava-se: ouvia DUAS
+  fontes, e as falas dele chegavam à tela sem nunca terem entrado na conta.
+  Quem acrescenta uma fonte à fila varre quem a lê — a sonda, os
+  blocos que leem a última mostrada e a amostra do histórico — pela FORMA
+  (`apresentou`, `historico`, `fonte`), e não pela lista de quem já se conhece.
 - **⚠️ E FALA DISPARADA NÃO É FALA VISTA — a QUARTA cara do `barco_medio`.**
   A de cima pergunta se alguém a dispara, e alguém dispara. Esta é do outro
   lado do frame: **o que sobrou no `Label` depois de TODOS os emits daquele

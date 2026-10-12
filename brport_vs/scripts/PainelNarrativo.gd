@@ -404,6 +404,13 @@ static func _vestir_balao(balao: PanelContainer, quem: String, com_bico: bool) -
 				balao.theme_type_variation = &"BalaoArlindo"
 			else:
 				balao.theme_type_variation = &"BalaoArlindoSeguido"
+		# O Toninho só fala no celular, por enquanto (`101`): sem cartão de
+		# conversa, não tem placa, e o `_vestir_placa()` não o conhece.
+		"toninho":
+			if com_bico:
+				balao.theme_type_variation = &"BalaoToninho"
+			else:
+				balao.theme_type_variation = &"BalaoToninhoSeguido"
 		_:
 			return false
 	return true

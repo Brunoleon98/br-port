@@ -39,10 +39,21 @@ func _on_message(text: String, kind: String, assunto: String = "") -> void:
 
 # ANTES do `super()`: a narradora já existe (é um membro do `Main`, montado
 # com a cena), e as ligações dela aos sinais do jogo só se fazem lá dentro.
+#
+# ⚠️ E O TONINHO É A TERCEIRA FONTE desde a `101`: o tutorial do dia 1 fala
+# para a mesma fila, e uma sonda presa às duas de antes contá-lo-ia como
+# apresentado sem nunca o ter visto entrar — a regra da sonda presa a um
+# ponto de passagem (`gerais.md`). O `tutorial` é `@onready`, e já está de pé
+# quando este `_ready()` corre.
 func _ready() -> void:
 	narradora.falou.connect(_registar_fala)
+	tutorial.falou.connect(_registar_toninho)
 	super()
 
 
 func _registar_fala(id: String, linha: String) -> void:
 	registo.append({"texto": linha, "kind": "", "fonte": "cida", "id": id})
+
+
+func _registar_toninho(id: String, linha: String) -> void:
+	registo.append({"texto": linha, "kind": "", "fonte": "toninho", "id": id})

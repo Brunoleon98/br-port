@@ -603,6 +603,10 @@ func amostra(qual: String) -> Variant:
 		# ficariam sem foto nenhuma. As falas são cópias das do jogo, com o
 		# cais no nome de omissão; os dias são os da última semana, e não um
 		# estado que a partida monte.
+		# ⚠️ MENOS O TONINHO (`101`), que só fala no dia 1: as duas dele são
+		# as mais antigas, no dia em que ele as diz. Juntas não acontecem no
+		# jogo — entre o atracar e o avançar o sistema diz «Avance o dia» —,
+		# e estão juntas para a voz dele ter o balão com bico E o seguido.
 		"historico":
 			return [
 				{"texto": "Um barco foi embora sem ser atendido.", "kind": "bad",
@@ -625,6 +629,10 @@ func amostra(qual: String) -> Variant:
 					"kind": "", "fonte": "cida", "dia": 25, "assunto": "", "retrato": null},
 				{"texto": "Trabalhador #2 liberado.", "kind": "",
 					"fonte": "sistema", "dia": 25, "assunto": "trabalhador", "retrato": null},
+				{"texto": "Aqui o relógio é você, chefia. Enquanto o dia não vira, barco não sai e dinheiro não entra.",
+					"kind": "", "fonte": "toninho", "dia": 1, "assunto": "", "retrato": null},
+				{"texto": "Tem barco esperando ali fora, chefia. Toca nele que eu trago pro píer.",
+					"kind": "", "fonte": "toninho", "dia": 1, "assunto": "", "retrato": null},
 			]
 		_:
 			falhas.append("amostra desconhecida: %s" % qual)

@@ -165,6 +165,10 @@ func _rodar() -> void:
 	_f21_a_migracao()
 	_confere("o bloco F21 correu até ao fim", _f21_terminou)
 
+	print("=== F22: o tutorial do Toninho fala quando o recorte diz, e mais nenhuma vez ===")
+	await _f22_o_tutorial()
+	_confere("o bloco F22 correu até ao fim", _f22_terminou)
+
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save migra só o que sabe ler, o texto resolve, o export vale ===")
 		quit(0)
@@ -1032,12 +1036,15 @@ func _f7_retratos() -> void:
 		"cida": _chaves(nar["CIDA_BOLETIM"]) + _chaves(nar["CIDA_LINHAS"]),
 		"arlindo": _chaves(nar["ARLINDO_FALAS"]) + _chaves(nar["ARLINDO_REACOES"]),
 		"ribeiro": _chaves(nar["RIBEIRO_FALAS"]),
+		# O quarto desde a `101`: o Toninho do tutorial.
+		"toninho": _chaves(nar["TONINHO_FALAS"]),
 	}
 	# Uma varredura que não acha nada passa sem conferir coisa nenhuma.
-	_confere("achou as falas dos três personagens (%d)" % (
-		falas["cida"].size() + falas["arlindo"].size() + falas["ribeiro"].size()),
+	_confere("achou as falas dos quatro personagens (%d)" % (
+		falas["cida"].size() + falas["arlindo"].size() + falas["ribeiro"].size()
+		+ falas["toninho"].size()),
 		falas["cida"].size() >= 12 and falas["arlindo"].size() >= 7
-		and falas["ribeiro"].size() >= 5)
+		and falas["ribeiro"].size() >= 5 and falas["toninho"].size() >= 3)
 
 	for personagem in falas:
 		var caras: Dictionary = expressoes.get(personagem, {})
@@ -1110,6 +1117,42 @@ func _f7_retratos() -> void:
 		_confere("%s: as %d falas chegam todas ao jogo" % [
 			personagem, falas[personagem].size()],
 			mudas.is_empty(), "mudas: " + ", ".join(mudas))
+	_f7_falas_do_toninho_chegam_ao_jogo(falas["toninho"])
+
+
+# ⚠️ E O TONINHO É O IRMÃO DESTA PERGUNTA (`101`): as falas dele vivem na
+# `Narrativa` e o gatilho no `TutorialDoToninho.gd` — outro arquivo, logo não é
+# espelho. Mas ali a busca pelo id ENTRE ASPAS, que serve aos painéis, dava um
+# verde de graça: «atracar» e «avancar» são também os nomes dos PASSOS
+# (`passo = "atracar"`), e apagar a fala deixava o passo a satisfazer a busca.
+# O que se procura é o argumento do `_dizer(...)`, que é quem põe a fala na
+# fila. E por dois caminhos (`037`): quantas chamadas o texto tem, contra
+# quantas a expressão leu — um `_dizer(id_composto)` reprova em vez de sumir.
+func _f7_falas_do_toninho_chegam_ao_jogo(ids: Array[String]) -> void:
+	var fonte := _sem_comentarios(
+		FileAccess.get_file_as_string("res://scripts/TutorialDoToninho.gd"))
+	_confere("F7: o TutorialDoToninho.gd foi lido", fonte.length() > 500)
+	var re := RegEx.new()
+	re.compile("(?<!func )_dizer\\(\"([a-z_]+)\"\\)")
+	var ditos := {}
+	var lidas := 0
+	for c in re.search_all(fonte):
+		ditos[c.get_string(1)] = true
+		lidas += 1
+	var chamadas := 0
+	var i := fonte.find("_dizer(")
+	while i >= 0:
+		if not fonte.substr(maxi(0, i - 5), 5).ends_with("func "):
+			chamadas += 1
+		i = fonte.find("_dizer(", i + 1)
+	_confere("F7: toda chamada do tutorial à fala passa um id literal (%d chamadas, %d lidas)"
+		% [chamadas, lidas], chamadas > 0 and chamadas == lidas)
+	var mudas: Array[String] = []
+	for id in ids:
+		if not ditos.has(id):
+			mudas.append(id)
+	_confere("toninho: as %d falas chegam todas ao jogo" % ids.size(),
+		mudas.is_empty(), "mudas: " + ", ".join(mudas))
 
 
 # ⚠️ E A QUARTA PERGUNTA AINDA É SOBRE TEXTO, NÃO SOBRE COMPORTAMENTO. Ela
@@ -1366,7 +1409,16 @@ func _f8_recolher(texto: String, _kind: String, _assunto: String = "") -> void:
 	_f8_sistema.append(texto)
 
 
+# ⚠️ AS FALAS DO TONINHO NÃO ENTRAM AQUI. Desde a `101` o dia 1 tem o
+# tutorial, e este bloco monta o `Main` no dia 1: a fala do passo 1 entra na
+# mesma fila, no fim do mesmo frame, e com a prioridade da Dona Cida — e o
+# `_f8_drenar()` devolvia-a como «a última mostrada» por cima da variante que
+# o F8c2 pergunta. Este bloco pergunta pelo sistema e pela Dona Cida; o
+# tutorial tem o seu, o F22, e é lá que a fala dele se prova vista.
 func _f8_recolher_apresentada(texto: String, _kind: String) -> void:
+	for id in Narrativa.TONINHO_FALAS:
+		if texto == Narrativa.toninho(String(id)):
+			return
 	_f8_apresentadas.append(texto)
 
 
@@ -5210,3 +5262,326 @@ func _f21_a_cadeia() -> void:
 	r = GS.cadeia_de_migracao({"versao": 15}, 14, anota)
 	_confere("F21: e o do futuro também — chega com a versão dele, e quem o recusa é o _save_aceite (F3)",
 		degraus.is_empty() and r.get("versao") == 15, "%s depois de %s" % [r, degraus])
+
+
+# ── F22 ─────────────────────────────────────────────────────────────────
+# O TUTORIAL DO TONINHO (`docs/decisoes/100`, `101`), jogado pelo `Main`.
+#
+# O F7 prova que cada fala dele tem cara, PNG e quem a peça no código; isto
+# prova que ela SAI quando o recorte diz, e mais nenhuma vez. São quatro
+# caminhos, cada um com a sua bandeira — um caminho que reprova cedo esconde o
+# que os outros veriam (`054`):
+#
+#   1. ATRACAR ANTES DE LER: o passo 1 entra na fila atrás da mensagem de
+#      abertura; quem atraca nesses segundos não o lê — ele SAI da fila e do
+#      histórico —, e vem o passo 2, com o «AVANÇAR DIA» a pulsar até à
+#      virada. Depois disso, nada: atracar no dia 2 não o repete.
+#   2. O DIA VIRA ANTES DE ATRACAR: o passo 1 é visto, o dia vira pelo botão,
+#      e sai a fala SÉRIA; atracar a seguir já não dá o passo 2. E o mesmo
+#      quando o dia vira no MESMO frame em que o `Main` monta, antes de o
+#      passo 1 ser pedido — a bateria de capturas joga assim, e a primeira
+#      versão calava-se ali: a fala dependia do frame, e não do barco.
+#   3. A ABERTURA: com o caderno na tela ele cala-se, e com a contra-oferta do
+#      dia 1 por responder também — só fala quando há barco que se possa
+#      chamar.
+#   4. NÃO É DIA DE TUTORIAL: o dia 2, o dia 1 com barco já no píer (um save
+#      recarregado) e o dia 1 sem barco ao largo passam calados.
+#
+# ⚠️ A CARA ESPERADA É LITERAL — calmo, irónico, sério, pela `100` —, e não
+# lida da `EXPRESSOES`: trocar duas caras lá mudaria os dois lados de uma
+# asserção que as comparasse.
+const F22_CARA := {"atracar": "retrato_toninho_calmo.png",
+	"avancar": "retrato_toninho_ironico.png", "dia_virou": "retrato_toninho_serio.png"}
+const F22_AVANCAR := "AcoesTurno/Avancar"
+
+var _f22_terminou := false
+var _f22_ditas: Array[String] = []
+var _f22_mostradas: Array[String] = []
+
+
+func _f22_o_tutorial() -> void:
+	var c1: bool = await _f22_atracar_antes_de_ler()
+	_confere("F22: o caminho 1 (atracar antes de ler) correu até ao fim", c1)
+	var c2: bool = await _f22_o_dia_vira_antes()
+	_confere("F22: o caminho 2 (o dia vira antes de atracar) correu até ao fim", c2)
+	var c3: bool = await _f22_a_abertura()
+	_confere("F22: o caminho 3 (a abertura) correu até ao fim", c3)
+	var c4: bool = await _f22_nao_e_dia()
+	_confere("F22: o caminho 4 (não é dia de tutorial) correu até ao fim", c4)
+	_f22_terminou = true
+
+
+# A partida do dia 1 com UM barco pronto ao largo e os nomes escolhidos, sem
+# contra-oferta: o estado é montado à mão, e o sorteio fica semeado para o
+# que ele ainda decidir (a chegada do dia seguinte).
+func _f22_dia_um(semente: int) -> void:
+	GS.clear_save()
+	GS._rng.seed = semente
+	GS.new_game()
+	GS.definir_nomes(GS.NOME_PORTO_PADRAO, "")
+	GS.fila = [GS._make_boat()]
+	GS.pending_rival = -1
+	GS._set_phase("playing")
+
+
+func _f22_montar() -> Node:
+	var cena := load("res://scenes/Main.tscn") as PackedScene
+	var main: Node = cena.instantiate()
+	root.add_child(main)
+	_f22_ditas.clear()
+	_f22_mostradas.clear()
+	main.tutorial.falou.connect(_f22_ouvir)
+	main._fila.apresentou.connect(_f22_ver)
+	return main
+
+
+func _f22_ouvir(id: String, _linha: String) -> void:
+	_f22_ditas.append(id)
+
+
+func _f22_ver(texto: String, _kind: String) -> void:
+	_f22_mostradas.append(texto)
+
+
+func _f22_esperar() -> void:
+	# Dois frames: `call_deferred` só corre depois do primeiro (`gdscript.md`).
+	await process_frame
+	await process_frame
+
+
+func _f22_drenar(main: Node) -> void:
+	var voltas := 0
+	while main._fila.avancar(99.0) and voltas < 200:
+		voltas += 1
+
+
+# A entrada do histórico com este texto, ou vazio.
+func _f22_no_historico(main: Node, texto: String) -> Dictionary:
+	for e in main._fila.historico:
+		if String(e["texto"]) == texto:
+			return e
+	return {}
+
+
+func _f22_cara(e: Dictionary) -> String:
+	var r = e.get("retrato", null)
+	return "" if r == null else String((r as Texture2D).resource_path.get_file())
+
+
+func _f22_atracar_antes_de_ler() -> bool:
+	_f22_dia_um(20261012)
+	var main := _f22_montar()
+	var botao := main.get_node(F22_AVANCAR) as Button
+	var linha1 := Narrativa.toninho("atracar")
+	var abertura := String(main._fila.atual().get("texto", ""))
+	await _f22_esperar()
+	_confere("F22.1: no dia 1 com barco ao largo, o Toninho diz o passo 1",
+		main.tutorial.passo == "atracar" and _f22_ditas == ["atracar"],
+		"passo «%s», disse %s" % [main.tutorial.passo, _f22_ditas])
+	var e1 := _f22_no_historico(main, linha1)
+	_confere("F22.1: na voz dele e com a cara calma",
+		String(e1.get("fonte", "")) == "toninho" and _f22_cara(e1) == F22_CARA["atracar"],
+		"fonte «%s», cara «%s»" % [e1.get("fonte", ""), _f22_cara(e1)])
+	# O ESTADO QUE APERTA: a fala ainda à espera, atrás da abertura. Se ela já
+	# estivesse na tela, «sai da fila» passaria por não ter o que tirar.
+	_confere("F22.1: e espera a vez atrás da mensagem de abertura",
+		String(main._fila.atual().get("texto", "")) == abertura and main._fila.pendentes() >= 1,
+		"na tela: «%s», %d à espera" % [main._fila.atual().get("texto", ""),
+			main._fila.pendentes()])
+
+	var antes := {}
+	for t in get_processed_tweens():
+		antes[t] = true
+	_confere("F22.1: (o jogo aceitou o atracar)", GS.atracar(0))
+	await _f22_esperar()
+	_f22_drenar(main)
+	_confere("F22.1: atracado antes de a ler, o passo 1 nunca chega à tela",
+		not _f22_mostradas.has(linha1), "mostradas: %s" % [_f22_mostradas])
+	_confere("F22.1: e sai do histórico — nunca foi dito",
+		_f22_no_historico(main, linha1).is_empty())
+	var linha2 := Narrativa.toninho("avancar")
+	var e2 := _f22_no_historico(main, linha2)
+	_confere("F22.1: vem o passo 2, visto, com a cara irónica",
+		main.tutorial.passo == "avancar" and _f22_mostradas.has(linha2)
+			and _f22_cara(e2) == F22_CARA["avancar"],
+		"passo «%s», cara «%s»" % [main.tutorial.passo, _f22_cara(e2)])
+
+	# O PULSO: o tween que o passo 2 criou, apanhado pela diferença da lista
+	# (`testes-e-guardas.md`), e o NÓ lido depois de o andar.
+	var novos: Array[Tween] = []
+	for t in get_processed_tweens():
+		if not antes.has(t):
+			novos.append(t)
+	for t in novos:
+		if t.is_valid():
+			t.custom_step(0.45)
+	_confere("F22.1: e o «AVANÇAR DIA» pulsa (%d tweens novos)" % novos.size(),
+		botao.modulate.r > 1.05, "modulate %s" % botao.modulate)
+
+	# O PASSO 2 NÃO SE REPETE NO MESMO DIA. Desfazer o toque e atracar outra
+	# vez (`desatracar()`, o «toque na doca para liberar») é um segundo
+	# `atracou` no dia 1, com o tutorial ainda a ouvir. ⚠️ No dia 2 quem o
+	# cala é o fim do tutorial, que desliga os sinais — e ali, sem a guarda do
+	# passo no `_ao_atracar`, tudo continuava verde (medido: o mutante M7 da
+	# `101` passou com a pergunta só no dia 2). É aqui que essa guarda aperta.
+	var voltou: bool = GS.desatracar(0)
+	var de_novo: bool = GS.atracar(0)
+	await _f22_esperar()
+	_f22_drenar(main)
+	_confere("F22.1: desfazer e atracar outra vez no dia 1 não repete o passo 2",
+		voltou and de_novo and _f22_ditas == ["atracar", "avancar"],
+		"desatracou %s, atracou %s, disse %s" % [voltou, de_novo, _f22_ditas])
+
+	botao.pressed.emit()
+	for t in novos:
+		if t.is_valid():
+			t.custom_step(0.45)
+	_confere("F22.1: virado o dia pelo botão, o pulso PARA (e não só volta ao branco)",
+		botao.modulate == Color.WHITE and main.tutorial.passo == "fim",
+		"modulate %s, passo «%s»" % [botao.modulate, main.tutorial.passo])
+
+	# NÃO SE REPETE: no dia 2, com barco e berço, atracar não diz nada.
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	await _f22_esperar()
+	for d in GS.docks:
+		d["boat"] = null
+		d["worker_id"] = null
+	GS.fila = [GS._make_boat()]
+	var atracou: bool = GS.atracar(0)
+	await _f22_esperar()
+	_confere("F22.1: no dia 2, atracar não repete o tutorial",
+		atracou and _f22_ditas == ["atracar", "avancar"], "disse %s" % [_f22_ditas])
+	main.free()
+	return true
+
+
+func _f22_o_dia_vira_antes() -> bool:
+	_f22_dia_um(20261013)
+	var main := _f22_montar()
+	var botao := main.get_node(F22_AVANCAR) as Button
+	await _f22_esperar()
+	_f22_drenar(main)
+	_confere("F22.2: o passo 1 chega à tela quando ninguém atraca",
+		_f22_mostradas.has(Narrativa.toninho("atracar")))
+	botao.pressed.emit()
+	await _f22_esperar()
+	_f22_drenar(main)
+	var serio := Narrativa.toninho("dia_virou")
+	var e := _f22_no_historico(main, serio)
+	_confere("F22.2: o dia virou antes de atracar — sai a fala séria, vista",
+		_f22_ditas == ["atracar", "dia_virou"] and _f22_mostradas.has(serio),
+		"disse %s" % [_f22_ditas])
+	_confere("F22.2: com a cara séria", _f22_cara(e) == F22_CARA["dia_virou"],
+		"cara «%s»" % _f22_cara(e))
+	_confere("F22.2: e o tutorial acaba", main.tutorial.passo == "fim")
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	GS.fila = [GS._make_boat()]
+	var atracou: bool = GS.atracar(0)
+	await _f22_esperar()
+	_confere("F22.2: atracar depois já não dá o passo 2",
+		atracou and _f22_ditas == ["atracar", "dia_virou"], "disse %s" % [_f22_ditas])
+	main.free()
+
+	# O dia vira no frame da montagem, sem esperar o passo 1.
+	_f22_dia_um(20261019)
+	main = _f22_montar()
+	botao = main.get_node(F22_AVANCAR) as Button
+	botao.pressed.emit()
+	await _f22_esperar()
+	var e2 := _f22_no_historico(main, serio)
+	_confere("F22.2: virado o dia no frame da montagem, sai na mesma a fala séria",
+		_f22_ditas == ["dia_virou"] and _f22_cara(e2) == F22_CARA["dia_virou"]
+			and main.tutorial.passo == "fim",
+		"passo «%s», disse %s" % [main.tutorial.passo, _f22_ditas])
+	main.free()
+	return true
+
+
+func _f22_a_abertura() -> bool:
+	# O caderno: a partida nova pergunta os nomes, e o Toninho espera-o.
+	_f22_dia_um(20261014)
+	GS.nome_porto = ""
+	GS.nome_jogador = ""
+	var main := _f22_montar()
+	var overlay: Node = main.get_node("Overlay")
+	await _f22_esperar()
+	_confere("F22.3: com a folha de rosto na tela, o Toninho não fala",
+		main.tutorial.passo == "" and _f22_ditas.is_empty(),
+		"passo «%s», disse %s" % [main.tutorial.passo, _f22_ditas])
+	var nomes: Node = _primeiro_com_script(overlay, "TelaNomes.gd")
+	if nomes != null:
+		GS.definir_nomes("Cais de Teste", "")
+		nomes.fechou.emit()
+	await _f22_esperar()
+	_confere("F22.3: nem com o diário",
+		_f22_ditas.is_empty(), "disse %s" % [_f22_ditas])
+	var diario: Node = _primeiro_com_script(overlay, "PainelDiario.gd")
+	_confere("F22.3: (a abertura abriu o diário)", diario != null)
+	if diario != null:
+		diario.fechou.emit()
+	await _f22_esperar()
+	_confere("F22.3: fechado o caderno, diz o passo 1",
+		_f22_ditas == ["atracar"], "disse %s" % [_f22_ditas])
+	main.free()
+
+	# A contra-oferta do dia 1: o barco está nas mãos do Arlindo, e mandar
+	# tocar nele seria mandar tocar no que não se pode chamar.
+	_f22_dia_um(20261015)
+	GS.fila[0]["rival"] = true
+	GS.pending_rival = 0
+	GS.rival_attempts_left = GS.RIVAL_PATIENCE
+	GS._set_phase("rival_offer")
+	main = _f22_montar()
+	await _f22_esperar()
+	_confere("F22.3: com a contra-oferta por responder, ele espera calado",
+		main.tutorial.passo == "a_espera" and _f22_ditas.is_empty(),
+		"passo «%s», disse %s" % [main.tutorial.passo, _f22_ditas])
+	GS.resolve_rival_offer(true)
+	await _f22_esperar()
+	_confere("F22.3: e fala quando o cliente fica",
+		_f22_ditas == ["atracar"], "disse %s" % [_f22_ditas])
+	main.free()
+	return true
+
+
+func _f22_nao_e_dia() -> bool:
+	_f22_dia_um(20261016)
+	GS.turn = 2
+	var main := _f22_montar()
+	await _f22_esperar()
+	_confere("F22.4: no dia 2 não há tutorial",
+		main.tutorial.passo == "fim" and _f22_ditas.is_empty(),
+		"passo «%s», disse %s" % [main.tutorial.passo, _f22_ditas])
+	main.free()
+
+	_f22_dia_um(20261017)
+	GS.atracar(0, false)
+	GS.fila = [GS._make_boat()]
+	main = _f22_montar()
+	await _f22_esperar()
+	_confere("F22.4: no dia 1 com barco já no píer, também não",
+		main.tutorial.passo == "fim" and _f22_ditas.is_empty(),
+		"passo «%s», disse %s" % [main.tutorial.passo, _f22_ditas])
+	main.free()
+
+	# O fundeadouro vazio no dia 1 (0,25³ das partidas): nada a tocar, e o dia
+	# passa calado — o passo 1 não manda tocar num barco que não existe, e a
+	# fala séria não fala de um barco que não esperou.
+	_f22_dia_um(20261018)
+	GS.fila = []
+	main = _f22_montar()
+	var botao := main.get_node(F22_AVANCAR) as Button
+	await _f22_esperar()
+	_confere("F22.4: com o fundeadouro vazio ele espera calado",
+		main.tutorial.passo == "a_espera" and _f22_ditas.is_empty(),
+		"passo «%s», disse %s" % [main.tutorial.passo, _f22_ditas])
+	botao.pressed.emit()
+	await _f22_esperar()
+	_confere("F22.4: e o dia vira sem fala nenhuma",
+		main.tutorial.passo == "fim" and _f22_ditas.is_empty(),
+		"passo «%s», disse %s" % [main.tutorial.passo, _f22_ditas])
+	main.free()
+	GS.clear_save()
+	return true

@@ -34,6 +34,12 @@ const RIBEIRO_CORDIAL := preload("res://art/props/retrato_ribeiro_cordial.png")
 const RIBEIRO_FORMAL := preload("res://art/props/retrato_ribeiro_formal.png")
 const RIBEIRO_GRAVE := preload("res://art/props/retrato_ribeiro_grave.png")
 
+# O Toninho, o guia do tutorial (`100`): uma cara por fala — calmo no atracar,
+# irónico no avançar, sério quando o dia vira antes de atracar (`101`).
+const TONINHO_CALMO := preload("res://art/props/retrato_toninho_calmo.png")
+const TONINHO_IRONICO := preload("res://art/props/retrato_toninho_ironico.png")
+const TONINHO_SERIO := preload("res://art/props/retrato_toninho_serio.png")
+
 const POR_EXPRESSAO := {
 	"cida": {
 		"seria": CIDA_SERIA,
@@ -49,6 +55,11 @@ const POR_EXPRESSAO := {
 		"cordial": RIBEIRO_CORDIAL,
 		"formal": RIBEIRO_FORMAL,
 		"grave": RIBEIRO_GRAVE,
+	},
+	"toninho": {
+		"calmo": TONINHO_CALMO,
+		"ironico": TONINHO_IRONICO,
+		"serio": TONINHO_SERIO,
 	},
 }
 

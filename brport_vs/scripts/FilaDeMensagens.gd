@@ -142,6 +142,28 @@ func registrar(texto: String, fonte: String, dia: int, retrato: Texture2D) -> vo
 		"assunto": "", "retrato": retrato})
 
 
+## TIRA DA FILA UMA MENSAGEM QUE AINDA ESPERA A VEZ, e do histórico com ela:
+## o que nunca esteve na tela não foi dito. Devolve se tirou.
+##
+## Existe para o tutorial do Toninho (`101`): o passo que o jogador faz antes
+## de ler a fala dele deixaria na faixa um «toque no barco» com o barco já no
+## píer. ⚠️ A QUE ESTÁ NA TELA FICA — é a regra da `PRIORIDADE` com o sinal
+## trocado: a fila nunca interrompe a frase a meio da leitura, nem para a tirar.
+func retirar(texto: String) -> bool:
+	for i in range(_fila.size()):
+		if String(_fila[i]["texto"]) != texto:
+			continue
+		_fila.remove_at(i)
+		# A fusão por duplicata garante que espera UMA com este texto; no
+		# histórico tira-se a mais recente, que é a que entrou com ela.
+		for j in range(historico.size()):
+			if String(historico[j]["texto"]) == texto:
+				historico.remove_at(j)
+				break
+		return true
+	return false
+
+
 func _guardar(entrada: Dictionary) -> void:
 	historico.push_front(entrada)
 	if historico.size() > HISTORICO_MAX:

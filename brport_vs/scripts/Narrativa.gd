@@ -303,6 +303,31 @@ const RIBEIRO_FALAS := {
 }
 
 
+# ── TONINHO — o tutorial curto (`docs/decisoes/100`, `101`) ──
+# Só no dia 1 de uma partida nova, na faixa de mensagem; quem escolhe o id é o
+# `TutorialDoToninho.gd`, e o id vai LITERAL lá, pela razão da narradora: o
+# F7 do fumaça varre aquele arquivo à procura de cada um.
+#
+# O tom é o do guia de voz do GDD — «conciso, observador, irônico sem
+# amargura», «chefia», o «Olha, chefia...» de quando vai dizer algo importante
+# —, e o texto é RASCUNHO para a leitura em voz alta do A4: o GDD dá o tom,
+# não as falas. Cada uma traz o que a tela não diz (`narrativa.md`): o cartão
+# já mostra o barco e o sistema já diz «Avance o dia para operar».
+const TONINHO_FALAS := {
+	# Dita com berço livre e barco pronto ao largo (`atracagem_pendente()`),
+	# lido onde a linha é escrita — «tem barco esperando» é verdade ali.
+	"atracar": "Tem barco esperando ali fora, chefia. Toca nele que eu trago pro píer.",
+	# Depois do primeiro barco atracado. O sistema acabou de dizer «avance o
+	# dia»; o Toninho diz o porquê: o jogo não tem relógio, e sem a virada o
+	# serviço não anda e a receita não entra (`advance_turn()`).
+	"avancar": "Aqui o relógio é você, chefia. Enquanto o dia não vira, barco não sai e dinheiro não entra.",
+	# O dia virou sem ninguém atracar. Os barcos do dia 1 estão agora a um dia
+	# da paciência (o cartão diz «vai embora hoje»); o que a tela não diz é
+	# para onde vão e o que custa — o Porto Farol e a reputação.
+	"dia_virou": "Olha, chefia... barco que espera demais desiste e vai pro Porto Farol. E isso a cidade comenta.",
+}
+
+
 # ── A CARA QUE CADA FALA PEDE ───────────────────────────────────────────────
 #
 # Item do plano pedido na leitura em voz alta de 13/09: *"o sprite com a
@@ -364,6 +389,14 @@ const EXPRESSOES := {
 		"pagou": "cordial",
 		"nao_pagou": "grave",
 		"despedida": "cordial",
+	},
+	# O Toninho tem três caras e três falas, uma para cada (`100`): o recorte
+	# do tutorial foi desenhado para que nenhuma fique muda — a séria só tem a
+	# fala do dia que vira antes de atracar.
+	"toninho": {
+		"atracar": "calmo",
+		"avancar": "ironico",
+		"dia_virou": "serio",
 	},
 }
 
@@ -633,3 +666,8 @@ static func diario() -> String:
 # `teste_fumaca` confere que os ids usados pelo jogo existem todos aqui.
 static func cida(id: String) -> String:
 	return _gs().texto(String(CIDA_LINHAS.get(id, "")))
+
+
+# Uma fala do Toninho por id, com a mesma regra: id desconhecido é silêncio.
+static func toninho(id: String) -> String:
+	return _gs().texto(String(TONINHO_FALAS.get(id, "")))

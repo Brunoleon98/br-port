@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=77 format=3]
+[gd_resource type="Theme" load_steps=79 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -1000,6 +1000,34 @@ content_margin_top = 8.0
 content_margin_right = 12.0
 content_margin_bottom = 8.0
 
+[sub_resource type="StyleBoxFlat" id="conversa_balao_toninho"]
+; O Toninho (`101`): a mostarda da camisa dele (#ac873f no retrato, a mediana
+; do D38), no matiz dela e clareada em OKLCH a L 0,90, C 0,07 — #f5daa9. Fica a
+; ΔE 27,3 da Dona Cida, 32,0 do Sr. Ribeiro e 47,5 do Arlindo; o par mais
+; perto dos quatro continua a ser o de antes (19,9). Só tem balão: ele fala na
+; faixa e no celular, e a placa (#e1c797, proposta na `100`) espera o dia em
+; que ele falar num cartão.
+bg_color = Color(0.961, 0.855, 0.663, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="conversa_balao_toninho_seguido"]
+bg_color = Color(0.961, 0.855, 0.663, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
 ; A PLACA DO RETRATO NA CONVERSA DOS PAINÉIS (`082`): o busto sentado numa
 ; placa da cor de quem fala, com o corte do peito na borda de baixo — até
 ; aqui ele flutuava cortado a seco sobre o branco do cartão, e com fala longa
@@ -1657,6 +1685,10 @@ BalaoArlindo/base_type = "PanelContainer"
 BalaoArlindo/styles/panel = SubResource("conversa_balao_arlindo")
 BalaoArlindoSeguido/base_type = "PanelContainer"
 BalaoArlindoSeguido/styles/panel = SubResource("conversa_balao_arlindo_seguido")
+BalaoToninho/base_type = "PanelContainer"
+BalaoToninho/styles/panel = SubResource("conversa_balao_toninho")
+BalaoToninhoSeguido/base_type = "PanelContainer"
+BalaoToninhoSeguido/styles/panel = SubResource("conversa_balao_toninho_seguido")
 ; As placas do retrato nos painéis de conversa (`082`).
 PlacaFalaCida/base_type = "PanelContainer"
 PlacaFalaCida/styles/panel = SubResource("placa_fala_cida")

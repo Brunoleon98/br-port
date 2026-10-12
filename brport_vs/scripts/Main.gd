@@ -31,6 +31,9 @@ const NarradoraDaCida := preload("res://scripts/NarradoraDaCida.gd")
 # A FILA DAS TELAS QUE ABREM SOZINHAS, num script seu desde o terceiro corte
 # do M8 (`docs/decisoes/097`). `preload` pela mesma razão.
 const VezDasTelas := preload("res://scripts/VezDasTelas.gd")
+# O TUTORIAL CURTO, que o Toninho guia no dia 1 (`docs/decisoes/100`, `101`).
+# `preload` pela mesma razão: lê o `GameState` pelo nome.
+const TutorialDoToninho := preload("res://scripts/TutorialDoToninho.gd")
 const CounterOfferScene := preload("res://scenes/panels/CounterOfferPanel.tscn")
 const DebtPaymentScene := preload("res://scenes/panels/DebtPaymentPanel.tscn")
 const UpgradePanelScene := preload("res://scenes/panels/UpgradePanel.tscn")
@@ -81,6 +84,13 @@ var narradora: NarradoraDaCida = NarradoraDaCida.new(_fila)
 # `docs/decisoes/097`). É PÚBLICA pela razão do `trafego`: o T16 do
 # `run_tests` fecha quem tem a vez, e lido direto um nome errado grita.
 @onready var vez: VezDasTelas = VezDasTelas.new(self)
+
+# O TUTORIAL DO DIA 1, com a fila da faixa (onde o Toninho fala) e o botão que
+# ele faz pulsar. É PÚBLICO pela razão do `trafego`: o F22 do `teste_fumaca`
+# lê-lhe o passo, e a sonda da régua da faixa ouve-lhe o `falou` — lido
+# direto, um nome errado grita. Começa em `_depois_da_abertura()`.
+@onready var tutorial: TutorialDoToninho = TutorialDoToninho.new(_fila,
+	$AcoesTurno/Avancar)
 
 @onready var _message_cartao: PanelContainer = $MensagemCartao
 @onready var _message_label: Label = $MensagemCartao/Linha/Mensagem
@@ -204,17 +214,28 @@ func _ready() -> void:
 			# com um barco no píer. Sem erro, sem aviso. Trinta por cento das
 			# instalações novas, e foi o que o primeiro playtest no telefone
 			# encontrou (Análise 1, 02/09).
-			diario.fechou.connect(_recuperar_fase)
+			diario.fechou.connect(_depois_da_abertura)
 		)
 		return
 
+	_depois_da_abertura()
+
+
+# O FIM DA ABERTURA, pelos dois caminhos: a partida nova depois do diário, e
+# a que se carrega logo no `_ready()`. Primeiro o painel que a fase pedir, e
+# só depois o tutorial — que espera esse painel resolver-se antes de falar
+# (`TutorialDoToninho.gd`). Começá-lo antes do caderno poria o Toninho a falar
+# para uma faixa tapada pela folha de rosto.
+func _depois_da_abertura() -> void:
 	_recuperar_fase()
+	tutorial.comecar()
 
 
 # Se o jogo abre com uma fase que BLOQUEIA o turno, o painel que a resolve tem
 # de estar na tela — venha ela de um save carregado ou do sorteio do
-# `new_game()`. Vive numa função própria porque é chamada de dois sítios: aqui,
-# quando não há abertura, e no fim da corrente da abertura.
+# `new_game()`. Vive numa função própria porque é chamada dos dois fins da
+# abertura — o `_ready()` sem caderno e o diário fechado —, hoje pelo
+# `_depois_da_abertura()`, que a seguir dá a vez ao tutorial.
 func _recuperar_fase() -> void:
 	if GameState.phase == "rival_offer" and GameState.pending_rival >= 0:
 		_on_rival_offer_triggered(GameState.pending_rival)
