@@ -405,6 +405,12 @@ elipsoides, não peça nova: custo zero sobre a P1.
 ✅ **Feita em 24/09 no kit de CAIXAS, e não em metaballs** (`056`): cada um
 tem a sua `Rosto` em `brp_retratos.py` — o Ribeiro retangular e alto, o
 Arlindo de ângulos — e o `_corpo()` partilhado saiu.
+✅ **E o quarto, o Toninho (`100`, 12/10), trouxe a primeira CÚPULA do kit**:
+a cabeça do trabalhador sem capacete, com o tampo do crânio e o cabelo numa
+`_cupula` (planta em superelipse, alçado em quarto de elipse) e o grão do
+cabelo no material. Seis voltas, todas sobre o cabelo e a camisa
+(`art_lab/retratos/toninho/`); a lição que fica para qualquer cabelo curto:
+o que lê como capacete é a BORDA DURA, não a falta de relevo.
 
 **P3. Olhos em ESFERA — o olhar vira rotação, a pálpebra vira casca.** Hoje o
 olho é esclera e pupila em placas, e o olhar desloca a pupila três pixels. Em

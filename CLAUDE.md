@@ -104,7 +104,7 @@ xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3
 tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # todas de uma vez
 
 # Blender como biblioteca Python (~1 GB, minutos)
-pip install "bpy==4.5.0"                                      # precisa de Python 3.11
+python3.11 -m pip install "bpy==4.5.0"                        # só no Python 3.11
 # os avisos do bpy (download, stdout em bloco, view_layer) estão em .claude/rules/arte.md
 python3 tools/gerar_props_iso.py brport_vs/art/props [prop ...]
 python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \

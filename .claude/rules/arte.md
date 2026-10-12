@@ -30,6 +30,9 @@ paths:
 Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
 
 ```sh
+# ⚠️ o `python3` do contêiner já é o 3.13, e o `pip` dele responde «from
+# versions: 5.1.0, …» ao 4.5.0 — que é só para o 3.11 (medido em 11/10, `100`):
+# `python3.11 -m pip`, e os scripts de estúdio correm com `python3.11`
 # ⚠️ o wheel tem 373 MB e o download já se cortou a meio (o pip diz que o
 # HASH não bate, não que a rede caiu): `pip download` primeiro, instala do arquivo
 # ⚠️ redirecionado para arquivo, o `gerar_brp.py` não escreve UMA linha até
@@ -362,6 +365,23 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   raio 76. A régua para pôr um acessório é o raio da peça VIZINHA e não a
   largura da cabeça — e quem conta peças conta cinco na mesma, que é a regra da
   boia com a corrente dentro do cone, à escala de uma cara.
+- **⚠️ CABELO CURTO QUE LÊ COMO CAPACETE TEM BORDA DURA, não falta de
+  relevo.** O Toninho (`100`) levou quatro técnicas: cachos em esfera sobre
+  uma calote liam «capacete com bolinhas brancas», por mais densos que
+  fossem. O que o fez cabelo foi tirar a borda — o grão no MATERIAL
+  (Voronoi), o contorno irregular por Displace, a cor a rarear até à pele nos
+  lados, e a borda da frente a AFINAR até ao crânio (sem isso, a ~6 px à
+  frente da testa, era a aba de um gorro). E uma borda feita de fios iguais
+  é um PENTE: o bigode em tufos só leu como bigode numa massa de contorno
+  desenhado, com o mesmo grão.
+  ⚠️ **E A FORMA DA PEÇA DE BAIXO MANDA NA DE CIMA.** Cachos numa ELIPSE
+  enterram-se na quina de um OITAVADO da mesma largura (~9 px aos 45°), e as
+  têmporas liam lisas: o que tem de assentar pousa-se POR RAIO na superfície.
+  Apagar faces de uma grade para fazer uma borda desenha uma ESCADA — a borda
+  é a última linha da malha. Um leque que se fecha num ápice faz lascas de
+  meio píxel, que com relevo e luz chapada desenham uma estrela. E um
+  `_retalho` com cantos acima do anel do tronco desce aos saltos, em pontas
+  soltas (a gola do Arlindo tem os cantos a 106 e 98, acima do anel de 98).
 - **⚠️ E O QUE A PEÇA TEM DE MOSTRAR DECIDE O ENQUADRAMENTO DELA.** Irmã da
   regra abaixo, um passo antes: ali o tamanho do widget decide a escala, aqui a
   FUNÇÃO decide o corte. O `trabalhador_retrato` identifica uma unidade, e o

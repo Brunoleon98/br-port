@@ -1886,7 +1886,7 @@ def _tom(hexa, fator):
     return "#" + "".join("%02x" % int(round(int(h[i:i + 2], 16) * fator)) for i in (0, 2, 4))
 
 
-def _rugas(r, mat, testa=True):
+def _rugas(r, mat, testa=True, leque=3):
     """A IDADE, em vincos rasos (a receita do Sr. Ribeiro e do Arlindo).
 
     ⚠️ NA v1 ERAM DOIS VINCOS DE 9 × 2 POR OLHO, no degrau da pele, e «não se
@@ -1899,13 +1899,19 @@ def _rugas(r, mat, testa=True):
 
     Os vincos acabam na FRENTE da cabeça (u 63, onde começa a quina): além
     dela a placa ficava a flutuar sobre a face que recua.
+
+    `leque=2` tira o vinco do meio: numa cara maior no quadro (a do Toninho,
+    sem capacete a ocupar o topo) os três em leque liam como BIGODES DE GATO;
+    e `leque=0` tira os dois que sobravam, que ainda liam assim (v5, o Bruno).
     """
     lo, ao = r.olho
     pecas = []
     for sx in (-1.0, 1.0):
         u = (r.u_olho + lo / 2.0 + 5.0) * sx
         # O de cima sobe para fora, o de baixo desce: o leque.
-        for k, (dz, ang) in enumerate(((5.0, -22.0), (0.0, 0.0), (-5.0, 22.0))):
+        vincos = {3: ((5.0, -22.0), (0.0, 0.0), (-5.0, 22.0)),
+                  2: ((3.5, -16.0), (-3.5, 16.0)), 0: ()}[leque]
+        for k, (dz, ang) in enumerate(vincos):
             pecas.append(_placa(r, "ruga_olho_%+d_%d" % (sx, k), u, r.z_olho + dz, 12.0, 3.5,
                                 mat, esp=_pf(0.8), inclina=ang * sx))
         pecas.append(_placa(r, "olheira_%+d" % sx, r.u_olho * sx, r.z_olho - ao / 2.0 - 4.5,
@@ -2221,9 +2227,512 @@ def _rabo_de_cavalo(nome, alvos, sx, mat, prendedor, tranca=False):
     return pecas
 
 
+# ────────────────────────────────────────────────────────────── o Toninho
+# O GUIA DO TUTORIAL (`docs/decisoes/100`): o estivador-chefe do GDD, vinte
+# anos com o avô, que o jogo só citava no diário. O escopo é do Bruno, numa
+# volta (11/10): pele PRETA, cabelo BRANCO RENTE com BIGODÃO branco, camisa
+# de botão MOSTARDA gasta aberta no peito e um PANO no ombro.
+#
+# O QUE O SEPARA DOS OUTROS A 96 px, contado na prancha dos rostos de hoje: o
+# topo é o único BRANCO E CHEIO (o Sr. Ribeiro é careca com a coroa grisalha,
+# o Arlindo tem quepe, a Dona Cida coque, o trabalhador capacete); o bigode é
+# o único branco e grosso (o do Arlindo é escuro e fino); e o pano no ombro é
+# a única peça ASSIMÉTRICA de um tronco — o que o estivador usa para pôr a
+# saca ao ombro, e o que diz «estivador» sem capacete nem colete.
+#
+# A CABEÇA É A DO TRABALHADOR (a mesma oficina, `058`) sem o capacete: o
+# maxilar largo, as orelhas, o olho, o nariz e as rugas do veterano. O que o
+# capacete tapava — o crânio acima dos 240 — passa a ser desenhado inteiro,
+# como o do Sr. Ribeiro.
+# ⚠️ A BOCA MAIS MARCADA (`boca_alt` 4,5) E DOIS PX ABAIXO: na v1 o bigodão
+# tapava a boca reta, e o sério lia MUDO no cartão (o Bruno).
+# E O CRÂNIO MAIS BAIXO (260, contra 268 na v1 e 264 na v2): o topo da cabeça
+# é cabelo rente, e o Bruno leu-o «ainda alto» duas vezes.
+TONINHO = Rosto(**dict(_TRABALHADOR_KW, z=(134.0, 260.0), z_boca=158.0, boca_alt=4.5))
+
+
+def _material_crespo(nome, claro, escuro, pele, z_fade=None, grao=5.5):
+    """O material do cabelo crespo rente: os tufos são COR, não geometria.
+
+    Um Voronoi (F1) em coordenadas do objeto faz a célula clara com a borda
+    escura — o tufo e a sombra entre tufos, a 5–6 px de desenho, que é o grão
+    de um crespo cortado rente. E um degradê na ALTURA mistura-o com a pele
+    abaixo de `z_fade` (px de desenho): nos lados e na nuca o cabelo rareia
+    até à pele, como num corte «degradê», e a borda dura deixa de existir.
+
+    ⚠️ ERA A BORDA DURA QUE O FAZIA CAPACETE (v1 e v2, o Bruno: «capacete com
+    bolinhas brancas»): uma calote de cor única, de lados retos, com um friso
+    horizontal acima da orelha. Os cachos em esfera só lhe punham bolinhas.
+
+    E o atributo `borda` da `_cupula` rareia a cor até à pele nos últimos 5 px
+    da linha do cabelo (60% na borda): a linha deixa de ser um corte e passa a
+    ser cabelo a acabar. Sem `z_fade` (o bigode) não há degradê de altura;
+    `grao` é o tamanho da célula em px de desenho.
+    """
+    m = bpy.data.materials.new(nome)
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    vor = nt.nodes.new("ShaderNodeTexVoronoi")
+    vor.feature = "F1"
+    vor.inputs["Scale"].default_value = 1.0 / _lg(grao)
+    nt.links.new(coord.outputs["Object"], vor.inputs["Vector"])
+    rampa = nt.nodes.new("ShaderNodeValToRGB")
+    rampa.color_ramp.elements[0].position = 0.25
+    rampa.color_ramp.elements[0].color = base._escurecer(claro, 1.0)
+    rampa.color_ramp.elements[1].position = 0.85
+    rampa.color_ramp.elements[1].color = base._escurecer(escuro, 1.0)
+    nt.links.new(vor.outputs["Distance"], rampa.inputs["Fac"])
+    cor = rampa.outputs["Color"]
+    if z_fade is not None:
+        # O DEGRADÊ: a altura do objeto, de `z_fade` (cabelo cheio) a 12 px
+        # abaixo (65% pele), por uma Map Range presa às pontas.
+        xyz = nt.nodes.new("ShaderNodeSeparateXYZ")
+        nt.links.new(coord.outputs["Object"], xyz.inputs["Vector"])
+        mapa = nt.nodes.new("ShaderNodeMapRange")
+        mapa.clamp = True
+        mapa.inputs["From Min"].default_value = _niv(z_fade - 12.0)
+        mapa.inputs["From Max"].default_value = _niv(z_fade)
+        mapa.inputs["To Min"].default_value = 0.65
+        mapa.inputs["To Max"].default_value = 0.0
+        nt.links.new(xyz.outputs["Z"], mapa.inputs["Value"])
+        mistura = nt.nodes.new("ShaderNodeMix")
+        mistura.data_type = "RGBA"
+        nt.links.new(mapa.outputs["Result"], mistura.inputs["Factor"])
+        nt.links.new(cor, mistura.inputs["A"])
+        mistura.inputs["B"].default_value = base._escurecer(pele, 1.0)
+        cor = mistura.outputs["Result"]
+        # A BORDA: o atributo da `_cupula`, a 60% de pele na linha do cabelo.
+        attr = nt.nodes.new("ShaderNodeAttribute")
+        attr.attribute_name = "borda"
+        fator = nt.nodes.new("ShaderNodeMath")
+        fator.operation = "MULTIPLY"
+        fator.inputs[1].default_value = 0.6
+        nt.links.new(attr.outputs["Fac"], fator.inputs[0])
+        borda = nt.nodes.new("ShaderNodeMix")
+        borda.data_type = "RGBA"
+        nt.links.new(fator.outputs["Value"], borda.inputs["Factor"])
+        nt.links.new(cor, borda.inputs["A"])
+        borda.inputs["B"].default_value = base._escurecer(pele, 1.0)
+        cor = borda.outputs["Result"]
+    nt.links.new(cor, b.inputs["Base Color"])
+    b.inputs["Roughness"].default_value = 0.95
+    b.inputs["Specular IOR Level"].default_value = 0.0
+    return m
+
+
+def _linha_do_cabelo(theta):
+    """A altura (px) abaixo da qual não há cabelo, pelo ângulo da frente.
+
+    Um ARCO: quase plano à frente da testa (252), a descer pelas têmporas
+    (244 aos 55°), à frente da orelha (234 aos 75°), por cima dela (228) e até
+    à nuca (224). ⚠️ ATÉ À v5 ERA UM M, com ENTRADAS a subir aos 257 aos 40°:
+    com a borda a afinar até ao crânio (v6) as entradas recuaram mais e o meio
+    do M ficou uma LÍNGUA estreita a descer pela testa.
+    """
+    pontos = ((0.0, 252.0), (20.0, 252.5), (38.0, 251.0), (55.0, 244.0),
+              (75.0, 234.0), (115.0, 228.0), (180.0, 224.0))
+    for (t0, z0), (t1, z1) in zip(pontos, pontos[1:]):
+        if theta <= t1:
+            return z0 + (z1 - z0) * (theta - t0) / (t1 - t0)
+    return pontos[-1][1]
+
+
+def _alisar(o, angulo=50.0):
+    """Sombreamento SUAVE numa peça, com as arestas acima de `angulo` vivas.
+
+    O kit é de luz chapada, e numa peça em leque ou pousada sobre facetas a
+    luz chapada desenha as FACETAS: a estrela no tampo do cabelo e os raios na
+    gola da v4 (o Bruno). Suave, a peça lê pela forma e pelo material; as
+    bordas (as que acabam e as que dobram mais do que `angulo`) ficam vivas.
+    ⚠️ O `Mesh.set_sharp_from_angle` não existe neste `bpy` (4.5): as arestas
+    marcam-se à mão.
+    """
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    lim = math.radians(angulo)
+    for f in bm.faces:
+        f.smooth = True
+    for e in bm.edges:
+        if e.is_boundary or (len(e.link_faces) == 2 and e.calc_face_angle(0.0) > lim):
+            e.smooth = False
+    bm.to_mesh(o.data)
+    bm.free()
+    return o
+
+
+def _forma_cupula(z, a0, b0, z0, z_topo, dy_topo, n_base, n_topo):
+    """A meia largura, o meio fundo, o expoente da planta e o recuo (px) de
+    uma cúpula à altura `z`: parede direita abaixo de `z0`, quarto de elipse
+    acima dele."""
+    t = min(1.0, max(0.0, (z - z0) / (z_topo - z0)))
+    k = math.sqrt(max(0.0, 1.0 - t * t))
+    return a0 * k, b0 * k, n_base + (n_topo - n_base) * t, dy_topo * t
+
+
+def _ponto_superelipse(phi, a, b, n, dy):
+    c, s = math.cos(phi), math.sin(phi)
+    return (a * math.copysign(abs(c) ** (2.0 / n), c),
+            b * math.copysign(abs(s) ** (2.0 / n), s) + dy)
+
+
+def _cupula(nome, mat, *, a0, b0, z0, z_topo, fundos, dy_topo=3.0, n_base=4.0, n_topo=2.2,
+            colunas=72, linhas=18, colar=None, afinar=7.0):
+    """Uma CÚPULA de cabeça, em grade (coluna × linha), do topo para baixo.
+
+    A PLANTA de cada anel é uma superelipse que vai de `n_base` (quase o
+    oitavado do kit, para cobrir as quinas do crânio de baixo) a `n_topo`
+    (quase uma elipse) no tampo; o ALÇADO é um quarto de elipse, de `z0` (o
+    ombro da cabeça) a `z_topo`; abaixo de `z0` a parede é direita.
+
+    `fundos(theta, j)` dá, por coluna, a altura (px) onde ela acaba — `theta`
+    é o ângulo a partir da FRENTE, em graus. Cada coluna desce do topo até lá
+    por passos de comprimento de arco iguais, e a última linha da grade É a
+    borda: uma linha do cabelo desenhada assim não tem ESCADA, que é o que
+    sobrava a apagar faces de uma grade (v3, o Bruno: «linha do cabelo em
+    escada»).
+
+    `colar` (os parâmetros da cúpula de DENTRO, a do crânio) faz a borda
+    AFINAR até ele: nos `afinar` px de cima da borda, cada vértice desliza da
+    cúpula de fora para 0,8 px acima da de dentro. ⚠️ SEM ISSO A FRENTE DO
+    CABELO ERA UM DEGRAU: à altura da testa a cúpula de fora fica ~6 px à
+    frente do crânio, e a borda lia como a aba de um gorro (v5, o Bruno:
+    «melhore a parte da frente do cabelo»). E grava em cada vértice o
+    atributo `borda` (1 na borda, 0 a 5 px dela), que o `_material_crespo`
+    usa para rarear a cor até à pele.
+
+    ⚠️ E UM ANEL NÃO CABE NO OUTRO SÓ POR SER MAIOR: a calote do cabelo e o
+    crânio por baixo dela saem desta função com as MESMAS colunas, e quem os
+    pede garante a folga à mesma altura (ver o `toninho()`).
+    """
+    altura = z_topo - z0
+    fora = (a0, b0, z0, z_topo, dy_topo, n_base, n_topo)
+
+    def meridiano(j, z_b):
+        # Amostras (z) do topo até `z_b`, e o comprimento de arco acumulado,
+        # medido em px no plano da coluna.
+        phi = 2.0 * math.pi * j / colunas
+        c, s = math.cos(phi), math.sin(phi)
+        raio = math.hypot(a0 * abs(c) ** (2.0 / n_base), b0 * abs(s) ** (2.0 / n_base))
+        zs = []
+        for q in range(241):
+            psi = (math.pi / 2.0) * q / 240.0
+            z = z0 + altura * math.cos(psi)
+            if z < z_b:
+                break
+            zs.append((z, raio * math.sin(psi)))
+        if z_b < z0:
+            for q in range(1, 61):
+                zs.append((z0 - (z0 - z_b) * q / 60.0, raio))
+        else:
+            psi = math.acos(min(1.0, (z_b - z0) / altura))
+            zs.append((z_b, raio * math.sin(psi)))
+        acum = [0.0]
+        for (za, ra), (zb_, rb) in zip(zs, zs[1:]):
+            acum.append(acum[-1] + math.hypot(za - zb_, ra - rb))
+        return zs, acum
+
+    bm = bmesh.new()
+    camada = bm.verts.layers.float.new("borda")
+    apice = bm.verts.new((0.0, _pf(dy_topo), _niv(z_topo)))
+    grade = [[] for _ in range(linhas)]
+    for j in range(colunas):
+        phi = 2.0 * math.pi * j / colunas
+        xr, yr = _ponto_superelipse(phi, a0, b0, n_base, 0.0)
+        theta = math.degrees(math.atan2(abs(xr), -yr))
+        z_b = fundos(theta, j)
+        zs, acum = meridiano(j, z_b)
+        total = acum[-1]
+        q = 0
+        for i in range(1, linhas + 1):
+            alvo = total * i / linhas
+            while q < len(acum) - 2 and acum[q + 1] < alvo:
+                q += 1
+            f = 0.0 if acum[q + 1] == acum[q] else (alvo - acum[q]) / (acum[q + 1] - acum[q])
+            z = zs[q][0] + (zs[q + 1][0] - zs[q][0]) * min(1.0, f)
+            x, y = _ponto_superelipse(phi, *_forma_cupula(z, *fora))
+            if colar is not None and z - z_b < afinar:
+                a, b, n, dy = _forma_cupula(z, *colar)
+                xi, yi = _ponto_superelipse(phi, a + 0.8, b + 0.8, n, dy)
+                s = max(0.0, (z - z_b) / afinar)
+                x, y = xi + (x - xi) * s, yi + (y - yi) * s
+            v = bm.verts.new((_lg(x), _pf(y), _niv(z)))
+            v[camada] = max(0.0, 1.0 - (z - z_b) / 5.0)
+            grade[i - 1].append(v)
+    for j in range(colunas):
+        jj = (j + 1) % colunas
+        bm.faces.new((apice, grade[0][jj], grade[0][j]))
+        for i in range(linhas - 1):
+            bm.faces.new((grade[i][j], grade[i][jj], grade[i + 1][jj], grade[i + 1][j]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return _objeto(nome, bm, mat)
+
+
+def _cabelo_rente(r, nome, mat):
+    """O cabelo CRESPO RENTE e branco: uma cúpula COLADA ao crânio.
+
+    As voltas (`art_lab/retratos/toninho/`):
+    - prévia da v1: cachos esparsos em esfera e a calote no grisalho — «touca
+      cinzenta de topo chato com pontos brancos»;
+    - v1: cachos densos de raio 9 — cabelo, mas VOLUMOSO, com a borda da
+      calote a fazer PALA na testa e as têmporas lisas;
+    - v2: cachos menores pousados por raio (os das têmporas estavam enterrados
+      na quina do oitavado) — e o Bruno leu «capacete com bolinhas brancas» e
+      «cabelo ainda alto»;
+    - v3: SEM esferas — a calote colada, com a linha do cabelo de apagar faces
+      numa grade, o contorno irregular por Displace e os tufos no material. O
+      Bruno: «topo quadrado» e «linha do cabelo em escada»;
+    - v4: a calote é uma `_cupula` (planta que arredonda para o tampo, alçado
+      em quarto de elipse) sobre um crânio que também é cúpula, e a linha do
+      cabelo é a última linha da grade. O Bruno: «riscos no tampo»;
+    - v5: o relevo apaga-se à volta do ápice, e a calote é suave. O Bruno:
+      «melhore a parte da frente do cabelo»;
+    - v6: a borda AFINA até ao crânio (`colar`) e a cor rareia até à pele nos
+      últimos 5 px — a linha do cabelo deixa de ser o degrau de uma aba.
+
+    ⚠️ O DISPLACE PEDE MALHA: um relevo de 5 px precisa de faces de ~6 px, e a
+    grade tem 72 colunas por 18 linhas por isso.
+    """
+    def fundos(theta, j):
+        # Um nada de irregularidade na borda, de um contador e não de sorteio.
+        return _linha_do_cabelo(theta) + ((j * 37) % 5 - 2) * 0.6
+
+    # O crânio por baixo: o tampo do `toninho()` (cúpula de 79 × 40, dos 244 ao
+    # topo) e, abaixo dos 244, a parede dele com as mesmas medidas.
+    cranio = (r.larg / 2.0 - 1.0, r.fundo / 2.0, 244.0, r.z[1], 3.0, 4.0, 2.2)
+    o = _cupula(nome, mat, a0=r.larg / 2.0 + 3.0, b0=r.fundo / 2.0 + 3.0, z0=247.0,
+                z_topo=r.z[1] + 4.0, fundos=fundos, colar=cranio)
+    # ⚠️ O ÁPICE É UM LEQUE DE 72 COLUNAS, e ali os quadriláteros são lascas de
+    # meio píxel: com o relevo a empurrá-las cada uma para seu lado e a luz
+    # chapada, desenhavam uma ESTRELA no tampo (v4, o Bruno: «riscos no tampo
+    # do cabelo»). O relevo apaga-se nos 26 px à volta do eixo (um grupo de
+    # vértices com o peso a subir de 0 a 1), e a peça é suave (`_alisar`); a
+    # 16 px sobrava um entalhe escuro no ápice (v5).
+    vg = o.vertex_groups.new(name="relevo")
+    for v in o.data.vertices:
+        d = math.hypot(v.co.x / _lg(1.0), v.co.y / _pf(1.0))
+        vg.add([v.index], min(1.0, d / 26.0), "REPLACE")
+    _alisar(o, 60.0)
+    tex = bpy.data.textures.new(nome + "_relevo", type="VORONOI")
+    tex.noise_scale = _lg(5.0)
+    tex.distance_metric = "DISTANCE"
+    relevo = o.modifiers.new("relevo", "DISPLACE")
+    relevo.texture = tex
+    relevo.texture_coords = "LOCAL"
+    # Só para FORA (`mid_level` 0): para dentro o relevo voltava a pôr o
+    # crânio à vista entre os tufos.
+    relevo.strength = _lg(3.0)
+    relevo.mid_level = 0.0
+    relevo.vertex_group = "relevo"
+    o.modifiers.new("espessura", "SOLIDIFY").thickness = _pf(1.5)
+    return [o]
+
+
+def _bigodao(r, mat):
+    """O BIGODÃO: UMA massa de contorno desenhado, saliente da cara.
+
+    As voltas: na v1 eram tufos em placa com a base atrás, e liam como uma
+    FILA DE DENTES com as pontas a parecer presas; na v2 a v5 a base cobria a
+    asa e os tufos sobrepunham-se, e ainda liam como PENTE (o Bruno, na v5) —
+    a borda de baixo, recortada em tufos iguais, é que fazia o pente. Agora é
+    um sólido só: grosso ao meio de cada asa, a afinar para fora e com as
+    pontas arredondadas a cair pelos cantos da boca, o sulco do lábio como um
+    entalhe no topo, e o pelo é o GRÃO do `_material_crespo`, mais miúdo.
+    Fica 2,5 px à frente da cara e projeta sombra no lábio, que é o que lhe
+    dá corpo.
+    """
+    zb = r.z_boca
+    direito = [(3.0, 17.5), (9.0, 18.5), (17.0, 18.0), (25.0, 15.5), (31.0, 11.5),
+               (34.5, 7.0), (34.0, 3.0), (31.5, 1.0), (28.5, 1.5), (24.0, 4.5),
+               (16.0, 6.5), (8.0, 7.5)]
+    contorno = [(0.0, 15.5)] + direito + [(0.0, 7.0)] + [(-u, dz) for u, dz in reversed(direito)]
+    y0 = -_pf(r.fundo / 2.0)
+    bm = bmesh.new()
+    frente = [bm.verts.new((_lg(u), y0 - _pf(2.5), _niv(zb + dz))) for u, dz in contorno]
+    tras = [bm.verts.new((_lg(u), y0 + _pf(1.5), _niv(zb + dz))) for u, dz in contorno]
+    bm.faces.new(frente)
+    bm.faces.new(list(reversed(tras)))
+    n = len(contorno)
+    for i in range(n):
+        k = (i + 1) % n
+        bm.faces.new((frente[i], tras[i], tras[k], frente[k]))
+    bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method="BEAUTY", ngon_method="EAR_CLIP")
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return [_objeto("bigode", bm, mat)]
+
+
+def toninho(M, cara):
+    """O busto do Toninho, de FRENTE: (tronco, cabeça)."""
+    r = TONINHO
+    k_pele, k_sombra, _, _, _ = _CORES["preta"]
+    pele = M[k_pele]
+    sombra = M[k_sombra]
+    escuro = M[_ESCURO["preta"]]
+    # ⚠️ A SOBRANCELHA É BRANCA COMO O CABELO, e é na pele preta que isso
+    # funciona: o branco mede contra a `pele_funda` o que o preto media contra
+    # a parda — a regra do contraste contra o FUNDO, com a testa por fundo. Na
+    # v2 era o `cabelo_grisalho`, e lia azulada ao lado do cabelo.
+    sobrancelha = _principled("sobrancelha_toninho", _tom(base.PALETA["cabelo_branco"], 0.86),
+                              rough=0.9)
+    cabelo_crespo = _material_crespo("cabelo_crespo_toninho", base.PALETA["cabelo_branco"],
+                                     _tom(base.PALETA["cabelo_branco"], 0.70),
+                                     base.PALETA[k_pele], z_fade=244.0)
+    camisa = _principled("camisa_toninho", base.PALETA["placa_velha"], rough=0.9)
+    pano = _principled("pano_toninho", base.PALETA["rafia"], rough=0.95)
+    pano_esc = _principled("pano_esc_toninho", _tom(base.PALETA["rafia"], 0.80), rough=0.95)
+    listra = _principled("pano_listra_toninho", base.PALETA["faixa"], rough=0.9)
+    labio = _principled("labio_toninho", base.PALETA[k_sombra], rough=0.8)
+    cab, tronco_l = [], []
+
+    # A CABEÇA: o crânio inteiro (o capacete do trabalhador tapava-o acima dos
+    # 240) e o maxilar largo dele. ⚠️ O TAMPO É CÚPULA (v4): no oitavado do kit
+    # o topo era uma placa de quinas vivas, e o cabelo colado a ele lia
+    # «topo quadrado» (o Bruno, na v3). A cúpula do crânio sai da mesma
+    # `_cupula` que a do cabelo, 4 px por dentro e com o ombro 3 px abaixo;
+    # medido à mesma altura, a folga nunca desce de 3 px (ver o `README` da v4).
+    cab.append(_loft("cabeca_cranio", [
+        (246.0, r.larg - 2.0, r.fundo, r.corte),
+        (r.maxilar, r.larg, r.fundo, r.corte),
+    ], pele, fechar=(False, False)))
+    cab.append(_cupula("cabeca_tampo", pele, a0=r.larg / 2.0 - 1.0, b0=r.fundo / 2.0,
+                       z0=244.0, z_topo=r.z[1], fundos=lambda theta, j: 244.0,
+                       colunas=48, linhas=10))
+    queixo = _QUEIXOS["homem"]
+    maxilar = _loft("cabeca_maxilar", [(r.maxilar, r.larg, r.fundo, r.corte)] + list(queixo),
+                    pele, fechar=(False, True))
+    cab.append(maxilar)
+    for sx in (-1.0, 1.0):
+        o = prisma("orelha_%+d" % sx, _contorno_oitavado(16.0, 28.0, 5.0),
+                   _niv(186.0), _niv(220.0), (1.0, 1.0), pele)
+        o.location.x += sx * _lg(r.larg / 2.0 + 2.0)
+        o.location.y += _pf(4.0)
+        cab.append(o)
+
+    cab += _olhos(r, M, cara, pele, escuro)
+    cab += _sobrancelhas(r, cara, sobrancelha)
+    nariz = _cunha(r, "nariz", 196.0, 176.0, 10.0, 21.0, 2.0, 8.0, pele)
+    nariz.visible_shadow = False
+    cab.append(nariz)
+    cab.append(_placa(r, "nariz_base", 0.0, 173.5, 22.0, 3.0, sombra))
+    cab += _boca(r, M, cara, escuro, labio)
+    ruga = _principled("ruga_toninho", _tom(base.PALETA[k_sombra], 0.78), rough=0.9)
+    # ⚠️ UM VINCO SÓ NA TESTA, e mais baixo: os dois do trabalhador (240 e
+    # 246,5) ficavam colados à linha do cabelo (250) e liam como uma faixa
+    # escura debaixo dele (prévia da v3). O capacete escondia-o.
+    cab += _rugas(r, ruga, testa=False, leque=0)
+    vinco = _placa(r, "ruga_testa_0", 0.0, 238.0, 48.0, 3.0, ruga, esp=_pf(0.8))
+    vinco.visible_shadow = False
+    cab.append(vinco)
+    cab += _bigodao(r, _material_crespo("bigode_toninho", base.PALETA["cabelo_branco"],
+                                        _tom(base.PALETA["cabelo_branco"], 0.74),
+                                        base.PALETA[k_pele], grao=3.0))
+    # ⚠️ SEM PATILHAS: as do trabalhador, que acabam em bico à frente da
+    # orelha, ficavam aqui como duas VARETAS cinzentas ao lado dos olhos, e
+    # liam como as alças de um capacete (v1). No crespo rente quem desce às
+    # têmporas são os cachos.
+    cab += _cabelo_rente(r, "cabelo_rente", cabelo_crespo)
+
+    # O PESCOÇO E O TRONCO do trabalhador: ombros largos e direitos, de quem
+    # carrega.
+    tronco_l.append(prisma("pescoco", _contorno_oitavado(58.0, 50.0, 12.0),
+                           _niv(80.0), _niv(142.0), (1.0, 1.0), pele))
+    # A SOMBRA DEBAIXO DO QUEIXO, o degrau da pele à volta do pescoço (a do Sr.
+    # Ribeiro): sem ela, queixo, pescoço e o V do peito eram UMA mancha da
+    # mesma cor, e o V lia como um babete castanho (v1).
+    tronco_l.append(prisma("pescoco_sombra", _contorno_oitavado(59.0, 51.0, 12.0),
+                           _niv(118.0), _niv(130.0), (1.0, 1.0), sombra))
+    tronco = _loft("tronco", [
+        (98.0, 52.0, 46.0, 12.0),
+        (92.0, 136.0, 64.0, 22.0),
+        (84.0, 214.0, 76.0, 30.0),
+        (72.0, 256.0, 82.0, 36.0),
+        (54.0, 268.0, 84.0, 38.0),
+        (20.0, 262.0, 82.0, 36.0),
+        (-40.0, 250.0, 80.0, 34.0),
+        (-90.0, 246.0, 78.0, 32.0),
+    ], camisa, contorno=_contorno_12)
+    tronco_l.append(tronco)
+    bpy.context.view_layer.update()
+
+    # A CAMISA ABERTA NO PEITO, pela receita que o Bruno aceitou no Arlindo
+    # (`056`): o V de pele é um TRAPÉZIO BAIXO (comprido lia como gravata), as
+    # pontas da gola abrem para os ombros e são da COR DA CAMISA, salientes —
+    # é a sombra delas que as desenha —, e a CARCELA com os botões diz
+    # «desabotoada». ⚠️ NA v3 A GOLA ERA UM TRIÂNGULO ESCURO CHAPADO e os
+    # botões QUADRADOS e claros, que no Arlindo já tinham lido «camisa de
+    # hospital» (o Bruno: «dê uma melhorada na camisa»). Os botões são de
+    # COCO, redondos e castanhos, e o bolso é só a PALA saliente, com botão.
+    tronco_l.append(_retalho("peito", [tronco],
+                             ((-26.0, 98.0), (26.0, 98.0), (8.0, 74.0), (-8.0, 74.0)),
+                             pele, afasta=1.0))
+    tronco_l.append(_retalho("carcela", [tronco],
+                             ((-6.0, 76.0), (6.0, 76.0), (6.0, -90.0), (-6.0, -90.0)),
+                             camisa, afasta=1.6, espessura=2.4))
+    botao = _principled("botao_toninho", base.PALETA["madeira_esc"], rough=0.6, spec=0.2)
+    for k, zz in enumerate((60.0, 34.0, 8.0)):
+        ok = _raio([tronco], Vector((0.0, -10.0, _niv(zz))), Vector((0, 1, 0)))
+        assert ok, "o botão não achou a camisa"
+        b = base.primitiva("primitive_cylinder_add", vertices=10, radius=_lg(4.0),
+                           depth=_pf(1.6), location=ok[0] + ok[1] * _pf(4.0))
+        b.name = "botao_%d" % k
+        b.rotation_euler.x = math.radians(90.0)
+        b.data.materials.append(botao)
+        tronco_l.append(b)
+    # ⚠️ A GOLA POUSA NA RAMPA DO OMBRO, que no tronco do kit são facetas
+    # íngremes (de 52 a 214 de largura em 14 px de altura): com a grade de 4
+    # e a luz chapada ela herdava-as, e lia com RAIOS (v4, o Bruno). Grade de
+    # 6 e suave. ⚠️ E OS CANTOS DE CIMA FICAM DENTRO DO TRONCO: os do Arlindo
+    # (106 e 98) estão acima do anel do ombro (98), e o raio que não acha o
+    # tronco desce 2 px a cada tentativa — com a grade fina isso dava PONTAS
+    # soltas e triângulos pretos na borda de cima (prévia da v5).
+    for sx in (-1.0, 1.0):
+        tronco_l.append(_alisar(_retalho("gola_%+d" % sx, [tronco],
+                                         ((18.0 * sx, 96.0), (50.0 * sx, 93.0),
+                                          (40.0 * sx, 66.0), (22.0 * sx, 76.0)),
+                                         camisa, afasta=4.0, espessura=3.5,
+                                         espelhado=sx < 0, n=6)))
+    # O BOLSO, só do lado esquerdo da imagem: o direito ficava debaixo do pano.
+    tronco_l.append(_retalho("bolso_pala", [tronco],
+                             ((-78.0, 50.0), (-40.0, 50.0), (-42.0, 33.0), (-76.0, 36.0)),
+                             camisa, afasta=3.6, espessura=3.6, espelhado=True))
+    ok = _raio([tronco], Vector((-_lg(59.0), -10.0, _niv(39.0))), Vector((0, 1, 0)))
+    assert ok, "o botão do bolso não achou a camisa"
+    bb = base.primitiva("primitive_cylinder_add", vertices=10, radius=_lg(3.5),
+                        depth=_pf(1.6), location=ok[0] + ok[1] * _pf(4.4))
+    bb.name = "bolso_botao"
+    bb.rotation_euler.x = math.radians(90.0)
+    bb.data.materials.append(botao)
+    tronco_l.append(bb)
+
+    # O PANO NO OMBRO: uma peça que envolve o ombro direito da imagem, das
+    # costas à frente, e cai até ao MEIO do peito com a ponta DOBRADA.
+    # ⚠️ LISO ELE LIA COMO UMA PRANCHA BRANCA (prévia da v1): o que diz PANO
+    # são as duas listras perto da ponta, as do pano de prato. ⚠️ E COMPRIDO
+    # LIA COMO CACHECOL (v1, o Bruno: «pano curto e dobrado»): acaba nos 34, e
+    # por baixo dele espreita a SEGUNDA camada, mais escura e um nada mais
+    # comprida e mais larga — a ponta dobrada de um pano posto ao ombro.
+    tronco_l.append(_retalho("pano_dobra", [tronco],
+                             ((49.0, 46.0), (91.0, 46.0), (91.0, 28.0), (49.0, 28.0)),
+                             pano_esc, afasta=2.0, espessura=1.0))
+    tronco_l.append(_envolver("pano", [tronco], lambda z: (52.0, 88.0), pano,
+                              afasta=3.4, espessura=3.0, lado=1.0, colunas=5, ate_z=34.0))
+    for nome, z0, z1 in (("pano_listra_0", 50.0, 46.0), ("pano_listra_1", 43.0, 40.0)):
+        tronco_l.append(_retalho(nome, [tronco],
+                                 ((53.0, z0), (87.0, z0), (87.0, z1), (53.0, z1)),
+                                 listra, afasta=6.9, espessura=0.5))
+
+    # O TRONCO SOBE 10, como o do trabalhador (v5 dele): o peito entra no
+    # quadro e o pescoço encurta.
+    for o in tronco_l:
+        o.location.z += _alt(10.0)
+    return tronco_l, cab
+
+
 # QUEM ESTÁ NESTE KIT, e a cabeça de cada um: o `retratos_de_fala` de
 # `brp_porto.py` tira daqui o construtor e o pivô da pose.
-KIT = {"cida": (CIDA, cida), "ribeiro": (RIBEIRO, ribeiro), "arlindo": (ARLINDO, arlindo)}
+KIT = {"cida": (CIDA, cida), "ribeiro": (RIBEIRO, ribeiro), "arlindo": (ARLINDO, arlindo),
+       "toninho": (TONINHO, toninho)}
 
 
 def pousar_cabeca(pecas, pose, pivo_px):

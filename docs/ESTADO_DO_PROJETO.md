@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 11/10/2026 — o M11 fechou: o Web no Pages e a régua do desempenho (`099`)
+> **Última atualização:** 12/10/2026 — o rosto do Toninho, o guia do tutorial, foi aceite (`100`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -74,9 +74,6 @@ tutorial, trabalhadores extras e progressão futura seguem pendentes (§7 do pla
 nível entre píer e guindaste. O Construir explica a madeira e os bloqueios.
 Níveis 2/3 só nas bancadas; progressão futura pendente.
 
-**E A FROTA DE PESCA TEM TRÊS PORTES** (`014`) — bote, traineira e arrasteiro,
-pelo VALOR do contrato. Importa porque o porto em ruínas **só recebe pesqueiro**.
-
 **E o navio vem ao porto POR ALGUMA COISA:** cada barco nasce com um MOTIVO —
 Pescado, Armazenagem, Contêiner ou Granel —, lido no cartão da doca. O efeito é
 o da ESTRUTURA a que o motivo está preso; oficina e posto são Fase 2 (`008`).
@@ -119,7 +116,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
 mais tranquila — **M1** a **M8**, o **M10** e o **M11** fecharam (`088`–`099`);
 o M9 espera o D1b e o M12 o A8, e a fila parou: volta a frente 5, pelo
-tutorial (§7 do plano). O Pages só publica com a fonte em «GitHub Actions».
+tutorial, que o **Toninho** guia (`100`) — o rosto está feito; o tutorial é o
+seguinte. O Pages publica a main verde.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -189,7 +187,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/scripts/VezDasTelas.gd` | **A vez das telas que abrem sozinhas**, uma de cada vez; objeto do `Main` (`054`, `097`) |
 | `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`); `imagem()` repõe o quadro de um prop em atlas (`049`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
-| `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. ⚠️ «Órfão» não é «apagável»: dos 11, nove servem à bancada `AssetPlacementTest`. Hoje **9 de 265**; o atlas não conta (`046`, `049`) |
+| `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. ⚠️ «Órfão» não é «apagável»: dos 11, nove servem à bancada `AssetPlacementTest`. Hoje **12 de 334**, três do Toninho sem fala (`100`); o atlas não conta (`046`, `049`) |
 | `brport_vs/tools/medir_boletim.gd` | **A régua do boletim** — herda o simulador e confere cada afirmação da Dona Cida contra o estado, no instante em que ela fala. CI, `BOLETIM OK` (`048`) |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
@@ -268,7 +266,8 @@ histórico em `HISTORICO.md`.
   diário em duas páginas (`082`)
 - **E OS TRÊS NPCs TÊM ROSTO** (`020`): nove bustos com pose própria, ao lado
   da fala no boletim, na parcela e na contra-oferta. A cara sai da FALA, por
-  tabela. Falta a faixa do rodapé: medida, à espera de layout
+  tabela. Falta a faixa do rodapé: medida, à espera de layout. O **Toninho**
+  tem as três dele em `art/props`, à espera das falas do tutorial (`100`)
 - **Registro de partida em `.jsonl`**, um por partida, com o tempo de cada
   turno. Sai pelo menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,

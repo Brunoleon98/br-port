@@ -1562,6 +1562,78 @@
       "sombra_de_contato": false
     },
     {
+      "id": "BRP_porto_retrato_toninho_calmo_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_toninho_calmo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_toninho_ironico_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_toninho_ironico.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_retrato_toninho_serio_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "retrato_toninho_serio.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "retrato",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
       "id": "BRP_fauna_tartaruga_verde_base",
       "category": "fauna",
       "stage": "base",

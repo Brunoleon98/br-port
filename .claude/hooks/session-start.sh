@@ -12,7 +12,7 @@
 #   bpy (Blender como biblioteca) — ~1 GB e minutos de instalação, e só faz
 #   falta em sessão de ARTE. Pagar isso em toda sessão para o usar numa em
 #   cada dez é o oposto de arranque rápido. Fica sob demanda:
-#       pip install "bpy==4.5.0"
+#       python3.11 -m pip install "bpy==4.5.0"
 #
 #   xvfb — só a captura de tela precisa de contexto gráfico, e o xvfb-run já
 #   vem no contêiner. Teste e import rodam sem tela.
@@ -111,4 +111,4 @@ if [ -n "$SUITES" ]; then
 else
   echo "  Suítes: veja os passos --script de .github/workflows/testes.yml"
 fi
-echo "  Blender (bpy, ~1 GB) fica SOB DEMANDA, fora do arranque: pip install \"bpy==4.5.0\" — só faz falta em sessão de arte."
+echo "  Blender (bpy, ~1 GB) fica SOB DEMANDA, fora do arranque: python3.11 -m pip install \"bpy==4.5.0\" — só faz falta em sessão de arte."

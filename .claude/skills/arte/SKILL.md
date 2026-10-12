@@ -58,7 +58,7 @@ paleta AMOSTRADA delas).
 | 6 — Interface encorpada | `ui/tema_brport.tres` e as cenas | **não** |
 
 Sem Blender, a sessão roda inteira no que o hook de arranque já deixou pronto.
-Com Blender, o primeiro passo é `pip install "bpy==4.5.0"` num Python 3.11 —
+Com Blender, o primeiro passo é `python3.11 -m pip install "bpy==4.5.0"` —
 ~1 GB e minutos, e é honesto dizer isso antes de prometer a etapa.
 
 **Há um terceiro caso, e ele é barato.** `tools/conferir_lote_de_arte.py`
@@ -466,6 +466,19 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   dia vira», e a pergunta dizia que o barco novo já entrava a deslizar — lido
   no comentário do `Dock.gd`. Medido logo depois: 0 de 21. Ele escolheu sobre
   uma descrição falsa do ponto de partida; a legenda do GIF corrigiu-a.
+- **Personagem que ainda não tem tela fotografa-se na tela de um irmão**
+  (`100`): os PNG da Dona Cida trocados pelos do Toninho SÓ para a foto —
+  `cp` dos originais para o scratchpad, `--import`, o boletim fotografado
+  (`boletim`, `boletim_ruim`, `boletim_otimo`), `cp` de volta e `--import`.
+  É o cartão em tamanho real, que é a pergunta; a placa e o balão ficam os do
+  irmão, e a legenda di-lo. ⚠️ **A devolução prova-se com `cmp` contra a
+  cópia e `git diff --quiet`**: o `sha1sum -c` de uma lista gravada com
+  caminhos ABSOLUTOS confere a cópia consigo mesma, e deu «OK» nos três antes
+  de os originais terem sido conferidos.
+  Na `100` o par prancha → pergunta, em blocos seguidos do mesmo turno, voltou
+  **6 de 6**; e o veredito mandado sem a lista de defeitos (a v5) voltou
+  «Ajustar» vazio, outra vez — a lista vai sempre, mesmo quando a passagem
+  parece pronta.
 - **E ONDE UMA PEÇA VAI também se pergunta antes do render** (`073`). Na
   `072` a baleeira levou seis posições escolhidas a olho, e ele recusou as
   seis. Na conversa seguinte a posição foi uma pergunta com duas saídas
