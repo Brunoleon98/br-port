@@ -173,3 +173,12 @@ linha (o autoteste dele).
 comportamento era idêntico. Refeito sem ela (M9b), reprovou nas duas suítes.
 É o «confira que o defeito pegou» das regras gerais com a forma de um
 mutante equivalente.
+
+## A medição
+
+**Paridade com a `main`**, mesma hora, Godot 4.6.3, 600 partidas por perfil,
+semente 20260825: o JSON do simulador da branch é o da `main` campo a campo,
+com doze diferenças — os doze contadores novos `emprestaram`, todos a zero.
+Nenhum perfil chega a pedir a segunda chance, e por isso o balanceamento em
+vigor (`economia.md`) não se mexe: o `SEGUNDA_CHANCE_ACRESCIMO` só age em
+quem não tem o boleto, e os bots têm-no sempre.
