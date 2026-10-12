@@ -3292,6 +3292,15 @@ func _f14_boletim() -> void:
 	_confere("F14: a tarja do boletim é «Entrou» menos «Saiu»",
 		tarja.size() == 1 and absi(int(tarja[0])) == absi(total_entrou - total_saiu),
 		str(tarja))
+	# O EMPRÉSTIMO DA SEGUNDA CHANCE (`102`) vem À PARTE, abaixo da tarja, e o
+	# número dele é o da semana — o laço de cima também o encheu, porque as
+	# chaves saem do `SEMANA_ZERADA`. Sem dívida viva (partida nova), a frase
+	# não promete devolução nenhuma.
+	var emprestou := _f14_reais(_f14_texto(painel, "O Sr. Ribeiro emprestou"))
+	_confere("F14: o boletim mostra o empréstimo da semana à parte, com o número dela",
+		int(resumo["emprestimo"]) > 0 and emprestou.size() == 1
+			and int(emprestou[0]) == int(resumo["emprestimo"]),
+		"mostrou %s, a semana tem %d" % [str(emprestou), int(resumo["emprestimo"])])
 	_f10_fechar(painel)
 	GS.clear_save()
 	GS._rng.seed = F10_SEMENTE
@@ -5303,7 +5312,7 @@ func _f21_um_exemplo(v: int, caminho: String, corrente: int) -> void:
 	# semana ou os recordes, reprovam esta e a ida e volta. Só esta reprova o
 	# exemplo pobre, onde a ida e volta passa com a obra esquecida (`098`).
 	var faltas: Array = load("res://tools/gravar_save_de_exemplo.gd").faltas(GS)
-	_confere("F21: o exemplo corrente traz os campos cheios — obra, fila, atracado, parcela, reparo, semanas, recorde e nomes",
+	_confere("F21: o exemplo corrente traz os campos cheios — obra, fila, atracado, parcela, reparo, semanas, recorde, nomes e a segunda chance",
 		faltas.is_empty(), "faltam: %s — ou o exemplo não os tem (regrave-o com a ferramenta), ou o load_game() não os repôs (ver a ida e volta)"
 			% ", ".join(faltas))
 	GS.save_game()

@@ -150,3 +150,26 @@ cheios, e um exemplo que nunca a pediu gravá-la-ia a zero.
   volta exata.
 - **R8** (registro, novo): a linha `segunda_chance` com o que o jogo
   emprestou e deve; e o autoteste do leitor, com o «não sei» da versão 2.
+
+**Vinte e um defeitos injetados no jogo, todos reprovados**, com o original
+reposto por `cp` e conferido por md5 entre um e outro, e as duas suítes
+verdes no fim: o empréstimo sem a semana (M1), com o salário à mão em vez do
+fecho (M2), com o caixa negativo posto a zero (M3); a chance na última
+cobrança (M4) e duas vezes (M5); pagar sem zerar a dívida (M6); o boleto sem
+ela (M7); a antecipação a abatê-la (M8); a dívida escrita só antes do
+`_baixar_parcela()` (M9b); a semana sem a linha (M10) e o resultado a somá-la
+(M11, também no F14); o save sem a dívida (M12 — o T14 fica PRESO no
+vencimento, porque o `pay_debt()` recusa calado e o `advance_turn()` volta
+calado); o carregamento a esquecer a chance (M13); a partida nova a
+lembrá-la (M14); a recusa sem a coerência (M15, só no F3); o degrau sem a
+linha da semana (M16) e sem degrau (M17); o painel sem a oferta (M18), a
+prometer o emprestado no «Volta» (M19) ou o dia da cobrança corrente (M20);
+e o boletim com outro número (M21). E mais três fora do jogo: o gravador sem
+ouvir o sinal (R8) e o leitor a dar a versão 2 por sabida ou a perder a
+linha (o autoteste dele).
+
+⚠️ **O M9 passou à primeira, e não provava nada**: escrevia a dívida antes do
+`_baixar_parcela()` e deixava a atribuição de depois no lugar — o
+comportamento era idêntico. Refeito sem ela (M9b), reprovou nas duas suítes.
+É o «confira que o defeito pegou» das regras gerais com a forma de um
+mutante equivalente.
