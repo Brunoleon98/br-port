@@ -4,10 +4,10 @@
 Continuando o BR Port. Leia docs/ESTADO_DO_PROJETO.md, a §7 do plano v3 e a
 decisão 103.
 
-Confira na main pelo GitHub se o PR da decisão 103 foi fundido (branch
-claude/vigilant-allen-9tclo6: só documentos — a 103, a §5 e a §7 do plano, o
-estado e a D1b da revisão de 09/10) e se há PR aberto do Codex antes de
-editar. A última decisão é a 103; confira o próximo número livre na main.
+Confira na main pelo GitHub se o PR #127, da decisão 103, foi fundido
+(branch claude/vigilant-allen-9tclo6: só documentos — a 103, a §5 e a §7
+do plano, o estado e a D1b da revisão de 09/10) e se há PR aberto do Codex
+antes de editar. A última decisão é a 103; confira o próximo número livre na main.
 
 A frente 5 segue pela progressão para a Fase 2 (103), etapa 1: a passagem e
 o save. A segunda linha da FASES (sem parcelas, sem prazo, nivel_maximo 2,
