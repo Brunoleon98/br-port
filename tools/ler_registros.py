@@ -53,13 +53,18 @@ import sys
 # que ali é o oposto: um save errado estraga a partida em curso, um registro
 # velho continua a ser um dado que alguém produziu jogando. Lê-se o que se
 # reconhece e DIZ-SE o que ficou de fora.
-VERSAO_CONHECIDA = 2
+VERSAO_CONHECIDA = 3
 
 # A primeira versão do gravador que ouve o `obra_concluida` (`088`). É a
 # VERSÃO, e não a ausência da linha, que separa «não acabou» de «não sei»: na
 # versão 1 a conclusão nunca foi gravada — antes da `087` a compra ERA a obra
 # pronta, e depois dela não.
 VERSAO_COM_OBRA_PRONTA = 2
+
+# A primeira que ouve a segunda chance do Sr. Ribeiro (`102`), pela mesma
+# razão: numa partida da 2 o jogo ainda não a oferecia, e a falta da linha não
+# quer dizer «não a pediu».
+VERSAO_COM_SEGUNDA_CHANCE = 3
 
 # O dia pronto de uma obra que o registro não sabe dizer. Um objeto e não um
 # número: zero ou −1 liam-se como dia (`CLAUDE.md`, «zero é o pior valor de
@@ -374,6 +379,27 @@ def relatar(partidas, orfas, ilegiveis):
     if nunca:
         print("  %d partida(s) não começaram obra nenhuma." % len(nunca))
 
+    # ── 4b. A SEGUNDA CHANCE DO SR. RIBEIRO (`102`) ──
+    #
+    # Nenhum perfil do simulador chega a pedi-la: quem a pede é o jogador que
+    # errou, e só o playtest diz quantos são e se ela os salva.
+    print("\n── A segunda chance do Sr. Ribeiro ──")
+    sabem = [p for p in partidas
+             if int(p["cabecalho"].get("versao", 0)) >= VERSAO_COM_SEGUNDA_CHANCE]
+    pediram = []
+    for p in sabem:
+        for e in so(p, "segunda_chance"):
+            fim = so(p, "fim")
+            pediram.append((e, fim[-1] if fim else None))
+    print("  pedida em %d de %d partidas" % (len(pediram), len(sabem)))
+    for e, fim in pediram:
+        desfecho = "sem fim" if fim is None else ("ganhou" if fim.get("ganhou") else "perdeu")
+        print("    dia %d: emprestou %d, devolve %d — a partida %s" % (
+            int(e["t"]), int(e["emprestado"]), int(e["devolve"]), desfecho))
+    if len(sabem) < len(partidas):
+        print("  não sei em %d — registro anterior à versão %d, que não a grava"
+              % (len(partidas) - len(sabem), VERSAO_COM_SEGUNDA_CHANCE))
+
     # ── 5. A SEMANA COMO A DONA CIDA A CONTA ──
     print("\n── O resultado de cada semana (mediana) ──")
     por_semana = {}
@@ -467,7 +493,8 @@ def _mais_proximo(medido, chave):
 # com o 8 cravado a primeira semana leva o dia 8 (2000 ms) e a mediana dos
 # oito continuava a dar 1000, passando por certa. Medido em 10/10 (`088`).
 
-def _fixture(versao=VERSAO_CONHECIDA, com_calendario=True, com_prontas=True):
+def _fixture(versao=VERSAO_CONHECIDA, com_calendario=True, com_prontas=True,
+             com_segunda_chance=False):
     cab = {"e": "abriu", "versao": versao, "quando": "fixture", "plataforma": "autoteste",
            "turnos_totais": 84, "t_inicial": 1, "retomada": False}
     if com_calendario:
@@ -481,6 +508,9 @@ def _fixture(versao=VERSAO_CONHECIDA, com_calendario=True, com_prontas=True):
             linhas.append({"e": "obra_pronta", "id": "pier_2", "t": 3})
         if t == 10:
             linhas.append({"e": "obra", "id": "armazem", "t": 10, "caixa": 0, "custo": 1})
+        if t == 29 and com_segunda_chance:
+            linhas.append({"e": "segunda_chance", "t": 29, "emprestado": 210000,
+                           "devolve": 235200})
     linhas.append({"e": "fim", "ganhou": True, "motivo": "fixture", "t": 85, "caixa": 0, "rep": 50.0})
     # Pelo `carregar()`, como um arquivo de verdade: a fixture prova também a
     # partição das partidas, e não só as contas sobre elas.
@@ -541,6 +571,20 @@ def autoteste():
     confere("na versão 1 o dia pronto é «não sei», e não «por acabar»",
             all(o["pronto"] is NAO_SEI for o in obras) and len(obras) == 2,
             str([o["pronto"] for o in obras]))
+
+    # A segunda chance (`102`): contada onde a versão a grava, «não sei» onde
+    # não grava — a falta da linha na 2 não é «não a pediu».
+    texto = _relatado(_fixture(com_segunda_chance=True))
+    confere("a segunda chance pedida aparece com o dia, o valor e o desfecho",
+            "pedida em 1 de 1 partidas" in texto
+            and "dia 29: emprestou 210000, devolve 235200 — a partida ganhou" in texto)
+    texto = _relatado(_fixture())
+    confere("e a que não a pediu conta-se como zero, sem «não sei»",
+            "pedida em 0 de 1 partidas" in texto and "não a grava" not in texto)
+    texto = _relatado(_fixture(versao=2))
+    confere("na versão 2 é «não sei», e não zero pedidas",
+            "pedida em 0 de 0 partidas" in texto and "não sei em 1" in texto
+            and "anterior à versão 3, que não a grava" in texto)
 
     if falhas:
         print("AUTOTESTE DO LEITOR FALHOU — %d verificação(ões):" % len(falhas))

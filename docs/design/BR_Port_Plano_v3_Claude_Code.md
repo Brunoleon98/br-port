@@ -479,6 +479,14 @@ frentes, e **a ordem é do Bruno**:
    Toninho guia com rosto novo — atracar e avançar só no dia 1, por cima do
    jogo e sem save. Crédito opcional, cancelamento, trabalhadores extras e
    fases futuras continuam pendentes.
+   **Continuação em 12/10 (`102`):** o crédito opcional, na forma da
+   **segunda chance** do Sr. Ribeiro — no vencimento, a quem falta o boleto,
+   o que falta mais uma semana de custos, +12% fixo na cobrança seguinte, uma
+   vez por fase e não na última. Save 15 com o primeiro degrau. Na Fase 1
+   todo serviço acaba no dia, logo cancelamento e trabalhadores extras só
+   ganham sentido com a Fase 2; a linha voluntária, também (o calendário trava
+   a obra, não o dinheiro). Pendentes: progressão, cancelamento, trabalhadores
+   extras e a linha voluntária.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.
@@ -728,10 +736,14 @@ A8. Volta a frente 5, pelo **tutorial curto** que o Bruno escolheu em 11/10.
 **Quem guia é o Toninho, com rosto novo** (`100`), e eram dois itens: o rosto
 fechou em 12/10 (aceite na v6), e o **tutorial** também, no recorte que ele
 escolheu — atracar e avançar, só no dia 1, overlay e sem save (`101`). As três
-falas são rascunho e esperam a leitura do A4. **O seguinte é escolher com o
-Bruno o próximo recorte da frente 5** — crédito opcional, cancelamento de
-trabalho, mais trabalhadores por píer ou a progressão —, com a pergunta e as
-opções, a recomendada primeiro.
+falas são rascunho e esperam a leitura do A4. Em 12/10 o Bruno escolheu o
+**crédito opcional**, e ele entrou como a **segunda chance** do Sr. Ribeiro
+(`102`), com as duas falas dele também à espera do A4. **O seguinte é
+escolher outra vez com o Bruno o recorte da frente 5** — a progressão para a
+Fase 2, o cancelamento de trabalho, mais trabalhadores por píer ou a linha
+voluntária de crédito —, com a pergunta e as opções, a recomendada primeiro.
+A leitura da `102` pesa nela: os três últimos só ganham uso com barcos de
+dois dias e mais o que construir, que são da Fase 2.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

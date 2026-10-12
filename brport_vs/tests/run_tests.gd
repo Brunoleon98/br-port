@@ -16,6 +16,8 @@ var _t14_completo := false
 var _t15_completo := false
 var _t16_completo := false
 var _t17_completo := false
+var _t18_completo := false
+var _t19_completo := false
 
 
 # Reproduz a chegada sorteada DENTRO do pagamento, com o botão e as cenas
@@ -334,6 +336,221 @@ func _t17_save_com_obra(texto: String, id: String, inicio: int, quitadas: int = 
 		dados["parcela_paid"] = quitadas > indice
 		dados["parcelas_quitadas"] = quitadas
 	return JSON.stringify(dados)
+
+
+# Leva uma partida nova ao vencimento da parcela `numero` (1 a 3), pagando as
+# de antes pela porta de sempre e com dinheiro de bancada — o que se mede aqui
+# é a cobrança, não a economia (essa é do simulador).
+func _t18_ate_ao_vencimento(numero: int) -> bool:
+	_fresh_playing()
+	GS.cash = GS.START_CASH * 25
+	var voltas := 0
+	while GS.phase != "game_over" and voltas < 200:
+		if GS.phase == "debt_payment":
+			if GS.parcela_indice + 1 == numero:
+				break
+			GS.pay_debt()
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+			continue
+		GS.cash = maxi(GS.cash, GS.START_CASH * 25)
+		GS.advance_turn()
+		voltas += 1
+	return GS.phase == "debt_payment" and GS.parcela_indice + 1 == numero
+
+
+# ── T18 ──────────────────────────────────────────────────────────────────
+# A SEGUNDA CHANCE (`docs/decisoes/102`): a quem não tem o boleto, o banco
+# empresta o que falta mais uma semana de custos, devolvido com acréscimo
+# fixo na cobrança seguinte; uma vez por fase, e não na última.
+#
+# ⚠️ OS CUSTOS DA SEMANA MONTAM-SE COM DOIS TRABALHADORES E O ESCRITÓRIO. Num
+# porto em ruínas o salário é um e sem desconto, e uma conta que lesse o
+# `SALARY_PER_WORKER` à mão daria o mesmo número que a do fecho — a regra
+# «uma conta que só diverge com um modificador ativo» (`testes-e-guardas.md`).
+# O escritório não se compra na Fase 1; aqui é bancada.
+#
+# ⚠️ E O CAIXA NEGATIVO TAMBÉM: o fecho da semana pode pô-lo abaixo de zero
+# antes da cobrança, e um empréstimo que fizesse `principal - maxi(cash, 0)`
+# deixaria o jogador com menos do que a semana.
+func _t18_segunda_chance() -> void:
+	# 1. Onde ela NÃO abre.
+	_fresh_playing()
+	GS.cash = 0
+	_check("T18: fora do vencimento não há segunda chance",
+		not GS.pode_pedir_segunda_chance() and not GS.aceitar_segunda_chance() and GS.cash == 0)
+	if not _t18_ate_ao_vencimento(1):
+		_check("T18: a partida chega ao primeiro vencimento", false)
+		return
+	GS.cash = GS.principal_da_parcela()
+	_check("T18: quem tem o boleto inteiro não a vê", not GS.pode_pedir_segunda_chance())
+	GS.cash = GS.principal_da_parcela() - 1
+	_check("T18: a quem falta um real, ela abre", GS.pode_pedir_segunda_chance())
+
+	if not _t18_ate_ao_vencimento(3):
+		_check("T18: a partida chega ao último vencimento", false)
+		return
+	GS.cash = 1000
+	var turno_3: int = GS.turn
+	_check("T18: na última cobrança da fase não há seguinte, e ela não abre",
+		not GS.pode_pedir_segunda_chance() and not GS.aceitar_segunda_chance()
+			and GS.cash == 1000 and GS.phase == "debt_payment" and GS.turn == turno_3
+			and GS.emprestimo_devido == 0)
+
+	# 2. O empréstimo, com o caixa NEGATIVO e os custos com modificador.
+	if not _t18_ate_ao_vencimento(1):
+		return
+	GS.estruturas.append("pier_2")
+	GS.estruturas.append("escritorio")
+	GS._reconciliar_roster()
+	_check("T18: a bancada tem dois trabalhadores", GS.workers.size() == 2)
+	var salarios := int(round(GS.SALARY_PER_WORKER * 2 * (1.0 - GS.ESCRITORIO_DESCONTO_SALARIO)))
+	var semana: int = salarios + int(GS.MAINTENANCE_WEEKLY)
+	GS.cash = -5000
+	var boleto: int = GS.principal_da_parcela()
+	var esperado: int = boleto + 5000 + semana
+	var devolver := int(round(esperado * (1.0 + GS.SEGUNDA_CHANCE_ACRESCIMO)))
+	_check("T18: o empréstimo é o que falta mais a semana do fecho (%d)" % esperado,
+		GS.emprestimo_da_segunda_chance() == esperado)
+	_check("T18: e a devolução leva o acréscimo fixo (%d)" % devolver,
+		GS.devolucao_da_segunda_chance() == devolver and devolver > esperado)
+
+	var sinais := []
+	var ouvir := func(e: int, d: int) -> void: sinais.append([e, d])
+	GS.segunda_chance_aceita.connect(ouvir)
+	var boletins := []
+	var ouvir_boletim := func(r: Dictionary) -> void: boletins.append(r.duplicate(true))
+	GS.semana_fechada.connect(ouvir_boletim)
+	_check("T18: aceitar devolve true", GS.aceitar_segunda_chance())
+	GS.segunda_chance_aceita.disconnect(ouvir)
+	GS.semana_fechada.disconnect(ouvir_boletim)
+	_check("T18: depois de pagar, o jogador fica exatamente com a semana (%d)" % semana,
+		GS.cash == semana)
+	_check("T18: a parcela 1 conta como paga, e a partida segue na janela 2",
+		GS.parcelas_quitadas == 1 and GS.parcela_indice == 1 and not GS.parcela_paid
+			and GS.phase in ["playing", "rival_offer"] and GS.total_pago_parcelas == boleto)
+	_check("T18: a dívida é a devolução, e a chance fica gasta",
+		GS.emprestimo_devido == devolver and GS.segunda_chance_usada)
+	_check("T18: o sinal sai uma vez, com o emprestado e a devolução",
+		sinais == [[esperado, devolver]])
+	_check("T18: o boletim da semana fecha uma vez",
+		boletins.size() == 1)
+	if boletins.size() == 1:
+		var r: Dictionary = boletins[0]
+		_check("T18: o boletim mostra o empréstimo à parte",
+			int(r["emprestimo"]) == esperado and int(r["parcela"]) == boleto)
+		_check("T18: e o resultado NÃO o soma — crédito não é lucro",
+			int(r["resultado"]) == int(r["receita"]) - int(r["salarios"])
+				- int(r["manutencao"]) - boleto)
+	_check("T18: aceitar outra vez não empresta de novo",
+		not GS.aceitar_segunda_chance() and GS.cash == semana and GS.emprestimo_devido == devolver)
+
+	# 3. A semana seguinte fecha no azul só com o aluguel do píer: a reserva
+	#    é o que impede «O dinheiro acabou» sete dias depois.
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(false)
+	for _d in range(GS.TURNS_PER_WEEK):
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(false)
+		GS.advance_turn()
+	_check("T18: a semana depois do empréstimo fecha sem quebrar, mesmo sem um barco",
+		GS.phase != "game_over" and GS.cash >= 0)
+
+	# 4. O boleto seguinte traz a dívida; antecipar abate só os juros da janela.
+	var parcela_2: int = GS.valor_da_parcela(1)
+	_check("T18: o boleto seguinte é a parcela mais a devolução",
+		GS.principal_da_parcela() == parcela_2 + devolver)
+	var com_divida: int = GS.valor_da_parcela_hoje()
+	GS.emprestimo_devido = 0
+	var sem_divida: int = GS.valor_da_parcela_hoje()
+	GS.emprestimo_devido = devolver
+	_check("T18: antecipar não abate a devolução — ela soma inteira ao valor de hoje",
+		com_divida - sem_divida == devolver and sem_divida < parcela_2)
+	GS.save_game()
+	GS.emprestimo_devido = 0
+	GS.segunda_chance_usada = false
+	_check("T18: o save devolve a dívida e a chance gasta",
+		GS.load_game() and GS.emprestimo_devido == devolver and GS.segunda_chance_usada)
+	GS.cash = com_divida
+	_check("T18: quitar antes paga a dívida junto", GS.pagar_parcela_adiantado()
+		and GS.emprestimo_devido == 0 and GS.cash == 0
+		and GS.total_pago_parcelas == boleto + com_divida)
+
+	# 5. Uma vez por fase: na cobrança seguinte, sem dinheiro, não volta.
+	if not _t18_ate_ao_vencimento(1):
+		return
+	GS.cash = 0
+	_check("T18: a primeira chance abre", GS.aceitar_segunda_chance())
+	var voltas := 0
+	while GS.phase != "debt_payment" and GS.phase != "game_over" and voltas < 60:
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+			continue
+		GS.cash = 0 if GS.turn == GS.vencimento_da_parcela() else maxi(GS.cash, 100000)
+		GS.advance_turn()
+		voltas += 1
+	_check("T18: a partida chega ao segundo vencimento com o boleto maior",
+		GS.phase == "debt_payment" and GS.principal_da_parcela() > GS.valor_da_parcela(1))
+	_check("T18: e a segunda chance não abre outra vez",
+		not GS.pode_pedir_segunda_chance() and not GS.aceitar_segunda_chance())
+	GS.cash = GS.principal_da_parcela()
+	GS.pay_debt()
+	_check("T18: pagar no vencimento paga a dívida junto",
+		GS.cash == 0 and GS.emprestimo_devido == 0 and GS.parcelas_quitadas == 2)
+
+	# 6. Partida nova esquece tudo.
+	_fresh_playing()
+	_check("T18: partida nova começa sem dívida e com a chance por usar",
+		GS.emprestimo_devido == 0 and not GS.segunda_chance_usada)
+	_t18_completo = true
+
+
+# ── T19 ──────────────────────────────────────────────────────────────────
+# O DEGRAU 14→15 (`102`), provado pelo exemplo da 14 — o que o jogo daquela
+# versão gravou —, e não por um dicionário escrito à mão. O F21 pergunta se
+# ele carrega; aqui pergunta-se o que o degrau fez a cada campo: os novos
+# nascem «nunca usada», e os de antes não se mexem.
+func _t19_degrau_14_para_15() -> void:
+	var texto := FileAccess.get_file_as_string("res://tests/saves/v14.json")
+	var v14 = JSON.parse_string(texto)
+	_check("T19: o exemplo da 14 lê-se", typeof(v14) == TYPE_DICTIONARY and int(v14["versao"]) == 14)
+	if typeof(v14) != TYPE_DICTIONARY:
+		return
+	_check("T19: e não traz os campos da 15",
+		not v14.has("emprestimo_devido") and not v14.has("segunda_chance_usada")
+			and not v14["semana_atual"].has("emprestimo"))
+	var migrado: Dictionary = GS._migrar(v14)
+	_check("T19: a cadeia leva-o à 15", int(migrado.get("versao", 0)) == 15)
+	_check("T19: sem dívida e com a chance por usar",
+		migrado.get("emprestimo_devido") is int and int(migrado["emprestimo_devido"]) == 0
+			and migrado.get("segunda_chance_usada") is bool and not migrado["segunda_chance_usada"])
+	_check("T19: a semana em curso ganha a linha do empréstimo a zero",
+		typeof(migrado["semana_atual"]) == TYPE_DICTIONARY
+			and int(migrado["semana_atual"].get("emprestimo", -1)) == 0)
+	var iguais := true
+	for chave in v14:
+		if chave == "versao" or chave == "semana_atual":
+			continue
+		if JSON.stringify(v14[chave]) != JSON.stringify(migrado[chave]):
+			iguais = false
+	for chave in v14["semana_atual"]:
+		if JSON.stringify(v14["semana_atual"][chave]) != JSON.stringify(migrado["semana_atual"][chave]):
+			iguais = false
+	_check("T19: e nenhum campo da 14 muda", iguais)
+	_check("T19: a origem não foi tocada", not v14.has("emprestimo_devido"))
+
+	# E pelo carregamento de verdade: o porto da 14 abre na 15.
+	_fresh_playing()
+	var f := FileAccess.open(GS.save_path, FileAccess.WRITE)
+	f.store_string(texto)
+	f.close()
+	_check("T19: o save da 14 carrega",
+		GS.load_game() and GS.emprestimo_devido == 0 and not GS.segunda_chance_usada
+			and GS.turn == int(v14["turn"]) and GS.cash == int(v14["cash"])
+			and int(GS.semana_atual["emprestimo"]) == 0)
+	GS.clear_save()
+	_fresh_playing()
+	_t19_completo = true
 
 
 func _t14_fase_inteira() -> void:
@@ -996,6 +1213,14 @@ func _run() -> void:
 	print("=== T17: a regra de abertura num lugar só ===")
 	_t17_abertura_num_lugar_so()
 	_check("o bloco T17 correu até ao fim", _t17_completo)
+
+	print("=== T18: a segunda chance do Sr. Ribeiro ===")
+	_t18_segunda_chance()
+	_check("o bloco T18 correu até ao fim", _t18_completo)
+
+	print("=== T19: o degrau 14→15 do save ===")
+	_t19_degrau_14_para_15()
+	_check("o bloco T19 correu até ao fim", _t19_completo)
 
 	print("")
 	if _fails == 0:

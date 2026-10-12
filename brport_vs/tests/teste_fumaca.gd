@@ -515,6 +515,54 @@ func _f3_migracao_de_save() -> void:
 		_escrever(boa)
 		_confere("o save com dois barcos ao largo e oferta %d entra" % oferta,
 			GS.load_game() and GS.fila.size() == 2 and GS.pending_rival == oferta)
+
+	# A SEGUNDA CHANCE (`102`) é forma nova do estado, e entra pelas mesmas
+	# portas: tipo antes de valor, e a dívida só onde o jogo a deixa — depois
+	# de usada, a partir da segunda cobrança e com o boleto por pagar.
+	var chances_mas := {
+		"sem a dívida da segunda chance": {"emprestimo_devido": null},
+		"sem a chance": {"segunda_chance_usada": null},
+		"dívida em texto": {"emprestimo_devido": "1000"},
+		"dívida negativa": {"emprestimo_devido": -1},
+		"dívida fracionária": {"emprestimo_devido": 10.5},
+		"chance em texto": {"segunda_chance_usada": "false"},
+		"dívida sem a chance usada": {"emprestimo_devido": 1000, "parcela_indice": 1,
+			"parcelas_quitadas": 1},
+		"dívida na primeira cobrança": {"emprestimo_devido": 1000,
+			"segunda_chance_usada": true},
+		"dívida com o boleto já pago": {"emprestimo_devido": 1000,
+			"segunda_chance_usada": true, "parcela_indice": 1, "parcelas_quitadas": 2,
+			"parcela_paid": true},
+	}
+	for caso in chances_mas:
+		var dados := _save_valido(versao)
+		for chave in chances_mas[caso]:
+			if chances_mas[caso][chave] == null:
+				dados.erase(chave)
+			else:
+				dados[chave] = chances_mas[caso][chave]
+		_escrever(dados)
+		GS.turn = 4321
+		var carregou_chance: bool = GS.load_game()
+		_confere("save com %s é recusado, e sem ter tocado em nada" % caso,
+			not carregou_chance and GS.turn == 4321,
+			"carregou=%s turn=%d" % [carregou_chance, GS.turn])
+	# E as duas que têm de entrar, senão as de cima passariam por um
+	# `load_game()` que recusa toda segunda chance.
+	var chances_boas := {
+		"a chance gasta e já paga": {"segunda_chance_usada": true, "parcela_indice": 1,
+			"parcelas_quitadas": 1},
+		"a dívida por pagar na segunda cobrança": {"emprestimo_devido": 156800,
+			"segunda_chance_usada": true, "parcela_indice": 1, "parcelas_quitadas": 1},
+	}
+	for caso in chances_boas:
+		var boa := _save_valido(versao)
+		for chave in chances_boas[caso]:
+			boa[chave] = chances_boas[caso][chave]
+		_escrever(boa)
+		_confere("o save com %s entra, com a dívida e a chance" % caso,
+			GS.load_game() and GS.segunda_chance_usada
+				and GS.emprestimo_devido == int(boa["emprestimo_devido"]))
 	GS.clear_save()
 
 
@@ -533,6 +581,7 @@ func _save_valido(versao: int) -> Dictionary:
 		"workers": [{"id": 1, "busy_turns": 0, "rosto": 0}],
 		"upgrade_purchased": false, "estruturas": [], "obra_em_andamento": {}, "parcela_paid": false,
 		"parcela_indice": 0, "parcelas_quitadas": 0, "total_pago_parcelas": 0,
+		"emprestimo_devido": 0, "segunda_chance_usada": false,
 		"phase": "playing", "fila": [], "pending_rival": -1, "rival_attempts_left": 2,
 		"end_reason": "", "won": false, "metrics": {}, "uid": 9,
 	}
@@ -1986,9 +2035,32 @@ func _f10_cada_tempo_cabe() -> void:
 	_f10_medir(p, "Ribeiro, entrada", &"entrada")
 	if not await _f10_tocar(p, "Não consigo"):
 		return
-	_confere("F10: «Não consigo pagar» encerrou a partida",
+	# A SEGUNDA CHANCE (`102`): na primeira cobrança o «não consigo» abre a
+	# oferta, e quem perde o porto é quem a recusa.
+	_confere("F10: «Não consigo pagar» na primeira cobrança não encerra a partida",
+		GS.phase == "debt_payment" and not _f10_motivos.has(false))
+	_f10_medir(p, "Ribeiro, segunda chance", &"segunda_chance")
+	if not await _f10_tocar(p, "Recusar"):
+		return
+	_confere("F10: «Recusar» a segunda chance encerrou a partida",
 		GS.phase == "game_over" and _f10_motivos.has(false))
 	_f10_medir(p, "Ribeiro, não pagou", &"nao_pagou")
+	_f10_fechar(p)
+
+	# E quem a aceita: a resposta leva o dinheiro que fica e a dívida, na
+	# linha de apoio, e é a mais comprida das tarjas desta cena.
+	if not _f10_ate_ao_vencimento(nome):
+		return
+	GS.cash = int(GS.valor_da_parcela(0)) / 2
+	p = await _f10_abrir(F10_RIBEIRO, [GS.valor_da_parcela(0)])
+	if not await _f10_tocar(p, "Não consigo"):
+		return
+	if not await _f10_tocar(p, "Aceitar"):
+		return
+	_confere("F10: «Aceitar o empréstimo» pagou a parcela e a partida segue",
+		GS.phase in ["playing", "rival_offer"] and GS.parcelas_quitadas == 1
+			and GS.emprestimo_devido > 0)
+	_f10_medir(p, "Ribeiro, emprestou", &"emprestou")
 	_f10_fechar(p)
 
 	if not _f10_ate_ao_vencimento(nome, GS.parcelas_na_fase()):
@@ -2950,11 +3022,51 @@ func _f14_cobranca() -> void:
 	if not await _f10_tocar(painel, "Não consigo", "F14"):
 		_f10_fechar(painel)
 		return
+	_f14_tom_confere(painel, "oferta da segunda chance")
+	if not await _f10_tocar(painel, "Recusar", "F14"):
+		_f10_fechar(painel)
+		return
 	var faltaram := _f14_reais(_f14_texto(painel, "Faltaram"))
 	_confere("F14: a resposta de quem não pagou repete a falta",
 		faltaram.size() == 1 and falta.size() == 1 and int(faltaram[0]) == int(falta[0]),
 		str(faltaram))
 	_f14_tom_confere(painel, "resposta de quem não pagou")
+	_f10_fechar(painel)
+
+	# A SEGUNDA CHANCE (`102`). A oferta promete dois números e um dia ANTES
+	# do toque — o que o banco põe, o que volta e quando —, e a resposta mais
+	# dois DEPOIS dele. Cada um contra o que o jogo fez: o emprestado é o que
+	# o caixa ganhou além do boleto que saiu.
+	if not _f10_ate_ao_vencimento("F14"):
+		return
+	GS.cash = parcela - 76543
+	painel = await _f10_abrir(F10_RIBEIRO, [parcela])
+	if not await _f10_tocar(painel, "Não consigo", "F14"):
+		_f10_fechar(painel)
+		return
+	var oferta := _f14_reais(_f14_texto(painel, "Empréstimo"))
+	var linha_volta := _f14_texto(painel, "Volta")
+	var volta := _f14_reais(linha_volta)
+	var dia_dito := RegEx.create_from_string("dia (\\d+)").search(linha_volta)
+	var antes := int(GS.cash)
+	if not await _f10_tocar(painel, "Aceitar", "F14"):
+		_f10_fechar(painel)
+		return
+	_confere("F14: o empréstimo prometido é o que o banco pôs no caixa",
+		oferta.size() == 1 and int(oferta[0]) == int(GS.cash) - antes + parcela,
+		"prometeu %s; o caixa foi de %d a %d com o boleto de %d" % [
+			str(oferta), antes, int(GS.cash), parcela])
+	_confere("F14: o que «Volta» é a dívida que o jogo guardou",
+		volta.size() == 1 and int(volta[0]) == int(GS.emprestimo_devido),
+		"prometeu %s; o jogo deve %d" % [str(volta), int(GS.emprestimo_devido)])
+	_confere("F14: e no dia da cobrança em que ela vence",
+		dia_dito != null and int(dia_dito.get_string(1)) == int(GS.vencimento_da_parcela()),
+		"«%s», a cobrança vence no dia %d" % [linha_volta, int(GS.vencimento_da_parcela())])
+	var fica := _f14_reais(_f14_texto(painel, "Você fica com"))
+	_confere("F14: a resposta de quem aceitou diz o dinheiro que fica e a dívida",
+		fica.size() == 2 and int(fica[0]) == int(GS.cash)
+			and int(fica[1]) == int(GS.emprestimo_devido), str(fica))
+	_f14_tom_confere(painel, "resposta de quem aceitou")
 	_f10_fechar(painel)
 	_f14_cobranca_ok = true
 
@@ -3218,6 +3330,10 @@ const F14_TOM_DA_PALAVRA := {
 	"Lucro": &"TarjaNarrativaBoa",
 	"Depois de pagar": &"TarjaNarrativaBoa",
 	"Parcela quitada": &"TarjaNarrativaBoa",
+	# A segunda chance (`102`): o boleto saiu, e o porto segue — é resultado
+	# bom; a oferta, antes de aceitar, é um preço.
+	"Parcela paga com o empréstimo": &"TarjaNarrativaBoa",
+	"Empréstimo": &"TarjaNarrativa",
 	"Negócio fechado": &"TarjaNarrativaBoa",
 	"Prejuízo": &"TarjaNarrativaRuim",
 	"Faltam": &"TarjaNarrativaRuim",
@@ -5099,13 +5215,14 @@ func _f20_nivel_alcancado() -> void:
 #    exemplo tem de trazer os campos CHEIOS, e a lista do que ele traz é a da
 #    ferramenta que o grava (`faltas()`), chamada daqui sobre o estado
 #    carregado. Do exemplo antigo pede-se que o porto chegue com os nomes.
-# 4. A CADEIA, com degraus de mentira: com a 14 a ser piso e corrente, o jogo
-#    não tem degrau nenhum, e o laço que os sobe não tinha quem o visse.
+# 4. A CADEIA, com degraus de mentira: até a `102` a 14 era piso e corrente,
+#    o jogo não tinha degrau nenhum, e o laço que os sobe não tinha quem o
+#    visse. Hoje o exemplo v14 sobe o degrau de verdade (pergunta 2).
 #
-# ⚠️ O QUE ISTO NÃO VÊ HOJE: a chamada da cadeia dentro do `_save_aceite()`.
-# Sem degrau nenhum, tirá-la não muda o que o jogo faz — medido, o fumaça
-# e o `run_tests` passam. Quem a vê é o exemplo v14 no dia em que a 15 existir: sem a
-# chamada, a pergunta da versão recusa-o, e isso também foi medido (`098`).
+# ⚠️ ATÉ A `102` ISTO NÃO VIA a chamada da cadeia dentro do `_save_aceite()`:
+# sem degrau nenhum, tirá-la não mudava o que o jogo fazia. Desde que a 15
+# existe, quem a vê é o exemplo v14 — sem a chamada, a pergunta da versão
+# recusa-o. O que o degrau 14→15 faz a cada campo prova-o o T19.
 const PASTA_DOS_EXEMPLOS := "res://tests/saves"
 var _f21_terminou := false
 

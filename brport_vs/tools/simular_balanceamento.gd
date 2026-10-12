@@ -417,13 +417,13 @@ func _despejar_json(caminho: String, resultados: Array, partidas: int, semente: 
 # decisão efetiva, e a chegada ao vencimento é uma observação separada.
 func _imprimir_cobrancas(resultados: Array, partidas: int) -> void:
 	print("=== As três cobranças dentro da Fase 1 ===")
-	print("Perfil | parcela | dia | chegaram / total | pagaram / total | anteciparam | caixa na decisão | saldo após pagar")
+	print("Perfil | parcela | dia | chegaram / total | pagaram / total | anteciparam | segunda chance | caixa na decisão | saldo após pagar")
 	for r in resultados:
 		for c in r["cobrancas"]:
-			print("%s | %d | %d | %d/%d | %d/%d | %d | R$%d | R$%d" % [
+			print("%s | %d | %d | %d/%d | %d/%d | %d | %d | R$%d | R$%d" % [
 				r["perfil"]["nome"], c["numero"], c["dia"], c["chegaram"], partidas,
-				c["pagaram"], partidas, c["anteciparam"], c["caixa_na_decisao_mediana"],
-				c["saldo_apos_pagar_mediana"]])
+				c["pagaram"], partidas, c["anteciparam"], c["emprestaram"],
+				c["caixa_na_decisao_mediana"], c["saldo_apos_pagar_mediana"]])
 	print("  Caixa e saldo são medianas das decisões observadas; antecipação ocorre antes do vencimento.")
 	print("")
 
@@ -465,7 +465,7 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 	var parcela_por_semana := []
 	var cobrancas := []
 	for i in range(GS.parcelas_na_fase()):
-		cobrancas.append({"chegaram": 0, "pagaram": 0, "anteciparam": 0,
+		cobrancas.append({"chegaram": 0, "pagaram": 0, "anteciparam": 0, "emprestaram": 0,
 			"caixas_na_decisao": [], "saldos_apos_pagar": []})
 	var atendidos_por_semana := []
 	var amostras_por_semana := []
@@ -589,6 +589,26 @@ func _simular_perfil(perfil: Dictionary, partidas: int, semente: int) -> Diction
 					caixa_semana[-1] -= valor
 					parcela_semana[-1] += valor
 					caixa_anterior -= valor
+					pago_anterior += valor
+				elif GS.pode_pedir_segunda_chance():
+					# A SEGUNDA CHANCE (`102`): quem não tem o boleto aceita-a, como
+					# o jogador que não quer perder o porto, e conta-se À PARTE de
+					# quem pagou — o alvo da `005` é pagar, não pedir emprestado.
+					# Na medição em vigor nenhum perfil chega aqui; a conta diz zero
+					# até o dia em que um chegue.
+					#
+					# ⚠️ O EMPRÉSTIMO NÃO É MARGEM. A semana do vencimento leva o
+					# boleto como quem paga, e o caixa de partida da seguinte é o
+					# REAL, já com o dinheiro do banco: assim nenhuma das duas
+					# semanas o conta como lucro. A devolução vem dentro do boleto
+					# seguinte (`principal_da_parcela()`), e sai como parcela.
+					var antes: int = GS.cash
+					GS.aceitar_segunda_chance()
+					cobranca["emprestaram"] += 1
+					cobranca["saldos_apos_pagar"].append(GS.cash)
+					caixa_semana[-1] -= valor
+					parcela_semana[-1] += valor
+					caixa_anterior += GS.cash - antes
 					pago_anterior += valor
 				else:
 					GS.fail_debt()

@@ -359,7 +359,11 @@ tirar parcela - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # parcela menor (`084`) fez a semente antiga conseguir pagar.
 tirar ribeiro - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro.png" @valor_da_parcela:0 parcela=vencida cash=0 --tempo=entrada
 tirar ribeiro_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_pagou.png" @valor_da_parcela:0 parcela=vencida cash=@valor_da_parcela:0 --tocar=Pagar --tempo=pagou
-tirar ribeiro_nao_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_nao_pagou.png" @valor_da_parcela:0 parcela=vencida cash=0 --tocar=Não --tempo=nao_pagou
+tirar ribeiro_nao_pagou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_nao_pagou.png" @valor_da_parcela:0 parcela=vencida cash=0 --tocar=Não --tocar=Recusar --tempo=nao_pagou
+# A segunda chance (`102`): a oferta, depois do «não consigo», e a resposta a
+# quem a aceitou. Na primeira cobrança, onde ela existe.
+tirar ribeiro_segunda_chance - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_segunda_chance.png" @valor_da_parcela:0 parcela=vencida cash=0 --tocar=Não --tempo=segunda_chance
+tirar ribeiro_emprestou - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_emprestou.png" @valor_da_parcela:0 parcela=vencida cash=0 --tocar=Não --tocar=Aceitar --tempo=emprestou
 tirar ribeiro_2 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_2.png" @valor_da_parcela:1 parcela=vencida_2 cash=@valor_da_parcela:1 --tempo=entrada
 tirar ribeiro_3 - - --script res://tools/capturar_cena.gd -- res://scenes/panels/DebtPaymentPanel.tscn "$SAIDA/ribeiro_3.png" @valor_da_parcela:2 parcela=vencida_3 cash=@valor_da_parcela:2 --tempo=entrada
 tirar contraoferta - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/CounterOfferPanel.tscn "$SAIDA/contraoferta.png" barco=0 0 --tempo=rodada

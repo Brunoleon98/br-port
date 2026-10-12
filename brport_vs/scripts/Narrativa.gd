@@ -292,7 +292,24 @@ const RIBEIRO_DESPEDIDA := """Uma coisa antes de ir.
 O Seu Maneco dizia que o pior erro de um portuário é achar que dá conta de tudo sozinho.
 Quando precisar de crédito, me procure cedo. Crédito pedido no aperto sai mais caro."""
 
-# As cinco por id, pela mesma razão das do Arlindo: é por aqui que a expressão
+# A SEGUNDA CHANCE (`docs/decisoes/102`): a quem diz que não consegue pagar,
+# nas duas primeiras cobranças e uma vez por fase. RASCUNHO para a leitura em
+# voz alta do A4. Sem número nenhum: o empréstimo e a devolução estão na tarja
+# logo abaixo, e a fala traz o que a tela não diz — por que ele cobre uma
+# semana a mais, e que não há terceira. «Um cais parado não paga ninguém» é
+# o banqueiro e não o amigo do avô: ele empresta porque convém ao banco.
+const RIBEIRO_OFERTA := """Então vamos conversar. Um cais parado não paga ninguém, nem o banco.
+Eu cubro o que falta e mais o dinheiro de uma semana, para o porto não parar. Volta tudo na próxima cobrança, com o custo de quem pede no aperto.
+Isso eu faço uma vez."""
+
+# A resposta a quem aceitou. Espelha a de quem pagou — «o banco não esquece
+# quem paga em dia» —, e a memória do banco é a mesma, do outro lado. A
+# despedida vem a seguir, como depois de pagar: «crédito pedido no aperto sai
+# mais caro» é, aqui, o que acabou de acontecer.
+const RIBEIRO_ACEITOU := """Assinado. O cais continua no seu nome.
+O banco anota tudo. Eu também."""
+
+# As sete por id, pela mesma razão das do Arlindo: é por aqui que a expressão
 # se prende à fala, e é isto que o fumaça percorre.
 const RIBEIRO_FALAS := {
 	"entrada": RIBEIRO_ENTRADA,
@@ -300,6 +317,8 @@ const RIBEIRO_FALAS := {
 	"pagou": RIBEIRO_PAGOU,
 	"nao_pagou": RIBEIRO_NAO_PAGOU,
 	"despedida": RIBEIRO_DESPEDIDA,
+	"oferta": RIBEIRO_OFERTA,
+	"aceitou": RIBEIRO_ACEITOU,
 }
 
 
@@ -389,6 +408,9 @@ const EXPRESSOES := {
 		"pagou": "cordial",
 		"nao_pagou": "grave",
 		"despedida": "cordial",
+		# O negócio, e não a amizade: a mesma cara de quem disse o valor.
+		"oferta": "formal",
+		"aceitou": "formal",
 	},
 	# O Toninho tem três caras e três falas, uma para cada (`100`): o recorte
 	# do tutorial foi desenhado para que nenhuma fique muda — a séria só tem a

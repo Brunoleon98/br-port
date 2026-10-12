@@ -98,8 +98,13 @@ func _rodar() -> void:
 					GS.negotiate_rival("metade" if rng.randf() < 0.5 else "manter")
 				continue
 			if GS.phase == "debt_payment":
-				if GS.cash >= GS.valor_da_parcela(0):
+				# O BOLETO DE HOJE, e não o da tabela: desde a `102` a segunda
+				# chance soma-se à cobrança seguinte, e com o da tabela o
+				# `pay_debt()` recusaria calado e a partida ficava presa aqui.
+				if GS.cash >= GS.principal_da_parcela():
 					GS.pay_debt()
+				elif GS.pode_pedir_segunda_chance():
+					GS.aceitar_segunda_chance()
 				else:
 					GS.fail_debt()
 				continue

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 12/10/2026 — o tutorial curto do Toninho, no dia 1 (`101`)
+> **Última atualização:** 12/10/2026 — a segunda chance do Sr. Ribeiro (`102`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -62,13 +62,14 @@ do mapa (`069`).
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **14** (`087`) retoma a obra e é o PISO da migração por degraus (`098`),
-com um save de exemplo por versão; 13 e anteriores recusadas antes de aplicar
+Save **15** (`102`) sobe da 14, o PISO da migração por degraus (`098`), com
+um save de exemplo por versão; 13 e anteriores recusadas antes de aplicar
 campos. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
-iguais de R$140 mil, R$20 mil de juros totais. Crédito opcional, cancelamento,
-trabalhadores extras e progressão futura seguem pendentes (§7 do plano).
+iguais de R$140 mil, R$20 mil de juros totais. **Quem não tem o boleto ganha
+uma segunda chance** do Sr. Ribeiro, uma vez por fase (`102`); cancelamento,
+trabalhadores extras e progressão seguem pendentes (§7).
 
 **O porto recebe pesca durante a Fase 1** (`086`): a classe depende do menor
 nível entre píer e guindaste. O Construir explica a madeira e os bloqueios.
@@ -100,8 +101,6 @@ contra a mata. Tem nível (`--nivel-vila=N`): térrea, sobrado, prédio.
 **praça** com coreto e **duas obras**, dos lotes VISÍVEIS — a 51 px quem
 distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 
-**E a mata atrás dela é desenhada onde se vê** (`com_saia()`).
-
 ---
 
 ## Onde estamos na fila
@@ -113,8 +112,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
 mais tranquila — **M1** a **M8**, o **M10** e o **M11** fecharam (`088`–`099`);
 o M9 espera o D1b e o M12 o A8, e a fila parou: voltou a frente 5, e o
-**tutorial curto** do Toninho está no jogo (`100`, `101`); o recorte seguinte
-escolhe-se com o Bruno. O Pages publica a main verde.
+**tutorial curto** (`100`, `101`) e a **segunda chance** (`102`) estão no jogo;
+o recorte seguinte escolhe-se com o Bruno. O Pages publica a main verde.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -124,7 +123,7 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas, os textos do caderno e as três do Toninho (`067`, `082`, `101`) |
+| **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas, o caderno, as três do Toninho e as duas novas do Sr. Ribeiro (`067`, `082`, `101`, `102`) |
 | **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína, os três degraus da animação e a virada do dia (`069`–`079`). O material do ChatGPT vive em `art_lab/` | Na 4 falta a máquina do contêiner (`079`); obras futuras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
 | **A7** | **Jogar pelo link do Pages** e ver duas pessoas jogarem; o FPS no telefone; as partidas em `playtest/` (`099`) | Só ele joga |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
@@ -246,7 +245,8 @@ histórico em `HISTORICO.md`.
 - **Três cobranças na Fase 1**, ao fim das semanas 4, 8 e 12. A semana só
   fecha depois da decisão; as duas primeiras quitações retomam a partida.
   **Quitar antes abate só juros da janela** (`085`) e mantém o recibo até o fecho
-  do período, sem abrir a próxima cobrança antes dele (`085`).
+  do período, sem abrir a próxima cobrança antes dele (`085`). Sem o boleto
+  nas duas primeiras, a segunda chance (`102`).
 - **Três reparos disponíveis por progressão**, no catálogo de sete estruturas:
   píer 2, armazém e pátio. A terceira doca e os upgrades continuam na bancada
   de arte e testes, mas não podem ser comprados nesta Fase 1 (`085`). O guindaste
@@ -266,8 +266,6 @@ histórico em `HISTORICO.md`.
   da fala no boletim, na parcela e na contra-oferta. A cara sai da FALA, por
   tabela. Falta a faixa do rodapé: medida, à espera de layout. O **Toninho**
   guia o tutorial do dia 1, com três caras (`100`, `101`)
-- **Registro de partida em `.jsonl`**, um por partida, com o tempo de cada
-  turno. Sai pelo menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,
   manutenção, parcela) — **só observa**, não entra em conta nenhuma do jogo
 - Fauna costeira tocável, com aparecimento, comportamento e saída por habitat
