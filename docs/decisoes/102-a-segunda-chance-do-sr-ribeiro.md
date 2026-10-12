@@ -182,3 +182,27 @@ com doze diferenças — os doze contadores novos `emprestaram`, todos a zero.
 Nenhum perfil chega a pedir a segunda chance, e por isso o balanceamento em
 vigor (`economia.md`) não se mexe: o `SEGUNDA_CHANCE_ACRESCIMO` só age em
 quem não tem o boleto, e os bots têm-no sempre.
+
+**O banco de aperto**, para ver QUEM ela salva — que a paridade não mostra.
+O jogo da branch com o caixa inicial baixado, com e sem a chance, mesma
+semente e 600 partidas por perfil (bancada fora do repositório; os brutos
+em `docs/arquivo/MEDICOES_SEGUNDA_CHANCE_2026-10-12.json`):
+
+| Caixa inicial | Perfil | Pediram | Vitórias com | Vitórias sem |
+|---|---|---:|---:|---:|
+| R$250.000 | Ótimo | 1 | 584 | 583 |
+| R$250.000 | Mediano | 6 | 599 | 594 |
+| R$250.000 | Descuidado | 0 | 210 | 210 |
+| R$200.000 | Ótimo | 254 | 429 | 183 |
+| R$200.000 | Mediano | 242 | 518 | 343 |
+| R$200.000 | Descuidado | 86 | 8 | 8 |
+
+O Antecipado paga sempre antes e não a vê. **Salva quem falhou por pouco**:
+589 partidas pediram-na, e com ela vencem 427 a mais do que sem ela. **Não
+salva duas coisas, e são escolha**: a última cobrança, onde ela não existe
+(das derrotas do Descuidado, as 390 a R$250 mil e 591 das 592 a R$200 mil
+são no dia 84, e as 86 que a pediram no dia 56 perderam lá); e «o dinheiro
+acabou» entre vencimentos (as 145 do Ótimo a R$200 mil quebram antes do dia
+28, com o caixa negativo num fecho de semana).
+Nenhuma destas duas portas faz parte do recorte; se o playtest mostrar gente
+a morrer nelas, a pergunta volta ao Bruno.

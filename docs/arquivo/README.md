@@ -48,6 +48,7 @@ aqui.
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10b.md` | 10/10 | Substitui o de 10/10: o M1 da fila fechou (`088`) — o gravador grava a obra pronta e o calendário, o leitor publica dia pago → pronto e as semanas do cabeçalho, com autoteste. Branch `claude/bold-gates-abot5o`. Próximo: o M2, a regra de abertura num lugar só |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10.md` | 10/10 | Depois da revisão geral de 09/10 e da revisão do PR #110 (`REVISAO_GERAL_2026-10-09.md`): a fila de melhorias da mais crítica à mais tranquila, antes de voltar aos gráficos e ao jogo |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-09b.md` | 09/10 | Obras dos reparos da Fase 1 (`087`), Save 14 autorizado e próximo recorte com Bruno |
+| `MEDICOES_SEGUNDA_CHANCE_2026-10-12.json` | 12/10 | A segunda chance (`102`): paridade do simulador com a main (só os contadores novos, a zero) e o banco de aperto — caixa inicial de R$250 e R$200 mil, com e sem a chance, mesma semente |
 | `MEDICOES_OBRAS_FASE_1_2026-10-09.json` | 09/10 | Base final da 086 contra obras em 2/2/3 dias: três cobranças, quantis, início/conclusão e paridade de autosave |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-09.md` | 09/10 | Fecho da 086 no PR #109, Save 13 autorizado e próximo recorte da frente 5 com Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-08b.md` | 08/10 | Guindaste de madeira na Fase 1 (086), medições e continuação do PR enquanto aguarda autorização explícita para Save 13 |
