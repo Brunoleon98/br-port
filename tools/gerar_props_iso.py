@@ -293,6 +293,12 @@ PALETA = {
     # passos mais claro (161 de luminância contra 118), que é a distância que
     # o põe acima da pele em vez de abaixo dela.
     "cabelo_grisalho": "#9aa3a8",
+    # O BRANCO do Toninho (`docs/decisoes/100`): o cabelo e o bigode de quem
+    # está no cais há quarenta anos. Não é o `concreto` (#b9c2c8), que é o
+    # grisalho do Sr. Ribeiro — dois veteranos com a mesma tinta no topo da
+    # cabeça aproximavam-se no cartão —, nem o `cabine`, que veste a gola e o
+    # olho e a −0,35 EV já fica rente ao teto (p99 239).
+    "cabelo_branco": "#dde1e0",
     # O DEGRAU ABAIXO do cabelo castanho, como o `pele_sombra` é o da pele: o
     # `madeira_esc` a 60%. É a calote da Dona Cida por baixo das mechas
     # (`docs/decisoes/055`) — no mesmo tom delas, as frestas acendiam-se e a

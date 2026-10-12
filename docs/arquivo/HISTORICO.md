@@ -833,3 +833,10 @@ o que se mexe não pode estar assado no fundo.»* Dos rostos, que a
 contra-oferta *«ganhou segundo tempo porque a despedida do Arlindo nunca
 tinha sido dita»* (`020`). E da água, *«A paleta medida não mudou (amplitude
 99,408; espuma 0,558 de Weber)»*, que a entrada de 13/09 acima já registava.
+
+**E, para caber o rosto do Toninho (`100`),** desceu do estado a frase que
+repetia a frota de pesca: *«E A FROTA DE PESCA TEM TRÊS PORTES (`014`) — bote,
+traineira e arrasteiro, pelo VALOR do contrato. Importa porque o porto em
+ruínas só recebe pesqueiro.»* O estado diz o mesmo na secção da arte («O
+barco de pesca diz quanto vale a escala»), e a trava da classe na das
+mecânicas.

@@ -257,6 +257,12 @@ func _montar() -> bool:
 				+ "dá âncora. Tire-o da lista: ela existe para ser exceção.")
 			quit(1)
 			return false
+	# A mesma conta para a arte de interface ainda sem registo, que o
+	# catálogo põe de fora sem a desenhar.
+	for erro in _cat.interface_por_conferir():
+		print("FALHOU — " + erro)
+		quit(1)
+		return false
 
 	# A CÉLULA SAI DO MAIOR PROP DO CATÁLOGO INTEIRO, e não do maior desta
 	# página: duas páginas com células de tamanhos diferentes não se comparam,

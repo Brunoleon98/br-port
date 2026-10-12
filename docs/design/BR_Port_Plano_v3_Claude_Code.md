@@ -720,8 +720,12 @@ frente 5 (o próximo recorte, em `BRIEFING_PROXIMA_CONVERSA_2026-10-09b.md`) e
 a melhoria de design abaixo esperam por ela, salvo pedido dele.
 
 **A fila parou em 11/10, com o M11 (`099`):** o M9 espera o D1b e o M12 o
-A8. Volta a frente 5, pelo **tutorial curto** que o Bruno escolheu em 11/10,
-com a pergunta de quem guia (a revisão, «Depois da fila»).
+A8. Volta a frente 5, pelo **tutorial curto** que o Bruno escolheu em 11/10.
+**Quem guia é o Toninho, com rosto novo** (`100`), e são dois itens: o rosto
+fechou em 12/10 (aceite na v6, os PNG no jogo sem fala ainda); o seguinte é o
+**tutorial**, no recorte que ele escolheu — atracar e avançar, só no dia 1,
+overlay e sem save —, com as falas, o registro do rosto e o tom do balão no
+mesmo commit. O desenho está na `100`.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

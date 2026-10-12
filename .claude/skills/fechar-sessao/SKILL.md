@@ -147,7 +147,7 @@ próprio simulador avisa quando a rodada é curta demais.
 **Sobre o validador do Blender:** ele não roda no CI, e de propósito — precisa
 do `bpy`, que são ~1 GB, e o que ele cobre (âncora, apoio ao solo, volume de
 seleção) só existe com a cena montada. Se mexeu em catálogo, é na mão:
-`pip install "bpy==4.5.0"` num Python 3.11.
+`python3.11 -m pip install "bpy==4.5.0"` (o `python3` do contêiner é 3.13).
 
 ## 4. Olhar, se o visual mudou
 

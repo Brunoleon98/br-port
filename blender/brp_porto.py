@@ -1171,6 +1171,24 @@ _CARAS = {
     ("ribeiro", "grave"): dict(
         boca="descontente", cenho="triste", olho="aberto", olhar="baixo",
         pose=(-4.0, 7.0, -3.0)),
+    # Toninho — o guia do tutorial (`docs/decisoes/100`), «conciso, observador,
+    # irônico sem amargura» no guia de voz. Aceito pelo Bruno na foto do jogo
+    # em 12/10 (`art_lab/retratos/toninho/v6/`), uma cara por fala:
+    # - calmo («Escolhe quem entra»): o sorriso fechado, a sobrancelha suave e
+    #   a cabeça de lado — o afeto de quem mostra o cais ao neto do amigo;
+    # - irónico («O resto o dia resolve»): o sorriso de canto e os olhos a
+    #   sorrir; com a sobrancelha torta lia DESCONFIADO (v5, o Bruno);
+    # - sério («Olha, chefia...»): a boca reta, o queixo baixo e o olhar
+    #   direto — a pausa antes do que importa.
+    ("toninho", "calmo"): dict(
+        boca="sorriso_fechado", cenho="suave", olho="aberto", olhar="frente",
+        pose=(5.0, -2.0, 5.0)),
+    ("toninho", "ironico"): dict(
+        boca="sorriso_lado", cenho="suave", olho="sorrindo", olhar="frente",
+        pose=(-5.0, 3.0, -6.0)),
+    ("toninho", "serio"): dict(
+        boca="reta", cenho="neutra", olho="aberto", olhar="frente",
+        pose=(0.0, 6.0, 0.0)),
 }
 
 # Quais expressões cada personagem tem. É esta tabela que o gerador percorre —
@@ -1180,11 +1198,16 @@ RETRATOS = {
     "cida": ("seria", "preocupada", "contente"),
     "arlindo": ("sorriso", "pressao", "contrariado"),
     "ribeiro": ("cordial", "formal", "grave"),
+    # ⚠️ O TONINHO ESTÁ AQUI E AINDA NÃO ESTÁ NO `Retratos.gd`: os PNG entram
+    # no jogo antes das falas dele (`100`), e o F7 do fumaça reprova cara
+    # registada que nenhuma fala pede. Quem o regista é a sessão do tutorial,
+    # com as falas e o tom do balão no mesmo commit.
+    "toninho": ("calmo", "ironico", "serio"),
 }
 
 
 def retratos_de_fala(M, est):
-    """Os nove bustos — três personagens, três expressões cada.
+    """Os doze bustos — quatro personagens, três expressões cada.
 
     Cada um é construído inteiro e no MESMO sítio do mundo: o `exportar()` do
     estúdio esconde tudo e mostra um grupo de cada vez, então nove bustos
