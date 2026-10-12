@@ -840,3 +840,8 @@ traineira e arrasteiro, pelo VALOR do contrato. Importa porque o porto em
 ruínas só recebe pesqueiro.»* O estado diz o mesmo na secção da arte («O
 barco de pesca diz quanto vale a escala»), e a trava da classe na das
 mecânicas.
+
+**E, para caber o tutorial do Toninho (`101`),** desceu do estado a frase da
+rua que vira: *«E a rua VIRA em vez de acabar: cada cotovelo leva chanfro nas
+duas quinas salientes (`013`), do tamanho que deixa o maior camião virar no
+asfalto (`053`).»* O desenho continua na `mapa.md` e nas duas decisões.

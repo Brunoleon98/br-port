@@ -161,10 +161,12 @@ func setup(historico: Variant = null) -> void:
 	acabar_celular()
 
 
-# O CABEÇALHO DO APP: as três caras de quem fala nesta conversa, umas sobre
-# as outras como num grupo, e o título de sempre. É a barra de cima de toda
-# conversa num telefone — e desde a terceira passagem a conversa é de três.
-const QUEM_FALA := [["cida", "neutro"], ["ribeiro", "entrada"], ["arlindo", "abertura"]]
+# O CABEÇALHO DO APP: as caras de quem fala nesta conversa, umas sobre as
+# outras como num grupo, e o título de sempre. É a barra de cima de toda
+# conversa num telefone — e desde a terceira passagem a conversa era de três;
+# o Toninho, que fala no dia 1 (`101`), é o quarto.
+const QUEM_FALA := [["cida", "neutro"], ["ribeiro", "entrada"], ["arlindo", "abertura"],
+	["toninho", "atracar"]]
 const CARA_DO_GRUPO := 36
 
 func _cabecalho() -> Control:
@@ -218,7 +220,8 @@ func _avatar(retrato: Texture2D, lado: int) -> Control:
 
 # A CARA DE UMA FALA: a que o jogo lhe deu ao dizê-la (a expressão da
 # Dona Cida muda com o que ela diz), e sem ela a de omissão da pessoa.
-const CARA_DE_OMISSAO := {"cida": "neutro", "ribeiro": "entrada", "arlindo": "abertura"}
+const CARA_DE_OMISSAO := {"cida": "neutro", "ribeiro": "entrada", "arlindo": "abertura",
+	"toninho": "atracar"}
 
 func _cara_de(fonte: String, retrato: Variant) -> Texture2D:
 	if retrato is Texture2D:

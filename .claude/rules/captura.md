@@ -164,6 +164,15 @@ O passo está no item 5 do núcleo. As armadilhas:
    instante em que foi tirada e mentia sobre o sistema. **Ferramenta que
    fotografa depois de agir espera o que a ação deixou pendente** — e num
    projeto onde a fala entra por `call_deferred`, esperar é medido em frames.
+   ⚠️ **E A FERRAMENTA JOGA NO FRAME EM QUE MONTA O `Main`.** O
+   `capturar_tela.gd` vira os N dias todos dentro do `_montar()`, antes de
+   correr um único `call_deferred`: o que espera o fim do frame não vê o
+   primeiro dia. Em 12/10 o tutorial do Toninho olhava o fundeadouro no fim
+   do frame, e a foto do dia 2 saiu sem a fala séria — um instante que
+   nenhum jogador alcança, mas que mostrou que a fala dependia do FRAME e não
+   do estado.
+   Corrigiu-se o tutorial, não a ferramenta (`101`): comportamento que muda
+   com o frame em que o dia vira é o defeito, e a foto foi quem o viu.
   ⚠️ **E VALE IGUAL PARA A CAPTURA: regerou arte, `--import` ANTES de
   fotografar.** Em 13/09 duas rondas de retratos foram fotografadas ao asset
   VELHO — o Godot desenha o `.ctex` de `.godot/imported/`, e a foto saiu

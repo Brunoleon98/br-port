@@ -2112,6 +2112,28 @@ func _t8_fila_de_mensagens() -> void:
 	_check("T8: e a mais recente vem primeiro",
 		String(h.historico[0]["texto"]) == "diferente")
 
+	# ── RETIRAR (`101`): o passo do tutorial feito antes de lido sai da fila.
+	# ⚠️ O ESTADO QUE APERTA tem TRÊS: uma na tela, a que sai e uma DEPOIS
+	# dela — tirar a última da fila, ou a primeira, passaria com duas.
+	var r := FilaDeMensagens.new()
+	var mostradas: Array[String] = []
+	r.apresentou.connect(func(t: String, _k: String) -> void: mostradas.append(t))
+	r.enfileirar("na tela", "", "sistema")
+	r.enfileirar("a sair", "", "toninho")
+	r.enfileirar("fica", "", "sistema")
+	_check("T8: retirar tira a que espera a vez", r.retirar("a sair") and r.pendentes() == 1)
+	var no_historico: Array[String] = []
+	for e in r.historico:
+		no_historico.append(String(e["texto"]))
+	_check("T8: e tira-a do histórico — nunca esteve na tela, não foi dita",
+		no_historico == ["fica", "na tela"])
+	_check("T8: a que está na tela NÃO se retira — a fila nunca interrompe",
+		not r.retirar("na tela") and String(r.atual()["texto"]) == "na tela"
+		and r.historico.size() == 2)
+	while r.avancar(99.0):
+		pass
+	_check("T8: e a que ficou chega à tela, pela ordem", mostradas == ["na tela", "fica"])
+
 	# ── O TEMPO MÍNIMO CRESCE COM O TEXTO, e tem piso e teto.
 	_check("T8: uma frase curta fica perto da base",
 		FilaDeMensagens.tempo_minimo("oi") >= FilaDeMensagens.BASE

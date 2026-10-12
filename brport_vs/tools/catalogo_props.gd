@@ -102,11 +102,10 @@ const SEM_ANCORA := {
 # A conta é dos dois lados, como a da `SEM_ANCORA`: quem estiver aqui e já no
 # `Retratos.gd` REPROVA, e quem estiver aqui e não existir também — então o
 # commit que os registar tem de os tirar daqui.
-const INTERFACE_SEM_REGISTO := {
-	"retrato_toninho_calmo.png": "rosto do tutorial, à espera das falas (100)",
-	"retrato_toninho_ironico.png": "rosto do tutorial, à espera das falas (100)",
-	"retrato_toninho_serio.png": "rosto do tutorial, à espera das falas (100)",
-}
+# Vazia desde a `101`: os três do Toninho entraram no `Retratos.gd` com as
+# falas do tutorial. Fica a porta para a próxima arte que chegue antes de quem
+# a mostra.
+const INTERFACE_SEM_REGISTO := {}
 
 var _gs: Node
 var _mapas := {}

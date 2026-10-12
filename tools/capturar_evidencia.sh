@@ -419,6 +419,16 @@ tirar mensagens 1 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/mensage
 # a conversa da amostra do D33 (`contraste_ui.gd`, `#historico`): cópias das
 # falas do jogo, as três vozes com e sem bico e os quatro tons do porto.
 tirar mensagens_vozes - - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelMensagens.tscn "$SAIDA/mensagens_vozes.png" "#historico"
+# O TUTORIAL DO TONINHO (`101`), em partida JOGADA: as caras e as falas dele
+# só existem no dia 1 de uma partida nova, e nenhum tiro acima as monta — o
+# cabeçalho do celular mostra a calma e mais nenhuma. Três estados: o passo 1
+# NA FAIXA, onde o jogador o lê (3 s simulados, depois da mensagem de
+# abertura, que segura a faixa 2,3 s); atracado no dia 1, o passo 2 (irónico)
+# no celular — e a fala do passo 1 não está lá, porque a ferramenta atraca
+# antes de a ler e ela sai da fila; e o dia virado sem atracar, o aviso (sério).
+tirar tutorial_atracar 0 1 --script res://tools/capturar_tela.gd -- 0 "$SAIDA/tutorial_atracar.png" limpo --frames=180
+tirar tutorial_avancar 1 1 --script res://tools/capturar_tela.gd -- 0 "$SAIDA/tutorial_avancar.png" limpo atracar mensagens
+tirar tutorial_aviso 1 2 --script res://tools/capturar_tela.gd -- 1 "$SAIDA/tutorial_aviso.png" limpo ocioso mensagens
 
 # ══ OS CINCO PAINÉIS QUE NENHUMA FOTO MOSTRAVA ═══════════════════════════════
 #

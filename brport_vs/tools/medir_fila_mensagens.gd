@@ -243,8 +243,11 @@ func _fonte(escrita: Dictionary) -> String:
 func _relatorio() -> bool:
 	var total := 0
 	var vistas := 0
-	var por_fonte := {"sistema": 0, "cida": 0}
-	var tapadas_por_fonte := {"sistema": 0, "cida": 0}
+	# O Toninho fala só no dia 1 (`101`), e por isso NÃO entra na recusa da
+	# fonte a zero lá em baixo: uma partida que abre sem barco a chamar
+	# passa o dia calada, e isso é o jogo, não a sonda surda.
+	var por_fonte := {"sistema": 0, "cida": 0, "toninho": 0}
+	var tapadas_por_fonte := {"sistema": 0, "cida": 0, "toninho": 0}
 	var histograma := {}
 	var maior := 0
 	var acoes_com_escrita := 0
@@ -295,14 +298,16 @@ func _relatorio() -> bool:
 	print("%d partidas (%d sementes x %d modos), %d ações do jogador"
 		% [SEMENTES.size() * MODOS.size(), SEMENTES.size(), MODOS.size(), _acoes.size()])
 	print("")
-	print("escritas na faixa: %d   (sistema %d · Dona Cida %d)"
-		% [total, por_fonte["sistema"], por_fonte["cida"]])
+	print("escritas na faixa: %d   (sistema %d · Dona Cida %d · Toninho %d)"
+		% [total, por_fonte["sistema"], por_fonte["cida"], por_fonte["toninho"]])
 	print("APRESENTADAS: %d" % vistas)
-	var tapadas: int = int(tapadas_por_fonte["sistema"]) + int(tapadas_por_fonte["cida"])
+	var tapadas: int = int(tapadas_por_fonte["sistema"]) + int(tapadas_por_fonte["cida"]) \
+		+ int(tapadas_por_fonte["toninho"])
 	var pct: float = 0.0 if total == 0 else 100.0 * float(tapadas) / float(total)
 	print("NUNCA APRESENTADAS: %d  (%.1f%% de tudo o que o jogo diz)" % [tapadas, pct])
-	print("   sendo sistema %d e Dona Cida %d"
-		% [tapadas_por_fonte["sistema"], tapadas_por_fonte["cida"]])
+	print("   sendo sistema %d, Dona Cida %d e Toninho %d"
+		% [tapadas_por_fonte["sistema"], tapadas_por_fonte["cida"],
+		tapadas_por_fonte["toninho"]])
 	print("")
 	print("escritas por ação — histograma:")
 	var chaves: Array = histograma.keys()

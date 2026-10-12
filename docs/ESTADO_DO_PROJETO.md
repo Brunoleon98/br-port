@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 12/10/2026 — o rosto do Toninho, o guia do tutorial, foi aceite (`100`)
+> **Última atualização:** 12/10/2026 — o tutorial curto do Toninho, no dia 1 (`101`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -68,7 +68,7 @@ campos. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
 iguais de R$140 mil, R$20 mil de juros totais. Crédito opcional, cancelamento,
-tutorial, trabalhadores extras e progressão futura seguem pendentes (§7 do plano).
+trabalhadores extras e progressão futura seguem pendentes (§7 do plano).
 
 **O porto recebe pesca durante a Fase 1** (`086`): a classe depende do menor
 nível entre píer e guindaste. O Construir explica a madeira e os bloqueios.
@@ -96,9 +96,6 @@ central e passadeiras) — **três camiões descem e dois sobem, pela DIREITA, e
 e uma **viela de terra entre elas** — a de trás mais rala, para a vila DESFIAR
 contra a mata. Tem nível (`--nivel-vila=N`): térrea, sobrado, prédio.
 
-**E a rua VIRA em vez de acabar:** cada cotovelo leva chanfro nas duas quinas
-salientes (`013`), do tamanho que deixa o maior camião virar no asfalto (`053`).
-
 **E TRÊS LOTES DA VILA NÃO SÃO CASA** (`022`): uma **igreja** com torre, uma
 **praça** com coreto e **duas obras**, dos lotes VISÍVEIS — a 51 px quem
 distingue é a silhueta, e por isso "comércios variados" ficou de fora.
@@ -115,9 +112,9 @@ itens param à espera do Bruno. Aqui fica só a posição.
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
 mais tranquila — **M1** a **M8**, o **M10** e o **M11** fecharam (`088`–`099`);
-o M9 espera o D1b e o M12 o A8, e a fila parou: volta a frente 5, pelo
-tutorial, que o **Toninho** guia (`100`) — o rosto está feito; o tutorial é o
-seguinte. O Pages publica a main verde.
+o M9 espera o D1b e o M12 o A8, e a fila parou: voltou a frente 5, e o
+**tutorial curto** do Toninho está no jogo (`100`, `101`); o recorte seguinte
+escolhe-se com o Bruno. O Pages publica a main verde.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -127,7 +124,7 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas e os textos do caderno (`067`, `082`) |
+| **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas, os textos do caderno e as três do Toninho (`067`, `082`, `101`) |
 | **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína, os três degraus da animação e a virada do dia (`069`–`079`). O material do ChatGPT vive em `art_lab/` | Na 4 falta a máquina do contêiner (`079`); obras futuras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
 | **A7** | **Jogar pelo link do Pages** e ver duas pessoas jogarem; o FPS no telefone; as partidas em `playtest/` (`099`) | Só ele joga |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
@@ -149,11 +146,11 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`). O **D34** pergunta de ONDE vem um stylebox (`045`); espera `DESIGN OK` |
-| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, **toda fala escrita chega ao jogo**, o prazo de obra prometido é cumprido (F18), todo nome lido por string existe no alvo (F19, `093`), a tabela das fases diz a verdade (F20, `094`), e um save de exemplo por versão carrega (F21, `098`) |
+| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, **toda fala escrita chega ao jogo**, o prazo de obra prometido é cumprido (F18), todo nome lido por string existe no alvo (F19, `093`), a tabela das fases diz a verdade (F20, `094`), um save de exemplo por versão carrega (F21, `098`), e o tutorial fala só quando deve (F22, `101`) |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
 | `brport_vs/tools/gravar_save_de_exemplo.gd` | Grava o save de exemplo da versão corrente em `tests/saves/` (`098`) |
 | `brport_vs/scripts/ArmazemLocal.gd` | **Onde o jogo guarda o que é do jogador** — com `--script`, em `user://ferramentas/`. `tools/sentinela_do_jogador.py` prova-o no CI (`061`) |
-| `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Nove bustos (`020`) |
+| `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Doze bustos (`020`, `101`) |
 | `brport_vs/scripts/FilaDeMensagens.gd` | **A fila da faixa de mensagem** — FIFO, tempo mínimo por frase, fusão só por duplicata, histórico da sessão. Objeto do `Main` e nunca autoload (`034`) |
 | `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa como **conversa no celular** (`PainelCelular.gd`, o aparelho partilhado com o menu). Em memória, sem migrar save (`067`) |
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
@@ -184,10 +181,11 @@ histórico em `HISTORICO.md`.
 | `playtest/` | As partidas reais do A7, uma por `.jsonl`, sem o nome de quem jogou (`006`, `099`) |
 | `brport_vs/scripts/TrafegoDeCamioes.gd` | **Os camiões da rua** — rotas, cedência, visita ao berço; objeto do `Main`, lido pelo `trafego` (`095`) |
 | `brport_vs/scripts/NarradoraDaCida.gd` | **A Dona Cida na faixa** — gatilhos, variantes e memórias; objeto do `Main` (`096`) |
+| `brport_vs/scripts/TutorialDoToninho.gd` | **O tutorial do dia 1** — atracar e avançar, por cima do jogo e sem save; objeto do `Main` (`101`) |
 | `brport_vs/scripts/VezDasTelas.gd` | **A vez das telas que abrem sozinhas**, uma de cada vez; objeto do `Main` (`054`, `097`) |
 | `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`); `imagem()` repõe o quadro de um prop em atlas (`049`) |
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
-| `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. ⚠️ «Órfão» não é «apagável»: dos 11, nove servem à bancada `AssetPlacementTest`. Hoje **12 de 334**, três do Toninho sem fala (`100`); o atlas não conta (`046`, `049`) |
+| `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. ⚠️ «Órfão» não é «apagável»: dos 11, nove servem à bancada `AssetPlacementTest`. Hoje **9 de 334**; o atlas não conta (`046`, `049`) |
 | `brport_vs/tools/medir_boletim.gd` | **A régua do boletim** — herda o simulador e confere cada afirmação da Dona Cida contra o estado, no instante em que ela fala. CI, `BOLETIM OK` (`048`) |
 | `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
@@ -267,7 +265,7 @@ histórico em `HISTORICO.md`.
 - **E OS TRÊS NPCs TÊM ROSTO** (`020`): nove bustos com pose própria, ao lado
   da fala no boletim, na parcela e na contra-oferta. A cara sai da FALA, por
   tabela. Falta a faixa do rodapé: medida, à espera de layout. O **Toninho**
-  tem as três dele em `art/props`, à espera das falas do tutorial (`100`)
+  guia o tutorial do dia 1, com três caras (`100`, `101`)
 - **Registro de partida em `.jsonl`**, um por partida, com o tempo de cada
   turno. Sai pelo menu de pausa
 - Contabilidade semanal por fonte (docagens, armazém, píer, salários,
