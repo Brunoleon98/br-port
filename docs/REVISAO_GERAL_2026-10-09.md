@@ -215,7 +215,7 @@ a automação publique evidência falsa ou induza a próxima sessão a errar.
 | # | Pergunta | Recomendação | Destrava |
 |---|---|---|---|
 | D1 | Autorizar o save 13 do #109 | **Resolvida.** Fundido em 09/10, e o #110 subiu a 14 (`087`) | — |
-| D1b | Uma subida de save para tirar o legado (M9)? | Só junto da próxima subida que outro recorte precise; nunca sozinha | M9 |
+| D1b | Uma subida de save para tirar o legado (M9)? | **Resolvida em 12/10:** vai no save 16 da progressão para a Fase 2, a primeira subida que outro recorte precisa (`103`, etapa 1) | M9 |
 | D2 | Reorganizar o `CLAUDE.md` num núcleo curto e regras por tema em `.claude/rules/`? | **Resolvida em 10/10: sim**, «e não esqueça de colocar regras gerais» — `gerais.md`, sem `paths:` (`091`) | — |
 | D3 | Expansão do mapa: vagas curadas por fase ou grade livre do GDD? | **Resolvida em 11/10: vagas curadas por fase, em dados** — os berços e os reparos na `FASES` (`094`) | — |
 | D4 | Reputação entre fases: a escala 0–3000 do GDD ou 0–100 por fase? | **Resolvida em 11/10: 0–100 por fase**; o início vive na `FASES`, o patamar entra com a regra da Fase 2 (`094`) | — |

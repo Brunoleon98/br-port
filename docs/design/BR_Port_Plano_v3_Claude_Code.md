@@ -487,6 +487,10 @@ frentes, e **a ordem é do Bruno**:
    ganham sentido com a Fase 2; a linha voluntária, também (o calendário trava
    a obra, não o dinheiro). Pendentes: progressão, cancelamento, trabalhadores
    extras e a linha voluntária.
+   **Escolha em 12/10 (`103`):** a progressão para a Fase 2, em quatro
+   etapas — a passagem e o save 16 com o M9; a treliça e o cargueiro; a meta
+   de três barras, a regressão e o fim no diário; a medição. Sem dívida e
+   sem prazo, por escolha do Bruno. Os outros três esperam-na.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.
@@ -738,12 +742,14 @@ fechou em 12/10 (aceite na v6), e o **tutorial** também, no recorte que ele
 escolheu — atracar e avançar, só no dia 1, overlay e sem save (`101`). As três
 falas são rascunho e esperam a leitura do A4. Em 12/10 o Bruno escolheu o
 **crédito opcional**, e ele entrou como a **segunda chance** do Sr. Ribeiro
-(`102`), com as duas falas dele também à espera do A4. **O seguinte é
-escolher outra vez com o Bruno o recorte da frente 5** — a progressão para a
-Fase 2, o cancelamento de trabalho, mais trabalhadores por píer ou a linha
-voluntária de crédito —, com a pergunta e as opções, a recomendada primeiro.
-A leitura da `102` pesa nela: os três últimos só ganham uso com barcos de
-dois dias e mais o que construir, que são da Fase 2.
+(`102`), com as duas falas dele também à espera do A4. Ainda em 12/10 ele
+escolheu a **progressão para a Fase 2** (`103`): as três quitações abrem-na
+no dia 85, sem dívida e sem prazo, com o píer 3, o escritório e a treliça, e
+uma meta de três barras (reputação, infra, o primeiro cargueiro) que fecha
+a fase no diário e deixa o jogo seguir livre; save 16 com o M9. São quatro
+etapas, uma por sessão, e **a seguinte é a 1** — a passagem e o save.
+Depois delas, o cancelamento, os trabalhadores extras e a linha voluntária
+voltam ao Bruno, já com onde agir.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

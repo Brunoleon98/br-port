@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 12/10/2026 — a segunda chance do Sr. Ribeiro (`102`)
+> **Última atualização:** 12/10/2026 — a progressão para a Fase 2, escolhida (`103`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -68,8 +68,8 @@ campos. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
 iguais de R$140 mil, R$20 mil de juros totais. **Quem não tem o boleto ganha
-uma segunda chance** do Sr. Ribeiro, uma vez por fase (`102`); cancelamento,
-trabalhadores extras e progressão seguem pendentes (§7).
+uma segunda chance** do Sr. Ribeiro, uma vez por fase (`102`). A progressão
+para a Fase 2 está desenhada em quatro etapas (`103`).
 
 **O porto recebe pesca durante a Fase 1** (`086`): a classe depende do menor
 nível entre píer e guindaste. O Construir explica a madeira e os bloqueios.
@@ -111,9 +111,10 @@ itens param à espera do Bruno. Aqui fica só a posição.
 **A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
 **fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
 mais tranquila — **M1** a **M8**, o **M10** e o **M11** fecharam (`088`–`099`);
-o M9 espera o D1b e o M12 o A8, e a fila parou: voltou a frente 5, e o
-**tutorial curto** (`100`, `101`) e a **segunda chance** (`102`) estão no jogo;
-o recorte seguinte escolhe-se com o Bruno. O Pages publica a main verde.
+o M9 vai no save 16 (`103`) e o M12 espera o A8, e a fila parou: voltou a
+frente 5, o **tutorial curto** (`100`, `101`) e a **segunda chance** (`102`)
+estão no jogo, e a **progressão para a Fase 2** foi escolhida (`103`): a
+etapa 1, a passagem e o save 16, é a seguinte. O Pages publica a main verde.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -251,8 +252,7 @@ histórico em `HISTORICO.md`.
   píer 2, armazém e pátio. A terceira doca e os upgrades continuam na bancada
   de arte e testes, mas não podem ser comprados nesta Fase 1 (`085`). O guindaste
   fica em madeira; o conjunto visual n1 conserva a base correta (`086`). O
-  pátio dobra a renda do píer; só seu bônus de contêiner espera clientes
-  futuros. Preços intactos; próximo recorte a escolher com Bruno.
+  pátio dobra a renda do píer; o bônus de contêiner espera o cargueiro (`103`).
 - **A faixa de mensagem tem FILA** — as duas fontes (sistema e Dona Cida) uma
   de cada vez, por ordem, com tempo mínimo na tela; tocar nela abre o histórico
   da sessão (`034`)
