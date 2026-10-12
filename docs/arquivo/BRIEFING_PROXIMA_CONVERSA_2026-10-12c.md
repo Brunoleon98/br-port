@@ -3,8 +3,8 @@
 ```text
 Continuando o BR Port. Leia docs/ESTADO_DO_PROJETO.md e a §7 do plano v3.
 
-Confira na main pelo GitHub se o PR da segunda chance do Sr. Ribeiro foi
-fundido (branch claude/zealous-volta-57u6cg: o aceitar_segunda_chance(), o
+Confira na main pelo GitHub se o PR #126, da segunda chance do Sr. Ribeiro,
+foi fundido (branch claude/zealous-volta-57u6cg: o aceitar_segunda_chance(), o
 save 15 com o primeiro degrau, o tempo do meio da cena da parcela, o T18/T19,
 a decisão 102) e se há PR aberto do Codex antes de editar. A última decisão
 é a 102; confira o próximo número livre na main.
