@@ -3,7 +3,9 @@
 **Estado: ✅ v6 ACEITA pelo Bruno na foto do jogo (12/10), e os PNG já em
 `brport_vs/art/props/`** — mas ainda sem fala: o registro em `Retratos.gd`
 entra com as falas do tutorial, na sessão seguinte (o F7 do fumaça reprova
-cara registada que nenhuma fala pede). O construtor é o `toninho()` de
+cara registada que nenhuma fala pede), e até lá a folha dos props põe-nos de
+fora pela `INTERFACE_SEM_REGISTO` do `catalogo_props.gd`, de onde saem no
+commit que os registar. O construtor é o `toninho()` de
 `blender/brp_retratos.py` (com a `TONINHO`), as três caras estão na `_CARAS`
 de `blender/brp_porto.py`. A decisão é a `100`.
 

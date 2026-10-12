@@ -68,10 +68,20 @@ manifest, e as caras em `_CARAS` e `RETRATOS` de `blender/brp_porto.py`.
 
 **Espera pela sessão do tutorial, no mesmo commit das falas:** o registro em
 `Retratos.gd` (`POR_EXPRESSAO`) e em `Narrativa.EXPRESSOES`, porque o F7 do
-`teste_fumaca` reprova cara registada que nenhuma fala pede; e o **tom do
+`teste_fumaca` reprova cara registada que nenhuma fala pede — e, no mesmo
+commit, a saída dos três da `INTERFACE_SEM_REGISTO` do `catalogo_props.gd`;
+e o **tom do
 balão** — proposto `#f5daa9` (balão) e `#e1c797` (placa), o matiz da camisa
 em OKLCH a L 0,90 e 0,84, a ΔE ≥ 27 dos três de hoje (o par mais próximo está
 a 19,9) —, que o D38 confere contra o matiz da roupa lido NO PNG.
+
+**E a folha dos props tomou-os por props.** O catálogo dela sai do disco,
+menos o que o `Retratos.gd` regista, e o tiro `props1` do CI do PR #124
+reprovou os três como props sem âncora: esta sessão não correu a bateria,
+porque nenhuma tela mudava. A `SEM_ANCORA` não servia — desenharia um retrato
+de 768 px como prop, e a célula da folha inteira cresceria até ele. Entrou a
+`INTERFACE_SEM_REGISTO`, conferida dos dois lados pela folha: os três a
+retirar e o PNG em falta reprovaram, injetados, e a base voltou a passar.
 
 ## O recorte do tutorial, para a sessão seguinte
 

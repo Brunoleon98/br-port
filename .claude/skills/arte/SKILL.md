@@ -176,6 +176,11 @@ mesmo vale para `frota.png` numa mudança que não seja de casco, e para
 `camioes.png` e `camioes_b.png` numa que não seja de camião (uma folha por
 transportadora desde a `070`; a frota e os camiões separaram-se na `047`).
 
+⚠️ **E CORRE MESMO QUANDO NENHUMA TELA MUDA.** PNG novo em `art/props/`
+entra no catálogo da folha dos props, que sai do disco: em 12/10 os retratos
+do Toninho, ainda sem registo no `Retratos.gd`, reprovaram o `props1` no CI
+porque a bateria não correu aqui (`.claude/rules/arte.md`).
+
 ⚠️ **FOTO NOVA NÃO TEM ANTES, e a primeira corrida diz "novo".** O
 `captura.yml` fotografa a base do PR com o script DA BASE — acrescentar um
 tiro ao `capturar_evidencia.sh` não dá antes/depois enquanto o PR não fundir.

@@ -93,6 +93,21 @@ const SEM_ANCORA := {
 	"doca_concreto.png": "órfão — nada no jogo o desenha",
 }
 
+# ⚠️ E A ARTE DE INTERFACE QUE AINDA NÃO ESTÁ NO REGISTO, com a razão ao lado.
+# Não é um prop sem âncora: a `SEM_ANCORA` desenha-o sobre o chão listrado, e
+# um retrato de 768 px como prop faria toda célula crescer até ele (o aviso da
+# arte de interface, na `folha_props.gd`). Em 12/10 o rosto do Toninho entrou
+# ANTES das falas — o F7 do fumaça reprova cara registada que nenhuma fala
+# pede —, o catálogo tomou-o por prop e o tiro `props1` do CI reprovou.
+# A conta é dos dois lados, como a da `SEM_ANCORA`: quem estiver aqui e já no
+# `Retratos.gd` REPROVA, e quem estiver aqui e não existir também — então o
+# commit que os registar tem de os tirar daqui.
+const INTERFACE_SEM_REGISTO := {
+	"retrato_toninho_calmo.png": "rosto do tutorial, à espera das falas (100)",
+	"retrato_toninho_ironico.png": "rosto do tutorial, à espera das falas (100)",
+	"retrato_toninho_serio.png": "rosto do tutorial, à espera das falas (100)",
+}
+
 var _gs: Node
 var _mapas := {}
 
@@ -104,6 +119,23 @@ func _init(gs: Node) -> void:
 ## O catálogo, tirado do DISCO e não de uma lista: um prop novo entra aqui
 ## sozinho, que é o contrário do buraco que esta folha existe para tapar.
 func catalogo() -> Array:
+	var fora := _registo()
+	for f in INTERFACE_SEM_REGISTO:
+		fora[f] = true
+
+	var nomes: Array[String] = []
+	var d := DirAccess.open(PASTA)
+	if d == null:
+		return nomes
+	for f in d.get_files():
+		if f.ends_with(".png") and not fora.has(f):
+			nomes.append(f)
+	nomes.sort()
+	return nomes
+
+
+## A arte de interface que o `Retratos.gd` regista, pelo nome do arquivo.
+func _registo() -> Dictionary:
 	var fora := {}
 	# ⚠️ `load()` e não `preload()`: um script alcançado por `preload` a partir
 	# de um `--script` é compilado antes de a árvore estar de pé. É a regra do
@@ -115,16 +147,23 @@ func catalogo() -> Array:
 			fora[(v as Texture2D).resource_path.get_file()] = true
 	for caminho in retratos.get_script_constant_map()["TRABALHADORES"]:
 		fora[String(caminho).get_file()] = true
+	return fora
 
-	var nomes: Array[String] = []
-	var d := DirAccess.open(PASTA)
-	if d == null:
-		return nomes
-	for f in d.get_files():
-		if f.ends_with(".png") and not fora.has(f):
-			nomes.append(f)
-	nomes.sort()
-	return nomes
+
+## O que está errado na `INTERFACE_SEM_REGISTO`, uma frase por entrada; vazio
+## quando ela está em dia. Quem reprova é a folha, que já faz a conta da
+## `SEM_ANCORA`.
+func interface_por_conferir() -> Array[String]:
+	var erros: Array[String] = []
+	var registo := _registo()
+	for f in INTERFACE_SEM_REGISTO:
+		if registo.has(f):
+			erros.append("'%s' já está no Retratos.gd e continua em " % f
+				+ "INTERFACE_SEM_REGISTO (catalogo_props.gd). Tire-o da lista.")
+		elif not FileAccess.file_exists("%s/%s" % [PASTA, f]):
+			erros.append("'%s' está em INTERFACE_SEM_REGISTO " % f
+				+ "(catalogo_props.gd) e não existe em %s." % PASTA)
+	return erros
 
 
 # ── O MAPA, e a régua dele ────────────────────────────────────────────────

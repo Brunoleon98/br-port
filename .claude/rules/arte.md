@@ -448,6 +448,14 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   RECONSTRÓI-SE com os detalhes repostos nas faces visíveis.
 - A prova visual do prop — o que a captura não vê, o sorteio, o estado
   que nenhuma foto monta, a folha de contato — está em `captura.md`.
+- **⚠️ PNG NOVO EM `art/props/` ENTRA NA FOLHA DOS PROPS, mesmo que o jogo
+  não o mostre.** O catálogo dela sai do DISCO, menos o que o `Retratos.gd`
+  regista. Em 12/10 os três retratos do Toninho entraram antes das falas, sem
+  registo; a sessão saltou a bateria por «nenhuma tela muda», e o tiro
+  `props1` do CI reprovou-os como props sem âncora. Arte de interface sem
+  registo declara-se na `INTERFACE_SEM_REGISTO` do `catalogo_props.gd` — não
+  na `SEM_ANCORA`, que a desenharia a 768 px —, e PNG novo corre a bateria
+  (`100`).
 - **⚠️ CAMPO PREENCHIDO A 100% PODE ESTAR PREENCHIDO PARA OUTRA PERGUNTA.** O
   manifest tem `habitat` nas 44 entradas, e em 14/09 propus agrupar a folha de
   contato por ele. Medido antes de codar: dos 51 props de MAPA só 26 estão no

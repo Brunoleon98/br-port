@@ -13,7 +13,8 @@ dia 1 de partida nova, por cima do jogo (objeto do Main, sem fase no
 GameState e sem campo no save) — atracar (calmo), avançar (irônico) e, se o
 dia virar antes de atracar, o aviso sério. No mesmo commit: as falas na
 Narrativa.gd com o gatilho, o registro do rosto (Retratos.gd e
-Narrativa.EXPRESSOES) e o tom do balão com a quarta voz do D38. As falas são
+Narrativa.EXPRESSOES, e a saída dos três da INTERFACE_SEM_REGISTO do
+catalogo_props.gd) e o tom do balão com a quarta voz do D38. As falas são
 rascunho para a leitura do A4. Um item só.
 ```
 
@@ -29,6 +30,11 @@ O job «Publicar no Pages» da main saiu verde em 11/10: a fonte já está em
 ⚠️ As três caras têm de ter fala cada uma — o sério só tem a do dia que vira
 antes de atracar; sem ela fica muda e o F7 reprova (`100`, «O recorte do
 tutorial»).
+
+⚠️ Ao registar o rosto, os três saem da `INTERFACE_SEM_REGISTO` do
+`catalogo_props.gd` no mesmo commit — a folha dos props reprova quem estiver
+nos dois sítios. E PNG novo em `art/props/` corre a bateria de capturas, mesmo
+sem tela nova (`.claude/rules/arte.md`, `100`).
 
 ⚠️ O tom do balão lê-se do PNG, não do hex da paleta: o D38 confere o matiz da
 roupa pela mediana do tronco, e a camisa do Toninho divide o tronco com o
