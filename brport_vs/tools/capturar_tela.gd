@@ -133,6 +133,9 @@ var _reparos_basicos := false
 var _balanco := false
 # 0 antes de pagar, 1 à espera do boletim, 2 à espera do fim de fase, 3 feito.
 var _passo_balanco := 0
+# O número da parcela que o último «Pagar» quitou: depois da terceira a Fase 2
+# recomeça o recibo, e o boletim que se segue confere-se por este (`104`).
+var _numero_pago := 0
 # A virada da folha do fim de fase, em passos do balanço: espera-se o tempo
 # `segunda_pagina` até este teto (cada passo são `FRAMES_POR_PASSO` frames).
 const TETO_DA_PAGINA := 60
@@ -286,10 +289,12 @@ func _process(_delta: float) -> bool:
 	if _balanco:
 		var topo: Node = _painel_de_cima()
 		if topo == null or topo.scene_file_path != "res://scenes/EndGame.tscn" \
-				or String(topo.get("tempo")) != "balanco" or not bool(GS.won):
-			push_error("capturar_tela: pediu-se `balanco` e o painel de cima é %s no tempo «%s» (won=%s)"
+				or String(topo.get("tempo")) != "balanco" or int(GS.numero_da_fase) < 2:
+			# De uma partida que PASSOU à Fase 2 (`104`): a Fase 1 ganha deixou de
+			# ser `won`, e o balanço abre por cima do jogo que segue.
+			push_error("capturar_tela: pediu-se `balanco` e o painel de cima é %s no tempo «%s» (fase %d)"
 				% ["(nenhum)" if topo == null else topo.scene_file_path,
-				   "" if topo == null else String(topo.get("tempo")), str(GS.won)])
+				   "" if topo == null else String(topo.get("tempo")), int(GS.numero_da_fase)])
 			quit(1)
 			return true
 	# O BOLETIM PEDIDO, e só ele: caso que declara um estado prova que o obteve
@@ -685,14 +690,18 @@ func _pagar_a_parcela() -> bool:
 		quit(1)
 		return false
 	var numero: int = GS.parcela_indice + 1
+	var ultima: bool = numero == int(GS.parcelas_na_fase(1))
 	if not _tocar(ribeiro, "Pagar"):
 		return false
-	if GS.parcelas_quitadas != numero or (numero == GS.parcelas_na_fase() \
-			and (GS.phase != "game_over" or not bool(GS.won))):
-		push_error("capturar_tela: o «Pagar» não acabou a partida paga (parcela_paid=%s, fase %s, won=%s)"
-			% [str(GS.parcela_paid), GS.phase, str(GS.won)])
+	# A última passa à Fase 2 (`104`), que recomeça o recibo: ali quem prova o
+	# pagamento é a fase nova; nas outras, a contagem das quitadas.
+	if (not ultima and GS.parcelas_quitadas != numero) \
+			or (ultima and (int(GS.numero_da_fase) != 2 or GS.phase == "game_over")):
+		push_error("capturar_tela: o «Pagar» não pagou a parcela %d (quitadas %d, fase %d, «%s»)"
+			% [numero, int(GS.parcelas_quitadas), int(GS.numero_da_fase), GS.phase])
 		quit(1)
 		return false
+	_numero_pago = numero
 	print("Cobrança %d paga — %d quitadas, dia %d, fase %s" % [numero,
 		GS.parcelas_quitadas, GS.turn, GS.phase])
 	# O boletim espera a resposta do banco. Nas duas primeiras cobranças o
@@ -724,15 +733,17 @@ func _andar_o_balanco() -> bool:
 			return false
 		# A semana vem do resumo que o boletim recebeu, e não do calendário: um
 		# boletim de outra semana que calhasse aqui também seria «o boletim».
+		# A semana da parcela PAGA, pelo número que o «Pagar» deixou, e da Fase 1:
+		# a terceira já abriu a Fase 2, que não tem parcelas nem última semana.
 		var semana: int = int((_painel_de_cima().get("_resumo") as Dictionary)["semana"])
-		if semana != int(GS.week_of(GS.dia_da_parcela(int(GS.parcelas_quitadas) - 1))):
+		if semana != int(GS.week_of(GS.dia_da_parcela(_numero_pago - 1, 1))):
 			push_error("capturar_tela: o boletim do fim é o da semana %d, e a última é a %d"
-				% [semana, int(GS.semanas_da_fase())])
+				% [semana, int(GS.ultima_semana_da_fase(1))])
 			quit(1)
 			return false
 		if not _tocar(_painel_de_cima(), "Fechar o boletim"):
 			return false
-		if semana < int(GS.semanas_da_fase()):
+		if semana < int(GS.ultima_semana_da_fase(1)):
 			_passo_balanco = -1
 			return true
 		_passo_balanco = 2

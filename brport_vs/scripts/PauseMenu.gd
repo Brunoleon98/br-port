@@ -49,9 +49,8 @@ func _ready() -> void:
 
 	# ONDE SE ESTÁ, numa linha: o cais, o dia e o espaço. Com três partidas no
 	# aparelho, «Salvar e sair» pede que se saiba QUAL se está a deixar.
-	var onde := paragrafo("%s · dia %d de %d · espaço %d de %d" % [
-		GameState.texto("{portName}"),
-		mini(GameState.turn, GameState.turnos_da_fase()), GameState.turnos_da_fase(),
+	var onde := paragrafo("%s · %s · espaço %d de %d" % [
+		GameState.texto("{portName}"), GameState.rotulo_do_dia(GameState.turn),
 		GameState.espaco, GameState.ESPACOS])
 	onde.theme_type_variation = &"RotuloApoio"
 
@@ -67,7 +66,7 @@ func _ready() -> void:
 	# (que é o que a segunda jogada pediu) não pode custar o balanço para
 	# sempre — seria trocar um beco sem saída por outro. Só aparece com a
 	# partida terminada: no meio de um jogo não há balanço nenhum a ver.
-	if GameState.phase == "game_over":
+	if GameState.phase == GameState.ESTADO_FIM:
 		_botao("Ver o balanço da partida", func() -> void:
 			ver_balanco.emit()
 			queue_free())

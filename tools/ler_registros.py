@@ -53,7 +53,7 @@ import sys
 # que ali é o oposto: um save errado estraga a partida em curso, um registro
 # velho continua a ser um dado que alguém produziu jogando. Lê-se o que se
 # reconhece e DIZ-SE o que ficou de fora.
-VERSAO_CONHECIDA = 3
+VERSAO_CONHECIDA = 4
 
 # A primeira versão do gravador que ouve o `obra_concluida` (`088`). É a
 # VERSÃO, e não a ausência da linha, que separa «não acabou» de «não sei»: na
@@ -65,6 +65,11 @@ VERSAO_COM_OBRA_PRONTA = 2
 # razão: numa partida da 2 o jogo ainda não a oferecia, e a falta da linha não
 # quer dizer «não a pediu».
 VERSAO_COM_SEGUNDA_CHANCE = 3
+
+# A primeira em que as três quitações gravam `fase` em vez de `fim` (`104`): a
+# Fase 1 ganha passou a seguir para a Fase 2 no mesmo save. Numa partida da 4,
+# o `fim` que vier depois da passagem é o da Fase 2, e não diz nada da 1.
+VERSAO_COM_PASSAGEM = 4
 
 # O dia pronto de uma obra que o registro não sabe dizer. Um objeto e não um
 # número: zero ou −1 liam-se como dia (`CLAUDE.md`, «zero é o pior valor de
@@ -209,10 +214,20 @@ def obras_de(partida):
     return obras, soltas
 
 
+def fim_da_fase_1(p):
+    """A linha que fecha a Fase 1: a passagem para a 2 (`fase`, desde a versão
+    4) ou, sem ela, o último `fim`. O leitor mede a Fase 1, e quem a passou
+    ganhou-a — o `fim` de uma Fase 2 perdida depois não o desdiz (`104`)."""
+    passagens = [e for e in so(p, "fase") if int(e.get("concluida", 0)) == 1]
+    if passagens:
+        return passagens[0]
+    fim = so(p, "fim")
+    return fim[-1] if fim else None
+
+
 def resumo_de_uma(p):
     turnos = so(p, "turno")
-    fim = so(p, "fim")
-    fim = fim[-1] if fim else None
+    fim = fim_da_fase_1(p)
     cab = p["cabecalho"]
     return {
         "origem": p["origem"],
@@ -389,8 +404,7 @@ def relatar(partidas, orfas, ilegiveis):
     pediram = []
     for p in sabem:
         for e in so(p, "segunda_chance"):
-            fim = so(p, "fim")
-            pediram.append((e, fim[-1] if fim else None))
+            pediram.append((e, fim_da_fase_1(p)))
     print("  pedida em %d de %d partidas" % (len(pediram), len(sabem)))
     for e, fim in pediram:
         desfecho = "sem fim" if fim is None else ("ganhou" if fim.get("ganhou") else "perdeu")
@@ -494,7 +508,7 @@ def _mais_proximo(medido, chave):
 # oito continuava a dar 1000, passando por certa. Medido em 10/10 (`088`).
 
 def _fixture(versao=VERSAO_CONHECIDA, com_calendario=True, com_prontas=True,
-             com_segunda_chance=False):
+             com_segunda_chance=False, perde_na_fase_2=False):
     cab = {"e": "abriu", "versao": versao, "quando": "fixture", "plataforma": "autoteste",
            "turnos_totais": 84, "t_inicial": 1, "retomada": False}
     if com_calendario:
@@ -511,7 +525,20 @@ def _fixture(versao=VERSAO_CONHECIDA, com_calendario=True, com_prontas=True,
         if t == 29 and com_segunda_chance:
             linhas.append({"e": "segunda_chance", "t": 29, "emprestado": 210000,
                            "devolve": 235200})
-    linhas.append({"e": "fim", "ganhou": True, "motivo": "fixture", "t": 85, "caixa": 0, "rep": 50.0})
+    # A Fase 1 ganha: na versão 4 é a passagem (`104`), antes dela o fim.
+    if versao >= VERSAO_COM_PASSAGEM:
+        linhas.append({"e": "fase", "concluida": 1, "ganhou": True, "motivo": "fixture",
+                       "t": 85, "caixa": 0, "rep": 50.0})
+    else:
+        linhas.append({"e": "fim", "ganhou": True, "motivo": "fixture", "t": 85, "caixa": 0, "rep": 50.0})
+    # E a Fase 2 jogada e perdida depois: dias que o calendário da Fase 1 não
+    # tem, e um `fim` que não é dela.
+    if perde_na_fase_2:
+        for t in range(86, 93):
+            linhas.append({"e": "turno", "t": t, "s": (t - 1) // 7 + 1, "ms": 99000,
+                           "caixa": 0, "rep": 50.0})
+        linhas.append({"e": "fim", "ganhou": False, "motivo": "O dinheiro acabou.", "t": 92,
+                       "caixa": -1, "rep": 40.0})
     # Pelo `carregar()`, como um arquivo de verdade: a fixture prova também a
     # partição das partidas, e não só as contas sobre elas.
     partidas, _, _ = carregar([json.dumps(l) for l in linhas], "fixture")
@@ -585,6 +612,22 @@ def autoteste():
     confere("na versão 2 é «não sei», e não zero pedidas",
             "pedida em 0 de 0 partidas" in texto and "não sei em 1" in texto
             and "anterior à versão 3, que não a grava" in texto)
+
+    # A passagem (`104`): na versão 4 a Fase 1 ganha é a linha `fase`, e o fim
+    # da Fase 2 que vier depois não a desdiz — nem os dias dela entram na
+    # última semana da Fase 1.
+    r = resumo_de_uma(_fixture()[0])
+    confere("a passagem conta como a Fase 1 ganha, e terminada",
+            r["terminou"] and r["ganhou"] is True, str((r["terminou"], r["ganhou"])))
+    r = resumo_de_uma(_fixture(perde_na_fase_2=True)[0])
+    confere("e a Fase 2 perdida depois não a desdiz",
+            r["ganhou"] is True and r["motivo"] == "fixture", str((r["ganhou"], r["motivo"])))
+    pontas = tempos_das_pontas(_fixture(perde_na_fase_2=True))
+    confere("e os dias da Fase 2 não entram na última semana da Fase 1",
+            pontas["ultima"] == [12000] * 7, str(pontas["ultima"]))
+    r = resumo_de_uma(_fixture(versao=3)[0])
+    confere("na versão 3 a Fase 1 ganha continua a ser o fim",
+            r["terminou"] and r["ganhou"] is True)
 
     if falhas:
         print("AUTOTESTE DO LEITOR FALHOU — %d verificação(ões):" % len(falhas))

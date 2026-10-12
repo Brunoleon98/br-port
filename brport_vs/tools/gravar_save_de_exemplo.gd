@@ -29,6 +29,17 @@ extends SceneTree
 # vencimento, chega lá sem o boleto, aceita o empréstimo e joga bem dali em
 # diante; pára antes da cobrança seguinte, com a dívida ainda por pagar.
 #
+# ⚠️ E DESDE A 16 ELE PASSA À FASE 2 (`104`). O campo novo é o número da fase,
+# e um exemplo da Fase 1 gravava-o a 1 — o valor que o degrau escreve e que a
+# partida nova traz, o campo vazio de cima outra vez. A partida joga BEM desde
+# o primeiro dia, paga as três e pára no primeiro dia da Fase 2 com tudo: o
+# primeiro mês mal jogado da 15 não chegava à segunda cobrança (medido: sem
+# caixa no dia 57), e a dívida que ele trazia a passagem zera na mesma.
+# Ali a parcela quitada e a dívida da segunda chance são ZERO por regra — a
+# passagem recomeça-as —, e por isso saíram da lista: a ida e volta delas é do
+# T14 e do T18. No lugar entra o que a Fase 2 guarda delas: o recibo da 1 no
+# `total_pago_parcelas`.
+#
 # Rodar (o exemplo existente só se substitui de propósito, antes de a versão
 # chegar à main — depois disso ele é o registo do que ela gravava):
 #   $G --headless --path brport_vs --script res://tools/gravar_save_de_exemplo.gd
@@ -42,6 +53,7 @@ const PASTA := "res://tests/saves"
 const SEMENTE := 20260825
 const NOME_PORTO := "Cais do Exemplo"
 const NOME_JOGADOR := "Quem Testa"
+const TETO_DE_DIAS := 200
 
 var _feito := false
 
@@ -70,9 +82,10 @@ func _rodar() -> void:
 	GS._rng.seed = SEMENTE
 	GS.new_game()
 	GS.definir_nomes(NOME_PORTO, NOME_JOGADOR)
-	var teto: int = GS.turnos_da_fase()
+	# Teto em dias e não o prazo da fase: a Fase 2 não tem prazo, e pedi-lo
+	# rebenta (`104`). Duzentos é mais do dobro de onde o exemplo pára.
 	while true:
-		if GS.phase == "game_over" or GS.turn > teto:
+		if GS.phase == "game_over" or GS.turn > TETO_DE_DIAS:
 			print("FALHA: a partida acabou no dia %d sem chegar a um save com tudo: %s" % [GS.turn, faltas(GS)])
 			quit(1)
 			return
@@ -92,7 +105,7 @@ func _rodar() -> void:
 		for id in GS.ESTRUTURAS.keys():
 			if GS.impedimento_estrutura(id) == "":
 				GS.comprar_estrutura(id)
-		for _b in range(GS.bercos_livres() if GS.segunda_chance_usada else 0):
+		for _b in range(GS.bercos_livres()):
 			if GS.atracagem_pendente() == Vector2i.ZERO or not GS.atracar(0, false):
 				break
 		if faltas(GS).is_empty():
@@ -121,14 +134,16 @@ static func faltas(GS: Node) -> Array[String]:
 	var falta: Array[String] = []
 	if GS.phase != "playing":
 		falta.append("a partida a correr")
+	if int(GS.numero_da_fase) < 2:
+		falta.append("a Fase 2")
 	if GS.obra_em_andamento.is_empty():
 		falta.append("uma obra em andamento")
 	if GS.fila.is_empty():
 		falta.append("um barco ao largo")
 	if not GS.docks.any(func(d): return d["boat"] != null):
 		falta.append("um barco atracado")
-	if int(GS.parcelas_quitadas) < 1:
-		falta.append("uma parcela quitada")
+	if int(GS.total_pago_parcelas) <= 0:
+		falta.append("o recibo da Fase 1")
 	if GS.estruturas.is_empty():
 		falta.append("um reparo pronto")
 	if GS.historico_semanas.is_empty():
@@ -141,6 +156,4 @@ static func faltas(GS: Node) -> Array[String]:
 		falta.append("um recorde")
 	if String(GS.nome_porto) == "" or String(GS.nome_jogador) == "":
 		falta.append("os dois nomes")
-	if not GS.segunda_chance_usada or int(GS.emprestimo_devido) <= 0:
-		falta.append("a segunda chance, com a dívida dela")
 	return falta

@@ -89,7 +89,9 @@ func _rodar() -> void:
 		GS.definir_nomes("Cais %d" % (p + 1), "" if p % 2 == 0 else "Testador")
 
 		var voltas := 0
-		while GS.phase != "game_over" and voltas < 400:
+		# Até ao desfecho da Fase 1 — o fim ou a passagem (`104`): a Fase 2 não
+		# acaba por calendário, e a partida ganha jogaria até ao teto.
+		while GS.phase != "game_over" and GS.numero_da_fase == 1 and voltas < 400:
 			voltas += 1
 			if GS.phase == "rival_offer":
 				if rng.randf() < float(jeito["iguala"]):

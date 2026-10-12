@@ -76,7 +76,12 @@ extends Node
 # A 3 (12/10, `102`) acrescentou a linha `segunda_chance`, pela mesma razão:
 # numa partida da 2 o jogo ainda não a oferecia, e a falta dela não quer dizer
 # «não a pediu».
-const VERSAO := 3
+#
+# A 4 (12/10, `104`) acrescentou a linha `fase` — a passagem da Fase 1 à 2, que
+# deixou de ser fim de jogo — e o `numero_da_fase` no cabeçalho. Numa partida
+# da 3 as três quitações gravavam `fim` com `ganhou`; na 4 gravam `fase`, e o
+# `fim` que vier depois é o da Fase 2.
+const VERSAO := 4
 
 # A pasta sai do `ArmazemLocal` (`061`): o `teste_registro` e o
 # `gravar_partidas` APAGAM tudo o que lá está, e o `_podar()` de cada tiro
@@ -140,6 +145,7 @@ func _ready() -> void:
 	_GS.debt_due.connect(_ao_vencer_parcela)
 	_GS.segunda_chance_aceita.connect(_ao_aceitar_segunda_chance)
 	_GS.game_over.connect(_ao_fim)
+	_GS.fase_concluida.connect(_ao_passar_de_fase)
 	_GS.message.connect(_ao_mensagem)
 
 
@@ -197,13 +203,19 @@ func armar() -> void:
 		# O que o jogo assume sobre a partida. Sem isto, um registro de hoje
 		# lido daqui a três reescalas mede-se contra os números errados — o
 		# mesmo defeito que a tabela dos números existe para resolver.
-		"turnos_totais": _GS.turnos_da_fase(),
+		#
+		# ⚠️ OS DIAS E A PARCELA SÃO OS DA FASE 1, e não os da fase em jogo: o
+		# leitor mede a Fase 1 (a primeira e a última semana dela), e a Fase 2
+		# não tem nem prazo nem parcela — pedi-los rebenta (`104`). Um registro
+		# retomado na Fase 2 diz em que fase abriu.
+		"turnos_totais": _GS.turnos_da_fase(1),
+		"numero_da_fase": _GS.numero_da_fase,
 		# Sem ele o leitor tirava a primeira e a última semana de `t <= 8` e
 		# `t > 24`, as semanas de 8 dias numa fase de 4: com 12 de 7 (`085`),
 		# a «semana 4» que publicava ia da 4 à 12. Registro sem o campo, o
 		# leitor diz que não sabe em vez de supor.
 		"turnos_por_semana": _GS.TURNS_PER_WEEK,
-		"parcela": _GS.valor_da_parcela(0),
+		"parcela": _GS.valor_da_parcela(0, 1),
 		"caixa_inicial": _GS.START_CASH,
 	})
 
@@ -421,8 +433,25 @@ func _ao_aceitar_segunda_chance(emprestado: int, devolver: int) -> void:
 
 
 func _ao_fim(ganhou: bool, motivo: String) -> void:
-	_gravar({
-		"e": "fim",
+	_gravar(_desfecho("fim", ganhou, motivo))
+
+
+# A PASSAGEM (`104`): as três quitações deixaram de ser fim de jogo, e um
+# registro que só gravasse o `fim` leria a partida que passou à Fase 2 como
+# ABANDONADA — a conclusão mais dura de um playtest, e falsa. A linha é a do
+# fim, com a fase que fechou; o sinal sai antes de a fase mudar, e a reputação
+# gravada é a com que a Fase 1 acabou.
+func _ao_passar_de_fase(numero: int, motivo: String) -> void:
+	var linha := _desfecho("fase", true, motivo)
+	linha["concluida"] = numero
+	_gravar(linha)
+
+
+# O que o fim e a passagem gravam, num lugar só: duas cópias desta lista
+# divergiam no primeiro campo novo.
+func _desfecho(evento: String, ganhou: bool, motivo: String) -> Dictionary:
+	return {
+		"e": evento,
 		"ganhou": ganhou,
 		"motivo": motivo,
 		"t": _GS.turn,
@@ -435,7 +464,7 @@ func _ao_fim(ganhou: bool, motivo: String) -> void:
 		# pessoa que a fez.
 		"jogador_anonimo": _GS.nome_jogador == "",
 		"jogador_letras": _GS.nome_jogador.length(),
-	})
+	}
 
 
 # Só o que correu mal. Contar TODA mensagem daria o ruído de sempre; o que

@@ -32,7 +32,10 @@ func setup(resumo: Dictionary) -> void:
 	_resumo = resumo
 	montar(LARGURA, ALTURA, ESCURO_DECISAO)
 	titulo_encorpado(Icones.CAIXA, "Boletim Financeiro")
-	paragrafo("Semana %d de %d" % [int(_resumo["semana"]), GameState.semanas_da_fase()])
+	# Sem prazo, a semana não tem «de quantas» (`104`).
+	var fase: int = int(_resumo["numero_da_fase"])
+	paragrafo("Semana %d de %d" % [int(_resumo["semana"]), GameState.ultima_semana_da_fase(fase)]
+		if GameState.fase_tem_prazo(fase) else "Semana %d" % int(_resumo["semana"]))
 
 	# LINHA COM ZERO NÃO ENTRA. O armazém só rende depois de consertado e a
 	# parcela só vence numa semana das quatro; mostrá-las a R$0 nas outras é

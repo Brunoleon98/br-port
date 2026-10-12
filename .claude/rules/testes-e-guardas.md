@@ -108,6 +108,13 @@ guarda.
    — o jogo a escrevê-lo — pede a sua guarda (`052`). E um sub-bloco leva a
    sua BANDEIRA: um erro de execução lá dentro só aborta ele, e a bandeira do
    chamador ficava verde.
+   ⚠️ **E O ESTADO ESCRITO À MÃO NÃO CHEGA A QUEM OUVE O SINAL.** Na `104`
+   o F23 escrevia `GS.reputation = 100` para provar que a Dona Cida não
+   anuncia o recomeço da passagem, e o mutante sem a correção PASSOU: a
+   narradora só sabe a faixa que viu passar, e a primeira que vê ela só
+   regista. Quem prova uma reação a um sinal monta o estado anterior PELO
+   SINAL, e acrescenta o controlo de que a reação existe (uma queda de
+   verdade, depois, é anunciada).
    ⚠️ **E CAMINHO QUE REPROVA CEDO ESCONDE O QUE OS OUTROS VERIAM.** O F11
    nasceu com três caminhos em fila num bloco só, e o primeiro vermelho saía
    do bloco: a primeira leva de mutantes deu UMA reprovação a cada um, e os

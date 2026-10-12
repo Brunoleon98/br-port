@@ -237,11 +237,11 @@ func _depois_da_abertura() -> void:
 # abertura — o `_ready()` sem caderno e o diário fechado —, hoje pelo
 # `_depois_da_abertura()`, que a seguir dá a vez ao tutorial.
 func _recuperar_fase() -> void:
-	if GameState.phase == "rival_offer" and GameState.pending_rival >= 0:
+	if GameState.phase == GameState.ESTADO_OFERTA and GameState.pending_rival >= 0:
 		_on_rival_offer_triggered(GameState.pending_rival)
-	elif GameState.phase == "debt_payment":
+	elif GameState.phase == GameState.ESTADO_COBRANCA:
 		_on_debt_due(GameState.principal_da_parcela())
-	elif GameState.phase == "game_over":
+	elif GameState.phase == GameState.ESTADO_FIM:
 		_on_game_over(GameState.won, GameState.end_reason)
 
 
@@ -494,6 +494,7 @@ func _connect_game_state() -> void:
 	GameState.rival_offer_triggered.connect(_on_rival_offer_triggered)
 	GameState.debt_due.connect(_on_debt_due)
 	GameState.game_over.connect(_on_game_over)
+	GameState.fase_concluida.connect(_on_fase_concluida)
 	GameState.semana_fechada.connect(_on_semana_fechada)
 
 	# AS FALAS DA DONA CIDA penduram-se nos sinais acima, e ligam-se AQUI, por
@@ -545,8 +546,12 @@ func _refresh_estruturas() -> void:
 
 func _refresh_hud() -> void:
 	_mostrar_caixa(int(GameState.cash))
-	var shown_day: int = min(GameState.turn, GameState.turnos_da_fase())
-	_day_label.text = "Dia %d/%d" % [shown_day, GameState.turnos_da_fase()]
+	# Na fase sem prazo o dia não tem «de quantos» (`104`).
+	if GameState.fase_tem_prazo():
+		var shown_day: int = min(GameState.turn, GameState.ultimo_dia_da_fase())
+		_day_label.text = "Dia %d/%d" % [shown_day, GameState.ultimo_dia_da_fase()]
+	else:
+		_day_label.text = "Dia %d" % GameState.turn
 	_rep_label.text = "%d %s" % [int(GameState.reputation), GameState.reputation_label()]
 	_docks_label.text = "%d/%d" % [GameState.docks.size(), GameState.bercos_no_mapa()]
 	# O botão não some quando tudo está construído: vira o registo de que o
@@ -559,7 +564,7 @@ func _refresh_hud() -> void:
 			if GameState.desbloqueio_da_estrutura(String(id)) == "" \
 					and GameState.obra_termina_na_fase(String(id)):
 				liberadas += 1
-	_upgrade_button.disabled = GameState.phase != "playing" or faltam == 0
+	_upgrade_button.disabled = GameState.phase != GameState.ESTADO_JOGANDO or faltam == 0
 	if faltam == 0:
 		_upgrade_button.text = "Porto completo"
 		Icones.no_botao(_upgrade_button, Icones.FEITO, 26)
@@ -576,7 +581,7 @@ func _refresh_hud() -> void:
 		_upgrade_button.text = "Construir  ·  %s" % Narrativa.concordar(liberadas,
 			"disponível", "disponíveis") if liberadas > 0 else "Construir  ·  ver estruturas"
 		Icones.no_botao(_upgrade_button, Icones.AMPLIAR_PIER, 26)
-	_advance_button.disabled = GameState.phase != "playing"
+	_advance_button.disabled = GameState.phase != GameState.ESTADO_JOGANDO
 	_refresh_meta()
 
 
@@ -584,6 +589,17 @@ func _refresh_hud() -> void:
 # a informação que estava faltando na tela: quanto já tem, quanto falta e
 # quantos dias restam até o Sr. Ribeiro bater na porta.
 func _refresh_meta() -> void:
+	# A FASE SEM COBRANÇA (`104`): o Sr. Ribeiro já recebeu as três, e o cartão
+	# diz isso e o que sobra de risco — o dinheiro. A meta de três barras que
+	# vai ocupar este lugar é da etapa 3 da `103`; até lá, nenhum número a
+	# perseguir, e nenhuma barra a meio que o pareça.
+	if not GameState.tem_cobranca():
+		_meta_icone.texture = Icones.FEITO
+		_meta_titulo.text = "Fase %d — sem dívida com o banco" % GameState.numero_da_fase
+		_meta_bar.value = 100.0
+		_meta_label.text = "Sem prazo: o porto segue enquanto houver dinheiro"
+		_meta_label.theme_type_variation = &"TextoPilulaBom"
+		return
 	var alvo := GameState.principal_da_parcela()
 	if GameState.parcela_paid:
 		# Pago: o banco dá lugar ao visto verde, que é o estado, não o credor.
@@ -699,7 +715,7 @@ func _refresh_titulo_fila() -> void:
 	elif GameState.bercos_livres() == 0:
 		_fila_titulo.text = "Ao largo — à espera de doca livre"
 		_fila_titulo.theme_type_variation = &"TextoBarra"
-	elif GameState.phase == "rival_offer":
+	elif GameState.phase == GameState.ESTADO_OFERTA:
 		_fila_titulo.text = "Ao largo — o Arlindo disputa um cliente"
 		_fila_titulo.theme_type_variation = &"TextoBarra"
 	else:
@@ -940,7 +956,7 @@ func _subir_ganho(doca: int, valor: int) -> void:
 func _notification(qual: int) -> void:
 	if qual != NOTIFICATION_WM_GO_BACK_REQUEST:
 		return
-	if GameState.phase != "playing":
+	if GameState.phase != GameState.ESTADO_JOGANDO:
 		return
 
 	var filhos := _overlay_layer.get_children()
@@ -1034,8 +1050,11 @@ func _on_docas_pilula_input(event: InputEvent) -> void:
 # item do playtest que a triagem tinha perdido. O botão não vive no cartão
 # porque o rodapé não tem os 44px de toque para lhe dar; ver o cabeçalho de
 # `PainelParcela.gd`.
+#
+# Sem cobrança não há painel da parcela (`104`): na Fase 2 o cartão só diz que
+# não há dívida, e abrir o painel leria uma parcela que não existe.
 func _on_meta_cartao_input(event: InputEvent) -> void:
-	if _e_toque_de_soltar(event):
+	if _e_toque_de_soltar(event) and GameState.tem_cobranca():
 		_abrir_painel(PainelParcelaScene).setup()
 		accept_event()
 
@@ -1118,4 +1137,17 @@ func _on_game_over(did_win: bool, reason: String) -> void:
 	vez.na_vez(func() -> Control:
 		var painel := _abrir_painel(EndGameScene)
 		painel.setup(did_win, reason)
+		return painel)
+
+
+# A PASSAGEM (`104`): a página do diário que fechava a Fase 1 abre por cima do
+# jogo, e a partida já está na Fase 2 por baixo dela. A reputação lê-se AQUI,
+# no instante do sinal — que sai antes de a fase mudar —, e não quando o
+# painel abrir: ele espera a vez atrás da resposta do Sr. Ribeiro e do
+# boletim, e a essa hora a barra já recomeçou na escala da Fase 2.
+func _on_fase_concluida(_numero: int, motivo: String) -> void:
+	var reputacao: float = GameState.reputation
+	vez.na_vez(func() -> Control:
+		var painel := _abrir_painel(EndGameScene)
+		painel.setup(true, motivo, reputacao)
 		return painel)

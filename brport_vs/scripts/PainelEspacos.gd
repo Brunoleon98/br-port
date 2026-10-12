@@ -85,9 +85,12 @@ func _cartao_do_espaco(n: int) -> Control:
 	var cabeca := Label.new()
 	cabeca.theme_type_variation = &"RotuloApoio"
 	cabeca.text = "Espaço %d" % n
-	if not r.is_empty() and String(r["fase"]) == "game_over":
-		cabeca.text += " · partida encerrada, %s" % (
-			"parcela paga" if bool(r["venceu"]) else "parcela não paga")
+	# A parcela só entra na frase onde há parcela: na Fase 2 perde-se só pelo
+	# dinheiro (`103`), e «parcela não paga» seria falso (`104`).
+	if not r.is_empty() and String(r["estado"]) == GameState.ESTADO_FIM:
+		cabeca.text += " · partida encerrada"
+		if int(r["numero_da_fase"]) == 1:
+			cabeca.text += ", %s" % ("parcela paga" if bool(r["venceu"]) else "parcela não paga")
 	coluna.add_child(cabeca)
 
 	var nome := Label.new()

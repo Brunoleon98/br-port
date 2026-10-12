@@ -219,7 +219,9 @@ func _r2_partida() -> void:
 
 	GS.definir_nomes("Cais de Teste", "Fulano")
 	var voltas := 0
-	while GS.phase != "game_over" and voltas < 200:
+	# Até ao desfecho da Fase 1: o fim de quem perde, ou a passagem de quem
+	# paga as três (`104`) — a Fase 2 não acaba por calendário.
+	while GS.phase != "game_over" and GS.numero_da_fase == 1 and voltas < 200:
 		voltas += 1
 		if GS.phase == "rival_offer":
 			GS.negotiate_rival("igualar")
@@ -233,7 +235,8 @@ func _r2_partida() -> void:
 		_atracar_tudo()
 		GS.advance_turn()
 
-	_confere("a partida chegou ao fim", GS.phase == "game_over",
+	var passou: bool = GS.numero_da_fase == 2
+	_confere("a Fase 1 chegou ao desfecho", GS.phase == "game_over" or passou,
 		"parou em %s após %d voltas" % [GS.phase, voltas])
 
 	var texto: String = R.texto_para_exportar()
@@ -251,12 +254,17 @@ func _r2_partida() -> void:
 	_confere("TODA linha é um objeto JSON", todas_json)
 	_confere("a primeira linha é a abertura", linhas.size() > 0
 		and JSON.parse_string(linhas[0]).get("e") == "abriu")
-	_confere("a última é o fim", linhas.size() > 0
-		and JSON.parse_string(linhas[linhas.size() - 1]).get("e") == "fim")
+	# O desfecho é a última linha: o `fim` de quem perdeu, ou a `fase` de
+	# quem passou — sem ela o leitor leria a partida ganha como ABANDONADA.
+	var ultima: Dictionary = JSON.parse_string(linhas[linhas.size() - 1]) if linhas.size() > 0 else {}
+	_confere("a última é o desfecho (%s)" % ultima.get("e", "?"),
+		(passou and ultima.get("e") == "fase" and int(ultima.get("concluida", 0)) == 1
+			and ultima.get("ganhou") == true)
+			or (not passou and ultima.get("e") == "fim"))
 	_confere("gravou um evento de turno por turno jogado",
-		int(tipos.get("turno", 0)) >= GS.turnos_da_fase() - 1,
-		"%d turnos para %d jogados" % [tipos.get("turno", 0), GS.turnos_da_fase()])
-	_confere("gravou o fecho das doze semanas", int(tipos.get("semana", 0)) == GS.semanas_da_fase(),
+		int(tipos.get("turno", 0)) >= GS.turnos_da_fase(1) - 1,
+		"%d turnos para %d jogados" % [tipos.get("turno", 0), GS.turnos_da_fase(1)])
+	_confere("gravou o fecho das doze semanas", int(tipos.get("semana", 0)) == GS.semanas_da_fase(1),
 		"%d semanas" % tipos.get("semana", 0))
 
 	# ZERO É O PIOR VALOR DE OMISSÃO QUE HÁ: lê-se como medida. A primeira
@@ -288,7 +296,7 @@ func _r2_partida() -> void:
 	var cab: Dictionary = JSON.parse_string(linhas[0])
 	_confere("o cabeçalho traz a versão do registro", int(cab.get("versao", 0)) == R.VERSAO)
 	_confere("e a parcela e o caixa inicial em vigor",
-		int(cab.get("parcela", 0)) == GS.valor_da_parcela(0)
+		int(cab.get("parcela", 0)) == GS.valor_da_parcela(0, 1)
 		and int(cab.get("caixa_inicial", 0)) == GS.START_CASH)
 
 	# O custo da obra tem de ser o custo DA OBRA. A primeira versão lia a
@@ -510,7 +518,7 @@ func _r7_obra_pronta() -> void:
 	_confere("o cabeçalho traz os dias por semana do jogo",
 		int(cab.get("turnos_por_semana", -1)) == GS.TURNS_PER_WEEK,
 		"gravou %s, o jogo tem %d" % [cab.get("turnos_por_semana"), GS.TURNS_PER_WEEK])
-	_confere("e os dias da fase", int(cab.get("turnos_totais", -1)) == GS.turnos_da_fase())
+	_confere("e os dias da Fase 1", int(cab.get("turnos_totais", -1)) == GS.turnos_da_fase(1))
 
 	GS.cash = 999999
 	var pago: int = GS.turn

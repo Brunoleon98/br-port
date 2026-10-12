@@ -519,7 +519,10 @@ func _t19_degrau_14_para_15() -> void:
 	_check("T19: e não traz os campos da 15",
 		not v14.has("emprestimo_devido") and not v14.has("segunda_chance_usada")
 			and not v14["semana_atual"].has("emprestimo"))
-	var migrado: Dictionary = GS._migrar(v14)
+	# SÓ ATÉ À 15: o que se prova aqui é o degrau 14→15. Pela cadeia inteira
+	# chegaria à 16, e o 15→16 tira um campo da 14 (`104`) — quem prova esse é
+	# o T20, contra o exemplo da 15.
+	var migrado: Dictionary = GS.cadeia_de_migracao(v14, 15, GS._migrar_um_passo)
 	_check("T19: a cadeia leva-o à 15", int(migrado.get("versao", 0)) == 15)
 	_check("T19: sem dívida e com a chance por usar",
 		migrado.get("emprestimo_devido") is int and int(migrado["emprestimo_devido"]) == 0
@@ -553,6 +556,313 @@ func _t19_degrau_14_para_15() -> void:
 	_t19_completo = true
 
 
+# ── T20 ──────────────────────────────────────────────────────────────────
+# A PASSAGEM E A FASE 2 SEM META (`103`, `104`). As três quitações deixaram de
+# ser fim de jogo: a partida segue na Fase 2, no mesmo save, sem dívida e sem
+# prazo. Quatro perguntas, cada uma com a sua bandeira:
+#
+# 1. A PASSAGEM: o sinal sai uma vez e ANTES de a fase mudar (quem o ouve lê a
+#    reputação com que a Fase 1 fechou), e recomeça o que é de cada fase — a
+#    cobrança, a segunda chance, a reputação — e mais nada.
+# 2. A FASE 2 JOGA-SE: semanas a fio sem cobrança nem fim, os reparos dela
+#    abertos desde o primeiro dia, a obra sem teto, e o caixa negativo ainda
+#    acaba a partida. Toda leitura da parcela corrente passa por
+#    `tem_cobranca()`; a que não passar rebenta com `SCRIPT ERROR`, e quem o
+#    reprova é o passo do CI — o erro numa função tipada devolve o zero do
+#    tipo, e a cadeia segue até um valor plausível (medido, `gdscript.md`).
+# 3. O SAVE CONFERE-SE CONTRA A FASE DO ARQUIVO, e não contra a da partida
+#    viva: o resumo dos espaços lê os três com uma partida aberta.
+# 4. O DEGRAU 15→16, contra o exemplo da 15 — e a partida ganha da 15, que na
+#    16 é a Fase 2 no dia 85.
+var _t20_passagem_ok := false
+var _t20_fase_2_ok := false
+var _t20_save_ok := false
+var _t20_degrau_ok := false
+var _t20_sinais: Array = []
+
+
+func _t20_ouvir(numero: int, motivo: String) -> void:
+	_t20_sinais.append({"numero": numero, "motivo": motivo, "fase": GS.numero_da_fase,
+		"rep": GS.reputation, "quitadas": GS.parcelas_quitadas})
+
+
+# Leva uma partida nova à Fase 2 pela porta de sempre, com dinheiro de bancada.
+func _t20_ate_a_fase_2() -> bool:
+	if not _t18_ate_ao_vencimento(3):
+		return false
+	GS.pay_debt()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	return GS.numero_da_fase == 2
+
+
+func _t20_passagem() -> void:
+	if not _t18_ate_ao_vencimento(3):
+		_check("T20: a partida chega à terceira cobrança", false)
+		return
+	# Uma reputação que a Fase 2 não começa: o sinal emitido DEPOIS da mudança
+	# leria a da Fase 2, e as duas têm de ser diferentes para se distinguirem.
+	GS.reputation = 91.0
+	_check("T20: a reputação de teste não é a de partida da Fase 2",
+		GS.reputation != GS.reputacao_inicial(2))
+	var pago_antes: int = GS.total_pago_parcelas
+	var boleto: int = GS.principal_da_parcela()
+	_t20_sinais = []
+	GS.fase_concluida.connect(_t20_ouvir)
+	GS.pay_debt()
+	GS.fase_concluida.disconnect(_t20_ouvir)
+	_check("T20: a terceira quitação emite a passagem uma vez, da Fase 1 (%d)" % _t20_sinais.size(),
+		_t20_sinais.size() == 1 and int(_t20_sinais[0]["numero"]) == 1
+			and String(_t20_sinais[0]["motivo"]) == GS.MOTIVO_DA_FASE_1)
+	_check("T20: e sai com a Fase 1 ainda em jogo — a reputação e o recibo com que ela fechou",
+		_t20_sinais.size() == 1 and int(_t20_sinais[0]["fase"]) == 1
+			and float(_t20_sinais[0]["rep"]) == 91.0 and int(_t20_sinais[0]["quitadas"]) == 3)
+	_check("T20: a partida segue na Fase 2, no primeiro dia dela, sem fim de jogo",
+		GS.numero_da_fase == 2 and GS.turn == GS.inicio_da_fase(2) and GS.turn == 85
+			and GS.phase != "game_over" and not GS.won and GS.end_reason == "")
+	_check("T20: a cobrança recomeça vazia, e a segunda chance por usar",
+		GS.parcela_indice == 0 and not GS.parcela_paid and GS.parcelas_quitadas == 0
+			and GS.emprestimo_devido == 0 and not GS.segunda_chance_usada and not GS.tem_cobranca())
+	_check("T20: a reputação recomeça na escala da Fase 2 (%.1f)" % GS.reputation,
+		GS.reputation == GS.reputacao_inicial(2))
+	_check("T20: e o recibo da Fase 1 fica no total pago",
+		GS.total_pago_parcelas == pago_antes + boleto)
+	_t20_passagem_ok = true
+
+
+func _t20_fase_2_joga_se() -> void:
+	if not _t20_ate_a_fase_2():
+		_check("T20: a partida chega à Fase 2", false)
+		return
+	# Sem cobrança, nenhuma pergunta lê uma parcela.
+	#
+	# ⚠️ ESTA LINHA NÃO APANHA QUEM LER A PARCELA SEM PERGUNTAR, e foi medido:
+	# com o mutante que tira o `tem_cobranca()` do `caixa_curto()`, o erro nasce
+	# no `valor_da_parcela()`, que é tipado e devolve o ZERO do tipo a quem o
+	# chamou — e a cadeia segue até um `false` plausível. Quem o apanha é o
+	# `SCRIPT ERROR` na saída, que o passo «Nenhuma suíte pode imprimir SCRIPT
+	# ERROR» do CI reprova (`gdscript.md`). Esta linha diz que a resposta é a
+	# certa; que nada rebentou pelo caminho diz o passo.
+	_check("T20: sem cobrança, nada pede o boleto",
+		not GS.caixa_curto() and not GS.pode_pagar_parcela_adiantado()
+			and not GS.pode_pedir_segunda_chance() and int(GS.projecao_do_dia()["parcela"]) == 0)
+	_check("T20: a Fase 2 não tem prazo, e o dia diz a fase",
+		not GS.fase_tem_prazo() and GS.rotulo_do_dia(GS.turn) == "Fase 2, dia %d" % GS.turn)
+	var dias: Array = GS.calendario()
+	_check("T20: o calendário mostra a semana de hoje e as três seguintes, sem cobrança",
+		dias.size() == GS.CALENDARIO_SEM_PRAZO_SEMANAS * GS.TURNS_PER_WEEK
+			and int(dias[0]["semana"]) == GS.current_week()
+			and dias.filter(func(d): return d["parcela_vence"] or d["ultimo_dia"]).is_empty())
+	# Os reparos da Fase 2 abrem no primeiro dia dela; o que a tabela não
+	# traz continua «nas próximas fases».
+	GS.cash = GS.START_CASH * 25
+	_check("T20: o píer 3 abre na Fase 2, depois do píer 2",
+		GS.desbloqueio_da_estrutura("pier_3") == ""
+			and GS.impedimento_estrutura("pier_3").begins_with("Precisa antes de"))
+	_check("T20: o escritório abre no primeiro dia dela",
+		GS.desbloqueio_da_estrutura("escritorio") == "" and GS.comprar_estrutura("escritorio"))
+	_check("T20: o guindaste e o cais continuam nas próximas fases",
+		GS.desbloqueio_da_estrutura("guindaste") == "Disponível nas próximas fases."
+			and GS.desbloqueio_da_estrutura("cais") == "Disponível nas próximas fases.")
+	# ⚠️ EM ARRAY, e não num `int`: o lambda do GDScript captura a variável
+	# local POR VALOR, e um `+= 1` lá dentro conta numa cópia — a primeira
+	# versão deste bloco dava «0 cobranças» de graça, e zero era o que ele
+	# queria provar. O `append` mexe no mesmo Array.
+	var cobrancas: Array = []
+	var semanas: Array = []
+	var ouvir_cobranca := func(v: int) -> void: cobrancas.append(v)
+	var ouvir_semana := func(r: Dictionary) -> void: semanas.append(int(r["semana"]))
+	GS.debt_due.connect(ouvir_cobranca)
+	GS.semana_fechada.connect(ouvir_semana)
+	var dia_inicial: int = GS.turn
+	var voltas := 0
+	while GS.turn - dia_inicial < 63 and voltas < 300 and GS.phase != "game_over":
+		voltas += 1
+		if GS.phase == "rival_offer":
+			GS.resolve_rival_offer(true)
+			continue
+		GS.cash = maxi(GS.cash, GS.START_CASH * 25)
+		for id in ["pier_2", "pier_3"]:
+			if GS.impedimento_estrutura(id) == "":
+				GS.comprar_estrutura(id)
+		while GS.atracagem_pendente() != Vector2i.ZERO:
+			if not GS.atracar(0, false):
+				break
+		GS.advance_turn()
+	GS.debt_due.disconnect(ouvir_cobranca)
+	GS.semana_fechada.disconnect(ouvir_semana)
+	_check("T20: nove semanas de Fase 2 sem cobrança e sem fim (%d dias, %d cobranças)"
+			% [GS.turn - dia_inicial, cobrancas.size()],
+		GS.turn - dia_inicial >= 63 and cobrancas.is_empty() and GS.phase != "game_over"
+			and GS.phase != "debt_payment")
+	# «Contagem só se testa acima de um» (`testes-e-guardas.md`): todas, e
+	# seguidas — o calendário não recomeça na Fase 2 (`103`).
+	_check("T20: e o boletim fecha toda semana, da 13 em diante (%s)" % str(semanas),
+		semanas.size() == 9 and semanas[0] == 13 and semanas[-1] == 21)
+	_check("T20: com o píer 3 de pé o porto chega aos três berços",
+		GS.tem_estrutura("pier_3") and GS.docks.size() == 3 and GS.workers.size() == 3)
+	# Perde-se só pelo caixa (`103`).
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	GS.cash = -GS.START_CASH * 25
+	GS.advance_turn()
+	_check("T20: o caixa negativo ainda acaba a partida na Fase 2",
+		GS.phase == "game_over" and not GS.won and GS.numero_da_fase == 2)
+	_t20_fase_2_ok = true
+
+
+# Um save da Fase 2 com a obra do píer 3 a andar, tirado de uma partida que lá
+# chegou, e os campos mexidos à vontade do caso.
+func _t20_save_da_fase_2() -> Dictionary:
+	if not _t20_ate_a_fase_2():
+		return {}
+	GS.cash = GS.START_CASH * 25
+	load("res://tools/estado_da_bancada.gd").instalar(GS, "pier_2")
+	if not GS.comprar_estrutura("pier_3"):
+		return {}
+	GS.save_game()
+	return JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
+
+
+# Com nome: o resumo dá o porto sem nome por livre (`066`), e a recusa não se
+# distinguiria dele.
+func _t20_no_espaco_2(dados: Dictionary) -> bool:
+	var com_nome: Dictionary = dados.duplicate(true)
+	com_nome["nome_porto"] = "Cais do T20"
+	var caminho: String = ArmazemLocal.caminho(GS.arquivo_do_espaco(2))
+	var f := FileAccess.open(caminho, FileAccess.WRITE)
+	f.store_string(JSON.stringify(com_nome))
+	f.close()
+	return not GS.resumo_do_espaco(2).is_empty()
+
+
+func _t20_save_pela_fase_do_arquivo() -> void:
+	var fase_2 := _t20_save_da_fase_2()
+	if fase_2.is_empty():
+		_check("T20: monta o save da Fase 2 com a obra do píer 3", false)
+		return
+	_check("T20: o save da Fase 2 traz a fase e a obra do píer 3",
+		int(fase_2["numero_da_fase"]) == 2 and String(fase_2["obra_em_andamento"]["id"]) == "pier_3")
+	# A partida viva na FASE 1: o píer 3 não é reparo dela, e o dia 85 é o
+	# último em que ela existe. Lido pela fase do arquivo, aceita.
+	_fresh_playing()
+	_check("T20: com a Fase 1 viva, o espaço da Fase 2 lê-se pela fase dele",
+		GS.numero_da_fase == 1 and _t20_no_espaco_2(fase_2))
+	# E ao contrário: com a Fase 2 viva, um espaço da Fase 1 no dia 30.
+	_fresh_playing()
+	GS.turn = 30
+	GS.save_game()
+	var fase_1: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GS.save_path))
+	if not _t20_ate_a_fase_2():
+		_check("T20: volta à Fase 2", false)
+		return
+	_check("T20: com a Fase 2 viva, o espaço da Fase 1 no dia 30 lê-se pela fase dele",
+		GS.numero_da_fase == 2 and _t20_no_espaco_2(fase_1))
+	# As recusas, uma a uma, cada uma sobre o save bom.
+	var casos := [
+		["a fase acima da tabela", "numero_da_fase", 3],
+		["a fase zero", "numero_da_fase", 0],
+		["a fase em texto", "numero_da_fase", "2"],
+		["a fase partida", "numero_da_fase", 2.5],
+		["o dia de antes de a Fase 2 abrir", "turn", 84],
+		["a Fase 1 com a obra do píer 3", "numero_da_fase", 1],
+		["uma parcela na Fase 2", "parcela_indice", 1],
+		["quitadas na Fase 2", "parcelas_quitadas", 3],
+		["o recibo pago na Fase 2", "parcela_paid", true],
+		["a segunda chance usada na Fase 2", "segunda_chance_usada", true],
+		["um estado de turno que não existe", "phase", "pausado"],
+	]
+	for caso in casos:
+		var ruim: Dictionary = fase_2.duplicate(true)
+		ruim[caso[1]] = caso[2]
+		_check("T20: recusa %s" % caso[0], GS._save_aceite(JSON.stringify(ruim)).is_empty())
+	# O controlo: o save bom passa, e a obra sem teto também — a Fase 2 não
+	# acaba, e uma obra que acabe no dia 300 é dela.
+	_check("T20: o save bom da Fase 2 passa", not GS._save_aceite(JSON.stringify(fase_2)).is_empty())
+	var longe: Dictionary = fase_2.duplicate(true)
+	longe["turn"] = 300
+	longe["obra_em_andamento"] = {"id": "pier_3", "inicio": 299,
+		"conclusao": 299 + GS.dias_da_obra("pier_3", 2)}
+	_check("T20: a obra da Fase 2 não tem teto de dia",
+		not GS._save_aceite(JSON.stringify(longe)).is_empty())
+	GS.apagar_espaco(2)
+	_t20_save_ok = true
+
+
+func _t20_degrau_15_para_16() -> void:
+	var texto := FileAccess.get_file_as_string("res://tests/saves/v15.json")
+	var v15 = JSON.parse_string(texto)
+	_check("T20: o exemplo da 15 lê-se", typeof(v15) == TYPE_DICTIONARY and int(v15["versao"]) == 15)
+	if typeof(v15) != TYPE_DICTIONARY:
+		return
+	_check("T20: e é da forma da 15 — com o legado, sem a fase",
+		v15.has("upgrade_purchased") and not v15.has("numero_da_fase"))
+	var migrado: Dictionary = GS.cadeia_de_migracao(v15, 16, GS._migrar_um_passo)
+	_check("T20: a cadeia leva-o à 16, na Fase 1 e sem o legado",
+		int(migrado.get("versao", 0)) == 16 and migrado.get("numero_da_fase") is int
+			and int(migrado["numero_da_fase"]) == 1 and not migrado.has("upgrade_purchased"))
+	var iguais := true
+	for chave in v15:
+		if chave in ["versao", "upgrade_purchased"]:
+			continue
+		if JSON.stringify(v15[chave]) != JSON.stringify(migrado.get(chave)):
+			iguais = false
+	_check("T20: e nenhum outro campo da 15 muda", iguais)
+	_check("T20: a origem não foi tocada", v15.has("upgrade_purchased"))
+	_fresh_playing()
+	var f := FileAccess.open(GS.save_path, FileAccess.WRITE)
+	f.store_string(texto)
+	f.close()
+	_check("T20: o save da 15 carrega na Fase 1",
+		GS.load_game() and GS.numero_da_fase == 1 and GS.turn == int(v15["turn"])
+			and GS.cash == int(v15["cash"]))
+
+	# A PARTIDA GANHA DA 15: as três pagas e o fim de jogo vencido. Na 16 é a
+	# Fase 2 no dia 85, com os recomeços da passagem.
+	var ganha: Dictionary = v15.duplicate(true)
+	ganha["turn"] = 85
+	ganha["phase"] = "game_over"
+	ganha["won"] = true
+	ganha["end_reason"] = GS.MOTIVO_DA_FASE_1
+	ganha["parcela_indice"] = 2
+	ganha["parcela_paid"] = true
+	ganha["parcelas_quitadas"] = 3
+	ganha["emprestimo_devido"] = 0
+	ganha["obra_em_andamento"] = {}
+	ganha["pending_rival"] = -1
+	ganha["reputation"] = 91.0
+	var passou: Dictionary = GS.cadeia_de_migracao(ganha, 16, GS._migrar_um_passo)
+	_check("T20: a partida ganha da 15 chega à 16 na Fase 2, a jogar",
+		int(passou["numero_da_fase"]) == 2 and passou["phase"] == "playing"
+			and passou["won"] == false and passou["end_reason"] == "")
+	_check("T20: com os recomeços da passagem",
+		int(passou["parcela_indice"]) == 0 and passou["parcela_paid"] == false
+			and int(passou["parcelas_quitadas"]) == 0 and int(passou["emprestimo_devido"]) == 0
+			and passou["segunda_chance_usada"] == false
+			and float(passou["reputation"]) == GS.reputacao_inicial(2))
+	_check("T20: e passa todas as recusas", not GS._save_aceite(JSON.stringify(ganha)).is_empty())
+	f = FileAccess.open(GS.save_path, FileAccess.WRITE)
+	f.store_string(JSON.stringify(ganha))
+	f.close()
+	var carregou: bool = GS.load_game()
+	if GS.phase == "rival_offer":
+		GS.resolve_rival_offer(true)
+	GS.advance_turn()
+	_check("T20: e joga-se: o dia anda sem cobrança nem fim",
+		carregou and GS.numero_da_fase == 2 and GS.turn == 86 and GS.phase != "game_over"
+			and GS.phase != "debt_payment")
+	# E a perdida fica onde a 15 a deixou.
+	var perdida: Dictionary = v15.duplicate(true)
+	perdida["phase"] = "game_over"
+	perdida["won"] = false
+	var ficou: Dictionary = GS.cadeia_de_migracao(perdida, 16, GS._migrar_um_passo)
+	_check("T20: a partida perdida da 15 fica no fim de jogo, na Fase 1",
+		int(ficou["numero_da_fase"]) == 1 and ficou["phase"] == "game_over" and ficou["won"] == false)
+	GS.clear_save()
+	_fresh_playing()
+	_t20_degrau_ok = true
+
+
 func _t14_fase_inteira() -> void:
 	_fresh_playing()
 	GS.cash = GS.START_CASH * 25
@@ -574,8 +884,13 @@ func _t14_fase_inteira() -> void:
 	# do vencimento deixa o caixa a zero, o `pay_debt()` recusa calado e o
 	# `advance_turn()` volta calado — o dia não anda, e a suíte ficava PRESA
 	# em vez de reprovar. Medido com o mutante do save sem a dívida.
+	#
+	# ⚠️ ATÉ À PASSAGEM, e não até ao dia 84 (`104`): a terceira quitação
+	# segue para a Fase 2, que não tem prazo — o `turnos_da_fase()` dela
+	# rebenta, e por isso o teto lê o da Fase 1.
 	var voltas := 0
-	while GS.turn <= GS.turnos_da_fase() and GS.phase != "game_over" and voltas < 400:
+	while GS.turn <= GS.turnos_da_fase(1) and GS.numero_da_fase == 1 \
+			and GS.phase != "game_over" and voltas < 400:
 		voltas += 1
 		if GS.phase == "rival_offer":
 			GS.resolve_rival_offer(true)
@@ -597,7 +912,10 @@ func _t14_fase_inteira() -> void:
 			GS.cash = 0
 			_check("T14: save retoma cobrança %d suspensa" % (indice + 1), GS.load_game() and GS.phase == "debt_payment" and GS.cash == dinheiro)
 			GS.pay_debt()
-			_check("T14: cobrança %d debitada uma vez" % (indice + 1), GS.cash == dinheiro - valor and GS.parcelas_quitadas == indice + 1)
+			# A terceira passa à Fase 2, que recomeça o recibo (`104`): ali quem
+			# prova a quitação é a fase nova.
+			_check("T14: cobrança %d debitada uma vez" % (indice + 1), GS.cash == dinheiro - valor
+				and (GS.parcelas_quitadas == indice + 1 if indice < 2 else GS.numero_da_fase == 2))
 			var depois: int = GS.cash
 			GS.pay_debt()
 			_check("T14: repetir Pagar não debita outra vez", GS.cash == depois)
@@ -611,9 +929,11 @@ func _t14_fase_inteira() -> void:
 				if indice == 0:
 					_check("T14: pátio abre após a cobrança paga", GS.comprar_estrutura("patio"))
 	_check("T14: o laço dos dias acabou sem bater no teto", voltas < 400)
-	_check("T14: três cobranças reais emitidas", cobrancas == [GS.valor_da_parcela(0), GS.valor_da_parcela(1), GS.valor_da_parcela(2)])
-	_check("T14: doze boletins, vitória só após o dia 84", boletins.size() == 12 and GS.won and GS.phase == "game_over" and GS.turn == 85)
-	_check("T14: recibo soma o que efetivamente saiu", GS.total_pago_parcelas == GS.valor_da_parcela(0) + GS.valor_da_parcela(1) + GS.valor_da_parcela(2))
+	_check("T14: três cobranças reais emitidas", cobrancas == [GS.valor_da_parcela(0, 1), GS.valor_da_parcela(1, 1), GS.valor_da_parcela(2, 1)])
+	# A Fase 1 ganha não acaba a partida (`104`): segue na Fase 2, no dia 85.
+	_check("T14: doze boletins, e a Fase 2 só depois do dia 84", boletins.size() == 12
+		and GS.numero_da_fase == 2 and not GS.won and GS.phase != "game_over" and GS.turn == 85)
+	_check("T14: recibo soma o que efetivamente saiu", GS.total_pago_parcelas == GS.valor_da_parcela(0, 1) + GS.valor_da_parcela(1, 1) + GS.valor_da_parcela(2, 1))
 	GS.debt_due.disconnect(ouvir_cobranca)
 	GS.semana_fechada.disconnect(ouvir_boletim)
 
@@ -632,9 +952,9 @@ func _t14_fase_inteira() -> void:
 		GS.turn = vencimento
 		GS.advance_turn()
 		_check("T14: antecipação não chama cobrança outra vez", GS.phase != "debt_payment")
-	_check("T14: três antecipações também vencem a fase", GS.phase == "game_over" and GS.won)
+	_check("T14: três antecipações também passam à Fase 2", GS.numero_da_fase == 2 and not GS.won)
 	_check("T14: antecipar nunca perdoa o capital emprestado", GS.total_pago_parcelas >= GS.START_CASH)
-	_check("T14: antecipar abate juros do total contratado", GS.total_pago_parcelas < GS.valor_da_parcela(0) + GS.valor_da_parcela(1) + GS.valor_da_parcela(2))
+	_check("T14: antecipar abate juros do total contratado", GS.total_pago_parcelas < GS.valor_da_parcela(0, 1) + GS.valor_da_parcela(1, 1) + GS.valor_da_parcela(2, 1))
 
 	# Falta de dinheiro é recusada em cada parcela, com o estado intacto.
 	for indice in range(3):
@@ -1149,7 +1469,10 @@ func _run() -> void:
 		GS.new_game()
 		var bought_up := false
 		var safety := 0
-		while GS.phase != "game_over" and safety < 300:
+		# Até à passagem (`104`): as três quitações seguem para a Fase 2, que
+		# não acaba por calendário — sem esta condição a partida ganha jogava
+		# até ao teto e reprovava como travada.
+		while GS.phase != "game_over" and GS.numero_da_fase == 1 and safety < 300:
 			safety += 1
 			if GS.phase == "rival_offer":
 				GS.resolve_rival_offer(true)
@@ -1162,7 +1485,7 @@ func _run() -> void:
 				continue
 			if GS.phase == "playing":
 				if not bought_up and GS.cash >= int(GS.ESTRUTURAS["pier_2"]["custo"]):
-					GS.buy_upgrade()
+					GS.comprar_estrutura("pier_2")
 					bought_up = true
 				# Atraca o que estiver ao largo (`083`). Até lá este laço alocava
 				# trabalhadores em barcos na doca — e depois da fila ele passava
@@ -1174,7 +1497,7 @@ func _run() -> void:
 		if safety >= 300:
 			_check("partida %d terminou (sem loop infinito)" % run, false)
 		servidos += int(GS.metrics["boats_served"])
-		if GS.won:
+		if GS.won or GS.numero_da_fase > 1:
 			wins += 1
 		else:
 			losses += 1
@@ -1229,6 +1552,16 @@ func _run() -> void:
 	print("=== T19: o degrau 14→15 do save ===")
 	_t19_degrau_14_para_15()
 	_check("o bloco T19 correu até ao fim", _t19_completo)
+
+	print("=== T20: a passagem e a Fase 2 sem meta ===")
+	_t20_passagem()
+	_check("o bloco T20 (a passagem) correu até ao fim", _t20_passagem_ok)
+	_t20_fase_2_joga_se()
+	_check("o bloco T20 (a Fase 2 joga-se) correu até ao fim", _t20_fase_2_ok)
+	_t20_save_pela_fase_do_arquivo()
+	_check("o bloco T20 (o save pela fase do arquivo) correu até ao fim", _t20_save_ok)
+	_t20_degrau_15_para_16()
+	_check("o bloco T20 (o degrau 15→16) correu até ao fim", _t20_degrau_ok)
 
 	print("")
 	if _fails == 0:

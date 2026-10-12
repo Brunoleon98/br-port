@@ -60,6 +60,7 @@ func conectar() -> void:
 	GameState.negociacao_resolvida.connect(_cida_negociacao)
 	GameState.contrato_fechado.connect(_cida_contrato)
 	GameState.reputation_changed.connect(_cida_reputacao)
+	GameState.fase_concluida.connect(_cida_passagem)
 	GameState.cash_changed.connect(_cida_caixa)
 	GameState.turn_advanced.connect(_cida_semana)
 
@@ -177,6 +178,17 @@ func _cida_reputacao(valor: float) -> void:
 		_cida("reputacao_subiu" if valor > _reputacao_vista else "reputacao_caiu")
 		_faixa_reputacao = faixa
 	_reputacao_vista = valor
+
+
+# ⚠️ A PASSAGEM RECOMEÇA A BARRA, e isso não é notícia (`104`): a Fase 2 abre a
+# reputação na escala dela (D4), e um porto que fechou a Fase 1 em «Referência»
+# cai para «Respeitado» sem ter recusado contrato nenhum. Sem isto a Dona Cida
+# diria «Andaram recusando contrato, chefia» no dia em que as três foram
+# pagas — a frase verdadeira em português e falsa neste mundo. O sinal sai
+# ANTES do recomeço, e esquecer a faixa aqui faz o recomeço só a registar,
+# como a primeira chamada.
+func _cida_passagem(_numero: int, _motivo: String) -> void:
+	_faixa_reputacao = ""
 
 
 # O aviso de caixa curto dispara UMA VEZ por travessia, não a cada centavo
