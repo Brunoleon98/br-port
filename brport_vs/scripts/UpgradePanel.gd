@@ -110,7 +110,12 @@ func _build_ui() -> void:
 			falta.append(String(dados["nome"]))
 	var porto := "Porto nível %d — recebe %s" % [nivel, ", ".join(recebe).to_lower()]
 	if int(GameState.nivel_guindaste()) == 1:
-		porto += "\nGuindaste de madeira · novos guindastes na Fase 2"
+		porto += "\nGuindaste de madeira · " + ("construa a treliça para receber cargueiros"
+			if GameState.numero_da_fase == 2 else "a treliça abre na Fase 2")
+	elif int(GameState.nivel_guindaste()) == 2:
+		porto += "\nGuindaste de treliça · cargueiro: %s; granel: %s" % [
+			Narrativa.concordar(GameState._turnos_de_operacao("medio", "conteiner"), "dia", "dias"),
+			Narrativa.concordar(GameState._turnos_de_operacao("medio", "granel"), "dia", "dias")]
 	if falta.size() > 0:
 		porto += "\nAinda não aguenta: %s" % ", ".join(falta).to_lower()
 	vbox.add_child(PainelNarrativo.tarja_solta(

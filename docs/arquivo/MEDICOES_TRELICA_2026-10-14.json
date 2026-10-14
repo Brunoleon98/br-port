@@ -1,0 +1,655 @@
+{
+  "base": "d9848ed400c3d05386a0c819cbf4608e8a386b04",
+  "semente": 20260825,
+  "n_por_perfil_e_preco": 600,
+  "dias_observados_na_fase_2": 56,
+  "quantis": [
+    "P10",
+    "P50",
+    "P90"
+  ],
+  "preco_escolhido": 80000,
+  "dias_de_obra_escolhidos": 2,
+  "precos": [
+    {
+      "preco": 120000,
+      "dias_de_obra": 2,
+      "n": 600,
+      "perfis": [
+        {
+          "perfil": "Ótimo",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            560804,
+            612290,
+            657287
+          ],
+          "caixa_final": [
+            1365879,
+            1450375,
+            1534048
+          ],
+          "menor_caixa": [
+            285936,
+            340166,
+            389543
+          ],
+          "margem_operacional": [
+            1107839,
+            1180443,
+            1248143
+          ]
+        },
+        {
+          "perfil": "Mediano",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            324732,
+            405162,
+            470170
+          ],
+          "caixa_final": [
+            943974,
+            1077110,
+            1194759
+          ],
+          "menor_caixa": [
+            259161,
+            268742,
+            285725
+          ],
+          "margem_operacional": [
+            940773,
+            1015327,
+            1085472
+          ]
+        },
+        {
+          "perfil": "Descuidado",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 0,
+          "cargueiro_atendido": 0,
+          "dias_ate_trelica": null,
+          "dias_ate_cargueiro": null,
+          "caixa_na_compra": null,
+          "caixa_final": [
+            189855,
+            238760,
+            283255
+          ],
+          "menor_caixa": [
+            97489,
+            136856,
+            173126
+          ],
+          "margem_operacional": [
+            71071,
+            105152,
+            135350
+          ]
+        },
+        {
+          "perfil": "Antecipado",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            292828,
+            360049,
+            413729
+          ],
+          "caixa_final": [
+            905191,
+            1018986,
+            1119220
+          ],
+          "menor_caixa": [
+            235888,
+            266285,
+            279041
+          ],
+          "margem_operacional": [
+            930248,
+            999505,
+            1070193
+          ]
+        }
+      ]
+    },
+    {
+      "preco": 40000,
+      "dias_de_obra": 2,
+      "n": 600,
+      "perfis": [
+        {
+          "perfil": "Ótimo",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            640804,
+            692290,
+            737287
+          ],
+          "caixa_final": [
+            1445879,
+            1530375,
+            1614048
+          ],
+          "menor_caixa": [
+            365936,
+            420166,
+            469543
+          ],
+          "margem_operacional": [
+            1107839,
+            1180443,
+            1248143
+          ]
+        },
+        {
+          "perfil": "Mediano",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            404732,
+            485162,
+            550170
+          ],
+          "caixa_final": [
+            1068244,
+            1190124,
+            1303410
+          ],
+          "menor_caixa": [
+            225990,
+            266610,
+            287187
+          ],
+          "margem_operacional": [
+            974383,
+            1045730,
+            1114258
+          ]
+        },
+        {
+          "perfil": "Descuidado",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 0,
+          "cargueiro_atendido": 0,
+          "dias_ate_trelica": null,
+          "dias_ate_cargueiro": null,
+          "caixa_na_compra": null,
+          "caixa_final": [
+            189855,
+            238760,
+            283255
+          ],
+          "menor_caixa": [
+            97489,
+            136856,
+            173126
+          ],
+          "margem_operacional": [
+            71071,
+            105152,
+            135350
+          ]
+        },
+        {
+          "perfil": "Antecipado",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            372828,
+            440049,
+            493729
+          ],
+          "caixa_final": [
+            1017491,
+            1125258,
+            1225996
+          ],
+          "menor_caixa": [
+            250868,
+            267860,
+            282528
+          ],
+          "margem_operacional": [
+            959802,
+            1027983,
+            1094484
+          ]
+        }
+      ]
+    },
+    {
+      "preco": 60000,
+      "dias_de_obra": 2,
+      "n": 600,
+      "perfis": [
+        {
+          "perfil": "Ótimo",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            620804,
+            672290,
+            717287
+          ],
+          "caixa_final": [
+            1425879,
+            1510375,
+            1594048
+          ],
+          "menor_caixa": [
+            345936,
+            400166,
+            449543
+          ],
+          "margem_operacional": [
+            1107839,
+            1180443,
+            1248143
+          ]
+        },
+        {
+          "perfil": "Mediano",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            384732,
+            465162,
+            530170
+          ],
+          "caixa_final": [
+            1036750,
+            1156986,
+            1276846
+          ],
+          "menor_caixa": [
+            235396,
+            267420,
+            284596
+          ],
+          "margem_operacional": [
+            963667,
+            1036315,
+            1109037
+          ]
+        },
+        {
+          "perfil": "Descuidado",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 0,
+          "cargueiro_atendido": 0,
+          "dias_ate_trelica": null,
+          "dias_ate_cargueiro": null,
+          "caixa_na_compra": null,
+          "caixa_final": [
+            189855,
+            238760,
+            283255
+          ],
+          "menor_caixa": [
+            97489,
+            136856,
+            173126
+          ],
+          "margem_operacional": [
+            71071,
+            105152,
+            135350
+          ]
+        },
+        {
+          "perfil": "Antecipado",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            352828,
+            420049,
+            473729
+          ],
+          "caixa_final": [
+            994597,
+            1100277,
+            1202792
+          ],
+          "menor_caixa": [
+            260614,
+            269195,
+            283732
+          ],
+          "margem_operacional": [
+            956209,
+            1019701,
+            1089885
+          ]
+        }
+      ]
+    },
+    {
+      "preco": 80000,
+      "dias_de_obra": 2,
+      "n": 600,
+      "perfis": [
+        {
+          "perfil": "Ótimo",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            600804,
+            652290,
+            697287
+          ],
+          "caixa_final": [
+            1405879,
+            1490375,
+            1574048
+          ],
+          "menor_caixa": [
+            325936,
+            380166,
+            429543
+          ],
+          "margem_operacional": [
+            1107839,
+            1180443,
+            1248143
+          ]
+        },
+        {
+          "perfil": "Mediano",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            364732,
+            445162,
+            510170
+          ],
+          "caixa_final": [
+            1007676,
+            1127952,
+            1248642
+          ],
+          "menor_caixa": [
+            244938,
+            268653,
+            284696
+          ],
+          "margem_operacional": [
+            955095,
+            1030057,
+            1096324
+          ]
+        },
+        {
+          "perfil": "Descuidado",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 0,
+          "cargueiro_atendido": 0,
+          "dias_ate_trelica": null,
+          "dias_ate_cargueiro": null,
+          "caixa_na_compra": null,
+          "caixa_final": [
+            189855,
+            238760,
+            283255
+          ],
+          "menor_caixa": [
+            97489,
+            136856,
+            173126
+          ],
+          "margem_operacional": [
+            71071,
+            105152,
+            135350
+          ]
+        },
+        {
+          "perfil": "Antecipado",
+          "chegaram": 600,
+          "quebraram": 0,
+          "prontas": 600,
+          "cargueiro_atendido": 600,
+          "dias_ate_trelica": [
+            2,
+            2,
+            2
+          ],
+          "dias_ate_cargueiro": [
+            3,
+            3,
+            5
+          ],
+          "caixa_na_compra": [
+            332828,
+            400049,
+            453729
+          ],
+          "caixa_final": [
+            955423,
+            1070511,
+            1180199
+          ],
+          "menor_caixa": [
+            260549,
+            267607,
+            282946
+          ],
+          "margem_operacional": [
+            942474,
+            1015914,
+            1087829
+          ]
+        }
+      ]
+    }
+  ],
+  "ordem_de_compra_fase_2": [
+    "pier_2",
+    "patio",
+    "armazem",
+    "trelica",
+    "pier_3",
+    "escritorio"
+  ],
+  "limite": "Recorte da treliça; não mede a meta completa da Fase 2 nem acesso depois da janela.",
+  "controle_positivo": {
+    "preco": 400000,
+    "n_por_perfil": 20,
+    "efeito": "Atrasa a treliça do Mediano além do dia 87; mesma semente do piloto."
+  },
+  "mutantes": [
+    {
+      "mutante": "sem-nivel-2",
+      "reprovacoes": [
+        "T21: concluída, a treliça põe píer, guindaste e porto no nível 2",
+        "T21: recebe pesca e cargueiro, mantendo longo curso bloqueado",
+        "T21: save da treliça pronta volta ao nível 2 sem meta de bancada",
+        "T21: a doca real escolhe o píer e a lança aprovados do nível 2",
+        "T21: o sorteio do porto de nível 2 produz cargueiro com contêiner",
+        "o bloco T21 correu até ao fim"
+      ]
+    },
+    {
+      "mutante": "nivel-2-durante-obra",
+      "reprovacoes": [
+        "T21: a treliça retoma do save ainda em obra, sem cobrar de novo"
+      ]
+    },
+    {
+      "mutante": "cargueiro-um-dia",
+      "reprovacoes": [
+        "T21: a treliça conserva dois dias do cargueiro e o extra do granel",
+        "T21: após um dia permanece na doca sem pagamento",
+        "T21: o cargueiro retoma do save com um dia trabalhado"
+      ]
+    },
+    {
+      "mutante": "trelica-na-fase-1",
+      "reprovacoes": [
+        "T21: a treliça não se compra na Fase 1"
+      ]
+    },
+    {
+      "mutante": "nivel-declarado-1",
+      "reprovacoes": [
+        "  FALHA F20: o nível máximo da Fase 2 é o que os reparos dela alcançam (declara 1, alcançam 2 em 40 portos)"
+      ]
+    },
+    {
+      "mutante": "load-perde-trelica",
+      "reprovacoes": [
+        "  FAIL  T21: save da treliça pronta volta ao nível 2 sem meta de bancada",
+        "  FAIL  T21: a doca real escolhe o píer e a lança aprovados do nível 2",
+        "  FAIL  T21: o sorteio do porto de nível 2 produz cargueiro com contêiner",
+        "  FAIL  o bloco T21 correu até ao fim"
+      ]
+    },
+    {
+      "mutante": "arte-madeira-no-n2",
+      "reprovacoes": [
+        "  FAIL  T21: a doca real escolhe o píer e a lança aprovados do nível 2"
+      ]
+    }
+  ]
+}

@@ -491,8 +491,10 @@ frentes, e **a ordem é do Bruno**:
    etapas — a passagem e o save 16 com o M9; a treliça e o cargueiro; a meta
    de três barras, a regressão e o fim no diário; a medição. Sem dívida e
    sem prazo, por escolha do Bruno. Os outros três esperam-na. **A etapa 1
-   fechou em 12/10 (`104`):** a Fase 2 joga-se no mesmo save, sem meta; a
-   seguinte é a 2.
+   fechou em 12/10 (`104`):** a Fase 2 joga-se no mesmo save, sem meta.
+   **A etapa 2 fechou em 14/10 (`105`):** a treliça compra-se por R$80 mil,
+   com dois dias de obra provisórios, e abre o cargueiro no porto de nível 2.
+   A seguinte é a 3: a meta, a regressão e o fim.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.
@@ -752,8 +754,11 @@ a fase no diário e deixa o jogo seguir livre; save 16 com o M9. São quatro
 etapas, uma por sessão. **A etapa 1 fechou em 12/10 (`104`)**: as três
 quitações passam à Fase 2 no dia 85, o diário da Fase 1 segue para ela, o
 save 16 guarda a fase e levou o M9, e a Fase 2 joga-se sem meta; o
-simulador mede a Fase 1 com paridade à main. **A seguinte é a 2** — a
-treliça, o porto de nível 2 e o cargueiro de dois dias.
+simulador mede a Fase 1 com paridade à main. **A etapa 2 fechou em 14/10
+(`105`)** — a treliça comprável, o porto de nível 2 e o cargueiro de dois dias,
+com a arte das bancadas e uma partida fotografada até lá. Preço e prazo
+provisórios, com varredura deste recorte; a etapa 4 mede a meta completa.
+**A seguinte é a 3** — a meta, a regressão e o fim.
 Depois delas, o cancelamento, os trabalhadores extras e a linha voluntária
 voltam ao Bruno, já com onde agir.
 

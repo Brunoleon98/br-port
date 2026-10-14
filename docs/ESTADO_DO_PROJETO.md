@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 12/10/2026 — a passagem para a Fase 2 e o save 16 (`104`)
+> **Última atualização:** 14/10/2026 — a treliça comprável e o cargueiro (`105`)
 >
 > **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
 > não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
@@ -69,12 +69,13 @@ após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
 iguais de R$140 mil, R$20 mil de juros totais. **Quem não tem o boleto ganha
 uma segunda chance** do Sr. Ribeiro, uma vez por fase (`102`). **As três
 quitações passam à Fase 2 no dia 85**, no mesmo save, sem dívida nem prazo,
-e ela joga-se livre: a treliça, a meta e a medição são as etapas 2–4 da
-`103` (`104`).
+e ela joga-se livre: a treliça chegou (`105`); a meta e a medição completa
+são as etapas 3–4 da `103`.
 
-**O porto recebe pesca durante a Fase 1** (`086`): a classe depende do menor
-nível entre píer e guindaste. O Construir explica a madeira e os bloqueios.
-Níveis 2/3 só nas bancadas; progressão futura pendente.
+**Madeira e pesca na Fase 1** (`086`). Na Fase 2 a **treliça custa R$80 mil
+e leva dois dias**, provisórios: com o píer 2 pronto, sua conclusão abre o
+porto de nível 2 e o cargueiro (dois dias; granel, três). O Construir explica
+a compra; pórtico e cais continuam para a Fase 3 (`105`).
 
 **E o navio vem ao porto POR ALGUMA COISA:** cada barco nasce com um MOTIVO —
 Pescado, Armazenagem, Contêiner ou Granel —, lido no cartão da doca. O efeito é
@@ -114,8 +115,8 @@ itens param à espera do Bruno. Aqui fica só a posição.
 mais tranquila — **M1** a **M11** fecharam (`088`–`099`, o M9 na `104`); o
 M12 espera o A8, e a fila parou: voltou a frente 5, o **tutorial curto**
 (`100`, `101`) e a **segunda chance** (`102`) estão no jogo, e a
-**progressão para a Fase 2** (`103`) fez a etapa 1 (`104`); a **2**, a
-treliça e o cargueiro, é a seguinte. O Pages publica a main verde.
+**progressão para a Fase 2** (`103`) fez as etapas 1 (`104`) e 2 (`105`);
+a seguinte é a **3**, a meta, a regressão e o fim. O Pages publica a main verde.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -147,7 +148,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`). O **D34** pergunta de ONDE vem um stylebox (`045`); espera `DESIGN OK` |
-| `brport_vs/tests/teste_fumaca.gd` | **Teste de fumaça** — toda `.tscn` instancia, todo ícone tem arquivo, o save de outra versão é descartado sem tocar no estado vivo, nenhum `{token}` chega cru, **toda fala escrita chega ao jogo**, o prazo de obra prometido é cumprido (F18), todo nome lido por string existe no alvo (F19, `093`), a tabela das fases diz a verdade (F20, `094`), um save de exemplo por versão carrega (F21, `098`), o tutorial fala só quando deve (F22, `101`), e a Fase 2 abre na tela, com o M9 trancado (F23, `104`) |
+| `brport_vs/tests/teste_fumaca.gd` | **Fumaça** — cenas, ícones, save, tokens e falas; prazo prometido (F18), nomes lidos por string (F19), fases declaradas contra o alcançado (F20), exemplos de save (F21), tutorial (F22), Fase 2 e M9 (F23) |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
 | `brport_vs/tools/gravar_save_de_exemplo.gd` | Grava o save de exemplo da versão corrente em `tests/saves/` (`098`) |
 | `brport_vs/scripts/ArmazemLocal.gd` | **Onde o jogo guarda o que é do jogador** — com `--script`, em `user://ferramentas/`. `tools/sentinela_do_jogador.py` prova-o no CI (`061`) |
@@ -193,6 +194,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Mede a Fase 1 e pára na passagem (`104`) |
 | `brport_vs/tools/leitura_do_simulador.gd` | A conclusão dele, fora do `SceneTree` para se provar com fixture (T7). Identidade ausente ou dupla: código 1 (`030`) |
 | `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor. Avança por TURNO efetivo, pelo botão do jogo, e pára diante de modal (`031`) |
+| `brport_vs/tools/medir_trelica.gd` + `capturar_fase_2.gd` | Preços do recorte 2 e foto da partida jogada desde o dia 1 até ao cargueiro (`105`) |
 | `brport_vs/tools/folha_props.gd` | **A folha dos props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Reprova ao transbordar; o catálogo e o chão vivem em `catalogo_props.gd` |
 | `brport_vs/tools/prancha_prop.gd` | **Para iterar UM prop**: a versão do jogo contra a candidata, na foto do jogo, a 1:1, ampliada, em silhueta e valor e na escala, com os números. Sem candidata exige Δ zero (`068`) |
 | `brport_vs/tools/escala_props.gd` | **Os props a 1:1 com o pé na mesma linha**, o trabalhador de régua (`068`) |
@@ -250,7 +252,7 @@ passa à Fase 2 (`104`).
   **Quitar antes abate só juros da janela** (`085`) e mantém o recibo até o fecho
   do período, sem abrir a próxima cobrança antes dele (`085`). Sem o boleto
   nas duas primeiras, a segunda chance (`102`).
-- **Três reparos disponíveis por progressão**, no catálogo de sete estruturas:
+- **Três reparos disponíveis por progressão na Fase 1**, no catálogo de estruturas:
   píer 2, armazém e pátio. A terceira doca e os upgrades continuam na bancada
   de arte e testes, mas não podem ser comprados nesta Fase 1 (`085`). O guindaste
   fica em madeira; o conjunto visual n1 conserva a base correta (`086`). O

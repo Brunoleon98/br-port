@@ -185,7 +185,16 @@ const ESTRUTURAS := {
 		"desc": "-50% nos salários da semana",
 		"custo": 80000, "ordem": 5, "requer": "",
 	},
-	# ── OS DOIS UPGRADES DE NÍVEL ──
+	# A treliça chega na Fase 2 (`103`). Compra o nível intermediário que
+	# antes só a bancada montava; não corta dias como o pórtico.
+	# TUNING: preço provisório, varrido nesta etapa e revisto com a meta
+	# completa na etapa 4. O píer 2 com ela dá os dois reparos do nível 2.
+	"trelica": {
+		"nome": "Guindaste de treliça",
+		"desc": "o cargueiro passa a atracar",
+		"custo": 80000, "ordem": 6, "requer": "pier_2",
+	},
+	# ── OS UPGRADES DO NÍVEL 3 ──
 	#
 	# O GDD 7 decidiu que "estruturas principais (grua, cais, armazém) têm
 	# upgrade in-place de até 3 níveis", e a ARTE dos três já existia desde
@@ -202,7 +211,7 @@ const ESTRUTURAS := {
 	"guindaste": {
 		"nome": "Guindaste de pórtico",
 		"desc": "corta um turno de cada operação",
-		"custo": 120000, "ordem": 6, "requer": "pier_2",
+		"custo": 120000, "ordem": 7, "requer": "pier_2",
 	},
 	# ⚠️ O CAIS DEIXOU DE SER UM MULTIPLICADOR EM 06/09. Ele dava "+60% de
 	# chance de navio grande" — um efeito estatístico que ninguém vê acontecer,
@@ -212,11 +221,11 @@ const ESTRUTURAS := {
 	"cais": {
 		"nome": "Reforçar o cais",
 		"desc": "o navio de longo curso passa a atracar",
-		"custo": 150000, "ordem": 7, "requer": "guindaste",
+		"custo": 150000, "ordem": 8, "requer": "guindaste",
 	},
 }
 
-# O guindaste de pórtico corta o tempo de operação. É o único dos sete que mexe
+# O guindaste de pórtico corta o tempo de operação. É o único que mexe
 # na VAZÃO em vez de no valor: os outros multiplicam dinheiro, este devolve
 # turnos, e turno devolvido vira barco a mais.
 #
@@ -507,7 +516,7 @@ const FASES := [
 		# Os três reparos da Fase 1 continuam a abrir — quem chega aqui sem o
 		# armazém não fica sem ele para sempre —, e entram o píer 3 e o
 		# escritório, os dois com arte desde a ruína. Todos desde o primeiro dia
-		# dela, uma obra de cada vez (`087`). A treliça é a etapa 2.
+		# dela, uma obra de cada vez (`087`). A treliça entra na etapa 2.
 		# TUNING: os dias de obra dos dois novos são PROVISÓRIOS até à etapa 4
 		# (`/balancear`): o píer 3 com os três do pátio, que é a obra grande, e
 		# o escritório com os dois dos reparos pequenos.
@@ -517,13 +526,13 @@ const FASES := [
 			"patio": {"semana": 1, "quitadas": 0, "dias_de_obra": 3},
 			"pier_3": {"semana": 1, "quitadas": 0, "dias_de_obra": 3},
 			"escritorio": {"semana": 1, "quitadas": 0, "dias_de_obra": 2},
+			# TUNING: dois dias provisórios, como instalar um reparo pequeno;
+			# a medição com a meta completa revê o prazo na etapa 4 (`103`).
+			"trelica": {"semana": 1, "quitadas": 0, "dias_de_obra": 2},
 		},
-		# ⚠️ AINDA 1, e a `103` diz 2. O 2 é o que a treliça alcança, e ela
-		# entra na etapa 2: sem ela o guindaste fica em madeira e o porto no
-		# nível 1 com qualquer compra desta linha. O F20 confere o declarado
-		# contra o alcançado, IGUAL, e um 2 aqui hoje seria a mentira que ele
-		# existe para apanhar. Quem trouxer a treliça sobe os dois juntos.
-		"nivel_maximo": 1,
+		# A treliça e o nível declarado sobem juntos: o F20 compara este
+		# número com o que as combinações de compras realmente alcançam.
+		"nivel_maximo": 2,
 		"bercos": 3,
 		# TUNING: onde a barra recomeça. A escala é 0–100 em cada fase (D4), e
 		# a passagem põe-na aqui. Provisório até à etapa 4: o mesmo da Fase 1,
@@ -2256,7 +2265,7 @@ func tem_estrutura(id: String) -> bool:
 ## O píer lê as estruturas; o guindaste lê seu equipamento, separadamente.
 ## Os reparos da Fase 1 não compram um guindaste novo (`086`). O aparelho
 ## de madeira permanece a Fase 1 inteira; a treliça é compra da Fase 2, na
-## etapa 2 da `103` — a Fase 2 já se joga (`104`), ainda sem ela. A arte e
+## etapa 2 da `103`. A arte e
 ## o pórtico futuro continuam exercitados pelas bancadas. Seu nível intermediário é montagem efêmera,
 ## restrita a --script; não é um campo do jogador nem entra no save.
 func nivel_pier() -> int:
@@ -2268,6 +2277,8 @@ func nivel_pier() -> int:
 func nivel_guindaste() -> int:
 	if tem_estrutura("guindaste"):
 		return 3
+	if tem_estrutura("trelica"):
+		return 2
 	if ArmazemLocal.sob_ferramenta() and has_meta(&"guindaste_intermediario_da_bancada"):
 		return 2
 	return 1
@@ -2485,13 +2496,10 @@ func nivel_do_porto() -> int:
 	return mini(nivel_pier(), nivel_guindaste())
 
 
-# ⚠️ O NÍVEL 2 NÃO TEM DONO, E POR ISSO NENHUMA `desc` O PROMETE. Ele sai de
-# `estruturas.size() >= 2` — duas estruturas QUAISQUER —, que era uma leitura
-# escrita em 05/09 para a ARTE do píer e da lança engrossarem à medida que o
-# porto se levanta. Escrever "e o cargueiro passa a atracar" na descrição do
-# Píer 2 seria mentira: quem comprar o escritório e o pátio chega lá sem tocar
-# num píer. O nível 3 tem dono — é o cais, que já exige o guindaste pela cadeia
-# de `requer` —, e é só na descrição dele que a promessa aparece.
+# O píer n2 continua a sair de duas estruturas QUAISQUER (`007`), mas a
+# treliça agora é a compra que abre o cargueiro (`103`): requer o píer 2,
+# logo sua conclusão garante também a segunda estrutura e o píer n2. Não
+# basta reconstruir píeres enquanto o guindaste continua em madeira (`086`).
 #
 # Quem conta a regra ao jogador, então: o painel Construir, que mostra o nível
 # do porto e o que cada um recebe (`UpgradePanel.gd`), a arte do píer e da
