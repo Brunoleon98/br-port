@@ -79,8 +79,8 @@ jobs:
       - name: Importar o projeto
         run: |
           set -euo pipefail
-          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --headless --path brport_vs --import
+          python3 tools/importar_para_ci.py brport_vs \
+            ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
 
       - name: Plantar a sentinela do jogador
         # O save, o volume e as gravações do JOGADOR vivem no `user://` do
@@ -141,8 +141,8 @@ jobs:
             exit 0
           fi
 
-          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --headless --path /tmp/base/brport_vs --import
+          python3 tools/importar_para_ci.py /tmp/base/brport_vs \
+            ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
           /tmp/base/tools/capturar_evidencia.sh /tmp/base/brport_vs \
             "$PWD/fotos/antes" \
             ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"

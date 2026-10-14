@@ -97,3 +97,13 @@ em segundos em vez de depois de um export inteiro.
 
 O `xvfb-run` só faz falta para a captura, que precisa de contexto gráfico.
 Teste e import rodam sem tela.
+
+⚠️ **No CI, importe por `tools/importar_para_ci.py`, inclusive a base do PR.**
+No PR #130, o Godot 4.6.3 abortou com sinal 11 ao importar Patrick Hand na
+base, depois de toda a captura do HEAD passar; repetir passou. O padrão está
+no [bug de fontes paralelas do motor](https://github.com/godotengine/godot/issues/111039).
+O helper aplica `editor/import/use_multiple_threads=false` em `override.cfg`
+somente durante o import, recusa sobrescrever um override existente e limpa
+o arquivo mesmo se o motor falhar. Não muda a versão do Godot, o projeto,
+os scripts de captura da base nem as guardas. Não substitua por um retry
+que dependa de sorte.

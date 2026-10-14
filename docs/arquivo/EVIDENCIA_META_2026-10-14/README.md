@@ -21,3 +21,8 @@ Os logs de captura registram cenas, dia, estruturas, saldo e imagem gravada.
 
 A conquista desta semente não mede balanceamento: os patamares e o tempo até
 a meta por perfil continuam para a etapa 4 da `103`.
+
+`importacao-ci.log` registra a correção do import intermitente no PR #130:
+leitura da chave de paralelismo pelo Godot real, fonte importada, limpeza
+após sucesso/falha, preservação de override existente e mutante `true`
+reprovado seguido de base verde. Os cinco imports do CI usam o helper.

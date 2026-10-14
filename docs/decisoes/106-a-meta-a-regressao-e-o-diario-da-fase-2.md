@@ -112,3 +112,23 @@ a regressão foi jogada até **dia 104, reputação 35**, preservando os barcos
 que já tinham chegado. Todos os painéis inteiros cabem em 720×1280.
 
 A etapa 4, a medição completa da Fase 2, continua aberta na §7 do plano.
+
+## Correção da verificação de captura do PR #130
+
+A primeira corrida de Captura passou no HEAD, mas o import de Patrick Hand
+na base `a95bf07` abortou com sinal 11 e `propagate_notification()` chamado
+por um trabalhador. A repetição passou. O padrão coincide com o
+[bug confirmado de importação paralela de fontes](https://github.com/godotengine/godot/issues/111039);
+não era um erro de GDScript da meta nem da fotografia da base.
+
+Os cinco imports dos workflows agora passam por `tools/importar_para_ci.py`.
+O helper usa a [chave documentada no Godot 4.6](https://docs.godotengine.org/en/4.6/classes/class_projectsettings.html#class-projectsettings-property-editor-import-use-multiple-threads)
+`editor/import/use_multiple_threads=false` em um `override.cfg` temporário,
+exclusivo, removido antes dos testes, exports e fotos. Preserva a versão
+4.6.3, o retorno de falha do motor e os scripts próprios da base.
+
+Uma sonda com o Godot real lê a chave a falso, importa a fonte e prova a
+limpeza. Os controles também exercitam saída 17, executável ausente e
+override preexistente sem alteração. O mutante que escreve `true` reprova
+na leitura real do motor; a base restaurada passa. Resultado guardado em
+`docs/arquivo/EVIDENCIA_META_2026-10-14/importacao-ci.log`.
