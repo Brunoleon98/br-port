@@ -1,7 +1,7 @@
 # Próxima conversa — 14/10/2026, etapa 3 da Fase 2
 
 Leia `docs/ESTADO_DO_PROJETO.md`, a §7 do plano v3 e as decisões 103–106.
-Confira no GitHub o merge do PR desta branch, os PRs abertos e o próximo
+Confira no GitHub o merge do PR #130, os PRs abertos e o próximo
 número livre na main antes de editar. Branch: `codex/frente-5-meta-fase-2`.
 
 A etapa 3 da `103` fechou na `106`: três barras, três fechos seguidos de
@@ -27,7 +27,7 @@ Prompt para colar:
 
 ```text
 Continuando o BR Port. Leia ESTADO_DO_PROJETO.md, §7 do plano v3
-e decisões 103–106. Confira o merge do PR da etapa 3, os PRs abertos
+e decisões 103–106. Confira o merge do PR #130, os PRs abertos
 e o próximo número livre na main antes de editar.
 Um item: etapa 4 da 103 — medir a Fase 2 por perfil, dias até a meta
 e quebras, para fechar preços e patamares. Se houver notas do A4,
