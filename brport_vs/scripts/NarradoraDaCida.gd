@@ -188,7 +188,8 @@ func _cida_reputacao(valor: float) -> void:
 # ANTES do recomeço, e esquecer a faixa aqui faz o recomeço só a registar,
 # como a primeira chamada.
 func _cida_passagem(_numero: int, _motivo: String) -> void:
-	_faixa_reputacao = ""
+	if _numero == 1:
+		_faixa_reputacao = ""
 
 
 # O aviso de caixa curto dispara UMA VEZ por travessia, não a cada centavo
@@ -202,12 +203,14 @@ func _cida_caixa(_valor: int) -> void:
 	# O CRITÉRIO SAI DO GAMESTATE, que é o mesmo que a fala da semana nova lê.
 	# Estava escrito aqui como `valor < PARCELA_AMOUNT / 2`, e a segunda
 	# leitora teria feito uma cópia.
-	var curto: bool = GameState.caixa_curto()
+	var curto: bool = GameState.caixa_curto() or GameState.dinheiro_curto_na_fase_livre()
 	if curto and not _caixa_estava_curto:
 		# ⚠️ E A PARCELA PODE JÁ TER SIDO PAGA — `pagar_parcela_adiantado()`
 		# quita a qualquer momento. "A parcela não vai esperar" seria falsa
 		# desde esse turno até ao fim da partida.
-		if GameState.parcela_paid:
+		if not GameState.tem_cobranca():
+			_cida("dinheiro_curto_livre")
+		elif GameState.parcela_paid:
 			_cida("caixa_baixo_quitado")
 		else:
 			_cida("caixa_baixo")
@@ -249,7 +252,7 @@ func _cida_semana(_turno: int, semana: int) -> void:
 # concatenação seria mudo para ela — a guarda daria um verde de graça.
 func _semana_nova() -> void:
 	var fila: bool = GameState.barcos_ao_largo() > 0
-	var curto: bool = GameState.caixa_curto()
+	var curto: bool = GameState.caixa_curto() or GameState.dinheiro_curto_na_fase_livre()
 	if fila and curto:
 		_cida_agora("semana_nova_fila_curto")
 	elif fila:
@@ -260,7 +263,7 @@ func _semana_nova() -> void:
 		# ouviria "a parcela correndo" em todas as semanas seguintes, que é a
 		# frase verdadeira em português e falsa neste mundo. É o mesmo par que
 		# o `_cida_caixa()` já fazia uma dobra acima, e que aqui faltava.
-		if GameState.parcela_paid:
+		if GameState.parcela_paid or not GameState.tem_cobranca():
 			_cida_agora("semana_nova_parado_curto_quitado")
 		else:
 			_cida_agora("semana_nova_parado_curto")

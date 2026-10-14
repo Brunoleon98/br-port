@@ -1,0 +1,102 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+  PASS  F10: a partida chega ao vencimento da parcela (turno 29)
+  PASS  F10 Ribeiro, entrada: o painel está no tempo «entrada»
+  PASS  F10 Ribeiro, entrada: o cartão cabe na tela
+  PASS  F10 Ribeiro, entrada: todo o texto cai dentro do cartão (8 peças)
+  PASS  F10: há um botão «Não consigo…» ligado para tocar
+  PASS  F10: «Não consigo pagar» na primeira cobrança não encerra a partida
+  PASS  F10 Ribeiro, segunda chance: o painel está no tempo «segunda_chance»
+  PASS  F10 Ribeiro, segunda chance: o cartão cabe na tela
+  PASS  F10 Ribeiro, segunda chance: todo o texto cai dentro do cartão (7 peças)
+  PASS  F10: há um botão «Recusar…» ligado para tocar
+  PASS  F10: «Recusar» a segunda chance encerrou a partida
+  PASS  F10 Ribeiro, não pagou: o painel está no tempo «nao_pagou»
+  PASS  F10 Ribeiro, não pagou: o cartão cabe na tela
+  PASS  F10 Ribeiro, não pagou: todo o texto cai dentro do cartão (6 peças)
+  PASS  F10: a partida chega ao vencimento da parcela (turno 29)
+  PASS  F10: há um botão «Não consigo…» ligado para tocar
+  PASS  F10: há um botão «Aceitar…» ligado para tocar
+  PASS  F10: «Aceitar o empréstimo» pagou a parcela e a partida segue
+  PASS  F10 Ribeiro, emprestou: o painel está no tempo «emprestou»
+  PASS  F10 Ribeiro, emprestou: o cartão cabe na tela
+  PASS  F10 Ribeiro, emprestou: todo o texto cai dentro do cartão (7 peças)
+  PASS  F10: a partida chega ao vencimento da parcela (turno 85)
+  PASS  F10: há um botão «Pagar…» ligado para tocar
+  PASS  F10: «Pagar» quitou mesmo a última parcela, e a partida passou à Fase 2
+  PASS  F10 Ribeiro, pagou: o painel está no tempo «pagou»
+  PASS  F10 Ribeiro, pagou: o cartão cabe na tela
+  PASS  F10 Ribeiro, pagou: todo o texto cai dentro do cartão (7 peças)
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F10: há um botão «Cortar metade…» ligado para tocar
+  PASS  F10: «Cortar metade» recusado deixa o cliente na mesa
+  PASS  F10 Arlindo, última tentativa depois de «Cortar metade»: o painel está no tempo «rodada»
+  PASS  F10 Arlindo, última tentativa depois de «Cortar metade»: o cartão cabe na tela
+  PASS  F10 Arlindo, última tentativa depois de «Cortar metade»: todo o texto cai dentro do cartão (8 peças)
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F10 Arlindo, rodada: o painel está no tempo «rodada»
+  PASS  F10 Arlindo, rodada: o cartão cabe na tela
+  PASS  F10 Arlindo, rodada: todo o texto cai dentro do cartão (7 peças)
+  PASS  F10: há um botão «Manter…» ligado para tocar
+  PASS  F10: «Manter» recusado deixa o cliente na mesa
+  PASS  F10 Arlindo, última tentativa depois de «Manter»: o painel está no tempo «rodada»
+  PASS  F10 Arlindo, última tentativa depois de «Manter»: o cartão cabe na tela
+  PASS  F10 Arlindo, última tentativa depois de «Manter»: todo o texto cai dentro do cartão (8 peças)
+  PASS  F10: há um botão «Manter…» ligado para tocar
+  PASS  F10: a segunda recusa leva o cliente para o Arlindo
+  PASS  F10 Arlindo, despedida de quem venceu: o painel está no tempo «despedida»
+  PASS  F10 Arlindo, despedida de quem venceu: o cartão cabe na tela
+  PASS  F10 Arlindo, despedida de quem venceu: todo o texto cai dentro do cartão (4 peças)
+  PASS  F10 Arlindo, despedida de quem venceu: nada diz que a negociação continua
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F10: há um botão «Igualar…» ligado para tocar
+  PASS  F10: «Igualar» fecha e o Arlindo perde
+  PASS  F10 Arlindo, despedida de quem perdeu: o painel está no tempo «despedida»
+  PASS  F10 Arlindo, despedida de quem perdeu: o cartão cabe na tela
+  PASS  F10 Arlindo, despedida de quem perdeu: todo o texto cai dentro do cartão (5 peças)
+  PASS  F10 Arlindo, despedida de quem perdeu: nada diz que a negociação continua
+  PASS  F10 Fim, narração: o painel está no tempo «narracao»
+  PASS  F10 Fim, narração: o cartão cabe na tela
+  PASS  F10 Fim, narração: todo o texto cai dentro do cartão (8 peças)
+  PASS  F10: a primeira página do fim de fase mostra a primeira metade da peça
+  PASS  F10: há um botão «Virar a página…» ligado para tocar
+ERROR: Parameter "t" is null.
+   at: texture_2d_get (./servers/rendering/dummy/storage/texture_storage.h:106)
+   GDScript backtrace (most recent call first):
+       [0] _fotografar_folha (res://scripts/PainelNarrativo.gd:1133)
+       [1] virar_folha (res://scripts/PainelNarrativo.gd:1114)
+       [2] _virar_pagina (res://scripts/EndGame.gd:131)
+       [3] _f10_tocar (res://tests/teste_fumaca.gd:2349)
+       [4] _f10_cada_tempo_cabe (res://tests/teste_fumaca.gd:2137)
+       [5] _f10_abrir (res://tests/teste_fumaca.gd:2331)
+       [6] _f8_esperar (res://tests/teste_fumaca.gd:1510)
+  PASS  F10: o painel chegou ao tempo «segunda_pagina» (77 frames)
+  PASS  F10 Fim, a segunda página: o painel está no tempo «segunda_pagina»
+  PASS  F10 Fim, a segunda página: o cartão cabe na tela
+  PASS  F10 Fim, a segunda página: todo o texto cai dentro do cartão (6 peças)
+  PASS  F10: a segunda página do fim de fase mostra a segunda metade da peça
+  PASS  F10: há um botão «Ver o balanço…» ligado para tocar
+  PASS  F10 Fim, balanço de quem venceu: o painel está no tempo «balanco»
+  PASS  F10 Fim, balanço de quem venceu: o cartão cabe na tela
+  PASS  F10 Fim, balanço de quem venceu: todo o texto cai dentro do cartão (19 peças)
+  PASS  F10 Fim, balanço de quem perdeu: o painel está no tempo «balanco»
+  PASS  F10 Fim, balanço de quem perdeu: o cartão cabe na tela
+  PASS  F10 Fim, balanço de quem perdeu: todo o texto cai dentro do cartão (20 peças)
+  PASS  F10: res://scenes/panels/PainelDiario.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F10 Diário: o painel é de uma tela só
+  PASS  F10 Diário: o cartão cabe na tela
+  PASS  F10 Diário: todo o texto cai dentro do cartão (2 peças)
+  PASS  F10: res://scenes/Main.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F10 Faixa de partida retomada: o painel é de uma tela só
+  PASS  F10 Faixa de partida retomada: o cartão cabe na tela
+  PASS  F10 Faixa de partida retomada: todo o texto cai dentro do cartão (1 peças)
+  PASS  F10 Diário da Fase 2: o painel é de uma tela só
+  PASS  F10 Diário da Fase 2: o cartão cabe na tela
+  PASS  F10 Diário da Fase 2: todo o texto cai dentro do cartão (2 peças)
+  PASS  F10: toda frase com o nome foi medida com ele (9 tokens, 104 rótulos vistos)
+  PASS  F10 correu até ao fim
+F10 OK
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2663)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)

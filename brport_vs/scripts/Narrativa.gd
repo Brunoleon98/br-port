@@ -167,6 +167,7 @@ const CIDA_LINHAS := {
 	# quem já trabalhou com ele. O termo sai daqui e da fala da semana nova; o
 	# rótulo "Caixa:" do painel da parcela é do mesmo achado e fica registado.
 	"caixa_baixo_quitado": "O dinheiro tá no fim, chefia. Ao menos o Sr. Ribeiro já tá pago.",
+	"dinheiro_curto_livre": "O banco saiu da conta, chefia. Os salários continuam nela.",
 	# "Perdeu pro Arlindo" narrava o que o jogador acabou de ver acontecer.
 	"perdeu_para_arlindo": "O Arlindo vai contar essa na padaria amanhã. Deixa contar, chefia.",
 	"bom_contrato": "Esse contrato fecha a semana. Anota aí.",
@@ -381,6 +382,7 @@ const EXPRESSOES := {
 		"reputacao_caiu": "preocupada",
 		"caixa_baixo": "preocupada",
 		"caixa_baixo_quitado": "preocupada",
+		"dinheiro_curto_livre": "preocupada",
 		"perdeu_para_arlindo": "preocupada",
 		"bom_contrato": "contente",
 		"semana_nova_fila_curto": "seria",
@@ -632,6 +634,39 @@ static func ordinal(n: int) -> String:
 	const ORD := ["", "primeira", "segunda", "terceira", "quarta", "quinta",
 		"sexta", "sétima", "oitava", "nona", "décima", "décima primeira", "décima segunda"]
 	return ORD[n] if n >= 1 and n < ORD.size() else str(n)
+
+
+static func abertura_do_porto() -> String:
+	var gs = _gs()
+	if gs.turn == 1 and gs.numero_da_fase == 1 and gs.estruturas.is_empty():
+		return "O porto é seu. Um píer de pé e o resto por levantar."
+	return gs.texto("De volta ao {portName}. O trabalho continua.")
+
+
+static func missao_da_fase_2() -> String:
+	return "Atenda o primeiro cargueiro até o fim. Ele só conta quando a carga sai e o pagamento entra."
+
+
+# Rascunho para a leitura do A4. Sem antecipar uma Fase 3 que ainda não existe.
+static func fim_da_fase_2() -> String:
+	return _gs().texto("""Hoje parei um pouco no fim do píer.
+
+A treliça recortada no céu.
+O primeiro cargueiro já tinha ido.
+Ficou o barulho da água nas estacas.
+
+O Seu Maneco tinha um jeito de olhar
+pro cais antes de ir embora.
+Como quem confere se deixou a luz acesa.
+
+Acho que começo a entender.
+
+O {portName} cresceu.
+Cabe mais trabalho. Cabe mais gente.
+E amanhã tem barco de novo.
+
+Vou deixar esta página aqui.
+O resto a gente escreve trabalhando.""")
 
 
 static func fim_de_fase() -> String:

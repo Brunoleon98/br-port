@@ -1,0 +1,70 @@
+[
+  {
+    "defeito": "sem-reset-da-sequencia",
+    "reprovas": [
+      "FAIL  T22: fecho abaixo do alvo recomeça sequência",
+      "FAIL  T22: 1 de três dias, sem conquista precoce",
+      "FAIL  T22: 2 de três dias, sem conquista precoce"
+    ]
+  },
+  {
+    "defeito": "sem-piso",
+    "reprovas": [
+      "FAIL  T22: abaixo do piso só novas chegadas de pesca",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão",
+      "FAIL  T22: sorteio respeita suspensão"
+    ]
+  },
+  {
+    "defeito": "conquista-repetida",
+    "reprovas": [
+      "FAIL  T22: jogo livre avança sem repetir diário"
+    ]
+  },
+  {
+    "defeito": "missao-no-primeiro-dia",
+    "reprovas": [
+      "FAIL  T22: primeiro dia de descarga não cumpre missão"
+    ]
+  },
+  {
+    "defeito": "load-perde-conquista",
+    "reprovas": [
+      "FAIL  T22: conquista e missão voltam mesmo com reputação baixa",
+      "FAIL  T22: jogo livre avança sem repetir diário"
+    ]
+  },
+  {
+    "defeito": "migracao-inventa-missao",
+    "reprovas": [
+      "FAIL  T22: degrau 16→17 conserva porto e começa acompanhamento"
+    ]
+  }
+]

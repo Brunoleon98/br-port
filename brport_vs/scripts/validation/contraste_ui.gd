@@ -61,6 +61,18 @@ const PASTA_PAINEIS := "res://scenes/panels"
 func percurso() -> Array:
 	return [
 		{"nome": "Diário", "cena": "res://scenes/panels/PainelDiario.tscn"},
+		{"nome": "Meta da Fase 2", "cena": "res://scenes/panels/PainelMeta.tscn",
+			"estado": {"numero_da_fase": 2, "turn": 85}, "setup": []},
+		{"nome": "Meta conquistada", "cena": "res://scenes/panels/PainelMeta.tscn",
+			"estado": {"numero_da_fase": 2, "turn": 100, "meta_concluida": true,
+				"primeiro_cargueiro": true, "dias_de_reputacao": 3,
+				"estruturas": ["pier_2", "trelica", "pier_3"]}, "setup": []},
+		{"nome": "Cargueiros suspensos", "cena": "res://scenes/panels/PainelMeta.tscn",
+			"estado": {"numero_da_fase": 2, "turn": 85, "reputation": 39.0}, "setup": []},
+		{"nome": "Diário da Fase 2", "cena": "res://scenes/panels/DiarioFase2.tscn",
+			"estado": {"numero_da_fase": 2, "turn": 100, "meta_concluida": true,
+				"primeiro_cargueiro": true, "dias_de_reputacao": 3,
+				"estruturas": ["pier_2", "trelica", "pier_3"]}, "setup": []},
 		{"nome": "Nomes", "cena": "res://scenes/panels/TelaNomes.tscn"},
 		{"nome": "Construir", "cena": "res://scenes/panels/UpgradePanel.tscn"},
 		{"nome": "Calendário", "cena": "res://scenes/panels/PainelCalendario.tscn",

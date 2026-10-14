@@ -76,8 +76,8 @@ jobs:
       - name: Importar o projeto
         run: |
           set -euo pipefail
-          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --headless --path brport_vs --import
+          python3 tools/importar_para_ci.py brport_vs \
+            ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
 
       - name: Despejar as constantes do GameState
         run: |

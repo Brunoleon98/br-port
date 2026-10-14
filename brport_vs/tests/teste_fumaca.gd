@@ -577,8 +577,8 @@ func _novo_jogo() -> void:
 
 
 # Um save com a forma toda certa, parametrizado só pela versão. Serve de base
-# para cada defeito ser injetado um de cada vez. A forma é a da CORRENTE (a 16,
-# com a fase e sem o legado, `104`); as versões de baixo usam-na só para serem
+# para cada defeito ser injetado um de cada vez. A forma é a da corrente,
+# com a fase e os marcos da meta (`106`); as versões de baixo usam-na só para serem
 # recusadas pela versão.
 func _save_valido(versao: int) -> Dictionary:
 	return {
@@ -586,6 +586,7 @@ func _save_valido(versao: int) -> Dictionary:
 		"docks": [{"boat": null, "worker_id": null}],
 		"workers": [{"id": 1, "busy_turns": 0, "rosto": 0}],
 		"numero_da_fase": 1,
+		"dias_de_reputacao": 0, "primeiro_cargueiro": false, "meta_concluida": false,
 		"estruturas": [], "obra_em_andamento": {}, "parcela_paid": false,
 		"parcela_indice": 0, "parcelas_quitadas": 0, "total_pago_parcelas": 0,
 		"emprestimo_devido": 0, "segunda_chance_usada": false,
@@ -2149,6 +2150,22 @@ func _f10_cada_tempo_cabe() -> void:
 	_f10_partida_nova(nome)
 	p = await _f10_abrir(F10_DIARIO, [])
 	_f10_medir(p, "Diário", &"")
+	_f10_fechar(p)
+
+	# Os novos tokens medem-se onde o jogo os desenha, com o mesmo nome longo.
+	_f10_partida_nova(nome)
+	GS.turn = 2
+	p = await _f10_abrir("res://scenes/Main.tscn", [])
+	_f10_medir(p.get_node("MensagemCartao"), "Faixa de partida retomada", &"")
+	_f10_fechar(p)
+	GS.numero_da_fase = 2
+	GS.turn = 100
+	GS.estruturas = ["pier_2", "trelica", "pier_3"]
+	GS.meta_concluida = true
+	GS.primeiro_cargueiro = true
+	GS.dias_de_reputacao = 3
+	p = await _f10_abrir("res://scenes/panels/DiarioFase2.tscn", [])
+	_f10_medir(p, "Diário da Fase 2", &"")
 	_f10_fechar(p)
 
 	GS.game_over.disconnect(_f10_recolher_fim)
@@ -5126,8 +5143,20 @@ func _f20_campos_da_fase(n: int, fase: Variant, ultima: bool) -> void:
 	if typeof(fase) != TYPE_DICTIONARY:
 		_confere("F20: a %s é um dicionário" % onde, false)
 		return
-	if not _f20_chaves("a " + onde, fase, F20_CAMPOS_DA_FASE):
+	var campos := F20_CAMPOS_DA_FASE.duplicate()
+	if n == 2:
+		campos.append_array(["meta", "piso_cargueiro"])
+	if not _f20_chaves("a " + onde, fase, campos):
 		return
+	if n == 2:
+		var meta: Variant = fase["meta"]
+		if typeof(meta) != TYPE_DICTIONARY or not _f20_chaves("meta da Fase 2", meta, ["dias", "infra", "reputacao"]):
+			return
+		_confere("F20: piso < início < meta na escala 0–100", float(fase["piso_cargueiro"]) >= 0.0
+			and float(fase["piso_cargueiro"]) < float(fase["reputacao_inicial"])
+			and float(meta["reputacao"]) > float(fase["reputacao_inicial"]) and float(meta["reputacao"]) <= 100.0)
+		_confere("F20: meta pede três dias e a infraestrutura escolhida", meta["dias"] == 3
+			and meta["infra"] == ["pier_3", "trelica"])
 	var semanas: Variant = fase["semanas"]
 	var com_prazo: bool = semanas != null
 	if com_prazo:
@@ -5938,8 +5967,8 @@ func _f23_a_fase_2_na_tela() -> bool:
 	_confere("F23: o dia do HUD não tem «de quantos» na Fase 2 («%s»)" % dia.text,
 		dia.text == "Dia %d" % int(GS.turn))
 	var meta := main.get_node("MetaCartao/MetaColuna/MetaTituloLinha/MetaTitulo") as Label
-	_confere("F23: o cartão da parcela diz que não há dívida («%s»)" % meta.text,
-		meta.text == "Fase 2 — sem dívida com o banco")
+	_confere("F23: o cartão abre a meta da Fase 2 («%s»)" % meta.text,
+		meta.text == "Meta da Fase 2 — toque para ver")
 	main.free()
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)

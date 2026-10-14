@@ -103,11 +103,17 @@ func _rodar() -> void:
 				return
 			continue
 		for id in GS.ESTRUTURAS.keys():
+			# A última obra fica para depois da conquista: o exemplo 17 traz
+			# a conquista, a missão e os dias cheios junto de uma obra viva.
+			if id == "escritorio" and GS.numero_da_fase == 2:
+				continue
 			if GS.impedimento_estrutura(id) == "":
 				GS.comprar_estrutura(id)
 		for _b in range(GS.bercos_livres()):
 			if GS.atracagem_pendente() == Vector2i.ZERO or not GS.atracar(0, false):
 				break
+		if faltas(GS) == ["uma obra em andamento"]:
+			GS.comprar_estrutura("escritorio")
 		if faltas(GS).is_empty():
 			break
 		GS.advance_turn()
@@ -136,6 +142,8 @@ static func faltas(GS: Node) -> Array[String]:
 		falta.append("a partida a correr")
 	if int(GS.numero_da_fase) < 2:
 		falta.append("a Fase 2")
+	if not GS.meta_concluida or not GS.primeiro_cargueiro or GS.dias_de_reputacao == 0:
+		falta.append("a meta conquistada, a missão e os dias de reputação")
 	if GS.obra_em_andamento.is_empty():
 		falta.append("uma obra em andamento")
 	if GS.fila.is_empty():

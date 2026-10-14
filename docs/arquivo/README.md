@@ -29,6 +29,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `EVIDENCIA_META_2026-10-14/` | 14/10 | Meta, diário, jogo livre e regressão de partidas jogadas; controles da etapa 3 (`106`) |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-14b.md` | 14/10 | Etapa 3 da `103` (`106`), PR #130; próxima: medição da Fase 2 |
 | `MEDICOES_TRELICA_2026-10-14.json` | 14/10 | Quatro preços, 600 partidas por perfil, 56 dias de Fase 2; controle positivo e sete defeitos injetados (`105`) |
 | `EVIDENCIA_TRELICA_2026-10-14/` | 14/10 | Porto e Construir de uma partida jogada até ao dia 91, três píeres e cargueiro no segundo dia (`105`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-14.md` | 14/10 | Etapa 2 da `103`: treliça e cargueiro (`105`); branch `codex/frente-5-trelica-cargueiro`. Próxima: meta, regressão e fim |

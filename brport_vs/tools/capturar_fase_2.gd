@@ -12,6 +12,7 @@ var _assentar := -1
 var _pasta := ""
 var _construir := false
 var _cargueiros := 0
+var _modo := "porto"
 
 
 func _process(_delta: float) -> bool:
@@ -19,6 +20,9 @@ func _process(_delta: float) -> bool:
 		var args := OS.get_cmdline_user_args()
 		_pasta = args[0]
 		_construir = args.has("construir")
+		for modo in ["meta", "diario", "livre", "suspenso"]:
+			if args.has(modo):
+				_modo = modo
 		GS = root.get_node("GameState")
 		GS.clear_save()
 		GS._rng.seed = 20260902
@@ -51,6 +55,9 @@ func _process(_delta: float) -> bool:
 	var overlay: Node = _main.get_node("Overlay")
 	if overlay.get_child_count() > 0:
 		var painel: Node = overlay.get_child(overlay.get_child_count() - 1)
+		if _modo == "diario" and painel.scene_file_path == "res://scenes/panels/DiarioFase2.tscn":
+			_assentar = 0
+			return false
 		if painel.scene_file_path.ends_with("CounterOfferPanel.tscn") and GS.phase == GS.ESTADO_OFERTA:
 			painel._negociar("igualar")
 			return false
@@ -79,7 +86,8 @@ func _process(_delta: float) -> bool:
 			break
 	# Atraca pelo mesmo método do toque e conserva o barco sorteado. Depois
 	# de um cargueiro atendido, a foto pede outro a trabalhar no segundo dia.
-	for _vaga in range(GS.bercos_livres()):
+	var deixar_desistir: bool = _modo == "suspenso" and GS.tem_estrutura("pier_3") and _cargueiros > 0
+	for _vaga in range(0 if deixar_desistir else GS.bercos_livres()):
 		for i in range(GS.fila.size()):
 			if GS.atracar(i, false):
 				break
@@ -88,8 +96,14 @@ func _process(_delta: float) -> bool:
 		if d["boat"] != null and d["boat"]["classe"] == "medio" \
 				and int(d["boat"]["progress"]) == 1 and int(d["boat"]["op_turns"]) == 2:
 			trabalha = true
-	if GS.numero_da_fase == 2 and GS.tem_estrutura("trelica") and GS.tem_estrutura("pier_3") \
-			and _cargueiros > 0 and trabalha:
+	var alvo: bool = trabalha and _cargueiros > 0
+	if _modo == "diario":
+		alvo = false # Espera a página automática, pela vez do Main.
+	elif _modo == "livre":
+		alvo = GS.meta_concluida
+	elif _modo == "suspenso":
+		alvo = GS.cargueiros_suspensos()
+	if GS.numero_da_fase == 2 and GS.tem_estrutura("trelica") and GS.tem_estrutura("pier_3") and alvo:
 		print("PARTIDA ALCANCADA: dia %d, fase %d, porto %d, %d cargueiros atendidos, caixa %d"
 			% [GS.turn, GS.numero_da_fase, GS.nivel_do_porto(), _cargueiros, GS.cash])
 		if GS.has_meta(&"guindaste_intermediario_da_bancada"):
@@ -98,6 +112,11 @@ func _process(_delta: float) -> bool:
 			return false
 		if _construir:
 			_main._on_upgrade_pressed()
+		elif _modo in ["meta", "suspenso"]:
+			var toque := InputEventMouseButton.new()
+			toque.button_index = MOUSE_BUTTON_LEFT
+			toque.pressed = false
+			_main._on_meta_cartao_input(toque)
 		_assentar = 0
 		return false
 	_main._advance_button.pressed.emit()
@@ -111,7 +130,7 @@ func _serviu(_valor: int, classe: String) -> void:
 
 
 func _fotografar() -> void:
-	var esperado := 1 if _construir else 0
+	var esperado := 1 if _construir or _modo in ["meta", "diario", "suspenso"] else 0
 	var paineis: int = _main.get_node("Overlay").get_child_count()
 	if paineis != esperado:
 		push_error("capturar_fase_2: %d painéis, esperava %d" % [paineis, esperado])
@@ -129,6 +148,8 @@ func _fotografar() -> void:
 		quit(1)
 		return
 	var nome := "construir_fase_2.png" if _construir else "porto_fase_2.png"
+	if _modo != "porto":
+		nome = _modo + "_fase_2.png"
 	if img.save_png(_pasta.path_join(nome)) != OK:
 		push_error("capturar_fase_2: não gravou a imagem")
 		quit(1)

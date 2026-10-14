@@ -104,7 +104,7 @@ func _build_ui() -> void:
 	var falta := PackedStringArray()
 	for id in GameState.CLASSES_DE_NAVIO:
 		var dados: Dictionary = GameState.CLASSES_DE_NAVIO[id]
-		if int(dados["nivel"]) <= nivel:
+		if GameState.classes_disponiveis().has(id):
 			recebe.append(String(dados["nome"]))
 		else:
 			falta.append(String(dados["nome"]))
@@ -117,7 +117,9 @@ func _build_ui() -> void:
 			Narrativa.concordar(GameState._turnos_de_operacao("medio", "conteiner"), "dia", "dias"),
 			Narrativa.concordar(GameState._turnos_de_operacao("medio", "granel"), "dia", "dias")]
 	if falta.size() > 0:
-		porto += "\nAinda não aguenta: %s" % ", ".join(falta).to_lower()
+		porto += "\nIndisponível: %s" % ", ".join(falta).to_lower()
+	if GameState.numero_da_fase == 2:
+		porto += "\n" + GameState.regra_dos_cargueiros()
 	vbox.add_child(PainelNarrativo.tarja_solta(
 		"Dinheiro: %s" % GameState.moeda(int(GameState.cash)), porto))
 

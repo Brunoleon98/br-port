@@ -31,6 +31,10 @@ prova-o contra o `v14.json`. O exemplo `v15.json` joga mal o primeiro mês de
 propósito, para trazer a dívida — um exemplo que nunca a pediu grava-a a zero.
 O número da fase ocupa a **16** (`104`), com o M9; o T20 prova o 15→16 contra
 o `v15.json`.
+Os marcos da meta ocupam a **17** (`106`), autorizada pelo Bruno com
+migração: o degrau 16→17 mantém a partida e começa dias, missão e conquista
+a zero, pois a 16 não registrava esse passado. O T22 prova-o; o exemplo 17
+chega à conquista com obra viva, e os exemplos 14–16 ficam intactos.
 Saves 13 e anteriores são recusados sem migração: partidas antigas recomeçam.
 Consulta preserva o arquivo; carregamento descarta o incompatível antes de
 aplicar campos, inclusive a obra viva. Até a 14, save de outra versão era

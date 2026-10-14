@@ -1,0 +1,8 @@
+Godot real leu false, importou a fonte e limpou o override
+Saida 17 propagada e override removido
+Excecao de execucao preservada e override removido
+Override preexistente recusado sem alterar bytes nem executar motor
+Mutante true recusado pela leitura real do Godot; override removido
+Base restaurada verde depois do mutante
+Os cinco imports de CI usam o helper; nenhum import direto permanece
+IMPORTACAO CI OK

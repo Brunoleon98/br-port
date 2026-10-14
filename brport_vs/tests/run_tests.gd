@@ -1667,6 +1667,9 @@ func _run() -> void:
 	print("=== T21: a treliça comprada e o cargueiro de dois dias ===")
 	_t21_trelica()
 	_check("o bloco T21 correu até ao fim", _t21_completo)
+	print("=== T22: três barras, regressão, jogo livre e save 17 ===")
+	await _t22_meta_da_fase_2()
+	_check("o bloco T22 correu até ao fim", _t22_completo)
 
 	print("")
 	if _fails == 0:
@@ -2996,3 +2999,191 @@ func _textos_de(no: Node) -> Array:
 	for filho in no.get_children():
 		textos.append_array(_textos_de(filho))
 	return textos
+
+
+var _t22_completo := false
+
+
+func _t22_porto() -> void:
+	GS._rng.seed = 20261014
+	_fresh_playing()
+	GS.definir_nomes("Cais da Meta", "Teste")
+	GS.numero_da_fase = 2
+	GS.turn = GS.inicio_da_fase(2)
+	GS.cash = 1000000
+	GS.estruturas = ["pier_2", "trelica"]
+	GS.parcela_indice = 0
+	GS.parcela_paid = false
+	GS.parcelas_quitadas = 0
+	GS.reputation = 80.0
+	GS._reconciliar_roster()
+	GS.fila = []
+	for d in GS.docks:
+		d["boat"] = null
+		d["worker_id"] = null
+
+
+func _t22_fechar_dia() -> void:
+	# Este fixture isola o fecho: descarta a chegada aleatória anterior.
+	# Igualar uma oferta aqui acrescentava reputação DEPOIS do valor que
+	# o caso preparou, tornando o fecho abaixo de 80 dependente do sorteio.
+	GS.phase = GS.ESTADO_JOGANDO
+	GS.pending_rival = -1
+	GS.fila = []
+	GS.advance_turn()
+
+
+func _t22_meta_da_fase_2() -> void:
+	_t22_porto()
+	var config: Dictionary = GS.dados_da_fase()
+	_check("T22: piso abaixo do início e meta acima, três dias", config["piso_cargueiro"] < config["reputacao_inicial"]
+		and config["meta"]["reputacao"] > config["reputacao_inicial"] and config["meta"]["dias"] == 3)
+	var fins := []
+	var ouvir := func(n: int, _motivo: String): fins.append(n)
+	GS.fase_concluida.connect(ouvir)
+	_check("T22: abre sem dias contados, missão ou conquista", GS.dias_de_reputacao == 0
+		and not GS.primeiro_cargueiro and not GS.meta_concluida)
+	_check("T22: um reparo pronto de dois, sem contar escritório", GS.progresso_da_meta()["infra"] == 1)
+	_t22_fechar_dia()
+	_check("T22: limiar exato conta um dia fechado", GS.dias_de_reputacao == 1)
+	GS.save_game()
+	GS.dias_de_reputacao = 0
+	_check("T22: save e load guardam o dia sem contar outro", GS.load_game() and GS.dias_de_reputacao == 1)
+	GS.reputation = 79.99
+	_t22_fechar_dia()
+	_check("T22: fecho abaixo do alvo recomeça sequência", GS.dias_de_reputacao == 0)
+	GS.reputation = 80.0
+	for dia in range(3):
+		_t22_fechar_dia()
+		_check("T22: %d de três dias, sem conquista precoce" % (dia + 1),
+			GS.dias_de_reputacao == dia + 1 and not GS.meta_concluida)
+	GS.obra_em_andamento = {"id": "pier_3", "inicio": GS.turn, "conclusao": GS.turn + 3}
+	_check("T22: píer 3 em obra não completa barra", GS.progresso_da_meta()["infra"] == 1)
+	GS.obra_em_andamento = {}
+	GS.estruturas.append("pier_3")
+	GS._reconciliar_roster()
+	_check("T22: infra pronta não substitui missão", GS.progresso_da_meta()["infra"] == 2
+		and fins.is_empty())
+	# O barco é o sorteado pelo motor. Só o posicionamento é fixture;
+	# os dois dias de descarga e o pagamento passam pela porta real.
+	var barco: Dictionary = GS._make_boat()
+	for tentativa in range(100):
+		if barco["classe"] == "medio" and barco["op_turns"] == 2:
+			break
+		barco = GS._make_boat()
+	_check("T22: encontrou cargueiro de dois dias", barco["classe"] == "medio" and barco["op_turns"] == 2)
+	GS.fila = [barco]
+	if GS.phase == GS.ESTADO_OFERTA:
+		GS.resolve_rival_offer(true)
+	_check("T22: atraca cargueiro sem cumprir missão", GS.atracar(0, false) and not GS.primeiro_cargueiro)
+	_t22_fechar_dia()
+	_check("T22: primeiro dia de descarga não cumpre missão", not GS.primeiro_cargueiro and fins.is_empty())
+	_t22_fechar_dia()
+	_check("T22: descarga cumpriu missão e fechou fase uma vez", GS.primeiro_cargueiro
+		and GS.meta_concluida and fins == [2] and GS.numero_da_fase == 2 and GS.phase != GS.ESTADO_FIM)
+	GS.reputation = 39.99
+	_check("T22: abaixo do piso só novas chegadas de pesca", GS.classes_disponiveis() == ["pesqueiro"])
+	for sorteio in range(50):
+		_check("T22: sorteio respeita suspensão", GS._make_boat()["classe"] == "pesqueiro")
+	GS.save_game()
+	GS.meta_concluida = false
+	_check("T22: conquista e missão voltam mesmo com reputação baixa", GS.load_game()
+		and GS.meta_concluida and GS.primeiro_cargueiro and GS.dias_de_reputacao == 3)
+	GS.reputation = 40.0
+	_check("T22: piso exato recupera cargueiros", GS.classes_disponiveis().has("medio"))
+	var antes: int = GS.turn
+	_t22_fechar_dia()
+	_check("T22: jogo livre avança sem repetir diário", GS.turn == antes + 1 and fins == [2] and GS.meta_concluida)
+	GS.cash = -1
+	GS._check_end()
+	_check("T22: conquista não impede quebra", GS.phase == GS.ESTADO_FIM and not GS.won)
+	GS.fase_concluida.disconnect(ouvir)
+
+	_t22_porto()
+	GS.fila = [barco.duplicate(true)]
+	GS.atracar(0, false)
+	GS.reputation = 0.0
+	_t22_fechar_dia()
+	_t22_fechar_dia()
+	_check("T22: contratado termina abaixo do piso", GS.primeiro_cargueiro and not GS.meta_concluida)
+	GS.dias_de_reputacao = 3
+	GS.estruturas.append("pier_3")
+	GS.cash = -1
+	GS._check_end()
+	_check("T22: quebra tem prioridade sobre três barras", not GS.meta_concluida and GS.phase == GS.ESTADO_FIM)
+
+	var antigo: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://tests/saves/v16.json"))
+	var copia := antigo.duplicate(true)
+	var migrado: Dictionary = GS._save_aceite(JSON.stringify(antigo))
+	_check("T22: degrau 16→17 conserva porto e começa acompanhamento", not migrado.is_empty()
+		and migrado["dias_de_reputacao"] == 0 and not migrado["primeiro_cargueiro"]
+		and not migrado["meta_concluida"] and antigo == copia and migrado["cash"] == antigo["cash"]
+		and migrado["estruturas"] == antigo["estruturas"] and migrado["turn"] == antigo["turn"])
+	for par in [["dias_de_reputacao", -1], ["dias_de_reputacao", 1.5], ["dias_de_reputacao", 4],
+		["primeiro_cargueiro", 1], ["meta_concluida", true]]:
+		var errado := migrado.duplicate(true)
+		errado[par[0]] = par[1]
+		_check("T22: recusa progresso inválido %s=%s" % par, GS._save_aceite(JSON.stringify(errado)).is_empty())
+
+	_t22_porto()
+	var main = load("res://scenes/Main.tscn").instantiate()
+	root.add_child(main)
+	var avisos := []
+	var ouvir_cida := func(id: String, _linha: String): avisos.append(id)
+	main.narradora.falou.connect(ouvir_cida)
+	GS.cash = 0
+	_check("T22: dinheiro curto sem cobrança é salário, não parcela", GS.dinheiro_curto_na_fase_livre()
+		and not GS.caixa_curto())
+	GS.cash_changed.emit(0)
+	await process_frame
+	await process_frame
+	_check("T22: aviso da Cida chega sem prometer cobrança", avisos.has("dinheiro_curto_livre")
+		and not avisos.has("caixa_baixo") and not Narrativa.cida("dinheiro_curto_livre").contains("parcela"))
+	main._on_meta_cartao_input(InputEventAction.new())
+	# O evento real de soltar abre a porta usada pelo jogador.
+	var toque := InputEventMouseButton.new()
+	toque.button_index = MOUSE_BUTTON_LEFT
+	toque.pressed = false
+	main._on_meta_cartao_input(toque)
+	var overlay: Node = main.get_node("Overlay")
+	_check("T22: toque no rodapé abre painel das três barras", overlay.get_child_count() == 1
+		and overlay.get_child(0).scene_file_path == "res://scenes/panels/PainelMeta.tscn")
+	var painel = overlay.get_child(0)
+	_check("T22: painel tem exatamente três barras", painel.find_children("*", "ProgressBar", true, false).size() == 3)
+	var barras: Array = painel.find_children("*", "ProgressBar", true, false)
+	_check("T22: barras leem dias, infra pronta e missão, nesta ordem", barras.size() == 3
+		and barras[0].value == 0 and barras[0].max_value == 3
+		and barras[1].value == 1 and barras[1].max_value == 2
+		and barras[2].value == 0 and barras[2].max_value == 1)
+	root.remove_child(main)
+	main.free()
+
+	_t22_porto()
+	main = load("res://scenes/Main.tscn").instantiate()
+	root.add_child(main)
+	GS.estruturas.append("pier_3")
+	GS.dias_de_reputacao = 3
+	GS.primeiro_cargueiro = true
+	GS._rng.seed = 0 # Oferta real na mesma abertura: espera a página do diário.
+	GS._check_end()
+	overlay = main.get_node("Overlay")
+	_check("T22: conquista abre diário e não EndGame", overlay.get_child_count() == 1
+		and overlay.get_child(0).scene_file_path == "res://scenes/panels/DiarioFase2.tscn")
+	var continuar: Array = overlay.get_child(0).find_children("*", "Button", true, false)
+	_check("T22: diário oferece só seguir em jogo livre", continuar.size() == 1
+		and continuar[0].text == "Seguir em jogo livre")
+	_check("T22: diário não traz dígitos nem tokens crus", not Narrativa.fim_da_fase_2().contains("{")
+		and not Narrativa.fim_da_fase_2().contains("3"))
+	overlay.get_child(0).queue_free()
+	await process_frame
+	await process_frame
+	_check("T22: oferta sorteada espera diário e vem ao fechar", overlay.get_child_count() == 1
+		and overlay.get_child(0).scene_file_path == "res://scenes/panels/CounterOfferPanel.tscn")
+	if GS.phase == GS.ESTADO_OFERTA:
+		GS.resolve_rival_offer(true)
+	root.remove_child(main)
+	main.free()
+	_fresh_playing()
+	_check("T22: partida nova zera todos os marcos", GS.dias_de_reputacao == 0
+		and not GS.primeiro_cargueiro and not GS.meta_concluida)
+	_t22_completo = true

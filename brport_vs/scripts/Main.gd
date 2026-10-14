@@ -48,6 +48,8 @@ const PainelReputacaoScene := preload("res://scenes/panels/PainelReputacao.tscn"
 const PainelDocasScene := preload("res://scenes/panels/PainelDocas.tscn")
 const PainelCalendarioScene := preload("res://scenes/panels/PainelCalendario.tscn")
 const PainelMenuScene := preload("res://scenes/panels/PainelMenu.tscn")
+const PainelMetaScene := preload("res://scenes/panels/PainelMeta.tscn")
+const DiarioFase2Scene := preload("res://scenes/panels/DiarioFase2.tscn")
 const PainelParcelaScene := preload("res://scenes/panels/PainelParcela.tscn")
 const PainelAjustesScene := preload("res://scenes/panels/PainelAjustes.tscn")
 # A tela inicial é uma CENA e não um painel: sair para ela troca a árvore
@@ -182,7 +184,7 @@ func _ready() -> void:
 	# obrigaria a mirar o que ela nem sabe que existe.
 	_message_cartao.gui_input.connect(_on_faixa_input)
 	if _message_label.text == "":
-		_on_message("O porto é seu. Um píer de pé e o resto por levantar.", "", "porto")
+		_on_message(Narrativa.abertura_do_porto(), "", "porto")
 
 	# A ABERTURA VEM ANTES DE TUDO. Partida nova pergunta os dois nomes, e a
 	# escolha é irrevogável (GDD 7). É overlay e não fase do jogo de propósito:
@@ -495,6 +497,7 @@ func _connect_game_state() -> void:
 	GameState.debt_due.connect(_on_debt_due)
 	GameState.game_over.connect(_on_game_over)
 	GameState.fase_concluida.connect(_on_fase_concluida)
+	GameState.meta_atualizada.connect(_refresh_meta)
 	GameState.semana_fechada.connect(_on_semana_fechada)
 
 	# AS FALAS DA DONA CIDA penduram-se nos sinais acima, e ligam-se AQUI, por
@@ -589,15 +592,14 @@ func _refresh_hud() -> void:
 # a informação que estava faltando na tela: quanto já tem, quanto falta e
 # quantos dias restam até o Sr. Ribeiro bater na porta.
 func _refresh_meta() -> void:
-	# A FASE SEM COBRANÇA (`104`): o Sr. Ribeiro já recebeu as três, e o cartão
-	# diz isso e o que sobra de risco — o dinheiro. A meta de três barras que
-	# vai ocupar este lugar é da etapa 3 da `103`; até lá, nenhum número a
-	# perseguir, e nenhuma barra a meio que o pareça.
+	# Sem cobrança, o cartão abre as três barras (`106`). O resumo dá o mesmo
+	# peso a cada requisito; o painel mostra o que falta em cada um.
 	if not GameState.tem_cobranca():
 		_meta_icone.texture = Icones.FEITO
-		_meta_titulo.text = "Fase %d — sem dívida com o banco" % GameState.numero_da_fase
-		_meta_bar.value = 100.0
-		_meta_label.text = "Sem prazo: o porto segue enquanto houver dinheiro"
+		var meta: Dictionary = GameState.progresso_da_meta()
+		_meta_titulo.text = "Fase 2 concluída — jogo livre" if GameState.meta_concluida else "Meta da Fase 2 — toque para ver"
+		_meta_bar.value = 100.0 * (float(meta["dias"]) / meta["dias_alvo"] + float(meta["infra"]) / meta["infra_alvo"] + meta["missao"]) / 3.0
+		_meta_label.text = "Sem prazo: o porto segue enquanto houver dinheiro" if GameState.meta_concluida else "Reputação · infraestrutura · primeiro cargueiro"
 		_meta_label.theme_type_variation = &"TextoPilulaBom"
 		return
 	var alvo := GameState.principal_da_parcela()
@@ -1051,11 +1053,13 @@ func _on_docas_pilula_input(event: InputEvent) -> void:
 # porque o rodapé não tem os 44px de toque para lhe dar; ver o cabeçalho de
 # `PainelParcela.gd`.
 #
-# Sem cobrança não há painel da parcela (`104`): na Fase 2 o cartão só diz que
-# não há dívida, e abrir o painel leria uma parcela que não existe.
+# Na Fase 2 o mesmo toque abre a meta (`106`), sem tentar ler uma parcela.
 func _on_meta_cartao_input(event: InputEvent) -> void:
-	if _e_toque_de_soltar(event) and GameState.tem_cobranca():
-		_abrir_painel(PainelParcelaScene).setup()
+	if _e_toque_de_soltar(event) and (GameState.tem_cobranca() or GameState.numero_da_fase == 2):
+		if GameState.numero_da_fase == 2:
+			_abrir_painel(PainelMetaScene).setup()
+		else:
+			_abrir_painel(PainelParcelaScene).setup()
 		accept_event()
 
 
@@ -1120,7 +1124,7 @@ func _on_rival_offer_triggered(indice_fila: int) -> void:
 	# `087` encontrou o Arlindo por cima da resposta do Ribeiro na parcela 2.
 	# Só nesse caminho ele espera resposta e boletim; a oferta habitual mantém
 	# a prioridade que já tinha sobre os outros painéis.
-	if is_instance_valid(vez.painel_da_vez) and vez.painel_da_vez.scene_file_path == DebtPaymentScene.resource_path:
+	if is_instance_valid(vez.painel_da_vez) and vez.painel_da_vez.scene_file_path in [DebtPaymentScene.resource_path, DiarioFase2Scene.resource_path]:
 		vez.na_vez(abrir)
 	else:
 		abrir.call()
@@ -1146,6 +1150,12 @@ func _on_game_over(did_win: bool, reason: String) -> void:
 # painel abrir: ele espera a vez atrás da resposta do Sr. Ribeiro e do
 # boletim, e a essa hora a barra já recomeçou na escala da Fase 2.
 func _on_fase_concluida(_numero: int, motivo: String) -> void:
+	if _numero == 2:
+		vez.na_vez(func() -> Control:
+			var diario := _abrir_painel(DiarioFase2Scene)
+			diario.setup()
+			return diario)
+		return
 	var reputacao: float = GameState.reputation
 	vez.na_vez(func() -> Control:
 		var painel := _abrir_painel(EndGameScene)

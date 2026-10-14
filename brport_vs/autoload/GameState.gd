@@ -64,6 +64,7 @@ signal fase_concluida(numero: int, motivo: String)
 # tem ícone.
 signal message(text: String, kind: String, assunto: String)
 signal state_loaded()
+signal meta_atualizada()
 # Uma semana fechou, com o resumo por fonte. Existe separado de `message`
 # porque o Boletim Financeiro da Dona Cida é uma TELA, não uma faixa de texto —
 # e porque quem o escuta precisa dos números decompostos, que a mensagem não
@@ -508,8 +509,7 @@ const FASES := [
 	},
 	# A FASE 2 (`103`, `104`): as três quitações abrem-na no dia seguinte ao
 	# último da Fase 1, no mesmo save, sem dívida e sem prazo. Perde-se só pelo
-	# caixa. A meta de três barras, o piso da reputação e a página que a fecha
-	# são da etapa 3; até lá ela joga-se livre.
+	# caixa. A meta da etapa 3 fecha-a no diário e conserva o jogo livre (`106`).
 	{
 		"semanas": null,
 		"parcelas": [],
@@ -538,6 +538,10 @@ const FASES := [
 		# a passagem põe-na aqui. Provisório até à etapa 4: o mesmo da Fase 1,
 		# que é a âncora neutra da negociação (`_chance_com_reputacao`).
 		"reputacao_inicial": 65.0,
+		# TUNING: patamares provisórios da etapa 3 (`106`); a etapa 4 mede-os.
+		# O piso abaixo do início conserva o acesso ao entrar; a meta pede avanço.
+		"meta": {"reputacao": 80.0, "dias": 3, "infra": ["pier_3", "trelica"]},
+		"piso_cargueiro": 40.0,
 	},
 ]
 
@@ -649,7 +653,9 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # o que a obra, a parcela e o dia querem dizer depende dela. Sai junto o
 # `upgrade_purchased` (M9), que só a suíte antiga lia. Autorizada pelo Bruno
 # com o degrau, que escreve a Fase 1 nos saves de antes.
-const SAVE_VERSION := 16
+# A 17 (`106`), autorizada com migração, guarda dias seguidos, primeiro
+# cargueiro e conquista. A 16 não conhecia o passado destes três marcos.
+const SAVE_VERSION := 17
 
 # O PISO DA MIGRAÇÃO (`098`). Até a 14, save de outra versão era descartado,
 # e servia ao protótipo, onde recomeçar custa uma partida de teste. Não serve
@@ -862,6 +868,10 @@ var cash: int = START_CASH
 # começa.
 var numero_da_fase: int = 1
 var reputation: float = reputacao_inicial()
+# Só dias FECHADOS contam. A missão e a conquista não se perdem com a queda.
+var dias_de_reputacao: int = 0
+var primeiro_cargueiro: bool = false
+var meta_concluida: bool = false
 var docks: Array = []       # [{boat: Dictionary|null, worker_id: int|null}]
 var workers: Array = []     # [{id:int, busy_turns:int}]
 # Estruturas já concluídas, por id. Guardado como Array para o save ser um JSON
@@ -1048,6 +1058,9 @@ func new_game() -> void:
 	cash = START_CASH
 	# A fase ANTES da reputação: é ela que diz onde a barra começa.
 	numero_da_fase = 1
+	dias_de_reputacao = 0
+	primeiro_cargueiro = false
+	meta_concluida = false
 	reputation = reputacao_inicial()
 	estruturas = []
 	obra_em_andamento = {}
@@ -1514,6 +1527,14 @@ func caixa_curto() -> bool:
 	return tem_cobranca() and cash < principal_da_parcela() / 2
 
 
+# Sem dívida, o aviso compara dinheiro com a próxima semana de operação.
+func dinheiro_curto_na_fase_livre() -> bool:
+	if tem_cobranca():
+		return false
+	var custos := _custos_da_semana()
+	return cash < int(custos["salarios"]) + int(custos["manutencao"])
+
+
 # Devolve o índice da doca onde o trabalhador está alocado, ou -1.
 func worker_dock_index(worker_id: int) -> int:
 	for i in range(docks.size()):
@@ -1691,6 +1712,9 @@ func advance_turn() -> void:
 				dia_atual["servidos"] += 1
 				metrics["boats_served"] += 1
 				_change_reputation(REPUTATION_GAIN_SERVED)
+				if numero_da_fase == 2 and boat["classe"] == "medio" and not primeiro_cargueiro:
+					primeiro_cargueiro = true
+					message.emit("Missão cumprida: primeiro cargueiro atendido.", "good", "meta")
 				contrato_fechado.emit(bruto, String(boat["classe"]))
 				var w = _find_worker(dock["worker_id"])
 				if w != null:
@@ -1757,6 +1781,7 @@ func advance_turn() -> void:
 	# e renda semanal. A obra só libera benefícios para o dia que vai abrir.
 	# Também conclui no vencimento: decidir a dívida não acrescenta um dia.
 	_concluir_obra_se_pronta()
+	_contar_dia_da_meta()
 
 	if venceu_hoje and not parcela_paid:
 		_set_phase(ESTADO_COBRANCA)
@@ -1993,6 +2018,14 @@ func _check_end() -> void:
 			_end_game(true, MOTIVO_DA_FASE_1)
 			return
 		_passar_de_fase(MOTIVO_DA_FASE_1)
+	# A quebra tem prioridade sobre a conquista no mesmo fecho. A página é
+	# overlay; marcar ANTES do sinal impede repeti-la por uma chamada reentrante.
+	if numero_da_fase == 2 and not meta_concluida:
+		var meta := progresso_da_meta()
+		if meta["dias"] == meta["dias_alvo"] and meta["infra"] == meta["infra_alvo"] and primeiro_cargueiro:
+			meta_concluida = true
+			fase_concluida.emit(2, "O porto cumpriu a meta da Fase 2. O trabalho continua.")
+	meta_atualizada.emit()
 	_spawn_boats()
 
 
@@ -2020,6 +2053,9 @@ func _passar_de_fase(motivo: String) -> void:
 	var concluida := numero_da_fase
 	fase_concluida.emit(concluida, motivo)
 	numero_da_fase += 1
+	dias_de_reputacao = 0
+	primeiro_cargueiro = false
+	meta_concluida = false
 	parcela_indice = 0
 	parcela_paid = false
 	parcelas_quitadas = 0
@@ -2507,12 +2543,53 @@ func nivel_do_porto() -> int:
 # classe do navio que chegou.
 
 
-# As classes que o porto de hoje consegue receber, na ordem da tabela. Nunca
-# volta vazia: o pesqueiro é de nível 1 e o porto em ruínas já é nível 1.
+# A fase permanece conquistada; só NOVAS chegadas são suspensas (`103`).
+# A fila e o serviço já contratado continuam, inclusive abaixo do piso.
+func cargueiros_suspensos() -> bool:
+	return numero_da_fase == 2 and reputation < float(dados_da_fase()["piso_cargueiro"])
+
+
+func regra_dos_cargueiros() -> String:
+	if numero_da_fase != 2:
+		return "A treliça e o cargueiro abrem na Fase 2."
+	var piso := int(dados_da_fase()["piso_cargueiro"])
+	return ("Cargueiros suspensos: recupere a reputação até %d. " % piso if cargueiros_suspensos()
+		else "Abaixo de %d de reputação, novos cargueiros deixam de vir. " % piso) \
+		+ "Os já contratados continuam. A fase conquistada permanece."
+
+
+func progresso_da_meta() -> Dictionary:
+	if numero_da_fase != 2:
+		return {}
+	var alvo: Dictionary = dados_da_fase()["meta"]
+	var prontas := 0
+	for id in alvo["infra"]:
+		if tem_estrutura(id):
+			prontas += 1
+	return {"dias": dias_de_reputacao, "dias_alvo": int(alvo["dias"]),
+		"reputacao_alvo": float(alvo["reputacao"]), "infra": prontas,
+		"infra_alvo": alvo["infra"].size(), "missao": 1 if primeiro_cargueiro else 0,
+		"concluida": meta_concluida, "piso": float(dados_da_fase()["piso_cargueiro"])}
+
+
+func _contar_dia_da_meta() -> void:
+	if numero_da_fase != 2 or meta_concluida:
+		return
+	var alvo: Dictionary = dados_da_fase()["meta"]
+	if reputation >= float(alvo["reputacao"]):
+		dias_de_reputacao = mini(dias_de_reputacao + 1, int(alvo["dias"]))
+	else:
+		dias_de_reputacao = 0
+
+
+# As classes disponíveis na ordem da tabela. Nunca volta vazia: o pesqueiro
+# é de nível 1, e a reputação só suspende o cargueiro.
 func classes_disponiveis() -> Array:
 	var nivel := nivel_do_porto()
 	var out: Array = []
 	for id in CLASSES_DE_NAVIO:
+		if id == "medio" and cargueiros_suspensos():
+			continue
 		if int(CLASSES_DE_NAVIO[id]["nivel"]) <= nivel:
 			out.append(id)
 	return out
@@ -2648,6 +2725,9 @@ func save_game() -> void:
 		"docks": docks,
 		"workers": workers,
 		"numero_da_fase": numero_da_fase,
+		"dias_de_reputacao": dias_de_reputacao,
+		"primeiro_cargueiro": primeiro_cargueiro,
+		"meta_concluida": meta_concluida,
 		"estruturas": estruturas,
 		"obra_em_andamento": obra_em_andamento,
 		"parcela_paid": parcela_paid,
@@ -2697,6 +2777,9 @@ func load_game() -> bool:
 	# A fase ANTES da reputação, que lê dela o padrão. Acesso direto: o
 	# `_save_aceite()` já exigiu o campo, e na fase certa.
 	numero_da_fase = int(parsed["numero_da_fase"])
+	dias_de_reputacao = int(parsed["dias_de_reputacao"])
+	primeiro_cargueiro = bool(parsed["primeiro_cargueiro"])
+	meta_concluida = bool(parsed["meta_concluida"])
 	reputation = float(parsed.get("reputation", reputacao_inicial()))
 	docks = parsed["docks"]
 	workers = parsed["workers"]
@@ -2822,6 +2905,28 @@ func _save_aceite(texto: String) -> Dictionary:
 			or int(fase_lida) < 1 or int(fase_lida) > FASES.size():
 		return {}
 	var fase := int(fase_lida)
+	var dias = parsed.get("dias_de_reputacao", null)
+	if typeof(dias) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(dias)) \
+			or float(dias) != int(dias) or int(dias) < 0:
+		return {}
+	if typeof(parsed.get("primeiro_cargueiro")) != TYPE_BOOL \
+			or typeof(parsed.get("meta_concluida")) != TYPE_BOOL:
+		return {}
+	if fase == 1:
+		if int(dias) != 0 or parsed["primeiro_cargueiro"] or parsed["meta_concluida"]:
+			return {}
+	else:
+		var alvo: Dictionary = dados_da_fase(fase)["meta"]
+		if int(dias) > int(alvo["dias"]):
+			return {}
+		if parsed["meta_concluida"]:
+			if int(dias) != int(alvo["dias"]) or not parsed["primeiro_cargueiro"]:
+				return {}
+			if typeof(parsed.get("estruturas")) != TYPE_ARRAY:
+				return {}
+			for id in alvo["infra"]:
+				if not parsed.get("estruturas", []).has(id):
+					return {}
 	# O DIA DENTRO DA FASE: a partir do primeiro dela e, com prazo, até ao dia a
 	# seguir ao último — o da cobrança que fecha a fase, à espera da decisão, ou
 	# o do fim. Um dia 40 na Fase 2 é um save que nenhuma partida grava, e
@@ -2983,6 +3088,8 @@ func _migrar_um_passo(de: int, dados: Dictionary) -> Dictionary:
 			return _de_14_para_15(dados)
 		15:
 			return _de_15_para_16(dados)
+		16:
+			return _de_16_para_17(dados)
 		_:
 			return {}
 
@@ -3027,6 +3134,15 @@ func _de_15_para_16(dados: Dictionary) -> Dictionary:
 		dados["emprestimo_devido"] = 0
 		dados["segunda_chance_usada"] = false
 		dados["reputation"] = reputacao_inicial(2)
+	return dados
+
+
+# A 16 não guardava a classe dos barcos já servidos nem os fechos acima da
+# meta. Não se inventa passado: mantém-se o porto e começa-se a contagem aqui.
+func _de_16_para_17(dados: Dictionary) -> Dictionary:
+	dados["dias_de_reputacao"] = 0
+	dados["primeiro_cargueiro"] = false
+	dados["meta_concluida"] = false
 	return dados
 
 
