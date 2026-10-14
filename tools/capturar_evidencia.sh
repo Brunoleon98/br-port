@@ -585,6 +585,12 @@ tirar fimfase - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame
 # incluído — só se lê depois dela. O «Virar» espera o tempo `segunda_pagina`,
 # que o painel só declara no fim da virada.
 tirar fimfase_2 - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGame.tscn "$SAIDA/fimfase_2.png" true "Você quitou as três parcelas e manteve o porto no azul!" recibo=quitado --tocar=Virar --tempo=segunda_pagina
+
+# Compra e operação alcançadas desde o dia 1, com caixa real (`103`, etapa 2).
+# O dia sai do primeiro cargueiro de dois dias após o píer 3 ficar pronto;
+# a ferramenta prova o percurso, o nível e a ausência de montagem de bancada.
+tirar porto_fase_2 0 - --script res://tools/capturar_fase_2.gd -- "$SAIDA"
+tirar construir_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" construir
 # O BALANÇO, numa partida JOGADA: o laço de sempre até ao vencimento (turno
 # 33), o «Pagar» do Sr. Ribeiro — ligado porque a partida juntou o dinheiro,
 # nunca porque a ferramenta o deu — e o «Ver o balanço» da narração. Foi a

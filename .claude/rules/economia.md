@@ -140,12 +140,16 @@ o triplo do balanceamento e reprova quem o repetir noutro sítio.
 ### Guindastes na Fase 1
 
 Os reparos básicos não promovem o aparelho de madeira (`086`); a treliça é
-da futura Fase 2. A base da máquina está no PNG do píer: `Dock.gd` seleciona
+compra da Fase 2 (`105`), após o píer 2: R$80 mil e dois dias de obra,
+provisórios até à etapa 4 da `103`. O nível 2 só entra na conclusão.
+A base da máquina está no PNG do píer: `Dock.gd` seleciona
 o conjunto n1 aprovado com madeira, preservando capacidade e assets. O nível
 intermediário das bancadas é efêmero e restrito a `--script`; não deve entrar
 no save nem atravessar partida nova ou carregamento. Madeira limita as classes
 a pesca: o pátio continua dobrando a renda do píer, enquanto o adicional de
-contêiner aguarda clientes futuros. Medir de novo antes de mudar preços.
+contêiner aguarda a treliça e o cargueiro na Fase 2. A varredura do recorte
+está em `docs/arquivo/MEDICOES_TRELICA_2026-10-14.json`; não substitui a
+medição da meta completa na etapa 4. Medir de novo antes de mudar preços.
 
 ### Obras da Fase 1
 

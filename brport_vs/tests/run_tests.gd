@@ -863,13 +863,115 @@ func _t20_degrau_15_para_16() -> void:
 	_t20_degrau_ok = true
 
 
+var _t21_completo := false
+
+
+# A compra real, não a meta efêmera da bancada. O save a meio da instalação
+# não pode liberar o navio cedo; o segundo avanço tem de fechar o contrato.
+func _t21_trelica() -> void:
+	_fresh_playing()
+	var caixa: int = GS.cash
+	_check("T21: a treliça não se compra na Fase 1",
+		GS.desbloqueio_da_estrutura("trelica") == "Disponível nas próximas fases."
+			and not GS.comprar_estrutura("trelica") and GS.cash == caixa)
+	if not _t20_ate_a_fase_2():
+		_check("T21: chega à Fase 2 pela terceira quitação", false)
+		return
+	_check("T21: a treliça abre no primeiro dia da Fase 2",
+		GS.abertura_do_reparo("trelica") == {"dia": 85, "quitadas": 0})
+	_check("T21: pede o píer 2 para garantir o píer de nível 2",
+		GS.impedimento_estrutura("trelica").begins_with("Precisa antes de"))
+	_check("T21: compra o píer 2", GS.comprar_estrutura("pier_2"))
+	_t21_avancar(GS.turn + GS.dias_da_obra("pier_2"))
+	caixa = GS.cash
+	var inicio: int = GS.turn
+	_check("T21: inicia a treliça e paga o preço inteiro uma vez",
+		GS.comprar_estrutura("trelica")
+			and GS.cash == caixa - int(GS.ESTRUTURAS["trelica"]["custo"]))
+	_check("T21: nem a obra nem dois reparos promovem a madeira antes de concluir",
+		GS.nivel_do_porto() == 1 and not GS.classes_disponiveis().has("medio")
+			and not GS.tem_estrutura("trelica"))
+	_t21_avancar(inicio + 1)
+	GS.save_game()
+	caixa = GS.cash
+	_check("T21: a treliça retoma do save ainda em obra, sem cobrar de novo",
+		GS.load_game() and GS.cash == caixa and GS.nivel_guindaste() == 1
+			and GS.obra_em_andamento.get("id", "") == "trelica"
+			and GS.dias_restantes_da_obra() == GS.dias_da_obra("trelica") - 1)
+	_t21_avancar(inicio + GS.dias_da_obra("trelica"))
+	_check("T21: concluída, a treliça põe píer, guindaste e porto no nível 2",
+		GS.tem_estrutura("trelica") and GS.nivel_pier() == 2
+			and GS.nivel_guindaste() == 2 and GS.nivel_do_porto() == 2
+			and GS.obra_em_andamento.is_empty())
+	_check("T21: recebe pesca e cargueiro, mantendo longo curso bloqueado",
+		GS.classes_disponiveis() == ["pesqueiro", "medio"])
+	GS.save_game()
+	_check("T21: save da treliça pronta volta ao nível 2 sem meta de bancada",
+		GS.load_game() and GS.nivel_do_porto() == 2
+			and not GS.has_meta(&"guindaste_intermediario_da_bancada"))
+	var doca = load("res://scenes/dock/Dock.tscn").instantiate()
+	doca.dock_index = 0
+	root.add_child(doca)
+	doca.refresh()
+	_check("T21: a doca real escolhe o píer e a lança aprovados do nível 2",
+		doca.get_node("Pier").texture == load("res://art/props/pier_n2.png")
+			and doca.get_node("Lanca").texture == load("res://art/props/lanca_n2.png"))
+	root.remove_child(doca)
+	doca.free()
+	var cargueiro: Dictionary = {}
+	for _tentativa in range(200):
+		var barco: Dictionary = GS._make_boat()
+		if barco["classe"] == "medio" and barco["motivo"] == "conteiner":
+			cargueiro = barco
+			break
+	_check("T21: o sorteio do porto de nível 2 produz cargueiro com contêiner", not cargueiro.is_empty())
+	if cargueiro.is_empty():
+		return
+	_check("T21: a treliça conserva dois dias do cargueiro e o extra do granel",
+		int(cargueiro["op_turns"]) == 2 and GS._turnos_de_operacao("medio", "granel") == 3)
+	for d in GS.docks:
+		d["boat"] = null
+		d["worker_id"] = null
+	for w in GS.workers:
+		w["busy_turns"] = 0
+	GS.fila = [cargueiro]
+	var servidos: int = GS.metrics["boats_served"]
+	_check("T21: o cargueiro sorteado atraca pela porta do jogador", GS.atracar(0, false))
+	var dia: int = GS.turn
+	_t21_avancar(dia + 1)
+	_check("T21: após um dia permanece na doca sem pagamento",
+		GS.docks[0]["boat"] != null and int(GS.docks[0]["boat"]["progress"]) == 1
+			and int(GS.metrics["boats_served"]) == servidos)
+	GS.save_game()
+	_check("T21: o cargueiro retoma do save com um dia trabalhado",
+		GS.load_game() and GS.docks[0]["boat"] != null
+			and int(GS.docks[0]["boat"]["progress"]) == 1)
+	_t21_avancar(dia + 2)
+	_check("T21: o segundo dia fecha o contrato e libera o trabalhador",
+		GS.docks[0]["boat"] == null and int(GS.metrics["boats_served"]) == servidos + 1)
+	_t21_completo = true
+
+
+func _t21_avancar(alvo: int) -> void:
+	var voltas := 0
+	while GS.turn < alvo and voltas < 30:
+		voltas += 1
+		if GS.phase == GS.ESTADO_OFERTA:
+			GS.resolve_rival_offer(true)
+		else:
+			GS.advance_turn()
+	if GS.phase == GS.ESTADO_OFERTA:
+		GS.resolve_rival_offer(true)
+	_check("T21: avança até ao dia %d" % alvo, GS.turn == alvo)
+
+
 func _t14_fase_inteira() -> void:
 	_fresh_playing()
 	GS.cash = GS.START_CASH * 25
 	_check("T14: calendário aprovado tem 84 dias e 7 por semana", GS.turnos_da_fase() == 84 and GS.TURNS_PER_WEEK == 7)
 	_check("T14: píer 2 abre no início", GS.comprar_estrutura("pier_2"))
 	_check("T14: armazém espera a segunda semana", not GS.comprar_estrutura("armazem"))
-	for id in ["pier_3", "escritorio", "guindaste", "cais"]:
+	for id in ["pier_3", "escritorio", "trelica", "guindaste", "cais"]:
 		_check("T14: %s não pode ser comprado na Fase 1" % id, not GS.comprar_estrutura(id))
 	var cobrancas := []
 	var boletins := []
@@ -1562,6 +1664,9 @@ func _run() -> void:
 	_check("o bloco T20 (o save pela fase do arquivo) correu até ao fim", _t20_save_ok)
 	_t20_degrau_15_para_16()
 	_check("o bloco T20 (o degrau 15→16) correu até ao fim", _t20_degrau_ok)
+	print("=== T21: a treliça comprada e o cargueiro de dois dias ===")
+	_t21_trelica()
+	_check("o bloco T21 correu até ao fim", _t21_completo)
 
 	print("")
 	if _fails == 0:

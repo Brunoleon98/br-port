@@ -29,6 +29,9 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `MEDICOES_TRELICA_2026-10-14.json` | 14/10 | Quatro preços, 600 partidas por perfil, 56 dias de Fase 2; controle positivo e sete defeitos injetados (`105`) |
+| `EVIDENCIA_TRELICA_2026-10-14/` | 14/10 | Porto e Construir de uma partida jogada até ao dia 91, três píeres e cargueiro no segundo dia (`105`) |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-14.md` | 14/10 | Etapa 2 da `103`: treliça e cargueiro (`105`); branch `codex/frente-5-trelica-cargueiro`. Próxima: meta, regressão e fim |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-10g.md` | 10/10 | Substitui o de 10/10 (f): o M6 da fila fechou (`093`) — o F19 do `teste_fumaca` exige no alvo cada privado que as suítes e as ferramentas leem por string, com a declaração em `brport_vs/tests/nomes_lidos_por_string.json`. Branch `claude/awesome-archimedes-ou0rnf`. Próximo: o M7, se o Bruno responder o D3 e o D4; senão, o M8 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-11d.md` | 11/10 | Substitui o de 11/10 (c): o M8 fechou (`097`) — a vez das telas fora do `Main`, em `scripts/VezDasTelas.gd`, com o F11d a contar os nós órfãos ao soltar o `Main` com telas na fila. Branch `claude/youthful-hawking-h4xzuc`. Próximo: perguntar ao Bruno o D5 e o D6 (M10, M11); sem resposta, a frente 5 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-11f.md` | 11/10 | Substitui o de 11/10 (e): o M11 fechou na parte de máquina (`099`) — o Web da `main` verde no Pages, com o protótipo em `/prototipo/`, a régua `medir_desempenho.gd` e a pasta `playtest/` das partidas do A7. Branch `claude/brave-brahmagupta-puciam`. Próximo: a fila parou; a frente 5, pelo tutorial curto, a começar por quem guia |

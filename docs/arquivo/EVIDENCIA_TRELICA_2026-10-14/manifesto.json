@@ -1,0 +1,17 @@
+{
+  "semente": 20260902,
+  "fixed_fps": 60,
+  "dia": 91,
+  "fase": 2,
+  "nivel_porto": 2,
+  "cargueiros_atendidos": 2,
+  "caixa": 351112,
+  "dimensoes": [
+    720,
+    1280
+  ],
+  "imagens": {
+    "porto_fase_2.png": "38ba34d084d1d16e072c4e51c0d86508421f31379d9e64870de5df4c5d43da91",
+    "construir_fase_2.png": "efb984b6e8ce95d4a3915e786409a66b093bbf4f6b345cae9d186a116015e67c"
+  }
+}
