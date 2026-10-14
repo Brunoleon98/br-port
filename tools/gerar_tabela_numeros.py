@@ -481,6 +481,23 @@ def montar_fases() -> list[str]:
                 ESTRUTURAS_LIDAS[_id]["nome"], int(r["semana"]),
                 int(r["quitadas"]), int(r["dias_de_obra"])))
         linhas.append("")
+        if "meta" in f:
+            meta = f["meta"]
+            linhas += [
+                "### Fase %d — meta e regressão" % (i + 1),
+                "",
+                "Patamares provisórios (`106`), até à etapa 4 da `103`.",
+                "",
+                "| Reputação da meta | Fechos seguidos | Piso dos cargueiros |",
+                "|---:|---:|---:|",
+                "| %s | %d | %s |" % (formatar(float(meta["reputacao"])),
+                    int(meta["dias"]), formatar(float(f["piso_cargueiro"]))),
+                "",
+                "Infraestrutura pronta: %s. Missão: primeiro cargueiro atendido." %
+                    ", ".join(ESTRUTURAS_LIDAS[e]["nome"] for e in meta["infra"]),
+                "A conquista mantém a fase em jogo livre; o piso só suspende novas chegadas.",
+                "",
+            ]
     return linhas
 MOTIVOS_LIDOS: dict = {}
 CLASSES_LIDAS: dict = {}

@@ -758,7 +758,10 @@ simulador mede a Fase 1 com paridade à main. **A etapa 2 fechou em 14/10
 (`105`)** — a treliça comprável, o porto de nível 2 e o cargueiro de dois dias,
 com a arte das bancadas e uma partida fotografada até lá. Preço e prazo
 provisórios, com varredura deste recorte; a etapa 4 mede a meta completa.
-**A seguinte é a 3** — a meta, a regressão e o fim.
+**A etapa 3 fechou em 14/10 (`106`)** — as três barras, o piso dos
+cargueiros, o save 17 com migração e a página do diário que segue em jogo
+livre. Os dois patamares são provisórios. **A seguinte é a 4**, a medição
+completa da Fase 2 por perfil.
 Depois delas, o cancelamento, os trabalhadores extras e a linha voluntária
 voltam ao Bruno, já com onde agir.
 

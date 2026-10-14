@@ -1,0 +1,15 @@
+[
+  {
+    "defeito": "barra-infra-apagada",
+    "reprovas": [
+      "FAIL  T22: painel tem exatamente três barras",
+      "FAIL  T22: barras leem dias, infra pronta e missão, nesta ordem"
+    ]
+  },
+  {
+    "defeito": "saida-jogar-de-novo",
+    "reprovas": [
+      "FAIL  T22: diário oferece só seguir em jogo livre"
+    ]
+  }
+]

@@ -1,0 +1,104 @@
+{
+  "godot": "4.6.3",
+  "base": "a95bf077d0303a01ba28e44f3476be44a9edfe2c",
+  "suites": {
+    "run_tests": "TODOS OS TESTES PASSARAM",
+    "teste_design": "DESIGN OK",
+    "teste_audio": "AUDIO OK",
+    "teste_fumaca": "FUMACA OK",
+    "teste_registro": "REGISTRO OK",
+    "asset_validator": "ASSET OK"
+  },
+  "paridade": {
+    "partidas_por_perfil": 600,
+    "semente": 20260825,
+    "valores_comparados": 712,
+    "diferencas": [],
+    "controle_mesmo_arquivo": 0,
+    "controle_valor_alterado": 1
+  },
+  "defeitos_injetados": [
+    {
+      "defeito": "sem-reset-da-sequencia",
+      "reprovas": [
+        "FAIL  T22: fecho abaixo do alvo recomeça sequência",
+        "FAIL  T22: 1 de três dias, sem conquista precoce",
+        "FAIL  T22: 2 de três dias, sem conquista precoce"
+      ]
+    },
+    {
+      "defeito": "sem-piso",
+      "reprovas": [
+        "FAIL  T22: abaixo do piso só novas chegadas de pesca",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão",
+        "FAIL  T22: sorteio respeita suspensão"
+      ]
+    },
+    {
+      "defeito": "conquista-repetida",
+      "reprovas": [
+        "FAIL  T22: jogo livre avança sem repetir diário"
+      ]
+    },
+    {
+      "defeito": "missao-no-primeiro-dia",
+      "reprovas": [
+        "FAIL  T22: primeiro dia de descarga não cumpre missão"
+      ]
+    },
+    {
+      "defeito": "load-perde-conquista",
+      "reprovas": [
+        "FAIL  T22: conquista e missão voltam mesmo com reputação baixa",
+        "FAIL  T22: jogo livre avança sem repetir diário"
+      ]
+    },
+    {
+      "defeito": "migracao-inventa-missao",
+      "reprovas": [
+        "FAIL  T22: degrau 16→17 conserva porto e começa acompanhamento"
+      ]
+    },
+    {
+      "defeito": "barra-infra-apagada",
+      "reprovas": [
+        "FAIL  T22: painel tem exatamente três barras",
+        "FAIL  T22: barras leem dias, infra pronta e missão, nesta ordem"
+      ]
+    },
+    {
+      "defeito": "saida-jogar-de-novo",
+      "reprovas": [
+        "FAIL  T22: diário oferece só seguir em jogo livre"
+      ]
+    }
+  ],
+  "sha256_game_state": "7fe4e2de7b66884189cbec93d8a5a55c920364506765ecdb930cc18f33f08955"
+}

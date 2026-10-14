@@ -190,8 +190,11 @@ parcelas e SEM PRAZO (`semanas` em `null`, que rebenta a quem a pedir sem o
 `fase_tem_prazo()`), e quem lê a parcela corrente pergunta antes pelo
 `tem_cobranca()`. As semanas de parcelas e reparos contam-se do início da
 fase; o calendário e o boletim não recomeçam. O simulador mede a Fase 1 e
-pára na passagem (`FASE_MEDIDA`); os preços, os dias de obra e a reputação
-de partida da Fase 2 são provisórios até à etapa 4 da `103`. Quem mexer no
+pára na passagem (`FASE_MEDIDA`). A meta da Fase 2 (`106`) pede reputação
+≥80 por três fechos seguidos, píer 3 e treliça prontos e cargueiro atendido;
+abaixo do piso 40 suspendem-se novas chegadas, sem perder a conquista. Os
+patamares, os preços, os dias de obra e a reputação de partida da Fase 2 são
+provisórios até à etapa 4 da `103`. Quem mexer no
 `valor` de uma parcela da Fase 1 mexe nos `juros` com ele: o F20 exige que o capital das três feche o `START_CASH`, que é o
 crédito da `085`. E o `nivel_maximo` não trava nada — é afirmação, e o F20
 reprova-a quando um reparo novo leva o porto acima dela.

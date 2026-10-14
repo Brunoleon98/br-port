@@ -63,6 +63,7 @@ const VAO_ICONE := 6
 # diz «feito» e não «obra», e passou ao guindaste; e o cliente que perde a
 # paciência tem a cara dele, e não as espadas do rival que ainda não ganhou.
 const ICONE_DO_ASSUNTO := {
+	"meta": Icones.VITORIA,
 	"porto": Icones.DOCA,
 	"doca": Icones.DOCA,
 	"trabalhador": Icones.TRABALHADOR,

@@ -4,12 +4,9 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 14/10/2026 — a treliça comprável e o cargueiro (`105`)
+> **Última atualização:** 14/10/2026 — etapa 3 da Fase 2 (`106`)
 >
-> **A tabela das quatro camadas está no `CLAUDE.md`, que carrega sozinho** —
-> não se repete aqui. Esta é a segunda; o que vem a seguir está na §7 de
-> `docs/design/BR_Port_Plano_v3_Claude_Code.md`, e o porquê de cada escolha em
-> `docs/decisoes/NNN-*.md`, uma por arquivo.
+> Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
 > Retome por este estado e pelo plano. Histórico: `docs/arquivo/HISTORICO.md`;
 > sessões fechadas: `docs/arquivo/`.
@@ -62,15 +59,17 @@ do mapa (`069`).
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **16** (`104`, com a fase e o M9) sobe da 14, o PISO dos degraus
-(`098`), com um exemplo por versão; 13 e anteriores recusadas. A Fase 1 dura
+Save **17** (`106`), com migração desde a 14 (`098`) e um exemplo por versão;
+13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
 iguais de R$140 mil, R$20 mil de juros totais. **Quem não tem o boleto ganha
 uma segunda chance** do Sr. Ribeiro, uma vez por fase (`102`). **As três
-quitações passam à Fase 2 no dia 85**, no mesmo save, sem dívida nem prazo,
-e ela joga-se livre: a treliça chegou (`105`); a meta e a medição completa
-são as etapas 3–4 da `103`.
+quitações passam à Fase 2 no dia 85**, no mesmo save, sem dívida nem prazo.
+**Meta de três barras** (`106`): reputação ≥80 em três fechos seguidos,
+píer 3 e treliça prontos, primeiro cargueiro atendido. Fecha a Fase 2 no
+diário e segue em jogo livre. Abaixo de 40, só novos cargueiros somem.
+Patamares provisórios até à medição da etapa 4 da `103`.
 
 **Madeira e pesca na Fase 1** (`086`). Na Fase 2 a **treliça custa R$80 mil
 e leva dois dias**, provisórios: com o píer 2 pronto, sua conclusão abre o
@@ -115,8 +114,9 @@ itens param à espera do Bruno. Aqui fica só a posição.
 mais tranquila — **M1** a **M11** fecharam (`088`–`099`, o M9 na `104`); o
 M12 espera o A8, e a fila parou: voltou a frente 5, o **tutorial curto**
 (`100`, `101`) e a **segunda chance** (`102`) estão no jogo, e a
-**progressão para a Fase 2** (`103`) fez as etapas 1 (`104`) e 2 (`105`);
-a seguinte é a **3**, a meta, a regressão e o fim. O Pages publica a main verde.
+**progressão para a Fase 2** (`103`) fez as etapas 1 (`104`), 2 (`105`) e
+**3** (`106`), com a meta, a regressão e o diário. A seguinte é a
+**4**, a medição completa. O Pages publica a main verde.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -126,7 +126,7 @@ histórico em `HISTORICO.md`.
 | Item | O que falta | Por que só ele |
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
-| **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas, o caderno, as três do Toninho e as duas novas do Sr. Ribeiro (`067`, `082`, `101`, `102`) |
+| **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas, o caderno, Toninho, Sr. Ribeiro e a página da Fase 2 com o aviso da Cida (`067`, `082`, `101`, `102`, `106`) |
 | **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína, os três degraus da animação e a virada do dia (`069`–`079`). O material do ChatGPT vive em `art_lab/` | Na 4 falta a máquina do contêiner (`079`); obras futuras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
 | **A7** | **Jogar pelo link do Pages** e ver duas pessoas jogarem; o FPS no telefone; as partidas em `playtest/` (`099`) | Só ele joga |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
@@ -139,7 +139,7 @@ histórico em `HISTORICO.md`.
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo; o que é de cada fase na tabela `FASES`, lida por funções (`094`) |
-| `brport_vs/tests/run_tests.gd` | Regressões da lógica: a parcela, o rival, a abertura dos reparos (T17, `089`) e a passagem para a Fase 2 (T20, `104`) |
+| `brport_vs/tests/run_tests.gd` | Regressões da lógica; Fase 2: passagem T20 (`104`), treliça T21 (`105`), meta/regressão/save T22 (`106`) |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |

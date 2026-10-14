@@ -591,6 +591,10 @@ tirar fimfase_2 - -  --script res://tools/capturar_cena.gd -- res://scenes/EndGa
 # a ferramenta prova o percurso, o nível e a ausência de montagem de bancada.
 tirar porto_fase_2 0 - --script res://tools/capturar_fase_2.gd -- "$SAIDA"
 tirar construir_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" construir
+tirar meta_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" meta
+tirar diario_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" diario
+tirar livre_fase_2 0 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" livre
+tirar suspenso_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" suspenso
 # O BALANÇO, numa partida JOGADA: o laço de sempre até ao vencimento (turno
 # 33), o «Pagar» do Sr. Ribeiro — ligado porque a partida juntou o dinheiro,
 # nunca porque a ferramenta o deu — e o «Ver o balanço» da narração. Foi a

@@ -115,6 +115,8 @@ func setup(_sem_argumentos: Variant = null) -> void:
 		"\"cortar pela metade\" nas negociações com o rival. Abaixo, piora.")
 		% int(GameState.reputacao_inicial()))
 
+	if GameState.numero_da_fase == 2:
+		paragrafo(GameState.regra_dos_cargueiros())
 	botao_fechar("Fechar")
 
 

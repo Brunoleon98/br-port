@@ -1,0 +1,96 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+  PASS  T22: piso abaixo do início e meta acima, três dias
+  PASS  T22: abre sem dias contados, missão ou conquista
+  PASS  T22: um reparo pronto de dois, sem contar escritório
+  PASS  T22: limiar exato conta um dia fechado
+  PASS  T22: save e load guardam o dia sem contar outro
+  PASS  T22: fecho abaixo do alvo recomeça sequência
+  PASS  T22: 1 de três dias, sem conquista precoce
+  PASS  T22: 2 de três dias, sem conquista precoce
+  PASS  T22: 3 de três dias, sem conquista precoce
+  PASS  T22: píer 3 em obra não completa barra
+  PASS  T22: infra pronta não substitui missão
+  PASS  T22: encontrou cargueiro de dois dias
+  PASS  T22: atraca cargueiro sem cumprir missão
+  PASS  T22: primeiro dia de descarga não cumpre missão
+  PASS  T22: descarga cumpriu missão e fechou fase uma vez
+  PASS  T22: abaixo do piso só novas chegadas de pesca
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: conquista e missão voltam mesmo com reputação baixa
+  PASS  T22: piso exato recupera cargueiros
+  PASS  T22: jogo livre avança sem repetir diário
+  PASS  T22: conquista não impede quebra
+  PASS  T22: contratado termina abaixo do piso
+  PASS  T22: quebra tem prioridade sobre três barras
+  PASS  T22: degrau 16→17 conserva porto e começa acompanhamento
+  PASS  T22: recusa progresso inválido dias_de_reputacao=-1
+  PASS  T22: recusa progresso inválido dias_de_reputacao=1.5
+  PASS  T22: recusa progresso inválido dias_de_reputacao=4
+  PASS  T22: recusa progresso inválido primeiro_cargueiro=1
+  PASS  T22: recusa progresso inválido meta_concluida=true
+  PASS  T22: dinheiro curto sem cobrança é salário, não parcela
+  PASS  T22: aviso da Cida chega sem prometer cobrança
+  PASS  T22: toque no rodapé abre painel das três barras
+  PASS  T22: painel tem exatamente três barras
+  PASS  T22: barras leem dias, infra pronta e missão, nesta ordem
+  PASS  T22: conquista abre diário e não EndGame
+  PASS  T22: diário oferece só seguir em jogo livre
+  PASS  T22: diário não traz dígitos nem tokens crus
+  PASS  T22: oferta sorteada espera diário e vem ao fechar
+  PASS  T22: partida nova zera todos os marcos
+  PASS  T22 correu até ao fim
+T22 OK
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2663)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)
