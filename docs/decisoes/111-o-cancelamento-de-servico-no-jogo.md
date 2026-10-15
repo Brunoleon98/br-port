@@ -100,3 +100,8 @@ a `107` reservada e separada.
 Bruno também pediu, **depois deste recorte**, uma revisão de recursos básicos
 que possam ter faltado, citando tela inicial e como salvar. É inspeção da
 experiência atual, sem autorização implícita para outra frente de alterações.
+
+**Continuação na `112`:** Bruno esclareceu a pergunta sobre novos recursos,
+pediu pesquisa e autorizou publicar um PR com esta implementação e os estudos.
+O registro de entrega local acima descreve o fecho anterior; não é proibição
+da publicação posteriormente autorizada. Nenhum item da pesquisa foi implementado.

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 15/10/2026 — cancelamento de serviço (`111`)
+> **Última atualização:** 15/10/2026 — cancelamento e pesquisa (`111`, `112`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -116,8 +116,8 @@ e as quatro etapas da **progressão para a Fase 2** (`103`–`106`, `108`).
 Valores mantidos pela medição; resultados e limites na `economia.md`.
 **Cancelamento de serviço integrado na `111`**, após medição `110` e aceite:
 confirmação, equipe livre no dia, −5 e multa de 10%, contas, registro 5 e
-migração 17→18. Entrega local, sem publicação. Recursos básicos:
-`REVISAO_RECURSOS_BASICOS_2026-10-15.md`: prioridades propostas para o Bruno.
+migração 17→18. PR autorizado, merge a conferir. Recursos básicos: `112` e
+`PESQUISA_RECURSOS_BASICOS_2026-10-15.md`; revisão anterior preservada.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 pendente**,
 caderno sem aceite.
 A `107` (nomes no Web móvel) está em

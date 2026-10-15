@@ -1,5 +1,10 @@
 # BR Port — revisão dos recursos básicos
 
+**Complemento após esclarecimento do Bruno (`112`):** esta inspeção permanece
+preservada. A pesquisa de **novos recursos para adicionar**, com fontes,
+prioridades e recortes, está em `PESQUISA_RECURSOS_BASICOS_2026-10-15.md`.
+As duas leituras seguem juntas para o projeto; a pesquisa amplia a resposta.
+
 **15/10/2026.** Pedido do Bruno depois do recorte de cancelamento (`111`):
 ver o que pode ter faltado na experiência básica, citando tela inicial e
 como salvar. Inspeção do código atual e dos fluxos cobertos pelas suítes.

@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-15c.md` | 15/10 | Pesquisa de novos recursos básicos na `112`, estudos preservados e publicação do PR autorizada |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-15b.md` | 15/10 | Cancelamento aceite e integrado na `111`, entrega local, revisão dos recursos básicos e escolha seguinte do Bruno |
 | `VERIFICACAO_CANCELAMENTO_2026-10-15/` | 15/10 | Provas da ação integrada: paridade com a `110`, migração, contabilidade, registro, interface, controles e capturas |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-15.md` | 15/10 | Proposta `109` e medição `110` no PR #132; recomendação de cinco pontos e 10%, com implementação e migração ainda sem aceite |

@@ -768,10 +768,16 @@ após a varredura; dados e limites na decisão e na `economia.md`.
 **Próxima conversa, escolha do Bruno em 14/10: melhorias gerais da frente
 5, além do fechamento da Fase 1 e separadas da progressão da Fase 2.**
 **O cancelamento de serviço foi aceite e integrado na `111`**, após a proposta
-`109` e a medição `110`; entrega local, ainda sem publicação. O desenho anterior
-desceu para `docs/arquivo/PLANO_V3_FECHADOS.md`. A revisão pedida em seguida está
-em `docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`: confiabilidade do save e ajuda
-consultável são prioridades propostas, à espera da escolha do Bruno.
+`109` e a medição `110`; publicação por PR autorizada na `112`, sem presumir merge.
+O desenho anterior desceu para `docs/arquivo/PLANO_V3_FECHADOS.md`.
+**Bruno pediu pesquisar novos recursos básicos (`112`).** O estudo está em
+`docs/PESQUISA_RECURSOS_BASICOS_2026-10-15.md`, com fontes, recortes e aceitação:
+ajuda/glossário, resumo de retomada, controles de save, cópia/recuperação,
+texto ajustável, reduzir movimento, ajuda contextual e versão/diagnóstico.
+A primeira novidade sugerida é ajuda/glossário, depois resumo de retomada;
+Bruno ainda escolhe o que implementar. A pesquisa segue para o projeto com
+o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em
+`docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`, inclusive falhas do save.
 Obras, mais trabalhadores por píer e crédito voluntário ficam para depois.
 São funcionalidades gerais que podem usar os serviços mais longos e o porto
 ampliado; não são novas etapas da progressão nem requisitos adicionais para
