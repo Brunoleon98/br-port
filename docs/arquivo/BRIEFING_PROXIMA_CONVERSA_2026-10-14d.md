@@ -71,4 +71,6 @@ Tutorial e segunda chance já estão feitos. A4 continua pendente;
 não aplicar o caderno reescrito sem seu aceite.
 Preserve a correção móvel separada em codex/corrigir-nomes-web (107);
 ainda falta publicar com autorização e confirmar a digitação no telefone.
+Ao encerrar, aplique sempre a skill /fechar-sessao, como exige AGENTS.md,
+e entregue o prompt completo da próxima conversa em bloco copiável.
 ```

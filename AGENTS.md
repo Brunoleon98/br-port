@@ -73,6 +73,9 @@ registada sem o Bruno pedir.
 - Mudou o jogo? Atualize o `docs/ESTADO_DO_PROJETO.md` (tem teto de tamanho;
   o conferidor avisa). O ritual completo de fecho está em
   `.claude/skills/fechar-sessao/SKILL.md`, e vale ler mesmo não sendo o Claude.
+- **Ao encerrar uma conversa, aplique sempre a skill `/fechar-sessao`**, mesmo
+  sem o Bruno repetir o pedido. Entregue o prompt completo da próxima conversa
+  em bloco copiável e confira o CI do último commit antes de recomendar merge.
 
 ## 4. Convenções
 
