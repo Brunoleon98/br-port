@@ -6,11 +6,10 @@ Segunda metade do item A2 da fila do Plano v3. A errata da economia
 revalidada por medição e que as Parcelas 2 (R$16.000, semana 8) e 3 (R$24.000,
 semana 12) seguem **não verificadas** — não erradas, desconhecidas.
 
-O QUE ISTO É, E O QUE NÃO É. Verificar as Parcelas 2 e 3 por MEDIÇÃO exigiria
-um jogo com as Fases 2 e 3 implementadas, e a própria errata diz que construir
-isso antes de o Vertical Slice sair é a ordem errada. Então aqui não se mede:
-projeta-se. O que torna a projeção defensável, e não mais um modelo de
-planilha como o que já falhou uma vez, são duas amarras:
+Este é o projetor das hipóteses financeiras do GDD congelado. A Fase 2
+jogável atual não tem dívida (`103`) e usa `medir_fase_2.gd` para medir sua
+meta, seus tempos e quebras (`108`). Seus resultados não se confundem com
+as parcelas hipotéticas abaixo. A projeção conserva duas amarras:
 
   1. Os números da Fase 1 NÃO são digitados. Vêm de `simular_balanceamento.gd`
      (a economia da semana em regime, medida no jogo que existe) e de
@@ -567,11 +566,10 @@ def _main() -> int:
         print("  Multiplicadores não provam dificuldade: confira as sobras dos")
         print("  cenários acima. Cobranças dentro da Fase 1 precisam de medição própria.")
     print("")
-    print("NOTA — isto é PROJEÇÃO, não medição. A Fase 1 acima é medida no jogo")
-    print("que existe; as Fases 2 e 3 são a mesma conta com os números que o GDD")
-    print("dá para elas. Vira medição quando as Fases 2 e 3 estiverem")
-    print("implementadas — e a errata é explícita em que isso não se faz antes de")
-    print("o Vertical Slice sair.")
+    print("NOTA — as Fases 2 e 3 acima são PROJEÇÕES das hipóteses do GDD.")
+    print("A calibração da Fase 1 usa a medição do jogo. A Fase 2 jogável atual")
+    print("não tem dívida: sua meta e suas quebras são medidas separadamente")
+    print("por tools/medir_fase_2.gd (108), não por estas parcelas hipotéticas.")
     return 0
 
 

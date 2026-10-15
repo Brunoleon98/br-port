@@ -275,16 +275,30 @@ marcados com o comentário `# TUNING:`. Dá para mudar valor de barco, custo de
 salário, valor da parcela etc. sem tocar em nenhuma lógica.
 
 Para **medir** o efeito de uma mudança em vez de chutar, existe um simulador que
-roda centenas de partidas com três perfis de jogador (quem joga perfeito, quem
-joga mediano e quem joga mal) e imprime a taxa de vitória de cada um:
+roda centenas de partidas com quatro perfis (Ótimo, Mediano, Descuidado e
+Antecipado) e mede a Fase 1 até a passagem:
 
 ```
-Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tools/simular_balanceamento.gd -- 800
+Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tools/simular_balanceamento.gd -- 600 20260825 fase-1.json --sem-save
 ```
 
 O jeito de usar é: rodar, anotar os números, mudar **uma** constante `# TUNING:`,
 rodar de novo com a mesma semente e comparar. Detalhes e a leitura dos resultados
-de hoje estão em `../docs/arquivo/BLOCO3_MARCO_INTERMEDIARIO.md`.
+atuais estão em `../.claude/rules/economia.md`.
+
+Para a **Fase 2**, a ferramenta complementar joga desde o dia 1, paga as
+parcelas e observa a segunda fase por uma janela definida:
+
+```
+Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tools/medir_fase_2.gd -- 600 20260825 fase-2.json 365 --sem-save
+```
+
+O último número limita os fechos observados, não o prazo do jogo. O JSON
+separa entradas, conquistas, quebras antes/depois da meta e partidas ainda
+vivas sem meta (censuradas). Quantis de dias usam só as conquistas e mostram
+seu tamanho de amostra. O jogo livre depois da meta continua sendo observado.
+Exigir `FASE 2 MEDIDA`, saída zero e ausência de erros de script. Evidência
+e leitura em `../docs/arquivo/MEDICOES_FASE_2_2026-10-14/` (`108`).
 
 ---
 

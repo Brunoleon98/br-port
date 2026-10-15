@@ -540,6 +540,22 @@ jobs:
             exit 1
           fi
 
+      - name: Exercitar o simulador da Fase 2
+        # Fumaça do instrumento: não julga taxa de conquista nem trata o fim
+        # da janela de observação como derrota numa fase sem prazo.
+        run: |
+          set -euo pipefail
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs \
+            --script res://tools/medir_fase_2.gd -- 3 20260825 \
+            /tmp/fase-2.json 56 --sem-save \
+            2>&1 | tee /tmp/fase-2.txt
+          grep -q "FASE 2 MEDIDA" /tmp/fase-2.txt || {
+            echo "::error::A medição da Fase 2 não chegou ao fim."; exit 1; }
+          if grep -qE "SCRIPT ERROR|at: push_error \(" /tmp/fase-2.txt; then
+            echo "::error::A medição da Fase 2 imprimiu erro."; exit 1
+          fi
+
       - name: Conferir que o boletim da Dona Cida só afirma o que o estado confirma
         # Cada tom do boletim AFIRMA coisas sobre a semana — "de novo", "a
         # parcela" —, e o tom é escolhido por números. Medido em 23/09 com esta

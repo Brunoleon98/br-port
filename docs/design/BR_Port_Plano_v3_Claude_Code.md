@@ -493,8 +493,9 @@ frentes, e **a ordem é do Bruno**:
    sem prazo, por escolha do Bruno. Os outros três esperam-na. **A etapa 1
    fechou em 12/10 (`104`):** a Fase 2 joga-se no mesmo save, sem meta.
    **A etapa 2 fechou em 14/10 (`105`):** a treliça compra-se por R$80 mil,
-   com dois dias de obra provisórios, e abre o cargueiro no porto de nível 2.
-   A seguinte é a 3: a meta, a regressão e o fim.
+   com dois dias de obra, e abre o cargueiro no porto de nível 2.
+   **A etapa 3 (`106`) trouxe meta, regressão e diário; a 4 (`108`) mediu
+   os quatro perfis e manteve os preços e patamares.** Ritmo humano no A7.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.
@@ -760,10 +761,16 @@ com a arte das bancadas e uma partida fotografada até lá. Preço e prazo
 provisórios, com varredura deste recorte; a etapa 4 mede a meta completa.
 **A etapa 3 fechou em 14/10 (`106`)** — as três barras, o piso dos
 cargueiros, o save 17 com migração e a página do diário que segue em jogo
-livre. Os dois patamares são provisórios. **A seguinte é a 4**, a medição
-completa da Fase 2 por perfil.
-Depois delas, o cancelamento, os trabalhadores extras e a linha voluntária
-voltam ao Bruno, já com onde agir.
+livre. **A etapa 4 fecha na `108`**: medição completa por perfil, com
+conquistas, dias condicionados à conquista, quebras e censuras numa janela
+de observação, sem criar prazo. Preços e patamares atuais foram mantidos
+após a varredura; dados e limites na decisão e na `economia.md`.
+**Prioridade de 14/10, escolha do Bruno: terminar a Fase 1 para o vertical
+slice, começando pelo A4.** O caderno reescrito está só na conversa, ainda
+sem aprovação. Enquanto isso, a `108` avançou na parte que não depende de
+revisão humana. Cancelamento, trabalhadores extras e crédito voluntário
+continuam aguardando a escolha do próximo recorte; não são requisitos novos
+para fechar o vertical slice.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

@@ -1670,6 +1670,9 @@ func _run() -> void:
 	print("=== T22: três barras, regressão, jogo livre e save 17 ===")
 	await _t22_meta_da_fase_2()
 	_check("o bloco T22 correu até ao fim", _t22_completo)
+	print("=== T23: populações e censura da medição da Fase 2 ===")
+	_t23_medicao_fase_2()
+	_check("o bloco T23 correu até ao fim", _t23_completo)
 
 	print("")
 	if _fails == 0:
@@ -3187,3 +3190,39 @@ func _t22_meta_da_fase_2() -> void:
 	_check("T22: partida nova zera todos os marcos", GS.dias_de_reputacao == 0
 		and not GS.primeiro_cargueiro and not GS.meta_concluida)
 	_t22_completo = true
+
+
+var _t23_completo := false
+
+func _t23_medicao_fase_2() -> void:
+	var leitura = load("res://tools/leitura_fase_2.gd")
+	var base := {"travou": false, "entrada": 85, "dias_ate_meta": null,
+		"quebrou": false, "caixa_entrada": 200, "caixa_meta": null,
+		"menor_caixa": 20, "caixa_final": 300, "margem_operacional": 100,
+		"dias_abaixo_piso": 2, "suspensoes": 1, "recuperacoes": 0}
+	var meta := base.duplicate()
+	meta["dias_ate_meta"] = 15
+	meta["caixa_meta"] = 250
+	var quebra := base.duplicate()
+	quebra["quebrou"] = true
+	var perda_anterior := base.duplicate()
+	perda_anterior["entrada"] = null
+	perda_anterior["quebrou"] = true
+	var livre_quebrou := meta.duplicate()
+	livre_quebrou["dias_ate_meta"] = 10
+	livre_quebrou["quebrou"] = true
+	var travada := base.duplicate()
+	travada["travou"] = true
+	var r: Dictionary = leitura.resumir([meta, quebra, base, perda_anterior, livre_quebrou, travada])
+	_check("T23: denominador de entrada exclui perda na Fase 1 e travamento", r["entraram"] == 4)
+	_check("T23: a meta permanece cumprida após quebra no jogo livre", r["metas"] == 2)
+	_check("T23: quebra antes da meta é separada da posterior", r["quebras_antes_meta"] == 1 and r["quebras_apos_meta"] == 1)
+	_check("T23: janela encerrada sem meta é censura, não derrota", r["censuradas"] == 1)
+	_check("T23: perda da fase anterior tem população própria", r["perdas_fase_1"] == 1)
+	_check("T23: travamento não se publica como perfil que perdeu", r["travadas"] == 1)
+	_check("T23: dias até a meta usam só quem a alcançou", r["dias_ate_meta"] == {"n": 2, "p10": 10, "p50": 15, "p90": 15})
+	_check("T23: o caixa usa as quatro entradas, não apenas as metas", r["caixa_entrada"]["n"] == 4)
+	var vazia: Dictionary = leitura.resumir([base])
+	_check("T23: sem meta não se inventa dia zero", vazia["dias_ate_meta"] == {"n": 0, "p10": null, "p50": null, "p90": null})
+	_check("T23: a população vazia também não inventa caixa", leitura.resumir([])["caixa_entrada"]["n"] == 0)
+	_t23_completo = true

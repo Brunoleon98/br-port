@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 14/10/2026 — etapa 3 da Fase 2 (`106`)
+> **Última atualização:** 14/10/2026 — medição da Fase 2 (`108`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -69,10 +69,10 @@ quitações passam à Fase 2 no dia 85**, no mesmo save, sem dívida nem prazo.
 **Meta de três barras** (`106`): reputação ≥80 em três fechos seguidos,
 píer 3 e treliça prontos, primeiro cargueiro atendido. Fecha a Fase 2 no
 diário e segue em jogo livre. Abaixo de 40, só novos cargueiros somem.
-Patamares provisórios até à medição da etapa 4 da `103`.
+Preços e patamares mantidos pela medição da `108`; ritmo humano no A7.
 
 **Madeira e pesca na Fase 1** (`086`). Na Fase 2 a **treliça custa R$80 mil
-e leva dois dias**, provisórios: com o píer 2 pronto, sua conclusão abre o
+e leva dois dias** (`108`): com o píer 2 pronto, sua conclusão abre o
 porto de nível 2 e o cargueiro (dois dias; granel, três). O Construir explica
 a compra; pórtico e cais continuam para a Fase 3 (`105`).
 
@@ -114,9 +114,12 @@ itens param à espera do Bruno. Aqui fica só a posição.
 mais tranquila — **M1** a **M11** fecharam (`088`–`099`, o M9 na `104`); o
 M12 espera o A8, e a fila parou: voltou a frente 5, o **tutorial curto**
 (`100`, `101`) e a **segunda chance** (`102`) estão no jogo, e a
-**progressão para a Fase 2** (`103`) fez as etapas 1 (`104`), 2 (`105`) e
-**3** (`106`), com a meta, a regressão e o diário. A seguinte é a
-**4**, a medição completa. O Pages publica a main verde.
+**progressão para a Fase 2** (`103`) fez as quatro etapas (`104`–`106`,
+`108`). A medição mantém os valores; resultado e limites na `economia.md`.
+Bruno priorizou fechar a Fase 1 e o **A4**: o novo caderno está só em
+rascunho na conversa, sem aprovação. A `107` (nomes no Web móvel) está em
+branch local separada, aguardando publicação autorizada e teste no telefone.
+O Pages publica a main verde.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -127,7 +130,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas, o caderno, Toninho, Sr. Ribeiro e a página da Fase 2 com o aviso da Cida (`067`, `082`, `101`, `102`, `106`) |
-| **A5** | Julgado (31 «Não»); **frente 1 feita**; na **2** (retratos) os três que falam estão no jogo no kit afinado, cada um com a sua cabeça, em Standard (`055`, `056`), e o trabalhador em busto com os seus trinta rostos (`058`, `059`). A **3** e a **6** fecharam (`066`–`068`); a **4** fez a escala, os camiões, a frota, a ruína, os três degraus da animação e a virada do dia (`069`–`079`). O material do ChatGPT vive em `art_lab/` | Na 4 falta a máquina do contêiner (`079`); obras futuras e mais de um trabalhador por píer são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
+| **A5** | Frentes 1, 3 e 6 fechadas; retratos e animações no jogo. Recortes e aceite no plano de arte e em `art_lab/` | Falta a máquina do contêiner (`079`); obras futuras e trabalhadores extras pertencem ao item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
 | **A7** | **Jogar pelo link do Pages** e ver duas pessoas jogarem; o FPS no telefone; as partidas em `playtest/` (`099`) | Só ele joga |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
@@ -139,7 +142,7 @@ histórico em `HISTORICO.md`.
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo; o que é de cada fase na tabela `FASES`, lida por funções (`094`) |
-| `brport_vs/tests/run_tests.gd` | Regressões da lógica; Fase 2: passagem T20 (`104`), treliça T21 (`105`), meta/regressão/save T22 (`106`) |
+| `brport_vs/tests/run_tests.gd` | Regressões da lógica; Fase 2: passagem T20, treliça T21, meta/regressão/save T22, populações da medição T23 |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
