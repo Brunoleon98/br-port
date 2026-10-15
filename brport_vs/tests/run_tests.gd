@@ -1673,6 +1673,9 @@ func _run() -> void:
 	print("=== T23: populações e censura da medição da Fase 2 ===")
 	_t23_medicao_fase_2()
 	_check("o bloco T23 correu até ao fim", _t23_completo)
+	var cancelamento = load("res://tests/casos_cancelamento.gd").new()
+	await cancelamento.rodar(GS, self)
+	_check("T24: cancelamento, contas, migração, interface e registro", cancelamento.completo and cancelamento.falhas == 0)
 
 	print("")
 	if _fails == 0:

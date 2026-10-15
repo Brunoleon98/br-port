@@ -591,7 +591,10 @@ func _save_valido(versao: int) -> Dictionary:
 		"parcela_indice": 0, "parcelas_quitadas": 0, "total_pago_parcelas": 0,
 		"emprestimo_devido": 0, "segunda_chance_usada": false,
 		"phase": "playing", "fila": [], "pending_rival": -1, "rival_attempts_left": 2,
-		"end_reason": "", "won": false, "metrics": {}, "uid": 9,
+		"end_reason": "", "won": false,
+		"metrics": {"servicos_cancelados": 0, "multas_cancelamento": 0}, "uid": 9,
+		"dia_atual": {"cancelamento": 0}, "dia_anterior": {"cancelamento": 0},
+		"semana_atual": {"cancelamento": 0},
 	}
 
 

@@ -53,7 +53,8 @@ import sys
 # que ali é o oposto: um save errado estraga a partida em curso, um registro
 # velho continua a ser um dado que alguém produziu jogando. Lê-se o que se
 # reconhece e DIZ-SE o que ficou de fora.
-VERSAO_CONHECIDA = 4
+VERSAO_CONHECIDA = 5
+VERSAO_COM_CANCELAMENTO = 5
 
 # A primeira versão do gravador que ouve o `obra_concluida` (`088`). É a
 # VERSÃO, e não a ausência da linha, que separa «não acabou» de «não sei»: na
@@ -414,6 +415,17 @@ def relatar(partidas, orfas, ilegiveis):
         print("  não sei em %d — registro anterior à versão %d, que não a grava"
               % (len(partidas) - len(sabem), VERSAO_COM_SEGUNDA_CHANCE))
 
+    print("\n── Cancelamentos de serviço ──")
+    observadas = [p for p in partidas
+                  if int(p["cabecalho"].get("versao", 0)) >= VERSAO_COM_CANCELAMENTO]
+    cancelamentos = [e for p in observadas for e in so(p, "cancelamento")]
+    print("  %d cancelamentos em %d partidas observáveis; multas %d; receita abandonada %d" % (
+        len(cancelamentos), len(observadas), sum(int(e["multa"]) for e in cancelamentos),
+        sum(int(e["receita_abandonada"]) for e in cancelamentos)))
+    if len(observadas) < len(partidas):
+        print("  não sei em %d — registro anterior à versão 5, que não observa cancelamento"
+              % (len(partidas) - len(observadas)))
+
     # ── 5. A SEMANA COMO A DONA CIDA A CONTA ──
     print("\n── O resultado de cada semana (mediana) ──")
     por_semana = {}
@@ -628,6 +640,18 @@ def autoteste():
     r = resumo_de_uma(_fixture(versao=3)[0])
     confere("na versão 3 a Fase 1 ganha continua a ser o fim",
             r["terminou"] and r["ganhou"] is True)
+
+    texto = _relatado(_fixture(versao=4))
+    confere("versão anterior não inventa zero cancelamentos observados",
+            "não sei em 1 — registro anterior à versão 5" in texto)
+    partida = _fixture()[0]
+    partida["eventos"].append({"e": "cancelamento", "multa": 851, "receita_abandonada": 11051})
+    texto = _relatado([partida])
+    confere("cancelamento soma despesas e receita abandonada separadas",
+            "1 cancelamentos em 1 partidas observáveis; multas 851; receita abandonada 11051" in texto)
+    texto = _relatado(_fixture())
+    confere("versão 5 sem evento observa zero",
+            "0 cancelamentos em 1 partidas observáveis; multas 0" in texto)
 
     if falhas:
         print("AUTOTESTE DO LEITOR FALHOU — %d verificação(ões):" % len(falhas))

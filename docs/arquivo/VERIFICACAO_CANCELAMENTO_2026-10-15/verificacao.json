@@ -1,0 +1,164 @@
+{
+  "godot": "4.6.3",
+  "base_main": "b142b80653cc44a0ca835c7933b5495a8240812d",
+  "suite": {
+    "sentinela-plantar": {
+      "ok": true,
+      "segundos": 0.11,
+      "codigo": 0
+    },
+    "integracao": {
+      "ok": true,
+      "segundos": 24.01,
+      "codigo": 0
+    },
+    "run_tests": {
+      "ok": true,
+      "segundos": 172.91,
+      "codigo": 0
+    },
+    "teste_design": {
+      "ok": true,
+      "segundos": 62.38,
+      "codigo": 0
+    },
+    "teste_audio": {
+      "ok": true,
+      "segundos": 0.52,
+      "codigo": 0
+    },
+    "teste_fumaca": {
+      "ok": true,
+      "segundos": 168.47,
+      "codigo": 0
+    },
+    "teste_registro": {
+      "ok": true,
+      "segundos": 12.09,
+      "codigo": 0
+    },
+    "asset_validator": {
+      "ok": true,
+      "segundos": 7.88,
+      "codigo": 0
+    },
+    "leitor": {
+      "ok": true,
+      "segundos": 0.36,
+      "codigo": 0
+    },
+    "importacao-final": {
+      "ok": true,
+      "segundos": 5.03,
+      "codigo": 0
+    },
+    "constantes": {
+      "ok": true,
+      "segundos": 0.36,
+      "codigo": 0
+    },
+    "tabela-final": {
+      "ok": true,
+      "segundos": 0.09,
+      "codigo": 0
+    },
+    "mutantes": {
+      "ok": true,
+      "segundos": 41.58,
+      "codigo": 0
+    },
+    "teste_design-final": {
+      "ok": true,
+      "segundos": 19.28,
+      "codigo": 0
+    },
+    "fase-1": {
+      "ok": true,
+      "segundos": 15.28,
+      "codigo": 0
+    },
+    "projetor": {
+      "ok": true,
+      "segundos": 0.12,
+      "codigo": 0
+    },
+    "sentinela-final": {
+      "ok": true,
+      "segundos": 0.06,
+      "codigo": 0
+    },
+    "sentinela-conferir": {
+      "ok": true,
+      "segundos": 0.11,
+      "codigo": 0
+    }
+  },
+  "paridade": {
+    "cenarios": [
+      {
+        "cenario": "controle",
+        "partidas": 2400,
+        "cancelamentos": 0,
+        "paridade_integral": true,
+        "arquivo_110": true
+      },
+      {
+        "cenario": "candidato-taxa",
+        "partidas": 2400,
+        "cancelamentos": 40103,
+        "paridade_integral": true,
+        "arquivo_110": true
+      },
+      {
+        "cenario": "candidato-valor",
+        "partidas": 2400,
+        "cancelamentos": 51254,
+        "paridade_integral": true,
+        "arquivo_110": true
+      },
+      {
+        "cenario": "candidato-uma",
+        "partidas": 2400,
+        "cancelamentos": 2001,
+        "paridade_integral": true,
+        "arquivo_110": true
+      },
+      {
+        "cenario": "candidato-impulsivo",
+        "partidas": 2400,
+        "cancelamentos": 66885,
+        "paridade_integral": true,
+        "arquivo_110": true
+      }
+    ],
+    "autosave_integral": true,
+    "n_autosave": 8,
+    "eventos_autosave": 16
+  },
+  "fase_1_integral": true,
+  "save": 18,
+  "registro": 5,
+  "importacao_sem_avisos": false,
+  "importacao": "Safe save failed; arquivo e causa não isolados (110).",
+  "novos_suites_e_medicoes_em_serie": true,
+  "sha256_fontes": {
+    "brport_vs/autoload/GameState.gd": "41c1bdaad247e3d98453b04d634c3bb7e90aba8c0fcb26188681ef34404970e2",
+    "brport_vs/autoload/Registro.gd": "168cf4106176ff47bfb7c6184060f7a54dcfc38a757cdac19076ed076400cc78",
+    "brport_vs/scripts/PainelCancelarServico.gd": "d8bc128e377f3d2ed5c31abc900e7a4e4c33830b94cc8ee6462a2b811c54b37c",
+    "brport_vs/scripts/DocaCartao.gd": "982f97feadf9832f13c1b55b455214b49822e33225a6bd58fa462a56b961206b",
+    "brport_vs/scripts/Dock.gd": "8312476a84be1519d7d890c9caa1ac57c3c6717ede1a7227a4ecb79838d1a582",
+    "brport_vs/scripts/Main.gd": "fe9c83de423c6979d6a9aa632ca604fa80b5b5e88cc3040a8a125ec72c2a5afe",
+    "brport_vs/scripts/PainelCaixa.gd": "65baf64660dbe8f52bfcf612709e6d5bd9965cdb8f30796b4d2f89737e59a48a",
+    "brport_vs/scripts/PainelBoletim.gd": "bec4415f9a42e281b98d492e4ee8d140ca8f2df502433300c7b62961a7f4aff5",
+    "brport_vs/tests/casos_cancelamento.gd": "be00c675a4572258505968484a1e2ac5c1821153cc2785a2a6ef4474465b8c1a",
+    "brport_vs/tests/saves/v18.json": "e4d306136e655205d2a07a03a480da35c966ed4bc818de77379d21870815cc06",
+    "brport_vs/tools/estado_cancelamento_experimental.gd": "621693bdf99e50b193a5b9f2e37ed2411611f22c8bfaf2567dcf7f8faef04342",
+    "brport_vs/tools/estado_cancelamento_producao.gd": "f1db371ef3d82072595168aacd016d26b349a755509a7b11fa5469c8e7130385",
+    "brport_vs/tools/medir_cancelamento.gd": "02251a497bfca636aaede595cedf0a7e0d64a3c5f5caba1c5677c5928db040f0",
+    "tools/verificar_integracao_cancelamento.py": "6cc217611fd2d88537e4d67a40b459def5b4c4a82f3fbe51a80057fd6390ab04",
+    "tools/testar_integracao_cancelamento.py": "cd267d62677ed8b56b35e039b6352edc13805d0ccd44481380604ed8e32a2915",
+    "tools/ler_registros.py": "585388728ef849524ea73472dedfb00aa6c9c42f41e2107b5e1354de2141b848"
+  },
+  "nomes_web_preservados": "0a0ab5c1f1cc00da21e255704c702fc016158cdd",
+  "publicacao": "Entrega local; sem push e sem PR novo. CI verde conferido é do PR 132 e de seu merge."
+}

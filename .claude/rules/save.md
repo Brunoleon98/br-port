@@ -35,6 +35,10 @@ Os marcos da meta ocupam a **17** (`106`), autorizada pelo Bruno com
 migração: o degrau 16→17 mantém a partida e começa dias, missão e conquista
 a zero, pois a 16 não registrava esse passado. O T22 prova-o; o exemplo 17
 chega à conquista com obra viva, e os exemplos 14–16 ficam intactos.
+A **18** (`111`), aceite com migração, guarda despesas e acumuladores do
+cancelamento. O degrau 17→18 põe os campos novos a zero e conserva a partida;
+o T24 prova a retomada com multa já paga e saldo negativo antes do fecho.
+O exemplo 18 joga um cancelamento real; os exemplos anteriores ficam intactos.
 Saves 13 e anteriores são recusados sem migração: partidas antigas recomeçam.
 Consulta preserva o arquivo; carregamento descarta o incompatível antes de
 aplicar campos, inclusive a obra viva. Até a 14, save de outra versão era

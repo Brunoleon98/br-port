@@ -595,6 +595,9 @@ tirar meta_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" meta
 tirar diario_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" diario
 tirar livre_fase_2 0 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" livre
 tirar suspenso_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" suspenso
+tirar cancelamento_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" cancelamento
+tirar cancelamento_negativo_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" cancelamento_negativo
+tirar cancelamento_caixa_fase_2 1 - --script res://tools/capturar_fase_2.gd -- "$SAIDA" cancelamento_caixa
 # O BALANÇO, numa partida JOGADA: o laço de sempre até ao vencimento (turno
 # 33), o «Pagar» do Sr. Ribeiro — ligado porque a partida juntou o dinheiro,
 # nunca porque a ferramenta o deu — e o «Ver o balanço» da narração. Foi a

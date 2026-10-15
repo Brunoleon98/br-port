@@ -767,15 +767,12 @@ de observação, sem criar prazo. Preços e patamares atuais foram mantidos
 após a varredura; dados e limites na decisão e na `economia.md`.
 **Próxima conversa, escolha do Bruno em 14/10: melhorias gerais da frente
 5, além do fechamento da Fase 1 e separadas da progressão da Fase 2.**
-**O recorte escolhido é cancelar um serviço contratado em andamento.**
-A análise está na proposta `109`, ainda **sem aceite e sem implementação**:
-saída definitiva, equipe livre no mesmo dia, perda da receita, −5 de reputação
-e multa de 10% do valor acordado, com confirmação e save 18 com migração
-propostos. A medição autorizada está na `110`: 600 partidas por perfil,
-políticas de troca e varredura separada de multa/reputação; recomenda manter
-o candidato, ainda sem aceite para implementar ou migrar o save.
-Não se trata de cancelar obras. Mais trabalhadores por píer e crédito
-voluntário ficam para depois.
+**O cancelamento de serviço foi aceite e integrado na `111`**, após a proposta
+`109` e a medição `110`; entrega local, ainda sem publicação. O desenho anterior
+desceu para `docs/arquivo/PLANO_V3_FECHADOS.md`. A revisão pedida em seguida está
+em `docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`: confiabilidade do save e ajuda
+consultável são prioridades propostas, à espera da escolha do Bruno.
+Obras, mais trabalhadores por píer e crédito voluntário ficam para depois.
 São funcionalidades gerais que podem usar os serviços mais longos e o porto
 ampliado; não são novas etapas da progressão nem requisitos adicionais para
 o vertical slice. Tutorial e segunda chance já estão no jogo. Carros e
