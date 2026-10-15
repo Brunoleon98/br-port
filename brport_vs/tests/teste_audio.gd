@@ -154,13 +154,31 @@ func _a4_espera() -> void:
 	var tocou_uma_vez: bool = A._ultima_vez.has("aviso")
 	_confere("o primeiro pedido toca", tocou_uma_vez)
 
-	# O mesmo som logo a seguir tem de ser engolido pela espera mínima.
-	var marca: float = float(A._ultima_vez.get("aviso", 0.0))
+	# O mesmo som dentro da espera tem de ser engolido por ela.
+	# ⚠️ «LOGO A SEGUIR» NÃO SERVE DE PROVA. Até 15/10 esta asserção pedia o
+	# segundo som na linha seguinte e conferia que a marca ficava igual — mas
+	# o relógio do Audio anda ao MILISSEGUNDO, e dois pedidos no mesmo
+	# milissegundo deixam a marca igual toque ou não toque. O mutante sem a
+	# espera passou verde aqui (`docs/decisoes/111`). A marca vai agora METADE
+	# da espera para trás: com a espera, fica; sem ela, o som toca e a marca
+	# vira o agora, que é outro número.
+	var espera: float = float(A.SONS["aviso"]["espera"])
+	var marca: float = A._agora() - espera / 2.0
+	A._ultima_vez["aviso"] = marca
 	A.tocar("aviso")
 	A._process(0.016)
-	_confere("o mesmo som colado não repete",
+	_confere("o mesmo som dentro da espera não repete",
 		float(A._ultima_vez.get("aviso", 0.0)) == marca,
-		"espera de %.2f s não segurou" % float(A.SONS["aviso"]["espera"]))
+		"espera de %.2f s não segurou" % espera)
+
+	# E o controle, sem o qual a marca parada acima seria o silêncio de quem
+	# nunca toca, e não a espera: passada ela, o mesmo pedido TOCA.
+	var antiga: float = A._agora() - espera - 0.1
+	A._ultima_vez["aviso"] = antiga
+	A.tocar("aviso")
+	A._process(0.016)
+	_confere("passada a espera, o mesmo som volta a tocar",
+		float(A._ultima_vez.get("aviso", 0.0)) > antiga)
 
 	# Toda espera tem de ser positiva, senão a regra não existe.
 	for id in A.SONS:

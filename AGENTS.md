@@ -25,7 +25,7 @@ O nome é do outro agente, mas o conteúdo é do projeto. Desde 10/10
 | `.claude/rules/projecao.md` | a projeção isométrica, o contrato entre os geradores e o `Main.tscn` |
 | `.claude/rules/mapa.md` | o desenho do mapa: costa, água, vila, rua, o byte a byte |
 | `.claude/rules/arte.md` | props, Blender, retratos |
-| `.claude/rules/testes-e-guardas.md` | escrever teste, guarda ou régua, e o defeito injetado |
+| `.claude/rules/testes-e-guardas.md` | escrever teste, guarda ou régua, o defeito injetado e o catálogo que o guarda |
 | `.claude/rules/economia.md` | o `GameState.gd`, o balanceamento medido, guindastes e obras |
 | `.claude/rules/save.md` | o save |
 | `.claude/rules/interface.md` | cenas, tema, painéis, cor e contraste |
@@ -69,6 +69,11 @@ registada sem o Bruno pedir.
   `.github/workflows/testes.yml`.
 - `python3 tools/conferir_docs.py`, que espera `DOCS OK`, se mexeu em
   documento.
+- Escreveu uma guarda ou corrigiu um bug? O defeito que a prova entra em
+  `tools/mutantes.toml`, e `python3 tools/conferir_mutantes.py --godot "$G"
+  --so <id>` espera `MUTANTES OK`. Se ele reprovar por «mutante órfão», o
+  código que a tarefa mexeu era o alvo de um defeito já provado: reescreva-o
+  contra a forma nova, não o apague (`docs/decisoes/111`).
 - Se mexeu no visual: uma captura do jogo, olhada (`tools/capturar_evidencia.sh`).
 - Mudou o jogo? Atualize o `docs/ESTADO_DO_PROJETO.md` (tem teto de tamanho;
   o conferidor avisa). O ritual completo de fecho está em
