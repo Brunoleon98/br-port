@@ -1,8 +1,10 @@
-# Como jogar e glossário — primeiro recorte proposto
+# Como jogar e glossário — primeiro recorte aprovado
 
-**15/10/2026, decisão `113`.** Bruno escolheu **definir o recorte de Como
-jogar/glossário**, a primeira novidade sugerida pela pesquisa `112`.
-Este documento apresenta o recorte para aceite; não autoriza implementação.
+**15/10/2026, decisões `113` e `114`.** Bruno escolheu **definir o recorte de
+Como jogar/glossário**, a primeira novidade sugerida pela pesquisa `112`, e
+aprovou o conjunto abaixo com o ajuste de redação sobre o autosave (`114`).
+O aceite fecha a definição; implementação e publicação de outro PR continuam
+sem autorização.
 
 ## O que a pessoa recebe
 
@@ -11,7 +13,7 @@ consultar uma dúvida e voltar ao mesmo lugar. O título é **Como jogar**;
 **Glossário** é um dos assuntos. Não abre sozinha nem substitui o tutorial
 do Toninho. Não pede uma partida para funcionar.
 
-Entradas propostas:
+Entradas aprovadas:
 
 - **Tela inicial:** botão Como jogar entre Carregar (quando existir) e
   Ajustes. Sem partida salva, aparece entre Nova partida e Ajustes.
@@ -30,10 +32,10 @@ fechar a ajuda pela pausa não retoma a partida automaticamente. A navegação
 preserva o índice e a página dentro da consulta; reabrir começa pelo índice.
 Não há necessidade de guardar essa posição no save.
 
-## Texto proposto para o primeiro conteúdo
+## Texto aprovado para o primeiro conteúdo
 
 O texto abaixo é informativo, sem fala de personagem nem retrato novo.
-Os números abaixo descrevem o jogo atual para revisão. Na implementação,
+Os números abaixo descrevem o jogo atual. Na implementação,
 quantidade de espaços, cobranças, multa e reputação devem vir das constantes
 ou dos dados da fase, com a mesma formatação dos painéis. Não manter uma
 segunda tabela de regras ou de economia dentro da ajuda.
@@ -67,7 +69,7 @@ no fechamento do dia; consulte a projeção antes de avançar.
 
 ### Salvar e retomar
 
-O jogo salva automaticamente depois das ações. Na pausa, Salvar e sair
+O jogo faz gravações automáticas durante a partida. Na pausa, Salvar e sair
 pede uma gravação e volta à tela inicial.
 
 Na tela inicial, Continuar abre a partida salva mais recente. Carregar
@@ -135,7 +137,7 @@ a escrita foi verificada. As falhas e propostas técnicas permanecem em
 `REVISAO_RECURSOS_BASICOS_2026-10-15.md`. A limitação de importação
 `Safe save failed` da `110`/`111` continua aberta, sem causa isolada.
 
-## Integração proposta, para depois do aceite
+## Integração definida, para implementação futura
 
 Um painel compartilhado da família `PainelNarrativo`, com cena própria,
 tema existente, índice e artigo rolável. A altura da área de leitura será
@@ -152,7 +154,7 @@ os botões por baixo. Voltar trata o nível interno antes de fechar o painel.
 Conferidos para esta proposta: `TelaInicial.gd`, `PauseMenu.gd`, o estado,
 a §7 do plano, a revisão de recursos básicos, a pesquisa e as decisões
 `103`, `108`–`112`. A organização segue `.claude/rules/interface.md`.
-Estes são pontos de integração propostos; nenhum script foi alterado.
+Estes são pontos de integração definidos; nenhum script foi alterado.
 
 ## O que precisa demonstrar para o aceite da implementação
 
@@ -176,5 +178,6 @@ Estes são pontos de integração propostos; nenhum script foi alterado.
   como retomar e a diferença entre devolver e cancelar. Esses resultados
   humanos não são substituídos por suíte verde.
 
-**Próximo passo:** Bruno aprovar ou ajustar este conjunto de entradas,
-assuntos, textos e limites; depois autorizar a implementação desse recorte.
+**Próximo passo:** Bruno autorizar a implementação deste recorte aprovado.
+A publicação em outro PR depende de autorização própria. O aceite da
+definição não substitui as provas de máquina, leitura e telefone acima.

@@ -778,7 +778,9 @@ texto ajustável, reduzir movimento, ajuda contextual e versão/diagnóstico.
 A primeira novidade sugerida é ajuda/glossário, depois resumo de retomada;
 Bruno escolheu **definir o recorte de Como jogar/glossário** (`113`).
 Entradas, textos e critérios estão em
-`docs/RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`, para aceite antes de implementar.
+`docs/RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`; Bruno aprovou o recorte
+com ajuste de redação sobre autosave (`114`). Implementação e publicação
+em outro PR continuam sem autorização.
 A pesquisa entrou na main com
 o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em
 `docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`, inclusive falhas do save.

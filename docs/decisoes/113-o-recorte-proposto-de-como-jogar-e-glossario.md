@@ -4,6 +4,10 @@
 recorte de Como jogar/glossário»**. Isso autoriza desenhar a entrega para
 revisão; não é aceite do conteúdo nem autorização de implementação.
 
+**Continuação:** Bruno aprovou o recorte com ajuste de redação sobre o
+autosave na `114`. O aceite fecha a definição; implementar e publicar
+outro PR continuam sem autorização. Esta decisão preserva a proposta.
+
 ## Base conferida
 
 O PR #133 foi fundido em `f03302d`, confirmado pelo GitHub às 13h56 de
