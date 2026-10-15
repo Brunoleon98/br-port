@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 14/10/2026 — medição da Fase 2 (`108`)
+> **Última atualização:** 14/10/2026 — proposta de cancelamento (`109`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -116,8 +116,8 @@ M12 espera o A8, e a fila parou: voltou a frente 5, o **tutorial curto**
 (`100`, `101`) e a **segunda chance** (`102`) estão no jogo, e a
 **progressão para a Fase 2** (`103`) fez as quatro etapas (`104`–`106`,
 `108`). A medição mantém os valores; resultado e limites na `economia.md`.
-**Próxima conversa: cancelar um serviço contratado em andamento**, escolha
-do Bruno na frente 5. Trabalhadores extras e crédito voluntário ficam para
+**Cancelamento de serviço: proposta `109` aguarda aceite**, sem implementação
+ou custos medidos. Trabalhadores extras e crédito voluntário ficam para
 depois. **A4 pendente**, caderno sem aceite.
 A `107` (nomes no Web móvel) está em
 branch local separada, aguardando publicação autorizada e teste no telefone.

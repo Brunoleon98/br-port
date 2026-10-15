@@ -768,9 +768,12 @@ após a varredura; dados e limites na decisão e na `economia.md`.
 **Próxima conversa, escolha do Bruno em 14/10: melhorias gerais da frente
 5, além do fechamento da Fase 1 e separadas da progressão da Fase 2.**
 **O recorte escolhido é cancelar um serviço contratado em andamento.**
-Rever o GDD e definir as regras antes de implementar; não se trata de
-cancelar obras. Mais trabalhadores por píer e crédito voluntário ficam
-para depois. Nenhum dos três foi implementado nesta sessão.
+A análise está na proposta `109`, ainda **sem aceite e sem implementação**:
+saída definitiva, equipe livre no mesmo dia, perda da receita, −5 de reputação
+e multa de 10% do valor acordado, com confirmação e save 18 com migração
+propostos. Os custos ainda precisam de medição após o aceite do desenho.
+Não se trata de cancelar obras. Mais trabalhadores por píer e crédito
+voluntário ficam para depois.
 São funcionalidades gerais que podem usar os serviços mais longos e o porto
 ampliado; não são novas etapas da progressão nem requisitos adicionais para
 o vertical slice. Tutorial e segunda chance já estão no jogo. Carros e

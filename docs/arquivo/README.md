@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-14e.md` | 14/10 | Cancelamento analisado na proposta `109`, sem aceite nem implementação; PR #131 fundido, correção móvel `107` separada |
 | `MEDICOES_FASE_2_2026-10-14/` | 14/10 | Etapa 4 da `103` (`108`): 600 partidas por perfil, dez variações, dados completos e verificações; valores mantidos |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-14d.md` | 14/10 | Medição no PR #131; próximo recorte: cancelar serviço contratado; A4 pendente e correção de nomes Web em branch separada |
 | `EVIDENCIA_META_2026-10-14/` | 14/10 | Meta, diário, jogo livre e regressão de partidas jogadas; controles da etapa 3 (`106`) |
