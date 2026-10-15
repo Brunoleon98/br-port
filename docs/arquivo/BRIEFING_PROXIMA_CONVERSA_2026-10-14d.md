@@ -33,6 +33,12 @@ Fase 2. O tutorial e a segunda chance já fecharam (`101`, `102`); carros e
 imóveis continuam futuros, sem novo escopo. Retomar um recorte por vez,
 conferindo o que já foi decidido antes de implementar.
 
+**Recorte escolhido pelo Bruno: cancelamento de trabalho**, para analisar
+na próxima conversa. Trata-se de interromper um serviço contratado em
+andamento. Ler o GDD e conferir o funcionamento atual antes de propor as
+regras; custos, consequências e interface ainda não foram definidos nesta
+conversa. Trabalhadores extras e crédito voluntário ficam para depois.
+
 O caderno reescrito foi apresentado só na conversa e ainda não teve aceite.
 A fonte narrativa ficou intacta. A frase «Contei três vezes» foi
 questionada; rever o caderno como um todo, sem apenas trocar essa frase.
@@ -56,10 +62,11 @@ Prompt para colar:
 Continuando o BR Port. Leia ESTADO_DO_PROJETO.md, §7 do plano v3
 e decisão 108. Confira a main, os PRs abertos e o próximo número livre.
 Confira o PR #131 (codex/medir-fase-2) e seu merge antes de começar.
-Foco pedido pelo Bruno: melhorias gerais além da Fase 1, separadas da
-progressão da Fase 2. Retome a fila: cancelamento de trabalho,
-mais trabalhadores por píer e linha voluntária de crédito. Leia a 103
-e o GDD, confira o que falta e avance em um recorte por vez.
+Item escolhido pelo Bruno: analisar o cancelamento de um serviço
+contratado em andamento. Leia a 103 e o GDD, confira o funcionamento
+atual e proponha as regras antes de implementar. Não é cancelamento
+de obras nem continuação da progressão da Fase 2. Trabalhadores extras
+e crédito voluntário ficam para depois.
 Tutorial e segunda chance já estão feitos. A4 continua pendente;
 não aplicar o caderno reescrito sem seu aceite.
 Preserve a correção móvel separada em codex/corrigir-nomes-web (107);

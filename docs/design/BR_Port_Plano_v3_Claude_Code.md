@@ -767,9 +767,10 @@ de observação, sem criar prazo. Preços e patamares atuais foram mantidos
 após a varredura; dados e limites na decisão e na `economia.md`.
 **Próxima conversa, escolha do Bruno em 14/10: melhorias gerais da frente
 5, além do fechamento da Fase 1 e separadas da progressão da Fase 2.**
-Retomar os candidatos que esperavam essa progressão (`103`): cancelamento
-de trabalho, mais trabalhadores por píer e linha voluntária de crédito.
-Escolher um recorte por vez; nenhum dos três foi implementado nesta sessão.
+**O recorte escolhido é cancelar um serviço contratado em andamento.**
+Rever o GDD e definir as regras antes de implementar; não se trata de
+cancelar obras. Mais trabalhadores por píer e crédito voluntário ficam
+para depois. Nenhum dos três foi implementado nesta sessão.
 São funcionalidades gerais que podem usar os serviços mais longos e o porto
 ampliado; não são novas etapas da progressão nem requisitos adicionais para
 o vertical slice. Tutorial e segunda chance já estão no jogo. Carros e
