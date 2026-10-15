@@ -141,6 +141,22 @@ jobs:
             exit 1
           fi
 
+      - name: Medir a Fase 2 sem prazo
+        run: |
+          set -euo pipefail
+          PARTIDAS="${{ github.event.inputs.partidas || '600' }}"
+          SEMENTE="${{ github.event.inputs.semente || '20260825' }}"
+          ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --headless --path brport_vs \
+            --script res://tools/medir_fase_2.gd \
+            -- "$PARTIDAS" "$SEMENTE" "$PWD/medicao/fase-2.json" 365 --sem-save \
+            2>&1 | tee medicao/fase-2.txt
+          grep -q "FASE 2 MEDIDA" medicao/fase-2.txt || {
+            echo "::error::A medição da Fase 2 não chegou ao fim."; exit 1; }
+          if grep -qE "SCRIPT ERROR|at: push_error \(" medicao/fase-2.txt; then
+            echo "::error::A medição da Fase 2 imprimiu erro."; exit 1
+          fi
+
       - name: Conferir o modelo das Parcelas 2 e 3
         # Contra as 600 partidas o erro do modelo fica abaixo de 1,2%. O
         # `testes.yml` roda as mesmas 600 desde 05/09 — esta linha dizia "as 30
@@ -167,6 +183,12 @@ jobs:
             # o cabeçalho, e o resumo não deve empilhar uma segunda reprovação
             # por cima da que interessa.
             sed -n '/^=== BR Port VS/,$p' medicao/leitura.txt \
+              | grep -v '^\(WARNING\|ERROR\|   at:\)' || true
+            echo '```'
+            echo
+            echo "### Fase 2 — janela de observação de 365 dias, sem prazo de jogo"
+            echo '```'
+            sed -n '/^=== BR Port — medição da Fase 2/,$p' medicao/fase-2.txt \
               | grep -v '^\(WARNING\|ERROR\|   at:\)' || true
             echo '```'
             echo

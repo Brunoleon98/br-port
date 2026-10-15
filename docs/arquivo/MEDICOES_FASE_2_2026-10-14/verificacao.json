@@ -1,0 +1,20 @@
+{
+  "jsons_conferidos_no_zip": 19,
+  "integridade_zips": true,
+  "seis_suites": {
+    "run_tests": "TODOS OS TESTES PASSARAM",
+    "teste_design": "DESIGN OK",
+    "teste_audio": "AUDIO OK",
+    "teste_fumaca": "FUMACA OK",
+    "teste_registro": "REGISTRO OK",
+    "asset_validator": "ASSET OK"
+  },
+  "erros_script_ou_push_error": 0,
+  "sentinela": true,
+  "docs": true,
+  "guardas_ci": true,
+  "fase_1_paridade_integral": true,
+  "autosave_paridade_integral": true,
+  "fumaca_final_json_identico": true,
+  "GameState_so_comentarios_alterados": true
+}

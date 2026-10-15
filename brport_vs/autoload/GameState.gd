@@ -188,8 +188,8 @@ const ESTRUTURAS := {
 	},
 	# A treliça chega na Fase 2 (`103`). Compra o nível intermediário que
 	# antes só a bancada montava; não corta dias como o pórtico.
-	# TUNING: preço provisório, varrido nesta etapa e revisto com a meta
-	# completa na etapa 4. O píer 2 com ela dá os dois reparos do nível 2.
+	# TUNING: preço mantido após a varredura da meta completa (`108`).
+	# O píer 2 com ela dá os dois reparos do nível 2.
 	"trelica": {
 		"nome": "Guindaste de treliça",
 		"desc": "o cargueiro passa a atracar",
@@ -526,8 +526,8 @@ const FASES := [
 			"patio": {"semana": 1, "quitadas": 0, "dias_de_obra": 3},
 			"pier_3": {"semana": 1, "quitadas": 0, "dias_de_obra": 3},
 			"escritorio": {"semana": 1, "quitadas": 0, "dias_de_obra": 2},
-			# TUNING: dois dias provisórios, como instalar um reparo pequeno;
-			# a medição com a meta completa revê o prazo na etapa 4 (`103`).
+			# TUNING: dois dias mantidos na medição da meta completa (`108`);
+			# a obra continua seguindo a regra dos reparos da Fase 1.
 			"trelica": {"semana": 1, "quitadas": 0, "dias_de_obra": 2},
 		},
 		# A treliça e o nível declarado sobem juntos: o F20 compara este
@@ -535,10 +535,10 @@ const FASES := [
 		"nivel_maximo": 2,
 		"bercos": 3,
 		# TUNING: onde a barra recomeça. A escala é 0–100 em cada fase (D4), e
-		# a passagem põe-na aqui. Provisório até à etapa 4: o mesmo da Fase 1,
+		# a passagem põe-na aqui. Mantido pela medição (`108`), como na Fase 1,
 		# que é a âncora neutra da negociação (`_chance_com_reputacao`).
 		"reputacao_inicial": 65.0,
-		# TUNING: patamares provisórios da etapa 3 (`106`); a etapa 4 mede-os.
+		# TUNING: patamares mantidos após a medição da etapa 4 (`108`).
 		# O piso abaixo do início conserva o acesso ao entrar; a meta pede avanço.
 		"meta": {"reputacao": 80.0, "dias": 3, "infra": ["pier_3", "trelica"]},
 		"piso_cargueiro": 40.0,

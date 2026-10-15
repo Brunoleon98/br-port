@@ -1,0 +1,78 @@
+{
+  "antes.json": {
+    "bytes": 2464912,
+    "sha256": "649761f31b5ffffb7fe7a33fbc575fadc929a38f74d99ee26403e27d2db600cb"
+  },
+  "precos-metade.json": {
+    "bytes": 2465724,
+    "sha256": "41bd7d077ad2c982891984cd0988c1842e29245b11f263248c2e95c1ad9a520a"
+  },
+  "precos-mais-50.json": {
+    "bytes": 2451992,
+    "sha256": "bb912935063c8d7f6f36356deec4cb237f98db333c4aca0adeffe0dde12a9913"
+  },
+  "meta-70.json": {
+    "bytes": 2463811,
+    "sha256": "f95329f73266bdff140de0196f45d1f7ce13e745dd5bca9d50cda9a8153884f4"
+  },
+  "meta-90.json": {
+    "bytes": 2465532,
+    "sha256": "94f0172a9e420a4e491223e3ce74b882f7910be9da250cb70342020d2b79d566"
+  },
+  "piso-20.json": {
+    "bytes": 2463765,
+    "sha256": "4fa0c945544461b4c779ef257f6c55e7543ad7fafe79715c9303f5ad09a9d329"
+  },
+  "piso-60.json": {
+    "bytes": 2465030,
+    "sha256": "a3118bdb4afd90a53e45e38cf814a336a600e068c62f4c3742ce22e6a70b6c7e"
+  },
+  "inicio-55.json": {
+    "bytes": 2466945,
+    "sha256": "4cb2b7f7f1c6eeedffb01db92e521dfaf53007d7d1bac38b9cf3c5654d152ec7"
+  },
+  "inicio-75.json": {
+    "bytes": 2462855,
+    "sha256": "b48e86119adabbacca3ac2a88bc36d041e419db1034a4bf380b13d663747193b"
+  },
+  "obras-curtas.json": {
+    "bytes": 2465005,
+    "sha256": "b1b66a60f0e1a86d8e82a53e58f41a1d2a34f5c5af7cb26f5fcafee4225c23d2"
+  },
+  "obras-longas.json": {
+    "bytes": 2465262,
+    "sha256": "036832a1987725dd81de1f0b441957fb47762da282f5c02b1f3ccc348f2c9041"
+  },
+  "amostra-sem-save.json": {
+    "bytes": 16720,
+    "sha256": "4f1336e81ee640b93fff27a16e2de85624592d1fafaa2494de806cb804866177"
+  },
+  "amostra-com-save.json": {
+    "bytes": 16720,
+    "sha256": "4f1336e81ee640b93fff27a16e2de85624592d1fafaa2494de806cb804866177"
+  },
+  "fumaca-final.json": {
+    "bytes": 16720,
+    "sha256": "4f1336e81ee640b93fff27a16e2de85624592d1fafaa2494de806cb804866177"
+  },
+  "fase-1.json": {
+    "bytes": 22325,
+    "sha256": "e25caa95a50430ba30f292085fd054c244909e6955968098242c2ebed63732ba"
+  },
+  "fase-1-base-106.json": {
+    "bytes": 22325,
+    "sha256": "e25caa95a50430ba30f292085fd054c244909e6955968098242c2ebed63732ba"
+  },
+  "constantes.json": {
+    "bytes": 6621,
+    "sha256": "5e636bcd4f40e651992fa16cc11819603edc390bea7814feda9b59b422b6b2e1"
+  },
+  "quebra-forcada.json": {
+    "bytes": 8755,
+    "sha256": "7fc5b6f3ed28720e0a4370787845d81eaf72a0603d5f7ba072624c430eb2bb1a"
+  },
+  "quebra-apos-meta.json": {
+    "bytes": 9316,
+    "sha256": "cd92c9248ac9ac933720ec2e0d8d8616970aa2c1136173e5e885bc7f14606c8c"
+  }
+}

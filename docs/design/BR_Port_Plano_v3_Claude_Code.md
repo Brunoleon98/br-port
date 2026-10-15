@@ -493,8 +493,9 @@ frentes, e **a ordem é do Bruno**:
    sem prazo, por escolha do Bruno. Os outros três esperam-na. **A etapa 1
    fechou em 12/10 (`104`):** a Fase 2 joga-se no mesmo save, sem meta.
    **A etapa 2 fechou em 14/10 (`105`):** a treliça compra-se por R$80 mil,
-   com dois dias de obra provisórios, e abre o cargueiro no porto de nível 2.
-   A seguinte é a 3: a meta, a regressão e o fim.
+   com dois dias de obra, e abre o cargueiro no porto de nível 2.
+   **A etapa 3 (`106`) trouxe meta, regressão e diário; a 4 (`108`) mediu
+   os quatro perfis e manteve os preços e patamares.** Ritmo humano no A7.
 6. **A folha de contato dos props** (props1–3): mais útil para a IA iterar,
    com referências profissionais. Só ferramenta; pequeno a médio, e barateia
    a 4.
@@ -760,10 +761,21 @@ com a arte das bancadas e uma partida fotografada até lá. Preço e prazo
 provisórios, com varredura deste recorte; a etapa 4 mede a meta completa.
 **A etapa 3 fechou em 14/10 (`106`)** — as três barras, o piso dos
 cargueiros, o save 17 com migração e a página do diário que segue em jogo
-livre. Os dois patamares são provisórios. **A seguinte é a 4**, a medição
-completa da Fase 2 por perfil.
-Depois delas, o cancelamento, os trabalhadores extras e a linha voluntária
-voltam ao Bruno, já com onde agir.
+livre. **A etapa 4 fecha na `108`**: medição completa por perfil, com
+conquistas, dias condicionados à conquista, quebras e censuras numa janela
+de observação, sem criar prazo. Preços e patamares atuais foram mantidos
+após a varredura; dados e limites na decisão e na `economia.md`.
+**Próxima conversa, escolha do Bruno em 14/10: melhorias gerais da frente
+5, além do fechamento da Fase 1 e separadas da progressão da Fase 2.**
+**O recorte escolhido é cancelar um serviço contratado em andamento.**
+Rever o GDD e definir as regras antes de implementar; não se trata de
+cancelar obras. Mais trabalhadores por píer e crédito voluntário ficam
+para depois. Nenhum dos três foi implementado nesta sessão.
+São funcionalidades gerais que podem usar os serviços mais longos e o porto
+ampliado; não são novas etapas da progressão nem requisitos adicionais para
+o vertical slice. Tutorial e segunda chance já estão no jogo. Carros e
+imóveis continuam futuros, sem escopo novo. O A4 segue pendente: o caderno
+reescrito está só na conversa, ainda sem aprovação.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

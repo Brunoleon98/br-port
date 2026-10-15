@@ -1,0 +1,13 @@
+{
+  "autosave": {
+    "partidas_por_perfil": 3,
+    "janela": 56,
+    "folhas_iguais": 621,
+    "controle_alterado_reprovou": true
+  },
+  "fase_1": {
+    "partidas_por_perfil": 600,
+    "semente": 20260825,
+    "folhas_iguais": 712
+  }
+}

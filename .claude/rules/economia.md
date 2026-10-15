@@ -3,6 +3,8 @@ paths:
   - "brport_vs/autoload/GameState.gd"
   - "brport_vs/tools/simular_balanceamento.gd"
   - "brport_vs/tools/leitura_do_simulador.gd"
+  - "brport_vs/tools/medir_fase_2.gd"
+  - "brport_vs/tools/leitura_fase_2.gd"
   - "brport_vs/tools/estado_simulado.gd"
   - "brport_vs/tools/despejar_constantes.gd"
   - "tools/projetar_parcelas.py"
@@ -14,7 +16,7 @@ paths:
   - ".github/workflows/balanceamento.yml"
 ---
 
-# Regras — economia e as regras da Fase 1
+# Regras — economia e fases
 
 > Carrega quando a sessão lê ou edita um arquivo do `paths:` acima. Veio do
 > `CLAUDE.md` em 10/10, palavra por palavra (`docs/decisoes/091`); o índice
@@ -141,7 +143,7 @@ o triplo do balanceamento e reprova quem o repetir noutro sítio.
 
 Os reparos básicos não promovem o aparelho de madeira (`086`); a treliça é
 compra da Fase 2 (`105`), após o píer 2: R$80 mil e dois dias de obra,
-provisórios até à etapa 4 da `103`. O nível 2 só entra na conclusão.
+mantidos pela medição completa da `108`. O nível 2 só entra na conclusão.
 A base da máquina está no PNG do píer: `Dock.gd` seleciona
 o conjunto n1 aprovado com madeira, preservando capacidade e assets. O nível
 intermediário das bancadas é efêmero e restrito a `--script`; não deve entrar
@@ -190,11 +192,21 @@ parcelas e SEM PRAZO (`semanas` em `null`, que rebenta a quem a pedir sem o
 `fase_tem_prazo()`), e quem lê a parcela corrente pergunta antes pelo
 `tem_cobranca()`. As semanas de parcelas e reparos contam-se do início da
 fase; o calendário e o boletim não recomeçam. O simulador mede a Fase 1 e
-pára na passagem (`FASE_MEDIDA`). A meta da Fase 2 (`106`) pede reputação
+pára na passagem (`FASE_MEDIDA`). A ferramenta `medir_fase_2.gd` joga desde
+o dia 1 e observa a segunda fase; não alimenta o projetor das Parcelas.
+A meta da Fase 2 (`106`) pede reputação
 ≥80 por três fechos seguidos, píer 3 e treliça prontos e cargueiro atendido;
 abaixo do piso 40 suspendem-se novas chegadas, sem perder a conquista. Os
-patamares, os preços, os dias de obra e a reputação de partida da Fase 2 são
-provisórios até à etapa 4 da `103`. Quem mexer no
+patamares, preços, dias de obra e reputação de partida foram mantidos como
+referência medida na etapa 4 (`108`). São 600 partidas por perfil, semente
+20260825 e janela de 365 fechos, nunca prazo de jogo. Dias até a meta usam
+só quem conquistou: no Descuidado foram 12 de 600; as outras 588 seguiram
+vivas sem meta, não perderam. Ninguém quebrou nessa janela. O T23 e o JSON
+separam censura, quebra antes/depois da meta e perda na Fase 1. Antes de
+comparar medianas, confira seus denominadores; não invente pressão ou altere
+os perfis para obter uma taxa. Evidência e varredura em
+`docs/arquivo/MEDICOES_FASE_2_2026-10-14/`; ritmo humano continua no A7.
+Quem mexer no
 `valor` de uma parcela da Fase 1 mexe nos `juros` com ele: o F20 exige que o capital das três feche o `START_CASH`, que é o
 crédito da `085`. E o `nivel_maximo` não trava nada — é afirmação, e o F20
 reprova-a quando um reparo novo leva o porto acima dela.

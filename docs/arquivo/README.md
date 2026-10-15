@@ -29,6 +29,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `MEDICOES_FASE_2_2026-10-14/` | 14/10 | Etapa 4 da `103` (`108`): 600 partidas por perfil, dez variações, dados completos e verificações; valores mantidos |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-14d.md` | 14/10 | Medição no PR #131; próximo recorte: cancelar serviço contratado; A4 pendente e correção de nomes Web em branch separada |
 | `EVIDENCIA_META_2026-10-14/` | 14/10 | Meta, diário, jogo livre e regressão de partidas jogadas; controles da etapa 3 (`106`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-14b.md` | 14/10 | Etapa 3 da `103` (`106`), PR #130; próxima: medição da Fase 2 |
 | `MEDICOES_TRELICA_2026-10-14.json` | 14/10 | Quatro preços, 600 partidas por perfil, 56 dias de Fase 2; controle positivo e sete defeitos injetados (`105`) |
