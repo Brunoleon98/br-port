@@ -765,12 +765,16 @@ livre. **A etapa 4 fecha na `108`**: medição completa por perfil, com
 conquistas, dias condicionados à conquista, quebras e censuras numa janela
 de observação, sem criar prazo. Preços e patamares atuais foram mantidos
 após a varredura; dados e limites na decisão e na `economia.md`.
-**Prioridade de 14/10, escolha do Bruno: terminar a Fase 1 para o vertical
-slice, começando pelo A4.** O caderno reescrito está só na conversa, ainda
-sem aprovação. Enquanto isso, a `108` avançou na parte que não depende de
-revisão humana. Cancelamento, trabalhadores extras e crédito voluntário
-continuam aguardando a escolha do próximo recorte; não são requisitos novos
-para fechar o vertical slice.
+**Próxima conversa, escolha do Bruno em 14/10: melhorias gerais da frente
+5, além do fechamento da Fase 1 e separadas da progressão da Fase 2.**
+Retomar os candidatos que esperavam essa progressão (`103`): cancelamento
+de trabalho, mais trabalhadores por píer e linha voluntária de crédito.
+Escolher um recorte por vez; nenhum dos três foi implementado nesta sessão.
+São funcionalidades gerais que podem usar os serviços mais longos e o porto
+ampliado; não são novas etapas da progressão nem requisitos adicionais para
+o vertical slice. Tutorial e segunda chance já estão no jogo. Carros e
+imóveis continuam futuros, sem escopo novo. O A4 segue pendente: o caderno
+reescrito está só na conversa, ainda sem aprovação.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

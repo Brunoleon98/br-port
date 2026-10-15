@@ -2,8 +2,9 @@
 
 Leia `ESTADO_DO_PROJETO.md`, §7 do plano v3 e a decisão `108`. Base desta
 sessão: `92862ef`, merge confirmado do PR #130, main até a `106`, nenhum
-PR aberto. Branch local: `codex/medir-fase-2`. Confirme o remoto novamente
-antes de editar ou integrar.
+PR aberto no início. A entrega foi publicada no **PR #131**, branch
+`codex/medir-fase-2`, commit `0913aa5`. Confirme seu estado no remoto antes
+de editar ou integrar; não presumir merge.
 
 A etapa 4 da `103` foi medida: 600 partidas por perfil, semente 20260825,
 365 fechos de observação na Fase 2. Preços e patamares atuais mantidos.
@@ -14,10 +15,23 @@ Os resultados completos e verificações estão em
 de derrota. O Descuidado conquistou em 12/600 partidas; sua mediana de 345
 dias é só dessas 12, nunca das 600. A janela de observação não cria prazo.
 
-Bruno priorizou terminar a Fase 1 para completar o vertical slice e voltou
-ao A4. Depois autorizou avançar o que dispensasse sua revisão: daí a
-medição. Não começar cancelamento, trabalhadores extras ou crédito
-voluntário sem a escolha do próximo recorte.
+Bruno voltou ao A4 e depois autorizou avançar o que dispensasse sua revisão:
+daí a medição. **Depois de abrir o PR #131, mudou o foco da próxima conversa
+para melhorias gerais além da Fase 1, separadas da progressão da Fase 2.**
+Ele não lembrava quais eram; a fila do plano e a decisão `103` recuperam:
+
+- **Cancelamento de trabalho:** poder interromper um serviço em andamento;
+  não confundir com cancelamento/reembolso de obra, excluído da `087`.
+- **Mais trabalhadores por píer:** ampliar a alocação e a contratação, que
+  hoje acompanham o píer; consultar o GDD antes de fixar limites e efeitos.
+- **Linha voluntária de crédito:** pedir empréstimo para antecipar
+  investimento; é diferente da segunda chance oferecida no vencimento.
+
+Essas funcionalidades ficaram esperando a progressão para ter serviços de
+mais de um dia e mais investimentos onde agir. Não são novas etapas da
+Fase 2. O tutorial e a segunda chance já fecharam (`101`, `102`); carros e
+imóveis continuam futuros, sem novo escopo. Retomar um recorte por vez,
+conferindo o que já foi decidido antes de implementar.
 
 O caderno reescrito foi apresentado só na conversa e ainda não teve aceite.
 A fonte narrativa ficou intacta. A frase «Contei três vezes» foi
@@ -41,9 +55,13 @@ Prompt para colar:
 ```text
 Continuando o BR Port. Leia ESTADO_DO_PROJETO.md, §7 do plano v3
 e decisão 108. Confira a main, os PRs abertos e o próximo número livre.
-Prioridade: terminar a Fase 1 para o vertical slice. Retome o A4 pelo
-caderno completo; há um rascunho ainda não aprovado na conversa anterior.
-A medição da Fase 2 está na branch local codex/medir-fase-2.
+Confira o PR #131 (codex/medir-fase-2) e seu merge antes de começar.
+Foco pedido pelo Bruno: melhorias gerais além da Fase 1, separadas da
+progressão da Fase 2. Retome a fila: cancelamento de trabalho,
+mais trabalhadores por píer e linha voluntária de crédito. Leia a 103
+e o GDD, confira o que falta e avance em um recorte por vez.
+Tutorial e segunda chance já estão feitos. A4 continua pendente;
+não aplicar o caderno reescrito sem seu aceite.
 Preserve a correção móvel separada em codex/corrigir-nomes-web (107);
 ainda falta publicar com autorização e confirmar a digitação no telefone.
 ```
