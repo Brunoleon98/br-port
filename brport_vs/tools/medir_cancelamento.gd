@@ -27,7 +27,11 @@ func _rodar() -> void:
 		push_error("medir_cancelamento: parâmetros inválidos")
 		quit(1)
 		return
-	GS = load("res://tools/estado_cancelamento_experimental.gd").new()
+	GS = load("res://tools/estado_cancelamento_producao.gd" if args.has("--producao") else "res://tools/estado_cancelamento_experimental.gd").new()
+	if args.has("--producao") and (float(args[5]) != 5.0 or float(args[6]) != 0.10):
+		push_error("paridade de produção exige os custos aprovados")
+		quit(1)
+		return
 	GS.gravar_autosave = args.has("--com-save")
 	GS.save_path = ArmazemLocal.caminho("cancelamento_experimental.json")
 	GS.perda_reputacao = float(args[5])

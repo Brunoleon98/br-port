@@ -556,6 +556,12 @@ jobs:
             echo "::error::A medição da Fase 2 imprimiu erro."; exit 1
           fi
 
+      - name: Conferir paridade do cancelamento integrado com a bancada
+        run: |
+          python3 tools/verificar_integracao_cancelamento.py \
+            --godot ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --saida /tmp/cancelamento-paridade
+
       - name: Conferir que o boletim da Dona Cida só afirma o que o estado confirma
         # Cada tom do boletim AFIRMA coisas sobre a semana — "de novo", "a
         # parcela" —, e o tom é escolhido por números. Medido em 23/09 com esta

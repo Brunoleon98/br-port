@@ -190,8 +190,10 @@ valida é o playtest, e o leitor dos registros conta-a.
 cancelamento (`110`), retirar a multa manteve a perda de reputação, mas
 encorajou mais trocas e atrasou a meta do Mediano. Compare frequências de
 ação junto com caixa e tempo; uma varredura de custo não é uma varredura
-com número de ações constante. Essa é medição experimental, não regra já
-disponível no jogo.
+com número de ações constante. A `110` é a referência experimental; o
+candidato de cinco pontos e 10% foi aceite e integrado na `111`, exigindo
+paridade da ação real com a bancada. Multa é despesa já paga no dia e na
+semana, sem nova cobrança no fecho e sem somá-la de volta como investimento.
 
 Desde a `094` a duração, as parcelas (semana, valor, juros), os reparos
 (semana, quitadas, dias de obra), o nível máximo, os berços e a reputação

@@ -930,13 +930,17 @@ func _guindaste_opera() -> bool:
 # enquanto a operação não começou (`083`). Até lá recebia o trabalhador
 # arrastado da fileira, que deu o lugar à fila.
 func _gui_input(event: InputEvent) -> void:
-	if not (event is InputEventMouseButton and event.pressed
+	if not (event is InputEventMouseButton
 			and event.button_index == MOUSE_BUTTON_LEFT):
 		return
 	if not esta_construida():
 		return
 	if GameState.docks[dock_index]["boat"] != null:
-		GameState.desatracar(dock_index)
+		# Mesmo gesto do cartão: serviço iniciado abre a confirmação no release.
+		var iniciado: bool = int(GameState.docks[dock_index]["boat"]["progress"]) > 0
+		if event.pressed == iniciado:
+			return
+		GameState.tocar_doca(dock_index)
 		accept_event()
 
 

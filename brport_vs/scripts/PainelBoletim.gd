@@ -51,6 +51,7 @@ func setup(resumo: Dictionary) -> void:
 		["Salários", int(_resumo["salarios"])],
 		["Manutenção", int(_resumo["manutencao"])],
 		["Parcela", int(_resumo["parcela"])],
+		["Cancelamento de serviço", int(_resumo.get("cancelamento", 0))],
 	], int(_resumo["despesa"]))
 
 	_resultado()

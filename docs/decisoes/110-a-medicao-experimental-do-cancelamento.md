@@ -4,6 +4,10 @@
 `109`. Isso autoriza avaliar suas regras candidatas; não é aceite de custos,
 interface ou subida de save. O jogo continua sem cancelamento disponível.
 
+**Continuação:** o aceite posterior do Bruno e a integração no jogo estão
+na `111`, com paridade contra esta bancada. Esta decisão conserva a medição
+experimental e seus limites.
+
 Base remota conferida: `82a9df0`, PR #131 fundido, nenhum PR aberto. A `109`
 estava no commit local `8cdcddd`; a medição parte dele, na branch
 `codex/medir-cancelamento-servico`. A `107` permanece em outra branch local.

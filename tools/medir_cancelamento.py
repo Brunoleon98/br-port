@@ -26,11 +26,11 @@ def executar(godot, projeto, saida, nome, argumentos, marcador, ambiente):
     with log.open("w", encoding="utf-8") as arquivo:
         processo = subprocess.run(
             [str(godot), "--headless", "--path", str(projeto), *argumentos],
-            stdout=arquivo, stderr=subprocess.STDOUT, env=ambiente, check=False,
+            stdout=arquivo, stderr=subprocess.STDOUT, env=ambiente, check=False, timeout=600,
         )
     texto = log.read_text(encoding="utf-8")
-    if processo.returncode or marcador not in texto or "SCRIPT ERROR" in texto or "at: push_error (" in texto:
-        raise RuntimeError(f"{nome} reprovou; ver {log}")
+    if processo.returncode or marcador not in texto or "SCRIPT ERROR" in texto or "GDScript backtrace" in texto or "at: push_error (" in texto:
+        raise RuntimeError(f"{nome} reprovou; ver {log}\n{texto[-4000:]}")
     print(f"OK {nome}", flush=True)
 
 
@@ -43,6 +43,7 @@ def main():
     ap.add_argument("--semente", type=int, default=20260825)
     ap.add_argument("--cenario", choices=[x[0] for x in CENARIOS])
     ap.add_argument("--com-save", action="store_true")
+    ap.add_argument("--producao", action="store_true", help="comparar a ação integrada aos custos aprovados")
     args = ap.parse_args()
     raiz = Path(__file__).resolve().parents[1]
     projeto = raiz / "brport_vs"
@@ -62,6 +63,8 @@ def main():
                       str(saida / f"{nome}.json"), str(args.janela), politica, str(reputacao), str(multa)]
         if args.com_save:
             argumentos.append("--com-save")
+        if args.producao:
+            argumentos.append("--producao")
         executar(args.godot, projeto, saida, nome, argumentos, "CANCELAMENTO MEDIDO", ambiente)
         dados = json.loads((saida / f"{nome}.json").read_text(encoding="utf-8"))
         print(json.dumps({g["perfil"]: {

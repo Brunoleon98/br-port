@@ -8,6 +8,10 @@ Nenhuma regra abaixo está aprovada ou implementada por este documento.
 estão na `110`, que recomenda manter o candidato; implementação e migração
 continuam sem aceite. O desenho abaixo registra a proposta anterior à rodada.
 
+**Aceite posterior em 15/10:** Bruno aprovou o recorte inteiro, inclusive
+saldo negativo e migração 17→18. A implementação e as provas estão na `111`;
+o texto abaixo conserva a proposta que antecedeu esse aceite.
+
 Base: main remota `82a9df0`, merge do PR #131 confirmado no GitHub. O
 último commit da branch `codex/medir-fase-2`, `7ba2ef7`, é ancestral dessa
 main. Não havia PR aberto. Decisões na main até a `108`; a `107` continua

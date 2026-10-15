@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 15/10/2026 — medição do cancelamento (`110`)
+> **Última atualização:** 15/10/2026 — cancelamento e pesquisa (`111`, `112`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -59,7 +59,8 @@ do mapa (`069`).
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **17** (`106`), com migração desde a 14 (`098`) e um exemplo por versão;
+Save local **18** (`111`; main publicada na 17), com migração desde a 14
+(`098`) e um exemplo por versão;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
@@ -109,16 +110,16 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-**A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
-**fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — **M1** a **M11** fecharam (`088`–`099`, o M9 na `104`); o
-M12 espera o A8, e a fila parou: voltou a frente 5, o **tutorial curto**
-(`100`, `101`) e a **segunda chance** (`102`) estão no jogo, e a
-**progressão para a Fase 2** (`103`) fez as quatro etapas (`104`–`106`,
-`108`). A medição mantém os valores; resultado e limites na `economia.md`.
-**Cancelamento de serviço: candidato medido na `110`**, sem implementação;
-a proposta `109` aguarda aceite. Mais trabalhadores e crédito voluntário ficam para
-depois. **A4 pendente**, caderno sem aceite.
+**R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
+A frente 5 já entregou **tutorial** (`100`, `101`), **segunda chance** (`102`)
+e as quatro etapas da **progressão para a Fase 2** (`103`–`106`, `108`).
+Valores mantidos pela medição; resultados e limites na `economia.md`.
+**Cancelamento de serviço integrado na `111`**, após medição `110` e aceite:
+confirmação, equipe livre no dia, −5 e multa de 10%, contas, registro 5 e
+migração 17→18. PR autorizado, merge a conferir. Recursos básicos: `112` e
+`PESQUISA_RECURSOS_BASICOS_2026-10-15.md`; revisão anterior preservada.
+Mais trabalhadores e crédito voluntário ficam para depois. **A4 pendente**,
+caderno sem aceite.
 A `107` (nomes no Web móvel) está em
 branch local separada, aguardando publicação autorizada e teste no telefone.
 O Pages publica a main verde.
