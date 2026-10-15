@@ -8,7 +8,11 @@ depois da `109` local e da `107` reservada em outra branch.
 Bruno respondeu **«pode seguir com a medição»**. Foram medidas as regras
 candidatas, sem interpretar isso como aceite da implementação ou migração.
 O jogo continua sem cancelamento disponível. Não houve push, PR novo ou
-publicação desta entrega.
+publicação durante a medição. Depois do fecho, Bruno pediu um PR para
+salvar o trabalho: a branch foi publicada no **PR #132**
+(`https://github.com/Brunoleon98/br-port/pull/132`), com a proposta e a
+medição. Conferir o último commit e seu CI antes de recomendar merge.
+Esse pedido autoriza publicar a entrega, não implementar o cancelamento.
 
 São 31.200 partidas na amostra principal: referência main e doze cenários,
 600 por perfil, semente 20260825 e janela de 365 fechos na Fase 2. A bancada
@@ -59,8 +63,10 @@ Continuando o BR Port. Leia AGENTS.md, ESTADO_DO_PROJETO.md,
 Confira a main remota, os PRs abertos e o próximo número livre.
 O PR #131 foi fundido em 82a9df0; confirme a situação atual.
 
-A branch local codex/medir-cancelamento-servico contém a proposta 109
-e a medição 110, sem push nem PR. Bruno autorizou seguir com a medição;
+A branch codex/medir-cancelamento-servico contém a proposta 109
+e a medição 110, publicadas no PR #132 a pedido do Bruno.
+Confira o PR e o CI do último commit; não presumir merge.
+Bruno autorizou a medição e a publicação dessa entrega;
 isso ainda não foi aceite para implementar ou migrar o save.
 Foram 600 partidas por perfil e 31.200 na amostra principal, semente
 20260825, com 365 fechos de observação na Fase 2. Dados e controles:
