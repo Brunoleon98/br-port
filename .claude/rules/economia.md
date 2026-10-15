@@ -6,6 +6,8 @@ paths:
   - "brport_vs/tools/medir_fase_2.gd"
   - "brport_vs/tools/leitura_fase_2.gd"
   - "brport_vs/tools/estado_simulado.gd"
+  - "brport_vs/tools/*cancelamento*.gd"
+  - "tools/*cancelamento*.py"
   - "brport_vs/tools/despejar_constantes.gd"
   - "tools/projetar_parcelas.py"
   - "tools/gerar_tabela_numeros.py"
@@ -183,6 +185,13 @@ Nenhum perfil chega a pedi-la (P10 na decisão ≥ R$175.244 na `087`); quem a
 valida é o playtest, e o leitor dos registros conta-a.
 
 ### Os números de cada fase
+
+**Um custo muda também quais ações a política escolhe.** Na bancada de
+cancelamento (`110`), retirar a multa manteve a perda de reputação, mas
+encorajou mais trocas e atrasou a meta do Mediano. Compare frequências de
+ação junto com caixa e tempo; uma varredura de custo não é uma varredura
+com número de ações constante. Essa é medição experimental, não regra já
+disponível no jogo.
 
 Desde a `094` a duração, as parcelas (semana, valor, juros), os reparos
 (semana, quitadas, dias de obra), o nível máximo, os berços e a reputação

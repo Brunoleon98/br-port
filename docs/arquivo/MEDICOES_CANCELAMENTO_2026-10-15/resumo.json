@@ -1,0 +1,6002 @@
+{
+  "n": 600,
+  "semente": 20260825,
+  "janela": 365,
+  "paridade_main_campos": 60000,
+  "cenarios": {
+    "controle": {
+      "politica": "nenhuma",
+      "perda_reputacao": 5.0,
+      "multa_fracao": 0.1,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8088385,
+            "p50": 8264868,
+            "p90": 8422502
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 499574,
+            "p50": 598185,
+            "p90": 699539
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 12,
+            "p50": 15,
+            "p90": 20
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7776936,
+            "p50": 7959055,
+            "p90": 8114396
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 325936,
+            "p50": 380166,
+            "p90": 429821
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 0,
+          "total_cancelamentos": 0,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 152,
+            "p50": 164,
+            "p90": 175
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7213936,
+            "p50": 7396055,
+            "p90": 7551396
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 630,
+            "p50": 642,
+            "p90": 655
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 40,
+            "p50": 47,
+            "p90": 55
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "mais_caixa_que_controle": 0,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7076757,
+            "p50": 7271653,
+            "p90": 7464879
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 524864,
+            "p50": 718355,
+            "p90": 1030968
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 22,
+            "p50": 36,
+            "p90": 54
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 6998644,
+            "p50": 7168589,
+            "p90": 7338473
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 244938,
+            "p50": 268653,
+            "p90": 284738
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 0,
+          "total_cancelamentos": 0,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 126,
+            "p50": 139,
+            "p90": 153
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6420644,
+            "p50": 6593353,
+            "p90": 6768185
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 540,
+            "p50": 554,
+            "p90": 569
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 86,
+            "p50": 96,
+            "p90": 107
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "mais_caixa_que_controle": 0,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1574657,
+            "p90": 2126271
+          },
+          "caixa_meta": {
+            "n": 12,
+            "p10": 1820964,
+            "p50": 1937727,
+            "p90": 2155981
+          },
+          "censuradas": 588,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 307,
+            "p50": 342,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 12,
+            "p10": 335,
+            "p50": 345,
+            "p90": 362
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2297006,
+            "p90": 2836186
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 12,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 3
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 0,
+          "total_cancelamentos": 0,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 7
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2347026,
+            "p90": 2767407
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 370
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 189,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 12,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "mais_caixa_que_controle": 0,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7010612,
+            "p50": 7220922,
+            "p90": 7405073
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 547667,
+            "p50": 761694,
+            "p90": 1062606
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 29,
+            "p50": 41,
+            "p90": 57
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 6984214,
+            "p50": 7166514,
+            "p90": 7330888
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260549,
+            "p50": 267607,
+            "p90": 282981
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 0,
+          "total_cancelamentos": 0,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 127,
+            "p50": 140,
+            "p90": 152
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6406214,
+            "p50": 6588685,
+            "p90": 6752888
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 539,
+            "p50": 553,
+            "p90": 568
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 87,
+            "p50": 97,
+            "p90": 108
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "mais_caixa_que_controle": 0,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "candidato-taxa": {
+      "politica": "taxa",
+      "perda_reputacao": 5.0,
+      "multa_fracao": 0.1,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8125107,
+            "p50": 8288246,
+            "p90": 8459962
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 514554,
+            "p50": 641801,
+            "p90": 817113
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 12,
+            "p50": 17,
+            "p90": 25
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7823530,
+            "p50": 7978266,
+            "p90": 8141181
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 326303,
+            "p50": 380340,
+            "p90": 430199
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 12731,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 148,
+            "p50": 160,
+            "p90": 172
+          },
+          "multas": {
+            "n": 600,
+            "p10": 15808,
+            "p50": 21188,
+            "p90": 26889
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 160797,
+            "p50": 215122,
+            "p90": 273350
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7283196,
+            "p50": 7434734,
+            "p90": 7596006
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 631,
+            "p50": 644,
+            "p90": 656
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 51,
+            "p50": 59,
+            "p90": 68
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 16,
+            "p50": 21,
+            "p90": 27
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -131511,
+            "p50": 28881,
+            "p90": 197139
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 8
+          },
+          "mais_caixa_que_controle": 353,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7106485,
+            "p50": 7321213,
+            "p90": 7542877
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 560950,
+            "p50": 873682,
+            "p90": 1387974
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 24,
+            "p50": 43,
+            "p90": 71
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7027941,
+            "p50": 7215751,
+            "p90": 7418291
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 245202,
+            "p50": 268452,
+            "p90": 283510
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13613,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 123,
+            "p50": 135,
+            "p90": 147
+          },
+          "multas": {
+            "n": 600,
+            "p10": 16675,
+            "p50": 22570,
+            "p90": 28524
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 170695,
+            "p50": 229478,
+            "p90": 289419
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6480838,
+            "p50": 6665475,
+            "p90": 6862216
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 546,
+            "p50": 561,
+            "p90": 575
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 93,
+            "p50": 103,
+            "p90": 114
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 17,
+            "p50": 23,
+            "p90": 29
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -134416,
+            "p50": 47005,
+            "p90": 238758
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -5,
+            "p50": 4,
+            "p90": 29
+          },
+          "mais_caixa_que_controle": 395,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1575707,
+            "p90": 2126271
+          },
+          "caixa_meta": {
+            "n": 6,
+            "p10": 2010088,
+            "p50": 2304287,
+            "p90": 2472905
+          },
+          "censuradas": 594,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 309,
+            "p50": 342,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 6,
+            "p10": 337,
+            "p50": 352,
+            "p90": 364
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2297006,
+            "p90": 2830940
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 6,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 4
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 122,
+          "total_cancelamentos": 219,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 6
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1466
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 14705
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2344070,
+            "p90": 2768071
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -1022,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 4,
+            "p10": 0,
+            "p50": 19,
+            "p90": 28
+          },
+          "mais_caixa_que_controle": 57,
+          "so_controle_conquistou": 8,
+          "so_candidato_conquistou": 2
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7074203,
+            "p50": 7254763,
+            "p90": 7447135
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 601423,
+            "p50": 949320,
+            "p90": 1422574
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 31,
+            "p50": 50,
+            "p90": 76
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7030584,
+            "p50": 7193166,
+            "p90": 7375047
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260549,
+            "p50": 267892,
+            "p90": 282873
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13540,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 122,
+            "p50": 135,
+            "p90": 148
+          },
+          "multas": {
+            "n": 600,
+            "p10": 16688,
+            "p50": 22212,
+            "p90": 28651
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 170985,
+            "p50": 225514,
+            "p90": 291399
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6478700,
+            "p50": 6638276,
+            "p90": 6819560
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 545,
+            "p50": 559,
+            "p90": 573
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 92,
+            "p50": 104,
+            "p90": 115
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 17,
+            "p50": 22,
+            "p90": 29
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -134820,
+            "p50": 44156,
+            "p90": 216054
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -6,
+            "p50": 7,
+            "p90": 29
+          },
+          "mais_caixa_que_controle": 367,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "candidato-valor": {
+      "politica": "valor",
+      "perda_reputacao": 5.0,
+      "multa_fracao": 0.1,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7965896,
+            "p50": 8141712,
+            "p90": 8326117
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 538982,
+            "p50": 715129,
+            "p90": 1081946
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 13,
+            "p50": 21,
+            "p90": 39
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7658209,
+            "p50": 7829972,
+            "p90": 8002161
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 325771,
+            "p50": 379288,
+            "p90": 429376
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 24769,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 155,
+            "p50": 167,
+            "p90": 178
+          },
+          "multas": {
+            "n": 600,
+            "p10": 31527,
+            "p50": 38106,
+            "p90": 45535
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 367569,
+            "p50": 445285,
+            "p90": 531563
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7135830,
+            "p50": 7305131,
+            "p90": 7478136
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 616,
+            "p50": 630,
+            "p90": 644
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 73,
+            "p50": 83,
+            "p90": 93
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 34,
+            "p50": 41,
+            "p90": 49
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -296315,
+            "p50": -117843,
+            "p90": 72259
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 6,
+            "p90": 21
+          },
+          "mais_caixa_que_controle": 112,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7029128,
+            "p50": 7237670,
+            "p90": 7441441
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 583926,
+            "p50": 995873,
+            "p90": 1710264
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 26,
+            "p50": 51,
+            "p90": 88
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 6954444,
+            "p50": 7138750,
+            "p90": 7314969
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 244006,
+            "p50": 267793,
+            "p90": 283744
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13093,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 126,
+            "p50": 139,
+            "p90": 153
+          },
+          "multas": {
+            "n": 600,
+            "p10": 14698,
+            "p50": 19371,
+            "p90": 25278
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 166071,
+            "p50": 219796,
+            "p90": 284739
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6397651,
+            "p50": 6581534,
+            "p90": 6762901
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 537,
+            "p50": 550,
+            "p90": 566
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 100,
+            "p50": 111,
+            "p90": 123
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 16,
+            "p50": 22,
+            "p90": 28
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -204391,
+            "p50": -33301,
+            "p90": 146375
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 11,
+            "p90": 44
+          },
+          "mais_caixa_que_controle": 251,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1568306,
+            "p90": 2126271
+          },
+          "caixa_meta": {
+            "n": 2,
+            "p10": 1835803,
+            "p50": 2152114,
+            "p90": 2152114
+          },
+          "censuradas": 598,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 309,
+            "p50": 343,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 2,
+            "p10": 350,
+            "p50": 362,
+            "p90": 362
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669668,
+            "p50": 2293324,
+            "p90": 2829629
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 2,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 4
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 162,
+          "total_cancelamentos": 389,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 7
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 2313
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 27844
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2340915,
+            "p90": 2767407
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 217,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 3
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -19226,
+            "p50": 0,
+            "p90": 1949
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 0,
+            "p10": null,
+            "p50": null,
+            "p90": null
+          },
+          "mais_caixa_que_controle": 65,
+          "so_controle_conquistou": 12,
+          "so_candidato_conquistou": 2
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 6990442,
+            "p50": 7173368,
+            "p90": 7371167
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 662040,
+            "p50": 1103453,
+            "p90": 1876255
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 35,
+            "p50": 58,
+            "p90": 98
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 6948013,
+            "p50": 7115294,
+            "p90": 7300476
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260609,
+            "p50": 268362,
+            "p90": 283685
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13003,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 126,
+            "p50": 140,
+            "p90": 152
+          },
+          "multas": {
+            "n": 600,
+            "p10": 14244,
+            "p50": 19386,
+            "p90": 24883
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 160223,
+            "p50": 218171,
+            "p90": 281470
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6389574,
+            "p50": 6556200,
+            "p90": 6741177
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 535,
+            "p50": 549,
+            "p90": 564
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 100,
+            "p50": 113,
+            "p90": 124
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 16,
+            "p50": 22,
+            "p90": 27
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -206229,
+            "p50": -33763,
+            "p90": 141848
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 15,
+            "p90": 55
+          },
+          "mais_caixa_que_controle": 237,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "candidato-uma": {
+      "politica": "uma",
+      "perda_reputacao": 5.0,
+      "multa_fracao": 0.1,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8087894,
+            "p50": 8260060,
+            "p90": 8412636
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 560582,
+            "p50": 647900,
+            "p90": 765133
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 15,
+            "p50": 18,
+            "p90": 23
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7780975,
+            "p50": 7947939,
+            "p90": 8097448
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 320477,
+            "p50": 373576,
+            "p90": 421953
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 600,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 152,
+            "p50": 164,
+            "p90": 176
+          },
+          "multas": {
+            "n": 600,
+            "p10": 793,
+            "p50": 1153,
+            "p90": 1502
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 10035,
+            "p50": 14796,
+            "p90": 20423
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7219380,
+            "p50": 7385966,
+            "p90": 7535696
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 629,
+            "p50": 641,
+            "p90": 653
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 40,
+            "p50": 48,
+            "p90": 56
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 1
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -72945,
+            "p50": -10211,
+            "p90": 50455
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 3,
+            "p90": 7
+          },
+          "mais_caixa_que_controle": 219,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7068498,
+            "p50": 7259368,
+            "p90": 7479139
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 578845,
+            "p50": 812575,
+            "p90": 1092690
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 26,
+            "p50": 41,
+            "p90": 59
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 6988749,
+            "p50": 7157608,
+            "p90": 7350764
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 241427,
+            "p50": 267762,
+            "p90": 282728
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 600,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 127,
+            "p50": 140,
+            "p90": 153
+          },
+          "multas": {
+            "n": 600,
+            "p10": 759,
+            "p50": 1086,
+            "p90": 1473
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 9126,
+            "p50": 13971,
+            "p90": 20123
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6415112,
+            "p50": 6581426,
+            "p90": 6782539
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 540,
+            "p50": 554,
+            "p90": 568
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 87,
+            "p50": 97,
+            "p90": 108
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 1
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -155599,
+            "p50": -4711,
+            "p90": 147894
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -8,
+            "p50": 3,
+            "p90": 18
+          },
+          "mais_caixa_que_controle": 262,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1576359,
+            "p90": 2112137
+          },
+          "caixa_meta": {
+            "n": 8,
+            "p10": 1260449,
+            "p50": 2162607,
+            "p90": 2389911
+          },
+          "censuradas": 592,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 311,
+            "p50": 343,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 8,
+            "p10": 336,
+            "p50": 357,
+            "p90": 364
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2301859,
+            "p90": 2818587
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 8,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 4
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 201,
+          "total_cancelamentos": 201,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 6
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1222
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 14652
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2349451,
+            "p90": 2759843
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 332,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -27677,
+            "p50": 0,
+            "p90": 7755
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 3,
+            "p10": 0,
+            "p50": 12,
+            "p90": 18
+          },
+          "mais_caixa_que_controle": 79,
+          "so_controle_conquistou": 9,
+          "so_candidato_conquistou": 5
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7024793,
+            "p50": 7198535,
+            "p90": 7395142
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 609742,
+            "p50": 852613,
+            "p90": 1181541
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 33,
+            "p50": 45,
+            "p90": 64
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 6984364,
+            "p50": 7147149,
+            "p90": 7323973
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260458,
+            "p50": 267904,
+            "p90": 282727
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 600,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 127,
+            "p50": 140,
+            "p90": 153
+          },
+          "multas": {
+            "n": 600,
+            "p10": 759,
+            "p50": 1084,
+            "p90": 1473
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 9117,
+            "p50": 13971,
+            "p90": 20255
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6406726,
+            "p50": 6569647,
+            "p90": 6749185
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 540,
+            "p50": 552,
+            "p90": 567
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 87,
+            "p50": 98,
+            "p90": 108
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 1
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -157307,
+            "p50": -5563,
+            "p90": 149947
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -10,
+            "p50": 4,
+            "p90": 21
+          },
+          "mais_caixa_que_controle": 258,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "candidato-impulsivo": {
+      "politica": "impulsivo",
+      "perda_reputacao": 5.0,
+      "multa_fracao": 0.1,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7830015,
+            "p50": 7973767,
+            "p90": 8148738
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 532225,
+            "p50": 690496,
+            "p90": 1022620
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 13,
+            "p50": 20,
+            "p90": 36
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7515512,
+            "p50": 7664047,
+            "p90": 7827895
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 324722,
+            "p50": 377209,
+            "p90": 428875
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 25012,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 156,
+            "p50": 168,
+            "p90": 180
+          },
+          "multas": {
+            "n": 600,
+            "p10": 37154,
+            "p50": 46006,
+            "p90": 54270
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 454201,
+            "p50": 564334,
+            "p90": 667600
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6999583,
+            "p50": 7144915,
+            "p90": 7307460
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 616,
+            "p50": 630,
+            "p90": 643
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 66,
+            "p50": 75,
+            "p90": 86
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 34,
+            "p50": 42,
+            "p90": 49
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -451893,
+            "p50": -282834,
+            "p90": -122931
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 4,
+            "p90": 19
+          },
+          "mais_caixa_que_controle": 10,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 6862101,
+            "p50": 7065473,
+            "p90": 7261504
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 621090,
+            "p50": 1097353,
+            "p90": 2009521
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 29,
+            "p50": 57,
+            "p90": 105
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 6780302,
+            "p50": 6964127,
+            "p90": 7126242
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 244241,
+            "p50": 267872,
+            "p90": 284092
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 20776,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 127,
+            "p50": 139,
+            "p90": 153
+          },
+          "multas": {
+            "n": 600,
+            "p10": 29614,
+            "p50": 38019,
+            "p90": 45853
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 359904,
+            "p50": 463980,
+            "p90": 563331
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6241938,
+            "p50": 6424072,
+            "p90": 6596034
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 538,
+            "p50": 551,
+            "p90": 566
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 101,
+            "p50": 112,
+            "p90": 124
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 27,
+            "p50": 35,
+            "p90": 42
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -398510,
+            "p50": -210939,
+            "p90": -23245
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 19,
+            "p90": 64
+          },
+          "mais_caixa_que_controle": 43,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1570659,
+            "p90": 2113671
+          },
+          "caixa_meta": {
+            "n": 4,
+            "p10": 1848532,
+            "p50": 1856084,
+            "p90": 2349563
+          },
+          "censuradas": 596,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 309,
+            "p50": 343,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 4,
+            "p10": 324,
+            "p50": 352,
+            "p90": 362
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2295456,
+            "p90": 2815281
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 4,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 4
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 135,
+          "total_cancelamentos": 273,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 6
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1894
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 23549
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2347446,
+            "p90": 2759281
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 217,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 2
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -12438,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 4,
+            "p10": 0,
+            "p50": 0,
+            "p90": 17
+          },
+          "mais_caixa_que_controle": 42,
+          "so_controle_conquistou": 8,
+          "so_candidato_conquistou": 0
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 6806121,
+            "p50": 7004971,
+            "p90": 7189443
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 713098,
+            "p50": 1231721,
+            "p90": 2089228
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 38,
+            "p50": 66,
+            "p90": 110
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 6776066,
+            "p50": 6952298,
+            "p90": 7109926
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260390,
+            "p50": 267689,
+            "p90": 282581
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 20824,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 127,
+            "p50": 140,
+            "p90": 152
+          },
+          "multas": {
+            "n": 600,
+            "p10": 29509,
+            "p50": 37716,
+            "p90": 46082
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 357718,
+            "p50": 462198,
+            "p90": 566298
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6233718,
+            "p50": 6409071,
+            "p90": 6573091
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 536,
+            "p50": 550,
+            "p90": 564
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 101,
+            "p50": 114,
+            "p90": 126
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 27,
+            "p50": 35,
+            "p90": 42
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -398121,
+            "p50": -209004,
+            "p90": -35089
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 24,
+            "p90": 65
+          },
+          "mais_caixa_que_controle": 39,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "rep-zero": {
+      "politica": "taxa",
+      "perda_reputacao": 0.0,
+      "multa_fracao": 0.1,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8127681,
+            "p50": 8288484,
+            "p90": 8456728
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 494687,
+            "p50": 590250,
+            "p90": 688079
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 12,
+            "p50": 15,
+            "p90": 18
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7824282,
+            "p50": 7978282,
+            "p90": 8135864
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 326303,
+            "p50": 380340,
+            "p90": 430199
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 12732,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 148,
+            "p50": 160,
+            "p90": 172
+          },
+          "multas": {
+            "n": 600,
+            "p10": 15819,
+            "p50": 21188,
+            "p90": 26888
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 160800,
+            "p50": 214795,
+            "p90": 273350
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7283707,
+            "p50": 7434734,
+            "p90": 7593811
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 631,
+            "p50": 644,
+            "p90": 656
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 51,
+            "p50": 59,
+            "p90": 68
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 16,
+            "p50": 21,
+            "p90": 26
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -132872,
+            "p50": 30341,
+            "p90": 196748
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -3,
+            "p50": 0,
+            "p90": 0
+          },
+          "mais_caixa_que_controle": 355,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7111981,
+            "p50": 7320900,
+            "p90": 7537938
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 475925,
+            "p50": 628126,
+            "p90": 824425
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 20,
+            "p50": 31,
+            "p90": 44
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7029351,
+            "p50": 7215135,
+            "p90": 7414040
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 245202,
+            "p50": 268339,
+            "p90": 283510
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13624,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 123,
+            "p50": 135,
+            "p90": 147
+          },
+          "multas": {
+            "n": 600,
+            "p10": 16649,
+            "p50": 22590,
+            "p90": 28531
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 170442,
+            "p50": 229886,
+            "p90": 289626
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6478877,
+            "p50": 6665406,
+            "p90": 6860874
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 546,
+            "p50": 561,
+            "p90": 575
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 93,
+            "p50": 103,
+            "p90": 115
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 17,
+            "p50": 23,
+            "p90": 29
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -129489,
+            "p50": 46293,
+            "p90": 238758
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -17,
+            "p50": -3,
+            "p90": 2
+          },
+          "mais_caixa_que_controle": 393,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1575707,
+            "p90": 2126520
+          },
+          "caixa_meta": {
+            "n": 12,
+            "p10": 1916307,
+            "p50": 2056333,
+            "p90": 2228933
+          },
+          "censuradas": 588,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 306,
+            "p50": 342,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 12,
+            "p10": 337,
+            "p50": 350,
+            "p90": 359
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2297006,
+            "p90": 2831776
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 12,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 3
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 3
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 122,
+          "total_cancelamentos": 230,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 7
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1504
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 15035
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2344070,
+            "p90": 2767407
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 623
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 7,
+            "p10": -4,
+            "p50": 1,
+            "p90": 15
+          },
+          "mais_caixa_que_controle": 63,
+          "so_controle_conquistou": 5,
+          "so_candidato_conquistou": 5
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7065518,
+            "p50": 7258329,
+            "p90": 7454540
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 482588,
+            "p50": 665215,
+            "p90": 906545
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 25,
+            "p50": 35,
+            "p90": 49
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7030411,
+            "p50": 7197105,
+            "p90": 7383845
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260515,
+            "p50": 267940,
+            "p90": 282873
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13561,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 122,
+            "p50": 135,
+            "p90": 148
+          },
+          "multas": {
+            "n": 600,
+            "p10": 16734,
+            "p50": 22133,
+            "p90": 28702
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 171433,
+            "p50": 225232,
+            "p90": 292617
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6474974,
+            "p50": 6643382,
+            "p90": 6827949
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 545,
+            "p50": 559,
+            "p90": 573
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 92,
+            "p50": 103,
+            "p90": 115
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 17,
+            "p50": 22,
+            "p90": 29
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -135862,
+            "p50": 44156,
+            "p90": 222621
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -20,
+            "p50": -4,
+            "p90": 3
+          },
+          "mais_caixa_que_controle": 371,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "rep-2-5": {
+      "politica": "taxa",
+      "perda_reputacao": 2.5,
+      "multa_fracao": 0.1,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8125107,
+            "p50": 8288484,
+            "p90": 8459962
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 506739,
+            "p50": 609356,
+            "p90": 723175
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 12,
+            "p50": 16,
+            "p90": 21
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7823530,
+            "p50": 7978266,
+            "p90": 8140156
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 326303,
+            "p50": 380340,
+            "p90": 430199
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 12727,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 148,
+            "p50": 160,
+            "p90": 172
+          },
+          "multas": {
+            "n": 600,
+            "p10": 15808,
+            "p50": 21193,
+            "p90": 26889
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 160797,
+            "p50": 215122,
+            "p90": 273350
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7283196,
+            "p50": 7434734,
+            "p90": 7595483
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 631,
+            "p50": 644,
+            "p90": 656
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 51,
+            "p50": 59,
+            "p90": 68
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 16,
+            "p50": 21,
+            "p90": 27
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -131511,
+            "p50": 30283,
+            "p90": 197139
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 3
+          },
+          "mais_caixa_que_controle": 354,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7111981,
+            "p50": 7320900,
+            "p90": 7537938
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 524404,
+            "p50": 732707,
+            "p90": 1013624
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 22,
+            "p50": 36,
+            "p90": 52
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7029351,
+            "p50": 7215135,
+            "p90": 7414040
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 245202,
+            "p50": 268421,
+            "p90": 283510
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13628,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 123,
+            "p50": 135,
+            "p90": 147
+          },
+          "multas": {
+            "n": 600,
+            "p10": 16658,
+            "p50": 22564,
+            "p90": 28575
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 170554,
+            "p50": 228894,
+            "p90": 290134
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6476723,
+            "p50": 6663659,
+            "p90": 6860874
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 546,
+            "p50": 561,
+            "p90": 575
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 93,
+            "p50": 103,
+            "p90": 115
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 17,
+            "p50": 23,
+            "p90": 29
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -129489,
+            "p50": 46183,
+            "p90": 238419
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -11,
+            "p50": 0,
+            "p90": 11
+          },
+          "mais_caixa_que_controle": 392,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1575707,
+            "p90": 2128191
+          },
+          "caixa_meta": {
+            "n": 9,
+            "p10": 1928318,
+            "p50": 2144914,
+            "p90": 2419497
+          },
+          "censuradas": 591,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 306,
+            "p50": 342,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 9,
+            "p10": 337,
+            "p50": 347,
+            "p90": 364
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2297006,
+            "p90": 2836286
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 9,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 3
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 122,
+          "total_cancelamentos": 239,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 7
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1629
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 16343
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2344070,
+            "p90": 2771348
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 2
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1085
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 5,
+            "p10": 0,
+            "p50": 10,
+            "p90": 19
+          },
+          "mais_caixa_que_controle": 64,
+          "so_controle_conquistou": 7,
+          "so_candidato_conquistou": 4
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7068331,
+            "p50": 7257248,
+            "p90": 7453476
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 547667,
+            "p50": 783002,
+            "p90": 1074643
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 28,
+            "p50": 42,
+            "p90": 59
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7030584,
+            "p50": 7197883,
+            "p90": 7377677
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260549,
+            "p50": 267940,
+            "p90": 282873
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13560,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 122,
+            "p50": 135,
+            "p90": 148
+          },
+          "multas": {
+            "n": 600,
+            "p10": 16734,
+            "p50": 22127,
+            "p90": 28702
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 171433,
+            "p50": 225232,
+            "p90": 292020
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6476723,
+            "p50": 6643382,
+            "p90": 6824309
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 545,
+            "p50": 559,
+            "p90": 573
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 92,
+            "p50": 104,
+            "p90": 115
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 17,
+            "p50": 22,
+            "p90": 29
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -134050,
+            "p50": 44192,
+            "p90": 217728
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -12,
+            "p50": 0,
+            "p90": 14
+          },
+          "mais_caixa_que_controle": 369,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "rep-8": {
+      "politica": "taxa",
+      "perda_reputacao": 8.0,
+      "multa_fracao": 0.1,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8125107,
+            "p50": 8288195,
+            "p90": 8456728
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 514554,
+            "p50": 665131,
+            "p90": 973257
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 12,
+            "p50": 18,
+            "p90": 33
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7823530,
+            "p50": 7976502,
+            "p90": 8140187
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 326303,
+            "p50": 380340,
+            "p90": 430199
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 12729,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 148,
+            "p50": 160,
+            "p90": 172
+          },
+          "multas": {
+            "n": 600,
+            "p10": 15778,
+            "p50": 21177,
+            "p90": 26888
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 160797,
+            "p50": 214795,
+            "p90": 273350
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7283196,
+            "p50": 7433875,
+            "p90": 7596006
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 631,
+            "p50": 644,
+            "p90": 656
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 51,
+            "p50": 59,
+            "p90": 68
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 16,
+            "p50": 21,
+            "p90": 26
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -131511,
+            "p50": 28881,
+            "p90": 196748
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 2,
+            "p90": 15
+          },
+          "mais_caixa_que_controle": 353,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7109060,
+            "p50": 7316901,
+            "p90": 7536333
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 577788,
+            "p50": 1067421,
+            "p90": 2144852
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 26,
+            "p50": 53,
+            "p90": 108
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7024035,
+            "p50": 7213896,
+            "p90": 7412437
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 245202,
+            "p50": 268452,
+            "p90": 283510
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13529,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 122,
+            "p50": 135,
+            "p90": 147
+          },
+          "multas": {
+            "n": 600,
+            "p10": 16659,
+            "p50": 22590,
+            "p90": 28142
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 170580,
+            "p50": 228894,
+            "p90": 286279
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6470318,
+            "p50": 6661436,
+            "p90": 6858516
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 547,
+            "p50": 561,
+            "p90": 575
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 92,
+            "p50": 103,
+            "p90": 114
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 17,
+            "p50": 23,
+            "p90": 28
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -140984,
+            "p50": 45058,
+            "p90": 232594
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 14,
+            "p90": 62
+          },
+          "mais_caixa_que_controle": 382,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1574657,
+            "p90": 2121326
+          },
+          "caixa_meta": {
+            "n": 3,
+            "p10": 2010088,
+            "p50": 2184771,
+            "p90": 2592403
+          },
+          "censuradas": 597,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 309,
+            "p50": 343,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 3,
+            "p10": 337,
+            "p50": 350,
+            "p90": 364
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669668,
+            "p50": 2297006,
+            "p90": 2832712
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 3,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 4
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 122,
+          "total_cancelamentos": 213,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 6
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1459
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 14637
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2347026,
+            "p90": 2757436
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 332,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -1148,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 2,
+            "p10": 0,
+            "p50": 40,
+            "p90": 40
+          },
+          "mais_caixa_que_controle": 57,
+          "so_controle_conquistou": 10,
+          "so_candidato_conquistou": 1
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7064846,
+            "p50": 7251227,
+            "p90": 7432542
+          },
+          "caixa_meta": {
+            "n": 599,
+            "p10": 660805,
+            "p50": 1221622,
+            "p90": 2177754
+          },
+          "censuradas": 1,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 3
+          },
+          "dias_ate_meta": {
+            "n": 599,
+            "p10": 34,
+            "p50": 63,
+            "p90": 111
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7028642,
+            "p50": 7191259,
+            "p90": 7369009
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260593,
+            "p50": 267863,
+            "p90": 282911
+          },
+          "metas": 599,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 13551,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 121,
+            "p50": 135,
+            "p90": 147
+          },
+          "multas": {
+            "n": 600,
+            "p10": 16646,
+            "p50": 22203,
+            "p90": 28272
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 170098,
+            "p50": 225999,
+            "p90": 286639
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6474974,
+            "p50": 6637475,
+            "p90": 6813225
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 546,
+            "p50": 559,
+            "p90": 573
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 92,
+            "p50": 104,
+            "p90": 114
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 17,
+            "p50": 22,
+            "p90": 28
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -138352,
+            "p50": 40044,
+            "p90": 205721
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 599,
+            "p10": 0,
+            "p50": 18,
+            "p90": 64
+          },
+          "mais_caixa_que_controle": 365,
+          "so_controle_conquistou": 1,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "multa-zero": {
+      "politica": "taxa",
+      "perda_reputacao": 5.0,
+      "multa_fracao": 0.0,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8133144,
+            "p50": 8308503,
+            "p90": 8474498
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 522834,
+            "p50": 655331,
+            "p90": 851412
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 12,
+            "p50": 18,
+            "p90": 26
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7839078,
+            "p50": 7998510,
+            "p90": 8169096
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 327257,
+            "p50": 380340,
+            "p90": 430462
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 15645,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 147,
+            "p50": 159,
+            "p90": 170
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 206968,
+            "p50": 272265,
+            "p90": 334648
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7276078,
+            "p50": 7435510,
+            "p90": 7606096
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 631,
+            "p50": 644,
+            "p90": 657
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 53,
+            "p50": 62,
+            "p90": 71
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 20,
+            "p50": 26,
+            "p90": 32
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -123913,
+            "p50": 51449,
+            "p90": 226816
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 2,
+            "p90": 9
+          },
+          "mais_caixa_que_controle": 383,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7150577,
+            "p50": 7338008,
+            "p90": 7534658
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 567085,
+            "p50": 918367,
+            "p90": 1523456
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 25,
+            "p50": 46,
+            "p90": 78
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7076090,
+            "p50": 7238085,
+            "p90": 7408342
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 245202,
+            "p50": 268421,
+            "p90": 283166
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 17420,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 121,
+            "p50": 133,
+            "p90": 146
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 235845,
+            "p50": 303413,
+            "p90": 373304
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6498728,
+            "p50": 6662961,
+            "p90": 6834351
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 550,
+            "p50": 562,
+            "p90": 576
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 95,
+            "p50": 105,
+            "p90": 115
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 23,
+            "p50": 29,
+            "p90": 36
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -103933,
+            "p50": 70589,
+            "p90": 257588
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -5,
+            "p50": 7,
+            "p90": 35
+          },
+          "mais_caixa_que_controle": 432,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1574657,
+            "p90": 2126271
+          },
+          "caixa_meta": {
+            "n": 5,
+            "p10": 2010088,
+            "p50": 2212130,
+            "p90": 2474677
+          },
+          "censuradas": 595,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 310,
+            "p50": 342,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 5,
+            "p10": 337,
+            "p50": 347,
+            "p90": 364
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2297006,
+            "p90": 2832340
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 5,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 4
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 133,
+          "total_cancelamentos": 247,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 6
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 17442
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2344070,
+            "p90": 2767407
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 2
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -3519,
+            "p50": 0,
+            "p90": 1978
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 4,
+            "p10": 0,
+            "p50": 19,
+            "p90": 28
+          },
+          "mais_caixa_que_controle": 65,
+          "so_controle_conquistou": 8,
+          "so_candidato_conquistou": 1
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7079683,
+            "p50": 7275438,
+            "p90": 7459287
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 627891,
+            "p50": 1009381,
+            "p90": 1580916
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 33,
+            "p50": 52,
+            "p90": 82
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7044804,
+            "p50": 7224124,
+            "p90": 7386657
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260497,
+            "p50": 268558,
+            "p90": 283947
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 17270,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 120,
+            "p50": 134,
+            "p90": 146
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 233473,
+            "p50": 298316,
+            "p90": 369422
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6463804,
+            "p50": 6647076,
+            "p90": 6808766
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 546,
+            "p50": 560,
+            "p90": 575
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 95,
+            "p50": 105,
+            "p90": 117
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 22,
+            "p50": 29,
+            "p90": 35
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -123607,
+            "p50": 62887,
+            "p90": 242404
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -6,
+            "p50": 11,
+            "p90": 36
+          },
+          "mais_caixa_que_controle": 419,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "multa-5": {
+      "politica": "taxa",
+      "perda_reputacao": 5.0,
+      "multa_fracao": 0.05,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8130772,
+            "p50": 8294724,
+            "p90": 8462351
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 521778,
+            "p50": 650489,
+            "p90": 835979
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 12,
+            "p50": 17,
+            "p90": 25
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7832035,
+            "p50": 7986408,
+            "p90": 8155342
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 326780,
+            "p50": 380166,
+            "p90": 430259
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 14189,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 148,
+            "p50": 160,
+            "p90": 170
+          },
+          "multas": {
+            "n": 600,
+            "p10": 9092,
+            "p50": 12016,
+            "p90": 14953
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 184722,
+            "p50": 242772,
+            "p90": 301281
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7279620,
+            "p50": 7435758,
+            "p90": 7603360
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 631,
+            "p50": 644,
+            "p90": 657
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 51,
+            "p50": 60,
+            "p90": 70
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 18,
+            "p50": 24,
+            "p90": 29
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -123331,
+            "p50": 38601,
+            "p90": 206479
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 9
+          },
+          "mais_caixa_que_controle": 360,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7124235,
+            "p50": 7320224,
+            "p90": 7545455
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 569628,
+            "p50": 907017,
+            "p90": 1471785
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 25,
+            "p50": 46,
+            "p90": 76
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7049012,
+            "p50": 7219045,
+            "p90": 7409378
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 245202,
+            "p50": 268220,
+            "p90": 283166
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 15722,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 122,
+            "p50": 134,
+            "p90": 147
+          },
+          "multas": {
+            "n": 600,
+            "p10": 9933,
+            "p50": 13218,
+            "p90": 16254
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 203434,
+            "p50": 268607,
+            "p90": 331471
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6487031,
+            "p50": 6660182,
+            "p90": 6852248
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 548,
+            "p50": 561,
+            "p90": 576
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 93,
+            "p50": 105,
+            "p90": 115
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 20,
+            "p50": 26,
+            "p90": 32
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -129023,
+            "p50": 58641,
+            "p90": 240157
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -5,
+            "p50": 6,
+            "p90": 33
+          },
+          "mais_caixa_que_controle": 394,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1574657,
+            "p90": 2126271
+          },
+          "caixa_meta": {
+            "n": 5,
+            "p10": 2010088,
+            "p50": 2211430,
+            "p90": 2473790
+          },
+          "censuradas": 595,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 310,
+            "p50": 342,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 5,
+            "p10": 337,
+            "p50": 347,
+            "p90": 364
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2297006,
+            "p90": 2832611
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 5,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 4
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 132,
+          "total_cancelamentos": 242,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 6
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 795
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 15924
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2344070,
+            "p90": 2769241
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 2
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -3859,
+            "p50": 0,
+            "p90": 1783
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 4,
+            "p10": 0,
+            "p50": 19,
+            "p90": 28
+          },
+          "mais_caixa_que_controle": 64,
+          "so_controle_conquistou": 8,
+          "so_candidato_conquistou": 1
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7065846,
+            "p50": 7267593,
+            "p90": 7463998
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 620808,
+            "p50": 981027,
+            "p90": 1532023
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 32,
+            "p50": 51,
+            "p90": 80
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7035523,
+            "p50": 7215948,
+            "p90": 7393989
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260506,
+            "p50": 268207,
+            "p90": 283091
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 15546,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 122,
+            "p50": 134,
+            "p90": 146
+          },
+          "multas": {
+            "n": 600,
+            "p10": 9949,
+            "p50": 12977,
+            "p90": 16384
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 202699,
+            "p50": 264537,
+            "p90": 331712
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6471623,
+            "p50": 6650134,
+            "p90": 6827100
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 547,
+            "p50": 560,
+            "p90": 573
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 94,
+            "p50": 105,
+            "p90": 115
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 20,
+            "p50": 26,
+            "p90": 32
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -136356,
+            "p50": 61277,
+            "p90": 234514
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -5,
+            "p50": 9,
+            "p90": 34
+          },
+          "mais_caixa_que_controle": 401,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "multa-20": {
+      "politica": "taxa",
+      "perda_reputacao": 5.0,
+      "multa_fracao": 0.2,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8100836,
+            "p50": 8279326,
+            "p90": 8457398
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 512778,
+            "p50": 627080,
+            "p90": 794463
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 12,
+            "p50": 16,
+            "p90": 24
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7801692,
+            "p50": 7972252,
+            "p90": 8133824
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 325936,
+            "p50": 380340,
+            "p90": 430199
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 10034,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 149,
+            "p50": 161,
+            "p90": 173
+          },
+          "multas": {
+            "n": 600,
+            "p10": 22946,
+            "p50": 32321,
+            "p90": 41998
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 116920,
+            "p50": 162481,
+            "p90": 212152
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7270679,
+            "p50": 7439762,
+            "p90": 7598757
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 631,
+            "p50": 643,
+            "p90": 656
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 48,
+            "p50": 57,
+            "p90": 65
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 12,
+            "p50": 17,
+            "p90": 22
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -135251,
+            "p50": 19714,
+            "p90": 176187
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 7
+          },
+          "mais_caixa_que_controle": 332,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7085902,
+            "p50": 7293458,
+            "p90": 7500795
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 548200,
+            "p50": 830963,
+            "p90": 1271644
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 23,
+            "p50": 41,
+            "p90": 65
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 6999256,
+            "p50": 7190861,
+            "p90": 7375254
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 245202,
+            "p50": 268461,
+            "p90": 283931
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 10229,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 122,
+            "p50": 135,
+            "p90": 148
+          },
+          "multas": {
+            "n": 600,
+            "p10": 22953,
+            "p50": 32763,
+            "p90": 43279
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 116654,
+            "p50": 166377,
+            "p90": 220140
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6452993,
+            "p50": 6648595,
+            "p90": 6838094
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 544,
+            "p50": 559,
+            "p90": 574
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 91,
+            "p50": 102,
+            "p90": 111
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 12,
+            "p50": 17,
+            "p90": 22
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -170792,
+            "p50": 29711,
+            "p90": 192004
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -4,
+            "p50": 2,
+            "p90": 23
+          },
+          "mais_caixa_que_controle": 352,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1575707,
+            "p90": 2126063
+          },
+          "caixa_meta": {
+            "n": 8,
+            "p10": 1820964,
+            "p50": 2288673,
+            "p90": 2471134
+          },
+          "censuradas": 592,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 308,
+            "p50": 342,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 8,
+            "p10": 335,
+            "p50": 352,
+            "p90": 364
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2297006,
+            "p90": 2831884
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 8,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 4
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 4
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 112,
+          "total_cancelamentos": 190,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 7
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 2526
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 12626
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2344070,
+            "p90": 2769939
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 1
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 5,
+            "p10": 0,
+            "p50": 0,
+            "p90": 28
+          },
+          "mais_caixa_que_controle": 54,
+          "so_controle_conquistou": 7,
+          "so_candidato_conquistou": 3
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7033577,
+            "p50": 7244014,
+            "p90": 7423302
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 591976,
+            "p50": 934445,
+            "p90": 1400285
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 31,
+            "p50": 49,
+            "p90": 75
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7002007,
+            "p50": 7182743,
+            "p90": 7348994
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260486,
+            "p50": 268275,
+            "p90": 282723
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 10331,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 124,
+            "p50": 136,
+            "p90": 148
+          },
+          "multas": {
+            "n": 600,
+            "p10": 23879,
+            "p50": 33068,
+            "p90": 42747
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 120837,
+            "p50": 167942,
+            "p90": 216769
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6456703,
+            "p50": 6638563,
+            "p90": 6804585
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 543,
+            "p50": 557,
+            "p90": 571
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 92,
+            "p50": 103,
+            "p90": 113
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 12,
+            "p50": 17,
+            "p90": 22
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -154957,
+            "p50": 21380,
+            "p90": 192749
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -4,
+            "p50": 6,
+            "p90": 28
+          },
+          "mais_caixa_que_controle": 337,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    },
+    "sem-custos": {
+      "politica": "taxa",
+      "perda_reputacao": 0.0,
+      "multa_fracao": 0.0,
+      "perfis": {
+        "Ótimo": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 680804,
+            "p50": 732290,
+            "p90": 777328
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 8133144,
+            "p50": 8308936,
+            "p90": 8474861
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 493646,
+            "p50": 588198,
+            "p90": 680206
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 12,
+            "p50": 15,
+            "p90": 18
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7840148,
+            "p50": 7998771,
+            "p90": 8169096
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 327257,
+            "p50": 380340,
+            "p90": 430462
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 15656,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 147,
+            "p50": 159,
+            "p90": 170
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 207142,
+            "p50": 272356,
+            "p90": 335016
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 7277148,
+            "p50": 7435771,
+            "p90": 7606096
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 631,
+            "p50": 644,
+            "p90": 657
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 53,
+            "p50": 62,
+            "p90": 71
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 20,
+            "p50": 26,
+            "p90": 32
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -123913,
+            "p50": 51648,
+            "p90": 226896
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -3,
+            "p50": 0,
+            "p90": 1
+          },
+          "mais_caixa_que_controle": 383,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Mediano": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 444732,
+            "p50": 525162,
+            "p90": 590720
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7151291,
+            "p50": 7337762,
+            "p90": 7538811
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 463290,
+            "p50": 605730,
+            "p90": 824827
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 20,
+            "p50": 30,
+            "p90": 43
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7076090,
+            "p50": 7238411,
+            "p90": 7410877
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 245202,
+            "p50": 268708,
+            "p90": 283166
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 17388,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 121,
+            "p50": 133,
+            "p90": 146
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 236122,
+            "p50": 302878,
+            "p90": 369575
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6498728,
+            "p50": 6663048,
+            "p90": 6835877
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 549,
+            "p50": 562,
+            "p90": 577
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 95,
+            "p50": 105,
+            "p90": 115
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 23,
+            "p50": 29,
+            "p90": 35
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -101299,
+            "p50": 69545,
+            "p90": 259030
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -19,
+            "p50": -4,
+            "p90": 2
+          },
+          "mais_caixa_que_controle": 429,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        },
+        "Descuidado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 98436,
+            "p50": 137814,
+            "p90": 173952
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 975911,
+            "p50": 1574657,
+            "p90": 2129239
+          },
+          "caixa_meta": {
+            "n": 14,
+            "p10": 1911453,
+            "p50": 2058105,
+            "p90": 2225940
+          },
+          "censuradas": 586,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 306,
+            "p50": 342,
+            "p90": 354
+          },
+          "dias_ate_meta": {
+            "n": 14,
+            "p10": 337,
+            "p50": 353,
+            "p90": 364
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 1669137,
+            "p50": 2297006,
+            "p90": 2832712
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 97489,
+            "p50": 136856,
+            "p90": 173673
+          },
+          "metas": 14,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 1,
+            "p90": 3
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 1,
+            "p50": 1,
+            "p90": 3
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 133,
+          "total_cancelamentos": 270,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 7
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 19894
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 1878456,
+            "p50": 2344070,
+            "p90": 2769449
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 280,
+            "p50": 331,
+            "p90": 371
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 190,
+            "p50": 216,
+            "p90": 251
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 2
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -652,
+            "p50": 0,
+            "p90": 5766
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 7,
+            "p10": -4,
+            "p50": 2,
+            "p90": 15
+          },
+          "mais_caixa_que_controle": 70,
+          "so_controle_conquistou": 5,
+          "so_candidato_conquistou": 7
+        },
+        "Antecipado": {
+          "caixa_entrada": {
+            "n": 600,
+            "p10": 412828,
+            "p50": 480049,
+            "p90": 533823
+          },
+          "caixa_final": {
+            "n": 600,
+            "p10": 7080366,
+            "p50": 7277580,
+            "p90": 7463912
+          },
+          "caixa_meta": {
+            "n": 600,
+            "p10": 462610,
+            "p50": 637290,
+            "p90": 849969
+          },
+          "censuradas": 0,
+          "dias_abaixo_piso": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "dias_ate_meta": {
+            "n": 600,
+            "p10": 25,
+            "p50": 34,
+            "p90": 47
+          },
+          "entraram": 600,
+          "margem_operacional": {
+            "n": 600,
+            "p10": 7041306,
+            "p50": 7227981,
+            "p90": 7391137
+          },
+          "menor_caixa": {
+            "n": 600,
+            "p10": 260497,
+            "p50": 268620,
+            "p90": 283947
+          },
+          "metas": 600,
+          "partidas": 600,
+          "perdas_fase_1": 0,
+          "quebras_antes_meta": 0,
+          "quebras_apos_meta": 0,
+          "recuperacoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "suspensoes": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "travadas": 0,
+          "partidas_com_cancelamento": 600,
+          "total_cancelamentos": 17291,
+          "dias_com_opcao": {
+            "n": 600,
+            "p10": 121,
+            "p50": 134,
+            "p90": 146
+          },
+          "multas": {
+            "n": 600,
+            "p10": 0,
+            "p50": 0,
+            "p90": 0
+          },
+          "receita_abandonada": {
+            "n": 600,
+            "p10": 234435,
+            "p50": 297573,
+            "p90": 369422
+          },
+          "receita_fase_2": {
+            "n": 600,
+            "p10": 6463306,
+            "p50": 6649569,
+            "p90": 6813137
+          },
+          "servidos_fase_2": {
+            "n": 600,
+            "p10": 546,
+            "p50": 559,
+            "p90": 575
+          },
+          "perdidos_fase_2": {
+            "n": 600,
+            "p10": 95,
+            "p50": 105,
+            "p90": 116
+          },
+          "cancelamentos": {
+            "n": 600,
+            "p10": 22,
+            "p50": 29,
+            "p90": 35
+          },
+          "delta_caixa_final_pareado": {
+            "n": 600,
+            "p10": -115401,
+            "p50": 64946,
+            "p90": 250101
+          },
+          "delta_dias_entre_duas_metas": {
+            "n": 600,
+            "p10": -20,
+            "p50": -6,
+            "p90": 3
+          },
+          "mais_caixa_que_controle": 413,
+          "so_controle_conquistou": 0,
+          "so_candidato_conquistou": 0
+        }
+      }
+    }
+  },
+  "controles_do_conferidor": {
+    "multa": "recusado",
+    "populacao": "recusado",
+    "nota": "recusado",
+    "quantil": "recusado"
+  }
+}
