@@ -1,0 +1,45 @@
+{
+  "godot": "4.6.3",
+  "base_main": "82a9df0",
+  "partidas_principais": 31200,
+  "paridade_main_campos": 60000,
+  "paridade_autosave_partidas": 8,
+  "paridade_autosave_eventos": 16,
+  "paridade_autosave_integral": true,
+  "mutantes_motor": {
+    "multa-ausente": "recusado pelas asserções",
+    "reputacao-ausente": "recusado pelas asserções",
+    "trabalhador-preso": "recusado pelas asserções",
+    "perda-duplicada": "recusado pelas asserções"
+  },
+  "mutantes_conferidor": {
+    "multa": "recusado",
+    "populacao": "recusado",
+    "nota": "recusado",
+    "quantil": "recusado"
+  },
+  "suites": {
+    "run_tests": "TODOS OS TESTES PASSARAM",
+    "teste_design": "DESIGN OK",
+    "teste_audio": "AUDIO OK",
+    "teste_fumaca": "FUMACA OK",
+    "teste_registro": "REGISTRO OK",
+    "asset_validator": "ASSET OK"
+  },
+  "sentinela": "cinco arquivos intactos no perfil isolado",
+  "game_state_e_simuladores_originais_intactos": true,
+  "importacao_sem_avisos": false,
+  "importacao": "Safe save failed persistiu no helper seriado do CI e na repetição verbose. Godot retornou zero; arquivo e causa não identificados. Importação não considerada limpa, embora suítes e medições passem.",
+  "sha256_fontes": {
+    "brport_vs/autoload/GameState.gd": "d50c8353a234a433626fa7e5c8e49df627312e53cf9417a3881fc3034b0be8ad",
+    "brport_vs/tools/medir_fase_2.gd": "ce2029356ea1cc07e9bf4d32c6354bd3097aa9aeca12d771901f1e6ce733fbcf",
+    "brport_vs/tools/simular_balanceamento.gd": "f32ef1164f761ed95e69dd383fa7cb3b50e49a39900bbe66dc17e1e31620fc65",
+    "brport_vs/tools/estado_cancelamento_experimental.gd": "621693bdf99e50b193a5b9f2e37ed2411611f22c8bfaf2567dcf7f8faef04342",
+    "brport_vs/tools/medir_cancelamento.gd": "0504876344bbb8721c60593795e0134e84c4e112c8a5085e0b3018677b84b098",
+    "brport_vs/tools/testar_cancelamento_experimental.gd": "60915bb51ce38fd4fc597285e9a9d589ee5ead5aab708ef5c6ee2e27f01cb6b5",
+    "tools/analisar_cancelamento.py": "af9aba8f07dde74a38124ab8c06f31be969eba46457b5db75dd123c865053e6d",
+    "tools/conferir_cancelamento.py": "fed0eaf91008e6a789f986d00c0d3c3917e177b1925227e1dd85759c1a67184b",
+    "tools/medir_cancelamento.py": "e5ffed209a30446d4ec23b2895931abe2573daa8ed0b22f5443f0499997f03aa",
+    "tools/testar_bancada_cancelamento.py": "fd96a9654f7e9c92c326839864d4c67852ff947bcc6ff8da93b348dad2d102bb"
+  }
+}

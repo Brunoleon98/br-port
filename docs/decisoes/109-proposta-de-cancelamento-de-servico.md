@@ -4,6 +4,10 @@
 foi analisar o funcionamento e propor as regras antes de implementar.
 Nenhuma regra abaixo está aprovada ou implementada por este documento.
 
+**Continuação em 15/10:** Bruno autorizou medir. A bancada e os resultados
+estão na `110`, que recomenda manter o candidato; implementação e migração
+continuam sem aceite. O desenho abaixo registra a proposta anterior à rodada.
+
 Base: main remota `82a9df0`, merge do PR #131 confirmado no GitHub. O
 último commit da branch `codex/medir-fase-2`, `7ba2ef7`, é ancestral dessa
 main. Não havia PR aberto. Decisões na main até a `108`; a `107` continua
@@ -112,7 +116,7 @@ Exemplo de confirmação, ainda rascunho de interface:
 Botões: **«Continuar serviço»** e **«Cancelar serviço»**, com o primeiro
 como ação padrão. Voltar/fechar não altera nada. O overlay bloqueia avanço
 de dia e toques no jogo enquanto aberto, sem criar estado novo do turno.
-A confirmação revalida a identidade (`uid`) do barco e sua doca: um painel
+A confirmação revalida a identidade (`id`) do barco e sua doca: um painel
 antigo nunca pode cancelar outro contrato nem cobrar duas vezes.
 
 O exemplo supõe receita total prevista de R$10.000 e não tem bônus. Na tela

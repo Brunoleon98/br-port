@@ -29,6 +29,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-15.md` | 15/10 | Medição experimental `110` concluída; recomendação de cinco pontos e 10%, com implementação e migração ainda sem aceite |
+| `MEDICOES_CANCELAMENTO_2026-10-15/` | 15/10 | Bancada da `110`: 600 partidas por perfil, varredura de custos e políticas da proposta `109`; sem implementação no jogo |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-14e.md` | 14/10 | Cancelamento analisado na proposta `109`, sem aceite nem implementação; PR #131 fundido, correção móvel `107` separada |
 | `MEDICOES_FASE_2_2026-10-14/` | 14/10 | Etapa 4 da `103` (`108`): 600 partidas por perfil, dez variações, dados completos e verificações; valores mantidos |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-14d.md` | 14/10 | Medição no PR #131; próximo recorte: cancelar serviço contratado; A4 pendente e correção de nomes Web em branch separada |

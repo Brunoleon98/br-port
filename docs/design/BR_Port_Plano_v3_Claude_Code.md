@@ -771,7 +771,9 @@ após a varredura; dados e limites na decisão e na `economia.md`.
 A análise está na proposta `109`, ainda **sem aceite e sem implementação**:
 saída definitiva, equipe livre no mesmo dia, perda da receita, −5 de reputação
 e multa de 10% do valor acordado, com confirmação e save 18 com migração
-propostos. Os custos ainda precisam de medição após o aceite do desenho.
+propostos. A medição autorizada está na `110`: 600 partidas por perfil,
+políticas de troca e varredura separada de multa/reputação; recomenda manter
+o candidato, ainda sem aceite para implementar ou migrar o save.
 Não se trata de cancelar obras. Mais trabalhadores por píer e crédito
 voluntário ficam para depois.
 São funcionalidades gerais que podem usar os serviços mais longos e o porto
