@@ -256,6 +256,17 @@ def main() -> int:
         print("  ✔ o catálogo de mutantes casa com o código da junção"
               + (" (menos os alvos em conflito)" if conflitos else ""))
 
+    # O bloco de teste repetido contra a BASE — a primeira versão só o
+    # conferia contra os outros ramos, e em 16/10 o T25 do Codex chegou à
+    # `main` (PR #134) com o T25 desta branch ainda por fundir: o conflito de
+    # texto aparecia, o nome repetido não.
+    mb = merge_base("HEAD", args.base)
+    blocos_repetidos = sorted((blocos("HEAD") - blocos(mb)) & (blocos(args.base) - blocos(mb)))
+    if blocos_repetidos:
+        bloqueios.append("bloco de teste repetido")
+        print(f"  ✖ a base e esta branch criam o bloco {', '.join(blocos_repetidos)} — "
+              "renumere o desta (rótulos, cabeçalho e documentos)")
+
     sv_mb, sv_base, sv_nos = (save_version(merge_base("HEAD", args.base)),
                               save_version(args.base), save_version("HEAD"))
     if sv_mb != sv_base and sv_mb != sv_nos and sv_base is not None:
