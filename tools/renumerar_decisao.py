@@ -21,8 +21,15 @@ da decisão, `"111"` entre aspas (o `de =` do catálogo de mutantes) e o título
 número que não é decisão (R$111.975 é a margem do Ótimo), e quem decide é quem
 lê.
 
+E O NÚMERO DO BLOCO DE TESTE É OUTRO ESPAÇO PARTILHADO: em 16/10 o T25 do
+Codex (a ajuda) fundiu antes do T25 desta branch (o jogador ao acaso). Com
+`--bloco T25 T26` a ferramenta troca o nome do bloco pela mesma regra — só nas
+linhas acrescentadas por esta branch, sem renomear arquivo —, e `--exceto`
+salta as linhas que citam o bloco do OUTRO ou contam a colisão como história.
+
 Uso:
   python3 tools/renumerar_decisao.py 111 117              # mostra, não escreve
+  python3 tools/renumerar_decisao.py --bloco T25 T26 --exceto "Codex|#134"
   python3 tools/renumerar_decisao.py 111 117 --aplicar    # escreve e faz git mv
   (--base origin/main por omissão; junte a `main` ANTES, senão a base mente)
 
@@ -78,16 +85,68 @@ def trocar_arquivo(p: Path, conteudo: str) -> None:
     os.replace(tmp, p)
 
 
+def renomear_bloco(args, mudados: list[str], exceto) -> int:
+    padrao = re.compile(rf"\b{re.escape(args.antigo)}\b(?!\d)")
+    trocas, arquivos, saltadas = [], {}, []
+    for linha in mudados:
+        partes = linha.split("\t")
+        if partes[0].startswith("D"):
+            continue
+        caminho = partes[-1]
+        p = RAIZ / caminho
+        try:
+            texto = p.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, FileNotFoundError):
+            continue
+        novas = linhas_acrescentadas(args.base, caminho)
+        linhas = texto.split("\n")
+        mudou = False
+        for i, l in enumerate(linhas, start=1):
+            if i not in novas or not padrao.search(l):
+                continue
+            if exceto and exceto.search(l):
+                saltadas.append((caminho, i, l.strip()))
+                continue
+            nova = padrao.sub(args.novo, l)
+            trocas.append((caminho, i, l.strip(), nova.strip()))
+            linhas[i - 1] = nova
+            mudou = True
+        if mudou:
+            arquivos[p] = "\n".join(linhas)
+    for caminho, i, antes, depois in trocas:
+        print(f"  {caminho}:{i}\n      - {antes[:110]}\n      + {depois[:110]}")
+    print(f"\n{len(trocas)} linha(s) a trocar em {len(arquivos)} arquivo(s).")
+    if saltadas:
+        print("\nSaltadas pelo --exceto (confira que citam o bloco do outro):")
+        for caminho, i, l in saltadas:
+            print(f"  {caminho}:{i}: {l[:110]}")
+    if not args.aplicar:
+        print("\nNada escrito — rode com --aplicar.")
+        return 0
+    for p, conteudo in arquivos.items():
+        trocar_arquivo(p, conteudo)
+    print(f"\nRENUMERACAO OK — bloco {args.antigo} → {args.novo}.")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("antigo")
     ap.add_argument("novo")
     ap.add_argument("--base", default="origin/main")
     ap.add_argument("--aplicar", action="store_true")
+    ap.add_argument("--bloco", action="store_true",
+                    help="renomeia um bloco de teste (T25 → T26) em vez de uma decisão")
+    ap.add_argument("--exceto", default="",
+                    help="regex: linhas que casam ficam como estão")
     args = ap.parse_args()
     antigo, novo = args.antigo, args.novo
-    if not (re.fullmatch(r"\d{3}", antigo) and re.fullmatch(r"\d{3}", novo)):
+    if args.bloco:
+        if not (re.fullmatch(r"[TFDRA]\d{1,3}", antigo) and re.fullmatch(r"[TFDRA]\d{1,3}", novo)):
+            raise SystemExit("um bloco chama-se como T25 ou F12.")
+    elif not (re.fullmatch(r"\d{3}", antigo) and re.fullmatch(r"\d{3}", novo)):
         raise SystemExit("os números são de três dígitos, como os da pasta.")
+    exceto = re.compile(args.exceto) if args.exceto else None
 
     if git("status", "--porcelain", "--untracked-files=no").strip():
         raise SystemExit("a árvore tem mudanças por commitar: os números de linha "
@@ -95,6 +154,8 @@ def main() -> int:
                          "texto. Commite ou guarde antes.")
 
     mudados = git("diff", "--name-status", f"{args.base}...HEAD").splitlines()
+    if args.bloco:
+        return renomear_bloco(args, mudados, exceto)
     criadas = [l.split("\t")[-1] for l in mudados
                if l.startswith("A") and re.match(rf"{DECISOES}/{antigo}-", l.split("\t")[-1])]
     if len(criadas) != 1:
