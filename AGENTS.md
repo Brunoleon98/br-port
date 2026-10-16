@@ -25,7 +25,7 @@ O nome é do outro agente, mas o conteúdo é do projeto. Desde 10/10
 | `.claude/rules/projecao.md` | a projeção isométrica, o contrato entre os geradores e o `Main.tscn` |
 | `.claude/rules/mapa.md` | o desenho do mapa: costa, água, vila, rua, o byte a byte |
 | `.claude/rules/arte.md` | props, Blender, retratos |
-| `.claude/rules/testes-e-guardas.md` | escrever teste, guarda ou régua, e o defeito injetado |
+| `.claude/rules/testes-e-guardas.md` | escrever teste, guarda ou régua, o defeito injetado e o catálogo que o guarda |
 | `.claude/rules/economia.md` | o `GameState.gd`, o balanceamento medido, guindastes e obras |
 | `.claude/rules/save.md` | o save |
 | `.claude/rules/interface.md` | cenas, tema, painéis, cor e contraste |
@@ -57,18 +57,47 @@ registada sem o Bruno pedir.
 - **Uma tarefa por PR**, com o que mudou e porquê; se algo foi medido, o
   número.
 - **Decisão nova** entra em `docs/decisoes/` com o próximo número livre —
-  confira a pasta na `main` antes de escolher, que dois agentes a numerar em
-  paralelo já deram números repetidos. Desde 09/10 o `tools/conferir_docs.py`
-  reprova número repetido, e o CI do PR corre sobre a junção com a `main`.
+  e «livre» conta os ramos dos outros, não só a `main`: em 16/10 a `111` saiu
+  repetida porque cada agente olhou só para a sua base (`docs/decisoes/119`).
+  O número e o nome do briefing do dia vêm do
+  `python3 tools/conferir_colaboracao.py`, que os conta em todos os ramos
+  empurrados. Colidiu mesmo assim? Quem funde em segundo renumera com
+  `python3 tools/renumerar_decisao.py <antigo> <novo>`, que só troca as linhas
+  que a SUA branch escreveu. O `tools/conferir_docs.py` reprova o repetido no
+  CI, e o CI do PR corre sobre a junção com a `main`.
+- **Empurre cedo.** Um ramo só local é invisível às ferramentas e ao outro
+  agente; um PR em rascunho aberto no início deixa o número à vista.
+- **Bloco de teste novo vive num arquivo próprio**, que a suíte só chama — como
+  o T24 (`tests/casos_cancelamento.gd`), o T25 (`tests/casos_como_jogar.gd`)
+  e o T26 (`tests/jogador_ao_acaso.gd`).
+  Dois agentes a acrescentar blocos deixam de editar o mesmo `run_tests.gd`.
+  Rótulo de falha com `FAIL`, `FALHA` ou `FALHOU` seguido de espaço: é por
+  essa forma que o `tools/conferir_mutantes.py` sabe qual guarda reprovou.
 
 ## 3. Antes de abrir o PR
 
+- **Junte a `main` e rode o pré-PR:** `git merge origin/main`, e depois
+  `python3 tools/conferir_colaboracao.py --outros <a cabeça de cada PR aberto
+  do outro agente>`, que espera `COLABORACAO OK`. Ele diz o que bloqueia
+  contra a base (conflito, número repetido, mutante órfão, `SAVE_VERSION`
+  subida dos dois lados) e avisa o que vai acontecer quando o PR do outro
+  fundir. Os documentos de fecho (`ESTADO_DO_PROJETO.md`, o índice do
+  arquivo) conflitam sempre: fica o texto de quem fundiu, e reaplicam-se as
+  próprias linhas.
 - As seis suítes do Godot, com a versão de `.godot-version`, e a linha final
   de cada uma — o código de saída sozinho não prova nada (o `CLAUDE.md` e
   `.claude/rules/testes-e-guardas.md` dizem porquê). A lista viva está em
   `.github/workflows/testes.yml`.
 - `python3 tools/conferir_docs.py`, que espera `DOCS OK`, se mexeu em
   documento.
+- Escreveu uma guarda ou corrigiu um bug? O defeito que a prova entra em
+  `tools/mutantes.toml` — e não num executor à parte nem numa tabela em
+  prosa, que ninguém volta a correr: foi onde ficaram as provas do
+  cancelamento e da ajuda até à `docs/decisoes/120` —, e
+  `python3 tools/conferir_mutantes.py --godot "$G" --so <id>` espera
+  `MUTANTES OK`. Se ele reprovar por «mutante órfão», o
+  código que a tarefa mexeu era o alvo de um defeito já provado: reescreva-o
+  contra a forma nova, não o apague (`docs/decisoes/117`).
 - Se mexeu no visual: uma captura do jogo, olhada (`tools/capturar_evidencia.sh`).
 - Mudou o jogo? Atualize o `docs/ESTADO_DO_PROJETO.md` (tem teto de tamanho;
   o conferidor avisa). O ritual completo de fecho está em

@@ -617,6 +617,91 @@ jobs:
         # APAGAM a pasta de registros que usam — era a do jogador até 25/09.
         run: python3 tools/sentinela_do_jogador.py conferir brport_vs
 
+  # ── OS DEFEITOS QUE JÁ PROVARAM UMA GUARDA ──
+  #
+  # O item 7 do fecho pede um defeito injetado por guarda nova, e até 15/10
+  # cada um corria UMA vez, à mão, e ficava escrito em prosa numa decisão.
+  # Nada voltava a perguntar se a guarda ainda o apanhava — e as regras de
+  # testes contam as maneiras de ela deixar de o apanhar sem ninguém ver.
+  # Este job reinjeta cada defeito de `tools/mutantes.toml` e exige que a
+  # guarda DECLARADA reprove; um refactor que apague a linha do defeito
+  # reprova por «mutante órfão» (`docs/decisoes/117`).
+  #
+  # Job SEPARADO, ao lado da suíte e não dentro dela: cada mutante corre a
+  # suíte que o apanha, e somados passam dos 15 minutos daquele job. E o
+  # sinal da suíte (o jogo está bem?) não deve esperar por este (as guardas
+  # ainda guardam?).
+  mutantes:
+    name: Defeitos já provados
+    runs-on: ubuntu-latest
+    # 58 defeitos levaram 1.525 s no contêiner de desenvolvimento (`120`);
+    # o teto deixa o dobro de folga para o runner e para o catálogo crescer.
+    timeout-minutes: 60
+
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Ler a versão do Godot
+        run: echo "GODOT_VERSION=$(tr -d '[:space:]' < .godot-version)" >> "$GITHUB_ENV"
+
+      - name: Reaproveitar o Godot já baixado
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ~/godot-bin
+          key: godot-${{ env.GODOT_VERSION }}-linux-x86_64
+
+      - name: Baixar o Godot
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p ~/godot-bin
+          curl -sSL --retry 3 -o /tmp/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot-bin
+          chmod +x ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: Importar o projeto
+        run: |
+          set -euo pipefail
+          python3 tools/importar_para_ci.py brport_vs \
+            ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: Plantar a sentinela do jogador
+        # Um mutante no `ArmazemLocal.gd` mandaria a suíte gravar no lugar do
+        # jogador. A ferramenta já aponta o `user://` de cada corrida para a
+        # pasta de saída; a sentinela é a prova do lado do arquivo.
+        run: python3 tools/sentinela_do_jogador.py plantar brport_vs
+
+      - name: Reinjetar os defeitos já provados
+        # A ferramenta corre a base de cada suíte antes e depois, com a
+        # varredura de `SCRIPT ERROR` dela; aqui exige-se o marcador, porque
+        # o código de saída é do `tee` e não dela.
+        run: |
+          set -euo pipefail
+          python3 tools/conferir_mutantes.py \
+            --godot ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            --saida /tmp/mutantes 2>&1 | tee /tmp/mutantes.txt
+          if ! grep -q "MUTANTES OK" /tmp/mutantes.txt; then
+            echo "::error::Um defeito já provado voltou a passar, ou o catálogo envelheceu (veja a saída acima)."
+            exit 1
+          fi
+
+      - name: Nenhum mutante tocou no que é do jogador
+        run: python3 tools/sentinela_do_jogador.py conferir brport_vs
+
+      - name: Guardar o que cada mutante imprimiu
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brport-mutantes
+          path: |
+            /tmp/mutantes/*.log
+            /tmp/mutantes/relatorio.json
+          if-no-files-found: ignore
+          retention-days: 14
+
   # ── A BUILD QUE SAI DAQUI E VAI PARA UM TELEFONE ──
   #
   # Item A1 do plano v3, e o único do plano ANTIGO que estava marcado para a

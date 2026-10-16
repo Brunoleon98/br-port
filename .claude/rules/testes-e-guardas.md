@@ -3,6 +3,7 @@ paths:
   - "brport_vs/tests/**"
   - "brport_vs/scripts/validation/**"
   - "tools/conferir_*.py"
+  - "tools/mutantes.toml"
   - "tools/medir_*.py"
   - "brport_vs/tools/medir_*.gd"
   - "brport_vs/tools/sonda_mensagens.gd"
@@ -14,6 +15,65 @@ paths:
 > Carrega quando a sessão lê ou edita um arquivo do `paths:` acima. Veio do
 > `CLAUDE.md` em 10/10, palavra por palavra (`docs/decisoes/091`); o índice
 > de todas as regras está no núcleo. Lição nova deste tema entra aqui.
+
+## O defeito injetado fica no catálogo (`117`)
+
+**O defeito que provou uma guarda entra em `tools/mutantes.toml`**, e não
+num `cp` que se desfaz: até 15/10 cada um corria uma vez e ficava em prosa,
+e nada voltava a perguntar se a guarda ainda o apanhava. Quem o corre é
+`tools/conferir_mutantes.py`, que faz sozinho o que as lições abaixo mandam
+fazer à mão — base verde antes e depois, o original por bytes, a guarda
+DECLARADA a reprovar, o mutante que não compila recusado, teto por corrida
+— e o CI reinjeta o catálogo inteiro a cada PR (job «Defeitos já provados»).
+
+- **Guarda nova:** escreva o `[[mutante]]` sem `reprova`, rode
+  `--explorar --so <id> --suites <a suíte>`, e declare a asserção que É a
+  guarda nova — não a primeira que reprovou. Depois `--so <id>` sem
+  `--explorar` espera `MUTANTES OK`.
+- **Bug corrigido:** o bug é o primeiro mutante — o `antes` é a linha
+  corrigida, o `depois` é a de antes da correção. Sem guarda que o apanhe,
+  o mutante não entra, e é aí que se escreve a guarda (F6).
+- **Mutante órfão** (o `antes` deixou de existir): o código mudou de forma,
+  e o defeito continua possível na forma nova. Reescreva-o contra ela e
+  rode `--explorar`; apagar a entrada é apagar a prova, e só se faz quando
+  o defeito deixou de poder existir, dito no commit.
+
+⚠️ **E A GUARDA DECLARADA SAI DO `--explorar`, NUNCA DO PALPITE.** Na
+medição da `117`, seis dos 35 defeitos reconstruídos reprovaram por outra
+asserção que não a que eu escrevi — e era essa a guarda verdadeira deles.
+⚠️ **E MARCA DE TEMPO SÓ PROVA COM O RELÓGIO A ANDAR.** O A4 do
+`teste_audio` provava a espera mínima pedindo o som duas vezes seguidas e
+conferindo que a marca não mudava; o relógio do `Audio` anda ao
+milissegundo, e no mesmo milissegundo a marca fica igual, toque ou não
+toque. O mutante sem a espera passou verde. A marca vai agora METADE da
+espera para trás, e o controle — passada a espera, o som toca — é o que
+prova que a régua consegue ver um toque (`117`).
+⚠️ **E O AUTOLOAD QUE NÃO COMPILA PENDURA A SUÍTE**, não a reprova: com o
+`GameState.gd` partido, o `run_tests` correu até ao teto. Quem lê só o
+código de saída vê um timeout; o `Parse Error` está na saída parcial, e é
+por isso que o executor julga a compilação antes do teto (`117`).
+
+## O jogador ao acaso (T26, `118`)
+
+O T26 joga partidas inteiras ao acaso, com semente, e confere a cada passo o
+que vale sempre. Três lições custaram a medição dele:
+
+- ⚠️ **ROBÔ SEM CONTROLE DE EXERCÍCIO PASSA VERDE SEM TER JOGADO.** A primeira
+  versão guardava os invariantes em 24 partidas e nunca tinha cancelado um
+  serviço — a ação nem chegava a existir. O controle «cada ação foi aceite ao
+  menos uma vez» é que o disse, três vezes seguidas, cada uma com uma causa.
+- ⚠️ **O ACASO PURO NÃO CHEGA AO FIM DO JOGO.** Sem pagar, nenhuma partida
+  chegava à Fase 2; com a treliça comprada, a reputação ao acaso ficava abaixo
+  do piso e os cargueiros eram suspensos (a regra a funcionar). Inclinações
+  medidas, perfis por semente e a «máscara» de ações legais — o robô vê o que
+  se pode cancelar — são o que o leva lá. Ao mexer no robô, leia a linha
+  `-> fase 2 em N de 24` antes de acreditar no verde.
+- ⚠️ **SUÍTE QUE DEVOLVE `false` NO `_process` PENDURA SE O `_run()`
+  ABORTAR.** O vigia de frames do `run_tests` e do `teste_fumaca` reprova com
+  nome; um mutante que fazia o T4d rebentar pendurava a suíte até ao teto.
+- **Bloco novo vive num arquivo próprio** (como o T24, o T25 e o T26), e o rótulo de
+  falha tem `FAIL`/`FALHA`/`FALHOU` seguido de espaço — é por aí que o
+  executor de mutantes sabe que guarda reprovou (`119`).
 
 ## Do «Antes de fechar», item 7 — escrever a guarda
 

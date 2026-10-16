@@ -1,0 +1,699 @@
+# OS DEFEITOS QUE JÁ PROVARAM UMA GUARDA, e que continuam a prová-la.
+#
+# Quem lê isto é `tools/conferir_mutantes.py` (espera `MUTANTES OK`); quem
+# decidiu a forma é `docs/decisoes/117`. Cada `[[mutante]]` é um defeito que
+# alguém injetou à mão para provar uma guarda, ou um bug que chegou a existir,
+# escrito como uma troca EXATA de texto num arquivo do jogo:
+#
+#   id      — o nome, curto, que o relatório e o `--so` usam
+#   de      — a decisão (ou o dia) onde o defeito nasceu; é lá que está o porquê
+#   o_que   — o defeito em uma frase, como o jogador ou a suíte o veria
+#   alvo    — o arquivo que muda, a partir da raiz do repositório
+#   antes   — o texto que existe hoje, e tem de existir UMA vez no alvo
+#   depois  — o texto do defeito
+#   todas   — opcional: troca TODAS as ocorrências (o mutante de nome renomeia o
+#             nome, não a linha — `testes-e-guardas.md`, `095`)
+#   reprova — suíte = "trecho do rótulo da asserção que TEM de reprovar"
+#
+# ⚠️ O `antes` É UM CONTRATO COM O CÓDIGO. Quem reescrever a linha vê a
+# ferramenta reprovar por «mutante órfão», e reescreve o defeito contra a forma
+# nova — com `--explorar`, que diz quem o apanha AGORA. Apagar a entrada é
+# apagar a prova; só se apaga o defeito que deixou de poder existir, e diz-se
+# porquê no commit.
+#
+# Literais TOML entre aspas simples: nada se escapa, e o tab do GDScript entra
+# como tab. O `'''` seguido de quebra de linha come essa quebra.
+
+# ── A FILA NO FUNDEADOURO (`083`) ──────────────────────────────────────────
+
+[[mutante]]
+id = "atracar-sem-trabalhador"
+de = "083"
+o_que = "atracar() põe o barco no berço e esquece o trabalhador"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	docks[doca]["worker_id"] = trabalhador
+'''
+depois = ''
+reprova = { run_tests = "com o trabalhador junto" }
+
+[[mutante]]
+id = "equipe-do-pier-ignorada"
+de = "083"
+o_que = "atracar no berço 2 chama o primeiro livre, e não a equipe do píer 2"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+		if wid == doca + 1:
+			return wid
+'''
+depois = ''
+reprova = { run_tests = "o berco 2 chama o trabalhador 2" }
+
+[[mutante]]
+id = "atracagem-conta-um-berco"
+de = "083"
+o_que = "atracagem_pendente() conta um berço livre só, por mais que haja"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'var livres := bercos_livres()'
+depois = 'var livres := 1 if berco_livre() >= 0 else 0'
+reprova = { run_tests = "conta todos os bercos livres" }
+
+[[mutante]]
+id = "desistencia-de-graca"
+de = "083"
+o_que = "o barco que desiste da fila não custa reputação"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+		_change_reputation(-REPUTATION_LOSS_LOST)
+	if desistiram > 0:
+'''
+depois = '''
+	if desistiram > 0:
+'''
+reprova = { run_tests = "e custa reputacao" }
+
+[[mutante]]
+id = "save-fila-sem-teto"
+de = "083"
+o_que = "o save aceita mais barcos ao largo do que o fundeadouro tem lugares"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'fila_lida.size() > FILA_LUGARES:'
+depois = 'fila_lida.size() > FILA_LUGARES + 10:'
+reprova = { teste_fumaca = "mais barcos do que lugares" }
+
+[[mutante]]
+id = "save-oferta-fora-da-fila"
+de = "083"
+o_que = "o save aceita a oferta do Arlindo a apontar para fora da fila"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+			or int(oferta_lida) < -1 or int(oferta_lida) >= fila_lida.size():
+'''
+depois = '''
+			or int(oferta_lida) < -1:
+'''
+reprova = { teste_fumaca = "oferta fora da fila" }
+
+[[mutante]]
+id = "espera-com-dois-espacos"
+de = "083"
+o_que = "«· acordo» colado com dois espaços, e o cartão da fila transborda"
+alvo = "brport_vs/scripts/BarcoFila.gd"
+antes = 'texto += " · acordo"'
+depois = 'texto += "  ·  acordo"'
+reprova = { teste_design = "a espera do barco ao largo cabe" }
+
+# ── O TRABALHADOR E O CAIXA ────────────────────────────────────────────────
+
+[[mutante]]
+id = "trabalhador-em-duas-docas"
+de = "T3"
+o_que = "o mesmo trabalhador aloca-se em duas docas no mesmo turno e fatura em dobro"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	if already >= 0:
+		if avisar:
+'''
+depois = '''
+	if already >= 0 and false:
+		if avisar:
+'''
+reprova = { run_tests = "segunda alocacao do MESMO trabalhador recusada" }
+
+[[mutante]]
+id = "fecho-sem-reabrir-o-turno"
+de = "bug de travamento"
+o_que = "fechar o negócio do Arlindo emite os sinais antes de a fase voltar a playing"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	metrics["rival_matched"] += 1
+	_close_rival_offer()
+	_change_reputation(REPUTATION_GAIN_RIVAL_MATCHED)
+	message.emit("%s — barco fechado por %s." % [aviso, moeda(valor)], "good", "negocio")
+	roster_changed.emit()
+'''
+depois = '''
+	metrics["rival_matched"] += 1
+	_change_reputation(REPUTATION_GAIN_RIVAL_MATCHED)
+	message.emit("%s — barco fechado por %s." % [aviso, moeda(valor)], "good", "negocio")
+	roster_changed.emit()
+	pending_rival = -1
+	rival_attempts_left = RIVAL_PATIENCE
+	phase = ESTADO_JOGANDO
+'''
+reprova = { run_tests = "[igualar] botao AVANCAR DIA reabilitado" }
+
+[[mutante]]
+id = "nivel-do-porto-pelo-maior"
+de = "testes-e-guardas.md, 06/09"
+o_que = "o nível do porto é o MAIOR de píer e guindaste, e não o menor"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'return mini(nivel_pier(), nivel_guindaste())'
+depois = 'return maxi(nivel_pier(), nivel_guindaste())'
+reprova = { run_tests = "com pórtico e sem cais o porto FICA no nível 2" }
+
+[[mutante]]
+id = "receita-sem-a-estrutura"
+de = "T5l"
+o_que = "o bónus do motivo paga mesmo sem a estrutura construída"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if estrutura == "" or bonus <= 0.0 or not tem_estrutura(estrutura):'
+depois = 'if estrutura == "" or bonus <= 0.0:'
+reprova = { run_tests = "T15: armazenagem ainda não recebe bônus" }
+
+# ── A DÍVIDA E A SEGUNDA CHANCE ─────────────────────────────────────────────
+
+[[mutante]]
+id = "derrota-sem-fechar-a-semana"
+de = "12/09, gdscript.md"
+o_que = "quem não pode pagar perde sem a semana da cobrança fechar no boletim"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	if phase == ESTADO_COBRANCA:
+		_fechar_resumo_da_semana(week_of(turn - 1))
+	_end_game(false,'''
+depois = '''
+	_end_game(false,'''
+reprova = { run_tests = "recusar a parcela FECHA a semana 4" }
+
+[[mutante]]
+id = "antecipacao-abate-capital"
+de = "085"
+o_que = "pagar adiantado abate o boleto inteiro pela janela, e não só os juros"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'var abatimento := int(round(float(juros) * dias / janela))'
+depois = 'var abatimento := int(round(float(principal_da_parcela()) * dias / janela))'
+reprova = { run_tests = "T14: antecipar nunca perdoa o capital emprestado" }
+
+[[mutante]]
+id = "segunda-chance-sem-limite"
+de = "102"
+o_que = "a segunda chance pede-se mais de uma vez na mesma fase"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+		and not segunda_chance_usada and parcela_indice < parcelas_na_fase() - 1
+'''
+depois = '''
+		and parcela_indice < parcelas_na_fase() - 1
+'''
+reprova = { run_tests = "T18: e a segunda chance não abre outra vez" }
+
+# ── AS OBRAS (`087`, `089`, `090`) ──────────────────────────────────────────
+
+[[mutante]]
+id = "obra-pronta-um-dia-cedo"
+de = "087"
+o_que = "a obra fica pronta um dia antes do prometido"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if obra_em_andamento.is_empty() or dias_restantes_da_obra() > 0:'
+depois = 'if obra_em_andamento.is_empty() or dias_restantes_da_obra() > 1:'
+reprova = { run_tests = "T15: segundo dia termina uma vez, abre no dia 3" }
+
+[[mutante]]
+id = "save-armazem-no-dia-9"
+de = "089"
+o_que = "o save recusa a obra começada no dia em que o reparo abre"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if abre.is_empty() or inicio < int(abre["dia"]) or inicio > int(dia) \'
+depois = 'if abre.is_empty() or inicio < int(abre["dia"]) + 1 or inicio > int(dia) \'
+reprova = { run_tests = "T17: obra de armazem começada no dia em que abre (8) é aceita" }
+
+[[mutante]]
+id = "save-obra-na-vespera"
+de = "089"
+o_que = "o save aceita a obra começada na véspera do dia em que o reparo abre"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if abre.is_empty() or inicio < int(abre["dia"]) or inicio > int(dia) \'
+depois = 'if abre.is_empty() or inicio < int(abre["dia"]) - 1 or inicio > int(dia) \'
+reprova = { run_tests = "T17: obra de armazem começada na véspera (dia 7) é recusada" }
+
+[[mutante]]
+id = "save-obra-sem-cobranca"
+de = "089"
+o_que = "o save aceita o pátio começado sem a cobrança que o abre"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	if not obra.is_empty() and quitadas < int(abertura_do_reparo(obra["id"], fase)["quitadas"]):
+'''
+depois = '''
+	if false:
+'''
+reprova = { run_tests = "T17: com uma quitada a menos o save de patio é recusado" }
+
+[[mutante]]
+id = "reparos-uma-semana-depois"
+de = "089"
+o_que = "todo reparo abre uma semana depois da que o calendário aprovado diz"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'return {"dia": inicio_da_fase(n) + (int(r["semana"]) - 1) * TURNS_PER_WEEK,'
+depois = 'return {"dia": inicio_da_fase(n) + int(r["semana"]) * TURNS_PER_WEEK,'
+reprova = { run_tests = "T14: armazém abre no dia 8" }
+
+[[mutante]]
+id = "obra-recusada-um-dia-cedo"
+de = "090"
+o_que = "a obra que acaba no fecho do último dia passa a ser recusada"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'turn + dias_da_obra(id) <= ultimo_dia_da_fase() + 1'
+depois = 'turn + dias_da_obra(id) <= ultimo_dia_da_fase()'
+reprova = { teste_fumaca = "no dia 84, o último da fase, a obra ainda não está de pé" }
+
+[[mutante]]
+id = "aviso-de-obra-um-dia-cedo"
+de = "090"
+o_que = "a obra que ainda serve à fase avisa que não será usada"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'return fase_tem_prazo() and conclusao > ultimo_dia_da_fase()'
+depois = 'return fase_tem_prazo() and conclusao >= ultimo_dia_da_fase()'
+reprova = { teste_fumaca = "na véspera o Construir não avisa" }
+
+[[mutante]]
+id = "mensagem-da-obra-sempre-verde"
+de = "090"
+o_que = "a compra da obra sem uso na fase sai no tom de quem comprou bem"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '"warn" if obra_sem_uso_na_fase(conclusao) else "good", "obra")'
+depois = '"good", "obra")'
+reprova = { teste_fumaca = "a mensagem avisa, em tom de aviso" }
+
+[[mutante]]
+id = "plural-da-obra-a-mao"
+de = "090"
+o_que = "a mensagem da obra volta a escrever «%d dias» à mão, e diz «1 dias»"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'Narrativa.concordar(dias_da_obra(id), "dia", "dias"), prazo_da_obra(conclusao)],'
+depois = '"%d dias" % dias_da_obra(id), prazo_da_obra(conclusao)],'
+reprova = { teste_fumaca = "F9: nenhum número escreve o plural à mão" }
+
+# ── AS FASES (`104`, `106`) ────────────────────────────────────────────────
+
+[[mutante]]
+id = "passagem-sem-recomecar-reputacao"
+de = "104"
+o_que = "a Fase 2 abre com a reputação com que a Fase 1 fechou"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	segunda_chance_usada = false
+	reputation = reputacao_inicial()
+	reputation_changed.emit(reputation)
+'''
+depois = '''
+	segunda_chance_usada = false
+	reputation_changed.emit(reputation)
+'''
+reprova = { run_tests = "T20: a reputação recomeça na escala da Fase 2" }
+
+[[mutante]]
+id = "cargueiro-sem-piso"
+de = "106"
+o_que = "a reputação abaixo do piso não suspende os cargueiros novos"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'return numero_da_fase == 2 and reputation < float(dados_da_fase()["piso_cargueiro"])'
+depois = 'return false'
+reprova = { run_tests = "T22: abaixo do piso só novas chegadas de pesca" }
+
+[[mutante]]
+id = "migracao-15-esquece-a-vitoria"
+de = "104"
+o_que = "a partida ganha da versão 15 fica presa no fim de jogo em vez de subir à Fase 2"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if dados.get("phase") == ESTADO_FIM and dados.get("won") == true:'
+depois = 'if false:'
+reprova = { run_tests = "T20: a partida ganha da 15 chega à 16 na Fase 2, a jogar" }
+
+# ── OS ROSTOS (`059`) ──────────────────────────────────────────────────────
+
+[[mutante]]
+id = "rosto-sem-filtro-dos-usados"
+de = "059"
+o_que = "o sorteio do rosto não exclui os já usados, e a fileira repete caras"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+		if not usados.has(k):
+			livres.append(k)
+'''
+depois = '''
+		livres.append(k)
+'''
+reprova = { teste_fumaca = "trinta rostos diferentes" }
+
+[[mutante]]
+id = "rosto-gasta-o-sorteio"
+de = "059"
+o_que = "escolher o rosto gasta o sorteio da partida que o simulador mede"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'return livres[gerador.randi_range(0, livres.size() - 1)]'
+depois = 'return livres[_rng.randi_range(0, livres.size() - 1)]'
+reprova = { teste_fumaca = "não mexe no sorteio da partida" }
+
+[[mutante]]
+id = "save-rosto-repetido"
+de = "059"
+o_que = "o save aceita dois trabalhadores com o mesmo rosto"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if k != float(w["rosto"]) or k < 0 or k >= rostos() or rostos_lidos.has(k):'
+depois = 'if k != float(w["rosto"]) or k < 0 or k >= rostos():'
+reprova = { teste_fumaca = "rosto repetido" }
+
+# ── O SAVE DO JOGADOR E OS NOMES (`061`, `093`) ─────────────────────────────
+
+[[mutante]]
+id = "armazem-sem-criar-a-pasta"
+de = "061"
+o_que = "o caminho da ferramenta não cria a pasta, e o autosave falha calado"
+alvo = "brport_vs/scripts/ArmazemLocal.gd"
+antes = '''
+		DirAccess.make_dir_recursive_absolute(destino.get_base_dir())
+'''
+depois = ''
+reprova = { teste_fumaca = "já tem pasta para gravar" }
+
+[[mutante]]
+id = "atalho-s-nao-e-ferramenta"
+de = "061"
+o_que = "a forma curta `-s` deixa de contar como ferramenta, e grava no save do jogador"
+alvo = "brport_vs/scripts/ArmazemLocal.gd"
+antes = 'return args.has("--script") or args.has("-s")'
+depois = 'return args.has("--script")'
+reprova = { teste_fumaca = "`-s` conta como ferramenta" }
+
+[[mutante]]
+id = "privado-lido-por-string-renomeado"
+de = "093"
+o_que = "um privado do Dock que as suítes leem por string muda de nome em todo o arquivo"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '_tw_trabalho'
+depois = '_tw_trabalho_renomeado'
+todas = true
+reprova = { teste_fumaca = "F19: todo nome lido por string existe no alvo" }
+
+# ── O CARTÃO DA DOCA E O REGISTRO ──────────────────────────────────────────
+
+[[mutante]]
+id = "progresso-com-dois-espacos"
+de = "083"
+o_que = "o «· parte em N dias» do cartão da doca com dois espaços, e transborda"
+alvo = "brport_vs/scripts/DocaCartao.gd"
+antes = 'return "%s · parte em %s" % [motivo, Narrativa.concordar(faltam, "dia", "dias")]'
+depois = 'return "%s  ·  parte em %s" % [motivo, Narrativa.concordar(faltam, "dia", "dias")]'
+reprova = { teste_design = "a linha do progresso cabe" }
+
+[[mutante]]
+id = "registro-sem-obra-pronta"
+de = "088"
+o_que = "o gravador de partida não grava o dia em que a obra fica pronta"
+alvo = "brport_vs/autoload/Registro.gd"
+antes = '''
+	_gravar({"e": "obra_pronta", "id": id, "t": _GS.turn})
+'''
+depois = '''
+	pass
+'''
+reprova = { teste_registro = "grava UMA linha de obra pronta" }
+
+# ── O SOM ──────────────────────────────────────────────────────────────────
+
+[[mutante]]
+id = "moeda-ao-gastar"
+de = "audio.md"
+o_que = "o som da moeda toca também quando o caixa desce"
+alvo = "brport_vs/autoload/Audio.gd"
+antes = 'if antes >= 0 and novo > antes:'
+depois = 'if antes >= 0 and novo != antes:'
+reprova = { teste_audio = "caixa caindo NÃO pede moeda" }
+
+[[mutante]]
+id = "som-sem-espera-minima"
+de = "audio.md"
+o_que = "o mesmo som repete-se sem a espera mínima dele"
+alvo = "brport_vs/autoload/Audio.gd"
+antes = 'if agora - float(_ultima_vez.get(id, -999.0)) < float(SONS[id]["espera"]):'
+depois = 'if agora - float(_ultima_vez.get(id, -999.0)) < 0.0:'
+reprova = { teste_audio = "o mesmo som dentro da espera não repete" }
+
+[[mutante]]
+id = "som-nunca-repete"
+de = "117"
+o_que = "o som toca a primeira vez e nunca mais — a marca parada do A4 passaria por espera"
+alvo = "brport_vs/autoload/Audio.gd"
+antes = 'if agora - float(_ultima_vez.get(id, -999.0)) < float(SONS[id]["espera"]):'
+depois = 'if _ultima_vez.has(id):'
+reprova = { teste_audio = "passada a espera, o mesmo som volta a tocar" }
+
+# ── O JOGADOR AO ACASO (`118`) ─────────────────────────────────────────────
+# Defeitos que nenhum bloco montava o estado para ver; o T26 joga até lá.
+
+[[mutante]]
+id = "save-recusa-a-fila-cheia"
+de = "118"
+o_que = "o save recusa o fundeadouro cheio, que o jogo produz todo dia"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'fila_lida.size() > FILA_LUGARES:'
+depois = 'fila_lida.size() >= FILA_LUGARES:'
+reprova = { run_tests = "o save que o jogo grava, o próprio jogo aceita" }
+
+[[mutante]]
+id = "load-esquece-a-paciencia-do-cliente"
+de = "118"
+o_que = "carregar a meio da oferta devolve ao Arlindo as tentativas já gastas"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'rival_attempts_left = int(parsed.get("rival_attempts_left", RIVAL_PATIENCE))'
+depois = 'rival_attempts_left = RIVAL_PATIENCE'
+reprova = { run_tests = "o save que o jogo grava não volta igual" }
+
+[[mutante]]
+id = "devolver-deixa-o-trabalhador"
+de = "118"
+o_que = "devolver o barco ao largo deixa o trabalhador preso na doca vazia"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	doca["boat"] = null
+	doca["worker_id"] = null
+	fila.append(barco)
+'''
+depois = '''
+	doca["boat"] = null
+	fila.append(barco)
+'''
+reprova = { run_tests = "e o trabalhador fica livre" }
+
+[[mutante]]
+id = "recusa-da-obra-cobra"
+de = "118"
+o_que = "a obra que o jogo recusa cobra um real na mesma"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+func comprar_estrutura(id: String) -> bool:
+	if impedimento_estrutura(id) != "":
+		return false
+'''
+depois = '''
+func comprar_estrutura(id: String) -> bool:
+	if impedimento_estrutura(id) != "":
+		cash -= 1
+		return false
+'''
+reprova = { run_tests = "a recusa de «construir» mexeu no estado" }
+
+[[mutante]]
+id = "cancelamento-sem-conferir-o-orcamento"
+de = "118"
+o_que = "a confirmação do cancelamento aceita um orçamento diferente do lido"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if evento.is_empty() or evento != confirmado:'
+depois = 'if evento.is_empty():'
+reprova = { run_tests = "a confirmação aceitou um orçamento que não era o lido" }
+
+[[mutante]]
+id = "reputacao-sem-teto"
+de = "118"
+o_que = "a reputação passa dos 100 e desce abaixo de zero"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'reputation = clamp(reputation + delta, 0.0, 100.0)'
+depois = 'reputation = reputation + delta'
+reprova = { run_tests = "a reputação fica entre 0 e 100" }
+
+[[mutante]]
+id = "fila-guarda-quem-desistiu"
+de = "118"
+o_que = "o barco sem paciência fica na fila em vez de ir embora"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if int(esperando["paciencia"]) > 0:'
+depois = 'if int(esperando["paciencia"]) >= 0:'
+reprova = { run_tests = "na fila nenhum barco começou a operar nem esgotou a paciência" }
+
+[[mutante]]
+id = "cancelamento-nunca-disponivel"
+de = "118"
+o_que = "o orçamento do cancelamento sai sempre vazio, e a ação some do jogo sem erro"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+func custos_do_cancelamento(doca: int, id: int) -> Dictionary:
+	if phase != ESTADO_JOGANDO or doca < 0 or doca >= docks.size():
+'''
+depois = '''
+func custos_do_cancelamento(doca: int, id: int) -> Dictionary:
+	if true:
+'''
+reprova = { run_tests = "o robô exerceu cada ação que o jogo aceitou" }
+
+# ── O CANCELAMENTO DO CODEX (`111`) ────────────────────────────────────────
+# Vieram do executor próprio dele, `tools/testar_integracao_cancelamento.py`,
+# que corre só quando alguém se lembra de o correr (`120`). O nono, o
+# orçamento ignorado, já está acima como `cancelamento-sem-conferir-o-orcamento`.
+
+[[mutante]]
+id = "cancelamento-sem-multa"
+de = "111"
+o_que = "cancelar o serviço não cobra a multa"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'cash -= int(evento["multa"])'
+depois = 'cash -= 0'
+reprova = { run_tests = "T24: multa e reputação únicas, sem pagar serviço" }
+
+[[mutante]]
+id = "cancelamento-sem-reputacao"
+de = "111"
+o_que = "cancelar o serviço não custa reputação"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '_change_reputation(-CANCELAMENTO_REPUTACAO)'
+depois = '_change_reputation(0.0)'
+reprova = { run_tests = "T24: multa e reputação únicas, sem pagar serviço" }
+
+[[mutante]]
+id = "cancelamento-prende-o-trabalhador"
+de = "111"
+o_que = "o trabalhador do serviço cancelado fica ocupado mais um dia"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'trabalhador["busy_turns"] = 0'
+depois = 'trabalhador["busy_turns"] = 1'
+reprova = { run_tests = "T24: equipe reutilizada no mesmo dia" }
+
+[[mutante]]
+id = "cancelamento-fora-da-semana"
+de = "111"
+o_que = "a multa sai do caixa e não entra na conta da semana"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'semana_atual["cancelamento"] += int(evento["multa"])'
+depois = 'semana_atual["cancelamento"] += 0'
+reprova = { run_tests = "T24: multa lançada nas contas" }
+
+[[mutante]]
+id = "migracao-18-inventa-multa"
+de = "111"
+o_que = "o degrau 17→18 escreve uma multa que a partida nunca pagou"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'dados[chave]["cancelamento"] = 0'
+depois = 'dados[chave]["cancelamento"] = 1'
+reprova = { run_tests = "T24: migração não inventa multa passada" }
+
+[[mutante]]
+id = "cancelamento-de-outro-barco"
+de = "111"
+o_que = "o cancelamento aceita a identidade de outro barco"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if barco == null or int(barco["id"]) != id:'
+depois = 'if barco == null:'
+reprova = { run_tests = "T24: confirmação velha não cobra outro barco" }
+
+[[mutante]]
+id = "cancelamento-sem-registro"
+de = "111"
+o_que = "o cancelamento não avisa o gravador de partida"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'servico_cancelado.emit(evento.duplicate(true))'
+depois = 'pass'
+reprova = { run_tests = "T24: registro 5 observa uma vez" }
+
+# ── A AJUDA DO CODEX (`115`) ────────────────────────────────────────────────
+# Os seis defeitos que a `115` descreve em prosa, reconstruídos como troca.
+
+[[mutante]]
+id = "ajuda-voltar-fecha-o-artigo"
+de = "115"
+o_que = "Voltar no artigo fecha a ajuda em vez de voltar aos assuntos"
+alvo = "brport_vs/scripts/PainelComoJogar.gd"
+antes = '''
+	if assunto_atual != "":
+		_mostrar("")
+	else:
+		super._fechar()
+'''
+depois = '''
+	super._fechar()
+'''
+reprova = { run_tests = "T25: Voltar retorna ao índice" }
+
+[[mutante]]
+id = "ajuda-gasta-o-sorteio"
+de = "115"
+o_que = "abrir a ajuda consome o sorteio da partida"
+alvo = "brport_vs/scripts/PainelComoJogar.gd"
+antes = '''
+	artigos = Conteudo.artigos(get_tree().root.get_node("GameState"))
+'''
+depois = '''
+	artigos = Conteudo.artigos(get_tree().root.get_node("GameState"))
+	get_tree().root.get_node("GameState")._rng.randi()
+'''
+reprova = { run_tests = "T25: consulta preserva estado, RNG, arquivos e registro" }
+
+[[mutante]]
+id = "ajuda-grava-a-partida"
+de = "115"
+o_que = "abrir a ajuda grava a partida, que é uma porta de escrita"
+alvo = "brport_vs/scripts/PainelComoJogar.gd"
+antes = '''
+	artigos = Conteudo.artigos(get_tree().root.get_node("GameState"))
+'''
+depois = '''
+	artigos = Conteudo.artigos(get_tree().root.get_node("GameState"))
+	get_tree().root.get_node("GameState").save_game()
+'''
+reprova = { run_tests = "T25: consulta não tem porta de escrita" }
+
+[[mutante]]
+id = "ajuda-multa-dobrada"
+de = "115"
+o_que = "a ajuda mostra a multa do cancelamento em dobro"
+alvo = "brport_vs/scripts/ConteudoComoJogar.gd"
+antes = 'float(gs.CANCELAMENTO_MULTA) * 100.0'
+depois = 'float(gs.CANCELAMENTO_MULTA) * 200.0'
+reprova = { run_tests = "T25: custos reais e regra sem parcial na ajuda" }
+
+[[mutante]]
+id = "ajuda-empilha"
+de = "115"
+o_que = "pedir a ajuda outra vez abre uma segunda por cima da primeira"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+		if filho.scene_file_path == ComoJogarScene.resource_path and not filho.is_queued_for_deletion():
+			return
+'''
+depois = '''
+		if false:
+			return
+'''
+reprova = { run_tests = "T25: pedido repetido não duplica ajuda" }
+
+# ⚠️ SÓ A RAIZ NÃO BASTA: com o `mouse_filter` da raiz da cena a deixar
+# passar, o fundo escurecido (filho dela, do `PainelNarrativo`) ainda segura o
+# toque, e o mutante passou verde por ser EQUIVALENTE — o jogo não mudava. A
+# `115` dizia «fundo e raiz», e é esse o defeito.
+
+[[mutante]]
+id = "ajuda-deixa-o-toque-passar"
+de = "115"
+o_que = "a raiz e o fundo da ajuda deixam o toque chegar ao botão de baixo"
+alvo = "brport_vs/scripts/PainelComoJogar.gd"
+antes = '''
+	montar(LARGURA, ALTURA)
+'''
+depois = '''
+	montar(LARGURA, ALTURA)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for filho in get_children():
+		if filho is Control:
+			filho.mouse_filter = Control.MOUSE_FILTER_IGNORE
+'''
+reprova = { run_tests = "T25: toque no fundo não atravessa a ajuda" }

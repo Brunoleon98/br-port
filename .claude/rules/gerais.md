@@ -253,6 +253,13 @@ reapontar, pergunte o que fica de fora — `git log --oneline origin/main..HEAD`
 e recupere pelo remoto (`git reset --hard origin/<nome>`) em vez de assumir que
 a main tem tudo.
 
+⚠️ **E NÚMERO DE DECISÃO E NOME DE BRIEFING SÃO ESPAÇOS PARTILHADOS ENTRE
+AGENTES.** Em 16/10 a `111` e o briefing `15b` saíram repetidos, cada agente a
+olhar só para a sua base. O livre conta-se em todos os ramos empurrados
+(`tools/conferir_colaboracao.py`), e quem funde em segundo renumera só as
+linhas que escreveu (`tools/renumerar_decisao.py`) — nunca por `sed` na
+árvore, que apaga as citações do outro (`119`).
+
 ## Ambiente (de «Como rodar»)
 
 **Literais multilinha no Windows precisam do conteúdo LF do Git.** Medido em

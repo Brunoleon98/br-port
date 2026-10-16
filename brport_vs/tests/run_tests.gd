@@ -1228,8 +1228,27 @@ var _t5l_completo := false
 # Os testes rodam no primeiro frame, não em _initialize(): dentro de
 # _initialize() a árvore ainda não está ativa e o _ready() das cenas
 # instanciadas não dispara (o botão sai como null).
+# O VIGIA DA SUÍTE QUE NÃO ACABA (`docs/decisoes/118`). Este `_process`
+# devolve `false` para os blocos poderem esperar frames, e o preço é este: um
+# erro de EXECUÇÃO direto no `_run()` aborta-o antes do `quit()`, e a árvore
+# fica a girar para sempre — sem marcador, sem nome, e no CI um job a morrer de
+# timeout. Medido com um mutante do T26 (devolver deixando o trabalhador): o
+# T4d rebentou na linha seguinte à asserção que reprovou, e a suíte só parou
+# pelo teto de 86 s do executor de mutantes. As esperas legítimas são de um
+# frame (umas vinte na suíte inteira); dois mil sem chegar ao fim é aborto.
+const TETO_DE_FRAMES := 2000
+var _acabou := false
+var _frames := 0
+
+
 func _process(_delta: float) -> bool:
 	if _done:
+		_frames += 1
+		if not _acabou and _frames > TETO_DE_FRAMES:
+			_acabou = true
+			print("  FAIL  a suíte não chegou ao fim: o _run() abortou (veja o SCRIPT ERROR acima)")
+			print("=== A SUÍTE NÃO ACABOU ===")
+			quit(1)
 		return false
 	_done = true
 	_run()
@@ -1679,12 +1698,17 @@ func _run() -> void:
 	var ajuda = load("res://tests/casos_como_jogar.gd").new()
 	await ajuda.rodar(GS, self)
 	_check("T25: consulta, navegação e preservação da partida", ajuda.completo and ajuda.falhas == 0)
+	print("=== T26: o jogador ao acaso — invariantes a cada passo ===")
+	var acaso = load("res://tests/jogador_ao_acaso.gd").new()
+	acaso.rodar(GS, self)
+	_check("o bloco T26 correu até ao fim, sem invariante quebrado", acaso.completo and acaso.falhas == 0)
 
 	print("")
 	if _fails == 0:
 		print("=== TODOS OS TESTES PASSARAM ===")
 	else:
 		print("=== %d TESTE(S) FALHARAM ===" % _fails)
+	_acabou = true
 	quit(_fails)
 
 

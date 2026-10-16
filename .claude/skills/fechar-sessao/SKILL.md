@@ -48,6 +48,16 @@ tabela da §3 respondeu que a mudança tinha tocado o `GameState.gd` e o catálo
 partidas por nada; quem faz a leitura ao contrário, num dia em que a economia
 mudou de verdade, não roda o que devia.
 
+**E o fetch traz o que OUTRO AGENTE fundiu** (`119`). Se a `main` andou,
+junte-a antes de verificar (`git merge origin/main`) — a §2 tem de correr
+sobre o que vai ser fundido —, e rode o pré-PR, que diz o que colide com a
+base e com os PRs abertos dos outros:
+
+```sh
+python3 tools/conferir_colaboracao.py --outros <cabeça de cada PR aberto>
+# espera COLABORACAO OK; decisão repetida → tools/renumerar_decisao.py N livre
+```
+
 **E a §3 pergunta-se pelo CONTEÚDO, não só pelo nome do arquivo.** Um
 `# TUNING:` pode mudar sem o nome do arquivo dizer nada de novo:
 `git diff origin/main..HEAD | grep "TUNING:"`.
@@ -98,6 +108,8 @@ também deve.
 | **qualquer coisa de áudio** | `python3 tools/medir_audio.py` | `SINAL OK` — e é OUTRA pergunta que o `teste_audio.gd`: lá o encanamento, aqui a ONDA (true peak, estalo interno, espectro) |
 | catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
 | **qualquer documento** | `python3 tools/conferir_docs.py` | `DOCS OK` |
+| **uma guarda nova, ou um bug corrigido** | o defeito em `tools/mutantes.toml`, e `python3 tools/conferir_mutantes.py --godot "$G" --so <id>` (`117`; o fluxo em `testes-e-guardas.md`) | `MUTANTES OK` |
+| **o código de um alvo do catálogo, ou uma suíte** | `python3 tools/conferir_mutantes.py --godot "$G"` — o catálogo inteiro, ~25 min | `MUTANTES OK`, sem órfão |
 | `BR_Port_GDD_V7.jsx` | `python3 tools/gerar_gdd_md.py` | `GDD OK`, e `git diff -- docs/gdd` limpo |
 | qualquer coisa visível | uma captura, e **olhar para ela** (seção 4) | — |
 
@@ -328,7 +340,9 @@ morre.
 
 - Vive em `docs/arquivo/BRIEFING_PROXIMA_CONVERSA_*.md`, com a data
   (`AAAA-MM-DD`) no lugar do `*` — a segunda do dia leva `b`, e assim por
-  diante —, com a linha no índice de
+  diante, contando os PRs abertos dos outros agentes: o nome livre sai do
+  `tools/conferir_colaboracao.py` (em 16/10 o `15b` foi criado pelos dois,
+  `119`) —, com a linha no índice de
   `docs/arquivo/README.md`, e entra **no mesmo commit do fecho**.
 - **No briefing, ⚠️ marca LIÇÃO, e todo aviso nomeia onde ela vive** — o
   arquivo (`CLAUDE.md`, um README, o script da função), a decisão (`NNN`) ou a

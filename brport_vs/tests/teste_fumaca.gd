@@ -67,8 +67,22 @@ func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
 # frame, porque a fala da Dona Cida entra por `call_deferred`. Com `true` a
 # corrida acabava antes de o `await` voltar, e as asserções do F8 nunca
 # corriam: verde sem ter testado nada.
+# O VIGIA DA SUÍTE QUE NÃO ACABA — o mesmo do `run_tests.gd`, e pela mesma
+# razão: devolver `false` deixa a árvore a girar se o `_rodar()` abortar antes
+# do `quit()` (`docs/decisoes/118`).
+const TETO_DE_FRAMES := 2000
+var _acabou := false
+var _frames := 0
+
+
 func _process(_delta: float) -> bool:
 	if _feito:
+		_frames += 1
+		if not _acabou and _frames > TETO_DE_FRAMES:
+			_acabou = true
+			print("  FALHA a suíte não chegou ao fim: o _rodar() abortou (veja o SCRIPT ERROR acima)")
+			print("=== FUMACA NÃO ACABOU ===")
+			quit(1)
 		return false
 	_feito = true
 	_rodar()
@@ -173,6 +187,7 @@ func _rodar() -> void:
 	await _f23_a_fase_2()
 	_confere("o bloco F23 correu até ao fim", _f23_terminou)
 
+	_acabou = true
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save migra só o que sabe ler, o texto resolve, o export vale ===")
 		quit(0)
