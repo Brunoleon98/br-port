@@ -439,3 +439,100 @@ alvo = "brport_vs/autoload/Audio.gd"
 antes = 'if agora - float(_ultima_vez.get(id, -999.0)) < float(SONS[id]["espera"]):'
 depois = 'if _ultima_vez.has(id):'
 reprova = { teste_audio = "passada a espera, o mesmo som volta a tocar" }
+
+# ── O JOGADOR AO ACASO (`118`) ─────────────────────────────────────────────
+# Defeitos que nenhum bloco montava o estado para ver; o T25 joga até lá.
+
+[[mutante]]
+id = "save-recusa-a-fila-cheia"
+de = "118"
+o_que = "o save recusa o fundeadouro cheio, que o jogo produz todo dia"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'fila_lida.size() > FILA_LUGARES:'
+depois = 'fila_lida.size() >= FILA_LUGARES:'
+reprova = { run_tests = "o save que o jogo grava, o próprio jogo aceita" }
+
+[[mutante]]
+id = "load-esquece-a-paciencia-do-cliente"
+de = "118"
+o_que = "carregar a meio da oferta devolve ao Arlindo as tentativas já gastas"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'rival_attempts_left = int(parsed.get("rival_attempts_left", RIVAL_PATIENCE))'
+depois = 'rival_attempts_left = RIVAL_PATIENCE'
+reprova = { run_tests = "o save que o jogo grava não volta igual" }
+
+[[mutante]]
+id = "devolver-deixa-o-trabalhador"
+de = "118"
+o_que = "devolver o barco ao largo deixa o trabalhador preso na doca vazia"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	doca["boat"] = null
+	doca["worker_id"] = null
+	fila.append(barco)
+'''
+depois = '''
+	doca["boat"] = null
+	fila.append(barco)
+'''
+reprova = { run_tests = "e o trabalhador fica livre" }
+
+[[mutante]]
+id = "recusa-da-obra-cobra"
+de = "118"
+o_que = "a obra que o jogo recusa cobra um real na mesma"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+func comprar_estrutura(id: String) -> bool:
+	if impedimento_estrutura(id) != "":
+		return false
+'''
+depois = '''
+func comprar_estrutura(id: String) -> bool:
+	if impedimento_estrutura(id) != "":
+		cash -= 1
+		return false
+'''
+reprova = { run_tests = "a recusa de «construir» mexeu no estado" }
+
+[[mutante]]
+id = "cancelamento-sem-conferir-o-orcamento"
+de = "118"
+o_que = "a confirmação do cancelamento aceita um orçamento diferente do lido"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if evento.is_empty() or evento != confirmado:'
+depois = 'if evento.is_empty():'
+reprova = { run_tests = "a confirmação aceitou um orçamento que não era o lido" }
+
+[[mutante]]
+id = "reputacao-sem-teto"
+de = "118"
+o_que = "a reputação passa dos 100 e desce abaixo de zero"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'reputation = clamp(reputation + delta, 0.0, 100.0)'
+depois = 'reputation = reputation + delta'
+reprova = { run_tests = "a reputação fica entre 0 e 100" }
+
+[[mutante]]
+id = "fila-guarda-quem-desistiu"
+de = "118"
+o_que = "o barco sem paciência fica na fila em vez de ir embora"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if int(esperando["paciencia"]) > 0:'
+depois = 'if int(esperando["paciencia"]) >= 0:'
+reprova = { run_tests = "na fila nenhum barco começou a operar nem esgotou a paciência" }
+
+[[mutante]]
+id = "cancelamento-nunca-disponivel"
+de = "118"
+o_que = "o orçamento do cancelamento sai sempre vazio, e a ação some do jogo sem erro"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+func custos_do_cancelamento(doca: int, id: int) -> Dictionary:
+	if phase != ESTADO_JOGANDO or doca < 0 or doca >= docks.size():
+'''
+depois = '''
+func custos_do_cancelamento(doca: int, id: int) -> Dictionary:
+	if true:
+'''
+reprova = { run_tests = "o robô exerceu cada ação que o jogo aceitou" }

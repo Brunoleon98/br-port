@@ -78,10 +78,15 @@ SUITES = {
     "asset_validator": ("res://scripts/validation/asset_validator.gd", "ASSET OK"),
 }
 
-# As três formas de uma asserção reprovada, uma por família de suíte:
+# As formas de uma asserção reprovada, uma por família de suíte:
 # `  FAIL  rótulo` (run_tests), `  FALHA rótulo` (design, fumaça, registro,
-# áudio) e `  FALHOU  rótulo` (assets).
-LINHA_REPROVADA = re.compile(r"^\s+(?:FAIL|FALHA|FALHOU)\s+(.+?)\s*$", re.M)
+# áudio), `  FALHOU  rótulo` (assets) — e `FAIL T24: rótulo`, SEM recuo, que é
+# a forma do bloco do cancelamento que o Codex escreveu num arquivo à parte
+# (`tests/casos_cancelamento.gd`). Com `^\s+` as falhas dele não tinham nome
+# para esta ferramenta: só a linha agregada do `run_tests` as via (`119`).
+# O espaço DEPOIS da palavra continua obrigatório: `FALHA: x nao existe`
+# (o cabeçalho de uma suíte que não arrancou) não é asserção.
+LINHA_REPROVADA = re.compile(r"^\s*(?:FAIL|FALHA|FALHOU)\s+(.+?)\s*$", re.M)
 
 # O erro de COMPILAÇÃO, que não é o de execução: este traz `SCRIPT ERROR` sem
 # backtrace e com a origem no `GDScript::reload` (medido em 21/09,

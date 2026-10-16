@@ -53,6 +53,28 @@ prova que a régua consegue ver um toque (`117`).
 código de saída vê um timeout; o `Parse Error` está na saída parcial, e é
 por isso que o executor julga a compilação antes do teto (`117`).
 
+## O jogador ao acaso (T25, `118`)
+
+O T25 joga partidas inteiras ao acaso, com semente, e confere a cada passo o
+que vale sempre. Três lições custaram a medição dele:
+
+- ⚠️ **ROBÔ SEM CONTROLE DE EXERCÍCIO PASSA VERDE SEM TER JOGADO.** A primeira
+  versão guardava os invariantes em 24 partidas e nunca tinha cancelado um
+  serviço — a ação nem chegava a existir. O controle «cada ação foi aceite ao
+  menos uma vez» é que o disse, três vezes seguidas, cada uma com uma causa.
+- ⚠️ **O ACASO PURO NÃO CHEGA AO FIM DO JOGO.** Sem pagar, nenhuma partida
+  chegava à Fase 2; com a treliça comprada, a reputação ao acaso ficava abaixo
+  do piso e os cargueiros eram suspensos (a regra a funcionar). Inclinações
+  medidas, perfis por semente e a «máscara» de ações legais — o robô vê o que
+  se pode cancelar — são o que o leva lá. Ao mexer no robô, leia a linha
+  `-> fase 2 em N de 24` antes de acreditar no verde.
+- ⚠️ **SUÍTE QUE DEVOLVE `false` NO `_process` PENDURA SE O `_run()`
+  ABORTAR.** O vigia de frames do `run_tests` e do `teste_fumaca` reprova com
+  nome; um mutante que fazia o T4d rebentar pendurava a suíte até ao teto.
+- **Bloco novo vive num arquivo próprio** (como o T24 e o T25), e o rótulo de
+  falha tem `FAIL`/`FALHA`/`FALHOU` seguido de espaço — é por aí que o
+  executor de mutantes sabe que guarda reprovou (`119`).
+
 ## Do «Antes de fechar», item 7 — escrever a guarda
 
 A regra é o item 7 do núcleo; as lições que valem para qualquer régua

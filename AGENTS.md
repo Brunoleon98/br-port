@@ -57,12 +57,32 @@ registada sem o Bruno pedir.
 - **Uma tarefa por PR**, com o que mudou e porquê; se algo foi medido, o
   número.
 - **Decisão nova** entra em `docs/decisoes/` com o próximo número livre —
-  confira a pasta na `main` antes de escolher, que dois agentes a numerar em
-  paralelo já deram números repetidos. Desde 09/10 o `tools/conferir_docs.py`
-  reprova número repetido, e o CI do PR corre sobre a junção com a `main`.
+  e «livre» conta os ramos dos outros, não só a `main`: em 16/10 a `111` saiu
+  repetida porque cada agente olhou só para a sua base (`docs/decisoes/119`).
+  O número e o nome do briefing do dia vêm do
+  `python3 tools/conferir_colaboracao.py`, que os conta em todos os ramos
+  empurrados. Colidiu mesmo assim? Quem funde em segundo renumera com
+  `python3 tools/renumerar_decisao.py <antigo> <novo>`, que só troca as linhas
+  que a SUA branch escreveu. O `tools/conferir_docs.py` reprova o repetido no
+  CI, e o CI do PR corre sobre a junção com a `main`.
+- **Empurre cedo.** Um ramo só local é invisível às ferramentas e ao outro
+  agente; um PR em rascunho aberto no início deixa o número à vista.
+- **Bloco de teste novo vive num arquivo próprio**, que a suíte só chama — como
+  o T24 (`tests/casos_cancelamento.gd`) e o T25 (`tests/jogador_ao_acaso.gd`).
+  Dois agentes a acrescentar blocos deixam de editar o mesmo `run_tests.gd`.
+  Rótulo de falha com `FAIL`, `FALHA` ou `FALHOU` seguido de espaço: é por
+  essa forma que o `tools/conferir_mutantes.py` sabe qual guarda reprovou.
 
 ## 3. Antes de abrir o PR
 
+- **Junte a `main` e rode o pré-PR:** `git merge origin/main`, e depois
+  `python3 tools/conferir_colaboracao.py --outros <a cabeça de cada PR aberto
+  do outro agente>`, que espera `COLABORACAO OK`. Ele diz o que bloqueia
+  contra a base (conflito, número repetido, mutante órfão, `SAVE_VERSION`
+  subida dos dois lados) e avisa o que vai acontecer quando o PR do outro
+  fundir. Os documentos de fecho (`ESTADO_DO_PROJETO.md`, o índice do
+  arquivo) conflitam sempre: fica o texto de quem fundiu, e reaplicam-se as
+  próprias linhas.
 - As seis suítes do Godot, com a versão de `.godot-version`, e a linha final
   de cada uma — o código de saída sozinho não prova nada (o `CLAUDE.md` e
   `.claude/rules/testes-e-guardas.md` dizem porquê). A lista viva está em
