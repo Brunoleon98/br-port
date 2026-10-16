@@ -409,6 +409,14 @@ tirar espacos_carregar - - --script res://tools/capturar_cena.gd -- res://scenes
 tirar espacos_nova - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_nova.png" espacos=1,3 --tocar=Nova --tempo=nova
 tirar espacos_confirmar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_confirmar.png" espacos=1 --tocar=Nova --tocar=Substituir --tempo=confirmar
 tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes.png" espacos=1,3 --tocar=Ajustes
+# Como jogar (`115`): as duas portas, o índice, o maior artigo e o glossário.
+# A pausa é de uma partida jogada; a cena da ajuda não é montada à parte.
+tirar ajuda_inicio_indice - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_indice.png" "--tocar=Como jogar" --tempo=indice
+tirar ajuda_inicio_artigo - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_artigo.png" "--tocar=Como jogar" "--tocar=Devolver ou cancelar" --tempo=artigo
+tirar ajuda_inicio_glossario - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_glossario.png" "--tocar=Como jogar" --tocar=Glossário --tempo=glossario
+tirar ajuda_pausa_indice 2 9 --script res://tools/capturar_tela.gd -- 8 "$SAIDA/ajuda_pausa_indice.png" completo pausa limpo "--tocar=Como jogar" --tempo=indice
+tirar ajuda_pausa_artigo 2 9 --script res://tools/capturar_tela.gd -- 8 "$SAIDA/ajuda_pausa_artigo.png" completo pausa limpo "--tocar=Como jogar" "--tocar=Devolver ou cancelar" --tempo=artigo
+tirar ajuda_pausa_glossario 2 9 --script res://tools/capturar_tela.gd -- 8 "$SAIDA/ajuda_pausa_glossario.png" completo pausa limpo "--tocar=Como jogar" --tocar=Glossário --tempo=glossario
 # O HISTÓRICO DA FAIXA (R5 da §7.1). Ele é a única resposta à pergunta "o que
 # passou enquanto eu olhava para o mapa?", e nenhum dos tiros acima o monta:
 # abre por um TOQUE na faixa de mensagem, depois de a sessão ter acumulado o

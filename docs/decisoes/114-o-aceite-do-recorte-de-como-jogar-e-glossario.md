@@ -7,6 +7,11 @@ durante a partida»**. A pergunta delimitava expressamente: este aceite
 fecha apenas a definição; implementação e publicação de outro PR dependem
 de autorização própria. Nenhum código do jogo foi alterado.
 
+**Continuação:** após o fecho deste aceite, Bruno autorizou implementar o
+recorte ao responder «Sim» à pergunta específica. A implementação local está
+na `115`; publicar outro PR continua sem autorização. O texto abaixo conserva
+o limite do aceite de definição que antecedeu essa nova autorização.
+
 ## Base reconferida antes de editar
 
 `git fetch origin main` confirmou `f03302d`, merge do PR #133, também

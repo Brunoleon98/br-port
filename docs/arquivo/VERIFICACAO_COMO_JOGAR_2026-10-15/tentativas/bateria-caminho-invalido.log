@@ -1,0 +1,16 @@
+::error::a captura 'obra_andamento' falhou (código 1):
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 617.42 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4060 Laptop GPU
+
+Overlay: 1 painel(eis)  [fase playing, turno 2, 0 estrutura(s)]
+Paineis: res://scenes/panels/UpgradePanel.tscn
+ERROR: Can't save PNG at path: '.evidencias/implementar-como-jogar/capturas/obra_andamento.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] _process (res://tools/capturar_tela.gd:374)
+       [1] _process (C:/Users/bruno/OneDrive/Documentos/ChatGPT/Jogo - BR Port/br-port/.evidencias/implementar-como-jogar/wrappers/capturar_tela.gd:11)
+FALHOU ao salvar em .evidencias/implementar-como-jogar/capturas/obra_andamento.png (erro 7)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2663)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)

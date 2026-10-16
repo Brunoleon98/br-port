@@ -1676,6 +1676,9 @@ func _run() -> void:
 	var cancelamento = load("res://tests/casos_cancelamento.gd").new()
 	await cancelamento.rodar(GS, self)
 	_check("T24: cancelamento, contas, migração, interface e registro", cancelamento.completo and cancelamento.falhas == 0)
+	var ajuda = load("res://tests/casos_como_jogar.gd").new()
+	await ajuda.rodar(GS, self)
+	_check("T25: consulta, navegação e preservação da partida", ajuda.completo and ajuda.falhas == 0)
 
 	print("")
 	if _fails == 0:

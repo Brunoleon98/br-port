@@ -3,8 +3,8 @@
 **15/10/2026, decisões `113` e `114`.** Bruno escolheu **definir o recorte de
 Como jogar/glossário**, a primeira novidade sugerida pela pesquisa `112`, e
 aprovou o conjunto abaixo com o ajuste de redação sobre o autosave (`114`).
-O aceite fecha a definição; implementação e publicação de outro PR continuam
-sem autorização.
+O aceite fechou a definição. Depois, Bruno autorizou a implementação (`115`),
+agora local. A publicação em outro PR continua sem autorização.
 
 ## O que a pessoa recebe
 
@@ -137,7 +137,7 @@ a escrita foi verificada. As falhas e propostas técnicas permanecem em
 `REVISAO_RECURSOS_BASICOS_2026-10-15.md`. A limitação de importação
 `Safe save failed` da `110`/`111` continua aberta, sem causa isolada.
 
-## Integração definida, para implementação futura
+## Integração implementada localmente (`115`)
 
 Um painel compartilhado da família `PainelNarrativo`, com cena própria,
 tema existente, índice e artigo rolável. A altura da área de leitura será
@@ -154,7 +154,8 @@ os botões por baixo. Voltar trata o nível interno antes de fechar o painel.
 Conferidos para esta proposta: `TelaInicial.gd`, `PauseMenu.gd`, o estado,
 a §7 do plano, a revisão de recursos básicos, a pesquisa e as decisões
 `103`, `108`–`112`. A organização segue `.claude/rules/interface.md`.
-Estes são pontos de integração definidos; nenhum script foi alterado.
+O conteúdo vive em `ConteudoComoJogar.gd`, usado pelo `PainelComoJogar.gd`.
+São as duas portas da mesma cena, sem estado novo de turno ou save.
 
 ## O que precisa demonstrar para o aceite da implementação
 
@@ -178,6 +179,6 @@ Estes são pontos de integração definidos; nenhum script foi alterado.
   como retomar e a diferença entre devolver e cancelar. Esses resultados
   humanos não são substituídos por suíte verde.
 
-**Próximo passo:** Bruno autorizar a implementação deste recorte aprovado.
-A publicação em outro PR depende de autorização própria. O aceite da
-definição não substitui as provas de máquina, leitura e telefone acima.
+**Próximo passo:** submeter a leitura e o teste no telefone ao Bruno; as provas
+de máquina e capturas da `115` passaram. Publicar outro PR depende de autorização própria.
+O aceite da definição não substitui as provas de máquina, leitura e telefone.

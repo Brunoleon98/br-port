@@ -171,6 +171,10 @@ const PAINEIS := {
 	"docas": ["_on_docas_pilula_input", true],
 }
 var _painel := ""
+# A ajuda é aberta depois de jogar e pausar, pelos botões reais. Cada toque
+# espera outro layout; pedir um tempo impede foto do índice como artigo.
+var _toques: Array = []
+var _tempo_esperado := ""
 # A prova das caras e o tamanho da foto já gravada, para a linha de sucesso.
 var _prova = null
 var _tamanho := Vector2i.ZERO
@@ -268,6 +272,19 @@ func _process(_delta: float) -> bool:
 		# O painel precisa de assentar como tudo o resto nesta ferramenta.
 		_frames_extra += FRAMES_ATE_ASSENTAR
 		return false
+
+	if not _toques.is_empty():
+		if not _tocar(_main, String(_toques.pop_front())):
+			quit(1)
+			return false
+		_frames_extra += FRAMES_ATE_ASSENTAR
+		return false
+	if _tempo_esperado != "":
+		var topo_ajuda := _painel_de_cima()
+		if topo_ajuda == null or String(topo_ajuda.get("tempo")) != _tempo_esperado:
+			push_error("captura: o painel não chegou ao tempo pedido «%s»" % _tempo_esperado)
+			quit(1)
+			return false
 
 	# QUANTOS PAINÉIS ESTÃO POR CIMA. A linha existe porque a captura do porto
 	# reconstruído saiu com o Boletim Financeiro tapando o mapa inteiro: com a
@@ -407,6 +424,12 @@ func _montar() -> void:
 				quit(1)
 				return
 			_painel = nome
+			continue
+		if bruto.begins_with("--tocar="):
+			_toques.append(bruto.substr("--tocar=".length()))
+			continue
+		if bruto.begins_with("--tempo="):
+			_tempo_esperado = bruto.substr("--tempo=".length())
 			continue
 		if bruto.begins_with("--boletim="):
 			var semana := bruto.substr(10)

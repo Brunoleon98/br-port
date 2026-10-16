@@ -1,0 +1,937 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+  PASS  meia_larg do pipeline == a do mapa
+  PASS  meia_alt do pipeline == a do mapa
+  PASS  ângulo da aresta coerente com meia_larg/meia_alt
+  PASS  rot_x da câmera é 60 (o número que o guia do pacote não fixava)
+  PASS  arbusto.png existe numa pasta só
+  PASS  arbusto.png tem o quadro do manifest
+  PASS  arbusto.png tem canal alfa
+  PASS  arbusto.png não ocupa o quadro inteiro
+  PASS  barreira.png existe numa pasta só
+  PASS  barreira.png tem o quadro do manifest
+  PASS  barreira.png tem canal alfa
+  PASS  barreira.png não ocupa o quadro inteiro
+  PASS  bote.png existe numa pasta só
+  PASS  bote.png tem o quadro do manifest
+  PASS  bote.png tem canal alfa
+  PASS  bote.png não ocupa o quadro inteiro
+  PASS  cabeco.png existe numa pasta só
+  PASS  cabeco.png tem o quadro do manifest
+  PASS  cabeco.png tem canal alfa
+  PASS  cabeco.png não ocupa o quadro inteiro
+  PASS  cachorro_caramelo.png existe numa pasta só
+  PASS  cachorro_caramelo.png tem o quadro do manifest
+  PASS  cachorro_caramelo.png tem canal alfa
+  PASS  cachorro_caramelo.png não ocupa o quadro inteiro
+  PASS  cachorro_caramelo.png selecionável declara cena
+  PASS  caminhao_armazenagem.png existe numa pasta só
+  PASS  caminhao_armazenagem.png tem o quadro do manifest
+  PASS  caminhao_armazenagem.png tem canal alfa
+  PASS  caminhao_armazenagem.png não ocupa o quadro inteiro
+  PASS  caminhao_armazenagem_b.png existe numa pasta só
+  PASS  caminhao_armazenagem_b.png tem o quadro do manifest
+  PASS  caminhao_armazenagem_b.png tem canal alfa
+  PASS  caminhao_armazenagem_b.png não ocupa o quadro inteiro
+  PASS  caminhao_armazenagem_b_mx.png existe numa pasta só
+  PASS  caminhao_armazenagem_b_mx.png tem o quadro do manifest
+  PASS  caminhao_armazenagem_b_mx.png tem canal alfa
+  PASS  caminhao_armazenagem_b_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_armazenagem_b_retorno.png existe numa pasta só
+  PASS  caminhao_armazenagem_b_retorno.png tem o quadro do manifest
+  PASS  caminhao_armazenagem_b_retorno.png tem canal alfa
+  PASS  caminhao_armazenagem_b_retorno.png não ocupa o quadro inteiro
+  PASS  caminhao_armazenagem_b_retorno_mx.png existe numa pasta só
+  PASS  caminhao_armazenagem_b_retorno_mx.png tem o quadro do manifest
+  PASS  caminhao_armazenagem_b_retorno_mx.png tem canal alfa
+  PASS  caminhao_armazenagem_b_retorno_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_armazenagem_mx.png existe numa pasta só
+  PASS  caminhao_armazenagem_mx.png tem o quadro do manifest
+  PASS  caminhao_armazenagem_mx.png tem canal alfa
+  PASS  caminhao_armazenagem_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_armazenagem_retorno.png existe numa pasta só
+  PASS  caminhao_armazenagem_retorno.png tem o quadro do manifest
+  PASS  caminhao_armazenagem_retorno.png tem canal alfa
+  PASS  caminhao_armazenagem_retorno.png não ocupa o quadro inteiro
+  PASS  caminhao_armazenagem_retorno_mx.png existe numa pasta só
+  PASS  caminhao_armazenagem_retorno_mx.png tem o quadro do manifest
+  PASS  caminhao_armazenagem_retorno_mx.png tem canal alfa
+  PASS  caminhao_armazenagem_retorno_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_conteiner.png existe numa pasta só
+  PASS  caminhao_conteiner.png tem o quadro do manifest
+  PASS  caminhao_conteiner.png tem canal alfa
+  PASS  caminhao_conteiner.png não ocupa o quadro inteiro
+  PASS  caminhao_conteiner_b.png existe numa pasta só
+  PASS  caminhao_conteiner_b.png tem o quadro do manifest
+  PASS  caminhao_conteiner_b.png tem canal alfa
+  PASS  caminhao_conteiner_b.png não ocupa o quadro inteiro
+  PASS  caminhao_conteiner_b_mx.png existe numa pasta só
+  PASS  caminhao_conteiner_b_mx.png tem o quadro do manifest
+  PASS  caminhao_conteiner_b_mx.png tem canal alfa
+  PASS  caminhao_conteiner_b_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_conteiner_b_retorno.png existe numa pasta só
+  PASS  caminhao_conteiner_b_retorno.png tem o quadro do manifest
+  PASS  caminhao_conteiner_b_retorno.png tem canal alfa
+  PASS  caminhao_conteiner_b_retorno.png não ocupa o quadro inteiro
+  PASS  caminhao_conteiner_b_retorno_mx.png existe numa pasta só
+  PASS  caminhao_conteiner_b_retorno_mx.png tem o quadro do manifest
+  PASS  caminhao_conteiner_b_retorno_mx.png tem canal alfa
+  PASS  caminhao_conteiner_b_retorno_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_conteiner_mx.png existe numa pasta só
+  PASS  caminhao_conteiner_mx.png tem o quadro do manifest
+  PASS  caminhao_conteiner_mx.png tem canal alfa
+  PASS  caminhao_conteiner_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_conteiner_retorno.png existe numa pasta só
+  PASS  caminhao_conteiner_retorno.png tem o quadro do manifest
+  PASS  caminhao_conteiner_retorno.png tem canal alfa
+  PASS  caminhao_conteiner_retorno.png não ocupa o quadro inteiro
+  PASS  caminhao_conteiner_retorno_mx.png existe numa pasta só
+  PASS  caminhao_conteiner_retorno_mx.png tem o quadro do manifest
+  PASS  caminhao_conteiner_retorno_mx.png tem canal alfa
+  PASS  caminhao_conteiner_retorno_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_granel.png existe numa pasta só
+  PASS  caminhao_granel.png tem o quadro do manifest
+  PASS  caminhao_granel.png tem canal alfa
+  PASS  caminhao_granel.png não ocupa o quadro inteiro
+  PASS  caminhao_granel_b.png existe numa pasta só
+  PASS  caminhao_granel_b.png tem o quadro do manifest
+  PASS  caminhao_granel_b.png tem canal alfa
+  PASS  caminhao_granel_b.png não ocupa o quadro inteiro
+  PASS  caminhao_granel_b_mx.png existe numa pasta só
+  PASS  caminhao_granel_b_mx.png tem o quadro do manifest
+  PASS  caminhao_granel_b_mx.png tem canal alfa
+  PASS  caminhao_granel_b_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_granel_b_retorno.png existe numa pasta só
+  PASS  caminhao_granel_b_retorno.png tem o quadro do manifest
+  PASS  caminhao_granel_b_retorno.png tem canal alfa
+  PASS  caminhao_granel_b_retorno.png não ocupa o quadro inteiro
+  PASS  caminhao_granel_b_retorno_mx.png existe numa pasta só
+  PASS  caminhao_granel_b_retorno_mx.png tem o quadro do manifest
+  PASS  caminhao_granel_b_retorno_mx.png tem canal alfa
+  PASS  caminhao_granel_b_retorno_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_granel_mx.png existe numa pasta só
+  PASS  caminhao_granel_mx.png tem o quadro do manifest
+  PASS  caminhao_granel_mx.png tem canal alfa
+  PASS  caminhao_granel_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_granel_retorno.png existe numa pasta só
+  PASS  caminhao_granel_retorno.png tem o quadro do manifest
+  PASS  caminhao_granel_retorno.png tem canal alfa
+  PASS  caminhao_granel_retorno.png não ocupa o quadro inteiro
+  PASS  caminhao_granel_retorno_mx.png existe numa pasta só
+  PASS  caminhao_granel_retorno_mx.png tem o quadro do manifest
+  PASS  caminhao_granel_retorno_mx.png tem canal alfa
+  PASS  caminhao_granel_retorno_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_pescado.png existe numa pasta só
+  PASS  caminhao_pescado.png tem o quadro do manifest
+  PASS  caminhao_pescado.png tem canal alfa
+  PASS  caminhao_pescado.png não ocupa o quadro inteiro
+  PASS  caminhao_pescado_b.png existe numa pasta só
+  PASS  caminhao_pescado_b.png tem o quadro do manifest
+  PASS  caminhao_pescado_b.png tem canal alfa
+  PASS  caminhao_pescado_b.png não ocupa o quadro inteiro
+  PASS  caminhao_pescado_b_mx.png existe numa pasta só
+  PASS  caminhao_pescado_b_mx.png tem o quadro do manifest
+  PASS  caminhao_pescado_b_mx.png tem canal alfa
+  PASS  caminhao_pescado_b_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_pescado_b_retorno.png existe numa pasta só
+  PASS  caminhao_pescado_b_retorno.png tem o quadro do manifest
+  PASS  caminhao_pescado_b_retorno.png tem canal alfa
+  PASS  caminhao_pescado_b_retorno.png não ocupa o quadro inteiro
+  PASS  caminhao_pescado_b_retorno_mx.png existe numa pasta só
+  PASS  caminhao_pescado_b_retorno_mx.png tem o quadro do manifest
+  PASS  caminhao_pescado_b_retorno_mx.png tem canal alfa
+  PASS  caminhao_pescado_b_retorno_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_pescado_mx.png existe numa pasta só
+  PASS  caminhao_pescado_mx.png tem o quadro do manifest
+  PASS  caminhao_pescado_mx.png tem canal alfa
+  PASS  caminhao_pescado_mx.png não ocupa o quadro inteiro
+  PASS  caminhao_pescado_retorno.png existe numa pasta só
+  PASS  caminhao_pescado_retorno.png tem o quadro do manifest
+  PASS  caminhao_pescado_retorno.png tem canal alfa
+  PASS  caminhao_pescado_retorno.png não ocupa o quadro inteiro
+  PASS  caminhao_pescado_retorno_mx.png existe numa pasta só
+  PASS  caminhao_pescado_retorno_mx.png tem o quadro do manifest
+  PASS  caminhao_pescado_retorno_mx.png tem canal alfa
+  PASS  caminhao_pescado_retorno_mx.png não ocupa o quadro inteiro
+  PASS  capivara.png existe numa pasta só
+  PASS  capivara.png tem o quadro do manifest
+  PASS  capivara.png tem canal alfa
+  PASS  capivara.png não ocupa o quadro inteiro
+  PASS  capivara.png selecionável declara cena
+  PASS  casa_costeira.png existe numa pasta só
+  PASS  casa_costeira.png tem o quadro do manifest
+  PASS  casa_costeira.png tem canal alfa
+  PASS  casa_costeira.png não ocupa o quadro inteiro
+  PASS  cone_transito.png existe numa pasta só
+  PASS  cone_transito.png tem o quadro do manifest
+  PASS  cone_transito.png tem canal alfa
+  PASS  cone_transito.png não ocupa o quadro inteiro
+  PASS  coqueiro_jovem.png existe numa pasta só
+  PASS  coqueiro_jovem.png tem o quadro do manifest
+  PASS  coqueiro_jovem.png tem canal alfa
+  PASS  coqueiro_jovem.png não ocupa o quadro inteiro
+  PASS  doca_concreto.png existe numa pasta só
+  PASS  doca_concreto.png tem o quadro do manifest
+  PASS  doca_concreto.png tem canal alfa
+  PASS  doca_concreto.png não ocupa o quadro inteiro
+  PASS  doca_concreto.png selecionável declara cena
+  PASS  empilhadeira.png existe numa pasta só
+  PASS  empilhadeira.png tem o quadro do manifest
+  PASS  empilhadeira.png tem canal alfa
+  PASS  empilhadeira.png não ocupa o quadro inteiro
+  PASS  gaivota.png existe numa pasta só
+  PASS  gaivota.png tem o quadro do manifest
+  PASS  gaivota.png tem canal alfa
+  PASS  gaivota.png não ocupa o quadro inteiro
+  PASS  gaivota.png selecionável declara cena
+  PASS  guincho.png existe numa pasta só
+  PASS  guincho.png tem o quadro do manifest
+  PASS  guincho.png tem canal alfa
+  PASS  guincho.png não ocupa o quadro inteiro
+  PASS  maria_farinha.png existe numa pasta só
+  PASS  maria_farinha.png tem o quadro do manifest
+  PASS  maria_farinha.png tem canal alfa
+  PASS  maria_farinha.png não ocupa o quadro inteiro
+  PASS  maria_farinha.png selecionável declara cena
+  PASS  mercado.png existe numa pasta só
+  PASS  mercado.png tem o quadro do manifest
+  PASS  mercado.png tem canal alfa
+  PASS  mercado.png não ocupa o quadro inteiro
+  PASS  mercado.png selecionável declara cena
+  PASS  pallet.png existe numa pasta só
+  PASS  pallet.png tem o quadro do manifest
+  PASS  pallet.png tem canal alfa
+  PASS  pallet.png não ocupa o quadro inteiro
+  PASS  pilha_caixotes.png existe numa pasta só
+  PASS  pilha_caixotes.png tem o quadro do manifest
+  PASS  pilha_caixotes.png tem canal alfa
+  PASS  pilha_caixotes.png não ocupa o quadro inteiro
+  PASS  pneus.png existe numa pasta só
+  PASS  pneus.png tem o quadro do manifest
+  PASS  pneus.png tem canal alfa
+  PASS  pneus.png não ocupa o quadro inteiro
+  PASS  poste.png existe numa pasta só
+  PASS  poste.png tem o quadro do manifest
+  PASS  poste.png tem canal alfa
+  PASS  poste.png não ocupa o quadro inteiro
+  PASS  poste_luz.png existe numa pasta só
+  PASS  poste_luz.png tem o quadro do manifest
+  PASS  poste_luz.png tem canal alfa
+  PASS  poste_luz.png não ocupa o quadro inteiro
+  PASS  quero_quero.png existe numa pasta só
+  PASS  quero_quero.png tem o quadro do manifest
+  PASS  quero_quero.png tem canal alfa
+  PASS  quero_quero.png não ocupa o quadro inteiro
+  PASS  quero_quero.png selecionável declara cena
+  PASS  retrato_arlindo_contrariado.png existe numa pasta só
+  PASS  retrato_arlindo_contrariado.png tem o quadro do manifest
+  PASS  retrato_arlindo_contrariado.png tem canal alfa
+  PASS  retrato_arlindo_contrariado.png não ocupa o quadro inteiro
+  PASS  retrato_arlindo_pressao.png existe numa pasta só
+  PASS  retrato_arlindo_pressao.png tem o quadro do manifest
+  PASS  retrato_arlindo_pressao.png tem canal alfa
+  PASS  retrato_arlindo_pressao.png não ocupa o quadro inteiro
+  PASS  retrato_arlindo_sorriso.png existe numa pasta só
+  PASS  retrato_arlindo_sorriso.png tem o quadro do manifest
+  PASS  retrato_arlindo_sorriso.png tem canal alfa
+  PASS  retrato_arlindo_sorriso.png não ocupa o quadro inteiro
+  PASS  retrato_cida_contente.png existe numa pasta só
+  PASS  retrato_cida_contente.png tem o quadro do manifest
+  PASS  retrato_cida_contente.png tem canal alfa
+  PASS  retrato_cida_contente.png não ocupa o quadro inteiro
+  PASS  retrato_cida_preocupada.png existe numa pasta só
+  PASS  retrato_cida_preocupada.png tem o quadro do manifest
+  PASS  retrato_cida_preocupada.png tem canal alfa
+  PASS  retrato_cida_preocupada.png não ocupa o quadro inteiro
+  PASS  retrato_cida_seria.png existe numa pasta só
+  PASS  retrato_cida_seria.png tem o quadro do manifest
+  PASS  retrato_cida_seria.png tem canal alfa
+  PASS  retrato_cida_seria.png não ocupa o quadro inteiro
+  PASS  retrato_ribeiro_cordial.png existe numa pasta só
+  PASS  retrato_ribeiro_cordial.png tem o quadro do manifest
+  PASS  retrato_ribeiro_cordial.png tem canal alfa
+  PASS  retrato_ribeiro_cordial.png não ocupa o quadro inteiro
+  PASS  retrato_ribeiro_formal.png existe numa pasta só
+  PASS  retrato_ribeiro_formal.png tem o quadro do manifest
+  PASS  retrato_ribeiro_formal.png tem canal alfa
+  PASS  retrato_ribeiro_formal.png não ocupa o quadro inteiro
+  PASS  retrato_ribeiro_grave.png existe numa pasta só
+  PASS  retrato_ribeiro_grave.png tem o quadro do manifest
+  PASS  retrato_ribeiro_grave.png tem canal alfa
+  PASS  retrato_ribeiro_grave.png não ocupa o quadro inteiro
+  PASS  retrato_toninho_calmo.png existe numa pasta só
+  PASS  retrato_toninho_calmo.png tem o quadro do manifest
+  PASS  retrato_toninho_calmo.png tem canal alfa
+  PASS  retrato_toninho_calmo.png não ocupa o quadro inteiro
+  PASS  retrato_toninho_ironico.png existe numa pasta só
+  PASS  retrato_toninho_ironico.png tem o quadro do manifest
+  PASS  retrato_toninho_ironico.png tem canal alfa
+  PASS  retrato_toninho_ironico.png não ocupa o quadro inteiro
+  PASS  retrato_toninho_serio.png existe numa pasta só
+  PASS  retrato_toninho_serio.png tem o quadro do manifest
+  PASS  retrato_toninho_serio.png tem canal alfa
+  PASS  retrato_toninho_serio.png não ocupa o quadro inteiro
+  PASS  tartaruga_verde.png existe numa pasta só
+  PASS  tartaruga_verde.png tem o quadro do manifest
+  PASS  tartaruga_verde.png tem canal alfa
+  PASS  tartaruga_verde.png não ocupa o quadro inteiro
+  PASS  tartaruga_verde.png selecionável declara cena
+  PASS  terreno_agua.png existe numa pasta só
+  PASS  terreno_agua.png tem o quadro do manifest
+  PASS  terreno_agua.png tem canal alfa
+  PASS  terreno_areia.png existe numa pasta só
+  PASS  terreno_areia.png tem o quadro do manifest
+  PASS  terreno_areia.png tem canal alfa
+  PASS  terreno_costa.png existe numa pasta só
+  PASS  terreno_costa.png tem o quadro do manifest
+  PASS  terreno_costa.png tem canal alfa
+  PASS  terreno_rua.png existe numa pasta só
+  PASS  terreno_rua.png tem o quadro do manifest
+  PASS  terreno_rua.png tem canal alfa
+  PASS  trabalhador_homem_adulto_amarela.png existe numa pasta só
+  PASS  trabalhador_homem_adulto_amarela.png tem o quadro do manifest
+  PASS  trabalhador_homem_adulto_amarela.png tem canal alfa
+  PASS  trabalhador_homem_adulto_amarela.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_adulto_branca.png existe numa pasta só
+  PASS  trabalhador_homem_adulto_branca.png tem o quadro do manifest
+  PASS  trabalhador_homem_adulto_branca.png tem canal alfa
+  PASS  trabalhador_homem_adulto_branca.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_adulto_indigena.png existe numa pasta só
+  PASS  trabalhador_homem_adulto_indigena.png tem o quadro do manifest
+  PASS  trabalhador_homem_adulto_indigena.png tem canal alfa
+  PASS  trabalhador_homem_adulto_indigena.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_adulto_preta.png existe numa pasta só
+  PASS  trabalhador_homem_adulto_preta.png tem o quadro do manifest
+  PASS  trabalhador_homem_adulto_preta.png tem canal alfa
+  PASS  trabalhador_homem_adulto_preta.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_jovem_amarela.png existe numa pasta só
+  PASS  trabalhador_homem_jovem_amarela.png tem o quadro do manifest
+  PASS  trabalhador_homem_jovem_amarela.png tem canal alfa
+  PASS  trabalhador_homem_jovem_amarela.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_jovem_branca.png existe numa pasta só
+  PASS  trabalhador_homem_jovem_branca.png tem o quadro do manifest
+  PASS  trabalhador_homem_jovem_branca.png tem canal alfa
+  PASS  trabalhador_homem_jovem_branca.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_jovem_indigena.png existe numa pasta só
+  PASS  trabalhador_homem_jovem_indigena.png tem o quadro do manifest
+  PASS  trabalhador_homem_jovem_indigena.png tem canal alfa
+  PASS  trabalhador_homem_jovem_indigena.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_jovem_parda.png existe numa pasta só
+  PASS  trabalhador_homem_jovem_parda.png tem o quadro do manifest
+  PASS  trabalhador_homem_jovem_parda.png tem canal alfa
+  PASS  trabalhador_homem_jovem_parda.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_jovem_preta.png existe numa pasta só
+  PASS  trabalhador_homem_jovem_preta.png tem o quadro do manifest
+  PASS  trabalhador_homem_jovem_preta.png tem canal alfa
+  PASS  trabalhador_homem_jovem_preta.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_veterano_amarela.png existe numa pasta só
+  PASS  trabalhador_homem_veterano_amarela.png tem o quadro do manifest
+  PASS  trabalhador_homem_veterano_amarela.png tem canal alfa
+  PASS  trabalhador_homem_veterano_amarela.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_veterano_branca.png existe numa pasta só
+  PASS  trabalhador_homem_veterano_branca.png tem o quadro do manifest
+  PASS  trabalhador_homem_veterano_branca.png tem canal alfa
+  PASS  trabalhador_homem_veterano_branca.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_veterano_indigena.png existe numa pasta só
+  PASS  trabalhador_homem_veterano_indigena.png tem o quadro do manifest
+  PASS  trabalhador_homem_veterano_indigena.png tem canal alfa
+  PASS  trabalhador_homem_veterano_indigena.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_veterano_parda.png existe numa pasta só
+  PASS  trabalhador_homem_veterano_parda.png tem o quadro do manifest
+  PASS  trabalhador_homem_veterano_parda.png tem canal alfa
+  PASS  trabalhador_homem_veterano_parda.png não ocupa o quadro inteiro
+  PASS  trabalhador_homem_veterano_preta.png existe numa pasta só
+  PASS  trabalhador_homem_veterano_preta.png tem o quadro do manifest
+  PASS  trabalhador_homem_veterano_preta.png tem canal alfa
+  PASS  trabalhador_homem_veterano_preta.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_adulto_amarela.png existe numa pasta só
+  PASS  trabalhador_mulher_adulto_amarela.png tem o quadro do manifest
+  PASS  trabalhador_mulher_adulto_amarela.png tem canal alfa
+  PASS  trabalhador_mulher_adulto_amarela.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_adulto_branca.png existe numa pasta só
+  PASS  trabalhador_mulher_adulto_branca.png tem o quadro do manifest
+  PASS  trabalhador_mulher_adulto_branca.png tem canal alfa
+  PASS  trabalhador_mulher_adulto_branca.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_adulto_indigena.png existe numa pasta só
+  PASS  trabalhador_mulher_adulto_indigena.png tem o quadro do manifest
+  PASS  trabalhador_mulher_adulto_indigena.png tem canal alfa
+  PASS  trabalhador_mulher_adulto_indigena.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_adulto_parda.png existe numa pasta só
+  PASS  trabalhador_mulher_adulto_parda.png tem o quadro do manifest
+  PASS  trabalhador_mulher_adulto_parda.png tem canal alfa
+  PASS  trabalhador_mulher_adulto_parda.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_adulto_preta.png existe numa pasta só
+  PASS  trabalhador_mulher_adulto_preta.png tem o quadro do manifest
+  PASS  trabalhador_mulher_adulto_preta.png tem canal alfa
+  PASS  trabalhador_mulher_adulto_preta.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_jovem_amarela.png existe numa pasta só
+  PASS  trabalhador_mulher_jovem_amarela.png tem o quadro do manifest
+  PASS  trabalhador_mulher_jovem_amarela.png tem canal alfa
+  PASS  trabalhador_mulher_jovem_amarela.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_jovem_branca.png existe numa pasta só
+  PASS  trabalhador_mulher_jovem_branca.png tem o quadro do manifest
+  PASS  trabalhador_mulher_jovem_branca.png tem canal alfa
+  PASS  trabalhador_mulher_jovem_branca.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_jovem_indigena.png existe numa pasta só
+  PASS  trabalhador_mulher_jovem_indigena.png tem o quadro do manifest
+  PASS  trabalhador_mulher_jovem_indigena.png tem canal alfa
+  PASS  trabalhador_mulher_jovem_indigena.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_jovem_parda.png existe numa pasta só
+  PASS  trabalhador_mulher_jovem_parda.png tem o quadro do manifest
+  PASS  trabalhador_mulher_jovem_parda.png tem canal alfa
+  PASS  trabalhador_mulher_jovem_parda.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_jovem_preta.png existe numa pasta só
+  PASS  trabalhador_mulher_jovem_preta.png tem o quadro do manifest
+  PASS  trabalhador_mulher_jovem_preta.png tem canal alfa
+  PASS  trabalhador_mulher_jovem_preta.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_veterano_amarela.png existe numa pasta só
+  PASS  trabalhador_mulher_veterano_amarela.png tem o quadro do manifest
+  PASS  trabalhador_mulher_veterano_amarela.png tem canal alfa
+  PASS  trabalhador_mulher_veterano_amarela.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_veterano_branca.png existe numa pasta só
+  PASS  trabalhador_mulher_veterano_branca.png tem o quadro do manifest
+  PASS  trabalhador_mulher_veterano_branca.png tem canal alfa
+  PASS  trabalhador_mulher_veterano_branca.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_veterano_indigena.png existe numa pasta só
+  PASS  trabalhador_mulher_veterano_indigena.png tem o quadro do manifest
+  PASS  trabalhador_mulher_veterano_indigena.png tem canal alfa
+  PASS  trabalhador_mulher_veterano_indigena.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_veterano_parda.png existe numa pasta só
+  PASS  trabalhador_mulher_veterano_parda.png tem o quadro do manifest
+  PASS  trabalhador_mulher_veterano_parda.png tem canal alfa
+  PASS  trabalhador_mulher_veterano_parda.png não ocupa o quadro inteiro
+  PASS  trabalhador_mulher_veterano_preta.png existe numa pasta só
+  PASS  trabalhador_mulher_veterano_preta.png tem o quadro do manifest
+  PASS  trabalhador_mulher_veterano_preta.png tem canal alfa
+  PASS  trabalhador_mulher_veterano_preta.png não ocupa o quadro inteiro
+  PASS  trabalhador_retrato.png existe numa pasta só
+  PASS  trabalhador_retrato.png tem o quadro do manifest
+  PASS  trabalhador_retrato.png tem canal alfa
+  PASS  trabalhador_retrato.png não ocupa o quadro inteiro
+  PASS  barco_grande_conteiner.png: o atlas custa menos do que o quadro
+  PASS  barco_grande_conteiner.png: o quadro reconstruído é o desenho do arquivo
+  PASS  barco_grande_geral.png: o atlas custa menos do que o quadro
+  PASS  barco_grande_geral.png: o quadro reconstruído é o desenho do arquivo
+  PASS  barco_grande_granel.png: o atlas custa menos do que o quadro
+  PASS  barco_grande_granel.png: o quadro reconstruído é o desenho do arquivo
+  PASS  barco_medio_conteiner.png: o atlas custa menos do que o quadro
+  PASS  barco_medio_conteiner.png: o quadro reconstruído é o desenho do arquivo
+  PASS  barco_medio_geral.png: o atlas custa menos do que o quadro
+  PASS  barco_medio_geral.png: o quadro reconstruído é o desenho do arquivo
+  PASS  barco_medio_granel.png: o atlas custa menos do que o quadro
+  PASS  barco_medio_granel.png: o quadro reconstruído é o desenho do arquivo
+  PASS  barco_pesca_arrasteiro.png: o atlas custa menos do que o quadro
+  PASS  barco_pesca_arrasteiro.png: o quadro reconstruído é o desenho do arquivo
+  PASS  barco_pesca_bote.png: o atlas custa menos do que o quadro
+  PASS  barco_pesca_bote.png: o quadro reconstruído é o desenho do arquivo
+  PASS  barco_pesca_traineira.png: o atlas custa menos do que o quadro
+  PASS  barco_pesca_traineira.png: o quadro reconstruído é o desenho do arquivo
+  PASS  barreira.png: o atlas custa menos do que o quadro
+  PASS  barreira.png: o quadro reconstruído é o desenho do arquivo
+  PASS  boia.png: o atlas custa menos do que o quadro
+  PASS  boia.png: o quadro reconstruído é o desenho do arquivo
+  PASS  bote.png: o atlas custa menos do que o quadro
+  PASS  bote.png: o quadro reconstruído é o desenho do arquivo
+  PASS  cabeco.png: o atlas custa menos do que o quadro
+  PASS  cabeco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  cachorro_caramelo.png: o atlas custa menos do que o quadro
+  PASS  cachorro_caramelo.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_armazenagem.png: o atlas custa menos do que o quadro
+  PASS  caminhao_armazenagem.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_armazenagem_b.png: o atlas custa menos do que o quadro
+  PASS  caminhao_armazenagem_b.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_armazenagem_b_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_armazenagem_b_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_armazenagem_b_retorno.png: o atlas custa menos do que o quadro
+  PASS  caminhao_armazenagem_b_retorno.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_armazenagem_b_retorno_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_armazenagem_b_retorno_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_armazenagem_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_armazenagem_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_armazenagem_retorno.png: o atlas custa menos do que o quadro
+  PASS  caminhao_armazenagem_retorno.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_armazenagem_retorno_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_armazenagem_retorno_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_conteiner.png: o atlas custa menos do que o quadro
+  PASS  caminhao_conteiner.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_conteiner_b.png: o atlas custa menos do que o quadro
+  PASS  caminhao_conteiner_b.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_conteiner_b_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_conteiner_b_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_conteiner_b_retorno.png: o atlas custa menos do que o quadro
+  PASS  caminhao_conteiner_b_retorno.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_conteiner_b_retorno_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_conteiner_b_retorno_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_conteiner_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_conteiner_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_conteiner_retorno.png: o atlas custa menos do que o quadro
+  PASS  caminhao_conteiner_retorno.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_conteiner_retorno_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_conteiner_retorno_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_granel.png: o atlas custa menos do que o quadro
+  PASS  caminhao_granel.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_granel_b.png: o atlas custa menos do que o quadro
+  PASS  caminhao_granel_b.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_granel_b_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_granel_b_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_granel_b_retorno.png: o atlas custa menos do que o quadro
+  PASS  caminhao_granel_b_retorno.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_granel_b_retorno_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_granel_b_retorno_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_granel_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_granel_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_granel_retorno.png: o atlas custa menos do que o quadro
+  PASS  caminhao_granel_retorno.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_granel_retorno_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_granel_retorno_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_pescado.png: o atlas custa menos do que o quadro
+  PASS  caminhao_pescado.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_pescado_b.png: o atlas custa menos do que o quadro
+  PASS  caminhao_pescado_b.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_pescado_b_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_pescado_b_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_pescado_b_retorno.png: o atlas custa menos do que o quadro
+  PASS  caminhao_pescado_b_retorno.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_pescado_b_retorno_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_pescado_b_retorno_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_pescado_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_pescado_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_pescado_retorno.png: o atlas custa menos do que o quadro
+  PASS  caminhao_pescado_retorno.png: o quadro reconstruído é o desenho do arquivo
+  PASS  caminhao_pescado_retorno_mx.png: o atlas custa menos do que o quadro
+  PASS  caminhao_pescado_retorno_mx.png: o quadro reconstruído é o desenho do arquivo
+  PASS  capivara.png: o atlas custa menos do que o quadro
+  PASS  capivara.png: o quadro reconstruído é o desenho do arquivo
+  PASS  carga_caixa.png: o atlas custa menos do que o quadro
+  PASS  carga_caixa.png: o quadro reconstruído é o desenho do arquivo
+  PASS  carga_n3_caixa_alto.png: o atlas custa menos do que o quadro
+  PASS  carga_n3_caixa_alto.png: o quadro reconstruído é o desenho do arquivo
+  PASS  carga_n3_caixa_baixo.png: o atlas custa menos do que o quadro
+  PASS  carga_n3_caixa_baixo.png: o quadro reconstruído é o desenho do arquivo
+  PASS  carga_n3_peixe_alto.png: o atlas custa menos do que o quadro
+  PASS  carga_n3_peixe_alto.png: o quadro reconstruído é o desenho do arquivo
+  PASS  carga_n3_peixe_baixo.png: o atlas custa menos do que o quadro
+  PASS  carga_n3_peixe_baixo.png: o quadro reconstruído é o desenho do arquivo
+  PASS  carga_n3_saco_alto.png: o atlas custa menos do que o quadro
+  PASS  carga_n3_saco_alto.png: o quadro reconstruído é o desenho do arquivo
+  PASS  carga_n3_saco_baixo.png: o atlas custa menos do que o quadro
+  PASS  carga_n3_saco_baixo.png: o quadro reconstruído é o desenho do arquivo
+  PASS  carga_saco.png: o atlas custa menos do que o quadro
+  PASS  carga_saco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  cone_transito.png: o atlas custa menos do que o quadro
+  PASS  cone_transito.png: o quadro reconstruído é o desenho do arquivo
+  PASS  coqueiro_copa.png: o atlas custa menos do que o quadro
+  PASS  coqueiro_copa.png: o quadro reconstruído é o desenho do arquivo
+  PASS  coqueiro_tronco.png: o atlas custa menos do que o quadro
+  PASS  coqueiro_tronco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  doca_concreto.png: o atlas custa menos do que o quadro
+  PASS  doca_concreto.png: o quadro reconstruído é o desenho do arquivo
+  PASS  emp_h_alto.png: o atlas custa menos do que o quadro
+  PASS  emp_h_alto.png: o quadro reconstruído é o desenho do arquivo
+  PASS  emp_h_baixo.png: o atlas custa menos do que o quadro
+  PASS  emp_h_baixo.png: o quadro reconstruído é o desenho do arquivo
+  PASS  emp_m_alto.png: o atlas custa menos do que o quadro
+  PASS  emp_m_alto.png: o quadro reconstruído é o desenho do arquivo
+  PASS  emp_m_baixo.png: o atlas custa menos do que o quadro
+  PASS  emp_m_baixo.png: o quadro reconstruído é o desenho do arquivo
+  PASS  empilhadeira.png: o atlas custa menos do que o quadro
+  PASS  empilhadeira.png: o quadro reconstruído é o desenho do arquivo
+  PASS  empilhadeira_n3.png: o atlas custa menos do que o quadro
+  PASS  empilhadeira_n3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  escritorio.png: o atlas custa menos do que o quadro
+  PASS  escritorio.png: o quadro reconstruído é o desenho do arquivo
+  PASS  escritorio_ruina.png: o atlas custa menos do que o quadro
+  PASS  escritorio_ruina.png: o quadro reconstruído é o desenho do arquivo
+  PASS  gaivota.png: o atlas custa menos do que o quadro
+  PASS  gaivota.png: o quadro reconstruído é o desenho do arquivo
+  PASS  galpao.png: o atlas custa menos do que o quadro
+  PASS  galpao.png: o quadro reconstruído é o desenho do arquivo
+  PASS  galpao_velho.png: o atlas custa menos do que o quadro
+  PASS  galpao_velho.png: o quadro reconstruído é o desenho do arquivo
+  PASS  guincho.png: o atlas custa menos do que o quadro
+  PASS  guincho.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_barco.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_barco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_barco_c.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_barco_c.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g0c.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g0c.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g1.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g1c.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g1c.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g2.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g2c.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g2c.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g3.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g3c.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g3c.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g4.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g4c.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g4c.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g5.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g5c.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g5c.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g6.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_g6c.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_g6c.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_pilha.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_pilha.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n1_pilha_c.png: o atlas custa menos do que o quadro
+  PASS  lanca_n1_pilha_c.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_barco_caixa.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_barco_caixa.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_barco_conteiner.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_barco_conteiner.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_barco_peixe.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_barco_peixe.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_barco_saco.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_barco_saco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_g1.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_g2.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_g3.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_g4.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_g5.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_g6.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_pilha_caixa.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_pilha_caixa.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_pilha_conteiner.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_pilha_conteiner.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_pilha_peixe.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_pilha_peixe.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n2_pilha_saco.png: o atlas custa menos do que o quadro
+  PASS  lanca_n2_pilha_saco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_barco_caixa.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_barco_caixa.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_barco_conteiner.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_barco_conteiner.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_barco_peixe.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_barco_peixe.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_barco_saco.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_barco_saco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_g1.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_g2.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_g3.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_g4.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_g5.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_g6.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_pouso_caixa.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_pouso_caixa.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_pouso_conteiner.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_pouso_conteiner.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_pouso_peixe.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_pouso_peixe.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lanca_n3_pouso_saco.png: o atlas custa menos do que o quadro
+  PASS  lanca_n3_pouso_saco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_caixa_barco.png: o atlas custa menos do que o quadro
+  PASS  lingada_caixa_barco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_caixa_g0.png: o atlas custa menos do que o quadro
+  PASS  lingada_caixa_g0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_caixa_g1.png: o atlas custa menos do que o quadro
+  PASS  lingada_caixa_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_caixa_g2.png: o atlas custa menos do que o quadro
+  PASS  lingada_caixa_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_caixa_g3.png: o atlas custa menos do que o quadro
+  PASS  lingada_caixa_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_caixa_g4.png: o atlas custa menos do que o quadro
+  PASS  lingada_caixa_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_caixa_g5.png: o atlas custa menos do que o quadro
+  PASS  lingada_caixa_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_caixa_g6.png: o atlas custa menos do que o quadro
+  PASS  lingada_caixa_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_caixa_pilha.png: o atlas custa menos do que o quadro
+  PASS  lingada_caixa_pilha.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_conteiner_barco.png: o atlas custa menos do que o quadro
+  PASS  lingada_conteiner_barco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_conteiner_g0.png: o atlas custa menos do que o quadro
+  PASS  lingada_conteiner_g0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_conteiner_g1.png: o atlas custa menos do que o quadro
+  PASS  lingada_conteiner_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_conteiner_g2.png: o atlas custa menos do que o quadro
+  PASS  lingada_conteiner_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_conteiner_g3.png: o atlas custa menos do que o quadro
+  PASS  lingada_conteiner_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_conteiner_g4.png: o atlas custa menos do que o quadro
+  PASS  lingada_conteiner_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_conteiner_g5.png: o atlas custa menos do que o quadro
+  PASS  lingada_conteiner_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_conteiner_g6.png: o atlas custa menos do que o quadro
+  PASS  lingada_conteiner_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_conteiner_pilha.png: o atlas custa menos do que o quadro
+  PASS  lingada_conteiner_pilha.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_caixa_barco.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_caixa_barco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_caixa_g0.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_caixa_g0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_caixa_g1.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_caixa_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_caixa_g2.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_caixa_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_caixa_g3.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_caixa_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_caixa_g4.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_caixa_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_caixa_g5.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_caixa_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_caixa_g6.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_caixa_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_caixa_pouso.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_caixa_pouso.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_conteiner_barco.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_conteiner_barco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_conteiner_g0.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_conteiner_g0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_conteiner_g1.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_conteiner_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_conteiner_g2.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_conteiner_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_conteiner_g3.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_conteiner_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_conteiner_g4.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_conteiner_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_conteiner_g5.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_conteiner_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_conteiner_g6.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_conteiner_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_conteiner_pouso.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_conteiner_pouso.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_peixe_barco.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_peixe_barco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_peixe_g0.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_peixe_g0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_peixe_g1.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_peixe_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_peixe_g2.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_peixe_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_peixe_g3.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_peixe_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_peixe_g4.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_peixe_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_peixe_g5.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_peixe_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_peixe_g6.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_peixe_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_peixe_pouso.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_peixe_pouso.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_saco_barco.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_saco_barco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_saco_g0.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_saco_g0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_saco_g1.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_saco_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_saco_g2.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_saco_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_saco_g3.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_saco_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_saco_g4.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_saco_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_saco_g5.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_saco_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_saco_g6.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_saco_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_n3_saco_pouso.png: o atlas custa menos do que o quadro
+  PASS  lingada_n3_saco_pouso.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_peixe_barco.png: o atlas custa menos do que o quadro
+  PASS  lingada_peixe_barco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_peixe_g0.png: o atlas custa menos do que o quadro
+  PASS  lingada_peixe_g0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_peixe_g1.png: o atlas custa menos do que o quadro
+  PASS  lingada_peixe_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_peixe_g2.png: o atlas custa menos do que o quadro
+  PASS  lingada_peixe_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_peixe_g3.png: o atlas custa menos do que o quadro
+  PASS  lingada_peixe_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_peixe_g4.png: o atlas custa menos do que o quadro
+  PASS  lingada_peixe_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_peixe_g5.png: o atlas custa menos do que o quadro
+  PASS  lingada_peixe_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_peixe_g6.png: o atlas custa menos do que o quadro
+  PASS  lingada_peixe_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_peixe_pilha.png: o atlas custa menos do que o quadro
+  PASS  lingada_peixe_pilha.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_saco_barco.png: o atlas custa menos do que o quadro
+  PASS  lingada_saco_barco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_saco_g0.png: o atlas custa menos do que o quadro
+  PASS  lingada_saco_g0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_saco_g1.png: o atlas custa menos do que o quadro
+  PASS  lingada_saco_g1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_saco_g2.png: o atlas custa menos do que o quadro
+  PASS  lingada_saco_g2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_saco_g3.png: o atlas custa menos do que o quadro
+  PASS  lingada_saco_g3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_saco_g4.png: o atlas custa menos do que o quadro
+  PASS  lingada_saco_g4.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_saco_g5.png: o atlas custa menos do que o quadro
+  PASS  lingada_saco_g5.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_saco_g6.png: o atlas custa menos do que o quadro
+  PASS  lingada_saco_g6.png: o quadro reconstruído é o desenho do arquivo
+  PASS  lingada_saco_pilha.png: o atlas custa menos do que o quadro
+  PASS  lingada_saco_pilha.png: o quadro reconstruído é o desenho do arquivo
+  PASS  marcador.png: o atlas custa menos do que o quadro
+  PASS  marcador.png: o quadro reconstruído é o desenho do arquivo
+  PASS  maria_farinha.png: o atlas custa menos do que o quadro
+  PASS  maria_farinha.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pallet.png: o atlas custa menos do que o quadro
+  PASS  pallet.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pier_n1.png: o atlas custa menos do que o quadro
+  PASS  pier_n1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pier_n2.png: o atlas custa menos do que o quadro
+  PASS  pier_n2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pier_n3.png: o atlas custa menos do que o quadro
+  PASS  pier_n3.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pier_vazio.png: o atlas custa menos do que o quadro
+  PASS  pier_vazio.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pilha_caixa.png: o atlas custa menos do que o quadro
+  PASS  pilha_caixa.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pilha_caixotes.png: o atlas custa menos do que o quadro
+  PASS  pilha_caixotes.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pilha_conteiner.png: o atlas custa menos do que o quadro
+  PASS  pilha_conteiner.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pilha_n3_caixa.png: o atlas custa menos do que o quadro
+  PASS  pilha_n3_caixa.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pilha_n3_conteiner.png: o atlas custa menos do que o quadro
+  PASS  pilha_n3_conteiner.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pilha_n3_peixe.png: o atlas custa menos do que o quadro
+  PASS  pilha_n3_peixe.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pilha_n3_saco.png: o atlas custa menos do que o quadro
+  PASS  pilha_n3_saco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pilha_peixe.png: o atlas custa menos do que o quadro
+  PASS  pilha_peixe.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pilha_saco.png: o atlas custa menos do que o quadro
+  PASS  pilha_saco.png: o quadro reconstruído é o desenho do arquivo
+  PASS  pneus.png: o atlas custa menos do que o quadro
+  PASS  pneus.png: o quadro reconstruído é o desenho do arquivo
+  PASS  poste.png: o atlas custa menos do que o quadro
+  PASS  poste.png: o quadro reconstruído é o desenho do arquivo
+  PASS  poste_luz.png: o atlas custa menos do que o quadro
+  PASS  poste_luz.png: o quadro reconstruído é o desenho do arquivo
+  PASS  quero_quero.png: o atlas custa menos do que o quadro
+  PASS  quero_quero.png: o quadro reconstruído é o desenho do arquivo
+  PASS  retrato_arlindo_contrariado.png fica fora do atlas com o quadro cheio
+  PASS  retrato_arlindo_pressao.png fica fora do atlas com o quadro cheio
+  PASS  retrato_arlindo_sorriso.png fica fora do atlas com o quadro cheio
+  PASS  retrato_cida_contente.png fica fora do atlas com o quadro cheio
+  PASS  retrato_cida_preocupada.png fica fora do atlas com o quadro cheio
+  PASS  retrato_cida_seria.png fica fora do atlas com o quadro cheio
+  PASS  retrato_ribeiro_cordial.png fica fora do atlas com o quadro cheio
+  PASS  retrato_ribeiro_formal.png fica fora do atlas com o quadro cheio
+  PASS  retrato_ribeiro_grave.png fica fora do atlas com o quadro cheio
+  PASS  retrato_toninho_calmo.png fica fora do atlas com o quadro cheio
+  PASS  retrato_toninho_ironico.png fica fora do atlas com o quadro cheio
+  PASS  retrato_toninho_serio.png fica fora do atlas com o quadro cheio
+  PASS  tartaruga_verde.png: o atlas custa menos do que o quadro
+  PASS  tartaruga_verde.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_guincho_0.png: o atlas custa menos do que o quadro
+  PASS  trab_h_guincho_0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_guincho_1.png: o atlas custa menos do que o quadro
+  PASS  trab_h_guincho_1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_leva_0.png: o atlas custa menos do que o quadro
+  PASS  trab_h_leva_0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_leva_1.png: o atlas custa menos do que o quadro
+  PASS  trab_h_leva_1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_leva_2.png: o atlas custa menos do que o quadro
+  PASS  trab_h_leva_2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_pilha_0.png: o atlas custa menos do que o quadro
+  PASS  trab_h_pilha_0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_pilha_1.png: o atlas custa menos do que o quadro
+  PASS  trab_h_pilha_1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_volta_0.png: o atlas custa menos do que o quadro
+  PASS  trab_h_volta_0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_volta_1.png: o atlas custa menos do que o quadro
+  PASS  trab_h_volta_1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_h_volta_2.png: o atlas custa menos do que o quadro
+  PASS  trab_h_volta_2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_guincho_0.png: o atlas custa menos do que o quadro
+  PASS  trab_m_guincho_0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_guincho_1.png: o atlas custa menos do que o quadro
+  PASS  trab_m_guincho_1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_leva_0.png: o atlas custa menos do que o quadro
+  PASS  trab_m_leva_0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_leva_1.png: o atlas custa menos do que o quadro
+  PASS  trab_m_leva_1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_leva_2.png: o atlas custa menos do que o quadro
+  PASS  trab_m_leva_2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_parado.png: o atlas custa menos do que o quadro
+  PASS  trab_m_parado.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_pilha_0.png: o atlas custa menos do que o quadro
+  PASS  trab_m_pilha_0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_pilha_1.png: o atlas custa menos do que o quadro
+  PASS  trab_m_pilha_1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_volta_0.png: o atlas custa menos do que o quadro
+  PASS  trab_m_volta_0.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_volta_1.png: o atlas custa menos do que o quadro
+  PASS  trab_m_volta_1.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trab_m_volta_2.png: o atlas custa menos do que o quadro
+  PASS  trab_m_volta_2.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador.png: o atlas custa menos do que o quadro
+  PASS  trabalhador.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_adulto_amarela.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_adulto_amarela.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_adulto_branca.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_adulto_branca.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_adulto_indigena.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_adulto_indigena.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_adulto_preta.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_adulto_preta.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_jovem_amarela.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_jovem_amarela.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_jovem_branca.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_jovem_branca.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_jovem_indigena.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_jovem_indigena.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_jovem_parda.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_jovem_parda.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_jovem_preta.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_jovem_preta.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_veterano_amarela.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_veterano_amarela.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_veterano_branca.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_veterano_branca.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_veterano_indigena.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_veterano_indigena.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_veterano_parda.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_veterano_parda.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_homem_veterano_preta.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_homem_veterano_preta.png: o quadro reconstruído é o desenho do arquivo
+  PASS  trabalhador_mulher_adulto_amarela.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_adulto_branca.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_adulto_indigena.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_adulto_parda.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_adulto_preta.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_jovem_amarela.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_jovem_branca.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_jovem_indigena.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_jovem_parda.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_jovem_preta.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_veterano_amarela.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_veterano_branca.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_veterano_indigena.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_veterano_parda.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_mulher_veterano_preta.png fica fora do atlas com o quadro cheio
+  PASS  trabalhador_retrato.png: o atlas custa menos do que o quadro
+  PASS  trabalhador_retrato.png: o quadro reconstruído é o desenho do arquivo
+
+=== ASSET OK — 100 assets conferidos, 249 props em atlas ===

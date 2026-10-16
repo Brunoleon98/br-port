@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 15/10/2026 — PR #133 fundido; recorte de ajuda aprovado (`114`)
+> **Atualização:** 15/10/2026 — PR #133 fundido; ajuda implementada localmente (`115`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -112,13 +112,12 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
-**Cancelamento integrado na `111`**, após medição `110`: equipe livre no dia,
-−5, multa de 10%, contas, registro 5 e migração 17→18. PR #133 fundido em
-`f03302d`; Testes e Captura verdes no head `9dc0732` e no merge.
+**Cancelamento na main (`111`, PR #133):** equipe livre no dia, −5, multa de
+10%, contas, registro 5 e migração 17→18. Medição na `110`; CI verde no merge.
 Pesquisa `112`: `PESQUISA_RECURSOS_BASICOS_2026-10-15.md`; revisão preservada.
-Bruno aprovou o recorte de **Como jogar/glossário** (`113`, `114`):
-`RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`. Implementação e novo PR ainda
-sem autorização.
+**Como jogar/glossário local (`114`, `115`):** inicial e pausa, seis assuntos
+e glossário compartilhados. Recorte em `RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`;
+consulta preserva a partida. Leitura e telefone pendentes; novo PR sem autorização.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
 A `107` permanece local e separada, sem autorização de publicação nem teste

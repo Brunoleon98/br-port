@@ -54,6 +54,7 @@ const PainelMetaScene := preload("res://scenes/panels/PainelMeta.tscn")
 const DiarioFase2Scene := preload("res://scenes/panels/DiarioFase2.tscn")
 const PainelParcelaScene := preload("res://scenes/panels/PainelParcela.tscn")
 const PainelAjustesScene := preload("res://scenes/panels/PainelAjustes.tscn")
+const ComoJogarScene := preload("res://scenes/panels/PainelComoJogar.tscn")
 # A tela inicial é uma CENA e não um painel: sair para ela troca a árvore
 # inteira, e é por isso que ela não está com os painéis acima (`066`).
 const CENA_INICIAL := "res://scenes/TelaInicial.tscn"
@@ -963,6 +964,14 @@ func _subir_ganho(doca: int, valor: int) -> void:
 func _notification(qual: int) -> void:
 	if qual != NOTIFICATION_WM_GO_BACK_REQUEST:
 		return
+	# A consulta tem navegação própria também na pausa do fim da partida.
+	# Não libera o Voltar de decisões obrigatórias que estejam por baixo.
+	if is_instance_valid(_overlay_layer) and _overlay_layer.get_child_count() > 0:
+		var consulta := _overlay_layer.get_child(_overlay_layer.get_child_count() - 1)
+		if consulta.scene_file_path == ComoJogarScene.resource_path:
+			if not consulta.is_queued_for_deletion():
+				consulta.call("_fechar")
+			return
 	if GameState.phase != GameState.ESTADO_JOGANDO:
 		return
 
@@ -1087,6 +1096,15 @@ func _on_pause_pressed() -> void:
 	menu.connect("pedir_ajustes", func() -> void:
 		_abrir_painel(PainelAjustesScene).call("setup"))
 	menu.connect("sair_para_inicio", _sair_para_inicio)
+	menu.connect("pedir_como_jogar", _abrir_como_jogar)
+
+
+func _abrir_como_jogar() -> void:
+	# A pausa fica na árvore. Pedidos repetidos não empilham consultas.
+	for filho in _overlay_layer.get_children():
+		if filho.scene_file_path == ComoJogarScene.resource_path and not filho.is_queued_for_deletion():
+			return
+	_abrir_painel(ComoJogarScene)
 
 
 # «SALVAR E SAIR» — da pausa para a tela inicial (`066`).
