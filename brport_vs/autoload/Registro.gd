@@ -81,7 +81,8 @@ extends Node
 # deixou de ser fim de jogo — e o `numero_da_fase` no cabeçalho. Numa partida
 # da 3 as três quitações gravavam `fim` com `ganhou`; na 4 gravam `fase`, e o
 # `fim` que vier depois é o da Fase 2.
-const VERSAO := 4
+# A 5 observa cancelamento; versões anteriores não distinguiam essa escolha.
+const VERSAO := 5
 
 # A pasta sai do `ArmazemLocal` (`061`): o `teste_registro` e o
 # `gravar_partidas` APAGAM tudo o que lá está, e o `_podar()` de cada tiro
@@ -141,6 +142,7 @@ func _ready() -> void:
 	_GS.obra_concluida.connect(_ao_concluir)
 	_GS.rival_offer_triggered.connect(_ao_abrir_oferta)
 	_GS.atracou.connect(_ao_atracar)
+	_GS.servico_cancelado.connect(_ao_cancelar_servico)
 	_GS.negociacao_resolvida.connect(_ao_negociar)
 	_GS.debt_due.connect(_ao_vencer_parcela)
 	_GS.segunda_chance_aceita.connect(_ao_aceitar_segunda_chance)
@@ -402,6 +404,13 @@ func _ao_atracar(doca: int, barco: Dictionary, valores_ao_largo: Array) -> void:
 		"classe": String(barco["classe"]), "valor": int(barco["value"]),
 		"paciencia": int(barco["paciencia"]), "ao_largo": valores_ao_largo,
 	})
+
+
+func _ao_cancelar_servico(evento: Dictionary) -> void:
+	var linha := evento.duplicate(true)
+	linha["e"] = "cancelamento"
+	linha["t"] = evento["dia"]
+	_gravar(linha)
 
 
 # O que o jogador ESCOLHEU na contra-oferta, e quanto tempo levou a escolher.

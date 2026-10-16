@@ -1,5 +1,7 @@
 extends Control
 
+const CancelarServicoScene := preload("res://scenes/panels/PainelCancelarServico.tscn")
+
 # ============================================================
 # BR Port VS — Main
 #
@@ -152,6 +154,7 @@ func _ready() -> void:
 	# abrem cena nenhuma — se gravasse por omissão, medir o balanceamento
 	# escreveria 1.800 arquivos e o custo de os escrever entraria na medida.
 	Registro.armar()
+	GameState.gerenciamento_solicitado.connect(_gerenciar_servico)
 
 	_advance_button.pressed.connect(_on_advance_pressed)
 	_upgrade_button.pressed.connect(_on_upgrade_pressed)
@@ -845,6 +848,8 @@ var _tw_caixa: Tween
 
 
 func _on_advance_pressed() -> void:
+	if get_tree().has_group("confirmacao_cancelamento"):
+		return
 	# UM TOQUE A MEIO DA VIRADA ACABA-A JÁ, e vira o dia seguinte — quem joga
 	# depressa não fica mais lento (escolha do Bruno, `078`).
 	_concluir_virada()
@@ -1006,6 +1011,14 @@ func _ao_falar(personagem: String, texto: String, retrato: Texture2D) -> void:
 
 func _on_upgrade_pressed() -> void:
 	_abrir_painel(UpgradePanelScene)
+
+
+func _gerenciar_servico(doca: int, id: int) -> void:
+	if _overlay_layer.get_child_count() > 0:
+		return
+	if GameState.custos_do_cancelamento(doca, id).is_empty():
+		return
+	_abrir_painel(CancelarServicoScene).setup(doca, id)
 
 
 # AS QUATRO PÍLULAS DO HUD SÃO TOCÁVEIS — item do primeiro playtest (02/09):

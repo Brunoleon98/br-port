@@ -25,126 +25,133 @@ A coluna **Fonte** diz de onde o número vem:
 não é exagero: uma rodada curta tem margem de dezenas de pontos, e já
 foi lida como regressão de balanceamento uma vez.
 
+## Geral
+
+| Constante | Valor | Fonte | Por quê | Onde |
+|---|---:|---|---|---|
+| `CANCELAMENTO_REPUTACAO` | 5.0 | TUNING | TUNING: custo medido na 110 e aceite na 111 | `GameState.gd:99` |
+| `CANCELAMENTO_MULTA` | 0.1 | TUNING | TUNING: fração do acordo, sem bônus, medida na 110 | `GameState.gd:100` |
+
 ## TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `ESCALA_MONETARIA_GDD` | 1.0 | TUNING | ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em que foram feitos importa para quem vier reler isto. … | `GameState.gd:137` |
-| `START_CASH` | 400.000 | TUNING | ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em que foram feitos importa para quem vier reler isto. … | `GameState.gd:138` |
-| `SALARY_PER_WORKER` | 6.000 | TUNING (GDD) | TUNING sobre a linha "Margem operacional base" do GDD, reescalada | `GameState.gd:139` |
-| `MAINTENANCE_WEEKLY` | 40.000 | TUNING (GDD) | TUNING sobre a mesma linha do GDD — o custo fixo que separa os perfis | `GameState.gd:140` |
-| `DOCKS_BASE` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:144` |
-| `WORKERS_BASE` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:145` |
-| `UPGRADE_EXTRA_DOCKS` | 1 | regra | O que cada píer reconstruído traz. … | `GameState.gd:149` |
-| `UPGRADE_EXTRA_WORKERS` | 1 | regra | O que cada píer reconstruído traz. … | `GameState.gd:150` |
+| `ESCALA_MONETARIA_GDD` | 1.0 | TUNING | ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em que foram feitos importa para quem vier reler isto. … | `GameState.gd:143` |
+| `START_CASH` | 400.000 | TUNING | ESCALA REALISTA E JOGO TRANQUILO (02/09) — os dois de uma vez, e a ordem em que foram feitos importa para quem vier reler isto. … | `GameState.gd:144` |
+| `SALARY_PER_WORKER` | 6.000 | TUNING (GDD) | TUNING sobre a linha "Margem operacional base" do GDD, reescalada | `GameState.gd:145` |
+| `MAINTENANCE_WEEKLY` | 40.000 | TUNING (GDD) | TUNING sobre a mesma linha do GDD — o custo fixo que separa os perfis | `GameState.gd:146` |
+| `DOCKS_BASE` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:150` |
+| `WORKERS_BASE` | 1 | GDD 7 | O porto ABRE PARADO. … | `GameState.gd:151` |
+| `UPGRADE_EXTRA_DOCKS` | 1 | regra | O que cada píer reconstruído traz. … | `GameState.gd:155` |
+| `UPGRADE_EXTRA_WORKERS` | 1 | regra | O que cada píer reconstruído traz. … | `GameState.gd:156` |
 
 ## ESTRUTURAS
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `GUINDASTE_CORTA_TURNOS` | 1 | TUNING | TUNING | `GameState.gd:239` |
-| `ARMAZEM_BONUS` | 0.5 | TUNING | TUNING | `GameState.gd:247` |
-| `PATIO_BONUS_CARGA` | 0.3 | TUNING | TUNING | `GameState.gd:251` |
-| `PATIO_BONUS_PIER` | 1.0 | TUNING | TUNING | `GameState.gd:252` |
-| `ESCRITORIO_DESCONTO_SALARIO` | 0.5 | TUNING | TUNING | `GameState.gd:256` |
+| `GUINDASTE_CORTA_TURNOS` | 1 | TUNING | TUNING | `GameState.gd:245` |
+| `ARMAZEM_BONUS` | 0.5 | TUNING | TUNING | `GameState.gd:253` |
+| `PATIO_BONUS_CARGA` | 0.3 | TUNING | TUNING | `GameState.gd:257` |
+| `PATIO_BONUS_PIER` | 1.0 | TUNING | TUNING | `GameState.gd:258` |
+| `ESCRITORIO_DESCONTO_SALARIO` | 0.5 | TUNING | TUNING | `GameState.gd:262` |
 
 ## MOTIVO DA ESCALA
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `PIER_SLOTS` | 6 | GDD 7 | GDD "Margem operacional base": 6 vagas de píer | `GameState.gd:305` |
-| `PIER_RATE_PER_SLOT` | 5.000 | GDD 7 | GDD "Margem operacional base", reescalado: renda fixa semanal | `GameState.gd:306` |
+| `PIER_SLOTS` | 6 | GDD 7 | GDD "Margem operacional base": 6 vagas de píer | `GameState.gd:311` |
+| `PIER_RATE_PER_SLOT` | 5.000 | GDD 7 | GDD "Margem operacional base", reescalado: renda fixa semanal | `GameState.gd:312` |
 
 ## A FILA NO FUNDEADOURO (`docs/decisoes/083`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `FILA_LUGARES` | 3 | GDD 7 | O barco já não nasce na doca: … | `GameState.gd:378` |
-| `PACIENCIA_FILA` | 2 | TUNING | TUNING | `GameState.gd:382` |
-| `BOAT_ARRIVAL_CHANCE` | 0.75 | TUNING | TUNING | `GameState.gd:386` |
+| `FILA_LUGARES` | 3 | GDD 7 | O barco já não nasce na doca: … | `GameState.gd:384` |
+| `PACIENCIA_FILA` | 2 | TUNING | TUNING | `GameState.gd:388` |
+| `BOAT_ARRIVAL_CHANCE` | 0.75 | TUNING | TUNING | `GameState.gd:392` |
 
 ## Contra-oferta do Arlindo (GDD: "Limiar de paciência do cliente")
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `RIVAL_TRIGGER_CHANCE` | 0.3 | TUNING (GDD) | Protótipo validado (Arlindo — dumping) | `GameState.gd:394` |
-| `RIVAL_DISCOUNT` | 0.15 | TUNING (GDD) | "Igualar rival −15%" (GDD) | `GameState.gd:395` |
-| `RIVAL_HALF_DISCOUNT` | 0.07 | TUNING (GDD) | "Cortar metade −7%" (GDD) | `GameState.gd:396` |
-| `RIVAL_HALF_CHANCE` | 0.7 | TUNING (GDD) | TUNING: chance de o cliente aceitar o meio-termo | `GameState.gd:397` |
-| `RIVAL_KEEP_CHANCE` | 0.45 | TUNING (GDD) | TUNING: chance de o cliente aceitar pagar cheio | `GameState.gd:398` |
-| `RIVAL_DISCOUNT_AFTER_FAIL` | 0.28 | TUNING | TUNING | `GameState.gd:401` |
-| `RIVAL_PATIENCE` | 2 | GDD 7 | GDD: máx. 2 tentativas antes de o cliente encerrar | `GameState.gd:402` |
-| `REPUTACAO_EFEITO_NEGOCIACAO` | 0.5 | TUNING | TUNING — o quanto a reputação pesa na aposta da contra-oferta (item A3). … | `GameState.gd:407` |
+| `RIVAL_TRIGGER_CHANCE` | 0.3 | TUNING (GDD) | Protótipo validado (Arlindo — dumping) | `GameState.gd:400` |
+| `RIVAL_DISCOUNT` | 0.15 | TUNING (GDD) | "Igualar rival −15%" (GDD) | `GameState.gd:401` |
+| `RIVAL_HALF_DISCOUNT` | 0.07 | TUNING (GDD) | "Cortar metade −7%" (GDD) | `GameState.gd:402` |
+| `RIVAL_HALF_CHANCE` | 0.7 | TUNING (GDD) | TUNING: chance de o cliente aceitar o meio-termo | `GameState.gd:403` |
+| `RIVAL_KEEP_CHANCE` | 0.45 | TUNING (GDD) | TUNING: chance de o cliente aceitar pagar cheio | `GameState.gd:404` |
+| `RIVAL_DISCOUNT_AFTER_FAIL` | 0.28 | TUNING | TUNING | `GameState.gd:407` |
+| `RIVAL_PATIENCE` | 2 | GDD 7 | GDD: máx. 2 tentativas antes de o cliente encerrar | `GameState.gd:408` |
+| `REPUTACAO_EFEITO_NEGOCIACAO` | 0.5 | TUNING | TUNING — o quanto a reputação pesa na aposta da contra-oferta (item A3). … | `GameState.gd:413` |
 
 ## REPUTAÇÃO COMERCIAL
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `REPUTATION_GAIN_SERVED` | 0.8 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:424` |
-| `REPUTATION_LOSS_LOST` | 2.5 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:425` |
-| `REPUTATION_GAIN_RIVAL_MATCHED` | 1.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:426` |
-| `REPUTATION_LOSS_RIVAL_REFUSED` | 8.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:427` |
+| `REPUTATION_GAIN_SERVED` | 0.8 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:430` |
+| `REPUTATION_LOSS_LOST` | 2.5 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:431` |
+| `REPUTATION_GAIN_RIVAL_MATCHED` | 1.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:432` |
+| `REPUTATION_LOSS_RIVAL_REFUSED` | 8.0 | TUNING | TUNING — a reputação MEXE na negociação (ver `_chance_com_reputacao`), e por isso estes números deixaram de ser cosméticos. … | `GameState.gd:433` |
 
 ## CADÊNCIA
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `TURNS_PER_WEEK` | 7 | TUNING | TUNING (`085`) — a semana tem sete dias, e é a do calendário inteiro, não a de uma fase: … | `GameState.gd:433` |
+| `TURNS_PER_WEEK` | 7 | TUNING | TUNING (`085`) — a semana tem sete dias, e é a do calendário inteiro, não a de uma fase: … | `GameState.gd:439` |
 
 ## ANTECIPAÇÃO
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `JUROS_POR_TURNO` | 0.0025 | TUNING | TUNING: fração do principal abatida por turno de antecipação | `GameState.gd:563` |
+| `JUROS_POR_TURNO` | 0.0025 | TUNING | TUNING: fração do principal abatida por turno de antecipação | `GameState.gd:569` |
 
 ## A SEGUNDA CHANCE DO SR. RIBEIRO (`docs/decisoes/102`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `SEGUNDA_CHANCE_ACRESCIMO` | 0.12 | TUNING | TUNING: o que o empréstimo da segunda chance custa, sobre o emprestado | `GameState.gd:584` |
+| `SEGUNDA_CHANCE_ACRESCIMO` | 0.12 | TUNING | TUNING: o que o empréstimo da segunda chance custa, sobre o emprestado | `GameState.gd:590` |
 
 ## SAVE
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `SAVE_ARQUIVO` | `savegame.json` | regra | O NOME é constante; o CAMINHO decide-o o `ArmazemLocal`, por processo: … | `GameState.gd:592` |
-| `SAVE_VERSION` | 17 | regra | VERSÃO DO SAVE — subir quando a forma ou a interpretação do estado mudar. … | `GameState.gd:658` |
-| `SAVE_VERSAO_MINIMA` | 14 | regra | O PISO DA MIGRAÇÃO (`098`). … | `GameState.gd:676` |
+| `SAVE_ARQUIVO` | `savegame.json` | regra | O NOME é constante; o CAMINHO decide-o o `ArmazemLocal`, por processo: … | `GameState.gd:598` |
+| `SAVE_VERSION` | 18 | regra | VERSÃO DO SAVE — subir quando a forma ou a interpretação do estado mudar. … | `GameState.gd:666` |
+| `SAVE_VERSAO_MINIMA` | 14 | regra | O PISO DA MIGRAÇÃO (`098`). … | `GameState.gd:684` |
 
 ## OS ESPAÇOS DE SAVE (`docs/decisoes/066`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `ESPACOS` | 3 | regra | Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do Bruno no lugar do «Novo jogo (apaga progresso)» que vivia na pausa. … | `GameState.gd:699` |
+| `ESPACOS` | 3 | regra | Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do Bruno no lugar do «Novo jogo (apaga progresso)» que vivia na pausa. … | `GameState.gd:707` |
 
 ## OS DOIS NOMES
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:831` |
-| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:838` |
-| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:843` |
+| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:839` |
+| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:846` |
+| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:851` |
 
 ## OS ESTADOS DO TURNO (M9, `104`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `ESTADO_JOGANDO` | `playing` | regra | O que o turno espera: … | `GameState.gd:857` |
-| `ESTADO_OFERTA` | `rival_offer` | regra | O que o turno espera: … | `GameState.gd:858` |
-| `ESTADO_COBRANCA` | `debt_payment` | regra | O que o turno espera: … | `GameState.gd:859` |
-| `ESTADO_FIM` | `game_over` | regra | O que o turno espera: … | `GameState.gd:860` |
+| `ESTADO_JOGANDO` | `playing` | regra | O que o turno espera: … | `GameState.gd:865` |
+| `ESTADO_OFERTA` | `rival_offer` | regra | O que o turno espera: … | `GameState.gd:866` |
+| `ESTADO_COBRANCA` | `debt_payment` | regra | O que o turno espera: … | `GameState.gd:867` |
+| `ESTADO_FIM` | `game_over` | regra | O que o turno espera: … | `GameState.gd:868` |
 
 ## A FASE EM JOGO (`094`, `104`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `CALENDARIO_SEM_PRAZO_SEMANAS` | 4 | regra | Quantas semanas o calendário mostra numa fase sem prazo: … | `GameState.gd:1321` |
+| `CALENDARIO_SEM_PRAZO_SEMANAS` | 4 | regra | Quantas semanas o calendário mostra numa fase sem prazo: … | `GameState.gd:1331` |
 
 ## TURN ADVANCE
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `MOTIVO_DA_FASE_1` | `Você quitou as três parcelas e manteve o porto no azul!` | regra | A frase do balanço de quem fecha a Fase 1. … | `GameState.gd:2034` |
+| `MOTIVO_DA_FASE_1` | `Você quitou as três parcelas e manteve o porto no azul!` | regra | A frase do balanço de quem fecha a Fase 1. … | `GameState.gd:2108` |
 
 ## As fases — o que muda de uma para a outra
 

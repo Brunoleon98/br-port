@@ -112,6 +112,16 @@ func _rodar() -> void:
 		for _b in range(GS.bercos_livres()):
 			if GS.atracagem_pendente() == Vector2i.ZERO or not GS.atracar(0, false):
 				break
+		# A 18 precisa de uma multa REAL no dia ainda aberto, para provar que
+		# retomar não perde o lançamento nem cobra de novo na virada.
+		if GS.numero_da_fase == 2 and GS.meta_concluida and int(GS.metrics["servicos_cancelados"]) == 0:
+			for d in range(GS.docks.size()):
+				var b = GS.docks[d]["boat"]
+				if b != null:
+					var custos: Dictionary = GS.custos_do_cancelamento(d, int(b["id"]))
+					if not custos.is_empty():
+						GS.cancelar_servico(d, int(b["id"]), custos)
+						break
 		if faltas(GS) == ["uma obra em andamento"]:
 			GS.comprar_estrutura("escritorio")
 		if faltas(GS).is_empty():
@@ -138,6 +148,8 @@ func _rodar() -> void:
 # corrente — lá, lida do arquivo; aqui, do estado vivo, para saber onde parar.
 static func faltas(GS: Node) -> Array[String]:
 	var falta: Array[String] = []
+	if int(GS.metrics["servicos_cancelados"]) == 0 or int(GS.metrics["multas_cancelamento"]) == 0:
+		falta.append("um serviço cancelado com multa")
 	if GS.phase != "playing":
 		falta.append("a partida a correr")
 	if int(GS.numero_da_fase) < 2:

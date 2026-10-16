@@ -29,7 +29,9 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
-| `BRIEFING_PROXIMA_CONVERSA_2026-10-15b.md` | 15/10 | Lateral ao de 15/10, que segue sendo o rumo: o catálogo de defeitos já provados (`111`), 37 mutantes reinjetados pelo CI a cada PR, e o A4 do áudio que não via a espera mínima |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-15c.md` | 15/10 | Pesquisa de novos recursos básicos na `112`, estudos preservados e publicação do PR autorizada |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-15b.md` | 15/10 | Cancelamento aceite e integrado na `111`, entrega local, revisão dos recursos básicos e escolha seguinte do Bruno |
+| `VERIFICACAO_CANCELAMENTO_2026-10-15/` | 15/10 | Provas da ação integrada: paridade com a `110`, migração, contabilidade, registro, interface, controles e capturas |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-15.md` | 15/10 | Proposta `109` e medição `110` no PR #132; recomendação de cinco pontos e 10%, com implementação e migração ainda sem aceite |
 | `MEDICOES_CANCELAMENTO_2026-10-15/` | 15/10 | Bancada da `110`: 600 partidas por perfil, varredura de custos e políticas da proposta `109`; sem implementação no jogo |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-14e.md` | 14/10 | Cancelamento analisado na proposta `109`, sem aceite nem implementação; PR #131 fundido, correção móvel `107` separada |

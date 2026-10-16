@@ -1992,3 +1992,15 @@ upgrades de 05/09 seguiram, e pela mesma razão: fase nova trava o
    regras pequenas da narrativa.
    A1 já teve jogo no telefone e A3 já tem efeito medido; não voltar ao ponto
    de partida histórico desta seção.
+
+## Da §7 — proposta e medição do cancelamento, aceites em 15/10 (`111`)
+
+**O recorte escolhido é cancelar um serviço contratado em andamento.**
+A análise está na proposta `109`, ainda **sem aceite e sem implementação**:
+saída definitiva, equipe livre no mesmo dia, perda da receita, −5 de reputação
+e multa de 10% do valor acordado, com confirmação e save 18 com migração
+propostos. A medição autorizada está na `110`: 600 partidas por perfil,
+políticas de troca e varredura separada de multa/reputação; recomenda manter
+o candidato, ainda sem aceite para implementar ou migrar o save.
+Não se trata de cancelar obras. Mais trabalhadores por píer e crédito
+voluntário ficam para depois.

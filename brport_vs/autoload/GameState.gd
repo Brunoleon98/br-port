@@ -92,6 +92,12 @@ signal negociacao_resolvida(acao: String, resultado: String, tentativa: int)
 # nada a disparava, porque nenhum sinal dizia o valor. Carrega a classe junto
 # para quem ouve poder comparar com a faixa dela em vez de com um número solto.
 signal contrato_fechado(valor: int, classe: String)
+signal gerenciamento_solicitado(doca: int, id: int)
+signal servico_cancelado(evento: Dictionary)
+
+# Candidato da bancada 110, aceite pelo Bruno na 111. A multa não inclui bônus.
+const CANCELAMENTO_REPUTACAO := 5.0 # TUNING: custo medido na 110 e aceite na 111
+const CANCELAMENTO_MULTA := 0.10    # TUNING: fração do acordo, sem bônus, medida na 110
 
 # ── TUNING: economia (fonte: GDD 7 — Sistemas > economia, Fase 1) ──
 #
@@ -655,14 +661,16 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # com o degrau, que escreve a Fase 1 nos saves de antes.
 # A 17 (`106`), autorizada com migração, guarda dias seguidos, primeiro
 # cargueiro e conquista. A 16 não conhecia o passado destes três marcos.
-const SAVE_VERSION := 17
+# A 18 (`111`), aceite com migração, guarda multas e contadores do
+# cancelamento; a 17 sobe com esses campos a zero, sem recomeçar a partida.
+const SAVE_VERSION := 18
 
 # O PISO DA MIGRAÇÃO (`098`). Até a 14, save de outra versão era descartado,
 # e servia ao protótipo, onde recomeçar custa uma partida de teste. Não serve
 # ao jogo publicado, que promete «você nunca precisa se preocupar em perder o
 # porto», e a resposta do Bruno ao D5 (11/10) foi a migração ENCADEADA:
-# cada versão nova traz o passo que lê a anterior, e um save da 14 chega à 17
-# por 14→15→16→17, sem ninguém escrever 14→17.
+# cada versão nova traz o passo que lê a anterior, e um save da 14 chega à
+# corrente pelos degraus, sem ninguém escrever um atalho desde o piso.
 #
 # As de baixo do piso foram recusadas pelas decisões que as subiram, com o
 # acordo do Bruno, e continuam: quem as recusa é a CADEIA, que não tem o passo
@@ -930,7 +938,7 @@ var nome_jogador: String = ""
 # `resumo_da_semana()` não o soma ao resultado, e o boletim mostra-o à parte.
 const SEMANA_ZERADA := {
 	"docagens": 0, "armazem": 0, "patio": 0, "pier": 0,
-	"salarios": 0, "manutencao": 0, "parcela": 0, "emprestimo": 0,
+	"salarios": 0, "manutencao": 0, "parcela": 0, "emprestimo": 0, "cancelamento": 0,
 }
 var semana_atual: Dictionary = SEMANA_ZERADA.duplicate()
 
@@ -943,7 +951,7 @@ var semana_atual: Dictionary = SEMANA_ZERADA.duplicate()
 # a meio de um turno mostraria uma soma parcial que muda enquanto se olha.
 const DIA_ZERADO := {
 	"docagens": 0, "armazem": 0, "patio": 0, "pier": 0,
-	"salarios": 0, "manutencao": 0, "parcela": 0,
+	"salarios": 0, "manutencao": 0, "parcela": 0, "cancelamento": 0,
 	"servidos": 0, "perdidos": 0, "turno": 0,
 }
 var dia_atual: Dictionary = DIA_ZERADO.duplicate()
@@ -980,6 +988,8 @@ const RECORDES_ZERADOS := {
 var _recordes: Dictionary = RECORDES_ZERADOS.duplicate(true)
 
 var metrics := {
+	"servicos_cancelados": 0,
+	"multas_cancelamento": 0,
 	"boats_served": 0,
 	"boats_lost": 0,
 	"rival_matched": 0,
@@ -1076,7 +1086,7 @@ func new_game() -> void:
 	rival_attempts_left = RIVAL_PATIENCE
 	end_reason = ""
 	won = false
-	metrics = {"boats_served": 0, "boats_lost": 0, "fila_desistiu": 0, "rival_matched": 0, "rival_refused": 0, "revenue": 0, "pier_income": 0}
+	metrics = {"boats_served": 0, "boats_lost": 0, "fila_desistiu": 0, "rival_matched": 0, "rival_refused": 0, "revenue": 0, "pier_income": 0, "servicos_cancelados": 0, "multas_cancelamento": 0}
 
 	docks.clear()
 	for i in range(DOCKS_BASE):
@@ -1485,11 +1495,71 @@ func desatracar(dock_index: int) -> bool:
 	return true
 
 
+# As duas metades da doca abrem a mesma confirmação. Sem dia operado,
+# preserva-se a devolução gratuita, inclusive a recusa com fila cheia.
+func tocar_doca(doca: int) -> void:
+	if phase != ESTADO_JOGANDO or doca < 0 or doca >= docks.size():
+		return
+	var barco = docks[doca]["boat"]
+	if barco == null:
+		return
+	if int(barco["progress"]) == 0:
+		desatracar(doca)
+	else:
+		gerenciamento_solicitado.emit(doca, int(barco["id"]))
+
+
+func custos_do_cancelamento(doca: int, id: int) -> Dictionary:
+	if phase != ESTADO_JOGANDO or doca < 0 or doca >= docks.size():
+		return {}
+	var barco = docks[doca]["boat"]
+	if barco == null or int(barco["id"]) != id:
+		return {}
+	if int(barco["progress"]) <= 0 or int(barco["progress"]) >= int(barco["op_turns"]):
+		return {}
+	if docks[doca]["worker_id"] == null or _find_worker(docks[doca]["worker_id"]) == null:
+		return {}
+	var multa := ceili(float(_valor_do_barco(doca)) * CANCELAMENTO_MULTA)
+	return {"dia": turn, "doca": doca, "uid": id,
+		"classe": barco["classe"], "motivo": barco["motivo"],
+		"operados": int(barco["progress"]), "total": int(barco["op_turns"]),
+		"valor_acordado": _valor_do_barco(doca), "receita_abandonada": receita_da_doca(doca),
+		"multa": multa, "caixa_antes": cash, "caixa_depois": cash - multa,
+		"rep_antes": reputation, "rep_depois": clampf(reputation - CANCELAMENTO_REPUTACAO, 0, 100)}
+
+
+# O orçamento exibido é revalidado inteiro: identidade impede cobrar outro
+# barco; valores impedem confirmar custos diferentes dos que foram lidos.
+# Nenhum fecho é antecipado e a multa já paga nunca é debitada na virada.
+func cancelar_servico(doca: int, id: int, confirmado: Dictionary) -> bool:
+	var evento := custos_do_cancelamento(doca, id)
+	if evento.is_empty() or evento != confirmado:
+		return false
+	var trabalhador = _find_worker(docks[doca]["worker_id"])
+	cash -= int(evento["multa"])
+	metrics["boats_lost"] += 1
+	metrics["servicos_cancelados"] += 1
+	metrics["multas_cancelamento"] += int(evento["multa"])
+	dia_atual["perdidos"] += 1
+	dia_atual["cancelamento"] += int(evento["multa"])
+	semana_atual["cancelamento"] += int(evento["multa"])
+	trabalhador["busy_turns"] = 0
+	docks[doca]["boat"] = null
+	docks[doca]["worker_id"] = null
+	_change_reputation(-CANCELAMENTO_REPUTACAO)
+	servico_cancelado.emit(evento.duplicate(true))
+	cash_changed.emit(cash)
+	roster_changed.emit()
+	message.emit("Serviço cancelado. Multa de %s; doca e trabalhador livres." % moeda(int(evento["multa"])), "warn", "doca")
+	save_game()
+	return true
+
+
 # A EQUIPE DO PÍER primeiro: o trabalhador nº N nasce com o píer N
 # (`novo_trabalhador()` numera por ordem de chegada, e cada píer traz um), e
 # atracar no berço N chama-o se ele estiver livre. É o que deixa o cartão da
 # doca mostrar sempre a mesma cara no mesmo píer. Só se ele estiver preso
-# noutro berço — o que só um `desatracar()` a meio pode produzir — vai o
+# noutro berço, por uma alocação anterior, vai o
 # primeiro livre.
 func _trabalhador_sem_doca(doca: int) -> int:
 	var primeiro := -1
@@ -1858,7 +1928,7 @@ func resumo_da_semana(semana: int) -> Dictionary:
 	var receita: int = int(semana_atual["docagens"]) + int(semana_atual["armazem"]) \
 		+ int(semana_atual["patio"]) + int(semana_atual["pier"])
 	var despesa: int = int(semana_atual["salarios"]) + int(semana_atual["manutencao"]) \
-		+ int(semana_atual["parcela"])
+		+ int(semana_atual["parcela"]) + int(semana_atual["cancelamento"])
 	var media := 0.0
 	for r in historico_semanas:
 		media += float(r)
@@ -1876,6 +1946,7 @@ func resumo_da_semana(semana: int) -> Dictionary:
 		"salarios": int(semana_atual["salarios"]),
 		"manutencao": int(semana_atual["manutencao"]),
 		"parcela": int(semana_atual["parcela"]),
+		"cancelamento": int(semana_atual["cancelamento"]),
 		# Fora do resultado, de propósito: ver `SEMANA_ZERADA`.
 		"emprestimo": int(semana_atual["emprestimo"]),
 		"receita": receita,
@@ -1911,7 +1982,7 @@ func resumo_do_dia() -> Dictionary:
 static func resultado_do_dia(dia: Dictionary) -> int:
 	var receita: int = int(dia["docagens"]) + int(dia["armazem"]) \
 		+ int(dia["patio"]) + int(dia["pier"])
-	var despesa: int = int(dia["salarios"]) + int(dia["manutencao"]) + int(dia["parcela"])
+	var despesa: int = int(dia["salarios"]) + int(dia["manutencao"]) + int(dia["parcela"]) + int(dia.get("cancelamento", 0))
 	return receita - despesa
 
 
@@ -1964,6 +2035,9 @@ func receita_da_doca(i: int) -> int:
 
 func projecao_do_dia() -> Dictionary:
 	var proj: Dictionary = DIA_ZERADO.duplicate()
+	# Já saiu do caixa hoje; aparece no resultado, sem nova cobrança no fecho.
+	proj["cancelamento"] = dia_atual["cancelamento"]
+	proj["perdidos"] = dia_atual["perdidos"]
 	proj["turno"] = turn
 	if phase != ESTADO_JOGANDO:
 		return proj
@@ -2894,6 +2968,17 @@ func _save_aceite(texto: String) -> Dictionary:
 	parsed = _migrar(parsed)
 	if parsed.is_empty() or int(parsed["versao"]) != SAVE_VERSION:
 		return {}
+	# Campos novos obrigatórios: a 17 ganha zero no degrau; uma 18 truncada
+	# não pode apagar multas já pagas por uma leitura com omissão.
+	for grupo in ["dia_atual", "dia_anterior", "semana_atual", "metrics"]:
+		if typeof(parsed.get(grupo)) != TYPE_DICTIONARY:
+			return {}
+		var chaves := ["servicos_cancelados", "multas_cancelamento"] if grupo == "metrics" else ["cancelamento"]
+		for chave in chaves:
+			var valor_novo = parsed[grupo].get(chave)
+			if typeof(valor_novo) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(valor_novo)) \
+					or float(valor_novo) != int(valor_novo) or int(valor_novo) < 0:
+				return {}
 	# A FASE DO ARQUIVO PRIMEIRO (`104`), e tudo o que vem abaixo confere-se
 	# contra ela — a obra, a cobrança, o dia —, e não contra a fase em jogo de
 	# quem o abre: o `resumo_do_espaco()` lê os três espaços com a partida do
@@ -3090,6 +3175,8 @@ func _migrar_um_passo(de: int, dados: Dictionary) -> Dictionary:
 			return _de_15_para_16(dados)
 		16:
 			return _de_16_para_17(dados)
+		17:
+			return _de_17_para_18(dados)
 		_:
 			return {}
 
@@ -3143,6 +3230,17 @@ func _de_16_para_17(dados: Dictionary) -> Dictionary:
 	dados["dias_de_reputacao"] = 0
 	dados["primeiro_cargueiro"] = false
 	dados["meta_concluida"] = false
+	return dados
+
+
+func _de_17_para_18(dados: Dictionary) -> Dictionary:
+	for chave in ["semana_atual", "dia_atual", "dia_anterior", "metrics"]:
+		if typeof(dados.get(chave)) != TYPE_DICTIONARY:
+			return {}
+	for chave in ["semana_atual", "dia_atual", "dia_anterior"]:
+		dados[chave]["cancelamento"] = 0
+	dados["metrics"]["servicos_cancelados"] = 0
+	dados["metrics"]["multas_cancelamento"] = 0
 	return dados
 
 

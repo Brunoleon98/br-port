@@ -60,6 +60,10 @@ const PASTA_PAINEIS := "res://scenes/panels"
 # Medir só a porta fácil é medir o caso que não reprova.
 func percurso() -> Array:
 	return [
+		{"nome": "Cancelar serviço", "cena": "res://scenes/panels/PainelCancelarServico.tscn",
+			"estado": {"numero_da_fase": 2, "turn": 86, "cash": 500,
+				"docks": [{"boat": {"id": 101, "value": 10000, "classe": "medio", "motivo": "conteiner",
+					"progress": 1, "op_turns": 2, "matched": false}, "worker_id": 1}]}, "setup": [0, 101]},
 		{"nome": "Diário", "cena": "res://scenes/panels/PainelDiario.tscn"},
 		{"nome": "Meta da Fase 2", "cena": "res://scenes/panels/PainelMeta.tscn",
 			"estado": {"numero_da_fase": 2, "turn": 85}, "setup": []},

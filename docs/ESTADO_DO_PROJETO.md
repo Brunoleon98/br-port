@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 15/10/2026 — o catálogo de defeitos (`111`)
+> **Última atualização:** 15/10/2026 — cancelamento e pesquisa (`111`, `112`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -40,7 +40,7 @@ em rampas.
 
 **As duas pontas são costa desenhada** (`023`), com o cais reto. Água, baixio,
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
-a forma; D20/D21/D24/D27 conferem o raster.
+a forma; D20/D21/D24/D27 conferem o raster. Medidas e razões na `023`.
 
 **A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM** — mapa a 1080 (`025`) e
 props a 768 px num quadro de 512 COORDENADAS (`029`), com `expand_mode` em 31
@@ -59,7 +59,8 @@ do mapa (`069`).
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **17** (`106`), com migração desde a 14 (`098`) e um exemplo por versão;
+Save local **18** (`111`; main publicada na 17), com migração desde a 14
+(`098`) e um exemplo por versão;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
@@ -109,16 +110,16 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
 itens param à espera do Bruno. Aqui fica só a posição.
 
-**A §7.1 fechou (R1–R9).** Desde 10/10 a prioridade, escolha do Bruno, é a
-**fila de melhorias** da `REVISAO_GERAL_2026-10-09.md` (§6), da mais crítica à
-mais tranquila — **M1** a **M11** fecharam (`088`–`099`, o M9 na `104`); o
-M12 espera o A8, e a fila parou: voltou a frente 5, o **tutorial curto**
-(`100`, `101`) e a **segunda chance** (`102`) estão no jogo, e a
-**progressão para a Fase 2** (`103`) fez as quatro etapas (`104`–`106`,
-`108`). A medição mantém os valores; resultado e limites na `economia.md`.
-**Cancelamento de serviço: candidato medido na `110`**, sem implementação;
-a proposta `109` aguarda aceite. Mais trabalhadores e crédito voluntário ficam para
-depois. **A4 pendente**, caderno sem aceite.
+**R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
+A frente 5 já entregou **tutorial** (`100`, `101`), **segunda chance** (`102`)
+e as quatro etapas da **progressão para a Fase 2** (`103`–`106`, `108`).
+Valores mantidos pela medição; resultados e limites na `economia.md`.
+**Cancelamento de serviço integrado na `111`**, após medição `110` e aceite:
+confirmação, equipe livre no dia, −5 e multa de 10%, contas, registro 5 e
+migração 17→18. PR autorizado, merge a conferir. Recursos básicos: `112` e
+`PESQUISA_RECURSOS_BASICOS_2026-10-15.md`; revisão anterior preservada.
+Mais trabalhadores e crédito voluntário ficam para depois. **A4 pendente**,
+caderno sem aceite.
 A `107` (nomes no Web móvel) está em
 branch local separada, aguardando publicação autorizada e teste no telefone.
 O Pages publica a main verde.
@@ -168,7 +169,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/scripts/TelaNomes.gd` + `PainelDiario.gd` | A folha de rosto do caderno — o nome do cais, irrevogável (GDD 7), e o do jogador — e a primeira página do diário, por baixo dela. O caderno desenha-se em `FolhaDoCaderno.gd` (`067`) |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
 | `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
-| `tools/trilha_de_arte.{sh,py}` | **A trilha de arte, para o gate A5** — a bateria em cada ponto que tocou em arte, e o antes/depois de cada foto contra a primeira; o que mudou sai do hash do PNG |
+| `tools/trilha_de_arte.{sh,py}` | **A trilha de arte, para o gate A5** — corre a bateria em cada ponto que tocou em arte e monta o antes/depois de cada foto contra a primeira vez que foi tirada. O que mudou sai do hash de cada PNG; os passos são lista, porque em imagem passam do teto de uma página |
 | `docs/design/referencias/` | As imagens que definem o alvo de arte + a leitura escrita delas |
 | `docs/design/BR_Port_Plano_Arte_Blender.md` | **O caminho medido** até o nível da referência: o que o Blender alcança, o que não alcança, e o que está aberto (`092`) |
 | `brport_vs/ui/tema_brport.tres` | **Todo o estilo da interface** — paleta, cantos, botões e cartões. A cor de MAPA não vive aqui: quem a define é o gerador do SVG |
@@ -194,7 +195,7 @@ histórico em `HISTORICO.md`.
 | `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
 | `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. ⚠️ «Órfão» não é «apagável»: dos 11, nove servem à bancada `AssetPlacementTest`. Hoje **9 de 334**; o atlas não conta (`046`, `049`) |
 | `brport_vs/tools/medir_boletim.gd` | **A régua do boletim** — herda o simulador e confere cada afirmação da Dona Cida contra o estado, no instante em que ela fala. CI, `BOLETIM OK` (`048`) |
-| `tools/comparar_props.py` | "Este prop mudou?", com os dois a 16×16 — cego à resolução; achou a gravata coplanar (`029`) |
+| `tools/comparar_props.py` | Responde "este prop mudou?" reduzindo os dois a 16×16 — cego à resolução, e foi ele que achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Mede a Fase 1 e pára na passagem (`104`) |
 | `brport_vs/tools/leitura_do_simulador.gd` | A conclusão dele, fora do `SceneTree` para se provar com fixture (T7). Identidade ausente ou dupla: código 1 (`030`) |
@@ -228,7 +229,6 @@ histórico em `HISTORICO.md`.
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
-| `tools/conferir_mutantes.py` + `mutantes.toml` | **Os defeitos que já provaram uma guarda**, reinjetados a cada PR; reprova a guarda que já não os apanha e o defeito órfão. `MUTANTES OK` (`111`) |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
 | `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desce ao TEMPO (`051`) e à CARA (`060`), sem lacuna declarada |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |

@@ -20,7 +20,7 @@ func _process(_delta: float) -> bool:
 		var args := OS.get_cmdline_user_args()
 		_pasta = args[0]
 		_construir = args.has("construir")
-		for modo in ["meta", "diario", "livre", "suspenso"]:
+		for modo in ["meta", "diario", "livre", "suspenso", "cancelamento", "cancelamento_negativo", "cancelamento_caixa"]:
 			if args.has(modo):
 				_modo = modo
 		GS = root.get_node("GameState")
@@ -117,6 +117,22 @@ func _process(_delta: float) -> bool:
 			toque.button_index = MOUSE_BUTTON_LEFT
 			toque.pressed = false
 			_main._on_meta_cartao_input(toque)
+		elif _modo.begins_with("cancelamento"):
+			for d in range(GS.docks.size()):
+				var b = GS.docks[d]["boat"]
+				if b == null or GS.custos_do_cancelamento(d, int(b["id"])).is_empty():
+					continue
+				if _modo == "cancelamento_negativo":
+					GS.cash = 0 # Só a variante visual do aviso; percurso e contrato são reais.
+					GS.cash_changed.emit(GS.cash)
+				GS.tocar_doca(d)
+				if _modo == "cancelamento_caixa":
+					var confirmar = overlay.get_child(0)
+					confirmar.confirmar()
+					overlay.remove_child(confirmar)
+					confirmar.free()
+					_main._on_caixa_pilula_input(_toque_de_soltar())
+				break
 		_assentar = 0
 		return false
 	_main._advance_button.pressed.emit()
@@ -130,7 +146,7 @@ func _serviu(_valor: int, classe: String) -> void:
 
 
 func _fotografar() -> void:
-	var esperado := 1 if _construir or _modo in ["meta", "diario", "suspenso"] else 0
+	var esperado := 1 if _construir or _modo in ["meta", "diario", "suspenso"] or _modo.begins_with("cancelamento") else 0
 	var paineis: int = _main.get_node("Overlay").get_child_count()
 	if paineis != esperado:
 		push_error("capturar_fase_2: %d painéis, esperava %d" % [paineis, esperado])
@@ -156,3 +172,10 @@ func _fotografar() -> void:
 		return
 	print("Tela salva em %s (%dx%d)" % [_pasta.path_join(nome), img.get_width(), img.get_height()])
 	quit(0)
+
+
+func _toque_de_soltar() -> InputEventMouseButton:
+	var toque := InputEventMouseButton.new()
+	toque.button_index = MOUSE_BUTTON_LEFT
+	toque.pressed = false
+	return toque

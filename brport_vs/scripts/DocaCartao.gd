@@ -19,6 +19,8 @@ extends PanelContainer
 # aqui DEVOLVE o barco ao largo enquanto a operação não começou — é o
 # «toque p/ liberar» de sempre, com o barco a voltar em vez de ficar sem
 # ninguém.
+# Serviço iniciado abre a confirmação da `111` ao soltar o toque; cartão e
+# cenário passam pela mesma porta e mostram os custos antes de cancelar.
 # ============================================================
 
 # ⚠️ AS DUAS CORES DESTE CARTÃO SAÍRAM DAQUI em 22/09, para o tema
@@ -176,8 +178,8 @@ static func texto_do_trabalhador(wid: int, acordo: bool, feitos: int) -> String:
 			return "acordo · toque p/ devolver"
 		return "#%d · toque p/ devolver" % wid
 	if acordo:
-		return "descarregando · acordo"
-	return "#%d · descarregando" % wid
+		return "acordo · toque p/ gerenciar"
+	return "#%d · toque p/ gerenciar" % wid
 
 
 
@@ -216,11 +218,16 @@ func _pintar_retrato() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
-	if not (event is InputEventMouseButton and event.pressed
+	if not (event is InputEventMouseButton
 			and event.button_index == MOUSE_BUTTON_LEFT):
 		return
 	if not esta_construida():
 		return
 	if GameState.docks[dock_index]["boat"] != null:
-		GameState.desatracar(dock_index)
+		# A confirmação abre ao SOLTAR: o mesmo gesto que a abriu não pode
+		# terminar por cima do botão destrutivo. Devolução gratuita mantém press.
+		var iniciado: bool = int(GameState.docks[dock_index]["boat"]["progress"]) > 0
+		if event.pressed == iniciado:
+			return
+		GameState.tocar_doca(dock_index)
 		accept_event()

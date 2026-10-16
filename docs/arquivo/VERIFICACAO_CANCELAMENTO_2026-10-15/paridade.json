@@ -1,0 +1,42 @@
+{
+  "cenarios": [
+    {
+      "cenario": "controle",
+      "partidas": 2400,
+      "cancelamentos": 0,
+      "paridade_integral": true,
+      "arquivo_110": true
+    },
+    {
+      "cenario": "candidato-taxa",
+      "partidas": 2400,
+      "cancelamentos": 40103,
+      "paridade_integral": true,
+      "arquivo_110": true
+    },
+    {
+      "cenario": "candidato-valor",
+      "partidas": 2400,
+      "cancelamentos": 51254,
+      "paridade_integral": true,
+      "arquivo_110": true
+    },
+    {
+      "cenario": "candidato-uma",
+      "partidas": 2400,
+      "cancelamentos": 2001,
+      "paridade_integral": true,
+      "arquivo_110": true
+    },
+    {
+      "cenario": "candidato-impulsivo",
+      "partidas": 2400,
+      "cancelamentos": 66885,
+      "paridade_integral": true,
+      "arquivo_110": true
+    }
+  ],
+  "autosave_integral": true,
+  "n_autosave": 8,
+  "eventos_autosave": 16
+}
