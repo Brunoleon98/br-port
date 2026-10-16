@@ -1,0 +1,1256 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+=== F1: toda cena do projeto abre ===
+  PASS  a varredura achou cenas para conferir (35)
+  PASS  scenes/EndGame.tscn: as dependências existem
+  PASS  scenes/EndGame.tscn: abre (1 nós)
+  PASS  scenes/EndGame.tscn: os scripts declarados compilaram
+  PASS  scenes/Main.tscn: as dependências existem
+  PASS  scenes/Main.tscn: abre (256 nós)
+  PASS  scenes/Main.tscn: os scripts declarados compilaram
+  PASS  scenes/TelaInicial.tscn: as dependências existem
+  PASS  scenes/TelaInicial.tscn: abre (8 nós)
+  PASS  scenes/TelaInicial.tscn: os scripts declarados compilaram
+  PASS  scenes/dock/DocaCartao.tscn: as dependências existem
+  PASS  scenes/dock/DocaCartao.tscn: abre (13 nós)
+  PASS  scenes/dock/DocaCartao.tscn: os scripts declarados compilaram
+  PASS  scenes/dock/Dock.tscn: as dependências existem
+  PASS  scenes/dock/Dock.tscn: abre (10 nós)
+  PASS  scenes/dock/Dock.tscn: os scripts declarados compilaram
+  PASS  scenes/fauna/CachorroCaramelo.tscn: as dependências existem
+  PASS  scenes/fauna/CachorroCaramelo.tscn: abre (4 nós)
+  PASS  scenes/fauna/CachorroCaramelo.tscn: os scripts declarados compilaram
+  PASS  scenes/fauna/Capivara.tscn: as dependências existem
+  PASS  scenes/fauna/Capivara.tscn: abre (4 nós)
+  PASS  scenes/fauna/Capivara.tscn: os scripts declarados compilaram
+  PASS  scenes/fauna/Gaivota.tscn: as dependências existem
+  PASS  scenes/fauna/Gaivota.tscn: abre (4 nós)
+  PASS  scenes/fauna/Gaivota.tscn: os scripts declarados compilaram
+  PASS  scenes/fauna/MariaFarinha.tscn: as dependências existem
+  PASS  scenes/fauna/MariaFarinha.tscn: abre (4 nós)
+  PASS  scenes/fauna/MariaFarinha.tscn: os scripts declarados compilaram
+  PASS  scenes/fauna/QueroQuero.tscn: as dependências existem
+  PASS  scenes/fauna/QueroQuero.tscn: abre (4 nós)
+  PASS  scenes/fauna/QueroQuero.tscn: os scripts declarados compilaram
+  PASS  scenes/fauna/TartarugaVerde.tscn: as dependências existem
+  PASS  scenes/fauna/TartarugaVerde.tscn: abre (4 nós)
+  PASS  scenes/fauna/TartarugaVerde.tscn: os scripts declarados compilaram
+  PASS  scenes/fila/BarcoFila.tscn: as dependências existem
+  PASS  scenes/fila/BarcoFila.tscn: abre (11 nós)
+  PASS  scenes/fila/BarcoFila.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/CounterOfferPanel.tscn: as dependências existem
+  PASS  scenes/panels/CounterOfferPanel.tscn: abre (1 nós)
+  PASS  scenes/panels/CounterOfferPanel.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/DebtPaymentPanel.tscn: as dependências existem
+  PASS  scenes/panels/DebtPaymentPanel.tscn: abre (1 nós)
+  PASS  scenes/panels/DebtPaymentPanel.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/DiarioFase2.tscn: as dependências existem
+  PASS  scenes/panels/DiarioFase2.tscn: abre (1 nós)
+  PASS  scenes/panels/DiarioFase2.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelAjustes.tscn: as dependências existem
+  PASS  scenes/panels/PainelAjustes.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelAjustes.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelBoletim.tscn: as dependências existem
+  PASS  scenes/panels/PainelBoletim.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelBoletim.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelCaixa.tscn: as dependências existem
+  PASS  scenes/panels/PainelCaixa.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelCaixa.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelCalendario.tscn: as dependências existem
+  PASS  scenes/panels/PainelCalendario.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelCalendario.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelCancelarServico.tscn: as dependências existem
+  PASS  scenes/panels/PainelCancelarServico.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelCancelarServico.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelComoJogar.tscn: as dependências existem
+  PASS  scenes/panels/PainelComoJogar.tscn: abre (20 nós)
+  PASS  scenes/panels/PainelComoJogar.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelDiario.tscn: as dependências existem
+  PASS  scenes/panels/PainelDiario.tscn: abre (15 nós)
+  PASS  scenes/panels/PainelDiario.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelDocas.tscn: as dependências existem
+  PASS  scenes/panels/PainelDocas.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelDocas.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelEspacos.tscn: as dependências existem
+  PASS  scenes/panels/PainelEspacos.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelEspacos.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelMensagens.tscn: as dependências existem
+  PASS  scenes/panels/PainelMensagens.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelMensagens.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelMenu.tscn: as dependências existem
+  PASS  scenes/panels/PainelMenu.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelMenu.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelMeta.tscn: as dependências existem
+  PASS  scenes/panels/PainelMeta.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelMeta.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelParcela.tscn: as dependências existem
+  PASS  scenes/panels/PainelParcela.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelParcela.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PainelReputacao.tscn: as dependências existem
+  PASS  scenes/panels/PainelReputacao.tscn: abre (1 nós)
+  PASS  scenes/panels/PainelReputacao.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/PauseMenu.tscn: as dependências existem
+  PASS  scenes/panels/PauseMenu.tscn: abre (14 nós)
+  PASS  scenes/panels/PauseMenu.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/TelaNomes.tscn: as dependências existem
+  PASS  scenes/panels/TelaNomes.tscn: abre (38 nós)
+  PASS  scenes/panels/TelaNomes.tscn: os scripts declarados compilaram
+  PASS  scenes/panels/UpgradePanel.tscn: as dependências existem
+  PASS  scenes/panels/UpgradePanel.tscn: abre (69 nós)
+  PASS  scenes/panels/UpgradePanel.tscn: os scripts declarados compilaram
+  PASS  scenes/proto/MapaConceito.tscn: as dependências existem
+  PASS  scenes/proto/MapaConceito.tscn: abre (40 nós)
+  PASS  scenes/proto/MapaConceito.tscn: os scripts declarados compilaram
+  PASS  scenes/proto/MapaIso.tscn: as dependências existem
+  PASS  scenes/proto/MapaIso.tscn: abre (25 nós)
+  PASS  scenes/proto/MapaIso.tscn: os scripts declarados compilaram
+  PASS  scenes/tests/AssetPlacementTest.tscn: as dependências existem
+  PASS  scenes/tests/AssetPlacementTest.tscn: abre (96 nós)
+  PASS  scenes/tests/AssetPlacementTest.tscn: os scripts declarados compilaram
+  PASS  a varredura achou recursos .tres (2)
+  PASS  audio/default_bus_layout.tres: carrega
+  PASS  ui/tema_brport.tres: carrega
+=== F2: todo ícone registrado tem arquivo ===
+  PASS  CAIXA -> caixa.svg
+  PASS  caixa.svg tem o .import versionado
+  PASS  caixa.svg carrega como textura
+  PASS  DIA -> dia.svg
+  PASS  dia.svg tem o .import versionado
+  PASS  dia.svg carrega como textura
+  PASS  REPUTACAO -> reputacao.svg
+  PASS  reputacao.svg tem o .import versionado
+  PASS  reputacao.svg carrega como textura
+  PASS  DOCA -> doca.svg
+  PASS  doca.svg tem o .import versionado
+  PASS  doca.svg carrega como textura
+  PASS  TRABALHADOR -> trabalhador.svg
+  PASS  trabalhador.svg tem o .import versionado
+  PASS  trabalhador.svg carrega como textura
+  PASS  BARCO -> barco.svg
+  PASS  barco.svg tem o .import versionado
+  PASS  barco.svg carrega como textura
+  PASS  PARCELA -> parcela.svg
+  PASS  parcela.svg tem o .import versionado
+  PASS  parcela.svg carrega como textura
+  PASS  PARCELA_BARRA -> parcela_barra.svg
+  PASS  parcela_barra.svg tem o .import versionado
+  PASS  parcela_barra.svg carrega como textura
+  PASS  AMPLIAR_PIER -> ampliar_pier.svg
+  PASS  ampliar_pier.svg tem o .import versionado
+  PASS  ampliar_pier.svg carrega como textura
+  PASS  PAUSAR -> pausar.svg
+  PASS  pausar.svg tem o .import versionado
+  PASS  pausar.svg carrega como textura
+  PASS  AVANCAR -> avancar.svg
+  PASS  avancar.svg tem o .import versionado
+  PASS  avancar.svg carrega como textura
+  PASS  FEITO -> feito.svg
+  PASS  feito.svg tem o .import versionado
+  PASS  feito.svg carrega como textura
+  PASS  MENU -> menu.svg
+  PASS  menu.svg tem o .import versionado
+  PASS  menu.svg carrega como textura
+  PASS  AJUSTES -> ajustes.svg
+  PASS  ajustes.svg tem o .import versionado
+  PASS  ajustes.svg carrega como textura
+  PASS  DIARIO -> diario.svg
+  PASS  diario.svg tem o .import versionado
+  PASS  diario.svg carrega como textura
+  PASS  BLOQUEADO -> bloqueado.svg
+  PASS  bloqueado.svg tem o .import versionado
+  PASS  bloqueado.svg carrega como textura
+  PASS  APP_DIARIO -> app_diario.svg
+  PASS  app_diario.svg tem o .import versionado
+  PASS  app_diario.svg carrega como textura
+  PASS  APP_CIDADE -> app_cidade.svg
+  PASS  app_cidade.svg tem o .import versionado
+  PASS  app_cidade.svg carrega como textura
+  PASS  APP_LOJAS -> app_lojas.svg
+  PASS  app_lojas.svg tem o .import versionado
+  PASS  app_lojas.svg carrega como textura
+  PASS  APP_MISSOES -> app_missoes.svg
+  PASS  app_missoes.svg tem o .import versionado
+  PASS  app_missoes.svg carrega como textura
+  PASS  APP_ANALISE -> app_analise.svg
+  PASS  app_analise.svg tem o .import versionado
+  PASS  app_analise.svg carrega como textura
+  PASS  APP_MENSAGENS -> app_mensagens.svg
+  PASS  app_mensagens.svg tem o .import versionado
+  PASS  app_mensagens.svg carrega como textura
+  PASS  CELULAR_SINAL -> celular_sinal.svg
+  PASS  celular_sinal.svg tem o .import versionado
+  PASS  celular_sinal.svg carrega como textura
+  PASS  CELULAR_BATERIA -> celular_bateria.svg
+  PASS  celular_bateria.svg tem o .import versionado
+  PASS  celular_bateria.svg carrega como textura
+  PASS  RIVAL -> rival.svg
+  PASS  rival.svg tem o .import versionado
+  PASS  rival.svg carrega como textura
+  PASS  ACORDO -> acordo.svg
+  PASS  acordo.svg tem o .import versionado
+  PASS  acordo.svg carrega como textura
+  PASS  CORTAR -> cortar.svg
+  PASS  cortar.svg tem o .import versionado
+  PASS  cortar.svg carrega como textura
+  PASS  FIRMEZA -> firmeza.svg
+  PASS  firmeza.svg tem o .import versionado
+  PASS  firmeza.svg carrega como textura
+  PASS  CLIENTE_CALMO -> cliente_calmo.svg
+  PASS  cliente_calmo.svg tem o .import versionado
+  PASS  cliente_calmo.svg carrega como textura
+  PASS  CLIENTE_IMPACIENTE -> cliente_impaciente.svg
+  PASS  cliente_impaciente.svg tem o .import versionado
+  PASS  cliente_impaciente.svg carrega como textura
+  PASS  VITORIA -> vitoria.svg
+  PASS  vitoria.svg tem o .import versionado
+  PASS  vitoria.svg carrega como textura
+  PASS  DERROTA -> derrota.svg
+  PASS  derrota.svg tem o .import versionado
+  PASS  derrota.svg carrega como textura
+  PASS  RECOMECAR -> recomecar.svg
+  PASS  recomecar.svg tem o .import versionado
+  PASS  recomecar.svg carrega como textura
+  PASS  nenhum SVG solto em res://art/icones
+=== F3: save que a cadeia de migração não lê é descartado, sem ter tocado em nada ===
+  PASS  um save recusado não deixa arquivo para trás (versão 13, abaixo do piso)
+  PASS  save de versão FUTURA também é recusado (versão 19)
+  PASS  save sem campo de versão nenhum é recusado
+ERROR: Parse JSON failed. Error at line 0: Expected 'true', 'false', or 'null', got 'isto'
+   at: parse_string (core/io/json.cpp:624)
+   GDScript backtrace (most recent call first):
+       [0] _save_aceite (res://autoload/GameState.gd:2937)
+       [1] load_game (res://autoload/GameState.gd:2843)
+       [2] _recusa_texto (res://tests/teste_fumaca.gd:629)
+       [3] _f3_migracao_de_save (res://tests/teste_fumaca.gd:436)
+       [4] _rodar (res://tests/teste_fumaca.gd:88)
+       [5] _process (res://tests/teste_fumaca.gd:74)
+  PASS  arquivo que não é JSON de objeto é recusado e apagado
+  PASS  save da versão corrente com roster vazio é recusado
+  PASS  e o caixa vivo não foi tocado (400000)
+  PASS  nem o turno (1)
+  PASS  nem as docas (1)
+  PASS  e o arquivo impossível foi apagado
+  PASS  o save da versão corrente carrega
+  PASS  e traz caixa e turno de volta
+  PASS  save com sem a fila é recusado, e sem ter tocado em nada
+  PASS  save com fila que não é lista é recusado, e sem ter tocado em nada
+  PASS  save com mais barcos do que lugares é recusado, e sem ter tocado em nada
+  PASS  save com barco sem paciência é recusado, e sem ter tocado em nada
+  PASS  save com paciência em texto é recusado, e sem ter tocado em nada
+  PASS  save com oferta fora da fila é recusado, e sem ter tocado em nada
+  PASS  save com oferta abaixo de -1 é recusado, e sem ter tocado em nada
+  PASS  o save com dois barcos ao largo e oferta -1 entra
+  PASS  o save com dois barcos ao largo e oferta 0 entra
+  PASS  save com sem a dívida da segunda chance é recusado, e sem ter tocado em nada
+  PASS  save com sem a chance é recusado, e sem ter tocado em nada
+  PASS  save com dívida em texto é recusado, e sem ter tocado em nada
+  PASS  save com dívida negativa é recusado, e sem ter tocado em nada
+  PASS  save com dívida fracionária é recusado, e sem ter tocado em nada
+  PASS  save com chance em texto é recusado, e sem ter tocado em nada
+  PASS  save com dívida sem a chance usada é recusado, e sem ter tocado em nada
+  PASS  save com dívida na primeira cobrança é recusado, e sem ter tocado em nada
+  PASS  save com dívida com o boleto já pago é recusado, e sem ter tocado em nada
+  PASS  o save com a chance gasta e já paga entra, com a dívida e a chance
+  PASS  o save com a dívida por pagar na segunda cobrança entra, com a dívida e a chance
+=== F4: o texto narrativo não chega ao jogador com token cru ===
+  PASS  Narrativa.gd expõe as constantes de texto (29)
+  PASS  DIARIO_PRIMEIRA_PAGINA: token {portName} é conhecido
+  PASS  DIARIO_PRIMEIRA_PAGINA: token {portName} é conhecido
+  PASS  DIARIO_PRIMEIRA_PAGINA: token {caixaInicial} é conhecido
+  PASS  ARLINDO_ABERTURA: token {portName} é conhecido
+  PASS  ARLINDO_VENCEU: token {portName} é conhecido
+  PASS  ARLINDO_FALAS: token {portName} é conhecido
+  PASS  ARLINDO_FALAS: token {portName} é conhecido
+  PASS  RIBEIRO_ENTRADA: token {vocativo} é conhecido
+  PASS  RIBEIRO_A_DIVIDA: token {valor} é conhecido
+  PASS  RIBEIRO_FALAS: token {vocativo} é conhecido
+  PASS  RIBEIRO_FALAS: token {valor} é conhecido
+  PASS  BOLETIM_DIA_TITULO: token {semana} é conhecido
+  PASS  BOLETIM_DIA_TITULO: token {dia} é conhecido
+  PASS  achou texto para conferir (60 pedaços)
+  PASS  nenhuma fala escreve valor à mão (achadas: 0)
+  PASS  o diário conta o caixa inicial, e com o valor do START_CASH (R$400.000)
+  PASS  o total contratado acompanha as três parcelas, sem usar o principal recebido
+  PASS  com nome de jogador — diário sem token cru
+  PASS  com nome de jogador — Sr. Ribeiro (entrada) sem token cru
+  PASS  com nome de jogador — Sr. Ribeiro (a dívida) sem token cru
+  PASS  com nome de jogador — fim de fase sem token cru
+  PASS  com nome de jogador — Arlindo (abertura) sem token cru
+  PASS  com nome de jogador — Arlindo (venceu) sem token cru
+  PASS  sem nome de jogador (e porto no padrão) — diário sem token cru
+  PASS  sem nome de jogador (e porto no padrão) — Sr. Ribeiro (entrada) sem token cru
+  PASS  sem nome de jogador (e porto no padrão) — Sr. Ribeiro (a dívida) sem token cru
+  PASS  sem nome de jogador (e porto no padrão) — fim de fase sem token cru
+  PASS  sem nome de jogador (e porto no padrão) — Arlindo (abertura) sem token cru
+  PASS  sem nome de jogador (e porto no padrão) — Arlindo (venceu) sem token cru
+  PASS  porto em branco vira Cais Mirim
+  PASS  e a tela de nomes não volta a pedir
+  PASS  o nome do jogador em branco continua em branco
+  PASS  partida nova volta a pedir os nomes
+  PASS  nome do porto é cortado em 24
+  PASS  e o do jogador perde o espaço das pontas
+  PASS  o save traz os dois nomes de volta
+  PASS  o do porto
+  PASS  e o do jogador
+  PASS  a tabela de falas da Dona Cida não está vazia
+  PASS  Cida: reputacao_subiu tem fala
+  PASS  Cida: reputacao_caiu tem fala
+  PASS  Cida: caixa_baixo tem fala
+  PASS  Cida: caixa_baixo_quitado tem fala
+  PASS  Cida: dinheiro_curto_livre tem fala
+  PASS  Cida: perdeu_para_arlindo tem fala
+  PASS  Cida: bom_contrato tem fala
+  PASS  Cida: semana_nova_fila_curto tem fala
+  PASS  Cida: semana_nova_fila_folgado tem fala
+  PASS  Cida: semana_nova_parado_curto tem fala
+  PASS  Cida: semana_nova_parado_curto_quitado tem fala
+  PASS  Cida: semana_nova_parado_folgado tem fala
+  PASS  Cida: upgrade_pronto tem fala
+  PASS  Cida: upgrade_pronto_rotina tem fala
+  PASS  Cida: arlindo_indireto tem fala
+  PASS  Cida: arlindo_primeira tem fala
+  PASS  o fim de fase diz as doze semanas que o jogo tem
+  PASS  e que as três parcelas terminaram
+  PASS  e que essa dívida não resta
+  PASS  e não escreve número nenhum em dígito
+  PASS  a NarradoraDaCida.gd foi lida
+  PASS  as 16 falas da Dona Cida chegam todas ao jogo
+=== F5: o projeto continua exportável para o telefone ===
+  PASS  a orientação é um INTEIRO, não a string do Godot 3
+  PASS  e é retrato travado (SCREEN_PORTRAIT)
+  PASS  o ETC2/ASTC está ligado no project.godot
+  PASS  o export_presets.cfg está versionado
+  PASS  o preset "Android" está lá
+  PASS  o preset "Web" está lá
+  PASS  keystore/release continua sem chave
+  PASS  keystore/release_user continua sem chave
+  PASS  keystore/debug continua sem chave
+  PASS  keystore/debug_user continua sem chave
+  PASS  os dois presets têm filtro de exclusão
+  PASS  tests/* fica fora dos dois pacotes
+  PASS  tools/* fica fora dos dois pacotes
+  PASS  scripts/validation/* fica fora dos dois pacotes
+  PASS  scenes/proto/* fica fora dos dois pacotes
+  PASS  scenes/tests/* fica fora dos dois pacotes
+=== F6: a abertura não deixa o turno preso numa fase que bloqueia ===
+  PASS  a montagem deixou o jogo em rival_offer com barco ao largo
+  PASS  a partida nova abre a tela de nomes
+  PASS  e o diário a seguir
+  PASS  fechada a abertura, o painel da contra-oferta está aberto
+=== F7: toda fala tem cara, toda cara tem arquivo, e toda cara é usada ===
+  PASS  achou as falas dos quatro personagens (39)
+  PASS  cida: as 22 falas todas têm expressão
+  PASS  cida: nenhuma expressão presa a fala que já não existe
+  PASS  arlindo: as 7 falas todas têm expressão
+  PASS  arlindo: nenhuma expressão presa a fala que já não existe
+  PASS  ribeiro: as 7 falas todas têm expressão
+  PASS  ribeiro: nenhuma expressão presa a fala que já não existe
+  PASS  toninho: as 3 falas todas têm expressão
+  PASS  toninho: nenhuma expressão presa a fala que já não existe
+  PASS  cida/ruim: a cara `preocupada` tem PNG
+  PASS  cida/ruim_virou: a cara `preocupada` tem PNG
+  PASS  cida/ruim_ribeiro: a cara `seria` tem PNG
+  PASS  cida/primeira_ruim: a cara `preocupada` tem PNG
+  PASS  cida/neutro: a cara `seria` tem PNG
+  PASS  cida/otimo: a cara `contente` tem PNG
+  PASS  cida/reputacao_subiu: a cara `contente` tem PNG
+  PASS  cida/reputacao_caiu: a cara `preocupada` tem PNG
+  PASS  cida/caixa_baixo: a cara `preocupada` tem PNG
+  PASS  cida/caixa_baixo_quitado: a cara `preocupada` tem PNG
+  PASS  cida/dinheiro_curto_livre: a cara `preocupada` tem PNG
+  PASS  cida/perdeu_para_arlindo: a cara `preocupada` tem PNG
+  PASS  cida/bom_contrato: a cara `contente` tem PNG
+  PASS  cida/semana_nova_fila_curto: a cara `seria` tem PNG
+  PASS  cida/semana_nova_fila_folgado: a cara `contente` tem PNG
+  PASS  cida/semana_nova_parado_curto: a cara `preocupada` tem PNG
+  PASS  cida/semana_nova_parado_curto_quitado: a cara `preocupada` tem PNG
+  PASS  cida/semana_nova_parado_folgado: a cara `seria` tem PNG
+  PASS  cida/upgrade_pronto: a cara `contente` tem PNG
+  PASS  cida/upgrade_pronto_rotina: a cara `contente` tem PNG
+  PASS  cida/arlindo_indireto: a cara `seria` tem PNG
+  PASS  cida/arlindo_primeira: a cara `seria` tem PNG
+  PASS  arlindo/abertura: a cara `sorriso` tem PNG
+  PASS  arlindo/igualar: a cara `sorriso` tem PNG
+  PASS  arlindo/metade: a cara `sorriso` tem PNG
+  PASS  arlindo/manter: a cara `sorriso` tem PNG
+  PASS  arlindo/ultima_tentativa: a cara `pressao` tem PNG
+  PASS  arlindo/venceu: a cara `sorriso` tem PNG
+  PASS  arlindo/perdeu: a cara `contrariado` tem PNG
+  PASS  ribeiro/entrada: a cara `cordial` tem PNG
+  PASS  ribeiro/a_divida: a cara `formal` tem PNG
+  PASS  ribeiro/pagou: a cara `cordial` tem PNG
+  PASS  ribeiro/nao_pagou: a cara `grave` tem PNG
+  PASS  ribeiro/despedida: a cara `cordial` tem PNG
+  PASS  ribeiro/oferta: a cara `formal` tem PNG
+  PASS  ribeiro/aceitou: a cara `formal` tem PNG
+  PASS  toninho/atracar: a cara `calmo` tem PNG
+  PASS  toninho/avancar: a cara `ironico` tem PNG
+  PASS  toninho/dia_virou: a cara `serio` tem PNG
+  PASS  conferiu as caras de todas as falas (39)
+  PASS  cida: as 3 caras desenhadas são todas usadas
+  PASS  arlindo: as 3 caras desenhadas são todas usadas
+  PASS  ribeiro: as 3 caras desenhadas são todas usadas
+  PASS  toninho: as 3 caras desenhadas são todas usadas
+  PASS  os dois painéis foram lidos
+  PASS  arlindo: as 7 falas chegam todas ao jogo
+  PASS  ribeiro: as 7 falas chegam todas ao jogo
+  PASS  F7: o TutorialDoToninho.gd foi lido
+  PASS  F7: toda chamada do tutorial à fala passa um id literal (4 chamadas, 4 lidas)
+  PASS  toninho: as 3 falas chegam todas ao jogo
+  PASS  a contra-oferta abre com a fala de abertura
+  PASS  resolvida a negociação, a tela NÃO fecha calada
+  PASS  e o Arlindo diz a fala de quem perdeu
+=== F8: a fala da Dona Cida é VISTA, e afirma só o que a condição garante ===
+  PASS  F8a: a compra emite mesmo uma mensagem do sistema no mesmo frame
+  PASS  F8a: a fala do upgrade é apresentada
+  PASS  F8a: e a mensagem do sistema da mesma compra também
+  PASS  F8b: a fala da obra não inventa duração
+  PASS  F8c: com barco à espera e caixa curto, sai a variante das duas
+  PASS  F8c: sem barco e com caixa folgado, sai a variante de nenhuma das duas
+  PASS  F8c2: a variante é a do estado em que a linha é ESCRITA, não a do sinal
+  PASS  F8d: a semana 1 não diz 'semana nova' — não há anterior com que comparar
+  PASS  F8e: a montagem quitou mesmo a parcela adiantada
+  PASS  F8e: com a parcela paga, a fala do caixa curto é a que não a cobra
+  PASS  F8f: com a parcela por pagar, é ela que a fala nomeia
+  PASS  F8f: com a parcela paga, sai a outra variante
+  PASS  F8f: e essa outra não fala de parcela nenhuma
+  PASS  F8g: a primeira obra tem a reação de primeira vez
+  PASS  F8g: a segunda obra não repete a fala igual — funde-se
+  PASS  F8g: mas a mensagem do sistema dela aparece — texto diferente não funde
+  PASS  F8g: e à segunda a fala da rotina ainda não saiu
+  PASS  F8g: da terceira em diante ela concede
+  PASS  F8h: a montagem tem uma narradora para seguir
+  PASS  F8h: a narradora morre com o Main que a montou
+  PASS  o bloco F8 correu até ao fim
+=== F9: nenhuma contagem escreve o plural à mão ===
+  PASS  F9: a varredura achou os scripts do jogo
+  PASS  F9: nenhum rótulo do jogo escreve "(s)" ao jogador
+  PASS  F9: nenhuma contagem concorda com um ternário à mão
+  PASS  F9: a expressão do ternário de palavra inteira reconhece a forma que caça
+  PASS  F9: a expressão do plural fixo reconhece a forma que caça
+  PASS  F9: nenhum número escreve o plural à mão («%d dias»)
+  PASS  F9: a expressão leu TODAS as chamadas a concordar() que existem
+  PASS  F9: e há chamadas para ler
+  PASS  F9: em toda chamada, a forma plural está mesmo no plural
+  PASS  o bloco F9 correu até ao fim
+=== F10: cada tempo dos painéis de mais de uma tela cabe no cartão ===
+  PASS  F10: a partida chega ao vencimento da parcela (turno 29)
+  PASS  F10 Ribeiro, entrada: o painel está no tempo «entrada»
+  PASS  F10 Ribeiro, entrada: o cartão cabe na tela
+  PASS  F10 Ribeiro, entrada: todo o texto cai dentro do cartão (8 peças)
+  PASS  F10: há um botão «Não consigo…» ligado para tocar
+  PASS  F10: «Não consigo pagar» na primeira cobrança não encerra a partida
+  PASS  F10 Ribeiro, segunda chance: o painel está no tempo «segunda_chance»
+  PASS  F10 Ribeiro, segunda chance: o cartão cabe na tela
+  PASS  F10 Ribeiro, segunda chance: todo o texto cai dentro do cartão (7 peças)
+  PASS  F10: há um botão «Recusar…» ligado para tocar
+  PASS  F10: «Recusar» a segunda chance encerrou a partida
+  PASS  F10 Ribeiro, não pagou: o painel está no tempo «nao_pagou»
+  PASS  F10 Ribeiro, não pagou: o cartão cabe na tela
+  PASS  F10 Ribeiro, não pagou: todo o texto cai dentro do cartão (6 peças)
+  PASS  F10: a partida chega ao vencimento da parcela (turno 29)
+  PASS  F10: há um botão «Não consigo…» ligado para tocar
+  PASS  F10: há um botão «Aceitar…» ligado para tocar
+  PASS  F10: «Aceitar o empréstimo» pagou a parcela e a partida segue
+  PASS  F10 Ribeiro, emprestou: o painel está no tempo «emprestou»
+  PASS  F10 Ribeiro, emprestou: o cartão cabe na tela
+  PASS  F10 Ribeiro, emprestou: todo o texto cai dentro do cartão (7 peças)
+  PASS  F10: a partida chega ao vencimento da parcela (turno 85)
+  PASS  F10: há um botão «Pagar…» ligado para tocar
+  PASS  F10: «Pagar» quitou mesmo a última parcela, e a partida passou à Fase 2
+  PASS  F10 Ribeiro, pagou: o painel está no tempo «pagou»
+  PASS  F10 Ribeiro, pagou: o cartão cabe na tela
+  PASS  F10 Ribeiro, pagou: todo o texto cai dentro do cartão (7 peças)
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F10: há um botão «Cortar metade…» ligado para tocar
+  PASS  F10: «Cortar metade» recusado deixa o cliente na mesa
+  PASS  F10 Arlindo, última tentativa depois de «Cortar metade»: o painel está no tempo «rodada»
+  PASS  F10 Arlindo, última tentativa depois de «Cortar metade»: o cartão cabe na tela
+  PASS  F10 Arlindo, última tentativa depois de «Cortar metade»: todo o texto cai dentro do cartão (8 peças)
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F10 Arlindo, rodada: o painel está no tempo «rodada»
+  PASS  F10 Arlindo, rodada: o cartão cabe na tela
+  PASS  F10 Arlindo, rodada: todo o texto cai dentro do cartão (7 peças)
+  PASS  F10: há um botão «Manter…» ligado para tocar
+  PASS  F10: «Manter» recusado deixa o cliente na mesa
+  PASS  F10 Arlindo, última tentativa depois de «Manter»: o painel está no tempo «rodada»
+  PASS  F10 Arlindo, última tentativa depois de «Manter»: o cartão cabe na tela
+  PASS  F10 Arlindo, última tentativa depois de «Manter»: todo o texto cai dentro do cartão (8 peças)
+  PASS  F10: há um botão «Manter…» ligado para tocar
+  PASS  F10: a segunda recusa leva o cliente para o Arlindo
+  PASS  F10 Arlindo, despedida de quem venceu: o painel está no tempo «despedida»
+  PASS  F10 Arlindo, despedida de quem venceu: o cartão cabe na tela
+  PASS  F10 Arlindo, despedida de quem venceu: todo o texto cai dentro do cartão (4 peças)
+  PASS  F10 Arlindo, despedida de quem venceu: nada diz que a negociação continua
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F10: há um botão «Igualar…» ligado para tocar
+  PASS  F10: «Igualar» fecha e o Arlindo perde
+  PASS  F10 Arlindo, despedida de quem perdeu: o painel está no tempo «despedida»
+  PASS  F10 Arlindo, despedida de quem perdeu: o cartão cabe na tela
+  PASS  F10 Arlindo, despedida de quem perdeu: todo o texto cai dentro do cartão (5 peças)
+  PASS  F10 Arlindo, despedida de quem perdeu: nada diz que a negociação continua
+  PASS  F10 Fim, narração: o painel está no tempo «narracao»
+  PASS  F10 Fim, narração: o cartão cabe na tela
+  PASS  F10 Fim, narração: todo o texto cai dentro do cartão (8 peças)
+  PASS  F10: a primeira página do fim de fase mostra a primeira metade da peça
+  PASS  F10: há um botão «Virar a página…» ligado para tocar
+ERROR: Parameter "t" is null.
+   at: texture_2d_get (./servers/rendering/dummy/storage/texture_storage.h:106)
+   GDScript backtrace (most recent call first):
+       [0] _fotografar_folha (res://scripts/PainelNarrativo.gd:1133)
+       [1] virar_folha (res://scripts/PainelNarrativo.gd:1114)
+       [2] _virar_pagina (res://scripts/EndGame.gd:131)
+       [3] _f10_tocar (res://tests/teste_fumaca.gd:2352)
+       [4] _f10_cada_tempo_cabe (res://tests/teste_fumaca.gd:2140)
+       [5] _f10_abrir (res://tests/teste_fumaca.gd:2334)
+       [6] _f8_esperar (res://tests/teste_fumaca.gd:1513)
+  PASS  F10: o painel chegou ao tempo «segunda_pagina» (60 frames)
+  PASS  F10 Fim, a segunda página: o painel está no tempo «segunda_pagina»
+  PASS  F10 Fim, a segunda página: o cartão cabe na tela
+  PASS  F10 Fim, a segunda página: todo o texto cai dentro do cartão (6 peças)
+  PASS  F10: a segunda página do fim de fase mostra a segunda metade da peça
+  PASS  F10: há um botão «Ver o balanço…» ligado para tocar
+  PASS  F10 Fim, balanço de quem venceu: o painel está no tempo «balanco»
+  PASS  F10 Fim, balanço de quem venceu: o cartão cabe na tela
+  PASS  F10 Fim, balanço de quem venceu: todo o texto cai dentro do cartão (19 peças)
+  PASS  F10 Fim, balanço de quem perdeu: o painel está no tempo «balanco»
+  PASS  F10 Fim, balanço de quem perdeu: o cartão cabe na tela
+  PASS  F10 Fim, balanço de quem perdeu: todo o texto cai dentro do cartão (20 peças)
+  PASS  F10: res://scenes/panels/PainelDiario.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F10 Diário: o painel é de uma tela só
+  PASS  F10 Diário: o cartão cabe na tela
+  PASS  F10 Diário: todo o texto cai dentro do cartão (2 peças)
+  PASS  F10: res://scenes/Main.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F10 Faixa de partida retomada: o painel é de uma tela só
+  PASS  F10 Faixa de partida retomada: o cartão cabe na tela
+  PASS  F10 Faixa de partida retomada: todo o texto cai dentro do cartão (1 peças)
+  PASS  F10 Diário da Fase 2: o painel é de uma tela só
+  PASS  F10 Diário da Fase 2: o cartão cabe na tela
+  PASS  F10 Diário da Fase 2: todo o texto cai dentro do cartão (2 peças)
+  PASS  F10: toda frase com o nome foi medida com ele (9 tokens, 104 rótulos vistos)
+  PASS  o bloco F10 correu até ao fim
+=== F11: no fim da partida as telas abrem uma de cada vez, e pela ordem ===
+  PASS  F11: a partida chega ao último dia a jogar (turno 84)
+  PASS  F11: o Main abre sem painel nenhum no último dia
+  PASS  F11: pagou, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela
+  PASS  F11: há um botão «Pagar…» ligado para tocar
+  PASS  F11: pagou — o «Pagar» passou a partida à Fase 2
+  PASS  F11: pagou, depois do «Pagar» — só DebtPaymentPanel.tscn «pagou» na tela
+  PASS  F11: há um botão «Até a próxima…» ligado para tocar
+  PASS  F11: pagou, o boletim — só PainelBoletim.tscn na tela
+  PASS  F11: pagou — o boletim é o da última semana
+  PASS  F11: há um botão «Fechar o boletim…» ligado para tocar
+  PASS  F11: pagou, fechado o boletim — só EndGame.tscn «narracao» na tela
+  PASS  F11: a partida chega ao último dia a jogar (turno 84)
+  PASS  F11: o Main abre sem painel nenhum no último dia
+  PASS  F11: não pagou, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela
+  PASS  F11: há um botão «Não consigo…» ligado para tocar
+  PASS  F11: não pagou, depois do «Não consigo» — só DebtPaymentPanel.tscn «nao_pagou» na tela
+  PASS  F11: há um botão «Adeus…» ligado para tocar
+  PASS  F11: não pagou, o boletim — só PainelBoletim.tscn na tela
+  PASS  F11: não pagou — o boletim é o da última semana
+  PASS  F11: há um botão «Fechar o boletim…» ligado para tocar
+  PASS  F11: não pagou, fechado o boletim — só EndGame.tscn «balanco» na tela
+  PASS  F11: a partida chega ao último dia a jogar (turno 84)
+  PASS  F11: quitou antes — a parcela pagou-se no último dia a jogar
+  PASS  F11: o Main abre sem painel nenhum no último dia
+  PASS  F11: quitou antes — virar o último dia passou a partida à Fase 2
+  PASS  F11: quitou antes, o boletim — só PainelBoletim.tscn na tela
+  PASS  F11: quitou antes — o boletim é o da última semana
+  PASS  F11: há um botão «Fechar o boletim…» ligado para tocar
+  PASS  F11: quitou antes, fechado o boletim — só EndGame.tscn «narracao» na tela
+  PASS  F11: a partida chega ao último dia a jogar (turno 84)
+  PASS  F11: o Main abre sem painel nenhum no último dia
+  PASS  F11: soltar com fila, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela
+  PASS  F11: há um botão «Pagar…» ligado para tocar
+  PASS  F11: soltar com fila — o «Pagar» deixou telas à espera da vez (2)
+  PASS  F11: soltar o Main com telas na fila não abre a seguinte (0 nós órfãos)
+  PASS  o bloco F11 correu até ao fim
+=== F12: cada trabalhador nasce com o seu rosto, e o sorteio da partida não se mexe ===
+  PASS  F12: o registo tem os trinta rostos (30)
+  PASS  F12: o jogo conta os rostos pelo registo
+  PASS  F12: trabalhador_retrato.png existe
+  PASS  F12: trabalhador_homem_jovem_branca.png existe
+  PASS  F12: trabalhador_homem_jovem_parda.png existe
+  PASS  F12: trabalhador_homem_jovem_preta.png existe
+  PASS  F12: trabalhador_homem_jovem_amarela.png existe
+  PASS  F12: trabalhador_homem_jovem_indigena.png existe
+  PASS  F12: trabalhador_homem_adulto_branca.png existe
+  PASS  F12: trabalhador_homem_adulto_preta.png existe
+  PASS  F12: trabalhador_homem_adulto_amarela.png existe
+  PASS  F12: trabalhador_homem_adulto_indigena.png existe
+  PASS  F12: trabalhador_homem_veterano_branca.png existe
+  PASS  F12: trabalhador_homem_veterano_parda.png existe
+  PASS  F12: trabalhador_homem_veterano_preta.png existe
+  PASS  F12: trabalhador_homem_veterano_amarela.png existe
+  PASS  F12: trabalhador_homem_veterano_indigena.png existe
+  PASS  F12: trabalhador_mulher_jovem_branca.png existe
+  PASS  F12: trabalhador_mulher_jovem_parda.png existe
+  PASS  F12: trabalhador_mulher_jovem_preta.png existe
+  PASS  F12: trabalhador_mulher_jovem_amarela.png existe
+  PASS  F12: trabalhador_mulher_jovem_indigena.png existe
+  PASS  F12: trabalhador_mulher_adulto_branca.png existe
+  PASS  F12: trabalhador_mulher_adulto_parda.png existe
+  PASS  F12: trabalhador_mulher_adulto_preta.png existe
+  PASS  F12: trabalhador_mulher_adulto_amarela.png existe
+  PASS  F12: trabalhador_mulher_adulto_indigena.png existe
+  PASS  F12: trabalhador_mulher_veterano_branca.png existe
+  PASS  F12: trabalhador_mulher_veterano_parda.png existe
+  PASS  F12: trabalhador_mulher_veterano_preta.png existe
+  PASS  F12: trabalhador_mulher_veterano_amarela.png existe
+  PASS  F12: trabalhador_mulher_veterano_indigena.png existe
+  PASS  F12: trabalhador_homem_adulto_amarela.png está no registo
+  PASS  F12: trabalhador_homem_adulto_branca.png está no registo
+  PASS  F12: trabalhador_homem_adulto_indigena.png está no registo
+  PASS  F12: trabalhador_homem_adulto_preta.png está no registo
+  PASS  F12: trabalhador_homem_jovem_amarela.png está no registo
+  PASS  F12: trabalhador_homem_jovem_branca.png está no registo
+  PASS  F12: trabalhador_homem_jovem_indigena.png está no registo
+  PASS  F12: trabalhador_homem_jovem_parda.png está no registo
+  PASS  F12: trabalhador_homem_jovem_preta.png está no registo
+  PASS  F12: trabalhador_homem_veterano_amarela.png está no registo
+  PASS  F12: trabalhador_homem_veterano_branca.png está no registo
+  PASS  F12: trabalhador_homem_veterano_indigena.png está no registo
+  PASS  F12: trabalhador_homem_veterano_parda.png está no registo
+  PASS  F12: trabalhador_homem_veterano_preta.png está no registo
+  PASS  F12: trabalhador_mulher_adulto_amarela.png está no registo
+  PASS  F12: trabalhador_mulher_adulto_branca.png está no registo
+  PASS  F12: trabalhador_mulher_adulto_indigena.png está no registo
+  PASS  F12: trabalhador_mulher_adulto_parda.png está no registo
+  PASS  F12: trabalhador_mulher_adulto_preta.png está no registo
+  PASS  F12: trabalhador_mulher_jovem_amarela.png está no registo
+  PASS  F12: trabalhador_mulher_jovem_branca.png está no registo
+  PASS  F12: trabalhador_mulher_jovem_indigena.png está no registo
+  PASS  F12: trabalhador_mulher_jovem_parda.png está no registo
+  PASS  F12: trabalhador_mulher_jovem_preta.png está no registo
+  PASS  F12: trabalhador_mulher_veterano_amarela.png está no registo
+  PASS  F12: trabalhador_mulher_veterano_branca.png está no registo
+  PASS  F12: trabalhador_mulher_veterano_indigena.png está no registo
+  PASS  F12: trabalhador_mulher_veterano_parda.png está no registo
+  PASS  F12: trabalhador_mulher_veterano_preta.png está no registo
+  PASS  F12: trabalhador_retrato.png está no registo
+  PASS  F12: a varredura do disco achou os trinta (30)
+  PASS  F12: trinta trabalhadores, trinta rostos diferentes (30)
+  PASS  F12: escolher o rosto não mexe no sorteio da partida
+  PASS  F12: as trinta caras saem de partidas novas (30 de 30, 400 sementes)
+  PASS  F12: a mesma semente dá a mesma cara (as fotos comparam-se)
+  PASS  F12: o save carrega
+  PASS  F12: e os rostos voltam iguais
+  PASS  F12: save com sem rosto é recusado, e sem ter tocado em nada
+  PASS  F12: save com rosto fora da tabela é recusado, e sem ter tocado em nada
+  PASS  F12: save com rosto negativo é recusado, e sem ter tocado em nada
+  PASS  F12: save com rosto repetido é recusado, e sem ter tocado em nada
+  PASS  F12: save com rosto em texto é recusado, e sem ter tocado em nada
+  PASS  F12: save com rosto partido é recusado, e sem ter tocado em nada
+  PASS  F12: o save com um rosto válido entra
+  PASS  F12: o cartão mostra o retrato do rosto dele
+  PASS  o bloco F12 correu até ao fim
+=== F2b: o ícone de cada cabeçalho lê-se no selo ===
+  PASS  F2b: o leitor leu as 18 chamadas ao cabeçalho que o código tem (18)
+  PASS  F2b: toda chamada nomeia o ícone por `Icones.X`, que é o que a guarda lê
+  PASS  F2b: os cabeçalhos usam ícones (13)
+  PASS  F2b: Icones.RIVAL lê-se no selo (mediana 5.14:1, corte 1.30)
+  PASS  F2b: Icones.PARCELA lê-se no selo (mediana 8.89:1, corte 1.30)
+  PASS  F2b: Icones.VITORIA lê-se no selo (mediana 1.63:1, corte 1.30)
+  PASS  F2b: Icones.DERROTA lê-se no selo (mediana 2.41:1, corte 1.30)
+  PASS  F2b: Icones.AJUSTES lê-se no selo (mediana 8.89:1, corte 1.30)
+  PASS  F2b: Icones.CAIXA lê-se no selo (mediana 2.20:1, corte 1.30)
+  PASS  F2b: Icones.DIA lê-se no selo (mediana 8.89:1, corte 1.30)
+  PASS  F2b: Icones.BARCO lê-se no selo (mediana 5.14:1, corte 1.30)
+  PASS  F2b: Icones.DIARIO lê-se no selo (mediana 7.97:1, corte 1.30)
+  PASS  F2b: Icones.RECOMECAR lê-se no selo (mediana 1.63:1, corte 1.30)
+  PASS  F2b: Icones.REPUTACAO lê-se no selo (mediana 8.89:1, corte 1.30)
+  PASS  F2b: Icones.PAUSAR lê-se no selo (mediana 8.89:1, corte 1.30)
+  PASS  F2b: Icones.AMPLIAR_PIER lê-se no selo (mediana 2.20:1, corte 1.30)
+  PASS  o bloco F2b correu até ao fim
+=== F13: ferramenta e suíte nunca escrevem onde o jogador guarda ===
+  PASS  F13: esta suíte corre como ferramenta
+  PASS  F13: o jogo aberto normalmente grava no lugar do jogador
+  PASS  F13: `--script` conta como ferramenta
+  PASS  F13: `-s` conta como ferramenta
+  PASS  F13: o save desta corrida vive em user://ferramentas/
+  PASS  F13: a pasta de registros desta corrida vive em user://ferramentas/
+  PASS  F13: o volume desta corrida vive em user://ferramentas/
+  PASS  F13: o caminho que o ArmazemLocal dá já tem pasta para gravar
+  PASS  F13: o autosave desta corrida chega ao arquivo isolado
+  PASS  F13: só o ArmazemLocal escreve `user://` no código do jogo
+  PASS  o bloco F13 correu até ao fim
+=== F14: o que a cobrança e a contra-oferta prometem antes da escolha é o que o jogo faz depois ===
+  PASS  F10: a partida chega ao vencimento da parcela (turno 29)
+  PASS  F14: a cobrança mostra, ao lado do saldo, o dinheiro e a parcela
+  PASS  F14: a barra da cobrança mostra o dinheiro contra a parcela (1.000)
+  PASS  F14: cobrança com dinheiro — há uma tarja
+  PASS  F14: cobrança com dinheiro — a tarja veste o tom da palavra («Depois de pagar: R$123.457»)
+  PASS  F14: há um botão «Pagar…» ligado para tocar
+  PASS  F14: «Depois de pagar» é o dinheiro que o pagamento deixa
+  PASS  F14: a resposta de quem pagou diz o dinheiro que ficou
+  PASS  F14: resposta de quem pagou — há uma tarja
+  PASS  F14: resposta de quem pagou — a tarja veste o tom da palavra («Parcela quitada: R$140.000»)
+  PASS  F10: a partida chega ao vencimento da parcela (turno 29)
+  PASS  F14: «Faltam» é a parcela menos o dinheiro
+  PASS  F14: a barra da cobrança mostra o dinheiro contra a parcela (0.453)
+  PASS  F14: cobrança sem dinheiro — há uma tarja
+  PASS  F14: cobrança sem dinheiro — a tarja veste o tom da palavra («Faltam R$76.543 para pagar»)
+  PASS  F14: há um botão «Não consigo…» ligado para tocar
+  PASS  F14: oferta da segunda chance — há uma tarja
+  PASS  F14: oferta da segunda chance — a tarja veste o tom da palavra («Empréstimo: R$122.543»)
+  PASS  F14: há um botão «Recusar…» ligado para tocar
+  PASS  F14: a resposta de quem não pagou repete a falta
+  PASS  F14: resposta de quem não pagou — há uma tarja
+  PASS  F14: resposta de quem não pagou — a tarja veste o tom da palavra («Parcela não paga: R$140.000»)
+  PASS  F10: a partida chega ao vencimento da parcela (turno 29)
+  PASS  F14: há um botão «Não consigo…» ligado para tocar
+  PASS  F14: há um botão «Aceitar…» ligado para tocar
+  PASS  F14: o empréstimo prometido é o que o banco pôs no caixa
+  PASS  F14: o que «Volta» é a dívida que o jogo guardou
+  PASS  F14: e no dia da cobrança em que ela vence
+  PASS  F14: a resposta de quem aceitou diz o dinheiro que fica e a dívida
+  PASS  F14: resposta de quem aceitou — há uma tarja
+  PASS  F14: resposta de quem aceitou — a tarja veste o tom da palavra («Parcela paga com o empréstimo: R$140.000»)
+  PASS  F14: o caminho da cobrança correu até ao fim
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F14: negociação aberta — há uma tarja
+  PASS  F14: negociação aberta — a tarja veste o tom da palavra («Valor original: R$4.199»)
+  PASS  F14: há um botão «Igualar…» ligado para tocar
+  PASS  F14: «Igualar» mostra o preço por que o jogo fecha
+  PASS  F14: depois de «Igualar», a despedida diz o preço fechado
+  PASS  F14: negócio fechado por «Igualar» — há uma tarja
+  PASS  F14: negócio fechado por «Igualar» — a tarja veste o tom da palavra («Negócio fechado no seu porto»)
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F14: negociação aberta — há uma tarja
+  PASS  F14: negociação aberta — a tarja veste o tom da palavra («Valor original: R$4.199»)
+  PASS  F14: há um botão «Cortar…» ligado para tocar
+  PASS  F14: «Cortar» mostra o preço por que o jogo fecha
+  PASS  F14: depois de «Cortar», a despedida diz o preço fechado
+  PASS  F14: negócio fechado por «Cortar» — há uma tarja
+  PASS  F14: negócio fechado por «Cortar» — a tarja veste o tom da palavra («Negócio fechado no seu porto»)
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F14: negociação aberta — há uma tarja
+  PASS  F14: negociação aberta — a tarja veste o tom da palavra («Valor original: R$4.199»)
+  PASS  F14: há um botão «Manter…» ligado para tocar
+  PASS  F14: «Manter» mostra o preço por que o jogo fecha
+  PASS  F14: depois de «Manter», a despedida diz o preço fechado
+  PASS  F14: negócio fechado por «Manter» — há uma tarja
+  PASS  F14: negócio fechado por «Manter» — a tarja veste o tom da palavra («Negócio fechado no seu porto»)
+  PASS  F14: o caminho dos preços correu até ao fim
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F14: antes da aposta, o cliente diz o que sobra e o novo desconto
+  PASS  F14: há um botão «Manter…» ligado para tocar
+  PASS  F14: recusada a aposta, sobram as tentativas prometidas (1)
+  PASS  F14: e igualar passou ao desconto prometido (−28%)
+  PASS  F14: na última rodada, o cliente promete ir para o Porto Farol
+  PASS  F14: há um botão «Manter…» ligado para tocar
+  PASS  F14: negócio perdido — há uma tarja
+  PASS  F14: negócio perdido — a tarja veste o tom da palavra («Negócio perdido para Porto Farol»)
+  PASS  F14: recusada a última, o barco foi mesmo para o rival
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F14: antes da aposta, o cliente diz o que sobra e o novo desconto
+  PASS  F14: há um botão «Manter…» ligado para tocar
+  PASS  F14: recusada a aposta, sobram as tentativas prometidas (1)
+  PASS  F14: e igualar passou ao desconto prometido (−28%)
+  PASS  F14: há um botão «Igualar…» ligado para tocar
+  PASS  F14: o igualar mais caro fecha pelo preço mostrado
+  PASS  F14: o caminho da recusa correu até ao fim
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F14: reputação 100, a barra do igualar está cheia — ele fecha sempre
+  PASS  F14: reputação 100, «Cortar» promete 95% e o cliente aceitou 94.9% de 4000
+  PASS  F14: reputação 100, a barra de «Cortar» mostra 95.0% contra 94.9% medidos
+  PASS  F14: reputação 100, «Manter» promete 68% e o cliente aceitou 66.4% de 4000
+  PASS  F14: reputação 100, a barra de «Manter» mostra 67.5% contra 66.4% medidos
+  PASS  F10: o sorteio abre uma oferta do rival (turno 8)
+  PASS  F14: reputação 20, a barra do igualar está cheia — ele fecha sempre
+  PASS  F14: reputação 20, «Cortar» promete 25% e o cliente aceitou 24.9% de 4000
+  PASS  F14: reputação 20, a barra de «Cortar» mostra 25.0% contra 24.9% medidos
+  PASS  F14: reputação 20, «Manter» promete 16% e o cliente aceitou 15.8% de 4000
+  PASS  F14: reputação 20, a barra de «Manter» mostra 16.1% contra 15.8% medidos
+  PASS  F14: o caminho da chance correu até ao fim
+  PASS  F14: o boletim tem os blocos «Entrou» e «Saiu»
+  PASS  F14: «Entrou» (18042) é a soma das 4 linhas por baixo
+  PASS  F14: «Saiu» (35161) é a soma das 4 linhas por baixo
+  PASS  F14: boletim de prejuízo — há uma tarja
+  PASS  F14: boletim de prejuízo — a tarja veste o tom da palavra («Prejuízo de R$17.119»)
+  PASS  F14: a tarja do boletim é «Entrou» menos «Saiu»
+  PASS  F14: o boletim mostra o empréstimo da semana à parte, com o número dela
+  PASS  F14: o caminho do boletim correu até ao fim
+  PASS  F14: o jogo acabou perdido
+  PASS  F14: balanço de quem perdeu — há uma tarja
+  PASS  F14: balanço de quem perdeu — a tarja veste o tom da palavra («O dinheiro acabou. Operação inviável.»)
+  PASS  F14: o balanço de quem perdeu sai por «Jogar de novo»
+  PASS  F14: a Fase 1 vencida passou à Fase 2, com a frase do balanço
+  PASS  F14: há um botão «Virar a página…» ligado para tocar
+ERROR: Parameter "t" is null.
+   at: texture_2d_get (./servers/rendering/dummy/storage/texture_storage.h:106)
+   GDScript backtrace (most recent call first):
+       [0] _fotografar_folha (res://scripts/PainelNarrativo.gd:1133)
+       [1] virar_folha (res://scripts/PainelNarrativo.gd:1114)
+       [2] _virar_pagina (res://scripts/EndGame.gd:131)
+       [3] _f10_tocar (res://tests/teste_fumaca.gd:2352)
+       [4] _f14_balanco (res://tests/teste_fumaca.gd:3486)
+       [5] _f10_abrir (res://tests/teste_fumaca.gd:2334)
+       [6] _f8_esperar (res://tests/teste_fumaca.gd:1513)
+  PASS  F10: o painel chegou ao tempo «segunda_pagina» (70 frames)
+  PASS  F14: há um botão «Ver o balanço…» ligado para tocar
+  PASS  F14: balanço de quem venceu — há uma tarja
+  PASS  F14: balanço de quem venceu — a tarja veste o tom da palavra («Você quitou as três parcelas e manteve o porto no azul!»)
+  PASS  F14: o balanço de quem venceu sai pela Fase 2, sem «Jogar de novo»
+  PASS  F14: o caminho do balanço correu até ao fim
+  PASS  o bloco F14 correu até ao fim
+=== F15: o que os painéis do HUD prometem é o que o jogo faz ===
+  PASS  F15: o porto completo tem armazém, pátio e as 3 docas
+  PASS  F14: docas, armazenagem com o armazém — há uma tarja
+  PASS  F14: docas, armazenagem com o armazém — a tarja veste o tom da palavra («A receber: R$116.666»)
+  PASS  F15 docas, armazenagem com o armazém: o quadro promete R$116.666 e o jogo paga R$116.666
+  PASS  F15 docas, armazenagem com o armazém: a tarja soma o mesmo
+  PASS  F14: docas, contêiner com o pátio — há uma tarja
+  PASS  F14: docas, contêiner com o pátio — a tarja veste o tom da palavra («A receber: R$86.667»)
+  PASS  F15 docas, contêiner com o pátio: o quadro promete R$86.667 e o jogo paga R$86.667
+  PASS  F15 docas, contêiner com o pátio: a tarja soma o mesmo
+  PASS  F14: docas, pescado, sem bónus — há uma tarja
+  PASS  F14: docas, pescado, sem bónus — a tarja veste o tom da palavra («A receber: R$12.345»)
+  PASS  F15 docas, pescado, sem bónus: o quadro promete R$12.345 e o jogo paga R$12.345
+  PASS  F15 docas, pescado, sem bónus: a tarja soma o mesmo
+  PASS  F14: docas, preço fechado com o rival — há uma tarja
+  PASS  F14: docas, preço fechado com o rival — a tarja veste o tom da palavra («A receber: R$83.333»)
+  PASS  F15 docas, preço fechado com o rival: o quadro promete R$83.333 e o jogo paga R$83.333
+  PASS  F15 docas, preço fechado com o rival: a tarja soma o mesmo
+  PASS  F14: docas, sem trabalhador — há uma tarja
+  PASS  F14: docas, sem trabalhador — a tarja veste o tom da palavra («Nenhuma doca trabalhando»)
+  PASS  F15 docas, sem trabalhador: o barco sai perdido sem pagar nada
+  PASS  F15 docas, sem trabalhador: a perda prometida (Perde R$116.666 ao avançar o dia: 1 doca sem trabalhador.) é o que o MESMO barco paga com gente (R$116.666)
+  PASS  F15 docas, uma com gente e outra sem: a tarja (R$116.666) é só o que entra (R$116.666)
+  PASS  F15 docas, uma com gente e outra sem: a perda é a da parada ([23456])
+  PASS  F15 docas, barco de três dias, dia 1: a barra promete 1 de 3, e o jogo fica em 1
+  PASS  F15 docas, barco de três dias, dia 2: a barra promete 2 de 3, e o jogo fica em 2
+  PASS  F15 docas, barco de três dias, dia 3: a barra promete 3 de 3, e o jogo fica em 3
+  PASS  F15: o caminho das docas correu até ao fim
+  PASS  F15: o porto completo tem armazém, pátio e as 3 docas
+  PASS  F15 recordes: na partida nova «Melhor dia» mostra «—»
+  PASS  F15 recordes: na partida nova «Mais barcos num dia» mostra «—»
+  PASS  F15 recordes: na partida nova «Maior negócio» mostra «—»
+  PASS  F15 recordes: na partida nova «Melhor semana» mostra «—»
+  PASS  F15 recordes: o observador jogou 25 dias e fechou 3 semanas
+  PASS  F15 recordes: ontem sem lucro, a tarja não tem barra
+  PASS  F15 recordes: «Melhor dia» mostra ["R$73.764", "dia 8"], e o observador mediu ["R$73.764", "dia 8"]
+  PASS  F15 recordes: «Mais barcos num dia» mostra ["3", "dia 8"], e o observador mediu ["3", "dia 8"]
+  PASS  F15 recordes: «Maior negócio» mostra ["R$39.587", "Armazenagem · dia 8"], e o observador mediu ["R$39.587", "Armazenagem · dia 8"]
+  PASS  F15 recordes: «Melhor semana» mostra ["R$299.491", "semana 2"], e o observador mediu ["R$299.491", "semana 2"]
+  PASS  F15 recordes: o save guarda-os e devolve-os iguais
+  PASS  F15: o caminho dos recordes correu até ao fim
+  PASS  F15 dia 32: a partida chega ao dia do vencimento a jogar
+  PASS  F15 dia 32: o dia vira para a cobrança
+  PASS  F15 dia 32: o melhor dia é o 32, com a parcela dentro (R$3.844.000), e o recorde diz R$3.844.000 do dia 28
+  PASS  F15: o caminho do dia 32 correu até ao fim
+  PASS  F15 reputação 76.60: o quadro diz o patamar do jogo («76,6 — Respeitado»)
+  PASS  F15 reputação 76.60: a escada tem os cinco degraus
+  PASS  F15 reputação 76.60: o degrau «Referência» começa onde o jogo o começa (81.0)
+  PASS  F15 reputação 76.60: «Referência» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 76.60: o degrau «Respeitado» começa onde o jogo o começa (61.0)
+  PASS  F15 reputação 76.60: «Respeitado» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 76.60: o «▸» está no patamar do jogo
+  PASS  F15 reputação 76.60: o degrau «Confiável» começa onde o jogo o começa (41.0)
+  PASS  F15 reputação 76.60: «Confiável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 76.60: o degrau «Questionável» começa onde o jogo o começa (21.0)
+  PASS  F15 reputação 76.60: «Questionável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 76.60: o degrau «Desconhecido» começa onde o jogo o começa (0.0)
+  PASS  F15 reputação 76.60: «Desconhecido» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 76.60: um degrau marcado, e um só
+  PASS  F15 reputação 76.60: «Faltam 4,4 para Referência.» — a 4.4 chega-se a Referência, e um pouco antes ainda não
+  PASS  F15 reputação 20.95: o quadro diz o patamar do jogo («20,9 — Desconhecido»)
+  PASS  F15 reputação 20.95: a escada tem os cinco degraus
+  PASS  F15 reputação 20.95: o degrau «Referência» começa onde o jogo o começa (81.0)
+  PASS  F15 reputação 20.95: «Referência» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 20.95: o degrau «Respeitado» começa onde o jogo o começa (61.0)
+  PASS  F15 reputação 20.95: «Respeitado» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 20.95: o degrau «Confiável» começa onde o jogo o começa (41.0)
+  PASS  F15 reputação 20.95: «Confiável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 20.95: o degrau «Questionável» começa onde o jogo o começa (21.0)
+  PASS  F15 reputação 20.95: «Questionável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 20.95: o degrau «Desconhecido» começa onde o jogo o começa (0.0)
+  PASS  F15 reputação 20.95: «Desconhecido» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 20.95: o «▸» está no patamar do jogo
+  PASS  F15 reputação 20.95: um degrau marcado, e um só
+  PASS  F15 reputação 20.95: «Faltam 0,1 para Questionável.» — a 0.1 chega-se a Questionável, e um pouco antes ainda não
+  PASS  F15 reputação 64.30: o quadro diz o patamar do jogo («64,3 — Respeitado»)
+  PASS  F15 reputação 64.30: a escada tem os cinco degraus
+  PASS  F15 reputação 64.30: o degrau «Referência» começa onde o jogo o começa (81.0)
+  PASS  F15 reputação 64.30: «Referência» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 64.30: o degrau «Respeitado» começa onde o jogo o começa (61.0)
+  PASS  F15 reputação 64.30: «Respeitado» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 64.30: o «▸» está no patamar do jogo
+  PASS  F15 reputação 64.30: o degrau «Confiável» começa onde o jogo o começa (41.0)
+  PASS  F15 reputação 64.30: «Confiável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 64.30: o degrau «Questionável» começa onde o jogo o começa (21.0)
+  PASS  F15 reputação 64.30: «Questionável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 64.30: o degrau «Desconhecido» começa onde o jogo o começa (0.0)
+  PASS  F15 reputação 64.30: «Desconhecido» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 64.30: um degrau marcado, e um só
+  PASS  F15 reputação 64.30: «Faltam 16,7 para Referência.» — a 16.7 chega-se a Referência, e um pouco antes ainda não
+  PASS  F15 reputação 81.00: o quadro diz o patamar do jogo («81,0 — Referência»)
+  PASS  F15 reputação 81.00: a escada tem os cinco degraus
+  PASS  F15 reputação 81.00: o degrau «Referência» começa onde o jogo o começa (81.0)
+  PASS  F15 reputação 81.00: «Referência» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 81.00: o «▸» está no patamar do jogo
+  PASS  F15 reputação 81.00: o degrau «Respeitado» começa onde o jogo o começa (61.0)
+  PASS  F15 reputação 81.00: «Respeitado» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 81.00: o degrau «Confiável» começa onde o jogo o começa (41.0)
+  PASS  F15 reputação 81.00: «Confiável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 81.00: o degrau «Questionável» começa onde o jogo o começa (21.0)
+  PASS  F15 reputação 81.00: «Questionável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 81.00: o degrau «Desconhecido» começa onde o jogo o começa (0.0)
+  PASS  F15 reputação 81.00: «Desconhecido» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 81.00: um degrau marcado, e um só
+  PASS  F15 reputação 81.00: no topo não promete degrau («O topo da escada.»)
+  PASS  F15 reputação 100.00: o quadro diz o patamar do jogo («100,0 — Referência»)
+  PASS  F15 reputação 100.00: a escada tem os cinco degraus
+  PASS  F15 reputação 100.00: o degrau «Referência» começa onde o jogo o começa (81.0)
+  PASS  F15 reputação 100.00: «Referência» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 100.00: o «▸» está no patamar do jogo
+  PASS  F15 reputação 100.00: o degrau «Respeitado» começa onde o jogo o começa (61.0)
+  PASS  F15 reputação 100.00: «Respeitado» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 100.00: o degrau «Confiável» começa onde o jogo o começa (41.0)
+  PASS  F15 reputação 100.00: «Confiável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 100.00: o degrau «Questionável» começa onde o jogo o começa (21.0)
+  PASS  F15 reputação 100.00: «Questionável» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 100.00: o degrau «Desconhecido» começa onde o jogo o começa (0.0)
+  PASS  F15 reputação 100.00: «Desconhecido» vai até ao degrau de cima e está no número do jogo
+  PASS  F15 reputação 100.00: um degrau marcado, e um só
+  PASS  F15 reputação 100.00: no topo não promete degrau («O topo da escada.»)
+  PASS  F15: o caminho da reputação correu até ao fim
+  PASS  F14: parcela por quitar — há uma tarja
+  PASS  F14: parcela por quitar — a tarja veste o tom da palavra («Quitar hoje: R$132.915»)
+  PASS  F15 parcela: a linha de apoio é a cheia menos o abatimento ([140000, 7085])
+  PASS  F15 parcela: a barra mede o dinheiro contra o valor de hoje
+  PASS  F15: há um botão «Quitar agora…» ligado para tocar
+  PASS  F15 parcela: a tarja promete R$132.915 e o botão tira R$132.915
+  PASS  F14: parcela quitada — há uma tarja
+  PASS  F14: parcela quitada — a tarja veste o tom da palavra («Parcela quitada»)
+  PASS  F15: o caminho da parcela correu até ao fim
+  PASS  F14: calendário — há uma tarja
+  PASS  F14: calendário — a tarja veste o tom da palavra («Dia 10 de 84»)
+  PASS  F15 calendário: a barra do prazo é o dia do jogo contra o fim da partida
+  PASS  F15 calendário: «Dia 10 de 84» / «Semana 2 de 12 · parcela 1 vence no dia 28» são o dia e a semana do jogo
+  PASS  F15: o caminho do calendário correu até ao fim
+  PASS  o bloco F15 correu até ao fim
+=== F16: três espaços de save, e só se apaga um porto com dois toques ===
+  PASS  F16: o espaço 1 grava no arquivo que o save sempre teve (savegame.json)
+  PASS  F16: os 3 espaços gravam em 3 arquivos diferentes
+  PASS  F16: carregar o espaço 1 traz o porto dele (Um, R$111)
+  PASS  F16: carregar o espaço 2 traz o porto dele (Dois, R$222)
+  PASS  F16: começar no espaço 3 deixa o 2 como estava
+  PASS  F16: e o 1 também
+  PASS  F16: o espaço 3, começado e ainda sem nome, lê-se livre
+  PASS  F16: um espaço de versão que a cadeia não lê lê-se livre
+  PASS  F16: e LER não o apaga — quem o apaga é a partida nova que o ocupar
+  PASS  F16: um espaço que a carga recusa (sem docas) lê-se livre, e não como porto
+  PASS  F16: ler os três não mexeu no estado vivo (espaço, porto, dinheiro, dia)
+  PASS  F16: o resumo do espaço 1 é o que o save diz (dia 1 de 84 · R$111)
+  PASS  F16: o jogado por último é o 2 (2)
+  PASS  F16: e passa a ser o 1 quando o 1 volta a gravar (1)
+  PASS  F16: com o 1 e o 2 ocupados, o primeiro livre é o 3
+  FALHA F16 tela inicial: com portos guardados há Continuar, Nova partida, Carregar e Ajustes  — ["Continuar", "Nova partida", "Carregar", "Como jogar", "Ajustes"]
+  PASS  F16 tela inicial: «Última partida: Um · dia 1 de 84 · R$111» é o porto jogado por último, não o espaço em uso
+  FALHA F16 tela inicial: sem porto guardado há só Nova partida e Ajustes  — ["Nova partida", "Como jogar", "Ajustes"]
+  PASS  F16 pausa: Continuar, Ajustes e Salvar e sair (Continuar, Como jogar, Ajustes, Salvar e sair)
+  PASS  F16 pausa: nenhum botão apaga a partida
+  PASS  F16 pausa: «Salvar e sair» pede a tela inicial e «Ajustes» pede os ajustes (["sair", "ajustes"])
+  PASS  F16 espaços: ao carregar, só os 2 ocupados são botão (2)
+  PASS  F16 espaços: na partida nova os ocupados dizem «Substituir» e o livre «Começar aqui»
+  PASS  F16 espaços: «Substituir» não escolhe nada — pergunta antes (confirmar)
+  PASS  F16 espaços: e o porto que ia apagar continua no disco
+  PASS  F16 espaços: o segundo toque escolhe o espaço 1 para a partida nova ([[1, "nova"]])
+  PASS  F16 registro: o porto arma o gravador ao abrir
+  PASS  F16 registro: «Salvar e sair» desarma o gravador
+  PASS  F16 registro: depois de sair, nem um dia jogado entra no registro da partida deixada
+  PASS  F16 registro: e a Ajustes ainda copia a última partida
+  PASS  o bloco F16 correu até ao fim
+=== F17: a conversa do celular — cada aviso com o seu ícone, cada fala com a sua cara ===
+  PASS  F17: todo aviso de GameState.gd diz o assunto (22 chamadas, 22 lidas)
+  PASS  F17: todo aviso de Main.gd diz o assunto (1 chamadas, 1 lidas)
+  PASS  F17: o assunto «doca» tem ícone na conversa
+  PASS  F17: o assunto «rival» tem ícone na conversa
+  PASS  F17: o assunto «trabalhador» tem ícone na conversa
+  PASS  F17: o assunto «cliente» tem ícone na conversa
+  PASS  F17: o assunto «negocio» tem ícone na conversa
+  PASS  F17: o assunto «meta» tem ícone na conversa
+  PASS  F17: o assunto «semana» tem ícone na conversa
+  PASS  F17: o assunto «dinheiro» tem ícone na conversa
+  PASS  F17: o assunto «obra» tem ícone na conversa
+  PASS  F17: o assunto «porto» tem ícone na conversa
+  PASS  F17: o ícone de «meta» tem quem o emita
+  PASS  F17: o ícone de «porto» tem quem o emita
+  PASS  F17: o ícone de «doca» tem quem o emita
+  PASS  F17: o ícone de «trabalhador» tem quem o emita
+  PASS  F17: o ícone de «rival» tem quem o emita
+  PASS  F17: o ícone de «cliente» tem quem o emita
+  PASS  F17: o ícone de «negocio» tem quem o emita
+  PASS  F17: o ícone de «semana» tem quem o emita
+  PASS  F17: o ícone de «dinheiro» tem quem o emita
+  PASS  F17: o ícone de «obra» tem quem o emita
+  PASS  F17: o Main tem a fila das mensagens
+  PASS  F17: a fala do painel de «ribeiro» está no histórico
+  PASS  F17: e com a cara dessa fala (ribeiro)
+  PASS  F17: a fala do painel de «cida» está no histórico
+  PASS  F17: e com a cara dessa fala (cida)
+  PASS  F17: a fala do painel de «arlindo» está no histórico
+  PASS  F17: e com a cara dessa fala (arlindo)
+  PASS  F17: gravar as falas não mexeu na faixa
+  PASS  o bloco F17 correu até ao fim
+=== F18: o prazo que o Construir e a mensagem prometem é o que a obra cumpre ===
+  PASS  F18: há reparos com prazo de obra nesta fase
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 pier_2, dia 83: o Construir avisa ANTES de comprar, em âmbar
+  PASS  F18 pier_2, dia 83: e não promete um dia que a fase não tem
+  PASS  F18 pier_2, dia 83: a mensagem avisa, em tom de aviso
+  PASS  F18 pier_2, dia 83: e a mensagem não diz «dia 85»
+  PASS  F18 pier_2, dia 83: com a obra a andar, o cartão continua a avisar
+  PASS  F18 pier_2: no dia 84, o último da fase, a obra ainda não está de pé
+  PASS  F18 pier_2: e fica pronta no fecho dele
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 pier_2, dia 82: na véspera o Construir não avisa
+  PASS  F18 pier_2, dia 82: a mensagem é boa e diz o dia, sem aviso
+  PASS  F18 pier_2, dia 82: o cartão da obra a andar promete o mesmo dia 84
+  PASS  F18 pier_2: o dia prometido (84) é um dia da fase
+  PASS  F18 pier_2: de pé no dia 84 e não antes
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 armazem, dia 83: o Construir avisa ANTES de comprar, em âmbar
+  PASS  F18 armazem, dia 83: e não promete um dia que a fase não tem
+  PASS  F18 armazem, dia 83: a mensagem avisa, em tom de aviso
+  PASS  F18 armazem, dia 83: e a mensagem não diz «dia 85»
+  PASS  F18 armazem, dia 83: com a obra a andar, o cartão continua a avisar
+  PASS  F18 armazem: no dia 84, o último da fase, a obra ainda não está de pé
+  PASS  F18 armazem: e fica pronta no fecho dele
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 armazem, dia 82: na véspera o Construir não avisa
+  PASS  F18 armazem, dia 82: a mensagem é boa e diz o dia, sem aviso
+  PASS  F18 armazem, dia 82: o cartão da obra a andar promete o mesmo dia 84
+  PASS  F18 armazem: o dia prometido (84) é um dia da fase
+  PASS  F18 armazem: de pé no dia 84 e não antes
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 patio, dia 82: o Construir avisa ANTES de comprar, em âmbar
+  PASS  F18 patio, dia 82: e não promete um dia que a fase não tem
+  PASS  F18 patio, dia 82: a mensagem avisa, em tom de aviso
+  PASS  F18 patio, dia 82: e a mensagem não diz «dia 85»
+  PASS  F18 patio, dia 82: com a obra a andar, o cartão continua a avisar
+  PASS  F18 patio: no dia 84, o último da fase, a obra ainda não está de pé
+  PASS  F18 patio: e fica pronta no fecho dele
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 patio, dia 81: na véspera o Construir não avisa
+  PASS  F18 patio, dia 81: a mensagem é boa e diz o dia, sem aviso
+  PASS  F18 patio, dia 81: o cartão da obra a andar promete o mesmo dia 84
+  PASS  F18 patio: o dia prometido (84) é um dia da fase
+  PASS  F18 patio: de pé no dia 84 e não antes
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 rodapé, dia 81: conta 3 disponíveis e o painel tem 3 para construir
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 rodapé, dia 82: conta 3 disponíveis e o painel tem 3 para construir
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 rodapé, dia 83: conta 2 disponíveis e o painel tem 2 para construir
+  PASS  F10: res://scenes/panels/UpgradePanel.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F18 rodapé, dia 84: conta 0 disponíveis e o painel tem 0 para construir
+  PASS  F18 rodapé: a contagem muda dentro dos dias percorridos
+  PASS  F18 rodapé, dia 81: sem dinheiro o rodapé não desce (3 com, 3 sem)
+  PASS  o bloco F18 correu até ao fim
+=== F19: todo nome que as suítes e as ferramentas leem por string existe no alvo ===
+  PASS  F19: as expressões reconhecem as formas que caçam, e só elas
+  PASS  F19: a declaração lê-se e traz as quatro chaves
+  PASS  F19: todo alvo tem um script com membros para perguntar
+  PASS  F19: a varredura achou as suítes e as ferramentas
+  PASS  F19: todo arquivo da declaração está na varredura
+  PASS  F19: todo nome lido por string existe no alvo, com o tipo que a leitura pede
+  FALHA F19: todo literal com cara de privado é uma leitura lida ou está declarado  —
+    tests/casos_como_jogar.gd: "_rng" fora de uma leitura que a guarda saiba ler (1)
+  PASS  F19: nenhuma declaração está morta
+  PASS  F19: nenhum literal declarado como não-membro é membro de um alvo
+  PASS  F19: e há nomes para conferir (50: { "Main": 15, "Trafego": 19, "Dock": 12, "Vez": 1, "PainelBoletim": 1, "Narradora": 1, "um painel": 1 })
+  PASS  o bloco F19 correu até ao fim
+=== F20: a tabela das fases tem os campos todos, e o que ela afirma é o que o jogo faz ===
+  PASS  F20: a tabela tem pelo menos uma fase (2)
+  PASS  F20: a Fase 1 tem os campos todos, e só eles
+  PASS  F20: a Fase 1 dura um número inteiro de semanas (12)
+  PASS  F20: o nível máximo da Fase 1 é um dos três do porto (1)
+  PASS  F20: a Fase 1 desenha pelo menos um berço (3)
+  PASS  F20: a reputação da Fase 1 começa na escala 0–100 (65.0)
+  PASS  F20: a parcela 1 da Fase 1 tem os campos todos, e só eles
+  PASS  F20: a parcela 1 da Fase 1 é feita de inteiros
+  PASS  F20: a parcela 1 da Fase 1 vence depois da anterior e dentro da fase (semana 4)
+  PASS  F20: os juros da parcela 1 da Fase 1 são parte do valor (9919 de 140000)
+  PASS  F20: a parcela 2 da Fase 1 tem os campos todos, e só eles
+  PASS  F20: a parcela 2 da Fase 1 é feita de inteiros
+  PASS  F20: a parcela 2 da Fase 1 vence depois da anterior e dentro da fase (semana 8)
+  PASS  F20: os juros da parcela 2 da Fase 1 são parte do valor (6693 de 140000)
+  PASS  F20: a parcela 3 da Fase 1 tem os campos todos, e só eles
+  PASS  F20: a parcela 3 da Fase 1 é feita de inteiros
+  PASS  F20: a parcela 3 da Fase 1 vence depois da anterior e dentro da fase (semana 12)
+  PASS  F20: os juros da parcela 3 da Fase 1 são parte do valor (3388 de 140000)
+  PASS  F20: o reparo pier_2 da Fase 1 está no catálogo das estruturas
+  PASS  F20: o reparo pier_2 da Fase 1 tem os campos todos, e só eles
+  PASS  F20: o reparo pier_2 da Fase 1 é feito de inteiros
+  PASS  F20: o reparo pier_2 da Fase 1 abre dentro da fase (semana 1)
+  PASS  F20: o reparo pier_2 da Fase 1 leva pelo menos um dia de obra (2)
+  PASS  F20: o reparo pier_2 da Fase 1 não pede mais quitadas do que a fase cobra (0 de 3)
+  PASS  F20: o reparo pier_2 da Fase 1 pede no máximo uma quitada — o desbloqueio diz «primeira» (0)
+  PASS  F20: o reparo armazem da Fase 1 está no catálogo das estruturas
+  PASS  F20: o reparo armazem da Fase 1 tem os campos todos, e só eles
+  PASS  F20: o reparo armazem da Fase 1 é feito de inteiros
+  PASS  F20: o reparo armazem da Fase 1 abre dentro da fase (semana 2)
+  PASS  F20: o reparo armazem da Fase 1 leva pelo menos um dia de obra (2)
+  PASS  F20: o reparo armazem da Fase 1 não pede mais quitadas do que a fase cobra (0 de 3)
+  PASS  F20: o reparo armazem da Fase 1 pede no máximo uma quitada — o desbloqueio diz «primeira» (0)
+  PASS  F20: o reparo patio da Fase 1 está no catálogo das estruturas
+  PASS  F20: o reparo patio da Fase 1 tem os campos todos, e só eles
+  PASS  F20: o reparo patio da Fase 1 é feito de inteiros
+  PASS  F20: o reparo patio da Fase 1 abre dentro da fase (semana 5)
+  PASS  F20: o reparo patio da Fase 1 leva pelo menos um dia de obra (3)
+  PASS  F20: o reparo patio da Fase 1 não pede mais quitadas do que a fase cobra (1 de 3)
+  PASS  F20: o reparo patio da Fase 1 pede no máximo uma quitada — o desbloqueio diz «primeira» (1)
+  PASS  F20: a Fase 2 tem os campos todos, e só eles
+  PASS  F20: meta da Fase 2 tem os campos todos, e só eles
+  PASS  F20: piso < início < meta na escala 0–100
+  PASS  F20: meta pede três dias e a infraestrutura escolhida
+  PASS  F20: a Fase 2 não tem prazo, e só a última fase e sem cobrança o pode não ter
+  PASS  F20: o nível máximo da Fase 2 é um dos três do porto (2)
+  PASS  F20: a Fase 2 desenha pelo menos um berço (3)
+  PASS  F20: a reputação da Fase 2 começa na escala 0–100 (65.0)
+  PASS  F20: o reparo pier_2 da Fase 2 está no catálogo das estruturas
+  PASS  F20: o reparo pier_2 da Fase 2 tem os campos todos, e só eles
+  PASS  F20: o reparo pier_2 da Fase 2 é feito de inteiros
+  PASS  F20: o reparo pier_2 da Fase 2 abre dentro da fase (semana 1)
+  PASS  F20: o reparo pier_2 da Fase 2 leva pelo menos um dia de obra (2)
+  PASS  F20: o reparo pier_2 da Fase 2 não pede mais quitadas do que a fase cobra (0 de 0)
+  PASS  F20: o reparo pier_2 da Fase 2 pede no máximo uma quitada — o desbloqueio diz «primeira» (0)
+  PASS  F20: o reparo armazem da Fase 2 está no catálogo das estruturas
+  PASS  F20: o reparo armazem da Fase 2 tem os campos todos, e só eles
+  PASS  F20: o reparo armazem da Fase 2 é feito de inteiros
+  PASS  F20: o reparo armazem da Fase 2 abre dentro da fase (semana 1)
+  PASS  F20: o reparo armazem da Fase 2 leva pelo menos um dia de obra (2)
+  PASS  F20: o reparo armazem da Fase 2 não pede mais quitadas do que a fase cobra (0 de 0)
+  PASS  F20: o reparo armazem da Fase 2 pede no máximo uma quitada — o desbloqueio diz «primeira» (0)
+  PASS  F20: o reparo patio da Fase 2 está no catálogo das estruturas
+  PASS  F20: o reparo patio da Fase 2 tem os campos todos, e só eles
+  PASS  F20: o reparo patio da Fase 2 é feito de inteiros
+  PASS  F20: o reparo patio da Fase 2 abre dentro da fase (semana 1)
+  PASS  F20: o reparo patio da Fase 2 leva pelo menos um dia de obra (3)
+  PASS  F20: o reparo patio da Fase 2 não pede mais quitadas do que a fase cobra (0 de 0)
+  PASS  F20: o reparo patio da Fase 2 pede no máximo uma quitada — o desbloqueio diz «primeira» (0)
+  PASS  F20: o reparo pier_3 da Fase 2 está no catálogo das estruturas
+  PASS  F20: o reparo pier_3 da Fase 2 tem os campos todos, e só eles
+  PASS  F20: o reparo pier_3 da Fase 2 é feito de inteiros
+  PASS  F20: o reparo pier_3 da Fase 2 abre dentro da fase (semana 1)
+  PASS  F20: o reparo pier_3 da Fase 2 leva pelo menos um dia de obra (3)
+  PASS  F20: o reparo pier_3 da Fase 2 não pede mais quitadas do que a fase cobra (0 de 0)
+  PASS  F20: o reparo pier_3 da Fase 2 pede no máximo uma quitada — o desbloqueio diz «primeira» (0)
+  PASS  F20: o reparo escritorio da Fase 2 está no catálogo das estruturas
+  PASS  F20: o reparo escritorio da Fase 2 tem os campos todos, e só eles
+  PASS  F20: o reparo escritorio da Fase 2 é feito de inteiros
+  PASS  F20: o reparo escritorio da Fase 2 abre dentro da fase (semana 1)
+  PASS  F20: o reparo escritorio da Fase 2 leva pelo menos um dia de obra (2)
+  PASS  F20: o reparo escritorio da Fase 2 não pede mais quitadas do que a fase cobra (0 de 0)
+  PASS  F20: o reparo escritorio da Fase 2 pede no máximo uma quitada — o desbloqueio diz «primeira» (0)
+  PASS  F20: o reparo trelica da Fase 2 está no catálogo das estruturas
+  PASS  F20: o reparo trelica da Fase 2 tem os campos todos, e só eles
+  PASS  F20: o reparo trelica da Fase 2 é feito de inteiros
+  PASS  F20: o reparo trelica da Fase 2 abre dentro da fase (semana 1)
+  PASS  F20: o reparo trelica da Fase 2 leva pelo menos um dia de obra (2)
+  PASS  F20: o reparo trelica da Fase 2 não pede mais quitadas do que a fase cobra (0 de 0)
+  PASS  F20: o reparo trelica da Fase 2 pede no máximo uma quitada — o desbloqueio diz «primeira» (0)
+  PASS  F20: o capital das parcelas da Fase 1 é o crédito que o jogador recebeu (R$400.000 de R$400.000)
+  PASS  F20: o mapa desenha os berços que a Fase 1 declara (3 docas e 3 cartões, declara 3)
+  PASS  F20: o nível máximo da Fase 1 é o que os reparos dela alcançam (declara 1, alcançam 1 em 8 portos)
+  PASS  F20: o mapa desenha os berços que a Fase 2 declara (3 docas e 3 cartões, declara 3)
+  PASS  F20: o nível máximo da Fase 2 é o que os reparos dela alcançam (declara 2, alcançam 2 em 40 portos)
+  PASS  o bloco F20 correu até ao fim
+=== F21: um save de exemplo por versão, e a cadeia de migração leva cada um à corrente ===
+  PASS  F21: o piso da migração não passa da versão corrente (14 ≤ 18)
+  PASS  F21: há um save de exemplo da versão 14
+  PASS  F21: há um save de exemplo da versão 15
+  PASS  F21: há um save de exemplo da versão 16
+  PASS  F21: há um save de exemplo da versão 17
+  PASS  F21: há um save de exemplo da versão 18
+  PASS  F21: o exemplo v14 está entre o piso e a corrente (14 a 18)
+  PASS  F21: o exemplo v15 está entre o piso e a corrente (14 a 18)
+  PASS  F21: o exemplo v16 está entre o piso e a corrente (14 a 18)
+  PASS  F21: o exemplo v17 está entre o piso e a corrente (14 a 18)
+  PASS  F21: o exemplo v18 está entre o piso e a corrente (14 a 18)
+  PASS  F21: o exemplo v14 diz que é da versão 14
+  PASS  F21: o save de exemplo da versão 14 carrega
+  PASS  F21: o porto do exemplo v14 chega com os dois nomes dele
+  PASS  F21: o exemplo v15 diz que é da versão 15
+  PASS  F21: o save de exemplo da versão 15 carrega
+  PASS  F21: o porto do exemplo v15 chega com os dois nomes dele
+  PASS  F21: o exemplo v16 diz que é da versão 16
+  PASS  F21: o save de exemplo da versão 16 carrega
+  PASS  F21: o porto do exemplo v16 chega com os dois nomes dele
+  PASS  F21: o exemplo v17 diz que é da versão 17
+  PASS  F21: o save de exemplo da versão 17 carrega
+  PASS  F21: o porto do exemplo v17 chega com os dois nomes dele
+  PASS  F21: o exemplo v18 diz que é da versão 18
+  PASS  F21: o save de exemplo da versão 18 carrega
+  PASS  F21: o exemplo corrente traz os campos cheios — obra, fila, atracado, parcela, reparo, semanas, recorde, nomes e a segunda chance
+  PASS  F21: o exemplo corrente volta igual depois de carregado e regravado
+  PASS  F21: a cadeia de 11 a 14 sobe os degraus 11, 12 e 13, por ordem
+  PASS  F21: e entrega a versão 14, escrita pela cadeia, com o que cada degrau escreveu
+  PASS  F21: e a origem não foi tocada
+  PASS  F21: o degrau que não sabe ler recusa o save inteiro, e os de cima não correm
+  PASS  F21: o save já na versão corrente atravessa sem degrau nenhum
+  PASS  F21: e o do futuro também — chega com a versão dele, e quem o recusa é o _save_aceite (F3)
+  PASS  o bloco F21 correu até ao fim
+=== F22: o tutorial do Toninho fala quando o recorte diz, e mais nenhuma vez ===
+  PASS  F22.1: no dia 1 com barco ao largo, o Toninho diz o passo 1
+  PASS  F22.1: na voz dele e com a cara calma
+  PASS  F22.1: e espera a vez atrás da mensagem de abertura
+  PASS  F22.1: (o jogo aceitou o atracar)
+  PASS  F22.1: atracado antes de a ler, o passo 1 nunca chega à tela
+  PASS  F22.1: e sai do histórico — nunca foi dito
+  PASS  F22.1: vem o passo 2, visto, com a cara irónica
+  PASS  F22.1: e o «AVANÇAR DIA» pulsa (3 tweens novos)
+  PASS  F22.1: desfazer e atracar outra vez no dia 1 não repete o passo 2
+  PASS  F22.1: virado o dia pelo botão, o pulso PARA (e não só volta ao branco)
+  PASS  F22.1: no dia 2, atracar não repete o tutorial
+  PASS  F22: o caminho 1 (atracar antes de ler) correu até ao fim
+  PASS  F22.2: o passo 1 chega à tela quando ninguém atraca
+  PASS  F22.2: o dia virou antes de atracar — sai a fala séria, vista
+  PASS  F22.2: com a cara séria
+  PASS  F22.2: e o tutorial acaba
+  PASS  F22.2: atracar depois já não dá o passo 2
+  PASS  F22.2: virado o dia no frame da montagem, sai na mesma a fala séria
+  PASS  F22: o caminho 2 (o dia vira antes de atracar) correu até ao fim
+  PASS  F22.3: com a folha de rosto na tela, o Toninho não fala
+  PASS  F22.3: nem com o diário
+  PASS  F22.3: (a abertura abriu o diário)
+  PASS  F22.3: fechado o caderno, diz o passo 1
+  PASS  F22.3: com a contra-oferta por responder, ele espera calado
+  PASS  F22.3: e fala quando o cliente fica
+  PASS  F22: o caminho 3 (a abertura) correu até ao fim
+  PASS  F22.4: no dia 2 não há tutorial
+  PASS  F22.4: no dia 1 com barco já no píer, também não
+  PASS  F22.4: com o fundeadouro vazio ele espera calado
+  PASS  F22.4: e o dia vira sem fala nenhuma
+  PASS  F22: o caminho 4 (não é dia de tutorial) correu até ao fim
+  PASS  o bloco F22 correu até ao fim
+=== F23: a Fase 2 abre na tela, e os estados do turno são constantes (M9) ===
+  PASS  F23: a varredura leu o código do jogo (45 arquivos, GameState e Main entre eles)
+  PASS  F23: e achou as quatro constantes que definem os estados (4)
+  PASS  F23: nenhum estado do turno por extenso no código do jogo (0)
+  PASS  F23: o legado saiu — sem `upgrade_purchased` nem `buy_upgrade()`, e o save sem ele
+  PASS  F23: o caminho do M9 correu até ao fim
+  PASS  F23: a passagem com o Main aberto põe a partida na Fase 2
+  PASS  F23: e a barra recomeçou abaixo da faixa em que a Fase 1 fechou
+  PASS  F23: e a Dona Cida não anuncia o recomeço como queda ()
+  PASS  F23: e uma queda de verdade, depois da passagem, ela anuncia (reputacao_caiu)
+  PASS  F23: o dia do HUD não tem «de quantos» na Fase 2 («Dia 85»)
+  PASS  F23: o cartão abre a meta da Fase 2 («Meta da Fase 2 — toque para ver»)
+  PASS  F23: o calendário da Fase 2 diz o dia sem prazo («Dia 85»)
+  PASS  F23: e mostra as quatro semanas a partir da de hoje (28 células, a primeira Dia85)
+  PASS  F23: e a legenda não explica um vencimento que a fase não tem
+  PASS  F23: o celular diz a semana e a fase, sem prazo («SEMANA 13», «Fase 2»)
+  PASS  F23: e a fita tem os dias que o calendário mostra (28)
+  PASS  F10: res://scenes/panels/PauseMenu.tscn não tem setup(), e o caso não lhe passa argumentos
+  PASS  F23: a pausa diz em que fase e dia está («Cais da Fase 2 · Fase 2, dia 85 · espaço 1 de 3»)
+  PASS  F23: a linha do espaço também («Fase 2, dia 85 · R$9.844.000»)
+  PASS  F23: o boletim da Fase 2 diz a semana sem prazo ([])
+  PASS  F23: o caminho da tela correu até ao fim
+  PASS  o bloco F23 correu até ao fim
+
+=== FUMACA FALHOU — 3 problema(s) ===
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2663)

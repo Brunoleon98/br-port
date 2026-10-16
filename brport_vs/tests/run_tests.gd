@@ -1695,10 +1695,13 @@ func _run() -> void:
 	var cancelamento = load("res://tests/casos_cancelamento.gd").new()
 	await cancelamento.rodar(GS, self)
 	_check("T24: cancelamento, contas, migração, interface e registro", cancelamento.completo and cancelamento.falhas == 0)
-	print("=== T25: o jogador ao acaso — invariantes a cada passo ===")
+	var ajuda = load("res://tests/casos_como_jogar.gd").new()
+	await ajuda.rodar(GS, self)
+	_check("T25: consulta, navegação e preservação da partida", ajuda.completo and ajuda.falhas == 0)
+	print("=== T26: o jogador ao acaso — invariantes a cada passo ===")
 	var acaso = load("res://tests/jogador_ao_acaso.gd").new()
 	acaso.rodar(GS, self)
-	_check("o bloco T25 correu até ao fim, sem invariante quebrado", acaso.completo and acaso.falhas == 0)
+	_check("o bloco T26 correu até ao fim, sem invariante quebrado", acaso.completo and acaso.falhas == 0)
 
 	print("")
 	if _fails == 0:

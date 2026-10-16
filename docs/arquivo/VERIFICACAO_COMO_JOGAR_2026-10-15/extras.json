@@ -1,0 +1,38 @@
+{
+  "inicio-artigo-9x20": {
+    "ok": true,
+    "tamanho": [
+      720,
+      1600
+    ],
+    "fim": false,
+    "pausa": false
+  },
+  "pausa-glossario-fim-9x20": {
+    "ok": true,
+    "tamanho": [
+      720,
+      1600
+    ],
+    "fim": true,
+    "pausa": true
+  },
+  "inicio-indice-10x16": {
+    "ok": true,
+    "tamanho": [
+      720,
+      1152
+    ],
+    "fim": false,
+    "pausa": false
+  },
+  "inicio-glossario-fim-10x16": {
+    "ok": true,
+    "tamanho": [
+      720,
+      1152
+    ],
+    "fim": true,
+    "pausa": false
+  }
+}
