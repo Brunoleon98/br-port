@@ -59,7 +59,11 @@ const MARGEM := 10.0
 const CABECALHO := 46.0
 const VAO := 8.0                 # entre dois props da mesma fila
 const NUMERO := 13.0             # a linha do número por baixo de cada fila
-const ENTRE_FILAS := 8.0
+# ⚠️ ERA 8, e a página está no LIMITE: com o rolo do pátio (`121`), o 88.º
+# prop, ela pedia 1283 px em 1280, e um pixel a menos entre as nove filas
+# devolve-lhe nove. O prop seguinte já não cabe assim — pede segunda página,
+# ou uma legenda mais curta, e não outro aperto destes.
+const ENTRE_FILAS := 7.0
 const FONTE_LEGENDA := 10
 const LINHA_LEGENDA := 13.0
 const COLUNAS_LEGENDA := 3
@@ -108,7 +112,7 @@ func _process(_delta: float) -> bool:
 	print("Folha salva em %s (%dx%d) — escala de %d props e %d réguas fora do mapa"
 		% [_saida, _foto.get_width(), _foto.get_height(), _n_props,
 			_artes.size() - _n_props]
-		+ " (%d quadros de animação contados pelo de repouso)" % _n_quadros)
+		+ " (%d quadros de animação e de obra contados pelo de repouso)" % _n_quadros)
 	quit(0)
 	return true
 
@@ -166,6 +170,19 @@ func _quadros_de_animacao() -> Dictionary:
 		for familia in ["guincho", "pilha", "leva", "volta"]:
 			for tex in quadros[sexo][familia]:
 				fora[String((tex as Texture2D).resource_path).get_file()] = true
+	# A OBRA (`121`) é o mesmo prop dia a dia, e a pergunta de tamanho dela é
+	# a do prédio pronto: o armazém e o píer em obra contam pelo galpão e pelo
+	# píer, que já estão na página, e o canteiro do pátio pelo primeiro dia — o
+	# rolo e a brita são a peça nova, e os dias seguintes só os mudam de sítio.
+	# Com os sete na página ela pedia 1430 px numa tela de 1280.
+	for tex in k["ArtePierObra"]:
+		fora[String((tex as Texture2D).resource_path).get_file()] = true
+	var ok: Dictionary = load("res://scripts/ObraNoMapa.gd").get_script_constant_map()
+	for tex in ok["ARMAZEM"]:
+		fora[String((tex as Texture2D).resource_path).get_file()] = true
+	var canteiro: Array = ok["CANTEIRO"]
+	for i in range(1, canteiro.size()):
+		fora[String((canteiro[i] as Texture2D).resource_path).get_file()] = true
 	_n_quadros = fora.size()
 	return fora
 

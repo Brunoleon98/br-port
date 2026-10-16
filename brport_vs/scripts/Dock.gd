@@ -27,6 +27,13 @@ extends Control
 # fazer — mas o `pivot_offset` do nó `Lanca` é de COORDENADA, e o gerador
 # imprime as duas linhas para não haver dúvida sobre qual copiar.
 const ArtePierVazio := preload("res://art/props/pier_vazio.png")
+# O PÍER EM OBRA, um quadro por dia (`121`): as estacas novas com a estrutura
+# e o tabuado empilhado, depois o tabuado a meio. Ocupam o nó do píer como o
+# vazio e os três níveis, e quem escolhe o quadro é o `GameState`.
+const ArtePierObra: Array[Texture2D] = [
+	preload("res://art/props/pier_obra_0.png"),
+	preload("res://art/props/pier_obra_1.png"),
+]
 
 # O PÍER E A LANÇA TÊM TRÊS NÍVEIS, e desde os upgrades quem escolhe são DUAS
 # leituras — `nivel_pier()` e `nivel_guindaste()`, cada uma presa ao seu
@@ -855,7 +862,11 @@ func _refresh_cena() -> void:
 	# ninguém, enquanto a doca não trabalha.
 	_empilhadeira.visible = esta_construida() and nivel_lanca == 3
 	if not esta_construida():
+		var obra := int(GameState.quadro_da_obra(GameState.id_do_pier(dock_index),
+			ArtePierObra.size()))
 		_pier.texture = ArtePierVazio
+		if obra >= 0:
+			_pier.texture = ArtePierObra[obra]
 		_mostrar_barco(-1, null)
 		return
 

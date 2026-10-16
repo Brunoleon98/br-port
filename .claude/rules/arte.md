@@ -93,6 +93,13 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   escritório: **a ruína não é o prédio pintado de velho, é MENOS prédio** —
   parede caída, vidro nenhum, meio telhado. Partilhar peças entre dois estados
   poupa render e custa a leitura, que é o que o estado existe para dar.
+  ⚠️ **E O ESTADO DO MEIO PARTILHA DE PROPÓSITO, nos dois sentidos.** A obra
+  (`121`) é a passagem de um para o outro: o primeiro dia do armazém é a
+  ruína LIMPA, o segundo é o pronto a que faltam peças, e o píer em obra usa
+  as estacas e as ripas do n1. É isso que impede o prédio de saltar de forma
+  entre um dia e o seguinte. A regra acima continua a valer entre os DOIS
+  estados com mecânica — a ruína e o pronto —, e é por isso que a obra só
+  existe desde que a obra leva dias (`087`): estado sem mecânica não vira arte.
 - **E o estado DEPOIS precisa de vocabulário próprio, não só o ANTES.** É a
   mesma regra com o sinal trocado, e foi o que sobrou depois de a ruína ser
   consertada em 05/09: o armazém ACABADO continuou a ser desenhado só com o

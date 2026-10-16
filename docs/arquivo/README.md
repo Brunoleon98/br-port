@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-16c.md` | 16/10 | A obra no mapa (`121`): píer, armazém e pátio dia a dia, o D45 e sete mutantes; candidata à espera do aceite |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-16b.md` | 16/10 | Lateral: catálogo de defeitos (`117`), jogador ao acaso T26 (`118`), pré-PR entre agentes (`119`) e as provas do Codex no catálogo (`120`); PR aberto a pedido do Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-16.md` | 16/10 | Publicação autorizada da ajuda no PR #134 (`116`), fecho na mesma branch e leitura/telefone/merge pendentes |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-15f.md` | 15/10 | Como jogar/glossário implementado localmente (`115`), verificações concluídas e leitura/telefone/publicação pendentes |

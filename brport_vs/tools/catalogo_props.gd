@@ -307,6 +307,14 @@ func familias(ancoras: Dictionary) -> Dictionary:
 	var pier: Array = [dk["ArtePierVazio"]]
 	for t in dk["ArtePier"]:
 		pier.append(t)
+	# Os quadros da obra (`121`) partilham o nó do píer, como o vazio.
+	for t in dk["ArtePierObra"]:
+		pier.append(t)
+	var ok: Dictionary = (load("res://scripts/ObraNoMapa.gd") as Script) \
+		.get_script_constant_map()
+	var armazem: Array = [mk["ArmazemRuina"], mk["ArmazemPronto"]]
+	for t in ok["ARMAZEM"]:
+		armazem.append(t)
 
 	# Os cascos percorrem classe × motivo × porte, como na folha da frota: o
 	# pesqueiro leva o mesmo casco nos dois motivos dele e três portes dentro
@@ -410,7 +418,8 @@ func familias(ancoras: Dictionary) -> Dictionary:
 		vaga + "/Trabalhador/Ombro": ombro,
 		vaga + "/Garfo": garfo,
 		vaga + "/Empilhadeira": empilhadeira,
-		"./MapaWrap/Cenario/Armazem": [mk["ArmazemRuina"], mk["ArmazemPronto"]],
+		"./MapaWrap/Cenario/Armazem": armazem,
+		"./MapaWrap/Cenario/CanteiroDoPatio": ok["CANTEIRO"],
 		"./MapaWrap/Cenario/Escritorio": [mk["EscritorioRuina"], mk["EscritorioPronto"]],
 		"./MapaWrap/Cenario/Caminhao0": camioes,
 		"./MapaWrap/Cenario/CaminhaoRetorno0": retorno,

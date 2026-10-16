@@ -30,6 +30,10 @@ const TrafegoDeCamioes := preload("res://scripts/TrafegoDeCamioes.gd")
 # (`docs/decisoes/096`): o que a põe a falar, a variante de cada momento e as
 # memórias que a impedem de se repetir. `preload` pela mesma razão.
 const NarradoraDaCida := preload("res://scripts/NarradoraDaCida.gd")
+# A OBRA NO MAPA (`docs/decisoes/121`): o armazém e o pátio a avançar dia a
+# dia, do dia em que se paga ao dia em que ficam prontos. `preload` pela razão
+# do tráfego: ele lê o `GameState` pelo nome.
+const ObraNoMapa := preload("res://scripts/ObraNoMapa.gd")
 # A FILA DAS TELAS QUE ABREM SOZINHAS, num script seu desde o terceiro corte
 # do M8 (`docs/decisoes/097`). `preload` pela mesma razão.
 const VezDasTelas := preload("res://scripts/VezDasTelas.gd")
@@ -126,6 +130,12 @@ var narradora: NarradoraDaCida = NarradoraDaCida.new(_fila)
 @onready var _fila_lugares: HBoxContainer = $Fila
 @onready var _fila_titulo: Label = $FilaTitulo
 @onready var _mapa: TextureRect = $MapaWrap/Mapa
+# A OBRA NO MAPA. Um objeto do Main, como o tráfego, a quem se dão o mapa, o
+# recorte do asfalto e o canteiro do pátio; quem o chama é o
+# `_refresh_estruturas()`. O D45 não lhe pergunta nada: lê os nós da cena.
+@onready var obra: ObraNoMapa = ObraNoMapa.new(_mapa,
+	$MapaWrap/AsfaltoDaObra as Polygon2D,
+	$MapaWrap/Cenario/CanteiroDoPatio as TextureRect)
 
 # As estruturas trocam de TEXTURA, não de nó: assim o prop ocupa exatamente o
 # mesmo quadro nos dois estados e o prédio não salta ao ser consertado — a
@@ -133,6 +143,10 @@ var narradora: NarradoraDaCida = NarradoraDaCida.new(_fila)
 ## O que só faz sentido num pátio já reconstruído. Ver `_refresh_estruturas`.
 const EQUIPAMENTO_DE_PATIO := ["Empilhadeira", "PilhaCaixotes", "Pallet",
 	"Guincho", "ConeTransito", "Barreira"]
+## Os dois do equipamento que são SINALIZAÇÃO DE OBRA — a barreira listrada e
+## o cone —, e por isso aparecem também enquanto o pátio está a ser feito
+## (`121`). O resto (empilhadeira, pallets, guincho) é de pátio a trabalhar.
+const SINALIZACAO_DE_OBRA := ["ConeTransito", "Barreira"]
 
 const MapaTerra := preload("res://art/porto_mapa_iso.svg")
 const MapaPatio := preload("res://art/porto_mapa_iso_patio.svg")
@@ -494,6 +508,10 @@ func _connect_game_state() -> void:
 	GameState.turn_advanced.connect(func(_t, _w): _refresh_all())
 	GameState.boats_spawned.connect(func(): _refresh_docks())
 	GameState.roster_changed.connect(_refresh_all)
+	# A OBRA COMEÇA NO DIA DA COMPRA (`121`), e o mapa tem de a mostrar nesse
+	# mesmo dia: até aqui nada redesenhava o porto ao comprar, porque a obra
+	# só mudava alguma coisa na virada, quando ficava pronta.
+	GameState.estrutura_comprada.connect(func(_id): _refresh_all())
 	GameState.fila_mudou.connect(_refresh_fila)
 	GameState.fila_mudou.connect(_pintar_ancorados)
 	GameState.message.connect(_on_message)
@@ -538,13 +556,23 @@ func _refresh_estruturas() -> void:
 	# propósito: rua, iluminação pública e cais não são do pátio, e o porto
 	# opera uma doca desde o primeiro dia.
 	var tem_patio := GameState.tem_estrutura("patio")
+	var patio_em_obra := int(GameState.quadro_da_obra("patio", 1)) >= 0
 	for nome in EQUIPAMENTO_DE_PATIO:
 		var eq := cenario.get_node_or_null(nome) as CanvasItem
 		if eq != null:
-			eq.visible = tem_patio
+			eq.visible = tem_patio or (patio_em_obra and nome in SINALIZACAO_DE_OBRA)
+	obra.refresh()
+	# O armazém em obra mostra o quadro do dia (`121`); fora dela, a ruína ou
+	# o pronto, como sempre.
 	var armazem := cenario.get_node_or_null("Armazem") as TextureRect
 	if armazem != null:
-		armazem.texture = ArmazemPronto if GameState.tem_estrutura("armazem") else ArmazemRuina
+		var em_obra := obra.textura_do_armazem()
+		if GameState.tem_estrutura("armazem"):
+			armazem.texture = ArmazemPronto
+		elif em_obra != null:
+			armazem.texture = em_obra
+		else:
+			armazem.texture = ArmazemRuina
 	var escritorio := cenario.get_node_or_null("Escritorio") as TextureRect
 	if escritorio != null:
 		escritorio.texture = EscritorioPronto if GameState.tem_estrutura("escritorio") \

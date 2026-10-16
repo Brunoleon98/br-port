@@ -3690,6 +3690,21 @@ def tabela_ancoras() -> dict:
             "entrada": [round(faixa_do_caminhao(borda), 3), round(meio, 3)],
         })
 
+    # E O PÁTIO, publicado para a obra dele (`121`): durante os três dias o
+    # jogo recorta o mapa PRONTO por cima do de terra, e o recorte tem de cair
+    # exatamente onde o gerador troca terra batida por asfalto. Os limites
+    # saem das MESMAS expressões que pintam o pátio, em `gerar()` — da frente
+    # da rua ao avental, só nos trechos de PORTO (`trechos_de_porto`) —, e o
+    # D45 confere a cópia do `ObraNoMapa.gd` contra esta lista.
+    patio = []
+    for my0, my1, borda in DEGRAUS:
+        for a, b in trechos_de_porto(my0, my1 + COSTURA):
+            patio.append({
+                "my": [round(a, 3), round(b, 3)],
+                "mx": [round(borda - RUA_RECUO + RUA_LARG + CALCADA, 3),
+                       round(borda - APRON, 3)],
+            })
+
     # E OS LOTES RESERVADOS, publicados para o D13 §8 os poder conferir contra os
     # acessos. Um deles já esteve em cima de um; sem os números aqui, a única
     # coisa que denunciava isso era um camião estacionado por cima da marca.
@@ -3801,6 +3816,7 @@ def tabela_ancoras() -> dict:
         "faixas": faixas,
         "cotovelos": cotovelos,
         "acessos": acessos,
+        "patio": patio,
         "lotes_reservados": reservados,
         # ⚠️ O `tipo` ENTRA NA TABELA para o teste de design poder perguntar ao
         # DESENHO se a igreja, a praça e a obra chegaram lá. Sem ele o bloco
