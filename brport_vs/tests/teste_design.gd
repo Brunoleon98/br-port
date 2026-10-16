@@ -327,6 +327,12 @@ func _rodar() -> void:
 	_d44_conversas_dos_cartoes()
 	_confere("o bloco D44 correu até ao fim", _d44_completo)
 
+	print("=== D45: a obra no mapa — o quadro de cada dia, o asfalto e o cartão ===")
+	var obra = load("res://tests/casos_obra_no_mapa.gd").new()
+	obra.rodar(root.get_node("GameState"), self, _ancoras)
+	_falhas += int(obra.falhas)
+	_confere("o bloco D45 correu até ao fim", obra.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")

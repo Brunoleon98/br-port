@@ -84,6 +84,14 @@ func refresh() -> void:
 		_progresso.text = "píer em ruínas"
 		_progresso.theme_type_variation = &"TextoDocaProgresso"
 		_trabalhador.text = ""
+		# EM OBRA o cartão diz o que o mapa mostra (`121`): as estacas novas e
+		# o tabuado a avançar, e QUANDO fica pronto. O prazo é o curto — o
+		# aviso da obra que não serve a esta fase já foi dito na compra e
+		# continua no Construir, e a frase inteira não cabe em 200 px.
+		var obra := GameState.obra_em_andamento
+		if not obra.is_empty() and String(obra["id"]) == GameState.id_do_pier(dock_index):
+			_progresso.text = "píer em obra"
+			_trabalhador.text = GameState.prazo_curto_da_obra(int(obra["conclusao"]))
 		return
 
 	var dock: Dictionary = GameState.docks[dock_index]

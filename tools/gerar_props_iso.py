@@ -1686,6 +1686,58 @@ def telhado_duas_aguas(nome, centro, tam, altura, mat, mat_cume, fiadas=5,
     return pecas
 
 
+def andaime(nome, xs, y_fora, y_dentro, niveis, topo, M) -> list:
+    """Andaime tubular de UMA fila, encostado a uma face `-y` (`121`).
+
+    `xs` são os montantes, de pé no chão (z = 0) em `y_fora`, e `niveis` as
+    alturas das pranchas, que vão de `y_fora` até `y_dentro` — rente à
+    parede, sem lhe tocar. A fila é UMA e não duas, como nos de verdade, por
+    causa da pegada: o armazém tem 0,13 unidades entre a doca e o limite em
+    `-y` (`PEGADAS`), e um andaime de duas filas sairia para o asfalto.
+
+    ⚠️ O TUBO TEM 0,08 E NÃO OS 0,05 DE UM CABO, e é a silhueta que se paga.
+    O andaime é a peça que diz «em obra» — a única silhueta memorável de um
+    prédio de 124 px —, e a 0,72 de escala um tubo de 0,05 dá 0,7 px de tela,
+    que é um cabo a desaparecer no antisserrilhado. As travessas e a diagonal
+    ficam mais finas: são o desenho de dentro, e o montante é o contorno.
+
+    ⚠️ E O TUBO É AMARELO, NÃO DE METAL. A primeira candidata era
+    `metal_claro`, e diante do esqueleto de aço da ruína (`metal`) os dois
+    cinzentos fundiam-se num andaime só — a regra do contraste gasto entre
+    duas peças, com o prédio no lugar do fundo. O amarelo separa-se da chapa
+    enferrujada, do esqueleto e da parede branca do dia 2, e é a cor de
+    máquina de obra que o rolo do pátio também veste: o acento da obra é UM.
+    """
+    pecas = []
+    for i, x in enumerate(xs):
+        pecas.append(caixa("%s_montante%d" % (nome, i), (x, y_fora, topo / 2.0),
+                           (0.08, 0.08, topo), M["amarelo"]))
+    meio_y = (y_fora + y_dentro) / 2.0
+    for j, zn in enumerate(niveis):
+        # A travessa fica À FRENTE da prancha e o topo dela 0,04 acima do da
+        # prancha: as duas faces de cima nunca ficam no mesmo plano onde se
+        # cruzam (o losango preto deste kit).
+        pecas.append(caixa("%s_prancha%d" % (nome, j),
+                           ((xs[0] + xs[-1]) / 2.0, meio_y, zn),
+                           (xs[-1] - xs[0] + 0.10, abs(y_dentro - y_fora), 0.05),
+                           M["madeira"]))
+        pecas.append(caixa("%s_travessa%d" % (nome, j),
+                           ((xs[0] + xs[-1]) / 2.0, y_fora - 0.01, zn + 0.035),
+                           (xs[-1] - xs[0] + 0.08, 0.06, 0.06), M["amarelo"]))
+    # O guarda-corpo no topo e uma diagonal por vão, alternada — o X de um
+    # andaime visto de lado é o que o separa de uma estante.
+    pecas.append(caixa("%s_guarda" % nome,
+                       ((xs[0] + xs[-1]) / 2.0, y_fora - 0.01, topo - 0.04),
+                       (xs[-1] - xs[0] + 0.08, 0.05, 0.05), M["amarelo"]))
+    for i in range(len(xs) - 1):
+        a, b = (xs[i], xs[i + 1]) if i % 2 == 0 else (xs[i + 1], xs[i])
+        pecas.append(barra("%s_diagonal%d" % (nome, i),
+                           (a, y_fora - 0.02, 0.10),
+                           (b, y_fora - 0.02, niveis[0] - 0.04), 0.05,
+                           M["amarelo"]))
+    return pecas
+
+
 def corrimao(nome, a, b, altura, mat, postes=5, esp=0.035):
     """Guarda-corpo: dois corrimãos e os montantes entre eles.
 
@@ -2576,6 +2628,68 @@ def montar(M: dict) -> dict:
     grupos["pier_n1"] = estacas + deck_n1 + mastro_n1
     grupos["pier_n2"] = estacas + tabuado + mastro_n2
     grupos["pier_n3"] = estacas_aco + deck_n3 + mastro_n3
+
+    # -- O PÍER EM OBRA, um quadro por dia (`121`) ---------------------------
+    # Entre as estacas velhas da vaga e o pontão do n1 há dois dias jogados
+    # (`087`), e cada um mostra o que já se fez. As peças são as do n1 — as
+    # MESMAS estacas e ripas do mesmo tamanho —, porque no dia seguinte a obra
+    # É o n1: o píer não pode pular de forma quando fica pronto, só ganhar o
+    # que faltava (o mastro do pau-de-carga, que é a última coisa a subir).
+    #
+    #   dia 1  as estacas NOVAS cravadas, as travessas e as longarinas por
+    #          cima delas, e o tabuado empilhado na raiz, à espera;
+    #   dia 2  o tabuado posto da raiz até pouco além do meio, e o que sobra
+    #          da pilha na frente da obra.
+    #
+    # A obra avança da RAIZ (`-x`, o lado do cais) para o mar, como se
+    # constrói um píer de verdade — e porque o `+x` é a ponta que fica à
+    # frente na imagem: a parte ainda nua tapa menos do que a parte acabada.
+    #
+    # ⚠️ A ESTRUTURA FICA 0,005 ABAIXO DA FACE DE BAIXO DAS RIPAS, e não
+    # encostada: ripa sobre travessa no mesmo plano é o losango preto.
+    BASE_RIPA = ALT_PIER - z(4.4)
+    vigas = []
+    for i in range(4):
+        x = -PIER_ALCANCE / 2 + 0.5 + i * (PIER_ALCANCE - 1.0) / 3
+        vigas.append(caixa("ob_travessa%d" % i, (x, 0.0, BASE_RIPA - 0.005 - 0.07),
+                           (0.16, PIER_LARG - 0.20, 0.14), M["madeira_esc"]))
+    for lado, y in enumerate((-PIER_LARG / 2 + 0.28, PIER_LARG / 2 - 0.28)):
+        vigas.append(caixa("ob_longarina%d" % lado,
+                           (0.0, y, BASE_RIPA - 0.005 - 0.16),
+                           (PIER_ALCANCE - 0.30, 0.14, 0.12), M["madeira_esc"]))
+
+    def _pilha_de_ripas(nome, x, n):
+        """Ripas do n1 empilhadas ao comprido sobre as travessas, duas a duas
+        e desencontradas — `n` delas, de baixo para cima."""
+        pilha = []
+        for k in range(n):
+            camada, lado = divmod(k, 2)
+            pilha.append(caixa("%s%d" % (nome, k),
+                               (x + 0.05 * (camada % 2), (lado - 0.5) * passo * 1.05,
+                                BASE_RIPA + z(4.4) * (camada + 0.5) + 0.003 * camada),
+                               (1.30, passo - 0.045, z(4.4)),
+                               M["madeira"] if k % 2 else M["madeira_esc"],
+                               rot=(0, 0, 2.0 if k % 3 == 0 else -1.5)))
+        return pilha
+
+    FRENTE_DIA2 = 0.35                # até onde o tabuado chegou no dia 2
+    ripas_dia2 = []
+    comp = FRENTE_DIA2 + PIER_ALCANCE / 2
+    for i in range(RIPAS):
+        y = -PIER_LARG / 2 + passo * (i + 0.5)
+        # A frente não é reta: as ripas de uma obra não acabam no mesmo
+        # sítio, e uma frente serrada a régua leria como píer mais curto.
+        folga = (0.0, 0.22, 0.08, 0.30, 0.0, 0.16, 0.26, 0.04, 0.18)[i]
+        ripas_dia2.append(caixa("ob_ripa%d" % i,
+                                (-PIER_ALCANCE / 2 + (comp - folga) / 2.0, y,
+                                 ALT_PIER - z(2.2)),
+                                (comp - folga, passo - 0.045, z(4.4)),
+                                M["madeira"] if i % 2 else M["madeira_esc"]))
+    grupos["pier_obra_0"] = estacas + vigas + _pilha_de_ripas(
+        "ob_pilha0_", -PIER_ALCANCE / 2 + 0.85, 6)
+    grupos["pier_obra_1"] = estacas + vigas + ripas_dia2 + _pilha_de_ripas(
+        "ob_pilha1_", FRENTE_DIA2 + 0.85, 3)
+
     grupos["lanca_n1"] = lanca_n1
     # O `lanca_n2` e o `lanca_n3` saem com os quadros deles, depois dos
     # cascos (`077`, `079`).
@@ -5116,6 +5230,138 @@ def montar(M: dict) -> dict:
                       M["folha"] if i % 2 == 0 else M["folha_clara"])]
     grupos["galpao_velho"] = galv
 
+    # -- O ARMAZÉM EM OBRA, um quadro por dia (`121`) ------------------------
+    # Dois dias jogados entre a ruína e o galpão pronto (`087`). Cada quadro
+    # parte do estado de ONTEM e não de uma terceira geometria: o dia 1 é a
+    # ruína limpa, o dia 2 é o galpão a que faltam as últimas peças. É a regra
+    # do par com o sinal trocado — lá o ANTES não podia partilhar as peças do
+    # DEPOIS; aqui a obra é a passagem de um para o outro, e partilhar é o que
+    # faz o prédio não saltar de forma de um dia para o outro.
+    #
+    #   dia 1  a ruína sem o mato, o entulho, a lona e o portão caído — o
+    #          canteiro limpo —, o ANDAIME na frente do esqueleto e as chapas
+    #          novas empilhadas no deck;
+    #   dia 2  as paredes do galpão pronto já fechadas, o telhado novo em dois
+    #          terços e a estrutura de aço à vista no terço do cais, a baia
+    #          ainda sem portão e o mesmo andaime.
+    #
+    # O andaime fica na face `-y` do terço do cais, que é onde está a obra e
+    # é a face que a câmera vê de frente. Ele cabe na pegada: os montantes em
+    # `-1,33` com 0,08 de tubo acabam a `-1,37`, contra o `-1,38` do limite.
+    limpeza = ("galv_arb", "galv_capim", "galv_trep", "galv_ent_", "galv_tijolo",
+               "galv_lona", "galv_pneu", "galv_portao", "galv_chapa_solta",
+               "galv_calha2", "galv_deck_caido", "galv_lasca")
+    # ⚠️ TRÊS VÃOS E NÃO DOIS: com dois (de 0,36 a 1,60) a candidata lia
+    # como uma ESCADA amarela encostada ao prédio. O terceiro vão passa por
+    # cima da baia, que é onde o portão novo vai entrar.
+    andaime_gal = andaime("gob_and", (-0.26, 0.36, 0.98, 1.60), -1.33, -1.22,
+                          (0.94, 1.52), 1.96, M)
+
+    def _chapas_novas(nome, n):
+        """Chapas de zinco NOVAS empilhadas no deck de `+x`: a cor do telhado
+        do galpão pronto, e não a do velho — é o material que chegou."""
+        return [caixa("%s%d" % (nome, k), (1.84, 0.58, 0.43 + 0.04 * k),
+                      (0.34, 0.86, 0.03), M["zinco"] if k % 2 == 0 else M["zinco_vinco"],
+                      rot=(0, 0, (-3.0, 2.0, -1.0, 3.0)[k % 4]))
+                for k in range(n)]
+
+    grupos["galpao_obra_0"] = [o for o in galv if not o.name.startswith(limpeza)] \
+        + andaime_gal + _chapas_novas("gob_chapa0_", 4)
+
+    # O dia 2 sai do galpão PRONTO: tudo menos o portão, a fita de vidro, a
+    # calha e o telhado, que entra novo só nos dois terços de trás. A baia
+    # fica escura — o vão à espera do portão, com o tambor e as guias já lá.
+    falta = ("gal_portao", "gal_lamina0", "gal_lamina1", "gal_fita", "gal_calha",
+             "gal_tel")
+    tesoura = ("galv_banzo", "galv_perna", "galv_pendural", "galv_escora",
+               "galv_terca", "galv_pilar", "galv_viga")
+    grupos["galpao_obra_1"] = [o for o in grupos["galpao"]
+                               if not o.name.startswith(falta)] \
+        + [na_face("gob_baia", "-y", *GAL, 0.0, V_PORTAO, 1.5, 0.72, 0.06,
+                   M["vao"], -0.02)] \
+        + telhado_duas_aguas("gob_tel", (NAVE[0], 0, 1.70), (NAVE_T[0], 2.40),
+                             0.62, M["zinco"], M["metal"], fiadas=0,
+                             nervuras=4, mat_nerv=M["zinco_vinco"]) \
+        + [o for o in galv if o.name.startswith(tesoura)] \
+        + andaime_gal + _chapas_novas("gob_chapa1_", 2)
+
+    # -- O PÁTIO EM OBRA: o rolo compactador e a brita (`121`) --------------
+    # O pátio não é prop: é o MAPA que troca de terra batida para asfalto, e
+    # quem mostra o asfalto a avançar dia a dia é o jogo, que recorta o mapa
+    # pronto por cima do de terra (`ObraNoMapa.gd`). O que este quadro traz é
+    # o canteiro que o acompanha, num nó só no pátio da doca 3: o rolo e os
+    # montes de brita que vão sendo gastos. Três dias jogados (`087`):
+    #
+    #   dia 1  dois montes cheios e o rolo parado junto do avental;
+    #   dia 2  um monte, e o rolo na frente do asfalto novo;
+    #   dia 3  o resto de um monte, e o rolo já do lado da rua. O resto vai
+    #          para o lado (`-x`, `-y`): atrás do rolo, a tela punha-o debaixo
+    #          da cobertura dele, e a primeira candidata perdeu-o assim.
+    #
+    # ⚠️ O ROLO CORRE NA FRENTE DO ASFALTO, e a frente é a do `ObraNoMapa`:
+    # o nó fica em (11,2; 20,9) e a faixa do pátio nesse degrau vai de 9,22 a
+    # 12,70 em `mx`, logo a frente do dia 2 (40%) cai a +0,11 do nó e a do
+    # dia 3 (75%) a −1,11. Quem mexer numa fração mexe no `x` do rolo.
+    #
+    # ⚠️ E O NÓ FICA ONDE O PÁTIO TEM SÍTIO. Medido nas âncoras: entre o
+    # acesso da doca 3 (`my` até 19,8) e o cotovelo da rua (a partir de
+    # 21,98) é o único pedaço de pátio livre com 1,5 unidades — o lote
+    # reservado (10,2–11,6 × 20,1–21,7) cai dentro, mas ele só é pintado no
+    # mapa PAVIMENTADO, e durante a obra o chão é a terra.
+    #
+    # Medidas reais de um rolo tandem pequeno (3,2 m, tambor de 1,2 m), pela
+    # régua da pessoa como a empilhadeira: amarelo, que é o sinal de máquina
+    # do pátio, e os TAMBORES claros, que são o que diz «rolo» e não «carro».
+    def _rolo(nome, x, y):
+        def em(dx, dy, dz):
+            return (x + _hm(dx), y + _hm(dy), _vm(dz))
+        p = []
+        for i, dy in enumerate((-1.05, 1.05)):
+            p.append(cone("%s_tambor%d" % (nome, i), em(0.0, dy, 0.60),
+                          _vm(0.60), _vm(0.60), _hm(1.30), 16, M["metal_claro"],
+                          rot=(0, 90, 0)))
+            # O garfo amarelo por cima do tambor: sem ele o tambor é um cano.
+            p.append(caixa("%s_garfo%d" % (nome, i), em(0.0, dy, 1.24),
+                           (_hm(1.46), _hm(0.80), _vm(0.18)), M["amarelo"]))
+        p += [
+            caixa("%s_corpo" % nome, em(0.0, 0.0, 1.10),
+                  (_hm(1.20), _hm(1.30), _vm(0.90)), M["amarelo"]),
+            caixa("%s_banco" % nome, em(0.0, 0.18, 1.66),
+                  (_hm(0.50), _hm(0.46), _vm(0.22)), M["pneu"]),
+            caixa("%s_painel" % nome, em(0.0, -0.36, 1.70),
+                  (_hm(0.70), _hm(0.22), _vm(0.30)), M["amarelo"]),
+        ]
+        for i, (dx, dy) in enumerate(((-0.52, -0.52), (0.52, -0.52),
+                                      (-0.52, 0.56), (0.52, 0.56))):
+            p.append(caixa("%s_coluna%d" % (nome, i), em(dx, dy, 2.22),
+                           (_hm(0.07), _hm(0.07), _vm(1.24)), M["metal"]))
+        p += [
+            caixa("%s_teto" % nome, em(0.0, 0.02, 2.86),
+                  (_hm(1.18), _hm(1.24), _vm(0.06)), M["metal"]),
+            caixa("%s_pirilampo" % nome, em(0.40, 0.40, 2.96),
+                  (_hm(0.12), _hm(0.12), _vm(0.14)), M["laranja"]),
+        ]
+        return p
+
+    brita = material_gasto("brita", PALETA["concreto_borda"], 9.0)
+
+    def _monte(nome, x, y, cheio):
+        """Monte de brita: um cone baixo de nove lados, e um segundo por
+        cima, desencontrado, para não ler como um chapéu."""
+        r = _hm(1.5 if cheio else 0.9)
+        h = _vm(1.0 if cheio else 0.5)
+        return [cone(nome, (x, y, h / 2.0), r, r * 0.18, h, 9, brita),
+                cone(nome + "_topo", (x + r * 0.25, y - r * 0.15, h * 0.55),
+                     r * 0.62, r * 0.10, h * 0.70, 7, brita, rot=(0, 0, 20))]
+
+    grupos["patio_obra_0"] = _rolo("pob_rolo0", 0.95, 0.0) \
+        + _monte("pob_monte0a", -0.55, -0.45, True) \
+        + _monte("pob_monte0b", -0.75, 0.55, True)
+    grupos["patio_obra_1"] = _rolo("pob_rolo1", 0.25, 0.0) \
+        + _monte("pob_monte1b", -0.75, 0.55, True)
+    grupos["patio_obra_2"] = _rolo("pob_rolo2", -0.95, 0.0) \
+        + _monte("pob_monte2b", -1.55, -0.60, False)
+
     # -- ESCRITÓRIO nos dois estados. O armazém reaproveita galpao/galpao_velho.
     # A ruína não é o prédio "pintado de velho": é MENOS prédio — parede caída,
     # telhado furado. Um jogador tem de ver de longe que ali não se opera.
@@ -5284,7 +5530,8 @@ def montar(M: dict) -> dict:
     # todas as proporções internas de pé: porta contra parede, janela contra
     # porta, beiral contra telhado. Reescrever à mão trinta números era trinta
     # chances de uma delas ficar por escalar.
-    _encolher(grupos, ("escritorio", "escritorio_ruina", "galpao", "galpao_velho"),
+    _encolher(grupos, ("escritorio", "escritorio_ruina", "galpao", "galpao_velho",
+                       "galpao_obra_0", "galpao_obra_1"),
               ESCALA_PREDIO)
     return grupos
 
@@ -5604,7 +5851,9 @@ def preparar_cena():
 # contato dura projetada na água lê como uma mancha de óleo — que foi
 # exatamente o que apareceu na captura. O próprio comentário abaixo já dizia
 # que o que fica sobre a água fica de fora; o marcador tinha ficado dentro.
-SOMBRA = {"galpao", "galpao_velho", "escritorio", "escritorio_ruina",
+SOMBRA = {"galpao", "galpao_velho", "galpao_obra_0", "galpao_obra_1",
+          "escritorio", "escritorio_ruina",
+          "patio_obra_0", "patio_obra_1", "patio_obra_2",
           "coqueiro_tronco"}
 SOMBRA_COR = (0.06, 0.09, 0.13)   # azulada: sombra ao ar livre é céu, não breu
 SOMBRA_FORCA = 0.42

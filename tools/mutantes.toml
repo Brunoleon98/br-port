@@ -697,3 +697,74 @@ depois = '''
 			filho.mouse_filter = Control.MOUSE_FILTER_IGNORE
 '''
 reprova = { run_tests = "T25: toque no fundo não atravessa a ajuda" }
+
+# ── A OBRA NO MAPA (`121`) ─────────────────────────────────────────────────
+# O D45 do teste de design joga as três obras e lê a CENA a cada dia. Cada
+# defeito abaixo foi injetado para provar uma pergunta dele.
+
+[[mutante]]
+id = "obra-nao-redesenha-na-compra"
+de = "121"
+o_que = "comprar uma obra não redesenha o mapa: o píer só muda na virada do dia"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	GameState.estrutura_comprada.connect(func(_id): _refresh_all())
+'''
+depois = ''
+reprova = { teste_design = "D45: o píer mostra o quadro 0 no dia da compra" }
+
+[[mutante]]
+id = "obra-um-dia-adiantada"
+de = "121"
+o_que = "o mapa mostra o quadro de amanhã: o dia da compra já sai com o segundo"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'var dia := clampi(turn - inicio, 0, total - 1)'
+depois = 'var dia := clampi(turn - inicio + 1, 0, total - 1)'
+reprova = { teste_design = "D45: o armazém mostra o quadro 0 no dia 1 da obra" }
+
+[[mutante]]
+id = "obra-longa-sem-repartir"
+de = "121"
+o_que = "obra de três dias num nó de dois quadros chega ao último no segundo dia"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'return dia * quadros / total'
+depois = 'return mini(dia, quadros - 1)'
+reprova = { teste_design = "D45: três dias em dois quadros" }
+
+[[mutante]]
+id = "obra-patio-copia-velha"
+de = "121"
+o_que = "a cópia do pátio no ObraNoMapa diverge da tabela: o asfalto passa o avental"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '[16.0, 22.5, 9.22, 12.7],'
+depois = '[16.0, 22.5, 9.22, 13.2],'
+reprova = { teste_design = "D45: o trecho 2 do pátio é o da tabela" }
+
+[[mutante]]
+id = "obra-uv-sem-razao"
+de = "121"
+o_que = "a UV do asfalto sai em coordenada do rect: recorta o canto errado do mapa pronto"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '		uv.append(v * razao)'
+depois = '		uv.append(v)'
+reprova = { teste_design = "D45: a UV do recorte" }
+
+[[mutante]]
+id = "obra-cartao-diz-ruinas"
+de = "121"
+o_que = "o cartão da doca 2 continua a dizer «píer em ruínas» com o píer em obra"
+alvo = "brport_vs/scripts/DocaCartao.gd"
+antes = '''
+			_progresso.text = "píer em obra"
+'''
+depois = ''
+reprova = { teste_design = "D45: o cartão diz «píer em obra»" }
+
+[[mutante]]
+id = "obra-patio-sem-sinalizacao"
+de = "121"
+o_que = "a barreira e o cone só aparecem com o pátio pronto, e não durante a obra"
+alvo = "brport_vs/scripts/Main.gd"
+antes = 'eq.visible = tem_patio or (patio_em_obra and nome in SINALIZACAO_DE_OBRA)'
+depois = 'eq.visible = tem_patio'
+reprova = { teste_design = "D45: a barreira e o cone sinalizam a obra" }

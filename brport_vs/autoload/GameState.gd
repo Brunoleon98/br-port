@@ -2533,7 +2533,16 @@ func obra_sem_uso_na_fase(conclusao: int) -> bool:
 # armazém e pátio — o são.
 func prazo_da_obra(conclusao: int) -> String:
 	if obra_sem_uso_na_fase(conclusao):
-		return "pronto só no fim do dia %d, e não será usado nesta fase" % ultimo_dia_da_fase()
+		return prazo_curto_da_obra(conclusao) + ", e não será usado nesta fase"
+	return prazo_curto_da_obra(conclusao)
+
+
+# O MESMO PRAZO SEM O AVISO, para o cartão da doca em obra (`121`): o cartão
+# tem 200 px e a frase inteira não cabe. O aviso já foi dito na compra e
+# continua no Construir; o cartão diz só QUANDO.
+func prazo_curto_da_obra(conclusao: int) -> String:
+	if obra_sem_uso_na_fase(conclusao):
+		return "pronto só no fim do dia %d" % ultimo_dia_da_fase()
 	return "pronto no dia %d" % conclusao
 
 
@@ -2541,6 +2550,38 @@ func dias_restantes_da_obra() -> int:
 	if obra_em_andamento.is_empty():
 		return 0
 	return maxi(0, int(obra_em_andamento["conclusao"]) - turn)
+
+
+## A estrutura que levanta a vaga de índice `doca`: a 1 é o `pier_2`, a 2 o
+## `pier_3` — o número do catálogo é o da doca a contar de 1 (`121`). É a
+## ordem em que o `_concluir_obra_se_pronta()` acrescenta as docas, e são
+## dois os leitores (a vaga no mapa e o cartão), por isso vive aqui.
+func id_do_pier(doca: int) -> String:
+	return "pier_%d" % (doca + 1)
+
+
+## O QUADRO DA OBRA QUE O MAPA DESENHA, de 0 a `quadros − 1`; −1 quando
+## `id` não está em obra (`121`). Num lugar só porque são três os leitores —
+## o píer no `Dock`, o armazém e o pátio no `ObraNoMapa` — e o D45 confere, dia
+## a dia, o quadro que os três mostram na cena.
+##
+## Conta o dia JOGADO e não o de calendário: a obra comprada no dia 1 com
+## dois dias mostra o quadro 0 no dia 1 e o 1 no dia 2, e no dia 3 já está
+## pronta. Com tantos quadros quantos dias é o dia da obra; com menos, os
+## dias repartem-se pelos quadros — o píer 3 da Fase 2 leva TRÊS dias
+## na tabela `FASES` e o píer tem dois quadros, e um índice cru passaria do fim da
+## lista no terceiro dia.
+##
+## ⚠️ O PRAZO SAI DA OBRA GRAVADA, e não do `dias_da_obra()` de hoje: uma
+## obra começada antes de um ajuste de prazo acaba no dia que ficou no save
+## (`conclusao`), e o último quadro tem de calhar no último dia dela.
+func quadro_da_obra(id: String, quadros: int) -> int:
+	if obra_em_andamento.is_empty() or String(obra_em_andamento["id"]) != id:
+		return -1
+	var inicio := int(obra_em_andamento["inicio"])
+	var total := maxi(1, int(obra_em_andamento["conclusao"]) - inicio)
+	var dia := clampi(turn - inicio, 0, total - 1)
+	return dia * quadros / total
 
 
 func _concluir_obra_se_pronta() -> void:

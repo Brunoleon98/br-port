@@ -791,6 +791,12 @@ ampliado; não são novas etapas da progressão nem requisitos adicionais para
 o vertical slice. Tutorial e segunda chance já estão no jogo. Carros e
 imóveis continuam futuros, sem escopo novo. O A4 segue pendente: o caderno
 reescrito está só na conversa, ainda sem aprovação.
+**Em 16/10 o Bruno voltou à melhoria gráfica da Fase 1** que o Codex começara
+no telefone (nada dela chegou ao GitHub) e escolheu **a obra no mapa** contra o
+armazém recuperado V3: andaime e material, dia a dia, sem pessoas, e o cartão
+da doca com o prazo (`121`). As obras que a `074` deixou fora existem desde a
+`087`. A candidata está no ramo da sessão e **espera o aceite na foto do
+jogo**; o recuperado V3 continua só no checkout do ChatGPT.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

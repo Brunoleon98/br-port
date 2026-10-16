@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3]
+[gd_scene load_steps=48 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/tema_brport.tres" id="2"]
@@ -40,6 +40,7 @@
 [ext_resource type="Texture2D" path="res://art/props/galpao.png" id="prop_galpao"]
 [ext_resource type="Texture2D" path="res://art/props/escritorio_ruina.png" id="prop_escritorio_ruina"]
 [ext_resource type="Texture2D" path="res://art/props/escritorio.png" id="prop_escritorio"]
+[ext_resource type="Texture2D" path="res://art/props/patio_obra_0.png" id="prop_patio_obra"]
 [ext_resource type="PackedScene" path="res://scenes/fauna/Gaivota.tscn" id="fauna_gaivota"]
 [ext_resource type="PackedScene" path="res://scenes/fauna/MariaFarinha.tscn" id="fauna_maria"]
 [ext_resource type="PackedScene" path="res://scenes/fauna/TartarugaVerde.tscn" id="fauna_tartaruga"]
@@ -223,6 +224,16 @@ offset_bottom = 720.0
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("3")
+
+; O ASFALTO DA OBRA DO PÁTIO (`121`): o mapa PAVIMENTADO recortado por cima
+; do de terra, do avental até onde a obra já chegou. Fica logo acima do mapa e
+; abaixo de tudo o resto, porque é chão. Quem lhe dá a forma e a UV é o
+; `ObraNoMapa.gd`; fora da obra fica escondido.
+
+[node name="AsfaltoDaObra" type="Polygon2D" parent="MapaWrap"]
+visible = false
+antialiased = true
+texture = ExtResource("mapa_patio")
 
 ; A ESPUMA é camada, e não fundo. Ela fica ENTRE o mapa e o cenário: por cima
 ; da água, por baixo de tudo o que flutua nela. São duas, de sementes
@@ -434,6 +445,16 @@ offset_bottom = 644.00
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("5")
+[node name="CanteiroDoPatio" type="TextureRect" parent="MapaWrap/Cenario"]
+visible = false
+layout_mode = 0
+offset_left = -111.0
+offset_top = 143.17
+offset_right = 401.0
+offset_bottom = 655.17
+mouse_filter = 2
+expand_mode = 1
+texture = ExtResource("prop_patio_obra")
 [node name="Cabeco" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
 offset_left = -10
