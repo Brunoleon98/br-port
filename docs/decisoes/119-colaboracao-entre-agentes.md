@@ -81,8 +81,14 @@ A renumeração provou-se igual: uma linha «da main» e outra «da branch» a
 citar `111`; só a segunda mudou, e com o filtro de linhas tirado as duas
 mudaram.
 
-Contra o PR #134 real: junta sem conflito, decisões 113–116 sem colisão com
-as desta, nenhum mutante órfão.
+Contra o PR #134 real, depois do commit do T25 desta branch: decisões
+113–116 sem colisão, nenhum mutante órfão, e **um conflito no `run_tests.gd`
+que era outra colisão de nome** — o Codex criou também um T25 (a ajuda «Como
+jogar», `tests/casos_como_jogar.gd`) na mesma linha. O número do bloco de
+teste é o terceiro espaço partilhado, e a ferramenta passou a conferi-lo: os
+rótulos novos entre aspas (`"T25: …"`) de cada ramo, contra os da sua base.
+Disse T25 e só T25, entre as dezenas de blocos que os dois lados já têm.
+Quem fundir em segundo renumera o seu.
 
 ## O que é do Bruno, e não de código
 

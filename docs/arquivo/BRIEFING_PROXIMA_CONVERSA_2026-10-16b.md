@@ -36,7 +36,11 @@ jogador ao acaso»).
 PRs abertos e os ramos `codex/*` recentes; `git merge origin/main`;
 `python3 tools/conferir_colaboracao.py --outros <cabeças dos PRs abertos>`;
 renumerar o que colidir com `tools/renumerar_decisao.py`; as seis suítes, o
-catálogo inteiro e o `conferir_docs.py`; só então o PR.
+catálogo inteiro e o `conferir_docs.py`; só então o PR. **Já se sabe uma
+colisão**: o #134 também cria um T25 (a ajuda «Como jogar»); se ele fundir
+primeiro, o jogador ao acaso desta branch passa a T26 — rótulos do
+`tests/jogador_ao_acaso.gd`, o cabeçalho no `run_tests.gd`, a `118`, o
+`ESTADO` e a regra de testes.
 
 **Pendente do Bruno**: ativar «Require branches to be up to date before
 merging» na `main` (ou a merge queue), e pedir ao Codex que empurre cedo —

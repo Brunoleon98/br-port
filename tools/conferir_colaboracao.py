@@ -136,6 +136,23 @@ def briefings(ref: str) -> set[str]:
     return {Path(f).name for f in saida.split() if "BRIEFING_PROXIMA_CONVERSA_" in f}
 
 
+# O NÚMERO DO BLOCO DE TESTE É O TERCEIRO ESPAÇO PARTILHADO (`119`). Em 16/10
+# o PR #134 do Codex e esta branch criaram cada um o seu «T25», no mesmo sítio
+# do `run_tests.gd`; o conflito de texto aparecia, a colisão do nome não. O que
+# se lê são os rótulos entre aspas (`"T25: …"`, `"=== F12: …"`), que é o nome
+# por que o bloco é citado nas decisões e no catálogo de mutantes.
+BLOCO = re.compile(r'"[^"\n]*?\b([TFDRA]\d{1,3})[a-z]?[:.]')
+
+
+def blocos(ref: str) -> set[str]:
+    _, saida = git("ls-tree", "-r", "--name-only", ref, "brport_vs/tests/")
+    achados: set[str] = set()
+    for f in saida.split():
+        if f.endswith(".gd"):
+            achados |= set(BLOCO.findall(ler(ref, f) or ""))
+    return achados
+
+
 def save_version(ref: str) -> int | None:
     texto = ler(ref, GAMESTATE)
     m = re.search(r"^const SAVE_VERSION := (\d+)", texto or "", re.M)
@@ -294,6 +311,13 @@ def main() -> int:
                   "quem fundir em segundo renumera (`tools/renumerar_decisao.py`)")
         elif deles:
             print(f"    ✔ decisões dele ({', '.join(sorted(deles))}) não repetem as desta")
+        nossos_blocos = blocos("HEAD") - blocos(merge_base("HEAD", args.base))
+        deles_blocos = blocos(ref) - blocos(merge_base(ref, args.base))
+        if nossos_blocos & deles_blocos:
+            avisos.append(f"bloco de teste repetido com {ref}")
+            print("    ⚠ as duas branches criam o bloco de teste "
+                  f"{', '.join(sorted(nossos_blocos & deles_blocos))} — quem fundir em "
+                  "segundo renumera o seu (rótulos, cabeçalho e documentos)")
         nossos_b = briefings("HEAD") - briefings(args.base)
         deles_b = briefings(ref) - briefings(args.base)
         if nossos_b & deles_b:
