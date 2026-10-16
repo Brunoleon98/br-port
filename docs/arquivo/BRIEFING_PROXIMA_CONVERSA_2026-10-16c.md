@@ -16,7 +16,7 @@ doca com o prazo.
 - **Armazém** (2 dias): a ruína limpa com andaime amarelo e chapas novas; depois
   o galpão pronto sem portão e com um terço do telhado por pôr.
 - **Pátio** (3 dias): brita e rolo compactador; depois o asfalto a chegar do
-  cais (40%, 75%), recortado do mapa pavimentado (`ObraNoMapa.gd`).
+  cais (55%, 80%), recortado do mapa pavimentado (`ObraNoMapa.gd`).
 - Guarda: o **D45** do teste de design (`tests/casos_obra_no_mapa.gd`) e sete
   defeitos no catálogo (`obra-*`).
 

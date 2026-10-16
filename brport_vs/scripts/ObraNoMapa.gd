@@ -39,7 +39,11 @@ const CANTEIRO: Array[Texture2D] = [
 # não há asfalto nenhum: é o dia da brita. O rolo do quadro está desenhado na
 # frente de cada fração (o comentário do `patio_obra_*` no gerador diz onde);
 # quem mexer num número aqui mexe no `x` do rolo lá.
-const ASFALTO_POR_QUADRO: Array[float] = [0.0, 0.40, 0.75]
+#
+# ⚠️ ERAM 40% E 75%, e o dia 2 não lia: na tela inteira, 40% do pátio é uma
+# faixa cinzenta rente ao avental que se confunde com ele. O Bruno pediu mais
+# asfalto nesse dia; o dia 3 subiu junto para a passada não encurtar.
+const ASFALTO_POR_QUADRO: Array[float] = [0.0, 0.55, 0.80]
 
 # O PÁTIO DO MAPA, em unidades de mundo: `[my0, my1, mx da frente da rua, mx
 # do avental]` por trecho de porto. É a lista `patio` da tabela de âncoras,

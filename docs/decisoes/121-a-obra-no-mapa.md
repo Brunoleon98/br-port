@@ -43,7 +43,7 @@ de cima e «pronto no dia N» na de baixo.
 |---|---|---|---|---|
 | **Píer 2** (vaga 2) | 2 | estacas NOVAS, travessas e longarinas, o tabuado empilhado na raiz | o tabuado posto da raiz até pouco além do meio, o resto da pilha na frente | — |
 | **Armazém** | 2 | a ruína LIMPA (sem mato, entulho, lona nem portão caído), o andaime e as chapas novas no deck | o galpão pronto sem portão, sem calha e com um terço do telhado por pôr, o mesmo andaime | — |
-| **Pátio** | 3 | a terra, dois montes de brita e o rolo junto do avental | 40% do pátio asfaltado a partir do cais, o rolo na frente | 75%, o rolo já do lado da rua |
+| **Pátio** | 3 | a terra, dois montes de brita e o rolo junto do avental | 55% do pátio asfaltado a partir do cais, o rolo na frente | 80%, o rolo já do lado da rua, a brita gasta |
 
 Cada quadro parte do estado de ONTEM: o primeiro dia do armazém é a ruína
 limpa, o segundo é o pronto a que faltam peças, e o píer usa as estacas e as
@@ -60,8 +60,8 @@ escada encostada, e com três lê como andaime.
 
 - **`tools/gerar_props_iso.py`** ganhou o `andaime()` do kit e sete grupos:
   `pier_obra_0/1`, `galpao_obra_0/1` (com sombra e a escala dos prédios) e
-  `patio_obra_0/1/2` (o rolo tandem em metros reais, à régua da pessoa, e a
-  brita). Os sete PNG entram pelo importador de atlas.
+  `patio_obra_0/1/2` (o rolo compactador de um tambor em metros reais, à
+  régua da pessoa, e a brita). Os sete PNG entram pelo importador de atlas.
 - **O pátio não é prop: é o MAPA.** O asfalto a avançar é o mapa
   PAVIMENTADO recortado por cima do de terra (`AsfaltoDaObra`, um
   `Polygon2D` com a textura dele e a UV na razão 1080/720), do avental até à
@@ -105,3 +105,14 @@ Os sete atlas novos somam 140 KB (os PNG fonte, 482 KB); o `.pck` do CI dá o
 número do pacote. Seis suítes verdes neste contêiner, `MUTANTES OK` nos sete,
 bateria de 86 fotos com `COBERTURA OK`. **Sem aceite**: o Bruno julga na foto
 do jogo, e só então a candidata deixa de o ser.
+
+## A segunda passagem do pátio
+
+Vistas as fotos, o Bruno pediu o pátio reforçado: **rolo maior e mais
+asfalto no dia 2**. O rolo maior é uma MÁQUINA maior, e não o tandem
+esticado: o compactador de um tambor (5,8 m, tambor de 1,5 m), que é também o
+que compacta a base de brita, pela mesma régua da pessoa (`069`). O asfalto
+passou de 40% e 75% para **55% e 80%**: aos 40% o dia 2 era uma faixa rente
+ao avental que se confundia com ele, e o dia 3 subiu junto para a passada não
+encurtar. No dia 3 a brita acabou — com o rolo maior, o resto do monte já não
+tinha onde ficar fora dele.

@@ -5294,52 +5294,75 @@ def montar(M: dict) -> dict:
     #
     #   dia 1  dois montes cheios e o rolo parado junto do avental;
     #   dia 2  um monte, e o rolo na frente do asfalto novo;
-    #   dia 3  o resto de um monte, e o rolo já do lado da rua. O resto vai
-    #          para o lado (`-x`, `-y`): atrás do rolo, a tela punha-o debaixo
-    #          da cobertura dele, e a primeira candidata perdeu-o assim.
+    #   dia 3  a brita gasta, e o rolo já do lado da rua.
     #
     # ⚠️ O ROLO CORRE NA FRENTE DO ASFALTO, e a frente é a do `ObraNoMapa`:
     # o nó fica em (11,2; 20,9) e a faixa do pátio nesse degrau vai de 9,22 a
-    # 12,70 em `mx`, logo a frente do dia 2 (40%) cai a +0,11 do nó e a do
-    # dia 3 (75%) a −1,11. Quem mexer numa fração mexe no `x` do rolo.
+    # 12,70 em `mx`, logo a frente do dia 2 (55%) cai a −0,41 do nó e a do
+    # dia 3 (80%) a −1,28. Quem mexer numa fração mexe no `x` do rolo.
     #
     # ⚠️ E O NÓ FICA ONDE O PÁTIO TEM SÍTIO. Medido nas âncoras: entre o
     # acesso da doca 3 (`my` até 19,8) e o cotovelo da rua (a partir de
     # 21,98) é o único pedaço de pátio livre com 1,5 unidades — o lote
     # reservado (10,2–11,6 × 20,1–21,7) cai dentro, mas ele só é pintado no
-    # mapa PAVIMENTADO, e durante a obra o chão é a terra.
+    # mapa PAVIMENTADO, e durante a obra o chão é a terra. O rolo, deitado em
+    # `my`, ocupa de 20,07 a 21,73: cabe com um quarto de unidade de cada lado.
     #
-    # Medidas reais de um rolo tandem pequeno (3,2 m, tambor de 1,2 m), pela
-    # régua da pessoa como a empilhadeira: amarelo, que é o sinal de máquina
-    # do pátio, e os TAMBORES claros, que são o que diz «rolo» e não «carro».
+    # ⚠️ O ROLO É UM DE UM TAMBOR (5,8 m), E NÃO O TANDEM DE 3,2 m DA PRIMEIRA
+    # CANDIDATA. O Bruno pediu-o maior, e maior saiu de uma MÁQUINA maior, e
+    # não de esticar a pequena: a régua da pessoa (`069`) vale para tudo o que
+    # pousa no pátio, e um tandem a 1,8x leria como brinquedo ao lado da
+    # empilhadeira. O de um tambor é também o certo para o trabalho: é ele que
+    # compacta a base de brita; o tandem é o do acabamento do asfalto. Medidas
+    # reais (tambor liso de 1,5 m × 2,1 m, cabine com ROPS a 3 m), pela régua
+    # da pessoa: amarelo, o sinal de máquina do pátio, e o TAMBOR claro na
+    # frente (`-y`, a face que a câmera vê), que é o que diz «rolo».
     def _rolo(nome, x, y):
         def em(dx, dy, dz):
             return (x + _hm(dx), y + _hm(dy), _vm(dz))
-        p = []
-        for i, dy in enumerate((-1.05, 1.05)):
-            p.append(cone("%s_tambor%d" % (nome, i), em(0.0, dy, 0.60),
-                          _vm(0.60), _vm(0.60), _hm(1.30), 16, M["metal_claro"],
-                          rot=(0, 90, 0)))
-            # O garfo amarelo por cima do tambor: sem ele o tambor é um cano.
-            p.append(caixa("%s_garfo%d" % (nome, i), em(0.0, dy, 1.24),
-                           (_hm(1.46), _hm(0.80), _vm(0.18)), M["amarelo"]))
-        p += [
-            caixa("%s_corpo" % nome, em(0.0, 0.0, 1.10),
-                  (_hm(1.20), _hm(1.30), _vm(0.90)), M["amarelo"]),
-            caixa("%s_banco" % nome, em(0.0, 0.18, 1.66),
-                  (_hm(0.50), _hm(0.46), _vm(0.22)), M["pneu"]),
-            caixa("%s_painel" % nome, em(0.0, -0.36, 1.70),
-                  (_hm(0.70), _hm(0.22), _vm(0.30)), M["amarelo"]),
+        p = [
+            # O tambor liso, na frente, e o garfo amarelo que o segura: sem o
+            # garfo o tambor é um cano.
+            cone("%s_tambor" % nome, em(0.0, -1.95, 0.75), _vm(0.75), _vm(0.75),
+                 _hm(2.13), 18, M["metal_claro"], rot=(0, 90, 0)),
+            caixa("%s_garfo" % nome, em(0.0, -1.95, 1.62),
+                  (_hm(2.40), _hm(1.10), _vm(0.30)), M["amarelo"]),
+            caixa("%s_garfo_e" % nome, em(-1.17, -1.95, 1.05),
+                  (_hm(0.12), _hm(0.80), _vm(1.00)), M["amarelo"]),
+            caixa("%s_garfo_d" % nome, em(1.17, -1.95, 1.05),
+                  (_hm(0.12), _hm(0.80), _vm(1.00)), M["amarelo"]),
+            # O chassi de trás, comprido e baixo, e o capô do motor no fim.
+            caixa("%s_chassi" % nome, em(0.0, 1.05, 1.25),
+                  (_hm(1.90), _hm(3.30), _vm(0.95)), M["amarelo"]),
+            caixa("%s_capo" % nome, em(0.0, 1.95, 1.95),
+                  (_hm(1.80), _hm(1.60), _vm(0.55)), M["amarelo"]),
+            caixa("%s_grade" % nome, em(0.0, 2.78, 1.70),
+                  (_hm(1.40), _hm(0.06), _vm(0.60)), M["metal"]),
+            # A articulação entre o garfo e o chassi, escura: é a linha que
+            # separa as duas metades da máquina.
+            caixa("%s_junta" % nome, em(0.0, -0.95, 1.20),
+                  (_hm(0.80), _hm(0.60), _vm(0.55)), M["metal"]),
+            caixa("%s_banco" % nome, em(0.0, 0.15, 1.92),
+                  (_hm(0.55), _hm(0.50), _vm(0.25)), M["pneu"]),
+            caixa("%s_painel" % nome, em(0.0, -0.45, 2.00),
+                  (_hm(0.80), _hm(0.22), _vm(0.35)), M["amarelo"]),
         ]
-        for i, (dx, dy) in enumerate(((-0.52, -0.52), (0.52, -0.52),
-                                      (-0.52, 0.56), (0.52, 0.56))):
-            p.append(caixa("%s_coluna%d" % (nome, i), em(dx, dy, 2.22),
-                           (_hm(0.07), _hm(0.07), _vm(1.24)), M["metal"]))
+        # Os pneus de trás, de borracha, dos dois lados do chassi.
+        for i, dx in enumerate((-1.02, 1.02)):
+            p.append(cone("%s_pneu%d" % (nome, i), em(dx, 1.30, 0.72),
+                          _vm(0.72), _vm(0.72), _hm(0.55), 14, M["pneu"],
+                          rot=(0, 90, 0)))
+        # A cabine aberta com ROPS: quatro colunas e o teto escuro, que é a
+        # linha que fecha a silhueta por cima.
+        for i, (dx, dy) in enumerate(((-0.80, -0.70), (0.80, -0.70),
+                                      (-0.80, 0.75), (0.80, 0.75))):
+            p.append(caixa("%s_coluna%d" % (nome, i), em(dx, dy, 2.45),
+                           (_hm(0.09), _hm(0.09), _vm(1.10)), M["metal"]))
         p += [
-            caixa("%s_teto" % nome, em(0.0, 0.02, 2.86),
-                  (_hm(1.18), _hm(1.24), _vm(0.06)), M["metal"]),
-            caixa("%s_pirilampo" % nome, em(0.40, 0.40, 2.96),
-                  (_hm(0.12), _hm(0.12), _vm(0.14)), M["laranja"]),
+            caixa("%s_teto" % nome, em(0.0, 0.02, 3.03),
+                  (_hm(1.80), _hm(1.65), _vm(0.08)), M["metal"]),
+            caixa("%s_pirilampo" % nome, em(0.55, 0.55, 3.14),
+                  (_hm(0.14), _hm(0.14), _vm(0.16)), M["laranja"]),
         ]
         return p
 
@@ -5354,13 +5377,15 @@ def montar(M: dict) -> dict:
                 cone(nome + "_topo", (x + r * 0.25, y - r * 0.15, h * 0.55),
                      r * 0.62, r * 0.10, h * 0.70, 7, brita, rot=(0, 0, 20))]
 
+    # Os montes ficam do lado da rua e fora do comprimento do rolo: com ele a
+    # 5,8 m, um monte a meio caía debaixo da máquina no dia 2. E o do dia 2
+    # vai para `-y`: em `+y` ficava atrás da cabine, meio tapado na tela.
     grupos["patio_obra_0"] = _rolo("pob_rolo0", 0.95, 0.0) \
-        + _monte("pob_monte0a", -0.55, -0.45, True) \
-        + _monte("pob_monte0b", -0.75, 0.55, True)
-    grupos["patio_obra_1"] = _rolo("pob_rolo1", 0.25, 0.0) \
-        + _monte("pob_monte1b", -0.75, 0.55, True)
-    grupos["patio_obra_2"] = _rolo("pob_rolo2", -0.95, 0.0) \
-        + _monte("pob_monte2b", -1.55, -0.60, False)
+        + _monte("pob_monte0a", -0.65, -0.45, True) \
+        + _monte("pob_monte0b", -1.20, 0.60, True)
+    grupos["patio_obra_1"] = _rolo("pob_rolo1", -0.41, 0.0) \
+        + _monte("pob_monte1b", -1.45, -0.45, True)
+    grupos["patio_obra_2"] = _rolo("pob_rolo2", -1.28, 0.0)
 
     # -- ESCRITÓRIO nos dois estados. O armazém reaproveita galpao/galpao_velho.
     # A ruína não é o prédio "pintado de velho": é MENOS prédio — parede caída,
