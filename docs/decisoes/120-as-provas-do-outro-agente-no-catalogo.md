@@ -26,7 +26,8 @@ desta branch.
   e declarado pela asserção dele que o apanha: sete do cancelamento (o
   oitavo, o orçamento ignorado, já lá estava pela `118`) e os seis da ajuda.
   Passam a correr a cada PR, dos dois agentes, no job «Defeitos já
-  provados». O catálogo tem 58.
+  provados». O catálogo tem 58, e correu inteiro em 1.525 s (`MUTANTES OK`);
+  o teto do job subiu de 40 para 60 minutos.
 - **O jogador ao acaso passou a T26**, pelo `tools/renumerar_decisao.py
   --bloco`, que troca o nome do bloco só nas linhas que esta branch
   escreveu — as citações do T25 do Codex ficaram como estavam.

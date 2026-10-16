@@ -634,7 +634,9 @@ jobs:
   mutantes:
     name: Defeitos já provados
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    # 58 defeitos levaram 1.525 s no contêiner de desenvolvimento (`120`);
+    # o teto deixa o dobro de folga para o runner e para o catálogo crescer.
+    timeout-minutes: 60
 
     steps:
       - name: Baixar o repositório
