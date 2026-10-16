@@ -61,3 +61,7 @@ Pesquisa, revisão e pacotes selados do cancelamento foram preservados.
 
 Esta entrega fica local, sem push ou novo PR. Antes de publicar, obter a
 autorização específica; antes de recomendar merge, conferir CI do novo head.
+
+**Continuação em 16/10:** Bruno pediu criar o PR e fechar a sessão. A
+autorização e a publicação no PR #134 estão na `116`; o fecho local
+descrito acima permanece como registro da etapa anterior.

@@ -4,7 +4,8 @@
 Como jogar/glossário**, a primeira novidade sugerida pela pesquisa `112`, e
 aprovou o conjunto abaixo com o ajuste de redação sobre o autosave (`114`).
 O aceite fechou a definição. Depois, Bruno autorizou a implementação (`115`),
-agora local. A publicação em outro PR continua sem autorização.
+publicada a seu pedido no PR #134 em 16/10 (`116`). Leitura, telefone e
+merge permanecem pendentes.
 
 ## O que a pessoa recebe
 
@@ -137,7 +138,7 @@ a escrita foi verificada. As falhas e propostas técnicas permanecem em
 `REVISAO_RECURSOS_BASICOS_2026-10-15.md`. A limitação de importação
 `Safe save failed` da `110`/`111` continua aberta, sem causa isolada.
 
-## Integração implementada localmente (`115`)
+## Integração implementada (`115`), publicada no PR #134 (`116`)
 
 Um painel compartilhado da família `PainelNarrativo`, com cena própria,
 tema existente, índice e artigo rolável. A altura da área de leitura será
@@ -180,5 +181,6 @@ São as duas portas da mesma cena, sem estado novo de turno ou save.
   humanos não são substituídos por suíte verde.
 
 **Próximo passo:** submeter a leitura e o teste no telefone ao Bruno; as provas
-de máquina e capturas da `115` passaram. Publicar outro PR depende de autorização própria.
+de máquina e capturas da `115` passaram. A publicação foi autorizada na
+`116` e feita no PR #134; conferir seu último head antes de recomendar merge.
 O aceite da definição não substitui as provas de máquina, leitura e telefone.

@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-16.md` | 16/10 | Publicação autorizada da ajuda no PR #134 (`116`), fecho na mesma branch e leitura/telefone/merge pendentes |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-15f.md` | 15/10 | Como jogar/glossário implementado localmente (`115`), verificações concluídas e leitura/telefone/publicação pendentes |
 | `VERIFICACAO_COMO_JOGAR_2026-10-15/` | 15/10 | Provas locais da ajuda compartilhada: navegação, preservação, controles, contraste e capturas (`115`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-15e.md` | 15/10 | Recorte de Como jogar/glossário aprovado com ajuste sobre autosave (`114`); implementação e novo PR sem autorização |

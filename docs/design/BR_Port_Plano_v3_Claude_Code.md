@@ -780,8 +780,8 @@ Bruno escolheu **definir o recorte de Como jogar/glossário** (`113`).
 Entradas, textos e critérios estão em
 `docs/RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`; Bruno aprovou o recorte
 com ajuste de redação sobre autosave (`114`) e depois autorizou implementar
-(`115`). A ajuda está local, compartilhada pela inicial e pausa; leitura e
-telefone continuam pendentes. Publicar outro PR ainda não foi autorizado.
+(`115`). A ajuda compartilhada pela inicial e pausa está no PR #134,
+publicado a pedido do Bruno (`116`); leitura, telefone e merge pendentes.
 A pesquisa entrou na main com
 o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em
 `docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`, inclusive falhas do save.

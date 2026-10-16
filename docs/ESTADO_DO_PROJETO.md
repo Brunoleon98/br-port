@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 15/10/2026 — PR #133 fundido; ajuda implementada localmente (`115`)
+> **Atualização:** 16/10/2026 — PR #133 fundido; ajuda no PR #134 (`116`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -115,9 +115,9 @@ progressão (`103`–`106`, `108`); medição na `economia.md`.
 **Cancelamento na main (`111`, PR #133):** equipe livre no dia, −5, multa de
 10%, contas, registro 5 e migração 17→18. Medição na `110`; CI verde no merge.
 Pesquisa `112`: `PESQUISA_RECURSOS_BASICOS_2026-10-15.md`; revisão preservada.
-**Como jogar/glossário local (`114`, `115`):** inicial e pausa, seis assuntos
-e glossário compartilhados. Recorte em `RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`;
-consulta preserva a partida. Leitura e telefone pendentes; novo PR sem autorização.
+**Como jogar/glossário no PR #134 (`114`–`116`):** inicial e pausa, consulta
+compartilhada que preserva a partida. Recorte em
+`RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`. Leitura, telefone e merge pendentes.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
 A `107` permanece local e separada, sem autorização de publicação nem teste
