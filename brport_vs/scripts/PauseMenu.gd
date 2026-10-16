@@ -3,7 +3,8 @@ extends PainelNarrativo
 # ============================================================
 # BR Port VS — o menu de PAUSA, curto (`docs/decisoes/066`)
 #
-# Três botões: Continuar, Ajustes e Salvar e sair — o padrão que a pesquisa
+# Continuar, Como jogar, Ajustes e Salvar e sair — a ajuda da `115` acrescenta
+# consulta ao padrão que a pesquisa
 # da família do sistema achou nos jogos de gestão (pista pela busca; as páginas
 # não se leem nestas sessões, `063`). Até 26/09 a pausa carregava volume,
 # registro e «Novo jogo (apaga progresso)» num cartão de 280 px, com o botão
@@ -34,6 +35,7 @@ signal ver_balanco
 ## Pedido para abrir a tela Ajustes, pela mesma razão: quem abre painéis — e
 ## lhes dá o tema — é o `Main`.
 signal pedir_ajustes
+signal pedir_como_jogar
 ## Pedido para voltar à tela inicial. Quem troca de cena é o `Main`, que é
 ## também quem armou o gravador da partida e o tem de desarmar.
 signal sair_para_inicio
@@ -58,6 +60,8 @@ func _ready() -> void:
 	continuar.theme_type_variation = &"BotaoPrimario"
 	continuar.custom_minimum_size = Vector2(0, ALTURA_BOTAO)
 
+	_botao("Como jogar", func() -> void:
+		pedir_como_jogar.emit())
 	_botao("Ajustes", func() -> void:
 		pedir_ajustes.emit())
 

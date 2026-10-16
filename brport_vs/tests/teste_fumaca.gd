@@ -4149,8 +4149,8 @@ func _f16_tela_inicial() -> void:
 	var textos: Array = []
 	_f16_textos_de_botao(cena, textos)
 	var ultima := cena.find_child("UltimaPartida", true, false) as Label
-	_confere("F16 tela inicial: com portos guardados há Continuar, Nova partida, Carregar e Ajustes",
-		textos == ["Continuar", "Nova partida", "Carregar", "Ajustes"], str(textos))
+	_confere("F16 tela inicial: ajuda entre Carregar e Ajustes com portos guardados",
+		textos == ["Continuar", "Nova partida", "Carregar", "Como jogar", "Ajustes"], str(textos))
 	_confere("F16 tela inicial: «%s» é o porto jogado por último, não o espaço em uso" % (ultima.text if ultima else "?"),
 		ultima != null and ultima.text.contains("Um") and not ultima.text.contains("Dois"))
 	root.remove_child(cena)
@@ -4164,8 +4164,8 @@ func _f16_tela_inicial() -> void:
 	root.add_child(vazia)
 	textos.clear()
 	_f16_textos_de_botao(vazia, textos)
-	_confere("F16 tela inicial: sem porto guardado há só Nova partida e Ajustes",
-		textos == ["Nova partida", "Ajustes"], str(textos))
+	_confere("F16 tela inicial: ajuda entre Nova partida e Ajustes sem porto guardado",
+		textos == ["Nova partida", "Como jogar", "Ajustes"], str(textos))
 	root.remove_child(vazia)
 	vazia.free()
 	# Os dois portos voltam, pela mesma porta, para os blocos seguintes.
@@ -4173,25 +4173,27 @@ func _f16_tela_inicial() -> void:
 	_f16_porto(2, String(guardados[1]["porto"]), int(guardados[1]["dinheiro"]))
 
 
-# A PAUSA: três saídas e nenhuma destrutiva, e cada botão pede o que diz.
+# A PAUSA: consulta e saídas sem destruir a partida; cada botão pede o que diz.
 func _f16_pausa() -> void:
 	var pausa: Node = (load("res://scenes/panels/PauseMenu.tscn") as PackedScene).instantiate()
 	root.add_child(pausa)
 	var textos: Array = []
 	_f16_textos_de_botao(pausa, textos)
-	_confere("F16 pausa: Continuar, Ajustes e Salvar e sair (%s)" % ", ".join(textos),
-		textos.has("Continuar") and textos.has("Ajustes") and textos.has("Salvar e sair"))
+	_confere("F16 pausa: ajuda entre Continuar e Ajustes (%s)" % ", ".join(textos),
+		textos == ["Continuar", "Como jogar", "Ajustes", "Salvar e sair"])
 	var destrutivo := textos.filter(func(t: String) -> bool:
 		return t.containsn("novo jogo") or t.containsn("apaga"))
 	_confere("F16 pausa: nenhum botão apaga a partida", destrutivo.is_empty(), str(destrutivo))
 	var pedidos: Array = []
 	pausa.connect("sair_para_inicio", func() -> void: pedidos.append("sair"))
 	pausa.connect("pedir_ajustes", func() -> void: pedidos.append("ajustes"))
+	pausa.connect("pedir_como_jogar", func() -> void: pedidos.append("ajuda"))
 	pausa.connect("ver_balanco", func() -> void: pedidos.append("balanco"))
 	_f16_botao(pausa, "Salvar e sair").pressed.emit()
 	_f16_botao(pausa, "Ajustes").pressed.emit()
-	_confere("F16 pausa: «Salvar e sair» pede a tela inicial e «Ajustes» pede os ajustes (%s)" % [pedidos],
-		pedidos == ["sair", "ajustes"])
+	_f16_botao(pausa, "Como jogar").pressed.emit()
+	_confere("F16 pausa: sair, ajustes e ajuda emitem seus pedidos (%s)" % [pedidos],
+		pedidos == ["sair", "ajustes", "ajuda"])
 	root.remove_child(pausa)
 	pausa.free()
 

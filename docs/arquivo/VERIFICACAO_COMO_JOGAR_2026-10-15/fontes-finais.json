@@ -1,0 +1,9 @@
+{
+  "brport_vs/scripts/ConteudoComoJogar.gd": "02f279d7fa1604bf5458b1e7f494b8473e0e1fd38a5000e25dda48d030381ad8",
+  "brport_vs/scripts/PainelComoJogar.gd": "68d6fa118c6e48576d2e286914305937203be261bba1c107e41b6223fce6925a",
+  "brport_vs/scripts/Main.gd": "ed51aa3ff23229108a06d73d66352f4997fa1cd33b2e26085a4f227160708590",
+  "brport_vs/scripts/TelaInicial.gd": "b2f99a66e6817e106891652fe4a25225471194c82da582989e1d1be95364ebaf",
+  "brport_vs/scripts/PauseMenu.gd": "024f368c6a1c9bdc837bad6e12b2f1889278a13b0d358df9d1c3024c7fa3170a",
+  "brport_vs/tests/casos_como_jogar.gd": "f876776bdc43843b24a83a256ac7af178b9a51a087350958298b0c28d83064a6",
+  "brport_vs/tests/teste_fumaca.gd": "7d809d756e5a0b7679391a0668fdca9f473d79fe576e9d49f927f0e05b334b37"
+}

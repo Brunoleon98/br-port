@@ -31,6 +31,7 @@ const FUNDO := preload("res://art/tela_inicial/fundo_provisorio.svg")
 const CENA_DO_PORTO := "res://scenes/Main.tscn"
 const PainelEspacosScene := preload("res://scenes/panels/PainelEspacos.tscn")
 const PainelAjustesScene := preload("res://scenes/panels/PainelAjustes.tscn")
+const ComoJogarScene := preload("res://scenes/panels/PainelComoJogar.tscn")
 
 const LARGURA_CARTAO := 560
 const ALTURA_BOTAO := 56
@@ -94,8 +95,8 @@ func _montar_cartao() -> void:
 	cartao.offset_right = LARGURA_CARTAO / 2.0
 	cartao.offset_top = -MARGEM_INFERIOR
 	cartao.offset_bottom = -MARGEM_INFERIOR
-	# Cresce PARA CIMA a partir do pé, à medida dos botões — com três espaços
-	# vazios há dois botões, com algum ocupado há quatro e a linha de apoio.
+	# Cresce PARA CIMA a partir do pé, à medida dos botões; com espaço ocupado
+	# entram também Continuar, Carregar e a linha de apoio.
 	cartao.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	add_child(cartao)
 
@@ -119,6 +120,7 @@ func _montar_cartao() -> void:
 	if _mais_recente > 0:
 		_botao(coluna, "Carregar", ALTURA_BOTAO, func() -> void:
 			_abrir_espacos("carregar"))
+	_botao(coluna, "Como jogar", ALTURA_BOTAO, _abrir_como_jogar)
 	_botao(coluna, "Ajustes", ALTURA_BOTAO, func() -> void:
 		_abrir_painel(PainelAjustesScene).call("setup"))
 
@@ -147,6 +149,13 @@ func _abrir_espacos(modo: String) -> void:
 	var painel := _abrir_painel(PainelEspacosScene)
 	painel.connect("escolhido", _ao_escolher_espaco)
 	painel.call("setup", modo)
+
+
+func _abrir_como_jogar() -> void:
+	for filho in get_children():
+		if filho is PainelNarrativo and not filho.is_queued_for_deletion():
+			return
+	_abrir_painel(ComoJogarScene)
 
 
 func _continuar() -> void:

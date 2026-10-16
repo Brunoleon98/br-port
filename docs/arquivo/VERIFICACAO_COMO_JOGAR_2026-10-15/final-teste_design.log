@@ -1,0 +1,1291 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+=== D1: props ancorados onde o mapa os desenha ===
+  PASS  o mapa desenha 3 berços e a cena tem 3 vagas
+  PASS  Doca 1 · Pier no lugar
+  PASS  Doca 1 · Lanca no lugar
+  PASS  Doca 1 · Barco no lugar
+  PASS  Doca 1 · trabalhador no convés
+  PASS  Doca 2 · Pier no lugar
+  PASS  Doca 2 · Lanca no lugar
+  PASS  Doca 2 · Barco no lugar
+  PASS  Doca 2 · trabalhador no convés
+  PASS  Doca 3 · Pier no lugar
+  PASS  Doca 3 · Lanca no lugar
+  PASS  Doca 3 · Barco no lugar
+  PASS  Doca 3 · trabalhador no convés
+=== D2: cenário em terra, e não em cima da rua ===
+  PASS  Caminhao0 tem pegada declarada
+  PASS  Caminhao0 em terra
+  PASS  CaminhaoRetorno0 tem pegada declarada
+  PASS  CaminhaoRetorno0 em terra
+  PASS  Escritorio fora do asfalto
+  PASS  Escritorio em terra
+  PASS  Caminhao1 tem pegada declarada
+  PASS  Caminhao1 em terra
+  PASS  Coqueiro0Tronco tem pegada declarada
+  PASS  Coqueiro0Tronco fora do asfalto
+  PASS  Coqueiro0Tronco em terra
+  PASS  Coqueiro0Copa tem pegada declarada
+  PASS  Coqueiro0Copa fora do asfalto
+  PASS  Coqueiro0Copa em terra
+  PASS  CaminhaoRetorno1 tem pegada declarada
+  PASS  CaminhaoRetorno1 em terra
+  PASS  Armazem fora do asfalto
+  PASS  Armazem em terra
+  PASS  Pneus tem pegada declarada
+  PASS  Pneus fora do asfalto
+  PASS  Pneus em terra
+  PASS  Barreira tem pegada declarada
+  PASS  Barreira fora do asfalto
+  PASS  Barreira em terra
+  PASS  Poste tem pegada declarada
+  PASS  Poste fora do asfalto
+  PASS  Poste em terra
+  PASS  PosteLuz tem pegada declarada
+  PASS  PosteLuz fora do asfalto
+  PASS  PosteLuz em terra
+  PASS  ConeTransito tem pegada declarada
+  PASS  ConeTransito fora do asfalto
+  PASS  ConeTransito em terra
+  PASS  Coqueiro1Tronco tem pegada declarada
+  PASS  Coqueiro1Tronco fora do asfalto
+  PASS  Coqueiro1Tronco em terra
+  PASS  Coqueiro1Copa tem pegada declarada
+  PASS  Coqueiro1Copa fora do asfalto
+  PASS  Coqueiro1Copa em terra
+  PASS  Caminhao2 tem pegada declarada
+  PASS  Caminhao2 em terra
+  PASS  Empilhadeira tem pegada declarada
+  PASS  Empilhadeira fora do asfalto
+  PASS  Empilhadeira em terra
+  PASS  Cabeco tem pegada declarada
+  PASS  Cabeco fora do asfalto
+  PASS  Cabeco em terra
+  PASS  PilhaCaixotes tem pegada declarada
+  PASS  PilhaCaixotes fora do asfalto
+  PASS  PilhaCaixotes em terra
+  PASS  Guincho tem pegada declarada
+  PASS  Guincho fora do asfalto
+  PASS  Guincho em terra
+  PASS  Pallet tem pegada declarada
+  PASS  Pallet fora do asfalto
+  PASS  Pallet em terra
+  PASS  Coqueiro2Tronco tem pegada declarada
+  PASS  Coqueiro2Tronco fora do asfalto
+  PASS  Coqueiro2Tronco em terra
+  PASS  Coqueiro2Copa tem pegada declarada
+  PASS  Coqueiro2Copa fora do asfalto
+  PASS  Coqueiro2Copa em terra
+=== D3: ordem dos nós = profundidade isométrica ===
+  PASS  Cenario/Caminhao0 vem depois de quem está atrás
+  PASS  Cenario/CaminhaoRetorno0 vem depois de quem está atrás
+  PASS  Cenario/Escritorio vem depois de quem está atrás
+  PASS  Cenario/Caminhao1 vem depois de quem está atrás
+  PASS  Cenario/Coqueiro0Tronco vem depois de quem está atrás
+  PASS  Cenario/Coqueiro0Copa vem depois de quem está atrás
+  PASS  Cenario/CaminhaoRetorno1 vem depois de quem está atrás
+  PASS  Cenario/Bote vem depois de quem está atrás
+  PASS  Cenario/Armazem vem depois de quem está atrás
+  PASS  Cenario/Pneus vem depois de quem está atrás
+  PASS  Cenario/Barreira vem depois de quem está atrás
+  PASS  Cenario/Poste vem depois de quem está atrás
+  PASS  Cenario/PosteLuz vem depois de quem está atrás
+  PASS  Cenario/ConeTransito vem depois de quem está atrás
+  PASS  Cenario/Coqueiro1Tronco vem depois de quem está atrás
+  PASS  Cenario/Coqueiro1Copa vem depois de quem está atrás
+  PASS  Cenario/Caminhao2 vem depois de quem está atrás
+  PASS  Cenario/Empilhadeira vem depois de quem está atrás
+  PASS  Cenario/BarcoEspera3 vem depois de quem está atrás
+  PASS  Cenario/Cabeco vem depois de quem está atrás
+  PASS  Cenario/PilhaCaixotes vem depois de quem está atrás
+  PASS  Cenario/Guincho vem depois de quem está atrás
+  PASS  Cenario/Pallet vem depois de quem está atrás
+  PASS  Cenario/BarcoEspera1 vem depois de quem está atrás
+  PASS  Cenario/Coqueiro2Tronco vem depois de quem está atrás
+  PASS  Cenario/Coqueiro2Copa vem depois de quem está atrás
+  PASS  Cenario/Ancoragem0 vem depois de quem está atrás
+  PASS  Cenario/Ancoragem2 vem depois de quem está atrás
+  PASS  Cenario/Ancoragem1 vem depois de quem está atrás
+  PASS  Cenario/BarcoEspera2 vem depois de quem está atrás
+  PASS  Docas/Doca0 vem depois de quem está atrás
+  PASS  Docas/Doca1 vem depois de quem está atrás
+  PASS  Docas/Doca2 vem depois de quem está atrás
+=== D4: nada estoura a viewport ===
+  PASS  HudBar dentro da tela
+  PASS  MapaWrap dentro da tela
+  PASS  BarraDocas dentro da tela
+  PASS  FilaTitulo dentro da tela
+  PASS  Fila dentro da tela
+  PASS  MensagemCartao dentro da tela
+  PASS  MetaCartao dentro da tela
+  PASS  LinhaConstruir dentro da tela
+  PASS  AcoesTurno dentro da tela
+=== D5: o rodapé não se sobrepõe ===
+  PASS  BarraDocas começa depois de MapaWrap
+  PASS  FilaTitulo começa depois de BarraDocas
+  PASS  Fila começa depois de FilaTitulo
+  PASS  MensagemCartao começa depois de Fila
+  PASS  MetaCartao começa depois de MensagemCartao
+  PASS  LinhaConstruir começa depois de MetaCartao
+  PASS  AcoesTurno começa depois de LinhaConstruir
+  PASS  os cartões preenchem a barra de docas
+=== D6: alvo de toque cabe no dedo ===
+  PASS  Avancar cabe no dedo (188x50)
+  PASS  Upgrade cabe no dedo (233x46)
+  PASS  Menu cabe no dedo (54x46)
+  PASS  Pausar cabe no dedo (46x44)
+  PASS  Cartao0 cabe no dedo (224x104)
+  PASS  Cartao1 cabe no dedo (224x84)
+  PASS  Cartao2 cabe no dedo (224x84)
+  PASS  Lugar0 cabe no dedo (224x148)
+  PASS  Lugar1 cabe no dedo (224x148)
+  PASS  Lugar2 cabe no dedo (224x148)
+=== D8: o pipeline BRP concorda com a projeção do mapa ===
+  PASS  meia_larg do pipeline BRP == a do mapa
+  PASS  meia_alt do pipeline BRP == a do mapa
+  PASS  câmera do pipeline BRP a 60/45
+=== D9: a escolha à espera avisa onde se resolve ===
+  PASS  o estado de teste tem mesmo escolha à espera
+  PASS  o rótulo nomeia a doca livre
+  PASS  com as docas 1 e 3 livres, o rótulo nomeia as duas
+  PASS  e está na cor de aviso, não na neutra
+  PASS  todo barco pronto ao largo tem o cartão aceso
+  PASS  e o berço que o toque enche está realçado no mapa
+  PASS  o bloco D9 correu até ao fim
+=== D10: tocar no dinheiro abre o resumo do dia ===
+  PASS  o press sozinho nao abre nada
+  PASS  o release abriu um painel a mais
+  PASS  e o painel aberto e o PainelCaixa
+  PASS  mostra que o primeiro dia ainda nao fechou
+  PASS  e mostra a secao do que hoje projeta
+  PASS  o bloco D10 correu até ao fim
+=== D11: os outros tres chips do HUD tambem abrem o deles ===
+  PASS  HudBar/DiaPilula abriu um painel
+  PASS  HudBar/DiaPilula abriu o painel certo
+  PASS  HudBar/DiaPilula mostra "Calendário"
+  PASS  HudBar/DiaPilula mostra "SEMANA 1"
+  PASS  HudBar/RepPilula abriu um painel
+  PASS  HudBar/RepPilula abriu o painel certo
+  PASS  HudBar/RepPilula mostra "Reputação"
+  PASS  HudBar/RepPilula mostra "Respeitado"
+  PASS  HudBar/DocasPilula abriu um painel
+  PASS  HudBar/DocasPilula abriu o painel certo
+  PASS  HudBar/DocasPilula mostra "Docas"
+  PASS  HudBar/DocasPilula mostra "DE 3 BERÇOS"
+  PASS  o bloco D11 correu até ao fim
+=== D12: o cartao da parcela convida e abre ===
+  PASS  com caixa de sobra, o cartão convida ao toque
+  PASS  e o convite sai no âmbar claro do tema
+  PASS  e essa cor passa o AA sobre o cartão da parcela, como ele se desenha
+  PASS  e o convite diz o valor de hoje, que é o que a porta cobra
+  PASS  MetaCartao abriu um painel
+  PASS  MetaCartao abriu o painel certo
+  PASS  MetaCartao mostra "Parcela do Sr. Ribeiro"
+  PASS  MetaCartao mostra "Quitar hoje"
+  PASS  sem caixa, o convite desaparece
+  PASS  com o valor de hoje exato, o convite aparece e a porta abre
+  PASS  o bloco D12 correu até ao fim
+=== D13: o caminhao atravessa o mapa, de fora a fora, no asfalto ===
+  PASS  o caminhão anda na projeção do mapa (20 x 10)
+  PASS  a rota tem os 12 pontos da escada
+  PASS  a rota inteira anda sobre asfalto, cotovelos incluídos
+  PASS  há um nó Caminhao por origem declarada (3)
+  PASS  a cena tem o nó Caminhao0
+  PASS  a cena põe o Caminhao0 no ponto de partida dele
+  PASS  e o Caminhao0 está inteiro dentro do mapa
+  PASS  o Caminhao0 parte de um trecho reto
+  PASS  a cena tem o nó Caminhao1
+  PASS  a cena põe o Caminhao1 no ponto de partida dele
+  PASS  e o Caminhao1 está inteiro dentro do mapa
+  PASS  o Caminhao1 parte de um trecho reto
+  PASS  a cena tem o nó Caminhao2
+  PASS  a cena põe o Caminhao2 no ponto de partida dele
+  PASS  e o Caminhao2 está inteiro dentro do mapa
+  PASS  o Caminhao2 parte de um trecho reto
+  PASS  a entrada da rota está fora do quadro
+  PASS  a saída da rota está fora do quadro
+  PASS  o motivo pescado tem camião
+  PASS  o motivo armazenagem tem camião
+  PASS  o motivo conteiner tem camião
+  PASS  o motivo granel tem camião
+  PASS  cada trecho usa a silhueta do eixo, da carga e da empresa
+  PASS  e as 16 silhuetas entram em campo
+  PASS  os 32 camiões têm desenhos distintos
+  PASS  no fim da travessia ele já mudou de ordem entre os irmãos
+  PASS  e no lugar certo da fila de profundidade
+  PASS  há um acesso publicado por vaga de doca (3)
+  PASS  e o TrafegoDeCamioes.gd conhece os mesmos 3
+  PASS  cada desvio bate com o acesso que o mapa desenha
+  PASS  e o camião encostado no berço está inteiro dentro do mapa
+  PASS  doca vazia não chama camião nenhum
+  PASS  barco sem trabalhador também não
+  PASS  barco COM trabalhador chama o camião, pelo id do barco
+  PASS  e troca de barco na mesma doca é uma visita nova
+  PASS  o mapa publica os lotes reservados
+  PASS  nenhum lote reservado pisa um acesso ao berço
+  PASS  e nenhum deles transborda para o avental
+  PASS  o retorno tem os 12 pontos da escada
+  PASS  cada rota anda no meio da sua faixa, em cada trecho
+  PASS  as duas rotas andam pela DIREITA na tela, como no Brasil
+  PASS  a ida e o retorno não se cruzam em ponto nenhum
+  PASS  a largura da rua no TrafegoDeCamioes.gd é a do mapa (1.80)
+  PASS  e a diagonal das curvas abertas também (0.6364)
+  PASS  há curvas abertas a medir (20 meias diagonais)
+  PASS  nenhuma carroçaria sai do asfalto nas curvas abertas (a que mais se aproxima: -0.005)
+  PASS  o retorno sobe a rua do princípio ao fim
+  PASS  o retorno anda sobre asfalto, cotovelos incluídos
+  PASS  há um nó CaminhaoRetorno por origem declarada (2)
+  PASS  a cena põe o CaminhaoRetorno0 no ponto de partida dele
+  PASS  e o CaminhaoRetorno0 está inteiro dentro do mapa
+  PASS  o CaminhaoRetorno0 parte de um trecho reto do retorno
+  PASS  a cena põe o CaminhaoRetorno1 no ponto de partida dele
+  PASS  e o CaminhaoRetorno1 está inteiro dentro do mapa
+  PASS  o CaminhaoRetorno1 parte de um trecho reto do retorno
+  PASS  a entrada do retorno está fora do quadro
+  PASS  a saída do retorno está fora do quadro
+  PASS  cada trecho do retorno usa a silhueta de costas, do eixo, da carga e da empresa
+  PASS  e as 16 silhuetas do retorno entram em campo
+  PASS  o retorno também encosta pelo caminho do jogo
+  PASS  e sai de frente com a silhueta de encostado, marcado, e sobe de costas
+  PASS  cada camião chega ao berço pelo caminho do jogo, e a visita fica marcada
+  PASS  encostado de ré, as portas para o píer (a silhueta mx_retorno da carga dele)
+  PASS  e sai do berço com a MESMA silhueta com que estava encostado
+  PASS  depois do acesso, retoma a estrada de frente
+  PASS  e na estrada não passa por silhueta de retorno
+  PASS  a saída do berço marca o camião como a sair, e desmarca-o na faixa
+  PASS  o bloco D13 correu até ao fim
+=== D14: a vila cabe no lote dela, e sai de baixo dos prédios ===
+  PASS  a tabela de âncoras publica os lotes da vila
+  PASS  a fileira da frente tem mais de uma casa
+  PASS  as casas da fileira da frente em my=-8.24 e -5.65 não se comem
+  PASS  as casas da fileira da frente em my=-5.65 e -4.40 não se comem
+  PASS  as casas da fileira da frente em my=-4.40 e -3.31 não se comem
+  PASS  as casas da fileira da frente em my=-3.31 e 1.65 não se comem
+  PASS  as casas da fileira da frente em my=1.65 e 3.04 não se comem
+  PASS  as casas da fileira da frente em my=3.04 e 10.53 não se comem
+  PASS  as casas da fileira da frente em my=10.53 e 13.41 não se comem
+  PASS  as casas da fileira da frente em my=13.41 e 14.51 não se comem
+  PASS  as casas da fileira da frente em my=14.51 e 16.35 não se comem
+  PASS  as casas da fileira da frente em my=16.35 e 17.55 não se comem
+  PASS  as casas da fileira da frente em my=17.55 e 18.93 não se comem
+  PASS  as casas da fileira da frente em my=18.93 e 20.49 não se comem
+  PASS  as casas da fileira da frente em my=20.49 e 24.35 não se comem
+  PASS  as casas da fileira da frente em my=24.35 e 25.37 não se comem
+  PASS  as casas da fileira da frente em my=25.37 e 26.61 não se comem
+  PASS  as casas da fileira da frente em my=26.61 e 27.83 não se comem
+  PASS  as casas da fileira da frente em my=27.83 e 28.92 não se comem
+  PASS  a fileira de trás tem mais de uma casa
+  PASS  as casas da fileira de trás em my=-5.65 e -4.50 não se comem
+  PASS  as casas da fileira de trás em my=-4.50 e -0.61 não se comem
+  PASS  as casas da fileira de trás em my=-0.61 e 0.61 não se comem
+  PASS  as casas da fileira de trás em my=0.61 e 1.95 não se comem
+  PASS  as casas da fileira de trás em my=1.95 e 6.11 não se comem
+  PASS  as casas da fileira de trás em my=6.11 e 8.35 não se comem
+  PASS  as casas da fileira de trás em my=8.35 e 9.88 não se comem
+  PASS  as casas da fileira de trás em my=9.88 e 13.73 não se comem
+  PASS  as casas da fileira de trás em my=13.73 e 16.35 não se comem
+  PASS  as casas da fileira de trás em my=16.35 e 17.35 não se comem
+  PASS  as casas da fileira de trás em my=17.35 e 21.31 não se comem
+  PASS  as casas da fileira de trás em my=21.31 e 22.41 não se comem
+  PASS  as casas da fileira de trás em my=22.41 e 24.35 não se comem
+  PASS  as casas da fileira de trás em my=24.35 e 25.54 não se comem
+  PASS  as casas da fileira de trás em my=25.54 e 26.67 não se comem
+  PASS  Armazem (em ruína) não tapa a casa em my=-8.24
+  PASS  Armazem (em ruína) não tapa a casa em my=-5.65
+  PASS  Armazem (em ruína) não tapa a casa em my=-4.40
+  PASS  Armazem (em ruína) não tapa a casa em my=-3.31
+  PASS  Armazem (em ruína) não tapa a casa em my=1.65
+  PASS  Armazem (em ruína) não tapa a casa em my=3.04
+  PASS  Armazem (em ruína) não tapa a casa em my=10.53
+  PASS  Armazem (em ruína) não tapa a casa em my=13.41
+  PASS  Armazem (em ruína) não tapa a casa em my=14.51
+  PASS  Armazem (em ruína) não tapa a casa em my=16.35
+  PASS  Armazem (em ruína) não tapa a casa em my=17.55
+  PASS  Armazem (em ruína) não tapa a casa em my=18.93
+  PASS  Armazem (em ruína) não tapa a casa em my=20.49
+  PASS  Armazem (em ruína) não tapa a casa em my=24.35
+  PASS  Armazem (em ruína) não tapa a casa em my=25.37
+  PASS  Armazem (em ruína) não tapa a casa em my=26.61
+  PASS  Armazem (em ruína) não tapa a casa em my=27.83
+  PASS  Armazem (em ruína) não tapa a casa em my=28.92
+  PASS  Armazem (em ruína) não tapa a casa em my=-5.65
+  PASS  Armazem (em ruína) não tapa a casa em my=-4.50
+  PASS  Armazem (em ruína) não tapa a casa em my=-0.61
+  PASS  Armazem (em ruína) não tapa a casa em my=0.61
+  PASS  Armazem (em ruína) não tapa a casa em my=1.95
+  PASS  Armazem (em ruína) não tapa a casa em my=6.11
+  PASS  Armazem (em ruína) não tapa a casa em my=8.35
+  PASS  Armazem (em ruína) não tapa a casa em my=9.88
+  PASS  Armazem (em ruína) não tapa a casa em my=13.73
+  PASS  Armazem (em ruína) não tapa a casa em my=16.35
+  PASS  Armazem (em ruína) não tapa a casa em my=17.35
+  PASS  Armazem (em ruína) não tapa a casa em my=21.31
+  PASS  Armazem (em ruína) não tapa a casa em my=22.41
+  PASS  Armazem (em ruína) não tapa a casa em my=24.35
+  PASS  Armazem (em ruína) não tapa a casa em my=25.54
+  PASS  Armazem (em ruína) não tapa a casa em my=26.67
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=-8.24
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=-5.65
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=-4.40
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=-3.31
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=1.65
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=3.04
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=10.53
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=13.41
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=14.51
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=16.35
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=17.55
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=18.93
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=20.49
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=24.35
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=25.37
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=26.61
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=27.83
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=28.92
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=-5.65
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=-4.50
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=-0.61
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=0.61
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=1.95
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=6.11
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=8.35
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=9.88
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=13.73
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=16.35
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=17.35
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=21.31
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=22.41
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=24.35
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=25.54
+  PASS  BarcoEspera3 (em ruína) não tapa a casa em my=26.67
+  PASS  houve prédio grande para conferir contra a vila (em ruína)
+  PASS  Escritorio (porto completo) não tapa a casa em my=-8.24
+  PASS  Escritorio (porto completo) não tapa a casa em my=-5.65
+  PASS  Escritorio (porto completo) não tapa a casa em my=-4.40
+  PASS  Escritorio (porto completo) não tapa a casa em my=-3.31
+  PASS  Escritorio (porto completo) não tapa a casa em my=1.65
+  PASS  Escritorio (porto completo) não tapa a casa em my=3.04
+  PASS  Escritorio (porto completo) não tapa a casa em my=10.53
+  PASS  Escritorio (porto completo) não tapa a casa em my=13.41
+  PASS  Escritorio (porto completo) não tapa a casa em my=14.51
+  PASS  Escritorio (porto completo) não tapa a casa em my=16.35
+  PASS  Escritorio (porto completo) não tapa a casa em my=17.55
+  PASS  Escritorio (porto completo) não tapa a casa em my=18.93
+  PASS  Escritorio (porto completo) não tapa a casa em my=20.49
+  PASS  Escritorio (porto completo) não tapa a casa em my=24.35
+  PASS  Escritorio (porto completo) não tapa a casa em my=25.37
+  PASS  Escritorio (porto completo) não tapa a casa em my=26.61
+  PASS  Escritorio (porto completo) não tapa a casa em my=27.83
+  PASS  Escritorio (porto completo) não tapa a casa em my=28.92
+  PASS  Escritorio (porto completo) não tapa a casa em my=-5.65
+  PASS  Escritorio (porto completo) não tapa a casa em my=-4.50
+  PASS  Escritorio (porto completo) não tapa a casa em my=-0.61
+  PASS  Escritorio (porto completo) não tapa a casa em my=0.61
+  PASS  Escritorio (porto completo) não tapa a casa em my=1.95
+  PASS  Escritorio (porto completo) não tapa a casa em my=6.11
+  PASS  Escritorio (porto completo) não tapa a casa em my=8.35
+  PASS  Escritorio (porto completo) não tapa a casa em my=9.88
+  PASS  Escritorio (porto completo) não tapa a casa em my=13.73
+  PASS  Escritorio (porto completo) não tapa a casa em my=16.35
+  PASS  Escritorio (porto completo) não tapa a casa em my=17.35
+  PASS  Escritorio (porto completo) não tapa a casa em my=21.31
+  PASS  Escritorio (porto completo) não tapa a casa em my=22.41
+  PASS  Escritorio (porto completo) não tapa a casa em my=24.35
+  PASS  Escritorio (porto completo) não tapa a casa em my=25.54
+  PASS  Escritorio (porto completo) não tapa a casa em my=26.67
+  PASS  Armazem (porto completo) não tapa a casa em my=-8.24
+  PASS  Armazem (porto completo) não tapa a casa em my=-5.65
+  PASS  Armazem (porto completo) não tapa a casa em my=-4.40
+  PASS  Armazem (porto completo) não tapa a casa em my=-3.31
+  PASS  Armazem (porto completo) não tapa a casa em my=1.65
+  PASS  Armazem (porto completo) não tapa a casa em my=3.04
+  PASS  Armazem (porto completo) não tapa a casa em my=10.53
+  PASS  Armazem (porto completo) não tapa a casa em my=13.41
+  PASS  Armazem (porto completo) não tapa a casa em my=14.51
+  PASS  Armazem (porto completo) não tapa a casa em my=16.35
+  PASS  Armazem (porto completo) não tapa a casa em my=17.55
+  PASS  Armazem (porto completo) não tapa a casa em my=18.93
+  PASS  Armazem (porto completo) não tapa a casa em my=20.49
+  PASS  Armazem (porto completo) não tapa a casa em my=24.35
+  PASS  Armazem (porto completo) não tapa a casa em my=25.37
+  PASS  Armazem (porto completo) não tapa a casa em my=26.61
+  PASS  Armazem (porto completo) não tapa a casa em my=27.83
+  PASS  Armazem (porto completo) não tapa a casa em my=28.92
+  PASS  Armazem (porto completo) não tapa a casa em my=-5.65
+  PASS  Armazem (porto completo) não tapa a casa em my=-4.50
+  PASS  Armazem (porto completo) não tapa a casa em my=-0.61
+  PASS  Armazem (porto completo) não tapa a casa em my=0.61
+  PASS  Armazem (porto completo) não tapa a casa em my=1.95
+  PASS  Armazem (porto completo) não tapa a casa em my=6.11
+  PASS  Armazem (porto completo) não tapa a casa em my=8.35
+  PASS  Armazem (porto completo) não tapa a casa em my=9.88
+  PASS  Armazem (porto completo) não tapa a casa em my=13.73
+  PASS  Armazem (porto completo) não tapa a casa em my=16.35
+  PASS  Armazem (porto completo) não tapa a casa em my=17.35
+  PASS  Armazem (porto completo) não tapa a casa em my=21.31
+  PASS  Armazem (porto completo) não tapa a casa em my=22.41
+  PASS  Armazem (porto completo) não tapa a casa em my=24.35
+  PASS  Armazem (porto completo) não tapa a casa em my=25.54
+  PASS  Armazem (porto completo) não tapa a casa em my=26.67
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=-8.24
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=-5.65
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=-4.40
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=-3.31
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=1.65
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=3.04
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=10.53
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=13.41
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=14.51
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=16.35
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=17.55
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=18.93
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=20.49
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=24.35
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=25.37
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=26.61
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=27.83
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=28.92
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=-5.65
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=-4.50
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=-0.61
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=0.61
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=1.95
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=6.11
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=8.35
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=9.88
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=13.73
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=16.35
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=17.35
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=21.31
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=22.41
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=24.35
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=25.54
+  PASS  BarcoEspera3 (porto completo) não tapa a casa em my=26.67
+  PASS  houve prédio grande para conferir contra a vila (porto completo)
+  PASS  D14: o porto completo põe mais prédio grande sobre a vila do que a ruína
+  PASS  no degrau my=[-14.0, -6.0] a fileira de trás sai de trás da da frente
+  PASS  no degrau my=[-6.0, 8.0] a fileira de trás sai de trás da da frente
+  PASS  no degrau my=[8.0, 16.0] a fileira de trás sai de trás da da frente
+  PASS  no degrau my=[16.0, 24.0] a fileira de trás sai de trás da da frente
+  PASS  no degrau my=[24.0, 34.0] a fileira de trás sai de trás da da frente
+  PASS  no degrau my=[34.0, 42.0] a fileira de trás sai de trás da da frente
+  PASS  o bloco D14 correu até ao fim
+=== D15: as duas pontas de areia, e quem pode pisá-las ===
+  PASS  a tabela de âncoras publica as praias
+  PASS  Coqueiro2Tronco fora da areia
+  PASS  Coqueiro2Tronco pode ficar na ponta de praia
+  PASS  Coqueiro2Copa fora da areia
+  PASS  Coqueiro2Copa pode ficar na ponta de praia
+  PASS  a praia -14.0..1.2 aparece na tela
+  PASS  a praia 22.5..42.1 aparece na tela
+  PASS  o bloco D15 correu até ao fim
+=== D16: o mundo transborda o quadro pelos quatro lados ===
+  PASS  a tabela de âncoras publica o fundo da terra
+  PASS  o fundo da terra (mx=-16) fica fora do quadro
+  PASS  o começo da costa (my=-14) fica fora do quadro
+  PASS  o fim da costa (my=42) fica fora do quadro
+  PASS  o bloco D16 correu até ao fim
+=== D17: os três níveis do píer e da lança ===
+  PASS  ArtePier declara os 3 níveis
+  PASS  ArteLanca declara os 3 níveis
+  PASS  a lança do nível 1 cobre o pivô (293.0, 187.0)
+  PASS  a lança do nível 1 tem desenho À VOLTA do pivô
+  PASS  o nível 1 da lança é distinto dos anteriores
+  PASS  a lança do nível 2 cobre o pivô (293.0, 187.0)
+  PASS  a lança do nível 2 tem desenho À VOLTA do pivô
+  PASS  o nível 2 da lança é distinto dos anteriores
+  PASS  a lança do nível 3 cobre o pivô (293.0, 187.0)
+  PASS  a lança do nível 3 tem desenho À VOLTA do pivô
+  PASS  o nível 3 da lança é distinto dos anteriores
+  PASS  a torre do píer nível 1 alcança o pivô (293.0, 187.0)
+  PASS  o nível 1 do píer é distinto dos anteriores
+  PASS  a torre do píer nível 2 alcança o pivô (293.0, 187.0)
+  PASS  o nível 2 do píer é distinto dos anteriores
+  PASS  a torre do píer nível 3 alcança o pivô (293.0, 187.0)
+  PASS  o nível 3 do píer é distinto dos anteriores
+  PASS  a classe pesqueiro com motivo pescado tem uma folha de cascos
+  PASS  a folha de pesqueiro/pescado não repete arquivo (3 porte(s))
+  PASS  os 3 porte(s) de pesqueiro/pescado saem todos na faixa R$4000–9000
+  PASS  o porte de pesqueiro/pescado cresce com o valor do contrato
+  PASS  a classe pesqueiro com motivo armazenagem tem uma folha de cascos
+  PASS  a folha de pesqueiro/armazenagem não repete arquivo (3 porte(s))
+  PASS  os 3 porte(s) de pesqueiro/armazenagem saem todos na faixa R$4000–9000
+  PASS  o porte de pesqueiro/armazenagem cresce com o valor do contrato
+  PASS  a classe pesqueiro tem uma folha por motivo, ou uma só para todos
+  PASS  a classe medio com motivo armazenagem tem uma folha de cascos
+  PASS  a folha de medio/armazenagem não repete arquivo (1 porte(s))
+  PASS  os 1 porte(s) de medio/armazenagem saem todos na faixa R$7000–16000
+  PASS  o porte de medio/armazenagem cresce com o valor do contrato
+  PASS  a classe medio com motivo conteiner tem uma folha de cascos
+  PASS  a folha de medio/conteiner não repete arquivo (1 porte(s))
+  PASS  os 1 porte(s) de medio/conteiner saem todos na faixa R$7000–16000
+  PASS  o porte de medio/conteiner cresce com o valor do contrato
+  PASS  a classe medio com motivo granel tem uma folha de cascos
+  PASS  a folha de medio/granel não repete arquivo (1 porte(s))
+  PASS  os 1 porte(s) de medio/granel saem todos na faixa R$7000–16000
+  PASS  o porte de medio/granel cresce com o valor do contrato
+  PASS  a classe medio tem uma folha por motivo, ou uma só para todos
+  PASS  a classe grande com motivo armazenagem tem uma folha de cascos
+  PASS  a folha de grande/armazenagem não repete arquivo (1 porte(s))
+  PASS  os 1 porte(s) de grande/armazenagem saem todos na faixa R$18000–28000
+  PASS  o porte de grande/armazenagem cresce com o valor do contrato
+  PASS  a classe grande com motivo conteiner tem uma folha de cascos
+  PASS  a folha de grande/conteiner não repete arquivo (1 porte(s))
+  PASS  os 1 porte(s) de grande/conteiner saem todos na faixa R$18000–28000
+  PASS  o porte de grande/conteiner cresce com o valor do contrato
+  PASS  a classe grande com motivo granel tem uma folha de cascos
+  PASS  a folha de grande/granel não repete arquivo (1 porte(s))
+  PASS  os 1 porte(s) de grande/granel saem todos na faixa R$18000–28000
+  PASS  o porte de grande/granel cresce com o valor do contrato
+  PASS  a classe grande tem uma folha por motivo, ou uma só para todos
+  PASS  barco_pesca_bote.png é de uma classe só
+  PASS  barco_pesca_traineira.png é de uma classe só
+  PASS  barco_pesca_arrasteiro.png é de uma classe só
+  PASS  barco_medio_geral.png é de uma classe só
+  PASS  barco_medio_conteiner.png é de uma classe só
+  PASS  barco_medio_granel.png é de uma classe só
+  PASS  barco_grande_geral.png é de uma classe só
+  PASS  barco_grande_conteiner.png é de uma classe só
+  PASS  barco_grande_granel.png é de uma classe só
+  PASS  os 9 cascos declarados têm desenhos distintos
+  PASS  o bloco D17 correu até ao fim
+=== D18: o texto do cartão de doca cabe no cartão ===
+  PASS  o cartão tem interior medível (200 px)
+  PASS  o cabeçalho cabe (191 de 200 px)
+  PASS  a linha do progresso cabe (198 de 200 px)
+  PASS  o berço livre cabe (153 de 200 px)
+  PASS  o berço livre cabe (153 de 200 px)
+  PASS  o berço livre cabe (157 de 200 px)
+  PASS  o berço livre cabe (28 de 200 px)
+  PASS  a linha do trabalhador cabe (160 de 200 px)
+  PASS  a linha do trabalhador cabe (165 de 200 px)
+  PASS  a linha do trabalhador cabe (187 de 200 px)
+  PASS  a linha do trabalhador cabe (193 de 200 px)
+  PASS  o cabeçalho do barco ao largo cabe (191 de 200 px)
+  PASS  a carga do barco ao largo cabe (164 de 200 px)
+  PASS  a espera do barco ao largo cabe (195 de 200 px)
+  PASS  a espera do barco ao largo cabe (178 de 200 px)
+  PASS  o bloco D18 correu até ao fim
+=== D19: o texto do painel Construir passa a WCAG no branco ===
+  PASS  o painel tem texto para medir (36)
+  PASS  nenhum rótulo reprova a WCAG (pior: 5.27:1 em Porto nível 1 — recebe pesqueiro Guindaste de  a 15px)
+  PASS  e a régua reprova o neutro do jogo pousado no cartão
+  PASS  D19: o painel com obra mostra os dois «Construída» (2)
+  PASS  D19: nenhum texto de uma linha desenha mais largo do que o sítio dele
+  PASS  o bloco D19 correu até ao fim
+=== D20: a pista é pista no desenho, do começo ao fim da rota ===
+  PASS  o mapa publica as cores da rua
+  PASS  o mapa publica os quatro tons da areia
+  PASS  porto_mapa_iso.svg existe
+  PASS  porto_mapa_iso.svg rasteriza
+  PASS  porto_mapa_iso.svg é um múltiplo coerente dos 720x720 da tabela
+  PASS  porto_mapa_iso.svg: a rota dá pelo menos 200 amostras dentro do quadro (1219)
+  PASS  porto_mapa_iso.svg: nenhum ponto da rota cai em calçada
+  PASS  porto_mapa_iso.svg: nenhum ponto da rota cai em areia
+SONDA porto_mapa_iso.svg: janela 11x11, mínimo 20 — máx calçada 0, máx areia 0
+  PASS  porto_mapa_iso_patio.svg existe
+  PASS  porto_mapa_iso_patio.svg rasteriza
+  PASS  porto_mapa_iso_patio.svg é um múltiplo coerente dos 720x720 da tabela
+  PASS  porto_mapa_iso_patio.svg: a rota dá pelo menos 200 amostras dentro do quadro (1219)
+  PASS  porto_mapa_iso_patio.svg: nenhum ponto da rota cai em calçada
+  PASS  porto_mapa_iso_patio.svg: nenhum ponto da rota cai em areia
+SONDA porto_mapa_iso_patio.svg: janela 11x11, mínimo 20 — máx calçada 6, máx areia 0
+  PASS  o bloco D20 correu até ao fim
+=== D21: quem espera fundeia AO LARGO, quem atraca fica na costeira ===
+  PASS  a tabela de âncoras publica as faixas de água
+  PASS  as duas famílias de água separam-se em luminância
+  PASS  porto_mapa_iso.svg existe
+  PASS  porto_mapa_iso.svg rasteriza
+  PASS  porto_mapa_iso.svg é um múltiplo coerente dos 720x720 da tabela
+  PASS  há um Cenario para varrer
+  PASS  a varredura achou a Zona de Espera
+  PASS  BarcoEspera3 cai dentro do mapa
+  PASS  BarcoEspera3 fundeia AO LARGO, fora das faixas da costa
+  PASS  BarcoEspera1 cai dentro do mapa
+  PASS  BarcoEspera1 fundeia AO LARGO, fora das faixas da costa
+  PASS  Ancoragem0 cai dentro do mapa
+  PASS  Ancoragem0 fundeia AO LARGO, fora das faixas da costa
+  PASS  Ancoragem2 cai dentro do mapa
+  PASS  Ancoragem2 fundeia AO LARGO, fora das faixas da costa
+  PASS  Ancoragem1 cai dentro do mapa
+  PASS  Ancoragem1 fundeia AO LARGO, fora das faixas da costa
+  PASS  BarcoEspera2 cai dentro do mapa
+  PASS  BarcoEspera2 fundeia AO LARGO, fora das faixas da costa
+  PASS  o berço da doca 1 está em água COSTEIRA
+  PASS  o berço da doca 2 está em água COSTEIRA
+  PASS  o berço da doca 3 está em água COSTEIRA
+  PASS  o bloco D21 correu até ao fim
+=== D22: a narração de fim de fase cabe sem rolar ===
+  PASS  D22: a narração sai em duas páginas (2)
+  PASS  D22: e as duas, juntas pela virada, são a peça inteira
+  PASS  D22: e a segunda acaba no remate
+  PASS  D22: a data da entrada escreve a semana por extenso («Porto Mirim, décima segunda semana»)
+  PASS  D22: a página 1, com o nome mais comprido, cabe na folha (19 linhas, pede 570, cabe 804)
+  PASS  D22: a página 2, com o nome mais comprido, cabe na folha (11 linhas, pede 330, cabe 804)
+  PASS  D22: o caderno montou as duas páginas e o recibo (2 páginas)
+  PASS  D22: a segunda página, com o recibo e o nome mais comprido, cabe na folha (pede 502, cabe 804)
+  PASS  o bloco D22 correu até ao fim
+=== D24: a igreja, a praça e a obra chegaram ao DESENHO da vila ===
+  PASS  o mapa publica as provas da vila
+  PASS  o mapa publica as cores da vila
+  PASS  a vila tem igreja
+  PASS  a vila tem praca
+  PASS  a vila tem obra
+  PASS  porto_mapa_iso.svg existe
+  PASS  porto_mapa_iso.svg rasteriza
+  PASS  porto_mapa_iso.svg é um múltiplo coerente dos 720x720 da tabela
+  PASS  o praca (lote 4) pinta telha_d à volta de (386, 110) — 164 px em 37x37
+  PASS  o igreja (lote 8) pinta telha_c à volta de (101, 297) — 51 px em 13x13
+  PASS  o obra (lote 11) pinta casa_a à volta de (111, 483) — 708 px em 31x31
+  PASS  e o obra (lote 11) não tem telha_a no topo — 0 px
+  PASS  e o obra (lote 11) não tem telha_b no topo — 2 px
+  PASS  e o obra (lote 11) não tem telha_c no topo — 0 px
+  PASS  e o obra (lote 11) não tem telha_d no topo — 12 px
+  PASS  o obra (lote 25) pinta casa_a à volta de (174, 243) — 644 px em 31x31
+  PASS  e o obra (lote 25) não tem telha_a no topo — 0 px
+  PASS  e o obra (lote 25) não tem telha_b no topo — 0 px
+  PASS  e o obra (lote 25) não tem telha_c no topo — 0 px
+  PASS  e o obra (lote 25) não tem telha_d no topo — 0 px
+  PASS  o bloco D24 correu até ao fim
+=== D25: a fauna cabe na régua do próprio jogo ===
+  PASS  a régua continua sendo uma pessoa de 7 px
+  PASS  gaivota mede os 15 px escolhidos
+  PASS  gaivota não fica abaixo da pessoa nem chega ao barco
+  PASS  gaivota conserva o alvo mínimo de 44 px
+  PASS  tartaruga_verde mede os 14 px escolhidos
+  PASS  tartaruga_verde não fica abaixo da pessoa nem chega ao barco
+  PASS  tartaruga_verde conserva o alvo mínimo de 44 px
+  PASS  maria_farinha mede os 12 px escolhidos
+  PASS  maria_farinha não fica abaixo da pessoa nem chega ao barco
+  PASS  maria_farinha conserva o alvo mínimo de 44 px
+  PASS  cachorro_caramelo mede os 15 px escolhidos
+  PASS  cachorro_caramelo não fica abaixo da pessoa nem chega ao barco
+  PASS  cachorro_caramelo conserva o alvo mínimo de 44 px
+  PASS  quero_quero mede os 13 px escolhidos
+  PASS  quero_quero não fica abaixo da pessoa nem chega ao barco
+  PASS  quero_quero conserva o alvo mínimo de 44 px
+  PASS  capivara mede os 17 px escolhidos
+  PASS  capivara não fica abaixo da pessoa nem chega ao barco
+  PASS  capivara conserva o alvo mínimo de 44 px
+  PASS  a escala lê gaivota > tartaruga > maria-farinha
+  PASS  a fauna terrestre lê capivara > cachorro > quero-quero
+  PASS  o bloco D25 correu até ao fim
+=== D26: a fauna aparece, vive e sai do mundo ===
+  PASS  gaivota espera fora do mundo
+  PASS  gaivota escondido não rouba toque
+  PASS  gaivota entra visível e tocável
+  PASS  a gaivota nasce além de uma borda do mapa
+  PASS  gaivota não fica parado enquanto está presente
+  PASS  gaivota começa uma saída própria
+  PASS  gaivota termina fora do mundo e sem toque
+  PASS  tartaruga_verde espera fora do mundo
+  PASS  tartaruga_verde escondido não rouba toque
+  PASS  tartaruga_verde entra visível e tocável
+  PASS  tartaruga_verde não fica parado enquanto está presente
+  PASS  tartaruga_verde começa uma saída própria
+  PASS  tartaruga_verde termina fora do mundo e sem toque
+  PASS  maria_farinha espera fora do mundo
+  PASS  maria_farinha escondido não rouba toque
+  PASS  maria_farinha entra visível e tocável
+  PASS  maria_farinha não fica parado enquanto está presente
+  PASS  maria_farinha começa uma saída própria
+  PASS  maria_farinha termina fora do mundo e sem toque
+  PASS  cachorro_caramelo espera fora do mundo
+  PASS  cachorro_caramelo escondido não rouba toque
+  PASS  cachorro_caramelo entra visível e tocável
+  PASS  cachorro_caramelo não fica parado enquanto está presente
+  PASS  cachorro_caramelo começa uma saída própria
+  PASS  cachorro_caramelo termina fora do mundo e sem toque
+  PASS  quero_quero espera fora do mundo
+  PASS  quero_quero escondido não rouba toque
+  PASS  quero_quero entra visível e tocável
+  PASS  quero_quero não fica parado enquanto está presente
+  PASS  quero_quero começa uma saída própria
+  PASS  quero_quero termina fora do mundo e sem toque
+  PASS  capivara espera fora do mundo
+  PASS  capivara escondido não rouba toque
+  PASS  capivara entra visível e tocável
+  PASS  capivara não fica parado enquanto está presente
+  PASS  capivara começa uma saída própria
+  PASS  capivara termina fora do mundo e sem toque
+  PASS  o bloco D26 correu até ao fim
+=== D27: cada animal nasce no habitat que lhe pertence ===
+  PASS  porto_mapa_iso.svg existe
+  PASS  porto_mapa_iso.svg rasteriza
+  PASS  porto_mapa_iso.svg é um múltiplo coerente dos 720x720 da tabela
+  PASS  o mapa oferece nove avistamentos
+  PASS  gaivota tem 2 ponto(s) de aparição
+  PASS  tartaruga_verde tem 2 ponto(s) de aparição
+  PASS  maria_farinha tem 2 ponto(s) de aparição
+  PASS  cachorro_caramelo tem 1 ponto(s) de aparição
+  PASS  quero_quero tem 1 ponto(s) de aparição
+  PASS  capivara tem 1 ponto(s) de aparição
+  PASS  CachorroCaramelo aparece sobre terra verde
+  PASS  QueroQuero aparece sobre terra verde
+  PASS  Capivara aparece sobre terra verde
+  PASS  o novo caranguejo aparece na praia sul
+  PASS  a nova tartaruga aparece no baixio norte
+  PASS  o bloco D27 correu até ao fim
+=== D28: as duas pontas são costa desenhada, e o cais é reto ===
+  PASS  a tabela publica o contorno desenhado
+  PASS  o contorno das pontas não tem buraco nenhum
+  PASS  o contorno atravessa a praia -14.0..1.2 inteira
+  PASS  o contorno atravessa a praia 22.5..42.1 inteira
+  PASS  nenhuma ponta tem reta maior do que 60 px
+  PASS  nenhuma ponta tem quina de ângulo reto (mais de 90 graus de tela)
+  PASS  o cais continua reto — a maior reta dele passa de 150 px
+  PASS  porto_mapa_iso.svg existe
+  PASS  porto_mapa_iso.svg rasteriza
+  PASS  porto_mapa_iso.svg é um múltiplo coerente dos 720x720 da tabela
+  PASS  a linha publicada dá pelo menos 120 leituras dentro do quadro (132)
+  PASS  de um lado da linha o mapa pinta água e do outro pinta terra
+  PASS  a areia da praia -14.0..1.2 para antes do passeio
+  PASS  a areia da praia 22.5..42.1 para antes do passeio
+  PASS  o bloco D28 correu até ao fim
+=== D29: o casco de um navio não tem bordo reto ===
+  PASS  a tabela da arte declara cascos
+    (barco_pesca_bote.png tem 43 px de tela e fica de fora: a curva cabe na tolerância da régua)
+  PASS  a linha de fundo de barco_pesca_traineira.png não é uma reta (46% do casco, teto 62%)
+  PASS  a linha de fundo de barco_pesca_arrasteiro.png não é uma reta (55% do casco, teto 62%)
+  PASS  a linha de fundo de barco_medio_geral.png não é uma reta (53% do casco, teto 62%)
+  PASS  a linha de fundo de barco_medio_conteiner.png não é uma reta (53% do casco, teto 62%)
+  PASS  a linha de fundo de barco_medio_granel.png não é uma reta (53% do casco, teto 62%)
+  PASS  a linha de fundo de barco_grande_geral.png não é uma reta (53% do casco, teto 62%)
+  PASS  a linha de fundo de barco_grande_conteiner.png não é uma reta (53% do casco, teto 62%)
+  PASS  a linha de fundo de barco_grande_granel.png não é uma reta (53% do casco, teto 62%)
+  PASS  D29 mediu algum casco
+  PASS  o bloco D29 correu até ao fim
+=== D30: peça co-ancorada encaixa na que está por cima ===
+  PASS  a cena tem o Cenario
+  PASS  a 'coqueiro_copa.png' pousa na ponta da 'coqueiro_tronco.png' (0.119 da altura dela, teto 0.26)
+  PASS  a 'poste_luz.png' pousa na ponta da 'poste.png' (0.053 da altura dela, teto 0.26)
+  PASS  D30 achou algum par co-ancorado
+  PASS  o bloco D30 correu até ao fim
+=== D31: quem mostra um prop reconcilia os pixels com as coordenadas ===
+  PASS  a cena tem o MapaWrap
+  PASS  Lanca mantém o quadro de 512 coordenadas
+  PASS  Lanca mostra uma textura múltipla do quadro
+  PASS  Empilhadeira mantém o quadro de 512 coordenadas
+  PASS  Empilhadeira mostra uma textura múltipla do quadro
+  PASS  Trabalhador mantém o quadro de 512 coordenadas
+  PASS  Trabalhador mostra uma textura múltipla do quadro
+  PASS  Pier mantém o quadro de 512 coordenadas
+  PASS  Pier mostra uma textura múltipla do quadro
+  PASS  Lanca mantém o quadro de 512 coordenadas
+  PASS  Lanca mostra uma textura múltipla do quadro
+  PASS  Empilhadeira mantém o quadro de 512 coordenadas
+  PASS  Empilhadeira mostra uma textura múltipla do quadro
+  PASS  Trabalhador mantém o quadro de 512 coordenadas
+  PASS  Trabalhador mostra uma textura múltipla do quadro
+  PASS  Pier mantém o quadro de 512 coordenadas
+  PASS  Pier mostra uma textura múltipla do quadro
+  PASS  Lanca mantém o quadro de 512 coordenadas
+  PASS  Lanca mostra uma textura múltipla do quadro
+  PASS  Empilhadeira mantém o quadro de 512 coordenadas
+  PASS  Empilhadeira mostra uma textura múltipla do quadro
+  PASS  Trabalhador mantém o quadro de 512 coordenadas
+  PASS  Trabalhador mostra uma textura múltipla do quadro
+  PASS  Pier mantém o quadro de 512 coordenadas
+  PASS  Pier mostra uma textura múltipla do quadro
+  PASS  Sprite desenha a textura no quadro de 512
+  PASS  Sprite desenha a textura no quadro de 512
+  PASS  Sprite desenha a textura no quadro de 512
+  PASS  Sprite desenha a textura no quadro de 512
+  PASS  Sprite desenha a textura no quadro de 512
+  PASS  Sprite desenha a textura no quadro de 512
+  PASS  Sprite desenha a textura no quadro de 512
+  PASS  Sprite desenha a textura no quadro de 512
+  PASS  Sprite desenha a textura no quadro de 512
+  PASS  BarcoEspera2 mantém o quadro de 512 coordenadas
+  PASS  BarcoEspera2 mostra uma textura múltipla do quadro
+  PASS  Ancoragem1 mantém o quadro de 512 coordenadas
+  PASS  Ancoragem1 mostra uma textura múltipla do quadro
+  PASS  Ancoragem2 mantém o quadro de 512 coordenadas
+  PASS  Ancoragem2 mostra uma textura múltipla do quadro
+  PASS  Ancoragem0 mantém o quadro de 512 coordenadas
+  PASS  Ancoragem0 mostra uma textura múltipla do quadro
+  PASS  Coqueiro2Copa mantém o quadro de 512 coordenadas
+  PASS  Coqueiro2Copa mostra uma textura múltipla do quadro
+  PASS  Coqueiro2Tronco mantém o quadro de 512 coordenadas
+  PASS  Coqueiro2Tronco mostra uma textura múltipla do quadro
+  PASS  BarcoEspera1 mantém o quadro de 512 coordenadas
+  PASS  BarcoEspera1 mostra uma textura múltipla do quadro
+  PASS  Pallet mantém o quadro de 512 coordenadas
+  PASS  Pallet mostra uma textura múltipla do quadro
+  PASS  Guincho mantém o quadro de 512 coordenadas
+  PASS  Guincho mostra uma textura múltipla do quadro
+  PASS  PilhaCaixotes mantém o quadro de 512 coordenadas
+  PASS  PilhaCaixotes mostra uma textura múltipla do quadro
+  PASS  Cabeco mantém o quadro de 512 coordenadas
+  PASS  Cabeco mostra uma textura múltipla do quadro
+  PASS  BarcoEspera3 mantém o quadro de 512 coordenadas
+  PASS  BarcoEspera3 mostra uma textura múltipla do quadro
+  PASS  Empilhadeira mantém o quadro de 512 coordenadas
+  PASS  Empilhadeira mostra uma textura múltipla do quadro
+  PASS  Caminhao2 mantém o quadro de 512 coordenadas
+  PASS  Caminhao2 mostra uma textura múltipla do quadro
+  PASS  Coqueiro1Copa mantém o quadro de 512 coordenadas
+  PASS  Coqueiro1Copa mostra uma textura múltipla do quadro
+  PASS  Coqueiro1Tronco mantém o quadro de 512 coordenadas
+  PASS  Coqueiro1Tronco mostra uma textura múltipla do quadro
+  PASS  ConeTransito mantém o quadro de 512 coordenadas
+  PASS  ConeTransito mostra uma textura múltipla do quadro
+  PASS  PosteLuz mantém o quadro de 512 coordenadas
+  PASS  PosteLuz mostra uma textura múltipla do quadro
+  PASS  Poste mantém o quadro de 512 coordenadas
+  PASS  Poste mostra uma textura múltipla do quadro
+  PASS  Barreira mantém o quadro de 512 coordenadas
+  PASS  Barreira mostra uma textura múltipla do quadro
+  PASS  Pneus mantém o quadro de 512 coordenadas
+  PASS  Pneus mostra uma textura múltipla do quadro
+  PASS  Armazem mantém o quadro de 512 coordenadas
+  PASS  Armazem mostra uma textura múltipla do quadro
+  PASS  Bote mantém o quadro de 512 coordenadas
+  PASS  Bote mostra uma textura múltipla do quadro
+  PASS  CaminhaoRetorno1 mantém o quadro de 512 coordenadas
+  PASS  CaminhaoRetorno1 mostra uma textura múltipla do quadro
+  PASS  Coqueiro0Copa mantém o quadro de 512 coordenadas
+  PASS  Coqueiro0Copa mostra uma textura múltipla do quadro
+  PASS  Coqueiro0Tronco mantém o quadro de 512 coordenadas
+  PASS  Coqueiro0Tronco mostra uma textura múltipla do quadro
+  PASS  Caminhao1 mantém o quadro de 512 coordenadas
+  PASS  Caminhao1 mostra uma textura múltipla do quadro
+  PASS  Escritorio mantém o quadro de 512 coordenadas
+  PASS  Escritorio mostra uma textura múltipla do quadro
+  PASS  CaminhaoRetorno0 mantém o quadro de 512 coordenadas
+  PASS  CaminhaoRetorno0 mostra uma textura múltipla do quadro
+  PASS  Caminhao0 mantém o quadro de 512 coordenadas
+  PASS  Caminhao0 mostra uma textura múltipla do quadro
+  PASS  D31 achou nós que mostram props
+  PASS  o bloco D31 correu até ao fim
+=== D23: o menu-celular — o que ele custou ao rodapé e o que se lê dentro ===
+  PASS  D23: o início só anuncia o píer 2 disponível
+  PASS  D23: durante a obra, o catálogo abre e anuncia o andamento
+  PASS  o Construir cabe o pior texto (Construir  ·  obra em andamento pede 295 e sobram 630 de 692)
+  PASS  o toque no menu abriu um painel a mais
+  PASS  e o painel aberto é o PainelMenu
+  PASS  o celular tem texto para medir (12)
+  PASS  nenhum texto do celular reprova nem fica sem fundo conhecido (pior: 5.70:1 em de 84 a 13px)
+  PASS  achei a grelha de apps
+  PASS  a grelha de apps cabe na tela (pede 289, tem 348)
+  PASS  achei um app aceso na grelha
+  PASS  o toque no app abriu um painel a mais
+  PASS  e o menu saiu de cena em vez de ficar por baixo
+  PASS  e o que abriu é o PainelDiario
+  PASS  o bloco D23 correu até ao fim
+=== D32: a faixa de mensagem com fila — contador legível e faixa tocável ===
+  PASS  D32: a faixa existe
+  PASS  D32: a faixa é um alvo de toque legal
+  PASS  D32: o contador do que espera existe
+  PASS  D32: e a faixa tem fundo próprio para medir contra
+  PASS  D32: o contador passa o AA de texto pequeno sobre o fundo da faixa
+  PASS  D32: e a régua reprova a cor de antes, que aqui não serve
+  PASS  o bloco D32 correu até ao fim
+=== D33: o contraste EFETIVO de toda a interface, painel a painel ===
+  PASS  D33: a régua mede e sabe reprovar (5 controles)
+  PASS  D33: o contorno só é fundo quando é opaco e largo (5 controles)
+  PASS  D33: o percurso cobre todo painel em scenes/panels/
+  PASS  D33: Como jogar (índice) produziu texto para medir
+  PASS  D33: Como jogar (artigo) produziu texto para medir
+  PASS  D33: Como jogar (glossário) produziu texto para medir
+  PASS  D33: Cancelar serviço produziu texto para medir
+  PASS  D33: Diário produziu texto para medir
+  PASS  D33: Meta da Fase 2 produziu texto para medir
+  PASS  D33: Meta conquistada produziu texto para medir
+  PASS  D33: Cargueiros suspensos produziu texto para medir
+  PASS  D33: Diário da Fase 2 produziu texto para medir
+  PASS  D33: Nomes produziu texto para medir
+  PASS  D33: Construir produziu texto para medir
+  PASS  D33: Calendário produziu texto para medir
+  PASS  D33: Docas produziu texto para medir
+  PASS  D33: Reputação produziu texto para medir
+  PASS  D33: Parcela produziu texto para medir
+  PASS  D33: Mensagens produziu texto para medir
+  PASS  D33: Menu-celular produziu texto para medir
+  PASS  D33: Pausa produziu texto para medir
+  PASS  D33: Ajustes produziu texto para medir
+  PASS  D33: Espaços (partida nova) produziu texto para medir
+  PASS  D33: Espaços (confirmar) produziu texto para medir
+  PASS  D33: Tela inicial produziu texto para medir
+  PASS  D33: Caixa produziu texto para medir
+  PASS  D33: Boletim produziu texto para medir
+  PASS  D33: Contra-oferta produziu texto para medir
+  PASS  D33: Ribeiro (pode pagar) produziu texto para medir
+  PASS  D33: Ribeiro (NÃO pode pagar) produziu texto para medir
+  PASS  D33: Fim de jogo (ganhou) produziu texto para medir
+  PASS  D33: Fim de jogo (perdeu) produziu texto para medir
+  PASS  D33: HUD (falta para a parcela) produziu texto para medir
+  PASS  D33: HUD (já dá para quitar) produziu texto para medir
+  PASS  D33: HUD (berços cheios, faixa boa) produziu texto para medir
+  PASS  D33: HUD (faixa de aviso) produziu texto para medir
+  PASS  D33: HUD (faixa ruim) produziu texto para medir
+  PASS  D33: HUD (barco ao largo sob oferta do rival) produziu texto para medir
+  PASS  D33: HUD (barco que vai embora hoje) produziu texto para medir
+  PASS  D33: Construir (com estrutura de pé) produziu texto para medir
+  PASS  D33: Construir (obra em andamento) produziu texto para medir
+  PASS  D33: Construir (obra sem uso na fase) produziu texto para medir
+  PASS  D33: nenhum texto abaixo do AA em 713 medidos
+  PASS  D33: nenhuma composição por resolver
+  PASS  D33: rótulo inativo descreve a AÇÃO, e nunca o motivo do bloqueio
+  PASS  D33: o percurso não encolheu (39 estados)
+  PASS  D33: o motor montou todos os estados
+  PASS  o bloco D33 correu até ao fim
+=== D35: o trânsito — ninguém passa por cima de ninguém ===
+  PASS  em 5400 s de jogo, nenhum camião passa por cima de outro à vista
+  PASS  as 32 silhuetas de camião aparecem na rua (serviço × empresa × silhueta)
+  PASS  na passagem, cada serviço da roda leva as 2 empresas, nos dois sentidos (4 casos)
+  PASS  e todos andam: cada um chega ao fim da rota pelo menos 5 vezes
+  PASS  a ida encosta nos berços (17 vezes)
+  PASS  e o retorno também (31 vezes)
+  PASS  e quem encosta leva a carga do navio
+  PASS  dois arranques seguidos: um sai, o outro espera
+  PASS  as primeiras passagens, que nenhuma regra separa, não se tocam
+  PASS  quem entra na rua — no arranque ou a sair do berço — nunca vai bater (4 x 770 posições)
+  PASS  e responde das duas maneiras (2135 livres, 900 à espera)
+  PASS  a previsão das curvas correu até ao fim
+  PASS  o bloco D35 correu até ao fim
+=== D36: o calendário mostra na grelha o que a legenda promete ===
+  PASS  D36: o toque no dia abriu um painel
+  PASS  D36: cada dia do calendário mostra o ícone do seu evento
+  PASS  D36: há um dia com as duas marcas, e foi conferido
+  PASS  D36: a legenda tem ícones
+  PASS  D36: todo ícone da legenda aparece na grelha
+  PASS  D36: todo ícone da grelha tem linha na legenda
+  PASS  D36: a grelha cabe no cartão sem o alargar (pede 420 de 480)
+  PASS  o bloco D36 correu até ao fim
+=== D37: o diário cabe na página do caderno, na pauta ===
+  PASS  D37: o vão entre a data e o texto é o espaço entre linhas da letra
+  PASS  D37: a primeira página, com o nome mais comprido, cabe na folha (pede 750, cabe 804)
+  PASS  o bloco D37 correu até ao fim
+=== D38: a conversa — cada voz com o seu balão, num telefone que cabe ===
+  PASS  D38: a amostra fala pelas 4 vozes da conversa (["ribeiro", "arlindo", "cida", "toninho"])
+  PASS  D38: ribeiro tem os dois balões — o primeiro, com bico, e o seguido (2, 1 com bico)
+  PASS  D38: os balões de ribeiro têm um tom só
+  PASS  D38: arlindo tem os dois balões — o primeiro, com bico, e o seguido (2, 1 com bico)
+  PASS  D38: os balões de arlindo têm um tom só
+  PASS  D38: cida tem os dois balões — o primeiro, com bico, e o seguido (2, 1 com bico)
+  PASS  D38: os balões de cida têm um tom só
+  PASS  D38: toninho tem os dois balões — o primeiro, com bico, e o seguido (2, 1 com bico)
+  PASS  D38: os balões de toninho têm um tom só
+  PASS  D38: o balão de ribeiro tem o matiz da roupa de quem fala (212°, roupa 213°)
+  PASS  D38: o balão de arlindo tem o matiz da roupa de quem fala (196°, roupa 195°)
+  PASS  D38: o balão de cida tem o matiz da roupa de quem fala (137°, roupa 144°)
+  PASS  D38: o balão de toninho tem o matiz da roupa de quem fala (39°, roupa 40°)
+  PASS  D38: o balão de ribeiro e o de arlindo distinguem-se (ΔE 19.9, mínimo 10)
+  PASS  D38: o balão de ribeiro e o de cida distinguem-se (ΔE 21.7, mínimo 10)
+  PASS  D38: o balão de ribeiro e o de toninho distinguem-se (ΔE 32.0, mínimo 10)
+  PASS  D38: o balão de arlindo e o de cida distinguem-se (ΔE 26.6, mínimo 10)
+  PASS  D38: o balão de arlindo e o de toninho distinguem-se (ΔE 47.5, mínimo 10)
+  PASS  D38: o balão de cida e o de toninho distinguem-se (ΔE 27.3, mínimo 10)
+  PASS  D38: mediu o corpo e o «Guardar» do telefone (5 peças)
+  PASS  D38: o telefone da conversa e o «Guardar» cabem na tela de 720 × 1280
+  PASS  o bloco D38 correu até ao fim
+=== D39: o pau-de-carga que descarrega — o casco, a pilha e o guincho ===
+  PASS  D39: pesqueiro · pescado tem pilha no nível 1
+  PASS  D39: pesqueiro · armazenagem tem pilha no nível 1
+  PASS  D39: o nível 1 recebe alguma classe (2 pares)
+  PASS  D39: há rostos de homem e de mulher ({ "h": 15, "m": 15 })
+  PASS  D39: guincho 0 — a figura dela não é a dele
+  PASS  D39: guincho 1 — a figura dela não é a dele
+  PASS  D39: h — a alavanca mexe entre os dois quadros
+  PASS  D39: m — a alavanca mexe entre os dois quadros
+  PASS  D39: o parado dela não é o dele
+  PASS  D39: o pau só passa a um ângulo vizinho (0 saltos)
+  PASS  D39: o gancho só desce nas pontas (0 fora)
+  PASS  D39: a carga engata no barco e larga na pilha (0 fora)
+  PASS  D39: todo quadro do pau passa no ciclo
+  PASS  D39: a lingada aparece no quadro do barco
+  PASS  D39: a carga desce dentro do barco_pesca_bote (pescado, 82% de casco à volta)
+  PASS  D39: a carga desce dentro do barco_pesca_traineira (pescado, 100% de casco à volta)
+  PASS  D39: a carga desce dentro do barco_pesca_arrasteiro (pescado, 100% de casco à volta)
+  PASS  D39: a carga desce dentro do barco_pesca_bote (armazenagem, 82% de casco à volta)
+  PASS  D39: a carga desce dentro do barco_pesca_traineira (armazenagem, 100% de casco à volta)
+  PASS  D39: a carga desce dentro do barco_pesca_arrasteiro (armazenagem, 100% de casco à volta)
+  PASS  D39: percorreu os cascos do nível 1 (6)
+  PASS  D39: pesqueiro · pescado — a carga pousa em cima da pilha (dx -0.0, dy 6.0)
+  PASS  D39: pesqueiro · armazenagem — a carga pousa em cima da pilha (dx -0.0, dy 6.0)
+  PASS  D39: h no guincho pisa o tabuado (100% de píer sob os pés)
+  PASS  D39: m no guincho pisa o tabuado (100% de píer sob os pés)
+  PASS  D39: a partida nova é de nível 1
+  PASS  D39: segundo píer montado
+  PASS  D39: armazém montado
+  PASS  D39: pátio montado
+  PASS  D39: reparos mantêm a lança e sua base de madeira, com dois píeres
+  PASS  D39: alocada com o barco no berço, o pau trabalha já com progress 0
+  PASS  D39: a pilha é a do barco
+  PASS  D39: a imagem do pau não gira por cima dos quadros
+  PASS  D39: um refresh a meio não recomeça o ciclo nem repõe o pau
+  PASS  D39: os 18 quadros do pau passam pelo nó (18)
+  PASS  D39: todo quadro do operador é dela (0 fora)
+  PASS  D39: a alavanca dela mexe na doca (2 quadros)
+  PASS  D39: o pau não gira enquanto trabalha (0 passos girados)
+  PASS  D39: no nível 3 ela vai na empilhadeira, e o pau do n1 sai
+  PASS  D39: devolvido o barco, a pilha sai e o pau volta a varrer em repouso
+  PASS  o bloco D39 correu até ao fim
+=== D40: o guindaste do nível 2 — a carga de cada serviço, a pilha e quem desengata ===
+  PASS  D40: pesqueiro · pescado tem tipo de carga no nível 2
+  PASS  D40: o tipo «peixe» tem as pontas, as nove lingadas e a pilha
+  PASS  D40: pesqueiro · armazenagem tem tipo de carga no nível 2
+  PASS  D40: o tipo «peixe» tem as pontas, as nove lingadas e a pilha
+  PASS  D40: medio · armazenagem tem tipo de carga no nível 2
+  PASS  D40: o tipo «caixa» tem as pontas, as nove lingadas e a pilha
+  PASS  D40: medio · conteiner tem tipo de carga no nível 2
+  PASS  D40: o tipo «conteiner» tem as pontas, as nove lingadas e a pilha
+  PASS  D40: medio · granel tem tipo de carga no nível 2
+  PASS  D40: o tipo «saco» tem as pontas, as nove lingadas e a pilha
+  PASS  D40: o nível 2 recebe pares (5)
+  PASS  D40: nenhum tipo da PONTAS_N2 fica sem serviço ([])
+  PASS  D40: nenhum tipo da LINGADAS_N2 fica sem serviço ([])
+  PASS  D40: nenhum tipo da PILHAS_N2 fica sem serviço ([])
+  PASS  D40: a carga só pende onde a lança está (0 fora)
+  PASS  D40: ele solta o gancho só na pilha (0 fora)
+  PASS  D40: todo quadro da lança e da carga passa no ciclo
+  PASS  D40: ele espera e solta ([0, 1])
+  PASS  D40: a lingada de peixe desce dentro do barco_pesca_bote (pescado, 100% de casco à volta)
+  PASS  D40: a lingada de peixe desce dentro do barco_pesca_traineira (pescado, 100% de casco à volta)
+  PASS  D40: a lingada de peixe desce dentro do barco_pesca_arrasteiro (pescado, 100% de casco à volta)
+  PASS  D40: a lingada de peixe desce dentro do barco_pesca_bote (armazenagem, 100% de casco à volta)
+  PASS  D40: a lingada de peixe desce dentro do barco_pesca_traineira (armazenagem, 100% de casco à volta)
+  PASS  D40: a lingada de peixe desce dentro do barco_pesca_arrasteiro (armazenagem, 100% de casco à volta)
+  PASS  D40: a lingada de caixa desce dentro do barco_medio_geral (armazenagem, 100% de casco à volta)
+  PASS  D40: a lingada de saco desce dentro do barco_medio_granel (granel, 100% de casco à volta)
+  PASS  D40: a lingada de conteiner desce dentro do barco_medio_conteiner (conteiner, 100% de casco à volta)
+  PASS  D40: a lingada de caixa desce dentro do barco_grande_geral (armazenagem, 100% de casco à volta)
+  PASS  D40: a lingada de saco desce dentro do barco_grande_granel (granel, 100% de casco à volta)
+  PASS  D40: a lingada de conteiner desce dentro do barco_grande_conteiner (conteiner, 100% de casco à volta)
+  PASS  D40: percorreu os cascos do nível 2 (12)
+  PASS  D40: peixe — a lingada pousa em cima da pilha (dx 0.0, dy 6.67, faixa [5.8, 7.5])
+  PASS  D40: caixa — a lingada pousa em cima da pilha (dx 0.0, dy 6.00, faixa [5.1, 6.9])
+  PASS  D40: saco — a lingada pousa em cima da pilha (dx -0.3, dy 6.67, faixa [6.0, 7.3])
+  PASS  D40: conteiner — a lingada pousa em cima da pilha (dx 0.0, dy 12.00, faixa [7.6, 16.4])
+  PASS  D40: h — os braços mexem entre esperar e soltar
+  PASS  D40: h ao pé da pilha (0) pisa o tabuado (100% de píer sob os pés)
+  PASS  D40: h (0) não tapa a pilha de peixe (4%)
+  PASS  D40: h (0) não tapa a pilha de caixa (4%)
+  PASS  D40: h (0) não tapa a pilha de saco (5%)
+  PASS  D40: h (0) não tapa a pilha de conteiner (13%)
+  PASS  D40: h ao pé da pilha (1) pisa o tabuado (100% de píer sob os pés)
+  PASS  D40: h (1) não tapa a pilha de peixe (8%)
+  PASS  D40: h (1) não tapa a pilha de caixa (8%)
+  PASS  D40: h (1) não tapa a pilha de saco (10%)
+  PASS  D40: h (1) não tapa a pilha de conteiner (14%)
+  PASS  D40: m — os braços mexem entre esperar e soltar
+  PASS  D40: m ao pé da pilha (0) pisa o tabuado (100% de píer sob os pés)
+  PASS  D40: m (0) não tapa a pilha de peixe (4%)
+  PASS  D40: m (0) não tapa a pilha de caixa (4%)
+  PASS  D40: m (0) não tapa a pilha de saco (5%)
+  PASS  D40: m (0) não tapa a pilha de conteiner (13%)
+  PASS  D40: m ao pé da pilha (1) pisa o tabuado (100% de píer sob os pés)
+  PASS  D40: m (1) não tapa a pilha de peixe (7%)
+  PASS  D40: m (1) não tapa a pilha de caixa (7%)
+  PASS  D40: m (1) não tapa a pilha de saco (9%)
+  PASS  D40: m (1) não tapa a pilha de conteiner (14%)
+  PASS  D40: a figura dela ao pé da pilha não é a dele
+  PASS  D40: a bancada monta o guindaste intermediário da Fase 2
+  PASS  D40: alocada no primeiro turno do serviço, o guindaste trabalha
+  PASS  D40: a pilha é a do tipo do barco (saco)
+  PASS  D40: ela fica por cima da carga na ordem dos nós
+  PASS  D40: a imagem da lança não gira por cima dos quadros
+  PASS  D40: um refresh a meio não recomeça o ciclo nem repõe a lança
+  PASS  D40: os 9 quadros da lança passam pelo nó (9)
+  PASS  D40: as nove lingadas passam pelo nó Carga (9)
+  PASS  D40: a carga pende sempre da lança do mesmo passo (0 fora)
+  PASS  D40: todo quadro de quem desengata é dela (0 fora)
+  PASS  D40: ela espera e solta na doca (2 quadros)
+  PASS  D40: no segundo turno a lança varre em repouso, a pilha fica e ela espera
+  PASS  D40: acabado o serviço, a pilha e a carga saem e a ordem da cena volta
+  PASS  D40: sem camião no berço ela espera, sem carga
+  PASS  D40: com o camião encostado a doca sabe dele e ela anda
+  PASS  D40: o caminho anda no eixo dos quadros com os quatro camiões (pior 12.5° de −mx: armazenagem, empresa 0, 52 px)
+  PASS  D40: os pés acabam encostados ao camião (9% de camião à volta, 0% sob eles)
+  PASS  D40: a carga vai ao ombro só na ida (0 fora)
+  PASS  D40: o quadro olha para onde ele anda (0 fora)
+  PASS  D40: os seis quadros da ida passam pelo nó (6)
+  PASS  D40: o camião largou, e a doca deixou de o ter
+  PASS  D40: percorreu as três docas nos dois estados (6)
+  PASS  D40: ele não se pinta por cima de prop do cenário que lhe está à frente (0 px; nenhum)
+  PASS  o bloco D40 correu até ao fim
+=== D41: a virada do dia na tela — o barco parte, o dinheiro conta, o ganho sobe ===
+  PASS  D41: o porto completo tem três docas e três trabalhadores
+  PASS  D41: ao abrir, os barcos estão no berço e nenhuma doca troca (0)
+  PASS  D41: o barco sai e entra na direção do píer para o mar (+mx)
+  PASS  D41: a virada não fecha semana (o caixa só muda pela receita)
+  PASS  D41: sobe um «+R$» por doca que pagou (3 de 3)
+  PASS  D41: a soma dos «+R$» é a receita que o jogo lançou no dia
+  PASS  D41: e a receita traz bónus, para o valor bruto não passar por ela
+  PASS  D41: no toque o dinheiro ainda mostra o valor de antes
+  PASS  D41: em cada doca o barco velho sai e o novo entra ([true, true, true])
+  PASS  D41: o barco velho não volta depois de o novo aparecer (0)
+  PASS  D41: o novo aparece no mar, e não no berço (0 fora)
+  PASS  D41: o velho só se afasta e o novo só se aproxima (0 recuos)
+  PASS  D41: o barco velho chega ao mar antes de o novo aparecer (0 no berço)
+  PASS  D41: o barco que sai fica opaco a maior parte do caminho (0.70)
+  PASS  D41: o dinheiro passa por valores do meio — conta, não salta
+  PASS  D41: e nunca desce a contar (0)
+  PASS  D41: o cartão da parcela mostra o mesmo dinheiro que a pílula (0)
+  PASS  D41: no fim, o barco novo de cada doca está no berço (3 de 3)
+  PASS  D41: no fim, o dinheiro é o do jogo e nenhum «+R$» está no ar
+  PASS  D41: dinheiro mudado fora da virada aparece já, sem contar
+  PASS  D41: a virada correu até ao fim
+  PASS  D41: a meio, a virada está em curso
+  PASS  D41: o toque seguinte tira do ar os «+R$» da virada anterior (0 sobram)
+  PASS  D41: e põe o dinheiro no valor que a virada anterior prometia
+  PASS  D41: e cada barco a meio da chegada encosta no berço antes de sair (3 de 3)
+  PASS  D41: o toque seguinte correu até ao fim
+  PASS  o bloco D41 correu até ao fim
+=== D42: o pórtico do nível 3 e a empilhadeira — o pallet, a pilha e o camião ===
+  PASS  D42: pesqueiro · pescado tem tipo de carga no nível 3
+  PASS  D42: o tipo «peixe» tem as pontas, as nove lingadas e a pilha, e o garfo
+  PASS  D42: pesqueiro · armazenagem tem tipo de carga no nível 3
+  PASS  D42: o tipo «peixe» tem as pontas, as nove lingadas e a pilha, e o garfo
+  PASS  D42: medio · armazenagem tem tipo de carga no nível 3
+  PASS  D42: o tipo «caixa» tem as pontas, as nove lingadas e a pilha, e o garfo
+  PASS  D42: medio · conteiner tem tipo de carga no nível 3
+  PASS  D42: o tipo «conteiner» tem as pontas, as nove lingadas e a pilha
+  PASS  D42: medio · granel tem tipo de carga no nível 3
+  PASS  D42: o tipo «saco» tem as pontas, as nove lingadas e a pilha, e o garfo
+  PASS  D42: grande · armazenagem tem tipo de carga no nível 3
+  PASS  D42: o tipo «caixa» tem as pontas, as nove lingadas e a pilha, e o garfo
+  PASS  D42: grande · conteiner tem tipo de carga no nível 3
+  PASS  D42: o tipo «conteiner» tem as pontas, as nove lingadas e a pilha
+  PASS  D42: grande · granel tem tipo de carga no nível 3
+  PASS  D42: o tipo «saco» tem as pontas, as nove lingadas e a pilha, e o garfo
+  PASS  D42: o nível 3 recebe pares (8)
+  PASS  D42: nenhum tipo da PONTAS_N3 fica sem serviço ([])
+  PASS  D42: nenhum tipo da LINGADAS_N3 fica sem serviço ([])
+  PASS  D42: nenhum tipo da PILHAS_N3 fica sem serviço ([])
+  PASS  D42: nenhum tipo da GARFO_N3 fica sem serviço ([])
+  PASS  D42: ida e volta até à pilha cabem no ciclo (1.24 + 1.74 s de 3.62)
+  PASS  D42: a carga do pórtico só pende onde ele está (0 fora)
+  PASS  D42: o pallet só espera no chão depois de largado (0 com carga no spreader)
+  PASS  D42: ela está à espera sempre que o pallet seguinte desce (0 fora)
+  PASS  D42: ela não salta no caminho (0.42 px num passo, até 0.50)
+  PASS  D42: os seis trechos dela passam (["leva", "pousa", "volta", "espera", "encosta", "levanta"])
+  PASS  D42: o garfo sobe e desce (["alto", "baixo"])
+  PASS  D42: todo passo do pórtico passa no ciclo
+  PASS  D42: a carga de peixe desce dentro do barco_pesca_bote (pescado, 100% de casco à volta)
+  PASS  D42: a carga de peixe desce dentro do barco_pesca_traineira (pescado, 100% de casco à volta)
+  PASS  D42: a carga de peixe desce dentro do barco_pesca_arrasteiro (pescado, 100% de casco à volta)
+  PASS  D42: a carga de peixe desce dentro do barco_pesca_bote (armazenagem, 100% de casco à volta)
+  PASS  D42: a carga de peixe desce dentro do barco_pesca_traineira (armazenagem, 100% de casco à volta)
+  PASS  D42: a carga de peixe desce dentro do barco_pesca_arrasteiro (armazenagem, 100% de casco à volta)
+  PASS  D42: a carga de caixa desce dentro do barco_medio_geral (armazenagem, 100% de casco à volta)
+  PASS  D42: a carga de saco desce dentro do barco_medio_granel (granel, 100% de casco à volta)
+  PASS  D42: a carga de conteiner desce dentro do barco_medio_conteiner (conteiner, 100% de casco à volta)
+  PASS  D42: a carga de caixa desce dentro do barco_grande_geral (armazenagem, 100% de casco à volta)
+  PASS  D42: a carga de saco desce dentro do barco_grande_granel (granel, 100% de casco à volta)
+  PASS  D42: a carga de conteiner desce dentro do barco_grande_conteiner (conteiner, 100% de casco à volta)
+  PASS  D42: percorreu os cascos do nível 3 (12)
+  PASS  D42: peixe — o pallet que o spreader larga é o que ela apanha (dx 0.0, dy 0.0)
+  PASS  D42: peixe — o caminho até à pilha anda em −mx (0.7°, 25 px)
+  PASS  D42: peixe — o pallet que ela larga é o da frente da pilha (96% em cima dela)
+  PASS  D42: caixa — o pallet que o spreader larga é o que ela apanha (dx 0.0, dy 0.0)
+  PASS  D42: caixa — o caminho até à pilha anda em −mx (0.7°, 25 px)
+  PASS  D42: caixa — o pallet que ela larga é o da frente da pilha (96% em cima dela)
+  PASS  D42: saco — o pallet que o spreader larga é o que ela apanha (dx 0.0, dy -0.0)
+  PASS  D42: saco — o caminho até à pilha anda em −mx (0.7°, 25 px)
+  PASS  D42: saco — o pallet que ela larga é o da frente da pilha (96% em cima dela)
+  PASS  D42: no píer 2 ela pisa o tabuado à espera (100% de píer)
+  PASS  D42: no píer 2 ela pisa o tabuado à espera (100% de píer)
+  PASS  D42: no píer 2 ela pisa o tabuado no pouso (100% de píer)
+  PASS  D42: no píer 2 ela pisa o tabuado no pouso (100% de píer)
+  PASS  D42: no píer 2 ela pisa o tabuado na pilha (100% de píer)
+  PASS  D42: no píer 2 ela pisa o tabuado na pilha (100% de píer)
+  PASS  D42: no píer 3 ela pisa o tabuado à espera (100% de píer)
+  PASS  D42: no píer 3 ela pisa o tabuado à espera (100% de píer)
+  PASS  D42: no píer 3 ela pisa o tabuado no pouso (100% de píer)
+  PASS  D42: no píer 3 ela pisa o tabuado no pouso (100% de píer)
+  PASS  D42: no píer 3 ela pisa o tabuado na pilha (100% de píer)
+  PASS  D42: no píer 3 ela pisa o tabuado na pilha (100% de píer)
+  PASS  D42: peixe — à espera, ela não toca o pallet que desce (0%)
+  PASS  D42: caixa — à espera, ela não toca o pallet que desce (0%)
+  PASS  D42: saco — à espera, ela não toca o pallet que desce (0%)
+  PASS  D42: ele e ela ao volante são figuras distintas
+  PASS  D42: parada, ninguém a conduz
+  PASS  D42: h — o garfo sobe
+  PASS  D42: m — o garfo sobe
+  PASS  D42: a empilhadeira do cais está na régua (0.67x o camião, 1.82x a pessoa)
+  PASS  D42: a empilhadeira do pátio está na régua (0.78x o camião, 2.12x a pessoa)
+  PASS  D42: com o guindaste e o cais o porto é de nível 3
+  PASS  D42: parada, sem ninguém, a empilhadeira espera no cais
+  PASS  D42: alocada, o nó do trabalhador sai e ela vai ao volante
+  PASS  D42: a pilha é a dos pallets do tipo do barco (caixa)
+  PASS  D42: na ordem dos nós a pilha, o pallet, ela e o barco
+  PASS  D42: o pórtico não gira a imagem por cima dos quadros
+  PASS  D42: um refresh a meio não recomeça o ciclo
+  PASS  D42: os 9 passos do pórtico passam pelo nó (9)
+  PASS  D42: as nove lingadas passam pelo nó Carga (9)
+  PASS  D42: o pallet no garfo, em baixo e levantado, passa pelo nó (["alto", "baixo"])
+  PASS  D42: todo quadro da empilhadeira é dela (0 fora)
+  PASS  D42: o pallet no garfo anda com ela (0 fora em 48 passos a caminho)
+  PASS  D42: o pallet nunca está no spreader e no garfo ao mesmo tempo (0)
+  PASS  D42: o pallet largado não some antes de ela o apanhar (0 passos)
+  PASS  D42: ela anda (44 posições)
+  PASS  D42: no nó ela não salta (0.84 px num passo de 1/30 s)
+  PASS  D42: no segundo turno o ciclo continua
+  PASS  D42: com contêiner o pórtico trabalha e ela espera ao volante, sem pallet
+  PASS  D42: acabado o serviço, ela fica parada sem ninguém e o pallet sai
+  PASS  D42: no nível 2 a empilhadeira sai do cais
+  PASS  D42: sem camião ela leva à pilha
+  PASS  D42: com o camião encostado a doca sabe dele e o caminho muda
+  PASS  D42: nas portas do camião o garfo não desce (0 de 10 passos lá em baixo)
+  PASS  D42: até ao camião o caminho anda em −mx (pior 2.0°: armazenagem, empresa 1, 80 px)
+  PASS  D42: o pallet acaba junto às portas de trás (pior 12% de camião à volta)
+  PASS  D42: o caminho mais comprido (88 px) cabe no ciclo (1.70 + 1.92 s de 3.62) sem ela passar do teto (36 px/s, ciclo x1.30)
+  PASS  D42: com o caminho comprido o ciclo inteiro abranda (x1.30: 1 s anda 0.77 s de ciclo)
+  PASS  D42: o camião largou, e a doca deixou de o ter
+  PASS  D42: percorreu os caminhos das três docas nos dois estados (12)
+  PASS  D42: ela não se pinta por cima de prop do cenário que lhe está à frente (0 px; nenhum)
+  PASS  o bloco D42 correu até ao fim
+=== D43: o rodapé escuro — as colunas dos trabalhadores e o que recua ===
+  PASS  D43: a fila tem os 3 lugares do fundeadouro
+  PASS  D43: em ruínas, cada lugar da fila ocupa a coluna da doca de cima
+  PASS  D43: a fila tem os 3 lugares do fundeadouro
+  PASS  D43: porto completo, cada lugar da fila ocupa a coluna da doca de cima
+  PASS  D43: o primário destaca-se do fundo (7.37:1)
+  PASS  D43: Upgrade desligado recua — 1.19:1 contra o fundo, abaixo dos 7.37 do «AVANÇAR DIA»
+  PASS  D43: Menu desligado recua — 1.19:1 contra o fundo, abaixo dos 7.37 do «AVANÇAR DIA»
+  PASS  D43: Avancar desligado recua — 1.19:1 contra o fundo, abaixo dos 7.37 do «AVANÇAR DIA»
+  PASS  D43: MensagemCartao recua — 1.19:1 contra o fundo, abaixo dos 7.37 do «AVANÇAR DIA»
+  PASS  D43: MetaCartao recua — 1.18:1 contra o fundo, abaixo dos 7.37 do «AVANÇAR DIA»
+  PASS  D43: o cartão CartaoDoca recua — 1.18:1 contra o fundo, abaixo dos 7.37 do «AVANÇAR DIA»
+  PASS  D43: o cartão CartaoDocaEspera recua — 1.34:1 contra o fundo, abaixo dos 7.37 do «AVANÇAR DIA»
+  PASS  D43: o cartão CartaoDocaRival recua — 1.15:1 contra o fundo, abaixo dos 7.37 do «AVANÇAR DIA»
+  PASS  D43: o cartão CartaoFilaVazia recua — 1.00:1 contra o fundo, abaixo dos 7.37 do «AVANÇAR DIA»
+  PASS  o bloco D43 correu até ao fim
+=== D44: as conversas dos cartões — o balão, a placa e a letra de quem fala ===
+  PASS  D44: Boletim montou
+  PASS  D44 cida: o cartão mostra o retrato de quem fala
+  PASS  D44 cida: o retrato senta numa placa
+  PASS  D44 cida: a placa tem o matiz da roupa de quem fala (137°, roupa 144°)
+  PASS  D44 cida: o balão «Entrou mais do que saiu.» tem o matiz da roupa de quem fala (137°, roupa 144°)
+  PASS  D44 cida: o cartão tem título
+  PASS  D44 cida: a fala pesa 400, menos do que os 600 do título
+  PASS  D44 cida: 1 balão(ões) para 1 parágrafo(s), só o primeiro com bico, nenhum vazio
+  PASS  D44: Contra-oferta montou
+  PASS  D44 arlindo: o cartão mostra o retrato de quem fala
+  PASS  D44 arlindo: o retrato senta numa placa
+  PASS  D44 arlindo: a placa tem o matiz da roupa de quem fala (196°, roupa 195°)
+  PASS  D44 arlindo: o balão «Cais Mirim fez uma propo» tem o matiz da roupa de quem fala (196°, roupa 195°)
+  PASS  D44 arlindo: o cartão tem título
+  PASS  D44 arlindo: a fala pesa 400, menos do que os 600 do título
+  PASS  D44 arlindo: 1 balão(ões) para 1 parágrafo(s), só o primeiro com bico, nenhum vazio
+  PASS  D44: Ribeiro (NÃO pode pagar) montou
+  PASS  D44 ribeiro: o cartão mostra o retrato de quem fala
+  PASS  D44 ribeiro: o retrato senta numa placa
+  PASS  D44 ribeiro: a placa tem o matiz da roupa de quem fala (213°, roupa 213°)
+  PASS  D44 ribeiro: o balão «Boa tarde. Rivaldo Ribei» tem o matiz da roupa de quem fala (212°, roupa 213°)
+  PASS  D44 ribeiro: o balão «A parcela vence hoje: R$» tem o matiz da roupa de quem fala (212°, roupa 213°)
+  PASS  D44 ribeiro: o cartão tem título
+  PASS  D44 ribeiro: a fala pesa 400, menos do que os 600 do título
+  PASS  D44 ribeiro: a fala pesa 400, menos do que os 600 do título
+  PASS  D44 ribeiro: 2 balão(ões) para 2 parágrafo(s), só o primeiro com bico, nenhum vazio
+  PASS  D44: mediu os três cartões de conversa (3)
+  PASS  o bloco D44 correu até ao fim
+
+=== DESIGN OK — tudo no lugar ===
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2663)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)

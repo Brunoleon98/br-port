@@ -29,6 +29,11 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-16.md` | 16/10 | Publicação autorizada da ajuda no PR #134 (`116`), fecho na mesma branch e leitura/telefone/merge pendentes |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-15f.md` | 15/10 | Como jogar/glossário implementado localmente (`115`), verificações concluídas e leitura/telefone/publicação pendentes |
+| `VERIFICACAO_COMO_JOGAR_2026-10-15/` | 15/10 | Provas locais da ajuda compartilhada: navegação, preservação, controles, contraste e capturas (`115`) |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-15e.md` | 15/10 | Recorte de Como jogar/glossário aprovado com ajuste sobre autosave (`114`); implementação e novo PR sem autorização |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-15d.md` | 15/10 | PR #133 confirmado fundido, CI conferido e proposta de Como jogar/glossário (`113`) para aceite |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-15c.md` | 15/10 | Pesquisa de novos recursos básicos na `112`, estudos preservados e publicação do PR autorizada |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-15b.md` | 15/10 | Cancelamento aceite e integrado na `111`, entrega local, revisão dos recursos básicos e escolha seguinte do Bruno |
 | `VERIFICACAO_CANCELAMENTO_2026-10-15/` | 15/10 | Provas da ação integrada: paridade com a `110`, migração, contabilidade, registro, interface, controles e capturas |

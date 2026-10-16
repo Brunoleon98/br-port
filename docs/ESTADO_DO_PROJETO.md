@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Última atualização:** 15/10/2026 — cancelamento e pesquisa (`111`, `112`)
+> **Atualização:** 16/10/2026 — PR #133 fundido; ajuda no PR #134 (`116`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -59,7 +59,7 @@ do mapa (`069`).
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save local **18** (`111`; main publicada na 17), com migração desde a 14
+Save **18** na main (`111`, PR #133), com migração desde a 14
 (`098`) e um exemplo por versão;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
@@ -107,22 +107,21 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 
 ## Onde estamos na fila
 
-**A fila em vigor é a §7 do plano** — ela é que diz o que vem a seguir e quais
-itens param à espera do Bruno. Aqui fica só a posição.
+**A fila em vigor é a §7 do plano.** Aqui fica só a posição.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
-A frente 5 já entregou **tutorial** (`100`, `101`), **segunda chance** (`102`)
-e as quatro etapas da **progressão para a Fase 2** (`103`–`106`, `108`).
-Valores mantidos pela medição; resultados e limites na `economia.md`.
-**Cancelamento de serviço integrado na `111`**, após medição `110` e aceite:
-confirmação, equipe livre no dia, −5 e multa de 10%, contas, registro 5 e
-migração 17→18. PR autorizado, merge a conferir. Recursos básicos: `112` e
-`PESQUISA_RECURSOS_BASICOS_2026-10-15.md`; revisão anterior preservada.
-Mais trabalhadores e crédito voluntário ficam para depois. **A4 pendente**,
-caderno sem aceite.
-A `107` (nomes no Web móvel) está em
-branch local separada, aguardando publicação autorizada e teste no telefone.
-O Pages publica a main verde.
+A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
+progressão (`103`–`106`, `108`); medição na `economia.md`.
+**Cancelamento na main (`111`, PR #133):** equipe livre no dia, −5, multa de
+10%, contas, registro 5 e migração 17→18. Medição na `110`; CI verde no merge.
+Pesquisa `112`: `PESQUISA_RECURSOS_BASICOS_2026-10-15.md`; revisão preservada.
+**Como jogar/glossário no PR #134 (`114`–`116`):** inicial e pausa, consulta
+compartilhada que preserva a partida. Recorte em
+`RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`. Leitura, telefone e merge pendentes.
+Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
+sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
+A `107` permanece local e separada, sem autorização de publicação nem teste
+no telefone. O Pages publica a main verde.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.

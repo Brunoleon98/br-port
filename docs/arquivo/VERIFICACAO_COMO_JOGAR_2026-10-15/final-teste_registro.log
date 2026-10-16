@@ -1,0 +1,76 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+=== R1: DESARMADO por omissão — o simulador não pode gravar ===
+  PASS  nasce desarmado
+  PASS  seis turnos desarmado não escrevem arquivo nenhum
+  PASS  e não contam linha
+  PASS  o sinal negociacao_resolvida existe no GameState
+=== R1b: armar() outra vez abre partida nova, não continua a velha ===
+  PASS  armar() outra vez abre arquivo NOVO
+  PASS  e ficam dois arquivos na pasta
+  PASS  duas aberturas — é por elas que o leitor parte as partidas
+=== R2: armado, uma partida inteira vira JSONL bem formado ===
+  PASS  armar() arma
+  PASS  armar() abre exatamente um arquivo
+  PASS  a Fase 1 chegou ao desfecho
+  PASS  o arquivo tem linhas
+  PASS  TODA linha é um objeto JSON
+  PASS  a primeira linha é a abertura
+  PASS  a última é o desfecho (fase)
+  PASS  gravou um evento de turno por turno jogado
+  PASS  gravou o fecho das doze semanas
+  PASS  os barcos servidos por turno somam o total da partida
+  PASS  e os perdidos também
+  PASS  e não são zero (senão a asserção acima passa por acaso)
+  PASS  linhas_gravadas() bate com o arquivo
+  PASS  o cabeçalho traz a versão do registro
+  PASS  e a parcela e o caixa inicial em vigor
+  PASS  a obra liberada foi comprada
+  PASS  a obra grava o custo de verdade, não um zero de omissão
+=== R3: acrescentar não trunca (FileAccess.WRITE apaga) ===
+  PASS  armar() outra vez recomeça a contagem
+  PASS  três linhas depois da abertura ficam as três
+  PASS  e na ordem em que foram escritas
+  PASS  o que está no disco é o que o gravador diz ter
+=== R4: os tetos seguram — linhas por arquivo, arquivos na pasta ===
+  PASS  passado o teto, grava a linha que explica e cala
+  PASS  e depois de calar não escreve mais nada
+  PASS  a pasta não passa do teto de arquivos
+=== R5: o nome do jogador NÃO entra no arquivo ===
+  PASS  o nome do jogador NÃO aparece no arquivo
+  PASS  mas o nome do porto sim (é escolha de jogo)
+  PASS  grava se o campo ficou em branco
+  PASS  e quantas letras tinha, sem as letras
+  PASS  com o nome preenchido, anonimo é falso
+  PASS  campo em branco grava anonimo verdadeiro
+=== R6: o relógio de deliberação é monotónico e não negativo ===
+  PASS  todo turno traz um tempo
+  PASS  e nenhum é negativo
+  PASS  a negociação grava ação, resultado e tempo
+  PASS  houve contra-oferta e ela foi gravada
+=== R7: a obra grava-se PAGA e PRONTA, e o cabeçalho traz a semana ===
+  PASS  o cabeçalho traz os dias por semana do jogo
+  PASS  e os dias da Fase 1
+  PASS  a obra liberada foi comprada
+  PASS  paga, ainda não está pronta (senão este bloco não prova nada)
+  PASS  pagar não grava a obra pronta
+  PASS  a obra ficou pronta no jogo
+  PASS  grava UMA linha de obra pronta
+  PASS  com o id da obra
+  PASS  no dia em que o jogo a deu por pronta
+  PASS  e a paga continua a gravar o dia do pagamento
+=== R8: a segunda chance do Sr. Ribeiro grava-se com o que entrou e o que volta ===
+  PASS  a partida chegou ao primeiro vencimento
+  PASS  antes de aceitar, nenhuma linha de segunda chance
+  PASS  a segunda chance foi aceite
+  PASS  grava UMA linha de segunda chance
+  PASS  com o que o banco pôs no caixa
+  PASS  e o que volta com a cobrança seguinte, que é a dívida do jogo
+  PASS  no dia em que a partida retoma
+  PASS  os nove blocos correram até ao fim
+
+REGISTRO OK
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2663)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)

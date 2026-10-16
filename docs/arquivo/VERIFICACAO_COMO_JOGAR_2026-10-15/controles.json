@@ -1,0 +1,146 @@
+{
+  "controle-base": {
+    "codigo": 0,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": []
+  },
+  "mutante-voltar-fecha-artigo": {
+    "codigo": 1,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": [
+      "FAIL T25: Voltar retorna ao índice: atracar",
+      "FAIL T25: Voltar retorna ao índice: atracar",
+      "FAIL T25: Voltar retorna ao índice: atracar",
+      "FAIL T25: Voltar retorna ao índice: atracar",
+      "FAIL T25: Voltar retorna ao índice: atracar",
+      "FAIL T25: Voltar retorna ao índice: atracar",
+      "FAIL T25: Voltar retorna ao índice: atracar"
+    ]
+  },
+  "restaurado-voltar-fecha-artigo": {
+    "codigo": 0,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": []
+  },
+  "mutante-consulta-sorteia": {
+    "codigo": 1,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": [
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo"
+    ]
+  },
+  "restaurado-consulta-sorteia": {
+    "codigo": 0,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": []
+  },
+  "mutante-consulta-grava": {
+    "codigo": 1,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": [
+      "FAIL T25: consulta não tem porta de escrita: PainelComoJogar",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo",
+      "FAIL T25: consulta preserva estado, RNG, arquivos e registro",
+      "FAIL T25: fechar por Voltar também preserva tudo"
+    ]
+  },
+  "restaurado-consulta-grava": {
+    "codigo": 0,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": []
+  },
+  "mutante-multa-divergente": {
+    "codigo": 1,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": [
+      "FAIL T25: custos reais e regra sem parcial na ajuda"
+    ]
+  },
+  "restaurado-multa-divergente": {
+    "codigo": 0,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": []
+  },
+  "mutante-ajuda-duplicada": {
+    "codigo": 1,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": [
+      "FAIL T25: pedido repetido não duplica ajuda",
+      "FAIL T25: pausa permanece na origem: fase1",
+      "FAIL T25: pedido repetido não duplica ajuda",
+      "FAIL T25: pausa permanece na origem: iniciado",
+      "FAIL T25: pedido repetido não duplica ajuda",
+      "FAIL T25: pausa permanece na origem: negativo",
+      "FAIL T25: pedido repetido não duplica ajuda",
+      "FAIL T25: pausa permanece na origem: livre",
+      "FAIL T25: pedido repetido não duplica ajuda",
+      "FAIL T25: pausa permanece na origem: fim"
+    ]
+  },
+  "restaurado-ajuda-duplicada": {
+    "codigo": 0,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": []
+  },
+  "mutante-toque-atravessado": {
+    "codigo": 1,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": [
+      "FAIL T25: toque no fundo não atravessa a ajuda",
+      "FAIL T25: controle: toque volta a alcançar a origem",
+      "FAIL T25: toque no fundo não atravessa a ajuda",
+      "FAIL T25: controle: toque volta a alcançar a origem",
+      "FAIL T25: toque no fundo não atravessa a ajuda",
+      "FAIL T25: controle: toque volta a alcançar a origem",
+      "FAIL T25: toque no fundo não atravessa a ajuda",
+      "FAIL T25: controle: toque volta a alcançar a origem",
+      "FAIL T25: toque no fundo não atravessa a ajuda",
+      "FAIL T25: controle: toque volta a alcançar a origem",
+      "FAIL T25: toque no fundo não atravessa a ajuda",
+      "FAIL T25: controle: toque volta a alcançar a origem",
+      "FAIL T25: toque no fundo não atravessa a ajuda",
+      "FAIL T25: controle: toque volta a alcançar a origem"
+    ]
+  },
+  "restaurado-toque-atravessado": {
+    "codigo": 0,
+    "ok": true,
+    "erros_de_script": false,
+    "falhas": []
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "sentinela-plantar": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "import-final": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "contraste-final": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "final-run_tests": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "final-teste_design": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "final-teste_audio": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "final-teste_fumaca": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "t25-final": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "final-teste_registro": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "final-asset_validator": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "conferir_escopo_ui": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "conferir_guardas_ci": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "conferir_docs": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  },
+  "sentinela-final": {
+    "codigo": 0,
+    "marcador": true,
+    "erros": [],
+    "ok": true
+  }
+}

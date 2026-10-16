@@ -1,0 +1,354 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS T25: espaços e cobranças vêm das regras
+FAIL T25: custos reais e regra sem parcial na ajuda
+PASS T25: consulta não tem porta de escrita: PainelComoJogar
+PASS T25: consulta não tem porta de escrita: ConteudoComoJogar
+PASS T25: ajuda sem depender de save (ocupado=false)
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: ajuda sem depender de save (ocupado=true)
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: fase1
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: iniciado
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: negativo
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: livre
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: fim
+PASS T25: índice alcançável em (720, 1280): Atracar e atender
+PASS T25: índice alcançável em (720, 1280): Avançar o dia
+PASS T25: índice alcançável em (720, 1280): Dinheiro e semana
+PASS T25: índice alcançável em (720, 1280): Salvar e retomar
+PASS T25: índice alcançável em (720, 1280): Devolver ou cancelar
+PASS T25: índice alcançável em (720, 1280): Fases e metas
+PASS T25: índice alcançável em (720, 1280): Glossário
+PASS T25: índice alcançável em (720, 1280): Fechar
+PASS T25: botão alcançável: Glossário
+PASS T25: fim do glossário alcançável em (720, 1280)
+PASS T25: retorno visível no fim em (720, 1280)
+PASS T25: índice alcançável em (720, 1600): Atracar e atender
+PASS T25: índice alcançável em (720, 1600): Avançar o dia
+PASS T25: índice alcançável em (720, 1600): Dinheiro e semana
+PASS T25: índice alcançável em (720, 1600): Salvar e retomar
+PASS T25: índice alcançável em (720, 1600): Devolver ou cancelar
+PASS T25: índice alcançável em (720, 1600): Fases e metas
+PASS T25: índice alcançável em (720, 1600): Glossário
+PASS T25: índice alcançável em (720, 1600): Fechar
+PASS T25: botão alcançável: Glossário
+PASS T25: fim do glossário alcançável em (720, 1600)
+PASS T25: retorno visível no fim em (720, 1600)
+PASS T25: índice alcançável em (720, 1152): Atracar e atender
+PASS T25: índice alcançável em (720, 1152): Avançar o dia
+PASS T25: índice alcançável em (720, 1152): Dinheiro e semana
+PASS T25: índice alcançável em (720, 1152): Salvar e retomar
+PASS T25: índice alcançável em (720, 1152): Devolver ou cancelar
+PASS T25: índice alcançável em (720, 1152): Fases e metas
+PASS T25: índice alcançável em (720, 1152): Glossário
+PASS T25: índice alcançável em (720, 1152): Fechar
+PASS T25: botão alcançável: Glossário
+PASS T25: fim do glossário alcançável em (720, 1152)
+PASS T25: retorno visível no fim em (720, 1152)
