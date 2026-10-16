@@ -1,8 +1,10 @@
-# 111 — O defeito injetado fica: o catálogo que o CI reinjeta a cada PR
+# 117 — O defeito injetado fica: o catálogo que o CI reinjeta a cada PR
 
-**15/10/2026.** Main `b142b80` (PR #132, fundido; nenhum PR aberto do Codex);
-111 livre conferida na main antes de escrever (a 107 é da branch local do
-Codex). Pedido do Bruno, com o Codex a trabalhar no jogo: *ver se os testes
+**15/10/2026.** Main `b142b80` (PR #132, fundido; nenhum PR aberto do Codex).
+Escrita como a 111, livre na main nesse dia; em 16/10 o Codex fundiu a SUA
+111 (o cancelamento) e abriu o PR #134 com a 113 à 116, e esta passou a 117
+pelo `tools/renumerar_decisao.py` — a colisão que a `119` trata. Pedido do
+Bruno, com o Codex a trabalhar no jogo: *ver se os testes
 aprendem com os bugs encontrados e os põem como defeitos injetados, e se podem
 melhorar para não deixar passar bugs antigos e novos.* Asserção nova com
 defeito injetado (F6).

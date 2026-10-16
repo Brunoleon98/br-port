@@ -625,7 +625,7 @@ jobs:
   # testes contam as maneiras de ela deixar de o apanhar sem ninguém ver.
   # Este job reinjeta cada defeito de `tools/mutantes.toml` e exige que a
   # guarda DECLARADA reprove; um refactor que apague a linha do defeito
-  # reprova por «mutante órfão» (`docs/decisoes/111`).
+  # reprova por «mutante órfão» (`docs/decisoes/117`).
   #
   # Job SEPARADO, ao lado da suíte e não dentro dela: cada mutante corre a
   # suíte que o apanha, e somados passam dos 15 minutos daquele job. E o

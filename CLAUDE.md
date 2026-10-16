@@ -193,7 +193,7 @@ Windows, o byte a byte dos mapas — está em `.claude/rules/plataforma.md`,
    **E o defeito FICA:** entra em `tools/mutantes.toml`, e o
    `tools/conferir_mutantes.py` (espera `MUTANTES OK`) reinjeta-o no CI a
    cada PR — o que só correu à mão não diz nada da guarda amanhã. Bug
-   corrigido entra também, como o mutante dele (`docs/decisoes/111`).
+   corrigido entra também, como o mutante dele (`docs/decisoes/117`).
 
 ---
 

@@ -73,7 +73,7 @@ registada sem o Bruno pedir.
   `tools/mutantes.toml`, e `python3 tools/conferir_mutantes.py --godot "$G"
   --so <id>` espera `MUTANTES OK`. Se ele reprovar por «mutante órfão», o
   código que a tarefa mexeu era o alvo de um defeito já provado: reescreva-o
-  contra a forma nova, não o apague (`docs/decisoes/111`).
+  contra a forma nova, não o apague (`docs/decisoes/117`).
 - Se mexeu no visual: uma captura do jogo, olhada (`tools/capturar_evidencia.sh`).
 - Mudou o jogo? Atualize o `docs/ESTADO_DO_PROJETO.md` (tem teto de tamanho;
   o conferidor avisa). O ritual completo de fecho está em

@@ -1,7 +1,7 @@
 # OS DEFEITOS QUE JÁ PROVARAM UMA GUARDA, e que continuam a prová-la.
 #
 # Quem lê isto é `tools/conferir_mutantes.py` (espera `MUTANTES OK`); quem
-# decidiu a forma é `docs/decisoes/111`. Cada `[[mutante]]` é um defeito que
+# decidiu a forma é `docs/decisoes/117`. Cada `[[mutante]]` é um defeito que
 # alguém injetou à mão para provar uma guarda, ou um bug que chegou a existir,
 # escrito como uma troca EXATA de texto num arquivo do jogo:
 #
@@ -433,7 +433,7 @@ reprova = { teste_audio = "o mesmo som dentro da espera não repete" }
 
 [[mutante]]
 id = "som-nunca-repete"
-de = "111"
+de = "117"
 o_que = "o som toca a primeira vez e nunca mais — a marca parada do A4 passaria por espera"
 alvo = "brport_vs/autoload/Audio.gd"
 antes = 'if agora - float(_ultima_vez.get(id, -999.0)) < float(SONS[id]["espera"]):'

@@ -98,7 +98,7 @@ também deve.
 | **qualquer coisa de áudio** | `python3 tools/medir_audio.py` | `SINAL OK` — e é OUTRA pergunta que o `teste_audio.gd`: lá o encanamento, aqui a ONDA (true peak, estalo interno, espectro) |
 | catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
 | **qualquer documento** | `python3 tools/conferir_docs.py` | `DOCS OK` |
-| **uma guarda nova, ou um bug corrigido** | o defeito em `tools/mutantes.toml`, e `python3 tools/conferir_mutantes.py --godot "$G" --so <id>` (`111`; o fluxo em `testes-e-guardas.md`) | `MUTANTES OK` |
+| **uma guarda nova, ou um bug corrigido** | o defeito em `tools/mutantes.toml`, e `python3 tools/conferir_mutantes.py --godot "$G" --so <id>` (`117`; o fluxo em `testes-e-guardas.md`) | `MUTANTES OK` |
 | **o código de um alvo do catálogo, ou uma suíte** | `python3 tools/conferir_mutantes.py --godot "$G"` — o catálogo inteiro, ~13 min | `MUTANTES OK`, sem órfão |
 | `BR_Port_GDD_V7.jsx` | `python3 tools/gerar_gdd_md.py` | `GDD OK`, e `git diff -- docs/gdd` limpo |
 | qualquer coisa visível | uma captura, e **olhar para ela** (seção 4) | — |

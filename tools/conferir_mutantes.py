@@ -8,7 +8,7 @@ prosa — «o `retirar` esquecido (M2)». Nada voltava a perguntar se a guarda
 ainda o apanhava, e as regras contam as maneiras de ela deixar de apanhar sem
 ninguém ver: a sonda presa a um funil que deixou de ser único, a regra que
 passou a existir em dois sítios, o bloco que um refactor esvaziou. Cada uma foi
-descoberta por acaso, sessões depois (`docs/decisoes/111`).
+descoberta por acaso, sessões depois (`docs/decisoes/117`).
 
 Este é o lugar onde o defeito fica. `tools/mutantes.toml` guarda cada um como
 uma troca EXATA de texto num arquivo do jogo, com a suíte e a guarda que o têm
@@ -211,7 +211,7 @@ def rodar_suite(godot: str, suite: str, log: Path, teto: float, perfil: Path) ->
 def julgar(r: dict, guarda: str | None, teto: float) -> tuple[bool, str]:
     """(aprovado, frase). `guarda` None é o modo --explorar: só descreve."""
     # A COMPILAÇÃO ANTES DO TETO: um autoload que não compila deixa a suíte
-    # pendurada (medido no autoteste, `111`), e o diagnóstico tem de dizer a
+    # pendurada (medido no autoteste, `117`), e o diagnóstico tem de dizer a
     # causa, não o sintoma. A saída parcial da corrida cortada já a traz.
     if not r["compilou"]:
         return False, ("o mutante não compila: a suíte caiu inteira, e isso não "

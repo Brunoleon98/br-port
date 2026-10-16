@@ -159,7 +159,7 @@ func _a4_espera() -> void:
 	# segundo som na linha seguinte e conferia que a marca ficava igual — mas
 	# o relógio do Audio anda ao MILISSEGUNDO, e dois pedidos no mesmo
 	# milissegundo deixam a marca igual toque ou não toque. O mutante sem a
-	# espera passou verde aqui (`docs/decisoes/111`). A marca vai agora METADE
+	# espera passou verde aqui (`docs/decisoes/117`). A marca vai agora METADE
 	# da espera para trás: com a espera, fica; sem ela, o som toca e a marca
 	# vira o agora, que é outro número.
 	var espera: float = float(A.SONS["aviso"]["espera"])

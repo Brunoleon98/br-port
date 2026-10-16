@@ -16,7 +16,7 @@ paths:
 > `CLAUDE.md` em 10/10, palavra por palavra (`docs/decisoes/091`); o índice
 > de todas as regras está no núcleo. Lição nova deste tema entra aqui.
 
-## O defeito injetado fica no catálogo (`111`)
+## O defeito injetado fica no catálogo (`117`)
 
 **O defeito que provou uma guarda entra em `tools/mutantes.toml`**, e não
 num `cp` que se desfaz: até 15/10 cada um corria uma vez e ficava em prosa,
@@ -39,7 +39,7 @@ DECLARADA a reprovar, o mutante que não compila recusado, teto por corrida
   o defeito deixou de poder existir, dito no commit.
 
 ⚠️ **E A GUARDA DECLARADA SAI DO `--explorar`, NUNCA DO PALPITE.** Na
-medição da `111`, seis dos 35 defeitos reconstruídos reprovaram por outra
+medição da `117`, seis dos 35 defeitos reconstruídos reprovaram por outra
 asserção que não a que eu escrevi — e era essa a guarda verdadeira deles.
 ⚠️ **E MARCA DE TEMPO SÓ PROVA COM O RELÓGIO A ANDAR.** O A4 do
 `teste_audio` provava a espera mínima pedindo o som duas vezes seguidas e
@@ -47,11 +47,11 @@ conferindo que a marca não mudava; o relógio do `Audio` anda ao
 milissegundo, e no mesmo milissegundo a marca fica igual, toque ou não
 toque. O mutante sem a espera passou verde. A marca vai agora METADE da
 espera para trás, e o controle — passada a espera, o som toca — é o que
-prova que a régua consegue ver um toque (`111`).
+prova que a régua consegue ver um toque (`117`).
 ⚠️ **E O AUTOLOAD QUE NÃO COMPILA PENDURA A SUÍTE**, não a reprova: com o
 `GameState.gd` partido, o `run_tests` correu até ao teto. Quem lê só o
 código de saída vê um timeout; o `Parse Error` está na saída parcial, e é
-por isso que o executor julga a compilação antes do teto (`111`).
+por isso que o executor julga a compilação antes do teto (`117`).
 
 ## Do «Antes de fechar», item 7 — escrever a guarda
 
