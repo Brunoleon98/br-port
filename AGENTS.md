@@ -91,8 +91,11 @@ registada sem o Bruno pedir.
 - `python3 tools/conferir_docs.py`, que espera `DOCS OK`, se mexeu em
   documento.
 - Escreveu uma guarda ou corrigiu um bug? O defeito que a prova entra em
-  `tools/mutantes.toml`, e `python3 tools/conferir_mutantes.py --godot "$G"
-  --so <id>` espera `MUTANTES OK`. Se ele reprovar por «mutante órfão», o
+  `tools/mutantes.toml` — e não num executor à parte nem numa tabela em
+  prosa, que ninguém volta a correr: foi onde ficaram as provas do
+  cancelamento e da ajuda até à `docs/decisoes/120` —, e
+  `python3 tools/conferir_mutantes.py --godot "$G" --so <id>` espera
+  `MUTANTES OK`. Se ele reprovar por «mutante órfão», o
   código que a tarefa mexeu era o alvo de um defeito já provado: reescreva-o
   contra a forma nova, não o apague (`docs/decisoes/117`).
 - Se mexeu no visual: uma captura do jogo, olhada (`tools/capturar_evidencia.sh`).

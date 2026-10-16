@@ -29,7 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
-| `BRIEFING_PROXIMA_CONVERSA_2026-10-16b.md` | 16/10 | Lateral: o catálogo de defeitos (`117`), o jogador ao acaso T26 (`118`) e o pré-PR entre agentes (`119`); como abrir o PR depois de parar o Codex |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-16b.md` | 16/10 | Lateral: catálogo de defeitos (`117`), jogador ao acaso T26 (`118`), pré-PR entre agentes (`119`) e as provas do Codex no catálogo (`120`); PR aberto a pedido do Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-16.md` | 16/10 | Publicação autorizada da ajuda no PR #134 (`116`), fecho na mesma branch e leitura/telefone/merge pendentes |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-15f.md` | 15/10 | Como jogar/glossário implementado localmente (`115`), verificações concluídas e leitura/telefone/publicação pendentes |
 | `VERIFICACAO_COMO_JOGAR_2026-10-15/` | 15/10 | Provas locais da ajuda compartilhada: navegação, preservação, controles, contraste e capturas (`115`) |

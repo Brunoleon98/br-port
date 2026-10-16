@@ -1,64 +1,57 @@
 # BR Port — testes que guardam o que aprenderam, e o pré-PR entre agentes
 
-**16/10/2026.** Branch `claude/gracious-mendel-oiww62`, com a main `f03302d`
-juntada (PR #133 do Codex: cancelamento e save 18). PR #134 do Codex aberto
-(`codex/implementar-como-jogar`, decisões 113–116, briefings até `2026-10-16`).
-Esta branch ainda **não tem PR**: o Bruno vai pedi-lo quando parar o Codex.
-Sessão LATERAL — o rumo do jogo continua o dos briefings do Codex.
+**16/10/2026.** Branch `claude/gracious-mendel-oiww62`, com a main `7a8ec41`
+juntada (PRs #133 e #134 do Codex: cancelamento com save 18, e a ajuda «Como
+jogar» com o bloco T25). Nenhum PR aberto do Codex nem ramo dele mais novo no
+momento do PR. O PR desta branch foi aberto a pedido do Bruno, que é quem
+funde. Sessão LATERAL — o rumo do jogo continua o dos briefings do Codex.
 
-Três decisões nesta branch:
+Quatro decisões nesta branch:
 
 - **`117`** — o catálogo de defeitos já provados (`tools/mutantes.toml`) e o
   executor (`tools/conferir_mutantes.py`), que o job «Defeitos já provados»
-  reinjeta a cada PR. Escrita como 111; passou a 117 quando a 111 do Codex
-  chegou à main.
-- **`118`** — o T26, o jogador ao acaso: 24 partidas com semente e invariantes
-  a cada passo, com a falha reduzida à trilha mínima; e o vigia que impede o
-  `run_tests` e o `teste_fumaca` de pendurar.
+  reinjeta a cada PR.
+- **`118`** — o T26, o jogador ao acaso: 24 partidas com semente e
+  invariantes a cada passo, com a falha reduzida à trilha mínima; e o vigia
+  que impede o `run_tests` e o `teste_fumaca` de pendurar.
 - **`119`** — a colaboração: `tools/conferir_colaboracao.py` (o pré-PR contra
-  a base e os PRs abertos) e `tools/renumerar_decisao.py`.
+  a base e os PRs abertos) e `tools/renumerar_decisao.py` (decisão e bloco).
+- **`120`** — as provas do Codex no catálogo: sete mutantes do cancelamento e
+  os seis da ajuda. O catálogo tem 58.
 
-O catálogo tem 45 defeitos; um deles só o T26 apanha (carregar a meio da
-oferta). O `run_tests` passou de ~13 s para ~21 s.
+O que a junção com o trabalho do Codex mudou: a decisão desta branch passou
+de 111 a 117; o jogador ao acaso passou de T25 a T26; o pré-PR ganhou as
+conferências de bloco repetido; e as provas dele entraram no catálogo.
 
 ⚠️ Os espaços partilhados entre agentes — número de decisão, nome de
-briefing, documentos de fecho — colidem; o livre conta-se em todos os ramos
-(`.claude/rules/gerais.md`, git e briefing; `AGENTS.md`, §2).
+briefing, número de bloco de teste, documentos de fecho — colidem; o livre
+conta-se em todos os ramos (`.claude/rules/gerais.md`; `AGENTS.md`, §2).
 
 ⚠️ Robô ao acaso sem controle de exercício passa verde sem ter jogado; leia a
 linha `-> fase 2 em N de 24` do T26 (`.claude/rules/testes-e-guardas.md`, «O
 jogador ao acaso»).
 
-⚠️ A guarda declarada de um mutante sai do `--explorar`, não do palpite
-(`.claude/rules/testes-e-guardas.md`, «O defeito injetado fica no catálogo»).
+⚠️ Defeito descrito em prosa reconstrói-se mais fraco do que o provado: a
+prova vive como troca exata no catálogo (`120`; `AGENTS.md`, §3).
 
-**Quando o Bruno pedir o PR** (`119`, e `AGENTS.md` §3): `git fetch`; ver os
-PRs abertos e os ramos `codex/*` recentes; `git merge origin/main`;
-`python3 tools/conferir_colaboracao.py --outros <cabeças dos PRs abertos>`;
-renumerar o que colidir com `tools/renumerar_decisao.py`; as seis suítes, o
-catálogo inteiro e o `conferir_docs.py`; só então o PR. **Já se sabe uma
-colisão**: o #134 também cria um T25 (a ajuda «Como jogar»); se ele fundir
-primeiro, o jogador ao acaso desta branch passa a T26 — rótulos do
-`tests/jogador_ao_acaso.gd`, o cabeçalho no `run_tests.gd`, a `118`, o
-`ESTADO` e a regra de testes.
-
-**Pendente do Bruno**: ativar «Require branches to be up to date before
-merging» na `main` (ou a merge queue), e pedir ao Codex que empurre cedo —
-as duas na `119`.
+**Pendente do Bruno**: rever e fundir o PR; ativar «Require branches to be up
+to date before merging» na `main` (ou a merge queue); pedir ao Codex que
+empurre cedo e que as provas dele entrem no catálogo (`119`, `120`).
 
 Prompt para colar:
 
 ```text
 Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3
-e as decisões 117, 118 e 119. Confira a main remota e os PRs abertos.
+e as decisões 117 a 120. Confira a main remota, os PRs abertos e o CI do
+último merge.
 
-A branch claude/gracious-mendel-oiww62 tem o catálogo de defeitos (117), o
-jogador ao acaso T26 (118) e o pré-PR entre agentes (119), sem PR aberto.
-Parei o Codex: crie o PR agora, seguindo o AGENTS.md §3 — junte a main, rode
-python3 tools/conferir_colaboracao.py com as cabeças dos PRs abertos dele,
-renumere com tools/renumerar_decisao.py o que colidir, rode as seis suítes,
-python3 tools/conferir_mutantes.py --godot "$G" e o conferir_docs.py, e diga
-o que o trabalho do Codex mudou no PR antes de o abrir.
+Se o PR da branch claude/gracious-mendel-oiww62 já foi fundido, confira se o
+job «Defeitos já provados» passou na main e quanto tempo levou. Se não foi,
+veja o que o Codex fundiu depois dele e rode python3 tools/conferir_colaboracao.py
+antes de qualquer coisa.
+
+Toda guarda nova ou bug corrigido desta conversa entra em tools/mutantes.toml,
+com a guarda declarada medida pelo --explorar.
 
 Ao encerrar, aplique /fechar-sessao e entregue o prompt completo da
 próxima conversa em bloco copiável.
