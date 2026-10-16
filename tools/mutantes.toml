@@ -441,7 +441,7 @@ depois = 'if _ultima_vez.has(id):'
 reprova = { teste_audio = "passada a espera, o mesmo som volta a tocar" }
 
 # ── O JOGADOR AO ACASO (`118`) ─────────────────────────────────────────────
-# Defeitos que nenhum bloco montava o estado para ver; o T25 joga até lá.
+# Defeitos que nenhum bloco montava o estado para ver; o T26 joga até lá.
 
 [[mutante]]
 id = "save-recusa-a-fila-cheia"
@@ -536,3 +536,164 @@ func custos_do_cancelamento(doca: int, id: int) -> Dictionary:
 	if true:
 '''
 reprova = { run_tests = "o robô exerceu cada ação que o jogo aceitou" }
+
+# ── O CANCELAMENTO DO CODEX (`111`) ────────────────────────────────────────
+# Vieram do executor próprio dele, `tools/testar_integracao_cancelamento.py`,
+# que corre só quando alguém se lembra de o correr (`120`). O nono, o
+# orçamento ignorado, já está acima como `cancelamento-sem-conferir-o-orcamento`.
+
+[[mutante]]
+id = "cancelamento-sem-multa"
+de = "111"
+o_que = "cancelar o serviço não cobra a multa"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'cash -= int(evento["multa"])'
+depois = 'cash -= 0'
+reprova = { run_tests = "T24: multa e reputação únicas, sem pagar serviço" }
+
+[[mutante]]
+id = "cancelamento-sem-reputacao"
+de = "111"
+o_que = "cancelar o serviço não custa reputação"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '_change_reputation(-CANCELAMENTO_REPUTACAO)'
+depois = '_change_reputation(0.0)'
+reprova = { run_tests = "T24: multa e reputação únicas, sem pagar serviço" }
+
+[[mutante]]
+id = "cancelamento-prende-o-trabalhador"
+de = "111"
+o_que = "o trabalhador do serviço cancelado fica ocupado mais um dia"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'trabalhador["busy_turns"] = 0'
+depois = 'trabalhador["busy_turns"] = 1'
+reprova = { run_tests = "T24: equipe reutilizada no mesmo dia" }
+
+[[mutante]]
+id = "cancelamento-fora-da-semana"
+de = "111"
+o_que = "a multa sai do caixa e não entra na conta da semana"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'semana_atual["cancelamento"] += int(evento["multa"])'
+depois = 'semana_atual["cancelamento"] += 0'
+reprova = { run_tests = "T24: multa lançada nas contas" }
+
+[[mutante]]
+id = "migracao-18-inventa-multa"
+de = "111"
+o_que = "o degrau 17→18 escreve uma multa que a partida nunca pagou"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'dados[chave]["cancelamento"] = 0'
+depois = 'dados[chave]["cancelamento"] = 1'
+reprova = { run_tests = "T24: migração não inventa multa passada" }
+
+[[mutante]]
+id = "cancelamento-de-outro-barco"
+de = "111"
+o_que = "o cancelamento aceita a identidade de outro barco"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if barco == null or int(barco["id"]) != id:'
+depois = 'if barco == null:'
+reprova = { run_tests = "T24: confirmação velha não cobra outro barco" }
+
+[[mutante]]
+id = "cancelamento-sem-registro"
+de = "111"
+o_que = "o cancelamento não avisa o gravador de partida"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'servico_cancelado.emit(evento.duplicate(true))'
+depois = 'pass'
+reprova = { run_tests = "T24: registro 5 observa uma vez" }
+
+# ── A AJUDA DO CODEX (`115`) ────────────────────────────────────────────────
+# Os seis defeitos que a `115` descreve em prosa, reconstruídos como troca.
+
+[[mutante]]
+id = "ajuda-voltar-fecha-o-artigo"
+de = "115"
+o_que = "Voltar no artigo fecha a ajuda em vez de voltar aos assuntos"
+alvo = "brport_vs/scripts/PainelComoJogar.gd"
+antes = '''
+	if assunto_atual != "":
+		_mostrar("")
+	else:
+		super._fechar()
+'''
+depois = '''
+	super._fechar()
+'''
+reprova = { run_tests = "T25: Voltar retorna ao índice" }
+
+[[mutante]]
+id = "ajuda-gasta-o-sorteio"
+de = "115"
+o_que = "abrir a ajuda consome o sorteio da partida"
+alvo = "brport_vs/scripts/PainelComoJogar.gd"
+antes = '''
+	artigos = Conteudo.artigos(get_tree().root.get_node("GameState"))
+'''
+depois = '''
+	artigos = Conteudo.artigos(get_tree().root.get_node("GameState"))
+	get_tree().root.get_node("GameState")._rng.randi()
+'''
+reprova = { run_tests = "T25: consulta preserva estado, RNG, arquivos e registro" }
+
+[[mutante]]
+id = "ajuda-grava-a-partida"
+de = "115"
+o_que = "abrir a ajuda grava a partida, que é uma porta de escrita"
+alvo = "brport_vs/scripts/PainelComoJogar.gd"
+antes = '''
+	artigos = Conteudo.artigos(get_tree().root.get_node("GameState"))
+'''
+depois = '''
+	artigos = Conteudo.artigos(get_tree().root.get_node("GameState"))
+	get_tree().root.get_node("GameState").save_game()
+'''
+reprova = { run_tests = "T25: consulta não tem porta de escrita" }
+
+[[mutante]]
+id = "ajuda-multa-dobrada"
+de = "115"
+o_que = "a ajuda mostra a multa do cancelamento em dobro"
+alvo = "brport_vs/scripts/ConteudoComoJogar.gd"
+antes = 'float(gs.CANCELAMENTO_MULTA) * 100.0'
+depois = 'float(gs.CANCELAMENTO_MULTA) * 200.0'
+reprova = { run_tests = "T25: custos reais e regra sem parcial na ajuda" }
+
+[[mutante]]
+id = "ajuda-empilha"
+de = "115"
+o_que = "pedir a ajuda outra vez abre uma segunda por cima da primeira"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+		if filho.scene_file_path == ComoJogarScene.resource_path and not filho.is_queued_for_deletion():
+			return
+'''
+depois = '''
+		if false:
+			return
+'''
+reprova = { run_tests = "T25: pedido repetido não duplica ajuda" }
+
+# ⚠️ SÓ A RAIZ NÃO BASTA: com o `mouse_filter` da raiz da cena a deixar
+# passar, o fundo escurecido (filho dela, do `PainelNarrativo`) ainda segura o
+# toque, e o mutante passou verde por ser EQUIVALENTE — o jogo não mudava. A
+# `115` dizia «fundo e raiz», e é esse o defeito.
+
+[[mutante]]
+id = "ajuda-deixa-o-toque-passar"
+de = "115"
+o_que = "a raiz e o fundo da ajuda deixam o toque chegar ao botão de baixo"
+alvo = "brport_vs/scripts/PainelComoJogar.gd"
+antes = '''
+	montar(LARGURA, ALTURA)
+'''
+depois = '''
+	montar(LARGURA, ALTURA)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for filho in get_children():
+		if filho is Control:
+			filho.mouse_filter = Control.MOUSE_FILTER_IGNORE
+'''
+reprova = { run_tests = "T25: toque no fundo não atravessa a ajuda" }

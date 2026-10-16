@@ -68,7 +68,8 @@ registada sem o Bruno pedir.
 - **Empurre cedo.** Um ramo só local é invisível às ferramentas e ao outro
   agente; um PR em rascunho aberto no início deixa o número à vista.
 - **Bloco de teste novo vive num arquivo próprio**, que a suíte só chama — como
-  o T24 (`tests/casos_cancelamento.gd`) e o T25 (`tests/jogador_ao_acaso.gd`).
+  o T24 (`tests/casos_cancelamento.gd`), o T25 (`tests/casos_como_jogar.gd`)
+  e o T26 (`tests/jogador_ao_acaso.gd`).
   Dois agentes a acrescentar blocos deixam de editar o mesmo `run_tests.gd`.
   Rótulo de falha com `FAIL`, `FALHA` ou `FALHOU` seguido de espaço: é por
   essa forma que o `tools/conferir_mutantes.py` sabe qual guarda reprovou.

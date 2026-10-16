@@ -1232,7 +1232,7 @@ var _t5l_completo := false
 # devolve `false` para os blocos poderem esperar frames, e o preço é este: um
 # erro de EXECUÇÃO direto no `_run()` aborta-o antes do `quit()`, e a árvore
 # fica a girar para sempre — sem marcador, sem nome, e no CI um job a morrer de
-# timeout. Medido com um mutante do T25 (devolver deixando o trabalhador): o
+# timeout. Medido com um mutante do T26 (devolver deixando o trabalhador): o
 # T4d rebentou na linha seguinte à asserção que reprovou, e a suíte só parou
 # pelo teto de 86 s do executor de mutantes. As esperas legítimas são de um
 # frame (umas vinte na suíte inteira); dois mil sem chegar ao fim é aborto.

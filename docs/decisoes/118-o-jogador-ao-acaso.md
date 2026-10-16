@@ -34,7 +34,7 @@ lidas, e o que segue é pista de padrão, não citação:
 
 ## O que mudou
 
-**O T25 — `tests/jogador_ao_acaso.gd`**, num arquivo próprio, como o T24 do
+**O T26 — `tests/jogador_ao_acaso.gd`**, num arquivo próprio, como o T24 do
 Codex (`119`). Joga 24 partidas com semente, até ao dia 140 ou 700 ações,
 escolhendo entre tudo o que o jogador faz — atracar, devolver, cancelar,
 construir, pagar adiantado ou no vencimento, pedir a segunda chance, negociar,
@@ -75,7 +75,7 @@ com nome.
 
 ## A prova
 
-O T25 passa no código de hoje: nenhum invariante quebrou em mais de 7.600
+O T26 passa no código de hoje: nenhum invariante quebrou em mais de 7.600
 ações aceites (e as recusadas por cima).
 Oito defeitos no catálogo (`118` no `de`), cada um reprovado pela guarda
 declarada:
@@ -89,7 +89,7 @@ declarada:
 | o cancelamento aceita outro orçamento | o T24 |
 | a reputação sem teto | o T24 |
 | o barco sem paciência fica na fila | o T4d e o F8g |
-| o cancelamento nunca disponível | o T24 — e no T25, só o controle |
+| o cancelamento nunca disponível | o T24 — e no T26, só o controle |
 
 O primeiro é o que a peça existe para apanhar: o jogo de hoje grava e lê a
 paciência do cliente, mas se deixasse de a ler de volta nenhuma outra guarda

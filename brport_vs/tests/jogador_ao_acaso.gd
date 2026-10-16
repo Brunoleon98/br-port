@@ -1,6 +1,6 @@
 extends RefCounted
 
-# T25 — O JOGADOR AO ACASO (`docs/decisoes/118`).
+# T26 — O JOGADOR AO ACASO (`docs/decisoes/118`).
 #
 # AS OUTRAS GUARDAS PERGUNTAM O QUE ALGUÉM PENSOU EM PERGUNTAR. Cada bloco do
 # `run_tests` monta um estado e confere uma resposta; o que nenhum bloco monta
@@ -45,9 +45,9 @@ var _dia_maximo := 0
 
 func conferir(nome: String, ok: bool, detalhe: String = "") -> void:
 	if ok:
-		print("  PASS  T25: %s" % nome)
+		print("  PASS  T26: %s" % nome)
 	else:
-		print("  FAIL  T25: %s%s" % [nome, ("  — " + detalhe) if detalhe != "" else ""])
+		print("  FAIL  T26: %s%s" % [nome, ("  — " + detalhe) if detalhe != "" else ""])
 		falhas += 1
 
 

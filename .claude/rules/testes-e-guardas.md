@@ -53,9 +53,9 @@ prova que a régua consegue ver um toque (`117`).
 código de saída vê um timeout; o `Parse Error` está na saída parcial, e é
 por isso que o executor julga a compilação antes do teto (`117`).
 
-## O jogador ao acaso (T25, `118`)
+## O jogador ao acaso (T26, `118`)
 
-O T25 joga partidas inteiras ao acaso, com semente, e confere a cada passo o
+O T26 joga partidas inteiras ao acaso, com semente, e confere a cada passo o
 que vale sempre. Três lições custaram a medição dele:
 
 - ⚠️ **ROBÔ SEM CONTROLE DE EXERCÍCIO PASSA VERDE SEM TER JOGADO.** A primeira
@@ -71,7 +71,7 @@ que vale sempre. Três lições custaram a medição dele:
 - ⚠️ **SUÍTE QUE DEVOLVE `false` NO `_process` PENDURA SE O `_run()`
   ABORTAR.** O vigia de frames do `run_tests` e do `teste_fumaca` reprova com
   nome; um mutante que fazia o T4d rebentar pendurava a suíte até ao teto.
-- **Bloco novo vive num arquivo próprio** (como o T24 e o T25), e o rótulo de
+- **Bloco novo vive num arquivo próprio** (como o T24, o T25 e o T26), e o rótulo de
   falha tem `FAIL`/`FALHA`/`FALHOU` seguido de espaço — é por aí que o
   executor de mutantes sabe que guarda reprovou (`119`).
 
