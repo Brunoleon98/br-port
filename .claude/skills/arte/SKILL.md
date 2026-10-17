@@ -430,6 +430,17 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   A terceira passagem devolveu a linha ao lugar e encheu o vão com uma peça
   que diz alguma coisa (o recibo da parcela), e foi aceite. Quando a queixa é
   um VAZIO, a correção que só o muda de sítio raramente chega.
+  ⚠️ **E NA `122` O «OUTRO» DA LISTA TROUXE O DEFEITO E O FIM.** O veredito
+  voltou «Ajustar», nenhuma das quatro opções da lista marcada, e no «Outro»
+  um defeito que eu não tinha visto («aparece uma linha amarela») mais a
+  ordem de fechar («corrija isso e na próxima sessão pode seguir»). Leia-o
+  assim: o que ele não marca não se faz, o que escreve faz-se, e a passagem
+  acaba nela — sem nova prancha nem nova pergunta. O envio e a pergunta em
+  blocos seguidos do mesmo turno voltaram 3 de 3 nessa sessão.
+  E o ESCOPO pode sair maior do que a recomendada: ali ele escolheu «as três
+  obras» contra «só o pátio», e a pergunta seguinte foi a da COMPOSIÇÃO de
+  cada máquina nova (onde, e o que faz em cada dia), com a prévia vista de
+  cima — voltou com as recomendadas.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

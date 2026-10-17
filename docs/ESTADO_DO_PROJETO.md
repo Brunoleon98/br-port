@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 16/10/2026 — a obra no mapa, candidata (`121`)
+> **Atualização:** 16/10/2026 — o maquinário da obra (`122`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -20,7 +20,8 @@ reparar o píer 2 desde o início, o armazém na semana 2 e o pátio a partir da
 semana 5, depois da primeira cobrança quitada (`085`). Na Fase 1 são até dois
 píeres; a Fase 2 abre o píer 3 e o escritório (`104`).
 Uma obra por vez, paga ao iniciar: píer/armazém em dois dias, pátio em três,
-e o mapa mostra cada dia dela (`121`); benefícios só ao concluir (`087`); a que só acaba no fecho do dia 84 avisa
+e o mapa mostra cada dia dela, com a máquina de cada uma — balsa com
+bate-estaca, caminhão munck, rolo (`121`, `122`); benefícios só ao concluir (`087`); a que só acaba no fecho do dia 84 avisa
 que não será usada nesta fase (`090`).
 
 **O rodapé é escuro, e só o "Avançar dia" é âmbar cheio** (`081`): o
@@ -28,7 +29,8 @@ desligado, a faixa, a parcela e os cartões recuam abaixo dele (**D43**).
 **As conversas falam como no celular, e o fim de fase é uma página do diário**
 (`082`, **D44**, **D22**). **Atracar é a escolha do dia** (`083`): até três
 barcos esperam ao largo, dois dias cada; tocar num atraca-o com o trabalhador
-do píer, e quem não for chamado vai embora e custa reputação.
+do píer, e quem não for chamado vai embora e custa reputação. Cancelar um
+serviço solta a equipe no dia, por −5 de reputação e 10% de multa (`111`).
 
 **A câmera mostra um DISTRITO e não três berços.** O `MEIA_LARG` efetivo é 20 e
 ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14 a
@@ -42,10 +44,8 @@ em rampas.
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
 a forma; D20/D21/D24/D27 conferem o raster.
 
-**A RESOLUÇÃO SUBIU NAS DUAS ALAVANCAS QUE PAGAM** — mapa a 1080 (`025`) e
-props a 768 px num quadro de 512 COORDENADAS (`029`); o **D31** tranca. ⚠️ **E
-A MOLDURA SAIU DA VRAM** pelo importador `texture_atlas` — **235,68 → 64,04
-MB** em jogo, `.pck` −17,4% (`049`). A água fica a 720 (`026`).
+**Mapa a 1080 (`025`), props a 768 px num quadro de 512 coordenadas (`029`,
+D31) e a moldura fora da VRAM pelo atlas (`049`)**; a água fica a 720 (`026`).
 
 **E OS CASCOS TÊM CURVA** (`024`, **D29**): quem lia quadrado era o casco,
 tapado pelo contêiner; as construções ficam quadradas, e é decisão.
@@ -110,13 +110,11 @@ distingue é a silhueta, e por isso "comércios variados" ficou de fora.
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
-**Cancelamento na main (`111`, PR #133):** equipe livre no dia, −5, multa de
-10%, contas, registro 5 e migração 17→18. Medição na `110`; CI verde no merge.
-Pesquisa `112`: `PESQUISA_RECURSOS_BASICOS_2026-10-15.md`; revisão preservada.
-**Como jogar/glossário na main (`114`–`116`, PR #134):** inicial e pausa;
-recorte no `RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`. Leitura e telefone
-pendentes. **A obra no mapa (`121`)**: andaime, tabuado e asfalto dia a dia;
-candidata, à espera do aceite na foto do jogo.
+**Na main:** o cancelamento (`109`–`111`, PR #133), a pesquisa de recursos
+básicos (`112`), como jogar/glossário na inicial e na pausa (`114`–`116`, PR
+#134; leitura e telefone pendentes) e a obra no mapa (`121`, PR #136).
+**O maquinário da obra (`122`)** foi aceite na foto; a fila do Bruno segue
+nas estruturas da cidade e depois no mapa (§7).
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
 A `107` permanece local e separada, sem autorização de publicação nem teste
@@ -131,7 +129,7 @@ histórico em `HISTORICO.md`.
 |---|---|---|
 | **A1** | Jogado e triado; fica **a ordem do resto** | Ver abaixo |
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas, o caderno, Toninho, Sr. Ribeiro e a página da Fase 2 com o aviso da Cida (`067`, `082`, `101`, `102`, `106`) |
-| **A5** | Frentes 1, 3 e 6 fechadas; retratos e animações no jogo. Recortes e aceite no plano de arte e em `art_lab/` | Falta a máquina do contêiner (`079`); trabalhadores extras são do item 5. A obra no mapa (`121`) espera aceite; o galpão recuperado V3 só existe no checkout do ChatGPT |
+| **A5** | Frentes 1, 3 e 6 fechadas; retratos e animações no jogo. Recortes e aceite no plano de arte e em `art_lab/` | Falta a máquina do contêiner (`079`); trabalhadores extras são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
 | **A7** | **Jogar pelo link do Pages** e ver duas pessoas jogarem; o FPS no telefone; as partidas em `playtest/` (`099`) | Só ele joga |
 | **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
@@ -186,7 +184,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/medir_desempenho.gd` | **A régua do custo por quadro** — desenho, nós e o `_process` pela chamada direta, calibrada; `xvfb-run`, `DESEMPENHO MEDIDO` (`099`) |
 | `playtest/` | As partidas reais do A7, uma por `.jsonl`, sem o nome de quem jogou (`006`, `099`) |
 | `brport_vs/scripts/TrafegoDeCamioes.gd` | **Os camiões da rua** — rotas, cedência, visita ao berço; objeto do `Main`, lido pelo `trafego` (`095`) |
-| `brport_vs/scripts/ObraNoMapa.gd` | **A obra no mapa** — o armazém e o pátio de cada dia; o asfalto é o mapa pronto recortado (`121`, D45) |
+| `brport_vs/scripts/ObraNoMapa.gd` | **A obra no mapa** — o armazém e o pátio de cada dia; o asfalto é o mapa pronto recortado (`121`, D45). Foto de um dia de obra: `tools/capturar_obra.gd` (`122`) |
 | `brport_vs/scripts/NarradoraDaCida.gd` | **A Dona Cida na faixa** — gatilhos, variantes e memórias; objeto do `Main` (`096`) |
 | `brport_vs/scripts/TutorialDoToninho.gd` | **O tutorial do dia 1** — atracar e avançar, por cima do jogo e sem save; objeto do `Main` (`101`) |
 | `brport_vs/scripts/VezDasTelas.gd` | **A vez das telas que abrem sozinhas**, uma de cada vez; objeto do `Main` (`054`, `097`) |

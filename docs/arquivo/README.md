@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-17.md` | 17/10 | O maquinário da obra (`122`): balsa com bate-estaca, caminhão munck e o rolo de tambor à mostra; aceite com a linha amarela corrigida, a fila segue nas estruturas da cidade |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-16c.md` | 16/10 | A obra no mapa (`121`): píer, armazém e pátio dia a dia, o D45 e sete mutantes; candidata à espera do aceite |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-16b.md` | 16/10 | Lateral: catálogo de defeitos (`117`), jogador ao acaso T26 (`118`), pré-PR entre agentes (`119`) e as provas do Codex no catálogo (`120`); PR aberto a pedido do Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-16.md` | 16/10 | Publicação autorizada da ajuda no PR #134 (`116`), fecho na mesma branch e leitura/telefone/merge pendentes |

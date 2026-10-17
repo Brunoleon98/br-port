@@ -201,6 +201,12 @@ O passo está no item 5 do núcleo. As armadilhas:
   o perfil Descuidado passa a partida toda. Ao acrescentar arte que uma
   condição do jogo destrava, pergunte QUAL das capturas monta essa condição —
   e se nenhuma monta, o tiro novo faz parte da entrega.
+  ⚠️ **E A PRANCHA NÃO ALCANÇA UM DIA DE OBRA** (`122`). Ela joga 16 turnos à
+  espera de ver o prop e reprova («não teve foto do jogo em 16 turnos»): o
+  pátio só abre depois da primeira cobrança e a obra dura dois ou três dias.
+  Quem monta a obra no quadro pedido, com os vizinhos de uma partida semeada,
+  é `brport_vs/tools/capturar_obra.gd`, e troca a textura de um nó por uma
+  candidata lida do arquivo — a mesma foto que a prancha daria, sem os números.
   ⚠️ **E O ESTADO PODE NÃO EXISTIR NUNCA, com tudo verde.** A animação do
   trabalhador ia ligar-se com `progress > 0`, o «operando» de sempre — e o
   pesqueiro, o único barco do nível 1, parte no MESMO avanço em que o

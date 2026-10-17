@@ -796,11 +796,11 @@ no telefone (nada dela chegou ao GitHub) e escolheu **a obra no mapa** contra o
 armazém recuperado V3: andaime e material, dia a dia, sem pessoas, e o cartão
 da doca com o prazo (`121`). As obras que a `074` deixou fora existem desde a
 `087`. O pátio levou uma segunda passagem a pedido dele (rolo maior, mais
-asfalto no dia 2); o PR foi aberto a pedido dele **antes do aceite**, que
-continua a ser na foto do jogo. O recuperado V3 continua só no checkout do
-ChatGPT.
+asfalto no dia 2); ele fundiu-a no PR #136, com o CI verde. O recuperado
+V3 continua só no checkout do ChatGPT.
 **A fila que ele deu para as conversas seguintes, por esta ordem:** (1) o
-design do maquinário de obra (o rolo compactador); (2) as estruturas da
+design do maquinário de obra — **fechado em 16/10 (`122`)**: ele abriu o
+escopo às três obras (rolo, balsa com bate-estaca, caminhão munck); (2) as estruturas da
 cidade; (3) o mapa — as melhorias que a sessão achar e as que ele viu: uma
 sombra bem QUADRADA nos píeres, e o mar que, em vez de escurecer ao largo,
 tem áreas ao fundo mais claras, como se fosse mais raso. Cada uma abre pela
