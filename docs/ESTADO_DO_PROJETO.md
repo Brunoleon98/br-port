@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 17/10/2026 — retomada no PR #140 (`125`, sem merge)
+> **Atualização:** 17/10/2026 — o terreno e a vegetação (`127`); a retomada (`125`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -43,6 +43,11 @@ arrebentação e cáusticas nas praias; a sombra do muro esvai.
 **As duas pontas são costa desenhada** (`023`), com o cais reto. Água, baixio,
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
 a forma; D20/D21/D24/D27 conferem o raster.
+
+**O chão tem textura e sobe num MORRO de mata atrás da vila** (`127`, **D47**).
+As árvores são do Blender e BALANÇAM — no morro, acima do contorno da vila, e
+na **restinga** das pontas, com o pé fora da areia; entre as casas vão
+EMBUTIDAS no SVG, paradas.
 
 **Mapa a 1080 (`025`), props a 768 px num quadro de 512 coordenadas (`029`,
 D31) e a moldura fora da VRAM pelo atlas (`049`)**; a água fica a 720 (`026`).
@@ -94,8 +99,8 @@ verdade** — parede desabada, meio telhado, portão fora do trilho.
 
 **O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
 central e passadeiras) — **três camiões descem e dois sobem, pela DIREITA, e os dois sentidos encostam nos berços** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
-e uma **viela de terra entre elas** — a de trás mais rala, para a vila DESFIAR
-contra a mata. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
+e uma **viela de terra entre elas** — a de trás mais rala, a desfiar no quintal
+e na mata do morro. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
 
 **A VILA É HUMILDE DE PROPÓSITO** (`123`): meia-água de fibrocimento, casinha
 de empena, quatro águas, varanda e casa em L, cada uma num terreno de muro
@@ -114,9 +119,10 @@ A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
 **Na main:** cancelamento, pesquisa de recursos e ajuda (`109`–`116`; da
 ajuda faltam leitura e telefone), a obra, o maquinário e a vila (`121`–`123`).
-**O mar (`124`)** foi aceite na foto; a fila que o Bruno deu acabou (§7).
-**Meu porto agora (`125`):** resumo antes do porto por Continuar/Carregar,
-no PR #140 em rascunho; consulta sem efeitos, sem atalhos. Claude no visual.
+**Meu porto agora (`125`, PR #140, na main):** resumo antes do porto por
+Continuar/Carregar; consulta sem efeitos, sem atalhos.
+**A fila da `126`** (§7): terreno e vegetação (`127`), **não aceite**,
+continua; depois, estradas e detalhes.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
 A `107` permanece local e separada, sem autorização de publicação nem teste
@@ -133,7 +139,7 @@ histórico em `HISTORICO.md`.
 | **A4** | ⚠️ **Três leituras (13, 19 e 23/09)**, notas aplicadas (`048`): resta ler em voz alta as falas reescritas, o caderno, Toninho, Sr. Ribeiro e a página da Fase 2 com o aviso da Cida (`067`, `082`, `101`, `102`, `106`) |
 | **A5** | Frentes 1, 3 e 6 fechadas; retratos e animações no jogo. Recortes e aceite no plano de arte e em `art_lab/` | Falta a máquina do contêiner (`079`); trabalhadores extras são do item 5. O galpão recuperado V3 só existe no checkout do ChatGPT |
 | **A7** | **Jogar pelo link do Pages** e ver duas pessoas jogarem; o FPS no telefone; as partidas em `playtest/` (`099`) | Só ele joga |
-| **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Este contêiner não tem placa de som. O protocolo está em `docs/PROTOCOLO_DE_ESCUTA.md`: telefone-alvo, volume fixo anotado, isolado E em contexto, três perguntas acionáveis. ⚠️ Comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
+| **A6** | **Ouvir** — a metade de máquina fechou (`040`) | Sem placa de som aqui. Protocolo em `docs/PROTOCOLO_DE_ESCUTA.md`; ⚠️ comece pela §4 — **o aviso tem 99% da energia abaixo de 500 Hz** |
 
 ---
 
@@ -151,7 +157,7 @@ histórico em `HISTORICO.md`.
 | `tools/ler_registros.py` | **O leitor** — resume N partidas e põe o jogador MEDIDO ao lado dos perfis supostos; dia pago → pronto e semanas do cabeçalho (`088`) |
 | `brport_vs/tools/gravar_partidas.gd` | Joga N partidas com o gravador armado. Existe para o CI pôr gravador e leitor a encontrar-se |
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
-| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`). O **D34** pergunta de ONDE vem um stylebox (`045`); espera `DESIGN OK` |
+| `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`); espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Fumaça** — cenas, ícones, save, tokens e falas; prazo prometido (F18), nomes lidos por string (F19), fases declaradas contra o alcançado (F20), exemplos de save (F21), tutorial (F22), Fase 2 e M9 (F23) |
 | `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
 | `brport_vs/tools/gravar_save_de_exemplo.gd` | Grava o save de exemplo da versão corrente em `tests/saves/` (`098`) |
@@ -161,9 +167,9 @@ histórico em `HISTORICO.md`.
 | `brport_vs/scripts/PainelMensagens.gd` | O histórico da faixa como **conversa no celular** (`PainelCelular.gd`, o aparelho partilhado com o menu). Em memória, sem migrar save (`067`) |
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
-| `brport_vs/tools/medir_contraste_ui.gd` | A tabela de cada texto em cada estado do percurso (`CONTRASTE MEDIDO`). ⚠️ O percurso não monta dia passado; como ele alcança cada estado, e prova que chegou ao nó, está na `042`–`044` |
-| `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn` (`036`). **Zero chamadas e zero exceções** desde a 5ª leva; ele também denuncia exceção MORTA (`045`) |
-| `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo; e as peças de número das famílias (bloco de contas, quadro, barra do HUD) |
+| `brport_vs/tools/medir_contraste_ui.gd` | A tabela de cada texto em cada estado do percurso (`CONTRASTE MEDIDO`); como o percurso alcança cada estado está na `042`–`044` |
+| `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn` (`036`). **Zero chamadas e zero exceções**; ele também denuncia exceção MORTA (`045`) |
+| `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo; e as peças de número (bloco de contas, quadro, barra do HUD) |
 | `brport_vs/scripts/TelaNomes.gd` + `PainelDiario.gd` | A folha de rosto do caderno — o nome do cais, irrevogável (GDD 7), e o do jogador — e a primeira página do diário, por baixo dela. O caderno desenha-se em `FolhaDoCaderno.gd` (`067`) |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
 | `brport_vs/tools/recortar_captura.gd` | Recorta e amplia um pedaço de captura, sem suavizar |
@@ -186,19 +192,20 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/medir_desempenho.gd` | **A régua do custo por quadro** — desenho, nós e o `_process` pela chamada direta, calibrada; `xvfb-run`, `DESEMPENHO MEDIDO` (`099`) |
 | `playtest/` | As partidas reais do A7, uma por `.jsonl`, sem o nome de quem jogou (`006`, `099`) |
 | `brport_vs/scripts/TrafegoDeCamioes.gd` | **Os camiões da rua** — rotas, cedência, visita ao berço; objeto do `Main`, lido pelo `trafego` (`095`) |
+| `brport_vs/scripts/MataNoMapa.gd` | **A mata que balança**, do morro e da restinga, entre os irmãos do `Cenario` pela profundidade (`127`) |
 | `brport_vs/scripts/ObraNoMapa.gd` | **A obra no mapa** — o armazém e o pátio de cada dia; o asfalto é o mapa pronto recortado (`121`, D45). Foto de um dia de obra: `tools/capturar_obra.gd` (`122`) |
 | `brport_vs/scripts/NarradoraDaCida.gd` | **A Dona Cida na faixa** — gatilhos, variantes e memórias; objeto do `Main` (`096`) |
 | `brport_vs/scripts/TutorialDoToninho.gd` | **O tutorial do dia 1** — atracar e avançar, por cima do jogo e sem save; objeto do `Main` (`101`) |
 | `brport_vs/scripts/VezDasTelas.gd` | **A vez das telas que abrem sozinhas**, uma de cada vez; objeto do `Main` (`054`, `097`) |
 | `brport_vs/scripts/PropIso.gd` | **O quadro de um prop, num lugar só** — 512 de coordenada para 768 de pixel, e a conta que traduz um no outro (`029`); `imagem()` repõe o quadro de um prop em atlas (`049`) |
-| `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da MESMA caixa; diz "não sei" onde a peça é pequena ou esbelta demais (`024`) |
-| `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. «Órfão» não é «apagável» (`046`); hoje **9 de 334**, o atlas não conta (`049`) |
+| `tools/medir_silhueta_props.py` | **A régua da forma** — a fração da silhueta nas três direções de uma caixa, contra formas ideais da mesma caixa; "não sei" na peça pequena ou esbelta (`024`) |
+| `tools/arte_orfa.py` | **Que arte NÃO chega à tela** — relatório, não portão. «Órfão» não é «apagável» (`046`); o atlas não conta (`049`) |
 | `brport_vs/tools/medir_boletim.gd` | **A régua do boletim** — herda o simulador e confere cada afirmação da Dona Cida contra o estado, no instante em que ela fala. CI, `BOLETIM OK` (`048`) |
 | `tools/comparar_props.py` | "Este prop mudou?", com os dois a 16×16 — cego à resolução; achou a gravata coplanar (`029`) |
 | `tools/gerar_props_iso.py` | Gera os props isométricos em Blender por script, na projeção do mapa, a **768 px num quadro de 512 coordenadas** (`029`). Confere a própria projeção ao fim |
 | `brport_vs/tools/simular_balanceamento.gd` | Simulador — N partidas em **quatro perfis**: Ótimo, Mediano, Descuidado e Antecipado (`018`). Mede a Fase 1 e pára na passagem (`104`) |
 | `brport_vs/tools/leitura_do_simulador.gd` | A conclusão dele, fora do `SceneTree` para se provar com fixture (T7). Identidade ausente ou dupla: código 1 (`030`) |
-| `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem abrir o editor. Avança por TURNO efetivo, pelo botão do jogo, e pára diante de modal (`031`) |
+| `brport_vs/tools/capturar_tela.gd` | Tira um PNG do jogo rodando, sem editor; avança por turno efetivo e pára diante de modal (`031`) |
 | `brport_vs/tools/medir_trelica.gd` + `capturar_fase_2.gd` | Preços do recorte 2 e foto da partida jogada desde o dia 1 até ao cargueiro (`105`) |
 | `brport_vs/tools/folha_props.gd` | **A folha dos props de mapa, a 1:1**, cada um sobre o chão que o mapa pinta sob a âncora dele (`027`). Reprova ao transbordar; o catálogo e o chão vivem em `catalogo_props.gd` |
 | `brport_vs/tools/prancha_prop.gd` | **Para iterar UM prop**: a versão do jogo contra a candidata, na foto do jogo, a 1:1, ampliada, em silhueta e valor e na escala, com os números. Sem candidata exige Δ zero (`068`) |
@@ -255,12 +262,10 @@ histórico em `HISTORICO.md`.
 - **Três cobranças na Fase 1**, ao fim das semanas 4, 8 e 12. A semana só
   fecha depois da decisão; as duas primeiras retomam a partida, a terceira
 passa à Fase 2 (`104`).
-  **Quitar antes abate só juros da janela** (`085`) e mantém o recibo até o fecho
-  do período, sem abrir a próxima cobrança antes dele (`085`). Sem o boleto
-  nas duas primeiras, a segunda chance (`102`).
-- **Três reparos disponíveis por progressão na Fase 1**, no catálogo de estruturas:
-  píer 2, armazém e pátio. A terceira doca e os upgrades continuam na bancada
-  de arte e testes, mas não podem ser comprados nesta Fase 1 (`085`). O guindaste
+  **Quitar antes abate só juros da janela** e mantém o recibo até o fecho do
+  período (`085`). Sem o boleto nas duas primeiras, a segunda chance (`102`).
+- **Três reparos por progressão na Fase 1**: píer 2, armazém e pátio; a
+  terceira doca e os upgrades não se compram nesta fase (`085`). O guindaste
   fica em madeira; o conjunto visual n1 conserva a base correta (`086`). O
   pátio dobra a renda do píer; o bônus de contêiner espera o cargueiro (`103`).
 - **A faixa de mensagem tem FILA** — as duas fontes (sistema e Dona Cida) uma

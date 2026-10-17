@@ -34,6 +34,9 @@ const NarradoraDaCida := preload("res://scripts/NarradoraDaCida.gd")
 # dia, do dia em que se paga ao dia em que ficam prontos. `preload` pela razão
 # do tráfego: ele lê o `GameState` pelo nome.
 const ObraNoMapa := preload("res://scripts/ObraNoMapa.gd")
+# A MATA DO MORRO (`docs/decisoes/127`): as árvores do Blender atrás da vila,
+# intercaladas no `Cenario` pela profundidade e a balançar como os coqueiros.
+const MataNoMapa := preload("res://scripts/MataNoMapa.gd")
 # A FILA DAS TELAS QUE ABREM SOZINHAS, num script seu desde o terceiro corte
 # do M8 (`docs/decisoes/097`). `preload` pela mesma razão.
 const VezDasTelas := preload("res://scripts/VezDasTelas.gd")
@@ -136,6 +139,9 @@ var narradora: NarradoraDaCida = NarradoraDaCida.new(_fila)
 @onready var obra: ObraNoMapa = ObraNoMapa.new(_mapa,
 	$MapaWrap/AsfaltoDaObra as Polygon2D,
 	$MapaWrap/Cenario/CanteiroDoPatio as TextureRect)
+# A MATA DO MORRO. Planta-se ao montar a cena, antes de o trânsito começar a
+# reordenar os camiões entre os irmãos — que passam a contar com ela.
+@onready var mata: MataNoMapa = MataNoMapa.new($MapaWrap/Cenario as Control)
 
 # As estruturas trocam de TEXTURA, não de nó: assim o prop ocupa exatamente o
 # mesmo quadro nos dois estados e o prédio não salta ao ser consertado — a
@@ -185,6 +191,7 @@ func _ready() -> void:
 	_refresh_all()
 	_animar_ancorados()
 	_animar_coqueiros()
+	mata.animar()
 	_animar_boias()
 	_animar_luzes()
 	trafego.animar_caminhoes()

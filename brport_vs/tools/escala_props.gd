@@ -27,9 +27,17 @@ extends SceneTree
 # afastaria os props pela largura do NOME, que é exatamente a distância que
 # esta página existe para não inventar.
 #
+# ⚠️ E SÃO DUAS PÁGINAS desde 17/10 (`127`): as dezanove espécies de árvore
+# levaram-na de 88 a 107 props, e uma página pedia 1515 px em 1280. As filas
+# dividem-se pela ordem — do mais alto ao mais baixo —, a régua abre cada
+# fila nas duas, e a numeração continua de uma para a outra. Como na folha de
+# contato, as páginas pedidas fazem parte do contrato: a que não chega, ou a
+# que sobra, reprova (`capturar_evidencia.sh`).
+#
 # Uso (Linux, sem monitor — precisa de xvfb):
 #   xvfb-run -a Godot --path brport_vs --rendering-driver opengl3 \
-#     --resolution 720x1280 --script res://tools/escala_props.gd -- <saida.png>
+#     --resolution 720x1280 --script res://tools/escala_props.gd \
+#     -- <saida.png> [<pagina> <total_de_paginas>]
 # ============================================================
 
 const FRAMES_ATE_ASSENTAR := 8
@@ -71,6 +79,8 @@ const DESENHO_MIN := 19
 
 var _cat: RefCounted
 var _saida := "user://escala.png"
+var _pagina := 1
+var _total := 1
 var _montado := false
 var _frames := 0
 var _foto: Image = null
@@ -109,8 +119,8 @@ func _process(_delta: float) -> bool:
 		print("FALHOU ao salvar em %s" % _saida)
 		quit(1)
 		return true
-	print("Folha salva em %s (%dx%d) — escala de %d props e %d réguas fora do mapa"
-		% [_saida, _foto.get_width(), _foto.get_height(), _n_props,
+	print("Folha salva em %s (%dx%d) — página %d de %d, %d props e %d réguas fora do mapa"
+		% [_saida, _foto.get_width(), _foto.get_height(), _pagina, _total, _n_props,
 			_artes.size() - _n_props]
 		+ " (%d quadros de animação e de obra contados pelo de repouso)" % _n_quadros)
 	quit(0)
@@ -191,6 +201,9 @@ func _montar() -> bool:
 	var args := OS.get_cmdline_user_args()
 	if args.size() >= 1:
 		_saida = args[0]
+	if args.size() >= 3:
+		_pagina = int(args[1])
+		_total = int(args[2])
 	_cat = load("res://tools/catalogo_props.gd").new(root.get_node("GameState"))
 	var nomes: Array = _cat.catalogo()
 	var quadros := _quadros_de_animacao()
@@ -255,27 +268,49 @@ func _montar() -> bool:
 	if not atual.is_empty():
 		filas.append(atual)
 
-	var alt_filas := 0.0
-	for f in filas:
-		alt_filas += maxf(float(f[0]["tam"].y), regua_tam.y) + NUMERO + ENTRE_FILAS
-	var linhas_legenda := int(ceil(float(pecas.size()) / float(COLUNAS_LEGENDA)))
-	var alt_legenda := 20.0 + float(linhas_legenda) * LINHA_LEGENDA
-
+	# AS PÁGINAS: as filas enchem a primeira pela ordem, e a seguinte começa
+	# na fila que já não cabe — com a legenda DA PÁGINA, que só lista os dela.
 	# ⚠️ A PÁGINA QUE TRANSBORDA REPROVA, como a folha de contato: um prop novo
 	# alto o bastante para empurrar a legenda para fora da tela sairia cortado
 	# sem uma palavra, e a legenda é a única forma de saber quem é quem.
-	if CABECALHO + alt_filas + alt_legenda + MARGEM > ALT:
-		print("FALHOU — a escala pede %.0f px e a tela tem %.0f (%d filas, %d props)."
-			% [CABECALHO + alt_filas + alt_legenda + MARGEM, ALT, filas.size(), pecas.size()])
+	var paginas: Array = [[]]
+	for f in filas:
+		var tentativa: Array = paginas[-1].duplicate()
+		tentativa.append(f)
+		if _altura(tentativa, regua_tam) > ALT and not paginas[-1].is_empty():
+			paginas.append([f])
+		else:
+			paginas[-1] = tentativa
+	for pg in paginas:
+		if _altura(pg, regua_tam) > ALT:
+			print("FALHOU — a escala pede %.0f px numa página e a tela tem %.0f (%d filas)."
+				% [_altura(pg, regua_tam), ALT, pg.size()])
+			quit(1)
+			return false
+	if paginas.size() != _total:
+		print("FALHOU — a escala de %d props pede %d página(s) e pediram-se %d. "
+			% [pecas.size(), paginas.size(), _total]
+			+ "Acrescente ou tire uma chamada no capturar_evidencia.sh.")
 		quit(1)
 		return false
+	if _pagina < 1 or _pagina > _total:
+		print("FALHOU — pediu-se a página %d de %d." % [_pagina, _total])
+		quit(1)
+		return false
+	var todas := pecas
+	filas = paginas[_pagina - 1]
+	pecas = []
+	for f in filas:
+		pecas.append_array(f)
+	_n_props = pecas.size()
+	var linhas_legenda := int(ceil(float(pecas.size()) / float(COLUNAS_LEGENDA)))
 
 	# ⚠️ E O NOME DA LEGENDA TAMBÉM NÃO PODE SER CORTADO — `Label` que não cabe
 	# corta sem erro. Mede-se o pior do catálogo, pela mesma chamada que o
 	# desenha.
 	var fonte := ThemeDB.fallback_font
 	var col := (LARG - 2.0 * MARGEM) / float(COLUNAS_LEGENDA)
-	for p in pecas:
+	for p in todas:
 		var t := _entrada(p)
 		var w := fonte.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, FONTE_LEGENDA).x
 		if w > col - 4.0:
@@ -287,8 +322,8 @@ func _montar() -> bool:
 	fundo.color = FUNDO
 	fundo.size = Vector2(LARG, ALT)
 	root.add_child(fundo)
-	_texto("ESCALA — os %d props de mapa a 1:1, com o pé na mesma linha" % pecas.size(),
-		Vector2(MARGEM, 4.0), 15, TINTA)
+	_texto("ESCALA — os %d props de mapa a 1:1, com o pé na mesma linha (%d de %d)"
+		% [todas.size(), _pagina, _total], Vector2(MARGEM, 4.0), 15, TINTA)
 	_texto("do mais alto ao mais baixo · a régua (a âmbar), no começo de cada fila: "
 		+ "trabalhador, pedestre e carro", Vector2(MARGEM, 25.0), 11, TINTA_FRACA)
 
@@ -335,6 +370,17 @@ func _montar() -> bool:
 			Vector2(MARGEM + float(c) * col, y + float(l) * LINHA_LEGENDA),
 			FONTE_LEGENDA, TINTA_FRACA)
 	return true
+
+
+## A altura que uma página com estas filas pede, a legenda dela incluída.
+func _altura(filas: Array, regua_tam: Vector2) -> float:
+	var alt := CABECALHO + MARGEM
+	var n := 0
+	for f in filas:
+		alt += maxf(float(f[0]["tam"].y), regua_tam.y) + NUMERO + ENTRE_FILAS
+		n += (f as Array).size()
+	var linhas := int(ceil(float(n) / float(COLUNAS_LEGENDA)))
+	return alt + 20.0 + float(linhas) * LINHA_LEGENDA
 
 
 func _entrada(p: Dictionary) -> String:

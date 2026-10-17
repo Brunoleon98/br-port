@@ -343,8 +343,17 @@ def main() -> int:
                   f"{sv_mb}→{sv_nos} aqui)")
 
         arvore_dois, _ = juntar("HEAD", ref)
-        catalogo_dois = arvore_dois if ler(arvore_dois, CATALOGO) is not None else "HEAD"
-        perdidos = orfaos(arvore_dois, catalogo_dois, conf)
+        # ⚠️ E O PRÓPRIO CATÁLOGO PODE ESTAR EM CONFLITO — os dois agentes
+        # acrescentam mutantes no fim dele —, e então o texto juntado traz as
+        # marcas de conflito e não se lê: a ferramenta rebentava a meio, sem
+        # veredito (`127`, com o PR #140). Confere-se cada um dos dois
+        # catálogos contra a árvore juntada.
+        if CATALOGO in conf:
+            perdidos = orfaos(arvore_dois, "HEAD", conf) + orfaos(arvore_dois, ref, conf)
+        else:
+            catalogo_dois = arvore_dois if ler(arvore_dois, CATALOGO) is not None \
+                else "HEAD"
+            perdidos = orfaos(arvore_dois, catalogo_dois, conf)
         if perdidos:
             avisos.append(f"mutante órfão com {ref}")
             print("    ⚠ quando os dois se juntarem ficam órfãos: " + "; ".join(perdidos))

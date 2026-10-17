@@ -137,6 +137,10 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   **Nos retratos de fala ele escolheu Standard a −0,35 EV** (`055`) — ⚠️ a
   0 EV a gola estourava: 54% dos pixels claros a 255. Troca de transformada
   mede-se pelo ESTOURO, não só pelo p99.
+  ⚠️ **E O VERDE-ACINZENTADO CLARO SAI QUASE BRANCO.** A embaúba (#93a88f) e
+  o guriri (#93ab68) leram como árvore seca, e só desceram a ~#5f7d62 e
+  #6e8a4a (`127`). Folha prateada escolhe-se dois degraus abaixo do que a
+  paleta mostra, e confere-se no PNG.
 - **Peça que avança o CHÃO de um prop avança a PEGADA, e as faces não têm a
   mesma folga.** Antes de escolher em que face sai um deck, uma escada ou um
   toldo que pousa, meça a folga de cada uma em `porto_mapa_ancoras.json` — o
@@ -573,3 +577,14 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   medir contra uma segunda corrida do mesmo código (`056`).
 - A sombra de contato tem **azimute próprio (250°)**, diferente do azimute do
   mapa: no azimute do mapa ela cai atrás do prop e não se vê.
+  ⚠️ **E A ROTAÇÃO `X` DA LUZ É O ÂNGULO AO ZÉNITE, não a altura do sol.** A
+  sombra das árvores ia a 82° para «sol alto» e saiu RASANTE: 119 px de
+  sombra, contra 64 a 62° e 21 a 20° (`127`, `SOMBRA_ZENITE`). Sol alto é `X`
+  pequeno; meça o comprimento da sombra no PNG antes de dizer o que o número
+  faz.
+- **⚠️ COPA DE ÁRVORE DO BLENDER LÊ COMO O MAPA EM FACETAS, NÃO EM RELEVO.**
+  Bolas lisas liam nuvem ou repolho; com relevo de ruído, o Bruno achou a
+  textura «estranha em relação ao jogo» (`127`). Icosfera de 80 faces,
+  chapada, com os vértices tremidos ±9% — o polígono com saia do mapa, em
+  volume. E a fruta, a flor e o acento pousam numa BOLA da copa, na face que
+  a câmara vê: contadas do centro, penduraram-se por baixo dela.

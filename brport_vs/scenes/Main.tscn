@@ -591,7 +591,7 @@ position = Vector2(78, 196)
 atraso_inicial = 0.8
 
 [node name="QueroQuero" parent="MapaWrap/Fauna" instance=ExtResource("fauna_quero")]
-position = Vector2(455, 105)
+position = Vector2(456, 76)
 atraso_inicial = 3.1
 
 [node name="Capivara" parent="MapaWrap/Fauna" instance=ExtResource("fauna_capivara")]
