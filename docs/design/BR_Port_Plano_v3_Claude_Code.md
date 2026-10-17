@@ -803,10 +803,11 @@ design do maquinário de obra — **fechado em 16/10 (`122`)**: ele abriu o
 escopo às três obras (rolo, balsa com bate-estaca, caminhão munck); (2) as estruturas da
 cidade — **fechado em 17/10 (`123`)**: a vila humilde do nível 1, com seis
 formas de casa, terreno com muro, igreja com adro e praça da matriz, aceite à
-quinta passagem; (3) o mapa — as melhorias que a sessão achar e as que ele viu: uma
-sombra bem QUADRADA nos píeres, e o mar que, em vez de escurecer ao largo,
-tem áreas ao fundo mais claras, como se fosse mais raso. Cada uma abre pela
-pergunta do escopo (`/arte`), e o mar pela medição antes de mexer.
+quinta passagem; (3) o mapa — **fechado em 17/10 (`124`)**: o mar escurece
+até ao largo, a sombra do muro esvai sem quina, e no lugar dos riscos «~»
+há marolas, correntes, arrebentação e cáusticas, aceite à terceira
+passagem. **A fila que ele deu acabou**: a conversa seguinte pergunta-lhe
+o que vem, com opções e a recomendada primeiro, e não escolhe por ele.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

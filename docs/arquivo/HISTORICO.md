@@ -872,3 +872,14 @@ uma **praça** com coreto e **duas obras**, dos lotes VISÍVEIS — a 51 px quem
 distingue é a silhueta, e por isso "comércios variados" ficou de fora.»* — a
 igreja, a praça e a obra continuam, com outro desenho, e a razão da silhueta
 vive na `022` e no gerador.
+
+**E, para caber o mar (`124`),** a lista do que está na `main` foi
+comprimida, e a descrição da água reescrita. Saiu da fila: *«**Na main:** o
+cancelamento (`109`–`111`, PR #133), a pesquisa de recursos básicos
+(`112`), como jogar/glossário na inicial e na pausa (`114`–`116`, PR #134;
+leitura e telefone pendentes), a obra no mapa (`121`, PR #136) e o
+maquinário dela (`122`, PR #137).»* — os números de PR vivem em cada
+decisão. E de «O jogo hoje»: *«**A água é tropical e lê como profundidade,
+não como fitas** — campo de cor contínuo pela distância à costa, com meandro
+longo de duas senóides, e a areia em rampas.»* — o meandro e a rampa da
+areia continuam, e vivem no gerador e na `mapa.md`.

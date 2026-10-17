@@ -64,6 +64,14 @@ prova que a régua consegue ver um toque (`117`).
 código de saída vê um timeout; o `Parse Error` está na saída parcial, e é
 por isso que o executor julga a compilação antes do teto (`117`).
 
+⚠️ **E O CORTE MEDIDO VALE PARA O DESENHO MEDIDO.** Os dois cortes do D46
+foram a meio da banda três vezes na mesma sessão, porque cada passagem de
+arte mexia no que eles medem: as correntes escuras do largo levaram a «pior
+subida» do mapa certo de 3,9 a 7,3 (sair de uma faixa escura também é
+subir), e a inclinação do degradê invertido de +0,13 a −0,17. Guarda raster
+sobre arte que ainda se está a desenhar re-mede o PAR — o certo e o defeito
+do catálogo — a cada passagem, antes do `--so` (`124`).
+
 ## O jogador ao acaso (T26, `118`)
 
 O T26 joga partidas inteiras ao acaso, com semente, e confere a cada passo o

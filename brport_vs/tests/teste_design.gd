@@ -333,6 +333,12 @@ func _rodar() -> void:
 	_falhas += int(obra.falhas)
 	_confere("o bloco D45 correu até ao fim", obra.completo)
 
+	print("=== D46: a água escurece até ao largo — a rampa e as manchas do mar aberto ===")
+	var mar = load("res://tests/casos_mar_ao_largo.gd").new()
+	mar.rodar(_mapa_lido("res://art/porto_mapa_iso.svg"), _ancoras)
+	_falhas += int(mar.falhas)
+	_confere("o bloco D46 correu até ao fim", mar.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")

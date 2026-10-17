@@ -352,7 +352,14 @@ C = {
     # passou a ser a faixa MÉDIA. Amplitude final 99,4 (era 89,7 no mar frio),
     # Weber da espuma 0,56 (era 0,57): tropical no matiz, e com mais
     # profundidade do que antes em vez de menos.
-    "agua": "#0d4d6b", "agua_funda": "#0f5a7d", "agua_media": "#1b7fa8",
+    #
+    # ⚠️ E O FUNDO DA RAMPA ESTAVA AO CONTRÁRIO ATÉ 17/10 (`124`). O degradê
+    # do largo vai de `agua` (perto) a `agua_funda` (longe), e a `agua_funda`
+    # era a MAIS CLARA das duas (76,6 contra 65,6): medida no mapa, a água
+    # escurecia até ~12 unidades da costa (73) e voltava a clarear ao fundo da
+    # tela — o «como se fosse mais raso» que o Bruno viu. Os dois tons
+    # trocaram de nome, e a rampa desce do baixio ao largo sem voltar atrás.
+    "agua": "#0f5a7d", "agua_funda": "#0d4d6b", "agua_media": "#1b7fa8",
     "agua_rasa": "#3fb6cf", "agua_baixio": "#57c6dc", "espuma": "#eafaff",
     "pedra": "#5a666b", "pedra_clara": "#7c888e", "pedra_media": "#6b767b",
     # AREIA — a metade que faltava da Etapa 1 (A5), em 04/09. O tom seco é o
@@ -894,15 +901,6 @@ def _corta_em_my(v: list, mya: float, myb: float) -> list:
     return out
 
 
-def costa_entre(de: float, ate: float, mya: float, myb: float) -> list:
-    """`costa(de, ate)`, mas só no trecho de `my` pedido."""
-    perto = [p(mx, my) for mx, my in _corta_em_my(costa_deslocada(de), mya, myb)]
-    longe = [p(mx, my) for mx, my in _corta_em_my(costa_deslocada(ate), mya, myb)]
-    if len(perto) < 2 or len(longe) < 2:
-        return []
-    return perto + list(reversed(longe))
-
-
 # ── NÚMERO DA DOCA, PINTADO NO CAIS ──────────────────────────────────────
 # Os nomes das docas eram Labels brancos flutuando por cima do mapa: liam-se
 # como legenda de diagrama, não como porto. Numa doca de verdade o número está
@@ -1357,6 +1355,10 @@ def _distancia_ao_contorno(px: float, py: float, segmentos: list) -> tuple:
     return math.sqrt(melhor_d2), melhor_my
 
 
+# Até onde chega a água costeira, em unidades: além disto é o largo. Vive
+# num lugar só porque a mancha RASA também pergunta por ele (`124`).
+ALCANCE_COSTEIRO = 6.0
+
 # Quantos pixels de lado tem o bloco do índice espacial, e o raio dele.
 BLOCO_AGUA = 8
 _RAIO_BLOCO = math.hypot(BLOCO_AGUA, BLOCO_AGUA) / 2.0
@@ -1374,8 +1376,87 @@ def _longe_da_caixa(cx0, cy0, cx1, cy1, caixa) -> float:
     return math.hypot(dx, dy)
 
 
-def agua_costeira_gradiente() -> str:
-    """Campo de distância à costa, rasterizado dentro do SVG.
+# ── A SOMBRA DO MURO, que esvai na água (`124`) ──────────────────────────
+# Era uma faixa CHAPADA de `sombra_agua` a 0,30, de 1,15 unidade, pelo
+# `costa_deslocada`: aresta reta do lado do mar, e nas quinas dos degraus — ao
+# lado das docas 2 e 3 — um paralelogramo com a ponta em esquadria, que o
+# Bruno leu como «uma sombra bem QUADRADA nos píeres». E pintava 1.105 px por
+# cima do TERREIRO do degrau seguinte: a faixa do espelho do degrau fica atrás
+# do muro na tela, e ela era desenhada depois do cais.
+#
+# Hoje é raster, no MESMO laço do campo de cor da água (a distância já está
+# medida lá): escura colada ao muro e a apagar-se em `SOMBRA_MURO_ALCANCE`, e
+# só onde a água está À VISTA. A queda é um smoothstep invertido — patamar
+# junto ao muro, onde a faixa velha dava 0,30, e saída sem degrau nenhum. A
+# primeira versão caía em quadrado, e a 0,4 u já só dava 0,18: a espuma ao pé
+# do muro clareou 30 pontos, e o cais deixou de assentar. É polinómio e não
+# `**` fracionário porque o CI compara o PNG byte a byte, e a `pow` de cada
+# libm pode discordar no último bit.
+SOMBRA_MURO_OPAC = 0.40
+SOMBRA_MURO_ALCANCE = 1.5     # unidades: onde a sombra chega a zero
+SOMBRA_MURO_REMATE = 1.6      # o trecho em que ela nasce e morre nas pontas do cais:
+# a 0,6 a sombra forte do muro acabava numa quina, e a água da ponta lia como
+# um raio de luz entre ela e o raso da praia
+# ⚠️ E ELA COMEÇA UM TEXEL ATRÁS DA FACE DO MURO. O campo é raster a 720 sob
+# um desenho a 1080, e o primeiro texel ao pé do muro tem o centro do lado da
+# terra: sem esta folga ele ficava sem sombra e deixava ver a espuma por baixo
+# do antisserrilhado do muro — um fio claro de 1,5 px colado ao cais, que a
+# faixa chapada tapava por ser desenhada por cima. A folga escurece só o
+# rodapé da face, que é onde a água molha o concreto.
+SOMBRA_MURO_PE = 0.06
+
+
+def _agua_a_vista(px: float, py: float) -> bool:
+    """O pixel de TELA (px, py) é água que nenhum degrau do cais tapa?
+
+    Desprojetado a h = 0 ele tem de cair na água; e subindo até `ALT_CAIS` o
+    ponto do mundo anda (+1, +1) por `ALT_CAIS / (2 · MEIA_ALT)` — se nesse
+    caminho atravessar o espelho de um degrau e cair dentro do concreto, é o
+    cais que se vê ali, e não a água. Foi assim que a faixa velha pintou o
+    terreiro.
+    """
+    a = round((px / ZOOM - CX) / MEIA_LARG, 8)       # mx - my
+    b = round((py / ZOOM - CY) / MEIA_ALT, 8)        # mx + my
+    mx, my = (a + b) / 2.0, (b - a) / 2.0
+    if mx <= _borda_em(my) - SOMBRA_MURO_PE:
+        return False
+    subida = ALT_CAIS / (2.0 * MEIA_ALT)
+    for _my0, my1, _b in DEGRAUS[:-1]:
+        if my < my1 <= my + subida and mx + (my1 - my) <= _borda_em(my1):
+            return False
+    return True
+
+
+def _alfa_da_sombra(px: float, py: float, distancia: float, my: float) -> int:
+    """O alfa (0–255) da sombra do muro num pixel, a `distancia` unidades da
+    costa cujo ponto mais perto está em `my`."""
+    if distancia >= SOMBRA_MURO_ALCANCE:
+        return 0
+    ponta = min(my - PONTA_NORTE, PONTA_SUL - my)
+    if ponta <= 0.0 or not _agua_a_vista(px, py):
+        return 0
+    t = round(distancia / SOMBRA_MURO_ALCANCE, 8)
+    resto = 1.0 - t * t * (3.0 - 2.0 * t)
+    remate = min(1.0, round(ponta / SOMBRA_MURO_REMATE, 8))
+    return round(SOMBRA_MURO_OPAC * resto * remate * 255.0)
+
+
+def _imagem_embutida(pixels: bytes) -> str:
+    dados = base64.b64encode(_png_rgba(SAIDA, SAIDA, pixels)).decode("ascii")
+    return ('  <image x="0" y="0" width="%d" height="%d" '
+            'preserveAspectRatio="none" href="data:image/png;base64,%s"/>\n'
+            % (LARG, ALT, dados))
+
+
+def campos_costeiros() -> tuple:
+    """Os dois campos da distância à costa: a cor da água e a sombra do muro.
+
+    Devolve as duas `<image>` que o `gerar()` põe em sítios diferentes — a
+    água no fundo de tudo, a sombra depois do cais e antes do enrocamento,
+    onde vivia a faixa chapada que ela substitui. Saem do mesmo laço porque a
+    distância de cada pixel é a conta cara, e a sombra é uma rampa dela.
+
+    Campo de distância à costa, rasterizado dentro do SVG.
 
     ⚠️ A COSTA GANHOU CURVA NAS DUAS PONTAS (item 8), e este campo tem de ler
     a MESMA linha que a areia desenha — senão a faixa de baixio fica a
@@ -1400,7 +1481,7 @@ def agua_costeira_gradiente() -> str:
     o PNG sai byte a byte igual ao da força bruta (conferido com o contorno
     velho antes de a costa mudar).
     """
-    alcance = 6.0
+    alcance = ALCANCE_COSTEIRO
     costa = linha_costeira(0.0)
     tela_costa = [tela(mx, my) for mx, my in costa]
     segmentos = [(tela_costa[i][0], tela_costa[i][1],
@@ -1412,6 +1493,8 @@ def agua_costeira_gradiente() -> str:
                                     ("agua_baixio", "agua_rasa",
                                      "agua_media", "espuma"))
     pixels = bytearray()
+    sombra = bytearray()
+    tom_da_sombra = _rgb(C["sombra_agua"])
     px_por_unidade = 2.0 * MEIA_LARG * ZOOM
     amplitude = PRAIA_PROF * CRISTA[0][1] / alcance
     # Além deste raio o pixel é transparente faça o meandro o que fizer: a
@@ -1436,9 +1519,12 @@ def agua_costeira_gradiente() -> str:
             perto = vizinhos[(x - x % BLOCO_AGUA, by)]
             if perto is None:
                 pixels.extend((0, 0, 0, 0))
+                sombra.extend((*tom_da_sombra, 0))
                 continue
             distancia_px, my = _distancia_ao_contorno(x + 0.5, y + 0.5,
                                                        [s for s, _c in perto])
+            sombra.extend((*tom_da_sombra, _alfa_da_sombra(
+                x + 0.5, y + 0.5, round(distancia_px / px_por_unidade, 8), my)))
             largura = 1.0 + amplitude * _meandro(my, CRISTA[0][2])
             d = round(distancia_px / px_por_unidade / largura, 8)
             if d >= alcance:
@@ -1463,11 +1549,7 @@ def agua_costeira_gradiente() -> str:
                 cor = _entre_rgb(cor, espuma_, f)
             pixels.extend((*cor, round(alfa * 255.0)))
 
-    png = _png_rgba(SAIDA, SAIDA, bytes(pixels))
-    dados = base64.b64encode(png).decode("ascii")
-    return ('  <image x="0" y="0" width="%d" height="%d" '
-            'preserveAspectRatio="none" href="data:image/png;base64,%s"/>\n'
-            % (LARG, ALT, dados))
+    return _imagem_embutida(bytes(pixels)), _imagem_embutida(bytes(sombra))
 
 
 def espuma_costeira_gradiente() -> str:
@@ -4414,6 +4496,218 @@ def espuma(semente: int) -> str:
     return s
 
 
+# ── AS MAROLAS (`124`) ───────────────────────────────────────────────────
+# Os riscos «~» eram um TRAÇO de espessura constante no plano da TELA, o mesmo
+# til de 18 a 38 px perto e longe da costa: liam como carimbo por cima do mar,
+# e o Bruno pediu-os fora — «se conseguir, coloque algo melhor no lugar, que
+# futuramente possa ser animado como ondas».
+#
+# A marola é desenhada no plano da ÁGUA e projetada, como tudo o que acompanha
+# a costa: a crista corre em `my` (paralela ao cais) com um arco leve para
+# terra, afina até zero nas duas pontas, e leva por baixo — do lado do mar,
+# que é a face `+mx`, a de sombra neste mapa — um cavado escuro mais curto. É
+# o par claro/escuro que dá relevo; uma crista sozinha era outro traço. Perto
+# da costa ela é maior e mais viva; ao largo encurta e apaga-se, e é isso que
+# deixa o fundo calmo depois de a rampa voltar a descer até lá.
+#
+# E CADA UMA É UMA PEÇA COM CENTRO, não um traço solto: para as animar basta
+# escrevê-las numa camada própria, como a espuma (`--espuma=N`), em duas
+# sementes que o `Main.gd` lave em contrafase. Hoje ficam no mapa; a VRAM de
+# uma camada a 1080 sem compressão são ~4,7 MB.
+MAROLAS_POR_DEGRAU = 22
+MAROLA_PERTO = 2.0            # unidades da borda do degrau até à primeira
+MAROLA_LONGE = 26.0           # e até à última
+MAROLA_VIES = 2.1             # o expoente que as encosta à costa
+MAROLA_FOLGA_TERRA = 1.8      # nenhum ponto dela a menos disto do cais
+# A ONDULAÇÃO CHEGA EM SÉRIES: atrás de uma crista vêm outras, paralelas e cada
+# vez mais fracas, a esta distância uma da outra. Uma crista solta lê como
+# risco; duas ou três em fila leem como mar a andar para a costa (segunda
+# passagem da `124`, a pedido de «deixar a água mais realista»).
+MAROLA_ESPACO = 0.95
+MAROLA_SERIE_FRACA = 0.72     # o que cada crista de trás guarda da da frente
+
+
+def _lente(mx, my, meio, grossura, arco, frente) -> list:
+    """O contorno de uma lente deitada na água, afinada nas pontas.
+
+    `meio` é meio comprimento em `my`; `grossura` a espessura máxima em `mx`,
+    da qual `frente` vai para terra e o resto para o mar; `arco` o quanto o
+    meio avança para terra.
+    """
+    terra, mar = [], []
+    for i in range(11):
+        s = -1.0 + i / 5.0
+        cheio = 1.0 - s * s
+        eixo = mx - arco * cheio
+        terra.append(p(eixo - grossura * frente * cheio, my + s * meio))
+        mar.append(p(eixo + grossura * (1.0 - frente) * cheio, my + s * meio))
+    return terra + mar[::-1]
+
+
+def _na_agua_livre(mx, my, meio, arco) -> bool:
+    """A lente inteira cai no mar, longe do cais e fora dos berços?"""
+    if any(mx - arco <= _borda_em(my + k * meio) + MAROLA_FOLGA_TERRA
+           for k in (-1.0, -0.5, 0.0, 0.5, 1.0)):
+        return False
+    return not (mx - _borda_em(my) < PIER_ALCANCE + 1.0 and _sob_pier(my))
+
+
+def marolas() -> str:
+    r = random.Random(SEMENTE_CHAO + 500)
+    s = '  <g>\n'
+    for my0, my1, borda in DEGRAUS:
+        for _ in range(MAROLAS_POR_DEGRAU):
+            vies = r.random() ** MAROLA_VIES         # mais perto da costa
+            dmx = MAROLA_PERTO + vies * (MAROLA_LONGE - MAROLA_PERTO)
+            my = r.uniform(my0 - 1.0, my1 + 3.0)
+            longe = 1.0 - vies * 0.55
+            meio = r.uniform(0.50, 0.95) * longe
+            grossura = r.uniform(0.09, 0.13) * longe
+            arco = r.uniform(0.08, 0.16) * longe
+            opac = 0.46 - vies * 0.34
+            serie = 1 + (r.random() < 0.55) + (r.random() < 0.30)
+            for j in range(serie):
+                fraca = MAROLA_SERIE_FRACA ** j
+                mx = borda + dmx + j * MAROLA_ESPACO
+                mj = my + j * meio * 0.12          # a série não é uma pilha
+                if not _na_agua_livre(mx, mj, meio * fraca, arco):
+                    continue
+                s += poli(_lente(mx + grossura * 1.8, mj + meio * 0.08,
+                                 meio * 0.82 * fraca, grossura * 0.70 * fraca,
+                                 arco, 0.5),
+                          C["sombra_agua"], round(opac * 0.55 * fraca, 2))
+                s += poli(_lente(mx, mj, meio * fraca, grossura * fraca, arco, 0.35),
+                          C["espuma"], round(opac * fraca, 2))
+    return s + '  </g>\n'
+
+
+# AS CORRENTES DO LARGO: faixas escuras compridas, deitadas ao longo da costa,
+# onde o fundo da rampa já não varia. São o que a mancha funda redonda não dá
+# ao largo — sem elas a água do fundo da tela é uma chapa só. Só escuras: a
+# claridade solta no mar aberto era a queixa.
+CORRENTES = 9
+
+
+def correntes() -> str:
+    r = random.Random(SEMENTE_CHAO + 510)
+    angulo = math.degrees(math.atan2(MEIA_ALT, -MEIA_LARG)) - 180.0
+    s = ''
+    for _ in range(CORRENTES):
+        my0, my1, borda = DEGRAUS[r.randrange(len(DEGRAUS))]
+        cx, cy = p(borda + r.uniform(9.0, 26.0), r.uniform(my0 - 2.0, my1 + 4.0))
+        rx = r.uniform(240.0, 420.0)
+        ry = rx * r.uniform(0.14, 0.22)
+        giro = angulo + r.uniform(-7.0, 7.0)
+        s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.0f" ry="%.0f" '
+              'fill="url(#mcorrente)" transform="rotate(%.0f %.0f %.0f)"/>\n'
+              % (cx, cy, rx, ry, giro, cx, cy))
+    return s
+
+
+# ── A ARREBENTAÇÃO E AS CÁUSTICAS DA PRAIA (`124`) ───────────────────────
+# A terceira passagem da `124` veio com um pedido de pesquisa: «técnicas para
+# deixar o mar mais bonito e realista». A busca (os resumos; as páginas não
+# abrem por este proxy, `063`) devolveu o mesmo vocabulário em toda a água
+# estilizada: a cor pela profundidade, que a rampa já faz; LINHAS DE ESPUMA
+# QUE CONTORNAM a margem, em faixas; e CÁUSTICAS — a rede de luz no fundo —
+# só no raso. As duas últimas vivem na praia, que é onde a onda quebra e o
+# fundo de areia se vê; no cais o fundo é dragado e o muro já tem espuma.
+#
+# As duas desenham-se pela MESMA família de curvas da costa
+# (`ponto_costeiro`), parametrizadas pelo comprimento ao longo dela e pela
+# distância à água — senão abriam costura com a areia, que é a regra do
+# `mapa.md`. E vêm DEPOIS da areia submersa, que as tapava.
+#
+# A faixa é uma LENTE ao longo da costa, afinada nas duas pontas: traço claro
+# de espessura constante lê como pintura de solo (`espuma()` conta a história).
+ARREBENTACAO = ((1.35, 0.075, 0.42), (2.30, 0.055, 0.24))   # (d, grossura, opacidade)
+CAUSTICA_PASSO = 0.21         # unidades entre dois vértices da rede, ao longo da costa
+CAUSTICA_FILAS = ((0.32, 0.20), (0.62, 0.15), (0.92, 0.10))  # (d, opacidade)
+
+
+def _amostras_da_costa(passo: float) -> list:
+    """(i, f) a cada `passo` unidades ao longo do contorno da costa."""
+    _v, comp, arco, _q = _geometria_da_costa()
+    out, i, k = [], 0, 0
+    while True:
+        s = round(k * passo, 8)
+        if s > arco[-1]:
+            return out
+        while i < len(comp) - 1 and s > arco[i + 1]:
+            i += 1
+        out.append((i, 0.0 if comp[i] == 0.0 else min(1.0, (s - arco[i]) / comp[i])))
+        k += 1
+
+
+def _na_praia_a(i: int, f: float, d: float) -> bool:
+    return na_praia(ponto_costeiro(i, f, d)[1])
+
+
+def arrebentacao() -> str:
+    r = random.Random(SEMENTE_CHAO + 530)
+    amostras = _amostras_da_costa(0.12)
+    s = '  <g>\n'
+    for d0, grossura, opac in ARREBENTACAO:
+        k = 0
+        while k < len(amostras):
+            n = int(r.uniform(0.9, 2.6) / 0.12)
+            trecho = amostras[k:k + n]
+            k += n + int(r.uniform(0.4, 1.3) / 0.12)
+            d = d0 + r.uniform(-0.14, 0.14)
+            if len(trecho) < 4 or not all(_na_praia_a(i, f, d) for i, f in trecho):
+                continue
+            terra, mar = [], []
+            for j, (i, f) in enumerate(trecho):
+                u = j / (len(trecho) - 1)
+                t = grossura * 4.0 * u * (1.0 - u)
+                a = ponto_costeiro(i, f, d - t)
+                b = ponto_costeiro(i, f, d + t)
+                terra.append(p(a[0], a[1]))
+                mar.append(p(b[0], b[1]))
+            s += poli(terra + mar[::-1], C["espuma"], opac)
+    return s + '  </g>\n'
+
+
+def causticas() -> str:
+    """A rede de luz no fundo de areia: filas ao longo da costa, com degraus
+    entre elas em posições alternadas — a parede de tijolo que, torta, dá
+    células de cinco e seis lados, e não a malha de uma rede de pesca."""
+    r = random.Random(SEMENTE_CHAO + 540)
+    amostras = _amostras_da_costa(CAUSTICA_PASSO)
+    tremor = [[r.uniform(-0.10, 0.10) for _ in amostras] for _ in CAUSTICA_FILAS]
+    falha = [[r.random() < 0.3 for _ in amostras] for _ in CAUSTICA_FILAS]
+    s = '  <g fill="none" stroke="%s" stroke-linejoin="round">\n' % C["espuma"]
+
+    def ponto(fila, k):
+        i, f = amostras[k]
+        d = CAUSTICA_FILAS[fila][0] + tremor[fila][k]
+        return (i, f, d) if _na_praia_a(i, f, d) else None
+
+    for fila, (_d, opac) in enumerate(CAUSTICA_FILAS):
+        corrida = []
+        for k in range(len(amostras) + 1):
+            q = ponto(fila, k) if k < len(amostras) else None
+            if q is not None:
+                mx, my = ponto_costeiro(*q)[:2]
+                corrida.append(p(mx, my))
+                continue
+            if len(corrida) >= 3:
+                s += ('    <polyline points="%s" stroke-width="1.1" opacity="%.2f"/>\n'
+                      % (" ".join("%.1f,%.1f" % c for c in corrida), opac))
+            corrida = []
+        if fila + 1 == len(CAUSTICA_FILAS):
+            continue
+        for k in range(fila % 2, len(amostras), 2):
+            a, b = ponto(fila, k), ponto(fila + 1, k + (1 if k + 1 < len(amostras) else 0))
+            if a is None or b is None or falha[fila][k]:
+                continue
+            pa, pb = ponto_costeiro(*a), ponto_costeiro(*b)
+            s += ('    <polyline points="%.1f,%.1f %.1f,%.1f" stroke-width="1.0" '
+                  'opacity="%.2f"/>\n'
+                  % (*p(pa[0], pa[1]), *p(pb[0], pb[1]), opac * 0.85))
+    return s + '  </g>\n'
+
+
 def gerar_espuma(semente: int) -> str:
     return ('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" '
             'viewBox="0 0 %d %d">\n%s</svg>\n'
@@ -4454,10 +4748,22 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
           # lê como erro de malha em vez de corrente. Gradiente que morre na
           # borda é o que dá mancha sem contorno. `objectBoundingBox` deixa os
           # dois `defs` servirem todas as manchas.
+          #
+          # ⚠️ E A MANCHA FUNDA TEM DE SER MAIS ESCURA DO QUE A ÁGUA DEBAIXO
+          # DELA. Ela era `agua_funda` a 0,30 — e, enquanto esse tom foi o mais
+          # claro do largo, cada «mancha funda» CLAREAVA a água (+3 de
+          # luminância). Hoje é o tom da sombra do muro, o único abaixo do fundo
+          # inteiro da rampa, e escurece de 3 a 6 pontos onde quer que caia.
           '<radialGradient id="mfunda" gradientUnits="objectBoundingBox" '
           'cx="0.5" cy="0.5" r="0.5">'
-          '<stop offset="0" stop-color="%s" stop-opacity="0.30"/>'
-          '<stop offset="0.55" stop-color="%s" stop-opacity="0.16"/>'
+          '<stop offset="0" stop-color="%s" stop-opacity="0.20"/>'
+          '<stop offset="0.55" stop-color="%s" stop-opacity="0.10"/>'
+          '<stop offset="1" stop-color="%s" stop-opacity="0"/>'
+          '</radialGradient>'
+          '<radialGradient id="mcorrente" gradientUnits="objectBoundingBox" '
+          'cx="0.5" cy="0.5" r="0.5">'
+          '<stop offset="0" stop-color="%s" stop-opacity="0.34"/>'
+          '<stop offset="0.6" stop-color="%s" stop-opacity="0.18"/>'
           '<stop offset="1" stop-color="%s" stop-opacity="0"/>'
           '</radialGradient>'
           '<radialGradient id="mrasa" gradientUnits="objectBoundingBox" '
@@ -4468,13 +4774,15 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
           '</radialGradient>'
           '</defs>\n'
           % (ini[0], ini[1], fim[0], fim[1], C["agua"], C["agua_funda"],
-             C["agua_funda"], C["agua_funda"], C["agua_funda"],
+             C["sombra_agua"], C["sombra_agua"], C["sombra_agua"],
+             C["sombra_agua"], C["sombra_agua"], C["sombra_agua"],
              C["agua_baixio"], C["agua_baixio"], C["agua_baixio"]))
     s += '  <rect width="%d" height="%d" fill="url(#fundo)"/>\n' % (LARG, ALT)
 
     # A costa mantém as MESMAS três distâncias e os MESMOS tons medidos, mas
     # em amostras de no máximo um pixel, com meandro longo de duas senóides.
-    s += agua_costeira_gradiente()
+    agua_costeira, sombra_do_muro = campos_costeiros()
+    s += agua_costeira
 
     # ESPUMA na linha de costa. O guia de terrenos do pacote é explícito:
     # "espuma somente nas bordas de praia, rochas, docas e colisões de barcos".
@@ -4501,40 +4809,32 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # VARIAÇÃO DE PROFUNDIDADE: manchas largas e suaves, para o mar não ser
     # três faixas de cor com aresta. O guia chama a isto "manchas largas e
     # suaves, sem ruído excessivo, sugerindo profundidade e corrente".
+    #
+    # ⚠️ A MANCHA RASA SÓ CAI ONDE A ÁGUA É RASA. Ela é a cor do BAIXIO, e
+    # sorteada até 26 unidades da costa punha bancos de areia no meio do mar
+    # aberto: das 18, duas caíam visíveis a 17 e a 25 unidades, e eram as
+    # manchas claras «ao fundo» da queixa (`124`). Fora da faixa costeira ela
+    # não se desenha — e os sorteios continuam todos, pela mesma ordem, para
+    # as manchas fundas não mudarem de sítio.
     rv = random.Random(SEMENTE_CHAO + 47)
     for _ in range(18):
         my0, my1, borda = DEGRAUS[rv.randrange(len(DEGRAUS))]
-        cx, cy = p(borda + rv.uniform(2.0, 26.0), rv.uniform(my0 - 3.0, my1 + 5.0))
+        dmx = rv.uniform(2.0, 26.0)
+        cx, cy = p(borda + dmx, rv.uniform(my0 - 3.0, my1 + 5.0))
         rx = rv.uniform(70.0, 190.0)
+        ry = rx * rv.uniform(0.34, 0.58)
+        mancha = "mfunda" if rv.random() < 0.62 else "mrasa"
+        giro = rv.uniform(-40, 40)
+        if mancha == "mrasa" and dmx >= ALCANCE_COSTEIRO:
+            continue
         s += ('  <ellipse cx="%.0f" cy="%.0f" rx="%.0f" ry="%.0f" fill="url(#%s)" '
               'transform="rotate(%.0f %.0f %.0f)"/>\n'
-              % (cx, cy, rx, rx * rv.uniform(0.34, 0.58),
-                 "mfunda" if rv.random() < 0.62 else "mrasa",
-                 rv.uniform(-40, 40), cx, cy))
+              % (cx, cy, rx, ry, mancha, giro, cx, cy))
 
-    # ONDAS. A primeira versão usava OITO deslocamentos fixos, repetidos igual
-    # em todos os degraus, e sempre o mesmo desenho `q8-5 16 0 q8 5 16 0`. Na
-    # tela isso vira papel de parede: o olho encontra o padrão em dois segundos
-    # e o mar deixa de ser mar. Agora comprimento, curvatura, opacidade e
-    # posição variam, com semente fixa para o mapa continuar reproduzível.
-    #
-    # A densidade cai com a distância da costa — é assim que a água mostra de
-    # que lado fica a terra.
-    ro = random.Random(SEMENTE_CHAO + 7)
-    s += ('  <g fill="none" stroke="%s" stroke-linecap="round">\n' % C["espuma"])
-    for my0, my1, borda in DEGRAUS:
-        for _ in range(26):
-            vies = ro.random() ** 1.9          # esmagado contra a costa
-            dmx = 1.2 + vies * 27.0
-            wx, wy = p(borda + dmx, ro.uniform(my0 - 2.0, my1 + 4.0))
-            comp = ro.uniform(9.0, 19.0)
-            curva = ro.uniform(3.0, 6.5)
-            op = max(0.10, 0.62 - vies * 0.5)
-            s += ('    <path d="M%.0f %.0f q%.0f-%.0f %.0f 0 q%.0f %.0f %.0f 0" '
-                  'stroke-width="%.1f" opacity="%.2f"/>\n'
-                  % (wx - comp, wy, comp / 2, curva, comp,
-                     comp / 2, curva, comp, ro.uniform(2.0, 3.4), op))
-    s += '  </g>\n'
+    # As correntes do largo e as MAROLAS no lugar dos riscos «~» (`124`):
+    # ver cada função.
+    s += correntes()
+    s += marolas()
 
     # ---- terra, degrau por degrau (de trás para a frente) ----
     # O `+ COSTURA` no my1: duas lajes que encostam exatamente no mesmo my
@@ -4559,6 +4859,9 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     for j, a, b in praias():
         s += praia_chao(j, a, b)
         s += praia_areia(j, a, b)
+    # Por cima da areia submersa, que as tapava (`124`).
+    s += causticas()
+    s += arrebentacao()
 
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
         # ⚠️ A LAJE DO CAIS PARA ONDE O PORTO PARA. Nas duas pontas (ver
@@ -4692,9 +4995,9 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # um pedaço da anterior.
     # E ela para nas duas pontas: onde a terra desce em rampa não há muro
     # nenhum a lançar sombra, e uma faixa escura ao pé de uma praia lê-se como
-    # sujeira na água.
-    s += poli(costa_entre(0.0, 1.15, PONTA_NORTE, PONTA_SUL),
-              C["sombra_agua"], 0.30)
+    # sujeira na água. Desde a `124` ela esvai em vez de acabar numa aresta, e
+    # sai do campo costeiro (`campos_costeiros`).
+    s += sombra_do_muro
 
     #
     # A SEGUNDA correção veio do playtest: as pedras eram espalhadas por
@@ -5077,9 +5380,14 @@ def tabela_ancoras() -> dict:
         # ⚠️ E ISTO É UMA DIVISÃO, NÃO UMA LISTA DE TONS. Quem acrescentar uma
         # quarta banda costeira tem de a pôr aqui, senão ela passa a contar como
         # largo e o D21 deixa de reprovar o que existe para reprovar.
+        #
+        # O `alcance_costeiro` diz onde o largo COMEÇA, em unidades: o D46
+        # parte dali para provar que a água escurece até ao fundo da tela
+        # (`124`), e escrito à mão no teste seria o espelho que envelhece.
         "cores_da_agua": {
             "costeiras": [C["agua_baixio"], C["agua_rasa"], C["agua_media"]],
             "largo": [C["agua"], C["agua_funda"]],
+            "alcance_costeiro": ALCANCE_COSTEIRO,
         },
         "pegadas": {k: list(v) for k, v in sorted(PEGADAS.items())},
         "mapa": {"largura": SAIDA, "altura": SAIDA},

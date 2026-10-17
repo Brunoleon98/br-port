@@ -821,3 +821,31 @@ depois = '''
 position = Vector2(105, 190)
 '''
 reprova = { teste_design = "CachorroCaramelo aparece sobre o relvado" }
+
+# ── O MAR AO LARGO (`124`) ─────────────────────────────────────────────────
+# Os dois no MAPA GERADO, pela mesma razão dos da vila: o executor troca
+# texto e não regera. Um é o defeito que o Bruno viu — o degradê do largo a
+# clarear para o fundo da tela —, o outro a mancha na cor do baixio no mar
+# aberto. São duas perguntas do D46: a mancha só mexe na inclinação média
+# de −0,92 para −0,88, e só a subida a apanha; o degradê invertido reprova
+# nas duas (−0,17 e 13,7), e a declarada é a da rampa. A mancha cita uma elipse pelas
+# coordenadas, e fica órfã se as manchas fundas mudarem de sítio — reescreve-
+# se com outra funda do largo (a 18 unidades da costa ou mais).
+
+[[mutante]]
+id = "mar-largo-clareia"
+de = "124"
+o_que = "o degradê do largo vai do tom escuro para o claro, e o fundo da tela volta a parecer raso"
+alvo = "brport_vs/art/porto_mapa_iso.svg"
+antes = '<stop offset="0" stop-color="#0f5a7d"/><stop offset="1" stop-color="#0d4d6b"/>'
+depois = '<stop offset="0" stop-color="#0d4d6b"/><stop offset="1" stop-color="#0f5a7d"/>'
+reprova = { teste_design = "a água escurece para o largo" }
+
+[[mutante]]
+id = "mar-mancha-rasa-ao-largo"
+de = "124"
+o_que = "uma mancha na cor do baixio cai a 18 unidades da costa, um banco de areia no mar aberto"
+alvo = "brport_vs/art/porto_mapa_iso.svg"
+antes = '<ellipse cx="924" cy="903" rx="149" ry="76" fill="url(#mfunda)"'
+depois = '<ellipse cx="924" cy="903" rx="149" ry="76" fill="url(#mrasa)"'
+reprova = { teste_design = "nenhuma mancha clara no mar aberto" }
