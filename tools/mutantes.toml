@@ -768,3 +768,41 @@ alvo = "brport_vs/scripts/Main.gd"
 antes = 'eq.visible = tem_patio or (patio_em_obra and nome in SINALIZACAO_DE_OBRA)'
 depois = 'eq.visible = tem_patio'
 reprova = { teste_design = "D45: a barreira e o cone sinalizam a obra" }
+
+# ── A VILA (`123`) ─────────────────────────────────────────────────────────
+#
+# O alvo é o MAPA GERADO e não o gerador: esta ferramenta troca texto e corre
+# as suítes, e não regera nada — um defeito no `gerar_mapa_iso.py` nunca
+# chegaria ao arquivo que o D24 rasteriza. O defeito no SVG é o que a guarda
+# vê, e a cor pura da pirâmide aparece nele uma vez só. Se o mapa for regerado
+# sem esta cor, o mutante fica órfão e diz-o; o do coreto cita as oito águas
+# pelas coordenadas, e fica órfão a cada vez que a vila mexe — reescreve-se
+# com o ápice que `geometria_do_coreto` dá. O rótulo declarado não leva o
+# número do lote: ele muda quando a implantação da vila muda (`123`).
+
+[[mutante]]
+id = "vila-torre-da-cor-das-vizinhas"
+de = "123"
+o_que = "a pirâmide da torre sai na telha das casas, e a prova se satisfaria com o telhado de uma vizinha"
+alvo = "brport_vs/art/porto_mapa_iso.svg"
+antes = 'fill="#8d3a22"'
+depois = 'fill="#b1512a"'
+reprova = { teste_design = "pinta telha_torre à volta" }
+
+[[mutante]]
+id = "vila-coreto-sem-telhado"
+de = "123"
+o_que = "o coreto sai sem o telhado de oito águas, e a praça volta a ser um pátio com pilares"
+alvo = "brport_vs/art/porto_mapa_iso.svg"
+antes = '''
+  <polygon points="185.3,321.1 193.8,321.1 189.6,316.2" fill="#894d46"/>
+  <polygon points="179.4,324.1 185.3,321.1 189.6,316.2" fill="#894d46"/>
+  <polygon points="193.8,321.1 199.8,324.1 189.6,316.2" fill="#894d46"/>
+  <polygon points="179.4,328.3 179.4,324.1 189.6,316.2" fill="#894d46"/>
+  <polygon points="199.8,324.1 199.8,328.3 189.6,316.2" fill="#894d46"/>
+  <polygon points="185.3,331.3 179.4,328.3 189.6,316.2" fill="#a05a52"/>
+  <polygon points="199.8,328.3 193.8,331.3 189.6,316.2" fill="#76423c"/>
+  <polygon points="193.8,331.3 185.3,331.3 189.6,316.2" fill="#a05a52"/>
+'''
+depois = ''
+reprova = { teste_design = "pinta telha_d à volta" }

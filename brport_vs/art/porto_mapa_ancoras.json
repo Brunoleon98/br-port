@@ -910,6 +910,7 @@
   "telha_b": "#9d6a3c",
   "telha_c": "#7f8c98",
   "telha_d": "#a05a52",
+  "telha_torre": "#8d3a22",
   "tronco": "#5a4632"
  },
  "cotovelos": [
@@ -1181,410 +1182,444 @@
  "lotes": [
   {
    "canto": [
-    378.2,
-    -67.0
+    376.3,
+    -67.5
    ],
-   "dmx": 1.27,
-   "dmy": 1.22,
+   "casa": "alpendre",
+   "dmx": 1.18,
+   "dmy": 1.19,
    "fundo": false,
-   "mx": -6.28,
-   "my": -8.24,
+   "mx": -6.35,
+   "my": -8.22,
    "tipo": ""
   },
   {
    "canto": [
-    406.3,
-    -1.2
+    403.9,
+    -2.4
    ],
-   "dmx": 1.12,
-   "dmy": 1.25,
+   "casa": "empena",
+   "dmx": 1.23,
+   "dmy": 0.78,
    "fundo": false,
-   "mx": -2.29,
+   "mx": -2.4,
    "my": -5.65,
    "tipo": ""
   },
   {
    "canto": [
-    381.0,
-    11.2
+    384.4,
+    7.5
    ],
-   "dmx": 1.26,
-   "dmy": 1.09,
+   "casa": "alpendre",
+   "dmx": 1.14,
+   "dmy": 1.08,
    "fundo": false,
-   "mx": -2.3,
-   "my": -4.4,
+   "mx": -2.4,
+   "my": -4.67,
    "tipo": ""
   },
   {
    "canto": [
-    359.7,
-    22.4
+    354.3,
+    22.1
    ],
-   "dmx": 1.18,
-   "dmy": 1.07,
+   "casa": "meia_agua",
+   "dmx": 1.25,
+   "dmy": 0.73,
    "fundo": false,
-   "mx": -2.27,
-   "my": -3.31,
+   "mx": -2.42,
+   "my": -3.18,
    "tipo": ""
   },
   {
    "canto": [
-    256.6,
-    70.0
+    206.2,
+    96.7
    ],
-   "dmx": 1.24,
-   "dmy": 1.15,
+   "casa": "quatro_aguas",
+   "dmx": 1.23,
+   "dmy": 0.77,
    "fundo": false,
-   "mx": -2.47,
-   "my": 1.65,
+   "mx": -2.4,
+   "my": 4.25,
+   "tipo": ""
+  },
+  {
+   "canto": [
+    165.0,
+    196.7
+   ],
+   "casa": "empena",
+   "dmx": 1.11,
+   "dmy": 0.65,
+   "fundo": false,
+   "mx": 1.58,
+   "my": 10.28,
+   "tipo": ""
+  },
+  {
+   "canto": [
+    145.6,
+    206.1
+   ],
+   "casa": "meia_agua",
+   "dmx": 1.27,
+   "dmy": 0.74,
+   "fundo": false,
+   "mx": 1.56,
+   "my": 11.23,
+   "tipo": ""
+  },
+  {
+   "canto": [
+    124.6,
+    216.4
+   ],
+   "casa": "empena",
+   "dmx": 1.23,
+   "dmy": 0.7,
+   "fundo": false,
+   "mx": 1.55,
+   "my": 12.27,
    "tipo": "praca"
   },
   {
    "canto": [
-    228.6,
-    83.7
+    123.3,
+    297.3
    ],
-   "dmx": 1.12,
-   "dmy": 1.27,
+   "casa": "em_l",
+   "dmx": 1.26,
+   "dmy": 1.29,
    "fundo": false,
-   "mx": -2.48,
-   "my": 3.04,
-   "tipo": ""
-  },
-  {
-   "canto": [
-    160.0,
-    199.4
-   ],
-   "dmx": 1.25,
-   "dmy": 1.14,
-   "fundo": false,
-   "mx": 1.59,
-   "my": 10.53,
-   "tipo": ""
-  },
-  {
-   "canto": [
-    104.5,
-    229.2
-   ],
-   "dmx": 1.17,
-   "dmy": 1.09,
-   "fundo": false,
-   "mx": 1.69,
-   "my": 13.41,
-   "tipo": ""
-  },
-  {
-   "canto": [
-    82.4,
-    240.0
-   ],
-   "dmx": 1.24,
-   "dmy": 1.1,
-   "fundo": false,
-   "mx": 1.67,
-   "my": 14.51,
+   "mx": 5.57,
+   "my": 16.35,
    "tipo": "igreja"
   },
   {
    "canto": [
-    126.0,
-    298.7
+    91.2,
+    313.0
    ],
-   "dmx": 1.19,
-   "dmy": 1.2,
+   "casa": "quatro_aguas",
+   "dmx": 1.29,
+   "dmy": 0.93,
    "fundo": false,
-   "mx": 5.7,
-   "my": 16.35,
+   "mx": 5.54,
+   "my": 17.93,
    "tipo": ""
   },
   {
    "canto": [
-    102.4,
-    310.8
+    66.2,
+    325.7
    ],
-   "dmx": 1.26,
-   "dmy": 1.21,
+   "casa": "quatro_aguas",
+   "dmx": 1.25,
+   "dmy": 0.98,
    "fundo": false,
-   "mx": 5.72,
-   "my": 17.55,
+   "mx": 5.56,
+   "my": 19.2,
    "tipo": ""
   },
   {
    "canto": [
-    74.3,
-    324.4
+    39.0,
+    339.3
    ],
-   "dmx": 1.23,
-   "dmy": 1.26,
+   "casa": "alpendre",
+   "dmx": 1.15,
+   "dmy": 1.13,
    "fundo": false,
-   "mx": 5.7,
-   "my": 18.93,
+   "mx": 5.56,
+   "my": 20.56,
    "tipo": "obra"
   },
   {
    "canto": [
-    43.0,
-    340.0
+    43.2,
+    417.3
    ],
-   "dmx": 1.14,
-   "dmy": 0.85,
+   "casa": "empena",
+   "dmx": 1.19,
+   "dmy": 0.82,
    "fundo": false,
-   "mx": 5.69,
-   "my": 20.49,
-   "tipo": ""
-  },
-  {
-   "canto": [
-    46.0,
-    418.7
-   ],
-   "dmx": 1.25,
-   "dmy": 0.81,
-   "fundo": false,
-   "mx": 9.7,
+   "mx": 9.56,
    "my": 24.35,
    "tipo": ""
   },
   {
    "canto": [
-    25.0,
-    428.5
+    22.6,
+    427.3
    ],
-   "dmx": 1.11,
-   "dmy": 1.25,
+   "casa": "alpendre",
+   "dmx": 1.28,
+   "dmy": 1.21,
    "fundo": false,
-   "mx": 9.67,
+   "mx": 9.55,
    "my": 25.37,
    "tipo": ""
   },
   {
    "canto": [
-    0.6,
-    441.2
+    -7.2,
+    442.7
    ],
-   "dmx": 1.25,
-   "dmy": 1.04,
+   "casa": "meia_agua",
+   "dmx": 1.14,
+   "dmy": 0.66,
    "fundo": false,
-   "mx": 9.7,
-   "my": 26.61,
+   "mx": 9.57,
+   "my": 26.88,
    "tipo": ""
   },
   {
    "canto": [
-    -24.0,
-    453.2
+    -25.1,
+    450.8
    ],
-   "dmx": 1.15,
+   "casa": "quatro_aguas",
+   "dmx": 1.2,
    "dmy": 1.09,
    "fundo": false,
-   "mx": 9.68,
-   "my": 27.83,
+   "mx": 9.53,
+   "my": 27.74,
    "tipo": ""
   },
   {
    "canto": [
-    -45.5,
+    -50.0,
     464.2
    ],
-   "dmx": 1.3,
-   "dmy": 0.95,
+   "casa": "meia_agua",
+   "dmx": 1.2,
+   "dmy": 0.84,
    "fundo": false,
-   "mx": 9.69,
-   "my": 28.92,
+   "mx": 9.58,
+   "my": 29.03,
    "tipo": ""
   },
   {
    "canto": [
-    344.2,
-    -32.2
+    344.8,
+    -31.9
    ],
-   "dmx": 1.33,
-   "dmy": 0.8,
+   "casa": "quatro_aguas",
+   "dmx": 1.11,
+   "dmy": 1.03,
    "fundo": true,
-   "mx": -5.39,
+   "mx": -5.36,
    "my": -5.65,
    "tipo": ""
   },
   {
    "canto": [
-    320.7,
-    -21.1
+    317.3,
+    -18.3
    ],
-   "dmx": 1.31,
-   "dmy": 0.81,
+   "casa": "alpendre",
+   "dmx": 1.24,
+   "dmy": 1.13,
    "fundo": true,
-   "mx": -5.42,
-   "my": -4.5,
+   "mx": -5.37,
+   "my": -4.28,
    "tipo": ""
   },
   {
    "canto": [
-    245.6,
-    19.3
+    229.9,
+    26.5
    ],
-   "dmx": 1.31,
-   "dmy": 0.98,
-   "fundo": true,
-   "mx": -5.28,
-   "my": -0.61,
-   "tipo": ""
-  },
-  {
-   "canto": [
-    221.5,
-    31.6
-   ],
-   "dmx": 1.25,
-   "dmy": 1.09,
-   "fundo": true,
-   "mx": -5.27,
-   "my": 0.61,
-   "tipo": ""
-  },
-  {
-   "canto": [
-    193.9,
-    44.5
-   ],
-   "dmx": 1.26,
-   "dmy": 0.98,
+   "casa": "em_l",
+   "dmx": 1.18,
+   "dmy": 1.22,
    "fundo": true,
    "mx": -5.31,
-   "my": 1.95,
+   "my": 0.14,
    "tipo": ""
   },
   {
    "canto": [
-    109.2,
-    85.6
+    198.0,
+    42.2
    ],
+   "casa": "empena",
+   "dmx": 1.16,
+   "dmy": 0.82,
+   "fundo": true,
+   "mx": -5.32,
+   "my": 1.72,
+   "tipo": ""
+  },
+  {
+   "canto": [
+    176.1,
+    53.3
+   ],
+   "casa": "empena",
    "dmx": 1.12,
-   "dmy": 1.14,
+   "dmy": 0.68,
    "fundo": true,
-   "mx": -5.38,
-   "my": 6.11,
+   "mx": -5.32,
+   "my": 2.83,
    "tipo": ""
   },
   {
    "canto": [
-    146.6,
-    148.9
+    114.9,
+    83.7
    ],
-   "dmx": 1.23,
-   "dmy": 1.26,
+   "casa": "meia_agua",
+   "dmx": 1.2,
+   "dmy": 0.78,
    "fundo": true,
-   "mx": -1.27,
+   "mx": -5.33,
+   "my": 5.88,
+   "tipo": ""
+  },
+  {
+   "canto": [
+    145.5,
+    148.4
+   ],
+   "casa": "meia_agua",
+   "dmx": 1.19,
+   "dmy": 0.91,
+   "fundo": true,
+   "mx": -1.32,
    "my": 8.35,
    "tipo": ""
   },
   {
    "canto": [
-    116.2,
-    164.4
+    119.6,
+    161.5
    ],
-   "dmx": 1.11,
-   "dmy": 1.07,
+   "casa": "meia_agua",
+   "dmx": 1.19,
+   "dmy": 0.79,
    "fundo": true,
-   "mx": -1.26,
-   "my": 9.88,
+   "mx": -1.32,
+   "my": 9.65,
    "tipo": "obra"
   },
   {
    "canto": [
-    38.3,
-    202.4
+    97.8,
+    171.9
    ],
-   "dmx": 1.1,
-   "dmy": 1.08,
+   "casa": "quatro_aguas",
+   "dmx": 1.17,
+   "dmy": 0.86,
    "fundo": true,
-   "mx": -1.3,
-   "my": 13.73,
+   "mx": -1.34,
+   "my": 10.72,
    "tipo": ""
   },
   {
    "canto": [
-    65.6,
-    268.4
+    37.5,
+    203.4
    ],
-   "dmx": 1.22,
-   "dmy": 1.0,
+   "casa": "quatro_aguas",
+   "dmx": 1.15,
+   "dmy": 0.95,
    "fundo": true,
-   "mx": 2.68,
+   "mx": -1.28,
+   "my": 13.8,
+   "tipo": ""
+  },
+  {
+   "canto": [
+    65.7,
+    268.5
+   ],
+   "casa": "alpendre",
+   "dmx": 1.18,
+   "dmy": 0.98,
+   "fundo": true,
+   "mx": 2.69,
    "my": 16.35,
    "tipo": ""
   },
   {
    "canto": [
-    45.8,
-    278.6
+    38.8,
+    282.3
    ],
-   "dmx": 1.12,
-   "dmy": 1.08,
-   "fundo": true,
-   "mx": 2.69,
-   "my": 17.35,
-   "tipo": ""
-  },
-  {
-   "canto": [
-    -33.2,
-    318.3
-   ],
-   "dmx": 1.14,
-   "dmy": 1.1,
+   "casa": "quatro_aguas",
+   "dmx": 1.17,
+   "dmy": 0.89,
    "fundo": true,
    "mx": 2.7,
-   "my": 21.31,
+   "my": 17.71,
    "tipo": ""
   },
   {
    "canto": [
-    -55.9,
-    328.9
+    -35.3,
+    318.8
    ],
-   "dmx": 1.33,
-   "dmy": 1.02,
+   "casa": "empena",
+   "dmx": 1.19,
+   "dmy": 0.8,
    "fundo": true,
-   "mx": 2.66,
-   "my": 22.41,
+   "mx": 2.68,
+   "my": 21.39,
    "tipo": ""
   },
   {
    "canto": [
-    -13.2,
-    389.1
+    -54.6,
+    328.5
    ],
-   "dmx": 1.15,
-   "dmy": 0.87,
+   "casa": "alpendre",
+   "dmx": 1.11,
+   "dmy": 1.08,
    "fundo": true,
-   "mx": 6.74,
+   "mx": 2.68,
+   "my": 22.36,
+   "tipo": ""
+  },
+  {
+   "canto": [
+    -16.1,
+    387.6
+   ],
+   "casa": "em_l",
+   "dmx": 1.21,
+   "dmy": 1.28,
+   "fundo": true,
+   "mx": 6.6,
    "my": 24.35,
    "tipo": ""
   },
   {
    "canto": [
-    -36.6,
-    401.2
+    -45.6,
+    403.0
    ],
-   "dmx": 1.22,
-   "dmy": 0.93,
+   "casa": "meia_agua",
+   "dmx": 1.24,
+   "dmy": 0.67,
    "fundo": true,
-   "mx": 6.76,
-   "my": 25.54,
+   "mx": 6.63,
+   "my": 25.86,
    "tipo": ""
   },
   {
    "canto": [
-    -60.0,
+    -63.7,
     412.2
    ],
-   "dmx": 1.11,
-   "dmy": 1.01,
+   "casa": "quatro_aguas",
+   "dmx": 1.24,
+   "dmy": 0.99,
    "fundo": true,
-   "mx": 6.73,
-   "my": 26.67,
+   "mx": 6.63,
+   "my": 26.77,
    "tipo": ""
   }
  ],
@@ -1738,22 +1773,22 @@
  "provas_da_vila": [
   {
    "cor": "telha_d",
-   "lote": 4,
-   "minimo": 10,
+   "lote": 7,
+   "minimo": 8,
    "px": [
-    257.4,
-    73.6
+    123.2,
+    216.9
    ],
-   "raio": 12,
+   "raio": 6,
    "tipo": "praca"
   },
   {
-   "cor": "telha_c",
+   "cor": "telha_torre",
    "lote": 8,
    "minimo": 6,
    "px": [
-    67.4,
-    198.4
+    118.8,
+    267.6
    ],
    "raio": 4,
    "tipo": "igreja"
@@ -1769,15 +1804,15 @@
     "telha_d"
    ],
    "px": [
-    74.1,
-    322.2
+    37.0,
+    335.0
    ],
    "raio": 10,
    "tipo": "obra"
   },
   {
    "cor": "casa_a",
-   "lote": 25,
+   "lote": 24,
    "minimo": 40,
    "proibidas": [
     "telha_a",
@@ -1786,8 +1821,8 @@
     "telha_d"
    ],
    "px": [
-    116.6,
-    162.0
+    121.3,
+    155.6
    ],
    "raio": 10,
    "tipo": "obra"

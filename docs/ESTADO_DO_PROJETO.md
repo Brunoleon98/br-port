@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 16/10/2026 — o maquinário da obra (`122`)
+> **Atualização:** 17/10/2026 — a vila humilde (`123`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -95,11 +95,13 @@ verdade** — parede desabada, meio telhado, portão fora do trilho.
 **O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
 central e passadeiras) — **três camiões descem e dois sobem, pela DIREITA, e os dois sentidos encostam nos berços** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
 e uma **viela de terra entre elas** — a de trás mais rala, para a vila DESFIAR
-contra a mata. Tem nível (`--nivel-vila=N`): térrea, sobrado, prédio.
+contra a mata. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
 
-**E TRÊS LOTES DA VILA NÃO SÃO CASA** (`022`): uma **igreja** com torre, uma
-**praça** com coreto e **duas obras**, dos lotes VISÍVEIS — a 51 px quem
-distingue é a silhueta, e por isso "comércios variados" ficou de fora.
+**A VILA É HUMILDE DE PROPÓSITO** (`123`): meia-água de fibrocimento, casinha
+de empena, quatro águas, varanda e casa em L, cada uma num terreno de muro
+baixo, com acento de cor, barrado e caixa-d'água; casario e sobrado são a
+melhoria do lote no nível 2. **Três lotes não são casa** (`022`): a
+igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 
 ---
 
@@ -112,9 +114,9 @@ A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
 **Na main:** o cancelamento (`109`–`111`, PR #133), a pesquisa de recursos
 básicos (`112`), como jogar/glossário na inicial e na pausa (`114`–`116`, PR
-#134; leitura e telefone pendentes) e a obra no mapa (`121`, PR #136).
-**O maquinário da obra (`122`)** foi aceite na foto; a fila do Bruno segue
-nas estruturas da cidade e depois no mapa (§7).
+#134; leitura e telefone pendentes), a obra no mapa (`121`, PR #136) e o
+maquinário dela (`122`, PR #137). **A vila humilde (`123`)** foi aceite na
+foto; a fila do Bruno segue no mapa (§7).
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
 A `107` permanece local e separada, sem autorização de publicação nem teste

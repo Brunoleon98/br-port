@@ -441,6 +441,17 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   obras» contra «só o pátio», e a pergunta seguinte foi a da COMPOSIÇÃO de
   cada máquina nova (onde, e o que faz em cada dia), com a prévia vista de
   cima — voltou com as recomendadas.
+  ⚠️ **E NA `123` (a vila) FORAM CINCO PASSAGENS, E O RUMO VEIO SEMPRE DO
+  «OUTRO».** Da segunda à quinta ele marcou TODAS as opções da lista — cada
+  uma com a correção escrita — e escreveu no «Outro» um pedido maior do que
+  ela: mais formas de casa e mais terreno; casas mais humildes agora e
+  melhores em fases à frente; mais detalhe; melhor encaixe. Cada um leu-se
+  como licença para a passagem seguinte, feita sem pergunta a meio e mostrada
+  com prancha e veredito no fim. ⚠️ **«Mais variações» não é «mais
+  riqueza»**: a segunda passagem trouxe casario e sobrado, e a resposta foi
+  «casas mais humildes» — num porto que abre em ruínas, a vila começa
+  simples e a melhor fica para a melhoria do lote noutro nível (`123`).
+  Envio e pergunta em blocos seguidos do mesmo turno voltaram 6 de 6.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

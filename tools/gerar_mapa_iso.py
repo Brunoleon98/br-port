@@ -429,8 +429,43 @@ C = {
     # da vila lia como concreto. Virou verde-água claro, que é cor de casa de
     # litoral e não repete nenhuma das outras duas.
     "casa_a": "#f0e7d3", "casa_b": "#e6d5b8", "casa_c": "#cfe0d2",
+    # Os três pastéis da `123` — amarelo, rosa e azul-claro —, pedidos pela
+    # mesma frase da referência. São CLAROS de propósito: a parede é a peça
+    # que diz "tem gente dentro", e o que a separa do quintal é o valor (as
+    # seis passam de 200 de luminância contra os 141 do quintal pavimentado);
+    # o matiz só distingue uma casa da vizinha.
+    "casa_d": "#f1dc9f", "casa_e": "#eec6b8", "casa_f": "#c8dbe8",
     "telha_a": "#b1512a", "telha_b": "#9d6a3c", "telha_c": "#7f8c98",
     "telha_d": "#a05a52",
+    # A igreja, a praça e a obra da `123`. `caiacao` é a parede da igreja,
+    # mais branca do que o creme das casas; `telha_torre` é o barro escuro
+    # da pirâmide do campanário, que é a única peça da vila com esta cor —
+    # é por ela que o D24 acha a torre sem se satisfazer com o telhado de
+    # uma vizinha. `gramado` são os canteiros da praça e `tijolo`, a parede
+    # por acabar da obra.
+    "caiacao": "#f7f3ea", "telha_torre": "#8d3a22", "gramado": "#7cab49",
+    # ⚠️ O TIJOLO ERA #c4673d E LIA COMO TELHA na primeira foto: 120 de
+    # luminância contra os 99 da `telha_a`, o mesmo laranja-escuro. O tijolo
+    # baiano novo é mais claro e mais alaranjado do que a telha velha, e é o
+    # VALOR que os separa: 146 contra 99.
+    "tijolo": "#d9844f",
+    # A caixa-d'água de fibra azul em cima do telhado, a marca mais brasileira
+    # que cabe num telhado de 51 px (`123`).
+    "caixa_dagua": "#3d84c6", "caixa_dagua_lado": "#2c64a0",
+    # A CASA HUMILDE (`123`, segunda passagem): o reboco por pintar e a telha
+    # ondulada de fibrocimento cinzenta, as duas marcas da casa simples que o
+    # Bruno pediu para o nível 1 — «em fases mais para frente casas melhores».
+    "reboco": "#cdc4b2", "fibrocimento": "#a7aeb0",
+    # As cores de acento (porta, folhas, portão) e as das flores dos quintais,
+    # a primavera magenta e o ipê amarelo: pequenas e saturadas, porque são
+    # elas que salpicam uma rua de casas claras (terceira passagem da `123`).
+    # ⚠️ 20% MENOS SATURADAS do que nasceram (#3f7e55, #3a6ca6, #a8432f,
+    # #c4932c): na quarta foto as folhas das janelas saltavam da fachada.
+    "acento_verde": "#4c7e5d", "acento_azul": "#5078a6",
+    "acento_vermelho": "#a85747", "acento_ocre": "#c49d4a",
+    "poste": "#4a4f55", "luminaria": "#f0dc8a",
+    "caixa_dagua_friso": "#5596d3", "caixa_dagua_tampa": "#6aa6dc",
+    "flor_primavera": "#c9477f", "flor_ipe": "#e6c13a", "flor_branca": "#f3efe6",
 }
 
 
@@ -1768,7 +1803,13 @@ VILA_NIVEIS = {
     2: [(34, "telha_a", 2), (31, "telha_b", 2), (37, "telha_d", 2)],
     3: [(56, "telha_c", 3), (48, "telha_c", 3), (64, "telha_c", 3)],
 }
-VILA_PAREDES = ["casa_a", "casa_b", "casa_c"]
+# ⚠️ A COR DA PAREDE DEIXOU DE SER A VARIANTE (`123`). Até 17/10 a variante
+# escolhia altura, telha E parede, e a vila tinha três casas e só três. Os
+# pastéis novos não podiam entrar no mesmo sorteio: o `randrange(3)` da
+# variante vive no `Random` que põe cada lote no sítio, e um quarto valor
+# mudaria a sequência e mexeria a vila inteira. A parede sai de um `Random`
+# próprio, em `paredes_da_vila()`, e a geminada continua a herdar a da vizinha.
+VILA_PAREDES = ["casa_a", "casa_b", "casa_c", "casa_d", "casa_e", "casa_f"]
 
 # ── ONDE NÃO CABE CASA: os vãos que os prédios do pátio obrigam a abrir ──
 #
@@ -2427,31 +2468,769 @@ def _sombrear(hexa: str, fator: float) -> str:
     return "#%02x%02x%02x" % tuple(min(255, int(c * fator)) for c in (r, g, b))
 
 
-def casa(mx0, my0, mx1, my1, altura, parede, telha, janelas) -> str:
-    """Uma casa da vila: parede, porta, janela e telhado com beiral curto.
+# ── O TELHADO DE QUATRO ÁGUAS E A SOMBRA DA CASA (`123`) ─────────────────
+#
+# Até 17/10 o telhado era uma CAIXA de 5 px por cima da parede — uma tampa
+# chata, que na foto do jogo lia como laje laranja e não como telhado. A casa
+# térrea brasileira de telha de barro tem quatro panos e uma cumeeira curta, e
+# a diferença de luz entre os dois panos que a câmera vê é o que desenha o
+# volume, sem crescer quase nada para cima.
+#
+# A cumeeira corre ao longo do lado MAIOR, e cada rincão sobe a 45° em planta:
+# é a forma de um telhado de quatro águas de inclinação igual nos quatro panos.
+# A altura sai do lado MENOR, porque é ele que dá o vão da tesoura.
+TELHADO_SUBIDA = 9.0      # px de cumeeira por unidade do lado menor do telhado
+TELHADO_TESTEIRA = 2.0    # px da borda do beiral, que é o que lhe dá espessura
+BEIRAL_CASA = 0.12        # o mesmo que o D14 lê como `BEIRAL_DA_CASA`
 
-    O beiral é 0,12 e o telhado tem 5px — proporção de casa, não de galpão.
-    A porta fica na face +my (virada para a rua) e ocupa pouco mais de um
-    terço do vão, que é o que dá escala humana à construção.
+
+def telhado_quatro_aguas(x0, y0, x1, y1, base, cor) -> str:
+    """Testeira e quatro panos sobre o retângulo do beiral, a partir de `base`.
+
+    Os panos de trás (−mx, −my) saem primeiro e os da frente por cima: num
+    volume convexo isso basta para que o pano de trás só apareça onde passa
+    acima da cumeeira, que é o que a câmera de cima de facto vê.
     """
-    p_dir, p_esq = _sombrear(parede, 0.80), _sombrear(parede, 0.91)
-    s = caixa(mx0, my0, mx1, my1, ALT_CAIS, altura, parede, p_dir, p_esq)
+    dx, dy = x1 - x0, y1 - y0
+    h = min(dx, dy) * TELHADO_SUBIDA
+    t = base + TELHADO_TESTEIRA
+    s = caixa(x0, y0, x1, y1, base, TELHADO_TESTEIRA, cor,
+              _sombrear(cor, 0.62), _sombrear(cor, 0.74))
+    if dx >= dy:
+        m = (y0 + y1) / 2.0
+        a, b = (x0 + dy / 2.0, m), (x1 - dy / 2.0, m)
+        tras_my = [(x0, y0, t), (x1, y0, t), (b[0], b[1], t + h), (a[0], a[1], t + h)]
+        tras_mx = [(x0, y0, t), (a[0], a[1], t + h), (x0, y1, t)]
+        frente_mx = [(x1, y0, t), (x1, y1, t), (b[0], b[1], t + h)]
+        frente_my = [(x0, y1, t), (a[0], a[1], t + h), (b[0], b[1], t + h), (x1, y1, t)]
+    else:
+        m = (x0 + x1) / 2.0
+        a, b = (m, y0 + dx / 2.0), (m, y1 - dx / 2.0)
+        tras_my = [(x0, y0, t), (x1, y0, t), (a[0], a[1], t + h)]
+        tras_mx = [(x0, y0, t), (a[0], a[1], t + h), (b[0], b[1], t + h), (x0, y1, t)]
+        frente_mx = [(x1, y0, t), (x1, y1, t), (b[0], b[1], t + h), (a[0], a[1], t + h)]
+        frente_my = [(x0, y1, t), (b[0], b[1], t + h), (x1, y1, t)]
+    # A LUZ É A DAS PAREDES: a face +mx é a de sombra (0,80) e a +my a de luz
+    # (0,91), logo o pano que olha para +my leva o tom puro da telha e o que
+    # olha para +mx o mais escuro. O pano puro é também o que o D24 lê.
+    for pano, fator in ((tras_my, 0.84), (tras_mx, 0.95),
+                        (frente_mx, 0.74), (frente_my, 1.0)):
+        s += poli([p(*q) for q in pano], cor if fator == 1.0 else _sombrear(cor, fator))
+    if cor != C["fibrocimento"]:
+        # Na água +my o beiral é o lado 0–3 e a cumeeira o 1–2; na +mx, que
+        # é triângulo quando a cumeeira corre em mx, os dois lados sobem do
+        # beiral (0 e 1) ao mesmo ápice (2).
+        if len(frente_my) == 4:
+            s += _fiadas(frente_my, (0, 1), (3, 2), _sombrear(cor, 0.86))
+        else:
+            s += _fiadas(frente_my, (0, 1), (2, 1), _sombrear(cor, 0.86))
+        if len(frente_mx) == 4:
+            s += _fiadas(frente_mx, (0, 3), (1, 2), _sombrear(cor, 0.64))
+        else:
+            s += _fiadas(frente_mx, (0, 2), (1, 2), _sombrear(cor, 0.64))
+    return s
 
-    meio = (mx0 + mx1) / 2.0
-    vao = (mx1 - mx0)
-    s += face_my(my1, meio - vao * 0.17, meio + vao * 0.17,
-                 ALT_CAIS, ALT_CAIS + altura * 0.55, C["porta"])
+
+def _fiadas(pano, lado_a, lado_b, cor) -> str:
+    """Duas fiadas de telha paralelas ao beiral, a um e a dois terços da água.
+
+    `lado_a` e `lado_b` são os índices (beiral, cumeeira) das duas arestas que
+    sobem do beiral; a fiada é a tira entre os dois pontos à mesma fração da
+    subida. É o que diz «telha de barro» e não «chapa laranja» (terceira
+    passagem da `123`).
+    """
+    s = ""
+
+    def em(ab, f):
+        a, b = pano[ab[0]], pano[ab[1]]
+        return tuple(a[k] + (b[k] - a[k]) * f for k in range(3))
+    for f in (0.33, 0.66):
+        q = [em(lado_a, f), em(lado_b, f), em(lado_b, f + 0.07), em(lado_a, f + 0.07)]
+        s += poli([p(*v) for v in q], cor)
+    return s
+
+
+def altura_do_telhado(x0, y0, x1, y1) -> float:
+    """O quanto o telhado sobe acima da parede, testeira incluída."""
+    return TELHADO_TESTEIRA + min(x1 - x0, y1 - y0) * TELHADO_SUBIDA
+
+
+# A SOMBRA anda na direção da das árvores (`arvore()`: 0,72 para +mx e 0,52
+# para +my por raio de copa), mais curta por pixel de altura: medida na copa,
+# a árvore lança ~0,016 unidades por px, e uma casa com essa razão cobriria o
+# passeio inteiro até ao asfalto. A esta razão a de uma térrea acaba no
+# passeio, e o volume assenta no chão sem a rua ganhar uma mancha.
+SOMBRA_POR_PX = (0.0100, 0.0072)
+SOMBRA_OPACIDADE = 0.26
+
+
+def sombra_de_volume(x0, y0, x1, y1, altura) -> str:
+    """O hexágono que a caixa lança no chão: a planta e ela deslocada.
+
+    Quem chama passa o retângulo do BEIRAL e a altura da PAREDE: é a borda do
+    beiral, à altura da parede, que desenha a orla da sombra; a cumeeira sobe
+    mais, mas fica no meio, e a sombra dela cai dentro deste hexágono.
+    """
+    dx, dy = altura * SOMBRA_POR_PX[0], altura * SOMBRA_POR_PX[1]
+    return _chao([(x0, y0), (x1, y0), (x1 + dx, y0 + dy), (x1 + dx, y1 + dy),
+                  (x0 + dx, y1 + dy), (x0, y1)], C["mangue"], SOMBRA_OPACIDADE)
+
+
+def casa(mx0, my0, mx1, my1, altura, parede, telha, janelas, acento=None) -> str:
+    """Uma casa da vila: parede, porta, janela e telhado de quatro águas.
+
+    O beiral é 0,12 — proporção de casa, não de galpão. A porta fica na face
+    +my e ocupa pouco mais de um terço do vão, que é o que dá escala humana à
+    construção. A sombra no chão sai à parte (`sombra_de_volume`), porque tem
+    de ir para baixo da árvore do quintal da frente.
+    """
+    s = _paredes(mx0, my0, mx1, my1, altura, parede)
+    s += _porta_my(my1, mx0, mx1, 0.33, 0.67, ALT_CAIS, ALT_CAIS + altura * 0.55,
+                   acento)
     for linha in range(janelas):
         j0 = ALT_CAIS + altura * (0.30 + 0.62 * linha / max(janelas, 1))
         j1 = j0 + altura * 0.24
-        s += face_mx(mx1, my0 + (my1 - my0) * 0.34, my0 + (my1 - my0) * 0.66,
-                     j0, j1, C["vidro"])
+        s += _janela_mx(mx1, my0, my1, 0.36, 0.64, j0, j1, acento)
         if linha > 0 or janelas == 1:
-            s += face_my(my1, mx0 + vao * 0.66, mx0 + vao * 0.88, j0, j1, C["vidro"])
+            s += _janela_my(my1, mx0, mx1, 0.74, 0.90, j0, j1, acento)
 
+    s += telhado_quatro_aguas(mx0 - BEIRAL_CASA, my0 - BEIRAL_CASA,
+                              mx1 + BEIRAL_CASA, my1 + BEIRAL_CASA,
+                              ALT_CAIS + altura, C[telha])
+    return s
+
+
+# ── AS SEIS CASAS DA VILA (`123`) ─────────────────────────────────────────
+#
+# Até 17/10 a vila tinha UMA casa — caixa, porta, janela e telhado — em três
+# alturas e três cores, e na foto do jogo lia como um loteamento. O pedido do
+# Bruno foi «mais variações de casa, seguindo o padrão brasileiro», e o que
+# separa uma casa da outra a 51 px de lote é a SILHUETA, a mesma regra que
+# escolheu a igreja, a praça e a obra (`022`). Daí seis formas, cada uma com um
+# contorno que nenhuma outra tem:
+#
+#   · QUATRO ÁGUAS — a térrea de telha de barro, a de sempre;
+#   · EMPENA — a casinha de duas águas com o triângulo virado para a rua, a da
+#     vila de pescador, estreita, com a porta no meio da empena;
+#   · PLATIBANDA — a fachada que sobe acima do telhado e o esconde, com a
+#     cornija branca: o casario das cidades de porto, e a única que encosta na
+#     vizinha (geminada) e de outra cor, como em Paraty;
+#   · ALPENDRE — a varanda de esteios na frente, com a meia-água por cima;
+#   · EM L — a casa com a ala recuada, que deixa um pátio na quina da frente;
+#   · SOBRADO — dois pisos e a sacada, a altura do nível seguinte da vila.
+#
+# Cada uma devolve só o desenho; a SOMBRA sai em `sombra_da_casa`, porque vai
+# para baixo do muro e da árvore da frente, que são desenhados depois.
+CASA_TIPOS = {
+    # tipo: (no saco da fileira da frente, no da de trás, largura mín., máx.)
+    # ⚠️ A PLATIBANDA E O SOBRADO NÃO ESTÃO NO SACO (segunda passagem da
+    # `123`): «por enquanto faça casas mais humildes, em fases mais para frente
+    # casas melhores podem aparecer». O nível 1 é a vila simples — a meia-água,
+    # a casinha de empena, a térrea de quatro águas, a de varanda e a em L — e
+    # as duas melhores são a MELHORIA do mesmo lote no nível 2 da vila
+    # (`forma_no_nivel`): a vila cresce casa a casa, sem mudar de terreno.
+    "quatro_aguas": (3, 3, 0.76, 1.10),
+    "empena": (3, 2, 0.62, 0.82),
+    "meia_agua": (2, 3, 0.66, 0.92),
+    "alpendre": (2, 2, 0.96, 1.22),
+    "em_l": (1, 1, 1.14, 1.38),
+    "platibanda": (0, 0, 0.72, 1.00),
+    "sobrado": (0, 0, 0.80, 1.04),
+}
+
+# A casa melhor que cada forma humilde vira no nível seguinte da vila.
+MELHORIA = {"meia_agua": "quatro_aguas", "empena": "platibanda",
+            "quatro_aguas": "sobrado", "alpendre": "alpendre", "em_l": "em_l",
+            "platibanda": "sobrado", "sobrado": "sobrado"}
+
+
+def forma_no_nivel(forma: str, nivel: int) -> str:
+    """A forma de um lote no nível pedido: o nível 1 é a sorteada.
+
+    No nível 3 a vila é de prédios (`VILA_NIVEIS`), e toda forma volta a ser a
+    caixa de quatro águas, que é a que aguenta três andares de janelas.
+    """
+    if nivel <= 1:
+        return forma
+    if nivel >= 3:
+        return "quatro_aguas"
+    return MELHORIA[forma]
+
+
+def _tirar_do_saco(saco: list, r: random.Random, fundo: bool) -> str:
+    """A forma seguinte da fileira, tirada de um SACO embaralhado.
+
+    ⚠️ PESO SORTEADO CASA A CASA DEIXOU UMA FORMA DE FORA, duas vezes seguidas:
+    a casa em L é a mais larga, e é a que o fim do degrau e os vãos dos prédios
+    do pátio mais recusam — com peso 1,6 em 11 nenhuma chegou à tela. O saco
+    tem cada forma o número de vezes da tabela, e só se enche outra vez quando
+    acaba: em cada onze casas sorteadas, todas as formas saem.
+    """
+    if not saco:
+        saco.extend(t for t, v in CASA_TIPOS.items() for _k in range(v[1 if fundo else 0]))
+        r.shuffle(saco)
+    if not saco:
+        raise ValueError("o saco da fileira está vazio — CASA_TIPOS sem contagem")
+    return saco.pop()
+
+
+def _paredes(x0, y0, x1, y1, altura, parede) -> str:
+    """As paredes e o barrado, nas duas faces que a câmera vê."""
+    s = caixa(x0, y0, x1, y1, ALT_CAIS, altura, parede,
+              _sombrear(parede, 0.80), _sombrear(parede, 0.91))
+    barra = _sombrear(parede, 0.78)
+    s += face_mx(x1, y0, y1, ALT_CAIS, ALT_CAIS + BARRADO_ALT, _sombrear(barra, 0.80))
+    s += face_my(y1, x0, x1, ALT_CAIS, ALT_CAIS + BARRADO_ALT, _sombrear(barra, 0.91))
+    return s
+
+
+def _vao_mx(x, y0, y1, a, b, z0, z1, cor) -> str:
+    """Uma abertura na face +mx, entre as frações `a` e `b` do lado."""
+    return face_mx(x, y0 + (y1 - y0) * a, y0 + (y1 - y0) * b, z0, z1, cor)
+
+
+def _vao_my(y, x0, x1, a, b, z0, z1, cor) -> str:
+    """Uma abertura na face +my, entre as frações `a` e `b` do lado."""
+    return face_my(y, x0 + (x1 - x0) * a, x0 + (x1 - x0) * b, z0, z1, cor)
+
+
+# ── O DETALHE QUE DÁ VIDA À CASA HUMILDE (terceira passagem da `123`) ────
+#
+# «Melhore alguns detalhes para deixar as casas mais ricas em detalhes, assim
+# torna a cidade um pouco mais viva.» A casa continua simples; o que a rua
+# brasileira tem e a vila não tinha é COR PEQUENA: cada casa tem uma cor de
+# acento — a das folhas da janela, a da porta e a do portão —, e é ela que
+# salpica a fileira. A janela ganha a moldura e as duas folhas abertas, e a
+# parede o BARRADO, a faixa escura que a casa simples pinta na base para
+# esconder a lama da chuva.
+ACENTOS = ["acento_verde", "acento_azul", "acento_vermelho", "acento_ocre"]
+BARRADO_ALT = 2.6         # px da faixa escura na base da parede
+
+
+def _folhas(face, plano, a0, a1, z0, z1, lim0, lim1, acento, sombra) -> str:
+    """A moldura e as duas folhas abertas de uma janela entre `a0` e `a1`."""
+    f = face_mx if face == "mx" else face_my
+    larg = (a1 - a0) * 0.42
+    s = f(plano, a0 - 0.012, a1 + 0.012, z0 - 0.8, z1 + 0.8,
+          _sombrear(C["caiacao"], sombra))
+    if acento:
+        cor = _sombrear(C[acento], sombra)
+        if a0 - 0.012 - larg > lim0:
+            s += f(plano, a0 - 0.012 - larg, a0 - 0.012, z0, z1, cor)
+        if a1 + 0.012 + larg < lim1:
+            s += f(plano, a1 + 0.012, a1 + 0.012 + larg, z0, z1, cor)
+    return s
+
+
+def _janela_mx(x, y0, y1, a, b, z0, z1, acento=None) -> str:
+    """Janela na face +mx: moldura clara, as folhas na cor de acento, vidro."""
+    ya, yb = y0 + (y1 - y0) * a, y0 + (y1 - y0) * b
+    return _folhas("mx", x, ya, yb, z0, z1, y0 + 0.01, y1 - 0.01, acento, 0.80) \
+        + face_mx(x, ya, yb, z0, z1, C["vidro"])
+
+
+def _janela_my(y, x0, x1, a, b, z0, z1, acento=None) -> str:
+    """Janela na face +my: a mesma, com a luz da face +my."""
+    xa, xb = x0 + (x1 - x0) * a, x0 + (x1 - x0) * b
+    return _folhas("my", y, xa, xb, z0, z1, x0 + 0.01, x1 - 0.01, acento, 0.91) \
+        + face_my(y, xa, xb, z0, z1, C["vidro"])
+
+
+def _porta_mx(x, y0, y1, a, b, z0, z1, acento=None) -> str:
+    """A porta na face +mx: de madeira, ou pintada da cor de acento."""
+    cor = _sombrear(C[acento], 0.80) if acento else C["porta"]
+    return _vao_mx(x, y0, y1, a, b, z0, z1, cor)
+
+
+def _porta_my(y, x0, x1, a, b, z0, z1, acento=None) -> str:
+    cor = _sombrear(C[acento], 0.91) if acento else C["porta"]
+    return _vao_my(y, x0, x1, a, b, z0, z1, cor)
+
+
+def telhado_duas_aguas(x0, y0, x1, y1, base, cor, parede, beiral=BEIRAL_CASA,
+                       ponta=0.06, subida=TELHADO_SUBIDA * 1.25,
+                       respiro=False) -> str:
+    """Duas águas com a cumeeira ao longo de mx e a empena na face +mx.
+
+    O retângulo é o da PAREDE; o beiral sai dos lados e a `ponta` sobre a
+    empena. ⚠️ O PANO −my PARTE-SE NA EMPENA: a parte de trás dele fica atrás
+    dela e tem de sair antes; a tira da ponta, à frente, sai depois — senão a
+    empena come a borda do telhado do lado da sombra (a nave da igreja ensinou
+    isto primeiro).
+    """
+    ym = (y0 + y1) / 2.0
+    h = (y1 - y0) * subida
+    t = base
+    tras = lambda xa, xb: poli([p(xa, y0 - beiral, t), p(xb, y0 - beiral, t),
+                                p(xb, ym, t + h), p(xa, ym, t + h)],
+                               _sombrear(cor, 0.84))
+    s = tras(x0 - ponta, x1)
+    s += poli([p(x1, y0, t), p(x1, y1, t), p(x1, ym, t + h)], _sombrear(parede, 0.80))
+    if respiro:
+        # O óculo do sótão: um quadrado escuro no terço de baixo da empena.
+        s += face_mx(x1, ym - (y1 - y0) * 0.07, ym + (y1 - y0) * 0.07,
+                     t + h * 0.22, t + h * 0.42, C["porta"])
+    s += tras(x1, x1 + ponta)
+    s += poli([p(x0 - ponta, y1 + beiral, t), p(x1 + ponta, y1 + beiral, t),
+               p(x1 + ponta, ym, t + h), p(x0 - ponta, ym, t + h)], cor)
+    return s
+
+
+def _caixa_dagua(mx, my, z) -> str:
+    """A caixa de fibra azul: o costado e a tampa, uma elipse e um arco.
+
+    Em planta o raio vira uma elipse de `r·√2·MEIA_LARG` por `r·√2·MEIA_ALT`;
+    o costado é o retângulo entre a tampa e a metade de BAIXO da elipse da
+    base (o arco com `sweep` 0 vai das 9 às 3 passando pelas 6, com o y da
+    tela para baixo).
+    """
+    r, alt = 0.085, 5.5
+    cx, cy = p(mx, my, z)
+    rx, ry = r * MEIA_LARG * math.sqrt(2.0), r * MEIA_ALT * math.sqrt(2.0)
+    s = ('  <path d="M%.1f,%.1f L%.1f,%.1f A%.1f,%.1f 0 0 0 %.1f,%.1f L%.1f,%.1f Z" '
+         'fill="%s"/>\n' % (cx - rx, cy - alt, cx - rx, cy, rx, ry, cx + rx, cy,
+                            cx + rx, cy - alt, C["caixa_dagua_lado"]))
+    # OS DOIS FRISOS do costado, as nervuras da caixa de fibra: cada um é a
+    # metade de baixo da elipse a uma altura, com 0,7 px de espessura — ida
+    # pelo arco de baixo (`sweep` 0) e volta por ele ao contrário (`sweep` 1).
+    for zf in (1.6, 3.5):
+        y = cy - zf
+        s += ('  <path d="M%.1f,%.1f A%.1f,%.1f 0 0 0 %.1f,%.1f L%.1f,%.1f '
+              'A%.1f,%.1f 0 0 1 %.1f,%.1f Z" fill="%s"/>\n'
+              % (cx - rx, y, rx, ry, cx + rx, y, cx + rx, y - 0.7, rx, ry,
+                 cx - rx, y - 0.7, C["caixa_dagua_friso"]))
+    # A tampa: o aro, a tampa mais clara dentro dele e o pegador no meio.
+    s += ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s"/>\n'
+          % (cx, cy - alt, rx, ry, C["caixa_dagua"]))
+    s += ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s"/>\n'
+          % (cx, cy - alt, rx * 0.66, ry * 0.66, C["caixa_dagua_tampa"]))
+    s += ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s"/>\n'
+          % (cx, cy - alt - 0.4, rx * 0.22, ry * 0.22, C["caixa_dagua_lado"]))
+    return s
+
+
+# ── A CAIXA ASSENTA NO TELHADO (quinta passagem da `123`) ────────────────
+#
+# «Melhore os detalhes das caixas da água, e tente encaixar melhor nas casas.»
+# Até aqui a caixa era um cilindro posto a uma altura escolhida à mão, e o pé
+# dela ou afundava na água do telhado ou pairava acima dela, conforme a casa.
+# Agora cada forma diz a ALTURA DO TELHADO em qualquer ponto (`z_*`), e a caixa
+# pousa num murete de alvenaria cujos quatro cantos de baixo seguem a água
+# naquele sítio e cujo topo é plano: é o que a casa de verdade faz, e o pé
+# deixa de ser uma aposta.
+CAIXA_BASE = 0.105        # meio lado do murete, um nada maior do que a caixa
+
+
+def z_quatro_aguas(x0, y0, x1, y1, base):
+    """A altura do telhado de quatro águas sobre o retângulo do beiral."""
+    dx, dy = x1 - x0, y1 - y0
+    h = min(dx, dy) * TELHADO_SUBIDA
+    k = h / (min(dx, dy) / 2.0)
+    t = base + TELHADO_TESTEIRA
+    return lambda x, y: t + min(h, k * max(0.0, min(x - x0, x1 - x, y - y0, y1 - y)))
+
+
+def z_duas_aguas(y0, y1, base, beiral=BEIRAL_CASA, subida=TELHADO_SUBIDA * 1.25):
+    """A altura do telhado de duas águas, com a cumeeira ao longo de mx."""
+    ym, h = (y0 + y1) / 2.0, (y1 - y0) * subida
+    meia = (y1 - y0) / 2.0 + beiral
+    return lambda x, y: base + max(0.0, h * (1.0 - abs(y - ym) / meia))
+
+
+def z_meia_agua(mx0, mx1, base):
+    """A altura da água única, a cair do muro de trás para a frente."""
+    queda = _meia_agua(mx0, mx1)
+    return lambda x, y: base + queda * (mx1 - x) / (mx1 - mx0)
+
+
+def _caixa_assente(cx, cy, z_telhado) -> str:
+    """O murete que nivela a caixa sobre a água, e a caixa por cima dele."""
+    a = CAIXA_BASE
+    zc = {(sx, sy): z_telhado(cx + sx * a, cy + sy * a)
+          for sx in (-1, 1) for sy in (-1, 1)}
+    zt = max(zc.values()) + 1.5
+    cor = C["reboco"]
+    s = poli([p(cx + a, cy - a, zt), p(cx + a, cy + a, zt),
+              p(cx + a, cy + a, zc[(1, 1)]), p(cx + a, cy - a, zc[(1, -1)])],
+             _sombrear(cor, 0.80))
+    s += poli([p(cx - a, cy + a, zt), p(cx + a, cy + a, zt),
+               p(cx + a, cy + a, zc[(1, 1)]), p(cx - a, cy + a, zc[(-1, 1)])],
+              _sombrear(cor, 0.91))
+    s += poli([p(cx - a, cy - a, zt), p(cx + a, cy - a, zt),
+               p(cx + a, cy + a, zt), p(cx - a, cy + a, zt)], cor)
+    return s + _caixa_dagua(cx, cy, zt)
+
+
+def _caixa_no_telhado(x0, y0, x1, y1, base) -> str:
+    """A caixa-d'água sobre a cumeeira de um telhado de quatro águas.
+
+    ⚠️ EM CIMA DA CUMEEIRA, e não no pano de trás: atrás dela, a cumeeira fica
+    entre a câmera e o pé do murete, e o murete, desenhado depois do telhado,
+    pintava-se por cima dela. Na cumeeira não há telhado à frente do pé.
+    """
+    cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+    return _caixa_assente(cx - 0.04, cy - 0.04, z_quatro_aguas(x0, y0, x1, y1, base))
+
+
+def casa_empena(mx0, my0, mx1, my1, altura, parede, telha, janelas, acento=None) -> str:
+    """A casinha de duas águas, com a empena e a porta viradas para a rua."""
+    s = _paredes(mx0, my0, mx1, my1, altura, parede)
+    s += _porta_mx(mx1, my0, my1, 0.38, 0.62, ALT_CAIS, ALT_CAIS + altura * 0.62, acento)
+    for linha in range(janelas):
+        z0 = ALT_CAIS + altura * (0.32 + 0.62 * linha / max(janelas, 1))
+        s += _janela_my(my1, mx0, mx1, 0.30, 0.58, z0, z0 + altura * 0.26, acento)
+    s += telhado_duas_aguas(mx0, my0, mx1, my1, ALT_CAIS + altura, C[telha],
+                            parede, respiro=True)
+    return s
+
+
+MEIA_AGUA_SUBIDA = 6.5    # px de queda do telhado por unidade de fundo
+
+
+def _meia_agua(mx0, mx1) -> float:
+    return (mx1 - mx0) * MEIA_AGUA_SUBIDA
+
+
+def casa_meia_agua(mx0, my0, mx1, my1, altura, parede, telha, janelas, acento=None) -> str:
+    """A mais simples: um telhado de uma água só, a cair para a rua.
+
+    ⚠️ CAI PARA A FRENTE (+mx) E NÃO PARA TRÁS. Caído para trás, o pano olha
+    para longe da câmera e a 60° quase some; caído para a frente ele mostra-se
+    inteiro, e o oitão do lado +my — o triângulo de parede entre a água e o
+    muro de trás, mais alto — é o contorno que nenhuma outra casa tem.
+    A telha ondulada leva vincos ao comprido da água: é o que a diz
+    fibrocimento e não laje.
+    """
+    queda = _meia_agua(mx0, mx1)
     t = ALT_CAIS + altura
-    s += caixa(mx0 - 0.12, my0 - 0.12, mx1 + 0.12, my1 + 0.12, t, 5,
-               C[telha], _sombrear(C[telha], 0.72), _sombrear(C[telha], 0.86))
+    p_esq = _sombrear(parede, 0.91)
+    s = _paredes(mx0, my0, mx1, my1, altura, parede)
+    s += poli([p(mx1, my1, t), p(mx0, my1, t), p(mx0, my1, t + queda)], p_esq)
+    s += _porta_mx(mx1, my0, my1, 0.56, 0.80, ALT_CAIS, ALT_CAIS + altura * 0.70, acento)
+    s += _janela_mx(mx1, my0, my1, 0.16, 0.38, ALT_CAIS + altura * 0.36,
+                 ALT_CAIS + altura * 0.66, acento)
+    s += _janela_my(my1, mx0, mx1, 0.40, 0.66, ALT_CAIS + altura * 0.34,
+                 ALT_CAIS + altura * 0.62, acento)
+    e = 0.08
+    cor = C[telha]
+    z = lambda x: t + queda * (mx1 - x) / (mx1 - mx0)
+    xa, xb, ya, yb = mx0 - e, mx1 + e, my0 - e, my1 + e
+    s += poli([p(xa, ya, z(xa)), p(xa, yb, z(xa)), p(xb, yb, z(xb)), p(xb, ya, z(xb))],
+              _sombrear(cor, 0.92))
+    if telha == "fibrocimento":
+        n = max(3, int((yb - ya) / 0.11))
+        for k in range(1, n):
+            y = ya + (yb - ya) * k / n
+            s += poli([p(xa, y, z(xa)), p(xa, y + 0.018, z(xa)),
+                       p(xb, y + 0.018, z(xb)), p(xb, y, z(xb))], _sombrear(cor, 0.78))
+    s += poli([p(xb, ya, z(xb)), p(xb, yb, z(xb)), p(xb, yb, z(xb) - 1.4),
+               p(xb, ya, z(xb) - 1.4)], _sombrear(cor, 0.62))
+    s += poli([p(xa, yb, z(xa)), p(xb, yb, z(xb)), p(xb, yb, z(xb) - 1.4),
+               p(xa, yb, z(xa) - 1.4)], _sombrear(cor, 0.74))
+    return s
+
+
+PLATIBANDA_ALTURA = 6.0   # px que a fachada sobe acima da parede
+
+
+def casa_platibanda(mx0, my0, mx1, my1, altura, parede, telha, janelas, acento=None) -> str:
+    """O casario: a fachada sobe acima do telhado e acaba numa cornija branca.
+
+    O telhado fica ATRÁS da platibanda e sem beiral dos lados — é o que deixa
+    duas destas encostarem sem um telhado fatiar o outro, a armadilha que
+    obrigava a geminada a herdar a variante da vizinha (`_fileira`).
+    """
+    s = _paredes(mx0, my0, mx1, my1, altura, parede)
+    s += _porta_mx(mx1, my0, my1, 0.12, 0.34, ALT_CAIS, ALT_CAIS + altura * 0.66, acento)
+    for a, b in ((0.46, 0.64), (0.74, 0.90)):
+        s += _janela_mx(mx1, my0, my1, a, b, ALT_CAIS + altura * 0.34,
+                     ALT_CAIS + altura * 0.66, acento)
+    if janelas > 1:
+        for a, b in ((0.12, 0.34), (0.46, 0.64), (0.74, 0.90)):
+            s += _janela_mx(mx1, my0, my1, a, b, ALT_CAIS + altura * 0.78,
+                         ALT_CAIS + altura * 0.92, acento)
+    s += telhado_quatro_aguas(mx0 + 0.04, my0 + 0.02, mx1 - 0.10, my1 - 0.02,
+                              ALT_CAIS + altura, C[telha])
+    t = ALT_CAIS + altura
+    s += caixa(mx1 - 0.05, my0, mx1, my1, t, PLATIBANDA_ALTURA, parede,
+               _sombrear(parede, 0.80), _sombrear(parede, 0.91))
+    branco = C["caiacao"]
+    s += caixa(mx1 - 0.07, my0 - 0.01, mx1 + 0.02, my1 + 0.01,
+               t + PLATIBANDA_ALTURA, 1.6, branco,
+               _sombrear(branco, 0.80), _sombrear(branco, 0.91))
+    return s
+
+
+def _alpendre(mx0, mx1) -> float:
+    return min(0.34, (mx1 - mx0) * 0.28)
+
+
+def casa_alpendre(mx0, my0, mx1, my1, altura, parede, telha, janelas, acento=None) -> str:
+    """A casa de varanda: esteios na frente e a meia-água por cima.
+
+    A ordem não é a do resto: a meia-água sai ANTES do telhado do corpo,
+    porque o beiral do corpo passa por cima da cabeça dela. Os esteios são de
+    madeira escura — brancos contra a parede branca não se viam.
+    """
+    bx1 = mx1 - _alpendre(mx0, mx1)
+    s = _paredes(mx0, my0, bx1, my1, altura, parede)
+    s += _porta_mx(bx1, my0, my1, 0.40, 0.60, ALT_CAIS, ALT_CAIS + altura * 0.62, acento)
+    for a, b in ((0.12, 0.30), (0.70, 0.88)):
+        s += _janela_mx(bx1, my0, my1, a, b, ALT_CAIS + altura * 0.34,
+                     ALT_CAIS + altura * 0.64, acento)
+    s += _janela_my(my1, mx0, bx1, 0.30, 0.60, ALT_CAIS + altura * 0.32,
+                 ALT_CAIS + altura * 0.58, acento)
+    piso = 1.5
+    s += caixa(bx1, my0 + 0.03, mx1, my1 - 0.03, ALT_CAIS, piso, C["calcada"],
+               _sombrear(C["calcada"], 0.80), _sombrear(C["calcada"], 0.91))
+    topo, borda = ALT_CAIS + altura - 1.0, ALT_CAIS + altura * 0.70
+    lado = 0.04
+    for y in (my0 + 0.06, (my0 + my1) / 2.0 - lado / 2.0, my1 - 0.06 - lado):
+        s += caixa(mx1 - 0.06, y, mx1 - 0.06 + lado, y + lado, ALT_CAIS + piso,
+                   borda - ALT_CAIS - piso, C["tronco"],
+                   _sombrear(C["tronco"], 0.80), _sombrear(C["tronco"], 0.91))
+    s += poli([p(bx1, my0 - 0.04, topo), p(bx1, my1 + 0.04, topo),
+               p(mx1 + 0.04, my1 + 0.04, borda), p(mx1 + 0.04, my0 - 0.04, borda)],
+              _sombrear(C[telha], 0.86))
+    s += face_mx(mx1 + 0.04, my0 - 0.04, my1 + 0.04, borda - 1.2, borda,
+                 _sombrear(C[telha], 0.62))
+    s += telhado_quatro_aguas(mx0 - BEIRAL_CASA, my0 - BEIRAL_CASA,
+                              bx1 + BEIRAL_CASA, my1 + BEIRAL_CASA,
+                              ALT_CAIS + altura, C[telha])
+    return s
+
+
+def _em_l(mx0, my0, mx1, my1) -> tuple:
+    """O corpo e a ala da casa em L, em planta."""
+    ya = my0 + (my1 - my0) * 0.56
+    xw = mx0 + (mx1 - mx0) * 0.58
+    return (mx0, my0, mx1, ya), (mx0, ya, xw, my1)
+
+
+def casa_em_l(mx0, my0, mx1, my1, altura, parede, telha, janelas, acento=None) -> str:
+    """O corpo ao comprido e a ala recuada, com o pátio na quina da frente.
+
+    ⚠️ A ALA SAI DEPOIS DO CORPO E ISSO NÃO É GOSTO: os dois encostam no plano
+    `my = ya`, a ala está do lado +my dele, e a câmera olha desse lado — logo
+    nada do corpo pode tapar a ala. A porta é a da ala, virada para o pátio.
+    """
+    (cx0, cy0, cx1, cy1), (ax0, ay0, ax1, ay1) = _em_l(mx0, my0, mx1, my1)
+    s = _paredes(cx0, cy0, cx1, cy1, altura, parede)
+    s += _janela_mx(cx1, cy0, cy1, 0.30, 0.70, ALT_CAIS + altura * 0.34,
+                 ALT_CAIS + altura * 0.64, acento)
+    s += _janela_my(cy1, cx0, cx1, 0.68, 0.88, ALT_CAIS + altura * 0.32,
+                 ALT_CAIS + altura * 0.58, acento)
+    s += telhado_quatro_aguas(cx0 - BEIRAL_CASA, cy0 - BEIRAL_CASA,
+                              cx1 + BEIRAL_CASA, cy1 + BEIRAL_CASA,
+                              ALT_CAIS + altura, C[telha])
+    s += _paredes(ax0, ay0, ax1, ay1, altura, parede)
+    s += _porta_mx(ax1, ay0, ay1, 0.36, 0.64, ALT_CAIS, ALT_CAIS + altura * 0.62, acento)
+    s += _janela_my(ay1, ax0, ax1, 0.30, 0.62, ALT_CAIS + altura * 0.32,
+                 ALT_CAIS + altura * 0.58, acento)
+    s += telhado_quatro_aguas(ax0 - BEIRAL_CASA, ay0 - BEIRAL_CASA,
+                              ax1 + BEIRAL_CASA, ay1 + BEIRAL_CASA,
+                              ALT_CAIS + altura, C[telha])
+    return s
+
+
+def altura_do_sobrado(nivel: int, variante: int) -> int:
+    """O sobrado tem a parede do nível SEGUINTE da vila, como a obra."""
+    if nivel + 1 in VILA_NIVEIS:
+        return VILA_NIVEIS[nivel + 1][variante][0]
+    return int(VILA_NIVEIS[nivel][variante][0] * 1.34)
+
+
+def sobrado(mx0, my0, mx1, my1, altura, parede, telha, janelas, acento=None) -> str:
+    """Dois pisos, a porta e a sacada na face da rua, quatro águas por cima."""
+    s = _paredes(mx0, my0, mx1, my1, altura, parede)
+    # ⚠️ A PORTA DO TÉRREO VAI PARA UM LADO: no eixo, por baixo da porta da
+    # sacada, as duas liam como UMA porta comprida (segunda foto da `123`).
+    s += _porta_mx(mx1, my0, my1, 0.10, 0.28, ALT_CAIS, ALT_CAIS + altura * 0.36, acento)
+    for a, b in ((0.42, 0.58), (0.72, 0.88)):
+        s += _janela_mx(mx1, my0, my1, a, b, ALT_CAIS + altura * 0.16,
+                     ALT_CAIS + altura * 0.34, acento)
+    for z0 in (ALT_CAIS + altura * 0.16, ALT_CAIS + altura * 0.62):
+        s += _janela_my(my1, mx0, mx1, 0.30, 0.56, z0, z0 + altura * 0.18, acento)
+    # A SACADA: a porta do piso de cima, a laje que sai da fachada e o
+    # guarda-corpo escuro, que é o traço que a faz ler a esta escala.
+    zb = ALT_CAIS + altura * 0.52
+    s += _porta_mx(mx1, my0, my1, 0.38, 0.62, zb, zb + altura * 0.30, acento)
+    ya, yb = my0 + (my1 - my0) * 0.28, my0 + (my1 - my0) * 0.72
+    s += caixa(mx1, ya, mx1 + 0.10, yb, zb - 1.2, 1.2, C["caiacao"],
+               _sombrear(C["caiacao"], 0.80), _sombrear(C["caiacao"], 0.91))
+    s += face_mx(mx1 + 0.10, ya, yb, zb + 2.2, zb + 3.2, C["tronco"])
+    for y in (ya, (ya + yb) / 2.0, yb - 0.02):
+        s += face_mx(mx1 + 0.10, y, y + 0.02, zb, zb + 3.2, C["tronco"])
+    s += telhado_quatro_aguas(mx0 - BEIRAL_CASA, my0 - BEIRAL_CASA,
+                              mx1 + BEIRAL_CASA, my1 + BEIRAL_CASA,
+                              ALT_CAIS + altura, C[telha])
+    return s
+
+
+CASAS = {"quatro_aguas": casa, "empena": casa_empena,
+         "meia_agua": casa_meia_agua,
+         "platibanda": casa_platibanda, "alpendre": casa_alpendre,
+         "em_l": casa_em_l, "sobrado": sobrado}
+
+
+def sombra_da_casa(tipo, mx0, my0, mx1, my1, altura) -> str:
+    """A sombra de cada forma: os volumes que a lançam, à altura da parede."""
+    b = BEIRAL_CASA
+    if tipo == "platibanda":
+        return sombra_de_volume(mx0, my0, mx1, my1, altura + PLATIBANDA_ALTURA)
+    if tipo == "meia_agua":
+        return sombra_de_volume(mx0 - 0.08, my0 - 0.08, mx1 + 0.08, my1 + 0.08,
+                                altura + _meia_agua(mx0, mx1) * 0.5)
+    if tipo == "alpendre":
+        bx1 = mx1 - _alpendre(mx0, mx1)
+        return sombra_de_volume(mx0 - b, my0 - b, bx1 + b, my1 + b, altura)
+    if tipo == "em_l":
+        (cx0, cy0, cx1, cy1), (ax0, ay0, ax1, ay1) = _em_l(mx0, my0, mx1, my1)
+        return sombra_de_volume(cx0 - b, cy0 - b, cx1 + b, cy1 + b, altura) \
+            + sombra_de_volume(ax0 - b, ay0 - b, ax1 + b, ay1 + b, altura)
+    return sombra_de_volume(mx0 - b, my0 - b, mx1 + b, my1 + b, altura)
+
+
+def caixa_dagua_da_casa(tipo, mx0, my0, mx1, my1, altura) -> str:
+    """Onde cada forma leva a caixa-d'água, se levar."""
+    b = BEIRAL_CASA
+    t = ALT_CAIS + altura
+    if tipo == "meia_agua":
+        # Junto do muro de trás, o mais alto: é onde a casa simples a põe.
+        return _caixa_assente(mx0 + 0.20, (my0 + my1) / 2.0,
+                              z_meia_agua(mx0, mx1, t))
+    if tipo == "empena":
+        return _caixa_assente((mx0 + mx1) / 2.0 - 0.15, (my0 + my1) / 2.0 - 0.03,
+                              z_duas_aguas(my0, my1, t))
+    if tipo == "platibanda":
+        return _caixa_no_telhado(mx0 + 0.04, my0 + 0.02, mx1 - 0.10, my1 - 0.02, t)
+    if tipo == "alpendre":
+        return _caixa_no_telhado(mx0 - b, my0 - b, mx1 - _alpendre(mx0, mx1) + b,
+                                 my1 + b, t)
+    if tipo == "em_l":
+        (cx0, cy0, cx1, cy1), _ala = _em_l(mx0, my0, mx1, my1)
+        return _caixa_no_telhado(cx0 - b, cy0 - b, cx1 + b, cy1 + b, t)
+    return _caixa_no_telhado(mx0 - b, my0 - b, mx1 + b, my1 + b, t)
+
+
+# ── O TERRENO: O MURO BAIXO E O QUINTAL DENTRO DELE (`123`) ──────────────
+#
+# A casa brasileira tem MURO. Até à `123` o quintal era uma mancha de terra
+# meio transparente à volta da casa, que passava por cima do passeio, e o que
+# se pediu foi «mais espaço para terrenos»: o terreno passa a ter limite — o
+# muro baixo da frente, com o portão, e o das divisas — e o quintal fica dentro
+# dele. O muro da frente fica um nada antes da calçada (ou da viela, na fileira
+# de trás), e a casa recua `VILA_QUINTAL_FRENTE` dele.
+VILA_QUINTAL_FRENTE = 0.12
+# ⚠️ ERA 3,5 PX E UM TOM ABAIXO DA PAREDE (0,95), e na foto do jogo era uma
+# linha clara que ninguém lia como muro (segunda foto da `123`). A 5 px e a
+# 0,85 da parede ele marca o terreno sem virar uma muralha.
+VILA_MURO_ALT = 5.0
+VILA_MURO_ESP = 0.04
+VILA_DIVISA = 0.16        # o quanto o terreno sai da casa para cada lado
+
+
+def linha_do_muro(borda: float, fundo: bool) -> float:
+    """O `mx` do muro da frente: antes da calçada, ou antes da viela."""
+    if fundo:
+        return borda - VILA_RECUO_2 + VILA_PROF + 0.12 - 0.03
+    return borda - RUA_RECUO - CALCADA - 0.03
+
+
+def _borda_do_lote(my0: float) -> float:
+    for a, b, borda in DEGRAUS:
+        if a <= my0 < b:
+            return borda
+    raise ValueError("lote fora dos degraus: my=%.2f" % my0)
+
+
+def terrenos_da_vila(lotes: list) -> list:
+    """(x_trás, x_muro, y_esq, y_dir, muro_esq, muro_dir) de cada lote.
+
+    A divisa fica a meio do vão até à vizinha, e nunca a mais de `VILA_DIVISA`
+    da casa; geminada não tem muro do lado da vizinha — a parede é a divisa.
+    """
+    saida = []
+    for i, (mx0, my0, dmx, dmy, _v, fundo, _c) in enumerate(lotes):
+        esq, dir_ = math.inf, math.inf
+        for j, (_x, oy0, _dx, ody, _ov, ofundo, _oc) in enumerate(lotes):
+            if j == i or ofundo != fundo:
+                continue
+            if oy0 + ody <= my0 + 1e-9:
+                esq = min(esq, my0 - (oy0 + ody))
+            elif oy0 >= my0 + dmy - 1e-9:
+                dir_ = min(dir_, oy0 - (my0 + dmy))
+        borda = _borda_do_lote(my0)
+        saida.append((mx0 - 0.28, linha_do_muro(borda, fundo),
+                      my0 - min(VILA_DIVISA, esq / 2.0),
+                      my0 + dmy + min(VILA_DIVISA, dir_ / 2.0),
+                      esq > 0.02, dir_ > 0.02))
+    return saida
+
+
+def _muro(x0, y0, x1, y1, parede) -> str:
+    cor = _sombrear(parede, 0.85)
+    return caixa(x0, y0, x1, y1, ALT_CAIS, VILA_MURO_ALT, cor,
+                 _sombrear(cor, 0.80), _sombrear(cor, 0.91))
+
+
+# Onde fica a porta na face da rua, em fração do lado (`my`); a de quatro águas
+# e a casa em L abrem para o lado, e o portão vai para a ponta +my.
+PORTA_NA_FRENTE = {"empena": 0.50, "meia_agua": 0.68, "alpendre": 0.50,
+                   "sobrado": 0.19, "platibanda": 0.23}
+
+
+def muros_do_terreno(terreno, parede, porta=None, acento=None) -> tuple:
+    """(o que fica atrás da casa, o que fica à frente) do muro do terreno.
+
+    O muro da divisa −my está atrás da casa e sai antes dela; o da +my e o da
+    frente estão à frente e saem depois. O portão é um vão no muro da frente
+    em frente à porta (ou na ponta +my, quando a porta abre para o lado), com
+    a folha na cor de acento e o caminho de cimento até à casa.
+    """
+    xt, xm, ye, yd, me, md = terreno
+    e = VILA_MURO_ESP
+    atras = _muro(xt + 0.10, ye, xm, ye + e, parede) if me else ""
+    frente = _muro(xt + 0.10, yd - e, xm, yd, parede) if md else ""
+    meio = yd - 0.22 if porta is None or porta >= yd - 0.12 else porta
+    meio = min(max(meio, ye + 0.18), yd - 0.18)
+    p0, p1 = meio - 0.11, meio + 0.11
+    # O caminho de cimento sai antes do muro, que o corta à altura do portão.
+    frente = _faixa_mx(xm - VILA_QUINTAL_FRENTE - 0.02, xm, p0 + 0.03, p1 - 0.03,
+                       C["calcada"], 0.9) + frente
+    if p0 - ye > 0.06:
+        frente += _muro(xm - e, ye, xm, p0, parede)
+    if yd - p1 > 0.06:
+        frente += _muro(xm - e, p1, xm, yd, parede)
+    if acento:
+        # A folha do portão, recuada no vão e mais baixa do que o muro.
+        frente += face_mx(xm - e * 0.5, p0, p1, ALT_CAIS,
+                          ALT_CAIS + VILA_MURO_ALT - 1.0, _sombrear(C[acento], 0.80))
+    return atras, frente
+
+
+def _moita(mx, my, flor, r: random.Random) -> str:
+    """Uma moita florida junto da casa: a primavera, o ipê, o jasmim.
+
+    É a receita da copa (`com_saia`), pequena e rente ao chão, com quatro
+    pontos de flor por cima — a cor que um quintal brasileiro tem e a vila não
+    tinha. ⚠️ Gasta o `r` da vila: as árvores que vêm depois mudam de sítio
+    com isso, como já mudavam a cada passagem desta decisão.
+    """
+    bx, by = p(mx, my, ALT_CAIS)
+    # ⚠️ ALTA O BASTANTE PARA PASSAR O MURO (quarta foto: «moitas pouco
+    # visíveis»). Na frente da casa o muro tapava-a inteira; no quintal do lado
+    # o muro da divisa +my, que sai depois dela, tapa-lhe só o pé — é o
+    # encaixe certo, a moita por trás do muro e a copa florida por cima dele.
+    raio = 0.10 * MEIA_LARG
+    canto = _lobo(bx, by - raio * 1.05, raio, raio * 0.72, r)
+    s = com_saia(canto, raio * 0.75, C["copa"])
+    for k in range(5):
+        ang = math.radians(20 + 70 * k + r.uniform(-12, 12))
+        fx = bx + math.cos(ang) * raio * 0.58
+        fy = by - raio * 1.12 + math.sin(ang) * raio * 0.32
+        s += ('  <ellipse cx="%.1f" cy="%.1f" rx="2.1" ry="1.7" fill="%s"/>\n'
+              % (fx, fy, C[flor]))
     return s
 
 
@@ -2485,14 +3264,45 @@ def casa(mx0, my0, mx1, my1, altura, parede, telha, janelas) -> str:
 # (obra), um lote com uma VERTICAL (igreja) e um lote SEM CASA (praça).
 
 
-def _sem_telhado(mx0, my0, mx1, my1, altura) -> str:
-    """O prédio EM OBRA: laje, pilares, o piso de cima e o andaime.
+def _cone(cx, cy, raio, base, altura, cor, cor_sombra) -> str:
+    """Um monte cónico: os dois meios-cones que a câmera vê, luz e sombra.
 
-    ⚠️ A COR NÃO É CINZENTA, E ISSO FOI MEDIDO CONTRA O FUNDO. Concreto pede
-    um cinzento, e todo cinzento desta paleta cai na banda de um dos dois
-    quintais: o mapa pavimentado desenha `terra_clara` (lum 141) e o outro
-    `terra_escura` (lum 104), e `pedra_clara` mede **0,05 de Weber** sobre o
-    primeiro — some — enquanto `pedra_media` fica em 0,18 e 0,12, fraca nos
+    O arco da frente vai de −45° a 135° em planta — os dois pontos onde a
+    elipse da base é mais larga na tela —, e é por eles que passa a orla do
+    monte. O meio que olha para +my leva a luz, o que olha para +mx a sombra,
+    como as paredes.
+    """
+    def arco(a0, a1):
+        n = 8
+        return [p(cx + raio * math.cos(math.radians(a0 + (a1 - a0) * k / n)),
+                  cy + raio * math.sin(math.radians(a0 + (a1 - a0) * k / n)), base)
+                for k in range(n + 1)]
+    topo = p(cx, cy, base + altura)
+    return poli([topo] + arco(-45.0, 45.0), cor_sombra) \
+        + poli([topo] + arco(45.0, 135.0), cor)
+
+
+# ⚠️ A OBRA RECUA DA FRENTE DO LOTE para o material caber à frente dela. Entre
+# a frente da casa e o passeio há poucos centésimos, e do lado das vizinhas o
+# monte cairia debaixo do quintal da casa seguinte, que é desenhado depois e a
+# meia opacidade por cima dele. Na frente do próprio lote ele é o primeiro
+# plano da obra, que é onde um canteiro de verdade o deixa.
+OBRA_RECUO_DA_FRENTE = 0.22
+
+
+def geometria_da_obra(mx0, my0, mx1, my1) -> tuple:
+    """A planta do prédio por acabar dentro do lote: o desenho e a prova."""
+    return mx0, my0, mx1 - OBRA_RECUO_DA_FRENTE, my1
+
+
+def _sem_telhado(mx0, my0, mx1, my1, altura) -> str:
+    """O prédio EM OBRA: laje, pilares, o piso de cima, tijolo e andaime.
+
+    ⚠️ A COR DA ESTRUTURA NÃO É CINZENTA, E ISSO FOI MEDIDO CONTRA O FUNDO.
+    Concreto pede um cinzento, e todo cinzento desta paleta cai na banda de um
+    dos dois quintais: o mapa pavimentado desenha `terra_clara` (lum 141) e o
+    outro `terra_escura` (lum 104), e `pedra_clara` mede **0,05 de Weber** sobre
+    o primeiro — some — enquanto `pedra_media` fica em 0,18 e 0,12, fraca nos
     dois. É a regra do gancho do pau-de-carga: um prop atravessa dois fundos e
     nenhum tom do meio ganha os dois. O creme mede 0,64 e 1,24, e laje de
     concreto novo é mesmo clara.
@@ -2501,26 +3311,73 @@ def _sem_telhado(mx0, my0, mx1, my1, altura) -> str:
     telhado. Numa fileira de telhas, o lote sem telha é o que salta, e essa
     leitura sobrevive a qualquer escala. É a regra da ruína com o sinal
     trocado: ali menos prédio era abandono, aqui é prédio por acabar.
+
+    ⚠️ E ATÉ À `123` ERA SÓ ESQUELETO, e lia como uma GAIOLA creme. O que faz
+    obra brasileira é o TIJOLO À MOSTRA: as paredes do térreo levantadas pela
+    metade, de alturas diferentes, entre os pilares claros. O tijolo não se
+    separa do quintal pelo valor — separa-se pelo matiz, como a telha —, e
+    dentro da peça quem o desenha é o creme dos pilares e da laje à volta.
     """
+    mx_lote = mx1
+    mx0, my0, mx1, my1 = geometria_da_obra(mx0, my0, mx1, my1)
     laje = 3.0
     pilar = (mx1 - mx0) * 0.14
-    s = _faixa_mx(mx0 - 0.10, mx1 + 0.10, my0 - 0.10, my1 + 0.10,
+    meia = ALT_CAIS + laje + (altura - laje) * 0.52
+    s = _faixa_mx(mx0 - 0.10, mx_lote + 0.04, my0 - 0.10, my1 + 0.10,
                   C["terra_escura"], 0.55)
+    s += sombra_de_volume(mx0, my0, mx1, my1, meia - ALT_CAIS)
     # A laje do térreo, e a do piso de cima meio metro abaixo do topo: são as
     # duas horizontais que dizem "isto vai ter andares".
     s += caixa(mx0, my0, mx1, my1, ALT_CAIS, laje,
                C["casa_a"], _sombrear(C["casa_a"], 0.80),
                _sombrear(C["casa_a"], 0.91))
-    meia = ALT_CAIS + laje + (altura - laje) * 0.52
-    for x0, y0 in ((mx0, my0), (mx0, my1 - pilar),
-                   (mx1 - pilar, my0), (mx1 - pilar, my1 - pilar)):
-        s += caixa(x0, y0, x0 + pilar, y0 + pilar, ALT_CAIS + laje,
-                   altura - laje, C["casa_a"],
-                   _sombrear(C["casa_a"], 0.78), _sombrear(C["casa_a"], 0.89))
+    cantos = ((mx0, my0), (mx0, my1 - pilar), (mx1 - pilar, my0),
+              (mx1 - pilar, my1 - pilar))
+
+    def pilar_em(x0, y0):
+        return caixa(x0, y0, x0 + pilar, y0 + pilar, ALT_CAIS + laje,
+                     altura - laje, C["casa_a"],
+                     _sombrear(C["casa_a"], 0.78), _sombrear(C["casa_a"], 0.89))
+
+    # Os três pilares de trás primeiro; o da frente sai depois do tijolo, que
+    # fica um nada recuado do plano dos pilares para eles o emoldurarem.
+    for x0, y0 in cantos[:3]:
+        s += pilar_em(x0, y0)
+    chao = ALT_CAIS + laje
+    andar = meia - chao
+    recuo = 0.02
+    # A face +my (a da luz) e a +mx (a da sombra), cada uma em dois panos de
+    # alturas diferentes: parede inteira de um lado, meia do outro. A parede
+    # por acabar é a que não tem a mesma altura de ponta a ponta.
+    xa, xb = mx0 + pilar, mx1 - pilar
+    xm = xa + (xb - xa) * 0.55
+    s += face_my(my1 - recuo, xa, xm, chao, meia, _sombrear(C["tijolo"], 0.94))
+    s += face_my(my1 - recuo, xm, xb, chao, chao + andar * 0.50,
+                 _sombrear(C["tijolo"], 0.94))
+    ya, yb = my0 + pilar, my1 - pilar
+    ym = ya + (yb - ya) * 0.45
+    s += face_mx(mx1 - recuo, ya, ym, chao, chao + andar * 0.70,
+                 _sombrear(C["tijolo"], 0.80))
+    s += face_mx(mx1 - recuo, ym, yb, chao, meia, _sombrear(C["tijolo"], 0.80))
+    # A ARGAMASSA: duas fiadas escuras a um terço e a dois terços do andar,
+    # cortadas na altura de cada pano. É o que diz «parede de tijolo» e não
+    # «parede laranja», e corta-se no pano porque a fiada acima da parede
+    # meia pairaria no ar.
+    for k in (1.0 / 3.0, 2.0 / 3.0):
+        z = chao + andar * k
+        for a0, a1, topo_pano in ((xa, xm, meia), (xm, xb, chao + andar * 0.50)):
+            if z + 0.8 < topo_pano:
+                s += face_my(my1 - recuo, a0, a1, z, z + 0.8,
+                             _sombrear(C["tijolo"], 0.70))
+        for a0, a1, topo_pano in ((ya, ym, chao + andar * 0.70), (ym, yb, meia)):
+            if z + 0.8 < topo_pano:
+                s += face_mx(mx1 - recuo, a0, a1, z, z + 0.8,
+                             _sombrear(C["tijolo"], 0.58))
+    s += pilar_em(*cantos[3])
     s += caixa(mx0, my0, mx1, my1, meia, 2.2,
                C["casa_a"], _sombrear(C["casa_a"], 0.80),
                _sombrear(C["casa_a"], 0.91))
-    # O ANDAIME, na face virada para a rua. Escuro de propósito: `tronco` mede
+    # O ANDAIME, nas duas faces visíveis. Escuro de propósito: `tronco` mede
     # 0,48 e 0,30 sobre os dois quintais, e é o par claro/escuro dentro da
     # própria peça que a faz ler como estrutura em vez de caixa branca.
     #
@@ -2545,90 +3402,255 @@ def _sem_telhado(mx0, my0, mx1, my1, altura) -> str:
     for y in (my0 + (my1 - my0) * 0.24, my0 + (my1 - my0) * 0.76):
         s += face_mx(mx1 + 0.06, y, y + 0.07, ALT_CAIS + laje, topo,
                      C["tronco"])
+    # O MATERIAL, à frente: um monte de areia e uma pilha de tijolos. O monte
+    # é mais íngreme do que o real pela razão da brita do pátio (`122`): na
+    # rampa real a câmera achata-o num disco claro.
+    dmy = my1 - my0
+    s += _cone(mx1 + 0.11, my0 + dmy * 0.30, 0.10, ALT_CAIS, 7.0,
+               C["areia"], C["areia_face"])
+    s += caixa(mx1 + 0.04, my0 + dmy * 0.60, mx1 + 0.18, my0 + dmy * 0.84,
+               ALT_CAIS, 3.5, _sombrear(C["tijolo"], 1.08),
+               _sombrear(C["tijolo"], 0.80), _sombrear(C["tijolo"], 0.94))
     return s
 
 
-def _igreja(mx0, my0, mx1, my1, altura, telha) -> str:
-    """A igreja: a nave, e sobretudo a TORRE.
+# ⚠️ ERA 0,20 e o adro lia como uma faixa (quarta foto: «adro da igreja
+# pequeno»); a 0,35 cabem os dois bancos e o poste.
+IGREJA_ADRO = 0.35
+
+
+def geometria_da_igreja(mx0, my0, dmx, dmy, altura) -> dict:
+    """Onde fica cada peça da igreja, num lugar só.
+
+    Quem a lê são três: o desenho (`_igreja`), a prova do D24
+    (`pontos_de_prova`) e a guarda de que a torre cabe no quadro
+    (`conferir_a_torre_cabe`). Até à `123` cada um refazia a conta da torre
+    por si, e a mesma conta escrita três vezes é a que um dia sai diferente.
+    """
+    # ⚠️ ERA 0,36 DO LOTE e lia fina contra a nave na primeira foto (`123`);
+    # a 0,44 ela pesa mais do que a empena que tapa, sem passar a ser um bloco.
+    larg = min(dmx, dmy) * 0.44
+    mx1, my1 = mx0 + dmx, my0 + dmy
+    # A TORRE FICA TODA À FRENTE DA NAVE, no eixo da fachada. Enfiada metade
+    # na nave, como nas igrejas grandes, a ordem de desenho deixava de ser
+    # uma só: a face +my da torre ficava atrás da empena numa altura e à frente
+    # dela noutra. À frente, a torre tapa a empena no meio e sobram dois
+    # triângulos brancos dos dois lados, que é a silhueta que se pediu.
+    # ⚠️ E ELA RECUA `IGREJA_ADRO` DA FRENTE DO LOTE (terceira foto da `123`,
+    # «igreja colada na rua»): o adro de calçada fica à frente da porta, e a
+    # nave estende-se para o quintal de trás o que perdeu na frente.
+    tx0, tx1 = mx1 - IGREJA_ADRO - larg, mx1 - IGREJA_ADRO
+    meio = (my0 + my1) / 2.0
+    ty0, ty1 = meio - larg / 2.0, meio + larg / 2.0
+    nave = (mx0 - 0.14, my0 + dmy * 0.14, tx0, my1 - dmy * 0.14)
+    alt_nave = altura * 1.3
+    # E A TORRE SOBE TRÊS VEZES A PAREDE DE UMA CASA. Medido no render de
+    # 13/09: a 2,0 ela assomava 14 px acima do beiral, que à escala desta vila
+    # é a altura de um telhado — não se lê como vertical, lê-se como saliência.
+    alt_torre = altura * 3.0
+    cornija = 2.0
+    alt_piramide = altura * 0.75
+    z_base_piramide = ALT_CAIS + alt_torre + cornija
+    folga = larg * 0.08                  # o beiral da pirâmide sobre a cornija
+    piramide = (tx0 - folga, ty0 - folga, tx1 + folga, ty1 + folga)
+    apice = ((tx0 + tx1) / 2.0, meio, z_base_piramide + alt_piramide)
+    # A CRUZ MEDE-SE EM FRAÇÕES DA TORRE (`mapa.md`: a de 13/09 media-se em
+    # unidades de mundo e saiu mais larga do que o campanário).
+    cruz = 6.0
+    return {"larg": larg, "torre": (tx0, ty0, tx1, ty1), "nave": nave,
+            "alt_nave": alt_nave, "alt_torre": alt_torre, "cornija": cornija,
+            "piramide": piramide, "z_piramide": z_base_piramide,
+            "apice": apice, "cruz": cruz,
+            "topo": apice[2] + cruz + 1.0}
+
+
+def _piramide(x0, y0, x1, y1, base, apice, cor) -> str:
+    """Quatro águas que se encontram num ponto: o telhado da torre."""
+    a = apice
+    tras_my = [(x0, y0, base), (x1, y0, base), a]
+    tras_mx = [(x0, y0, base), a, (x0, y1, base)]
+    frente_mx = [(x1, y0, base), (x1, y1, base), a]
+    frente_my = [(x0, y1, base), a, (x1, y1, base)]
+    s = ""
+    for pano, fator in ((tras_my, 0.84), (tras_mx, 0.95),
+                        (frente_mx, 0.74), (frente_my, 1.0)):
+        s += poli([p(*q) for q in pano], cor if fator == 1.0 else _sombrear(cor, fator))
+    return s
+
+
+def _igreja(mx0, my0, mx1, my1, altura) -> str:
+    """A igreja de vila: a nave de duas águas e a torre no eixo da fachada.
 
     ⚠️ QUEM FAZ O TRABALHO É A VERTICAL, e a nave quase não conta. A 51 px de
-    largura de lote não há vitral, portão nem frontão que se leiam; o que se lê
-    numa fileira de telhados todos deitados é uma coisa DE PÉ. A torre tem um
-    terço da largura do lote e sobe ao dobro da parede, que é o mínimo para ela
-    se soltar da linha dos beirais.
-
-    O telhado dela é `telha_c` — o cinzento-azulado — e não o barro dos
-    vizinhos, para a ponta que assoma acima da fileira não se confundir com
-    mais um telhado. É a única peça da vila que usa esta telha fora do nível 3.
+    largura de lote não há vitral nem portão que se leiam; o que se lê numa
+    fileira de telhados deitados é uma coisa DE PÉ. Até à `123` a torre era
+    uma caixa com um remate cinzento por cima, e o remate lia como caixa-
+    -d'água; agora acaba numa pirâmide de barro escuro com a cruz, e a nave
+    vira a empena branca para a avenida, a aparecer dos dois lados da torre.
     """
-    # A NAVE É MAIS CURTA do que uma casa, para a torre ter o que dominar.
-    s = casa(mx0, my0 + (my1 - my0) * 0.30, mx1, my1, altura,
-             C["casa_a"], telha, 1)
-
-    # ⚠️ A TORRE AVANÇA PARA A RUA, e a primeira versão não avançava — ficava
-    # dentro da pegada da nave, e o telhado dela (que tem beiral) comia-lhe a
-    # base: o que saía acima da linha do beiral era um toco grosso que se lia
-    # como CHAMINÉ. É a regra do `-x` e a da peça pequena encostada à grande,
-    # as duas ao mesmo tempo. Uma torre de igreja fica na fachada, à frente da
-    # nave, e é isso que ela faz agora.
-    larg = (mx1 - mx0) * 0.40
-    tx0 = mx0 + (mx1 - mx0) * 0.06
-    ty0 = my1 - larg * 0.55
-    ty1 = ty0 + larg
-    # E SOBE TRÊS VEZES A PAREDE, não duas. Medido no render: a 2,0 a torre
-    # assomava 14 px acima do beiral, que à escala desta vila é a altura de um
-    # telhado — não se lê como vertical, lê-se como saliência.
-    alt_torre = altura * 3.0
-    s += caixa(tx0, ty0, tx0 + larg, ty1, ALT_CAIS, alt_torre,
-               C["casa_a"], _sombrear(C["casa_a"], 0.80),
-               _sombrear(C["casa_a"], 0.91))
-    # O vão do sino: um furo escuro no alto, que é o que diz torre e não poste.
-    s += face_my(ty1, tx0 + larg * 0.24, tx0 + larg * 0.76,
-                 ALT_CAIS + alt_torre * 0.72, ALT_CAIS + alt_torre * 0.90,
-                 C["porta"])
-    t = ALT_CAIS + alt_torre
-    # O REMATE ESCALONA em vez de ser uma tampa. Um telhado chato de 4 px sobre
-    # uma caixa é exatamente o desenho de uma chaminé; o que dá campanário é o
-    # degrau — um corpo mais estreito por cima, e só então a telha.
-    s += caixa(tx0 - 0.05, ty0 - 0.05, tx0 + larg + 0.05, ty1 + 0.05, t, 3,
-               C["telha_c"], _sombrear(C["telha_c"], 0.72),
-               _sombrear(C["telha_c"], 0.86))
-    est = larg * 0.60
-    ex0 = tx0 + (larg - est) / 2.0
-    ey0 = ty0 + (larg - est) / 2.0
-    s += caixa(ex0, ey0, ex0 + est, ey0 + est, t + 3, altura * 0.55,
-               C["telha_c"], _sombrear(C["telha_c"], 0.70),
-               _sombrear(C["telha_c"], 0.84))
+    g = geometria_da_igreja(mx0, my0, mx1 - mx0, my1 - my0, altura)
+    nx0, ny0, nx1, ny1 = g["nave"]
+    tx0, ty0, tx1, ty1 = g["torre"]
+    branco = C["caiacao"]
+    b_dir, b_esq = _sombrear(branco, 0.80), _sombrear(branco, 0.91)
+    s = sombra_de_volume(nx0, ny0, nx1, ny1, g["alt_nave"])
+    s += sombra_de_volume(tx0, ty0, tx1, ty1, g["alt_torre"])
+    # A NAVE, e o telhado dela em duas águas com a cumeeira para a avenida.
+    s += caixa(nx0, ny0, nx1, ny1, ALT_CAIS, g["alt_nave"], branco, b_dir, b_esq)
+    # Duas janelas altas e estreitas no flanco que se vê: é o ritmo de nave.
+    for k in (0.25, 0.62):
+        x = nx0 + (nx1 - nx0) * k
+        s += face_my(ny1, x, x + 0.07, ALT_CAIS + g["alt_nave"] * 0.35,
+                     ALT_CAIS + g["alt_nave"] * 0.75, C["vidro"])
+    t = ALT_CAIS + g["alt_nave"]
+    e = 0.07
+    ym = (ny0 + ny1) / 2.0
+    h = (ny1 - ny0) * TELHADO_SUBIDA * 1.3
+    telha = C["telha_a"]
+    # ⚠️ O PANO −my PARTE-SE NA EMPENA. A parte de trás dele fica atrás da
+    # empena e tem de sair antes dela; a tira do beiral, à frente da empena,
+    # sai depois — senão a empena come a borda do telhado do lado da sombra.
+    pano_tras = lambda xa, xb: poli([p(xa, ny0 - e, t), p(xb, ny0 - e, t),
+                                     p(xb, ym, t + h), p(xa, ym, t + h)],
+                                    _sombrear(telha, 0.84))
+    s += pano_tras(nx0 - e, nx1)
+    s += poli([p(nx1, ny0, t), p(nx1, ny1, t), p(nx1, ym, t + h)], b_dir)
+    s += pano_tras(nx1, nx1 + e)
+    s += poli([p(nx0 - e, ny1 + e, t), p(nx1 + e, ny1 + e, t),
+               p(nx1 + e, ym, t + h), p(nx0 - e, ym, t + h)], telha)
+    # A TORRE, à frente da empena: a porta da igreja é a dela, e o vão do sino
+    # é o furo escuro no alto que diz torre e não poste.
+    at = g["alt_torre"]
+    s += caixa(tx0, ty0, tx1, ty1, ALT_CAIS, at, branco, b_dir, b_esq)
+    larg = g["larg"]
+    s += face_mx(tx1, ty0 + larg * 0.28, ty1 - larg * 0.28,
+                 ALT_CAIS, ALT_CAIS + g["alt_nave"] * 0.50, C["porta"])
+    for face in ("mx", "my"):
+        z0, z1 = ALT_CAIS + at * 0.76, ALT_CAIS + at * 0.92
+        if face == "mx":
+            s += face_mx(tx1, ty0 + larg * 0.26, ty1 - larg * 0.26, z0, z1, C["porta"])
+        else:
+            s += face_my(ty1, tx0 + larg * 0.26, tx1 - larg * 0.26, z0, z1, C["porta"])
+    # A cornija, um nada mais larga do que o fuste, e a pirâmide por cima.
+    c = larg * 0.05
+    s += caixa(tx0 - c, ty0 - c, tx1 + c, ty1 + c, ALT_CAIS + at, g["cornija"],
+               branco, b_dir, b_esq)
+    s += _piramide(*g["piramide"], g["z_piramide"], g["apice"], C["telha_torre"])
     # A CRUZ, e ela são dois traços. Não se "lê" a esta escala — o que faz é
     # quebrar o topo, e um topo quebrado não é chaminé.
-    # ⚠️ A CRUZ MEDE-SE EM FRAÇÕES DO CAMPANÁRIO, e a primeira versão media-a
-    # em unidades de mundo: a barra ia de `cx0 - 0,14` a `cx0 + 0,22`, o que
-    # dá **0,36 unidades num campanário de 0,30** — uma cruz mais larga do que
-    # a torre que a sustenta, e que em planta cobria o topo inteiro. Não deu
-    # erro nenhum e quem a apanhou foi a prova do D24, a ler `tronco` onde a
-    # tabela prometia telha. É a irmã da regra "encolher um prop escala-se no
-    # GRUPO, nunca reescrevendo as literais", do outro lado: número absoluto
-    # dentro de uma peça que tem tamanho próprio não sobrevive ao primeiro
-    # lote de outra medida.
-    tc = t + 3 + altura * 0.55
-    cx0 = ex0 + est * 0.46
-    s += caixa(cx0, ey0 + est * 0.46, cx0 + est * 0.08, ey0 + est * 0.54,
-               tc, 6.0, C["tronco"], _sombrear(C["tronco"], 0.8),
+    ax, ay, az = g["apice"]
+    w = larg * 0.07
+    s += caixa(ax - w / 2, ay - w / 2, ax + w / 2, ay + w / 2, az - 1.0,
+               g["cruz"] + 1.0, C["tronco"], _sombrear(C["tronco"], 0.8),
                _sombrear(C["tronco"], 0.9))
-    s += caixa(cx0 - est * 0.16, ey0 + est * 0.48, cx0 + est * 0.24,
-               ey0 + est * 0.52, tc + 3.4, 1.1, C["tronco"],
+    s += caixa(ax - w / 2, ay - larg * 0.18, ax + w / 2, ay + larg * 0.18,
+               az + g["cruz"] * 0.55, 1.2, C["tronco"],
                _sombrear(C["tronco"], 0.8), _sombrear(C["tronco"], 0.9))
     return s
+
+
+def _banco(x0, y0, x1, y1) -> str:
+    """Um banco de praça: o assento de madeira e o encosto do lado de trás.
+
+    O encosto vai para o lado −mx ou −my (o mais comprido diz qual), que é o
+    que fica atrás de quem se senta virado para a câmera.
+    """
+    cor = C["tronco"]
+    s = caixa(x0, y0, x1, y1, ALT_CAIS, 2.2, _sombrear(cor, 1.25),
+              _sombrear(cor, 0.80), _sombrear(cor, 0.95))
+    if x1 - x0 >= y1 - y0:
+        e = (x0, y0, x1, y0 + 0.018)
+    else:
+        e = (x0, y0, x0 + 0.018, y1)
+    s += caixa(*e, ALT_CAIS + 2.2, 2.6, _sombrear(cor, 1.10),
+               _sombrear(cor, 0.80), _sombrear(cor, 0.95))
+    return s
+
+
+def _poste(x, y, alt=16.0) -> str:
+    """O poste de luz: o fuste escuro e a luminária amarela no topo."""
+    l = 0.022
+    s = caixa(x - l, y - l, x + l, y + l, ALT_CAIS, alt, C["poste"],
+              _sombrear(C["poste"], 0.80), _sombrear(C["poste"], 0.91))
+    s += caixa(x - 0.045, y - 0.045, x + 0.045, y + 0.045, ALT_CAIS + alt, 2.4,
+               C["luminaria"], _sombrear(C["luminaria"], 0.85),
+               _sombrear(C["luminaria"], 0.93))
+    return s
+
+
+def _octogono(cx, cy, raio) -> list:
+    """Os oito vértices em planta, com um lado virado para cada eixo."""
+    return [(cx + raio * math.cos(math.radians(22.5 + 45.0 * k)),
+             cy + raio * math.sin(math.radians(22.5 + 45.0 * k)))
+            for k in range(8)]
+
+
+def geometria_do_coreto(mx0, my0, mx1, my1) -> dict:
+    """O coreto da praça: o desenho e a prova do D24 leem daqui."""
+    cx, cy = (mx0 + mx1) / 2.0, (my0 + my1) / 2.0
+    # ⚠️ A 0,17 DO LOTE ELE LIA, MAS ERA A PEÇA MENOR DA PRAÇA (primeira foto
+    # da `123`, «coreto ainda pequeno»); todo ele cresce ~25%, e o largo do
+    # meio cresce com ele, porque o chanfro dos canteiros sai do beiral.
+    raio = min(mx1 - mx0, my1 - my0) * 0.21
+    base = 3.0
+    pilar = 12.5
+    beiral = raio * 1.18
+    z_telhado = ALT_CAIS + base + pilar
+    apice = (cx, cy, z_telhado + 10.0)
+    return {"centro": (cx, cy), "raio": raio, "base": base, "pilar": pilar,
+            "beiral": beiral, "z_telhado": z_telhado, "apice": apice}
+
+
+def _faces_do_telhado_do_coreto(g) -> list:
+    """(pontos, normal em planta, fator de luz) de cada água do telhado.
+
+    ⚠️ DUAS ÁGUAS FICAM DE PERFIL À CÂMERA — as de normal a 135° e a 315°, que
+    a projeção achata numa linha —, e `cos + sin` delas dá ±1e-16 em vez de
+    zero. Decidir frente e trás por `> 0` punha-as de um lado ou do outro ao
+    sabor do arredondamento, e a prova do D24, que procura a água pura mais
+    virada para +my, escolhia justamente a de 135°. A folga as põe atrás.
+    """
+    cx, cy = g["centro"]
+    v = _octogono(cx, cy, g["beiral"])
+    faces = []
+    for k in range(8):
+        a, b = v[k], v[(k + 1) % 8]
+        ang = math.radians(45.0 * (k + 1))      # a normal do lado k em planta
+        nx, ny = math.cos(ang), math.sin(ang)
+        if nx + ny <= 1e-6:
+            fator = 0.86                        # de costas, ou de perfil
+        elif ny >= nx - 1e-6:
+            fator = 1.0                         # a luz, como a parede +my
+        else:
+            fator = 0.74
+        faces.append(([(a[0], a[1], g["z_telhado"]), (b[0], b[1], g["z_telhado"]),
+                       g["apice"]], (nx, ny), fator))
+    return faces
+
+
+PRACA_LARGURA_MIN = 1.05
+
+
+def planta_da_praca(mx0, my0, dmx, dmy) -> tuple:
+    """O retângulo da praça: o lote, alargado para o vão livre da esquina.
+
+    A praça só cai em esquina (`lotes_especiais`), com pelo menos 0,7 livre do
+    lado +my; um lote estreito alarga até `PRACA_LARGURA_MIN` para esse lado,
+    e o coreto, que se mede pelo lado menor, não encolhe com ele. O desenho e
+    a prova do D24 leem daqui.
+    """
+    return mx0, my0, mx0 + dmx, my0 + max(dmy, PRACA_LARGURA_MIN)
 
 
 def _pracinha(mx0, my0, mx1, my1, r: random.Random) -> str:
     """A praça: o lote em que NÃO há casa.
 
-    É o mais barato dos três e talvez o que mais se veja, porque numa frente de
-    rua contínua o buraco é que chama o olho — a mesma razão de a travessa dar
-    esquina à vila. O coreto é pequeno de propósito: se ele crescesse ao ponto
-    de ler como construção, a praça deixaria de ser um vão e passaria a ser mais
-    um lote ocupado.
+    Numa frente de rua contínua o buraco é que chama o olho — a mesma razão de
+    a travessa dar esquina à vila. ⚠️ ATÉ À `123` ELA LIA COMO ESTACIONAMENTO:
+    calçada cinzenta de borda a borda e um coreto de telhado quadrado que, a
+    51 px de lote, era uma garagem. O que diz praça é o VERDE: os quatro
+    quadrantes viram canteiros de grama, a calçada fica só nos caminhos em cruz
+    e na borda, e o coreto passa a octogonal, branco, com telhado pontudo.
     """
     # ⚠️ O CHÃO É CALÇADA, E NÃO TERRA. A primeira versão usava `solo_claro`,
     # que é a cor certa para um terreno e a errada para se VER: ele mede
@@ -2640,29 +3662,34 @@ def _pracinha(mx0, my0, mx1, my1, r: random.Random) -> str:
     # ⚠️ E ELA LEVA MEIO-FIO, porque o piso dela é a MESMA calçada do passeio.
     # Medido na captura: sem ele a praça e o passeio da rua eram um bloco claro
     # contínuo, e o que devia ler como um vão na frente de rua lia como um
-    # alargamento do passeio. Uma praça é mesmo calçada — o que a separa da
-    # rua, na vida real e aqui, é a guia. E ela é o `meiofio` da rua, não um
-    # tom novo: o mesmo material faz o mesmo trabalho.
-    s = _faixa_mx(mx0 - 0.26, mx1 + 0.36, my0 - 0.31, my1 + 0.31,
-                  C["meiofio"], 1.0)
-    s += _faixa_mx(mx0 - 0.20, mx1 + 0.30, my0 - 0.25, my1 + 0.25,
-                   C["calcada"], 1.0)
-    # Um caminho em cruz, que é o que diz praça e não largo de terra batida.
-    meiox, meioy = (mx0 + mx1) / 2.0, (my0 + my1) / 2.0
-    s += _faixa_mx(mx0 - 0.2, mx1 + 0.3, meioy - 0.07, meioy + 0.07,
-                   C["terra_clara"], 0.95)
-    s += _faixa_mx(meiox - 0.07, meiox + 0.07, my0 - 0.25, my1 + 0.25,
-                   C["terra_clara"], 0.95)
-    # O coreto: quatro pilares e um telhado, com metade da altura de uma casa.
-    lg = (mx1 - mx0) * 0.26
-    cx, cy = meiox - lg / 2.0, meioy - lg / 2.0
-    for dx, dy in ((0, 0), (0, lg - 0.05), (lg - 0.05, 0), (lg - 0.05, lg - 0.05)):
-        s += caixa(cx + dx, cy + dy, cx + dx + 0.05, cy + dy + 0.05,
-                   ALT_CAIS, 9, C["casa_a"], _sombrear(C["casa_a"], 0.78),
-                   _sombrear(C["casa_a"], 0.89))
-    s += caixa(cx - 0.10, cy - 0.10, cx + lg + 0.10, cy + lg + 0.10,
-               ALT_CAIS + 9, 3.5, C["telha_d"], _sombrear(C["telha_d"], 0.72),
-               _sombrear(C["telha_d"], 0.86))
+    # alargamento do passeio. E ele é o `meiofio` da rua, não um tom novo.
+    # O piso vai até à linha do muro das vizinhas, e não mais: até à `123`
+    # passava 0,30 da frente do lote, por cima do passeio da rua.
+    x0, x1 = mx0 - 0.20, mx1 + VILA_QUINTAL_FRENTE
+    y0, y1 = my0 - 0.25, my1 + 0.25
+    s = _faixa_mx(x0 - 0.06, x1 + 0.06, y0 - 0.06, y1 + 0.06, C["meiofio"], 1.0)
+    s += _faixa_mx(x0, x1, y0, y1, C["calcada"], 1.0)
+    # OS CANTEIROS: um por quadrante, com a borda de calçada à volta e os dois
+    # caminhos em cruz entre eles. A quina de cada um que dá para o meio é
+    # chanfrada, e o que sobra no centro é o largo redondo do coreto.
+    g = geometria_do_coreto(mx0, my0, mx1, my1)
+    cx, cy = g["centro"]
+    borda, caminho = 0.10, 0.09
+    chanfro = g["beiral"] * 1.25
+    for qx0, qx1 in ((x0 + borda, cx - caminho), (cx + caminho, x1 - borda)):
+        for qy0, qy1 in ((y0 + borda, cy - caminho), (cy + caminho, y1 - borda)):
+            pts = [(qx0, qy0), (qx1, qy0), (qx1, qy1), (qx0, qy1)]
+            # A quina do meio é a mais perto do centro; ela dá lugar a duas,
+            # cada uma recuada `chanfro` ao longo do lado que lá chega.
+            i = min(range(4), key=lambda k: math.hypot(pts[k][0] - cx, pts[k][1] - cy))
+            q = pts[i]
+            novos = []
+            for viz in (pts[i - 1], pts[(i + 1) % 4]):
+                d = math.hypot(viz[0] - q[0], viz[1] - q[1])
+                f = min(chanfro, d * 0.6) / d
+                novos.append((q[0] + (viz[0] - q[0]) * f, q[1] + (viz[1] - q[1]) * f))
+            pts[i:i + 1] = novos
+            s += _chao(pts, C["gramado"])
     # ⚠️ AS ÁRVORES VÃO PARA AS QUINAS, e não sorteadas pelo lote. Sorteadas,
     # duas das três calharam em cima do coreto e taparam-no: o contador dizia
     # quatro peças e o render mostrava três, que é a boia com a corrente dentro
@@ -2677,11 +3704,64 @@ def _pracinha(mx0, my0, mx1, my1, r: random.Random) -> str:
     # 51x47 —, e o ponto que o D24 mede calhava debaixo de uma delas. A copa
     # projeta-se para cima e para trás e cobre muito mais chão do que a planta
     # dela sugere; é a mesma conta que mandou as árvores da vila para o quintal.
-    for qx, qy in ((-0.10, -0.08), (-0.08, 1.02), (1.02, 0.98)):
+    # ⚠️ AS ÁRVORES SAEM ANTES DO CORETO. Até à `123` as três saíam no fim, e
+    # a de trás — que fica atrás dele e cresce para cima na tela — pintava-se
+    # por cima do telhado (segunda foto da `123`). O `r` gasta-se na mesma
+    # ordem de sempre — as mesmas chamadas, as mesmas três árvores —, porque é
+    # o das árvores da vila.
+    # ⚠️ E DESDE A QUINTA PASSAGEM ELAS FICAM NAS DUAS BORDAS DE TRÁS, longe
+    # dos postes («praça sem movimento» pôs um poste por quina, e árvore e
+    # poste juntos eram um poste dentro de uma copa). Todas atrás do meio da
+    # praça, e saem antes do coreto.
+    frente = ""
+    for qx, qy in ((-0.12, 0.76), (0.13, -0.12), (0.72, -0.12)):
         if r.random() < 0.85:
             s += arvore(mx0 + (mx1 - mx0) * qx + r.uniform(-0.04, 0.04),
                         my0 + (my1 - my0) * qy + r.uniform(-0.05, 0.05),
                         r.uniform(0.24, 0.34), r, r.random())
+    # OS QUATRO POSTES e os DOIS BANCOS nos caminhos, virados para o coreto:
+    # os de trás antes dele, os da frente depois.
+    # ⚠️ AS QUINAS DE CIMA E DE BAIXO ESTÃO NO EIXO DO CORETO NA TELA — numa
+    # praça quase quadrada o coreto e essas duas quinas caem na mesma coluna
+    # (`mx − my`) —, e o poste da quina da frente atravessava-lhe a entrada.
+    # Esses dois correm 38% ao longo da borda; os das quinas dos lados ficam.
+    q = 0.07
+    larg = y1 - y0
+    s += _poste(x0 + q, y0 + larg * 0.38) + _poste(x0 + q, y1 - q)
+    frente += _banco(cx + caminho + 0.10, cy + caminho + 0.03,
+                     cx + caminho + 0.30, cy + caminho + 0.08)
+    frente += _banco(cx - caminho - 0.08, cy + caminho + 0.10,
+                     cx - caminho - 0.03, cy + caminho + 0.30)
+    frente += _poste(x1 - q, y0 + q) + _poste(x1 - q, y1 - larg * 0.38)
+    # O CORETO: plataforma, oito pilares e o telhado de oito águas.
+    s += sombra_de_volume(cx - g["beiral"], cy - g["beiral"],
+                          cx + g["beiral"], cy + g["beiral"], g["base"] + g["pilar"])
+    oct_ = _octogono(cx, cy, g["raio"])
+    zb = ALT_CAIS + g["base"]
+    branco = C["casa_a"]
+    for k in range(8):
+        a, b = oct_[k], oct_[(k + 1) % 8]
+        ang = math.radians(45.0 * (k + 1))
+        nx, ny = math.cos(ang), math.sin(ang)
+        if nx + ny > 1e-6:                   # os lados que olham para a câmera;
+            # os dois de perfil dão ±1e-16 e um polígono sem área (ver o telhado)
+            s += poli([p(a[0], a[1], zb), p(b[0], b[1], zb),
+                       p(b[0], b[1], ALT_CAIS), p(a[0], a[1], ALT_CAIS)],
+                      _sombrear(branco, 0.80 if nx > ny else 0.91))
+    s += poli([p(x, y, zb) for x, y in oct_], branco)
+    lado = 0.035
+    pilares = sorted(_octogono(cx, cy, g["raio"] * 0.86), key=lambda q: q[0] + q[1])
+    for px_, py_ in pilares:
+        s += caixa(px_ - lado, py_ - lado, px_ + lado, py_ + lado, zb, g["pilar"],
+                   branco, _sombrear(branco, 0.78), _sombrear(branco, 0.89))
+    faces = _faces_do_telhado_do_coreto(g)
+    telha = C["telha_d"]
+    # As de trás primeiro, depois as da frente da mais funda para a mais perto:
+    # numa pirâmide convexa é a ordem que basta.
+    for pts, _n, fator in sorted(faces, key=lambda f: (f[2] != 0.86,
+                                                     math.fsum(q[0] + q[1] for q in f[0]))):
+        s += poli([p(*q) for q in pts], telha if fator == 1.0 else _sombrear(telha, fator))
+    s += frente
     return s
 
 
@@ -2695,9 +3775,30 @@ def _pracinha(mx0, my0, mx1, my1, r: random.Random) -> str:
 #
 # A igreja e a praça vão para a fileira da FRENTE, que é a que se vê inteira;
 # as obras, uma em cada fileira, porque uma cidade não cresce só na beira.
+def _vaos_do_lote(lotes: list, i: int) -> tuple:
+    """O vão até à vizinha da mesma fileira, de cada lado (−my, +my)."""
+    _x, my0, _dx, dmy, _v, fundo, _c = lotes[i]
+    esq, dir_ = math.inf, math.inf
+    for j, o in enumerate(lotes):
+        if j == i or o[5] != fundo:
+            continue
+        if o[1] + o[3] <= my0 + 1e-9:
+            esq = min(esq, my0 - (o[1] + o[3]))
+        elif o[1] >= my0 + dmy - 1e-9:
+            dir_ = min(dir_, o[1] - (my0 + dmy))
+    return esq, dir_
+
+
 def lotes_especiais(lotes: list) -> dict:
+    # ⚠️ LOTE COLADO À VIZINHA NÃO É ESPECIAL (`123`). Quando o casario de
+    # platibanda encostava (a primeira passagem), a escolha pôs a praça no meio
+    # de uma fieira — com a fachada da vizinha a tapar meio coreto — e uma obra
+    # com uma parede partilhada que ela não tem. O nível 1 já não encosta, e a
+    # guarda fica para o dia em que alguma forma voltar a encostar.
+    soltos = {i for i in range(len(lotes)) if min(_vaos_do_lote(lotes, i)) > 0.02}
     visiveis = [i for i, l in enumerate(lotes)
-                if no_quadro(l[0] + l[2] / 2.0, l[1] + l[3] / 2.0, folga=0.0)]
+                if i in soltos
+                and no_quadro(l[0] + l[2] / 2.0, l[1] + l[3] / 2.0, folga=0.0)]
     frente = [i for i in visiveis if not lotes[i][5]]
     fundo = [i for i in visiveis if lotes[i][5]]
     r = random.Random(SEMENTE_CHAO + 420)
@@ -2706,10 +3807,44 @@ def lotes_especiais(lotes: list) -> dict:
         # A igreja no MEIO da frente visível, e não sorteada: ela é a peça mais
         # alta da vila, e o meio é o único sítio onde se tem a certeza de que a
         # torre não assoma meio cortada pela borda do quadro.
-        especiais[frente[len(frente) // 2]] = "igreja"
+        # ⚠️ E NUM LOTE LARGO (`123`): com as casas de larguras diferentes, o
+        # do meio podia ser o de uma casinha de empena, de 0,64, e a nave não
+        # cabia ao lado da torre. É o largo mais perto do meio.
+        meio = len(frente) // 2
+        largos = [k for k, i in enumerate(frente) if lotes[i][3] >= 1.0] or [meio]
+        especiais[frente[min(largos, key=lambda k: abs(k - meio))]] = "igreja"
     livres = [i for i in frente if i not in especiais]
     if livres:
-        especiais[livres[len(livres) // 4]] = "praca"
+        # A PRAÇA NA ESQUINA, quando há: no fim do quarteirão, com a travessa do
+        # lado +my, nenhuma casa à frente dela lhe tapa o coreto — a casa que o
+        # tapava ficava desse lado, e é a altura dela que se projeta por cima.
+        # E BEM DENTRO DO QUADRO: a primeira esquina que este critério achou
+        # ficava a 23 px do topo, com o coreto a assomar para fora dele.
+        # ⚠️ E A ESQUINA É EXIGÊNCIA, não preferência: a segunda foto ainda a
+        # mostrou apertada contra uma vizinha a 0,45 («praça apertada»), que
+        # era o recurso quando faltava esquina bem dentro do quadro. O que se
+        # relaxa primeiro é o quadro, nunca o vão +my de quase um metro.
+        # ⚠️ E A ESQUINA PODE SER ESTREITA (terceira foto: «praça muito na
+        # borda»). Exigir lote largo deixava uma esquina só, colada à borda
+        # esquerda; a praça alarga para o vão livre da esquina
+        # (`planta_da_praca`), e entre as esquinas bem dentro do quadro fica a
+        # mais perto da igreja — a praça da matriz, como numa vila de verdade.
+        # A 0,7 de vão +my a vizinha ainda não chega ao coreto.
+        esquinas = [i for i in livres if _vaos_do_lote(lotes, i)[1] >= 0.7]
+        for folga in (-60.0, -20.0, 0.0):
+            dentro = [i for i in esquinas
+                      if no_quadro(lotes[i][0] + lotes[i][2] / 2.0,
+                                   lotes[i][1] + lotes[i][3] / 2.0, folga=folga)]
+            if dentro:
+                break
+        dentro = dentro or esquinas or livres
+        igreja = [i for i, t in especiais.items() if t == "igreja"]
+        if igreja:
+            ix, iy = tela(lotes[igreja[0]][0], lotes[igreja[0]][1])
+            dentro = sorted(dentro, key=lambda i: math.hypot(
+                tela(lotes[i][0], lotes[i][1])[0] - ix,
+                tela(lotes[i][0], lotes[i][1])[1] - iy))
+        especiais[dentro[0]] = "praca"
     for grupo in (frente, fundo):
         candidatos = [i for i in grupo if i not in especiais]
         if candidatos:
@@ -2759,7 +3894,7 @@ def pontos_de_prova(nivel: int = 1) -> dict:
     perfis = VILA_NIVEIS[min(nivel, max(VILA_NIVEIS))]
     saida = {}
     for i, tipo in tipos_dos_lotes().items():
-        mx0, my0, dmx, dmy, variante, _fundo = lotes[i]
+        mx0, my0, dmx, dmy, variante, _fundo, _casa = lotes[i]
         altura = perfis[variante][0]
         # ⚠️ CADA PROVA TRAZ O SEU RAIO, e isto veio de dois defeitos injetados
         # que NÃO pegaram. Com um raio único de 12 px: tirar o campanário da
@@ -2773,32 +3908,31 @@ def pontos_de_prova(nivel: int = 1) -> dict:
         # E a obra ganhou uma prova NEGATIVA: o que a define não é ter laje
         # creme (as casas também são cremes) — é NÃO TER TELHA por cima.
         if tipo == "igreja":
-            # O remate da torre: a telha cinzenta, que é a única da vila fora
-            # do nível 3 e o que faz a torre não ler como chaminé.
-            # ⚠️ O PONTO É O TOPO DO CAMPANÁRIO, e a primeira versão apontava
-            # para METADE da altura do remate — que em isométrico não cai no
-            # topo da caixa, cai na FACE lateral dela. O teste lia o tom
-            # sombreado (`67737d` contra os `7f8c98` da tabela) e reprovava um
-            # desenho que estava certo. Uma prova tem de mirar a face que a
-            # projeção mostra, e para um volume essa face é o topo.
-            #
-            # E desloca-se do eixo, porque no meio do topo está a CRUZ.
-            larg = dmx * 0.40
-            tx0 = mx0 + dmx * 0.06
-            ty0 = my0 + dmy - larg * 0.55
-            est = larg * 0.60
-            ex0 = tx0 + (larg - est) / 2.0
-            ey0 = ty0 + (larg - est) / 2.0
-            topo_camp = ALT_CAIS + altura * 3.0 + 3 + altura * 0.55
-            saida[i] = {"tipo": tipo, "cor": "telha_c", "raio": 4, "minimo": 6,
-                        "px": [round(c, 1) for c in
-                               tela(ex0 + est * 0.26, ey0 + est * 0.26, topo_camp)]}
+            # A pirâmide da torre, no barro escuro que só ela tem: é o que faz
+            # a torre não ler como chaminé nem como caixa-d'água (`123`).
+            # ⚠️ O PONTO MIRA A ÁGUA QUE A PROJEÇÃO MOSTRA EM TOM PURO, que é a
+            # +my. A primeira prova desta igreja (13/09) apontava para metade da
+            # altura do remate, que em isométrico cai na FACE lateral e não no
+            # topo: o teste lia o tom sombreado e reprovava um desenho certo.
+            # O baricentro do triângulo +my fica dentro dele por construção, e
+            # longe da cruz, que nasce no ápice.
+            g = geometria_da_igreja(mx0, my0, dmx, dmy, altura)
+            x0, _y0, x1, y1 = g["piramide"]
+            z = g["z_piramide"]
+            bx = (x0 + x1 + g["apice"][0]) / 3.0
+            by = (y1 + y1 + g["apice"][1]) / 3.0
+            bz = (z + z + g["apice"][2]) / 3.0
+            saida[i] = {"tipo": tipo, "cor": "telha_torre", "raio": 4, "minimo": 6,
+                        "px": [round(c, 1) for c in tela(bx, by, bz)]}
         elif tipo == "obra":
             # O TOPO da obra é laje, não telhado — é isso que a faz ler como
             # prédio por acabar, e é a única coisa que a separa das vizinhas.
+            # A planta é a da OBRA, que recua da frente do lote (`123`).
+            ox0, oy0, ox1, oy1 = geometria_da_obra(mx0, my0, mx0 + dmx, my0 + dmy)
             saida[i] = {"tipo": tipo, "cor": "casa_a", "raio": 10, "minimo": 40,
                         "proibidas": ["telha_a", "telha_b", "telha_c", "telha_d"],
-                        "px": [round(c, 1) for c in tela(mx0 + dmx * 0.5, my0 + dmy * 0.5,
+                        "px": [round(c, 1) for c in tela((ox0 + ox1) / 2.0,
+                                                         (oy0 + oy1) / 2.0,
                                                          ALT_CAIS + altura)]}
         elif tipo == "praca":
             # O piso: fora do caminho em cruz, que passa pelo meio.
@@ -2808,10 +3942,16 @@ def pontos_de_prova(nivel: int = 1) -> dict:
             # apagada — a guarda que se satisfaz com o vizinho. O coreto é a
             # única peça que só a praça tem, é sólido, e fica no meio, onde
             # nenhuma copa chega desde que as árvores foram para a borda.
-            saida[i] = {"tipo": tipo, "cor": "telha_d", "raio": 12, "minimo": 10,
-                        "px": [round(c, 1) for c in
-                               tela(mx0 + dmx * 0.5, my0 + dmy * 0.5,
-                                    ALT_CAIS + 9 + 3.5)]}
+            # Desde a `123` o telhado do coreto é de oito águas, e a prova mira
+            # o baricentro da água em tom puro que mais olha para +my.
+            g = geometria_do_coreto(*planta_da_praca(mx0, my0, dmx, dmy))
+            pts, _n, _f = max((f for f in _faces_do_telhado_do_coreto(g)
+                               if f[2] == 1.0), key=lambda f: f[1][1])
+            # `math.fsum`, não `sum`: o CI compara a tabela ao byte, e o `sum` de
+            # floats mudou na Python 3.12 (`mapa.md`).
+            bx, by, bz = (math.fsum(q[k] for q in pts) / 3.0 for k in range(3))
+            saida[i] = {"tipo": tipo, "cor": "telha_d", "raio": 6, "minimo": 8,
+                        "px": [round(c, 1) for c in tela(bx, by, bz)]}
     return saida
 
 
@@ -2821,15 +3961,13 @@ def conferir_a_torre_cabe() -> list:
     queixas = []
     igrejas = [i for i, t in tipos_dos_lotes().items() if t == "igreja"]
     for i in igrejas:
-        mx0, my0, dmx, dmy, variante, _fundo = lotes[i]
-        larg = dmx * 0.40
-        tx = mx0 + dmx * 0.06 + larg / 2.0
-        ty = my0 + dmy - larg * 0.55 + larg / 2.0
+        mx0, my0, dmx, dmy, variante, _fundo, _casa = lotes[i]
         for nivel, perfis in sorted(VILA_NIVEIS.items()):
             altura = perfis[variante][0]
-            # fuste + remate + campanário + cruz, na mesma ordem de `_igreja`
-            topo = ALT_CAIS + altura * 3.0 + 3 + altura * 0.55 + 6.0 + 3.4 + 1.1
-            _x, y = tela(tx, ty, topo)
+            # O topo sai da MESMA geometria que o desenho usa: fuste, cornija,
+            # pirâmide e cruz.
+            g = geometria_da_igreja(mx0, my0, dmx, dmy, altura)
+            _x, y = tela(g["apice"][0], g["apice"][1], g["topo"])
             if y < 0.0:
                 queixas.append(
                     "a torre da igreja (lote %d) sai %0.0f px por cima do quadro "
@@ -2865,8 +4003,13 @@ def conferir_a_torre_cabe() -> list:
 # frente de rua contínua é justamente o que se lê como cidade de longe.
 VILA_LOTES_POR_QUARTEIRAO = (3, 5)
 VILA_TRAVESSA = (1.5, 1.9)      # o vão da rua transversal, em `my`
-VILA_VAO = (0.10, 0.38)         # entre vizinhos do mesmo quarteirão
-VILA_GEMINADA = 0.34            # com que frequência dois vizinhos encostam
+# ⚠️ O VÃO ENTRE VIZINHOS MEXEU DUAS VEZES NA `123`. Era 0,10 a 0,38, com um
+# par em cada três colado; com o muro de divisa a meio dele, 0,10 não deixava
+# terreno, e a primeira passagem abriu-o a 0,22–0,52 — «a vila ficou rala»,
+# disse a foto seguinte. A 0,16–0,40 o muro ainda cabe e o quarteirão fecha.
+# E nenhuma casa do nível 1 encosta na vizinha: o telhado com beiral de uma
+# fatiaria o da outra, e a casa humilde de vila é solta no terreno.
+VILA_VAO = (0.16, 0.40)         # entre vizinhos do mesmo quarteirão
 
 
 def _fileira(recuo: float, semente: int, fundo: bool = False) -> list:
@@ -2882,51 +4025,56 @@ def _fileira(recuo: float, semente: int, fundo: bool = False) -> list:
     quarteirao = (2, 3) if fundo else VILA_LOTES_POR_QUARTEIRAO
     travessa = (2.2, 3.4) if fundo else VILA_TRAVESSA
     saida = []
+    saco: list = []
     for my0, my1, borda in DEGRAUS:
         my = my0 + 0.35
         # A linha de frente do quarteirão. `frente` é o recuo partilhado.
         frente = r.uniform(0.0, 0.20)
         restam = r.randint(*quarteirao)
-        par = None            # a variante a herdar, quando a casa é geminada
+        muro = linha_do_muro(borda, fundo)
         while my < my1 - 0.5:
-            dmy = r.uniform(0.72, 1.28)
-            if my + dmy > my1 - 0.15:
-                break
-            dmx = VILA_PROF - r.uniform(0.0, 0.26)
             mx = borda - recuo + frente + r.uniform(0.0, 0.05)
+            visivel = no_quadro(mx, my, folga=110.0)
+            # O SACO SÓ SERVE QUEM SE VÊ, e a forma de um lote recusado volta
+            # para ele: metade dos lotes desta fileira cai fora do quadro ou
+            # num vão, e um saco gasto neles deixava formas inteiras de fora da
+            # tela outra vez, cada vez outras, a cada ajuste na geometria.
+            do_saco = visivel
+            tipo = _tirar_do_saco(saco, r, fundo) if visivel else "quatro_aguas"
+            dmy = r.uniform(*CASA_TIPOS[tipo][2:])
+            if my + dmy > my1 - 0.15:
+                if do_saco:
+                    saco.append(tipo)
+                break
+            # A casa recua do muro da frente o bastante para ele caber.
+            dmx = min(VILA_PROF - r.uniform(0.0, 0.26),
+                      muro - VILA_QUINTAL_FRENTE - mx)
+            variante = r.randrange(3)
             # ⚠️ E O QUE CAI FORA DO QUADRO NÃO ENTRA, pelo mesmo motivo que a
             # mata: medido em 04/09, só **17,3 das 40 unidades** da fileira da
             # frente estão dentro do PNG — 43%. O degrau 3 inteiro está fora, à
             # esquerda, e gerava cinco casas que ninguém nunca viu. A folga é
             # larga porque um telhado assoma no quadro muito antes do canto do
             # lote lá chegar.
-            if not no_quadro(mx, my, folga=110.0):
+            if not visivel:
                 pass
             # O vão só vale se a casa INTEIRA couber fora dele: testar o
             # canto, como se fazia, deixava passar a casa que entra no vão
             # pela outra ponta.
             elif not any(a < my + dmy and my < b for a, b in vaos):
-                saida.append((mx, my, dmx, dmy,
-                              r.randrange(3) if par is None else par, fundo))
+                saida.append((mx, my, dmx, dmy, variante, fundo, tipo))
+            elif do_saco:
+                saco.append(tipo)
             restam -= 1
             if restam <= 0:
                 my += dmy + r.uniform(*travessa)
                 frente = r.uniform(0.0, 0.20)
                 restam = r.randint(*quarteirao)
-                par = None
-            elif r.random() < VILA_GEMINADA:
-                # ⚠️ GEMINADA HERDA A VARIANTE DA VIZINHA, e sem isso ela sai
-                # pior do que não existir. Duas casas encostadas com telhados
-                # de ALTURAS e cores diferentes não leem como par geminado:
-                # leem como um telhado fatiado pelo outro, porque o beiral de
-                # 0,12 de cada lado faz os dois sobreporem-se 0,24 e o mais
-                # alto corta o mais baixo ao meio. Com a mesma variante os
-                # dois telhados encaixam e o que se vê é UM prédio comprido,
-                # que é o que uma casa geminada é.
-                par = saida[-1][4] if saida else None
-                my += dmy                      # parede partilhada
             else:
-                par = None
+                # ⚠️ ATÉ À `123` UM PAR EM CADA TRÊS ENCOSTAVA (geminada), e a
+                # geminada tinha de herdar a variante da vizinha: telhados de
+                # alturas diferentes liam como um fatiado pelo outro, porque o
+                # beiral de 0,12 de cada lado os sobrepunha 0,24.
                 my += dmy + r.uniform(*VILA_VAO)
     return saida
 
@@ -2966,7 +4114,10 @@ VILA_RECUO_2 = VILA_RECUO + VILA_PROF + VILA_TRAVESSA_FUNDO
 
 
 def lotes_da_vila() -> list:
-    """(mx0, my0, dmx, dmy, variante, fundo) de cada casa, medido do cais.
+    """(mx0, my0, dmx, dmy, variante, fundo, casa) de cada lote, do cais.
+
+    `casa` é a forma (`CASA_TIPOS`); quem decide se o lote é casa, igreja,
+    praça ou obra é `tipos_dos_lotes()`.
 
     Duas fileiras, e o que decide quais casas existem é o quadro: ver
     `_fileira` e `VILA_RECUO_2`.
@@ -3007,7 +4158,7 @@ def viela_da_vila(pavimentado: bool) -> str:
         # escolhido: viela que passa da última casa é viela que acaba no nada,
         # que é justamente o que se está a corrigir.
         fim = None
-        for lmx0, lmy0, dmx, dmy, _v, fundo in lotes_da_vila():
+        for lmx0, lmy0, dmx, dmy, _v, fundo, _c in lotes_da_vila():
             if fundo and my0 <= lmy0 < my1:
                 fim = max(fim, lmy0 + dmy) if fim is not None else lmy0 + dmy
         if fim is None:
@@ -3015,6 +4166,57 @@ def viela_da_vila(pavimentado: bool) -> str:
         s += _faixa_mx(mx0, mx1, my0, min(fim + 0.45, my1),
                        C["terra_clara"] if pavimentado else C["terra_escura"])
     return s
+
+
+def paredes_da_vila(lotes: list) -> list:
+    """A cor da parede de cada lote, pela ordem de `lotes_da_vila()`.
+
+    Vizinhas de porta não repetem a cor — "cada casa de uma cor", na leitura
+    da referência. Nem a geminada: desde a `123` só o casario de platibanda
+    encosta, e casario é cada fachada de uma cor.
+    """
+    r = random.Random(SEMENTE_CHAO + 430)
+    saida = []
+    for i, lote in enumerate(lotes):
+        ant = lotes[i - 1] if i > 0 else None
+        vizinha = saida[-1] if ant is not None and ant[5] == lote[5] else None
+        # A casa por pintar: o reboco cru, em metade das meias-águas e numa
+        # casa em seis das outras — a vila humilde do nível 1 (`123`).
+        if vizinha != "reboco" and r.random() < (0.5 if lote[6] == "meia_agua" else 0.16):
+            saida.append("reboco")
+            continue
+        saida.append(r.choice([c for c in VILA_PAREDES if c != vizinha]))
+    return saida
+
+
+def caixas_que_caem_na_igreja(lotes: list, especiais: dict, perfis: list) -> set:
+    """Os lotes cuja caixa-d'água, na tela, cairia em cima da igreja.
+
+    ⚠️ A CAIXA É DA CASA DE TRÁS, MAS O OLHO DÁ-A À IGREJA: na segunda foto da
+    `123` a caixa azul da casa atrás da nave assomava colada à torre, e a
+    igreja parecia ter uma caixa-d'água no telhado. Uma caixa cujo ponto na
+    tela cai dentro do retângulo da igreja não se desenha.
+    """
+    caixa_igreja = None
+    for i, t in especiais.items():
+        if t != "igreja":
+            continue
+        mx0, my0, dmx, dmy, variante, _f, _c = lotes[i]
+        g = geometria_da_igreja(mx0, my0, dmx, dmy, perfis[variante][0])
+        pts = [tela(x, y, z) for x in (mx0, mx0 + dmx) for y in (my0, my0 + dmy)
+               for z in (ALT_CAIS, g["topo"])]
+        caixa_igreja = (min(q[0] for q in pts) - 4, min(q[1] for q in pts) - 4,
+                        max(q[0] for q in pts) + 4, max(q[1] for q in pts) + 4)
+    if caixa_igreja is None:
+        return set()
+    fora = set()
+    for i, (mx0, my0, dmx, dmy, variante, _f, _c) in enumerate(lotes):
+        if i in especiais:
+            continue
+        x, y = tela(mx0 + dmx / 2.0, my0 + dmy / 2.0, ALT_CAIS + perfis[variante][0] + 8)
+        if caixa_igreja[0] <= x <= caixa_igreja[2] and caixa_igreja[1] <= y <= caixa_igreja[3]:
+            fora.add(i)
+    return fora
 
 
 def vila(nivel: int, pavimentado: bool) -> str:
@@ -3046,21 +4248,47 @@ def vila(nivel: int, pavimentado: bool) -> str:
     s = viela_da_vila(pavimentado)
     lotes = lotes_da_vila()
     especiais = tipos_dos_lotes()
+    paredes = paredes_da_vila(lotes)
     # ⚠️ O ÍNDICE VEM DE ANTES DA ORDENAÇÃO. Os lotes desenham-se de trás para
     # a frente, mas quem é a igreja decidiu-se sobre a lista COMO ELA SAI DE
     # `lotes_da_vila()` — que é a mesma que a tabela de âncoras publica. Ordenar
     # primeiro e indexar depois faria a igreja mudar de lote de cada vez que uma
     # casa se mexesse, sem erro nenhum a apontá-lo.
-    for i, (mx0, my0, dmx, dmy, variante, fundo) in sorted(
+    terrenos = terrenos_da_vila(lotes)
+    # A caixa-d'água sai de um `Random` só dela, pela ordem dos lotes: o `r`
+    # da vila é o das árvores, e cada sorteio a mais lá mudava-as de sítio.
+    # ⚠️ ERA UMA CASA EM CADA 2,5, e na terceira foto eram caixas demais.
+    rc = random.Random(SEMENTE_CHAO + 440)
+    caixas = [rc.random() < 0.25 for _l in lotes]
+    # A telha de fibrocimento, também de um `Random` próprio, e SÓ na meia-água:
+    # com uma empena em cinco e uma casa em dez também de cinzento, a terceira
+    # foto ainda leu «cinza demais nos telhados». A telha de barro é tão
+    # humilde quanto ela, e é a cor quente da vila.
+    rf = random.Random(SEMENTE_CHAO + 450)
+    fibro = [l[6] == "meia_agua" and rf.random() < 0.8 for l in lotes]
+    # A cor de acento de cada casa e a moita florida do quintal, cada uma do
+    # seu `Random`, pela ordem dos lotes.
+    ra = random.Random(SEMENTE_CHAO + 460)
+    acentos = [ra.choice(ACENTOS) if ra.random() < 0.85 else None for _l in lotes]
+    rj = random.Random(SEMENTE_CHAO + 470)
+    jardins = [(rj.random() < 0.45, rj.choice(["flor_primavera", "flor_ipe",
+                                                "flor_primavera", "flor_branca"]),
+                rj.uniform(0.15, 0.85)) for _l in lotes]
+    sem_caixa = caixas_que_caem_na_igreja(lotes, especiais, perfis)
+    for i, (mx0, my0, dmx, dmy, variante, fundo, forma) in sorted(
             enumerate(lotes), key=lambda par: par[1][0] + par[1][1]):
         altura, telha, janelas = perfis[variante]
         tipo: str = especiais.get(i, "")
+        xt, xm, ye, yd, _me, _md = terrenos[i]
+        moita = False
         # Na fileira de trás planta-se mais: é ela que desfia a vila contra a
         # mata, e é a árvore — não o vão vazio — que faz a orla parecer orla.
         pomar = 0.85 if fundo else 0.55
         # Quintal: a casa não ocupa o lote todo, e o que sobra é chão batido
-        # mesmo no mapa pavimentado — quintal não é asfalto.
-        s += _faixa_mx(mx0 - 0.28, mx0 + dmx + 0.5, my0 - 0.3, my0 + dmy + 0.3,
+        # mesmo no mapa pavimentado — quintal não é asfalto. Desde a `123` é o
+        # TERRENO, de muro a muro; antes saía 0,5 para a frente da casa e
+        # passava por cima do passeio.
+        s += _faixa_mx(xt, xm, ye, yd,
                        C["terra_clara"] if pavimentado else C["terra_escura"], 0.5)
         # Árvore do QUINTAL DE TRÁS, desenhada antes da casa para a casa a
         # tapar em parte — é o que a põe atrás em vez de colada por cima.
@@ -3069,9 +4297,23 @@ def vila(nivel: int, pavimentado: bool) -> str:
                         my0 + r.uniform(-0.1, dmy + 0.1),
                         r.uniform(0.30, 0.52), r, r.random())
         if tipo == "praca":
-            s += _pracinha(mx0, my0, mx0 + dmx, my0 + dmy, r)
+            s += _pracinha(*planta_da_praca(mx0, my0, dmx, dmy), r)
         elif tipo == "igreja":
-            s += _igreja(mx0, my0, mx0 + dmx, my0 + dmy, altura, telha)
+            # O ADRO: a calçada à frente da porta, da torre até ao passeio —
+            # a igreja recuou da frente do lote para ele caber (`IGREJA_ADRO`).
+            g = geometria_da_igreja(mx0, my0, dmx, dmy, altura)
+            s += _faixa_mx(g["torre"][2] - 0.02, xm + 0.03, my0 + dmy * 0.06,
+                           my0 + dmy * 0.94, C["meiofio"])
+            s += _faixa_mx(g["torre"][2] - 0.02, xm + 0.03, my0 + dmy * 0.06 + 0.04,
+                           my0 + dmy * 0.94 - 0.04, C["calcada"])
+            # O banco do lado −my do adro e o poste, na quina desse lado, ficam
+            # atrás da torre na tela e saem antes dela; o banco +my, depois.
+            # (O poste na quina +my caía mesmo à frente da porta da torre.)
+            tx1, ty0, ty1 = g["torre"][2], g["torre"][1], g["torre"][3]
+            s += _banco(tx1 + 0.08, ty0 - 0.16, tx1 + 0.28, ty0 - 0.11)
+            s += _poste(xm - 0.06, my0 + dmy * 0.06 + 0.10)
+            s += _igreja(mx0, my0, mx0 + dmx, my0 + dmy, altura)
+            s += _banco(tx1 + 0.08, ty1 + 0.08, tx1 + 0.28, ty1 + 0.13)
         elif tipo == "obra":
             # ⚠️ A OBRA É DESENHADA COM A ALTURA DO NÍVEL SEGUINTE, e é isto
             # que responde ao "indicadores que farão a cidade ir crescendo" do
@@ -3086,15 +4328,44 @@ def vila(nivel: int, pavimentado: bool) -> str:
                 proximo = int(altura * 1.34)
             s += _sem_telhado(mx0, my0, mx0 + dmx, my0 + dmy, proximo)
         else:
-            s += casa(mx0, my0, mx0 + dmx, my0 + dmy, altura,
-                      C[VILA_PAREDES[variante]], telha, janelas)
-        # Árvore do quintal da FRENTE, entre a casa e o passeio.
-        if r.random() < pomar - 0.05:
-            s += arvore(mx0 + dmx + r.uniform(0.10, 0.34),
-                        my0 + r.uniform(0.0, dmy),
-                        r.uniform(0.26, 0.44), r, r.random())
+            parede = C[paredes[i]]
+            forma = forma_no_nivel(forma, nivel)
+            if nivel <= 1 and fibro[i]:
+                telha = "fibrocimento"
+            if forma == "sobrado":
+                altura, janelas = altura_do_sobrado(nivel, variante), janelas + 1
+            porta = my0 + dmy * PORTA_NA_FRENTE.get(forma, 1.0)
+            atras, frente = muros_do_terreno(terrenos[i], parede, porta, acentos[i])
+            s += atras
+            s += sombra_da_casa(forma, mx0, my0, mx0 + dmx, my0 + dmy, altura)
+            s += CASAS[forma](mx0, my0, mx0 + dmx, my0 + dmy, altura,
+                              parede, telha, janelas, acentos[i])
+            if caixas[i] and i not in sem_caixa:
+                s += caixa_dagua_da_casa(forma, mx0, my0, mx0 + dmx, my0 + dmy,
+                                         altura)
+            tem, flor, onde = jardins[i]
+            lado = yd - (my0 + dmy)
+            moita = tem and lado > 0.10
+            if moita:
+                s += _moita(mx0 + dmx * (0.35 + 0.5 * onde), my0 + dmy + lado * 0.5,
+                            flor, r)
+            s += frente
+        # Árvore do quintal do LADO, entre a casa e a divisa +my.
+        # ⚠️ ERA DA FRENTE, a 0,10–0,34 da fachada, e desde a `123` a frente
+        # tem 0,12 até ao muro: o tronco cairia em cima dele ou da calçada.
+        # O lado é onde o terreno brasileiro tem espaço, e a copa, que sobe e
+        # recua na tela, tapa a própria casa como na vida real e nunca a rua.
+        # E NÃO NOS LOTES ESPECIAIS: na praça ela nascia no piso, à frente do
+        # coreto, e tapava-lhe a base; na igreja, a da torre (`123`).
+        lado = yd - (my0 + dmy)
+        if tipo:
+            continue
+        # O quintal do lado com moita não leva árvore: uma tapava a outra.
+        if lado > 0.10 and not moita and r.random() < pomar - 0.05:
+            s += arvore(mx0 + dmx * r.uniform(0.45, 0.90), my0 + dmy + lado * 0.6,
+                        r.uniform(0.22, 0.36), r, r.random())
         elif r.random() < 0.7:
-            gx, gy = p(mx0 + dmx + r.uniform(0.12, 0.4),
+            gx, gy = p(mx0 + dmx + r.uniform(0.02, VILA_QUINTAL_FRENTE - 0.02),
                        my0 + r.uniform(0.1, dmy), ALT_CAIS)
             s += tufo_de_capim(gx, gy, r, n=(3, 5), alt=(3.0, 5.5))
     return s
@@ -3826,6 +5097,7 @@ def tabela_ancoras() -> dict:
         "lotes": [{"mx": round(l[0], 2), "my": round(l[1], 2),
                    "dmx": round(l[2], 2), "dmy": round(l[3], 2),
                    "fundo": bool(l[5]),
+                   "casa": l[6],
                    "tipo": tipos_dos_lotes().get(i, ""),
                    "canto": px(l[0], l[1], ALT_CAIS)}
                   for i, l in enumerate(lotes_da_vila())],
@@ -3834,7 +5106,8 @@ def tabela_ancoras() -> dict:
         "cores_da_vila": {"calcada": C["calcada"], "telha_c": C["telha_c"],
                           "casa_a": C["casa_a"], "tronco": C["tronco"],
                           "telha_d": C["telha_d"], "meiofio": C["meiofio"],
-                          "telha_a": C["telha_a"], "telha_b": C["telha_b"]},
+                          "telha_a": C["telha_a"], "telha_b": C["telha_b"],
+                          "telha_torre": C["telha_torre"]},
         "provas_da_vila": [{"lote": i, **v}
                            for i, v in sorted(pontos_de_prova().items())],
     }
