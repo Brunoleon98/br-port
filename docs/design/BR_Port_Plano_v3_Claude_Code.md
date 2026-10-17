@@ -781,7 +781,11 @@ Entradas, textos e critérios estão em
 `docs/RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`; Bruno aprovou o recorte
 com ajuste de redação sobre autosave (`114`) e depois autorizou implementar
 (`115`). A ajuda compartilhada pela inicial e pausa está no PR #134,
-publicado a pedido do Bruno (`116`); leitura, telefone e merge pendentes.
+publicado a pedido do Bruno (`116`) e fundido; leitura e telefone pendentes.
+**Em 17/10 Bruno escolheu RB2 — Meu porto agora (`125`) e autorizou o
+recorte apresentado.** Resumo por Continuar/Carregar antes de entrar no
+porto, informativo e sem atalhos diretos. Codex no PR #140 em rascunho;
+Claude no visual. Conteúdo, painel e testes próprios, integração na inicial.
 A pesquisa entrou na main com
 o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em
 `docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`, inclusive falhas do save.

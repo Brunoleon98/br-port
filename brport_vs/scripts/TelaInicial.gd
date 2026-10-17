@@ -32,6 +32,7 @@ const CENA_DO_PORTO := "res://scenes/Main.tscn"
 const PainelEspacosScene := preload("res://scenes/panels/PainelEspacos.tscn")
 const PainelAjustesScene := preload("res://scenes/panels/PainelAjustes.tscn")
 const ComoJogarScene := preload("res://scenes/panels/PainelComoJogar.tscn")
+const MeuPortoScene := preload("res://scenes/panels/PainelMeuPorto.tscn")
 
 const LARGURA_CARTAO := 560
 const ALTURA_BOTAO := 56
@@ -42,6 +43,7 @@ const ALTURA_CONTINUAR := 64
 const MARGEM_INFERIOR := 96
 
 var _mais_recente := 0
+var _retomando := false
 
 
 func _ready() -> void:
@@ -159,8 +161,23 @@ func _abrir_como_jogar() -> void:
 
 
 func _continuar() -> void:
-	GameState.usar_espaco(_mais_recente)
-	_ir_para_o_porto()
+	_retomar(_mais_recente)
+
+
+func _retomar(espaco: int) -> void:
+	if _retomando:
+		return
+	_retomando = true
+	# A consulta de espaço recusa sem apagar. Não usamos usar_espaco(): ele
+	# inicia partida nova na falha, que não pode se apresentar como retomada.
+	var disponivel := not GameState.resumo_do_espaco(espaco).is_empty()
+	if disponivel:
+		GameState._apontar_espaco(espaco)
+		disponivel = GameState.load_game()
+	var painel := _abrir_painel(MeuPortoScene)
+	painel.connect("entrar_no_porto", _ir_para_o_porto)
+	painel.connect("fechou", func() -> void: _retomando = false)
+	painel.call("setup", disponivel)
 
 
 # NOVA PARTIDA SEM ESPAÇO OCUPADO NÃO PERGUNTA ONDE. Na primeira vez que o
@@ -177,9 +194,9 @@ func _nova_partida() -> void:
 func _ao_escolher_espaco(espaco: int, modo: String) -> void:
 	if modo == "nova":
 		GameState.comecar_no_espaco(espaco)
+		_ir_para_o_porto()
 	else:
-		GameState.usar_espaco(espaco)
-	_ir_para_o_porto()
+		_retomar(espaco)
 
 
 func _ir_para_o_porto() -> void:

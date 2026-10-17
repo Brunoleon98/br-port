@@ -405,6 +405,13 @@ tirar menu    - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # põem os três estados do cartão na mesma foto; a confirmação monta só o 1,
 # para «Substituir» casar UM botão.
 tirar inicial - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/inicial.png" espacos=1,3
+tirar retomada_fase1 - - --script res://tools/capturar_meu_porto.gd -- fase1 "$SAIDA/retomada_fase1.png"
+tirar retomada_fase1_fim - - --script res://tools/capturar_meu_porto.gd -- fase1 "$SAIDA/retomada_fase1_fim.png" fim
+tirar retomada_fase2 - - --script res://tools/capturar_meu_porto.gd -- fase2 "$SAIDA/retomada_fase2.png"
+tirar retomada_fase2_fim - - --script res://tools/capturar_meu_porto.gd -- fase2 "$SAIDA/retomada_fase2_fim.png" fim
+tirar retomada_livre - - --script res://tools/capturar_meu_porto.gd -- livre "$SAIDA/retomada_livre.png" fim
+tirar retomada_encerrada - - --script res://tools/capturar_meu_porto.gd -- encerrada "$SAIDA/retomada_encerrada.png"
+tirar retomada_indisponivel - - --script res://tools/capturar_meu_porto.gd -- indisponivel "$SAIDA/retomada_indisponivel.png"
 tirar espacos_carregar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_carregar.png" espacos=1,3 --tocar=Carregar --tempo=carregar
 tirar espacos_nova - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_nova.png" espacos=1,3 --tocar=Nova --tempo=nova
 tirar espacos_confirmar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_confirmar.png" espacos=1 --tocar=Nova --tocar=Substituir --tempo=confirmar

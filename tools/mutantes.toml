@@ -849,3 +849,103 @@ alvo = "brport_vs/art/porto_mapa_iso.svg"
 antes = '<ellipse cx="924" cy="903" rx="149" ry="76" fill="url(#mfunda)"'
 depois = '<ellipse cx="924" cy="903" rx="149" ry="76" fill="url(#mrasa)"'
 reprova = { teste_design = "nenhuma mancha clara no mar aberto" }
+
+# ── MEU PORTO AGORA (`125`) ──────────────────────────────────────────────
+
+[[mutante]]
+id = "retomada-consome-rng"
+de = "125"
+o_que = "consultar o resumo consome um sorteio da partida"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'static func resumir(gs: Node) -> Dictionary:'
+depois = '''static func resumir(gs: Node) -> Dictionary:
+	gs._rng.randi()'''
+reprova = { run_tests = "T27: gerar conteúdo preserva estado, RNG, arquivos e registro" }
+
+[[mutante]]
+id = "retomada-regrava-save"
+de = "125"
+o_que = "abrir o resumo regrava o save mesmo sem alterar dinheiro ou dia"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'static func resumir(gs: Node) -> Dictionary:'
+depois = '''static func resumir(gs: Node) -> Dictionary:
+	gs.save_game()'''
+reprova = { run_tests = "T27: gerar conteúdo preserva estado, RNG, arquivos e registro" }
+
+[[mutante]]
+id = "retomada-cobra-quitada"
+de = "125"
+o_que = "o recibo antecipado reaparece como parcela a pagar"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'if gs.parcela_paid:'
+depois = 'if false and gs.parcela_paid:'
+reprova = { run_tests = "T27: antecipação mantém recibo e próxima cobrança futura" }
+
+[[mutante]]
+id = "retomada-inventa-cobranca-fase2"
+de = "125"
+o_que = "a Fase 2 anuncia dívida inexistente sem tentar ler fora da tabela"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'return "Sem cobranças nesta fase."'
+depois = 'return "Próxima cobrança no dia 112."'
+reprova = { run_tests = "T27: Fase 2 sem cobrança nem prazo fictícios" }
+
+[[mutante]]
+id = "retomada-adianta-progresso"
+de = "125"
+o_que = "o serviço mostra o trabalho de amanhã como concluído"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'int(barco["progress"]), Narrativa.concordar(int(barco["op_turns"]), "dia", "dias")]'
+depois = 'int(barco["progress"]) + 1, Narrativa.concordar(int(barco["op_turns"]), "dia", "dias")]'
+reprova = { run_tests = "T27: serviço mostra progresso guardado e receita com bônus" }
+
+[[mutante]]
+id = "retomada-receita-sem-bonus"
+de = "125"
+o_que = "o resumo anuncia só o valor do barco, omitindo bônus já devidos"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'gs.moeda(gs.receita_da_doca(i))'
+depois = 'gs.moeda(int(barco["value"]))'
+reprova = { run_tests = "T27: serviço mostra progresso guardado e receita com bônus" }
+
+[[mutante]]
+id = "retomada-meta-esquecida"
+de = "125"
+o_que = "o jogo livre volta a apresentar a meta já conquistada como incompleta"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'if meta["concluida"]:'
+depois = 'if false and meta["concluida"]:'
+reprova = { run_tests = "T27: jogo livre conserva conquista sem novo objetivo" }
+
+[[mutante]]
+id = "retomada-voltar-entra"
+de = "125"
+o_que = "o botão de voltar à inicial começa a entrada no porto"
+alvo = "brport_vs/scripts/PainelMeuPorto.gd"
+antes = 'func _entrar() -> void:'
+depois = '''func _fechar() -> void:
+	_entrar()
+
+
+func _entrar() -> void:'''
+reprova = { run_tests = "T27: consulta visual preserva estado, RNG, arquivos e registro" }
+
+[[mutante]]
+id = "retomada-carrega-espaco-errado"
+de = "125"
+o_que = "o Carregar ignora a escolha e retoma sempre o espaço 1"
+alvo = "brport_vs/scripts/TelaInicial.gd"
+antes = 'GameState._apontar_espaco(espaco)'
+depois = 'GameState._apontar_espaco(1)'
+reprova = { run_tests = "T27: Carregar mostra o espaço escolhido" }
+
+[[mutante]]
+id = "retomada-recusa-inicia-nova"
+de = "125"
+o_que = "um espaço que ficou incompatível cria partida nova no lugar da retomada"
+alvo = "brport_vs/scripts/TelaInicial.gd"
+antes = '''	var disponivel := not GameState.resumo_do_espaco(espaco).is_empty()'''
+depois = '''	var disponivel := not GameState.resumo_do_espaco(espaco).is_empty()
+	if not disponivel:
+		GameState.new_game()'''
+reprova = { run_tests = "T27: recusa não inicia partida nem apaga arquivo" }
