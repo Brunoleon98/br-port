@@ -1,0 +1,3 @@
+416 documentos, 134 no arquivo, estado com 29963 bytes.
+13 regras em .claude/rules/; carregam sempre 45483 bytes (teto 48000).
+=== DOCS OK — as camadas estão de pé, as referências resolvem e o texto bate com o que o CI corre ===

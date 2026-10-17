@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 17/10/2026 — o terreno e a vegetação (`127`)
+> **Atualização:** 17/10/2026 — o terreno e a vegetação (`127`); a retomada (`125`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -119,6 +119,8 @@ A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
 **Na main:** cancelamento, pesquisa de recursos e ajuda (`109`–`116`; da
 ajuda faltam leitura e telefone), a obra, o maquinário e a vila (`121`–`123`).
+**Meu porto agora (`125`, PR #140, na main):** resumo antes do porto por
+Continuar/Carregar; consulta sem efeitos, sem atalhos.
 **A fila da `126`** (§7): terreno e vegetação (`127`), **não aceite**,
 continua; depois, estradas e detalhes.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
@@ -147,7 +149,7 @@ histórico em `HISTORICO.md`.
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo; o que é de cada fase na tabela `FASES`, lida por funções (`094`) |
-| `brport_vs/tests/run_tests.gd` | Regressões da lógica; Fase 2: T20–T23; cancelamento T24; ajuda T25; **o jogador ao acaso** T26, invariantes a cada passo (`118`) |
+| `brport_vs/tests/run_tests.gd` | Lógica: Fase 2 T20–T23; cancelamento T24; ajuda T25; acaso T26 (`118`); retomada T27 (`125`) |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
@@ -233,7 +235,7 @@ histórico em `HISTORICO.md`.
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
-| `tools/conferir_mutantes.py` + `mutantes.toml`; `conferir_colaboracao.py`; `renumerar_decisao.py` | **Os defeitos já provados, dos dois agentes**, reinjetados a cada PR (`117`, `120`); **o pré-PR entre agentes** e a renumeração que só toca as próprias linhas (`119`) |
+| `tools/conferir_mutantes.py` + `mutantes.toml` | Defeitos reinjetados no CI (`117`, `120`); pré-PR e renumeração em `conferir_colaboracao.py` / `renumerar_decisao.py` (`119`) |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
 | `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desce ao TEMPO (`051`) e à CARA (`060`), sem lacuna declarada |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |

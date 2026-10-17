@@ -1702,6 +1702,9 @@ func _run() -> void:
 	var acaso = load("res://tests/jogador_ao_acaso.gd").new()
 	acaso.rodar(GS, self)
 	_check("o bloco T26 correu até ao fim, sem invariante quebrado", acaso.completo and acaso.falhas == 0)
+	var retomada = load("res://tests/casos_meu_porto.gd").new()
+	await retomada.rodar(GS, self)
+	_check("T27: resumo de retomada e consulta sem efeitos", retomada.completo and retomada.falhas == 0)
 
 	print("")
 	if _fails == 0:

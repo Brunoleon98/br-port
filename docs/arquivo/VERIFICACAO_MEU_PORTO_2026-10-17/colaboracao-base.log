@@ -1,0 +1,14 @@
+Base origin/main (01ba125); esta branch codex/meu-porto-agora: 3 à frente, 0 atrás.
+
+Contra a base:
+  ✔ a junção com a base não conflita
+  ✔ decisões novas desta branch: 125 — nenhuma repete a base
+  ✔ o catálogo de mutantes casa com o código da junção
+
+Contra os outros (0 ramo(s)):
+  · nenhum — se há um PR aberto de outro agente, passe-o em --outros
+
+Próxima decisão livre, contando a base, esta branch e os outros: 126
+Próximo briefing livre para hoje: docs/arquivo/BRIEFING_PROXIMA_CONVERSA_2026-10-17d.md
+
+COLABORACAO OK — nada bloqueia o PR contra a base; 0 aviso(s) sobre os outros ramos.
