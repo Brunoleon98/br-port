@@ -115,4 +115,4 @@ func _ready() -> void:
     fs.rmSync(pasta, { recursive: true, force: true });
   }
 }
-main().catch(e => { console.error(e); process.exitCode = 1; });
+main().catch(e => { console.error(e); process.exit(1); });

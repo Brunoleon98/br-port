@@ -26,6 +26,13 @@ func _fotografar() -> void:
 		push_error("uso: capturar_diagnostico.gd -- <consulta|copiado|indisponivel> <saida.png>")
 		quit(1)
 		return
+	# O fundo da inicial também aparece sob o escurecimento. Derivamos seus
+	# espaços, em vez de herdar o que a captura anterior deixou no disco.
+	var gs: Node = root.get_node("GameState")
+	gs._rng.seed = 42
+	for n in range(1, int(gs.ESPACOS) + 1):
+		gs.apagar_espaco(n)
+	gs.comecar_no_espaco(1)
 	var inicio: Control = load("res://scenes/TelaInicial.tscn").instantiate()
 	root.add_child(inicio)
 	inicio._abrir_diagnostico()

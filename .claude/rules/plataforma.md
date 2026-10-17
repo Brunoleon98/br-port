@@ -54,6 +54,8 @@ o FPS mede-se no telefone (`099`).
 pacotes. Não copie um SHA para o código: identifique a árvore exportada e
 marque modificações. O editor ignora esse recurso, que pode ser sobra de
 outro export. O job confere a identificação dentro do `.pck`, contra o Git.
+Em PR, esse SHA é o da junção testada pelo CI, que pode diferir da cabeça
+da branch; na publicação do Pages é o commit exportado da main.
 
 **O Pages publica o Web da `main` verde**, e o link é o que se manda a quem
 vai testar; o protótipo HTML da raiz passou a `/prototipo/`. ⚠️ Só corre com a

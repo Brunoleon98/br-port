@@ -30,12 +30,26 @@ entrega. A exportação do registro existente continua nos Ajustes.
 Não se cria número de lançamento novo: o commit identifica a versão de
 desenvolvimento. A versão 0.1.0 do preset Android não muda.
 
-Casos próprios T28 devem provar as duas portas, o Voltar, a prévia igual
-ao texto copiado, a cópia por ação explícita, a indisponibilidade da área
-de transferência e a preservação da partida e dos arquivos. O gerador
-de identificação precisa ser exercitado contra um repositório de teste,
-inclusive árvore modificada. Defeitos representativos permanecem no
-catálogo oficial. Captura e contraste cobrem a consulta e seu retorno.
+Casos próprios T28 provam as duas portas, o Voltar, a prévia igual ao texto
+copiado, a cópia por ação explícita, a indisponibilidade e a preservação da
+partida, RNG, arquivos e registro. Um destino ausente denuncia até regravar
+os mesmos bytes no mesmo segundo. Contraste cobre as respostas, e o leiaute
+é medido também com SHA completo e marca de modificado, mais compridos que
+a identificação do editor. O F16 conserva a lista exata dos menus novos.
+
+O gerador é exercitado contra commits reais num Git temporário: árvore limpa,
+alteração, arquivo novo, commit seguinte e falha que preserva o destino.
+O CI abre o `.pck` exportado e confere sua identificação contra o Git; num
+PR, o commit é o da junção testada. A cópia Web é provada no Chrome por um
+projeto mínimo com o mesmo backend: escrita/lida real, promessa recusada,
+API ausente e timeout, incluindo resposta atrasada após uma tentativa nova.
+Não se anuncia sucesso só porque `clipboard_set()` foi chamado.
+
+Cinco defeitos `diagnostico-*` permanecem no catálogo oficial. As três
+capturas usam a consulta real e respostas controladas do copiador; não
+alteram o clipboard de quem roda a bateria. O fundo também deriva os
+espaços, sem herdar a partida da foto anterior. Isso não substitui a prova
+real do backend no navegador nem o teste físico no telefone.
 
 Leitura física no telefone e o aceite visual são do Bruno. Esta decisão
 não reabre a ajuda, a retomada, a Fase 2 ou as pendências de salvamento.
