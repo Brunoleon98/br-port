@@ -4,7 +4,7 @@
 `01ba125` (PR #139, o mar da `124`, fundido pelo Bruno). **PR #141 aberto a
 pedido dele**, por fundir. Nenhum PR aberto do Codex nem de outro agente.
 
-**Decisão `125` — a fila nova do Bruno**, um item por conversa: (1) terreno e
+**Decisão `126` — a fila nova do Bruno**, um item por conversa: (1) terreno e
 vegetação, (2) estradas, (3) sprites de detalhes. Fora dela: animar as
 marolas e o fio diagonal da ponta norte do cais (`124`), os gates A4 e A7, o
 galpão recuperado V3.
@@ -51,27 +51,27 @@ Prompt para colar:
 
 ```text
 Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3
-e as decisões 125 (a fila nova) e 126 (o terreno e a vegetação). Confira a
+e as decisões 126 (a fila nova) e 127 (o terreno e a vegetação). Confira a
 main remota, os PRs abertos e o CI do último merge, e rode
 python3 tools/conferir_colaboracao.py.
 
-O terreno e a vegetação (126) estão no PR #141, branch
+O terreno e a vegetação (127) estão no PR #141, branch
 claude/terreno-vegetacao-m22sp1, e NÃO foram aceites. Se o PR ainda estiver
 aberto, continue nessa branch (traga a main antes, se ela andou) e conduza o
 CI até verde; se já tiver sido fundido, recomece a branch designada a partir
 da main.
 
-O item desta conversa continua a ser o 1 da fila da 125, com o pedido do
+O item desta conversa continua a ser o 1 da fila da 126, com o pedido do
 Bruno: melhorar os DETALHES e CORRIGIR OS ERROS da vegetação até ela ficar
 boa, e melhorar também o TERRENO. Use /arte: fotografe o JOGO (dia 1 e porto
 completo, e as duas pontas e o morro ampliados), mostre o estado e pergunte
 ao Bruno, com opções e a recomendada primeiro, o que ele vê de errado e o
 que melhorar no terreno — junte à pergunta, como opções, os candidatos que a
-126 viu na foto (estão no briefing 2026-10-17d) e o que você mesmo encontrar
+127 viu na foto (estão no briefing 2026-10-17d) e o que você mesmo encontrar
 a olhar ampliado. Medir antes de mexer; passagens com prancha antes/depois
 contra a main e veredito no fim, com a lista de defeitos que você vê.
 Mantenha o que ele já escolheu: árvores do Blender que balançam, os três
-coqueiros, a encosta de mata, as espécies da 126.
+coqueiros, a encosta de mata, as espécies da 127.
 
 Não avance para as estradas nem para os sprites de detalhes: anote o que
 aparecer deles (o fio azul na borda do pátio da ponta norte é das estradas).

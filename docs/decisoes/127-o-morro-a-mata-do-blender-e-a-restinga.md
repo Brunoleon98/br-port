@@ -1,6 +1,6 @@
 # 127 — O morro, o chão, a mata do Blender e a restinga das pontas
 
-**17/10/2026 · item 1 da fila da `125`** — «melhorar o terreno e a
+**17/10/2026 · item 1 da fila da `126`** — «melhorar o terreno e a
 vegetação». Foto do jogo antes e o escopo perguntado ao Bruno, pela `/arte`.
 A mata andou quatro passagens, todas «Ajustar» até à terceira; a quarta e a
 primeira da restinga foram entregues em foto e **não foram aceites** (ver
@@ -126,7 +126,7 @@ uma vez, ancorada na primeira árvore dela.
 
 - **Estradas:** um fio azul de 1 px corre ao longo da borda do pátio de
   terra, na ponta norte, contra a restinga — visto nas fotos, não medido nem
-  investigado; pode ser o «fio diagonal» que a `125` deixou fora da fila.
+  investigado; pode ser o «fio diagonal» que a `126` deixou fora da fila.
 - **Sprites de detalhes:** se o Bruno quiser o coqueiro menor, a medida está
   acima.
 

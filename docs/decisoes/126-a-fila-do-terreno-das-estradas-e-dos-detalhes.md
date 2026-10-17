@@ -1,8 +1,10 @@
-# 125 — A fila do terreno, das estradas e dos detalhes
+# 126 — A fila do terreno, das estradas e dos detalhes
 
 **17/10/2026.** Main `01ba125` (PR #139, o mar da `124`, fundido pelo Bruno);
-nenhum PR aberto, nenhum ramo de outro agente nos últimos três dias. 125 livre
-pelo `tools/conferir_colaboracao.py`. A fila que ele deu na `121` acabou com a
+nenhum PR aberto, nenhum ramo de outro agente nos últimos três dias, e 125
+livre pelo `tools/conferir_colaboracao.py`. **Nasceu `125`**: a meio desta
+conversa o Codex abriu o PR #140 com a `125` dele, empurrada antes desta, e
+quem renumerou foi esta branch (`119`). A fila que ele deu na `121` acabou com a
 `124`, e esta é a seguinte, dada por ele no arranque desta conversa.
 
 ## A fila

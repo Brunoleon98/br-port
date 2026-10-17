@@ -259,6 +259,10 @@ olhar só para a sua base. O livre conta-se em todos os ramos empurrados
 (`tools/conferir_colaboracao.py`), e quem funde em segundo renumera só as
 linhas que escreveu (`tools/renumerar_decisao.py`) — nunca por `sed` na
 árvore, que apaga as citações do outro (`119`).
+⚠️ **E O PRÉ-PR É UMA FOTOGRAFIA: corre outra vez logo antes do push.** Em
+17/10 ele saiu limpo às 18:36:24, o Codex empurrou a `125` dele às 18:36:31,
+e esta conversa empurrou a sua `125` meia hora depois sem o repetir; quem
+renumerou foi ela, para `126` e `127`.
 
 ## Ambiente (de «Como rodar»)
 

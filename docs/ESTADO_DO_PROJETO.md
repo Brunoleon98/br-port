@@ -120,7 +120,7 @@ A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
 **Na main:** cancelamento, pesquisa de recursos e ajuda (`109`–`116`; da
 ajuda faltam leitura e telefone), a obra, o maquinário e a vila (`121`–`123`).
-**A fila da `125`** (§7): terreno e vegetação (`127`), **não aceite**,
+**A fila da `126`** (§7): terreno e vegetação (`127`), **não aceite**,
 continua; depois, estradas e detalhes.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
