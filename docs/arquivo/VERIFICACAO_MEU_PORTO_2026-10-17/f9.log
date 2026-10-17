@@ -1,0 +1,13 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+  PASS  F9: a varredura achou os scripts do jogo
+  PASS  F9: nenhum rótulo do jogo escreve "(s)" ao jogador
+  PASS  F9: nenhuma contagem concorda com um ternário à mão
+  PASS  F9: a expressão do ternário de palavra inteira reconhece a forma que caça
+  PASS  F9: a expressão do plural fixo reconhece a forma que caça
+  PASS  F9: nenhum número escreve o plural à mão («%d dias»)
+  PASS  F9: a expressão leu TODAS as chamadas a concordar() que existem
+  PASS  F9: e há chamadas para ler
+  PASS  F9: em toda chamada, a forma plural está mesmo no plural
+  PASS  o bloco F9 correu até ao fim
+CONCORDANCIA CONFERIDA

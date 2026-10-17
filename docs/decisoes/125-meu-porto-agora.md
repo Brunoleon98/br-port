@@ -25,10 +25,26 @@ partida nova como retomada; isso não autoriza ampliar as funções de save.
 
 ## Verificação e entrega
 
-Implementação em andamento na branch `codex/meu-porto-agora`, publicada
-cedo em PR rascunho para tornar esta reserva visível. Casos novos próprios,
-defeitos persistentes em `tools/mutantes.toml`, suítes, evidência visual e
-pré-PR serão conferidos antes da entrega. Sem merge automático.
+Implementação na branch `codex/meu-porto-agora`, PR #140 em rascunho,
+publicado cedo para tornar esta reserva visível. Casos próprios T27 e
+defeitos `retomada-*` persistem no catálogo oficial. O pacote
+`docs/arquivo/VERIFICACAO_MEU_PORTO_2026-10-17/README.md` reúne a verificação,
+as capturas, as limitações e o prompt de retomada. Sem merge automático.
+
+## Colisão posterior com o PR #141
+
+O PR visual do Claude foi publicado depois da reserva e também criou uma
+decisão 125. O pré-PR contra ele apontou colisão no catálogo e nos documentos
+de fecho; terminou com traceback ao tentar ler TOML com marcadores de
+conflito. Isso não é `COLABORACAO OK`. A checagem separada contra a main
+passou, mas não substitui a comparação com o #141.
+
+Perguntado sobre renumerar esta decisão e ajustar apenas nossas linhas nos
+arquivos compartilhados, Bruno respondeu **“Deixe como está”**. A numeração
+e esses arquivos ficam preservados nesta entrega; a integração entre os
+dois PRs permanece pendente. Não se funde o trabalho visual nem se corrige
+o conferidor nesta frente. O fecho e o prompt ficam no pacote próprio já
+indexado, sem novo briefing que exija alterar o índice compartilhado.
 
 Leitura por pessoa nova, telefone, A4 e caderno continuam pendentes. A
 decisão 107 permanece local e separada; o `Safe save failed` histórico

@@ -1,0 +1,26 @@
+Base origin/main (01ba125); esta branch codex/meu-porto-agora: 3 à frente, 0 atrás.
+
+Contra a base:
+  ✔ a junção com a base não conflita
+  ✔ decisões novas desta branch: 125 — nenhuma repete a base
+  ✔ o catálogo de mutantes casa com o código da junção
+
+Contra os outros (1 ramo(s)):
+  origin/claude/terreno-vegetacao-m22sp1 (2026-10-17, 2 commit(s) à frente da base)
+    ⚠ conflito ao juntar: tools/mutantes.toml
+    ⚠ conflito nos documentos de fecho (fica o texto de quem fundiu, e reaplicam-se as próprias linhas): docs/ESTADO_DO_PROJETO.md
+    · 5 arquivo(s) mexido(s) pelos dois: docs/ESTADO_DO_PROJETO.md, docs/arquivo/README.md, docs/design/BR_Port_Plano_v3_Claude_Code.md, tools/capturar_evidencia.sh, tools/mutantes.toml
+    ⚠ as duas branches criam a decisão 125 — quem fundir em segundo renumera (`tools/renumerar_decisao.py`)
+Traceback (most recent call last):
+  File "C:\Users\bruno\OneDrive\Documentos\ChatGPT\Jogo - BR Port\br-port\tools\conferir_colaboracao.py", line 371, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\bruno\OneDrive\Documentos\ChatGPT\Jogo - BR Port\br-port\tools\conferir_colaboracao.py", line 347, in main
+    perdidos = orfaos(arvore_dois, catalogo_dois, conf)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bruno\OneDrive\Documentos\ChatGPT\Jogo - BR Port\br-port\tools\conferir_colaboracao.py", line 176, in orfaos
+    for m in tomllib.loads(texto).get("mutante", []):
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bruno\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tomllib\_parser.py", line 124, in loads
+    raise suffixed_err(src, pos, "Invalid statement")
+tomllib.TOMLDecodeError: Invalid statement (at line 853, column 1)
