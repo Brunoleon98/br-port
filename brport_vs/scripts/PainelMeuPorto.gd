@@ -36,11 +36,11 @@ func setup(disponivel: Variant = true) -> void:
 	if resumo["situacao"] != "":
 		_linha(corpo, "Situação", resumo["situacao"])
 	_linha(corpo, "Caixa atual", resumo["caixa"])
-	_linha(corpo, "Obra em andamento", resumo["obra"])
-	_linha(corpo, "Serviços contratados", "Nenhum serviço contratado nas docas." if resumo["servicos"].is_empty()
+	_linha(corpo, "Obra registrada" if resumo["encerrada"] else "Obra em andamento", resumo["obra"])
+	_linha(corpo, "Serviços registrados" if resumo["encerrada"] else "Serviços contratados", "Nenhum serviço contratado nas docas." if resumo["servicos"].is_empty()
 		else "\n\n".join(resumo["servicos"]))
 	_linha(corpo, "Cobrança", resumo["cobranca"])
-	_linha(corpo, "Meta atual", resumo["meta"])
+	_linha(corpo, "Meta no encerramento" if resumo["encerrada"] else "Meta atual", resumo["meta"])
 	var entrar := Button.new()
 	entrar.name = "IrAoPorto"
 	entrar.text = "Ir ao porto"

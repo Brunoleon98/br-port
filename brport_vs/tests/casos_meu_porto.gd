@@ -160,7 +160,9 @@ func rodar(estado, tree: SceneTree) -> void:
 	r = ler()
 	conferir("vencimento identifica dia fechado sem adiantar decisão", gs.phase == gs.ESTADO_COBRANCA
 		and r["situacao"].contains("dia %d" % gs.vencimento_da_parcela())
-		and r["cobranca"].contains("Cobrança pendente"))
+		and r["cobranca"].contains("Cobrança pendente")
+		and r["dia"].contains(gs.rotulo_do_dia(gs.vencimento_da_parcela())) and r["dia"].ends_with("encerrado")
+		and r["semana"] == "Semana %d" % gs.week_of(gs.vencimento_da_parcela()))
 
 	ate_fase_2()
 	r = ler()
@@ -232,6 +234,16 @@ func rodar(estado, tree: SceneTree) -> void:
 	r = ler()
 	conferir("encerramento e caixa negativo são reais", r["situacao"].contains(gs.end_reason)
 		and r["situacao"].contains("Partida encerrada") and r["caixa"] == gs.moeda(-321))
+	conferir("conquista fica registrada após encerramento", r["meta"].contains("concluída antes do encerramento"))
+	novo()
+	conferir("controle: obra e serviço antes do encerramento", gs.comprar_estrutura("pier_2") and gs.atracar(0))
+	gs.cash = -321
+	gs._end_game(false, "O dinheiro acabou. Operação inviável.")
+	r = ler()
+	conferir("encerrada não promete obra nem recebimento futuros", r["encerrada"]
+		and r["obra"].contains("interrompida") and not r["obra"].contains("pronto no dia")
+		and r["servicos"][0].contains("Atendimento interrompido")
+		and not r["servicos"][0].contains("Recebimento previsto:") and not r["meta"].contains("Quitar"))
 	await interface_e_fluxo()
 	completo = true
 

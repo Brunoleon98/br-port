@@ -949,3 +949,32 @@ depois = '''	var disponivel := not GameState.resumo_do_espaco(espaco).is_empty()
 	if not disponivel:
 		GameState.new_game()'''
 reprova = { run_tests = "T27: recusa não inicia partida nem apaga arquivo" }
+
+[[mutante]]
+id = "retomada-dia-pendente-adiantado"
+de = "125"
+o_que = "o cabeçalho anuncia o dia e a semana seguintes antes da decisão da cobrança"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'var turno_visivel: int = gs.vencimento_da_parcela() if gs.phase == gs.ESTADO_COBRANCA else gs.turn'
+depois = 'var turno_visivel: int = gs.turn'
+reprova = { run_tests = "T27: vencimento identifica dia fechado sem adiantar decisão" }
+
+[[mutante]]
+id = "retomada-conta-obra-como-pronta"
+de = "125"
+o_que = "a meta do resumo conta uma estrutura ainda em construção"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'var meta: Dictionary = gs.progresso_da_meta()'
+depois = '''var meta: Dictionary = gs.progresso_da_meta()
+	if not gs.obra_em_andamento.is_empty():
+		meta["infra"] += 1'''
+reprova = { run_tests = "T27: meta não conta estrutura ainda em obra" }
+
+[[mutante]]
+id = "retomada-promete-apos-encerrar"
+de = "125"
+o_que = "uma partida encerrada anuncia conclusão de obra e recebimento futuros"
+alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
+antes = 'var encerrada: bool = gs.phase == gs.ESTADO_FIM'
+depois = 'var encerrada: bool = false'
+reprova = { run_tests = "T27: encerrada não promete obra nem recebimento futuros" }
