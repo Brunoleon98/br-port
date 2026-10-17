@@ -852,3 +852,14 @@ que continua no gerador e na `mapa.md`; e o item *«Registro de partida em
 `.jsonl`, um por partida, com o tempo de cada turno. Sai pelo menu de
 pausa»* dos sistemas que funcionam, que repetia o «A partida grava-se» do
 topo do mesmo arquivo.
+
+**E, para caber o maquinário da obra (`122`),** desceram do estado duas
+frases. Da fila: *«**Cancelamento na main (`111`, PR #133):** equipe livre no
+dia, −5, multa de 10%, contas, registro 5 e migração 17→18. Medição na `110`;
+CI verde no merge. Pesquisa `112`: `PESQUISA_RECURSOS_BASICOS_2026-10-15.md`;
+revisão preservada. **Como jogar/glossário na main (`114`–`116`, PR #134):**
+inicial e pausa; recorte no `RECORTE_COMO_JOGAR_GLOSSARIO_2026-10-15.md`.»* —
+a mecânica do cancelamento passou para «O jogo hoje», numa linha. E da
+resolução: *«⚠️ **E A MOLDURA SAIU DA VRAM** pelo importador `texture_atlas` —
+**235,68 → 64,04 MB** em jogo, `.pck` −17,4% (`049`).»* — os números vivem na
+`049` e na `projecao.md`.

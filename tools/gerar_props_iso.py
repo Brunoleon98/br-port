@@ -2685,10 +2685,160 @@ def montar(M: dict) -> dict:
                                  ALT_PIER - z(2.2)),
                                 (comp - folga, passo - 0.045, z(4.4)),
                                 M["madeira"] if i % 2 else M["madeira_esc"]))
-    grupos["pier_obra_0"] = estacas + vigas + _pilha_de_ripas(
-        "ob_pilha0_", -PIER_ALCANCE / 2 + 0.85, 6)
+    # -- A BALSA DO BATE-ESTACA, na ponta do píer (`122`) --------------------
+    # As máquinas das três obras são escolha do Bruno (`122`), sem pessoas,
+    # como a `121`: no píer, um guindaste de esteiras sobre uma balsa, do lado
+    # do MAR — a obra avança da raiz para a ponta, e quem crava as últimas
+    # estacas só as alcança da água. É a ponta que fica à frente na imagem, e
+    # a balsa ali não tapa o tabuado que se está a pôr.
+    #
+    #   dia 1  a torre do bate-estaca de pé sobre o par de estacas da ponta,
+    #          que ainda sobem acima das outras e não têm travessa nem
+    #          longarina por cima; duas estacas novas deitadas na balsa;
+    #   dia 2  o par já cortado e travado (o quadro de sempre), a torre
+    #          deitada na balsa e o gancho a trazer um fardo de ripas para a
+    #          pilha da frente.
+    #
+    # ⚠️ A LANÇA TEM O MESMO COMPRIMENTO NOS DOIS DIAS, e a altura da ponta
+    # sai dele: com a lança fixa e o alvo no chão, quem muda é o ângulo. Dois
+    # números escritos à mão dariam uma lança a crescer de um dia para o outro.
+    #
+    # ⚠️ E O AMARELO É O DA OBRA, o mesmo do andaime e do rolo: o acento da
+    # obra é UM (`121`). O laranja é o do guindaste do porto (n2), que é outra
+    # máquina, e a balsa ao lado do píer 1 não pode ler como ele.
+    ZB = z(5.0)                                   # o convés da balsa
+    BX0, BX1 = PIER_ALCANCE / 2 + 0.16, PIER_ALCANCE / 2 + 1.30
+    BY = PIER_LARG / 2 - 0.05
+    BCX = (BX0 + BX1) / 2.0
+    GX, GY = BCX + 0.12, 0.30                     # o centro do guindaste
+    PIVO = Vector((GX - 0.24, GY, ZB + 0.26))     # o pé da lança
+    LANCA = 3.0
+    X_PONTA = -PIER_ALCANCE / 2 + 0.5 + 3 * (PIER_ALCANCE - 1.0) / 3
+    Y_FRENTE = -PIER_LARG / 2 + 0.28
+
+    def _ponta_da_lanca(ax, ay):
+        """A ponta da lança sobre o ponto (ax, ay) do chão, com a lança no
+        comprimento de sempre."""
+        d = math.hypot(ax - PIVO.x, ay - PIVO.y)
+        return Vector((ax, ay, PIVO.z + math.sqrt(LANCA ** 2 - d ** 2)))
+
+    def _balsa(nome):
+        p = [
+            # O casco escuro, com a borda à vista em volta do convés claro:
+            # é a borda que desenha a balsa contra a água.
+            caixa(nome + "_casco", (BCX, 0.0, (ZB - z(2.0)) / 2.0),
+                  (BX1 - BX0, 2 * BY, ZB + z(2.0)), M["metal"]),
+            caixa(nome + "_conves", (BCX, 0.0, ZB + 0.004),
+                  (BX1 - BX0 - 0.10, 2 * BY - 0.10, 0.012), M["metal_claro"]),
+        ]
+        for i, (bx, by) in enumerate(((BX0 + 0.12, -BY + 0.12),
+                                      (BX0 + 0.12, BY - 0.12))):
+            p.append(caixa("%s_cabeco%d" % (nome, i), (bx, by, ZB + 0.05),
+                           (0.07, 0.07, 0.10), M["metal"]))
+        # O guindaste de esteiras: as duas esteiras, o giro e a casa amarela
+        # com o vidro na face da frente e o contrapeso atrás.
+        for i, dy in enumerate((-0.17, 0.17)):
+            p.append(caixa("%s_esteira%d" % (nome, i), (GX, GY + dy, ZB + 0.06),
+                           (0.62, 0.13, 0.10), M["pneu"]))
+        p += [
+            caixa(nome + "_giro", (GX, GY, ZB + 0.13), (0.30, 0.30, 0.05),
+                  M["metal"]),
+            caixa(nome + "_casa", (GX + 0.02, GY, ZB + 0.30),
+                  (0.58, 0.46, 0.30), M["amarelo"]),
+            caixa(nome + "_vidro", (GX - 0.12, GY - 0.235, ZB + 0.36),
+                  (0.20, 0.02, 0.14), M["vidro_cab"]),
+            caixa(nome + "_contrapeso", (GX + 0.35, GY, ZB + 0.28),
+                  (0.14, 0.48, 0.24), M["metal"]),
+        ]
+        return p
+
+    def _lanca(nome, ponta):
+        """A lança em treliça do pé à ponta, e o cabo que a segura do alto da
+        casa — é ele que amarra a silhueta, como os tirantes do n2."""
+        return trelica(nome, tuple(PIVO), tuple(ponta), 0.065, M["amarelo"],
+                       montantes=9, esp=0.032) + [
+            barra(nome + "_cabo", (GX + 0.20, GY, ZB + 0.50), tuple(ponta),
+                  0.020, M["metal"])]
+
+    # O dia 1: o par da ponta ainda acima das outras, sem travessa nem
+    # longarina por cima dele, e a torre de pé sobre o da frente.
+    TOPO_CRAVANDO = ALT_PIER + z(10.0)
+    cravando = [caixa("ob_cravando%d" % lado,
+                      (X_PONTA, y, (TOPO_CRAVANDO - z(26.0)) / 2.0),
+                      (0.22, 0.22, TOPO_CRAVANDO + z(26.0)), M["madeira_esc"])
+                for lado, y in enumerate((Y_FRENTE, -Y_FRENTE))]
+    vigas_dia1 = [v for v in vigas if v.name != "ob_travessa3"
+                  and not v.name.startswith("ob_longarina")]
+    for lado, y in enumerate((Y_FRENTE, -Y_FRENTE)):
+        x0, x1 = -PIER_ALCANCE / 2 + 0.15, X_PONTA - 0.55
+        vigas_dia1.append(caixa("ob_longarina_d1_%d" % lado,
+                                ((x0 + x1) / 2.0, y, BASE_RIPA - 0.005 - 0.16),
+                                (x1 - x0, 0.14, 0.12), M["madeira_esc"]))
+    ponta1 = _ponta_da_lanca(X_PONTA, Y_FRENTE)
+    # ⚠️ A TORRE É A SILHUETA, e por isso a lança tem 3,0 e não 2,1. Na
+    # primeira candidata a torre subia pouco acima do tabuado e a lança
+    # baixa ia direita à estaca: lia como escavadeira numa balsa. A torre
+    # alta e vertical, com o martelo escuro em cima da estaca, é o que diz
+    # «bate-estaca», como o mastro do n1 diz «guindaste».
+    torre = trelica("ob_torre", (X_PONTA, Y_FRENTE, ALT_PIER - 0.10),
+                    (X_PONTA, Y_FRENTE, ponta1.z - 0.05), 0.07, M["amarelo"],
+                    montantes=12, esp=0.032)
+    # ⚠️ SEM O BRAÇO DO PÉ DA TORRE. A segunda candidata tinha uma barra de
+    # 0,045 do guindaste ao pé da torre (o «spotter» dos de verdade): sobre a
+    # água ela era um risco amarelo solto, e o Bruno leu-a como defeito («uma
+    # linha amarela»). A torre pende da ponta da lança, e é o que se vê.
+    martelo = [caixa("ob_martelo", (X_PONTA, Y_FRENTE, TOPO_CRAVANDO + 0.215),
+                     (0.21, 0.21, 0.42), M["metal"])]
+    estacas_na_balsa = [caixa("ob_estaca_deitada%d" % k,
+                              (BX0 + 0.16 + 0.17 * k, -0.25, ZB + 0.085),
+                              (0.15, 1.30, 0.15), M["madeira_esc"])
+                        for k in range(2)]
+    balsa_dia1 = _balsa("ob_balsa1") + _lanca("ob_lanca1", ponta1) + torre \
+        + martelo + estacas_na_balsa
+
+    # O dia 2: a torre deitada na balsa, e a lança a trazer um fardo de ripas
+    # da balsa para a pilha da frente do tabuado.
+    #
+    # ⚠️ O FARDO VAI SUSPENSO SOBRE A ÁGUA, à frente da borda do píer, e não
+    # por cima da pilha: madeira sobre tabuado de madeira fundia-se (o fardo
+    # da primeira candidata não se via), e contra a água azul ele separa-se
+    # pelo matiz e pelo valor. As cintas são da cor da corda, a única linha
+    # clara da peça.
+    PILHA2_X = FRENTE_DIA2 + 0.85
+    FX, FY = PILHA2_X + 0.25, -PIER_LARG / 2 - 0.22
+    ponta2 = _ponta_da_lanca(FX, FY)
+    z_moitao = ALT_PIER + 0.85
+    torre_deitada = trelica("ob_torre_d", (BX0 + 0.22, -1.00, ZB + 0.08),
+                            (BX0 + 0.22, 0.40, ZB + 0.08), 0.07,
+                            M["amarelo"], montantes=8, esp=0.032)
+    fardo = [barra("ob_gancho_cabo", tuple(ponta2), (FX, FY, z_moitao + 0.06),
+                   0.020, M["metal"]),
+             caixa("ob_moitao", (FX, FY, z_moitao), (0.11, 0.10, 0.13),
+                   M["amarelo"])]
+    z_fardo = z_moitao - 0.34
+    for k in range(4):
+        camada, lado = divmod(k, 2)
+        fardo.append(caixa("ob_fardo%d" % k,
+                           (FX, FY + (lado - 0.5) * 0.12,
+                            z_fardo + camada * 0.055),
+                           (1.15, 0.115, 0.05),
+                           M["madeira"] if (k + camada) % 2 else M["madeira_esc"]))
+    for k, dx in enumerate((-0.38, 0.38)):
+        fardo += [
+            caixa("ob_cinta%d" % k, (FX + dx, FY, z_fardo + 0.03),
+                  (0.04, 0.26, 0.13), M["corda"]),
+            barra("ob_linga%d" % k, (FX, FY, z_moitao - 0.06),
+                  (FX + dx, FY, z_fardo + 0.09), 0.014, M["metal"]),
+        ]
+    balsa_dia2 = _balsa("ob_balsa2") + _lanca("ob_lanca2", ponta2) \
+        + torre_deitada + fardo
+
+    grupos["pier_obra_0"] = [e for e in estacas
+                             if not e.name.startswith("estaca_3_")] \
+        + cravando + vigas_dia1 + _pilha_de_ripas(
+            "ob_pilha0_", -PIER_ALCANCE / 2 + 0.85, 6) + balsa_dia1
     grupos["pier_obra_1"] = estacas + vigas + ripas_dia2 + _pilha_de_ripas(
-        "ob_pilha1_", FRENTE_DIA2 + 0.85, 3)
+        "ob_pilha1_", PILHA2_X, 3) + balsa_dia2
 
     grupos["lanca_n1"] = lanca_n1
     # O `lanca_n2` e o `lanca_n3` saem com os quadros deles, depois dos
@@ -5265,8 +5415,151 @@ def montar(M: dict) -> dict:
                       rot=(0, 0, (-3.0, 2.0, -1.0, 3.0)[k % 4]))
                 for k in range(n)]
 
+    # -- O CAMINHÃO MUNCK, no avental do lado do cais (`122`) ----------------
+    # A máquina da obra do armazém (escolha do Bruno, `122`): um caminhão com
+    # guindaste articulado, a trazer o zinco do telhado. Fica do lado do cais
+    # (`+x`), que é por onde o material chega e onde as chapas novas já
+    # esperavam no deck; do lado `-y` o andaime e o cotovelo da rua não
+    # deixam sítio.
+    #
+    #   dia 1  a carroceria cheia de chapas e um fardo a descer para o deck,
+    #          ao lado das que já lá estão;
+    #   dia 2  a lança subida por cima do terço do telhado que falta, com um
+    #          fardo pendurado acima da cumeeira, e menos chapas na carroceria.
+    #
+    # ⚠️ É O CAMIÃO DO JOGO À ESCALA DELE, e de propósito sem conta nova: as
+    # medidas são as do `_pecas_do_caminhao()` do `brp_porto` (largura 0,62,
+    # roda de 5 px, cabine até 16,5 px, chassi do baú) ANTES do
+    # `ESCALA_CAMINHAO`, e este grupo encolhe com o prédio pela `ESCALA_PREDIO`
+    # — que é o mesmo 0,72. Pela régua da pessoa (`_hm`) ele sairia 1,6x a
+    # largura dos camiões da rua, e o olho compara camião com camião.
+    #
+    # ⚠️ E ELE PÕE-SE EM `x = 2,62`, A 0,15 DA TESTA DO DECK: o estabilizador
+    # de `-x` pousa entre os dois sem tocar nas defensas (2,16), e o corpo cai
+    # no avental, fora da pegada do prédio (`PEGADAS` no `gerar_mapa_iso.py`)
+    # e longe do acesso da doca 2, que passa do outro lado (`my` < 11,8).
+    #
+    # ⚠️ O GUINDASTE VAI NA TRASEIRA, e não atrás da cabine. Atrás da cabine
+    # (a primeira candidata) ele nascia na ponta de `-y`, que é a da frente na
+    # imagem, debaixo da copa do coqueiro do avental e ao lado do pórtico do
+    # barco da doca 2: a lança curta do dia 1 não se via. Na traseira (o munck
+    # traseiro, comum nos caminhões de obra daqui) a lança nasce do lado de
+    # trás e cruza o avental claro até ao deck.
+    #
+    # O primeiro braço da lança tem o MESMO comprimento nos dois dias e só
+    # muda o ângulo; o segundo é telescópico, e esse sim estica.
+    MK_X, MK_Y = 2.62, 0.25
+    MK_RODA, MK_LARG, MK_CHASSI, MK_CAB = 5.0, 0.62, 1.56, 0.44
+    MK_BRACO = 1.30
+
+    def _munck(nome, elev, alvo, z_ponta, z_carga, chapas):
+        f = MK_Y - MK_CHASSI / 2.0                    # a frente, em `-y`
+        R = MK_RODA
+        p = [caixa(nome + "_chassi", (MK_X, MK_Y, z(R + 2.0)),
+                   (MK_LARG, MK_CHASSI, z(4.0)), M["metal"])]
+        # As rodas — um eixo à frente e dois atrás — e o cubo claro do lado
+        # que a câmera vê, como nos camiões da rua.
+        for i, dy in enumerate((-0.52, 0.40, 0.64)):
+            for j, sx in enumerate((-1.0, 1.0)):
+                p.append(cone("%s_roda%d%d" % (nome, i, j),
+                              (MK_X + sx * (MK_LARG / 2.0 - 0.03), MK_Y + dy, z(R)),
+                              z(R), z(R), 0.10, 14, M["pneu"], rot=(0, 90, 0)))
+            p.append(cone("%s_cubo%d" % (nome, i),
+                          (MK_X + MK_LARG / 2.0 + 0.025, MK_Y + dy, z(R)),
+                          z(2.2), z(2.2), 0.02, 10, M["metal_claro"],
+                          rot=(0, 90, 0)))
+        # A cabine cara-chata na cor de uma transportadora do jogo: o coral
+        # separa-se do avental claro e do amarelo do guindaste.
+        p += [
+            caixa(nome + "_cabine", (MK_X, f + MK_CAB / 2.0, z(R + 10.25)),
+                  (MK_LARG, MK_CAB, z(12.5)), M["cab_coral"]),
+            caixa(nome + "_cab_teto", (MK_X, f + MK_CAB / 2.0 + 0.02, z(R + 17.2)),
+                  (MK_LARG - 0.06, MK_CAB - 0.10, z(2.6)), M["cab_coral"]),
+            caixa(nome + "_parabrisa", (MK_X, f - 0.004, z(R + 12.5)),
+                  (MK_LARG - 0.12, 0.02, z(5.0)), M["vidro_cab"]),
+            caixa(nome + "_janela", (MK_X + MK_LARG / 2.0 + 0.004,
+                                     f + MK_CAB / 2.0 + 0.03, z(R + 12.5)),
+                  (0.02, 0.22, z(5.0)), M["vidro_cab"]),
+            caixa(nome + "_parachoque", (MK_X, f - 0.02, z(R + 3.0)),
+                  (MK_LARG + 0.02, 0.05, z(2.6)), M["metal_claro"]),
+        ]
+        # A carroceria aberta, com a guarda baixa, e as chapas de zinco nela:
+        # o assoalho é da madeira CLARA, que o zinco escuro se lê por cima.
+        b0, b1 = f + MK_CAB + 0.04, MK_Y + MK_CHASSI / 2.0 - 0.22
+        p.append(caixa(nome + "_assoalho", (MK_X, (b0 + b1) / 2.0, z(R + 5.0)),
+                       (MK_LARG, b1 - b0, z(2.0)), M["madeira"]))
+        for j, sx in enumerate((-1.0, 1.0)):
+            p.append(caixa("%s_guarda%d" % (nome, j),
+                           (MK_X + sx * (MK_LARG / 2.0 - 0.015), (b0 + b1) / 2.0,
+                            z(R + 7.0)), (0.03, b1 - b0, z(3.0)), M["metal_claro"]))
+        p.append(caixa(nome + "_guarda_frente", (MK_X, b0 + 0.015, z(R + 7.0)),
+                       (MK_LARG, 0.03, z(3.0)), M["metal_claro"]))
+        for k in range(chapas):
+            p.append(caixa("%s_chapa%d" % (nome, k),
+                           (MK_X, (b0 + b1) / 2.0,
+                            z(R + 6.0) + 0.015 + 0.03 * k),
+                           (0.34, 0.80, 0.025),
+                           M["zinco"] if k % 2 == 0 else M["zinco_vinco"]))
+        # O guindaste na traseira: a base, os estabilizadores abertos com as
+        # sapatas no chão — é o que diz «a trabalhar» —, a coluna, os dois
+        # braços e o cilindro do primeiro.
+        gy = MK_Y + MK_CHASSI / 2.0 - 0.11
+        p.append(caixa(nome + "_base", (MK_X, gy, z(R + 5.5)),
+                       (MK_LARG + 0.04, 0.18, z(4.0)), M["amarelo"]))
+        for j, (sx, alc) in enumerate(((1.0, 0.30), (-1.0, 0.08))):
+            xe = MK_X + sx * (MK_LARG / 2.0 + alc)
+            p += [
+                caixa("%s_estab%d" % (nome, j),
+                      (MK_X + sx * (MK_LARG / 2.0 + alc / 2.0), gy, z(R + 5.0)),
+                      (alc + 0.04, 0.08, z(2.4)), M["amarelo"]),
+                caixa("%s_perna%d" % (nome, j), (xe, gy, z(R + 5.0) / 2.0),
+                      (0.06, 0.06, z(R + 5.0)), M["amarelo"]),
+                caixa("%s_sapata%d" % (nome, j), (xe, gy, z(0.6)),
+                      (0.14, 0.14, z(1.2)), M["metal"]),
+            ]
+        topo = Vector((MK_X + 0.08, gy, z(R + 24.0)))
+        dx, dy = alvo[0] - topo.x, alvo[1] - topo.y
+        d = math.hypot(dx, dy)
+        c, s_ = math.cos(math.radians(elev)), math.sin(math.radians(elev))
+        joelho = Vector((topo.x + MK_BRACO * c * dx / d,
+                         topo.y + MK_BRACO * c * dy / d, topo.z + MK_BRACO * s_))
+        ponta = Vector((alvo[0], alvo[1], z_ponta))
+        p += [
+            caixa(nome + "_coluna", (topo.x, gy, (z(R + 5.5) + topo.z) / 2.0),
+                  (0.12, 0.13, topo.z - z(R + 5.5)), M["amarelo"]),
+            barra(nome + "_braco1", tuple(topo), tuple(joelho), 0.085,
+                  M["amarelo"]),
+            barra(nome + "_braco2", tuple(joelho), tuple(ponta), 0.065,
+                  M["amarelo"]),
+            caixa(nome + "_joelho", tuple(joelho), (0.11, 0.11, 0.11), M["metal"]),
+            barra(nome + "_cilindro", (topo.x, gy, z(R + 14.0)),
+                  tuple((topo + joelho) / 2.0), 0.035, M["metal_claro"]),
+        ]
+        # O cabo, o gancho e o fardo de zinco com as cintas da cor da corda.
+        z_gancho = z_carga + 0.14
+        p += [
+            barra(nome + "_cabo", tuple(ponta), (alvo[0], alvo[1], z_gancho + 0.04),
+                  0.016, M["metal"]),
+            caixa(nome + "_gancho", (alvo[0], alvo[1], z_gancho), (0.07, 0.07, 0.08),
+                  M["amarelo"]),
+        ]
+        for k in range(3):
+            p.append(caixa("%s_fardo%d" % (nome, k),
+                           (alvo[0], alvo[1], z_carga + 0.028 * k),
+                           (0.34, 0.86, 0.022),
+                           M["zinco"] if k % 2 == 0 else M["zinco_vinco"]))
+        for k, ddy in enumerate((-0.28, 0.28)):
+            p += [
+                caixa("%s_cinta%d" % (nome, k), (alvo[0], alvo[1] + ddy, z_carga + 0.03),
+                      (0.38, 0.04, 0.10), M["corda"]),
+                barra("%s_linga%d" % (nome, k), (alvo[0], alvo[1], z_gancho - 0.04),
+                      (alvo[0], alvo[1] + ddy, z_carga + 0.08), 0.012, M["metal"]),
+            ]
+        return p
+
     grupos["galpao_obra_0"] = [o for o in galv if not o.name.startswith(limpeza)] \
-        + andaime_gal + _chapas_novas("gob_chapa0_", 4)
+        + andaime_gal + _chapas_novas("gob_chapa0_", 4) \
+        + _munck("gob_munck0", 50.0, (1.84, 0.05), 1.50, 0.85, 4)
 
     # O dia 2 sai do galpão PRONTO: tudo menos o portão, a fita de vidro, a
     # calha e o telhado, que entra novo só nos dois terços de trás. A baia
@@ -5283,7 +5576,8 @@ def montar(M: dict) -> dict:
                              0.62, M["zinco"], M["metal"], fiadas=0,
                              nervuras=4, mat_nerv=M["zinco_vinco"]) \
         + [o for o in galv if o.name.startswith(tesoura)] \
-        + andaime_gal + _chapas_novas("gob_chapa1_", 2)
+        + andaime_gal + _chapas_novas("gob_chapa1_", 2) \
+        + _munck("gob_munck1", 72.0, (1.15, 0.30), 2.90, 2.50, 2)
 
     # -- O PÁTIO EM OBRA: o rolo compactador e a brita (`121`) --------------
     # O pátio não é prop: é o MAPA que troca de terra batida para asfalto, e
@@ -5315,67 +5609,141 @@ def montar(M: dict) -> dict:
     # empilhadeira. O de um tambor é também o certo para o trabalho: é ele que
     # compacta a base de brita; o tandem é o do acabamento do asfalto. Medidas
     # reais (tambor liso de 1,5 m × 2,1 m, cabine com ROPS a 3 m), pela régua
-    # da pessoa: amarelo, o sinal de máquina do pátio, e o TAMBOR claro na
-    # frente (`-y`, a face que a câmera vê), que é o que diz «rolo».
+    # da pessoa.
+    #
+    # ⚠️ E O QUE DIZ «ROLO» É O CÍRCULO DO TAMBOR DE PERFIL (`122`). A segunda
+    # candidata tinha o tambor claro e uma chapa amarela do garfo de 0,80 × 1,00
+    # na face `+x`, que é a face que a câmera vê de lado: a chapa tapava o
+    # círculo inteiro, e o que sobrava era uma faixa cinzenta por baixo de uma
+    # caixa amarela — lia como empilhadeira. O garfo passou a ser um BRAÇO
+    # estreito do cubo à travessa de cima, e o círculo fica à mostra à volta
+    # dele. O tambor é de aço ESCURO, escolha do Bruno: o claro fundia-se com o
+    # asfalto novo dos dias 2 e 3, e o escuro separa-se da terra pelo valor e
+    # do asfalto pela borda clara do aro.
+    #
+    # ⚠️ E O CAPÔ NÃO É O CHASSI. Na segunda candidata as duas caixas amarelas
+    # de trás eram uma massa só; o capô ganhou a grade escura na face `+x`, o
+    # escape de pé e o degrau para a plataforma, e a cabine ficou com o teto
+    # MENOR — o teto de 1,8 × 1,65 era a maior mancha escura da peça e, vista
+    # de cima, era o que se lia primeiro.
     def _rolo(nome, x, y):
         def em(dx, dy, dz):
             return (x + _hm(dx), y + _hm(dy), _vm(dz))
+        R, TAMBOR_Y, LARG_T = 0.75, -1.95, 2.13
         p = [
-            # O tambor liso, na frente, e o garfo amarelo que o segura: sem o
-            # garfo o tambor é um cano.
-            cone("%s_tambor" % nome, em(0.0, -1.95, 0.75), _vm(0.75), _vm(0.75),
-                 _hm(2.13), 18, M["metal_claro"], rot=(0, 90, 0)),
-            caixa("%s_garfo" % nome, em(0.0, -1.95, 1.62),
-                  (_hm(2.40), _hm(1.10), _vm(0.30)), M["amarelo"]),
-            caixa("%s_garfo_e" % nome, em(-1.17, -1.95, 1.05),
-                  (_hm(0.12), _hm(0.80), _vm(1.00)), M["amarelo"]),
-            caixa("%s_garfo_d" % nome, em(1.17, -1.95, 1.05),
-                  (_hm(0.12), _hm(0.80), _vm(1.00)), M["amarelo"]),
-            # O chassi de trás, comprido e baixo, e o capô do motor no fim.
-            caixa("%s_chassi" % nome, em(0.0, 1.05, 1.25),
-                  (_hm(1.90), _hm(3.30), _vm(0.95)), M["amarelo"]),
-            caixa("%s_capo" % nome, em(0.0, 1.95, 1.95),
-                  (_hm(1.80), _hm(1.60), _vm(0.55)), M["amarelo"]),
-            caixa("%s_grade" % nome, em(0.0, 2.78, 1.70),
-                  (_hm(1.40), _hm(0.06), _vm(0.60)), M["metal"]),
-            # A articulação entre o garfo e o chassi, escura: é a linha que
-            # separa as duas metades da máquina.
-            caixa("%s_junta" % nome, em(0.0, -0.95, 1.20),
-                  (_hm(0.80), _hm(0.60), _vm(0.55)), M["metal"]),
-            caixa("%s_banco" % nome, em(0.0, 0.15, 1.92),
-                  (_hm(0.55), _hm(0.50), _vm(0.25)), M["pneu"]),
-            caixa("%s_painel" % nome, em(0.0, -0.45, 2.00),
-                  (_hm(0.80), _hm(0.22), _vm(0.35)), M["amarelo"]),
+            # O tambor, de aço escuro, e o aro claro na face de fora: o aro
+            # é a linha que fecha o círculo contra o chão escuro.
+            cone("%s_tambor" % nome, em(0.0, TAMBOR_Y, R), _vm(R), _vm(R),
+                 _hm(LARG_T), 24, M["metal"], rot=(0, 90, 0)),
+            anel("%s_aro" % nome, em(LARG_T / 2 + 0.005, TAMBOR_Y, R),
+                 _vm(R) * 0.94, _vm(0.06), M["metal_claro"], rot=(0, 90, 0),
+                 lados=24),
+            # O cubo no pé do braço do garfo, por fora dele: é onde o braço
+            # pega no tambor.
+            cone("%s_cubo" % nome, em(LARG_T / 2 + 0.19, TAMBOR_Y, R),
+                 _vm(0.24), _vm(0.24), _hm(0.06), 12, M["amarelo"],
+                 rot=(0, 90, 0)),
+            # A travessa de cima do garfo, mais curta do que o diâmetro em `y`:
+            # a frente e as costas do tambor continuam a ver-se.
+            caixa("%s_travessa" % nome, em(0.0, TAMBOR_Y, 1.72),
+                  (_hm(2.42), _hm(0.90), _vm(0.24)), M["amarelo"]),
         ]
-        # Os pneus de trás, de borracha, dos dois lados do chassi.
-        for i, dx in enumerate((-1.02, 1.02)):
-            p.append(cone("%s_pneu%d" % (nome, i), em(dx, 1.30, 0.72),
-                          _vm(0.72), _vm(0.72), _hm(0.55), 14, M["pneu"],
-                          rot=(0, 90, 0)))
-        # A cabine aberta com ROPS: quatro colunas e o teto escuro, que é a
-        # linha que fecha a silhueta por cima.
-        for i, (dx, dy) in enumerate(((-0.80, -0.70), (0.80, -0.70),
-                                      (-0.80, 0.75), (0.80, 0.75))):
-            p.append(caixa("%s_coluna%d" % (nome, i), em(dx, dy, 2.45),
-                           (_hm(0.09), _hm(0.09), _vm(1.10)), M["metal"]))
+        # Os braços do garfo, do cubo à travessa, um de cada lado — o de `+x`
+        # é o que se vê, e é estreito para não tapar o círculo.
+        for i, lado in enumerate((-1.0, 1.0)):
+            p.append(caixa("%s_braco%d" % (nome, i),
+                           em(lado * (LARG_T / 2 + 0.11), TAMBOR_Y, 1.22),
+                           (_hm(0.12), _hm(0.42), _vm(1.00)), M["amarelo"]))
         p += [
-            caixa("%s_teto" % nome, em(0.0, 0.02, 3.03),
-                  (_hm(1.80), _hm(1.65), _vm(0.08)), M["metal"]),
-            caixa("%s_pirilampo" % nome, em(0.55, 0.55, 3.14),
+            # Os faróis da frente, nos cantos da travessa.
+            caixa("%s_farol0" % nome, em(-0.95, TAMBOR_Y - 0.47, 1.80),
+                  (_hm(0.18), _hm(0.06), _vm(0.12)), M["luz_poste"]),
+            caixa("%s_farol1" % nome, em(0.95, TAMBOR_Y - 0.47, 1.80),
+                  (_hm(0.18), _hm(0.06), _vm(0.12)), M["luz_poste"]),
+            # A articulação, escura: a linha que parte a máquina em duas.
+            caixa("%s_junta" % nome, em(0.0, -0.95, 1.10),
+                  (_hm(0.70), _hm(0.55), _vm(0.55)), M["pneu"]),
+            # O chassi de trás e a plataforma do operador por cima dele.
+            caixa("%s_chassi" % nome, em(0.0, 0.95, 0.92),
+                  (_hm(1.90), _hm(3.40), _vm(0.70)), M["amarelo"]),
+            caixa("%s_plataforma" % nome, em(0.0, -0.05, 1.37),
+                  (_hm(1.95), _hm(1.40), _vm(0.18)), M["metal"]),
+            # O capô do motor: alto à frente, com a traseira em degrau.
+            caixa("%s_capo" % nome, em(0.0, 1.55, 1.68),
+                  (_hm(1.80), _hm(1.55), _vm(0.75)), M["amarelo"]),
+            caixa("%s_capo_tras" % nome, em(0.0, 2.55, 1.52),
+                  (_hm(1.80), _hm(0.50), _vm(0.48)), M["amarelo"]),
+            # O escape de pé no capô, escuro, com a ponta clara.
+            cone("%s_escape" % nome, em(0.55, 1.15, 2.40), _hm(0.07),
+                 _hm(0.07), _vm(0.75), 8, M["pneu"]),
+            # O banco e a coluna do volante.
+            caixa("%s_banco" % nome, em(0.0, 0.25, 1.68),
+                  (_hm(0.55), _hm(0.50), _vm(0.45)), M["pneu"]),
+            caixa("%s_volante" % nome, em(0.0, -0.45, 1.75),
+                  (_hm(0.45), _hm(0.10), _vm(0.60)), M["pneu"]),
+        ]
+        # A grade do capô na face `+x`, três frisos escuros fora da face (uma
+        # fração, nunca rente: rente é o losango preto deste kit).
+        for k in range(3):
+            p.append(caixa("%s_grade%d" % (nome, k),
+                           em(0.905, 1.55, 1.45 + 0.17 * k),
+                           (_hm(0.03), _hm(1.20), _vm(0.07)), M["pneu"]))
+        # Os pneus de trás, grandes, com o cubo claro na face de fora.
+        for i, dx in enumerate((-1.02, 1.02)):
+            p.append(cone("%s_pneu%d" % (nome, i), em(dx, 1.45, 0.72),
+                          _vm(0.72), _vm(0.72), _hm(0.55), 16, M["pneu"],
+                          rot=(0, 90, 0)))
+        p.append(cone("%s_jante" % nome, em(1.31, 1.45, 0.72), _vm(0.30),
+                      _vm(0.30), _hm(0.04), 12, M["metal_claro"],
+                      rot=(0, 90, 0)))
+        # A cabine aberta com ROPS: quatro colunas e o teto, menor do que a
+        # plataforma, com o pirilampo.
+        for i, (dx, dy) in enumerate(((-0.68, -0.55), (0.68, -0.55),
+                                      (-0.68, 0.62), (0.68, 0.62))):
+            p.append(caixa("%s_coluna%d" % (nome, i), em(dx, dy, 2.21),
+                           (_hm(0.08), _hm(0.08), _vm(1.52)), M["metal"]))
+        p += [
+            caixa("%s_teto" % nome, em(0.0, 0.03, 3.00),
+                  (_hm(1.50), _hm(1.38), _vm(0.08)), M["metal"]),
+            caixa("%s_pirilampo" % nome, em(0.45, 0.45, 3.13),
                   (_hm(0.14), _hm(0.14), _vm(0.16)), M["laranja"]),
         ]
         return p
 
-    brita = material_gasto("brita", PALETA["concreto_borda"], 9.0)
+    # ⚠️ A BRITA TEM GRÃO E TOM DE PEDRA (`122`). A segunda candidata era um
+    # cone de nove lados no cinzento da borda do concreto, com a mancha de
+    # escala 9 do `material_gasto`: os montes liam como pedras facetadas, e o
+    # cinzento frio era o do asfalto. O grão é o mesmo ruído a escala 38 com a
+    # rampa estreitada e mais escura (salpico, não mancha), e o tom é um
+    # cinzento quente e CLARO — separa-se da terra pelo valor e do asfalto pelo
+    # matiz.
+    BRITA_HEX = "#a6a196"
+    brita = material_gasto("brita", BRITA_HEX, 38.0)
+    for nodo in brita.node_tree.nodes:
+        if nodo.type == "VALTORGB":
+            nodo.color_ramp.elements[0].position = 0.46
+            nodo.color_ramp.elements[1].position = 0.56
+            nodo.color_ramp.elements[1].color = _escurecer(BRITA_HEX, 0.70)
 
     def _monte(nome, x, y, cheio):
-        """Monte de brita: um cone baixo de nove lados, e um segundo por
-        cima, desencontrado, para não ler como um chapéu."""
-        r = _hm(1.5 if cheio else 0.9)
-        h = _vm(1.0 if cheio else 0.5)
-        return [cone(nome, (x, y, h / 2.0), r, r * 0.18, h, 9, brita),
-                cone(nome + "_topo", (x + r * 0.25, y - r * 0.15, h * 0.55),
-                     r * 0.62, r * 0.10, h * 0.70, 7, brita, rot=(0, 0, 20))]
+        """Monte de brita: um cone liso de 24 lados que acaba quase em ponta,
+        e um segundo, mais baixo, encostado e desencontrado — a encosta de um
+        monte despejado não é simétrica.
+
+        ⚠️ De nove lados e de ponta, lia como uma pedra facetada; com uma
+        coroa redonda por cima de um cone de topo largo, lia como CHAPÉU — o
+        degrau entre os dois desenhava a aba. A coroa é o próprio cone a
+        fechar, e o arredondado vem do segundo monte ao lado.
+
+        ⚠️ E O MONTE É MAIS ÍNGREME DO QUE O REAL. Na rampa de repouso da
+        brita (~35°) e com 1,5 m de raio, a câmera a 60° achatava-o num disco
+        claro rente ao chão, que lia como tampa de bueiro; a 1,3 m de raio e
+        1,7 de altura a encosta tem sombra, e é a sombra que diz volume."""
+        r = _hm(1.3 if cheio else 0.8)
+        h = _vm(1.7 if cheio else 0.9)
+        return [cone(nome, (x, y, h / 2.0), r, r * 0.12, h, 24, brita),
+                cone(nome + "_encosta", (x + r * 0.42, y + r * 0.30, h * 0.31),
+                     r * 0.62, r * 0.12, h * 0.62, 20, brita, rot=(0, 0, 17))]
 
     # Os montes ficam do lado da rua e fora do comprimento do rolo: com ele a
     # 5,8 m, um monte a meio caía debaixo da máquina no dia 2. E o do dia 2

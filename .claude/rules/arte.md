@@ -448,6 +448,29 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   O mesmo vale para a COR DE ACENTO: ela só acentua enquanto for UMA. Com o
   pórtico e o pau ambos laranja o laranja deixou de apontar para coisa nenhuma;
   o pau voltou ao cinzento e o arco passou a ser o barco.
+  ⚠️ **E A PEÇA QUE NOMEIA A MÁQUINA VAI À FACE QUE SE VÊ, SEM NADA POR
+  CIMA** (`122`). O rolo lia como empilhadeira porque a chapa amarela do
+  garfo, na face `+x`, tapava o círculo do tambor; o bate-estaca lia como
+  escavadeira porque a lança curta deixava a torre abaixo da silhueta do
+  píer. O garfo virou braço estreito e a lança cresceu até a torre ser o
+  contorno. Antes de detalhar uma máquina, pergunte que forma DIZ o nome
+  dela — o círculo, a torre — e confira na foto que nada da mesma cor a tapa.
+  ⚠️ **E A BARRA FINA SOLTA SOBRE UM FUNDO LISO LÊ COMO RISCO.** O braço de
+  0,045 do guindaste ao pé da torre, real nos bate-estacas, saiu um traço
+  amarelo a atravessar a água, e o Bruno leu-o como defeito («uma linha
+  amarela»). Peça fina só lê presa a uma massa nas duas pontas, ou não entra.
+- **⚠️ MONTE DE MATERIAL É MAIS ÍNGREME DO QUE O REAL** (`122`). Na rampa de
+  repouso da brita (~35°) a câmera a 60° achatou o monte num disco claro
+  rente ao chão; uma coroa redonda por cima de um cone largo desenhou a aba de
+  um CHAPÉU. O que diz volume é a sombra da ENCOSTA: cone liso de muitos lados,
+  quase em ponta, mais alto do que o real, e um segundo encostado.
+- **⚠️ VEÍCULO MEDE-SE PELA RÉGUA DOS VEÍCULOS, NÃO PELA DA PESSOA** (`122`).
+  A régua da pessoa (`069`) é 1,5x o real e os camiões da rua são 1x: um munck
+  pela `_hm` sairia 1,6 vezes a largura deles, e o olho compara camião com
+  camião. Ele saiu das medidas do `_pecas_do_caminhao()` antes do
+  `ESCALA_CAMINHAO` — e o grupo do armazém encolhe pela `ESCALA_PREDIO`, que é o
+  mesmo 0,72. Se um dia os dois números divergirem, o munck muda de tamanho sem
+  erro nenhum.
 - **Rodar um prop 90° manda metade dos detalhes para a face que a câmera não
   vê.** Só `+x` e `-y` são visíveis. Rodar o caminhão para o eixo da estrada
   punha o para-brisa a olhar certo e a janela lateral para `-x` — invisível, e
