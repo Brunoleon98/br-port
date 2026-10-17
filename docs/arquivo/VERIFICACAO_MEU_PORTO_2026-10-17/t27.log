@@ -1,0 +1,77 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: Fase 1 usa dia, saldo e meta reais
+PASS T27: porto sem obras nem serviços é explícito
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: boleto inclui segunda chance
+PASS T27: controle: antecipação aceita
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: antecipação mantém recibo e próxima cobrança futura
+PASS T27: controle: compra real inicia obra
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: obra usa prazo real e dias restantes
+PASS T27: prazo mostrado corresponde à conclusão no jogo
+PASS T27: controle: obra no último fecho inicia
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: obra do último fecho não promete dia inexistente
+PASS T27: última antecipação não inventa parcela seguinte
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: vencimento identifica dia fechado sem adiantar decisão
+PASS T27: controle: partida chega à Fase 2
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: Fase 2 sem cobrança nem prazo fictícios
+PASS T27: controle: píer 3 comprado ainda em obra
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: meta não conta estrutura ainda em obra
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: meta lê dias fechados e infraestrutura pronta
+PASS T27: controle: cargueiro com armazenagem sorteado
+PASS T27: controle: serviço contratado pela atracação
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: serviço mostra progresso guardado e receita com bônus
+PASS T27: recebimento mostrado confere com entrega real
+PASS T27: controle: outro serviço atraca
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: sem trabalhador não promete recebimento
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: jogo livre conserva conquista sem novo objetivo
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: encerramento e caixa negativo são reais
+PASS T27: conquista fica registrada após encerramento
+PASS T27: controle: obra e serviço antes do encerramento
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: encerrada não promete obra nem recebimento futuros
+PASS T27: controle: partida chega à Fase 2
+PASS T27: controle: doca ocupada para layout 0
+PASS T27: controle: doca ocupada para layout 1
+PASS T27: controle: doca ocupada para layout 2
+PASS T27: botões acessíveis fora da leitura
+PASS T27: resumo tem contraste medido sem pendências
+PASS T27: leitura alcança meta e botões continuam fora da rolagem
+PASS T27: consulta visual preserva estado, RNG, arquivos e registro
+PASS T27: Continuar abre resumo do mais recente sem criar Main
+PASS T27: retomada repetida não duplica painel
+PASS T27: Voltar do aparelho fica na inicial e preserva consulta
+PASS T27: Carregar mostra o espaço escolhido
+PASS T27: Ir ao porto emite entrada única sem recarregar
+PASS T27: controle: estado pendente alcançado rival_offer
+PASS T27: consulta mantém decisão pendente rival_offer
+PASS T27: Ir ao porto troca para a cena real rival_offer
+PASS T27: porto recupera painel original rival_offer
+PASS T27: controle: estado pendente alcançado debt_payment
+PASS T27: consulta mantém decisão pendente debt_payment
+PASS T27: Ir ao porto troca para a cena real debt_payment
+PASS T27: porto recupera painel original debt_payment
+PASS T27: controle: estado pendente alcançado game_over
+PASS T27: consulta mantém decisão pendente game_over
+PASS T27: Ir ao porto troca para a cena real game_over
+PASS T27: porto recupera painel original game_over
+PASS T27: recusa não inicia partida nem apaga arquivo
+PASS T27: partida nova segue sem resumo: instalação false
+PASS T27: partida nova segue sem resumo: instalação true
+RETOMADA OK
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2663)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)
