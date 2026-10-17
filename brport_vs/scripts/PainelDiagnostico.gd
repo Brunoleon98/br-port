@@ -5,7 +5,7 @@ const Copia := preload("res://scripts/CopiaDoDiagnostico.gd")
 const LARGURA := 560
 const ALTURA_BOTAO := 56
 
-var tempo: StringName = &"consulta"
+var tempo: StringName = &""
 var _previa: Label
 var _aviso: Label
 var _copiar: Button
@@ -14,6 +14,9 @@ var _copiador: Node
 
 func _ready() -> void:
 	super._ready()
+	# O estado inicial também é um tempo fotografável: a declaração explícita
+	# mantém o catálogo de cobertura alinhado aos outros tempos do painel.
+	tempo = &"consulta"
 	_copiador = Copia.new()
 	add_child(_copiador)
 	_copiador.connect("concluida", _ao_copiar)

@@ -61,6 +61,8 @@ func _fotografar() -> void:
 		quit(1)
 		return
 	print("Paineis: ", painel.scene_file_path)
-	print("Tempo: ", painel.tempo)
+	# O conferidor lê CENA e TEMPO, como no capturar_cena.gd: só o id não
+	# permite atribuir a foto ao painel e reprova mesmo com o PNG correto.
+	print("Tempo: %s %s" % [painel.scene_file_path, painel.tempo])
 	print("Tela salva em ", args[1], " (", imagem.get_width(), "x", imagem.get_height(), ")")
 	quit(0)
