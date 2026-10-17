@@ -44,6 +44,14 @@ mais; na folha dos props a juçara pequena «pousa» num telhado (a âncora é u
 embutida atrás de uma casa); e um fio azul de 1 px na borda do pátio da ponta
 norte, que é das estradas.
 
+**Ao lado do PR #140 do Codex** (o resumo «Meu porto agora», rascunho): as
+duas branches criaram a decisão 125, e esta renumerou as suas para `126` e
+`127`. Elas mexem em cinco arquivos comuns, todos de documentação ou
+ferramenta; ao juntar há dois conflitos de texto — o fim do
+`tools/mutantes.toml`, onde as duas acrescentam, e duas linhas do estado —, e
+quem fundir em segundo fica com os dois lados. A junção de teste passou nas
+seis suítes, no `DOCS OK` (29.968 bytes de estado) e nos 22 mutantes novos.
+
 **Pendente do Bruno**: fundir o PR #141 quando quiser — ou depois do aceite,
 com as passagens novas na mesma branch.
 
