@@ -44,11 +44,10 @@ arrebentação e cáusticas nas praias; a sombra do muro esvai.
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
 a forma; D20/D21/D24/D27 conferem o raster.
 
-**O chão é raster com textura e sobe num MORRO de mata atrás da vila** (`127`,
-**D47**). As árvores são do Blender e BALANÇAM: no morro, acima do contorno da
-vila; na **restinga** das pontas — areia na relva, capim, salsa, aroeira e
-guriri — com o pé fora da areia. Entre as casas, as mesmas vão EMBUTIDAS no
-SVG, paradas.
+**O chão tem textura e sobe num MORRO de mata atrás da vila** (`127`, **D47**).
+As árvores são do Blender e BALANÇAM — no morro, acima do contorno da vila, e
+na **restinga** das pontas, com o pé fora da areia; entre as casas vão
+EMBUTIDAS no SVG, paradas.
 
 **Mapa a 1080 (`025`), props a 768 px num quadro de 512 coordenadas (`029`,
 D31) e a moldura fora da VRAM pelo atlas (`049`)**; a água fica a 720 (`026`).
