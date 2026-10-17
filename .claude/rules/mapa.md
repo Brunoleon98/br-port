@@ -63,6 +63,21 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   amplitude de luminância antes e depois**, e lembre que o contraste que o olho
   vê é razão e não diferença. Na captura inteira nada disso aparecia; a 3× de
   ampliação era evidente.
+- **⚠️ O NOME DE UMA COR NÃO É O VALOR DELA.** O degradê do largo ia de
+  `agua` a `agua_funda`, e a `agua_funda` era a MAIS CLARA das duas: o mar
+  escurecia até ~12 unidades da costa e voltava a clarear ao fundo da tela,
+  e as manchas «fundas», nessa cor, clareavam onde caíam. Nenhuma guarda o
+  via, porque o D21 separa a água em DOIS pontos e a paleta lia-se pelos
+  nomes. Uma rampa prova-se pela FORMA no mapa rasterizado — o D46 percorre-a
+  em raios —, e o tom de uma mancha mede-se contra a água DEBAIXO dela (`124`).
+- **⚠️ O QUE SE PINTA NA ÁGUA DEPOIS DA TERRA PERGUNTA SE A ÁGUA ESTÁ À
+  VISTA.** A faixa da sombra do muro saía depois do cais, a h = 0, e a parte
+  dela ao longo do espelho de um degrau fica, na tela, ATRÁS do muro: pintou
+  1.105 px do terreiro do degrau seguinte durante semanas. Quem desenha na
+  água depois da terra pergunta se o ponto, subindo até `ALT_CAIS`, atravessa
+  concreto (`_agua_a_vista`). E raster por baixo de vetor tem a mesma
+  pergunta à escala do texel: o primeiro texel ao pé do muro tinha o centro
+  em terra, ficou sem sombra, e mostrou um fio claro de 1,5 px (`124`).
 - **⚠️ O COMENTÁRIO QUE DIZ QUAL CONTA APERTA PODE APONTAR PARA A ERRADA.** O
   `RUA_LARG` tinha ao lado a conta do pátio (`RUA_RECUO - RUA_LARG - CALCADA -
   APRON`) e a afirmação de que o armazém cabe — e cabe, em `mx`. Ao alargar a

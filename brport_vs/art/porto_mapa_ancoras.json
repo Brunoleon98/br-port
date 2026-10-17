@@ -881,14 +881,15 @@
   ]
  ],
  "cores_da_agua": {
+  "alcance_costeiro": 6.0,
   "costeiras": [
    "#57c6dc",
    "#3fb6cf",
    "#1b7fa8"
   ],
   "largo": [
-   "#0d4d6b",
-   "#0f5a7d"
+   "#0f5a7d",
+   "#0d4d6b"
   ]
  },
  "cores_da_areia": {

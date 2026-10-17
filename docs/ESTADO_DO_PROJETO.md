@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 17/10/2026 — a vila humilde (`123`)
+> **Atualização:** 17/10/2026 — o mar que escurece ao largo (`124`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -36,9 +36,9 @@ serviço solta a equipe no dia, por −5 de reputação e 10% de multa (`111`).
 ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14 a
 42, fundo da terra em −16), senão o mapa ACABAVA à vista por três lados.
 
-**A água é tropical e lê como profundidade, não como fitas** — campo de cor
-contínuo pela distância à costa, com meandro longo de duas senóides, e a areia
-em rampas.
+**A água é tropical e escurece até ao largo** (`124`, **D46**) — campo de cor
+contínuo pela distância à costa, marolas em séries, correntes escuras,
+arrebentação e cáusticas nas praias; a sombra do muro esvai.
 
 **As duas pontas são costa desenhada** (`023`), com o cais reto. Água, baixio,
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
@@ -112,11 +112,9 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
-**Na main:** o cancelamento (`109`–`111`, PR #133), a pesquisa de recursos
-básicos (`112`), como jogar/glossário na inicial e na pausa (`114`–`116`, PR
-#134; leitura e telefone pendentes), a obra no mapa (`121`, PR #136) e o
-maquinário dela (`122`, PR #137). **A vila humilde (`123`)** foi aceite na
-foto; a fila do Bruno segue no mapa (§7).
+**Na main:** cancelamento, pesquisa de recursos e ajuda (`109`–`116`; da
+ajuda faltam leitura e telefone), a obra, o maquinário e a vila (`121`–`123`).
+**O mar (`124`)** foi aceite na foto; a fila que o Bruno deu acabou (§7).
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
 A `107` permanece local e separada, sem autorização de publicação nem teste

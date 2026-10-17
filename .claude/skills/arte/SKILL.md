@@ -452,6 +452,15 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   «casas mais humildes» — num porto que abre em ruínas, a vila começa
   simples e a melhor fica para a melhoria do lote noutro nível (`123`).
   Envio e pergunta em blocos seguidos do mesmo turno voltaram 6 de 6.
+  ⚠️ **E NA `124` (o mar) O «OUTRO» PEDIU PESQUISA.** A primeira passagem
+  trocou os riscos «~» por um pedido de escopo no «Outro» («coloque algo
+  melhor… que futuramente possa ser animado»); a segunda veio com «pesquise
+  meios de aplicar técnicas para deixar o mar mais bonito e realista». A
+  busca devolve RESUMO (as páginas não abrem por este proxy, `063`): leu-se
+  como pista de padrão, e as técnicas que se repetiam entre as fontes
+  entraram numa passagem só delas, com o nome de cada uma na prancha. Ele
+  aceitou essa. Os pares em blocos seguidos voltaram 3 de 4; o que falhou foi
+  um reinício do worker com a pergunta pendente, e a pergunta sozinha voltou.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
