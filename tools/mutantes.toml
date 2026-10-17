@@ -806,3 +806,18 @@ antes = '''
 '''
 depois = ''
 reprova = { teste_design = "pinta telha_d à volta" }
+
+[[mutante]]
+id = "fauna-cao-em-cima-da-casa"
+de = "123"
+o_que = "o cão caramelo volta ao ponto onde a vila nova pôs o muro e a frente de uma casa"
+alvo = "brport_vs/scenes/Main.tscn"
+antes = '''
+[node name="CachorroCaramelo" parent="MapaWrap/Fauna" instance=ExtResource("fauna_cachorro")]
+position = Vector2(78, 196)
+'''
+depois = '''
+[node name="CachorroCaramelo" parent="MapaWrap/Fauna" instance=ExtResource("fauna_cachorro")]
+position = Vector2(105, 190)
+'''
+reprova = { teste_design = "CachorroCaramelo aparece sobre o relvado" }

@@ -3481,6 +3481,10 @@ func _d26_ciclo_da_fauna() -> void:
 # caranguejo, sobre areia; a segunda tartaruga, sobre água. Assim uma edição de
 # coordenada que ponha capivara na rua ou tartaruga em terra falha sem depender
 # de uma captura a olho.
+const RELVADO_G_MENOS_R := [8, 35]
+const RELVADO_G_MENOS_B := 35
+
+
 func _d27_habitats_da_fauna() -> void:
 	var grupo: Node2D = _main.get_node("MapaWrap/Fauna")
 	# A posição de cada bicho é TELA (é filho do `MapaWrap`); a textura pode
@@ -3506,12 +3510,22 @@ func _d27_habitats_da_fauna() -> void:
 			int(quantidades.get(especie, 0)) == esperado,
 			"encontrados %d" % int(quantidades.get(especie, 0)))
 
+	# ⚠️ O VERDE DO RELVADO, E NÃO «VERDE DOMINANTE». A vila da `123` pôs o
+	# cão caramelo em cima do muro de uma casa verde-água, e o muro (`#9faca1`)
+	# passava em `g > r e g > b`; quem o viu foi a folha dos props. Medido: o
+	# relvado dá `g − r` 20 e `g − b` 61 (e 23/54 no tom escuro dele), o muro
+	# verde-água 13/11 e a copa 81/85. O corte de `g − b` fica a meio da banda
+	# entre o relvado e o muro, e o teto de `g − r` deixa a copa de fora.
 	for nome in ["CachorroCaramelo", "QueroQuero", "Capivara"]:
 		var bicho: Node2D = grupo.get_node(nome)
 		var cor := mapa.get_pixelv(lido.pxv(bicho.position))
-		_confere("%s aparece sobre terra verde" % nome,
-			cor.g > cor.r and cor.g > cor.b,
-			"posição %s, cor #%s" % [bicho.position, cor.to_html(false)])
+		var gr := int(round((cor.g - cor.r) * 255.0))
+		var gb := int(round((cor.g - cor.b) * 255.0))
+		_confere("%s aparece sobre o relvado" % nome,
+			gr >= RELVADO_G_MENOS_R[0] and gr <= RELVADO_G_MENOS_R[1]
+				and gb >= RELVADO_G_MENOS_B,
+			"posição %s, cor #%s (g−r %d, g−b %d)"
+				% [bicho.position, cor.to_html(false), gr, gb])
 
 	var caranguejo: Node2D = grupo.get_node("MariaFarinhaSul")
 	var cor_areia := mapa.get_pixelv(lido.pxv(caranguejo.position))
