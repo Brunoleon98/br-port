@@ -1,8 +1,8 @@
-# BR Port — o terreno e a vegetação, à espera do veredito; seguem as estradas
+# BR Port — o terreno e a vegetação, não aceites; a próxima conversa continua-os
 
 **17/10/2026.** Branch `claude/terreno-vegetacao-m22sp1`, a partir da main
-`01ba125` (PR #139, o mar da `124`, fundido pelo Bruno). Nenhum PR aberto do
-Codex nem de outro agente. **Sem PR aberto desta branch.**
+`01ba125` (PR #139, o mar da `124`, fundido pelo Bruno). **PR #141 aberto a
+pedido dele**, por fundir. Nenhum PR aberto do Codex nem de outro agente.
 
 **Decisão `125` — a fila nova do Bruno**, um item por conversa: (1) terreno e
 vegetação, (2) estradas, (3) sprites de detalhes. Fora dela: animar as
@@ -13,10 +13,13 @@ galpão recuperado V3.
 1. O chão de trás é raster com textura e sobe num morro de mata; as árvores
 são do Blender e balançam (escolha dele), no morro acima do contorno da vila
 e na restinga das pontas com o pé fora da areia; entre as casas vão
-embutidas no SVG, paradas. A mata andou quatro passagens («Ajustar» nas
-três primeiras); **a quarta e a primeira da restinga foram entregues em foto
-e esperam o veredito dele.** A guarda nova é o **D47**
+embutidas no SVG, paradas. A guarda nova é o **D47**
 (`casos_mata_do_morro.gd`), com nove defeitos no catálogo.
+
+**Não aceite.** Vistas as fotos, o Bruno pediu outra conversa no mesmo item:
+*«focando na melhoria de detalhes e correção de erros para que a vegetação
+fique boa; além disso, o terreno pode ser melhorado também»*. As estradas
+esperam pelo aceite deste.
 
 ⚠️ Um prop por cima do mapa só erra sobre o que está à frente e é mais alto;
 chão plano à frente nunca o tapa (`.claude/rules/mapa.md`).
@@ -30,13 +33,19 @@ rasante (`.claude/rules/arte.md`).
 ⚠️ Contorno por coluna é o mínimo da coluna: a guarda que pergunta se ele vê
 uma casa só aperta onde a casa é o mais alto (`.claude/rules/testes-e-guardas.md`).
 
-**O que fica para as outras conversas** (na `126`): nas estradas, um fio azul
-de 1 px ao longo da borda do pátio de terra na ponta norte, contra a
-restinga — visto, não investigado; nos detalhes, o coqueiro menor, se o
-Bruno o quiser (medido: 71 px, ≈3× a casa, a proporção real).
+⚠️ Régua que lê pixel de prop ou de bicho passa pelo `PropIso`: o sprite da
+fauna também é atlas (`.claude/rules/testes-e-guardas.md`).
 
-**Pendente do Bruno**: o veredito da quarta passagem da mata e da primeira da
-restinga; abrir o PR desta branch e fundi-lo.
+**Candidatos que a sessão viu na foto, sem medir** — para a lista do
+veredito, não para corrigir sem perguntar: duas aroeiras ainda quase na mesma
+coluna na restinga norte; a embaúba pequena só existe cortada na borda
+esquerda do morro; o guriri pode ler como agave; a restinga sul com areia a
+mais; na folha dos props a juçara pequena «pousa» num telhado (a âncora é uma
+embutida atrás de uma casa); e um fio azul de 1 px na borda do pátio da ponta
+norte, que é das estradas.
+
+**Pendente do Bruno**: fundir o PR #141 quando quiser — ou depois do aceite,
+com as passagens novas na mesma branch.
 
 Prompt para colar:
 
@@ -46,25 +55,32 @@ e as decisões 125 (a fila nova) e 126 (o terreno e a vegetação). Confira a
 main remota, os PRs abertos e o CI do último merge, e rode
 python3 tools/conferir_colaboracao.py.
 
-O terreno e a vegetação (126) estão na branch claude/terreno-vegetacao-m22sp1.
-Se o PR ainda não estiver aberto ou fundido, pergunte ao Bruno se quer o PR
-aberto; se ele pedir, abra-o e conduza-o até verde. Se ele ainda não deu o
-veredito da quarta passagem da mata e da primeira da restinga, pergunte-lhe
-primeiro, com a foto, e ajuste o que ele marcar antes de abrir a fila.
+O terreno e a vegetação (126) estão no PR #141, branch
+claude/terreno-vegetacao-m22sp1, e NÃO foram aceites. Se o PR ainda estiver
+aberto, continue nessa branch (traga a main antes, se ela andou) e conduza o
+CI até verde; se já tiver sido fundido, recomece a branch designada a partir
+da main.
 
-O item desta conversa é o 2 da fila da 125: as ESTRADAS. Use /arte:
-fotografe o JOGO antes, mostre o estado das ruas (asfalto, calçada,
-cotovelos, passadeiras, a viela de terra e os acessos aos berços) e pergunte
-ao Bruno o escopo antes de mexer, com opções e a recomendada primeiro. Olhe
-também o fio azul ao longo da borda do pátio de terra na ponta norte, que a
-126 anotou para esta conversa. Não avance para os sprites de detalhes:
-anote o que aparecer deles para a conversa seguinte.
+O item desta conversa continua a ser o 1 da fila da 125, com o pedido do
+Bruno: melhorar os DETALHES e CORRIGIR OS ERROS da vegetação até ela ficar
+boa, e melhorar também o TERRENO. Use /arte: fotografe o JOGO (dia 1 e porto
+completo, e as duas pontas e o morro ampliados), mostre o estado e pergunte
+ao Bruno, com opções e a recomendada primeiro, o que ele vê de errado e o
+que melhorar no terreno — junte à pergunta, como opções, os candidatos que a
+126 viu na foto (estão no briefing 2026-10-17d) e o que você mesmo encontrar
+a olhar ampliado. Medir antes de mexer; passagens com prancha antes/depois
+contra a main e veredito no fim, com a lista de defeitos que você vê.
+Mantenha o que ele já escolheu: árvores do Blender que balançam, os três
+coqueiros, a encosta de mata, as espécies da 126.
 
+Não avance para as estradas nem para os sprites de detalhes: anote o que
+aparecer deles (o fio azul na borda do pátio da ponta norte é das estradas).
 Fora desta fila, para depois: animar as marolas como a espuma e o fio
 diagonal na ponta norte do cais (124), os gates do Bruno (A4 leitura, A7
 playtest pelo Pages) e o recuperado V3.
 
 Não comece outra funcionalidade por conta própria. Ao encerrar, aplique
-/fechar-sessao e entregue o prompt completo da próxima conversa (sprites de
-detalhes) em bloco copiável.
+/fechar-sessao e entregue o prompt completo da próxima conversa em bloco
+copiável — as estradas, se ele aceitar a vegetação; senão, mais uma volta
+nela.
 ```

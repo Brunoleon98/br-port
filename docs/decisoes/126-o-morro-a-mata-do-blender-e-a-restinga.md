@@ -3,7 +3,8 @@
 **17/10/2026 · item 1 da fila da `125`** — «melhorar o terreno e a
 vegetação». Foto do jogo antes e o escopo perguntado ao Bruno, pela `/arte`.
 A mata andou quatro passagens, todas «Ajustar» até à terceira; a quarta e a
-primeira da restinga foram entregues em foto e **esperam o veredito dele**.
+primeira da restinga foram entregues em foto e **não foram aceites** (ver
+«O veredito», no fim).
 
 ## O que o Bruno escolheu
 
@@ -128,3 +129,10 @@ uma vez, ancorada na primeira árvore dela.
   investigado; pode ser o «fio diagonal» que a `125` deixou fora da fila.
 - **Sprites de detalhes:** se o Bruno quiser o coqueiro menor, a medida está
   acima.
+
+## O veredito
+
+Ao fecho, vistas as fotos, o Bruno **não aceitou**: *«continue isso na
+próxima conversa focando na melhoria de detalhes e correção de erros para que
+a vegetação fique boa; além disso, o terreno pode ser melhorado também»*. O
+item 1 da fila continua na conversa seguinte, e as estradas esperam por ele.

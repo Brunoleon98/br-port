@@ -31,7 +31,7 @@ aqui.
 |---|---|---|
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17.md` | 17/10 | O maquinário da obra (`122`): balsa com bate-estaca, caminhão munck e o rolo de tambor à mostra; aceite com a linha amarela corrigida, a fila segue nas estruturas da cidade |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17b.md` | 17/10 | A vila humilde (`123`): seis formas de casa, terreno com muro, igreja com adro e praça da matriz, aceite à quinta passagem; a fila segue no mapa |
-| `BRIEFING_PROXIMA_CONVERSA_2026-10-17d.md` | 17/10 | A fila nova (`125`) e o terreno e a vegetação (`126`): chão com textura, morro de mata, árvores do Blender que balançam e a restinga das pontas, à espera do veredito; segue a estrada |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-17d.md` | 17/10 | A fila nova (`125`) e o terreno e a vegetação (`126`): chão com textura, morro de mata, árvores do Blender que balançam e a restinga das pontas; não aceite, a vegetação e o terreno continuam |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17c.md` | 17/10 | O mar que escurece ao largo (`124`): a rampa, a sombra do muro que esvai, marolas, arrebentação e cáusticas, aceite à terceira passagem; a fila do Bruno acabou |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-16c.md` | 16/10 | A obra no mapa (`121`): píer, armazém e pátio dia a dia, o D45 e sete mutantes; candidata à espera do aceite |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-16b.md` | 16/10 | Lateral: catálogo de defeitos (`117`), jogador ao acaso T26 (`118`), pré-PR entre agentes (`119`) e as provas do Codex no catálogo (`120`); PR aberto a pedido do Bruno |
