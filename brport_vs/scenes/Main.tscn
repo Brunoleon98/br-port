@@ -587,7 +587,7 @@ atraso_inicial = 11.0
 semente = 202609153
 
 [node name="CachorroCaramelo" parent="MapaWrap/Fauna" instance=ExtResource("fauna_cachorro")]
-position = Vector2(105, 190)
+position = Vector2(78, 196)
 atraso_inicial = 0.8
 
 [node name="QueroQuero" parent="MapaWrap/Fauna" instance=ExtResource("fauna_quero")]

@@ -801,7 +801,9 @@ V3 continua só no checkout do ChatGPT.
 **A fila que ele deu para as conversas seguintes, por esta ordem:** (1) o
 design do maquinário de obra — **fechado em 16/10 (`122`)**: ele abriu o
 escopo às três obras (rolo, balsa com bate-estaca, caminhão munck); (2) as estruturas da
-cidade; (3) o mapa — as melhorias que a sessão achar e as que ele viu: uma
+cidade — **fechado em 17/10 (`123`)**: a vila humilde do nível 1, com seis
+formas de casa, terreno com muro, igreja com adro e praça da matriz, aceite à
+quinta passagem; (3) o mapa — as melhorias que a sessão achar e as que ele viu: uma
 sombra bem QUADRADA nos píeres, e o mar que, em vez de escurecer ao largo,
 tem áreas ao fundo mais claras, como se fosse mais raso. Cada uma abre pela
 pergunta do escopo (`/arte`), e o mar pela medição antes de mexer.

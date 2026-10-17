@@ -167,7 +167,7 @@ um jogo que não existe.
 | Água funda | `#1b7fa8` | ✅ `#0f5a7d`→`#1b7fa8`, sem banda chapada desde 13/09 |
 | Areia | `#e8d9a8` | ✅ **em uso desde 04/09** — `areia`, nas duas pontas |
 | Telha | `#c2502e` a `#e07a3c` | `#c85420` — está certo |
-| Parede | creme `#f2e6cf`, e cada casa de uma cor | `#eef2f5` — frio e uniforme |
+| Parede | creme `#f2e6cf`, e cada casa de uma cor | ✅ creme, bege, verde-água e três pastéis, mais o reboco cru; vizinhas nunca repetem (`123`) |
 | Vegetação | `#3e8f3a` com `#6fbf4e` no realce | `#2d7a3a` — sem realce |
 | ↳ *copa de árvore* | *idem* | ✅ **em uso desde 04/09** — `copa` e `copa_luz` |
 | Asfalto | `#6b6f76` com faixa amarela viva | `#6f7b85` — está certo |

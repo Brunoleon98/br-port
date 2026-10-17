@@ -188,6 +188,27 @@ def trocar(alvo: Path, conteudo: bytes, modo: int) -> None:
     os.replace(tmp, alvo)
 
 
+def reimportar_se_arte(godot: str, alvo: Path, perfil: Path) -> None:
+    """Reimporta o projeto quando o alvo é arte que o Godot importa.
+
+    ⚠️ AS SUÍTES LEEM A TEXTURA PELO CACHE DO IMPORTADOR, de propósito — o
+    `_mapa_lido` do `teste_design` explica porquê —, e um defeito trocado só
+    no SVG nunca lá chegaria: o primeiro mutante de mapa (`123`) SOBREVIVEU
+    assim, com a guarda certa e a suíte a ler a textura de antes do defeito.
+    É o «confira que o defeito chegou a quem o havia de ver» (`gerais.md`).
+    O `.import` ao lado do alvo é o que diz que ele passa pelo importador.
+    """
+    if not alvo.with_name(alvo.name + ".import").exists():
+        return
+    ambiente = dict(os.environ, XDG_DATA_HOME=str(perfil), APPDATA=str(perfil))
+    r = subprocess.run([godot, "--headless", "--path", str(PROJETO), "--import"],
+                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                       env=ambiente, timeout=600)
+    if r.returncode != 0:
+        raise RuntimeError(f"o --import depois de trocar {alvo.name} saiu com "
+                           f"{r.returncode}")
+
+
 def rodar_suite(godot: str, suite: str, log: Path, teto: float, perfil: Path) -> dict:
     script, marcador = SUITES[suite]
     ambiente = dict(os.environ, XDG_DATA_HOME=str(perfil), APPDATA=str(perfil))
@@ -328,6 +349,7 @@ def main() -> int:
         por_suite = {}
         try:
             trocar(alvo, mutado, modo)
+            reimportar_se_arte(args.godot, alvo, perfil)
             for suite in plano[m["id"]]:
                 r = rodar_suite(args.godot, suite,
                                 saida / f"{m['id']}-{suite}.log", tetos[suite], perfil)
@@ -343,6 +365,8 @@ def main() -> int:
             if alvo.read_bytes() != original:
                 print(f"::error::{m['alvo']} NÃO voltou ao original — confira à mão.")
                 return 2
+            # E o cache volta com ele; a base do fim é que o prova.
+            reimportar_se_arte(args.godot, alvo, perfil)
         resultado[m["id"]] = por_suite
         if args.explorar:
             print(f"  {m['id']}  ({m['de']})")

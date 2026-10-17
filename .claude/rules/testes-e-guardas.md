@@ -38,6 +38,17 @@ DECLARADA a reprovar, o mutante que não compila recusado, teto por corrida
   rode `--explorar`; apagar a entrada é apagar a prova, e só se faz quando
   o defeito deixou de poder existir, dito no commit.
 
+⚠️ **E DEFEITO EM ARTE IMPORTADA SÓ CHEGA À SUÍTE PELO `--import`.** O
+`teste_design` lê o mapa pela textura do cache, de propósito (o `_mapa_lido`
+diz porquê), e o primeiro mutante de mapa (`123`) SOBREVIVEU com a guarda
+certa: o SVG mudou e a textura não. O executor reimporta quando o alvo tem
+`.import` ao lado, e outra vez ao desfazer; a base do fim prova que o cache
+voltou. E o alvo é o arquivo GERADO, não o gerador — o executor troca texto,
+não regera.
+⚠️ **E O RÓTULO DECLARADO NÃO LEVA O QUE O GERADOR RENUMERA.** O do coreto
+dizia «o praca (lote 4)», e a vila nova pôs a praça no lote 7: a guarda certa
+reprovou e o executor deu o mutante por FURADO. «pinta telha_d à volta»
+sobrevive a qualquer implantação (`123`).
 ⚠️ **E A GUARDA DECLARADA SAI DO `--explorar`, NUNCA DO PALPITE.** Na
 medição da `117`, seis dos 35 defeitos reconstruídos reprovaram por outra
 asserção que não a que eu escrevi — e era essa a guarda verdadeira deles.
@@ -435,6 +446,13 @@ guarda.
   pelo coreto, que é a única coisa que só ela tem. E quando a peça se define por
   uma AUSÊNCIA, a prova é negativa — ter laje creme não distingue uma obra das
   casas, que são do mesmo creme; **não ter telha por cima**, sim.
+- **⚠️ E «VERDE DOMINANTE» NÃO É RELVADO.** O D27 conferia o habitat do cão
+  caramelo pedindo `g > r e g > b` no pixel dele, e a vila nova (`123`)
+  pô-lo em cima do muro de uma casa verde-água — que passa nesse teste. Quem
+  o viu foi a folha dos props, que mudou de chão. A pergunta certa é a cor
+  do relvado medida contra as que podem estar lá por engano (o muro, a
+  parede, a copa), com o corte a meio da banda; e mexer na vila pergunta
+  que props pousam por cima dela.
 
 ## Do «Estilo de código»
 

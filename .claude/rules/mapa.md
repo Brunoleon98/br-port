@@ -179,6 +179,36 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   era 11% / 50% / 10% / **0%**. Toda faixa deste mapa medida a partir do cais
   tem uma janela visível estreita, e o orçamento de desenho é de peças
   DESENHADAS, nunca de sorteios — `no_quadro()` existe para isso.
+- **⚠️ E VARIEDADE NUM QUADRO ESTREITO PEDE UM SACO, NÃO UM PESO.** A irmã da
+  regra acima, do lado da forma: a vila sorteava a forma de cada casa por peso,
+  e a casa em L — a mais larga, a que o fim do degrau e os vãos do pátio mais
+  recusam — ficou de fora da tela duas vezes seguidas, cada vez com outra
+  forma a sobrar. O saco embaralhado tem cada forma o número de vezes da
+  tabela, serve só os lotes que se veem, e a forma de um lote recusado volta
+  para ele (`_tirar_do_saco`, `123`).
+- **⚠️ E O SORTEIO NOVO VEM DE UM `Random` NOVO.** É a regra da caminhada
+  sorteada, do lado do que se acrescenta: a cor, a caixa-d'água, a telha, o
+  acento e o jardim de cada casa saem cada um do seu `Random`, pela ordem dos
+  lotes — um sorteio a mais no da implantação mexia a vila inteira, e no das
+  árvores mexia todas as copas (`123`).
+- **⚠️ O QUE POUSA NOUTRA PEÇA PERGUNTA-LHE A ALTURA NAQUELE PONTO.** A
+  caixa-d'água ia a uma altura escolhida à mão por forma de casa, e o pé dela
+  afundava na água ou pairava. Cada telhado diz a altura em qualquer ponto
+  (`z_quatro_aguas`, `z_duas_aguas`, `z_meia_agua`), e a caixa pousa num
+  murete cujos quatro cantos de baixo seguem essa altura. E pousa na
+  CUMEEIRA: no pano de trás, a cumeeira fica entre a câmera e o pé, e o
+  murete, desenhado depois, pintava-se por cima dela (`123`).
+- **⚠️ NUMA PEÇA QUASE QUADRADA, AS QUINAS DE CIMA E DE BAIXO ESTÃO NA COLUNA
+  DO MEIO.** Quem decide a coluna da tela é `mx − my`, e o poste da quina da
+  frente da praça atravessava a entrada do coreto, centrado nela. E dentro de
+  um lote a ordem também é profundidade: a árvore atrás do coreto, desenhada
+  depois dele, pintava-se por cima do telhado; a moita atrás do muro sai antes
+  dele, e o muro tapa-lhe o pé (`123`).
+- **⚠️ E CLASSIFICAR FACES PELO SINAL PEDE FOLGA.** No octógono do coreto,
+  duas águas ficam de perfil à câmera e `cos + sin` delas dá ±1e-16 em vez de
+  zero: decidir frente e trás por `> 0` punha-as de um lado ao sabor do
+  arredondamento, a prova do D24 escolhia uma delas, e a plataforma ganhava
+  um polígono sem área. A folga é `1e-6` (`123`).
 - **Fileira dupla só lê se a separação passar de UM elemento.** Em isométrico
   duas fileiras separadas por `Δmx` ficam a `Δmx × MEIA_LARG` px na tela. A
   segunda fileira da vila nasceu com 57px de separação para telhados de 78: a

@@ -863,3 +863,12 @@ a mecânica do cancelamento passou para «O jogo hoje», numa linha. E da
 resolução: *«⚠️ **E A MOLDURA SAIU DA VRAM** pelo importador `texture_atlas` —
 **235,68 → 64,04 MB** em jogo, `.pck` −17,4% (`049`).»* — os números vivem na
 `049` e na `projecao.md`.
+
+**E, para caber a vila humilde (`123`),** a descrição da vila no estado foi
+reescrita. Saiu: *«Tem nível (`--nivel-vila=N`): térrea, sobrado, prédio.»* —
+o jogo só mostra o nível 1, e desde a `123` o 2 é a melhoria do mesmo lote —
+e *«**E TRÊS LOTES DA VILA NÃO SÃO CASA** (`022`): uma **igreja** com torre,
+uma **praça** com coreto e **duas obras**, dos lotes VISÍVEIS — a 51 px quem
+distingue é a silhueta, e por isso "comércios variados" ficou de fora.»* — a
+igreja, a praça e a obra continuam, com outro desenho, e a razão da silhueta
+vive na `022` e no gerador.
