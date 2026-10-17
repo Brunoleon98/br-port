@@ -1,4 +1,4 @@
-# 126 — O morro, o chão, a mata do Blender e a restinga das pontas
+# 127 — O morro, o chão, a mata do Blender e a restinga das pontas
 
 **17/10/2026 · item 1 da fila da `125`** — «melhorar o terreno e a
 vegetação». Foto do jogo antes e o escopo perguntado ao Bruno, pela `/arte`.

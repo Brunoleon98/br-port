@@ -27,7 +27,7 @@ extends SceneTree
 # afastaria os props pela largura do NOME, que é exatamente a distância que
 # esta página existe para não inventar.
 #
-# ⚠️ E SÃO DUAS PÁGINAS desde 17/10 (`126`): as dezanove espécies de árvore
+# ⚠️ E SÃO DUAS PÁGINAS desde 17/10 (`127`): as dezanove espécies de árvore
 # levaram-na de 88 a 107 props, e uma página pedia 1515 px em 1280. As filas
 # dividem-se pela ordem — do mais alto ao mais baixo —, a régua abre cada
 # fila nas duas, e a numeração continua de uma para a outra. Como na folha de

@@ -9,7 +9,7 @@ vegetação, (2) estradas, (3) sprites de detalhes. Fora dela: animar as
 marolas e o fio diagonal da ponta norte do cais (`124`), os gates A4 e A7, o
 galpão recuperado V3.
 
-**Decisão `126` — o morro, o chão, a mata do Blender e a restinga**, o item
+**Decisão `127` — o morro, o chão, a mata do Blender e a restinga**, o item
 1. O chão de trás é raster com textura e sobe num morro de mata; as árvores
 são do Blender e balançam (escolha dele), no morro acima do contorno da vila
 e na restinga das pontas com o pé fora da areia; entre as casas vão

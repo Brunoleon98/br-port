@@ -678,7 +678,7 @@ tirar trabalhadores - - --script res://tools/folha_trabalhadores.gd -- "$SAIDA/t
 # pallet no garfo e a empilhadeira parada e com cada sexo ao volante —
 # levaram-no a 234.
 # E TREZE desde 17/10: as dezanove espécies de árvore da mata e da restinga
-# (`126`) levaram-no a 260.
+# (`127`) levaram-no a 260.
 tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 13
 tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 13
 tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 13

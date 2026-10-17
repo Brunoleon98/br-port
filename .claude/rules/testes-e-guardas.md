@@ -461,23 +461,23 @@ guarda.
   do relvado medida contra as que podem estar lá por engano (o muro, a
   parede, a copa), com o corte a meio da banda; e mexer na vila pergunta
   que props pousam por cima dela. E mexer no CHÃO pergunta que bichos: a
-  areia da restinga caiu debaixo do quero-quero (`126`).
+  areia da restinga caiu debaixo do quero-quero (`127`).
 - **⚠️ CONTORNO POR COLUNA É O MÍNIMO DA COLUNA, e a guarda que pergunta se
   ele VÊ uma casa só aperta onde a casa é o mais alto.** O mutante do D47
   que subia um lote 60 px sobreviveu: em quase toda coluna o contorno vem
   de 100 a 350 px acima, de casas e quintais de trás, fora do quadro. O
   defeito que a pergunta caça é o contorno CEGO nas colunas da casa, e é
-  esse o mutante (`126`).
+  esse o mutante (`127`).
 - **PROP NOVO NO `Cenario` RESPONDE ÀS GUARDAS DE TODOS OS PROPS.** As plantas
   da restinga caíram no D2 (seis no asfalto, verdade) e no D15 (equipamento de
   porto na praia — que elas não são). A isenção é pelo nome e diz a espécie,
   nunca o sítio: `Arvore` pode estar no `my` da praia e continua proibida na
-  areia (`126`).
+  areia (`127`).
 - **⚠️ E O SPRITE DA FAUNA TAMBÉM É ATLAS.** A pergunta do D47 «nenhum bicho
   em cima de uma árvore» lia a caixa pelo `get_image()` — a região, com o
   canto em (0, 0) (`049`) — e media 256 px ao lado do bicho: verde de graça
   até o mutante sobreviver duas vezes. Régua que lê pixel de textura de
-  prop ou de bicho passa pelo `PropIso` (`126`).
+  prop ou de bicho passa pelo `PropIso` (`127`).
 
 ## Do «Estilo de código»
 

@@ -283,7 +283,7 @@ func da_cena(cena: String, base: Vector2, raiz: String, r: Dictionary) -> void:
 			if tex.begins_with(PASTA + "/"):
 				r["vistas"].append([tex.get_file(), caminho])
 
-	# ⚠️ A MATA DO MORRO NÃO ESTÁ NO `Main.tscn` (`126`): o `MataNoMapa`
+	# ⚠️ A MATA DO MORRO NÃO ESTÁ NO `Main.tscn` (`127`): o `MataNoMapa`
 	# planta-a em runtime, intercalada pela profundidade, e o estado da cena
 	# não a tem. A âncora de cada espécie é o pé da PRIMEIRA árvore dela na
 	# lista que o jogo planta — sem isto as nove caíam aqui como órfãs, e a
@@ -308,7 +308,7 @@ func da_cena(cena: String, base: Vector2, raiz: String, r: Dictionary) -> void:
 			r["ancoras"][caminho] = base + Vector2(float(a[1]), float(a[2]))
 			r["vistas"].append([String(a[0]) + ".png", caminho])
 		# E as árvores EMBUTIDAS no mapa (a vila e o quintal de trás, segunda
-		# passagem da `126`): não são nós, e a tabela de âncoras publica o pé
+		# passagem da `127`): não são nós, e a tabela de âncoras publica o pé
 		# de cada uma. Ancoram as espécies que nenhum prop da mata usa.
 		var f := FileAccess.open("res://art/porto_mapa_ancoras.json", FileAccess.READ)
 		var tabela = JSON.parse_string(f.get_as_text()) if f != null else null

@@ -9,7 +9,7 @@ pelo `tools/conferir_colaboracao.py`. A fila que ele deu na `121` acabou com a
 
 **Um item por conversa, nesta ordem:**
 
-1. **Terreno e vegetação** — a conversa que a abre (`126`).
+1. **Terreno e vegetação** — a conversa que a abre (`127`).
 2. **Estradas.**
 3. **Sprites de detalhes.**
 

@@ -1,7 +1,7 @@
 extends RefCounted
 
 # ============================================================
-# D47 — a mata do morro e a restinga das pontas (`docs/decisoes/126`)
+# D47 — a mata do morro e a restinga das pontas (`docs/decisoes/127`)
 #
 # Atrás da vila o chão sobe num morro, e a mata dele são props do Blender por
 # cima do mapa, a balançar como os coqueiros — escolha do Bruno em 17/10. Um
@@ -51,20 +51,20 @@ const MEIO_QUADRO := 256.0
 ## contato entra (sai a ~0,4), o véu do denoiser fica de fora.
 const ALFA_MIN := 0.06
 ## Mínimo que uma casa sobe acima do chão do MEIO do lote, em px de TELA.
-## Medido (`126`), nas 23 casas do quadro: a mais baixa (uma meia-água) sobe
+## Medido (`127`), nas 23 casas do quadro: a mais baixa (uma meia-água) sobe
 ## 26,7; um lote SEM casa sobe 16,8 — a quina de trás a 12,8 acima do meio,
 ## o muro de 3,3 e o px de folga do contorno. O corte fica a meio.
 const CASA_MIN := 21.7
 ## Quanto uma árvore tem de girar, no máximo da rajada, para contar como
 ## balanço: metade da amplitude.
 const GIRO_MIN := 0.011
-## Colunas de PNG com desenho, no mínimo, por árvore. Medido (`126`): a peça
+## Colunas de PNG com desenho, no mínimo, por árvore. Medido (`127`): a peça
 ## mais estreita da mata é a moita b, com 32 colunas acima de `ALFA_MIN` (a
 ## copa pequena tem 53). O corte fica a três quartos dela — abaixo disto a
 ## guarda não olhou para a árvore.
 const COLUNAS_MIN := 24
 ## Alfa a partir do qual um pixel é DESENHO e não sombra de contato: a
-## sombra sai a 0,40–0,45 em todos os props, medido em 17/10 (`126`), e o
+## sombra sai a 0,40–0,45 em todos os props, medido em 17/10 (`127`), e o
 ## corpo acima de 0,6 — a régua de TAMANHO do `arte.md` corta no mesmo 0,5.
 const ALFA_OPACO := 0.5
 ## Meia largura, em px de TELA, das colunas do tronco que o §3b lê.

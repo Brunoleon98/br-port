@@ -400,7 +400,7 @@ C = {
     "vidro": "#7fb6cc", "porta": "#5a3a20", "terra": "#8a7a63",
     "terra_clara": "#9c8b71", "terra_escura": "#75664f", "poca": "#6b6f66",
     "mato": "#5c7343",
-    # A RESTINGA (`126`): o capim-da-praia em dois tons, o verde e a palha,
+    # A RESTINGA (`127`): o capim-da-praia em dois tons, o verde e a palha,
     # porque o chão dele vai do relvado à areia e nenhum tom só ganha os dois
     # fundos (`arte.md`); e a salsa-da-praia, a rasteira de flor roxa que
     # desce a duna.
@@ -430,7 +430,7 @@ C = {
     # vegetação do mapa era um verde só. O capim já era o traço mais claro do
     # solo — passou a ser claro o bastante para se ver.
     "mangue": "#425f3c", "mangue_raiz": "#5a4a34", "capim": "#6fbf4e",
-    # O CHÃO DA MATA (`126`): o que se vê entre as copas do morro é sombra e
+    # O CHÃO DA MATA (`127`): o que se vê entre as copas do morro é sombra e
     # folha caída, e não relvado. Escuro de propósito — 81 de luminância contra
     # os 134 do `solo` —, para a fresta entre duas copas ler como fundo da mata
     # e não como clareira. Era #55663a (95), e a segunda passagem escureceu-o
@@ -1098,7 +1098,7 @@ def vegetacao_do_solo(indice: int, mx0: float, my0: float, mx1: float,
     chão deste jogo é um SVG gerado, e uma moita que muda de estado não existe.
 
     ⚠️ ESTA FUNÇÃO DESENHAVA A MATA INTEIRA ATÉ 17/10, e duas das três partes
-    saíram dela (`126`):
+    saíram dela (`127`):
 
     - a VARIAÇÃO DE TOM — cinco manchas escuras a 0,22, que tiravam a chapa e
       pouco mais — é hoje o campo do chão (`campo_do_chao`), com ruído em
@@ -1140,7 +1140,7 @@ def vegetacao_do_solo(indice: int, mx0: float, my0: float, mx1: float,
     return s
 
 
-# ── O MORRO E O CHÃO (`126`) ─────────────────────────────────────────────
+# ── O MORRO E O CHÃO (`127`) ─────────────────────────────────────────────
 #
 # O Bruno escolheu, em 17/10, «encosta de mata»: o chão sobe atrás da vila até
 # a borda de cima do quadro, todo coberto de mata, e a vila fica ao pé do
@@ -1454,7 +1454,7 @@ def campo_do_chao() -> str:
             % "".join(recorte)) + _imagem_embutida(bytes(pixels)) + '  </g>\n'
 
 
-# ── A MATA DO MORRO: onde cada árvore pousa (`126`) ──────────────────────
+# ── A MATA DO MORRO: onde cada árvore pousa (`127`) ──────────────────────
 #
 # As árvores são PROPS do Blender por cima do mapa — o Bruno quis que
 # balançassem como os coqueiros —, e um prop por cima do mapa pinta-se por
@@ -1706,7 +1706,7 @@ def arvores_da_mata() -> list:
     return [o[:6] for o in postas]
 
 
-# ── A RESTINGA DAS PONTAS: onde pousa cada planta (`126`) ─────────────────
+# ── A RESTINGA DAS PONTAS: onde pousa cada planta (`127`) ─────────────────
 #
 # Os mesmos props que balançam, entre a rua e a duna. Aqui o perigo não é a
 # vila: a restinga está À FRENTE da rua, e uma copa que suba por cima do
@@ -1923,7 +1923,7 @@ def plantas_do_mapa() -> list:
         + [(*o, "restinga") for o in arvores_da_restinga()]
 
 
-# ── AS ÁRVORES EMBUTIDAS: o desenho do Blender DENTRO do mapa (`126`) ─────
+# ── AS ÁRVORES EMBUTIDAS: o desenho do Blender DENTRO do mapa (`127`) ─────
 #
 # Segunda passagem: o Bruno marcou «árvores dos quintais» (as copas em SVG da
 # vila, no desenho antigo) e pediu no «Outro» árvores «no meio da cidade
@@ -1964,11 +1964,11 @@ def arvore_embutida(variante: str, mx: float, my: float, escala: float,
 def arvore_da_cidade(mx: float, my: float, raio: float, r: random.Random,
                      luz: float = 0.5, teto: float = 0.8) -> str:
     """A árvore de um quintal ou da praça, com a assinatura da antiga `arvore()`
-    em SVG (que saiu na `126`, com a restinga): quem a chamava não mudou.
+    em SVG (que saiu na `127`, com a restinga): quem a chamava não mudou.
 
     O `raio` escolhe o tamanho, a `luz` qual das duas variantes de cada um, e
     um sorteio a espécie.
-    ⚠️ TERCEIRA PASSAGEM (`126`): «árvores repetidas» pediu a segunda
+    ⚠️ TERCEIRA PASSAGEM (`127`): «árvores repetidas» pediu a segunda
     variante de cada tamanho; «mais cor na vila», os ipês e a mangueira;
     «árvores demais», um teto de escala.
     ⚠️ E A QUARTA: «pode variar as árvores na vila com versões menores das
@@ -3207,7 +3207,7 @@ def _pontos_da_praia(t0: float, amp: float, fase: float, my_a: float,
                      my_b: float, passo: float = 0.30) -> list:
     """A mesma linha em (mx, my, q) do MUNDO — `q` é a fração da altura do cais.
 
-    O chão da restinga mede a distância de cada pixel à crista (`126`), e essa
+    O chão da restinga mede a distância de cada pixel à crista (`127`), e essa
     conta faz-se no mundo: na tela o isométrico estica a direção (1, −1) e
     comprime a (1, 1), e a mesma distância daria dois números.
     """
@@ -3321,7 +3321,7 @@ def praia_chao(indice: int, my_a: float, my_b: float) -> str:
     return s
 
 
-# A RESTINGA DAS PONTAS (`126`). Da crista para dentro, como na restinga de
+# A RESTINGA DAS PONTAS (`127`). Da crista para dentro, como na restinga de
 # verdade: a areia ainda aparece entre a relva (o chão, em `campo_do_chao`),
 # o capim-da-praia fecha-se junto da duna e rareia para trás, a salsa-da-praia
 # desce a areia (`praia_areia`), e os arbustos e as árvores baixas — a
@@ -3334,7 +3334,7 @@ RESTINGA_MANCHAS = 2.6   # até onde ainda há manchas de areia na relva
 def restinga_rasteira(indice: int, my_a: float, my_b: float) -> str:
     """O capim-da-praia da restinga: denso junto da crista, raro para trás.
 
-    ⚠️ VEM DEPOIS DO CAMPO DO CHÃO, e não com o chão da praia. Até à `126` o
+    ⚠️ VEM DEPOIS DO CAMPO DO CHÃO, e não com o chão da praia. Até à `127` o
     capim saía em `praia_chao` — antes da rua e da vila, que é a lição de
     04/09 (desenhado depois de uma casa, cai-lhe em cima). Continua antes
     delas; mas o chão da restinga passou a ser o raster do `campo_do_chao`,
@@ -3579,7 +3579,7 @@ def altura_do_telhado(x0, y0, x1, y1) -> float:
 
 
 # A SOMBRA anda na direção da das árvores antigas do mapa (a `arvore()` em
-# SVG, que saiu com a restinga da `126`: 0,72 para +mx e 0,52
+# SVG, que saiu com a restinga da `127`: 0,72 para +mx e 0,52
 # para +my por raio de copa), mais curta por pixel de altura: medida na copa,
 # a árvore lança ~0,016 unidades por px, e uma casa com essa razão cobriria o
 # passeio inteiro até ao asfalto. A esta razão a de uma térrea acaba no
@@ -5307,7 +5307,7 @@ def vila(nivel: int, pavimentado: bool) -> str:
         moita = False
         # Na fileira de trás planta-se mais: é ela que desfia a vila contra a
         # mata, e é a árvore — não o vão vazio — que faz a orla parecer orla.
-        # ⚠️ ERA 0,85 E 0,55, com a copa em SVG: na segunda passagem da `126`
+        # ⚠️ ERA 0,85 E 0,55, com a copa em SVG: na segunda passagem da `127`
         # o Bruno pediu árvores «no meio da cidade para não ficar sem nada»,
         # e as do Blender entram no mesmo sítio da ordem de desenho.
         # ⚠️ E NA TERCEIRA PASSAGEM a da frente desceu a 0,5: «árvores demais
@@ -5861,7 +5861,7 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
                           *p(borda - APRON + 0.05, a + 0.3, ALT_CAIS),
                           *p(borda - APRON + 0.05, b - 0.3, ALT_CAIS)))
 
-    # O CHÃO DE TRÁS, com textura e com o morro (`126`): depois do laço,
+    # O CHÃO DE TRÁS, com textura e com o morro (`127`): depois do laço,
     # porque o recorte é a união do solo de todos os degraus e o morro de um
     # degrau sobe, na tela, por cima da faixa do vizinho; antes da mata baixa,
     # que cresce nele, e da rua e da vila, que estão à frente dele.
@@ -6354,7 +6354,7 @@ def tabela_ancoras() -> dict:
                           "telha_torre": C["telha_torre"]},
         "provas_da_vila": [{"lote": i, **v}
                            for i, v in sorted(pontos_de_prova().items())],
-        # A MATA DO MORRO (`126`): onde pousa o pé de cada árvore do Blender,
+        # A MATA DO MORRO (`127`): onde pousa o pé de cada árvore do Blender,
         # pela ordem de profundidade, e o CONTORNO DA VILA que nenhuma delas
         # pode atravessar — a linha mais alta que a vila e as vias pintam em
         # cada coluna da tela. O D47 lê os dois: confere a cópia do
@@ -6368,7 +6368,7 @@ def tabela_ancoras() -> dict:
                  for v, mx, my, h, x, y, chao in plantas_do_mapa()],
         "cristas": [[list(q) for q in c] for c in cristas_da_tela()],
         "horizonte_da_vila": horizonte_da_vila(),
-        # As árvores EMBUTIDAS no mapa (`126`, segunda passagem): a da vila e a
+        # As árvores EMBUTIDAS no mapa (`127`, segunda passagem): a da vila e a
         # mata baixa do quintal de trás. Não são nós da cena; o catálogo da
         # folha dos props ancora nelas as espécies que não são prop.
         "arvores_embutidas": [{"arvore": v, "pe": [x, y], "escala": k}

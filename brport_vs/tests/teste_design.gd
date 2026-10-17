@@ -378,7 +378,7 @@ func _rodar() -> void:
 #      prop plantado nela fica com o pé no ar;
 #   2. só quem é da praia fica no `my` de uma praia. Coqueiro pode (a
 #      referência pede "pedras e coqueiros"), e as plantas da restinga
-#      (`Arvore*`, do `MataNoMapa`, `126`) também; empilhadeira, palete, pilha
+#      (`Arvore*`, do `MataNoMapa`, `127`) também; empilhadeira, palete, pilha
 #      de caixotes e contêiner, não. A mata do morro também se chama `Arvore`
 #      e nunca está no `my` de uma praia — o nome isenta a espécie, não o
 #      sítio: a pergunta 1 continua a valer para todas;

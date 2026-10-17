@@ -34,7 +34,7 @@ const NarradoraDaCida := preload("res://scripts/NarradoraDaCida.gd")
 # dia, do dia em que se paga ao dia em que ficam prontos. `preload` pela razão
 # do tráfego: ele lê o `GameState` pelo nome.
 const ObraNoMapa := preload("res://scripts/ObraNoMapa.gd")
-# A MATA DO MORRO (`docs/decisoes/126`): as árvores do Blender atrás da vila,
+# A MATA DO MORRO (`docs/decisoes/127`): as árvores do Blender atrás da vila,
 # intercaladas no `Cenario` pela profundidade e a balançar como os coqueiros.
 const MataNoMapa := preload("res://scripts/MataNoMapa.gd")
 # A FILA DAS TELAS QUE ABREM SOZINHAS, num script seu desde o terceiro corte

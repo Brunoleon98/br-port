@@ -227,7 +227,7 @@ PALETA = {
     "metal": "#4a535a", "metal_claro": "#6d7880",
     "casco": "#24466e", "faixa": "#c23030", "cabine": "#eef2f5",
     "tronco": "#8a5a34", "folha": "#2d7a3a", "folha_clara": "#4a9c58",
-    # A MATA DO MORRO (`126`): quatro espécies da mata atlântica, cada uma com
+    # A MATA DO MORRO (`127`): quatro espécies da mata atlântica, cada uma com
     # a marca que a separa das outras a 40 px — o verde fundo da copa redonda,
     # a palmeira-juçara fina e alta, a embaúba de folha PRATEADA e o ipê
     # florido, o único acento de cor. O tronco da mata é cinzento-castanho e
@@ -242,7 +242,7 @@ PALETA = {
     # O SOL NO ALTO DA COPA: um quarto tom, só nas bolas de cima, para a copa
     # ter um lado que a luz bate e não ser um repolho de três verdes.
     "folha_sol": "#6aa84f",
-    # AS COPAS TÊM PALETA PRÓPRIA desde a terceira passagem (`126`): o Bruno
+    # AS COPAS TÊM PALETA PRÓPRIA desde a terceira passagem (`127`): o Bruno
     # pediu-as «mais parecidas com as árvores anteriores», as do mapa em SVG
     # (`copa` #3e8f3a com `copa_luz` #6fbf4e). Os quatro tons sobem para esse
     # verde, e o `folha` do coqueiro fica onde estava — ele partilha a cor.
@@ -256,7 +256,7 @@ PALETA = {
     "mata_esc": "#1f4f26", "mata_mei": "#2c6431", "mata_cla": "#3f7d3a",
     # A MANGUEIRA: copa larga e escura, e a fruta é o ponto de cor quente.
     "manga": "#e3a02e", "manga_madura": "#d0582c",
-    # A RESTINGA DAS PONTAS (`126`, a segunda frente): verde-OLIVA, mais
+    # A RESTINGA DAS PONTAS (`127`, a segunda frente): verde-OLIVA, mais
     # amarelo e mais baço do que a mata — é o sol, o sal e a areia —, para a
     # orla ler outra vegetação e não a mata do morro trazida à praia.
     "restinga_esc": "#3d5a2c", "restinga_mei": "#557236", "restinga_cla": "#738c45",
@@ -1644,7 +1644,7 @@ def copa_bolas(nome, lobos, M):
             for i, (c, r) in enumerate(lobos)]
 
 
-# ── A MATA DO MORRO (`126`) ───────────────────────────────────────────────
+# ── A MATA DO MORRO (`127`) ───────────────────────────────────────────────
 #
 # O Bruno escolheu, em 17/10, árvores do Blender que BALANÇAM como os
 # coqueiros, em quatro espécies: copa redonda, palmeira-juçara, embaúba e ipê
@@ -1661,7 +1661,7 @@ def copa_bolas(nome, lobos, M):
 def bola_facetada(nome, centro, raios, mat, rng):
     """Um tufo de copa em FACETAS chapadas, e não uma esfera lisa.
 
-    ⚠️ A COPA JÁ FOI DE DOIS JEITOS, e nenhum casou com o mapa (`126`). A
+    ⚠️ A COPA JÁ FOI DE DOIS JEITOS, e nenhum casou com o mapa (`127`). A
     primeira era de bolas lisas — nuvem ou repolho. A segunda pôs-lhes relevo
     de ruído (um Displace de nuvem), e o Bruno respondeu que a textura «está
     estranha em relação ao jogo» e pediu algo «mais parecido com as árvores
@@ -5146,7 +5146,7 @@ def montar(M: dict) -> dict:
                          0.085, 0.085, 0.14, 6, M["madeira_esc"]))
     grupos["coqueiro_copa"] = copa
 
-    # -- A MATA DO MORRO (`126`): quatro espécies, nove variantes --------
+    # -- A MATA DO MORRO (`127`): quatro espécies, nove variantes --------
     # Os tamanhos estão em unidades do mundo e em `z` do Blender, à régua do
     # coqueiro (copa a 2,34): a copa grande é a árvore adulta da mata, mais
     # larga e um pouco mais baixa do que ele; a juçara passa-o, porque é ela
@@ -5192,7 +5192,7 @@ def montar(M: dict) -> dict:
                               (0.12, 0.12, 0.14),
                               M["manga"] if i % 3 else M["manga_madura"]))
     grupos["arvore_mangueira"] = mangueira
-    # AS MOITAS DO QUINTAL (`126`, segunda passagem): o Bruno marcou o
+    # AS MOITAS DO QUINTAL (`127`, segunda passagem): o Bruno marcou o
     # «quintal vazio atrás das casas». Sem tronco, baixas e largas, para
     # encherem a faixa entre a vila e a mata sem subirem por cima de nada.
     rm = random.Random(126010)
@@ -6589,7 +6589,7 @@ SOMBRA = {"galpao", "galpao_velho", "galpao_obra_0", "galpao_obra_1",
           "escritorio", "escritorio_ruina",
           "patio_obra_0", "patio_obra_1", "patio_obra_2",
           "coqueiro_tronco",
-          # As árvores da mata (`126`) pousam no chão do morro, como o tronco
+          # As árvores da mata (`127`) pousam no chão do morro, como o tronco
           # do coqueiro; a copa do coqueiro não, porque pousa no tronco.
           "arvore_copa_m", "arvore_copa_p",
           "arvore_jucara_a", "arvore_jucara_b",
@@ -6599,7 +6599,7 @@ SOMBRA = {"galpao", "galpao_velho", "galpao_obra_0", "galpao_obra_1",
           "arvore_copa_m2", "arvore_copa_p2", "arvore_mata_a", "arvore_mata_b",
           "arvore_mangueira", "arvore_aroeira_a", "arvore_aroeira_b",
           "arvore_guriri_a", "arvore_guriri_b"}
-# ⚠️ AS ÁRVORES DA MATA PEDEM O SOL QUASE A PINO (`126`). Aos 62° dos prédios
+# ⚠️ AS ÁRVORES DA MATA PEDEM O SOL QUASE A PINO (`127`). Aos 62° dos prédios
 # a sombra da copa grande descia 64 px abaixo do pé e corria 69 para a
 # direita: numa mata no morro ela cairia por cima das árvores da frente, e o
 # mapa teria de as afastar todas da vila para a sombra não tocar um telhado.
@@ -6645,7 +6645,7 @@ def render_sombra(cena, grupo, caminho: str, zenite: float = 62.0) -> None:
     Por que a chave sobe para 62°: nos 48° do mapa a sombra sai comprida e o
     sprite ganha um rabo escuro atravessado. Sombra de sprite serve para grudar
     a peça no chão, não para contar a hora do dia.
-    ⚠️ (`126`) O número é o ângulo a partir da VERTICAL — o X do
+    ⚠️ (`127`) O número é o ângulo a partir da VERTICAL — o X do
     `rotation_euler` tomba a luz a partir de −Z —, e 62° é um sol MAIS baixo do
     que 48°, não mais alto: medido nas árvores da mata, 62° deu uma sombra de
     64 px abaixo do pé, 82° de 119 e 20° de 21. Para elas o zénite é 20°
@@ -6734,13 +6734,13 @@ def medir_arvores(saida: str) -> str:
     e a mais baixa com desenho — sombra incluída, porque a sombra também se
     pintaria por cima de um telhado. O `gerar_mapa_iso.py` lê isto e só põe
     uma árvore onde a coluna inteira dela fica acima do contorno da vila
-    (`126`); quem CONFERE é o teste de design, nos pixels do PNG que o jogo
+    (`127`); quem CONFERE é o teste de design, nos pixels do PNG que o jogo
     carrega — duas fontes, e a que gera é mais folgada do que a que confere.
 
     Mede TODAS as árvores da pasta, e não só as desta corrida: renderizar uma
     espécie não pode apagar o perfil das outras.
 
-    E guarda o RECORTE de cada uma (`126`, segunda passagem): o PNG aparado ao
+    E guarda o RECORTE de cada uma (`127`, segunda passagem): o PNG aparado ao
     desenho, em base64, e onde ele cai no quadro de 768. As árvores da CIDADE
     entram no mapa embutidas no SVG, na ordem de profundidade da vila — é o
     que as deixa ficar entre as casas, que um prop por cima do mapa não pode

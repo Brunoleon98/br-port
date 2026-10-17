@@ -226,7 +226,7 @@ xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3
 
 O log repete o contexto e os números, e é o que se lê sem abrir a imagem. A
 proporção de um prop contra o resto do catálogo está na `escala.png` e na
-`escala2.png` da bateria (duas páginas desde a `126`): todos a 1:1, com o pé
+`escala2.png` da bateria (duas páginas desde a `127`): todos a 1:1, com o pé
 na mesma linha.
 
 ---
@@ -462,7 +462,7 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   entraram numa passagem só delas, com o nome de cada uma na prancha. Ele
   aceitou essa. Os pares em blocos seguidos voltaram 3 de 4; o que falhou foi
   um reinício do worker com a pergunta pendente, e a pergunta sozinha voltou.
-  ⚠️ **E NA `126` (o terreno) ELE ESCOLHEU CONTRA A RECOMENDADA DUAS
+  ⚠️ **E NA `127` (o terreno) ELE ESCOLHEU CONTRA A RECOMENDADA DUAS
   VEZES** — árvores do Blender e que balançam, contra «no mapa, paradas» —,
   e a escolha tinha um preço que ele não viu: um prop por cima do mapa não
   fica atrás de uma casa. Pagou-se sem nova pergunta (a mata acima do

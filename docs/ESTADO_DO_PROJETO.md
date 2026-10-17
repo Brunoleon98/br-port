@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 17/10/2026 — o terreno e a vegetação (`126`)
+> **Atualização:** 17/10/2026 — o terreno e a vegetação (`127`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -44,7 +44,7 @@ arrebentação e cáusticas nas praias; a sombra do muro esvai.
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
 a forma; D20/D21/D24/D27 conferem o raster.
 
-**O chão é raster com textura e sobe num MORRO de mata atrás da vila** (`126`,
+**O chão é raster com textura e sobe num MORRO de mata atrás da vila** (`127`,
 **D47**). As árvores são do Blender e BALANÇAM: no morro, acima do contorno da
 vila; na **restinga** das pontas — areia na relva, capim, salsa, aroeira e
 guriri — com o pé fora da areia. Entre as casas, as mesmas vão EMBUTIDAS no
@@ -120,7 +120,7 @@ A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
 **Na main:** cancelamento, pesquisa de recursos e ajuda (`109`–`116`; da
 ajuda faltam leitura e telefone), a obra, o maquinário e a vila (`121`–`123`).
-**A fila da `125`** (§7): terreno e vegetação (`126`), **não aceite**,
+**A fila da `125`** (§7): terreno e vegetação (`127`), **não aceite**,
 continua; depois, estradas e detalhes.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
@@ -191,7 +191,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/medir_desempenho.gd` | **A régua do custo por quadro** — desenho, nós e o `_process` pela chamada direta, calibrada; `xvfb-run`, `DESEMPENHO MEDIDO` (`099`) |
 | `playtest/` | As partidas reais do A7, uma por `.jsonl`, sem o nome de quem jogou (`006`, `099`) |
 | `brport_vs/scripts/TrafegoDeCamioes.gd` | **Os camiões da rua** — rotas, cedência, visita ao berço; objeto do `Main`, lido pelo `trafego` (`095`) |
-| `brport_vs/scripts/MataNoMapa.gd` | **A mata que balança**, do morro e da restinga, entre os irmãos do `Cenario` pela profundidade (`126`) |
+| `brport_vs/scripts/MataNoMapa.gd` | **A mata que balança**, do morro e da restinga, entre os irmãos do `Cenario` pela profundidade (`127`) |
 | `brport_vs/scripts/ObraNoMapa.gd` | **A obra no mapa** — o armazém e o pátio de cada dia; o asfalto é o mapa pronto recortado (`121`, D45). Foto de um dia de obra: `tools/capturar_obra.gd` (`122`) |
 | `brport_vs/scripts/NarradoraDaCida.gd` | **A Dona Cida na faixa** — gatilhos, variantes e memórias; objeto do `Main` (`096`) |
 | `brport_vs/scripts/TutorialDoToninho.gd` | **O tutorial do dia 1** — atracar e avançar, por cima do jogo e sem save; objeto do `Main` (`101`) |

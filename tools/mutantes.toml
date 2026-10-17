@@ -850,7 +850,7 @@ antes = '<ellipse cx="924" cy="903" rx="149" ry="76" fill="url(#mfunda)"'
 depois = '<ellipse cx="924" cy="903" rx="149" ry="76" fill="url(#mrasa)"'
 reprova = { teste_design = "nenhuma mancha clara no mar aberto" }
 
-# ── A MATA DO MORRO E A RESTINGA DAS PONTAS (`126`) ────────────────────────
+# ── A MATA DO MORRO E A RESTINGA DAS PONTAS (`127`) ────────────────────────
 # As árvores são props que balançam, por cima do mapa, e o D47 pergunta o que
 # isso arrisca: a cópia do jogo contra a tabela, a árvore maior do que o sítio
 # dela (por cima da vila), a planta da restinga com o pé na areia, o contorno
@@ -871,7 +871,7 @@ reprova = { teste_design = "nenhuma mancha clara no mar aberto" }
 
 [[mutante]]
 id = "mata-copia-desalinhada"
-de = "126"
+de = "127"
 o_que = "a cópia do MataNoMapa.gd fica com uma árvore 10 px fora do sítio da tabela"
 alvo = "brport_vs/scripts/MataNoMapa.gd"
 antes = '["arvore_mata_b", 20.4, 25.9],'
@@ -880,7 +880,7 @@ reprova = { teste_design = "a cópia da mata confere com a tabela" }
 
 [[mutante]]
 id = "mata-arvore-maior"
-de = "126"
+de = "127"
 o_que = "a moita pequena junto da vila passa a desenhar a copa grande da mata, e pinta por cima dos telhados"
 alvo = "brport_vs/scripts/MataNoMapa.gd"
 antes = '"arvore_moita_b": preload("res://art/props/arvore_moita_b.png"),'
@@ -889,7 +889,7 @@ reprova = { teste_design = "nenhuma árvore pinta por cima da vila" }
 
 [[mutante]]
 id = "restinga-pe-na-areia"
-de = "126"
+de = "127"
 o_que = "o guriri passa a desenhar um prédio cujo pé desce meio quadro abaixo do sítio, pela duna abaixo"
 alvo = "brport_vs/scripts/MataNoMapa.gd"
 antes = '"arvore_guriri_a": preload("res://art/props/arvore_guriri_a.png"),'
@@ -898,7 +898,7 @@ reprova = { teste_design = "nenhuma planta da restinga desce à areia" }
 
 [[mutante]]
 id = "mata-contorno-cego"
-de = "126"
+de = "127"
 o_que = "o contorno da vila fica cego nas colunas de uma casa (a em L do lote my=0,14), e uma árvore ali podia pintar-lhe o telhado"
 alvo = "brport_vs/art/porto_mapa_ancoras.json"
 antes = '''
@@ -919,7 +919,7 @@ reprova = { teste_design = "o contorno sobe acima de cada casa" }
 
 [[mutante]]
 id = "fauna-em-cima-da-arvore"
-de = "126"
+de = "127"
 o_que = "o quero-quero pousa em cima da moita grande da restinga norte, e pinta-se por cima dela"
 alvo = "brport_vs/scenes/Main.tscn"
 antes = 'position = Vector2(456, 76)'
@@ -928,7 +928,7 @@ reprova = { teste_design = "nenhum bicho da fauna cai em cima de uma árvore" }
 
 [[mutante]]
 id = "mata-parada"
-de = "126"
+de = "127"
 o_que = "o Main monta a mata e não a anima: as árvores ficam paradas ao lado dos coqueiros que balançam"
 alvo = "brport_vs/scripts/Main.gd"
 antes = '''
@@ -940,7 +940,7 @@ reprova = { teste_design = "cada árvore tem a sua rajada" }
 
 [[mutante]]
 id = "mata-gira-fora-do-pe"
-de = "126"
+de = "127"
 o_que = "a árvore gira em volta do pivô da copa do coqueiro, e o pé escorrega pelo chão a cada rajada"
 alvo = "brport_vs/scripts/MataNoMapa.gd"
 antes = 'no.pivot_offset = Vector2(MEIO_QUADRO, MEIO_QUADRO)'
@@ -949,7 +949,7 @@ reprova = { teste_design = "cada árvore gira em volta do pé" }
 
 [[mutante]]
 id = "mata-fora-da-profundidade"
-de = "126"
+de = "127"
 o_que = "as árvores entram no fim do Cenario, e pintam-se por cima de tudo o que lhes está à frente"
 alvo = "brport_vs/scripts/MataNoMapa.gd"
 antes = '''
@@ -961,7 +961,7 @@ reprova = { teste_design = "vem depois de quem está atrás" }
 
 [[mutante]]
 id = "restinga-tapa-coqueiro"
-de = "126"
+de = "127"
 o_que = "a aroeira pequena junto do coqueiro sul passa a desenhar a copa grande, e tapa-lhe o tronco"
 alvo = "brport_vs/scripts/MataNoMapa.gd"
 antes = '"arvore_aroeira_b": preload("res://art/props/arvore_aroeira_b.png"),'
