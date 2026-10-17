@@ -61,6 +61,7 @@ const PainelMetaScene := preload("res://scenes/panels/PainelMeta.tscn")
 const DiarioFase2Scene := preload("res://scenes/panels/DiarioFase2.tscn")
 const PainelParcelaScene := preload("res://scenes/panels/PainelParcela.tscn")
 const PainelAjustesScene := preload("res://scenes/panels/PainelAjustes.tscn")
+const DiagnosticoScene := preload("res://scenes/panels/PainelDiagnostico.tscn")
 const ComoJogarScene := preload("res://scenes/panels/PainelComoJogar.tscn")
 # A tela inicial é uma CENA e não um painel: sair para ela troca a árvore
 # inteira, e é por isso que ela não está com os painéis acima (`066`).
@@ -1132,6 +1133,14 @@ func _on_pause_pressed() -> void:
 		_abrir_painel(PainelAjustesScene).call("setup"))
 	menu.connect("sair_para_inicio", _sair_para_inicio)
 	menu.connect("pedir_como_jogar", _abrir_como_jogar)
+	menu.connect("pedir_diagnostico", _abrir_diagnostico)
+
+
+func _abrir_diagnostico() -> void:
+	for filho in _overlay_layer.get_children():
+		if filho.scene_file_path == DiagnosticoScene.resource_path and not filho.is_queued_for_deletion():
+			return
+	_abrir_painel(DiagnosticoScene)
 
 
 func _abrir_como_jogar() -> void:

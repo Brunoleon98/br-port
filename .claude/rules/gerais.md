@@ -266,6 +266,13 @@ renumerou foi ela, para `126` e `127`.
 
 ## Ambiente (de «Como rodar»)
 
+**Bruno também acompanha pelo celular, onde pedidos de permissão podem não
+aparecer.** Prefira ferramentas conectadas e reaproveite as autorizações já
+dadas, sem pedir de novo dentro do recorte. Não baseie a continuidade em ele
+abrir outra interface para descobrir um bloqueio: se uma aprovação da
+plataforma for indispensável, explique no chat a ação e a razão. Não se
+promete persistência de permissões entre conversas nem se contorna uma recusa.
+
 **Literais multilinha no Windows precisam do conteúdo LF do Git.** Medido em
 `086`: CRLF no checkout de `Narrativa.gd` impedia o separador `\n\n—\n\n`
 de dividir o caderno, causando cinco falhas de design. A mesma base com LF

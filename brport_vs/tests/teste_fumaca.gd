@@ -4165,7 +4165,7 @@ func _f16_tela_inicial() -> void:
 	_f16_textos_de_botao(cena, textos)
 	var ultima := cena.find_child("UltimaPartida", true, false) as Label
 	_confere("F16 tela inicial: ajuda entre Carregar e Ajustes com portos guardados",
-		textos == ["Continuar", "Nova partida", "Carregar", "Como jogar", "Ajustes"], str(textos))
+		textos == ["Continuar", "Nova partida", "Carregar", "Como jogar", "Ajustes", "Versão e diagnóstico"], str(textos))
 	_confere("F16 tela inicial: «%s» é o porto jogado por último, não o espaço em uso" % (ultima.text if ultima else "?"),
 		ultima != null and ultima.text.contains("Um") and not ultima.text.contains("Dois"))
 	root.remove_child(cena)
@@ -4180,7 +4180,7 @@ func _f16_tela_inicial() -> void:
 	textos.clear()
 	_f16_textos_de_botao(vazia, textos)
 	_confere("F16 tela inicial: ajuda entre Nova partida e Ajustes sem porto guardado",
-		textos == ["Nova partida", "Como jogar", "Ajustes"], str(textos))
+		textos == ["Nova partida", "Como jogar", "Ajustes", "Versão e diagnóstico"], str(textos))
 	root.remove_child(vazia)
 	vazia.free()
 	# Os dois portos voltam, pela mesma porta, para os blocos seguintes.
@@ -4195,7 +4195,7 @@ func _f16_pausa() -> void:
 	var textos: Array = []
 	_f16_textos_de_botao(pausa, textos)
 	_confere("F16 pausa: ajuda entre Continuar e Ajustes (%s)" % ", ".join(textos),
-		textos == ["Continuar", "Como jogar", "Ajustes", "Salvar e sair"])
+		textos == ["Continuar", "Como jogar", "Ajustes", "Versão e diagnóstico", "Salvar e sair"])
 	var destrutivo := textos.filter(func(t: String) -> bool:
 		return t.containsn("novo jogo") or t.containsn("apaga"))
 	_confere("F16 pausa: nenhum botão apaga a partida", destrutivo.is_empty(), str(destrutivo))

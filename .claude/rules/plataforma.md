@@ -49,6 +49,12 @@ o FPS mede-se no telefone (`099`).
 
 ## O Web, provado aqui (`099`)
 
+**A identificação do build é gerada antes do export** (`128`), por
+`tools/gerar_identificacao_build.py`; o recurso ignorado pelo Git entra nos
+pacotes. Não copie um SHA para o código: identifique a árvore exportada e
+marque modificações. O editor ignora esse recurso, que pode ser sobra de
+outro export. O job confere a identificação dentro do `.pck`, contra o Git.
+
 **O Pages publica o Web da `main` verde**, e o link é o que se manda a quem
 vai testar; o protótipo HTML da raiz passou a `/prototipo/`. ⚠️ Só corre com a
 fonte do Pages em «GitHub Actions», que é configuração do repositório.

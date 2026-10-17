@@ -1705,6 +1705,9 @@ func _run() -> void:
 	var retomada = load("res://tests/casos_meu_porto.gd").new()
 	await retomada.rodar(GS, self)
 	_check("T27: resumo de retomada e consulta sem efeitos", retomada.completo and retomada.falhas == 0)
+	var diagnostico = load("res://tests/casos_diagnostico.gd").new()
+	await diagnostico.rodar(GS, self)
+	_check("T28: identidade, prévia, cópia e consulta sem efeitos", diagnostico.completo and diagnostico.falhas == 0)
 
 	print("")
 	if _fails == 0:

@@ -1096,3 +1096,64 @@ alvo = "brport_vs/scripts/ConteudoMeuPorto.gd"
 antes = 'var encerrada: bool = gs.phase == gs.ESTADO_FIM'
 depois = 'var encerrada: bool = false'
 reprova = { run_tests = "T27: encerrada não promete obra nem recebimento futuros" }
+
+# ── VERSÃO E DIAGNÓSTICO (`128`) ──────────────────────────────────────────
+
+[[mutante]]
+id = "diagnostico-copia-diferente"
+de = "128"
+o_que = "A cópia acrescenta texto que a prévia não mostrou"
+alvo = "brport_vs/scripts/PainelDiagnostico.gd"
+antes = '''	_copiador.call("copiar", _previa.text)'''
+depois = '''	_copiador.call("copiar", _previa.text + "\nextra")'''
+reprova = { run_tests = "T28: copia exatamente a prévia por ação explícita" }
+
+[[mutante]]
+id = "diagnostico-falso-sucesso"
+de = "128"
+o_que = "A recusa da cópia é anunciada como sucesso"
+alvo = "brport_vs/scripts/PainelDiagnostico.gd"
+antes = '''
+	if sucesso:
+'''
+depois = '''
+	if true:
+'''
+reprova = { run_tests = "T28: falha não anuncia sucesso e permite tentar de novo" }
+
+[[mutante]]
+id = "diagnostico-copia-ao-abrir"
+de = "128"
+o_que = "Abrir a consulta já tenta copiar sem gesto do jogador"
+alvo = "brport_vs/scripts/PainelDiagnostico.gd"
+antes = '''
+	voltar.custom_minimum_size.y = ALTURA_BOTAO
+'''
+depois = '''
+	voltar.custom_minimum_size.y = ALTURA_BOTAO
+	_copiar_diagnostico()
+'''
+reprova = { run_tests = "T28: abrir não inicia cópia automaticamente" }
+
+[[mutante]]
+id = "diagnostico-consulta-grava"
+de = "128"
+o_que = "A consulta regrava a partida"
+alvo = "brport_vs/scripts/PainelDiagnostico.gd"
+antes = '''
+	super._ready()
+'''
+depois = '''
+	super._ready()
+	get_tree().root.get_node("GameState").save_game()
+'''
+reprova = { run_tests = "T28: consulta e cópia preservam estado, RNG, arquivos e registro" }
+
+[[mutante]]
+id = "diagnostico-sem-marca-modificado"
+de = "128"
+o_que = "Árvore modificada se apresenta como commit intacto"
+alvo = "brport_vs/scripts/DiagnosticoDoJogo.gd"
+antes = '''" · modificado" if dados["modificado"] else ""'''
+depois = '''"" if dados["modificado"] else ""'''
+reprova = { run_tests = "T28: identidade conserva commit completo e marca modificada" }

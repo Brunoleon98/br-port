@@ -244,10 +244,25 @@ Export → Android**, apontando o `Android SDK Path` para uma instalação do
 Android Studio (ou do `commandlinetools`). Sem `platform-tools` e `build-tools`
 o export recusa-se a correr, e a mensagem diz qual dos dois falta.
 
+Antes de **cada export**, na raiz do repositório, gere a identificação da
+árvore que será empacotada (`128`):
+
+```sh
+python3 tools/gerar_identificacao_build.py
+```
+
+Depois, dentro de `brport_vs/`:
+
 ```
 Godot --headless --path . --export-debug   "Android" ../build/android/brport.apk
 Godot --headless --path . --export-release "Web"     ../build/web/index.html
 ```
+
+O CI faz essa geração antes de exportar e confere o commit dentro do `.pck`.
+No início e na pausa, **Versão e diagnóstico** mostra a identificação e o
+texto completo que o botão copia. Não envia nada. Uma execução pelo editor
+se identifica como local, pois o recurso gerado pode sobrar de outro export;
+um export de árvore modificada leva essa marca.
 
 O **Web não precisa de SDK nenhum** — só dos templates. É o jeito mais rápido
 de ver o jogo fora do editor. Mas o `index.html` **não abre com duplo clique**:

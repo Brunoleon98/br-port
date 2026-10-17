@@ -39,3 +39,7 @@ catálogo oficial. Captura e contraste cobrem a consulta e seu retorno.
 
 Leitura física no telefone e o aceite visual são do Bruno. Esta decisão
 não reabre a ajuda, a retomada, a Fase 2 ou as pendências de salvamento.
+
+Bruno pediu evitar pedidos de permissão que só aparecem fora do aplicativo
+do celular. A preferência ficou em `.claude/rules/gerais.md`: usar ferramentas
+conectadas e autorizações existentes; explicar no chat bloqueios inevitáveis.
