@@ -283,6 +283,62 @@ func da_cena(cena: String, base: Vector2, raiz: String, r: Dictionary) -> void:
 			if tex.begins_with(PASTA + "/"):
 				r["vistas"].append([tex.get_file(), caminho])
 
+	# ⚠️ A MATA DO MORRO NÃO ESTÁ NO `Main.tscn` (`126`): o `MataNoMapa`
+	# planta-a em runtime, intercalada pela profundidade, e o estado da cena
+	# não a tem. A âncora de cada espécie é o pé da PRIMEIRA árvore dela na
+	# lista que o jogo planta — sem isto as nove caíam aqui como órfãs, e a
+	# folha pedia-as na `SEM_ANCORA`, que é para o que nada desenha.
+	# ⚠️ A PRIMEIRA DENTRO DO MAPA, e não a primeira da lista: a mata do morro
+	# pousa árvores com o pé a x NEGATIVO (a copa entra pela borda) e a
+	# embutida a y negativo, e a amostra do chão fora da imagem devolve o
+	# MAGENTA — seis espécies saíram na folha sobre magenta. A espécie que só
+	# pousa fora (a embaúba pequena, que entra pela borda do morro) ancora-se
+	# no ponto do mapa mais perto do pé dela: o chão continua o mesmo.
+	if cena == "res://scenes/Main.tscn" and raiz == "./MapaWrap":
+		var mata: Script = load("res://scripts/MataNoMapa.gd")
+		var fora := {}
+		for a in mata.ARVORES:
+			var caminho := "./MapaWrap/Cenario/Mata/" + String(a[0])
+			if not _no_mapa(float(a[1]), float(a[2])):
+				if not fora.has(caminho):
+					fora[caminho] = [String(a[0]), Vector2(float(a[1]), float(a[2]))]
+				continue
+			if r["ancoras"].has(caminho):
+				continue
+			r["ancoras"][caminho] = base + Vector2(float(a[1]), float(a[2]))
+			r["vistas"].append([String(a[0]) + ".png", caminho])
+		# E as árvores EMBUTIDAS no mapa (a vila e o quintal de trás, segunda
+		# passagem da `126`): não são nós, e a tabela de âncoras publica o pé
+		# de cada uma. Ancoram as espécies que nenhum prop da mata usa.
+		var f := FileAccess.open("res://art/porto_mapa_ancoras.json", FileAccess.READ)
+		var tabela = JSON.parse_string(f.get_as_text()) if f != null else null
+		if tabela is Dictionary:
+			for e in tabela.get("arvores_embutidas", []):
+				var caminho := "./MapaWrap/Mapa/Embutida/" + String(e["arvore"])
+				var pe: Array = e["pe"]
+				if r["ancoras"].has("./MapaWrap/Cenario/Mata/" + String(e["arvore"])) \
+						or r["ancoras"].has(caminho) \
+						or not _no_mapa(float(pe[0]), float(pe[1])):
+					continue
+				r["ancoras"][caminho] = base + Vector2(float(pe[0]), float(pe[1]))
+				r["vistas"].append([String(e["arvore"]) + ".png", caminho])
+		for caminho in fora:
+			var especie: String = fora[caminho][0]
+			if r["ancoras"].has(caminho) \
+					or r["ancoras"].has("./MapaWrap/Mapa/Embutida/" + especie):
+				continue
+			var lim := Vector2(RAIO_CHAO, RAIO_CHAO)
+			var pe_dentro: Vector2 = (fora[caminho][1] as Vector2).clamp(
+				lim, Vector2(LADO_DO_MAPA, LADO_DO_MAPA) - lim - Vector2.ONE)
+			r["ancoras"][caminho] = base + pe_dentro
+			r["vistas"].append([especie + ".png", caminho])
+
+
+## O pé cai dentro da imagem do mapa, com folga para a janela do chão?
+func _no_mapa(x: float, y: float) -> bool:
+	return x >= RAIO_CHAO and y >= RAIO_CHAO \
+		and x < LADO_DO_MAPA - RAIO_CHAO and y < LADO_DO_MAPA - RAIO_CHAO
+
 
 # ── AS FAMÍLIAS: quem mais pode encher um slot que a cena deixa em branco ──
 #

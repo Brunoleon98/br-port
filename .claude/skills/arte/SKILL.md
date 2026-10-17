@@ -225,8 +225,9 @@ xvfb-run -a $G --path brport_vs --resolution 720x1280 --rendering-driver opengl3
 ```
 
 O log repete o contexto e os números, e é o que se lê sem abrir a imagem. A
-proporção de um prop contra o resto do catálogo está na `escala.png` da
-bateria: todos a 1:1, com o pé na mesma linha.
+proporção de um prop contra o resto do catálogo está na `escala.png` e na
+`escala2.png` da bateria (duas páginas desde a `126`): todos a 1:1, com o pé
+na mesma linha.
 
 ---
 
@@ -461,6 +462,16 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   entraram numa passagem só delas, com o nome de cada uma na prancha. Ele
   aceitou essa. Os pares em blocos seguidos voltaram 3 de 4; o que falhou foi
   um reinício do worker com a pergunta pendente, e a pergunta sozinha voltou.
+  ⚠️ **E NA `126` (o terreno) ELE ESCOLHEU CONTRA A RECOMENDADA DUAS
+  VEZES** — árvores do Blender e que balançam, contra «no mapa, paradas» —,
+  e a escolha tinha um preço que ele não viu: um prop por cima do mapa não
+  fica atrás de uma casa. Pagou-se sem nova pergunta (a mata acima do
+  contorno da vila, a da cidade embutida no SVG) e escreveu-se na decisão.
+  Quando o «Outro» duvidou de uma ESCALA («talvez seja impressão minha», do
+  coqueiro), a passagem respondeu com a MEDIDA na legenda — 71 px, 3× a
+  casa, a proporção real — em vez de mexer. E um «Continuar» a meio de um
+  turno leu-se como seguir sem pergunta a meio: as pranchas foram entregues
+  e o veredito ficou pedido no fim.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

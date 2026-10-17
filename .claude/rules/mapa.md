@@ -302,3 +302,20 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   porque uma casa levanta-se 20 px e o que vem depois cai-lhe em cima.
 - **O importador de SVG do Godot é o ThorVG e não desenha `<text>`.** Texto no
   mapa é polígono de estêncil (ver `DIGITOS`).
+  ⚠️ **E SÓ DESENHA O `<use>` COM `xlink:href`**, e com o `xmlns:xlink` na
+  raiz: o `href` do SVG 2 sai em branco, sem erro (`126`, as árvores
+  embutidas).
+- **⚠️ UM PROP POR CIMA DO MAPA SÓ ERRA SOBRE O QUE ESTÁ À FRENTE E É MAIS
+  ALTO.** O prop pinta-se por cima de tudo: uma árvore que balança atrás de
+  uma casa sai com a copa no telhado, e por isso a mata do morro respeita o
+  contorno da vila e a da cidade vai EMBUTIDA no SVG (`126`). Mas chão plano
+  à frente nunca tapa um prop — o pixel acima do pé está à frente do chão que
+  cobre, e a sombra abaixo dele é sombra no chão. A restinga nasceu a exigir
+  a planta inteira acima da crista e encostou tudo à rua.
+  ⚠️ **E O QUE SE MEDE DA COSTA NÃO SABE DA RUA.** Junto do salto de um
+  degrau a costa corre em `my` e a rua vira no cotovelo: plantas postas a
+  «tantas unidades da crista» caíram no asfalto. Quem pousa a partir da costa
+  confere a rua do degrau DELE e os cotovelos.
+  ⚠️ **E RASTER NOVO TAPA O QUE SE DESENHOU ANTES DELE NO MESMO SÍTIO.** Com
+  o chão da restinga no `campo_do_chao`, o capim que saía no `praia_chao`
+  sumiu por baixo — e continua a ter de sair antes da rua e da vila.

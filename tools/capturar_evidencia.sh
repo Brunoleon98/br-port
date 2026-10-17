@@ -677,18 +677,21 @@ tirar trabalhadores - - --script res://tools/folha_trabalhadores.gd -- "$SAIDA/t
 # quinze passos do pórtico, as trinta e seis lingadas, as quatro pilhas, o
 # pallet no garfo e a empilhadeira parada e com cada sexo ao volante —
 # levaram-no a 234.
-tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 12
-tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 12
-tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 12
-tirar props4  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props4.png" 4 12
-tirar props5  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props5.png" 5 12
-tirar props6  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props6.png" 6 12
-tirar props7  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props7.png" 7 12
-tirar props8  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props8.png" 8 12
-tirar props9  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props9.png" 9 12
-tirar props10 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props10.png" 10 12
-tirar props11 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props11.png" 11 12
-tirar props12 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props12.png" 12 12
+# E TREZE desde 17/10: as dezanove espécies de árvore da mata e da restinga
+# (`126`) levaram-no a 260.
+tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 13
+tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 13
+tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 13
+tirar props4  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props4.png" 4 13
+tirar props5  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props5.png" 5 13
+tirar props6  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props6.png" 6 13
+tirar props7  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props7.png" 7 13
+tirar props8  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props8.png" 8 13
+tirar props9  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props9.png" 9 13
+tirar props10 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props10.png" 10 13
+tirar props11 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props11.png" 11 13
+tirar props12 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props12.png" 12 13
+tirar props13 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props13.png" 13 13
 
 # A ESCALA E A PRANCHA (`docs/decisoes/068`), as duas respostas ao veredito
 # do Bruno sobre as três folhas de cima: «mais útil para a IA alterar e fazer
@@ -698,7 +701,8 @@ tirar props12 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props12.p
 # dela: B = A, e ela exige Δ zero exato e as duas fotos do jogo iguais ao byte.
 # O prop é a traineira porque é da frota de pesca do porto em ruínas, a que o
 # veredito pediu «mais realista», e aparece sozinha no primeiro dia.
-tirar escala  - -  --script res://tools/escala_props.gd  --    "$SAIDA/escala.png"
+tirar escala  - -  --script res://tools/escala_props.gd  --    "$SAIDA/escala.png" 1 2
+tirar escala2 - -  --script res://tools/escala_props.gd  --    "$SAIDA/escala2.png" 2 2
 tirar prancha - -  --script res://tools/prancha_prop.gd  --    "$SAIDA/prancha.png" barco_pesca_traineira
 
 # UMA IMAGEM CHAPADA TAMBÉM É UM PNG. Se o contexto gráfico falhar em silêncio

@@ -806,8 +806,15 @@ formas de casa, terreno com muro, igreja com adro e praça da matriz, aceite à
 quinta passagem; (3) o mapa — **fechado em 17/10 (`124`)**: o mar escurece
 até ao largo, a sombra do muro esvai sem quina, e no lugar dos riscos «~»
 há marolas, correntes, arrebentação e cáusticas, aceite à terceira
-passagem. **A fila que ele deu acabou**: a conversa seguinte pergunta-lhe
-o que vem, com opções e a recomendada primeiro, e não escolhe por ele.
+passagem. **A fila que ele deu acabou**, e em 17/10 ele deu a seguinte
+(`125`), um item por conversa: (1) terreno e vegetação — **entregue em 17/10
+(`126`)**: chão com textura, um morro de mata atrás da vila, árvores do
+Blender que balançam no morro e na restinga das pontas, e as mesmas
+embutidas no mapa entre as casas; a quarta passagem da mata e a primeira da
+restinga esperam o veredito dele na foto; (2) **estradas**; (3) **sprites de
+detalhes**. Cada uma abre com a foto do jogo e a pergunta do escopo. Fora
+dela, para depois: animar as marolas e o fio diagonal da ponta norte do
+cais (`124`), os gates A4 e A7, e o galpão recuperado V3.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

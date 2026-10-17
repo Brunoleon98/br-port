@@ -339,6 +339,21 @@ func _rodar() -> void:
 	_falhas += int(mar.falhas)
 	_confere("o bloco D46 correu até ao fim", mar.completo)
 
+	print("=== D47: a mata do morro — a cópia, o contorno da vila, a fauna e o balanço ===")
+	# Um `Main` dele, como os blocos depois do D32: o `_main` já saiu da árvore.
+	var GS47: Node = root.get_node("GameState")
+	GS47.clear_save()
+	GS47._rng.seed = 20260903
+	GS47.new_game()
+	var tela47: Control = load(CENA).instantiate()
+	root.add_child(tela47)
+	var mata = load("res://tests/casos_mata_do_morro.gd").new()
+	mata.rodar(tela47, _ancoras)
+	root.remove_child(tela47)
+	tela47.free()
+	_falhas += int(mata.falhas)
+	_confere("o bloco D47 correu até ao fim", mata.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -362,13 +377,16 @@ func _rodar() -> void:
 #   1. NINGUÉM pisa a AREIA. Nem o coqueiro: a rampa desce até a água, e um
 #      prop plantado nela fica com o pé no ar;
 #   2. só quem é da praia fica no `my` de uma praia. Coqueiro pode (a
-#      referência pede "pedras e coqueiros"); empilhadeira, palete, pilha de
-#      caixotes e contêiner, não;
+#      referência pede "pedras e coqueiros"), e as plantas da restinga
+#      (`Arvore*`, do `MataNoMapa`, `126`) também; empilhadeira, palete, pilha
+#      de caixotes e contêiner, não. A mata do morro também se chama `Arvore`
+#      e nunca está no `my` de uma praia — o nome isenta a espécie, não o
+#      sítio: a pergunta 1 continua a valer para todas;
 #   3. cada ponta tem costa VISÍVEL que chegue. É a lição da mata de 04/09
 #      posta como asserção: `PONTA_SUL = 24` (o degrau seguinte, que parecia o
 #      corte natural) derruba a costa visível de 233 para 49 px, porque é ali
 #      que ela sai do quadro — e nada, sem isto, o diria.
-const PRAIA_SO_PARA := ["Coqueiro"]
+const PRAIA_SO_PARA := ["Coqueiro", "Arvore"]
 
 # Medido em 04/09: a ponta norte tem 139 px de costa dentro do quadro e a sul
 # 233. O piso é generoso de propósito — ele existe para pegar uma praia que
