@@ -32,6 +32,7 @@ Uso:
 """
 
 import base64
+import collections
 import json
 import math
 import pathlib
@@ -436,6 +437,21 @@ C = {
     # e não como clareira. Era #55663a (95), e a segunda passagem escureceu-o
     # para a encosta se separar do relvado de baixo.
     "chao_mata": "#47572f",
+    # O que o chão da mata ganhou na `129`: a folha caída, castanha e baça, e
+    # o pingo de sol entre as copas, um verde quente mais claro do que o
+    # `chao_mata` e mais escuro do que o relvado — luz, e não clareira.
+    "folhas_caidas": "#6e5f36", "luz_da_mata": "#6a8340",
+    # A PEDRA DO MORRO (`129`): granito à mostra, como os morros do litoral
+    # — cinzento quente, mais claro do que o enrocamento do cais, com a face
+    # de sombra e o veio escuro que a chuva desenha.
+    "granito": "#a8a296", "granito_luz": "#c4bfb2", "granito_sombra": "#7c776d",
+    "granito_veio": "#5f5b53",
+    # AS FLORES DO RELVADO e a HORTA (`129`): «relvado da vila com vida».
+    # As flores do relvado repetem as dos jardins (`flor_ipe`, `flor_branca`,
+    # `flor_primavera`) e acrescentam o lilás da trapoeraba.
+    "flor_lilas": "#b88ad6",
+    "horta_terra": "#5e4a33", "horta_folha": "#5f9a3c", "trilha": "#8f7c5c",
+    "trilha_clara": "#a8946f",
     "tinta": "#e0a81f",
     # A via ficou MAIS ESCURA que o pátio em 31/08. Antes era #5f6a73 contra o
     # #6f7b85 do pátio — dois cinzas a um passo um do outro, que na tela viravam
@@ -1089,6 +1105,41 @@ def tufo_de_capim(px: float, py: float, r: random.Random,
     return s
 
 
+def tufo_em_leque(px: float, py: float, r: random.Random,
+                  n: tuple = (5, 8), alt: tuple = (6.0, 10.0),
+                  cor: str = "") -> str:
+    """Um tufo de capim-da-praia em LEQUE: lâminas CHEIAS que abrem do pé.
+
+    ⚠️ O TRAÇO DE 1,3 LIA ARRANHÃO NA AREIA (`129`): «capim da restinga em
+    fios», marcou o Bruno. O `tufo_de_capim` é um traço de largura fixa que
+    acaba redondo, e sobre a areia clara um traço fino é um risco. A lâmina
+    aqui é uma FOLHA — larga no pé, a afinar até à ponta, curva —, as do meio
+    em pé e as de fora a deitar, e o pé leva a sombra do tufo: é a mancha
+    escura na base que faz o leque assentar no chão.
+    """
+    cor = cor or C["capim_praia"]
+    escura = "#%02x%02x%02x" % tuple(round(c * 0.72) for c in _rgb(cor))
+    s = ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s" '
+         'opacity="0.45"/>\n' % (px, py + 0.6, r.uniform(4.0, 5.5), 1.7, escura))
+    k = r.randint(*n)
+    for i in range(k):
+        # Do lado esquerdo para o direito, a abrir: −62° a +62° da vertical.
+        th = math.radians(-62.0 + 124.0 * (i + r.uniform(0.2, 0.8)) / k)
+        a = r.uniform(*alt) * (1.0 - 0.35 * abs(math.sin(th)))
+        bx = px + r.uniform(-1.5, 1.5)
+        dx, dy = math.sin(th), -math.cos(th)
+        tx, ty = bx + dx * a * 1.15, py + dy * a + a * 0.12 * abs(dx)
+        w = r.uniform(1.4, 2.0)
+        # A curva: o meio da lâmina sai para fora, e a ponta cai.
+        mx_, my_ = bx + dx * a * 0.55, py + dy * a * 0.62
+        s += ('  <path d="M%.1f %.1f Q%.1f %.1f %.1f %.1f Q%.1f %.1f %.1f %.1f Z" '
+              'fill="%s" opacity="0.95"/>\n'
+              % (bx - w / 2.0, py, mx_ - w * 0.3, my_, tx, ty,
+                 mx_ + w * 0.3, my_, bx + w / 2.0, py,
+                 escura if i % 3 == 1 else cor))
+    return s
+
+
 def vegetacao_do_solo(indice: int, mx0: float, my0: float, mx1: float,
                       my1: float) -> str:
     """A mata BAIXA atrás da rua: moita e capim no quintal de trás.
@@ -1244,6 +1295,86 @@ def no_morro(mx: float, my: float) -> tuple:
     return (mx, my, ALT_CAIS + altura_do_morro(mx, my))
 
 
+# AS CLAREIRAS DO MORRO (`129`): «morro que se leia», marcou o Bruno. Debaixo
+# das copas não se via a encosta subir; onde a mata se abre aparecem o chão
+# claro e o granito, e uma fresta de chão ACIMA de copas e ABAIXO de outras é
+# o que diz que o chão sobe. (mx, my, raio) no mundo, no morro que o quadro
+# vê — medido pela área livre acima da vila, e não escolhido no mundo: o
+# morro é quase todo fora da tela (`mapa.md`, «antes de gerar mais»).
+# ⚠️ A SEGUNDA, mais acima e menor, na volta seguinte: «uma clareira só» —
+# com duas a alturas diferentes a encosta lê a subir.
+CLAREIRAS = ((-7.2, 7.6, 0.75), (-8.0, 4.4, 0.50))
+
+
+_PEDRAS = None
+
+
+def pedras_do_morro() -> tuple:
+    """(svg, pedras): o granito à mostra nas clareiras do morro (`129`).
+
+    Uma laje grande e uma ou duas pequenas por clareira, no sólido facetado
+    do enrocamento (`com_saia`), com o realce de cima e o VEIO escuro que a
+    chuva desenha na face — é o veio que diz granito e não pedra solta. Cada
+    pedra publica a caixa de TELA e a profundidade (`mx + my`): a mata que
+    balança é prop e pintar-se-ia por cima da que lhe fica à frente.
+    """
+    global _PEDRAS
+    if _PEDRAS is not None:
+        return _PEDRAS
+    r = random.Random(SEMENTE_CHAO + 640)
+    s, pedras = "", []
+    for cx, cy, raio in CLAREIRAS:
+        # ⚠️ A PRIMEIRA PEDRA LIA UM BLOCO cinzento (alta como larga): o
+        # granito do litoral é LAJEDO — baixo, largo, em lombos —, e o que o
+        # diz são os veios escuros a escorrer e o musgo nas costas.
+        # O tamanho da pedra acompanha o da clareira (a de 0,75 é a medida).
+        k = raio / 0.75
+        lajes = [(cx - raio * 0.15, cy + raio * 0.10, k * r.uniform(19.0, 23.0)),
+                 (cx - raio * 0.40, cy - raio * 0.20, k * r.uniform(12.0, 15.0))]
+        for _ in range(r.randint(1, 2)):
+            a = r.uniform(0.0, math.tau)
+            lajes.append((cx + raio * 0.45 * math.cos(a), cy + raio * 0.45 * math.sin(a),
+                          k * r.uniform(6.0, 9.0)))
+        for mx, my, rx in sorted(lajes, key=lambda q: q[0] + q[1]):
+            px, py = p(mx, my, ALT_CAIS + altura_do_morro(mx, my))
+            ry = rx * r.uniform(0.52, 0.62)
+            alto = rx * r.uniform(0.28, 0.36)
+            canto = _lobo(px, py - alto, rx, ry, r)
+            s += com_saia(canto, alto, C["granito"])
+            luz = [(px - rx * 0.20 + (q[0] - px) * 0.55,
+                    py - alto - ry * 0.18 + (q[1] - py + alto) * 0.55) for q in canto]
+            s += poli(luz, C["granito_luz"], 0.85)
+            # O MUSGO nas costas da pedra, a mancha verde do lado de trás.
+            s += ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s" '
+                  'opacity="0.8"/>\n' % (px - rx * 0.30, py - alto - ry * 0.45,
+                                         rx * 0.35, ry * 0.30, C["luz_da_mata"]))
+            for k in range(2 if rx > 11.0 else 1):
+                vx = px + rx * (r.uniform(-0.2, 0.1) + 0.45 * k)
+                s += ('  <path d="M%.1f %.1f q%.1f %.1f %.1f %.1f" stroke="%s" '
+                      'stroke-width="1.8" fill="none" stroke-linecap="round"/>\n'
+                      % (vx, py - alto + ry * 0.75, rx * 0.06, alto * 0.45, -rx * 0.04,
+                         alto * 0.9, C["granito_veio"]))
+            xs = [q[0] for q in canto]
+            ys = [q[1] for q in canto]
+            pedras.append({"x0": round(min(xs) * ZOOM, 1), "x1": round(max(xs) * ZOOM, 1),
+                           "y0": round(min(ys) * ZOOM, 1),
+                           "y1": round((max(ys) + alto) * ZOOM, 1),
+                           "prof": round(mx + my, 3)})
+    _PEDRAS = (s, pedras)
+    return _PEDRAS
+
+
+def clareira_em(mx: float, my: float) -> float:
+    """Quanto o ponto está aberto, de 0 (mata) a 1 (meio de uma clareira)."""
+    melhor = 0.0
+    for cx, cy, raio in CLAREIRAS:
+        dx, dy = mx - cx, my - cy
+        d = math.sqrt(dx * dx + dy * dy)
+        if d < raio:
+            melhor = max(melhor, _suave((raio - d) / (raio * 0.35)))
+    return melhor
+
+
 def _ruido(x: float, y: float, semente: int) -> float:
     """Ruído de valor em [0, 1), suave, com o sorteio num HASH inteiro.
 
@@ -1305,7 +1436,22 @@ def _cor_do_chao(mx: float, my: float, h: float) -> tuple:
     gx, gy = subida * ux, subida * uy
     sx, sy, sz = SOL_DO_MORRO
     luz = (-gx * sx - gy * sy + sz) / math.sqrt(gx * gx + gy * gy + 1.0) / sz
-    cor = _entre_rgb(cor, _rgb(C["chao_mata"]), 0.92 * _suave(t / 1.0))
+    # A CLAREIRA (`129`): o chão volta a relva e a sol onde a mata se abre,
+    # e é o claro entre as copas que deixa ler a encosta a subir.
+    aberta = clareira_em(mx, my)
+    cor = _entre_rgb(cor, _rgb(C["chao_mata"]), 0.92 * _suave(t / 1.0) * (1.0 - aberta))
+    # AS FOLHAS CAÍDAS E A LUZ QUE PASSA ENTRE AS COPAS (`129`): «o chão da
+    # mata é um verde-oliva uniforme», marcou o Bruno. Duas manchas de borda
+    # NÍTIDA — o corte do ruído num limiar, pela regra da areia da restinga —,
+    # a folhagem castanha em grão miúdo e a luz em pingos maiores.
+    if t > 0.25 and aberta < 0.5:
+        u, w = 0.8253 * mx - 0.5646 * my, 0.5646 * mx + 0.8253 * my
+        folha = _ruido(u / 0.21 + 3.0, w / 0.21, 11)
+        cor = _entre_rgb(cor, _rgb(C["folhas_caidas"]),
+                         0.55 * _suave((folha - 0.70) / 0.05 + 0.5))
+        pingo = _ruido(w / 0.33 - 7.0, -u / 0.33, 12) * _ruido(u / 0.9, w / 0.9, 13)
+        cor = _entre_rgb(cor, _rgb(C["luz_da_mata"]),
+                         0.65 * _suave((pingo - 0.42) / 0.04 + 0.5))
     k = max(0.70, min(1.18, luz))
     return tuple(max(0, min(255, round(c * k))) for c in cor)
 
@@ -1431,8 +1577,18 @@ def campo_do_chao() -> str:
             if areia > 0.0:
                 # A areia da restinga é a SECA, e clareia até à da duna junto
                 # da crista, para o raster chegar à rampa já na cor dela.
+                # ⚠️ COM BORDA, E NÃO EM DEGRADÊ (`129`): misturada pela
+                # fração `areia`, 29,5% do chão da restinga saía a meio-tom
+                # entre relva e areia, e lia-se como um BORRÃO no meio de um
+                # mapa de bordas limpas — «areia da restinga nítida», marcou
+                # o Bruno. O campo continua o mesmo; o que muda é cortá-lo num
+                # LIMIAR, com um texel de antisserrilhado, e a relva junto da
+                # borda escurece um pouco, a saia que o mapa dá a toda peça.
+                k_areia = _suave((areia - RESTINGA_LIMIAR) / RESTINGA_BORDA + 0.5)
+                if k_areia < 1.0 and areia > RESTINGA_LIMIAR - RESTINGA_SAIA:
+                    cor = tuple(round(c * 0.88) for c in cor)
                 cor = _entre_rgb(cor, _entre_rgb(seca, clara, _suave(1.0 - d / 0.5)),
-                                 areia)
+                                 k_areia)
             k = (y * SAIDA + x) * 4
             pixels[k:k + 4] = bytes((*cor, 255))
 
@@ -1462,7 +1618,10 @@ def campo_do_chao() -> str:
 # casa sairia com a copa por cima do telhado. Logo a regra da implantação não
 # é «atrás da vila no mundo», é «acima da vila NA TELA»: cada coluna do PNG
 # da árvore, sombra incluída, tem de acabar acima da linha mais alta que a
-# vila e as vias pintam naquela coluna (`horizonte_da_vila`).
+# vila e as vias pintam naquela coluna.
+# ⚠️ E SÓ DO QUE LHE FICA À FRENTE, desde a `129` (`pecas_da_vila`, por lote,
+# e `orla_embutida`, árvore a árvore): por coluna o contorno da vila inteira é
+# o mínimo, e uma casa lá atrás proibia uma árvore à frente dela.
 #
 # ⚠️ O CONTORNO DA VILA SAI DO SVG QUE ELA EMITE, e não da geometria dos
 # lotes: a caixa-d'água, a cruz da igreja e a copa de um quintal sobem acima
@@ -1479,35 +1638,74 @@ MATA_FOLGA_VILA = 3          # px de TELA entre o fundo de uma árvore e a vila
 # (meia largura, acima, abaixo) em px de TELA: a caixa de um bicho da fauna,
 # que se desenha DEPOIS do `Cenario` e pintar-se-ia por cima de uma copa.
 MATA_FOLGA_FAUNA = (34, 44, 18)
-# (variante, raio da copa em unidades, quantas). Os ipês são poucos e vêm
-# primeiro, para ficarem à vista: o acento de cor só acentua enquanto for
-# raro (`arte.md`). Depois as copas grandes e médias, que são a MASSA da
-# mata; a juçara e a embaúba entram nas frestas — o raio delas aqui é o do
-# tronco que precisa de chão, e não o da copa, que fura o dossel por cima —,
-# e a copa pequena enche o que sobrar.
-# ⚠️ NA PRIMEIRA ORDEM, juçaras e embaúbas antes das copas, saíram 13 delas
-# contra 2 copas grandes: a mata lia como palmeiral.
-MATA_ESPECIES = [
-    ("arvore_ipe_amarelo", 0.80, 2), ("arvore_ipe_rosa", 0.78, 1),
-    ("arvore_jucara_a", 0.30, 2), ("arvore_jucara_b", 0.30, 1),
-    ("arvore_embauba_a", 0.40, 2), ("arvore_embauba_b", 0.40, 1),
-    # ⚠️ TERCEIRA PASSAGEM: «morro ainda fraco». A massa da encosta passou às
-    # copas ESCURAS da mata, as duas alternadas em levas, e a copa clara da
-    # vila fica em poucas, para a encosta ter as três massas de valor
-    # (escuro, médio, claro) que a pesquisa repete, e não um verde só.
-    # As outras espécies da vila não precisam de estar aqui: a tabela publica
-    # as árvores EMBUTIDAS (`arvores_embutidas`), e o catálogo da folha dos
-    # props ancora-as lá. Na primeira tentativa elas entravam aqui uma a uma
-    # para não ficarem órfãs, e comiam o alto do morro à copa escura.
-    ("arvore_mata_a", 1.00, 6), ("arvore_mata_b", 0.82, 6),
-    ("arvore_mata_a", 1.00, 99), ("arvore_mata_b", 0.82, 99),
-    # As moitas fecham as frestas que sobram entre as copas (segunda passagem).
-    ("arvore_moita_a", 0.45, 4), ("arvore_moita_b", 0.36, 4),
+# (variante, raio da copa em unidades, quantas). OS DESTAQUES vêm primeiro,
+# para ficarem à vista: o ipê, o único acento de cor, e as duas silhuetas que
+# não são copa — a juçara, que fura o dossel, e a embaúba de folha prateada.
+# O raio da juçara e da embaúba é o do tronco que precisa de chão, e não o da
+# copa, que passa por cima das outras.
+# ⚠️ NA PRIMEIRA ORDEM da `127`, juçaras e embaúbas antes das copas, saíram
+# 13 delas contra 2 copas grandes: a mata lia como palmeiral. Por isso são
+# poucas, e contadas.
+MATA_DESTAQUES = [
+    ("arvore_ipe_amarelo", 0.80, 2), ("arvore_ipe_rosa", 0.78, 2),
+    ("arvore_jucara_a", 0.30, 3), ("arvore_jucara_b", 0.30, 2),
+    ("arvore_embauba_a", 0.40, 2), ("arvore_embauba_b", 0.40, 2),
 ]
+# A MASSA da mata, por SACO e não por ordem (`129`): «parece que a maioria das
+# árvores é a mesma», marcou o Bruno — a `127` punha as duas copas escuras em
+# levas de 99, e a encosta era a mesma bola em fila. O saco tem cada forma o
+# número de vezes da tabela (a regra da vila, `_tirar_do_saco`), e é a
+# FORMA que muda de uma árvore para a vizinha: a escura grande, a emergente em
+# guarda-chuva, a média, a alta e estreita, e as claras da vila que sobem o
+# morro. As três massas de valor que a `127` pedia — escuro, médio, claro —
+# saem das proporções: seis escuras, três médias, uma clara.
+MATA_MASSA = [
+    ("arvore_mata_a", 1.00, 2), ("arvore_mata_c", 1.15, 2),
+    ("arvore_mata_b", 0.82, 2), ("arvore_mata_d", 0.62, 2),
+    ("arvore_copa_m", 0.85, 1), ("arvore_copa_m2", 0.80, 1),
+    ("arvore_copa_alta", 0.55, 1), ("arvore_copa_larga", 1.05, 1),
+]
+# Px de TELA entre dois destaques da mesma espécie (as variantes `_a` e `_b`
+# contam como uma): o acento só acentua enquanto é raro, e dois juntos são uma
+# mancha.
+MATA_DESTAQUE_LONGE = 55.0
+# ⚠️ E CADA FORMA TEM TETO (`129`): o morro visível é uma faixa estreita, e
+# nela cabem sobretudo as copas ESTREITAS. Sem teto, a 0,32 de aperto, a alta
+# e a escura média deram 12 e 11 das 39 copas, em fila — a mesma árvore em
+# parede, que era a queixa.
+MATA_TETO = 6
+# A copa a partir da qual a forma é GRANDE (raio em unidades), e quantas de
+# cada uma se tentam antes do saco.
+MATA_GRANDE = 0.80
+MATA_GRANDES_PRIMEIRO = 3
+# O aperto do sub-bosque: a moita entra na copa da árvore cujo pé tapa.
+MATA_APERTO_SUB = 0.12
+# O que se tenta no relvado plano entre os degraus, e quantas de cada.
+# ⚠️ A MOITA DA MATA É A ESCURA: com dez de cada, as 56 moitas da primeira
+# volta (sobretudo a `moita_a`, da paleta clara da vila) fizeram do meio um
+# matagal claro, e não mata.
+# ⚠️ E NA VOLTA SEGUINTE, «moita demais, árvore de menos» (48 moitas em 82):
+# as ARVORETAS — árvore baixa de tronco curto, que cabe onde a moita cabe —
+# vêm primeiro, e a moita escura só enche o que sobra.
+MATA_DO_RELVADO = [("arvore_arvoreta_a", 0.48, 8), ("arvore_arvoreta_b", 0.42, 8),
+                   ("arvore_mata_d", 0.62, 4), ("arvore_copa_p2", 0.45, 3),
+                   ("arvore_moita_b", 0.36, 5)]
+# Quantas vezes o saco inteiro se tenta encher: a mata acaba quando acaba o
+# chão, e não numa conta.
+MATA_SACOS = 12
+# As moitas fecham as frestas que sobram entre as copas.
+# ⚠️ NA MATA SÓ A MOITA ESCURA (`129`): «moita clara destoa», marcou o
+# Bruno — a `moita_a` tem o verde claro da vila e saltava na mata escura. A
+# clara fica nos jardins. E poucas: «moita demais, árvore de menos».
+MATA_MIUDA = [("arvore_moita_b", 0.36, 4)]
 # A copa de uma árvore pode entrar este tanto na da vizinha: a mata FECHA-SE,
 # e é a sobreposição que faz dela uma massa em vez de um pomar. Era 0,72 e
 # 0,55; a terceira passagem fechou-a mais.
-MATA_APERTO = 0.45
+# ⚠️ E A `129` FECHOU-A A 0,34: sem a orla escura embutida, a massa do morro
+# passou a ser só a mata que balança, e o que a limita é o CHÃO livre, não os
+# dardos (medido: 30 sacos e 400 tentativas dão 41 árvores contra 36). O
+# aperto é que enche: 36 árvores a 0,45, 46 a 0,38, 59 a 0,32.
+MATA_APERTO = 0.34
 
 
 def _contornos_do_svg(svg: str):
@@ -1612,17 +1810,6 @@ def _envolver(svg: str, topo: list) -> None:
                     topo[c] = y
 
 
-def horizonte_da_vila() -> list:
-    """Por coluna de TELA, a linha mais alta que a vila e as vias pintam —
-    e a mata baixa do quintal de trás, que está à frente da mata do morro.
-
-    `SAIDA` onde não pintam nada. Vale a menor das duas versões do mapa — a de
-    terra batida e a do pátio — porque as árvores são as mesmas nas duas.
-    """
-    topo = [float(SAIDA)] * SAIDA
-    for pavimentado in (False, True):
-        _envolver(mata_baixa() + vias(pavimentado) + vila(1, pavimentado), topo)
-    return [round(math.floor(y * 10.0) / 10.0, 1) for y in topo]
 
 
 def _fauna_da_cena() -> list:
@@ -1638,70 +1825,167 @@ def _fauna_da_cena() -> list:
 def arvores_da_mata() -> list:
     """Onde pousa cada árvore da mata: (variante, mx, my, h, x, y) de TELA.
 
-    Dardos no chão atrás da vila, com a ordem das espécies de
-    `MATA_ESPECIES`. Uma árvore fica se: o pé cai no quadro; cada coluna do
-    PNG dela acaba `MATA_FOLGA_VILA` acima do contorno da vila; não toca a
-    caixa de nenhum bicho; e o pé está a mais de `MATA_APERTO` das duas copas
-    somadas de qualquer outra. Sai ordenada pela profundidade — quem tem
-    `mx + my` menor desenha-se primeiro.
+    Dardos no chão atrás da vila: primeiro os destaques, contados, depois a
+    massa da mata por saco até acabar o chão, e as moitas nas frestas. Uma
+    árvore fica se: o pé cai no quadro e fora das clareiras; cada coluna do
+    PNG dela acaba `MATA_FOLGA_VILA` acima do contorno da vila; não pinta por
+    cima de uma pedra que lhe fica à frente; não toca a caixa de nenhum bicho;
+    e o pé está a mais de `MATA_APERTO` das duas copas somadas de qualquer
+    outra. Sai ordenada pela profundidade — quem tem `mx + my` menor
+    desenha-se primeiro.
     """
     perfis = json.loads(MEDIDAS_DA_MATA.read_text("utf-8"))
-    topo = horizonte_da_vila()
     fl, fc, fb = MATA_FOLGA_FAUNA
     fauna = [(x - fl, y - fc, x + fl, y + fb) for _n, x, y in _fauna_da_cena()]
+    pedras = pedras_do_morro()[1]
+    orla = [(_colunas_da_embutida(perfis[v], x, y, k), prof)
+            for v, x, y, k, prof in orla_embutida()]
     r = random.Random(SEMENTE_MATA)
     postas = []
-    for variante, raio, quantas in MATA_ESPECIES:
+
+    def cabe(variante: str, raio: float, mx: float, my: float,
+             sozinha: float = 0.0, aperto: float = MATA_APERTO,
+             so_plano: bool = False):
+        """(h, x, y) se a árvore pode ficar com o pé em (mx, my), ou `None`.
+
+        `sozinha`: px de TELA até ao destaque mais perto da mesma espécie —
+        os dois ipês amarelos saíram COLADOS, e liam um bolo amarelo só.
+        `aperto`: quanto a copa entra na da vizinha (o sub-bosque entra mais).
+        `so_plano`: só no chão plano, fora do morro (as moitas do relvado).
+        """
         perfil = perfis[variante]
         largura = len(perfil["baixo"])
         cima = min(v for v in perfil["cima"] if v is not None)
-        feitas = 0
-        for _ in range(2500 if quantas > 50 else 600):
-            if feitas >= quantas:
-                break
-            # ⚠️ EM TUFOS, E NÃO ESPALHADA POR IGUAL (terceira passagem): a
-            # pesquisa repete que mata espalhada por igual lê como plantação.
-            # Sete dardos em dez nascem junto de uma árvore já posta; os outros
-            # abrem tufos novos — e é entre os tufos que ficam as clareiras.
+        if mx > _borda_em(my) - VILA_RECUO_2 - 0.1 or clareira_em(mx, my) > 0.0:
+            return None
+        morro = altura_do_morro(mx, my)
+        if so_plano and morro > 0.0:
+            return None
+        h = ALT_CAIS + morro
+        x, y = tela(mx, my, h)
+        if not (-10.0 <= x <= SAIDA + 10.0 and 20.0 <= y <= SAIDA):
+            return None
+        if any(math.hypot(mx - o[1], my - o[2]) < aperto * (raio + o[6]) for o in postas):
+            return None
+        if sozinha and any(re.sub(r"_[ab]$", "", o[0]) == re.sub(r"_[ab]$", "", variante)
+                           and math.hypot(x - o[4], y - o[5]) < sozinha
+                           for o in postas):
+            return None
+        topo = _a_frente(mx, my)
+        for k in range(largura):
+            baixo = perfil["baixo"][k]
+            # Com o `x` fracionário a coluna do perfil cai em TRÊS do mapa:
+            # o perfil mede o PNG a 768 em colunas de TELA inteiras, e um
+            # pixel de 2/3 com o pé a x = 80,8 chega a `c + 2`. ⚠️ ERAM DUAS,
+            # e o D47 viu uma árvore 0,8 px por cima de uma embutida que o
+            # gerador julgava livre (`129`).
+            c = math.floor(x) + perfil["dx0"] + k
+            if baixo is None:
+                continue
+            if any(0 <= cc < SAIDA and y + baixo > topo[cc] - MATA_FOLGA_VILA
+                   for cc in (c, c + 1, c + 2)):
+                return None
+            # A PEDRA E A ÁRVORE EMBUTIDA À FRENTE (`129`): as duas são
+            # desenho do mapa, e a árvore de trás, prop, pintar-se-ia por
+            # cima delas. As de trás, não: a árvore da frente tapa-as, e é o
+            # que se quer. A pedra, aliás, nem a da frente a pode tapar: é a
+            # clareira que se quer ver.
+            cima_k = perfil["cima"][k]
+            for pd in pedras:
+                if pd["x0"] - 2 <= c + 1 and c <= pd["x1"] + 2 \
+                        and y + baixo > pd["y0"] - 2 and y + cima_k < pd["y1"] + 2:
+                    return None
+            for cols, prof in orla:
+                if prof <= mx + my:
+                    continue
+                for cc in (c, c + 1, c + 2):
+                    e = cols.get(cc)
+                    if e is not None and y + baixo > e[0] - MATA_FOLGA_VILA \
+                            and y + cima_k < e[1]:
+                        return None
+        x0, x1 = x + perfil["dx0"], x + perfil["dx0"] + largura
+        y0 = y + cima
+        y1 = y + max(v for v in perfil["baixo"] if v is not None)
+        if any(x0 < b[2] and b[0] < x1 and y0 < b[3] and b[1] < y1 for b in fauna):
+            return None
+        return h, x, y
+
+    def por(variante: str, raio: float, mx: float, my: float, onde: tuple) -> None:
+        h, x, y = onde
+        postas.append((variante, round(mx, 3), round(my, 3), round(h, 2),
+                       round(x, 1), round(y, 1), raio))
+
+    def plantar(variante: str, raio: float, tentativas: int, **regras) -> bool:
+        for _ in range(tentativas):
+            # ⚠️ EM TUFOS, E NÃO ESPALHADA POR IGUAL (`127`): a pesquisa
+            # repete que mata espalhada por igual lê como plantação. Sete
+            # dardos em dez nascem junto de uma árvore já posta; os outros
+            # abrem tufos novos.
             if postas and r.random() < 0.7:
                 o = postas[r.randrange(len(postas))]
                 a = r.uniform(0.0, math.tau)
                 d = r.uniform(0.9, 1.5) * (raio + o[6]) * MATA_APERTO
                 mx, my = o[1] + d * math.cos(a), o[2] + d * math.sin(a)
-                if mx > _borda_em(my) - VILA_RECUO_2 - 0.1:
-                    continue
             else:
                 my = r.uniform(-4.0, 20.0)
                 mx = r.uniform(FUNDO_TERRA + 2.0, _borda_em(my) - VILA_RECUO_2 - 0.1)
-            h = ALT_CAIS + altura_do_morro(mx, my)
-            x, y = tela(mx, my, h)
-            if not (-10.0 <= x <= SAIDA + 10.0 and 20.0 <= y <= SAIDA):
-                continue
-            if any(math.hypot(mx - o[1], my - o[2]) < MATA_APERTO * (raio + o[6])
-                   for o in postas):
-                continue
-            ok = True
-            for k in range(largura):
-                baixo = perfil["baixo"][k]
-                # Com o `x` fracionário a coluna do PNG cai em DUAS do mapa.
-                c = math.floor(x) + perfil["dx0"] + k
-                if baixo is None:
-                    continue
-                if any(0 <= cc < SAIDA and y + baixo > topo[cc] - MATA_FOLGA_VILA
-                       for cc in (c, c + 1)):
-                    ok = False
-                    break
-            if not ok:
-                continue
-            x0, x1 = x + perfil["dx0"], x + perfil["dx0"] + largura
-            y0 = y + cima
-            y1 = y + max(v for v in perfil["baixo"] if v is not None)
-            if any(x0 < b[2] and b[0] < x1 and y0 < b[3] and b[1] < y1
-                   for b in fauna):
-                continue
-            postas.append((variante, round(mx, 3), round(my, 3), round(h, 2),
-                           round(x, 1), round(y, 1), raio))
-            feitas += 1
+            onde = cabe(variante, raio, mx, my, **regras)
+            if onde is not None:
+                por(variante, raio, mx, my, onde)
+                return True
+        return False
+
+    for variante, raio, quantas in MATA_DESTAQUES:
+        for _ in range(quantas):
+            plantar(variante, raio, 300, sozinha=MATA_DESTAQUE_LONGE)
+    # AS GRANDES PRIMEIRO: a copa larga não cabe onde as estreitas já
+    # estão, e com o saco baralhado desde o início saíam duas grandes em 39.
+    contas = collections.Counter()
+    for v, raio, _n in sorted(MATA_MASSA, key=lambda q: -q[1]):
+        if raio >= MATA_GRANDE:
+            for _ in range(MATA_GRANDES_PRIMEIRO):
+                if plantar(v, raio, 300):
+                    contas[v] += 1
+    saco = [(v, raio) for v, raio, n in MATA_MASSA for _ in range(n)]
+    for _ in range(MATA_SACOS):
+        r.shuffle(saco)
+        feitas = 0
+        for v, raio in saco:
+            if contas[v] < MATA_TETO and plantar(v, raio, 120):
+                contas[v] += 1
+                feitas += 1
+        if not feitas:
+            break
+    # O SUB-BOSQUE (`129`): «troncos em fila», marcou o Bruno — na borda da
+    # mata virada para a vila, os troncos das copas ficavam à mostra em
+    # paliçada. Uma moita no pé, À FRENTE de cada árvore (para o cais e para
+    # a esquerda da tela), a entrar-lhe na copa; onde a vila à frente não a
+    # deixa caber, fica o tronco.
+    altas = [o for o in postas if "moita" not in o[0]]
+    for i, o in enumerate(sorted(altas, key=lambda q: -(q[1] + q[2]))):
+        # Uma em cada três árvores fica sem moita no pé: o sub-bosque de todas
+        # é uma fileira de moitas a seguir a fileira de troncos.
+        if i % 3 == 2:
+            continue
+        variante, raio = MATA_MIUDA[0][:2]
+        for _ in range(6):
+            mx = o[1] + r.uniform(0.25, 0.60)
+            my = o[2] + r.uniform(-0.25, 0.45)
+            onde = cabe(variante, raio, mx, my, aperto=MATA_APERTO_SUB)
+            if onde is not None:
+                por(variante, raio, mx, my, onde)
+                break
+    for variante, raio, quantas in MATA_MIUDA:
+        for _ in range(quantas):
+            plantar(variante, raio, 300)
+    # A MATA DO RELVADO (`129`): «mata parada no meio», marcou o Bruno — a
+    # massa do relvado entre os degraus era toda embutida. Onde uma moita que
+    # balança cabe sem pintar por cima da vila, a orla deixa-lhe o sítio
+    # (`quintal_de_tras`), e é aqui que ela nasce, só no chão plano: primeiro
+    # as árvores pequenas que lá couberem, depois as moitas.
+    for variante, raio, quantas in MATA_DO_RELVADO:
+        for _ in range(quantas):
+            plantar(variante, raio, 400, so_plano=True)
     postas.sort(key=lambda o: (o[1] + o[2], o[2]))
     return [o[:6] for o in postas]
 
@@ -1738,7 +2022,11 @@ RESTINGA_ESPECIES = [
 ]
 # A restinga NÃO fecha, ao contrário da mata: entre as moitas há areia.
 RESTINGA_APERTO = 0.85
-RESTINGA_FOLGA_AREIA = 2     # px de TELA entre o fundo de uma planta e a crista
+# Px de TELA entre o pé de uma planta e a crista à frente. ⚠️ ERA 2, e o
+# guriri da `129` — pecíolos que saem do chão — tem desenho opaco 2 px abaixo
+# do pé: o D47 leu-o a 0,01 px dentro da areia. O gerador é mais folgado do
+# que a guarda (`mapa.md`).
+RESTINGA_FOLGA_AREIA = 3
 RESTINGA_TOPO = 4            # px de TELA: nenhuma copa acima, que é a barra do HUD
 # A caixa de um prop PARADO do `Cenario` (os camiões andam e a profundidade
 # resolve-os), em px de TELA a partir do pé dele: (esquerda, cima, direita,
@@ -1861,7 +2149,14 @@ def arvores_da_restinga() -> list:
                 # ⚠️ E NA TELA: três aroeiras saíram na MESMA coluna, uma atrás
                 # da outra a 15 px, e liam como uma torre de copas — longe no
                 # mundo, empilhadas na vista. A 26 px ainda saíam duas.
-                if any(abs(x - o[4]) < 12.0 and abs(y - o[5]) < 34.0 for o in postas):
+                # ⚠️ E A 34 AINDA SAÍAM (`129`): «aroeiras empilhadas», marcou o
+                # Bruno — duas na mesma coluna a 37 px na ponta norte, e duas
+                # COLADAS lado a lado a 14 px na borda da ponta sul, que a
+                # coluna de 12 px deixava passar. A copa da aroeira tem ~40 px
+                # de largo: em coluna, 16 px e 44 de altura; lado a lado, 22 px.
+                if any((abs(x - o[4]) < 16.0 and abs(y - o[5]) < 44.0)
+                       or (abs(x - o[4]) < 22.0 and abs(y - o[5]) < 14.0)
+                       for o in postas):
                     continue
                 # O PÉ na restinga: as colunas do tronco acabam acima da crista.
                 if any(frente is None or y > frente - RESTINGA_FOLGA_AREIA
@@ -1956,13 +2251,40 @@ def arvore_embutida(variante: str, mx: float, my: float, escala: float,
     _medidas_da_mata()[variante]          # rebenta se a espécie não existir
     _ARVORES_USADAS.add(variante)
     bx, by = p(mx, my, h)
-    _EMBUTIDAS.append((variante, round(bx * ZOOM, 1), round(by * ZOOM, 1), escala))
+    _EMBUTIDAS.append((variante, round(bx * ZOOM, 1), round(by * ZOOM, 1), escala,
+                       round(mx + my, 3)))
     return ('  <use xlink:href="#%s" transform="translate(%.1f,%.1f) scale(%.3f)"/>\n'
             % (variante, bx, by, escala))
 
 
+def _sob_a_casa(variante: str, mx: float, my: float, escala: float,
+                casa: list) -> float:
+    """A fração da COPA de uma árvore embutida que cai abaixo da linha de cima
+    da casa `casa` (o contorno por coluna de TELA, `_envolver`): tapada, se a
+    árvore está atrás; por cima do telhado, se está à frente.
+
+    A copa é a parte de cima do perfil — 70% da altura dele: o resto é tronco
+    e sombra, que estão no chão e não sobre a casa.
+    """
+    perfil = _medidas_da_mata()[variante]
+    bx, by = p(mx, my, ALT_CAIS)
+    x, y = bx * ZOOM, by * ZOOM
+    total = sob = 0.0
+    for i, (cima, baixo) in enumerate(zip(perfil["cima"], perfil["baixo"])):
+        if cima is None:
+            continue
+        c = math.floor(x + escala * (perfil["dx0"] + i))
+        y0 = y + escala * cima
+        y1 = y + escala * (cima + 0.7 * (baixo - cima))
+        total += y1 - y0
+        if 0 <= c < SAIDA and casa[c] < y1:
+            sob += y1 - max(y0, casa[c])
+    return sob / total if total > 0.0 else 0.0
+
+
 def arvore_da_cidade(mx: float, my: float, raio: float, r: random.Random,
-                     luz: float = 0.5, teto: float = 0.8) -> str:
+                     luz: float = 0.5, teto: float = 0.8, casa: list = None,
+                     atras: bool = False, sem_ipe: bool = False) -> str:
     """A árvore de um quintal ou da praça, com a assinatura da antiga `arvore()`
     em SVG (que saiu na `127`, com a restinga): quem a chamava não mudou.
 
@@ -1980,9 +2302,13 @@ def arvore_da_cidade(mx: float, my: float, raio: float, r: random.Random,
     pequeno, e o teto desceu de 1,0 para 0,8 (0,65 ao lado da casa).
     """
     sorte = r.random()
-    if sorte < 0.04:
+    # ⚠️ O IPÊ SUBIU DE 7% PARA 12% DO SORTEIO (`129`): com a regra da casa e a
+    # da praça, a vila do dia 1 ficou sem ipê nenhum à vista — o acento de cor
+    # que o Bruno pediu na `127` («mais cor na vila»). O sorteio é o mesmo, e
+    # muda só onde se corta.
+    if sorte < 0.07:
         variante, nominal = "arvore_ipe_amarelo", 0.62
-    elif sorte < 0.07:
+    elif sorte < 0.12:
         variante, nominal = "arvore_ipe_rosa", 0.62
     elif sorte < 0.17:
         variante, nominal = "arvore_mangueira", 0.72
@@ -1997,7 +2323,35 @@ def arvore_da_cidade(mx: float, my: float, raio: float, r: random.Random,
     else:
         variante = "arvore_copa_m" if luz < 0.5 else "arvore_copa_m2"
         nominal = 0.66
+    # ⚠️ NA PRAÇA E NOS LOTES ESPECIAIS, O IPÊ É COPA (`129`): o do quintal de
+    # trás do lote da praça ficava 55% atrás das árvores dela, desenhadas
+    # depois — o D47 §10 viu-o —, e a regra da casa não chega a um lote sem
+    # casa. O sorteio é o mesmo; só a espécie muda.
+    if sem_ipe and variante.startswith("arvore_ipe"):
+        variante, nominal = "arvore_copa_m2", 0.66
     escala = max(0.45, min(teto, raio / nominal))
+    # ⚠️ A CASA DO LOTE DECIDE SE A ÁRVORE SE LÊ (`129`). «Árvore no telhado,
+    # ipê escondido», marcou o Bruno: uma copa da mata a 0,45 no quintal do
+    # LADO pousava inteira em cima do telhado da casa, e um ipê no quintal de
+    # TRÁS só mostrava um bolo amarelo acima da cumeeira. À frente da casa,
+    # copa que cobre mais de um terço do telhado vira a moita do jardim; atrás
+    # dela, árvore que a casa esconde mais de 60% não se planta — e o ipê,
+    # que é acento e não massa, só vai com 60% da copa à vista (o D47 §10
+    # exige metade da flor: o gerador é o mais apertado dos dois). A 70% a
+    # vila do dia 1 ficou sem ipê nenhum. Sem sorteio
+    # novo: os do `r` já foram gastos, e a vila não muda de sítio.
+    if atras:
+        # A de trás pergunta a TODAS as casas que lhe ficam à frente, e não só
+        # à do lote: o ipê rosa da `129` passou a regra da casa dele com 39% de
+        # copa tapada e saiu um bolo acima de DOIS telhados — o da vizinha,
+        # desenhada depois, tapava o resto (o D47 §10 viu-o a 38% à vista).
+        casa = _casas_a_frente(mx, my)
+    if casa is not None:
+        tapado = _sob_a_casa(variante, mx, my, escala, casa)
+        if atras and tapado > (0.40 if variante.startswith("arvore_ipe") else 0.60):
+            return ""
+        if not atras and tapado > 0.35:
+            variante, escala = "arvore_moita_a", 0.8
     return arvore_embutida(variante, mx, my, round(escala, 3))
 
 
@@ -2017,10 +2371,21 @@ def _com_as_arvores(svg: str) -> str:
     return svg[:ini] + "".join(defs) + svg[ini:]
 
 
-ORLA_DO_QUINTAL = 3.0     # unidades atrás do fundo dos lotes
-# A parte de TRÁS da orla é mata escura: «mata do morro maior», marcou o
-# Bruno na quarta passagem — a massa escura ficava só na borda esquerda.
-ORLA_DA_MATA = 1.2        # a parte da frente da orla, junto aos lotes, é quintal
+# Unidades atrás do fundo dos lotes, e a parte da frente, que é quintal; a de
+# trás é mata escura (a «mata do morro maior» da `127`).
+# ⚠️ A MATA ESCURA EMBUTIDA COMEU O MORRO enquanto o contorno da vila a
+# contava (`horizonte_da_vila`): por coluna ele é o MÍNIMO, ela subia-o acima
+# do topo da tela, e as 21 árvores do morro couberam nos 31 px da borda
+# esquerda (5.589 px² de morro livre, contra 24.139 sem orla). Na `129` o
+# contorno deixou de a contar, a mata do morro pergunta-lhe árvore a árvore
+# pela profundidade, e ela só se embute onde um prop não pode estar — o
+# relvado da junta de dois degraus, à frente de casas de trás. Encolhida a
+# 0,9 nessa passagem, deixou esse relvado vazio, e a encosta perdeu a massa.
+ORLA_DO_QUINTAL = 3.0
+ORLA_DA_MATA = 0.9
+ORLA_SEBE = ("arvore_moita_b", "arvore_copa_p2", "arvore_arvoreta_a", "arvore_copa_p")
+ORLA_FORMAS = ("arvore_mata_a", "arvore_mata_b", "arvore_mata_c", "arvore_mata_d",
+               "arvore_copa_m", "arvore_copa_alta")
 
 
 def quintal_de_tras(indice: int, my0: float, my1: float, borda: float) -> str:
@@ -2028,9 +2393,9 @@ def quintal_de_tras(indice: int, my0: float, my1: float, borda: float) -> str:
 
     O Bruno marcou-a vazia na primeira passagem. É chão ATRÁS da vila — sai
     antes dela, e a vila tapa o que deve tapar —, mas À FRENTE da mata do
-    morro, que é prop: o contorno que a mata respeita (`horizonte_da_vila`)
-    conta também com esta faixa. Moitas e árvores pequenas, numa ORLA de
-    `ORLA_DO_QUINTAL` atrás dos lotes.
+    morro, que é prop e não lhe pode pintar por cima (`orla_embutida`).
+    Moitas e árvores pequenas, numa ORLA de `ORLA_DO_QUINTAL` atrás dos
+    lotes.
 
     ⚠️ A PRIMEIRA VERSÃO IA ATÉ AO PÉ DO MORRO, e a mata que balança ficou com
     12 árvores, quase todas moitas: o que se embute à frente sobe o contorno,
@@ -2046,8 +2411,22 @@ def quintal_de_tras(indice: int, my0: float, my1: float, borda: float) -> str:
         mx = r.uniform(fundo - ORLA_DO_QUINTAL, fundo - 0.25)
         if not no_quadro(mx, my):
             continue
+        # ⚠️ EM TUFOS, COM RELVA ENTRE ELES (`129`, «moitas em fileira»): a
+        # orla corre ao longo do fundo dos lotes, e cheia de ponta a ponta lia
+        # uma sebe plantada. Um ruído largo do sítio abre-lhe vãos — sem gastar
+        # sorteio, que a orla ficava toda noutro sítio.
+        if _ruido(my * 1.4 + 3.0, mx * 1.4, 24) < 0.42:
+            continue
+        # ⚠️ NO MORRO, PARA LÁ DO QUINTAL, NÃO SE EMBUTE NADA (`129`): cada
+        # copa parada atrás das casas obrigava a mata do morro a subir acima
+        # dela, e com a orla de 3,0 inteira embutida as que balançam voltaram
+        # todas aos 35 px da borda esquerda. A mata escura embutida fica no
+        # chão PLANO — o relvado da junta de dois degraus, à frente de casas
+        # de trás, onde nenhum prop cabe —, e o morro é da que balança.
+        if mx < fundo - ORLA_DA_MATA and altura_do_morro(mx, my) > 0.0:
+            continue
         if mx < fundo - ORLA_DA_MATA:
-            moita, raio = False, 0.70
+            raio = 0.70
         else:
             moita = r.random() < 0.6
             raio = 0.42 if moita else 0.52
@@ -2058,57 +2437,94 @@ def quintal_de_tras(indice: int, my0: float, my1: float, borda: float) -> str:
         if any(math.hypot(mx - a, my - b) < aperto * (raio + c) for a, b, c in postas):
             continue
         postas.append((mx, my, raio))
-    topo_da_vila = _horizonte_so_da_vila()
     medidas = _medidas_da_mata()
     for mx, my, raio in sorted(postas, key=lambda o: o[0] + o[1]):
         h = ALT_CAIS + altura_do_morro(mx, my)
-        # ⚠️ A COPA ESCURA SÓ SE EMBUTE ONDE UM PROP NÃO PODE ESTAR. Embutida, a
-        # árvore fica parada; e a orla de 2,2 a 2,6 unidades, toda embutida,
-        # comeu o morro aos props — sobraram 4, e depois 8 moitas, da mata que
-        # o Bruno quis a balançar. Onde a copa, como prop, ficaria inteira
-        # acima da vila e das vias, o sítio fica para a mata do morro.
-        if raio > 0.6:
-            x, y = tela(mx, my, h)
-            if _cabe_acima(medidas["arvore_mata_a"], x, y, 0.95, topo_da_vila):
-                continue
         if raio < 0.5:
-            s += arvore_embutida("arvore_moita_a" if r.random() < 0.6
-                                 else "arvore_moita_b", mx, my,
-                                 round(r.uniform(0.75, 1.1), 3), h)
+            # A moita da orla é a ESCURA, quase sempre: a orla é a borda da
+            # mata vista da vila, e a clara destoava nela (`129`).
+            variante = "arvore_moita_a" if r.random() < 0.2 else "arvore_moita_b"
+            escala = r.uniform(0.75, 1.1)
         elif raio > 0.6:
-            s += arvore_embutida("arvore_mata_a" if r.random() < 0.5
-                                 else "arvore_mata_b", mx, my,
-                                 round(r.uniform(0.75, 0.95), 3), h)
+            # A MATA ESCURA da orla em seis formas, e não em duas: «parece que
+            # a maioria das árvores é a mesma» (`129`).
+            variante = ORLA_FORMAS[r.randrange(len(ORLA_FORMAS))]
+            escala = r.uniform(0.75, 0.95)
         else:
-            s += arvore_embutida("arvore_copa_p" if r.random() < 0.5
-                                 else "arvore_copa_p2", mx, my,
-                                 round(r.uniform(0.6, 0.9), 3), h)
+            variante = "arvore_copa_p" if r.random() < 0.5 else "arvore_copa_p2"
+            escala = r.uniform(0.6, 0.9)
+        # ⚠️ SÓ SE EMBUTE O QUE UM PROP NÃO PODE SER (`127`, a copa escura; e
+        # na `129` toda a orla): embutida, a árvore fica parada. Onde a
+        # planta, como prop, ficaria inteira acima da vila e das vias, o sítio
+        # fica para a mata que balança.
+        x, y = tela(mx, my, h)
+        topo = _a_frente(mx, my)
+        if _cabe_acima(medidas[variante], x, y, escala, topo):
+            continue
+        # ⚠️ E NO RELVADO PLANO A MATA ESCURA SÓ FICA ONDE NEM UMA MOITA QUE
+        # BALANÇA CABERIA (`129`, «mata parada no meio»): onde uma moita, prop,
+        # cabe sem pintar por cima da vila, o sítio fica vazio, e a mata do
+        # morro planta lá a moita ou a árvore pequena (`MATA_DO_RELVADO`).
+        # Medido: com metade dos sítios vagos ao acaso, e depois com a faixa
+        # da frente vaga, nenhuma coube no meio do relvado — atrás de uma copa
+        # parada nenhum prop pode estar, e havia sempre outra à frente.
+        if raio > 0.6 and _cabe_acima(medidas["arvore_moita_a"], x, y, 1.0, topo):
+            continue
+        # E O QUE TEM DE SE EMBUTIR AQUI É BAIXO: uma copa alta parada logo
+        # atrás de uma casa sobe 40 a 55 px e fecha a qualquer prop o relvado
+        # de trás. Uma sebe de moitas e copas pequenas deixa a mata que
+        # balança crescer por trás dela.
+        if raio > 0.6 and altura_do_morro(mx, my) == 0.0:
+            variante = ORLA_SEBE[math.floor(_ruido(mx * 3.1, my * 3.1, 22) * len(ORLA_SEBE))]
+            escala = 0.80 + 0.25 * _ruido(my * 2.7, mx * 2.7, 23)
+        s += arvore_embutida(variante, mx, my, round(escala, 3), h)
     return s
 
 
 def arvores_embutidas() -> list:
-    """(variante, x, y, escala) de TELA de cada árvore embutida no mapa do
-    porto: a mata baixa do quintal de trás e as da vila, pela ordem em que
-    se desenham. A tabela publica-as para o catálogo da folha dos props."""
+    """(variante, x, y, escala, prof, chao) de TELA de cada árvore embutida no
+    mapa do porto: a mata baixa do quintal de trás (`quintal`) e as da vila
+    (`vila`), pela ordem em que se desenham. A tabela publica-as para o
+    catálogo da folha dos props e para o D47, que confere que nenhuma árvore
+    do morro pinta por cima de uma do quintal que lhe fica à frente — a
+    profundidade é o `mx + my` do pé."""
+    return [e + ("quintal",) for e in orla_embutida()] + [e + ("vila",) for e in _da_vila()]
+
+
+_ORLA = None
+
+
+def orla_embutida() -> list:
+    """(variante, x, y, escala, prof) de cada árvore EMBUTIDA da mata baixa do
+    quintal de trás. Uma árvore do morro, prop, não pode descer por cima de
+    nenhuma que lhe fique à frente — e pode, por cima das de trás."""
+    global _ORLA
+    if _ORLA is None:
+        pecas_da_vila()
+        _EMBUTIDAS.clear()
+        mata_baixa()
+        _ORLA = list(_EMBUTIDAS)
+    return _ORLA
+
+
+def _da_vila() -> list:
     _EMBUTIDAS.clear()
-    mata_baixa()
     vila(1, False)
     return list(_EMBUTIDAS)
 
 
-_TOPO_SO_DA_VILA = None
-
-
-def _horizonte_so_da_vila() -> list:
-    """O contorno da vila e das vias, SEM a mata baixa — o que um prop da mata
-    teria de respeitar se a orla não existisse."""
-    global _TOPO_SO_DA_VILA
-    if _TOPO_SO_DA_VILA is None:
-        topo = [float(SAIDA)] * SAIDA
-        for pavimentado in (False, True):
-            _envolver(vias(pavimentado) + vila(1, pavimentado), topo)
-        _TOPO_SO_DA_VILA = topo
-    return _TOPO_SO_DA_VILA
+def _colunas_da_embutida(perfil: dict, x: float, y: float, k: float) -> dict:
+    """{coluna de TELA: (cima, baixo)} do desenho de uma árvore embutida."""
+    cols = {}
+    for i, (cima, baixo) in enumerate(zip(perfil["cima"], perfil["baixo"])):
+        if cima is None:
+            continue
+        c0 = math.floor(x + k * (perfil["dx0"] + i))
+        for c in range(c0, math.floor(x + k * (perfil["dx0"] + i + 1)) + 1):
+            a, b = y + k * cima, y + k * baixo
+            velho = cols.get(c)
+            cols[c] = (a, b) if velho is None else (min(velho[0], a), max(velho[1], b))
+    return cols
 
 
 def _cabe_acima(perfil: dict, x: float, y: float, k: float, topo: list) -> bool:
@@ -2118,10 +2534,113 @@ def _cabe_acima(perfil: dict, x: float, y: float, k: float, topo: list) -> bool:
         if baixo is None:
             continue
         c = math.floor(x + k * (perfil["dx0"] + i))
-        for cc in (c, c + 1):
+        for cc in (c, c + 1, c + 2):
             if 0 <= cc < SAIDA and y + k * baixo > topo[cc] - MATA_FOLGA_VILA:
                 return False
     return True
+
+
+def relvado_da_vila() -> str:
+    """O relvado da vila com vida (`129`): trilhas, flores rasteiras e hortas.
+
+    «O chão verde entre os lotes é liso», marcou o Bruno. É CHÃO, e sai antes
+    da mata baixa, da rua e da vila — o que lhe cair debaixo de uma casa ou
+    de uma viela fica tapado, que é onde uma casa ou uma viela o tapariam.
+    Três coisas que dizem que ali vive gente:
+
+    - as TRILHAS de terra batida nos vãos da fileira de trás, da viela até ao
+      pé do morro e um pouco por ele acima: o caminho que o pé abre para a
+      mata. Sobem a encosta, e é a curva delas a subir que mostra o morro;
+    - as FLORES rasteiras em touceiras, no relvado que sobra entre os lotes;
+    - as HORTAS — canteiros de terra escura com fileiras de verde — encostadas
+      ao lado de um terreno, que é onde a vila as faz.
+
+    Um `Random` só deste chão (`mapa.md`): sorteio novo vem de um novo.
+    """
+    r = random.Random(SEMENTE_CHAO + 650)
+    lotes = lotes_da_vila()
+    terrenos = terrenos_da_vila(lotes)
+    caixas = [(t[0] - 0.08, t[1] + 0.08, t[2] - 0.08, t[3] + 0.08) for t in terrenos]
+
+    def livre(mx: float, my: float) -> bool:
+        return (_no_chao_de_tras(mx, my) and altura_do_morro(mx, my) == 0.0
+                and no_quadro(mx, my)
+                and not any(a <= mx <= b and c <= my <= d for a, b, c, d in caixas))
+
+    s = ""
+    # AS TRILHAS, nos vãos de pelo menos meia unidade entre dois terrenos da
+    # fileira de trás do mesmo degrau.
+    trilhas = []
+    fundo = sorted((t for t, l in zip(terrenos, lotes) if l[5]), key=lambda t: t[2])
+    for ta, tb in zip(fundo, fundo[1:]):
+        if tb[2] - ta[3] < 0.5 or abs(ta[0] - tb[0]) > 0.5:
+            continue
+        my = (ta[3] + tb[2]) / 2.0 + r.uniform(-0.12, 0.12)
+        if not no_quadro(ta[1], my):
+            continue
+        ini, fim = pe_do_morro(my) - 1.1, max(ta[1], tb[1]) + 0.15
+        fase = r.uniform(0.0, math.tau)
+        pts = []
+        for k in range(10):
+            t = k / 9.0
+            mx = ini + (fim - ini) * t
+            yy = my + 0.13 * math.sin(fase + t * 4.2) * (1.0 - 0.6 * t)
+            pts.append(p(mx, yy, ALT_CAIS + altura_do_morro(mx, yy)))
+        d = "M" + " L".join("%.1f %.1f" % q for q in pts)
+        s += ('  <path d="%s" stroke="%s" stroke-width="6" fill="none" '
+              'stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>\n'
+              % (d, C["trilha"]))
+        s += ('  <path d="%s" stroke="%s" stroke-width="2.2" fill="none" '
+              'stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>\n'
+              % (d, C["trilha_clara"]))
+        trilhas.append(my)
+
+    # AS HORTAS, ao lado de um terreno da fileira da frente ou de trás, no
+    # relvado livre: o canteiro inteiro tem de caber fora dos lotes.
+    hortas = 0
+    for t in terrenos:
+        if hortas >= 6 or r.random() < 0.55:
+            continue
+        lado = r.choice((-1.0, 1.0))
+        my0 = t[3] + 0.14 if lado > 0 else t[2] - 0.14 - 0.34
+        mx0 = t[0] + (t[1] - t[0]) * r.uniform(0.15, 0.45)
+        canto = [(mx0, my0), (mx0 + 0.55, my0), (mx0 + 0.55, my0 + 0.34), (mx0, my0 + 0.34)]
+        if not all(livre(a, b) for a, b in canto + [(mx0 + 0.27, my0 + 0.17)]):
+            continue
+        if any(abs(my0 + 0.17 - m) < 0.4 for m in trilhas):
+            continue
+        hortas += 1
+        s += poli([p(a, b, ALT_CAIS) for a, b in canto], C["horta_terra"])
+        # ⚠️ AS FILEIRAS DEIXAM A TERRA À VISTA: com pés de 2,4 px a 0,10 u
+        # a horta lia um tapete verde. É a terra escura entre as linhas que
+        # diz canteiro.
+        for k in range(3):
+            yy = my0 + 0.07 + k * 0.10
+            for j in range(6):
+                gx, gy = p(mx0 + 0.06 + j * 0.087, yy, ALT_CAIS)
+                s += ('  <ellipse cx="%.1f" cy="%.1f" rx="1.5" ry="1.1" fill="%s"/>\n'
+                      % (gx, gy - 0.8, C["horta_folha"]))
+
+    # AS FLORES, em touceiras no relvado que sobra.
+    cores = ("flor_ipe", "flor_branca", "flor_lilas", "flor_primavera", "flor_ipe")
+    flores = 0
+    for _ in range(900):
+        if flores >= 60:
+            break
+        my = r.uniform(-8.0, 32.0)
+        mx = r.uniform(_borda_em(my) - RUA_RECUO - 9.0, _borda_em(my) - RUA_RECUO - CALCADA)
+        cor = C[cores[r.randrange(len(cores))]]
+        if not livre(mx, my):
+            continue
+        flores += 1
+        cx, cy = p(mx, my, ALT_CAIS)
+        s += ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s" '
+              'opacity="0.7"/>\n' % (cx, cy, r.uniform(4.0, 6.0), 2.2, C["solo_escuro"]))
+        for _k in range(r.randint(4, 7)):
+            s += ('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="%s"/>\n'
+                  % (cx + r.uniform(-4.5, 4.5), cy - r.uniform(0.0, 2.5),
+                     r.uniform(1.1, 1.6), cor))
+    return s
 
 
 def mata_baixa() -> str:
@@ -3329,6 +3848,12 @@ def praia_chao(indice: int, my_a: float, my_b: float) -> str:
 # (`arvores_da_restinga`).
 RESTINGA_AREIA = 1.0     # unidades da crista para dentro onde a areia domina
 RESTINGA_MANCHAS = 2.6   # até onde ainda há manchas de areia na relva
+# O corte do campo `areia` em relva OU areia (`129`): o limiar, a largura da
+# rampa de antisserrilhado (em unidades do campo, ~1 texel onde ele corre
+# depressa) e a faixa de relva escurecida do lado de fora da borda.
+RESTINGA_LIMIAR = 0.5
+RESTINGA_BORDA = 0.08
+RESTINGA_SAIA = 0.12
 
 
 def restinga_rasteira(indice: int, my_a: float, my_b: float) -> str:
@@ -3358,9 +3883,8 @@ def restinga_rasteira(indice: int, my_a: float, my_b: float) -> str:
             continue
         ex, ey = p(gx, gy, ALT_CAIS)
         palha = r.random() < (0.35 if dentro < RESTINGA_AREIA else 0.75)
-        s += tufo_de_capim(ex, ey, r, n=(5, 8), alt=(6.0, 10.0),
-                           cor=C["capim_palha"] if palha else C["capim_praia"],
-                           opac=0.9)
+        s += tufo_em_leque(ex, ey, r, n=(5, 8), alt=(6.0, 10.0),
+                           cor=C["capim_palha"] if palha else C["capim_praia"])
     return s
 
 
@@ -4742,7 +5266,7 @@ def _pracinha(mx0, my0, mx1, my1, r: random.Random) -> str:
         if r.random() < 0.85:
             s += arvore_da_cidade(mx0 + (mx1 - mx0) * qx + r.uniform(-0.04, 0.04),
                         my0 + (my1 - my0) * qy + r.uniform(-0.05, 0.05),
-                        r.uniform(0.24, 0.34), r, r.random())
+                        r.uniform(0.24, 0.34), r, r.random(), sem_ipe=True)
     # OS QUATRO POSTES e os DOIS BANCOS nos caminhos, virados para o coreto:
     # os de trás antes dele, os da frente depois.
     # ⚠️ AS QUINAS DE CIMA E DE BAIXO ESTÃO NO EIXO DO CORETO NA TELA — numa
@@ -5243,6 +5767,56 @@ def caixas_que_caem_na_igreja(lotes: list, especiais: dict, perfis: list) -> set
     return fora
 
 
+def contorno_da_casa(lote: tuple, nivel: int = 1) -> list:
+    """Por coluna de TELA, a linha mais alta que a casa do lote pinta.
+
+    A mesma casa que a `vila()` desenha — forma do nível, altura do sobrado —,
+    sem a cor, o acento e as janelas, que não mudam o contorno (`129`).
+    """
+    mx0, my0, dmx, dmy, variante, _fundo, forma = lote
+    altura, telha, janelas = VILA_NIVEIS[min(nivel, max(VILA_NIVEIS))][variante]
+    forma = forma_no_nivel(forma, nivel)
+    if forma == "sobrado":
+        altura = altura_do_sobrado(nivel, variante)
+    topo = [float(SAIDA)] * SAIDA
+    _envolver(CASAS[forma](mx0, my0, mx0 + dmx, my0 + dmy, altura, C["casa_a"],
+                           telha, janelas, None), topo)
+    return topo
+
+
+_CASAS = None
+
+
+def _casas_a_frente(mx: float, my: float) -> list:
+    """O contorno, por coluna de TELA, das casas dos lotes que ficam à frente
+    do ponto (mx, my) — a regra do eixo de `lote_a_frente`, pela caixa do
+    terreno. Só as CASAS: é o que esconde uma árvore de quintal."""
+    global _CASAS
+    if _CASAS is None:
+        lotes = lotes_da_vila()
+        especiais = tipos_dos_lotes()
+        _CASAS = [(tuple(t[:4]), {c: y for c, y in enumerate(contorno_da_casa(l)) if y < SAIDA})
+                  for i, (l, t) in enumerate(zip(lotes, terrenos_da_vila(lotes)))
+                  if not especiais.get(i, "")]
+    topo = [float(SAIDA)] * SAIDA
+    for caixa, cols in _CASAS:
+        if lote_a_frente(caixa, mx, my):
+            for c, y in cols.items():
+                if y < topo[c]:
+                    topo[c] = y
+    return topo
+
+
+def telhado_do_lote(lote: tuple) -> list:
+    """O ponto de TELA logo abaixo do alto do telhado, na coluna do meio do
+    lote: o sítio que o D47 olha para saber se uma copa pousou nele."""
+    mx0, my0, dmx, dmy = lote[:4]
+    x, _y = tela(mx0 + dmx / 2.0, my0 + dmy / 2.0, ALT_CAIS)
+    topo = contorno_da_casa(lote)
+    c = max(0, min(SAIDA - 1, math.floor(x)))
+    return [round(c + 0.5, 1), round(topo[c] + 3.0, 1)]
+
+
 def vila(nivel: int, pavimentado: bool) -> str:
     """As casas atrás da rua, no nível pedido, e as árvores entre elas.
 
@@ -5299,8 +5873,13 @@ def vila(nivel: int, pavimentado: bool) -> str:
                                                 "flor_primavera", "flor_branca"]),
                 rj.uniform(0.15, 0.85)) for _l in lotes]
     sem_caixa = caixas_que_caem_na_igreja(lotes, especiais, perfis)
+    marcas = []
     for i, (mx0, my0, dmx, dmy, variante, fundo, forma) in sorted(
             enumerate(lotes), key=lambda par: par[1][0] + par[1][1]):
+        # Onde começa o desenho de cada lote, para o contorno POR LOTE
+        # (`pecas_da_vila`), com a caixa do TERRENO — onde vivem a casa, os
+        # muros e as árvores dele.
+        marcas.append((tuple(round(v, 3) for v in terrenos[i][:4]), len(s)))
         altura, telha, janelas = perfis[variante]
         tipo: str = especiais.get(i, "")
         xt, xm, ye, yd, _me, _md = terrenos[i]
@@ -5319,12 +5898,17 @@ def vila(nivel: int, pavimentado: bool) -> str:
         # passava por cima do passeio.
         s += _faixa_mx(xt, xm, ye, yd,
                        C["terra_clara"] if pavimentado else C["terra_escura"], 0.5)
+        # O CONTORNO DA CASA, para as árvores do lote saberem quanto ela as
+        # tapa ou quanto lhe tapam (`129`). É o mesmo desenho que sai mais
+        # abaixo — a casa não sorteia nada —, só que medido antes.
+        casa = None if tipo else contorno_da_casa(lotes[i], nivel)
         # Árvore do QUINTAL DE TRÁS, desenhada antes da casa para a casa a
         # tapar em parte — é o que a põe atrás em vez de colada por cima.
         if r.random() < pomar:
             s += arvore_da_cidade(mx0 - r.uniform(0.10, 0.26),
                         my0 + r.uniform(-0.1, dmy + 0.1),
-                        r.uniform(0.30, 0.52), r, r.random())
+                        r.uniform(0.30, 0.52), r, r.random(), atras=True,
+                        sem_ipe=bool(tipo))
         if tipo == "praca":
             s += _pracinha(*planta_da_praca(mx0, my0, dmx, dmy), r)
         elif tipo == "igreja":
@@ -5392,12 +5976,101 @@ def vila(nivel: int, pavimentado: bool) -> str:
         # O quintal do lado com moita não leva árvore: uma tapava a outra.
         if lado > 0.10 and not moita and r.random() < pomar - 0.05:
             s += arvore_da_cidade(mx0 + dmx * r.uniform(0.45, 0.90), my0 + dmy + lado * 0.6,
-                        r.uniform(0.22, 0.36), r, r.random(), teto=0.65)
+                        r.uniform(0.22, 0.36), r, r.random(), teto=0.65, casa=casa)
         elif r.random() < 0.7:
             gx, gy = p(mx0 + dmx + r.uniform(0.02, VILA_QUINTAL_FRENTE - 0.02),
                        my0 + r.uniform(0.1, dmy), ALT_CAIS)
             s += tufo_de_capim(gx, gy, r, n=(3, 5), alt=(3.0, 5.5))
+    if nivel == 1:
+        _DESENHO_POR_LOTE[pavimentado] = [
+            (prof, s[ini:(marcas[k + 1][1] if k + 1 < len(marcas) else len(s))])
+            for k, (prof, ini) in enumerate(marcas)]
     return s
+
+
+_DESENHO_POR_LOTE = {}
+_PECAS = None
+
+
+def pecas_da_vila() -> list:
+    """[(caixa, {coluna de TELA: linha de cima})] — o contorno de CADA LOTE
+    da vila (a casa, os muros, as árvores e a caixa-d'água dele), com a caixa
+    do terreno no mundo, `(mx0, mx1, my0, my1)`.
+
+    ⚠️ O CONTORNO DA VILA INTEIRA É O MÍNIMO DA COLUNA (`129`), e uma casa lá
+    ATRÁS proibia uma árvore que balança À FRENTE dela: a mata do morro caiu
+    toda nos 35 px da borda esquerda, porque à direita disso há casas da
+    fileira de trás mais acima na tela. Uma árvore só pode errar sobre o que
+    lhe fica À FRENTE — e é isso que estas peças deixam perguntar, lote a
+    lote. Vale a menor das duas versões do mapa, como o contorno.
+    """
+    global _PECAS
+    if _PECAS is None:
+        # ⚠️ O `vila()` ACRESCENTA as árvores dele à lista das embutidas, e
+        # esta função corre a meio de quem a está a recolher (a orla pergunta
+        # pelos lotes à frente): sem repor a lista, a orla publicada levava as
+        # árvores da vila, conforme a ordem das chamadas — e a cópia do jogo
+        # deixou de bater com a tabela.
+        guardadas = list(_EMBUTIDAS)
+        juntas = {}
+        for pavimentado in (False, True):
+            vila(1, pavimentado)
+            for caixa, desenho in _DESENHO_POR_LOTE[pavimentado]:
+                topo = [float(SAIDA)] * SAIDA
+                _envolver(desenho, topo)
+                cols = juntas.setdefault(caixa, {})
+                for c, y in enumerate(topo):
+                    if y < SAIDA:
+                        cols[c] = min(cols.get(c, y), y)
+        _PECAS = [(caixa, {c: round(math.floor(y * 10.0) / 10.0, 1)
+                           for c, y in sorted(cols.items())})
+                  for caixa, cols in sorted(juntas.items())]
+        _EMBUTIDAS[:] = guardadas
+    return _PECAS
+
+
+def lote_a_frente(caixa: tuple, mx: float, my: float) -> bool:
+    """O lote de terreno `caixa` está à frente do ponto (mx, my) do chão?
+
+    A regra do eixo que separa: o ponto só fica à frente se passar do fim do
+    terreno num dos dois eixos — `mx` maior (mais perto do cais) ou `my`
+    maior (mais para a esquerda e para baixo na tela). Pela soma `mx + my`,
+    um ponto atrás de uma casa e ao lado dela em `my` contava-se à frente, e
+    a árvore pintar-se-ia por cima do telhado.
+    """
+    return not (mx >= caixa[1] or my >= caixa[3])
+
+
+_TOPO_DAS_VIAS = None
+
+
+def horizonte_das_vias() -> list:
+    """O contorno das vias, que estão à frente de toda a mata: por coluna."""
+    global _TOPO_DAS_VIAS
+    if _TOPO_DAS_VIAS is None:
+        topo = [float(SAIDA)] * SAIDA
+        for pavimentado in (False, True):
+            _envolver(vias(pavimentado), topo)
+        _TOPO_DAS_VIAS = [round(math.floor(y * 10.0) / 10.0, 1) for y in topo]
+    return _TOPO_DAS_VIAS
+
+
+_A_FRENTE = {}
+
+
+def _a_frente(mx: float, my: float) -> list:
+    """O contorno do que fica À FRENTE do ponto (mx, my): as vias, que estão à
+    frente de toda a mata, e os lotes que `lote_a_frente` diz."""
+    chave = (round(mx, 2), round(my, 2))
+    if chave not in _A_FRENTE:
+        topo = list(horizonte_das_vias())
+        for caixa, cols in pecas_da_vila():
+            if lote_a_frente(caixa, mx, my):
+                for c, y in cols.items():
+                    if y < topo[c]:
+                        topo[c] = y
+        _A_FRENTE[chave] = topo
+    return _A_FRENTE[chave]
 
 
 # ── ESPUMA: DEIXOU DE SER FUNDO E PASSOU A SER CAMADA ────────────────────
@@ -5866,6 +6539,10 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # degrau sobe, na tela, por cima da faixa do vizinho; antes da mata baixa,
     # que cresce nele, e da rua e da vila, que estão à frente dele.
     s += campo_do_chao()
+    # O granito das clareiras e o relvado da vila (`129`): chão, logo antes
+    # da mata baixa, da rua e da vila, que estão à frente dele.
+    s += pedras_do_morro()[0]
+    s += relvado_da_vila()
     for j, a, b in praias():
         s += restinga_rasteira(j, a, b)
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
@@ -6343,7 +7020,9 @@ def tabela_ancoras() -> dict:
                    "fundo": bool(l[5]),
                    "casa": l[6],
                    "tipo": tipos_dos_lotes().get(i, ""),
-                   "canto": px(l[0], l[1], ALT_CAIS)}
+                   "canto": px(l[0], l[1], ALT_CAIS),
+                   # O alto do telhado, para o D47 §9 (`129`).
+                   "telhado": telhado_do_lote(l)}
                   for i, l in enumerate(lotes_da_vila())],
         # As cores com que a vila pinta o que não é casa. O D24 lê-as daqui em
         # vez de as escrever à mão, pela mesma razão que o D20 lê as da rua.
@@ -6367,12 +7046,24 @@ def tabela_ancoras() -> dict:
                   "h": round(h * ZOOM, 2), "pe": [x, y], "chao": chao}
                  for v, mx, my, h, x, y, chao in plantas_do_mapa()],
         "cristas": [[list(q) for q in c] for c in cristas_da_tela()],
-        "horizonte_da_vila": horizonte_da_vila(),
+        # O granito das clareiras (`129`): a caixa de TELA e a profundidade
+        # de cada pedra — o D47 §8 confere que nenhuma árvore de trás a tapa.
+        "pedras_do_morro": pedras_do_morro()[1],
+        # ⚠️ O CONTORNO DA VILA É POR LOTE desde a `129` (`pecas_da_vila`): o
+        # de cada terreno, com a caixa dele no mundo, e o das vias à parte. O
+        # mínimo da coluna, que a `127` publicava, proibia uma árvore à
+        # frente de uma casa que lhe ficava atrás.
+        "horizonte_das_vias": horizonte_das_vias(),
+        "pecas_da_vila": [{"caixa": list(caixa), "x0": min(cols),
+                           "topo": [cols.get(c, float(SAIDA))
+                                    for c in range(min(cols), max(cols) + 1)]}
+                          for caixa, cols in pecas_da_vila() if cols],
         # As árvores EMBUTIDAS no mapa (`127`, segunda passagem): a da vila e a
         # mata baixa do quintal de trás. Não são nós da cena; o catálogo da
         # folha dos props ancora nelas as espécies que não são prop.
-        "arvores_embutidas": [{"arvore": v, "pe": [x, y], "escala": k}
-                              for v, x, y, k in arvores_embutidas()],
+        "arvores_embutidas": [{"arvore": v, "pe": [x, y], "escala": k,
+                               "prof": prof, "chao": chao}
+                              for v, x, y, k, prof, chao in arvores_embutidas()],
     }
 
 

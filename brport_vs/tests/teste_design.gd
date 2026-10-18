@@ -348,7 +348,7 @@ func _rodar() -> void:
 	var tela47: Control = load(CENA).instantiate()
 	root.add_child(tela47)
 	var mata = load("res://tests/casos_mata_do_morro.gd").new()
-	mata.rodar(tela47, _ancoras)
+	mata.rodar(tela47, _ancoras, _mapa_lido("res://art/porto_mapa_iso.svg"))
 	root.remove_child(tela47)
 	tela47.free()
 	_falhas += int(mata.falhas)
