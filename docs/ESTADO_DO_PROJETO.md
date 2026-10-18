@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 17/10/2026 — o terreno e a vegetação (`127`); a retomada (`125`)
+> **Atualização:** 17/10/2026 — diagnóstico (`128`); terreno (`127`); retomada (`125`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -117,10 +117,10 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
-**Na main:** cancelamento, pesquisa de recursos e ajuda (`109`–`116`; da
-ajuda faltam leitura e telefone), a obra, o maquinário e a vila (`121`–`123`).
-**Meu porto agora (`125`, PR #140, na main):** resumo antes do porto por
-Continuar/Carregar; consulta sem efeitos, sem atalhos.
+**Na main:** cancelamento e ajuda (`109`–`116`; leitura e telefone pendentes),
+obras, máquinas e vila (`121`–`123`); retomada sem efeitos/atalhos (`125`).
+**Versão e diagnóstico (`128`, PR #142 rascunho):** build, prévia e cópia
+explícita no início e na pausa; sem dados da partida. Claude parado.
 **A fila da `126`** (§7): terreno e vegetação (`127`), **não aceite**,
 continua; depois, estradas e detalhes.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno

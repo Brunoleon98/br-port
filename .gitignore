@@ -7,3 +7,6 @@ __pycache__/
 # build, não fonte — e mora AQUI, na raiz, não em brport_vs/.gitignore: um
 # .gitignore só vale da pasta dele para baixo, e o export sobe um nível.
 build/
+
+# Gerado imediatamente antes do export, com o commit da árvore exportada.
+brport_vs/dados/identificacao_build.tres

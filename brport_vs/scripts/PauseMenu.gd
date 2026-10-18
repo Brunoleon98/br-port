@@ -36,6 +36,7 @@ signal ver_balanco
 ## lhes dá o tema — é o `Main`.
 signal pedir_ajustes
 signal pedir_como_jogar
+signal pedir_diagnostico
 ## Pedido para voltar à tela inicial. Quem troca de cena é o `Main`, que é
 ## também quem armou o gravador da partida e o tem de desarmar.
 signal sair_para_inicio
@@ -64,6 +65,8 @@ func _ready() -> void:
 		pedir_como_jogar.emit())
 	_botao("Ajustes", func() -> void:
 		pedir_ajustes.emit())
+	_botao("Versão e diagnóstico", func() -> void:
+		pedir_diagnostico.emit())
 
 	# ⚠️ A PORTA DE VOLTA AO BALANÇO, e ela existe por causa do botão de fechar
 	# que o `EndGame.gd` ganhou em 07/09. Fechar o balanço para chegar AQUI
