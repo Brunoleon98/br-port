@@ -29,6 +29,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-18.md` | 18/10 | RB6 (`129`, PR #143): preferência, operação preservada, prova temporal e retomada; #142 já mesclado e Claude ativo no visual |
+| `VERIFICACAO_REDUZIR_MOVIMENTO_2026-10-18/README.md` | 18/10 | RB6 (`129`, PR #143): reprodução da preferência, isolamento, guardas e comparação temporal; divisão com o WIP visual |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17e.md` | 17/10 | Versão e diagnóstico (`128`), PR #142 rascunho: identificação real do export, prévia e cópia explícita; preferência por evitar aprovações invisíveis no celular |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17.md` | 17/10 | O maquinário da obra (`122`): balsa com bate-estaca, caminhão munck e o rolo de tambor à mostra; aceite com a linha amarela corrigida, a fila segue nas estruturas da cidade |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17b.md` | 17/10 | A vila humilde (`123`): seis formas de casa, terreno com muro, igreja com adro e praça da matriz, aceite à quinta passagem; a fila segue no mapa |

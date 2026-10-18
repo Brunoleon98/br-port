@@ -7,7 +7,7 @@
     python3 tools/sentinela_do_jogador.py remover  brport_vs
 
 Planta um arquivo conhecido em cada lugar onde o JOGO guarda o que é do
-jogador — `savegame.json`, `audio.cfg` e a pasta `registros/` do `user://` do
+jogador — saves, `audio.cfg`, `apresentacao.cfg` e a pasta `registros/` do
 projeto — e depois exige-os byte a byte, sem arquivo novo na pasta.
 `docs/decisoes/061`.
 
@@ -53,7 +53,8 @@ CONTEUDO = (
 # e os outros dois são arquivos novos — que as ferramentas agora APAGAM ao
 # partir de um disco conhecido (`apagar_espaco`). Sem eles aqui, um isolamento
 # que falhasse só para os espaços 2 e 3 levava as partidas do jogador calado.
-ARQUIVOS = ("savegame.json", "savegame_2.json", "savegame_3.json", "audio.cfg")
+# A preferência de apresentação (`129`) pertence ao aparelho e também entra.
+ARQUIVOS = ("savegame.json", "savegame_2.json", "savegame_3.json", "audio.cfg", "apresentacao.cfg")
 PASTA_REGISTROS = "registros"
 REGISTRO_SENTINELA = "partida_sentinela.jsonl"
 

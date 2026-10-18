@@ -21,6 +21,8 @@ extends PainelNarrativo
 # ============================================================
 
 const LARGURA := 460
+var _movimento: CheckButton
+var _aviso_preferencia: Label
 
 
 func setup(_sem_argumentos: Variant = null) -> void:
@@ -32,10 +34,35 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	_vbox.add_child(_slider_de_volume("Efeitos", "SFX"))
 
 	fio()
+	secao("APRESENTAÇÃO")
+	_movimento = CheckButton.new()
+	_movimento.name = "ReduzirMovimento"
+	_movimento.text = "Reduzir movimento"
+	_movimento.custom_minimum_size = Vector2(0, TOQUE_MIN)
+	_movimento.button_pressed = PreferenciasDeApresentacao.atual().reduzir_movimento
+	_vbox.add_child(_movimento)
+	paragrafo("Diminui movimentos de fundo, pulsos e transições. Mantém os avisos e os sinais de operação.")
+	_aviso_preferencia = paragrafo("")
+	_aviso_preferencia.theme_type_variation = &"RotuloApoio"
+	_aviso_preferencia.visible = false
+	_movimento.toggled.connect(_escolher_movimento)
+	PreferenciasDeApresentacao.atual().mudou.connect(_mostrar_movimento)
+
+	fio()
 	secao("REGISTRO DA PARTIDA")
 	_registro()
 
 	botao_fechar("Voltar")
+
+
+func _escolher_movimento(reduzido: bool) -> void:
+	var erro := PreferenciasDeApresentacao.atual().definir_reduzir_movimento(reduzido)
+	_aviso_preferencia.text = "Não foi possível lembrar a escolha. Ela vale nesta sessão."
+	_aviso_preferencia.visible = erro != OK
+
+
+func _mostrar_movimento(reduzido: bool) -> void:
+	_movimento.set_pressed_no_signal(reduzido)
 
 
 # Um rótulo, o slider e a percentagem. A linha tem a altura do alvo de toque,

@@ -1,5 +1,9 @@
 # BR Port — versão e diagnóstico no PR #142
 
+> Atualização de 18/10: #142 foi mesclado, main `56b3983`; o texto abaixo
+> conserva o estado da sessão. Retomada atual em
+> `BRIEFING_PROXIMA_CONVERSA_2026-10-18.md` (RB6, PR #143).
+
 **17/10/2026.** Bruno escolheu a opção 1: versão e diagnóstico, primeiro
 recorte do RB8 (`128`). Informou que o Claude está parado. Branch
 `codex/versao-diagnostico`, PR #142 em rascunho, base `0ce0421`. Sem merge.

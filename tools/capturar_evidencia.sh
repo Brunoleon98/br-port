@@ -416,6 +416,13 @@ tirar espacos_carregar - - --script res://tools/capturar_cena.gd -- res://scenes
 tirar espacos_nova - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_nova.png" espacos=1,3 --tocar=Nova --tempo=nova
 tirar espacos_confirmar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_confirmar.png" espacos=1 --tocar=Nova --tocar=Substituir --tempo=confirmar
 tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes.png" espacos=1,3 --tocar=Ajustes
+tirar movimento_normal - - --script res://tools/capturar_movimento.gd -- normal "$SAIDA/movimento_normal.png"
+tirar movimento_reduzido - - --script res://tools/capturar_movimento.gd -- reduzido "$SAIDA/movimento_reduzido.png"
+python3 tools/comparar_movimento.py "$SAIDA" > "$SAIDA/movimento_comparacao.log"
+grep -q "COMPARACAO TEMPORAL CONFERIDA" "$SAIDA/movimento_comparacao.log"
+tirar movimento_inicio - - --script res://tools/capturar_movimento.gd -- inicio "$SAIDA/movimento_inicio.png"
+tirar movimento_pausa - - --script res://tools/capturar_movimento.gd -- pausa "$SAIDA/movimento_pausa.png"
+tirar movimento_resultado - - --script res://tools/capturar_movimento.gd -- resultado "$SAIDA/movimento_resultado.png"
 tirar diagnostico - - --script res://tools/capturar_diagnostico.gd -- consulta "$SAIDA/diagnostico.png"
 tirar diagnostico_copiado - - --script res://tools/capturar_diagnostico.gd -- copiado "$SAIDA/diagnostico_copiado.png"
 tirar diagnostico_indisponivel - - --script res://tools/capturar_diagnostico.gd -- indisponivel "$SAIDA/diagnostico_indisponivel.png"

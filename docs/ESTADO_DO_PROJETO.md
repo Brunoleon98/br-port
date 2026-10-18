@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 17/10/2026 — diagnóstico (`128`); terreno (`127`); retomada (`125`)
+> **Atualização:** 18/10/2026 — reduzir movimento (`129`); diagnóstico integrado (`128`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -117,16 +117,16 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
 progressão (`103`–`106`, `108`); medição na `economia.md`.
-**Na main:** cancelamento e ajuda (`109`–`116`; leitura e telefone pendentes),
-obras, máquinas e vila (`121`–`123`); retomada sem efeitos/atalhos (`125`).
-**Versão e diagnóstico (`128`, PR #142 rascunho):** build, prévia e cópia
-explícita no início e na pausa; sem dados da partida. Claude parado.
-**A fila da `126`** (§7): terreno e vegetação (`127`), **não aceite**,
-continua; depois, estradas e detalhes.
-Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
-sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
-A `107` permanece local e separada, sem autorização de publicação nem teste
-no telefone.
+**Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
+(`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142 mesclado).
+**RB6 (`129`, PR #143 rascunho):** Reduzir movimento nos Ajustes do início
+e pausa, preferência por aparelho; fundo parado e transições diretas,
+com operação, ações e resultados preservados. Sem mudar partida/save.
+**Claude segue no visual:** item 1 da `126`, terreno/vegetação (`127`)
+**sem aceite**; estradas e detalhes esperam. Sem redesenho neste RB6.
+Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
+pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
+ou teste no telefone.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.

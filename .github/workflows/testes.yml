@@ -96,6 +96,14 @@ jobs:
           python3 tools/importar_para_ci.py brport_vs \
             ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
 
+      - name: Provar preferência após reiniciar e isolamento do jogador
+        run: |
+          set -euo pipefail
+          python3 tools/testar_preferencia_movimento.py \
+            --godot ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
+            2>&1 | tee /tmp/preferencia_movimento.txt
+          grep -q "REINICIO DE PREFERENCIA CONFERIDO" /tmp/preferencia_movimento.txt
+
       - name: Plantar a sentinela do jogador
         # O save, o volume e as gravações do JOGADOR vivem no `user://` do
         # projeto, e em 25/09 uma captura apagou a partida real do Bruno no
