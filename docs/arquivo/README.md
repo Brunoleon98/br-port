@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-18b.md` | 18/10 | A vegetação de folhas (`130`): contorno por lote, copa de folhas com a normal da copa, clareiras de granito, destaques à vista e as palmeiras jovens no relvado; aceite à sétima passagem, a fila segue nas estradas |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17e.md` | 17/10 | Versão e diagnóstico (`128`), PR #142 rascunho: identificação real do export, prévia e cópia explícita; preferência por evitar aprovações invisíveis no celular |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17.md` | 17/10 | O maquinário da obra (`122`): balsa com bate-estaca, caminhão munck e o rolo de tambor à mostra; aceite com a linha amarela corrigida, a fila segue nas estruturas da cidade |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17b.md` | 17/10 | A vila humilde (`123`): seis formas de casa, terreno com muro, igreja com adro e praça da matriz, aceite à quinta passagem; a fila segue no mapa |

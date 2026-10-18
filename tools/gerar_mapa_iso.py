@@ -437,16 +437,16 @@ C = {
     # e não como clareira. Era #55663a (95), e a segunda passagem escureceu-o
     # para a encosta se separar do relvado de baixo.
     "chao_mata": "#47572f",
-    # O que o chão da mata ganhou na `129`: a folha caída, castanha e baça, e
+    # O que o chão da mata ganhou na `130`: a folha caída, castanha e baça, e
     # o pingo de sol entre as copas, um verde quente mais claro do que o
     # `chao_mata` e mais escuro do que o relvado — luz, e não clareira.
     "folhas_caidas": "#6e5f36", "luz_da_mata": "#6a8340",
-    # A PEDRA DO MORRO (`129`): granito à mostra, como os morros do litoral
+    # A PEDRA DO MORRO (`130`): granito à mostra, como os morros do litoral
     # — cinzento quente, mais claro do que o enrocamento do cais, com a face
     # de sombra e o veio escuro que a chuva desenha.
     "granito": "#a8a296", "granito_luz": "#c4bfb2", "granito_sombra": "#7c776d",
     "granito_veio": "#5f5b53",
-    # AS FLORES DO RELVADO e a HORTA (`129`): «relvado da vila com vida».
+    # AS FLORES DO RELVADO e a HORTA (`130`): «relvado da vila com vida».
     # As flores do relvado repetem as dos jardins (`flor_ipe`, `flor_branca`,
     # `flor_primavera`) e acrescentam o lilás da trapoeraba.
     "flor_lilas": "#b88ad6",
@@ -1110,7 +1110,7 @@ def tufo_em_leque(px: float, py: float, r: random.Random,
                   cor: str = "") -> str:
     """Um tufo de capim-da-praia em LEQUE: lâminas CHEIAS que abrem do pé.
 
-    ⚠️ O TRAÇO DE 1,3 LIA ARRANHÃO NA AREIA (`129`): «capim da restinga em
+    ⚠️ O TRAÇO DE 1,3 LIA ARRANHÃO NA AREIA (`130`): «capim da restinga em
     fios», marcou o Bruno. O `tufo_de_capim` é um traço de largura fixa que
     acaba redondo, e sobre a areia clara um traço fino é um risco. A lâmina
     aqui é uma FOLHA — larga no pé, a afinar até à ponta, curva —, as do meio
@@ -1295,7 +1295,7 @@ def no_morro(mx: float, my: float) -> tuple:
     return (mx, my, ALT_CAIS + altura_do_morro(mx, my))
 
 
-# AS CLAREIRAS DO MORRO (`129`): «morro que se leia», marcou o Bruno. Debaixo
+# AS CLAREIRAS DO MORRO (`130`): «morro que se leia», marcou o Bruno. Debaixo
 # das copas não se via a encosta subir; onde a mata se abre aparecem o chão
 # claro e o granito, e uma fresta de chão ACIMA de copas e ABAIXO de outras é
 # o que diz que o chão sobe. (mx, my, raio) no mundo, no morro que o quadro
@@ -1310,7 +1310,7 @@ _PEDRAS = None
 
 
 def pedras_do_morro() -> tuple:
-    """(svg, pedras): o granito à mostra nas clareiras do morro (`129`).
+    """(svg, pedras): o granito à mostra nas clareiras do morro (`130`).
 
     Uma laje grande e uma ou duas pequenas por clareira, no sólido facetado
     do enrocamento (`com_saia`), com o realce de cima e o VEIO escuro que a
@@ -1436,11 +1436,11 @@ def _cor_do_chao(mx: float, my: float, h: float) -> tuple:
     gx, gy = subida * ux, subida * uy
     sx, sy, sz = SOL_DO_MORRO
     luz = (-gx * sx - gy * sy + sz) / math.sqrt(gx * gx + gy * gy + 1.0) / sz
-    # A CLAREIRA (`129`): o chão volta a relva e a sol onde a mata se abre,
+    # A CLAREIRA (`130`): o chão volta a relva e a sol onde a mata se abre,
     # e é o claro entre as copas que deixa ler a encosta a subir.
     aberta = clareira_em(mx, my)
     cor = _entre_rgb(cor, _rgb(C["chao_mata"]), 0.92 * _suave(t / 1.0) * (1.0 - aberta))
-    # AS FOLHAS CAÍDAS E A LUZ QUE PASSA ENTRE AS COPAS (`129`): «o chão da
+    # AS FOLHAS CAÍDAS E A LUZ QUE PASSA ENTRE AS COPAS (`130`): «o chão da
     # mata é um verde-oliva uniforme», marcou o Bruno. Duas manchas de borda
     # NÍTIDA — o corte do ruído num limiar, pela regra da areia da restinga —,
     # a folhagem castanha em grão miúdo e a luz em pingos maiores.
@@ -1577,7 +1577,7 @@ def campo_do_chao() -> str:
             if areia > 0.0:
                 # A areia da restinga é a SECA, e clareia até à da duna junto
                 # da crista, para o raster chegar à rampa já na cor dela.
-                # ⚠️ COM BORDA, E NÃO EM DEGRADÊ (`129`): misturada pela
+                # ⚠️ COM BORDA, E NÃO EM DEGRADÊ (`130`): misturada pela
                 # fração `areia`, 29,5% do chão da restinga saía a meio-tom
                 # entre relva e areia, e lia-se como um BORRÃO no meio de um
                 # mapa de bordas limpas — «areia da restinga nítida», marcou
@@ -1619,7 +1619,7 @@ def campo_do_chao() -> str:
 # é «atrás da vila no mundo», é «acima da vila NA TELA»: cada coluna do PNG
 # da árvore, sombra incluída, tem de acabar acima da linha mais alta que a
 # vila e as vias pintam naquela coluna.
-# ⚠️ E SÓ DO QUE LHE FICA À FRENTE, desde a `129` (`pecas_da_vila`, por lote,
+# ⚠️ E SÓ DO QUE LHE FICA À FRENTE, desde a `130` (`pecas_da_vila`, por lote,
 # e `orla_embutida`, árvore a árvore): por coluna o contorno da vila inteira é
 # o mínimo, e uma casa lá atrás proibia uma árvore à frente dela.
 #
@@ -1651,7 +1651,7 @@ MATA_DESTAQUES = [
     ("arvore_jucara_a", 0.30, 3), ("arvore_jucara_b", 0.30, 2),
     ("arvore_embauba_a", 0.40, 2), ("arvore_embauba_b", 0.40, 2),
 ]
-# A MASSA da mata, por SACO e não por ordem (`129`): «parece que a maioria das
+# A MASSA da mata, por SACO e não por ordem (`130`): «parece que a maioria das
 # árvores é a mesma», marcou o Bruno — a `127` punha as duas copas escuras em
 # levas de 99, e a encosta era a mesma bola em fila. O saco tem cada forma o
 # número de vezes da tabela (a regra da vila, `_tirar_do_saco`), e é a
@@ -1675,7 +1675,7 @@ MATA_DESTAQUE_LONGE = 55.0
 # faixa do morro. A 26 px cabem três e quatro, e uma silhueta fina ao lado
 # de outra igual continua a ler-se como duas árvores.
 MATA_PALMEIRA_LONGE = 26.0
-# ⚠️ E CADA FORMA TEM TETO (`129`): o morro visível é uma faixa estreita, e
+# ⚠️ E CADA FORMA TEM TETO (`130`): o morro visível é uma faixa estreita, e
 # nela cabem sobretudo as copas ESTREITAS. Sem teto, a 0,32 de aperto, a alta
 # e a escura média deram 12 e 11 das 39 copas, em fila — a mesma árvore em
 # parede, que era a queixa.
@@ -1705,13 +1705,13 @@ MATA_DO_RELVADO = [("arvore_arvoreta_a", 0.48, 8), ("arvore_arvoreta_b", 0.42, 8
 # das arvoretas, que senão lhes tomam o chão, e com a distância entre iguais
 # das adultas (a jovem conta como da espécie dela, `_especie`).
 MATA_DESTAQUES_DO_RELVADO = [("arvore_jucara_c", 0.26, 2), ("arvore_embauba_c", 0.32, 2)]
-# ⚠️ E O DESTAQUE SÓ CONTA ONDE SE VÊ (`129`): o mapa começa a 62 px do topo
+# ⚠️ E O DESTAQUE SÓ CONTA ONDE SE VÊ (`130`): o mapa começa a 62 px do topo
 # da tela, debaixo da barra do HUD, e metade das juçaras e embaúbas do morro
 # tinha o pé a y 21–36 — a copa inteira atrás da barra. O topo da copa de um
 # destaque fica no máximo a este tanto acima do topo do mapa (a ponta pode
 # entrar debaixo da barra; o corpo, não).
 MATA_COPA_VISIVEL = -10.0
-# ⚠️ E NADA À FRENTE DA COPA DE UM DESTAQUE (`129`): as jovens nasceram no
+# ⚠️ E NADA À FRENTE DA COPA DE UM DESTAQUE (`130`): as jovens nasceram no
 # relvado e as arvoretas plantadas depois, em tufos à volta delas, taparam-nas
 # pela frente — da juçara só se viam as pontas das folhas. Nenhuma árvore fica
 # À FRENTE (pé mais abaixo na tela, que é a ordem do `MataNoMapa`) da parte de
@@ -1733,14 +1733,14 @@ MATA_COPA_TAPADA_ENTRE = 0.65
 # chão, e não numa conta.
 MATA_SACOS = 12
 # As moitas fecham as frestas que sobram entre as copas.
-# ⚠️ NA MATA SÓ A MOITA ESCURA (`129`): «moita clara destoa», marcou o
+# ⚠️ NA MATA SÓ A MOITA ESCURA (`130`): «moita clara destoa», marcou o
 # Bruno — a `moita_a` tem o verde claro da vila e saltava na mata escura. A
 # clara fica nos jardins. E poucas: «moita demais, árvore de menos».
 MATA_MIUDA = [("arvore_moita_b", 0.36, 4)]
 # A copa de uma árvore pode entrar este tanto na da vizinha: a mata FECHA-SE,
 # e é a sobreposição que faz dela uma massa em vez de um pomar. Era 0,72 e
 # 0,55; a terceira passagem fechou-a mais.
-# ⚠️ E A `129` FECHOU-A A 0,34: sem a orla escura embutida, a massa do morro
+# ⚠️ E A `130` FECHOU-A A 0,34: sem a orla escura embutida, a massa do morro
 # passou a ser só a mata que balança, e o que a limita é o CHÃO livre, não os
 # dardos (medido: 30 sacos e 400 tentativas dão 41 árvores contra 36). O
 # aperto é que enche: 36 árvores a 0,45, 46 a 0,38, 59 a 0,32.
@@ -1927,14 +1927,14 @@ def arvores_da_mata() -> list:
             # o perfil mede o PNG a 768 em colunas de TELA inteiras, e um
             # pixel de 2/3 com o pé a x = 80,8 chega a `c + 2`. ⚠️ ERAM DUAS,
             # e o D47 viu uma árvore 0,8 px por cima de uma embutida que o
-            # gerador julgava livre (`129`).
+            # gerador julgava livre (`130`).
             c = math.floor(x) + perfil["dx0"] + k
             if baixo is None:
                 continue
             if any(0 <= cc < SAIDA and y + baixo > topo[cc] - MATA_FOLGA_VILA
                    for cc in (c, c + 1, c + 2)):
                 return None
-            # A PEDRA E A ÁRVORE EMBUTIDA À FRENTE (`129`): as duas são
+            # A PEDRA E A ÁRVORE EMBUTIDA À FRENTE (`130`): as duas são
             # desenho do mapa, e a árvore de trás, prop, pintar-se-ia por
             # cima delas. As de trás, não: a árvore da frente tapa-as, e é o
             # que se quer. A pedra, aliás, nem a da frente a pode tapar: é a
@@ -2003,7 +2003,7 @@ def arvores_da_mata() -> list:
             # repete que mata espalhada por igual lê como plantação. Sete
             # dardos em dez nascem junto de uma árvore já posta; os outros
             # abrem tufos novos.
-            # ⚠️ MENOS A `solta` (`129`): o destaque do relvado nasce antes
+            # ⚠️ MENOS A `solta` (`130`): o destaque do relvado nasce antes
             # das árvores do relvado, e os dardos junto de uma já posta caíam
             # no morro — 621 das 800 tentativas das jovens morriam no «só no
             # plano», e nenhuma nasceu.
@@ -2043,7 +2043,7 @@ def arvores_da_mata() -> list:
                 feitas += 1
         if not feitas:
             break
-    # ⚠️ E TODA FORMA ENTRA AO MENOS UMA VEZ (`129`): com a copa de folhas e a
+    # ⚠️ E TODA FORMA ENTRA AO MENOS UMA VEZ (`130`): com a copa de folhas e a
     # regra dos destaques, o saco deixou a escura grande e a escura alta a
     # zero — a encosta perdia duas das seis formas, que era a queixa da
     # primeira volta («a maioria das árvores é a mesma»), e a folha dos props
@@ -2051,7 +2051,7 @@ def arvores_da_mata() -> list:
     for v, raio, _n in MATA_MASSA:
         if not contas[v] and plantar(v, raio, MATA_DARDOS_DA_QUE_FALTA):
             contas[v] += 1
-    # O SUB-BOSQUE (`129`): «troncos em fila», marcou o Bruno — na borda da
+    # O SUB-BOSQUE (`130`): «troncos em fila», marcou o Bruno — na borda da
     # mata virada para a vila, os troncos das copas ficavam à mostra em
     # paliçada. Uma moita no pé, À FRENTE de cada árvore (para o cais e para
     # a esquerda da tela), a entrar-lhe na copa; onde a vila à frente não a
@@ -2073,7 +2073,7 @@ def arvores_da_mata() -> list:
     for variante, raio, quantas in MATA_MIUDA:
         for _ in range(quantas):
             plantar(variante, raio, 300)
-    # A MATA DO RELVADO (`129`): «mata parada no meio», marcou o Bruno — a
+    # A MATA DO RELVADO (`130`): «mata parada no meio», marcou o Bruno — a
     # massa do relvado entre os degraus era toda embutida. Onde uma moita que
     # balança cabe sem pintar por cima da vila, a orla deixa-lhe o sítio
     # (`quintal_de_tras`), e é aqui que ela nasce, só no chão plano: primeiro
@@ -2122,7 +2122,7 @@ RESTINGA_ESPECIES = [
 # A restinga NÃO fecha, ao contrário da mata: entre as moitas há areia.
 RESTINGA_APERTO = 0.85
 # Px de TELA entre o pé de uma planta e a crista à frente. ⚠️ ERA 2, e o
-# guriri da `129` — pecíolos que saem do chão — tem desenho opaco 2 px abaixo
+# guriri da `130` — pecíolos que saem do chão — tem desenho opaco 2 px abaixo
 # do pé: o D47 leu-o a 0,01 px dentro da areia. O gerador é mais folgado do
 # que a guarda (`mapa.md`).
 RESTINGA_FOLGA_AREIA = 3
@@ -2248,7 +2248,7 @@ def arvores_da_restinga() -> list:
                 # ⚠️ E NA TELA: três aroeiras saíram na MESMA coluna, uma atrás
                 # da outra a 15 px, e liam como uma torre de copas — longe no
                 # mundo, empilhadas na vista. A 26 px ainda saíam duas.
-                # ⚠️ E A 34 AINDA SAÍAM (`129`): «aroeiras empilhadas», marcou o
+                # ⚠️ E A 34 AINDA SAÍAM (`130`): «aroeiras empilhadas», marcou o
                 # Bruno — duas na mesma coluna a 37 px na ponta norte, e duas
                 # COLADAS lado a lado a 14 px na borda da ponta sul, que a
                 # coluna de 12 px deixava passar. A copa da aroeira tem ~40 px
@@ -2401,7 +2401,7 @@ def arvore_da_cidade(mx: float, my: float, raio: float, r: random.Random,
     pequeno, e o teto desceu de 1,0 para 0,8 (0,65 ao lado da casa).
     """
     sorte = r.random()
-    # ⚠️ O IPÊ SUBIU DE 7% PARA 12% DO SORTEIO (`129`): com a regra da casa e a
+    # ⚠️ O IPÊ SUBIU DE 7% PARA 12% DO SORTEIO (`130`): com a regra da casa e a
     # da praça, a vila do dia 1 ficou sem ipê nenhum à vista — o acento de cor
     # que o Bruno pediu na `127` («mais cor na vila»). O sorteio é o mesmo, e
     # muda só onde se corta.
@@ -2422,14 +2422,14 @@ def arvore_da_cidade(mx: float, my: float, raio: float, r: random.Random,
     else:
         variante = "arvore_copa_m" if luz < 0.5 else "arvore_copa_m2"
         nominal = 0.66
-    # ⚠️ NA PRAÇA E NOS LOTES ESPECIAIS, O IPÊ É COPA (`129`): o do quintal de
+    # ⚠️ NA PRAÇA E NOS LOTES ESPECIAIS, O IPÊ É COPA (`130`): o do quintal de
     # trás do lote da praça ficava 55% atrás das árvores dela, desenhadas
     # depois — o D47 §10 viu-o —, e a regra da casa não chega a um lote sem
     # casa. O sorteio é o mesmo; só a espécie muda.
     if sem_ipe and variante.startswith("arvore_ipe"):
         variante, nominal = "arvore_copa_m2", 0.66
     escala = max(0.45, min(teto, raio / nominal))
-    # ⚠️ A CASA DO LOTE DECIDE SE A ÁRVORE SE LÊ (`129`). «Árvore no telhado,
+    # ⚠️ A CASA DO LOTE DECIDE SE A ÁRVORE SE LÊ (`130`). «Árvore no telhado,
     # ipê escondido», marcou o Bruno: uma copa da mata a 0,45 no quintal do
     # LADO pousava inteira em cima do telhado da casa, e um ipê no quintal de
     # TRÁS só mostrava um bolo amarelo acima da cumeeira. À frente da casa,
@@ -2441,7 +2441,7 @@ def arvore_da_cidade(mx: float, my: float, raio: float, r: random.Random,
     # novo: os do `r` já foram gastos, e a vila não muda de sítio.
     if atras:
         # A de trás pergunta a TODAS as casas que lhe ficam à frente, e não só
-        # à do lote: o ipê rosa da `129` passou a regra da casa dele com 39% de
+        # à do lote: o ipê rosa da `130` passou a regra da casa dele com 39% de
         # copa tapada e saiu um bolo acima de DOIS telhados — o da vizinha,
         # desenhada depois, tapava o resto (o D47 §10 viu-o a 38% à vista).
         casa = _casas_a_frente(mx, my)
@@ -2475,7 +2475,7 @@ def _com_as_arvores(svg: str) -> str:
 # ⚠️ A MATA ESCURA EMBUTIDA COMEU O MORRO enquanto o contorno da vila a
 # contava (`horizonte_da_vila`): por coluna ele é o MÍNIMO, ela subia-o acima
 # do topo da tela, e as 21 árvores do morro couberam nos 31 px da borda
-# esquerda (5.589 px² de morro livre, contra 24.139 sem orla). Na `129` o
+# esquerda (5.589 px² de morro livre, contra 24.139 sem orla). Na `130` o
 # contorno deixou de a contar, a mata do morro pergunta-lhe árvore a árvore
 # pela profundidade, e ela só se embute onde um prop não pode estar — o
 # relvado da junta de dois degraus, à frente de casas de trás. Encolhida a
@@ -2510,13 +2510,13 @@ def quintal_de_tras(indice: int, my0: float, my1: float, borda: float) -> str:
         mx = r.uniform(fundo - ORLA_DO_QUINTAL, fundo - 0.25)
         if not no_quadro(mx, my):
             continue
-        # ⚠️ EM TUFOS, COM RELVA ENTRE ELES (`129`, «moitas em fileira»): a
+        # ⚠️ EM TUFOS, COM RELVA ENTRE ELES (`130`, «moitas em fileira»): a
         # orla corre ao longo do fundo dos lotes, e cheia de ponta a ponta lia
         # uma sebe plantada. Um ruído largo do sítio abre-lhe vãos — sem gastar
         # sorteio, que a orla ficava toda noutro sítio.
         if _ruido(my * 1.4 + 3.0, mx * 1.4, 24) < 0.42:
             continue
-        # ⚠️ NO MORRO, PARA LÁ DO QUINTAL, NÃO SE EMBUTE NADA (`129`): cada
+        # ⚠️ NO MORRO, PARA LÁ DO QUINTAL, NÃO SE EMBUTE NADA (`130`): cada
         # copa parada atrás das casas obrigava a mata do morro a subir acima
         # dela, e com a orla de 3,0 inteira embutida as que balançam voltaram
         # todas aos 35 px da borda esquerda. A mata escura embutida fica no
@@ -2541,19 +2541,19 @@ def quintal_de_tras(indice: int, my0: float, my1: float, borda: float) -> str:
         h = ALT_CAIS + altura_do_morro(mx, my)
         if raio < 0.5:
             # A moita da orla é a ESCURA, quase sempre: a orla é a borda da
-            # mata vista da vila, e a clara destoava nela (`129`).
+            # mata vista da vila, e a clara destoava nela (`130`).
             variante = "arvore_moita_a" if r.random() < 0.2 else "arvore_moita_b"
             escala = r.uniform(0.75, 1.1)
         elif raio > 0.6:
             # A MATA ESCURA da orla em seis formas, e não em duas: «parece que
-            # a maioria das árvores é a mesma» (`129`).
+            # a maioria das árvores é a mesma» (`130`).
             variante = ORLA_FORMAS[r.randrange(len(ORLA_FORMAS))]
             escala = r.uniform(0.75, 0.95)
         else:
             variante = "arvore_copa_p" if r.random() < 0.5 else "arvore_copa_p2"
             escala = r.uniform(0.6, 0.9)
         # ⚠️ SÓ SE EMBUTE O QUE UM PROP NÃO PODE SER (`127`, a copa escura; e
-        # na `129` toda a orla): embutida, a árvore fica parada. Onde a
+        # na `130` toda a orla): embutida, a árvore fica parada. Onde a
         # planta, como prop, ficaria inteira acima da vila e das vias, o sítio
         # fica para a mata que balança.
         x, y = tela(mx, my, h)
@@ -2561,7 +2561,7 @@ def quintal_de_tras(indice: int, my0: float, my1: float, borda: float) -> str:
         if _cabe_acima(medidas[variante], x, y, escala, topo):
             continue
         # ⚠️ E NO RELVADO PLANO A MATA ESCURA SÓ FICA ONDE NEM UMA MOITA QUE
-        # BALANÇA CABERIA (`129`, «mata parada no meio»): onde uma moita, prop,
+        # BALANÇA CABERIA (`130`, «mata parada no meio»): onde uma moita, prop,
         # cabe sem pintar por cima da vila, o sítio fica vazio, e a mata do
         # morro planta lá a moita ou a árvore pequena (`MATA_DO_RELVADO`).
         # Medido: com metade dos sítios vagos ao acaso, e depois com a faixa
@@ -2615,7 +2615,7 @@ def _da_vila() -> list:
 def _colunas_da_embutida(perfil: dict, x: float, y: float, k: float) -> dict:
     """{coluna de TELA: (cima, baixo)} do desenho de uma árvore embutida.
 
-    ⚠️ COM UMA COLUNA DE FOLGA PARA CADA LADO (`129`): o perfil põe cada pixel
+    ⚠️ COM UMA COLUNA DE FOLGA PARA CADA LADO (`130`): o perfil põe cada pixel
     do PNG na coluna onde ele COMEÇA, e o pixel da borda de uma copa embutida
     a 0,639 entrava 0,17 px na coluna seguinte — o D47 §3c viu uma arvoreta
     1,5 px por cima da copa ali, que o gerador julgava só sombra até y 67,5.
@@ -2646,7 +2646,7 @@ def _cabe_acima(perfil: dict, x: float, y: float, k: float, topo: list) -> bool:
 
 
 def relvado_da_vila() -> str:
-    """O relvado da vila com vida (`129`): trilhas, flores rasteiras e hortas.
+    """O relvado da vila com vida (`130`): trilhas, flores rasteiras e hortas.
 
     «O chão verde entre os lotes é liso», marcou o Bruno. É CHÃO, e sai antes
     da mata baixa, da rua e da vila — o que lhe cair debaixo de uma casa ou
@@ -3953,7 +3953,7 @@ def praia_chao(indice: int, my_a: float, my_b: float) -> str:
 # (`arvores_da_restinga`).
 RESTINGA_AREIA = 1.0     # unidades da crista para dentro onde a areia domina
 RESTINGA_MANCHAS = 2.6   # até onde ainda há manchas de areia na relva
-# O corte do campo `areia` em relva OU areia (`129`): o limiar, a largura da
+# O corte do campo `areia` em relva OU areia (`130`): o limiar, a largura da
 # rampa de antisserrilhado (em unidades do campo, ~1 texel onde ele corre
 # depressa) e a faixa de relva escurecida do lado de fora da borda.
 RESTINGA_LIMIAR = 0.5
@@ -5876,7 +5876,7 @@ def contorno_da_casa(lote: tuple, nivel: int = 1) -> list:
     """Por coluna de TELA, a linha mais alta que a casa do lote pinta.
 
     A mesma casa que a `vila()` desenha — forma do nível, altura do sobrado —,
-    sem a cor, o acento e as janelas, que não mudam o contorno (`129`).
+    sem a cor, o acento e as janelas, que não mudam o contorno (`130`).
     """
     mx0, my0, dmx, dmy, variante, _fundo, forma = lote
     altura, telha, janelas = VILA_NIVEIS[min(nivel, max(VILA_NIVEIS))][variante]
@@ -6004,7 +6004,7 @@ def vila(nivel: int, pavimentado: bool) -> str:
         s += _faixa_mx(xt, xm, ye, yd,
                        C["terra_clara"] if pavimentado else C["terra_escura"], 0.5)
         # O CONTORNO DA CASA, para as árvores do lote saberem quanto ela as
-        # tapa ou quanto lhe tapam (`129`). É o mesmo desenho que sai mais
+        # tapa ou quanto lhe tapam (`130`). É o mesmo desenho que sai mais
         # abaixo — a casa não sorteia nada —, só que medido antes.
         casa = None if tipo else contorno_da_casa(lotes[i], nivel)
         # Árvore do QUINTAL DE TRÁS, desenhada antes da casa para a casa a
@@ -6102,7 +6102,7 @@ def pecas_da_vila() -> list:
     da vila (a casa, os muros, as árvores e a caixa-d'água dele), com a caixa
     do terreno no mundo, `(mx0, mx1, my0, my1)`.
 
-    ⚠️ O CONTORNO DA VILA INTEIRA É O MÍNIMO DA COLUNA (`129`), e uma casa lá
+    ⚠️ O CONTORNO DA VILA INTEIRA É O MÍNIMO DA COLUNA (`130`), e uma casa lá
     ATRÁS proibia uma árvore que balança À FRENTE dela: a mata do morro caiu
     toda nos 35 px da borda esquerda, porque à direita disso há casas da
     fileira de trás mais acima na tela. Uma árvore só pode errar sobre o que
@@ -6644,7 +6644,7 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     # degrau sobe, na tela, por cima da faixa do vizinho; antes da mata baixa,
     # que cresce nele, e da rua e da vila, que estão à frente dele.
     s += campo_do_chao()
-    # O granito das clareiras e o relvado da vila (`129`): chão, logo antes
+    # O granito das clareiras e o relvado da vila (`130`): chão, logo antes
     # da mata baixa, da rua e da vila, que estão à frente dele.
     s += pedras_do_morro()[0]
     s += relvado_da_vila()
@@ -7126,7 +7126,7 @@ def tabela_ancoras() -> dict:
                    "casa": l[6],
                    "tipo": tipos_dos_lotes().get(i, ""),
                    "canto": px(l[0], l[1], ALT_CAIS),
-                   # O alto do telhado, para o D47 §9 (`129`).
+                   # O alto do telhado, para o D47 §9 (`130`).
                    "telhado": telhado_do_lote(l)}
                   for i, l in enumerate(lotes_da_vila())],
         # As cores com que a vila pinta o que não é casa. O D24 lê-as daqui em
@@ -7151,10 +7151,10 @@ def tabela_ancoras() -> dict:
                   "h": round(h * ZOOM, 2), "pe": [x, y], "chao": chao}
                  for v, mx, my, h, x, y, chao in plantas_do_mapa()],
         "cristas": [[list(q) for q in c] for c in cristas_da_tela()],
-        # O granito das clareiras (`129`): a caixa de TELA e a profundidade
+        # O granito das clareiras (`130`): a caixa de TELA e a profundidade
         # de cada pedra — o D47 §8 confere que nenhuma árvore de trás a tapa.
         "pedras_do_morro": pedras_do_morro()[1],
-        # ⚠️ O CONTORNO DA VILA É POR LOTE desde a `129` (`pecas_da_vila`): o
+        # ⚠️ O CONTORNO DA VILA É POR LOTE desde a `130` (`pecas_da_vila`): o
         # de cada terreno, com a caixa dele no mundo, e o das vias à parte. O
         # mínimo da coluna, que a `127` publicava, proibia uma árvore à
         # frente de uma casa que lhe ficava atrás.

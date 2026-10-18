@@ -472,7 +472,7 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   casa, a proporção real — em vez de mexer. E um «Continuar» a meio de um
   turno leu-se como seguir sem pergunta a meio: as pranchas foram entregues
   e o veredito ficou pedido no fim.
-  ⚠️ **E NA SEGUNDA CONVERSA DO TERRENO (`129`) A TÉCNICA PROVOU-SE NUMA
+  ⚠️ **E NA SEGUNDA CONVERSA DO TERRENO (`130`) A TÉCNICA PROVOU-SE NUMA
   ÁRVORE ANTES DE IR ÀS DEZANOVE.** Quatro «Ajustar», cada um com a lista de
   defeitos marcada e um «Outro» maior do que ela; à quarta, *«as folhas
   parecem bolinhas… pesquise… uma das árvores»*. A pesquisa (resumos) deu a

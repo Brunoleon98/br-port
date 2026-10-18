@@ -238,7 +238,7 @@ PALETA = {
     # #7f9a7c e #adbea6): o AgX clareia o verde-acinzentado até quase o
     # papel. O Bruno marcou-o na segunda passagem. Mais verde e mais escura,
     # e o prateado fica no avesso das folhas, que é onde ele mora.
-    # ⚠️ E LIA PÁLIDA OUTRA VEZ NA `129` (#5f7d62, #879d84, tronco #bdb7a6):
+    # ⚠️ E LIA PÁLIDA OUTRA VEZ NA `130` (#5f7d62, #879d84, tronco #bdb7a6):
     # o tronco era o mais claro da árvore, e a umbela de varetas deixava ver
     # o chão. A primeira correção (#4f6d53, #748f72, tronco #8e8b80) saiu
     # AINDA cinza-azulada no PNG — o AgX outra vez. A câmara vê a folha por
@@ -246,7 +246,7 @@ PALETA = {
     # que só aparece na folha que se levanta. Tronco cinza-pardo com anéis.
     "embauba": "#3a6342", "embauba_clara": "#6a8a66", "tronco_embauba": "#757165",
     "embauba_anel": "#4f4c45", "embauba_esc": "#264a2e",
-    # A FOLHA NOVA da copa larga da vila (`129`): verde mais amarelo e mais
+    # A FOLHA NOVA da copa larga da vila (`130`): verde mais amarelo e mais
     # claro, a terceira massa de valor da encosta.
     "nova_esc": "#4a7a2e", "nova_mei": "#62953a", "nova_cla": "#82b04b",
     # O SOL NO ALTO DA COPA: um quarto tom, só nas bolas de cima, para a copa
@@ -1681,7 +1681,7 @@ def bola_facetada(nome, centro, raios, mat, rng, subdivisoes=1, tremor=0.12):
     vetorial. É uma icosfera chapada, com os vértices tremidos um pouco para
     nenhuma copa sair cristal (a razão do `_lobo` do mapa).
 
-    ⚠️ DE 20 FACES, E NÃO DE 80 (`129`): «copas fofas contra o mapa nítido»,
+    ⚠️ DE 20 FACES, E NÃO DE 80 (`130`): «copas fofas contra o mapa nítido»,
     marcou o Bruno. A 80 faces cada faceta tinha ~3 px no jogo, e o
     antisserrilhado fundia-as numa penugem; a 20 tem ~6, e a copa lê planos,
     como as casas. A icosfera de 20 faces é mais pequena do que a esfera que a
@@ -1725,7 +1725,7 @@ _PARA_A_CAMARA = (0.612, -0.612, 0.5)
 def folhagem(nome, rng, centro, raios, tufos, cores_folha, folha, vies=0.0):
     """Os tufos de uma copa feitos de FOLHAS, numa malha só.
 
-    ⚠️ CADA TUFO EM BOLA LIA UMA BOLINHA (`129`): «as folhas parecem
+    ⚠️ CADA TUFO EM BOLA LIA UMA BOLINHA (`130`): «as folhas parecem
     bolinhas», marcou o Bruno, e pediu folha «mais realista». Era a sexta
     copa, e a razão estava na luz e não na forma: cada icosfera tinha o seu
     próprio lado claro e o seu lado escuro, e a copa lia-se como um cacho de
@@ -1845,7 +1845,7 @@ def copa_natural(nome, M, rng, centro, raios, cores, n, tufo, folha=FOLHA, vies=
     cada vértice esticado, a aroeira saiu um charuto inclinado de folhas
     riscadas; é o tufo que o vento afasta, e a folha continua folha.
 
-    ⚠️ A COPA JÁ FOI DE CINCO JEITOS, e esta é a sexta (`129`). Bolas lisas
+    ⚠️ A COPA JÁ FOI DE CINCO JEITOS, e esta é a sexta (`130`). Bolas lisas
     liam nuvem; com ruído, «textura estranha»; em facetas de 80, «fofas
     contra o mapa nítido»; em facetas de 20, «mais artificial» — cristal; em
     tufos de icosfera, cada um no tom da sua exposição, «as folhas parecem
@@ -1901,7 +1901,7 @@ def copa_de_bolas_no_pe(nome, M, rng, centro, raio, n, cores, achatar=0.82,
     primeira: é a troca de VALOR entre as bolas que dá o volume, como na copa
     do coqueiro, e não o tom de uma só.
 
-    `largura` e `altura` esticam a FORMA da copa (`129`): «parece que a
+    `largura` e `altura` esticam a FORMA da copa (`130`): «parece que a
     maioria das árvores é a mesma», marcou o Bruno, e era — dez das dezanove
     eram a mesma bola em tamanhos e cores diferentes. A copa larga e chata é
     a árvore emergente da mata atlântica, em guarda-chuva; a alta e estreita,
@@ -1946,7 +1946,7 @@ def arvore_de_copa(nome, M, semente, tronco, raio, n, cores, mat_tronco,
                            (raio * 0.38 * largura * math.cos(r),
                             raio * 0.38 * largura * math.sin(r),
                             tronco + raio * 0.18 * altura), 0.045, M[mat_tronco]))
-    # A copa de FOLHAGEM (`129`): o número de tufos cresce com a área da copa
+    # A copa de FOLHAGEM (`130`): o número de tufos cresce com a área da copa
     # (40 numa copa de 0,85), e o tamanho do tufo com o raio dela. O `n` da
     # assinatura ficou da copa de bolas, e só sobrevive na mangueira e na
     # aroeira, que penduram fruta por ele.
@@ -1962,7 +1962,7 @@ def arvore_em_cachos(nome, M, semente, tronco, raio, cachos, cores, mat_tronco,
     em leque, e a copa em CACHOS — um tufo na ponta de cada galho, mais um no
     alto do tronco —, com frestas entre eles.
 
-    ⚠️ A COPA LARGA EM BOLAS ESPALHADAS POR IGUAL LIA UMA LAJE (`129`): «as
+    ⚠️ A COPA LARGA EM BOLAS ESPALHADAS POR IGUAL LIA UMA LAJE (`130`): «as
     folhas da mata c não estão boas, tente melhorar a organização delas para
     ficar mais natural e bonito», marcou o Bruno. Era a copa redonda esticada
     a 1,45 e achatada a 0,5 — onze bolas num disco. A árvore de verdade
@@ -2006,7 +2006,7 @@ def palmeira_jucara(nome, M, semente, tronco, escala=1.0):
     estrela ACIMA da mata — é a silhueta que a separa das copas redondas.
 
     `escala` encolhe a COPA e o palmito, e não o estipe, que é o `tronco`: a
-    juçara jovem (`129`) tem a estrela mais pequena num estipe mais curto.
+    juçara jovem (`130`) tem a estrela mais pequena num estipe mais curto.
     """
     rng = random.Random(semente)
     k = escala
@@ -2034,13 +2034,13 @@ def embauba(nome, M, semente, tronco, escala=1.0):
     um guarda-chuva de folhas prateadas — o cinza-claro no meio do verde.
 
     `escala` encolhe os galhos e as umbelas, e não o tronco: a embaúba jovem
-    (`129`) abre o candelabro mais curto.
+    (`130`) abre o candelabro mais curto.
     """
     rng = random.Random(semente)
     k = escala
     pecas = [cone("%s_tronco" % nome, (0, 0, tronco / 2.0), 0.060, 0.040,
                   tronco, 7, M["tronco_embauba"])]
-    # OS ANÉIS do tronco (`129`): a embaúba tem o tronco liso, claro e
+    # OS ANÉIS do tronco (`130`): a embaúba tem o tronco liso, claro e
     # marcado pelas cicatrizes das folhas, em anéis. Com o tronco escurecido
     # para não ler árvore seca, são eles que ainda dizem «embaúba» nele.
     for j in range(4):
@@ -2062,7 +2062,7 @@ def embauba(nome, M, semente, tronco, escala=1.0):
     # embaúba é palmada, enorme, e cai em leque: folhas longas em volta da
     # ponta, inclinadas para baixo, alternando o verde-prata com o avesso
     # claro, é o que se lê a 40 px.
-    # ⚠️ E A ESTRELA FINA LIA ESQUELETO (`129`): «embaúba pálida», marcou o
+    # ⚠️ E A ESTRELA FINA LIA ESQUELETO (`130`): «embaúba pálida», marcou o
     # Bruno — sete folhas de 0,075 de largura sobre um tronco quase branco,
     # o guarda-sol de varetas sem pano. Oito folhas mais largas, que se
     # tocam, e um MIOLO escuro no centro de cada umbela: é a mão aberta da
@@ -2106,14 +2106,14 @@ def arvore_de_restinga(nome, M, semente, tronco, raio, n, frutas):
     # O vento PENTEIA: a copa ALONGA-SE ao longo do vento e desce do lado do
     # mar. ⚠️ Só descer não se via — a primeira prova saiu uma bola como as
     # da vila; o que a deita é ser mais comprida do que alta.
-    # ⚠️ E PENTEIA-SE O TUFO, NÃO O OBJETO (`129`): com a copa de folhas
+    # ⚠️ E PENTEIA-SE O TUFO, NÃO O OBJETO (`130`): com a copa de folhas
     # numa malha só, mover o objeto movia a copa inteira; é o centro de cada
     # tufo que se afasta do eixo (`copa_natural`), e a fruta vai com ele.
     def pentear(w):
         dx = (w[0] - cx) * 1.45
         return (cx + dx, w[1] * 0.85, w[2] - max(0.0, dx) * 0.45)
 
-    # O viés claro (`129`): com folhas, a copa deitada mostra à câmara mais
+    # O viés claro (`130`): com folhas, a copa deitada mostra à câmara mais
     # frestas e mais sombra própria, e saiu dez pontos mais escura do que a
     # de tufos — a restinga é a planta clara da orla.
     copa = copa_natural(nome, M, rng, (cx, 0.0, cz), (raio * 0.80, raio * 0.80, raio * 0.48),
@@ -2127,7 +2127,7 @@ def arvore_de_restinga(nome, M, semente, tronco, raio, n, frutas):
     # para a câmara (`+x` ou `-y`) e assenta-lhe no ombro de cima — ponteado
     # vermelho por cima do verde, que é como a aroeira se vê.
     vistos = [t for t in TUFOS[nome] if t[0][0] - cx > -0.05 or t[0][1] < 0.0]
-    # ⚠️ UMA BAGA POR SÍTIO, e não duas coladas (`129`): o par a 0,045 saía no
+    # ⚠️ UMA BAGA POR SÍTIO, e não duas coladas (`130`): o par a 0,045 saía no
     # jogo como um RETÂNGULO vermelho de 2×4 px, que o Bruno leu como enfeite
     # («frutas soltas»). Bagas soltas, mais pequenas e mais numerosas, leem o
     # ponteado da aroeira; cada uma num tufo, na face que a câmara vê.
@@ -2135,7 +2135,7 @@ def arvore_de_restinga(nome, M, semente, tronco, raio, n, frutas):
         (tx, ty, tz), (r, _ry, rz) = vistos[rng.randrange(len(vistos))]
         a = math.radians(rng.uniform(-80.0, 0.0))
         sobe = rng.uniform(0.35, 0.75)
-        # ⚠️ NA PELE DAS FOLHAS, e não a 0,70 do tufo (`129`): a folhagem do
+        # ⚠️ NA PELE DAS FOLHAS, e não a 0,70 do tufo (`130`): a folhagem do
         # tufo vai de 0,65 a ~1,2 do semi-eixo, e a baga lá dentro sumia.
         pecas.append(bola(
             "%s_fruta%d" % (nome, i),
@@ -2153,7 +2153,7 @@ def guriri(nome, M, semente, n, alto, fruta):
     """
     rng = random.Random(semente)
     pecas = []
-    # ⚠️ OS CONES RETOS LIAM AGAVE (`129`): «guriri lê como agave», marcou o
+    # ⚠️ OS CONES RETOS LIAM AGAVE (`130`): «guriri lê como agave», marcou o
     # Bruno — nove espinhos de ponta fina em roseta são a babosa, e não uma
     # palmeira. A folha do guriri é uma PENA que sobe e depois cai: o pecíolo
     # fino sobe, e a lâmina — duas bolas achatadas e largas, a segunda a
@@ -5487,7 +5487,7 @@ def montar(M: dict) -> dict:
     # (A copa GRANDE clara, `arvore_copa_g`, saiu na terceira passagem: era a
     # massa da mata na primeira, e esse papel passou às copas escuras do
     # morro; na vila ninguém a pedia, e ficava órfã.)
-    # ⚠️ E AS DUAS COPAS GRANDES REDONDAS TAMBÉM EM CACHOS (`129`, «faça o
+    # ⚠️ E AS DUAS COPAS GRANDES REDONDAS TAMBÉM EM CACHOS (`130`, «faça o
     # mesmo com modelos semelhantes»): a bola de doze tufos espalhados por
     # igual era o mesmo tampo da emergente, só que redondo. Em cachos fechados
     # — coroa curta e alta —, a copa redonda ganha a organização por galho.
@@ -5511,7 +5511,7 @@ def montar(M: dict) -> dict:
                                                abertura=0.80, altura=0.95)
     grupos["arvore_mata_b"] = arvore_de_copa("amb2", M, 126015, 0.95, 0.82, 10,
                                              mata, "tronco_mata")
-    # AS FORMAS (`129`): «parece que a maioria das árvores é a mesma». A
+    # AS FORMAS (`130`): «parece que a maioria das árvores é a mesma». A
     # emergente em GUARDA-CHUVA — tronco alto e nu, copa larga e chata acima
     # das outras, a silhueta que diz mata atlântica de longe — e a ALTA e
     # estreita, que cresce apertada. Na mata escura e na copa da vila, e a
@@ -5525,7 +5525,7 @@ def montar(M: dict) -> dict:
     grupos["arvore_copa_larga"] = arvore_em_cachos(
         "acl", M, 129003, 1.35, 0.85, 5, ("nova_esc", "nova_mei", "nova_cla"),
         "tronco_mata")
-    # AS ARVORETAS (`129`): «moita demais, árvore de menos», marcou o Bruno —
+    # AS ARVORETAS (`130`): «moita demais, árvore de menos», marcou o Bruno —
     # no relvado entre os degraus só cabia moita, porque uma copa alta logo
     # atrás de uma casa pinta-lhe por cima. A arvoreta é uma árvore baixa, de
     # tronco curto: cabe onde a moita cabe e lê árvore.
@@ -5546,14 +5546,14 @@ def montar(M: dict) -> dict:
     # dentro dos tufos e não se via (a regra da peça pequena encostada à
     # grande, `arte.md`). E MAIORES, na quarta passagem da `127`: a 0,075
     # «as mangas quase não se veem a 1:1» — eram dois px de tela.
-    # ⚠️ E PENDURADAS NUM TUFO, e não num raio contado do tronco (`129`): a
+    # ⚠️ E PENDURADAS NUM TUFO, e não num raio contado do tronco (`130`): a
     # 0,95–1,05 do eixo e abaixo da copa, as nove saíam soltas por baixo
     # dela, a cair («frutas soltas»). A regra da fruta da aroeira: cada manga
     # escolhe um tufo virado para a câmara e pende do OMBRO de baixo dele,
     # meio enterrada — é assim que o cacho fica preso à árvore.
     # E UM TUFO POR MANGA, os mais virados para a câmara (`+x` e `−y`): à
     # sorte, três das sete calharam no mesmo tufo e fizeram um cacho só.
-    # ⚠️ E NA PELE DAS FOLHAS (`129`): o tufo de folhas tem a folhagem de
+    # ⚠️ E NA PELE DAS FOLHAS (`130`): o tufo de folhas tem a folhagem de
     # 0,65 a ~1,2 do semi-eixo, e a manga a 0,78 dele ficava enterrada.
     tufos = sorted(TUFOS["amg"], key=lambda t: t[0][1] - t[0][0])
     for i in range(7):
@@ -5570,9 +5570,9 @@ def montar(M: dict) -> dict:
     # «quintal vazio atrás das casas». Sem tronco, baixas e largas, para
     # encherem a faixa entre a vila e a mata sem subirem por cima de nada.
     rm = random.Random(126010)
-    # ⚠️ +15% NA `129`: «moitas pequenas», marcou o Bruno — as facetas de 20
+    # ⚠️ +15% NA `130`: «moitas pequenas», marcou o Bruno — as facetas de 20
     # encolheram-nas (a icosfera é mais pequena do que a esfera; 0,55 e 0,42).
-    # ⚠️ E COM VIÉS PARA O ESCURO (`129`): achatada, a moita mostra à câmara
+    # ⚠️ E COM VIÉS PARA O ESCURO (`130`): achatada, a moita mostra à câmara
     # quase só o tampo, e com folhas cada uma no tom da SUA exposição saiu
     # sete pontos mais clara do que a de tufos, a puxar ao verde-menta —
     # a «moita clara destoa» outra vez. O viés volta-a ao tom de antes.
@@ -5586,7 +5586,7 @@ def montar(M: dict) -> dict:
     grupos["arvore_jucara_b"] = palmeira_jucara("ajb", M, 126005, 2.45)
     grupos["arvore_embauba_a"] = embauba("aea", M, 126006, 2.25)
     grupos["arvore_embauba_b"] = embauba("aeb", M, 126007, 1.85)
-    # AS JOVENS (`129`): «poucas juçaras e embaúbas», marcou o Bruno, e no
+    # AS JOVENS (`130`): «poucas juçaras e embaúbas», marcou o Bruno, e no
     # morro elas não cabiam mais — metade caía debaixo do HUD. No relvado do
     # meio as adultas pintariam por cima das casas da frente; a jovem tem o
     # tamanho da arvoreta e a silhueta da espécie.

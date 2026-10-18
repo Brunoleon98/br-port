@@ -583,7 +583,7 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   pequeno; meça o comprimento da sombra no PNG antes de dizer o que o número
   faz.
 - **⚠️ COPA DE ÁRVORE DO BLENDER É DE FOLHAS, COM A NORMAL DA COPA.** Foi de
-  seis jeitos (`127`, `129`): bola lisa (nuvem), relevo de ruído
+  seis jeitos (`127`, `130`): bola lisa (nuvem), relevo de ruído
   («estranha»), facetas de 80 («fofas»), de 20 («artificial»), e tufos de
   icosfera — «bolinhas», porque cada tufo tinha o seu lado claro, trinta sóis
   numa copa. A que ficou (`folhagem()`): folhas em losango numa malha só, com

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 18/10/2026 — vegetação aceite (`129`); diagnóstico (`128`)
+> **Atualização:** 18/10/2026 — vegetação aceite (`130`); diagnóstico (`128`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -44,7 +44,7 @@ arrebentação e cáusticas nas praias; a sombra do muro esvai.
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
 a forma; D20/D21/D24/D27 conferem o raster.
 
-**O chão tem textura e sobe num MORRO de mata atrás da vila** (`127`, `129`,
+**O chão tem textura e sobe num MORRO de mata atrás da vila** (`127`, `130`,
 **D47**). As árvores são do Blender, de FOLHAS, e BALANÇAM — no morro, acima
 do que lhes fica à frente na vila, com duas clareiras de granito, e na
 **restinga**, com o pé fora da areia; entre as casas vão EMBUTIDAS no SVG,
@@ -121,7 +121,7 @@ obras, máquinas e vila (`121`–`123`); retomada sem efeitos/atalhos (`125`).
 **Versão e diagnóstico (`128`):** build, prévia e cópia no início e na
 pausa; sem dados da partida.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
-`129`); a seguir, estradas, depois detalhes.
+`130`); a seguir, estradas, depois detalhes.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
 A `107` permanece local e separada, sem autorização de publicação nem teste

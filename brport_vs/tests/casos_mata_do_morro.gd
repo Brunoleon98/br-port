@@ -19,7 +19,7 @@ extends RefCounted
 #      pé no sítio da tabela;
 #   §3 o CONTORNO: nenhum pixel de árvore do MORRO — sombra incluída — desce
 #      abaixo do contorno do que lhe fica À FRENTE na coluna dele: as vias e
-#      os lotes da vila cujo terreno não fica para trás dela (`129`: por
+#      os lotes da vila cujo terreno não fica para trás dela (`130`: por
 #      coluna, o contorno da vila inteira era o mínimo, e uma casa lá atrás
 #      proibia uma árvore à frente). Lê o PNG que o jogo carrega, e não o
 #      perfil com que o gerador as pôs: o defeito que só esta pergunta vê é a
@@ -42,25 +42,25 @@ extends RefCounted
 #      jogador procura. Os camiões andam e ficam de fora; a sombra também, que
 #      é chão;
 #   §3c nenhuma árvore do morro pinta por cima de uma árvore EMBUTIDA do
-#      quintal de trás que lhe fica à frente (`129`): o contorno da vila já
+#      quintal de trás que lhe fica à frente (`130`): o contorno da vila já
 #      não conta a orla — por coluna ele é o mínimo, e uma moita ATRÁS
 #      proibia uma árvore À FRENTE —, e a orla pergunta-se pela profundidade;
 #   §8 nenhuma árvore do morro pinta por cima do GRANITO de uma clareira que
-#      lhe fica à frente (`129`): a pedra é desenho do mapa, e a árvore de
+#      lhe fica à frente (`130`): a pedra é desenho do mapa, e a árvore de
 #      trás, prop, cairia por cima dela — o contorno da vila não a conhece;
-#   §9 nenhuma copa EMBUTIDA pousa no telhado de uma casa (`129`, «árvore no
+#   §9 nenhuma copa EMBUTIDA pousa no telhado de uma casa (`130`, «árvore no
 #      telhado»): no ponto de cima do telhado de cada casa — que a tabela
 #      publica do CONTORNO da casa, e não das árvores —, o mapa rasterizado
 #      não é verde de copa;
-#   §10 cada IPÊ embutido mostra a cor dele (`129`, «ipê escondido»): os pixels
+#   §10 cada IPÊ embutido mostra a cor dele (`130`, «ipê escondido»): os pixels
 #      de flor no mapa, na janela da copa, são pelo menos metade dos do PNG
 #      à escala dele — atrás de uma casa, o ipê inteiro ou nenhum;
 #   §11 a copa de cada DESTAQUE que balança — ipê, juçara, embaúba — está À
-#      VISTA (`129`, «poucas juçaras e embaúbas»): o `MapaWrap` recorta o que
+#      VISTA (`130`, «poucas juçaras e embaúbas»): o `MapaWrap` recorta o que
 #      sobe acima do topo do mapa, que fica debaixo da barra do HUD, e metade
 #      das juçaras e embaúbas tinha lá a copa inteira. Lê o recorte na CENA e
 #      o desenho no PNG, e não o perfil do gerador;
-#   §12 nenhuma árvore desenhada DEPOIS de um destaque lhe tapa a copa (`129`):
+#   §12 nenhuma árvore desenhada DEPOIS de um destaque lhe tapa a copa (`130`):
 #      as juçaras jovens nasceram no relvado e as arvoretas plantadas à volta
 #      taparam-nas pela frente. Conta, pixel a pixel, quanto do terço de cima
 #      do desenho do destaque fica debaixo do desenho de outra árvore.
@@ -109,7 +109,7 @@ const COPA_SOB_A_BARRA := 12.0
 ## A parte de cima do desenho de um destaque que conta como copa (§12).
 const COPA_DO_DESTAQUE := 0.40
 ## A fração da copa de um destaque que outra árvore pode tapar (§12). Medido
-## (`129`): no mapa certo a pior é o ipê amarelo da borda, a 63% — atrás da
+## (`130`): no mapa certo a pior é o ipê amarelo da borda, a 63% — atrás da
 ## embaúba —, e o defeito que a pergunta nasceu a caçar, a embaúba atrás do
 ## ipê, dava 90%. O corte vai a meio. ⚠️ A guarda defende «a copa não some
 ## quase toda»; os 63% do ipê ficam registados, e não são verdes por ela.

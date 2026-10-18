@@ -884,7 +884,7 @@ não como fitas** — campo de cor contínuo pela distância à costa, com meand
 longo de duas senóides, e a areia em rampas.»* — o meandro e a rampa da
 areia continuam, e vivem no gerador e na `mapa.md`.
 
-**E, para caber a vegetação de folhas (`129`),** saiu da fila do estado a
+**E, para caber a vegetação de folhas (`130`),** saiu da fila do estado a
 linha da frente 5: *«A frente 5 entregou tutorial (`100`, `101`), segunda
 chance (`102`) e progressão (`103`–`106`, `108`); medição na
 `economia.md`.»* — cada uma vive na sua decisão, e a medição na

@@ -316,7 +316,7 @@ func da_cena(cena: String, base: Vector2, raiz: String, r: Dictionary) -> void:
 			for e in tabela.get("arvores_embutidas", []):
 				var caminho := "./MapaWrap/Mapa/Embutida/" + String(e["arvore"])
 				var pe: Array = e["pe"]
-				# ⚠️ E A ESPÉCIE QUE SÓ VIVE EMBUTIDA FORA DO MAPA (`129`): com a
+				# ⚠️ E A ESPÉCIE QUE SÓ VIVE EMBUTIDA FORA DO MAPA (`130`): com a
 				# copa de folhas, a escura grande deixou de caber no morro e
 				# ficou só em duas embutidas a x negativo — a mesma conta da
 				# mata que só pousa fora, logo abaixo.

@@ -815,7 +815,7 @@ até ao largo, a sombra do muro esvai sem quina, e no lugar dos riscos «~»
 há marolas, correntes, arrebentação e cáusticas, aceite à terceira
 passagem. **A fila que ele deu acabou**, e em 17/10 ele deu a seguinte
 (`126`), um item por conversa: (1) terreno e vegetação — **fechado em 18/10
-(`127`, `129`)**: chão com textura, um morro de mata atrás da vila, árvores do
+(`127`, `130`)**: chão com textura, um morro de mata atrás da vila, árvores do
 Blender que balançam no morro e na restinga das pontas, e as mesmas
 embutidas no mapa entre as casas; não aceite em 17/10, aceite na segunda
 conversa, à sétima passagem, com a copa de FOLHAS, clareiras no morro e os
