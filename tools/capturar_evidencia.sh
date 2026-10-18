@@ -416,6 +416,9 @@ tirar espacos_carregar - - --script res://tools/capturar_cena.gd -- res://scenes
 tirar espacos_nova - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_nova.png" espacos=1,3 --tocar=Nova --tempo=nova
 tirar espacos_confirmar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_confirmar.png" espacos=1 --tocar=Nova --tocar=Substituir --tempo=confirmar
 tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes.png" espacos=1,3 --tocar=Ajustes
+tirar diagnostico - - --script res://tools/capturar_diagnostico.gd -- consulta "$SAIDA/diagnostico.png"
+tirar diagnostico_copiado - - --script res://tools/capturar_diagnostico.gd -- copiado "$SAIDA/diagnostico_copiado.png"
+tirar diagnostico_indisponivel - - --script res://tools/capturar_diagnostico.gd -- indisponivel "$SAIDA/diagnostico_indisponivel.png"
 # Como jogar (`115`): as duas portas, o índice, o maior artigo e o glossário.
 # A pausa é de uma partida jogada; a cena da ajuda não é montada à parte.
 tirar ajuda_inicio_indice - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_indice.png" "--tocar=Como jogar" --tempo=indice

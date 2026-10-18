@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-17e.md` | 17/10 | Versão e diagnóstico (`128`), PR #142 rascunho: identificação real do export, prévia e cópia explícita; preferência por evitar aprovações invisíveis no celular |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17.md` | 17/10 | O maquinário da obra (`122`): balsa com bate-estaca, caminhão munck e o rolo de tambor à mostra; aceite com a linha amarela corrigida, a fila segue nas estruturas da cidade |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17b.md` | 17/10 | A vila humilde (`123`): seis formas de casa, terreno com muro, igreja com adro e praça da matriz, aceite à quinta passagem; a fila segue no mapa |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17d.md` | 17/10 | A fila nova (`126`) e o terreno e a vegetação (`127`): chão com textura, morro de mata, árvores do Blender que balançam e a restinga das pontas; não aceite, a vegetação e o terreno continuam |

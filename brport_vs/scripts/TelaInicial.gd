@@ -33,6 +33,7 @@ const PainelEspacosScene := preload("res://scenes/panels/PainelEspacos.tscn")
 const PainelAjustesScene := preload("res://scenes/panels/PainelAjustes.tscn")
 const ComoJogarScene := preload("res://scenes/panels/PainelComoJogar.tscn")
 const MeuPortoScene := preload("res://scenes/panels/PainelMeuPorto.tscn")
+const DiagnosticoScene := preload("res://scenes/panels/PainelDiagnostico.tscn")
 
 const LARGURA_CARTAO := 560
 const ALTURA_BOTAO := 56
@@ -125,6 +126,7 @@ func _montar_cartao() -> void:
 	_botao(coluna, "Como jogar", ALTURA_BOTAO, _abrir_como_jogar)
 	_botao(coluna, "Ajustes", ALTURA_BOTAO, func() -> void:
 		_abrir_painel(PainelAjustesScene).call("setup"))
+	_botao(coluna, "Versão e diagnóstico", ALTURA_BOTAO, _abrir_diagnostico)
 
 
 func _botao(onde: Control, texto: String, altura: int, ao_tocar: Callable) -> Button:
@@ -158,6 +160,13 @@ func _abrir_como_jogar() -> void:
 		if filho is PainelNarrativo and not filho.is_queued_for_deletion():
 			return
 	_abrir_painel(ComoJogarScene)
+
+
+func _abrir_diagnostico() -> void:
+	for filho in get_children():
+		if filho is PainelNarrativo and not filho.is_queued_for_deletion():
+			return
+	_abrir_painel(DiagnosticoScene)
 
 
 func _continuar() -> void:
