@@ -132,3 +132,21 @@ limpeza. Os controles também exercitam saída 17, executável ausente e
 override preexistente sem alteração. O mutante que escreve `true` reprova
 na leitura real do motor; a base restaurada passa. Resultado guardado em
 `docs/arquivo/EVIDENCIA_META_2026-10-14/importacao-ci.log`.
+
+## Correção de 18/10: o `override.cfg` não chegava ao `--import`
+
+A base do PR #144 caiu duas vezes na mesma fonte (saídas 250 e 245), com o
+helper no caminho. A sonda acima lia a chave num `--script`, e esse modo lê
+o `override.cfg`; o `--import` não o lê. Medido nas linhas de reimport de um
+import do zero: com e sem o `override.cfg`, o mesmo padrão paralelo (Patrick
+Hand seis vezes, 22 arquivos repetidos); com a chave no `project.godot`, uma
+vez cada. O helper passou a escrevê-la no `project.godot` durante o import e
+a devolvê-lo byte a byte, e `tools/testar_importar_para_ci.py` (no CI, antes
+do import) prova com um motor falso que a chave está lá quando ele importa.
+Na base da `main`, seis imports do zero de cada, alternados: o helper antigo
+caiu uma vez com a mesma assinatura do CI (sinal 11, `propagate_notification()`
+num trabalhador, na Patrick Hand) e importou em paralelo nas outras cinco; o novo
+importou em série nas seis, sem queda, a ~29 s contra ~24 s.
+A prova nova reprovou três defeitos injetados à mão — o helper antigo, o
+`project.godot` não devolvido e a seção `[editor]` duplicada — com a base
+verde entre cada um; o catálogo de mutantes só reinjeta nas suítes do Godot.

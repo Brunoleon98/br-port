@@ -37,6 +37,11 @@ jobs:
       - name: Provar a identificação do build contra commits reais
         run: python3 tools/testar_identificacao_build.py
 
+      - name: Provar que o import do CI chega ao motor com um trabalhador
+        # A prova de 14/10 lia a chave num `--script`, e o `--import` não a
+        # lia: a base do PR #144 caiu duas vezes na fonte (`106`).
+        run: python3 tools/testar_importar_para_ci.py
+
       - name: Nenhum passo de CI pode rodar --script sem guarda
         # Vem AQUI, antes do download do Godot, porque custa um segundo e
         # responde a uma pergunta sobre este arquivo — não sobre o jogo. Um
