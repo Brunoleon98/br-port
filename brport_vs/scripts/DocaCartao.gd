@@ -53,8 +53,13 @@ func setup(index: int) -> void:
 
 
 func _ready() -> void:
+	PreferenciasDeApresentacao.atual().mudou.connect(_ao_movimento)
 	if dock_index >= 0:
 		refresh()
+
+
+func _ao_movimento(_reduzido: bool) -> void:
+	refresh()
 
 
 func esta_construida() -> bool:
@@ -196,6 +201,9 @@ func _pulsar(ligado: bool) -> void:
 		_tw_pulso.kill()
 	if not ligado:
 		modulate = Color.WHITE
+		return
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		modulate = Color(1.3, 1.18, 0.8)
 		return
 	_tw_pulso = create_tween().set_loops()
 	_tw_pulso.tween_property(self, "modulate", Color(1.3, 1.18, 0.8), PULSO_SEG) \

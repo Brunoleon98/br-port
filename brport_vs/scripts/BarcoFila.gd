@@ -63,8 +63,13 @@ func setup(i: int) -> void:
 
 
 func _ready() -> void:
+	PreferenciasDeApresentacao.atual().mudou.connect(_ao_movimento)
 	if indice >= 0:
 		refresh()
+
+
+func _ao_movimento(_reduzido: bool) -> void:
+	refresh()
 
 
 ## O barco deste lugar, ou null se o lugar está vazio.
@@ -205,6 +210,9 @@ func _pulsar(ligado: bool) -> void:
 		_tw_pulso.kill()
 	if not ligado:
 		modulate = Color.WHITE
+		return
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		modulate = PULSO_COR
 		return
 	_tw_pulso = create_tween().set_loops()
 	_tw_pulso.tween_property(self, "modulate", PULSO_COR, PULSO_SEG) \

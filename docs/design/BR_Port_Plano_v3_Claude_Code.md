@@ -788,7 +788,12 @@ porto, informativo e sem atalhos diretos. Integrado no PR #140.
 **Ainda em 17/10, Bruno escolheu versão e diagnóstico (`128`), primeiro
 recorte do RB8.** Consulta compartilhada pelo início e pausa, identificação
 do commit exportado, prévia integral e cópia explícita; sem dados da partida
-ou envio. Codex no PR #142 rascunho; Bruno informou que o Claude está parado.
+ou envio. Integrado no PR #142, mesclado em 18/10 (`56b3983`).
+**Em 18/10, Bruno escolheu RB6 — Reduzir movimento (`129`), opção 2.**
+Preferência nos Ajustes do início e pausa, persistente fora da partida;
+redução de fundo e transições com informação operacional e ações preservadas.
+Codex no PR #143 rascunho. Bruno confirmou o Claude ativo no visual;
+terreno e vegetação continuam com ele, sem aceite da `127`.
 A pesquisa entrou na main com
 o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em
 `docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`, inclusive falhas do save.

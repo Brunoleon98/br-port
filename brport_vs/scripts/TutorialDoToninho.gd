@@ -69,6 +69,11 @@ var _dito := ""
 func _init(fila: FilaDeMensagens, avancar: Button) -> void:
 	_fila = fila
 	_avancar = avancar
+	PreferenciasDeApresentacao.atual().mudou.connect(_ao_movimento)
+
+
+func _ao_movimento(_reduzido: bool) -> void:
+	_pulsar(passo == "avancar")
 
 
 ## Chamado pelo `Main` quando a abertura acaba: o caderno fechado (nomes e
@@ -202,6 +207,9 @@ func _pulsar(ligado: bool) -> void:
 		return
 	if not ligado or passo != "avancar":
 		_avancar.modulate = Color.WHITE
+		return
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		_avancar.modulate = BarcoFila.PULSO_COR
 		return
 	_pulso = _avancar.create_tween().set_loops()
 	_pulso.tween_property(_avancar, "modulate", BarcoFila.PULSO_COR,

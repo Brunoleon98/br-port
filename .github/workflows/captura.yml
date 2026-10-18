@@ -75,6 +75,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq xvfb
           sudo apt-get install -y -qq libgl1 libglx-mesa0 libgl1-mesa-dri || true
+          python3 -m pip install pillow
 
       - name: Importar o projeto
         run: |
@@ -96,6 +97,14 @@ jobs:
           set -euo pipefail
           tools/capturar_evidencia.sh brport_vs "$PWD/fotos/depois" \
             ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: Guardar comparação temporal e Ajustes do RB6
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brport-rb6
+          path: fotos/depois/movimento*
+          if-no-files-found: error
 
       - name: A bateria não tocou no que é do jogador
         # Foi a bateria que apagou o save real em 25/09 (`capturar_cena.gd`
