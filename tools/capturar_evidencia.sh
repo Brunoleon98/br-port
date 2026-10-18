@@ -417,7 +417,11 @@ tirar espacos_nova - - --script res://tools/capturar_cena.gd -- res://scenes/Tel
 tirar espacos_confirmar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_confirmar.png" espacos=1 --tocar=Nova --tocar=Substituir --tempo=confirmar
 tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes.png" espacos=1,3 --tocar=Ajustes
 tirar movimento_normal - - --script res://tools/capturar_movimento.gd -- normal "$SAIDA/movimento_normal.png"
+# Cada par nasce na mesma execução: o log registra os dois nomes de saída.
+# Anexá-lo também ao segundo quadro conserva a guarda de log por PNG.
+cp "$SAIDA/movimento_normal.log" "$SAIDA/movimento_normal_t1.log"
 tirar movimento_reduzido - - --script res://tools/capturar_movimento.gd -- reduzido "$SAIDA/movimento_reduzido.png"
+cp "$SAIDA/movimento_reduzido.log" "$SAIDA/movimento_reduzido_t1.log"
 python3 tools/comparar_movimento.py "$SAIDA" > "$SAIDA/movimento_comparacao.log"
 grep -q "COMPARACAO TEMPORAL CONFERIDA" "$SAIDA/movimento_comparacao.log"
 tirar movimento_inicio - - --script res://tools/capturar_movimento.gd -- inicio "$SAIDA/movimento_inicio.png"

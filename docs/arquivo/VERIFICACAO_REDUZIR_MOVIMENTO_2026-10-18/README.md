@@ -77,6 +77,15 @@ inspecionadas antes de encerrar. O artefato pequeno evita repetir o download
 grande do #142. As imagens e os logs locais ficam preservados em
 `.evidencias/reduzir-movimento/`; resultados do HEAD constam no PR.
 
+A primeira captura do CI (`e4d6639`, corrida 39101447680) mediu 43.832 pixels
+alterados no mapa normal e zero no reduzido. Os sete quadros foram
+inspecionados: Ajustes legíveis pelas duas portas, realces fixos, mapa
+estável e ganho de serviço visível junto às ações seguintes. Isso não é
+aceite visual do Bruno. A bateria completa reprovou porque faltava anexar
+o log aos arquivos `_t1.png`; cada par já tinha os dois nomes no log da
+mesma execução. A correção anexa esse log também ao segundo quadro,
+preservando a guarda e exigindo nova corrida completa.
+
 ## Colaboração e pendências
 
 Bruno confirmou que o Claude está ativo no visual. WIP `67b2641`, branch
