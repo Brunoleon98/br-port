@@ -319,3 +319,17 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   ⚠️ **E RASTER NOVO TAPA O QUE SE DESENHOU ANTES DELE NO MESMO SÍTIO.** Com
   o chão da restinga no `campo_do_chao`, o capim que saía no `praia_chao`
   sumiu por baixo — e continua a ter de sair antes da rua e da vila.
+  ⚠️ **E O TOPO DO MAPA ESTÁ DEBAIXO DO HUD.** O `MapaWrap` começa no y 62 da
+  tela e recorta o que sobe acima dele: metade das juçaras e embaúbas do
+  morro tinha a copa inteira atrás da barra, e o «poucas juçaras» do Bruno
+  era isso (`129`). Quem tem de ser VISTO pergunta onde fica a copa, não o pé.
+  ⚠️ **E NUM EMPACOTAMENTO SORTEADO CADA APERTO DESABA EM CASCATA.** Somar
+  pela caixa inteira tudo o que tapava uma copa tirou do morro as palmeiras
+  e, por uma embaúba que caiu no relvado, as nove arvoretas (63 árvores → 42).
+  Conte por espécie a cada aperto, e deixe a guarda medir nos PIXELS o que o
+  gerador aproxima por caixas — foi ela que achou a embaúba 90% tapada que
+  as caixas davam por livre (`129`).
+  ⚠️ **E O PERFIL POR COLUNA PÕE CADA PIXEL ONDE ELE COMEÇA.** À escala de um
+  `<use>` (0,639) o pixel da borda de uma copa entra 0,17 px na coluna
+  seguinte, e o gerador deu por livre a coluna que a guarda viu ocupada.
+  Colunas de OUTRA peça conferem-se com uma de folga para cada lado (`129`).

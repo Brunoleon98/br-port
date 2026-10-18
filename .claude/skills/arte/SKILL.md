@@ -472,6 +472,16 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   casa, a proporção real — em vez de mexer. E um «Continuar» a meio de um
   turno leu-se como seguir sem pergunta a meio: as pranchas foram entregues
   e o veredito ficou pedido no fim.
+  ⚠️ **E NA SEGUNDA CONVERSA DO TERRENO (`129`) A TÉCNICA PROVOU-SE NUMA
+  ÁRVORE ANTES DE IR ÀS DEZANOVE.** Quatro «Ajustar», cada um com a lista de
+  defeitos marcada e um «Outro» maior do que ela; à quarta, *«as folhas
+  parecem bolinhas… pesquise… uma das árvores»*. A pesquisa (resumos) deu a
+  técnica, o protótipo foi a TRÊS árvores postas no JOGO — não só a prancha
+  do prop —, e a pergunta trouxe «aplicar a todas» com as variantes de
+  tamanho, mais, ao lado, a causa medida de outro defeito marcado (os
+  destaques atrás do HUD) com as saídas dela. Ele escolheu as recomendadas
+  nas duas e aceitou a passagem seguinte. Dois reinícios do worker
+  apanharam uma pergunta pendente: refaz-se a pergunta, sozinha.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 17/10/2026 — diagnóstico (`128`); terreno (`127`); retomada (`125`)
+> **Atualização:** 18/10/2026 — vegetação aceite (`129`); diagnóstico (`128`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -44,10 +44,11 @@ arrebentação e cáusticas nas praias; a sombra do muro esvai.
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
 a forma; D20/D21/D24/D27 conferem o raster.
 
-**O chão tem textura e sobe num MORRO de mata atrás da vila** (`127`, **D47**).
-As árvores são do Blender e BALANÇAM — no morro, acima do contorno da vila, e
-na **restinga** das pontas, com o pé fora da areia; entre as casas vão
-EMBUTIDAS no SVG, paradas.
+**O chão tem textura e sobe num MORRO de mata atrás da vila** (`127`, `129`,
+**D47**). As árvores são do Blender, de FOLHAS, e BALANÇAM — no morro, acima
+do que lhes fica à frente na vila, com duas clareiras de granito, e na
+**restinga**, com o pé fora da areia; entre as casas vão EMBUTIDAS no SVG,
+paradas. Ipê, juçara e embaúba só nascem com a copa à vista.
 
 **Mapa a 1080 (`025`), props a 768 px num quadro de 512 coordenadas (`029`,
 D31) e a moldura fora da VRAM pelo atlas (`049`)**; a água fica a 720 (`026`).
@@ -115,14 +116,12 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **A fila em vigor é a §7 do plano.** Aqui fica só a posição.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
-A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
-progressão (`103`–`106`, `108`); medição na `economia.md`.
 **Na main:** cancelamento e ajuda (`109`–`116`; leitura e telefone pendentes),
 obras, máquinas e vila (`121`–`123`); retomada sem efeitos/atalhos (`125`).
-**Versão e diagnóstico (`128`, PR #142 rascunho):** build, prévia e cópia
-explícita no início e na pausa; sem dados da partida. Claude parado.
-**A fila da `126`** (§7): terreno e vegetação (`127`), **não aceite**,
-continua; depois, estradas e detalhes.
+**Versão e diagnóstico (`128`):** build, prévia e cópia no início e na
+pausa; sem dados da partida.
+**A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
+`129`); a seguir, estradas, depois detalhes.
 Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
 sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
 A `107` permanece local e separada, sem autorização de publicação nem teste

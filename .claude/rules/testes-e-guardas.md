@@ -45,6 +45,14 @@ certa: o SVG mudou e a textura não. O executor reimporta quando o alvo tem
 `.import` ao lado, e outra vez ao desfazer; a base do fim prova que o cache
 voltou. E o alvo é o arquivo GERADO, não o gerador — o executor troca texto,
 não regera.
+⚠️ **E O EXECUTOR MORTO A MEIO RESTAURA O ARQUIVO, MAS NÃO O CACHE.** Em
+18/10 (`129`) o catálogo inteiro passou do teto de 30 min que o segundo
+plano desta sessão dá por omissão e foi morto no mutante do mar: o SVG
+voltou ao certo — confere byte a byte com o gerador —, a reimportação não
+chegou a correr, e a corrida seguinte deu a BASE do `teste_design`
+vermelha, com a mancha clara do mutante. Depois de um executor
+interrompido, `--import` antes de outra coisa; e o catálogo corre com o
+teto de tempo dado à mão.
 ⚠️ **E O RÓTULO DECLARADO NÃO LEVA O QUE O GERADOR RENUMERA.** O do coreto
 dizia «o praca (lote 4)», e a vila nova pôs a praça no lote 7: a guarda certa
 reprovou e o executor deu o mutante por FURADO. «pinta telha_d à volta»
@@ -468,6 +476,12 @@ guarda.
   de 100 a 350 px acima, de casas e quintais de trás, fora do quadro. O
   defeito que a pergunta caça é o contorno CEGO nas colunas da casa, e é
   esse o mutante (`127`).
+- **⚠️ MUTANTE QUE TROCA ARTE CONFERE QUE A NOVA EXISTE ONDE É LIDA.** O do
+  telhado (`129`) trocava uma moita embutida por uma copa que o SVG não tem
+  nas `<defs>`: o `<use>` não desenha nada, o mutante APAGAVA a moita em vez
+  de a crescer, e sobreviveu. E o do destaque tapado nasceu fraco (73%,
+  abaixo do corte): o mutante que fica é o caso que PEDIU a guarda, não um
+  parecido com ele.
 - **PROP NOVO NO `Cenario` RESPONDE ÀS GUARDAS DE TODOS OS PROPS.** As plantas
   da restinga caíram no D2 (seis no asfalto, verdade) e no D15 (equipamento de
   porto na praia — que elas não são). A isenção é pelo nome e diz a espécie,

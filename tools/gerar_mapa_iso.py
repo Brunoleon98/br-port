@@ -1680,6 +1680,8 @@ MATA_PALMEIRA_LONGE = 26.0
 # e a escura média deram 12 e 11 das 39 copas, em fila — a mesma árvore em
 # parede, que era a queixa.
 MATA_TETO = 6
+# Os dardos de uma forma que o saco deixou a zero (`arvores_da_mata`).
+MATA_DARDOS_DA_QUE_FALTA = 1500
 # A copa a partir da qual a forma é GRANDE (raio em unidades), e quantas de
 # cada uma se tentam antes do saco.
 MATA_GRANDE = 0.80
@@ -1720,6 +1722,13 @@ MATA_COPA_VISIVEL = -10.0
 MATA_DESTACADAS = {"arvore_jucara": 0.30, "arvore_embauba": 0.35,
                    "arvore_ipe_amarelo": 0.55, "arvore_ipe_rosa": 0.55}
 MATA_COPA_TAPADA = 0.25
+MATA_COPA_TAPADA_ENTRE = 0.65
+# ⚠️ E UM DESTAQUE TAPA OUTRO, pela COPA: medido nos pixels pelo D47 §12, a
+# embaúba do morro saiu com 90% da copa debaixo da do ipê amarelo, com o pé a
+# 7,6 px do dele — a regra só perguntava pelas árvores comuns. Pela caixa
+# inteira do da frente, e somando todas as da frente, a regra tirava do morro
+# as palmeiras e do relvado as arvoretas (de 63 árvores a 42): o estipe da
+# juçara não tapa nada, e a cada aperto o empacotamento desabava em cascata.
 # Quantas vezes o saco inteiro se tenta encher: a mata acaba quando acaba o
 # chão, e não numa conta.
 MATA_SACOS = 12
@@ -1948,27 +1957,33 @@ def arvores_da_mata() -> list:
         y1 = y + max(v for v in perfil["baixo"] if v is not None)
         if any(x0 < b[2] and b[0] < x1 and y0 < b[3] and b[1] < y1 for b in fauna):
             return None
+        # A COPA DE UM DESTAQUE À VISTA: o de pé mais abaixo fica à frente, e
+        # tapa a copa do de trás — com a caixa inteira, se for uma árvore
+        # comum; só com a copa, se for outro destaque.
         destaque = _especie(variante) in MATA_DESTACADAS
         for o in postas:
-            if destaque == (_especie(o[0]) in MATA_DESTACADAS) or o[5] == y:
+            outro = _especie(o[0]) in MATA_DESTACADAS
+            if o[5] == y or not (destaque if o[5] > y else outro):
                 continue
-            # O da frente é o de pé mais abaixo; a copa protegida, a do outro.
-            fx0, fx1, fy0, fy1 = x0, x1, y0, y1
-            cx0, cx1, cy0, cy1 = _caixa_na_tela(o[0], o[4], o[5])
-            fracao = MATA_DESTACADAS.get(_especie(o[0]), 0.0)
-            if destaque:
-                fx0, fx1, fy0, fy1, cx0, cx1, cy0, cy1 = cx0, cx1, cy0, cy1, fx0, fx1, fy0, fy1
-                fracao = MATA_DESTACADAS[_especie(variante)]
-                frente = o[5] > y
+            if o[5] > y:
+                copa = _copa_na_tela(variante, x, y)
+                frente = _copa_na_tela(o[0], o[4], o[5]) if outro \
+                    else _caixa_na_tela(o[0], o[4], o[5])
             else:
-                frente = y > o[5]
-            if not frente:
-                continue
-            cy1 = cy0 + fracao * (cy1 - cy0)
-            tapado = max(0.0, min(fx1, cx1) - max(fx0, cx0)) * max(0.0, min(fy1, cy1) - max(fy0, cy0))
-            if tapado > MATA_COPA_TAPADA * (cx1 - cx0) * (cy1 - cy0):
+                copa = _copa_na_tela(o[0], o[4], o[5])
+                frente = _copa_na_tela(variante, x, y) if destaque else (x0, x1, y0, y1)
+            tapado = max(0.0, min(frente[1], copa[1]) - max(frente[0], copa[0])) \
+                * max(0.0, min(frente[3], copa[3]) - max(frente[2], copa[2]))
+            teto = MATA_COPA_TAPADA_ENTRE if (destaque and outro) else MATA_COPA_TAPADA
+            if tapado > teto * (copa[1] - copa[0]) * (copa[3] - copa[2]):
                 return None
         return h, x, y
+
+    def _copa_na_tela(variante: str, x: float, y: float) -> tuple:
+        """A caixa de TELA da COPA de um destaque: a fração de cima da caixa
+        dele que a `MATA_DESTACADAS` diz ser copa."""
+        cx0, cx1, cy0, cy1 = _caixa_na_tela(variante, x, y)
+        return (cx0, cx1, cy0, cy0 + MATA_DESTACADAS[_especie(variante)] * (cy1 - cy0))
 
     def _caixa_na_tela(variante: str, x: float, y: float) -> tuple:
         pf = perfis[variante]
@@ -2028,6 +2043,14 @@ def arvores_da_mata() -> list:
                 feitas += 1
         if not feitas:
             break
+    # ⚠️ E TODA FORMA ENTRA AO MENOS UMA VEZ (`129`): com a copa de folhas e a
+    # regra dos destaques, o saco deixou a escura grande e a escura alta a
+    # zero — a encosta perdia duas das seis formas, que era a queixa da
+    # primeira volta («a maioria das árvores é a mesma»), e a folha dos props
+    # ficava sem chão para elas. A que faltar tenta outra vez, com mais dardos.
+    for v, raio, _n in MATA_MASSA:
+        if not contas[v] and plantar(v, raio, MATA_DARDOS_DA_QUE_FALTA):
+            contas[v] += 1
     # O SUB-BOSQUE (`129`): «troncos em fila», marcou o Bruno — na borda da
     # mata virada para a vila, os troncos das copas ficavam à mostra em
     # paliçada. Uma moita no pé, À FRENTE de cada árvore (para o cais e para
@@ -2590,13 +2613,19 @@ def _da_vila() -> list:
 
 
 def _colunas_da_embutida(perfil: dict, x: float, y: float, k: float) -> dict:
-    """{coluna de TELA: (cima, baixo)} do desenho de uma árvore embutida."""
+    """{coluna de TELA: (cima, baixo)} do desenho de uma árvore embutida.
+
+    ⚠️ COM UMA COLUNA DE FOLGA PARA CADA LADO (`129`): o perfil põe cada pixel
+    do PNG na coluna onde ele COMEÇA, e o pixel da borda de uma copa embutida
+    a 0,639 entrava 0,17 px na coluna seguinte — o D47 §3c viu uma arvoreta
+    1,5 px por cima da copa ali, que o gerador julgava só sombra até y 67,5.
+    """
     cols = {}
     for i, (cima, baixo) in enumerate(zip(perfil["cima"], perfil["baixo"])):
         if cima is None:
             continue
         c0 = math.floor(x + k * (perfil["dx0"] + i))
-        for c in range(c0, math.floor(x + k * (perfil["dx0"] + i + 1)) + 1):
+        for c in range(c0 - 1, math.floor(x + k * (perfil["dx0"] + i + 1)) + 2):
             a, b = y + k * cima, y + k * baixo
             velho = cols.get(c)
             cols[c] = (a, b) if velho is None else (min(velho[0], a), max(velho[1], b))

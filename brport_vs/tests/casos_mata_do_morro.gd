@@ -54,7 +54,16 @@ extends RefCounted
 #      não é verde de copa;
 #   §10 cada IPÊ embutido mostra a cor dele (`129`, «ipê escondido»): os pixels
 #      de flor no mapa, na janela da copa, são pelo menos metade dos do PNG
-#      à escala dele — atrás de uma casa, o ipê inteiro ou nenhum.
+#      à escala dele — atrás de uma casa, o ipê inteiro ou nenhum;
+#   §11 a copa de cada DESTAQUE que balança — ipê, juçara, embaúba — está À
+#      VISTA (`129`, «poucas juçaras e embaúbas»): o `MapaWrap` recorta o que
+#      sobe acima do topo do mapa, que fica debaixo da barra do HUD, e metade
+#      das juçaras e embaúbas tinha lá a copa inteira. Lê o recorte na CENA e
+#      o desenho no PNG, e não o perfil do gerador;
+#   §12 nenhuma árvore desenhada DEPOIS de um destaque lhe tapa a copa (`129`):
+#      as juçaras jovens nasceram no relvado e as arvoretas plantadas à volta
+#      taparam-nas pela frente. Conta, pixel a pixel, quanto do terço de cima
+#      do desenho do destaque fica debaixo do desenho de outra árvore.
 #
 # A ordem de profundidade não está aqui: as árvores são irmãs dos outros
 # props, e quem a pergunta é o D3, para todos.
@@ -91,6 +100,20 @@ const TELHADO_JANELA := 2.0
 ## vila e da mata medem 50 a 60 (`copa_esc` #2a6430: 52); o telhado de barro,
 ## o fibrocimento e a caixa-d'água ficam abaixo de zero.
 const VERDE_MIN := 25
+## As espécies que são DESTAQUE na mata (§11, §12): o nome da variante sem a
+## letra do porte.
+const DESTAQUES := ["arvore_ipe_amarelo", "arvore_ipe_rosa", "arvore_jucara", "arvore_embauba"]
+## Quanto o desenho de um destaque pode subir acima do recorte do mapa, em px
+## de TELA (§11): a ponta de uma folha, e não a copa.
+const COPA_SOB_A_BARRA := 12.0
+## A parte de cima do desenho de um destaque que conta como copa (§12).
+const COPA_DO_DESTAQUE := 0.40
+## A fração da copa de um destaque que outra árvore pode tapar (§12). Medido
+## (`129`): no mapa certo a pior é o ipê amarelo da borda, a 63% — atrás da
+## embaúba —, e o defeito que a pergunta nasceu a caçar, a embaúba atrás do
+## ipê, dava 90%. O corte vai a meio. ⚠️ A guarda defende «a copa não some
+## quase toda»; os 63% do ipê ficam registados, e não são verdes por ela.
+const COPA_TAPADA_MAX := 0.76
 
 var falhas := 0
 var completo := false
@@ -486,6 +509,56 @@ func rodar(main: Node, ancoras: Dictionary, lido = null) -> void:
 	conferir("a guarda achou ipês embutidos", ipes >= 1, "%d ipês" % ipes)
 	conferir("nenhum ipê embutido fica escondido", escondido == "", escondido)
 
+	# §11 — a copa de cada destaque abaixo do recorte do mapa.
+	var mapa_wrap: Control = main.get_node("MapaWrap")
+	conferir("o mapa recorta o que sobe acima dele", mapa_wrap.clip_contents)
+	var destaques: Array[int] = []
+	for i in mini(nos.size(), copia.size()):
+		var v := String(copia[i][0])
+		if v.left(v.length() - 2) in DESTAQUES or v in DESTAQUES:
+			destaques.append(i)
+	conferir("a guarda achou destaques na mata", destaques.size() >= 6,
+		"%d destaques" % destaques.size())
+	var cache_opaco := {}
+	var sob_a_barra := ""
+	for i in destaques:
+		var no: TextureRect = nos[i]
+		var r := _opaco(no.texture, cache_opaco)
+		var topo := no.position.y + r.position.y
+		if topo < -COPA_SOB_A_BARRA and sob_a_barra == "":
+			sob_a_barra = "%s (%s) tem o desenho a começar em y=%.1f, acima do recorte do mapa" \
+				% [no.name, copia[i][0], topo]
+	conferir("a copa de cada destaque fica à vista", sob_a_barra == "", sob_a_barra)
+
+	# §12 — nenhuma árvore desenhada depois tapa a copa de um destaque.
+	var pior_tapa := 0.0
+	var tapada := ""
+	for i in destaques:
+		var no: TextureRect = nos[i]
+		var copa := _celulas(no, 0.0, COPA_DO_DESTAQUE)
+		if copa.is_empty():
+			continue
+		var caixa := _opaco(no.texture, cache_opaco)
+		caixa.position += no.position
+		var tapadas := {}
+		for j in nos.size():
+			var outro: TextureRect = nos[j]
+			if outro == no or outro.get_index() < no.get_index():
+				continue
+			var r := _opaco(outro.texture, cache_opaco)
+			r.position += outro.position
+			if not r.intersects(caixa):
+				continue
+			for c in _celulas(outro, 0.0, 1.0):
+				if copa.has(c):
+					tapadas[c] = true
+		var fracao := float(tapadas.size()) / float(copa.size())
+		if fracao > pior_tapa:
+			pior_tapa = fracao
+			tapada = "%s (%s): %.0f%% da copa debaixo de outra árvore" \
+				% [no.name, copia[i][0], 100.0 * fracao]
+	conferir("nenhuma árvore tapa a copa de um destaque", pior_tapa <= COPA_TAPADA_MAX, tapada)
+
 	completo = true
 
 
@@ -565,6 +638,35 @@ func _crista_a_frente(crista: Array, x: float, y_pe: float):
 		if y >= y_pe - 3.0 and (melhor == null or y < float(melhor)):
 			melhor = y
 	return melhor
+
+
+## As células de TELA (px inteiros do mapa) do desenho OPACO de uma árvore,
+## na faixa de alturas [de, ate] do desenho — 0 é o topo dele, 1 o pé.
+func _celulas(no: TextureRect, de: float, ate: float) -> Dictionary:
+	var img := PropIso.imagem(no.texture)
+	var k := PropIso.escala(no.texture)
+	var u := img.get_used_rect()
+	var y0 := u.end.y
+	var y1 := u.position.y - 1
+	for py in range(u.position.y, u.end.y):
+		for px in range(u.position.x, u.end.x):
+			if img.get_pixel(px, py).a >= ALFA_OPACO:
+				y0 = mini(y0, py)
+				y1 = maxi(y1, py)
+				break
+	var cel := {}
+	if y1 < y0:
+		return cel
+	var lo := float(y0) + de * float(y1 - y0 + 1)
+	var hi := float(y0) + ate * float(y1 - y0 + 1)
+	for py in range(y0, y1 + 1):
+		if float(py) < lo or float(py) >= hi:
+			continue
+		for px in range(u.position.x, u.end.x):
+			if img.get_pixel(px, py).a >= ALFA_OPACO:
+				cel[Vector2i(floori(no.position.x + float(px) * k),
+					floori(no.position.y + float(py) * k))] = true
+	return cel
 
 
 ## O retângulo do desenho OPACO de uma textura, em px de TELA a partir do

@@ -316,15 +316,23 @@ func da_cena(cena: String, base: Vector2, raiz: String, r: Dictionary) -> void:
 			for e in tabela.get("arvores_embutidas", []):
 				var caminho := "./MapaWrap/Mapa/Embutida/" + String(e["arvore"])
 				var pe: Array = e["pe"]
+				# ⚠️ E A ESPÉCIE QUE SÓ VIVE EMBUTIDA FORA DO MAPA (`129`): com a
+				# copa de folhas, a escura grande deixou de caber no morro e
+				# ficou só em duas embutidas a x negativo — a mesma conta da
+				# mata que só pousa fora, logo abaixo.
+				if not _no_mapa(float(pe[0]), float(pe[1])):
+					if not fora.has(caminho):
+						fora[caminho] = [String(e["arvore"]), Vector2(float(pe[0]), float(pe[1]))]
+					continue
 				if r["ancoras"].has("./MapaWrap/Cenario/Mata/" + String(e["arvore"])) \
-						or r["ancoras"].has(caminho) \
-						or not _no_mapa(float(pe[0]), float(pe[1])):
+						or r["ancoras"].has(caminho):
 					continue
 				r["ancoras"][caminho] = base + Vector2(float(pe[0]), float(pe[1]))
 				r["vistas"].append([String(e["arvore"]) + ".png", caminho])
 		for caminho in fora:
 			var especie: String = fora[caminho][0]
 			if r["ancoras"].has(caminho) \
+					or r["ancoras"].has("./MapaWrap/Cenario/Mata/" + especie) \
 					or r["ancoras"].has("./MapaWrap/Mapa/Embutida/" + especie):
 				continue
 			var lim := Vector2(RAIO_CHAO, RAIO_CHAO)

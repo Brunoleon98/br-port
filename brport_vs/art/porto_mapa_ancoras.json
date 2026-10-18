@@ -3946,69 +3946,58 @@
  },
  "mata": [
   {
-   "arvore": "arvore_mata_d",
-   "chao": "morro",
-   "h": 44.33,
-   "mx": -8.585,
-   "my": 5.658,
-   "pe": [
-    54.1,
-    21.9
-   ]
-  },
-  {
-   "arvore": "arvore_mata_b",
-   "chao": "morro",
-   "h": 47.52,
-   "mx": -8.614,
-   "my": 6.168,
-   "pe": [
-    43.4,
-    23.5
-   ]
-  },
-  {
-   "arvore": "arvore_arvoreta_b",
-   "chao": "morro",
-   "h": 17.33,
-   "mx": -6.073,
-   "my": 3.7,
-   "pe": [
-    143.5,
-    54.4
-   ]
-  },
-  {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 35.47,
-   "mx": -8.013,
-   "my": 5.809,
+   "h": 39.37,
+   "mx": -8.308,
+   "my": 5.618,
    "pe": [
-    62.6,
-    38.0
+    60.5,
+    29.2
    ]
   },
   {
-   "arvore": "arvore_jucara_c",
+   "arvore": "arvore_embauba_c",
    "chao": "morro",
    "h": 17.33,
-   "mx": -5.817,
-   "my": 3.727,
+   "mx": -6.194,
+   "my": 3.716,
    "pe": [
-    148.1,
-    57.3
+    140.8,
+    53.4
+   ]
+  },
+  {
+   "arvore": "arvore_copa_m",
+   "chao": "morro",
+   "h": 44.11,
+   "mx": -8.462,
+   "my": 6.047,
+   "pe": [
+    48.8,
+    27.2
    ]
   },
   {
    "arvore": "arvore_copa_alta",
    "chao": "morro",
-   "h": 38.44,
-   "mx": -8.128,
-   "my": 6.052,
+   "h": 35.47,
+   "mx": -7.999,
+   "my": 5.854,
    "pe": [
-    55.4,
-    36.3
+    61.9,
+    38.6
+   ]
+  },
+  {
+   "arvore": "arvore_moita_b",
+   "chao": "morro",
+   "h": 17.33,
+   "mx": -5.812,
+   "my": 3.701,
+   "pe": [
+    148.7,
+    57.1
    ]
   },
   {
@@ -4025,56 +4014,67 @@
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 38.58,
-   "mx": -8.095,
-   "my": 6.197,
+   "h": 38.17,
+   "mx": -8.067,
+   "my": 6.209,
    "pe": [
-    53.1,
-    37.9
+    53.5,
+    38.7
    ]
   },
   {
-   "arvore": "arvore_arvoreta_b",
+   "arvore": "arvore_jucara_c",
    "chao": "morro",
    "h": 17.33,
-   "mx": -5.58,
-   "my": 3.734,
+   "mx": -5.643,
+   "my": 3.929,
    "pe": [
-    152.7,
-    59.7
-   ]
-  },
-  {
-   "arvore": "arvore_arvoreta_a",
-   "chao": "morro",
-   "h": 17.33,
-   "mx": -5.635,
-   "my": 4.051,
-   "pe": [
-    145.3,
-    62.3
+    147.6,
+    61.0
    ]
   },
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 42.95,
-   "mx": -8.204,
-   "my": 6.718,
+   "h": 31.01,
+   "mx": -7.672,
+   "my": 5.962,
    "pe": [
-    40.6,
-    37.7
+    66.3,
+    47.4
+   ]
+  },
+  {
+   "arvore": "arvore_copa_alta",
+   "chao": "morro",
+   "h": 42.53,
+   "mx": -8.221,
+   "my": 6.576,
+   "pe": [
+    43.1,
+    36.5
+   ]
+  },
+  {
+   "arvore": "arvore_moita_b",
+   "chao": "morro",
+   "h": 37.59,
+   "mx": -7.942,
+   "my": 6.52,
+   "pe": [
+    49.8,
+    43.7
    ]
   },
   {
    "arvore": "arvore_mata_b",
    "chao": "morro",
-   "h": 54.35,
-   "mx": -8.588,
-   "my": 7.496,
+   "h": 53.15,
+   "mx": -8.543,
+   "my": 7.444,
    "pe": [
-    17.3,
-    30.2
+    19.3,
+    31.4
    ]
   },
   {
@@ -4091,188 +4091,155 @@
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 47.27,
-   "mx": -8.196,
-   "my": 7.583,
+   "h": 49.51,
+   "mx": -8.288,
+   "my": 7.68,
    "pe": [
-    23.4,
-    42.1
-   ]
-  },
-  {
-   "arvore": "arvore_moita_b",
-   "chao": "morro",
-   "h": 49.62,
-   "mx": -8.237,
-   "my": 7.879,
-   "pe": [
-    16.7,
-    42.3
+    19.6,
+    39.9
    ]
   },
   {
    "arvore": "arvore_copa_m",
    "chao": "morro",
-   "h": 59.89,
-   "mx": -8.459,
-   "my": 8.872,
+   "h": 57.05,
+   "mx": -8.334,
+   "my": 8.834,
    "pe": [
-    -7.6,
-    39.7
+    -4.4,
+    43.4
    ]
   },
   {
    "arvore": "arvore_arvoreta_a",
    "chao": "morro",
    "h": 17.33,
-   "mx": -6.162,
-   "my": 6.871,
+   "mx": -5.976,
+   "my": 6.837,
    "pe": [
-    78.3,
-    85.3
+    82.7,
+    86.8
    ]
   },
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 53.48,
-   "mx": -8.011,
-   "my": 9.146,
+   "h": 53.04,
+   "mx": -8.034,
+   "my": 9.053,
    "pe": [
-    -4.1,
-    53.4
+    -2.7,
+    52.6
    ]
   },
   {
-   "arvore": "arvore_arvoreta_a",
+   "arvore": "arvore_mata_d",
    "chao": "morro",
    "h": 17.33,
-   "mx": -5.713,
-   "my": 6.857,
+   "mx": -5.847,
+   "my": 7.192,
    "pe": [
-    87.6,
-    89.6
+    78.2,
+    91.6
    ]
   },
   {
-   "arvore": "arvore_arvoreta_a",
+   "arvore": "arvore_moita_b",
    "chao": "morro",
    "h": 17.33,
-   "mx": -6.018,
-   "my": 7.373,
+   "mx": -5.568,
+   "my": 6.944,
    "pe": [
-    71.2,
-    91.7
-   ]
-  },
-  {
-   "arvore": "arvore_copa_m",
-   "chao": "morro",
-   "h": 54.53,
-   "mx": -7.938,
-   "my": 9.406,
-   "pe": [
-    -7.9,
-    55.6
-   ]
-  },
-  {
-   "arvore": "arvore_embauba_c",
-   "chao": "morro",
-   "h": 17.33,
-   "mx": -5.657,
-   "my": 7.135,
-   "pe": [
-    83.1,
-    92.9
+    88.8,
+    91.9
    ]
   },
   {
    "arvore": "arvore_jucara_c",
    "chao": "morro",
    "h": 17.33,
-   "mx": -5.783,
-   "my": 7.485,
+   "mx": -5.862,
+   "my": 7.574,
    "pe": [
-    73.6,
-    95.2
-   ]
-  },
-  {
-   "arvore": "arvore_moita_b",
-   "chao": "morro",
-   "h": 17.33,
-   "mx": -5.947,
-   "my": 7.658,
-   "pe": [
-    66.9,
+    70.3,
     95.3
    ]
   },
   {
-   "arvore": "arvore_moita_b",
+   "arvore": "arvore_mata_b",
    "chao": "morro",
-   "h": 17.33,
-   "mx": -5.564,
-   "my": 7.425,
+   "h": 51.66,
+   "mx": -7.707,
+   "my": 9.557,
    "pe": [
-    79.2,
-    96.8
+    -6.3,
+    62.3
    ]
   },
   {
    "arvore": "arvore_arvoreta_b",
    "chao": "morro",
    "h": 17.33,
-   "mx": -5.585,
-   "my": 7.704,
+   "mx": -5.557,
+   "my": 7.416,
    "pe": [
-    73.2,
-    99.4
+    79.5,
+    96.8
+   ]
+  },
+  {
+   "arvore": "arvore_moita_b",
+   "chao": "morro",
+   "h": 17.33,
+   "mx": -5.968,
+   "my": 7.884,
+   "pe": [
+    62.0,
+    97.3
+   ]
+  },
+  {
+   "arvore": "arvore_arvoreta_a",
+   "chao": "morro",
+   "h": 17.33,
+   "mx": -5.573,
+   "my": 7.731,
+   "pe": [
+    72.9,
+    99.7
    ]
   },
   {
    "arvore": "arvore_embauba_b",
    "chao": "morro",
-   "h": 47.19,
-   "mx": -7.438,
-   "my": 9.588,
+   "h": 43.99,
+   "mx": -7.241,
+   "my": 9.604,
    "pe": [
-    -1.5,
-    69.8
+    2.1,
+    75.1
    ]
   },
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 47.75,
-   "mx": -7.389,
-   "my": 9.75,
+   "h": 17.33,
+   "mx": -5.739,
+   "my": 8.107,
    "pe": [
-    -3.8,
-    71.4
+    62.1,
+    101.8
    ]
   },
   {
-   "arvore": "arvore_arvoreta_b",
+   "arvore": "arvore_embauba_c",
    "chao": "morro",
    "h": 17.33,
-   "mx": -5.713,
-   "my": 8.088,
+   "mx": -5.498,
+   "my": 8.021,
    "pe": [
-    63.0,
-    101.9
-   ]
-  },
-  {
-   "arvore": "arvore_arvoreta_b",
-   "chao": "morro",
-   "h": 17.33,
-   "mx": -5.38,
-   "my": 8.053,
-   "pe": [
-    70.3,
-    104.9
+    68.6,
+    103.4
    ]
   },
   {
@@ -4289,45 +4256,56 @@
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 39.85,
-   "mx": -6.937,
-   "my": 9.695,
+   "h": 17.33,
+   "mx": -5.573,
+   "my": 8.301,
    "pe": [
-    6.4,
-    83.2
+    61.5,
+    105.4
+   ]
+  },
+  {
+   "arvore": "arvore_moita_b",
+   "chao": "morro",
+   "h": 35.87,
+   "mx": -6.748,
+   "my": 9.547,
+   "pe": [
+    13.1,
+    87.6
+   ]
+  },
+  {
+   "arvore": "arvore_moita_b",
+   "chao": "morro",
+   "h": 41.41,
+   "mx": -6.96,
+   "my": 9.847,
+   "pe": [
+    2.9,
+    83.0
    ]
   },
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
    "h": 17.33,
-   "mx": -5.546,
-   "my": 8.363,
+   "mx": -5.656,
+   "my": 8.56,
    "pe": [
-    60.8,
-    106.3
+    54.7,
+    107.2
    ]
   },
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 34.41,
-   "mx": -6.578,
-   "my": 9.686,
+   "h": 39.35,
+   "mx": -6.761,
+   "my": 9.984,
    "pe": [
-    13.7,
-    92.2
-   ]
-  },
-  {
-   "arvore": "arvore_moita_b",
-   "chao": "morro",
-   "h": 39.16,
-   "mx": -6.755,
-   "my": 9.97,
-   "pe": [
-    4.5,
-    88.5
+    4.1,
+    88.4
    ]
   },
   {
@@ -4344,23 +4322,23 @@
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 35.93,
-   "mx": -6.469,
-   "my": 10.113,
+   "h": 30.29,
+   "mx": -6.142,
+   "my": 9.958,
    "pe": [
-    7.4,
-    96.0
+    17.0,
+    103.4
    ]
   },
   {
-   "arvore": "arvore_moita_b",
+   "arvore": "arvore_copa_alta",
    "chao": "morro",
-   "h": 39.62,
-   "mx": -6.606,
-   "my": 10.329,
+   "h": 34.42,
+   "mx": -6.28,
+   "my": 10.283,
    "pe": [
-    0.3,
-    93.1
+    7.7,
+    101.1
    ]
   },
   {
@@ -4372,6 +4350,28 @@
    "pe": [
     -3.5,
     96.7
+   ]
+  },
+  {
+   "arvore": "arvore_moita_b",
+   "chao": "morro",
+   "h": 27.65,
+   "mx": -5.874,
+   "my": 10.081,
+   "pe": [
+    19.9,
+    109.9
+   ]
+  },
+  {
+   "arvore": "arvore_moita_b",
+   "chao": "morro",
+   "h": 24.49,
+   "mx": -5.608,
+   "my": 10.085,
+   "pe": [
+    25.1,
+    115.8
    ]
   },
   {
@@ -4388,45 +4388,67 @@
   {
    "arvore": "arvore_copa_alta",
    "chao": "morro",
-   "h": 31.51,
-   "mx": -5.836,
-   "my": 10.752,
+   "h": 31.75,
+   "mx": -5.833,
+   "my": 10.794,
    "pe": [
-    7.2,
-    113.2
+    6.5,
+    113.4
    ]
   },
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 30.75,
-   "mx": -5.729,
-   "my": 10.852,
+   "h": 34.71,
+   "mx": -5.936,
+   "my": 11.011,
    "pe": [
-    7.4,
-    116.0
+    0.1,
+    111.5
    ]
   },
   {
    "arvore": "arvore_moita_b",
    "chao": "morro",
-   "h": 28.44,
-   "mx": -5.579,
-   "my": 10.797,
+   "h": 27.93,
+   "mx": -5.494,
+   "my": 10.886,
    "pe": [
-    11.5,
-    119.2
+    11.4,
+    121.5
    ]
   },
   {
    "arvore": "arvore_mata_b",
    "chao": "morro",
-   "h": 35.97,
-   "mx": -5.858,
-   "my": 11.342,
+   "h": 37.12,
+   "mx": -5.93,
+   "my": 11.352,
    "pe": [
-    -5.0,
-    114.4
+    -6.6,
+    112.6
+   ]
+  },
+  {
+   "arvore": "arvore_moita_b",
+   "chao": "morro",
+   "h": 32.47,
+   "mx": -5.627,
+   "my": 11.31,
+   "pe": [
+    0.3,
+    119.9
+   ]
+  },
+  {
+   "arvore": "arvore_copa_alta",
+   "chao": "morro",
+   "h": 34.51,
+   "mx": -5.524,
+   "my": 11.808,
+   "pe": [
+    -7.6,
+    123.8
    ]
   },
   {
@@ -4452,25 +4474,25 @@
    ]
   },
   {
-   "arvore": "arvore_mata_d",
-   "chao": "morro",
-   "h": 17.33,
-   "mx": 2.348,
-   "my": 18.781,
-   "pe": [
-    10.3,
-    289.5
-   ]
-  },
-  {
    "arvore": "arvore_moita_b",
    "chao": "morro",
    "h": 17.33,
-   "mx": 2.085,
-   "my": 19.086,
+   "mx": 1.976,
+   "my": 19.171,
    "pe": [
-    -1.0,
-    289.9
+    -4.9,
+    289.6
+   ]
+  },
+  {
+   "arvore": "arvore_copa_alta",
+   "chao": "morro",
+   "h": 17.33,
+   "mx": 2.389,
+   "my": 18.809,
+   "pe": [
+    10.6,
+    290.1
    ]
   },
   {
@@ -4485,36 +4507,14 @@
    ]
   },
   {
-   "arvore": "arvore_moita_b",
+   "arvore": "arvore_copa_m2",
    "chao": "morro",
    "h": 17.33,
-   "mx": 2.428,
-   "my": 19.166,
+   "mx": 2.356,
+   "my": 19.779,
    "pe": [
-    4.2,
-    294.1
-   ]
-  },
-  {
-   "arvore": "arvore_arvoreta_a",
-   "chao": "morro",
-   "h": 17.33,
-   "mx": 2.088,
-   "my": 19.529,
-   "pe": [
-    -9.8,
-    294.3
-   ]
-  },
-  {
-   "arvore": "arvore_mata_b",
-   "chao": "morro",
-   "h": 17.33,
-   "mx": 2.441,
-   "my": 19.831,
-   "pe": [
-    -8.8,
-    300.9
+    -9.5,
+    299.5
    ]
   },
   {
