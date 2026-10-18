@@ -1669,6 +1669,12 @@ MATA_MASSA = [
 # contam como uma): o acento só acentua enquanto é raro, e dois juntos são uma
 # mancha.
 MATA_DESTAQUE_LONGE = 55.0
+# ⚠️ E A PALMEIRA E A EMBAÚBA NÃO SÃO ACENTO DE COR, são SILHUETA: «poucas
+# juçaras e embaúbas», marcou o Bruno na quarta volta, e a conta dava-lhe
+# razão — com os 55 px do ipê, das nove pedidas só cabiam DUAS de cada na
+# faixa do morro. A 26 px cabem três e quatro, e uma silhueta fina ao lado
+# de outra igual continua a ler-se como duas árvores.
+MATA_PALMEIRA_LONGE = 26.0
 # ⚠️ E CADA FORMA TEM TETO (`129`): o morro visível é uma faixa estreita, e
 # nela cabem sobretudo as copas ESTREITAS. Sem teto, a 0,32 de aperto, a alta
 # e a escura média deram 12 e 11 das 39 copas, em fila — a mesma árvore em
@@ -1690,6 +1696,30 @@ MATA_APERTO_SUB = 0.12
 MATA_DO_RELVADO = [("arvore_arvoreta_a", 0.48, 8), ("arvore_arvoreta_b", 0.42, 8),
                    ("arvore_mata_d", 0.62, 4), ("arvore_copa_p2", 0.45, 3),
                    ("arvore_moita_b", 0.36, 5)]
+# ⚠️ E OS DESTAQUES DESCEM AO RELVADO, em JOVENS: «poucas juçaras e
+# embaúbas», marcou o Bruno na quarta volta. No morro não cabiam mais, e as
+# adultas no relvado pintariam por cima das casas da frente — medido, nem uma
+# cabia. A jovem tem o porte da arvoreta e a silhueta da espécie. Vêm antes
+# das arvoretas, que senão lhes tomam o chão, e com a distância entre iguais
+# das adultas (a jovem conta como da espécie dela, `_especie`).
+MATA_DESTAQUES_DO_RELVADO = [("arvore_jucara_c", 0.26, 2), ("arvore_embauba_c", 0.32, 2)]
+# ⚠️ E O DESTAQUE SÓ CONTA ONDE SE VÊ (`129`): o mapa começa a 62 px do topo
+# da tela, debaixo da barra do HUD, e metade das juçaras e embaúbas do morro
+# tinha o pé a y 21–36 — a copa inteira atrás da barra. O topo da copa de um
+# destaque fica no máximo a este tanto acima do topo do mapa (a ponta pode
+# entrar debaixo da barra; o corpo, não).
+MATA_COPA_VISIVEL = -10.0
+# ⚠️ E NADA À FRENTE DA COPA DE UM DESTAQUE (`129`): as jovens nasceram no
+# relvado e as arvoretas plantadas depois, em tufos à volta delas, taparam-nas
+# pela frente — da juçara só se viam as pontas das folhas. Nenhuma árvore fica
+# À FRENTE (pé mais abaixo na tela, que é a ordem do `MataNoMapa`) da parte de
+# cima de um destaque — a fração da altura dele que é copa, por espécie — em
+# mais de `MATA_COPA_TAPADA` da caixa dela. ⚠️ Com 45% da altura para todas
+# e nada tapado, caíram sete árvores do morro: 45% de uma juçara adulta é
+# quase só estipe, e é a copa dela que fura o dossel por cima das outras.
+MATA_DESTACADAS = {"arvore_jucara": 0.30, "arvore_embauba": 0.35,
+                   "arvore_ipe_amarelo": 0.55, "arvore_ipe_rosa": 0.55}
+MATA_COPA_TAPADA = 0.25
 # Quantas vezes o saco inteiro se tenta encher: a mata acaba quando acaba o
 # chão, e não numa conta.
 MATA_SACOS = 12
@@ -1822,6 +1852,12 @@ def _fauna_da_cena() -> list:
     return [(n, float(x), float(y)) for n, x, y in achados]
 
 
+def _especie(variante: str) -> str:
+    """A espécie de uma variante: `arvore_jucara_c` e `arvore_jucara_a` são
+    a mesma juçara, a jovem e a adulta."""
+    return re.sub(r"_[abc]$", "", variante)
+
+
 def arvores_da_mata() -> list:
     """Onde pousa cada árvore da mata: (variante, mx, my, h, x, y) de TELA.
 
@@ -1849,7 +1885,9 @@ def arvores_da_mata() -> list:
         """(h, x, y) se a árvore pode ficar com o pé em (mx, my), ou `None`.
 
         `sozinha`: px de TELA até ao destaque mais perto da mesma espécie —
-        os dois ipês amarelos saíram COLADOS, e liam um bolo amarelo só.
+        os dois ipês amarelos saíram COLADOS, e liam um bolo amarelo só. É
+        também o que marca um DESTAQUE, que só nasce onde a copa se vê
+        (`MATA_COPA_VISIVEL`).
         `aperto`: quanto a copa entra na da vizinha (o sub-bosque entra mais).
         `so_plano`: só no chão plano, fora do morro (as moitas do relvado).
         """
@@ -1867,7 +1905,9 @@ def arvores_da_mata() -> list:
             return None
         if any(math.hypot(mx - o[1], my - o[2]) < aperto * (raio + o[6]) for o in postas):
             return None
-        if sozinha and any(re.sub(r"_[ab]$", "", o[0]) == re.sub(r"_[ab]$", "", variante)
+        if sozinha and y + cima < MATA_COPA_VISIVEL:
+            return None
+        if sozinha and any(_especie(o[0]) == _especie(variante)
                            and math.hypot(x - o[4], y - o[5]) < sozinha
                            for o in postas):
             return None
@@ -1908,20 +1948,51 @@ def arvores_da_mata() -> list:
         y1 = y + max(v for v in perfil["baixo"] if v is not None)
         if any(x0 < b[2] and b[0] < x1 and y0 < b[3] and b[1] < y1 for b in fauna):
             return None
+        destaque = _especie(variante) in MATA_DESTACADAS
+        for o in postas:
+            if destaque == (_especie(o[0]) in MATA_DESTACADAS) or o[5] == y:
+                continue
+            # O da frente é o de pé mais abaixo; a copa protegida, a do outro.
+            fx0, fx1, fy0, fy1 = x0, x1, y0, y1
+            cx0, cx1, cy0, cy1 = _caixa_na_tela(o[0], o[4], o[5])
+            fracao = MATA_DESTACADAS.get(_especie(o[0]), 0.0)
+            if destaque:
+                fx0, fx1, fy0, fy1, cx0, cx1, cy0, cy1 = cx0, cx1, cy0, cy1, fx0, fx1, fy0, fy1
+                fracao = MATA_DESTACADAS[_especie(variante)]
+                frente = o[5] > y
+            else:
+                frente = y > o[5]
+            if not frente:
+                continue
+            cy1 = cy0 + fracao * (cy1 - cy0)
+            tapado = max(0.0, min(fx1, cx1) - max(fx0, cx0)) * max(0.0, min(fy1, cy1) - max(fy0, cy0))
+            if tapado > MATA_COPA_TAPADA * (cx1 - cx0) * (cy1 - cy0):
+                return None
         return h, x, y
+
+    def _caixa_na_tela(variante: str, x: float, y: float) -> tuple:
+        pf = perfis[variante]
+        a = x + pf["dx0"]
+        return (a, a + len(pf["baixo"]), y + min(v for v in pf["cima"] if v is not None),
+                y + max(v for v in pf["baixo"] if v is not None))
 
     def por(variante: str, raio: float, mx: float, my: float, onde: tuple) -> None:
         h, x, y = onde
         postas.append((variante, round(mx, 3), round(my, 3), round(h, 2),
                        round(x, 1), round(y, 1), raio))
 
-    def plantar(variante: str, raio: float, tentativas: int, **regras) -> bool:
+    def plantar(variante: str, raio: float, tentativas: int, solta: bool = False,
+                **regras) -> bool:
         for _ in range(tentativas):
             # ⚠️ EM TUFOS, E NÃO ESPALHADA POR IGUAL (`127`): a pesquisa
             # repete que mata espalhada por igual lê como plantação. Sete
             # dardos em dez nascem junto de uma árvore já posta; os outros
             # abrem tufos novos.
-            if postas and r.random() < 0.7:
+            # ⚠️ MENOS A `solta` (`129`): o destaque do relvado nasce antes
+            # das árvores do relvado, e os dardos junto de uma já posta caíam
+            # no morro — 621 das 800 tentativas das jovens morriam no «só no
+            # plano», e nenhuma nasceu.
+            if postas and not solta and r.random() < 0.7:
                 o = postas[r.randrange(len(postas))]
                 a = r.uniform(0.0, math.tau)
                 d = r.uniform(0.9, 1.5) * (raio + o[6]) * MATA_APERTO
@@ -1937,7 +2008,8 @@ def arvores_da_mata() -> list:
 
     for variante, raio, quantas in MATA_DESTAQUES:
         for _ in range(quantas):
-            plantar(variante, raio, 300, sozinha=MATA_DESTAQUE_LONGE)
+            plantar(variante, raio, 300, sozinha=MATA_DESTAQUE_LONGE if "ipe" in variante
+                    else MATA_PALMEIRA_LONGE)
     # AS GRANDES PRIMEIRO: a copa larga não cabe onde as estreitas já
     # estão, e com o saco baralhado desde o início saíam duas grandes em 39.
     contas = collections.Counter()
@@ -1983,6 +2055,10 @@ def arvores_da_mata() -> list:
     # balança cabe sem pintar por cima da vila, a orla deixa-lhe o sítio
     # (`quintal_de_tras`), e é aqui que ela nasce, só no chão plano: primeiro
     # as árvores pequenas que lá couberem, depois as moitas.
+    for variante, raio, quantas in MATA_DESTAQUES_DO_RELVADO:
+        for _ in range(quantas):
+            plantar(variante, raio, 1200, solta=True, so_plano=True,
+                    sozinha=MATA_PALMEIRA_LONGE)
     for variante, raio, quantas in MATA_DO_RELVADO:
         for _ in range(quantas):
             plantar(variante, raio, 400, so_plano=True)

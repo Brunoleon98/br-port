@@ -1002,7 +1002,7 @@ def chanfrar(objs, largura: float = 0.020, segmentos: int = 2) -> None:
     conta é como se quebra o alinhamento com o mapa.
     """
     for o in objs:
-        if o.type != "MESH":
+        if o.type != "MESH" or o.get("sem_chanfro"):
             continue
         mod = o.modifiers.new("chanfro", "BEVEL")
         mod.width = largura
@@ -1717,25 +1717,156 @@ def _tom(M, cor: str, fator: float):
     return _TONS[chave]
 
 
-def copa_natural(nome, M, rng, centro, raios, cores, n, tufo):
-    """Uma copa de FOLHAGEM: um miolo escuro e `n` tufos pequenos junto à pele
-    de um elipsoide de semi-eixos `raios`, cada um no tom da sua exposição.
+# A câmara vê de (+x, −y, +z): é para lá que cada folha vira a face, para
+# nenhuma chegar à câmara pelas costas (`folhagem`).
+_PARA_A_CAMARA = (0.612, -0.612, 0.5)
 
-    ⚠️ A COPA JÁ FOI DE QUATRO JEITOS, e esta é a quinta (`129`). Bolas lisas
-    liam nuvem; com ruído, «textura estranha»; em facetas de 80, «fofas
-    contra o mapa nítido»; em facetas de 20, «mais artificial» — cristal,
-    porque cada faceta tinha 6 px e a copa inteira eram dez gemas. O que o
-    Bruno pediu foi folhagem, «sem economizar polígonos»: muitos tufos
-    pequenos (a icosfera de 80 a 0,13–0,22 u, ~6–9 px no jogo), e é a troca
-    de VALOR de tufo para tufo — claro em cima e na face da câmara, escuro
-    por baixo e por dentro — que desenha a copa, e não a faceta.
-    `cores` vai do escuro ao claro; o primeiro é o do miolo.
+
+def folhagem(nome, rng, centro, raios, tufos, cores_folha, folha, vies=0.0):
+    """Os tufos de uma copa feitos de FOLHAS, numa malha só.
+
+    ⚠️ CADA TUFO EM BOLA LIA UMA BOLINHA (`129`): «as folhas parecem
+    bolinhas», marcou o Bruno, e pediu folha «mais realista». Era a sexta
+    copa, e a razão estava na luz e não na forma: cada icosfera tinha o seu
+    próprio lado claro e o seu lado escuro, e a copa lia-se como um cacho de
+    uvas — trinta sóis pequenos em vez de um. A pesquisa pedida (lida por
+    resumo, `063`) trouxe a técnica de toda folhagem de jogo: folhas pequenas
+    espalhadas pelo volume, com as NORMAIS reescritas para o volume da copa
+    inteira, de modo que a luz lê uma massa só e a folha dá o recorte e o
+    grão. Aqui a normal é a da copa misturada com a do tufo (`MISTURA_DO_TUFO`)
+    e um pouco de ruído: a copa lê-se pelos galhos sem cada tufo ser uma bola.
+
+    `tufos` é [(centro, semi-eixos)], `cores_folha` os
+    materiais do escuro ao claro, `folha` o comprimento de uma folha.
     """
     cx, cy, cz = centro
     rx, ry, rz = raios
-    pecas = [bola_facetada("%s_miolo" % nome, (cx, cy, cz - rz * 0.08),
-                           (rx * 0.78, ry * 0.78, rz * 0.74), _tom(M, cores[0], 0.9),
-                           rng, subdivisoes=2)]
+    vx, vy, vz = _PARA_A_CAMARA
+    verts, faces, normais, mats = [], [], [], []
+    for (px, py, pz), (ax, ay, az) in tufos:
+        area = 4.0 * math.pi * ((ax * ay + ax * az + ay * az) / 3.0)
+        n = max(8, round(FOLHAS_COBERTURA * area / (0.5 * folha * folha * FOLHA_ASPECTO)))
+        for _ in range(n):
+            # Um ponto na pele do tufo (e um pouco para dentro dela).
+            zf = rng.uniform(-1.0, 1.0)
+            a = rng.uniform(0.0, math.tau)
+            rr = math.sqrt(1.0 - zf * zf)
+            ux, uy, uz = rr * math.cos(a), rr * math.sin(a), zf
+            if uz < -0.45 and rng.random() < 0.7:
+                continue                   # por baixo do tufo quase nada se vê
+            p = rng.uniform(0.65, 1.0) + abs(rng.gauss(0.0, FOLHA_FRANJA))
+            fx, fy, fz = px + ux * ax * p, py + uy * ay * p, pz + uz * az * p
+            # A normal da copa, no elipsoide (o gradiente), e a do tufo.
+            gx, gy, gz = (fx - cx) / (rx * rx), (fy - cy) / (ry * ry), (fz - cz) / (rz * rz)
+            g = math.sqrt(gx * gx + gy * gy + gz * gz) or 1.0
+            m = MISTURA_DO_TUFO
+            nx = (1.0 - m) * gx / g + m * ux + rng.gauss(0.0, 0.12)
+            ny = (1.0 - m) * gy / g + m * uy + rng.gauss(0.0, 0.12)
+            nz = (1.0 - m) * gz / g + m * uz + rng.gauss(0.0, 0.12)
+            nn = math.sqrt(nx * nx + ny * ny + nz * nz) or 1.0
+            nx, ny, nz = nx / nn, ny / nn, nz / nn
+            # A face da folha vira-se meio para fora, meio para a câmara: de
+            # costas, o Cycles vira-lhe a normal para dentro e ela sai negra.
+            fnx, fny, fnz = nx + vx, ny + vy, nz + vz
+            fn = math.sqrt(fnx * fnx + fny * fny + fnz * fnz) or 1.0
+            fnx, fny, fnz = fnx / fn, fny / fn, fnz / fn
+            # Dois eixos no plano da folha, girados ao acaso.
+            ex, ey, ez = (0.0, 0.0, 1.0) if abs(fnz) < 0.9 else (1.0, 0.0, 0.0)
+            tx, ty, tz = fny * ez - fnz * ey, fnz * ex - fnx * ez, fnx * ey - fny * ex
+            t = math.sqrt(tx * tx + ty * ty + tz * tz)
+            tx, ty, tz = tx / t, ty / t, tz / t
+            bx, by, bz = fny * tz - fnz * ty, fnz * tx - fnx * tz, fnx * ty - fny * tx
+            giro = rng.uniform(0.0, math.tau)
+            c, s = math.cos(giro), math.sin(giro)
+            lx, ly, lz = c * tx + s * bx, c * ty + s * by, c * tz + s * bz
+            wx, wy, wz = -s * tx + c * bx, -s * ty + c * by, -s * tz + c * bz
+            comp = folha * rng.uniform(0.75, 1.25)
+            larg = comp * FOLHA_ASPECTO
+            base = len(verts)
+            # A folha é um losango comprido: pé, dois lados e ponta.
+            for dl, dw in ((-0.40, 0.0), (0.05, 0.5), (0.60, 0.0), (0.05, -0.5)):
+                verts.append((fx + lx * comp * dl + wx * larg * dw,
+                              fy + ly * comp * dl + wy * larg * dw,
+                              fz + lz * comp * dl + wz * larg * dw))
+                normais.append((nx, ny, nz))
+            # ⚠️ NESTA ORDEM: (pé, lado de −w, ponta, lado de +w) dá a normal
+            # geométrica `l × w`, que é a face virada para a câmara. Na ordem
+            # contrária a copa saiu PRETA, todas as folhas de costas.
+            faces.append((base, base + 3, base + 2, base + 1))
+            # A cor sai da exposição da PRÓPRIA folha, pela régua dos tufos
+            # (`copa_natural`), com mais ruído: a folha é o grão de uma copa de
+            # verdade, que nunca é de uma tinta só, e o tufo já não tem cor sua.
+            e = FOLHA_CONTRASTE * (0.60 * nz + 0.30 * (nx - ny) / 1.414) + vies \
+                + rng.uniform(-FOLHA_RUIDO_COR, FOLHA_RUIDO_COR)
+            kk = int((e + 1.0) / 2.0 * len(cores_folha))
+            mats.append(max(0, min(len(cores_folha) - 1, kk)))
+    malha = bpy.data.meshes.new("%s_folhas" % nome)
+    malha.from_pydata(verts, [], faces)
+    for mat in cores_folha:
+        malha.materials.append(mat)
+    malha.polygons.foreach_set("material_index", mats)
+    malha.polygons.foreach_set("use_smooth", [True] * len(faces))
+    malha.normals_split_custom_set_from_vertices(normais)
+    o = bpy.data.objects.new("%s_folhas" % nome, malha)
+    bpy.context.scene.collection.objects.link(o)
+    o["sem_chanfro"] = True              # a folha não tem aresta a chanfrar
+    return o
+
+
+# A folhagem (`folhagem`): quanto da pele de cada tufo as folhas cobrem (2 =
+# duas camadas, para o miolo escuro só aparecer nas frestas), a largura da
+# folha sobre o comprimento, e quanto a normal da folha deve ao tufo em vez
+# da copa — a 0 a copa é uma bola lisa com recorte de folha; a 1, volta o
+# cacho de uvas.
+FOLHAS_COBERTURA = 2.0
+FOLHA_ASPECTO = 0.50
+MISTURA_DO_TUFO = 0.35
+FOLHA_CONTRASTE = 1.6
+FOLHA_RUIDO_COR = 0.15
+FOLHA_FRANJA = 0.20
+FOLHA = 0.15
+FOLHA_RECUO = 0.85
+
+
+# Os tufos de cada copa, por nome, para quem pendura nela fruta (a mangueira
+# e a aroeira): o tufo já não é um objeto que se possa perguntar.
+TUFOS = {}
+
+
+def copa_natural(nome, M, rng, centro, raios, cores, n, tufo, folha=FOLHA, vies=0.0,
+                 deformar=None):
+    """Uma copa de FOLHAGEM: um miolo escuro e `n` tufos junto à pele de um
+    elipsoide de semi-eixos `raios`, cada tufo um punhado de FOLHAS de
+    comprimento `folha` (`folhagem`). `vies` desloca a exposição de todas as
+    folhas, para uma copa achatada, que a câmara vê quase só por cima, não
+    sair toda no tom de sol. `cores` vai do escuro ao claro; o primeiro é o
+    do miolo. `deformar` leva um ponto do mundo a outro, e passa pelo miolo e
+    pelos CENTROS dos tufos (o vento da aroeira) — ⚠️ não pelas folhas: com
+    cada vértice esticado, a aroeira saiu um charuto inclinado de folhas
+    riscadas; é o tufo que o vento afasta, e a folha continua folha.
+
+    ⚠️ A COPA JÁ FOI DE CINCO JEITOS, e esta é a sexta (`129`). Bolas lisas
+    liam nuvem; com ruído, «textura estranha»; em facetas de 80, «fofas
+    contra o mapa nítido»; em facetas de 20, «mais artificial» — cristal; em
+    tufos de icosfera, cada um no tom da sua exposição, «as folhas parecem
+    bolinhas». O que ficou de cada volta: a copa lê-se pela troca de VALOR —
+    claro em cima e na face da câmara, escuro por baixo e por dentro —, e o
+    tufo é o que organiza a folha por galho. O tufo deixou de ser uma bola
+    e passou a ser folhas.
+    """
+    cx, cy, cz = centro
+    rx, ry, rz = raios
+    miolo = bola_facetada("%s_miolo" % nome, (cx, cy, cz - rz * 0.08),
+                          (rx * 0.78, ry * 0.78, rz * 0.74), _tom(M, cores[0], 0.9),
+                          rng, subdivisoes=2)
+    for f in miolo.data.polygons:
+        f.use_smooth = True              # o miolo só se vê nas frestas, sem facetas
+    if deformar is not None:
+        o = miolo.location
+        for v in miolo.data.vertices:
+            w = deformar((o.x + v.co[0], o.y + v.co[1], o.z + v.co[2]))
+            v.co = (w[0] - o.x, w[1] - o.y, w[2] - o.z)
+    tufos = []
     ouro = math.pi * (3.0 - math.sqrt(5.0))
     for i in range(n):
         # Espiral de Fibonacci com sacudidela: tufos espalhados por igual na
@@ -1746,22 +1877,20 @@ def copa_natural(nome, M, rng, centro, raios, cores, n, tufo):
         nx, ny, nz = rr * math.cos(a), rr * math.sin(a), zf
         if nz < -0.55 and rng.random() < 0.6:
             continue                       # por baixo quase nada se vê
-        prof = rng.uniform(0.72, 0.95)
+        # ⚠️ RECUADOS (`FOLHA_RECUO`): a folha e a franja saem para fora do
+        # tufo, e a copa de folhas engordava 13–20% sobre a de bolas, o que
+        # tirou DEZ árvores da mata na primeira prova — o perfil de cada uma
+        # sai do PNG (`arvores_da_mata.json`) e o morro é uma faixa estreita.
+        prof = rng.uniform(0.72, 0.95) * FOLHA_RECUO
         px, py, pz = cx + nx * rx * prof, cy + ny * ry * prof, cz + nz * rz * prof
-        # A exposição: de cima e da face que a câmara vê (`+x` e `−y`), com
-        # pouco ruído. ⚠️ A ±0,25 a copa saiu um confetti de pontos claros —
-        # cada tufo com o seu sol —, e a luz da copa deixou de ser uma só.
-        e = 0.60 * nz + 0.30 * (nx - ny) / 1.414 + rng.uniform(-0.12, 0.12)
-        k = max(0, min(len(cores) - 1, int((e + 1.0) / 2.0 * len(cores))))
-        r = tufo * rng.uniform(0.80, 1.20)
-        # Achatados e tremidos: o tufo é uma almofada de folhas, e o contorno
-        # da copa sai lobado. Redondos e lisos, liam bolinhas.
-        pecas.append(bola_facetada("%s_tufo%d" % (nome, i), (px, py, pz),
-                                   (r * rng.uniform(0.9, 1.15), r * rng.uniform(0.9, 1.15),
-                                    r * 0.68),
-                                   _tom(M, cores[k], rng.uniform(0.95, 1.05)), rng,
-                                   subdivisoes=2, tremor=0.20))
-    return pecas
+        r = tufo * rng.uniform(0.80, 1.20) * FOLHA_RECUO
+        tufos.append(((px, py, pz), (r * rng.uniform(0.9, 1.15),
+                                     r * rng.uniform(0.9, 1.15), r * 0.68)))
+    if deformar is not None:
+        tufos = [(deformar(c), semi) for c, semi in tufos]
+    TUFOS[nome] = tufos
+    return [miolo, folhagem(nome, rng, centro, raios, tufos,
+                            [_tom(M, c, 1.0) for c in cores], folha, vies)]
 
 
 def copa_de_bolas_no_pe(nome, M, rng, centro, raio, n, cores, achatar=0.82,
@@ -1872,33 +2001,43 @@ def arvore_em_cachos(nome, M, semente, tronco, raio, cachos, cores, mat_tronco,
     return pecas
 
 
-def palmeira_jucara(nome, M, semente, tronco):
+def palmeira_jucara(nome, M, semente, tronco, escala=1.0):
     """A palmeira-juçara: estipe fino e reto, o palmito verde e a copa em
-    estrela ACIMA da mata — é a silhueta que a separa das copas redondas."""
+    estrela ACIMA da mata — é a silhueta que a separa das copas redondas.
+
+    `escala` encolhe a COPA e o palmito, e não o estipe, que é o `tronco`: a
+    juçara jovem (`129`) tem a estrela mais pequena num estipe mais curto.
+    """
     rng = random.Random(semente)
+    k = escala
     pecas = [cone("%s_estipe" % nome, (0, 0, tronco / 2.0), 0.042, 0.030,
                   tronco, 7, M["tronco_jucara"]),
-             cone("%s_palmito" % nome, (0, 0, tronco + 0.14), 0.050, 0.036,
-                  0.30, 7, M["palmito"])]
-    base_z = tronco + 0.28
+             cone("%s_palmito" % nome, (0, 0, tronco + 0.14 * k), 0.050, 0.036,
+                  0.30 * k, 7, M["palmito"])]
+    base_z = tronco + 0.28 * k
     for i in range(9):
         a = i * 40.0 + rng.uniform(-8, 8)
         r = math.radians(a)
         cor = M["folha"] if i % 2 else M["folha_clara"]
-        base = (0.08 * math.cos(r), 0.08 * math.sin(r), base_z)
-        pecas.append(cone("%s_folha%d_a" % (nome, i), base, 0.10, 0.07, 0.48, 4,
-                          cor, rot=(48 + rng.uniform(-6, 6), 0, a + 90)))
-        ponta = (base[0] + 0.40 * math.cos(r), base[1] + 0.40 * math.sin(r),
-                 base_z + 0.30)
-        pecas.append(cone("%s_folha%d_b" % (nome, i), ponta, 0.08, 0.01, 0.70, 4,
-                          cor, rot=(112 + rng.uniform(-8, 8), 0, a + 90)))
+        base = (0.08 * k * math.cos(r), 0.08 * k * math.sin(r), base_z)
+        pecas.append(cone("%s_folha%d_a" % (nome, i), base, 0.10 * k, 0.07 * k,
+                          0.48 * k, 4, cor, rot=(48 + rng.uniform(-6, 6), 0, a + 90)))
+        ponta = (base[0] + 0.40 * k * math.cos(r), base[1] + 0.40 * k * math.sin(r),
+                 base_z + 0.30 * k)
+        pecas.append(cone("%s_folha%d_b" % (nome, i), ponta, 0.08 * k, 0.01,
+                          0.70 * k, 4, cor, rot=(112 + rng.uniform(-8, 8), 0, a + 90)))
     return pecas
 
 
-def embauba(nome, M, semente, tronco):
+def embauba(nome, M, semente, tronco, escala=1.0):
     """A embaúba: tronco CLARO, galhos em candelabro e, na ponta de cada um,
-    um guarda-chuva de folhas prateadas — o cinza-claro no meio do verde."""
+    um guarda-chuva de folhas prateadas — o cinza-claro no meio do verde.
+
+    `escala` encolhe os galhos e as umbelas, e não o tronco: a embaúba jovem
+    (`129`) abre o candelabro mais curto.
+    """
     rng = random.Random(semente)
+    k = escala
     pecas = [cone("%s_tronco" % nome, (0, 0, tronco / 2.0), 0.060, 0.040,
                   tronco, 7, M["tronco_embauba"])]
     # OS ANÉIS do tronco (`129`): a embaúba tem o tronco liso, claro e
@@ -1912,8 +2051,8 @@ def embauba(nome, M, semente, tronco):
     pontas = [(0.0, 0.0, tronco + 0.10)]
     for i, a in enumerate((20.0, 140.0, 260.0)):
         r = math.radians(a + rng.uniform(-15, 15))
-        d = rng.uniform(0.40, 0.55)
-        ponta = (d * math.cos(r), d * math.sin(r), tronco + rng.uniform(-0.25, 0.0))
+        d = rng.uniform(0.40, 0.55) * k
+        ponta = (d * math.cos(r), d * math.sin(r), tronco + rng.uniform(-0.25, 0.0) * k)
         pecas.append(barra("%s_galho%d" % (nome, i), (0, 0, tronco * 0.72),
                            ponta, 0.038, M["tronco_embauba"]))
         pontas.append(ponta)
@@ -1931,15 +2070,15 @@ def embauba(nome, M, semente, tronco):
     for i, (x, y, zt) in enumerate(pontas):
         giro = rng.uniform(0, 360)
         pecas.append(bola_facetada("%s_miolo%d" % (nome, i), (x, y, zt + 0.02),
-                                   (0.13, 0.13, 0.06), M["embauba_esc"], rng))
-        for k in range(8):
-            a = math.radians(giro + k * 360.0 / 8)
-            d = 0.19
-            pecas.append(bola("%s_umbela%d_%d" % (nome, i, k),
+                                   (0.13 * k, 0.13 * k, 0.06 * k), M["embauba_esc"], rng))
+        for j in range(8):
+            a = math.radians(giro + j * 360.0 / 8)
+            d = 0.19 * k
+            pecas.append(bola("%s_umbela%d_%d" % (nome, i, j),
                               (x + d * math.cos(a), y + d * math.sin(a),
-                               zt + 0.04 - 0.04 * (k % 2)),
-                              (0.22, 0.105, 0.035),
-                              M["embauba"] if k % 2 else M["embauba_clara"],
+                               zt + (0.04 - 0.04 * (j % 2)) * k),
+                              (0.22 * k, 0.105 * k, 0.035),
+                              M["embauba"] if j % 2 else M["embauba_clara"],
                               rot=(0, 18, math.degrees(a))))
     return pecas
 
@@ -1963,41 +2102,44 @@ def arvore_de_restinga(nome, M, semente, tronco, raio, n, frutas):
                    (raio * 0.30, -raio * 0.25, tronco + raio * 0.05),
                    grosso * 0.6, M["tronco_mata"])]
     cx, cz = -inclina - raio * 0.10, tronco + raio * 0.22
-    copa = copa_natural(nome, M, rng, (cx, 0.0, cz), (raio * 0.80, raio * 0.80, raio * 0.48),
-                        ("restinga_esc", "restinga_mei", "restinga_cla"),
-                        max(10, round(15.0 * (raio / 0.62) ** 2)), 0.05 + 0.19 * raio / 0.62)
+
     # O vento PENTEIA: a copa ALONGA-SE ao longo do vento e desce do lado do
     # mar. ⚠️ Só descer não se via — a primeira prova saiu uma bola como as
     # da vila; o que a deita é ser mais comprida do que alta.
-    for o in copa:
-        dx = (o.location.x - cx) * 1.45
-        o.location.x = cx + dx
-        o.location.y *= 0.85
-        o.location.z -= max(0.0, dx) * 0.45
+    # ⚠️ E PENTEIA-SE O TUFO, NÃO O OBJETO (`129`): com a copa de folhas
+    # numa malha só, mover o objeto movia a copa inteira; é o centro de cada
+    # tufo que se afasta do eixo (`copa_natural`), e a fruta vai com ele.
+    def pentear(w):
+        dx = (w[0] - cx) * 1.45
+        return (cx + dx, w[1] * 0.85, w[2] - max(0.0, dx) * 0.45)
+
+    # O viés claro (`129`): com folhas, a copa deitada mostra à câmara mais
+    # frestas e mais sombra própria, e saiu dez pontos mais escura do que a
+    # de tufos — a restinga é a planta clara da orla.
+    copa = copa_natural(nome, M, rng, (cx, 0.0, cz), (raio * 0.80, raio * 0.80, raio * 0.48),
+                        ("restinga_esc", "restinga_mei", "restinga_cla"),
+                        max(10, round(15.0 * (raio / 0.62) ** 2)), 0.05 + 0.19 * raio / 0.62,
+                        vies=0.15, deformar=pentear)
     pecas += copa
     # ⚠️ A FRUTA POUSA NUMA BOLA DA COPA, e não num raio contado do centro.
     # Duas provas assim penduraram-na por BAIXO da copa: a copa penteada já não
     # é a esfera de onde o raio se contava. Cada cacho escolhe um tufo virado
     # para a câmara (`+x` ou `-y`) e assenta-lhe no ombro de cima — ponteado
     # vermelho por cima do verde, que é como a aroeira se vê.
-    vistos = [o for o in copa[1:] if o.location.x - cx > -0.05 or o.location.y < 0.0]
+    vistos = [t for t in TUFOS[nome] if t[0][0] - cx > -0.05 or t[0][1] < 0.0]
     # ⚠️ UMA BAGA POR SÍTIO, e não duas coladas (`129`): o par a 0,045 saía no
     # jogo como um RETÂNGULO vermelho de 2×4 px, que o Bruno leu como enfeite
     # («frutas soltas»). Bagas soltas, mais pequenas e mais numerosas, leem o
     # ponteado da aroeira; cada uma num tufo, na face que a câmara vê.
     for i in range(frutas):
-        o = vistos[rng.randrange(len(vistos))]
-        # O raio lê-se nos VÉRTICES: a `dimensions` fica velha com o arnês
-        # das primitivas (`arte.md`), e a bola foi esticada na malha.
-        r = max(abs(v.co[0]) for v in o.data.vertices)
-        rz = max(v.co[2] for v in o.data.vertices)
+        (tx, ty, tz), (r, _ry, rz) = vistos[rng.randrange(len(vistos))]
         a = math.radians(rng.uniform(-80.0, 0.0))
         sobe = rng.uniform(0.35, 0.75)
+        # ⚠️ NA PELE DAS FOLHAS, e não a 0,70 do tufo (`129`): a folhagem do
+        # tufo vai de 0,65 a ~1,2 do semi-eixo, e a baga lá dentro sumia.
         pecas.append(bola(
             "%s_fruta%d" % (nome, i),
-            (o.location.x + r * 0.70 * math.cos(a),
-             o.location.y + r * 0.70 * math.sin(a),
-             o.location.z + rz * sobe),
+            (tx + r * 1.0 * math.cos(a), ty + r * 1.0 * math.sin(a), tz + rz * sobe),
             (0.040, 0.040, 0.040), M["aroeira_fruta"]))
     return pecas
 
@@ -5411,18 +5553,16 @@ def montar(M: dict) -> dict:
     # meio enterrada — é assim que o cacho fica preso à árvore.
     # E UM TUFO POR MANGA, os mais virados para a câmara (`+x` e `−y`): à
     # sorte, três das sete calharam no mesmo tufo e fizeram um cacho só.
-    tufos = sorted((o for o in mangueira if "_tronco" not in o.name
-                    and "_galho" not in o.name and "_miolo" not in o.name),
-                   key=lambda o: o.location.y - o.location.x)
+    # ⚠️ E NA PELE DAS FOLHAS (`129`): o tufo de folhas tem a folhagem de
+    # 0,65 a ~1,2 do semi-eixo, e a manga a 0,78 dele ficava enterrada.
+    tufos = sorted(TUFOS["amg"], key=lambda t: t[0][1] - t[0][0])
     for i in range(7):
-        o = tufos[i]
-        r = max(abs(v.co[0]) for v in o.data.vertices)
-        rz = max(v.co[2] for v in o.data.vertices)
+        (tx, ty, tz), (r, _ry, rz) = tufos[i]
         a = math.radians(rf.uniform(-80, 10))
         mangueira.append(bola("amg_fruta%d" % i,
-                              (o.location.x + r * 0.78 * math.cos(a),
-                               o.location.y + r * 0.78 * math.sin(a),
-                               o.location.z - rz * rf.uniform(0.15, 0.45)),
+                              (tx + r * 1.05 * math.cos(a),
+                               ty + r * 1.05 * math.sin(a),
+                               tz - rz * rf.uniform(0.15, 0.45)),
                               (0.10, 0.10, 0.12),
                               M["manga"] if i % 3 else M["manga_madura"]))
     grupos["arvore_mangueira"] = mangueira
@@ -5432,15 +5572,26 @@ def montar(M: dict) -> dict:
     rm = random.Random(126010)
     # ⚠️ +15% NA `129`: «moitas pequenas», marcou o Bruno — as facetas de 20
     # encolheram-nas (a icosfera é mais pequena do que a esfera; 0,55 e 0,42).
+    # ⚠️ E COM VIÉS PARA O ESCURO (`129`): achatada, a moita mostra à câmara
+    # quase só o tampo, e com folhas cada uma no tom da SUA exposição saiu
+    # sete pontos mais clara do que a de tufos, a puxar ao verde-menta —
+    # a «moita clara destoa» outra vez. O viés volta-a ao tom de antes.
     grupos["arvore_moita_a"] = copa_natural(
-        "ama", M, rm, (0.0, 0.0, 0.30), (0.56, 0.56, 0.36), copa_verde, 12, 0.21)
+        "ama", M, rm, (0.0, 0.0, 0.30), (0.56, 0.56, 0.36), copa_verde, 12, 0.21,
+        vies=-0.25)
     grupos["arvore_moita_b"] = copa_natural(
         "amb", M, rm, (0.0, 0.0, 0.23), (0.44, 0.44, 0.29),
-        ("folha_escura", "folha", "folha_clara"), 10, 0.18)
+        ("folha_escura", "folha", "folha_clara"), 10, 0.18, vies=-0.35)
     grupos["arvore_jucara_a"] = palmeira_jucara("aja", M, 126004, 2.95)
     grupos["arvore_jucara_b"] = palmeira_jucara("ajb", M, 126005, 2.45)
     grupos["arvore_embauba_a"] = embauba("aea", M, 126006, 2.25)
     grupos["arvore_embauba_b"] = embauba("aeb", M, 126007, 1.85)
+    # AS JOVENS (`129`): «poucas juçaras e embaúbas», marcou o Bruno, e no
+    # morro elas não cabiam mais — metade caía debaixo do HUD. No relvado do
+    # meio as adultas pintariam por cima das casas da frente; a jovem tem o
+    # tamanho da arvoreta e a silhueta da espécie.
+    grupos["arvore_jucara_c"] = palmeira_jucara("ajc", M, 129007, 0.85, escala=0.55)
+    grupos["arvore_embauba_c"] = embauba("aec", M, 129008, 0.95, escala=0.60)
     grupos["arvore_ipe_amarelo"] = arvore_de_copa(
         "aia", M, 126008, 1.20, 0.82, 12, ("ipe_amarelo", "ipe_amarelo",
                                            "ipe_amarelo_luz"), "tronco_mata")
@@ -6828,8 +6979,8 @@ SOMBRA = {"galpao", "galpao_velho", "galpao_obra_0", "galpao_obra_1",
           # As árvores da mata (`127`) pousam no chão do morro, como o tronco
           # do coqueiro; a copa do coqueiro não, porque pousa no tronco.
           "arvore_copa_m", "arvore_copa_p",
-          "arvore_jucara_a", "arvore_jucara_b",
-          "arvore_embauba_a", "arvore_embauba_b",
+          "arvore_jucara_a", "arvore_jucara_b", "arvore_jucara_c",
+          "arvore_embauba_a", "arvore_embauba_b", "arvore_embauba_c",
           "arvore_ipe_amarelo", "arvore_ipe_rosa",
           "arvore_moita_a", "arvore_moita_b",
           "arvore_copa_m2", "arvore_copa_p2", "arvore_mata_a", "arvore_mata_b",
