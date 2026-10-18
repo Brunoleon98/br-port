@@ -71,6 +71,7 @@ var _detalhe_da_tarja: Label
 func _ready() -> void:
 	anchor_right = 1.0
 	anchor_bottom = 1.0
+	PreferenciasDeApresentacao.atual().mudou.connect(_ao_movimento_da_folha)
 
 
 # Monta o andaime e devolve a caixa onde o conteúdo entra.
@@ -1099,6 +1100,14 @@ var _virada_desenho: Control
 var _virada_baixo: Control
 var _virada_legenda: Control
 var _curva: ShaderMaterial
+var _transicao_folha: Tween
+
+
+func _ao_movimento_da_folha(reduzido: bool) -> void:
+	if reduzido and _transicao_folha != null and _transicao_folha.is_valid():
+		# Completar executa também os callbacks que liberam a próxima ação.
+		# Matar o tween deixaria nomes/diário esperando uma folha que não vira.
+		_transicao_folha.custom_step(10.0)
 
 
 # A FOLHA CURVA quando há imagem da tela para a dobrar; sem ela (o
@@ -1111,6 +1120,12 @@ func virar_folha(folha: PanelContainer, desenho: Control, de_baixo: Control,
 	_virada_baixo = de_baixo
 	_virada_legenda = legenda
 	var t := create_tween()
+	_transicao_folha = t
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		# O chamador ainda vai anexar seu callback ao tween retornado. Um
+		# intervalo zero mantém esse contrato, sem desenho intermediário.
+		t.tween_interval(0.0)
+		return t
 	var foto := _fotografar_folha()
 	if foto != null:
 		_montar_curva(foto)

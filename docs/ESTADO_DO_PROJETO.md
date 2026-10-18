@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 18/10/2026 — vegetação aceite (`130`); diagnóstico (`128`)
+> **Atualização:** 18/10/2026 — vegetação aceite (`130`); reduzir movimento (`129`); diagnóstico (`128`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -116,16 +116,16 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **A fila em vigor é a §7 do plano.** Aqui fica só a posição.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
-**Na main:** cancelamento e ajuda (`109`–`116`; leitura e telefone pendentes),
-obras, máquinas e vila (`121`–`123`); retomada sem efeitos/atalhos (`125`).
-**Versão e diagnóstico (`128`):** build, prévia e cópia no início e na
-pausa; sem dados da partida.
+**Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
+(`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142 mesclado).
+**RB6 (`129`, #143 mesclado):** Reduzir movimento nos Ajustes do início
+e pausa, preferência por aparelho; fundo parado e transições diretas,
+com operação, ações e resultados preservados. Sem mudar partida/save.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
 `130`); a seguir, estradas, depois detalhes.
-Mais trabalhadores e crédito voluntário ficam para depois. **A4 e caderno
-sem aceite.** Importação com `Safe save failed`, causa não isolada (`110`).
-A `107` permanece local e separada, sem autorização de publicação nem teste
-no telefone.
+Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
+pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
+ou teste no telefone.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.

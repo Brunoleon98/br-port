@@ -799,8 +799,16 @@ func _ready() -> void:
 	_barco_base = _barco.position
 	_trabalhador_base = _trabalhador_prop.position
 	_emp_base = _empilhadeira.position
+	PreferenciasDeApresentacao.atual().mudou.connect(_ao_movimento)
 	if dock_index >= 0:
 		refresh()
+
+
+func _ao_movimento(_reduzido: bool) -> void:
+	concluir_troca()
+	if _barco.texture != null:
+		_iniciar_balanco()
+	refresh()
 
 
 ## O camião do serviço encostou no berço desta doca — `ancora` é o chão à
@@ -978,7 +986,7 @@ func _mostrar_barco(barco_id: int, textura: Texture2D) -> void:
 			tw.kill()
 
 	var na_agua := _barco.texture != null and _barco.modulate.a > 0.0
-	if not _vista_feita or (not na_agua and textura == null):
+	if PreferenciasDeApresentacao.atual().reduzir_movimento or not _vista_feita or (not na_agua and textura == null):
 		_pousar_barco(textura)
 		return
 
@@ -1038,6 +1046,9 @@ func _iniciar_balanco() -> void:
 	_barco.modulate.a = 1.0
 	if _tw_balanco != null and _tw_balanco.is_valid():
 		_tw_balanco.kill()
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		_barco.position = _barco_base
+		return
 	_tw_balanco = create_tween().set_loops()
 	_tw_balanco.tween_property(_barco, "position:y",
 		_barco_base.y - BALANCO_PX, BALANCO_SEG).set_trans(Tween.TRANS_SINE)
@@ -1058,6 +1069,9 @@ func _acender_realce(ligado: bool) -> void:
 		_tw_realce.kill()
 	if not ligado:
 		_pier.modulate = Color.WHITE
+		return
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		_pier.modulate = REALCE
 		return
 	_tw_realce = create_tween().set_loops()
 	_tw_realce.tween_property(_pier, "modulate", REALCE, PULSO_SEG) \
@@ -1313,11 +1327,11 @@ func _mostrar_lanca(ligado: bool, varre: bool = true) -> void:
 	_lanca.visible = ligado
 	if _tw_lanca != null and _tw_lanca.is_valid():
 		_tw_lanca.kill()
-	if not varre:
+	if not varre or PreferenciasDeApresentacao.atual().reduzir_movimento:
 		# Os quadros do pau-de-carga já trazem o ângulo dentro; a imagem não
 		# gira por cima deles.
 		_lanca.rotation = 0.0
-	if not ligado or not varre:
+	if not ligado or not varre or PreferenciasDeApresentacao.atual().reduzir_movimento:
 		return
 	# Fase por doca, senão as três varrem como um só mecanismo.
 	var fase := 0.9 * float(max(dock_index, 0))

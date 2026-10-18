@@ -124,8 +124,7 @@ func _montar_cartao() -> void:
 		_botao(coluna, "Carregar", ALTURA_BOTAO, func() -> void:
 			_abrir_espacos("carregar"))
 	_botao(coluna, "Como jogar", ALTURA_BOTAO, _abrir_como_jogar)
-	_botao(coluna, "Ajustes", ALTURA_BOTAO, func() -> void:
-		_abrir_painel(PainelAjustesScene).call("setup"))
+	_botao(coluna, "Ajustes", ALTURA_BOTAO, _abrir_ajustes)
 	_botao(coluna, "Versão e diagnóstico", ALTURA_BOTAO, _abrir_diagnostico)
 
 
@@ -160,6 +159,13 @@ func _abrir_como_jogar() -> void:
 		if filho is PainelNarrativo and not filho.is_queued_for_deletion():
 			return
 	_abrir_painel(ComoJogarScene)
+
+
+func _abrir_ajustes() -> void:
+	for filho in get_children():
+		if filho is PainelNarrativo and not filho.is_queued_for_deletion():
+			return
+	_abrir_painel(PainelAjustesScene).call("setup")
 
 
 func _abrir_diagnostico() -> void:

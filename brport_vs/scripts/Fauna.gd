@@ -93,9 +93,28 @@ func _ready() -> void:
 	_toque.input_event.connect(_ao_input)
 	_entrar_espera(atraso_inicial if atraso_inicial >= 0.0
 		else float(ATRASOS_INICIAIS[especie]))
+	PreferenciasDeApresentacao.atual().mudou.connect(_ao_movimento)
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		_ao_movimento(true)
+
+
+func _ao_movimento(reduzido: bool) -> void:
+	if reduzido:
+		# Uma pose inteira no habitat, com toque e som, em vez de congelar uma
+		# aparição a meio (animal translúcido, encolhido ou fora do quadro).
+		_restaurar_sprite()
+		position = _origem
+		_sprite.visible = true
+		_toque.input_pickable = true
+		_mudar_estado(Estado.PRESENTE, 1.0)
+	else:
+		_entrar_espera(0.0)
+	queue_redraw()
 
 
 func _process(delta: float) -> void:
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
 	_tempo_estado += delta
 	var progresso := clampf(_tempo_estado / _duracao_estado, 0.0, 1.0)
 
@@ -134,6 +153,9 @@ func esta_presente() -> bool:
 # API pequena de coordenação: permite ao ambiente (e à prova) adiantar um
 # avistamento sem conhecer a máquina de estados interna.
 func aparecer_agora() -> void:
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		_ao_movimento(true)
+		return
 	_restaurar_sprite()
 	_sprite.visible = true
 	_toque.input_pickable = true
@@ -179,6 +201,8 @@ func aparecer_agora() -> void:
 
 
 func sumir_agora() -> void:
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
 	if _estado in [Estado.ESPERANDO, Estado.SAINDO]:
 		return
 	_inicio_saida = position

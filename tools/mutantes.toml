@@ -1221,3 +1221,158 @@ alvo = "brport_vs/scripts/DiagnosticoDoJogo.gd"
 antes = '''" · modificado" if dados["modificado"] else ""'''
 depois = '''"" if dados["modificado"] else ""'''
 reprova = { run_tests = "T28: identidade conserva commit completo e marca modificada" }
+
+# ── REDUZIR MOVIMENTO (`129`) ────────────────────────────────────────────
+
+[[mutante]]
+id = "movimento-padrao-ativado"
+de = "129"
+o_que = "Ausência/valor inválido ativa a redução por omissão"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "var reduzir_movimento := false"
+depois = "var reduzir_movimento := true"
+reprova = { run_tests = "T29: ausência mantém padrão e leitura não cria arquivo" }
+
+[[mutante]]
+id = "movimento-nao-persiste"
+de = "129"
+o_que = "A escolha só dura na memória"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "var erro := cfg.save(caminho)"
+depois = "var erro := OK"
+reprova = { run_tests = "T29: nova instância relê escolha persistente" }
+
+[[mutante]]
+id = "movimento-sem-aviso-aos-abertos"
+de = "129"
+o_que = "Elementos já abertos não recebem a escolha"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "mudou.emit(valor)"
+depois = "pass # sem notificar os elementos abertos"
+reprova = { run_tests = "T29: escolha para fundo já aberto e repõe pose inteira" }
+
+[[mutante]]
+id = "movimento-preferencia-no-jogador"
+de = "129"
+o_que = "Ferramenta usa a preferência do jogador"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "caminho = ArmazemLocal.caminho(ARQUIVO)"
+depois = "caminho = ArmazemLocal.RAIZ_DO_JOGADOR + ARQUIVO"
+reprova = { run_tests = "T29: preferência de ferramenta é isolada" }
+
+[[mutante]]
+id = "movimento-nao-pausa-fundo"
+de = "129"
+o_que = "Ciclos decorativos seguem correndo"
+alvo = "brport_vs/scripts/MovimentoDeFundo.gd"
+antes = "tween.pause()"
+depois = "tween.play()"
+reprova = { run_tests = "T29: comparação temporal: fundo reduzido fica estável" }
+
+[[mutante]]
+id = "movimento-sem-pose-inteira"
+de = "129"
+o_que = "A escolha congela uma pose intermediária"
+alvo = "brport_vs/scripts/MovimentoDeFundo.gd"
+antes = "no.set_indexed(NodePath(propriedade), ciclo[\"repouso\"][propriedade])"
+depois = "pass # deixa a pose intermediária"
+reprova = { run_tests = "T29: escolha para fundo já aberto e repõe pose inteira" }
+
+[[mutante]]
+id = "movimento-novos-ignoram-escolha"
+de = "129"
+o_que = "Elementos novos não recebem a preferência existente"
+alvo = "brport_vs/scripts/MovimentoDeFundo.gd"
+antes = "_ajustar(ciclo, PreferenciasDeApresentacao.atual().reduzir_movimento)"
+depois = "pass # novo ciclo ignora a escolha"
+reprova = { run_tests = "T29: elementos criados depois nascem com fundo parado" }
+
+[[mutante]]
+id = "movimento-folha-ainda-espera"
+de = "129"
+o_que = "A folha reduzida deixa a ação esperando"
+alvo = "brport_vs/scripts/PainelNarrativo.gd"
+antes = "t.tween_interval(0.0)"
+depois = "t.tween_interval(5.0)"
+reprova = { run_tests = "T29: transição reduzida conclui próximo callback sem espera" }
+
+[[mutante]]
+id = "movimento-folha-perde-callback"
+de = "129"
+o_que = "Mudar durante a transição mata a cadeia de navegação"
+alvo = "brport_vs/scripts/PainelNarrativo.gd"
+antes = "_transicao_folha.custom_step(10.0)"
+depois = "_transicao_folha.kill()"
+reprova = { run_tests = "T29: mudar a meio conclui callback da transição" }
+
+[[mutante]]
+id = "movimento-barco-ainda-transita"
+de = "129"
+o_que = "O barco segue em transição após concluir o serviço"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = "if PreferenciasDeApresentacao.atual().reduzir_movimento or not _vista_feita or (not na_agua and textura == null):"
+depois = "if not _vista_feita or (not na_agua and textura == null):"
+reprova = { run_tests = "T29: serviço e dia concluem com movimento reduzido" }
+
+[[mutante]]
+id = "movimento-apaga-realce-da-fila"
+de = "129"
+o_que = "A redução apaga o destaque da ação de atracar"
+alvo = "brport_vs/scripts/BarcoFila.gd"
+antes = "\t\tmodulate = PULSO_COR\n\t\treturn"
+depois = "\t\tmodulate = Color.WHITE\n\t\treturn"
+reprova = { run_tests = "T29: barco chamável mantém realce e ação" }
+
+[[mutante]]
+id = "movimento-duplica-ajustes"
+de = "129"
+o_que = "Pedidos repetidos empilham os Ajustes"
+alvo = "brport_vs/scripts/TelaInicial.gd"
+antes = "func _abrir_ajustes() -> void:\n\tfor filho in get_children():\n\t\tif filho is PainelNarrativo and not filho.is_queued_for_deletion():\n\t\t\treturn\n\t_abrir_painel(PainelAjustesScene).call(\"setup\")"
+depois = "func _abrir_ajustes() -> void:\n\t_abrir_painel(PainelAjustesScene).call(\"setup\")"
+reprova = { run_tests = "T29: Ajustes repetidos não duplicam painel" }
+
+[[mutante]]
+id = "movimento-grava-a-partida"
+de = "129"
+o_que = "Escolher apresentação regrava o save"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "mudou.emit(valor)\n\treturn erro"
+depois = "mudou.emit(valor)\n\tEngine.get_main_loop().root.get_node(\"GameState\").save_game()\n\treturn erro"
+reprova = { run_tests = "T29: Ajustes preservam partida, RNG, arquivos e registro" }
+
+[[mutante]]
+id = "movimento-oculta-visita-operacional"
+de = "129"
+o_que = "A redução esconde também o caminhão do serviço"
+alvo = "brport_vs/scripts/TrafegoDeCamioes.gd"
+antes = "or _ocupante_do_berco.has(camiao)"
+depois = "or false"
+reprova = { run_tests = "T29: visita operacional do caminhão continua visível" }
+
+[[mutante]]
+id = "movimento-resultado-nao-termina"
+de = "129"
+o_que = "O ganho fica esperando após pausar o movimento"
+alvo = "brport_vs/scripts/Main.gd"
+antes = "tween_interval(GANHO_SEG).finished.connect(rotulo.queue_free)"
+depois = "tween_interval(GANHO_SEG + 10.0).finished.connect(rotulo.queue_free)"
+reprova = { run_tests = "T29: resultado termina sem esperar tween decorativo pausado" }
+
+[[mutante]]
+id = "movimento-fauna-continua-andando"
+de = "129"
+o_que = "Fauna segue animada com a preferência ligada"
+alvo = "brport_vs/scripts/Fauna.gd"
+antes = "func _process(delta: float) -> void:\n\tif PreferenciasDeApresentacao.atual().reduzir_movimento:\n\t\treturn"
+depois = "func _process(delta: float) -> void:\n\tif false:\n\t\treturn"
+reprova = { run_tests = "T29: fauna reduzida mantém pose e toque" }
+
+[[mutante]]
+id = "movimento-esconde-falha-de-gravacao"
+de = "129"
+o_que = "Ajustes não informam que a preferência não pôde ser lembrada"
+alvo = "brport_vs/scripts/PainelAjustes.gd"
+antes = "_aviso_preferencia.visible = erro != OK"
+depois = "_aviso_preferencia.visible = false # oculta erro"
+reprova = { run_tests = "T29: falha ao lembrar é explícita e escolha vale na sessão" }

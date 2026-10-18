@@ -43,6 +43,19 @@ var _docas: Control
 func _init(cenario: Node, docas: Control) -> void:
 	_cenario = cenario
 	_docas = docas
+	PreferenciasDeApresentacao.atual().mudou.connect(_aplicar_movimento)
+
+
+func _aplicar_movimento(_reduzido: bool) -> void:
+	for camiao in _camioes():
+		_mostrar_trafego(camiao["no"])
+
+
+func _mostrar_trafego(camiao: TextureRect) -> void:
+	# A viagem sem serviço é fundo. A visita ao berço continua visível: ela
+	# coordena o operador e a carga. Nenhum tween/callback de trânsito é parado.
+	camiao.visible = not PreferenciasDeApresentacao.atual().reduzir_movimento \
+		or _ocupante_do_berco.has(camiao)
 
 
 ## O CAMINHÃO ENTRA NO PÁTIO — pedido do primeiro playtest ("até fazer o
@@ -1376,6 +1389,7 @@ func _percorrer_retorno(j: int, pontos: Array, ao_fim: Callable,
 func _percorrer_de(caminhao: TextureRect, base: Vector2, origem_do_no: Vector2,
 		carga: String, empresa: int, pontos: Array, ao_fim: Callable,
 		re_no_primeiro := false) -> void:
+	_mostrar_trafego(caminhao)
 	var tw := caminhao.create_tween()
 	tw.tween_callback(func() -> void:
 		caminhao.position = base + tela_da_rota(pontos[0], origem_do_no)

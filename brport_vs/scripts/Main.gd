@@ -143,6 +143,7 @@ var narradora: NarradoraDaCida = NarradoraDaCida.new(_fila)
 # A MATA DO MORRO. Planta-se ao montar a cena, antes de o trânsito começar a
 # reordenar os camiões entre os irmãos — que passam a contar com ela.
 @onready var mata: MataNoMapa = MataNoMapa.new($MapaWrap/Cenario as Control)
+var movimento_de_fundo: MovimentoDeFundo
 
 # As estruturas trocam de TEXTURA, não de nó: assim o prop ocupa exatamente o
 # mesmo quadro nos dois estados e o prédio não salta ao ser consertado — a
@@ -169,6 +170,9 @@ const EscritorioPronto := preload("res://art/props/escritorio.png")
 
 
 func _ready() -> void:
+	movimento_de_fundo = MovimentoDeFundo.new()
+	add_child(movimento_de_fundo)
+	PreferenciasDeApresentacao.atual().mudou.connect(_aplicar_movimento)
 	# O gravador de partida (item B7) só grava depois disto, e ESTA é a única
 	# linha do projeto que o arma. É de propósito que seja o jogo a armá-lo e
 	# não ele a armar-se sozinho: o autoload está de pé também durante as 600
@@ -193,6 +197,10 @@ func _ready() -> void:
 	_animar_ancorados()
 	_animar_coqueiros()
 	mata.animar()
+	# A frente visual mantém a implantação da mata. O RB6 usa apenas sua API
+	# pública de nós/rajadas, sem alterar árvores, arte ou enquadramento.
+	for i in mata.nos().size():
+		movimento_de_fundo.guardar(mata.rajadas()[i], mata.nos()[i], {"rotation": 0.0})
 	_animar_boias()
 	_animar_luzes()
 	trafego.animar_caminhoes()
@@ -320,6 +328,7 @@ func _animar_ancorados() -> void:
 			continue
 		var base := barco.position
 		var tw := barco.create_tween().set_loops()
+		movimento_de_fundo.guardar(tw, barco, {"position": base})
 		if fases[i] > 0.0:
 			tw.tween_interval(fases[i])
 		tw.tween_property(barco, "position:y", base.y - 4.0, 2.1) \
@@ -362,6 +371,7 @@ func _animar_coqueiros() -> void:
 		var amplitude := 0.038 if i % 2 == 0 else -0.038
 		var dur: float = duracoes[i % duracoes.size()]
 		var tw := no.create_tween().set_loops()
+		movimento_de_fundo.guardar(tw, no, {"rotation": 0.0})
 		if fases[i % fases.size()] > 0.0:
 			tw.tween_interval(fases[i % fases.size()])
 		# A rajada bate: rápida a ir, com a velocidade a morrer no fim.
@@ -413,6 +423,7 @@ func _animar_boias() -> void:
 			continue
 		var base := tr.position
 		var tw := tr.create_tween().set_loops()
+		movimento_de_fundo.guardar(tw, tr, {"position": base})
 		if fases[i % fases.size()] > 0.0:
 			tw.tween_interval(fases[i % fases.size()])
 		var dur: float = duracoes[i % duracoes.size()]
@@ -466,6 +477,8 @@ func _animar_espuma() -> void:
 		camada.modulate.a = 1.0 if alta else 0.45
 		camada.position = base + (ESPUMA_AVANCO if alta else Vector2.ZERO)
 		var tw := camada.create_tween().set_loops().set_parallel(false)
+		movimento_de_fundo.guardar(tw, camada, {"position": camada.position,
+			"modulate:a": camada.modulate.a})
 		for passo in 2:
 			var sobe := (passo == 0) != alta
 			var dur := ESPUMA_ENTRA if sobe else ESPUMA_RECUA
@@ -500,6 +513,7 @@ func _animar_luzes() -> void:
 		if tr == null:
 			continue
 		var tw := tr.create_tween().set_loops()
+		movimento_de_fundo.guardar(tw, tr, {"modulate:a": 1.0})
 		tw.tween_property(tr, "modulate:a", 0.82, 1.4).set_trans(Tween.TRANS_SINE)
 		tw.tween_property(tr, "modulate:a", 1.0, 0.9).set_trans(Tween.TRANS_SINE)
 		tw.tween_interval(2.2)
@@ -941,7 +955,7 @@ func virada_em_curso() -> bool:
 func _mostrar_caixa(alvo: int) -> void:
 	if _tw_caixa != null and _tw_caixa.is_valid():
 		_tw_caixa.kill()
-	if not _virada_armada or alvo == _caixa_mostrado:
+	if PreferenciasDeApresentacao.atual().reduzir_movimento or not _virada_armada or alvo == _caixa_mostrado:
 		_pintar_caixa(alvo)
 		return
 	_tw_caixa = create_tween()
@@ -977,11 +991,20 @@ func _subir_ganho(doca: int, valor: int) -> void:
 	rotulo.position = centro - Vector2(rotulo.size.x * 0.5,
 		rotulo.size.y * 0.5 + GANHO_ACIMA_PX)
 	var tw := rotulo.create_tween().set_parallel(true)
+	movimento_de_fundo.guardar(tw, rotulo, {"position": rotulo.position, "modulate:a": 1.0})
 	tw.tween_property(rotulo, "position:y", rotulo.position.y - GANHO_SUBIDA_PX,
 		GANHO_SEG).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tw.tween_property(rotulo, "modulate:a", 0.0, GANHO_SEG * 0.4) \
 		.set_delay(GANHO_SEG * 0.6)
-	tw.chain().tween_callback(rotulo.queue_free)
+	# A leitura do resultado tem o mesmo tempo, mesmo com o movimento pausado.
+	# O descarte fica fora do tween decorativo para nunca esperar um ciclo parado.
+	rotulo.create_tween().tween_interval(GANHO_SEG).finished.connect(rotulo.queue_free)
+
+
+func _aplicar_movimento(reduzido: bool) -> void:
+	if reduzido and _tw_caixa != null and _tw_caixa.is_valid():
+		_tw_caixa.kill()
+		_pintar_caixa(int(GameState.cash))
 
 
 # O BOTÃO VOLTAR DO ANDROID. Só existe no telefone, e é por isso que ninguém
@@ -1129,8 +1152,7 @@ func _on_pause_pressed() -> void:
 	var menu := _abrir_painel(PauseMenuScene)
 	menu.connect("ver_balanco", func() -> void:
 		_on_game_over(GameState.won, GameState.end_reason))
-	menu.connect("pedir_ajustes", func() -> void:
-		_abrir_painel(PainelAjustesScene).call("setup"))
+	menu.connect("pedir_ajustes", _abrir_ajustes)
 	menu.connect("sair_para_inicio", _sair_para_inicio)
 	menu.connect("pedir_como_jogar", _abrir_como_jogar)
 	menu.connect("pedir_diagnostico", _abrir_diagnostico)
@@ -1141,6 +1163,13 @@ func _abrir_diagnostico() -> void:
 		if filho.scene_file_path == DiagnosticoScene.resource_path and not filho.is_queued_for_deletion():
 			return
 	_abrir_painel(DiagnosticoScene)
+
+
+func _abrir_ajustes() -> void:
+	for filho in _overlay_layer.get_children():
+		if filho.scene_file_path == PainelAjustesScene.resource_path and not filho.is_queued_for_deletion():
+			return
+	_abrir_painel(PainelAjustesScene).call("setup")
 
 
 func _abrir_como_jogar() -> void:
