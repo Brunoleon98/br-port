@@ -29,6 +29,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-18b.md` | 18/10 | A vegetação de folhas (`130`): contorno por lote, copa de folhas com a normal da copa, clareiras de granito, destaques à vista e as palmeiras jovens no relvado; aceite à sétima passagem, a fila segue nas estradas |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-18.md` | 18/10 | RB6 (`129`, PR #143): preferência, operação preservada, prova temporal e retomada; #142 já mesclado e Claude ativo no visual |
 | `VERIFICACAO_REDUZIR_MOVIMENTO_2026-10-18/README.md` | 18/10 | RB6 (`129`, PR #143): reprodução da preferência, isolamento, guardas e comparação temporal; divisão com o WIP visual |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-17e.md` | 17/10 | Versão e diagnóstico (`128`), PR #142 rascunho: identificação real do export, prévia e cópia explícita; preferência por evitar aprovações invisíveis no celular |

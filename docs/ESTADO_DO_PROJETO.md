@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 18/10/2026 — reduzir movimento (`129`); diagnóstico integrado (`128`)
+> **Atualização:** 18/10/2026 — vegetação aceite (`130`); reduzir movimento (`129`); diagnóstico (`128`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -44,10 +44,11 @@ arrebentação e cáusticas nas praias; a sombra do muro esvai.
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
 a forma; D20/D21/D24/D27 conferem o raster.
 
-**O chão tem textura e sobe num MORRO de mata atrás da vila** (`127`, **D47**).
-As árvores são do Blender e BALANÇAM — no morro, acima do contorno da vila, e
-na **restinga** das pontas, com o pé fora da areia; entre as casas vão
-EMBUTIDAS no SVG, paradas.
+**O chão tem textura e sobe num MORRO de mata atrás da vila** (`127`, `130`,
+**D47**). As árvores são do Blender, de FOLHAS, e BALANÇAM — no morro, acima
+do que lhes fica à frente na vila, com duas clareiras de granito, e na
+**restinga**, com o pé fora da areia; entre as casas vão EMBUTIDAS no SVG,
+paradas. Ipê, juçara e embaúba só nascem com a copa à vista.
 
 **Mapa a 1080 (`025`), props a 768 px num quadro de 512 coordenadas (`029`,
 D31) e a moldura fora da VRAM pelo atlas (`049`)**; a água fica a 720 (`026`).
@@ -115,15 +116,13 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **A fila em vigor é a §7 do plano.** Aqui fica só a posição.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
-A frente 5 entregou tutorial (`100`, `101`), segunda chance (`102`) e
-progressão (`103`–`106`, `108`); medição na `economia.md`.
 **Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
 (`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142 mesclado).
-**RB6 (`129`, PR #143 rascunho):** Reduzir movimento nos Ajustes do início
+**RB6 (`129`, #143 mesclado):** Reduzir movimento nos Ajustes do início
 e pausa, preferência por aparelho; fundo parado e transições diretas,
 com operação, ações e resultados preservados. Sem mudar partida/save.
-**Claude segue no visual:** item 1 da `126`, terreno/vegetação (`127`)
-**sem aceite**; estradas e detalhes esperam. Sem redesenho neste RB6.
+**A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
+`130`); a seguir, estradas, depois detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.

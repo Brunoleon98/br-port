@@ -582,9 +582,18 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   sombra, contra 64 a 62° e 21 a 20° (`127`, `SOMBRA_ZENITE`). Sol alto é `X`
   pequeno; meça o comprimento da sombra no PNG antes de dizer o que o número
   faz.
-- **⚠️ COPA DE ÁRVORE DO BLENDER LÊ COMO O MAPA EM FACETAS, NÃO EM RELEVO.**
-  Bolas lisas liam nuvem ou repolho; com relevo de ruído, o Bruno achou a
-  textura «estranha em relação ao jogo» (`127`). Icosfera de 80 faces,
-  chapada, com os vértices tremidos ±9% — o polígono com saia do mapa, em
-  volume. E a fruta, a flor e o acento pousam numa BOLA da copa, na face que
-  a câmara vê: contadas do centro, penduraram-se por baixo dela.
+- **⚠️ COPA DE ÁRVORE DO BLENDER É DE FOLHAS, COM A NORMAL DA COPA.** Foi de
+  seis jeitos (`127`, `130`): bola lisa (nuvem), relevo de ruído
+  («estranha»), facetas de 80 («fofas»), de 20 («artificial»), e tufos de
+  icosfera — «bolinhas», porque cada tufo tinha o seu lado claro, trinta sóis
+  numa copa. A que ficou (`folhagem()`): folhas em losango numa malha só, com
+  a normal reescrita para o VOLUME da copa, franja irregular e os tufos
+  recuados para a copa não engordar.
+  ⚠️ **E A FACE DA FOLHA VIRA-SE PARA A CÂMARA**: de costas, o Cycles vira a
+  normal para dentro, e a primeira prova saiu PRETA — quem decide é a ordem
+  dos vértices.
+  ⚠️ **E A FRUTA POUSA NA PELE DAS FOLHAS**, num tufo virado para a câmara
+  (`TUFOS`): contada do centro, pendurou-se por baixo da copa; a 0,7 do
+  tufo, ficou enterrada nas folhas. E quem deforma uma copa de folhas move os
+  TUFOS, não as folhas: esticada vértice a vértice, a aroeira saiu um charuto
+  riscado.

@@ -110,8 +110,14 @@ Teste e import rodam sem tela.
 No PR #130, o Godot 4.6.3 abortou com sinal 11 ao importar Patrick Hand na
 base, depois de toda a captura do HEAD passar; repetir passou. O padrão está
 no [bug de fontes paralelas do motor](https://github.com/godotengine/godot/issues/111039).
-O helper aplica `editor/import/use_multiple_threads=false` em `override.cfg`
-somente durante o import, recusa sobrescrever um override existente e limpa
-o arquivo mesmo se o motor falhar. Não muda a versão do Godot, o projeto,
-os scripts de captura da base nem as guardas. Não substitua por um retry
-que dependa de sorte.
+O helper escreve `editor/import/use_multiple_threads=false` no
+`project.godot` só durante o import, recusa uma chave já escrita e devolve-o
+byte a byte mesmo se o motor falhar. Não muda a versão do Godot, os scripts
+de captura da base nem as guardas. Não substitua por um retry que dependa
+de sorte.
+⚠️ **E O `override.cfg` NÃO CHEGA AO `--import`.** Até 18/10 a chave ia
+nele: um `--script` lia-a a falso, que foi a prova da `106`, e o import
+continuou PARALELO — a fonte saía seis vezes nas linhas de reimport, contra
+uma com a chave no `project.godot` —, e a base do PR #144 caiu duas vezes
+nela. Chave de import prova-se no LOG do import, não numa leitura do motor
+noutro modo; `tools/testar_importar_para_ci.py` tranca o sítio dela.

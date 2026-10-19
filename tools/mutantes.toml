@@ -874,17 +874,20 @@ id = "mata-copia-desalinhada"
 de = "127"
 o_que = "a cópia do MataNoMapa.gd fica com uma árvore 10 px fora do sítio da tabela"
 alvo = "brport_vs/scripts/MataNoMapa.gd"
-antes = '["arvore_mata_b", 20.4, 25.9],'
-depois = '["arvore_mata_b", 20.4, 35.9],'
+antes = '["arvore_mata_b", 19.3, 31.4],'
+depois = '["arvore_mata_b", 19.3, 41.4],'
 reprova = { teste_design = "a cópia da mata confere com a tabela" }
 
 [[mutante]]
 id = "mata-arvore-maior"
 de = "127"
-o_que = "a moita pequena junto da vila passa a desenhar a copa grande da mata, e pinta por cima dos telhados"
+o_que = "a moita escura junto da vila passa a desenhar a emergente larga da mata, e pinta por cima dos telhados"
+# ⚠️ FICOU FURADO NA `130` com a copa da `mata_a`: na mata replantada, com o
+# contorno por lote, ela já não descia abaixo da vila, e reprovava só a
+# pedra e a orla — outras guardas. A emergente larga ainda desce.
 alvo = "brport_vs/scripts/MataNoMapa.gd"
 antes = '"arvore_moita_b": preload("res://art/props/arvore_moita_b.png"),'
-depois = '"arvore_moita_b": preload("res://art/props/arvore_mata_a.png"),'
+depois = '"arvore_moita_b": preload("res://art/props/arvore_mata_c.png"),'
 reprova = { teste_design = "nenhuma árvore pinta por cima da vila" }
 
 [[mutante]]
@@ -897,23 +900,84 @@ depois = '"arvore_guriri_a": preload("res://art/props/escritorio.png"),'
 reprova = { teste_design = "nenhuma planta da restinga desce à areia" }
 
 [[mutante]]
+id = "destaque-debaixo-da-barra"
+de = "130"
+o_que = "a embaúba da borda do morro passa a desenhar a juçara alta, e a copa sobe para debaixo da barra do HUD"
+alvo = "brport_vs/scripts/MataNoMapa.gd"
+antes = '"arvore_embauba_b": preload("res://art/props/arvore_embauba_b.png"),'
+depois = '"arvore_embauba_b": preload("res://art/props/arvore_jucara_a.png"),'
+reprova = { teste_design = "a copa de cada destaque fica à vista" }
+
+[[mutante]]
+id = "destaque-tapado"
+de = "130"
+o_que = "a embaúba da borda volta ao sítio da primeira prova, a 7,6 px do pé do ipê amarelo e atrás dele, com a copa quase toda debaixo da dele"
+# ⚠️ O PRIMEIRO DEFEITO SOBREVIVEU, e era ele que não chegava: o ipê rosa
+# trocado pela copa larga tapava 73% do ipê amarelo, abaixo do corte. Este é
+# o caso que pediu a guarda — 90% na prova —, e a cópia diverge da tabela
+# junto (o §1 reprova também).
+alvo = "brport_vs/scripts/MataNoMapa.gd"
+antes = '["arvore_embauba_b", 2.1, 75.1],'
+depois = '["arvore_embauba_b", -1.5, 69.8],'
+reprova = { teste_design = "nenhuma árvore tapa a copa de um destaque" }
+
+[[mutante]]
+id = "mata-sobre-a-orla"
+de = "130"
+o_que = "as arvoretas do relvado passam a desenhar a copa grande da mata, e descem por cima das árvores embutidas do quintal à frente"
+alvo = "brport_vs/scripts/MataNoMapa.gd"
+antes = '"arvore_arvoreta_b": preload("res://art/props/arvore_arvoreta_b.png"),'
+depois = '"arvore_arvoreta_b": preload("res://art/props/arvore_mata_c.png"),'
+reprova = { teste_design = "nenhuma árvore pinta por cima de uma embutida à frente" }
+
+[[mutante]]
+id = "mata-sobre-a-pedra"
+de = "130"
+o_que = "a mata escura do morro passa a desenhar a emergente larga, e desce por cima do granito da clareira à frente"
+alvo = "brport_vs/scripts/MataNoMapa.gd"
+antes = '"arvore_mata_b": preload("res://art/props/arvore_mata_b.png"),'
+depois = '"arvore_mata_b": preload("res://art/props/arvore_mata_c.png"),'
+reprova = { teste_design = "nenhuma árvore pinta por cima de uma pedra à frente" }
+
+[[mutante]]
+id = "copa-no-telhado"
+de = "130"
+o_que = "a moita do jardim da frente da meia-água do lote my=5,88 passa a ser a copa grande da mata, e pousa-lhe no telhado"
+alvo = "brport_vs/art/porto_mapa_iso.svg"
+antes = '<use xlink:href="#arvore_moita_a" transform="translate(166.8,148.9) scale(0.800)"/>'
+depois = '<use xlink:href="#arvore_mata_a" transform="translate(166.8,148.9) scale(1.000)"/>'
+# ⚠️ TROCADA POR UMA ESPÉCIE QUE ESTEJA NAS `<defs>` do SVG: com a copa alta,
+# que o mapa não embute, o `<use>` não desenhava nada, o mutante apagava a
+# moita em vez de a crescer, e sobrevivia.
+reprova = { teste_design = "nenhuma copa embutida pousa num telhado" }
+
+[[mutante]]
+id = "ipe-sem-flor"
+de = "130"
+o_que = "o ipê amarelo embutido entre as casas passa a desenhar uma copa verde, e a cor que a mata da vila tinha some"
+alvo = "brport_vs/art/porto_mapa_iso.svg"
+antes = '<use xlink:href="#arvore_ipe_amarelo" transform="translate(65.8,415.2) scale(0.644)"/>'
+depois = '<use xlink:href="#arvore_copa_m" transform="translate(65.8,415.2) scale(0.644)"/>'
+reprova = { teste_design = "nenhum ipê embutido fica escondido" }
+
+[[mutante]]
 id = "mata-contorno-cego"
 de = "127"
 o_que = "o contorno da vila fica cego nas colunas de uma casa (a em L do lote my=0,14), e uma árvore ali podia pintar-lhe o telhado"
 alvo = "brport_vs/art/porto_mapa_ancoras.json"
 antes = '''
-  -73.2,
-  -72.3,
-  -69.6,
-  -70.1,
-  -71.0,
+    -30.7,
+    -30.7,
+    -30.7,
+    -30.7,
+    -24.6,
 '''
 depois = '''
-  720.0,
-  720.0,
-  720.0,
-  720.0,
-  720.0,
+    720.0,
+    720.0,
+    720.0,
+    720.0,
+    720.0,
 '''
 reprova = { teste_design = "o contorno sobe acima de cada casa" }
 
