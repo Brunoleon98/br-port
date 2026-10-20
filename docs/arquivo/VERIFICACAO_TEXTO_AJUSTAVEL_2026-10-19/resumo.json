@@ -1,0 +1,295 @@
+[
+  {
+    "cenario": "ajustes-inicio",
+    "fator": 1.0,
+    "quantidade_textos": 18,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "ajustes-inicio-1.json"
+  },
+  {
+    "cenario": "ajustes-inicio",
+    "fator": 1.25,
+    "quantidade_textos": 18,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "ajustes-inicio-1.25.json"
+  },
+  {
+    "cenario": "ajustes-inicio",
+    "fator": 1.5,
+    "quantidade_textos": 18,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "ajustes-inicio-1.5.json"
+  },
+  {
+    "cenario": "ajustes-pausa",
+    "fator": 1.0,
+    "quantidade_textos": 18,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "ajustes-pausa-1.json"
+  },
+  {
+    "cenario": "ajustes-pausa",
+    "fator": 1.25,
+    "quantidade_textos": 18,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "ajustes-pausa-1.25.json"
+  },
+  {
+    "cenario": "ajustes-pausa",
+    "fator": 1.5,
+    "quantidade_textos": 18,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "ajustes-pausa-1.5.json"
+  },
+  {
+    "cenario": "artigo",
+    "fator": 1.0,
+    "quantidade_textos": 3,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "artigo-1.json"
+  },
+  {
+    "cenario": "artigo",
+    "fator": 1.25,
+    "quantidade_textos": 3,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "artigo-1.25.json"
+  },
+  {
+    "cenario": "artigo",
+    "fator": 1.5,
+    "quantidade_textos": 3,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "artigo-1.5.json"
+  },
+  {
+    "cenario": "hud",
+    "fator": 1.0,
+    "quantidade_textos": 29,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "hud-1.json"
+  },
+  {
+    "cenario": "hud",
+    "fator": 1.25,
+    "quantidade_textos": 29,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "hud-1.25.json"
+  },
+  {
+    "cenario": "hud",
+    "fator": 1.5,
+    "quantidade_textos": 29,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [
+      {
+        "classe": "Label",
+        "desenho": [
+          0.0,
+          0.0,
+          109.0,
+          40.0
+        ],
+        "em_rolagem": false,
+        "excesso_janela": 54.0,
+        "excesso_local": 0.0,
+        "fonte": 29,
+        "minimo": [
+          109.0,
+          40.0
+        ],
+        "minimo_maior_que_area": 0.0,
+        "no": "Fila/Lugar2/Coluna/Cabecalho/Valor",
+        "tamanho": [
+          109.0,
+          40.0
+        ],
+        "texto": "R$8.440"
+      }
+    ],
+    "manifesto": "hud-1.5.json"
+  },
+  {
+    "cenario": "doca",
+    "fator": 1.0,
+    "quantidade_textos": 31,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "doca-1.json"
+  },
+  {
+    "cenario": "doca",
+    "fator": 1.25,
+    "quantidade_textos": 31,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "doca-1.25.json"
+  },
+  {
+    "cenario": "doca",
+    "fator": 1.5,
+    "quantidade_textos": 31,
+    "excesso_local": [],
+    "excesso_janela_fora_rolagem": [
+      {
+        "classe": "Label",
+        "desenho": [
+          0.0,
+          0.0,
+          140.1875,
+          28.0
+        ],
+        "em_rolagem": false,
+        "excesso_janela": 19.1875,
+        "excesso_local": 0.0,
+        "fonte": 20,
+        "minimo": [
+          141.0,
+          28.0
+        ],
+        "minimo_maior_que_area": 0.0,
+        "no": "BarraDocas/Cartao2/Coluna/ProgressoLinha/Progresso",
+        "tamanho": [
+          200.0,
+          28.0
+        ],
+        "texto": "píer em ruínas"
+      },
+      {
+        "classe": "Label",
+        "desenho": [
+          0.0,
+          0.0,
+          109.0,
+          40.0
+        ],
+        "em_rolagem": false,
+        "excesso_janela": 54.0,
+        "excesso_local": 0.0,
+        "fonte": 29,
+        "minimo": [
+          109.0,
+          40.0
+        ],
+        "minimo_maior_que_area": 0.0,
+        "no": "Fila/Lugar2/Coluna/Cabecalho/Valor",
+        "tamanho": [
+          109.0,
+          40.0
+        ],
+        "texto": "R$8.440"
+      }
+    ],
+    "manifesto": "doca-1.5.json"
+  },
+  {
+    "cenario": "calibracao",
+    "fator": 1.0,
+    "quantidade_textos": 2,
+    "excesso_local": [
+      {
+        "classe": "Label",
+        "desenho": [
+          0.0,
+          0.0,
+          359.375,
+          27.0
+        ],
+        "em_rolagem": false,
+        "excesso_janela": 0.0,
+        "excesso_local": 259.375,
+        "fonte": 19,
+        "minimo": [
+          1.0,
+          27.0
+        ],
+        "minimo_maior_que_area": 0.0,
+        "no": "Transborda",
+        "tamanho": [
+          100.0,
+          60.0
+        ],
+        "texto": "WWWWWWWWWWWWWWWWWWWW"
+      }
+    ],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "calibracao-1.json"
+  },
+  {
+    "cenario": "calibracao",
+    "fator": 1.25,
+    "quantidade_textos": 2,
+    "excesso_local": [
+      {
+        "classe": "Label",
+        "desenho": [
+          0.0,
+          0.0,
+          454.0,
+          34.0
+        ],
+        "em_rolagem": false,
+        "excesso_janela": 0.0,
+        "excesso_local": 354.0,
+        "fonte": 24,
+        "minimo": [
+          1.0,
+          34.0
+        ],
+        "minimo_maior_que_area": 0.0,
+        "no": "Transborda",
+        "tamanho": [
+          100.0,
+          60.0
+        ],
+        "texto": "WWWWWWWWWWWWWWWWWWWW"
+      }
+    ],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "calibracao-1.25.json"
+  },
+  {
+    "cenario": "calibracao",
+    "fator": 1.5,
+    "quantidade_textos": 2,
+    "excesso_local": [
+      {
+        "classe": "Label",
+        "desenho": [
+          0.0,
+          0.0,
+          548.0,
+          40.0
+        ],
+        "em_rolagem": false,
+        "excesso_janela": 0.0,
+        "excesso_local": 448.0,
+        "fonte": 29,
+        "minimo": [
+          1.0,
+          40.0
+        ],
+        "minimo_maior_que_area": 0.0,
+        "no": "Transborda",
+        "tamanho": [
+          100.0,
+          60.0
+        ],
+        "texto": "WWWWWWWWWWWWWWWWWWWW"
+      }
+    ],
+    "excesso_janela_fora_rolagem": [],
+    "manifesto": "calibracao-1.5.json"
+  }
+]

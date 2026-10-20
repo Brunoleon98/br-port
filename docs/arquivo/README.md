@@ -20,6 +20,8 @@ aqui.
 
 | Camada | Onde | Responde |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-19.md` | 19/10 | Bancada RB5 (`131`): aumentos comparados, limites do HUD, provas e continuação; escolha de tamanho/acomodação e telefone pendentes |
+| `VERIFICACAO_TEXTO_AJUSTAVEL_2026-10-19/README.md` | 19/10 | Bancada RB5 (`131`): Padrão/+25%/+50%, capturas repetíveis e limites de espaço; tamanho e acomodação ainda pendentes |
 | Regras | `CLAUDE.md`, na raiz | O que nunca se faz aqui — e é o único que carrega sozinho |
 | Estado | `docs/ESTADO_DO_PROJETO.md` | Como o jogo está hoje |
 | Rumo | `docs/design/BR_Port_Plano_v3_Claude_Code.md` | O que vem a seguir, e quem faz o quê |

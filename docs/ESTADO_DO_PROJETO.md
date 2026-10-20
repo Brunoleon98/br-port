@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 18/10/2026 — vegetação aceite (`130`); reduzir movimento (`129`); diagnóstico (`128`)
+> **Atualização:** 19/10/2026 — bancada RB5 (`131`); vegetação aceite (`130`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -118,9 +118,10 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
 (`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142 mesclado).
-**RB6 (`129`, #143 mesclado):** Reduzir movimento nos Ajustes do início
-e pausa, preferência por aparelho; fundo parado e transições diretas,
-com operação, ações e resultados preservados. Sem mudar partida/save.
+**RB6 (`129`, #143):** Reduzir movimento nos Ajustes de início/pausa, por aparelho;
+fundo parado e transições diretas, operação e resultados preservados.
+Telefone/aceite visual pendentes; partida/save intactos.
+**RB5 (`131`):** bancada; tamanho e acomodação pendentes, sem opção global.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
 `130`); a seguir, estradas, depois detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone

@@ -1,0 +1,109 @@
+{
+	"alvo": "interface_do_porto",
+	"caixa": 400000,
+	"cenario": "calibracao",
+	"fator": 1.5,
+	"fontes": [
+		{
+			"aplicado": 29,
+			"base": 19,
+			"no": "Cabe"
+		},
+		{
+			"aplicado": 29,
+			"base": 19,
+			"no": "Transborda"
+		}
+	],
+	"fontes_reaplicadas": [
+		{
+			"aplicado": 29,
+			"base": 19,
+			"no": "Cabe"
+		},
+		{
+			"aplicado": 29,
+			"base": 19,
+			"no": "Transborda"
+		}
+	],
+	"fontes_restauradas": [
+		{
+			"aplicado": 19,
+			"base": 19,
+			"no": "Cabe"
+		},
+		{
+			"aplicado": 19,
+			"base": 19,
+			"no": "Transborda"
+		}
+	],
+	"fps_fixo": 60,
+	"janela": [
+		720,
+		1280
+	],
+	"medicao": {
+		"areas": [],
+		"areas_originais": [],
+		"quantidade": 2,
+		"rolagem": [],
+		"textos": [
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					41.0,
+					40.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 29,
+				"minimo": [
+					1.0,
+					40.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "Cabe",
+				"tamanho": [
+					100.0,
+					60.0
+				],
+				"texto": "OK"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					548.0,
+					40.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 448.0,
+				"fonte": 29,
+				"minimo": [
+					1.0,
+					40.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "Transborda",
+				"tamanho": [
+					100.0,
+					60.0
+				],
+				"texto": "WWWWWWWWWWWWWWWWWWWW"
+			}
+		]
+	},
+	"mesmo_estado_apos_ampliar": true,
+	"movimento_reduzido_em_memoria": true,
+	"persistencia_rb5": false,
+	"rng": "-7940546980199586925",
+	"semente": 42,
+	"turno": 1
+}

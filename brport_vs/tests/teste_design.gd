@@ -354,6 +354,12 @@ func _rodar() -> void:
 	_falhas += int(mata.falhas)
 	_confere("o bloco D47 correu até ao fim", mata.completo)
 
+	print("=== BT: a regua da bancada de tamanho do texto ===")
+	var bancada_texto = load("res://tests/casos_bancada_texto.gd").new()
+	bancada_texto.rodar(self)
+	_falhas += int(bancada_texto.falhas)
+	_confere("o bloco da bancada de texto correu ate ao fim", bancada_texto.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")

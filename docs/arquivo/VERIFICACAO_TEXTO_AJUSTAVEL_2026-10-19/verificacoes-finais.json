@@ -1,0 +1,60 @@
+{
+  "base": "fc052032ea796060eea803d46f413ccdb0b14bf1",
+  "catalogo": {
+    "total": 124,
+    "anteriores_identicos": 120,
+    "movimento": 17,
+    "ids_exatos": true,
+    "todos_pares_suite_rotulo": true,
+    "bases_verdes_antes_depois": true
+  },
+  "suites": [
+    {
+      "suite": "run_tests",
+      "marcador": "TODOS OS TESTES PASSARAM",
+      "log": "suites/run_tests.log",
+      "sha256": "bb29aabc59ad6b0a70fc28e9bc87fe86798809d5a6fccde64b762faa1a83d0bc"
+    },
+    {
+      "suite": "teste_design",
+      "marcador": "DESIGN OK",
+      "log": "suites/teste_design.log",
+      "sha256": "68d0eeeae2ee69552a661e47631ea7f724cc55eb60173107d8a4390955999d99"
+    },
+    {
+      "suite": "teste_audio",
+      "marcador": "AUDIO OK",
+      "log": "suites/teste_audio.log",
+      "sha256": "7e5a7eea17247288cecc144cd9578d53d5f826eb4b96b204fde0a4390cf36a00"
+    },
+    {
+      "suite": "teste_fumaca",
+      "marcador": "FUMACA OK",
+      "log": "suites/teste_fumaca.log",
+      "sha256": "1712ed018a4e665a49190714cbdfe7651e57bb8e12771786bff320c4c5b9808c"
+    },
+    {
+      "suite": "teste_registro",
+      "marcador": "REGISTRO OK",
+      "log": "suites/teste_registro.log",
+      "sha256": "7dc2aa24fa8ff47f38eac92aa696b0040eaccf3565946f1d659104333011ff43"
+    },
+    {
+      "suite": "asset_validator",
+      "marcador": "ASSET OK",
+      "log": "suites/asset_validator.log",
+      "sha256": "d12fd0b1d117fafeb54c9f465c7a849f503e4fc0c23a3960d0c6627be6b32a7d"
+    }
+  ],
+  "sentinela_arquivos": 6,
+  "pngs_repetidos_identicos": 21,
+  "fontes_sha256": {
+    "brport_vs/tools/bancada_texto.gd": "2f6dab2185cada5cd44ed318fe378cab55d77f6bbe3c45731ed99b64382792aa",
+    "brport_vs/tools/medir_texto_bancada.gd": "b33fe3c623070042600fd267392e73f94883d6942320d62758d88872f98f252b",
+    "brport_vs/tests/casos_bancada_texto.gd": "8e0f4ee590d3c68df956982fd2bb930dde93dcb81ec1d62c29fe84a3ab48cb86",
+    "brport_vs/tests/teste_design.gd": "3159c0e6329d18a5075771de09e1b4feb7df84c5bf4a9ae9a885b2aef17d8fa8",
+    "tools/rodar_bancada_texto.py": "4a877e2bc901304dfdff1f5467ad81499eb60558559dd0e49a99a5e2a97b7957",
+    "tools/mutantes.toml": "5683cb897275c35758531c9ffac8e27392ab4f46898e20db7b08315f7d8950e1",
+    ".github/workflows/testes.yml": "1fbb61d436eee25608b7ed855bb1fcfba9c72f8949a45123471e3617186d7424"
+  }
+}
