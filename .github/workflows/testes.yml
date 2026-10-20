@@ -650,9 +650,10 @@ jobs:
   mutantes:
     name: Defeitos já provados
     runs-on: ubuntu-latest
-    # 58 defeitos levaram 1.525 s no contêiner de desenvolvimento (`120`);
-    # o teto deixa o dobro de folga para o runner e para o catálogo crescer.
-    timeout-minutes: 60
+    # A main fc05203 levou 58min18s com 120 defeitos (job 117832180799).
+    # A bancada de texto acrescenta quatro (`131`); 60 min já não dão folga.
+    # Os tetos por suíte continuam medidos pelo executor, sem cortar provas.
+    timeout-minutes: 90
 
     steps:
       - name: Baixar o repositório

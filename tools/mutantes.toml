@@ -1376,3 +1376,41 @@ alvo = "brport_vs/scripts/PainelAjustes.gd"
 antes = "_aviso_preferencia.visible = erro != OK"
 depois = "_aviso_preferencia.visible = false # oculta erro"
 reprova = { run_tests = "T29: falha ao lembrar é explícita e escolha vale na sessão" }
+
+# ── A REGUA DA BANCADA DE TEXTO (RB5, 19/10/2026) ─────────────────────────
+
+[[mutante]]
+id = "texto-bancada-sem-ampliacao"
+de = "RB5 bancada 2026-10-19"
+o_que = "a bancada informa um fator mas conserva a fonte base"
+alvo = "brport_vs/tools/medir_texto_bancada.gd"
+antes = 'var tamanho: int = maxi(1, roundi(base * fator))'
+depois = 'var tamanho: int = base'
+reprova = { teste_design = "BT: amplia o override real do rotulo e do botao de 19 para 24" }
+
+[[mutante]]
+id = "texto-bancada-acumula"
+de = "RB5 bancada 2026-10-19"
+o_que = "reaplicar a fonte usa a fonte atual em vez da base original"
+alvo = "brport_vs/tools/medir_texto_bancada.gd"
+antes = 'var base: int = int(no.get_meta(&"bancada_texto_base"))'
+depois = 'var base: int = no.get_theme_font_size("font_size")'
+reprova = { teste_design = "BT: reaplicar no mesmo no nao acumula escala" }
+
+[[mutante]]
+id = "texto-bancada-caixa-cega"
+de = "RB5 bancada 2026-10-19"
+o_que = "a medicao compara a caixa com ela mesma e nao ve o texto excedente"
+alvo = "brport_vs/tools/medir_texto_bancada.gd"
+antes = '_excesso(desenho, local) if tem_desenho else 0.0'
+depois = '_excesso(local, local) if tem_desenho else 0.0'
+reprova = { teste_design = "BT: a mesma caixa distingue texto que cabe de texto que transborda" }
+
+[[mutante]]
+id = "texto-bancada-janela-cega"
+de = "RB5 bancada 2026-10-19"
+o_que = "a medicao compara o desenho com ele mesmo e ignora a janela"
+alvo = "brport_vs/tools/medir_texto_bancada.gd"
+antes = '_excesso(global, janela) if tem_desenho else 0.0'
+depois = '_excesso(global, global) if tem_desenho else 0.0'
+reprova = { teste_design = "BT: texto fora da janela nao recebe o zero do texto dentro" }

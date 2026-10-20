@@ -1,0 +1,116 @@
+[
+  {
+    "cenario": "ajustes-inicio",
+    "fatores": [
+      1,
+      1.25,
+      1.5
+    ],
+    "estado_e_parametros_iguais": true,
+    "turno": 1,
+    "caixa": 400000,
+    "rng": "-7940546980199586925",
+    "semente": 42,
+    "fps_fixo": 60,
+    "janela": [
+      720,
+      1280
+    ],
+    "movimento_reduzido_em_memoria": true
+  },
+  {
+    "cenario": "ajustes-pausa",
+    "fatores": [
+      1,
+      1.25,
+      1.5
+    ],
+    "estado_e_parametros_iguais": true,
+    "turno": 1,
+    "caixa": 400000,
+    "rng": "-7940546980199586925",
+    "semente": 42,
+    "fps_fixo": 60,
+    "janela": [
+      720,
+      1280
+    ],
+    "movimento_reduzido_em_memoria": true
+  },
+  {
+    "cenario": "artigo",
+    "fatores": [
+      1,
+      1.25,
+      1.5
+    ],
+    "estado_e_parametros_iguais": true,
+    "turno": 1,
+    "caixa": 400000,
+    "rng": "-7940546980199586925",
+    "semente": 42,
+    "fps_fixo": 60,
+    "janela": [
+      720,
+      1280
+    ],
+    "movimento_reduzido_em_memoria": true
+  },
+  {
+    "cenario": "hud",
+    "fatores": [
+      1,
+      1.25,
+      1.5
+    ],
+    "estado_e_parametros_iguais": true,
+    "turno": 1,
+    "caixa": 400000,
+    "rng": "-7940546980199586925",
+    "semente": 42,
+    "fps_fixo": 60,
+    "janela": [
+      720,
+      1280
+    ],
+    "movimento_reduzido_em_memoria": true
+  },
+  {
+    "cenario": "doca",
+    "fatores": [
+      1,
+      1.25,
+      1.5
+    ],
+    "estado_e_parametros_iguais": true,
+    "turno": 1,
+    "caixa": 400000,
+    "rng": "-7940546980199586925",
+    "semente": 42,
+    "fps_fixo": 60,
+    "janela": [
+      720,
+      1280
+    ],
+    "movimento_reduzido_em_memoria": true
+  },
+  {
+    "cenario": "calibracao",
+    "fatores": [
+      1,
+      1.25,
+      1.5
+    ],
+    "estado_e_parametros_iguais": true,
+    "turno": 1,
+    "caixa": 400000,
+    "rng": "-7940546980199586925",
+    "semente": 42,
+    "fps_fixo": 60,
+    "janela": [
+      720,
+      1280
+    ],
+    "movimento_reduzido_em_memoria": true
+  }
+]

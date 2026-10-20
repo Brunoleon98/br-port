@@ -792,8 +792,15 @@ ou envio. Integrado no PR #142, mesclado em 18/10 (`56b3983`).
 **Em 18/10, Bruno escolheu RB6 — Reduzir movimento (`129`), opção 2.**
 Preferência nos Ajustes do início e pausa, persistente fora da partida;
 redução de fundo e transições com informação operacional e ações preservadas.
-Codex no PR #143 rascunho. Bruno confirmou o Claude ativo no visual;
-terreno e vegetação continuam com ele, sem aceite da `127`.
+PR #143 mesclado pelo Bruno em 18/10 (`0796534`); telefone e aceite visual
+do RB6 pendentes. Claude continua no visual; a vegetação foi aceite na `130`
+e integrada pelo Bruno no #144 (`fc05203`).
+**Em 19/10, Bruno escolheu RB5 — tamanho de texto ajustável (`131`) e
+autorizou a bancada.** Padrão/+25%/+50% nos Ajustes, artigo longo, HUD e
+doca; tamanho e acomodação ainda pendentes. A ampliação sozinha sobrepõe
+a fila à mensagem em +25% e corta conteúdo em +50%. Sem opção global,
+persistência ou redesenho do HUD autorizado nesta bancada. As estradas
+continuam na divisão visual do Claude; não são a próxima tarefa do Codex.
 A pesquisa entrou na main com
 o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em
 `docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`, inclusive falhas do save.

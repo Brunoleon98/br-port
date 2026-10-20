@@ -1,0 +1,763 @@
+{
+	"alvo": "painel",
+	"caixa": 400000,
+	"cenario": "ajustes-inicio",
+	"fator": 1.25,
+	"fontes": [
+		{
+			"aplicado": 21,
+			"base": 17,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@PanelContainer@12/@HBoxContainer@9/@Label@11"
+		},
+		{
+			"aplicado": 16,
+			"base": 13,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@13"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@16/@Label@14"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@16/@Label@15"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@19/@Label@17"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@19/@Label@18"
+		},
+		{
+			"aplicado": 16,
+			"base": 13,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@21"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@30"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@31"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@32"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@33"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@34"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/ReduzirMovimento"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@22"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@23"
+		},
+		{
+			"aplicado": 16,
+			"base": 13,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@25"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@26"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Button@27"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@28"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Button@29"
+		}
+	],
+	"fontes_reaplicadas": [
+		{
+			"aplicado": 21,
+			"base": 17,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@PanelContainer@12/@HBoxContainer@9/@Label@11"
+		},
+		{
+			"aplicado": 16,
+			"base": 13,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@13"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@16/@Label@14"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@16/@Label@15"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@19/@Label@17"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@19/@Label@18"
+		},
+		{
+			"aplicado": 16,
+			"base": 13,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@21"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@30"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@31"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@32"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@33"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@34"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/ReduzirMovimento"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@22"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@23"
+		},
+		{
+			"aplicado": 16,
+			"base": 13,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@25"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@26"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Button@27"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@28"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Button@29"
+		}
+	],
+	"fontes_restauradas": [
+		{
+			"aplicado": 17,
+			"base": 17,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@PanelContainer@12/@HBoxContainer@9/@Label@11"
+		},
+		{
+			"aplicado": 13,
+			"base": 13,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@13"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@16/@Label@14"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@16/@Label@15"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@19/@Label@17"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@19/@Label@18"
+		},
+		{
+			"aplicado": 13,
+			"base": 13,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@21"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@30"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@31"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@32"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@33"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@34"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/ReduzirMovimento"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@22"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@23"
+		},
+		{
+			"aplicado": 13,
+			"base": 13,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@25"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@26"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Button@27"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Label@28"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@7/@VBoxContainer@8/@Button@29"
+		}
+	],
+	"fps_fixo": 60,
+	"janela": [
+		720,
+		1280
+	],
+	"medicao": {
+		"areas": [],
+		"areas_originais": [],
+		"quantidade": 18,
+		"rolagem": [],
+		"textos": [
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					74.0,
+					30.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 21,
+				"minimo": [
+					1.0,
+					30.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@PanelContainer@12/@HBoxContainer@9/@Label@11",
+				"tamanho": [
+					374.0,
+					30.0
+				],
+				"texto": "Ajustes"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					36.140625,
+					23.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 16,
+				"minimo": [
+					37.0,
+					23.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@Label@13",
+				"tamanho": [
+					436.0,
+					23.0
+				],
+				"texto": "SOM"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					64.5625,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					76.0,
+					27.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@16/@Label@14",
+				"tamanho": [
+					76.0,
+					27.0
+				],
+				"texto": "Música"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					48.984375,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					49.0,
+					27.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@16/@Label@15",
+				"tamanho": [
+					49.0,
+					27.0
+				],
+				"texto": "100%"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					62.09375,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					76.0,
+					27.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@19/@Label@17",
+				"tamanho": [
+					76.0,
+					27.0
+				],
+				"texto": "Efeitos"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					48.984375,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					49.0,
+					27.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@HBoxContainer@19/@Label@18",
+				"tamanho": [
+					49.0,
+					27.0
+				],
+				"texto": "100%"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					122.78125,
+					23.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 16,
+				"minimo": [
+					123.0,
+					23.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@Label@21",
+				"tamanho": [
+					436.0,
+					23.0
+				],
+				"texto": "APRESENTAÇÃO"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					275.03125,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					276.0,
+					27.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@Label@30",
+				"tamanho": [
+					436.0,
+					27.0
+				],
+				"texto": "Tamanho do texto — bancada"
+			},
+			{
+				"classe": "Button",
+				"desenho": [
+					0.0,
+					0.0,
+					66.0,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					94.0,
+					47.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@31",
+				"tamanho": [
+					142.0,
+					47.0
+				],
+				"texto": "Padrão"
+			},
+			{
+				"classe": "Button",
+				"desenho": [
+					0.0,
+					0.0,
+					49.0,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					77.0,
+					47.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@32",
+				"tamanho": [
+					143.0,
+					47.0
+				],
+				"texto": "+25%"
+			},
+			{
+				"classe": "Button",
+				"desenho": [
+					0.0,
+					0.0,
+					49.0,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					77.0,
+					47.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/CandidatosDeTexto/@Button@33",
+				"tamanho": [
+					143.0,
+					47.0
+				],
+				"texto": "+50%"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					376.09375,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					1.0,
+					27.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@Label@34",
+				"tamanho": [
+					436.0,
+					27.0
+				],
+				"texto": "Exemplo: Serviço concluído — R$125.000."
+			},
+			{
+				"classe": "CheckButton",
+				"desenho": [
+					0.0,
+					0.0,
+					180.0,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					244.0,
+					47.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/ReduzirMovimento",
+				"tamanho": [
+					436.0,
+					47.0
+				],
+				"texto": "Reduzir movimento"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					395.671875,
+					87.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					1.0,
+					87.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@Label@22",
+				"tamanho": [
+					436.0,
+					87.0
+				],
+				"texto": "Diminui movimentos de fundo, pulsos e transições. Mantém os avisos e os sinais de operação."
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					173.828125,
+					23.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 16,
+				"minimo": [
+					174.0,
+					23.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@Label@25",
+				"tamanho": [
+					436.0,
+					23.0
+				],
+				"texto": "REGISTRO DA PARTIDA"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					388.671875,
+					57.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					1.0,
+					57.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@Label@26",
+				"tamanho": [
+					436.0,
+					57.0
+				],
+				"texto": "Copia o que o jogo gravou da partida, para colar numa conversa."
+			},
+			{
+				"classe": "Button",
+				"desenho": [
+					0.0,
+					0.0,
+					236.0,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					264.0,
+					47.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@Button@27",
+				"tamanho": [
+					436.0,
+					47.0
+				],
+				"texto": "Copiar registro da partida"
+			},
+			{
+				"classe": "Button",
+				"desenho": [
+					0.0,
+					0.0,
+					56.0,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					84.0,
+					47.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@7/@VBoxContainer@8/@Button@29",
+				"tamanho": [
+					436.0,
+					47.0
+				],
+				"texto": "Voltar"
+			}
+		]
+	},
+	"mesmo_estado_apos_ampliar": true,
+	"movimento_reduzido_em_memoria": true,
+	"persistencia_rb5": false,
+	"rng": "-7940546980199586925",
+	"semente": 42,
+	"turno": 1
+}
