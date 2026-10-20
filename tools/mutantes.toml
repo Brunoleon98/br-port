@@ -1328,8 +1328,8 @@ id = "movimento-duplica-ajustes"
 de = "129"
 o_que = "Pedidos repetidos empilham os Ajustes"
 alvo = "brport_vs/scripts/TelaInicial.gd"
-antes = "func _abrir_ajustes() -> void:\n\tfor filho in get_children():\n\t\tif filho is PainelNarrativo and not filho.is_queued_for_deletion():\n\t\t\treturn\n\t_abrir_painel(PainelAjustesScene).call(\"setup\")"
-depois = "func _abrir_ajustes() -> void:\n\t_abrir_painel(PainelAjustesScene).call(\"setup\")"
+antes = "func _abrir_ajustes() -> void:\n\tif _preparar_consulta():"
+depois = "func _abrir_ajustes() -> void:\n\tif true:"
 reprova = { run_tests = "T29: Ajustes repetidos não duplicam painel" }
 
 [[mutante]]
@@ -1414,3 +1414,57 @@ alvo = "brport_vs/tools/medir_texto_bancada.gd"
 antes = '_excesso(global, janela) if tem_desenho else 0.0'
 depois = '_excesso(global, global) if tem_desenho else 0.0'
 reprova = { teste_design = "BT: texto fora da janela nao recebe o zero do texto dentro" }
+
+[[mutante]]
+id = "inicio-movimento-sem-fundo"
+de = "132"
+o_que = "o estado selecionado sob toque cai no estilo transparente do motor"
+alvo = "brport_vs/ui/tema_brport.tres"
+antes = "CheckButton/styles/hover_pressed = SubResource(\"botao_press\")"
+depois = ""
+reprova = { run_tests = "T30: movimento hover_pressed tem fundo opaco e contraste AA" }
+
+[[mutante]]
+id = "inicio-consultas-sobrepostas"
+de = "132"
+o_que = "a consulta deixa o menu de Configurações visível por baixo"
+alvo = "brport_vs/scripts/TelaInicial.gd"
+antes = "\t\t_configuracoes.hide()"
+depois = "\t\tpass"
+reprova = { run_tests = "T30: a consulta oculta o menu de Configurações" }
+
+[[mutante]]
+id = "inicio-consulta-sem-retorno"
+de = "132"
+o_que = "ao fechar a consulta o menu continua escondido"
+alvo = "brport_vs/scripts/TelaInicial.gd"
+antes = "\t\t\t_configuracoes.show()"
+depois = "\t\t\tpass"
+reprova = { run_tests = "T30: fechar a consulta devolve o mesmo menu visível" }
+
+[[mutante]]
+id = "inicio-continuar-sem-partida"
+de = "132"
+o_que = "Continuar está habilitado sem partida salva"
+alvo = "brport_vs/scripts/TelaInicial.gd"
+antes = "continuar.disabled = _mais_recente == 0"
+depois = "continuar.disabled = false"
+reprova = { run_tests = "T30: Continuar só está habilitado quando há partida salva" }
+
+[[mutante]]
+id = "inicio-saves-sem-porta"
+de = "132"
+o_que = "Saves abre Configurações em vez da lista de espaços"
+alvo = "brport_vs/scripts/TelaInicial.gd"
+antes = "_abrir_espacos(\"carregar\")"
+depois = "_abrir_configuracoes()"
+reprova = { run_tests = "T30: Saves abre a lista compartilhada de espaços" }
+
+[[mutante]]
+id = "inicio-extras-na-inicial"
+de = "132"
+o_que = "a inicial volta a acumular uma consulta fora de Configurações"
+alvo = "brport_vs/scripts/TelaInicial.gd"
+antes = "\t_botao(coluna, \"Configurações\", ALTURA_BOTAO, _abrir_configuracoes)"
+depois = "\t_botao(coluna, \"Configurações\", ALTURA_BOTAO, _abrir_configuracoes)\n\t_botao(coluna, \"Como jogar\", ALTURA_BOTAO, _abrir_como_jogar)"
+reprova = { run_tests = "T30: início tem exatamente quatro entradas em ambas as situações" }

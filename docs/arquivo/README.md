@@ -31,6 +31,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-20.md` | 20/10 | Início/Configurações e contraste (`132`), fundo com o porto ao fundo em revisão e texto global pendente |
+| `VERIFICACAO_INICIO_CONFIGURACOES_2026-10-20/README.md` | 20/10 | Quatro entradas no início, consultas em Configurações, contraste de Reduzir movimento e candidata com o porto ao fundo (`132`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-18b.md` | 18/10 | A vegetação de folhas (`130`): contorno por lote, copa de folhas com a normal da copa, clareiras de granito, destaques à vista e as palmeiras jovens no relvado; aceite à sétima passagem, a fila segue nas estradas |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-18.md` | 18/10 | RB6 (`129`, PR #143): preferência, operação preservada, prova temporal e retomada; #142 já mesclado e Claude ativo no visual |
 | `VERIFICACAO_REDUZIR_MOVIMENTO_2026-10-18/README.md` | 18/10 | RB6 (`129`, PR #143): reprodução da preferência, isolamento, guardas e comparação temporal; divisão com o WIP visual |

@@ -193,6 +193,8 @@ func rodar(estado, tree: SceneTree) -> void:
 		inicio.theme = tema
 		arvore.root.add_child(inicio)
 		await assentar()
+		inicio._abrir_configuracoes()
+		await assentar()
 		conferir("ajuda sem depender de save (ocupado=%s)" % ocupado, botao(inicio, "Como jogar") != null)
 		await consulta(inicio, inicio)
 		inicio.free()

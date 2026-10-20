@@ -12,8 +12,8 @@ extends Control
 #  - a ilustração sai do GERADOR DE IMAGEM, pelo `art_lab/` — é arte de painel
 #    e não prop no mapa, que é a linha que o `CLAUDE.md` traça. Até ela chegar
 #    o fundo é um degradê que não finge ser a arte (`FUNDO`);
-#  - TRÊS espaços de save, e os botões Continuar, Nova partida, Carregar e
-#    Ajustes.
+#  - TRÊS espaços de save; desde a `132`, a inicial concentra Continuar,
+#    Nova partida, Saves e Configurações, com as consultas dentro do menu.
 #
 # ⚠️ ELA NÃO É UMA FASE DO `GameState`, e é por isso que o balanceamento não a
 # vê: o simulador nunca abre cena nenhuma, e a regra «tela nova é overlay,
@@ -23,10 +23,9 @@ extends Control
 # fechar a aplicação: o Voltar, aqui, fecha-a (`_notification`).
 # ============================================================
 
-# O FUNDO, num sítio só. Quando a ilustração chegar do `art_lab/`, é esta
-# linha que muda. A mesma peça vai ser o papel de parede do celular (escolha
-# do Bruno: uma peça, dois usos) — isso é a terceira passagem da família, e
-# ainda não está feito.
+# O degradê também é consumido pelo celular. A candidata da inicial fica no
+# art_lab até o aceite; trocar esta constante alteraria os dois usos, embora
+# o pedido da `132` e sua prévia sejam só da tela inicial.
 const FUNDO := preload("res://art/tela_inicial/fundo_provisorio.svg")
 const CENA_DO_PORTO := "res://scenes/Main.tscn"
 const PainelEspacosScene := preload("res://scenes/panels/PainelEspacos.tscn")
@@ -34,6 +33,7 @@ const PainelAjustesScene := preload("res://scenes/panels/PainelAjustes.tscn")
 const ComoJogarScene := preload("res://scenes/panels/PainelComoJogar.tscn")
 const MeuPortoScene := preload("res://scenes/panels/PainelMeuPorto.tscn")
 const DiagnosticoScene := preload("res://scenes/panels/PainelDiagnostico.tscn")
+const ConfiguracoesScene := preload("res://scenes/panels/PainelConfiguracoes.tscn")
 
 const LARGURA_CARTAO := 560
 const ALTURA_BOTAO := 56
@@ -45,6 +45,7 @@ const MARGEM_INFERIOR := 96
 
 var _mais_recente := 0
 var _retomando := false
+var _configuracoes: Control
 
 
 func _ready() -> void:
@@ -98,8 +99,8 @@ func _montar_cartao() -> void:
 	cartao.offset_right = LARGURA_CARTAO / 2.0
 	cartao.offset_top = -MARGEM_INFERIOR
 	cartao.offset_bottom = -MARGEM_INFERIOR
-	# Cresce PARA CIMA a partir do pé, à medida dos botões; com espaço ocupado
-	# entram também Continuar, Carregar e a linha de apoio.
+	# Cresce PARA CIMA a partir do pé; as quatro entradas permanecem no cartão
+	# nas duas situações de disco, mudando a linha de apoio e o estado de Continuar.
 	cartao.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	add_child(cartao)
 
@@ -116,16 +117,21 @@ func _montar_cartao() -> void:
 		apoio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		apoio.text = "Última partida: %s · %s" % [String(r["porto"]), GameState.linha_do_espaco(r)]
 		coluna.add_child(apoio)
-		var continuar := _botao(coluna, "Continuar", ALTURA_CONTINUAR, _continuar)
-		continuar.theme_type_variation = &"BotaoPrimarioGrande"
+	else:
+		var apoio := Label.new()
+		apoio.theme_type_variation = &"RotuloApoio"
+		apoio.text = "Nenhuma partida salva neste aparelho."
+		apoio.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		apoio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		coluna.add_child(apoio)
+	var continuar := _botao(coluna, "Continuar", ALTURA_CONTINUAR, _continuar)
+	continuar.theme_type_variation = &"BotaoPrimarioGrande"
+	continuar.disabled = _mais_recente == 0
 
 	_botao(coluna, "Nova partida", ALTURA_BOTAO, _nova_partida)
-	if _mais_recente > 0:
-		_botao(coluna, "Carregar", ALTURA_BOTAO, func() -> void:
-			_abrir_espacos("carregar"))
-	_botao(coluna, "Como jogar", ALTURA_BOTAO, _abrir_como_jogar)
-	_botao(coluna, "Ajustes", ALTURA_BOTAO, _abrir_ajustes)
-	_botao(coluna, "Versão e diagnóstico", ALTURA_BOTAO, _abrir_diagnostico)
+	_botao(coluna, "Saves", ALTURA_BOTAO, func() -> void:
+		_abrir_espacos("carregar"))
+	_botao(coluna, "Configurações", ALTURA_BOTAO, _abrir_configuracoes)
 
 
 func _botao(onde: Control, texto: String, altura: int, ao_tocar: Callable) -> Button:
@@ -155,24 +161,49 @@ func _abrir_espacos(modo: String) -> void:
 
 
 func _abrir_como_jogar() -> void:
-	for filho in get_children():
-		if filho is PainelNarrativo and not filho.is_queued_for_deletion():
-			return
-	_abrir_painel(ComoJogarScene)
+	if _preparar_consulta():
+		_ao_fechar_consulta(_abrir_painel(ComoJogarScene))
 
 
 func _abrir_ajustes() -> void:
-	for filho in get_children():
-		if filho is PainelNarrativo and not filho.is_queued_for_deletion():
-			return
-	_abrir_painel(PainelAjustesScene).call("setup")
+	if _preparar_consulta():
+		var painel := _abrir_painel(PainelAjustesScene)
+		painel.call("setup")
+		_ao_fechar_consulta(painel)
 
 
 func _abrir_diagnostico() -> void:
+	if _preparar_consulta():
+		_ao_fechar_consulta(_abrir_painel(DiagnosticoScene))
+
+
+func _abrir_configuracoes() -> void:
 	for filho in get_children():
 		if filho is PainelNarrativo and not filho.is_queued_for_deletion():
 			return
-	_abrir_painel(DiagnosticoScene)
+	_configuracoes = _abrir_painel(ConfiguracoesScene)
+	_configuracoes.connect("pedir_ajustes", _abrir_ajustes)
+	_configuracoes.connect("pedir_como_jogar", _abrir_como_jogar)
+	_configuracoes.connect("pedir_diagnostico", _abrir_diagnostico)
+
+
+# As consultas são irmãs do menu: o Voltar do aparelho fecha a de cima e
+# devolve exatamente o menu aberto, sem empilhar dois cartões visíveis.
+func _preparar_consulta() -> bool:
+	for filho in get_children():
+		if filho is PainelNarrativo and not filho.is_queued_for_deletion() \
+				and filho != _configuracoes:
+			return false
+	if is_instance_valid(_configuracoes) and not _configuracoes.is_queued_for_deletion():
+		_configuracoes.hide()
+	return true
+
+
+func _ao_fechar_consulta(painel: Control) -> void:
+	painel.tree_exited.connect(func():
+		if is_instance_valid(_configuracoes) and not _configuracoes.is_queued_for_deletion():
+			_configuracoes.show()
+	)
 
 
 func _continuar() -> void:

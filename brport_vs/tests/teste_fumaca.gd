@@ -4164,8 +4164,8 @@ func _f16_tela_inicial() -> void:
 	var textos: Array = []
 	_f16_textos_de_botao(cena, textos)
 	var ultima := cena.find_child("UltimaPartida", true, false) as Label
-	_confere("F16 tela inicial: ajuda entre Carregar e Ajustes com portos guardados",
-		textos == ["Continuar", "Nova partida", "Carregar", "Como jogar", "Ajustes", "Versão e diagnóstico"], str(textos))
+	_confere("F16 tela inicial: quatro entradas com portos guardados",
+		textos == ["Continuar", "Nova partida", "Saves", "Configurações"], str(textos))
 	_confere("F16 tela inicial: «%s» é o porto jogado por último, não o espaço em uso" % (ultima.text if ultima else "?"),
 		ultima != null and ultima.text.contains("Um") and not ultima.text.contains("Dois"))
 	root.remove_child(cena)
@@ -4179,8 +4179,8 @@ func _f16_tela_inicial() -> void:
 	root.add_child(vazia)
 	textos.clear()
 	_f16_textos_de_botao(vazia, textos)
-	_confere("F16 tela inicial: ajuda entre Nova partida e Ajustes sem porto guardado",
-		textos == ["Nova partida", "Como jogar", "Ajustes", "Versão e diagnóstico"], str(textos))
+	_confere("F16 tela inicial: quatro entradas sem porto guardado",
+		textos == ["Continuar", "Nova partida", "Saves", "Configurações"], str(textos))
 	root.remove_child(vazia)
 	vazia.free()
 	# Os dois portos voltam, pela mesma porta, para os blocos seguintes.
