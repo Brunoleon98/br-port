@@ -31,6 +31,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-20b.md` | 20/10 | Candidata v3 com mais mar entre navio e menu; código preservado e pedido de resumo, com prompt só quando solicitado |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-20.md` | 20/10 | Início/Configurações e contraste (`132`), fundo com o porto ao fundo em revisão e texto global pendente |
 | `VERIFICACAO_INICIO_CONFIGURACOES_2026-10-20/README.md` | 20/10 | Quatro entradas no início, consultas em Configurações, contraste de Reduzir movimento e candidata com o porto ao fundo (`132`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-18b.md` | 18/10 | A vegetação de folhas (`130`): contorno por lote, copa de folhas com a normal da copa, clareiras de granito, destaques à vista e as palmeiras jovens no relvado; aceite à sétima passagem, a fila segue nas estradas |

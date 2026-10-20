@@ -105,3 +105,19 @@ Tamanho de texto global, acomodação e telefone continuam pendentes. A `131`
 é bancada por `--script`, excluída dos exports. Não se escreve preferência
 de texto nem se muda a gravação de movimento. Save, economia, RNG, duração,
 dia, missão, meta e o visual do mapa não são alterados nesta entrega.
+
+## Revisão da candidata v3
+
+Bruno pediu subir o assunto para afastá-lo do menu, como na primeira imagem.
+A v3 preserva o porto ao fundo e abre uma faixa de mar abaixo do navio.
+Foi fotografada no jogo com título/cartão nas posições originais e
+inspecionada em 720×1280: popa inteira acima do cartão, espaço de água entre
+eles, título legível. Fonte RGB 941×1672 original em `art_lab/tela_inicial/v3/`.
+Aceite da v3 ainda pendente; não entrou em `brport_vs/`.
+
+Esta revisão mantém todos os arquivos do jogo, suítes, catálogo e workflow
+idênticos aos de `9ebe192`. As seis suítes rodaram novamente, com marcadores
+e sentinela intacta; a prova dos 130 pares permanece sobre o mesmo código.
+A foto e os recibos adicionais ficam em `revisao-v3/` no acervo local.
+O briefing `2026-10-20b` registra também o pedido do Bruno: resumo no fecho,
+prompt completo somente quando solicitado.

@@ -28,7 +28,10 @@ defeito anterior é removido. Os novos defeitos ficam no catálogo oficial.
 O fundo usa o gerador de imagem escolhido na `066`, com candidatas no
 `art_lab/tela_inicial/`. Bruno gostou do estilo da v1 e pediu colocar o porto
 ao fundo, como no jogo, em vez da lateral. A v2 conserva o estilo e muda
-essa composição. O aceite da foto de runtime ainda precisa ser registrado;
+essa composição. Bruno pediu depois subir o assunto para deixar mar livre
+entre o navio e o menu, como na primeira imagem. A v3 aplica esse ajuste e
+foi fotografada no jogo, com os controles nas mesmas posições.
+O aceite da foto de runtime ainda precisa ser registrado;
 o papel de parede do celular e um novo logotipo não foram incluídos.
 
 O botão global de tamanho de texto ainda não existe: a `131` era bancada

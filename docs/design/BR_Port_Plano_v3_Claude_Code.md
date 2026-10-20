@@ -804,7 +804,8 @@ continuam na divisão visual do Claude; não são a próxima tarefa do Codex.
 **Em 20/10, Bruno pediu corrigir o contraste do controle de movimento,
 reunir as consultas em Configurações e deixar quatro entradas no início
 (`132`).** Alterações locais; fundo ilustrado em revisão, com o porto ao
-fundo como no jogo. O texto global continua separado, sem tamanho escolhido.
+fundo como no jogo, elevado na v3 para afastar o navio do menu. O texto
+global continua separado, sem tamanho escolhido.
 A pesquisa entrou na main com
 o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em
 `docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`, inclusive falhas do save.

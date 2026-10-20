@@ -11,7 +11,8 @@ redimensionada nem retocada. A composição é aproximadamente 9:16, abaixo da
 largura de 1080 px proposta no briefing antigo; a prévia permite julgar o
 resultado real no jogo. Não se criou logotipo novo nem se mudou o celular.
 
-**Foto de runtime apresentada; aceite da v2 ainda não recebido.**
+**Foto de runtime apresentada; Bruno pediu subir a composição.**
+A revisão seguinte está em `../v3/`; a v2 fica preservada como referência.
 O recurso de produção continua provisório até o aceite. A prévia usa os
 mesmos controles do jogo, mudando somente a textura pela ferramenta.
 
