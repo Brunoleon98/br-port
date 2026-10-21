@@ -43,3 +43,8 @@ predefinida tomada como aceite. Texto e movimento terão de coexistir no disco.
 Base remota conferida: `f70b45c` (#145, mesclado por Bruno), CI próprio e
 pós-merge verdes. Nenhum merge pelo Codex. Não se alteram save, economia,
 RNG, dia, duração de serviço, meta, arte do mapa ou o trabalho visual do Claude.
+
+Em 21/10 Bruno pediu abrir PR para esses commits. A publicação inclui o
+menu, o contraste e as candidatas no art_lab, sem integrar a v3 em produção
+ou implementar texto global. O CI do PR deve aprovar sua própria junção;
+as provas locais e o CI da base não o substituem.

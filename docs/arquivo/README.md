@@ -31,6 +31,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-21.md` | 21/10 | Publicação autorizada do início/Configurações e contraste (`132`); arte v3 e texto global permanecem fora da produção |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-20b.md` | 20/10 | Candidata v3 com mais mar entre navio e menu; código preservado e pedido de resumo, com prompt só quando solicitado |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-20.md` | 20/10 | Início/Configurações e contraste (`132`), fundo com o porto ao fundo em revisão e texto global pendente |
 | `VERIFICACAO_INICIO_CONFIGURACOES_2026-10-20/README.md` | 20/10 | Quatro entradas no início, consultas em Configurações, contraste de Reduzir movimento e candidata com o porto ao fundo (`132`) |

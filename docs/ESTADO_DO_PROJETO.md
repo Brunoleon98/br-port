@@ -122,9 +122,9 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 fundo parado e transições diretas, operação e resultados preservados.
 Telefone/aceite visual pendentes; partida/save intactos.
 **RB5 (`131`, #145 mesclado):** bancada; tamanho e acomodação pendentes, sem opção global.
-**Início (`132`, local):** quatro entradas/Configurações e movimento legível
+**Início (`132`, PR):** quatro entradas/Configurações e movimento legível
 sob toque; provas em `arquivo/VERIFICACAO_INICIO_CONFIGURACOES_2026-10-20/README.md`.
-Fundo v3 aguarda aceite; sem nova publicação.
+Fundo v3 no art_lab; PR em revisão.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
 `130`); a seguir, estradas, depois detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
