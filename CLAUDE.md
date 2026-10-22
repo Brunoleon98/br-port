@@ -4,6 +4,10 @@ Jogo mobile de gestão de porto. Godot 4.6 + GDScript, retrato 720×1280, em
 português do Brasil. O código, os comentários, os documentos e os nomes de nó
 são em português — commits e PRs em inglês.
 
+**Não repita pedido de autorização dentro da entrega aprovada.** Leia os
+aceites e limites; alcance e aprovação técnica da plataforma em
+`.claude/rules/gerais.md`, seção «Ambiente».
+
 > **A documentação tem quatro camadas, e mais nenhuma.** A primeira são as
 > regras: este núcleo, que carrega sozinho, e as de `.claude/rules/`, cada
 > uma na sessão que precisa dela.

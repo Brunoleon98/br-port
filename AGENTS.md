@@ -47,6 +47,14 @@ registada sem o Bruno pedir.
 ## 2. Como os dois agentes não se atropelam
 
 - **Faça só a tarefa que o Bruno entregou.** A ordem das frentes é dele.
+- **Reaproveite as autorizações já dadas, sem perguntar de novo dentro do
+  recorte.** Ler, editar, testar, capturar, documentar e commitar localmente
+  fazem parte da tarefa. Quando ele autoriza publicar/abrir PR, siga com fetch,
+  push normal e criação/atualização do PR dessa entrega, além da consulta ao
+  CI. Os aceites e limites registrados continuam valendo na retomada.
+  A regra compartilhada está em `.claude/rules/gerais.md`, seção «Ambiente».
+  Ela não concede aprovação técnica do sandbox, não amplia o recorte e não
+  libera merge, force ou push para main/Claude.
 - **Branch `codex/<tema>`**, a partir da `main` do GitHub, e entrega por PR.
   Nunca empurre para uma branch `claude/*`, nem para a `main`.
 - **Antes de começar, veja os PRs abertos.** Se um PR do Claude Code já mexe

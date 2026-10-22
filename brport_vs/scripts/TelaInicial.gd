@@ -10,8 +10,8 @@ extends Control
 #  - uma CENA PRÓPRIA, com ilustração, e não o porto vivo por trás. É a cena
 #    principal do projeto, e o `Main` passa a ser para onde ela leva;
 #  - a ilustração sai do GERADOR DE IMAGEM, pelo `art_lab/` — é arte de painel
-#    e não prop no mapa, que é a linha que o `CLAUDE.md` traça. Até ela chegar
-#    o fundo é um degradê que não finge ser a arte (`FUNDO`);
+#    e não prop no mapa, que é a linha que o `CLAUDE.md` traça. A v3 foi
+#    aceita na foto do jogo (`133`); o celular conserva `FUNDO`;
 #  - TRÊS espaços de save; desde a `132`, a inicial concentra Continuar,
 #    Nova partida, Saves e Configurações, com as consultas dentro do menu.
 #
@@ -23,10 +23,10 @@ extends Control
 # fechar a aplicação: o Voltar, aqui, fecha-a (`_notification`).
 # ============================================================
 
-# O degradê também é consumido pelo celular. A candidata da inicial fica no
-# art_lab até o aceite; trocar esta constante alteraria os dois usos, embora
-# o pedido da `132` e sua prévia sejam só da tela inicial.
+# O celular conserva o degradê; a ilustração aceita é exclusiva da inicial
+# (`133`). Recursos separados impedem trocar o papel de parede por acidente.
 const FUNDO := preload("res://art/tela_inicial/fundo_provisorio.svg")
+const FUNDO_INICIAL := preload("res://art/tela_inicial/fundo_inicial.png")
 const CENA_DO_PORTO := "res://scenes/Main.tscn"
 const PainelEspacosScene := preload("res://scenes/panels/PainelEspacos.tscn")
 const PainelAjustesScene := preload("res://scenes/panels/PainelAjustes.tscn")
@@ -60,7 +60,7 @@ func _ready() -> void:
 func _montar_fundo() -> void:
 	var fundo := TextureRect.new()
 	fundo.name = "Fundo"
-	fundo.texture = FUNDO
+	fundo.texture = FUNDO_INICIAL
 	fundo.anchor_right = 1.0
 	fundo.anchor_bottom = 1.0
 	# COBRE e corta, em vez de encolher com faixas: a tela do aparelho não
