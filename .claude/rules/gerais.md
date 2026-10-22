@@ -266,12 +266,35 @@ renumerou foi ela, para `126` e `127`.
 
 ## Ambiente (de «Como rodar»)
 
-**Bruno também acompanha pelo celular, onde pedidos de permissão podem não
-aparecer.** Prefira ferramentas conectadas e reaproveite as autorizações já
-dadas, sem pedir de novo dentro do recorte. Não baseie a continuidade em ele
-abrir outra interface para descobrir um bloqueio: se uma aprovação da
-plataforma for indispensável, explique no chat a ação e a razão. Não se
-promete persistência de permissões entre conversas nem se contorna uma recusa.
+**A autorização do Bruno continua valendo dentro do recorte aprovado, inclusive
+ao retomar noutra conversa.** Antes de perguntar, leia o pedido, os aceites e
+os limites registrados na decisão e na continuidade da entrega.
+
+- Ler o repositório, consultar refs/PRs/CI, preparar a branch, editar, importar,
+  rodar testes/capturas isolados, documentar e fazer commits locais são passos
+  da tarefa autorizada; não pedem outra confirmação a cada comando.
+- Depois de autorizado abrir, publicar ou atualizar um PR, isso cobre fetch,
+  push normal para a branch da entrega, criação/atualização desse PR e consulta
+  ao CI. Correções e registros da mesma entrega não pedem autorização de novo.
+  Outra entrega não herda essa autorização de publicação.
+- Aceite concreto de arte não se pergunta outra vez para a mesma versão e
+  composição. Consulte o registro; mudança no que foi aceito pede novo aceite.
+- Continuam os limites expressos do Bruno: sem merge pelo Codex, force, push
+  para main/Claude, descarte de trabalho/dados ou ampliação de escopo. Silêncio,
+  seleção predefinida e simples retomada não concedem autorização nova.
+
+**Autorização de tarefa e aprovação técnica da plataforma são diferentes.**
+Estas instruções não liberam o sandbox nem garantem permissões técnicas entre
+sessões. Prefira conectores e permissões disponíveis. Para Git,
+downloads necessários ao Godot e sockets da captura virtual, peça à ferramenta
+somente o acesso indispensável, preservando proxy/TLS; não peça ao Bruno para
+reaprovar o objetivo já autorizado nem contorne uma recusa da plataforma.
+
+**Bruno também acompanha pelo celular, onde pedidos técnicos podem não
+aparecer.** Se a plataforma exigir aprovação, explique no chat a ação exata e
+a razão. Se a chamada ficar pendente, informe o bloqueio prontamente e siga
+com o que independe dela; não espere em silêncio nem trate a espera
+como consentimento. Registre o que foi executado e o que ficou bloqueado.
 
 **Literais multilinha no Windows precisam do conteúdo LF do Git.** Medido em
 `086`: CRLF no checkout de `Narrativa.gd` impedia o separador `\n\n—\n\n`
