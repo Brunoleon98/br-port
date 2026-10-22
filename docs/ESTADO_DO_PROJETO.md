@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 20/10/2026 — início e contraste (`132`); bancada RB5 (`131`)
+> **Atualização:** 22/10/2026 — fundo da inicial (`133`); início/contraste (`132`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -122,9 +122,10 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 fundo parado e transições diretas, operação e resultados preservados.
 Telefone/aceite visual pendentes; partida/save intactos.
 **RB5 (`131`, #145 mesclado):** bancada; tamanho e acomodação pendentes, sem opção global.
-**Início (`132`, PR):** quatro entradas/Configurações e movimento legível
-sob toque; provas em `arquivo/VERIFICACAO_INICIO_CONFIGURACOES_2026-10-20/README.md`.
-Fundo v3 no art_lab; PR em revisão.
+**Início (`132`, #146 mesclado por Bruno):** quatro entradas/Configurações e movimento legível
+sob toque (`132`).
+V3 aceita/integrada localmente só na inicial (`133`); sem publicação.
+Celular conserva o degradê.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
 `130`); a seguir, estradas, depois detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone

@@ -803,8 +803,9 @@ persistência ou redesenho do HUD autorizado nesta bancada. As estradas
 continuam na divisão visual do Claude; não são a próxima tarefa do Codex.
 **Em 20/10, Bruno pediu corrigir o contraste do controle de movimento,
 reunir as consultas em Configurações e deixar quatro entradas no início
-(`132`).** PR solicitado; fundo ilustrado em revisão, com o porto ao
-fundo como no jogo, elevado na v3 para afastar o navio do menu. O texto
+(`132`).** #146 mesclado por Bruno. V3 aceita na foto de runtime em
+22/10 e integrada localmente somente na inicial (`133`), com o porto ao
+fundo e o navio afastado do menu; nova publicação não solicitada. O texto
 global continua separado, sem tamanho escolhido.
 A pesquisa entrou na main com
 o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em

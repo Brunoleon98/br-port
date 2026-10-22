@@ -31,6 +31,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-22.md` | 22/10 | V3 aceita na foto e integração local exclusiva da inicial (`133`), com celular preservado e publicação não solicitada |
+| `VERIFICACAO_FUNDO_INICIAL_2026-10-22/README.md` | 22/10 | Provas da integração do fundo v3 somente na inicial (`133`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-21.md` | 21/10 | Publicação autorizada do início/Configurações e contraste (`132`); arte v3 e texto global permanecem fora da produção |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-20b.md` | 20/10 | Candidata v3 com mais mar entre navio e menu; código preservado e pedido de resumo, com prompt só quando solicitado |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-20.md` | 20/10 | Início/Configurações e contraste (`132`), fundo com o porto ao fundo em revisão e texto global pendente |

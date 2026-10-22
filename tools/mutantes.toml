@@ -1468,3 +1468,21 @@ alvo = "brport_vs/scripts/TelaInicial.gd"
 antes = "\t_botao(coluna, \"Configurações\", ALTURA_BOTAO, _abrir_configuracoes)"
 depois = "\t_botao(coluna, \"Configurações\", ALTURA_BOTAO, _abrir_configuracoes)\n\t_botao(coluna, \"Como jogar\", ALTURA_BOTAO, _abrir_como_jogar)"
 reprova = { run_tests = "T30: início tem exatamente quatro entradas em ambas as situações" }
+
+[[mutante]]
+id = "inicio-fundo-provisorio"
+de = "133"
+o_que = "a inicial volta ao degradê e deixa de desenhar a arte aceita"
+alvo = "brport_vs/scripts/TelaInicial.gd"
+antes = "fundo.texture = FUNDO_INICIAL"
+depois = "fundo.texture = FUNDO"
+reprova = { teste_design = "D48: inicial desenha a fonte v3 aceita" }
+
+[[mutante]]
+id = "inicio-fundo-vaza-celular"
+de = "133"
+o_que = "a arte da inicial substitui indevidamente o papel de parede do celular"
+alvo = "brport_vs/scripts/PainelCelular.gd"
+antes = "parede.texture = TelaInicialScript.FUNDO"
+depois = "parede.texture = TelaInicialScript.FUNDO_INICIAL"
+reprova = { teste_design = "D48: celular conserva o degrade" }
