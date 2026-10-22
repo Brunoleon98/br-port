@@ -25,3 +25,8 @@ a identidade da textura não substitui essa inspeção.
 
 O aceite da arte não autoriza publicar esta nova entrega. Preparação local,
 sem novo PR, push ou merge; publicação depende de pedido próprio do Bruno.
+
+Na continuação da conversa, Bruno encaminhou este recorte para PR.
+Publicação autorizada na branch `codex/fundo-inicial-v3`, sem merge.
+O CI do PR precisa provar sua própria junção; o verde da base e as
+provas locais não o substituem.

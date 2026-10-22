@@ -16,7 +16,7 @@ Foto de runtime apresentada em 720×1280. A inspeção confirmou o navio
 inteiro acima do cartão, uma faixa de água entre os dois e o título legível.
 **Aceite específico recebido em 22/10/2026 na foto recriada do jogo:**
 “Aprovo esta v3 para a tela inicial”. Integração local na `133`, exclusiva
-da inicial; o celular conserva o degradê. Publicação desta entrega não solicitada.
+da inicial; o celular conserva o degradê. Encaminhamento por PR autorizado na continuação da conversa.
 Não mudou o papel de parede do celular nem foi criado logotipo.
 
 O conferidor genérico rotula este RGB opaco como xadrez/sem alfa. O briefing

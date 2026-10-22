@@ -124,7 +124,7 @@ Telefone/aceite visual pendentes; partida/save intactos.
 **RB5 (`131`, #145 mesclado):** bancada; tamanho e acomodação pendentes, sem opção global.
 **Início (`132`, #146 mesclado por Bruno):** quatro entradas/Configurações e movimento legível
 sob toque (`132`).
-V3 aceita/integrada localmente só na inicial (`133`); sem publicação.
+V3 aceita/integrada só na inicial (`133`); PR solicitado.
 Celular conserva o degradê.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
 `130`); a seguir, estradas, depois detalhes.

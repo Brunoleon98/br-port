@@ -805,7 +805,7 @@ continuam na divisão visual do Claude; não são a próxima tarefa do Codex.
 reunir as consultas em Configurações e deixar quatro entradas no início
 (`132`).** #146 mesclado por Bruno. V3 aceita na foto de runtime em
 22/10 e integrada localmente somente na inicial (`133`), com o porto ao
-fundo e o navio afastado do menu; nova publicação não solicitada. O texto
+fundo e o navio afastado do menu; encaminhamento por PR autorizado. O texto
 global continua separado, sem tamanho escolhido.
 A pesquisa entrou na main com
 o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em
