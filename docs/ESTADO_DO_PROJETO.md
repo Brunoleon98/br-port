@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 19/10/2026 — bancada RB5 (`131`); vegetação aceite (`130`)
+> **Atualização:** 20/10/2026 — início e contraste (`132`); bancada RB5 (`131`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -121,7 +121,10 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB6 (`129`, #143):** Reduzir movimento nos Ajustes de início/pausa, por aparelho;
 fundo parado e transições diretas, operação e resultados preservados.
 Telefone/aceite visual pendentes; partida/save intactos.
-**RB5 (`131`):** bancada; tamanho e acomodação pendentes, sem opção global.
+**RB5 (`131`, #145 mesclado):** bancada; tamanho e acomodação pendentes, sem opção global.
+**Início (`132`, PR):** quatro entradas/Configurações e movimento legível
+sob toque; provas em `arquivo/VERIFICACAO_INICIO_CONFIGURACOES_2026-10-20/README.md`.
+Fundo v3 no art_lab; PR em revisão.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
 `130`); a seguir, estradas, depois detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
@@ -168,7 +171,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/medir_fila_mensagens.gd` | **A régua da faixa** — conta o que entra e o que chega à tela, por AÇÃO do jogador, nas duas fontes |
 | `brport_vs/scripts/validation/contraste_ui.gd` | **A régua do contraste** — cor final contra fundo real, com herança, override e modulação. Dois consumidores: a ferramenta e o D33 (`035`) |
 | `brport_vs/tools/medir_contraste_ui.gd` | A tabela de cada texto em cada estado do percurso (`CONTRASTE MEDIDO`); como o percurso alcança cada estado está na `042`–`044` |
-| `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | **O portão do ESCOPO** — cor de UI pintada fora do tema sem exceção declarada reprova. Lê `.gd` e `.tscn` (`036`). **Zero chamadas e zero exceções**; ele também denuncia exceção MORTA (`045`) |
+| `tools/conferir_escopo_ui.py` + `tools/excecoes_cor_ui.json` | Cor de UI fora do tema e exceção morta (`036`, `045`); zero chamadas/exceções |
 | `brport_vs/scripts/PainelNarrativo.gd` | O andaime das telas narrativas — escurecer, cartão, título, parágrafo, botão. `montar(largura, 0)` ajusta o cartão ao conteúdo; e as peças de número (bloco de contas, quadro, barra do HUD) |
 | `brport_vs/scripts/TelaNomes.gd` + `PainelDiario.gd` | A folha de rosto do caderno — o nome do cais, irrevogável (GDD 7), e o do jogador — e a primeira página do diário, por baixo dela. O caderno desenha-se em `FolhaDoCaderno.gd` (`067`) |
 | `brport_vs/scripts/PainelBoletim.gd` | O Boletim Financeiro da Dona Cida, no fecho de cada semana — receita e despesa por fonte, e o tom dela conforme o resultado |
@@ -218,7 +221,7 @@ histórico em `HISTORICO.md`.
 | `blender/gerar_brp.py` | Roda os quatro estúdios, exporta PNGs, salva `.blend` e junta o manifest |
 | `brport_vs/scripts/Fauna.gd` + `AmbienteCosteiro.gd` | Ciclos de seis espécies em nove pontos; habitats, toque, mar e gaivota |
 | `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
-| `brport_vs/scripts/validation/asset_validator.gd` | Validador do lado do Godot: quadro, alfa, recorte e **a projeção do manifest contra as âncoras do mapa**; e o atlas dos 69 props (`049`). Espera `ASSET OK` |
+| `brport_vs/scripts/validation/asset_validator.gd` | Godot: quadro, alfa, recorte, projeção/âncoras e atlas (`049`); `ASSET OK` |
 | `.claude/rules/` | **As regras por tema** (`091`): o núcleo do `CLAUDE.md` e `gerais.md` carregam sempre; as de tema, ao abrir um arquivo delas. O índice está no núcleo |
 | `.claude/skills/` | **Os rituais**: `/fechar-sessao` (o fecho), `/arte` e `/balancear` (a medição e o rasto de cada frente) |
 | `.claude/hooks/session-start.sh` | **O arranque da sessão** — baixa o Godot, importa o projeto, deixa o `$G` pronto |
@@ -237,7 +240,7 @@ histórico em `HISTORICO.md`.
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
 | `tools/conferir_mutantes.py` + `mutantes.toml` | Defeitos reinjetados no CI (`117`, `120`); pré-PR e renumeração em `conferir_colaboracao.py` / `renumerar_decisao.py` (`119`) |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
-| `tools/conferir_cobertura_paineis.py` | **Todo painel que o jogo abre tem foto?** Lê os logs da bateria contra o `_abrir_painel` do `Main`. Espera `COBERTURA OK` (`039`). Desce ao TEMPO (`051`) e à CARA (`060`), sem lacuna declarada |
+| `tools/conferir_cobertura_paineis.py` | Fotos dos painéis abertos, por tempo/cara (`039`, `051`, `060`); `COBERTURA OK`, sem lacuna |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
 | `docs/REVISAO_GERAL_*.md` | Revisões gerais (17/09; 09/10 com plano de execução), com evidência |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou, e o que fechou nos dois planos (`092`). **Nada se apaga** — o índice está no `docs/arquivo/README.md` |

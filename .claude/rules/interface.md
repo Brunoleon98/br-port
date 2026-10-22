@@ -413,6 +413,10 @@ paths:
 - Dinheiro sai por `GameState.moeda()` — separador de milhar, um lugar só.
 - O tema (`ui/tema_brport.tres`) é o ponto único de estilo. Script não pinta
   cor na mão.
+  **CheckButton ligado sob toque usa `hover_pressed`, não só `pressed`.**
+  Sem esse estilo, o padrão do motor pode ser transparente com letra branca
+  sobre cartão branco (`132`). Meça os estados normal, hover, pressed e
+  hover_pressed; uma foto sem o ponteiro sobre o controle não prova o último.
   ⚠️ **E COMENTÁRIO NO `.tres` LEVA `;` EM CADA LINHA.** Em 25/09 um bloco de
   sete linhas com o `;` só na primeira partiu o parse do tema inteiro: as cenas
   abriram sem ele, e a fumaça passou verde porque conferia que o arquivo

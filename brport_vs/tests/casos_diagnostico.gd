@@ -58,6 +58,8 @@ func rodar(estado, tree: SceneTree) -> void:
 	var inicio: Control = load("res://scenes/TelaInicial.tscn").instantiate()
 	arvore.root.add_child(inicio)
 	await apoio.assentar()
+	inicio._abrir_configuracoes()
+	await apoio.assentar()
 	await porta(inicio, inicio)
 	inicio.queue_free()
 	await apoio.assentar()
