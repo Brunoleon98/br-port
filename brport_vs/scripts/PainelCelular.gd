@@ -112,6 +112,10 @@ func montar_celular(com_parede: bool, largura: int = LARGURA,
 	_dentro = VBoxContainer.new()
 	_dentro.add_theme_constant_override("separation", 16)
 	miolo.add_child(_dentro)
+	# A conversa já tem a sua janela expansível e o seu rolo. Envolver essa
+	# janela num segundo rolo a faria encolher a zero de altura.
+	if com_parede:
+		_dentro.set_meta(&"conteudo_rolavel_rb5", true)
 	return _dentro
 
 

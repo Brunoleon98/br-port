@@ -112,6 +112,7 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	dentro.add_child(_widget_do_dia())
 
 	var grade := GridContainer.new()
+	grade.set_meta(&"apps_rb5", true)
 	grade.columns = COLUNAS
 	grade.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	grade.add_theme_constant_override("h_separation", SEPARACAO_H)

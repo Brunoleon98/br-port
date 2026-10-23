@@ -1238,8 +1238,8 @@ id = "movimento-nao-persiste"
 de = "129"
 o_que = "A escolha só dura na memória"
 alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
-antes = "var erro := cfg.save(caminho)"
-depois = "var erro := OK"
+antes = "var erro := cfg.save(caminho)\n\tmudou.emit(valor)"
+depois = "var erro := OK\n\tmudou.emit(valor)"
 reprova = { run_tests = "T29: nova instância relê escolha persistente" }
 
 [[mutante]]
@@ -1247,8 +1247,8 @@ id = "movimento-sem-aviso-aos-abertos"
 de = "129"
 o_que = "Elementos já abertos não recebem a escolha"
 alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
-antes = "mudou.emit(valor)"
-depois = "pass # sem notificar os elementos abertos"
+antes = "\tmudou.emit(valor)"
+depois = "\tpass # sem notificar os elementos abertos"
 reprova = { run_tests = "T29: escolha para fundo já aberto e repõe pose inteira" }
 
 [[mutante]]
@@ -1337,8 +1337,8 @@ id = "movimento-grava-a-partida"
 de = "129"
 o_que = "Escolher apresentação regrava o save"
 alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
-antes = "mudou.emit(valor)\n\treturn erro"
-depois = "mudou.emit(valor)\n\tEngine.get_main_loop().root.get_node(\"GameState\").save_game()\n\treturn erro"
+antes = "\tmudou.emit(valor)\n\treturn erro"
+depois = "\tmudou.emit(valor)\n\tEngine.get_main_loop().root.get_node(\"GameState\").save_game()\n\treturn erro"
 reprova = { run_tests = "T29: Ajustes preservam partida, RNG, arquivos e registro" }
 
 [[mutante]]
@@ -1373,8 +1373,8 @@ id = "movimento-esconde-falha-de-gravacao"
 de = "129"
 o_que = "Ajustes não informam que a preferência não pôde ser lembrada"
 alvo = "brport_vs/scripts/PainelAjustes.gd"
-antes = "_aviso_preferencia.visible = erro != OK"
-depois = "_aviso_preferencia.visible = false # oculta erro"
+antes = "definir_reduzir_movimento(reduzido)\n\t_aviso_preferencia.text = \"Não foi possível lembrar a escolha. Ela vale nesta sessão.\"\n\t_aviso_preferencia.visible = erro != OK"
+depois = "definir_reduzir_movimento(reduzido)\n\t_aviso_preferencia.text = \"Não foi possível lembrar a escolha. Ela vale nesta sessão.\"\n\t_aviso_preferencia.visible = false # oculta erro"
 reprova = { run_tests = "T29: falha ao lembrar é explícita e escolha vale na sessão" }
 
 # ── A REGUA DA BANCADA DE TEXTO (RB5, 19/10/2026) ─────────────────────────
@@ -1486,3 +1486,239 @@ alvo = "brport_vs/scripts/PainelCelular.gd"
 antes = "parede.texture = TelaInicialScript.FUNDO"
 depois = "parede.texture = TelaInicialScript.FUNDO_INICIAL"
 reprova = { teste_design = "D48: celular conserva o degrade" }
+
+# ── TEXTO AJUSTÁVEL INTEGRADO (aceite da 134) ────────────────────────────
+
+[[mutante]]
+id = "texto-tema-ignora-maior"
+de = "134"
+o_que = "O texto herdado conserva o tema padrão"
+alvo = "brport_vs/scripts/TextoDaInterface.gd"
+antes = "\treturn _tema_maior"
+depois = "\treturn TEMA"
+reprova = { teste_design = "RB5: exemplo usa fonte maior do tema" }
+
+[[mutante]]
+id = "texto-override-ignorado"
+de = "134"
+o_que = "O override da cena conserva a letra pequena"
+alvo = "brport_vs/scripts/TextoDaInterface.gd"
+antes = "var tamanho := roundi(int(bases[item][\"base\"]) * fator)"
+depois = "var tamanho := int(bases[item][\"base\"])"
+reprova = { teste_design = "RB5: override da cena amplia de 19 para 24" }
+
+[[mutante]]
+id = "texto-padrao-nao-restaura"
+de = "134"
+o_que = "Voltar ao Padrão conserva os overrides ampliados"
+alvo = "brport_vs/scripts/TextoDaInterface.gd"
+antes = "var tamanho := roundi(int(bases[item][\"base\"]) * fator)"
+depois = "var tamanho := roundi(int(bases[item][\"base\"]) * fator) if fator > 1.0 else int(bases[item][\"aplicado\"])"
+reprova = { teste_design = "RB5: ciclo restaura todas as fontes" }
+
+[[mutante]]
+id = "texto-no-tardio-ignorado"
+de = "134"
+o_que = "Texto criado depois da escolha não recebe ampliação"
+alvo = "brport_vs/scripts/TextoDaInterface.gd"
+antes = "if no is Control and raiz.is_ancestor_of(no):"
+depois = "if false:"
+reprova = { teste_design = "RB5: no criado depois recebe tamanho escolhido" }
+
+[[mutante]]
+id = "texto-painel-sem-rolagem"
+de = "134"
+o_que = "Painéis altos não acomodam o texto com rolagem"
+alvo = "brport_vs/scripts/AcomodacaoDeLeitura.gd"
+antes = "if _rolos.has(conteudo):"
+depois = "if true:"
+reprova = { teste_design = "RB5: leitura maior cabe em (720, 1152): PainelAjustes" }
+
+[[mutante]]
+id = "texto-acoes-fora-da-tela"
+de = "134"
+o_que = "O avanço fixo fica abaixo da janela"
+alvo = "brport_vs/scripts/AcomodacaoDoPorto.gd"
+antes = "turno.position = Vector2(14, 1265 - altura_turno)"
+depois = "turno.position = Vector2(14, 1465 - altura_turno)"
+reprova = { teste_design = "RB5: acoes fixas cabem fora do rolo" }
+
+[[mutante]]
+id = "texto-arrasto-executa-acao"
+de = "134"
+o_que = "Soltar um arrasto é entregue ao cartão"
+alvo = "brport_vs/scripts/RolagemDaOperacao.gd"
+antes = "\t\t\tif _arrastou:\n\t\t\t\tget_viewport().set_input_as_handled()"
+depois = "\t\t\tif _arrastou:\n\t\t\t\tpass # solta o gesto sobre o cartão"
+reprova = { teste_design = "RB5: arrasto sobre barco atracado nao libera ao premir" }
+
+[[mutante]]
+id = "texto-doca-libera-ao-premir"
+de = "134"
+o_que = "A doca libera o barco antes de distinguir o arrasto"
+alvo = "brport_vs/scripts/DocaCartao.gd"
+antes = "var no_rolo := RolagemDaOperacao.contem(self)"
+depois = "var no_rolo := false"
+reprova = { teste_design = "RB5: arrasto sobre barco atracado nao libera ao premir" }
+
+[[mutante]]
+id = "texto-perde-leitura"
+de = "134"
+o_que = "A troca devolve a leitura ao início"
+alvo = "brport_vs/scripts/MemoriaDeLeitura.gd"
+antes = "rolo.scroll_vertical += roundi(y - rolo.global_position.y - marca.deslocamento)"
+depois = "rolo.scroll_vertical = 0"
+reprova = { teste_design = "RB5: troca conserva caractere na dobra da leitura" }
+
+[[mutante]]
+id = "texto-perde-cursor"
+de = "134"
+o_que = "A reorganização desloca o cursor do campo de nomes"
+alvo = "brport_vs/scripts/TextoDaInterface.gd"
+antes = "foco.caret_column = campo.cursor"
+depois = "foco.caret_column = 0"
+reprova = { teste_design = "RB5: troca conserva campo texto cursor e foco" }
+
+[[mutante]]
+id = "texto-apaga-movimento"
+de = "134"
+o_que = "Alterar o texto regrava uma preferência sem movimento"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "cfg.load(caminho)\n\tcfg.set_value(\"apresentacao\", \"tamanho_do_texto\", valor)"
+depois = "pass # não lê a outra preferência\n\tcfg.set_value(\"apresentacao\", \"tamanho_do_texto\", valor)"
+reprova = { teste_design = "RB5: duas preferencias no disco maior/true ordem 0" }
+
+[[mutante]]
+id = "movimento-apaga-texto"
+de = "134"
+o_que = "Alterar movimento regrava uma preferência sem texto"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "cfg.load(caminho)\n\tcfg.set_value(\"apresentacao\", \"reduzir_movimento\", valor)"
+depois = "pass # não lê a outra preferência\n\tcfg.set_value(\"apresentacao\", \"reduzir_movimento\", valor)"
+reprova = { teste_design = "RB5: duas preferencias no disco maior/true ordem 1" }
+
+[[mutante]]
+id = "texto-nao-persiste"
+de = "134"
+o_que = "O texto maior vale só nesta sessão"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "var erro := cfg.save(caminho)\n\ttexto_mudou.emit(valor)"
+depois = "var erro := OK\n\ttexto_mudou.emit(valor)"
+reprova = { teste_design = "RB5: leitor restaura maior/false ordem 0" }
+
+[[mutante]]
+id = "texto-sinal-ignorado"
+de = "134"
+o_que = "A escolha não chega às telas abertas"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "\ttexto_mudou.emit(valor)"
+depois = "\tpass # não notifica a interface"
+reprova = { teste_design = "RB5: controle aplica tamanho e preserva foco" }
+
+[[mutante]]
+id = "texto-tamanho-invalido"
+de = "135"
+o_que = "Leitor aceita uma palavra que não é um tamanho suportado"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = "if typeof(texto) == TYPE_STRING and texto in [PADRAO, MAIOR]:"
+depois = "if typeof(texto) == TYPE_STRING:"
+reprova = { teste_design = "RB5: leitor recusa tamanho invalido MAIOR" }
+
+[[mutante]]
+id = "texto-esconde-falha-de-gravacao"
+de = "135"
+o_que = "Ajustes ocultam falha ao lembrar o tamanho"
+alvo = "brport_vs/scripts/PainelAjustes.gd"
+antes = "definir_tamanho_do_texto(modo)\n\t_aviso_preferencia.text = \"Não foi possível lembrar a escolha. Ela vale nesta sessão.\"\n\t_aviso_preferencia.visible = erro != OK"
+depois = "definir_tamanho_do_texto(modo)\n\t_aviso_preferencia.text = \"Não foi possível lembrar a escolha. Ela vale nesta sessão.\"\n\t_aviso_preferencia.visible = false"
+reprova = { teste_design = "RB5: falha ao lembrar texto aparece nos Ajustes" }
+
+[[mutante]]
+id = "texto-nome-longo-sem-quebra"
+de = "135"
+o_que = "Um nome válido sem espaços deixa de quebrar dentro do balão narrativo"
+alvo = "brport_vs/scripts/TextoDaInterface.gd"
+antes = "if no.get_meta(&\"quebra_base_rb5\") == TextServer.AUTOWRAP_WORD:\n\t\t\tno.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if fator > 1.0 else TextServer.AUTOWRAP_WORD"
+depois = "if no.get_meta(&\"quebra_base_rb5\") in [TextServer.AUTOWRAP_WORD, TextServer.AUTOWRAP_WORD_SMART]:\n\t\t\tno.autowrap_mode = TextServer.AUTOWRAP_WORD"
+reprova = { teste_design = "RB5: nome de 24 letras cabe no balao sem encolher" }
+
+[[mutante]]
+id = "texto-celular-sem-medida"
+de = "135"
+o_que = "O aparelho alarga além da medida escolhida e sai do centro"
+alvo = "brport_vs/scripts/AcomodacaoDeLeitura.gd"
+antes = "no.offset_right = tamanho.x / 2.0"
+depois = "no.offset_right = tamanho.x / 2.0 + 100.0"
+reprova = { teste_design = "RB5: aparelho conserva medidas e centro Menu-celular" }
+
+[[mutante]]
+id = "texto-fita-alarga-celular"
+de = "135"
+o_que = "Os espaços dos 84 dias forçam o aparelho maior que o visor"
+alvo = "brport_vs/scripts/AcomodacaoDeLeitura.gd"
+antes = "semana.add_theme_constant_override(\"separation\", 1)"
+depois = "semana.add_theme_constant_override(\"separation\", 2)"
+reprova = { teste_design = "RB5: aparelho conserva medidas e centro Menu-celular" }
+
+[[mutante]]
+id = "texto-rolo-rouba-painel"
+de = "135"
+o_que = "O rolo do porto recebe o arrasto destinado ao painel por cima"
+alvo = "brport_vs/scripts/RolagemDaOperacao.gd"
+antes = "if overlay != null:"
+depois = "if false:"
+reprova = { teste_design = "RB5: painel aberto bloqueia gesto no porto de baixo" }
+
+[[mutante]]
+id = "texto-consulta-selecao-ausente"
+de = "135"
+o_que = "Getter do campo sem seleção imprime erro do motor e devolve -1"
+alvo = "brport_vs/scripts/TextoDaInterface.gd"
+antes = "foco.get_selection_from_column() if selecionado else 0"
+depois = "foco.get_selection_from_column()"
+reprova = { teste_design = "RB5: campo sem selecao nao gera erro do motor" }
+
+[[mutante]]
+id = "texto-cartao-guarda-faixa-vazia"
+de = "135"
+o_que = "A altura de teto inicial permanece mesmo depois de o texto caber"
+alvo = "brport_vs/scripts/AcomodacaoDeLeitura.gd"
+antes = "var altura := minf(disponivel, maxf(altura_fixa, pedido))"
+depois = "var altura := disponivel"
+reprova = { teste_design = "RB5: ajustes novos no maior nao guardam faixa vazia" }
+
+[[mutante]]
+id = "texto-rouba-posicao-inicial"
+de = "135"
+o_que = "O andaime troca a última mensagem pelo começo durante a montagem"
+alvo = "brport_vs/scripts/TextoDaInterface.gd"
+antes = "var _leitura_pendente := false"
+depois = "var _leitura_pendente := true"
+reprova = { teste_design = "RB5: conversa nova mostra fim do historico" }
+
+[[mutante]]
+id = "texto-captura-fila-antiga"
+de = "135"
+o_que = "A captura jogada perde o barco quando a fila muda para o rolo"
+alvo = "brport_vs/tools/capturar_tela.gd"
+antes = 'var fila := porto.find_child("Fila", true, false)'
+depois = 'var fila := porto.get_node_or_null("Fila")'
+reprova = { teste_design = "RB5: captura jogada encontra o barco dentro do rolo" }
+
+[[mutante]]
+id = "texto-botao-horizontal-sem-largura"
+de = "135"
+o_que = "A coluna expansível comprime a ação de construir até ficar ilegível"
+alvo = "brport_vs/scripts/TextoDaInterface.gd"
+antes = 'var quebra := fator > 1.0 and not no.get_parent() is HBoxContainer'
+depois = 'var quebra := fator > 1.0'
+reprova = { teste_design = "RB5: acao de obra permanece legivel Construir" }
+
+[[mutante]]
+id = "texto-consulta-nasce-sem-leitura"
+de = "135"
+o_que = "Abrir diretamente no Maior envolve a leitura nativa num segundo rolo e a faz encolher"
+alvo = "brport_vs/scripts/AcomodacaoDeLeitura.gd"
+antes = "\tfor filho in conteudo.get_children():\n\t\tif filho is ScrollContainer:\n\t\t\treturn"
+depois = "\tpass # permite envolver o rolo expansível já existente"
+reprova = { teste_design = "RB5: abertura maior conserva area de leitura Meu porto agora (Fase 1)" }

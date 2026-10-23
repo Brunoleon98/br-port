@@ -53,6 +53,7 @@ var _barra_manter: ProgressBar
 
 
 func setup(index: int) -> void:
+	TextoDaInterface.acompanhar(self)
 	indice_fila = index
 	_barco = GameState.barco_da_oferta()
 	tempo = &"rodada"
@@ -84,6 +85,7 @@ func _build_ui() -> void:
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 10)
 	box.add_child(vbox)
+	box.set_meta(&"cartao_rolavel_rb5", vbox)
 
 	# O TÍTULO É A PESSOA, como o do Sr. Ribeiro (`082`). Dizia «Arlindo
 	# (Porto Farol) fez uma oferta», e na despedida continuava a dizê-lo com o

@@ -33,6 +33,7 @@ var _rebuild_pedido := false
 
 
 func _ready() -> void:
+	TextoDaInterface.acompanhar(self)
 	_build_ui()
 	GameState.cash_changed.connect(func(_v): _pedir_rebuild())
 	GameState.roster_changed.connect(_pedir_rebuild)
@@ -81,6 +82,7 @@ func _build_ui() -> void:
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 8)
 	box.add_child(vbox)
+	box.set_meta(&"cartao_rolavel_rb5", vbox)
 
 	# O VOCABULÁRIO DAS FAMÍLIAS DE 25/09 (`062`–`065`): cabeçalho com selo e
 	# tarja. O Construir abre-se pelo HUD como o Dinheiro, as Docas e a

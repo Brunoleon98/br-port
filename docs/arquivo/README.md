@@ -31,6 +31,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `VERIFICACAO_RB5_2026-10-23/README.md` | 23/10 | RB5 integrado localmente: três colunas/+25%, 84 percursos/86 PNGs, seis suítes, 158 mutantes, Padrão idêntico e persistência/arrasto Web; sem publicação |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-23.md` | 23/10 | RB5 pronto localmente, provas e preservação; publicação e telefone pendentes, sem repetir a escolha aprovada |
 | `ACOMODACAO_TEXTO_2026-10-22/README.md` | 22/10 | Bancada `134`: colunas/lista, +25%/+50%, 22 capturas reais e comparação; escolha e implementação global pendentes |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22e.md` | 22/10 | RB5: propostas de acomodação prontas para escolher tamanho/leiaute, sem preferência global ou publicação |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22c.md` | 22/10 | Autorizações já dadas registradas nas instruções compartilhadas, com alcance por entrega e limites da plataforma |

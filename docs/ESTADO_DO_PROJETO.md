@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 22/10/2026 — propostas de acomodação do texto maior (`134`)
+> **Atualização:** 23/10/2026 — RB5 implementado localmente (`134`, `135`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -121,8 +121,9 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB6 (`129`, #143):** Reduzir movimento nos Ajustes de início/pausa, por aparelho;
 fundo parado e transições diretas, operação e resultados preservados.
 Telefone/aceite visual pendentes; partida/save intactos.
-**RB5 (`131`, #145):** propostas de acomodação em colunas/lista (`134`);
-tamanho e aceite pendentes, sem opção global ou persistência.
+**RB5 (`134`, `135`):** três colunas/+25% implementados localmente;
+Padrão/Maior nos Ajustes, persistência independente do movimento e provas
+no arquivo (`135`). Publicação e telefone pendentes.
 **Início/fundo (`132`/`133`, #146/#147):** mesclados por Bruno. V3 só na
 inicial, celular com degradê. Pages `ed2c770`; CI pós-merge verde.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,

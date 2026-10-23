@@ -3,7 +3,11 @@
 **22/10/2026.** Bruno escolheu continuar o item 1 apresentado: preparar
 propostas de acomodação e comparações para avaliar o texto maior; só depois
 implementar o tamanho escolhido. É a continuação da bancada da `131`.
-O percentual, o leiaute final e a implementação global continuam sem aceite.
+Na continuação, Bruno aprovou **«Três colunas com +25% (recomendado)»**.
+O aceite define o modo Maior do RB5: fonte a 1,25 da base, três cartões lado
+a lado e operação rolável, com Construir, Menu e Avançar dia fixos. O modo
+Padrão conserva a apresentação anterior. A implementação global segue o
+recorte de `docs/RECORTE_TEXTO_AJUSTAVEL_2026-10-19.md`.
 
 A main de partida é `ed2c770`, #147 mesclado por Bruno. Nenhum PR aberto
 na consulta; a branch de fechamento anterior e seus commits locais foram
@@ -36,5 +40,6 @@ acrescenta a preferência de texto antes de provar sua convivência no disco.
 Capturas reais, medidas, reprodução e limites em
 `docs/arquivo/ACOMODACAO_TEXTO_2026-10-22/README.md`. O comparador preserva
 os PNGs e permite olhar início/fim da rolagem em +25% e +50%.
-Conforto, toque no telefone e escolha da proposta ainda cabem ao Bruno.
+O aceite da proposta não substitui as provas de interação da integração nem
+a conferência no telefone.
 Nenhuma autorização de publicação desta entrega foi presumida.

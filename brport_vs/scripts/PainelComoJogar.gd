@@ -26,7 +26,7 @@ func _ready() -> void:
 
 func _mostrar(id: String) -> void:
 	if _rolo != null:
-		_posicoes[assunto_atual] = _rolo.scroll_vertical
+		_posicoes[assunto_atual] = MemoriaDeLeitura.marcar(_rolo)
 	assunto_atual = id
 	_revisao += 1
 	for filho in _vbox.get_children():
@@ -74,6 +74,7 @@ func _mostrar(id: String) -> void:
 				foco = botao
 	else:
 		var corpo := Label.new()
+		corpo.name = "TextoDoArtigo"
 		corpo.name = "Corpo"
 		corpo.text = texto
 		corpo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -101,7 +102,7 @@ func _restaurar_leitura(revisao: int, foco: Button) -> void:
 	if revisao != _revisao or not is_inside_tree() or is_queued_for_deletion():
 		return
 	foco.grab_focus()
-	_rolo.scroll_vertical = int(_posicoes.get(assunto_atual, 0))
+	MemoriaDeLeitura.restaurar(_rolo, _posicoes.get(assunto_atual, {}))
 
 
 func _fechar() -> void:
