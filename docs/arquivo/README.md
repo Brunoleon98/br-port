@@ -31,6 +31,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `ACOMODACAO_TEXTO_2026-10-22/README.md` | 22/10 | Bancada `134`: colunas/lista, +25%/+50%, 22 capturas reais e comparação; escolha e implementação global pendentes |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-22e.md` | 22/10 | RB5: propostas de acomodação prontas para escolher tamanho/leiaute, sem preferência global ou publicação |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22c.md` | 22/10 | Autorizações já dadas registradas nas instruções compartilhadas, com alcance por entrega e limites da plataforma |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22b.md` | 22/10 | Encaminhamento autorizado por PR do fundo exclusivo da inicial (`133`); provas locais preservadas e CI próprio a conferir |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22.md` | 22/10 | V3 aceita na foto e integração local exclusiva da inicial (`133`), com celular preservado e publicação não solicitada |

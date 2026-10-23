@@ -801,6 +801,9 @@ doca; tamanho e acomodação ainda pendentes. A ampliação sozinha sobrepõe
 a fila à mensagem em +25% e corta conteúdo em +50%. Sem opção global,
 persistência ou redesenho do HUD autorizado nesta bancada. As estradas
 continuam na divisão visual do Claude; não são a próxima tarefa do Codex.
+**Em 22/10, Bruno autorizou preparar acomodação e comparações do RB5**
+(`134`): colunas e lista, com +25%/+50%, mantendo o mapa. A proposta ainda
+espera escolha de tamanho e aceite; não é a preferência global integrada.
 **Em 20/10, Bruno pediu corrigir o contraste do controle de movimento,
 reunir as consultas em Configurações e deixar quatro entradas no início
 (`132`).** #146 mesclado por Bruno. V3 aceita na foto de runtime em
