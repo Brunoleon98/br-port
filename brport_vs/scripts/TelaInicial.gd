@@ -49,6 +49,7 @@ var _configuracoes: Control
 
 
 func _ready() -> void:
+	TextoDaInterface.acompanhar(self)
 	anchor_right = 1.0
 	anchor_bottom = 1.0
 	_mais_recente = GameState.espaco_mais_recente()

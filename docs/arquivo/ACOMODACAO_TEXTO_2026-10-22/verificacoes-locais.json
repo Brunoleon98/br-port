@@ -1,0 +1,50 @@
+[
+  {
+    "passo": "sentinela-antes",
+    "exit_code": 0,
+    "marcador": "Sentinela plantada",
+    "ok": true
+  },
+  {
+    "passo": "run_tests",
+    "exit_code": 0,
+    "marcador": "TODOS OS TESTES PASSARAM",
+    "ok": true
+  },
+  {
+    "passo": "teste_design",
+    "exit_code": 0,
+    "marcador": "DESIGN OK",
+    "ok": true
+  },
+  {
+    "passo": "teste_audio",
+    "exit_code": 0,
+    "marcador": "AUDIO OK",
+    "ok": true
+  },
+  {
+    "passo": "teste_fumaca",
+    "exit_code": 0,
+    "marcador": "FUMACA OK",
+    "ok": true
+  },
+  {
+    "passo": "teste_registro",
+    "exit_code": 0,
+    "marcador": "REGISTRO OK",
+    "ok": true
+  },
+  {
+    "passo": "asset_validator",
+    "exit_code": 0,
+    "marcador": "ASSET OK",
+    "ok": true
+  },
+  {
+    "passo": "sentinela-depois",
+    "exit_code": 0,
+    "marcador": "SENTINELA INTACTA",
+    "ok": true
+  }
+]

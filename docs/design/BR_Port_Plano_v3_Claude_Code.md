@@ -797,16 +797,22 @@ do RB6 pendentes. Claude continua no visual; a vegetação foi aceite na `130`
 e integrada pelo Bruno no #144 (`fc05203`).
 **Em 19/10, Bruno escolheu RB5 — tamanho de texto ajustável (`131`) e
 autorizou a bancada.** Padrão/+25%/+50% nos Ajustes, artigo longo, HUD e
-doca; tamanho e acomodação ainda pendentes. A ampliação sozinha sobrepõe
+doca; naquele passo, tamanho e acomodação estavam pendentes. A ampliação sozinha sobrepõe
 a fila à mensagem em +25% e corta conteúdo em +50%. Sem opção global,
 persistência ou redesenho do HUD autorizado nesta bancada. As estradas
 continuam na divisão visual do Claude; não são a próxima tarefa do Codex.
+**Em 22/10, Bruno autorizou preparar acomodação e comparações do RB5**
+(`134`): colunas e lista, com +25%/+50%, mantendo o mapa. Depois aprovou
+**três colunas e +25%**. A integração global está pronta localmente (`135`), com
+Padrão/Maior, leitura e persistência independentes do movimento. As provas
+estão no arquivo da sessão de 23/10. Bruno autorizou o PR #148, aberto;
+CI remoto e teste no telefone pendentes, sem merge ou atualização do Pages.
 **Em 20/10, Bruno pediu corrigir o contraste do controle de movimento,
 reunir as consultas em Configurações e deixar quatro entradas no início
 (`132`).** #146 mesclado por Bruno. V3 aceita na foto de runtime em
-22/10 e integrada localmente somente na inicial (`133`), com o porto ao
-fundo e o navio afastado do menu; encaminhamento por PR autorizado. O texto
-global continua separado, sem tamanho escolhido.
+22/10 e mesclada por Bruno no #147 (`133`), somente na inicial, com o porto
+ao fundo e o navio afastado do menu. CI pós-merge e pacote do Pages em
+`ed2c770` conferidos; o celular conserva seu degradê.
 A pesquisa entrou na main com
 o cancelamento, sem aplicar toda a lista. A inspeção anterior permanece em
 `docs/REVISAO_RECURSOS_BASICOS_2026-10-15.md`, inclusive falhas do save.

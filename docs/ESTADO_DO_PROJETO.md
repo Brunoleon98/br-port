@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 22/10/2026 — fundo da inicial (`133`); início/contraste (`132`)
+> **Atualização:** 23/10/2026 — RB5 implementado localmente (`134`, `135`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -121,11 +121,11 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB6 (`129`, #143):** Reduzir movimento nos Ajustes de início/pausa, por aparelho;
 fundo parado e transições diretas, operação e resultados preservados.
 Telefone/aceite visual pendentes; partida/save intactos.
-**RB5 (`131`, #145 mesclado):** bancada; tamanho e acomodação pendentes, sem opção global.
-**Início (`132`, #146 mesclado por Bruno):** quatro entradas/Configurações e movimento legível
-sob toque (`132`).
-V3 aceita/integrada só na inicial (`133`); PR solicitado.
-Celular conserva o degradê.
+**RB5 (`134`, `135`):** três colunas/+25% implementados localmente;
+Padrão/Maior nos Ajustes, persistência independente do movimento e provas
+no arquivo (`135`). PR #148 aberto; CI e telefone pendentes.
+**Início/fundo (`132`/`133`, #146/#147):** mesclados por Bruno. V3 só na
+inicial, celular com degradê. Pages `ed2c770`; CI pós-merge verde.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
 `130`); a seguir, estradas, depois detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone

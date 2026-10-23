@@ -23,6 +23,8 @@ extends PainelNarrativo
 const LARGURA := 460
 var _movimento: CheckButton
 var _aviso_preferencia: Label
+var _texto_padrao: Button
+var _texto_maior: Button
 
 
 func setup(_sem_argumentos: Variant = null) -> void:
@@ -47,6 +49,30 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	_aviso_preferencia.visible = false
 	_movimento.toggled.connect(_escolher_movimento)
 	PreferenciasDeApresentacao.atual().mudou.connect(_mostrar_movimento)
+	paragrafo("Tamanho do texto")
+	var tamanhos := HBoxContainer.new()
+	tamanhos.name = "TamanhoDoTexto"
+	tamanhos.add_theme_constant_override("separation", 10)
+	_vbox.add_child(tamanhos)
+	var grupo := ButtonGroup.new()
+	for modo in [PreferenciasDeApresentacao.PADRAO, PreferenciasDeApresentacao.MAIOR]:
+		var botao := Button.new()
+		botao.name = "TextoPadrao" if modo == PreferenciasDeApresentacao.PADRAO else "TextoMaior"
+		botao.text = "Padrão" if modo == PreferenciasDeApresentacao.PADRAO else "Maior (+25%)"
+		botao.toggle_mode = true
+		botao.button_group = grupo
+		botao.custom_minimum_size.y = TOQUE_MIN
+		botao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		botao.pressed.connect(_escolher_texto.bind(modo))
+		tamanhos.add_child(botao)
+		if modo == PreferenciasDeApresentacao.PADRAO:
+			_texto_padrao = botao
+		else:
+			_texto_maior = botao
+	_mostrar_texto(PreferenciasDeApresentacao.atual().tamanho_do_texto)
+	PreferenciasDeApresentacao.atual().texto_mudou.connect(_mostrar_texto)
+	var exemplo := paragrafo("Exemplo: Serviço concluído — R$125.000.")
+	exemplo.name = "ExemploDoTexto"
 
 	fio()
 	secao("REGISTRO DA PARTIDA")
@@ -63,6 +89,17 @@ func _escolher_movimento(reduzido: bool) -> void:
 
 func _mostrar_movimento(reduzido: bool) -> void:
 	_movimento.set_pressed_no_signal(reduzido)
+
+
+func _escolher_texto(modo: String) -> void:
+	var erro := PreferenciasDeApresentacao.atual().definir_tamanho_do_texto(modo)
+	_aviso_preferencia.text = "Não foi possível lembrar a escolha. Ela vale nesta sessão."
+	_aviso_preferencia.visible = erro != OK
+
+
+func _mostrar_texto(modo: String) -> void:
+	_texto_padrao.set_pressed_no_signal(modo == PreferenciasDeApresentacao.PADRAO)
+	_texto_maior.set_pressed_no_signal(modo == PreferenciasDeApresentacao.MAIOR)
 
 
 # Um rótulo, o slider e a percentagem. A linha tem a altura do alvo de toque,

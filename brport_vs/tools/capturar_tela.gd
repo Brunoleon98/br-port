@@ -936,7 +936,10 @@ func _paineis_abertos() -> int:
 # barco no berço sem passar pelo que o cartão faz. O teto é o número de
 # berços: cada toque enche um, e um que não enchesse nada pararia o laço.
 func _atracar_todos() -> void:
-	var lugar := _main.get_node("Fila").get_child(0) as Control
+	var lugar := primeiro_barco_da_fila(_main)
+	if lugar == null:
+		push_error("capturar_tela: não achei o primeiro cartão ao largo")
+		return
 	for _i in range(GS.docks.size()):
 		if GS.atracagem_pendente() == Vector2i.ZERO:
 			return
@@ -948,3 +951,10 @@ func _atracar_todos() -> void:
 		if GS.bercos_livres() == antes:
 			push_error("capturar_tela: o toque no barco ao largo não atracou nada")
 			return
+
+
+static func primeiro_barco_da_fila(porto: Node) -> Control:
+	# O tamanho maior conserva os cartões e muda o pai deles para o rolo.
+	# O caminho direto antigo abortava a captura jogada depois do dia 29.
+	var fila := porto.find_child("Fila", true, false)
+	return fila.get_child(0) as Control if fila != null and fila.get_child_count() > 0 else null

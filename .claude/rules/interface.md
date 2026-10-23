@@ -32,6 +32,11 @@ paths:
 
 ### Interface
 
+- **Quebrar o texto de um botão numa linha horizontal pode zerar sua largura
+  mínima.** No RB5 (`135`), a coluna expansível do Construir tomou o espaço
+  da ação, que virou uma tira alta dentro do painel rolável. A rolagem tornava
+  o conteúdo alcançável, mas não legível. Preserve a largura pedida pelo texto
+  do botão ou reorganize a linha; confira a ação montada, além dos rótulos.
 - **Tela nova é OVERLAY, nunca fase do `GameState`.** Uma fase nova que bloqueie
   o turno não dá erro nenhum: o `advance_turn()` retorna calado fora de
   `"playing"`, e o laço do `simular_balanceamento.gd` só sabe resolver

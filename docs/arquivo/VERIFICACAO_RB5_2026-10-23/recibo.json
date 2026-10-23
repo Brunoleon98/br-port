@@ -1,0 +1,1903 @@
+{
+  "data_utc": "2026-10-23",
+  "base_main": "ed2c770b105fecb4c9750e5e0fca64735fae97e1",
+  "branch": "codex/rb5-texto-global",
+  "publicacao_desta_entrega": false,
+  "ci_remoto_desta_entrega": false,
+  "godot": "4.6.3",
+  "fonte_capturada_sha256": "e72112266030c09bface13011a957171807592a9f5be5cf896276874f900b523",
+  "arquivos_na_fonte_capturada": 1491,
+  "capturadores_sha256": {
+    "brport_vs/tools/capturar_cena.gd": "dd3ac976d29016e1d77ba9fdfa29a294a18baf62da40301c090a58453d7fe76d",
+    "brport_vs/tools/capturar_cena_texto_maior.gd": "e917e750388b8791ace24b00367f3c214f6dbebf3b8d70b12a8c257ae87023d8",
+    "brport_vs/tools/capturar_diagnostico.gd": "d7c6af7ee34de6b33e56d495c647f2a4b2626a83d9c2846dfff0b0942925e4f5",
+    "brport_vs/tools/capturar_diagnostico_texto_maior.gd": "1889d259d35b627ef837445c52942141e317948cc74037330dbd9067130e0505",
+    "brport_vs/tools/capturar_fase_2.gd": "c9f86c9fe870f67f9412e3cbcf546a36ee4b82478c7e21af5ddbcd7cc636f78e",
+    "brport_vs/tools/capturar_fase_2_texto_maior.gd": "4d7202668e2579bac3cc3d47dacec7ff95e73e00d0e42b28abeaf20b7791324e",
+    "brport_vs/tools/capturar_meu_porto.gd": "d9cb32b27e8a51c83862a7c3ac4f9e2b585e4b52ccf98bf5e4c5458b23c68cd6",
+    "brport_vs/tools/capturar_meu_porto_texto_maior.gd": "0df9e8382ef431f0deeb7dc1b9122e8dfabb4fdf4b74d62e0dd0dcc21795cf9a",
+    "brport_vs/tools/capturar_movimento.gd": "65375f789d4b8094f1a688c215569e6fae96f9836c7762e716f0b4e06524b734",
+    "brport_vs/tools/capturar_movimento_texto_maior.gd": "656490d7957548e9821011f758898cd0fcea133ae5a212a942d5db9cae8ddcd9",
+    "brport_vs/tools/capturar_obra.gd": "1c90537fb44959773503489d402c4fe44abb6e2a7aae504c8fefce804d898274",
+    "brport_vs/tools/capturar_tela.gd": "eedce831575a9a160b8f4394f9a42201218b4ac55f609f8b1b4e121ac1251188",
+    "brport_vs/tools/capturar_texto_maior.gd": "1bf24671185a9c8ee69ce8295c0ebbc30a2295df008c2b68d805f8483cdc1521"
+  },
+  "receitas_de_captura_sha256": "fb3d95801cc7ce2577fe8eea3d1c8d1e80f9039b1471aeffef8b4d10377bfcdd",
+  "suites": [
+    {
+      "suite": "run_tests",
+      "ok": true,
+      "marcador": "TODOS OS TESTES PASSARAM",
+      "segundos": 23.17
+    },
+    {
+      "suite": "teste_design",
+      "ok": true,
+      "marcador": "DESIGN OK",
+      "segundos": 41,
+      "duracao_arredondada": true,
+      "reconfirmada_com_nome_no_balao": "base e fim do catálogo completo",
+      "casos_texto_ajustavel_sha256": "dab80e30c78cb7946655662126cb4430250ba5cf7d9f72d4e625825bb9d5b395"
+    },
+    {
+      "suite": "teste_audio",
+      "ok": true,
+      "marcador": "AUDIO OK",
+      "segundos": 0.37
+    },
+    {
+      "suite": "teste_fumaca",
+      "ok": true,
+      "marcador": "FUMACA OK",
+      "segundos": 10.89
+    },
+    {
+      "suite": "teste_registro",
+      "ok": true,
+      "marcador": "REGISTRO OK",
+      "segundos": 0.47
+    },
+    {
+      "suite": "asset_validator",
+      "ok": true,
+      "marcador": "ASSET OK",
+      "segundos": 8.84
+    }
+  ],
+  "capturas": [
+    {
+      "nome": "retomada_fase2.png",
+      "sha256": "e818de69882d20b611e1e0d8d6c4610389109f93eaaa33a1cdcce37c16ad3941",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "diagnostico.png",
+      "sha256": "7f250c22badbf5c07c075553d93ab690acae527b5ecd9f49d031cbe434075c7e",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ajuda_inicio_glossario.png",
+      "sha256": "e99afeffcb9e968b39c1a4d0471c774600d4881feaef3c0006a9429e2e919587",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "obra_andamento.png",
+      "sha256": "9fd0d60a928b210ff344434c747e2bbdcf1b05064eaf79b4ab01e30c8cf325a9",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "reparos_fase1.png",
+      "sha256": "84700e7952e71e55f3a2fb9f7faf0e998b0d683c699302d478dbbed0f4ca3db6",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "inicio.png",
+      "sha256": "aab487de46dbd1a3e37308e32aaab806b87967923ad93bbbc5206ee016dc1b15",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "porto.png",
+      "sha256": "d6ae088ebf7f773e82b4d11d1476abdd91b0046a4c45b8a245b34a958f44855c",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "meio.png",
+      "sha256": "268ff65ec33fe654d4152f3030b8d2d5aea8f831c7eafcc57df14ad24d2a23bf",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "docas.png",
+      "sha256": "8f08e768b026c621ae16881e28cc74c085310eab2cc6909a3f2156403480e873",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "pesca.png",
+      "sha256": "18034c212bbd2c4cb2721071d27a973edbfe667c655a7c748d16216f3f87a1e1",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "guindaste2.png",
+      "sha256": "d947e22838e4da4b840d82492cb77b6a27b38f49eccfb0f912d4774fcb1e69da",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "virada.png",
+      "sha256": "3e7cefdf61607f6496400118489cb2a4ddf443bd779e3b929822679f09a439ac",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "largo.png",
+      "sha256": "8c0138629dfef59a3fd44e9efea4c2d365a8f5e5043187a0d0b3544619b045bd",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "boletim.png",
+      "sha256": "38e6e32f2814e015828270f8a5d6b09770bdc2b99283a9b23a43da49825ec41b",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "boletim_ruim.png",
+      "sha256": "1ed55e5ff87e4c52d075c9766c6a9383baf7552ae424723ba92b84a4b1734cbe",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "boletim_otimo.png",
+      "sha256": "2e8825777578772bd7af40705996965410eaff4c121905d563242ef995fb0005",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "pausa.png",
+      "sha256": "2a868a4a79166bd9d14f54a20d879291d4850282ee955889356ae6e0ed3c14a7",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "diario.png",
+      "sha256": "6e01f9925bf6c684f63f01678fc313da1e65987a5f81a92a74c89c10324cdcda",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "parcela.png",
+      "sha256": "531227f682e46718edd8321f021650285acfd958c0c97faa3182d7c435b270f5",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ribeiro.png",
+      "sha256": "870771e5d87c004d6a6e07e8a4b4a5859e02661d517a445231a2258f5873a506",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ribeiro_pagou.png",
+      "sha256": "7fc4bf343dd8517d3ae3ce8df4bea70b424360c4bd87f79f85427c15f4cd0123",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ribeiro_nao_pagou.png",
+      "sha256": "0b4619f32e36216a79f2450e4f1a570bb1db164613f0296f041cbec0a093bf32",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ribeiro_segunda_chance.png",
+      "sha256": "16a719e32ade8724b0eea892daf055c6cf23f44f78b04bb32b6c57e7962e6e1c",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ribeiro_emprestou.png",
+      "sha256": "f6391a09b3a07c21daae0dcb3b192e7a3a2146379587c58804f5102e49f8c9e3",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ribeiro_2.png",
+      "sha256": "f9ccb2d515b5e4c8fc2f3d1fd3c39be42ecb047ce04645672f9a10b21b19b188",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ribeiro_3.png",
+      "sha256": "2f41d8fc36b5b6447f0e8f1a07d0a1d01070412be284b2ba3e1eba693fa85cb8",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "contraoferta.png",
+      "sha256": "d61b69f0f58cad3df65535389fbce41d4b3f847744c4b829ff3be1dd0f83b9a9",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "contraoferta_pressao.png",
+      "sha256": "598100e2c3a84c7f363d87a00b68c2e8436545f042cb47ce180c24657d72974e",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "contraoferta_fim.png",
+      "sha256": "2ee77e576d8e4c904b7dcf94f7b11c6ef02e035b46734f7e18f251560d8db17b",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "contraoferta_venceu.png",
+      "sha256": "4fa1ae00949e68cbfb42133a0e7c4c40f32a4999eb02ce4be40235891813c8b6",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "menu.png",
+      "sha256": "08192ac88714a5e1b11f740ac98d9273dc6dc41533c5730d26b121730cfb368d",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "inicial.png",
+      "sha256": "7f855579ae6a561c7d4371f82a6147ff9431c976621725d82845808f344a14c3",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "configuracoes.png",
+      "sha256": "3d6b5ade516c41455e1f18e25e399e0bc56a04816d7957e60c71a167fcdcd4af",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "retomada_fase1.png",
+      "sha256": "32331fe074e95196e8bf67614f2400f896a513ce7753c8479717a7da3c36449b",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "retomada_fase1_fim.png",
+      "sha256": "ec589b8ea3966fe58343fd1676d6422bc3eb9b98e2f9d30743f6a2fd14c20c76",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "retomada_fase2_fim.png",
+      "sha256": "1b5d5981c3d48934e32cff2871b3725fc9e91204354885934605e818f77be747",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "retomada_livre.png",
+      "sha256": "ec126c6a32f05d57871065f9342e522b537dac32e541f7bdb14e03719a2deef5",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "retomada_encerrada.png",
+      "sha256": "81b76c07c068aa5e48e9515fbb236f21ae41dab88cdc41c4a9a0fe70e91c42cd",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "retomada_indisponivel.png",
+      "sha256": "f8e871e3415dea377d1784fb27aaf58a585d9a6a8a4bfb64b3b389ff12465bc0",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "espacos_carregar.png",
+      "sha256": "b37b04e13a3ca3aff2b386369940fb0cd2124bca2e2cd9eec1139c7134469fca",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "espacos_nova.png",
+      "sha256": "466b5701ba6ae3953a8a65c6d04b5d984b43c7a1ea81fb65eef15695074af28f",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "espacos_confirmar.png",
+      "sha256": "dd4327593690466efb596f7b82eb20e0e4b1b942028916acd4f8101f7eaa484e",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ajustes.png",
+      "sha256": "c565e38b08c0ed73f5b581d6c2baee077be1ad3c2db248229300327520b325f0",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ajustes_movimento_ligado.png",
+      "sha256": "dffd7d96f1c0fa7a4e7d731027b41226d13215539f7b6ea32fe54802adab9288",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "movimento_normal.png",
+      "sha256": "de199c0a67343a06736b12bb03dd2efefc98bc1b6ad6539ea657608bd90d3852",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "movimento_reduzido.png",
+      "sha256": "41c558fbfe0caf9d53ba10469bb635223411057b12cadd86bb43954093bdf631",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "movimento_inicio.png",
+      "sha256": "ac4314af5fd75abc87f37e8a4fd2b6fa512eb9b8e264c3254890c4b4537214e5",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "movimento_pausa.png",
+      "sha256": "78ab9cc23513c6c98172a36d73c3fa8feea7daa75778ddf93d02303d73760f88",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "movimento_resultado.png",
+      "sha256": "e7b425cfd4fb105f76ed5ef55a84838f82c6c4f2a7bd824d5a6d17fe3b17f5c7",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "diagnostico_copiado.png",
+      "sha256": "d4d285aff5a0e93ed5902e2207874c1ed112eaa33f206071cefa7e43725b7c19",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "diagnostico_indisponivel.png",
+      "sha256": "a467fc01ab1fa7a73c878ab27fc3438a69ccc06558cf5193d6d99b409f0eb4a1",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ajuda_inicio_indice.png",
+      "sha256": "e27b9e98bee0feb70bfc80e0950ddab7dd3b2676fe9f877eaa561aed2b58aaae",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ajuda_inicio_artigo.png",
+      "sha256": "ea38f06987a7b97933bf19864c187768b35e32ed72ce65063387a3d184af0538",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ajuda_pausa_indice.png",
+      "sha256": "4f0197c5f6fb1a036522552c73d78d532b8b2018e6e4950ed7745db8a7952420",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ajuda_pausa_artigo.png",
+      "sha256": "4166278cc9b70319ac2f3c71facb4e38d824f10eb79ea68c7e7888052baafb24",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "ajuda_pausa_glossario.png",
+      "sha256": "72071225ae23667c7d0e11f6ce238826fc7b36bdc3734564bc11deacf8ae29d4",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "mensagens.png",
+      "sha256": "3edde9b44ff33750384f5f3571d7b70ae0d652a256ddcc85c509eb5592dad8da",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "mensagens_vozes.png",
+      "sha256": "869bc979b4912d4a8d22d4d7b5bbdb5a81d13cf05aae008cc4c698d58adc8055",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "tutorial_atracar.png",
+      "sha256": "353c06bab4fa4233c7767ca9a7a8779dcb513524e7f670a43ceb107ab34a2fc4",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "tutorial_avancar.png",
+      "sha256": "5e5b9eb0c4deb71c200d25b6a2b8d30832d6a6ee40003018e5a608cf227b6323",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "tutorial_aviso.png",
+      "sha256": "0de2612ad9f652511a9824d66f51cd9e7f0752c459db162b428f4e8ad2a7ce8f",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "construir.png",
+      "sha256": "e0e6024ab821f29111ded0b26d6851a70b8c11d1f08ef445dd29605277395e6e",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "construir_inicio.png",
+      "sha256": "807745ac9b282eaccd67c9aa18831d4d9dc419e8d1a9beebb610fa3ddc6f275a",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "construir_semana2.png",
+      "sha256": "1645255eee25fd22f921e6ee74f63547ee887eda3c57e2efe8205634a6fcaedf",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "construir_semana5.png",
+      "sha256": "b5664dd75cc34e6d91f237304a5b5135433ea7cbd551f5745ba64a492a4474aa",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "calendario.png",
+      "sha256": "f5c3080bda9b69ac62a16593f275b635afa6317894eaa7d63d50f72e2f155c44",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "calendario_final.png",
+      "sha256": "9f3e91faaee6a45741a2447d051726f4629f4dd8baa1b4a6b51705ea2a1e390d",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "painel_docas.png",
+      "sha256": "b13ee981c130b74eefbd542ea1ca32ee5b6433aec5b24145e754b075b35fafd6",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "reputacao.png",
+      "sha256": "35829242eac9c8204ee2d8ca4da6fb32556ec41692f6cba7ecdef9efc985c271",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "caixa.png",
+      "sha256": "f0647fd71a206774f093762758c988729ca998bad9dad81e4b28ac199b219ff1",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "nomes.png",
+      "sha256": "6bd5d4495725ee83281ce64827c32bc39dce92568cdef78b40d31e14c59717f2",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "nomes_virando.png",
+      "sha256": "753abb1bd28d7a86e3f6a93a06e985b282bff9aab98de0d3236b407f6b203020",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "fimfase.png",
+      "sha256": "4d48b1e0883ef16648d3e7e63a9c733ed107e97701d3cbb3036da69486b96f92",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "fimfase_2.png",
+      "sha256": "d9a83b1374d00cf4029ee1319f39216f20a5c01dee45e3f6b5b950f6e3e20262",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "porto_fase_2.png",
+      "sha256": "9547705dee0ac293c014d49bb3bdc3658feb1e7ac294a91c89665fb0dc316226",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "construir_fase_2.png",
+      "sha256": "4723943737b8c717daa02b2fa750fb4de65dbff64a0099a58dadd5a95acd1d88",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "meta_fase_2.png",
+      "sha256": "df1baa8488300d7f70f4e3e72ea768804c244201365094f9f0f054ae35644fb0",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "diario_fase_2.png",
+      "sha256": "9cda6ed10847ae8bd5e6a7b560eb18e8c40ebd802e9701e1490c1c82299010dc",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "livre_fase_2.png",
+      "sha256": "da4020813d11db27d5e676a1258ac4df1ba1f5284b10ae2f6d814f9e46052496",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "suspenso_fase_2.png",
+      "sha256": "f2faaa1a1e1005a6204cbf0ebfcf6f6f42c31d4cd4d186825dbd0f041b5077fe",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "cancelamento_fase_2.png",
+      "sha256": "133aa076d676d3511f7a893ea30957e47b403c28598ed9471af4ae690bf853e9",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "cancelamento_negativo_fase_2.png",
+      "sha256": "9ceb523f5f4a16d63ab4cf0de9ab697407c29aff03dfa019ce3871795af6942e",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "cancelamento_caixa_fase_2.png",
+      "sha256": "311ca94a20b86d80c1248b72c24dee78deef873b8b8abce7bd129a49b9a90762",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "balanco.png",
+      "sha256": "7aaa3b0b9e5c98af592d0554804cf0237f020668f855f1042e2baa057fed1496",
+      "resolucao": [
+        720,
+        1280
+      ]
+    }
+  ],
+  "capturas_temporais": [
+    {
+      "nome": "movimento_normal_t1.png",
+      "sha256": "035cc5c4c972a53714bd5f1cf2f09ed74165e00e2612d2d41d64d515286bef69",
+      "resolucao": [
+        720,
+        1280
+      ]
+    },
+    {
+      "nome": "movimento_reduzido_t1.png",
+      "sha256": "be96ebe9ef05e5571a9de77ffadcf224b1844ddfd1a943021cbbeef1496841da",
+      "resolucao": [
+        720,
+        1280
+      ]
+    }
+  ],
+  "total_pngs": 86,
+  "cobertura": "24 painel(eis) que o jogo abre, todos fotografados.\n21 tempo(s) em 7 painel(eis) de mais de uma tela; 21 fotografado(s) e 0 sem foto, declarado(s).\n12 cara(s) de 4 personagem(ns), todas fotografadas.\nCOBERTURA OK",
+  "padrao_contra_main": {
+    "inicio": {
+      "base": "4d66d98dc69485d9c901635bca300e675ff6e251653e8a044cf64eed89c01977",
+      "atual": "4d66d98dc69485d9c901635bca300e675ff6e251653e8a044cf64eed89c01977",
+      "identicos": true
+    },
+    "menu": {
+      "base": "e605eaa5c090f0d811818e44171f11b03bec72f3cea7093dd5e79b8e8342cfad",
+      "atual": "e605eaa5c090f0d811818e44171f11b03bec72f3cea7093dd5e79b8e8342cfad",
+      "identicos": true
+    },
+    "inicial": {
+      "base": "0e6d8265218bb042fc49d3bc74f46f6c644021282315879fb1a9ba8064f54a04",
+      "atual": "0e6d8265218bb042fc49d3bc74f46f6c644021282315879fb1a9ba8064f54a04",
+      "identicos": true
+    }
+  },
+  "mutantes": {
+    "total_ids": 158,
+    "total_pares": 158,
+    "pares": [
+      {
+        "id": "atracar-sem-trabalhador",
+        "suite": "run_tests",
+        "guarda": "com o trabalhador junto",
+        "confirmada": true
+      },
+      {
+        "id": "equipe-do-pier-ignorada",
+        "suite": "run_tests",
+        "guarda": "o berco 2 chama o trabalhador 2",
+        "confirmada": true
+      },
+      {
+        "id": "atracagem-conta-um-berco",
+        "suite": "run_tests",
+        "guarda": "conta todos os bercos livres",
+        "confirmada": true
+      },
+      {
+        "id": "desistencia-de-graca",
+        "suite": "run_tests",
+        "guarda": "e custa reputacao",
+        "confirmada": true
+      },
+      {
+        "id": "save-fila-sem-teto",
+        "suite": "teste_fumaca",
+        "guarda": "mais barcos do que lugares",
+        "confirmada": true
+      },
+      {
+        "id": "save-oferta-fora-da-fila",
+        "suite": "teste_fumaca",
+        "guarda": "oferta fora da fila",
+        "confirmada": true
+      },
+      {
+        "id": "espera-com-dois-espacos",
+        "suite": "teste_design",
+        "guarda": "a espera do barco ao largo cabe",
+        "confirmada": true
+      },
+      {
+        "id": "trabalhador-em-duas-docas",
+        "suite": "run_tests",
+        "guarda": "segunda alocacao do MESMO trabalhador recusada",
+        "confirmada": true
+      },
+      {
+        "id": "fecho-sem-reabrir-o-turno",
+        "suite": "run_tests",
+        "guarda": "[igualar] botao AVANCAR DIA reabilitado",
+        "confirmada": true
+      },
+      {
+        "id": "nivel-do-porto-pelo-maior",
+        "suite": "run_tests",
+        "guarda": "com pórtico e sem cais o porto FICA no nível 2",
+        "confirmada": true
+      },
+      {
+        "id": "receita-sem-a-estrutura",
+        "suite": "run_tests",
+        "guarda": "T15: armazenagem ainda não recebe bônus",
+        "confirmada": true
+      },
+      {
+        "id": "derrota-sem-fechar-a-semana",
+        "suite": "run_tests",
+        "guarda": "recusar a parcela FECHA a semana 4",
+        "confirmada": true
+      },
+      {
+        "id": "antecipacao-abate-capital",
+        "suite": "run_tests",
+        "guarda": "T14: antecipar nunca perdoa o capital emprestado",
+        "confirmada": true
+      },
+      {
+        "id": "segunda-chance-sem-limite",
+        "suite": "run_tests",
+        "guarda": "T18: e a segunda chance não abre outra vez",
+        "confirmada": true
+      },
+      {
+        "id": "obra-pronta-um-dia-cedo",
+        "suite": "run_tests",
+        "guarda": "T15: segundo dia termina uma vez, abre no dia 3",
+        "confirmada": true
+      },
+      {
+        "id": "save-armazem-no-dia-9",
+        "suite": "run_tests",
+        "guarda": "T17: obra de armazem começada no dia em que abre (8) é aceita",
+        "confirmada": true
+      },
+      {
+        "id": "save-obra-na-vespera",
+        "suite": "run_tests",
+        "guarda": "T17: obra de armazem começada na véspera (dia 7) é recusada",
+        "confirmada": true
+      },
+      {
+        "id": "save-obra-sem-cobranca",
+        "suite": "run_tests",
+        "guarda": "T17: com uma quitada a menos o save de patio é recusado",
+        "confirmada": true
+      },
+      {
+        "id": "reparos-uma-semana-depois",
+        "suite": "run_tests",
+        "guarda": "T14: armazém abre no dia 8",
+        "confirmada": true
+      },
+      {
+        "id": "obra-recusada-um-dia-cedo",
+        "suite": "teste_fumaca",
+        "guarda": "no dia 84, o último da fase, a obra ainda não está de pé",
+        "confirmada": true
+      },
+      {
+        "id": "aviso-de-obra-um-dia-cedo",
+        "suite": "teste_fumaca",
+        "guarda": "na véspera o Construir não avisa",
+        "confirmada": true
+      },
+      {
+        "id": "mensagem-da-obra-sempre-verde",
+        "suite": "teste_fumaca",
+        "guarda": "a mensagem avisa, em tom de aviso",
+        "confirmada": true
+      },
+      {
+        "id": "plural-da-obra-a-mao",
+        "suite": "teste_fumaca",
+        "guarda": "F9: nenhum número escreve o plural à mão",
+        "confirmada": true
+      },
+      {
+        "id": "passagem-sem-recomecar-reputacao",
+        "suite": "run_tests",
+        "guarda": "T20: a reputação recomeça na escala da Fase 2",
+        "confirmada": true
+      },
+      {
+        "id": "cargueiro-sem-piso",
+        "suite": "run_tests",
+        "guarda": "T22: abaixo do piso só novas chegadas de pesca",
+        "confirmada": true
+      },
+      {
+        "id": "migracao-15-esquece-a-vitoria",
+        "suite": "run_tests",
+        "guarda": "T20: a partida ganha da 15 chega à 16 na Fase 2, a jogar",
+        "confirmada": true
+      },
+      {
+        "id": "rosto-sem-filtro-dos-usados",
+        "suite": "teste_fumaca",
+        "guarda": "trinta rostos diferentes",
+        "confirmada": true
+      },
+      {
+        "id": "rosto-gasta-o-sorteio",
+        "suite": "teste_fumaca",
+        "guarda": "não mexe no sorteio da partida",
+        "confirmada": true
+      },
+      {
+        "id": "save-rosto-repetido",
+        "suite": "teste_fumaca",
+        "guarda": "rosto repetido",
+        "confirmada": true
+      },
+      {
+        "id": "armazem-sem-criar-a-pasta",
+        "suite": "teste_fumaca",
+        "guarda": "já tem pasta para gravar",
+        "confirmada": true
+      },
+      {
+        "id": "atalho-s-nao-e-ferramenta",
+        "suite": "teste_fumaca",
+        "guarda": "`-s` conta como ferramenta",
+        "confirmada": true
+      },
+      {
+        "id": "privado-lido-por-string-renomeado",
+        "suite": "teste_fumaca",
+        "guarda": "F19: todo nome lido por string existe no alvo",
+        "confirmada": true
+      },
+      {
+        "id": "progresso-com-dois-espacos",
+        "suite": "teste_design",
+        "guarda": "a linha do progresso cabe",
+        "confirmada": true
+      },
+      {
+        "id": "registro-sem-obra-pronta",
+        "suite": "teste_registro",
+        "guarda": "grava UMA linha de obra pronta",
+        "confirmada": true
+      },
+      {
+        "id": "moeda-ao-gastar",
+        "suite": "teste_audio",
+        "guarda": "caixa caindo NÃO pede moeda",
+        "confirmada": true
+      },
+      {
+        "id": "som-sem-espera-minima",
+        "suite": "teste_audio",
+        "guarda": "o mesmo som dentro da espera não repete",
+        "confirmada": true
+      },
+      {
+        "id": "som-nunca-repete",
+        "suite": "teste_audio",
+        "guarda": "passada a espera, o mesmo som volta a tocar",
+        "confirmada": true
+      },
+      {
+        "id": "save-recusa-a-fila-cheia",
+        "suite": "run_tests",
+        "guarda": "o save que o jogo grava, o próprio jogo aceita",
+        "confirmada": true
+      },
+      {
+        "id": "load-esquece-a-paciencia-do-cliente",
+        "suite": "run_tests",
+        "guarda": "o save que o jogo grava não volta igual",
+        "confirmada": true
+      },
+      {
+        "id": "devolver-deixa-o-trabalhador",
+        "suite": "run_tests",
+        "guarda": "e o trabalhador fica livre",
+        "confirmada": true
+      },
+      {
+        "id": "recusa-da-obra-cobra",
+        "suite": "run_tests",
+        "guarda": "a recusa de «construir» mexeu no estado",
+        "confirmada": true
+      },
+      {
+        "id": "cancelamento-sem-conferir-o-orcamento",
+        "suite": "run_tests",
+        "guarda": "a confirmação aceitou um orçamento que não era o lido",
+        "confirmada": true
+      },
+      {
+        "id": "reputacao-sem-teto",
+        "suite": "run_tests",
+        "guarda": "a reputação fica entre 0 e 100",
+        "confirmada": true
+      },
+      {
+        "id": "fila-guarda-quem-desistiu",
+        "suite": "run_tests",
+        "guarda": "na fila nenhum barco começou a operar nem esgotou a paciência",
+        "confirmada": true
+      },
+      {
+        "id": "cancelamento-nunca-disponivel",
+        "suite": "run_tests",
+        "guarda": "o robô exerceu cada ação que o jogo aceitou",
+        "confirmada": true
+      },
+      {
+        "id": "cancelamento-sem-multa",
+        "suite": "run_tests",
+        "guarda": "T24: multa e reputação únicas, sem pagar serviço",
+        "confirmada": true
+      },
+      {
+        "id": "cancelamento-sem-reputacao",
+        "suite": "run_tests",
+        "guarda": "T24: multa e reputação únicas, sem pagar serviço",
+        "confirmada": true
+      },
+      {
+        "id": "cancelamento-prende-o-trabalhador",
+        "suite": "run_tests",
+        "guarda": "T24: equipe reutilizada no mesmo dia",
+        "confirmada": true
+      },
+      {
+        "id": "cancelamento-fora-da-semana",
+        "suite": "run_tests",
+        "guarda": "T24: multa lançada nas contas",
+        "confirmada": true
+      },
+      {
+        "id": "migracao-18-inventa-multa",
+        "suite": "run_tests",
+        "guarda": "T24: migração não inventa multa passada",
+        "confirmada": true
+      },
+      {
+        "id": "cancelamento-de-outro-barco",
+        "suite": "run_tests",
+        "guarda": "T24: confirmação velha não cobra outro barco",
+        "confirmada": true
+      },
+      {
+        "id": "cancelamento-sem-registro",
+        "suite": "run_tests",
+        "guarda": "T24: registro 5 observa uma vez",
+        "confirmada": true
+      },
+      {
+        "id": "ajuda-voltar-fecha-o-artigo",
+        "suite": "run_tests",
+        "guarda": "T25: Voltar retorna ao índice",
+        "confirmada": true
+      },
+      {
+        "id": "ajuda-gasta-o-sorteio",
+        "suite": "run_tests",
+        "guarda": "T25: consulta preserva estado, RNG, arquivos e registro",
+        "confirmada": true
+      },
+      {
+        "id": "ajuda-grava-a-partida",
+        "suite": "run_tests",
+        "guarda": "T25: consulta não tem porta de escrita",
+        "confirmada": true
+      },
+      {
+        "id": "ajuda-multa-dobrada",
+        "suite": "run_tests",
+        "guarda": "T25: custos reais e regra sem parcial na ajuda",
+        "confirmada": true
+      },
+      {
+        "id": "ajuda-empilha",
+        "suite": "run_tests",
+        "guarda": "T25: pedido repetido não duplica ajuda",
+        "confirmada": true
+      },
+      {
+        "id": "ajuda-deixa-o-toque-passar",
+        "suite": "run_tests",
+        "guarda": "T25: toque no fundo não atravessa a ajuda",
+        "confirmada": true
+      },
+      {
+        "id": "obra-nao-redesenha-na-compra",
+        "suite": "teste_design",
+        "guarda": "D45: o píer mostra o quadro 0 no dia da compra",
+        "confirmada": true
+      },
+      {
+        "id": "obra-um-dia-adiantada",
+        "suite": "teste_design",
+        "guarda": "D45: o armazém mostra o quadro 0 no dia 1 da obra",
+        "confirmada": true
+      },
+      {
+        "id": "obra-longa-sem-repartir",
+        "suite": "teste_design",
+        "guarda": "D45: três dias em dois quadros",
+        "confirmada": true
+      },
+      {
+        "id": "obra-patio-copia-velha",
+        "suite": "teste_design",
+        "guarda": "D45: o trecho 2 do pátio é o da tabela",
+        "confirmada": true
+      },
+      {
+        "id": "obra-uv-sem-razao",
+        "suite": "teste_design",
+        "guarda": "D45: a UV do recorte",
+        "confirmada": true
+      },
+      {
+        "id": "obra-cartao-diz-ruinas",
+        "suite": "teste_design",
+        "guarda": "D45: o cartão diz «píer em obra»",
+        "confirmada": true
+      },
+      {
+        "id": "obra-patio-sem-sinalizacao",
+        "suite": "teste_design",
+        "guarda": "D45: a barreira e o cone sinalizam a obra",
+        "confirmada": true
+      },
+      {
+        "id": "vila-torre-da-cor-das-vizinhas",
+        "suite": "teste_design",
+        "guarda": "pinta telha_torre à volta",
+        "confirmada": true
+      },
+      {
+        "id": "vila-coreto-sem-telhado",
+        "suite": "teste_design",
+        "guarda": "pinta telha_d à volta",
+        "confirmada": true
+      },
+      {
+        "id": "fauna-cao-em-cima-da-casa",
+        "suite": "teste_design",
+        "guarda": "CachorroCaramelo aparece sobre o relvado",
+        "confirmada": true
+      },
+      {
+        "id": "mar-largo-clareia",
+        "suite": "teste_design",
+        "guarda": "a água escurece para o largo",
+        "confirmada": true
+      },
+      {
+        "id": "mar-mancha-rasa-ao-largo",
+        "suite": "teste_design",
+        "guarda": "nenhuma mancha clara no mar aberto",
+        "confirmada": true
+      },
+      {
+        "id": "mata-copia-desalinhada",
+        "suite": "teste_design",
+        "guarda": "a cópia da mata confere com a tabela",
+        "confirmada": true
+      },
+      {
+        "id": "mata-arvore-maior",
+        "suite": "teste_design",
+        "guarda": "nenhuma árvore pinta por cima da vila",
+        "confirmada": true
+      },
+      {
+        "id": "restinga-pe-na-areia",
+        "suite": "teste_design",
+        "guarda": "nenhuma planta da restinga desce à areia",
+        "confirmada": true
+      },
+      {
+        "id": "destaque-debaixo-da-barra",
+        "suite": "teste_design",
+        "guarda": "a copa de cada destaque fica à vista",
+        "confirmada": true
+      },
+      {
+        "id": "destaque-tapado",
+        "suite": "teste_design",
+        "guarda": "nenhuma árvore tapa a copa de um destaque",
+        "confirmada": true
+      },
+      {
+        "id": "mata-sobre-a-orla",
+        "suite": "teste_design",
+        "guarda": "nenhuma árvore pinta por cima de uma embutida à frente",
+        "confirmada": true
+      },
+      {
+        "id": "mata-sobre-a-pedra",
+        "suite": "teste_design",
+        "guarda": "nenhuma árvore pinta por cima de uma pedra à frente",
+        "confirmada": true
+      },
+      {
+        "id": "copa-no-telhado",
+        "suite": "teste_design",
+        "guarda": "nenhuma copa embutida pousa num telhado",
+        "confirmada": true
+      },
+      {
+        "id": "ipe-sem-flor",
+        "suite": "teste_design",
+        "guarda": "nenhum ipê embutido fica escondido",
+        "confirmada": true
+      },
+      {
+        "id": "mata-contorno-cego",
+        "suite": "teste_design",
+        "guarda": "o contorno sobe acima de cada casa",
+        "confirmada": true
+      },
+      {
+        "id": "fauna-em-cima-da-arvore",
+        "suite": "teste_design",
+        "guarda": "nenhum bicho da fauna cai em cima de uma árvore",
+        "confirmada": true
+      },
+      {
+        "id": "mata-parada",
+        "suite": "teste_design",
+        "guarda": "cada árvore tem a sua rajada",
+        "confirmada": true
+      },
+      {
+        "id": "mata-gira-fora-do-pe",
+        "suite": "teste_design",
+        "guarda": "cada árvore gira em volta do pé",
+        "confirmada": true
+      },
+      {
+        "id": "mata-fora-da-profundidade",
+        "suite": "teste_design",
+        "guarda": "vem depois de quem está atrás",
+        "confirmada": true
+      },
+      {
+        "id": "restinga-tapa-coqueiro",
+        "suite": "teste_design",
+        "guarda": "nenhuma árvore tapa um prop parado",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-consome-rng",
+        "suite": "run_tests",
+        "guarda": "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-regrava-save",
+        "suite": "run_tests",
+        "guarda": "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-cobra-quitada",
+        "suite": "run_tests",
+        "guarda": "T27: antecipação mantém recibo e próxima cobrança futura",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-inventa-cobranca-fase2",
+        "suite": "run_tests",
+        "guarda": "T27: Fase 2 sem cobrança nem prazo fictícios",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-adianta-progresso",
+        "suite": "run_tests",
+        "guarda": "T27: serviço mostra progresso guardado e receita com bônus",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-receita-sem-bonus",
+        "suite": "run_tests",
+        "guarda": "T27: serviço mostra progresso guardado e receita com bônus",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-meta-esquecida",
+        "suite": "run_tests",
+        "guarda": "T27: jogo livre conserva conquista sem novo objetivo",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-voltar-entra",
+        "suite": "run_tests",
+        "guarda": "T27: consulta visual preserva estado, RNG, arquivos e registro",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-carrega-espaco-errado",
+        "suite": "run_tests",
+        "guarda": "T27: Carregar mostra o espaço escolhido",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-recusa-inicia-nova",
+        "suite": "run_tests",
+        "guarda": "T27: recusa não inicia partida nem apaga arquivo",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-dia-pendente-adiantado",
+        "suite": "run_tests",
+        "guarda": "T27: vencimento identifica dia fechado sem adiantar decisão",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-conta-obra-como-pronta",
+        "suite": "run_tests",
+        "guarda": "T27: meta não conta estrutura ainda em obra",
+        "confirmada": true
+      },
+      {
+        "id": "retomada-promete-apos-encerrar",
+        "suite": "run_tests",
+        "guarda": "T27: encerrada não promete obra nem recebimento futuros",
+        "confirmada": true
+      },
+      {
+        "id": "diagnostico-copia-diferente",
+        "suite": "run_tests",
+        "guarda": "T28: copia exatamente a prévia por ação explícita",
+        "confirmada": true
+      },
+      {
+        "id": "diagnostico-falso-sucesso",
+        "suite": "run_tests",
+        "guarda": "T28: falha não anuncia sucesso e permite tentar de novo",
+        "confirmada": true
+      },
+      {
+        "id": "diagnostico-copia-ao-abrir",
+        "suite": "run_tests",
+        "guarda": "T28: abrir não inicia cópia automaticamente",
+        "confirmada": true
+      },
+      {
+        "id": "diagnostico-consulta-grava",
+        "suite": "run_tests",
+        "guarda": "T28: consulta e cópia preservam estado, RNG, arquivos e registro",
+        "confirmada": true
+      },
+      {
+        "id": "diagnostico-sem-marca-modificado",
+        "suite": "run_tests",
+        "guarda": "T28: identidade conserva commit completo e marca modificada",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-padrao-ativado",
+        "suite": "run_tests",
+        "guarda": "T29: ausência mantém padrão e leitura não cria arquivo",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-nao-persiste",
+        "suite": "run_tests",
+        "guarda": "T29: nova instância relê escolha persistente",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-sem-aviso-aos-abertos",
+        "suite": "run_tests",
+        "guarda": "T29: escolha para fundo já aberto e repõe pose inteira",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-preferencia-no-jogador",
+        "suite": "run_tests",
+        "guarda": "T29: preferência de ferramenta é isolada",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-nao-pausa-fundo",
+        "suite": "run_tests",
+        "guarda": "T29: comparação temporal: fundo reduzido fica estável",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-sem-pose-inteira",
+        "suite": "run_tests",
+        "guarda": "T29: escolha para fundo já aberto e repõe pose inteira",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-novos-ignoram-escolha",
+        "suite": "run_tests",
+        "guarda": "T29: elementos criados depois nascem com fundo parado",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-folha-ainda-espera",
+        "suite": "run_tests",
+        "guarda": "T29: transição reduzida conclui próximo callback sem espera",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-folha-perde-callback",
+        "suite": "run_tests",
+        "guarda": "T29: mudar a meio conclui callback da transição",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-barco-ainda-transita",
+        "suite": "run_tests",
+        "guarda": "T29: serviço e dia concluem com movimento reduzido",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-apaga-realce-da-fila",
+        "suite": "run_tests",
+        "guarda": "T29: barco chamável mantém realce e ação",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-duplica-ajustes",
+        "suite": "run_tests",
+        "guarda": "T29: Ajustes repetidos não duplicam painel",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-grava-a-partida",
+        "suite": "run_tests",
+        "guarda": "T29: Ajustes preservam partida, RNG, arquivos e registro",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-oculta-visita-operacional",
+        "suite": "run_tests",
+        "guarda": "T29: visita operacional do caminhão continua visível",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-resultado-nao-termina",
+        "suite": "run_tests",
+        "guarda": "T29: resultado termina sem esperar tween decorativo pausado",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-fauna-continua-andando",
+        "suite": "run_tests",
+        "guarda": "T29: fauna reduzida mantém pose e toque",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-esconde-falha-de-gravacao",
+        "suite": "run_tests",
+        "guarda": "T29: falha ao lembrar é explícita e escolha vale na sessão",
+        "confirmada": true
+      },
+      {
+        "id": "texto-bancada-sem-ampliacao",
+        "suite": "teste_design",
+        "guarda": "BT: amplia o override real do rotulo e do botao de 19 para 24",
+        "confirmada": true
+      },
+      {
+        "id": "texto-bancada-acumula",
+        "suite": "teste_design",
+        "guarda": "BT: reaplicar no mesmo no nao acumula escala",
+        "confirmada": true
+      },
+      {
+        "id": "texto-bancada-caixa-cega",
+        "suite": "teste_design",
+        "guarda": "BT: a mesma caixa distingue texto que cabe de texto que transborda",
+        "confirmada": true
+      },
+      {
+        "id": "texto-bancada-janela-cega",
+        "suite": "teste_design",
+        "guarda": "BT: texto fora da janela nao recebe o zero do texto dentro",
+        "confirmada": true
+      },
+      {
+        "id": "inicio-movimento-sem-fundo",
+        "suite": "run_tests",
+        "guarda": "T30: movimento hover_pressed tem fundo opaco e contraste AA",
+        "confirmada": true
+      },
+      {
+        "id": "inicio-consultas-sobrepostas",
+        "suite": "run_tests",
+        "guarda": "T30: a consulta oculta o menu de Configurações",
+        "confirmada": true
+      },
+      {
+        "id": "inicio-consulta-sem-retorno",
+        "suite": "run_tests",
+        "guarda": "T30: fechar a consulta devolve o mesmo menu visível",
+        "confirmada": true
+      },
+      {
+        "id": "inicio-continuar-sem-partida",
+        "suite": "run_tests",
+        "guarda": "T30: Continuar só está habilitado quando há partida salva",
+        "confirmada": true
+      },
+      {
+        "id": "inicio-saves-sem-porta",
+        "suite": "run_tests",
+        "guarda": "T30: Saves abre a lista compartilhada de espaços",
+        "confirmada": true
+      },
+      {
+        "id": "inicio-extras-na-inicial",
+        "suite": "run_tests",
+        "guarda": "T30: início tem exatamente quatro entradas em ambas as situações",
+        "confirmada": true
+      },
+      {
+        "id": "inicio-fundo-provisorio",
+        "suite": "teste_design",
+        "guarda": "D48: inicial desenha a fonte v3 aceita",
+        "confirmada": true
+      },
+      {
+        "id": "inicio-fundo-vaza-celular",
+        "suite": "teste_design",
+        "guarda": "D48: celular conserva o degrade",
+        "confirmada": true
+      },
+      {
+        "id": "texto-tema-ignora-maior",
+        "suite": "teste_design",
+        "guarda": "RB5: exemplo usa fonte maior do tema",
+        "confirmada": true
+      },
+      {
+        "id": "texto-override-ignorado",
+        "suite": "teste_design",
+        "guarda": "RB5: override da cena amplia de 19 para 24",
+        "confirmada": true
+      },
+      {
+        "id": "texto-padrao-nao-restaura",
+        "suite": "teste_design",
+        "guarda": "RB5: ciclo restaura todas as fontes",
+        "confirmada": true
+      },
+      {
+        "id": "texto-no-tardio-ignorado",
+        "suite": "teste_design",
+        "guarda": "RB5: no criado depois recebe tamanho escolhido",
+        "confirmada": true
+      },
+      {
+        "id": "texto-painel-sem-rolagem",
+        "suite": "teste_design",
+        "guarda": "RB5: leitura maior cabe em (720, 1152): PainelAjustes",
+        "confirmada": true
+      },
+      {
+        "id": "texto-acoes-fora-da-tela",
+        "suite": "teste_design",
+        "guarda": "RB5: acoes fixas cabem fora do rolo",
+        "confirmada": true
+      },
+      {
+        "id": "texto-arrasto-executa-acao",
+        "suite": "teste_design",
+        "guarda": "RB5: arrasto sobre barco atracado nao libera ao premir",
+        "confirmada": true
+      },
+      {
+        "id": "texto-doca-libera-ao-premir",
+        "suite": "teste_design",
+        "guarda": "RB5: arrasto sobre barco atracado nao libera ao premir",
+        "confirmada": true
+      },
+      {
+        "id": "texto-perde-leitura",
+        "suite": "teste_design",
+        "guarda": "RB5: troca conserva caractere na dobra da leitura",
+        "confirmada": true
+      },
+      {
+        "id": "texto-perde-cursor",
+        "suite": "teste_design",
+        "guarda": "RB5: troca conserva campo texto cursor e foco",
+        "confirmada": true
+      },
+      {
+        "id": "texto-apaga-movimento",
+        "suite": "teste_design",
+        "guarda": "RB5: duas preferencias no disco maior/true ordem 0",
+        "confirmada": true
+      },
+      {
+        "id": "movimento-apaga-texto",
+        "suite": "teste_design",
+        "guarda": "RB5: duas preferencias no disco maior/true ordem 1",
+        "confirmada": true
+      },
+      {
+        "id": "texto-nao-persiste",
+        "suite": "teste_design",
+        "guarda": "RB5: leitor restaura maior/false ordem 0",
+        "confirmada": true
+      },
+      {
+        "id": "texto-sinal-ignorado",
+        "suite": "teste_design",
+        "guarda": "RB5: controle aplica tamanho e preserva foco",
+        "confirmada": true
+      },
+      {
+        "id": "texto-tamanho-invalido",
+        "suite": "teste_design",
+        "guarda": "RB5: leitor recusa tamanho invalido MAIOR",
+        "confirmada": true
+      },
+      {
+        "id": "texto-esconde-falha-de-gravacao",
+        "suite": "teste_design",
+        "guarda": "RB5: falha ao lembrar texto aparece nos Ajustes",
+        "confirmada": true
+      },
+      {
+        "id": "texto-nome-longo-sem-quebra",
+        "suite": "teste_design",
+        "guarda": "RB5: nome de 24 letras cabe no balao sem encolher",
+        "confirmada": true
+      },
+      {
+        "id": "texto-celular-sem-medida",
+        "suite": "teste_design",
+        "guarda": "RB5: aparelho conserva medidas e centro Menu-celular",
+        "confirmada": true
+      },
+      {
+        "id": "texto-fita-alarga-celular",
+        "suite": "teste_design",
+        "guarda": "RB5: aparelho conserva medidas e centro Menu-celular",
+        "confirmada": true
+      },
+      {
+        "id": "texto-rolo-rouba-painel",
+        "suite": "teste_design",
+        "guarda": "RB5: painel aberto bloqueia gesto no porto de baixo",
+        "confirmada": true
+      },
+      {
+        "id": "texto-consulta-selecao-ausente",
+        "suite": "teste_design",
+        "guarda": "RB5: campo sem selecao nao gera erro do motor",
+        "confirmada": true
+      },
+      {
+        "id": "texto-cartao-guarda-faixa-vazia",
+        "suite": "teste_design",
+        "guarda": "RB5: ajustes novos no maior nao guardam faixa vazia",
+        "confirmada": true
+      },
+      {
+        "id": "texto-rouba-posicao-inicial",
+        "suite": "teste_design",
+        "guarda": "RB5: conversa nova mostra fim do historico",
+        "confirmada": true
+      },
+      {
+        "id": "texto-captura-fila-antiga",
+        "suite": "teste_design",
+        "guarda": "RB5: captura jogada encontra o barco dentro do rolo",
+        "confirmada": true
+      },
+      {
+        "id": "texto-botao-horizontal-sem-largura",
+        "suite": "teste_design",
+        "guarda": "RB5: acao de obra permanece legivel Construir",
+        "confirmada": true
+      },
+      {
+        "id": "texto-consulta-nasce-sem-leitura",
+        "suite": "teste_design",
+        "guarda": "RB5: abertura maior conserva area de leitura Meu porto agora (Fase 1)",
+        "confirmada": true
+      }
+    ],
+    "integridade": {
+      "retorno": 0,
+      "arquivos_selados": 1675,
+      "restauracao_exata": true,
+      "segundos": 4692.49
+    },
+    "catalogo_sha256": "575d1fd50744992fb92c2f977c531d961ed2d4ad8531e1e232fac1b4dda930fa"
+  },
+  "web_local": {
+    "tipo": "PCK atual com runtime oficial Godot 4.6.3 da main, Chromium por toque; não é export APK nem CI",
+    "identidade_exportada": "[gd_resource type=\"Resource\" format=3]\n\n[resource]\nmetadata/formato = 1\nmetadata/commit = \"bf9be019739110d24e94398dde7b18bf0e6a1da1\"\nmetadata/modificado = true\n",
+    "pck_sha256": "05b551d2baf4cf31317f376762004ad23f75e03a4711c3e8790bcc7eab3c2e12",
+    "wasm_sha256": "26b61ce95247012ab3dca3ff51e96d1cdbff44ee91a8c20a83e150afca83f1b6",
+    "canvas": {
+      "width": 393,
+      "height": 852,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "width": 393,
+        "height": 852,
+        "top": 0,
+        "right": 393,
+        "bottom": 852,
+        "left": 0
+      }
+    },
+    "pares": [
+      {
+        "texto": "padrao",
+        "reduzir_movimento": false,
+        "cfg": "[apresentacao]\n\ntamanho_do_texto=\"padrao\"\nreduzir_movimento=false\n",
+        "reinicio_ok": true,
+        "selecao_antes": {
+          "Padrão": 12,
+          "Maior (+25%)": 0,
+          "Reduzir movimento": 0
+        },
+        "selecao_depois": {
+          "Padrão": 12,
+          "Maior (+25%)": 0,
+          "Reduzir movimento": 0
+        }
+      },
+      {
+        "texto": "maior",
+        "reduzir_movimento": false,
+        "cfg": "[apresentacao]\n\ntamanho_do_texto=\"maior\"\nreduzir_movimento=false\n",
+        "reinicio_ok": true,
+        "selecao_antes": {
+          "Padrão": 0,
+          "Maior (+25%)": 25,
+          "Reduzir movimento": 0
+        },
+        "selecao_depois": {
+          "Padrão": 0,
+          "Maior (+25%)": 25,
+          "Reduzir movimento": 0
+        }
+      },
+      {
+        "texto": "maior",
+        "reduzir_movimento": true,
+        "cfg": "[apresentacao]\n\ntamanho_do_texto=\"maior\"\nreduzir_movimento=true\n",
+        "reinicio_ok": true,
+        "selecao_antes": {
+          "Padrão": 0,
+          "Maior (+25%)": 25,
+          "Reduzir movimento": 105
+        },
+        "selecao_depois": {
+          "Padrão": 0,
+          "Maior (+25%)": 25,
+          "Reduzir movimento": 105
+        }
+      },
+      {
+        "texto": "padrao",
+        "reduzir_movimento": true,
+        "cfg": "[apresentacao]\n\ntamanho_do_texto=\"padrao\"\nreduzir_movimento=true\n",
+        "reinicio_ok": true,
+        "selecao_antes": {
+          "Padrão": 12,
+          "Maior (+25%)": 0,
+          "Reduzir movimento": 79
+        },
+        "selecao_depois": {
+          "Padrão": 12,
+          "Maior (+25%)": 0,
+          "Reduzir movimento": 79
+        }
+      }
+    ],
+    "arquivos_antes": {
+      "registros/partida_20261023_044536.jsonl": {
+        "sha256": "69747a4957245c3446b75fea3366383543edae0708a234c933fc79e560353d41",
+        "timestamp": "2026-10-23T04:45:36.192Z"
+      },
+      "savegame.json": {
+        "sha256": "2860d76d49522a2b6d856f56a81f7ce8c167d76060704ea3518e827ee15d933d",
+        "timestamp": "2026-10-23T04:45:47.726Z"
+      }
+    },
+    "arquivos_depois": {
+      "registros/partida_20261023_044536.jsonl": {
+        "sha256": "69747a4957245c3446b75fea3366383543edae0708a234c933fc79e560353d41",
+        "timestamp": "2026-10-23T04:45:36.192Z"
+      },
+      "savegame.json": {
+        "sha256": "2860d76d49522a2b6d856f56a81f7ce8c167d76060704ea3518e827ee15d933d",
+        "timestamp": "2026-10-23T04:45:47.726Z"
+      }
+    },
+    "aviso_igual_ao_pacote_main": [
+      {
+        "fase": "nova-partida",
+        "texto": "ERROR: Condition \"!is_inside_tree()\" is true. Returning: false"
+      }
+    ],
+    "script_errors": false,
+    "arrasto_web_provado": true,
+    "pixels_da_barra_que_mudaram": 392,
+    "arrasto_arquivos_antes": {
+      "registros/partida_20261023_044536.jsonl": {
+        "sha256": "69747a4957245c3446b75fea3366383543edae0708a234c933fc79e560353d41",
+        "timestamp": "2026-10-23T04:45:36.192Z"
+      },
+      "registros/partida_20261023_053230.jsonl": {
+        "sha256": "d27829937f0edfcbaf2f663ef7dafd277590bbbed24eff5193a0b48edca5a97c",
+        "timestamp": "2026-10-23T05:32:30.604Z"
+      },
+      "registros/partida_20261023_053555.jsonl": {
+        "sha256": "dc5491356e1d4407b6e0baff2811198836f25d8503a12b54d7df02c7101b4390",
+        "timestamp": "2026-10-23T05:36:00.250Z"
+      },
+      "savegame.json": {
+        "sha256": "9196b87818ec11128e51389682c29c0e133ce71a83ff84a6d997ace607c254c7",
+        "timestamp": "2026-10-23T05:36:00.249Z"
+      }
+    },
+    "arrasto_arquivos_depois": {
+      "registros/partida_20261023_044536.jsonl": {
+        "sha256": "69747a4957245c3446b75fea3366383543edae0708a234c933fc79e560353d41",
+        "timestamp": "2026-10-23T04:45:36.192Z"
+      },
+      "registros/partida_20261023_053230.jsonl": {
+        "sha256": "d27829937f0edfcbaf2f663ef7dafd277590bbbed24eff5193a0b48edca5a97c",
+        "timestamp": "2026-10-23T05:32:30.604Z"
+      },
+      "registros/partida_20261023_053555.jsonl": {
+        "sha256": "dc5491356e1d4407b6e0baff2811198836f25d8503a12b54d7df02c7101b4390",
+        "timestamp": "2026-10-23T05:36:00.250Z"
+      },
+      "savegame.json": {
+        "sha256": "9196b87818ec11128e51389682c29c0e133ce71a83ff84a6d997ace607c254c7",
+        "timestamp": "2026-10-23T05:36:00.249Z"
+      }
+    }
+  },
+  "sentinelas": {
+    "arquivos": 6,
+    "capturas": true,
+    "suites": true,
+    "mutantes": true
+  },
+  "preservados": {
+    "brport_vs/autoload/GameState.gd": "c543ec2a4ccea812353157d53eed62afbe45344845fd4955b037d02464ca5953",
+    "brport_vs/scripts/MataNoMapa.gd": "345ffc5c2e289d583ddc2aebf3d1fb066bee703a6caf679b9d5ddefdb4708037",
+    "brport_vs/scenes/Main.tscn": "304ada06842f78302261bc9e76abbac33212c71490a438fa4b735080e98909fa",
+    "brport_vs/project.godot": "8839142ab0f4a2e6f43bce0086e7d80e18adc8448900b908211c756c6805e074",
+    "brport_vs/art/tela_inicial/fundo_inicial.png": "c8dd35c73b11a13da9d3f773ba916cce10b9307c8d7d1addb79faf9571e7ec6f"
+  }
+}
