@@ -30,7 +30,7 @@ extends RefCounted
 #      «por partes» que o Bruno pediu —, e a cada dia os dois recortes da
 #      rua (o mapa de terra no que falta, por cima do pátio, e o pavimentado
 #      no que já está pronto) e os três cones na frente, entre os irmãos do
-#      `Cenario` pela profundidade. O D48 mede nos mapas que nada muda fora.
+#      `Cenario` pela profundidade. O D49 mede nos mapas que nada muda fora.
 #
 # Bloco num arquivo próprio pela regra do `AGENTS.md` §2: dois agentes a
 # acrescentar blocos deixam de editar o mesmo `teste_design.gd`. Síncrono,

@@ -31,6 +31,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-23.md` | 23/10 | Estradas aceites (`134`, D49), renumeradas na junção com a main; a seguir, os sprites de detalhes |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22c.md` | 22/10 | Autorizações já dadas registradas nas instruções compartilhadas, com alcance por entrega e limites da plataforma |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22b.md` | 22/10 | Encaminhamento autorizado por PR do fundo exclusivo da inicial (`133`); provas locais preservadas e CI próprio a conferir |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22.md` | 22/10 | V3 aceita na foto e integração local exclusiva da inicial (`133`), com celular preservado e publicação não solicitada |

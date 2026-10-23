@@ -365,13 +365,13 @@ func _rodar() -> void:
 	_falhas += int(bancada_texto.falhas)
 	_confere("o bloco da bancada de texto correu ate ao fim", bancada_texto.completo)
 
-	print("=== D48: as estradas — o que a obra troca, as juntas e a borda norte ===")
+	print("=== D49: as estradas — o que a obra troca, as juntas e a borda norte ===")
 	var estradas = load("res://tests/casos_estradas.gd").new()
 	estradas.rodar(_mapa_lido("res://art/porto_mapa_iso.svg"),
 		_mapa_lido("res://art/porto_mapa_iso_patio.svg"), _ancoras,
 		load("res://scripts/ObraNoMapa.gd"))
 	_falhas += int(estradas.falhas)
-	_confere("o bloco D48 correu até ao fim", estradas.completo)
+	_confere("o bloco D49 correu até ao fim", estradas.completo)
 
 	print("")
 	if _falhas == 0:

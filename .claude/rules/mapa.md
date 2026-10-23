@@ -343,7 +343,7 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   começa mostrava a ÁGUA, que é o fundo do mapa. A de baixo passa por baixo
   da de cima pela `COSTURA`; e a borda que fecha um polígono fecha À ALTURA
   do vizinho — a da praia fechava na crista, que o meandro levanta a 1,09 do
-  cais, e saía inclinada, com o fio a engrossar para o cais. O D48 §2 e §3
+  cais, e saía inclinada, com o fio a engrossar para o cais. O D49 §2 e §3
   medem os dois.
 - **⚠️ O QUE MUDA ENTRE OS DOIS MAPAS TEM DE MUDAR DENTRO DA OBRA.** O jogo
   troca o mapa de terra pelo pavimentado de uma vez, no fim da obra do pátio,
@@ -351,7 +351,7 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   26.901 px — a linha central, as zebras, a viela e os quintais da vila, que
   clareavam, e a faixa do avental, um pixel além do recorte. Desenho novo que
   o pavimentado faça diferente cai num recorte da obra (o pátio ou um trecho
-  de `obra_da_rua()`); o D48 §1 conta os pixels.
+  de `obra_da_rua()`); o D49 §1 conta os pixels.
 - **⚠️ O CONTORNO DAS VIAS É O QUE A MATA LÊ.** O `horizonte_das_vias()` sai do
   SVG do `vias()`, e o leitor de contornos rebenta com tag que não conhece:
   o que se pinta DENTRO da rua vive em `vias_detalhes()`, fora dele. E mudar a

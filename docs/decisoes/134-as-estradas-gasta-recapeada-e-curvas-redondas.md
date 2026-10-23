@@ -85,7 +85,7 @@ meia rua (0,9) nos dois lados do contrato, e o arco subiu a **1,38**; o D13
 
 ## As provas
 
-- **D48** (novo, `casos_estradas.gd`): §1 tudo o que muda entre os dois mapas
+- **D49** (novo, `casos_estradas.gd`): §1 tudo o que muda entre os dois mapas
   cai dentro da obra (5 px fora contra 26.901 na `main`); §2 nenhuma junta de
   cotovelo tem fio claro (0 a +4 contra +30); §3 a água não aparece na borda
   norte do pátio (+17,5 contra +90,5).

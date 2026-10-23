@@ -7920,7 +7920,7 @@ def tabela_ancoras() -> dict:
 
     # E A OBRA DA RUA (`134`): os pedaços da rua que a obra do pátio recapeia,
     # cada um com o dia em que fica pronto. O `ObraNoMapa.gd` copia-os (o JSON
-    # não vai no pacote) e o D45 confere a cópia contra esta lista; o D48 mede
+    # não vai no pacote) e o D45 confere a cópia contra esta lista; o D49 mede
     # nos dois mapas que tudo o que muda entre eles cai dentro deles ou do
     # pátio.
     obra_rua = [{"quadro": q, "pontos": [[x, y] for x, y in pol]}

@@ -103,7 +103,7 @@ central amarela, curvas em arco) — **três camiões descem e dois sobem, pela 
 e uma **viela de terra entre elas** — a de trás mais rala, a desfiar no quintal
 e na mata do morro. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
 **A rua é GASTA no porto em ruínas**; a obra do pátio recapeia-a por trechos,
-com cones (`134`, D48).
+com cones (`134`, D49).
 
 **A VILA É HUMILDE DE PROPÓSITO** (`123`): meia-água de fibrocimento, casinha
 de empena, quatro águas, varanda e casa em L, cada uma num terreno de muro

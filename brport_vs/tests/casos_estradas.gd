@@ -1,7 +1,7 @@
 extends RefCounted
 
 # ============================================================
-# D48 — as estradas: o que a obra do pátio troca, as juntas e a borda norte
+# D49 — as estradas: o que a obra do pátio troca, as juntas e a borda norte
 # (`docs/decisoes/134`)
 #
 # O mapa do porto em ruínas leva a rua GASTA e o do pátio pronto a RECAPEADA,
@@ -57,9 +57,9 @@ var completo := false
 
 func conferir(nome: String, ok: bool, detalhe: String = "") -> void:
 	if ok:
-		print("  PASS  D48: %s" % nome)
+		print("  PASS  D49: %s" % nome)
 	else:
-		print("  FALHA D48: %s%s" % [nome, ("  — " + detalhe) if detalhe != "" else ""])
+		print("  FALHA D49: %s%s" % [nome, ("  — " + detalhe) if detalhe != "" else ""])
 		falhas += 1
 
 
