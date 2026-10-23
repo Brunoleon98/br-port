@@ -31,6 +31,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `VERIFICACAO_RB5_2026-10-23/CI_TIMEOUT.md` | 23/10 | PR #148: 155/158 mutantes detectados antes do teto de 90 min; limite do job ajustado para 120, provas preservadas e nova corrida necessária |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-23d.md` | 23/10 | Correção do timeout do PR #148, resultados oficiais parciais, CI por conferir e preservação da branch concorrente |
 | `VERIFICACAO_RB5_2026-10-23/PUBLICACAO.md` | 23/10 | Autorização posterior ao fecho local, envio normal da branch e PR #148; CI iniciado, sem merge ou alteração do Pages |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-23b.md` | 23/10 | RB5 no PR #148; autorização vigente, distinção entre provas locais e CI remoto, preservação e telefone pendente |
 | `VERIFICACAO_RB5_2026-10-23/README.md` | 23/10 | RB5 integrado localmente: três colunas/+25%, 84 percursos/86 PNGs, seis suítes, 158 mutantes, Padrão idêntico e persistência/arrasto Web; sem publicação |

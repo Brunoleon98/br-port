@@ -89,3 +89,11 @@ em 23/10. CI remoto desta integração e teste físico no telefone continuam
 pendentes, sem merge ou atualização do Pages. O registro em
 `docs/arquivo/VERIFICACAO_RB5_2026-10-23/PUBLICACAO.md` distingue esse envio
 das provas locais e da main publicada.
+
+O primeiro CI completo do head `5608871` passou nas suítes, export e captura,
+mas o job de mutantes atingiu o teto de 90 minutos após detectar 155 dos 158
+defeitos, sem FURADO. O workflow passa a reservar 120 minutos para terminar
+os três restantes e as bases finais. Catálogo, guardas, limites por suíte e
+código do jogo permanecem idênticos. O diagnóstico e os resultados parciais
+estão em `docs/arquivo/VERIFICACAO_RB5_2026-10-23/CI_TIMEOUT.md`; a correção
+precisa de nova corrida remota, sem tomar o cancelamento como sucesso.

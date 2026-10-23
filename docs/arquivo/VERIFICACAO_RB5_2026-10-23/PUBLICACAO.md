@@ -35,3 +35,8 @@ Não houve merge pelo Codex, force ou push para main/Claude. O PR não
 publica no Pages: a versão publicada continua na main `ed2c770`.
 Teste físico no telefone continua pendente. A continuidade posterior está
 em `docs/arquivo/BRIEFING_PROXIMA_CONVERSA_2026-10-23b.md`.
+
+A consulta posterior encontrou cancelamento por tempo no job de mutantes.
+O diagnóstico e a correção do orçamento do job estão em
+[CI_TIMEOUT.md](CI_TIMEOUT.md); os demais resultados concluídos foram
+conferidos nos logs oficiais, sem transformar a corrida cancelada em verde.
