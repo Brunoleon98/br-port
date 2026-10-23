@@ -52,3 +52,49 @@ lixeiras, um ponto de ônibus, e cavaletes de obra ao lado dos cones.
 
 **Pendente do Bruno**: pedir o PR desta branch quando quiser — o CI só corre
 no PR (`CLAUDE.md`, «Como rodar»).
+
+Prompt para colar:
+
+```text
+Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3
+e as decisões 126 (a fila) e 134 (as estradas aceites). Confira a main remota,
+os PRs abertos e o CI do último merge, e rode
+python3 tools/conferir_colaboracao.py — com o trabalho commitado, que ele lê
+o HEAD.
+
+As estradas (134) foram ACEITES e vivem na branch ccr-cce8964c-k07qy0, sem
+PR, já junta à main de 23/10 (PR #147). Se ela ainda não estiver na main,
+pergunte ao Bruno se abre o PR dela e conduza-o até verde antes de começar;
+os detalhes partem da main com ela.
+
+O item desta conversa é o 3 e último da fila da 126: os SPRITES DE
+DETALHES. Use /arte: fotografe o JOGO (dia 1, um dia da obra do pátio e o
+porto completo, e ampliados a rua, as calçadas, o pátio, os acessos aos
+berços e a vila), mostre o estado e pergunte ao Bruno o escopo, com opções e
+a recomendada primeiro — junte à pergunta, como opções, o que a 134 anotou
+nas fotos (postes e placas na calçada nova, carros estacionados, lixeiras,
+um ponto de ônibus, cavaletes de obra ao lado dos cones; estão no briefing
+2026-10-23) e o que você mesmo encontrar a olhar ampliado. Pergunte também
+ONDE cada família vai antes do render (a /arte, §8). Medir antes de mexer;
+passagens com prancha antes/depois contra a main e veredito no fim, com a
+lista de defeitos que você vê.
+
+Mantenha o que ele já aceitou: as estradas da 134 (a rua gasta e a obra que
+a recapeia por trechos, com os cones), a vegetação da 130, a vila da 123, o
+mar da 124, e os camiões de mão dupla que encostam de ré nos berços (a
+ROTA_ESTRADA, o D20 e o D13 §7j guardam a pista). Prop novo no Cenario
+responde às guardas de todos os props.
+
+Fora desta fila, para depois: animar as marolas como a espuma e o fio
+diagonal na ponta norte do cais (124), os gates do Bruno (A4 leitura, A7
+playtest pelo Pages), o recuperado V3, o que a 130 deixou registado (o ipê
+amarelo da borda 63% tapado, as palmeiras jovens pequenas) e o que a 134
+deixou (o camião encosta 2 px na linha central na curva de fora; a calçada
+da quina de dentro 0,095 fora do cerco). O texto global e o telefone são da
+frente do Codex (131 a 133): não mexa neles.
+
+Não comece outra funcionalidade por conta própria. Ao encerrar, aplique
+/fechar-sessao e entregue o prompt completo da próxima conversa em bloco
+copiável. Se ele aceitar os detalhes, a fila da 126 acaba: pergunte-lhe a
+seguinte em vez de a escolher; senão, mais uma volta neles.
+```
