@@ -405,6 +405,7 @@ tirar menu    - -  --script res://tools/capturar_cena.gd -- res://scenes/panels/
 # põem os três estados do cartão na mesma foto; a confirmação monta só o 1,
 # para «Substituir» casar UM botão.
 tirar inicial - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/inicial.png" espacos=1,3
+tirar configuracoes - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/configuracoes.png" espacos=1,3 "--tocar=Configurações"
 tirar retomada_fase1 - - --script res://tools/capturar_meu_porto.gd -- fase1 "$SAIDA/retomada_fase1.png"
 tirar retomada_fase1_fim - - --script res://tools/capturar_meu_porto.gd -- fase1 "$SAIDA/retomada_fase1_fim.png" fim
 tirar retomada_fase2 - - --script res://tools/capturar_meu_porto.gd -- fase2 "$SAIDA/retomada_fase2.png"
@@ -412,10 +413,11 @@ tirar retomada_fase2_fim - - --script res://tools/capturar_meu_porto.gd -- fase2
 tirar retomada_livre - - --script res://tools/capturar_meu_porto.gd -- livre "$SAIDA/retomada_livre.png" fim
 tirar retomada_encerrada - - --script res://tools/capturar_meu_porto.gd -- encerrada "$SAIDA/retomada_encerrada.png"
 tirar retomada_indisponivel - - --script res://tools/capturar_meu_porto.gd -- indisponivel "$SAIDA/retomada_indisponivel.png"
-tirar espacos_carregar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_carregar.png" espacos=1,3 --tocar=Carregar --tempo=carregar
+tirar espacos_carregar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_carregar.png" espacos=1,3 --tocar=Saves --tempo=carregar
 tirar espacos_nova - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_nova.png" espacos=1,3 --tocar=Nova --tempo=nova
 tirar espacos_confirmar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_confirmar.png" espacos=1 --tocar=Nova --tocar=Substituir --tempo=confirmar
-tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes.png" espacos=1,3 --tocar=Ajustes
+tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes.png" espacos=1,3 "--tocar=Configurações" --tocar=Ajustes
+tirar ajustes_movimento_ligado - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes_movimento_ligado.png" espacos=1,3 "--tocar=Configurações" --tocar=Ajustes "--tocar=Reduzir movimento"
 tirar movimento_normal - - --script res://tools/capturar_movimento.gd -- normal "$SAIDA/movimento_normal.png"
 # Cada par nasce na mesma execução: o log registra os dois nomes de saída.
 # Anexá-lo também ao segundo quadro conserva a guarda de log por PNG.
@@ -432,9 +434,9 @@ tirar diagnostico_copiado - - --script res://tools/capturar_diagnostico.gd -- co
 tirar diagnostico_indisponivel - - --script res://tools/capturar_diagnostico.gd -- indisponivel "$SAIDA/diagnostico_indisponivel.png"
 # Como jogar (`115`): as duas portas, o índice, o maior artigo e o glossário.
 # A pausa é de uma partida jogada; a cena da ajuda não é montada à parte.
-tirar ajuda_inicio_indice - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_indice.png" "--tocar=Como jogar" --tempo=indice
-tirar ajuda_inicio_artigo - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_artigo.png" "--tocar=Como jogar" "--tocar=Devolver ou cancelar" --tempo=artigo
-tirar ajuda_inicio_glossario - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_glossario.png" "--tocar=Como jogar" --tocar=Glossário --tempo=glossario
+tirar ajuda_inicio_indice - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_indice.png" "--tocar=Configurações" "--tocar=Como jogar" --tempo=indice
+tirar ajuda_inicio_artigo - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_artigo.png" "--tocar=Configurações" "--tocar=Como jogar" "--tocar=Devolver ou cancelar" --tempo=artigo
+tirar ajuda_inicio_glossario - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajuda_inicio_glossario.png" "--tocar=Configurações" "--tocar=Como jogar" --tocar=Glossário --tempo=glossario
 tirar ajuda_pausa_indice 2 9 --script res://tools/capturar_tela.gd -- 8 "$SAIDA/ajuda_pausa_indice.png" completo pausa limpo "--tocar=Como jogar" --tempo=indice
 tirar ajuda_pausa_artigo 2 9 --script res://tools/capturar_tela.gd -- 8 "$SAIDA/ajuda_pausa_artigo.png" completo pausa limpo "--tocar=Como jogar" "--tocar=Devolver ou cancelar" --tempo=artigo
 tirar ajuda_pausa_glossario 2 9 --script res://tools/capturar_tela.gd -- 8 "$SAIDA/ajuda_pausa_glossario.png" completo pausa limpo "--tocar=Como jogar" --tocar=Glossário --tempo=glossario

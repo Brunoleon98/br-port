@@ -487,7 +487,7 @@ func _paineis_abertos() -> Array:
 		return abertos
 	for filho in _no.get_children():
 		if filho is Control and filho.scene_file_path != "" \
-				and not filho.is_queued_for_deletion():
+				and not filho.is_queued_for_deletion() and filho.is_visible_in_tree():
 			abertos.append(filho)
 	return abertos
 
@@ -551,6 +551,15 @@ func _tocar(prefixo: String) -> bool:
 	if _aposta_recusada and not _semear_recusa():
 		return false
 	print("  toque: %s" % botao.text)
+	# Emitir pressed sozinho não alterna um CheckButton. Alternar primeiro
+	# reproduz o estado que o toque real entrega ao sinal, antes da foto.
+	if botao.toggle_mode:
+		botao.button_pressed = not botao.button_pressed
+		# O toque deixa o ponteiro sobre o controle: é hover_pressed, o estado
+		# que ficava branco no aparelho e exige uma foto específica.
+		var movimento := InputEventMouseMotion.new()
+		movimento.position = botao.get_global_rect().get_center()
+		root.push_input(movimento, true)
 	botao.pressed.emit()
 	return true
 

@@ -1142,6 +1142,21 @@ Button/styles/normal = SubResource("botao_normal")
 Button/styles/hover = SubResource("botao_hover")
 Button/styles/pressed = SubResource("botao_press")
 Button/styles/disabled = SubResource("botao_off")
+; O CheckButton também desenha hover_pressed enquanto a escolha está ligada.
+; Sem este estado ele cai no fundo transparente do motor, com letra clara
+; sobre o cartão branco: o defeito só aparece ao tocar/passar por cima.
+CheckButton/colors/font_color = Color(1, 1, 1, 1)
+CheckButton/colors/font_hover_color = Color(1, 1, 1, 1)
+CheckButton/colors/font_focus_color = Color(1, 1, 1, 1)
+CheckButton/colors/font_pressed_color = Color(0.961, 0.725, 0.227, 1)
+CheckButton/colors/font_hover_pressed_color = Color(0.961, 0.725, 0.227, 1)
+CheckButton/colors/font_disabled_color = Color(0.51, 0.6, 0.706, 1)
+CheckButton/colors/button_checked_color = Color(0.961, 0.725, 0.227, 1)
+CheckButton/styles/normal = SubResource("botao_normal")
+CheckButton/styles/hover = SubResource("botao_hover")
+CheckButton/styles/pressed = SubResource("botao_press")
+CheckButton/styles/hover_pressed = SubResource("botao_press")
+CheckButton/styles/disabled = SubResource("botao_off")
 Label/colors/font_color = Color(0.11, 0.204, 0.329, 1)
 Label/font_sizes/font_size = 15
 LineEdit/colors/font_color = Color(0.11, 0.204, 0.329, 1)

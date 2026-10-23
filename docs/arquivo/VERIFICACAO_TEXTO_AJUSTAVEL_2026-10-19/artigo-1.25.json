@@ -1,0 +1,367 @@
+{
+	"alvo": "painel",
+	"caixa": 400000,
+	"cenario": "artigo",
+	"fator": 1.25,
+	"fontes": [
+		{
+			"aplicado": 21,
+			"base": 17,
+			"no": "@PanelContainer@9/@VBoxContainer@10/@PanelContainer@23/@HBoxContainer@20/@Label@22"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@9/@VBoxContainer@10/Leitura/Corpo"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@9/@VBoxContainer@10/Voltar"
+		}
+	],
+	"fontes_reaplicadas": [
+		{
+			"aplicado": 21,
+			"base": 17,
+			"no": "@PanelContainer@9/@VBoxContainer@10/@PanelContainer@23/@HBoxContainer@20/@Label@22"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@9/@VBoxContainer@10/Leitura/Corpo"
+		},
+		{
+			"aplicado": 19,
+			"base": 15,
+			"no": "@PanelContainer@9/@VBoxContainer@10/Voltar"
+		}
+	],
+	"fontes_restauradas": [
+		{
+			"aplicado": 17,
+			"base": 17,
+			"no": "@PanelContainer@9/@VBoxContainer@10/@PanelContainer@23/@HBoxContainer@20/@Label@22"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@9/@VBoxContainer@10/Leitura/Corpo"
+		},
+		{
+			"aplicado": 15,
+			"base": 15,
+			"no": "@PanelContainer@9/@VBoxContainer@10/Voltar"
+		}
+	],
+	"fps_fixo": 60,
+	"janela": [
+		720,
+		1280
+	],
+	"medicao": {
+		"areas": [
+			{
+				"minimo": [
+					515.0,
+					44.0
+				],
+				"no": "HudBar",
+				"posicao": [
+					8.0,
+					8.0
+				],
+				"tamanho": [
+					704.0,
+					48.0
+				]
+			},
+			{
+				"minimo": [
+					692.0,
+					104.0
+				],
+				"no": "BarraDocas",
+				"posicao": [
+					14.0,
+					728.0
+				],
+				"tamanho": [
+					692.0,
+					104.0
+				]
+			},
+			{
+				"minimo": [
+					692.0,
+					148.0
+				],
+				"no": "Fila",
+				"posicao": [
+					14.0,
+					860.0
+				],
+				"tamanho": [
+					692.0,
+					148.0
+				]
+			},
+			{
+				"minimo": [
+					47.0,
+					30.0
+				],
+				"no": "MensagemCartao",
+				"posicao": [
+					14.0,
+					1014.0
+				],
+				"tamanho": [
+					692.0,
+					52.0
+				]
+			},
+			{
+				"minimo": [
+					351.0,
+					71.0
+				],
+				"no": "MetaCartao",
+				"posicao": [
+					14.0,
+					1072.0
+				],
+				"tamanho": [
+					692.0,
+					77.0
+				]
+			},
+			{
+				"minimo": [
+					295.0,
+					46.0
+				],
+				"no": "LinhaConstruir",
+				"posicao": [
+					14.0,
+					1155.0
+				],
+				"tamanho": [
+					692.0,
+					46.0
+				]
+			},
+			{
+				"minimo": [
+					188.0,
+					50.0
+				],
+				"no": "AcoesTurno",
+				"posicao": [
+					14.0,
+					1207.0
+				],
+				"tamanho": [
+					692.0,
+					58.0
+				]
+			}
+		],
+		"areas_originais": [
+			{
+				"minimo": [
+					515.0,
+					44.0
+				],
+				"no": "HudBar",
+				"posicao": [
+					8.0,
+					8.0
+				],
+				"tamanho": [
+					704.0,
+					48.0
+				]
+			},
+			{
+				"minimo": [
+					692.0,
+					104.0
+				],
+				"no": "BarraDocas",
+				"posicao": [
+					14.0,
+					728.0
+				],
+				"tamanho": [
+					692.0,
+					104.0
+				]
+			},
+			{
+				"minimo": [
+					692.0,
+					148.0
+				],
+				"no": "Fila",
+				"posicao": [
+					14.0,
+					860.0
+				],
+				"tamanho": [
+					692.0,
+					148.0
+				]
+			},
+			{
+				"minimo": [
+					47.0,
+					30.0
+				],
+				"no": "MensagemCartao",
+				"posicao": [
+					14.0,
+					1014.0
+				],
+				"tamanho": [
+					692.0,
+					52.0
+				]
+			},
+			{
+				"minimo": [
+					351.0,
+					71.0
+				],
+				"no": "MetaCartao",
+				"posicao": [
+					14.0,
+					1072.0
+				],
+				"tamanho": [
+					692.0,
+					77.0
+				]
+			},
+			{
+				"minimo": [
+					295.0,
+					46.0
+				],
+				"no": "LinhaConstruir",
+				"posicao": [
+					14.0,
+					1155.0
+				],
+				"tamanho": [
+					692.0,
+					46.0
+				]
+			},
+			{
+				"minimo": [
+					188.0,
+					50.0
+				],
+				"no": "AcoesTurno",
+				"posicao": [
+					14.0,
+					1207.0
+				],
+				"tamanho": [
+					692.0,
+					58.0
+				]
+			}
+		],
+		"quantidade": 3,
+		"rolagem": [
+			{
+				"altura": 638.0,
+				"conteudo": 1377.0,
+				"no": "Overlay/PainelComoJogar/@PanelContainer@9/@VBoxContainer@10/Leitura",
+				"pagina": 638.0
+			}
+		],
+		"textos": [
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					94.0,
+					30.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 21,
+				"minimo": [
+					1.0,
+					30.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@9/@VBoxContainer@10/@PanelContainer@23/@HBoxContainer@20/@Label@22",
+				"tamanho": [
+					474.0,
+					30.0
+				],
+				"texto": "Glossário"
+			},
+			{
+				"classe": "Label",
+				"desenho": [
+					0.0,
+					0.0,
+					519.828125,
+					1377.0
+				],
+				"em_rolagem": true,
+				"excesso_janela": 413.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					1.0,
+					1377.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@9/@VBoxContainer@10/Leitura/Corpo",
+				"tamanho": [
+					528.0,
+					1377.0
+				],
+				"texto": "Acordo\nValor combinado para atender aquele barco. A multa usa esse valor, sem os bônus de estruturas.\n\nAo largo / fundeadouro\nA fila de barcos que ainda aguardam uma doca.\n\nAtracar\nTrazer um barco da fila para uma doca com trabalhador disponível.\n\nBônus\nReceita adicional ligada às estruturas e à carga atendida.\n\nCaixa\nDinheiro disponível no porto.\n\nCargueiro\nClasse de barco liberada quando o porto alcança o nível necessário.\n\nDoca\nVaga onde o barco recebe atendimento.\n\nFechamento\nCálculo e acontecimentos da virada de dia ou de semana, conforme a conta.\n\nJogo livre\nContinuação da partida depois de cumprir a meta disponível.\n\nMulta\nDespesa cobrada ao confirmar o cancelamento de um serviço iniciado.\n\nPíer\nEstrutura do porto que oferece uma doca e sua equipe.\n\nReputação\nConfiança comercial do porto; influencia negociações e acesso a clientes.\n\nTreliça\nMelhoria do guindaste disponível na Fase 2, necessária para o porto receber cargueiros junto do píer adequado."
+			},
+			{
+				"classe": "Button",
+				"desenho": [
+					0.0,
+					0.0,
+					84.0,
+					27.0
+				],
+				"em_rolagem": false,
+				"excesso_janela": 0.0,
+				"excesso_local": 0.0,
+				"fonte": 19,
+				"minimo": [
+					112.0,
+					56.0
+				],
+				"minimo_maior_que_area": 0.0,
+				"no": "@PanelContainer@9/@VBoxContainer@10/Voltar",
+				"tamanho": [
+					536.0,
+					56.0
+				],
+				"texto": "Assuntos"
+			}
+		]
+	},
+	"mesmo_estado_apos_ampliar": true,
+	"movimento_reduzido_em_memoria": true,
+	"persistencia_rb5": false,
+	"rng": "-7940546980199586925",
+	"semente": 42,
+	"turno": 1
+}

@@ -1711,6 +1711,9 @@ func _run() -> void:
 	var movimento = load("res://tests/casos_reduzir_movimento.gd").new()
 	await movimento.rodar(GS, self)
 	_check("T29: preferência, movimento, informação e isolamento", movimento.completo and movimento.falhas == 0)
+	var inicio_configuracoes = load("res://tests/casos_inicio_configuracoes.gd").new()
+	await inicio_configuracoes.rodar(GS, self)
+	_check("T30: quatro entradas, retorno das consultas e movimento legível", inicio_configuracoes.completo and inicio_configuracoes.falhas == 0)
 
 	print("")
 	if _fails == 0:

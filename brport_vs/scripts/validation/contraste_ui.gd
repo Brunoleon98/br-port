@@ -60,6 +60,7 @@ const PASTA_PAINEIS := "res://scenes/panels"
 # Medir só a porta fácil é medir o caso que não reprova.
 func percurso() -> Array:
 	return [
+		{"nome": "Configurações do início", "cena": "res://scenes/panels/PainelConfiguracoes.tscn"},
 		{"nome": "Versão e diagnóstico", "cena": "res://scenes/panels/PainelDiagnostico.tscn"},
 		{"nome": "Diagnóstico (cópia indisponível)", "cena": "res://scenes/panels/PainelDiagnostico.tscn", "tocar": ["Copiar diagnóstico"], "tempo": "indisponivel"},
 		{"nome": "Meu porto agora (Fase 1)", "cena": "res://scenes/panels/PainelMeuPorto.tscn", "setup": []},

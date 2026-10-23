@@ -354,6 +354,17 @@ func _rodar() -> void:
 	_falhas += int(mata.falhas)
 	_confere("o bloco D47 correu até ao fim", mata.completo)
 
+	var fundo_inicial = load("res://tests/casos_fundo_inicial.gd").new()
+	fundo_inicial.rodar(self)
+	_falhas += int(fundo_inicial.falhas)
+	_confere("o bloco D48 correu ate ao fim", fundo_inicial.completo)
+
+	print("=== BT: a regua da bancada de tamanho do texto ===")
+	var bancada_texto = load("res://tests/casos_bancada_texto.gd").new()
+	bancada_texto.rodar(self)
+	_falhas += int(bancada_texto.falhas)
+	_confere("o bloco da bancada de texto correu ate ao fim", bancada_texto.completo)
+
 	print("=== D48: as estradas — o que a obra troca, as juntas e a borda norte ===")
 	var estradas = load("res://tests/casos_estradas.gd").new()
 	estradas.rodar(_mapa_lido("res://art/porto_mapa_iso.svg"),
