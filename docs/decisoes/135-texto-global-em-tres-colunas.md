@@ -83,5 +83,9 @@ As provas estão em `docs/arquivo/VERIFICACAO_RB5_2026-10-23/README.md`:
 seis suítes, 158 pares de mutantes, 84 percursos de captura (86 PNGs),
 cobertura e Padrão comparado com a main. O Web local provou os quatro pares
 de preferências após reinício e o arrasto por toque com partida preservada.
-Publicação, CI remoto desta integração e teste físico no telefone continuam
-pendentes; o recibo distingue a fonte de trabalho exportada da main publicada.
+Depois do fechamento local, Bruno autorizou: «Pode seguir com o PR caso não
+tenha achado erros». A conferência continuou verde e o PR #148 foi aberto
+em 23/10. CI remoto desta integração e teste físico no telefone continuam
+pendentes, sem merge ou atualização do Pages. O registro em
+`docs/arquivo/VERIFICACAO_RB5_2026-10-23/PUBLICACAO.md` distingue esse envio
+das provas locais e da main publicada.

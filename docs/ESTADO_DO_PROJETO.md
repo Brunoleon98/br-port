@@ -123,7 +123,7 @@ fundo parado e transições diretas, operação e resultados preservados.
 Telefone/aceite visual pendentes; partida/save intactos.
 **RB5 (`134`, `135`):** três colunas/+25% implementados localmente;
 Padrão/Maior nos Ajustes, persistência independente do movimento e provas
-no arquivo (`135`). Publicação e telefone pendentes.
+no arquivo (`135`). PR #148 aberto; CI e telefone pendentes.
 **Início/fundo (`132`/`133`, #146/#147):** mesclados por Bruno. V3 só na
 inicial, celular com degradê. Pages `ed2c770`; CI pós-merge verde.
 **A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,

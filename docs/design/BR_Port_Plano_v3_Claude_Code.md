@@ -805,7 +805,8 @@ continuam na divisão visual do Claude; não são a próxima tarefa do Codex.
 (`134`): colunas e lista, com +25%/+50%, mantendo o mapa. Depois aprovou
 **três colunas e +25%**. A integração global está pronta localmente (`135`), com
 Padrão/Maior, leitura e persistência independentes do movimento. As provas
-estão no arquivo da sessão de 23/10; publicação e teste no telefone pendentes.
+estão no arquivo da sessão de 23/10. Bruno autorizou o PR #148, aberto;
+CI remoto e teste no telefone pendentes, sem merge ou atualização do Pages.
 **Em 20/10, Bruno pediu corrigir o contraste do controle de movimento,
 reunir as consultas em Configurações e deixar quatro entradas no início
 (`132`).** #146 mesclado por Bruno. V3 aceita na foto de runtime em

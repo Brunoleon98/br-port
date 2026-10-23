@@ -3,7 +3,9 @@
 Bruno aprovou três colunas com +25% na bancada da decisão `134`. A decisão
 `135` registra a integração: Padrão e Maior nos Ajustes do início e da pausa,
 leitura e foco preservados, preferências de texto e movimento independentes.
-Não houve push, PR, merge ou publicação desta entrega.
+No fechamento local ainda não havia push ou PR desta entrega. O envio posterior
+autorizado por Bruno está em [PUBLICACAO.md](PUBLICACAO.md); o recibo abaixo
+continua retratando as provas locais anteriores ao PR.
 
 ## Fonte e identidade
 
