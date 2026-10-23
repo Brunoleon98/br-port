@@ -275,7 +275,7 @@ const BOCA_DEPOIS := 1.2
 ## A LARGURA DA RUA, repetida do gerador (`RUA_LARG`) pela mesma razão que a
 ## rota: o jogo não lê o JSON. O D13 confere-a contra as âncoras.
 ##
-## O CHANFRO das quinas salientes já não se repete aqui: desde 23/09 é o
+## A QUINA SALIENTE (chanfro até à `131`, arco desde ela) não se repete aqui: desde 23/09 é o
 ## gerador que o deriva da curva deste arquivo, e não a curva dele
 ## (`corte_da_curva()`, `docs/decisoes/053`).
 const RUA_LARG := 1.8
@@ -490,7 +490,14 @@ func silhueta_do_trecho(de: Vector2, para: Vector2, motivo: String,
 ## A curva aberta corta então a quina por uma diagonal a MEIA FAIXA do vértice
 ## (`RUA_LARG / 4`, na perpendicular), e esta é a distância do vértice até
 ## onde ela começa e acaba, ao longo de cada trecho: `meia_faixa * raiz(2)`.
-## É o mesmo número de 0,636 que saía, até 23/09, do chanfro de meia rua.
+## Era o mesmo número de 0,636 que saía, até 23/09, do chanfro de meia rua.
+##
+## ⚠️ E PASSOU A MEIA RUA (0,9) NA `131`. O Bruno pediu a curva de fora mais
+## redonda, e o raio do arco da borda sai deste corte: com 0,636 não passava de
+## 0,86. Andar em ARCO não serviu — o sprite não roda, e a meio da curva a
+## ponta aponta para a quina e sai do asfalto em qualquer raio (medido: +0,24
+## a +0,26) —; cortar mais cedo pela mesma diagonal afasta-o, e o arco sobe a
+## 1,38. A diagonal passa a 0,9/raiz(2) do vértice, na perpendicular.
 ##
 ## ⚠️ E A ORDEM INVERTEU-SE (`docs/decisoes/053`). A diagonal saía do chanfro
 ## do mapa, e o maior camião, um retângulo alinhado ao eixo a andar a 45°,
@@ -503,7 +510,7 @@ func silhueta_do_trecho(de: Vector2, para: Vector2, motivo: String,
 ## uma faixa de 0,9 sai sempre um palmo fora dela (0,25 do porta-contêiner),
 ## e ali o palmo cai na OUTRA faixa, que é asfalto; separa-os o tempo.
 static func corte_da_curva() -> float:
-	return RUA_LARG * sqrt(2.0) / 4.0
+	return RUA_LARG / 2.0
 
 
 ## O CAMINHO DESENHADO de uma lista de pontos, trecho a trecho: igual à lista,

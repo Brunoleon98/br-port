@@ -354,6 +354,14 @@ func _rodar() -> void:
 	_falhas += int(mata.falhas)
 	_confere("o bloco D47 correu até ao fim", mata.completo)
 
+	print("=== D48: as estradas — o que a obra troca, as juntas e a borda norte ===")
+	var estradas = load("res://tests/casos_estradas.gd").new()
+	estradas.rodar(_mapa_lido("res://art/porto_mapa_iso.svg"),
+		_mapa_lido("res://art/porto_mapa_iso_patio.svg"), _ancoras,
+		load("res://scripts/ObraNoMapa.gd"))
+	_falhas += int(estradas.falhas)
+	_confere("o bloco D48 correu até ao fim", estradas.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -2150,11 +2158,15 @@ func _d13_travessia_do_caminhao() -> void:
 #
 # A curva aberta corta a quina saliente por uma diagonal, e o camião percorre-a
 # com a silhueta do eixo a que cada metade pertence — um RETÂNGULO alinhado ao
-# eixo, a andar a 45°. A quina dele que aponta para a ponta chanfrada fica
+# eixo, a andar a 45°. A quina dele que aponta para a ponta da curva fica
 # `(comprimento + largura) / 2` para dentro da linha da diagonal, somadas as
-# duas distâncias às bordas, e é isso que o chanfro tem de deixar de asfalto.
+# duas distâncias às bordas, e é isso que a curva tem de deixar de asfalto.
 # Até 23/09 o chanfro era meia rua (0,9) e o porta-contêiner saía 0,207 dele,
 # por cima do meio-fio e do passeio: a `052` registou-o e deixou-o por decidir.
+# ⚠️ E DESDE A `131` A QUINA É UM ARCO, tangente às duas bordas, e o que mais
+# aperta já não é o meio da diagonal: é a quina da carroçaria no meio da curva,
+# rente a uma das bordas, onde o arco recua mais do que o chanfro recuava. O
+# gerador deriva o raio dessa conta; aqui mede-se contra o arco publicado.
 #
 # ⚠️ TRÊS FONTES, e nenhuma é espelho de outra. O caminho sai do
 # `TrafegoDeCamioes.gd` (`trechos_de()`), o chanfro da tabela de âncoras (o
@@ -2175,9 +2187,9 @@ func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array)
 	for c in cotovelos:
 		var amx: Array = c["asfalto_mx"]
 		var amy: Array = c["asfalto_my"]
-		var ch := float(c["chanfro"])
-		quinas.append([Vector2(float(amx[1]), float(amy[0])), -1.0, 1.0, ch])
-		quinas.append([Vector2(float(amx[0]), float(amy[1])), 1.0, -1.0, ch])
+		var raio := float(c["raio"])
+		quinas.append([Vector2(float(amx[1]), float(amy[0])), -1.0, 1.0, raio])
+		quinas.append([Vector2(float(amx[0]), float(amy[1])), 1.0, -1.0, raio])
 	var diagonais := 0
 	var pior := -INF
 	var onde := ""
@@ -2206,9 +2218,12 @@ func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array)
 						for canto in [p + ext, p - ext, p + Vector2(ext.x, -ext.y), p + Vector2(-ext.x, ext.y)]:
 							var dx: float = float(q[1]) * ((canto as Vector2).x - quina.x)
 							var dy: float = float(q[2]) * ((canto as Vector2).y - quina.y)
-							# Quanto sai: além de cada borda reta, ou além do chanfro,
-							# medido na perpendicular dele.
-							var sai := maxf(maxf(-dx, -dy), (float(q[3]) - dx - dy) / sqrt(2.0))
+							# Quanto sai: além de cada borda reta, ou além do arco,
+							# medido no raio dele.
+							var r := float(q[3])
+							var sai := maxf(-dx, -dy)
+							if dx < r and dy < r:
+								sai = maxf(sai, Vector2(dx, dy).distance_to(Vector2(r, r)) - r)
 							if sai > pior:
 								pior = sai
 								onde = "%s (empresa %d) na diagonal %s -> %s, quina %s" \

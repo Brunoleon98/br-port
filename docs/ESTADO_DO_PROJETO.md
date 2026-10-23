@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 18/10/2026 — vegetação aceite (`130`); reduzir movimento (`129`); diagnóstico (`128`)
+> **Atualização:** 19/10/2026 — estradas aceite (`131`); vegetação aceite (`130`); reduzir movimento (`129`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -98,10 +98,12 @@ quatro portas FECHADAS — cidade, lojas, missões, análise (itens 18 a 21).
 **O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
 verdade** — parede desabada, meio telhado, portão fora do trilho.
 
-**O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
-central e passadeiras) — **três camiões descem e dois sobem, pela DIREITA, e os dois sentidos encostam nos berços** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
+**O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, linha
+central amarela, curvas em arco) — **três camiões descem e dois sobem, pela DIREITA, e os dois sentidos encostam nos berços** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
 e uma **viela de terra entre elas** — a de trás mais rala, a desfiar no quintal
 e na mata do morro. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
+**A rua é GASTA no porto em ruínas** e a obra do pátio recapeia-a um trecho
+por dia, com cones; o acesso de terra chega asfaltado com ela (`131`, D48).
 
 **A VILA É HUMILDE DE PROPÓSITO** (`123`): meia-água de fibrocimento, casinha
 de empena, quatro águas, varanda e casa em L, cada uma num terreno de muro
@@ -117,12 +119,10 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
-(`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142 mesclado).
-**RB6 (`129`, #143 mesclado):** Reduzir movimento nos Ajustes do início
-e pausa, preferência por aparelho; fundo parado e transições diretas,
-com operação, ações e resultados preservados. Sem mudar partida/save.
-**A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
-`130`); a seguir, estradas, depois detalhes.
+(`121`–`123`), retomada (`125`), diagnóstico (`128`) e reduzir movimento
+(`129`, RB6: nos Ajustes do início e da pausa, por aparelho).
+**A fila da `126`** (§7): terreno e vegetação **aceite** (`127`, `130`),
+estradas **aceite** em 19/10 (`131`); a seguir, detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
@@ -192,7 +192,7 @@ histórico em `HISTORICO.md`.
 | `playtest/` | As partidas reais do A7, uma por `.jsonl`, sem o nome de quem jogou (`006`, `099`) |
 | `brport_vs/scripts/TrafegoDeCamioes.gd` | **Os camiões da rua** — rotas, cedência, visita ao berço; objeto do `Main`, lido pelo `trafego` (`095`) |
 | `brport_vs/scripts/MataNoMapa.gd` | **A mata que balança**, do morro e da restinga, entre os irmãos do `Cenario` pela profundidade (`127`) |
-| `brport_vs/scripts/ObraNoMapa.gd` | **A obra no mapa** — o armazém e o pátio de cada dia; o asfalto é o mapa pronto recortado (`121`, D45). Foto de um dia de obra: `tools/capturar_obra.gd` (`122`) |
+| `brport_vs/scripts/ObraNoMapa.gd` | **A obra no mapa** — o armazém, o pátio e a rua de cada dia; o asfalto é o mapa pronto recortado (`121`, D45). Foto de um dia de obra: `tools/capturar_obra.gd` (`122`) |
 | `brport_vs/scripts/NarradoraDaCida.gd` | **A Dona Cida na faixa** — gatilhos, variantes e memórias; objeto do `Main` (`096`) |
 | `brport_vs/scripts/TutorialDoToninho.gd` | **O tutorial do dia 1** — atracar e avançar, por cima do jogo e sem save; objeto do `Main` (`101`) |
 | `brport_vs/scripts/VezDasTelas.gd` | **A vez das telas que abrem sozinhas**, uma de cada vez; objeto do `Main` (`054`, `097`) |

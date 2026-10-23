@@ -459,6 +459,20 @@ C = {
     # o chão que sobrou. O meio-fio (`meiofio`) faz o resto do trabalho.
     "asfalto_via": "#49535b", "calcada": "#aeb8bf", "faixa_via": "#e6ebee",
     "meiofio": "#8d979e",
+    # A RUA GASTA (`131`): o mapa do porto em ruínas leva a rua que a cidade
+    # deixou envelhecer — o asfalto desbotado e MAIS CLARO do que o
+    # `asfalto_via`, que passou a ser o da rua recapeada com o pátio. O
+    # remendo é mais ESCURO do que o asfalto à volta, porque é mais novo do
+    # que ele; a fissura e o buraco, mais escuros ainda.
+    "asfalto_gasto": "#5b6268", "remendo": "#4c545a", "fissura": "#3b4247",
+    "buraco": "#2b3034", "buraco_borda": "#737a7f", "oleo": "#262b2f",
+    # A GUIA REBAIXADA na boca de cada acesso: concreto mais escuro do que a
+    # calçada, e a 20/255 dela — fora da folga de 4 com que o D20 casa a
+    # calçada, que a rota do camião não pode pisar.
+    # A boca de lobo é a grelha da sarjeta, quase da cor dela: escura como o
+    # buraco, lia como tracinhos pretos rente ao meio-fio (segunda passagem).
+    "rebaixo": "#9aa4ab", "junta_calcada": "#959fa6", "bueiro": "#3f464c",
+    "grelha": "#727b81", "tampa": "#5a6065",
     # "cada casa de uma cor", diz a leitura da referência. A `casa_c` era
     # #cfd8de — o mesmo azul-acinzentado da parede antiga, de modo que um terço
     # da vila lia como concreto. Virou verde-água claro, que é cor de casa de
@@ -1017,16 +1031,33 @@ def manchas_chao(indice: int, mx0: float, my0: float, mx1: float, my1: float,
 
     if pavimentado:
         # Rachaduras: linha quebrada rente ao chão, não risco sobre a imagem.
-        for _ in range(5):
-            mx, my = r.uniform(mx0, mx1), r.uniform(my0, my1)
-            pts = [p(mx, my, ALT_CAIS)]
-            for _ in range(3):
-                mx += r.uniform(-1.1, 1.1)
-                my += r.uniform(-1.1, 1.1)
-                pts.append(p(mx, my, ALT_CAIS))
-            out.append('    <polyline points="%s" fill="none" stroke="#4e5860" '
-                       'stroke-width="1.6" opacity="0.5"/>\n'
-                       % " ".join("%.1f,%.1f" % q for q in pts))
+        #
+        # ⚠️ ERAM TRÊS TRAÇOS RETOS DE ATÉ 1,1 UNIDADE, e liam como rabisco —
+        # um «X» atrás do escritório, um triângulo ao pé do cone (`131`). A
+        # fissura de verdade anda aos ziguezagues curtos e abre um ramo. Sai
+        # de um `Random` próprio: o das manchas acaba nelas e não muda.
+        rf = random.Random(SEMENTE_CHAO + 720 + indice)
+        for _ in range(4):
+            mx, my = rf.uniform(mx0, mx1), rf.uniform(my0, my1)
+            ang = rf.uniform(0.0, math.tau)
+            ramos, caminhos = [(mx, my, ang, rf.randint(7, 12))], []
+            while ramos:
+                bx, by, ba, passos = ramos.pop()
+                linha = [p(bx, by, ALT_CAIS)]
+                for j in range(passos):
+                    ba += rf.uniform(-0.5, 0.5)
+                    passo = rf.uniform(0.08, 0.17)
+                    bx, by = bx + math.cos(ba) * passo, by + math.sin(ba) * passo
+                    linha.append(p(bx, by, ALT_CAIS))
+                    if j == passos // 2 and not caminhos and rf.random() < 0.7:
+                        ramos.append((bx, by, ba + rf.choice((-1, 1)) * rf.uniform(0.6, 1.1),
+                                      rf.randint(3, 6)))
+                caminhos.append(linha)
+            out.append('    <path d="%s" fill="none" stroke="#4e5860" stroke-width="1.0" '
+                       'stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>\n'
+                       % " ".join("M%.1f,%.1f " % c[0] + " ".join("L%.1f,%.1f" % q
+                                                                  for q in c[1:])
+                                  for c in caminhos))
     else:
         # Cascalho: o pátio de terra batida é chão de obra, não jardim.
         for _ in range(60):
@@ -3303,43 +3334,117 @@ MEIOFIO = 0.05
 # continua chanfrada — o que o 4b pediu (`docs/decisoes/013`) é que ela não
 # acabe em ponta de 90°, e não um tamanho. A viela, que o chanfro de 0,9 comia
 # 0,08, deixa de ser tocada: ela abre a 0,82 da quina.
-CORTE_DA_CURVA = RUA_LARG * math.sqrt(2.0) / 4.0
+# ⚠️ E O CORTE CRESCEU NA `131`, de `RUA_LARG * raiz(2) / 4` (0,636) para
+# MEIA RUA: o Bruno pediu a curva de fora mais redonda, e o raio do arco sai
+# deste corte — com 0,636 não passava de 0,86. Fazer o camião andar em ARCO
+# não serve: o sprite não roda, e a meio da curva a ponta dele aponta para a
+# quina e sai do asfalto em qualquer raio (medido: +0,24 a +0,26). Cortar mais
+# CEDO pela mesma diagonal afasta-o da quina, e o arco sobe a 1,38.
+CORTE_DA_CURVA = RUA_LARG / 2.0
 CAMIAO_MAIOR = (1.96 * 0.72, 0.62 * 0.72)     # chassi, largura
-CHANFRO_COTOVELO = math.floor(
-    (RUA_LARG / 2.0 + CORTE_DA_CURVA - (CAMIAO_MAIOR[0] + CAMIAO_MAIOR[1]) / 2.0)
-    * 100.0) / 100.0
+# ⚠️ E DESDE A `131` NÃO HÁ CHANFRO: a quina é um arco, e o raio dele sai da
+# mesma conta do camião — ver `RAIO_COTOVELO`, logo abaixo. O chanfro de 0,6
+# que esta conta dava deixou de ser desenhado.
+
+# ── A CURVA REDONDA (`131`) ──────────────────────────────────────────────
+#
+# O Bruno pediu, na conversa das estradas, *«curvas mais arredondadas»*: a
+# quina saliente era um chanfro a 45°, e a reentrante, um canto vivo. A
+# saliente passou a um ARCO tangente às duas bordas, e o raio dele sai do
+# mesmo camião de que saía o chanfro — é o maior com que a carroçaria do
+# porta-contêiner, a cortar a curva pela diagonal (`trechos_de()` do
+# trânsito), não sai do asfalto. A conta: a quina da carroçaria anda na reta
+# `dx + dy = s`, a `s = RUA_LARG / 2 + CORTE_DA_CURVA - (chassi + largura) / 2`
+# das duas bordas (a mesma do chanfro), e o ponto que mais aperta o arco é o
+# do meio da diagonal, a `(x, y)` das bordas; o arco tangente de raio `R` deixa
+# esse ponto no asfalto enquanto `R <= s + raiz(s² - x² - y²)`. Dá 0,869, e
+# arredonda-se PARA BAIXO, que é o lado do asfalto. O D13 §7j mede-o.
+_S_CURVA = RUA_LARG / 2.0 + CORTE_DA_CURVA - (CAMIAO_MAIOR[0] + CAMIAO_MAIOR[1]) / 2.0
+_X_CURVA = RUA_LARG / 4.0 + CORTE_DA_CURVA / 2.0 - CAMIAO_MAIOR[1] / 2.0
+_Y_CURVA = RUA_LARG / 4.0 + CORTE_DA_CURVA / 2.0 - CAMIAO_MAIOR[0] / 2.0
+RAIO_COTOVELO = math.floor(
+    (_S_CURVA + math.sqrt(_S_CURVA ** 2 - _X_CURVA ** 2 - _Y_CURVA ** 2)) * 100.0) / 100.0
+# A quina de DENTRO arredondava-se só dentro da calçada (raio 0,22, a
+# calçada em canto vivo), e não se notava: «curva de dentro pouco visível»,
+# na terceira passagem. A 0,45 a calçada também arredonda (raio 0,23) e
+# avança até 0,095 sobre o canto do pátio e o da vila — fora do cerco que a
+# tabela publica, que é retângulo; a obra da rua recorta-a com o cotovelo.
+RAIO_DE_DENTRO = 0.45
+# Os segmentos de cada quarto de arco: a 0,86 de raio são 2,4 px por lado.
+PASSOS_DO_ARCO = 12
+
+
+def _arco(cx, cy, raio, de, ate, passos=PASSOS_DO_ARCO) -> list:
+    """Pontos do arco de centro (cx, cy), de `de` a `ate` graus, em mundo."""
+    out = []
+    for k in range(passos + 1):
+        t = math.radians(de + (ate - de) * k / passos)
+        # Arredondado ao milionésimo: o seno de uma libm pode diferir da de
+        # outra no último bit, e o CI compara o mapa byte a byte (`mapa.md`).
+        out.append((round(cx + raio * math.cos(t), 6), round(cy + raio * math.sin(t), 6)))
+    return out
 
 
 def cotovelo_pontos(borda, prox, my1, folga: float = 0.0) -> list:
-    """Os vértices do cotovelo, inflado de `folga` (calçada, meio-fio).
+    """O contorno do cotovelo, inflado de `folga` (calçada, meio-fio).
 
     A `folga` empurra o contorno para fora nos quatro lados, o que faz o mesmo
     polígono servir de asfalto, de meio-fio e de calçada — desenhá-los como
     três retângulos independentes é o que deixava a calçada com a esquina
-    quadrada por baixo de um asfalto já chanfrado.
+    quadrada por baixo de um asfalto já arredondado.
 
-    ⚠️ E O CORTE CRESCE COM A FOLGA, senão a calçada sai o DOBRO da largura em
-    cima do chanfro. Afastar a esquina de `folga` em `mx` E em `my` afasta a
-    reta a 45° de `folga * raiz(2)`, e a primeira versão desta função usava o
-    mesmo corte nos três contornos: medido no render, a faixa de passeio saltava
-    de 3,9 px nas retas para 8,8 px no bisel, e lia-se como um muro em vez de um
-    meio-fio. Recuar o corte de `folga * (2 - raiz(2))` põe as duas retas
-    paralelas à distância certa. Sobra 1,58x, e isso não é defeito: é a projeção
-    — em isométrico a direção (1,1) comprime-se e a (1,-1) estica-se, e uma
-    faixa de largura constante NO MUNDO não tem largura constante NA TELA.
-    Corrigir isso seria escrever pixel dentro de geometria de mundo, que é a
-    fronteira que o `tela()` existe para não deixar atravessar.
+    ⚠️ AS DUAS QUINAS SALIENTES SÃO ARCOS desde a `131` — eram um chanfro a
+    45° —, e os arcos dos três contornos são CONCÊNTRICOS: o raio cresce com
+    a folga e o centro fica. O chanfro precisava de recuar o corte de
+    `folga * (2 - raiz(2))` para a calçada não sair o dobro da largura em
+    cima do bisel (3,9 px nas retas contra 8,8 no bisel, lido como um muro);
+    o arco concêntrico não tem esse problema, porque é a mesma curva afastada.
+    Sobra a projeção — em isométrico a direção (1,1) comprime-se e a (1,-1)
+    estica-se —, e isso não é defeito: corrigi-lo seria escrever pixel dentro
+    de geometria de mundo, que é a fronteira que o `tela()` existe para não
+    deixar atravessar.
     """
-    corte = CHANFRO_COTOVELO + folga * (2.0 - math.sqrt(2.0))
-    mx0 = borda - RUA_RECUO - folga
-    mx1 = prox - RUA_RECUO + RUA_LARG + folga
-    my_a = my1 - RUA_LARG - folga
-    my_b = my1 + folga
-    return [(mx0, my_a), (mx1 - corte, my_a), (mx1, my_a + corte),
-            (mx1, my_b), (mx0 + corte, my_b), (mx0, my_b - corte)]
+    x0 = borda - RUA_RECUO
+    x1 = prox - RUA_RECUO + RUA_LARG
+    ya = my1 - RUA_LARG
+    yb = my1
+    rho = RAIO_COTOVELO + folga
+    # A saliente de `mx` alto e `my` baixo: o asfalto fica a −mx e a +my.
+    alta = _arco(x1 - RAIO_COTOVELO, ya + RAIO_COTOVELO, rho, -90.0, 0.0)
+    # A saliente de `mx` baixo e `my` alto: o asfalto fica a +mx e a −my.
+    baixa = _arco(x0 + RAIO_COTOVELO, yb - RAIO_COTOVELO, rho, 90.0, 180.0)
+    return ([(x0 - folga, ya - folga)] + alta + [(x1 + folga, yb + folga)] + baixa)
 
 
-def passadeira(borda, my_centro) -> str:
+def quinas_de_dentro(borda, prox, my1, folga: float = 0.0, asfalto: bool = False) -> list:
+    """O que se acrescenta nas duas quinas REENTRANTES de um cotovelo, para a
+    curva de dentro sair redonda: o pedaço entre o canto vivo e o arco de raio
+    `RAIO_DE_DENTRO - folga`, com o mesmo centro nos contornos todos.
+
+    A primeira é a da reta de cima a virar para `+mx` (no lado da ÁGUA da
+    reta), a segunda a do cotovelo a virar para a reta de baixo (no lado da
+    VILA). Com `folga = CALCADA` o raio é zero e não há nada a acrescentar.
+    """
+    r = RAIO_DE_DENTRO
+    rho = r - folga
+    if rho <= 1e-6:
+        return []
+    f = borda - RUA_RECUO + RUA_LARG          # a face da água da reta de cima
+    ya = my1 - RUA_LARG
+    d = prox - RUA_RECUO                      # a face da vila da reta de baixo
+    yb = my1
+    um = [(f + folga, ya - folga)] + _arco(f + r, ya - r, rho, 180.0, 90.0)
+    dois = [(d - folga, yb + folga)] + _arco(d - r, yb + r, rho, 0.0, -90.0)
+    if asfalto:
+        # O asfalto leva também a meia largura do meio-fio da RETA que fica
+        # do lado de dentro da curva: o meio-fio reto vem até ao canto vivo,
+        # e sem isto ficava uma lasca dele a direito por dentro do arco.
+        um = [(f - MEIOFIO, ya), (f - MEIOFIO, ya - r)] + um[1:]
+        dois = [(d + MEIOFIO, yb), (d + MEIOFIO, yb + r)] + dois[1:]
+    return [um, dois]
+
+
+def passadeira(borda, my_centro, gasta=None) -> str:
     """Faixa de pedestres a atravessar a rua, na altura de um prédio do pátio.
 
     ⚠️ AS BARRAS CORREM NO SENTIDO DO TRÁFEGO, que aqui é `my`. Desenhá-las
@@ -3348,8 +3453,11 @@ def passadeira(borda, my_centro) -> str:
     cima dela. Como a rua deste mapa corre em `my`, as barras correm em `my` e
     repetem-se em `mx`.
 
-    Ela só existe com o pavimento — pintura de piso num porto de terra batida
-    seria marcação sem estrada, a mesma regra da linha central logo abaixo.
+    ⚠️ ELA SÓ EXISTIA COM O PAVIMENTO, e aparecia do nada no dia em que o
+    pátio ficava pronto — com a linha central, 27 mil pixels fora do recorte
+    da obra (`131`). A rua é da cidade e já lá estava: no porto em ruínas a
+    zebra está GASTA (`gasta` traz o sorteio do desgaste), e a obra do pátio
+    repinta-a com o trecho de rua dela.
     """
     dentro = borda - RUA_RECUO
     fora = dentro + RUA_LARG
@@ -3360,8 +3468,20 @@ def passadeira(borda, my_centro) -> str:
     passo = RUA_LARG / 8.0
     mx = dentro + passo * 0.5
     while mx + passo * 0.5 <= fora:
-        s += _faixa_mx(mx, mx + passo * 0.5, my_centro - PASSADEIRA_COMP / 2.0,
-                       my_centro + PASSADEIRA_COMP / 2.0, C["faixa_via"], 0.85)
+        y0 = my_centro - PASSADEIRA_COMP / 2.0
+        y1 = my_centro + PASSADEIRA_COMP / 2.0
+        opac = 0.85
+        if gasta is not None:
+            # A tinta gasta some primeiro onde a roda passa: cada barra perde
+            # uma ponta, ou fica só a sombra dela.
+            opac = gasta.uniform(0.26, 0.42)
+            if gasta.random() < 0.45:
+                corte = gasta.uniform(0.12, 0.35) * PASSADEIRA_COMP
+                if gasta.random() < 0.5:
+                    y0 += corte
+                else:
+                    y1 -= corte
+        s += _faixa_mx(mx, mx + passo * 0.5, y0, y1, C["faixa_via"], opac)
         mx += passo
     return s
 
@@ -3379,6 +3499,12 @@ def vias(pavimentado: bool) -> str:
     s = ""
     dentro = lambda b: b - RUA_RECUO
     fora = lambda b: b - RUA_RECUO + RUA_LARG
+    # A RUA DO PORTO EM RUÍNAS É GASTA, e a do pátio pronto é recapeada
+    # (`131`): os dois mapas diferem DENTRO do contorno da rua, e a obra do
+    # pátio recapeia-a trecho a trecho (`obra_da_rua()`). O que muda no chão
+    # gasto — remendo, fissura, buraco, a tinta apagada — vive em
+    # `vias_detalhes()`; aqui só o tom do asfalto.
+    asfalto = C["asfalto_via"] if pavimentado else C["asfalto_gasto"]
 
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
         vira = i + 1 < len(DEGRAUS)
@@ -3408,42 +3534,787 @@ def vias(pavimentado: bool) -> str:
         if vira:
             s += _chao(cotovelo_pontos(borda, prox, my1, CALCADA), C["calcada"])
             s += _chao(cotovelo_pontos(borda, prox, my1, MEIOFIO), C["meiofio"])
-        s += _faixa_mx(dentro(borda), fora(borda), my0, fim, C["asfalto_via"])
+        # ⚠️ E A RETA COMEÇA DENTRO DO COTOVELO DE TRÁS, pela `COSTURA`. Até
+        # 19/10 ela começava no `my0`, a borda exata onde o cotovelo acaba: as
+        # duas bordas antisserrilhadas no mesmo sítio deixavam passar a
+        # calçada de baixo, e cada um dos quatro cotovelos à vista tinha um
+        # fio claro atravessado na pista (+25 a +30 de luminância, `131`) —
+        # a «linha fina diagonal junto do coqueiro sul» da `130`. Do outro
+        # lado a costura já existia: a reta acaba DENTRO do cotovelo (`fim`),
+        # e o cotovelo desenha-se por cima dela.
+        ini = my0 - COSTURA if i > 0 else my0
+        s += _faixa_mx(dentro(borda), fora(borda), ini, fim, asfalto)
         # O meio-fio da faixa reta acaba com ela: daí para a frente quem tem
         # margem é o contorno do cotovelo, que já está desenhado por baixo.
         for m in (dentro(borda), fora(borda)):
             s += _faixa_mx(m - MEIOFIO, m + MEIOFIO, my0, fim, C["meiofio"])
 
         if vira:
-            s += _chao(cotovelo_pontos(borda, prox, my1), C["asfalto_via"])
+            s += _chao(cotovelo_pontos(borda, prox, my1), asfalto)
 
-        if pavimentado:
-            # AS PASSADEIRAS, na altura de cada prédio do pátio. O pedido dizia
-            # "faixas de pedestres perto do armazém e escritório, por exemplo",
-            # e é literalmente isso: quem trabalha no pátio atravessa a rua
-            # para chegar à vila, e a passadeira é o que diz que aquilo é uma
-            # rua com gente e não uma pista.
-            #
-            # ⚠️ O `my` SAI DOS PRÉDIOS, não de um número escrito aqui. Eles
-            # andaram em 07/09 quando a rua alargou, e uma passadeira cravada
-            # ficaria a marcar a travessia de um prédio que já não está ali.
-            for _n, _pmx, pmy, _spr in PREDIOS_DO_PATIO:
-                if my0 <= pmy < my1:
-                    s += passadeira(borda, pmy)
-            meio = (dentro(borda) + fora(borda)) / 2.0
-            my = my0 + 0.5
-            while my < my1 - 1.4:
-                s += _faixa_mx(meio - 0.05, meio + 0.05, my, my + 0.5,
-                               C["faixa_via"], 0.7)
-                my += 1.2
+    # A CURVA DE DENTRO (`131`), depois do laço: a quina reentrante de baixo
+    # fica na reta do degrau seguinte, que se desenha na volta seguinte e
+    # tapava o que aqui se pusesse. Primeiro o meio-fio, depois o asfalto.
+    for i in range(len(DEGRAUS) - 1):
+        my1, borda = DEGRAUS[i][1], DEGRAUS[i][2]
+        prox = DEGRAUS[i + 1][2]
+        for pedaco in quinas_de_dentro(borda, prox, my1, MEIOFIO):
+            s += _chao(pedaco, C["meiofio"])
+        for pedaco in quinas_de_dentro(borda, prox, my1, asfalto=True):
+            s += _chao(pedaco, asfalto)
 
     # Acesso de cada berço: liga a rua ao avental, na altura do píer. É o que
     # explica para que serve a rua — sem ele ela passeia sem servir a nada.
+    #
+    # ⚠️ NO PORTO EM RUÍNAS ELE É DE TERRA (`131`). Era asfalto novo nos dois
+    # mapas, três faixas escuras a cortar a terra batida de um porto que
+    # abre em ruínas; o asfalto chega agora com a obra do pátio, que já
+    # recorta o mapa pavimentado do avental para a rua. No de terra fica só
+    # o sulco dos pneus, em `vias_detalhes()`. E ele começa na FRENTE da
+    # calçada: a boca dele, que era asfalto por cima do passeio, é a guia
+    # rebaixada — igual nos dois mapas, porque a calçada não se recapeia.
     for my0, my1, borda in PIERES:
         meio = (my0 + my1) / 2.0
-        s += _faixa_mx(fora(borda), borda - APRON,
-                       meio - 0.6, meio + 0.6, C["asfalto_via"])
+        frente = fora(borda) + CALCADA
+        if pavimentado:
+            s += _faixa_mx(frente - COSTURA, borda - APRON,
+                           meio - 0.6, meio + 0.6, asfalto)
+        s += guia_rebaixada(borda, meio)
     return s
+
+
+# A boca do acesso: 0,6 para cada lado do meio, a mesma largura do acesso.
+ACESSO_MEIA = 0.6
+# A aba de cada lado, onde o passeio desce até à guia.
+ABA = 0.22
+
+
+def guia_rebaixada(borda, meio) -> str:
+    """A boca do acesso, onde ele atravessa a calçada do lado da água.
+
+    O camião sobe do asfalto para o avental por cima do passeio, e o que lá
+    está numa rua de verdade é a guia rebaixada: a calçada desce em rampa até
+    ao nível da rua, com uma aba de cada lado e o meio-fio interrompido. Até à
+    `131` era o asfalto do acesso pintado por cima do passeio.
+    """
+    f = borda - RUA_RECUO + RUA_LARG
+    frente = f + CALCADA
+    y0, y1 = meio - ACESSO_MEIA, meio + ACESSO_MEIA
+    s = _faixa_mx(f - MEIOFIO, frente, y0, y1, C["rebaixo"])
+    # As abas, em triângulo: largas na guia e a morrer no fundo do passeio.
+    for borda_y, fora_y in ((y0, y0 - ABA), (y1, y1 + ABA)):
+        s += _chao([(f - MEIOFIO, borda_y), (frente, borda_y),
+                    (f - MEIOFIO, fora_y)], C["rebaixo"], 0.6)
+    # O degrau da guia rebaixada, uma aresta fina rente à rua.
+    s += _faixa_mx(f - MEIOFIO, f - MEIOFIO + 0.03, y0, y1, C["meiofio"])
+    return s
+
+
+# ── OS DETALHES DA RUA, GASTA E RECAPEADA (`131`) ────────────────────────
+#
+# Na conversa das estradas o Bruno escolheu tudo o que estava na mesa: a
+# sinalização brasileira, o asfalto e a calçada com vida, os acessos com cara
+# de entrada de porto, e a rua GASTA no porto em ruínas, recapeada com o
+# pátio. E escreveu duas coisas que a lista não tinha: *«as sinalizações
+# aparecem do nada depois de atualizar o pátio»* — medido, 27 mil pixels
+# mudavam fora do recorte da obra — e *«essa troca tem que acontecer por
+# partes, que nem quando algo está sendo construído»*: é a `obra_da_rua()`.
+#
+# ⚠️ NADA DAQUI SAI DO CONTORNO DA RUA, e é por isso que esta parte vive fora
+# do `vias()`. O `horizonte_das_vias()` — a linha acima da qual a mata pode
+# pintar — lê o contorno do `vias()`, e um tufo que subisse dois pixels acima
+# do passeio mexeria a mata que o Bruno aceitou na `130`. Aqui pode haver
+# traço e recorte (`<path>`, `<clipPath>`), que o leitor de contornos não
+# conhece; e tudo cai dentro do passeio.
+#
+# ⚠️ E CADA SORTEIO TEM O SEU `Random` (`mapa.md`, `123`): a junta, a boca de
+# lobo, o desgaste, o óleo, a tampa. O que é igual nos dois mapas sai da
+# MESMA semente nos dois, e o que é só de um não mexe no outro.
+SEMENTE_VIAS = SEMENTE_CHAO + 700
+# A linha central: meia largura, traço e passo (o traço de 0,5 a cada 1,2 é o
+# de antes), e quanto ela corre contínua antes e depois de cada cotovelo —
+# nada, desde a segunda passagem da `131`: com 0,9 de cada lado o zigue-zague
+# amarelo pesava em cada curva («linha contínua da curva pesada»).
+FAIXA_MEIA = 0.05
+TRACO, PASSO_TRACO = 0.5, 1.2
+CURVA_CONTINUA = 0.0
+
+
+def caminho_da_faixa(o: float, arcos: bool = False) -> tuple:
+    """A linha que corre a `o` da face de TERRA da rua, de ponta a ponta.
+
+    Nas retas ela fica a `o` da face de terra; nos cotovelos, a `o` da borda
+    de `my` alto — é a regra das duas rotas do `TrafegoDeCamioes.gd` (a ida a
+    `RUA_LARG / 4`, o retorno a 3/4), e o eixo da rua é `RUA_LARG / 2`. As
+    quinas saem cortadas a `CORTE_DA_CURVA` de cada lado, que é como o camião
+    as corta: pela diagonal (o sulco do pneu cai debaixo da roda) ou, com
+    `arcos`, por um arco tangente nos mesmos dois pontos — a linha central,
+    redonda desde a `131`, e entre as duas rotas, sem cruzar nenhuma.
+
+    Devolve `(pontos, marcas)`: `marcas[i]` são os índices das quatro pontas
+    das duas quinas do cotovelo `i` — as que o arco ou a diagonal ligam —, e
+    a reta `i` começa na última do cotovelo de trás (no ponto 0, a primeira).
+    """
+    c = CORTE_DA_CURVA
+    # O arco é CONCÊNTRICO com o da borda de fora: a primeira quina de cada
+    # cotovelo contorna a saliente a `o` das bordas, a segunda a `RUA_LARG - o`,
+    # e o raio é o da borda menos essa distância — no eixo, 1,38 − 0,9.
+    ca = max(RAIO_COTOVELO - o, 0.05)
+    cb = max(RAIO_COTOVELO - (RUA_LARG - o), 0.05)
+    pts = [(DEGRAUS[0][2] - RUA_RECUO + o, DEGRAUS[0][0])]
+    marcas = []
+    for i in range(len(DEGRAUS) - 1):
+        a = DEGRAUS[i][2] - RUA_RECUO + o
+        b = DEGRAUS[i + 1][2] - RUA_RECUO + o
+        y = DEGRAUS[i][1] - o
+        a1 = len(pts)
+        # A quina de cima: entra a descer (+my) e sai para o cais (+mx).
+        pts += _arco(a + ca, y - ca, ca, 180.0, 90.0) if arcos else [(a, y - c), (a + c, y)]
+        a2 = len(pts) - 1
+        b1 = len(pts)
+        # A de baixo: entra para o cais (+mx) e sai a descer (+my).
+        pts += _arco(b - cb, y + cb, cb, -90.0, 0.0) if arcos else [(b - c, y), (b, y + c)]
+        marcas.append((a1, a2, b1, len(pts) - 1))
+    pts.append((DEGRAUS[-1][2] - RUA_RECUO + o, DEGRAUS[-1][1]))
+    return pts, marcas
+
+
+def _comprimentos(pts) -> list:
+    acc = [0.0]
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        acc.append(math.fsum((acc[-1], math.hypot(x1 - x0, y1 - y0))))
+    return acc
+
+
+def _trecho(pts, acc, s0: float, s1: float) -> list:
+    """Os pontos do caminho entre as distâncias `s0` e `s1`, ao longo dele."""
+    out = []
+    for k in range(len(pts) - 1):
+        a, b = acc[k], acc[k + 1]
+        if b <= s0 or a >= s1 or b - a < 1e-9:
+            continue
+        (x0, y0), (x1, y1) = pts[k], pts[k + 1]
+        for s in ((max(s0, a),) if not out else ()) + (min(s1, b),):
+            t = (s - a) / (b - a)
+            out.append((x0 + (x1 - x0) * t, y0 + (y1 - y0) * t))
+    return out
+
+
+def _fita(pts, meia: float) -> list:
+    """O contorno de uma fita de meia largura `meia` ao longo de `pts`, com as
+    quinas em esquadria: a fita do cotovelo vira sem dente nem fresta."""
+    limpos = []
+    for q in pts:
+        if not limpos or math.hypot(q[0] - limpos[-1][0], q[1] - limpos[-1][1]) > 1e-6:
+            limpos.append(q)
+    if len(limpos) < 2:
+        return []
+    normais = []
+    for (x0, y0), (x1, y1) in zip(limpos, limpos[1:]):
+        comp = math.hypot(x1 - x0, y1 - y0)
+        normais.append((-(y1 - y0) / comp, (x1 - x0) / comp))
+    esq, dir_ = [], []
+    for k, (x, y) in enumerate(limpos):
+        if k == 0:
+            n = normais[0]
+        elif k == len(limpos) - 1:
+            n = normais[-1]
+        else:
+            (ax, ay), (bx, by) = normais[k - 1], normais[k]
+            d = 1.0 + ax * bx + ay * by
+            n = ((ax + bx) / d, (ay + by) / d)
+        esq.append((x + n[0] * meia, y + n[1] * meia))
+        dir_.append((x - n[0] * meia, y - n[1] * meia))
+    return esq + dir_[::-1]
+
+
+def _menos(intervalos, tira) -> list:
+    """Os intervalos de `intervalos` sem os de `tira`."""
+    out = []
+    for a, b in intervalos:
+        partes = [(a, b)]
+        for c0, c1 in tira:
+            novas = []
+            for u, v in partes:
+                if c1 <= u or c0 >= v:
+                    novas.append((u, v))
+                    continue
+                if c0 > u:
+                    novas.append((u, c0))
+                if c1 < v:
+                    novas.append((c1, v))
+            partes = novas
+        out += partes
+    return out
+
+
+def _zebras() -> list:
+    """(degrau, my) de cada passadeira: na altura de cada prédio do pátio.
+
+    ⚠️ O `my` SAI DOS PRÉDIOS, não de um número escrito aqui. Eles andaram em
+    07/09 quando a rua alargou, e uma passadeira cravada ficaria a marcar a
+    travessia de um prédio que já não está ali. O pedido era «faixas de
+    pedestres perto do armazém e escritório»: quem trabalha no pátio
+    atravessa a rua para a vila.
+    """
+    out = []
+    for i, (my0, my1, _b) in enumerate(DEGRAUS):
+        for _n, _pmx, pmy, _spr in PREDIOS_DO_PATIO:
+            if my0 <= pmy < my1:
+                out.append((i, pmy))
+    return out
+
+
+def _fio(pts, meia, cor, opac) -> str:
+    """Uma fita de tinta no chão, ao longo de `pts` em coordenadas de mundo."""
+    contorno = _fita(pts, meia)
+    return _chao(contorno, cor, opac) if contorno else ""
+
+
+def linha_central(gasta) -> str:
+    """O eixo da rua, AMARELO: no Brasil é a cor que separa sentidos opostos.
+
+    ⚠️ ERA BRANCO, e só no mapa do pátio pronto: tracejado nas retas e nada
+    nos cotovelos, de modo que a mão dupla deixava de estar pintada em cada
+    curva (`131`). Hoje é tracejado nas retas, CONTÍNUO à volta de cada
+    cotovelo — na curva não se ultrapassa —, e interrompido nas passadeiras,
+    onde a linha de retenção toma o lugar dele. `gasta` traz o sorteio do
+    desgaste do porto em ruínas: a tinta apagada, a falhar aos bocados.
+    """
+    pts, marcas = caminho_da_faixa(RUA_LARG / 2.0, arcos=True)
+    acc = _comprimentos(pts)
+    continuas = [(acc[m[0]] - CURVA_CONTINUA, acc[m[3]] + CURVA_CONTINUA) for m in marcas]
+    cortes = []
+    for i, pmy in _zebras():
+        k = 0 if i == 0 else marcas[i - 1][3]
+        meio = acc[k] + (pmy - pts[k][1])
+        meia = PASSADEIRA_COMP / 2.0 + 0.3
+        cortes.append((meio - meia, meio + meia))
+    pecas = list(_menos(continuas, cortes))
+    for u, v in _menos(_menos([(0.0, acc[-1])], continuas), cortes):
+        s = u + (PASSO_TRACO - TRACO) / 2.0
+        while s + TRACO <= v:
+            pecas.append((s, s + TRACO))
+            s += PASSO_TRACO
+    out = ""
+    for u, v in pecas:
+        partes = [(u, v)]
+        if gasta is not None:
+            if v - u > TRACO + 0.01:
+                # O trecho contínuo gasta aos bocados.
+                partes, s = [], u
+                while s < v:
+                    comp = gasta.uniform(0.35, 1.2)
+                    partes.append((s, min(v, s + comp)))
+                    s += comp + gasta.uniform(0.06, 0.3)
+            elif gasta.random() < 0.22:
+                continue          # o traço que já não está lá
+            else:
+                partes = [(u + gasta.uniform(0.0, 0.12), v - gasta.uniform(0.0, 0.12))]
+        for a, b in partes:
+            mx, my = _trecho(pts, acc, (a + b) / 2.0, (a + b) / 2.0 + 1e-3)[0]
+            if not no_quadro(mx, my):
+                continue
+            opac = gasta.uniform(0.30, 0.46) if gasta is not None else 0.92
+            out += _fio(_trecho(pts, acc, a, b), FAIXA_MEIA, C["tinta"], opac)
+    return out
+
+
+def retencoes(gasta) -> str:
+    """A linha de retenção antes de cada passadeira, uma por sentido.
+
+    A ida desce em `+my` pela faixa da vila e para antes da zebra; o retorno
+    sobe pela faixa da água e para depois dela (`docs/decisoes/052`).
+    """
+    s = ""
+    for i, pmy in _zebras():
+        d = DEGRAUS[i][2] - RUA_RECUO
+        meio = d + RUA_LARG / 2.0
+        meia = PASSADEIRA_COMP / 2.0 + 0.28
+        for x0, x1, y in ((d + 0.08, meio - 0.08, pmy - meia),
+                          (meio + 0.08, d + RUA_LARG - 0.08, pmy + meia)):
+            opac = gasta.uniform(0.25, 0.4) if gasta is not None else 0.9
+            s += _faixa_mx(x0, x1, y - 0.04, y + 0.04, C["faixa_via"], opac)
+    return s
+
+
+def _regioes_do_asfalto(encolhe: float) -> list:
+    """O asfalto da rua em polígonos, reta a reta e cotovelo a cotovelo,
+    encolhido de `encolhe` para o desgaste não pintar o meio-fio:
+    (polígono, (mx0, mx1, my0, my1), ao longo de my?)."""
+    out = []
+    n = len(DEGRAUS)
+    for i, (my0, my1, borda) in enumerate(DEGRAUS):
+        d = borda - RUA_RECUO
+        fim = my1 - RUA_LARG if i + 1 < n else my1
+        x0, x1 = d + MEIOFIO + encolhe, d + RUA_LARG - MEIOFIO - encolhe
+        out.append(([(x0, my0), (x1, my0), (x1, fim), (x0, fim)],
+                    (x0, x1, my0, fim), True))
+        if i + 1 < n:
+            prox = DEGRAUS[i + 1][2]
+            pol = cotovelo_pontos(borda, prox, my1, -(MEIOFIO + encolhe))
+            xs = [q[0] for q in pol]
+            ys = [q[1] for q in pol]
+            out.append((pol, (min(xs), max(xs), min(ys), max(ys)), False))
+    return out
+
+
+def desgaste_da_rua(r: random.Random) -> str:
+    """O asfalto do porto em ruínas: remendos, fissuras e buracos.
+
+    O remendo é mais ESCURO do que a rua (é mais novo do que ela) e tem a
+    selagem à volta; a fissura anda aos ziguezagues e abre um ramo; o buraco
+    é um poço escuro com a borda clara do lado de lá. Tudo recortado ao
+    asfalto, reta a reta, para nada pisar o meio-fio.
+    """
+    s = ""
+    for k, (pol, (x0, x1, y0, y1), ao_longo_my) in enumerate(_regioes_do_asfalto(0.04)):
+        comp = (y1 - y0) if ao_longo_my else (x1 - x0)
+        dentro = ""
+
+        def ponto():
+            return r.uniform(x0, x1), r.uniform(y0, y1)
+
+        for _ in range(max(1, round(comp / 4.0))):
+            cx, cy = ponto()
+            if r.random() < 0.35:
+                # Remendo de uma faixa inteira: o corte de uma obra antiga.
+                ao = r.uniform(0.4, 1.1)
+                fx = (x0, (x0 + x1) / 2.0) if r.random() < 0.5 else ((x0 + x1) / 2.0, x1)
+                caixa = ((fx[0], cy - ao / 2.0, fx[1], cy + ao / 2.0) if ao_longo_my
+                         else (cx - ao / 2.0, y0 + r.uniform(0.0, 0.6),
+                               cx + ao / 2.0, y1 - r.uniform(0.0, 0.6)))
+            else:
+                a, b = r.uniform(0.3, 0.8), r.uniform(0.25, 0.5)
+                if not ao_longo_my:
+                    a, b = b, a
+                caixa = (cx - b / 2.0, cy - a / 2.0, cx + b / 2.0, cy + a / 2.0)
+            if not no_quadro((caixa[0] + caixa[2]) / 2.0, (caixa[1] + caixa[3]) / 2.0):
+                continue
+            # ⚠️ DE BORDA IRREGULAR E SEM SELAGEM À VOLTA: retângulos com o
+            # contorno escuro liam como CAIXAS desenhadas no asfalto (segunda
+            # passagem da `131`, «remendos quadrados no dia 1»).
+            cantos = [(caixa[0], caixa[1]), (caixa[2], caixa[1]),
+                      (caixa[2], caixa[3]), (caixa[0], caixa[3])]
+            canto = []
+            for j in range(4):
+                (ax, ay), (bx, by) = cantos[j], cantos[(j + 1) % 4]
+                for t in (0.0, 0.34, 0.67):
+                    canto.append((ax + (bx - ax) * t + r.uniform(-0.045, 0.045),
+                                  ay + (by - ay) * t + r.uniform(-0.045, 0.045)))
+            dentro += _chao(canto, C["remendo"], r.uniform(0.55, 0.8))
+        for _ in range(max(1, round(comp / 2.2))):
+            mx, my = ponto()
+            if not no_quadro(mx, my):
+                continue
+            ang = (math.pi / 2.0 if ao_longo_my else 0.0) if r.random() < 0.6 \
+                else (0.0 if ao_longo_my else math.pi / 2.0)
+            ang += r.uniform(-0.45, 0.45)
+            ramos = [(mx, my, ang, r.randint(6, 11))]
+            caminhos = []
+            while ramos:
+                bx, by, ba, passos = ramos.pop()
+                linha = [p(bx, by, ALT_CAIS)]
+                for j in range(passos):
+                    ba += r.uniform(-0.45, 0.45)
+                    passo = r.uniform(0.09, 0.18)
+                    bx, by = bx + math.cos(ba) * passo, by + math.sin(ba) * passo
+                    linha.append(p(bx, by, ALT_CAIS))
+                    if j == passos // 2 and len(caminhos) == 0 and r.random() < 0.55:
+                        ramos.append((bx, by, ba + r.choice((-1, 1)) * r.uniform(0.6, 1.1),
+                                      r.randint(3, 5)))
+                caminhos.append(linha)
+            d = " ".join("M%.1f,%.1f " % c[0] + " ".join("L%.1f,%.1f" % q for q in c[1:])
+                         for c in caminhos)
+            dentro += ('  <path d="%s" fill="none" stroke="%s" stroke-width="1.0" '
+                       'stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>\n'
+                       % (d, C["fissura"]))
+        if ao_longo_my and r.random() < 0.6:
+            # O buraco, numa faixa de rodagem.
+            mx = (x0 + (x0 + x1) / 2.0) / 2.0 if r.random() < 0.5 else ((x0 + x1) / 2.0 + x1) / 2.0
+            my = r.uniform(y0 + 0.5, y1 - 0.5)
+            if no_quadro(mx, my):
+                cx, cy = p(mx + r.uniform(-0.15, 0.15), my, ALT_CAIS)
+                rx = r.uniform(3.5, 5.5)
+                dentro += ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s" '
+                           'opacity="0.8"/>\n' % (cx, cy + 0.6, rx + 1.2, rx / 2.0 + 0.7,
+                                                  C["buraco_borda"]))
+                dentro += ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s"/>\n'
+                           % (cx, cy, rx, rx / 2.0, C["buraco"]))
+        if dentro:
+            ident = "rua_gasta%d" % k
+            s += '  <clipPath id="%s"><polygon points="%s"/></clipPath>\n' % (
+                ident, " ".join("%.1f,%.1f" % p(x, y, ALT_CAIS) for x, y in pol))
+            s += '  <g clip-path="url(#%s)">\n%s  </g>\n' % (ident, dentro)
+    return s
+
+
+def _quadro_do_pedaco(j: int) -> int:
+    """O dia da obra de cada pedaço de `_regioes_do_asfalto`: a reta `i` é o
+    pedaço `2i`, o cotovelo `i` o `2i + 1` — e a obra leva as duas primeiras
+    retas e o primeiro cotovelo no dia 0, e cada cotovelo com a reta a
+    seguir nos dias seguintes (`obra_da_rua`)."""
+    i, cotovelo = divmod(j, 2)
+    if cotovelo:
+        return min(i, OBRA_DIAS)
+    return 0 if i <= 1 else min(i - 1, OBRA_DIAS)
+
+
+def emendas_do_recapeamento(r: random.Random) -> str:
+    """O asfalto recapeado não é uma chapa: cada dia da obra deixou o seu tom,
+    muito leve, a junta onde um dia encontrou o seguinte, e uma trinca selada
+    aqui e ali (terceira passagem da `131`, «rua recapeada lisa demais»). Os
+    tons e as juntas caem nos trechos da obra, e a obra mostra-os com eles."""
+    tons = [("#ffffff", 0.035), ("#000000", 0.04), ("#ffffff", 0.02), ("#000000", 0.025)]
+    s = ""
+    regioes = _regioes_do_asfalto(0.0)
+    for j, (pol, (x0, x1, y0, y1), ao_longo_my) in enumerate(regioes):
+        cor, opac = tons[_quadro_do_pedaco(j) % len(tons)]
+        s += _chao(pol, cor, opac)
+    for i in range(len(DEGRAUS) - 1):
+        if _quadro_do_pedaco(2 * i) == _quadro_do_pedaco(2 * i + 1):
+            continue
+        d = DEGRAUS[i][2] - RUA_RECUO
+        ya = DEGRAUS[i][1] - RUA_LARG
+        if no_quadro(d + RUA_LARG / 2.0, ya):
+            s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="#353c42" stroke-width="1.0" '
+                  'opacity="0.45"/>\n' % (*p(d + MEIOFIO, ya, ALT_CAIS),
+                                          *p(d + RUA_LARG - MEIOFIO, ya, ALT_CAIS)))
+    for pol, (x0, x1, y0, y1), ao_longo_my in regioes:
+        if not ao_longo_my or y1 - y0 < 3.0:
+            continue
+        mx, my = r.uniform(x0 + 0.2, x1 - 0.2), r.uniform(y0 + 0.8, y1 - 0.8)
+        if not no_quadro(mx, my):
+            continue
+        ang = math.pi / 2.0 + r.uniform(-0.3, 0.3)
+        linha = [p(mx, my, ALT_CAIS)]
+        for _ in range(r.randint(6, 10)):
+            ang += r.uniform(-0.35, 0.35)
+            mx = min(max(mx + math.cos(ang) * 0.15, x0 + 0.05), x1 - 0.05)
+            my += math.sin(ang) * 0.15
+            linha.append(p(mx, my, ALT_CAIS))
+        s += ('  <path d="M%s" stroke="#2f363b" stroke-width="1.3" fill="none" '
+              'stroke-linecap="round" stroke-linejoin="round" opacity="0.28"/>\n'
+              % " L".join("%.1f,%.1f" % q for q in linha))
+    return s
+
+
+def manchas_da_rua(r: random.Random, gasta: bool) -> str:
+    """O óleo que pinga no meio de cada faixa, mais junto da boca dos acessos,
+    e o sulco do pneu em cada curva — na rua gasta, mais e mais escuros."""
+    s = ""
+    for o in (RUA_LARG / 4.0, RUA_LARG * 3.0 / 4.0):
+        pts, _marcas = caminho_da_faixa(o)
+        acc = _comprimentos(pts)
+        for _ in range(26 if gasta else 7):
+            v = r.uniform(0.0, acc[-1] - 0.01)
+            mx, my = _trecho(pts, acc, v, v + 1e-3)[0]
+            if not no_quadro(mx, my):
+                continue
+            cx, cy = p(mx + r.uniform(-0.06, 0.06), my, ALT_CAIS)
+            rx = r.uniform(3.5, 9.0)
+            s += ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s" '
+                  'opacity="%.2f"/>\n' % (cx, cy, rx, rx / 2.0, C["oleo"],
+                                          r.uniform(0.12, 0.24) if gasta
+                                          else r.uniform(0.08, 0.14)))
+        # O sulco das rodas em cada curva, de um lado e do outro do camião.
+        # ⚠️ AOS BOCADOS: inteiro e paralelo ao eixo, lia como uma faixa
+        # pintada a mais (a primeira passagem da `131`).
+        for roda in (-0.16, 0.16):
+            rp, rm = caminho_da_faixa(o + roda)
+            ra = _comprimentos(rp)
+            for a1, a2, b1, b2 in rm:
+                for k0, k1 in ((a1, a2), (b1, b2)):
+                    a = ra[k0] - r.uniform(0.1, 0.35)
+                    while a < ra[k1] + 0.2:
+                        b = a + r.uniform(0.15, 0.4)
+                        trecho = _trecho(rp, ra, a, b)
+                        if trecho and no_quadro(*trecho[0]):
+                            s += _fio(trecho, 0.022, C["oleo"],
+                                      r.uniform(0.08, 0.16) if gasta else r.uniform(0.05, 0.1))
+                        a = b + r.uniform(0.05, 0.25)
+    for my0, my1, borda in PIERES:
+        meio = (my0 + my1) / 2.0
+        faixa = borda - RUA_RECUO + RUA_LARG * 0.75
+        for _ in range(4 if gasta else 2):
+            cx, cy = p(faixa + r.uniform(-0.2, 0.25), meio + r.uniform(-0.7, 0.7), ALT_CAIS)
+            rx = r.uniform(4.0, 8.0)
+            s += ('  <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="%s" '
+                  'opacity="%.2f"/>\n' % (cx, cy, rx, rx / 2.0, C["oleo"],
+                                          r.uniform(0.14, 0.26) if gasta else 0.12))
+    return s
+
+
+def tampas_da_rua(r: random.Random) -> str:
+    """Uma tampa de bueiro por reta, numa faixa de rodagem — igual nos dois
+    mapas: o recapeamento passa à volta dela."""
+    s = ""
+    n = len(DEGRAUS)
+    zebras = _zebras()
+    for i, (my0, my1, borda) in enumerate(DEGRAUS):
+        fim = my1 - RUA_LARG if i + 1 < n else my1
+        mx = borda - RUA_RECUO + r.choice((RUA_LARG / 4.0, RUA_LARG * 3.0 / 4.0))
+        my = r.uniform(my0 + 0.9, fim - 0.9) if fim - my0 > 2.0 else (my0 + fim) / 2.0
+        if any(j == i and abs(my - pmy) < 1.0 for j, pmy in zebras) or not no_quadro(mx, my):
+            continue
+        cx, cy = p(mx, my, ALT_CAIS)
+        s += ('  <ellipse cx="%.1f" cy="%.1f" rx="5.0" ry="2.5" fill="%s" '
+              'stroke="%s" stroke-width="1.0"/>\n' % (cx, cy, C["tampa"], C["bueiro"]))
+        s += ('  <ellipse cx="%.1f" cy="%.1f" rx="3.0" ry="1.5" fill="none" '
+              'stroke="%s" stroke-width="0.6"/>\n' % (cx, cy, C["grelha"]))
+    return s
+
+
+def _boca_de_lobo(x0, x1, y0, y1, ao_longo_my: bool) -> str:
+    s = _chao([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], C["bueiro"])
+    linhas = []
+    for t in (0.25, 0.5, 0.75):
+        if ao_longo_my:
+            y = y0 + (y1 - y0) * t
+            linhas.append((p(x0, y, ALT_CAIS), p(x1, y, ALT_CAIS)))
+        else:
+            x = x0 + (x1 - x0) * t
+            linhas.append((p(x, y0, ALT_CAIS), p(x, y1, ALT_CAIS)))
+    s += ('  <path d="%s" stroke="%s" stroke-width="0.7" fill="none"/>\n'
+          % (" ".join("M%.1f,%.1f L%.1f,%.1f" % (a + b) for a, b in linhas), C["grelha"]))
+    return s
+
+
+def bocas_de_lobo() -> str:
+    """A grelha da boca de lobo na sarjeta, rente ao meio-fio, dos dois lados
+    — a cada 3,1 unidades, fora das bocas dos acessos e das zebras."""
+    s = ""
+    n = len(DEGRAUS)
+    zebras = _zebras()
+    acessos = [(my0 + my1) / 2.0 for my0, my1, _b in PIERES]
+    for i, (my0, my1, borda) in enumerate(DEGRAUS):
+        d = borda - RUA_RECUO
+        f = d + RUA_LARG
+        fim = my1 - RUA_LARG if i + 1 < n else my1
+        y = my0 + 1.0
+        while y < fim - 0.6:
+            livre = not any(j == i and abs(y - pmy) < 0.8 for j, pmy in zebras)
+            if livre and no_quadro(d + RUA_LARG / 2.0, y):
+                s += _boca_de_lobo(d + MEIOFIO, d + MEIOFIO + 0.07, y - 0.14, y + 0.14, True)
+                if all(abs(y - a) > ACESSO_MEIA + ABA + 0.3 for a in acessos):
+                    s += _boca_de_lobo(f - MEIOFIO - 0.07, f - MEIOFIO, y - 0.14, y + 0.14, True)
+            y += 3.1
+        if i + 1 < n:
+            # No cotovelo, uma na sarjeta de baixo, a meio do meio-fio livre.
+            prox = DEGRAUS[i + 1][2]
+            x = (d + RAIO_COTOVELO + prox - RUA_RECUO) / 2.0
+            if no_quadro(x, my1):
+                s += _boca_de_lobo(x - 0.14, x + 0.14, my1 - MEIOFIO - 0.07, my1 - MEIOFIO, False)
+    return s
+
+
+def _tufinho(px: float, py: float, r: random.Random) -> str:
+    """Capim na fresta da calçada: duas ou três lâminas de três pixels."""
+    s = ""
+    for _ in range(r.randint(2, 3)):
+        tx, ty = px + r.uniform(-1.5, 1.5), py + r.uniform(-0.5, 0.5)
+        dx, a = r.uniform(-2.0, 2.0), r.uniform(2.0, 3.4)
+        s += ('  <path d="M%.1f %.1f q%.1f %.1f %.1f %.1f" stroke="%s" stroke-width="1.0" '
+              'fill="none" stroke-linecap="round" opacity="0.7"/>\n'
+              % (tx, ty, dx * 0.25, -a * 0.7, dx, -a, C["mato"]))
+    return s
+
+
+def juntas_da_calcada(r: random.Random) -> str:
+    """A calçada em placas de cimento: a junta a cada 0,55, e capim nalgumas
+    frestas do lado de BAIXO na tela (o da água nas retas, o de `my` alto nos
+    cotovelos), onde o tufo não sobe acima do passeio."""
+    juntas, tufos = [], ""
+    n = len(DEGRAUS)
+    acessos = [(my0 + my1) / 2.0 for my0, my1, _b in PIERES]
+
+    def junta(a, b, capim_em=None):
+        if not no_quadro(*a):
+            return ""
+        juntas.append((p(*a, ALT_CAIS), p(*b, ALT_CAIS)))
+        if capim_em is not None and r.random() < 0.2:
+            return _tufinho(*p(*capim_em, ALT_CAIS), r)
+        return ""
+
+    for i, (my0, my1, borda) in enumerate(DEGRAUS):
+        d = borda - RUA_RECUO
+        f = d + RUA_LARG
+        fim = my1 - RUA_LARG if i + 1 < n else my1
+        y = my0 + 0.3
+        while y < fim:
+            tufos += junta((d - MEIOFIO, y), (d - CALCADA, y))
+            if all(abs(y - a) > ACESSO_MEIA + ABA for a in acessos):
+                tufos += junta((f + MEIOFIO, y), (f + CALCADA, y),
+                               (f + CALCADA - 0.03, y))
+            y += 0.55
+        if i + 1 < n:
+            prox = DEGRAUS[i + 1][2]
+            f1 = prox - RUA_RECUO + RUA_LARG
+            ya, yb = my1 - RUA_LARG, my1
+            x = d + RUA_LARG + 0.3
+            while x < f1 - RAIO_COTOVELO - 0.2:
+                tufos += junta((x, ya - MEIOFIO), (x, ya - CALCADA))
+                x += 0.55
+            x = d + RAIO_COTOVELO + 0.2
+            while x < f1 - RUA_LARG - 0.3:
+                tufos += junta((x, yb + MEIOFIO), (x, yb + CALCADA),
+                               (x, yb + CALCADA - 0.03))
+                x += 0.55
+    s = ""
+    if juntas:
+        s += ('  <path d="%s" stroke="%s" stroke-width="0.8" fill="none"/>\n'
+              % (" ".join("M%.1f,%.1f L%.1f,%.1f" % (a + b) for a, b in juntas),
+                 C["junta_calcada"]))
+    return s + tufos
+
+
+def acessos_detalhes(gasta: bool, r: random.Random) -> str:
+    """O acesso de cada berço: o sulco de terra no porto em ruínas, e no pátio
+    pronto a retenção na boca e o zebrado amarelo de manobra junto do avental,
+    onde o camião encosta de ré (`131`)."""
+    s = ""
+    for k, (my0, my1, borda) in enumerate(PIERES):
+        meio = (my0 + my1) / 2.0
+        frente = borda - RUA_RECUO + RUA_LARG + CALCADA
+        av = borda - APRON
+        if gasta:
+            # A terra batida pelo uso, e os dois sulcos das rodas.
+            s += _faixa_mx(frente, av, meio - 0.42, meio + 0.42, C["terra_escura"], 0.2)
+            for roda in (-0.17, 0.17):
+                linha, x = [], frente + 0.05
+                while x < av - 0.05:
+                    linha.append(p(x, meio + roda + r.uniform(-0.03, 0.03), ALT_CAIS))
+                    x += r.uniform(0.35, 0.6)
+                linha.append(p(av - 0.05, meio + roda, ALT_CAIS))
+                s += ('  <path d="M%s" stroke="#66563f" stroke-width="2.2" fill="none" '
+                      'stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/>\n'
+                      % " L".join("%.1f,%.1f" % q for q in linha))
+            continue
+        s += _faixa_mx(frente + 0.1, frente + 0.17, meio - 0.55, meio + 0.55,
+                       C["faixa_via"], 0.9)
+        x0, x1 = av - 0.42, av - 0.08
+        y0, y1 = meio - 0.5, meio + 0.5
+        ident = "zebrado%d" % k
+        caixa = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+        s += '  <clipPath id="%s"><polygon points="%s"/></clipPath>\n' % (
+            ident, " ".join("%.1f,%.1f" % p(x, y, ALT_CAIS) for x, y in caixa))
+        listras = ""
+        t = x0 + y0
+        while t < x1 + y1:
+            # A listra a 45° no chão: entre `mx + my = t` e `t + 0,08`.
+            listras += _chao([(t - y0 + 0.3, y0 - 0.3), (t + 0.08 - y0 + 0.3, y0 - 0.3),
+                              (t + 0.08 - y1 - 0.3, y1 + 0.3), (t - y1 - 0.3, y1 + 0.3)],
+                             C["tinta"], 0.9)
+            t += 0.22
+        s += '  <g clip-path="url(#%s)">\n%s  </g>\n' % (ident, listras)
+        for a, b, c, d in ((x0, x1, y0, y0 + 0.04), (x0, x1, y1 - 0.04, y1),
+                           (x0, x0 + 0.04, y0, y1), (x1 - 0.04, x1, y0, y1)):
+            s += _faixa_mx(a, b, c, d, C["tinta"], 0.9)
+    return s
+
+
+def vias_detalhes(pavimentado: bool) -> str:
+    """Tudo o que se pinta DENTRO do contorno da rua: a rua gasta do porto em
+    ruínas, ou a recapeada do pátio pronto (`131`)."""
+    gasta = not pavimentado
+    s = ""
+    if gasta:
+        s += desgaste_da_rua(random.Random(SEMENTE_VIAS + 3))
+    else:
+        s += emendas_do_recapeamento(random.Random(SEMENTE_VIAS + 8))
+    s += manchas_da_rua(random.Random(SEMENTE_VIAS + (4 if gasta else 14)), gasta)
+    s += tampas_da_rua(random.Random(SEMENTE_VIAS + 5))
+    s += bocas_de_lobo()
+    tinta = random.Random(SEMENTE_VIAS + 6) if gasta else None
+    s += linha_central(tinta)
+    for i, pmy in _zebras():
+        s += passadeira(DEGRAUS[i][2], pmy, tinta)
+    s += retencoes(tinta)
+    s += acessos_detalhes(gasta, random.Random(SEMENTE_VIAS + 7))
+    s += juntas_da_calcada(random.Random(SEMENTE_VIAS + 1))
+    return s
+
+
+# ── A OBRA DA RUA (`131`) ────────────────────────────────────────────────
+#
+# A rua recapeia-se com a obra do pátio, UM TRECHO POR DIA, do norte para o
+# sul: o Bruno pediu que a troca da rua gasta pela nova acontecesse *«por
+# partes, que nem quando algo está sendo construído»*. O jogo mostra cada
+# trecho pronto recortando o mapa pavimentado por cima do de terra, como já
+# fazia ao pátio (`ObraNoMapa.gd`, `121`); o último trecho fica para o dia em
+# que a obra acaba e o mapa inteiro troca.
+#
+# Cada polígono vai até ao MEIO da calçada, que é igual nos dois mapas: o
+# antisserrilhado da borda do recorte cai em chão que não muda. E o trecho
+# seguinte sobrepõe-se ao anterior (o cotovelo começa `CALCADA / 2` antes do
+# fim da reta), para a junta entre dois trechos prontos não abrir uma fresta.
+#
+# `OBRA_DIAS` são os dias da obra do pátio — os quadros do `CANTEIRO` do
+# `ObraNoMapa.gd`; o D45 confere que são os mesmos.
+OBRA_DIAS = 3
+
+
+def cones_da_obra() -> list:
+    """(quadro, pontos em mundo) dos cones de cada dia da obra da rua.
+
+    *«Obra da rua sem sinalização»*, marcou o Bruno na segunda passagem da
+    `131`: o trecho a recapear trocava de cor e mais nada. No dia `q` a obra
+    está na FRENTE do trecho seguinte — onde a rua nova acaba e a gasta
+    continua —, e é lá que ficam três cones em fila no eixo, do lado da rua
+    gasta, no troço reto do cotovelo que a abre, a 0,9 uns dos outros — ali
+    a linha central fica a 0,45 de cada rota, e a carroçaria mais o cone cabem
+    em 0,32; na curva o camião corta pela diagonal e passa a 0,2 do eixo.
+    """
+    pts, marcas = caminho_da_faixa(RUA_LARG / 2.0, arcos=True)
+    acc = _comprimentos(pts)
+    out = []
+    for q in range(OBRA_DIAS):
+        # O trecho seguinte abre no cotovelo `q + 1`. Os cones ficam no troço
+        # RETO dele, entre os dois arcos do eixo: depois do primeiro arco.
+        reto = acc[marcas[q + 1][1]]
+        cones = []
+        # ⚠️ A 0,9 UNS DOS OUTROS, NO RETO DO COTOVELO (terceira passagem). A
+        # 0,45 liam como um monte («cones amontoados»); antes da curva caíam
+        # na passadeira, que fica logo antes de cada cotovelo; e NA curva o
+        # camião, que a corta pela diagonal, passa a 0,2 do eixo e pisá-los-ia.
+        for avanco in (0.5, 1.4, 2.3):
+            mx, my = _trecho(pts, acc, reto + avanco, reto + avanco + 1e-3)[0]
+            cones.append((round(mx, 3), round(my, 3)))
+        out.append((q, cones))
+    return out
+
+
+def obra_da_rua() -> list:
+    """(quadro, polígono em mundo) de cada pedaço da rua, pela ordem da obra.
+
+    O quadro `q` é o dia da obra em que o pedaço fica pronto; `OBRA_DIAS` é
+    o dia em que a obra acaba. O dia 0 leva a reta de cima, o primeiro
+    cotovelo e a reta do berço 1; cada dia seguinte, um cotovelo e a reta a
+    seguir a ele; e o fim, o resto para sul.
+    """
+    n = len(DEGRAUS)
+    meia = CALCADA / 2.0
+
+    def reta(i):
+        my0, my1, borda = DEGRAUS[i]
+        d = borda - RUA_RECUO
+        fim = my1 - RUA_LARG if i + 1 < n else my1 + COSTURA
+        return [(d - meia, my0), (d + RUA_LARG + meia, my0),
+                (d + RUA_LARG + meia, fim), (d - meia, fim)]
+
+    def cotovelo(i):
+        return cotovelo_pontos(DEGRAUS[i][2], DEGRAUS[i + 1][2], DEGRAUS[i][1], meia)
+
+    def dentro(i):
+        # As duas quinas de dentro do cotovelo, que avançam sobre o canto do
+        # pátio e o da vila: chegam com o cotovelo.
+        return quinas_de_dentro(DEGRAUS[i][2], DEGRAUS[i + 1][2], DEGRAUS[i][1], meia)
+
+    pecas = [(0, reta(0)), (0, cotovelo(0))] + [(0, q) for q in dentro(0)] + [(0, reta(1))]
+    for i in range(1, n - 1):
+        q = min(i, OBRA_DIAS)
+        pecas += [(q, cotovelo(i))] + [(q, d) for d in dentro(i)] + [(q, reta(i + 1))]
+    return [(q, [(round(x, 3), round(y, 3)) for x, y in pol]) for q, pol in pecas]
 
 
 # ── A VILA QUE CRESCE ────────────────────────────────────────────────────
@@ -3937,11 +4808,26 @@ def praia_chao(indice: int, my_a: float, my_b: float) -> str:
     fecha com o muro. Aqui não há muro nenhum para fechar — quem fecha é a
     rampa, desenhada depois, junto com o enrocamento.
     """
-    crista = linha_da_praia(*CRISTA[indice], my_a, my_b)
+    mundo = _pontos_da_praia(*CRISTA[indice], my_a, my_b)
+    crista = [p(mx, my, ALT_CAIS * q) for mx, my, q in mundo]
     if len(crista) < 2:
         return ""
-    s = poli([p(FUNDO_TERRA, my_a, ALT_CAIS)] + crista
-             + [p(FUNDO_TERRA, my_b, ALT_CAIS)], C["solo"])
+    # ⚠️ E ELE PASSA POR BAIXO DO PORTO, pela `COSTURA` e À ALTURA DO CAIS
+    # (`131`). Acabava no `PONTA_NORTE` exato, onde a laje e o pátio começam,
+    # e fechava na ponta da crista — que o meandro levanta até 1,09 do cais:
+    # a borda saía inclinada, longe da laje junto do cais e colada a ela lá
+    # atrás, e a ÁGUA, que é o fundo do mapa, via-se num fio azul que
+    # engrossava para o cais (#1f86ac, anotado na `130`). A laje, desenhada
+    # depois, tapa o que ele avança.
+    if indice == 0:
+        mx = mundo[-1][0]
+        ini = [p(FUNDO_TERRA, my_a, ALT_CAIS)]
+        fim = [p(mx, my_b + COSTURA, ALT_CAIS), p(FUNDO_TERRA, my_b + COSTURA, ALT_CAIS)]
+    else:
+        mx = mundo[0][0]
+        ini = [p(FUNDO_TERRA, my_a - COSTURA, ALT_CAIS), p(mx, my_a - COSTURA, ALT_CAIS)]
+        fim = [p(FUNDO_TERRA, my_b, ALT_CAIS)]
+    s = poli(ini + crista + fim, C["solo"])
     return s
 
 
@@ -4953,10 +5839,10 @@ def _sem_telhado(mx0, my0, mx1, my1, altura) -> str:
 
     ⚠️ A COR DA ESTRUTURA NÃO É CINZENTA, E ISSO FOI MEDIDO CONTRA O FUNDO.
     Concreto pede um cinzento, e todo cinzento desta paleta cai na banda de um
-    dos dois quintais: o mapa pavimentado desenha `terra_clara` (lum 141) e o
-    outro `terra_escura` (lum 104), e `pedra_clara` mede **0,05 de Weber** sobre
-    o primeiro — some — enquanto `pedra_media` fica em 0,18 e 0,12, fraca nos
-    dois. É a regra do gancho do pau-de-carga: um prop atravessa dois fundos e
+    dos dois quintais: o mapa pavimentado desenhava `terra_clara` (lum 141) e o
+    outro `terra_escura` (lum 104) — desde a `131` são ambos a escura —, e
+    `pedra_clara` mede **0,05 de Weber** sobre o primeiro — some — enquanto
+    `pedra_media` fica em 0,18 e 0,12, fraca nos dois. É a regra do gancho do pau-de-carga: um prop atravessa dois fundos e
     nenhum tom do meio ganha os dois. O creme mede 0,64 e 1,24, e laje de
     concreto novo é mesmo clara.
 
@@ -5816,8 +6702,11 @@ def viela_da_vila(pavimentado: bool) -> str:
                 fim = max(fim, lmy0 + dmy) if fim is not None else lmy0 + dmy
         if fim is None:
             continue
-        s += _faixa_mx(mx0, mx1, my0, min(fim + 0.45, my1),
-                       C["terra_clara"] if pavimentado else C["terra_escura"])
+        # ⚠️ A MESMA TERRA NOS DOIS MAPAS (`131`). Ela clareava para
+        # `terra_clara` no mapa do pátio pronto, e a viela inteira trocava de
+        # cor no dia em que a obra do pátio acabava — longe da obra e fora do
+        # recorte dela, «do nada». A vila não é do porto; fica com a do dia 1.
+        s += _faixa_mx(mx0, mx1, my0, min(fim + 0.45, my1), C["terra_escura"])
     return s
 
 
@@ -6000,9 +6889,9 @@ def vila(nivel: int, pavimentado: bool) -> str:
         # Quintal: a casa não ocupa o lote todo, e o que sobra é chão batido
         # mesmo no mapa pavimentado — quintal não é asfalto. Desde a `123` é o
         # TERRENO, de muro a muro; antes saía 0,5 para a frente da casa e
-        # passava por cima do passeio.
-        s += _faixa_mx(xt, xm, ye, yd,
-                       C["terra_clara"] if pavimentado else C["terra_escura"], 0.5)
+        # passava por cima do passeio. E é a MESMA terra nos dois mapas desde
+        # a `131`, pela razão da viela: o quintal não muda com o pátio.
+        s += _faixa_mx(xt, xm, ye, yd, C["terra_escura"], 0.5)
         # O CONTORNO DA CASA, para as árvores do lote saberem quanto ela as
         # tapa ou quanto lhe tapam (`130`). É o mesmo desenho que sai mais
         # abaixo — a casa não sorteia nada —, só que medido antes.
@@ -6634,10 +7523,14 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
             if com_pavimento:
                 # Faixa do avental, rente à borda interna dele — mais para
                 # dentro riscaria o número da doca, pintado logo ao lado.
+                # ⚠️ E DO LADO DO PÁTIO desde a `131`: a 0,05 para dentro do
+                # avental ela ficava um pixel além do recorte da obra e
+                # aparecia do nada no fim dela; a 0,06 para dentro chega com
+                # a primeira faixa de asfalto, que a obra pinta do avental.
                 s += ('  <path d="M%.1f,%.1f L%.1f,%.1f" stroke="#e0a81f" '
                       'stroke-width="2.5" fill="none"/>\n' % (
-                          *p(borda - APRON + 0.05, a + 0.3, ALT_CAIS),
-                          *p(borda - APRON + 0.05, b - 0.3, ALT_CAIS)))
+                          *p(borda - APRON - 0.06, a + 0.3, ALT_CAIS),
+                          *p(borda - APRON - 0.06, b - 0.3, ALT_CAIS)))
 
     # O CHÃO DE TRÁS, com textura e com o morro (`127`): depois do laço,
     # porque o recorte é a união do solo de todos os degraus e o morro de um
@@ -6655,6 +7548,7 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
     s += mata_baixa()
 
     s += vias(com_pavimento)
+    s += vias_detalhes(com_pavimento)
     s += vila(nivel_vila, com_pavimento)
 
     # ---- concreto do cais: juntas e desgaste ----
@@ -6978,7 +7872,9 @@ def tabela_ancoras() -> dict:
             "asfalto_mx": [round(borda - RUA_RECUO, 3),
                            round(prox - RUA_RECUO + RUA_LARG, 3)],
             "asfalto_my": [round(my1 - RUA_LARG, 3), round(my1, 3)],
-            "chanfro": round(CHANFRO_COTOVELO, 3),
+            # O raio dos arcos das duas quinas salientes (`131`), que era
+            # um chanfro: o D13 §7j reconstrói o desenho com ele.
+            "raio": round(RAIO_COTOVELO, 3),
             # A diagonal de que o chanfro foi derivado, para o jogo a
             # poder conferir contra a dele (D13 §7i).
             "corte_da_curva": round(CORTE_DA_CURVA, 4),
@@ -7021,6 +7917,16 @@ def tabela_ancoras() -> dict:
                 "mx": [round(borda - RUA_RECUO + RUA_LARG + CALCADA, 3),
                        round(borda - APRON, 3)],
             })
+
+    # E A OBRA DA RUA (`131`): os pedaços da rua que a obra do pátio recapeia,
+    # cada um com o dia em que fica pronto. O `ObraNoMapa.gd` copia-os (o JSON
+    # não vai no pacote) e o D45 confere a cópia contra esta lista; o D48 mede
+    # nos dois mapas que tudo o que muda entre eles cai dentro deles ou do
+    # pátio.
+    obra_rua = [{"quadro": q, "pontos": [[x, y] for x, y in pol]}
+                for q, pol in obra_da_rua()]
+    cones_obra = [{"quadro": q, "pontos": [[x, y] for x, y in pts]}
+                  for q, pts in cones_da_obra()]
 
     # E OS LOTES RESERVADOS, publicados para o D13 §8 os poder conferir contra os
     # acessos. Um deles já esteve em cima de um; sem os números aqui, a única
@@ -7114,6 +8020,9 @@ def tabela_ancoras() -> dict:
         "cotovelos": cotovelos,
         "acessos": acessos,
         "patio": patio,
+        "obra_da_rua": obra_rua,
+        "obra_dias": OBRA_DIAS,
+        "cones_da_obra": cones_obra,
         "lotes_reservados": reservados,
         # ⚠️ O `tipo` ENTRA NA TABELA para o teste de design poder perguntar ao
         # DESENHO se a igreja, a praça e a obra chegaram lá. Sem ele o bloco

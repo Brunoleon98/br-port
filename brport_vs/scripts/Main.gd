@@ -139,7 +139,9 @@ var narradora: NarradoraDaCida = NarradoraDaCida.new(_fila)
 # `_refresh_estruturas()`. O D45 não lhe pergunta nada: lê os nós da cena.
 @onready var obra: ObraNoMapa = ObraNoMapa.new(_mapa,
 	$MapaWrap/AsfaltoDaObra as Polygon2D,
-	$MapaWrap/Cenario/CanteiroDoPatio as TextureRect)
+	$MapaWrap/Cenario/CanteiroDoPatio as TextureRect,
+	$MapaWrap/RuaPorRecapear as Polygon2D,
+	$MapaWrap/RuaRecapeada as Polygon2D)
 # A MATA DO MORRO. Planta-se ao montar a cena, antes de o trânsito começar a
 # reordenar os camiões entre os irmãos — que passam a contar com ela.
 @onready var mata: MataNoMapa = MataNoMapa.new($MapaWrap/Cenario as Control)

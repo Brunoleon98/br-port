@@ -333,3 +333,34 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   `<use>` (0,639) o pixel da borda de uma copa entra 0,17 px na coluna
   seguinte, e o gerador deu por livre a coluna que a guarda viu ocupada.
   Colunas de OUTRA peça conferem-se com uma de folga para cada lado (`130`).
+
+## As estradas (`131`)
+
+- **⚠️ PEÇA QUE SÓ ENCOSTA NÃO FECHA.** Duas bordas antisserrilhadas no
+  mesmo sítio deixam ver o que está por baixo delas: a reta que começava na
+  borda exata do cotovelo mostrava a calçada num fio claro atravessado na
+  pista (+25 a +30 de luminância), e o chão da praia que acabava onde o pátio
+  começa mostrava a ÁGUA, que é o fundo do mapa. A de baixo passa por baixo
+  da de cima pela `COSTURA`; e a borda que fecha um polígono fecha À ALTURA
+  do vizinho — a da praia fechava na crista, que o meandro levanta a 1,09 do
+  cais, e saía inclinada, com o fio a engrossar para o cais. O D48 §2 e §3
+  medem os dois.
+- **⚠️ O QUE MUDA ENTRE OS DOIS MAPAS TEM DE MUDAR DENTRO DA OBRA.** O jogo
+  troca o mapa de terra pelo pavimentado de uma vez, no fim da obra do pátio,
+  e tudo o que difere fora do recorte dela «aparece do nada»: em 18/10 eram
+  26.901 px — a linha central, as zebras, a viela e os quintais da vila, que
+  clareavam, e a faixa do avental, um pixel além do recorte. Desenho novo que
+  o pavimentado faça diferente cai num recorte da obra (o pátio ou um trecho
+  de `obra_da_rua()`); o D48 §1 conta os pixels.
+- **⚠️ O CONTORNO DAS VIAS É O QUE A MATA LÊ.** O `horizonte_das_vias()` sai do
+  SVG do `vias()`, e o leitor de contornos rebenta com tag que não conhece:
+  o que se pinta DENTRO da rua vive em `vias_detalhes()`, fora dele. E mudar a
+  forma da rua (o chanfro virou arco) mexe no horizonte — 69 colunas em 19/10
+  —; confira que a `mata` da tabela saiu igual antes de dar a vegetação aceite
+  por intocada.
+- **⚠️ O SPRITE DO CAMIÃO NÃO RODA, e por isso a curva em arco não lhe
+  serve.** A meio dela a ponta da carroçaria aponta para a quina e sai do
+  asfalto em qualquer raio (+0,24 a +0,26, medido); o que afasta o camião da
+  quina é cortar a curva mais CEDO pela diagonal (`corte_da_curva()`). O raio
+  do arco da borda sai desse corte e do maior camião (`RAIO_COTOVELO`), e o
+  D13 §7j mede a carroçaria contra o arco publicado.

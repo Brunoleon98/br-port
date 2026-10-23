@@ -235,6 +235,22 @@ visible = false
 antialiased = true
 texture = ExtResource("mapa_patio")
 
+; A RUA DA OBRA DO PÁTIO (`131`): a obra recapeia a rua gasta um trecho por
+; dia, do norte para o sul. `RuaPorRecapear` é o mapa de TERRA nos trechos que
+; ainda faltam, por cima do asfalto do pátio — que atravessa três cotovelos e
+; os recapearia antes do dia deles —; `RuaRecapeada`, o PAVIMENTADO nos
+; trechos prontos, por cima dos dois. Quem lhes dá a forma é o `ObraNoMapa.gd`.
+
+[node name="RuaPorRecapear" type="Polygon2D" parent="MapaWrap"]
+visible = false
+antialiased = true
+texture = ExtResource("3")
+
+[node name="RuaRecapeada" type="Polygon2D" parent="MapaWrap"]
+visible = false
+antialiased = true
+texture = ExtResource("mapa_patio")
+
 ; A ESPUMA é camada, e não fundo. Ela fica ENTRE o mapa e o cenário: por cima
 ; da água, por baixo de tudo o que flutua nela. São duas, de sementes
 ; diferentes, e o `Main.gd` lava-as em contrafase — uma entra enquanto a outra

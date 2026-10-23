@@ -24,7 +24,13 @@ extends RefCounted
 #      ficarem prontos; o asfalto conferido contra os cantos que a TABELA
 #      publica, e não contra o `poligonos_do_asfalto()` que o desenha;
 #   §5 a obra de três dias num nó de dois quadros (o píer 3 da Fase 2): o
-#      último quadro calha no último dia, e nenhum índice passa do fim.
+#      último quadro calha no último dia, e nenhum índice passa do fim;
+#   §6 a RUA que a obra do pátio recapeia (`131`): a cópia dos pedaços e dos
+#      cones contra a tabela, um trecho por dia e o último no fim — o
+#      «por partes» que o Bruno pediu —, e a cada dia os dois recortes da
+#      rua (o mapa de terra no que falta, por cima do pátio, e o pavimentado
+#      no que já está pronto) e os três cones na frente, entre os irmãos do
+#      `Cenario` pela profundidade. O D48 mede nos mapas que nada muda fora.
 #
 # Bloco num arquivo próprio pela regra do `AGENTS.md` §2: dois agentes a
 # acrescentar blocos deixam de editar o mesmo `teste_design.gd`. Síncrono,
@@ -64,6 +70,7 @@ func rodar(gs: Node, arvore: SceneTree, ancoras: Dictionary) -> void:
 	_mk = (load("res://scripts/Main.gd") as Script).get_script_constant_map()
 
 	_contrato_com_a_tabela()
+	_contrato_da_rua()
 	_um_quadro_por_dia()
 	conferir("o píer comprado correu até ao fim", _o_pier_comprado())
 	conferir("o armazém correu até ao fim", _o_armazem())
@@ -192,8 +199,18 @@ func _o_patio() -> bool:
 	var cenario: Node = tela.get_node("MapaWrap/Cenario")
 	var quadros: Array = _ok["CANTEIRO"]
 	var fracoes: Array = _ok["ASFALTO_POR_QUADRO"]
+	var velha: Polygon2D = tela.get_node("MapaWrap/RuaPorRecapear")
+	var nova: Polygon2D = tela.get_node("MapaWrap/RuaRecapeada")
 	conferir("antes da obra não há canteiro nem asfalto novo",
 		not canteiro.visible and not asfalto.visible)
+	# §6 — a ordem dos três recortes é a pergunta: a rua por recapear tem de
+	# TAPAR o asfalto do pátio, que atravessa três cotovelos.
+	conferir("a rua por recapear vem depois do asfalto do pátio, e a recapeada depois dela",
+		asfalto.get_index() < velha.get_index() and velha.get_index() < nova.get_index())
+	conferir("a rua por recapear recorta o mapa de terra, e a recapeada o pavimentado",
+		velha.texture == _mk["MapaTerra"] and nova.texture == _mk["MapaPatio"])
+	conferir("antes da obra não há rua recortada nem cones",
+		not velha.visible and not nova.visible and _cones(cenario).is_empty())
 	_comecar_obra("patio")
 	for d in range(int(_gs.dias_da_obra("patio"))):
 		var dia := "no dia %d da obra" % (d + 1)
@@ -205,12 +222,17 @@ func _o_patio() -> bool:
 			and not (cenario.get_node("Empilhadeira") as CanvasItem).visible)
 		conferir("o chão de baixo continua a terra %s" % dia, mapa.texture == _mk["MapaTerra"])
 		_confere_asfalto(asfalto, mapa, float(fracoes[d]), dia)
+		_confere_rua(nova, d, true, dia)
+		_confere_rua(velha, d, false, dia)
+		_confere_cones(cenario, d, dia)
 		if not _virar_o_dia():
 			_desmontar(tela)
 			return false
 	conferir("pronto, o mapa é o pavimentado, sem canteiro nem recorte por cima",
 		_gs.tem_estrutura("patio") and mapa.texture == _mk["MapaPatio"]
 		and not canteiro.visible and not asfalto.visible)
+	conferir("pronto, sem rua recortada nem cones",
+		not velha.visible and not nova.visible and _cones(cenario).is_empty())
 	_desmontar(tela)
 	return true
 
@@ -257,6 +279,119 @@ func _confere_asfalto(asfalto: Polygon2D, mapa: TextureRect, fracao: float, dia:
 		uv_certa = uv_certa and asfalto.uv[k].distance_to(pontos[k] * razao) < 0.01
 	conferir("a UV do recorte é o vértice × %.3f, a razão textura/rect %s" % [razao, dia],
 		uv_certa)
+
+
+# ── §6 ─────────────────────────────────────────────────────────────────────
+func _contrato_da_rua() -> void:
+	var dias := (_ok["CANTEIRO"] as Array).size()
+	conferir("a tabela conta os mesmos dias de obra que o canteiro (%d)" % dias,
+		int(_ancoras.get("obra_dias", -1)) == dias)
+	var tabela: Array = _ancoras.get("obra_da_rua", [])
+	var copia: Array = _ok["RUA"]
+	conferir("a obra da rua da tabela tem %d pedaço(s), e a cópia tantos quantos" % tabela.size(),
+		not tabela.is_empty() and tabela.size() == copia.size(),
+		"tabela %d, cópia %d" % [tabela.size(), copia.size()])
+	var por_dia := {}
+	for i in range(mini(tabela.size(), copia.size())):
+		var t: Dictionary = tabela[i]
+		por_dia[int(t["quadro"])] = true
+		conferir("o pedaço %d da obra da rua é o da tabela" % i,
+			_igual(t, copia[i]), "cópia %s" % [copia[i]])
+	# Um trecho em cada dia e o último no fim: sem isto, um pedaço no dia 0
+	# a mais recapeava a rua inteira de uma vez, e tudo o resto passava.
+	var cada_dia := true
+	for q in range(dias + 1):
+		cada_dia = cada_dia and por_dia.has(q)
+	conferir("a rua recapeia por partes: um trecho em cada dia e o último no fim (%s)"
+		% [por_dia.keys()], cada_dia and por_dia.size() == dias + 1)
+	var cones_t: Array = _ancoras.get("cones_da_obra", [])
+	var cones_c: Array = _ok["CONES"]
+	conferir("um grupo de cones por dia de obra, na tabela e na cópia (%d e %d)"
+		% [cones_t.size(), cones_c.size()], cones_t.size() == dias and cones_c.size() == dias)
+	for i in range(mini(cones_t.size(), cones_c.size())):
+		conferir("os cones do dia %d são os da tabela" % i, _igual(cones_t[i], cones_c[i]))
+
+
+## Um pedaço (ou um grupo de cones) da cópia contra o da tabela: o dia e cada
+## ponto, à mesma tolerância do pátio.
+func _igual(t: Dictionary, c: Array) -> bool:
+	var pts: Array = t["pontos"]
+	var vs: Array = c[1]
+	if int(t["quadro"]) != int(c[0]) or pts.size() != vs.size():
+		return false
+	for k in range(vs.size()):
+		var v: Vector2 = vs[k]
+		if absf(v.x - float(pts[k][0])) >= 0.0005 or absf(v.y - float(pts[k][1])) >= 0.0005:
+			return false
+	return true
+
+
+## Um recorte da rua no dia `d`: os pedaços prontos (`prontos`) ou os que
+## faltam, contra a TABELA, pela projeção dela.
+func _confere_rua(no: Polygon2D, d: int, prontos: bool, dia: String) -> void:
+	var esperado: Array = []
+	for t in _ancoras["obra_da_rua"]:
+		if (int(t["quadro"]) <= d) == prontos:
+			esperado.append(t["pontos"])
+	var nome := "a rua recapeada" if prontos else "a rua por recapear"
+	var grupos: Array = no.polygons
+	conferir("%s mostra %d pedaço(s) %s" % [nome, esperado.size(), dia],
+		no.visible == not esperado.is_empty() and grupos.size() == esperado.size(),
+		"%d grupos, visível %s" % [grupos.size(), no.visible])
+	if grupos.size() != esperado.size():
+		return
+	var certo := true
+	for i in range(esperado.size()):
+		var ids: PackedInt32Array = grupos[i]
+		var pts: Array = esperado[i]
+		if ids.size() != pts.size():
+			certo = false
+			continue
+		for k in range(pts.size()):
+			if no.polygon[ids[k]].distance_to(_tela(float(pts[k][0]), float(pts[k][1]))) > 0.05:
+				certo = false
+	conferir("%s cai nos pedaços da tabela %s" % [nome, dia], certo)
+
+
+## Os três cones do dia, nos pontos da tabela, e cada um entre os irmãos de
+## cima e os de baixo na tela — a profundidade do `Cenario` é a ordem.
+func _confere_cones(cenario: Node, d: int, dia: String) -> void:
+	var cones := _cones(cenario)
+	var esperado: Array = []
+	for t in _ancoras["cones_da_obra"]:
+		if int(t["quadro"]) == d:
+			esperado = t["pontos"]
+	conferir("%d cones na frente da obra %s" % [esperado.size(), dia],
+		not esperado.is_empty() and cones.size() == esperado.size(), "há %d" % cones.size())
+	var no_sitio := cones.size() == esperado.size()
+	var na_ordem := true
+	var onde := ""
+	for c in cones:
+		var pe := (c as Control).position + Vector2(PropIso.MEIO, PropIso.MEIO)
+		var achou := false
+		for v in esperado:
+			achou = achou or pe.distance_to(_tela(float(v[0]), float(v[1]))) < 0.05
+		no_sitio = no_sitio and achou
+		var i := (c as Node).get_index()
+		var y := (c as Control).position.y
+		for j in range(cenario.get_child_count()):
+			var outro := cenario.get_child(j) as Control
+			if outro == null or outro == c:
+				continue
+			if (j < i and outro.position.y > y + 0.5) or (j > i and outro.position.y < y - 0.5):
+				na_ordem = false
+				onde = "%s (y %.1f, índice %d) e %s (y %.1f, índice %d)" \
+					% [c.name, y, i, outro.name, outro.position.y, j]
+	conferir("os cones ficam nos pontos da tabela %s" % dia, no_sitio)
+	conferir("cada cone fica entre os irmãos pela profundidade %s" % dia, na_ordem, onde)
+
+
+func _cones(cenario: Node) -> Array:
+	var out: Array = []
+	for no in cenario.get_children():
+		if String(no.name).begins_with("ConeDaRua"):
+			out.append(no)
+	return out
 
 
 # ── §5 ─────────────────────────────────────────────────────────────────────
