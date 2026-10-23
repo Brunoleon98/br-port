@@ -275,7 +275,7 @@ const BOCA_DEPOIS := 1.2
 ## A LARGURA DA RUA, repetida do gerador (`RUA_LARG`) pela mesma razão que a
 ## rota: o jogo não lê o JSON. O D13 confere-a contra as âncoras.
 ##
-## A QUINA SALIENTE (chanfro até à `134`, arco desde ela) não se repete aqui: desde 23/09 é o
+## A QUINA SALIENTE (chanfro até à `136`, arco desde ela) não se repete aqui: desde 23/09 é o
 ## gerador que o deriva da curva deste arquivo, e não a curva dele
 ## (`corte_da_curva()`, `docs/decisoes/053`).
 const RUA_LARG := 1.8
@@ -492,7 +492,7 @@ func silhueta_do_trecho(de: Vector2, para: Vector2, motivo: String,
 ## onde ela começa e acaba, ao longo de cada trecho: `meia_faixa * raiz(2)`.
 ## Era o mesmo número de 0,636 que saía, até 23/09, do chanfro de meia rua.
 ##
-## ⚠️ E PASSOU A MEIA RUA (0,9) NA `134`. O Bruno pediu a curva de fora mais
+## ⚠️ E PASSOU A MEIA RUA (0,9) NA `136`. O Bruno pediu a curva de fora mais
 ## redonda, e o raio do arco da borda sai deste corte: com 0,636 não passava de
 ## 0,86. Andar em ARCO não serviu — o sprite não roda, e a meio da curva a
 ## ponta aponta para a quina e sai do asfalto em qualquer raio (medido: +0,24

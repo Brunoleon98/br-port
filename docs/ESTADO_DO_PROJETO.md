@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 23/10/2026 — estradas (`134`); fundo da inicial (`133`); início/contraste (`132`)
+> **Atualização:** 23/10/2026 — estradas (`136`); fundo da inicial (`133`); início/contraste (`132`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -103,7 +103,7 @@ central amarela, curvas em arco) — **três camiões descem e dois sobem, pela 
 e uma **viela de terra entre elas** — a de trás mais rala, a desfiar no quintal
 e na mata do morro. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
 **A rua é GASTA no porto em ruínas**; a obra do pátio recapeia-a por trechos,
-com cones (`134`, D49).
+com cones (`136`, D49).
 
 **A VILA É HUMILDE DE PROPÓSITO** (`123`): meia-água de fibrocimento, casinha
 de empena, quatro águas, varanda e casa em L, cada uma num terreno de muro
@@ -128,7 +128,7 @@ Telefone/aceite visual pendentes; partida/save intactos.
 sob toque.
 V3 aceita só na inicial (`133`, #147); o celular conserva o degradê.
 **A fila da `126`** (§7): terreno e vegetação (`127`, `130`) e estradas
-(`134`) **aceites**; a seguir, detalhes.
+(`136`) **aceites**; a seguir, detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.

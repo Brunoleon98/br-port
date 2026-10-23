@@ -2174,7 +2174,7 @@ func _d13_travessia_do_caminhao() -> void:
 # duas distâncias às bordas, e é isso que a curva tem de deixar de asfalto.
 # Até 23/09 o chanfro era meia rua (0,9) e o porta-contêiner saía 0,207 dele,
 # por cima do meio-fio e do passeio: a `052` registou-o e deixou-o por decidir.
-# ⚠️ E DESDE A `134` A QUINA É UM ARCO, tangente às duas bordas, e o que mais
+# ⚠️ E DESDE A `136` A QUINA É UM ARCO, tangente às duas bordas, e o que mais
 # aperta já não é o meio da diagonal: é a quina da carroçaria no meio da curva,
 # rente a uma das bordas, onde o arco recua mais do que o chanfro recuava. O
 # gerador deriva o raio dessa conta; aqui mede-se contra o arco publicado.

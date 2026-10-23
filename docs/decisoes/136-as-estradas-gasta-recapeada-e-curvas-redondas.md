@@ -1,11 +1,12 @@
-# 134 — As estradas: a rua gasta, a recapeada por partes e as curvas redondas
+# 136 — As estradas: a rua gasta, a recapeada por partes e as curvas redondas
 
 **19/10/2026 · item 2 da fila da `126`.** Main `fc05203` (PR #144, a
 vegetação da `130`, fundido pelo Bruno); nenhum PR aberto, nenhum ramo de
 outro agente nos últimos três dias, e 131 livre pelo
-`tools/conferir_colaboracao.py`. **Nasceu `131` e é `134`**: enquanto ela
+`tools/conferir_colaboracao.py`. **Nasceu `131` e é `136`**: enquanto ela
 corria, o Codex fundiu a `131` (a bancada de texto), a `132` e a `133`, e o
-D48 dele (o fundo da inicial); quem renumerou foi esta branch, no fecho de
+D48 dele (o fundo da inicial), e o PR #148 dele, aberto antes do push
+desta, trazia a `134` e a `135`; quem renumerou foi esta branch, no fecho de
 23/10, e o bloco dela é o D49 (`119`). A conversa abriu com a foto do jogo (dia 1 e
 porto completo, ampliados a 1080) e a pergunta do escopo pela `/arte`; foram
 três passagens, com prancha contra a `main` e veredito em cada uma, e a

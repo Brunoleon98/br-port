@@ -482,7 +482,7 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   destaques atrás do HUD) com as saídas dela. Ele escolheu as recomendadas
   nas duas e aceitou a passagem seguinte. Dois reinícios do worker
   apanharam uma pergunta pendente: refaz-se a pergunta, sozinha.
-  ⚠️ **E NAS ESTRADAS (`134`) O «OUTRO» DO ESCOPO TROUXE DOIS REQUISITOS QUE
+  ⚠️ **E NAS ESTRADAS (`136`) O «OUTRO» DO ESCOPO TROUXE DOIS REQUISITOS QUE
   NENHUMA OPÇÃO TINHA** — *«as sinalizações aparecem do nada»* e *«por
   partes, como uma obra»* —, e foram eles que deram forma à conversa:
   medido, o «do nada» eram 26.901 px fora da obra. A correção escrita numa

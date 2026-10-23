@@ -39,7 +39,7 @@ invisível a qualquer ferramenta — o PR aberto é a fonte certa, e quem o lê
 deu «decisões novas desta branch: nenhuma» e nenhum bloco repetido com a
 `131` e o D48 das estradas escritos e por commitar — e o Codex já tinha
 fundido os dois números; só o «livre: 134» o denunciou. Commite antes de a
-correr, e confira o número livre contra o que escreveu (`134`).
+correr, e confira o número livre contra o que escreveu (`136`).
 
 Uso:
   python3 tools/conferir_colaboracao.py

@@ -2,7 +2,7 @@ extends RefCounted
 
 # ============================================================
 # D49 — as estradas: o que a obra do pátio troca, as juntas e a borda norte
-# (`docs/decisoes/134`)
+# (`docs/decisoes/136`)
 #
 # O mapa do porto em ruínas leva a rua GASTA e o do pátio pronto a RECAPEADA,
 # e a obra do pátio troca uma pela outra um trecho por dia (`ObraNoMapa.gd`).
@@ -36,17 +36,17 @@ const DIFERENCA := 8
 ## Folga, em px de TELA, em volta de cada recorte: o antisserrilhado da borda
 ## do pátio e a faixa do avental, que é traço de 2,5 px de desenho.
 const FOLGA := 1.4
-## Medido (`134`): 5 px fora no mapa certo, 26.901 na `main` de 18/10, e a
+## Medido (`136`): 5 px fora no mapa certo, 26.901 na `main` de 18/10, e a
 ## viela sozinha (o mutante) dá 12.280. Uma dúzia de pixels de borda pode
 ## sobrar sem querer dizer nada; cinquenta já é um traço inteiro.
 const FORA_MAX := 50
 ## E a régua tem de ter visto mudança: com os mapas iguais ela passaria a
 ## contar zero fora de graça. O pátio sozinho são dezenas de milhares.
 const MUDADOS_MIN := 20000
-## Medido (`134`), na textura do jogo: o pior fio na junta é +30 sem a costura
+## Medido (`136`), na textura do jogo: o pior fio na junta é +30 sem a costura
 ## (+30,8 com o mutante) e 0 a +3,8 com ela. O corte fica a meio.
 const FIO_MAX := 16.0
-## Medido (`134`): o azul da borda norte (B − média de R e G) é +90,5 com o
+## Medido (`136`): o azul da borda norte (B − média de R e G) é +90,5 com o
 ## fio, e sem ele −22,5 na terra e +17,5 no pavimentado — o cinzento-azulado
 ## do pátio. O corte fica a meio dos dois últimos com o primeiro.
 const AZUL_MAX := 54.0

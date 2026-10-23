@@ -55,7 +55,7 @@ const PATIO: Array = [
 	[16.0, 22.5, 9.22, 12.7],
 ]
 
-# A RUA QUE A OBRA DO PÁTIO RECAPEIA (`134`), um trecho por dia, do norte
+# A RUA QUE A OBRA DO PÁTIO RECAPEIA (`136`), um trecho por dia, do norte
 # para o sul: `[quadro, contorno em mundo]`. O Bruno pediu que a rua gasta do
 # porto em ruínas virasse a recapeada *«por partes, que nem quando algo está
 # sendo construído»*; o quadro 3 é o dia em que a obra acaba e o mapa inteiro
@@ -188,7 +188,7 @@ const ALT_CAIS := 52.0 / 3.0
 const MEIA_LARG := 20.0
 const MEIA_ALT := 10.0
 
-# OS CONES DA OBRA DA RUA (`134`): três no eixo, na frente do trecho que a
+# OS CONES DA OBRA DA RUA (`136`): três no eixo, na frente do trecho que a
 # obra recapeia a seguir — `[dia, pontos em mundo]`, um dia por quadro do
 # canteiro. *«Obra da rua sem sinalização»*: o trecho trocava de cor e mais
 # nada. É a lista `cones_da_obra` da tabela, copiada pela razão do `PATIO`.

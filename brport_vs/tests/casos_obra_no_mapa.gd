@@ -25,7 +25,7 @@ extends RefCounted
 #      publica, e não contra o `poligonos_do_asfalto()` que o desenha;
 #   §5 a obra de três dias num nó de dois quadros (o píer 3 da Fase 2): o
 #      último quadro calha no último dia, e nenhum índice passa do fim;
-#   §6 a RUA que a obra do pátio recapeia (`134`): a cópia dos pedaços e dos
+#   §6 a RUA que a obra do pátio recapeia (`136`): a cópia dos pedaços e dos
 #      cones contra a tabela, um trecho por dia e o último no fim — o
 #      «por partes» que o Bruno pediu —, e a cada dia os dois recortes da
 #      rua (o mapa de terra no que falta, por cima do pátio, e o pavimentado

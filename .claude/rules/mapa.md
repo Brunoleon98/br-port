@@ -334,7 +334,7 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   seguinte, e o gerador deu por livre a coluna que a guarda viu ocupada.
   Colunas de OUTRA peça conferem-se com uma de folga para cada lado (`130`).
 
-## As estradas (`134`)
+## As estradas (`136`)
 
 - **⚠️ PEÇA QUE SÓ ENCOSTA NÃO FECHA.** Duas bordas antisserrilhadas no
   mesmo sítio deixam ver o que está por baixo delas: a reta que começava na
