@@ -235,7 +235,7 @@ visible = false
 antialiased = true
 texture = ExtResource("mapa_patio")
 
-; A RUA DA OBRA DO PÁTIO (`131`): a obra recapeia a rua gasta um trecho por
+; A RUA DA OBRA DO PÁTIO (`134`): a obra recapeia a rua gasta um trecho por
 ; dia, do norte para o sul. `RuaPorRecapear` é o mapa de TERRA nos trechos que
 ; ainda faltam, por cima do asfalto do pátio — que atravessa três cotovelos e
 ; os recapearia antes do dia deles —; `RuaRecapeada`, o PAVIMENTADO nos

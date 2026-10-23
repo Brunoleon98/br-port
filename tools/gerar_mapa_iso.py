@@ -459,7 +459,7 @@ C = {
     # o chão que sobrou. O meio-fio (`meiofio`) faz o resto do trabalho.
     "asfalto_via": "#49535b", "calcada": "#aeb8bf", "faixa_via": "#e6ebee",
     "meiofio": "#8d979e",
-    # A RUA GASTA (`131`): o mapa do porto em ruínas leva a rua que a cidade
+    # A RUA GASTA (`134`): o mapa do porto em ruínas leva a rua que a cidade
     # deixou envelhecer — o asfalto desbotado e MAIS CLARO do que o
     # `asfalto_via`, que passou a ser o da rua recapeada com o pátio. O
     # remendo é mais ESCURO do que o asfalto à volta, porque é mais novo do
@@ -1033,7 +1033,7 @@ def manchas_chao(indice: int, mx0: float, my0: float, mx1: float, my1: float,
         # Rachaduras: linha quebrada rente ao chão, não risco sobre a imagem.
         #
         # ⚠️ ERAM TRÊS TRAÇOS RETOS DE ATÉ 1,1 UNIDADE, e liam como rabisco —
-        # um «X» atrás do escritório, um triângulo ao pé do cone (`131`). A
+        # um «X» atrás do escritório, um triângulo ao pé do cone (`134`). A
         # fissura de verdade anda aos ziguezagues curtos e abre um ramo. Sai
         # de um `Random` próprio: o das manchas acaba nelas e não muda.
         rf = random.Random(SEMENTE_CHAO + 720 + indice)
@@ -3334,7 +3334,7 @@ MEIOFIO = 0.05
 # continua chanfrada — o que o 4b pediu (`docs/decisoes/013`) é que ela não
 # acabe em ponta de 90°, e não um tamanho. A viela, que o chanfro de 0,9 comia
 # 0,08, deixa de ser tocada: ela abre a 0,82 da quina.
-# ⚠️ E O CORTE CRESCEU NA `131`, de `RUA_LARG * raiz(2) / 4` (0,636) para
+# ⚠️ E O CORTE CRESCEU NA `134`, de `RUA_LARG * raiz(2) / 4` (0,636) para
 # MEIA RUA: o Bruno pediu a curva de fora mais redonda, e o raio do arco sai
 # deste corte — com 0,636 não passava de 0,86. Fazer o camião andar em ARCO
 # não serve: o sprite não roda, e a meio da curva a ponta dele aponta para a
@@ -3342,11 +3342,11 @@ MEIOFIO = 0.05
 # CEDO pela mesma diagonal afasta-o da quina, e o arco sobe a 1,38.
 CORTE_DA_CURVA = RUA_LARG / 2.0
 CAMIAO_MAIOR = (1.96 * 0.72, 0.62 * 0.72)     # chassi, largura
-# ⚠️ E DESDE A `131` NÃO HÁ CHANFRO: a quina é um arco, e o raio dele sai da
+# ⚠️ E DESDE A `134` NÃO HÁ CHANFRO: a quina é um arco, e o raio dele sai da
 # mesma conta do camião — ver `RAIO_COTOVELO`, logo abaixo. O chanfro de 0,6
 # que esta conta dava deixou de ser desenhado.
 
-# ── A CURVA REDONDA (`131`) ──────────────────────────────────────────────
+# ── A CURVA REDONDA (`134`) ──────────────────────────────────────────────
 #
 # O Bruno pediu, na conversa das estradas, *«curvas mais arredondadas»*: a
 # quina saliente era um chanfro a 45°, e a reentrante, um canto vivo. A
@@ -3393,7 +3393,7 @@ def cotovelo_pontos(borda, prox, my1, folga: float = 0.0) -> list:
     três retângulos independentes é o que deixava a calçada com a esquina
     quadrada por baixo de um asfalto já arredondado.
 
-    ⚠️ AS DUAS QUINAS SALIENTES SÃO ARCOS desde a `131` — eram um chanfro a
+    ⚠️ AS DUAS QUINAS SALIENTES SÃO ARCOS desde a `134` — eram um chanfro a
     45° —, e os arcos dos três contornos são CONCÊNTRICOS: o raio cresce com
     a folga e o centro fica. O chanfro precisava de recuar o corte de
     `folga * (2 - raiz(2))` para a calçada não sair o dobro da largura em
@@ -3455,7 +3455,7 @@ def passadeira(borda, my_centro, gasta=None) -> str:
 
     ⚠️ ELA SÓ EXISTIA COM O PAVIMENTO, e aparecia do nada no dia em que o
     pátio ficava pronto — com a linha central, 27 mil pixels fora do recorte
-    da obra (`131`). A rua é da cidade e já lá estava: no porto em ruínas a
+    da obra (`134`). A rua é da cidade e já lá estava: no porto em ruínas a
     zebra está GASTA (`gasta` traz o sorteio do desgaste), e a obra do pátio
     repinta-a com o trecho de rua dela.
     """
@@ -3500,7 +3500,7 @@ def vias(pavimentado: bool) -> str:
     dentro = lambda b: b - RUA_RECUO
     fora = lambda b: b - RUA_RECUO + RUA_LARG
     # A RUA DO PORTO EM RUÍNAS É GASTA, e a do pátio pronto é recapeada
-    # (`131`): os dois mapas diferem DENTRO do contorno da rua, e a obra do
+    # (`134`): os dois mapas diferem DENTRO do contorno da rua, e a obra do
     # pátio recapeia-a trecho a trecho (`obra_da_rua()`). O que muda no chão
     # gasto — remendo, fissura, buraco, a tinta apagada — vive em
     # `vias_detalhes()`; aqui só o tom do asfalto.
@@ -3538,7 +3538,7 @@ def vias(pavimentado: bool) -> str:
         # 19/10 ela começava no `my0`, a borda exata onde o cotovelo acaba: as
         # duas bordas antisserrilhadas no mesmo sítio deixavam passar a
         # calçada de baixo, e cada um dos quatro cotovelos à vista tinha um
-        # fio claro atravessado na pista (+25 a +30 de luminância, `131`) —
+        # fio claro atravessado na pista (+25 a +30 de luminância, `134`) —
         # a «linha fina diagonal junto do coqueiro sul» da `130`. Do outro
         # lado a costura já existia: a reta acaba DENTRO do cotovelo (`fim`),
         # e o cotovelo desenha-se por cima dela.
@@ -3552,7 +3552,7 @@ def vias(pavimentado: bool) -> str:
         if vira:
             s += _chao(cotovelo_pontos(borda, prox, my1), asfalto)
 
-    # A CURVA DE DENTRO (`131`), depois do laço: a quina reentrante de baixo
+    # A CURVA DE DENTRO (`134`), depois do laço: a quina reentrante de baixo
     # fica na reta do degrau seguinte, que se desenha na volta seguinte e
     # tapava o que aqui se pusesse. Primeiro o meio-fio, depois o asfalto.
     for i in range(len(DEGRAUS) - 1):
@@ -3566,7 +3566,7 @@ def vias(pavimentado: bool) -> str:
     # Acesso de cada berço: liga a rua ao avental, na altura do píer. É o que
     # explica para que serve a rua — sem ele ela passeia sem servir a nada.
     #
-    # ⚠️ NO PORTO EM RUÍNAS ELE É DE TERRA (`131`). Era asfalto novo nos dois
+    # ⚠️ NO PORTO EM RUÍNAS ELE É DE TERRA (`134`). Era asfalto novo nos dois
     # mapas, três faixas escuras a cortar a terra batida de um porto que
     # abre em ruínas; o asfalto chega agora com a obra do pátio, que já
     # recorta o mapa pavimentado do avental para a rua. No de terra fica só
@@ -3595,7 +3595,7 @@ def guia_rebaixada(borda, meio) -> str:
     O camião sobe do asfalto para o avental por cima do passeio, e o que lá
     está numa rua de verdade é a guia rebaixada: a calçada desce em rampa até
     ao nível da rua, com uma aba de cada lado e o meio-fio interrompido. Até à
-    `131` era o asfalto do acesso pintado por cima do passeio.
+    `134` era o asfalto do acesso pintado por cima do passeio.
     """
     f = borda - RUA_RECUO + RUA_LARG
     frente = f + CALCADA
@@ -3610,7 +3610,7 @@ def guia_rebaixada(borda, meio) -> str:
     return s
 
 
-# ── OS DETALHES DA RUA, GASTA E RECAPEADA (`131`) ────────────────────────
+# ── OS DETALHES DA RUA, GASTA E RECAPEADA (`134`) ────────────────────────
 #
 # Na conversa das estradas o Bruno escolheu tudo o que estava na mesa: a
 # sinalização brasileira, o asfalto e a calçada com vida, os acessos com cara
@@ -3633,7 +3633,7 @@ def guia_rebaixada(borda, meio) -> str:
 SEMENTE_VIAS = SEMENTE_CHAO + 700
 # A linha central: meia largura, traço e passo (o traço de 0,5 a cada 1,2 é o
 # de antes), e quanto ela corre contínua antes e depois de cada cotovelo —
-# nada, desde a segunda passagem da `131`: com 0,9 de cada lado o zigue-zague
+# nada, desde a segunda passagem da `134`: com 0,9 de cada lado o zigue-zague
 # amarelo pesava em cada curva («linha contínua da curva pesada»).
 FAIXA_MEIA = 0.05
 TRACO, PASSO_TRACO = 0.5, 1.2
@@ -3649,7 +3649,7 @@ def caminho_da_faixa(o: float, arcos: bool = False) -> tuple:
     quinas saem cortadas a `CORTE_DA_CURVA` de cada lado, que é como o camião
     as corta: pela diagonal (o sulco do pneu cai debaixo da roda) ou, com
     `arcos`, por um arco tangente nos mesmos dois pontos — a linha central,
-    redonda desde a `131`, e entre as duas rotas, sem cruzar nenhuma.
+    redonda desde a `134`, e entre as duas rotas, sem cruzar nenhuma.
 
     Devolve `(pontos, marcas)`: `marcas[i]` são os índices das quatro pontas
     das duas quinas do cotovelo `i` — as que o arco ou a diagonal ligam —, e
@@ -3776,7 +3776,7 @@ def linha_central(gasta) -> str:
 
     ⚠️ ERA BRANCO, e só no mapa do pátio pronto: tracejado nas retas e nada
     nos cotovelos, de modo que a mão dupla deixava de estar pintada em cada
-    curva (`131`). Hoje é tracejado nas retas, CONTÍNUO à volta de cada
+    curva (`134`). Hoje é tracejado nas retas, CONTÍNUO à volta de cada
     cotovelo — na curva não se ultrapassa —, e interrompido nas passadeiras,
     onde a linha de retenção toma o lugar dele. `gasta` traz o sorteio do
     desgaste do porto em ruínas: a tinta apagada, a falhar aos bocados.
@@ -3893,7 +3893,7 @@ def desgaste_da_rua(r: random.Random) -> str:
                 continue
             # ⚠️ DE BORDA IRREGULAR E SEM SELAGEM À VOLTA: retângulos com o
             # contorno escuro liam como CAIXAS desenhadas no asfalto (segunda
-            # passagem da `131`, «remendos quadrados no dia 1»).
+            # passagem da `134`, «remendos quadrados no dia 1»).
             cantos = [(caixa[0], caixa[1]), (caixa[2], caixa[1]),
                       (caixa[2], caixa[3]), (caixa[0], caixa[3])]
             canto = []
@@ -3963,7 +3963,7 @@ def _quadro_do_pedaco(j: int) -> int:
 def emendas_do_recapeamento(r: random.Random) -> str:
     """O asfalto recapeado não é uma chapa: cada dia da obra deixou o seu tom,
     muito leve, a junta onde um dia encontrou o seguinte, e uma trinca selada
-    aqui e ali (terceira passagem da `131`, «rua recapeada lisa demais»). Os
+    aqui e ali (terceira passagem da `134`, «rua recapeada lisa demais»). Os
     tons e as juntas caem nos trechos da obra, e a obra mostra-os com eles."""
     tons = [("#ffffff", 0.035), ("#000000", 0.04), ("#ffffff", 0.02), ("#000000", 0.025)]
     s = ""
@@ -4019,7 +4019,7 @@ def manchas_da_rua(r: random.Random, gasta: bool) -> str:
                                           else r.uniform(0.08, 0.14)))
         # O sulco das rodas em cada curva, de um lado e do outro do camião.
         # ⚠️ AOS BOCADOS: inteiro e paralelo ao eixo, lia como uma faixa
-        # pintada a mais (a primeira passagem da `131`).
+        # pintada a mais (a primeira passagem da `134`).
         for roda in (-0.16, 0.16):
             rp, rm = caminho_da_faixa(o + roda)
             ra = _comprimentos(rp)
@@ -4171,7 +4171,7 @@ def juntas_da_calcada(r: random.Random) -> str:
 def acessos_detalhes(gasta: bool, r: random.Random) -> str:
     """O acesso de cada berço: o sulco de terra no porto em ruínas, e no pátio
     pronto a retenção na boca e o zebrado amarelo de manobra junto do avental,
-    onde o camião encosta de ré (`131`)."""
+    onde o camião encosta de ré (`134`)."""
     s = ""
     for k, (my0, my1, borda) in enumerate(PIERES):
         meio = (my0 + my1) / 2.0
@@ -4215,7 +4215,7 @@ def acessos_detalhes(gasta: bool, r: random.Random) -> str:
 
 def vias_detalhes(pavimentado: bool) -> str:
     """Tudo o que se pinta DENTRO do contorno da rua: a rua gasta do porto em
-    ruínas, ou a recapeada do pátio pronto (`131`)."""
+    ruínas, ou a recapeada do pátio pronto (`134`)."""
     gasta = not pavimentado
     s = ""
     if gasta:
@@ -4235,7 +4235,7 @@ def vias_detalhes(pavimentado: bool) -> str:
     return s
 
 
-# ── A OBRA DA RUA (`131`) ────────────────────────────────────────────────
+# ── A OBRA DA RUA (`134`) ────────────────────────────────────────────────
 #
 # A rua recapeia-se com a obra do pátio, UM TRECHO POR DIA, do norte para o
 # sul: o Bruno pediu que a troca da rua gasta pela nova acontecesse *«por
@@ -4258,7 +4258,7 @@ def cones_da_obra() -> list:
     """(quadro, pontos em mundo) dos cones de cada dia da obra da rua.
 
     *«Obra da rua sem sinalização»*, marcou o Bruno na segunda passagem da
-    `131`: o trecho a recapear trocava de cor e mais nada. No dia `q` a obra
+    `134`: o trecho a recapear trocava de cor e mais nada. No dia `q` a obra
     está na FRENTE do trecho seguinte — onde a rua nova acaba e a gasta
     continua —, e é lá que ficam três cones em fila no eixo, do lado da rua
     gasta, no troço reto do cotovelo que a abre, a 0,9 uns dos outros — ali
@@ -4813,7 +4813,7 @@ def praia_chao(indice: int, my_a: float, my_b: float) -> str:
     if len(crista) < 2:
         return ""
     # ⚠️ E ELE PASSA POR BAIXO DO PORTO, pela `COSTURA` e À ALTURA DO CAIS
-    # (`131`). Acabava no `PONTA_NORTE` exato, onde a laje e o pátio começam,
+    # (`134`). Acabava no `PONTA_NORTE` exato, onde a laje e o pátio começam,
     # e fechava na ponta da crista — que o meandro levanta até 1,09 do cais:
     # a borda saía inclinada, longe da laje junto do cais e colada a ela lá
     # atrás, e a ÁGUA, que é o fundo do mapa, via-se num fio azul que
@@ -5840,7 +5840,7 @@ def _sem_telhado(mx0, my0, mx1, my1, altura) -> str:
     ⚠️ A COR DA ESTRUTURA NÃO É CINZENTA, E ISSO FOI MEDIDO CONTRA O FUNDO.
     Concreto pede um cinzento, e todo cinzento desta paleta cai na banda de um
     dos dois quintais: o mapa pavimentado desenhava `terra_clara` (lum 141) e o
-    outro `terra_escura` (lum 104) — desde a `131` são ambos a escura —, e
+    outro `terra_escura` (lum 104) — desde a `134` são ambos a escura —, e
     `pedra_clara` mede **0,05 de Weber** sobre o primeiro — some — enquanto
     `pedra_media` fica em 0,18 e 0,12, fraca nos dois. É a regra do gancho do pau-de-carga: um prop atravessa dois fundos e
     nenhum tom do meio ganha os dois. O creme mede 0,64 e 1,24, e laje de
@@ -6702,7 +6702,7 @@ def viela_da_vila(pavimentado: bool) -> str:
                 fim = max(fim, lmy0 + dmy) if fim is not None else lmy0 + dmy
         if fim is None:
             continue
-        # ⚠️ A MESMA TERRA NOS DOIS MAPAS (`131`). Ela clareava para
+        # ⚠️ A MESMA TERRA NOS DOIS MAPAS (`134`). Ela clareava para
         # `terra_clara` no mapa do pátio pronto, e a viela inteira trocava de
         # cor no dia em que a obra do pátio acabava — longe da obra e fora do
         # recorte dela, «do nada». A vila não é do porto; fica com a do dia 1.
@@ -6890,7 +6890,7 @@ def vila(nivel: int, pavimentado: bool) -> str:
         # mesmo no mapa pavimentado — quintal não é asfalto. Desde a `123` é o
         # TERRENO, de muro a muro; antes saía 0,5 para a frente da casa e
         # passava por cima do passeio. E é a MESMA terra nos dois mapas desde
-        # a `131`, pela razão da viela: o quintal não muda com o pátio.
+        # a `134`, pela razão da viela: o quintal não muda com o pátio.
         s += _faixa_mx(xt, xm, ye, yd, C["terra_escura"], 0.5)
         # O CONTORNO DA CASA, para as árvores do lote saberem quanto ela as
         # tapa ou quanto lhe tapam (`130`). É o mesmo desenho que sai mais
@@ -7523,7 +7523,7 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
             if com_pavimento:
                 # Faixa do avental, rente à borda interna dele — mais para
                 # dentro riscaria o número da doca, pintado logo ao lado.
-                # ⚠️ E DO LADO DO PÁTIO desde a `131`: a 0,05 para dentro do
+                # ⚠️ E DO LADO DO PÁTIO desde a `134`: a 0,05 para dentro do
                 # avental ela ficava um pixel além do recorte da obra e
                 # aparecia do nada no fim dela; a 0,06 para dentro chega com
                 # a primeira faixa de asfalto, que a obra pinta do avental.
@@ -7872,7 +7872,7 @@ def tabela_ancoras() -> dict:
             "asfalto_mx": [round(borda - RUA_RECUO, 3),
                            round(prox - RUA_RECUO + RUA_LARG, 3)],
             "asfalto_my": [round(my1 - RUA_LARG, 3), round(my1, 3)],
-            # O raio dos arcos das duas quinas salientes (`131`), que era
+            # O raio dos arcos das duas quinas salientes (`134`), que era
             # um chanfro: o D13 §7j reconstrói o desenho com ele.
             "raio": round(RAIO_COTOVELO, 3),
             # A diagonal de que o chanfro foi derivado, para o jogo a
@@ -7918,7 +7918,7 @@ def tabela_ancoras() -> dict:
                        round(borda - APRON, 3)],
             })
 
-    # E A OBRA DA RUA (`131`): os pedaços da rua que a obra do pátio recapeia,
+    # E A OBRA DA RUA (`134`): os pedaços da rua que a obra do pátio recapeia,
     # cada um com o dia em que fica pronto. O `ObraNoMapa.gd` copia-os (o JSON
     # não vai no pacote) e o D45 confere a cópia contra esta lista; o D48 mede
     # nos dois mapas que tudo o que muda entre eles cai dentro deles ou do
