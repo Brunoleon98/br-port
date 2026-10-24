@@ -31,6 +31,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-24.md` | 24/10 | Testes mais rápidos (`137`): cópias, fatias e o relógio fixo, o PR aberto; a seguir, as treze lacunas graves, depois os detalhes |
 | `MEDICOES_VELOCIDADE_TESTES_2026-10-24/` | 24/10 | Para onde vai o tempo das suítes e dos mutantes, o catálogo em quatro cópias e com `--fixed-fps`, a bateria em paralelo igual ao byte, a cobertura por função e a mutação amostrada das lacunas (`137`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-23c.md` | 23/10 | Estradas aceites (`136`, D49, PR #149), renumeradas contra o #148; a seguir, acelerar os testes, depois os detalhes |
 | `VERIFICACAO_RB5_2026-10-23/CI_TIMEOUT.md` | 23/10 | PR #148: 155/158 mutantes detectados antes do teto de 90 min; limite do job ajustado para 120, provas preservadas e nova corrida necessária |

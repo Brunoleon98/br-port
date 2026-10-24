@@ -57,6 +57,13 @@ três: **paralelo + matriz, `--fixed-fps 60` e captura em paralelo.** Ficaram
 de fora os extras — parar a suíte quando a guarda declarada reprova (−24% do
 tempo de mutante) e o laço do D35 (−4,5 s por `teste_design`).
 
+Medidas as lacunas, escolheu mais três coisas: **fechar as treze graves antes
+dos sprites de detalhes** — cada uma com a guarda e o defeito no catálogo —,
+**abrir o PR** desta branch, e **as suítes em paralelo para os agentes, não
+agora**. A meio, a pergunta dele — *«como assim à espera da bateria e da
+amostra»* — pôs na `gerais.md` que trabalho em fundo se descreve pelo que
+prova e quanto falta.
+
 ## O que mudou
 
 - **`tools/conferir_mutantes.py`**: `--trabalhadores N` copia a árvore N
@@ -155,8 +162,8 @@ telemetria do playtest. Treze são de gravidade alta (a tabela está no README).
 
 - **Parar a suíte quando a guarda declarada reprova** (−24% do tempo de
   mutante com o passo fixo) e **o laço do D35** (−4,5 s): não escolhidos.
-- **As seis suítes em paralelo para os agentes** (118 → 56 s, medido): não
-  estava nas opções; fica como próximo passo barato, com um `user://` por
+- **As seis suítes em paralelo para os agentes** (118 → 56 s, medido): o
+  Bruno disse «não agora»; é o próximo passo barato, com um `user://` por
   suíte.
 - **O runner do GitHub pode ter dois núcleos reais com SMT.** O teto de cada
   fatia (45 min) é largo por isso; o tempo real mede-se na primeira corrida

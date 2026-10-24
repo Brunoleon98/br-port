@@ -295,6 +295,7 @@ aparecer.** Se a plataforma exigir aprovação, explique no chat a ação exata 
 a razão. Se a chamada ficar pendente, informe o bloqueio prontamente e siga
 com o que independe dela; não espere em silêncio nem trate a espera
 como consentimento. Registre o que foi executado e o que ficou bloqueado.
+Trabalho em fundo descreve-se pelo que prova e quanto falta (`137`).
 
 **Literais multilinha no Windows precisam do conteúdo LF do Git.** Medido em
 `086`: CRLF no checkout de `Narrativa.gd` impedia o separador `\n\n—\n\n`

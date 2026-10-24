@@ -847,10 +847,14 @@ destaques à vista; (2) estradas — **fechado em 19/10 (`136`)**: a rua
 gasta no porto em ruínas e recapeada pela obra do pátio, um trecho por dia
 com cones, a linha central amarela, os acessos de terra que chegam
 asfaltados, e as curvas em arco, aceite à terceira passagem; (3) **sprites
-de detalhes** — depois de uma pausa que ele pediu em 23/10: a conversa
-seguinte **pesquisa e analisa como acelerar os testes** das IAs e do GitHub
-(o catálogo de mutantes levou 63 min no contêiner, e passou dos 90 min do
-job no PR #148), e a melhoria gráfica volta logo a seguir, por este item.
+de detalhes** — depois de duas pausas que ele pediu: **acelerar os testes**
+das IAs e do GitHub, **fechada em 24/10 (`137`)** — o catálogo em quatro
+cópias e em três fatias no CI, as suítes a `--fixed-fps 60`, as fotos quatro
+a quatro, nenhuma prova a menos —; e **as treze lacunas graves que a `137`
+mediu** (defeitos plausíveis que passam nas seis suítes: o que os painéis
+mostram e o que os botões fazem, a reputação ao servir, o save no arranque,
+o volume, o som do mar), que a conversa seguinte fecha, cada uma com a guarda
+e o defeito no catálogo, antes de a melhoria gráfica voltar por este item.
 Cada uma abre com a foto do jogo e a pergunta do escopo. Fora
 dela, para depois: animar as marolas e o fio diagonal da ponta norte do
 cais (`124`), os gates A4 e A7, e o galpão recuperado V3.
