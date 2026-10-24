@@ -94,7 +94,7 @@ painéis e preferências.
 |---|---|---|---|
 | — (equivalente) | `GameState:1305:bool` | — | o `calendario()` pergunta `vencimentos.has(t)`, e o `false` deixa a chave: o calendário marca na mesma |
 | `alocar-fora-do-array` | `GameState:1344:rel` | T31 | a doca de índice igual ao total é recusada **sem erro do motor** |
-| `recordes-vazam-no-load` | `GameState:2952:apagar` | T31 | o save sem recordes carrega com eles a zero, e não com os da partida viva |
+| `recordes-vazam-no-load` | `GameState:2952:apagar` | T31 | o recorde malformado no save carrega a zero, e não com o da partida viva |
 | `registro-partida-nova-retomada` | `Registro:203:rel` | R9 | a partida do dia 1 grava-se nova; a que arma a meio, retomada |
 | `registro-turno-nasce-com-aviso` | `Registro:295:const` | R9 | o turno sem aviso vermelho conta zero, e com um conta um |
 | `registro-docas-ao-contrario` | `Registro:316:rel` | R9 | duas docas com trabalhador contam duas |
@@ -123,11 +123,21 @@ painéis e preferências.
   cabem nos dois. O Construir não cabe — sem a acomodação, a 1000 px ele
   começava em −37, com o título fora da tela.
 - E duas defendem estados que o jogo não monta: o cartão da doca com barco
-  e sem trabalhador (atracar leva-o sempre), e o save sem recordes (todo
-  save que o jogo grava os traz). As guardas defendem a leitura escrita ao
+  e sem trabalhador (atracar leva-o sempre), e o save com um recorde de
+  outro tipo (todo save que o jogo grava os traz certos). As guardas defendem a leitura escrita ao
   lado do código, e o comentário de cada uma o diz.
 
-QUEM-MEDIAS
+**E a prova é a mesma das graves.** Os treze voltaram a correr na árvore
+de antes destas guardas, com o `amostra.py`: todos **sobreviveram**. Os doze
+que não são equivalentes entraram numa secção própria do catálogo (*«as
+lacunas médias que o Bruno escolheu»*), e o `--explorar` em quatro cópias
+deu onze reprovados pela guarda nova, numa suíte só cada um. **O décimo
+segundo — os recordes — sobreviveu à guarda que eu escrevi**: ela montava o
+save sem a chave `recordes`, e o `.get(nome, {})` do `load_game()` devolve um
+dicionário vazio e reescreve cada campo a zero na mesma, com ou sem o
+reset. O reset só separa quando um recorde vem com OUTRO TIPO, que o laço
+salta; a guarda passou a plantar isso, e o defeito reprovou. `--so` dos doze:
+*«MUTANTES OK — 12 defeito(s) reinjetado(s) em 4 cópia(s)»*.
 
 As que ficaram de fora: as treze **visuais** (animação, ordem de desenho,
 recorte de retrato, espaço do HUD), que mudam as fotos do «Evidência

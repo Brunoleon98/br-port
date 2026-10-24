@@ -118,7 +118,15 @@ equivalentes). A lógica perguntada está guardada; o que escapa é outra coisa:
   «graves» da `137` não chegavam ao jogador: «confirmar duas vezes cancela
   duas vezes» o jogo recusa, e a meta da Fase 1 o `Main` nunca abre. Antes de
   escrever a guarda, siga o defeito até à tela, e escreva ao lado dela o que
-  ela defende de verdade (`138`).
+  ela defende de verdade (`138`). Das médias, o calendário era equivalente
+  (trocar o VALOR de uma chave que se lê por `has()` não muda nada), e os
+  recordes só vazavam com um campo de outro tipo: a chave em falta, que a
+  primeira guarda montou, o `.get(nome, {})` já zerava.
+- ⚠️ **E ONDE UM DEFEITO DE LEIAUTE SE VÊ DIZ-O UMA SONDA COM E SEM ELE.** A
+  acomodação do Maior desligada deu a mesma geometria em quase todo painel a
+  1280; correr o percurso do contraste nas duas árvores, a três alturas, e
+  comparar as caixas achou o único caso que muda à vista — o Construir, que
+  a 1000 px começava em −37 (`138`).
 
 ## O jogador ao acaso (T26, `118`)
 

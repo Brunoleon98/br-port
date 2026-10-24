@@ -126,7 +126,7 @@ persistência independente do movimento; telefone pendente.
 **A fila da `126`** (§7): terreno e vegetação (`127`, `130`) e estradas
 (`136`) **aceites**. **Testes (`137`, `138`):** catálogo em cópias e
 fatias, suítes a `--fixed-fps 60`, fotos em paralelo; das lacunas medidas,
-as 13 graves fechadas, as 28 médias com o Bruno. A seguir: os detalhes.
+fechadas as 13 graves e 13 médias (`138`). A seguir: os detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
