@@ -1,9 +1,9 @@
-# BR Port — as estradas aceites; a próxima conversa é a dos sprites de detalhes
+# BR Port — as estradas aceites (PR #149); a próxima conversa acelera os testes
 
 **23/10/2026.** Branch `ccr-cce8964c-k07qy0`, da main `fc05203` (PR #144, a
 vegetação da `130`) e junta outra vez à main `ed2c770` (PR #147, o fundo da
-inicial do Codex) no fecho. **Sem PR aberto desta branch** — o Bruno não o
-pediu nesta conversa. Na junção, o número e o bloco desta branch tinham sido
+inicial do Codex) no fecho, e à `bf2eafe` (o #148) em 24/10, quando o Bruno
+pediu o **PR #149**. Na junção, o número e o bloco desta branch tinham sido
 tomados pelo Codex (a `131` da bancada de texto e o D48 do fundo da inicial),
 e o PR #148 dele, aberto antes do push, traz a `134` e a `135`: esta é a
 **`136`** e o bloco é o **D49**, renumerados pela
@@ -51,51 +51,61 @@ lá).
 investigados): postes e placas na calçada nova, carros estacionados,
 lixeiras, um ponto de ônibus, e cavaletes de obra ao lado dos cones.
 
-**Pendente do Bruno**: pedir o PR desta branch quando quiser — o CI só corre
-no PR (`CLAUDE.md`, «Como rodar»).
+⚠️ O fim do catálogo de mutantes é onde os dois agentes colidem: o bloco
+das estradas foi para uma secção própria (`.claude/rules/testes-e-guardas.md`).
+
+**Pendente**: o CI do #149. O job dos mutantes tem 166 entradas, e a ~35 s
+cada no CI do #148 isso dá uns 100 dos 120 min do teto.
+
+**A próxima conversa, pedida pelo Bruno em 24/10, não é de arte**: pesquisar
+e analisar como acelerar os testes das IAs e do GitHub. A melhoria gráfica
+(os sprites de detalhes) volta a seguir.
 
 Prompt para colar:
 
 ```text
 Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3
-e as decisões 126 (a fila) e 136 (as estradas aceites). Confira a main remota,
-os PRs abertos e o CI do último merge, e rode
-python3 tools/conferir_colaboracao.py — com o trabalho commitado, que ele lê
-o HEAD.
+e a decisão 117 (o catálogo de mutantes). Confira a main remota, os PRs
+abertos e o CI do último merge, e rode python3 tools/conferir_colaboracao.py
+com o trabalho commitado (ele lê o HEAD). Se o PR #149 (as estradas, 136)
+ainda não estiver na main, pergunte ao Bruno por ele e conduza-o até verde
+antes de começar.
 
-As estradas (136) foram ACEITES e vivem na branch ccr-cce8964c-k07qy0, sem
-PR, já junta à main de 23/10 (PR #147). Se ela ainda não estiver na main,
-pergunte ao Bruno se abre o PR dela e conduza-o até verde antes de começar;
-os detalhes partem da main com ela.
+O item desta conversa, pedido pelo Bruno, NÃO é de arte: pesquisar e
+analisar meios de ACELERAR OS TESTES — os que as IAs (Claude e Codex) correm
+no contêiner e os que o GitHub corre no CI —, que hoje demoram bastante. É
+uma conversa de medir e decidir (F1 a F4): meça antes de propor.
 
-O item desta conversa é o 3 e último da fila da 126: os SPRITES DE
-DETALHES. Use /arte: fotografe o JOGO (dia 1, um dia da obra do pátio e o
-porto completo, e ampliados a rua, as calçadas, o pátio, os acessos aos
-berços e a vila), mostre o estado e pergunte ao Bruno o escopo, com opções e
-a recomendada primeiro — junte à pergunta, como opções, o que a 136 anotou
-nas fotos (postes e placas na calçada nova, carros estacionados, lixeiras,
-um ponto de ônibus, cavaletes de obra ao lado dos cones; estão no briefing
-2026-10-23c) e o que você mesmo encontrar a olhar ampliado. Pergunte também
-ONDE cada família vai antes do render (a /arte, §8). Medir antes de mexer;
-passagens com prancha antes/depois contra a main e veredito no fim, com a
-lista de defeitos que você vê.
+O que já se sabe, medido (confira antes de herdar):
+- No contêiner, em 23/10: run_tests ~26 s, teste_design ~32 s, teste_fumaca
+  ~13 s, teste_audio e teste_registro ~0 s; o catálogo inteiro de mutantes
+  (140) levou 63 min, em série — cada mutante corre de novo a suíte inteira
+  que o deve reprovar, num Godot novo, e os de arte reimportam o projeto.
+- No CI do PR #148, o job «Defeitos já provados» chegou aos 90 min com 155
+  de 158 mutantes (~35 s cada) e o teto passou a 120
+  (docs/arquivo/VERIFICACAO_RB5_2026-10-23/CI_TIMEOUT.md). Hoje são 166.
+- As ferramentas partilham user://ferramentas/, e é por isso que nada corre
+  em paralelo (CLAUDE.md, «Como rodar»; decisões 061 e 069).
 
-Mantenha o que ele já aceitou: as estradas da 136 (a rua gasta e a obra que
-a recapeia por trechos, com os cones), a vegetação da 130, a vila da 123, o
-mar da 124, e os camiões de mão dupla que encostam de ré nos berços (a
-ROTA_ESTRADA, o D20 e o D13 §7j guardam a pista). Prop novo no Cenario
-responde às guardas de todos os props.
+Desenhe a medição: o tempo de cada job do testes.yml e do captura.yml nas
+últimas corridas do GitHub Actions, o de cada suíte e de cada mutante aqui,
+e onde ele vai (arranque do Godot, --import, corpo da suíte). Depois
+pesquise as saídas — paralelismo com uma pasta de dados por processo, o
+catálogo partido em vários jobs (matriz), no PR só os mutantes cujo alvo o
+diff toca e o catálogo inteiro na main ou à noite, cache do .godot/
+importado, um Godot vivo reaproveitado entre mutantes, e o que mais a busca
+trouxer —, com o custo, o ganho medido ou estimado e o risco de cada uma
+para as guardas. Leve ao Bruno as opções com a recomendada primeiro, e
+implemente só o que ele escolher.
 
-Fora desta fila, para depois: animar as marolas como a espuma e o fio
-diagonal na ponta norte do cais (124), os gates do Bruno (A4 leitura, A7
-playtest pelo Pages), o recuperado V3, o que a 130 deixou registado (o ipê
-amarelo da borda 63% tapado, as palmeiras jovens pequenas) e o que a 136
-deixou (o camião encosta 2 px na linha central na curva de fora; a calçada
-da quina de dentro 0,095 fora do cerco). O texto global e o telefone são da
-frente do Codex (131 a 135, o PR #148): não mexa neles.
+Nunca acelerar tirando prova: nenhum mutante, suíte ou guarda sai para
+ganhar tempo. Uma mudança no executor ou no workflow prova-se com defeitos
+injetados que continuem a reprovar, e com o mesmo MUTANTES OK antes e
+depois.
 
-Não comece outra funcionalidade por conta própria. Ao encerrar, aplique
-/fechar-sessao e entregue o prompt completo da próxima conversa em bloco
-copiável. Se ele aceitar os detalhes, a fila da 126 acaba: pergunte-lhe a
-seguinte em vez de a escolher; senão, mais uma volta neles.
+Depois desta conversa a melhoria gráfica volta: o item 3 da fila da 126,
+os sprites de detalhes (o que a 136 anotou nas fotos está no briefing
+2026-10-23c). Não comece outra funcionalidade por conta própria. Ao
+encerrar, aplique /fechar-sessao e entregue o prompt completo da próxima
+conversa em bloco copiável — a dos sprites de detalhes.
 ```

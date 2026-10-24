@@ -31,7 +31,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
-| `BRIEFING_PROXIMA_CONVERSA_2026-10-23c.md` | 23/10 | Estradas aceites (`136`, D49), renumeradas na junção com a main e contra o PR #148; a seguir, os sprites de detalhes |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-23c.md` | 23/10 | Estradas aceites (`136`, D49, PR #149), renumeradas contra o #148; a seguir, acelerar os testes, depois os detalhes |
 | `VERIFICACAO_RB5_2026-10-23/CI_TIMEOUT.md` | 23/10 | PR #148: 155/158 mutantes detectados antes do teto de 90 min; limite do job ajustado para 120, provas preservadas e nova corrida necessária |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-23d.md` | 23/10 | Correção do timeout do PR #148, resultados oficiais parciais, CI por conferir e preservação da branch concorrente |
 | `VERIFICACAO_RB5_2026-10-23/PUBLICACAO.md` | 23/10 | Autorização posterior ao fecho local, envio normal da branch e PR #148; CI iniciado, sem merge ou alteração do Pages |
