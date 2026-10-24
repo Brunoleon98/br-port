@@ -13,6 +13,10 @@ As do «Estilo de código» do `CLAUDE.md` que são do GDScript. O essencial
 — o `GS` destipado — ficou no núcleo; as de suíte estão em
 `testes-e-guardas.md`.
 
+- **Os getters da seleção de `LineEdit` exigem `has_selection()`.** Sem seleção,
+  devolvem −1 e imprimem erro C++ com `GDScript backtrace`, sem `SCRIPT ERROR`
+  e sem interromper o teste. O RB5 (`135`) só consulta os limites quando há
+  seleção e confere também esse rastro na prova de foco/cursor.
 - **⚠️ FUNÇÃO NOVA NUMA CLASSE BASE PODE TER O NOME DE UMA DAS FILHAS**, e a
   filha deixa de compilar — «The function signature doesn't match the
   parent». Em 04/10 o `_vestir_balao()` estático do `PainelNarrativo` colidiu

@@ -650,10 +650,11 @@ jobs:
   mutantes:
     name: Defeitos já provados
     runs-on: ubuntu-latest
-    # A main fc05203 levou 58min18s com 120 defeitos (job 117832180799).
-    # A bancada de texto acrescenta quatro (`131`); 60 min já não dão folga.
+    # No PR #148, o job 120606846893 detectou 155 dos 158 defeitos antes
+    # de atingir 90 min. Restavam três e a base final; 120 min dão folga
+    # para a bateria completa no runner, sem reduzir catálogo ou guardas.
     # Os tetos por suíte continuam medidos pelo executor, sem cortar provas.
-    timeout-minutes: 90
+    timeout-minutes: 120
 
     steps:
       - name: Baixar o repositório

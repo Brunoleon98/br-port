@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 23/10/2026 — estradas (`136`); fundo da inicial (`133`); início/contraste (`132`)
+> **Atualização:** 23/10/2026 — estradas (`136`); RB5 (`134`, `135`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -123,12 +123,13 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB6 (`129`, #143):** Reduzir movimento nos Ajustes de início/pausa, por aparelho;
 fundo parado e transições diretas, operação e resultados preservados.
 Telefone/aceite visual pendentes; partida/save intactos.
-**RB5 (`131`, #145 mesclado):** bancada; tamanho e acomodação pendentes, sem opção global.
-**Início (`132`, #146):** quatro entradas/Configurações e movimento legível
-sob toque.
-V3 aceita só na inicial (`133`, #147); o celular conserva o degradê.
+**RB5 (`134`, `135`, #148):** três colunas/+25%; Padrão/Maior nos Ajustes,
+persistência independente do movimento; telefone pendente.
+**Início/fundo (`132`/`133`, #146/#147):** V3 só na inicial, celular com
+degradê.
 **A fila da `126`** (§7): terreno e vegetação (`127`, `130`) e estradas
-(`136`) **aceites**; a seguir, detalhes.
+(`136`) **aceites**. A seguir (Bruno, 23/10): acelerar os testes das IAs e
+do GitHub; depois, os detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.

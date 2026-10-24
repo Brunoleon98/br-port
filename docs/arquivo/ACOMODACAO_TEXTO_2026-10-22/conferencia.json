@@ -1,0 +1,82 @@
+[
+  {
+    "caso": "colunas-doca-1.25",
+    "curso": 183.0,
+    "pagina": 380.0,
+    "textos_originais_preservados": true,
+    "mapa_pixels_identicos": true,
+    "acoes_fixas_dentro_da_janela": true,
+    "estado_preservado": true,
+    "headless_identico_ao_grafico": true
+  },
+  {
+    "caso": "colunas-doca-1.5",
+    "curso": 260.0,
+    "pagina": 369.0,
+    "textos_originais_preservados": true,
+    "mapa_pixels_identicos": true,
+    "acoes_fixas_dentro_da_janela": true,
+    "estado_preservado": true,
+    "headless_identico_ao_grafico": true
+  },
+  {
+    "caso": "colunas-hud-1.25",
+    "curso": 96.0,
+    "pagina": 380.0,
+    "textos_originais_preservados": true,
+    "mapa_pixels_identicos": true,
+    "acoes_fixas_dentro_da_janela": true,
+    "estado_preservado": true,
+    "headless_identico_ao_grafico": true
+  },
+  {
+    "caso": "colunas-hud-1.5",
+    "curso": 188.0,
+    "pagina": 369.0,
+    "textos_originais_preservados": true,
+    "mapa_pixels_identicos": true,
+    "acoes_fixas_dentro_da_janela": true,
+    "estado_preservado": true,
+    "headless_identico_ao_grafico": true
+  },
+  {
+    "caso": "lista-doca-1.25",
+    "curso": 623.0,
+    "pagina": 380.0,
+    "textos_originais_preservados": true,
+    "mapa_pixels_identicos": true,
+    "acoes_fixas_dentro_da_janela": true,
+    "estado_preservado": true,
+    "headless_identico_ao_grafico": true
+  },
+  {
+    "caso": "lista-doca-1.5",
+    "curso": 744.0,
+    "pagina": 369.0,
+    "textos_originais_preservados": true,
+    "mapa_pixels_identicos": true,
+    "acoes_fixas_dentro_da_janela": true,
+    "estado_preservado": true,
+    "headless_identico_ao_grafico": true
+  },
+  {
+    "caso": "lista-hud-1.25",
+    "curso": 623.0,
+    "pagina": 380.0,
+    "textos_originais_preservados": true,
+    "mapa_pixels_identicos": true,
+    "acoes_fixas_dentro_da_janela": true,
+    "estado_preservado": true,
+    "headless_identico_ao_grafico": true
+  },
+  {
+    "caso": "lista-hud-1.5",
+    "curso": 744.0,
+    "pagina": 369.0,
+    "textos_originais_preservados": true,
+    "mapa_pixels_identicos": true,
+    "acoes_fixas_dentro_da_janela": true,
+    "estado_preservado": true,
+    "headless_identico_ao_grafico": true
+  }
+]

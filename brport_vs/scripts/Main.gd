@@ -171,7 +171,12 @@ const EscritorioPronto := preload("res://art/props/escritorio.png")
 @onready var _meta_cartao: PanelContainer = $MetaCartao
 
 
+var texto_da_interface: TextoDaInterface
+
+
 func _ready() -> void:
+	texto_da_interface = TextoDaInterface.acompanhar(self)
+	texto_da_interface.acomodacao = AcomodacaoDoPorto.new(self)
 	movimento_de_fundo = MovimentoDeFundo.new()
 	add_child(movimento_de_fundo)
 	PreferenciasDeApresentacao.atual().mudou.connect(_aplicar_movimento)

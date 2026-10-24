@@ -1,0 +1,8 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:364)
+OpenGL API 4.5 (Core Profile) Mesa 25.0.7-2+deb13u1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 19.1.7, 256 bits)
+
+Tela salva em <saida>/lista-hud-1.5.png (720x1280)
+Tela salva em <saida>/lista-hud-1.5_fim.png (720x1280)
+BANCADA TEXTO MEDIDA hud fator=1.5 textos=30 estado_igual=true

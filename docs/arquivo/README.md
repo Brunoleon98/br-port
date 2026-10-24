@@ -32,6 +32,14 @@ aqui.
 | Documento | Data | O que registra |
 |---|---|---|
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-23c.md` | 23/10 | Estradas aceites (`136`, D49), renumeradas na junção com a main e contra o PR #148; a seguir, os sprites de detalhes |
+| `VERIFICACAO_RB5_2026-10-23/CI_TIMEOUT.md` | 23/10 | PR #148: 155/158 mutantes detectados antes do teto de 90 min; limite do job ajustado para 120, provas preservadas e nova corrida necessária |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-23d.md` | 23/10 | Correção do timeout do PR #148, resultados oficiais parciais, CI por conferir e preservação da branch concorrente |
+| `VERIFICACAO_RB5_2026-10-23/PUBLICACAO.md` | 23/10 | Autorização posterior ao fecho local, envio normal da branch e PR #148; CI iniciado, sem merge ou alteração do Pages |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-23b.md` | 23/10 | RB5 no PR #148; autorização vigente, distinção entre provas locais e CI remoto, preservação e telefone pendente |
+| `VERIFICACAO_RB5_2026-10-23/README.md` | 23/10 | RB5 integrado localmente: três colunas/+25%, 84 percursos/86 PNGs, seis suítes, 158 mutantes, Padrão idêntico e persistência/arrasto Web; sem publicação |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-23.md` | 23/10 | RB5 pronto localmente, provas e preservação; publicação e telefone pendentes, sem repetir a escolha aprovada |
+| `ACOMODACAO_TEXTO_2026-10-22/README.md` | 22/10 | Bancada `134`: colunas/lista, +25%/+50%, 22 capturas reais e comparação; escolha e implementação global pendentes |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-22e.md` | 22/10 | RB5: propostas de acomodação prontas para escolher tamanho/leiaute, sem preferência global ou publicação |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22c.md` | 22/10 | Autorizações já dadas registradas nas instruções compartilhadas, com alcance por entrega e limites da plataforma |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22b.md` | 22/10 | Encaminhamento autorizado por PR do fundo exclusivo da inicial (`133`); provas locais preservadas e CI próprio a conferir |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-22.md` | 22/10 | V3 aceita na foto e integração local exclusiva da inicial (`133`), com celular preservado e publicação não solicitada |

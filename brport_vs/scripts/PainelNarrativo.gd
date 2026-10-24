@@ -69,6 +69,7 @@ var _detalhe_da_tarja: Label
 
 
 func _ready() -> void:
+	TextoDaInterface.acompanhar(self)
 	anchor_right = 1.0
 	anchor_bottom = 1.0
 	PreferenciasDeApresentacao.atual().mudou.connect(_ao_movimento_da_folha)
@@ -116,6 +117,11 @@ func montar(largura: int, altura: int, escuro: float = ESCURO_LEITURA,
 	_vbox = VBoxContainer.new()
 	_vbox.add_theme_constant_override("separation", 10)
 	caixa.add_child(_vbox)
+	if variacao != "Celular":
+		caixa.set_meta(&"cartao_rolavel_rb5", _vbox)
+		caixa.set_meta(&"cartao_altura_rb5", altura)
+	else:
+		caixa.set_meta(&"celular_tamanho_rb5", Vector2(largura, altura))
 	return _vbox
 
 
@@ -802,6 +808,7 @@ func pagina_do_caderno(pautada: bool, com_fita: bool,
 	var caixa := VBoxContainer.new()
 	caixa.add_theme_constant_override("separation", 12)
 	margem.add_child(caixa)
+	caixa.set_meta(&"conteudo_rolavel_rb5", true)
 
 	_pagina = papel
 	_folha = folha

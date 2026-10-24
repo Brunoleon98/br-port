@@ -125,10 +125,12 @@ func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
 
 func _process(_delta: float) -> bool:
 	if _feito:
-		return true
+		return false
 	_feito = true
 	_rodar()
-	return true
+	# O RB5 espera o layout real. Só o quit do fecho encerra a árvore;
+	# true terminaria a suíte no primeiro await, sem executar o bloco novo.
+	return false
 
 
 func _rodar() -> void:
@@ -364,6 +366,11 @@ func _rodar() -> void:
 	bancada_texto.rodar(self)
 	_falhas += int(bancada_texto.falhas)
 	_confere("o bloco da bancada de texto correu ate ao fim", bancada_texto.completo)
+	print("=== RB5: tamanho ajustavel integrado ===")
+	var texto_ajustavel = load("res://tests/casos_texto_ajustavel.gd").new()
+	await texto_ajustavel.rodar(self)
+	_falhas += int(texto_ajustavel.falhas)
+	_confere("o bloco RB5 correu ate ao fim", texto_ajustavel.completo)
 
 	print("=== D49: as estradas — o que a obra troca, as juntas e a borda norte ===")
 	var estradas = load("res://tests/casos_estradas.gd").new()

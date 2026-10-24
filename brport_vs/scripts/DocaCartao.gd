@@ -243,7 +243,8 @@ func _gui_input(event: InputEvent) -> void:
 		# A confirmação abre ao SOLTAR: o mesmo gesto que a abriu não pode
 		# terminar por cima do botão destrutivo. Devolução gratuita mantém press.
 		var iniciado: bool = int(GameState.docks[dock_index]["boat"]["progress"]) > 0
-		if event.pressed == iniciado:
+		var no_rolo := RolagemDaOperacao.contem(self)
+		if event.pressed if no_rolo else event.pressed == iniciado:
 			return
 		GameState.tocar_doca(dock_index)
 		accept_event()
