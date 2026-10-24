@@ -415,8 +415,9 @@ func _rodar() -> void:
 #
 # ⚠️ E O MOBILIÁRIO DA RUA (`140`) acompanha a rua, que passa ao lado das duas
 # praias: os postes da vila e as placas do porto não são equipamento do
-# porto. A pergunta 1 continua a valer para eles — nenhum pisa a areia.
-const PRAIA_SO_PARA := ["Coqueiro", "Arvore", "PosteDaRua", "PlacaDaRua"]
+# porto, nem a subestação da cidade no campo do norte, de onde a rede vem. A
+# pergunta 1 continua a valer para eles — nenhum pisa a areia.
+const PRAIA_SO_PARA := ["Coqueiro", "Arvore", "PosteDaRua", "PlacaDaRua", "SubestacaoDaRede"]
 
 # Medido em 04/09: a ponta norte tem 139 px de costa dentro do quadro e a sul
 # 233. O piso é generoso de propósito — ele existe para pegar uma praia que

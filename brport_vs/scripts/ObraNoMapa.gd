@@ -188,7 +188,7 @@ const ALT_CAIS := 52.0 / 3.0
 const MEIA_LARG := 20.0
 const MEIA_ALT := 10.0
 
-# OS CONES DA OBRA DA RUA (`136`): três no eixo, na frente do trecho que a
+# OS CONES DA OBRA DA RUA (`136`): dois no eixo, na frente do trecho que a
 # obra recapeia a seguir — `[dia, pontos em mundo]`, um dia por quadro do
 # canteiro. *«Obra da rua sem sinalização»*: o trecho trocava de cor e mais
 # nada. É a lista `cones_da_obra` da tabela, copiada pela razão do `PATIO`.
@@ -197,50 +197,62 @@ const MEIA_ALT := 10.0
 # vê pisar a rua — é a única vez que um cone a pisa com razão (D2).
 const CONE := preload("res://art/props/cone_transito.png")
 const CONES: Array = [
-	[0, [
-		Vector2(1.08, 7.1), Vector2(1.98, 7.1), Vector2(2.88, 7.1)]],
-	[1, [
-		Vector2(5.08, 15.1), Vector2(5.98, 15.1), Vector2(6.88, 15.1)]],
-	[2, [
-		Vector2(9.08, 23.1), Vector2(9.98, 23.1), Vector2(10.88, 23.1)]],
+	[0, [Vector2(1.15, 7.1), Vector2(3.05, 7.1)]],
+	[1, [Vector2(5.15, 15.1), Vector2(7.05, 15.1)]],
+	[2, [Vector2(9.15, 23.1), Vector2(11.05, 23.1)]],
 ]
 
-# OS CAVALETES DA OBRA DA RUA (`140`): entre os cones, no eixo, um dia por
-# quadro — cone, cavalete, cone, cavalete, cone. É a lista
+# OS CAVALETES DA OBRA DA RUA (`140`): um por dia, na calçada do pátio do
+# cotovelo dos cones, ao longo dela — escolha do Bruno na quarta passagem: no
+# eixo, entre os cones, o poste da quina de dentro ficava-lhe à frente. É a lista
 # `cavaletes_da_obra` da tabela, copiada pela razão do `PATIO`; nascem e
 # morrem com os cones.
 const CAVALETE := preload("res://art/props/cavalete_obra.png")
 const CAVALETES: Array = [
-	[0, [Vector2(1.53, 7.1), Vector2(2.43, 7.1)]],
-	[1, [Vector2(5.53, 15.1), Vector2(6.43, 15.1)]],
-	[2, [Vector2(9.53, 23.1), Vector2(10.43, 23.1)]],
+	[0, [Vector2(3.078, 6.09)]],
+	[1, [Vector2(7.078, 14.09)]],
+	[2, [Vector2(11.078, 22.09)]],
 ]
 
-# O MOBILIÁRIO DA RUA (`140`): os postes na calçada da vila e as placas na do
-# porto, `[tipo, ponto em mundo, quadro]`. Escolha do Bruno: a rua gasta do
-# porto em ruínas leva os VELHOS, e a obra do pátio troca cada um pelo novo
-# no dia em que o trecho dele é recapeado — o mesmo `quadro` da `RUA`. Ao
-# contrário dos cones, existem sempre: plantam-se ao montar a cena, entre os
-# irmãos do `Cenario` pela profundidade, e o que muda é a textura. É a lista
+# O MOBILIÁRIO DA RUA (`140`): os postes na calçada da vila e as placas nas
+# do porto e do pátio, `[tipo, ponto em mundo, quadro]`. Escolha do Bruno: a
+# rua gasta do porto em ruínas leva os VELHOS, e a obra do pátio troca cada
+# um pelo novo no dia em que o trecho dele é recapeado — o mesmo `quadro` da
+# `RUA`. Ao contrário dos cones, existem sempre: plantam-se ao montar a cena,
+# entre os irmãos do `Cenario` pela profundidade, e o que muda é a textura. A
+# subestação e a linha que lhe chega da borda do mapa (quarta passagem) têm
+# `quadro` −1: são da cidade e ficam sempre novas. É a lista
 # `mobiliario_da_rua` da tabela, copiada pela razão do `PATIO`.
 const MOBILIARIO: Array = [
-	["poste", Vector2(-0.91, -1.0), 0], ["poste", Vector2(-0.91, 2.5), 0],
-	["poste", Vector2(3.09, 9.5), 1], ["poste", Vector2(3.09, 11.8), 1],
-	["poste", Vector2(7.09, 17.0), 2], ["poste", Vector2(7.09, 20.5), 2],
-	["poste", Vector2(11.09, 25.0), 3], ["poste", Vector2(11.09, 28.5), 3],
-	["quina", Vector2(-0.474, 7.674), 1], ["quina", Vector2(3.526, 15.674), 2],
-	["quina", Vector2(7.526, 23.674), 3],
-	["pare", Vector2(1.11, 2.23), 0], ["pare", Vector2(5.11, 10.23), 1],
-	["pare", Vector2(9.11, 18.23), 2],
-	["pedestres", Vector2(1.11, 5.89), 0], ["pedestres", Vector2(5.11, 13.89), 1],
-	["velocidade", Vector2(9.11, 21.4), 2],
+	["ramal", Vector2(-0.91, -1.0), 0], ["poste", Vector2(-0.91, 2.5), 0],
+	["poste", Vector2(3.09, 11.8), 1], ["poste", Vector2(7.09, 19.7), 2],
+	["poste", Vector2(11.09, 27.2), 3], ["poste", Vector2(11.09, 30.7), 3],
+	["curva_a", Vector2(-0.797, 7.19), 1], ["curva_b", Vector2(0.01, 7.997), 1],
+	["quina", Vector2(2.99, 8.21), 1], ["curva_a", Vector2(3.203, 15.19), 2],
+	["curva_b", Vector2(4.01, 15.997), 2], ["quina", Vector2(6.99, 16.21), 2],
+	["curva_a", Vector2(7.203, 23.19), 3], ["curva_b", Vector2(8.01, 23.997), 3],
+	["quina", Vector2(10.99, 24.21), 3], ["pare", Vector2(1.11, 2.23), 0],
+	["pare", Vector2(5.11, 10.23), 1], ["pare", Vector2(9.11, 18.23), 2],
+	["pedestres", Vector2(-0.91, 5.89), 0], ["pedestres", Vector2(3.09, 13.89), 1],
+	["velocidade", Vector2(9.11, 21.4), 2], ["subestacao", Vector2(3.1, -1.9), -1],
+	["linha", Vector2(0.2, -8.6), -1], ["linha", Vector2(2.0, -4.9), -1],
+	["saida", Vector2(2.0, -1.3), -1],
 ]
 ## A arte de cada tipo: `[velha, nova]`.
 const ARTE_DO_MOBILIARIO := {
 	"poste": [preload("res://art/props/poste_rua_velho.png"),
 		preload("res://art/props/poste_rua_novo.png")],
-	# O da quina de fora de cada cotovelo: o mesmo poste rodado 45°, com a
-	# cruzeta de frente para a câmara, e é nele que a fiação vira.
+	# O primeiro da vila, onde chega o ramal da subestação por cima da rua: a
+	# cruzeta a −45°, de través à curva de 90° que a rede faz nele.
+	"ramal": [preload("res://art/props/poste_rua_ramal_velho.png"),
+		preload("res://art/props/poste_rua_ramal_novo.png")],
+	# Os das curvas: o mesmo poste rodado em Z com a rua, a cruzeta sempre
+	# de través a ela — dois no arco de fora de cada cotovelo e um na quina
+	# de dentro —, e é neles que a fiação vira (`GIRO_DO_POSTE`).
+	"curva_a": [preload("res://art/props/poste_rua_curva_a_velho.png"),
+		preload("res://art/props/poste_rua_curva_a_novo.png")],
+	"curva_b": [preload("res://art/props/poste_rua_curva_b_velho.png"),
+		preload("res://art/props/poste_rua_curva_b_novo.png")],
 	"quina": [preload("res://art/props/poste_rua_quina_velho.png"),
 		preload("res://art/props/poste_rua_quina_novo.png")],
 	"pare": [preload("res://art/props/placa_pare_velha.png"),
@@ -249,6 +261,13 @@ const ARTE_DO_MOBILIARIO := {
 		preload("res://art/props/placa_pedestres_nova.png")],
 	"velocidade": [preload("res://art/props/placa_velocidade_velha.png"),
 		preload("res://art/props/placa_velocidade_nova.png")],
+	# A subestação e a linha da borda do mapa: um estado só.
+	"subestacao": [preload("res://art/props/subestacao.png"),
+		preload("res://art/props/subestacao.png")],
+	"linha": [preload("res://art/props/poste_linha.png"),
+		preload("res://art/props/poste_linha.png")],
+	"saida": [preload("res://art/props/poste_linha_saida.png"),
+		preload("res://art/props/poste_linha_saida.png")],
 }
 
 var _mapa: TextureRect
@@ -259,19 +278,26 @@ var _rua_nova: Polygon2D
 ## A lâmpada de sódio do poste VELHO, à parte para piscar (`140`): o nome
 ## começa por `PosteLuz`, e é por ele que o `_animar_luzes` do `Main` a acha,
 ## como à do poste do pátio — aqui na `RedeDaRua`, e não no `Cenario`. O
-## poste novo é LED e não pisca.
+## poste novo é LED e não pisca, e os da linha da subestação não têm luz.
 const LUZ_DE_SODIO := {
 	"poste": preload("res://art/props/poste_rua_luz.png"),
+	"ramal": preload("res://art/props/poste_rua_ramal_luz.png"),
+	"curva_a": preload("res://art/props/poste_rua_curva_a_luz.png"),
+	"curva_b": preload("res://art/props/poste_rua_curva_b_luz.png"),
 	"quina": preload("res://art/props/poste_rua_quina_luz.png"),
 }
-## Os tipos que são poste: os da reta e os das quinas, ligados pela fiação.
-const POSTES := ["poste", "quina"]
-## Quanto o poste da quina está rodado em Z, em graus (`POSTE_QUINA_GIRO`).
-const POSTE_QUINA_GIRO := 45.0
+## Quanto cada tipo de poste está rodado em Z, em graus: os do
+## `POSTE_GIROS` do `brp_porto.py`. As chaves são os tipos que são poste,
+## ligados pela fiação.
+const GIRO_DO_POSTE := {"poste": 0.0, "curva_a": 22.5, "quina": 45.0, "curva_b": 67.5,
+	"ramal": -45.0, "linha": 0.0, "saida": -45.0}
+## Os da linha da subestação, que a fiação liga pela ordem da tabela antes
+## dos da rua (`cadeia_dos_postes()`).
+const POSTES_DA_LINHA := ["linha", "saida"]
 
 # A FIAÇÃO (`140`): dois fios de cruzeta a cruzeta, pousados nos isoladores
 # das pontas, de poste em poste pela calçada da vila — e, desde a terceira
-# passagem, a virar com a rua no poste da quina de cada cotovelo. Eram três
+# passagem, a virar com a rua nos postes das curvas de cada cotovelo. Eram três
 # fios quase pretos, e liam pesados por cima dos telhados (*«fios escuros
 # demais»*). Os números são os do `brp_porto.py`
 # (`POSTE_ISOLADOR`, `POSTE_ISOLADORES`, `POSTE_VELHO_TOMBO`) com a régua das
@@ -289,6 +315,41 @@ const ZOOM := 2.0 / 3.0
 ## A barriga do fio a meio do vão, em px de tela: mais solta na rede velha.
 const FIO_BARRIGA: Array[float] = [4.5, 3.0]
 const FIO_PONTOS := 9
+
+# A FIAÇÃO ATRÁS DA VILA (quarta passagem da `140`): *«fio passando por cima
+# de construções, como a igreja»*. A vila é o MAPA, um fundo chapado, e a
+# fiação desenha-se por cima dele inteira; mas o fio da curva corre pela
+# calçada da vila ao longo do cotovelo, e o lote da esquina fica-lhe À FRENTE
+# — a torre da igreja sobe na tela acima da altura dele. Onde o lote o tapa,
+# o fio fica transparente (`_tapume()`). `[poste A, poste B, primeira coluna
+# de tela, o y de cima do que lhe fica à frente em cada coluna]`: a lista
+# `fiacao_atras_da_vila` da tabela, copiada pela razão do `PATIO`, que sai do
+# contorno de cada lote (`pecas_da_vila`) — o que a mata do morro já lê.
+const FIACAO_ATRAS_DA_VILA: Array = [
+	[10, 11, 91, [
+		296.5, 296.9, 297.4, 297.9, 288.5, 287.3, 286.1, 284.9, 283.8, 282.6,
+		281.4, 280.3, 279.1, 277.9, 276.7, 276.4, 276.5, 276.7, 276.9, 267.5,
+		266.7, 266.0, 265.2, 264.4, 263.6, 262.9, 262.1, 261.3, 260.5, 255.7,
+		255.2, 253.8, 253.7, 253.9, 254.0, 260.3, 261.1, 261.9, 262.6, 263.4,
+		264.2, 265.0, 265.8, 266.5, 267.3, 268.1, 300.3, 300.8, 301.3, 301.8,
+		302.3, 302.8, 303.3, 299.1, 298.6, 298.5, 298.8, 299.3, 306.3, 306.8,
+		307.3, 307.8, 308.3, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0,
+		720.0, 720.0, 720.0
+	]],
+	[13, 14, 11, [
+		416.2, 415.7, 415.2, 414.7, 414.2, 413.7, 411.5, 411.1, 411.0, 411.0,
+		411.1, 410.9, 411.1, 410.1, 398.4, 395.5, 393.3, 393.3, 391.2, 391.2,
+		391.2, 390.4, 389.7, 388.3, 388.3, 388.3, 388.3, 388.3, 389.7, 389.7,
+		389.7, 389.7, 389.7, 391.2, 391.9, 391.9, 391.9, 391.9, 392.6, 395.5,
+		404.7, 405.2, 405.7, 406.2, 406.7, 407.2, 407.7, 408.2, 408.7, 409.2,
+		409.7, 410.2, 410.7, 411.2, 411.7, 412.2, 412.7, 413.2, 413.7, 414.3,
+		423.9, 424.4, 424.9, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0,
+		720.0, 720.0, 720.0
+	]],
+]
+## O passo, em px de tela, a que se amostra o fio de um vão que a vila tapa:
+## a cor muda de vértice em vértice, e é aí que o fio some.
+const PASSO_DO_TAPUME := 1.0
 
 var _cones: Array[TextureRect] = []
 var _mobiliario: Array[TextureRect] = []
@@ -454,11 +515,11 @@ func _plantar_o_mobiliario() -> void:
 		var peca: Array = MOBILIARIO[i]
 		var tipo: String = peca[0]
 		var no := _prop_no_chao(ARTE_DO_MOBILIARIO[tipo][0], peca[1])
-		no.name = ("PosteDaRua%d" if tipo in POSTES else "PlacaDaRua%d") % i
+		no.name = _nome_da_peca(tipo) % i
 		_plantar(cenario, no)
 		_mobiliario.append(no)
 		var luz: TextureRect = null
-		if tipo in POSTES:
+		if LUZ_DE_SODIO.has(tipo):
 			luz = _prop_no_chao(LUZ_DE_SODIO[tipo], peca[1])
 			luz.name = "PosteLuzDaRua%d" % i
 			rede.add_child(luz)
@@ -477,22 +538,34 @@ func _plantar_o_mobiliario() -> void:
 			_fios.append([a, b, k, fio])
 
 
-## Os postes pela ordem da calçada da vila, que é a ordem de `my`: a rua
-## desce sempre, e o poste da quina fica entre o último da reta de cima e o
-## primeiro da de baixo. A fiação liga cada um ao seguinte.
+## O nome do nó de cada peça, com o índice dela no `MOBILIARIO`.
+static func _nome_da_peca(tipo: String) -> String:
+	if tipo == "subestacao":
+		return "SubestacaoDaRede%d"
+	return "PosteDaRua%d" if GIRO_DO_POSTE.has(tipo) else "PlacaDaRua%d"
+
+
+## Os postes pela ordem dos fios: os da linha da subestação pela ordem da
+## tabela — da borda do mapa ao de saída —, e depois os da calçada da vila
+## pela ordem de `my`, a começar pelo do ramal: a rua desce sempre, e os das
+## curvas ficam entre o último da reta de cima e o primeiro da de baixo. A
+## fiação liga cada um ao seguinte.
 static func cadeia_dos_postes() -> Array:
+	var linha: Array = []
 	var ids: Array = []
 	for i in MOBILIARIO.size():
-		if MOBILIARIO[i][0] in POSTES:
+		if MOBILIARIO[i][0] in POSTES_DA_LINHA:
+			linha.append(i)
+		elif GIRO_DO_POSTE.has(MOBILIARIO[i][0]):
 			ids.append(i)
 	ids.sort_custom(func(a, b): return (MOBILIARIO[a][1] as Vector2).y < (MOBILIARIO[b][1] as Vector2).y)
-	return ids
+	return linha + ids
 
 
 ## Onde o fio pousa no isolador `k` de um poste em `v`, no espaço tela: o
 ## topo do isolador, rodado com o poste quando ele é o VELHO e pende para a
-## rua — a mesma rotação em Y do `_inclinar` do estúdio — e, no da quina,
-## depois rodado em Z. No Blender `y = -my`, logo o giro em Z leva o `x` da
+## rua — a mesma rotação em Y do `_inclinar` do estúdio — e, nos das
+## curvas, depois rodado em Z. No Blender `y = -my`, logo o giro em Z leva o `x` da
 ## cruzeta a `(x cos, -x sin)` no chão do mapa.
 static func ponta_do_fio(v: Vector2, k: int, velho: bool, giro := 0.0) -> Vector2:
 	var x := POSTE_ISOLADORES[k]
@@ -520,7 +593,7 @@ func fios() -> Array:
 
 
 static func _giro(i: int) -> float:
-	return POSTE_QUINA_GIRO if MOBILIARIO[i][0] == "quina" else 0.0
+	return float(GIRO_DO_POSTE[MOBILIARIO[i][0]])
 
 
 ## A arte de cada peça no quadro `q` da obra do pátio: a nova onde o trecho
@@ -532,12 +605,14 @@ func _trocar_o_mobiliario(q: int) -> void:
 	for i in _mobiliario.size():
 		var peca: Array = MOBILIARIO[i]
 		var nova := int(peca[2]) <= q if q >= 0 else pronto_fora_da_obra
+		if int(peca[2]) < 0:
+			nova = true
 		novos.append(nova)
 		_mobiliario[i].texture = ARTE_DO_MOBILIARIO[peca[0]][1 if nova else 0]
 		if _luzes[i] != null:
 			_luzes[i].visible = not nova
-	# Os dois postes de um vão podem estar em estados diferentes: o da quina
-	# troca com o cotovelo, um dia antes do primeiro da reta de baixo.
+	# Os dois postes de um vão podem estar em estados diferentes: os da curva
+	# trocam com o cotovelo, um dia depois dos da reta de cima.
 	for f in _fios:
 		var a: int = f[0]
 		var b: int = f[1]
@@ -545,11 +620,54 @@ func _trocar_o_mobiliario(q: int) -> void:
 		var pa := ponta_do_fio(MOBILIARIO[a][1], f[2], velho, _giro(a))
 		var pb := ponta_do_fio(MOBILIARIO[b][1], f[2], not novos[b], _giro(b))
 		var barriga: float = FIO_BARRIGA[0 if velho else 1]
+		var teto := _teto_do_vao(a, b)
+		var n := FIO_PONTOS
+		if not teto.is_empty():
+			n = maxi(n, ceili(absf(pb.x - pa.x) / PASSO_DO_TAPUME) + 1)
 		var pontos := PackedVector2Array()
-		for s in FIO_PONTOS:
-			var t := float(s) / float(FIO_PONTOS - 1)
+		for s in n:
+			var t := float(s) / float(n - 1)
 			pontos.append(pa.lerp(pb, t) + Vector2(0.0, barriga * 4.0 * t * (1.0 - t)))
 		(f[3] as Line2D).points = pontos
+		(f[3] as Line2D).gradient = _tapume(pontos, teto)
+
+
+## `[primeira coluna, teto por coluna]` do vão de `a` a `b` na
+## `FIACAO_ATRAS_DA_VILA`, ou vazio se a vila não o tapa.
+static func _teto_do_vao(a: int, b: int) -> Array:
+	for v in FIACAO_ATRAS_DA_VILA:
+		if int(v[0]) == a and int(v[1]) == b:
+			return [int(v[2]), v[3]]
+	return []
+
+
+## A cor do fio vértice a vértice: a dele onde se vê, transparente onde o
+## lote da vila à frente o tapa — o vértice está ABAIXO do topo do que fica
+## à frente na coluna dele. Um ponto de cor por vértice, porque o `Line2D`
+## pinta cada vértice com a cor do gradiente no comprimento dele e mistura
+## entre dois: um ponto a meio de um segmento comprido não se veria. `null`
+## no vão que a vila não tapa, e o fio fica com a `default_color`.
+static func _tapume(pontos: PackedVector2Array, teto: Array) -> Gradient:
+	if teto.is_empty():
+		return null
+	var x0: int = teto[0]
+	var colunas: Array = teto[1]
+	var comprimento := [0.0]
+	for i in range(1, pontos.size()):
+		comprimento.append(float(comprimento[i - 1]) + pontos[i - 1].distance_to(pontos[i]))
+	var total: float = comprimento[pontos.size() - 1]
+	var offsets := PackedFloat32Array()
+	var cores := PackedColorArray()
+	var escondida := Color(FIO_COR, 0.0)
+	for i in pontos.size():
+		var c := roundi(pontos[i].x) - x0
+		var tapado := c >= 0 and c < colunas.size() and pontos[i].y >= float(colunas[c])
+		offsets.append(float(comprimento[i]) / total)
+		cores.append(escondida if tapado else FIO_COR)
+	var g := Gradient.new()
+	g.offsets = offsets
+	g.colors = cores
+	return g
 
 
 ## Um recorte do mapa: o nó mostra a textura DELE nos contornos dados, e

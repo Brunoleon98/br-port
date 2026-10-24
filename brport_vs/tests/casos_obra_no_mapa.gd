@@ -29,15 +29,18 @@ extends RefCounted
 #      cones contra a tabela, um trecho por dia e o último no fim — o
 #      «por partes» que o Bruno pediu —, e a cada dia os dois recortes da
 #      rua (o mapa de terra no que falta, por cima do pátio, e o pavimentado
-#      no que já está pronto) e os três cones na frente, entre os irmãos do
+#      no que já está pronto) e os dois cones na frente, entre os irmãos do
 #      `Cenario` pela profundidade. O D49 mede nos mapas que nada muda fora.
 #   §7 o MOBILIÁRIO DA RUA (`140`): a cópia dos postes, das placas e dos
-#      cavaletes contra a tabela; cada peça na calçada do lado dela (o poste
-#      na da vila, a placa na do porto), fora do cotovelo e da boca do acesso,
-#      e com o dia do trecho de rua onde pousa; e, dia a dia, a arte velha ou
-#      a nova pelo trecho, a lâmpada de sódio só no poste velho, os dois
-#      cavaletes entre os cones e cada fio da fiação pousado num ISOLADOR do
-#      poste que se vê — lido no PNG dele, e não na conta que o desenha.
+#      cavaletes contra a tabela; cada peça no pedaço de calçada do tipo dela
+#      (os postes na da vila — reta, curva de fora, quina de dentro —, a de
+#      pedestres na do pátio do cotovelo, o PARE e a de 40 na do porto, fora
+#      da boca do acesso), reconstruído da tabela, e com o dia do trecho de
+#      rua onde pousa; a planta da fiação por cima da calçada da vila, sem
+#      cortar a curva nem o lote da esquina; e, dia a dia, a arte velha ou a
+#      nova pelo trecho, a lâmpada de sódio só no poste velho, o cavalete
+#      entre os cones e cada fio da fiação pousado num ISOLADOR do poste que
+#      se vê — lido no PNG dele, e não na conta que o desenha.
 #
 # Bloco num arquivo próprio pela regra do `AGENTS.md` §2: dois agentes a
 # acrescentar blocos deixam de editar o mesmo `teste_design.gd`. Síncrono,
@@ -366,8 +369,7 @@ func _confere_rua(no: Polygon2D, d: int, prontos: bool, dia: String) -> void:
 	conferir("%s cai nos pedaços da tabela %s" % [nome, dia], certo)
 
 
-## Os três cones do dia (ou os dois cavaletes entre eles, `140`), nos pontos
-## da tabela, e cada um entre os irmãos de cima e os de baixo na tela — a
+## Os cones do dia (ou o cavalete entre eles, `140`), nos pontos da tabela, e cada um entre os irmãos de cima e os de baixo na tela — a
 ## profundidade do `Cenario` é a ordem.
 func _confere_cones(cenario: Node, d: int, dia: String, prefixo := "ConeDaRua",
 		lista := "cones_da_obra") -> void:
@@ -431,6 +433,41 @@ const RAIO_DO_ISOLADOR := 2
 const LUZ_DO_ISOLADOR := 0.66
 ## Os fios de cada vão (`140`, terceira passagem: eram três e liam pesados).
 const FIOS_POR_VAO := 2
+## Quanto se anda da peça para o lado da rua até ao asfalto de que ela é: a
+## meia calçada (0,11) e um pouco, para cair dentro do pedaço e não na borda.
+const PASSO_PARA_A_RUA := 0.15
+## Os tipos que são poste, ligados pela fiação. Escritos aqui, e não lidos do
+## `GIRO_DO_POSTE` do jogo: um poste que o jogo tomasse por placa tem de
+## reprovar, e não sair da conta dos dois lados.
+const TIPOS_DE_POSTE := ["ramal", "poste", "curva_a", "curva_b", "quina"]
+## Os postes da linha que chega à subestação, ligados pela ordem da tabela,
+## antes dos da rua, e sem luz (quarta passagem).
+const TIPOS_DA_LINHA := ["linha", "saida"]
+## Os que levam luminária, e a lâmpada de sódio quando velhos: todos os da
+## rua. O da quina de dentro esteve uma passagem sem ela, e voltou a tê-la.
+const TIPOS_COM_LUZ := ["ramal", "poste", "curva_a", "curva_b", "quina"]
+## O pedaço de calçada (`_meio_da_calcada()`) de cada tipo da rua que não é
+## placa da reta do porto. A de pedestres vive na calçada da vila desde a
+## quarta passagem, como os postes da reta.
+const LUGAR_DO_TIPO := {"ramal": "reta", "poste": "reta", "curva_a": "curva",
+	"curva_b": "curva", "quina": "quina", "pedestres": "reta"}
+## O que não é da rua e pousa no campo ao norte do pátio: a subestação e a
+## linha que lhe chega (`_no_campo()`).
+const NO_CAMPO := ["subestacao", "linha", "saida"]
+## A distância mínima do pé de um poste da linha, ou da caixa da subestação,
+## ao pé de uma planta da restinga: meia copa da aroeira, que é a maior ali.
+const FOLGA_DA_PLANTA := 0.3
+## Os pontos em que se amostra a planta de cada vão da fiação.
+const AMOSTRAS_DO_VAO := 40
+## O mais que a planta de um vão se pode afastar do meio da calçada da vila.
+## O certo dá 0,113 (a corda de 45° no arco de fora); a rede da terceira
+## passagem, 0,349 na curva cortada e 0,891 no lote da esquina. O corte vai
+## a meio, uma calçada inteira.
+const FIO_FORA_DA_CALCADA := 0.22
+## Ao pixel do topo do lote, o vértice pode estar de qualquer dos lados: o
+## jogo decide-o pela coluna arredondada e este bloco também, mas o topo
+## publicado vai a 0,1 e o antisserrilhado é de um pixel.
+const MARGEM_DO_TAPUME := 1.0
 
 
 func _contrato_do_mobiliario() -> void:
@@ -451,46 +488,56 @@ func _contrato_do_mobiliario() -> void:
 	var cav_t: Array = _ancoras.get("cavaletes_da_obra", [])
 	var cav_c: Array = _ok["CAVALETES"]
 	var dias := int(_ancoras.get("obra_dias", -1))
-	conferir("um par de cavaletes por dia de obra, na tabela e na cópia (%d e %d)"
+	conferir("um grupo de cavaletes por dia de obra, na tabela e na cópia (%d e %d)"
 		% [cav_t.size(), cav_c.size()], cav_t.size() == dias and cav_c.size() == dias)
 	for i in range(mini(cav_t.size(), cav_c.size())):
 		conferir("os cavaletes do dia %d são os da tabela" % i, _igual(cav_t[i], cav_c[i]))
+	var atras_t: Array = _ancoras.get("fiacao_atras_da_vila", [])
+	var atras_c: Array = _ok["FIACAO_ATRAS_DA_VILA"]
+	var atras_igual := not atras_t.is_empty() and atras_t.size() == atras_c.size()
+	for i in range(mini(atras_t.size(), atras_c.size())):
+		var t: Dictionary = atras_t[i]
+		var c: Array = atras_c[i]
+		var tt: Array = t["teto"]
+		var ct: Array = c[3]
+		atras_igual = atras_igual and int(t["vao"][0]) == int(c[0]) \
+			and int(t["vao"][1]) == int(c[1]) and int(t["x0"]) == int(c[2]) \
+			and tt.size() == ct.size()
+		for k in range(mini(tt.size(), ct.size())):
+			atras_igual = atras_igual and absf(float(tt[k]) - float(ct[k])) < 0.05
+	conferir("o que a vila tapa da fiação (%d vãos) é o da tabela" % atras_t.size(), atras_igual)
 
-	# NA CALÇADA DO LADO DELA. A tabela publica a rua (asfalto e calçadas) e o
-	# asfalto de cada faixa; o poste vive entre a borda da rua e o asfalto do
-	# lado da vila, e a placa do outro lado. O D2 isenta-os de «fora do
-	# asfalto» pelo nome, porque a calçada é rua para ele — é aqui que se
-	# pergunta onde eles pousam de verdade.
+	# NA CALÇADA DO LADO DELA. O D2 isenta-os de «fora do asfalto» pelo nome,
+	# porque a calçada é rua para ele — é aqui que se pergunta onde eles
+	# pousam de verdade. Cada tipo no pedaço de calçada dele, que se
+	# reconstrói da tabela (`_meio_da_calcada()`): o poste na reta da vila, os
+	# das curvas no arco de fora do cotovelo e o da quina no de dentro, a de
+	# pedestres na reta da vila também; o PARE e a de 40 na reta do porto,
+	# fora da guia do acesso; e a subestação e a linha no campo do norte.
 	var na_calcada := true
 	var onde := ""
+	var meia := _calcada() / 2.0
 	for t in tabela:
 		var x := float(t["ponto"][0])
 		var y := float(t["ponto"][1])
-		if String(t["tipo"]) == "quina":
-			# O poste da quina vive no arco da calçada de fora do cotovelo:
-			# concêntrico com o do asfalto, entre o raio dele e o raio mais a
-			# calçada, e no quadrante da quina (`mx` baixo, `my` alto).
-			var na_quina := false
-			for cot in _ancoras["cotovelos"]:
-				var r := float(cot["raio"])
-				var largura := float(cot["asfalto_mx"][0]) - float(cot["mx"][0])
-				var centro := Vector2(float(cot["asfalto_mx"][0]) + r,
-					float(cot["asfalto_my"][1]) - r)
-				var dist := Vector2(x, y).distance_to(centro)
-				if dist > r and dist < r + largura and x < centro.x and y > centro.y:
-					na_quina = true
-			if not na_quina:
+		var tipo := String(t["tipo"])
+		if NO_CAMPO.has(tipo):
+			var fora := _no_campo(tipo, Vector2(x, y))
+			if fora != "":
 				na_calcada = false
-				onde = "quina em (%.2f, %.2f) fora do arco da calçada de fora de um cotovelo" % [x, y]
+				onde = fora
+			continue
+		if LUGAR_DO_TIPO.has(tipo):
+			var dist := float(_meio_da_calcada(Vector2(x, y))[LUGAR_DO_TIPO[tipo]])
+			if dist > meia:
+				na_calcada = false
+				onde = "%s em (%.2f, %.2f) a %.3f do meio da calçada %s" \
+					% [tipo, x, y, dist, LUGAR_DO_TIPO[tipo]]
 			continue
 		var faixa := _faixa_de(y)
 		var rua: Array = faixa["rua"]
 		var asf: Array = faixa["asfalto"]
-		var ok: bool
-		if String(t["tipo"]) == "poste":
-			ok = x > float(rua[0]) and x < float(asf[0])
-		else:
-			ok = x > float(asf[1]) and x < float(rua[1])
+		var ok := x > float(asf[1]) and x < float(rua[1])
 		for cot in _ancoras["cotovelos"]:
 			if x > float(cot["mx"][0]) and x < float(cot["mx"][1]) \
 					and y > float(cot["my"][0]) and y < float(cot["my"][1]):
@@ -501,37 +548,194 @@ func _contrato_do_mobiliario() -> void:
 				ok = false
 		if not ok:
 			na_calcada = false
-			onde = "%s em (%.2f, %.2f): rua %s, asfalto %s" % [t["tipo"], x, y, rua, asf]
+			onde = "%s em (%.2f, %.2f): rua %s, asfalto %s" % [tipo, x, y, rua, asf]
 	conferir("cada peça do mobiliário pousa na calçada do lado dela, fora do cotovelo e da guia do acesso",
 		na_calcada, onde)
 
-	# E NO DIA DO TRECHO ONDE POUSA: o poste troca no dia em que o asfalto do
-	# pedaço de rua debaixo dele troca — a reta, ou o cotovelo para o poste da
-	# quina. Cada pedaço da obra da rua vai até ao meio das duas calçadas, e a
-	# peça pousa nessa borda: conta o pedaço cuja caixa a contém, com 0,01 de
-	# folga, e todos os que a contêm têm de concordar.
+	# E A FIAÇÃO POR CIMA DA CALÇADA DA VILA (quarta passagem): *«fio corta o
+	# cotovelo»*, *«fio por cima das casas»*. Com um poste só a meio do arco
+	# de fora, a corda dele até ao primeiro da reta de baixo atravessava o
+	# lote da esquina — a igreja —, e a da reta de cima cortava o asfalto da
+	# curva. A planta de cada vão é a reta entre os pés de dois postes
+	# vizinhos (a fila pelo `my`, como a do jogo), e nenhum ponto dela se
+	# afasta do meio da calçada mais do que `FIO_FORA_DA_CALCADA`.
+	var postes: Array = []
+	for t in tabela:
+		if TIPOS_DE_POSTE.has(String(t["tipo"])):
+			postes.append(Vector2(float(t["ponto"][0]), float(t["ponto"][1])))
+	postes.sort_custom(func(a, b): return a.y < b.y)
+	var pior := 0.0
+	var vao := ""
+	for j in range(postes.size() - 1):
+		for s in range(AMOSTRAS_DO_VAO + 1):
+			var p: Vector2 = (postes[j] as Vector2).lerp(postes[j + 1], float(s) / AMOSTRAS_DO_VAO)
+			var perto := INF
+			for lugar in ["reta", "curva", "cotovelo", "quina"]:
+				perto = minf(perto, float(_meio_da_calcada(p)[lugar]))
+			if perto > pior:
+				pior = perto
+				vao = "%s a %s" % [postes[j], postes[j + 1]]
+	conferir("a fiação corre por cima da calçada da vila: o vão mais torto afasta-se %.3f do meio dela"
+		% pior, postes.size() > 1 and pior <= FIO_FORA_DA_CALCADA, vao)
+
+	# E NO DIA DO ASFALTO AO LADO DELA: a peça troca no dia em que o pedaço
+	# de rua junto dela é recapeado — a reta, ou o cotovelo para as das
+	# curvas, a da quina e a de pedestres.
+	# ⚠️ A PEÇA POUSA NO MEIO DA CALÇADA, QUE É A FRONTEIRA ENTRE OS PEDAÇOS:
+	# cada um vai até lá (`136`). Pela caixa, a placa de pedestres da reta 2
+	# cabia também no pedacinho da quina de dentro do cotovelo seguinte, que é
+	# de outro dia, e a pergunta não tinha resposta. O ponto que responde é o
+	# do asfalto, a `PASSO_PARA_A_RUA` da peça para o lado da rua, pelo
+	# polígono exato; e os pedaços onde ele cai são todos do dia da peça — na
+	# quina de dentro o cotovelo e a reta de baixo sobrepõem-se, e são do
+	# mesmo dia; na junta entre dois dias seriam dois, e reprova.
 	var no_dia := true
 	for t in tabela:
 		var x := float(t["ponto"][0])
 		var y := float(t["ponto"][1])
-		var achou := -1
+		var tipo := String(t["tipo"])
+		var p := Vector2(x, y)
+		if int(t["quadro"]) < 0:
+			# Da cidade, e não da rua: não troca com a obra, e quem o diz é o
+			# `_no_campo()` — a peça da rua com o quadro −1 cai lá e reprova.
+			continue
+		match tipo:
+			"ramal", "poste", "pedestres":
+				p.x += PASSO_PARA_A_RUA
+			"curva_a", "curva_b":
+				p += (_centro_da_curva(p) - p).normalized() * PASSO_PARA_A_RUA
+			"quina":
+				p += (p - _centro_da_quina(p)).normalized() * PASSO_PARA_A_RUA
+			_:
+				p.x -= PASSO_PARA_A_RUA
+		var achados: Array = []
 		for pedaco in _ancoras["obra_da_rua"]:
-			var xs: Array = []
-			var ys: Array = []
+			var poli := PackedVector2Array()
 			for pt in pedaco["pontos"]:
-				xs.append(float(pt[0]))
-				ys.append(float(pt[1]))
-			if x >= float(xs.min()) - 0.01 and x <= float(xs.max()) + 0.01 \
-					and y >= float(ys.min()) - 0.01 and y <= float(ys.max()) + 0.01:
-				if achou >= 0 and achou != int(pedaco["quadro"]):
-					achou = -2
-					break
-				achou = int(pedaco["quadro"])
-		if achou != int(t["quadro"]):
+				poli.append(Vector2(float(pt[0]), float(pt[1])))
+			if Geometry2D.is_point_in_polygon(p, poli):
+				achados.append(int(pedaco["quadro"]))
+		var certo := not achados.is_empty()
+		for q in achados:
+			certo = certo and int(q) == int(t["quadro"])
+		if not certo:
 			no_dia = false
-			onde = "%s em (%.2f, %.2f): quadro %d, a reta dele é do %d" \
-				% [t["tipo"], x, y, int(t["quadro"]), achou]
-	conferir("cada peça do mobiliário troca no dia da reta de rua onde pousa", no_dia, onde)
+			onde = "%s em (%.2f, %.2f): quadro %d, o asfalto ao lado é de %s" \
+				% [tipo, x, y, int(t["quadro"]), achados]
+	conferir("cada peça do mobiliário troca no dia do trecho de rua onde pousa", no_dia, onde)
+
+
+## Vazio se a peça `tipo` em `p` pousa no campo ao norte do pátio: entre a
+## calçada do porto da reta dela e a areia (`praias`), a norte do primeiro
+## pátio, e longe das plantas da restinga (`mata`) — a subestação pela caixa
+## inteira (`subestacao`), um poste pelo pé. Senão, o que falhou.
+func _no_campo(tipo: String, p: Vector2) -> String:
+	var meio := Vector2.ZERO
+	if tipo == "subestacao":
+		var sub: Dictionary = _ancoras["subestacao"]
+		var c := Vector2(float(sub["centro"][0]), float(sub["centro"][1]))
+		if c.distance_to(p) > 0.0005:
+			return "a subestação em %s, e a caixa dela em %s" % [p, c]
+		meio = Vector2(float(sub["tam"][0]), float(sub["tam"][1])) / 2.0
+	var norte := float(_ancoras["patio"][0]["my"][0])
+	var cantos := [p - meio, Vector2(p.x + meio.x, p.y - meio.y), p + meio,
+		Vector2(p.x - meio.x, p.y + meio.y)]
+	for k in cantos:
+		var q: Vector2 = k
+		var faixa := _faixa_de(q.y)
+		if faixa.is_empty():
+			return "%s em %s: o canto %s fora da rua" % [tipo, p, q]
+		var areia := float(faixa["borda"])
+		for praia in _ancoras["praias"]:
+			if q.y >= float(praia["my"][0]) and q.y < float(praia["my"][1]):
+				areia = float(faixa["borda"]) - float(praia["recuo"])
+		if q.x <= float(faixa["rua"][1]) or q.x >= areia or q.y >= norte:
+			return "%s em %s: o canto %s fora do campo (rua %s, areia %.2f, pátio a %.2f)" \
+				% [tipo, p, q, faixa["rua"], areia, norte]
+	for planta in _ancoras["mata"]:
+		var pe := Vector2(float(planta["mx"]), float(planta["my"]))
+		if absf(pe.x - p.x) < meio.x + FOLGA_DA_PLANTA and absf(pe.y - p.y) < meio.y + FOLGA_DA_PLANTA:
+			return "%s em %s pisa a %s em %s" % [tipo, p, planta["arvore"], pe]
+	return ""
+
+
+## A largura da calçada, da tabela: do cerco do cotovelo ao asfalto dele.
+func _calcada() -> float:
+	var cot: Dictionary = _ancoras["cotovelos"][0]
+	return float(cot["asfalto_mx"][0]) - float(cot["mx"][0])
+
+
+## A distância de `p` ao MEIO de cada pedaço de calçada que a fiação e o
+## mobiliário usam, reconstruído da tabela (`faixas` e `cotovelos`) e não da
+## conta do gerador que os põe: `reta` (a da vila, entre duas curvas),
+## `curva` (o arco de fora de cada cotovelo, concêntrico com o do asfalto),
+## `cotovelo` (a da vila ao longo dele), `quina` (o arco de dentro, centrado
+## do lado do lote, de raio `raio_dentro`) e `patio` (a do outro lado do
+## cotovelo, entre a quina de dentro e o arco de fora). Os arcos só valem no
+## quadrante deles; fora, a distância é infinita e quem responde é a reta ao
+## lado.
+func _meio_da_calcada(p: Vector2) -> Dictionary:
+	var c := _calcada()
+	var out := {"reta": INF, "curva": INF, "cotovelo": INF, "quina": INF, "patio": INF}
+	var cots: Array = _ancoras["cotovelos"]
+	var faixas: Array = _ancoras["faixas"]
+	var topo := -INF
+	for k in range(faixas.size()):
+		var x := float(faixas[k]["asfalto"][0]) - c / 2.0
+		var fim := INF
+		if k < cots.size():
+			var cot: Dictionary = cots[k]
+			var r := float(cot["raio"])
+			var rd := float(cot["raio_dentro"])
+			var w := float(cot["asfalto_my"][1]) - float(cot["asfalto_my"][0])
+			var ya := float(cot["asfalto_my"][0])
+			var yb := float(cot["asfalto_my"][1])
+			var fora := Vector2(float(cot["asfalto_mx"][0]) + r, yb - r)
+			var d := float(cot["asfalto_mx"][1]) - w
+			var dentro := Vector2(d - rd, yb + rd)
+			fim = fora.y
+			if p.x <= fora.x and p.y >= fora.y:
+				out["curva"] = minf(out["curva"], absf(p.distance_to(fora) - (r + c / 2.0)))
+			if p.x >= dentro.x and p.y <= dentro.y:
+				out["quina"] = minf(out["quina"], absf(p.distance_to(dentro) - (rd - c / 2.0)))
+			out["cotovelo"] = minf(out["cotovelo"], _ao_segmento(p,
+				Vector2(fora.x, yb + c / 2.0), Vector2(dentro.x, yb + c / 2.0)))
+			var f := float(cot["asfalto_mx"][0]) + w
+			out["patio"] = minf(out["patio"], _ao_segmento(p,
+				Vector2(f + rd, ya - c / 2.0), Vector2(float(cot["asfalto_mx"][1]) - r, ya - c / 2.0)))
+		out["reta"] = minf(out["reta"], _ao_segmento(p, Vector2(x, maxf(topo, -1e6)),
+			Vector2(x, minf(fim, 1e6))))
+		if k < cots.size():
+			var cot: Dictionary = cots[k]
+			topo = float(cot["asfalto_my"][1]) + float(cot["raio_dentro"])
+	return out
+
+
+func _ao_segmento(p: Vector2, a: Vector2, b: Vector2) -> float:
+	return p.distance_to(Geometry2D.get_closest_point_to_segment(p, a, b))
+
+
+## O centro do arco de fora do cotovelo onde `p` pousa.
+func _centro_da_curva(p: Vector2) -> Vector2:
+	var melhor := Vector2.INF
+	for cot in _ancoras["cotovelos"]:
+		var r := float(cot["raio"])
+		var c := Vector2(float(cot["asfalto_mx"][0]) + r, float(cot["asfalto_my"][1]) - r)
+		if p.distance_to(c) < p.distance_to(melhor):
+			melhor = c
+	return melhor
+
+
+## O centro do arco da quina de dentro do cotovelo onde `p` pousa.
+func _centro_da_quina(p: Vector2) -> Vector2:
+	var melhor := Vector2.INF
+	for cot in _ancoras["cotovelos"]:
+		var rd := float(cot["raio_dentro"])
+		var w := float(cot["asfalto_my"][1]) - float(cot["asfalto_my"][0])
+		var c := Vector2(float(cot["asfalto_mx"][1]) - w - rd, float(cot["asfalto_my"][1]) + rd)
+		if p.distance_to(c) < p.distance_to(melhor):
+			melhor = c
+	return melhor
 
 
 func _faixa_de(my: float) -> Dictionary:
@@ -563,10 +767,12 @@ func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
 	for i in range(tabela.size()):
 		var t: Dictionary = tabela[i]
 		var tipo := String(t["tipo"])
-		var nova := int(t["quadro"]) <= d
-		var e_poste := tipo == "poste" or tipo == "quina"
-		var no := cenario.get_node_or_null(
-			("PosteDaRua%d" if e_poste else "PlacaDaRua%d") % i) as TextureRect
+		var nova := int(t["quadro"]) <= d or int(t["quadro"]) < 0
+		var e_poste := TIPOS_DE_POSTE.has(tipo) or TIPOS_DA_LINHA.has(tipo)
+		var nome := "PosteDaRua%d" if e_poste else "PlacaDaRua%d"
+		if tipo == "subestacao":
+			nome = "SubestacaoDaRede%d"
+		var no := cenario.get_node_or_null(nome % i) as TextureRect
 		var pe := _tela(float(t["ponto"][0]), float(t["ponto"][1]))
 		if no == null or no.texture != arte[tipo][1 if nova else 0] \
 				or (no.position + Vector2(PropIso.MEIO, PropIso.MEIO)).distance_to(pe) > 0.05:
@@ -577,20 +783,32 @@ func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
 			continue
 		postes[i] = no
 		var luz := rede.get_node_or_null("PosteLuzDaRua%d" % i) as TextureRect
-		if luz == null or luz.visible == nova or luz.position != no.position:
+		if not TIPOS_COM_LUZ.has(tipo):
+			luz_certa = luz_certa and luz == null
+		elif luz == null or luz.visible == nova or luz.position != no.position:
 			luz_certa = false
 	conferir("cada peça do mobiliário mostra a arte do trecho dela %s" % dia, certo, onde)
 	conferir("a lâmpada de sódio acende só no poste velho, no quadro dele, %s" % dia, luz_certa)
 
-	# Os vãos, pela TABELA: os postes da calçada da vila em fila pelo `my` —
-	# a rua desce sempre, e o da quina fica entre a reta de cima e a de baixo
-	# —, cada um ligado ao seguinte.
+	# Os vãos, pela TABELA: os postes da linha pela ordem dela, da borda do
+	# mapa ao de saída da subestação, e depois os da calçada da vila em fila
+	# pelo `my` — a rua desce sempre, e os das curvas ficam entre a reta de
+	# cima e a de baixo —, cada um ligado ao seguinte.
 	var vaos := {}
-	var fila: Array = postes.keys()
-	fila.sort_custom(func(a, b): return float(tabela[a]["ponto"][1]) < float(tabela[b]["ponto"][1]))
+	var fila: Array = []
+	var da_rua: Array = []
+	for i in postes.keys():
+		if TIPOS_DA_LINHA.has(String(tabela[i]["tipo"])):
+			fila.append(i)
+		else:
+			da_rua.append(i)
+	fila.sort()
+	da_rua.sort_custom(func(a, b): return float(tabela[a]["ponto"][1]) < float(tabela[b]["ponto"][1]))
+	fila += da_rua
 	for j in range(fila.size() - 1):
 		vaos["%d-%d" % [mini(fila[j], fila[j + 1]), maxi(fila[j], fila[j + 1])]] = true
 	var fios: Array = []
+	var tapume := {"erros": 0, "tapados": 0, "onde": ""}
 	for f in rede.get_children():
 		if f is Line2D:
 			fios.append(f)
@@ -613,12 +831,81 @@ func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
 			onde = "%s: pontas em %s e %s, postes %d e %d" \
 				% [f.name, pontos[0], pontos[pontos.size() - 1], a, b]
 		vistos[chave] = int(vistos.get(chave, 0)) + 1
+		if a >= 0 and b >= 0:
+			_tapume_do_fio(f as Line2D, tabela[a], tabela[b], tapume)
 	conferir("cada fio liga dois postes vizinhos e pousa num isolador de cada %s" % dia,
 		nos_isoladores, onde)
+	# ATRÁS DA VILA, ESCONDIDO (quarta passagem): a vila é o mapa, e o fio
+	# desenhava-se por cima da torre da igreja, que lhe fica à frente. Cada
+	# vértice de cada fio, pela cor que o `Line2D` lhe dá, contra o topo do
+	# que lhe fica à frente na coluna dele, refeito aqui dos `pecas_da_vila`
+	# da tabela — e não da cópia que o jogo lê. Os dois lados: o tapado some,
+	# e o que se vê não some; e o controle de que a vila tapa algum.
+	conferir("cada fio some atrás do lote da vila que lhe fica à frente, e só aí %s" % dia,
+		tapume["erros"] == 0, String(tapume["onde"]))
+	conferir("a vila tapa fio em algum vão (%d vértices) %s" % [tapume["tapados"], dia],
+		int(tapume["tapados"]) > 0)
 	var cada_vao := vistos.size() == vaos.size()
 	for v in vistos.values():
 		cada_vao = cada_vao and int(v) == FIOS_POR_VAO
 	conferir("cada vão leva os seus dois fios %s" % dia, cada_vao, "%s" % [vistos])
+
+
+## Confere cada vértice do fio `linha`, do poste `ta` ao `tb` (as linhas da
+## tabela), contra o que lhe fica à frente: abaixo do topo do lote, a cor
+## dele é transparente; acima, é a do fio. Ao pixel do topo, qualquer das
+## duas (`MARGEM_DO_TAPUME`). Soma em `conta`.
+func _tapume_do_fio(linha: Line2D, ta: Dictionary, tb: Dictionary, conta: Dictionary) -> void:
+	var pa := Vector2(float(ta["ponto"][0]), float(ta["ponto"][1]))
+	var pb := Vector2(float(tb["ponto"][0]), float(tb["ponto"][1]))
+	var pontos := linha.points
+	var total := 0.0
+	for i in range(1, pontos.size()):
+		total += pontos[i - 1].distance_to(pontos[i])
+	var andado := 0.0
+	for i in pontos.size():
+		if i > 0:
+			andado += pontos[i - 1].distance_to(pontos[i])
+		var c := roundi(pontos[i].x)
+		var teto := _teto_da_vila(pa, pb, c)
+		var alfa := linha.default_color.a
+		if linha.gradient != null:
+			alfa = linha.gradient.sample(andado / total).a
+		if absf(pontos[i].y - teto) < MARGEM_DO_TAPUME:
+			continue
+		var tapado := pontos[i].y > teto
+		if tapado:
+			conta["tapados"] = int(conta["tapados"]) + 1
+		if tapado != (alfa < 0.01):
+			conta["erros"] = int(conta["erros"]) + 1
+			conta["onde"] = "%s: vértice %d em %s, topo da vila %.1f, alfa %.2f" \
+				% [linha.name, i, pontos[i], teto, alfa]
+
+
+## O `y` de cima do que fica à frente da fiação na coluna `c` de tela, entre
+## os pés `pa` e `pb`: os lotes da vila (`pecas_da_vila`) à frente do ponto
+## da reta dos pés nessa coluna — as pontas, fora dela; o meio, se o vão é
+## vertical na tela. «À frente» é a regra do eixo que separa do gerador
+## (`lote_a_frente`): o ponto só fica à frente se passar do fim do terreno
+## num dos dois eixos.
+func _teto_da_vila(pa: Vector2, pb: Vector2, c: int) -> float:
+	var xa := _tela(pa.x, pa.y).x
+	var xb := _tela(pb.x, pb.y).x
+	var f := 0.5
+	if absf(xb - xa) >= 1.0:
+		f = clampf((float(c) - xa) / (xb - xa), 0.0, 1.0)
+	var p := pa.lerp(pb, f)
+	var teto := INF
+	for peca in _ancoras["pecas_da_vila"]:
+		var caixa: Array = peca["caixa"]
+		var topo: Array = peca["topo"]
+		var k := c - int(peca["x0"])
+		if k < 0 or k >= topo.size():
+			continue
+		if p.x >= float(caixa[1]) or p.y >= float(caixa[3]):
+			continue
+		teto = minf(teto, float(topo[k]))
+	return teto
 
 
 ## O poste de cujo ISOLADOR sai o ponto `p` (espaço do mapa), ou −1: o pixel

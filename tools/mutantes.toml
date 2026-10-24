@@ -1499,8 +1499,10 @@ reprova = { teste_design = "nenhuma carroçaria sai do asfalto nas curvas aberta
 #
 # Os postes, as placas, os cavaletes e a rede da rua, que trocam do velho
 # para o novo trecho a trecho com a obra do pátio. Quem os vê é o D45 §7; o
-# D2 isenta-os pelo nome, e os três defeitos da tabela provam que a isenção
-# não engole a calçada, o cotovelo nem a guia do acesso.
+# D2 isenta-os pelo nome, e os defeitos da tabela provam que a isenção não
+# engole a calçada de cada tipo, o cotovelo nem a guia do acesso. Os da
+# TABELA reprovam também a cópia do jogo, que é a mesma lista escrita à mão:
+# o executor troca um arquivo só, e a guarda declarada é a do lugar.
 
 [[mutante]]
 id = "mobiliario-ignora-a-obra"
@@ -1527,26 +1529,134 @@ antes = '	var t := deg_to_rad(POSTE_VELHO_TOMBO if velho else 0.0)'
 depois = '	var t := deg_to_rad(0.0)'
 
 [[mutante]]
-id = "quina-sem-giro"
+id = "curva-sem-giro"
 de = "140"
-o_que = "a fiação pousa no poste da quina como se a cruzeta dele corresse em mx, e não rodada 45°: os fios que viram com a rua saem do ar"
+o_que = "a fiação pousa nos postes das curvas como se a cruzeta deles corresse em mx, e não rodada com a rua: os fios que viram saem do ar"
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
-antes = '	return POSTE_QUINA_GIRO if MOBILIARIO[i][0] == "quina" else 0.0'
+antes = '	return float(GIRO_DO_POSTE[MOBILIARIO[i][0]])'
 depois = '	return 0.0'
 
 [[mutante]]
-id = "quina-fora-do-arco"
+id = "curva-fora-do-arco"
 de = "140"
-o_que = "a tabela põe o poste da quina do primeiro cotovelo dentro do asfalto da curva, e não no arco da calçada de fora"
+o_que = "a tabela põe o primeiro poste da curva do primeiro cotovelo dentro do asfalto dela, e não no arco da calçada de fora"
 alvo = "brport_vs/art/porto_mapa_ancoras.json"
 antes = '''
-    -0.474,
-    7.674
+    -0.797,
+    7.19
 '''
 depois = '''
     0.0,
     7.2
 '''
+
+[[mutante]]
+id = "quina-dentro-do-lote"
+de = "140"
+o_que = "a tabela põe o poste da quina de dentro do primeiro cotovelo no lote da esquina, e não no arco da calçada dela"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    2.99,
+    8.21
+'''
+depois = '''
+    2.7,
+    8.5
+'''
+
+[[mutante]]
+id = "pedestres-sobre-a-zebra"
+de = "140"
+o_que = "a tabela devolve a placa de pedestres do armazém à calçada do porto, logo depois da zebra, onde a chapa sobe por cima das barras"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    3.09,
+    13.89
+'''
+depois = '''
+    5.11,
+    13.89
+'''
+
+[[mutante]]
+id = "fio-corta-a-curva"
+de = "140"
+o_que = "a tabela junta os dois postes da curva do primeiro cotovelo num só, a 3/4 do arco: o fio da reta de cima corta o asfalto da curva"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    -0.797,
+    7.19
+'''
+depois = '''
+    0.01,
+    7.997
+'''
+
+[[mutante]]
+id = "fio-corta-a-esquina"
+de = "140"
+o_que = "a tabela tira o poste da quina de dentro do primeiro cotovelo (vai para a do segundo): o fio da curva para a reta de baixo atravessa o lote da esquina"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    2.99,
+    8.21
+   ],
+   "quadro": 1,'''
+depois = '''
+    6.99,
+    16.21
+   ],
+   "quadro": 2,'''
+
+[[mutante]]
+id = "fio-por-cima-da-igreja"
+de = "140"
+o_que = "o fio da curva do segundo cotovelo desenha-se inteiro por cima da torre da igreja, que lhe fica à frente"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '		(f[3] as Line2D).gradient = _tapume(pontos, teto)'
+depois = '		(f[3] as Line2D).gradient = null'
+
+[[mutante]]
+id = "fio-some-sem-casa"
+de = "140"
+o_que = "o fio some doze pixels antes do topo do lote da frente: falta um pedaço de fio por cima da torre, onde não há nada a tapá-lo"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '		var tapado := c >= 0 and c < colunas.size() and pontos[i].y >= float(colunas[c])'
+depois = '		var tapado := c >= 0 and c < colunas.size() and pontos[i].y >= float(colunas[c]) - 12.0'
+
+[[mutante]]
+id = "subestacao-na-areia"
+de = "140"
+o_que = "a tabela põe a subestação a meio caminho da praia: a cerca do lado do mar pisa a areia"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+  "centro": [
+   3.1,
+   -1.9
+  ],'''
+depois = '''
+  "centro": [
+   4.1,
+   -1.9
+  ],'''
+
+[[mutante]]
+id = "linha-com-a-arte-velha"
+de = "140"
+o_que = "a linha da subestação, que é da cidade, envelhece com a rua: os fios pousam no poste como se ele pendesse, e saem do ar"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '''
+		if int(peca[2]) < 0:
+			nova = true'''
+depois = ''
+
+[[mutante]]
+id = "linha-depois-da-rua"
+de = "140"
+o_que = "a cadeia dos postes põe a linha da subestação depois da rua: o último poste da vila liga-se à borda do mapa, e a saída não chega ao ramal"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	return linha + ids'
+depois = '	return ids + linha'
 
 [[mutante]]
 id = "rede-por-cima-de-tudo"
@@ -1559,10 +1669,10 @@ depois = ''
 [[mutante]]
 id = "cavaletes-copia-velha"
 de = "140"
-o_que = "a cópia dos cavaletes do segundo dia no ObraNoMapa põe o segundo em cima do último cone"
+o_que = "a cópia dos cavaletes do segundo dia no ObraNoMapa devolve o cavalete ao eixo da rua, atrás do poste da quina"
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
-antes = '	[1, [Vector2(5.53, 15.1), Vector2(6.43, 15.1)]],'
-depois = '	[1, [Vector2(5.53, 15.1), Vector2(6.88, 15.1)]],'
+antes = '	[1, [Vector2(7.078, 14.09)]],'
+depois = '	[1, [Vector2(7.078, 15.1)]],'
 
 [[mutante]]
 id = "placa-no-asfalto"
@@ -1609,16 +1719,16 @@ depois = '''
 [[mutante]]
 id = "poste-troca-fora-do-dia"
 de = "140"
-o_que = "a tabela dá a um poste da reta 2 o dia da reta 3: ele troca um dia depois do asfalto debaixo dele"
+o_que = "a tabela dá ao poste da reta 2 o dia da reta 3: ele troca um dia depois do asfalto debaixo dele"
 alvo = "brport_vs/art/porto_mapa_ancoras.json"
 antes = '''
     3.09,
-    9.5
+    11.8
    ],
    "quadro": 1,'''
 depois = '''
     3.09,
-    9.5
+    11.8
    ],
    "quadro": 2,'''
 

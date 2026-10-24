@@ -1481,6 +1481,160 @@
       "sombra_de_contato": false
     },
     {
+      "id": "BRP_porto_poste_rua_curva_a_luz_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_a_luz.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "light_flicker": {
+          "tween": "modulate",
+          "loop": true
+        }
+      },
+      "origin": "encaixe",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_a_novo_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_a_novo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_a_velho_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_a_velho.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_b_luz_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_b_luz.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "light_flicker": {
+          "tween": "modulate",
+          "loop": true
+        }
+      },
+      "origin": "encaixe",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_b_novo_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_b_novo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_b_velho_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_b_velho.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_poste_rua_luz_base",
       "category": "porto",
       "stage": "base",
@@ -1514,6 +1668,54 @@
       "category": "porto",
       "stage": "base",
       "file": "poste_rua_novo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_quina_novo_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_quina_novo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_quina_velho_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_quina_velho.png",
       "format": "png-rgba",
       "frame_size": [
         768,
