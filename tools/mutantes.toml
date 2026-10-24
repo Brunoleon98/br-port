@@ -1120,6 +1120,111 @@ depois = '''
    "raio": 1.6'''
 reprova = { teste_design = "nenhuma carroçaria sai do asfalto nas curvas abertas" }
 
+# ── O MOBILIÁRIO DA RUA (`140`) ────────────────────────────────────────────
+#
+# Os postes, as placas, os cavaletes e a rede da rua, que trocam do velho
+# para o novo trecho a trecho com a obra do pátio. Quem os vê é o D45 §7; o
+# D2 isenta-os pelo nome, e os três defeitos da tabela provam que a isenção
+# não engole a calçada, o cotovelo nem a guia do acesso.
+
+[[mutante]]
+id = "mobiliario-ignora-a-obra"
+de = "140"
+o_que = "os postes e as placas só trocam quando o pátio fica pronto, todos de uma vez, e não trecho a trecho com o asfalto"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '		var nova := int(peca[2]) <= q if q >= 0 else pronto_fora_da_obra'
+depois = '		var nova := pronto_fora_da_obra'
+
+[[mutante]]
+id = "sodio-aceso-no-poste-novo"
+de = "140"
+o_que = "a lâmpada de sódio do poste velho fica acesa por baixo da LED do poste novo"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '			_luzes[i].visible = not nova'
+depois = '			_luzes[i].visible = true'
+
+[[mutante]]
+id = "fio-sem-tombo"
+de = "140"
+o_que = "a fiação pousa no poste velho como se ele estivesse direito: os fios saem do ar ao lado dos isoladores"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	var t := deg_to_rad(POSTE_VELHO_TOMBO if velho else 0.0)'
+depois = '	var t := deg_to_rad(0.0)'
+
+[[mutante]]
+id = "rede-por-cima-de-tudo"
+de = "140"
+o_que = "a rede da rua desenha-se depois das docas: os fios e as lâmpadas passam por cima dos camiões e dos prédios"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	cenario.get_parent().move_child(rede, cenario.get_index())'
+depois = ''
+
+[[mutante]]
+id = "cavaletes-copia-velha"
+de = "140"
+o_que = "a cópia dos cavaletes do segundo dia no ObraNoMapa põe o segundo em cima do último cone"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	[1, [Vector2(5.53, 15.1), Vector2(6.43, 15.1)]],'
+depois = '	[1, [Vector2(5.53, 15.1), Vector2(6.88, 15.1)]],'
+
+[[mutante]]
+id = "placa-no-asfalto"
+de = "140"
+o_que = "a tabela põe o PARE do acesso 2 dentro da pista, e o D2 isenta as placas pelo nome"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    5.11,
+    10.23
+'''
+depois = '''
+    4.7,
+    10.23
+'''
+
+[[mutante]]
+id = "placa-na-guia-do-acesso"
+de = "140"
+o_que = "a tabela põe o PARE do acesso 2 em cima da guia rebaixada por onde o camião sai"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    5.11,
+    10.23
+'''
+depois = '''
+    5.11,
+    10.45
+'''
+
+[[mutante]]
+id = "poste-no-cotovelo"
+de = "140"
+o_que = "a tabela põe o segundo poste da reta de cima dentro do primeiro cotovelo da rua"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    -0.91,
+    2.5
+'''
+depois = '''
+    -0.91,
+    7.0
+'''
+
+[[mutante]]
+id = "poste-troca-fora-do-dia"
+de = "140"
+o_que = "a tabela dá a um poste da reta 2 o dia da reta 3: ele troca um dia depois do asfalto debaixo dele"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    3.09,
+    9.5
+   ],
+   "quadro": 1,'''
+depois = '''
+    3.09,
+    9.5
+   ],
+   "quadro": 2,'''
+
 # ── MEU PORTO AGORA (`125`) ──────────────────────────────────────────────
 
 [[mutante]]

@@ -31,6 +31,13 @@ extends RefCounted
 #      rua (o mapa de terra no que falta, por cima do pátio, e o pavimentado
 #      no que já está pronto) e os três cones na frente, entre os irmãos do
 #      `Cenario` pela profundidade. O D49 mede nos mapas que nada muda fora.
+#   §7 o MOBILIÁRIO DA RUA (`140`): a cópia dos postes, das placas e dos
+#      cavaletes contra a tabela; cada peça na calçada do lado dela (o poste
+#      na da vila, a placa na do porto), fora do cotovelo e da boca do acesso,
+#      e com o dia do trecho de rua onde pousa; e, dia a dia, a arte velha ou
+#      a nova pelo trecho, a lâmpada de sódio só no poste velho, os dois
+#      cavaletes entre os cones e cada fio da fiação pousado num ISOLADOR do
+#      poste que se vê — lido no PNG dele, e não na conta que o desenha.
 #
 # Bloco num arquivo próprio pela regra do `AGENTS.md` §2: dois agentes a
 # acrescentar blocos deixam de editar o mesmo `teste_design.gd`. Síncrono,
@@ -71,6 +78,7 @@ func rodar(gs: Node, arvore: SceneTree, ancoras: Dictionary) -> void:
 
 	_contrato_com_a_tabela()
 	_contrato_da_rua()
+	_contrato_do_mobiliario()
 	_um_quadro_por_dia()
 	conferir("o píer comprado correu até ao fim", _o_pier_comprado())
 	conferir("o armazém correu até ao fim", _o_armazem())
@@ -211,6 +219,7 @@ func _o_patio() -> bool:
 		velha.texture == _mk["MapaTerra"] and nova.texture == _mk["MapaPatio"])
 	conferir("antes da obra não há rua recortada nem cones",
 		not velha.visible and not nova.visible and _cones(cenario).is_empty())
+	_confere_mobiliario(tela, -1, "antes da obra")
 	_comecar_obra("patio")
 	for d in range(int(_gs.dias_da_obra("patio"))):
 		var dia := "no dia %d da obra" % (d + 1)
@@ -225,6 +234,8 @@ func _o_patio() -> bool:
 		_confere_rua(nova, d, true, dia)
 		_confere_rua(velha, d, false, dia)
 		_confere_cones(cenario, d, dia)
+		_confere_cones(cenario, d, dia, "CavaleteDaRua", "cavaletes_da_obra")
+		_confere_mobiliario(tela, d, dia)
 		if not _virar_o_dia():
 			_desmontar(tela)
 			return false
@@ -232,7 +243,9 @@ func _o_patio() -> bool:
 		_gs.tem_estrutura("patio") and mapa.texture == _mk["MapaPatio"]
 		and not canteiro.visible and not asfalto.visible)
 	conferir("pronto, sem rua recortada nem cones",
-		not velha.visible and not nova.visible and _cones(cenario).is_empty())
+		not velha.visible and not nova.visible and _cones(cenario).is_empty()
+		and _cones(cenario, "CavaleteDaRua").is_empty())
+	_confere_mobiliario(tela, int(_ancoras["obra_dias"]), "com o pátio pronto")
 	_desmontar(tela)
 	return true
 
@@ -353,15 +366,18 @@ func _confere_rua(no: Polygon2D, d: int, prontos: bool, dia: String) -> void:
 	conferir("%s cai nos pedaços da tabela %s" % [nome, dia], certo)
 
 
-## Os três cones do dia, nos pontos da tabela, e cada um entre os irmãos de
-## cima e os de baixo na tela — a profundidade do `Cenario` é a ordem.
-func _confere_cones(cenario: Node, d: int, dia: String) -> void:
-	var cones := _cones(cenario)
+## Os três cones do dia (ou os dois cavaletes entre eles, `140`), nos pontos
+## da tabela, e cada um entre os irmãos de cima e os de baixo na tela — a
+## profundidade do `Cenario` é a ordem.
+func _confere_cones(cenario: Node, d: int, dia: String, prefixo := "ConeDaRua",
+		lista := "cones_da_obra") -> void:
+	var cones := _cones(cenario, prefixo)
 	var esperado: Array = []
-	for t in _ancoras["cones_da_obra"]:
+	for t in _ancoras[lista]:
 		if int(t["quadro"]) == d:
 			esperado = t["pontos"]
-	conferir("%d cones na frente da obra %s" % [esperado.size(), dia],
+	var quem := "cones" if prefixo == "ConeDaRua" else "cavaletes"
+	conferir("%d %s na frente da obra %s" % [esperado.size(), quem, dia],
 		not esperado.is_empty() and cones.size() == esperado.size(), "há %d" % cones.size())
 	var no_sitio := cones.size() == esperado.size()
 	var na_ordem := true
@@ -382,16 +398,227 @@ func _confere_cones(cenario: Node, d: int, dia: String) -> void:
 				na_ordem = false
 				onde = "%s (y %.1f, índice %d) e %s (y %.1f, índice %d)" \
 					% [c.name, y, i, outro.name, outro.position.y, j]
-	conferir("os cones ficam nos pontos da tabela %s" % dia, no_sitio)
-	conferir("cada cone fica entre os irmãos pela profundidade %s" % dia, na_ordem, onde)
+	conferir("os %s ficam nos pontos da tabela %s" % [quem, dia], no_sitio)
+	conferir("cada um dos %s fica entre os irmãos pela profundidade %s" % [quem, dia],
+		na_ordem, onde)
 
 
-func _cones(cenario: Node) -> Array:
+func _cones(cenario: Node, prefixo := "ConeDaRua") -> Array:
 	var out: Array = []
 	for no in cenario.get_children():
-		if String(no.name).begins_with("ConeDaRua"):
+		if String(no.name).begins_with(prefixo):
 			out.append(no)
 	return out
+
+
+# ── §7 ─────────────────────────────────────────────────────────────────────
+## A guia rebaixada de cada lado da boca do acesso (`ABA` do gerador). A
+## placa fica fora dela por mais folga ainda (`FOLGA_DA_PLACA`); a guarda
+## pede só a guia, que é o que tem de ficar livre — quem gera é mais folgado
+## do que quem confere (`mapa.md`, os limiares iguais).
+const GUIA_DO_ACESSO := 0.22
+## O raio, em pixels do PNG, em que o fio tem de achar o isolador. Medido no
+## poste velho da segunda passagem (`140`): as três pontas certas acertam já a
+## 1 px; sem o tombo de 6°, duas das três só tocam um isolador a 3 px — e a
+## terceira cai em cheio no isolador VIZINHO, porque o tombo anda a ponta
+## quase a distância entre os dois da direita. O corte vai a meio, e é a
+## contagem dos três fios que apanha o poste direito no lugar do torto.
+const RAIO_DO_ISOLADOR := 2
+## O isolador é a peça mais clara do poste, e é por aí que se acha: os
+## pixels opacos acima disto, na luminância de 0 a 1. Medido nos mesmos PNG:
+## o isolador dá 0,72 a 0,74, e a peça clara seguinte, o concreto novo, 0,60
+## no p90 — o corte vai a meio.
+const LUZ_DO_ISOLADOR := 0.66
+
+
+func _contrato_do_mobiliario() -> void:
+	var tabela: Array = _ancoras.get("mobiliario_da_rua", [])
+	var copia: Array = _ok["MOBILIARIO"]
+	conferir("o mobiliário da tabela tem %d peça(s), e a cópia tantas quantas" % tabela.size(),
+		not tabela.is_empty() and tabela.size() == copia.size(),
+		"tabela %d, cópia %d" % [tabela.size(), copia.size()])
+	for i in range(mini(tabela.size(), copia.size())):
+		var t: Dictionary = tabela[i]
+		var c: Array = copia[i]
+		var v: Vector2 = c[1]
+		conferir("a peça %d do mobiliário (%s) é a da tabela" % [i, t["tipo"]],
+			String(c[0]) == String(t["tipo"]) and int(c[2]) == int(t["quadro"])
+			and absf(v.x - float(t["ponto"][0])) < 0.0005
+			and absf(v.y - float(t["ponto"][1])) < 0.0005,
+			"cópia %s, tabela %s" % [c, t])
+	var cav_t: Array = _ancoras.get("cavaletes_da_obra", [])
+	var cav_c: Array = _ok["CAVALETES"]
+	var dias := int(_ancoras.get("obra_dias", -1))
+	conferir("um par de cavaletes por dia de obra, na tabela e na cópia (%d e %d)"
+		% [cav_t.size(), cav_c.size()], cav_t.size() == dias and cav_c.size() == dias)
+	for i in range(mini(cav_t.size(), cav_c.size())):
+		conferir("os cavaletes do dia %d são os da tabela" % i, _igual(cav_t[i], cav_c[i]))
+
+	# NA CALÇADA DO LADO DELA. A tabela publica a rua (asfalto e calçadas) e o
+	# asfalto de cada faixa; o poste vive entre a borda da rua e o asfalto do
+	# lado da vila, e a placa do outro lado. O D2 isenta-os de «fora do
+	# asfalto» pelo nome, porque a calçada é rua para ele — é aqui que se
+	# pergunta onde eles pousam de verdade.
+	var na_calcada := true
+	var onde := ""
+	for t in tabela:
+		var x := float(t["ponto"][0])
+		var y := float(t["ponto"][1])
+		var faixa := _faixa_de(y)
+		var rua: Array = faixa["rua"]
+		var asf: Array = faixa["asfalto"]
+		var ok: bool
+		if String(t["tipo"]) == "poste":
+			ok = x > float(rua[0]) and x < float(asf[0])
+		else:
+			ok = x > float(asf[1]) and x < float(rua[1])
+		for cot in _ancoras["cotovelos"]:
+			if x > float(cot["mx"][0]) and x < float(cot["mx"][1]) \
+					and y > float(cot["my"][0]) and y < float(cot["my"][1]):
+				ok = false
+		for a in _ancoras["acessos"]:
+			if x > float(asf[1]) and y > float(a["my"][0]) - GUIA_DO_ACESSO \
+					and y < float(a["my"][1]) + GUIA_DO_ACESSO:
+				ok = false
+		if not ok:
+			na_calcada = false
+			onde = "%s em (%.2f, %.2f): rua %s, asfalto %s" % [t["tipo"], x, y, rua, asf]
+	conferir("cada peça do mobiliário pousa na calçada do lado dela, fora do cotovelo e da guia do acesso",
+		na_calcada, onde)
+
+	# E NO DIA DO TRECHO ONDE POUSA: o poste troca no dia em que o asfalto da
+	# reta dele troca. A reta é um pedaço de quatro cantos da obra da rua, que
+	# vai até ao meio das duas calçadas.
+	var no_dia := true
+	for t in tabela:
+		var x := float(t["ponto"][0])
+		var y := float(t["ponto"][1])
+		var achou := -1
+		for pedaco in _ancoras["obra_da_rua"]:
+			var pts: Array = pedaco["pontos"]
+			if pts.size() != 4:
+				continue
+			var xs := [float(pts[0][0]), float(pts[1][0]), float(pts[2][0]), float(pts[3][0])]
+			var ys := [float(pts[0][1]), float(pts[1][1]), float(pts[2][1]), float(pts[3][1])]
+			if x >= xs.min() - 0.01 and x <= xs.max() + 0.01 and y >= ys.min() and y <= ys.max():
+				achou = int(pedaco["quadro"])
+		if achou != int(t["quadro"]):
+			no_dia = false
+			onde = "%s em (%.2f, %.2f): quadro %d, a reta dele é do %d" \
+				% [t["tipo"], x, y, int(t["quadro"]), achou]
+	conferir("cada peça do mobiliário troca no dia da reta de rua onde pousa", no_dia, onde)
+
+
+func _faixa_de(my: float) -> Dictionary:
+	for f in _ancoras["faixas"]:
+		if my >= float(f["my"][0]) and my < float(f["my"][1]):
+			return f
+	return {}
+
+
+## O mobiliário no dia `d` da obra do pátio — −1 antes dela, `obra_dias`
+## com o pátio pronto: cada peça com a arte velha ou a nova pelo dia do
+## trecho DELA, no ponto da tabela; e a rede da rua antes do `Cenario`: a
+## lâmpada de sódio só no poste velho, no quadro dele, e cada fio a ligar
+## dois postes vizinhos com cada ponta pousada num isolador do poste que se
+## VÊ.
+func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
+	var cenario: Node = tela.get_node("MapaWrap/Cenario")
+	var rede := tela.get_node_or_null("MapaWrap/RedeDaRua")
+	conferir("a rede da rua desenha-se logo antes do Cenario, debaixo de todo prop %s" % dia,
+		rede != null and rede.get_index() == cenario.get_index() - 1)
+	if rede == null:
+		return
+	var tabela: Array = _ancoras["mobiliario_da_rua"]
+	var arte: Dictionary = _ok["ARTE_DO_MOBILIARIO"]
+	var certo := true
+	var luz_certa := true
+	var onde := ""
+	var postes := {}
+	for i in range(tabela.size()):
+		var t: Dictionary = tabela[i]
+		var tipo := String(t["tipo"])
+		var nova := int(t["quadro"]) <= d
+		var no := cenario.get_node_or_null(
+			("PosteDaRua%d" if tipo == "poste" else "PlacaDaRua%d") % i) as TextureRect
+		var pe := _tela(float(t["ponto"][0]), float(t["ponto"][1]))
+		if no == null or no.texture != arte[tipo][1 if nova else 0] \
+				or (no.position + Vector2(PropIso.MEIO, PropIso.MEIO)).distance_to(pe) > 0.05:
+			certo = false
+			onde = "peça %d (%s, quadro %d)" % [i, tipo, int(t["quadro"])]
+			continue
+		if tipo != "poste":
+			continue
+		postes[i] = no
+		var luz := rede.get_node_or_null("PosteLuzDaRua%d" % i) as TextureRect
+		if luz == null or luz.visible == nova or luz.position != no.position:
+			luz_certa = false
+	conferir("cada peça do mobiliário mostra a arte do trecho dela %s" % dia, certo, onde)
+	conferir("a lâmpada de sódio acende só no poste velho, no quadro dele, %s" % dia, luz_certa)
+
+	# Os vãos: dois postes da mesma reta sem outro entre eles, pela TABELA.
+	var vaos := {}
+	var ids: Array = postes.keys()
+	for a in ids:
+		var melhor := -1
+		for b in ids:
+			if b == a or absf(float(tabela[a]["ponto"][0]) - float(tabela[b]["ponto"][0])) > 0.001:
+				continue
+			if float(tabela[b]["ponto"][1]) <= float(tabela[a]["ponto"][1]):
+				continue
+			if melhor < 0 or float(tabela[b]["ponto"][1]) < float(tabela[melhor]["ponto"][1]):
+				melhor = b
+		if melhor >= 0:
+			vaos["%d-%d" % [a, melhor]] = true
+	var fios: Array = []
+	for f in rede.get_children():
+		if f is Line2D:
+			fios.append(f)
+	conferir("três fios em cada vão entre dois postes da mesma reta (%d vãos) %s"
+		% [vaos.size(), dia], not vaos.is_empty() and fios.size() == vaos.size() * 3,
+		"há %d fios" % fios.size())
+	var nos_isoladores := true
+	var vistos := {}
+	for f in fios:
+		var pontos: PackedVector2Array = (f as Line2D).points
+		if pontos.size() < 2:
+			nos_isoladores = false
+			continue
+		var a := _poste_do_isolador(pontos[0], postes)
+		var b := _poste_do_isolador(pontos[pontos.size() - 1], postes)
+		var chave := "%d-%d" % [mini(a, b), maxi(a, b)]
+		if a < 0 or b < 0 or not vaos.has(chave):
+			nos_isoladores = false
+			onde = "%s: pontas em %s e %s, postes %d e %d" \
+				% [f.name, pontos[0], pontos[pontos.size() - 1], a, b]
+		vistos[chave] = int(vistos.get(chave, 0)) + 1
+	conferir("cada fio liga dois postes vizinhos e pousa num isolador de cada %s" % dia,
+		nos_isoladores, onde)
+	var cada_vao := vistos.size() == vaos.size()
+	for v in vistos.values():
+		cada_vao = cada_vao and int(v) == 3
+	conferir("cada vão leva os seus três fios %s" % dia, cada_vao, "%s" % [vistos])
+
+
+## O poste de cujo ISOLADOR sai o ponto `p` (espaço do mapa), ou −1: o pixel
+## do PNG do poste, na textura que ele mostra, à volta do ponto tem de ter
+## a peça clara do isolador. Lê o desenho, e não a conta do `ObraNoMapa`.
+func _poste_do_isolador(p: Vector2, postes: Dictionary) -> int:
+	for i in postes.keys():
+		var no: TextureRect = postes[i]
+		var img := PropIso.imagem(no.texture)
+		var k := PropIso.escala(no.texture)
+		var px := (p - no.position) / k
+		for dy in range(-RAIO_DO_ISOLADOR, RAIO_DO_ISOLADOR + 1):
+			for dx in range(-RAIO_DO_ISOLADOR, RAIO_DO_ISOLADOR + 1):
+				var x := roundi(px.x) + dx
+				var y := roundi(px.y) + dy
+				if x < 0 or y < 0 or x >= img.get_width() or y >= img.get_height():
+					continue
+				var c := img.get_pixel(x, y)
+				if c.a > 0.5 and c.get_luminance() > LUZ_DO_ISOLADOR:
+					return int(i)
+	return -1
 
 
 # ── §5 ─────────────────────────────────────────────────────────────────────

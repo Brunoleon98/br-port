@@ -888,6 +888,47 @@
    "prof": 40.612
   }
  ],
+ "cavaletes_da_obra": [
+  {
+   "pontos": [
+    [
+     1.53,
+     7.1
+    ],
+    [
+     2.43,
+     7.1
+    ]
+   ],
+   "quadro": 0
+  },
+  {
+   "pontos": [
+    [
+     5.53,
+     15.1
+    ],
+    [
+     6.43,
+     15.1
+    ]
+   ],
+   "quadro": 1
+  },
+  {
+   "pontos": [
+    [
+     9.53,
+     23.1
+    ],
+    [
+     10.43,
+     23.1
+    ]
+   ],
+   "quadro": 2
+  }
+ ],
  "cones_da_obra": [
   {
    "pontos": [
@@ -4679,6 +4720,120 @@
     30.0,
     637.7
    ]
+  }
+ ],
+ "mobiliario_da_rua": [
+  {
+   "ponto": [
+    -0.91,
+    -1.0
+   ],
+   "quadro": 0,
+   "tipo": "poste"
+  },
+  {
+   "ponto": [
+    -0.91,
+    2.5
+   ],
+   "quadro": 0,
+   "tipo": "poste"
+  },
+  {
+   "ponto": [
+    3.09,
+    9.5
+   ],
+   "quadro": 1,
+   "tipo": "poste"
+  },
+  {
+   "ponto": [
+    3.09,
+    11.8
+   ],
+   "quadro": 1,
+   "tipo": "poste"
+  },
+  {
+   "ponto": [
+    7.09,
+    17.0
+   ],
+   "quadro": 2,
+   "tipo": "poste"
+  },
+  {
+   "ponto": [
+    7.09,
+    20.5
+   ],
+   "quadro": 2,
+   "tipo": "poste"
+  },
+  {
+   "ponto": [
+    11.09,
+    25.0
+   ],
+   "quadro": 3,
+   "tipo": "poste"
+  },
+  {
+   "ponto": [
+    11.09,
+    28.5
+   ],
+   "quadro": 3,
+   "tipo": "poste"
+  },
+  {
+   "ponto": [
+    1.11,
+    2.23
+   ],
+   "quadro": 0,
+   "tipo": "pare"
+  },
+  {
+   "ponto": [
+    5.11,
+    10.23
+   ],
+   "quadro": 1,
+   "tipo": "pare"
+  },
+  {
+   "ponto": [
+    9.11,
+    18.23
+   ],
+   "quadro": 2,
+   "tipo": "pare"
+  },
+  {
+   "ponto": [
+    1.11,
+    5.89
+   ],
+   "quadro": 0,
+   "tipo": "pedestres"
+  },
+  {
+   "ponto": [
+    5.11,
+    13.89
+   ],
+   "quadro": 1,
+   "tipo": "pedestres"
+  },
+  {
+   "ponto": [
+    9.11,
+    21.4
+   ],
+   "quadro": 2,
+   "tipo": "velocidade"
   }
  ],
  "obra_da_rua": [

@@ -1240,9 +1240,232 @@ def retratos_de_fala(M, est):
             est.registrar(nome, pecas, ancora="retrato", cor=brp_retratos.COR_RETRATO)
 
 
+# ── O MOBILIÁRIO DA RUA (`140`) ─────────────────────────────────────────
+#
+# Escolha do Bruno: postes de luz na calçada da vila, placas na do porto e
+# cavaletes entre os cones da obra; a rua gasta do dia 1 leva os VELHOS, e a
+# obra do pátio troca-os pelos novos trecho a trecho, com o asfalto (`136`).
+#
+# ⚠️ A FACE QUE A CÂMARA VÊ DECIDE DE QUE LADO VIVE CADA PLACA. Só `+x` e
+# `-y` do Blender se veem, que no mapa são as faces viradas para `+mx` e
+# `+my`. Uma placa para quem DESCE a rua (`+my`) olha para `-my` e mostraria
+# o verso: as de pedestres e a de velocidade servem quem SOBE, na calçada do
+# porto, que é a direita de quem sobe; o PARE olha para `+mx`, para o camião
+# que sai do acesso ao berço.
+#
+# ⚠️ E A ESCALA É A DO CONE E DA BARREIRA, não a da pessoa. A placa a 1,5x o
+# real teria 3 px de chapa a 720 — um ponto de cor sem forma. O cone da obra
+# já tem ~2,8x e a barreira ~2,2x; a placa vai a ~2,5x, a 2/3 da altura do
+# poste de luz, que fica no 1x dos camiões e do poste do pátio.
+
+def _inclinar(pecas, graus_x=0.0, graus_y=0.0, giro_z=0.0):
+    """Roda o grupo inteiro em volta do PÉ (a origem): a placa torta, o poste
+    a pender para a rua. Gira primeiro em Z (a chapa torcida no cano) e
+    depois tomba. Mexe na posição e na rotação de cada peça, e não no
+    `matrix_world`, que o arnês da montagem deixa velho (`080`)."""
+    r = (Matrix.Rotation(math.radians(graus_y), 3, "Y")
+         @ Matrix.Rotation(math.radians(graus_x), 3, "X")
+         @ Matrix.Rotation(math.radians(giro_z), 3, "Z"))
+    for o in pecas:
+        o.location = r @ Vector(o.location)
+        o.rotation_euler = (r @ o.rotation_euler.to_matrix()).to_euler()
+    return pecas
+
+
+# Altura do poste e da cruzeta em PIXELS DO MAPA, e o tombo do velho. O
+# `ObraNoMapa.gd` pendura a fiação nos isoladores e lê estes números de lá
+# (`POSTE_*`); o D45 confere que a ponta de cada fio cai em cima do desenho
+# do isolador, no PNG.
+POSTE_ALTURA = 52.0
+POSTE_ISOLADOR = 50.0          # o topo dos isoladores, onde o fio pousa
+# Ao longo da cruzeta, em `x` (`mx`): um em cada ponta e o do meio FORA da
+# haste — no x = 0 ficava dentro da ponta do poste e não se via.
+POSTE_ISOLADORES = (-0.27, 0.13, 0.27)
+POSTE_VELHO_TOMBO = 6.0        # graus, para a rua (`+x`)
+
+
+def _poste_da_rua(M, velho):
+    """O poste de concreto da rede, com a cruzeta e a luminária da rua:
+    `(poste, luz)`, a luz à parte só no velho.
+
+    A cruzeta com os três isoladores é o que diz «poste de rua brasileiro» a
+    esta escala, e é nela que a fiação pousa; o braço da luz aponta para
+    `+x`, a rua, que é também a face que se vê.
+
+    ⚠️ SEGUNDA PASSAGEM (`140`): na primeira os dois liam como palitos claros
+    e só se distinguiam pela cor. A haste engrossou e escureceu um degrau, a
+    cruzeta cresceu, e o velho passou a ser OUTRO poste: escuro de chuva, a
+    pender seis graus para a rua, cruzeta de madeira, braço curto, cúpula de
+    sódio — e a lâmpada de sódio é peça À PARTE, para piscar devagar como a
+    do poste do pátio (o `_animar_luzes` do `Main`); se fosse uma peça só,
+    piscava o concreto. O novo é claro, direito, com o braço longo e a chapa
+    da LED, e não pisca."""
+    pre = "pv" if velho else "pn"
+    conc = M["poste_concreto_velho" if velho else "poste_concreto"]
+    alt = z(POSTE_ALTURA)
+    cruzeta = alt - z(POSTE_ALTURA - POSTE_ISOLADOR + 2.6)
+    p = [caixa(pre + "_pe", (0.0, 0.0, z(1.2)), (0.17, 0.17, z(2.4)), conc),
+         # Quatro lados rodados 45°: a secção quadrada que afina, como o
+         # poste duplo T visto de longe.
+         cone(pre + "_haste", (0.0, 0.0, alt / 2.0), 0.10, 0.06, alt, 4,
+              conc, rot=(0, 0, 45)),
+         caixa(pre + "_cruzeta", (0.0, 0.0, cruzeta), (0.60, 0.07, z(2.4)),
+               M["madeira_velha" if velho else "metal_claro"])]
+    for i, x in enumerate(POSTE_ISOLADORES):
+        p.append(cone("%s_isolador%d" % (pre, i),
+                      (x, 0.0, cruzeta + z(1.2) + z(1.2)),
+                      0.026, 0.016, z(2.4), 6, M["cabine"]))
+    luz = []
+    if velho:
+        p += [barra(pre + "_braco", (0.0, 0.0, alt - z(12.0)),
+                    (0.28, 0.0, alt - z(10.0)), 0.045, M["metal"]),
+              cone(pre + "_cupula", (0.33, 0.0, alt - z(11.0)), 0.085, 0.035,
+                   z(3.4), 10, M["metal"])]
+        luz = [cone(pre + "_sodio", (0.33, 0.0, alt - z(13.4)), 0.055, 0.075,
+                    z(1.8), 10, M["sodio"])]
+        _inclinar(p + luz, graus_y=POSTE_VELHO_TOMBO)
+        return p, luz
+    # ⚠️ O BRAÇO É GROSSO E A LUMINÁRIA CLARA, de propósito: na primeira
+    # prova o braço de 0,032 sumia no asfalto e a chapa LED escura flutuava
+    # sozinha ao lado do poste — a barra fina solta lê como risco (`122`).
+    p += [barra(pre + "_braco_a", (0.0, 0.0, alt - z(12.0)),
+                (0.24, 0.0, alt - z(8.0)), 0.055, conc),
+          barra(pre + "_braco_b", (0.24, 0.0, alt - z(8.0)),
+                (0.48, 0.0, alt - z(7.5)), 0.055, conc),
+          caixa(pre + "_led", (0.56, 0.0, alt - z(7.9)), (0.24, 0.12, z(1.8)),
+                M["metal_claro"]),
+          caixa(pre + "_led_luz", (0.57, 0.0, alt - z(8.9)), (0.19, 0.09, z(0.5)),
+                M["cabine"])]
+    return p, luz
+
+
+# O sol da sombra de contato do mobiliário: a pino, como o das árvores
+# (`127`). A 62° a sombra do poste saía um traço comprido na diagonal a
+# riscar o asfalto — *«sombras riscam a rua»*, primeira passagem da `140`.
+ZENITE_DO_MOBILIARIO = 20.0
+
+
+def poste_rua(M, est):
+    for velho, nome in ((True, "poste_rua_velho"), (False, "poste_rua_novo")):
+        p, luz = _poste_da_rua(M, velho)
+        origem(nome)
+        est.registrar(nome, p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+        if luz:
+            origem("poste_rua_luz", tipo="encaixe")
+            est.registrar("poste_rua_luz", luz, ancora="encaixe", celulas=(1, 1),
+                          animacoes={"light_flicker": {"tween": "modulate",
+                                                       "loop": True}})
+
+
+# A chapa e o cano da placa, em unidades de mundo e pixels do mapa.
+PLACA_RAIO = 0.17
+# ⚠️ 30% MAIS BAIXA DESDE A SEGUNDA PASSAGEM (`140`): a 30 px a chapa da de
+# pedestres, que vive na calçada do porto logo depois da zebra, subia na tela
+# por cima da zebra de trás e lia como uma placa NO MEIO da travessia. Do
+# outro lado da zebra o escritório e o armazém tapavam-na.
+PLACA_ALTURA = 21.0
+# O PARE é a placa que manda parar: a chapa um pouco maior do que as outras,
+# como na rua — e é a única que se lê só pela cor, sem símbolo.
+PLACA_PARE = 1.18
+
+
+def _placa(M, nome, forma, velha):
+    """Uma placa de trânsito no cano: a chapa, a borda e o símbolo.
+
+    `forma` é `pare` (octógono vermelho de fio branco, a olhar para `+x`),
+    `pedestres` (losango amarelo de borda preta com a figura, a olhar para
+    `-y`) ou `velocidade` (círculo branco de aro vermelho com o número em
+    preto, a olhar para `-y`). A esta escala a palavra e o número não se
+    leem: lê-se a COR e a FORMA, e o símbolo é uma mancha preta a dizer que
+    há alguma coisa desenhada.
+
+    A velha é desbotada, com a chapa torcida no cano e o cano a pender."""
+    v = "_velha" if velha else ""
+    cano = M["metal_claro"]
+    h = z(PLACA_ALTURA)
+    raio = PLACA_RAIO * (PLACA_PARE if forma == "pare" else 1.0)
+    p = [cone(nome + "_cano", (0.0, 0.0, h / 2.0), 0.026, 0.026, h, 6, cano)]
+    # A chapa é um cilindro achatado com o eixo na direção para onde olha. A
+    # borda vai atrás (mais larga) e o símbolo à frente: nunca no mesmo plano.
+    if forma == "pare":
+        eixo, rot, lados = "x", (22.5, 90, 0), 8
+    elif forma == "pedestres":
+        eixo, rot, lados = "y", (90, 0, 0), 4
+    else:
+        eixo, rot, lados = "y", (90, 0, 0), 16
+    frente = 1.0 if eixo == "x" else -1.0
+
+    def no_plano(nome_p, r, recuo, mat, esp=0.014):
+        c = (frente * recuo, 0.0, h) if eixo == "x" else (0.0, frente * recuo, h)
+        return cone(nome_p, c, r, r, esp, lados, mat, rot=rot)
+
+    branca = M["placa_branca" + v]
+    if forma == "pare":
+        # ⚠️ SEM A FAIXA DA PALAVRA: a primeira prova levava uma barra branca
+        # no meio, e o círculo vermelho com a barra é o «sentido proibido»
+        # (R-3). O PARE lê-se pelo vermelho cheio dentro do fio branco.
+        p += [no_plano(nome + "_borda", raio, 0.020, branca),
+              no_plano(nome + "_chapa", raio * 0.88, 0.034,
+                       M["placa_vermelha" + v])]
+    elif forma == "pedestres":
+        p += [no_plano(nome + "_borda", raio * 1.10, 0.020, M["placa_preta"]),
+              no_plano(nome + "_chapa", raio * 0.96, 0.034,
+                       M["placa_amarela" + v]),
+              caixa(nome + "_figura", (0.0, -0.046, h - z(0.4)),
+                    (0.05, 0.010, z(4.0)), M["placa_preta"]),
+              cone(nome + "_cabeca", (0.0, -0.046, h + z(2.4)), 0.022, 0.022,
+                   0.010, 8, M["placa_preta"], rot=(90, 0, 0))]
+    else:
+        p += [no_plano(nome + "_aro", raio, 0.020, M["placa_vermelha" + v]),
+              no_plano(nome + "_chapa", raio * 0.74, 0.034, branca),
+              caixa(nome + "_numero_a", (-0.030, -0.046, h), (0.034, 0.010, z(3.4)),
+                    M["placa_preta"]),
+              caixa(nome + "_numero_b", (0.030, -0.046, h), (0.034, 0.010, z(3.4)),
+                    M["placa_preta"])]
+    if velha:
+        # Torcida no cano e a pender: o vento e o para-choque de alguém.
+        return _inclinar(p, graus_x=4.0, graus_y=-5.0, giro_z=14.0)
+    return p
+
+
+def placas_da_rua(M, est):
+    for forma in ("pare", "pedestres", "velocidade"):
+        for velha, sufixo in ((True, "velha"), (False, "nova")):
+            nome = "placa_%s_%s" % (forma, sufixo)
+            p = _placa(M, nome, forma, velha)
+            origem(nome)
+            est.registrar(nome, p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+
+
+def cavalete_obra(M, est):
+    """O cavalete de obra: duas tábuas listradas em dois pés em A.
+
+    Vai ENTRE os cones da obra da rua, no eixo e ao longo dele — e a rua do
+    cotovelo corre em `mx`, por isso as tábuas correm em `x` e a face listrada
+    é a `-y`, que se vê. Mais baixo e mais curto do que a barreira do pátio,
+    que é de concreto e fecha um trecho: o cavalete é de madeira e mudável.
+    As listras são peças, como na barreira: a esta escala faixa pintada some."""
+    p = []
+    comp, n = 0.44, 5
+    passo = comp / n
+    for j, zt in enumerate((z(6.5), z(11.0))):
+        for i in range(n):
+            mat = M["laranja"] if i % 2 == 0 else M["cabine"]
+            p.append(caixa("cav_tabua%d_%d" % (j, i),
+                           (-comp / 2.0 + passo * (i + 0.5), 0.0, zt),
+                           (passo, 0.035, z(2.6)), mat))
+    for lado, x in (("e", -comp / 2.0 + 0.03), ("d", comp / 2.0 - 0.03)):
+        for k, dy in enumerate((-0.07, 0.07)):
+            p.append(barra("cav_pe%s%d" % (lado, k), (x, dy, 0.0),
+                           (x, 0.0, z(12.4)), 0.026, M["madeira"]))
+    origem("cavalete_obra")
+    est.registrar("cavalete_obra", p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+
+
 CATALOGO = (_registrar_caminhoes, empilhadeira, cabeco, poste, pilha_caixotes,
             doca_concreto, pallet, pneus, cone_transito, barreira, bote,
-            guincho, trabalhador_retrato, retratos_de_fala)
+            guincho, trabalhador_retrato, retratos_de_fala,
+            poste_rua, placas_da_rua, cavalete_obra)
 
 
 def montar(M, est):

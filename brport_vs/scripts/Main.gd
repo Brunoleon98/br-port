@@ -513,7 +513,13 @@ func _animar_luzes() -> void:
 	var cenario := $MapaWrap.get_node_or_null("Cenario")
 	if cenario == null:
 		return
-	for no in cenario.get_children():
+	# E as lâmpadas de sódio dos postes velhos da rua, que vivem na rede da
+	# rua, antes do `Cenario` (`140`; o porquê está no `ObraNoMapa`).
+	var nos: Array = cenario.get_children()
+	var rede := $MapaWrap.get_node_or_null("RedeDaRua")
+	if rede != null:
+		nos += rede.get_children()
+	for no in nos:
 		if not String(no.name).begins_with("PosteLuz"):
 			continue
 		var tr := no as TextureRect

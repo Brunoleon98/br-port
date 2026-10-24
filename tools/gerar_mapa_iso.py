@@ -4312,9 +4312,91 @@ def obra_da_rua() -> list:
 
     pecas = [(0, reta(0)), (0, cotovelo(0))] + [(0, q) for q in dentro(0)] + [(0, reta(1))]
     for i in range(1, n - 1):
-        q = min(i, OBRA_DIAS)
+        q = quadro_da_reta(i + 1)
         pecas += [(q, cotovelo(i))] + [(q, d) for d in dentro(i)] + [(q, reta(i + 1))]
     return [(q, [(round(x, 3), round(y, 3)) for x, y in pol]) for q, pol in pecas]
+
+
+def quadro_da_reta(i: int) -> int:
+    """O dia da obra em que a reta `i` da rua fica recapeada: as duas de cima
+    no dia 0, cada uma das seguintes no dia a seguir, e o resto no fim
+    (`OBRA_DIAS`). Um lugar só, para a `obra_da_rua()` e o mobiliário que
+    troca com ela (`140`) não poderem discordar."""
+    return 0 if i <= 1 else min(i - 1, OBRA_DIAS)
+
+
+def cavaletes_da_obra() -> list:
+    """(quadro, pontos em mundo) dos cavaletes de cada dia da obra da rua.
+
+    Escolha do Bruno na `140`: ENTRE os cones, no eixo e ao longo dele — cone,
+    cavalete, cone, cavalete, cone. Saem dos cones e não de números à parte:
+    se a fila dos cones andar, os cavaletes andam com ela. No eixo o cavalete
+    ocupa ±0,08 em `my` (os pés em A), contra os ±0,15 do cone que já cabe
+    ali, e os 0,44 dele cabem nos 0,6 livres entre duas bases de cone."""
+    out = []
+    for q, cones in cones_da_obra():
+        meios = [(round((a[0] + b[0]) / 2.0, 3), round((a[1] + b[1]) / 2.0, 3))
+                 for a, b in zip(cones, cones[1:])]
+        out.append((q, meios))
+    return out
+
+
+# ── O MOBILIÁRIO DA RUA (`140`) ──────────────────────────────────────────
+#
+# Escolha do Bruno: postes de luz só na calçada da VILA, e as placas — o PARE
+# na boca de cada acesso ao berço, a de pedestres antes de cada zebra e uma
+# de velocidade — na do PORTO. Cada peça troca da velha para a nova no dia
+# em que o trecho dela é recapeado (`quadro_da_reta()`), como o asfalto.
+#
+# ⚠️ AS PLACAS VIVEM NA CALÇADA DO PORTO POR CAUSA DA CÂMARA, e não por gosto.
+# Ela só vê as faces viradas para `+mx` e `+my`: uma placa para quem DESCE a
+# rua (`+my`) olha para `-my` e mostraria o verso. As de pedestres e a de
+# velocidade servem quem SOBE, cuja direita é a calçada do porto; o PARE olha
+# para `+mx`, para o camião que sai do acesso.
+#
+# O `my` dos postes saiu da foto (`140`): um a cada ~3,5 de rua, e o segundo
+# da reta 2 encostado ao primeiro porque a zebra do armazém lhe come o sítio.
+POSTES_DA_RUA = [(1, -1.0), (1, 2.5), (2, 9.5), (2, 11.8),
+                 (3, 17.0), (3, 20.5), (4, 25.0), (4, 28.5)]
+# (reta, my) da placa de velocidade: para quem sobe, a entrar na reta 3.
+VELOCIDADE_DA_RUA = [(3, 21.4)]
+# A placa fica fora da guia rebaixada do acesso (`ABA`) e da zebra, a esta
+# distância delas.
+FOLGA_DA_PLACA = 0.15
+# A de pedestres fica a esta distância do meio da zebra, do lado de quem
+# vem — a do Código diz «antes da travessia».
+AVISO_DA_ZEBRA = 1.0
+
+
+def mobiliario_da_rua() -> list:
+    """(tipo, mx, my, quadro) de cada peça do mobiliário, pela ordem: os
+    postes, os PARE, as de pedestres e a de velocidade. O `mx` é o MEIO da
+    calçada, que é igual nos dois mapas."""
+    def reta_de(my):
+        for i, (my0, my1, _b) in enumerate(DEGRAUS):
+            if my0 <= my < my1:
+                return i
+        raise ValueError("my %.2f fora da rua" % my)
+
+    def vila(i):
+        return DEGRAUS[i][2] - RUA_RECUO - CALCADA / 2.0
+
+    def porto(i):
+        return DEGRAUS[i][2] - RUA_RECUO + RUA_LARG + CALCADA / 2.0
+
+    out = [("poste", vila(i), my, quadro_da_reta(i)) for i, my in POSTES_DA_RUA]
+    for my0, my1, _b in PIERES:
+        # Do lado de `-my` da boca, que é a direita do camião que sai do
+        # acesso para a rua (a conta do `(-hy, hx)`, `052`).
+        my = (my0 + my1) / 2.0 - ACESSO_MEIA - ABA - FOLGA_DA_PLACA
+        i = reta_de(my)
+        out.append(("pare", porto(i), my, quadro_da_reta(i)))
+    for i, pmy in _zebras():
+        my = pmy + AVISO_DA_ZEBRA
+        out.append(("pedestres", porto(i), my, quadro_da_reta(i)))
+    for i, my in VELOCIDADE_DA_RUA:
+        out.append(("velocidade", porto(i), my, quadro_da_reta(i)))
+    return [(t, round(mx, 3), round(my, 3), q) for t, mx, my, q in out]
 
 
 # ── A VILA QUE CRESCE ────────────────────────────────────────────────────
@@ -7927,6 +8009,13 @@ def tabela_ancoras() -> dict:
                 for q, pol in obra_da_rua()]
     cones_obra = [{"quadro": q, "pontos": [[x, y] for x, y in pts]}
                   for q, pts in cones_da_obra()]
+    # E O MOBILIÁRIO DA RUA (`140`): os cavaletes entre os cones, e os postes
+    # e as placas, cada um com o dia em que o trecho dele fica pronto. O jogo
+    # copia-os como copia os cones, e o D45 confere a cópia.
+    cavaletes_obra = [{"quadro": q, "pontos": [[x, y] for x, y in pts]}
+                      for q, pts in cavaletes_da_obra()]
+    mobiliario = [{"tipo": t, "ponto": [x, y], "quadro": q}
+                  for t, x, y, q in mobiliario_da_rua()]
 
     # E OS LOTES RESERVADOS, publicados para o D13 §8 os poder conferir contra os
     # acessos. Um deles já esteve em cima de um; sem os números aqui, a única
@@ -8023,6 +8112,8 @@ def tabela_ancoras() -> dict:
         "obra_da_rua": obra_rua,
         "obra_dias": OBRA_DIAS,
         "cones_da_obra": cones_obra,
+        "cavaletes_da_obra": cavaletes_obra,
+        "mobiliario_da_rua": mobiliario,
         "lotes_reservados": reservados,
         # ⚠️ O `tipo` ENTRA NA TABELA para o teste de design poder perguntar ao
         # DESENHO se a igreja, a praça e a obra chegaram lá. Sem ele o bloco

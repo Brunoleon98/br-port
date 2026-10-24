@@ -205,12 +205,77 @@ const CONES: Array = [
 		Vector2(9.08, 23.1), Vector2(9.98, 23.1), Vector2(10.88, 23.1)]],
 ]
 
+# OS CAVALETES DA OBRA DA RUA (`140`): entre os cones, no eixo, um dia por
+# quadro — cone, cavalete, cone, cavalete, cone. É a lista
+# `cavaletes_da_obra` da tabela, copiada pela razão do `PATIO`; nascem e
+# morrem com os cones.
+const CAVALETE := preload("res://art/props/cavalete_obra.png")
+const CAVALETES: Array = [
+	[0, [Vector2(1.53, 7.1), Vector2(2.43, 7.1)]],
+	[1, [Vector2(5.53, 15.1), Vector2(6.43, 15.1)]],
+	[2, [Vector2(9.53, 23.1), Vector2(10.43, 23.1)]],
+]
+
+# O MOBILIÁRIO DA RUA (`140`): os postes na calçada da vila e as placas na do
+# porto, `[tipo, ponto em mundo, quadro]`. Escolha do Bruno: a rua gasta do
+# porto em ruínas leva os VELHOS, e a obra do pátio troca cada um pelo novo
+# no dia em que o trecho dele é recapeado — o mesmo `quadro` da `RUA`. Ao
+# contrário dos cones, existem sempre: plantam-se ao montar a cena, entre os
+# irmãos do `Cenario` pela profundidade, e o que muda é a textura. É a lista
+# `mobiliario_da_rua` da tabela, copiada pela razão do `PATIO`.
+const MOBILIARIO: Array = [
+	["poste", Vector2(-0.91, -1.0), 0], ["poste", Vector2(-0.91, 2.5), 0],
+	["poste", Vector2(3.09, 9.5), 1], ["poste", Vector2(3.09, 11.8), 1],
+	["poste", Vector2(7.09, 17.0), 2], ["poste", Vector2(7.09, 20.5), 2],
+	["poste", Vector2(11.09, 25.0), 3], ["poste", Vector2(11.09, 28.5), 3],
+	["pare", Vector2(1.11, 2.23), 0], ["pare", Vector2(5.11, 10.23), 1],
+	["pare", Vector2(9.11, 18.23), 2],
+	["pedestres", Vector2(1.11, 5.89), 0], ["pedestres", Vector2(5.11, 13.89), 1],
+	["velocidade", Vector2(9.11, 21.4), 2],
+]
+## A arte de cada tipo: `[velha, nova]`.
+const ARTE_DO_MOBILIARIO := {
+	"poste": [preload("res://art/props/poste_rua_velho.png"),
+		preload("res://art/props/poste_rua_novo.png")],
+	"pare": [preload("res://art/props/placa_pare_velha.png"),
+		preload("res://art/props/placa_pare_nova.png")],
+	"pedestres": [preload("res://art/props/placa_pedestres_velha.png"),
+		preload("res://art/props/placa_pedestres_nova.png")],
+	"velocidade": [preload("res://art/props/placa_velocidade_velha.png"),
+		preload("res://art/props/placa_velocidade_nova.png")],
+}
+
 var _mapa: TextureRect
 var _asfalto: Polygon2D
 var _canteiro: TextureRect
 var _rua_velha: Polygon2D
 var _rua_nova: Polygon2D
+## A lâmpada de sódio do poste VELHO, à parte para piscar (`140`): o nome
+## começa por `PosteLuz`, e é por ele que o `_animar_luzes` do `Main` a acha,
+## como à do poste do pátio — aqui na `RedeDaRua`, e não no `Cenario`. O
+## poste novo é LED e não pisca.
+const LUZ_DE_SODIO := preload("res://art/props/poste_rua_luz.png")
+
+# A FIAÇÃO (`140`): três fios de cruzeta a cruzeta, entre os postes da mesma
+# reta, pousados nos isoladores. Os números são os do `brp_porto.py`
+# (`POSTE_ISOLADOR`, `POSTE_ISOLADORES`, `POSTE_VELHO_TOMBO`) com a régua das
+# alturas do kit (`ALTURA_PX`, 36,74 px do mapa por unidade, a 2/3 no espaço
+# tela); o D45 confere no PNG que a ponta de cada fio cai em cima do desenho
+# do isolador, nos dois estados — se o poste mudar e isto não, reprova.
+const POSTE_ISOLADOR_PX := 50.0
+const POSTE_ISOLADORES: Array[float] = [-0.27, 0.13, 0.27]
+const POSTE_VELHO_TOMBO := 6.0
+const ALTURA_PX := 36.742346
+const ZOOM := 2.0 / 3.0
+## A barriga do fio a meio do vão, em px de tela: mais solta na rede velha.
+const FIO_BARRIGA: Array[float] = [4.5, 3.0]
+const FIO_PONTOS := 9
+
 var _cones: Array[TextureRect] = []
+var _mobiliario: Array[TextureRect] = []
+var _luzes: Array[TextureRect] = []
+## Os fios, `[índice do poste A, índice do poste B, isolador, Line2D]`.
+var _fios: Array = []
 
 
 ## A rua: `rua_velha` é o mapa de TERRA por cima do asfalto novo do pátio,
@@ -224,6 +289,7 @@ func _init(mapa: TextureRect, asfalto: Polygon2D, canteiro: TextureRect,
 	_canteiro = canteiro
 	_rua_velha = rua_velha
 	_rua_nova = rua_nova
+	_plantar_o_mobiliario()
 
 
 ## Onde um ponto do chão do porto cai na tela, à altura do cais.
@@ -289,6 +355,7 @@ func refresh() -> void:
 	_recortar(_rua_nova, prontos)
 	_recortar(_rua_velha, faltam)
 	_sinalizar_a_rua(q)
+	_trocar_o_mobiliario(q)
 	var fracao := 0.0
 	if q >= 0:
 		fracao = ASFALTO_POR_QUADRO[q]
@@ -307,24 +374,164 @@ func _sinalizar_a_rua(q: int) -> void:
 	if q < 0 or _canteiro == null:
 		return
 	var cenario := _canteiro.get_parent()
-	for dia in CONES:
-		if int(dia[0]) != q:
+	# Os cavaletes vão na mesma lista dos cones: nascem e morrem com eles.
+	for par in [[CONES, CONE, "ConeDaRua"], [CAVALETES, CAVALETE, "CavaleteDaRua"]]:
+		for dia in par[0]:
+			if int(dia[0]) != q:
+				continue
+			for v in dia[1]:
+				var peca := _prop_no_chao(par[1], v)
+				peca.name = "%s%d" % [par[2], _cones.size()]
+				_plantar(cenario, peca)
+				_cones.append(peca)
+
+
+## Um prop pousado no chão do porto em `v`, no quadro de 512 (`029`).
+static func _prop_no_chao(textura: Texture2D, v: Vector2) -> TextureRect:
+	var no := TextureRect.new()
+	no.texture = textura
+	no.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	no.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	no.size = Vector2(PropIso.QUADRO, PropIso.QUADRO)
+	no.position = tela(v.x, v.y) - Vector2(PropIso.QUADRO, PropIso.QUADRO) / 2.0
+	return no
+
+
+## Entra no `Cenario` no índice que a profundidade pede — contar os irmãos
+## acima dele na tela, a mesma leitura do `_ordenar_por_profundidade()` dos
+## camiões e da D3.
+static func _plantar(cenario: Node, no: Control) -> void:
+	var indice := 0
+	for outro in cenario.get_children():
+		if outro is Control and (outro as Control).position.y < no.position.y:
+			indice += 1
+	cenario.add_child(no)
+	cenario.move_child(no, indice)
+
+
+## O mobiliário da rua, plantado UMA vez ao montar a cena, com a arte velha:
+## quem a troca é o `_trocar_o_mobiliario()`. Planta-se aqui, e não no
+## primeiro `refresh()`, pela razão da mata: o trânsito reordena os camiões
+## entre os irmãos, e os irmãos têm de lá estar antes de ele começar.
+func _plantar_o_mobiliario() -> void:
+	if _canteiro == null or _canteiro.get_parent() == null:
+		return
+	var cenario := _canteiro.get_parent()
+	# A REDE DA RUA — as lâmpadas de sódio e a fiação — desenha-se ANTES do
+	# `Cenario`, por cima do mapa e debaixo de todo prop: os postes tapam as
+	# pontas dos fios, e os camiões, os prédios do pátio e os coqueiros, que
+	# estão todos à frente da calçada da vila, passam-lhe por cima — que é
+	# onde estão.
+	# ⚠️ A LÂMPADA NÃO VAI NO `Cenario` AO LADO DO POSTE, como a do poste do
+	# pátio: lá o D30 lê todo par no mesmo quadro como duas metades em que a
+	# de cima POUSA NA PONTA da de baixo, e esta pende do braço, abaixo do
+	# topo do poste. Aqui, debaixo dele, o poste não lhe tapa nada — a cúpula
+	# fica por cima e a lâmpada por baixo —, e o quadro é o mesmo, ao pixel.
+	var rede := Node2D.new()
+	rede.name = "RedeDaRua"
+	cenario.get_parent().add_child(rede)
+	cenario.get_parent().move_child(rede, cenario.get_index())
+	for i in MOBILIARIO.size():
+		var peca: Array = MOBILIARIO[i]
+		var tipo: String = peca[0]
+		var no := _prop_no_chao(ARTE_DO_MOBILIARIO[tipo][0], peca[1])
+		no.name = ("PosteDaRua%d" if tipo == "poste" else "PlacaDaRua%d") % i
+		_plantar(cenario, no)
+		_mobiliario.append(no)
+		var luz: TextureRect = null
+		if tipo == "poste":
+			luz = _prop_no_chao(LUZ_DE_SODIO, peca[1])
+			luz.name = "PosteLuzDaRua%d" % i
+			rede.add_child(luz)
+		_luzes.append(luz)
+	for a in MOBILIARIO.size():
+		for b in range(a + 1, MOBILIARIO.size()):
+			if not _postes_vizinhos(a, b):
+				continue
+			for k in POSTE_ISOLADORES.size():
+				var fio := Line2D.new()
+				fio.name = "Fio%d_%d_%d" % [a, b, k]
+				fio.width = 1.0
+				fio.default_color = Color(0.13, 0.15, 0.17, 0.85)
+				fio.antialiased = true
+				rede.add_child(fio)
+				_fios.append([a, b, k, fio])
+			break
+
+
+## Dois postes ligam-se por fios quando estão na MESMA reta (o mesmo `mx`) e
+## nenhum outro poste fica entre eles — a fiação não vira nos cotovelos.
+static func _postes_vizinhos(a: int, b: int) -> bool:
+	var pa: Array = MOBILIARIO[a]
+	var pb: Array = MOBILIARIO[b]
+	if pa[0] != "poste" or pb[0] != "poste":
+		return false
+	if not is_equal_approx((pa[1] as Vector2).x, (pb[1] as Vector2).x):
+		return false
+	for c in MOBILIARIO.size():
+		var pc: Array = MOBILIARIO[c]
+		if c == a or c == b or pc[0] != "poste":
 			continue
-		for v in dia[1]:
-			var cone := TextureRect.new()
-			cone.name = "ConeDaRua%d" % _cones.size()
-			cone.texture = CONE
-			cone.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			cone.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			cone.size = Vector2(PropIso.QUADRO, PropIso.QUADRO)
-			cone.position = tela(v.x, v.y) - Vector2(PropIso.QUADRO, PropIso.QUADRO) / 2.0
-			var indice := 0
-			for outro in cenario.get_children():
-				if outro is Control and (outro as Control).position.y < cone.position.y:
-					indice += 1
-			cenario.add_child(cone)
-			cenario.move_child(cone, indice)
-			_cones.append(cone)
+		var vc: Vector2 = pc[1]
+		if is_equal_approx(vc.x, (pa[1] as Vector2).x) \
+				and vc.y > minf(pa[1].y, pb[1].y) and vc.y < maxf(pa[1].y, pb[1].y):
+			return false
+	return true
+
+
+## Onde o fio pousa no isolador `k` de um poste em `v`, no espaço tela: o
+## topo do isolador, rodado com o poste quando ele é o VELHO e pende para a
+## rua (`+mx`) — a mesma rotação em Y do `_inclinar` do estúdio.
+static func ponta_do_fio(v: Vector2, k: int, velho: bool) -> Vector2:
+	var x := POSTE_ISOLADORES[k]
+	var h := POSTE_ISOLADOR_PX / ALTURA_PX
+	var t := deg_to_rad(POSTE_VELHO_TOMBO if velho else 0.0)
+	var dx := x * cos(t) + h * sin(t)
+	var dz := -x * sin(t) + h * cos(t)
+	return tela(v.x + dx, v.y) - Vector2(0.0, dz * ALTURA_PX * ZOOM)
+
+
+## O mobiliário plantado, pela ordem de `MOBILIARIO` (o D45 lê-o).
+func mobiliario() -> Array[TextureRect]:
+	return _mobiliario
+
+
+## As lâmpadas de sódio, pela mesma ordem (`null` onde a peça não é poste).
+func luzes() -> Array[TextureRect]:
+	return _luzes
+
+
+## Os fios, `[poste A, poste B, isolador, Line2D]`.
+func fios() -> Array:
+	return _fios
+
+
+## A arte de cada peça no quadro `q` da obra do pátio: a nova onde o trecho
+## dela já está recapeado. Fora da obra, quem decide é o pátio — pronto, a
+## rua inteira é a nova; por fazer, é a gasta do porto em ruínas.
+func _trocar_o_mobiliario(q: int) -> void:
+	var pronto_fora_da_obra: bool = GameState.tem_estrutura("patio")
+	var novos: Array[bool] = []
+	for i in _mobiliario.size():
+		var peca: Array = MOBILIARIO[i]
+		var nova := int(peca[2]) <= q if q >= 0 else pronto_fora_da_obra
+		novos.append(nova)
+		_mobiliario[i].texture = ARTE_DO_MOBILIARIO[peca[0]][1 if nova else 0]
+		if _luzes[i] != null:
+			_luzes[i].visible = not nova
+	# Os dois postes de um vão são da mesma reta, logo do mesmo estado.
+	for f in _fios:
+		var a: int = f[0]
+		var b: int = f[1]
+		var velho := not novos[a]
+		var pa := ponta_do_fio(MOBILIARIO[a][1], f[2], velho)
+		var pb := ponta_do_fio(MOBILIARIO[b][1], f[2], velho)
+		var barriga: float = FIO_BARRIGA[0 if velho else 1]
+		var pontos := PackedVector2Array()
+		for s in FIO_PONTOS:
+			var t := float(s) / float(FIO_PONTOS - 1)
+			pontos.append(pa.lerp(pb, t) + Vector2(0.0, barriga * 4.0 * t * (1.0 - t)))
+		(f[3] as Line2D).points = pontos
 
 
 ## Um recorte do mapa: o nó mostra a textura DELE nos contornos dados, e
