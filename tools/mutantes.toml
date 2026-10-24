@@ -458,6 +458,7 @@ antes = '''
 depois = '''
 				pass
 '''
+reprova = { run_tests = "T31: atender um barco sobe a reputação" }
 
 # amostra: GameState:1048:not
 [[mutante]]
@@ -473,6 +474,7 @@ depois = '''
 	_apontar_espaco(maxi(espaco_mais_recente(), 1))
 	if load_game():
 '''
+reprova = { run_tests = "T31: o arranque abre a partida gravada" }
 
 # amostra: PainelCaixa:90:rel
 [[mutante]]
@@ -486,6 +488,7 @@ antes = '''
 depois = '''
 	if receita == 0:
 '''
+reprova = { run_tests = "T31: o caixa diz o que entrou ontem" }
 
 # amostra: PainelCancelarServico:50:apagar
 [[mutante]]
@@ -499,6 +502,7 @@ antes = '''
 depois = '''
 	pass
 '''
+reprova = { run_tests = "T24: a confirmação mostra o botão Cancelar serviço" }
 
 # amostra: PainelCancelarServico:57:bool
 [[mutante]]
@@ -512,6 +516,7 @@ antes = '''
 depois = '''
 	_respondido = false
 '''
+reprova = { run_tests = "T24: recusa pede reabrir" }
 
 # amostra: PainelMeta:11:apagar
 [[mutante]]
@@ -525,6 +530,7 @@ antes = '''
 depois = '''
 		pass
 '''
+reprova = { run_tests = "T31: antes da Fase 2 a meta diz quando abre e deixa fechar" }
 
 # amostra: PainelParcela:98:apagar
 [[mutante]]
@@ -540,6 +546,7 @@ depois = '''
 		paragrafo("Faltam %s para quitar hoje." % GameState.moeda(falta))
 		pass
 '''
+reprova = { run_tests = "T31: a parcela com falta deixa fechar" }
 
 # amostra: DocaCartao:115:apagar
 [[mutante]]
@@ -553,6 +560,7 @@ antes = '''
 depois = '''
 	pass
 '''
+reprova = { run_tests = "T31: o cartão da doca mostra o valor do barco atracado" }
 
 # amostra: PainelAjustes:61:rel
 [[mutante]]
@@ -566,6 +574,7 @@ antes = '''
 depois = '''
 		botao.text = "Padrão" if modo != PreferenciasDeApresentacao.PADRAO else "Maior (+25%)"
 '''
+reprova = { teste_design = "RB5: o botao que diz Maior aplica o maior" }
 
 # amostra: Audio:198:apagar
 [[mutante]]
@@ -579,6 +588,7 @@ antes = '''
 depois = '''
 		pass
 '''
+reprova = { teste_audio = "e o 0,5 fica gravado no arquivo de volume" }
 
 # amostra: AmbienteCosteiro:26:apagar
 [[mutante]]
@@ -592,6 +602,7 @@ antes = '''
 depois = '''
 	pass
 '''
+reprova = { teste_audio = "o relógio do mar pede o som do mar" }
 
 # amostra: RolagemDaOperacao:34:rel
 [[mutante]]
@@ -605,6 +616,7 @@ antes = '''
 depois = '''
 	elif evento is InputEventScreenDrag and evento.index != 0 and _pressionado:
 '''
+reprova = { teste_design = "RB5: arrasto com um dedo rola" }
 
 # amostra: BarcoFila:195:rel
 [[mutante]]
@@ -618,6 +630,7 @@ antes = '''
 depois = '''
 	if _escala >= 0.0:
 '''
+reprova = { run_tests = "T31: cada barco ao largo tem casco à vista" }
 
 # ── O JOGADOR AO ACASO (`118`) ─────────────────────────────────────────────
 # Defeitos que nenhum bloco montava o estado para ver; o T26 joga até lá.
