@@ -56,7 +56,25 @@ outras seis vivem ao lado das irmãs. Nada corre contra o relógio de parede:
 o mar dispara-se pelo `timeout` à mão, o arranque é um nó posto na árvore,
 e o T31 semeia a partida.
 
-QUEM-REPROVA
+## Os defeitos injetados
+
+Os treze entraram numa secção própria do catálogo (*«as treze lacunas graves
+da amostra»*), com o `antes`/`depois` da amostra e o id dela ao lado. O
+`--explorar` pô-los contra as seis suítes, em quatro cópias: **cada um
+reprovou pela guarda nova e só na suíte dela**, e nas outras cinco ficou
+verde (a saída está em `docs/arquivo/MEDICOES_VELOCIDADE_TESTES_2026-10-24/`).
+Dois levam vizinhos em cascata, e não são guardas a mais: a recusa esquecida
+cancela de verdade, e a contagem do «confirmação real cobra uma vez» a seguir
+sai a dois; o arranque trocado também reprova o controlo, porque sem save o
+`_ready()` defeituoso não abre partida nenhuma. Com ele, as outras suítes
+passam nos dois arranques errados — o que troca o save e o que não abre nada
+—, porque todo bloco chama o seu `new_game()`. Declaradas as guardas,
+`--so` dos treze: *«MUTANTES OK — 13 defeito(s) reinjetado(s) em 4 cópia(s)»*.
+
+**E o toque do dedo foi a única guarda com uma afirmação por provar**: o
+comentário diz que o `push_input` entrega o `ScreenTouch` cru, sem o rato
+emulado do `Input`. Se o rato viesse junto, o gesto do rato rolaria com o
+ramo do dedo partido e o mutante passaria; reprovou, e só na guarda do dedo.
 
 ## A prova
 
@@ -64,4 +82,30 @@ PROVA
 
 ## As de gravidade média, para o Bruno escolher
 
-MEDIAS
+A amostra deu 28 sobreviventes de gravidade média (e 43 baixas, 33 delas de
+visual fino).
+Nenhuma entrou: a escolha do Bruno foi as treze graves. Ficam aqui, com o id
+da amostra, pelas três famílias que ele nomeou primeiro:
+
+| Família | Defeito (id da amostra) | O que se veria |
+|---|---|---|
+| painéis | `DiarioFase2:9:apagar` | some a legenda «Fase 2 concluída» |
+| painéis | `PainelDocas:159:apagar` | o painel das docas perde a linha de classe, prazo e trabalhador |
+| painéis | `PainelEspacos:52:apagar` | a escolha de espaço para partida nova perde o título |
+| painéis | `PainelMeuPorto:26:apagar` | o «Meu porto agora» perde o dia e a semana |
+| preferências | `AcomodacaoDeLeitura:88:not` | no texto Maior, o cartão rolável não se acomoda |
+| preferências | `DocaCartao:206:apagar` | com «reduzir movimento», o destaque da doca some |
+| preferências | `MemoriaDeLeitura:18:logico` | a memória de leitura marca o caractere errado |
+| telemetria | `Registro:203:rel` | toda partida nova lida como retomada |
+| telemetria | `Registro:295:const` | cada turno começa com uma mensagem ruim contada |
+| telemetria | `Registro:316:rel` | as docas ocupadas contadas ao contrário |
+
+E as outras médias, de outras famílias: três de **lógica** —
+`GameState:1305:bool` (o calendário deixa de marcar os vencimentos),
+`GameState:1344:rel` (alocar na doca de índice igual ao total passa a guarda)
+e `GameState:2952:apagar` (os recordes de uma partida vazam para a
+carregada) —; uma de **texto**, `Narrativa:705:apagar` (uma linha do fim da
+Fase 1 some); uma **fora do headless**, `CopiaDoDiagnostico:28:apagar`; e
+treze **visuais** (animação, ordem de desenho, recorte de retrato, espaço do
+HUD), que mudam as fotos do «Evidência visual» e pedem alguém a olhar. As
+três de lógica são as que este registo poria primeiro, se ele quiser mais.

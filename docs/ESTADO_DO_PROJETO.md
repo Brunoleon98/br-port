@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 24/10/2026 — testes mais rápidos (`137`); estradas (`136`)
+> **Atualização:** 24/10/2026 — lacunas graves (`138`); testes (`137`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -124,10 +124,9 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB5 (`134`, `135`, #148):** três colunas/+25%; Padrão/Maior nos Ajustes,
 persistência independente do movimento; telefone pendente.
 **A fila da `126`** (§7): terreno e vegetação (`127`, `130`) e estradas
-(`136`) **aceites**. **Testes acelerados (`137`):** catálogo em quatro
-cópias e três fatias no CI, suítes a `--fixed-fps 60`, fotos quatro a quatro;
-lacunas medidas (99 de 205 defeitos passam). A seguir (Bruno): as 13
-graves, depois os detalhes.
+(`136`) **aceites**. **Testes (`137`, `138`):** catálogo em cópias e
+fatias, suítes a `--fixed-fps 60`, fotos em paralelo; das lacunas medidas,
+as 13 graves fechadas, as 28 médias com o Bruno. A seguir: os detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
@@ -153,7 +152,7 @@ histórico em `HISTORICO.md`.
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo; o que é de cada fase na tabela `FASES`, lida por funções (`094`) |
-| `brport_vs/tests/run_tests.gd` | Lógica: Fase 2 T20–T23; cancelamento T24; ajuda T25; acaso T26 (`118`); retomada T27 (`125`) |
+| `brport_vs/tests/run_tests.gd` | Lógica: Fase 2 T20–T23; cancelamento T24; ajuda T25; acaso T26 (`118`); retomada T27 (`125`); o que os painéis mostram e fazem T31 (`138`) |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |

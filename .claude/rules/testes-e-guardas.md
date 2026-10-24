@@ -108,6 +108,17 @@ equivalentes). A lógica perguntada está guardada; o que escapa é outra coisa:
 - **Executar não é conferir.** A cobertura por função diz que a linha correu;
   só um defeito posto nela diz se alguém olhou. A medição e o instrumentador
   estão em `docs/arquivo/MEDICOES_VELOCIDADE_TESTES_2026-10-24/`.
+- ⚠️ **E O BOTÃO ESCOLHE-SE PELO QUE ELE DIZ, NÃO PELO NOME DO NÓ.** O RB5
+  premia o `TextoMaior` pelo nome, e os rótulos Padrão e Maior trocados
+  passavam verdes; o T24 chamava `confirmar()` direto, e o botão podia sair
+  da árvore (`138`). E o toque do telefone prova-se com `ScreenTouch` e
+  `ScreenDrag` no `push_input`, que os entrega crus: o rato emulado é do
+  `Input`, e o gesto do rato rolava com o ramo do dedo partido.
+- ⚠️ **E A GRAVIDADE DE UMA AMOSTRA LIDA À MÃO É HIPÓTESE.** Dois dos treze
+  «graves» da `137` não chegavam ao jogador: «confirmar duas vezes cancela
+  duas vezes» o jogo recusa, e a meta da Fase 1 o `Main` nunca abre. Antes de
+  escrever a guarda, siga o defeito até à tela, e escreva ao lado dela o que
+  ela defende de verdade (`138`).
 
 ## O jogador ao acaso (T26, `118`)
 
