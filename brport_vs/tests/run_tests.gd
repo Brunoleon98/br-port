@@ -1714,6 +1714,10 @@ func _run() -> void:
 	var inicio_configuracoes = load("res://tests/casos_inicio_configuracoes.gd").new()
 	await inicio_configuracoes.rodar(GS, self)
 	_check("T30: quatro entradas, retorno das consultas e movimento legível", inicio_configuracoes.completo and inicio_configuracoes.falhas == 0)
+	print("=== T31: o que a tela mostra e o que o toque faz ===")
+	var mostra_e_faz = load("res://tests/casos_mostra_e_faz.gd").new()
+	await mostra_e_faz.rodar(GS, self)
+	_check("T31: reputação, arranque e o que os painéis mostram e fazem", mostra_e_faz.completo and mostra_e_faz.falhas == 0)
 
 	print("")
 	if _fails == 0:

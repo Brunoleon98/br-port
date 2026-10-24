@@ -189,6 +189,20 @@ func _inicio() -> void:
 	await assentar()
 	var botao: Button = tela.find_child("TextoMaior", true, false)
 	conferir("ajustes oferecem os dois tamanhos", botao != null and tela.find_child("TextoPadrao", true, false) != null)
+	# ⚠️ O JOGADOR ESCOLHE PELO QUE O BOTÃO DIZ, NÃO PELO NOME DO NÓ (`138`).
+	# Este bloco premia o `TextoMaior` pelo nome, e os dois rótulos trocados
+	# deixavam-no verde: o botão que diz «Maior» punha o Padrão.
+	var diz_maior := _botao_que_diz(tela, "Maior (+25%)")
+	var diz_padrao := _botao_que_diz(tela, "Padrão")
+	if diz_maior != null:
+		diz_maior.pressed.emit()
+		await assentar()
+	var ficou_maior := _preferencias.tamanho_do_texto == "maior"
+	if diz_padrao != null:
+		diz_padrao.pressed.emit()
+		await assentar()
+	conferir("o botao que diz Maior aplica o maior e o que diz Padrao volta", diz_maior != null
+		and diz_padrao != null and ficou_maior and _preferencias.tamanho_do_texto == "padrao")
 	botao.grab_focus()
 	botao.pressed.emit()
 	await assentar()
@@ -251,6 +265,30 @@ func _gestos(tela: Control, rolo: ScrollContainer, apoio: RefCounted) -> void:
 	conferir("arrastar rola sem executar acao da partida", rolo.scroll_vertical > 0 and antes == apoio.fotografia())
 	rolo.scroll_vertical = 0
 	await assentar()
+	# ⚠️ O TELEFONE ARRASTA COM O DEDO, NÃO COM O RATO (`138`). O gesto de cima
+	# é o do rato, e o ramo do toque podia deixar de rolar com ele verde. O
+	# `push_input` entrega o toque cru: a emulação de rato é do `Input`, não do
+	# `Viewport`, e por isso este caminho não se confunde com o de cima.
+	var dedo := InputEventScreenTouch.new()
+	dedo.index = 0
+	dedo.position = origem
+	dedo.pressed = true
+	arvore.root.push_input(dedo, true)
+	var desliza := InputEventScreenDrag.new()
+	desliza.index = 0
+	desliza.position = origem - Vector2(0, 70)
+	desliza.relative = Vector2(0, -70)
+	arvore.root.push_input(desliza, true)
+	var solta := InputEventScreenTouch.new()
+	solta.index = 0
+	solta.position = desliza.position
+	solta.pressed = false
+	arvore.root.push_input(solta, true)
+	await assentar()
+	conferir("arrasto com um dedo rola sem executar acao da partida", rolo.scroll_vertical > 0
+		and antes == apoio.fotografia())
+	rolo.scroll_vertical = 0
+	await assentar()
 	# O controle contrário é um toque completo no barco, pela GUI real.
 	var cartao: Control = tela._fila_lugares.get_child(0)
 	var toque: Vector2 = cartao.get_global_rect().get_center()
@@ -276,6 +314,13 @@ func _gestos(tela: Control, rolo: ScrollContainer, apoio: RefCounted) -> void:
 	gs.tocar_doca(0)
 	tela._refresh_all()
 	await assentar()
+
+
+func _botao_que_diz(tela: Node, texto: String) -> Button:
+	for no in TextoDaInterface.descendentes(tela):
+		if no is Button and no.text == texto and no.is_visible_in_tree():
+			return no
+	return null
 
 
 func _mouse(posicao: Vector2, pressionado: bool) -> void:

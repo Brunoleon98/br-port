@@ -440,6 +440,185 @@ antes = 'if agora - float(_ultima_vez.get(id, -999.0)) < float(SONS[id]["espera"
 depois = 'if _ultima_vez.has(id):'
 reprova = { teste_audio = "passada a espera, o mesmo som volta a tocar" }
 
+# ── AS TREZE LACUNAS GRAVES DA AMOSTRA (`137`, `138`) ──────────────────────
+# A amostra de mutação da `137` sorteou-os nas funções que as suítes executam,
+# e os treze passavam verdes nas seis. O `antes`/`depois` é o da amostra
+# (`docs/arquivo/MEDICOES_VELOCIDADE_TESTES_2026-10-24/amostra_mutacao.json`),
+# com o id dela no comentário de cada um.
+
+# amostra: GameState:1784:apagar
+[[mutante]]
+id = "servir-sem-reputacao"
+de = "138"
+o_que = "atender um barco deixa de subir a reputação"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+				_change_reputation(REPUTATION_GAIN_SERVED)
+'''
+depois = '''
+				pass
+'''
+
+# amostra: GameState:1048:not
+[[mutante]]
+id = "arranque-troca-o-save"
+de = "138"
+o_que = "no arranque, o save que carrega é trocado por partida nova"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	_apontar_espaco(maxi(espaco_mais_recente(), 1))
+	if not load_game():
+'''
+depois = '''
+	_apontar_espaco(maxi(espaco_mais_recente(), 1))
+	if load_game():
+'''
+
+# amostra: PainelCaixa:90:rel
+[[mutante]]
+id = "caixa-entrou-ao-contrario"
+de = "138"
+o_que = "o bloco «Entrou» do caixa só aparece com receita zero"
+alvo = "brport_vs/scripts/PainelCaixa.gd"
+antes = '''
+	if receita != 0:
+'''
+depois = '''
+	if receita == 0:
+'''
+
+# amostra: PainelCancelarServico:50:apagar
+[[mutante]]
+id = "cancelar-sem-botao"
+de = "138"
+o_que = "o botão de confirmar o cancelamento some do painel"
+alvo = "brport_vs/scripts/PainelCancelarServico.gd"
+antes = '''
+	_vbox.add_child(_confirmar)
+'''
+depois = '''
+	pass
+'''
+
+# amostra: PainelCancelarServico:57:bool
+[[mutante]]
+id = "cancelar-recusa-esquecida"
+de = "138"
+o_que = "depois de uma recusa, confirmar outra vez cancela com a conta velha"
+alvo = "brport_vs/scripts/PainelCancelarServico.gd"
+antes = '''
+	_respondido = true
+'''
+depois = '''
+	_respondido = false
+'''
+
+# amostra: PainelMeta:11:apagar
+[[mutante]]
+id = "meta-cedo-sem-fechar"
+de = "138"
+o_que = "a meta aberta antes da Fase 2 não tem botão de fechar"
+alvo = "brport_vs/scripts/PainelMeta.gd"
+antes = '''
+		botao_fechar("Fechar")
+'''
+depois = '''
+		pass
+'''
+
+# amostra: PainelParcela:98:apagar
+[[mutante]]
+id = "parcela-falta-sem-fechar"
+de = "138"
+o_que = "a parcela com falta abre sem botão de fechar"
+alvo = "brport_vs/scripts/PainelParcela.gd"
+antes = '''
+		paragrafo("Faltam %s para quitar hoje." % GameState.moeda(falta))
+		botao_fechar("Fechar")
+'''
+depois = '''
+		paragrafo("Faltam %s para quitar hoje." % GameState.moeda(falta))
+		pass
+'''
+
+# amostra: DocaCartao:115:apagar
+[[mutante]]
+id = "doca-sem-valor"
+de = "138"
+o_que = "o cartão da doca não mostra o valor do barco"
+alvo = "brport_vs/scripts/DocaCartao.gd"
+antes = '''
+	_valor.text = GameState.moeda(valor)
+'''
+depois = '''
+	pass
+'''
+
+# amostra: PainelAjustes:61:rel
+[[mutante]]
+id = "ajustes-rotulos-trocados"
+de = "138"
+o_que = "os rótulos Padrão e Maior dos Ajustes trocam de lugar"
+alvo = "brport_vs/scripts/PainelAjustes.gd"
+antes = '''
+		botao.text = "Padrão" if modo == PreferenciasDeApresentacao.PADRAO else "Maior (+25%)"
+'''
+depois = '''
+		botao.text = "Padrão" if modo != PreferenciasDeApresentacao.PADRAO else "Maior (+25%)"
+'''
+
+# amostra: Audio:198:apagar
+[[mutante]]
+id = "volume-nao-grava"
+de = "138"
+o_que = "o volume escolhido não é gravado no arquivo"
+alvo = "brport_vs/autoload/Audio.gd"
+antes = '''
+		cfg.set_value("volume", bus, volume(bus))
+'''
+depois = '''
+		pass
+'''
+
+# amostra: AmbienteCosteiro:26:apagar
+[[mutante]]
+id = "ambiente-sem-relogio"
+de = "138"
+o_que = "o relógio do mar e da gaivota dispara e nada toca"
+alvo = "brport_vs/scripts/AmbienteCosteiro.gd"
+antes = '''
+	timer.timeout.connect(chamada)
+'''
+depois = '''
+	pass
+'''
+
+# amostra: RolagemDaOperacao:34:rel
+[[mutante]]
+id = "rolo-ignora-o-dedo"
+de = "138"
+o_que = "o arrasto com um dedo deixa de rolar a operação"
+alvo = "brport_vs/scripts/RolagemDaOperacao.gd"
+antes = '''
+	elif evento is InputEventScreenDrag and evento.index == 0 and _pressionado:
+'''
+depois = '''
+	elif evento is InputEventScreenDrag and evento.index != 0 and _pressionado:
+'''
+
+# amostra: BarcoFila:195:rel
+[[mutante]]
+id = "fila-cascos-a-zero"
+de = "138"
+o_que = "a escala dos cascos da fila fica 0 e os barcos ao largo somem"
+alvo = "brport_vs/scripts/BarcoFila.gd"
+antes = '''
+	if _escala > 0.0:
+'''
+depois = '''
+	if _escala >= 0.0:
+'''
+
 # ── O JOGADOR AO ACASO (`118`) ─────────────────────────────────────────────
 # Defeitos que nenhum bloco montava o estado para ver; o T26 joga até lá.
 
