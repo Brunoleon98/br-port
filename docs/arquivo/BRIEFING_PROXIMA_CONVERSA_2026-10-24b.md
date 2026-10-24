@@ -56,5 +56,33 @@ cavaletes de obra ao lado dos cones.
 Prompt para colar:
 
 ```text
-PROMPT
+Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3,
+a decisão 136 (as estradas) e a 138 (as lacunas fechadas). Confira a main
+remota, os PRs abertos e o CI do último merge, e rode python3
+tools/conferir_colaboracao.py com o trabalho commitado (ele lê o HEAD). Se o
+trabalho da 138 (branch claude/upbeat-meitner-fkfkne) ainda não estiver na
+main, pergunte ao Bruno pelo PR dele e conduza-o até verde antes de começar:
+o catálogo passou de 166 para 191 mutantes, e o job das três fatias cresce
+com ele — leia o tempo de cada fatia e registe-o na 138.
+
+O item desta conversa é a melhoria gráfica que volta: o item 3 da fila da
+126, os SPRITES DE DETALHES. É arte: use /arte, abra
+.claude/rules/arte.md, mapa.md e projecao.md, e comece pela foto do jogo
+(dia 1 e porto completo, ampliados) e pela pergunta do escopo ao Bruno, com
+as opções e a recomendada primeiro — não escolha por ele. O que a 136
+anotou nas fotos, sem investigar (briefing 2026-10-23c): postes e placas na
+calçada nova, carros estacionados, lixeiras, um ponto de ônibus e cavaletes
+de obra ao lado dos cones. Pergunte quais, onde (a rua do porto, a vila, o
+pátio) e se mudam com a obra do pátio, como a rua recapeada da 136.
+
+Prop novo no Cenario responde às guardas de todos os props, e prop que
+pousa na rua ou na calçada confere a tabela de âncoras e o contorno das vias
+(.claude/rules/testes-e-guardas.md, mapa.md). Cada passagem leva a prancha
+contra a main e o veredito do Bruno, e o que se medir vai para a decisão.
+Os props saem do Blender (bpy ~1 GB, sob demanda).
+
+As quinze lacunas médias que ficaram de fora (as visuais, uma de texto, uma
+fora do headless) estão nomeadas na 138; não as comece sem ele. Não comece
+outra funcionalidade por conta própria. Ao encerrar, aplique /fechar-sessao
+e entregue o prompt completo da próxima conversa em bloco copiável.
 ```
