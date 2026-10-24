@@ -2,9 +2,9 @@
 
 **24/10/2026.** Branch `claude/upbeat-meitner-fkfkne`, avançada para a da
 `137` (`claude/zealous-heisenberg-dtqner`, **PR #150**), que esta conversa
-levou a verde no runner e cujos tempos registou lá: o job dos mutantes acaba
-aos 15:37 da corrida, contra 100 min no #149. O #150 espera o Bruno para
-fundir; esta branch não tem PR — ele não o pediu nesta conversa.
+levou a verde no runner e cujos tempos registou lá — o job dos mutantes acaba
+aos 15:37 da corrida, contra 100 min no #149 —, e que o Bruno fundiu
+(`10b9d7c`). Esta branch não tem PR: ele não o pediu nesta conversa.
 
 **Decisão `138` — as treze lacunas graves, fechadas pelo texto e pela
 ação.** Os treze defeitos da amostra da `137` voltaram a passar verdes antes
@@ -33,8 +33,7 @@ comentário de `arranque_carrega_o_save` em `brport_vs/tests/casos_mostra_e_faz.
 ⚠️ A captura em paralelo ganha 1,4× no runner, contra ~3× aqui (`137`, «A
 prova»).
 
-**Pendente:** fundir o #150 e abrir o PR desta branch, as duas decisões do
-Bruno. As 28 lacunas de gravidade média estão listadas na `138`, por
+**Pendente:** o PR desta branch, que é decisão do Bruno. As 28 lacunas de gravidade média estão listadas na `138`, por
 família, para ele escolher se entram.
 
 **A próxima conversa:** o item 3 da fila da `126`, os sprites de detalhes. O

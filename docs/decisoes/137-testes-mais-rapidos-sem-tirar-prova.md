@@ -140,7 +140,8 @@ saía com 2 e deixaria o CI vermelho. Uma sonda de uma linha reproduziu-o;
   aos **15:37** da corrida, contra 100,4 min no #149. A fatia 2 levou 1,7×
   as outras com o mesmo número de mutantes, e os quatro trabalhadores dela
   atrasaram-se juntos: lê como máquina mais lenta e não como partilha
-  torta, mas uma corrida só não o separa. As suítes no runner, com o
+  torta — e a segunda corrida (`34c0fcf`, as mesmas fatias) separou-o:
+  8:48, 10:00 e 9:33. As suítes no runner, com o
   relógio fixo: 19 / 39 / 12 / 11 s (`run_tests` / `teste_design` /
   `teste_fumaca` / `asset_validator`); o job «Godot headless» 7:18, o
   export 1:27. **A captura em paralelo ganhou menos lá do que aqui:** este

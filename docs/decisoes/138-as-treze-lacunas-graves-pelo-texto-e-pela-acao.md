@@ -1,10 +1,11 @@
 # 138 — As treze lacunas graves, fechadas pelo texto e pela ação
 
 **24/10/2026 · escolha do Bruno na `137`, antes de a melhoria gráfica
-voltar.** Main `b0ae8ee` (PR #149); a branch parte da da `137`
+voltar.** Main `b0ae8ee` (PR #149) ao abrir; a branch partiu da da `137`
 (`claude/zealous-heisenberg-dtqner`, PR #150), que esta conversa levou a
-verde no runner e cujos tempos ficaram registados lá. Nenhum PR do Codex
-aberto; 138 livre pelo `tools/conferir_colaboracao.py`. F6 — guarda nova e
+verde no runner, com os tempos registados lá, e que o Bruno fundiu a meio
+dela (`10b9d7c`). Nenhum PR do Codex aberto; 138 livre pelo
+`tools/conferir_colaboracao.py`. F6 — guarda nova e
 defeito injetado —, Opus.
 
 ## O antes
